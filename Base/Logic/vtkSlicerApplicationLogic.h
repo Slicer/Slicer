@@ -73,13 +73,6 @@ class VTK_SLICER_LOGIC_EXPORT vtkSlicerApplicationLogic : public vtkSlicerLogic
   // -- these are dynamic (discovered, create, deleted at run time)
   //
 
-  ///// Views 
-  // Description:
-  // Views are the 3D viewports into the mrml scene
-  // SlicerLogic maintains the list of currently active views
-  vtkSetObjectMacro (Views,vtkSlicerViewCollection);
-  vtkGetObjectMacro (Views,vtkSlicerViewCollection);
-
   // Description:
   // Views are the 3D viewports into the mrml scene
   // SlicerLogic maintains the list of currently active views
