@@ -1,0 +1,7 @@
+PROJECT( GUI )
+
+ADD_EXECUTABLE (Slicer3)
+
+IF (Slicer3_BUILD_TESTING)
+    SUBDIRS( Testing )
+ENDIF (Slicer3_BUILD_TESTING)
