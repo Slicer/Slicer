@@ -29,9 +29,9 @@
 #include "vtkMatrix4x4.h"
 #include "vtkTransform.h"
 #include "vtkImageData.h"
-#include "vtkITKArchetypeImageSeriesReader.h"
 
 class vtkImageData;
+class vtkITKArchetypeImageSeriesReader;
 
 class VTK_EXPORT vtkMRMLVolumeNode : public vtkMRMLNode
 {
