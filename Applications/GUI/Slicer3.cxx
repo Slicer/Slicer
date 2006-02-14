@@ -1,10 +1,11 @@
 
+#include "vtkKWApplication.h"
 #include "vtkSlicerApplicationLogic.h"
-#include "vtkSlicerGUI.h"
+#include "vtkSlicerApplicationGUI.h"
 
 #include <vtksys/SystemTools.hxx>
 
-extern "C" int Slicer3lib_Init(Tcl_Interp *interp);
+extern "C" int Slicerbasegui_Init(Tcl_Interp *interp);
 int Slicer3_main(int argc, char *argv[])
 {
   // Initialize Tcl
@@ -18,7 +19,7 @@ int Slicer3_main(int argc, char *argv[])
 
   // Initialize our Tcl library (i.e. our classes wrapped in Tcl)
 
-  Slicer3lib_Init(interp);
+  Slicerbasegui_Init(interp);
 
   // Create the application Logic object, 
   // then create the GUI object and have it observe the Logic
@@ -30,7 +31,9 @@ int Slicer3_main(int argc, char *argv[])
   
   appGUI->SetLogic(appLogic);
 
-  int res = appGUI->Run(argc, argv);
+    // TODO: where should args get parsed?
+  //int res = appGUI->StartApplication(argc, argv);
+  int res = appGUI->StartApplication();
 
   appGUI->Delete();
   appLogic->Delete();
