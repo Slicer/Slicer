@@ -21,13 +21,8 @@
 #ifndef __vtkSlicerLogic_h
 #define __vtkSlicerLogic_h
 
-#include <stdlib.h>
-
 #include "vtkSlicerBase.h"
-
 #include "vtkObject.h"
-
-class vtkObject;
 
 class VTK_SLICER_BASE_EXPORT vtkSlicerLogic : public vtkObject 
 {
@@ -45,9 +40,8 @@ class VTK_SLICER_BASE_EXPORT vtkSlicerLogic : public vtkObject
 protected:
   vtkSlicerLogic();
   ~vtkSlicerLogic();
-  vtkSlicerLogic(const vtkSlicerLogic&) {};
-  void operator=(const vtkSlicerLogic&) {};
-
+  vtkSlicerLogic(const vtkSlicerLogic&);
+  void operator=(const vtkSlicerLogic&);
 };
 
 #endif

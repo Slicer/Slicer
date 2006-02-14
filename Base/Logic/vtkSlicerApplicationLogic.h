@@ -127,8 +127,8 @@ protected:
 
   vtkSlicerApplicationLogic();
   ~vtkSlicerApplicationLogic();
-  vtkSlicerApplicationLogic(const vtkSlicerApplicationLogic&) {};
-  void operator=(const vtkSlicerApplicationLogic&) {};
+  vtkSlicerApplicationLogic(const vtkSlicerApplicationLogic&);
+  void operator=(const vtkSlicerApplicationLogic&);
 
 private:
   
