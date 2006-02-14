@@ -11,6 +11,7 @@
   Version:   $Revision: 1.45 $
 
 =========================================================================auto=*/
+
 // .NAME vtkSlicerSliceLogic - slicer logic class for slice manipulation
 // .SECTION Description
 // This class manages the logic associated with display of slice windows
@@ -36,16 +37,16 @@
 #include <stdlib.h>
 
 #include "vtkSlicerLogic.h"
-#include "vtkMrml.h"
-#include "vtkMrmlVolume.h"
+//#include "vtkMrml.h"
+//#include "vtkMrmlVolume.h"
 
-class VTK_SLICER_LOGIC_EXPORT vtkSlicerSliceLogic : public vtkSlicerLogic 
+class VTK_SLICER_BASE_EXPORT vtkSlicerSliceLogic : public vtkSlicerLogic 
 {
   public:
   
   // The Usual vtk class functions
   static vtkSlicerSliceLogic *New();
-  vtkTypeMacro(vtkSlicerSliceLogic,vtkObject);
+  vtkTypeRevisionMacro(vtkSlicerSliceLogic,vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
     
 protected:

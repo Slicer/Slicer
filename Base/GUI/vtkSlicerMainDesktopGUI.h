@@ -3,6 +3,8 @@
 
 #include "vtkSlicerComponentGUI.h"
 
+#include "vtkKWScale.h"
+
 class vtkKWWindow;
 class vtkKWFrame;
 class vtkKWLabel;

@@ -11,7 +11,7 @@
 // undefined symbol error. So, changing the library
 // name to KWSlicer3Lib, and the function to
 // Kwslicer3lib_Init won't work. What am i missing?
-extern "C" int Kwmylib_Init (Tcl_Interp *interp );
+extern "C" int Slicerbasegui_Init (Tcl_Interp *interp );
 
 int slicer3_main( int argc, char *argv[] )
 {
@@ -25,7 +25,7 @@ int slicer3_main( int argc, char *argv[] )
     }
     // Initialize our classses wrapped in Tcl.
     // Tcl requires a call to wrap them.
-    Kwmylib_Init (interp);
+    Slicerbasegui_Init (interp);
     
     vtkSlicerApplicationGUI *app;
     vtkSlicerMainDesktopGUI *gui;

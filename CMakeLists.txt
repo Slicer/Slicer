@@ -61,6 +61,7 @@ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 INCLUDE("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
 SET(VTK_WRAP_TCL3_INIT_DIR "${VTK_SOURCE_DIR}/Wrapping")
 
+# TODO
 # VTK_WRAP_TCL3(${LIB_NAME} LIB_TCL_SRCS ${LIB_SRCS} "")
 
 
@@ -80,3 +81,6 @@ IF (Slicer3_BUILD_TESTING)
     SUBDIRS( Testing )
 ENDIF (Slicer3_BUILD_TESTING)
 
+# include a test for endianness (used to be done by default)
+INCLUDE (${CMAKE_ROOT}/Modules/TestBigEndian.cmake)
+TEST_BIG_ENDIAN(CMAKE_WORDS_BIGENDIAN)

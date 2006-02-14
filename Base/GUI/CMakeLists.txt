@@ -1,4 +1,4 @@
-PROJECT(GUI)
+PROJECT(SlicerBaseGUI)
 
 # If we are not in the KWWidgets source tree, make sure we can find KWWidgets
 # as an external package, and use it. If you are using this CMakeLists.txt 
@@ -19,7 +19,7 @@ SET(TARGET_BASE_NAME "Slicer3${PROJECT_NAME}Test")
 # use its callbacks from our user interface. To do so, we need to create
 # a library and wrap it automatically for the Tcl language.
 
-SET(LIB_NAME "KWMyLib")
+SET(LIB_NAME "SlicerBaseGUI")
 SET(LIB_SRCS 
   vtkSlicerStyle.cxx             
   vtkSlicerGUI.cxx
@@ -30,6 +30,15 @@ SET(LIB_SRCS
   vtkSlicerGUIUpdate.cxx
   vtkSlicerMainDesktopGUI.cxx
   )
+
+# Helper classes
+
+SET_SOURCE_FILES_PROPERTIES(
+    # none yet
+  vtkSlicerGUIUpdate.cxx 
+  WRAP_EXCLUDE
+  )
+
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 INCLUDE("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
@@ -75,7 +84,7 @@ CONFIGURE_FILE(
 # own library.
 
 ADD_EXECUTABLE(${EXE_NAME} WIN32 ${EXE_SRCS} ${RES_FILE})
-TARGET_LINK_LIBRARIES(${EXE_NAME} ${KWWidgets_LIBRARIES} ${LIB_NAME})
+TARGET_LINK_LIBRARIES(${EXE_NAME} SlicerBaseLogic SlicerBaseGUI ${KWWidgets_LIBRARIES} ${LIB_NAME})
 
 # If needed, copy the Tcl/Tk support files required at run-time 
 # to initialize Tcl/Tk. This is only triggered if VTK was built
@@ -98,7 +107,7 @@ ENDIF (NOT KWWidgets_SOURCE_DIR)
 # to install your application right where KWWidgets is already installed.
 
 IF(BUILD_EXAMPLES)
-  INSTALL_TARGETS(${KWWidgets_INSTALL_BIN_DIR} ${EXE_NAME})
+  #INSTALL_TARGETS(${KWWidgets_INSTALL_BIN_DIR} ${EXE_NAME})
 ENDIF(BUILD_EXAMPLES)
 
 # Register this example as a test. Our executable supports a --test

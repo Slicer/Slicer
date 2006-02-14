@@ -23,19 +23,19 @@
 
 #include <stdlib.h>
 
-#include "vtkSlicer.h"
+#include "vtkSlicerBase.h"
 
-#ifndef vtkFloatingPointType
-#define vtkFloatingPointType float
-#endif
+#include "vtkObject.h"
 
-class VTK_SLICER_LOGIC_EXPORT vtkSlicerLogic : public vtkObject 
+class vtkObject;
+
+class VTK_SLICER_BASE_EXPORT vtkSlicerLogic : public vtkObject 
 {
   public:
   
   // The Usual vtk class functions
   static vtkSlicerLogic *New();
-  vtkTypeMacro(vtkSlicerLogic,vtkObject);
+  vtkTypeRevisionMacro(vtkSlicerLogic,vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Additional functionality:

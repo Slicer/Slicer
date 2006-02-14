@@ -6,12 +6,12 @@
 
 class vtkObject;
 
-class vtkSlicerGUIUpdate : public vtkCommand
+class vtkSlicerGUIUpdate : public vtkCallbackCommand
 {
  public:
     static vtkSlicerGUIUpdate* New ( )
         { return new vtkSlicerGUIUpdate; }
-    vtkTypeRevisionMacro ( vtkSlicerGUIUpdate, vtkCommand );
+    vtkTypeRevisionMacro ( vtkSlicerGUIUpdate, vtkCallbackCommand );
 
     void SetGUI ( vtkSlicerComponentGUI *gui ) { this->GUI = gui; }
     vtkSlicerComponentGUI *GetGUI ( ) { return this->GUI; }

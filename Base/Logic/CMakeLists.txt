@@ -1,0 +1,60 @@
+PROJECT(SlicerBaseLogic)
+
+# --------------------------------------------------------------------------
+# Sources
+
+SET(SlicerBaseLogic_SRCS
+  vtkSlicerLogic.cxx 
+  vtkSlicerApplicationLogic.cxx 
+  vtkSlicerSliceLogic.cxx 
+)
+
+# Abstract/pure virtual classes
+
+SET_SOURCE_FILES_PROPERTIES(
+  vtkSlicerLogic.cxx 
+  ABSTRACT
+  )
+
+# Helper classes
+
+SET_SOURCE_FILES_PROPERTIES(
+    # none yet
+  vtkSlicerLogic.cxx 
+  WRAP_EXCLUDE
+  )
+
+# --------------------------------------------------------------------------
+# Include dirs
+
+INCLUDE_DIRECTORIES(
+  ${SlicerBase_SOURCE_DIR}
+  ${SlicerBase_BINARY_DIR}
+  ${VTK_INCLUDE_DIR}
+  )
+
+
+
+# --------------------------------------------------------------------------
+# Wrapping
+
+# TODO - figure out how best to do the wrapping
+
+# --------------------------------------------------------------------------
+# Build the library
+
+ADD_LIBRARY(SlicerBaseLogic 
+  ${SlicerBaseLogic_SRCS} 
+  )
+
+TARGET_LINK_LIBRARIES(SlicerBaseLogic 
+  vtkCommon
+  )
+
+
+# --------------------------------------------------------------------------
+# Testing (requires some of the examples)
+
+IF(BUILD_TESTING)
+  SUBDIRS(Testing)
+ENDIF(BUILD_TESTING)

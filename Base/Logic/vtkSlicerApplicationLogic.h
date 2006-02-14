@@ -25,22 +25,26 @@
 #define __vtkSlicerApplicationLogic_h
 
 #include "vtkSlicerLogic.h"
-#include "vtkMrml.h"
-#include "vtkMrmlScene.h"
+#include "vtkSlicerSliceLogic.h"
+//#include "vtkMrml.h"
+//#include "vtkMrmlScene.h"
 
-class VTK_SLICER_LOGIC_EXPORT vtkSlicerApplicationLogic : public vtkSlicerLogic 
+#include "vtkCollection.h"
+
+
+class VTK_SLICER_BASE_EXPORT vtkSlicerApplicationLogic : public vtkSlicerLogic 
 {
   public:
   
   // The Usual vtk class functions
   static vtkSlicerApplicationLogic *New();
-  vtkTypeMacro(vtkSlicerApplicationLogic,vtkObject);
+  vtkTypeRevisionMacro(vtkSlicerApplicationLogic,vtkSlicerLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
     
 
   // Description:
   // Get the current Mrml Scene object
-  vtkGetObjectMacro(MrmlScene,vtkMrmlScene);
+  //vtkGetObjectMacro(MrmlScene,vtkMrmlScene);
 
   // Description:
   // Connect to the given URL.  Disconnect any currently active 
@@ -76,37 +80,37 @@ class VTK_SLICER_LOGIC_EXPORT vtkSlicerApplicationLogic : public vtkSlicerLogic
   // Description:
   // Views are the 3D viewports into the mrml scene
   // SlicerLogic maintains the list of currently active views
-  vtkSetObjectMacro (Views,vtkSlicerViewCollection);
-  vtkGetObjectMacro (Views,vtkSlicerViewCollection);
+  vtkSetObjectMacro (Views,vtkCollection);
+  vtkGetObjectMacro (Views,vtkCollection);
 
   // Description:
   // the ActiveView is the default destination of UI events
-  vtkSetObjectMacro (ActiveView,vtkSlicerView);
-  vtkGetObjectMacro (ActiveView,vtkSlicerView);
+  //vtkSetObjectMacro (ActiveView,vtkSlicerViewLogic);
+  //vtkGetObjectMacro (ActiveView,vtkSlicerViewLogic);
 
   ///// Slices
   // Description:
   // Slices are the 2D viewports that show composited layers
   // of volume data from a particular slice definition.
-  vtkSetObjectMacro (Slices,vtkSlicerSliceCollection);
-  vtkGetObjectMacro (Slices,vtkSlicerSliceCollection);
+  vtkSetObjectMacro (Slices,vtkCollection);
+  vtkGetObjectMacro (Slices,vtkCollection);
 
   // Description:
   // the ActiveSlice is the default destination of UI events
-  vtkSetObjectMacro (ActiveSlice,vtkSlicerSlice);
-  vtkGetObjectMacro (ActiveSlice,vtkSlicerSlice);
+  vtkSetObjectMacro (ActiveSlice,vtkSlicerSliceLogic);
+  vtkGetObjectMacro (ActiveSlice,vtkSlicerSliceLogic);
 
   ///// Modules
   // Description:
   // Modules are additional pieces of Slicer functionality
   // that are loaded and managed at run time
-  vtkSetObjectMacro (Modules,vtkSlicerModuleCollection);
-  vtkGetObjectMacro (Modules,vtkSlicerModuleCollection);
+  vtkSetObjectMacro (Modules,vtkCollection);
+  vtkGetObjectMacro (Modules,vtkCollection);
 
   // Description:
   // the ActiveModule is the default destination of UI events
-  vtkSetObjectMacro (ActiveModule,vtkSlicerModule);
-  vtkGetObjectMacro (ActiveModule,vtkSlicerModule);
+  //vtkSetObjectMacro (ActiveModule,vtkSlicerModule);
+  //vtkGetObjectMacro (ActiveModule,vtkSlicerModule);
 
   //
   // Transient Application State
@@ -128,15 +132,17 @@ protected:
 
 private:
   
-  vtkMrmlScene *MrmlScene;
+  //vtkMrmlScene *MrmlScene;
   
-  vtkSlicerViewCollection *Views;
-  vtkSlicerSliceCollection *Slices;
-  vtkSlicerModuleCollection *Modules;
+  // for now, make these generic collections
+  // - maybe they should be subclassed to be type-specific?
+  vtkCollection *Views;
+  vtkCollection *Slices;
+  vtkCollection *Modules;
 
-  vtkSlicerView *ActiveView;
-  vtkSlicerSlice *ActiveSlice;
-  vtkSlicerModule *ActiveModule;
+  //vtkSlicerViewLogic *ActiveView;
+  vtkSlicerSliceLogic *ActiveSlice;
+  //vtkSlicerModuleLogic *ActiveModule;
 
 
   // Transient Application State
