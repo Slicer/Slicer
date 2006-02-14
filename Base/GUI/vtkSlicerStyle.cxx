@@ -80,14 +80,6 @@ void vtkSlicerStyle::ApplyPresentation ( ) {
 void vtkSlicerStyle::ParseStyleParameters ( ) {
 }
 
-
-//---------------------------------------------------------------------------
-void vtkSlicerStyle::SetJustify ( char *anchor ) {
-
-    this->Justify = anchor;
-}
-
-
 //---------------------------------------------------------------------------
 void vtkSlicerStyle::SetTextLeftJustify (  ) {
 
@@ -110,11 +102,6 @@ void vtkSlicerStyle::SetTextCenterJustify (  ) {
 
 
 
-//---------------------------------------------------------------------------
-void vtkSlicerStyle::SetRelief ( char *relief  ) {
-
-    this->Relief = relief;
-}
 
 
 
@@ -487,28 +474,3 @@ void vtkSlicerStyle::SetPadY ( int pady ) {
 }
 
 
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerStyle::SetBigFont ( char *font ) {
-
-    this->BigFont = font;
-
-}
-
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerStyle::SetMedFont ( char *font ) {
-
-    this->MedFont = font;
-
-}
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerStyle::SetSmallFont ( char *font ) {
-
-    this->SmallFont = font;
-
-}

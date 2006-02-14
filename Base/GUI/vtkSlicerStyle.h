@@ -26,20 +26,20 @@ class vtkSlicerStyle : public vtkObject
 
     // Interface to standard Tk options
     // font and text
-    virtual void SetBigFont ( char *font );
-    virtual char* GetBigFont ( ) { return this->BigFont ;}
-    virtual void SetMedFont ( char *font );
-    virtual char* GetMedFont ( ) { return this->MedFont ;}
-    virtual void SetSmallFont ( char *font );
-    virtual char* GetSmallFont ( ) { return this->SmallFont ;}
-    virtual void SetJustify ( char * );
-    virtual char* GetJustify ( ) { return this->Justify ;}
+    vtkSetStringMacro(BigFont);
+    vtkGetStringMacro(BigFont);
+    vtkSetStringMacro(MedFont);
+    vtkGetStringMacro(MedFont);
+    vtkSetStringMacro(SmallFont);
+    vtkGetStringMacro(SmallFont);
+    vtkSetStringMacro(Justify);
+    vtkGetStringMacro(Justify);
     virtual void SetTextLeftJustify ( );
     virtual void SetTextRightJustify ( );
     virtual void SetTextCenterJustify ( );
 
     // relief
-    virtual void SetRelief ( char * );
+    vtkSetStringMacro(Relief);
     virtual void SetFlatRelief ( );
     virtual void SetGrooveRelief ( );
 
@@ -107,8 +107,8 @@ class vtkSlicerStyle : public vtkObject
     char *Justify;
     
     // Relief
-    char *FlatRelief;
-    char *GrooveRelief;
+//    char *FlatRelief; // Not used
+//    char *GrooveRelief; // Not used
     char *Relief;
     
     // Code colors
