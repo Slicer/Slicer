@@ -1,25 +1,26 @@
-PROJECT(SlicerBaseLogic)
+PROJECT(MRML)
 
 # --------------------------------------------------------------------------
 # Sources
 
-SET(SlicerBaseLogic_SRCS
-  vtkSlicerLogic.cxx 
-  vtkSlicerApplicationLogic.cxx 
-  vtkSlicerSliceLogic.cxx 
+SET(MRML_SRCS
+    vtkMRMLScene.cxx
+    vtkMRMLParser.cxx
+    vtkMRMLNode.cxx
+    vtkMRMLVolumeNode.cxx
 )
 
 # Abstract/pure virtual classes
 
 SET_SOURCE_FILES_PROPERTIES(
-  vtkSlicerLogic.cxx 
+  vtkMRMLNode.cxx 
   ABSTRACT
   )
 
 # Helper classes
 
 SET_SOURCE_FILES_PROPERTIES(
-  vtkSlicerLogic.cxx 
+  vtkMRMLNode.cxx 
   WRAP_EXCLUDE
   )
 
@@ -27,9 +28,8 @@ SET_SOURCE_FILES_PROPERTIES(
 # Include dirs
 
 INCLUDE_DIRECTORIES(
-  ${SlicerBase_SOURCE_DIR}
-  ${SlicerBase_BINARY_DIR}
   ${VTK_INCLUDE_DIR}
+  ${Slicer3_SOURCE_DIR}/Libs/vtkITK
   )
 
 
@@ -42,11 +42,11 @@ INCLUDE_DIRECTORIES(
 # --------------------------------------------------------------------------
 # Build the library
 
-ADD_LIBRARY(SlicerBaseLogic 
-  ${SlicerBaseLogic_SRCS} 
+ADD_LIBRARY(MRML 
+  ${MRML_SRCS} 
   )
 
-TARGET_LINK_LIBRARIES(SlicerBaseLogic 
+TARGET_LINK_LIBRARIES(MRML 
   vtkCommon
   )
 

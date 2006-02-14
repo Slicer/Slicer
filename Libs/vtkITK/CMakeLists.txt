@@ -1,38 +1,33 @@
-PROJECT(SlicerBaseLogic)
+PROJECT(vtkITK)
 
 # --------------------------------------------------------------------------
 # Sources
 
-SET(SlicerBaseLogic_SRCS
-  vtkSlicerLogic.cxx 
-  vtkSlicerApplicationLogic.cxx 
-  vtkSlicerSliceLogic.cxx 
+SET(vtkITK_SRCS
+    vtkITKArchetypeImageSeriesReader.cxx
+    vtkITKArchetypeImageSeriesScalarReader.cxx
+    vtkITKArchetypeImageSeriesVectorReader.cxx
 )
 
 # Abstract/pure virtual classes
 
-SET_SOURCE_FILES_PROPERTIES(
-  vtkSlicerLogic.cxx 
-  ABSTRACT
-  )
+#SET_SOURCE_FILES_PROPERTIES(
+#  ABSTRACT
+#  )
 
 # Helper classes
 
-SET_SOURCE_FILES_PROPERTIES(
-  vtkSlicerLogic.cxx 
-  WRAP_EXCLUDE
-  )
+#SET_SOURCE_FILES_PROPERTIES(
+#  WRAP_EXCLUDE
+#  )
 
 # --------------------------------------------------------------------------
 # Include dirs
 
 INCLUDE_DIRECTORIES(
-  ${SlicerBase_SOURCE_DIR}
-  ${SlicerBase_BINARY_DIR}
+  ${ITK_INCLUDE_DIR}
   ${VTK_INCLUDE_DIR}
   )
-
-
 
 # --------------------------------------------------------------------------
 # Wrapping
@@ -42,11 +37,11 @@ INCLUDE_DIRECTORIES(
 # --------------------------------------------------------------------------
 # Build the library
 
-ADD_LIBRARY(SlicerBaseLogic 
-  ${SlicerBaseLogic_SRCS} 
+ADD_LIBRARY(vtkITK 
+  ${vtkITK_SRCS} 
   )
 
-TARGET_LINK_LIBRARIES(SlicerBaseLogic 
+TARGET_LINK_LIBRARIES(vtkITK 
   vtkCommon
   )
 
