@@ -7,8 +7,14 @@
 
 class vtkKWWindow;
 class vtkKWFrame;
-class vtkKWLabel;
+// for file browse
+class vtkKWLoadSaveButtonWithLabel;
+class vtkKWLoadSaveDialog;
+// for image viewer
+class vtkKWRenderWidget;
+class vtkImageViewer2;
 class vtkKWScale;
+class vtkKWWIndowLevelPresetSelector;
 class vtkSlicerApplicationGUI;
 
 // Description:
@@ -27,12 +33,6 @@ class vtkSlicerMainDesktopGUI : public vtkSlicerComponentGUI
     static vtkSlicerMainDesktopGUI* New ( );
     vtkTypeRevisionMacro ( vtkSlicerMainDesktopGUI, vtkSlicerComponentGUI );
 
-    // Basic window for Slicer's desktop expression.
-    vtkKWWindow *myWindow;
-    vtkKWScale *myScale;
-    vtkKWFrame *myFrame;
-    vtkKWLabel *myLabel;
-
     virtual void MakeWindow ( );
     virtual void MakeWidgets ( );
     // overriding base class definitions
@@ -43,6 +43,17 @@ class vtkSlicerMainDesktopGUI : public vtkSlicerComponentGUI
     virtual void ProcessLogicEvents ( vtkObject *, unsigned long, void * );
     
  protected:
+    // Basic window for Slicer's desktop expression.
+    vtkKWWindow *Window;
+    vtkSlicerMRMLLogic *MRMLLogic;
+    // And widgets.
+    vtkKWLoadSaveButtonWithLabel *FileBrowseButton;
+    vtkImageViewer2 *ImageViewer;
+    vtkKWWindowLevelPresetSelector *WindowLevelPresetSelector;
+    vtkKWRenderWidget *RenderWidget;
+    vtkKWScale *Scale;
+    vtkKWFrame *Frame;
+
     vtkSlicerMainDesktopGUI ( );
     ~vtkSlicerMainDesktopGUI ( );
 
