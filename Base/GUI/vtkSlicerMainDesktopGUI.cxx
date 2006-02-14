@@ -3,9 +3,26 @@
 #include "vtkCommand.h"
 #include "vtkKWApplication.h"
 #include "vtkKWWindow.h"
-#include "vtkKWFrame.h"
 #include "vtkKWScale.h"
-#include "vtkKWLabel.h"
+#include "vtkCornerAnnotation.h"
+#include "vtkImageData.h"
+#include "vtkImageViewer2.h"
+#include "vtkKWFrame.h"
+#include "vtkKWFrameWithLabel.h"
+#include "vtkKWMenuButton.h"
+#include "vtkKWNotebook.h"
+#include "vtkKWRenderWidget.h"
+#include "vtkKWScale.h"
+#include "vtkKWWindow.h"
+#include "vtkKWWindowLevelPresetSelector.h"
+#include "vtkObjectFactory.h"
+#include "vtkRenderWindow.h"
+#include "vtkRenderWindowInteractor.h"
+
+#include "vtkKWWidgetsPaths.h"
+#include "vtkToolkits.h"
+
+
 #include "vtkSlicerMainDesktopGUI.h"
 #include "vtkSlicerApplicationGUI.h"
 #include "vtkSlicerLogic.h"
@@ -16,25 +33,43 @@ vtkCxxRevisionMacro ( vtkSlicerMainDesktopGUI, "$Revision: 1.0 $" );
 
 //---------------------------------------------------------------------------
 vtkSlicerMainDesktopGUI::vtkSlicerMainDesktopGUI ( ) {
-    this->myScale = NULL;
-    this->myLabel = NULL;
-    this->myFrame = NULL;
-    this->myWindow = NULL;
+
+    this->Scale = NULL;
+    this->Window = NULL;
+    this->FileBrowseButton = NULL;
+    this->FileBrowse = NULL;
+    this->ImageViewer = NULL;
+    this->WindowLevelPresetSelector = NULL;
+    this->RenderWidget = NULL;
+    this->Frame = NULL;
+    this->Window = NULL;
 }
 
 
 //---------------------------------------------------------------------------
 vtkSlicerMainDesktopGUI::~vtkSlicerMainDesktopGUI ( ) {
 
-    if ( this->myScale ) {
-        this->myScale->Delete ( );
+    if ( this->Scale ) {
+        this->Scale->Delete ( );
     }
-    if ( this->myLabel ) {
-        this->myLabel->Delete ( );
+    if (this->FileBrowse ) {
+        this->FileBrowse->Delete ( );
     }
-    if ( this->myWindow ) {
-        this->myWindow->Close ( );
-        this->myWindow->Delete ( );
+    if (this->FileBrowseButton ) {
+        this->FileBrowseButton->Delete ( );
+    }
+    if (this->ImageViewer) {
+        this->ImageViewer->Delete ( );
+    }
+    if (this->WindowLevelPresetSelector ) {
+        this->WindowLevelPresetSelector->Delete ( );
+    }
+    if (this->RenderWidget ) {
+        this->RenderWidget->Delete ( );
+    }
+    if ( this->Window ) {
+        this->Window->Close ( );
+        this->Window->Delete ( );
     }
 
 }
@@ -45,15 +80,15 @@ vtkSlicerMainDesktopGUI::~vtkSlicerMainDesktopGUI ( ) {
 void vtkSlicerMainDesktopGUI::MakeWindow ( ) {
 
     // Make a window
-    if ( !this->myWindow ) {
-        this->myWindow = vtkKWWindow::New ( );
+    if ( !this->Window ) {
+        this->Window = vtkKWWindow::New ( );
     }
-    this->SetWindow ( this->myWindow );
-    this->myWindow->SecondaryPanelVisibilityOff ( );
-    this->myWindow->MainPanelVisibilityOff ( );
+    this->SetWindow ( this->Window );
+    this->Window->SecondaryPanelVisibilityOff ( );
+    this->Window->MainPanelVisibilityOff ( );
     // Add new window to the application
-    this->SlicerApplication->AddWindow ( this->myWindow );
-    this->myWindow->Create ( );
+    this->SlicerApplication->AddWindow ( this->Window );
+    this->Window->Create ( );
 }
 
 
@@ -61,33 +96,52 @@ void vtkSlicerMainDesktopGUI::MakeWindow ( ) {
 void vtkSlicerMainDesktopGUI::MakeWidgets ( ) {
 
     // make simple scale widget for now.
-    this->myFrame = this->myWindow->GetViewFrame ( );
-    if ( !this->myScale ) {
-        this->myScale = vtkKWScale::New ( );
-    }
-    this->myScale->SetParent ( this->myFrame );
-    this->myScale->Create ( );
-    this->myScale->SetResolution (0.5);
-    this->myScale->SetValue ( 0.0 );
+    this->Frame = this->Window->GetViewFrame ( );
 
-    if ( !this->myLabel ) {
-        this->myLabel = vtkKWLabel::New ( );
-    }
-    this->myLabel->SetParent (this->myFrame );
-    this->myLabel->Create ( );
-    char str[256];
-    //sprintf (str, "logic state=%lf", this->Logic->GetMyState ( ) );
-    sprintf (str, "logic state=unknown");
-    this->myLabel->SetText ( str );
+    // add a file browse.
+    this->FileBrowseButton = vtkKWLoadSaveButtonWithLabel::New ( );
+    this->FileBrowseButton->SetParent (this->Frame );
+    this->FileBrowseButton->Create ( );
+    this->FileBrowseButton->SetText ( "Choose a file to load");
+    this->FileBrowseButton->GetLoadSaveDialog ( )->SaveDialogOff ( );
 
-    // pack in the window's view frame
+    // and add a render widget
+    this->RenderWidget = vtkKWRenderWidget::New();
+    this->RenderWidget->SetParent(win->GetViewFrame());
+    this->RenderWidget->Create();
+    this->RenderWidget->CornerAnnotationVisibilityOn();
+    this->RenderWidget->SetParent ( this->Frame );
+    
+    // Create an image viewer
+    // Use the render window and renderer of the renderwidget
+    this->ImageViewer = vtkImageViewer2::New();
+    this->ImageViewer->SetRenderWindow(this->RenderWidget->GetRenderWindow());
+    this->ImageViewer->SetRenderer(this->RenderWidget->GetRenderer());
+    this->ImageViewer->SetInput(reader->GetOutput());
+    this->ImageViewer->SetupInteractor(
+    this->RenderWidget->GetRenderWindow()->GetInteractor());
+
+    // Turn on annotations
+    vtkCornerAnnotation *ca = this->RenderWidget->GetCornerAnnotation();
+    ca->SetImageActor(this->ImageViewer->GetImageActor());
+    ca->SetWindowLevel(this->ImageViewer->GetWindowLevel());
+    ca->SetText(2, "<slice>");
+    ca->SetText(3, "<window>\n<level>");
+
+    // Create a scale to control the slice
+    this->Scale = vtkKWScale::New();
+    this->Scale->SetParent(win->GetViewPanelFrame());
+    this->Scale->Create();
+    this->Scale->SetCommand(this, "SetSliceFromScaleCallback");
+
+    // Pack in the window's view frame
     vtkKWApplication *kwapp = this->GetKWApplication ( );
-    kwapp->Script("pack %s -side left -anchor c ", this->myScale->GetWidgetName ( ) );
-    kwapp->Script("pack %s -side left -anchor c ", this->myLabel->GetWidgetName ( ) );
-
-    // why do we delete like this?
-    //this->myScale->Delete ( );
-    //this->myLabel->Delete ( );
+    kwapp->Script("pack %s -expand n -side top -anchor c -padx 2 -pady 2", 
+              this->FileBrowseButton->GetWidgetName());
+    kwapp->Script("pack %s -expand y -fill both -anchor c -expand y", 
+              this->RenderWidget->GetWidgetName());
+    kwapp->Script("pack %s -side top -expand n -fill x -padx 2 -pady 2", 
+              this->Scale->GetWidgetName());
 
 
 }
@@ -97,7 +151,8 @@ void vtkSlicerMainDesktopGUI::MakeWidgets ( ) {
 //---------------------------------------------------------------------------
 void vtkSlicerMainDesktopGUI::AddGUIObservers ( ) {
     
-    this->AddCallbackCommandObserver (this->myScale, vtkKWScale::ScaleValueChangingEvent );
+    this->AddCallbackCommandObserver (this->Scale, vtkKWScale::ScaleValueChangingEvent );
+    this->AddCallbackCommandObserver (this->FileBrowseButton, vtkKWLoadSaveButtonWithLabel::ModifiedEvent);
 }
 
 
@@ -120,15 +175,25 @@ void vtkSlicerMainDesktopGUI::ProcessCallbackCommandEvents ( vtkObject *caller,
 {
     // process GUI events.
     vtkKWScale *scalewidget = vtkKWScale::SafeDownCast(caller);
+    vtkKWLoadSaveButtonWithLabel *filebrowse = vtkKWLoadSaveButtonWithLabel::SafeDownCast(caller);
     if (caller == scalewidget && event == vtkKWScale::ScaleValueChangingEvent )
         {
+            // set the current slice.
 #if 0
-            if (  this->Logic->GetMyState( ) != scalewidget->GetValue( ) ) {
-                this->Logic->SetMyState ( scalewidget->GetValue() );
+            if (  this->Logic->GetState( ) != scalewidget->GetValue( ) ) {
+                this->Logic->SetState ( scalewidget->GetValue() );
                 this->Logic->Modified( );
             }
 #endif
         }
+    elseif (caller == filebrowse && event = vtkKWLoadSaveButtonWithLabel::ModifiedEvent )
+        {
+            // set the reader's input.
+            this->ReaderLogic->Connect ( filebrowse->GetFileName ( ) );
+            // configure the slider's range to match the number of slices.
+            // configure call an update on
+        }
+
     // always do this?
     this->Superclass::ProcessCallbackCommandEvents ( caller, event, callData );
 }
@@ -144,11 +209,15 @@ void vtkSlicerMainDesktopGUI::ProcessLogicEvents ( vtkObject *caller,
     // process Logic changes
     if (caller == static_cast <vtkObject *> (this->Logic) && event == vtkCommand::ModifiedEvent ) {
         char str[256];
+
+        // if mrml has changed, get info about the new data (num slices, etc.)
+        // display stuff in the image and
+        // update the range of the scale.
 #if 0
-        sprintf (str, "logic state=%lf", this->Logic->GetMyState ( ) );
-        this->myLabel->SetText ( str );
-        if ( this->myScale->GetValue ( )  != this->Logic->GetMyState( ) ) {
-            this->myScale->SetValue ( this->Logic->GetMyState ( ) );
+        sprintf (str, "logic state=%lf", this->Logic->GetState ( ) );
+        this->Label->SetText ( str );
+        if ( this->Scale->GetValue ( )  != this->Logic->GetState( ) ) {
+            this->Scale->SetValue ( this->Logic->GetState ( ) );
         }
 #endif
 
@@ -176,7 +245,7 @@ int vtkSlicerMainDesktopGUI::BuildGUI ( vtkSlicerApplicationGUI *app ) {
     this->SlicerApplication->AddGUI ( this );
 
     // Display the window.
-    this->myWindow->Display ( );
+    this->Window->Display ( );
 
     // Should test here to see if the gui is created.
 
