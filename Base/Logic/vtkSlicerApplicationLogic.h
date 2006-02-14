@@ -27,7 +27,6 @@
 #include "vtkSlicerLogic.h"
 #include "vtkSlicerSliceLogic.h"
 
-#include "vtkMRML.h"
 #include "vtkMRMLScene.h"
 
 #include "vtkCollection.h"
