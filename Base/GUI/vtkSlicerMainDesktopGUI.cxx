@@ -8,7 +8,7 @@
 #include "vtkKWLabel.h"
 #include "vtkSlicerMainDesktopGUI.h"
 #include "vtkSlicerApplicationGUI.h"
-#include "vtkSlicerApplicationLogic.h"
+#include "vtkSlicerLogic.h"
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro ( vtkSlicerMainDesktopGUI );
@@ -52,7 +52,7 @@ void vtkSlicerMainDesktopGUI::MakeWindow ( ) {
     this->myWindow->SecondaryPanelVisibilityOff ( );
     this->myWindow->MainPanelVisibilityOff ( );
     // Add new window to the application
-    this->SlicerApp->AddWindow ( this->myWindow );
+    this->SlicerApplication->AddWindow ( this->myWindow );
     this->myWindow->Create ( );
 }
 
@@ -76,11 +76,12 @@ void vtkSlicerMainDesktopGUI::MakeWidgets ( ) {
     this->myLabel->SetParent (this->myFrame );
     this->myLabel->Create ( );
     char str[256];
-    sprintf (str, "logic state=%lf", this->Logic->GetMyState ( ) );
+    //sprintf (str, "logic state=%lf", this->Logic->GetMyState ( ) );
+    sprintf (str, "logic state=unknown");
     this->myLabel->SetText ( str );
 
     // pack in the window's view frame
-    vtkKWApplication *kwapp = this->GetKwApplication ( );
+    vtkKWApplication *kwapp = this->GetKWApplication ( );
     kwapp->Script("pack %s -side left -anchor c ", this->myScale->GetWidgetName ( ) );
     kwapp->Script("pack %s -side left -anchor c ", this->myLabel->GetWidgetName ( ) );
 
@@ -121,10 +122,12 @@ void vtkSlicerMainDesktopGUI::ProcessCallbackCommandEvents ( vtkObject *caller,
     vtkKWScale *scalewidget = vtkKWScale::SafeDownCast(caller);
     if (caller == scalewidget && event == vtkKWScale::ScaleValueChangingEvent )
         {
+#if 0
             if (  this->Logic->GetMyState( ) != scalewidget->GetValue( ) ) {
                 this->Logic->SetMyState ( scalewidget->GetValue() );
                 this->Logic->Modified( );
             }
+#endif
         }
     // always do this?
     this->Superclass::ProcessCallbackCommandEvents ( caller, event, callData );
@@ -139,14 +142,15 @@ void vtkSlicerMainDesktopGUI::ProcessLogicEvents ( vtkObject *caller,
                                                    void *callData ) 
 {
     // process Logic changes
-    if (caller == this->Logic && event == vtkCommand::ModifiedEvent ) {
+    if (caller == static_cast <vtkObject *> (this->Logic) && event == vtkCommand::ModifiedEvent ) {
         char str[256];
+#if 0
         sprintf (str, "logic state=%lf", this->Logic->GetMyState ( ) );
         this->myLabel->SetText ( str );
-
         if ( this->myScale->GetValue ( )  != this->Logic->GetMyState( ) ) {
             this->myScale->SetValue ( this->Logic->GetMyState ( ) );
         }
+#endif
 
     }
 }
@@ -169,7 +173,7 @@ int vtkSlicerMainDesktopGUI::BuildGUI ( vtkSlicerApplicationGUI *app ) {
     this->MakeWidgets ( );
 
     // Add the new GUI to the application's collection of GUIs.
-    this->SlicerApp->AddGUI ( this );
+    this->SlicerApplication->AddGUI ( this );
 
     // Display the window.
     this->myWindow->Display ( );

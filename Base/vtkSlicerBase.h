@@ -20,10 +20,6 @@
  */
 
 
-#ifndef vtkFloatingPointType
-#define vtkFloatingPointType float
-#endif
-
 //
 // use an ifdef on SLICER_VTK5 to flag code that won't
 // compile on vtk4.4 and before

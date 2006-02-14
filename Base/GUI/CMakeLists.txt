@@ -25,7 +25,6 @@ SET(LIB_SRCS
   vtkSlicerGUI.cxx
   vtkSlicerGUICollection.cxx
   vtkSlicerApplicationGUI.cxx
-  vtkSlicerApplicationLogic.cxx
   vtkSlicerComponentGUI.cxx
   vtkSlicerGUIUpdate.cxx
   vtkSlicerMainDesktopGUI.cxx
@@ -39,6 +38,12 @@ SET_SOURCE_FILES_PROPERTIES(
   WRAP_EXCLUDE
   )
 
+INCLUDE_DIRECTORIES(
+  ${SlicerBase_SOURCE_DIR}
+  ${SlicerBase_BINARY_DIR}
+  ${SlicerBase_SOURCE_DIR}/Logic
+  ${VTK_INCLUDE_DIR}
+  )
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 INCLUDE("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")

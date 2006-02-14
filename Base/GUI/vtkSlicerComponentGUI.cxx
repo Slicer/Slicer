@@ -21,9 +21,9 @@ vtkSlicerComponentGUI::vtkSlicerComponentGUI ( ) {
     this->LogicCommand = vtkSlicerGUIUpdate::New ( );
     this->LogicCommand->SetGUI ( this );
 
-    this->SlicerApp = NULL;
-    this->KWapp = NULL;
-    this->Win = NULL;
+    this->SlicerApplication = NULL;
+    this->KWApplication = NULL;
+    this->KWWindow = NULL;
     this->Logic = NULL;
 }
 
@@ -41,11 +41,11 @@ vtkSlicerComponentGUI::~vtkSlicerComponentGUI ( ) {
 
 //---------------------------------------------------------------------------
 void vtkSlicerComponentGUI::SetWindow ( vtkKWWindowBase *win ) {
-    this->Win = win;
+    this->KWWindow = win;
 }
 //---------------------------------------------------------------------------
 vtkKWWindowBase* vtkSlicerComponentGUI::GetWindow ( ) {
-    return this->Win;
+    return this->KWWindow;
 }
 
 
@@ -53,26 +53,26 @@ vtkKWWindowBase* vtkSlicerComponentGUI::GetWindow ( ) {
 //---------------------------------------------------------------------------
 void vtkSlicerComponentGUI::SetSlicerApplication ( vtkSlicerApplicationGUI *app ) {
     
-    this->SlicerApp = app;
-    if ( app->GetKwApplication () ) {
-        this->SetKwApplication ( app->GetKwApplication ( ) );
+    this->SlicerApplication = app;
+    if ( app->GetKWApplication () ) {
+        this->SetKWApplication ( app->GetKWApplication ( ) );
     }
 }
 //---------------------------------------------------------------------------
 vtkSlicerApplicationGUI* vtkSlicerComponentGUI::GetSlicerApplication ( ) {
-    return this->SlicerApp;
+    return this->SlicerApplication;
 }
 
 
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerComponentGUI::SetKwApplication ( vtkKWApplication *app ) {
-    this->KWapp = app;
+void vtkSlicerComponentGUI::SetKWApplication ( vtkKWApplication *app ) {
+    this->KWApplication = app;
 }
 //---------------------------------------------------------------------------
-vtkKWApplication* vtkSlicerComponentGUI::GetKwApplication ( ) {
-    return this->KWapp;
+vtkKWApplication* vtkSlicerComponentGUI::GetKWApplication ( ) {
+    return this->KWApplication;
 }
 
 

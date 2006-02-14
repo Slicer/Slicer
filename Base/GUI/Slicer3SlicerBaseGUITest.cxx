@@ -1,6 +1,7 @@
 #include "vtkKWApplication.h"
 #include "vtkSlicerApplicationGUI.h"
 #include "vtkSlicerMainDesktopGUI.h"
+#include "vtkSlicerLogic.h"
 #include "vtkSlicerApplicationLogic.h"
 
 #include <vtksys/SystemTools.hxx>

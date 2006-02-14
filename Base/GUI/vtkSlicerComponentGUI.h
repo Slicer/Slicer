@@ -5,6 +5,7 @@
 #include "vtkKWObject.h"
 
 class vtkSlicerApplicationGUI;
+class vtkSlicerLogic;
 class vtkSlicerApplicationLogic;
 class vtkKWWindowBase;
 class vtkKWApplication;
@@ -29,8 +30,8 @@ class vtkSlicerComponentGUI : public vtkKWObject
     vtkKWWindowBase *GetWindow ( );
     virtual void SetSlicerApplication ( vtkSlicerApplicationGUI *app );
     vtkSlicerApplicationGUI *GetSlicerApplication ( );
-    virtual void SetKwApplication ( vtkKWApplication *app ) ;
-    vtkKWApplication *GetKwApplication ( );
+    virtual void SetKWApplication ( vtkKWApplication *app ) ;
+    vtkKWApplication *GetKWApplication ( );
 
     // MEDIATOR FUNCTiONS:
     virtual void SetLogic ( vtkSlicerApplicationLogic *logic );
@@ -54,11 +55,11 @@ class vtkSlicerComponentGUI : public vtkKWObject
     
  protected:
     // pointer to the window in which the GUI is displayed.
-    vtkKWWindowBase *Win;
+    vtkKWWindowBase *KWWindow;
     // pointer to the vtkSlicerApplicationGUI to which GUI belongs.
-    vtkSlicerApplicationGUI *SlicerApp;
+    vtkSlicerApplicationGUI *SlicerApplication;
     // pointer to the vtkKWApplication to which GUI belongs.
-    vtkKWApplication *KWapp;
+    vtkKWApplication *KWApplication;
     
     // GUI's interface to the application layer;
     vtkSlicerApplicationLogic *Logic;
