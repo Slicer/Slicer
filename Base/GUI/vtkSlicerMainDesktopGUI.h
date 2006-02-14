@@ -3,6 +3,8 @@
 
 #include "vtkSlicerComponentGUI.h"
 
+#include "vtkSlicerMRMLLogic.h"
+
 #include "vtkKWScale.h"
 
 class vtkKWWindow;
@@ -14,7 +16,7 @@ class vtkKWLoadSaveDialog;
 class vtkKWRenderWidget;
 class vtkImageViewer2;
 class vtkKWScale;
-class vtkKWWIndowLevelPresetSelector;
+class vtkKWWindowLevelPresetSelector;
 class vtkSlicerApplicationGUI;
 
 // Description:
@@ -41,6 +43,9 @@ class vtkSlicerMainDesktopGUI : public vtkSlicerComponentGUI
     virtual void AddLogicObservers ( );
     virtual void ProcessCallbackCommandEvents (vtkObject *, unsigned long, void * );
     virtual void ProcessLogicEvents ( vtkObject *, unsigned long, void * );
+
+    vtkGetObjectMacro (MRMLLogic, vtkSlicerMRMLLogic);
+    vtkSetObjectMacro (MRMLLogic, vtkSlicerMRMLLogic);
     
  protected:
     // Basic window for Slicer's desktop expression.

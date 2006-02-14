@@ -18,6 +18,7 @@
 #include "vtkObjectFactory.h"
 #include "vtkRenderWindow.h"
 #include "vtkRenderWindowInteractor.h"
+#include "vtkKWLoadSaveButtonWithLabel.h"
 
 #include "vtkKWWidgetsPaths.h"
 #include "vtkToolkits.h"
@@ -37,12 +38,14 @@ vtkSlicerMainDesktopGUI::vtkSlicerMainDesktopGUI ( ) {
     this->Scale = NULL;
     this->Window = NULL;
     this->FileBrowseButton = NULL;
-    this->FileBrowse = NULL;
+    //this->FileBrowse = NULL;
     this->ImageViewer = NULL;
     this->WindowLevelPresetSelector = NULL;
     this->RenderWidget = NULL;
     this->Frame = NULL;
     this->Window = NULL;
+
+    this->MRMLLogic = NULL;
 }
 
 
@@ -52,9 +55,9 @@ vtkSlicerMainDesktopGUI::~vtkSlicerMainDesktopGUI ( ) {
     if ( this->Scale ) {
         this->Scale->Delete ( );
     }
-    if (this->FileBrowse ) {
-        this->FileBrowse->Delete ( );
-    }
+    //if (this->FileBrowse ) {
+     //   this->FileBrowse->Delete ( );
+    //}
     if (this->FileBrowseButton ) {
         this->FileBrowseButton->Delete ( );
     }
@@ -102,12 +105,12 @@ void vtkSlicerMainDesktopGUI::MakeWidgets ( ) {
     this->FileBrowseButton = vtkKWLoadSaveButtonWithLabel::New ( );
     this->FileBrowseButton->SetParent (this->Frame );
     this->FileBrowseButton->Create ( );
-    this->FileBrowseButton->SetText ( "Choose a file to load");
-    this->FileBrowseButton->GetLoadSaveDialog ( )->SaveDialogOff ( );
+    //this->FileBrowseButton->SetText ("Choose a file to load");
+    //this->FileBrowseButton->GetLoadSaveDialog ( )->SaveDialogOff ( );
 
     // and add a render widget
     this->RenderWidget = vtkKWRenderWidget::New();
-    this->RenderWidget->SetParent(win->GetViewFrame());
+    this->RenderWidget->SetParent(this->Window->GetViewFrame());
     this->RenderWidget->Create();
     this->RenderWidget->CornerAnnotationVisibilityOn();
     this->RenderWidget->SetParent ( this->Frame );
@@ -117,9 +120,9 @@ void vtkSlicerMainDesktopGUI::MakeWidgets ( ) {
     this->ImageViewer = vtkImageViewer2::New();
     this->ImageViewer->SetRenderWindow(this->RenderWidget->GetRenderWindow());
     this->ImageViewer->SetRenderer(this->RenderWidget->GetRenderer());
-    this->ImageViewer->SetInput(reader->GetOutput());
+    //this->ImageViewer->SetInput(reader->GetOutput());
     this->ImageViewer->SetupInteractor(
-    this->RenderWidget->GetRenderWindow()->GetInteractor());
+        this->RenderWidget->GetRenderWindow()->GetInteractor());
 
     // Turn on annotations
     vtkCornerAnnotation *ca = this->RenderWidget->GetCornerAnnotation();
@@ -130,7 +133,7 @@ void vtkSlicerMainDesktopGUI::MakeWidgets ( ) {
 
     // Create a scale to control the slice
     this->Scale = vtkKWScale::New();
-    this->Scale->SetParent(win->GetViewPanelFrame());
+    this->Scale->SetParent(this->Window->GetViewPanelFrame());
     this->Scale->Create();
     this->Scale->SetCommand(this, "SetSliceFromScaleCallback");
 
@@ -152,7 +155,7 @@ void vtkSlicerMainDesktopGUI::MakeWidgets ( ) {
 void vtkSlicerMainDesktopGUI::AddGUIObservers ( ) {
     
     this->AddCallbackCommandObserver (this->Scale, vtkKWScale::ScaleValueChangingEvent );
-    this->AddCallbackCommandObserver (this->FileBrowseButton, vtkKWLoadSaveButtonWithLabel::ModifiedEvent);
+    //this->AddCallbackCommandObserver (this->FileBrowseButton, vtkKWLoadSaveButtonWithLabel::ModifiedEvent);
 }
 
 
@@ -186,10 +189,10 @@ void vtkSlicerMainDesktopGUI::ProcessCallbackCommandEvents ( vtkObject *caller,
             }
 #endif
         }
-    elseif (caller == filebrowse && event = vtkKWLoadSaveButtonWithLabel::ModifiedEvent )
+    else if (caller == filebrowse /* && event = vtkKWLoadSaveButtonWithLabel::ModifiedEvent */ )
         {
             // set the reader's input.
-            this->ReaderLogic->Connect ( filebrowse->GetFileName ( ) );
+            //this->MRMLLogic->Connect ( filebrowse->GetFileName ( ) );
             // configure the slider's range to match the number of slices.
             // configure call an update on
         }
