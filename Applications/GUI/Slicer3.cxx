@@ -2,6 +2,7 @@
 #include "vtkKWApplication.h"
 #include "vtkSlicerApplicationLogic.h"
 #include "vtkSlicerApplicationGUI.h"
+#include "vtkSlicerMainDesktopGUI.h"
 
 #include <vtksys/SystemTools.hxx>
 
@@ -29,12 +30,21 @@ int Slicer3_main(int argc, char *argv[])
 
   vtkSlicerApplicationGUI *appGUI = vtkSlicerApplicationGUI::New();
   
+  appGUI->ConfigureApplication ( );
   appGUI->SetLogic(appLogic);
+
+  vtkSlicerMainDesktopGUI *gui;
+  gui = vtkSlicerMainDesktopGUI::New ( );
+  gui->SetLogic ( appLogic );
+  gui->BuildGUI ( appGUI );
+  gui->AddGUIObservers ( );
+  gui->AddLogicObservers ( );
 
     // TODO: where should args get parsed?
   //int res = appGUI->StartApplication(argc, argv);
   int res = appGUI->StartApplication();
 
+  gui->Delete ( );
   appGUI->Delete();
   appLogic->Delete();
 
