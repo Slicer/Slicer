@@ -26,6 +26,7 @@
 
 #include "vtkSlicerLogic.h"
 #include "vtkSlicerSliceLogic.h"
+
 //#include "vtkMrml.h"
 //#include "vtkMrmlScene.h"
 
