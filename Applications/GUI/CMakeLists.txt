@@ -4,12 +4,20 @@ SET (SRC
     Slicer3.cxx
 )
 
-INCLUDE_DIRECTORIES (
-    ${Slicer3_SOURCE_DIR}/Base/Logic
-    ${Slicer3_SOURCE_DIR}/Base/GUI
-)
+# --------------------------------------------------------------------------
+# Include dirs
+
+INCLUDE_DIRECTORIES(
+  ${SlicerBase_SOURCE_DIR}
+  ${SlicerBase_BINARY_DIR}
+  ${SlicerBase_SOURCE_DIR}/Logic
+  ${SlicerBase_SOURCE_DIR}/GUI
+  ${VTK_INCLUDE_DIR}
+  )
+
 
 ADD_EXECUTABLE (Slicer3 ${SRC})
+TARGET_LINK_LIBRARIES( Slicer3 SlicerBaseLogic SlicerBaseGUI ${KWWidgets_LIBRARIES} )
 
 IF (Slicer3_BUILD_TESTING)
     SUBDIRS( Testing )
