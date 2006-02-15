@@ -202,10 +202,10 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
     // Find the series that contains the archetype
     candidateSeries = inputImageFileGenerator->GetSeriesUIDs();
     int found = 0;
-    for (int s = 0; s < candidateSeries.size() && found == 0; s++)
+    for (unsigned int s = 0; s < candidateSeries.size() && found == 0; s++)
       {
       candidateFiles = inputImageFileGenerator->GetFileNames(candidateSeries[s]);
-      for (int f = 0; f < candidateFiles.size(); f++)
+      for (unsigned int f = 0; f < candidateFiles.size(); f++)
         {
         if (itksys::SystemTools::CollapseFullPath(candidateFiles[f].c_str()) ==
             fileNameCollapsed)
@@ -230,7 +230,7 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
     }
 
   // Reduce the selection of filenames
-  int lastFile;
+  unsigned int lastFile;
   if (this->FileNameSliceCount == 0)
     {
     lastFile = candidateFiles.size();
@@ -244,7 +244,7 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
       }
     }
   this->FileNames.resize(0);
-  for (int f = this->FileNameSliceOffset;
+  for (unsigned int f = this->FileNameSliceOffset;
        f < lastFile;
        f += this->FileNameSliceSpacing)
     {
