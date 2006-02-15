@@ -63,7 +63,7 @@ public:
   // Description:
   // Get node XML tag name (like Volume, Model)
   // NOTE: Subclasses should implement this method
-  virtual char* GetNodeTagName() = 0;
+  virtual const char* GetNodeTagName() = 0;
   
   // Description:
   // Set/Get a numerical ID for the calling program to use to keep track

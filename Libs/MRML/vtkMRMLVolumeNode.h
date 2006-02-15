@@ -62,7 +62,7 @@ class VTK_EXPORT vtkMRMLVolumeNode : public vtkMRMLNode
 
   // Description:
   // Get node XML tag name (like Volume, Model)
-  virtual char* GetNodeTagName() {return "Volume";};
+  virtual const char* GetNodeTagName() {return "Volume";};
 
   // Description:
   // A file name or one name in a series
