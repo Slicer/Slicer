@@ -90,7 +90,7 @@ CONFIGURE_FILE(
 # own library.
 
 ADD_EXECUTABLE(${EXE_NAME} WIN32 ${EXE_SRCS} ${RES_FILE})
-TARGET_LINK_LIBRARIES(${EXE_NAME} SlicerBaseLogic SlicerBaseGUI ${KWWidgets_LIBRARIES} ${LIB_NAME})
+TARGET_LINK_LIBRARIES(${EXE_NAME} SlicerBaseLogic SlicerBaseGUI MRML ${KWWidgets_LIBRARIES} ${LIB_NAME})
 
 # If needed, copy the Tcl/Tk support files required at run-time 
 # to initialize Tcl/Tk. This is only triggered if VTK was built

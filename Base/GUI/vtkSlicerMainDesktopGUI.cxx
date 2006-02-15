@@ -18,7 +18,7 @@
 #include "vtkObjectFactory.h"
 #include "vtkRenderWindow.h"
 #include "vtkRenderWindowInteractor.h"
-#include "vtkKWLoadSaveButtonWithLabel.h"
+#include "vtkKWLoadSaveButton.h"
 
 #include "vtkKWWidgetsPaths.h"
 #include "vtkToolkits.h"
@@ -102,7 +102,7 @@ void vtkSlicerMainDesktopGUI::MakeWidgets ( ) {
     this->Frame = this->Window->GetViewFrame ( );
 
     // add a file browse.
-    this->FileBrowseButton = vtkKWLoadSaveButtonWithLabel::New ( );
+    this->FileBrowseButton = vtkKWLoadSaveButton::New ( );
     this->FileBrowseButton->SetParent (this->Frame );
     this->FileBrowseButton->Create ( );
     //this->FileBrowseButton->SetText ("Choose a file to load");
@@ -156,6 +156,7 @@ void vtkSlicerMainDesktopGUI::AddGUIObservers ( ) {
     
     this->AddCallbackCommandObserver (this->Scale, vtkKWScale::ScaleValueChangingEvent );
     //this->AddCallbackCommandObserver (this->FileBrowseButton, vtkKWLoadSaveButtonWithLabel::ModifiedEvent);
+    this->FileBrowseButton->AddObserver ( vtkCommand::ModifiedEvent,  (vtkCommand *)this->LogicCommand );
 }
 
 
@@ -178,7 +179,7 @@ void vtkSlicerMainDesktopGUI::ProcessCallbackCommandEvents ( vtkObject *caller,
 {
     // process GUI events.
     vtkKWScale *scalewidget = vtkKWScale::SafeDownCast(caller);
-    vtkKWLoadSaveButtonWithLabel *filebrowse = vtkKWLoadSaveButtonWithLabel::SafeDownCast(caller);
+    vtkKWLoadSaveButton *filebrowse = vtkKWLoadSaveButton::SafeDownCast(caller);
     if (caller == scalewidget && event == vtkKWScale::ScaleValueChangingEvent )
         {
             // set the current slice.
@@ -209,6 +210,15 @@ void vtkSlicerMainDesktopGUI::ProcessLogicEvents ( vtkObject *caller,
                                                    unsigned long event,
                                                    void *callData ) 
 {
+    vtkKWLoadSaveButton *filebrowse = vtkKWLoadSaveButton::SafeDownCast(caller);
+
+    if (caller == filebrowse && event == vtkCommand::ModifiedEvent )
+        {
+            // set the reader's input.
+            //this->MRMLLogic->Connect ( filebrowse->GetLoadSaveDialog()->GetFileName ( ) );
+            this->GetLogic()->Connect ( filebrowse->GetFileName() );
+        }
+
     // process Logic changes
     if (caller == static_cast <vtkObject *> (this->Logic) && event == vtkCommand::ModifiedEvent ) {
         char str[256];

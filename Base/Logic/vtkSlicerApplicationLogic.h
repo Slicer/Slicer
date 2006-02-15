@@ -52,7 +52,13 @@ class VTK_SLICER_BASE_EXPORT vtkSlicerApplicationLogic : public vtkSlicerLogic
   // to disconnect current and not have a current connection
   // (creates a blank scene for manipulation).
   // Return code tells if connection was completed successfully.
-  int Connect (const char *URL);
+  void Connect (const char *URL) {
+    if (this->MRMLScene)
+      {
+      this->MRMLScene->SetURL(URL);
+      this->MRMLScene->Connect();
+      }
+  };
   // Description:
   // Commit your current scene modifications to the connected URL
   // Return code tells result of commit.

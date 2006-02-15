@@ -10,7 +10,7 @@
 class vtkKWWindow;
 class vtkKWFrame;
 // for file browse
-class vtkKWLoadSaveButtonWithLabel;
+class vtkKWLoadSaveButton;
 class vtkKWLoadSaveDialog;
 // for image viewer
 class vtkKWRenderWidget;
@@ -52,7 +52,7 @@ class vtkSlicerMainDesktopGUI : public vtkSlicerComponentGUI
     vtkKWWindow *Window;
     vtkSlicerMRMLLogic *MRMLLogic;
     // And widgets.
-    vtkKWLoadSaveButtonWithLabel *FileBrowseButton;
+    vtkKWLoadSaveButton *FileBrowseButton;
     vtkImageViewer2 *ImageViewer;
     vtkKWWindowLevelPresetSelector *WindowLevelPresetSelector;
     vtkKWRenderWidget *RenderWidget;
