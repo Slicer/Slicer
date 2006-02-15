@@ -91,7 +91,7 @@ public:
   // Name of space in which this node lives
   vtkSetStringMacro(SpaceName);
   vtkGetStringMacro(SpaceName);
-  
+
   // Description:
   // Node's effect on indentation when displaying the
   // contents of a MRML file. (0, +1, -1)

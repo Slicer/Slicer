@@ -11,9 +11,6 @@
   Version:   $Revision: 1.2 $
 
 =========================================================================auto=*/
-#include <string>
-#include <ostream>
-#include <sstream>
 
 #include "vtkBYUReader.h" 
 #include "vtkPolyDataReader.h"
@@ -23,6 +20,11 @@
 
 #include "vtkObjectFactory.h"
 #include "vtkMRMLModelNode.h"
+
+#include <string>
+#include <sstream>
+
+vtkCxxSetObjectMacro(vtkMRMLModelNode, PolyData, vtkPolyData);
 
 //------------------------------------------------------------------------------
 vtkMRMLModelNode* vtkMRMLModelNode::New()

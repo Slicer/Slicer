@@ -8,6 +8,7 @@ SET(MRML_SRCS
     vtkMRMLParser.cxx
     vtkMRMLNode.cxx
     vtkMRMLVolumeNode.cxx
+    vtkMRMLModelNode.cxx
 )
 
 # Abstract/pure virtual classes

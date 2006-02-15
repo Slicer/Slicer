@@ -47,15 +47,13 @@ PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #ifndef __vtkMRMLScene_h
 #define __vtkMRMLScene_h
 
-#include <list>
-#include <map>
-#include <vector>
-#include <string>
-
 #include "vtkCollection.h"
-#include "vtkObjectFactory.h"
-
 #include "vtkMRMLNode.h"
+
+#include <vtkstd/vector>
+#include <vtkstd/string>
+#include <vtkstd/list>
+#include <vtkstd/map>
 
 class vtkTransform;
 
@@ -88,18 +86,18 @@ public:
   void AddNode(vtkMRMLNode *n) {
     //TODO convert URL to Root directory
     n->SetSceneRootDir("");
-    this->vtkCollection::AddItem((vtkObject *)n);};
+    this->vtkCollection::AddItem(n); }
   
   // Description:
   // Remove a path from the list.
   void RemoveNode(vtkMRMLNode *n) {
-    this->vtkCollection::RemoveItem((vtkObject *)n);};
+    this->vtkCollection::RemoveItem(n);}
   
   // Description:
   // Determine whether a particular node is present. Returns its position
   // in the list.
   int IsNodePresent(vtkMRMLNode *n) {
-    return this->vtkCollection::IsItemPresent((vtkObject *)n);};
+    return this->vtkCollection::IsItemPresent(n);};
   
   // Description:
   // Get the next path in the list.
@@ -121,7 +119,7 @@ public:
   int GetNumberOfNodesByClass(const char* className);
   
   //BTX
-  std::list<std::string> GetNodeClassesList();
+  vtkstd::list<vtkstd::string> GetNodeClassesList();
   //ETX
   
   // returns list of names
@@ -141,15 +139,12 @@ public:
 protected:
   vtkMRMLScene();
   ~vtkMRMLScene() {};
-  vtkMRMLScene(const vtkMRMLScene&);
-  void operator=(const vtkMRMLScene&);
-  
   char *URL;
   
   //BTX
-  std::map< std::string, int> UniqueIdByClass;
-  std::vector< vtkMRMLNode* > RegisteredNodeClasses;
-  std::vector< std::string > RegisteredNodeTags;
+  vtkstd::map< vtkstd::string, int> UniqueIdByClass;
+  vtkstd::vector< vtkMRMLNode* > RegisteredNodeClasses;
+  vtkstd::vector< vtkstd::string > RegisteredNodeTags;
   //ETX
   
   vtkMRMLNode* InitTraversalByClass(const char *className);
@@ -170,6 +165,9 @@ private:
   unsigned long ErrorCode;
 
   char* ClassNameList;
+
+  vtkMRMLScene(const vtkMRMLScene&);
+  void operator=(const vtkMRMLScene&);
 };
 
 #endif

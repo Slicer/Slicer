@@ -61,7 +61,7 @@ vtkMRMLNode* vtkMRMLScene::CreateNodeByClass(const char* className)
 void vtkMRMLScene::RegisterNodeClass(vtkMRMLNode* node) 
 {
   this->RegisteredNodeClasses.push_back(node);
-  this->RegisteredNodeTags.push_back(std::string(node->GetNodeTagName()));
+  this->RegisteredNodeTags.push_back(node->GetNodeTagName());
 }
 
 //------------------------------------------------------------------------------
@@ -166,10 +166,10 @@ int vtkMRMLScene::GetNumberOfNodesByClass(const char *className)
 }
 
 //------------------------------------------------------------------------------
-std::list< std::string > vtkMRMLScene::GetNodeClassesList()
+vtkstd::list< vtkstd::string > vtkMRMLScene::GetNodeClassesList()
 {
-  std::list< std::string > classes;
-  vtkCollectionElement *elem=this->Top;
+  vtkstd::list< vtkstd::string > classes;
+  vtkCollectionElement *elem = this->Top;
   while (elem != NULL) {
     classes.push_back(elem->Item->GetClassName());
     elem = elem->Next;
@@ -182,14 +182,14 @@ std::list< std::string > vtkMRMLScene::GetNodeClassesList()
 //------------------------------------------------------------------------------
 const char* vtkMRMLScene::GetNodeClasses()
 {
-  std::list< std::string > classes = this->GetNodeClassesList();
-  std::string classList;
+  vtkstd::list< vtkstd::string > classes = this->GetNodeClassesList();
+  vtkstd::string classList;
 
-  std::list< std::string >::const_iterator iter;
+  vtkstd::list< vtkstd::string >::const_iterator iter;
   // Iterate through list and output each element.
   for (iter = classes.begin(); iter != classes.end(); iter++) {
     if (!(iter == classes.begin())) {
-      classList += std::string(" ");
+      classList += " ";
     }
     classList.append(*iter);
   }
@@ -423,12 +423,12 @@ void vtkMRMLScene::InsertBeforeNode(vtkMRMLNode *item, vtkMRMLNode *n)
 void vtkMRMLScene::PrintSelf(ostream& os, vtkIndent indent)
 {
   vtkCollection::PrintSelf(os,indent);
-  std::list<std::string> classes = this->GetNodeClassesList();
+  vtkstd::list<vtkstd::string> classes = this->GetNodeClassesList();
 
-  std::list< std::string >::const_iterator iter;
+  vtkstd::list< vtkstd::string >::const_iterator iter;
   // Iterate through list and output each element.
   for (iter = classes.begin(); iter != classes.end(); iter++) {
-    std::string className = (*iter);
+    vtkstd::string className = (*iter);
     os << indent << "Number Of Nodes for class " << className.c_str() << " : " << this->GetNumberOfNodesByClass(className.c_str()) << "\n";
   }
 }

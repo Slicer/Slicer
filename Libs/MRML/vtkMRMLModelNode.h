@@ -21,11 +21,10 @@
 #ifndef __vtkMRMLModelNode_h
 #define __vtkMRMLModelNode_h
 
-#include <string>
-
 #include "vtkPolyData.h" 
 #include "vtkMRMLNode.h"
 
+#include <string>
 
 class VTK_EXPORT vtkMRMLModelNode : public vtkMRMLNode
 {
@@ -61,7 +60,7 @@ public:
   
   // Description:
   // Get node XML tag name (like Volume, Model)
-  virtual char* GetNodeTagName() {return "Model";};
+  virtual const char* GetNodeTagName() {return "Model";};
 
   // Description:
   // Path of the data file, relative to the MRML file
@@ -126,16 +125,14 @@ public:
   vtkGetMacro(LUTName,int);
   vtkSetMacro(LUTName,int);
 
-    
+  // Description:
+  // Set/Get PolyData
   vtkGetObjectMacro(PolyData, vtkPolyData);
-  vtkSetObjectMacro(PolyData, vtkPolyData);
+  virtual void SetPolyData(vtkPolyData*);
 
 protected:
   vtkMRMLModelNode();
   ~vtkMRMLModelNode();
-  vtkMRMLModelNode(const vtkMRMLModelNode&) {};
-  void operator=(const vtkMRMLModelNode&) {};
-
   // Data
   vtkPolyData *PolyData;
 
@@ -158,6 +155,8 @@ protected:
   // Arrays
   vtkFloatingPointType ScalarRange[2];
 
+  vtkMRMLModelNode(const vtkMRMLModelNode&);
+  void operator=(const vtkMRMLModelNode&);
 };
 
 #endif
