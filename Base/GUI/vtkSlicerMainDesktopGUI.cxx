@@ -22,8 +22,6 @@
 #include "vtkKWLoadSaveDialog.h"
 #include "vtkKWWidgetsPaths.h"
 #include "vtkToolkits.h"
-
-
 #include "vtkSlicerMainDesktopGUI.h"
 #include "vtkSlicerApplicationGUI.h"
 #include "vtkSlicerLogic.h"
@@ -210,28 +208,27 @@ void vtkSlicerMainDesktopGUI::UpdateGUIWithLogicEvents ( vtkObject *caller,
     // In this example, only thing that will come from the logic is new image data.
     vtkMRMLScene *mrml = vtkMRMLScene::SafeDownCast(caller);
     
-    if (mrml == (this->ApplicationLogic->GetMRMLScene ( ) ) && event == vtkCommand::ModifiedEvent ) {
-        char str[256];
-
-        // If the MRML scene has changed, get the 0th volume node.
-        // and set that as input into the ImageViewer.
-        vtkMRMLVolumeNode* volumenode = vtkMRMLVolumeNode::SafeDownCast (this->ApplicationLogic->GetMRMLScene()->GetNthNodeByClass( 0, "vtkMRMLVolumeNode" ) );
-        this->ImageViewer->SetInput ( volumenode->GetImageData( ) );
-        this->ImageViewer->Render ( );
+    if (mrml == (this->ApplicationLogic->GetMRMLScene ( ) ) && event == vtkCommand::ModifiedEvent )
+        {
+            // If the MRML scene has changed, get the 0th volume node.
+            // and set that as input into the ImageViewer.
+            vtkMRMLVolumeNode* volumenode = vtkMRMLVolumeNode::SafeDownCast (this->ApplicationLogic->GetMRMLScene()->GetNthNodeByClass( 0, "vtkMRMLVolumeNode" ) );
+            this->ImageViewer->SetInput ( volumenode->GetImageData( ) );
+            this->ImageViewer->Render ( );
         
-        // configure window, level, camera, etc.
-        double *range = volumenode->GetImageData()->GetScalarRange ( );
-        this->ImageViewer->SetColorWindow ( range [1] - range [0] );
-        this->ImageViewer->SetColorLevel (0.5 * (range [1] - range [0] ));
-        this->RenderWidget->ResetCamera ( );
-        vtkCornerAnnotation *ca = this->RenderWidget->GetCornerAnnotation ( );
-        ca->SetImageActor (this->ImageViewer->GetImageActor ( ) );
-        ca->SetWindowLevel (this->ImageViewer->GetWindowLevel ( ) );
+            // configure window, level, camera, etc.
+            double *range = volumenode->GetImageData()->GetScalarRange ( );
+            this->ImageViewer->SetColorWindow ( range [1] - range [0] );
+            this->ImageViewer->SetColorLevel (0.5 * (range [1] - range [0] ));
+            this->RenderWidget->ResetCamera ( );
+            vtkCornerAnnotation *ca = this->RenderWidget->GetCornerAnnotation ( );
+            ca->SetImageActor (this->ImageViewer->GetImageActor ( ) );
+            ca->SetWindowLevel (this->ImageViewer->GetWindowLevel ( ) );
 
-        // set the range of the slider
-        this->Scale->SetRange ( this->ImageViewer->GetSliceMin ( ), this->ImageViewer->GetSliceMax ( ) );
-        this->Scale->SetValue (this->ImageViewer->GetSlice ( ) );
-    }
+            // set the range of the slider
+            this->Scale->SetRange ( this->ImageViewer->GetSliceMin ( ), this->ImageViewer->GetSliceMax ( ) );
+            this->Scale->SetValue (this->ImageViewer->GetSlice ( ) );
+        }
 
 }
 
