@@ -19,7 +19,7 @@
 #include "vtkRenderWindow.h"
 #include "vtkRenderWindowInteractor.h"
 #include "vtkKWLoadSaveButton.h"
-
+#include "vtkKWLoadSaveDialog.h"
 #include "vtkKWWidgetsPaths.h"
 #include "vtkToolkits.h"
 
