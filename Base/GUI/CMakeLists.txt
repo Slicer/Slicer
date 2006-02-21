@@ -27,15 +27,16 @@ SET(LIB_SRCS
   vtkSlicerApplicationGUI.cxx
   vtkSlicerComponentGUI.cxx
   vtkSlicerGUIUpdate.cxx
-  vtkSlicerMainDesktopGUI.cxx
   vtkSlicerLogicUpdate.cxx
+  vtkSlicerMainDesktopGUI.cxx
   )
 
 # Helper classes
 
 SET_SOURCE_FILES_PROPERTIES(
     # none yet
-  vtkSlicerGUIUpdate.cxx 
+  vtkSlicerGUIUpdate.cxx
+  vtkSlicerLogicUpdate.cxx
   WRAP_EXCLUDE
   )
 
@@ -44,6 +45,7 @@ INCLUDE_DIRECTORIES(
   ${SlicerBase_BINARY_DIR}
   ${SlicerBase_SOURCE_DIR}/Logic
   ${Slicer3_SOURCE_DIR}/Libs/MRML
+  ${Slicer3_SOURCE_DIR}/Libs/vtkITK
   ${VTK_INCLUDE_DIR}
   )
 
