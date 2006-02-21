@@ -10,6 +10,7 @@ class vtkSlicerApplicationLogic;
 class vtkKWWindowBase;
 class vtkKWApplication;
 class vtkSlicerGUIUpdate;
+class vtkSlicerLogicUpdate;
 
 
 // Description:
@@ -49,8 +50,11 @@ class vtkSlicerComponentGUI : public vtkKWObject
                                                 unsigned long event,
                                                 void *callData );
     // propagate events generated in application layer to GUI
-    virtual void ProcessLogicEvents ( vtkObject *caller, unsigned long event,
+    virtual void UpdateGUIWithLogicEvents ( vtkObject *caller, unsigned long event,
                                 void *callData );
+    // alternative method to propagate events generated in GUI to app layer
+    virtual void UpdateLogicWithGUIEvents ( vtkObject *caller, unsigned long event,
+                                    void *callData );
     
     
  protected:
@@ -64,7 +68,9 @@ class vtkSlicerComponentGUI : public vtkKWObject
     // GUI's interface to the application layer;
     vtkSlicerApplicationLogic *Logic;
     vtkSlicerGUIUpdate *LogicCommand;
-
+    // alternative Logic interface to the GUI layer.
+    vtkSlicerLogicUpdate *GUICommand;
+    
     // constructor, destructor.
     vtkSlicerComponentGUI ( );
     ~vtkSlicerComponentGUI ( );
