@@ -10,6 +10,10 @@ SET(Slicer3_VERSION_PATCH "0")
 SET(Slicer3_VERSION "${Slicer3_VERSION_MAJOR}.${Slicer3_VERSION_MINOR}")
 SET(Slicer3_VERSION_FULL "${Slicer3_VERSION}.${Slicer3_VERSION_PATCH}")
 
+#-----------------------------------------------------------------------------
+# Build shared lib by default
+OPTION(BUILD_SHARED_LIBS "Build Slicer3 with shared libraries." ON)
+
 
 #
 # Top level slicer3 configurations
