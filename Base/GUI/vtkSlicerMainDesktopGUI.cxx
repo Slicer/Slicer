@@ -27,6 +27,7 @@
 #include "vtkSlicerMainDesktopGUI.h"
 #include "vtkSlicerApplicationGUI.h"
 #include "vtkSlicerLogic.h"
+#include "vtkMRMLVolumeNode.h"
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro ( vtkSlicerMainDesktopGUI );
@@ -42,10 +43,9 @@ vtkSlicerMainDesktopGUI::vtkSlicerMainDesktopGUI ( ) {
     this->ImageViewer = NULL;
     this->WindowLevelPresetSelector = NULL;
     this->RenderWidget = NULL;
-    this->Frame = NULL;
     this->Window = NULL;
 
-    this->MRMLLogic = NULL;
+    this->ApplicationLogic = NULL;
 }
 
 
@@ -82,13 +82,14 @@ vtkSlicerMainDesktopGUI::~vtkSlicerMainDesktopGUI ( ) {
 //---------------------------------------------------------------------------
 void vtkSlicerMainDesktopGUI::MakeWindow ( ) {
 
-    // Make a window
+    // Make slicer's main window on the desktop
     if ( !this->Window ) {
         this->Window = vtkKWWindow::New ( );
     }
     this->SetWindow ( this->Window );
     this->Window->SecondaryPanelVisibilityOff ( );
     this->Window->MainPanelVisibilityOff ( );
+
     // Add new window to the application
     this->SlicerApplication->AddWindow ( this->Window );
     this->Window->Create ( );
@@ -98,44 +99,33 @@ void vtkSlicerMainDesktopGUI::MakeWindow ( ) {
 //---------------------------------------------------------------------------
 void vtkSlicerMainDesktopGUI::MakeWidgets ( ) {
 
-    // make simple scale widget for now.
-    this->Frame = this->Window->GetViewFrame ( );
-
-    // add a file browse.
+    // for starters, the goal is to make a simple file browse,
+    // image viewer and slice slider in the ViewFrame.
+    
+    // add a LOAD file browser (comes with a popup file browser/selector)
     this->FileBrowseButton = vtkKWLoadSaveButton::New ( );
-    this->FileBrowseButton->SetParent (this->Frame );
+    this->FileBrowseButton->SetParent (this->Window->GetViewFrame ( ) );
     this->FileBrowseButton->Create ( );
-    //this->FileBrowseButton->SetText ("Choose a file to load");
-    //this->FileBrowseButton->GetLoadSaveDialog ( )->SaveDialogOff ( );
+    this->FileBrowseButton->SetText ("Choose a file to load");
+    this->FileBrowseButton->GetLoadSaveDialog ( )->SaveDialogOff ( );
 
     // and add a render widget
     this->RenderWidget = vtkKWRenderWidget::New();
-    this->RenderWidget->SetParent(this->Window->GetViewFrame());
+    this->RenderWidget->SetParent ( this->Window->GetViewFrame ( ) );
     this->RenderWidget->Create();
     this->RenderWidget->CornerAnnotationVisibilityOn();
-    this->RenderWidget->SetParent ( this->Frame );
     
     // Create an image viewer
     // Use the render window and renderer of the renderwidget
     this->ImageViewer = vtkImageViewer2::New();
     this->ImageViewer->SetRenderWindow(this->RenderWidget->GetRenderWindow());
     this->ImageViewer->SetRenderer(this->RenderWidget->GetRenderer());
-    //this->ImageViewer->SetInput(reader->GetOutput());
-    this->ImageViewer->SetupInteractor(
-        this->RenderWidget->GetRenderWindow()->GetInteractor());
+    this->ImageViewer->SetupInteractor( this->RenderWidget->GetRenderWindow()->GetInteractor());
 
-    // Turn on annotations
-    vtkCornerAnnotation *ca = this->RenderWidget->GetCornerAnnotation();
-    ca->SetImageActor(this->ImageViewer->GetImageActor());
-    ca->SetWindowLevel(this->ImageViewer->GetWindowLevel());
-    ca->SetText(2, "<slice>");
-    ca->SetText(3, "<window>\n<level>");
-
-    // Create a scale to control the slice
+    // Create a scale to control the slice number displayed
     this->Scale = vtkKWScale::New();
-    this->Scale->SetParent(this->Window->GetViewPanelFrame());
+    this->Scale->SetParent(this->Window->GetViewFrame ( ) );
     this->Scale->Create();
-    this->Scale->SetCommand(this, "SetSliceFromScaleCallback");
 
     // Pack in the window's view frame
     vtkKWApplication *kwapp = this->GetKWApplication ( );
@@ -145,8 +135,6 @@ void vtkSlicerMainDesktopGUI::MakeWidgets ( ) {
               this->RenderWidget->GetWidgetName());
     kwapp->Script("pack %s -side top -expand n -fill x -padx 2 -pady 2", 
               this->Scale->GetWidgetName());
-
-
 }
 
 
@@ -154,9 +142,14 @@ void vtkSlicerMainDesktopGUI::MakeWidgets ( ) {
 //---------------------------------------------------------------------------
 void vtkSlicerMainDesktopGUI::AddGUIObservers ( ) {
     
-    this->AddCallbackCommandObserver (this->Scale, vtkKWScale::ScaleValueChangingEvent );
-    //this->AddCallbackCommandObserver (this->FileBrowseButton, vtkKWLoadSaveButtonWithLabel::ModifiedEvent);
-    this->FileBrowseButton->AddObserver ( vtkCommand::ModifiedEvent,  (vtkCommand *)this->LogicCommand );
+    // original way; using kwobject command observers...
+    //this->AddCallbackCommandObserver (this->Scale, vtkKWScale::ScaleValueChangingEvent );
+    //this->AddCallbackCommandObserver (this->FileBrowseButton, vtkKWLoadSaveButton::ModifiedEvent);
+
+    // try a parallel implementation, using vtkObject observers...
+    this->FileBrowseButton->AddObserver ( vtkCommand::ModifiedEvent,  (vtkCommand *)this->GUICommand );
+    this->Scale->AddObserver ( vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICommand );
+
 }
 
 
@@ -165,79 +158,82 @@ void vtkSlicerMainDesktopGUI::AddGUIObservers ( ) {
 //---------------------------------------------------------------------------
 void vtkSlicerMainDesktopGUI::AddLogicObservers ( ) {
 
-    this->Logic->AddObserver ( vtkCommand::ModifiedEvent,  (vtkCommand *)this->LogicCommand );
+    this->ApplicationLogic->GetMRMLScene()->AddObserver ( vtkCommand::ModifiedEvent,  (vtkCommand *)this->LogicCommand );
 }
 
 
 
-
-
 //---------------------------------------------------------------------------
-void vtkSlicerMainDesktopGUI::ProcessCallbackCommandEvents ( vtkObject *caller,
-                                                             unsigned long event,
-                                                             void *callData )
-{
-    // process GUI events.
-    vtkKWScale *scalewidget = vtkKWScale::SafeDownCast(caller);
-    vtkKWLoadSaveButton *filebrowse = vtkKWLoadSaveButton::SafeDownCast(caller);
-    if (caller == scalewidget && event == vtkKWScale::ScaleValueChangingEvent )
-        {
-            // set the current slice.
-#if 0
-            if (  this->Logic->GetState( ) != scalewidget->GetValue( ) ) {
-                this->Logic->SetState ( scalewidget->GetValue() );
-                this->Logic->Modified( );
-            }
-#endif
-        }
-    else if (caller == filebrowse /* && event = vtkKWLoadSaveButtonWithLabel::ModifiedEvent */ )
-        {
-            // set the reader's input.
-            //this->MRMLLogic->Connect ( filebrowse->GetFileName ( ) );
-            // configure the slider's range to match the number of slices.
-            // configure call an update on
-        }
-
-    // always do this?
-    this->Superclass::ProcessCallbackCommandEvents ( caller, event, callData );
-}
-
-
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerMainDesktopGUI::ProcessLogicEvents ( vtkObject *caller,
+void vtkSlicerMainDesktopGUI::UpdateLogicWithGUIEvents ( vtkObject *caller,
                                                    unsigned long event,
                                                    void *callData ) 
 {
+
+    // Try processing GUI events the vtkObject way.
+    // One of two things can happen here...
+    // 1. the filebrowsebutton has selected data to be read (or cancelled), or
+    // 2. the slider is being dragged to cause the slice image to update.
+    //
+    vtkKWScale *scalewidget = vtkKWScale::SafeDownCast(caller);
     vtkKWLoadSaveButton *filebrowse = vtkKWLoadSaveButton::SafeDownCast(caller);
+    //this->FileBrowseButton->GetLoadSaveDialog ( )
 
-    if (caller == filebrowse && event == vtkCommand::ModifiedEvent )
+    if (scalewidget == this->Scale && event == vtkCommand::ModifiedEvent )
         {
-            // set the reader's input.
-            //this->MRMLLogic->Connect ( filebrowse->GetLoadSaveDialog()->GetFileName ( ) );
-            this->GetLogic()->Connect ( filebrowse->GetFileName() );
+            // Set the current slice in the image viewer.
+            if ( this->ImageViewer->GetSlice ( ) != this->Scale->GetValue ( ) ) {
+                this->ImageViewer->SetSlice((int) this->Scale->GetValue ( ) );
+            }
+        }
+    else if (filebrowse == this->FileBrowseButton  && event == vtkCommand::ModifiedEvent )
+        {
+            // If a file has been selected for loading...
+            if ( this->FileBrowseButton->GetFileName ( ) ) {
+                this->ApplicationLogic->Connect ( filebrowse->GetFileName ( ) );
+            }
         }
 
-    // process Logic changes
-    if (caller == static_cast <vtkObject *> (this->Logic) && event == vtkCommand::ModifiedEvent ) {
-        char str[256];
+    // hmmm. what if we don't do this?
+    // this->Superclass::ProcessCallbackCommandEvents ( caller, event, callData );
 
-        // if mrml has changed, get info about the new data (num slices, etc.)
-        // display stuff in the image and
-        // update the range of the scale.
-#if 0
-        sprintf (str, "logic state=%lf", this->Logic->GetState ( ) );
-        this->Label->SetText ( str );
-        if ( this->Scale->GetValue ( )  != this->Logic->GetState( ) ) {
-            this->Scale->SetValue ( this->Logic->GetState ( ) );
-        }
-#endif
-
-    }
 }
 
 
+
+//---------------------------------------------------------------------------
+void vtkSlicerMainDesktopGUI::UpdateGUIWithLogicEvents ( vtkObject *caller,
+                                                   unsigned long event,
+                                                   void *callData ) 
+{
+
+    // process Logic changes
+    // In this example, only thing that will come from the logic is new image data.
+    vtkMRMLScene *mrml = vtkMRMLScene::SafeDownCast(caller);
+    
+    if (mrml == (this->ApplicationLogic->GetMRMLScene ( ) ) && event == vtkCommand::ModifiedEvent ) {
+        char str[256];
+
+        // If the MRML scene has changed, get the 0th volume node.
+        // and set that as input into the ImageViewer.
+        vtkMRMLVolumeNode* volumenode = vtkMRMLVolumeNode::SafeDownCast (this->ApplicationLogic->GetMRMLScene()->GetNthNodeByClass( 0, "vtkMRMLVolumeNode" ) );
+        this->ImageViewer->SetInput ( volumenode->GetImageData( ) );
+        this->ImageViewer->Render ( );
+        
+        // configure window, level, camera, etc.
+        double *range = volumenode->GetImageData()->GetScalarRange ( );
+        this->ImageViewer->SetColorWindow ( range [1] - range [0] );
+        this->ImageViewer->SetColorLevel (0.5 * (range [1] - range [0] ));
+        this->RenderWidget->ResetCamera ( );
+        vtkCornerAnnotation *ca = this->RenderWidget->GetCornerAnnotation ( );
+        ca->SetImageActor (this->ImageViewer->GetImageActor ( ) );
+        ca->SetWindowLevel (this->ImageViewer->GetWindowLevel ( ) );
+
+        // set the range of the slider
+        this->Scale->SetRange ( this->ImageViewer->GetSliceMin ( ), this->ImageViewer->GetSliceMax ( ) );
+        this->Scale->SetValue (this->ImageViewer->GetSlice ( ) );
+    }
+
+}
 
 
 
@@ -265,6 +261,31 @@ int vtkSlicerMainDesktopGUI::BuildGUI ( vtkSlicerApplicationGUI *app ) {
     return 0;
 
 }
+
+
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerMainDesktopGUI::ProcessCallbackCommandEvents ( vtkObject *caller,
+                                                             unsigned long event,
+                                                             void *callData )
+{
+    // process GUI events.
+    vtkKWScale *scalewidget = vtkKWScale::SafeDownCast(caller);
+    vtkKWLoadSaveButton *filebrowse = vtkKWLoadSaveButton::SafeDownCast(caller);
+
+    if (caller == scalewidget && event == vtkKWScale::ScaleValueChangingEvent )
+        {
+        }
+    else if (caller == filebrowse /* && event = vtkKWLoadSaveButtonWithLabel::ModifiedEvent */ )
+        {
+        }
+
+    // always do this?
+    this->Superclass::ProcessCallbackCommandEvents ( caller, event, callData );
+}
+
+
 
 
 
