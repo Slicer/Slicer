@@ -28,6 +28,7 @@ SET(LIB_SRCS
   vtkSlicerComponentGUI.cxx
   vtkSlicerGUIUpdate.cxx
   vtkSlicerMainDesktopGUI.cxx
+  vtkSlicerLogicUpdate.cxx
   )
 
 # Helper classes
