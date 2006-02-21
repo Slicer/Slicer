@@ -1,6 +1,7 @@
 #include "vtkSlicerGUI.h"
 #include "vtkObjectFactory.h"
 #include "vtkCommand.h"
+#include "vtkXMLParser.h"
 #include "vtkSlicerStyle.h"
 
 //---------------------------------------------------------------------------
@@ -15,7 +16,6 @@ vtkSlicerGUI::vtkSlicerGUI ( ) {
 
     // allocatate for look and feel
     this->SlicerStyle = vtkSlicerStyle::New ( );
-    
 }
 
 
