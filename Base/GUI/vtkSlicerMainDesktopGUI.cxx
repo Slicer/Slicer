@@ -107,7 +107,7 @@ void vtkSlicerMainDesktopGUI::MakeWidgets ( ) {
     this->FileBrowseButton->SetParent (this->Window->GetViewFrame ( ) );
     this->FileBrowseButton->Create ( );
     this->FileBrowseButton->SetText ("Choose a file to load");
-    this->FileBrowseButton->GetLoadSaveDialog ( )->SaveDialogOff ( );
+    this->FileBrowseButton->GetLoadSaveDialog()->SaveDialogOff ( );
 
     // and add a render widget
     this->RenderWidget = vtkKWRenderWidget::New();
