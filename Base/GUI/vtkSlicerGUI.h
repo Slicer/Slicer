@@ -14,6 +14,7 @@ class vtkSlicerGUI : public vtkKWObject
  public:
     static vtkSlicerGUI* New();
     vtkTypeRevisionMacro ( vtkSlicerGUI, vtkKWObject );
+
     
  protected:
     vtkSlicerGUI ( );
