@@ -4,6 +4,7 @@
 #include "vtkSlicerApplicationGUI.h"
 #include "vtkSlicerApplicationLogic.h"
 #include "vtkSlicerGUIUpdate.h"
+#include "vtkSlicerLogicUpdate.h"
 
 
 //---------------------------------------------------------------------------
@@ -20,7 +21,9 @@ vtkSlicerComponentGUI::vtkSlicerComponentGUI ( ) {
     // into the GUI state.
     this->LogicCommand = vtkSlicerGUIUpdate::New ( );
     this->LogicCommand->SetGUI ( this );
-
+    this->GUICommand = vtkSlicerLogicUpdate::New ( );
+    this->GUICommand->SetGUI ( this );
+    
     this->SlicerApplication = NULL;
     this->KWApplication = NULL;
     this->KWWindow = NULL;
@@ -34,6 +37,9 @@ vtkSlicerComponentGUI::~vtkSlicerComponentGUI ( ) {
 
     if ( this->LogicCommand ) {
         this->LogicCommand->Delete ( );
+    }
+    if (this->GUICommand ) {
+        this->GUICommand->Delete ( );
     }
 }
 
@@ -100,10 +106,18 @@ void vtkSlicerComponentGUI::ProcessCallbackCommandEvents ( vtkObject *caller,
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerComponentGUI::ProcessLogicEvents ( vtkObject *caller,
+void vtkSlicerComponentGUI::UpdateGUIWithLogicEvents ( vtkObject *caller,
                                                  unsigned long event,
                                                  void *callData ) {
     //    this->GUI->Get/Set commands
+}
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerComponentGUI::UpdateLogicWithGUIEvents ( vtkObject *caller,
+                                                 unsigned long event,
+                                                 void *callData ) {
+    //    this->Logic->Get/Set commands
 }
 
 
