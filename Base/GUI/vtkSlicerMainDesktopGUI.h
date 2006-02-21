@@ -2,13 +2,10 @@
 #define __vtkSlicerMainDesktopGUI_h
 
 #include "vtkSlicerComponentGUI.h"
-
-#include "vtkSlicerMRMLLogic.h"
-
+#include "vtkSlicerApplicationLogic.h"
 #include "vtkKWScale.h"
 
 class vtkKWWindow;
-class vtkKWFrame;
 // for file browse
 class vtkKWLoadSaveButton;
 class vtkKWLoadSaveDialog;
@@ -41,23 +38,25 @@ class vtkSlicerMainDesktopGUI : public vtkSlicerComponentGUI
     virtual int BuildGUI ( vtkSlicerApplicationGUI *app );
     virtual void AddGUIObservers ( );
     virtual void AddLogicObservers ( );
+    virtual void UpdateGUIWithLogicEvents ( vtkObject *, unsigned long, void * );
+    // try using this:
+    virtual void UpdateLogicWithGUIEvents ( vtkObject *, unsigned long, void * );
+    // instead of this:
     virtual void ProcessCallbackCommandEvents (vtkObject *, unsigned long, void * );
-    virtual void ProcessLogicEvents ( vtkObject *, unsigned long, void * );
 
-    vtkGetObjectMacro (MRMLLogic, vtkSlicerMRMLLogic);
-    vtkSetObjectMacro (MRMLLogic, vtkSlicerMRMLLogic);
+    vtkGetObjectMacro (ApplicationLogic, vtkSlicerApplicationLogic);
+    vtkSetObjectMacro (ApplicationLogic, vtkSlicerApplicationLogic);
     
  protected:
     // Basic window for Slicer's desktop expression.
     vtkKWWindow *Window;
-    vtkSlicerMRMLLogic *MRMLLogic;
+    vtkSlicerApplicationLogic *ApplicationLogic;
     // And widgets.
     vtkKWLoadSaveButton *FileBrowseButton;
     vtkImageViewer2 *ImageViewer;
     vtkKWWindowLevelPresetSelector *WindowLevelPresetSelector;
     vtkKWRenderWidget *RenderWidget;
     vtkKWScale *Scale;
-    vtkKWFrame *Frame;
 
     vtkSlicerMainDesktopGUI ( );
     ~vtkSlicerMainDesktopGUI ( );
