@@ -107,6 +107,10 @@ void vtkSlicerMainDesktopGUI::MakeWidgets ( ) {
     this->FileBrowseButton->SetText ("Choose a file to load");
     //this->FileBrowseButton->GetLoadSaveDialog()->SaveDialogOff ( );
 
+    // Should be in TK format. Default is: "{{Text Document} {.txt}}"
+    this->FileBrowseButton->GetLoadSaveDialog()->SetFileTypes(
+        "{ {MRML Document} {.mrml .xml} }");
+
     // and add a render widget
     this->RenderWidget = vtkKWRenderWidget::New();
     this->RenderWidget->SetParent ( this->Window->GetViewFrame ( ) );
