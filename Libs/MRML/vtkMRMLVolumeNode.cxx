@@ -19,7 +19,7 @@ Version:   $Revision: 1.11 $
 #include "vtkObjectFactory.h"
 #include "vtkMRMLVolumeNode.h"
 
-#include "vtkITKArchetypeImageSeriesReader.h"
+#include "vtkITKArchetypeImageSeriesScalarReader.h"
 
 // Initialize static member that controls resampling -- 
 // old comment: "This offset will be changed to 0.5 from 0.0 per 2/8/2002 Slicer 
@@ -89,7 +89,7 @@ vtkMRMLVolumeNode::vtkMRMLVolumeNode()
 
   // Data
   this->ImageData = NULL;
-  this->ImageReader = vtkITKArchetypeImageSeriesReader::New();
+  this->ImageReader = vtkITKArchetypeImageSeriesScalarReader::New();
 }
 
 //----------------------------------------------------------------------------

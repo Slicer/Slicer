@@ -15,6 +15,9 @@
 #include "vtkObjectFactory.h"
 #include "vtkSlicerApplicationLogic.h"
 
+#include "vtkMRMLVolumeNode.h"
+#include "vtkMRMLModelNode.h"
+
 vtkCxxRevisionMacro(vtkSlicerApplicationLogic, "$Revision: 1.9.12.1 $");
 vtkStandardNewMacro(vtkSlicerApplicationLogic);
 
@@ -23,6 +26,13 @@ vtkStandardNewMacro(vtkSlicerApplicationLogic);
 vtkSlicerApplicationLogic::vtkSlicerApplicationLogic()
 {
     this->MRMLScene = vtkMRMLScene::New();
+
+    vtkMRMLVolumeNode *volumenode = vtkMRMLVolumeNode::New(); 
+    this->MRMLScene->RegisterNodeClass( volumenode );
+
+    vtkMRMLModelNode *modelnode = vtkMRMLModelNode::New(); 
+    this->MRMLScene->RegisterNodeClass( modelnode );
+
     this->Views = NULL;
     this->Slices = NULL;
     this->Modules = NULL;

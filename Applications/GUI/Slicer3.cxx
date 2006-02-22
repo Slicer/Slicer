@@ -65,7 +65,7 @@ int __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR lpCmdLine, int)
   return ret;
 }
 
-int _main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
   return Slicer3_main(argc, argv);
 }

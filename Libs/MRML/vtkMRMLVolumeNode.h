@@ -31,7 +31,7 @@
 #include "vtkImageData.h"
 
 class vtkImageData;
-class vtkITKArchetypeImageSeriesReader;
+class vtkITKArchetypeImageSeriesScalarReader;
 
 class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLNode
 {
@@ -262,7 +262,7 @@ protected:
 
   vtkImageData *ImageData;
 
-  vtkITKArchetypeImageSeriesReader* ImageReader;
+  vtkITKArchetypeImageSeriesScalarReader* ImageReader;
 };
 
 #endif
