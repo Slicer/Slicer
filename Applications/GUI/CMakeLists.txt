@@ -19,7 +19,11 @@ INCLUDE_DIRECTORIES(
 
 
 ADD_EXECUTABLE (Slicer3 ${SRC})
-TARGET_LINK_LIBRARIES( Slicer3 SlicerBaseLogic SlicerBaseGUI MRML ${KWWidgets_LIBRARIES} )
+TARGET_LINK_LIBRARIES( 
+    Slicer3 SlicerBaseLogic SlicerBaseGUI 
+    MRML vtkITK 
+    ITKCommon ITKIO
+    ${KWWidgets_LIBRARIES} )
 
 IF (Slicer3_BUILD_TESTING)
     SUBDIRS( Testing )

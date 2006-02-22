@@ -6,17 +6,17 @@
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Program:   3D Slicer
-  Module:    $RCSfile: vtkSlicerLogic.cxx,v $
+  Module:    $RCSfile: vtkSlicerSliceLogic.cxx,v $
   Date:      $Date: 2006/01/06 17:56:48 $
   Version:   $Revision: 1.58 $
 
 =========================================================================auto=*/
 
 #include "vtkObjectFactory.h"
-#include "vtkSlicerLogic.h"
+#include "vtkSlicerSliceLogic.h"
 
-vtkCxxRevisionMacro(vtkSlicerLogic, "$Revision: 1.9.12.1 $");
-vtkStandardNewMacro(vtkSlicerLogic);
+vtkCxxRevisionMacro(vtkSlicerSliceLogic, "$Revision: 1.9.12.1 $");
+vtkStandardNewMacro(vtkSlicerSliceLogic);
 
 //-----  This hack needed to compile using gcc3 on OSX until new stdc++.dylib
 #ifdef __APPLE_CC__
@@ -32,20 +32,20 @@ extern "C"
 
 
 //----------------------------------------------------------------------------
-vtkSlicerLogic::vtkSlicerLogic()
+vtkSlicerSliceLogic::vtkSlicerSliceLogic()
 {
 }
 
 //----------------------------------------------------------------------------
-vtkSlicerLogic::~vtkSlicerLogic()
+vtkSlicerSliceLogic::~vtkSlicerSliceLogic()
 {
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerLogic::PrintSelf(ostream& os, vtkIndent indent)
+void vtkSlicerSliceLogic::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->vtkObject::PrintSelf(os, indent);
 
-  os << indent << "SlicerLogic:             " << this->GetClassName() << "\n";
+  os << indent << "SlicerSliceLogic:             " << this->GetClassName() << "\n";
 }
 
