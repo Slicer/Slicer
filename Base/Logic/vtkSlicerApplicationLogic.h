@@ -24,6 +24,7 @@
 #ifndef __vtkSlicerApplicationLogic_h
 #define __vtkSlicerApplicationLogic_h
 
+#include "vtkSlicerBaseLogic.h"
 #include "vtkSlicerLogic.h"
 #include "vtkSlicerSliceLogic.h"
 
@@ -32,7 +33,7 @@
 #include "vtkCollection.h"
 
 
-class VTK_SLICER_BASE_EXPORT vtkSlicerApplicationLogic : public vtkSlicerLogic 
+class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic : public vtkSlicerLogic 
 {
   public:
   

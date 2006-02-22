@@ -42,14 +42,6 @@ INCLUDE_DIRECTORIES(
 # TODO - figure out how best to do the wrapping
 
 
-
-
-# --------------------------------------------------------------------------
-# Wrapping
-
-# TODO - figure out how best to do the wrapping
-
-# --------------------------------------------------------------------------
 # Build the library
 
 ADD_LIBRARY(MRML 

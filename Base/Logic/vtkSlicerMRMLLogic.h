@@ -24,6 +24,7 @@
 #ifndef __vtkSlicerMRMLLogic_h
 #define __vtkSlicerMRMLLogic_h
 
+#include "vtkSlicerBaseLogic.h"
 #include "vtkSlicerLogic.h"
 
 #include "vtkMRMLScene.h"
@@ -32,7 +33,7 @@
 #include "vtkCollection.h"
 
 
-class VTK_SLICER_BASE_EXPORT vtkSlicerMRMLLogic : public vtkSlicerLogic 
+class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerMRMLLogic : public vtkSlicerLogic 
 {
   public:
   

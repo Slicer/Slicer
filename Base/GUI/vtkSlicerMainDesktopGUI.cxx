@@ -217,13 +217,20 @@ void vtkSlicerMainDesktopGUI::UpdateGUIWithLogicEvents ( vtkObject *caller,
             // If the MRML scene has changed, get the 0th volume node.
             // and set that as input into the ImageViewer.
             vtkMRMLVolumeNode* volumenode = vtkMRMLVolumeNode::SafeDownCast (this->ApplicationLogic->GetMRMLScene()->GetNthNodeByClass( 0, "vtkMRMLVolumeNode" ) );
-            this->ImageViewer->SetInput ( volumenode->GetImageData( ) );
-            this->ImageViewer->Render ( );
-        
+            if ( volumenode )
+              {
+              this->ImageViewer->SetInput ( volumenode->GetImageData( ) );
+              double *range = volumenode->GetImageData()->GetScalarRange ( );
+              this->ImageViewer->SetColorWindow ( range [1] - range [0] );
+              this->ImageViewer->SetColorLevel (0.5 * (range [1] - range [0] ));
+              }
+            else
+              {
+              this->ImageViewer->SetInput (NULL);
+              }
+            this->ImageViewer->Render();
+
             // configure window, level, camera, etc.
-            double *range = volumenode->GetImageData()->GetScalarRange ( );
-            this->ImageViewer->SetColorWindow ( range [1] - range [0] );
-            this->ImageViewer->SetColorLevel (0.5 * (range [1] - range [0] ));
             this->RenderWidget->ResetCamera ( );
             vtkCornerAnnotation *ca = this->RenderWidget->GetCornerAnnotation ( );
             ca->SetImageActor (this->ImageViewer->GetImageActor ( ) );

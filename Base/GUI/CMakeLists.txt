@@ -43,10 +43,11 @@ SET_SOURCE_FILES_PROPERTIES(
 INCLUDE_DIRECTORIES(
   ${SlicerBase_SOURCE_DIR}
   ${SlicerBase_BINARY_DIR}
-  ${SlicerBase_SOURCE_DIR}/Logic
+  ${SlicerBaseLogic_SOURCE_DIR}
+  ${SlicerBaseLogic_BINARY_DIR}
   ${MRML_SOURCE_DIR}
   ${MRML_BINARY_DIR}
-  ${Slicer3_SOURCE_DIR}/Libs/vtkITK
+  ${VTKITK_SOURCE_DIR}/Libs/vtkITK
   ${VTK_INCLUDE_DIR}
   )
 

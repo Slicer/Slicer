@@ -10,8 +10,12 @@ SET (SRC
 INCLUDE_DIRECTORIES(
   ${SlicerBase_SOURCE_DIR}
   ${SlicerBase_BINARY_DIR}
-  ${SlicerBase_SOURCE_DIR}/Logic
-  ${SlicerBase_SOURCE_DIR}/GUI
+  ${SlicerBaseLogic_SOURCE_DIR}
+  ${SlicerBaseLogic_BINARY_DIR}
+  ${SlicerBaseGUI_SOURCE_DIR}
+  ${SlicerBaseGUI_BINARY_DIR}
+  ${MRML_SOURCE_DIR}
+  ${MRML_BINARY_DIR}
   ${MRML_SOURCE_DIR}
   ${MRML_BINARY_DIR}
   ${VTK_INCLUDE_DIR}

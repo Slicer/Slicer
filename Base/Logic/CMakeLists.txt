@@ -28,8 +28,8 @@ SET_SOURCE_FILES_PROPERTIES(
 # Include dirs
 
 INCLUDE_DIRECTORIES(
-  ${SlicerBase_SOURCE_DIR}
-  ${SlicerBase_BINARY_DIR}
+  ${SlicerBaseLogic_SOURCE_DIR}
+  ${SlicerBaseLogic_BINARY_DIR}
   ${MRML_SOURCE_DIR}
   ${MRML_BINARY_DIR}
   ${VTK_INCLUDE_DIR}
@@ -64,3 +64,8 @@ TARGET_LINK_LIBRARIES(SlicerBaseLogic
 IF(BUILD_TESTING)
   SUBDIRS(Testing)
 ENDIF(BUILD_TESTING)
+
+CONFIGURE_FILE(
+  ${SlicerBaseLogic_SOURCE_DIR}/vtkSlicerBaseLogicConfigure.h.in 
+  ${SlicerBaseLogic_BINARY_DIR}/vtkSlicerBaseLogicConfigure.h
+)

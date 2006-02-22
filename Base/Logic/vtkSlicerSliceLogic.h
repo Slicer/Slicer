@@ -36,12 +36,13 @@
 
 #include <stdlib.h>
 
+#include "vtkSlicerBaseLogic.h"
 #include "vtkSlicerLogic.h"
 
 //#include "vtkMrml.h"
 //#include "vtkMrmlVolume.h"
 
-class VTK_SLICER_BASE_EXPORT vtkSlicerSliceLogic : public vtkSlicerLogic 
+class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLogic : public vtkSlicerLogic 
 {
   public:
   

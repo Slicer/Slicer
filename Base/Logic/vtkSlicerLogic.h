@@ -21,10 +21,11 @@
 #ifndef __vtkSlicerLogic_h
 #define __vtkSlicerLogic_h
 
-#include "vtkSlicerBase.h"
+#include "vtkSlicerBaseLogic.h"
 #include "vtkObject.h"
+#include "vtkObjectFactory.h"
 
-class VTK_SLICER_BASE_EXPORT vtkSlicerLogic : public vtkObject 
+class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerLogic : public vtkObject 
 {
   public:
   
