@@ -30,6 +30,7 @@ SET_SOURCE_FILES_PROPERTIES(
 
 INCLUDE_DIRECTORIES(
   ${VTK_INCLUDE_DIR}
+  ${MRML_BINARY_DIR}
   ${Slicer3_SOURCE_DIR}/Libs/vtkITK
   )
 
@@ -58,3 +59,11 @@ TARGET_LINK_LIBRARIES(MRML
 IF(BUILD_TESTING)
   SUBDIRS(Testing)
 ENDIF(BUILD_TESTING)
+
+# --------------------------------------------------------------------------
+# Special build configs (to handle linking on windows)
+CONFIGURE_FILE(
+  ${MRML_SOURCE_DIR}/vtkMRMLConfigure.h.in 
+  ${MRML_BINARY_DIR}/vtkMRMLConfigure.h
+)
+

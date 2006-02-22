@@ -22,11 +22,17 @@ vtkStandardNewMacro(vtkSlicerApplicationLogic);
 //----------------------------------------------------------------------------
 vtkSlicerApplicationLogic::vtkSlicerApplicationLogic()
 {
+    this->MRMLScene = vtkMRMLScene::New();
+    this->Views = NULL;
+    this->Slices = NULL;
+    this->Modules = NULL;
+    this->ActiveSlice = NULL;
 }
 
 //----------------------------------------------------------------------------
 vtkSlicerApplicationLogic::~vtkSlicerApplicationLogic()
 {
+  // TODO - unregister/delete ivars
 }
 
 //----------------------------------------------------------------------------
@@ -34,6 +40,4 @@ void vtkSlicerApplicationLogic::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->vtkObject::PrintSelf(os, indent);
 
-  os << indent << "SlicerApplicationLogic:             " << this->GetClassName() << "\n";
-}
-
+  os << indent << "SlicerApplicationLogic:             " << this->GetClassName() << "\n"; } 

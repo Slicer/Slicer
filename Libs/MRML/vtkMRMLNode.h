@@ -5,7 +5,7 @@
   See Doc/copyright/copyright.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
 
-  Program:   3D Slicer
+  Program:   MRML
   Module:    $RCSfile: vtkMRMLNode.h,v $
   Date:      $Date: 2006/02/11 17:20:11 $
   Version:   $Revision: 1.9 $
@@ -22,7 +22,9 @@
 
 #include "vtkObject.h"
 
-class VTK_EXPORT vtkMRMLNode : public vtkObject
+#include "vtkMRML.h"
+
+class VTK_MRML_EXPORT vtkMRMLNode : public vtkObject
 {
 public:
   static vtkMRMLNode *New();

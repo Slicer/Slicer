@@ -35,7 +35,7 @@ int Slicer3_main(int argc, char *argv[])
 
   vtkSlicerMainDesktopGUI *gui;
   gui = vtkSlicerMainDesktopGUI::New ( );
-  gui->SetLogic ( appLogic );
+  gui->SetApplicationLogic ( appLogic );
   gui->BuildGUI ( appGUI );
   gui->AddGUIObservers ( );
   gui->AddLogicObservers ( );
@@ -64,6 +64,12 @@ int __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR lpCmdLine, int)
   delete [] argv;
   return ret;
 }
+
+int _main(int argc, char *argv[])
+{
+  return Slicer3_main(argc, argv);
+}
+
 #else
 int main(int argc, char *argv[])
 {

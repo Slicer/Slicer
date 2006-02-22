@@ -12,7 +12,8 @@ INCLUDE_DIRECTORIES(
   ${SlicerBase_BINARY_DIR}
   ${SlicerBase_SOURCE_DIR}/Logic
   ${SlicerBase_SOURCE_DIR}/GUI
-  ${Slicer3_SOURCE_DIR}/Libs/MRML
+  ${MRML_SOURCE_DIR}
+  ${MRML_BINARY_DIR}
   ${VTK_INCLUDE_DIR}
   )
 

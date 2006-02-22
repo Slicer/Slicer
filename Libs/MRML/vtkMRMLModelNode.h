@@ -26,7 +26,7 @@
 
 #include <string>
 
-class VTK_EXPORT vtkMRMLModelNode : public vtkMRMLNode
+class VTK_MRML_EXPORT vtkMRMLModelNode : public vtkMRMLNode
 {
 public:
   static vtkMRMLModelNode *New();

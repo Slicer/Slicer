@@ -33,7 +33,7 @@
 class vtkImageData;
 class vtkITKArchetypeImageSeriesReader;
 
-class VTK_EXPORT vtkMRMLVolumeNode : public vtkMRMLNode
+class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLNode
 {
   public:
   static vtkMRMLVolumeNode *New();
