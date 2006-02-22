@@ -16,7 +16,7 @@
 
 #include "vtkITKArchetypeImageSeriesReader.h"
 
-class VTK_EXPORT vtkITKArchetypeImageSeriesVectorReader : public vtkITKArchetypeImageSeriesReader
+class VTK_ITK_EXPORT vtkITKArchetypeImageSeriesVectorReader : public vtkITKArchetypeImageSeriesReader
 {
  public:
   static vtkITKArchetypeImageSeriesVectorReader *New();

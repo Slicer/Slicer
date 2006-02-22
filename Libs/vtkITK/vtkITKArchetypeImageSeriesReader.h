@@ -45,7 +45,9 @@
 #include <vector>
 #include <string>
 
-class VTK_EXPORT vtkITKArchetypeImageSeriesReader : public vtkImageSource
+#include "vtkITK.h"
+
+class VTK_ITK_EXPORT vtkITKArchetypeImageSeriesReader : public vtkImageSource
 {
 public:
   static vtkITKArchetypeImageSeriesReader *New();

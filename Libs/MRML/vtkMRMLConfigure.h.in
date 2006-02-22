@@ -14,7 +14,7 @@
   #define WORDS_LITTLEENDIAN
 #endif
 
-#cmakedefine MRML_BUILD_SHARED_LIBS
-#ifndef MRML_BUILD_SHARED_LIBS
-#define MRML_STATIC
+#cmakedefine BUILD_SHARED_LIBS
+#ifndef BUILD_SHARED_LIBS
+#define VTKMRML_STATIC
 #endif

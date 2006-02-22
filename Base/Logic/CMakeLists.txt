@@ -50,7 +50,11 @@ ADD_LIBRARY(SlicerBaseLogic
   )
 
 TARGET_LINK_LIBRARIES(SlicerBaseLogic 
+  MRML
+  vtkITK
   vtkCommon
+  vtkFiltering
+  vtkIO
   )
 
 
