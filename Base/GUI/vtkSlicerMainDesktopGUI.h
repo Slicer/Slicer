@@ -26,7 +26,7 @@ class vtkSlicerApplicationGUI;
 // and the logic state change causes the gui label text to update. Just
 // demos the basic mechanisms. Will this fail in some obvious cases?
 //
-class vtkSlicerMainDesktopGUI : public vtkSlicerComponentGUI
+class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerMainDesktopGUI : public vtkSlicerComponentGUI
 {
  public:
     static vtkSlicerMainDesktopGUI* New ( );

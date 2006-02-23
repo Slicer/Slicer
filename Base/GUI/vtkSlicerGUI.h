@@ -3,13 +3,15 @@
 
 #include "vtkKWObject.h"
 
+#include "vtkSlicerBaseGUIWin32Header.h"
+
 class vtkSlicerStyle;
 
 // Description:
 // Contains Slicer's suggested presentation conventions,
 // defined in the vtkSlicerStyle class.
 //
-class vtkSlicerGUI : public vtkKWObject
+class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGUI : public vtkKWObject
 {
  public:
     static vtkSlicerGUI* New();

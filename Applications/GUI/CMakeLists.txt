@@ -22,7 +22,7 @@ INCLUDE_DIRECTORIES(
   )
 
 
-ADD_EXECUTABLE (Slicer3 ${SRC})
+ADD_EXECUTABLE (Slicer3 WIN32 ${SRC})
 TARGET_LINK_LIBRARIES( 
     Slicer3 SlicerBaseLogic SlicerBaseGUI 
     MRML vtkITK 

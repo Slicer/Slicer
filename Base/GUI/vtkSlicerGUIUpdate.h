@@ -4,9 +4,11 @@
 #include "vtkCallbackCommand.h"
 #include "vtkSlicerComponentGUI.h"
 
+#include "vtkSlicerBaseGUIWin32Header.h"
+
 class vtkObject;
 
-class vtkSlicerGUIUpdate : public vtkCallbackCommand
+class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGUIUpdate : public vtkCallbackCommand
 {
  public:
     static vtkSlicerGUIUpdate* New ( )

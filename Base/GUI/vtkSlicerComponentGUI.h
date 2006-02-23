@@ -4,6 +4,8 @@
 #include "vtkObject.h"
 #include "vtkKWObject.h"
 
+#include "vtkSlicerBaseGUIWin32Header.h"
+
 class vtkSlicerApplicationGUI;
 class vtkSlicerLogic;
 class vtkSlicerApplicationLogic;
@@ -18,7 +20,7 @@ class vtkSlicerLogicUpdate;
 // A GUI can access its Slicer look & feel through its
 // "App" data member. 
 //
-class vtkSlicerComponentGUI : public vtkKWObject
+class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerComponentGUI : public vtkKWObject
 {
 
  public:

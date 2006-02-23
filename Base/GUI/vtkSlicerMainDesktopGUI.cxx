@@ -20,7 +20,6 @@
 #include "vtkRenderWindowInteractor.h"
 #include "vtkKWLoadSaveButton.h"
 #include "vtkKWLoadSaveDialog.h"
-#include "vtkKWWidgetsPaths.h"
 #include "vtkToolkits.h"
 #include "vtkSlicerMainDesktopGUI.h"
 #include "vtkSlicerApplicationGUI.h"

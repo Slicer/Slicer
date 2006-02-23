@@ -4,9 +4,9 @@
 #include "vtkCollection.h"
 #include "vtkSlicerComponentGUI.h"  
 
+#include "vtkSlicerBaseGUIWin32Header.h"
 
-
-class vtkSlicerGUICollection : public vtkCollection
+class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGUICollection : public vtkCollection
 {
  public:
     static vtkSlicerGUICollection *New ( );

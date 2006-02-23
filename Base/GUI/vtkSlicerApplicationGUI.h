@@ -38,7 +38,7 @@ class vtkCollection;
 // and a collection of vtkSlicerGUIUnits.
 
 //
-class vtkSlicerApplicationGUI : public vtkSlicerGUI
+class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerGUI
 {
  public:
     static vtkSlicerApplicationGUI* New ( );
