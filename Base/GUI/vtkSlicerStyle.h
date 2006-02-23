@@ -2,12 +2,15 @@
 #define __vtkSlicerStyle_h
 
 #include "vtkObject.h"
-#include "vtkSlicerBaseGUIWin32Header.h"
+#include "vtkSlicerColor.h"
+#include "vtkSlicerFont.h"
+
+#include <stdio.h>
 
 // Description:
 // Definition of Slicer's look and feel.
 //
-class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerStyle : public vtkObject
+class vtkSlicerStyle : public vtkObject
 {
  public:
     static vtkSlicerStyle* New ( );
@@ -49,6 +52,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerStyle : public vtkObject
     // Used by all color-setting methods to do error checking, setting.
     //
     virtual int SetColor ( double *color, double r, double g, double b );
+    virtual int SetColor (double *c1, double *c2);
     virtual int SetBgColor ( double *color );
     virtual int SetBgColor ( double r, double g, double b );
     virtual double* GetBgColor ( );
@@ -99,9 +103,13 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerStyle : public vtkObject
     virtual void SetPadY (int pady );
     virtual int GetPadY ( ) { return this->PadY ;}
     
+
+    int WriteCascadingStyleSheet (char * filename);
     
  protected:
     // Font and text
+    vtkSlicerFont *Fonts;
+    
     char *BigFont;
     char *MedFont;
     char *SmallFont;
@@ -111,6 +119,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerStyle : public vtkObject
 //    char *FlatRelief; // Not used
 //    char *GrooveRelief; // Not used
     char *Relief;
+
+    // Color definitions
+    vtkSlicerColor *Colors;
     
     // Code colors
     double SavedDataTextColor [3];
@@ -119,6 +130,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerStyle : public vtkObject
     double ErrorColor [3];
     double WarningTextColor [3];
     double WarningColor [3];
+
+    // Slice color
+    double SagColor [3];
+    double AxiColor [3];
+    double CorColor [3];
     
     // Foreground and Background color
     double BgColor [3];
