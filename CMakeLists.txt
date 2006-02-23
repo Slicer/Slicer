@@ -61,9 +61,25 @@ ENDIF (NOT KWWidgets_FOUND)
 
 INCLUDE(${KWWidgets_USE_FILE})
 
+# Generate the default setup paths scripts.
+# Generate some useful scripts that can be used to setup various environment 
+# variables and launch the executable properly against external packages.
+
+INCLUDE("${KWWidgets_CMAKE_DIR}/KWWidgetsPathsMacros.cmake")
+KWWidgets_GENERATE_DEFAULT_SETUP_PATHS(
+  "${EXECUTABLE_OUTPUT_PATH}" "Slicer3SetupPaths")
+
+# VTK 5.0 does not have VTK_CMAKE_DIR
+# Alternatively you could use KWWidget's wrapping, which encapsulate
+# the differences between various VTK versions:
+#  INCLUDE("${KWWidgets_CMAKE_DIR}/KWWidgetsWrappingMacros.cmake")
+#  KWWidgets_WRAP_TCL(${LIB_NAME} LIB_TCL_SRCS "${LIB_SRCS}" "")
+
+IF(NOT VTK_CMAKE_DIR)
+  SET(VTK_CMAKE_DIR "${VTK_SOURCE_DIR}/CMake")
+ENDIF(NOT VTK_CMAKE_DIR)
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 INCLUDE("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
-SET(VTK_WRAP_TCL3_INIT_DIR "${VTK_SOURCE_DIR}/Wrapping")
 
 # TODO
 # VTK_WRAP_TCL3(${LIB_NAME} LIB_TCL_SRCS ${LIB_SRCS} "")
