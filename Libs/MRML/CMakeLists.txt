@@ -26,13 +26,6 @@ SET_SOURCE_FILES_PROPERTIES(
   ABSTRACT
   )
 
-# Helper classes
-
-SET_SOURCE_FILES_PROPERTIES(
-  vtkMRMLNode.cxx 
-  WRAP_EXCLUDE
-  )
-
 # --------------------------------------------------------------------------
 # Include dirs
 
@@ -53,18 +46,17 @@ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 INCLUDE("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
 VTK_WRAP_TCL3(MRML MRML_TCL_SRCS "${MRML_SRCS}" "")
 
-
 # Build the library
 
 ADD_LIBRARY(MRML 
-  ${MRML_SRCS} 
+  ${MRML_SRCS} ${MRML_TCL_SRCS}
   )
 
 TARGET_LINK_LIBRARIES(MRML 
   vtkITK
-  vtkCommon
-  vtkFiltering
-  vtkIO
+  vtkCommonTCL
+  vtkFilteringTCL
+  vtkIOTCL
   ITKAlgorithms
   ITKNumerics 
   ITKCommon

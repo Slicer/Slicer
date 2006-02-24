@@ -7,6 +7,8 @@
 #include <vtksys/SystemTools.hxx>
 
 extern "C" int Slicerbasegui_Init(Tcl_Interp *interp);
+extern "C" int Mrml_Init(Tcl_Interp *interp);
+
 int Slicer3_main(int argc, char *argv[])
 {
   // Initialize Tcl
@@ -21,6 +23,7 @@ int Slicer3_main(int argc, char *argv[])
   // Initialize our Tcl library (i.e. our classes wrapped in Tcl)
 
   Slicerbasegui_Init(interp);
+  Mrml_Init(interp);
 
   // Create the application Logic object, 
   // then create the GUI object and have it observe the Logic

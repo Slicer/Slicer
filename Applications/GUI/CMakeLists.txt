@@ -16,17 +16,19 @@ INCLUDE_DIRECTORIES(
   ${SlicerBaseGUI_BINARY_DIR}
   ${MRML_SOURCE_DIR}
   ${MRML_BINARY_DIR}
-  ${MRML_SOURCE_DIR}
-  ${MRML_BINARY_DIR}
   ${VTK_INCLUDE_DIR}
   )
 
 
 ADD_EXECUTABLE (Slicer3 WIN32 ${SRC})
 TARGET_LINK_LIBRARIES( 
-    Slicer3 SlicerBaseLogic SlicerBaseGUI 
-    MRML vtkITK 
-    ITKCommon ITKIO
+    Slicer3 
+    SlicerBaseLogic 
+    SlicerBaseGUI 
+    MRML 
+    vtkITK 
+    ITKCommon 
+    ITKIO
     ${KWWidgets_LIBRARIES} )
 
 IF (Slicer3_BUILD_TESTING)
