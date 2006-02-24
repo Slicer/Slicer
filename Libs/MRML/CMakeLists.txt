@@ -1,6 +1,14 @@
 PROJECT(MRML)
 
 # --------------------------------------------------------------------------
+# Special build configs (to handle linking on windows)
+CONFIGURE_FILE(
+  ${MRML_SOURCE_DIR}/vtkMRMLConfigure.h.in 
+  ${MRML_BINARY_DIR}/vtkMRMLConfigure.h
+)
+
+
+# --------------------------------------------------------------------------
 # Sources
 
 SET(MRML_SRCS
@@ -41,6 +49,10 @@ INCLUDE_DIRECTORIES(
 
 # TODO - figure out how best to do the wrapping
 
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
+INCLUDE("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
+VTK_WRAP_TCL3(MRML MRML_TCL_SRCS "${MRML_SRCS}" "")
+
 
 # Build the library
 
@@ -71,11 +83,4 @@ TARGET_LINK_LIBRARIES(MRML
 IF(BUILD_TESTING)
   SUBDIRS(Testing)
 ENDIF(BUILD_TESTING)
-
-# --------------------------------------------------------------------------
-# Special build configs (to handle linking on windows)
-CONFIGURE_FILE(
-  ${MRML_SOURCE_DIR}/vtkMRMLConfigure.h.in 
-  ${MRML_BINARY_DIR}/vtkMRMLConfigure.h
-)
 
