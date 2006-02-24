@@ -19,7 +19,7 @@ OPTION(BUILD_SHARED_LIBS "Build Slicer3 with shared libraries." ON)
 # Top level slicer3 configurations
 #
 
-SET (LIBRARY_OUTPUT_PATH ${Slicer3_BINARY_DIR}/lib/ 
+SET (LIBRARY_OUTPUT_PATH ${Slicer3_BINARY_DIR}/bin/ 
         CACHE PATH 
         "Single output directory for building all libraries." 
         FORCE)
