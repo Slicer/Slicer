@@ -66,7 +66,7 @@ INCLUDE(${KWWidgets_USE_FILE})
 # variables and launch the executable properly against external packages.
 
 INCLUDE("${KWWidgets_CMAKE_DIR}/KWWidgetsPathsMacros.cmake")
-KWWidgets_GENERATE_DEFAULT_SETUP_PATHS(
+KWWidgets_GENERATE_SETUP_PATHS_SCRIPTS(
   "${EXECUTABLE_OUTPUT_PATH}" "Slicer3SetupPaths")
 
 # VTK 5.0 does not have VTK_CMAKE_DIR
