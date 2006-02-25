@@ -21,12 +21,11 @@ SET(LIB_SRCS
   vtkSlicerColor.cxx
   vtkSlicerFont.cxx
   vtkSlicerGUI.cxx
+  vtkSlicerGUIUpdate.cxx
+  vtkSlicerLogicUpdate.cxx
   vtkSlicerGUICollection.cxx
   vtkSlicerApplicationGUI.cxx
   vtkSlicerComponentGUI.cxx
-  vtkSlicerGUIUpdate.cxx
-  vtkSlicerLogicUpdate.cxx
-  vtkSlicerMainDesktopGUI.cxx
   )
 
 # Helper classes
