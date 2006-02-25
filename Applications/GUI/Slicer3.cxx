@@ -1,8 +1,8 @@
 
 #include "vtkKWApplication.h"
+#include "vtkSlicerGUI.h"
 #include "vtkSlicerApplicationLogic.h"
 #include "vtkSlicerApplicationGUI.h"
-#include "vtkSlicerMainDesktopGUI.h"
 
 #include <vtksys/SystemTools.hxx>
 
@@ -25,32 +25,35 @@ int Slicer3_main(int argc, char *argv[])
   Slicerbasegui_Init(interp);
   Mrml_Init(interp);
 
-  // Create the application Logic object, 
-  // then create the GUI object and have it observe the Logic
-  // then let the application gui run
-
-  vtkSlicerApplicationLogic *appLogic = vtkSlicerApplicationLogic::New();
-
-  vtkSlicerApplicationGUI *appGUI = vtkSlicerApplicationGUI::New();
   
-  appGUI->ConfigureApplication ( );
-  appGUI->SetLogic(appLogic);
+  // Create SlicerGUI application, style, and main window container
+  vtkSlicerGUI *slicerGUI = vtkSlicerGUI::New ( );
 
-  vtkSlicerMainDesktopGUI *gui;
-  gui = vtkSlicerMainDesktopGUI::New ( );
-  gui->SetApplicationLogic ( appLogic );
-  gui->BuildGUI ( appGUI );
-  gui->AddGUIObservers ( );
-  gui->AddLogicObservers ( );
+  // Create the application Logic object, 
+  // Create the application GUI object
+  // and have it observe the Logic
+  vtkSlicerApplicationLogic *appLogic = vtkSlicerApplicationLogic::New( );
+  vtkSlicerApplicationGUI *appGUI = vtkSlicerApplicationGUI::New ( );
+  appGUI->SetApplication ( slicerGUI );
+  appGUI->SetLogic ( appLogic );
+  appGUI->SetParent ( slicerGUI->GetNthWindow(0)->GetViewFrame ( ));
+  appGUI->BuildGUI ( );
+  appGUI->AddGUIObservers ( );
+  appGUI->AddLogicObservers ( );
+  // after everything is packed 
+  slicerGUI->DisplaySlicerWindow ( );
 
-    // TODO: where should args get parsed?
+  // add to collection of component GUIs
+  slicerGUI->AddGUI ( appGUI );
+  
+  // TODO: where should args get parsed?
   //int res = appGUI->StartApplication(argc, argv);
-  int res = appGUI->StartApplication();
+  int res = slicerGUI->StartApplication();
 
-  gui->Delete ( );
   appGUI->Delete();
   appLogic->Delete();
-
+  slicerGUI->Delete();
+  
   return res;
 }
 
