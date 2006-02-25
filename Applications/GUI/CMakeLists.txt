@@ -19,7 +19,6 @@ INCLUDE_DIRECTORIES(
   ${VTK_INCLUDE_DIR}
   )
 
-
 ADD_EXECUTABLE (Slicer3 WIN32 ${SRC})
 TARGET_LINK_LIBRARIES( 
     Slicer3 
@@ -31,6 +30,21 @@ TARGET_LINK_LIBRARIES(
     ITKIO
     ${KWWidgets_LIBRARIES} )
 
+# Generate a lightweight C launcher for a *specific* executable.
+# The launcher sets up all the environments variables (PATH, TCLLIBPATH,
+# LD_LIBRARY_PATH, etc.) required by this executable and some known external 
+# third-party dependencie like VTK, ITK, SOV, etc., before launching the
+# executable itself. Note that the path to the executable to launch is 
+# hard-coded in the launcher: do not move the target exe around, or copy the
+# launcher to your installation tree, if any (ultimately, all the DLLs needed
+# by a project should/could be stored together in the installation tree, and a
+# launcher should not be needed in that case).
+
+INCLUDE("${KWWidgets_CMAKE_DIR}/KWWidgetsPathsMacros.cmake")
+KWWidgets_GENERATE_SETUP_PATHS_LAUNCHER(
+  "${CMAKE_CURRENT_BINARY_DIR}" "Slicer3Launcher" 
+  "${EXECUTABLE_OUTPUT_PATH}" "Slicer3")
+
 IF (Slicer3_BUILD_TESTING)
-    SUBDIRS( Testing )
+  SUBDIRS( Testing )
 ENDIF (Slicer3_BUILD_TESTING)
