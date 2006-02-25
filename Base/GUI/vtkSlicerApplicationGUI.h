@@ -21,82 +21,50 @@
 #ifndef __vtkSlicerApplicationGUI_h
 #define __vtkSlicerApplicationGUI_h
 
-#include "vtkSlicerGUI.h"
+#include "vtkSlicerBaseGUIWin32Header.h"
+#include "vtkSlicerComponentGUI.h"
 
-#include "vtkSlicerApplicationLogic.h"
-
-#include "vtkKWApplication.h"
-
-class vtkSlicerComponentGUI;
-class vtkSlicerGUICollection;
-class vtkKWWindowBase;
-class vtkCollection;
+class vtkObject;
+class vtkSlicerApplicationLogic;
+class vtkKWLoadSaveButton;
+class vtkKWRenderWidget;
+class vtkImageViewer2;
+class vtkKWScale;
+class vtkKWWindowLevelPresetSelector;
 
 
 // Description:
-// Contains a vtkKWApplication object, 
-// and a collection of vtkSlicerGUIUnits.
-
+// This class implements Slicer's main Application GUI.
 //
-class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerGUI
+class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerComponentGUI
 {
  public:
-    static vtkSlicerApplicationGUI* New ( );
-    vtkTypeRevisionMacro ( vtkSlicerApplicationGUI, vtkSlicerGUI );
-
-
-    vtkGetObjectMacro(Logic, vtkSlicerApplicationLogic);
-    vtkSetObjectMacro(Logic, vtkSlicerApplicationLogic);
-
-
-    vtkGetObjectMacro(KWApplication, vtkKWApplication);
-    vtkSetObjectMacro(KWApplication, vtkKWApplication);
-    
-    // Description:
-    // This method collects GUIs added to Slicer.
-    virtual void AddGUI ( vtkSlicerComponentGUI *gui );
+    static vtkSlicerApplicationGUI* New (  );
+    vtkTypeRevisionMacro ( vtkSlicerApplicationGUI, vtkSlicerComponentGUI );
 
     // Description:
-    // Sets application behavior.
-    virtual void ConfigureApplication ( );
-
-    // Description:
-    // Starts up the application with no window
-    virtual int StartApplication ( );
-
-    // Description:
-    // Adds a new window to the application
-    virtual void AddWindow ( vtkKWWindowBase *win );
-
-    // Description:
-    // Closes all application windows
-    virtual void CloseWindows ( );
-
-    vtkGetMacro ( NumberOfGUIs, int );
+    // This method builds Slicer's main GUI
+    virtual void BuildGUI ( );
+    virtual void AddGUIObservers ( );
+    virtual void AddLogicObservers ( );
+    virtual void UpdateGUIWithLogicEvents ( vtkObject *caller, unsigned long event,
+                                            void *callData );
+    virtual void UpdateLogicWithGUIEvents ( vtkObject *caller, unsigned long event,
+                                           void *callData );
     
  protected:
     vtkSlicerApplicationGUI ( );
     ~vtkSlicerApplicationGUI ( );
+    // And widgets.
+    vtkKWLoadSaveButton *FileBrowseButton;
+    vtkImageViewer2 *ImageViewer;
+    vtkKWWindowLevelPresetSelector *WindowLevelPresetSelector;
+    vtkKWRenderWidget *RenderWidget;
+    vtkKWScale *Scale;
 
-    vtkSlicerApplicationLogic* Logic;
-
-    // Tcl_Interp *interp; 
-
-    // Description:
-    // Application widget
-    vtkKWApplication *KWApplication;
-
-    // Description:
-    // Collections of widgets
-    vtkSlicerGUICollection *GUICollection;
-
-    // Description:
-    // numbers of widgets
-    int NumberOfGUIs;
-    
  private:
     vtkSlicerApplicationGUI ( const vtkSlicerApplicationGUI& ); // Not implemented.
-    void operator = ( const vtkSlicerGUI& ); //Not implemented.
+    void operator = ( const vtkSlicerApplicationGUI& ); //Not implemented.
 }; 
 
 #endif
