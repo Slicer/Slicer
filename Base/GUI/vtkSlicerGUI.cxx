@@ -31,19 +31,13 @@ vtkSlicerGUI::vtkSlicerGUI ( ) {
     this->RestoreApplicationSettingsFromRegistry ( );
     this->SetHelpDialogStartingPage ( "http://www.slicer.org" );
 
-    if ( this->GUICollection == NULL ) {
-        this->GUICollection = vtkSlicerGUICollection::New ( );
-    }
-    if ( this->SlicerStyle == NULL ) {
-        this->SlicerStyle = vtkSlicerStyle::New ( );
-    }
-    if ( this->SlicerWin == NULL ) {
-        this->SlicerWin = vtkKWWindow::New ( );
-        this->SlicerWin->SecondaryPanelVisibilityOff ( );
-        this->SlicerWin->MainPanelVisibilityOff ( );
-        this->AddWindow ( this->SlicerWin );
-        this->SlicerWin->Create ( );
-    }
+    this->GUICollection = vtkSlicerGUICollection::New ( );
+    this->SlicerStyle = vtkSlicerStyle::New ( );
+    this->SlicerWin = vtkKWWindow::New ( );
+    this->SlicerWin->SecondaryPanelVisibilityOff ( );
+    this->SlicerWin->MainPanelVisibilityOff ( );
+    this->AddWindow ( this->SlicerWin );
+    this->SlicerWin->Create ( );
     
     this->NumberOfGUIs = 0;
 
