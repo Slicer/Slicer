@@ -40,8 +40,6 @@ INCLUDE_DIRECTORIES(
 # --------------------------------------------------------------------------
 # Wrapping
 
-# TODO - figure out how best to do the wrapping
-
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 INCLUDE("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
 VTK_WRAP_TCL3(MRML MRML_TCL_SRCS "${MRML_SRCS}" "")

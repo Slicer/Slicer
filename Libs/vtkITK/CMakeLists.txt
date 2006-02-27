@@ -34,18 +34,21 @@ INCLUDE_DIRECTORIES(
 # --------------------------------------------------------------------------
 # Wrapping
 
-# TODO - figure out how best to do the wrapping
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
+INCLUDE("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
+VTK_WRAP_TCL3(vtkITK vtkITK_TCL_SRCS "${vtkITK_SRCS}" "")
 
 # --------------------------------------------------------------------------
 # Build the library
 
 ADD_LIBRARY(vtkITK 
   ${vtkITK_SRCS} 
+  ${vtkITK_TCL_SRCS} 
   )
 
 TARGET_LINK_LIBRARIES(vtkITK 
-  vtkCommon
-  vtkFiltering
+  vtkCommonTCL
+  vtkFilteringTCL
   ITKAlgorithms
   ITKNumerics 
   ITKCommon
