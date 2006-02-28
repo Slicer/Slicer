@@ -34,16 +34,15 @@ TARGET_LINK_LIBRARIES(
 # The launcher sets up all the environments variables (PATH, TCLLIBPATH,
 # LD_LIBRARY_PATH, etc.) required by this executable and some known external 
 # third-party dependencies like VTK, ITK, SOV, etc., before launching the
-# executable itself. Note that the path to the executable to launch is 
-# hard-coded in the launcher: do not move the target exe around, or copy the
-# launcher to your installation tree, if any (ultimately, all the DLLs needed
-# by a project should/could be stored together in the installation tree, and a
-# launcher should not be needed in that case).
+# executable itself. Note that the paths to many of the external libraries are
+# hard-coded in the launcher: do not copy the launcher to your installation 
+# tree, if any (ultimately, all the DLLs needed by a project should/could be
+# stored together in the installation tree, and a launcher should not be
+# needed in that case).
 
 INCLUDE("${KWWidgets_CMAKE_DIR}/KWWidgetsPathsMacros.cmake")
 KWWidgets_GENERATE_SETUP_PATHS_LAUNCHER(
-  "${CMAKE_CURRENT_BINARY_DIR}" "Slicer3Launcher" 
-  "${EXECUTABLE_OUTPUT_PATH}" "Slicer3")
+  "${CMAKE_CURRENT_BINARY_DIR}" "Slicer3Launcher" "" "Slicer3")
 
 IF (Slicer3_BUILD_TESTING)
   SUBDIRS( Testing )
