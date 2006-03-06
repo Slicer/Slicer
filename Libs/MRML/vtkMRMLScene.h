@@ -47,13 +47,15 @@ PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #ifndef __vtkMRMLScene_h
 #define __vtkMRMLScene_h
 
-#include "vtkCollection.h"
-#include "vtkMRMLNode.h"
+#include <list>
+#include <map>
+#include <vector>
+#include <string>
 
-#include <vtkstd/vector>
-#include <vtkstd/string>
-#include <vtkstd/list>
-#include <vtkstd/map>
+#include "vtkCollection.h"
+#include "vtkObjectFactory.h"
+
+#include "vtkMRMLNode.h"
 
 class vtkTransform;
 
@@ -73,7 +75,7 @@ public:
   int Commit(const char* url=NULL);
   
   // Create node with a given class
-  vtkMRMLNode* CreateNodeByClass(const char* className) ;
+  vtkMRMLNode* CreateNodeByClass(const char* className);
 
   // Register node class with the Scene so that it can create it from
   // a class name
@@ -83,21 +85,18 @@ public:
 
   // Description:
   // Add a path to the list.
-  void AddNode(vtkMRMLNode *n) {
-    //TODO convert URL to Root directory
-    n->SetSceneRootDir("");
-    this->vtkCollection::AddItem(n); }
-  
+  void AddNode(vtkMRMLNode *n); 
+
   // Description:
   // Remove a path from the list.
   void RemoveNode(vtkMRMLNode *n) {
-    this->vtkCollection::RemoveItem(n);}
+    this->vtkCollection::RemoveItem((vtkObject *)n);};
   
   // Description:
   // Determine whether a particular node is present. Returns its position
   // in the list.
   int IsNodePresent(vtkMRMLNode *n) {
-    return this->vtkCollection::IsItemPresent(n);};
+    return this->vtkCollection::IsItemPresent((vtkObject *)n);};
   
   // Description:
   // Get the next path in the list.
@@ -107,10 +106,12 @@ public:
   vtkMRMLNode *GetNextNodeByClass(const char* className);
   
   vtkCollection *GetNodesByName(const char* name);
+
+  vtkCollection *GetNodesByID(const char* name);
+
+  vtkCollection* GetNodesByClassByID(const char* className, const char* id);
   
   vtkCollection *GetNodesByClassByName(const char* className, const char* name);
-  
-  vtkMRMLNode *GetNodeByClassById(const char* className, unsigned long id);
   
   vtkMRMLNode* GetNthNode(int n);
   
@@ -119,13 +120,13 @@ public:
   int GetNumberOfNodesByClass(const char* className);
   
   //BTX
-  vtkstd::list<vtkstd::string> GetNodeClassesList();
+  std::list<std::string> GetNodeClassesList();
   //ETX
   
   // returns list of names
   const char* GetNodeClasses();
   
-  int GetUniqueIdByClass(const char* className);
+  const char* GetUniqueIDByClass(const char* className);
   
   void InsertAfterNode( vtkMRMLNode *item, vtkMRMLNode *newItem);
   void InsertBeforeNode( vtkMRMLNode *item, vtkMRMLNode *newItem);
@@ -139,12 +140,16 @@ public:
 protected:
   vtkMRMLScene();
   ~vtkMRMLScene() {};
+  vtkMRMLScene(const vtkMRMLScene&);
+  void operator=(const vtkMRMLScene&);
+  
   char *URL;
   
   //BTX
-  vtkstd::map< vtkstd::string, int> UniqueIdByClass;
-  vtkstd::vector< vtkMRMLNode* > RegisteredNodeClasses;
-  vtkstd::vector< vtkstd::string > RegisteredNodeTags;
+  std::map< std::string, int> UniqueIDByClass;
+  std::vector< std::string > UniqueIDs;
+  std::vector< vtkMRMLNode* > RegisteredNodeClasses;
+  std::vector< std::string > RegisteredNodeTags;
   //ETX
   
   vtkMRMLNode* InitTraversalByClass(const char *className);
@@ -165,9 +170,6 @@ private:
   unsigned long ErrorCode;
 
   char* ClassNameList;
-
-  vtkMRMLScene(const vtkMRMLScene&);
-  void operator=(const vtkMRMLScene&);
 };
 
 #endif

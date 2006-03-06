@@ -17,6 +17,9 @@ SET(MRML_SRCS
     vtkMRMLNode.cxx
     vtkMRMLVolumeNode.cxx
     vtkMRMLModelNode.cxx
+    vtkMRMLStorageNode.cxx
+    vtkMRMLVolumeArchetypeStorageNode.cxx
+    vtkMRMLModelStorageNode.cxx
 )
 
 # Abstract/pure virtual classes

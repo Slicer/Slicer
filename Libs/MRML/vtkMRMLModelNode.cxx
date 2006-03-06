@@ -1,30 +1,21 @@
 /*=auto=========================================================================
-
   Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
-
   See Doc/copyright/copyright.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Program:   3D Slicer
   Module:    $RCSfile: vtkMRMLModelNode.cxx,v $
-  Date:      $Date: 2006/02/11 17:20:10 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2006/03/03 22:26:39 $
+  Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
 
-#include "vtkBYUReader.h" 
-#include "vtkPolyDataReader.h"
-#include "vtkSTLReader.h"
-//TODO: read in a free surfer file
-//#include "vtkFSSurfaceReader.h"
+#include <string>
+#include <ostream>
+#include <sstream>
 
 #include "vtkObjectFactory.h"
 #include "vtkMRMLModelNode.h"
-
-#include <string>
-#include <sstream>
-
-vtkCxxSetObjectMacro(vtkMRMLModelNode, PolyData, vtkPolyData);
 
 //------------------------------------------------------------------------------
 vtkMRMLModelNode* vtkMRMLModelNode::New()
@@ -61,7 +52,6 @@ vtkMRMLModelNode::vtkMRMLModelNode()
   PolyData = NULL;
 
   // Strings
-  this->FileName = NULL;
   this->Color = NULL;
 
   // Numbers
@@ -85,10 +75,6 @@ vtkMRMLModelNode::vtkMRMLModelNode()
 //----------------------------------------------------------------------------
 vtkMRMLModelNode::~vtkMRMLModelNode()
 {
-  if (this->FileName) {
-    delete [] this->FileName;
-    this->FileName = NULL;
-  }
   if (this->Color) {
     delete [] this->Color;
     this->Color = NULL;
@@ -112,10 +98,6 @@ void vtkMRMLModelNode::WriteXML(ostream& of, int nIndent)
   if (this->Name && strcmp(this->Name, "")) 
   {
     of << " name='" << this->Name << "'";
-  }
-  if (this->FileName && strcmp(this->FileName, "")) 
-  {
-    of << " fileName='" << this->FileName << "'";
   }
   if (this->Color && strcmp(this->Color, "")) 
   {
@@ -174,10 +156,7 @@ void vtkMRMLModelNode::ReadXMLAttributes(const char** atts)
   while (*atts != NULL) {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "FileName")) {
-      this->SetFileName(attValue);
-    }
-    else if (!strcmp(attName, "Color")) {
+    if (!strcmp(attName, "Color")) {
       this->SetColor(attValue);
     }
     else if (!strcmp(attName, "ScalarRange")) {
@@ -224,67 +203,6 @@ void vtkMRMLModelNode::ReadXMLAttributes(const char** atts)
   }  
 }
 
-//----------------------------------------------------------------------------
-void vtkMRMLModelNode::ReadData()
-{
-  if (this->PolyData) {
-    this->PolyData->Delete();
-    this->PolyData = NULL;
-  }
-
-  char *fullName;
-  if (this->SceneRootDir != NULL) {
-    fullName = strcat(this->SceneRootDir, this->GetFileName());
-  }
-  else {
-    fullName = this->GetFileName();
-  }
-
-  if (fullName == NULL) {
-    vtkErrorMacro("vtkMRMLModelNode: File name not specified");
-  }
-  // compute file prefix
-  std::string name(fullName);
-  std::string::size_type loc = name.find(".");
-  if( loc == std::string::npos ) {
-    vtkErrorMacro("vtkMRMLModelNode: no file extention specified");
-  }
-  std::string extention = name.substr(loc);
-  
-  if ( extention == std::string(".g")) {
-    vtkBYUReader *reader = vtkBYUReader::New();
-    reader->SetGeometryFileName(fullName);
-    reader->Update();
-    this->SetPolyData(reader->GetOutput());
-  }
-  else if (extention == std::string(".vtk")) {
-    vtkPolyDataReader *reader = vtkPolyDataReader::New();
-    reader->SetFileName(fullName);
-    reader->Update();
-    this->SetPolyData(reader->GetOutput());
-  }  
-  else if ( extention == std::string(".orig") ||
-            extention == std::string(".inflated") || 
-            extention == std::string(".pial") ) {
-    //TODO: read in a free surfer file
-    //vtkFSSurfaceReader *reader = vtkFSSurfaceReader::New();
-    //reader->SetFileName(fullName);
-    //reader->Update();
-    //this->SetPolyData(reader->GetOutput());
-  }  
-  else if (extention == std::string(".stl")) {
-    vtkSTLReader *reader = vtkSTLReader::New();
-    reader->SetFileName(fullName);
-    this->SetPolyData(reader->GetOutput());
-    reader->Update();
-  }
-}
-
-void vtkMRMLModelNode::WriteData()
-{
-  vtkErrorMacro("NOT IMPLEMENTED YET");
-}
-
 
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
@@ -295,7 +213,6 @@ void vtkMRMLModelNode::Copy(vtkMRMLNode *anode)
   vtkMRMLModelNode *node = (vtkMRMLModelNode *) anode;
 
   // Strings
-  this->SetFileName(node->FileName);
 
   this->SetColor(node->Color);
 
@@ -319,8 +236,6 @@ void vtkMRMLModelNode::PrintSelf(ostream& os, vtkIndent indent)
   
   vtkMRMLNode::PrintSelf(os,indent);
 
-  os << indent << "FileName: " <<
-    (this->FileName ? this->FileName : "(none)") << "\n";
   os << indent << "Color: " <<
     (this->Color ? this->Color : "(none)") << "\n";
 

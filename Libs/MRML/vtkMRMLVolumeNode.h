@@ -7,8 +7,8 @@
 
   Program:   3D Slicer
   Module:    $RCSfile: vtkMRMLVolumeNode.h,v $
-  Date:      $Date: 2006/02/11 17:20:11 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2006/03/03 22:26:41 $
+  Version:   $Revision: 1.10 $
 
 =========================================================================auto=*/
 // .NAME vtkMRMLVolumeNode - MRML node for representing a volume (image stack).
@@ -25,13 +25,13 @@
 #define __vtkMRMLVolumeNode_h
 
 #include "vtkMRMLNode.h"
+#include "vtkMRMLStorageNode.h"
 
 #include "vtkMatrix4x4.h"
 #include "vtkTransform.h"
 #include "vtkImageData.h"
 
 class vtkImageData;
-class vtkITKArchetypeImageSeriesScalarReader;
 
 class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLNode
 {
@@ -46,12 +46,6 @@ class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLNode
   // Set node attributes
   virtual void ReadXMLAttributes( const char** atts);
 
-  // Read data for the node
-  virtual void ReadData();
-
-  // Write data for the node
-  virtual void WriteData();
-
   // Description:
   // Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
@@ -65,9 +59,8 @@ class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLNode
   virtual const char* GetNodeTagName() {return "Volume";};
 
   // Description:
-  // A file name or one name in a series
-  vtkSetStringMacro(FileArcheType);
-  vtkGetStringMacro(FileArcheType);
+  // Finds the storage node and read the data
+  virtual void UpdateScene(vtkMRMLScene *scene);
 
   // Description:
   // Two numbers: the number of columns and rows of pixels in each image
@@ -220,6 +213,20 @@ class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLNode
   void GetIjkToRasMatrix(vtkMatrix4x4* mat);
   void SetIjkToRasMatrix(vtkMatrix4x4* mat);
 
+
+  // Description:
+  // Numerical ID of the storage MRML node
+  vtkSetStringMacro(StorageNodeID);
+  vtkGetStringMacro(StorageNodeID);
+
+  // Description:
+  // Numerical ID of the display MRML node
+  vtkSetStringMacro(DisplayNodeID);
+  vtkGetStringMacro(DisplayNodeID);
+
+  vtkGetObjectMacro(StorageNode, vtkMRMLStorageNode);
+  vtkSetObjectMacro(StorageNode, vtkMRMLStorageNode);
+
   vtkGetObjectMacro(ImageData, vtkImageData);
   vtkSetObjectMacro(ImageData, vtkImageData);
 
@@ -232,7 +239,6 @@ protected:
 
 
   // Strings
-  char *FileArcheType;
   char *LUTName;
   char *ScanOrder;
 
@@ -260,9 +266,12 @@ protected:
   double JToRasDirections[3];
   double KToRasDirections[3];
 
-  vtkImageData *ImageData;
+  char *StorageNodeID;
+  char *DisplayNodeID;
 
-  vtkITKArchetypeImageSeriesScalarReader* ImageReader;
+  vtkMRMLStorageNode *StorageNode;
+  vtkImageData       *ImageData;
+
 };
 
 #endif

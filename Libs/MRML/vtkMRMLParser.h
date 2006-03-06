@@ -42,6 +42,7 @@ PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #ifndef __vtkMRMLParser_h
 #define __vtkMRMLParser_h
 
+#include <stack> 
 
 #include "vtkObjectFactory.h"
 #include "vtkXMLParser.h"
@@ -56,18 +57,21 @@ public:
   
   vtkGetObjectMacro(MRMLScene, vtkMRMLScene);
   vtkSetObjectMacro(MRMLScene, vtkMRMLScene);
-
+  
 protected:
   vtkMRMLParser() {MRMLScene=NULL;};
   ~vtkMRMLParser() {};
   vtkMRMLParser(const vtkMRMLParser&);
   void operator=(const vtkMRMLParser&);
   
- virtual void StartElement(const char* name, const char** atts);
-
+  virtual void StartElement(const char* name, const char** atts);
+  virtual void EndElement (const char *name);
 
 private:
   vtkMRMLScene* MRMLScene;
+//BTX
+  std::stack< vtkMRMLNode *> NodeStack;
+//ETX
 };
 
 #endif

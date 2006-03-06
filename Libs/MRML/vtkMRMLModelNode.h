@@ -1,16 +1,13 @@
 /*=auto=========================================================================
-
   Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
-
   See Doc/copyright/copyright.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
-
   Program:   3D Slicer
   Module:    $RCSfile: vtkMRMLModelNode.h,v $
-  Date:      $Date: 2006/02/11 17:20:11 $
-  Version:   $Revision: 1.2 $
-
+  Date:      $Date: 2006/03/03 22:26:39 $
+  Version:   $Revision: 1.4 $
 =========================================================================auto=*/
+
 // .NAME vtkMRMLModelNode - MRML node to represent a 3D surface model.
 // .SECTION Description
 // Model nodes describe polygonal data.  They indicate where the model is 
@@ -21,10 +18,11 @@
 #ifndef __vtkMRMLModelNode_h
 #define __vtkMRMLModelNode_h
 
+#include <string>
+
 #include "vtkPolyData.h" 
 #include "vtkMRMLNode.h"
 
-#include <string>
 
 class VTK_MRML_EXPORT vtkMRMLModelNode : public vtkMRMLNode
 {
@@ -43,12 +41,6 @@ public:
   // Set node attributes
   virtual void ReadXMLAttributes( const char** atts);
 
-  // Read data for the node
-  virtual void ReadData();
-
-  // Write data for the node
-  virtual void WriteData();
-
   // Description:
   // Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
@@ -61,11 +53,6 @@ public:
   // Description:
   // Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "Model";};
-
-  // Description:
-  // Path of the data file, relative to the MRML file
-  vtkSetStringMacro(FileName);
-  vtkGetStringMacro(FileName);
 
   // Description:
   // Name of the model's color, which is defined by a Color node in a MRML file
@@ -125,19 +112,20 @@ public:
   vtkGetMacro(LUTName,int);
   vtkSetMacro(LUTName,int);
 
-  // Description:
-  // Set/Get PolyData
+    
   vtkGetObjectMacro(PolyData, vtkPolyData);
-  virtual void SetPolyData(vtkPolyData*);
+  vtkSetObjectMacro(PolyData, vtkPolyData);
 
 protected:
   vtkMRMLModelNode();
   ~vtkMRMLModelNode();
+  vtkMRMLModelNode(const vtkMRMLModelNode&);
+  void operator=(const vtkMRMLModelNode&);
+
   // Data
   vtkPolyData *PolyData;
 
   // Strings
-  char *FileName;
   char *Color;
   int LUTName;
     
@@ -155,8 +143,6 @@ protected:
   // Arrays
   vtkFloatingPointType ScalarRange[2];
 
-  vtkMRMLModelNode(const vtkMRMLModelNode&);
-  void operator=(const vtkMRMLModelNode&);
 };
 
 #endif

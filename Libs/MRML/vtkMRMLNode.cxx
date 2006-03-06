@@ -7,11 +7,13 @@ or http://www.slicer.org/copyright/copyright.txt for details.
 
 Program:   3D Slicer
 Module:    $RCSfile: vtkMRMLNode.cxx,v $
-Date:      $Date: 2006/02/07 19:19:35 $
-Version:   $Revision: 1.4 $
+Date:      $Date: 2006/03/03 22:26:39 $
+Version:   $Revision: 1.5 $
 
 =========================================================================auto=*/
 #include "vtkMRMLNode.h"
+#include "vtkMRMLScene.h"
+
 #include "vtkObjectFactory.h"
 
 //------------------------------------------------------------------------------
@@ -30,7 +32,7 @@ vtkMRMLNode* vtkMRMLNode::New()
 //------------------------------------------------------------------------------
 vtkMRMLNode::vtkMRMLNode()
 {
-  this->ID = 0;
+  this->ID = NULL;
   
   // By default nodes have no effect on indentation
   this->Indent = 0;
@@ -44,7 +46,6 @@ vtkMRMLNode::vtkMRMLNode()
   this->Name = NULL;
   this->SetName("");
 
-  this->SpaceName = NULL;
   this->SceneRootDir = NULL;
 }
 
@@ -52,16 +53,17 @@ vtkMRMLNode::vtkMRMLNode()
 vtkMRMLNode::~vtkMRMLNode()
 {
   this->SetDescription(NULL);
-  this->SetSpaceName(NULL);
   this->SetName(NULL);
+  this->SetID(NULL);
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLNode::Copy(vtkMRMLNode *node)
 {
   this->SetDescription(node->GetDescription());
-  this->SetSpaceName(node->GetSpaceName());
   this->SetName(strcat(node->GetName(), "1"));
+  this->SetID(node->GetID());
+  //TODO create unique id
 }
 
 //----------------------------------------------------------------------------
@@ -95,14 +97,14 @@ void vtkMRMLNode::ReadXMLAttributes(const char** atts)
   while (*atts != NULL) {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "Name")) {
+    if (!strcmp(attName, "ID")) {
+      this->SetID(attValue);
+    }
+    else if (!strcmp(attName, "Name")) {
       this->SetName(attValue);
     }
     else if (!strcmp(attName, "Description")) {
       this->SetDescription(attValue);
-    }
-    else if (!strcmp(attName, "SpaceName")) {
-      this->SetSpaceName(attValue);
     }
   } 
   return;

@@ -7,8 +7,8 @@ or http://www.slicer.org/copyright/copyright.txt for details.
 
 Program:   3D Slicer
 Module:    $RCSfile: vtkMRMLVolumeNode.cxx,v $
-Date:      $Date: 2006/02/11 17:20:11 $
-Version:   $Revision: 1.11 $
+Date:      $Date: 2006/03/03 22:26:41 $
+Version:   $Revision: 1.12 $
 
 =========================================================================auto=*/
 
@@ -17,9 +17,9 @@ Version:   $Revision: 1.11 $
 #include <sstream>
 
 #include "vtkObjectFactory.h"
-#include "vtkMRMLVolumeNode.h"
 
-#include "vtkITKArchetypeImageSeriesScalarReader.h"
+#include "vtkMRMLVolumeNode.h"
+#include "vtkMRMLScene.h"
 
 // Initialize static member that controls resampling -- 
 // old comment: "This offset will be changed to 0.5 from 0.0 per 2/8/2002 Slicer 
@@ -57,7 +57,6 @@ vtkMRMLNode* vtkMRMLVolumeNode::CreateNodeInstance()
 vtkMRMLVolumeNode::vtkMRMLVolumeNode()
 {
   // Strings
-  this->FileArcheType = NULL;
   this->LUTName = NULL;
   this->ScanOrder = NULL;
 
@@ -88,18 +87,15 @@ vtkMRMLVolumeNode::vtkMRMLVolumeNode()
   this->SetFileSpacing(0, 0, 0);
 
   // Data
+  this->StorageNodeID = NULL;
+  this->DisplayNodeID = NULL;
   this->ImageData = NULL;
-  this->ImageReader = vtkITKArchetypeImageSeriesScalarReader::New();
+  this->StorageNode = NULL;
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLVolumeNode::~vtkMRMLVolumeNode()
 {
-  if (this->FileArcheType)
-    {
-      delete [] this->FileArcheType;
-      this->FileArcheType = NULL;
-    }
   if (this->LUTName)
     {
       delete [] this->LUTName;
@@ -111,10 +107,27 @@ vtkMRMLVolumeNode::~vtkMRMLVolumeNode()
       this->ScanOrder = NULL;
     }
 
-  this->ImageReader->Delete();
-  if (this->ImageData) {
-    this->ImageData->Delete();
-  }
+
+  if (this->StorageNodeID)
+    {
+      delete [] this->StorageNodeID;
+      this->StorageNodeID = NULL;
+    }
+  if (this->DisplayNodeID)
+    {
+      delete [] this->DisplayNodeID;
+      this->DisplayNodeID = NULL;
+    }
+
+  if (this->ImageData) 
+    {
+      this->ImageData->Delete();
+    }
+  
+  if (this->StorageNode) 
+    {
+      this->StorageNode->Delete();
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -156,10 +169,7 @@ void vtkMRMLVolumeNode::ReadXMLAttributes(const char** atts)
   while (*atts != NULL) {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "FileArcheType")) {
-      this->SetFileArcheType(attValue);
-    }
-    else if (!strcmp(attName, "FileDimensions")) {
+    if (!strcmp(attName, "FileDimensions")) {
       std::stringstream ss;
       ss << attValue;
       ss >> FileDimensions[0];
@@ -197,60 +207,13 @@ void vtkMRMLVolumeNode::ReadXMLAttributes(const char** atts)
         this->IjkToRasDirections[i] = val;
       }
     }
+    else if (!strcmp(attName, "StorageNodeID")) {
+      this->SetStorageNodeID(attValue);
+    }
+    else if (!strcmp(attName, "DisplayNodeID")) {
+      this->SetDisplayNodeID(attValue);
+    }
   }  
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLVolumeNode::ReadData()
-{
-  if (this->ImageData) {
-    this->ImageData->Delete();
-    this->ImageData = NULL;
-  }
-
-  char *fullName;
-  if (this->SceneRootDir != NULL) {
-    fullName = strcat(this->SceneRootDir, this->GetFileArcheType());
-  }
-  else {
-    fullName = this->GetFileArcheType();
-  }
-
-  if (fullName == NULL) {
-    vtkErrorMacro("vtkMRMLVolumeNode: File name not specified");
-  }
-
-  this->ImageReader->SetArchetype(fullName);
-  this->ImageReader->Update();
-  this->ImageData = this->ImageReader->GetOutput();
-
-  // set volume attributes
-  vtkMatrix4x4* mat = this->ImageReader->GetRasToIjkMatrix();
-  mat->Invert();
-
-  // normalize direction vectors
-  for (int row=0; row<3; row++) {
-    double len =0;
-    int col;
-    for (col=0; col<3; col++) {
-      len += mat->GetElement(row, col) * mat->GetElement(row, col);
-    }
-    len = sqrt(len);
-    for (col=0; col<3; col++) {
-      mat->SetElement(row, col,  mat->GetElement(row, col)/len);
-    }
-  }
-  this->SetIjkToRasMatrix(mat);
-
-  if (!(this->FileSpacing[0] == 0 && this->FileSpacing[1] == 0 && this->FileSpacing[2] == 0) ) {
-    this->ImageData->SetSpacing(FileSpacing[0], FileSpacing[1], FileSpacing[2]);
-  }
-
-}
-
-void vtkMRMLVolumeNode::WriteData()
-{
-  vtkErrorMacro("NOT IMPLEMENTED YET");
 }
 
 //----------------------------------------------------------------------------
@@ -262,7 +225,6 @@ void vtkMRMLVolumeNode::Copy(vtkMRMLNode *anode)
   vtkMRMLVolumeNode *node = (vtkMRMLVolumeNode *) anode;
 
   // Strings
-  this->SetFileArcheType(node->FileArcheType);
   this->SetLUTName(node->LUTName);
   this->SetScanOrder(node->ScanOrder);
 
@@ -291,6 +253,11 @@ void vtkMRMLVolumeNode::Copy(vtkMRMLNode *anode)
   if (this->ImageData) {
     this->SetImageData(node->ImageData);
   }
+  if (this->StorageNode) {
+    this->SetStorageNode(node->StorageNode);
+  }
+  this->SetStorageNodeID(node->StorageNodeID);
+  this->SetDisplayNodeID(node->DisplayNodeID);
 }
 
 //----------------------------------------------------------------------------
@@ -300,8 +267,6 @@ void vtkMRMLVolumeNode::PrintSelf(ostream& os, vtkIndent indent)
   
   vtkMRMLNode::PrintSelf(os,indent);
 
-  os << indent << "FileArcheType: " <<
-    (this->FileArcheType ? this->FileArcheType : "(none)") << "\n";
   os << indent << "ScanOrder: " <<
     (this->ScanOrder ? this->ScanOrder : "(none)") << "\n";
   os << indent << "LUTName: " <<
@@ -338,6 +303,12 @@ void vtkMRMLVolumeNode::PrintSelf(ostream& os, vtkIndent indent)
     os << indent << ", " << this->IjkToRasDirections[idx];
   }
   os << ")\n";
+
+  os << indent << "StorageNodeID: " <<
+    (this->StorageNodeID ? this->StorageNodeID : "(none)") << "\n";
+
+  os << indent << "DisplayNodeID: " <<
+    (this->DisplayNodeID ? this->DisplayNodeID : "(none)") << "\n";
 
   if (this->ImageData != NULL) {
     os << indent << "ImageData:\n";
@@ -517,5 +488,25 @@ const char* vtkMRMLVolumeNode::ComputeScanOrderFromIjkToRas(vtkMatrix4x4 *ijkToR
   }        
  
 }
+
+
+void vtkMRMLVolumeNode::UpdateScene(vtkMRMLScene *scene)
+{
+  if (this->GetStorageNodeID() == NULL) {
+    vtkErrorMacro("No reference StorageNodeID found");
+    return;
+  }
+
+  vtkCollection* nodes = scene->GetNodesByID(StorageNodeID);
+  if (nodes->GetNumberOfItems() != 1) {
+    vtkErrorMacro("Not unique reference to StorageNode: ID" << StorageNodeID);
+  }
+  vtkMRMLStorageNode *node  = dynamic_cast < vtkMRMLStorageNode *>(nodes->GetItemAsObject(0));
+  if (node) {
+    node->ReadData(this);
+  }
+  
+}
+
 
 // End
