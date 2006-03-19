@@ -1,13 +1,16 @@
 /*=auto=========================================================================
+
   Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
+
   See Doc/copyright/copyright.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
+
   Program:   3D Slicer
   Module:    $RCSfile: vtkMRMLModelNode.h,v $
-  Date:      $Date: 2006/03/03 22:26:39 $
-  Version:   $Revision: 1.4 $
-=========================================================================auto=*/
+  Date:      $Date: 2006/03/19 17:12:28 $
+  Version:   $Revision: 1.6 $
 
+=========================================================================auto=*/
 // .NAME vtkMRMLModelNode - MRML node to represent a 3D surface model.
 // .SECTION Description
 // Model nodes describe polygonal data.  They indicate where the model is 
@@ -21,6 +24,8 @@
 #include <string>
 
 #include "vtkPolyData.h" 
+
+#include "vtkMRML.h"
 #include "vtkMRMLNode.h"
 
 

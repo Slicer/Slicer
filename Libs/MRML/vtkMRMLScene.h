@@ -55,17 +55,18 @@ PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "vtkCollection.h"
 #include "vtkObjectFactory.h"
 
+#include "vtkMRML.h"
 #include "vtkMRMLNode.h"
 
 class vtkTransform;
 
-class VTK_MRML_EXPORT vtkMRMLScene : public vtkCollection
+class VTK_MRML_EXPORT vtkMRMLScene : public vtkObject
 {
 public:
   static vtkMRMLScene *New();
   vtkTypeMacro(vtkMRMLScene,vtkCollection);
   void PrintSelf(ostream& os, vtkIndent indent);
-  
+
   // Filename should be flie://path/file.xml
   vtkSetStringMacro(URL);
   vtkGetStringMacro(URL);
@@ -85,23 +86,23 @@ public:
 
   // Description:
   // Add a path to the list.
-  void AddNode(vtkMRMLNode *n); 
-
+  void AddNode(vtkMRMLNode *n);
+  
   // Description:
   // Remove a path from the list.
   void RemoveNode(vtkMRMLNode *n) {
-    this->vtkCollection::RemoveItem((vtkObject *)n);};
+    this->CurrentScene->vtkCollection::RemoveItem((vtkObject *)n);};
   
   // Description:
   // Determine whether a particular node is present. Returns its position
   // in the list.
   int IsNodePresent(vtkMRMLNode *n) {
-    return this->vtkCollection::IsItemPresent((vtkObject *)n);};
+    return this->CurrentScene->vtkCollection::IsItemPresent((vtkObject *)n);};
   
   // Description:
   // Get the next path in the list.
   vtkMRMLNode *GetNextNode() {
-    return (vtkMRMLNode *)(this->GetNextItemAsObject());};
+    return (vtkMRMLNode *)(this->CurrentScene->GetNextItemAsObject());};
   
   vtkMRMLNode *GetNextNodeByClass(const char* className);
   
@@ -136,12 +137,38 @@ public:
   
   int GetTransformBetweenSpaces( const char *space1, const char *space2, 
                                  vtkTransform *xform );
-  
+
+  // Undo API
+  void SetUndoOn() {UndoFlag=true;};
+  void SetUndoOff() {UndoFlag=false;};
+  int  GetUndoFlag() {return UndoFlag;};
+  void SetUndoFlag(int flag) {UndoFlag = flag;};
+
+  void Undo();
+
+  void SaveStateForUndo(vtkMRMLNode *node);
+  void SaveStateForUndo(vtkCollection *nodes);
+  //BTX
+  void SaveStateForUndo(std::vector<vtkMRMLNode *> nodes);
+  //ETX
+
 protected:
   vtkMRMLScene();
-  ~vtkMRMLScene() {};
+  ~vtkMRMLScene();
   vtkMRMLScene(const vtkMRMLScene&);
   void operator=(const vtkMRMLScene&);
+  
+
+  void PushIntoUndoStack();
+
+  void ReplaceNodeInUndoStack(vtkMRMLNode *node, vtkMRMLNode *withNode);
+  
+  vtkCollection* CurrentScene;
+  int UndoStackSize;
+  bool UndoFlag;
+  //BTX
+  std::list< vtkCollection* >  UndoStack;
+  //ETX
   
   char *URL;
   
@@ -152,8 +179,6 @@ protected:
   std::vector< std::string > RegisteredNodeTags;
   //ETX
   
-  vtkMRMLNode* InitTraversalByClass(const char *className);
-  
   vtkSetMacro(ErrorCode,unsigned long);
   vtkGetMacro(ErrorCode,unsigned long);
 
@@ -162,14 +187,15 @@ protected:
   
 private:
   // hide the standard AddItem from the user and the compiler.
-  void AddItem(vtkObject *o) { this->vtkCollection::AddItem(o); };
-  void RemoveItem(vtkObject *o) { this->vtkCollection::RemoveItem(o); };
-  void RemoveItem(int i) { this->vtkCollection::RemoveItem(i); };
-  int  IsItemPresent(vtkObject *o) { return this->vtkCollection::IsItemPresent(o);};
+  void AddItem(vtkObject *o) { this->CurrentScene->vtkCollection::AddItem(o); };
+  void RemoveItem(vtkObject *o) { this->CurrentScene->vtkCollection::RemoveItem(o); };
+  void RemoveItem(int i) { this->CurrentScene->vtkCollection::RemoveItem(i); };
+  int  IsItemPresent(vtkObject *o) { return this->CurrentScene->vtkCollection::IsItemPresent(o);};
   
   unsigned long ErrorCode;
 
   char* ClassNameList;
+
 };
 
 #endif

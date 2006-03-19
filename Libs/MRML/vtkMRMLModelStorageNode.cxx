@@ -7,8 +7,8 @@ or http://www.slicer.org/copyright/copyright.txt for details.
 
 Program:   3D Slicer
 Module:    $RCSfile: vtkMRMLModelStorageNode.cxx,v $
-Date:      $Date: 2006/03/03 22:26:39 $
-Version:   $Revision: 1.1 $
+Date:      $Date: 2006/03/17 15:10:09 $
+Version:   $Revision: 1.2 $
 
 =========================================================================auto=*/
 
@@ -104,10 +104,9 @@ void vtkMRMLModelStorageNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, StorageID
 void vtkMRMLModelStorageNode::Copy(vtkMRMLNode *anode)
 {
-  vtkMRMLStorageNode::Copy(anode);
+  Superclass::Copy(anode);
   vtkMRMLModelStorageNode *node = (vtkMRMLModelStorageNode *) anode;
 
-  // Strings
   this->SetFileName(node->FileName);
 }
 

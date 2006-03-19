@@ -12,14 +12,16 @@ CONFIGURE_FILE(
 # Sources
 
 SET(MRML_SRCS
-    vtkMRMLScene.cxx
-    vtkMRMLParser.cxx
-    vtkMRMLNode.cxx
-    vtkMRMLVolumeNode.cxx
-    vtkMRMLModelNode.cxx
-    vtkMRMLStorageNode.cxx
-    vtkMRMLVolumeArchetypeStorageNode.cxx
-    vtkMRMLModelStorageNode.cxx
+        vtkMRMLScene.cxx
+        vtkMRMLParser.cxx
+        vtkMRMLNode.cxx
+        vtkMRMLVolumeNode.cxx
+        vtkMRMLModelNode.cxx
+        vtkMRMLStorageNode.cxx
+        vtkMRMLVolumeArchetypeStorageNode.cxx
+        vtkMRMLVolumeHeaderlessStorageNode.cxx
+        vtkMRMLModelStorageNode.cxx
+        vtkMRMLVolumeDisplayNode.cxx
 )
 
 # Abstract/pure virtual classes
@@ -56,6 +58,7 @@ ADD_LIBRARY(MRML
 TARGET_LINK_LIBRARIES(MRML 
   vtkITK
   vtkCommonTCL
+  vtkImagingTCL
   vtkFilteringTCL
   vtkIOTCL
   ITKAlgorithms

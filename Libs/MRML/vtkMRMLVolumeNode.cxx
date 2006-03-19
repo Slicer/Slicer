@@ -7,8 +7,8 @@ or http://www.slicer.org/copyright/copyright.txt for details.
 
 Program:   3D Slicer
 Module:    $RCSfile: vtkMRMLVolumeNode.cxx,v $
-Date:      $Date: 2006/03/03 22:26:41 $
-Version:   $Revision: 1.12 $
+Date:      $Date: 2006/03/17 17:01:53 $
+Version:   $Revision: 1.14 $
 
 =========================================================================auto=*/
 
@@ -56,37 +56,8 @@ vtkMRMLNode* vtkMRMLVolumeNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLVolumeNode::vtkMRMLVolumeNode()
 {
-  // Strings
-  this->LUTName = NULL;
-  this->ScanOrder = NULL;
-
-  // Numbers
-  this->FileScalarType = VTK_SHORT;
-  this->FileNumberOfScalarComponents = 0;
   this->LabelMap = 0;
-  this->Interpolate = 1;
-  this->FileLittleEndian = 0;
 
-  this->AutoWindowLevel = 1;
-  this->Window = 256;
-  this->Level = 128;
-  this->AutoThreshold = 0;
-  this->ApplyThreshold = 0;
-  this->LowerThreshold = VTK_SHORT_MIN;
-  this->UpperThreshold = VTK_SHORT_MAX;
-
-  memset(this->FileDimensions,0,2*sizeof(int));
-  memset(this->FileSpacing,0,3*sizeof(vtkFloatingPointType));
-
-  // ScanOrder can never be NULL
-  this->ScanOrder = new char[3];
-  strcpy(this->ScanOrder, "");
-
-  // Initialize 
-  this->SetFileDimensions(0, 0, 0);
-  this->SetFileSpacing(0, 0, 0);
-
-  // Data
   this->StorageNodeID = NULL;
   this->DisplayNodeID = NULL;
   this->ImageData = NULL;
@@ -96,18 +67,6 @@ vtkMRMLVolumeNode::vtkMRMLVolumeNode()
 //----------------------------------------------------------------------------
 vtkMRMLVolumeNode::~vtkMRMLVolumeNode()
 {
-  if (this->LUTName)
-    {
-      delete [] this->LUTName;
-      this->LUTName = NULL;
-    }
-  if (this->ScanOrder)
-    {
-      delete [] this->ScanOrder;
-      this->ScanOrder = NULL;
-    }
-
-
   if (this->StorageNodeID)
     {
       delete [] this->StorageNodeID;
@@ -131,31 +90,29 @@ vtkMRMLVolumeNode::~vtkMRMLVolumeNode()
 }
 
 //----------------------------------------------------------------------------
-const char* vtkMRMLVolumeNode::GetFileScalarTypeAsString()
-{
-  switch (this->FileScalarType)
-    {
-    case VTK_VOID:           return "Void"; break;
-    case VTK_BIT:            return "Bit"; break;
-    case VTK_CHAR:           return "Char"; break;
-    case VTK_UNSIGNED_CHAR:  return "UnsignedChar"; break;
-    case VTK_SHORT:          return "Short"; break;
-    case VTK_UNSIGNED_SHORT: return "UnsignedShort"; break;
-    case VTK_INT:            return "Int"; break;
-    case VTK_UNSIGNED_INT:   return "UnsignedInt"; break;
-    case VTK_LONG:           return "Long"; break;
-    case VTK_UNSIGNED_LONG:  return "UnsignedLong"; break;
-    case VTK_FLOAT:          return "Float"; break;
-    case VTK_DOUBLE:         return "Double"; break;
-    }
-  return "Short";
-}
-
-//----------------------------------------------------------------------------
 void vtkMRMLVolumeNode::WriteXML(ostream& of, int nIndent)
 {
-  vtkErrorMacro("NOT IMPLEMENTED YET");
-  (void)of; (void)nIndent;
+  Superclass::WriteXML(of, nIndent);
+
+  vtkIndent indent(nIndent);
+
+  if (this->StorageNodeID != NULL) {
+    of << indent << "StorageNodeID='" << this->StorageNodeID << "' ";
+  }
+  if (this->DisplayNodeID != NULL) {
+    of << indent << "DisplayNodeID='" << this->DisplayNodeID << "' ";
+  }
+  if (this->IjkToRasDirections != NULL) {
+    std::stringstream ss;
+    for (int i=0; i<9; i++) {
+      ss << this->IjkToRasDirections[i];
+      if (i!=8) {
+        ss << " ";
+      }
+    }
+    of << indent << "IjkToRasDirections='" << ss.str() << "' ";
+  }
+
 }
 
 //----------------------------------------------------------------------------
@@ -169,36 +126,7 @@ void vtkMRMLVolumeNode::ReadXMLAttributes(const char** atts)
   while (*atts != NULL) {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "FileDimensions")) {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> FileDimensions[0];
-      ss >> FileDimensions[1];
-      ss >> FileDimensions[2];
-    }
-    else if (!strcmp(attName, "FileSpacing")) {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> FileSpacing[0];
-      ss >> FileSpacing[1];
-      ss >> FileSpacing[2];
-    }
-    else if (!strcmp(attName, "FileNumberOfScalarComponents")) {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> FileNumberOfScalarComponents;
-    }
-    else if (!strcmp(attName, "FileScalarType")) {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> FileScalarType;
-    }
-    else if (!strcmp(attName, "FileLittleEndian")) {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> FileLittleEndian;
-    }
-    else if (!strcmp(attName, "IjkToRasDirections")) {
+    if (!strcmp(attName, "IjkToRasDirections")) {
       std::stringstream ss;
       double val;
       ss << attValue;
@@ -221,30 +149,10 @@ void vtkMRMLVolumeNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, VolumeID
 void vtkMRMLVolumeNode::Copy(vtkMRMLNode *anode)
 {
-  vtkMRMLNode::Copy(anode);
+  Superclass::Copy(anode);
   vtkMRMLVolumeNode *node = (vtkMRMLVolumeNode *) anode;
 
-  // Strings
-  this->SetLUTName(node->LUTName);
-  this->SetScanOrder(node->ScanOrder);
-
-  // Vectors
-  this->SetFileSpacing(node->FileSpacing);
-  this->SetFileDimensions(node->FileDimensions);
-  
-  // Numbers
   this->SetLabelMap(node->LabelMap);
-  this->SetFileLittleEndian(node->FileLittleEndian);
-  this->SetFileScalarType(node->FileScalarType);
-  this->SetFileNumberOfScalarComponents(node->FileNumberOfScalarComponents);
-  this->SetAutoWindowLevel(node->AutoWindowLevel);
-  this->SetWindow(node->Window);
-  this->SetLevel(node->Level);
-  this->SetAutoThreshold(node->AutoThreshold);
-  this->SetApplyThreshold(node->ApplyThreshold);
-  this->SetUpperThreshold(node->UpperThreshold);
-  this->SetLowerThreshold(node->LowerThreshold);
-  this->SetInterpolate(node->Interpolate);
 
   // Matrices
   for(int i=0; i<9; i++) {
@@ -266,37 +174,7 @@ void vtkMRMLVolumeNode::PrintSelf(ostream& os, vtkIndent indent)
   int idx;
   
   vtkMRMLNode::PrintSelf(os,indent);
-
-  os << indent << "ScanOrder: " <<
-    (this->ScanOrder ? this->ScanOrder : "(none)") << "\n";
-  os << indent << "LUTName: " <<
-    (this->LUTName ? this->LUTName : "(none)") << "\n";
-
   os << indent << "LabelMap:          " << this->LabelMap << "\n";
-  os << indent << "FileLittleEndian:  " << this->FileLittleEndian << "\n";
-  os << indent << "FileScalarType:    " << this->FileScalarType << "\n";
-  os << indent << "FileNumberOfScalarComponents:  " << this->FileNumberOfScalarComponents << "\n";
-  os << indent << "AutoWindowLevel:   " << this->AutoWindowLevel << "\n";
-  os << indent << "Window:            " << this->Window << "\n";
-  os << indent << "Level:             " << this->Level << "\n";
-  os << indent << "AutoThreshold:     " << this->AutoThreshold << "\n";
-  os << indent << "ApplyThreshold:    " << this->ApplyThreshold << "\n";
-  os << indent << "UpperThreshold:    " << this->UpperThreshold << "\n";
-  os << indent << "LowerThreshold:    " << this->LowerThreshold << "\n";
-  os << indent << "Interpolate:       " << this->Interpolate << "\n";
-
-  os << "FileSpacing:\n";
-  for (idx = 0; idx < 3; ++idx) {
-    os << indent << ", " << this->FileSpacing[idx];
-  }
-  os << ")\n";
-  
-  os << "FileDimensions:\n";
-  for (idx = 0; idx < 3; ++idx) {
-    os << indent << ", " << this->FileDimensions[idx];
-  }
-  os << ")\n";
-  
   // Matrices
   os << "IjkToRasDirections:\n";
   for (idx = 0; idx < 9; ++idx) {
@@ -497,13 +375,23 @@ void vtkMRMLVolumeNode::UpdateScene(vtkMRMLScene *scene)
     return;
   }
 
-  vtkCollection* nodes = scene->GetNodesByID(StorageNodeID);
+  vtkCollection* nodes = scene->GetNodesByID(this->StorageNodeID);
   if (nodes->GetNumberOfItems() != 1) {
     vtkErrorMacro("Not unique reference to StorageNode: ID" << StorageNodeID);
   }
   vtkMRMLStorageNode *node  = dynamic_cast < vtkMRMLStorageNode *>(nodes->GetItemAsObject(0));
   if (node) {
     node->ReadData(this);
+  }
+  
+  if (this->DisplayNodeID != NULL) {
+  nodes = scene->GetNodesByID(this->DisplayNodeID);
+    if (nodes->GetNumberOfItems() != 1) {
+      vtkErrorMacro("Not unique reference to DisplayNodeID: ID" << StorageNodeID);
+    }
+    vtkMRMLVolumeDisplayNode *displayNode  = dynamic_cast < vtkMRMLVolumeDisplayNode *>(nodes->GetItemAsObject(0));
+
+    this->SetDisplayNode(displayNode);
   }
   
 }

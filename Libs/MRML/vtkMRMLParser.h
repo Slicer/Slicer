@@ -46,6 +46,8 @@ PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include "vtkObjectFactory.h"
 #include "vtkXMLParser.h"
+
+#include "vtkMRML.h"
 #include "vtkMRMLScene.h"
 
 class VTK_MRML_EXPORT vtkMRMLParser : public vtkXMLParser
@@ -55,8 +57,8 @@ public:
   vtkTypeMacro(vtkMRMLParser,vtkCollection);
   void PrintSelf(ostream& os, vtkIndent indent){}
   
-  vtkGetObjectMacro(MRMLScene, vtkMRMLScene);
-  vtkSetObjectMacro(MRMLScene, vtkMRMLScene);
+  vtkMRMLScene* GetMRMLScene() {return this->MRMLScene;};
+  void SetMRMLScene(vtkMRMLScene* scene) {this->MRMLScene = scene;};
   
 protected:
   vtkMRMLParser() {MRMLScene=NULL;};

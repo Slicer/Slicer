@@ -7,8 +7,8 @@ or http://www.slicer.org/copyright/copyright.txt for details.
 
 Program:   3D Slicer
 Module:    $RCSfile: vtkMRMLNode.cxx,v $
-Date:      $Date: 2006/03/03 22:26:39 $
-Version:   $Revision: 1.5 $
+Date:      $Date: 2006/03/17 15:10:09 $
+Version:   $Revision: 1.11 $
 
 =========================================================================auto=*/
 #include "vtkMRMLNode.h"
@@ -47,6 +47,7 @@ vtkMRMLNode::vtkMRMLNode()
   this->SetName("");
 
   this->SceneRootDir = NULL;
+  this->Scene = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -61,9 +62,10 @@ vtkMRMLNode::~vtkMRMLNode()
 void vtkMRMLNode::Copy(vtkMRMLNode *node)
 {
   this->SetDescription(node->GetDescription());
-  this->SetName(strcat(node->GetName(), "1"));
-  this->SetID(node->GetID());
-  //TODO create unique id
+  this->SetName(node->GetName());
+  this->SetID( node->GetID() );
+
+  this->SetScene(node->GetScene());
 }
 
 //----------------------------------------------------------------------------
@@ -86,7 +88,16 @@ void vtkMRMLNode::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 void vtkMRMLNode::WriteXML(ostream& of, int nIndent)
 {
-  vtkErrorMacro("NOT IMPLEMENTED YET");
+  vtkIndent indent(nIndent);
+  if (this->ID != NULL) {
+    of << indent << "ID='" << this->ID << "' ";
+  }
+  if (this->Name != NULL) {
+    of << indent << "Name='" << this->Name << "' ";
+  }
+  if (this->Description != NULL) {
+    of << indent << "Description='" << this->Description << "' ";
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -109,3 +120,4 @@ void vtkMRMLNode::ReadXMLAttributes(const char** atts)
   } 
   return;
 }
+

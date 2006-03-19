@@ -7,8 +7,8 @@
 
   Program:   3D Slicer
   Module:    $RCSfile: vtkMRMLVolumeNode.h,v $
-  Date:      $Date: 2006/03/03 22:26:41 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2006/03/19 17:12:29 $
+  Version:   $Revision: 1.13 $
 
 =========================================================================auto=*/
 // .NAME vtkMRMLVolumeNode - MRML node for representing a volume (image stack).
@@ -24,8 +24,10 @@
 #ifndef __vtkMRMLVolumeNode_h
 #define __vtkMRMLVolumeNode_h
 
+#include "vtkMRML.h"
 #include "vtkMRMLNode.h"
 #include "vtkMRMLStorageNode.h"
+#include "vtkMRMLVolumeDisplayNode.h"
 
 #include "vtkMatrix4x4.h"
 #include "vtkTransform.h"
@@ -62,68 +64,10 @@ class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLNode
   // Finds the storage node and read the data
   virtual void UpdateScene(vtkMRMLScene *scene);
 
-  // Description:
-  // Two numbers: the number of columns and rows of pixels in each image
-  vtkGetVector3Macro(FileDimensions, int);
-  vtkSetVector3Macro(FileDimensions, int);
-
-  // Description:
-  // Three numbers for the dimensions of each voxel, in millimeters
-  vtkGetVector3Macro(FileSpacing, vtkFloatingPointType);
-  vtkSetVector3Macro(FileSpacing, vtkFloatingPointType);
-  
-  // Description:
-  // The type of data in the file. One of: Char, UnsignedChar, Short, 
-  // UnsignedShort, Int, UnsignedInt, Long, UnsignedLong, Float, Double
-  vtkSetMacro(FileScalarType, int);
-  vtkGetMacro(FileScalarType, int);
-
-  void SetFileScalarTypeToUnsignedChar() 
-    {this->SetFileScalarType(VTK_UNSIGNED_CHAR);};
-  void SetFileScalarTypeToChar() 
-    {this->SetFileScalarType(VTK_CHAR);};
-  void SetFileScalarTypeToShort() {
-    this->SetFileScalarType(VTK_SHORT);};
-  void SetFileScalarTypeToUnsignedShort() 
-    {this->SetFileScalarType(VTK_UNSIGNED_SHORT);};
-  void SetFileScalarTypeToInt() {
-    this->SetFileScalarType(VTK_INT);};
-  void SetFileScalarTypeToUnsignedInt() {
-    this->SetFileScalarType(VTK_UNSIGNED_INT);};
-  void SetFileScalarTypeToLong() {
-    this->SetFileScalarType(VTK_LONG);};
-  void SetFileScalarTypeToUnsignedLong() {
-    this->SetFileScalarType(VTK_UNSIGNED_LONG);};
-  void SetFileScalarTypeToFloat() {
-    this->SetFileScalarType(VTK_FLOAT);};
-  void SetFileScalarTypeToDouble() {
-    this->SetFileScalarType(VTK_DOUBLE);};
-
-  const char* GetFileScalarTypeAsString();
-  
-  // Description:
-  // The number of scalar components for each voxel. 
-  // Gray-level data has 1. Color data has 3
-  vtkGetMacro(FileNumberOfScalarComponents, int);
-  vtkSetMacro(FileNumberOfScalarComponents, int);
-
-  // Description:
-  // Describes the order of bytes for each voxel.  Little endian 
-  // positions the least-significant byte on the rightmost end, 
-  // and is true of data generated on a PC or SGI.
-  vtkGetMacro(FileLittleEndian, int);
-  vtkSetMacro(FileLittleEndian, int);
-  vtkBooleanMacro(FileLittleEndian, int);
-
   //--------------------------------------------------------------------------
   // Display Information
   //--------------------------------------------------------------------------
   
-  // Description:
-  // Numerical ID of the color lookup table to use for rendering the volume
-  vtkSetStringMacro(LUTName);
-  vtkGetStringMacro(LUTName);
-
   // Description:
   // Indicates if this volume is a label map, which is the output of 
   // segmentation that labels each voxel according to its tissue type.  
@@ -131,54 +75,6 @@ class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLNode
   vtkGetMacro(LabelMap, int);
   vtkSetMacro(LabelMap, int);
   vtkBooleanMacro(LabelMap, int);
-
-  // Description:
-  // Specifies whether windowing and leveling are to be performed automatically
-  vtkBooleanMacro(AutoWindowLevel, int);
-  vtkGetMacro(AutoWindowLevel, int);
-  vtkSetMacro(AutoWindowLevel, int);
-
-  // Description:
-  // The window value to use when autoWindowLevel is 'no'
-  vtkGetMacro(Window, vtkFloatingPointType);
-  vtkSetMacro(Window, vtkFloatingPointType);
-
-  // Description:
-  // The level value to use when autoWindowLevel is 'no'
-  vtkGetMacro(Level, vtkFloatingPointType);
-  vtkSetMacro(Level, vtkFloatingPointType);
-
-  // Description:
-  // Specifies whether to apply the threshold
-  vtkBooleanMacro(ApplyThreshold, int);
-  vtkGetMacro(ApplyThreshold, int);
-  vtkSetMacro(ApplyThreshold, int);
-
-  // Description:
-  // Specifies whether the threshold should be set automatically
-  vtkBooleanMacro(AutoThreshold, int);
-  vtkGetMacro(AutoThreshold, int);
-  vtkSetMacro(AutoThreshold, int);
-
-  // Description:
-  // The upper threshold value to use when autoThreshold is 'no'
-  // Warning:
-  // XXX-MH Should be floating point....
-  vtkGetMacro(UpperThreshold, vtkFloatingPointType);
-  vtkSetMacro(UpperThreshold, vtkFloatingPointType);
-
-  // Description:
-  // The lower threshold value to use when autoThreshold is 'no'
-  // Warning:
-  // XXX-MH Should be floating point....
-  vtkGetMacro(LowerThreshold, vtkFloatingPointType);
-  vtkSetMacro(LowerThreshold, vtkFloatingPointType);
-
-  // Description:
-  // Set/Get interpolate reformated slices
-  vtkGetMacro(Interpolate, int);
-  vtkSetMacro(Interpolate, int);
-  vtkBooleanMacro(Interpolate, int);
 
   //--------------------------------------------------------------------------
   // RAS->IJK Matrix Calculation
@@ -190,11 +86,7 @@ class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLNode
   // This matrix can be computed either from corner points, or just he
   // scanOrder.
   static void ComputeIjkToRasFromScanOrder(char *order, vtkMatrix4x4 *IjkToRas);
-
   static const char* ComputeScanOrderFromIjkToRas(vtkMatrix4x4 *IjkToRas);
-
-  vtkGetStringMacro(ScanOrder);
-  vtkSetStringMacro(ScanOrder);
 
   void SetIjkToRasDirections(double dirs[9]);
   void SetIjkToRasDirections(double ir, double ia, double is,
@@ -227,6 +119,9 @@ class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLNode
   vtkGetObjectMacro(StorageNode, vtkMRMLStorageNode);
   vtkSetObjectMacro(StorageNode, vtkMRMLStorageNode);
 
+  vtkGetObjectMacro(DisplayNode, vtkMRMLVolumeDisplayNode);
+  vtkSetObjectMacro(DisplayNode, vtkMRMLVolumeDisplayNode);
+
   vtkGetObjectMacro(ImageData, vtkImageData);
   vtkSetObjectMacro(ImageData, vtkImageData);
 
@@ -239,27 +134,9 @@ protected:
 
 
   // Strings
-  char *LUTName;
-  char *ScanOrder;
-
-  int FileScalarType;
-  int FileNumberOfScalarComponents;
-  int FileLittleEndian;
-  vtkFloatingPointType FileSpacing[3];
-  int FileDimensions[3];
-
-  vtkFloatingPointType Window;
-  vtkFloatingPointType Level;
-  vtkFloatingPointType UpperThreshold;
-  vtkFloatingPointType LowerThreshold;
-
 
   // Booleans
   int LabelMap;
-  int Interpolate;
-  int AutoWindowLevel;
-  int ApplyThreshold;
-  int AutoThreshold;
 
   double IjkToRasDirections[9];
   double IToRasDirections[3];
@@ -270,6 +147,7 @@ protected:
   char *DisplayNodeID;
 
   vtkMRMLStorageNode *StorageNode;
+  vtkMRMLVolumeDisplayNode *DisplayNode;
   vtkImageData       *ImageData;
 
 };

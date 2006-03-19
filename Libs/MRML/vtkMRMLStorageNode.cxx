@@ -7,8 +7,8 @@ or http://www.slicer.org/copyright/copyright.txt for details.
 
 Program:   3D Slicer
 Module:    $RCSfile: vtkMRMLStorageNode.cxx,v $
-Date:      $Date: 2006/03/03 22:26:41 $
-Version:   $Revision: 1.1 $
+Date:      $Date: 2006/03/17 15:10:10 $
+Version:   $Revision: 1.2 $
 
 =========================================================================auto=*/
 
@@ -37,8 +37,7 @@ vtkMRMLStorageNode::~vtkMRMLStorageNode()
 
 void vtkMRMLStorageNode::WriteXML(ostream& of, int nIndent)
 {
-  vtkErrorMacro("NOT IMPLEMENTED YET");
-  (void)of; (void)nIndent;
+  Superclass::WriteXML(of, nIndent);
 }
 
 //----------------------------------------------------------------------------
@@ -50,11 +49,9 @@ void vtkMRMLStorageNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, StorageID
-void vtkMRMLStorageNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLStorageNode::Copy(vtkMRMLNode *node)
 {
-  vtkMRMLNode::Copy(anode);
-  vtkMRMLStorageNode *node = (vtkMRMLStorageNode *) anode;
-
+  Superclass::Copy(node);
 }
 
 //----------------------------------------------------------------------------

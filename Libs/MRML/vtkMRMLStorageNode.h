@@ -7,8 +7,8 @@
 
   Program:   3D Slicer
   Module:    $RCSfile: vtkMRMLStorageNode.h,v $
-  Date:      $Date: 2006/03/03 22:26:41 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2006/03/19 17:12:29 $
+  Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
 // .NAME vtkMRMLStorageNode - MRML node for representing a volume (image stack).
@@ -24,6 +24,7 @@
 #ifndef __vtkMRMLStorageNode_h
 #define __vtkMRMLStorageNode_h
 
+#include "vtkMRML.h"
 #include "vtkMRMLNode.h"
 
 class vtkImageData;

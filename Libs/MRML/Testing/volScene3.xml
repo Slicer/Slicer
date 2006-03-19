@@ -1,0 +1,14 @@
+<MRML>
+<Volume
+Name='head1' Description='somebodys1' ID='vol1' StorageNodeID='storage1'></Volume>
+
+<Volume
+Name='head2' Description='somebodys2' ID='vol2' StorageNodeID='storage2'></Volume>
+
+<VolumeArchetypeStorage
+FileArchetype='Testing/TestData/imagetest/nrrd/fixed.nrrd' ID='storage1'></VolumeArchetypeStorage>
+
+<VolumeArchetypeStorage
+FileArchetype='Testing/TestData/imagetest/nrrd/moving.nrrd' ID='storage2'></VolumeArchetypeStorage>
+
+</MRML>
