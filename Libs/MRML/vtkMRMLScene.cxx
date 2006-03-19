@@ -15,8 +15,6 @@ Version:   $Revision: 1.18 $
 #include <map>
 
 //#include <hash_map>
-#include <vtksys/SystemTools.hxx> 
-
 #include "vtkMRMLScene.h"
 #include "vtkMRMLParser.h"
 #include "vtkObjectFactory.h"
@@ -104,6 +102,9 @@ int vtkMRMLScene::Connect()
     vtkErrorMacro("Need URL specified");
     return 0;
   }
+  this->RootDirectory = vtksys::SystemTools::GetParentDirectory(this->GetURL());   
+  this->RootDirectory = this->RootDirectory + vtksys_stl::string("/");
+
   bool undoFlag = this->GetUndoFlag();
   this->SetUndoOff();
 
@@ -193,9 +194,7 @@ void vtkMRMLScene::AddNode(vtkMRMLNode *n)
   //TODO convert URL to Root directory
   //n->SetSceneRootDir("");
 
-  vtksys_stl::string root = vtksys::SystemTools::GetParentDirectory(this->GetURL());   
-  root = root + vtksys_stl::string("/");
-  n->SetSceneRootDir(root.c_str());
+  n->SetSceneRootDir(this->RootDirectory.c_str());
 
   this->CurrentScene->vtkCollection::AddItem((vtkObject *)n);
 }

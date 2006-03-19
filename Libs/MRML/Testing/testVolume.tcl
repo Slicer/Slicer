@@ -11,7 +11,7 @@ vtkMRMLVolumeArchetypeStorageNode vs
 
 sc RegisterNodeClass vs
 
-sc SetURL Modules/vtkSlicerThree/Tests/volScene3.xml
+sc SetURL C:/alexy/slicer2-head/Slicer3/Libs/MRML/Testing/volScene3.xml
 sc Connect
 
 puts "GetNumberOfNodesByClass [sc GetNumberOfNodesByClass vtkMRMLVolumeNode]"

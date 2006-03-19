@@ -51,6 +51,7 @@ PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <map>
 #include <vector>
 #include <string>
+#include <vtksys/SystemTools.hxx> 
 
 #include "vtkCollection.h"
 #include "vtkObjectFactory.h"
@@ -168,10 +169,11 @@ protected:
   bool UndoFlag;
   //BTX
   std::list< vtkCollection* >  UndoStack;
+  vtksys_stl::string RootDirectory;
   //ETX
   
   char *URL;
-  
+
   //BTX
   std::map< std::string, int> UniqueIDByClass;
   std::vector< std::string > UniqueIDs;
