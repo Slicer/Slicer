@@ -26,7 +26,7 @@ int Slicer3_main(int argc, char *argv[])
   Mrml_Init(interp);
 
   
-  // Create SlicerGUI application, style, and main window container
+  // Create SlicerGUI application, style, and main window 
   vtkSlicerGUI *slicerGUI = vtkSlicerGUI::New ( );
 
   // Create the application Logic object, 
@@ -36,12 +36,13 @@ int Slicer3_main(int argc, char *argv[])
   vtkSlicerApplicationGUI *appGUI = vtkSlicerApplicationGUI::New ( );
   appGUI->SetApplication ( slicerGUI );
   appGUI->SetLogic ( appLogic );
-  appGUI->SetParent ( slicerGUI->GetNthWindow(0)->GetViewFrame ( ));
+  
+  appGUI->SetParent ( slicerGUI->GetMainSlicerWin( )->GetViewFrame ( ));
   appGUI->BuildGUI ( );
   appGUI->AddGUIObservers ( );
   appGUI->AddLogicObservers ( );
   // after everything is packed 
-  slicerGUI->DisplaySlicerWindow ( );
+  slicerGUI->DisplayMainSlicerWindow ( );
 
   // add to collection of component GUIs
   slicerGUI->AddGUI ( appGUI );
