@@ -13,9 +13,8 @@
 =========================================================================auto=*/
 // .NAME vtkSlicerGUI 
 // .SECTION Description
-// Main application GUI for slicer3.  Points to the ApplicationLogic and
-// reflects changes in that logic back onto the UI.  Also routes changes
-// from the GUI into the Logic to effect the user's desires.
+// Contains slicer's style, application and collection of associated guis.
+//
 
 
 #ifndef __vtkSlicerGUI_h
@@ -42,8 +41,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGUI : public vtkKWApplication
     vtkGetObjectMacro ( SlicerStyle, vtkSlicerStyle );
     vtkSetObjectMacro ( SlicerStyle, vtkSlicerStyle );
     
-    vtkGetObjectMacro ( SlicerWin, vtkKWWindow );
-    vtkSetObjectMacro ( SlicerWin, vtkKWWindow );
+    vtkGetObjectMacro ( MainSlicerWin, vtkKWWindow );
+    vtkSetObjectMacro ( MainSlicerWin, vtkKWWindow );
     
     vtkGetObjectMacro ( GUICollection, vtkSlicerGUICollection );
     vtkSetObjectMacro ( GUICollection, vtkSlicerGUICollection );
@@ -57,7 +56,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGUI : public vtkKWApplication
     // Description:
     // This method closes all windows associated with the application
     virtual void CloseAllWindows ( ) ;
-    virtual void DisplaySlicerWindow ( );
+    virtual void DisplayMainSlicerWindow ( );
     
     // Description:
     // Sets application behavior.
@@ -69,15 +68,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGUI : public vtkKWApplication
     ~vtkSlicerGUI ( );
 
     vtkSlicerStyle *SlicerStyle;
-    vtkKWWindow *SlicerWin;
+    vtkKWWindow *MainSlicerWin;
 
     // Description:
     // Collections of widgets
     vtkSlicerGUICollection *GUICollection;
-    // Description:
-    // Contains the main window, the title, main menu,
-    // and buttons that navigate modules and core.
-    vtkSlicerComponentGUI *SlicerGUI;
     
     // Description:
     // numbers of widgets
