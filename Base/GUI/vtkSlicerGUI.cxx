@@ -33,11 +33,11 @@ vtkSlicerGUI::vtkSlicerGUI ( ) {
 
     this->GUICollection = vtkSlicerGUICollection::New ( );
     this->SlicerStyle = vtkSlicerStyle::New ( );
-    this->SlicerWin = vtkKWWindow::New ( );
-    this->SlicerWin->SecondaryPanelVisibilityOff ( );
-    this->SlicerWin->MainPanelVisibilityOff ( );
-    this->AddWindow ( this->SlicerWin );
-    this->SlicerWin->Create ( );
+    this->MainSlicerWin = vtkKWWindow::New ( );
+    this->MainSlicerWin->SecondaryPanelVisibilityOff ( );
+    this->MainSlicerWin->MainPanelVisibilityOff ( );
+    this->AddWindow ( this->MainSlicerWin );
+    this->MainSlicerWin->Create ( );
     
     this->NumberOfGUIs = 0;
 
@@ -53,8 +53,8 @@ vtkSlicerGUI::~vtkSlicerGUI ( ) {
     if ( this->GUICollection ) {
        this->GUICollection->Delete ( );
     }
-    if ( this->SlicerWin ) {
-        this->SlicerWin->Delete ( );
+    if ( this->MainSlicerWin ) {
+        this->MainSlicerWin->Delete ( );
     }
     if ( this->SlicerStyle ) {
         this->SlicerStyle->Delete ( );
@@ -90,9 +90,9 @@ void vtkSlicerGUI::ConfigureApplication ( ) {
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerGUI::DisplaySlicerWindow ( ) {
+void vtkSlicerGUI::DisplayMainSlicerWindow ( ) {
 
-    this->SlicerWin->Display ( );
+    this->MainSlicerWin->Display ( );
 }
 
 
@@ -118,9 +118,9 @@ int vtkSlicerGUI::StartApplication ( ) {
 
     // Start the application & event loop here
     this->Start ( );
-    ret = this->GetExitStatus ( );
+    this->CloseAllWindows ( );
 
     // Clean up and exit
-    this->CloseAllWindows ( );
+    ret = this->GetExitStatus ( );
     return ret;
 }
