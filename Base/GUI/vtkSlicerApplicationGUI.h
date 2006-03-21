@@ -62,6 +62,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkKWRenderWidget *RenderWidget;
     vtkKWScale *Scale;
 
+    //vtkKWSliceGUI *MainAxialGUI;
+    //vtkKWSliceGUI *MainSaggitalGUI;
+    //vtkKWSliceGUI *MainCoronalGUI;
+
  private:
     vtkSlicerApplicationGUI ( const vtkSlicerApplicationGUI& ); // Not implemented.
     void operator = ( const vtkSlicerApplicationGUI& ); //Not implemented.
