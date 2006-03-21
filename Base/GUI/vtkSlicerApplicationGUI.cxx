@@ -55,6 +55,7 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  ) {
     this->RenderWidget = NULL;
     this->Logic = NULL;
 
+
 }
 
 
