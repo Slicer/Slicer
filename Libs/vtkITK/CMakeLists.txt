@@ -7,6 +7,7 @@ SET(vtkITK_SRCS
     vtkITKArchetypeImageSeriesReader.cxx
     vtkITKArchetypeImageSeriesScalarReader.cxx
     vtkITKArchetypeImageSeriesVectorReader.cxx
+    vtkITKImageWriter.cxx
 )
 
 # Abstract/pure virtual classes
@@ -49,6 +50,7 @@ ADD_LIBRARY(vtkITK
 TARGET_LINK_LIBRARIES(vtkITK 
   vtkCommonTCL
   vtkFilteringTCL
+  vtkImagingTCL
   ITKAlgorithms
   ITKNumerics 
   ITKCommon
