@@ -24,8 +24,8 @@ TARGET_LINK_LIBRARIES(
     Slicer3 
     SlicerBaseLogic 
     SlicerBaseGUI 
-    MRML 
-    vtkITK 
+    MRML
+    vtkITK
     ITKCommon 
     ITKIO
     ${KWWidgets_LIBRARIES} )
