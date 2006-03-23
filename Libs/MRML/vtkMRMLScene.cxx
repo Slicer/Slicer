@@ -152,8 +152,8 @@ int vtkMRMLScene::Commit(const char* url)
     return 1;
   }
   
-  file << "<?xml version=\"1.0\" standalone='no'?>\n";
-  file << "<!DOCTYPE MRML SYSTEM \"mrml20.dtd\">\n";
+  //file << "<?xml version=\"1.0\" standalone='no'?>\n";
+  //file << "<!DOCTYPE MRML SYSTEM \"mrml20.dtd\">\n";
   file << "<MRML>\n";
    
   // Write each node

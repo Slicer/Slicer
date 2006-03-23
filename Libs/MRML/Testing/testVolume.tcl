@@ -3,13 +3,15 @@ vtkMRMLScene sc
 
 catch "vn Delete"
 vtkMRMLVolumeNode vn
-
 sc RegisterNodeClass vn
 
 catch "vs Delete"
 vtkMRMLVolumeArchetypeStorageNode vs
-
 sc RegisterNodeClass vs
+
+catch "vd Delete"
+vtkMRMLVolumeDisplayNode vd
+sc RegisterNodeClass vd
 
 sc SetURL C:/alexy/slicer2-head/Slicer3/Libs/MRML/Testing/volScene3.xml
 sc Connect
@@ -35,3 +37,6 @@ set n [sc GetNthNodeByClass 1 vtkMRMLVolumeArchetypeStorageNode]
 puts "Print Storage node 1"
 puts "[$n Print]"
 
+set n [sc GetNthNodeByClass 0 vtkMRMLVolumeDisplayNode]
+puts "Print Display node 0"
+puts "[$n Print]"

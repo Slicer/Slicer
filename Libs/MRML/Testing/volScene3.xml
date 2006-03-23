@@ -1,9 +1,9 @@
 <MRML>
 <Volume
-Name='head1' Description='somebodys1' ID='vol1' StorageNodeID='storage1'></Volume>
+Name='head1' Description='somebodys1' ID='vol1' StorageNodeID='storage1' DisplayNodeID='display1'></Volume>
 
 <Volume
-Name='head2' Description='somebodys2' ID='vol2' StorageNodeID='storage2'></Volume>
+Name='head2' Description='somebodys2' ID='vol2' StorageNodeID='storage2' DisplayNodeID='display1'></Volume>
 
 <VolumeArchetypeStorage
 FileArchetype='TestData/fixed.nrrd' ID='storage1'></VolumeArchetypeStorage>
@@ -11,4 +11,6 @@ FileArchetype='TestData/fixed.nrrd' ID='storage1'></VolumeArchetypeStorage>
 <VolumeArchetypeStorage
 FileArchetype='TestData/moving.nrrd' ID='storage2'></VolumeArchetypeStorage>
 
+<VolumeDisplay
+Name='disp1' ID='display1' Level='128' Window='100'></VolumeDisplay>
 </MRML>

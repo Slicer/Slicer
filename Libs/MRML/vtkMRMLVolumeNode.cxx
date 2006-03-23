@@ -60,6 +60,9 @@ vtkMRMLVolumeNode::vtkMRMLVolumeNode()
 
   this->StorageNodeID = NULL;
   this->DisplayNodeID = NULL;
+  this->StorageNode = NULL;
+  this->DisplayNode = NULL;
+
   this->ImageData = NULL;
   this->StorageNode = NULL;
 }

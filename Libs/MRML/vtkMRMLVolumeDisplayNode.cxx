@@ -89,39 +89,46 @@ Superclass::WriteXML(of, nIndent);
     of << indent << "LUTName='" << this->LUTName << "' ";
   }
 
-  std::stringstream ss;
-
-  ss << this->Window;
-  of << indent << "Window='" << ss.str() << "' ";
-  ss.clear();
-
-  ss << this->Level;
-  of << indent << "Level='" << ss.str() << "' ";
-  ss.clear();
-
-  ss << this->UpperThreshold;
-  of << indent << "UpperThreshold='" << ss.str() << "' ";
-  ss.clear();
-
-  ss << this->LowerThreshold;
-  of << indent << "LowerThreshold='" << ss.str() << "' ";
-  ss.clear();
-
-  ss << this->Interpolate;
-  of << indent << "Interpolate='" << ss.str() << "' ";
-  ss.clear();
-
-  ss << this->AutoWindowLevel;
-  of << indent << "AutoWindowLevel='" << ss.str() << "' ";
-  ss.clear();
-
-  ss << this->ApplyThreshold;
-  of << indent << "ApplyThreshold='" << ss.str() << "' ";
-  ss.clear();
-
-  ss << this->AutoThreshold;
-  of << indent << "AutoThreshold='" << ss.str() << "' ";
-  ss.clear();
+  {
+    std::stringstream ss;
+    ss << this->Window;
+    of << indent << "Window='" << ss.str() << "' ";
+  }
+  {
+    std::stringstream ss;
+    ss << this->Level;
+    of << indent << "Level='" << ss.str() << "' ";
+  }
+  {
+    std::stringstream ss;
+    ss << this->UpperThreshold;
+    of << indent << "UpperThreshold='" << ss.str() << "' ";
+  }
+  {    
+    std::stringstream ss;
+    ss << this->LowerThreshold;
+    of << indent << "LowerThreshold='" << ss.str() << "' ";
+  }
+  {   
+    std::stringstream ss;
+    ss << this->Interpolate;
+    of << indent << "Interpolate='" << ss.str() << "' ";
+  }
+  {
+    std::stringstream ss;
+    ss << this->AutoWindowLevel;
+    of << indent << "AutoWindowLevel='" << ss.str() << "' ";
+  }
+  {
+    std::stringstream ss;
+    ss << this->ApplyThreshold;
+    of << indent << "ApplyThreshold='" << ss.str() << "' ";
+  }
+  {
+    std::stringstream ss;
+    ss << this->AutoThreshold;
+    of << indent << "AutoThreshold='" << ss.str() << "' ";
+  }
 
 }
 
