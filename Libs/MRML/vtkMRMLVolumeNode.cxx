@@ -377,23 +377,14 @@ void vtkMRMLVolumeNode::UpdateScene(vtkMRMLScene *scene)
     vtkErrorMacro("No reference StorageNodeID found");
     return;
   }
-
-  vtkCollection* nodes = scene->GetNodesByID(this->StorageNodeID);
-  if (nodes->GetNumberOfItems() != 1) {
-    vtkErrorMacro("Not unique reference to StorageNode: ID" << StorageNodeID);
-  }
-  vtkMRMLStorageNode *node  = dynamic_cast < vtkMRMLStorageNode *>(nodes->GetItemAsObject(0));
-  if (node) {
+  vtkMRMLNode* mnode = scene->GetNodeByID(this->StorageNodeID);
+  if (mnode) {
+    vtkMRMLStorageNode *node  = dynamic_cast < vtkMRMLStorageNode *>(node);
     node->ReadData(this);
   }
-  
   if (this->DisplayNodeID != NULL) {
-  nodes = scene->GetNodesByID(this->DisplayNodeID);
-    if (nodes->GetNumberOfItems() != 1) {
-      vtkErrorMacro("Not unique reference to DisplayNodeID: ID" << StorageNodeID);
-    }
-    vtkMRMLVolumeDisplayNode *displayNode  = dynamic_cast < vtkMRMLVolumeDisplayNode *>(nodes->GetItemAsObject(0));
-
+    mnode = scene->GetNodeByID(this->DisplayNodeID);
+    vtkMRMLVolumeDisplayNode *displayNode  = dynamic_cast < vtkMRMLVolumeDisplayNode *>(mnode);
     this->SetDisplayNode(displayNode);
   }
   

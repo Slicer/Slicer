@@ -111,9 +111,9 @@ public:
   
   vtkCollection *GetNodesByName(const char* name);
 
-  vtkCollection *GetNodesByID(const char* name);
+  vtkMRMLNode *GetNodeByID(const char* name);
 
-  vtkCollection* GetNodesByClassByID(const char* className, const char* id);
+  vtkMRMLNode* GetNodeByClassByID(const char* className, const char* id);
   
   vtkCollection *GetNodesByClassByName(const char* className, const char* name);
   
@@ -173,6 +173,7 @@ protected:
   void PushIntoRedoStack();
 
   void ReplaceNodeInUndoStack(vtkMRMLNode *node, vtkMRMLNode *withNode);
+  void ReplaceNodeInRedoStack(vtkMRMLNode *node, vtkMRMLNode *withNode);
   
   vtkCollection* CurrentScene;
   int UndoStackSize;

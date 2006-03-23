@@ -6,7 +6,7 @@ vtkMRMLVolumeArchetypeStorageNode vs
 
 sc RegisterNodeClass vs
 
-sc SetURL Modules/vtkSlicerThree/Tests/undo.xml
+sc SetURL C:/alexy/slicer2-head/Slicer3/Libs/MRML/Testing/undo.xml
 sc Connect
 
 set n [sc GetNthNodeByClass 0 vtkMRMLVolumeArchetypeStorageNode]

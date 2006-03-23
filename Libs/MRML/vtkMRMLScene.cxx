@@ -312,36 +312,32 @@ vtkCollection* vtkMRMLScene::GetNodesByName(const char* name)
 
 
 //------------------------------------------------------------------------------
-vtkCollection* vtkMRMLScene::GetNodesByID(const char* id)
+vtkMRMLNode* vtkMRMLScene::GetNodeByID(const char* id)
 {
-
-  vtkCollection* nodes = vtkCollection::New();
 
   vtkMRMLNode *node;
   for (int n=0; n < this->CurrentScene->GetNumberOfItems(); n++) {
     node = (vtkMRMLNode*)this->CurrentScene->GetItemAsObject(n);
     if (node->GetID() && !strcmp(node->GetID(), id)) {
-      nodes->AddItem(node);
+      return node;
     }
   }
   
-  return nodes;
+  return NULL;
 }
 
 //------------------------------------------------------------------------------
-vtkCollection* vtkMRMLScene::GetNodesByClassByID(const char* className, const char* id)
-{
-  vtkCollection* nodes = vtkCollection::New();
-  
+vtkMRMLNode* vtkMRMLScene::GetNodeByClassByID(const char* className, const char* id)
+{  
   vtkMRMLNode *node;
   for (int n=0; n < this->CurrentScene->GetNumberOfItems(); n++) {
     node = (vtkMRMLNode*)this->CurrentScene->GetItemAsObject(n);
     if (node->GetID() && !strcmp(node->GetID(), id) && strcmp(node->GetClassName(), className) == 0) {
-      nodes->AddItem(node);
+      return node;
     }
   }
 
-  return nodes;
+  return NULL;
 }
 
 //------------------------------------------------------------------------------
@@ -497,6 +493,20 @@ void vtkMRMLScene::SaveStateForUndo ()
   this->ClearRedoStack();
   this->SetUndoOn();
   this->PushIntoUndoStack();
+
+  if (0) { // copy the whole scene
+    int nnodes = this->CurrentScene->GetNumberOfItems();
+    for (int n=0; n<nnodes; n++) {
+      vtkMRMLNode *node  = dynamic_cast < vtkMRMLNode *>(this->CurrentScene->GetItemAsObject(n));
+      if (node) {
+        vtkMRMLNode *snode = node->CreateNodeInstance();
+        if (snode != NULL) {
+          snode->Copy(node);
+          this->ReplaceNodeInUndoStack(node, snode);
+        }
+      }
+    }
+  }
 } 
 
 //------------------------------------------------------------------------------
@@ -550,7 +560,20 @@ void vtkMRMLScene::PushIntoRedoStack()
 //------------------------------------------------------------------------------
 void vtkMRMLScene::ReplaceNodeInUndoStack(vtkMRMLNode *replaceNode, vtkMRMLNode *withNode)
 {
-  vtkCollection* undoScene = dynamic_cast < vtkCollection *>( this->UndoStack.back() );;
+  vtkCollection* undoScene = dynamic_cast < vtkCollection *>( this->UndoStack.back() );
+  int nnodes = undoScene->GetNumberOfItems();
+  for (int n=0; n<nnodes; n++) {
+    vtkMRMLNode *node  = dynamic_cast < vtkMRMLNode *>(undoScene->GetItemAsObject(n));
+    if (node == replaceNode) {
+      undoScene->ReplaceItem (n, withNode);
+    }
+  }
+}
+
+//------------------------------------------------------------------------------
+void vtkMRMLScene::ReplaceNodeInRedoStack(vtkMRMLNode *replaceNode, vtkMRMLNode *withNode)
+{
+  vtkCollection* undoScene = dynamic_cast < vtkCollection *>( this->RedoStack.back() );
   int nnodes = undoScene->GetNumberOfItems();
   for (int n=0; n<nnodes; n++) {
     vtkMRMLNode *node  = dynamic_cast < vtkMRMLNode *>(undoScene->GetItemAsObject(n));
@@ -610,6 +633,12 @@ void vtkMRMLScene::Undo()
     }
     else if (iter->second != curIter->second) {
       // nodes differ, copy from undo to current scene
+      // but before create a copy in redo stack from current
+      vtkMRMLNode *snode = curIter->second->CreateNodeInstance();
+      if (snode != NULL) {
+        snode->Copy(curIter->second);
+        this->ReplaceNodeInRedoStack(curIter->second, snode);
+      }
       curIter->second->Copy(iter->second);
     }
   }
@@ -687,6 +716,12 @@ void vtkMRMLScene::Redo()
     }
     else if (iter->second != curIter->second) {
       // nodes differ, copy from undo to current scene
+      // but before create a copy in undo stack from current
+      vtkMRMLNode *snode = curIter->second->CreateNodeInstance();
+      if (snode != NULL) {
+        snode->Copy(curIter->second);
+        this->ReplaceNodeInUndoStack(curIter->second, snode);
+      }
       curIter->second->Copy(iter->second);
     }
   }
