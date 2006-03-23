@@ -194,6 +194,9 @@ void vtkMRMLScene::AddNode(vtkMRMLNode *n)
   //TODO convert URL to Root directory
   //n->SetSceneRootDir("");
 
+  if (n->GetID() == NULL) {
+    n->SetID(this->GetUniqueIDByClass(n->GetClassName()));
+  }
   n->SetSceneRootDir(this->RootDirectory.c_str());
 
   this->CurrentScene->vtkCollection::AddItem((vtkObject *)n);
@@ -599,5 +602,7 @@ void vtkMRMLScene::Undo()
   undoScene->RemoveAllItems();
   undoScene->Delete();
   UndoStack.pop_back();
+
+  this->Modified();
 }
 

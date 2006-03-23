@@ -92,7 +92,9 @@ public:
   // Description:
   // Remove a path from the list.
   void RemoveNode(vtkMRMLNode *n) {
-    this->CurrentScene->vtkCollection::RemoveItem((vtkObject *)n);};
+    this->CurrentScene->vtkCollection::RemoveItem((vtkObject *)n);
+    this->Modified();
+  };
   
   // Description:
   // Determine whether a particular node is present. Returns its position
