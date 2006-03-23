@@ -35,7 +35,7 @@ $win Create
 
 
 # create the mrml scene
-set sc [vtkMRMLScene New]
+set scene [vtkMRMLScene New]
 
 # Undo button
 set pb [vtkKWPushButton New]
@@ -46,7 +46,7 @@ $pb SetAnchorToWest
 pack [$pb GetWidgetName] -side top -anchor nw -expand false -fill x -padx 2 -pady 2
 $pb SetBalloonHelpString \
 "Undo manipulations of mrml scene."
-$pb SetCommand "" "$sc Undo"
+$pb SetCommand "" "$scene Undo"
 
 # Redo button
 set pb [vtkKWPushButton New]
@@ -57,7 +57,7 @@ $pb SetAnchorToWest
 pack [$pb GetWidgetName] -side top -anchor nw -expand false -fill x -padx 2 -pady 2
 $pb SetBalloonHelpString \
 "Redo manipulations of mrml scene."
-$pb SetCommand "" "$sc Redo"
+$pb SetCommand "" "$scene Redo"
 
 # Add a button for each mrml node type
 
@@ -67,7 +67,7 @@ set nodes "vtkMRMLVolumeNode vtkMRMLModelNode"
 foreach n $nodes {
 
   set nn [$n New]
-  $sc RegisterNodeClass $nn
+  $scene RegisterNodeClass $nn
 
   set pb [vtkKWPushButton New]
   $pb SetParent $win
@@ -77,17 +77,16 @@ foreach n $nodes {
   pack [$pb GetWidgetName] -side top -anchor nw -expand false -fill x -padx 2 -pady 2
   $pb SetBalloonHelpString \
     "Add a $n to the current mrml scene."
-  $pb SetCommand "" "mrmlAddNode $sc $n"
+  $pb SetCommand "" "mrmlAddNode $scene $n"
 
 }
 
-proc mrmlAddNode {sc nodetype} {
-    puts "adding a $nodetype node to the scene $sc"
+proc mrmlAddNode {scene nodetype} {
 
     set n [$nodetype New]
     $n SetName Node-[clock seconds]
-    $sc SaveStateForUndo
-    $sc AddNode $n
+    $scene SaveStateForUndo
+    $scene AddNode $n
 }
 
 
@@ -96,36 +95,54 @@ proc mrmlAddNode {sc nodetype} {
 
 # Create a multi-column list
 
-set mcl1 [vtkKWMultiColumnList New]
-$mcl1 SetParent $win
-$mcl1 Create
-$mcl1 SetBalloonHelpString \
+set mcl [vtkKWMultiColumnList New]
+$mcl SetParent $win
+$mcl Create
+$mcl SetBalloonHelpString \
 "A simple multicolumn list. Columns can be resized moved and sorted.\
 Double-click on some entries to edit them."
-$mcl1 MovableColumnsOn
-$mcl1 SetWidth 0
-$mcl1 SetPotentialCellColorsChangedCommand \
-    $mcl1 "ScheduleRefreshColorsOfAllCellsWithWindowCommand"
-$mcl1 SetColumnSortedCommand \
-    $mcl1 "ScheduleRefreshColorsOfAllCellsWithWindowCommand"
+$mcl MovableColumnsOn
+$mcl SetWidth 0
+$mcl SetPotentialCellColorsChangedCommand \
+    $mcl "ScheduleRefreshColorsOfAllCellsWithWindowCommand"
+$mcl SetColumnSortedCommand \
+    $mcl "ScheduleRefreshColorsOfAllCellsWithWindowCommand"
 
 # Add the columns make some of them editable
 
-set col_index [$mcl1 AddColumn "Node Type"] 
+set col_index [$mcl AddColumn "Node Type"] 
 
-set col_index [$mcl1 AddColumn "Name"] 
-$mcl1 SetColumnAlignmentToCenter $col_index
-$mcl1 ColumnEditableOn $col_index
+set col_index [$mcl AddColumn "Name"] 
+$mcl SetColumnAlignmentToCenter $col_index
+$mcl ColumnEditableOn $col_index
+
+set col_index [$mcl AddColumn "ID"] 
+$mcl SetColumnAlignmentToCenter $col_index
 
 
-pack [$mcl1 GetWidgetName] -side top -anchor nw -expand n -fill y -padx 2 -pady 2
+pack [$mcl GetWidgetName] -side top -anchor nw -expand n -fill y -padx 2 -pady 2
 
+#
+# set the command to execute when a cell is edited
+#
+
+$mcl SetCellUpdatedCommand "" "mrmlUpdateName $scene $mcl"
+
+proc mrmlUpdateName {scene mcl row col txt} {
+
+    set id [$mcl GetCellText $row 2]
+    set name [$mcl GetCellText $row 1]
+    set coll [$scene GetNodesByID $id]
+    set node [$coll GetItemAsObject 0]
+    $scene SaveStateForUndo $node
+    $node SetName $name
+}
 
 # 
 # set an observer to refresh the list box when the scene changes
 #
 
-$sc AddObserver ModifiedEvent "mrmlFillMCL $sc $mcl1"
+$scene AddObserver ModifiedEvent "mrmlFillMCL $scene $mcl"
 
 proc mrmlFillMCL {scene mcl} {
     $mcl DeleteAllRows
@@ -134,6 +151,7 @@ proc mrmlFillMCL {scene mcl} {
         set n [$scene GetNthNode $i]
         $mcl InsertCellText $i 0 [$n GetClassName]
         $mcl InsertCellText $i 1 [$n GetName]
+        $mcl InsertCellText $i 2 [$n GetID]
     }
 }
 
