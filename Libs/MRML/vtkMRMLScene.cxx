@@ -715,7 +715,7 @@ void vtkMRMLScene::Redo()
       addNodes.push_back(iter->second);
     }
     else if (iter->second != curIter->second) {
-      // nodes differ, copy from undo to current scene
+      // nodes differ, copy from redo to current scene
       // but before create a copy in undo stack from current
       vtkMRMLNode *snode = curIter->second->CreateNodeInstance();
       if (snode != NULL) {

@@ -155,6 +155,9 @@ public:
   void ClearUndoStack();
   void ClearRedoStack();
 
+  int GetNumberOfUndoLevels() { return this->UndoStack.size();};
+  int GetNumberOfRedoLevels() { return this->RedoStack.size();};
+
   void SaveStateForUndo();
   void SaveStateForUndo(vtkMRMLNode *node);
   void SaveStateForUndo(vtkCollection *nodes);
