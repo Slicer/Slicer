@@ -132,8 +132,7 @@ proc mrmlUpdateName {scene mcl row col txt} {
 
     set id [$mcl GetCellText $row 2]
     set name [$mcl GetCellText $row 1]
-    set coll [$scene GetNodesByID $id]
-    set node [$coll GetItemAsObject 0]
+    set node [$scene GetNodeByID $id]
     $scene SaveStateForUndo $node
     $node SetName $name
 }
