@@ -75,7 +75,7 @@ public:
   int Connect();
   
   int Commit(const char* url=NULL);
-  
+
   // Create node with a given class
   vtkMRMLNode* CreateNodeByClass(const char* className);
 
@@ -115,6 +115,8 @@ public:
   
   vtkCollection *GetNodesByClassByName(const char* className, const char* name);
   
+  int GetNumberOfNodes () { return this->CurrentScene->GetNumberOfItems(); };
+
   vtkMRMLNode* GetNthNode(int n);
   
   vtkMRMLNode* GetNthNodeByClass(int n, const char* className );
@@ -147,6 +149,7 @@ public:
 
   void Undo();
 
+  void SaveStateForUndo();
   void SaveStateForUndo(vtkMRMLNode *node);
   void SaveStateForUndo(vtkCollection *nodes);
   //BTX
@@ -189,9 +192,9 @@ protected:
   
 private:
   // hide the standard AddItem from the user and the compiler.
-  void AddItem(vtkObject *o) { this->CurrentScene->vtkCollection::AddItem(o); };
-  void RemoveItem(vtkObject *o) { this->CurrentScene->vtkCollection::RemoveItem(o); };
-  void RemoveItem(int i) { this->CurrentScene->vtkCollection::RemoveItem(i); };
+  void AddItem(vtkObject *o) { this->CurrentScene->vtkCollection::AddItem(o); this->Modified();};
+  void RemoveItem(vtkObject *o) { this->CurrentScene->vtkCollection::RemoveItem(o); this->Modified();};
+  void RemoveItem(int i) { this->CurrentScene->vtkCollection::RemoveItem(i); this->Modified();};
   int  IsItemPresent(vtkObject *o) { return this->CurrentScene->vtkCollection::IsItemPresent(o);};
   
   unsigned long ErrorCode;

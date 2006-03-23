@@ -73,7 +73,8 @@ void vtkMRMLNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->vtkObject::PrintSelf(os,indent);
 
-  os << indent << "ID:          " << this->ID << "\n";
+  os << indent << "ID: " <<
+    (this->ID ? this->ID : "(none)") << "\n";
 
   os << indent << "Indent:      " << this->Indent << "\n";
 

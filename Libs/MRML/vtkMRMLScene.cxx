@@ -197,6 +197,7 @@ void vtkMRMLScene::AddNode(vtkMRMLNode *n)
   n->SetSceneRootDir(this->RootDirectory.c_str());
 
   this->CurrentScene->vtkCollection::AddItem((vtkObject *)n);
+  this->Modified();
 }
 
 //------------------------------------------------------------------------------
@@ -482,6 +483,13 @@ void vtkMRMLScene::SaveStateForUndo (vtkCollection* nodes)
       }
     }
   }
+} 
+
+//------------------------------------------------------------------------------
+void vtkMRMLScene::SaveStateForUndo ()
+{
+  this->SetUndoOn();
+  this->PushIntoUndoStack();
 } 
 
 //------------------------------------------------------------------------------
