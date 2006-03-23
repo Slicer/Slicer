@@ -37,6 +37,7 @@ $win Create
 # create the mrml scene
 set sc [vtkMRMLScene New]
 
+# Undo button
 set pb [vtkKWPushButton New]
 $pb SetParent $win
 $pb Create
@@ -46,6 +47,17 @@ pack [$pb GetWidgetName] -side top -anchor nw -expand false -fill x -padx 2 -pad
 $pb SetBalloonHelpString \
 "Undo manipulations of mrml scene."
 $pb SetCommand "" "$sc Undo"
+
+# Redo button
+set pb [vtkKWPushButton New]
+$pb SetParent $win
+$pb Create
+$pb SetText "Redo"
+$pb SetAnchorToWest
+pack [$pb GetWidgetName] -side top -anchor nw -expand false -fill x -padx 2 -pady 2
+$pb SetBalloonHelpString \
+"Redo manipulations of mrml scene."
+$pb SetCommand "" "$sc Redo"
 
 # Add a button for each mrml node type
 
@@ -116,13 +128,10 @@ pack [$mcl1 GetWidgetName] -side top -anchor nw -expand n -fill y -padx 2 -pady 
 $sc AddObserver ModifiedEvent "mrmlFillMCL $sc $mcl1"
 
 proc mrmlFillMCL {scene mcl} {
-    puts "got scene $scene and mcl $mcl"
     $mcl DeleteAllRows
     set nitems [$scene GetNumberOfNodes]
-    puts "$nitems items"
     for {set i 0} {$i < $nitems} {incr i} {
         set n [$scene GetNthNode $i]
-        puts [$n Print]
         $mcl InsertCellText $i 0 [$n GetClassName]
         $mcl InsertCellText $i 1 [$n GetName]
     }
