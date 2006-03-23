@@ -150,6 +150,10 @@ public:
   void SetUndoFlag(int flag) {UndoFlag = flag;};
 
   void Undo();
+  void Redo();
+
+  void ClearUndoStack();
+  void ClearRedoStack();
 
   void SaveStateForUndo();
   void SaveStateForUndo(vtkMRMLNode *node);
@@ -166,6 +170,7 @@ protected:
   
 
   void PushIntoUndoStack();
+  void PushIntoRedoStack();
 
   void ReplaceNodeInUndoStack(vtkMRMLNode *node, vtkMRMLNode *withNode);
   
@@ -174,16 +179,17 @@ protected:
   bool UndoFlag;
   //BTX
   std::list< vtkCollection* >  UndoStack;
-  vtksys_stl::string RootDirectory;
+  std::list< vtkCollection* >  RedoStack;
   //ETX
   
   char *URL;
 
   //BTX
   std::map< std::string, int> UniqueIDByClass;
-  std::vector< std::string > UniqueIDs;
+  std::vector< std::string >  UniqueIDs;
   std::vector< vtkMRMLNode* > RegisteredNodeClasses;
-  std::vector< std::string > RegisteredNodeTags;
+  std::vector< std::string >  RegisteredNodeTags;
+  vtksys_stl::string          RootDirectory;
   //ETX
   
   vtkSetMacro(ErrorCode,unsigned long);
