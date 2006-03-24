@@ -18,22 +18,15 @@
 vtkCxxRevisionMacro(vtkSlicerSliceLogic, "$Revision: 1.9.12.1 $");
 vtkStandardNewMacro(vtkSlicerSliceLogic);
 
-//-----  This hack needed to compile using gcc3 on OSX until new stdc++.dylib
-#ifdef __APPLE_CC__
-extern "C"
-{
-  void oft_initSlicerBase() 
-  {
-  extern void _ZNSt8ios_base4InitC4Ev();
-  _ZNSt8ios_base4InitC4Ev();
-  }
-}
-#endif
-
-
 //----------------------------------------------------------------------------
 vtkSlicerSliceLogic::vtkSlicerSliceLogic()
 {
+  this->BackgroundLayer = NULL;
+  this->ForegroundLayer = NULL;
+  this->SliceNode = NULL;
+  this->ForegroundOpacity = 0.5;
+
+  this->Blend = vtkImageBlend::New();
 }
 
 //----------------------------------------------------------------------------
@@ -42,10 +35,76 @@ vtkSlicerSliceLogic::~vtkSlicerSliceLogic()
 }
 
 //----------------------------------------------------------------------------
+void vtkSlicerSliceLogic::SetSliceNode(vtkMRMLSliceNode *SliceNode)
+{
+  if (this->SliceNode)
+    {
+    this->SliceNode->Delete();
+    }
+  if (this->BackgroundLayer)
+    {
+    this->BackgroundLayer->SetSliceNode(SliceNode);
+    }
+
+  if (this->ForegroundLayer)
+    {
+    this->ForegroundLayer->SetSliceNode(SliceNode);
+    }
+
+  this->SliceNode = SliceNode;
+  this->SliceNode->Register(this);
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerSliceLogic::SetBackgroundLayer(vtkSlicerSliceLayerLogic *BackgroundLayer)
+{
+  if (this->BackgroundLayer)
+    {
+    this->BackgroundLayer->Delete();
+    }
+  this->BackgroundLayer = BackgroundLayer;
+  this->BackgroundLayer->Register(this);
+  this->BackgroundLayer->SetSliceNode(SliceNode);
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerSliceLogic::SetForegroundLayer(vtkSlicerSliceLayerLogic *ForegroundLayer)
+{
+  if (this->ForegroundLayer)
+    {
+    this->ForegroundLayer->Delete();
+    }
+  this->ForegroundLayer = ForegroundLayer;
+  this->ForegroundLayer->Register(this);
+  this->ForegroundLayer->SetSliceNode(SliceNode);
+}
+
+
+//----------------------------------------------------------------------------
+void vtkSlicerSliceLogic::SetForegroundOpacity(double ForegroundOpacity)
+{
+  this->ForegroundOpacity = ForegroundOpacity;
+  this->Blend->SetOpacity(1, this->ForegroundOpacity);
+}
+
+
+//----------------------------------------------------------------------------
 void vtkSlicerSliceLogic::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->vtkObject::PrintSelf(os, indent);
 
   os << indent << "SlicerSliceLogic:             " << this->GetClassName() << "\n";
+
+  os << indent << "SliceNode: " <<
+    (this->SliceNode ? this->SliceNode->GetName() : "(none)") << "\n";
+  // TODO: fix printing of vtk objects
+  os << indent << "BackgroundLayer: " <<
+    (this->BackgroundLayer ? "this->BackgroundLayer" : "(none)") << "\n";
+  os << indent << "ForegroundLayer: " <<
+    (this->ForegroundLayer ? "this->ForegroundLayer" : "(none)") << "\n";
+  os << indent << "Blend: " <<
+    (this->Blend ? "this->Blend" : "(none)") << "\n";
+  os << indent << "ForegroundOpacity: " << this->ForegroundOpacity << "\n";
+
 }
 

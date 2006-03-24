@@ -60,14 +60,27 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic : public vtkSlicerL
       this->MRMLScene->Connect();
       }
   };
+
   // Description:
   // Commit your current scene modifications to the connected URL
   // Return code tells result of commit.
-  int Commit ();
+  int Commit () {
+    if (this->MRMLScene)
+      {
+      return (this->MRMLScene->Commit());
+      }
+    return (0);
+  };
   // Description:
   // Commit your current scene modifications to specified URL
   // Return code tells result of commit.
-  int Commit (const char *URL);
+  int Commit (const char *URL) {
+    if (this->MRMLScene)
+      {
+      return (this->MRMLScene->Commit(URL));
+      }
+    return (0);
+  };
 
 
   // Description:

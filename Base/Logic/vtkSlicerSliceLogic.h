@@ -18,12 +18,7 @@
 // (but not the GUI).  Features of the class include:
 //  -- a back-to-front list of MrmlVolumes to be displayed
 //  -- a compositing mode for each volume layer (opacity, outline, glyph, checkerboard, etc)
-//  -- a current slice view specification 
-//  ---- slab thickness 
-//  ---- slice center
-//  ---- pan/zoom settings
-//  ---- slice space (pixel, RAS)
-//  ---- view coordinate space (RAS, Camera Relative, other)
+//  -- each layer is required to provide an RGBA image in the space defined by the vtkMRMLSliceNode
 //
 // This class manages internal vtk pipelines that create an output vtkImageData
 // which can be used by the vtkSlicerSliceGUI class to display the resulting
@@ -39,8 +34,11 @@
 #include "vtkSlicerBaseLogic.h"
 #include "vtkSlicerLogic.h"
 
-//#include "vtkMrml.h"
-//#include "vtkMrmlVolume.h"
+#include "vtkMrml.h"
+#include "vtkMrmlSliceNode.h"
+#include "vtkSlicerSliceLayerLogic.h"
+
+#include "vtkImageBlend.h"
 
 class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLogic : public vtkSlicerLogic 
 {
@@ -50,6 +48,34 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLogic : public vtkSlicerLogic
   static vtkSlicerSliceLogic *New();
   vtkTypeRevisionMacro(vtkSlicerSliceLogic,vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
+
+  // Description:
+  // The mrml slice node for this slice logic
+  vtkGetObjectMacro (SliceNode, vtkMRMLSliceNode);
+  void SetSliceNode (vtkMRMLSliceNode *SliceNode);
+
+  // Description:
+  // The background slice layer
+  // TODO: this will eventually be generalized to a list of layers
+  vtkGetObjectMacro (BackgroundLayer, vtkSlicerSliceLayerLogic);
+  void SetBackgroundLayer (vtkSlicerSliceLayerLogic *BackgroundLayer);
+
+  // Description:
+  // The forground slice layer
+  // TODO: this will eventually be generalized to a list of layers
+  vtkGetObjectMacro (ForegroundLayer, vtkSlicerSliceLayerLogic);
+  void SetForegroundLayer (vtkSlicerSliceLayerLogic *ForegroundLayer);
+
+  // Description:
+  // The opacity of the forground slice layer
+  // TODO: this will eventually be generalized to a per-layer compositing function
+  vtkGetMacro (ForegroundOpacity, double);
+  void SetForegroundOpacity (double ForegroundOpacity);
+
+  // Description:
+  // The compositing filter
+  // TODO: this will eventually be generalized to a per-layer compositing function
+  vtkGetObjectMacro (Blend, vtkImageBlend);
     
 protected:
   vtkSlicerSliceLogic();
@@ -58,7 +84,12 @@ protected:
   void operator=(const vtkSlicerSliceLogic&);
 
   // Description:
-  // 
+  //
+  vtkMRMLSliceNode *SliceNode;
+  vtkSlicerSliceLayerLogic *BackgroundLayer;
+  vtkSlicerSliceLayerLogic *ForegroundLayer;
+  double ForegroundOpacity;
+  vtkImageBlend *Blend;
 };
 
 #endif

@@ -31,7 +31,7 @@
 #include "vtkMRMLVolumeNode.h"
 
 #include "vtkCollection.h"
-
+#include "vtkCallbackCommand.h"
 
 class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerMRMLLogic : public vtkSlicerLogic 
 {
