@@ -21,11 +21,6 @@ Version:   $Revision: 1.14 $
 #include "vtkMRMLVolumeNode.h"
 #include "vtkMRMLScene.h"
 
-// Initialize static member that controls resampling -- 
-// old comment: "This offset will be changed to 0.5 from 0.0 per 2/8/2002 Slicer 
-// development meeting, to move ijk coordinates to voxel centers."
-
-
 //------------------------------------------------------------------------------
 vtkMRMLVolumeNode* vtkMRMLVolumeNode::New()
 {
@@ -320,8 +315,7 @@ void vtkMRMLVolumeNode::SetIjkToRasMatrix(vtkMatrix4x4* mat)
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeNode::ComputeIjkToRasFromScanOrder(char *order, vtkMatrix4x4 *IjkToRas)
 {
-  std::cerr << "NOT IMPLEMENTED YET" << std::endl;
-  (void)order; (void)IjkToRas;
+  cout << "NOT IMPLEMENTED YET" << "\n";
 }
 
 //----------------------------------------------------------------------------
@@ -379,8 +373,9 @@ void vtkMRMLVolumeNode::UpdateScene(vtkMRMLScene *scene)
   }
   vtkMRMLNode* mnode = scene->GetNodeByID(this->StorageNodeID);
   if (mnode) {
-    vtkMRMLStorageNode *node  = dynamic_cast < vtkMRMLStorageNode *>(node);
+    vtkMRMLStorageNode *node  = dynamic_cast < vtkMRMLStorageNode *>(mnode);
     node->ReadData(this);
+    this->SetStorageNode(node);
   }
   if (this->DisplayNodeID != NULL) {
     mnode = scene->GetNodeByID(this->DisplayNodeID);

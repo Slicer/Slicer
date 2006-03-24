@@ -59,7 +59,7 @@ PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
 
-class vtkTransform;
+class vtkGeneralTransform;
 
 class VTK_MRML_EXPORT vtkMRMLScene : public vtkObject
 {
@@ -138,10 +138,7 @@ public:
   void InsertBeforeNode( vtkMRMLNode *item, vtkMRMLNode *newItem);
   
   int GetTransformBetweenNodes( vtkMRMLNode *node1, vtkMRMLNode *node2, 
-                                vtkTransform *xform );
-  
-  int GetTransformBetweenSpaces( const char *space1, const char *space2, 
-                                 vtkTransform *xform );
+                                vtkGeneralTransform *xform );
 
   // Undo API
   void SetUndoOn() {UndoFlag=true;};

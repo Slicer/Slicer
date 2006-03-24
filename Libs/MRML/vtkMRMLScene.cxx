@@ -15,10 +15,12 @@ Version:   $Revision: 1.18 $
 #include <map>
 
 //#include <hash_map>
-#include "vtkMRMLScene.h"
-#include "vtkMRMLParser.h"
 #include "vtkObjectFactory.h"
 #include "vtkErrorCode.h"
+#include "vtkGeneralTransform.h"
+
+#include "vtkMRMLScene.h"
+#include "vtkMRMLParser.h"
 
 //------------------------------------------------------------------------------
 vtkMRMLScene::vtkMRMLScene() 
@@ -359,16 +361,7 @@ vtkCollection* vtkMRMLScene::GetNodesByClassByName(const char* className, const 
 //------------------------------------------------------------------------------
 int  vtkMRMLScene::GetTransformBetweenNodes(vtkMRMLNode *node1,
                                             vtkMRMLNode *node2, 
-                                            vtkTransform *xform)
-{
-  vtkErrorMacro("NOT IMPLEMENTEED YET");
-  return 1;
-}
-
-//------------------------------------------------------------------------------
-int vtkMRMLScene::GetTransformBetweenSpaces( const char *space1, 
-                                             const char *space2, 
-                                             vtkTransform *xform )
+                                            vtkGeneralTransform *xform)
 {
   vtkErrorMacro("NOT IMPLEMENTEED YET");
   return 1;

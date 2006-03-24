@@ -30,7 +30,6 @@
 #include "vtkMRMLVolumeDisplayNode.h"
 
 #include "vtkMatrix4x4.h"
-#include "vtkTransform.h"
 #include "vtkImageData.h"
 
 class vtkImageData;
@@ -64,10 +63,6 @@ class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLNode
   // Finds the storage node and read the data
   virtual void UpdateScene(vtkMRMLScene *scene);
 
-  //--------------------------------------------------------------------------
-  // Display Information
-  //--------------------------------------------------------------------------
-  
   // Description:
   // Indicates if this volume is a label map, which is the output of 
   // segmentation that labels each voxel according to its tissue type.  
