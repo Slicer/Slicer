@@ -24,13 +24,10 @@
 #ifndef __vtkMRMLTransformNode_h
 #define __vtkMRMLTransformNode_h
 
-#include "vtkMRML.h"
 #include "vtkMRMLNode.h"
 
 #include "vtkGeneralTransform.h"
 #include "vtkMatrix4x4.h"
-
-class vtkImageData;
 
 class VTK_MRML_EXPORT vtkMRMLTransformNode : public vtkMRMLNode
 {
@@ -83,9 +80,9 @@ class VTK_MRML_EXPORT vtkMRMLTransformNode : public vtkMRMLNode
 
   void  GetTransformToNode(vtkMRMLTransformNode* node, vtkGeneralTransform* transformToNode);
 
-  virtual void  GetTransformMatrixToWorld(vtkMatrix4x4* transformToWorld) = 0;
+  virtual int  GetMatrixTransformToWorld(vtkMatrix4x4* transformToWorld) = 0;
 
-  virtual void  GetTransformMatrixToNode(vtkMRMLTransformNode* node, vtkMatrix4x4* transformToNode) = 0;
+  virtual int GetMatrixTransformToNode(vtkMRMLTransformNode* node, vtkMatrix4x4* transformToNode) = 0;
 
 protected:
   vtkMRMLTransformNode();

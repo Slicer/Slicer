@@ -22,6 +22,8 @@ SET(MRML_SRCS
         vtkMRMLVolumeHeaderlessStorageNode.cxx
         vtkMRMLModelStorageNode.cxx
         vtkMRMLVolumeDisplayNode.cxx
+        vtkMRMLTransformNode.cxx
+        vtkMRMLLinearTransformNode.cxx
 )
 
 # Abstract/pure virtual classes
