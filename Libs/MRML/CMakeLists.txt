@@ -24,6 +24,7 @@ SET(MRML_SRCS
         vtkMRMLVolumeDisplayNode.cxx
         vtkMRMLTransformNode.cxx
         vtkMRMLLinearTransformNode.cxx
+        vtkMRMLSliceNode.cxx
 )
 
 # Abstract/pure virtual classes
