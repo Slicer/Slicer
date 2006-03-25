@@ -120,7 +120,8 @@ int vtkMRMLScene::Connect()
   // create node references
   int nnodes = this->CurrentScene->GetNumberOfItems();
   vtkMRMLNode *node = NULL;
-  for (int n=0; n<nnodes; n++) {
+  int n;
+  for (n=0; n<nnodes; n++) {
     node = (vtkMRMLNode *)this->CurrentScene->GetItemAsObject(n);
     node->UpdateScene(this);
   }
@@ -134,7 +135,7 @@ int vtkMRMLScene::Connect()
 int vtkMRMLScene::Commit(const char* url)
 {
   if (url == NULL) {
-    url = URL;
+    url = this->URL;
   }
 
   vtkMRMLNode *node;
@@ -159,7 +160,8 @@ int vtkMRMLScene::Commit(const char* url)
   file << "<MRML>\n";
    
   // Write each node
-  for (int n=0; n < this->CurrentScene->GetNumberOfItems(); n++) {
+  int n;
+  for (n=0; n < this->CurrentScene->GetNumberOfItems(); n++) {
     node = (vtkMRMLNode*)this->CurrentScene->GetItemAsObject(n);
     
     deltaIndent = node->GetIndent();
@@ -210,7 +212,8 @@ int vtkMRMLScene::GetNumberOfNodesByClass(const char *className)
 {
   int num=0;
   vtkMRMLNode *node;
-  for (int n=0; n < this->CurrentScene->GetNumberOfItems(); n++) {
+  int n;
+  for (n=0; n < this->CurrentScene->GetNumberOfItems(); n++) {
     node = (vtkMRMLNode*)this->CurrentScene->GetItemAsObject(n);
     if (!strcmp(node->GetClassName(), className)) {
       num++;
@@ -432,6 +435,10 @@ const char* vtkMRMLScene::GetUniqueIDByClass(const char* className)
 }
 
 //------------------------------------------------------------------------------
+// Pushes the current scene onto the undo stack, and makes a backup copy of the 
+// passed node so that changes to the node are undoable; several signatures to handle 
+// individual nodes or a vtkCollection of nodes, or a vector of nodes
+//
 void vtkMRMLScene::SaveStateForUndo (vtkMRMLNode *node)
 {
   this->ClearRedoStack();
@@ -488,23 +495,10 @@ void vtkMRMLScene::SaveStateForUndo ()
   this->ClearRedoStack();
   this->SetUndoOn();
   this->PushIntoUndoStack();
-
-  if (0) { // copy the whole scene
-    int nnodes = this->CurrentScene->GetNumberOfItems();
-    for (int n=0; n<nnodes; n++) {
-      vtkMRMLNode *node  = dynamic_cast < vtkMRMLNode *>(this->CurrentScene->GetItemAsObject(n));
-      if (node) {
-        vtkMRMLNode *snode = node->CreateNodeInstance();
-        if (snode != NULL) {
-          snode->Copy(node);
-          this->ReplaceNodeInUndoStack(node, snode);
-        }
-      }
-    }
-  }
 } 
 
 //------------------------------------------------------------------------------
+// Make a new collection that has pointers to all the nodes in the current scene
 void vtkMRMLScene::PushIntoUndoStack()
 {
   if (this->CurrentScene == NULL) {
@@ -529,6 +523,7 @@ void vtkMRMLScene::PushIntoUndoStack()
 }
 
 //------------------------------------------------------------------------------
+// Make a new collection that has pointers to the current scene nodes
 void vtkMRMLScene::PushIntoRedoStack()
 {
   if (this->CurrentScene == NULL) {
@@ -553,6 +548,8 @@ void vtkMRMLScene::PushIntoRedoStack()
 }
 
 //------------------------------------------------------------------------------
+// Put a replacement node into the undoable copy of the scene so that the node
+// can be edited
 void vtkMRMLScene::ReplaceNodeInUndoStack(vtkMRMLNode *replaceNode, vtkMRMLNode *withNode)
 {
   vtkCollection* undoScene = dynamic_cast < vtkCollection *>( this->UndoStack.back() );
@@ -566,6 +563,8 @@ void vtkMRMLScene::ReplaceNodeInUndoStack(vtkMRMLNode *replaceNode, vtkMRMLNode 
 }
 
 //------------------------------------------------------------------------------
+// Put a replacement node into the redoable copy of the scene so that the node
+// can be replaced by the Undo version
 void vtkMRMLScene::ReplaceNodeInRedoStack(vtkMRMLNode *replaceNode, vtkMRMLNode *withNode)
 {
   vtkCollection* undoScene = dynamic_cast < vtkCollection *>( this->RedoStack.back() );
@@ -579,6 +578,8 @@ void vtkMRMLScene::ReplaceNodeInRedoStack(vtkMRMLNode *replaceNode, vtkMRMLNode 
 }
 
 //------------------------------------------------------------------------------
+// Replace the current scene by the top of the undo stack
+// -- move the current scene on the redo stack
 void vtkMRMLScene::Undo()
 {
   if (this->UndoStack.size() == 0) {
