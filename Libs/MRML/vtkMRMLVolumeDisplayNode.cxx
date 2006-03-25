@@ -208,7 +208,6 @@ void vtkMRMLVolumeDisplayNode::Copy(vtkMRMLNode *anode)
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  int idx;
   
   vtkMRMLNode::PrintSelf(os,indent);
 

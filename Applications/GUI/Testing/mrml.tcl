@@ -35,29 +35,31 @@ $win Create
 
 
 # create the mrml scene
-set scene [vtkMRMLScene New]
+set ::scene [vtkMRMLScene New]
 
 # Undo button
-set pb [vtkKWPushButton New]
-$pb SetParent $win
-$pb Create
-$pb SetText "Undo"
-$pb SetAnchorToWest
-pack [$pb GetWidgetName] -side top -anchor nw -expand false -fill x -padx 2 -pady 2
-$pb SetBalloonHelpString \
+set ::Undopb [vtkKWPushButton New]
+$::Undopb SetParent $win
+$::Undopb Create
+$::Undopb SetText "Undo (0)"
+$::Undopb SetEnabled 0
+$::Undopb SetAnchorToWest
+pack [$::Undopb GetWidgetName] -side top -anchor nw -expand false -fill x -padx 2 -pady 2
+$::Undopb SetBalloonHelpString \
 "Undo manipulations of mrml scene."
-$pb SetCommand "" "$scene Undo"
+$::Undopb SetCommand "" "$::scene Undo; mrmlUpdateUndoRedoButtons"
 
 # Redo button
-set pb [vtkKWPushButton New]
-$pb SetParent $win
-$pb Create
-$pb SetText "Redo"
-$pb SetAnchorToWest
-pack [$pb GetWidgetName] -side top -anchor nw -expand false -fill x -padx 2 -pady 2
-$pb SetBalloonHelpString \
+set ::Redopb [vtkKWPushButton New]
+$::Redopb SetParent $win
+$::Redopb Create
+$::Redopb SetText "Redo (0)"
+$::Redopb SetEnabled 0
+$::Redopb SetAnchorToWest
+pack [$::Redopb GetWidgetName] -side top -anchor nw -expand false -fill x -padx 2 -pady 2
+$::Redopb SetBalloonHelpString \
 "Redo manipulations of mrml scene."
-$pb SetCommand "" "$scene Redo"
+$::Redopb SetCommand "" "$::scene Redo; mrmlUpdateUndoRedoButtons"
 
 # Add a button for each mrml node type
 
@@ -67,7 +69,7 @@ set nodes "vtkMRMLVolumeNode vtkMRMLModelNode"
 foreach n $nodes {
 
   set nn [$n New]
-  $scene RegisterNodeClass $nn
+  $::scene RegisterNodeClass $nn
 
   set pb [vtkKWPushButton New]
   $pb SetParent $win
@@ -77,16 +79,17 @@ foreach n $nodes {
   pack [$pb GetWidgetName] -side top -anchor nw -expand false -fill x -padx 2 -pady 2
   $pb SetBalloonHelpString \
     "Add a $n to the current mrml scene."
-  $pb SetCommand "" "mrmlAddNode $scene $n"
+  $pb SetCommand "" "mrmlAddNode $n"
 
 }
 
-proc mrmlAddNode {scene nodetype} {
+proc mrmlAddNode {nodetype} {
 
     set n [$nodetype New]
     $n SetName Node-[clock seconds]
-    $scene SaveStateForUndo
-    $scene AddNode $n
+    $::scene SaveStateForUndo
+    $::scene AddNode $n
+    mrmlUpdateUndoRedoButtons
 }
 
 
@@ -126,35 +129,53 @@ pack [$mcl GetWidgetName] -side top -anchor nw -expand n -fill y -padx 2 -pady 2
 # set the command to execute when a cell is edited
 #
 
-$mcl SetCellUpdatedCommand "" "mrmlUpdateName $scene $mcl"
+$mcl SetCellUpdatedCommand "" "mrmlUpdateName $mcl"
 
-proc mrmlUpdateName {scene mcl row col txt} {
+proc mrmlUpdateName {mcl row col txt} {
 
     set id [$mcl GetCellText $row 2]
     set name [$mcl GetCellText $row 1]
-    set node [$scene GetNodeByID $id]
-    $scene SaveStateForUndo $node
+    set node [$::scene GetNodeByID $id]
+    $::scene SaveStateForUndo $node
     $node SetName $name
+    mrmlUpdateUndoRedoButtons
 }
 
 # 
 # set an observer to refresh the list box when the scene changes
 #
 
-$scene AddObserver ModifiedEvent "mrmlFillMCL $scene $mcl"
+$::scene AddObserver ModifiedEvent "mrmlFillMCL $mcl"
 
-proc mrmlFillMCL {scene mcl} {
+proc mrmlFillMCL {mcl} {
     $mcl DeleteAllRows
-    set nitems [$scene GetNumberOfNodes]
+    set nitems [$::scene GetNumberOfNodes]
     for {set i 0} {$i < $nitems} {incr i} {
-        set n [$scene GetNthNode $i]
+        set n [$::scene GetNthNode $i]
         $mcl InsertCellText $i 0 [$n GetClassName]
         $mcl InsertCellText $i 1 [$n GetName]
         $mcl InsertCellText $i 2 [$n GetID]
     }
 }
 
+proc mrmlUpdateUndoRedoButtons {} {
 
+    set nundo [$::scene GetNumberOfUndoLevels]
+    $::Undopb SetText "Undo ($nundo)"
+    if { $nundo > 0 } {
+        $::Undopb SetEnabled 1
+    } else {
+        $::Undopb SetEnabled 0
+    }
+
+    set nredo [$::scene GetNumberOfRedoLevels]
+    $::Redopb SetText "Redo ($nredo)"
+    if { $nredo > 0 } {
+        $::Redopb SetEnabled 1
+    } else {
+        $::Redopb SetEnabled 0
+    }
+}
 
 
 # Start the application

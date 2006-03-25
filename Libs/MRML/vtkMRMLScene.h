@@ -143,8 +143,8 @@ public:
   // Undo API
   void SetUndoOn() {UndoFlag=true;};
   void SetUndoOff() {UndoFlag=false;};
-  int  GetUndoFlag() {return UndoFlag;};
-  void SetUndoFlag(int flag) {UndoFlag = flag;};
+  bool  GetUndoFlag() {return UndoFlag;};
+  void SetUndoFlag(bool flag) {UndoFlag = flag;};
 
   void Undo();
   void Redo();

@@ -411,7 +411,8 @@ const char* vtkMRMLScene::GetUniqueIDByClass(const char* className)
     ss << id;
     name = ss.str();
     bool nameExists = false;
-    for (int i=0; i< UniqueIDs.size(); i++) {
+    unsigned int i;
+    for (i=0; i< UniqueIDs.size(); i++) {
       if (UniqueIDs[i] == name) {
         nameExists = true;
         break;
@@ -449,7 +450,8 @@ void vtkMRMLScene::SaveStateForUndo (std::vector<vtkMRMLNode *> nodes)
   this->ClearRedoStack();
   this->SetUndoOn();
   this->PushIntoUndoStack();
-  for (int n=0; n<nodes.size(); n++) {
+  unsigned int n;
+  for (n=0; n<nodes.size(); n++) {
     vtkMRMLNode *node = nodes[n];
     vtkMRMLNode *snode = node->CreateNodeInstance();
     if (snode != NULL) {
@@ -585,6 +587,7 @@ void vtkMRMLScene::Undo()
 
   int nnodes;
   int n;
+  unsigned int nn;
 
   PushIntoRedoStack();
 
@@ -645,11 +648,11 @@ void vtkMRMLScene::Undo()
     }
   }
 
-  for (n=0; n<addNodes.size(); n++) {
-    this->AddNode(addNodes[n]);
+  for (nn=0; nn<addNodes.size(); nn++) {
+    this->AddNode(addNodes[nn]);
   }
-  for (n=0; n<removeNodes.size(); n++) {
-    this->RemoveNode(removeNodes[n]);
+  for (nn=0; nn<removeNodes.size(); nn++) {
+    this->RemoveNode(removeNodes[nn]);
   }
 
   undoScene->RemoveAllItems();
@@ -668,6 +671,7 @@ void vtkMRMLScene::Redo()
 
   int nnodes;
   int n;
+  unsigned int nn;
 
   PushIntoUndoStack();
 
@@ -728,11 +732,11 @@ void vtkMRMLScene::Redo()
     }
   }
 
-  for (n=0; n<addNodes.size(); n++) {
-    this->AddNode(addNodes[n]);
+  for (nn=0; nn<addNodes.size(); nn++) {
+    this->AddNode(addNodes[nn]);
   }
-  for (n=0; n<removeNodes.size(); n++) {
-    this->RemoveNode(removeNodes[n]);
+  for (nn=0; nn<removeNodes.size(); nn++) {
+    this->RemoveNode(removeNodes[nn]);
   }
 
   undoScene->RemoveAllItems();

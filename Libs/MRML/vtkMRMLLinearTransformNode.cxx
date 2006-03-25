@@ -172,9 +172,11 @@ int  vtkMRMLLinearTransformNode::GetMatrixTransformToWorld(vtkMatrix4x4* transfo
   if (parent != NULL) {
     vtkMRMLLinearTransformNode *lparent = dynamic_cast < vtkMRMLLinearTransformNode* > (parent);
     if (lparent) {
-      lparent->GetMatrixTransformToWorld(transformToWorld);
+      return (lparent->GetMatrixTransformToWorld(transformToWorld));
     }
   }
+  // TODO: what does this return code mean?
+  return 1;
 }
 
 //----------------------------------------------------------------------------
@@ -197,6 +199,9 @@ int  vtkMRMLLinearTransformNode::GetMatrixTransformToNode(vtkMRMLTransformNode* 
   xform->DeepCopy(transformToNode);
   vtkMatrix4x4::Multiply4x4(xform, transformToWorld2, transformToNode);
   xform->Delete();
+
+  // TODO: what does this return code mean?
+  return 1;
 }
 
 

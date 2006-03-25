@@ -13,17 +13,19 @@ SET(SlicerBaseLogic_SRCS
 
 # Abstract/pure virtual classes
 
-SET_SOURCE_FILES_PROPERTIES(
-  vtkSlicerLogic.cxx 
-  ABSTRACT
-  )
+#SET_SOURCE_FILES_PROPERTIES(
+  # <classname>.cxx
+  #PROPERTIES
+  #ABSTRACT "TRUE"
+  #)
 
 # Helper classes
 
-SET_SOURCE_FILES_PROPERTIES(
-  vtkSlicerLogic.cxx 
-  WRAP_EXCLUDE
-  )
+#SET_SOURCE_FILES_PROPERTIES(
+  # <classname>.cxx
+  #PROPERTIES
+  #WRAP_EXCLUDE "TRUE"
+  #)
 
 # --------------------------------------------------------------------------
 # Include dirs
