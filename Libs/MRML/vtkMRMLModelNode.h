@@ -24,10 +24,11 @@
 #include <string>
 
 #include "vtkPolyData.h" 
+#include "vtkMatrix4x4.h"
 
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
-
+#include "vtkMRMLTransformNode.h"
 
 class VTK_MRML_EXPORT vtkMRMLModelNode : public vtkMRMLNode
 {
@@ -58,6 +59,10 @@ public:
   // Description:
   // Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "Model";};
+
+  // Description:
+  // Finds the storage node and read the data
+  virtual void UpdateScene(vtkMRMLScene *scene);
 
   // Description:
   // Name of the model's color, which is defined by a Color node in a MRML file
@@ -117,6 +122,16 @@ public:
   vtkGetMacro(LUTName,int);
   vtkSetMacro(LUTName,int);
 
+  // Description:
+  // String ID of the transform MRML node
+  vtkSetStringMacro(TransformNodeID);
+  vtkGetStringMacro(TransformNodeID);
+
+  // Description:
+  // Associated transform MRML node
+  vtkGetObjectMacro(TransformNode, vtkMRMLTransformNode);
+  vtkSetObjectMacro(TransformNode, vtkMRMLTransformNode);
+
     
   vtkGetObjectMacro(PolyData, vtkPolyData);
   vtkSetObjectMacro(PolyData, vtkPolyData);
@@ -147,6 +162,9 @@ protected:
 
   // Arrays
   vtkFloatingPointType ScalarRange[2];
+
+  char *TransformNodeID;
+  vtkMRMLTransformNode       *TransformNode;
 
 };
 

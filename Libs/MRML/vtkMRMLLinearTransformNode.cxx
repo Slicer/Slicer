@@ -77,7 +77,7 @@ void vtkMRMLLinearTransformNode::WriteXML(ostream& of, int nIndent)
     for (int row=0; row<4; row++) {
       for (int col=0; col<4; col++) {
         ss << this->MatrixTransformToParent->GetElement(row, col);
-        if (row!=3 && col!=3) {
+        if (!(row==3 && col==3)) {
           ss << " ";
         }
       }
@@ -136,7 +136,7 @@ void vtkMRMLLinearTransformNode::PrintSelf(ostream& os, vtkIndent indent)
     for (int row=0; row<4; row++) {
       for (int col=0; col<4; col++) {
         os << this->MatrixTransformToParent->GetElement(row, col);
-        if (row!=3 && col!=3) {
+        if (!(row==3 && col==3)) {
           os << " ";
         }
         else {
@@ -181,25 +181,64 @@ int  vtkMRMLLinearTransformNode::GetMatrixTransformToWorld(vtkMatrix4x4* transfo
 
 //----------------------------------------------------------------------------
 int  vtkMRMLLinearTransformNode::GetMatrixTransformToNode(vtkMRMLTransformNode* node,
-                                                           vtkMatrix4x4* transformToNode)
+                                                          vtkMatrix4x4* transformToNode)
 {
   if (this->IsTransformToNodeLinear(node) != 1) {
     transformToNode->Identity();
     return 0;
   }
-
-  this->GetMatrixTransformToWorld(transformToNode);
-  vtkMatrix4x4* transformToWorld2 = vtkMatrix4x4::New();
-  transformToWorld2->Identity();
   
-  node->GetMatrixTransformToWorld(transformToWorld2);
-  transformToWorld2->Invert();
+  
+  if (this->IsTransformNodeMyParent(node)) {
+    vtkMRMLTransformNode *parent = this->GetParentTransformNode();
+    if (parent != NULL) {
 
-  vtkMatrix4x4 *xform = vtkMatrix4x4::New();
-  xform->DeepCopy(transformToNode);
-  vtkMatrix4x4::Multiply4x4(xform, transformToWorld2, transformToNode);
-  xform->Delete();
+      vtkMatrix4x4 *xform = vtkMatrix4x4::New();
+      xform->DeepCopy(transformToNode);
+      vtkMatrix4x4::Multiply4x4(xform, this->MatrixTransformToParent, transformToNode);
 
+      if (strcmp(parent->GetID(), node->GetID()) ) {
+        this->GetMatrixTransformToNode(node, transformToNode);
+      }
+    }
+    else if (this->MatrixTransformToParent) {
+      vtkMatrix4x4 *xform = vtkMatrix4x4::New();
+      xform->DeepCopy(transformToNode);
+      vtkMatrix4x4::Multiply4x4(xform, this->MatrixTransformToParent, transformToNode);
+    }
+  }
+  else if (this->IsTransformNodeMyChild(node)) {
+    vtkMRMLLinearTransformNode *lnode = dynamic_cast <vtkMRMLLinearTransformNode *> (node);
+    vtkMRMLLinearTransformNode *parent = dynamic_cast <vtkMRMLLinearTransformNode *> (node->GetParentTransformNode());
+    if (parent != NULL) {
+
+      vtkMatrix4x4 *xform = vtkMatrix4x4::New();
+      xform->DeepCopy(transformToNode);
+      vtkMatrix4x4::Multiply4x4(xform, lnode->MatrixTransformToParent, transformToNode);
+
+      if (strcmp(parent->GetID(), this->GetID()) ) {
+        this->GetMatrixTransformToNode(this, transformToNode);
+      }
+    }
+    else if (lnode->MatrixTransformToParent) {
+      vtkMatrix4x4 *xform = vtkMatrix4x4::New();
+      xform->DeepCopy(transformToNode);
+      vtkMatrix4x4::Multiply4x4(xform, lnode->MatrixTransformToParent, transformToNode);
+    }
+  }
+  else {
+    this->GetMatrixTransformToWorld(transformToNode);
+    vtkMatrix4x4* transformToWorld2 = vtkMatrix4x4::New();
+    transformToWorld2->Identity();
+    
+    node->GetMatrixTransformToWorld(transformToWorld2);
+    transformToWorld2->Invert();
+    
+    vtkMatrix4x4 *xform = vtkMatrix4x4::New();
+    xform->DeepCopy(transformToNode);
+    vtkMatrix4x4::Multiply4x4(xform, transformToWorld2, transformToNode);
+    xform->Delete();
+  }
   // TODO: what does this return code mean?
   return 1;
 }

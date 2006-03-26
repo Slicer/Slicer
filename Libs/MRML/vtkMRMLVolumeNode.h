@@ -24,13 +24,14 @@
 #ifndef __vtkMRMLVolumeNode_h
 #define __vtkMRMLVolumeNode_h
 
+#include "vtkMatrix4x4.h"
+#include "vtkImageData.h"
+
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
 #include "vtkMRMLStorageNode.h"
 #include "vtkMRMLVolumeDisplayNode.h"
-
-#include "vtkMatrix4x4.h"
-#include "vtkImageData.h"
+#include "vtkMRMLTransformNode.h"
 
 class vtkImageData;
 
@@ -102,21 +103,37 @@ class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLNode
 
 
   // Description:
-  // Numerical ID of the storage MRML node
+  // String ID of the storage MRML node
   vtkSetStringMacro(StorageNodeID);
   vtkGetStringMacro(StorageNodeID);
 
   // Description:
-  // Numerical ID of the display MRML node
+  // String ID of the display MRML node
   vtkSetStringMacro(DisplayNodeID);
   vtkGetStringMacro(DisplayNodeID);
 
+  // Description:
+  // String ID of the transform MRML node
+  vtkSetStringMacro(TransformNodeID);
+  vtkGetStringMacro(TransformNodeID);
+
+  // Description:
+  // Associated storage MRML node
   vtkGetObjectMacro(StorageNode, vtkMRMLStorageNode);
   vtkSetObjectMacro(StorageNode, vtkMRMLStorageNode);
 
+  // Description:
+  // Associated display MRML node
   vtkGetObjectMacro(DisplayNode, vtkMRMLVolumeDisplayNode);
   vtkSetObjectMacro(DisplayNode, vtkMRMLVolumeDisplayNode);
 
+  // Description:
+  // Associated transform MRML node
+  vtkGetObjectMacro(TransformNode, vtkMRMLTransformNode);
+  vtkSetObjectMacro(TransformNode, vtkMRMLTransformNode);
+
+  // Description:
+  // Associated ImageData
   vtkGetObjectMacro(ImageData, vtkImageData);
   vtkSetObjectMacro(ImageData, vtkImageData);
 
@@ -140,10 +157,12 @@ protected:
 
   char *StorageNodeID;
   char *DisplayNodeID;
+  char *TransformNodeID;
 
-  vtkMRMLStorageNode *StorageNode;
-  vtkMRMLVolumeDisplayNode *DisplayNode;
-  vtkImageData       *ImageData;
+  vtkMRMLStorageNode         *StorageNode;
+  vtkMRMLVolumeDisplayNode   *DisplayNode;
+  vtkMRMLTransformNode       *TransformNode;
+  vtkImageData               *ImageData;
 
 };
 

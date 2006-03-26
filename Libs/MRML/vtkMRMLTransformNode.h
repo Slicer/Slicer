@@ -59,30 +59,55 @@ class VTK_MRML_EXPORT vtkMRMLTransformNode : public vtkMRMLNode
   virtual void UpdateScene(vtkMRMLScene *scene);
 
   // Description:
-  // Numerical ID of the parent transform MRML node
+  // string ID of the parent transform MRML node
+  // If NULL the node at the top
   vtkSetStringMacro(ParentTransformNodeID);
   vtkGetStringMacro(ParentTransformNodeID);
 
+  // Description:
+  // parent transform MRML node. 
+  // If NULL the node at the top
   vtkGetObjectMacro(ParentTransformNode, vtkMRMLTransformNode);
   vtkSetObjectMacro(ParentTransformNode, vtkMRMLTransformNode);
 
-
+  // Description:
+  // 1 if transfrom is linear, 0 otherwise
   virtual int IsLinear() = 0;
 
+  // Description:
+  // vtkGeneral transform of this node
   virtual vtkGeneralTransform* GetTransformToParent() {
      return this->TransformToParent; };
 
+  // Description:
+  // 1 if all the transforms to the top are linear, 0 otherwise
   int  IsTransformToWorldLinear() ;
 
-  void GetTransformToWorld(vtkGeneralTransform* transformToWorld);
-
+  // Description:
+  // 1 if all the transforms bwetween nodes  are linear, 0 otherwise
   int  IsTransformToNodeLinear(vtkMRMLTransformNode* node);
 
-  void  GetTransformToNode(vtkMRMLTransformNode* node, vtkGeneralTransform* transformToNode);
+  // Description:
+  // Get concatinated transforms to the top
+  void GetTransformToWorld(vtkGeneralTransform* transformToWorld);
 
-  virtual int  GetMatrixTransformToWorld(vtkMatrix4x4* transformToWorld) = 0;
+  // Description:
+  // Get concatinated transforms  bwetween nodes  
+  void GetTransformToNode(vtkMRMLTransformNode* node, 
+                          vtkGeneralTransform* transformToNode);
 
-  virtual int GetMatrixTransformToNode(vtkMRMLTransformNode* node, vtkMatrix4x4* transformToNode) = 0;
+  int IsTransformNodeMyParent(vtkMRMLTransformNode* node);
+
+  int IsTransformNodeMyChild(vtkMRMLTransformNode* node);
+
+  // Description:
+  // Get concatinated transforms to the top
+  virtual int GetMatrixTransformToWorld(vtkMatrix4x4* transformToWorld) = 0;
+
+  // Description:
+  // Get concatinated transforms  bwetween nodes  
+  virtual int GetMatrixTransformToNode(vtkMRMLTransformNode* node, 
+                                       vtkMatrix4x4* transformToNode) = 0;
 
 protected:
   vtkMRMLTransformNode();

@@ -55,50 +55,61 @@ vtkMRMLVolumeNode::vtkMRMLVolumeNode()
 
   this->StorageNodeID = NULL;
   this->DisplayNodeID = NULL;
+  this->TransformNodeID = NULL;
+
   this->StorageNode = NULL;
   this->DisplayNode = NULL;
+  this->TransformNode = NULL;
 
   this->ImageData = NULL;
-  this->StorageNode = NULL;
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLVolumeNode::~vtkMRMLVolumeNode()
 {
-  if (this->StorageNodeID)
-    {
-      delete [] this->StorageNodeID;
-      this->StorageNodeID = NULL;
-    }
-  if (this->DisplayNodeID)
-    {
-      delete [] this->DisplayNodeID;
-      this->DisplayNodeID = NULL;
-    }
+  if (this->StorageNodeID) {
+    delete [] this->StorageNodeID;
+    this->StorageNodeID = NULL;
+  }
+  if (this->DisplayNodeID) {
+    delete [] this->DisplayNodeID;
+    this->DisplayNodeID = NULL;
+  }
+  if (this->TransformNodeID) {
+    delete [] this->TransformNodeID;
+    this->TransformNodeID = NULL;
+  }
 
-  if (this->ImageData) 
-    {
-      this->ImageData->Delete();
-    }
+  if (this->ImageData)  {
+    this->ImageData->Delete();
+  }
   
-  if (this->StorageNode) 
-    {
-      this->StorageNode->Delete();
-    }
+  if (this->StorageNode)  {
+    this->StorageNode->Delete();
+  }
+  if (this->DisplayNode) {
+    this->DisplayNode->Delete();
+  }
+  if (this->TransformNode) {
+    this->TransformNode->Delete();
+  }
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
-
+  
   vtkIndent indent(nIndent);
-
+  
   if (this->StorageNodeID != NULL) {
     of << indent << "StorageNodeID='" << this->StorageNodeID << "' ";
   }
   if (this->DisplayNodeID != NULL) {
     of << indent << "DisplayNodeID='" << this->DisplayNodeID << "' ";
+  }
+  if (this->TransformNodeID != NULL) {
+    of << indent << "TransformNodeID='" << this->TransformNodeID << "' ";
   }
   if (this->IjkToRasDirections != NULL) {
     std::stringstream ss;
@@ -139,6 +150,9 @@ void vtkMRMLVolumeNode::ReadXMLAttributes(const char** atts)
     else if (!strcmp(attName, "DisplayNodeID")) {
       this->SetDisplayNodeID(attValue);
     }
+    else if (!strcmp(attName, "TransformNodeID")) {
+      this->SetTransformNodeID(attValue);
+    }
   }  
 }
 
@@ -161,9 +175,16 @@ void vtkMRMLVolumeNode::Copy(vtkMRMLNode *anode)
   }
   if (this->StorageNode) {
     this->SetStorageNode(node->StorageNode);
+  }  
+  if (this->DisplayNode) {
+    this->SetDisplayNode(node->DisplayNode);
+  }
+  if (this->TransformNode) {
+    this->SetTransformNode(node->TransformNode);
   }
   this->SetStorageNodeID(node->StorageNodeID);
   this->SetDisplayNodeID(node->DisplayNodeID);
+  this->SetTransformNodeID(node->TransformNodeID);
 }
 
 //----------------------------------------------------------------------------
@@ -185,6 +206,9 @@ void vtkMRMLVolumeNode::PrintSelf(ostream& os, vtkIndent indent)
 
   os << indent << "DisplayNodeID: " <<
     (this->DisplayNodeID ? this->DisplayNodeID : "(none)") << "\n";
+
+  os << indent << "TransformNodeID: " <<
+    (this->TransformNodeID ? this->TransformNodeID : "(none)") << "\n";
 
   if (this->ImageData != NULL) {
     os << indent << "ImageData:\n";
@@ -364,25 +388,34 @@ const char* vtkMRMLVolumeNode::ComputeScanOrderFromIjkToRas(vtkMatrix4x4 *ijkToR
  
 }
 
-
+//-----------------------------------------------------------
 void vtkMRMLVolumeNode::UpdateScene(vtkMRMLScene *scene)
 {
   if (this->GetStorageNodeID() == NULL) {
     vtkErrorMacro("No reference StorageNodeID found");
     return;
   }
+
   vtkMRMLNode* mnode = scene->GetNodeByID(this->StorageNodeID);
   if (mnode) {
     vtkMRMLStorageNode *node  = dynamic_cast < vtkMRMLStorageNode *>(mnode);
     node->ReadData(this);
     this->SetStorageNode(node);
   }
+
   if (this->DisplayNodeID != NULL) {
     mnode = scene->GetNodeByID(this->DisplayNodeID);
     vtkMRMLVolumeDisplayNode *displayNode  = dynamic_cast < vtkMRMLVolumeDisplayNode *>(mnode);
     this->SetDisplayNode(displayNode);
   }
-  
+
+  if (this->TransformNodeID != NULL) {
+    mnode = scene->GetNodeByID(this->TransformNodeID);
+    if (mnode) {
+      vtkMRMLTransformNode *node  = dynamic_cast < vtkMRMLTransformNode *>(mnode);
+      this->SetTransformNode(node);
+    }
+  }
 }
 
 

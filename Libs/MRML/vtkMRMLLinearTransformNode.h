@@ -51,15 +51,25 @@ class VTK_MRML_EXPORT vtkMRMLLinearTransformNode : public vtkMRMLTransformNode
   // Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "LinearTransform";};
 
+  // Description:
+  // 1 if transfrom is linear, 0 otherwise
   virtual int IsLinear() {return 1;};
 
+  // Description:
+  // vtkGeneral transform of this node
   virtual vtkGeneralTransform* GetTransformToParent();
 
-  vtkMatrix4x4* GetMatrixTransformToParent() {return this->MatrixTransformToParent;};
+  // Description:
+  // vtkMatrix4x4 transform of this node
+  vtkGetObjectMacro(MatrixTransformToParent, vtkMatrix4x4); 
   vtkSetObjectMacro(MatrixTransformToParent, vtkMatrix4x4); 
 
+  // Description:
+  // Get concatinated transforms to the top
   virtual int  GetMatrixTransformToWorld(vtkMatrix4x4* transformToWorld);
   
+  // Description:
+  // Get concatinated transforms  bwetween nodes  
   virtual int  GetMatrixTransformToNode(vtkMRMLTransformNode* node, 
                                         vtkMatrix4x4* transformToNode);
   
