@@ -43,6 +43,7 @@ set ::volsel [vtkSlicerVolumeSelectGUI New]
 $::volsel SetParent $win
 $::volsel Create
 $::volsel SetMRMLScene $::scene
+$::volsel SetLabelText "Volume Select: "
 pack [$::volsel GetWidgetName] -side top -anchor nw -expand false -fill x -padx 2 -pady 2
 $::volsel SetBalloonHelpString \
 "select a volume from the current mrml scene."
