@@ -1,5 +1,6 @@
 
 #include "vtkKWApplication.h"
+#include "vtkKWNotebook.h"
 #include "vtkSlicerGUI.h"
 #include "vtkSlicerApplicationLogic.h"
 #include "vtkSlicerApplicationGUI.h"
@@ -46,7 +47,15 @@ int Slicer3_main(int argc, char *argv[])
 
   // add to collection of component GUIs
   slicerGUI->AddGUI ( appGUI );
+
+  // Add Modules
   
+  vtkKWNotebook* mnb = slicerGUI->GetMainSlicerWin()->GetMainNotebook();
+  mnb->AddPage("Sample Module");
+  vtkKWFrame *moduleFrame = mnb->GetFrame("Sample Module");
+
+
+
   // TODO: where should args get parsed?
   //int res = appGUI->StartApplication(argc, argv);
   int res = slicerGUI->StartApplication();
