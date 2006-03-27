@@ -26,8 +26,10 @@
 #include "vtkKWFrame.h"
 #include "vtkMRMLScene.h"
 
+#include "vtkModulesBaseClasses.h"
 
-class VTK_EXPORT vtkModule : public vtkObject
+
+class VTK_MODULES_BASE_CLASSES_EXPORT vtkModule : public vtkObject
 {
 public:
   static vtkModule *New();

@@ -6,7 +6,7 @@
 
 class vtkKWScale;
 
-class KWCallbacksExample_EXPORT vtkGradientAnisotropicDiffusionFilterWidget : public vtkKWCompositeWidget
+class VTK_GRADIENTANIOTROPICDIFFUSIONFILTER_EXPORT vtkGradientAnisotropicDiffusionFilterWidget : public vtkKWCompositeWidget
 {
 public:
   static vtkGradientAnisotropicDiffusionFilterWidget* New();

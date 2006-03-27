@@ -16,7 +16,7 @@
 
 #include "vtkModule.h"
 
-class VTK_MRML_EXPORT vtkGradientAnisotropicDiffusionFilterModule : public vtkModule
+class VTK_GRADIENTANIOTROPICDIFFUSIONFILTER_EXPORT vtkGradientAnisotropicDiffusionFilterModule : public vtkModule
 {
   public:
   static vtkGradientAnisotropicDiffusionFilterModule *New();

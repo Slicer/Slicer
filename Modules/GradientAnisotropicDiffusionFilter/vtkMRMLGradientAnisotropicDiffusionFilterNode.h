@@ -24,7 +24,7 @@
 
 class vtkImageData;
 
-class VTK_MRML_EXPORT vtkMRMLGradientAnisotropicDiffusionFilterNode : public vtkMRMLNode
+class VTK_GRADIENTANIOTROPICDIFFUSIONFILTER_EXPORT vtkMRMLGradientAnisotropicDiffusionFilterNode : public vtkMRMLNode
 {
   public:
   static vtkMRMLGradientAnisotropicDiffusionFilterNode *New();
