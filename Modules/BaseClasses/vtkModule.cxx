@@ -57,8 +57,8 @@ vtkModule::vtkModule()
 {
   this->Description = NULL;
   this->Name = NULL;
-  this->SceneRootDir = NULL;
-  this->Scene = NULL;
+  this->MRMLSceneRootDir = NULL;
+  this->MRMLScene = NULL;
   this->MRMLCallbackCommand = vtkCallbackCommand::New();
   this->MRMLCallbackCommand->SetClientData( reinterpret_cast<void *> (this) );
   this->MRMLCallbackCommand->SetCallback(MRMLCallback);
@@ -69,8 +69,8 @@ vtkModule::~vtkModule()
 {
   this->SetDescription(NULL);
   this->SetName(NULL);
-  if (this->Scene) {
-    this->Scene->Delete();
+  if (this->MRMLScene) {
+    this->MRMLScene->Delete();
   }
 }
 

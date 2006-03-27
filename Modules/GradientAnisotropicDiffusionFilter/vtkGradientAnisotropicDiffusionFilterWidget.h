@@ -2,11 +2,13 @@
 #define __vtkGradientAnisotropicDiffusionFilterWidget_h
 
 #include "vtkKWCompositeWidget.h"
-#include "vtkKWCallbacksExampleWin32Header.h"
+
+#include "vtkGradientAnisotropicDiffusionFilter.h"
+
 
 class vtkKWScale;
 
-class VTK_GRADIENTANIOTROPICDIFFUSIONFILTER_EXPORT vtkGradientAnisotropicDiffusionFilterWidget : public vtkKWCompositeWidget
+class VTK_GRADIENTANISOTROPICDIFFUSIONFILTER_EXPORT vtkGradientAnisotropicDiffusionFilterWidget : public vtkKWCompositeWidget
 {
 public:
   static vtkGradientAnisotropicDiffusionFilterWidget* New();

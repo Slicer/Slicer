@@ -22,9 +22,11 @@
 #include "vtkTransform.h"
 #include "vtkImageData.h"
 
+#include "vtkGradientAnisotropicDiffusionFilter.h"
+
 class vtkImageData;
 
-class VTK_GRADIENTANIOTROPICDIFFUSIONFILTER_EXPORT vtkMRMLGradientAnisotropicDiffusionFilterNode : public vtkMRMLNode
+class VTK_GRADIENTANISOTROPICDIFFUSIONFILTER_EXPORT vtkMRMLGradientAnisotropicDiffusionFilterNode : public vtkMRMLNode
 {
   public:
   static vtkMRMLGradientAnisotropicDiffusionFilterNode *New();

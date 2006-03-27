@@ -16,11 +16,13 @@
 
 #include "vtkModule.h"
 
-class VTK_GRADIENTANIOTROPICDIFFUSIONFILTER_EXPORT vtkGradientAnisotropicDiffusionFilterModule : public vtkModule
+#include "vtkGradientAnisotropicDiffusionFilter.h"
+
+class VTK_GRADIENTANISOTROPICDIFFUSIONFILTER_EXPORT vtkGradientAnisotropicDiffusionFilterModule : public vtkModule
 {
   public:
   static vtkGradientAnisotropicDiffusionFilterModule *New();
-  vtkTypeMacro(vtkGradientAnisotropicDiffusionFilterModule,vtkMRMLNode);
+  vtkTypeMacro(vtkGradientAnisotropicDiffusionFilterModule,vtkModule);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual void BuildGUI(vtkKWFrame* frame);

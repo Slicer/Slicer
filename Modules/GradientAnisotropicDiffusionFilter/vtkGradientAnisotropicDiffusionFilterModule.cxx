@@ -6,7 +6,7 @@ See Doc/copyright/copyright.txt
 or http://www.slicer.org/copyright/copyright.txt for details.
 
 Program:   3D Slicer
-Module:    $RCSfile: vtGradientAnisotropicDiffusionFilterModule.cxx,v $
+Module:    $RCSfile: vtkGradientAnisotropicDiffusionFilterModule.cxx,v $
 Date:      $Date: 2006/03/17 15:10:10 $
 Version:   $Revision: 1.2 $
 
@@ -18,50 +18,51 @@ Version:   $Revision: 1.2 $
 
 #include "vtkObjectFactory.h"
 
-#include "vtGradientAnisotropicDiffusionFilterModule.h"
+#include "vtkGradientAnisotropicDiffusionFilterModule.h"
 #include "vtkGradientAnisotropicDiffusionFilterWidget.h"
 #include "vtkMRMLGradientAnisotropicDiffusionFilterNode.h"
 
 //------------------------------------------------------------------------------
-vtGradientAnisotropicDiffusionFilterModule* vtGradientAnisotropicDiffusionFilterModule::New()
+vtkGradientAnisotropicDiffusionFilterModule* vtkGradientAnisotropicDiffusionFilterModule::New()
 {
   // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtGradientAnisotropicDiffusionFilterModule");
+  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkGradientAnisotropicDiffusionFilterModule");
   if(ret)
     {
-      return (vtGradientAnisotropicDiffusionFilterModule*)ret;
+      return (vtkGradientAnisotropicDiffusionFilterModule*)ret;
     }
   // If the factory was unable to create the object, then create it here.
-  return new vtGradientAnisotropicDiffusionFilterModule;
+  return new vtkGradientAnisotropicDiffusionFilterModule;
 }
 
 
 //----------------------------------------------------------------------------
-vtGradientAnisotropicDiffusionFilterModule::vtGradientAnisotropicDiffusionFilterModule()
+vtkGradientAnisotropicDiffusionFilterModule::vtkGradientAnisotropicDiffusionFilterModule()
 {
 
 }
 
 //----------------------------------------------------------------------------
-vtGradientAnisotropicDiffusionFilterModule::~vtGradientAnisotropicDiffusionFilterModule()
+vtkGradientAnisotropicDiffusionFilterModule::~vtkGradientAnisotropicDiffusionFilterModule()
 {
 
 }
 
 //----------------------------------------------------------------------------
-void vtGradientAnisotropicDiffusionFilterModule::BuildGUI(vtkKWFrame* frame);
+void vtkGradientAnisotropicDiffusionFilterModule::BuildGUI(vtkKWFrame* frame)
 {
   Superclass::BuildGUI(frame);
-  vtkMRMLGradientAnisotropicDiffusionFilterWidget widget = vtkMRMLGradientAnisotropicDiffusionFilterWidget::New();
+  vtkGradientAnisotropicDiffusionFilterWidget *widget = vtkGradientAnisotropicDiffusionFilterWidget::New();
+  widget->Create();
+
+  widget->SetParent(frame);
   
 
 }
 
 //----------------------------------------------------------------------------
-void vtGradientAnisotropicDiffusionFilterModule::PrintSelf(ostream& os, vtkIndent indent)
+void vtkGradientAnisotropicDiffusionFilterModule::PrintSelf(ostream& os, vtkIndent indent)
 {
   
-  Superclass::PrintSelf(os,indent);
-
 }
 

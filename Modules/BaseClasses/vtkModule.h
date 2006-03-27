@@ -44,8 +44,8 @@ public:
 
   // Description:
   // Root directory of MRML scene
-  vtkSetStringMacro(SceneRootDir);
-  vtkGetStringMacro(SceneRootDir);
+  vtkSetStringMacro(MRMLSceneRootDir);
+  vtkGetStringMacro(MRMLSceneRootDir);
   
   // Description:
   // Name of this module, to be set by the user
@@ -54,9 +54,9 @@ public:
   
   // Description:
   // MRML Scene
-  vtkGetObjectMacro(Scene, vtkMRMLScene);
+  vtkGetObjectMacro(MRMLScene, vtkMRMLScene);
 
-  virtual void SetScene(vtkMRMLScene* scene);
+  virtual void SetMRMLScene(vtkMRMLScene* scene);
 
   virtual void BuildGUI(vtkKWFrame* frame){};
 
@@ -74,12 +74,10 @@ protected:
   vtkModule(const vtkModule&);
   void operator=(const vtkModule&);
   
-  vtkSetMacro(Indent, int);
-  
   char *Description;
   char *Name;
-  char *SceneRootDir;
-  vtkMRMLScene *Scene;
+  char *MRMLSceneRootDir;
+  vtkMRMLScene *MRMLScene;
   vtkCallbackCommand *MRMLCallbackCommand;
 };
 

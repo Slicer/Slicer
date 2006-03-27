@@ -29,8 +29,8 @@ SET(GradientAnisotropicDiffusionFilter_SRCS
 # Include dirs
 
 INCLUDE_DIRECTORIES(
-  ${ModuleBaseClasses_SOURCE_DIR}
-  ${ModuleBaseClasses_BINARY_DIR}
+  ${ModulesBaseClasses_SOURCE_DIR}
+  ${ModulesBaseClasses_BINARY_DIR}
   ${GradientAnisotropicDiffusionFilter_SOURCE_DIR}
   ${GradientAnisotropicDiffusionFilter_BINARY_DIR}
   ${SlicerBase_SOURCE_DIR}
@@ -55,6 +55,7 @@ ADD_LIBRARY(GradientAnisotropicDiffusionFilter
   )
 
 TARGET_LINK_LIBRARIES(GradientAnisotropicDiffusionFilter
+  ModulesBaseClasses
   SlicerBaseLogic 
   SlicerBaseGUI 
   MRML
@@ -74,5 +75,5 @@ ENDIF(BUILD_TESTING)
 
 CONFIGURE_FILE(
   ${GradientAnisotropicDiffusionFilter_SOURCE_DIR}/vtkGradientAnisotropicDiffusionFilterConfigure.h.in 
-  ${GradientAnisotropicDiffusionFilter_BINARY_DIR}/vtkModulesBaseClassesConfigure.h
+  ${GradientAnisotropicDiffusionFilter_BINARY_DIR}/vtkGradientAnisotropicDiffusionFilterConfigure.h
 )
