@@ -444,11 +444,7 @@ void vtkMRMLScene::SaveStateForUndo (vtkMRMLNode *node)
   this->ClearRedoStack();
   this->SetUndoOn();
   this->PushIntoUndoStack();
-  vtkMRMLNode *snode = node->CreateNodeInstance();
-  if (snode != NULL) {
-    snode->Copy(node);
-    this->ReplaceNodeInUndoStack(node, snode);
-  }
+  this->CopyNodeInUndoStack(node);
 } 
 
 //------------------------------------------------------------------------------
@@ -460,11 +456,7 @@ void vtkMRMLScene::SaveStateForUndo (std::vector<vtkMRMLNode *> nodes)
   unsigned int n;
   for (n=0; n<nodes.size(); n++) {
     vtkMRMLNode *node = nodes[n];
-    vtkMRMLNode *snode = node->CreateNodeInstance();
-    if (snode != NULL) {
-      snode->Copy(node);
-      this->ReplaceNodeInUndoStack(node, snode);
-    }
+    this->CopyNodeInUndoStack(node);
   }
 } 
 
@@ -480,11 +472,7 @@ void vtkMRMLScene::SaveStateForUndo (vtkCollection* nodes)
   for (int n=0; n<nnodes; n++) {
     vtkMRMLNode *node  = dynamic_cast < vtkMRMLNode *>(nodes->GetItemAsObject(n));
     if (node) {
-      vtkMRMLNode *snode = node->CreateNodeInstance();
-      if (snode != NULL) {
-        snode->Copy(node);
-        this->ReplaceNodeInUndoStack(node, snode);
-      }
+      this->CopyNodeInUndoStack(node);
     }
   }
 } 
@@ -550,14 +538,18 @@ void vtkMRMLScene::PushIntoRedoStack()
 //------------------------------------------------------------------------------
 // Put a replacement node into the undoable copy of the scene so that the node
 // can be edited
-void vtkMRMLScene::ReplaceNodeInUndoStack(vtkMRMLNode *replaceNode, vtkMRMLNode *withNode)
+void vtkMRMLScene::CopyNodeInUndoStack(vtkMRMLNode *copyNode)
 {
+  vtkMRMLNode *snode = copyNode->CreateNodeInstance();
+  if (snode != NULL) {
+    snode->Copy(copyNode);
+  }
   vtkCollection* undoScene = dynamic_cast < vtkCollection *>( this->UndoStack.back() );
   int nnodes = undoScene->GetNumberOfItems();
   for (int n=0; n<nnodes; n++) {
     vtkMRMLNode *node  = dynamic_cast < vtkMRMLNode *>(undoScene->GetItemAsObject(n));
-    if (node == replaceNode) {
-      undoScene->ReplaceItem (n, withNode);
+    if (node == copyNode) {
+      undoScene->ReplaceItem (n, snode);
     }
   }
 }
@@ -565,14 +557,18 @@ void vtkMRMLScene::ReplaceNodeInUndoStack(vtkMRMLNode *replaceNode, vtkMRMLNode 
 //------------------------------------------------------------------------------
 // Put a replacement node into the redoable copy of the scene so that the node
 // can be replaced by the Undo version
-void vtkMRMLScene::ReplaceNodeInRedoStack(vtkMRMLNode *replaceNode, vtkMRMLNode *withNode)
+void vtkMRMLScene::CopyNodeInRedoStack(vtkMRMLNode *copyNode)
 {
+  vtkMRMLNode *snode = copyNode->CreateNodeInstance();
+  if (snode != NULL) {
+    snode->Copy(copyNode);
+  }
   vtkCollection* undoScene = dynamic_cast < vtkCollection *>( this->RedoStack.back() );
   int nnodes = undoScene->GetNumberOfItems();
   for (int n=0; n<nnodes; n++) {
     vtkMRMLNode *node  = dynamic_cast < vtkMRMLNode *>(undoScene->GetItemAsObject(n));
-    if (node == replaceNode) {
-      undoScene->ReplaceItem (n, withNode);
+    if (node == copyNode) {
+      undoScene->ReplaceItem (n, snode);
     }
   }
 }
@@ -631,11 +627,7 @@ void vtkMRMLScene::Undo()
     else if (iter->second != curIter->second) {
       // nodes differ, copy from undo to current scene
       // but before create a copy in redo stack from current
-      vtkMRMLNode *snode = curIter->second->CreateNodeInstance();
-      if (snode != NULL) {
-        snode->Copy(curIter->second);
-        this->ReplaceNodeInRedoStack(curIter->second, snode);
-      }
+      this->CopyNodeInRedoStack(curIter->second);
       curIter->second->Copy(iter->second);
     }
   }
@@ -715,11 +707,7 @@ void vtkMRMLScene::Redo()
     else if (iter->second != curIter->second) {
       // nodes differ, copy from redo to current scene
       // but before create a copy in undo stack from current
-      vtkMRMLNode *snode = curIter->second->CreateNodeInstance();
-      if (snode != NULL) {
-        snode->Copy(curIter->second);
-        this->ReplaceNodeInUndoStack(curIter->second, snode);
-      }
+      this->CopyNodeInUndoStack(curIter->second);
       curIter->second->Copy(iter->second);
     }
   }

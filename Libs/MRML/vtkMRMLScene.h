@@ -154,8 +154,8 @@ protected:
   void PushIntoUndoStack();
   void PushIntoRedoStack();
 
-  void ReplaceNodeInUndoStack(vtkMRMLNode *node, vtkMRMLNode *withNode);
-  void ReplaceNodeInRedoStack(vtkMRMLNode *node, vtkMRMLNode *withNode);
+  void CopyNodeInUndoStack(vtkMRMLNode *node);
+  void CopyNodeInRedoStack(vtkMRMLNode *node);
   
   vtkCollection* CurrentScene;
   int UndoStackSize;
