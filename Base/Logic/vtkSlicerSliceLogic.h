@@ -69,6 +69,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLogic : public vtkSlicerLogic
   // Description:
   // The opacity of the forground slice layer
   // TODO: this will eventually be generalized to a per-layer compositing function
+  // -- could be checkerboard or other filter
   vtkGetMacro (ForegroundOpacity, double);
   void SetForegroundOpacity (double ForegroundOpacity);
 

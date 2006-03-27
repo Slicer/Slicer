@@ -26,6 +26,7 @@ SET(LIB_SRCS
   vtkSlicerGUICollection.cxx
   vtkSlicerApplicationGUI.cxx
   vtkSlicerComponentGUI.cxx
+  vtkSlicerVolumeSelectGUI.cxx
   )
 
 # Helper classes

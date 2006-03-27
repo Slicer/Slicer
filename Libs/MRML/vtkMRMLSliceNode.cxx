@@ -78,6 +78,11 @@ void vtkMRMLSliceNode::WriteXML(ostream& of, int nIndent)
         this->FieldOfView[1] << " " <<
         this->FieldOfView[2] << "' ";
 
+  of << indent << "Dimensions='" << 
+        this->Dimensions[0] << " " <<
+        this->Dimensions[1] << " " <<
+        this->Dimensions[2] << "' ";
+
   std::stringstream ss;
   int j;
   for (i=0; i<4; i++) 
@@ -118,7 +123,19 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
         this->FieldOfView[i] = val;
         }
       }
-    if (!strcmp(attName, "FieldOfView")) 
+    if (!strcmp(attName, "Dimensions")) 
+      {
+      std::stringstream ss;
+      unsigned int val;
+      ss << attValue;
+      int i;
+      for (i=0; i<3; i++) 
+        {
+        ss >> val;
+        this->Dimensions[i] = val;
+        }
+      }
+    if (!strcmp(attName, "RASToSlice")) 
       {
       std::stringstream ss;
       double val;

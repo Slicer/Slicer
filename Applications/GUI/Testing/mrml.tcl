@@ -37,6 +37,16 @@ $win Create
 # create the mrml scene
 set ::scene [vtkMRMLScene New]
 
+
+# VolumeSelect widget
+set ::volsel [vtkSlicerVolumeSelectGUI New]
+$::volsel SetParent $win
+$::volsel Create
+$::volsel SetMRMLScene $::scene
+pack [$::volsel GetWidgetName] -side top -anchor nw -expand false -fill x -padx 2 -pady 2
+$::volsel SetBalloonHelpString \
+"select a volume from the current mrml scene."
+
 # Undo button
 set ::Undopb [vtkKWPushButton New]
 $::Undopb SetParent $win
@@ -98,38 +108,39 @@ proc mrmlAddNode {nodetype} {
 
 # Create a multi-column list
 
-set mcl [vtkKWMultiColumnList New]
+set mcl [vtkKWMultiColumnListWithScrollbars New]
 $mcl SetParent $win
 $mcl Create
 $mcl SetBalloonHelpString \
 "A simple multicolumn list. Columns can be resized moved and sorted.\
 Double-click on some entries to edit them."
-$mcl MovableColumnsOn
+set mclwidget [$mcl GetWidget]
+$mclwidget MovableColumnsOn
 $mcl SetWidth 0
-$mcl SetPotentialCellColorsChangedCommand \
-    $mcl "ScheduleRefreshColorsOfAllCellsWithWindowCommand"
-$mcl SetColumnSortedCommand \
-    $mcl "ScheduleRefreshColorsOfAllCellsWithWindowCommand"
+$mclwidget SetPotentialCellColorsChangedCommand \
+    $mclwidget "ScheduleRefreshColorsOfAllCellsWithWindowCommand"
+$mclwidget SetColumnSortedCommand \
+    $mclwidget "ScheduleRefreshColorsOfAllCellsWithWindowCommand"
 
 # Add the columns make some of them editable
 
-set col_index [$mcl AddColumn "Node Type"] 
+set col_index [$mclwidget AddColumn "Node Type"] 
 
-set col_index [$mcl AddColumn "Name"] 
-$mcl SetColumnAlignmentToCenter $col_index
-$mcl ColumnEditableOn $col_index
+set col_index [$mclwidget AddColumn "Name"] 
+$mclwidget SetColumnAlignmentToCenter $col_index
+$mclwidget ColumnEditableOn $col_index
 
-set col_index [$mcl AddColumn "ID"] 
-$mcl SetColumnAlignmentToCenter $col_index
+set col_index [$mclwidget AddColumn "ID"] 
+$mclwidget SetColumnAlignmentToCenter $col_index
 
 
-pack [$mcl GetWidgetName] -side top -anchor nw -expand n -fill y -padx 2 -pady 2
+pack [$mcl GetWidgetName] -side top -anchor nw -expand n -fill both -padx 2 -pady 2
 
 #
 # set the command to execute when a cell is edited
 #
 
-$mcl SetCellUpdatedCommand "" "mrmlUpdateName $mcl"
+$mclwidget SetCellUpdatedCommand "" "mrmlUpdateName $mclwidget"
 
 proc mrmlUpdateName {mcl row col txt} {
 
@@ -138,6 +149,7 @@ proc mrmlUpdateName {mcl row col txt} {
     set node [$::scene GetNodeByID $id]
     $::scene SaveStateForUndo $node
     $node SetName $name
+    $::scene Modified
     mrmlUpdateUndoRedoButtons
 }
 
@@ -145,7 +157,7 @@ proc mrmlUpdateName {mcl row col txt} {
 # set an observer to refresh the list box when the scene changes
 #
 
-$::scene AddObserver ModifiedEvent "mrmlFillMCL $mcl"
+$::scene AddObserver ModifiedEvent "mrmlFillMCL $mclwidget"
 
 proc mrmlFillMCL {mcl} {
     $mcl DeleteAllRows

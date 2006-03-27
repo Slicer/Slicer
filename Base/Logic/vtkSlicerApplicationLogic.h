@@ -120,6 +120,10 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic : public vtkSlicerL
   vtkSetObjectMacro (ActiveSlice,vtkSlicerSliceLogic);
   vtkGetObjectMacro (ActiveSlice,vtkSlicerSliceLogic);
 
+  // Description:
+  // Create a new Slice with it's associated class instances
+  vtkSlicerSliceLogic *CreateSlice ();
+
   ///// Modules
   // Description:
   // Modules are additional pieces of Slicer functionality

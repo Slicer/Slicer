@@ -46,8 +46,35 @@ vtkSlicerApplicationLogic::~vtkSlicerApplicationLogic()
 }
 
 //----------------------------------------------------------------------------
+// Create a new Slice with it's associated class instances
+vtkSlicerSliceLogic *vtkSlicerApplicationLogic::CreateSlice ()
+{
+    // Create the logic instances
+    vtkSlicerSliceLogic *sliceLogic = vtkSlicerSliceLogic::New();
+    vtkSlicerSliceLayerLogic *bg = vtkSlicerSliceLayerLogic::New();
+    vtkSlicerSliceLayerLogic *fg = vtkSlicerSliceLayerLogic::New();
+
+    // Create the mrml nodes to store state
+    vtkMRMLSliceNode *sliceNode = vtkMRMLSliceNode::New();
+    this->MRMLScene->AddNode(sliceNode);
+
+    // Configure the logic
+    sliceLogic->SetBackgroundLayer(bg);
+    sliceLogic->SetForegroundLayer(fg);
+    sliceLogic->SetSliceNode(sliceNode);
+
+    // Update internal state
+    this->Slices->AddItem(sliceLogic);
+    this->SetActiveSlice(sliceLogic);
+
+    return (sliceLogic);
+}
+
+//----------------------------------------------------------------------------
 void vtkSlicerApplicationLogic::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->vtkObject::PrintSelf(os, indent);
 
-  os << indent << "SlicerApplicationLogic:             " << this->GetClassName() << "\n"; } 
+  os << indent << "SlicerApplicationLogic:             " << this->GetClassName() << "\n"; 
+} 
+

@@ -79,6 +79,10 @@ public:
   // in the list.
   int IsNodePresent(vtkMRMLNode *n) {
     return this->CurrentScene->vtkCollection::IsItemPresent((vtkObject *)n);};
+
+  // Description:
+  // Initialize a traversal (not reentrant!)
+  void InitTraversal() { this->CurrentScene->InitTraversal(); };
   
   // Description:
   // Get the next path in the list.

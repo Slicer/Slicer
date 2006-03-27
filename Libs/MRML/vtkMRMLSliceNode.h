@@ -63,6 +63,12 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
   vtkGetVector3Macro (FieldOfView, double);
   vtkSetVector3Macro (FieldOfView, double);
 
+  // Description:
+  // Number of samples in each direction
+  // -- note that the spacing is implicitly FieldOfView / Dimensions
+  vtkGetVector3Macro (Dimensions, unsigned int);
+  vtkSetVector3Macro (Dimensions, unsigned int);
+
   
 protected:
   vtkMRMLSliceNode();
@@ -72,6 +78,7 @@ protected:
 
   vtkMatrix4x4 *RASToSlice;
   double FieldOfView[3];
+  unsigned int Dimensions[3];
 
 };
 
