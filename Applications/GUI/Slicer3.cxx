@@ -53,7 +53,7 @@ int Slicer3_main(int argc, char *argv[])
   vtkKWNotebook* mnb = slicerGUI->GetMainSlicerWin()->GetMainNotebook();
   mnb->AddPage("Sample Module");
   vtkKWFrame *moduleFrame = mnb->GetFrame("Sample Module");
-
+  // pass this frame to the module to have it fill in the GUI
 
 
   // TODO: where should args get parsed?
