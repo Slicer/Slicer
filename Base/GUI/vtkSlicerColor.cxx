@@ -55,7 +55,7 @@ vtkSlicerColor::vtkSlicerColor ( ) {
 
     // 3D viewer background
     SetColor(this->MediumBlue,  .4588, .5647, .6823 );
-    SetColor(this->ViewerBlue,  .9333, .8392, .5019 );
+    SetColor(this->ViewerBlue, .70196, .70196, .90588 );  
 }
 
 
