@@ -29,6 +29,7 @@ int Slicer3_main(int argc, char *argv[])
   
   // Create SlicerGUI application, style, and main window 
   vtkSlicerGUI *slicerGUI = vtkSlicerGUI::New ( );
+  slicerGUI->GetSlicerStyle()->ApplyPresentation ( );
 
   // Create the application Logic object, 
   // Create the application GUI object
@@ -38,7 +39,7 @@ int Slicer3_main(int argc, char *argv[])
   appGUI->SetApplication ( slicerGUI );
   appGUI->SetLogic ( appLogic );
   
-  appGUI->SetParent ( slicerGUI->GetMainSlicerWin( )->GetViewFrame ( ));
+  //appGUI->SetParent ( slicerGUI->GetMainSlicerWin( ) );
   appGUI->BuildGUI ( );
   appGUI->AddGUIObservers ( );
   appGUI->AddLogicObservers ( );
@@ -49,10 +50,9 @@ int Slicer3_main(int argc, char *argv[])
   slicerGUI->AddGUI ( appGUI );
 
   // Add Modules
-  
-  vtkKWNotebook* mnb = slicerGUI->GetMainSlicerWin()->GetMainNotebook();
-  mnb->AddPage("Sample Module");
-  vtkKWFrame *moduleFrame = mnb->GetFrame("Sample Module");
+  // vtkKWNotebook* mnb = slicerGUI->GetMainSlicerWin()->GetMainNotebook();
+  //  mnb->AddPage("Sample Module");
+  //vtkKWFrame *moduleFrame = mnb->GetFrame("Sample Module");
   // pass this frame to the module to have it fill in the GUI
 
 
