@@ -17,6 +17,9 @@
 #include "vtkSlicerGUICollection.h"
 #include "vtkSlicerComponentGUI.h"
 #include "vtkKWWindow.h"
+#include "vtkKWNotebook.h"
+#include "vtkKWFrame.h"
+#include "vtkKWUserInterfacePanel.h"
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerGUI);
@@ -34,8 +37,8 @@ vtkSlicerGUI::vtkSlicerGUI ( ) {
     this->GUICollection = vtkSlicerGUICollection::New ( );
     this->SlicerStyle = vtkSlicerStyle::New ( );
     this->MainSlicerWin = vtkKWWindow::New ( );
-    this->MainSlicerWin->SecondaryPanelVisibilityOff ( );
-    this->MainSlicerWin->MainPanelVisibilityOff ( );
+    this->MainSlicerWin->SecondaryPanelVisibilityOn ( );
+    this->MainSlicerWin->MainPanelVisibilityOn ( );
     this->AddWindow ( this->MainSlicerWin );
     this->MainSlicerWin->Create ( );
     
@@ -86,6 +89,7 @@ void vtkSlicerGUI::ConfigureApplication ( ) {
     this->SplashScreenVisibilityOn ( );
     this->SaveUserInterfaceGeometryOn ( );
 }
+
 
 
 
