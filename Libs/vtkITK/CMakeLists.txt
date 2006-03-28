@@ -8,15 +8,15 @@ SET(vtkITK_SRCS
     vtkITKArchetypeImageSeriesScalarReader.cxx
     vtkITKArchetypeImageSeriesVectorReader.cxx
     vtkITKImageWriter.cxx
-    vtkITKImageToImageFilter.h
-    vtkITKImageToImageFilter2DFF.h
-    vtkITKImageToImageFilterFF.h
-    vtkITKImageToImageFilterFUL.h
-    vtkITKImageToImageFilterULUL.h
-    vtkITKImageToImageFilterUSUL.h
-    vtkITKImageToImageFilterUSUS.h
-    vtkITKImageToImageFilterSS.h
-    vtkITKGradientAnisotropicDiffusionImageFilter.h
+    #vtkITKImageToImageFilter.h
+    #vtkITKImageToImageFilter2DFF.h
+    #vtkITKImageToImageFilterFF.h
+    #vtkITKImageToImageFilterFUL.h
+    #vtkITKImageToImageFilterULUL.h
+    #vtkITKImageToImageFilterUSUL.h
+    #vtkITKImageToImageFilterUSUS.h
+    #vtkITKImageToImageFilterSS.h
+    #vtkITKGradientAnisotropicDiffusionImageFilter.h
 )
 
 # Abstract/pure virtual classes
