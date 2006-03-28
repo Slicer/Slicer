@@ -56,6 +56,7 @@ protected:
   vtkSlicerVolumeSelectGUI();
   ~vtkSlicerVolumeSelectGUI();
 
+
   vtkMRMLScene       *MRMLScene;
 
 private:
