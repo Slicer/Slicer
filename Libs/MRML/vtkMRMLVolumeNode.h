@@ -25,6 +25,7 @@
 #define __vtkMRMLVolumeNode_h
 
 #include "vtkMatrix4x4.h"
+#include "vtkImageData.h"
 
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
@@ -35,11 +36,11 @@
 class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLNode
 {
   public:
-  static vtkMRMLVolumeNode *New();
+  static vtkMRMLVolumeNode *New() {return NULL;};
   vtkTypeMacro(vtkMRMLVolumeNode,vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  virtual vtkMRMLNode* CreateNodeInstance();
+  virtual vtkMRMLNode* CreateNodeInstance() = 0;
 
   // Description:
   // Set node attributes

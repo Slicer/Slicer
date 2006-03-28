@@ -22,33 +22,6 @@ Version:   $Revision: 1.14 $
 #include "vtkMRMLScene.h"
 
 //------------------------------------------------------------------------------
-vtkMRMLVolumeNode* vtkMRMLVolumeNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLVolumeNode");
-  if(ret)
-    {
-      return (vtkMRMLVolumeNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLVolumeNode;
-}
-
-//----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLVolumeNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLVolumeNode");
-  if(ret)
-    {
-      return (vtkMRMLVolumeNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLVolumeNode;
-}
-
-//----------------------------------------------------------------------------
 vtkMRMLVolumeNode::vtkMRMLVolumeNode()
 {
   this->LabelMap = 0;
