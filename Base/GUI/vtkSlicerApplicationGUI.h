@@ -24,14 +24,18 @@
 #include "vtkSlicerBaseGUIWin32Header.h"
 #include "vtkSlicerComponentGUI.h"
 
-class vtkObject;
-class vtkSlicerApplicationLogic;
-class vtkKWLoadSaveButton;
-class vtkKWRenderWidget;
-class vtkImageViewer2;
-class vtkKWScale;
-class vtkKWWindowLevelPresetSelector;
+// include GUIs for Slicer Base modules
+#include "vtkSlicerSliceGUI.h"
+#include "vtkSlicerVolumesGUI.h"
+#include "vtkSlicerModelsGUI.h"
 
+// includes + fwd declarations for ApplicationGUI widgets
+#include "vtkKWMenuButton.h"
+#include "vtkKWFrame.h"
+
+class vtkObject;
+class vtkKWUserInterfacePanel;
+class vtkKWPushButton;
 
 // Description:
 // This class implements Slicer's main Application GUI.
@@ -43,28 +47,164 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkTypeRevisionMacro ( vtkSlicerApplicationGUI, vtkSlicerComponentGUI );
 
     // Description:
+    // Get/Set Macros for protected vtkSlicerApplicationGUI dimensions
+    vtkGetMacro ( DefaultSlicerWindowWidth, int );
+    vtkSetMacro ( DefaultSlicerWindowWidth, int );
+    vtkGetMacro ( DefaultSlicerWindowHeight, int );
+    vtkSetMacro ( DefaultSlicerWindowHeight, int );
+    vtkGetMacro ( DefaultMainViewerWidth, int);
+    vtkSetMacro ( DefaultMainViewerWidth, int);
+    vtkGetMacro ( DefaultMainViewerHeight, int);
+    vtkSetMacro ( DefaultMainViewerHeight, int);
+    vtkGetMacro ( DefaultSliceGUIFrameHeight, int);
+    vtkSetMacro ( DefaultSliceGUIFrameHeight, int);
+    vtkGetMacro ( DefaultSliceGUIFrameWidth, int);
+    vtkSetMacro ( DefaultSliceGUIFrameWidth, int);
+    vtkGetMacro ( DefaultSliceWindowWidth, int);
+    vtkSetMacro ( DefaultSliceWindowWidth, int);
+    vtkGetMacro ( DefaultSliceWindowHeight, int);
+    vtkSetMacro ( DefaultSliceWindowHeight, int);
+    vtkGetMacro ( DefaultGUIPanelWidth, int);
+    vtkSetMacro ( DefaultGUIPanelWidth, int);
+    vtkGetMacro ( DefaultGUIPanelHeight, int);
+    vtkSetMacro ( DefaultGUIPanelHeight, int);
+    vtkGetMacro ( DefaultLogoFrameHeight, int );
+    vtkSetMacro ( DefaultLogoFrameHeight, int );
+    vtkGetMacro ( DefaultSlicerControlFrameHeight, int );
+    vtkSetMacro ( DefaultSlicerControlFrameHeight, int );
+    vtkGetMacro ( DefaultModuleControlFrameHeight, int );
+    vtkSetMacro ( DefaultModuleControlFrameHeight, int );
+    vtkGetMacro ( DefaultSliceControlFrameHeight, int );
+    vtkSetMacro ( DefaultSliceControlFrameHeight, int );
+    vtkGetMacro ( DefaultViewControlFrameHeight, int );
+    vtkSetMacro ( DefaultViewControlFrameHeight, int );
+
+    // Description:
+    // These Get/Set methods for frames in the GUI panel.
+    vtkGetObjectMacro ( ModuleControlFrame, vtkKWFrame );
+    vtkSetObjectMacro ( ModuleControlFrame, vtkKWFrame );
+    vtkGetObjectMacro ( SlicerControlFrame, vtkKWFrame );
+    vtkSetObjectMacro ( SlicerControlFrame, vtkKWFrame );
+    vtkGetObjectMacro ( SliceControlFrame, vtkKWFrame );
+    vtkSetObjectMacro ( SliceControlFrame, vtkKWFrame );
+    vtkGetObjectMacro ( ViewControlFrame, vtkKWFrame );
+    vtkSetObjectMacro ( ViewControlFrame, vtkKWFrame );
+    vtkGetObjectMacro ( ModulesButton, vtkKWMenuButton );
+    vtkSetObjectMacro ( ModulesButton, vtkKWMenuButton );
+    vtkGetObjectMacro ( HomeButton, vtkKWPushButton );
+    vtkSetObjectMacro ( HomeButton, vtkKWPushButton );
+    vtkGetObjectMacro ( VolumesButton, vtkKWPushButton );
+    vtkSetObjectMacro ( VolumesButton, vtkKWPushButton );
+    vtkGetObjectMacro ( ModelsButton, vtkKWPushButton );
+    vtkSetObjectMacro ( ModelsButton, vtkKWPushButton );
+    vtkGetObjectMacro ( DataButton, vtkKWPushButton );
+    vtkSetObjectMacro ( DataButton, vtkKWPushButton );
+
+    // Description:
+    // These Get/Set methods for Slice Base Module GUIs.
+    vtkGetObjectMacro ( SliceGUI, vtkSlicerSliceGUI);
+    vtkSetObjectMacro ( SliceGUI, vtkSlicerSliceGUI);
+    vtkGetObjectMacro ( VolumesGUI, vtkSlicerVolumesGUI);
+    vtkSetObjectMacro ( VolumesGUI, vtkSlicerVolumesGUI);
+    vtkGetObjectMacro ( ModelsGUI, vtkSlicerModelsGUI);
+    vtkSetObjectMacro ( ModelsGUI, vtkSlicerModelsGUI);
+
+    
+    // Description:
     // This method builds Slicer's main GUI
     virtual void BuildGUI ( );
     virtual void AddGUIObservers ( );
     virtual void AddLogicObservers ( );
-    virtual void UpdateGUIWithLogicEvents ( vtkObject *caller, unsigned long event,
+    virtual void AddMrmlObservers ( );
+    virtual void ProcessLogicEvents ( vtkObject *caller, unsigned long event,
                                             void *callData );
-    virtual void UpdateLogicWithGUIEvents ( vtkObject *caller, unsigned long event,
+    virtual void ProcessGUIEvents ( vtkObject *caller, unsigned long event,
+                                           void *callData );
+    virtual void ProcessMrmlEvents ( vtkObject *caller, unsigned long event,
                                            void *callData );
     
+    // Description:
+    // These methods set up default dimensions for the Slicer Window
+    virtual void InitDefaultGUIPanelDimensions ( );
+    virtual void InitDefaultSlicePanelDimensions ( );
+    virtual void InitDefaultMainViewerDimensions ( );
+    virtual void InitDefaultSlicerWindowDimensions ( );
+    
+    // Desrciption:
+    // These methods delete widgets belonging to components of the Slicer Window
+    virtual void DeleteSliceGUI ( );
+    virtual void DeleteGUIPanelWidgets ( );
+    virtual void DeleteFrames ( );
+
+    // Description:
+    // These methods configure and pack the Slicer Window
+    virtual void ConfigureMainSlicerWindow ( );
+    virtual void ConfigureMainViewer ( );
+    virtual void ConfigureSliceViewers ( );
+    virtual void ConfigureGUIPanel ( );
+    // Description:
+    // These methods populate the various GUI Panel frames
+    virtual void BuildLogoGUI ( );
+    virtual void BuildSlicerControlGUI ( );
+    virtual void BuildModuleControlGUI ( );
+    virtual void BuildSliceControlGUI ( );
+    virtual void BuildViewControlGUI ( );
+    // Description:
+    // These methods add a Page on the UI panel for each Slicer module
+    // and build the GUI for each Slicer module.
+    virtual void AddGUIPanelForAllModules ( char *modules );
+    virtual void BuildGUIForAllModules ( );
+
  protected:
     vtkSlicerApplicationGUI ( );
     ~vtkSlicerApplicationGUI ( );
-    // And widgets.
-    vtkKWLoadSaveButton *FileBrowseButton;
-    vtkImageViewer2 *ImageViewer;
-    vtkKWWindowLevelPresetSelector *WindowLevelPresetSelector;
-    vtkKWRenderWidget *RenderWidget;
-    vtkKWScale *Scale;
 
-    //vtkKWSliceGUI *MainAxialGUI;
-    //vtkKWSliceGUI *MainSaggitalGUI;
-    //vtkKWSliceGUI *MainCoronalGUI;
+    // Description:
+    // Widgets for the main Slicer UI panel    
+    vtkKWFrame *LogoFrame;
+    vtkKWFrame *SlicerControlFrame;
+    vtkKWFrame *ModuleControlFrame;
+    vtkKWFrame *SliceControlFrame;
+    vtkKWFrame *ViewControlFrame;
+    vtkKWPushButton *HomeButton;
+    vtkKWPushButton *DataButton;
+    vtkKWPushButton *VolumesButton;
+    vtkKWPushButton *ModelsButton;
+    vtkKWFrame *DefaultSlice0Frame;
+    vtkKWFrame *DefaultSlice1Frame;
+    vtkKWFrame *DefaultSlice2Frame;
+
+    // Description:
+    // Widgets for the modules GUI panels
+    vtkKWUserInterfacePanel *ui_panel;
+    vtkKWMenuButton *ModulesButton;
+    
+    // Description:
+    // Dimensions for the Default Window & components
+    int DefaultSlicerWindowHeight;
+    int DefaultSlicerWindowWidth;
+    int DefaultMainViewerHeight;
+    int DefaultMainViewerWidth;
+    int DefaultSliceGUIFrameHeight;
+    int DefaultSliceGUIFrameWidth;
+    int DefaultSliceWindowHeight;
+    int DefaultSliceWindowWidth;
+    int DefaultGUIPanelHeight;
+    int DefaultGUIPanelWidth;
+
+    // Description:
+    // Dimensions for specific GUI panel components
+    int DefaultLogoFrameHeight;
+    int DefaultSlicerControlFrameHeight;
+    int DefaultModuleControlFrameHeight;
+    int DefaultSliceControlFrameHeight;    
+    int DefaultViewControlFrameHeight;
+    
+    // Description:
+    // Slice GUI containing SliceWidgetCollection
+    vtkSlicerSliceGUI *SliceGUI;
+    vtkSlicerVolumesGUI *VolumesGUI;
+    vtkSlicerModelsGUI *ModelsGUI;
 
  private:
     vtkSlicerApplicationGUI ( const vtkSlicerApplicationGUI& ); // Not implemented.
