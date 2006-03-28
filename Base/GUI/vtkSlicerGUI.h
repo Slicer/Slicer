@@ -54,7 +54,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGUI : public vtkKWApplication
     // This method collects GUIs added to Slicer.
     virtual void AddGUI ( vtkSlicerComponentGUI *gui );
     // Description:
-    // This method closes all windows associated with the application
+    // These methods manage windows associated with the application
     virtual void CloseAllWindows ( ) ;
     virtual void DisplayMainSlicerWindow ( );
     
@@ -71,7 +71,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGUI : public vtkKWApplication
     vtkKWWindow *MainSlicerWin;
 
     // Description:
-    // Collections of widgets
+    // Collections of GUIs
     vtkSlicerGUICollection *GUICollection;
     
     // Description:
