@@ -19,7 +19,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGUIUpdate : public vtkCallbackCommand
     vtkSlicerComponentGUI *GetGUI ( ) { return this->GUI; }
     void Execute ( vtkObject *caller, unsigned long event, void *callData )
         {
-            this->GUI->UpdateGUIWithLogicEvents ( caller, event, callData );
+            this->GUI->ProcessLogicEvents ( caller, event, callData );
+            this->GUI->ProcessMrmlEvents ( caller, event, callData );
         }
 
  protected:
