@@ -38,6 +38,19 @@ $win Create
 set ::scene [vtkMRMLScene New]
 
 
+# a slice node to be controlled by the slicecontrol
+set slicen [vtkMRMLSliceNode New]
+$::scene AddNode $slicen
+
+
+# SliceControl widget
+set ::slicec [vtkSlicerSliceControlGUI New]
+$::slicec SetParent $win
+$::slicec Create
+$::slicec SetSliceNode $slicen
+$::slicec SetMRMLScene $::scene
+pack [$::slicec GetWidgetName] -side top -anchor nw -expand false -fill x -padx 2 -pady 2
+
 # VolumeSelect widget
 set ::volsel [vtkSlicerVolumeSelectGUI New]
 $::volsel SetParent $win
