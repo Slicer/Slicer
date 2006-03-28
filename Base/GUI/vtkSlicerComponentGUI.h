@@ -4,9 +4,10 @@
 #include "vtkObject.h"
 #include "vtkKWObject.h"
 #include "vtkSlicerBaseGUIWin32Header.h"
+#include "vtkSlicerApplicationLogic.h"
+#include "vtkMRMLScene.h"
+#include "vtkSlicerLogic.h"
 
-class vtkSlicerLogic;
-class vtkSlicerApplicationLogic;
 class vtkSlicerGUIUpdate;
 class vtkSlicerLogicUpdate;
 class vtkKWApplication;
@@ -25,6 +26,13 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerComponentGUI : public vtkKWObject
     vtkTypeRevisionMacro ( vtkSlicerComponentGUI, vtkKWObject );
 
     // Description:
+    // Get/Set pointers to the ApplicationLogic and MrmlScene.
+    vtkGetObjectMacro ( Logic, vtkSlicerApplicationLogic );
+    vtkSetObjectMacro ( Logic, vtkSlicerApplicationLogic );
+    vtkGetObjectMacro ( Mrml, vtkMRMLScene );
+    vtkSetObjectMacro ( Mrml, vtkMRMLScene );
+    
+    // Description:
     // Determines where the GUI should be packed.
     // May be more than one parent being assigned
     // in a derived class' redef of this method.
@@ -35,13 +43,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerComponentGUI : public vtkKWObject
     virtual void BuildGUI ( );
 
     // Description:
-    // Set pointers to object in the application layer
-    // which this gui component needs to know about.
-    // May be more than one logic pointer being assigned
-    // in a derived class' redef of this method.
-    virtual void SetLogic ( vtkSlicerApplicationLogic *logic );
-
-    // Description:
     // Create observers on widgets defined in this class using the following paradigm:
     // this->AddCallbackCommandObserver ( ObservedWidget, vtkCommand::SomeEvent);
     virtual void AddGUIObservers ( ) { }
@@ -49,17 +50,30 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerComponentGUI : public vtkKWObject
     // Create observers on logic in application layer using the vtk paradigm:
     // Logic->mylogic->AddObserver ( vtkCommand::ModifiedEvent, this->LogicCommand);
     virtual void AddLogicObservers ( ) { }
-    // propagate events generated in application layer to GUI
-    virtual void UpdateGUIWithLogicEvents ( vtkObject *caller, unsigned long event,
+    // Description:
+    // Create observers on logic in application layer using the vtk paradigm:
+    // Mrml->thing->AddObserver ( vtkCommand::ModifiedEvent, this->MrmlCommand);
+    virtual void AddMrmlObservers ( ) { }
+    
+    // Description:
+    // propagate events generated in logic layer to GUI
+    virtual void ProcessLogicEvents ( vtkObject *caller, unsigned long event,
                                 void *callData );
-    // alternative method to propagate events generated in GUI to app layer
-    virtual void UpdateLogicWithGUIEvents ( vtkObject *caller, unsigned long event,
+    // Description:
+    // propagate events generated in mrml layer to GUI
+    virtual void ProcessMrmlEvents ( vtkObject *caller, unsigned long event,
+                                void *callData );
+    // Description:
+    // alternative method to propagate events generated in GUI to logic / mrml
+    virtual void ProcessGUIEvents ( vtkObject *caller, unsigned long event,
                                     void *callData );
     
     
  protected:
     // GUI's interface to the application layer;
     vtkSlicerApplicationLogic *Logic;
+    vtkMRMLScene *Mrml;
+    
     vtkSlicerGUIUpdate *LogicCommand;
     // alternative Logic interface to the GUI layer.
     vtkSlicerLogicUpdate *GUICommand;
