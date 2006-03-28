@@ -148,7 +148,7 @@ void vtkSlicerApplicationGUI::UpdateGUIWithLogicEvents ( vtkObject *caller,
         {
             // If the MRML scene has changed, get the 0th volume node.
             // and set that as input into the ImageViewer.
-            vtkMRMLScalarVolumeNode* volumenode = vtkMRMLScalarVolumeNode::SafeDownCast (this->Logic->GetMRMLScene()->GetNthNodeByClass( 0, "vtkMRMLVolumeNode" ) );
+            vtkMRMLScalarVolumeNode* volumenode = vtkMRMLScalarVolumeNode::SafeDownCast (this->Logic->GetMRMLScene()->GetNthNodeByClass( 0, "vtkMRMLScalarVolumeNode" ) );
             if ( volumenode && volumenode->GetImageData() != NULL )
               {
               this->ImageViewer->SetInput ( volumenode->GetImageData( ) );
