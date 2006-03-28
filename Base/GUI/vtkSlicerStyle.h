@@ -23,7 +23,7 @@ class vtkSlicerStyle : public vtkObject
     // to specify different look and feel.
     // Can we plan to adopt Tk tiles to create
     // a platform invariant expression of Slicer brand?
-    void ApplyPresentation ( );
+    virtual void ApplyPresentation ( );
     // To be defined later, reading slicer style from xml fikle.
     // for now, just hardcode them.
     void ParseStyleParameters ( );
@@ -80,6 +80,18 @@ class vtkSlicerStyle : public vtkObject
     virtual int SetTroughColor ( double r, double g, double b );
     virtual int SetTroughColor ( double *color );
     virtual double* GetTroughColor ( );
+    virtual int SetGUIBgColor ( double r, double g, double b);
+    virtual int SetGUIBgColor ( double *color);
+    virtual double* GetGUIBgColor ( );
+    virtual int SetGUIFgColor ( double r, double g, double b);
+    virtual int SetGUIFgColor ( double *color);
+    virtual double* GetGUIFgColor ( );    
+    virtual int SetViewerBgColor ( double r, double g, double b);
+    virtual int SetViewerBgColor ( double *color);
+    virtual double* GetViewerBgColor ( );
+    virtual int SetSliceBgColor ( double r, double g, double b);
+    virtual int SetSliceBgColor ( double *color);
+    virtual double* GetSliceBgColor ( );
 
     // highlights
     virtual int SetHighLightColor ( double r, double g, double b );
@@ -146,6 +158,10 @@ class vtkSlicerStyle : public vtkObject
     double DisabledFgColor [3];
     double SelectFgColor [3];
     double TroughColor [3];
+    double ViewerBgColor [3];
+    double GUIBgColor [3];
+    double GUIFgColor [3];
+    double SliceBgColor [3];
     
     // Highlights
     double HighLightColor [3];
