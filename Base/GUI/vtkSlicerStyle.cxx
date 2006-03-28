@@ -65,15 +65,15 @@ void vtkSlicerStyle::ApplyPresentation ( ) {
 
     // 3D viewer background
     double  MediumBlue [3] = { .4588, .5647, .6823 } ;
-    double  ViewerBlue [3] = { .9333, .8392, .5019 } ;
-
+    double ViewerBlue [3] = { .70196, .70196, .90588};
 */
     // Configure Slicer Brand; just a few things for now.
-    this->SetBigFont (this->Fonts->AdobeHelvetica12);
-    this->SetMedFont (this->Fonts->AdobeHelvetica10);
-    this->SetSmallFont (this->Fonts->AdobeHelvetica8);
-    this->SetJustify(this->Fonts->JustifyLeft);
-    this->SetFlatRelief ( );
+    // these font settings cause a crash... fix.
+    //this->SetBigFont (this->Fonts->AdobeHelvetica12);
+    //this->SetMedFont (this->Fonts->AdobeHelvetica10);
+    //this->SetSmallFont (this->Fonts->AdobeHelvetica8);
+    //this->SetJustify(this->Fonts->JustifyLeft);
+    //this->SetFlatRelief ( );
     this->SetBgColor ( this->Colors->White );
     this->SetFgColor ( this->Colors->MediumGrey );
     this->SetPadX ( 2 );
@@ -83,6 +83,10 @@ void vtkSlicerStyle::ApplyPresentation ( ) {
     this->SetColor(AxiColor, this->Colors->MediumRed);
     this->SetColor(CorColor, this->Colors->MediumGreen);
     this->SetColor(WarningTextColor, this->Colors->BrightYellow);
+    this->SetColor(GUIBgColor, this->Colors->White);
+    this->SetColor(GUIFgColor, this->Colors->Black);
+    this->SetColor(ViewerBgColor, this->Colors->ViewerBlue);
+    this->SetColor(SliceBgColor, this->Colors->Black);
 }
 
 //---------------------------------------------------------------------------
@@ -434,6 +438,109 @@ double* vtkSlicerStyle::GetHighLightBgColor ( ) {
 
     return this->HighLightBgColor;
 }
+
+
+
+
+
+//---------------------------------------------------------------------------
+int vtkSlicerStyle::SetGUIBgColor ( double *c ) {
+
+    if ( this->SetColor ( this->GUIBgColor, c[0], c[1], c[2] ) ) {
+        return 1;
+    }
+    return 0;
+}
+//---------------------------------------------------------------------------
+int vtkSlicerStyle::SetGUIBgColor ( double r, double g, double b ) {
+
+    if ( this->SetColor ( this->GUIBgColor, r, g, b ) ) {
+        return 1;
+    }
+    return 0;
+}
+//---------------------------------------------------------------------------
+double* vtkSlicerStyle::GetGUIBgColor ( ) {
+
+    return this->GUIBgColor;
+}
+
+
+
+
+//---------------------------------------------------------------------------
+int vtkSlicerStyle::SetGUIFgColor ( double *c ) {
+
+    if ( this->SetColor ( this->GUIFgColor, c[0], c[1], c[2] ) ) {
+        return 1;
+    }
+    return 0;
+}
+//---------------------------------------------------------------------------
+int vtkSlicerStyle::SetGUIFgColor ( double r, double g, double b ) {
+
+    if ( this->SetColor ( this->GUIFgColor, r, g, b ) ) {
+        return 1;
+    }
+    return 0;
+}
+//---------------------------------------------------------------------------
+double* vtkSlicerStyle::GetGUIFgColor ( ) {
+
+    return this->GUIFgColor;
+}
+
+
+
+
+//---------------------------------------------------------------------------
+int vtkSlicerStyle::SetSliceBgColor ( double *c ) {
+
+    if ( this->SetColor ( this->SliceBgColor, c[0], c[1], c[2] ) ) {
+        return 1;
+    }
+    return 0;
+}
+//---------------------------------------------------------------------------
+int vtkSlicerStyle::SetSliceBgColor ( double r, double g, double b ) {
+
+    if ( this->SetColor ( this->SliceBgColor, r, g, b ) ) {
+        return 1;
+    }
+    return 0;
+}
+//---------------------------------------------------------------------------
+double* vtkSlicerStyle::GetSliceBgColor ( ) {
+
+    return this->SliceBgColor;
+}
+
+
+
+
+//---------------------------------------------------------------------------
+int vtkSlicerStyle::SetViewerBgColor ( double *c ) {
+
+    if ( this->SetColor ( this->ViewerBgColor, c[0], c[1], c[2] ) ) {
+        return 1;
+    }
+    return 0;
+}
+//---------------------------------------------------------------------------
+int vtkSlicerStyle::SetViewerBgColor ( double r, double g, double b ) {
+
+    if ( this->SetColor ( this->ViewerBgColor, r, g, b ) ) {
+        return 1;
+    }
+    return 0;
+}
+//---------------------------------------------------------------------------
+double* vtkSlicerStyle::GetViewerBgColor ( ) {
+
+    return this->ViewerBgColor;
+}
+
+
 
 
 
