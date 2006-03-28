@@ -81,6 +81,10 @@ void vtkMRMLLinearTransformNode::WriteXML(ostream& of, int nIndent)
           ss << " ";
         }
       }
+      if ( row != 3 )
+        {
+        ss << " ";
+        }
     }
     of << indent << "MatrixTransformToParent='" << ss.str() << "' ";
   }
