@@ -52,8 +52,16 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceControlGUI : public vtkKWComposit
   void SetOrientationFromMenu ();
 
   // Description:
-  // Transfers the state of the widgets into the mrml node
+  // Transfers the state of the widgets into the mrml node 
+  // -- sets undo state before applying 
+  void Apply(double val) {this->Apply();}; // accept the scale value as arg
   void Apply();
+
+  // Description:
+  // Transfers the state of the widgets into the mrml node
+  // -- not undoable
+  void TransientApply(double val) {this->TransientApply();}; // accept the scale value as arg
+  void TransientApply();
     
  protected:
     // sub widgets.

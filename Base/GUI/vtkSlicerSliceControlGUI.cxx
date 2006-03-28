@@ -176,11 +176,16 @@ void vtkSlicerSliceControlGUI::Create()
   this->Script("pack %s -side right -expand false", this->OrientationMenu->GetWidgetName());
 
   // TODO: there is no start event (needed for undo)
-  this->OffsetScale->GetWidget()->AddObserver( vtkKWScale::ScaleValueChangingEvent, this->WidgetCallbackCommand );
+  //this->OffsetScale->GetWidget()->AddObserver( vtkKWScale::ScaleValueChangedEvent, this->WidgetCallbackCommand );
   // TODO: the entry doesn't invoke events, it only has a Command
-  this->FieldOfViewEntry->AddObserver( vtkCommand::ModifiedEvent, this->WidgetCallbackCommand );
+  //this->FieldOfViewEntry->AddObserver( vtkCommand::ModifiedEvent, this->WidgetCallbackCommand );
   // TODO: the menu doesn't send an event either
   this->OrientationMenu->AddObserver( vtkCommand::ModifiedEvent, this->WidgetCallbackCommand );
+
+  // TODO: should we make these events for consistency or stick with the Commands?
+  this->OffsetScale->GetWidget()->SetStartCommand( this, "Apply" );
+  this->OffsetScale->GetWidget()->SetCommand( this, "TransientApply" );
+  this->FieldOfViewEntry->GetWidget()->SetCommand( this, "Apply" );
 }
 
 //----------------------------------------------------------------------------
@@ -212,7 +217,11 @@ void vtkSlicerSliceControlGUI::UpdateWidgets()
   double fovover2 = this->SliceNode->GetFieldOfView()[2] / 2.;
   this->OffsetScale->SetRange(-fovover2, fovover2);
 
-  // TODO: set the scale value from the translation part of the matrix
+
+  // TODO: set the scale value from the translation part of the matrix with rotation
+  // Set the Scale from the Offest in the matrix
+  vtkMatrix4x4 *m = this->SliceNode->GetRASToSlice();
+  this->OffsetScale->SetValue( m->GetElement( 2, 3 ) );
 }
 
 //----------------------------------------------------------------------------
@@ -225,12 +234,8 @@ void vtkSlicerSliceControlGUI::SetOrientationFromMenu()
 
 
 //----------------------------------------------------------------------------
-void vtkSlicerSliceControlGUI::Apply()
+void vtkSlicerSliceControlGUI::TransientApply()
 {
-
-  // TODO: observe scale start and end states and only set undo on
-  // button down
-  this->MRMLScene->SaveStateForUndo(this->SliceNode);
 
   // Set the Field of View from the Entry
   double val = this->FieldOfViewEntry->GetWidget()->GetValueAsDouble();
@@ -244,6 +249,18 @@ void vtkSlicerSliceControlGUI::Apply()
   // TODO: this should be set by the Orientation menu
   m->Identity();
   m->SetElement( 2, 3, this->OffsetScale->GetValue() );
+
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerSliceControlGUI::Apply()
+{
+
+  // TODO: observe scale start and end states and only set undo on
+  // button down
+  this->MRMLScene->SaveStateForUndo(this->SliceNode);
+
+  this->TransientApply();
 
 }
 
