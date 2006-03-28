@@ -1,22 +1,6 @@
 catch "sc Delete"
 vtkMRMLScene sc
 
-catch "vn Delete"
-vtkMRMLVolumeNode vn
-sc RegisterNodeClass vn
-
-catch "vs Delete"
-vtkMRMLVolumeArchetypeStorageNode vs
-sc RegisterNodeClass vs
-
-catch "vd Delete"
-vtkMRMLVolumeDisplayNode vd
-sc RegisterNodeClass vd
-
-catch "tl Delete"
-vtkMRMLLinearTransformNode tl
-sc RegisterNodeClass tl
-
 sc SetURL C:/alexy/slicer2-head/Slicer3/Libs/MRML/Testing/volScene3.xml
 sc Connect
 

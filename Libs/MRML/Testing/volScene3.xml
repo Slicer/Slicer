@@ -17,10 +17,8 @@ FileArchetype='TestData/moving.nrrd' ID='storage2'></VolumeArchetypeStorage>
 Name='disp1' ID='display1' Level='128' Window='100'></VolumeDisplay>
 
 <LinearTransform
-Name='matXform1' ID='xform1' MatrixTransformToParent='1 0 0 0 0 1 0 0 0 0 1
-0 10 20 30 1'></LinearTransform>
+Name='matXform1' ID='xform1' MatrixTransformToParent='1 0 0 0 0 1 0 0 0 0 1 0 10 20 30 1'></LinearTransform>
 
 <LinearTransform
-Name='matXform2' ID='xform2' MatrixTransformToParent='1 0 0 0 0 1 0 0 0 0 1
-0 10 20 30 1'></LinearTransform>
+Name='matXform2' ID='xform2' MatrixTransformToParent='1 0 0 0 0 1 0 0 0 0 1 0 10 20 30 1'></LinearTransform>
 </MRML>

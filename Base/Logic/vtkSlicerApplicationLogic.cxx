@@ -27,12 +27,6 @@ vtkSlicerApplicationLogic::vtkSlicerApplicationLogic()
 {
     this->MRMLScene = vtkMRMLScene::New();
 
-    vtkMRMLScalarVolumeNode *volumenode = vtkMRMLScalarVolumeNode::New(); 
-    this->MRMLScene->RegisterNodeClass( volumenode );
-
-    vtkMRMLModelNode *modelnode = vtkMRMLModelNode::New(); 
-    this->MRMLScene->RegisterNodeClass( modelnode );
-
     this->Views = NULL;
     this->Slices = NULL;
     this->Modules = NULL;

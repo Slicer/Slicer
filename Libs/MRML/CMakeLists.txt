@@ -26,6 +26,9 @@ SET(MRML_SRCS
         vtkMRMLTransformNode.cxx
         vtkMRMLLinearTransformNode.cxx
         vtkMRMLSliceNode.cxx
+        vtkMRMLSliceCompositeNode.cxx
+        # Note: when you add new node types, add
+        # register code to the vtkMRMLScene constructor
 )
 
 # Abstract/pure virtual classes

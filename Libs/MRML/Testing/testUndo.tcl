@@ -4,8 +4,6 @@ vtkMRMLScene sc
 catch "vs Delete"
 vtkMRMLVolumeArchetypeStorageNode vs
 
-sc RegisterNodeClass vs
-
 sc SetURL C:/alexy/slicer2-head/Slicer3/Libs/MRML/Testing/undo.xml
 sc Connect
 

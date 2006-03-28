@@ -22,6 +22,16 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLScene.h"
 #include "vtkMRMLParser.h"
 
+#include "vtkMRMLLinearTransformNode.h"
+#include "vtkMRMLModelNode.h"
+#include "vtkMRMLModelStorageNode.h"
+#include "vtkMRMLScalarVolumeNode.h"
+#include "vtkMRMLSliceCompositeNode.h"
+#include "vtkMRMLSliceNode.h"
+#include "vtkMRMLVolumeArchetypeStorageNode.h"
+#include "vtkMRMLVolumeDisplayNode.h"
+#include "vtkMRMLVolumeHeaderlessStorageNode.h"
+
 //------------------------------------------------------------------------------
 vtkMRMLScene::vtkMRMLScene() 
 {
@@ -33,6 +43,36 @@ vtkMRMLScene::vtkMRMLScene()
   this->CurrentScene =  vtkCollection::New();
   this->UndoStackSize = 100;
   this->UndoFlag = true;
+
+  //
+  // Register all the 'built-in' nodes for the library
+  //
+  vtkMRMLScalarVolumeNode *volumenode = vtkMRMLScalarVolumeNode::New(); 
+  this->RegisterNodeClass( volumenode );
+
+  vtkMRMLModelNode *modelnode = vtkMRMLModelNode::New(); 
+  this->RegisterNodeClass( modelnode );
+
+  vtkMRMLLinearTransformNode *linxnode = vtkMRMLLinearTransformNode::New(); 
+  this->RegisterNodeClass( linxnode );
+
+  vtkMRMLModelStorageNode *modelstorenode = vtkMRMLModelStorageNode::New(); 
+  this->RegisterNodeClass( modelstorenode );
+
+  vtkMRMLScalarVolumeNode *svoln = vtkMRMLScalarVolumeNode::New(); 
+  this->RegisterNodeClass( svoln );
+
+  vtkMRMLSliceCompositeNode *scompn = vtkMRMLSliceCompositeNode::New(); 
+  this->RegisterNodeClass( scompn );
+
+  vtkMRMLSliceNode *snode = vtkMRMLSliceNode::New(); 
+  this->RegisterNodeClass( snode );
+
+  vtkMRMLVolumeArchetypeStorageNode *astoren = vtkMRMLVolumeArchetypeStorageNode::New(); 
+  this->RegisterNodeClass( astoren );
+
+  vtkMRMLVolumeDisplayNode *vdisn = vtkMRMLVolumeDisplayNode::New(); 
+  this->RegisterNodeClass( vdisn );
 }
 
 //------------------------------------------------------------------------------

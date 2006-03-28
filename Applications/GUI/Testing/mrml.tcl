@@ -87,13 +87,8 @@ $::Redopb SetCommand "" "$::scene Redo; mrmlUpdateUndoRedoButtons"
 
 # Add a button for each mrml node type
 
-# set nodes [info command vtkMRML*Node]
 set nodes "vtkMRMLVolumeNode vtkMRMLModelNode"
-
 foreach n $nodes {
-
-  set nn [$n New]
-  $::scene RegisterNodeClass $nn
 
   set pb [vtkKWPushButton New]
   $pb SetParent $win
