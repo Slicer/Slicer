@@ -25,7 +25,7 @@
 #define __vtkMRMLVolumeNode_h
 
 #include "vtkMatrix4x4.h"
-#include "vtkImageData.h"
+//#include "vtkImageData.h"
 
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
@@ -130,6 +130,10 @@ class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLNode
   vtkGetObjectMacro(TransformNode, vtkMRMLTransformNode);
   vtkSetObjectMacro(TransformNode, vtkMRMLTransformNode);
 
+  // Description:
+  // Associated ImageData
+  virtual vtkImageData * GetImageData ( void ) = 0;
+  virtual void SetImageData ( vtkImageData * ) = 0;
   
 protected:
   vtkMRMLVolumeNode();

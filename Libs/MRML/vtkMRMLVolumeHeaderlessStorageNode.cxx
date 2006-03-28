@@ -227,7 +227,11 @@ void vtkMRMLVolumeHeaderlessStorageNode::ReadData(vtkMRMLNode *refNode)
     return;
   }
 
-  vtkMRMLScalarVolumeNode *volNode = dynamic_cast <vtkMRMLScalarVolumeNode *> (refNode);
+  vtkMRMLVolumeNode *volNode;
+  
+  if ( refNode->IsA("vtkMRMLScalarVolumeNode") ) {
+    volNode = dynamic_cast <vtkMRMLScalarVolumeNode *> (refNode);
+  }
 
   if (volNode->GetImageData()) {
     volNode->GetImageData()->Delete();
@@ -262,8 +266,12 @@ void vtkMRMLVolumeHeaderlessStorageNode::WriteData(vtkMRMLNode *refNode)
     return;
   }
   
-  vtkMRMLScalarVolumeNode *volNode = dynamic_cast <vtkMRMLScalarVolumeNode *> (refNode);
+  vtkMRMLVolumeNode *volNode;
   
+  if ( refNode->IsA("vtkMRMLScalarVolumeNode") ) {
+    volNode = dynamic_cast <vtkMRMLScalarVolumeNode *> (refNode);
+  }
+
   if (volNode->GetImageData() == NULL) {
     vtkErrorMacro("cannot write ImageData, it's NULL");
   }

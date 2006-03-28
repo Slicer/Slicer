@@ -65,6 +65,14 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeNode : public vtkMRMLVolumeNode
   virtual const char* GetNodeTagName() {return "Volume";};
 
   // Description:
+  // Get/Set the pointer pointing to the ImageData
+  virtual vtkImageData * GetImageData ( void ) { return this->ImageData ; };
+  virtual void SetImageData ( vtkImageData * imgData) { 
+    this->ImageData = imgData; 
+    return;
+    };
+
+  // Description:
   // A file name or one name in a series
   vtkSetStringMacro(FileArcheType);
   vtkGetStringMacro(FileArcheType);
@@ -220,9 +228,6 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeNode : public vtkMRMLVolumeNode
   void GetIjkToRasMatrix(vtkMatrix4x4* mat);
   void SetIjkToRasMatrix(vtkMatrix4x4* mat);
 
-  vtkGetObjectMacro(ImageData, vtkImageData);
-  vtkSetObjectMacro(ImageData, vtkImageData);
-
   
 protected:
   vtkMRMLScalarVolumeNode();
@@ -255,12 +260,12 @@ protected:
   int ApplyThreshold;
   int AutoThreshold;
 
+  vtkImageData * ImageData;
+
   double IjkToRasDirections[9];
   double IToRasDirections[3];
   double JToRasDirections[3];
   double KToRasDirections[3];
-
-  vtkImageData *ImageData;
 
   vtkITKArchetypeImageSeriesScalarReader* ImageReader;
 };

@@ -58,7 +58,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLayerLogic : public vtkSlicerLo
   // Description:
   // The volume node to operate on
   vtkGetObjectMacro (VolumeNode, vtkMRMLVolumeNode);
-  void SetVolumeNode (vtkMRMLScalarVolumeNode *VolumeNode);
+  void SetVolumeNode (vtkMRMLVolumeNode *VolumeNode);
 
   // Description:
   // The slice node that defines the view 
@@ -88,7 +88,7 @@ protected:
 
   // Description:
   // 
-  vtkMRMLScalarVolumeNode *VolumeNode;
+  vtkMRMLVolumeNode *VolumeNode;
   vtkMRMLSliceNode *SliceNode;
   vtkImageReslice *Reslice;
   vtkImageMapToRGBA *MapToRGBA;

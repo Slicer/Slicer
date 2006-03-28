@@ -18,6 +18,7 @@ Version:   $Revision: 1.6 $
 
 #include "vtkObjectFactory.h"
 #include "vtkMRMLVolumeArchetypeStorageNode.h"
+#include "vtkMRMLVolumeNode.h"
 #include "vtkMRMLScalarVolumeNode.h"
 
 #include "vtkMatrix4x4.h"
@@ -131,7 +132,12 @@ void vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
     return;         
   }
 
-  vtkMRMLScalarVolumeNode *volNode = dynamic_cast <vtkMRMLScalarVolumeNode *> (refNode);
+  
+  vtkMRMLVolumeNode *volNode;
+
+  if ( refNode->IsA("vtkMRMLScalarVolumeNode") ) {
+    volNode = dynamic_cast <vtkMRMLScalarVolumeNode *> (refNode);
+  }
 
   if (volNode->GetImageData()) {
     volNode->GetImageData()->Delete();
@@ -190,7 +196,11 @@ void vtkMRMLVolumeArchetypeStorageNode::WriteData(vtkMRMLNode *refNode)
     return;
   }
   
-  vtkMRMLScalarVolumeNode *volNode = dynamic_cast <vtkMRMLScalarVolumeNode *> (refNode);
+  vtkMRMLVolumeNode *volNode;
+  
+  if ( refNode->IsA("vtkMRMLScalarVolumeNode") ) {
+    volNode = dynamic_cast <vtkMRMLScalarVolumeNode *> (refNode);
+  }
   
   if (volNode->GetImageData() == NULL) {
     vtkErrorMacro("cannot write ImageData, it's NULL");

@@ -50,13 +50,18 @@ void vtkSlicerSliceLayerLogic::SetSliceNode(vtkMRMLSliceNode *SliceNode)
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerSliceLayerLogic::SetVolumeNode(vtkMRMLScalarVolumeNode *VolumeNode)
+void vtkSlicerSliceLayerLogic::SetVolumeNode(vtkMRMLVolumeNode *VolumeNode)
 {
   if (this->VolumeNode)
     {
     this->VolumeNode->Delete();
     }
-  this->VolumeNode = VolumeNode;
+
+  if ( VolumeNode->IsA("vtkMRMLScalarVolumeNode") ) 
+    {
+    this->VolumeNode = dynamic_cast <vtkMRMLScalarVolumeNode *> (VolumeNode);
+    }
+
   this->VolumeNode->Register(this);
 
   if (this->VolumeNode)

@@ -17,6 +17,7 @@ Version:   $Revision: 1.14 $
 #include <sstream>
 
 #include "vtkObjectFactory.h"
+#include "vtkImageData.h"
 
 #include "vtkMRMLVolumeNode.h"
 #include "vtkMRMLScene.h"
