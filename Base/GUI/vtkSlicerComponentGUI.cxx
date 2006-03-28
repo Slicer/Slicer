@@ -1,4 +1,3 @@
-
 #include "vtkObjectFactory.h"
 #include "vtkSlicerComponentGUI.h"
 #include "vtkSlicerApplicationGUI.h"
@@ -25,8 +24,8 @@ vtkSlicerComponentGUI::vtkSlicerComponentGUI ( ) {
     this->GUICommand = vtkSlicerLogicUpdate::New ( );
     this->GUICommand->SetGUI ( this );
     this->Logic = NULL;
-    //this->SetApplication ( app );
-    //this->SetParent ( this->GetApplication()->GetNthWindow(0)->GetViewFrame() );
+    this->Mrml = NULL;
+
 }
 
 
@@ -41,6 +40,7 @@ vtkSlicerComponentGUI::~vtkSlicerComponentGUI ( ) {
         this->GUICommand->Delete ( );
     }
     this->Logic = NULL;
+    this->Mrml = NULL;
     this->Parent = NULL;
 }
 
@@ -61,27 +61,28 @@ void vtkSlicerComponentGUI::SetParent ( vtkKWFrame *frame ) {
 
 
 
-//---------------------------------------------------------------------------
-void vtkSlicerComponentGUI::SetLogic ( vtkSlicerApplicationLogic *logic ) {
-    this->Logic = logic;
-}
-
-
-
 
 //---------------------------------------------------------------------------
-void vtkSlicerComponentGUI::UpdateGUIWithLogicEvents ( vtkObject *caller,
+void vtkSlicerComponentGUI::ProcessLogicEvents ( vtkObject *caller,
                                                  unsigned long event,
                                                  void *callData ) {
-    //    this->GUI->Get/Set commands
+
 }
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerComponentGUI::UpdateLogicWithGUIEvents ( vtkObject *caller,
+void vtkSlicerComponentGUI::ProcessGUIEvents ( vtkObject *caller,
                                                  unsigned long event,
                                                  void *callData ) {
-    //    this->Logic->Get/Set commands
+
+}
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerComponentGUI::ProcessMrmlEvents ( vtkObject *caller,
+                                                 unsigned long event,
+                                                 void *callData ) {
+
 }
 
 
