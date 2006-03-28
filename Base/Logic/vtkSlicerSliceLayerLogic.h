@@ -39,6 +39,7 @@
 
 #include "vtkMrml.h"
 #include "vtkMrmlVolumeNode.h"
+#include "vtkMrmlScalarVolumeNode.h"
 #include "vtkMrmlSliceNode.h"
 
 #include "vtkImageReslice.h"
@@ -57,7 +58,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLayerLogic : public vtkSlicerLo
   // Description:
   // The volume node to operate on
   vtkGetObjectMacro (VolumeNode, vtkMRMLVolumeNode);
-  void SetVolumeNode (vtkMRMLVolumeNode *VolumeNode);
+  void SetVolumeNode (vtkMRMLScalarVolumeNode *VolumeNode);
 
   // Description:
   // The slice node that defines the view 
@@ -87,7 +88,7 @@ protected:
 
   // Description:
   // 
-  vtkMRMLVolumeNode *VolumeNode;
+  vtkMRMLScalarVolumeNode *VolumeNode;
   vtkMRMLSliceNode *SliceNode;
   vtkImageReslice *Reslice;
   vtkImageMapToRGBA *MapToRGBA;

@@ -16,6 +16,7 @@ SET(MRML_SRCS
         vtkMRMLParser.cxx
         vtkMRMLNode.cxx
         vtkMRMLVolumeNode.cxx
+        vtkMRMLScalarVolumeNode.cxx        
         vtkMRMLModelNode.cxx
         vtkMRMLStorageNode.cxx
         vtkMRMLVolumeArchetypeStorageNode.cxx

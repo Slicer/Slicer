@@ -50,7 +50,7 @@ void vtkSlicerSliceLayerLogic::SetSliceNode(vtkMRMLSliceNode *SliceNode)
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerSliceLayerLogic::SetVolumeNode(vtkMRMLVolumeNode *VolumeNode)
+void vtkSlicerSliceLayerLogic::SetVolumeNode(vtkMRMLScalarVolumeNode *VolumeNode)
 {
   if (this->VolumeNode)
     {

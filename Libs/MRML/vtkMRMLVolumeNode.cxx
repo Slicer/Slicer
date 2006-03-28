@@ -60,8 +60,6 @@ vtkMRMLVolumeNode::vtkMRMLVolumeNode()
   this->StorageNode = NULL;
   this->DisplayNode = NULL;
   this->TransformNode = NULL;
-
-  this->ImageData = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -78,10 +76,6 @@ vtkMRMLVolumeNode::~vtkMRMLVolumeNode()
   if (this->TransformNodeID) {
     delete [] this->TransformNodeID;
     this->TransformNodeID = NULL;
-  }
-
-  if (this->ImageData)  {
-    this->ImageData->Delete();
   }
   
   if (this->StorageNode)  {
@@ -170,9 +164,7 @@ void vtkMRMLVolumeNode::Copy(vtkMRMLNode *anode)
   for(int i=0; i<9; i++) {
     this->IjkToRasDirections[i] = node->IjkToRasDirections[i];
   }
-  if (this->ImageData) {
-    this->SetImageData(node->ImageData);
-  }
+
   if (this->StorageNode) {
     this->SetStorageNode(node->StorageNode);
   }  
@@ -209,11 +201,6 @@ void vtkMRMLVolumeNode::PrintSelf(ostream& os, vtkIndent indent)
 
   os << indent << "TransformNodeID: " <<
     (this->TransformNodeID ? this->TransformNodeID : "(none)") << "\n";
-
-  if (this->ImageData != NULL) {
-    os << indent << "ImageData:\n";
-    this->ImageData->PrintSelf(os, indent.GetNextIndent()); 
-  }
 }
 
 //----------------------------------------------------------------------------

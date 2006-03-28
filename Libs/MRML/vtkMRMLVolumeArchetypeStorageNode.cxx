@@ -18,7 +18,7 @@ Version:   $Revision: 1.6 $
 
 #include "vtkObjectFactory.h"
 #include "vtkMRMLVolumeArchetypeStorageNode.h"
-#include "vtkMRMLVolumeNode.h"
+#include "vtkMRMLScalarVolumeNode.h"
 
 #include "vtkMatrix4x4.h"
 #include "vtkImageData.h"
@@ -124,12 +124,14 @@ void vtkMRMLVolumeArchetypeStorageNode::ProcessParentNode(vtkMRMLNode *parentNod
 
 void vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
 {
-  if (!refNode->IsA("vtkMRMLVolumeNode") ) {
+
+  // test whether refNode is a valid node to hold a volume
+  if ( !refNode->IsA("vtkMRMLScalarVolumeNode") ) {
     vtkErrorMacro("Reference node is not a vtkMRMLVolumeNode");
-    return;
+    return;         
   }
 
-  vtkMRMLVolumeNode *volNode = dynamic_cast <vtkMRMLVolumeNode *> (refNode);
+  vtkMRMLScalarVolumeNode *volNode = dynamic_cast <vtkMRMLScalarVolumeNode *> (refNode);
 
   if (volNode->GetImageData()) {
     volNode->GetImageData()->Delete();
@@ -182,12 +184,13 @@ void vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
 
 void vtkMRMLVolumeArchetypeStorageNode::WriteData(vtkMRMLNode *refNode)
 {
-  if (!refNode->IsA("vtkMRMLVolumeNode") ) {
+  // test whether refNode is a valid node to hold a volume
+  if (!refNode->IsA("vtkMRMLScalarVolumeNode") ) {
     vtkErrorMacro("Reference node is not a vtkMRMLVolumeNode");
     return;
   }
   
-  vtkMRMLVolumeNode *volNode = dynamic_cast <vtkMRMLVolumeNode *> (refNode);
+  vtkMRMLScalarVolumeNode *volNode = dynamic_cast <vtkMRMLScalarVolumeNode *> (refNode);
   
   if (volNode->GetImageData() == NULL) {
     vtkErrorMacro("cannot write ImageData, it's NULL");

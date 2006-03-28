@@ -300,6 +300,7 @@ void vtkITKImageWriter::Write()
         {
           typedef itk::Vector<double, 3>    VectorPixelType;
           VectorPixelType pixelType;
+          pixelType.Fill(0.0);
           ITKWriteVTKImage(this, this->GetInput(), this->GetFileName(), this->RasToIJKMatrix, pixelType);
         }
         break;
@@ -307,6 +308,7 @@ void vtkITKImageWriter::Write()
         {
           typedef itk::Vector<float, 3>    VectorPixelType;
           VectorPixelType pixelType;
+          pixelType.Fill(0.0);
           ITKWriteVTKImage(this, this->GetInput(), this->GetFileName(), this->RasToIJKMatrix, pixelType);
         }
         break;
@@ -314,6 +316,7 @@ void vtkITKImageWriter::Write()
         {
           typedef itk::Vector<unsigned short, 3>    VectorPixelType;
           VectorPixelType pixelType;
+          pixelType.Fill(0);
           ITKWriteVTKImage(this, this->GetInput(), this->GetFileName(), this->RasToIJKMatrix, pixelType);
         }
         break;
@@ -321,6 +324,7 @@ void vtkITKImageWriter::Write()
         {
           typedef itk::Vector<unsigned char, 3>    VectorPixelType;
           VectorPixelType pixelType;
+          pixelType.Fill(0);
           ITKWriteVTKImage(this, this->GetInput(), this->GetFileName(), this->RasToIJKMatrix, pixelType);
         }
         break;

@@ -18,7 +18,7 @@ Version:   $Revision: 1.3 $
 
 #include "vtkObjectFactory.h"
 #include "vtkMRMLVolumeHeaderlessStorageNode.h"
-#include "vtkMRMLVolumeNode.h"
+#include "vtkMRMLScalarVolumeNode.h"
 
 #include "vtkMatrix4x4.h"
 #include "vtkImageData.h"
@@ -221,13 +221,13 @@ void vtkMRMLVolumeHeaderlessStorageNode::ReadData(vtkMRMLNode *refNode)
 {
   vtkErrorMacro("NOT IMPLEMENTED YET");
 
-
-  if (!refNode->IsA("vtkMRMLVolumeNode") ) {
+  // Test for scalar volume node
+  if (!refNode->IsA("vtkMRMLScalarVolumeNode") ) {
     vtkErrorMacro("Reference node is not a vtkMRMLVolumeNode");
     return;
   }
 
-  vtkMRMLVolumeNode *volNode = dynamic_cast <vtkMRMLVolumeNode *> (refNode);
+  vtkMRMLScalarVolumeNode *volNode = dynamic_cast <vtkMRMLScalarVolumeNode *> (refNode);
 
   if (volNode->GetImageData()) {
     volNode->GetImageData()->Delete();
@@ -256,12 +256,13 @@ void vtkMRMLVolumeHeaderlessStorageNode::WriteData(vtkMRMLNode *refNode)
 {
   vtkErrorMacro("NOT IMPLEMENTED YET");
 
-  if (!refNode->IsA("vtkMRMLVolumeNode") ) {
+  // test for scalar volume node
+  if (!refNode->IsA("vtkMRMLScalarVolumeNode") ) {
     vtkErrorMacro("Reference node is not a vtkMRMLVolumeNode");
     return;
   }
   
-  vtkMRMLVolumeNode *volNode = dynamic_cast <vtkMRMLVolumeNode *> (refNode);
+  vtkMRMLScalarVolumeNode *volNode = dynamic_cast <vtkMRMLScalarVolumeNode *> (refNode);
   
   if (volNode->GetImageData() == NULL) {
     vtkErrorMacro("cannot write ImageData, it's NULL");
