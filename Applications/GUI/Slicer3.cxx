@@ -8,6 +8,7 @@
 #include <vtksys/SystemTools.hxx>
 
 extern "C" int Slicerbasegui_Init(Tcl_Interp *interp);
+extern "C" int Slicerbaselogic_Init(Tcl_Interp *interp);
 extern "C" int Mrml_Init(Tcl_Interp *interp);
 
 int Slicer3_main(int argc, char *argv[])
@@ -24,6 +25,7 @@ int Slicer3_main(int argc, char *argv[])
   // Initialize our Tcl library (i.e. our classes wrapped in Tcl)
 
   Slicerbasegui_Init(interp);
+  Slicerbaselogic_Init(interp);
   Mrml_Init(interp);
 
   
@@ -49,12 +51,7 @@ int Slicer3_main(int argc, char *argv[])
   // add to collection of component GUIs
   slicerGUI->AddGUI ( appGUI );
 
-  // Add Modules
-  // vtkKWNotebook* mnb = slicerGUI->GetMainSlicerWin()->GetMainNotebook();
-  //  mnb->AddPage("Sample Module");
-  //vtkKWFrame *moduleFrame = mnb->GetFrame("Sample Module");
-  // pass this frame to the module to have it fill in the GUI
-
+  const char *name = slicerGUI->GetTclName();
 
   // TODO: where should args get parsed?
   //int res = appGUI->StartApplication(argc, argv);
