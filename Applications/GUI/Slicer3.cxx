@@ -41,7 +41,7 @@ int Slicer3_main(int argc, char *argv[])
   appGUI->SetApplication ( slicerApp );
   appGUI->SetLogic ( appLogic );
   
-  //appGUI->SetParent ( slicerGUI->GetMainSlicerWin( ) );
+  //appGUI->SetParent ( slicerApp->GetMainSlicerWin( ) );
   appGUI->BuildGUI ( );
   appGUI->AddGUIObservers ( );
   appGUI->AddLogicObservers ( );
@@ -51,7 +51,7 @@ int Slicer3_main(int argc, char *argv[])
   // add to collection of component GUIs
   slicerApp->AddGUI ( appGUI );
 
-  const char *name = slicerGUI->GetTclName();
+  const char *name = slicerApp->GetTclName();
 
   // TODO: where should args get parsed?
   //int res = appGUI->StartApplication(argc, argv);
