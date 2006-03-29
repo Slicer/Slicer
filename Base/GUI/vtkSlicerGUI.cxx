@@ -1,33 +1,19 @@
-/*=auto=========================================================================
-
-  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
-
-  See Doc/copyright/copyright.txt
-  or http://www.slicer.org/copyright/copyright.txt for details.
-
-  Program:   3D Slicer
-  Module:    $RCSfile: vtkSlicerGUI.cxx,v $
-  Date:      $Date: 2006/01/08 04:48:05 $
-  Version:   $Revision: 1.45 $
-
-=========================================================================auto=*/
-
 #include "vtkObjectFactory.h"
-#include "vtkSlicerGUI.h"
+#include "vtkSlicerApplication.h"
 #include "vtkSlicerGUICollection.h"
 #include "vtkSlicerComponentGUI.h"
-#include "vtkKWWindow.h"
 #include "vtkKWNotebook.h"
 #include "vtkKWFrame.h"
 #include "vtkKWUserInterfacePanel.h"
+#include "vtkKWWindowBase.h"
 
 //---------------------------------------------------------------------------
-vtkStandardNewMacro (vtkSlicerGUI);
-vtkCxxRevisionMacro(vtkSlicerGUI, "$Revision: 1.0 $");
+vtkStandardNewMacro (vtkSlicerApplication);
+vtkCxxRevisionMacro(vtkSlicerApplication, "$Revision: 1.0 $");
 
 
 //---------------------------------------------------------------------------
-vtkSlicerGUI::vtkSlicerGUI ( ) {
+vtkSlicerApplication::vtkSlicerApplication ( ) {
 
     // configure the application before creating
     this->SetName ( "3D Slicer Version 3.0 Alpha" );
@@ -36,12 +22,6 @@ vtkSlicerGUI::vtkSlicerGUI ( ) {
 
     this->GUICollection = vtkSlicerGUICollection::New ( );
     this->SlicerStyle = vtkSlicerStyle::New ( );
-    this->MainSlicerWin = vtkKWWindow::New ( );
-    this->MainSlicerWin->SecondaryPanelVisibilityOn ( );
-    this->MainSlicerWin->MainPanelVisibilityOn ( );
-    this->AddWindow ( this->MainSlicerWin );
-    this->MainSlicerWin->Create ( );
-    
     this->NumberOfGUIs = 0;
 
     // could initialize Tcl here, no?
@@ -50,14 +30,11 @@ vtkSlicerGUI::vtkSlicerGUI ( ) {
 
 
 //---------------------------------------------------------------------------
-vtkSlicerGUI::~vtkSlicerGUI ( ) {
+vtkSlicerApplication::~vtkSlicerApplication ( ) {
 
     this->CloseAllWindows ( );
     if ( this->GUICollection ) {
        this->GUICollection->Delete ( );
-    }
-    if ( this->MainSlicerWin ) {
-        this->MainSlicerWin->Delete ( );
     }
     if ( this->SlicerStyle ) {
         this->SlicerStyle->Delete ( );
@@ -68,7 +45,7 @@ vtkSlicerGUI::~vtkSlicerGUI ( ) {
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerGUI::AddGUI ( vtkSlicerComponentGUI *gui ) {
+void vtkSlicerApplication::AddGUI ( vtkSlicerComponentGUI *gui ) {
 
     // Create if it doesn't exist already
     if ( this->GUICollection == NULL ) {
@@ -82,7 +59,7 @@ void vtkSlicerGUI::AddGUI ( vtkSlicerComponentGUI *gui ) {
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerGUI::ConfigureApplication ( ) {
+void vtkSlicerApplication::ConfigureApplication ( ) {
 
     this->PromptBeforeExitOn ( );
     this->SupportSplashScreenOn ( );
@@ -93,17 +70,12 @@ void vtkSlicerGUI::ConfigureApplication ( ) {
 
 
 
-//---------------------------------------------------------------------------
-void vtkSlicerGUI::DisplayMainSlicerWindow ( ) {
-
-    this->MainSlicerWin->Display ( );
-}
 
 
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerGUI::CloseAllWindows ( ) {
+void vtkSlicerApplication::CloseAllWindows ( ) {
     int n, i;
     vtkKWWindowBase *win;
     
@@ -116,7 +88,7 @@ void vtkSlicerGUI::CloseAllWindows ( ) {
 
 
 //---------------------------------------------------------------------------
-int vtkSlicerGUI::StartApplication ( ) {
+int vtkSlicerApplication::StartApplication ( ) {
 
     int ret = 0;
 
