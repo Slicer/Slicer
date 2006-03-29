@@ -10,7 +10,7 @@
 #include "vtkKWFrame.h"
 #include "vtkKWRenderWidget.h"
 #include "vtkSlicerSliceWidget.h"
-#include "vtkSlicerGUI.h"
+#include "vtkSlicerApplication.h"
 
 
 //---------------------------------------------------------------------------
@@ -52,7 +52,7 @@ vtkSlicerSliceWidget::~vtkSlicerSliceWidget ( ){
 //---------------------------------------------------------------------------
 void vtkSlicerSliceWidget::Create ( ) {
 
-    vtkSlicerGUI *app = (vtkSlicerGUI *)this->GetApplication();
+    vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
     
     //---
     // Create a frame

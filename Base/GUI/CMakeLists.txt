@@ -20,7 +20,7 @@ SET(LIB_SRCS
   vtkSlicerStyle.cxx
   vtkSlicerColor.cxx
   vtkSlicerFont.cxx
-  vtkSlicerGUI.cxx
+  vtkSlicerApplication.cxx
   vtkSlicerGUIUpdate.cxx
   vtkSlicerLogicUpdate.cxx
   vtkSlicerMrmlUpdate.cxx

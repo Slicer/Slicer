@@ -3,7 +3,7 @@
 #include "vtkCommand.h"
 #include "vtkKWWidget.h"
 #include "vtkSlicerVolumesGUI.h"
-#include "vtkSlicerGUI.h"
+#include "vtkSlicerApplication.h"
 #include "vtkSlicerStyle.h"
 #include "vtkKWFrameWithLabel.h"
 
@@ -99,7 +99,7 @@ void vtkSlicerVolumesGUI::BuildGUI ( ) {
 //---------------------------------------------------------------------------
 void vtkSlicerVolumesGUI::BuildGUI ( vtkKWWidget* f ) {
 
-    vtkSlicerGUI *app = (vtkSlicerGUI *)this->GetApplication();
+    vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
     vtkSlicerStyle *style = app->GetSlicerStyle();
     // ---
     // MODULE GUI FRAME 

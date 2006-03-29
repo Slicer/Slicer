@@ -30,6 +30,7 @@
 #include "vtkSlicerModelsGUI.h"
 
 // includes + fwd declarations for ApplicationGUI widgets
+#include "vtkKWWindow.h"
 #include "vtkKWMenuButton.h"
 #include "vtkKWFrame.h"
 
@@ -108,7 +109,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkSetObjectMacro ( VolumesGUI, vtkSlicerVolumesGUI);
     vtkGetObjectMacro ( ModelsGUI, vtkSlicerModelsGUI);
     vtkSetObjectMacro ( ModelsGUI, vtkSlicerModelsGUI);
-
+    vtkGetObjectMacro ( MainSlicerWin, vtkKWWindow );
+    vtkSetObjectMacro ( MainSlicerWin, vtkKWWindow );
     
     // Description:
     // This method builds Slicer's main GUI
@@ -150,10 +152,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     virtual void BuildSliceControlGUI ( );
     virtual void BuildViewControlGUI ( );
     // Description:
-    // These methods add a Page on the UI panel for each Slicer module
-    // and build the GUI for each Slicer module.
-    virtual void AddGUIPanelForAllModules ( char *modules );
-    virtual void BuildGUIForAllModules ( );
+    // Display Slicer's main window
+    virtual void DisplayMainSlicerWindow ( );
 
  protected:
     vtkSlicerApplicationGUI ( );
@@ -202,6 +202,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     
     // Description:
     // Slice GUI containing SliceWidgetCollection
+    vtkKWWindow *MainSlicerWin;
     vtkSlicerSliceGUI *SliceGUI;
     vtkSlicerVolumesGUI *VolumesGUI;
     vtkSlicerModelsGUI *ModelsGUI;

@@ -2,7 +2,7 @@
 #include "vtkCommand.h"
 #include "vtkKWApplication.h"
 #include "vtkKWWidget.h"
-#include "vtkSlicerGUI.h"
+#include "vtkSlicerApplication.h"
 #include "vtkSlicerApplicationLogic.h"
 #include "vtkSlicerSliceGUI.h"
 #include "vtkSlicerSliceWidgetCollection.h"
@@ -196,7 +196,7 @@ vtkSlicerSliceWidget* vtkSlicerSliceGUI::GetSliceWidget ( char *SliceWidgetColor
 //---------------------------------------------------------------------------
 void vtkSlicerSliceGUI::BuildGUI (  ) {
 
-    vtkSlicerGUI *app = (vtkSlicerGUI *)this->GetApplication();
+    vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
     
 
     vtkSlicerSliceWidget *MainSlice0 = vtkSlicerSliceWidget::New ( );
