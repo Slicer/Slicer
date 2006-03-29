@@ -14,7 +14,7 @@ Version:   $Revision: 1.2 $
 
 #include "vtkSlicerVolumeSelectGUI.h"
 
-#include "vtkMRMLVolumeNode.h"
+#include "vtkMRMLScalarVolumeNode.h"
 
 #include "vtkKWMenu.h"
 #include "vtkKWMenuButton.h"
@@ -101,7 +101,7 @@ void vtkSlicerVolumeSelectGUI::UpdateMenu()
 
     vtkMRMLVolumeNode *node;
     this->MRMLScene->InitTraversal();
-    while ( (node = vtkMRMLVolumeNode::SafeDownCast (this->MRMLScene->GetNextNodeByClass("vtkMRMLVolumeNode"))) != NULL)
+    while ( (node = vtkMRMLScalarVolumeNode::SafeDownCast (this->MRMLScene->GetNextNodeByClass("vtkMRMLScalarVolumeNode"))) != NULL)
       {
       // TODO: figure out how to use the ID instead of the name as the menu indicator
       mb->AddRadioButton ( node->GetName() );
