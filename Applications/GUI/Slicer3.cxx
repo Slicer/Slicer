@@ -1,7 +1,7 @@
 
 #include "vtkKWApplication.h"
 #include "vtkKWNotebook.h"
-#include "vtkSlicerGUI.h"
+#include "vtkSlicerApplication.h"
 #include "vtkSlicerApplicationLogic.h"
 #include "vtkSlicerApplicationGUI.h"
 
@@ -30,15 +30,15 @@ int Slicer3_main(int argc, char *argv[])
 
   
   // Create SlicerGUI application, style, and main window 
-  vtkSlicerGUI *slicerGUI = vtkSlicerGUI::New ( );
-  slicerGUI->GetSlicerStyle()->ApplyPresentation ( );
+  vtkSlicerApplication *slicerApp = vtkSlicerApplication::New ( );
+  slicerApp->GetSlicerStyle()->ApplyPresentation ( );
 
   // Create the application Logic object, 
   // Create the application GUI object
   // and have it observe the Logic
   vtkSlicerApplicationLogic *appLogic = vtkSlicerApplicationLogic::New( );
   vtkSlicerApplicationGUI *appGUI = vtkSlicerApplicationGUI::New ( );
-  appGUI->SetApplication ( slicerGUI );
+  appGUI->SetApplication ( slicerApp );
   appGUI->SetLogic ( appLogic );
   
   //appGUI->SetParent ( slicerGUI->GetMainSlicerWin( ) );
@@ -46,20 +46,20 @@ int Slicer3_main(int argc, char *argv[])
   appGUI->AddGUIObservers ( );
   appGUI->AddLogicObservers ( );
   // after everything is packed 
-  slicerGUI->DisplayMainSlicerWindow ( );
+  appGUI->DisplayMainSlicerWindow ( );
 
   // add to collection of component GUIs
-  slicerGUI->AddGUI ( appGUI );
+  slicerApp->AddGUI ( appGUI );
 
   const char *name = slicerGUI->GetTclName();
 
   // TODO: where should args get parsed?
   //int res = appGUI->StartApplication(argc, argv);
-  int res = slicerGUI->StartApplication();
+  int res = slicerApp->StartApplication();
 
   appGUI->Delete();
   appLogic->Delete();
-  slicerGUI->Delete();
+  slicerApp->Delete();
   
   return res;
 }
