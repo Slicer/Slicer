@@ -1,29 +1,15 @@
-/*=auto=========================================================================
-
-  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
-
-  See Doc/copyright/copyright.txt
-  or http://www.slicer.org/copyright/copyright.txt for details.
-
-  Program:   3D Slicer
-  Module:    $RCSfile: vtkSlicerGUI.h,v $
-  Date:      $Date: 2006/01/08 04:48:05 $
-  Version:   $Revision: 1.45 $
-
-=========================================================================auto=*/
-// .NAME vtkSlicerGUI 
+// .NAME vtkSlicerApplication
 // .SECTION Description
 // Contains slicer's style, application and collection of associated guis.
 //
 
 
-#ifndef __vtkSlicerGUI_h
-#define __vtkSlicerGUI_h
+#ifndef __vtkSlicerApplication_h
+#define __vtkSlicerApplication_h
 
 #include "vtkSlicerBaseGUIWin32Header.h"
 #include "vtkKWApplication.h"
 #include "vtkSlicerStyle.h"
-#include "vtkKWWindow.h"
 #include "vtkSlicerGUICollection.h"
 
 class vtkSlicerComponentGUI;
@@ -32,17 +18,14 @@ class vtkSlicerComponentGUI;
 // Description:
 // Contains slicer's style, application and collection of associated guis.
 //
-class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGUI : public vtkKWApplication
+class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
 {
  public:
-    static vtkSlicerGUI* New ( );
-    vtkTypeRevisionMacro ( vtkSlicerGUI, vtkKWApplication );
+    static vtkSlicerApplication* New ( );
+    vtkTypeRevisionMacro ( vtkSlicerApplication, vtkKWApplication );
 
     vtkGetObjectMacro ( SlicerStyle, vtkSlicerStyle );
     vtkSetObjectMacro ( SlicerStyle, vtkSlicerStyle );
-    
-    vtkGetObjectMacro ( MainSlicerWin, vtkKWWindow );
-    vtkSetObjectMacro ( MainSlicerWin, vtkKWWindow );
     
     vtkGetObjectMacro ( GUICollection, vtkSlicerGUICollection );
     vtkSetObjectMacro ( GUICollection, vtkSlicerGUICollection );
@@ -56,7 +39,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGUI : public vtkKWApplication
     // Description:
     // These methods manage windows associated with the application
     virtual void CloseAllWindows ( ) ;
-    virtual void DisplayMainSlicerWindow ( );
     
     // Description:
     // Sets application behavior.
@@ -64,11 +46,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGUI : public vtkKWApplication
     virtual int StartApplication ( );
     
  protected:
-    vtkSlicerGUI ( );
-    ~vtkSlicerGUI ( );
+    vtkSlicerApplication ( );
+    ~vtkSlicerApplication ( );
 
     vtkSlicerStyle *SlicerStyle;
-    vtkKWWindow *MainSlicerWin;
 
     // Description:
     // Collections of GUIs
@@ -82,8 +63,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGUI : public vtkKWApplication
 
     
  private:
-    vtkSlicerGUI ( const vtkSlicerGUI& ); // Not implemented.
-    void operator = ( const vtkSlicerGUI& ); //Not implemented.
+    vtkSlicerApplication ( const vtkSlicerApplication& ); // Not implemented.
+    void operator = ( const vtkSlicerApplication& ); //Not implemented.
 }; 
 
 #endif
