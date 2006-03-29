@@ -15,10 +15,6 @@
 #include "vtkObjectFactory.h"
 #include "vtkCommand.h"
 #include "vtkCornerAnnotation.h"
-#include "vtkImageData.h"
-#include "vtkImageViewer2.h"
-#include "vtkRenderWindow.h"
-#include "vtkRenderWindowInteractor.h"
 #include "vtkToolkits.h"
 #include "vtkKWApplication.h"
 #include "vtkKWWidget.h"
@@ -36,7 +32,7 @@
 #include "vtkKWPushButton.h"
 #include "vtkSlicerSliceGUI.h"
 #include "vtkSlicerVolumesGUI.h"
-#include "vtkSLicerModelsGUI.h"
+#include "vtkSlicerModelsGUI.h"
 #include "vtkSlicerApplicationLogic.h"
 
 //---------------------------------------------------------------------------
@@ -55,7 +51,9 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  ) {
     this->SliceGUI = NULL;
     this->VolumesGUI = NULL;
     this->ModelsGUI = NULL;
-
+    this->VolumesModuleGUIID = 0;
+    this->ModelsModuleGUIID = 0;
+    
     // Control frames that comprise the Main Slicer GUI
     this->LogoFrame = vtkKWFrame::New();
     this->SlicerControlFrame = vtkKWFrame::New();
@@ -88,7 +86,7 @@ vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( ) {
     if ( this->MainSlicerWin ) {
         this->MainSlicerWin->Delete ( );
     }
-    this->DeleteSliceGUI ( );
+    this->DeleteGUIs ( );
     this->DeleteGUIPanelWidgets ( );
     this->DeleteFrames ( );
     this->Logic = NULL;
@@ -97,10 +95,17 @@ vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( ) {
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::DeleteSliceGUI ( ) {
+void vtkSlicerApplicationGUI::DeleteGUIs ( ) {
   if ( this->SliceGUI ) {
     this->SliceGUI->Delete ( );
   }
+  if ( this->VolumesGUI ) {
+      this->VolumesGUI->Delete ();
+  }
+  if ( this->ModelsGUI ) {
+      this->ModelsGUI->Delete ( );
+  }
+  
 }
 
 
@@ -224,7 +229,14 @@ void vtkSlicerApplicationGUI::AddGUIObservers ( ) {
     // add SlicerControlButton Observers here.
     this->GetSliceGUI ( )->AddGUIObservers ( );
     this->GetVolumesGUI ( )->AddGUIObservers ( );
-    //this->GetModelsGUI ( )->AddGUIObservers ( );
+    this->GetModelsGUI ( )->AddGUIObservers ( );
+
+    // add observers onto the buttons and menubutton in the SlicerControl frame
+    this->HomeButton->AddObserver (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICommand );
+    this->DataButton->AddObserver (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICommand );
+    this->VolumesButton->AddObserver (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICommand );
+    this->ModelsButton->AddObserver (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICommand );
+    this->ModulesButton->AddObserver (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICommand );    
 }
 
 
@@ -235,7 +247,7 @@ void vtkSlicerApplicationGUI::AddLogicObservers ( ) {
 
     this->GetSliceGUI ( )->AddLogicObservers ( );
     this->GetVolumesGUI ( )->AddLogicObservers ( );
-    //this->GetModelsGUI ( )->AddLogicObservers ( );
+    this->GetModelsGUI ( )->AddLogicObservers ( );
 }
 
 
@@ -249,6 +261,29 @@ void vtkSlicerApplicationGUI::AddMrmlObservers ( ) {
 void vtkSlicerApplicationGUI::ProcessGUIEvents ( vtkObject *caller,
                                                    unsigned long event,
                                                    void *callData ) {
+    
+
+    // This is just a placeholder:
+    // Actually, these events want to set "activeModule" in the logic;
+    // using this->Logic->SetActiveModule ( ) which is currently commented out.
+    // Observers on that logic should raise and lower the appropriate page.
+    // So for now, the GUI is controlling the GUI instead of going thru the logic.
+    //---
+    vtkKWPushButton *pushb = vtkKWPushButton::SafeDownCast (caller );
+    vtkKWMenuButton *menub = vtkKWMenuButton::SafeDownCast (caller );
+    if ( pushb == this->HomeButton && event == vtkCommand::ModifiedEvent ) {
+        this->ui_panel->RaisePage ( this->VolumesModuleGUIID );
+    } else if (pushb == this->DataButton && event == vtkCommand::ModifiedEvent ) {
+        //
+    } else if (pushb == this->VolumesButton && event == vtkCommand::ModifiedEvent ) {
+        this->ui_panel->RaisePage ( this->VolumesModuleGUIID );
+    } else if (pushb == this->ModelsButton && event == vtkCommand::ModifiedEvent ) {
+        this->ui_panel->RaisePage ( this->ModelsModuleGUIID );
+    }
+    if ( menub == this->ModulesButton && event == vtkCommand::ModifiedEvent ) {
+        this->ui_panel->RaisePage ( this->ModulesButton->GetValue() );
+    }
+    
 
 }
 
@@ -322,6 +357,7 @@ void vtkSlicerApplicationGUI::BuildGUI ( ) {
 
             // Turn off the tabs for pages in the ModuleControlGUI
             this->MainSlicerWin->GetMainNotebook( )->AlwaysShowTabsOff ( );
+            this->MainSlicerWin->GetMainNotebook( )->ShowIconsOff ( );
             this->BuildSliceControlGUI ( );
             this->BuildViewControlGUI ( );
         }
@@ -336,14 +372,15 @@ void vtkSlicerApplicationGUI::BuildModuleControlGUI ( ) {
     // stuffed here for now; 
     
     // Create the volumes GUI.
-    this->ui_panel->AddPage ( "VolumesModuleGUI", "VolumesModuleGUI", NULL);
+    this->VolumesModuleGUIID=this->ui_panel->AddPage ( "Volumes", "Volumes", NULL);
     this->VolumesGUI = vtkSlicerVolumesGUI::New ( );
     this->VolumesGUI->SetApplication ( (vtkSlicerApplication *)this->GetApplication() );
-    this->VolumesGUI->BuildGUI ( ui_panel->GetPageWidget ("VolumesModuleGUI" )) ;
+    this->VolumesGUI->BuildGUI ( ui_panel->GetPageWidget ("Volumes" )) ;
     // Create the models GUI.
-    //this->ModelsGUI = vtkSlicerVolumesGUI::New ( );
-    //this->ModelsGUI->SetApplication ( (vtkSlicerApplication *)this->GetApplication() );
-    //this->ModelsGUI->BuildGUI ( ui_panel->GetPageWidget ("VolumesModuleGUI" );
+    this->ModelsModuleGUIID=this->ui_panel->AddPage ( "Models", "Models", NULL);
+    this->ModelsGUI = vtkSlicerModelsGUI::New ( );
+    this->ModelsGUI->SetApplication ( (vtkSlicerApplication *)this->GetApplication() );
+    this->ModelsGUI->BuildGUI ( ui_panel->GetPageWidget ("Models" ) );
 
 
 
@@ -357,7 +394,7 @@ void vtkSlicerApplicationGUI::BuildLogoGUI ( ) {
 
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::BuildSlicerControlGUI ( ) {
-    const char* modules[] = { "data", "volumes", "models" };
+    const char* modules[] = { "Data", "Volumes", "Models" };
 
     if ( this->GetApplication() != NULL ) {
         vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
@@ -366,25 +403,25 @@ void vtkSlicerApplicationGUI::BuildSlicerControlGUI ( ) {
         this->HomeButton->Create ( );
         this->HomeButton->SetWidth ( 7 );
         //this->HomeButton->SetBackgroundColor ( style->GetGUIBgColor() );
-        this->HomeButton->SetText ( "home" );
+        this->HomeButton->SetText ( "Home" );
 
         this->DataButton->SetParent ( this->SlicerControlFrame );
         this->DataButton->Create ( );
         this->DataButton->SetWidth ( 7 );
         //this->DataButton->SetBackgroundColor ( style->GetGUIBgColor() );
-        this->DataButton->SetText ("data");
+        this->DataButton->SetText ("Data");
 
         this->VolumesButton->SetParent ( this->SlicerControlFrame );
         this->VolumesButton->Create ( );
         this->VolumesButton->SetWidth ( 7 );
         //this->VolumesButton->SetBackgroundColor ( style->GetGUIBgColor() );
-        this->VolumesButton->SetText("volumes");
+        this->VolumesButton->SetText("Volumes");
 
         this->ModelsButton->SetParent ( this->SlicerControlFrame );
         this->ModelsButton->Create ( );
         this->ModelsButton->SetWidth ( 7 );
         //this->ModelsButton->SetBackgroundColor ( style->GetGUIBgColor() );
-        this->ModelsButton->SetText("models");
+        this->ModelsButton->SetText("Models");
 
         this->ModulesButton->SetParent ( this->SlicerControlFrame );
         this->ModulesButton->Create ( );
@@ -396,11 +433,11 @@ void vtkSlicerApplicationGUI::BuildSlicerControlGUI ( ) {
             this->ModulesButton->AddRadioButton( modules[i] );
         }
 
-        app->Script ( "pack %s -side left -anchor n -padx 2 -pady 2 -ipady 1", this->HomeButton->GetWidgetName( ) );
-        app->Script ( "pack %s -side left -anchor n -padx 2 -pady 2 -ipady 1", this->DataButton->GetWidgetName( ) );
-        app->Script ( "pack %s -side left -anchor n -padx 2 -pady 2 -ipady 1", this->VolumesButton->GetWidgetName( ) );
-        app->Script ( "pack %s -side left -anchor n -padx 2 -pady 2 -ipady 1", this->ModelsButton->GetWidgetName( ) );
-        app->Script ( "pack %s -side left -anchor n -padx 2 -pady 2 -ipady 0", this->ModulesButton->GetWidgetName( ) );
+        app->Script ( "pack %s -side left -anchor n -padx 1 -pady 2 -ipady 1", this->HomeButton->GetWidgetName( ) );
+        app->Script ( "pack %s -side left -anchor n -padx 1 -pady 2 -ipady 1", this->DataButton->GetWidgetName( ) );
+        app->Script ( "pack %s -side left -anchor n -padx 1 -pady 2 -ipady 1", this->VolumesButton->GetWidgetName( ) );
+        app->Script ( "pack %s -side left -anchor n -padx 1 -pady 2 -ipady 1", this->ModelsButton->GetWidgetName( ) );
+        app->Script ( "pack %s -side left -anchor n -padx 1 -pady 2 -ipady 0", this->ModulesButton->GetWidgetName( ) );
     }
 }
 

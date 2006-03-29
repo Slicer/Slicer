@@ -105,8 +105,7 @@ void vtkSlicerModelsGUI::BuildGUI ( vtkKWWidget *f ) {
     modHelpFrame->SetParent ( f );
     modHelpFrame->Create ( );
     modHelpFrame->CollapseFrame ( );
-    modHelpFrame->SetLabelText ("help");
-    modHelpFrame->SetDefaultLabelCaseToLowercaseFirst( );
+    modHelpFrame->SetLabelText ("Help");
     modHelpFrame->SetDefaultLabelFontWeightToNormal( );
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   modHelpFrame->GetWidgetName(), f->GetWidgetName());
@@ -116,9 +115,8 @@ void vtkSlicerModelsGUI::BuildGUI ( vtkKWWidget *f ) {
     vtkKWFrameWithLabel *modLoadFrame = vtkKWFrameWithLabel::New ( );
     modLoadFrame->SetParent ( f );
     modLoadFrame->Create ( );
-    modLoadFrame->SetLabelText ("load");
+    modLoadFrame->SetLabelText ("Load");
     modLoadFrame->SetDefaultLabelFontWeightToNormal( );
-    modLoadFrame->SetDefaultLabelCaseToLowercaseFirst( );
     modLoadFrame->ExpandFrame ( );
 
     // add a file browser 
@@ -139,9 +137,8 @@ void vtkSlicerModelsGUI::BuildGUI ( vtkKWWidget *f ) {
     modDisplayFrame->SetParent ( f );
     modDisplayFrame->Create ( );
     //modDisplayFrame->SetBackgroundColor ( style->GetGUIBgColor() );
-    modDisplayFrame->SetLabelText ("display");
+    modDisplayFrame->SetLabelText ("Display");
     modDisplayFrame->SetDefaultLabelFontWeightToNormal( );
-    modDisplayFrame->SetDefaultLabelCaseToLowercaseFirst( );
     modDisplayFrame->CollapseFrame ( );
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   modDisplayFrame->GetWidgetName(), f->GetWidgetName());

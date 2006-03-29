@@ -111,8 +111,7 @@ void vtkSlicerVolumesGUI::BuildGUI ( vtkKWWidget* f ) {
     volHelpFrame->SetParent ( f );
     volHelpFrame->Create ( );
     volHelpFrame->CollapseFrame ( );
-    volHelpFrame->SetLabelText ("help");
-    volHelpFrame->SetDefaultLabelCaseToLowercaseFirst( );
+    volHelpFrame->SetLabelText ("Help");
     volHelpFrame->SetDefaultLabelFontWeightToNormal( );
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   volHelpFrame->GetWidgetName(), f->GetWidgetName());
@@ -122,9 +121,8 @@ void vtkSlicerVolumesGUI::BuildGUI ( vtkKWWidget* f ) {
     vtkKWFrameWithLabel *volLoadFrame = vtkKWFrameWithLabel::New ( );
     volLoadFrame->SetParent ( f );
     volLoadFrame->Create ( );
-    volLoadFrame->SetLabelText ("load");
+    volLoadFrame->SetLabelText ("Load");
     volLoadFrame->SetDefaultLabelFontWeightToNormal( );
-    volLoadFrame->SetDefaultLabelCaseToLowercaseFirst( );
     volLoadFrame->ExpandFrame ( );
 
     // add a file browser 
@@ -144,9 +142,8 @@ void vtkSlicerVolumesGUI::BuildGUI ( vtkKWWidget* f ) {
     vtkKWFrameWithLabel *volDisplayFrame = vtkKWFrameWithLabel::New ( );
     volDisplayFrame->SetParent ( f );
     volDisplayFrame->Create ( );
-    volDisplayFrame->SetLabelText ("display");
+    volDisplayFrame->SetLabelText ("Display");
     volDisplayFrame->SetDefaultLabelFontWeightToNormal( );
-    volDisplayFrame->SetDefaultLabelCaseToLowercaseFirst( );
     volDisplayFrame->CollapseFrame ( );
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   volDisplayFrame->GetWidgetName(), f->GetWidgetName());

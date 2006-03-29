@@ -81,6 +81,15 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkSetMacro ( DefaultViewControlFrameHeight, int );
 
     // Description:
+    // These Get/Set methods for IDs for ModuleGUI pages.
+    vtkGetMacro (VolumesModuleGUIID, int );
+    vtkSetMacro (VolumesModuleGUIID, int );
+    vtkGetMacro (ModelsModuleGUIID, int );
+    vtkSetMacro (ModelsModuleGUIID, int );
+    vtkGetMacro (DataModuleGUIID, int );
+    vtkSetMacro (DataModuleGUIID, int );
+        
+    // Description:
     // These Get/Set methods for frames in the GUI panel.
     vtkGetObjectMacro ( ModuleControlFrame, vtkKWFrame );
     vtkSetObjectMacro ( ModuleControlFrame, vtkKWFrame );
@@ -134,7 +143,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     
     // Desrciption:
     // These methods delete widgets belonging to components of the Slicer Window
-    virtual void DeleteSliceGUI ( );
+    virtual void DeleteGUIs ( );
     virtual void DeleteGUIPanelWidgets ( );
     virtual void DeleteFrames ( );
 
@@ -180,6 +189,16 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkKWMenuButton *ModulesButton;
     
     // Description:
+    // Slice GUI containing SliceWidgetCollection
+    vtkKWWindow *MainSlicerWin;
+    vtkSlicerSliceGUI *SliceGUI;
+    vtkSlicerVolumesGUI *VolumesGUI;
+    vtkSlicerModelsGUI *ModelsGUI;
+    int VolumesModuleGUIID;
+    int ModelsModuleGUIID;
+    int DataModuleGUIID;
+
+    // Description:
     // Dimensions for the Default Window & components
     int DefaultSlicerWindowHeight;
     int DefaultSlicerWindowWidth;
@@ -200,13 +219,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     int DefaultSliceControlFrameHeight;    
     int DefaultViewControlFrameHeight;
     
-    // Description:
-    // Slice GUI containing SliceWidgetCollection
-    vtkKWWindow *MainSlicerWin;
-    vtkSlicerSliceGUI *SliceGUI;
-    vtkSlicerVolumesGUI *VolumesGUI;
-    vtkSlicerModelsGUI *ModelsGUI;
-
  private:
     vtkSlicerApplicationGUI ( const vtkSlicerApplicationGUI& ); // Not implemented.
     void operator = ( const vtkSlicerApplicationGUI& ); //Not implemented.
