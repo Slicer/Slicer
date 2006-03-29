@@ -25,7 +25,7 @@
 #define __vtkMRMLVolumeNode_h
 
 #include "vtkMatrix4x4.h"
-//#include "vtkImageData.h"
+#include "vtkImageData.h"
 
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
@@ -33,10 +33,12 @@
 #include "vtkMRMLVolumeDisplayNode.h"
 #include "vtkMRMLTransformNode.h"
 
+class vtkImageData;
+
 class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLNode
 {
   public:
-  static vtkMRMLVolumeNode *New() {return NULL;};
+  static vtkMRMLVolumeNode *New(){return NULL;};
   vtkTypeMacro(vtkMRMLVolumeNode,vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
@@ -56,19 +58,12 @@ class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLNode
 
   // Description:
   // Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() {return "Volume";};
+  virtual const char* GetNodeTagName() = 0;
 
   // Description:
   // Finds the storage node and read the data
   virtual void UpdateScene(vtkMRMLScene *scene);
 
-  // Description:
-  // Indicates if this volume is a label map, which is the output of 
-  // segmentation that labels each voxel according to its tissue type.  
-  // The alternative is a gray-level or color image.
-  vtkGetMacro(LabelMap, int);
-  vtkSetMacro(LabelMap, int);
-  vtkBooleanMacro(LabelMap, int);
 
   //--------------------------------------------------------------------------
   // RAS->IJK Matrix Calculation
@@ -132,20 +127,15 @@ class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLNode
 
   // Description:
   // Associated ImageData
-  virtual vtkImageData * GetImageData ( void ) = 0;
-  virtual void SetImageData ( vtkImageData * ) = 0;
+  vtkGetObjectMacro(ImageData, vtkImageData);
+  vtkSetObjectMacro(ImageData, vtkImageData);
+
   
 protected:
   vtkMRMLVolumeNode();
   ~vtkMRMLVolumeNode();
   vtkMRMLVolumeNode(const vtkMRMLVolumeNode&);
   void operator=(const vtkMRMLVolumeNode&);
-
-
-  // Strings
-
-  // Booleans
-  int LabelMap;
 
   double IjkToRasDirections[9];
   double IToRasDirections[3];
@@ -159,8 +149,12 @@ protected:
   vtkMRMLStorageNode         *StorageNode;
   vtkMRMLVolumeDisplayNode   *DisplayNode;
   vtkMRMLTransformNode       *TransformNode;
+  vtkImageData               *ImageData;
 
 };
 
 #endif
+
+
+ 
 

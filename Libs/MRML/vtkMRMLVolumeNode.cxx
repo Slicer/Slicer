@@ -17,16 +17,13 @@ Version:   $Revision: 1.14 $
 #include <sstream>
 
 #include "vtkObjectFactory.h"
-#include "vtkImageData.h"
 
 #include "vtkMRMLVolumeNode.h"
 #include "vtkMRMLScene.h"
 
-//------------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 vtkMRMLVolumeNode::vtkMRMLVolumeNode()
 {
-  this->LabelMap = 0;
-
   this->StorageNodeID = NULL;
   this->DisplayNodeID = NULL;
   this->TransformNodeID = NULL;
@@ -34,6 +31,8 @@ vtkMRMLVolumeNode::vtkMRMLVolumeNode()
   this->StorageNode = NULL;
   this->DisplayNode = NULL;
   this->TransformNode = NULL;
+
+  this->ImageData = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -50,6 +49,10 @@ vtkMRMLVolumeNode::~vtkMRMLVolumeNode()
   if (this->TransformNodeID) {
     delete [] this->TransformNodeID;
     this->TransformNodeID = NULL;
+  }
+
+  if (this->ImageData)  {
+    this->ImageData->Delete();
   }
   
   if (this->StorageNode)  {
@@ -96,7 +99,7 @@ void vtkMRMLVolumeNode::WriteXML(ostream& of, int nIndent)
 void vtkMRMLVolumeNode::ReadXMLAttributes(const char** atts)
 {
 
-  vtkMRMLNode::ReadXMLAttributes(atts);
+  Superclass::ReadXMLAttributes(atts);
 
   const char* attName;
   const char* attValue;
@@ -132,13 +135,13 @@ void vtkMRMLVolumeNode::Copy(vtkMRMLNode *anode)
   Superclass::Copy(anode);
   vtkMRMLVolumeNode *node = (vtkMRMLVolumeNode *) anode;
 
-  this->SetLabelMap(node->LabelMap);
-
   // Matrices
   for(int i=0; i<9; i++) {
     this->IjkToRasDirections[i] = node->IjkToRasDirections[i];
   }
-
+  if (this->ImageData) {
+    this->SetImageData(node->ImageData);
+  }
   if (this->StorageNode) {
     this->SetStorageNode(node->StorageNode);
   }  
@@ -158,8 +161,7 @@ void vtkMRMLVolumeNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   int idx;
   
-  vtkMRMLNode::PrintSelf(os,indent);
-  os << indent << "LabelMap:          " << this->LabelMap << "\n";
+  Superclass::PrintSelf(os,indent);
   // Matrices
   os << "IjkToRasDirections:\n";
   for (idx = 0; idx < 9; ++idx) {
@@ -175,6 +177,11 @@ void vtkMRMLVolumeNode::PrintSelf(ostream& os, vtkIndent indent)
 
   os << indent << "TransformNodeID: " <<
     (this->TransformNodeID ? this->TransformNodeID : "(none)") << "\n";
+
+  if (this->ImageData != NULL) {
+    os << indent << "ImageData:\n";
+    this->ImageData->PrintSelf(os, indent.GetNextIndent()); 
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -380,4 +387,4 @@ void vtkMRMLVolumeNode::UpdateScene(vtkMRMLScene *scene)
 }
 
 
-// End
+ 
