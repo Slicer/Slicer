@@ -35,6 +35,9 @@ vtkSlicerSliceGUI::vtkSlicerSliceGUI (  ) {
 //---------------------------------------------------------------------------
 vtkSlicerSliceGUI::~vtkSlicerSliceGUI ( ) {
 
+    if ( this->SliceWidgets ) {
+        this->SliceWidgets->Delete();
+    }
     if ( this->MainSlice0 ) {
         this->MainSlice0->Delete ( );
     }
@@ -44,9 +47,6 @@ vtkSlicerSliceGUI::~vtkSlicerSliceGUI ( ) {
     if ( this->MainSlice2 ) {
         this->MainSlice2->Delete ( );
     }    
-    if ( this->SliceWidgets ) {
-        this->SliceWidgets->Delete();
-    }
     this->Logic = NULL;
     this->SliceLogic = NULL;
 }
