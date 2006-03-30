@@ -13,6 +13,7 @@
 #include "vtkCornerAnnotation.h"
 #include "vtkKWRenderWidget.h"
 #include "vtkKWScaleWithEntry.h"
+#include "vtkKWFrame.h"
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerSliceGUI);
@@ -25,12 +26,24 @@ vtkSlicerSliceGUI::vtkSlicerSliceGUI (  ) {
     this->Logic = NULL;
     this->SliceLogic = NULL;
     this->SliceWidgets = vtkSlicerSliceWidgetCollection::New();
+    this->MainSlice0 = NULL;
+    this->MainSlice1 = NULL;
+    this->MainSlice2 = NULL;
 }
 
 
 //---------------------------------------------------------------------------
 vtkSlicerSliceGUI::~vtkSlicerSliceGUI ( ) {
 
+    if ( this->MainSlice0 ) {
+        this->MainSlice0->Delete ( );
+    }
+    if ( this->MainSlice1 ) {
+        this->MainSlice1->Delete ( );
+    }
+    if ( this->MainSlice2 ) {
+        this->MainSlice2->Delete ( );
+    }    
     if ( this->SliceWidgets ) {
         this->SliceWidgets->Delete();
     }
@@ -42,6 +55,7 @@ vtkSlicerSliceGUI::~vtkSlicerSliceGUI ( ) {
 
 //---------------------------------------------------------------------------
 void vtkSlicerSliceGUI::AddSliceWidget ( vtkSlicerSliceWidget *w ){
+
     // Create if it doesn't exist already
     if ( this->SliceWidgets == NULL ) {
         this->SliceWidgets = vtkSlicerSliceWidgetCollection::New();
@@ -194,26 +208,39 @@ vtkSlicerSliceWidget* vtkSlicerSliceGUI::GetSliceWidget ( char *SliceWidgetColor
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerSliceGUI::BuildGUI (  ) {
+void vtkSlicerSliceGUI::BuildGUI ( ) {
+}
+
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerSliceGUI::BuildGUI ( vtkKWFrame* f1, vtkKWFrame *f2, vtkKWFrame *f3  ) {
 
     vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
     
 
-    vtkSlicerSliceWidget *MainSlice0 = vtkSlicerSliceWidget::New ( );
-    MainSlice0->SetApplication (app);
-    MainSlice0->Create ( );
-    this->AddSliceWidget ( MainSlice0 );
+    this->MainSlice0 = vtkSlicerSliceWidget::New ( );
+    this->MainSlice0->SetApplication (app);
+    this->MainSlice0->SetParent ( f1 );
+    this->MainSlice0->Create ( );
+    this->AddSliceWidget ( this->MainSlice0 );
+    app->Script ( "pack %s -side top -fill both -padx 0 -pady 0", this->MainSlice0->GetWidgetName () );
 
     // create these others for now, but they are not observed.
-    vtkSlicerSliceWidget *MainSlice1 = vtkSlicerSliceWidget::New ( );
-    MainSlice1->SetApplication (app);
-    MainSlice1->Create ( );
-    this->AddSliceWidget ( MainSlice1 );
+    this->MainSlice1 = vtkSlicerSliceWidget::New ( );
+    this->MainSlice1->SetApplication (app);
+    this->MainSlice1->SetParent ( f2 );
+    this->MainSlice1->Create ( );
+    this->AddSliceWidget ( this->MainSlice1 );
+    app->Script ( "pack %s -side top -fill both -padx 0 -pady 0", this->MainSlice1->GetWidgetName () );
 
-    vtkSlicerSliceWidget *MainSlice2 = vtkSlicerSliceWidget::New ( );
-    MainSlice2->SetApplication (app);
-    MainSlice2->Create ( );
-    this->AddSliceWidget ( MainSlice2 );
+    this->MainSlice2 = vtkSlicerSliceWidget::New ( );
+    this->MainSlice2->SetApplication (app);
+    this->MainSlice2->SetParent ( f3 );
+    this->MainSlice2->Create ( );
+    this->AddSliceWidget ( this->MainSlice2 );
+    app->Script ( "pack %s -side top -fill both -padx 0 -pady 0", this->MainSlice2->GetWidgetName () );
+
 }
 
 

@@ -30,12 +30,19 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceGUI : public vtkSlicerComponentGU
     vtkSetObjectMacro ( SliceLogic, vtkSlicerSliceLogic);
     vtkGetObjectMacro ( SliceWidgets, vtkSlicerSliceWidgetCollection);
     vtkSetObjectMacro ( SliceWidgets, vtkSlicerSliceWidgetCollection);
+    vtkGetObjectMacro ( MainSlice0, vtkSlicerSliceWidget);
+    vtkSetObjectMacro ( MainSlice0, vtkSlicerSliceWidget);
+    vtkGetObjectMacro ( MainSlice1, vtkSlicerSliceWidget);
+    vtkSetObjectMacro ( MainSlice1, vtkSlicerSliceWidget);
+    vtkGetObjectMacro ( MainSlice2, vtkSlicerSliceWidget);
+    vtkSetObjectMacro ( MainSlice2, vtkSlicerSliceWidget);
     
     virtual void AddSliceWidget ( vtkSlicerSliceWidget *w );
     vtkSlicerSliceWidget* GetSliceWidget ( int SliceWidgetNum );
     vtkSlicerSliceWidget* GetSliceWidget ( char *SliceWidgetColor );
     
     virtual void BuildGUI ( );
+    virtual void BuildGUI ( vtkKWFrame *f1, vtkKWFrame *f2, vtkKWFrame *f3);
     virtual void AddGUIObservers ( );
     virtual void AddLogicObservers ( );
     virtual void AddMrmlObservers ( );
@@ -51,7 +58,13 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceGUI : public vtkSlicerComponentGU
     ~vtkSlicerSliceGUI ( );
 
     vtkSlicerSliceLogic *SliceLogic;
-    // Collection of slice widgets.
+
+    // Three slice widgets by default.
+    vtkSlicerSliceWidget *MainSlice0;
+    vtkSlicerSliceWidget *MainSlice1;
+    vtkSlicerSliceWidget *MainSlice2;
+
+    // Collection of the above and other slice widgets.
     vtkSlicerSliceWidgetCollection *SliceWidgets;
     
  private:

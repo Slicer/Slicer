@@ -5,7 +5,6 @@
 #include "vtkKWCompositeWidget.h"
 #include "vtkKWRenderWidget.h"
 #include "vtkImageViewer2.h"
-#include "vtkKWFrame.h"
 #include "vtkKWScaleWithEntry.h"
 
 // Note:
@@ -27,8 +26,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceWidget : public vtkKWCompositeWid
     vtkSetObjectMacro ( ImageViewer, vtkImageViewer2 );
     vtkGetObjectMacro ( RenderWidget, vtkKWRenderWidget );
     vtkSetObjectMacro ( RenderWidget, vtkKWRenderWidget );
-    vtkGetObjectMacro ( SliceFrame, vtkKWFrame );
-    vtkSetObjectMacro ( SliceFrame, vtkKWFrame );
 
     virtual void Create ( );
 
@@ -36,7 +33,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceWidget : public vtkKWCompositeWid
     vtkSlicerSliceWidget ( );
     ~vtkSlicerSliceWidget ( );
 
-    vtkKWFrame *SliceFrame;
     vtkKWRenderWidget *RenderWidget;
     vtkImageViewer2 *ImageViewer;
     vtkKWScaleWithEntry *Scale;

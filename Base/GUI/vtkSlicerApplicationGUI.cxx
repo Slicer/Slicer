@@ -95,6 +95,142 @@ vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( ) {
 
 
 //---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::AddGUIObservers ( ) {
+
+    // add SlicerControlButton Observers here.
+    this->GetSliceGUI ( )->AddGUIObservers ( );
+    this->GetVolumesGUI ( )->AddGUIObservers ( );
+    this->GetModelsGUI ( )->AddGUIObservers ( );
+
+    // add observers onto the buttons and menubutton in the SlicerControl frame
+    this->HomeButton->AddObserver (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICommand );
+    this->DataButton->AddObserver (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICommand );
+    this->VolumesButton->AddObserver (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICommand );
+    this->ModelsButton->AddObserver (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICommand );
+    this->ModulesButton->AddObserver (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICommand );    
+}
+
+
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::AddLogicObservers ( ) {
+
+    this->GetSliceGUI ( )->AddLogicObservers ( );
+    this->GetVolumesGUI ( )->AddLogicObservers ( );
+    this->GetModelsGUI ( )->AddLogicObservers ( );
+}
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::AddMrmlObservers ( ) {
+
+}
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::ProcessGUIEvents ( vtkObject *caller,
+                                                   unsigned long event,
+                                                   void *callData ) {
+    
+
+    // This is just a placeholder:
+    // Actually, these events want to set "activeModule" in the logic;
+    // using this->Logic->SetActiveModule ( ) which is currently commented out.
+    // Observers on that logic should raise and lower the appropriate page.
+    // So for now, the GUI is controlling the GUI instead of going thru the logic.
+    //---
+    vtkKWPushButton *pushb = vtkKWPushButton::SafeDownCast (caller );
+    vtkKWMenuButton *menub = vtkKWMenuButton::SafeDownCast (caller );
+    if ( pushb == this->HomeButton && event == vtkCommand::ModifiedEvent ) {
+        this->ui_panel->RaisePage ( this->VolumesModuleGUIID );
+    } else if (pushb == this->DataButton && event == vtkCommand::ModifiedEvent ) {
+        //
+    } else if (pushb == this->VolumesButton && event == vtkCommand::ModifiedEvent ) {
+        this->ui_panel->RaisePage ( this->VolumesModuleGUIID );
+    } else if (pushb == this->ModelsButton && event == vtkCommand::ModifiedEvent ) {
+        this->ui_panel->RaisePage ( this->ModelsModuleGUIID );
+    }
+    if ( menub == this->ModulesButton && event == vtkCommand::ModifiedEvent ) {
+        this->ui_panel->RaisePage ( this->ModulesButton->GetValue() );
+    }
+    
+
+}
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::ProcessMrmlEvents ( vtkObject *caller,
+                                                   unsigned long event,
+                                                   void *callData ) {
+}
+
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::ProcessLogicEvents ( vtkObject *caller,
+                                                   unsigned long event,
+                                                   void *callData ) {
+
+}
+
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::BuildGUI ( ) {
+
+    // Set up the conventional window: 3Dviewer, slice widgets, UI panel for now.
+    if ( this->GetApplication() != NULL ) {
+        vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
+        vtkSlicerStyle *style = app->GetSlicerStyle();
+
+        if ( this->MainSlicerWin != NULL ) {
+
+            // set up Slicer's main window
+            this->MainSlicerWin->SecondaryPanelVisibilityOn ( );
+            this->MainSlicerWin->MainPanelVisibilityOn ( );
+            app->AddWindow ( this->MainSlicerWin );
+            this->MainSlicerWin->Create ( );        
+
+            // configure default size of GUI
+            this->ConfigureMainSlicerWindow ( );
+            this->ConfigureMainViewer ( );
+            this->ConfigureSliceViewers ( );
+            this->ConfigureGUIPanel ( );
+
+            // ---
+            // SLICE WIDGET
+            // create a slice widget
+            this->SliceGUI = vtkSlicerSliceGUI::New ( );
+            this->SliceGUI->SetApplication ( (vtkSlicerApplication *)this->GetApplication() );
+            this->SliceGUI->BuildGUI ( this->DefaultSlice0Frame,
+                                       this->DefaultSlice1Frame,
+                                       this->DefaultSlice2Frame );
+            // Build main GUI panel
+            this->BuildLogoGUI ( );
+            this->BuildSlicerControlGUI ( );
+            this->BuildModuleControlGUI ( );
+
+            // Turn off the tabs for pages in the ModuleControlGUI
+            this->MainSlicerWin->GetMainNotebook( )->AlwaysShowTabsOff ( );
+            this->MainSlicerWin->GetMainNotebook( )->ShowIconsOff ( );
+            this->BuildSliceControlGUI ( );
+            this->BuildViewControlGUI ( );
+        }
+    }
+}
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::DisplayMainSlicerWindow ( ) {
+
+    this->MainSlicerWin->Display ( );
+}
+
+
+
+
+//---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::DeleteGUIs ( ) {
   if ( this->SliceGUI ) {
     this->SliceGUI->Delete ( );
@@ -222,147 +358,6 @@ void vtkSlicerApplicationGUI::InitDefaultSlicerWindowDimensions ( ) {
 }
 
 
-
-//---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::AddGUIObservers ( ) {
-
-    // add SlicerControlButton Observers here.
-    this->GetSliceGUI ( )->AddGUIObservers ( );
-    this->GetVolumesGUI ( )->AddGUIObservers ( );
-    this->GetModelsGUI ( )->AddGUIObservers ( );
-
-    // add observers onto the buttons and menubutton in the SlicerControl frame
-    this->HomeButton->AddObserver (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICommand );
-    this->DataButton->AddObserver (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICommand );
-    this->VolumesButton->AddObserver (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICommand );
-    this->ModelsButton->AddObserver (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICommand );
-    this->ModulesButton->AddObserver (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICommand );    
-}
-
-
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::AddLogicObservers ( ) {
-
-    this->GetSliceGUI ( )->AddLogicObservers ( );
-    this->GetVolumesGUI ( )->AddLogicObservers ( );
-    this->GetModelsGUI ( )->AddLogicObservers ( );
-}
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::AddMrmlObservers ( ) {
-
-}
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::ProcessGUIEvents ( vtkObject *caller,
-                                                   unsigned long event,
-                                                   void *callData ) {
-    
-
-    // This is just a placeholder:
-    // Actually, these events want to set "activeModule" in the logic;
-    // using this->Logic->SetActiveModule ( ) which is currently commented out.
-    // Observers on that logic should raise and lower the appropriate page.
-    // So for now, the GUI is controlling the GUI instead of going thru the logic.
-    //---
-    vtkKWPushButton *pushb = vtkKWPushButton::SafeDownCast (caller );
-    vtkKWMenuButton *menub = vtkKWMenuButton::SafeDownCast (caller );
-    if ( pushb == this->HomeButton && event == vtkCommand::ModifiedEvent ) {
-        this->ui_panel->RaisePage ( this->VolumesModuleGUIID );
-    } else if (pushb == this->DataButton && event == vtkCommand::ModifiedEvent ) {
-        //
-    } else if (pushb == this->VolumesButton && event == vtkCommand::ModifiedEvent ) {
-        this->ui_panel->RaisePage ( this->VolumesModuleGUIID );
-    } else if (pushb == this->ModelsButton && event == vtkCommand::ModifiedEvent ) {
-        this->ui_panel->RaisePage ( this->ModelsModuleGUIID );
-    }
-    if ( menub == this->ModulesButton && event == vtkCommand::ModifiedEvent ) {
-        this->ui_panel->RaisePage ( this->ModulesButton->GetValue() );
-    }
-    
-
-}
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::ProcessMrmlEvents ( vtkObject *caller,
-                                                   unsigned long event,
-                                                   void *callData ) {
-}
-
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::ProcessLogicEvents ( vtkObject *caller,
-                                                   unsigned long event,
-                                                   void *callData ) {
-
-}
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::DisplayMainSlicerWindow ( ) {
-
-    this->MainSlicerWin->Display ( );
-}
-
-
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::BuildGUI ( ) {
-
-    // Set up the conventional window: 3Dviewer, slice widgets, UI panel for now.
-    if ( this->GetApplication() != NULL ) {
-        vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-        vtkSlicerStyle *style = app->GetSlicerStyle();
-
-        if ( this->MainSlicerWin != NULL ) {
-
-            // set up Slicer's main window
-            this->MainSlicerWin->SecondaryPanelVisibilityOn ( );
-            this->MainSlicerWin->MainPanelVisibilityOn ( );
-            app->AddWindow ( this->MainSlicerWin );
-            this->MainSlicerWin->Create ( );        
-
-            // configure default size of GUI
-            this->ConfigureMainSlicerWindow ( );
-            this->ConfigureMainViewer ( );
-            this->ConfigureSliceViewers ( );
-            this->ConfigureGUIPanel ( );
-
-            // ---
-            // SLICE WIDGET
-            // create a slice widget
-            this->SliceGUI = vtkSlicerSliceGUI::New ( );
-            this->SliceGUI->SetApplication ( (vtkSlicerApplication *)this->GetApplication() );
-            this->SliceGUI->BuildGUI ( );
-            // Parent Slice0 frame
-            this->SliceGUI->GetSliceWidget(0)->GetSliceFrame()->SetParent ( this->DefaultSlice0Frame );
-            app->Script ("pack %s -side top -fill both  -padx 0 -pady 0", this->SliceGUI->GetSliceWidget(0)->GetSliceFrame()->GetWidgetName( ) );
-            // Parent Slice1 frame
-            this->SliceGUI->GetSliceWidget(1)->GetSliceFrame()->SetParent ( this->DefaultSlice1Frame );
-            app->Script ("pack %s -side top -fill both -padx 0 -pady 0", this->SliceGUI->GetSliceWidget(1)->GetSliceFrame()->GetWidgetName( ) );
-            // Parent Slice2 frame
-            this->SliceGUI->GetSliceWidget(2)->GetSliceFrame()->SetParent ( this->DefaultSlice2Frame );
-            app->Script ("pack %s -side top -fill both  -padx 0 -pady 0", this->SliceGUI->GetSliceWidget(2)->GetSliceFrame()->GetWidgetName( ) );
-
-            this->BuildLogoGUI ( );
-            this->BuildSlicerControlGUI ( );
-            this->BuildModuleControlGUI ( );
-
-            // Turn off the tabs for pages in the ModuleControlGUI
-            this->MainSlicerWin->GetMainNotebook( )->AlwaysShowTabsOff ( );
-            this->MainSlicerWin->GetMainNotebook( )->ShowIconsOff ( );
-            this->BuildSliceControlGUI ( );
-            this->BuildViewControlGUI ( );
-        }
-    }
-}
 
 
 //---------------------------------------------------------------------------

@@ -7,7 +7,6 @@
 #include "vtkRenderWindowInteractor.h"
 #include "vtkKWWidget.h"
 #include "vtkKWScaleWithEntry.h"
-#include "vtkKWFrame.h"
 #include "vtkKWRenderWidget.h"
 #include "vtkSlicerSliceWidget.h"
 #include "vtkSlicerApplication.h"
@@ -24,7 +23,6 @@ vtkSlicerSliceWidget::vtkSlicerSliceWidget ( ) {
     //---  
     // widgets comprising the SliceWidget for now.
     this->Scale = NULL;
-    this->SliceFrame = NULL;
     this->ImageViewer = NULL;
     this->RenderWidget = NULL;
 
@@ -36,34 +34,29 @@ vtkSlicerSliceWidget::~vtkSlicerSliceWidget ( ){
     if ( this->Scale ) {
         this->Scale->Delete ( );
     }
-    if ( this->RenderWidget ) {
-        this->RenderWidget->Delete ( );
-    }
     if ( this->ImageViewer ) {
         this->ImageViewer->Delete ( );
     }
-    if ( this->SliceFrame ) {
-        this->SliceFrame->Delete ( );
+    if ( this->RenderWidget ) {
+        this->RenderWidget->Delete ( );
     }
-
 }
 
 
 //---------------------------------------------------------------------------
 void vtkSlicerSliceWidget::Create ( ) {
 
-    vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-    
-    //---
-    // Create a frame
-    this->SliceFrame = vtkKWFrame::New ( );
-    this->SliceFrame->SetApplication ( app );
-    this->SliceFrame->Create ( );
+    // the widget is a frame with a scale and an image viewer packed inside
+    if (this->IsCreated ( ) ) {
+        vtkErrorMacro ( << this->GetClassName() << "already created.");
+        return;
+    }
+    this->Superclass::Create ( );
     
     //---
     // Create a render widget
     this->RenderWidget = vtkKWRenderWidget::New ( );
-    this->RenderWidget->SetParent ( this->SliceFrame );
+    this->RenderWidget->SetParent ( this );
     this->RenderWidget->Create();
     this->RenderWidget->CornerAnnotationVisibilityOn();
 
@@ -79,15 +72,15 @@ void vtkSlicerSliceWidget::Create ( ) {
     //---
     // Create a scale to control the slice number displayed
     this->Scale = vtkKWScaleWithEntry::New();
-    this->Scale->SetParent( this->SliceFrame );
+    this->Scale->SetParent ( this );
     this->Scale->Create();
     this->Scale->SetRange(0.0, 100.0);
     this->Scale->SetResolution(1.0);
     this->Scale->RangeVisibilityOff ( );
             
-    // pack 
-
-    app->Script("pack %s -side top -fill x -padx 2 -pady 2", this->Scale->GetWidgetName());
-    app->Script("pack %s -side top -anchor c", this->RenderWidget->GetWidgetName());
+    // pack slider and viewer into frame
+    vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
+    app->Script("pack %s -side top -fill x -padx 2 -pady 2", this->Scale->GetWidgetName() );
+    app->Script("pack %s -side top -anchor c", this->RenderWidget->GetWidgetName() );
 
 }
