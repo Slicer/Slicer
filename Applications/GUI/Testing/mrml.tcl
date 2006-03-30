@@ -76,6 +76,26 @@ $::slicel SetSliceNode $::slicen
 [$::slicel GetImageData] Update
 puts [[$::slicel GetImageData] Print]
 
+
+##############
+#
+# key matrices:
+#
+
+set a [vtkITKArchetypeImageSeriesReader New]
+$a SetArchetype c:/pieper/bwh/slicer3/latest/Slicer3/Applications/GUI/Testing/TestData/volone.nrrd
+set IJKToRAS [vtkMatrix4x4 New]
+$IJKToRAS DeepCopy [$a GetRasToIjkMatrix]
+$IJKToRAS Invert
+puts "IJKToRAS from the Reader"
+puts [$IJKToRAS Print]
+
+set nodeIjkToRas [vtkMatrix4x4 New]
+[$::slicebgl GetVolumeNode] GetIjkToRasMatrix $nodeIjkToRas 
+puts "IjkToRas from the Node"
+puts [$nodeIjkToRas Print]
+
+
 #
 # set up the image viewer to render
 #
@@ -91,7 +111,7 @@ pack [$renderwidget GetWidgetName] -side top -fill both -expand y -padx 0 -pady 
 set viewer [vtkImageViewer2 New]
 $viewer SetColorWindow 200
 $viewer SetColorLevel 100
-$viewer SetZSlice 10
+$viewer SetSlice 10
 $viewer SetRenderWindow [$renderwidget GetRenderWindow] 
 $viewer SetRenderer [$renderwidget GetRenderer] 
 $viewer SetInput [$::slicel GetImageData]
