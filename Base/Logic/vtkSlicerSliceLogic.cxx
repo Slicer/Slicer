@@ -23,7 +23,9 @@ vtkSlicerSliceLogic::vtkSlicerSliceLogic()
 {
   this->BackgroundLayer = NULL;
   this->ForegroundLayer = NULL;
+  this->MRMLScene = NULL;
   this->SliceNode = NULL;
+  this->SliceCompositeNode = NULL;
   this->ForegroundOpacity = 0.5;
 
   this->Blend = vtkImageBlend::New();
@@ -53,6 +55,54 @@ void vtkSlicerSliceLogic::SetSliceNode(vtkMRMLSliceNode *SliceNode)
 
   this->SliceNode = SliceNode;
   this->SliceNode->Register(this);
+
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerSliceLogic::SetSliceCompositeNode(vtkMRMLSliceCompositeNode *SliceCompositeNode)
+{
+  if (this->SliceCompositeNode)
+    {
+    this->SliceCompositeNode->Delete();
+    }
+
+  this->SliceCompositeNode = SliceCompositeNode;
+
+  if (this->SliceCompositeNode)
+    {
+    this->SliceCompositeNode->Register(this);
+
+    if ( !this->MRMLScene )
+      {
+      vtkErrorMacro ("MRML Scene is NULL");
+      return;
+      }
+
+    const char *id = this->SliceCompositeNode->GetBackgroundVolumeID();
+    // TODO: change this to a volume node once the superclass is sorted out
+    vtkMRMLScalarVolumeNode *bgnode = NULL;
+    if (id)
+      {
+      bgnode = vtkMRMLScalarVolumeNode::SafeDownCast (this->MRMLScene->GetNodeByID(id));
+      }
+    
+    if (this->BackgroundLayer)
+      {
+      this->BackgroundLayer->SetVolumeNode (bgnode);
+      }
+
+    id = this->SliceCompositeNode->GetForegroundVolumeID();
+    vtkMRMLScalarVolumeNode *fgnode = NULL;
+    if (id)
+      {
+      fgnode = vtkMRMLScalarVolumeNode::SafeDownCast (this->MRMLScene->GetNodeByID(id));
+      }
+    
+    if (this->ForegroundLayer)
+      {
+      this->ForegroundLayer->SetVolumeNode (fgnode);
+      }
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -63,8 +113,14 @@ void vtkSlicerSliceLogic::SetBackgroundLayer(vtkSlicerSliceLayerLogic *Backgroun
     this->BackgroundLayer->Delete();
     }
   this->BackgroundLayer = BackgroundLayer;
-  this->BackgroundLayer->Register(this);
-  this->BackgroundLayer->SetSliceNode(SliceNode);
+
+  if (this->BackgroundLayer)
+    {
+    this->BackgroundLayer->Register(this);
+    this->BackgroundLayer->SetSliceNode(SliceNode);
+
+    this->Blend->SetInput( 0, this->BackgroundLayer->GetImageData() );
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -75,8 +131,15 @@ void vtkSlicerSliceLogic::SetForegroundLayer(vtkSlicerSliceLayerLogic *Foregroun
     this->ForegroundLayer->Delete();
     }
   this->ForegroundLayer = ForegroundLayer;
-  this->ForegroundLayer->Register(this);
-  this->ForegroundLayer->SetSliceNode(SliceNode);
+
+  if (this->BackgroundLayer)
+    {
+    this->ForegroundLayer->Register(this);
+    this->ForegroundLayer->SetSliceNode(SliceNode);
+
+    //this->Blend->SetInput( 1, this->ForegroundLayer->GetImageData() );
+    this->Blend->AddInput( 0, this->ForegroundLayer->GetImageData() );
+    }
 }
 
 
@@ -84,6 +147,7 @@ void vtkSlicerSliceLogic::SetForegroundLayer(vtkSlicerSliceLayerLogic *Foregroun
 void vtkSlicerSliceLogic::SetForegroundOpacity(double ForegroundOpacity)
 {
   this->ForegroundOpacity = ForegroundOpacity;
+
   this->Blend->SetOpacity(1, this->ForegroundOpacity);
 }
 
@@ -97,6 +161,8 @@ void vtkSlicerSliceLogic::PrintSelf(ostream& os, vtkIndent indent)
 
   os << indent << "SliceNode: " <<
     (this->SliceNode ? this->SliceNode->GetName() : "(none)") << "\n";
+  os << indent << "SliceCompositeNode: " <<
+    (this->SliceCompositeNode ? this->SliceCompositeNode->GetName() : "(none)") << "\n";
   // TODO: fix printing of vtk objects
   os << indent << "BackgroundLayer: " <<
     (this->BackgroundLayer ? "this->BackgroundLayer" : "(none)") << "\n";

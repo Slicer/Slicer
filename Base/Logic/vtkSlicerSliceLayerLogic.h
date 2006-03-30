@@ -52,7 +52,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLayerLogic : public vtkSlicerLo
   
   // The Usual vtk class functions
   static vtkSlicerSliceLayerLogic *New();
-  vtkTypeRevisionMacro(vtkSlicerSliceLayerLogic,vtkObject);
+  vtkTypeRevisionMacro(vtkSlicerSliceLayerLogic,vtkSlicerLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description:
@@ -79,6 +79,9 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLayerLogic : public vtkSlicerLo
   // The image map that applies the lookup table
   vtkGetObjectMacro (MapToRGBA, vtkImageMapToRGBA);
 
+  // Description:
+  // Get the output of the pipeline for this layer
+  vtkImageData *GetImageData () { return (this->GetMapToRGBA()->GetOutput()); };
     
 protected:
   vtkSlicerSliceLayerLogic();

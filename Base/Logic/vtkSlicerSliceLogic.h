@@ -34,8 +34,10 @@
 #include "vtkSlicerBaseLogic.h"
 #include "vtkSlicerLogic.h"
 
-#include "vtkMrml.h"
-#include "vtkMrmlSliceNode.h"
+#include "vtkMRML.h"
+#include "vtkMRMLScene.h"
+#include "vtkMRMLSliceNode.h"
+#include "vtkMRMLSliceCompositeNode.h"
 #include "vtkSlicerSliceLayerLogic.h"
 
 #include "vtkImageBlend.h"
@@ -53,6 +55,16 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLogic : public vtkSlicerLogic
   // The mrml slice node for this slice logic
   vtkGetObjectMacro (SliceNode, vtkMRMLSliceNode);
   void SetSliceNode (vtkMRMLSliceNode *SliceNode);
+
+  // Description:
+  // The mrml slice node for this slice logic
+  vtkGetObjectMacro (SliceCompositeNode, vtkMRMLSliceCompositeNode);
+  void SetSliceCompositeNode (vtkMRMLSliceCompositeNode *SliceCompositeNode);
+
+  // Description:
+  // The mrml slice node for this slice logic
+  vtkGetObjectMacro (MRMLScene, vtkMRMLScene);
+  vtkSetObjectMacro (MRMLScene, vtkMRMLScene);
 
   // Description:
   // The background slice layer
@@ -77,6 +89,10 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLogic : public vtkSlicerLogic
   // The compositing filter
   // TODO: this will eventually be generalized to a per-layer compositing function
   vtkGetObjectMacro (Blend, vtkImageBlend);
+
+  // Description:
+  // the tail of the pipeline
+  vtkImageData *GetImageData () { return (this->Blend->GetOutput()); };
     
 protected:
   vtkSlicerSliceLogic();
@@ -86,7 +102,9 @@ protected:
 
   // Description:
   //
+  vtkMRMLScene *MRMLScene;
   vtkMRMLSliceNode *SliceNode;
+  vtkMRMLSliceCompositeNode *SliceCompositeNode;
   vtkSlicerSliceLayerLogic *BackgroundLayer;
   vtkSlicerSliceLayerLogic *ForegroundLayer;
   double ForegroundOpacity;

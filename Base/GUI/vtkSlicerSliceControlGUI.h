@@ -38,9 +38,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceControlGUI : public vtkKWComposit
   void SetSliceNode (vtkMRMLSliceNode *SliceNode);
 
   // Description:
-  // the mrml scene - not observed, but used for undo state
+  // the mrml scene - observed to know undo status
   vtkGetObjectMacro (MRMLScene, vtkMRMLScene);
-  vtkSetObjectMacro (MRMLScene, vtkMRMLScene);
+  void SetMRMLScene (vtkMRMLScene *MRMLScene);
 
   // Description:
   // Gets called by the command callback when the mrml node is modified

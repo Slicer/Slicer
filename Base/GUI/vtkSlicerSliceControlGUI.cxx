@@ -169,7 +169,7 @@ void vtkSlicerSliceControlGUI::Create()
   m->AddRadioButton (0, "Axial", buttonVar, this, "SetOrientationFromMenu", "Axial view (parallel to the floor)"  );
   m->AddRadioButton (1, "Sagittal", buttonVar, this, "SetOrientationFromMenu", "Sagittal view (side view)"  );
   m->AddRadioButton (2, "Coronal", buttonVar, this, "SetOrientationFromMenu", "Coronal view (front view)"  );
-  m->Invoke("Axial");
+  mb->SetValue ("Axial");
 
   this->Script("pack %s -side bottom -expand true -fill x", this->OffsetScale->GetWidgetName());
   this->Script("pack %s -side right -expand false", this->FieldOfViewEntry->GetWidgetName());
@@ -193,16 +193,34 @@ void vtkSlicerSliceControlGUI::SetSliceNode ( vtkMRMLSliceNode  *SliceNode )
 {
   if ( this->SliceNode  )
     {
-    this->SliceNode ->RemoveObserver( this->MRMLCallbackCommand );
-    this->SliceNode ->Delete();
+    this->SliceNode->RemoveObserver( this->MRMLCallbackCommand );
+    this->SliceNode->Delete();
     }
   
   this->SliceNode  = SliceNode ;
 
   if ( this->SliceNode  )
     {
-    this->SliceNode ->Register(this);
-    this->SliceNode ->AddObserver( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+    this->SliceNode->Register(this);
+    this->SliceNode->AddObserver( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerSliceControlGUI::SetMRMLScene ( vtkMRMLScene  *MRMLScene )
+{
+  if ( this->MRMLScene  )
+    {
+    this->MRMLScene ->RemoveObserver( this->MRMLCallbackCommand );
+    this->MRMLScene ->Delete();
+    }
+  
+  this->MRMLScene  = MRMLScene ;
+
+  if ( this->MRMLScene  )
+    {
+    this->MRMLScene->Register(this);
+    this->MRMLScene->AddObserver( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
     }
 }
 
@@ -222,6 +240,8 @@ void vtkSlicerSliceControlGUI::UpdateWidgets()
   // Set the Scale from the Offest in the matrix
   vtkMatrix4x4 *m = this->SliceNode->GetRASToSlice();
   this->OffsetScale->SetValue( m->GetElement( 2, 3 ) );
+
+  this->Modified();
 }
 
 //----------------------------------------------------------------------------
@@ -250,6 +270,7 @@ void vtkSlicerSliceControlGUI::TransientApply()
   m->Identity();
   m->SetElement( 2, 3, this->OffsetScale->GetValue() );
 
+  this->Modified();
 }
 
 //----------------------------------------------------------------------------

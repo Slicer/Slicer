@@ -37,10 +37,67 @@ $win Create
 # create the mrml scene
 set ::scene [vtkMRMLScene New]
 
+set scenefile c:/pieper/bwh/slicer3/latest/Slicer3/Applications/GUI/Testing/mrmlScene.xml
+
+#set scenefile [file dirname [info script]]/mrmlScene.xml
+$::scene SetURL $scenefile
+$::scene Connect
+
+#
+# add the needed pieces to display the volumes
+# - a slice node to specify the plane
+# - a SliceComposite node to identify the volumes
+# - a SliceLogic to generate the image data
+# - a SliceLayerLogic for the reslicing and display
+#
+
+# a SliceLayerLogic  - background and foreground
+set ::slicebgl [vtkSlicerSliceLayerLogic New]
+set ::slicefgl [vtkSlicerSliceLayerLogic New]
 
 # a slice node to be controlled by the slicecontrol
 set slicen [vtkMRMLSliceNode New]
 $::scene AddNode $slicen
+
+# a SliceComposite node for the SliceLogic
+set slicecn [vtkMRMLSliceCompositeNode New]
+$::slicecn SetBackgroundVolumeID vol1
+$::slicecn SetForegroundVolumeID vol2
+$::scene AddNode $slicecn
+
+# a SliceLogic 
+set ::slicel [vtkSlicerSliceLogic New]
+$::slicel SetMRMLScene $::scene
+$::slicel SetBackgroundLayer $::slicebgl
+$::slicel SetForegroundLayer $::slicefgl
+$::slicel SetSliceCompositeNode $::slicecn
+$::slicel SetSliceNode $::slicen
+
+[$::slicel GetImageData] Update
+puts [[$::slicel GetImageData] Print]
+
+#
+# set up the image viewer to render
+#
+
+set renderwidget [vtkKWRenderWidget New]
+$renderwidget SetParent $win
+$renderwidget Create
+pack [$renderwidget GetWidgetName] -side top -fill both -expand y -padx 0 -pady 0
+
+# Create an image viewer
+# Use the render window and renderer of the renderwidget
+
+set viewer [vtkImageViewer2 New]
+$viewer SetColorWindow 200
+$viewer SetColorLevel 100
+$viewer SetZSlice 10
+$viewer SetRenderWindow [$renderwidget GetRenderWindow] 
+$viewer SetRenderer [$renderwidget GetRenderer] 
+$viewer SetInput [$::slicel GetImageData]
+$viewer SetupInteractor [[$renderwidget GetRenderWindow] GetInteractor]
+
+$renderwidget ResetCamera
 
 
 # SliceControl widget
@@ -50,6 +107,10 @@ $::slicec Create
 $::slicec SetSliceNode $slicen
 $::slicec SetMRMLScene $::scene
 pack [$::slicec GetWidgetName] -side top -anchor nw -expand false -fill x -padx 2 -pady 2
+$::slicec AddObserver ModifiedEvent mrmlUpdateUndoRedoButtons
+
+# TODO: orientation doesn't work yet
+[$::slicec GetOrientationMenu] SetEnabled 0
 
 # VolumeSelect widget
 set ::volsel [vtkSlicerVolumeSelectGUI New]
@@ -179,6 +240,9 @@ proc mrmlFillMCL {mcl} {
     }
 }
 
+# initialize with the current scene
+mrmlFillMCL $mclwidget
+
 proc mrmlUpdateUndoRedoButtons {} {
 
     set nundo [$::scene GetNumberOfUndoLevels]
@@ -197,6 +261,9 @@ proc mrmlUpdateUndoRedoButtons {} {
         $::Redopb SetEnabled 0
     }
 }
+
+# initialize with the current state
+mrmlUpdateUndoRedoButtons
 
 
 # Start the application

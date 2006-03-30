@@ -28,7 +28,7 @@ vtkSlicerSliceLayerLogic::vtkSlicerSliceLayerLogic()
   this->MapToRGBA = vtkImageMapToRGBA::New();
   this->MapToWindowLevelColors = vtkImageMapToWindowLevelColors::New();
 
-  this->Reslice->SetInput( this->MapToRGBA->GetOutput() );
+  this->MapToWindowLevelColors->SetInput( this->Reslice->GetOutput() );
   this->MapToRGBA->SetInput( this->MapToWindowLevelColors->GetOutput() );
 }
 
@@ -46,7 +46,10 @@ void vtkSlicerSliceLayerLogic::SetSliceNode(vtkMRMLSliceNode *SliceNode)
     this->SliceNode->Delete();
     }
   this->SliceNode = SliceNode;
-  this->SliceNode->Register(this);
+  if (this->SliceNode)
+    {  
+    this->SliceNode->Register(this);
+    }
 }
 
 //----------------------------------------------------------------------------
