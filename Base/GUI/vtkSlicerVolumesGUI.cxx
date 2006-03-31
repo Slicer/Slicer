@@ -32,6 +32,18 @@ vtkSlicerVolumesGUI::~vtkSlicerVolumesGUI ( ) {
 
 
 //---------------------------------------------------------------------------
+void vtkSlicerVolumesGUI::RemoveGUIObservers ( ) {
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerVolumesGUI::RemoveLogicObservers ( ) {
+}
+ 
+//---------------------------------------------------------------------------
+void vtkSlicerVolumesGUI::RemoveMrmlObservers ( ) {
+}
+
+//---------------------------------------------------------------------------
 void vtkSlicerVolumesGUI::AddGUIObservers ( ) {
 
     // observer load volume button
@@ -65,7 +77,7 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents ( vtkObject *caller,
         {
             // If a file has been selected for loading...
             if ( this->LoadVolumeButton->GetFileName ( ) ) {
-                //this->VolumesLogic->Connect ( filebrowse->GetFileName ( ) );
+                this->Logic->Connect ( filebrowse->GetFileName ( ) );
             }
         }
 

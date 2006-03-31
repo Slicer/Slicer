@@ -2,10 +2,14 @@
 #define __vtkSlicerSliceWidget_h
 
 #include "vtkSlicerBaseGUIWin32Header.h"
-#include "vtkKWCompositeWidget.h"
 #include "vtkKWRenderWidget.h"
 #include "vtkImageViewer2.h"
+#include "vtkKWCompositeWidget.h"
 #include "vtkKWScaleWithEntry.h"
+#include "vtkKWEntryWithLabel.h"
+#include "vtkKWMenuButtonWithLabel.h"
+#include "vtkSlicerSliceLogic.h"
+
 
 // Note:
 // eventually this class will break out into 
@@ -19,13 +23,21 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceWidget : public vtkKWCompositeWid
  public:
     static vtkSlicerSliceWidget* New ( );
     vtkTypeRevisionMacro ( vtkSlicerSliceWidget, vtkKWCompositeWidget );
+    void PrintSelf (ostream& os, vtkIndent indent);
     
-    vtkGetObjectMacro ( Scale, vtkKWScaleWithEntry );
-    vtkSetObjectMacro ( Scale, vtkKWScaleWithEntry );
+    vtkGetMacro  ( SliceLogicObserverTag, unsigned long );
+    vtkSetMacro  ( SliceLogicObserverTag, unsigned long );
+    vtkGetObjectMacro ( OffsetScale, vtkKWScaleWithEntry );
+    vtkSetObjectMacro ( OffsetScale, vtkKWScaleWithEntry );
+    vtkGetObjectMacro ( FieldOfViewEntry, vtkKWEntryWithLabel );
+    vtkSetObjectMacro ( FieldOfViewEntry, vtkKWEntryWithLabel );
+    vtkGetObjectMacro ( OrientationMenu, vtkKWMenuButtonWithLabel );
     vtkGetObjectMacro ( ImageViewer, vtkImageViewer2 );
     vtkSetObjectMacro ( ImageViewer, vtkImageViewer2 );
     vtkGetObjectMacro ( RenderWidget, vtkKWRenderWidget );
     vtkSetObjectMacro ( RenderWidget, vtkKWRenderWidget );
+    vtkGetObjectMacro ( SliceLogic, vtkSlicerSliceLogic );
+    vtkSetObjectMacro ( SliceLogic, vtkSlicerSliceLogic );
 
     virtual void Create ( );
 
@@ -35,7 +47,12 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceWidget : public vtkKWCompositeWid
 
     vtkKWRenderWidget *RenderWidget;
     vtkImageViewer2 *ImageViewer;
-    vtkKWScaleWithEntry *Scale;
+    vtkKWScaleWithEntry *OffsetScale;
+    vtkKWEntryWithLabel *FieldOfViewEntry;
+    vtkKWMenuButtonWithLabel *OrientationMenu;
+    vtkMRMLSliceLogic *SliceLogic;
+    unsigned long SliceLogicObserverTag;
+    
 
  private:
     vtkSlicerSliceWidget (const vtkSlicerSliceWidget &); //Not implemented

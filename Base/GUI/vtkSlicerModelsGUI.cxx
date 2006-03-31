@@ -30,6 +30,19 @@ vtkSlicerModelsGUI::~vtkSlicerModelsGUI ( ) {
 
 
 //---------------------------------------------------------------------------
+void vtkSlicerModelsGUI::RemoveGUIObservers ( ) {
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerModelsGUI::RemoveLogicObservers ( ) {
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerModelsGUI::RemoveMrmlObservers ( ) {
+}
+
+
+//---------------------------------------------------------------------------
 void vtkSlicerModelsGUI::AddGUIObservers ( ) {
 
     this->LoadModelButton->AddObserver ( vtkCommand::ModifiedEvent,  (vtkCommand *)this->GUICommand );    
@@ -61,7 +74,7 @@ void vtkSlicerModelsGUI::ProcessGUIEvents ( vtkObject *caller,
         {
             // If a file has been selected for loading...
             if ( this->LoadModelButton->GetFileName ( ) ) {
-                //this->ModelsLogic->Connect ( filebrowse->GetFileName ( ) );
+                this->Logic->Connect ( filebrowse->GetFileName ( ) );
             }
         }
 }

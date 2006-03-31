@@ -7,13 +7,20 @@
 #include "vtkSlicerSliceGUI.h"
 #include "vtkSlicerSliceWidgetCollection.h"
 #include "vtkSlicerSliceWidget.h"
-#include "vtkMRMLScene.h"
-#include "vtkMRMLScalarVolumeNode.h"
 #include "vtkImageViewer2.h"
 #include "vtkCornerAnnotation.h"
 #include "vtkKWRenderWidget.h"
 #include "vtkKWScaleWithEntry.h"
+#include "vtkKWEntryWithLabel.h"
+#include "vtkKWMenuButtonWithLabel.h"
+#include "vtkKWScale.h"
+#include "vtkKWMenu.h"
+#include "vtkKWEntry.h"
 #include "vtkKWFrame.h"
+#include "vtkMRMLScene.h"
+#include "vtkMRMLSliceNode.h"
+#include "vtkMRMLScalarVolumeNode.h"
+#include "vtkSlicerSliceLogic.h"
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerSliceGUI);
@@ -65,35 +72,82 @@ void vtkSlicerSliceGUI::AddSliceWidget ( vtkSlicerSliceWidget *w ){
 }
 
 
+
+
+
 //---------------------------------------------------------------------------
 void vtkSlicerSliceGUI::AddGUIObservers ( ) {
-    
+    int i;
 
     // add observers ont SliceWidget(0)
     vtkSlicerSliceWidget *sw = this->GetSliceWidget (0);
-    vtkImageViewer2 *iv = sw->GetImageViewer ();
-    vtkKWScaleWithEntry *s = sw->GetScale () ;
+    vtkKWScaleWithEntry *s = sw->GetOffsetScale () ;
+    vtkKWEntryWithLabel *e = sw->GetFieldOfViewEntry ();
+    vtkKWMenuButtonWithLabel *m = sw->GetOrientationMenu ();
+
     s->AddObserver (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICommand );
+    s->AddObserver (vtkKWScale::StartEvent, (vtkCommand *)this->GUICommand );
+    e->AddObserver (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICommand );
+    m->AddObserver (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICommand );
 
-    // add observers onto SliceWidget(1) (do later)
+    // add observers onto all SliceWidgets (do later)
+    /*
+    int n = this->SliceWidgets->GetNumberOfItems ( );
+    for ( i = 0; i < n; i++) {
+        vtkSlicerSliceWidget *sw = this->SliceWidgets->GetItemAsObject ( i );
+        vtkImageViewer2 *iv = sw->GetImageViewer ();
+        vtkKWScaleWithEntry *s = sw->GetOffsetScale () ;
+        vtkKWEntryWithLabel *e = sw->GetFieldOfViewEntry ();
+        vtkKWMenuButtonWithLabel *m = sw->GetOrientationMenu ();
 
-    // add observers onto SliceWidget(2) (do later)
+        s->AddObserver (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICommand );
+        s->AddObserver (vtkScale::StartEvent, (vtkCommand *)this->GUICommand );
+        e->AddObserver (vtkCommand::ModifiedEvent (vtkCommand *)this->GUICommand );
+        m->AddObserver (vtkCommand::ModifiedEvent (vtkCommand *)this->GUICommand );
+    }
+    */
 }
+
+
 
 
 //---------------------------------------------------------------------------
 void vtkSlicerSliceGUI::AddMrmlObservers ( ) {
+    unsigned long tag;
     
-    // add observers onto mrml scene
+    // add observers onto mrml scene; observe the widget's SliceLogic
+    // Before a widget's SliceLogic is set, no observers are created.
+    if ( this->GetSliceWidget(0)->GetSliceLogic ( ) != NULL ) {
+        tag = this->GetSliceWidget(0)->GetSliceLogic()->AddObserver ( vtkCommand::ModifiedEvent, (vtkCommand *)this->MrmlCommand );
+        this->GetSliceWidget(0)->SetSliceLogicObserverTag ( tag );
+    }
 }
+
 
 
 
 //---------------------------------------------------------------------------
 void vtkSlicerSliceGUI::AddLogicObservers ( ) {
 
-    // add observers onto mrmlscene.
-    // this->Logic->GetMRMLScene()->AddObserver ( vtkCommand::ModifiedEvent,  (vtkCommand *)this->LogicCommand );
+}
+
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerSliceGUI::RemoveGUIObservers ( ) {
+
+}
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerSliceGUI::RemoveLogicObservers ( ) {
+}
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerSliceGUI::RemoveMrmlObservers ( ) {
+
+
 }
 
 
@@ -101,32 +155,110 @@ void vtkSlicerSliceGUI::AddLogicObservers ( ) {
 //---------------------------------------------------------------------------
 void vtkSlicerSliceGUI::ProcessGUIEvents ( vtkObject *caller,
                                                    unsigned long event,
-                                                   void *callData ) 
-{
+                                           void *callData ) {
 
-    vtkKWScaleWithEntry *scalewidget = vtkKWScaleWithEntry::SafeDownCast(caller);
-    if (scalewidget == this->GetSliceWidget(0)->GetScale() && event == vtkCommand::ModifiedEvent )
-        {
-            vtkSlicerSliceWidget *sw = this->GetSliceWidget (0);
-            vtkImageViewer2 *iv = sw->GetImageViewer ();
-            vtkKWScaleWithEntry *s = sw->GetScale () ;
+    vtkKWScaleWithEntry *s = vtkKWScaleWithEntry::SafeDownCast(caller);
+    vtkKWEntryWithLabel *e = vtkKWEntryWithLabel::SafeDownCast(caller);
 
-            // Set the current slice in the image viewer.
-            if ( iv->GetSlice ( ) != s->GetValue ( ) ) {
-                iv->SetSlice((int) s->GetValue ( ) );
-            }
+    //---
+    // Scale Widget
+    vtkSlicerSliceWidget *sw = this->GetSliceWidget(0);
+    if ( s == sw->GetOffsetScale ( ) ) {
+
+        // SET UNDO STATE
+        if ( event == vtkKWScale::StartCommand && this->Mrml != NULL ) {
+            this->Mrml->SaveStateForUndo ( sw->GetSliceLogic()->GetSliceNode() );
         }
+        // UNDO-ABLE APPLY
+        if ( event == vtkKWScale::StartCommand || event == vtkCommand::ModifiedEvent ) {
+            vtkMatrix4x4 *m = sw->GetSliceLogic()->GetSliceNode()->GetRASToSlice ( );
+            m->Identity ( );
+            m->SetElement (2, 3, sw->GetOffsetScale()->GetValue ( ) );
+            this->GetSliceLogic()->GetSliceNode()->Modified();
+        }
+    }
+    
+    //---
+    // FieldOfView Entry Widget
+    if ( e = sw->GetFieldOfViewEntry() && event == vtkCommand::ModifiedEvent ) {
+        // SET UNDO STATE
+        this->MRML->SaveStateForUndo ( sw->GetSliceLogic()->GetSliceNode() );
+        // UNDO-ABLE APPLY
+        double val = sw->GetFieldOfViewEntry()->GetWidget()->GetValueAsDouble();
+        if ( val != 0 ) {
+            sw->GetSliceLogic()->GetSliceNode()->SetFieldOfView ( val, val, val );
+            this->GetSliceLogic()->GetSliceNode()->Modified();
+        }
+    }
 
 }
+
+
+
 
 //---------------------------------------------------------------------------
 void vtkSlicerSliceGUI::ProcessMrmlEvents ( vtkObject *caller,
                                                    unsigned long event,
                                                    void *callData ) 
 {
-    // if a new volume is added to MrmlScene, then we'll have to update the
-    // image viewer here.
+    
+
+    vtkSlicerSliceLogic *n = vtkSlicerSliceLogic::SafeDownCast(caller);
+
+    // find out whether this node belongs to any of the slice widgets
+    int num = this->SliceWidgets->GetNumberOfItems ( );
+    int i = 0;
+    while ( i < num ) {
+        if ( n == this->SliceWidgets->GetItemAsObject ( i ) ) { break; }
+        i++;
+    }
+    if ( i == num ) {
+        vtkErrorMacro(<<"ProcessMrmlEvents: Unable to find SliceWidget associated with SliceLogic event: ");
+        return;
+    }
+    
+    // UPDATE THE GUI.
+    vtkKWScaleWithEntry *sw = this->SliceWidgets->GetItemAsObject ( i ) ;    
+    if ( event == vtkCommand::ModifiedEvent ) {
+
+        // UPDATE THE FOV ENTRY
+        double fov = sw->GetSliceLogic()->GetSliceNode()->GetFieldOfView()[0];
+        char fovstring[80];
+        sprintf (fovstring, "%g", fov);
+        sw->GetFieldOfViewEntry()->GetWidget()->SetValue(fovstring);
+        sw->GetFieldOfViewEntry()->Modified();
+
+        // UPDATE THE SCALE
+        double fovover2 = sw->GetSliceLogic()->GetSliceNode()->GetFieldOfView()[2] / 2.;
+        sw->GetOffsetScale()->SetRange ( -fovover2, fovover2 );
+        // TODO: set the scale value from the translation part
+        // of the matrix with rotation. 
+        // Set the scale from the Offset in the matrix.
+        vtkMatrix4x4 *m = sw->GetSliceLogic()->GetSliceNode()->GetRASToSlice();
+        sw->GetOffsetScale()->SetValue ( m->GetElement(2,3) );
+        sw->GetOffsetScale()->Modified();
+        
+        // UPDATE IMAGE VIEWER
+        vtkImageViewer2 *iv = sw->GetImageViewer ();
+        vtkKWRenderWidget *rw = sw->GetRenderWidget ();
+        if ( sw->GetSliceLogic()->GetImageData() != NULL )
+            {
+                iv->SetInput ( sw->GetSliceLogic()->GetImageData( ) );
+            }
+        else
+            {
+                iv->SetInput (NULL);
+            }
+        iv->Render();
+        // configure window, level, camera, etc.
+        rw->ResetCamera ( );
+        vtkCornerAnnotation *ca = rw->GetCornerAnnotation ( );
+        ca->SetImageActor (iv->GetImageActor ( ) );
+        sw->GetImageViewer()->Modified ();
+
+    }
 }
+
 
 
 //---------------------------------------------------------------------------
@@ -135,44 +267,6 @@ void vtkSlicerSliceGUI::ProcessLogicEvents ( vtkObject *caller,
                                                    void *callData ) 
 {
     // process Logic changes
-    // In this example, only thing that will come from the logic is new image data.
-    // Steve is changing this to monitor the mrml scene directly rather tahn going
-    // thru the logic.
-    vtkMRMLScene *mrml = vtkMRMLScene::SafeDownCast(caller);
-    
-    if (mrml == (this->Logic->GetMRMLScene ( ) ) && event == vtkCommand::ModifiedEvent )
-        {
-            // If the MRML scene has changed, get the 0th volume node.
-            // and set that as input into the ImageViewer.
-            vtkMRMLScalarVolumeNode* volumenode = vtkMRMLScalarVolumeNode::SafeDownCast (this->Logic->GetMRMLScene()->GetNthNodeByClass( 0, "vtkMRMLScalarVolumeNode" ) );
-            vtkSlicerSliceWidget *sw = this->GetSliceWidget (0);
-            vtkImageViewer2 *iv = sw->GetImageViewer ();
-            vtkKWRenderWidget *rw = sw->GetRenderWidget ();
-            vtkKWScaleWithEntry *s = sw->GetScale () ;
-
-            if ( volumenode && volumenode->GetImageData() != NULL )
-                {
-                    iv->SetInput ( volumenode->GetImageData( ) );
-                    double *range = volumenode->GetImageData()->GetScalarRange ( );
-                    iv->SetColorWindow ( range [1] - range [0] );
-                    iv->SetColorLevel (0.5 * (range [1] - range [0] ));
-                }
-            else
-                {
-                    iv->SetInput (NULL);
-                }
-            iv->Render();
-
-
-            // configure window, level, camera, etc.
-            rw->ResetCamera ( );
-            vtkCornerAnnotation *ca = rw->GetCornerAnnotation ( );
-            ca->SetImageActor (iv->GetImageActor ( ) );
-
-            // update range and value of slider.
-            s->SetRange ( iv->GetSliceMin ( ), iv->GetSliceMax ( ) );
-            s->SetValue (iv->GetSlice ( ) );
-        }
 }
 
 
@@ -211,6 +305,9 @@ vtkSlicerSliceWidget* vtkSlicerSliceGUI::GetSliceWidget ( char *SliceWidgetColor
 void vtkSlicerSliceGUI::BuildGUI ( ) {
 }
 
+    
+
+
 
 
 //---------------------------------------------------------------------------
@@ -247,3 +344,13 @@ void vtkSlicerSliceGUI::BuildGUI ( vtkKWFrame* f1, vtkKWFrame *f2, vtkKWFrame *f
 
 
 
+//----------------------------------------------------------------------------
+void vtkSlicerSliceWidget::PrintSelf(ostream& os, vtkIndent indent)
+{
+  this->Superclass::PrintSelf(os, indent);
+  os << indent << "MainSlice0: " << this->MainSlice0 << endl;
+  os << indent << "MainSlice1: " << this->MainSlice1 << endl;
+  os << indent << "MainSlice2: " << this->MainSlice2 << endl;
+  os << indent << "SliceLogic: " << this->SliceLogic << endl;  
+
+}

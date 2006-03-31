@@ -10,6 +10,7 @@
 
 class vtkSlicerGUIUpdate;
 class vtkSlicerLogicUpdate;
+class vtkSlicerMrmlUpdate;
 class vtkKWApplication;
 class vtkKWFrame;
 
@@ -56,6 +57,13 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerComponentGUI : public vtkKWObject
     virtual void AddMrmlObservers ( ) { }
     
     // Description:
+    // Remove observers on logic, GUI and Mrml
+    virtual void RemoveGUIObservers ( ) { }
+    virtual void RemoveLogicObservers ( ) { }
+    virtual void RemoveMrmlObservers ( ) { }
+
+
+    // Description:
     // propagate events generated in logic layer to GUI
     virtual void ProcessLogicEvents ( vtkObject *caller, unsigned long event,
                                 void *callData );
@@ -75,8 +83,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerComponentGUI : public vtkKWObject
     vtkMRMLScene *Mrml;
     
     vtkSlicerGUIUpdate *LogicCommand;
-    // alternative Logic interface to the GUI layer.
     vtkSlicerLogicUpdate *GUICommand;
+    vtkSlicerMrmlUpdate *MrmlCommand;
+
     // frame into which this GUI will be packed.
     vtkKWFrame *Parent;
     

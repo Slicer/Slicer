@@ -33,8 +33,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerVolumesGUI : public vtkSlicerComponent
     virtual void BuildGUI ( );
     virtual void BuildGUI ( vtkKWWidget *f );
     virtual void AddGUIObservers ( );
+    virtual void RemoveGUIObservers ( );
     virtual void AddLogicObservers ( );
+    virtual void RemoveLogicObservers ( );
     virtual void AddMrmlObservers ( );
+    virtual void RemoveMrmlObservers ( );
     virtual void ProcessLogicEvents ( vtkObject *caller, unsigned long event,
                                             void *callData );
     virtual void ProcessGUIEvents ( vtkObject *caller, unsigned long event,

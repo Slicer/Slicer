@@ -4,6 +4,7 @@
 #include "vtkSlicerApplicationLogic.h"
 #include "vtkSlicerGUIUpdate.h"
 #include "vtkSlicerLogicUpdate.h"
+#include "vtkSlicerMrmlUpdate.h"
 #include "vtkKWApplication.h"
 
 
@@ -23,6 +24,8 @@ vtkSlicerComponentGUI::vtkSlicerComponentGUI ( ) {
     this->LogicCommand->SetGUI ( this );
     this->GUICommand = vtkSlicerLogicUpdate::New ( );
     this->GUICommand->SetGUI ( this );
+    this->MrmlCommand = vtkSlicerMrmlUpdate::New ( );
+    this->MrmlCommand->SetGUI ( this );
     this->Logic = NULL;
     this->Mrml = NULL;
 
@@ -35,9 +38,15 @@ vtkSlicerComponentGUI::~vtkSlicerComponentGUI ( ) {
 
     if ( this->LogicCommand ) {
         this->LogicCommand->Delete ( );
+        this->LogicCommand = NULL;
     }
     if (this->GUICommand ) {
         this->GUICommand->Delete ( );
+        this->GUICommand = NULL;
+    }
+    if (this->MrmlCommand ) {
+        this->MrmlCommand->Delete ( );
+        this->MrmlCommand = NULL;
     }
     this->Logic = NULL;
     this->Mrml = NULL;

@@ -25,7 +25,6 @@
 #include "vtkSlicerComponentGUI.h"
 
 // include GUIs for Slicer Base modules
-#include "vtkSlicerSliceGUI.h"
 #include "vtkSlicerVolumesGUI.h"
 #include "vtkSlicerModelsGUI.h"
 
@@ -112,8 +111,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
 
     // Description:
     // These Get/Set methods for Slice Base Module GUIs.
-    vtkGetObjectMacro ( SliceGUI, vtkSlicerSliceGUI);
-    vtkSetObjectMacro ( SliceGUI, vtkSlicerSliceGUI);
     vtkGetObjectMacro ( VolumesGUI, vtkSlicerVolumesGUI);
     vtkSetObjectMacro ( VolumesGUI, vtkSlicerVolumesGUI);
     vtkGetObjectMacro ( ModelsGUI, vtkSlicerModelsGUI);
@@ -125,8 +122,12 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // This method builds Slicer's main GUI
     virtual void BuildGUI ( );
     virtual void AddGUIObservers ( );
+    virtual void RemoveGUIObservers ( );
     virtual void AddLogicObservers ( );
+    virtual void RemoveLogicObservers ( );
     virtual void AddMrmlObservers ( );
+    virtual void RemoveMrmlObservers ( );
+
     virtual void ProcessLogicEvents ( vtkObject *caller, unsigned long event,
                                             void *callData );
     virtual void ProcessGUIEvents ( vtkObject *caller, unsigned long event,
@@ -150,16 +151,16 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // Description:
     // These methods configure and pack the Slicer Window
     virtual void ConfigureMainSlicerWindow ( );
-    virtual void ConfigureMainViewer ( );
-    virtual void ConfigureSliceViewers ( );
+    virtual void ConfigureMainViewerPanel ( );
+    virtual void ConfigureSliceViewersPanel ( );
     virtual void ConfigureGUIPanel ( );
     // Description:
     // These methods populate the various GUI Panel frames
-    virtual void BuildLogoGUI ( );
-    virtual void BuildSlicerControlGUI ( );
-    virtual void BuildModuleControlGUI ( );
-    virtual void BuildSliceControlGUI ( );
-    virtual void BuildViewControlGUI ( );
+    virtual void BuildLogoGUIPanel ( );
+    virtual void BuildSlicerControlGUIPanel ( );
+    virtual void BuildModuleControlGUIPanel ( );
+    virtual void BuildSliceControlGUIPanel ( );
+    virtual void BuildViewControlGUIPanel ( );
     // Description:
     // Display Slicer's main window
     virtual void DisplayMainSlicerWindow ( );
@@ -191,7 +192,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // Description:
     // Slice GUI containing SliceWidgetCollection
     vtkKWWindow *MainSlicerWin;
-    vtkSlicerSliceGUI *SliceGUI;
     vtkSlicerVolumesGUI *VolumesGUI;
     vtkSlicerModelsGUI *ModelsGUI;
     int VolumesModuleGUIID;

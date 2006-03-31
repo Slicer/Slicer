@@ -25,6 +25,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceGUI : public vtkSlicerComponentGU
  public:
     static vtkSlicerSliceGUI* New (  );
     vtkTypeRevisionMacro ( vtkSlicerSliceGUI, vtkSlicerComponentGUI );
+    void PrintSelf (ostream& os, vtkIndent indent);
 
     vtkGetObjectMacro ( SliceLogic, vtkSlicerSliceLogic);
     vtkSetObjectMacro ( SliceLogic, vtkSlicerSliceLogic);
@@ -40,12 +41,15 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceGUI : public vtkSlicerComponentGU
     virtual void AddSliceWidget ( vtkSlicerSliceWidget *w );
     vtkSlicerSliceWidget* GetSliceWidget ( int SliceWidgetNum );
     vtkSlicerSliceWidget* GetSliceWidget ( char *SliceWidgetColor );
-    
+
     virtual void BuildGUI ( );
     virtual void BuildGUI ( vtkKWFrame *f1, vtkKWFrame *f2, vtkKWFrame *f3);
     virtual void AddGUIObservers ( );
+    virtual void RemoveGUIObservers ( );
     virtual void AddLogicObservers ( );
+    virtual void RemoveLogicObservers ( );
     virtual void AddMrmlObservers ( );
+    virtual void RemoveMrmlObservers ( );
 
     virtual void ProcessLogicEvents ( vtkObject *caller, unsigned long event,
                                             void *callData );
