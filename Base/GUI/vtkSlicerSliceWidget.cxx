@@ -118,6 +118,7 @@ void vtkSlicerSliceWidget::Create ( ) {
             
     // pack slider and viewer into frame
     //vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
+    this->Script("pack %s -anchor c -side bottom -expand true -fill both", this->RenderWidget->GetWidgetName());
     this->Script("pack %s -side bottom -expand true -fill x", this->OffsetScale->GetWidgetName());
     this->Script("pack %s -side right -expand false", this->FieldOfViewEntry->GetWidgetName());
     this->Script("pack %s -side right -expand false", this->OrientationMenu->GetWidgetName());
@@ -129,6 +130,6 @@ void vtkSlicerSliceWidget::Create ( ) {
 void vtkSlicerSliceWidget::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
-  os << indent << "SliceLogic: " << this->SliceLogic->GetSliceLogic() << endl;
+  os << indent << "SliceLogic: " << this->SliceLogic << endl;
 }
 

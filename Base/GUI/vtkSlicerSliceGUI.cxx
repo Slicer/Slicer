@@ -77,7 +77,6 @@ void vtkSlicerSliceGUI::AddSliceWidget ( vtkSlicerSliceWidget *w ){
 
 //---------------------------------------------------------------------------
 void vtkSlicerSliceGUI::AddGUIObservers ( ) {
-    int i;
 
     // add observers ont SliceWidget(0)
     vtkSlicerSliceWidget *sw = this->GetSliceWidget (0);
@@ -86,7 +85,7 @@ void vtkSlicerSliceGUI::AddGUIObservers ( ) {
     vtkKWMenuButtonWithLabel *m = sw->GetOrientationMenu ();
 
     s->AddObserver (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICommand );
-    s->AddObserver (vtkKWScale::StartEvent, (vtkCommand *)this->GUICommand );
+    s->AddObserver (vtkKWScale::ScaleValueStartChangingEvent, (vtkCommand *)this->GUICommand );
     e->AddObserver (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICommand );
     m->AddObserver (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICommand );
 
@@ -166,11 +165,11 @@ void vtkSlicerSliceGUI::ProcessGUIEvents ( vtkObject *caller,
     if ( s == sw->GetOffsetScale ( ) ) {
 
         // SET UNDO STATE
-        if ( event == vtkKWScale::StartCommand && this->Mrml != NULL ) {
+        if ( event == vtkKWScale::ScaleValueStartChangingEvent && this->Mrml != NULL ) {
             this->Mrml->SaveStateForUndo ( sw->GetSliceLogic()->GetSliceNode() );
         }
         // UNDO-ABLE APPLY
-        if ( event == vtkKWScale::StartCommand || event == vtkCommand::ModifiedEvent ) {
+        if ( event == vtkKWScale::ScaleValueStartChangingEvent || event == vtkCommand::ModifiedEvent ) {
             vtkMatrix4x4 *m = sw->GetSliceLogic()->GetSliceNode()->GetRASToSlice ( );
             m->Identity ( );
             m->SetElement (2, 3, sw->GetOffsetScale()->GetValue ( ) );
@@ -180,9 +179,9 @@ void vtkSlicerSliceGUI::ProcessGUIEvents ( vtkObject *caller,
     
     //---
     // FieldOfView Entry Widget
-    if ( e = sw->GetFieldOfViewEntry() && event == vtkCommand::ModifiedEvent ) {
+    if ( e == sw->GetFieldOfViewEntry() && event == vtkCommand::ModifiedEvent ) {
         // SET UNDO STATE
-        this->MRML->SaveStateForUndo ( sw->GetSliceLogic()->GetSliceNode() );
+        this->Mrml->SaveStateForUndo ( sw->GetSliceLogic()->GetSliceNode() );
         // UNDO-ABLE APPLY
         double val = sw->GetFieldOfViewEntry()->GetWidget()->GetValueAsDouble();
         if ( val != 0 ) {
@@ -218,7 +217,7 @@ void vtkSlicerSliceGUI::ProcessMrmlEvents ( vtkObject *caller,
     }
     
     // UPDATE THE GUI.
-    vtkKWScaleWithEntry *sw = this->SliceWidgets->GetItemAsObject ( i ) ;    
+    vtkSlicerSliceWidget *sw = vtkSlicerSliceWidget::SafeDownCast(this->SliceWidgets->GetItemAsObject ( i )) ;    
     if ( event == vtkCommand::ModifiedEvent ) {
 
         // UPDATE THE FOV ENTRY
@@ -345,7 +344,7 @@ void vtkSlicerSliceGUI::BuildGUI ( vtkKWFrame* f1, vtkKWFrame *f2, vtkKWFrame *f
 
 
 //----------------------------------------------------------------------------
-void vtkSlicerSliceWidget::PrintSelf(ostream& os, vtkIndent indent)
+void vtkSlicerSliceGUI::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
   os << indent << "MainSlice0: " << this->MainSlice0 << endl;

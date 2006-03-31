@@ -108,6 +108,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkSetObjectMacro ( ModelsButton, vtkKWPushButton );
     vtkGetObjectMacro ( DataButton, vtkKWPushButton );
     vtkSetObjectMacro ( DataButton, vtkKWPushButton );
+    vtkGetObjectMacro ( DefaultSlice0Frame, vtkKWFrame );
+    vtkGetObjectMacro ( DefaultSlice1Frame, vtkKWFrame );
+    vtkGetObjectMacro ( DefaultSlice2Frame, vtkKWFrame );
 
     // Description:
     // These Get/Set methods for Slice Base Module GUIs.

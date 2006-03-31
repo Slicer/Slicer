@@ -50,7 +50,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceWidget : public vtkKWCompositeWid
     vtkKWScaleWithEntry *OffsetScale;
     vtkKWEntryWithLabel *FieldOfViewEntry;
     vtkKWMenuButtonWithLabel *OrientationMenu;
-    vtkMRMLSliceLogic *SliceLogic;
+    vtkSlicerSliceLogic *SliceLogic;
     unsigned long SliceLogicObserverTag;
     
 

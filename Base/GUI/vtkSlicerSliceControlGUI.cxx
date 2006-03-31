@@ -269,6 +269,7 @@ void vtkSlicerSliceControlGUI::TransientApply()
   // TODO: this should be set by the Orientation menu
   m->Identity();
   m->SetElement( 2, 3, this->OffsetScale->GetValue() );
+  this->SliceNode->UpdateMatrices();
 
   this->Modified();
 }

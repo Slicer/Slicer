@@ -76,7 +76,7 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents ( vtkObject *caller,
     if (filebrowse == this->LoadVolumeButton  && event == vtkCommand::ModifiedEvent )
         {
             // If a file has been selected for loading...
-            if ( this->LoadVolumeButton->GetFileName ( ) ) {
+            if ( filebrowse->GetFileName ( ) ) {
                 this->Logic->Connect ( filebrowse->GetFileName ( ) );
             }
         }
