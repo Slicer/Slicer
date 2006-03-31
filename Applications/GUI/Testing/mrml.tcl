@@ -33,7 +33,7 @@ $win SupportHelpOn
 $app AddWindow $win
 $win Create
 
-
+#################################3
 # create the mrml scene
 set ::scene [vtkMRMLScene New]
 
@@ -57,11 +57,12 @@ set ::slicefgl [vtkSlicerSliceLayerLogic New]
 
 # a slice node to be controlled by the slicecontrol
 set slicen [vtkMRMLSliceNode New]
+$::slicen SetOrientationToAxial
 $::scene AddNode $slicen
 
 # a SliceComposite node for the SliceLogic
 set slicecn [vtkMRMLSliceCompositeNode New]
-$::slicecn SetBackgroundVolumeID vol1
+$::slicecn SetBackgroundVolumeID vol3
 $::slicecn SetForegroundVolumeID vol2
 $::scene AddNode $slicecn
 
@@ -83,18 +84,26 @@ puts [[$::slicel GetImageData] Print]
 #
 
 set a [vtkITKArchetypeImageSeriesReader New]
-$a SetArchetype c:/pieper/bwh/slicer3/latest/Slicer3/Applications/GUI/Testing/TestData/volone.nrrd
+$a SetArchetype c:/pieper/bwh/slicer3/latest/Slicer3/Applications/GUI/Testing/TestData/abct.nrrd
 set IJKToRAS [vtkMatrix4x4 New]
 $IJKToRAS DeepCopy [$a GetRasToIjkMatrix]
 $IJKToRAS Invert
-puts "IJKToRAS from the Reader"
+puts "--------------IJKToRAS from the Reader"
 puts [$IJKToRAS Print]
 
-set nodeIjkToRas [vtkMatrix4x4 New]
-[$::slicebgl GetVolumeNode] GetIjkToRasMatrix $nodeIjkToRas 
-puts "IjkToRas from the Node"
-puts [$nodeIjkToRas Print]
+set nodeIJKToRAS [vtkMatrix4x4 New]
+[$::slicebgl GetVolumeNode] GetIJKToRASMatrix $nodeIJKToRAS 
+puts "--------------IJKToRAS from the Node"
+puts [$nodeIJKToRAS Print]
 
+puts "--------------XYToIJK from the layer logic"
+puts [[$::slicebgl GetXYToIJKTransform] Print]
+
+puts "bg layer logic is: $::slicebgl"
+puts "bg volume node is: [$::slicebgl GetVolumeNode]"
+puts "slice node is: $::slicen"
+
+##### #####
 
 #
 # set up the image viewer to render

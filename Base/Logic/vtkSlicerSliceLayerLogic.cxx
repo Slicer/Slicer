@@ -24,17 +24,27 @@ vtkSlicerSliceLayerLogic::vtkSlicerSliceLayerLogic()
   this->VolumeNode = NULL;
   this->SliceNode = NULL;
 
+  this->XYToIJKTransform = vtkTransform::New();
+
   this->Reslice = vtkImageReslice::New();
   this->MapToRGBA = vtkImageMapToRGBA::New();
   this->MapToWindowLevelColors = vtkImageMapToWindowLevelColors::New();
 
   this->MapToWindowLevelColors->SetInput( this->Reslice->GetOutput() );
   this->MapToRGBA->SetInput( this->MapToWindowLevelColors->GetOutput() );
+
 }
 
 //----------------------------------------------------------------------------
 vtkSlicerSliceLayerLogic::~vtkSlicerSliceLayerLogic()
 {
+    this->SetSliceNode(NULL);
+    this->SetVolumeNode(NULL);
+
+    this->XYToIJKTransform->Delete();
+    this->Reslice->Delete();
+    this->MapToRGBA->Delete();
+    this->MapToWindowLevelColors->Delete();
 }
 
 
@@ -50,6 +60,9 @@ void vtkSlicerSliceLayerLogic::SetSliceNode(vtkMRMLSliceNode *SliceNode)
     {  
     this->SliceNode->Register(this);
     }
+
+  // Update the reslice transform to move this image into XY
+  this->UpdateTransforms();
 }
 
 //----------------------------------------------------------------------------
@@ -75,7 +88,43 @@ void vtkSlicerSliceLayerLogic::SetVolumeNode(vtkMRMLVolumeNode *VolumeNode)
     {
     this->Reslice->SetInput( NULL ); 
     }
+
+  // Update the reslice transform to move this image into XY
+  this->UpdateTransforms();
 }
+
+//----------------------------------------------------------------------------
+void vtkSlicerSliceLayerLogic::UpdateTransforms()
+{
+    unsigned int dimensions[3];
+    dimensions[0] = 100;  // dummy values until SliceNode is set
+    dimensions[1] = 100;
+    dimensions[2] = 100;
+
+    vtkMatrix4x4 *m = this->XYToIJKTransform->GetMatrix();
+    m->Identity();
+
+    if (this->SliceNode)
+      {
+      vtkMatrix4x4::Multiply4x4(this->SliceNode->GetXYToRAS(), m, m);
+      this->SliceNode->GetDimensions(dimensions);
+      }
+
+    if (this->VolumeNode)
+      {
+      vtkMatrix4x4 *rasToIJK = vtkMatrix4x4::New();
+      this->VolumeNode->GetRASToIJKMatrix(rasToIJK);
+      vtkMatrix4x4::Multiply4x4(rasToIJK, m, m); 
+      }
+
+    this->Reslice->SetResliceTransform( this->XYToIJKTransform );
+    this->Reslice->SetOutputOrigin( 0, 0, 0 );
+    this->Reslice->SetOutputSpacing( 1, 1, 1 );
+    this->Reslice->SetOutputExtent( 0, dimensions[0]-1,
+                                    0, dimensions[1]-1,
+                                    0, dimensions[2]-1);
+}
+
 
 //----------------------------------------------------------------------------
 void vtkSlicerSliceLayerLogic::PrintSelf(ostream& os, vtkIndent indent)

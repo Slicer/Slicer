@@ -82,6 +82,15 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLayerLogic : public vtkSlicerLo
   // Description:
   // Get the output of the pipeline for this layer
   vtkImageData *GetImageData () { return (this->GetMapToRGBA()->GetOutput()); };
+
+  // Description:
+  // set the Reslice transforms to reflect the current state
+  // of the VolumeNode and the SliceNode
+  void UpdateTransforms(); 
+
+  // Description:
+  // The current reslice transform XYToIJK
+  vtkGetObjectMacro (XYToIJKTransform, vtkTransform);
     
 protected:
   vtkSlicerSliceLayerLogic();
@@ -96,6 +105,9 @@ protected:
   vtkImageReslice *Reslice;
   vtkImageMapToRGBA *MapToRGBA;
   vtkImageMapToWindowLevelColors *MapToWindowLevelColors;
+
+  // TODO: make this a vtkAbstractTransform for non-linear
+  vtkTransform *XYToIJKTransform;
 };
 
 #endif

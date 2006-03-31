@@ -94,6 +94,20 @@ class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLNode
   void GetIjkToRasMatrix(vtkMatrix4x4* mat);
   void SetIjkToRasMatrix(vtkMatrix4x4* mat);
 
+  // Description:
+  // Spacing and Origin, with the Directions, are the independent
+  // parameters that go to make up the IJKToRAS matrix
+  vtkGetVector3Macro (Spacing, double);
+  vtkSetVector3Macro (Spacing, double);
+  vtkGetVector3Macro (Origin, double);
+  vtkSetVector3Macro (Origin, double);
+
+  // Description:
+  // Get the IJKToRAS Matrix that includes the spacing and origin
+  // information (assumes the image data is Origin 0 0 0 and Spacing 1 1 1
+  // RASToIJK is the inverse of this
+  void GetIJKToRASMatrix(vtkMatrix4x4* mat);
+  void GetRASToIJKMatrix(vtkMatrix4x4* mat);
 
   // Description:
   // String ID of the storage MRML node
@@ -137,10 +151,14 @@ protected:
   vtkMRMLVolumeNode(const vtkMRMLVolumeNode&);
   void operator=(const vtkMRMLVolumeNode&);
 
+  // TODO: this looks redundant - shouldn't there be one variable?
   double IjkToRasDirections[9];
   double IToRasDirections[3];
   double JToRasDirections[3];
   double KToRasDirections[3];
+
+  double Spacing[3];
+  double Origin[3];
 
   char *StorageNodeID;
   char *DisplayNodeID;

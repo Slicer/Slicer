@@ -29,6 +29,7 @@ vtkSlicerSliceLogic::vtkSlicerSliceLogic()
   this->ForegroundOpacity = 0.5;
 
   this->Blend = vtkImageBlend::New();
+  this->SetForegroundOpacity(this->ForegroundOpacity);
 }
 
 //----------------------------------------------------------------------------

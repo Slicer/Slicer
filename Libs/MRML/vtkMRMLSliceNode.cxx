@@ -49,20 +49,98 @@ vtkMRMLNode* vtkMRMLSliceNode::CreateNodeInstance()
 }
 
 //----------------------------------------------------------------------------
+// Constructor
 vtkMRMLSliceNode::vtkMRMLSliceNode()
 {
+    // set by user
   this->RASToSlice = vtkMatrix4x4::New();
   this->RASToSlice->Identity();
 
+    // calculated by UpdateMatrices()
+  this->XYToSlice = vtkMatrix4x4::New();
+  this->XYToRAS = vtkMatrix4x4::New();
+
   // set the default field of view to a convenient size for looking 
-  // at slices through human heads (25 cm)
-  this->SetFieldOfView(250.0, 250.0, 0.0);
+  // at slices through human heads (a 1mm thick slab 25x25 cm)
+  this->SetFieldOfView(250.0, 250.0, 1.0);
+  this->SetDimensions(256, 256, 1);
+  this->SetOrientationToAxial();
+
+  this->UpdateMatrices();
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLSliceNode::~vtkMRMLSliceNode()
 {
 }
+
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceNode::SetOrientationToAxial()
+{
+    this->RASToSlice->Identity();
+    // Px -> Patient Left
+    this->RASToSlice->SetElement(0, 0, -1.0);
+    // Py -> Patient Anterior
+    this->RASToSlice->SetElement(1, 1,  1.0);
+    // Pz -> Patient Inferior
+    this->RASToSlice->SetElement(1, 1, -1.0);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceNode::SetOrientationToSagittal()
+{
+    vtkErrorMacro("Not yet implemented");
+    this->RASToSlice->Identity();
+}
+
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceNode::SetOrientationToCoronal()
+{
+    vtkErrorMacro("Not yet implemented");
+    this->RASToSlice->Identity();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceNode::UpdateMatrices()
+{
+    double spacing[3];
+    unsigned int i;
+    this->XYToSlice->Identity();
+
+    // the mapping from XY output slice pixels to Slice Plane coordinate
+    for (i = 0; i < 3; i++)
+      {
+      spacing[i] = this->FieldOfView[i] / this->Dimensions[i];
+      this->XYToSlice->SetElement(i, i, spacing[i]);
+      this->XYToSlice->SetElement(i, 3, -this->FieldOfView[i] / 2.);
+      }
+
+    // the mapping from slice plane coordinates to RAS 
+    // (the Orienation as in Axial, Sagittal, Coronal)
+    vtkMatrix4x4 *SliceToRAS = vtkMatrix4x4::New();
+    SliceToRAS->DeepCopy(this->RASToSlice);
+    SliceToRAS->Invert();
+
+    // 
+    // The combined transform:
+    //
+    // | R | = [Slice to RAS ] [ XY to Slice ]  | X |
+    // | A |                                    | Y |
+    // | S |                                    | Z |
+    // | 1 |                                    | 1 |
+    //
+    // or
+    //
+    // RAS = XYToRAS * XY
+    //
+
+    vtkMatrix4x4::Multiply4x4(SliceToRAS, this->XYToSlice, this->XYToRAS);
+    
+    SliceToRAS->Delete();
+}
+
 
 //----------------------------------------------------------------------------
 void vtkMRMLSliceNode::WriteXML(ostream& of, int nIndent)

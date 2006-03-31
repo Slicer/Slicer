@@ -296,12 +296,39 @@ void vtkMRMLVolumeNode::GetIjkToRasMatrix(vtkMatrix4x4* mat)
 
 void vtkMRMLVolumeNode::SetIjkToRasMatrix(vtkMatrix4x4* mat)
 {
-  int i=0;
-  for (int row=0; row<3; row++) {
-    for (int col=0; col<3; col++) {
+  int row, col, i=0;
+  for (row=0; row<3; row++) {
+    for (col=0; col<3; col++) {
       IjkToRasDirections[i++] = mat->GetElement(row, col);
     }
   }
+}
+
+//----------------------------------------------------------------------------
+
+void vtkMRMLVolumeNode::GetIJKToRASMatrix(vtkMatrix4x4* mat)
+{
+  // this is the full matrix including the spacing and origin
+  mat->Identity();
+  int row, col, i=0;
+  for (row=0; row<3; row++) 
+    {
+    for (col=0; col<3; col++) 
+      {
+      mat->SetElement(row, col, this->Spacing[col] * IjkToRasDirections[i++]);
+      }
+      mat->SetElement(row, 3, this->Origin[row]);
+    }
+
+
+}
+
+//----------------------------------------------------------------------------
+
+void vtkMRMLVolumeNode::GetRASToIJKMatrix(vtkMatrix4x4* mat)
+{
+    this->GetIJKToRASMatrix( mat );
+    mat->Invert();
 }
 
 //----------------------------------------------------------------------------

@@ -59,7 +59,15 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
   vtkSetObjectMacro (RASToSlice, vtkMatrix4x4);
 
   // Description:
-  // Size of the slice plane in 
+  // 'standard' radiological convention views of patient space
+  // these calls adjust the RASToSlice matrix to position the slice
+  // cutting plane 
+  void SetOrientationToAxial();
+  void SetOrientationToSagittal();
+  void SetOrientationToCoronal();
+
+  // Description:
+  // Size of the slice plane in millimeters
   vtkGetVector3Macro (FieldOfView, double);
   vtkSetVector3Macro (FieldOfView, double);
 
@@ -69,6 +77,15 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
   vtkGetVector3Macro (Dimensions, unsigned int);
   vtkSetVector3Macro (Dimensions, unsigned int);
 
+  // Description:
+  // Matrix mapping from XY pixel coordinates on an image window 
+  // into slice coordinates in mm
+  vtkGetObjectMacro (XYToSlice, vtkMatrix4x4);
+
+  // Description:
+  // Matrix mapping from XY pixel coordinates on an image window 
+  // into RAS world coordinates
+  vtkGetObjectMacro (XYToRAS, vtkMatrix4x4);
   
 protected:
   vtkMRMLSliceNode();
@@ -76,7 +93,15 @@ protected:
   vtkMRMLSliceNode(const vtkMRMLSliceNode&);
   void operator=(const vtkMRMLSliceNode&);
 
+  // Description:
+  // Recalculate XYToSlice and XYToRAS in terms or fov, dim, RASToSlice
+  // - called when any of the inputs change
+  void UpdateMatrices();
+
   vtkMatrix4x4 *RASToSlice;
+  vtkMatrix4x4 *XYToSlice;
+  vtkMatrix4x4 *XYToRAS;
+
   double FieldOfView[3];
   unsigned int Dimensions[3];
 

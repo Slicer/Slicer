@@ -165,27 +165,35 @@ void vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
   reader->SetUseNativeOriginOff();
   reader->Update();
 
-  volNode->SetImageData (reader->GetOutput());
 
   // set volume attributes
   vtkMatrix4x4* mat = reader->GetRasToIjkMatrix();
   mat->Invert();
 
   // normalize direction vectors
-  for (int row=0; row<3; row++) {
+  double spacing[3];
+  int row;
+  for (row=0; row<3; row++) {
     double len =0;
     int col;
     for (col=0; col<3; col++) {
       len += mat->GetElement(row, col) * mat->GetElement(row, col);
     }
     len = sqrt(len);
+    spacing[row] = len;
     for (col=0; col<3; col++) {
       mat->SetElement(row, col,  mat->GetElement(row, col)/len);
     }
   }
   volNode->SetIjkToRasMatrix(mat);
+  volNode->SetSpacing(spacing);
+  volNode->SetOrigin(reader->GetOutput()->GetOrigin());
   volNode->SetStorageNode(this);
   //TODO update scene to send Modified event
+ 
+  reader->GetOutput()->SetSpacing(1.0, 1.0, 1.0);
+  reader->GetOutput()->SetOrigin(0.0, 0.0, 0.0);
+  volNode->SetImageData (reader->GetOutput());
 }
 
 void vtkMRMLVolumeArchetypeStorageNode::WriteData(vtkMRMLNode *refNode)
