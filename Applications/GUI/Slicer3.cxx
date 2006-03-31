@@ -84,6 +84,7 @@ int Slicer3_main(int argc, char *argv[])
   //int res = appGUI->StartApplication(argc, argv);
   int res = slicerApp->StartApplication();
 
+  sliceGUI->Delete ();
   appGUI->Delete();
   appLogic->Delete();
   slicerApp->Delete();
