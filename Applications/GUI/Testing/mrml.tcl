@@ -57,7 +57,10 @@ set ::slicefgl [vtkSlicerSliceLayerLogic New]
 
 # a slice node to be controlled by the slicecontrol
 set slicen [vtkMRMLSliceNode New]
+#$::slicen SetOrientationToCoronal
 $::slicen SetOrientationToAxial
+$::slicen SetDimensions 512 512 1
+$::slicen SetFieldOfView 413 413 1
 $::scene AddNode $slicen
 
 # a SliceComposite node for the SliceLogic
@@ -70,31 +73,28 @@ $::scene AddNode $slicecn
 set ::slicel [vtkSlicerSliceLogic New]
 $::slicel SetMRMLScene $::scene
 $::slicel SetBackgroundLayer $::slicebgl
+$::slicebgl UpdateTransforms
 $::slicel SetForegroundLayer $::slicefgl
+$::slicefgl UpdateTransforms
 $::slicel SetSliceCompositeNode $::slicecn
 $::slicel SetSliceNode $::slicen
 
 [$::slicel GetImageData] Update
-puts [[$::slicel GetImageData] Print]
-
 
 ##############
 #
 # key matrices:
 #
 
-set a [vtkITKArchetypeImageSeriesReader New]
-$a SetArchetype c:/pieper/bwh/slicer3/latest/Slicer3/Applications/GUI/Testing/TestData/abct.nrrd
-set IJKToRAS [vtkMatrix4x4 New]
-$IJKToRAS DeepCopy [$a GetRasToIjkMatrix]
-$IJKToRAS Invert
-puts "--------------IJKToRAS from the Reader"
-puts [$IJKToRAS Print]
 
 set nodeIJKToRAS [vtkMatrix4x4 New]
 [$::slicebgl GetVolumeNode] GetIJKToRASMatrix $nodeIJKToRAS 
-puts "--------------IJKToRAS from the Node"
+puts "--------------IJKToRAS from the Volume Node"
 puts [$nodeIJKToRAS Print]
+
+
+puts "--------------XYToRAS from the Slice Node"
+puts [[$::slicen GetXYToRAS] Print]
 
 puts "--------------XYToIJK from the layer logic"
 puts [[$::slicebgl GetXYToIJKTransform] Print]
@@ -124,7 +124,7 @@ $viewer SetSlice 10
 $viewer SetRenderWindow [$renderwidget GetRenderWindow] 
 $viewer SetRenderer [$renderwidget GetRenderer] 
 $viewer SetInput [$::slicel GetImageData]
-$viewer SetupInteractor [[$renderwidget GetRenderWindow] GetInteractor]
+#$viewer SetupInteractor [[$renderwidget GetRenderWindow] GetInteractor]
 
 $renderwidget ResetCamera
 
@@ -137,6 +137,7 @@ $::slicec SetSliceNode $slicen
 $::slicec SetMRMLScene $::scene
 pack [$::slicec GetWidgetName] -side top -anchor nw -expand false -fill x -padx 2 -pady 2
 $::slicec AddObserver ModifiedEvent mrmlUpdateUndoRedoButtons
+$::slicec AddObserver ModifiedEvent mrmlRender
 
 # TODO: orientation doesn't work yet
 [$::slicec GetOrientationMenu] SetEnabled 0
@@ -289,6 +290,12 @@ proc mrmlUpdateUndoRedoButtons {} {
     } else {
         $::Redopb SetEnabled 0
     }
+}
+
+proc mrmlRender {} {
+    $::slicebgl UpdateTransforms
+    $::slicefgl UpdateTransforms
+    $::viewer Render
 }
 
 # initialize with the current state

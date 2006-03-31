@@ -86,6 +86,11 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
   // Matrix mapping from XY pixel coordinates on an image window 
   // into RAS world coordinates
   vtkGetObjectMacro (XYToRAS, vtkMatrix4x4);
+
+  // Description:
+  // Recalculate XYToSlice and XYToRAS in terms or fov, dim, RASToSlice
+  // - called when any of the inputs change
+  void UpdateMatrices();
   
 protected:
   vtkMRMLSliceNode();
@@ -93,10 +98,6 @@ protected:
   vtkMRMLSliceNode(const vtkMRMLSliceNode&);
   void operator=(const vtkMRMLSliceNode&);
 
-  // Description:
-  // Recalculate XYToSlice and XYToRAS in terms or fov, dim, RASToSlice
-  // - called when any of the inputs change
-  void UpdateMatrices();
 
   vtkMatrix4x4 *RASToSlice;
   vtkMatrix4x4 *XYToSlice;

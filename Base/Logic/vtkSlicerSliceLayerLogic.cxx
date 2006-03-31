@@ -123,6 +123,7 @@ void vtkSlicerSliceLayerLogic::UpdateTransforms()
     this->Reslice->SetOutputExtent( 0, dimensions[0]-1,
                                     0, dimensions[1]-1,
                                     0, dimensions[2]-1);
+    this->Reslice->SetOutputDimensionality( 2 );
 }
 
 

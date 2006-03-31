@@ -62,6 +62,7 @@ vtkMRMLSliceNode::vtkMRMLSliceNode()
 
   // set the default field of view to a convenient size for looking 
   // at slices through human heads (a 1mm thick slab 25x25 cm)
+  // TODO: how to represent this as a slab rather than infinitessimal slice?
   this->SetFieldOfView(250.0, 250.0, 1.0);
   this->SetDimensions(256, 256, 1);
   this->SetOrientationToAxial();
@@ -85,21 +86,51 @@ void vtkMRMLSliceNode::SetOrientationToAxial()
     this->RASToSlice->SetElement(1, 1,  1.0);
     // Pz -> Patient Inferior
     this->RASToSlice->SetElement(1, 1, -1.0);
+
+    this->UpdateMatrices();
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLSliceNode::SetOrientationToSagittal()
 {
-    vtkErrorMacro("Not yet implemented");
     this->RASToSlice->Identity();
+
+    // Px -> Patient Left
+    this->RASToSlice->SetElement(0, 0,  0.0);
+    this->RASToSlice->SetElement(1, 0,  1.0);
+    this->RASToSlice->SetElement(2, 0,  0.0);
+    // Py -> Patient Inferior
+    this->RASToSlice->SetElement(0, 1,  0.0);
+    this->RASToSlice->SetElement(1, 1,  0.0);
+    this->RASToSlice->SetElement(2, 1, -1.0);
+    // Pz -> Patient Right
+    this->RASToSlice->SetElement(0, 2,  1.0);
+    this->RASToSlice->SetElement(1, 2,  0.0);
+    this->RASToSlice->SetElement(2, 2,  0.0);
+
+    this->UpdateMatrices();
 }
 
 
 //----------------------------------------------------------------------------
 void vtkMRMLSliceNode::SetOrientationToCoronal()
 {
-    vtkErrorMacro("Not yet implemented");
     this->RASToSlice->Identity();
+
+    // Px -> Patient Anterior
+    this->RASToSlice->SetElement(0, 0, -1.0);
+    this->RASToSlice->SetElement(1, 0,  0.0);
+    this->RASToSlice->SetElement(2, 0,  0.0);
+    // Py -> Patient Inferior
+    this->RASToSlice->SetElement(0, 1,  0.0);
+    this->RASToSlice->SetElement(1, 1,  0.0);
+    this->RASToSlice->SetElement(2, 1, -1.0);
+    // Pz -> Patient Anterior
+    this->RASToSlice->SetElement(0, 2,  0.0);
+    this->RASToSlice->SetElement(1, 2,  1.0);
+    this->RASToSlice->SetElement(2, 2,  0.0);
+
+    this->UpdateMatrices();
 }
 
 //----------------------------------------------------------------------------
@@ -139,6 +170,8 @@ void vtkMRMLSliceNode::UpdateMatrices()
     vtkMatrix4x4::Multiply4x4(SliceToRAS, this->XYToSlice, this->XYToRAS);
     
     SliceToRAS->Delete();
+
+    this->Modified();
 }
 
 
