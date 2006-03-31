@@ -24,6 +24,7 @@ vtkSlicerModelsGUI::vtkSlicerModelsGUI ( ) {
 vtkSlicerModelsGUI::~vtkSlicerModelsGUI ( ) {
     if (this->LoadModelButton ) {
         this->LoadModelButton->Delete ( );
+        this->LoadModelButton = NULL;
     }
     //this->ModelsLogic = NULL;
 }

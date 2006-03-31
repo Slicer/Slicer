@@ -99,16 +99,22 @@ void vtkSlicerSliceWidget::Create ( ) {
     this->OrientationMenu->SetParent ( this );
     this->OrientationMenu->SetLabelText ( "Orientation: ");
     vtkKWMenuButton *mb = this->OrientationMenu->GetWidget ( );
+    mb->SetWidth ( 8 );
     this->OrientationMenu->Create ( );
+    mb->AddRadioButton ( "Axial" );
+    mb->AddRadioButton ( "Saggital" );
+    mb->AddRadioButton ( "Coronal" );
+    mb->SetValue ("Axial");    
 
+        /*
     vtkKWMenu *m = mb->GetMenu ( );
     m->DeleteAllMenuItems();
     char* buttonVar = m->CreateRadioButtonVariable(this, "Orientation");
     m->AddRadioButton (0, "Axial", buttonVar, this, "SetOrientationFromMenu", "Axial view (parallel to the floor)"  );
     m->AddRadioButton (1, "Sagittal", buttonVar, this, "SetOrientationFromMenu", "Sagittal view (side view)"  );
     m->AddRadioButton (2, "Coronal", buttonVar, this, "SetOrientationFromMenu", "Coronal view (front view)"  );
-    mb->SetValue ("Axial");
-
+        */
+        
     //---
     // Create a scale to control the slice number displayed
     this->OffsetScale = vtkKWScaleWithEntry::New();

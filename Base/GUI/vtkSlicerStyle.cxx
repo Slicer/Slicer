@@ -16,8 +16,14 @@ vtkSlicerStyle::vtkSlicerStyle ( ) {
 
 //---------------------------------------------------------------------------
 vtkSlicerStyle::~vtkSlicerStyle ( ) {
-    this->Colors->Delete();
-    this->Fonts->Delete();
+    if ( this->Colors ) {
+        this->Colors->Delete();
+        this->Colors = NULL;
+    }
+    if ( this->Fonts ) {
+        this->Fonts->Delete();
+        this->Fonts = NULL;
+    }
 }
 
 //---------------------------------------------------------------------------

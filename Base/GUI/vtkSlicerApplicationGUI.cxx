@@ -91,6 +91,7 @@ vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( ) {
     this->RemoveLogicObservers ( );
     if ( this->MainSlicerWin ) {
         this->MainSlicerWin->Delete ( );
+        this->MainSlicerWin = NULL;
     }
     this->Logic = NULL;
 }
@@ -246,12 +247,14 @@ void vtkSlicerApplicationGUI::DeleteGUIs ( ) {
     this->VolumesGUI->RemoveMrmlObservers ( );
     if ( this->VolumesGUI ) {
         this->VolumesGUI->Delete ();
+        this->VolumesGUI = NULL;
     }
     this->ModelsGUI->RemoveGUIObservers ( );
     this->ModelsGUI->RemoveLogicObservers ( );
     this->ModelsGUI->RemoveMrmlObservers ( );
     if ( this->ModelsGUI ) {
         this->ModelsGUI->Delete ( );
+        this->ModelsGUI = NULL;
     }
   
 }
@@ -261,21 +264,27 @@ void vtkSlicerApplicationGUI::DeleteGUIs ( ) {
 void vtkSlicerApplicationGUI::DeleteGUIPanelWidgets ( ) {
     if ( this->HomeButton ) {
         this->HomeButton->Delete ();
+        this->HomeButton = NULL;
     }
     if ( this->DataButton) {
         this->DataButton->Delete ();
+        this->DataButton = NULL;
     }
     if ( this->VolumesButton ) {
         this->VolumesButton->Delete ();
+        this->VolumesButton = NULL;
     }
     if ( this->ModelsButton) {
         this->ModelsButton->Delete ();
+        this->ModelsButton = NULL;
     }
     if ( this->ModulesButton ) {
         this->ModulesButton->Delete();
+        this->ModulesButton = NULL;
     }
     if ( this->ui_panel ) {
         this->ui_panel->Delete ();
+        this->ui_panel = NULL;
     }
 }
 
@@ -283,27 +292,35 @@ void vtkSlicerApplicationGUI::DeleteGUIPanelWidgets ( ) {
 void vtkSlicerApplicationGUI::DeleteFrames ( ) {
     if ( this->LogoFrame ) {
         this->LogoFrame->Delete ();
+        this->LogoFrame = NULL;
     }
     if ( this->SlicerControlFrame ) {
         this->SlicerControlFrame->Delete ();
+        this->SlicerControlFrame = NULL;
     }
     if ( this->ModuleControlFrame ) {
         this->ModuleControlFrame->Delete ( );
+        this->ModuleControlFrame = NULL;
     }
     if ( this->SliceControlFrame ) {
         this->SliceControlFrame->Delete ( );
+        this->SliceControlFrame = NULL;
     }
     if ( this->ViewControlFrame ) {
         this->ViewControlFrame->Delete ( );
+        this->ViewControlFrame = NULL;
     }
     if ( this->DefaultSlice0Frame ) {
         this->DefaultSlice0Frame->Delete ();
+        this->DefaultSlice0Frame = NULL;
     }
     if ( this->DefaultSlice1Frame ) {
         this->DefaultSlice1Frame->Delete ();
+        this->DefaultSlice1Frame = NULL;
     }
     if ( this->DefaultSlice2Frame ) {
         this->DefaultSlice2Frame->Delete ();
+        this->DefaultSlice2Frame = NULL;
     }
 
 }

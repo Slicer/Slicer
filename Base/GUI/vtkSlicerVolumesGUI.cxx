@@ -26,6 +26,7 @@ vtkSlicerVolumesGUI::~vtkSlicerVolumesGUI ( ) {
 
     if (this->LoadVolumeButton ) {
         this->LoadVolumeButton->Delete ( );
+        this->LoadVolumeButton = NULL;
     }
     //this->VolumesLogic = NULL;
 }

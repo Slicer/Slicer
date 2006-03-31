@@ -13,6 +13,7 @@
 #include "vtkKWScaleWithEntry.h"
 #include "vtkKWEntryWithLabel.h"
 #include "vtkKWMenuButtonWithLabel.h"
+#include "vtkKWMenuButton.h"
 #include "vtkKWScale.h"
 #include "vtkKWMenu.h"
 #include "vtkKWEntry.h"
@@ -44,15 +45,19 @@ vtkSlicerSliceGUI::~vtkSlicerSliceGUI ( ) {
 
     if ( this->SliceWidgets ) {
         this->SliceWidgets->Delete();
+        this->SliceWidgets = NULL;
     }
     if ( this->MainSlice0 ) {
         this->MainSlice0->Delete ( );
+        this->MainSlice0 = NULL;
     }
     if ( this->MainSlice1 ) {
         this->MainSlice1->Delete ( );
+        this->MainSlice1 = NULL;
     }
     if ( this->MainSlice2 ) {
         this->MainSlice2->Delete ( );
+        this->MainSlice2 = NULL;
     }    
     this->Logic = NULL;
     this->SliceLogic = NULL;
@@ -158,7 +163,7 @@ void vtkSlicerSliceGUI::ProcessGUIEvents ( vtkObject *caller,
 
     vtkKWScaleWithEntry *s = vtkKWScaleWithEntry::SafeDownCast(caller);
     vtkKWEntryWithLabel *e = vtkKWEntryWithLabel::SafeDownCast(caller);
-
+    vtkKWMenuButtonWithLabel *o = vtkKWMenuButtonWithLabel::SafeDownCast (caller );
     //---
     // Scale Widget
     vtkSlicerSliceWidget *sw = this->GetSliceWidget(0);
@@ -173,7 +178,7 @@ void vtkSlicerSliceGUI::ProcessGUIEvents ( vtkObject *caller,
             vtkMatrix4x4 *m = sw->GetSliceLogic()->GetSliceNode()->GetRASToSlice ( );
             m->Identity ( );
             m->SetElement (2, 3, sw->GetOffsetScale()->GetValue ( ) );
-            this->GetSliceLogic()->GetSliceNode()->Modified();
+            sw->GetSliceLogic()->GetSliceNode()->Modified();
         }
     }
     
@@ -186,10 +191,18 @@ void vtkSlicerSliceGUI::ProcessGUIEvents ( vtkObject *caller,
         double val = sw->GetFieldOfViewEntry()->GetWidget()->GetValueAsDouble();
         if ( val != 0 ) {
             sw->GetSliceLogic()->GetSliceNode()->SetFieldOfView ( val, val, val );
-            this->GetSliceLogic()->GetSliceNode()->Modified();
+            sw->GetSliceLogic()->GetSliceNode()->Modified();
         }
     }
 
+    //---
+    // Orientation menu
+    if ( o == sw->GetOrientationMenu ( ) && event == vtkCommand::ModifiedEvent ) {
+        // SET UNDO STATE
+        //UNDO-ABLE APPLY
+        // TO DO: set the RASToSlice matrix from the menu value
+        sw->GetOrientationMenu()->GetWidget()->GetValue ( );
+    }
 }
 
 
