@@ -3,7 +3,9 @@
 #include "vtkKWNotebook.h"
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerApplicationLogic.h"
+#include "vtkMRMLScene.h"
 #include "vtkSlicerApplicationGUI.h"
+#include "vtkSlicerSliceGUI.h"
 
 #include <vtksys/SystemTools.hxx>
 
@@ -42,12 +44,32 @@ int Slicer3_main(int argc, char *argv[])
   vtkSlicerApplicationGUI *appGUI = vtkSlicerApplicationGUI::New ( );
   appGUI->SetApplication ( slicerApp );
   appGUI->SetLogic ( appLogic );
-  
-  //appGUI->SetParent ( slicerApp->GetMainSlicerWin( ) );
+  appGUI->SetMrml ( appGUI->GetLogic()->GetMRMLScene( ) );
   appGUI->BuildGUI ( );
   appGUI->AddGUIObservers ( );
   appGUI->AddLogicObservers ( );
-  // after everything is packed 
+  appGUI->AddMrmlObservers ( );
+
+  vtkSlicerSliceGUI *sliceGUI = vtkSlicerSliceGUI::New ();
+  // ---
+  // SLICE GUI
+  sliceGUI = vtkSlicerSliceGUI::New ( );
+  sliceGUI->SetMrml (appGUI->GetMrml ( ) );
+  sliceGUI->SetApplication ( slicerApp);
+  sliceGUI->BuildGUI ( appGUI->DefaultSlice0Frame,
+                       appGUI->DefaultSlice1Frame,
+                       appGUI->DefaultSlice2Frame );
+
+  // set slice viewer size
+  sliceGUI->GetMainSlice0()->GetRenderWidget()->GetRenderWindow()->SetSize( appGUI->DefaultSliceGUIFrameWidth, appGUI->DefaultSliceGUIFrameWidth);
+  
+  sliceGUI->GetMainSlice1()->GetRenderWidget()->GetRenderWindow()->SetSize( appGUI->DefaultSliceGUIFrameWidth, appGUI->DefaultSliceGUIFrameWidth);
+  
+  sliceGUI->GetMainSlice2()->GetRenderWidget()->GetRenderWindow()->SetSize( appGUI->DefaultSliceGUIFrameWidth, appGUI->DefaultSliceGUIFrameWidth);
+  sliceGUI->AddGUIObservers();
+  sliceGUI->AddLogicObservers();
+  sliceGUI->AddMrmlObservers();
+  
   appGUI->DisplayMainSlicerWindow ( );
 
   // add to collection of component GUIs
