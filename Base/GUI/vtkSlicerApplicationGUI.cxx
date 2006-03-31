@@ -111,7 +111,6 @@ void vtkSlicerApplicationGUI::AddGUIObservers ( ) {
     this->VolumesButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICommand );
     this->ModelsButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICommand );
     this->ModulesButton->AddObserver (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICommand );    
-
 }
 
 
@@ -150,8 +149,8 @@ void vtkSlicerApplicationGUI::ProcessGUIEvents ( vtkObject *caller,
                                                    unsigned long event,
                                                    void *callData ) {
     
-
     // This is just a placeholder:
+    // TODO:
     // Actually, these events want to set "activeModule" in the logic;
     // using this->Logic->SetActiveModule ( ) which is currently commented out.
     // Observers on that logic should raise and lower the appropriate page.

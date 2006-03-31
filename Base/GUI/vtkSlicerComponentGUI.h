@@ -82,8 +82,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerComponentGUI : public vtkKWObject
     vtkSlicerApplicationLogic *Logic;
     vtkMRMLScene *Mrml;
     
-    vtkSlicerGUIUpdate *LogicCommand;
-    vtkSlicerLogicUpdate *GUICommand;
+    vtkSlicerGUIUpdate *GUICommand;
+    vtkSlicerLogicUpdate *LogicCommand;
     vtkSlicerMrmlUpdate *MrmlCommand;
 
     // frame into which this GUI will be packed.

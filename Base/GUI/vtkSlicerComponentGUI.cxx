@@ -20,9 +20,9 @@ vtkSlicerComponentGUI::vtkSlicerComponentGUI ( ) {
     // Every gui has a helper class called LogicCommand
     // whose execute method propagates logic changes
     // into the GUI state.
-    this->LogicCommand = vtkSlicerGUIUpdate::New ( );
+    this->LogicCommand = vtkSlicerLogicUpdate::New ( );
     this->LogicCommand->SetGUI ( this );
-    this->GUICommand = vtkSlicerLogicUpdate::New ( );
+    this->GUICommand = vtkSlicerGUIUpdate::New ( );
     this->GUICommand->SetGUI ( this );
     this->MrmlCommand = vtkSlicerMrmlUpdate::New ( );
     this->MrmlCommand->SetGUI ( this );
