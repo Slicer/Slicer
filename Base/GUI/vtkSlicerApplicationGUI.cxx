@@ -25,6 +25,7 @@
 #include "vtkKWWidget.h"
 #include "vtkKWWindow.h"
 #include "vtkKWWindow.h"
+#include "vtkKWRenderWidget.h"
 #include "vtkObjectFactory.h"
 #include "vtkRenderWindow.h"
 #include "vtkSlicerApplication.h"
@@ -35,6 +36,13 @@
 #include "vtkSlicerStyle.h"
 #include "vtkSlicerVolumesGUI.h"
 #include "vtkToolkits.h"
+// things for temporary MainViewer teapot display.
+#include "vtkActor.h"
+#include "vtkRenderer.h"
+#include "vtkKWRenderWidget.h"
+#include "vtkPolyDataMapper.h"
+#include "vtkRenderWindow.h"
+#include "vtkXMLPolyDataReader.h"
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerApplicationGUI);
@@ -71,6 +79,7 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  ) {
     this->VolumesButton = vtkKWPushButton::New();
     this->ModelsButton = vtkKWPushButton::New();
     this->ModulesButton = vtkKWMenuButton::New();
+    this->MainViewer = vtkKWRenderWidget::New ( );
 
     this->InitDefaultGUIPanelDimensions ( );
     this->InitDefaultSlicePanelDimensions ( );
@@ -90,6 +99,10 @@ vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( ) {
     this->RemoveGUIObservers ( );
     this->RemoveMrmlObservers ( );
     this->RemoveLogicObservers ( );
+    if ( this->MainViewer ) {
+        this->MainViewer->Delete ( );
+        this->MainViewer = NULL;
+    }
     if ( this->MainSlicerWin ) {
         this->MainSlicerWin->Delete ( );
         this->MainSlicerWin = NULL;
@@ -215,6 +228,9 @@ void vtkSlicerApplicationGUI::BuildGUI ( ) {
             this->ConfigureMainViewerPanel ( );
             this->ConfigureSliceViewersPanel ( );
             this->ConfigureGUIPanel ( );
+
+            // Build 3DViewer
+            this->BuildMainViewer ( );
 
             // Build main GUI panel
             this->BuildLogoGUIPanel ( );
@@ -411,6 +427,37 @@ void vtkSlicerApplicationGUI::BuildModuleControlGUIPanel ( ) {
 }
 
 //---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::BuildMainViewer ( ) {
+
+    if ( this->GetApplication() != NULL ) {
+        vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
+        vtkSlicerStyle *style = app->GetSlicerStyle();
+        vtkKWWindow *win = this->MainSlicerWin;
+        if ( this->MainViewer != NULL ) {
+            this->MainViewer->SetParent (win->GetViewPanelFrame ( ) );
+            this->MainViewer->Create ( );
+            app->Script  ("pack %s -side top -fill both -expand y -padx 0 -pady 0",
+                          this->MainViewer->GetWidgetName ( ) );
+            this->MainViewer->SetRendererBackgroundColor ( style->GetViewerBgColor ( ) );
+
+            // put a teapot in there for now.
+            vtkXMLPolyDataReader *rwReader = vtkXMLPolyDataReader::New ( );
+            rwReader->SetFileName ( "C:/KWWidgets/Examples/Data/teapot.vtp");
+            vtkPolyDataMapper *rwMapper = vtkPolyDataMapper::New ();
+            rwMapper->SetInputConnection (rwReader->GetOutputPort() );
+            vtkActor *rwActor = vtkActor::New ( );
+            rwActor->SetMapper ( rwMapper );
+            MainViewer->AddViewProp ( rwActor );
+            MainViewer->ResetCamera ( );
+        
+            rwReader->Delete ();
+            rwActor->Delete ();
+            rwMapper->Delete ();
+        }
+    }
+}
+
+//---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::BuildLogoGUIPanel ( ) {
 }
 
@@ -451,7 +498,7 @@ void vtkSlicerApplicationGUI::BuildSlicerControlGUIPanel ( ) {
         this->ModulesButton->SetValue ("Volumes");
         this->ModulesButton->IndicatorVisibilityOn ( );
         for ( int i=0; i < sizeof(modules)/sizeof(modules[0]); i++) {
-            this->ModulesButton->GetMenu()->AddRadioButton( modules[i] );
+            this->ModulesButton->AddRadioButton( modules[i] );
         }
 
         app->Script ( "pack %s -side left -anchor n -padx 1 -pady 2 -ipady 1", this->HomeButton->GetWidgetName( ) );

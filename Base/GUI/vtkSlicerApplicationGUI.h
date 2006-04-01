@@ -32,6 +32,7 @@
 #include "vtkKWWindow.h"
 #include "vtkKWMenuButton.h"
 #include "vtkKWFrame.h"
+#include "vtkKWRenderWidget.h"
 
 class vtkObject;
 class vtkKWUserInterfacePanel;
@@ -111,7 +112,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkGetObjectMacro ( DefaultSlice0Frame, vtkKWFrame );
     vtkGetObjectMacro ( DefaultSlice1Frame, vtkKWFrame );
     vtkGetObjectMacro ( DefaultSlice2Frame, vtkKWFrame );
-
+    vtkGetObjectMacro ( MainViewer, vtkKWRenderWidget );
+    vtkSetObjectMacro ( MainViewer, vtkKWRenderWidget );
+    
     // Description:
     // These Get/Set methods for Slice Base Module GUIs.
     vtkGetObjectMacro ( VolumesGUI, vtkSlicerVolumesGUI);
@@ -159,6 +162,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     virtual void ConfigureGUIPanel ( );
     // Description:
     // These methods populate the various GUI Panel frames
+    virtual void BuildMainViewer ( );
     virtual void BuildLogoGUIPanel ( );
     virtual void BuildSlicerControlGUIPanel ( );
     virtual void BuildModuleControlGUIPanel ( );
@@ -186,6 +190,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkKWFrame *DefaultSlice0Frame;
     vtkKWFrame *DefaultSlice1Frame;
     vtkKWFrame *DefaultSlice2Frame;
+    vtkKWRenderWidget *MainViewer;
 
     // Description:
     // Widgets for the modules GUI panels
