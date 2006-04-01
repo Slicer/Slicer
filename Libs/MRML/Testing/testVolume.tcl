@@ -4,15 +4,15 @@ vtkMRMLScene sc
 sc SetURL C:/alexy/slicer2-head/Slicer3/Libs/MRML/Testing/volScene3.xml
 sc Connect
 
-puts "GetNumberOfNodesByClass [sc GetNumberOfNodesByClass vtkMRMLVolumeNode]"
+puts "GetNumberOfNodesByClass [sc GetNumberOfNodesByClass vtkMRMLScalarVolumeNode]"
 puts "GetNodeClasses [sc GetNodeClasses]"
 puts "GetNthNode"
 
-set v0 [sc GetNthNodeByClass 0 vtkMRMLVolumeNode]
+set v0 [sc GetNthNodeByClass 0 vtkMRMLScalarVolumeNode]
 puts "Print volume node 0"
 puts "[$v0 Print]"
 
-set v1 [sc GetNthNodeByClass 1 vtkMRMLVolumeNode]
+set v1 [sc GetNthNodeByClass 1 vtkMRMLScalarVolumeNode]
 puts "Print volume node 1"
 puts "[$v1 Print]"
 

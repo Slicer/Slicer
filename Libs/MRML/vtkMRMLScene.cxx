@@ -255,7 +255,7 @@ int vtkMRMLScene::GetNumberOfNodesByClass(const char *className)
   int n;
   for (n=0; n < this->CurrentScene->GetNumberOfItems(); n++) {
     node = (vtkMRMLNode*)this->CurrentScene->GetItemAsObject(n);
-    if (!strcmp(node->GetClassName(), className)) {
+    if (node->IsA(className)) {
       num++;
     }
   }
@@ -302,10 +302,15 @@ vtkMRMLNode *vtkMRMLScene::GetNextNodeByClass(const char *className)
 {
   vtkMRMLNode *node = (vtkMRMLNode*)this->CurrentScene->GetNextItemAsObject();
 
-  while (node != NULL && strcmp(node->GetClassName(), className)) {
+  while (node != NULL && !node->IsA(className)) {
     node = (vtkMRMLNode*)this->CurrentScene->GetNextItemAsObject();
   }
-  return node;
+  if (node->IsA(className)) {
+    return node;
+  }
+  else {
+    return NULL;
+  }
 }
 
 
@@ -328,7 +333,7 @@ vtkMRMLNode* vtkMRMLScene::GetNthNodeByClass(int n, const char *className)
   vtkMRMLNode *node;
   for (int nn=0; nn < this->CurrentScene->GetNumberOfItems(); nn++) {
     node = (vtkMRMLNode*)this->CurrentScene->GetItemAsObject(nn);
-    if (!strcmp(node->GetClassName(), className)) {
+    if (node->IsA(className)) {
       if (num == n) {
         return node;
       }
@@ -377,7 +382,7 @@ vtkMRMLNode* vtkMRMLScene::GetNodeByClassByID(const char* className, const char*
   vtkMRMLNode *node;
   for (int n=0; n < this->CurrentScene->GetNumberOfItems(); n++) {
     node = (vtkMRMLNode*)this->CurrentScene->GetItemAsObject(n);
-    if (node->GetID() && !strcmp(node->GetID(), id) && strcmp(node->GetClassName(), className) == 0) {
+    if (node->GetID() && !strcmp(node->GetID(), id) && node->IsA(className)) {
       return node;
     }
   }
@@ -393,7 +398,7 @@ vtkCollection* vtkMRMLScene::GetNodesByClassByName(const char* className, const 
   vtkMRMLNode *node;
   for (int n=0; n < this->CurrentScene->GetNumberOfItems(); n++) {
     node = (vtkMRMLNode*)this->CurrentScene->GetItemAsObject(n);
-    if (!strcmp(node->GetName(), name) && strcmp(node->GetClassName(), className) == 0) {
+    if (!strcmp(node->GetName(), name) && node->IsA(className)) {
       nodes->AddItem(node);
     }
   }
