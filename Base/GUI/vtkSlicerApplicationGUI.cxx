@@ -12,28 +12,29 @@
 
 =========================================================================auto=*/
 
-#include "vtkObjectFactory.h"
 #include "vtkCommand.h"
 #include "vtkCornerAnnotation.h"
-#include "vtkToolkits.h"
-#include "vtkRenderWindow.h"
 #include "vtkKWApplication.h"
-#include "vtkKWWidget.h"
-#include "vtkKWWindow.h"
-#include "vtkSlicerApplicationGUI.h"
+#include "vtkKWFrame.h"
+#include "vtkKWMenu.h"
+#include "vtkKWNotebook.h"
+#include "vtkKWPushButton.h"
+#include "vtkKWRenderWidget.h"
 #include "vtkKWScaleWithEntry.h"
 #include "vtkKWUserInterfacePanel.h"
-#include "vtkKWFrame.h"
-#include "vtkKWNotebook.h"
-#include "vtkKWRenderWidget.h"
+#include "vtkKWWidget.h"
 #include "vtkKWWindow.h"
+#include "vtkKWWindow.h"
+#include "vtkObjectFactory.h"
+#include "vtkRenderWindow.h"
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerApplicationGUI.h"
-#include "vtkSlicerStyle.h"
-#include "vtkKWPushButton.h"
-#include "vtkSlicerVolumesGUI.h"
-#include "vtkSlicerModelsGUI.h"
+#include "vtkSlicerApplicationGUI.h"
 #include "vtkSlicerApplicationLogic.h"
+#include "vtkSlicerModelsGUI.h"
+#include "vtkSlicerStyle.h"
+#include "vtkSlicerVolumesGUI.h"
+#include "vtkToolkits.h"
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerApplicationGUI);
@@ -450,7 +451,7 @@ void vtkSlicerApplicationGUI::BuildSlicerControlGUIPanel ( ) {
         this->ModulesButton->SetValue ("Volumes");
         this->ModulesButton->IndicatorVisibilityOn ( );
         for ( int i=0; i < sizeof(modules)/sizeof(modules[0]); i++) {
-            this->ModulesButton->AddRadioButton( modules[i] );
+            this->ModulesButton->GetMenu()->AddRadioButton( modules[i] );
         }
 
         app->Script ( "pack %s -side left -anchor n -padx 1 -pady 2 -ipady 1", this->HomeButton->GetWidgetName( ) );

@@ -164,12 +164,18 @@ void vtkSlicerSliceControlGUI::Create()
   this->OrientationMenu->Create();
 
   vtkKWMenu *m = mb->GetMenu();
-  m->DeleteAllMenuItems();
-  char* buttonVar = m->CreateRadioButtonVariable(this, "Orientation");
-  m->AddRadioButton (0, "Axial", buttonVar, this, "SetOrientationFromMenu", "Axial view (parallel to the floor)"  );
-  m->AddRadioButton (1, "Sagittal", buttonVar, this, "SetOrientationFromMenu", "Sagittal view (side view)"  );
-  m->AddRadioButton (2, "Coronal", buttonVar, this, "SetOrientationFromMenu", "Coronal view (front view)"  );
-  mb->SetValue ("Axial");
+  int index;
+
+  m->DeleteAllItems();
+
+  index = m->AddRadioButton ("Axial", this, "SetOrientationFromMenu");
+  m->SetItemHelpString(index, "Axial view (parallel to the floor)");
+  
+  index = m->AddRadioButton ("Sagittal", this, "SetOrientationFromMenu");
+  m->SetItemHelpString(index, "Sagittal view (side view)" );
+  
+  index = m->AddRadioButton ("Coronal", this, "SetOrientationFromMenu");
+  m->SetItemHelpString(index, "Coronal view (front view)");
 
   this->Script("pack %s -side bottom -expand true -fill x", this->OffsetScale->GetWidgetName());
   this->Script("pack %s -side right -expand false", this->FieldOfViewEntry->GetWidgetName());

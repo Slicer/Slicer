@@ -97,15 +97,19 @@ void vtkSlicerVolumeSelectGUI::UpdateMenu()
     vtkKWMenuButton *mb = this->GetWidget()->GetWidget();
     vtkKWMenu *m = mb->GetMenu();
 
-    m->DeleteAllMenuItems();
+    int index;
+    m->DeleteAllItems();
 
     vtkMRMLVolumeNode *node;
+    int nth_rank = 0;
     this->MRMLScene->InitTraversal();
     while ( (node = vtkMRMLScalarVolumeNode::SafeDownCast (this->MRMLScene->GetNextNodeByClass("vtkMRMLScalarVolumeNode"))) != NULL)
       {
       // TODO: figure out how to use the ID instead of the name as the menu indicator
-      mb->AddRadioButton ( node->GetName() );
+      index = m->AddRadioButton ( node->GetName() );
+      m->SetItemSelectedValueAsInt(index, nth_rank++);
       }
+
 }
 
 //----------------------------------------------------------------------------
@@ -120,8 +124,9 @@ vtkMRMLVolumeNode *vtkSlicerVolumeSelectGUI::GetSelected()
     vtkKWMenuButton *mb = this->GetWidget()->GetWidget();
     vtkKWMenu *m = mb->GetMenu();
 
-    int idx = m->GetCheckButtonValue(m, "VolumeSelect");
-    vtkMRMLNode *n = this->MRMLScene->GetNthNodeByClass (idx, "vtkMRMLVolumeNode");
+    int nth_rank = m->GetItemSelectedValueAsInt(
+      m->GetIndexOfItem(mb->GetValue()));
+    vtkMRMLNode *n = this->MRMLScene->GetNthNodeByClass (nth_rank, "vtkMRMLVolumeNode");
     return (vtkMRMLVolumeNode::SafeDownCast(n));
 }
 
