@@ -319,8 +319,6 @@ void vtkMRMLVolumeNode::GetIJKToRASMatrix(vtkMatrix4x4* mat)
       }
       mat->SetElement(row, 3, this->Origin[row]);
     }
-
-
 }
 
 //----------------------------------------------------------------------------

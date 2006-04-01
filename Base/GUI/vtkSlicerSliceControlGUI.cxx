@@ -238,7 +238,7 @@ void vtkSlicerSliceControlGUI::UpdateWidgets()
 
   // TODO: set the scale value from the translation part of the matrix with rotation
   // Set the Scale from the Offest in the matrix
-  vtkMatrix4x4 *m = this->SliceNode->GetRASToSlice();
+  vtkMatrix4x4 *m = this->SliceNode->GetSliceToRAS();
   this->OffsetScale->SetValue( m->GetElement( 2, 3 ) );
 
   this->Modified();
@@ -248,7 +248,7 @@ void vtkSlicerSliceControlGUI::UpdateWidgets()
 void vtkSlicerSliceControlGUI::SetOrientationFromMenu()
 {
 
-  // TODO: set the RASToSlice matrix from the menu value
+  // TODO: set the SliceToRAS matrix from the menu value
 
 }
 
@@ -265,9 +265,8 @@ void vtkSlicerSliceControlGUI::TransientApply()
     }
 
   // Set the Offset from the Scale
-  vtkMatrix4x4 *m = this->SliceNode->GetRASToSlice();
+  vtkMatrix4x4 *m = this->SliceNode->GetSliceToRAS();
   // TODO: this should be set by the Orientation menu
-  m->Identity();
   m->SetElement( 2, 3, this->OffsetScale->GetValue() );
   this->SliceNode->UpdateMatrices();
 

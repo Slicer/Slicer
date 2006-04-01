@@ -57,11 +57,12 @@ set ::slicefgl [vtkSlicerSliceLayerLogic New]
 
 # a slice node to be controlled by the slicecontrol
 set slicen [vtkMRMLSliceNode New]
+$::scene AddNode $slicen
 #$::slicen SetOrientationToCoronal
 $::slicen SetOrientationToAxial
 $::slicen SetDimensions 512 512 1
 $::slicen SetFieldOfView 413 413 1
-$::scene AddNode $slicen
+$::slicen UpdateMatrices
 
 # a SliceComposite node for the SliceLogic
 set slicecn [vtkMRMLSliceCompositeNode New]
@@ -86,11 +87,24 @@ $::slicel SetSliceNode $::slicen
 # key matrices:
 #
 
-
 set nodeIJKToRAS [vtkMatrix4x4 New]
 [$::slicebgl GetVolumeNode] GetIJKToRASMatrix $nodeIJKToRAS 
-puts "--------------IJKToRAS from the Volume Node"
+puts "--------------IJKToRAS from the BG Volume Node"
 puts [$nodeIJKToRAS Print]
+
+set nodeRASToIJK [vtkMatrix4x4 New]
+[$::slicebgl GetVolumeNode] GetRASToIJKMatrix $nodeRASToIJK 
+puts "--------------RASToIJK from the BG Volume Node"
+puts [$nodeRASToIJK Print]
+
+
+[$::slicefgl GetVolumeNode] GetIJKToRASMatrix $nodeIJKToRAS 
+puts "--------------IJKToRAS from the FG Volume Node"
+puts [$nodeIJKToRAS Print]
+
+[$::slicefgl GetVolumeNode] GetRASToIJKMatrix $nodeRASToIJK 
+puts "--------------RASToIJK from the FG Volume Node"
+puts [$nodeRASToIJK Print]
 
 
 puts "--------------XYToRAS from the Slice Node"
@@ -124,7 +138,7 @@ $viewer SetSlice 10
 $viewer SetRenderWindow [$renderwidget GetRenderWindow] 
 $viewer SetRenderer [$renderwidget GetRenderer] 
 $viewer SetInput [$::slicel GetImageData]
-#$viewer SetupInteractor [[$renderwidget GetRenderWindow] GetInteractor]
+$viewer SetupInteractor [[$renderwidget GetRenderWindow] GetInteractor]
 
 $renderwidget ResetCamera
 
@@ -299,8 +313,8 @@ proc mrmlRender {} {
 }
 
 # initialize with the current state
-mrmlUpdateUndoRedoButtons
-
+#mrmlUpdateUndoRedoButtons
+#mrmlRender
 
 # Start the application
 # If --test was provided, do not enter the event loop and run this example

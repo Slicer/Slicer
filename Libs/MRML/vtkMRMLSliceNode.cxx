@@ -53,8 +53,8 @@ vtkMRMLNode* vtkMRMLSliceNode::CreateNodeInstance()
 vtkMRMLSliceNode::vtkMRMLSliceNode()
 {
     // set by user
-  this->RASToSlice = vtkMatrix4x4::New();
-  this->RASToSlice->Identity();
+  this->SliceToRAS = vtkMatrix4x4::New();
+  this->SliceToRAS->Identity();
 
     // calculated by UpdateMatrices()
   this->XYToSlice = vtkMatrix4x4::New();
@@ -79,13 +79,13 @@ vtkMRMLSliceNode::~vtkMRMLSliceNode()
 //----------------------------------------------------------------------------
 void vtkMRMLSliceNode::SetOrientationToAxial()
 {
-    this->RASToSlice->Identity();
+    this->SliceToRAS->Identity();
     // Px -> Patient Left
-    this->RASToSlice->SetElement(0, 0, -1.0);
+    this->SliceToRAS->SetElement(0, 0, -1.0);
     // Py -> Patient Anterior
-    this->RASToSlice->SetElement(1, 1,  1.0);
+    this->SliceToRAS->SetElement(1, 1,  1.0);
     // Pz -> Patient Inferior
-    this->RASToSlice->SetElement(1, 1, -1.0);
+    this->SliceToRAS->SetElement(1, 1, -1.0);
 
     this->UpdateMatrices();
 }
@@ -93,20 +93,20 @@ void vtkMRMLSliceNode::SetOrientationToAxial()
 //----------------------------------------------------------------------------
 void vtkMRMLSliceNode::SetOrientationToSagittal()
 {
-    this->RASToSlice->Identity();
+    this->SliceToRAS->Identity();
 
     // Px -> Patient Left
-    this->RASToSlice->SetElement(0, 0,  0.0);
-    this->RASToSlice->SetElement(1, 0,  1.0);
-    this->RASToSlice->SetElement(2, 0,  0.0);
+    this->SliceToRAS->SetElement(0, 0,  0.0);
+    this->SliceToRAS->SetElement(1, 0,  1.0);
+    this->SliceToRAS->SetElement(2, 0,  0.0);
     // Py -> Patient Inferior
-    this->RASToSlice->SetElement(0, 1,  0.0);
-    this->RASToSlice->SetElement(1, 1,  0.0);
-    this->RASToSlice->SetElement(2, 1, -1.0);
+    this->SliceToRAS->SetElement(0, 1,  0.0);
+    this->SliceToRAS->SetElement(1, 1,  0.0);
+    this->SliceToRAS->SetElement(2, 1, -1.0);
     // Pz -> Patient Right
-    this->RASToSlice->SetElement(0, 2,  1.0);
-    this->RASToSlice->SetElement(1, 2,  0.0);
-    this->RASToSlice->SetElement(2, 2,  0.0);
+    this->SliceToRAS->SetElement(0, 2,  1.0);
+    this->SliceToRAS->SetElement(1, 2,  0.0);
+    this->SliceToRAS->SetElement(2, 2,  0.0);
 
     this->UpdateMatrices();
 }
@@ -115,20 +115,20 @@ void vtkMRMLSliceNode::SetOrientationToSagittal()
 //----------------------------------------------------------------------------
 void vtkMRMLSliceNode::SetOrientationToCoronal()
 {
-    this->RASToSlice->Identity();
+    this->SliceToRAS->Identity();
 
     // Px -> Patient Anterior
-    this->RASToSlice->SetElement(0, 0, -1.0);
-    this->RASToSlice->SetElement(1, 0,  0.0);
-    this->RASToSlice->SetElement(2, 0,  0.0);
+    this->SliceToRAS->SetElement(0, 0, -1.0);
+    this->SliceToRAS->SetElement(1, 0,  0.0);
+    this->SliceToRAS->SetElement(2, 0,  0.0);
     // Py -> Patient Inferior
-    this->RASToSlice->SetElement(0, 1,  0.0);
-    this->RASToSlice->SetElement(1, 1,  0.0);
-    this->RASToSlice->SetElement(2, 1, -1.0);
+    this->SliceToRAS->SetElement(0, 1,  0.0);
+    this->SliceToRAS->SetElement(1, 1,  0.0);
+    this->SliceToRAS->SetElement(2, 1, -1.0);
     // Pz -> Patient Anterior
-    this->RASToSlice->SetElement(0, 2,  0.0);
-    this->RASToSlice->SetElement(1, 2,  1.0);
-    this->RASToSlice->SetElement(2, 2,  0.0);
+    this->SliceToRAS->SetElement(0, 2,  0.0);
+    this->SliceToRAS->SetElement(1, 2,  1.0);
+    this->SliceToRAS->SetElement(2, 2,  0.0);
 
     this->UpdateMatrices();
 }
@@ -150,10 +150,6 @@ void vtkMRMLSliceNode::UpdateMatrices()
 
     // the mapping from slice plane coordinates to RAS 
     // (the Orienation as in Axial, Sagittal, Coronal)
-    vtkMatrix4x4 *SliceToRAS = vtkMatrix4x4::New();
-    SliceToRAS->DeepCopy(this->RASToSlice);
-    SliceToRAS->Invert();
-
     // 
     // The combined transform:
     //
@@ -167,10 +163,8 @@ void vtkMRMLSliceNode::UpdateMatrices()
     // RAS = XYToRAS * XY
     //
 
-    vtkMatrix4x4::Multiply4x4(SliceToRAS, this->XYToSlice, this->XYToRAS);
+    vtkMatrix4x4::Multiply4x4(this->SliceToRAS, this->XYToSlice, this->XYToRAS);
     
-    SliceToRAS->Delete();
-
     this->Modified();
 }
 
@@ -200,14 +194,14 @@ void vtkMRMLSliceNode::WriteXML(ostream& of, int nIndent)
     {
     for (j=0; j<4; j++) 
       {
-      ss << this->RASToSlice->GetElement(i,j);
+      ss << this->SliceToRAS->GetElement(i,j);
       if ( !( i==3 && j==3) )
         {
         ss << " ";
         }
       }
     }
-  of << indent << "RASToSlice='" << ss.str() << "' ";
+  of << indent << "SliceToRAS='" << ss.str() << "' ";
 }
 
 //----------------------------------------------------------------------------
@@ -246,7 +240,7 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
         this->Dimensions[i] = val;
         }
       }
-    if (!strcmp(attName, "RASToSlice")) 
+    if (!strcmp(attName, "SliceToRAS")) 
       {
       std::stringstream ss;
       double val;
@@ -257,7 +251,7 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
         for (j=0; j<4; j++) 
           {
           ss >> val;
-          this->RASToSlice->SetElement(i,j,val);
+          this->SliceToRAS->SetElement(i,j,val);
           }
         }
       }
@@ -272,7 +266,7 @@ void vtkMRMLSliceNode::Copy(vtkMRMLNode *anode)
   Superclass::Copy(anode);
   vtkMRMLSliceNode *node = vtkMRMLSliceNode::SafeDownCast(anode);
 
-  this->RASToSlice->DeepCopy(node->GetRASToSlice());
+  this->SliceToRAS->DeepCopy(node->GetSliceToRAS());
 
   int i;
   for(i=0; i<3; i++) 
@@ -293,8 +287,8 @@ void vtkMRMLSliceNode::PrintSelf(ostream& os, vtkIndent indent)
   }
   os << "\n";
 
-  os << indent << "RASToSlice: \n";
-  this->RASToSlice->PrintSelf(os, indent.GetNextIndent());
+  os << indent << "SliceToRAS: \n";
+  this->SliceToRAS->PrintSelf(os, indent.GetNextIndent());
 }
 
 

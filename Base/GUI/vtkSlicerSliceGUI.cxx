@@ -175,7 +175,7 @@ void vtkSlicerSliceGUI::ProcessGUIEvents ( vtkObject *caller,
         }
         // UNDO-ABLE APPLY
         if ( event == vtkKWScale::ScaleValueStartChangingEvent || event == vtkCommand::ModifiedEvent ) {
-            vtkMatrix4x4 *m = sw->GetSliceLogic()->GetSliceNode()->GetRASToSlice ( );
+            vtkMatrix4x4 *m = sw->GetSliceLogic()->GetSliceNode()->GetSliceToRAS ( );
             m->Identity ( );
             m->SetElement (2, 3, sw->GetOffsetScale()->GetValue ( ) );
             sw->GetSliceLogic()->GetSliceNode()->Modified();
@@ -246,7 +246,7 @@ void vtkSlicerSliceGUI::ProcessMrmlEvents ( vtkObject *caller,
         // TODO: set the scale value from the translation part
         // of the matrix with rotation. 
         // Set the scale from the Offset in the matrix.
-        vtkMatrix4x4 *m = sw->GetSliceLogic()->GetSliceNode()->GetRASToSlice();
+        vtkMatrix4x4 *m = sw->GetSliceLogic()->GetSliceNode()->GetSliceToRAS();
         sw->GetOffsetScale()->SetValue ( m->GetElement(2,3) );
         sw->GetOffsetScale()->Modified();
         

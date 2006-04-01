@@ -15,7 +15,7 @@
 // .SECTION Description
 // This node stores the information about how to map from RAS space to 
 // the desired slice plane.
-// -- RASToSlice is the matrix that rotates and translates the slice plane
+// -- SliceToRAS is the matrix that rotates and translates the slice plane
 // -- FieldOfView tells the size of  slice plane
 //
 
@@ -55,12 +55,12 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
   // Description:
   // Mapping from RAS space onto the slice plane
   // TODO: maybe this should be a quaternion and a translate to avoid shears/scales
-  vtkGetObjectMacro (RASToSlice, vtkMatrix4x4);
-  vtkSetObjectMacro (RASToSlice, vtkMatrix4x4);
+  vtkGetObjectMacro (SliceToRAS, vtkMatrix4x4);
+  vtkSetObjectMacro (SliceToRAS, vtkMatrix4x4);
 
   // Description:
   // 'standard' radiological convention views of patient space
-  // these calls adjust the RASToSlice matrix to position the slice
+  // these calls adjust the SliceToRAS matrix to position the slice
   // cutting plane 
   void SetOrientationToAxial();
   void SetOrientationToSagittal();
@@ -88,7 +88,7 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
   vtkGetObjectMacro (XYToRAS, vtkMatrix4x4);
 
   // Description:
-  // Recalculate XYToSlice and XYToRAS in terms or fov, dim, RASToSlice
+  // Recalculate XYToSlice and XYToRAS in terms or fov, dim, SliceToRAS
   // - called when any of the inputs change
   void UpdateMatrices();
   
@@ -99,7 +99,7 @@ protected:
   void operator=(const vtkMRMLSliceNode&);
 
 
-  vtkMatrix4x4 *RASToSlice;
+  vtkMatrix4x4 *SliceToRAS;
   vtkMatrix4x4 *XYToSlice;
   vtkMatrix4x4 *XYToRAS;
 
