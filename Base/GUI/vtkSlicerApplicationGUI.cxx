@@ -498,7 +498,7 @@ void vtkSlicerApplicationGUI::BuildSlicerControlGUIPanel ( ) {
         this->ModulesButton->SetValue ("Volumes");
         this->ModulesButton->IndicatorVisibilityOn ( );
         for ( int i=0; i < sizeof(modules)/sizeof(modules[0]); i++) {
-            this->ModulesButton->AddRadioButton( modules[i] );
+            this->ModulesButton->GetMenu()->AddRadioButton( modules[i] );
         }
 
         app->Script ( "pack %s -side left -anchor n -padx 1 -pady 2 -ipady 1", this->HomeButton->GetWidgetName( ) );

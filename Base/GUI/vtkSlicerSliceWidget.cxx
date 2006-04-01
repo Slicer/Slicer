@@ -101,9 +101,9 @@ void vtkSlicerSliceWidget::Create ( ) {
     vtkKWMenuButton *mb = this->OrientationMenu->GetWidget ( );
     mb->SetWidth ( 8 );
     this->OrientationMenu->Create ( );
-    mb->AddRadioButton ( "Axial" );
-    mb->AddRadioButton ( "Saggital" );
-    mb->AddRadioButton ( "Coronal" );
+    mb->GetMenu()->AddRadioButton ( "Axial" );
+    mb->GetMenu()->AddRadioButton ( "Saggital" );
+    mb->GetMenu()->AddRadioButton ( "Coronal" );
     mb->SetValue ("Axial");    
 
         
