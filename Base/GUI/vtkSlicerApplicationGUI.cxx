@@ -368,7 +368,7 @@ void vtkSlicerApplicationGUI::InitDefaultSlicePanelDimensions ( ) {
     this->SetDefaultSliceGUIFrameWidth ( 102 );
     this->SetDefaultSliceWindowHeight ( 100 );
     this->SetDefaultSliceWindowWidth ( 100 );
-    int w = 3.0 * this->GetDefaultSliceGUIFrameWidth ( );
+    int w = 3 * this->GetDefaultSliceGUIFrameWidth ( );
 
 
 }
@@ -379,7 +379,7 @@ void vtkSlicerApplicationGUI::InitDefaultMainViewerDimensions ( ) {
         this->GetDefaultModuleControlFrameHeight ( ) +
         this->GetDefaultSliceControlFrameHeight ( ) +
         this->GetDefaultViewControlFrameHeight ( );
-    int w = 3.0 * this->GetDefaultSliceGUIFrameWidth ( );
+    int w = 3 * this->GetDefaultSliceGUIFrameWidth ( );
     // set up default Slicer Window size here for now
     this->SetDefaultMainViewerHeight ( h - this->GetDefaultSliceGUIFrameHeight () );
     this->SetDefaultMainViewerWidth ( w );
@@ -397,7 +397,7 @@ void vtkSlicerApplicationGUI::InitDefaultSlicerWindowDimensions ( ) {
         this->GetDefaultModuleControlFrameHeight ( ) +
         this->GetDefaultSliceControlFrameHeight ( ) +
         this->GetDefaultViewControlFrameHeight ( ) + hbuf;
-    int w = 3.0 * this->GetDefaultSliceGUIFrameWidth ( );
+    int w = 3 * this->GetDefaultSliceGUIFrameWidth ( );
     w = w + this->GetDefaultGUIPanelWidth ( ) + hbuf;
     this->SetDefaultSlicerWindowWidth ( w + this->GetDefaultGUIPanelWidth ( ) );
     this->SetDefaultSlicerWindowHeight ( h );
@@ -561,7 +561,7 @@ void vtkSlicerApplicationGUI::ConfigureSliceViewersPanel ( ) {
         vtkSlicerStyle *style = app->GetSlicerStyle();
 
         if ( this->MainSlicerWin != NULL ) {
-            this->MainSlicerWin->GetSecondaryPanelFrame()->SetWidth ( 3.0 * this->GetDefaultSliceGUIFrameWidth () );
+            this->MainSlicerWin->GetSecondaryPanelFrame()->SetWidth ( 3 * this->GetDefaultSliceGUIFrameWidth () );
             this->MainSlicerWin->GetSecondaryPanelFrame()->SetHeight ( this->GetDefaultSliceGUIFrameHeight () );
             this->MainSlicerWin->GetSecondaryNotebook( )->AlwaysShowTabsOff ( );
 

@@ -37,10 +37,10 @@
 #include "vtkSlicerBaseLogic.h"
 #include "vtkSlicerLogic.h"
 
-#include "vtkMrml.h"
-#include "vtkMrmlVolumeNode.h"
-#include "vtkMrmlScalarVolumeNode.h"
-#include "vtkMrmlSliceNode.h"
+#include "vtkMRML.h"
+#include "vtkMRMLVolumeNode.h"
+#include "vtkMRMLScalarVolumeNode.h"
+#include "vtkMRMLSliceNode.h"
 
 #include "vtkImageReslice.h"
 #include "vtkImageMapToRGBA.h"
