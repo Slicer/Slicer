@@ -61,7 +61,7 @@ $::scene AddNode $slicen
 #$::slicen SetOrientationToCoronal
 $::slicen SetOrientationToAxial
 $::slicen SetDimensions 512 512 1
-$::slicen SetFieldOfView 413 413 1
+$::slicen SetFieldOfView 413 413 413
 $::slicen UpdateMatrices
 
 # a SliceComposite node for the SliceLogic
@@ -134,7 +134,6 @@ pack [$renderwidget GetWidgetName] -side top -fill both -expand y -padx 0 -pady 
 set viewer [vtkImageViewer2 New]
 $viewer SetColorWindow 200
 $viewer SetColorLevel 100
-$viewer SetSlice 10
 $viewer SetRenderWindow [$renderwidget GetRenderWindow] 
 $viewer SetRenderer [$renderwidget GetRenderer] 
 $viewer SetInput [$::slicel GetImageData]
