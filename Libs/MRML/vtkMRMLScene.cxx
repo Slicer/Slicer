@@ -305,7 +305,7 @@ vtkMRMLNode *vtkMRMLScene::GetNextNodeByClass(const char *className)
   while (node != NULL && !node->IsA(className)) {
     node = (vtkMRMLNode*)this->CurrentScene->GetNextItemAsObject();
   }
-  if (node->IsA(className)) {
+  if (node != NULL && node->IsA(className)) {
     return node;
   }
   else {
