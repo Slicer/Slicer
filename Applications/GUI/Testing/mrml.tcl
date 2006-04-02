@@ -37,9 +37,10 @@ $win Create
 # create the mrml scene
 set ::scene [vtkMRMLScene New]
 
-set scenefile c:/pieper/bwh/slicer3/latest/Slicer3/Applications/GUI/Testing/mrmlScene.xml
+# for use when cutting and pasting into the console:
+# set scenefile c:/pieper/bwh/slicer3/latest/Slicer3/Applications/GUI/Testing/mrmlScene.xml
 
-#set scenefile [file dirname [info script]]/mrmlScene.xml
+set scenefile [file dirname [info script]]/mrmlScene.xml
 $::scene SetURL $scenefile
 $::scene Connect
 
