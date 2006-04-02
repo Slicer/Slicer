@@ -118,8 +118,9 @@ void vtkSlicerSliceLayerLogic::UpdateTransforms()
       }
 
     this->Reslice->SetResliceTransform( this->XYToIJKTransform );
-    this->Reslice->SetOutputOrigin( 0, 0, 0 );
-    this->Reslice->SetOutputSpacing( 1, 1, 1 );
+    // TODO: why don't these work?
+    //this->Reslice->SetOutputOrigin( 0, 0, 0 );
+    //this->Reslice->SetOutputSpacing( 1, 1, 1 );
     this->Reslice->SetOutputExtent( 0, dimensions[0]-1,
                                     0, dimensions[1]-1,
                                     0, dimensions[2]-1);
