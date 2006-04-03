@@ -20,9 +20,10 @@ vtkMRMLParser* vtkMRMLParser::New()
 {
   // First try to create the object from the vtkObjectFactory
   vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLParser");
-  if(ret) {
+  if(ret) 
+    {
     return (vtkMRMLParser*)ret;
-  }
+    }
   // If the factory was unable to create the object, then create it here.
   return new vtkMRMLParser;
 }
@@ -31,30 +32,34 @@ vtkMRMLParser* vtkMRMLParser::New()
 //------------------------------------------------------------------------------
 void vtkMRMLParser::StartElement(const char* tagName, const char** atts)
 {
-  if (!strcmp(tagName, "MRML")) {
+  if (!strcmp(tagName, "MRML")) 
+    {
     return;
-  }
+    }
   const char* className = this->MRMLScene->GetClassNameByTag(tagName);
 
-  if (className == NULL) {
+  if (className == NULL) 
+    {
     return;
-  }
+    }
 
   vtkMRMLNode* node = this->MRMLScene->CreateNodeByClass( className );
 
   node->SetScene(this->MRMLScene);
   node->ReadXMLAttributes(atts);
 
-  if (node->GetID() == NULL) {
+  if (node->GetID() == NULL) 
+    {
     node->SetID(this->MRMLScene->GetUniqueIDByClass(className));
-  }
+    }
 
-  if (!this->NodeStack.empty()) {
+  if (!this->NodeStack.empty()) 
+    {
     vtkMRMLNode* parentNode = this->NodeStack.top();
     parentNode->ProcessChildNode(node);
 
     node->ProcessParentNode(parentNode);
-  }
+    }
 
   this->NodeStack.push(node);
 
@@ -67,8 +72,9 @@ void vtkMRMLParser::StartElement(const char* tagName, const char** atts)
 
 void vtkMRMLParser::EndElement (const char *name)
 {
-  if (!strcmp(name, "MRML")) {
+  if (!strcmp(name, "MRML")) 
+    {
     return;
-  }
+    }
   this->NodeStack.pop();
 }

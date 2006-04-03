@@ -1,14 +1,14 @@
 /*=auto=========================================================================
 
-  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
+Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
 
-  See Doc/copyright/copyright.txt
-  or http://www.slicer.org/copyright/copyright.txt for details.
+See Doc/copyright/copyright.txt
+or http://www.slicer.org/copyright/copyright.txt for details.
 
-  Program:   3D Slicer
-  Module:    $RCSfile: vtkMRMLModelNode.cxx,v $
-  Date:      $Date: 2006/03/03 22:26:39 $
-  Version:   $Revision: 1.3 $
+Program:   3D Slicer
+Module:    $RCSfile: vtkMRMLModelNode.cxx,v $
+Date:      $Date: 2006/03/03 22:26:39 $
+Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
 #include <string>
@@ -26,9 +26,9 @@ vtkMRMLModelNode* vtkMRMLModelNode::New()
   // First try to create the object from the vtkObjectFactory
   vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLModelNode");
   if(ret)
-  {
+    {
     return (vtkMRMLModelNode*)ret;
-  }
+    }
   // If the factory was unable to create the object, then create it here.
   return new vtkMRMLModelNode;
 }
@@ -41,7 +41,7 @@ vtkMRMLNode* vtkMRMLModelNode::CreateNodeInstance()
   vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLModelNode");
   if(ret)
     {
-      return (vtkMRMLModelNode*)ret;
+    return (vtkMRMLModelNode*)ret;
     }
   // If the factory was unable to create the object, then create it here.
   return new vtkMRMLModelNode;
@@ -80,20 +80,24 @@ vtkMRMLModelNode::vtkMRMLModelNode()
 //----------------------------------------------------------------------------
 vtkMRMLModelNode::~vtkMRMLModelNode()
 {
-  if (this->Color) {
+  if (this->Color) 
+    {
     delete [] this->Color;
     this->Color = NULL;
-  }
-  if (this->PolyData) {
+    }
+  if (this->PolyData) 
+    {
     this->PolyData->Delete();
-  }
-  if (this->TransformNodeID) {
+    }
+  if (this->TransformNodeID) 
+    {
     delete [] this->TransformNodeID;
     this->TransformNodeID = NULL;
-  }
-  if (this->TransformNode) {
+    }
+  if (this->TransformNode) 
+    {
     this->TransformNode->Delete();
-  }
+    }
   
 }
 
@@ -107,47 +111,48 @@ void vtkMRMLModelNode::WriteXML(ostream& of, int nIndent)
   vtkIndent indent(nIndent);
 
   if (this->Color && strcmp(this->Color, "")) 
-  {
+    {
     of << indent << " color='" << this->Color << "'";
-  }
+    }
 
   //if (this->LUTName && strcmp(this->LUTName,""))
   if (this->LUTName != -1)
-  {
-      of << indent << " lutName='" << this->LUTName << "'";
-  }
+    {
+    of << indent << " lutName='" << this->LUTName << "'";
+    }
   
   // Numbers
   if (this->Opacity != 1.0)
-  {
+    {
     of << indent << " opacity='" << this->Opacity << "'";
-  }
+    }
   if (this->Visibility != 1)
-  {
+    {
     of << indent << " visibility='" << (this->Visibility ? "true" : "false") << "'";
-  }
+    }
   if (this->Clipping != 0)
-  {
+    {
     of << indent << " clipping='" << (this->Clipping ? "true" : "false") << "'";
-  }
+    }
   if (this->BackfaceCulling != 1)
-  {
+    {
     of << indent << " backfaceCulling='" << (this->BackfaceCulling ? "true" : "false") << "'";
-  }
+    }
   if (this->ScalarVisibility != 0)
-  {
+    {
     of << indent << " scalarVisibility='" << (this->ScalarVisibility ? "true" : "false") << "'";
-  }
+    }
 
   // Arrays
   if (this->ScalarRange[0] != 0 || this->ScalarRange[1] != 100)
-  {
+    {
     of << indent << " scalarRange='" << this->ScalarRange[0] << " "
        << this->ScalarRange[1] << "'";
-  }
-  if (this->TransformNodeID != NULL) {
+    }
+  if (this->TransformNodeID != NULL) 
+    {
     of << indent << "TransformNodeID='" << this->TransformNodeID << "' ";
-  }
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -158,57 +163,68 @@ void vtkMRMLModelNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL) {
+  while (*atts != NULL) 
+    {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "Color")) {
+    if (!strcmp(attName, "Color")) 
+      {
       this->SetColor(attValue);
-    }
-    else if (!strcmp(attName, "ScalarRange")) {
+      }
+    else if (!strcmp(attName, "ScalarRange")) 
+      {
       std::stringstream ss;
       ss << attValue;
       ss >> ScalarRange[0];
       ss >> ScalarRange[1];
-    }
-    else if (!strcmp(attName, "LUTName")) {
+      }
+    else if (!strcmp(attName, "LUTName")) 
+      {
       std::stringstream ss;
       ss << attValue;
       ss >> LUTName;
-    }
-    else if (!strcmp(attName, "Opacity")) {
+      }
+    else if (!strcmp(attName, "Opacity")) 
+      {
       std::stringstream ss;
       ss << attValue;
       ss >> Opacity;
-    }
-    else if (!strcmp(attName, "Visibility")) {
+      }
+    else if (!strcmp(attName, "Visibility")) 
+      {
       std::stringstream ss;
       ss << attValue;
       ss >> Visibility;
-    }
-    else if (!strcmp(attName, "BackfaceCulling")) {
+      }
+    else if (!strcmp(attName, "BackfaceCulling")) 
+      {
       std::stringstream ss;
       ss << attValue;
       ss >> BackfaceCulling;
-    }
-    else if (!strcmp(attName, "ScalarVisibility")) {
+      }
+    else if (!strcmp(attName, "ScalarVisibility")) 
+      {
       std::stringstream ss;
       ss << attValue;
       ss >> ScalarVisibility;
-    }
-    else if (!strcmp(attName, "VectorVisibility")) {
+      }
+    else if (!strcmp(attName, "VectorVisibility")) 
+      {
       std::stringstream ss;
       ss << attValue;
       ss >> VectorVisibility;
-    }
-    else if (!strcmp(attName, "TensorVisibility")) {
+      }
+    else if (!strcmp(attName, "TensorVisibility")) 
+      {
       std::stringstream ss;
       ss << attValue;
       ss >> TensorVisibility;
-    }
-    else if (!strcmp(attName, "TransformNodeID")) {
+      }
+    else if (!strcmp(attName, "TransformNodeID")) 
+      {
       this->SetTransformNodeID(attValue);
-    }
-  }  
+      }
+    }  
 }
 
 
@@ -235,9 +251,10 @@ void vtkMRMLModelNode::Copy(vtkMRMLNode *anode)
   this->SetClipping(node->Clipping);
   this->SetPolyData(node->PolyData);
 
-  if (this->TransformNode) {
+  if (this->TransformNode) 
+    {
     this->SetTransformNode(node->TransformNode);
-  }
+    }
   this->SetTransformNodeID(node->TransformNodeID);
 
 }
@@ -258,18 +275,19 @@ void vtkMRMLModelNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "BackfaceCulling:   " << this->BackfaceCulling << "\n";
   os << indent << "Clipping:          " << this->Clipping << "\n";
 
- os << indent << "TransformNodeID: " <<
+  os << indent << "TransformNodeID: " <<
     (this->TransformNodeID ? this->TransformNodeID : "(none)") << "\n";
 
   os << "ScalarRange:\n";
   for (idx = 0; idx < 2; ++idx)
-  {
+    {
     os << indent << ", " << this->ScalarRange[idx];
-  }
+    }
   os << "\nPoly Data:\n";
-  if (this->PolyData) {
+  if (this->PolyData) 
+    {
     this->PolyData->PrintSelf(os, indent.GetNextIndent());
-  }
+    }
 
 }
 
@@ -278,9 +296,10 @@ void vtkMRMLModelNode::PrintSelf(ostream& os, vtkIndent indent)
 void vtkMRMLModelNode::UpdateScene(vtkMRMLScene *scene)
 {
   vtkMRMLNode *mnode = scene->GetNodeByID(this->TransformNodeID);
-  if (mnode) {
+  if (mnode) 
+    {
     vtkMRMLTransformNode *node  = dynamic_cast < vtkMRMLTransformNode *>(mnode);
     this->SetTransformNode(node);
-  }
+    }
 }
 

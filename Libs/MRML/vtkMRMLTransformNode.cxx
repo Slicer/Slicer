@@ -34,16 +34,19 @@ vtkMRMLTransformNode::vtkMRMLTransformNode()
 //----------------------------------------------------------------------------
 vtkMRMLTransformNode::~vtkMRMLTransformNode()
 {
-  if (this->ParentTransformNodeID) {
+  if (this->ParentTransformNodeID) 
+    {
     delete [] this->ParentTransformNodeID;
     this->ParentTransformNodeID = NULL;
-  }
-  if (this->ParentTransformNode) {
+    }
+  if (this->ParentTransformNode) 
+    {
     this->ParentTransformNode->Delete();
-  }
-  if (this->TransformToParent) {
+    }
+  if (this->TransformToParent) 
+    {
     this->TransformToParent->Delete();
-  }
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -53,9 +56,10 @@ void vtkMRMLTransformNode::WriteXML(ostream& of, int nIndent)
 
   vtkIndent indent(nIndent);
 
-  if (this->ParentTransformNodeID != NULL) {
+  if (this->ParentTransformNodeID != NULL) 
+    {
     of << indent << "ParentTransformNodeID='" << this->ParentTransformNodeID << "' ";
-  }
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -66,13 +70,15 @@ void vtkMRMLTransformNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL) {
+  while (*atts != NULL) 
+    {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "ParentTransformNodeID")) {
+    if (!strcmp(attName, "ParentTransformNodeID")) 
+      {
       this->SetParentTransformNodeID(attValue);
-    }
-  }  
+      }
+    }  
 }
 
 //----------------------------------------------------------------------------
@@ -96,83 +102,101 @@ void vtkMRMLTransformNode::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 void vtkMRMLTransformNode::UpdateScene(vtkMRMLScene *scene)
 {
-  if (this->GetParentTransformNodeID() == NULL) {
+  if (this->GetParentTransformNodeID() == NULL) 
+    {
     return;
-  }
+    }
   vtkMRMLNode* mnode = scene->GetNodeByID(this->ParentTransformNodeID);
-  if (mnode) {
+  if (mnode) 
+    {
     vtkMRMLTransformNode *node  = dynamic_cast < vtkMRMLTransformNode *>(mnode);
     this->SetParentTransformNode(node);
-  }
+    }
 }
 
 //----------------------------------------------------------------------------
 int  vtkMRMLTransformNode::IsTransformToWorldLinear()
 {
-  if (this->IsLinear() == 0) {
+  if (this->IsLinear() == 0) 
+    {
     return 0;
-  }
-  else {
+    }
+  else 
+    {
     vtkMRMLTransformNode *parent = this->GetParentTransformNode();
-    if (parent != NULL) {
+    if (parent != NULL) 
+      {
       return parent->IsTransformToWorldLinear();
-    }
-    else {
+      }
+    else 
+      {
       return 1;
+      }
     }
-  }
 
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLTransformNode::GetTransformToWorld(vtkGeneralTransform* transformToWorld)
 {
-  if (transformToWorld->GetNumberOfConcatenatedTransforms() == 0) {
+  if (transformToWorld->GetNumberOfConcatenatedTransforms() == 0) 
+    {
     transformToWorld->Identity();
-  }
+    }
 
   transformToWorld->Concatenate(this->TransformToParent);
 
   vtkMRMLTransformNode *parent = this->GetParentTransformNode();
-  if (parent != NULL) {
+  if (parent != NULL) 
+    {
     parent->GetTransformToWorld(transformToWorld);
-  }
+    }
 }
 
 //----------------------------------------------------------------------------
 int  vtkMRMLTransformNode::IsTransformToNodeLinear(vtkMRMLTransformNode* node)
 {
-  if (this->IsTransformNodeMyParent(node)) {
+  if (this->IsTransformNodeMyParent(node)) 
+    {
     vtkMRMLTransformNode *parent = this->GetParentTransformNode();
-    if (parent != NULL) {
-      if (!strcmp(parent->GetID(), node->GetID()) ) {
+    if (parent != NULL) 
+      {
+      if (!strcmp(parent->GetID(), node->GetID()) ) 
+        {
         return this->IsLinear();
-      }
-      else {
+        }
+      else 
+        {
         return this->IsLinear() * parent->IsTransformToNodeLinear(node);
+        }
       }
-    }
     else return this->IsLinear();
-  }
-  else if (this->IsTransformNodeMyChild(node)) {
-    vtkMRMLTransformNode *parent = node->GetParentTransformNode();
-    if (parent != NULL) {
-      if (!strcmp(parent->GetID(), this->GetID()) ) {
-        return node->IsLinear();
-      }
-      else {
-        return node->IsLinear() * parent->IsTransformToNodeLinear(this);
-      }
     }
+  else if (this->IsTransformNodeMyChild(node)) 
+    {
+    vtkMRMLTransformNode *parent = node->GetParentTransformNode();
+    if (parent != NULL) 
+      {
+      if (!strcmp(parent->GetID(), this->GetID()) ) 
+        {
+        return node->IsLinear();
+        }
+      else 
+        {
+        return node->IsLinear() * parent->IsTransformToNodeLinear(this);
+        }
+      }
     else return node->IsLinear();
-  }
+    }
   else if (this->IsTransformToWorldLinear() == 1 && 
-      node->IsTransformToWorldLinear() == 1) {
+           node->IsTransformToWorldLinear() == 1) 
+    {
     return 1;
-  }
-  else {
+    }
+  else 
+    {
     return 0;
-  }
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -180,31 +204,40 @@ void  vtkMRMLTransformNode::GetTransformToNode(vtkMRMLTransformNode* node,
                                                vtkGeneralTransform* transformToNode)
 {
 
-  if (this->IsTransformNodeMyParent(node)) {
+  if (this->IsTransformNodeMyParent(node)) 
+    {
     vtkMRMLTransformNode *parent = this->GetParentTransformNode();
-    if (parent != NULL) {
+    if (parent != NULL) 
+      {
       transformToNode->Concatenate(this->GetTransformToParent());
-      if (strcmp(parent->GetID(), node->GetID()) ) {
+      if (strcmp(parent->GetID(), node->GetID()) ) 
+        {
         this->GetTransformToNode(node, transformToNode);
+        }
       }
-    }
-    else if (this->GetTransformToParent()) {
+    else if (this->GetTransformToParent()) 
+      {
       transformToNode->Concatenate(this->GetTransformToParent());
-    }
-  }
-  else if (this->IsTransformNodeMyChild(node)) {
-    vtkMRMLTransformNode *parent = node->GetParentTransformNode();
-    if (parent != NULL) {
-      transformToNode->Concatenate(node->GetTransformToParent());
-      if (strcmp(parent->GetID(), this->GetID()) ) {
-        node->GetTransformToNode(this, transformToNode);
       }
     }
-    else if (node->GetTransformToParent()) {
+  else if (this->IsTransformNodeMyChild(node)) 
+    {
+    vtkMRMLTransformNode *parent = node->GetParentTransformNode();
+    if (parent != NULL) 
+      {
       transformToNode->Concatenate(node->GetTransformToParent());
+      if (strcmp(parent->GetID(), this->GetID()) ) 
+        {
+        node->GetTransformToNode(this, transformToNode);
+        }
+      }
+    else if (node->GetTransformToParent()) 
+      {
+      transformToNode->Concatenate(node->GetTransformToParent());
+      }
     }
-  }
-  else {
+  else 
+    {
     this->GetTransformToWorld(transformToNode);
     vtkGeneralTransform* transformToWorld2 = vtkGeneralTransform::New();
     transformToWorld2->Identity();
@@ -213,21 +246,24 @@ void  vtkMRMLTransformNode::GetTransformToNode(vtkMRMLTransformNode* node,
     transformToWorld2->Inverse();
     
     transformToNode->Concatenate(transformToWorld2);
-  }
+    }
 }
 
 //----------------------------------------------------------------------------
 int vtkMRMLTransformNode::IsTransformNodeMyParent(vtkMRMLTransformNode* node)
 {
   vtkMRMLTransformNode *parent = this->ParentTransformNode;
-  if (parent != NULL) {
-    if (!strcmp(parent->GetID(), node->GetID()) ) {
+  if (parent != NULL) 
+    {
+    if (!strcmp(parent->GetID(), node->GetID()) ) 
+      {
       return 1;
-    }
-    else {
+      }
+    else 
+      {
       return parent->IsTransformNodeMyParent(node);
+      }
     }
-  }
   else return 0;
 }
 

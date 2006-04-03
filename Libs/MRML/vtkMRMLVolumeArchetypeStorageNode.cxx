@@ -34,7 +34,7 @@ vtkMRMLVolumeArchetypeStorageNode* vtkMRMLVolumeArchetypeStorageNode::New()
   vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLVolumeArchetypeStorageNode");
   if(ret)
     {
-      return (vtkMRMLVolumeArchetypeStorageNode*)ret;
+    return (vtkMRMLVolumeArchetypeStorageNode*)ret;
     }
   // If the factory was unable to create the object, then create it here.
   return new vtkMRMLVolumeArchetypeStorageNode;
@@ -48,7 +48,7 @@ vtkMRMLNode* vtkMRMLVolumeArchetypeStorageNode::CreateNodeInstance()
   vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLVolumeArchetypeStorageNode");
   if(ret)
     {
-      return (vtkMRMLVolumeArchetypeStorageNode*)ret;
+    return (vtkMRMLVolumeArchetypeStorageNode*)ret;
     }
   // If the factory was unable to create the object, then create it here.
   return new vtkMRMLVolumeArchetypeStorageNode;
@@ -63,19 +63,21 @@ vtkMRMLVolumeArchetypeStorageNode::vtkMRMLVolumeArchetypeStorageNode()
 //----------------------------------------------------------------------------
 vtkMRMLVolumeArchetypeStorageNode::~vtkMRMLVolumeArchetypeStorageNode()
 {
-  if (this->FileArchetype) {
+  if (this->FileArchetype) 
+    {
     delete [] this->FileArchetype;
     this->FileArchetype = NULL;
-  }
+    }
 }
 
 void vtkMRMLVolumeArchetypeStorageNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
   vtkIndent indent(nIndent);
-  if (this->FileArchetype != NULL) {
+  if (this->FileArchetype != NULL) 
+    {
     of << indent << "FileArchetype='" << this->FileArchetype << "' ";
-  }
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -86,13 +88,15 @@ void vtkMRMLVolumeArchetypeStorageNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL) {
+  while (*atts != NULL) 
+    {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "FileArchetype")) {
+    if (!strcmp(attName, "FileArchetype")) 
+      {
       this->SetFileArchetype(attValue);
+      }
     }
-  }
 }
 
 //----------------------------------------------------------------------------
@@ -127,34 +131,40 @@ void vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
 {
 
   // test whether refNode is a valid node to hold a volume
-  if ( !refNode->IsA("vtkMRMLScalarVolumeNode") ) {
+  if ( !refNode->IsA("vtkMRMLScalarVolumeNode") ) 
+    {
     vtkErrorMacro("Reference node is not a vtkMRMLVolumeNode");
     return;         
-  }
+    }
 
   
   vtkMRMLVolumeNode *volNode;
 
-  if ( refNode->IsA("vtkMRMLScalarVolumeNode") ) {
+  if ( refNode->IsA("vtkMRMLScalarVolumeNode") ) 
+    {
     volNode = dynamic_cast <vtkMRMLScalarVolumeNode *> (refNode);
-  }
+    }
 
-  if (volNode->GetImageData()) {
+  if (volNode->GetImageData()) 
+    {
     volNode->GetImageData()->Delete();
     volNode->SetImageData (NULL);
-  }
+    }
 
   std::string fullName;
-  if (this->SceneRootDir != NULL) {
+  if (this->SceneRootDir != NULL) 
+    {
     fullName = std::string(this->SceneRootDir) + std::string(this->GetFileArchetype());
-  }
-  else {
+    }
+  else 
+    {
     fullName = std::string(this->GetFileArchetype());
-  }
+    }
 
-  if (fullName == std::string("")) {
+  if (fullName == std::string("")) 
+    {
     vtkErrorMacro("vtkMRMLVolumeNode: File name not specified");
-  }
+    }
 
   //TODO: handle both scalars and vectors
   vtkITKArchetypeImageSeriesScalarReader* reader = vtkITKArchetypeImageSeriesScalarReader::New();
@@ -173,18 +183,21 @@ void vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
   // normalize direction vectors
   double spacing[3];
   int row;
-  for (row=0; row<3; row++) {
+  for (row=0; row<3; row++) 
+    {
     double len =0;
     int col;
-    for (col=0; col<3; col++) {
+    for (col=0; col<3; col++) 
+      {
       len += mat->GetElement(row, col) * mat->GetElement(row, col);
-    }
+      }
     len = sqrt(len);
     spacing[row] = len;
-    for (col=0; col<3; col++) {
+    for (col=0; col<3; col++) 
+      {
       mat->SetElement(row, col,  mat->GetElement(row, col)/len);
+      }
     }
-  }
   volNode->SetIjkToRasMatrix(mat);
   volNode->SetSpacing(spacing);
   volNode->SetOrigin(reader->GetOutput()->GetOrigin());
@@ -199,32 +212,38 @@ void vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
 void vtkMRMLVolumeArchetypeStorageNode::WriteData(vtkMRMLNode *refNode)
 {
   // test whether refNode is a valid node to hold a volume
-  if (!refNode->IsA("vtkMRMLScalarVolumeNode") ) {
+  if (!refNode->IsA("vtkMRMLScalarVolumeNode") ) 
+    {
     vtkErrorMacro("Reference node is not a vtkMRMLVolumeNode");
     return;
-  }
+    }
   
   vtkMRMLVolumeNode *volNode;
   
-  if ( refNode->IsA("vtkMRMLScalarVolumeNode") ) {
+  if ( refNode->IsA("vtkMRMLScalarVolumeNode") ) 
+    {
     volNode = dynamic_cast <vtkMRMLScalarVolumeNode *> (refNode);
-  }
+    }
   
-  if (volNode->GetImageData() == NULL) {
+  if (volNode->GetImageData() == NULL) 
+    {
     vtkErrorMacro("cannot write ImageData, it's NULL");
-  }
+    }
   
   std::string fullName;
-  if (this->SceneRootDir != NULL) {
+  if (this->SceneRootDir != NULL) 
+    {
     fullName = std::string(this->SceneRootDir) + std::string(this->GetFileArchetype());
-  }
-  else {
+    }
+  else 
+    {
     fullName = std::string(this->GetFileArchetype());
-  }
+    }
   
-  if (fullName == std::string("")) {
+  if (fullName == std::string("")) 
+    {
     vtkErrorMacro("vtkMRMLVolumeNode: File name not specified");
-  }
+    }
   vtkITKImageWriter *writer = vtkITKImageWriter::New();
   writer->SetFileName(fullName.c_str());
   

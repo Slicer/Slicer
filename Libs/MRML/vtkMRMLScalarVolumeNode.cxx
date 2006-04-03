@@ -28,7 +28,7 @@ vtkMRMLScalarVolumeNode* vtkMRMLScalarVolumeNode::New()
   vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLScalarVolumeNode");
   if(ret)
     {
-      return (vtkMRMLScalarVolumeNode*)ret;
+    return (vtkMRMLScalarVolumeNode*)ret;
     }
   // If the factory was unable to create the object, then create it here.
   return new vtkMRMLScalarVolumeNode;
@@ -42,7 +42,7 @@ vtkMRMLNode* vtkMRMLScalarVolumeNode::CreateNodeInstance()
   vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLScalarVolumeNode");
   if(ret)
     {
-      return (vtkMRMLScalarVolumeNode*)ret;
+    return (vtkMRMLScalarVolumeNode*)ret;
     }
   // If the factory was unable to create the object, then create it here.
   return new vtkMRMLScalarVolumeNode;
@@ -77,17 +77,19 @@ void vtkMRMLScalarVolumeNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL) {
+  while (*atts != NULL) 
+    {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "LabelMap")) {
+    if (!strcmp(attName, "LabelMap")) 
+      {
       std::stringstream ss;
       int val;
       ss << attValue;
       ss >> val;
       this->SetLabelMap(val);
-    }
-  }  
+      }
+    }  
 }
 
 //----------------------------------------------------------------------------

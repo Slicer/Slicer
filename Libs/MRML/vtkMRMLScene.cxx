@@ -78,12 +78,14 @@ vtkMRMLScene::vtkMRMLScene()
 //------------------------------------------------------------------------------
 vtkMRMLScene::~vtkMRMLScene() 
 {
-  if (this->URL) {
+  if (this->URL) 
+    {
     delete this->URL;
-  }
-  if (this->ClassNameList) {
+    }
+  if (this->ClassNameList) 
+    {
     delete this->ClassNameList;
-  }
+    }
   this->CurrentScene->Delete();
 }
 
@@ -92,9 +94,10 @@ vtkMRMLScene* vtkMRMLScene::New()
 {
   // First try to create the object from the vtkObjectFactory
   vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLScene");
-  if(ret) {
+  if(ret) 
+    {
     return (vtkMRMLScene*)ret;
-  }
+    }
   // If the factory was unable to create the object, then create it here.
   return new vtkMRMLScene;
 }
@@ -103,19 +106,23 @@ vtkMRMLScene* vtkMRMLScene::New()
 vtkMRMLNode* vtkMRMLScene::CreateNodeByClass(const char* className) 
 {
   vtkMRMLNode* node = NULL;
-  for (unsigned int i=0; i<RegisteredNodeClasses.size(); i++) {
-    if (!strcmp(RegisteredNodeClasses[i]->GetClassName(), className)) {
+  for (unsigned int i=0; i<RegisteredNodeClasses.size(); i++) 
+    {
+    if (!strcmp(RegisteredNodeClasses[i]->GetClassName(), className)) 
+      {
       node = RegisteredNodeClasses[i]->CreateNodeInstance();
       break;
+      }
     }
-  }
   // non-registered nodes can have a registered factory
-  if (node == NULL) {
+  if (node == NULL) 
+    {
     vtkObject* ret = vtkObjectFactory::CreateInstance(className); 
-    if(ret) {
+    if(ret) 
+      {
       node = static_cast<vtkMRMLNode *>(ret);
+      }
     }
-  }
   return node;
 }
 
@@ -129,21 +136,24 @@ void vtkMRMLScene::RegisterNodeClass(vtkMRMLNode* node)
 //------------------------------------------------------------------------------
 const char* vtkMRMLScene::GetClassNameByTag(const char *tagName)
 {
-  for (unsigned int i=0; i<RegisteredNodeTags.size(); i++) {
-    if (!strcmp(RegisteredNodeTags[i].c_str(), tagName)) {
+  for (unsigned int i=0; i<RegisteredNodeTags.size(); i++) 
+    {
+    if (!strcmp(RegisteredNodeTags[i].c_str(), tagName)) 
+      {
       return (RegisteredNodeClasses[i])->GetClassName();
+      }
     }
-  }
   return NULL;
 }
 
 //------------------------------------------------------------------------------
 int vtkMRMLScene::Connect()
 {
-  if (this->URL == NULL) {
+  if (this->URL == NULL) 
+    {
     vtkErrorMacro("Need URL specified");
     return 0;
-  }
+    }
   this->RootDirectory = vtksys::SystemTools::GetParentDirectory(this->GetURL());   
   this->RootDirectory = this->RootDirectory + vtksys_stl::string("/");
 
@@ -161,10 +171,11 @@ int vtkMRMLScene::Connect()
   int nnodes = this->CurrentScene->GetNumberOfItems();
   vtkMRMLNode *node = NULL;
   int n;
-  for (n=0; n<nnodes; n++) {
+  for (n=0; n<nnodes; n++) 
+    {
     node = (vtkMRMLNode *)this->CurrentScene->GetItemAsObject(n);
     node->UpdateScene(this);
-  }
+    }
 
   this->SetUndoFlag(undoFlag);
 
@@ -174,9 +185,10 @@ int vtkMRMLScene::Connect()
 //------------------------------------------------------------------------------
 int vtkMRMLScene::Commit(const char* url)
 {
-  if (url == NULL) {
+  if (url == NULL) 
+    {
     url = this->URL;
-  }
+    }
 
   vtkMRMLNode *node;
   ofstream file;
@@ -184,7 +196,8 @@ int vtkMRMLScene::Commit(const char* url)
   
   // Open file
   file.open(url);
-  if (file.fail()) {
+  if (file.fail()) 
+    {
     vtkErrorMacro("Write: Could not open file " << url);
     cerr << "Write: Could not open file " << url;
 #if (VTK_MAJOR_VERSION <= 5)      
@@ -193,7 +206,7 @@ int vtkMRMLScene::Commit(const char* url)
     this->SetErrorCode(vtkErrorCode::GetErrorCodeFromString("CannotOpenFileError"));
 #endif
     return 1;
-  }
+    }
   
   //file << "<?xml version=\"1.0\" standalone='no'?>\n";
   //file << "<!DOCTYPE MRML SYSTEM \"mrml20.dtd\">\n";
@@ -201,13 +214,15 @@ int vtkMRMLScene::Commit(const char* url)
    
   // Write each node
   int n;
-  for (n=0; n < this->CurrentScene->GetNumberOfItems(); n++) {
+  for (n=0; n < this->CurrentScene->GetNumberOfItems(); n++) 
+    {
     node = (vtkMRMLNode*)this->CurrentScene->GetItemAsObject(n);
     
     deltaIndent = node->GetIndent();
-    if ( deltaIndent < 0 ) {
+    if ( deltaIndent < 0 ) 
+      {
       indent -=2;
-    }
+      }
     
     vtkIndent vindent(indent);
     file << vindent << "<" << node->GetNodeTagName() << "\n";
@@ -216,10 +231,11 @@ int vtkMRMLScene::Commit(const char* url)
     
     file << vindent << "></" << node->GetNodeTagName() << ">\n";
     
-    if ( deltaIndent > 0 ) {
+    if ( deltaIndent > 0 ) 
+      {
       indent += 2;
-    }    
-  }
+      }    
+    }
   
   file << "</MRML>\n";
   
@@ -238,9 +254,10 @@ void vtkMRMLScene::AddNode(vtkMRMLNode *n)
   //TODO convert URL to Root directory
   //n->SetSceneRootDir("");
 
-  if (n->GetID() == NULL) {
+  if (n->GetID() == NULL) 
+    {
     n->SetID(this->GetUniqueIDByClass(n->GetClassName()));
-  }
+    }
   n->SetSceneRootDir(this->RootDirectory.c_str());
 
   this->CurrentScene->vtkCollection::AddItem((vtkObject *)n);
@@ -253,12 +270,14 @@ int vtkMRMLScene::GetNumberOfNodesByClass(const char *className)
   int num=0;
   vtkMRMLNode *node;
   int n;
-  for (n=0; n < this->CurrentScene->GetNumberOfItems(); n++) {
+  for (n=0; n < this->CurrentScene->GetNumberOfItems(); n++) 
+    {
     node = (vtkMRMLNode*)this->CurrentScene->GetItemAsObject(n);
-    if (node->IsA(className)) {
+    if (node->IsA(className)) 
+      {
       num++;
+      }
     }
-  }
   return num;
 }
 
@@ -268,10 +287,11 @@ std::list< std::string > vtkMRMLScene::GetNodeClassesList()
   std::list< std::string > classes;
 
   vtkMRMLNode *node;
-  for (int n=0; n < this->CurrentScene->GetNumberOfItems(); n++) {
+  for (int n=0; n < this->CurrentScene->GetNumberOfItems(); n++) 
+    {
     node = (vtkMRMLNode*)this->CurrentScene->GetItemAsObject(n);
     classes.push_back(node->GetClassName());
-  }
+    }
   classes.unique();
   return classes;
   
@@ -285,12 +305,14 @@ const char* vtkMRMLScene::GetNodeClasses()
 
   std::list< std::string >::const_iterator iter;
   // Iterate through list and output each element.
-  for (iter = classes.begin(); iter != classes.end(); iter++) {
-    if (!(iter == classes.begin())) {
+  for (iter = classes.begin(); iter != classes.end(); iter++) 
+    {
+    if (!(iter == classes.begin())) 
+      {
       classList += std::string(" ");
-    }
+      }
     classList.append(*iter);
-  }
+    }
   SetClassNameList(classList.c_str());
   return this->ClassNameList;
 }
@@ -302,15 +324,18 @@ vtkMRMLNode *vtkMRMLScene::GetNextNodeByClass(const char *className)
 {
   vtkMRMLNode *node = (vtkMRMLNode*)this->CurrentScene->GetNextItemAsObject();
 
-  while (node != NULL && !node->IsA(className)) {
+  while (node != NULL && !node->IsA(className)) 
+    {
     node = (vtkMRMLNode*)this->CurrentScene->GetNextItemAsObject();
-  }
-  if (node != NULL && node->IsA(className)) {
+    }
+  if (node != NULL && node->IsA(className)) 
+    {
     return node;
-  }
-  else {
+    }
+  else 
+    {
     return NULL;
-  }
+    }
 }
 
 
@@ -318,12 +343,14 @@ vtkMRMLNode *vtkMRMLScene::GetNextNodeByClass(const char *className)
 vtkMRMLNode* vtkMRMLScene::GetNthNode(int n)
 {
 
-  if(n < 0 || n >= this->CurrentScene->GetNumberOfItems()) {
+  if(n < 0 || n >= this->CurrentScene->GetNumberOfItems()) 
+    {
     return NULL;
-  }
-  else {
+    }
+  else 
+    {
     return (vtkMRMLNode*)this->CurrentScene->GetItemAsObject(n);
-  }
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -331,15 +358,18 @@ vtkMRMLNode* vtkMRMLScene::GetNthNodeByClass(int n, const char *className)
 {
   int num=0;
   vtkMRMLNode *node;
-  for (int nn=0; nn < this->CurrentScene->GetNumberOfItems(); nn++) {
+  for (int nn=0; nn < this->CurrentScene->GetNumberOfItems(); nn++) 
+    {
     node = (vtkMRMLNode*)this->CurrentScene->GetItemAsObject(nn);
-    if (node->IsA(className)) {
-      if (num == n) {
+    if (node->IsA(className)) 
+      {
+      if (num == n) 
+        {
         return node;
-      }
+        }
       num++;
+      }
     }
-  }
   return NULL;
 }
 
@@ -350,12 +380,14 @@ vtkCollection* vtkMRMLScene::GetNodesByName(const char* name)
   vtkCollection* nodes = vtkCollection::New();
 
   vtkMRMLNode *node;
-  for (int n=0; n < this->CurrentScene->GetNumberOfItems(); n++) {
+  for (int n=0; n < this->CurrentScene->GetNumberOfItems(); n++) 
+    {
     node = (vtkMRMLNode*)this->CurrentScene->GetItemAsObject(n);
-    if (!strcmp(node->GetName(), name)) {
+    if (!strcmp(node->GetName(), name)) 
+      {
       nodes->AddItem(node);
+      }
     }
-  }
   
   return nodes;
 }
@@ -366,12 +398,14 @@ vtkMRMLNode* vtkMRMLScene::GetNodeByID(const char* id)
 {
 
   vtkMRMLNode *node;
-  for (int n=0; n < this->CurrentScene->GetNumberOfItems(); n++) {
+  for (int n=0; n < this->CurrentScene->GetNumberOfItems(); n++) 
+    {
     node = (vtkMRMLNode*)this->CurrentScene->GetItemAsObject(n);
-    if (node->GetID() && !strcmp(node->GetID(), id)) {
+    if (node->GetID() && !strcmp(node->GetID(), id)) 
+      {
       return node;
+      }
     }
-  }
   
   return NULL;
 }
@@ -380,12 +414,14 @@ vtkMRMLNode* vtkMRMLScene::GetNodeByID(const char* id)
 vtkMRMLNode* vtkMRMLScene::GetNodeByClassByID(const char* className, const char* id)
 {  
   vtkMRMLNode *node;
-  for (int n=0; n < this->CurrentScene->GetNumberOfItems(); n++) {
+  for (int n=0; n < this->CurrentScene->GetNumberOfItems(); n++) 
+    {
     node = (vtkMRMLNode*)this->CurrentScene->GetItemAsObject(n);
-    if (node->GetID() && !strcmp(node->GetID(), id) && node->IsA(className)) {
+    if (node->GetID() && !strcmp(node->GetID(), id) && node->IsA(className)) 
+      {
       return node;
+      }
     }
-  }
 
   return NULL;
 }
@@ -396,12 +432,14 @@ vtkCollection* vtkMRMLScene::GetNodesByClassByName(const char* className, const 
   vtkCollection* nodes = vtkCollection::New();
   
   vtkMRMLNode *node;
-  for (int n=0; n < this->CurrentScene->GetNumberOfItems(); n++) {
+  for (int n=0; n < this->CurrentScene->GetNumberOfItems(); n++) 
+    {
     node = (vtkMRMLNode*)this->CurrentScene->GetItemAsObject(n);
-    if (!strcmp(node->GetName(), name) && node->IsA(className)) {
+    if (!strcmp(node->GetName(), name) && node->IsA(className)) 
+      {
       nodes->AddItem(node);
+      }
     }
-  }
 
   return nodes;
 }
@@ -436,44 +474,51 @@ void vtkMRMLScene::PrintSelf(ostream& os, vtkIndent indent)
 
   std::list< std::string >::const_iterator iter;
   // Iterate through list and output each element.
-  for (iter = classes.begin(); iter != classes.end(); iter++) {
+  for (iter = classes.begin(); iter != classes.end(); iter++) 
+    {
     std::string className = (*iter);
     os << indent << "Number Of Nodes for class " << className.c_str() << " : " << this->GetNumberOfNodesByClass(className.c_str()) << "\n";
-  }
+    }
 }
 
 //------------------------------------------------------------------------------
 const char* vtkMRMLScene::GetUniqueIDByClass(const char* className)
 {
   std::string sname(className);
-  if (UniqueIDByClass.find(sname) == UniqueIDByClass.end() ) {
+  if (UniqueIDByClass.find(sname) == UniqueIDByClass.end() ) 
+    {
     UniqueIDByClass[className] = 1;
-  }
+    }
   int id = UniqueIDByClass[sname];
 
   std::string name;
 
-  while (true) {
+  while (true) 
+    {
     std::stringstream ss;
     ss << className;
     ss << id;
     name = ss.str();
     bool nameExists = false;
     unsigned int i;
-    for (i=0; i< UniqueIDs.size(); i++) {
-      if (UniqueIDs[i] == name) {
+    for (i=0; i< UniqueIDs.size(); i++) 
+      {
+      if (UniqueIDs[i] == name) 
+        {
         nameExists = true;
         break;
+        }
       }
-    }
-    if (nameExists) {
+    if (nameExists) 
+      {
       id++;
       continue;
-    }
-    else {
+      }
+    else 
+      {
       break;
+      }
     }
-  }
   UniqueIDByClass[className] = id + 1;
   UniqueIDs.push_back(name);
   return UniqueIDs[UniqueIDs.size()-1].c_str();
@@ -499,10 +544,11 @@ void vtkMRMLScene::SaveStateForUndo (std::vector<vtkMRMLNode *> nodes)
   this->SetUndoOn();
   this->PushIntoUndoStack();
   unsigned int n;
-  for (n=0; n<nodes.size(); n++) {
+  for (n=0; n<nodes.size(); n++) 
+    {
     vtkMRMLNode *node = nodes[n];
     this->CopyNodeInUndoStack(node);
-  }
+    }
 } 
 
 //------------------------------------------------------------------------------
@@ -514,12 +560,14 @@ void vtkMRMLScene::SaveStateForUndo (vtkCollection* nodes)
 
   int nnodes = nodes->GetNumberOfItems();
   
-  for (int n=0; n<nnodes; n++) {
+  for (int n=0; n<nnodes; n++) 
+    {
     vtkMRMLNode *node  = dynamic_cast < vtkMRMLNode *>(nodes->GetItemAsObject(n));
-    if (node) {
+    if (node) 
+      {
       this->CopyNodeInUndoStack(node);
+      }
     }
-  }
 } 
 
 //------------------------------------------------------------------------------
@@ -534,9 +582,10 @@ void vtkMRMLScene::SaveStateForUndo ()
 // Make a new collection that has pointers to all the nodes in the current scene
 void vtkMRMLScene::PushIntoUndoStack()
 {
-  if (this->CurrentScene == NULL) {
+  if (this->CurrentScene == NULL) 
+    {
     return;
-  }
+    }
 
   vtkCollection* newScene = vtkCollection::New();
 
@@ -544,12 +593,14 @@ void vtkMRMLScene::PushIntoUndoStack()
   
   int nnodes = currentScene->GetNumberOfItems();
 
-  for (int n=0; n<nnodes; n++) {
+  for (int n=0; n<nnodes; n++) 
+    {
     vtkMRMLNode *node  = dynamic_cast < vtkMRMLNode *>(currentScene->GetItemAsObject(n));
-    if (node) {
+    if (node) 
+      {
       newScene->AddItem(node);
+      }
     }
-  }
 
   //TODO check max stack size
   this->UndoStack.push_back(newScene);
@@ -559,9 +610,10 @@ void vtkMRMLScene::PushIntoUndoStack()
 // Make a new collection that has pointers to the current scene nodes
 void vtkMRMLScene::PushIntoRedoStack()
 {
-  if (this->CurrentScene == NULL) {
+  if (this->CurrentScene == NULL) 
+    {
     return;
-  }
+    }
 
   vtkCollection* newScene = vtkCollection::New();
 
@@ -569,12 +621,14 @@ void vtkMRMLScene::PushIntoRedoStack()
   
   int nnodes = currentScene->GetNumberOfItems();
 
-  for (int n=0; n<nnodes; n++) {
+  for (int n=0; n<nnodes; n++) 
+    {
     vtkMRMLNode *node  = dynamic_cast < vtkMRMLNode *>(currentScene->GetItemAsObject(n));
-    if (node) {
+    if (node) 
+      {
       newScene->AddItem(node);
+      }
     }
-  }
 
   //TODO check max stack size
   this->RedoStack.push_back(newScene);
@@ -586,17 +640,20 @@ void vtkMRMLScene::PushIntoRedoStack()
 void vtkMRMLScene::CopyNodeInUndoStack(vtkMRMLNode *copyNode)
 {
   vtkMRMLNode *snode = copyNode->CreateNodeInstance();
-  if (snode != NULL) {
+  if (snode != NULL) 
+    {
     snode->Copy(copyNode);
-  }
+    }
   vtkCollection* undoScene = dynamic_cast < vtkCollection *>( this->UndoStack.back() );
   int nnodes = undoScene->GetNumberOfItems();
-  for (int n=0; n<nnodes; n++) {
+  for (int n=0; n<nnodes; n++) 
+    {
     vtkMRMLNode *node  = dynamic_cast < vtkMRMLNode *>(undoScene->GetItemAsObject(n));
-    if (node == copyNode) {
+    if (node == copyNode) 
+      {
       undoScene->ReplaceItem (n, snode);
+      }
     }
-  }
 }
 
 //------------------------------------------------------------------------------
@@ -605,17 +662,20 @@ void vtkMRMLScene::CopyNodeInUndoStack(vtkMRMLNode *copyNode)
 void vtkMRMLScene::CopyNodeInRedoStack(vtkMRMLNode *copyNode)
 {
   vtkMRMLNode *snode = copyNode->CreateNodeInstance();
-  if (snode != NULL) {
+  if (snode != NULL) 
+    {
     snode->Copy(copyNode);
-  }
+    }
   vtkCollection* undoScene = dynamic_cast < vtkCollection *>( this->RedoStack.back() );
   int nnodes = undoScene->GetNumberOfItems();
-  for (int n=0; n<nnodes; n++) {
+  for (int n=0; n<nnodes; n++) 
+    {
     vtkMRMLNode *node  = dynamic_cast < vtkMRMLNode *>(undoScene->GetItemAsObject(n));
-    if (node == copyNode) {
+    if (node == copyNode) 
+      {
       undoScene->ReplaceItem (n, snode);
+      }
     }
-  }
 }
 
 //------------------------------------------------------------------------------
@@ -623,9 +683,10 @@ void vtkMRMLScene::CopyNodeInRedoStack(vtkMRMLNode *copyNode)
 // -- move the current scene on the redo stack
 void vtkMRMLScene::Undo()
 {
-  if (this->UndoStack.size() == 0) {
+  if (this->UndoStack.size() == 0) 
+    {
     return;
-  }
+    }
 
   int nnodes;
   int n;
@@ -637,23 +698,27 @@ void vtkMRMLScene::Undo()
   //std::hash_map<std::string, vtkMRMLNode*> currentMap;
   std::map<std::string, vtkMRMLNode*> currentMap;
   nnodes = currentScene->GetNumberOfItems();
-  for (n=0; n<nnodes; n++) {
+  for (n=0; n<nnodes; n++) 
+    {
     vtkMRMLNode *node  = dynamic_cast < vtkMRMLNode *>(currentScene->GetItemAsObject(n));
-    if (node) {
+    if (node) 
+      {
       currentMap[node->GetID()] = node;
+      }
     }
-  }
 
   vtkCollection* undoScene = dynamic_cast < vtkCollection *>( this->UndoStack.back() );;
   //std::hash_map<std::string, vtkMRMLNode*> undoMap;
   std::map<std::string, vtkMRMLNode*> undoMap;
   nnodes = undoScene->GetNumberOfItems();
-  for (n=0; n<nnodes; n++) {
+  for (n=0; n<nnodes; n++) 
+    {
     vtkMRMLNode *node  = dynamic_cast < vtkMRMLNode *>(undoScene->GetItemAsObject(n));
-    if (node) {
+    if (node) 
+      {
       undoMap[node->GetID()] = node;
+      }
     }
-  }
 
   //std::hash_map<std::string, vtkMRMLNode*>::iterator iter;
   //std::hash_map<std::string, vtkMRMLNode*>::iterator curIter;
@@ -663,35 +728,42 @@ void vtkMRMLScene::Undo()
   // copy back changes and add deleted nodes to the current scene
   std::vector<vtkMRMLNode*> addNodes;
 
-  for(iter=undoMap.begin(); iter != undoMap.end(); iter++) {
+  for(iter=undoMap.begin(); iter != undoMap.end(); iter++) 
+    {
     curIter = currentMap.find(iter->first);
-    if ( curIter == currentMap.end() ) {
+    if ( curIter == currentMap.end() ) 
+      {
       // the node was deleted, add Node back to the curreent scene
       addNodes.push_back(iter->second);
-    }
-    else if (iter->second != curIter->second) {
+      }
+    else if (iter->second != curIter->second) 
+      {
       // nodes differ, copy from undo to current scene
       // but before create a copy in redo stack from current
       this->CopyNodeInRedoStack(curIter->second);
       curIter->second->Copy(iter->second);
+      }
     }
-  }
   
   // remove new nodes created before Undo
   std::vector<vtkMRMLNode*> removeNodes;
-  for(curIter=currentMap.begin(); curIter != currentMap.end(); curIter++) {
+  for(curIter=currentMap.begin(); curIter != currentMap.end(); curIter++) 
+    {
     iter = undoMap.find(curIter->first);
-    if ( iter == undoMap.end() ) {
+    if ( iter == undoMap.end() ) 
+      {
       removeNodes.push_back(curIter->second);
+      }
     }
-  }
 
-  for (nn=0; nn<addNodes.size(); nn++) {
+  for (nn=0; nn<addNodes.size(); nn++) 
+    {
     this->AddNode(addNodes[nn]);
-  }
-  for (nn=0; nn<removeNodes.size(); nn++) {
+    }
+  for (nn=0; nn<removeNodes.size(); nn++) 
+    {
     this->RemoveNode(removeNodes[nn]);
-  }
+    }
 
   undoScene->RemoveAllItems();
   undoScene->Delete();
@@ -703,9 +775,10 @@ void vtkMRMLScene::Undo()
 
 void vtkMRMLScene::Redo()
 {
-  if (this->RedoStack.size() == 0) {
+  if (this->RedoStack.size() == 0) 
+    {
     return;
-  }
+    }
 
   int nnodes;
   int n;
@@ -717,23 +790,27 @@ void vtkMRMLScene::Redo()
   //std::hash_map<std::string, vtkMRMLNode*> currentMap;
   std::map<std::string, vtkMRMLNode*> currentMap;
   nnodes = currentScene->GetNumberOfItems();
-  for (n=0; n<nnodes; n++) {
+  for (n=0; n<nnodes; n++) 
+    {
     vtkMRMLNode *node  = dynamic_cast < vtkMRMLNode *>(currentScene->GetItemAsObject(n));
-    if (node) {
+    if (node) 
+      {
       currentMap[node->GetID()] = node;
+      }
     }
-  }
 
   vtkCollection* undoScene = dynamic_cast < vtkCollection *>( this->RedoStack.back() );;
   //std::hash_map<std::string, vtkMRMLNode*> undoMap;
   std::map<std::string, vtkMRMLNode*> undoMap;
   nnodes = undoScene->GetNumberOfItems();
-  for (n=0; n<nnodes; n++) {
+  for (n=0; n<nnodes; n++) 
+    {
     vtkMRMLNode *node  = dynamic_cast < vtkMRMLNode *>(undoScene->GetItemAsObject(n));
-    if (node) {
+    if (node) 
+      {
       undoMap[node->GetID()] = node;
+      }
     }
-  }
 
   //std::hash_map<std::string, vtkMRMLNode*>::iterator iter;
   //std::hash_map<std::string, vtkMRMLNode*>::iterator curIter;
@@ -743,35 +820,42 @@ void vtkMRMLScene::Redo()
   // copy back changes and add deleted nodes to the current scene
   std::vector<vtkMRMLNode*> addNodes;
 
-  for(iter=undoMap.begin(); iter != undoMap.end(); iter++) {
+  for(iter=undoMap.begin(); iter != undoMap.end(); iter++) 
+    {
     curIter = currentMap.find(iter->first);
-    if ( curIter == currentMap.end() ) {
+    if ( curIter == currentMap.end() ) 
+      {
       // the node was deleted, add Node back to the curreent scene
       addNodes.push_back(iter->second);
-    }
-    else if (iter->second != curIter->second) {
+      }
+    else if (iter->second != curIter->second) 
+      {
       // nodes differ, copy from redo to current scene
       // but before create a copy in undo stack from current
       this->CopyNodeInUndoStack(curIter->second);
       curIter->second->Copy(iter->second);
+      }
     }
-  }
   
   // remove new nodes created before Undo
   std::vector<vtkMRMLNode*> removeNodes;
-  for(curIter=currentMap.begin(); curIter != currentMap.end(); curIter++) {
+  for(curIter=currentMap.begin(); curIter != currentMap.end(); curIter++) 
+    {
     iter = undoMap.find(curIter->first);
-    if ( iter == undoMap.end() ) {
+    if ( iter == undoMap.end() ) 
+      {
       removeNodes.push_back(curIter->second);
+      }
     }
-  }
 
-  for (nn=0; nn<addNodes.size(); nn++) {
+  for (nn=0; nn<addNodes.size(); nn++) 
+    {
     this->AddNode(addNodes[nn]);
-  }
-  for (nn=0; nn<removeNodes.size(); nn++) {
+    }
+  for (nn=0; nn<removeNodes.size(); nn++) 
+    {
     this->RemoveNode(removeNodes[nn]);
-  }
+    }
 
   undoScene->RemoveAllItems();
   undoScene->Delete();
@@ -784,18 +868,20 @@ void vtkMRMLScene::Redo()
 void vtkMRMLScene::ClearUndoStack()
 {
   std::list< vtkCollection* >::iterator iter;
-  for(iter=this->UndoStack.begin(); iter != this->UndoStack.end(); iter++) {
+  for(iter=this->UndoStack.begin(); iter != this->UndoStack.end(); iter++) 
+    {
     (*iter)->RemoveAllItems();
-  }
+    }
   this->UndoStack.clear();
 }
 
 void vtkMRMLScene::ClearRedoStack()
 {
   std::list< vtkCollection* >::iterator iter;
-  for(iter=this->RedoStack.begin(); iter != this->RedoStack.end(); iter++) {
+  for(iter=this->RedoStack.begin(); iter != this->RedoStack.end(); iter++) 
+    {
     (*iter)->RemoveAllItems();
-  }
+    }
   this->RedoStack.clear();
 }
 

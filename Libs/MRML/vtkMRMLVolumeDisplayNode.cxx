@@ -33,7 +33,7 @@ vtkMRMLVolumeDisplayNode* vtkMRMLVolumeDisplayNode::New()
   vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLVolumeDisplayNode");
   if(ret)
     {
-      return (vtkMRMLVolumeDisplayNode*)ret;
+    return (vtkMRMLVolumeDisplayNode*)ret;
     }
   // If the factory was unable to create the object, then create it here.
   return new vtkMRMLVolumeDisplayNode;
@@ -47,7 +47,7 @@ vtkMRMLNode* vtkMRMLVolumeDisplayNode::CreateNodeInstance()
   vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLVolumeDisplayNode");
   if(ret)
     {
-      return (vtkMRMLVolumeDisplayNode*)ret;
+    return (vtkMRMLVolumeDisplayNode*)ret;
     }
   // If the factory was unable to create the object, then create it here.
   return new vtkMRMLVolumeDisplayNode;
@@ -73,61 +73,62 @@ vtkMRMLVolumeDisplayNode::~vtkMRMLVolumeDisplayNode()
 {
   if (this->LUTName)
     {
-      delete [] this->LUTName;
-      this->LUTName = NULL;
+    delete [] this->LUTName;
+    this->LUTName = NULL;
     }
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeDisplayNode::WriteXML(ostream& of, int nIndent)
 {
-Superclass::WriteXML(of, nIndent);
+  Superclass::WriteXML(of, nIndent);
 
   vtkIndent indent(nIndent);
 
-  if (this->LUTName != NULL) {
+  if (this->LUTName != NULL) 
+    {
     of << indent << "LUTName='" << this->LUTName << "' ";
-  }
+    }
 
   {
-    std::stringstream ss;
-    ss << this->Window;
-    of << indent << "Window='" << ss.str() << "' ";
+  std::stringstream ss;
+  ss << this->Window;
+  of << indent << "Window='" << ss.str() << "' ";
   }
   {
-    std::stringstream ss;
-    ss << this->Level;
-    of << indent << "Level='" << ss.str() << "' ";
+  std::stringstream ss;
+  ss << this->Level;
+  of << indent << "Level='" << ss.str() << "' ";
   }
   {
-    std::stringstream ss;
-    ss << this->UpperThreshold;
-    of << indent << "UpperThreshold='" << ss.str() << "' ";
+  std::stringstream ss;
+  ss << this->UpperThreshold;
+  of << indent << "UpperThreshold='" << ss.str() << "' ";
   }
   {    
-    std::stringstream ss;
-    ss << this->LowerThreshold;
-    of << indent << "LowerThreshold='" << ss.str() << "' ";
+  std::stringstream ss;
+  ss << this->LowerThreshold;
+  of << indent << "LowerThreshold='" << ss.str() << "' ";
   }
   {   
-    std::stringstream ss;
-    ss << this->Interpolate;
-    of << indent << "Interpolate='" << ss.str() << "' ";
+  std::stringstream ss;
+  ss << this->Interpolate;
+  of << indent << "Interpolate='" << ss.str() << "' ";
   }
   {
-    std::stringstream ss;
-    ss << this->AutoWindowLevel;
-    of << indent << "AutoWindowLevel='" << ss.str() << "' ";
+  std::stringstream ss;
+  ss << this->AutoWindowLevel;
+  of << indent << "AutoWindowLevel='" << ss.str() << "' ";
   }
   {
-    std::stringstream ss;
-    ss << this->ApplyThreshold;
-    of << indent << "ApplyThreshold='" << ss.str() << "' ";
+  std::stringstream ss;
+  ss << this->ApplyThreshold;
+  of << indent << "ApplyThreshold='" << ss.str() << "' ";
   }
   {
-    std::stringstream ss;
-    ss << this->AutoThreshold;
-    of << indent << "AutoThreshold='" << ss.str() << "' ";
+  std::stringstream ss;
+  ss << this->AutoThreshold;
+  of << indent << "AutoThreshold='" << ss.str() << "' ";
   }
 
 }
@@ -140,50 +141,59 @@ void vtkMRMLVolumeDisplayNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL) {
+  while (*atts != NULL) 
+    {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "Window")) {
+    if (!strcmp(attName, "Window")) 
+      {
       std::stringstream ss;
       ss << attValue;
       ss >> this->Window;
-    }
-    else if (!strcmp(attName, "Level")) {
+      }
+    else if (!strcmp(attName, "Level")) 
+      {
       std::stringstream ss;
       ss << attValue;
       ss >> this->Level;
-    }
-    else if (!strcmp(attName, "UpperThreshold")) {
+      }
+    else if (!strcmp(attName, "UpperThreshold")) 
+      {
       std::stringstream ss;
       ss << attValue;
       ss >> this->UpperThreshold;
-    }
-    else if (!strcmp(attName, "LowerThreshold")) {
+      }
+    else if (!strcmp(attName, "LowerThreshold")) 
+      {
       std::stringstream ss;
       ss << attValue;
       ss >> this->LowerThreshold;
-    }
-    else if (!strcmp(attName, "Interpolate")) {
+      }
+    else if (!strcmp(attName, "Interpolate")) 
+      {
       std::stringstream ss;
       ss << attValue;
       ss >> this->Interpolate;
-    }
-    else if (!strcmp(attName, "AutoWindowLevel")) {
+      }
+    else if (!strcmp(attName, "AutoWindowLevel")) 
+      {
       std::stringstream ss;
       ss << attValue;
       ss >> this->AutoWindowLevel;
-    }
-    else if (!strcmp(attName, "ApplyThreshold")) {
+      }
+    else if (!strcmp(attName, "ApplyThreshold")) 
+      {
       std::stringstream ss;
       ss << attValue;
       ss >> this->ApplyThreshold;
-    }
-    else if (!strcmp(attName, "AutoThreshold")) {
+      }
+    else if (!strcmp(attName, "AutoThreshold")) 
+      {
       std::stringstream ss;
       ss << attValue;
       ss >> this->AutoThreshold;
-    }
-  }  
+      }
+    }  
 }
 
 //----------------------------------------------------------------------------

@@ -41,7 +41,7 @@ vtkMRMLModelStorageNode* vtkMRMLModelStorageNode::New()
   vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLModelStorageNode");
   if(ret)
     {
-      return (vtkMRMLModelStorageNode*)ret;
+    return (vtkMRMLModelStorageNode*)ret;
     }
   // If the factory was unable to create the object, then create it here.
   return new vtkMRMLModelStorageNode;
@@ -55,7 +55,7 @@ vtkMRMLNode* vtkMRMLModelStorageNode::CreateNodeInstance()
   vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLModelStorageNode");
   if(ret)
     {
-      return (vtkMRMLModelStorageNode*)ret;
+    return (vtkMRMLModelStorageNode*)ret;
     }
   // If the factory was unable to create the object, then create it here.
   return new vtkMRMLModelStorageNode;
@@ -70,10 +70,11 @@ vtkMRMLModelStorageNode::vtkMRMLModelStorageNode()
 //----------------------------------------------------------------------------
 vtkMRMLModelStorageNode::~vtkMRMLModelStorageNode()
 {
-  if (this->FileName) {
+  if (this->FileName) 
+    {
     delete [] this->FileName;
     this->FileName = NULL;
-  }
+    }
 }
 
 void vtkMRMLModelStorageNode::WriteXML(ostream& of, int nIndent)
@@ -90,13 +91,15 @@ void vtkMRMLModelStorageNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL) {
+  while (*atts != NULL) 
+    {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "FileName")) {
+    if (!strcmp(attName, "FileName")) 
+      {
       this->SetFileName(attValue);
+      }
     }
-  }
 }
 
 //----------------------------------------------------------------------------
@@ -129,65 +132,75 @@ void vtkMRMLModelStorageNode::ProcessParentNode(vtkMRMLNode *parentNode)
 //----------------------------------------------------------------------------
 void vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
 {
-  if (!refNode->IsA("vtkMRMLModelNode") ) {
+  if (!refNode->IsA("vtkMRMLModelNode") ) 
+    {
     vtkErrorMacro("Reference node is not a vtkMRMLModelNode");
     return;
-  }
+    }
 
   vtkMRMLModelNode *modelNode = dynamic_cast <vtkMRMLModelNode *> (refNode);
 
-  if (modelNode->GetPolyData()) {
+  if (modelNode->GetPolyData()) 
+    {
     modelNode->GetPolyData()->Delete();
     modelNode->SetPolyData (NULL);
-  }
+    }
 
   std::string fullName;
-  if (this->SceneRootDir != NULL) {
+  if (this->SceneRootDir != NULL) 
+    {
     fullName = std::string(this->SceneRootDir) + std::string(this->GetFileName());
-  }
-  else {
+    }
+  else 
+    {
     fullName = std::string(this->GetFileName());
-  }
+    }
 
-  if (fullName == std::string("")) {
+  if (fullName == std::string("")) 
+    {
     vtkErrorMacro("vtkMRMLModelNode: File name not specified");
-  }
+    }
 
   // compute file prefix
   std::string name(fullName);
   std::string::size_type loc = name.find(".");
-  if( loc == std::string::npos ) {
+  if( loc == std::string::npos ) 
+    {
     vtkErrorMacro("vtkMRMLModelNode: no file extention specified");
-  }
+    }
   std::string extention = name.substr(loc);
   
-  if ( extention == std::string(".g")) {
+  if ( extention == std::string(".g")) 
+    {
     vtkBYUReader *reader = vtkBYUReader::New();
     reader->SetGeometryFileName(fullName.c_str());
     reader->Update();
     modelNode->SetPolyData(reader->GetOutput());
-  }
-  else if (extention == std::string(".vtk")) {
+    }
+  else if (extention == std::string(".vtk")) 
+    {
     vtkPolyDataReader *reader = vtkPolyDataReader::New();
     reader->SetFileName(fullName.c_str());
     reader->Update();
     modelNode->SetPolyData(reader->GetOutput());
-  }  
+    }  
   else if ( extention == std::string(".orig") ||
             extention == std::string(".inflated") || 
-            extention == std::string(".pial") ) {
+            extention == std::string(".pial") ) 
+    {
     //TODO: read in a free surfer file
     //vtkFSSurfaceReader *reader = vtkFSSurfaceReader::New();
     //reader->SetFileName(fullName.c_str());
     //reader->Update();
     //modelNode->SetPolyData(reader->GetOutput());
-  }  
-  else if (extention == std::string(".stl")) {
+    }  
+  else if (extention == std::string(".stl")) 
+    {
     vtkSTLReader *reader = vtkSTLReader::New();
     reader->SetFileName(fullName.c_str());
     modelNode->SetPolyData(reader->GetOutput());
     reader->Update();
-  }
+    }
 }
 
 void vtkMRMLModelStorageNode::WriteData(vtkMRMLNode *refNode)

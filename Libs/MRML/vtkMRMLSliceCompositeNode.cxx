@@ -28,7 +28,7 @@ vtkMRMLSliceCompositeNode* vtkMRMLSliceCompositeNode::New()
   vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLSliceCompositeNode");
   if(ret)
     {
-      return (vtkMRMLSliceCompositeNode*)ret;
+    return (vtkMRMLSliceCompositeNode*)ret;
     }
   // If the factory was unable to create the object, then create it here.
   return new vtkMRMLSliceCompositeNode;
@@ -42,7 +42,7 @@ vtkMRMLNode* vtkMRMLSliceCompositeNode::CreateNodeInstance()
   vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLSliceCompositeNode");
   if(ret)
     {
-      return (vtkMRMLSliceCompositeNode*)ret;
+    return (vtkMRMLSliceCompositeNode*)ret;
     }
   // If the factory was unable to create the object, then create it here.
   return new vtkMRMLSliceCompositeNode;

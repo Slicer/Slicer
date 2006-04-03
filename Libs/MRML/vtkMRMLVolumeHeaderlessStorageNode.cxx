@@ -30,7 +30,7 @@ vtkMRMLVolumeHeaderlessStorageNode* vtkMRMLVolumeHeaderlessStorageNode::New()
   vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLVolumeHeaderlessStorageNode");
   if(ret)
     {
-      return (vtkMRMLVolumeHeaderlessStorageNode*)ret;
+    return (vtkMRMLVolumeHeaderlessStorageNode*)ret;
     }
   // If the factory was unable to create the object, then create it here.
   return new vtkMRMLVolumeHeaderlessStorageNode;
@@ -44,7 +44,7 @@ vtkMRMLNode* vtkMRMLVolumeHeaderlessStorageNode::CreateNodeInstance()
   vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLVolumeHeaderlessStorageNode");
   if(ret)
     {
-      return (vtkMRMLVolumeHeaderlessStorageNode*)ret;
+    return (vtkMRMLVolumeHeaderlessStorageNode*)ret;
     }
   // If the factory was unable to create the object, then create it here.
   return new vtkMRMLVolumeHeaderlessStorageNode;
@@ -74,14 +74,16 @@ vtkMRMLVolumeHeaderlessStorageNode::vtkMRMLVolumeHeaderlessStorageNode()
 //----------------------------------------------------------------------------
 vtkMRMLVolumeHeaderlessStorageNode::~vtkMRMLVolumeHeaderlessStorageNode()
 {
-  if (this->Filename) {
+  if (this->Filename) 
+    {
     delete [] this->Filename;
     this->Filename = NULL;
-  }
-  if (this->FileScanOrder) {
+    }
+  if (this->FileScanOrder) 
+    {
     delete [] this->FileScanOrder;
     this->FileScanOrder = NULL;
-  }
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -121,46 +123,54 @@ void vtkMRMLVolumeHeaderlessStorageNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL) {
+  while (*atts != NULL) 
+    {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "Filename")) {
+    if (!strcmp(attName, "Filename")) 
+      {
       this->SetFilename(attValue);
-    }
-    if (!strcmp(attName, "FileScanOrder")) {
+      }
+    if (!strcmp(attName, "FileScanOrder")) 
+      {
       this->SetFileScanOrder(attValue);
-    }
-    else if (!strcmp(attName, "FileDimensions")) {
+      }
+    else if (!strcmp(attName, "FileDimensions")) 
+      {
       std::stringstream ss;
       ss << attValue;
       ss >> FileDimensions[0];
       ss >> FileDimensions[1];
       ss >> FileDimensions[2];
-    }
-    else if (!strcmp(attName, "FileSpacing")) {
+      }
+    else if (!strcmp(attName, "FileSpacing")) 
+      {
       std::stringstream ss;
       ss << attValue;
       ss >> FileSpacing[0];
       ss >> FileSpacing[1];
       ss >> FileSpacing[2];
-    }
-    else if (!strcmp(attName, "FileNumberOfScalarComponents")) {
+      }
+    else if (!strcmp(attName, "FileNumberOfScalarComponents")) 
+      {
       std::stringstream ss;
       ss << attValue;
       ss >> FileNumberOfScalarComponents;
-    }
-    else if (!strcmp(attName, "FileScalarType")) {
+      }
+    else if (!strcmp(attName, "FileScalarType")) 
+      {
       std::stringstream ss;
       ss << attValue;
       ss >> FileScalarType;
-    }
-    else if (!strcmp(attName, "FileLittleEndian")) {
+      }
+    else if (!strcmp(attName, "FileLittleEndian")) 
+      {
       std::stringstream ss;
       ss << attValue;
       ss >> FileLittleEndian;
-    }
+      }
 
-  }
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -196,15 +206,17 @@ void vtkMRMLVolumeHeaderlessStorageNode::PrintSelf(ostream& os, vtkIndent indent
   os << indent << "FileScalarType:    " << this->FileScalarType << "\n";
   os << indent << "FileNumberOfScalarComponents:  " << this->FileNumberOfScalarComponents << "\n";
   os << "FileSpacing:\n";
-  for (idx = 0; idx < 3; ++idx) {
+  for (idx = 0; idx < 3; ++idx) 
+    {
     os << indent << ", " << this->FileSpacing[idx];
-  }
+    }
   os << ")\n";
   
   os << "FileDimensions:\n";
-  for (idx = 0; idx < 3; ++idx) {
+  for (idx = 0; idx < 3; ++idx) 
+    {
     os << indent << ", " << this->FileDimensions[idx];
-  }
+    }
   os << ")\n";
 
 }
@@ -222,33 +234,39 @@ void vtkMRMLVolumeHeaderlessStorageNode::ReadData(vtkMRMLNode *refNode)
   vtkErrorMacro("NOT IMPLEMENTED YET");
 
   // Test for scalar volume node
-  if (!refNode->IsA("vtkMRMLScalarVolumeNode") ) {
+  if (!refNode->IsA("vtkMRMLScalarVolumeNode") ) 
+    {
     vtkErrorMacro("Reference node is not a vtkMRMLVolumeNode");
     return;
-  }
+    }
 
   vtkMRMLVolumeNode *volNode;
   
-  if ( refNode->IsA("vtkMRMLScalarVolumeNode") ) {
+  if ( refNode->IsA("vtkMRMLScalarVolumeNode") ) 
+    {
     volNode = dynamic_cast <vtkMRMLScalarVolumeNode *> (refNode);
-  }
+    }
 
-  if (volNode->GetImageData()) {
+  if (volNode->GetImageData()) 
+    {
     volNode->GetImageData()->Delete();
     volNode->SetImageData (NULL);
-  }
+    }
 
   std::string fullName;
-  if (this->SceneRootDir != NULL) {
+  if (this->SceneRootDir != NULL) 
+    {
     fullName = std::string(this->SceneRootDir) + std::string(this->GetFilename());
-  }
-  else {
+    }
+  else 
+    {
     fullName = std::string(this->GetFilename());
-  }
+    }
 
-  if (fullName == std::string("")) {
+  if (fullName == std::string("")) 
+    {
     vtkErrorMacro("vtkMRMLVolumeNode: File name not specified");
-  }
+    }
   //volNode->SetImageData (reader->GetOutput());
 
   //volNode->SetIjkToRasMatrix(mat);
@@ -261,30 +279,37 @@ void vtkMRMLVolumeHeaderlessStorageNode::WriteData(vtkMRMLNode *refNode)
   vtkErrorMacro("NOT IMPLEMENTED YET");
 
   // test for scalar volume node
-  if (!refNode->IsA("vtkMRMLScalarVolumeNode") ) {
+  if (!refNode->IsA("vtkMRMLScalarVolumeNode") ) 
+    {
     vtkErrorMacro("Reference node is not a vtkMRMLVolumeNode");
     return;
-  }
+    }
   
   vtkMRMLVolumeNode *volNode;
   
-  if ( refNode->IsA("vtkMRMLScalarVolumeNode") ) {
+  if ( refNode->IsA("vtkMRMLScalarVolumeNode") ) 
+    {
     volNode = dynamic_cast <vtkMRMLScalarVolumeNode *> (refNode);
-  }
+    }
 
-  if (volNode->GetImageData() == NULL) {
+  if (volNode->GetImageData() == NULL) 
+    {
     vtkErrorMacro("cannot write ImageData, it's NULL");
-  }
+    }
   
   std::string fullName;
-  if (this->SceneRootDir != NULL) {
+  if (this->SceneRootDir != NULL) 
+    {
     fullName = std::string(this->SceneRootDir) + std::string(this->GetFilename());
-  }
-  else {
+    }
+  else 
+    {
     fullName = std::string(this->GetFilename());
-  }
+    }
   
-  if (fullName == std::string("")) {
+  if (fullName == std::string("")) 
+    {
     vtkErrorMacro("vtkMRMLVolumeNode: File name not specified");
-  }
+    }
 }
+
