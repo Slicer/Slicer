@@ -28,14 +28,21 @@ $app SetHelpDialogStartingPage "http://www.kwwidgets.org"
 # Add a window
 # Set 'SupportHelp' to automatically add a menu entry for the help link
 
-set win [vtkKWWindowBase New]
+set win [vtkKWWindow New]
 $win SupportHelpOn
 $app AddWindow $win
 $win Create
 
+
 #################################3
 # create the mrml scene
 set ::scene [vtkMRMLScene New]
+
+set index [[$win GetEditMenu] AddCommand "&Undo" "" "$::scene Undo; mrmlUpdateUndoRedoButtons"]
+[$win GetEditMenu] SetItemAccelerator $index "Ctrl+Z"
+set index [[$win GetEditMenu] AddCommand "&Redo" "" "$::scene Redo; mrmlUpdateUndoRedoButtons"]
+[$win GetEditMenu] SetItemAccelerator $index "Ctrl+Y"
+
 
 # for use when cutting and pasting into the console:
 # set scenefile c:/pieper/bwh/slicer3/latest/Slicer3/Applications/GUI/Testing/mrmlScene.xml
