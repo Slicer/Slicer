@@ -14,29 +14,58 @@
 #ifndef __vtkGradientAnisotropicDiffusionFilterModule_h
 #define __vtkGradientAnisotropicDiffusionFilterModule_h
 
-#include "vtkModule.h"
+#include "vtkSlicerBaseGUIWin32Header.h"
+#include "vtkSlicerComponentGUI.h"
+#include "vtkSlicerSliceLogic.h"
+#include "vtkSlicerSliceWidgetCollection.h"
+#include "vtkMRMLScene.h"
 
 #include "vtkGradientAnisotropicDiffusionFilter.h"
+//#include "vtkITKGradientAnisotropicDiffusionImageFilter.h"
+#include "vtkMRMLGradientAnisotropicDiffusionFilterNode.h"
 
-class VTK_GRADIENTANISOTROPICDIFFUSIONFILTER_EXPORT vtkGradientAnisotropicDiffusionFilterModule : public vtkModule
+class vtkSlicerSliceWidget;
+class vtkKWFrame;
+class vtkKWPushButton;
+class vtkSlicerVolumeSelectGUI;
+
+class VTK_GRADIENTANISOTROPICDIFFUSIONFILTER_EXPORT vtkGradientAnisotropicDiffusionFilterModule : public vtkSlicerComponentGUI
 {
   public:
   static vtkGradientAnisotropicDiffusionFilterModule *New();
-  vtkTypeMacro(vtkGradientAnisotropicDiffusionFilterModule,vtkModule);
+  vtkTypeMacro(vtkGradientAnisotropicDiffusionFilterModule,vtkSlicerComponentGUI);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  virtual void BuildGUI(vtkKWFrame* frame);
-
-
-  //virtual void ProcessMRMLSceneModified(vtkMRMLScene *scene);
+  virtual void BuildGUI ( );
+  virtual void AddGUIObservers ( );
+  virtual void RemoveGUIObservers ( ){};
+  virtual void AddLogicObservers ( ){};
+  virtual void RemoveLogicObservers ( ){};
+  virtual void AddMrmlObservers ( );
+  virtual void RemoveMrmlObservers ( ){};
   
+  virtual void ProcessLogicEvents ( vtkObject *caller, unsigned long event,
+                                  void *callData ){};
+  virtual void ProcessGUIEvents ( vtkObject *caller, unsigned long event,
+                                  void *callData );
+  virtual void ProcessMrmlEvents ( vtkObject *caller, unsigned long event,
+                                   void *callData );
+
+  vtkGetObjectMacro (GradientAnisotropicDiffusionFilterNode, vtkMRMLGradientAnisotropicDiffusionFilterNode);
+  vtkSetObjectMacro (GradientAnisotropicDiffusionFilterNode, vtkMRMLGradientAnisotropicDiffusionFilterNode);
+
 protected:
   vtkGradientAnisotropicDiffusionFilterModule();
   ~vtkGradientAnisotropicDiffusionFilterModule();
   vtkGradientAnisotropicDiffusionFilterModule(const vtkGradientAnisotropicDiffusionFilterModule&);
   void operator=(const vtkGradientAnisotropicDiffusionFilterModule&);
 
-  vtkCallbackCommand *GUICallbackCommand;
+  vtkMRMLGradientAnisotropicDiffusionFilterNode* GradientAnisotropicDiffusionFilterNode;
+  vtkKWScaleWithEntry* ConductanceScale;
+  vtkKWScaleWithEntry* TimeStepScale;
+  vtkKWScaleWithEntry* NumberOfIterationsScale;
+  vtkSlicerVolumeSelectGUI* VolumeSelector;
+  vtkKWPushButton* ApplyButton;
 
 };
 

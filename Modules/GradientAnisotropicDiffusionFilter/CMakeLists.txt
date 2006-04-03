@@ -39,12 +39,21 @@ INCLUDE_DIRECTORIES(
   ${SlicerBaseLogic_BINARY_DIR}
   ${SlicerBaseGUI_SOURCE_DIR}
   ${SlicerBaseGUI_BINARY_DIR}
+  ${vtkITK_SOURCE_DIR}
+  ${vtkITK_BINARY_DIR}
+  ${ITK_INCLUDE_DIR}
+  ${VTK_INCLUDE_DIR}
   ${MRML_SOURCE_DIR}
   ${MRML_BINARY_DIR}
-  ${VTK_INCLUDE_DIR}
   )
 
 
+# --------------------------------------------------------------------------
+# Wrapping
+
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
+INCLUDE("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
+VTK_WRAP_TCL3(GradientAnisotropicDiffusionFilter GradientAnisotropicDiffusionFilter_TCL_SRCS "${GradientAnisotropicDiffusionFilter_SRCS}" "")
 
 
 # --------------------------------------------------------------------------
@@ -52,6 +61,7 @@ INCLUDE_DIRECTORIES(
 
 ADD_LIBRARY(GradientAnisotropicDiffusionFilter
   ${GradientAnisotropicDiffusionFilter_SRCS}
+  ${GradientAnisotropicDiffusionFilter_TCL_SRCS}
   )
 
 TARGET_LINK_LIBRARIES(GradientAnisotropicDiffusionFilter
@@ -60,8 +70,19 @@ TARGET_LINK_LIBRARIES(GradientAnisotropicDiffusionFilter
   SlicerBaseGUI 
   MRML
   vtkITK
-  ITKCommon 
+  vtkCommonTCL
+  vtkImagingTCL
+  vtkFilteringTCL
+  vtkIOTCL
+  ITKAlgorithms
+  ITKNumerics 
+  ITKCommon
+  ITKBasicFilters
+  ITKNumerics
+  ITKStatistics
+  ITKBasicFilters
   ITKIO
+  ITKDICOMParser
   ${KWWidgets_LIBRARIES} )
 
 
