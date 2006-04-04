@@ -20,11 +20,13 @@ Version:   $Revision: 1.6 $
 #include "vtkMRMLVolumeArchetypeStorageNode.h"
 #include "vtkMRMLVolumeNode.h"
 #include "vtkMRMLScalarVolumeNode.h"
+#include "vtkMRMLVectorVolumeNode.h"
 
 #include "vtkMatrix4x4.h"
 #include "vtkImageData.h"
 #include "vtkITKArchetypeImageSeriesReader.h"
 #include "vtkITKArchetypeImageSeriesScalarReader.h"
+#include "vtkITKArchetypeImageSeriesVectorReader.h"
 #include "vtkITKImageWriter.h"
 
 //------------------------------------------------------------------------------
@@ -131,7 +133,7 @@ void vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
 {
 
   // test whether refNode is a valid node to hold a volume
-  if ( !refNode->IsA("vtkMRMLScalarVolumeNode") ) 
+  if ( !refNode->IsA("vtkMRMLScalarVolumeNode") || !refNode->IsA("vtkMRMLVolumeVolumeNode")) 
     {
     vtkErrorMacro("Reference node is not a vtkMRMLVolumeNode");
     return;         
@@ -140,11 +142,18 @@ void vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
   
   vtkMRMLVolumeNode *volNode;
 
+  vtkITKArchetypeImageSeriesReader* reader;
+  
   if ( refNode->IsA("vtkMRMLScalarVolumeNode") ) 
     {
     volNode = dynamic_cast <vtkMRMLScalarVolumeNode *> (refNode);
+    reader = vtkITKArchetypeImageSeriesScalarReader::New();  
     }
-
+  else if ( refNode->IsA("vtkMRMLVectorVolumeNode") ) 
+    {
+    volNode = dynamic_cast <vtkMRMLVectorVolumeNode *> (refNode);
+    reader = vtkITKArchetypeImageSeriesVectorReader::New();
+    }
   if (volNode->GetImageData()) 
     {
     volNode->GetImageData()->Delete();
@@ -160,14 +169,13 @@ void vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
     {
     fullName = std::string(this->GetFileArchetype());
     }
-
+  
   if (fullName == std::string("")) 
     {
     vtkErrorMacro("vtkMRMLVolumeNode: File name not specified");
     }
 
   //TODO: handle both scalars and vectors
-  vtkITKArchetypeImageSeriesScalarReader* reader = vtkITKArchetypeImageSeriesScalarReader::New();
 
   reader->SetArchetype(fullName.c_str());
   reader->SetOutputScalarTypeToNative();
