@@ -221,6 +221,7 @@ int  vtkMRMLLinearTransformNode::GetMatrixTransformToNode(vtkMRMLTransformNode* 
       vtkMatrix4x4 *xform = vtkMatrix4x4::New();
       xform->DeepCopy(transformToNode);
       vtkMatrix4x4::Multiply4x4(xform, this->MatrixTransformToParent, transformToNode);
+      xform->Delete();
 
       if (strcmp(parent->GetID(), node->GetID()) ) 
         {
@@ -232,6 +233,7 @@ int  vtkMRMLLinearTransformNode::GetMatrixTransformToNode(vtkMRMLTransformNode* 
       vtkMatrix4x4 *xform = vtkMatrix4x4::New();
       xform->DeepCopy(transformToNode);
       vtkMatrix4x4::Multiply4x4(xform, this->MatrixTransformToParent, transformToNode);
+      xform->Delete();
       }
     }
   else if (this->IsTransformNodeMyChild(node)) 
@@ -244,6 +246,7 @@ int  vtkMRMLLinearTransformNode::GetMatrixTransformToNode(vtkMRMLTransformNode* 
       vtkMatrix4x4 *xform = vtkMatrix4x4::New();
       xform->DeepCopy(transformToNode);
       vtkMatrix4x4::Multiply4x4(xform, lnode->MatrixTransformToParent, transformToNode);
+      xform->Delete();
 
       if (strcmp(parent->GetID(), this->GetID()) ) 
         {
@@ -255,6 +258,7 @@ int  vtkMRMLLinearTransformNode::GetMatrixTransformToNode(vtkMRMLTransformNode* 
       vtkMatrix4x4 *xform = vtkMatrix4x4::New();
       xform->DeepCopy(transformToNode);
       vtkMatrix4x4::Multiply4x4(xform, lnode->MatrixTransformToParent, transformToNode);
+      xform->Delete();
       }
     }
   else 

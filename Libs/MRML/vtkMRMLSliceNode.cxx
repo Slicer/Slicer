@@ -81,6 +81,10 @@ vtkMRMLSliceNode::~vtkMRMLSliceNode()
     {
     this->XYToSlice->Delete();
     }
+  if ( this->XYToRAS != NULL) 
+    {
+    this->XYToRAS->Delete();
+    }
 }
 
 

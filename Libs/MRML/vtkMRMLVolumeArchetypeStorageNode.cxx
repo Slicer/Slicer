@@ -266,5 +266,6 @@ void vtkMRMLVolumeArchetypeStorageNode::WriteData(vtkMRMLNode *refNode)
 
   writer->Write();
 
+  mat->Delete();
   writer->Delete();
 }
