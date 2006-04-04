@@ -36,9 +36,7 @@ vtkSlicerApplication::~vtkSlicerApplication ( ) {
     if ( this->GUICollection ) {
        this->GUICollection->Delete ( );
     }
-    if ( this->SlicerStyle ) {
-        this->SlicerStyle->Delete ( );
-    }
+    this->SlicerStyle(NULL);
 
 }
 

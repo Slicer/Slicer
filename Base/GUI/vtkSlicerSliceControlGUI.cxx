@@ -133,6 +133,16 @@ vtkSlicerSliceControlGUI::~vtkSlicerSliceControlGUI()
     this->OrientationMenu = NULL;
     }
 
+  if (this->MRMLCallbackCommand)
+    {
+    this->MRMLCallbackCommand->Delete();
+    this->MRMLCallbackCommand = NULL;
+    }
+  if (this->WidgetCallbackCommand)
+    {
+    this->WidgetCallbackCommand->Delete();
+    this->WidgetCallbackCommand = NULL;
+    }
 }
 
 //----------------------------------------------------------------------------

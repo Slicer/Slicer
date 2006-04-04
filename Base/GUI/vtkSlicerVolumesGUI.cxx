@@ -34,6 +34,7 @@ vtkSlicerVolumesGUI::~vtkSlicerVolumesGUI ( ) {
 
 //---------------------------------------------------------------------------
 void vtkSlicerVolumesGUI::RemoveGUIObservers ( ) {
+    this->LoadVolumeButton->RemoveObservers ( vtkCommand::ModifiedEvent,  (vtkCommand *)this->GUICommand);    
 }
 
 //---------------------------------------------------------------------------
@@ -161,6 +162,10 @@ void vtkSlicerVolumesGUI::BuildGUI ( vtkKWWidget* f ) {
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   volDisplayFrame->GetWidgetName(), f->GetWidgetName());
 
+
+    volLoadFrame->Delete();
+    volHelpFrame->Delete();
+    volDisplayFrame->Delete();
 }
 
 

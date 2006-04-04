@@ -37,14 +37,9 @@ vtkSlicerApplication::~vtkSlicerApplication ( ) {
        this->GUICollection->Delete ( );
        this->GUICollection = NULL;
     }
-    if ( this->SlicerStyle ) {
-        this->SlicerStyle->Delete ( );
-        this->SlicerStyle = NULL;
-    }
+    this->SetSlicerStyle(NULL);
 
 }
-
-
 
 //---------------------------------------------------------------------------
 void vtkSlicerApplication::AddGUI ( vtkSlicerComponentGUI *gui ) {

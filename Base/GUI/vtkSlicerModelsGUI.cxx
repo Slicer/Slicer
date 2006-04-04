@@ -26,12 +26,14 @@ vtkSlicerModelsGUI::~vtkSlicerModelsGUI ( ) {
         this->LoadModelButton->Delete ( );
         this->LoadModelButton = NULL;
     }
+
     //this->ModelsLogic = NULL;
 }
 
 
 //---------------------------------------------------------------------------
 void vtkSlicerModelsGUI::RemoveGUIObservers ( ) {
+    this->LoadModelButton->RemoveObservers ( vtkCommand::ModifiedEvent,  (vtkCommand *)this->GUICommand);    
 }
 
 //---------------------------------------------------------------------------
@@ -157,6 +159,9 @@ void vtkSlicerModelsGUI::BuildGUI ( vtkKWWidget *f ) {
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   modDisplayFrame->GetWidgetName(), f->GetWidgetName());
 
+    modLoadFrame->Delete ( );
+    modHelpFrame->Delete ( );
+    modDisplayFrame->Delete ( );
 }
 
 

@@ -30,13 +30,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceGUI : public vtkSlicerComponentGU
     vtkGetObjectMacro ( SliceLogic, vtkSlicerSliceLogic);
     vtkSetObjectMacro ( SliceLogic, vtkSlicerSliceLogic);
     vtkGetObjectMacro ( SliceWidgets, vtkSlicerSliceWidgetCollection);
-    vtkSetObjectMacro ( SliceWidgets, vtkSlicerSliceWidgetCollection);
     vtkGetObjectMacro ( MainSlice0, vtkSlicerSliceWidget);
-    vtkSetObjectMacro ( MainSlice0, vtkSlicerSliceWidget);
     vtkGetObjectMacro ( MainSlice1, vtkSlicerSliceWidget);
-    vtkSetObjectMacro ( MainSlice1, vtkSlicerSliceWidget);
     vtkGetObjectMacro ( MainSlice2, vtkSlicerSliceWidget);
-    vtkSetObjectMacro ( MainSlice2, vtkSlicerSliceWidget);
     
     virtual void AddSliceWidget ( vtkSlicerSliceWidget *w );
     vtkSlicerSliceWidget* GetSliceWidget ( int SliceWidgetNum );

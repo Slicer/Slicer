@@ -48,9 +48,8 @@ vtkSlicerComponentGUI::~vtkSlicerComponentGUI ( ) {
         this->MrmlCommand->Delete ( );
         this->MrmlCommand = NULL;
     }
-    this->Logic = NULL;
-    this->Mrml = NULL;
-    this->Parent = NULL;
+    this->SetLogic(NULL);
+    this->SetMrml(NULL);
 }
 
 
@@ -60,15 +59,6 @@ void vtkSlicerComponentGUI::BuildGUI ( ) {
 
     // instance, configure and pack all GUI elements.
 }
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerComponentGUI::SetParent ( vtkKWFrame *frame ) {
-    this->Parent = frame;
-    
-}
-
-
 
 
 //---------------------------------------------------------------------------

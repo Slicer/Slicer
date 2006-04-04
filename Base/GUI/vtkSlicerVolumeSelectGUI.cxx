@@ -69,8 +69,13 @@ vtkSlicerVolumeSelectGUI::~vtkSlicerVolumeSelectGUI()
   if (this->MRMLScene)
     {
     this->MRMLScene->Delete();
+    this->MRMLScene = NULL;
     }
-  this->MRMLScene = NULL;
+  if (this->MRMLCallbackCommand)
+    {
+    this->MRMLCallbackCommand->Delete();
+    this->MRMLCallbackCommand = NULL;
+    }
 }
 
 //----------------------------------------------------------------------------

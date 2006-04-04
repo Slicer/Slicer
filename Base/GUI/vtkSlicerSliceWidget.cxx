@@ -57,7 +57,7 @@ vtkSlicerSliceWidget::~vtkSlicerSliceWidget ( ){
         this->RenderWidget->Delete ( );
         this->RenderWidget = NULL;
     }
-    this->SliceLogic = NULL;
+    this->SetSliceLogic(NULL);
     this->SliceLogicObserverTag = 0;
     
 }

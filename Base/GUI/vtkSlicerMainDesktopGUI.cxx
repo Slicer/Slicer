@@ -71,6 +71,7 @@ vtkSlicerMainDesktopGUI::~vtkSlicerMainDesktopGUI ( ) {
         this->Window->Close ( );
         this->Window->Delete ( );
     }
+    this->SetApplicationLogic(NULL);
 
 }
 

@@ -92,13 +92,14 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  ) {
 //---------------------------------------------------------------------------
 vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( ) {
 
+    this->RemoveGUIObservers ( );
+    this->RemoveMrmlObservers ( );
+    this->RemoveLogicObservers ( );
+
     this->DeleteGUIs ( );
     this->DeleteGUIPanelWidgets ( );
     this->DeleteFrames ( );
 
-    this->RemoveGUIObservers ( );
-    this->RemoveMrmlObservers ( );
-    this->RemoveLogicObservers ( );
     if ( this->MainViewer ) {
         this->MainViewer->Delete ( );
         this->MainViewer = NULL;
@@ -107,7 +108,6 @@ vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( ) {
         this->MainSlicerWin->Delete ( );
         this->MainSlicerWin = NULL;
     }
-    this->Logic = NULL;
 }
 
 
@@ -148,14 +148,43 @@ void vtkSlicerApplicationGUI::AddMrmlObservers ( ) {
 
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::RemoveGUIObservers ( ) {
+  if (this->VolumesGUI)
+    {
+    this->VolumesGUI->RemoveGUIObservers ( );
+    }
+  if ( this->ModelsGUI ) 
+    {
+    this->ModelsGUI->RemoveGUIObservers ( );
+    }
+    this->HomeButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICommand );
+    this->DataButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICommand );
+    this->VolumesButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICommand );
+    this->ModelsButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICommand );
+    this->ModulesButton->RemoveObservers (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICommand );    
 }
 
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::RemoveMrmlObservers ( ) {
+  if ( this->VolumesGUI ) 
+    {
+    this->VolumesGUI->RemoveMrmlObservers ( );
+    }
+  if ( this->ModelsGUI ) 
+    {
+    this->ModelsGUI->RemoveMrmlObservers ( );
+    }
 }
 
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::RemoveLogicObservers ( ) {
+  if ( this->VolumesGUI ) 
+    {
+    this->VolumesGUI->RemoveLogicObservers ( );
+    }
+  if ( this->ModelsGUI ) 
+    {
+    this->ModelsGUI->RemoveLogicObservers ( );
+    }
 }
 
 
@@ -259,16 +288,10 @@ void vtkSlicerApplicationGUI::DisplayMainSlicerWindow ( ) {
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::DeleteGUIs ( ) {
 
-    this->VolumesGUI->RemoveGUIObservers ( );
-    this->VolumesGUI->RemoveLogicObservers ( );
-    this->VolumesGUI->RemoveMrmlObservers ( );
     if ( this->VolumesGUI ) {
         this->VolumesGUI->Delete ();
         this->VolumesGUI = NULL;
     }
-    this->ModelsGUI->RemoveGUIObservers ( );
-    this->ModelsGUI->RemoveLogicObservers ( );
-    this->ModelsGUI->RemoveMrmlObservers ( );
     if ( this->ModelsGUI ) {
         this->ModelsGUI->Delete ( );
         this->ModelsGUI = NULL;

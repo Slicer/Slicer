@@ -28,14 +28,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceWidget : public vtkKWCompositeWid
     vtkGetMacro  ( SliceLogicObserverTag, unsigned long );
     vtkSetMacro  ( SliceLogicObserverTag, unsigned long );
     vtkGetObjectMacro ( OffsetScale, vtkKWScaleWithEntry );
-    vtkSetObjectMacro ( OffsetScale, vtkKWScaleWithEntry );
     vtkGetObjectMacro ( FieldOfViewEntry, vtkKWEntryWithLabel );
-    vtkSetObjectMacro ( FieldOfViewEntry, vtkKWEntryWithLabel );
     vtkGetObjectMacro ( OrientationMenu, vtkKWMenuButtonWithLabel );
     vtkGetObjectMacro ( ImageViewer, vtkImageViewer2 );
-    vtkSetObjectMacro ( ImageViewer, vtkImageViewer2 );
     vtkGetObjectMacro ( RenderWidget, vtkKWRenderWidget );
-    vtkSetObjectMacro ( RenderWidget, vtkKWRenderWidget );
     vtkGetObjectMacro ( SliceLogic, vtkSlicerSliceLogic );
     vtkSetObjectMacro ( SliceLogic, vtkSlicerSliceLogic );
 

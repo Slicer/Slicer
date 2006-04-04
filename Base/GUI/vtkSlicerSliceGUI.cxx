@@ -59,8 +59,7 @@ vtkSlicerSliceGUI::~vtkSlicerSliceGUI ( ) {
         this->MainSlice2->Delete ( );
         this->MainSlice2 = NULL;
     }    
-    this->Logic = NULL;
-    this->SliceLogic = NULL;
+    this->SetSliceLogic(NULL);
 }
 
 
@@ -140,6 +139,19 @@ void vtkSlicerSliceGUI::AddLogicObservers ( ) {
 //---------------------------------------------------------------------------
 void vtkSlicerSliceGUI::RemoveGUIObservers ( ) {
 
+    vtkSlicerSliceWidget *sw = this->GetSliceWidget (0);
+    if (sw)
+      {
+      vtkKWScaleWithEntry *s = sw->GetOffsetScale () ;
+      vtkKWEntryWithLabel *e = sw->GetFieldOfViewEntry ();
+      vtkKWMenuButtonWithLabel *m = sw->GetOrientationMenu ();
+
+      s->RemoveObservers (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICommand );
+      s->RemoveObservers (vtkKWScale::ScaleValueStartChangingEvent, (vtkCommand *)this->GUICommand );
+      e->RemoveObservers (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICommand );
+      m->RemoveObservers (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICommand );
+      }
+
 }
 
 
@@ -151,6 +163,9 @@ void vtkSlicerSliceGUI::RemoveLogicObservers ( ) {
 //---------------------------------------------------------------------------
 void vtkSlicerSliceGUI::RemoveMrmlObservers ( ) {
 
+  if ( this->GetSliceWidget(0)->GetSliceLogic ( ) != NULL ) {
+  this->GetSliceWidget(0)->GetSliceLogic()->RemoveObservers ( vtkCommand::ModifiedEvent, (vtkCommand *)this->MrmlCommand );
+    }
 
 }
 

@@ -34,12 +34,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerComponentGUI : public vtkKWObject
     vtkSetObjectMacro ( Mrml, vtkMRMLScene );
     
     // Description:
-    // Determines where the GUI should be packed.
-    // May be more than one parent being assigned
-    // in a derived class' redef of this method.
-    virtual void SetParent ( vtkKWFrame *frame );
-    
-    // Description:
     // Specifies all widgets for this GUI
     virtual void BuildGUI ( );
 
@@ -86,9 +80,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerComponentGUI : public vtkKWObject
     vtkSlicerLogicUpdate *LogicCommand;
     vtkSlicerMrmlUpdate *MrmlCommand;
 
-    // frame into which this GUI will be packed.
-    vtkKWFrame *Parent;
-    
     // constructor, destructor.
     vtkSlicerComponentGUI ( );
     ~vtkSlicerComponentGUI ( );

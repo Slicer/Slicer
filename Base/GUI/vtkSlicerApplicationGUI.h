@@ -92,37 +92,24 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // Description:
     // These Get/Set methods for frames in the GUI panel.
     vtkGetObjectMacro ( ModuleControlFrame, vtkKWFrame );
-    vtkSetObjectMacro ( ModuleControlFrame, vtkKWFrame );
     vtkGetObjectMacro ( SlicerControlFrame, vtkKWFrame );
-    vtkSetObjectMacro ( SlicerControlFrame, vtkKWFrame );
     vtkGetObjectMacro ( SliceControlFrame, vtkKWFrame );
-    vtkSetObjectMacro ( SliceControlFrame, vtkKWFrame );
     vtkGetObjectMacro ( ViewControlFrame, vtkKWFrame );
-    vtkSetObjectMacro ( ViewControlFrame, vtkKWFrame );
     vtkGetObjectMacro ( ModulesButton, vtkKWMenuButton );
-    vtkSetObjectMacro ( ModulesButton, vtkKWMenuButton );
     vtkGetObjectMacro ( HomeButton, vtkKWPushButton );
-    vtkSetObjectMacro ( HomeButton, vtkKWPushButton );
     vtkGetObjectMacro ( VolumesButton, vtkKWPushButton );
-    vtkSetObjectMacro ( VolumesButton, vtkKWPushButton );
     vtkGetObjectMacro ( ModelsButton, vtkKWPushButton );
-    vtkSetObjectMacro ( ModelsButton, vtkKWPushButton );
     vtkGetObjectMacro ( DataButton, vtkKWPushButton );
-    vtkSetObjectMacro ( DataButton, vtkKWPushButton );
     vtkGetObjectMacro ( DefaultSlice0Frame, vtkKWFrame );
     vtkGetObjectMacro ( DefaultSlice1Frame, vtkKWFrame );
     vtkGetObjectMacro ( DefaultSlice2Frame, vtkKWFrame );
     vtkGetObjectMacro ( MainViewer, vtkKWRenderWidget );
-    vtkSetObjectMacro ( MainViewer, vtkKWRenderWidget );
     
     // Description:
     // These Get/Set methods for Slice Base Module GUIs.
     vtkGetObjectMacro ( VolumesGUI, vtkSlicerVolumesGUI);
-    vtkSetObjectMacro ( VolumesGUI, vtkSlicerVolumesGUI);
     vtkGetObjectMacro ( ModelsGUI, vtkSlicerModelsGUI);
-    vtkSetObjectMacro ( ModelsGUI, vtkSlicerModelsGUI);
     vtkGetObjectMacro ( MainSlicerWin, vtkKWWindow );
-    vtkSetObjectMacro ( MainSlicerWin, vtkKWWindow );
     
     // Description:
     // This method builds Slicer's main GUI
