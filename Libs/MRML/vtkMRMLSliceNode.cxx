@@ -73,6 +73,14 @@ vtkMRMLSliceNode::vtkMRMLSliceNode()
 //----------------------------------------------------------------------------
 vtkMRMLSliceNode::~vtkMRMLSliceNode()
 {
+  if ( this->SliceToRAS != NULL) 
+    {
+    this->SliceToRAS->Delete();
+    }
+  if ( this->XYToSlice != NULL) 
+    {
+    this->XYToSlice->Delete();
+    }
 }
 
 
