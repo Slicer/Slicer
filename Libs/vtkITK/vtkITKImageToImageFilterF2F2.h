@@ -29,7 +29,7 @@
 #include "itkVTKImageImport.h"
 #include "vtkITKUtility.h"
 
-class VTK_EXPORT vtkITKImageToImageFilterF2F2 : public vtkITKImageToImageFilter
+class VTK_ITK_EXPORT vtkITKImageToImageFilterF2F2 : public vtkITKImageToImageFilter
 {
 public:
   vtkTypeMacro(vtkITKImageToImageFilterF2F2,vtkITKImageToImageFilter);

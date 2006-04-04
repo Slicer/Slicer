@@ -28,6 +28,8 @@
 #include "vtkImageCast.h"
 #include "vtkImageData.h"
 
+#include "vtkITK.h"
+
 #undef itkExceptionMacro  
 #define itkExceptionMacro(x) \
   { \
@@ -45,7 +47,7 @@
   std::cerr << message.str() << std::endl; \
   }
 
-class VTK_EXPORT vtkITKImageToImageFilter : public vtkImageToImageFilter
+class VTK_ITK_EXPORT vtkITKImageToImageFilter : public vtkImageToImageFilter
 {
 public:
   static vtkITKImageToImageFilter *New()

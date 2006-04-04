@@ -32,7 +32,7 @@
 #include "itkGradientAnisotropicDiffusionImageFilter.h"
 #include "vtkObjectFactory.h"
 
-class VTK_EXPORT vtkITKGradientAnisotropicDiffusionImageFilter : public vtkITKImageToImageFilterFF
+class VTK_ITK_EXPORT vtkITKGradientAnisotropicDiffusionImageFilter : public vtkITKImageToImageFilterFF
 {
  public:
   static vtkITKGradientAnisotropicDiffusionImageFilter *New();

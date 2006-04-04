@@ -27,7 +27,7 @@
 #include "vtkITKUtility.h"
 
 
-class VTK_EXPORT vtkITKImageToImageFilterF2F : public vtkITKImageToImageFilter
+class VTK_ITK_EXPORT vtkITKImageToImageFilterF2F : public vtkITKImageToImageFilter
 {
 public:
   vtkTypeMacro(vtkITKImageToImageFilterF2F,vtkITKImageToImageFilter);
