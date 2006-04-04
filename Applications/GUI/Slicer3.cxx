@@ -8,6 +8,7 @@
 #include "vtkMRMLScene.h"
 #include "vtkSlicerApplicationGUI.h"
 #include "vtkSlicerSliceGUI.h"
+#include "vtkKWUserInterfacePanel.h"
 #include "vtkSlicerGUICollection.h"
 
 #include <vtksys/SystemTools.hxx>
@@ -53,6 +54,7 @@ int Slicer3_main(int argc, char *argv[])
   appGUI->AddLogicObservers ( );
   appGUI->AddMrmlObservers ( );
 
+
   vtkSlicerSliceGUI *sliceGUI = vtkSlicerSliceGUI::New ();
   // ---
   // SLICE GUI
@@ -63,15 +65,20 @@ int Slicer3_main(int argc, char *argv[])
                        appGUI->GetDefaultSlice2Frame() );
 
   // set slice viewer size
-  sliceGUI->GetMainSlice0()->GetRenderWidget()->GetRenderWindow()->SetSize( appGUI->GetDefaultSliceGUIFrameWidth(), appGUI->GetDefaultSliceGUIFrameWidth());
+  //sliceGUI->GetMainSlice0()->GetRenderWidget()->GetRenderWindow()->SetSize( appGUI->GetDefaultSliceGUIFrameWidth(), appGUI->GetDefaultSliceGUIFrameWidth());
   
-  sliceGUI->GetMainSlice1()->GetRenderWidget()->GetRenderWindow()->SetSize( appGUI->GetDefaultSliceGUIFrameWidth(), appGUI->GetDefaultSliceGUIFrameWidth());
+  //sliceGUI->GetMainSlice1()->GetRenderWidget()->GetRenderWindow()->SetSize( appGUI->GetDefaultSliceGUIFrameWidth(), appGUI->GetDefaultSliceGUIFrameWidth());
   
-  sliceGUI->GetMainSlice2()->GetRenderWidget()->GetRenderWindow()->SetSize( appGUI->GetDefaultSliceGUIFrameWidth(), appGUI->GetDefaultSliceGUIFrameWidth());
+  //sliceGUI->GetMainSlice2()->GetRenderWidget()->GetRenderWindow()->SetSize( appGUI->GetDefaultSliceGUIFrameWidth(), appGUI->GetDefaultSliceGUIFrameWidth());
   sliceGUI->AddGUIObservers();
   sliceGUI->AddLogicObservers();
   sliceGUI->AddMrmlObservers();
 
+  // ---
+  // CREATE MODULE GUIs
+
+  // ---
+  // display main slicer window
   appGUI->DisplayMainSlicerWindow ( );
 
   // add to collection of component GUIs
