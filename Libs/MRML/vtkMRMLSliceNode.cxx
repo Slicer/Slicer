@@ -19,6 +19,7 @@ Version:   $Revision: 1.2 $
 #include "vtkObjectFactory.h"
 #include "vtkMRMLSliceNode.h"
 
+#include "vtkTransform.h"
 #include "vtkMatrix4x4.h"
 
 //------------------------------------------------------------------------------
@@ -97,7 +98,7 @@ void vtkMRMLSliceNode::SetOrientationToAxial()
     // Py -> Patient Anterior
     this->SliceToRAS->SetElement(1, 1,  1.0);
     // Pz -> Patient Inferior
-    this->SliceToRAS->SetElement(1, 1, -1.0);
+    this->SliceToRAS->SetElement(2, 2, -1.0);
 
     this->UpdateMatrices();
 }
@@ -159,6 +160,8 @@ void vtkMRMLSliceNode::UpdateMatrices()
       this->XYToSlice->SetElement(i, i, spacing[i]);
       this->XYToSlice->SetElement(i, 3, -this->FieldOfView[i] / 2.);
       }
+      this->XYToSlice->SetElement(2, 2, 1.);
+      this->XYToSlice->SetElement(2, 3, 0.);
 
     // the mapping from slice plane coordinates to RAS 
     // (the Orienation as in Axial, Sagittal, Coronal)
@@ -174,9 +177,9 @@ void vtkMRMLSliceNode::UpdateMatrices()
     //
     // RAS = XYToRAS * XY
     //
-
-    vtkMatrix4x4::Multiply4x4(this->SliceToRAS, this->XYToSlice, this->XYToRAS);
     
+    vtkMatrix4x4::Multiply4x4(this->SliceToRAS, this->XYToSlice, this->XYToRAS);
+
     this->Modified();
 }
 

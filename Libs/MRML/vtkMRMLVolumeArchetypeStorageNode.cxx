@@ -24,6 +24,7 @@ Version:   $Revision: 1.6 $
 
 #include "vtkMatrix4x4.h"
 #include "vtkImageData.h"
+#include "vtkImageChangeInformation.h"
 #include "vtkITKArchetypeImageSeriesReader.h"
 #include "vtkITKArchetypeImageSeriesScalarReader.h"
 #include "vtkITKArchetypeImageSeriesVectorReader.h"
@@ -212,9 +213,13 @@ void vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
   volNode->SetStorageNode(this);
   //TODO update scene to send Modified event
  
-  reader->GetOutput()->SetSpacing(1.0, 1.0, 1.0);
-  reader->GetOutput()->SetOrigin(0.0, 0.0, 0.0);
-  volNode->SetImageData (reader->GetOutput());
+  vtkImageChangeInformation *ici = vtkImageChangeInformation::New();
+
+  ici->SetInput (reader->GetOutput());
+  ici->SetOutputSpacing( 1, 1, 1 );
+  ici->SetOutputOrigin( 0, 0, 0 );
+
+  volNode->SetImageData (ici->GetOutput());
 }
 
 void vtkMRMLVolumeArchetypeStorageNode::WriteData(vtkMRMLNode *refNode)

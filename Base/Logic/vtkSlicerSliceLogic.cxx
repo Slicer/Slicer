@@ -122,7 +122,12 @@ void vtkSlicerSliceLogic::SetBackgroundLayer(vtkSlicerSliceLayerLogic *Backgroun
     this->BackgroundLayer->Register(this);
     this->BackgroundLayer->SetSliceNode(SliceNode);
 
-    this->Blend->SetInput( 0, this->BackgroundLayer->GetImageData() );
+    this->Blend->RemoveAllInputs ( );
+    this->Blend->AddInput( this->BackgroundLayer->GetImageData() );
+    if ( this->ForegroundLayer )
+      {
+      this->Blend->AddInput( this->ForegroundLayer->GetImageData() );
+      }
     }
 }
 
@@ -140,8 +145,12 @@ void vtkSlicerSliceLogic::SetForegroundLayer(vtkSlicerSliceLayerLogic *Foregroun
     this->ForegroundLayer->Register(this);
     this->ForegroundLayer->SetSliceNode(SliceNode);
 
-    //this->Blend->SetInput( 1, this->ForegroundLayer->GetImageData() );
-    this->Blend->AddInput( 0, this->ForegroundLayer->GetImageData() );
+    this->Blend->RemoveAllInputs ( );
+    this->Blend->AddInput( this->BackgroundLayer->GetImageData() );
+    if ( this->ForegroundLayer )
+      {
+      this->Blend->AddInput( this->ForegroundLayer->GetImageData() );
+      }
     }
 }
 

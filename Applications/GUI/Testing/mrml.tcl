@@ -51,6 +51,7 @@ set scenefile [file dirname [info script]]/mrmlScene.xml
 $::scene SetURL $scenefile
 $::scene Connect
 
+
 #
 # add the needed pieces to display the volumes
 # - a slice node to specify the plane
@@ -68,14 +69,14 @@ set slicen [vtkMRMLSliceNode New]
 $::scene AddNode $slicen
 #$::slicen SetOrientationToCoronal
 $::slicen SetOrientationToAxial
-$::slicen SetDimensions 512 512 1
-$::slicen SetFieldOfView 413 413 413
+$::slicen SetDimensions 128 128 1
+$::slicen SetFieldOfView 128 128 128
 $::slicen UpdateMatrices
 
 # a SliceComposite node for the SliceLogic
 set slicecn [vtkMRMLSliceCompositeNode New]
-$::slicecn SetBackgroundVolumeID vol3
-$::slicecn SetForegroundVolumeID vol2
+$::slicecn SetBackgroundVolumeID vol1
+$::slicecn SetForegroundVolumeID vol3
 $::scene AddNode $slicecn
 
 # a SliceLogic 
@@ -90,42 +91,74 @@ $::slicel SetSliceNode $::slicen
 
 [$::slicel GetImageData] Update
 
+[$slicebgl GetReslice] SetBackgroundLevel 128
+[$slicebgl GetReslice] AutoCropOutputOff
+[$slicebgl GetReslice] SetOptimization 1
+#[$slicebgl GetReslice] SetInformationInput [[$slicefgl GetReslice] GetInput]
+
+[$slicefgl GetReslice] SetBackgroundLevel 128
+[$slicefgl GetReslice] AutoCropOutputOff
+[$slicefgl GetReslice] SetOptimization 1
+#[$slicefgl GetReslice] SetInformationInput [[$slicefgl GetReslice] GetInput]
+
+[$slicebgl GetReslice] SetOutputOrigin 0 0 0
+[$slicefgl GetReslice] SetOutputOrigin 0 0 0
+
+[$slicebgl GetReslice] SetOutputSpacing 1 1 1
+[$slicefgl GetReslice] SetOutputSpacing 1 1 1
+
+
 ##############
 #
 # key matrices:
 #
 
-set nodeIJKToRAS [vtkMatrix4x4 New]
-[$::slicebgl GetVolumeNode] GetIJKToRASMatrix $nodeIJKToRAS 
-puts "--------------IJKToRAS from the BG Volume Node"
-puts [$nodeIJKToRAS Print]
+proc print {} {
+    set nodeIJKToRAS [vtkMatrix4x4 New]
+    [$::slicebgl GetVolumeNode] GetIJKToRASMatrix $nodeIJKToRAS 
+    puts "--------------IJKToRAS from the BG Volume Node"
+    puts [$nodeIJKToRAS Print]
 
-set nodeRASToIJK [vtkMatrix4x4 New]
-[$::slicebgl GetVolumeNode] GetRASToIJKMatrix $nodeRASToIJK 
-puts "--------------RASToIJK from the BG Volume Node"
-puts [$nodeRASToIJK Print]
-
-
-[$::slicefgl GetVolumeNode] GetIJKToRASMatrix $nodeIJKToRAS 
-puts "--------------IJKToRAS from the FG Volume Node"
-puts [$nodeIJKToRAS Print]
-
-[$::slicefgl GetVolumeNode] GetRASToIJKMatrix $nodeRASToIJK 
-puts "--------------RASToIJK from the FG Volume Node"
-puts [$nodeRASToIJK Print]
+    set nodeRASToIJK [vtkMatrix4x4 New]
+    [$::slicebgl GetVolumeNode] GetRASToIJKMatrix $nodeRASToIJK 
+    puts "--------------RASToIJK from the BG Volume Node"
+    puts [$nodeRASToIJK Print]
 
 
-puts "--------------XYToRAS from the Slice Node"
-puts [[$::slicen GetXYToRAS] Print]
+    if {0} {
+        [$::slicefgl GetVolumeNode] GetIJKToRASMatrix $nodeIJKToRAS 
+        puts "--------------IJKToRAS from the FG Volume Node"
+        puts [$nodeIJKToRAS Print]
 
-puts "--------------XYToIJK from the layer logic"
-puts [[$::slicebgl GetXYToIJKTransform] Print]
+        [$::slicefgl GetVolumeNode] GetRASToIJKMatrix $nodeRASToIJK 
+        puts "--------------RASToIJK from the FG Volume Node"
+        puts [$nodeRASToIJK Print]
+    }
+
+    puts "--------------XYToSlice from the Slice Node"
+    puts [[$::slicen GetXYToSlice] Print]
+
+    puts "--------------SliceRAS from the Slice Node"
+    puts [[$::slicen GetSliceToRAS] Print]
+
+
+    puts "--------------XYToRAS from the Slice Node"
+    puts [[$::slicen GetXYToRAS] Print]
+
+    puts "--------------XYToIJK from the layer logic"
+    puts [[$::slicebgl GetXYToIJKTransform] Print]
+}
+
+print
 
 puts "bg layer logic is: $::slicebgl"
 puts "bg volume node is: [$::slicebgl GetVolumeNode]"
 puts "slice node is: $::slicen"
 
+
 ##### #####
+
+if { 0 } {
 
 #
 # set up the image viewer to render
@@ -149,6 +182,7 @@ $viewer SetupInteractor [[$renderwidget GetRenderWindow] GetInteractor]
 
 $renderwidget ResetCamera
 
+}
 
 # SliceControl widget
 set ::slicec [vtkSlicerSliceControlGUI New]
@@ -316,7 +350,28 @@ proc mrmlUpdateUndoRedoButtons {} {
 proc mrmlRender {} {
     $::slicebgl UpdateTransforms
     $::slicefgl UpdateTransforms
-    $::viewer Render
+    set dimx [expr [lindex [$::slicen GetDimensions] 0] -1]
+    set dimy [expr [lindex [$::slicen GetDimensions] 1] -1]
+    [$::viewer GetImageActor] SetDisplayExtent 0 $dimx 0 $dimy 0 0
+    # $::viewer Render
+}
+
+set caster [vtkImageCast New]
+$::caster SetInput [[$slicebgl GetReslice] GetOutput]
+$caster SetOutputScalarTypeToUnsignedChar
+set writer [vtkJPEGWriter New]
+$writer SetInput [$::caster GetOutput]
+set v [vtkImageViewer New]
+$v SetInput [$::caster GetOutput]
+proc save {} {
+    file delete -force c:/tmp/reslice.jpg
+    [[$::slicebgl GetReslice] GetOutput] Modified
+    [[$::slicebgl GetReslice] GetOutput] Update
+    $::writer SetFileName c:/tmp/reslice.jpg
+    $::writer Modified
+    $::writer Update
+
+    exec c:/Program\ Files/IrfanView/i_view32.exe c:\\tmp\\reslice.jpg &
 }
 
 # initialize with the current state
@@ -326,6 +381,7 @@ proc mrmlRender {} {
 # Start the application
 # If --test was provided, do not enter the event loop and run this example
 # as a non-interactive test for software quality purposes.
+
 
 set ret 0
 $win Display
