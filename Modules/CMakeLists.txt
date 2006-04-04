@@ -2,7 +2,7 @@ PROJECT( Modules )
 
 SUBDIRS(
   BaseClasses
-  GradientAnisotropicDiffusionFilter
+#  GradientAnisotropicDiffusionFilter
 )
 
 
