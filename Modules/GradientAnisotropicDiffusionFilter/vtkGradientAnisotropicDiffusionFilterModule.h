@@ -27,6 +27,7 @@ class vtkSlicerSliceWidget;
 class vtkKWFrame;
 class vtkKWPushButton;
 class vtkSlicerVolumeSelectGUI;
+class vtkITKGradientAnisotropicDiffusionImageFilter;
 
 class VTK_GRADIENTANISOTROPICDIFFUSIONFILTER_EXPORT vtkGradientAnisotropicDiffusionFilterModule : public vtkSlicerComponentGUI
 {
@@ -65,6 +66,10 @@ protected:
   vtkKWScaleWithEntry* NumberOfIterationsScale;
   vtkSlicerVolumeSelectGUI* VolumeSelector;
   vtkKWPushButton* ApplyButton;
+
+  vtkITKGradientAnisotropicDiffusionImageFilter* GradientAnisotropicDiffusionImageFilter;
+
+  void Compute();
 
 };
 

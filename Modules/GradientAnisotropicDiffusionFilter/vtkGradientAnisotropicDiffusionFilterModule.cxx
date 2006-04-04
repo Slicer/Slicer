@@ -65,6 +65,9 @@ vtkGradientAnisotropicDiffusionFilterModule::vtkGradientAnisotropicDiffusionFilt
   this->NumberOfIterationsScale = vtkKWScaleWithEntry::New();
   this->VolumeSelector = vtkSlicerVolumeSelectGUI::New();
   this->ApplyButton = vtkKWPushButton::New();
+
+  GradientAnisotropicDiffusionFilterNode = vtkMRMLGradientAnisotropicDiffusionFilterNode::New();
+  GradientAnisotropicDiffusionImageFilter = vtkITKGradientAnisotropicDiffusionImageFilter::New();
 }
 
 //----------------------------------------------------------------------------
@@ -75,6 +78,9 @@ vtkGradientAnisotropicDiffusionFilterModule::~vtkGradientAnisotropicDiffusionFil
   this->NumberOfIterationsScale->Delete();
   this->VolumeSelector->Delete();
   this->ApplyButton->Delete();
+
+  this->GradientAnisotropicDiffusionImageFilter->Delete();
+  this->GradientAnisotropicDiffusionFilterNode->Delete();
 }
 
 //----------------------------------------------------------------------------
@@ -139,7 +145,7 @@ void vtkGradientAnisotropicDiffusionFilterModule::ProcessGUIEvents ( vtkObject *
     this->GradientAnisotropicDiffusionFilterNode->SetVolumeNodeID(this->VolumeSelector->GetSelected()->GetID());
   }
   else if (b == this->ApplyButton && event == vtkCommand::ModifiedEvent ) {
-    //Update();
+    Compute();
   }
 }
 
@@ -216,4 +222,8 @@ void vtkGradientAnisotropicDiffusionFilterModule::BuildGUI ( )
   this->ApplyButton->SetText("Apply");
   app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                 this->ApplyButton->GetWidgetName(), this->Parent->GetWidgetName());
+}
+void vtkGradientAnisotropicDiffusionFilterModule::Compute()
+{
+  this->GradientAnisotropicDiffusionImageFilter->SetConductanceParameter(this->GradientAnisotropicDiffusionFilterNode->GetConductance());
 }
