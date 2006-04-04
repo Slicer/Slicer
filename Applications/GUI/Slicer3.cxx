@@ -8,6 +8,7 @@
 #include "vtkMRMLScene.h"
 #include "vtkSlicerApplicationGUI.h"
 #include "vtkSlicerSliceGUI.h"
+#include "vtkSlicerGUICollection.h"
 
 #include <vtksys/SystemTools.hxx>
 
@@ -55,7 +56,6 @@ int Slicer3_main(int argc, char *argv[])
   vtkSlicerSliceGUI *sliceGUI = vtkSlicerSliceGUI::New ();
   // ---
   // SLICE GUI
-  sliceGUI = vtkSlicerSliceGUI::New ( );
   sliceGUI->SetMrml (appGUI->GetMrml ( ) );
   sliceGUI->SetApplication ( slicerApp);
   sliceGUI->BuildGUI ( appGUI->GetDefaultSlice0Frame(),
@@ -71,7 +71,7 @@ int Slicer3_main(int argc, char *argv[])
   sliceGUI->AddGUIObservers();
   sliceGUI->AddLogicObservers();
   sliceGUI->AddMrmlObservers();
-  
+
   appGUI->DisplayMainSlicerWindow ( );
 
   // add to collection of component GUIs
@@ -84,10 +84,19 @@ int Slicer3_main(int argc, char *argv[])
   //int res = appGUI->StartApplication(argc, argv);
   int res = slicerApp->StartApplication();
 
+  sliceGUI->RemoveGUIObservers();
+  sliceGUI->RemoveLogicObservers();
+  sliceGUI->RemoveMrmlObservers();
+  
+  sliceGUI->GetSliceWidgets()->RemoveAllItems(); // that's because this has no effect in the slicerApp destructor, as the collection holds references. you can add a RemoveAllSlices method to slicerGUI that will just RemoveAllItems, or better yet, use STL containers (see in KWWidgets).
+  slicerApp->GetGUICollection()->RemoveAllItems(); // that's because this has no effect in the slicerApp destructor, as the collection holds references. you can add a RemoveAllGUIs method to slicerApp that will just RemoveAllItems, or better yet, use STL containers (see in KWWidgets).
+
+  slicerApp->Exit();
+
   sliceGUI->Delete ();
+  slicerApp->Delete();
   appGUI->Delete();
   appLogic->Delete();
-  slicerApp->Delete();
   
   return res;
 }
