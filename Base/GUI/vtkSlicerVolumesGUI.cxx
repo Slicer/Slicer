@@ -6,7 +6,7 @@
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerStyle.h"
 #include "vtkKWFrameWithLabel.h"
-
+#include "vtkKWFrame.h"
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerVolumesGUI );
@@ -105,13 +105,10 @@ void vtkSlicerVolumesGUI::ProcessMrmlEvents ( vtkObject *caller,
 
 
 
+
+
 //---------------------------------------------------------------------------
 void vtkSlicerVolumesGUI::BuildGUI ( ) {
-}
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerVolumesGUI::BuildGUI ( vtkKWWidget* f ) {
 
     vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
     vtkSlicerStyle *style = app->GetSlicerStyle();
@@ -120,23 +117,24 @@ void vtkSlicerVolumesGUI::BuildGUI ( vtkKWWidget* f ) {
     // configure a page for a volume loading UI for now.
     // later, switch on the modulesButton in the SlicerControlGUI
     // ---
+    // create a page
+    this->ModuleUIPageID = this->UIPanel->AddPage ( "Volumes", "Volumes", NULL );
+    
     // HELP FRAME
     vtkKWFrameWithLabel *volHelpFrame = vtkKWFrameWithLabel::New ( );
-    volHelpFrame->SetParent ( f );
+    volHelpFrame->SetParent ( this->UIPanel->GetPageWidget ( "Volumes" ) );
     volHelpFrame->Create ( );
     volHelpFrame->CollapseFrame ( );
     volHelpFrame->SetLabelText ("Help");
-    volHelpFrame->SetDefaultLabelFontWeightToNormal( );
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                  volHelpFrame->GetWidgetName(), f->GetWidgetName());
+                  volHelpFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Volumes")->GetWidgetName());
 
     // ---
     // LOAD FRAME            
     vtkKWFrameWithLabel *volLoadFrame = vtkKWFrameWithLabel::New ( );
-    volLoadFrame->SetParent ( f );
+    volLoadFrame->SetParent ( this->UIPanel->GetPageWidget ( "Volumes" ) );
     volLoadFrame->Create ( );
     volLoadFrame->SetLabelText ("Load");
-    volLoadFrame->SetDefaultLabelFontWeightToNormal( );
     volLoadFrame->ExpandFrame ( );
 
     // add a file browser 
@@ -147,20 +145,20 @@ void vtkSlicerVolumesGUI::BuildGUI ( vtkKWWidget* f ) {
     this->LoadVolumeButton->GetLoadSaveDialog()->SetFileTypes(
                                                               "{ {MRML Document} {.mrml .xml} }");
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                  volLoadFrame->GetWidgetName(), f->GetWidgetName());
+                  volLoadFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Volumes")->GetWidgetName());
     app->Script("pack %s -side top -anchor w -padx 2 -pady 4", 
                 this->LoadVolumeButton->GetWidgetName());
 
     // ---
     // DISPLAY FRAME            
     vtkKWFrameWithLabel *volDisplayFrame = vtkKWFrameWithLabel::New ( );
-    volDisplayFrame->SetParent ( f );
+    volDisplayFrame->SetParent ( this->UIPanel->GetPageWidget ( "Volumes" ) );
     volDisplayFrame->Create ( );
     volDisplayFrame->SetLabelText ("Display");
     volDisplayFrame->SetDefaultLabelFontWeightToNormal( );
     volDisplayFrame->CollapseFrame ( );
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                  volDisplayFrame->GetWidgetName(), f->GetWidgetName());
+                  volDisplayFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Volumes")->GetWidgetName());
 
 
     volLoadFrame->Delete();

@@ -27,7 +27,6 @@
 // include GUIs for Slicer Base modules
 #include "vtkSlicerVolumesGUI.h"
 #include "vtkSlicerModelsGUI.h"
-
 // includes + fwd declarations for ApplicationGUI widgets
 #include "vtkKWWindow.h"
 #include "vtkKWMenuButton.h"
@@ -35,7 +34,6 @@
 #include "vtkKWRenderWidget.h"
 
 class vtkObject;
-class vtkKWUserInterfacePanel;
 class vtkKWPushButton;
 
 // Description:
@@ -81,15 +79,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkSetMacro ( DefaultViewControlFrameHeight, int );
 
     // Description:
-    // These Get/Set methods for IDs for ModuleGUI pages.
-    vtkGetMacro (VolumesModuleGUIID, int );
-    vtkSetMacro (VolumesModuleGUIID, int );
-    vtkGetMacro (ModelsModuleGUIID, int );
-    vtkSetMacro (ModelsModuleGUIID, int );
-    vtkGetMacro (DataModuleGUIID, int );
-    vtkSetMacro (DataModuleGUIID, int );
-        
-    // Description:
     // These Get/Set methods for frames in the GUI panel.
     vtkGetObjectMacro ( ModuleControlFrame, vtkKWFrame );
     vtkGetObjectMacro ( SlicerControlFrame, vtkKWFrame );
@@ -104,11 +93,13 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkGetObjectMacro ( DefaultSlice1Frame, vtkKWFrame );
     vtkGetObjectMacro ( DefaultSlice2Frame, vtkKWFrame );
     vtkGetObjectMacro ( MainViewer, vtkKWRenderWidget );
+
     
     // Description:
-    // These Get/Set methods for Slice Base Module GUIs.
+    // These Get/Set methods for Slicer Base Module GUIs.
     vtkGetObjectMacro ( VolumesGUI, vtkSlicerVolumesGUI);
     vtkGetObjectMacro ( ModelsGUI, vtkSlicerModelsGUI);
+
     vtkGetObjectMacro ( MainSlicerWin, vtkKWWindow );
     
     // Description:
@@ -181,7 +172,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
 
     // Description:
     // Widgets for the modules GUI panels
-    vtkKWUserInterfacePanel *ui_panel;
     vtkKWMenuButton *ModulesButton;
     
     // Description:
@@ -189,9 +179,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkKWWindow *MainSlicerWin;
     vtkSlicerVolumesGUI *VolumesGUI;
     vtkSlicerModelsGUI *ModelsGUI;
-    int VolumesModuleGUIID;
-    int ModelsModuleGUIID;
-    int DataModuleGUIID;
 
     // Description:
     // Dimensions for the Default Window & components

@@ -348,7 +348,7 @@ void vtkSlicerSliceGUI::BuildGUI ( vtkKWFrame* f1, vtkKWFrame *f2, vtkKWFrame *f
     this->MainSlice0->SetParent ( f1 );
     this->MainSlice0->Create ( );
     this->AddSliceWidget ( this->MainSlice0 );
-    app->Script ( "pack %s -side top -fill both -padx 0 -pady 0", this->MainSlice0->GetWidgetName () );
+    app->Script ( "pack %s -side top -fill both -expand y -padx 0 -pady 0", this->MainSlice0->GetWidgetName () );
 
     // create these others for now, but they are not observed.
     this->MainSlice1 = vtkSlicerSliceWidget::New ( );
@@ -356,14 +356,14 @@ void vtkSlicerSliceGUI::BuildGUI ( vtkKWFrame* f1, vtkKWFrame *f2, vtkKWFrame *f
     this->MainSlice1->SetParent ( f2 );
     this->MainSlice1->Create ( );
     this->AddSliceWidget ( this->MainSlice1 );
-    app->Script ( "pack %s -side top -fill both -padx 0 -pady 0", this->MainSlice1->GetWidgetName () );
+    app->Script ( "pack %s -side top -fill both -expand y -padx 0 -pady 0", this->MainSlice1->GetWidgetName () );
 
     this->MainSlice2 = vtkSlicerSliceWidget::New ( );
     this->MainSlice2->SetApplication (app);
     this->MainSlice2->SetParent ( f3 );
     this->MainSlice2->Create ( );
     this->AddSliceWidget ( this->MainSlice2 );
-    app->Script ( "pack %s -side top -fill both -padx 0 -pady 0", this->MainSlice2->GetWidgetName () );
+    app->Script ( "pack %s -side top -fill both -expand y -padx 0 -pady 0", this->MainSlice2->GetWidgetName () );
 
 }
 

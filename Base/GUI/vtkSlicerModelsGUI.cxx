@@ -101,38 +101,36 @@ void vtkSlicerModelsGUI::ProcessMrmlEvents ( vtkObject *caller,
 
 
 
+
 //---------------------------------------------------------------------------
 void vtkSlicerModelsGUI::BuildGUI ( ) {
-}
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerModelsGUI::BuildGUI ( vtkKWWidget *f ) {
 
     vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
     vtkSlicerStyle *style = app->GetSlicerStyle();
+
     // ---
     // MODULE GUI FRAME 
     // configure a page for a model loading UI for now.
     // later, switch on the modulesButton in the SlicerControlGUI
     // ---
+    // create a page
+    this->ModuleUIPageID = this->UIPanel->AddPage ( "Models", "Models", NULL );
+    
     // HELP FRAME
     vtkKWFrameWithLabel *modHelpFrame = vtkKWFrameWithLabel::New ( );
-    modHelpFrame->SetParent ( f );
+    modHelpFrame->SetParent ( this->UIPanel->GetPageWidget ( "Models" ) );
     modHelpFrame->Create ( );
     modHelpFrame->CollapseFrame ( );
     modHelpFrame->SetLabelText ("Help");
-    modHelpFrame->SetDefaultLabelFontWeightToNormal( );
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                  modHelpFrame->GetWidgetName(), f->GetWidgetName());
+                  modHelpFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Models")->GetWidgetName());
 
     // ---
     // LOAD FRAME            
     vtkKWFrameWithLabel *modLoadFrame = vtkKWFrameWithLabel::New ( );
-    modLoadFrame->SetParent ( f );
+    modLoadFrame->SetParent ( this->UIPanel->GetPageWidget ( "Models" ) );
     modLoadFrame->Create ( );
     modLoadFrame->SetLabelText ("Load");
-    modLoadFrame->SetDefaultLabelFontWeightToNormal( );
     modLoadFrame->ExpandFrame ( );
 
     // add a file browser 
@@ -143,21 +141,21 @@ void vtkSlicerModelsGUI::BuildGUI ( vtkKWWidget *f ) {
     this->LoadModelButton->GetLoadSaveDialog()->SetFileTypes(
                                                              "{ {MRML Document} {.mrml .xml} }");
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                  modLoadFrame->GetWidgetName(), f->GetWidgetName());
+                  modLoadFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Models")->GetWidgetName());
     app->Script("pack %s -side top -anchor w -padx 2 -pady 4", 
                 this->LoadModelButton->GetWidgetName());
 
     // ---
     // DISPLAY FRAME            
     vtkKWFrameWithLabel *modDisplayFrame = vtkKWFrameWithLabel::New ( );
-    modDisplayFrame->SetParent ( f );
+    modDisplayFrame->SetParent ( this->UIPanel->GetPageWidget ( "Models" ) );
     modDisplayFrame->Create ( );
     //modDisplayFrame->SetBackgroundColor ( style->GetGUIBgColor() );
     modDisplayFrame->SetLabelText ("Display");
     modDisplayFrame->SetDefaultLabelFontWeightToNormal( );
     modDisplayFrame->CollapseFrame ( );
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                  modDisplayFrame->GetWidgetName(), f->GetWidgetName());
+                  modDisplayFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Models")->GetWidgetName());
 
     modLoadFrame->Delete ( );
     modHelpFrame->Delete ( );

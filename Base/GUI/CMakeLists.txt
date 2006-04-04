@@ -25,6 +25,7 @@ SET(LIB_SRCS
   vtkSlicerLogicUpdate.cxx
   vtkSlicerMrmlUpdate.cxx
   vtkSlicerComponentGUI.cxx
+  vtkSlicerModuleGUI.cxx
   vtkSlicerGUICollection.cxx
   vtkSlicerSliceWidget.cxx
   vtkSlicerSliceWidgetCollection.cxx
@@ -64,7 +65,7 @@ KWWidgets_WRAP_TCL(${LIB_NAME} LIB_TCL_SRCS "${LIB_SRCS}" "")
 # Create the library.
 
 ADD_LIBRARY(${LIB_NAME} ${LIB_TCL_SRCS} ${LIB_SRCS})
-TARGET_LINK_LIBRARIES(${LIB_NAME} ${KWWidgets_LIBRARIES} SlicerBaseLogic)
+TARGET_LINK_LIBRARIES(${LIB_NAME} ${KWWidgets_LIBRARIES} SlicerBaseLogic )
 
 # The name of our executable and the corresponding source file.
 

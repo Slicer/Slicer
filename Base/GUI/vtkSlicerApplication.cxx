@@ -5,6 +5,7 @@
 #include "vtkKWNotebook.h"
 #include "vtkKWFrame.h"
 #include "vtkKWUserInterfacePanel.h"
+#include "vtkKWFrameWithLabel.h"
 #include "vtkKWWindowBase.h"
 
 //---------------------------------------------------------------------------
@@ -23,7 +24,7 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
     this->GUICollection = vtkSlicerGUICollection::New ( );
     this->SlicerStyle = vtkSlicerStyle::New ( );
     this->NumberOfGUIs = 0;
-
+    vtkKWFrameWithLabel::SetDefaultLabelFontWeightToNormal( );
     // could initialize Tcl here, no?
 
 }

@@ -9,6 +9,7 @@
 #include "vtkKWScaleWithEntry.h"
 #include "vtkKWRenderWidget.h"
 #include "vtkKWMenu.h"
+#include "vtkKWFrame.h"
 #include "vtkKWMenuButton.h"
 #include "vtkSlicerSliceWidget.h"
 #include "vtkSlicerApplication.h"
@@ -29,8 +30,10 @@ vtkSlicerSliceWidget::vtkSlicerSliceWidget ( ) {
     this->OrientationMenu = NULL;
     this->ImageViewer = NULL;
     this->RenderWidget = NULL;
+    this->ControlFrame = NULL;
     this->SliceLogic = NULL;
     this->SliceLogicObserverTag = 0;
+
 }
 
 
@@ -57,6 +60,11 @@ vtkSlicerSliceWidget::~vtkSlicerSliceWidget ( ){
         this->RenderWidget->Delete ( );
         this->RenderWidget = NULL;
     }
+    if ( this->ControlFrame ) {
+        this->ControlFrame->Delete ( );
+        this->ControlFrame = NULL;
+    }
+
     this->SetSliceLogic(NULL);
     this->SliceLogicObserverTag = 0;
     
@@ -79,7 +87,11 @@ void vtkSlicerSliceWidget::Create ( ) {
     this->RenderWidget = vtkKWRenderWidget::New ( );
     this->RenderWidget->SetParent ( this );
     this->RenderWidget->Create();
+    this->RenderWidget->SetWidth ( 10 );
+    this->RenderWidget->SetHeight ( 10 );
     this->RenderWidget->CornerAnnotationVisibilityOn();
+    this->RenderWidget->SetBorderWidth(2);
+    this->RenderWidget->SetReliefToGroove ( );
 
     //---
     // Create an image viewer
@@ -90,17 +102,22 @@ void vtkSlicerSliceWidget::Create ( ) {
     // use interactor or not?
     this->ImageViewer->SetupInteractor( this->RenderWidget->GetRenderWindow()->GetInteractor());
 
+    this->ControlFrame = vtkKWFrame::New ( );
+    this->ControlFrame->SetParent (this);
+    this->ControlFrame->Create( );
+
     this->FieldOfViewEntry = vtkKWEntryWithLabel::New();
-    this->FieldOfViewEntry->SetParent (this);
+    this->FieldOfViewEntry->SetParent (this->ControlFrame);
     this->FieldOfViewEntry->SetLabelText ( "FOV:" );
+    this->FieldOfViewEntry->SetWidth ( 8 );
     this->FieldOfViewEntry->Create ( );
 
     this->OrientationMenu = vtkKWMenuButtonWithLabel::New ();
-    this->OrientationMenu->SetParent ( this );
+    this->OrientationMenu->SetParent ( this->ControlFrame );
+    this->OrientationMenu->Create ( );
     this->OrientationMenu->SetLabelText ( "Orientation: ");
     vtkKWMenuButton *mb = this->OrientationMenu->GetWidget ( );
     mb->SetWidth ( 8 );
-    this->OrientationMenu->Create ( );
     mb->GetMenu()->AddRadioButton ( "Axial" );
     mb->GetMenu()->AddRadioButton ( "Saggital" );
     mb->GetMenu()->AddRadioButton ( "Coronal" );
@@ -115,11 +132,12 @@ void vtkSlicerSliceWidget::Create ( ) {
     this->OffsetScale->RangeVisibilityOff ( );
             
     // pack slider and viewer into frame
-    //vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-    this->Script("pack %s -anchor c -side bottom -expand true -fill both", this->RenderWidget->GetWidgetName());
-    this->Script("pack %s -side bottom -expand true -fill x", this->OffsetScale->GetWidgetName());
-    this->Script("pack %s -side right -expand false", this->FieldOfViewEntry->GetWidgetName());
-    this->Script("pack %s -side right -expand false", this->OrientationMenu->GetWidgetName());
+    this->Script("pack %s -pady 0 -side top -expand false -fill x", this->ControlFrame->GetWidgetName() );
+    this->Script("pack %s -pady 2 -padx 2 -side right -expand false", this->FieldOfViewEntry->GetWidgetName());
+    this->Script("pack %s -pady 2 -padx 2 -side right -expand false", this->OrientationMenu->GetWidgetName());
+    this->Script("pack %s -side top -expand false -fill x", this->OffsetScale->GetWidgetName());
+    this->Script("pack %s -anchor c -side top -expand true -fill both", this->RenderWidget->GetWidgetName());
+
 }
 
 

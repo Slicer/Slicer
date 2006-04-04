@@ -8,7 +8,7 @@
 #define __vtkSlicerModelsGUI_h
 
 #include "vtkSlicerBaseGUIWin32Header.h"
-#include "vtkSlicerComponentGUI.h"
+#include "vtkSlicerModuleGUI.h"
 //#include "vtkSlicerModelsLogic.h"
 #include "vtkKWLoadSaveButton.h"
 #include "vtkKWLoadSaveDialog.h"
@@ -17,11 +17,11 @@
 // Description:
 // This class implements Slicer's Models GUI
 //
-class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModelsGUI : public vtkSlicerComponentGUI
+class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModelsGUI : public vtkSlicerModuleGUI
 {
  public:
     static vtkSlicerModelsGUI* New (  );
-    vtkTypeRevisionMacro ( vtkSlicerModelsGUI, vtkSlicerComponentGUI );
+    vtkTypeRevisionMacro ( vtkSlicerModelsGUI, vtkSlicerModuleGUI );
 
     //vtkGetObjectMacro ( ModelsLogic, vtkSlicerModelsLogic);
     //vtkSetObjectMacro ( ModelsLogic, vtkSlicerModelsLogic);
@@ -30,7 +30,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModelsGUI : public vtkSlicerComponentG
     // Description:
     // This method builds a Slice GUI
     virtual void BuildGUI ( ) ;
-    virtual void BuildGUI ( vtkKWWidget *f );
     virtual void AddGUIObservers ( );
     virtual void RemoveGUIObservers ( );
     virtual void AddLogicObservers ( );

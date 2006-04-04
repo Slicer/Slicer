@@ -9,7 +9,7 @@
 #define __vtkSlicerVolumesGUI_h
 
 #include "vtkSlicerBaseGUIWin32Header.h"
-#include "vtkSlicerComponentGUI.h"
+#include "vtkSlicerModuleGUI.h"
 //#include "vtkSlicerVolumesLogic.h"
 #include "vtkKWLoadSaveButton.h"
 #include "vtkKWLoadSaveDialog.h"
@@ -18,11 +18,11 @@
 // Description:
 // This class implements Slicer's Volumes GUI
 //
-class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerVolumesGUI : public vtkSlicerComponentGUI
+class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerVolumesGUI : public vtkSlicerModuleGUI
 {
  public:
     static vtkSlicerVolumesGUI* New (  );
-    vtkTypeRevisionMacro ( vtkSlicerVolumesGUI, vtkSlicerComponentGUI );
+    vtkTypeRevisionMacro ( vtkSlicerVolumesGUI, vtkSlicerModuleGUI );
     vtkGetObjectMacro ( LoadVolumeButton, vtkKWLoadSaveButton );
     
     //vtkGetObjectMacro ( VolumesLogic, vtkSlicerVolumesLogic);
@@ -31,7 +31,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerVolumesGUI : public vtkSlicerComponent
     // Description:
     // This method builds a Slice GUI
     virtual void BuildGUI ( );
-    virtual void BuildGUI ( vtkKWWidget *f );
     virtual void AddGUIObservers ( );
     virtual void RemoveGUIObservers ( );
     virtual void AddLogicObservers ( );

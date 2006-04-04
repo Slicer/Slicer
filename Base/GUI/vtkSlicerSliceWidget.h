@@ -9,7 +9,7 @@
 #include "vtkKWEntryWithLabel.h"
 #include "vtkKWMenuButtonWithLabel.h"
 #include "vtkSlicerSliceLogic.h"
-
+#include "vtkKWFrame.h"
 
 // Note:
 // eventually this class will break out into 
@@ -34,6 +34,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceWidget : public vtkKWCompositeWid
     vtkGetObjectMacro ( RenderWidget, vtkKWRenderWidget );
     vtkGetObjectMacro ( SliceLogic, vtkSlicerSliceLogic );
     vtkSetObjectMacro ( SliceLogic, vtkSlicerSliceLogic );
+    vtkGetObjectMacro ( ControlFrame, vtkKWFrame );
+    vtkSetObjectMacro ( ControlFrame, vtkKWFrame );
 
     virtual void Create ( );
 
@@ -46,6 +48,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceWidget : public vtkKWCompositeWid
     vtkKWScaleWithEntry *OffsetScale;
     vtkKWEntryWithLabel *FieldOfViewEntry;
     vtkKWMenuButtonWithLabel *OrientationMenu;
+    vtkKWFrame *ControlFrame;
     vtkSlicerSliceLogic *SliceLogic;
     unsigned long SliceLogicObserverTag;
     
