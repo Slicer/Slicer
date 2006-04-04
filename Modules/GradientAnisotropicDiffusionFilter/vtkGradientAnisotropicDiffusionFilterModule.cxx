@@ -22,6 +22,8 @@ Version:   $Revision: 1.2 $
 #include "vtkGradientAnisotropicDiffusionFilterWidget.h"
 #include "vtkMRMLGradientAnisotropicDiffusionFilterNode.h"
 
+#include "vtkITKGradientAnisotropicDiffusionImageFilter.h"
+
 #include "vtkCommand.h"
 #include "vtkKWApplication.h"
 #include "vtkKWWidget.h"
@@ -166,7 +168,7 @@ void vtkGradientAnisotropicDiffusionFilterModule::BuildGUI ( )
   }
 
   vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-  vtkSlicerStyle *style = app->GetSlicerStyle();
+  //vtkSlicerStyle *style = app->GetSlicerStyle();
   // ---
   // MODULE GUI FRAME 
   // configure a page for a volume loading UI for now.

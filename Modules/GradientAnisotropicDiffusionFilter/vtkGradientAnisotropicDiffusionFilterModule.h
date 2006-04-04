@@ -21,7 +21,6 @@
 #include "vtkMRMLScene.h"
 
 #include "vtkGradientAnisotropicDiffusionFilter.h"
-//#include "vtkITKGradientAnisotropicDiffusionImageFilter.h"
 #include "vtkMRMLGradientAnisotropicDiffusionFilterNode.h"
 
 class vtkSlicerSliceWidget;
