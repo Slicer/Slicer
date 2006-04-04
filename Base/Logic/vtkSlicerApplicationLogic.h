@@ -100,7 +100,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic : public vtkSlicerL
   // Description:
   // Views are the 3D viewports into the mrml scene
   // SlicerLogic maintains the list of currently active views
-  vtkSetObjectMacro (Views,vtkCollection);
+  //vtkSetObjectMacro (Views,vtkCollection);
   vtkGetObjectMacro (Views,vtkCollection);
 
   // Description:
@@ -112,7 +112,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic : public vtkSlicerL
   // Description:
   // Slices are the 2D viewports that show composited layers
   // of volume data from a particular slice definition.
-  vtkSetObjectMacro (Slices,vtkCollection);
+  //vtkSetObjectMacro (Slices,vtkCollection);
   vtkGetObjectMacro (Slices,vtkCollection);
 
   // Description:
@@ -128,7 +128,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic : public vtkSlicerL
   // Description:
   // Modules are additional pieces of Slicer functionality
   // that are loaded and managed at run time
-  vtkSetObjectMacro (Modules,vtkCollection);
+  //vtkSetObjectMacro (Modules,vtkCollection);
   vtkGetObjectMacro (Modules,vtkCollection);
 
   // Description:

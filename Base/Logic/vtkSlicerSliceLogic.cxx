@@ -35,6 +35,8 @@ vtkSlicerSliceLogic::vtkSlicerSliceLogic()
 //----------------------------------------------------------------------------
 vtkSlicerSliceLogic::~vtkSlicerSliceLogic()
 {
+  this->Blend->Delete();
+  this->SetMRMLScene(NULL);
 }
 
 //----------------------------------------------------------------------------

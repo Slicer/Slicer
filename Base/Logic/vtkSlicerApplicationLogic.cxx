@@ -36,6 +36,28 @@ vtkSlicerApplicationLogic::vtkSlicerApplicationLogic()
 //----------------------------------------------------------------------------
 vtkSlicerApplicationLogic::~vtkSlicerApplicationLogic()
 {
+  if (this->Views)
+    {
+    this->Views->Delete();
+    this->Views = NULL;
+    }
+  if (this->Slices)
+    {
+    this->Slices->Delete();
+    this->Slices = NULL;
+    }
+  if (this->Modules)
+    {
+    this->Modules->Delete();
+    this->Modules = NULL;
+    }
+  this->SetActiveSlice(NULL);
+  if (this->MRMLScene)
+    {
+    this->MRMLScene->Delete();
+    this->MRMLScene = NULL;
+    }
+
   // TODO - unregister/delete ivars
 }
 
@@ -60,6 +82,15 @@ vtkSlicerSliceLogic *vtkSlicerApplicationLogic::CreateSlice ()
     // Update internal state
     this->Slices->AddItem(sliceLogic);
     this->SetActiveSlice(sliceLogic);
+
+    // Since they were New(), they should be Deleted(). If it crashes
+    // then something is not ref-counted properly and should be fixed
+    // (otherwise you are just leaking)
+
+    sliceLogic->Delete();
+    bg->Delete();
+    fg->Delete();
+    sliceNode->Delete();
 
     return (sliceLogic);
 }

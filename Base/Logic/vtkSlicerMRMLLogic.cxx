@@ -64,10 +64,7 @@ vtkSlicerMRMLLogic::~vtkSlicerMRMLLogic()
       {
       this->MRMLScene->Delete();
       }
-    if (this->ActiveVolume) 
-      {
-      this->ActiveVolume->Delete();
-      }
+    this->SetActiveVolume(NULL);
 
     this->MRMLCallbackCommand->Delete();
 }
