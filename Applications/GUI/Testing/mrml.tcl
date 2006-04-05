@@ -75,8 +75,8 @@ $::slicen UpdateMatrices
 
 # a SliceComposite node for the SliceLogic
 set slicecn [vtkMRMLSliceCompositeNode New]
-$::slicecn SetBackgroundVolumeID vol1
-$::slicecn SetForegroundVolumeID vol3
+$::slicecn SetBackgroundVolumeID vol3
+$::slicecn SetForegroundVolumeID vol1
 $::scene AddNode $slicecn
 
 # a SliceLogic 
@@ -113,16 +113,96 @@ $::slicel SetSliceNode $::slicen
 # key matrices:
 #
 
-proc print {} {
-    set nodeIJKToRAS [vtkMatrix4x4 New]
-    [$::slicebgl GetVolumeNode] GetIJKToRASMatrix $nodeIJKToRAS 
-    puts "--------------IJKToRAS from the BG Volume Node"
-    puts [$nodeIJKToRAS Print]
+set matrices [vtkKWTopLevel New]
+$matrices SetApplication $app
+$matrices Create
+$matrices SetTitle "Matrices"
+$matrices Display
+$matrices SetGeometry 240x1100+730+15
 
-    set nodeRASToIJK [vtkMatrix4x4 New]
-    [$::slicebgl GetVolumeNode] GetRASToIJKMatrix $nodeRASToIJK 
+
+set XYToSliceFrame [vtkKWFrameWithLabel New]
+$XYToSliceFrame SetParent $matrices
+$XYToSliceFrame Create
+$XYToSliceFrame SetLabelText "XYToSlice"
+pack [$XYToSliceFrame GetWidgetName] -side top -anchor nw -expand true -fill both -padx 2 -pady 2
+
+set XYToSlice [vtkKWMatrix4x4 New]
+$XYToSlice SetParent [$XYToSliceFrame GetFrame]
+$XYToSlice Create
+$XYToSlice SetMatrix4x4 [$::slicen GetXYToSlice]
+pack [$XYToSlice GetWidgetName] -side top -anchor nw -expand true -fill both -padx 2 -pady 2
+
+set SliceToRASFrame [vtkKWFrameWithLabel New]
+$SliceToRASFrame SetParent $matrices
+$SliceToRASFrame Create
+$SliceToRASFrame SetLabelText "SliceToRAS"
+pack [$SliceToRASFrame GetWidgetName] -side top -anchor nw -expand true -fill both -padx 2 -pady 2
+
+set SliceToRAS [vtkKWMatrix4x4 New]
+$SliceToRAS SetParent [$SliceToRASFrame GetFrame]
+$SliceToRAS Create
+$SliceToRAS SetMatrix4x4 [$::slicen GetSliceToRAS]
+pack [$SliceToRAS GetWidgetName] -side top -anchor nw -expand true -fill both -padx 2 -pady 2
+
+set XYToRASFrame [vtkKWFrameWithLabel New]
+$XYToRASFrame SetParent $matrices
+$XYToRASFrame Create
+$XYToRASFrame SetLabelText "XYToRAS"
+pack [$XYToRASFrame GetWidgetName] -side top -anchor nw -expand true -fill both -padx 2 -pady 2
+
+set XYToRAS [vtkKWMatrix4x4 New]
+$XYToRAS SetParent [$XYToRASFrame GetFrame]
+$XYToRAS Create
+$XYToRAS SetMatrix4x4 [$::slicen GetXYToRAS]
+pack [$XYToRAS GetWidgetName] -side top -anchor nw -expand true -fill both -padx 2 -pady 2
+
+set ::RASToIJKMatrixbg [vtkMatrix4x4 New]
+
+set RASToIJKFrame [vtkKWFrameWithLabel New]
+$RASToIJKFrame SetParent $matrices
+$RASToIJKFrame Create
+$RASToIJKFrame SetLabelText "Bg RASToIJK"
+pack [$RASToIJKFrame GetWidgetName] -side top -anchor nw -expand true -fill both -padx 2 -pady 2
+
+set RASToIJK [vtkKWMatrix4x4 New]
+$RASToIJK SetParent [$RASToIJKFrame GetFrame]
+$RASToIJK Create
+$RASToIJK SetMatrix4x4 $::RASToIJKMatrixbg
+pack [$RASToIJK GetWidgetName] -side top -anchor nw -expand true -fill both -padx 2 -pady 2
+
+set XYToIJKFrame [vtkKWFrameWithLabel New]
+$XYToIJKFrame SetParent $matrices
+$XYToIJKFrame Create
+$XYToIJKFrame SetLabelText "Bg XYToIJK"
+pack [$XYToIJKFrame GetWidgetName] -side top -anchor nw -expand true -fill both -padx 2 -pady 2
+
+set XYToIJK [vtkKWMatrix4x4 New]
+$XYToIJK SetParent [$XYToIJKFrame GetFrame]
+$XYToIJK Create
+$XYToIJK SetMatrix4x4 [[$::slicebgl GetXYToIJKTransform] GetMatrix]
+pack [$XYToIJK GetWidgetName] -side top -anchor nw -expand true -fill both -padx 2 -pady 2
+
+
+proc mrmlUpdateMatrices {} {
+    
+    $::XYToSlice UpdateWidget
+    $::SliceToRAS UpdateWidget
+    $::XYToRAS UpdateWidget
+    [$::slicebgl GetVolumeNode] GetRASToIJKMatrix $::RASToIJKMatrixbg
+    $::RASToIJK UpdateWidget
+    $::XYToIJK UpdateWidget
+    return
+
+    set ::nodeIJKToRASbg [vtkMatrix4x4 New]
+    [$::slicebgl GetVolumeNode] GetIJKToRASMatrix $::nodeIJKToRAS 
+    puts "--------------IJKToRAS from the BG Volume Node"
+    puts [$::nodeIJKToRAS Print]
+
+    set ::nodeRASToIJKbg [vtkMatrix4x4 New]
+    [$::slicebgl GetVolumeNode] GetRASToIJKMatrix $::nodeRASToIJK 
     puts "--------------RASToIJK from the BG Volume Node"
-    puts [$nodeRASToIJK Print]
+    puts [$::nodeRASToIJK Print]
 
 
     if {0} {
@@ -145,20 +225,13 @@ proc print {} {
     puts "--------------XYToRAS from the Slice Node"
     puts [[$::slicen GetXYToRAS] Print]
 
-    puts "--------------XYToIJK from the layer logic"
+    puts "--------------XYToIJK from the BG layer logic"
+    puts {[$::slicebgl GetXYToIJKTransform]}
     puts [[$::slicebgl GetXYToIJKTransform] Print]
 }
 
-print
-
-puts "bg layer logic is: $::slicebgl"
-puts "bg volume node is: [$::slicebgl GetVolumeNode]"
-puts "slice node is: $::slicen"
-
-
 ##### #####
 
-if { 0 } {
 
 #
 # set up the image viewer to render
@@ -182,8 +255,6 @@ $viewer SetupInteractor [[$renderwidget GetRenderWindow] GetInteractor]
 
 $renderwidget ResetCamera
 
-}
-
 # SliceControl widget
 set ::slicec [vtkSlicerSliceControlGUI New]
 $::slicec SetParent $win
@@ -193,6 +264,7 @@ $::slicec SetMRMLScene $::scene
 pack [$::slicec GetWidgetName] -side top -anchor nw -expand false -fill x -padx 2 -pady 2
 $::slicec AddObserver ModifiedEvent mrmlUpdateUndoRedoButtons
 $::slicec AddObserver ModifiedEvent mrmlRender
+
 
 # TODO: orientation doesn't work yet
 [$::slicec GetOrientationMenu] SetEnabled 0
@@ -348,35 +420,25 @@ proc mrmlUpdateUndoRedoButtons {} {
 }
 
 proc mrmlRender {} {
+
+    # update the slice layers
     $::slicebgl UpdateTransforms
     $::slicefgl UpdateTransforms
+
+    # make the image actor match the output of the reslicing
     set dimx [expr [lindex [$::slicen GetDimensions] 0] -1]
     set dimy [expr [lindex [$::slicen GetDimensions] 1] -1]
     [$::viewer GetImageActor] SetDisplayExtent 0 $dimx 0 $dimy 0 0
-    # $::viewer Render
-}
 
-set caster [vtkImageCast New]
-$::caster SetInput [[$slicebgl GetReslice] GetOutput]
-$caster SetOutputScalarTypeToUnsignedChar
-set writer [vtkJPEGWriter New]
-$writer SetInput [$::caster GetOutput]
-set v [vtkImageViewer New]
-$v SetInput [$::caster GetOutput]
-proc save {} {
-    file delete -force c:/tmp/reslice.jpg
-    [[$::slicebgl GetReslice] GetOutput] Modified
-    [[$::slicebgl GetReslice] GetOutput] Update
-    $::writer SetFileName c:/tmp/reslice.jpg
-    $::writer Modified
-    $::writer Update
-
-    exec c:/Program\ Files/IrfanView/i_view32.exe c:\\tmp\\reslice.jpg &
+    # update the widgets and render
+    mrmlUpdateMatrices
+    $::viewer Render
 }
 
 # initialize with the current state
-#mrmlUpdateUndoRedoButtons
-#mrmlRender
+mrmlUpdateUndoRedoButtons
+mrmlRender
+
 
 # Start the application
 # If --test was provided, do not enter the event loop and run this example
