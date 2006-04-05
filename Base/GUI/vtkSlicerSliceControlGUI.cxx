@@ -15,6 +15,7 @@ Version:   $Revision: 1.2 $
 #include "vtkCallbackCommand.h"
 
 #include "vtkKWEntry.h"
+#include "vtkKWSpinBox.h"
 #include "vtkKWScale.h"
 #include "vtkKWMenu.h"
 #include "vtkKWMenuButton.h"
@@ -101,7 +102,7 @@ vtkSlicerSliceControlGUI::vtkSlicerSliceControlGUI()
 
   // create the sub widgets
   this->OffsetScale = vtkKWScaleWithEntry::New();
-  this->FieldOfViewEntry = vtkKWEntryWithLabel::New();
+  this->FieldOfViewEntry = vtkKWSpinBoxWithLabel::New();
   this->OrientationMenu = vtkKWMenuButtonWithLabel::New();
 
 }
@@ -167,6 +168,8 @@ void vtkSlicerSliceControlGUI::Create()
   this->FieldOfViewEntry->SetParent(this);
   this->FieldOfViewEntry->SetLabelText("FOV: ");
   this->FieldOfViewEntry->Create();
+  this->FieldOfViewEntry->GetWidget()->SetIncrement (1);
+  this->FieldOfViewEntry->GetWidget()->SetRange (0., 100000.);
 
   this->OrientationMenu->SetParent(this);
   this->OrientationMenu->SetLabelText("Orientation: ");
@@ -246,9 +249,7 @@ void vtkSlicerSliceControlGUI::SetMRMLScene ( vtkMRMLScene  *MRMLScene )
 void vtkSlicerSliceControlGUI::UpdateWidgets()
 {
   double fov = this->SliceNode->GetFieldOfView()[0];
-  char fovstring[80];
-  sprintf (fovstring, "%g", fov);
-  this->FieldOfViewEntry->GetWidget()->SetValue(fovstring);
+  this->FieldOfViewEntry->GetWidget()->SetValue(fov);
   
   double fovover2 = this->SliceNode->GetFieldOfView()[2] / 2.;
   this->OffsetScale->SetRange(-fovover2, fovover2);
@@ -276,7 +277,7 @@ void vtkSlicerSliceControlGUI::TransientApply()
 {
 
   // Set the Field of View from the Entry
-  double val = this->FieldOfViewEntry->GetWidget()->GetValueAsDouble();
+  double val = this->FieldOfViewEntry->GetWidget()->GetValue();
   if ( val != 0 )
     {
     this->SliceNode->SetFieldOfView(val, val, val);

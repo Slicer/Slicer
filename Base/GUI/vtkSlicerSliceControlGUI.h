@@ -6,7 +6,7 @@
 
 #include "vtkKWCompositeWidget.h"
 #include "vtkKWScaleWithEntry.h"
-#include "vtkKWEntryWithLabel.h"
+#include "vtkKWSpinBoxWithLabel.h"
 #include "vtkKWMenuButtonWithLabel.h"
 
 class vtkCallbackCommand;
@@ -28,7 +28,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceControlGUI : public vtkKWComposit
   // Description:
   // Get the sub widgets
   vtkGetObjectMacro(OffsetScale, vtkKWScaleWithEntry);
-  vtkGetObjectMacro(FieldOfViewEntry, vtkKWEntryWithLabel);
+  vtkGetObjectMacro(FieldOfViewEntry, vtkKWSpinBoxWithLabel);
   vtkGetObjectMacro(OrientationMenu, vtkKWMenuButtonWithLabel);
 
   // Description:
@@ -66,7 +66,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceControlGUI : public vtkKWComposit
  protected:
     // sub widgets.
     vtkKWScaleWithEntry *OffsetScale;
-    vtkKWEntryWithLabel *FieldOfViewEntry;
+    vtkKWSpinBoxWithLabel *FieldOfViewEntry;
     vtkKWMenuButtonWithLabel *OrientationMenu;
 
     vtkMRMLScene *MRMLScene;
