@@ -50,43 +50,33 @@ vtkMRMLScene::vtkMRMLScene()
   //
   vtkMRMLScalarVolumeNode *volumenode = vtkMRMLScalarVolumeNode::New(); 
   this->RegisterNodeClass( volumenode );
-  volumenode->Delete();
 
   vtkMRMLModelNode *modelnode = vtkMRMLModelNode::New(); 
   this->RegisterNodeClass( modelnode );
-  modelnode->Delete();
   
   vtkMRMLLinearTransformNode *linxnode = vtkMRMLLinearTransformNode::New(); 
   this->RegisterNodeClass( linxnode );
-  linxnode->Delete();
   
   vtkMRMLModelStorageNode *modelstorenode = vtkMRMLModelStorageNode::New(); 
   this->RegisterNodeClass( modelstorenode );
-  modelstorenode->Delete();
   
   vtkMRMLScalarVolumeNode *svoln = vtkMRMLScalarVolumeNode::New(); 
   this->RegisterNodeClass( svoln );
-  svoln->Delete();
   
   vtkMRMLVectorVolumeNode *vvoln = vtkMRMLVectorVolumeNode::New(); 
   this->RegisterNodeClass( vvoln );
-  vvoln->Delete();
   
   vtkMRMLSliceCompositeNode *scompn = vtkMRMLSliceCompositeNode::New(); 
   this->RegisterNodeClass( scompn );
-  scompn->Delete();
   
   vtkMRMLSliceNode *snode = vtkMRMLSliceNode::New(); 
   this->RegisterNodeClass( snode );
-  snode->Delete();
   
   vtkMRMLVolumeArchetypeStorageNode *astoren = vtkMRMLVolumeArchetypeStorageNode::New(); 
   this->RegisterNodeClass( astoren );
-  astoren->Delete();
   
   vtkMRMLVolumeDisplayNode *vdisn = vtkMRMLVolumeDisplayNode::New(); 
   this->RegisterNodeClass( vdisn );
-  vdisn->Delete();
 }
 
 //------------------------------------------------------------------------------
@@ -101,6 +91,12 @@ vtkMRMLScene::~vtkMRMLScene()
     delete this->ClassNameList;
     }
   this->CurrentScene->Delete();
+
+  for (unsigned int n=0; n<this->RegisteredNodeClasses.size(); n++) 
+    {
+    this->RegisteredNodeClasses[n]->Delete();
+    }
+
 }
 
 //------------------------------------------------------------------------------
