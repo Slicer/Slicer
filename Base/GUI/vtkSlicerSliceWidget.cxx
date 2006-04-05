@@ -109,8 +109,8 @@ void vtkSlicerSliceWidget::Create ( ) {
     this->FieldOfViewEntry = vtkKWEntryWithLabel::New();
     this->FieldOfViewEntry->SetParent (this->ControlFrame);
     this->FieldOfViewEntry->SetLabelText ( "FOV:" );
-    this->FieldOfViewEntry->SetWidth ( 8 );
     this->FieldOfViewEntry->Create ( );
+    this->FieldOfViewEntry->SetWidth ( 8 );
 
     this->OrientationMenu = vtkKWMenuButtonWithLabel::New ();
     this->OrientationMenu->SetParent ( this->ControlFrame );
