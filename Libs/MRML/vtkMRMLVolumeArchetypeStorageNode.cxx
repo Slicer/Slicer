@@ -24,7 +24,6 @@ Version:   $Revision: 1.6 $
 
 #include "vtkMatrix4x4.h"
 #include "vtkImageData.h"
-#include "vtkImageChangeInformation.h"
 #include "vtkITKArchetypeImageSeriesReader.h"
 #include "vtkITKArchetypeImageSeriesScalarReader.h"
 #include "vtkITKArchetypeImageSeriesVectorReader.h"
@@ -134,7 +133,7 @@ void vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
 {
 
   // test whether refNode is a valid node to hold a volume
-  if ( !refNode->IsA("vtkMRMLScalarVolumeNode") || !refNode->IsA("vtkMRMLVolumeVolumeNode")) 
+  if ( !(refNode->IsA("vtkMRMLScalarVolumeNode")) || refNode->IsA("vtkMRMLVolumeVolumeNode" ) )
     {
     vtkErrorMacro("Reference node is not a vtkMRMLVolumeNode");
     return;         
@@ -213,13 +212,9 @@ void vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
   volNode->SetStorageNode(this);
   //TODO update scene to send Modified event
  
-  vtkImageChangeInformation *ici = vtkImageChangeInformation::New();
-
-  ici->SetInput (reader->GetOutput());
-  ici->SetOutputSpacing( 1, 1, 1 );
-  ici->SetOutputOrigin( 0, 0, 0 );
-
-  volNode->SetImageData (ici->GetOutput());
+  reader->GetOutput()->SetSpacing(1.0, 1.0, 1.0);
+  reader->GetOutput()->SetOrigin(0.0, 0.0, 0.0);
+  volNode->SetImageData (reader->GetOutput());
 }
 
 void vtkMRMLVolumeArchetypeStorageNode::WriteData(vtkMRMLNode *refNode)
@@ -271,6 +266,5 @@ void vtkMRMLVolumeArchetypeStorageNode::WriteData(vtkMRMLNode *refNode)
 
   writer->Write();
 
-  mat->Delete();
   writer->Delete();
 }
