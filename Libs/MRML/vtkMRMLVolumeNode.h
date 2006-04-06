@@ -104,7 +104,7 @@ class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLNode
 
   // Description:
   // Get the IJKToRAS Matrix that includes the spacing and origin
-  // information (assumes the image data is Origin 0 0 0 and Spacing 1 1 1
+  // information (assumes the image data is Origin 0 0 0 and Spacing 1 1 1)
   // RASToIJK is the inverse of this
   void GetIJKToRASMatrix(vtkMatrix4x4* mat);
   void GetRASToIJKMatrix(vtkMatrix4x4* mat);
@@ -156,6 +156,7 @@ protected:
   double IToRasDirections[3];
   double JToRasDirections[3];
   double KToRasDirections[3];
+  vtkMatrix4x4 *IJKToRAS;
 
   double Spacing[3];
   double Origin[3];

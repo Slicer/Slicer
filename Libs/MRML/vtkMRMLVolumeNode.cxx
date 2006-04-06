@@ -17,6 +17,7 @@ Version:   $Revision: 1.14 $
 #include <sstream>
 
 #include "vtkObjectFactory.h"
+#include "vtkMatrix4x4.h"
 
 #include "vtkMRMLVolumeNode.h"
 #include "vtkMRMLScene.h"
@@ -31,6 +32,9 @@ vtkMRMLVolumeNode::vtkMRMLVolumeNode()
   this->StorageNode = NULL;
   this->DisplayNode = NULL;
   this->TransformNode = NULL;
+
+  this->IJKToRAS = vtkMatrix4x4::New();
+  this->IJKToRAS->Identity();
 
   this->ImageData = NULL;
 }
@@ -338,7 +342,6 @@ void vtkMRMLVolumeNode::SetIjkToRasMatrix(vtkMatrix4x4* mat)
 }
 
 //----------------------------------------------------------------------------
-
 void vtkMRMLVolumeNode::GetIJKToRASMatrix(vtkMatrix4x4* mat)
 {
   // this is the full matrix including the spacing and origin
@@ -348,14 +351,13 @@ void vtkMRMLVolumeNode::GetIJKToRASMatrix(vtkMatrix4x4* mat)
     {
     for (col=0; col<3; col++) 
       {
-      mat->SetElement(row, col, this->Spacing[col] * IjkToRasDirections[i++]);
+      mat->SetElement(row, col, this->Spacing[row] * IjkToRasDirections[i++]);
       }
     mat->SetElement(row, 3, this->Origin[row]);
     }
 }
 
 //----------------------------------------------------------------------------
-
 void vtkMRMLVolumeNode::GetRASToIJKMatrix(vtkMatrix4x4* mat)
 {
   this->GetIJKToRASMatrix( mat );
