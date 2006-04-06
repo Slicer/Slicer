@@ -34,6 +34,7 @@ vtkSlicerVolumesGUI::~vtkSlicerVolumesGUI ( ) {
 
 //---------------------------------------------------------------------------
 void vtkSlicerVolumesGUI::RemoveGUIObservers ( ) {
+
     this->LoadVolumeButton->RemoveObservers ( vtkCommand::ModifiedEvent,  (vtkCommand *)this->GUICommand);    
 }
 
@@ -41,9 +42,7 @@ void vtkSlicerVolumesGUI::RemoveGUIObservers ( ) {
 void vtkSlicerVolumesGUI::RemoveLogicObservers ( ) {
 }
  
-//---------------------------------------------------------------------------
-void vtkSlicerVolumesGUI::RemoveMrmlObservers ( ) {
-}
+
 
 //---------------------------------------------------------------------------
 void vtkSlicerVolumesGUI::AddGUIObservers ( ) {
@@ -54,10 +53,6 @@ void vtkSlicerVolumesGUI::AddGUIObservers ( ) {
 }
 
 
-//---------------------------------------------------------------------------
-void vtkSlicerVolumesGUI::AddMrmlObservers ( ) {
-    
-}
 
 
 //---------------------------------------------------------------------------
@@ -96,13 +91,6 @@ void vtkSlicerVolumesGUI::ProcessLogicEvents ( vtkObject *caller,
 
 
 
-//---------------------------------------------------------------------------
-void vtkSlicerVolumesGUI::ProcessMrmlEvents ( vtkObject *caller,
-                                                     unsigned long event,
-                                                     void *callData ) {
-
-}
-
 
 
 
@@ -118,7 +106,7 @@ void vtkSlicerVolumesGUI::BuildGUI ( ) {
     // later, switch on the modulesButton in the SlicerControlGUI
     // ---
     // create a page
-    this->ModuleUIPageID = this->UIPanel->AddPage ( "Volumes", "Volumes", NULL );
+    this->UIPanel->AddPage ( "Volumes", "Volumes", NULL );
     
     // HELP FRAME
     vtkKWFrameWithLabel *volHelpFrame = vtkKWFrameWithLabel::New ( );

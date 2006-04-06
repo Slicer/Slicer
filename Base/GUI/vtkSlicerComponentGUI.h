@@ -5,12 +5,10 @@
 #include "vtkKWObject.h"
 #include "vtkSlicerBaseGUIWin32Header.h"
 #include "vtkSlicerApplicationLogic.h"
-#include "vtkMRMLScene.h"
 #include "vtkSlicerLogic.h"
 
 class vtkSlicerGUIUpdate;
 class vtkSlicerLogicUpdate;
-class vtkSlicerMrmlUpdate;
 class vtkKWApplication;
 class vtkKWFrame;
 
@@ -23,62 +21,54 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerComponentGUI : public vtkKWObject
 {
 
  public:
-    static vtkSlicerComponentGUI* New ( );
+    static vtkSlicerComponentGUI* New ( ) { return NULL; } ;
     vtkTypeRevisionMacro ( vtkSlicerComponentGUI, vtkKWObject );
 
     // Description:
-    // Get/Set pointers to the ApplicationLogic and MrmlScene.
+    // Get/Set pointers to the ApplicationLogic
     vtkGetObjectMacro ( Logic, vtkSlicerApplicationLogic );
     vtkSetObjectMacro ( Logic, vtkSlicerApplicationLogic );
-    vtkGetObjectMacro ( Mrml, vtkMRMLScene );
-    vtkSetObjectMacro ( Mrml, vtkMRMLScene );
+    vtkSetStringMacro ( GUIName );
+    vtkGetStringMacro ( GUIName );
     
     // Description:
     // Specifies all widgets for this GUI
-    virtual void BuildGUI ( );
+    // Define function in subclasses.
+    virtual void BuildGUI ( ) = 0;
 
     // Description:
-    // Create observers on widgets defined in this class using the following paradigm:
-    // this->AddCallbackCommandObserver ( ObservedWidget, vtkCommand::SomeEvent);
-    virtual void AddGUIObservers ( ) { }
+    // Create observers on widgets defined in this class
+    // Define function in subclasses.
+    virtual void AddGUIObservers ( ) = 0;
     // Description:
-    // Create observers on logic in application layer using the vtk paradigm:
-    // Logic->mylogic->AddObserver ( vtkCommand::ModifiedEvent, this->LogicCommand);
-    virtual void AddLogicObservers ( ) { }
-    // Description:
-    // Create observers on logic in application layer using the vtk paradigm:
-    // Mrml->thing->AddObserver ( vtkCommand::ModifiedEvent, this->MrmlCommand);
-    virtual void AddMrmlObservers ( ) { }
+    // Create observers on logic in application layer 
+    // Define function in subclasses.
+    virtual void AddLogicObservers ( ) = 0;
     
     // Description:
-    // Remove observers on logic, GUI and Mrml
-    virtual void RemoveGUIObservers ( ) { }
-    virtual void RemoveLogicObservers ( ) { }
-    virtual void RemoveMrmlObservers ( ) { }
+    // Remove observers on logic, GUI
+    // Define functions in subclasses.
+    virtual void RemoveGUIObservers ( ) = 0;
+    virtual void RemoveLogicObservers ( ) = 0;
 
 
     // Description:
     // propagate events generated in logic layer to GUI
     virtual void ProcessLogicEvents ( vtkObject *caller, unsigned long event,
-                                void *callData );
-    // Description:
-    // propagate events generated in mrml layer to GUI
-    virtual void ProcessMrmlEvents ( vtkObject *caller, unsigned long event,
-                                void *callData );
+                                         void *callData ) { }
     // Description:
     // alternative method to propagate events generated in GUI to logic / mrml
     virtual void ProcessGUIEvents ( vtkObject *caller, unsigned long event,
-                                    void *callData );
+                                       void *callData ) { }
     
     
  protected:
     // GUI's interface to the application layer;
     vtkSlicerApplicationLogic *Logic;
-    vtkMRMLScene *Mrml;
+    char *GUIName;
     
     vtkSlicerGUIUpdate *GUICommand;
     vtkSlicerLogicUpdate *LogicCommand;
-    vtkSlicerMrmlUpdate *MrmlCommand;
 
     // constructor, destructor.
     vtkSlicerComponentGUI ( );

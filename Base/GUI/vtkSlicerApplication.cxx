@@ -1,7 +1,8 @@
+#include <sstream>
 #include "vtkObjectFactory.h"
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerGUICollection.h"
-#include "vtkSlicerComponentGUI.h"
+#include "vtkSlicerModuleGUI.h"
 #include "vtkKWNotebook.h"
 #include "vtkKWFrame.h"
 #include "vtkKWUserInterfacePanel.h"
@@ -21,9 +22,9 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
     this->RestoreApplicationSettingsFromRegistry ( );
     this->SetHelpDialogStartingPage ( "http://www.slicer.org" );
 
-    this->GUICollection = vtkSlicerGUICollection::New ( );
+    this->ModuleGUICollection = vtkSlicerGUICollection::New ( );
     this->SlicerStyle = vtkSlicerStyle::New ( );
-    this->NumberOfGUIs = 0;
+    this->NumberOfModuleGUIs = 0;
     vtkKWFrameWithLabel::SetDefaultLabelFontWeightToNormal( );
     // could initialize Tcl here, no?
 
@@ -34,26 +35,43 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
 vtkSlicerApplication::~vtkSlicerApplication ( ) {
 
     this->CloseAllWindows ( );
-    if ( this->GUICollection ) {
-       this->GUICollection->Delete ( );
-       this->GUICollection = NULL;
+    if ( this->ModuleGUICollection ) {
+        this->ModuleGUICollection->RemoveAllItems ( );
+        this->ModuleGUICollection->Delete ( );
+        this->ModuleGUICollection = NULL;
     }
+    this->NumberOfModuleGUIs = 0;
     this->SetSlicerStyle(NULL);
 
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerApplication::AddGUI ( vtkSlicerComponentGUI *gui ) {
+void vtkSlicerApplication::AddModuleGUI ( vtkSlicerModuleGUI *gui ) {
 
     // Create if it doesn't exist already
-    if ( this->GUICollection == NULL ) {
-        this->GUICollection = vtkSlicerGUICollection::New ( );
+    if ( this->ModuleGUICollection == NULL ) {
+        this->ModuleGUICollection = vtkSlicerGUICollection::New ( );
     } 
     // Add a gui
-    this->GUICollection->AddItem ( gui );
-    this->NumberOfGUIs = this->GUICollection->GetNumberOfItems ( );
+    this->ModuleGUICollection->AddItem ( gui );
+    this->NumberOfModuleGUIs = this->ModuleGUICollection->GetNumberOfItems ( );
 }
 
+//---------------------------------------------------------------------------
+vtkSlicerModuleGUI* vtkSlicerApplication::GetModuleGUIByName ( char *name ) {
+
+    if ( this->ModuleGUICollection != NULL ) {
+        int n = this->ModuleGUICollection->GetNumberOfItems ( );
+        int i;
+        for (i = 0; i < n; i ++ ) {
+            vtkSlicerModuleGUI *m = vtkSlicerModuleGUI::SafeDownCast( this->ModuleGUICollection->GetItemAsObject(i) );
+            if ( !strcmp (m->GetGUIName(), name) ) {
+                return (m);
+            }
+        }
+    }
+    return ( NULL );
+}
 
 
 //---------------------------------------------------------------------------

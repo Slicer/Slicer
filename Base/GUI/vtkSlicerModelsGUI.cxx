@@ -40,9 +40,6 @@ void vtkSlicerModelsGUI::RemoveGUIObservers ( ) {
 void vtkSlicerModelsGUI::RemoveLogicObservers ( ) {
 }
 
-//---------------------------------------------------------------------------
-void vtkSlicerModelsGUI::RemoveMrmlObservers ( ) {
-}
 
 
 //---------------------------------------------------------------------------
@@ -50,11 +47,6 @@ void vtkSlicerModelsGUI::AddGUIObservers ( ) {
 
     this->LoadModelButton->AddObserver ( vtkCommand::ModifiedEvent,  (vtkCommand *)this->GUICommand );    
 
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerModelsGUI::AddMrmlObservers ( ) {
-    
 }
 
 
@@ -92,14 +84,6 @@ void vtkSlicerModelsGUI::ProcessLogicEvents ( vtkObject *caller,
 }
 
 
-//---------------------------------------------------------------------------
-void vtkSlicerModelsGUI::ProcessMrmlEvents ( vtkObject *caller,
-                                                    unsigned long event,
-                                                    void *callData ) {
-
-}
-
-
 
 
 //---------------------------------------------------------------------------
@@ -114,7 +98,7 @@ void vtkSlicerModelsGUI::BuildGUI ( ) {
     // later, switch on the modulesButton in the SlicerControlGUI
     // ---
     // create a page
-    this->ModuleUIPageID = this->UIPanel->AddPage ( "Models", "Models", NULL );
+    this->UIPanel->AddPage ( "Models", "Models", NULL );
     
     // HELP FRAME
     vtkKWFrameWithLabel *modHelpFrame = vtkKWFrameWithLabel::New ( );

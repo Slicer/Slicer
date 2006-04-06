@@ -44,6 +44,7 @@ vtkSlicerSliceGUI::vtkSlicerSliceGUI (  ) {
 vtkSlicerSliceGUI::~vtkSlicerSliceGUI ( ) {
 
     if ( this->SliceWidgets ) {
+        this->SliceWidgets->RemoveAllItems ( );
         this->SliceWidgets->Delete();
         this->SliceWidgets = NULL;
     }
@@ -114,23 +115,18 @@ void vtkSlicerSliceGUI::AddGUIObservers ( ) {
 
 
 
+
+
 //---------------------------------------------------------------------------
-void vtkSlicerSliceGUI::AddMrmlObservers ( ) {
+void vtkSlicerSliceGUI::AddLogicObservers ( ) {
     unsigned long tag;
     
     // add observers onto mrml scene; observe the widget's SliceLogic
     // Before a widget's SliceLogic is set, no observers are created.
     if ( this->GetSliceWidget(0)->GetSliceLogic ( ) != NULL ) {
-        tag = this->GetSliceWidget(0)->GetSliceLogic()->AddObserver ( vtkCommand::ModifiedEvent, (vtkCommand *)this->MrmlCommand );
+        tag = this->GetSliceWidget(0)->GetSliceLogic()->AddObserver ( vtkCommand::ModifiedEvent, (vtkCommand *)this->LogicCommand );
         this->GetSliceWidget(0)->SetSliceLogicObserverTag ( tag );
     }
-}
-
-
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerSliceGUI::AddLogicObservers ( ) {
 
 }
 
@@ -157,15 +153,11 @@ void vtkSlicerSliceGUI::RemoveGUIObservers ( ) {
 
 //---------------------------------------------------------------------------
 void vtkSlicerSliceGUI::RemoveLogicObservers ( ) {
-}
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerSliceGUI::RemoveMrmlObservers ( ) {
 
   if ( this->GetSliceWidget(0)->GetSliceLogic ( ) != NULL ) {
-  this->GetSliceWidget(0)->GetSliceLogic()->RemoveObservers ( vtkCommand::ModifiedEvent, (vtkCommand *)this->MrmlCommand );
+  this->GetSliceWidget(0)->GetSliceLogic()->RemoveObservers ( vtkCommand::ModifiedEvent, (vtkCommand *)this->LogicCommand );
     }
+
 
 }
 
@@ -179,57 +171,62 @@ void vtkSlicerSliceGUI::ProcessGUIEvents ( vtkObject *caller,
     vtkKWScaleWithEntry *s = vtkKWScaleWithEntry::SafeDownCast(caller);
     vtkKWEntryWithLabel *e = vtkKWEntryWithLabel::SafeDownCast(caller);
     vtkKWMenuButtonWithLabel *o = vtkKWMenuButtonWithLabel::SafeDownCast (caller );
-    //---
-    // Scale Widget
-    vtkSlicerSliceWidget *sw = this->GetSliceWidget(0);
-    if ( s == sw->GetOffsetScale ( ) ) {
+    vtkMRMLScene *mrml = this->Logic->GetMRMLScene();
 
-        // SET UNDO STATE
-        if ( event == vtkKWScale::ScaleValueStartChangingEvent && this->Mrml != NULL ) {
-            this->Mrml->SaveStateForUndo ( sw->GetSliceLogic()->GetSliceNode() );
+    if (mrml != NULL ) {
+        //---
+        // Scale Widget
+        vtkSlicerSliceWidget *sw = this->GetSliceWidget(0);
+        if ( s == sw->GetOffsetScale ( ) ) {
+
+            // SET UNDO STATE
+            if ( event == vtkKWScale::ScaleValueStartChangingEvent  ) {
+                mrml->SaveStateForUndo ( sw->GetSliceLogic()->GetSliceNode() );
+            }
+            // UNDO-ABLE APPLY
+            if ( event == vtkKWScale::ScaleValueStartChangingEvent || event == vtkCommand::ModifiedEvent ) {
+                vtkMatrix4x4 *m = sw->GetSliceLogic()->GetSliceNode()->GetSliceToRAS ( );
+                m->Identity ( );
+                m->SetElement (2, 3, sw->GetOffsetScale()->GetValue ( ) );
+                sw->GetSliceLogic()->GetSliceNode()->Modified();
+            }
         }
-        // UNDO-ABLE APPLY
-        if ( event == vtkKWScale::ScaleValueStartChangingEvent || event == vtkCommand::ModifiedEvent ) {
-            vtkMatrix4x4 *m = sw->GetSliceLogic()->GetSliceNode()->GetSliceToRAS ( );
-            m->Identity ( );
-            m->SetElement (2, 3, sw->GetOffsetScale()->GetValue ( ) );
-            sw->GetSliceLogic()->GetSliceNode()->Modified();
-        }
-    }
     
-    //---
-    // FieldOfView Entry Widget
-    if ( e == sw->GetFieldOfViewEntry() && event == vtkCommand::ModifiedEvent ) {
-        // SET UNDO STATE
-        this->Mrml->SaveStateForUndo ( sw->GetSliceLogic()->GetSliceNode() );
-        // UNDO-ABLE APPLY
-        double val = sw->GetFieldOfViewEntry()->GetWidget()->GetValueAsDouble();
-        if ( val != 0 ) {
-            sw->GetSliceLogic()->GetSliceNode()->SetFieldOfView ( val, val, val );
-            sw->GetSliceLogic()->GetSliceNode()->Modified();
+        //---
+        // FieldOfView Entry Widget
+        if ( e == sw->GetFieldOfViewEntry() && event == vtkCommand::ModifiedEvent ) {
+            // SET UNDO STATE
+            mrml->SaveStateForUndo ( sw->GetSliceLogic()->GetSliceNode() );
+            // UNDO-ABLE APPLY
+            double val = sw->GetFieldOfViewEntry()->GetWidget()->GetValueAsDouble();
+            if ( val != 0 ) {
+                sw->GetSliceLogic()->GetSliceNode()->SetFieldOfView ( val, val, val );
+                sw->GetSliceLogic()->GetSliceNode()->Modified();
+            }
         }
-    }
 
-    //---
-    // Orientation menu
-    if ( o == sw->GetOrientationMenu ( ) && event == vtkCommand::ModifiedEvent ) {
-        // SET UNDO STATE
-        //UNDO-ABLE APPLY
-        // TO DO: set the RASToSlice matrix from the menu value
-        sw->GetOrientationMenu()->GetWidget()->GetValue ( );
+        //---
+        // Orientation menu
+        if ( o == sw->GetOrientationMenu ( ) && event == vtkCommand::ModifiedEvent ) {
+            // SET UNDO STATE
+            //UNDO-ABLE APPLY
+            // TO DO: set the RASToSlice matrix from the menu value
+            sw->GetOrientationMenu()->GetWidget()->GetValue ( );
+        }
     }
 }
 
 
 
 
+
+
 //---------------------------------------------------------------------------
-void vtkSlicerSliceGUI::ProcessMrmlEvents ( vtkObject *caller,
+void vtkSlicerSliceGUI::ProcessLogicEvents ( vtkObject *caller,
                                                    unsigned long event,
                                                    void *callData ) 
 {
-    
-
+    // process Logic changes
     vtkSlicerSliceLogic *n = vtkSlicerSliceLogic::SafeDownCast(caller);
 
     // find out whether this node belongs to any of the slice widgets
@@ -240,7 +237,7 @@ void vtkSlicerSliceGUI::ProcessMrmlEvents ( vtkObject *caller,
         i++;
     }
     if ( i == num ) {
-        vtkErrorMacro(<<"ProcessMrmlEvents: Unable to find SliceWidget associated with SliceLogic event: ");
+        vtkErrorMacro(<<"ProcessLogicEvents: Unable to find SliceWidget associated with SliceLogic event: ");
         return;
     }
     
@@ -284,16 +281,7 @@ void vtkSlicerSliceGUI::ProcessMrmlEvents ( vtkObject *caller,
         sw->GetImageViewer()->Modified ();
 
     }
-}
 
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerSliceGUI::ProcessLogicEvents ( vtkObject *caller,
-                                                   unsigned long event,
-                                                   void *callData ) 
-{
-    // process Logic changes
 }
 
 

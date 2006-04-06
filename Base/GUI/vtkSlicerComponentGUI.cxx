@@ -4,15 +4,11 @@
 #include "vtkSlicerApplicationLogic.h"
 #include "vtkSlicerGUIUpdate.h"
 #include "vtkSlicerLogicUpdate.h"
-#include "vtkSlicerMrmlUpdate.h"
 #include "vtkKWApplication.h"
 
 
 //---------------------------------------------------------------------------
-vtkStandardNewMacro (vtkSlicerComponentGUI);
 vtkCxxRevisionMacro(vtkSlicerComponentGUI, "$Revision: 1.0 $");
-
-
 
 //---------------------------------------------------------------------------
 vtkSlicerComponentGUI::vtkSlicerComponentGUI ( ) {
@@ -24,13 +20,9 @@ vtkSlicerComponentGUI::vtkSlicerComponentGUI ( ) {
     this->LogicCommand->SetGUI ( this );
     this->GUICommand = vtkSlicerGUIUpdate::New ( );
     this->GUICommand->SetGUI ( this );
-    this->MrmlCommand = vtkSlicerMrmlUpdate::New ( );
-    this->MrmlCommand->SetGUI ( this );
     this->Logic = NULL;
-    this->Mrml = NULL;
-
+    this->GUIName = NULL;
 }
-
 
 
 //---------------------------------------------------------------------------
@@ -44,45 +36,11 @@ vtkSlicerComponentGUI::~vtkSlicerComponentGUI ( ) {
         this->GUICommand->Delete ( );
         this->GUICommand = NULL;
     }
-    if (this->MrmlCommand ) {
-        this->MrmlCommand->Delete ( );
-        this->MrmlCommand = NULL;
-    }
+    this->GUIName = NULL;
     this->SetLogic(NULL);
-    this->SetMrml(NULL);
 }
 
 
-
-//---------------------------------------------------------------------------
-void vtkSlicerComponentGUI::BuildGUI ( ) {
-
-    // instance, configure and pack all GUI elements.
-}
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerComponentGUI::ProcessLogicEvents ( vtkObject *caller,
-                                                 unsigned long event,
-                                                 void *callData ) {
-
-}
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerComponentGUI::ProcessGUIEvents ( vtkObject *caller,
-                                                 unsigned long event,
-                                                 void *callData ) {
-
-}
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerComponentGUI::ProcessMrmlEvents ( vtkObject *caller,
-                                                 unsigned long event,
-                                                 void *callData ) {
-
-}
 
 
 

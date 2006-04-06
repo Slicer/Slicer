@@ -23,7 +23,6 @@ SET(LIB_SRCS
   vtkSlicerApplication.cxx
   vtkSlicerGUIUpdate.cxx
   vtkSlicerLogicUpdate.cxx
-  vtkSlicerMrmlUpdate.cxx
   vtkSlicerComponentGUI.cxx
   vtkSlicerModuleGUI.cxx
   vtkSlicerGUICollection.cxx
@@ -32,6 +31,7 @@ SET(LIB_SRCS
   vtkSlicerSliceGUI.cxx
   vtkSlicerVolumesGUI.cxx
   vtkSlicerModelsGUI.cxx
+  vtkSlicerDataGUI.cxx
   vtkSlicerApplicationGUI.cxx
   vtkSlicerVolumeSelectGUI.cxx
   vtkSlicerSliceControlGUI.cxx
@@ -45,7 +45,6 @@ SET_SOURCE_FILES_PROPERTIES(
     # none yet
   vtkSlicerGUIUpdate.cxx
   vtkSlicerLogicUpdate.cxx
-  vtkSlicerMrmlUpdate.cxx
   WRAP_EXCLUDE
   )
 

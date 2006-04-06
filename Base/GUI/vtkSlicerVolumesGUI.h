@@ -29,19 +29,15 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerVolumesGUI : public vtkSlicerModuleGUI
     //vtkSetObjectMacro ( VolumesLogic, vtkSlicerVolumesLogic);
 
     // Description:
-    // This method builds a Slice GUI
+    // This method builds the Volumes module GUI
     virtual void BuildGUI ( );
     virtual void AddGUIObservers ( );
     virtual void RemoveGUIObservers ( );
     virtual void AddLogicObservers ( );
     virtual void RemoveLogicObservers ( );
-    virtual void AddMrmlObservers ( );
-    virtual void RemoveMrmlObservers ( );
     virtual void ProcessLogicEvents ( vtkObject *caller, unsigned long event,
                                             void *callData );
     virtual void ProcessGUIEvents ( vtkObject *caller, unsigned long event,
-                                            void *callData );
-    virtual void ProcessMrmlEvents ( vtkObject *caller, unsigned long event,
                                             void *callData );
 
  protected:

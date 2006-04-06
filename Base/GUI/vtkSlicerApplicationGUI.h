@@ -23,11 +23,8 @@
 
 #include "vtkSlicerBaseGUIWin32Header.h"
 #include "vtkSlicerComponentGUI.h"
-
-// include GUIs for Slicer Base modules
 #include "vtkSlicerVolumesGUI.h"
 #include "vtkSlicerModelsGUI.h"
-// includes + fwd declarations for ApplicationGUI widgets
 #include "vtkKWWindow.h"
 #include "vtkKWMenuButton.h"
 #include "vtkKWFrame.h"
@@ -71,8 +68,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkSetMacro ( DefaultLogoFrameHeight, int );
     vtkGetMacro ( DefaultSlicerControlFrameHeight, int );
     vtkSetMacro ( DefaultSlicerControlFrameHeight, int );
-    vtkGetMacro ( DefaultModuleControlFrameHeight, int );
-    vtkSetMacro ( DefaultModuleControlFrameHeight, int );
+    vtkGetMacro ( DefaultModuleControlPanelHeight, int );
+    vtkSetMacro ( DefaultModuleControlPanelHeight, int );
     vtkGetMacro ( DefaultSliceControlFrameHeight, int );
     vtkSetMacro ( DefaultSliceControlFrameHeight, int );
     vtkGetMacro ( DefaultViewControlFrameHeight, int );
@@ -80,7 +77,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
 
     // Description:
     // These Get/Set methods for frames in the GUI panel.
-    vtkGetObjectMacro ( ModuleControlFrame, vtkKWFrame );
     vtkGetObjectMacro ( SlicerControlFrame, vtkKWFrame );
     vtkGetObjectMacro ( SliceControlFrame, vtkKWFrame );
     vtkGetObjectMacro ( ViewControlFrame, vtkKWFrame );
@@ -94,12 +90,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkGetObjectMacro ( DefaultSlice2Frame, vtkKWFrame );
     vtkGetObjectMacro ( MainViewer, vtkKWRenderWidget );
 
-    
     // Description:
-    // These Get/Set methods for Slicer Base Module GUIs.
-    vtkGetObjectMacro ( VolumesGUI, vtkSlicerVolumesGUI);
-    vtkGetObjectMacro ( ModelsGUI, vtkSlicerModelsGUI);
-
+    // Get/Set the main slicer window.
     vtkGetObjectMacro ( MainSlicerWin, vtkKWWindow );
     
     // Description:
@@ -109,14 +101,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     virtual void RemoveGUIObservers ( );
     virtual void AddLogicObservers ( );
     virtual void RemoveLogicObservers ( );
-    virtual void AddMrmlObservers ( );
-    virtual void RemoveMrmlObservers ( );
 
     virtual void ProcessLogicEvents ( vtkObject *caller, unsigned long event,
                                             void *callData );
     virtual void ProcessGUIEvents ( vtkObject *caller, unsigned long event,
-                                           void *callData );
-    virtual void ProcessMrmlEvents ( vtkObject *caller, unsigned long event,
                                            void *callData );
     
     // Description:
@@ -125,12 +113,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     virtual void InitDefaultSlicePanelDimensions ( );
     virtual void InitDefaultMainViewerDimensions ( );
     virtual void InitDefaultSlicerWindowDimensions ( );
-    
-    // Desrciption:
-    // These methods delete widgets belonging to components of the Slicer Window
-    virtual void DeleteGUIs ( );
-    virtual void DeleteGUIPanelWidgets ( );
-    virtual void DeleteFrames ( );
 
     // Description:
     // These methods configure and pack the Slicer Window
@@ -138,14 +120,20 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     virtual void ConfigureMainViewerPanel ( );
     virtual void ConfigureSliceViewersPanel ( );
     virtual void ConfigureGUIPanel ( );
+    
     // Description:
     // These methods populate the various GUI Panel frames
     virtual void BuildMainViewer ( );
     virtual void BuildLogoGUIPanel ( );
     virtual void BuildSlicerControlGUIPanel ( );
-    virtual void BuildModuleControlGUIPanel ( );
     virtual void BuildSliceControlGUIPanel ( );
     virtual void BuildViewControlGUIPanel ( );
+
+    // Desrciption:
+    // These methods delete widgets belonging to components of the Slicer Window
+    virtual void DeleteGUIPanelWidgets ( );
+    virtual void DeleteFrames ( );
+
     // Description:
     // Display Slicer's main window
     virtual void DisplayMainSlicerWindow ( );
@@ -158,7 +146,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // Widgets for the main Slicer UI panel    
     vtkKWFrame *LogoFrame;
     vtkKWFrame *SlicerControlFrame;
-    vtkKWFrame *ModuleControlFrame;
     vtkKWFrame *SliceControlFrame;
     vtkKWFrame *ViewControlFrame;
     vtkKWPushButton *HomeButton;
@@ -169,16 +156,12 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkKWFrame *DefaultSlice1Frame;
     vtkKWFrame *DefaultSlice2Frame;
     vtkKWRenderWidget *MainViewer;
-
     // Description:
     // Widgets for the modules GUI panels
     vtkKWMenuButton *ModulesButton;
-    
     // Description:
-    // Slice GUI containing SliceWidgetCollection
+    // Main Slicer window
     vtkKWWindow *MainSlicerWin;
-    vtkSlicerVolumesGUI *VolumesGUI;
-    vtkSlicerModelsGUI *ModelsGUI;
 
     // Description:
     // Dimensions for the Default Window & components
@@ -192,12 +175,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     int DefaultSliceWindowWidth;
     int DefaultGUIPanelHeight;
     int DefaultGUIPanelWidth;
-
     // Description:
     // Dimensions for specific GUI panel components
     int DefaultLogoFrameHeight;
     int DefaultSlicerControlFrameHeight;
-    int DefaultModuleControlFrameHeight;
+    int DefaultModuleControlPanelHeight;
     int DefaultSliceControlFrameHeight;    
     int DefaultViewControlFrameHeight;
     

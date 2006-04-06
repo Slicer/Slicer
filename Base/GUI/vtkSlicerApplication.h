@@ -12,7 +12,7 @@
 #include "vtkSlicerStyle.h"
 #include "vtkSlicerGUICollection.h"
 
-class vtkSlicerComponentGUI;
+class vtkSlicerModuleGUI;
 
 
 // Description:
@@ -27,14 +27,16 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
     vtkGetObjectMacro ( SlicerStyle, vtkSlicerStyle );
     vtkSetObjectMacro ( SlicerStyle, vtkSlicerStyle );
     
-    vtkGetObjectMacro ( GUICollection, vtkSlicerGUICollection );
+    vtkGetObjectMacro ( ModuleGUICollection, vtkSlicerGUICollection );
     
-    vtkGetMacro ( NumberOfGUIs, int );
-    vtkSetMacro ( NumberOfGUIs, int );
+    vtkGetMacro ( NumberOfModuleGUIs, int );
+    vtkSetMacro ( NumberOfModuleGUIs, int );
 
     // Description:
     // This method collects GUIs added to Slicer.
-    virtual void AddGUI ( vtkSlicerComponentGUI *gui );
+    virtual void AddModuleGUI ( vtkSlicerModuleGUI *gui );
+    virtual vtkSlicerModuleGUI* GetModuleGUIByName ( char *name );
+
     // Description:
     // These methods manage windows associated with the application
     virtual void CloseAllWindows ( ) ;
@@ -52,7 +54,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
 
     // Description:
     // Collections of GUIs
-    vtkSlicerGUICollection *GUICollection;
+    vtkSlicerGUICollection *ModuleGUICollection;
+    int NumberOfModuleGUIs;
     
     // Description:
     // numbers of widgets

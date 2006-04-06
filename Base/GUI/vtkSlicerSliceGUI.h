@@ -11,7 +11,6 @@
 #include "vtkSlicerComponentGUI.h"
 #include "vtkSlicerSliceLogic.h"
 #include "vtkSlicerSliceWidgetCollection.h"
-#include "vtkMRMLScene.h"
 
 class vtkObject;
 class vtkSlicerSliceWidget;
@@ -44,14 +43,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceGUI : public vtkSlicerComponentGU
     virtual void RemoveGUIObservers ( );
     virtual void AddLogicObservers ( );
     virtual void RemoveLogicObservers ( );
-    virtual void AddMrmlObservers ( );
-    virtual void RemoveMrmlObservers ( );
 
     virtual void ProcessLogicEvents ( vtkObject *caller, unsigned long event,
                                             void *callData );
     virtual void ProcessGUIEvents ( vtkObject *caller, unsigned long event,
-                                            void *callData );
-    virtual void ProcessMrmlEvents ( vtkObject *caller, unsigned long event,
                                             void *callData );
  protected:
     vtkSlicerSliceGUI ( );
