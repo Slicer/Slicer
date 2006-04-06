@@ -9,7 +9,13 @@
 #include "vtkSlicerApplicationGUI.h"
 #include "vtkSlicerSliceGUI.h"
 #include "vtkKWUserInterfacePanel.h"
+#include "vtkKWUserInterfaceManager.h"
+#include "vtkKWUserInterfaceManagerNotebook.h"
 #include "vtkSlicerGUICollection.h"
+#include "vtkSlicerVolumesGUI.h"
+#include "vtkSlicerModelsGUI.h"
+#include "vtkSlicerDataGUI.h"
+
 
 #include <vtksys/SystemTools.hxx>
 
@@ -20,116 +26,166 @@ extern "C" int Vtkitk_Init(Tcl_Interp *interp);
 
 int Slicer3_main(int argc, char *argv[])
 {
-  // Initialize Tcl
+    // Initialize Tcl
 
-  Tcl_Interp *interp = vtkKWApplication::InitializeTcl(argc, argv, &cerr);
-  if (!interp)
-    {
-    cerr << "Error: InitializeTcl failed" << endl ;
-    return 1;
-    }
+    Tcl_Interp *interp = vtkKWApplication::InitializeTcl(argc, argv, &cerr);
+    if (!interp)
+        {
+            cerr << "Error: InitializeTcl failed" << endl ;
+            return 1;
+        }
 
-  // Initialize our Tcl library (i.e. our classes wrapped in Tcl)
+    // Initialize our Tcl library (i.e. our classes wrapped in Tcl)
 
-  Slicerbasegui_Init(interp);
-  Slicerbaselogic_Init(interp);
-  Mrml_Init(interp);
-  Vtkitk_Init(interp);
+    Slicerbasegui_Init(interp);
+    Slicerbaselogic_Init(interp);
+    Mrml_Init(interp);
+    Vtkitk_Init(interp);
 
   
-  // Create SlicerGUI application, style, and main window 
-  vtkSlicerApplication *slicerApp = vtkSlicerApplication::New ( );
-  slicerApp->GetSlicerStyle()->ApplyPresentation ( );
+    // Create SlicerGUI application, style, and main window 
+    vtkSlicerApplication *slicerApp = vtkSlicerApplication::New ( );
+    slicerApp->GetSlicerStyle()->ApplyPresentation ( );
 
-  // Create the application Logic object, 
-  // Create the application GUI object
-  // and have it observe the Logic
-  vtkSlicerApplicationLogic *appLogic = vtkSlicerApplicationLogic::New( );
-  vtkSlicerApplicationGUI *appGUI = vtkSlicerApplicationGUI::New ( );
-  appGUI->SetApplication ( slicerApp );
-  appGUI->SetLogic ( appLogic );
-  appGUI->SetMrml ( appGUI->GetLogic()->GetMRMLScene( ) );
-  appGUI->BuildGUI ( );
-  appGUI->AddGUIObservers ( );
-  appGUI->AddLogicObservers ( );
-  appGUI->AddMrmlObservers ( );
+    // Create the application Logic object, 
+    // Create the application GUI object
+    // and have it observe the Logic
+    vtkSlicerApplicationLogic *appLogic = vtkSlicerApplicationLogic::New( );
+    vtkSlicerApplicationGUI *appGUI = vtkSlicerApplicationGUI::New ( );
+    appGUI->SetApplication ( slicerApp );
+    appGUI->SetLogic ( appLogic );
+    appGUI->BuildGUI ( );
+    appGUI->AddGUIObservers ( );
+    appGUI->AddLogicObservers ( );
 
 
-  vtkSlicerSliceGUI *sliceGUI = vtkSlicerSliceGUI::New ();
-  // ---
-  // SLICE GUI
-  sliceGUI->SetMrml (appGUI->GetMrml ( ) );
-  sliceGUI->SetApplication ( slicerApp);
-  sliceGUI->BuildGUI ( appGUI->GetDefaultSlice0Frame(),
-                       appGUI->GetDefaultSlice1Frame(),
-                       appGUI->GetDefaultSlice2Frame() );
+    vtkSlicerSliceGUI *sliceGUI = vtkSlicerSliceGUI::New ();
+    // ---
+    // SLICE GUI
+    sliceGUI->SetApplication ( slicerApp);
+    sliceGUI->BuildGUI ( appGUI->GetDefaultSlice0Frame(),
+                         appGUI->GetDefaultSlice1Frame(),
+                         appGUI->GetDefaultSlice2Frame() );
+    sliceGUI->AddGUIObservers();
+    sliceGUI->AddLogicObservers();
 
-  // set slice viewer size
-  //sliceGUI->GetMainSlice0()->GetRenderWidget()->GetRenderWindow()->SetSize( appGUI->GetDefaultSliceGUIFrameWidth(), appGUI->GetDefaultSliceGUIFrameWidth());
+    // ---
+    // Note on vtkSlicerApplication's ModuleGUICollection:
+    // right now the vtkSlicerApplication's ModuleGUICollection
+    // collects ONLY module GUIs which populate the shared
+    // ui panel in the main user interface. Other GUIs, like
+    // the vtkSlicerSliceGUI which manages the slice widgets
+    // the vtkSlicerApplicationGUI which manages the entire
+    // main user interface and viewer, any future GUI that
+    // creates toplevel widgets are not added to this collection.
+    // If we need to collect them at some point, we should define 
+    // other collections in the vtkSlicerApplication class.
+
+    // ---
+    // MODULE GUIs:
+    // for now list them here but later autodetect;
+    // Also add code to handle the raising of their
+    // GUI panel in vtkSlicerApplicationGUI.cxx
+
+    // Create the volumes module GUI.
+    vtkSlicerVolumesGUI *VolumesGUI = vtkSlicerVolumesGUI::New ( );
+    VolumesGUI->SetApplication ( slicerApp );
+    VolumesGUI->SetGUIName( "VolumesGUI" );
+    VolumesGUI->GetUIPanel()->SetName ("VolumesGUI");
+    VolumesGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWin()->GetMainUserInterfaceManager ( ) );
+    VolumesGUI->GetUIPanel()->Create ( );
+    VolumesGUI->BuildGUI ( );
+    VolumesGUI->AddGUIObservers ( );
+    VolumesGUI->AddLogicObservers ( );
+    slicerApp->AddModuleGUI ( VolumesGUI );
+    
+    // Create the models module GUI.
+    vtkSlicerModelsGUI *ModelsGUI = vtkSlicerModelsGUI::New ( );
+    ModelsGUI->SetApplication ( slicerApp );
+    ModelsGUI->SetGUIName( "ModelsGUI" );
+    ModelsGUI->GetUIPanel()->SetName ("ModelsGUI");
+    ModelsGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWin()->GetMainUserInterfaceManager ( ) );
+    ModelsGUI->GetUIPanel()->Create ( );
+    ModelsGUI->BuildGUI ( );
+    ModelsGUI->AddGUIObservers ( );
+    ModelsGUI->AddLogicObservers ( );
+    slicerApp->AddModuleGUI ( ModelsGUI );
+
+
+    // Create the data module GUI.
+    vtkSlicerDataGUI *DataGUI = vtkSlicerDataGUI::New ( );
+    DataGUI->SetApplication ( slicerApp );
+    DataGUI->SetGUIName( "DataGUI" );
+    DataGUI->GetUIPanel()->SetName ("DataGUI");
+    DataGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWin()->GetMainUserInterfaceManager ( ) );
+    DataGUI->GetUIPanel()->Create ( );
+    DataGUI->BuildGUI ( );
+    DataGUI->AddGUIObservers ( );
+    DataGUI->AddLogicObservers ( );
+    slicerApp->AddModuleGUI ( DataGUI );
+    
+    // Additional Modules GUI panel configuration.
+    vtkKWUserInterfaceManagerNotebook *mnb = vtkKWUserInterfaceManagerNotebook::SafeDownCast (appGUI->GetMainSlicerWin()->GetMainUserInterfaceManager());
+    mnb->GetNotebook()->AlwaysShowTabsOff();
+    mnb->GetNotebook()->ShowOnlyPagesWithSameTagOn();    
+
+    const char *name = slicerApp->GetTclName();
+
+    // DISPLAY WINDOW AND RUN
+    appGUI->DisplayMainSlicerWindow ( );
+    int res = slicerApp->StartApplication();
+
+    // REMOVE OBSERVERS
+    VolumesGUI->RemoveGUIObservers ( );
+    VolumesGUI->RemoveLogicObservers ( );
+    ModelsGUI->RemoveGUIObservers ( );
+    ModelsGUI->RemoveLogicObservers ( );
+    DataGUI->RemoveGUIObservers ( );
+    DataGUI->RemoveLogicObservers ( );
+    sliceGUI->RemoveGUIObservers();
+    sliceGUI->RemoveLogicObservers();
   
-  //sliceGUI->GetMainSlice1()->GetRenderWidget()->GetRenderWindow()->SetSize( appGUI->GetDefaultSliceGUIFrameWidth(), appGUI->GetDefaultSliceGUIFrameWidth());
+    // REMOVE ALL COLLECTED GUI OBJECTS OR DELETE WON'T WORK
+    sliceGUI->GetSliceWidgets()->RemoveAllItems(); 
+    slicerApp->GetModuleGUICollection ( )->RemoveAllItems ( );
+
+    // EXIT THE APPLICATION
+    slicerApp->Exit();
+
+    // DELETE ALL GUI OBJECTS IN GOOD ORDER
+    VolumesGUI->Delete ( );
+    ModelsGUI->Delete ( );
+    DataGUI->Delete ( );
+    sliceGUI->Delete ();
+    appGUI->Delete();
+    appLogic->Delete();
+    slicerApp->Delete();
   
-  //sliceGUI->GetMainSlice2()->GetRenderWidget()->GetRenderWindow()->SetSize( appGUI->GetDefaultSliceGUIFrameWidth(), appGUI->GetDefaultSliceGUIFrameWidth());
-  sliceGUI->AddGUIObservers();
-  sliceGUI->AddLogicObservers();
-  sliceGUI->AddMrmlObservers();
-
-  // ---
-  // CREATE MODULE GUIs
-
-  // ---
-  // display main slicer window
-  appGUI->DisplayMainSlicerWindow ( );
-
-  // add to collection of component GUIs
-  slicerApp->AddGUI ( appGUI );
-
-
-  const char *name = slicerApp->GetTclName();
-
-  // TODO: where should args get parsed?
-  //int res = appGUI->StartApplication(argc, argv);
-  int res = slicerApp->StartApplication();
-
-  sliceGUI->RemoveGUIObservers();
-  sliceGUI->RemoveLogicObservers();
-  sliceGUI->RemoveMrmlObservers();
-  
-  sliceGUI->GetSliceWidgets()->RemoveAllItems(); // that's because this has no effect in the slicerApp destructor, as the collection holds references. you can add a RemoveAllSlices method to slicerGUI that will just RemoveAllItems, or better yet, use STL containers (see in KWWidgets).
-  slicerApp->GetGUICollection()->RemoveAllItems(); // that's because this has no effect in the slicerApp destructor, as the collection holds references. you can add a RemoveAllGUIs method to slicerApp that will just RemoveAllItems, or better yet, use STL containers (see in KWWidgets).
-
-  slicerApp->Exit();
-
-  sliceGUI->Delete ();
-  slicerApp->Delete();
-  appGUI->Delete();
-  appLogic->Delete();
-  
-  return res;
+    return res;
 }
 
 #ifdef _WIN32
 #include <windows.h>
 int __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR lpCmdLine, int)
 {
-  int argc;
-  char **argv;
-  vtksys::SystemTools::ConvertWindowsCommandLineToUnixArguments(
-    lpCmdLine, &argc, &argv);
-  int ret = Slicer3_main(argc, argv);
-  for (int i = 0; i < argc; i++) { delete [] argv[i]; }
-  delete [] argv;
-  return ret;
+    int argc;
+    char **argv;
+    vtksys::SystemTools::ConvertWindowsCommandLineToUnixArguments(
+                                                                  lpCmdLine, &argc, &argv);
+    int ret = Slicer3_main(argc, argv);
+    for (int i = 0; i < argc; i++) { delete [] argv[i]; }
+    delete [] argv;
+    return ret;
 }
 
 int main(int argc, char *argv[])
 {
-  return Slicer3_main(argc, argv);
+    return Slicer3_main(argc, argv);
 }
 
 #else
 int main(int argc, char *argv[])
 {
-  return Slicer3_main(argc, argv);
+    return Slicer3_main(argc, argv);
 }
 #endif
