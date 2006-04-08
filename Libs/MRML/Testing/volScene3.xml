@@ -5,7 +5,7 @@ displayNodeRef="display1" transformNodeRef="xform1"></Volume>
 
 <Volume
 name="head2" description="somebodys2" id="vol2" storageNodeRef="storage2"
-sisplayNodeRef="display1" transformNodeRef="xform2"></Volume>
+displayNodeRef="display1" transformNodeRef="xform2"></Volume>
 
 <VolumeArchetypeStorage
 fileArchetype="TestData/fixed.nrrd" id="storage1"></VolumeArchetypeStorage>
