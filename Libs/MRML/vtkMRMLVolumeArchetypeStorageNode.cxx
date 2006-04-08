@@ -217,6 +217,7 @@ void vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
   ici->SetInput (reader->GetOutput());
   ici->SetOutputSpacing( 1, 1, 1 );
   ici->SetOutputOrigin( 0, 0, 0 );
+  ici->Update();
 
   volNode->SetImageData (ici->GetOutput());
 }
