@@ -1,6 +1,6 @@
 /*=auto=========================================================================
 
-Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
+Portions (c) Copyright 2005 Brigham and Women\"s Hospital (BWH) All Rights Reserved.
 
 See Doc/copyright/copyright.txt
 or http://www.slicer.org/copyright/copyright.txt for details.
@@ -92,15 +92,15 @@ void vtkMRMLNode::WriteXML(ostream& of, int nIndent)
   vtkIndent indent(nIndent);
   if (this->ID != NULL) 
     {
-    of << indent << "ID='" << this->ID << "' ";
+    of << indent << "id=\"" << this->ID << "\" ";
     }
   if (this->Name != NULL) 
     {
-    of << indent << "Name='" << this->Name << "' ";
+    of << indent << "name=\"" << this->Name << "\" ";
     }
   if (this->Description != NULL) 
     {
-    of << indent << "Description='" << this->Description << "' ";
+    of << indent << "description=\"" << this->Description << "\" ";
     }
 }
 
@@ -113,15 +113,15 @@ void vtkMRMLNode::ReadXMLAttributes(const char** atts)
     {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "ID")) 
+    if (!strcmp(attName, "id")) 
       {
       this->SetID(attValue);
       }
-    else if (!strcmp(attName, "Name")) 
+    else if (!strcmp(attName, "name")) 
       {
       this->SetName(attValue);
       }
-    else if (!strcmp(attName, "Description")) 
+    else if (!strcmp(attName, "description")) 
       {
       this->SetDescription(attValue);
       }

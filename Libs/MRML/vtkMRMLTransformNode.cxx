@@ -58,7 +58,7 @@ void vtkMRMLTransformNode::WriteXML(ostream& of, int nIndent)
 
   if (this->ParentTransformNodeID != NULL) 
     {
-    of << indent << "ParentTransformNodeID='" << this->ParentTransformNodeID << "' ";
+    of << indent << "parentTransformNodeRef=/'" << this->ParentTransformNodeID << "/' ";
     }
 }
 
@@ -74,7 +74,7 @@ void vtkMRMLTransformNode::ReadXMLAttributes(const char** atts)
     {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "ParentTransformNodeID")) 
+    if (!strcmp(attName, "parentTransformNodeRef")) 
       {
       this->SetParentTransformNodeID(attValue);
       }

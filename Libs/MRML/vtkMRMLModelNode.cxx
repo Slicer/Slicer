@@ -112,46 +112,46 @@ void vtkMRMLModelNode::WriteXML(ostream& of, int nIndent)
 
   if (this->Color && strcmp(this->Color, "")) 
     {
-    of << indent << " color='" << this->Color << "'";
+    of << indent << " color=\"" << this->Color << "\"";
     }
 
   //if (this->LUTName && strcmp(this->LUTName,""))
   if (this->LUTName != -1)
     {
-    of << indent << " lutName='" << this->LUTName << "'";
+    of << indent << " lutName=\"" << this->LUTName << "\"";
     }
   
   // Numbers
   if (this->Opacity != 1.0)
     {
-    of << indent << " opacity='" << this->Opacity << "'";
+    of << indent << " opacity=\"" << this->Opacity << "\"";
     }
   if (this->Visibility != 1)
     {
-    of << indent << " visibility='" << (this->Visibility ? "true" : "false") << "'";
+    of << indent << " visibility=\"" << (this->Visibility ? "true" : "false") << "\"";
     }
   if (this->Clipping != 0)
     {
-    of << indent << " clipping='" << (this->Clipping ? "true" : "false") << "'";
+    of << indent << " clipping=\"" << (this->Clipping ? "true" : "false") << "\"";
     }
   if (this->BackfaceCulling != 1)
     {
-    of << indent << " backfaceCulling='" << (this->BackfaceCulling ? "true" : "false") << "'";
+    of << indent << " backfaceCulling=\"" << (this->BackfaceCulling ? "true" : "false") << "\"";
     }
   if (this->ScalarVisibility != 0)
     {
-    of << indent << " scalarVisibility='" << (this->ScalarVisibility ? "true" : "false") << "'";
+    of << indent << " scalarVisibility=\"" << (this->ScalarVisibility ? "true" : "false") << "\"";
     }
 
   // Arrays
   if (this->ScalarRange[0] != 0 || this->ScalarRange[1] != 100)
     {
-    of << indent << " scalarRange='" << this->ScalarRange[0] << " "
-       << this->ScalarRange[1] << "'";
+    of << indent << " scalarRange=\"" << this->ScalarRange[0] << " "
+       << this->ScalarRange[1] << "\"";
     }
   if (this->TransformNodeID != NULL) 
     {
-    of << indent << "TransformNodeID='" << this->TransformNodeID << "' ";
+    of << indent << "transformNodeRef=\"" << this->TransformNodeID << "\" ";
     }
 }
 
@@ -167,11 +167,11 @@ void vtkMRMLModelNode::ReadXMLAttributes(const char** atts)
     {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "Color")) 
+    if (!strcmp(attName, "color")) 
       {
       this->SetColor(attValue);
       }
-    else if (!strcmp(attName, "ScalarRange")) 
+    else if (!strcmp(attName, "scalarRange")) 
       {
       std::stringstream ss;
       ss << attValue;
@@ -184,43 +184,43 @@ void vtkMRMLModelNode::ReadXMLAttributes(const char** atts)
       ss << attValue;
       ss >> LUTName;
       }
-    else if (!strcmp(attName, "Opacity")) 
+    else if (!strcmp(attName, "opacity")) 
       {
       std::stringstream ss;
       ss << attValue;
       ss >> Opacity;
       }
-    else if (!strcmp(attName, "Visibility")) 
+    else if (!strcmp(attName, "visibility")) 
       {
       std::stringstream ss;
       ss << attValue;
       ss >> Visibility;
       }
-    else if (!strcmp(attName, "BackfaceCulling")) 
+    else if (!strcmp(attName, "backfaceCulling")) 
       {
       std::stringstream ss;
       ss << attValue;
       ss >> BackfaceCulling;
       }
-    else if (!strcmp(attName, "ScalarVisibility")) 
+    else if (!strcmp(attName, "scalarVisibility")) 
       {
       std::stringstream ss;
       ss << attValue;
       ss >> ScalarVisibility;
       }
-    else if (!strcmp(attName, "VectorVisibility")) 
+    else if (!strcmp(attName, "vectorVisibility")) 
       {
       std::stringstream ss;
       ss << attValue;
       ss >> VectorVisibility;
       }
-    else if (!strcmp(attName, "TensorVisibility")) 
+    else if (!strcmp(attName, "tensorVisibility")) 
       {
       std::stringstream ss;
       ss << attValue;
       ss >> TensorVisibility;
       }
-    else if (!strcmp(attName, "TransformNodeID")) 
+    else if (!strcmp(attName, "transformNodeRef")) 
       {
       this->SetTransformNodeID(attValue);
       }

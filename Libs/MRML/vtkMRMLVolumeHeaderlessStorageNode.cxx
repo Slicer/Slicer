@@ -127,15 +127,15 @@ void vtkMRMLVolumeHeaderlessStorageNode::ReadXMLAttributes(const char** atts)
     {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "Filename")) 
+    if (!strcmp(attName, "filename")) 
       {
       this->SetFilename(attValue);
       }
-    if (!strcmp(attName, "FileScanOrder")) 
+    if (!strcmp(attName, "fileScanOrder")) 
       {
       this->SetFileScanOrder(attValue);
       }
-    else if (!strcmp(attName, "FileDimensions")) 
+    else if (!strcmp(attName, "fileDimensions")) 
       {
       std::stringstream ss;
       ss << attValue;
@@ -143,7 +143,7 @@ void vtkMRMLVolumeHeaderlessStorageNode::ReadXMLAttributes(const char** atts)
       ss >> FileDimensions[1];
       ss >> FileDimensions[2];
       }
-    else if (!strcmp(attName, "FileSpacing")) 
+    else if (!strcmp(attName, "fileSpacing")) 
       {
       std::stringstream ss;
       ss << attValue;
@@ -151,19 +151,19 @@ void vtkMRMLVolumeHeaderlessStorageNode::ReadXMLAttributes(const char** atts)
       ss >> FileSpacing[1];
       ss >> FileSpacing[2];
       }
-    else if (!strcmp(attName, "FileNumberOfScalarComponents")) 
+    else if (!strcmp(attName, "fileNumberOfScalarComponents")) 
       {
       std::stringstream ss;
       ss << attValue;
       ss >> FileNumberOfScalarComponents;
       }
-    else if (!strcmp(attName, "FileScalarType")) 
+    else if (!strcmp(attName, "fileScalarType")) 
       {
       std::stringstream ss;
       ss << attValue;
       ss >> FileScalarType;
       }
-    else if (!strcmp(attName, "FileLittleEndian")) 
+    else if (!strcmp(attName, "fileLittleEndian")) 
       {
       std::stringstream ss;
       ss << attValue;

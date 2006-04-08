@@ -91,7 +91,7 @@ void vtkMRMLLinearTransformNode::WriteXML(ostream& of, int nIndent)
         ss << " ";
         }
       }
-    of << indent << "MatrixTransformToParent='" << ss.str() << "' ";
+    of << indent << "matrixTransformToParent=\"" << ss.str() << "\" ";
     }
 
 }
@@ -108,7 +108,7 @@ void vtkMRMLLinearTransformNode::ReadXMLAttributes(const char** atts)
     {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "MatrixTransformToParent")) 
+    if (!strcmp(attName, "matrixTransformToParent")) 
       {
       if (this->MatrixTransformToParent != NULL) 
         {

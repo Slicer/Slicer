@@ -79,7 +79,7 @@ void vtkMRMLVolumeArchetypeStorageNode::WriteXML(ostream& of, int nIndent)
   vtkIndent indent(nIndent);
   if (this->FileArchetype != NULL) 
     {
-    of << indent << "FileArchetype='" << this->FileArchetype << "' ";
+    of << indent << "fileArchetype=/'" << this->FileArchetype << "/' ";
     }
 }
 
@@ -95,7 +95,7 @@ void vtkMRMLVolumeArchetypeStorageNode::ReadXMLAttributes(const char** atts)
     {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "FileArchetype")) 
+    if (!strcmp(attName, "fileArchetype")) 
       {
       this->SetFileArchetype(attValue);
       }

@@ -1,6 +1,6 @@
 /*=auto=========================================================================
 
-Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
+Portions (c) Copyright 2005 Brigham and Women\"s Hospital (BWH) All Rights Reserved.
 
 See Doc/copyright/copyright.txt
 or http://www.slicer.org/copyright/copyright.txt for details.
@@ -193,15 +193,15 @@ void vtkMRMLSliceNode::WriteXML(ostream& of, int nIndent)
 
   vtkIndent indent(nIndent);
 
-  of << indent << "FieldOfView='" << 
+  of << indent << "fieldOfView=\"" << 
         this->FieldOfView[0] << " " <<
         this->FieldOfView[1] << " " <<
-        this->FieldOfView[2] << "' ";
+        this->FieldOfView[2] << "\" ";
 
-  of << indent << "Dimensions='" << 
+  of << indent << "dimensions=\"" << 
         this->Dimensions[0] << " " <<
         this->Dimensions[1] << " " <<
-        this->Dimensions[2] << "' ";
+        this->Dimensions[2] << "\" ";
 
   std::stringstream ss;
   int j;
@@ -216,7 +216,7 @@ void vtkMRMLSliceNode::WriteXML(ostream& of, int nIndent)
         }
       }
     }
-  of << indent << "SliceToRAS='" << ss.str() << "' ";
+  of << indent << "sliceToRAS=\"" << ss.str() << "\" ";
 }
 
 //----------------------------------------------------------------------------
@@ -231,7 +231,7 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
     {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "FieldOfView")) 
+    if (!strcmp(attName, "fieldOfView")) 
       {
       std::stringstream ss;
       double val;
@@ -243,7 +243,7 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
         this->FieldOfView[i] = val;
         }
       }
-    if (!strcmp(attName, "Dimensions")) 
+    if (!strcmp(attName, "dimensions")) 
       {
       std::stringstream ss;
       unsigned int val;
@@ -255,7 +255,7 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
         this->Dimensions[i] = val;
         }
       }
-    if (!strcmp(attName, "SliceToRAS")) 
+    if (!strcmp(attName, "sliceToRAS")) 
       {
       std::stringstream ss;
       double val;
@@ -274,7 +274,7 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-// Copy the node's attributes to this object.
+// Copy the node\"s attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, SliceID
 void vtkMRMLSliceNode::Copy(vtkMRMLNode *anode)
 {

@@ -1,6 +1,6 @@
 /*=auto=========================================================================
 
-Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
+Portions (c) Copyright 2005 Brigham and Women\"s Hospital (BWH) All Rights Reserved.
 
 See Doc/copyright/copyright.txt
 or http://www.slicer.org/copyright/copyright.txt for details.
@@ -84,15 +84,15 @@ void vtkMRMLVolumeNode::WriteXML(ostream& of, int nIndent)
   
   if (this->StorageNodeID != NULL) 
     {
-    of << indent << "StorageNodeID='" << this->StorageNodeID << "' ";
+    of << indent << "storageNodeRef=\"" << this->StorageNodeID << "\" ";
     }
   if (this->DisplayNodeID != NULL) 
     {
-    of << indent << "DisplayNodeID='" << this->DisplayNodeID << "' ";
+    of << indent << "displayNodeRef=\"" << this->DisplayNodeID << "\" ";
     }
   if (this->TransformNodeID != NULL) 
     {
-    of << indent << "TransformNodeID='" << this->TransformNodeID << "' ";
+    of << indent << "transformNodeRef=\"" << this->TransformNodeID << "\" ";
     }
   if (this->IjkToRasDirections != NULL) 
     {
@@ -105,7 +105,7 @@ void vtkMRMLVolumeNode::WriteXML(ostream& of, int nIndent)
         ss << " ";
         }
       }
-    of << indent << "IjkToRasDirections='" << ss.str() << "' ";
+    of << indent << "ijkToRasDirections=\"" << ss.str() << "\" ";
     }
 
 }
@@ -122,7 +122,7 @@ void vtkMRMLVolumeNode::ReadXMLAttributes(const char** atts)
     {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "IjkToRasDirections")) 
+    if (!strcmp(attName, "ijkToRasDirections")) 
       {
       std::stringstream ss;
       double val;
@@ -133,15 +133,15 @@ void vtkMRMLVolumeNode::ReadXMLAttributes(const char** atts)
         this->IjkToRasDirections[i] = val;
         }
       }
-    else if (!strcmp(attName, "StorageNodeID")) 
+    else if (!strcmp(attName, "storageNodeRef")) 
       {
       this->SetStorageNodeID(attValue);
       }
-    else if (!strcmp(attName, "DisplayNodeID")) 
+    else if (!strcmp(attName, "displayNodeRef")) 
       {
       this->SetDisplayNodeID(attValue);
       }
-    else if (!strcmp(attName, "TransformNodeID")) 
+    else if (!strcmp(attName, "transformNodeRef")) 
       {
       this->SetTransformNodeID(attValue);
       }
@@ -149,7 +149,7 @@ void vtkMRMLVolumeNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-// Copy the node's attributes to this object.
+// Copy the node\"s attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, VolumeID
 void vtkMRMLVolumeNode::Copy(vtkMRMLNode *anode)
 {

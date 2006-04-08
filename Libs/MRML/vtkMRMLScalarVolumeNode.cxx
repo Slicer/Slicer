@@ -66,7 +66,7 @@ void vtkMRMLScalarVolumeNode::WriteXML(ostream& of, int nIndent)
   
   vtkIndent indent(nIndent);
   
-  of << indent << "LabelMap='" << this->LabelMap << "' ";
+  of << indent << "labelMap=/'" << this->LabelMap << "/' ";
 }
 
 //----------------------------------------------------------------------------
@@ -81,7 +81,7 @@ void vtkMRMLScalarVolumeNode::ReadXMLAttributes(const char** atts)
     {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "LabelMap")) 
+    if (!strcmp(attName, "labelMap")) 
       {
       std::stringstream ss;
       int val;

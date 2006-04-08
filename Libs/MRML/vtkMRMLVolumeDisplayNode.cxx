@@ -1,6 +1,6 @@
 /*=auto=========================================================================
 
-Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
+Portions (c) Copyright 2005 Brigham and Women\"s Hospital (BWH) All Rights Reserved.
 
 See Doc/copyright/copyright.txt
 or http://www.slicer.org/copyright/copyright.txt for details.
@@ -87,48 +87,48 @@ void vtkMRMLVolumeDisplayNode::WriteXML(ostream& of, int nIndent)
 
   if (this->LUTName != NULL) 
     {
-    of << indent << "LUTName='" << this->LUTName << "' ";
+    of << indent << "LUTName=\"" << this->LUTName << "\" ";
     }
 
   {
   std::stringstream ss;
   ss << this->Window;
-  of << indent << "Window='" << ss.str() << "' ";
+  of << indent << "window=\"" << ss.str() << "\" ";
   }
   {
   std::stringstream ss;
   ss << this->Level;
-  of << indent << "Level='" << ss.str() << "' ";
+  of << indent << "level=\"" << ss.str() << "\" ";
   }
   {
   std::stringstream ss;
   ss << this->UpperThreshold;
-  of << indent << "UpperThreshold='" << ss.str() << "' ";
+  of << indent << "upperThreshold=\"" << ss.str() << "\" ";
   }
   {    
   std::stringstream ss;
   ss << this->LowerThreshold;
-  of << indent << "LowerThreshold='" << ss.str() << "' ";
+  of << indent << "lowerThreshold=\"" << ss.str() << "\" ";
   }
   {   
   std::stringstream ss;
   ss << this->Interpolate;
-  of << indent << "Interpolate='" << ss.str() << "' ";
+  of << indent << "interpolate=\"" << ss.str() << "\" ";
   }
   {
   std::stringstream ss;
   ss << this->AutoWindowLevel;
-  of << indent << "AutoWindowLevel='" << ss.str() << "' ";
+  of << indent << "autoWindowLevel=\"" << ss.str() << "\" ";
   }
   {
   std::stringstream ss;
   ss << this->ApplyThreshold;
-  of << indent << "ApplyThreshold='" << ss.str() << "' ";
+  of << indent << "applyThreshold=\"" << ss.str() << "\" ";
   }
   {
   std::stringstream ss;
   ss << this->AutoThreshold;
-  of << indent << "AutoThreshold='" << ss.str() << "' ";
+  of << indent << "autoThreshold=\"" << ss.str() << "\" ";
   }
 
 }
@@ -145,49 +145,49 @@ void vtkMRMLVolumeDisplayNode::ReadXMLAttributes(const char** atts)
     {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "Window")) 
+    if (!strcmp(attName, "window")) 
       {
       std::stringstream ss;
       ss << attValue;
       ss >> this->Window;
       }
-    else if (!strcmp(attName, "Level")) 
+    else if (!strcmp(attName, "level")) 
       {
       std::stringstream ss;
       ss << attValue;
       ss >> this->Level;
       }
-    else if (!strcmp(attName, "UpperThreshold")) 
+    else if (!strcmp(attName, "upperThreshold")) 
       {
       std::stringstream ss;
       ss << attValue;
       ss >> this->UpperThreshold;
       }
-    else if (!strcmp(attName, "LowerThreshold")) 
+    else if (!strcmp(attName, "lowerThreshold")) 
       {
       std::stringstream ss;
       ss << attValue;
       ss >> this->LowerThreshold;
       }
-    else if (!strcmp(attName, "Interpolate")) 
+    else if (!strcmp(attName, "interpolate")) 
       {
       std::stringstream ss;
       ss << attValue;
       ss >> this->Interpolate;
       }
-    else if (!strcmp(attName, "AutoWindowLevel")) 
+    else if (!strcmp(attName, "autoWindowLevel")) 
       {
       std::stringstream ss;
       ss << attValue;
       ss >> this->AutoWindowLevel;
       }
-    else if (!strcmp(attName, "ApplyThreshold")) 
+    else if (!strcmp(attName, "applyThreshold")) 
       {
       std::stringstream ss;
       ss << attValue;
       ss >> this->ApplyThreshold;
       }
-    else if (!strcmp(attName, "AutoThreshold")) 
+    else if (!strcmp(attName, "autoThreshold")) 
       {
       std::stringstream ss;
       ss << attValue;
@@ -197,7 +197,7 @@ void vtkMRMLVolumeDisplayNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-// Copy the node's attributes to this object.
+// Copy the node\"s attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, VolumeID
 void vtkMRMLVolumeDisplayNode::Copy(vtkMRMLNode *anode)
 {

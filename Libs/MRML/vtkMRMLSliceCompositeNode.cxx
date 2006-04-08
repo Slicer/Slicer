@@ -1,6 +1,6 @@
 /*=auto=========================================================================
 
-Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
+Portions (c) Copyright 2005 Brigham and Women\"s Hospital (BWH) All Rights Reserved.
 
 See Doc/copyright/copyright.txt
 or http://www.slicer.org/copyright/copyright.txt for details.
@@ -68,9 +68,9 @@ void vtkMRMLSliceCompositeNode::WriteXML(ostream& of, int nIndent)
 
   vtkIndent indent(nIndent);
 
-  of << indent << "BackgroundVolumeID='" << this->BackgroundVolumeID << "' ";
-  of << indent << "ForegroundVolumeID='" << this->ForegroundVolumeID << "' ";
-  of << indent << "Opacity='" << this->Opacity << "' ";
+  of << indent << "backgroundVolumeID=\"" << this->BackgroundVolumeID << "\" ";
+  of << indent << "foregroundVolumeID=\"" << this->ForegroundVolumeID << "\" ";
+  of << indent << "opacity=\"" << this->Opacity << "\" ";
 
 }
 
@@ -86,15 +86,15 @@ void vtkMRMLSliceCompositeNode::ReadXMLAttributes(const char** atts)
     {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "BackgroundVolumeID")) 
+    if (!strcmp(attName, "backgroundVolumeID")) 
       {
       this->SetBackgroundVolumeID(attValue);
       }
-    if (!strcmp(attName, "ForegroundVolumeID")) 
+    if (!strcmp(attName, "foregroundVolumeID")) 
       {
       this->SetForegroundVolumeID(attValue);
       }
-    if (!strcmp(attName, "Opacity")) 
+    if (!strcmp(attName, "opacity")) 
       {
       this->SetOpacity( atof(attValue) );
       }
@@ -102,7 +102,7 @@ void vtkMRMLSliceCompositeNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-// Copy the node's attributes to this object.
+// Copy the node\"s attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, SliceID
 void vtkMRMLSliceCompositeNode::Copy(vtkMRMLNode *anode)
 {
