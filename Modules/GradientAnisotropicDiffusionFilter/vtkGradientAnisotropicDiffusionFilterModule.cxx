@@ -24,6 +24,8 @@ Version:   $Revision: 1.2 $
 
 #include "vtkITKGradientAnisotropicDiffusionImageFilter.h"
 
+#include "vtkMRMLScalarVolumeNode.h"
+
 #include "vtkCommand.h"
 #include "vtkKWApplication.h"
 #include "vtkKWWidget.h"
@@ -108,11 +110,6 @@ void vtkGradientAnisotropicDiffusionFilterModule::AddGUIObservers ( )
 
 
 
-//---------------------------------------------------------------------------
-void vtkGradientAnisotropicDiffusionFilterModule::AddMrmlObservers ( )
-{
-  this->AddObserver ( vtkCommand::ModifiedEvent, (vtkCommand *)this->MrmlCommand );
-}
 
 //---------------------------------------------------------------------------
 void vtkGradientAnisotropicDiffusionFilterModule::ProcessGUIEvents ( vtkObject *caller,
@@ -124,8 +121,8 @@ void vtkGradientAnisotropicDiffusionFilterModule::ProcessGUIEvents ( vtkObject *
   }
 
   // save node state for Undo
-  if ( event == vtkKWScale::ScaleValueStartChangingEvent && this->Mrml != NULL ) {
-    this->Mrml->SaveStateForUndo ( this->GradientAnisotropicDiffusionFilterNode );
+  if ( event == vtkKWScale::ScaleValueStartChangingEvent && this->Logic->GetMRMLScene() != NULL ) {
+    this->Logic->GetMRMLScene()->SaveStateForUndo ( this->GradientAnisotropicDiffusionFilterNode );
   }
 
   vtkKWScaleWithEntry *s = vtkKWScaleWithEntry::SafeDownCast(caller);
@@ -156,7 +153,7 @@ void vtkGradientAnisotropicDiffusionFilterModule::ProcessMrmlEvents ( vtkObject 
                                             void *callData ) 
 {
     
-  vtkMRMLGradientAnisotropicDiffusionFilterNode* node = dynamic_cast<vtkMRMLGradientAnisotropicDiffusionFilterNode *> (this->Mrml->GetNextNodeByClass("vtkMRMLGradientAnisotropicDiffusionFilterNode"));
+  vtkMRMLGradientAnisotropicDiffusionFilterNode* node = dynamic_cast<vtkMRMLGradientAnisotropicDiffusionFilterNode *> (this->Logic->GetMRMLScene()->GetNextNodeByClass("vtkMRMLGradientAnisotropicDiffusionFilterNode"));
 
   if (node) {
     this->SetGradientAnisotropicDiffusionFilterNode(node);
@@ -169,7 +166,7 @@ void vtkGradientAnisotropicDiffusionFilterModule::ProcessMrmlEvents ( vtkObject 
 //---------------------------------------------------------------------------
 void vtkGradientAnisotropicDiffusionFilterModule::BuildGUI ( ) 
 {
-  if (this->Parent == NULL) {
+  if (this->GetApplication() == NULL) {
     return;
   }
 
@@ -182,48 +179,63 @@ void vtkGradientAnisotropicDiffusionFilterModule::BuildGUI ( )
   // ---
   // HELP FRAME
   vtkKWFrameWithLabel *helpFrame = vtkKWFrameWithLabel::New ( );
-  helpFrame->SetParent ( this->Parent );
+//  helpFrame->SetParent ( this->GetApplication() );
   helpFrame->Create ( );
   helpFrame->CollapseFrame ( );
   helpFrame->SetLabelText ("Help");
   helpFrame->SetDefaultLabelFontWeightToNormal( );
   app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                  helpFrame->GetWidgetName(), this->Parent->GetWidgetName());
-
-  this->ConductanceScale->SetParent(this->Parent);
+                  helpFrame->GetWidgetName(), GUIName);
+//  this->ConductanceScale->SetParent(this->GetApplication());
   this->ConductanceScale->SetLabelText("Conductance");
   this->ConductanceScale->Create();
   app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                this->ConductanceScale->GetWidgetName(), this->Parent->GetWidgetName());
+                this->ConductanceScale->GetWidgetName(), GUIName);
 
-  this->TimeStepScale->SetParent(this->Parent);
+//  this->TimeStepScale->SetParent(this->GetApplication());
   this->TimeStepScale->SetLabelText("Time Step");
   this->TimeStepScale->Create();
   app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                this->TimeStepScale->GetWidgetName(), this->Parent->GetWidgetName());
+                this->TimeStepScale->GetWidgetName(), GUIName);
 
-  this->NumberOfIterationsScale->SetParent(this->Parent);
+//  this->NumberOfIterationsScale->SetParent(this->GetApplication());
   this->NumberOfIterationsScale->SetLabelText("Number of Iterations");
   this->NumberOfIterationsScale->Create();
   app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                this->NumberOfIterationsScale->GetWidgetName(), this->Parent->GetWidgetName());
+                this->NumberOfIterationsScale->GetWidgetName(), GUIName);
 
-  this->VolumeSelector->SetParent(this->Parent);
+//  this->VolumeSelector->SetParent(this->GetApplication());
   this->VolumeSelector->Create();
-  this->VolumeSelector->SetMRMLScene(this->Mrml);
+  this->VolumeSelector->SetMRMLScene(this->Logic->GetMRMLScene());
   this->VolumeSelector->SetLabelText( "Volume Select: ");
   this->VolumeSelector->SetBalloonHelpString("select a volume from the current mrml scene.");
   //pack -side top -anchor nw -expand false -fill x -padx 2 -pady 2
   app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                this->VolumeSelector->GetWidgetName(), this->Parent->GetWidgetName());
+                this->VolumeSelector->GetWidgetName(), GUIName);
 
-  this->ApplyButton->SetParent(this->Parent);
+//  this->ApplyButton->SetParent(this->GetApplication());
   this->ApplyButton->Create();
   this->ApplyButton->SetText("Apply");
   app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                this->ApplyButton->GetWidgetName(), this->Parent->GetWidgetName());
+                this->ApplyButton->GetWidgetName(), GUIName);
 }
 void vtkGradientAnisotropicDiffusionFilterModule::Compute()
 {
   this->GradientAnisotropicDiffusionImageFilter->SetConductanceParameter(this->GradientAnisotropicDiffusionFilterNode->GetConductance());
+  this->GradientAnisotropicDiffusionImageFilter->SetNumberOfIterations(this->GradientAnisotropicDiffusionFilterNode->GetNumberOfIterations());
+  this->GradientAnisotropicDiffusionImageFilter->SetTimeStep(this->GradientAnisotropicDiffusionFilterNode->GetTimeStep());
+
+  this->GradientAnisotropicDiffusionImageFilter->Update();
+
+  // create new volume Node and add it to mrml scene
+  vtkMRMLScalarVolumeNode *volumeNodeOut = vtkMRMLScalarVolumeNode::New();
+
+  volumeNodeOut->SetImageData(this->GradientAnisotropicDiffusionImageFilter->GetOutput());
+
+  this->Logic->GetMRMLScene()->SaveStateForUndo();
+
+  this->Logic->GetMRMLScene()->AddNode(volumeNodeOut);
+
+  volumeNodeOut->Delete();
+
 }

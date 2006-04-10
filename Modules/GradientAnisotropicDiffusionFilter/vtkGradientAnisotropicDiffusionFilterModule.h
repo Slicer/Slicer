@@ -41,7 +41,6 @@ class VTK_GRADIENTANISOTROPICDIFFUSIONFILTER_EXPORT vtkGradientAnisotropicDiffus
   virtual void RemoveGUIObservers ( ){};
   virtual void AddLogicObservers ( ){};
   virtual void RemoveLogicObservers ( ){};
-  virtual void AddMrmlObservers ( );
   virtual void RemoveMrmlObservers ( ){};
   
   virtual void ProcessLogicEvents ( vtkObject *caller, unsigned long event,
