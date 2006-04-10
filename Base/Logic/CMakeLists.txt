@@ -6,6 +6,7 @@ PROJECT(SlicerBaseLogic)
 SET(SlicerBaseLogic_SRCS
   vtkSlicerLogic.cxx 
   vtkSlicerApplicationLogic.cxx 
+  vtkSlicerModuleLogic.cxx 
   vtkSlicerMRMLLogic.cxx 
   vtkSlicerSliceLogic.cxx 
   vtkSlicerSliceLayerLogic.cxx 
