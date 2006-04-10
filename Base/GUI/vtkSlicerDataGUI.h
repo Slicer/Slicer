@@ -28,7 +28,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerDataGUI : public vtkSlicerModuleGUI
                                             void *callData );
     virtual void ProcessGUIEvents ( vtkObject *caller, unsigned long event,
                                             void *callData );
-
+    virtual void Enter ( );
+    virtual void Exit ( );
+    
  protected:
     vtkSlicerDataGUI ( );
     ~vtkSlicerDataGUI ( );

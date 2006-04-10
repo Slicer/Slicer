@@ -91,6 +91,15 @@ void vtkSlicerVolumesGUI::ProcessLogicEvents ( vtkObject *caller,
 
 
 
+//---------------------------------------------------------------------------
+void vtkSlicerVolumesGUI::Enter ( ) {
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerVolumesGUI::Exit ( ) {
+}
+
+
 
 
 

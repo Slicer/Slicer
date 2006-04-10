@@ -83,6 +83,14 @@ void vtkSlicerModelsGUI::ProcessLogicEvents ( vtkObject *caller,
 
 }
 
+//---------------------------------------------------------------------------
+void vtkSlicerModelsGUI::Enter ( ) {
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerModelsGUI::Exit ( ) {
+}
+
 
 
 

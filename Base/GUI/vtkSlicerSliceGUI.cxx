@@ -317,6 +317,14 @@ vtkSlicerSliceWidget* vtkSlicerSliceGUI::GetSliceWidget ( char *SliceWidgetColor
 
 
 //---------------------------------------------------------------------------
+void vtkSlicerSliceGUI::Enter ( ) {
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerSliceGUI::Exit ( ) {
+}
+
+//---------------------------------------------------------------------------
 void vtkSlicerSliceGUI::BuildGUI ( ) {
 }
 

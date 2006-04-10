@@ -215,6 +215,14 @@ void vtkSlicerApplicationGUI::ProcessLogicEvents ( vtkObject *caller,
 
 
 //---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::Enter ( ) {
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::Exit ( ) {
+}
+
+//---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::BuildGUI ( ) {
 
     // Set up the conventional window: 3Dviewer, slice widgets, UI panel for now.

@@ -61,6 +61,12 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerComponentGUI : public vtkKWObject
     virtual void ProcessGUIEvents ( vtkObject *caller, unsigned long event,
                                        void *callData ) { }
     
+    // Description:
+    // functions that define and undefine module-specific
+    // behaviors.
+    virtual void Enter ( ) = 0;
+    virtual void Exit ( ) = 0;
+
     
  protected:
     // GUI's interface to the application layer;

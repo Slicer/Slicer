@@ -107,6 +107,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     virtual void ProcessGUIEvents ( vtkObject *caller, unsigned long event,
                                            void *callData );
     
+    virtual void Enter ( );
+    virtual void Exit ( );
+    
     // Description:
     // These methods set up default dimensions for the Slicer Window
     virtual void InitDefaultGUIPanelDimensions ( );

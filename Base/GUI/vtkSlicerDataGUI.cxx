@@ -64,6 +64,16 @@ void vtkSlicerDataGUI::ProcessLogicEvents ( vtkObject *caller,
 }
 
 
+//---------------------------------------------------------------------------
+void vtkSlicerDataGUI::Enter ( ) {
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerDataGUI::Exit ( ) {
+}
+
+
+
 
 //---------------------------------------------------------------------------
 void vtkSlicerDataGUI::BuildGUI ( ) {
