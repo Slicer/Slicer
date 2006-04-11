@@ -21,10 +21,10 @@ fileArchetype='TestData/volone.nrrd' id='storage1'></VolumeArchetypeStorage>
 fileArchetype='TestData/voltwo.nrrd' id='storage2'></VolumeArchetypeStorage>
 
 <VolumeDisplay
-name='disp1' id='display1' level='128' window='100'></VolumeDisplay>
+name='disp1' id='display1' level='500' window='600'></VolumeDisplay>
 
 <VolumeDisplay
-name='disp2' id='display2' level='500' window='500'></VolumeDisplay>
+name='disp2' id='display2' level='1000' window='500'></VolumeDisplay>
 
 <LinearTransform
 name='matXform1' id='xform1' matrixTransformToParent='1 0 0 0 0 1 0 0 0 0 1 0 10 20 30 1'></LinearTransform>
