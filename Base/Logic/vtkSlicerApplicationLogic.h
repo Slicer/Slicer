@@ -28,8 +28,6 @@
 #include "vtkSlicerLogic.h"
 #include "vtkSlicerSliceLogic.h"
 
-#include "vtkMRMLScene.h"
-
 #include "vtkCollection.h"
 
 
@@ -42,10 +40,6 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic : public vtkSlicerL
   vtkTypeRevisionMacro(vtkSlicerApplicationLogic,vtkSlicerLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
     
-
-  // Description:
-  // Get the current MRML Scene object
-  vtkGetObjectMacro(MRMLScene,vtkMRMLScene);
 
   // Description:
   // Connect to the given URL.  Disconnect any currently active 
@@ -155,8 +149,6 @@ protected:
   void operator=(const vtkSlicerApplicationLogic&);
 
 private:
-  
-  vtkMRMLScene *MRMLScene;
   
   // for now, make these generic collections
   // - maybe they should be subclassed to be type-specific?

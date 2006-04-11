@@ -25,8 +25,6 @@ vtkStandardNewMacro(vtkSlicerApplicationLogic);
 //----------------------------------------------------------------------------
 vtkSlicerApplicationLogic::vtkSlicerApplicationLogic()
 {
-    this->MRMLScene = vtkMRMLScene::New();
-
     this->Views = NULL;
     this->Slices = NULL;
     this->Modules = NULL;
@@ -52,11 +50,6 @@ vtkSlicerApplicationLogic::~vtkSlicerApplicationLogic()
     this->Modules = NULL;
     }
   this->SetActiveSlice(NULL);
-  if (this->MRMLScene)
-    {
-    this->MRMLScene->Delete();
-    this->MRMLScene = NULL;
-    }
 
   // TODO - unregister/delete ivars
 }
