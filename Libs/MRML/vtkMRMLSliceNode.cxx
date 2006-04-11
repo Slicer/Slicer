@@ -93,6 +93,7 @@ vtkMRMLSliceNode::~vtkMRMLSliceNode()
 void vtkMRMLSliceNode::SetOrientationToAxial()
 {
     this->SliceToRAS->Identity();
+
     // Px -> Patient Left
     this->SliceToRAS->SetElement(0, 0, -1.0);
     // Py -> Patient Anterior
@@ -108,14 +109,14 @@ void vtkMRMLSliceNode::SetOrientationToSagittal()
 {
     this->SliceToRAS->Identity();
 
-    // Px -> Patient Left
+    // Px -> Patient Posterior
     this->SliceToRAS->SetElement(0, 0,  0.0);
-    this->SliceToRAS->SetElement(1, 0,  1.0);
+    this->SliceToRAS->SetElement(1, 0, -1.0);
     this->SliceToRAS->SetElement(2, 0,  0.0);
     // Py -> Patient Inferior
     this->SliceToRAS->SetElement(0, 1,  0.0);
     this->SliceToRAS->SetElement(1, 1,  0.0);
-    this->SliceToRAS->SetElement(2, 1, -1.0);
+    this->SliceToRAS->SetElement(2, 1,  1.0);
     // Pz -> Patient Right
     this->SliceToRAS->SetElement(0, 2,  1.0);
     this->SliceToRAS->SetElement(1, 2,  0.0);
@@ -130,14 +131,14 @@ void vtkMRMLSliceNode::SetOrientationToCoronal()
 {
     this->SliceToRAS->Identity();
 
-    // Px -> Patient Anterior
+    // Px -> Patient Left
     this->SliceToRAS->SetElement(0, 0, -1.0);
     this->SliceToRAS->SetElement(1, 0,  0.0);
     this->SliceToRAS->SetElement(2, 0,  0.0);
     // Py -> Patient Inferior
     this->SliceToRAS->SetElement(0, 1,  0.0);
     this->SliceToRAS->SetElement(1, 1,  0.0);
-    this->SliceToRAS->SetElement(2, 1, -1.0);
+    this->SliceToRAS->SetElement(2, 1,  1.0);
     // Pz -> Patient Anterior
     this->SliceToRAS->SetElement(0, 2,  0.0);
     this->SliceToRAS->SetElement(1, 2,  1.0);
