@@ -25,6 +25,9 @@
 #include "vtkObject.h"
 #include "vtkObjectFactory.h"
 
+#include "vtkMRMLScene.h"
+
+
 class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerLogic : public vtkObject 
 {
   public:
@@ -34,15 +37,20 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerLogic : public vtkObject
   vtkTypeRevisionMacro(vtkSlicerLogic,vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
 
+  // Description
+  // All logic classes need to know about the current mrml scene
+  vtkSetObjectMacro (MRMLScene, vtkMRMLScene);
+  vtkGetObjectMacro (MRMLScene, vtkMRMLScene);
+
   // Additional functionality:
-  //  -- an undo stack (also need helper classes)
-  //  -- a tracing/macro infrastructure
     
 protected:
   vtkSlicerLogic();
   ~vtkSlicerLogic();
   vtkSlicerLogic(const vtkSlicerLogic&);
   void operator=(const vtkSlicerLogic&);
+
+  vtkMRMLScene *MRMLScene;
 };
 
 #endif

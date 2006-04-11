@@ -51,7 +51,6 @@ static void MRMLCallback(vtkObject *__mrmlscene, unsigned long eid, void *__clie
 //----------------------------------------------------------------------------
 vtkSlicerMRMLLogic::vtkSlicerMRMLLogic()
 {
-    this->MRMLScene = NULL;
     this->ActiveVolume = NULL;
     this->MRMLCallbackCommand = vtkCallbackCommand::New();
     this->MRMLCallbackCommand->SetCallback(MRMLCallback);
@@ -60,30 +59,11 @@ vtkSlicerMRMLLogic::vtkSlicerMRMLLogic()
 //----------------------------------------------------------------------------
 vtkSlicerMRMLLogic::~vtkSlicerMRMLLogic()
 {
-    if (this->MRMLScene) 
-      {
-      this->MRMLScene->Delete();
-      }
     this->SetActiveVolume(NULL);
 
     this->MRMLCallbackCommand->Delete();
 }
 
-
-void vtkSlicerMRMLLogic::SetMRMLScene( vtkMRMLScene *scene)
-{
-    if ( this->MRMLScene )
-      {
-      this->MRMLScene->RemoveObserver( this->MRMLCallbackCommand );
-      }
-    
-    this->MRMLScene = scene;
-
-    if ( this->MRMLScene )
-      {
-      this->MRMLScene->AddObserver( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
-      }
-}
 
 //----------------------------------------------------------------------------
 void vtkSlicerMRMLLogic::PrintSelf(ostream& os, vtkIndent indent)

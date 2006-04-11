@@ -23,7 +23,6 @@ vtkSlicerSliceLogic::vtkSlicerSliceLogic()
 {
   this->BackgroundLayer = NULL;
   this->ForegroundLayer = NULL;
-  this->MRMLScene = NULL;
   this->SliceNode = NULL;
   this->SliceCompositeNode = NULL;
   this->ForegroundOpacity = 0.5;
@@ -36,7 +35,6 @@ vtkSlicerSliceLogic::vtkSlicerSliceLogic()
 vtkSlicerSliceLogic::~vtkSlicerSliceLogic()
 {
   this->Blend->Delete();
-  this->SetMRMLScene(NULL);
 }
 
 //----------------------------------------------------------------------------

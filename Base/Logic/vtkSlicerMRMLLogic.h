@@ -27,7 +27,6 @@
 #include "vtkSlicerBaseLogic.h"
 #include "vtkSlicerLogic.h"
 
-#include "vtkMRMLScene.h"
 #include "vtkMRMLVolumeNode.h"
 
 #include "vtkCollection.h"
@@ -42,11 +41,6 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerMRMLLogic : public vtkSlicerLogic
   vtkTypeRevisionMacro(vtkSlicerMRMLLogic,vtkSlicerLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
     
-
-  // Description:
-  // Get the current MRML Scene object
-  vtkGetObjectMacro(MRMLScene,vtkMRMLScene);
-  void SetMRMLScene (vtkMRMLScene *);
 
   // Description:
   // Additional methods here to manipulate the application:
@@ -70,7 +64,6 @@ protected:
 
 private:
   
-  vtkMRMLScene *MRMLScene;
 
   vtkMRMLVolumeNode *ActiveVolume;
   
