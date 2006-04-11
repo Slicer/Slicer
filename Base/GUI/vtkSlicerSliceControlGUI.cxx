@@ -207,6 +207,14 @@ void vtkSlicerSliceControlGUI::Create()
   this->OffsetScale->GetWidget()->SetStartCommand( this, "Apply" );
   this->OffsetScale->GetWidget()->SetCommand( this, "TransientApply" );
   this->FieldOfViewEntry->GetWidget()->SetCommand( this, "Apply" );
+  
+  // TODO: this should probably be done in kwwidgets
+  // (make the Return key trigger the callback)
+  char *command = NULL;
+  this->SetObjectMethodCommand(&command, this->FieldOfViewEntry->GetWidget(), "CommandCallback");
+  this->Script("bind %s <Return> \"%s\"", 
+          this->FieldOfViewEntry->GetWidget()->GetWidgetName(), command);
+  delete [] command;
 }
 
 //----------------------------------------------------------------------------
