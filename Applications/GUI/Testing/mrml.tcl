@@ -71,7 +71,7 @@ set slicen [vtkMRMLSliceNode New]
 $::scene AddNode $slicen
 #$::slicen SetOrientationToCoronal
 $::slicen SetOrientationToAxial
-$::slicen SetDimensions 128 128 1
+$::slicen SetDimensions 512 512 1
 $::slicen SetFieldOfView 128 128 128
 $::slicen UpdateMatrices
 

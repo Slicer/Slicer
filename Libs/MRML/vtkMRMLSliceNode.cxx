@@ -99,7 +99,7 @@ void vtkMRMLSliceNode::SetOrientationToAxial()
     // Py -> Patient Anterior
     this->SliceToRAS->SetElement(1, 1,  1.0);
     // Pz -> Patient Inferior
-    this->SliceToRAS->SetElement(2, 2, -1.0);
+    this->SliceToRAS->SetElement(2, 2,  1.0);
 
     this->UpdateMatrices();
 }
