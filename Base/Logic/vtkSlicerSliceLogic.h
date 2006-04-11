@@ -35,7 +35,6 @@
 #include "vtkSlicerLogic.h"
 
 #include "vtkMRML.h"
-#include "vtkMRMLScene.h"
 #include "vtkMRMLSliceNode.h"
 #include "vtkMRMLSliceCompositeNode.h"
 #include "vtkSlicerSliceLayerLogic.h"
@@ -60,11 +59,6 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLogic : public vtkSlicerLogic
   // The mrml slice node for this slice logic
   vtkGetObjectMacro (SliceCompositeNode, vtkMRMLSliceCompositeNode);
   void SetSliceCompositeNode (vtkMRMLSliceCompositeNode *SliceCompositeNode);
-
-  // Description:
-  // The mrml slice node for this slice logic
-  vtkGetObjectMacro (MRMLScene, vtkMRMLScene);
-  vtkSetObjectMacro (MRMLScene, vtkMRMLScene);
 
   // Description:
   // The background slice layer
@@ -102,7 +96,6 @@ protected:
 
   // Description:
   //
-  vtkMRMLScene *MRMLScene;
   vtkMRMLSliceNode *SliceNode;
   vtkMRMLSliceCompositeNode *SliceCompositeNode;
   vtkSlicerSliceLayerLogic *BackgroundLayer;

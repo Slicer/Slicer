@@ -21,11 +21,17 @@ vtkStandardNewMacro(vtkSlicerLogic);
 //----------------------------------------------------------------------------
 vtkSlicerLogic::vtkSlicerLogic()
 {
+  this->MRMLScene = NULL;
 }
 
 //----------------------------------------------------------------------------
 vtkSlicerLogic::~vtkSlicerLogic()
 {
+  if (this->MRMLScene)
+    {
+    this->MRMLScene->Delete();
+    this->MRMLScene = NULL;
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -34,5 +40,6 @@ void vtkSlicerLogic::PrintSelf(ostream& os, vtkIndent indent)
   this->vtkObject::PrintSelf(os, indent);
 
   os << indent << "SlicerLogic:             " << this->GetClassName() << "\n";
+  os << indent << "MRMLScene: " << this->GetMRMLScene() << "\n";
 }
 
