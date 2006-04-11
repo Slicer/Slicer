@@ -15,6 +15,8 @@
 #include "vtkObjectFactory.h"
 #include "vtkSlicerSliceLayerLogic.h"
 
+#include "vtkMRMLVolumeDisplayNode.h"
+
 vtkCxxRevisionMacro(vtkSlicerSliceLayerLogic, "$Revision: 1.9.12.1 $");
 vtkStandardNewMacro(vtkSlicerSliceLayerLogic);
 
@@ -29,6 +31,13 @@ vtkSlicerSliceLayerLogic::vtkSlicerSliceLayerLogic()
   this->Reslice = vtkImageReslice::New();
   this->MapToRGBA = vtkImageMapToRGBA::New();
   this->MapToWindowLevelColors = vtkImageMapToWindowLevelColors::New();
+
+  this->Reslice->SetBackgroundLevel(128);
+  this->Reslice->AutoCropOutputOff();
+  this->Reslice->SetOptimization(1);
+  this->Reslice->SetOutputOrigin( 0, 0, 0 );
+  this->Reslice->SetOutputSpacing( 1, 1, 1 );
+  this->Reslice->SetOutputDimensionality( 2 );
 
   this->MapToWindowLevelColors->SetInput( this->Reslice->GetOutput() );
   this->MapToRGBA->SetInput( this->MapToWindowLevelColors->GetOutput() );
@@ -116,16 +125,33 @@ void vtkSlicerSliceLayerLogic::UpdateTransforms()
       this->VolumeNode->GetRASToIJKMatrix(rasToIJK);
       vtkMatrix4x4::Multiply4x4(rasToIJK, m, m); 
       rasToIJK->Delete();
+
+      const char *id = this->VolumeNode->GetDisplayNodeID();
+      vtkMRMLVolumeDisplayNode *dnode = NULL;
+      if (id)
+        {
+        dnode = vtkMRMLVolumeDisplayNode::SafeDownCast (this->MRMLScene->GetNodeByID(id));
+        this->MapToWindowLevelColors->SetWindow(dnode->GetWindow());
+        this->MapToWindowLevelColors->SetLevel(dnode->GetLevel());
+
+        // TODO: update the pipeline with other display values
+          //vtkFloatingPointType UpperThreshold;
+          //vtkFloatingPointType LowerThreshold;
+          // Booleans
+          //int Interpolate;
+          //int AutoWindowLevel;
+          //int ApplyThreshold;
+          //int AutoThreshold;
+
+        }
       }
 
     this->Reslice->SetResliceTransform( this->XYToIJKTransform );
-    // TODO: why don't these work?
-    //this->Reslice->SetOutputOrigin( 0, 0, 0 );
-    //this->Reslice->SetOutputSpacing( 1, 1, 1 );
+
     this->Reslice->SetOutputExtent( 0, dimensions[0]-1,
                                     0, dimensions[1]-1,
                                     0, dimensions[2]-1);
-    this->Reslice->SetOutputDimensionality( 2 );
+
 }
 
 
