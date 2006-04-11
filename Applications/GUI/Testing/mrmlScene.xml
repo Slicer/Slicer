@@ -1,34 +1,34 @@
 <MRML>
 <Volume
-Name='body' Description='abdominal ct' ID='vol3' StorageNodeID='storage3'
-DisplayNodeID='display2' TransformNodeID=''></Volume>
+name='body' description='abdominal ct' id='vol3' storageNodeRef='storage3'
+displayNodeRef='display2' transformNodeRef=''></Volume>
 
 <Volume
-Name='head1' Description='somebodys1' ID='vol1' StorageNodeID='storage1'
-DisplayNodeID='display1' TransformNodeID='xform1'></Volume>
+Name='head1' Description='somebodys1' id='vol1' storageNodeRef='storage1'
+displayNodeRef='display1' transformNodeRef='xform1'></Volume>
 
 <Volume
-Name='head2' Description='somebodys2' ID='vol2' StorageNodeID='storage2'
-DisplayNodeID='display1' TransformNodeID='xform2'></Volume>
+Name='head2' Description='somebodys2' id='vol2' storageNodeRef='storage2'
+displayNodeRef='display1' transformNodeRef='xform2'></Volume>
 
 <VolumeArchetypeStorage
-FileArchetype='TestData/abct128.nrrd' ID='storage3'></VolumeArchetypeStorage>
+fileArchetype='TestData/abct128.nrrd' id='storage3'></VolumeArchetypeStorage>
 
 <VolumeArchetypeStorage
-FileArchetype='TestData/volone.nrrd' ID='storage1'></VolumeArchetypeStorage>
+fileArchetype='TestData/volone.nrrd' id='storage1'></VolumeArchetypeStorage>
 
 <VolumeArchetypeStorage
-FileArchetype='TestData/voltwo.nrrd' ID='storage2'></VolumeArchetypeStorage>
+fileArchetype='TestData/voltwo.nrrd' id='storage2'></VolumeArchetypeStorage>
 
 <VolumeDisplay
-Name='disp1' ID='display1' Level='128' Window='100'></VolumeDisplay>
+name='disp1' id='display1' level='128' window='100'></VolumeDisplay>
 
 <VolumeDisplay
-Name='disp2' ID='display2' Level='500' Window='500'></VolumeDisplay>
+name='disp2' id='display2' level='500' window='500'></VolumeDisplay>
 
 <LinearTransform
-Name='matXform1' ID='xform1' MatrixTransformToParent='1 0 0 0 0 1 0 0 0 0 1 0 10 20 30 1'></LinearTransform>
+name='matXform1' id='xform1' matrixTransformToParent='1 0 0 0 0 1 0 0 0 0 1 0 10 20 30 1'></LinearTransform>
 
 <LinearTransform
-Name='matXform2' ID='xform2' MatrixTransformToParent='1 0 0 0 0 1 0 0 0 0 1 0 10 20 30 1'></LinearTransform>
+name='matXform2' id='xform2' matrixTransformToParent='1 0 0 0 0 1 0 0 0 0 1 0 10 20 30 1'></LinearTransform>
 </MRML>
