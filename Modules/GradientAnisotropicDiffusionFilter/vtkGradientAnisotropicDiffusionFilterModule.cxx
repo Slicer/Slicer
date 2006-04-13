@@ -121,8 +121,8 @@ void vtkGradientAnisotropicDiffusionFilterModule::ProcessGUIEvents ( vtkObject *
   }
 
   // save node state for Undo
-  if ( event == vtkKWScale::ScaleValueStartChangingEvent && this->Logic->GetMRMLScene() != NULL ) {
-    this->Logic->GetMRMLScene()->SaveStateForUndo ( this->GradientAnisotropicDiffusionFilterNode );
+  if ( event == vtkKWScale::ScaleValueStartChangingEvent && this->ApplicationLogic->GetMRMLScene() != NULL ) {
+    this->ApplicationLogic->GetMRMLScene()->SaveStateForUndo ( this->GradientAnisotropicDiffusionFilterNode );
   }
 
   vtkKWScaleWithEntry *s = vtkKWScaleWithEntry::SafeDownCast(caller);
@@ -153,7 +153,7 @@ void vtkGradientAnisotropicDiffusionFilterModule::ProcessMrmlEvents ( vtkObject 
                                             void *callData ) 
 {
     
-  vtkMRMLGradientAnisotropicDiffusionFilterNode* node = dynamic_cast<vtkMRMLGradientAnisotropicDiffusionFilterNode *> (this->Logic->GetMRMLScene()->GetNextNodeByClass("vtkMRMLGradientAnisotropicDiffusionFilterNode"));
+  vtkMRMLGradientAnisotropicDiffusionFilterNode* node = dynamic_cast<vtkMRMLGradientAnisotropicDiffusionFilterNode *> (this->ApplicationLogic->GetMRMLScene()->GetNextNodeByClass("vtkMRMLGradientAnisotropicDiffusionFilterNode"));
 
   if (node) {
     this->SetGradientAnisotropicDiffusionFilterNode(node);
@@ -206,7 +206,7 @@ void vtkGradientAnisotropicDiffusionFilterModule::BuildGUI ( )
 
 //  this->VolumeSelector->SetParent(this->GetApplication());
   this->VolumeSelector->Create();
-  this->VolumeSelector->SetMRMLScene(this->Logic->GetMRMLScene());
+  this->VolumeSelector->SetMRMLScene(this->ApplicationLogic->GetMRMLScene());
   this->VolumeSelector->SetLabelText( "Volume Select: ");
   this->VolumeSelector->SetBalloonHelpString("select a volume from the current mrml scene.");
   //pack -side top -anchor nw -expand false -fill x -padx 2 -pady 2
@@ -232,9 +232,9 @@ void vtkGradientAnisotropicDiffusionFilterModule::Compute()
 
   volumeNodeOut->SetImageData(this->GradientAnisotropicDiffusionImageFilter->GetOutput());
 
-  this->Logic->GetMRMLScene()->SaveStateForUndo();
+  this->ApplicationLogic->GetMRMLScene()->SaveStateForUndo();
 
-  this->Logic->GetMRMLScene()->AddNode(volumeNodeOut);
+  this->ApplicationLogic->GetMRMLScene()->AddNode(volumeNodeOut);
 
   volumeNodeOut->Delete();
 
