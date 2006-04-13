@@ -9,12 +9,9 @@ vtkCxxRevisionMacro(vtkSlicerModuleGUI, "$Revision: 1.0 $");
 //---------------------------------------------------------------------------
 vtkSlicerModuleGUI::vtkSlicerModuleGUI ( ) {
 
-    // Every gui has a helper class called LogicCommand
-    // whose execute method propagates logic changes
-    // into the GUI state.
     this->UIPanel = vtkKWUserInterfacePanel::New ( );
-
 }
+
 
 
 
@@ -26,8 +23,6 @@ vtkSlicerModuleGUI::~vtkSlicerModuleGUI ( ) {
         this->UIPanel = NULL;
     }
 }
-
-
 
 
 

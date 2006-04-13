@@ -151,7 +151,8 @@ void vtkSlicerApplicationGUI::ProcessGUIEvents ( vtkObject *caller,
                                                    unsigned long event,
                                                    void *callData ) {
     
-    // This is just a placeholder:
+    // This code is just a placeholder until the logic is set up to use properly:
+    // For now, the GUI controls the GUI instead of going thru the logic...
     // TODO:
     // Actually, these events want to set "activeModule" in the logic;
     // using this->Logic->SetActiveModule ( ) which is currently commented out.
@@ -162,21 +163,30 @@ void vtkSlicerApplicationGUI::ProcessGUIEvents ( vtkObject *caller,
     vtkKWMenuButton *menub = vtkKWMenuButton::SafeDownCast (caller );
 
     // Process events from top row of buttons
+    // For now, Home button takes us to the Volumes module.
     if ( pushb == this->HomeButton && event == vtkKWPushButton::InvokedEvent ) {
         vtkSlicerModuleGUI *m = vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("VolumesGUI");
         if ( m != NULL ) { m->GetUIPanel()->Raise(); }
+        // also for now, make the pulldown menu button show the correct value
+        this->ModulesButton->SetValue ( "Volumes" );
     }
     else if (pushb == this->DataButton && event == vtkKWPushButton::InvokedEvent ) {
         vtkSlicerModuleGUI *m = vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("DataGUI");
         if ( m != NULL ) { m->GetUIPanel()->Raise(); }
+        // also for now, make the pulldown menu button show the correct value
+        this->ModulesButton->SetValue ( "Data" );
     }
     else if (pushb == this->VolumesButton && event == vtkKWPushButton::InvokedEvent ) {
         vtkSlicerModuleGUI *m = vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("VolumesGUI");
         if ( m != NULL ) { m->GetUIPanel()->Raise(); }
+        // also for now, make the pulldown menu button show the correct value
+        this->ModulesButton->SetValue ( "Volumes" );
     }
     else if (pushb == this->ModelsButton && event == vtkKWPushButton::InvokedEvent ) {
         vtkSlicerModuleGUI *m = vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("ModelsGUI");
         if ( m != NULL ) { m->GetUIPanel()->Raise(); }
+        // also for now, make the pulldown menu button show the correct value
+        this->ModulesButton->SetValue ( "Models" );
     }
 
 

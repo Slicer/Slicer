@@ -25,8 +25,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceWidget : public vtkKWCompositeWid
     vtkTypeRevisionMacro ( vtkSlicerSliceWidget, vtkKWCompositeWidget );
     void PrintSelf (ostream& os, vtkIndent indent);
     
-    vtkGetMacro  ( SliceLogicObserverTag, unsigned long );
-    vtkSetMacro  ( SliceLogicObserverTag, unsigned long );
     vtkGetObjectMacro ( OffsetScale, vtkKWScaleWithEntry );
     vtkGetObjectMacro ( FieldOfViewEntry, vtkKWEntryWithLabel );
     vtkGetObjectMacro ( OrientationMenu, vtkKWMenuButtonWithLabel );
@@ -50,8 +48,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceWidget : public vtkKWCompositeWid
     vtkKWMenuButtonWithLabel *OrientationMenu;
     vtkKWFrame *ControlFrame;
     vtkSlicerSliceLogic *SliceLogic;
-    unsigned long SliceLogicObserverTag;
-    
 
  private:
     vtkSlicerSliceWidget (const vtkSlicerSliceWidget &); //Not implemented

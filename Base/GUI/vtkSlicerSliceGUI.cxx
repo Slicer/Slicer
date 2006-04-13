@@ -1,3 +1,4 @@
+#include "vtkObject.h"
 #include "vtkObjectFactory.h"
 #include "vtkCommand.h"
 #include "vtkKWApplication.h"
@@ -31,9 +32,10 @@ vtkCxxRevisionMacro(vtkSlicerSliceGUI, "$Revision: 1.0 $");
 //---------------------------------------------------------------------------
 vtkSlicerSliceGUI::vtkSlicerSliceGUI (  ) {
 
-    this->Logic = NULL;
-    this->SliceLogic = NULL;
-    this->SliceWidgets = vtkSlicerSliceWidgetCollection::New();
+    this->SetApplicationLogic ( NULL );
+    this->SetMRMLScene ( NULL );
+    this->SliceWidgetCollection = vtkSlicerSliceWidgetCollection::New ( );
+    this->SliceLogicCollection = vtkSlicerSliceLogicCollection::New ( );
     this->MainSlice0 = NULL;
     this->MainSlice1 = NULL;
     this->MainSlice2 = NULL;
@@ -43,25 +45,42 @@ vtkSlicerSliceGUI::vtkSlicerSliceGUI (  ) {
 //---------------------------------------------------------------------------
 vtkSlicerSliceGUI::~vtkSlicerSliceGUI ( ) {
 
-    if ( this->SliceWidgets ) {
-        this->SliceWidgets->RemoveAllItems ( );
-        this->SliceWidgets->Delete();
-        this->SliceWidgets = NULL;
+    vtkSlicerSliceLogic *sl, *nextsl;
+    vtkSlicerSliceWidget *sw, *nextsw;
+
+    // Delete SliceLogics and their collection
+    if ( this->SliceLogicCollection ) {
+        this->SliceLogicCollection->InitTraversal ( );
+        sl = vtkSlicerSliceLogic::SafeDownCast ( this->SliceLogicCollection->GetNextItemAsObject ( ) );
+        while ( sl != NULL ) {
+            nextsl = vtkSlicerSliceLogic::SafeDownCast (this->SliceLogicCollection->GetNextItemAsObject ( ) );
+            this->SliceLogicCollection->RemoveItem ( sl );
+            sl->Delete ( );
+            sl = nextsl;
+        }
+        this->SliceLogicCollection->Delete ( );
+        this->SliceLogicCollection = NULL;
     }
-    if ( this->MainSlice0 ) {
-        this->MainSlice0->Delete ( );
-        this->MainSlice0 = NULL;
+
+    // Delete SliceWidgets and their collection
+    if ( this->SliceWidgetCollection ) {
+        this->SliceWidgetCollection->InitTraversal ( );
+        sw = vtkSlicerSliceWidget::SafeDownCast (this->SliceWidgetCollection->GetNextItemAsObject ( ));
+        while ( sw != NULL ) {        
+            nextsw = vtkSlicerSliceWidget::SafeDownCast (this->SliceWidgetCollection->GetNextItemAsObject ( ));
+            this->SliceWidgetCollection->RemoveItem ( sw );
+            sw->Delete ( );
+            sw = nextsw;
+        }
+        this->SliceWidgetCollection->Delete();
+        this->SliceWidgetCollection = NULL;
     }
-    if ( this->MainSlice1 ) {
-        this->MainSlice1->Delete ( );
-        this->MainSlice1 = NULL;
-    }
-    if ( this->MainSlice2 ) {
-        this->MainSlice2->Delete ( );
-        this->MainSlice2 = NULL;
-    }    
-    this->SetSliceLogic(NULL);
+
+    this->MainSlice0 = NULL;
+    this->MainSlice1 = NULL;
+    this->MainSlice2 = NULL;
 }
+
 
 
 
@@ -69,13 +88,126 @@ vtkSlicerSliceGUI::~vtkSlicerSliceGUI ( ) {
 void vtkSlicerSliceGUI::AddSliceWidget ( vtkSlicerSliceWidget *w ){
 
     // Create if it doesn't exist already
-    if ( this->SliceWidgets == NULL ) {
-        this->SliceWidgets = vtkSlicerSliceWidgetCollection::New();
+    if ( this->SliceWidgetCollection == NULL ) {
+        this->SliceWidgetCollection = vtkSlicerSliceWidgetCollection::New();
     }
     //Add widget
-    this->SliceWidgets->AddItem ( w );
+    this->SliceWidgetCollection->AddItem ( w );
 }
 
+
+
+
+//---------------------------------------------------------------------------
+vtkSlicerSliceWidget* vtkSlicerSliceGUI::GetSliceWidget ( int SliceWidgetNum ) {
+    // get slicewidget 0, 1, 2
+    return ( (vtkSlicerSliceWidget::SafeDownCast(this->SliceWidgetCollection->GetItemAsObject( SliceWidgetNum ) ) ) );
+}
+
+
+
+
+
+//---------------------------------------------------------------------------
+vtkSlicerSliceWidget* vtkSlicerSliceGUI::GetSliceWidget ( char *SliceWidgetColor ) {
+    // get slicewidget red, yellow, green
+    if ( SliceWidgetColor == "r" || SliceWidgetColor == "R" )
+        {
+            return ( vtkSlicerSliceWidget::SafeDownCast(this->SliceWidgetCollection->GetItemAsObject( 0 )));
+        } else if ( SliceWidgetColor == "g" || SliceWidgetColor == "G")
+            {
+                return ( vtkSlicerSliceWidget::SafeDownCast(this->SliceWidgetCollection->GetItemAsObject( 1 )));
+            } else if ( SliceWidgetColor == "y" || SliceWidgetColor == "Y" )
+                {
+                    return ( vtkSlicerSliceWidget::SafeDownCast(this->SliceWidgetCollection->GetItemAsObject( 2 )));
+                } else {
+                        return NULL;
+                }
+}
+
+
+                
+//---------------------------------------------------------------------------
+void vtkSlicerSliceGUI::SetSliceLogic ( vtkSlicerSliceLogic *logic, int swNum ) {
+
+    int numLogics = this->SliceLogicCollection->GetNumberOfItems ( );
+
+    // Test to see if the request is out of bounds
+    if ( swNum > numLogics ) {
+        vtkErrorMacro ( << "There are currently " << numLogics << "logic pointers in the SliceGUI's collection; can't replace a pointer or add a new one at" << swNum );
+        return;
+    }
+
+    vtkSlicerSliceLogic *sl =  this->GetSliceLogic ( swNum );
+    // Don't bother if already set
+    if ( logic == sl ) {
+        return;
+    }
+    // Remove observers from application logic
+    if ( sl != NULL ) {
+        this->RemoveLogicObservers ( swNum );
+    }
+    // Add to the collection of SliceLogicCollection OR
+    // replace an existing logic pointer for a slice widget
+    if ( swNum == numLogics ) {
+        this->AddSliceLogic ( logic );
+    } else {
+        this->SliceLogicCollection->ReplaceItem( swNum, logic );
+    }
+
+    // Add logic observers on new logic
+    sl = this->GetSliceLogic ( swNum );
+    if ( sl != NULL ) {
+        this->AddLogicObservers ( swNum );
+    }
+
+}
+
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerSliceGUI::AddSliceLogic ( vtkSlicerSliceLogic *w ){
+
+    // Create if it doesn't exist already
+    if ( this->SliceLogicCollection == NULL ) {
+        this->SliceLogicCollection = vtkSlicerSliceLogicCollection::New();
+    }
+    //Add widget
+    this->SliceLogicCollection->AddItem ( w );
+}
+
+
+
+//---------------------------------------------------------------------------
+vtkSlicerSliceLogic* vtkSlicerSliceGUI::GetSliceLogic ( int SliceLogicNum ) {
+
+    // get slicelogic for widgets 0, 1, 2
+    return ( vtkSlicerSliceLogic::SafeDownCast(this->SliceLogicCollection->GetItemAsObject( SliceLogicNum )));
+    
+}
+
+
+
+
+
+//---------------------------------------------------------------------------
+vtkSlicerSliceLogic* vtkSlicerSliceGUI::GetSliceLogic ( char *SliceWidgetColor ) {
+
+    // get slicewidget red, yellow, green
+    if ( SliceWidgetColor == "r" || SliceWidgetColor == "R" )
+        {
+            return ( vtkSlicerSliceLogic::SafeDownCast(this->SliceLogicCollection->GetItemAsObject( 0 )));
+        } else if ( SliceWidgetColor == "g" || SliceWidgetColor == "G")
+            {
+                return ( vtkSlicerSliceLogic::SafeDownCast(this->SliceLogicCollection->GetItemAsObject( 1 )));
+            } else if ( SliceWidgetColor == "y" || SliceWidgetColor == "Y" )
+                {
+                    return ( vtkSlicerSliceLogic::SafeDownCast(this->SliceLogicCollection->GetItemAsObject( 2 )));
+                } else
+                    {
+                        return NULL;
+                    }
+}
 
 
 
@@ -83,82 +215,163 @@ void vtkSlicerSliceGUI::AddSliceWidget ( vtkSlicerSliceWidget *w ){
 //---------------------------------------------------------------------------
 void vtkSlicerSliceGUI::AddGUIObservers ( ) {
 
-    // add observers ont SliceWidget(0)
-    vtkSlicerSliceWidget *sw = this->GetSliceWidget (0);
-    vtkKWScaleWithEntry *s = sw->GetOffsetScale () ;
-    vtkKWEntryWithLabel *e = sw->GetFieldOfViewEntry ();
-    vtkKWMenuButtonWithLabel *m = sw->GetOrientationMenu ();
+    // Add observers on gui components for all slice widgets
+    int numWidgets = this->SliceWidgetCollection->GetNumberOfItems ( );
 
-    s->AddObserver (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICommand );
-    s->AddObserver (vtkKWScale::ScaleValueStartChangingEvent, (vtkCommand *)this->GUICommand );
-    e->AddObserver (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICommand );
-    m->AddObserver (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICommand );
-
-    // add observers onto all SliceWidgets (do later)
-    /*
-    int n = this->SliceWidgets->GetNumberOfItems ( );
-    for ( i = 0; i < n; i++) {
-        vtkSlicerSliceWidget *sw = this->SliceWidgets->GetItemAsObject ( i );
-        vtkImageViewer2 *iv = sw->GetImageViewer ();
-        vtkKWScaleWithEntry *s = sw->GetOffsetScale () ;
-        vtkKWEntryWithLabel *e = sw->GetFieldOfViewEntry ();
-        vtkKWMenuButtonWithLabel *m = sw->GetOrientationMenu ();
+    vtkSlicerSliceWidget *sw;
+    vtkKWScaleWithEntry *s;
+    vtkKWEntryWithLabel *e;
+    vtkKWMenuButtonWithLabel *m;
+    for ( int i = 0; i < numWidgets; i++) {
+        sw = this->GetSliceWidget (i);
+        s = sw->GetOffsetScale () ;
+        e = sw->GetFieldOfViewEntry ();
+        m = sw->GetOrientationMenu ();
 
         s->AddObserver (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICommand );
-        s->AddObserver (vtkScale::StartEvent, (vtkCommand *)this->GUICommand );
-        e->AddObserver (vtkCommand::ModifiedEvent (vtkCommand *)this->GUICommand );
-        m->AddObserver (vtkCommand::ModifiedEvent (vtkCommand *)this->GUICommand );
-    }
-    */
-}
-
-
-
-
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerSliceGUI::AddLogicObservers ( ) {
-    unsigned long tag;
-    
-    // add observers onto mrml scene; observe the widget's SliceLogic
-    // Before a widget's SliceLogic is set, no observers are created.
-    if ( this->GetSliceWidget(0)->GetSliceLogic ( ) != NULL ) {
-        tag = this->GetSliceWidget(0)->GetSliceLogic()->AddObserver ( vtkCommand::ModifiedEvent, (vtkCommand *)this->LogicCommand );
-        this->GetSliceWidget(0)->SetSliceLogicObserverTag ( tag );
+        s->AddObserver (vtkKWScale::ScaleValueStartChangingEvent, (vtkCommand *)this->GUICommand );
+        e->AddObserver (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICommand );
+        m->AddObserver (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICommand );
     }
 
 }
-
 
 
 //---------------------------------------------------------------------------
 void vtkSlicerSliceGUI::RemoveGUIObservers ( ) {
 
-    vtkSlicerSliceWidget *sw = this->GetSliceWidget (0);
-    if (sw)
-      {
-      vtkKWScaleWithEntry *s = sw->GetOffsetScale () ;
-      vtkKWEntryWithLabel *e = sw->GetFieldOfViewEntry ();
-      vtkKWMenuButtonWithLabel *m = sw->GetOrientationMenu ();
+    // Add observers on gui components for all slice widgets
+    int numWidgets = this->SliceWidgetCollection->GetNumberOfItems ( );
 
-      s->RemoveObservers (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICommand );
-      s->RemoveObservers (vtkKWScale::ScaleValueStartChangingEvent, (vtkCommand *)this->GUICommand );
-      e->RemoveObservers (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICommand );
-      m->RemoveObservers (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICommand );
-      }
+    vtkSlicerSliceWidget *sw;
+    vtkKWScaleWithEntry *s;
+    vtkKWEntryWithLabel *e;
+    vtkKWMenuButtonWithLabel *m;
+    for ( int i = 0; i < numWidgets; i++) {
+        sw = this->GetSliceWidget (i);
+        s = sw->GetOffsetScale () ;
+        e = sw->GetFieldOfViewEntry ();
+        m = sw->GetOrientationMenu ();
+
+        s->RemoveObservers (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICommand );
+        s->RemoveObservers (vtkKWScale::ScaleValueStartChangingEvent, (vtkCommand *)this->GUICommand );
+        e->RemoveObservers (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICommand );
+        m->RemoveObservers (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICommand );
+    }
 
 }
+
+
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerSliceGUI::AddLogicObserver ( vtkSlicerSliceLogic* logic, int event ) {
+    logic->AddObserver ( event, (vtkCommand *)this->LogicCommand);
+}
+//---------------------------------------------------------------------------
+void vtkSlicerSliceGUI::RemoveLogicObserver ( vtkSlicerSliceLogic* logic, int event ) {
+    logic->RemoveObservers ( event, (vtkCommand *)this->LogicCommand);
+}
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerSliceGUI::AddLogicObservers ( int logicnum ) {
+    
+    // Add observers on the widget's SliceLogic pointer.
+    // Before a widget's SliceLogic is set, no observers are created.
+    //
+     int numLogics = this->SliceLogicCollection->GetNumberOfItems ( );
+
+     if ( logicnum >= numLogics ) {
+         vtkErrorMacro ( << "There are only" << numLogics << "widgets. No logic pointers are assigned.");
+         return;
+     }
+     if ( this->GetSliceLogic ( logicnum ) != NULL ) {
+         this->AddLogicObserver ( this->GetSliceLogic ( logicnum ), vtkCommand::DeleteEvent );
+         this->AddLogicObserver ( this->GetSliceLogic ( logicnum ), vtkCommand::ModifiedEvent );
+     }
+}
+
+
+//---------------------------------------------------------------------------
+ void vtkSlicerSliceGUI::RemoveLogicObservers ( int logicnum ) {
+    // Add removes observers on the widget's SliceLogic pointer.
+    // Before a widget's SliceLogic is set, no observers are created.
+    //
+     int numLogics = this->SliceLogicCollection->GetNumberOfItems ( );
+
+     if ( logicnum >= numLogics ) {
+         vtkErrorMacro ( << "There are only" << numLogics << "slice widgets. No observers on logic pointers have been created.");
+         return;
+     }
+     if ( this->GetSliceLogic ( logicnum ) != NULL ) {
+         this->RemoveLogicObserver ( this->GetSliceLogic ( logicnum ), vtkCommand::DeleteEvent );
+         this->RemoveLogicObserver ( this->GetSliceLogic ( logicnum ), vtkCommand::ModifiedEvent );
+     }
+ }
+
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerSliceGUI::AddLogicObservers ( ) {
+
+    // Add observers on SliceLogic for all SliceWidgets:
+     int numWidgets = this->SliceWidgetCollection->GetNumberOfItems ( );
+     int numLogics = this->SliceLogicCollection->GetNumberOfItems ( );
+     if ( numWidgets != numLogics ) {
+         vtkErrorMacro ( << "Unequal number of SliceWidgets and SliceLogicPointers assigned. No observers on SliceLogic were added.");
+         return;
+     }
+
+     for ( int i = 0; i < numWidgets; i++) {
+         if ( this->GetSliceLogic ( i ) != NULL ) {
+             this->AddLogicObserver ( this->GetSliceLogic ( i ), vtkCommand::DeleteEvent );
+             this->AddLogicObserver ( this->GetSliceLogic ( i ), vtkCommand::ModifiedEvent );
+         }
+     }
+}
+
 
 
 //---------------------------------------------------------------------------
 void vtkSlicerSliceGUI::RemoveLogicObservers ( ) {
 
-  if ( this->GetSliceWidget(0)->GetSliceLogic ( ) != NULL ) {
-  this->GetSliceWidget(0)->GetSliceLogic()->RemoveObservers ( vtkCommand::ModifiedEvent, (vtkCommand *)this->LogicCommand );
-    }
+    // Delete observers on SliceLogic for all SliceWidgets:
+     int numWidgets = this->SliceWidgetCollection->GetNumberOfItems ( );
+     int numLogics = this->SliceLogicCollection->GetNumberOfItems ( );
+     if ( numWidgets != numLogics ) {
+         vtkErrorMacro ( << "Unequal number of SliceWidgets and SliceLogicPointers assigned. No observers on SliceLogic were removed.");
+         return;
+     }
+
+     for ( int i = 0; i < numWidgets; i++) {
+         if ( this->GetSliceLogic ( i ) != NULL ) {
+             this->RemoveLogicObserver ( this->GetSliceLogic ( i ), vtkCommand::DeleteEvent );
+             this->RemoveLogicObserver ( this->GetSliceLogic ( i ), vtkCommand::ModifiedEvent );
+         }
+     }
+}
 
 
+
+//---------------------------------------------------------------------------
+void vtkSlicerSliceGUI::AddMRMLObserver ( vtkMRMLNode *node, int event ) {
+    // Fill in
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerSliceGUI::RemoveMRMLObserver ( vtkMRMLNode *node, int event ) {
+    // Fill in
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerSliceGUI::AddMRMLObservers ( ) {
+    // Fill in
+}
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerSliceGUI::RemoveMRMLObservers ( ) {
 }
 
 
@@ -171,7 +384,7 @@ void vtkSlicerSliceGUI::ProcessGUIEvents ( vtkObject *caller,
     vtkKWScaleWithEntry *s = vtkKWScaleWithEntry::SafeDownCast(caller);
     vtkKWEntryWithLabel *e = vtkKWEntryWithLabel::SafeDownCast(caller);
     vtkKWMenuButtonWithLabel *o = vtkKWMenuButtonWithLabel::SafeDownCast (caller );
-    vtkMRMLScene *mrml = this->Logic->GetMRMLScene();
+    vtkMRMLScene *mrml = this->ApplicationLogic->GetMRMLScene();
 
     if (mrml != NULL ) {
         //---
@@ -221,6 +434,7 @@ void vtkSlicerSliceGUI::ProcessGUIEvents ( vtkObject *caller,
 
 
 
+
 //---------------------------------------------------------------------------
 void vtkSlicerSliceGUI::ProcessLogicEvents ( vtkObject *caller,
                                                    unsigned long event,
@@ -230,44 +444,52 @@ void vtkSlicerSliceGUI::ProcessLogicEvents ( vtkObject *caller,
     vtkSlicerSliceLogic *n = vtkSlicerSliceLogic::SafeDownCast(caller);
 
     // find out whether this node belongs to any of the slice widgets
-    int num = this->SliceWidgets->GetNumberOfItems ( );
+    int numWidgets = this->SliceWidgetCollection->GetNumberOfItems ( );
+    int numLogics = this->SliceLogicCollection->GetNumberOfItems ( );
+    if ( numWidgets != numLogics ) {
+        vtkErrorMacro ( << "Unequal number of SliceWidgets and SliceLogicPointers assigned. Cannot process logic event.");
+        return;
+    }
+
     int i = 0;
-    while ( i < num ) {
-        if ( n == this->SliceWidgets->GetItemAsObject ( i ) ) { break; }
+    while ( i < numLogics ) {
+        if ( n == this->SliceLogicCollection->GetItemAsObject ( i ) ) { break; }
         i++;
     }
-    if ( i == num ) {
-        vtkErrorMacro(<<"ProcessLogicEvents: Unable to find SliceWidget associated with SliceLogic event: ");
+    if ( i == numLogics ) {
+        vtkErrorMacro(<<"ProcessLogicEvents: Unable to find SliceLogic that generated event: ");
         return;
     }
     
-    // UPDATE THE GUI.
-    vtkSlicerSliceWidget *sw = vtkSlicerSliceWidget::SafeDownCast(this->SliceWidgets->GetItemAsObject ( i )) ;    
+    // UPDATE THE i^th widget whose SliceLogic generated the event.
+    vtkSlicerSliceWidget *sw = this->GetSliceWidget ( i );
+    // Get the MRML slicenode thru the slice logic.
+    n = this->GetSliceLogic ( i );
     if ( event == vtkCommand::ModifiedEvent ) {
 
         // UPDATE THE FOV ENTRY
-        double fov = sw->GetSliceLogic()->GetSliceNode()->GetFieldOfView()[0];
+        double fov = n->GetSliceNode()->GetFieldOfView()[0];
         char fovstring[80];
         sprintf (fovstring, "%g", fov);
         sw->GetFieldOfViewEntry()->GetWidget()->SetValue(fovstring);
         sw->GetFieldOfViewEntry()->Modified();
 
         // UPDATE THE SCALE
-        double fovover2 = sw->GetSliceLogic()->GetSliceNode()->GetFieldOfView()[2] / 2.;
+        double fovover2 = n->GetSliceNode()->GetFieldOfView()[2] / 2.;
         sw->GetOffsetScale()->SetRange ( -fovover2, fovover2 );
         // TODO: set the scale value from the translation part
         // of the matrix with rotation. 
         // Set the scale from the Offset in the matrix.
-        vtkMatrix4x4 *m = sw->GetSliceLogic()->GetSliceNode()->GetSliceToRAS();
+        vtkMatrix4x4 *m = n->GetSliceNode()->GetSliceToRAS();
         sw->GetOffsetScale()->SetValue ( m->GetElement(2,3) );
         sw->GetOffsetScale()->Modified();
         
         // UPDATE IMAGE VIEWER
         vtkImageViewer2 *iv = sw->GetImageViewer ();
         vtkKWRenderWidget *rw = sw->GetRenderWidget ();
-        if ( sw->GetSliceLogic()->GetImageData() != NULL )
+        if ( n->GetImageData() != NULL )
             {
-                iv->SetInput ( sw->GetSliceLogic()->GetImageData( ) );
+                iv->SetInput ( n->GetImageData( ) );
             }
         else
             {
@@ -284,51 +506,26 @@ void vtkSlicerSliceGUI::ProcessLogicEvents ( vtkObject *caller,
 
 }
 
-
-
-
-// get slicewidget 0, 1, 2
 //---------------------------------------------------------------------------
-vtkSlicerSliceWidget* vtkSlicerSliceGUI::GetSliceWidget ( int SliceWidgetNum ) {
-
-    return ( (vtkSlicerSliceWidget *) (this->SliceWidgets->GetItemAsObject( SliceWidgetNum ) ) );
+void vtkSlicerSliceGUI::ProcessMRMLEvents ( vtkObject *caller,
+                                            unsigned long event,
+                                            void *callData ) {
+    // Fill in
 }
 
 
-
-// get slicewidget red, yellow, green
-//---------------------------------------------------------------------------
-vtkSlicerSliceWidget* vtkSlicerSliceGUI::GetSliceWidget ( char *SliceWidgetColor ) {
-    if ( SliceWidgetColor == "r" || SliceWidgetColor == "R" )
-        {
-            return ( (vtkSlicerSliceWidget *) (this->SliceWidgets->GetItemAsObject( 0 )));
-        } else if ( SliceWidgetColor == "g" || SliceWidgetColor == "G")
-            {
-                return ( (vtkSlicerSliceWidget *) (this->SliceWidgets->GetItemAsObject( 1 )));
-            } else if ( SliceWidgetColor == "y" || SliceWidgetColor == "Y" )
-                {
-                    return ( (vtkSlicerSliceWidget *) (this->SliceWidgets->GetItemAsObject( 2 )));
-                } else
-                    {
-                        return NULL;
-                    }
-}
 
 
 
 //---------------------------------------------------------------------------
 void vtkSlicerSliceGUI::Enter ( ) {
+    // Fill in
 }
 
 //---------------------------------------------------------------------------
 void vtkSlicerSliceGUI::Exit ( ) {
+    // Fill in
 }
-
-//---------------------------------------------------------------------------
-void vtkSlicerSliceGUI::BuildGUI ( ) {
-}
-
-    
 
 
 
@@ -374,6 +571,6 @@ void vtkSlicerSliceGUI::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "MainSlice0: " << this->MainSlice0 << endl;
   os << indent << "MainSlice1: " << this->MainSlice1 << endl;
   os << indent << "MainSlice2: " << this->MainSlice2 << endl;
-  os << indent << "SliceLogic: " << this->SliceLogic << endl;  
-
+  os << indent << "SliceWidgetCollection: " << this->SliceWidgetCollection << endl;
+  os << indent << "SliceLogicCollection: " << this->SliceLogicCollection << endl;
 }

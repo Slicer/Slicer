@@ -5,6 +5,8 @@
 #include "vtkSlicerModelsGUI.h"
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerStyle.h"
+#include "vtkSlicerModuleLogic.h"
+//#include "vtkSlicerModelsLogic.h"
 #include "vtkKWFrameWithLabel.h"
 
 //---------------------------------------------------------------------------
@@ -15,7 +17,7 @@ vtkCxxRevisionMacro ( vtkSlicerModelsGUI, "$Revision: 1.0 $");
 //---------------------------------------------------------------------------
 vtkSlicerModelsGUI::vtkSlicerModelsGUI ( ) {
 
-    //this->ModelsLogic = NULL;
+    //this->SetLogic ( NULL );
     this->LoadModelButton = NULL;
 }
 
@@ -27,7 +29,7 @@ vtkSlicerModelsGUI::~vtkSlicerModelsGUI ( ) {
         this->LoadModelButton = NULL;
     }
 
-    //this->ModelsLogic = NULL;
+    //this->SetLogic ( NULL );
 }
 
 
@@ -36,25 +38,76 @@ void vtkSlicerModelsGUI::RemoveGUIObservers ( ) {
     this->LoadModelButton->RemoveObservers ( vtkCommand::ModifiedEvent,  (vtkCommand *)this->GUICommand);    
 }
 
-//---------------------------------------------------------------------------
-void vtkSlicerModelsGUI::RemoveLogicObservers ( ) {
-}
-
-
 
 //---------------------------------------------------------------------------
 void vtkSlicerModelsGUI::AddGUIObservers ( ) {
 
     this->LoadModelButton->AddObserver ( vtkCommand::ModifiedEvent,  (vtkCommand *)this->GUICommand );    
+}
 
+
+//---------------------------------------------------------------------------
+void vtkSlicerModelsGUI::AddLogicObserver ( vtkSlicerModuleLogic *logic, int event ) {
+    // Fill in
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerModelsGUI::RemoveLogicObserver ( vtkSlicerModuleLogic *logic, int event ) {
+    // Fill in
 }
 
 
 //---------------------------------------------------------------------------
 void vtkSlicerModelsGUI::AddLogicObservers ( ) {
-
-
+    // Fill in
 }
+
+//---------------------------------------------------------------------------
+void vtkSlicerModelsGUI::RemoveLogicObservers ( ) {
+    // Fill in
+}
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerModelsGUI::AddMRMLObserver ( vtkMRMLNode *node, int event ) {
+    // Fill in
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerModelsGUI::RemoveMRMLObserver ( vtkMRMLNode *node, int event ) {
+    // Fill in
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerModelsGUI::AddMRMLObservers ( ) {
+    // Fill in
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerModelsGUI::RemoveMRMLObservers ( ) {
+    // Fill in
+}
+
+
+    /*
+//---------------------------------------------------------------------------
+void vtkSlicerModelsGUI::SetLogic ( vtkSlicerModelsLogic *logic ) {
+
+    // Don't bother if already set.
+    if ( logic == this->Logic ) {
+        return;
+    }
+    // Remove observers from application logic
+    if ( this->Logic != NULL ) {
+        this->RemoveLogicObservers ( );
+    }
+    // Set pointer and add observers if not null
+    this->Logic = logic;
+    if ( this->Logic != NULL ) {
+        this->AddLogicObservers ( );
+    }
+}
+     */
 
 
 
@@ -69,7 +122,7 @@ void vtkSlicerModelsGUI::ProcessGUIEvents ( vtkObject *caller,
         {
             // If a file has been selected for loading...
             if ( this->LoadModelButton->GetFileName ( ) ) {
-                this->Logic->Connect ( filebrowse->GetFileName ( ) );
+                this->ApplicationLogic->Connect ( filebrowse->GetFileName ( ) );
             }
         }
 }
@@ -82,6 +135,14 @@ void vtkSlicerModelsGUI::ProcessLogicEvents ( vtkObject *caller,
                                                     void *callData ) {
 
 }
+
+//---------------------------------------------------------------------------
+void vtkSlicerModelsGUI::ProcessMRMLEvents ( vtkObject *caller,
+                                                    unsigned long event,
+                                                    void *callData ) {
+
+}
+
 
 //---------------------------------------------------------------------------
 void vtkSlicerModelsGUI::Enter ( ) {

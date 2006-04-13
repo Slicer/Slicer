@@ -8,10 +8,11 @@
 #include "vtkSlicerComponentGUI.h"
 
 
-
 // Description:
-// This is a base class from which all SlicerAdditionalGUIs are derived,
-// including the main vtkSlicerApplicationGUI
+// This is a base class from which all SlicerModuleGUIs that include
+// their GUI in Slicer's shared GUI panel are derived. SlicerModuleGUIs
+// that don't populate that panel with their widgets can derive
+// directly from vtkSlicerComponentGUI.
 //
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleGUI : public vtkSlicerComponentGUI
 {
@@ -24,10 +25,13 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleGUI : public vtkSlicerComponentG
     // Get/Set pointers to the ApplicationLogic
     vtkGetObjectMacro ( UIPanel, vtkKWUserInterfacePanel );
     vtkSetObjectMacro ( UIPanel, vtkKWUserInterfacePanel );
-    
-    
+
  protected:
-    // widgets
+
+    // Description:
+    // This user interface panel is populated with the GUI's widgets,
+    // and is raised in Slicer's shared GUI panel when the module
+    // is selected for use.
     vtkKWUserInterfacePanel *UIPanel;
     
     // constructor, destructor.

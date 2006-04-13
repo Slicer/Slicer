@@ -32,7 +32,6 @@ vtkSlicerSliceWidget::vtkSlicerSliceWidget ( ) {
     this->RenderWidget = NULL;
     this->ControlFrame = NULL;
     this->SliceLogic = NULL;
-    this->SliceLogicObserverTag = 0;
 
 }
 
@@ -65,8 +64,7 @@ vtkSlicerSliceWidget::~vtkSlicerSliceWidget ( ){
         this->ControlFrame = NULL;
     }
 
-    this->SetSliceLogic(NULL);
-    this->SliceLogicObserverTag = 0;
+    this->SliceLogic = NULL;
     
 }
 

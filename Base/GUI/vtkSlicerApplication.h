@@ -28,9 +28,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
     vtkSetObjectMacro ( SlicerStyle, vtkSlicerStyle );
     
     vtkGetObjectMacro ( ModuleGUICollection, vtkSlicerGUICollection );
-    
-    vtkGetMacro ( NumberOfModuleGUIs, int );
-    vtkSetMacro ( NumberOfModuleGUIs, int );
 
     // Description:
     // This method collects GUIs added to Slicer.
@@ -55,14 +52,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
     // Description:
     // Collections of GUIs
     vtkSlicerGUICollection *ModuleGUICollection;
-    int NumberOfModuleGUIs;
-    
-    // Description:
-    // numbers of widgets
-    int NumberOfGUIs;
-    
-    // Tcl_Interp *interp; 
-
     
  private:
     vtkSlicerApplication ( const vtkSlicerApplication& ); // Not implemented.
