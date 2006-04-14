@@ -87,6 +87,17 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLogic : public vtkSlicerLogic
   // Description:
   // the tail of the pipeline
   vtkImageData *GetImageData () { return (this->Blend->GetOutput()); };
+
+  // Description:
+  // update the pipeline to reflect the current state of the nodes
+  void UpdatePipeline ();
+
+  // Description:
+  // provide the virtual method that updates this Logic based
+  // on mrml changes and one that updates based on changes in 
+  // the input logic (the slice layers in this case)
+  void ProcessMRMLEvents(); 
+  void ProcessLogicEvents(); 
     
 protected:
   vtkSlicerSliceLogic();

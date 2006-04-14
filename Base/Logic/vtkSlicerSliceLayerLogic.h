@@ -84,6 +84,11 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLayerLogic : public vtkSlicerLo
   vtkImageData *GetImageData () { return (this->GetMapToRGBA()->GetOutput()); };
 
   // Description:
+  // provide the virtual method that updates this Logic based
+  // on mrml changes
+  void ProcessMRMLEvents(); 
+
+  // Description:
   // set the Reslice transforms to reflect the current state
   // of the VolumeNode and the SliceNode
   void UpdateTransforms(); 
@@ -99,15 +104,19 @@ protected:
   void operator=(const vtkSlicerSliceLayerLogic&);
 
   // Description:
-  // 
+  // the MRML Nodes that define this Logic's parameters
   vtkMRMLVolumeNode *VolumeNode;
   vtkMRMLSliceNode *SliceNode;
+
+  // Description:
+  // the VTK class instances that implement this Logic's operations
   vtkImageReslice *Reslice;
   vtkImageMapToRGBA *MapToRGBA;
   vtkImageMapToWindowLevelColors *MapToWindowLevelColors;
 
   // TODO: make this a vtkAbstractTransform for non-linear
   vtkTransform *XYToIJKTransform;
+
 };
 
 #endif

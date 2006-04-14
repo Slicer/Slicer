@@ -256,11 +256,23 @@ void vtkSlicerSliceControlGUI::SetMRMLScene ( vtkMRMLScene  *MRMLScene )
 //----------------------------------------------------------------------------
 void vtkSlicerSliceControlGUI::UpdateWidgets()
 {
+  int modified = 0;
+
   double fov = this->SliceNode->GetFieldOfView()[0];
-  this->FieldOfViewEntry->GetWidget()->SetValue(fov);
+  if ( fov != this->FieldOfViewEntry->GetWidget()->GetValue() )
+    {
+    this->FieldOfViewEntry->GetWidget()->SetValue(fov);
+    modified = 1;
+    }
   
   double fovover2 = this->SliceNode->GetFieldOfView()[2] / 2.;
-  this->OffsetScale->SetRange(-fovover2, fovover2);
+  double min, max;
+  this->OffsetScale->GetRange(min, max);
+  if ( min != fovover2 || max != fovover2 )
+    {
+    this->OffsetScale->SetRange(-fovover2, fovover2);
+    modified = 1;
+    }
 
 
   // TODO: set the scale value from the translation part of the matrix with rotation
@@ -269,7 +281,10 @@ void vtkSlicerSliceControlGUI::UpdateWidgets()
   // TODO: pull out the appropriate element ...
   //this->OffsetScale->SetValue( m->GetElement( 2, 3 ) );
 
-  this->Modified();
+  if ( modified )
+    {
+    this->Modified();
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -285,31 +300,45 @@ void vtkSlicerSliceControlGUI::SetOrientationFromMenu()
 void vtkSlicerSliceControlGUI::TransientApply()
 {
 
+  int modified = 0;
+
   // Set the Field of View from the Entry
   double val = this->FieldOfViewEntry->GetWidget()->GetValue();
-  if ( val != 0 )
+  double nodeval[3];
+  this->SliceNode->GetFieldOfView(nodeval[0], nodeval[1], nodeval[2]);
+  if ( val != 0 && (val != nodeval[0] || val != nodeval[1] || val != nodeval[2]) )
     {
     this->SliceNode->SetFieldOfView(val, val, val);
+    modified = 1;
     }
 
   // Set the Offset from the Scale
   // - transform the value by SliceToRAS so that the 
   //   slice's 'z' coordinate corresponds to the direction
   //   perpendicular to the current slice orientation
-  vtkMatrix4x4 *m = this->SliceNode->GetSliceToRAS();
+  vtkMatrix4x4 *newm = vtkMatrix4x4::New();
+  newm->DeepCopy( this->SliceNode->GetSliceToRAS() );
   double in[4], out[4];
   in[0] = in[1] = in[3] = 0.;
   in[2] = (double) this->OffsetScale->GetValue();
-  m->MultiplyPoint(in, out);
-
-  m->SetElement( 0, 3, out[0] );
-  m->SetElement( 1, 3, out[1] );
-  m->SetElement( 2, 3, out[2] );
+  newm->MultiplyPoint(in, out);
+  newm->SetElement( 0, 3, out[0] );
+  newm->SetElement( 1, 3, out[1] );
+  newm->SetElement( 2, 3, out[2] );
  
-  //for axial: m->SetElement( 2, 3, this->OffsetScale->GetValue() );
-  this->SliceNode->UpdateMatrices();
+  if ( newm->GetElement( 0, 3 ) != this->SliceNode->GetSliceToRAS()->GetElement( 0, 3 ) ||
+       newm->GetElement( 1, 3 ) != this->SliceNode->GetSliceToRAS()->GetElement( 1, 3 ) ||
+       newm->GetElement( 2, 3 ) != this->SliceNode->GetSliceToRAS()->GetElement( 2, 3 ) )
+    {
+    this->SliceNode->GetSliceToRAS()->DeepCopy( newm );
+    this->SliceNode->UpdateMatrices();
+    modified = 1;
+    }
 
-  this->Modified();
+  if ( modified )
+    {
+    this->Modified();
+    }
 }
 
 //----------------------------------------------------------------------------

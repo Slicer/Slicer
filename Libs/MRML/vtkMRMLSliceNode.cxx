@@ -288,7 +288,9 @@ void vtkMRMLSliceNode::Copy(vtkMRMLNode *anode)
   for(i=0; i<3; i++) 
     {
     this->FieldOfView[i] = node->FieldOfView[i];
+    this->Dimensions[i] = node->Dimensions[i];
     }
+  this->UpdateMatrices();
 }
 
 //----------------------------------------------------------------------------
@@ -303,8 +305,17 @@ void vtkMRMLSliceNode::PrintSelf(ostream& os, vtkIndent indent)
   }
   os << "\n";
 
+  os << "Dimensions:\n ";
+  for (idx = 0; idx < 3; ++idx) {
+    os << indent << " " << this->Dimensions[idx];
+  }
+  os << "\n";
+
   os << indent << "SliceToRAS: \n";
   this->SliceToRAS->PrintSelf(os, indent.GetNextIndent());
+
+  os << indent << "XYToRAS: \n";
+  this->XYToRAS->PrintSelf(os, indent.GetNextIndent());
 }
 
 

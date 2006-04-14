@@ -13,7 +13,10 @@
 =========================================================================auto=*/
 
 #include "vtkObjectFactory.h"
+#include "vtkCallbackCommand.h"
+
 #include "vtkSlicerSliceLogic.h"
+
 
 vtkCxxRevisionMacro(vtkSlicerSliceLogic, "$Revision: 1.9.12.1 $");
 vtkStandardNewMacro(vtkSlicerSliceLogic);
@@ -35,20 +38,52 @@ vtkSlicerSliceLogic::vtkSlicerSliceLogic()
 vtkSlicerSliceLogic::~vtkSlicerSliceLogic()
 {
   this->Blend->Delete();
+
+  if (this->MRMLCallbackCommand)
+    {
+    this->MRMLCallbackCommand->Delete();
+    this->MRMLCallbackCommand = NULL;
+    }
+
+  if (this->LogicCallbackCommand)
+    {
+    this->LogicCallbackCommand->Delete();
+    this->LogicCallbackCommand = NULL;
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerSliceLogic::ProcessMRMLEvents()
+{
+  cerr << "updating slice logic from a mrml event" << endl ;
+  this->UpdatePipeline();
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerSliceLogic::ProcessLogicEvents()
+{
+    cerr << "updating  slice logic from a logic event" << endl ;
+  // This is called when a slice layer is modified, so pass it on
+  // to anyone interested in changes to this sub-pipeline
+  this->Modified();
 }
 
 //----------------------------------------------------------------------------
 void vtkSlicerSliceLogic::SetSliceNode(vtkMRMLSliceNode *SliceNode)
 {
+    // Don't directly observe the slice node -- the layers will observe it and
+    // will notify us when things have changed.
+    // This class takes care of passing the one slice node to each of the layers
+    // so that users of this class only need to set the node one place.
   if (this->SliceNode)
     {
     this->SliceNode->Delete();
     }
+
   if (this->BackgroundLayer)
     {
     this->BackgroundLayer->SetSliceNode(SliceNode);
     }
-
   if (this->ForegroundLayer)
     {
     this->ForegroundLayer->SetSliceNode(SliceNode);
@@ -57,13 +92,18 @@ void vtkSlicerSliceLogic::SetSliceNode(vtkMRMLSliceNode *SliceNode)
   this->SliceNode = SliceNode;
   this->SliceNode->Register(this);
 
+  this->Modified();
+
 }
 
 //----------------------------------------------------------------------------
 void vtkSlicerSliceLogic::SetSliceCompositeNode(vtkMRMLSliceCompositeNode *SliceCompositeNode)
 {
+    // Observe the composite node, since this holds the parameters for
+    // this pipeline
   if (this->SliceCompositeNode)
     {
+    this->SliceCompositeNode->RemoveObserver( this->MRMLCallbackCommand );
     this->SliceCompositeNode->Delete();
     }
 
@@ -72,15 +112,80 @@ void vtkSlicerSliceLogic::SetSliceCompositeNode(vtkMRMLSliceCompositeNode *Slice
   if (this->SliceCompositeNode)
     {
     this->SliceCompositeNode->Register(this);
+    this->SliceCompositeNode->AddObserver( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+    }
 
-    if ( !this->MRMLScene )
-      {
-      vtkErrorMacro ("MRML Scene is NULL");
-      return;
-      }
+  this->UpdatePipeline();
 
-    const char *id = this->SliceCompositeNode->GetBackgroundVolumeID();
-    // TODO: change this to a volume node once the superclass is sorted out
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerSliceLogic::SetBackgroundLayer(vtkSlicerSliceLayerLogic *BackgroundLayer)
+{
+  if (this->BackgroundLayer)
+    {
+    this->BackgroundLayer->RemoveObserver( this->LogicCallbackCommand );
+    this->BackgroundLayer->Delete();
+    }
+  this->BackgroundLayer = BackgroundLayer;
+
+  if (this->BackgroundLayer)
+    {
+    this->BackgroundLayer->Register(this);
+    this->BackgroundLayer->AddObserver( vtkCommand::ModifiedEvent, this->LogicCallbackCommand );
+    this->BackgroundLayer->SetSliceNode(SliceNode);
+    }
+
+  this->Modified();
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerSliceLogic::SetForegroundLayer(vtkSlicerSliceLayerLogic *ForegroundLayer)
+{
+  if (this->ForegroundLayer)
+    {
+    this->ForegroundLayer->RemoveObserver( this->LogicCallbackCommand );
+    this->ForegroundLayer->Delete();
+    }
+  this->ForegroundLayer = ForegroundLayer;
+
+  if (this->ForegroundLayer)
+    {
+    this->ForegroundLayer->Register(this);
+    this->ForegroundLayer->AddObserver( vtkCommand::ModifiedEvent, this->LogicCallbackCommand );
+    this->ForegroundLayer->SetSliceNode(SliceNode);
+    }
+
+  this->Modified();
+}
+
+
+//----------------------------------------------------------------------------
+void vtkSlicerSliceLogic::SetForegroundOpacity(double ForegroundOpacity)
+{
+  this->ForegroundOpacity = ForegroundOpacity;
+
+  if ( this->Blend->GetOpacity(1) != this->ForegroundOpacity )
+    {
+    this->Blend->SetOpacity(1, this->ForegroundOpacity);
+    this->Modified();
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerSliceLogic::UpdatePipeline()
+{
+  if ( this->SliceCompositeNode )
+    {
+    // get the background and foreground image data from the layers
+    // so we can use them as input to the image blend
+    // TODO: change logic to use a volume node superclass rather than
+    // a scalar volume node once the superclass is sorted out
+
+    const char *id;
+    
+    // Background
+    id = this->SliceCompositeNode->GetBackgroundVolumeID();
     vtkMRMLScalarVolumeNode *bgnode = NULL;
     if (id)
       {
@@ -92,6 +197,7 @@ void vtkSlicerSliceLogic::SetSliceCompositeNode(vtkMRMLSliceCompositeNode *Slice
       this->BackgroundLayer->SetVolumeNode (bgnode);
       }
 
+    // Foreground
     id = this->SliceCompositeNode->GetForegroundVolumeID();
     vtkMRMLScalarVolumeNode *fgnode = NULL;
     if (id)
@@ -103,64 +209,21 @@ void vtkSlicerSliceLogic::SetSliceCompositeNode(vtkMRMLSliceCompositeNode *Slice
       {
       this->ForegroundLayer->SetVolumeNode (fgnode);
       }
-    }
-}
 
-//----------------------------------------------------------------------------
-void vtkSlicerSliceLogic::SetBackgroundLayer(vtkSlicerSliceLayerLogic *BackgroundLayer)
-{
-  if (this->BackgroundLayer)
-    {
-    this->BackgroundLayer->Delete();
-    }
-  this->BackgroundLayer = BackgroundLayer;
-
-  if (this->BackgroundLayer)
-    {
-    this->BackgroundLayer->Register(this);
-    this->BackgroundLayer->SetSliceNode(SliceNode);
-
+    // Now update the image blend with the background and foreground
     this->Blend->RemoveAllInputs ( );
-    this->Blend->AddInput( this->BackgroundLayer->GetImageData() );
+    if ( this->BackgroundLayer )
+      {
+      this->Blend->AddInput( this->BackgroundLayer->GetImageData() );
+      }
     if ( this->ForegroundLayer )
       {
       this->Blend->AddInput( this->ForegroundLayer->GetImageData() );
       }
+
+    this->Modified();
     }
 }
-
-//----------------------------------------------------------------------------
-void vtkSlicerSliceLogic::SetForegroundLayer(vtkSlicerSliceLayerLogic *ForegroundLayer)
-{
-  if (this->ForegroundLayer)
-    {
-    this->ForegroundLayer->Delete();
-    }
-  this->ForegroundLayer = ForegroundLayer;
-
-  if (this->BackgroundLayer)
-    {
-    this->ForegroundLayer->Register(this);
-    this->ForegroundLayer->SetSliceNode(SliceNode);
-
-    this->Blend->RemoveAllInputs ( );
-    this->Blend->AddInput( this->BackgroundLayer->GetImageData() );
-    if ( this->ForegroundLayer )
-      {
-      this->Blend->AddInput( this->ForegroundLayer->GetImageData() );
-      }
-    }
-}
-
-
-//----------------------------------------------------------------------------
-void vtkSlicerSliceLogic::SetForegroundOpacity(double ForegroundOpacity)
-{
-  this->ForegroundOpacity = ForegroundOpacity;
-
-  this->Blend->SetOpacity(1, this->ForegroundOpacity);
-}
-
 
 //----------------------------------------------------------------------------
 void vtkSlicerSliceLogic::PrintSelf(ostream& os, vtkIndent indent)
@@ -175,11 +238,11 @@ void vtkSlicerSliceLogic::PrintSelf(ostream& os, vtkIndent indent)
     (this->SliceCompositeNode ? this->SliceCompositeNode->GetName() : "(none)") << "\n";
   // TODO: fix printing of vtk objects
   os << indent << "BackgroundLayer: " <<
-    (this->BackgroundLayer ? "this->BackgroundLayer" : "(none)") << "\n";
+    (this->BackgroundLayer ? "not null" : "(none)") << "\n";
   os << indent << "ForegroundLayer: " <<
-    (this->ForegroundLayer ? "this->ForegroundLayer" : "(none)") << "\n";
+    (this->ForegroundLayer ? "not null" : "(none)") << "\n";
   os << indent << "Blend: " <<
-    (this->Blend ? "this->Blend" : "(none)") << "\n";
+    (this->Blend ? "not null" : "(none)") << "\n";
   os << indent << "ForegroundOpacity: " << this->ForegroundOpacity << "\n";
 
 }

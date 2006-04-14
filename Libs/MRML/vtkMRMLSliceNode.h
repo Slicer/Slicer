@@ -69,13 +69,32 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
   // Description:
   // Size of the slice plane in millimeters
   vtkGetVector3Macro (FieldOfView, double);
-  vtkSetVector3Macro (FieldOfView, double);
+  void SetFieldOfView (double x, double y, double z) 
+  {
+    if ( x != this->FieldOfView[0] || y != this->FieldOfView[1] || z != this->FieldOfView[2] )
+      {
+      this->FieldOfView[0] = x;
+      this->FieldOfView[1] = y;
+      this->FieldOfView[2] = z;
+      this->UpdateMatrices();
+      }
+  }
+
 
   // Description:
   // Number of samples in each direction
   // -- note that the spacing is implicitly FieldOfView / Dimensions
   vtkGetVector3Macro (Dimensions, unsigned int);
-  vtkSetVector3Macro (Dimensions, unsigned int);
+  void SetDimensions (unsigned int x, unsigned int y, unsigned int z) 
+  {
+    if ( x != this->Dimensions[0] || y != this->Dimensions[1] || z != this->Dimensions[2] )
+      {
+      this->Dimensions[0] = x;
+      this->Dimensions[1] = y;
+      this->Dimensions[2] = z;
+      this->UpdateMatrices();
+      }
+  }
 
   // Description:
   // Matrix mapping from XY pixel coordinates on an image window 

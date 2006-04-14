@@ -38,6 +38,7 @@ $win Create
 # create the mrml scene
 set ::scene [vtkMRMLScene New]
 
+## set up global key bindings
 set index [[$win GetEditMenu] AddCommand "&Undo" "" "$::scene Undo; mrmlUpdateUndoRedoButtons"]
 [$win GetEditMenu] SetItemAccelerator $index "Ctrl+Z"
 set index [[$win GetEditMenu] AddCommand "&Redo" "" "$::scene Redo; mrmlUpdateUndoRedoButtons"]
@@ -66,6 +67,10 @@ $::slicebgl SetMRMLScene $::scene
 set ::slicefgl [vtkSlicerSliceLayerLogic New]
 $::slicefgl SetMRMLScene $::scene
 
+# turn off the Damn warnings!
+[$::slicebgl GetXYToIJKTransform] AddObserver "" ""
+[$::slicefgl GetXYToIJKTransform] AddObserver "" ""
+
 # a slice node to be controlled by the slicecontrol
 set slicen [vtkMRMLSliceNode New]
 $::scene AddNode $slicen
@@ -90,6 +95,8 @@ $::slicel SetForegroundLayer $::slicefgl
 $::slicefgl UpdateTransforms
 $::slicel SetSliceCompositeNode $::slicecn
 $::slicel SetSliceNode $::slicen
+$::slicel AddObserver ModifiedEvent "puts {Slice Logic Changed}"
+$::slicel AddObserver ModifiedEvent mrmlRender
 
 ##############
 #
@@ -277,7 +284,6 @@ $::slicec SetSliceNode $slicen
 $::slicec SetMRMLScene $::scene
 pack [$::slicec GetWidgetName] -side top -anchor nw -expand false -fill x -padx 2 -pady 2
 $::slicec AddObserver ModifiedEvent mrmlUpdateUndoRedoButtons
-$::slicec AddObserver ModifiedEvent mrmlRender
 
 
 # TODO: orientation doesn't work yet
@@ -433,13 +439,12 @@ proc mrmlUpdateUndoRedoButtons {} {
     }
 }
 
+set ::renderCount 0 
 proc mrmlRender {} {
 
-    # update the slice layers
-    $::slicebgl UpdateTransforms
-    $::slicefgl UpdateTransforms
+puts "render [incr ::renderCount]"
 
-    # make the image actor match the output of the reslicing
+    # make the image actor match the output of the reslicing - needs to be fixed in vtkSlicerSliceGUI
     set dimx [expr [lindex [$::slicen GetDimensions] 0] -1]
     set dimy [expr [lindex [$::slicen GetDimensions] 1] -1]
     [$::viewer GetImageActor] SetDisplayExtent 0 $dimx 0 $dimy 0 0

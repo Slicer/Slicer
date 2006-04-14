@@ -13,12 +13,16 @@
 =========================================================================auto=*/
 
 #include "vtkObjectFactory.h"
+#include "vtkCallbackCommand.h"
+
 #include "vtkSlicerSliceLayerLogic.h"
 
 #include "vtkMRMLVolumeDisplayNode.h"
 
+
 vtkCxxRevisionMacro(vtkSlicerSliceLayerLogic, "$Revision: 1.9.12.1 $");
 vtkStandardNewMacro(vtkSlicerSliceLayerLogic);
+
 
 //----------------------------------------------------------------------------
 vtkSlicerSliceLayerLogic::vtkSlicerSliceLayerLogic()
@@ -56,18 +60,28 @@ vtkSlicerSliceLayerLogic::~vtkSlicerSliceLayerLogic()
     this->MapToWindowLevelColors->Delete();
 }
 
+//----------------------------------------------------------------------------
+void vtkSlicerSliceLayerLogic::ProcessMRMLEvents()
+{
+    cerr << "updating transforms from a mrml event" << endl ;
+  this->UpdateTransforms();
+}
 
 //----------------------------------------------------------------------------
 void vtkSlicerSliceLayerLogic::SetSliceNode(vtkMRMLSliceNode *SliceNode)
 {
-  if (this->SliceNode)
+  if ( this->SliceNode  )
     {
+    this->SliceNode->RemoveObserver( this->MRMLCallbackCommand );
     this->SliceNode->Delete();
     }
-  this->SliceNode = SliceNode;
-  if (this->SliceNode)
-    {  
+  
+  this->SliceNode  = SliceNode ;
+
+  if ( this->SliceNode  )
+    {
     this->SliceNode->Register(this);
+    this->SliceNode->AddObserver( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
     }
 
   // Update the reslice transform to move this image into XY
@@ -79,6 +93,7 @@ void vtkSlicerSliceLayerLogic::SetVolumeNode(vtkMRMLVolumeNode *VolumeNode)
 {
   if (this->VolumeNode)
     {
+    this->VolumeNode->RemoveObserver( this->MRMLCallbackCommand );
     this->VolumeNode->Delete();
     }
 
@@ -87,10 +102,11 @@ void vtkSlicerSliceLayerLogic::SetVolumeNode(vtkMRMLVolumeNode *VolumeNode)
     this->VolumeNode = dynamic_cast <vtkMRMLScalarVolumeNode *> (VolumeNode);
     }
 
-  this->VolumeNode->Register(this);
 
   if (this->VolumeNode)
     {
+    this->VolumeNode->AddObserver( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+    this->VolumeNode->Register(this);
     this->Reslice->SetInput( this->VolumeNode->GetImageData() ); 
     }
     else
@@ -152,6 +168,7 @@ void vtkSlicerSliceLayerLogic::UpdateTransforms()
                                     0, dimensions[1]-1,
                                     0, dimensions[2]-1);
 
+    this->Modified();
 }
 
 
