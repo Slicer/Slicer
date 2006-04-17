@@ -17,6 +17,8 @@
 #include "vtkSlicerModelsGUI.h"
 #include "vtkSlicerDataGUI.h"
 
+#include "vtkGradientAnisotropicDiffusionFilterLogic.h"
+#include "vtkGradientAnisotropicDiffusionFilterGUI.h"
 
 #include <vtksys/SystemTools.hxx>
 
@@ -24,6 +26,8 @@ extern "C" int Slicerbasegui_Init(Tcl_Interp *interp);
 extern "C" int Slicerbaselogic_Init(Tcl_Interp *interp);
 extern "C" int Mrml_Init(Tcl_Interp *interp);
 extern "C" int Vtkitk_Init(Tcl_Interp *interp);
+//TODO remove temporary
+extern "C" int Gradientanisotropicdiffusionfilter_Init(Tcl_Interp *interp);
 
 int Slicer3_main(int argc, char *argv[])
 {
@@ -42,16 +46,21 @@ int Slicer3_main(int argc, char *argv[])
     Slicerbaselogic_Init(interp);
     Mrml_Init(interp);
     Vtkitk_Init(interp);
+    //TODO remove temporary
+    Gradientanisotropicdiffusionfilter_Init(interp);
 
-  
     // Create SlicerGUI application, style, and main window 
     vtkSlicerApplication *slicerApp = vtkSlicerApplication::New ( );
     slicerApp->GetSlicerStyle()->ApplyPresentation ( );
+ 
+    // Create MRML scene
+    vtkMRMLScene *scene = vtkMRMLScene::New();
 
     // Create the application Logic object, 
     // Create the application GUI object
     // and have it observe the Logic
     vtkSlicerApplicationLogic *appLogic = vtkSlicerApplicationLogic::New( );
+    appLogic->SetMRMLScene(scene);
     vtkSlicerApplicationGUI *appGUI = vtkSlicerApplicationGUI::New ( );
     appGUI->SetApplication ( slicerApp );
     appGUI->SetApplicationLogic ( appLogic );
@@ -144,6 +153,27 @@ int Slicer3_main(int argc, char *argv[])
     DataGUI->SetApplicationLogic ( appLogic );
     //    DataGUI->SetModuleLogic ( dataLogic );
     slicerApp->AddModuleGUI ( DataGUI );
+    
+    
+    ///////// Modules
+    // Create  module GUI.
+    vtkGradientAnisotropicDiffusionFilterGUI *GradientAnisotropicDiffusionFilterGUI = vtkGradientAnisotropicDiffusionFilterGUI::New ( );
+    vtkGradientAnisotropicDiffusionFilterLogic *GradientAnisotropicDiffusionFilterLogic  = vtkGradientAnisotropicDiffusionFilterLogic::New ( );
+    GradientAnisotropicDiffusionFilterLogic->SetMRMLScene(scene);
+    GradientAnisotropicDiffusionFilterGUI->SetLogic ( GradientAnisotropicDiffusionFilterLogic );
+    
+    GradientAnisotropicDiffusionFilterGUI->SetApplication ( slicerApp );
+    GradientAnisotropicDiffusionFilterGUI->SetGUIName( "GradientAnisotropicDiffusionFilterGUI" );
+    GradientAnisotropicDiffusionFilterGUI->GetUIPanel()->SetName ("GradientAnisotropicDiffusionFilterGUI");
+    GradientAnisotropicDiffusionFilterGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWin()->GetMainUserInterfaceManager ( ) );
+    GradientAnisotropicDiffusionFilterGUI->GetUIPanel()->Create ( );
+    GradientAnisotropicDiffusionFilterGUI->BuildGUI ( );
+    GradientAnisotropicDiffusionFilterGUI->AddGUIObservers ( );
+    GradientAnisotropicDiffusionFilterGUI->SetApplicationLogic ( appLogic );
+    slicerApp->AddModuleGUI ( GradientAnisotropicDiffusionFilterGUI );
+    
+    
+    
     
     // Additional Modules GUI panel configuration.
     vtkKWUserInterfaceManagerNotebook *mnb = vtkKWUserInterfaceManagerNotebook::SafeDownCast (appGUI->GetMainSlicerWin()->GetMainUserInterfaceManager());
