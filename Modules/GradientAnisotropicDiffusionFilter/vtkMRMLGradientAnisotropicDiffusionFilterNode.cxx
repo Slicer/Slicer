@@ -55,7 +55,8 @@ vtkMRMLGradientAnisotropicDiffusionFilterNode::vtkMRMLGradientAnisotropicDiffusi
    this->Conductance = 1.0;
    this->NumberOfIterations = 1;
    this->TimeStep = 0.1;
-   this->VolumeNodeID = NULL;
+   this->InputVolumeRef = NULL;
+   this->OutputVolumeRef = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -87,8 +88,13 @@ Superclass::WriteXML(of, nIndent);
   }
   {
     std::stringstream ss;
-    ss << this->VolumeNodeID;
-    of << indent << "VolumeNodeID='" << ss.str() << "' ";
+    ss << this->InputVolumeRef;
+    of << indent << "InputVolumeRef='" << ss.str() << "' ";
+  }
+  {
+    std::stringstream ss;
+    ss << this->OutputVolumeRef;
+    of << indent << "OutputVolumeRef='" << ss.str() << "' ";
   }
 }
 
@@ -100,30 +106,41 @@ void vtkMRMLGradientAnisotropicDiffusionFilterNode::ReadXMLAttributes(const char
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL) {
+  while (*atts != NULL) 
+    {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "Conductance")) {
+    if (!strcmp(attName, "Conductance")) 
+      {
       std::stringstream ss;
       ss << attValue;
       ss >> this->Conductance;
-    }
-    else if (!strcmp(attName, "NumberOfIterations")) {
+      }
+    else if (!strcmp(attName, "NumberOfIterations")) 
+      {
       std::stringstream ss;
       ss << attValue;
       ss >> this->NumberOfIterations;
-    }
-    else if (!strcmp(attName, "TimeStep")) {
+      }
+    else if (!strcmp(attName, "TimeStep")) 
+      {
       std::stringstream ss;
       ss << attValue;
       ss >> this->TimeStep;
-    }
-    else if (!strcmp(attName, "VolumeNodeID")) {
+      }
+    else if (!strcmp(attName, "InputVolumeRef"))
+      {
       std::stringstream ss;
       ss << attValue;
-      ss >> this->VolumeNodeID;
+      ss >> this->InputVolumeRef;
+      }
+    else if (!strcmp(attName, "OutputVolumeRef"))
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->OutputVolumeRef;
+      }
     }
-  }
 }
 
 //----------------------------------------------------------------------------
@@ -137,7 +154,8 @@ void vtkMRMLGradientAnisotropicDiffusionFilterNode::Copy(vtkMRMLNode *anode)
   this->SetConductance(node->Conductance);
   this->SetNumberOfIterations(node->NumberOfIterations);
   this->SetTimeStep(node->TimeStep);
-  this->SetVolumeNodeID(node->VolumeNodeID);
+  this->SetInputVolumeRef(node->InputVolumeRef);
+  this->SetOutputVolumeRef(node->OutputVolumeRef);
 }
 
 //----------------------------------------------------------------------------
@@ -149,6 +167,7 @@ void vtkMRMLGradientAnisotropicDiffusionFilterNode::PrintSelf(ostream& os, vtkIn
   os << indent << "Conductance:   " << this->Conductance << "\n";
   os << indent << "NumberOfIterations:   " << this->NumberOfIterations << "\n";
   os << indent << "TimeStep:   " << this->TimeStep << "\n";
-  os << indent << "VolumeNodeID:   " << this->VolumeNodeID << "\n";
+  os << indent << "InputVolumeRef:   " << this->InputVolumeRef << "\n";
+  os << indent << "OutputVolumeRef:   " << this->OutputVolumeRef << "\n";
 }
 

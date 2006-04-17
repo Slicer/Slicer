@@ -62,8 +62,12 @@ class VTK_GRADIENTANISOTROPICDIFFUSIONFILTER_EXPORT vtkMRMLGradientAnisotropicDi
   vtkGetMacro(TimeStep, vtkFloatingPointType);
   vtkSetMacro(TimeStep, vtkFloatingPointType);
  
-  vtkGetStringMacro(VolumeNodeID);
-  vtkSetStringMacro(VolumeNodeID);
+  vtkGetStringMacro(InputVolumeRef);
+  vtkSetStringMacro(InputVolumeRef);
+  
+  vtkGetStringMacro(OutputVolumeRef);
+  vtkSetStringMacro(OutputVolumeRef);
+
  
 protected:
   vtkMRMLGradientAnisotropicDiffusionFilterNode();
@@ -74,7 +78,9 @@ protected:
   vtkFloatingPointType Conductance;
   vtkFloatingPointType TimeStep;
   int NumberOfIterations;
-  char* VolumeNodeID;
+  
+  char* InputVolumeRef;
+  char* OutputVolumeRef;
 
 };
 

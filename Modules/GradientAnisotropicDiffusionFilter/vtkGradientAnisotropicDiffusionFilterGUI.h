@@ -6,36 +6,38 @@
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Program:   3D Slicer
-  Module:    $RCSfile: vtkGradientAnisotropicDiffusionFilterModule.h,v $
+  Module:    $RCSfile: vtkGradientAnisotropicDiffusionFilterGUI.h,v $
   Date:      $Date: 2006/03/19 17:12:29 $
   Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-#ifndef __vtkGradientAnisotropicDiffusionFilterModule_h
-#define __vtkGradientAnisotropicDiffusionFilterModule_h
+#ifndef __vtkGradientAnisotropicDiffusionFilterGUI_h
+#define __vtkGradientAnisotropicDiffusionFilterGUI_h
 
 #include "vtkSlicerBaseGUIWin32Header.h"
-#include "vtkSlicerComponentGUI.h"
-#include "vtkSlicerSliceLogic.h"
+#include "vtkSlicerModuleGUI.h"
 #include "vtkSlicerSliceWidgetCollection.h"
-#include "vtkMRMLScene.h"
 
-#include "vtkGradientAnisotropicDiffusionFilter.h"
-#include "vtkMRMLGradientAnisotropicDiffusionFilterNode.h"
+#include "vtkMRMLScene.h"
+#include "vtkGradientAnisotropicDiffusionFilterLogic.h"
+
 
 class vtkSlicerSliceWidget;
 class vtkKWFrame;
 class vtkKWPushButton;
 class vtkSlicerVolumeSelectGUI;
-class vtkITKGradientAnisotropicDiffusionImageFilter;
 
-class VTK_GRADIENTANISOTROPICDIFFUSIONFILTER_EXPORT vtkGradientAnisotropicDiffusionFilterModule : public vtkSlicerComponentGUI
+class VTK_GRADIENTANISOTROPICDIFFUSIONFILTER_EXPORT vtkGradientAnisotropicDiffusionFilterGUI : public vtkSlicerModuleGUI
 {
   public:
-  static vtkGradientAnisotropicDiffusionFilterModule *New();
-  vtkTypeMacro(vtkGradientAnisotropicDiffusionFilterModule,vtkSlicerComponentGUI);
+  static vtkGradientAnisotropicDiffusionFilterGUI *New();
+  vtkTypeMacro(vtkGradientAnisotropicDiffusionFilterGUI,vtkSlicerModuleGUI);
   void PrintSelf(ostream& os, vtkIndent indent);
 
+   // Description: Get/Set MRML node
+  vtkGetObjectMacro (Logic, vtkGradientAnisotropicDiffusionFilterLogic);
+  vtkSetObjectMacro (Logic, vtkGradientAnisotropicDiffusionFilterLogic);
+  
   virtual void BuildGUI ( );
   virtual void AddGUIObservers ( );
   virtual void RemoveGUIObservers ( ){};
@@ -50,25 +52,19 @@ class VTK_GRADIENTANISOTROPICDIFFUSIONFILTER_EXPORT vtkGradientAnisotropicDiffus
   virtual void ProcessMrmlEvents ( vtkObject *caller, unsigned long event,
                                    void *callData );
 
-  vtkGetObjectMacro (GradientAnisotropicDiffusionFilterNode, vtkMRMLGradientAnisotropicDiffusionFilterNode);
-  vtkSetObjectMacro (GradientAnisotropicDiffusionFilterNode, vtkMRMLGradientAnisotropicDiffusionFilterNode);
-
 protected:
-  vtkGradientAnisotropicDiffusionFilterModule();
-  ~vtkGradientAnisotropicDiffusionFilterModule();
-  vtkGradientAnisotropicDiffusionFilterModule(const vtkGradientAnisotropicDiffusionFilterModule&);
-  void operator=(const vtkGradientAnisotropicDiffusionFilterModule&);
+  vtkGradientAnisotropicDiffusionFilterGUI();
+  ~vtkGradientAnisotropicDiffusionFilterGUI();
+  vtkGradientAnisotropicDiffusionFilterGUI(const vtkGradientAnisotropicDiffusionFilterGUI&);
+  void operator=(const vtkGradientAnisotropicDiffusionFilterGUI&);
 
-  vtkMRMLGradientAnisotropicDiffusionFilterNode* GradientAnisotropicDiffusionFilterNode;
   vtkKWScaleWithEntry* ConductanceScale;
   vtkKWScaleWithEntry* TimeStepScale;
   vtkKWScaleWithEntry* NumberOfIterationsScale;
   vtkSlicerVolumeSelectGUI* VolumeSelector;
   vtkKWPushButton* ApplyButton;
-
-  vtkITKGradientAnisotropicDiffusionImageFilter* GradientAnisotropicDiffusionImageFilter;
-
-  void Compute();
+  
+  vtkGradientAnisotropicDiffusionFilterLogic *Logic;
 
 };
 

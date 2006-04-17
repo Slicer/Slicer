@@ -4,8 +4,8 @@ PROJECT(GradientAnisotropicDiffusionFilter)
 # Sources
 
 SET(GradientAnisotropicDiffusionFilter_SRCS
-  vtkGradientAnisotropicDiffusionFilterModule.cxx
-  vtkGradientAnisotropicDiffusionFilterWidget.cxx
+  vtkGradientAnisotropicDiffusionFilterLogic.cxx
+  vtkGradientAnisotropicDiffusionFilterGUI.cxx
   vtkMRMLGradientAnisotropicDiffusionFilterNode.cxx
 )
 
