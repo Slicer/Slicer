@@ -275,11 +275,26 @@ void vtkSlicerSliceControlGUI::UpdateWidgets()
     }
 
 
-  // TODO: set the scale value from the translation part of the matrix with rotation
-  // Set the Scale from the Offest in the matrix
+
+  // Since translation is a scalar multiple of the Pz column of the
+  // SliceToRAS upper 3x3, find a non-zero entry in that column
+  // and calculate the scalar from that.
   vtkMatrix4x4 *m = this->SliceNode->GetSliceToRAS();
-  // TODO: pull out the appropriate element ...
-  //this->OffsetScale->SetValue( m->GetElement( 2, 3 ) );
+  int i;
+  double s;
+  for (i = 0; i < 3; i++)
+    {
+    if ( m->GetElement( i, 2 ) != 0.0 )
+      { 
+      s = m->GetElement( i, 3 ) / m->GetElement( i, 2 ); 
+      }
+    }
+
+  if ( s != this->OffsetScale->GetValue() )
+  {
+    this->OffsetScale->SetValue( s );
+    modified = 1;
+    }
 
   if ( modified )
     {
@@ -316,6 +331,8 @@ void vtkSlicerSliceControlGUI::TransientApply()
   // - transform the value by SliceToRAS so that the 
   //   slice's 'z' coordinate corresponds to the direction
   //   perpendicular to the current slice orientation
+  // - basically, multiply the scale value times the z column vector of the
+  //   rotation matrix
   vtkMatrix4x4 *newm = vtkMatrix4x4::New();
   newm->DeepCopy( this->SliceNode->GetSliceToRAS() );
   double in[4], out[4];
