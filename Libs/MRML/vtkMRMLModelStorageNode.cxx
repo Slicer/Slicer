@@ -130,12 +130,12 @@ void vtkMRMLModelStorageNode::ProcessParentNode(vtkMRMLNode *parentNode)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
+int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
 {
   if (!refNode->IsA("vtkMRMLModelNode") ) 
     {
     vtkErrorMacro("Reference node is not a vtkMRMLModelNode");
-    return;
+    return 0;
     }
 
   vtkMRMLModelNode *modelNode = dynamic_cast <vtkMRMLModelNode *> (refNode);
@@ -159,6 +159,7 @@ void vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
   if (fullName == std::string("")) 
     {
     vtkErrorMacro("vtkMRMLModelNode: File name not specified");
+    return 0;
     }
 
   // compute file prefix
@@ -201,9 +202,11 @@ void vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
     modelNode->SetPolyData(reader->GetOutput());
     reader->Update();
     }
+    return 1;
 }
 
-void vtkMRMLModelStorageNode::WriteData(vtkMRMLNode *refNode)
+int vtkMRMLModelStorageNode::WriteData(vtkMRMLNode *refNode)
 {
   vtkErrorMacro("NOT IMPLEMENTED YET");
+  return 1;
 }

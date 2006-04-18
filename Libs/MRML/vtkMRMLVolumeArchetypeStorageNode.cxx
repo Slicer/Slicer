@@ -61,6 +61,7 @@ vtkMRMLNode* vtkMRMLVolumeArchetypeStorageNode::CreateNodeInstance()
 vtkMRMLVolumeArchetypeStorageNode::vtkMRMLVolumeArchetypeStorageNode()
 {
   this->FileArchetype = NULL;
+  this->AbsoluteFileName = 0;
 }
 
 //----------------------------------------------------------------------------
@@ -81,6 +82,8 @@ void vtkMRMLVolumeArchetypeStorageNode::WriteXML(ostream& of, int nIndent)
     {
     of << indent << "fileArchetype=/'" << this->FileArchetype << "/' ";
     }
+  of << indent << "absoluteFileName=/'" << this->AbsoluteFileName << "/' ";
+
 }
 
 //----------------------------------------------------------------------------
@@ -99,6 +102,12 @@ void vtkMRMLVolumeArchetypeStorageNode::ReadXMLAttributes(const char** atts)
       {
       this->SetFileArchetype(attValue);
       }
+    if (!strcmp(attName, "absoluteFileName")) 
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->AbsoluteFileName;
+      }
     }
 }
 
@@ -111,6 +120,7 @@ void vtkMRMLVolumeArchetypeStorageNode::Copy(vtkMRMLNode *anode)
   vtkMRMLVolumeArchetypeStorageNode *node = (vtkMRMLVolumeArchetypeStorageNode *) anode;
 
   this->SetFileArchetype(node->FileArchetype);
+  this->SetAbsoluteFileName(node->AbsoluteFileName);
 }
 
 //----------------------------------------------------------------------------
@@ -120,6 +130,7 @@ void vtkMRMLVolumeArchetypeStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 
   os << indent << "FileArchetype: " <<
     (this->FileArchetype ? this->FileArchetype : "(none)") << "\n";
+  os << indent << "AbsoluteFileName: " << this->AbsoluteFileName << "\n";
 }
 
 //----------------------------------------------------------------------------
@@ -130,14 +141,14 @@ void vtkMRMLVolumeArchetypeStorageNode::ProcessParentNode(vtkMRMLNode *parentNod
 
 //----------------------------------------------------------------------------
 
-void vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
+int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
 {
 
   // test whether refNode is a valid node to hold a volume
   if ( !(refNode->IsA("vtkMRMLScalarVolumeNode")) || refNode->IsA("vtkMRMLVolumeVolumeNode" ) )
     {
     vtkErrorMacro("Reference node is not a vtkMRMLVolumeNode");
-    return;         
+    return 0;         
     }
 
   
@@ -162,7 +173,7 @@ void vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
     }
 
   std::string fullName;
-  if (this->SceneRootDir != NULL) 
+  if (this->AbsoluteFileName == 0 && this->SceneRootDir != NULL) 
     {
     fullName = std::string(this->SceneRootDir) + std::string(this->GetFileArchetype());
     }
@@ -174,9 +185,8 @@ void vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
   if (fullName == std::string("")) 
     {
     vtkErrorMacro("vtkMRMLVolumeNode: File name not specified");
+    return 0;
     }
-
-  //TODO: handle both scalars and vectors
 
   reader->SetArchetype(fullName.c_str());
   reader->SetOutputScalarTypeToNative();
@@ -220,15 +230,17 @@ void vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
   ici->Update();
 
   volNode->SetImageData (ici->GetOutput());
+
+  return 1;
 }
 
-void vtkMRMLVolumeArchetypeStorageNode::WriteData(vtkMRMLNode *refNode)
+int vtkMRMLVolumeArchetypeStorageNode::WriteData(vtkMRMLNode *refNode)
 {
   // test whether refNode is a valid node to hold a volume
   if (!refNode->IsA("vtkMRMLScalarVolumeNode") ) 
     {
     vtkErrorMacro("Reference node is not a vtkMRMLVolumeNode");
-    return;
+    return 0;
     }
   
   vtkMRMLVolumeNode *volNode;
@@ -256,6 +268,7 @@ void vtkMRMLVolumeArchetypeStorageNode::WriteData(vtkMRMLNode *refNode)
   if (fullName == std::string("")) 
     {
     vtkErrorMacro("vtkMRMLVolumeNode: File name not specified");
+    return 0;
     }
   vtkITKImageWriter *writer = vtkITKImageWriter::New();
   writer->SetFileName(fullName.c_str());
@@ -271,5 +284,8 @@ void vtkMRMLVolumeArchetypeStorageNode::WriteData(vtkMRMLNode *refNode)
 
   writer->Write();
 
-  writer->Delete();
+  writer->Delete();    
+  
+  return 1;
+
 }

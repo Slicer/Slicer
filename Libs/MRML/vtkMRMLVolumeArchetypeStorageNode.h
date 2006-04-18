@@ -47,12 +47,12 @@ class VTK_MRML_EXPORT vtkMRMLVolumeArchetypeStorageNode : public vtkMRMLStorageN
    // Description:
   // Read data and set it in the referenced node
   // NOTE: Subclasses should implement this method
-  virtual void ReadData(vtkMRMLNode *refNode);
+  virtual int ReadData(vtkMRMLNode *refNode);
 
   // Description:
   // Write data from a  referenced node
   // NOTE: Subclasses should implement this method
-  virtual void WriteData(vtkMRMLNode *refNode);
+  virtual int WriteData(vtkMRMLNode *refNode);
 
   // Description:
   // Write this node's information to a MRML file in XML format.
@@ -76,6 +76,10 @@ class VTK_MRML_EXPORT vtkMRMLVolumeArchetypeStorageNode : public vtkMRMLStorageN
   vtkGetStringMacro(FileArchetype);
   vtkSetStringMacro(FileArchetype);
 
+  vtkBooleanMacro(AbsoluteFileName, int);
+  vtkGetMacro(AbsoluteFileName, int);
+  vtkSetMacro(AbsoluteFileName, int);
+
 protected:
 
 
@@ -85,6 +89,8 @@ protected:
   void operator=(const vtkMRMLVolumeArchetypeStorageNode&);
 
   char *FileArchetype;
+
+  int AbsoluteFileName;
 
 };
 

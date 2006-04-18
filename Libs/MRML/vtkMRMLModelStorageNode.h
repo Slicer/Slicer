@@ -51,12 +51,12 @@ class VTK_MRML_EXPORT vtkMRMLModelStorageNode : public vtkMRMLStorageNode
   // Description:
   // Read data and set it in the referenced node
   // NOTE: Subclasses should implement this method
-  virtual void ReadData(vtkMRMLNode *refNode);
+  virtual int ReadData(vtkMRMLNode *refNode);
 
   // Description:
   // Write data from a  referenced node
   // NOTE: Subclasses should implement this method
-  virtual void WriteData(vtkMRMLNode *refNode);
+  virtual int WriteData(vtkMRMLNode *refNode);
 
   // Description:
   // Write this node's information to a MRML file in XML format.

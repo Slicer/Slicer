@@ -229,7 +229,7 @@ void vtkMRMLVolumeHeaderlessStorageNode::ProcessParentNode(vtkMRMLNode *parentNo
 
 //----------------------------------------------------------------------------
 
-void vtkMRMLVolumeHeaderlessStorageNode::ReadData(vtkMRMLNode *refNode)
+int vtkMRMLVolumeHeaderlessStorageNode::ReadData(vtkMRMLNode *refNode)
 {
   vtkErrorMacro("NOT IMPLEMENTED YET");
 
@@ -237,7 +237,7 @@ void vtkMRMLVolumeHeaderlessStorageNode::ReadData(vtkMRMLNode *refNode)
   if (!refNode->IsA("vtkMRMLScalarVolumeNode") ) 
     {
     vtkErrorMacro("Reference node is not a vtkMRMLVolumeNode");
-    return;
+    return 0;
     }
 
   vtkMRMLVolumeNode *volNode;
@@ -266,15 +266,17 @@ void vtkMRMLVolumeHeaderlessStorageNode::ReadData(vtkMRMLNode *refNode)
   if (fullName == std::string("")) 
     {
     vtkErrorMacro("vtkMRMLVolumeNode: File name not specified");
+    return 0;
     }
   //volNode->SetImageData (reader->GetOutput());
 
   //volNode->SetIjkToRasMatrix(mat);
   volNode->SetStorageNode(this);
   //TODO update scene to send Modified event
+  return 1;
 }
 
-void vtkMRMLVolumeHeaderlessStorageNode::WriteData(vtkMRMLNode *refNode)
+int vtkMRMLVolumeHeaderlessStorageNode::WriteData(vtkMRMLNode *refNode)
 {
   vtkErrorMacro("NOT IMPLEMENTED YET");
 
@@ -282,7 +284,7 @@ void vtkMRMLVolumeHeaderlessStorageNode::WriteData(vtkMRMLNode *refNode)
   if (!refNode->IsA("vtkMRMLScalarVolumeNode") ) 
     {
     vtkErrorMacro("Reference node is not a vtkMRMLVolumeNode");
-    return;
+    return 0;
     }
   
   vtkMRMLVolumeNode *volNode;
@@ -295,6 +297,7 @@ void vtkMRMLVolumeHeaderlessStorageNode::WriteData(vtkMRMLNode *refNode)
   if (volNode->GetImageData() == NULL) 
     {
     vtkErrorMacro("cannot write ImageData, it's NULL");
+    return 0;
     }
   
   std::string fullName;
@@ -310,6 +313,9 @@ void vtkMRMLVolumeHeaderlessStorageNode::WriteData(vtkMRMLNode *refNode)
   if (fullName == std::string("")) 
     {
     vtkErrorMacro("vtkMRMLVolumeNode: File name not specified");
+    return 0;
     }
+  return 1;
+
 }
 
