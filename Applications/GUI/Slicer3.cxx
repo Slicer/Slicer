@@ -81,18 +81,18 @@ int Slicer3_main(int argc, char *argv[])
     // other collections in the vtkSlicerApplication class.
     // ---
     vtkSlicerVolumesGUI *volumesGUI = vtkSlicerVolumesGUI::New ( );
-    vtkSlicerVolumesLogic *VolumesLogic = vtkSlicerVolumesLogic::New ( );
-    VolumesLogic->SetMRMLScene(scene);
-    VolumesGUI->SetApplication ( slicerApp );
-    VolumesGUI->SetApplicationLogic ( appLogic );
-    VolumesGUI->SetLogic(VolumesLogic);
-    VolumesGUI->SetGUIName( "Volumes" );
-    VolumesGUI->GetUIPanel()->SetName ( VolumesGUI->GetGUIName ( ) );
-    VolumesGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWin()->GetMainUserInterfaceManager ( ) );
-    VolumesGUI->GetUIPanel()->Create ( );
-    slicerApp->AddModuleGUI ( VolumesGUI );
+    vtkSlicerVolumesLogic *volumesLogic = vtkSlicerVolumesLogic::New ( );
+    volumesLogic->SetMRMLScene(scene);
+    volumesGUI->SetApplication ( slicerApp );
+    volumesGUI->SetApplicationLogic ( appLogic );
+    volumesGUI->SetLogic(volumesLogic);
+    volumesGUI->SetGUIName( "Volumes" );
+    volumesGUI->GetUIPanel()->SetName ( volumesGUI->GetGUIName ( ) );
+    volumesGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWin()->GetMainUserInterfaceManager ( ) );
+    volumesGUI->GetUIPanel()->Create ( );
+    slicerApp->AddModuleGUI ( volumesGUI );
     
-    vtkSlicerModelsGUI *ModelsGUI = vtkSlicerModelsGUI::New ( );
+    vtkSlicerModelsGUI *modelsGUI = vtkSlicerModelsGUI::New ( );
 
     //vtkSlicerModelsLogic *modelsLogic = vtkSlicerModelsLogic::New ( );
     modelsGUI->SetApplication ( slicerApp );
