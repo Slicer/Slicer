@@ -39,17 +39,7 @@ vtkSlicerSliceLogic::~vtkSlicerSliceLogic()
 {
   this->Blend->Delete();
 
-  if (this->MRMLCallbackCommand)
-    {
-    this->MRMLCallbackCommand->Delete();
-    this->MRMLCallbackCommand = NULL;
-    }
 
-  if (this->LogicCallbackCommand)
-    {
-    this->LogicCallbackCommand->Delete();
-    this->LogicCallbackCommand = NULL;
-    }
 }
 
 //----------------------------------------------------------------------------
@@ -69,52 +59,33 @@ void vtkSlicerSliceLogic::ProcessLogicEvents()
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerSliceLogic::SetSliceNode(vtkMRMLSliceNode *SliceNode)
+void vtkSlicerSliceLogic::SetSliceNode(vtkMRMLSliceNode *sliceNode)
 {
     // Don't directly observe the slice node -- the layers will observe it and
     // will notify us when things have changed.
     // This class takes care of passing the one slice node to each of the layers
     // so that users of this class only need to set the node one place.
-  if (this->SliceNode)
-    {
-    this->SliceNode->Delete();
-    }
+  this->SetMRML( vtkObjectPointer(&this->SliceNode), sliceNode );
 
   if (this->BackgroundLayer)
     {
-    this->BackgroundLayer->SetSliceNode(SliceNode);
+    this->BackgroundLayer->SetSliceNode(sliceNode);
     }
   if (this->ForegroundLayer)
     {
-    this->ForegroundLayer->SetSliceNode(SliceNode);
+    this->ForegroundLayer->SetSliceNode(sliceNode);
     }
-
-  this->SliceNode = SliceNode;
-  this->SliceNode->Register(this);
 
   this->Modified();
 
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerSliceLogic::SetSliceCompositeNode(vtkMRMLSliceCompositeNode *SliceCompositeNode)
+void vtkSlicerSliceLogic::SetSliceCompositeNode(vtkMRMLSliceCompositeNode *sliceCompositeNode)
 {
     // Observe the composite node, since this holds the parameters for
     // this pipeline
-  if (this->SliceCompositeNode)
-    {
-    this->SliceCompositeNode->RemoveObserver( this->MRMLCallbackCommand );
-    this->SliceCompositeNode->Delete();
-    }
-
-  this->SliceCompositeNode = SliceCompositeNode;
-
-  if (this->SliceCompositeNode)
-    {
-    this->SliceCompositeNode->Register(this);
-    this->SliceCompositeNode->AddObserver( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
-    }
-
+  this->SetAndObserveMRML( vtkObjectPointer(&this->SliceCompositeNode), sliceCompositeNode );
   this->UpdatePipeline();
 
 }

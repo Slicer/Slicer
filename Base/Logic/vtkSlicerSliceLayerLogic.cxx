@@ -68,51 +68,17 @@ void vtkSlicerSliceLayerLogic::ProcessMRMLEvents()
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerSliceLayerLogic::SetSliceNode(vtkMRMLSliceNode *SliceNode)
+void vtkSlicerSliceLayerLogic::SetSliceNode(vtkMRMLSliceNode *sliceNode)
 {
-  if ( this->SliceNode  )
-    {
-    this->SliceNode->RemoveObserver( this->MRMLCallbackCommand );
-    this->SliceNode->Delete();
-    }
-  
-  this->SliceNode  = SliceNode ;
-
-  if ( this->SliceNode  )
-    {
-    this->SliceNode->Register(this);
-    this->SliceNode->AddObserver( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
-    }
-
+  this->SetAndObserveMRML( vtkObjectPointer(&this->SliceNode), sliceNode );
   // Update the reslice transform to move this image into XY
   this->UpdateTransforms();
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerSliceLayerLogic::SetVolumeNode(vtkMRMLVolumeNode *VolumeNode)
+void vtkSlicerSliceLayerLogic::SetVolumeNode(vtkMRMLVolumeNode *volumeNode)
 {
-  if (this->VolumeNode)
-    {
-    this->VolumeNode->RemoveObserver( this->MRMLCallbackCommand );
-    this->VolumeNode->Delete();
-    }
-
-  if ( VolumeNode->IsA("vtkMRMLScalarVolumeNode") ) 
-    {
-    this->VolumeNode = dynamic_cast <vtkMRMLScalarVolumeNode *> (VolumeNode);
-    }
-
-
-  if (this->VolumeNode)
-    {
-    this->VolumeNode->AddObserver( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
-    this->VolumeNode->Register(this);
-    this->Reslice->SetInput( this->VolumeNode->GetImageData() ); 
-    }
-    else
-    {
-    this->Reslice->SetInput( NULL ); 
-    }
+  this->SetAndObserveMRML( vtkObjectPointer( &this->VolumeNode ), volumeNode );
 
   // Update the reslice transform to move this image into XY
   this->UpdateTransforms();
@@ -137,6 +103,8 @@ void vtkSlicerSliceLayerLogic::UpdateTransforms()
 
     if (this->VolumeNode)
       {
+      this->Reslice->SetInput( this->VolumeNode->GetImageData() ); 
+
       vtkMatrix4x4 *rasToIJK = vtkMatrix4x4::New();
       this->VolumeNode->GetRASToIJKMatrix(rasToIJK);
       vtkMatrix4x4::Multiply4x4(rasToIJK, m, m); 
@@ -159,6 +127,10 @@ void vtkSlicerSliceLayerLogic::UpdateTransforms()
           //int ApplyThreshold;
           //int AutoThreshold;
 
+        }
+      else
+        {
+        this->Reslice->SetInput( NULL ); 
         }
       }
 

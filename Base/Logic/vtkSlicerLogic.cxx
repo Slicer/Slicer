@@ -42,6 +42,18 @@ vtkSlicerLogic::~vtkSlicerLogic()
     this->MRMLScene->Delete();
     this->MRMLScene = NULL;
     }
+      
+  if (this->MRMLCallbackCommand)
+    {
+    this->MRMLCallbackCommand->Delete();
+    this->MRMLCallbackCommand = NULL;
+    }
+
+  if (this->LogicCallbackCommand)
+    {
+    this->LogicCallbackCommand->Delete();
+    this->LogicCallbackCommand = NULL;
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -104,4 +116,38 @@ vtkSlicerLogic::LogicCallback(vtkObject *__mrmlnode,
   inLogicCallback = 1;
   self->ProcessLogicEvents();
   inLogicCallback = 0;
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerLogic::SetMRML(vtkObject **nodePtr, vtkObject *node)
+{
+  if ( *nodePtr  )
+    {
+    (*nodePtr)->Delete();
+    }
+  
+  *nodePtr  = node ;
+
+  if ( *nodePtr  )
+    {
+    (*nodePtr)->Register(this);
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerLogic::SetAndObserveMRML(vtkObject **nodePtr, vtkObject *node)
+{
+  if ( *nodePtr  )
+    {
+    (*nodePtr)->RemoveObservers( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+    (*nodePtr)->Delete();
+    }
+  
+  *nodePtr  = node ;
+
+  if ( *nodePtr  )
+    {
+    (*nodePtr)->Register(this);
+    (*nodePtr)->AddObserver( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+    }
 }

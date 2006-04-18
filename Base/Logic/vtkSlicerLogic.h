@@ -29,6 +29,10 @@
 
 class vtkCallbackCommand;
 
+#ifndef vtkObjectPointer
+#define vtkObjectPointer(xx) (reinterpret_cast <vtkObject **>( (xx) ))
+#endif
+
 class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerLogic : public vtkObject 
 {
   public:
@@ -64,6 +68,10 @@ protected:
                 unsigned long eid, void *__clientData, void *callData);
   static void LogicCallback(vtkObject *__mrmlslice, 
                 unsigned long eid, void *__clientData, void *callData);
+
+  void vtkSlicerLogic::SetMRML(vtkObject **nodePtr, vtkObject *node);
+
+  void vtkSlicerLogic::SetAndObserveMRML(vtkObject **nodePtr, vtkObject *node);
   //ETX
 
   // Description:
