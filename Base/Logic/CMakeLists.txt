@@ -10,6 +10,7 @@ SET(SlicerBaseLogic_SRCS
   vtkSlicerMRMLLogic.cxx 
   vtkSlicerSliceLogic.cxx 
   vtkSlicerSliceLayerLogic.cxx 
+  vtkSlicerVolumesLogic.cxx 
 )
 
 # Abstract/pure virtual classes
