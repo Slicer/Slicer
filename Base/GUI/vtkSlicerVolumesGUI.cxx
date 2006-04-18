@@ -4,7 +4,7 @@
 #include "vtkKWWidget.h"
 #include "vtkSlicerVolumesGUI.h"
 #include "vtkSlicerApplication.h"
-#include "vtkSLicerModuleLogic.h"
+#include "vtkSlicerModuleLogic.h"
 #include "vtkSlicerStyle.h"
 #include "vtkKWFrameWithLabel.h"
 #include "vtkKWFrame.h"

@@ -13,7 +13,7 @@ Version:   $Revision: 1.3 $
 =========================================================================auto=*/
 
 #include <string>
-#include <ostream>
+#include <iostream>
 #include <sstream>
 
 #include "vtkObjectFactory.h"
