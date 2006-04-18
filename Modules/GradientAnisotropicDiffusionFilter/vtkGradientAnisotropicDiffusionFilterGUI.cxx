@@ -177,36 +177,44 @@ void vtkGradientAnisotropicDiffusionFilterGUI::BuildGUI ( )
   app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                 helpFrame->GetWidgetName(), this->UIPanel->GetPageWidget("GradientAnisotropicDiffusionFilter")->GetWidgetName());
 
-  this->ConductanceScale->SetParent( this->UIPanel->GetPageWidget ( "GradientAnisotropicDiffusionFilter" ));
+  vtkKWFrameWithLabel *moduleFrame = vtkKWFrameWithLabel::New ( );
+  moduleFrame->SetParent ( this->UIPanel->GetPageWidget ( "GradientAnisotropicDiffusionFilter" ) );
+  moduleFrame->Create ( );
+  moduleFrame->SetLabelText ("Gradient Anisotropic Diffusion Filter");
+  moduleFrame->ExpandFrame ( );
+  app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
+                moduleFrame->GetWidgetName(), this->UIPanel->GetPageWidget("GradientAnisotropicDiffusionFilter")->GetWidgetName());
+
+
+  this->ConductanceScale->SetParent( moduleFrame->GetFrame() );
   this->ConductanceScale->SetLabelText("Conductance");
   this->ConductanceScale->Create();
-  app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                this->ConductanceScale->GetWidgetName(), GUIName);
+  app->Script("pack %s -side top -anchor w -padx 2 -pady 4", 
+                this->ConductanceScale->GetWidgetName());
 
-  this->TimeStepScale->SetParent( this->UIPanel->GetPageWidget ( "GradientAnisotropicDiffusionFilter" ));
+  this->TimeStepScale->SetParent( moduleFrame->GetFrame() );
   this->TimeStepScale->SetLabelText("Time Step");
   this->TimeStepScale->Create();
-  app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                this->TimeStepScale->GetWidgetName(), GUIName);
+  app->Script("pack %s -side top -anchor w -padx 2 -pady 4", 
+                this->TimeStepScale->GetWidgetName());
 
-  this->NumberOfIterationsScale->SetParent( this->UIPanel->GetPageWidget ( "GradientAnisotropicDiffusionFilter" ));
+  this->NumberOfIterationsScale->SetParent( moduleFrame->GetFrame() );
   this->NumberOfIterationsScale->SetLabelText("Number of Iterations");
   this->NumberOfIterationsScale->Create();
-  app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                this->NumberOfIterationsScale->GetWidgetName(), GUIName);
+  app->Script("pack %s -side top -anchor w -padx 2 -pady 4", 
+                this->NumberOfIterationsScale->GetWidgetName());
 
-  this->VolumeSelector->SetParent( this->UIPanel->GetPageWidget ( "GradientAnisotropicDiffusionFilter" ));
+  this->VolumeSelector->SetParent( moduleFrame->GetFrame() );
   this->VolumeSelector->Create();
   this->VolumeSelector->SetMRMLScene(this->Logic->GetMRMLScene());
   this->VolumeSelector->SetLabelText( "Volume Select: ");
   this->VolumeSelector->SetBalloonHelpString("select a volume from the current mrml scene.");
-  //pack -side top -anchor nw -expand false -fill x -padx 2 -pady 2
-  app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                this->VolumeSelector->GetWidgetName(), GUIName);
+  app->Script("pack %s -side top -anchor w -padx 2 -pady 4", 
+                this->VolumeSelector->GetWidgetName());
 
-//  this->ApplyButton->SetParent(this->GetApplication());
+  this->ApplyButton->SetParent( moduleFrame->GetFrame() );
   this->ApplyButton->Create();
   this->ApplyButton->SetText("Apply");
-  app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                this->ApplyButton->GetWidgetName(), GUIName);
+  app->Script("pack %s -side top -anchor w -padx 2 -pady 4", 
+                this->ApplyButton->GetWidgetName());
 }
