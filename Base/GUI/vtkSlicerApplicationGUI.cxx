@@ -159,60 +159,56 @@ void vtkSlicerApplicationGUI::ProcessGUIEvents ( vtkObject *caller,
     // Observers on that logic should raise and lower the appropriate page.
     // So for now, the GUI is controlling the GUI instead of going thru the logic.
     //---
+    vtkSlicerModuleGUI * m;
+    const char *mName;
     vtkKWPushButton *pushb = vtkKWPushButton::SafeDownCast (caller );
     vtkKWMenuButton *menub = vtkKWMenuButton::SafeDownCast (caller );
-
+    vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication() );
+        
     // Process events from top row of buttons
     // For now, Home button takes us to the Volumes module.
     if ( pushb == this->HomeButton && event == vtkKWPushButton::InvokedEvent ) {
-        vtkSlicerModuleGUI *m = vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("VolumesGUI");
+        vtkSlicerModuleGUI *m = vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Volumes");
         if ( m != NULL ) { m->GetUIPanel()->Raise(); }
-        // also for now, make the pulldown menu button show the correct value
         this->ModulesButton->SetValue ( "Volumes" );
     }
     else if (pushb == this->DataButton && event == vtkKWPushButton::InvokedEvent ) {
-        vtkSlicerModuleGUI *m = vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("DataGUI");
+        vtkSlicerModuleGUI *m = vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Data");
         if ( m != NULL ) { m->GetUIPanel()->Raise(); }
-        // also for now, make the pulldown menu button show the correct value
         this->ModulesButton->SetValue ( "Data" );
     }
     else if (pushb == this->VolumesButton && event == vtkKWPushButton::InvokedEvent ) {
-        vtkSlicerModuleGUI *m = vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("VolumesGUI");
+        vtkSlicerModuleGUI *m = vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Volumes");
         if ( m != NULL ) { m->GetUIPanel()->Raise(); }
-        // also for now, make the pulldown menu button show the correct value
         this->ModulesButton->SetValue ( "Volumes" );
     }
     else if (pushb == this->ModelsButton && event == vtkKWPushButton::InvokedEvent ) {
-        vtkSlicerModuleGUI *m = vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("ModelsGUI");
+        vtkSlicerModuleGUI *m = vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Models");
         if ( m != NULL ) { m->GetUIPanel()->Raise(); }
-        // also for now, make the pulldown menu button show the correct value
         this->ModulesButton->SetValue ( "Models" );
     }
 
-
-    // Process events from menubutton
-    if ( menub == this->ModulesButton && event == vtkCommand::ModifiedEvent ) {
-    
-        if ( !strcmp (this->ModulesButton->GetValue(), "Volumes") ) {
-            vtkSlicerModuleGUI *m = vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("VolumesGUI");
-            if ( m != NULL ) { m->GetUIPanel()->Raise(); }
+    //--- Process events from menubutton
+    //--- TODO: change the Logic's "active module" and raise the appropriate UIPanel.
+    if ( menub == this->ModulesButton && event == vtkCommand::ModifiedEvent )
+        {
+            if ( app->GetModuleGUICollection ( ) != NULL )
+                {
+                    app->GetModuleGUICollection( )->InitTraversal( );
+                    m = vtkSlicerModuleGUI::SafeDownCast( app->GetModuleGUICollection( )->GetNextItemAsObject( ) );
+                    while (m != NULL )
+                        {
+                            mName = m->GetUIPanel()->GetName();
+                            if ( !strcmp (this->ModulesButton->GetValue(), mName) ) {
+                                m->GetUIPanel()->Raise();
+                                break;
+                            }
+                            m = vtkSlicerModuleGUI::SafeDownCast( app->GetModuleGUICollection( )->GetNextItemAsObject( ) );
+                        }
+                    //this->ModulesButton->SetValue ( "Modules" );
+                }
         }
-
-        if ( !strcmp ( this->ModulesButton->GetValue(), "Models") ) {
-            vtkSlicerModuleGUI *m = vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("ModelsGUI");
-            if ( m != NULL ) { m->GetUIPanel()->Raise(); }
-        }
-
-        if ( !strcmp (this->ModulesButton->GetValue(), "Data") ) {
-            vtkSlicerModuleGUI *m = vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("DataGUI");
-            if ( m != NULL ) { m->GetUIPanel()->Raise(); }
-        }
-    }
-
-
 }
-
-
 
 
 //---------------------------------------------------------------------------
@@ -442,40 +438,50 @@ void vtkSlicerApplicationGUI::BuildLogoGUIPanel ( ) {
 
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::BuildSlicerControlGUIPanel ( ) {
-    const char* modules[] = { "Data", "Volumes", "Models" };
-
-    if ( this->GetApplication() != NULL ) {
-        vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-        vtkSlicerStyle *style = app->GetSlicerStyle();
+    const char* mName;
+    vtkSlicerModuleGUI *m;
+    
+    if ( this->GetApplication( )  != NULL ) {
+        vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication() );
+        //--- home button
         this->HomeButton->SetParent ( this->SlicerControlFrame );
         this->HomeButton->Create ( );
         this->HomeButton->SetWidth ( 7 );
         this->HomeButton->SetText ( "Home" );
-
+        //--- data module
         this->DataButton->SetParent ( this->SlicerControlFrame );
         this->DataButton->Create ( );
         this->DataButton->SetWidth ( 7 );
         this->DataButton->SetText ("Data");
-
+        //--- volumes module
         this->VolumesButton->SetParent ( this->SlicerControlFrame );
         this->VolumesButton->Create ( );
         this->VolumesButton->SetWidth ( 7 );
         this->VolumesButton->SetText("Volumes");
-
+        // --- models module
         this->ModelsButton->SetParent ( this->SlicerControlFrame );
         this->ModelsButton->Create ( );
         this->ModelsButton->SetWidth ( 7 );
         this->ModelsButton->SetText("Models");
-
+        
+        //--- ALL modules menu button
         this->ModulesButton->SetParent ( this->SlicerControlFrame );
         this->ModulesButton->Create ( );
         this->ModulesButton->SetWidth ( 10 );
-        this->ModulesButton->SetValue ("Volumes");
         this->ModulesButton->IndicatorVisibilityOn ( );
-        for ( int i=0; i < sizeof(modules)/sizeof(modules[0]); i++) {
-            this->ModulesButton->GetMenu()->AddRadioButton( modules[i] );
+        //--- ALL modules pull-down menu 
+        if ( app->GetModuleGUICollection ( ) != NULL ) {
+            app->GetModuleGUICollection( )->InitTraversal( );
+            m = vtkSlicerModuleGUI::SafeDownCast( app->GetModuleGUICollection( )->GetNextItemAsObject( ));
+            while ( m != NULL ) {
+                mName = m->GetUIPanel( )->GetName( );
+                this->ModulesButton->GetMenu( )->AddRadioButton( mName );
+                m = vtkSlicerModuleGUI::SafeDownCast( app->GetModuleGUICollection( )->GetNextItemAsObject( ));
+            }
         }
-
+        this->ModulesButton->SetValue ("Modules");
+        
+        //--- pack everything up.
         app->Script ( "pack %s -side left -anchor n -padx 1 -pady 2 -ipady 1", this->HomeButton->GetWidgetName( ) );
         app->Script ( "pack %s -side left -anchor n -padx 1 -pady 2 -ipady 1", this->DataButton->GetWidgetName( ) );
         app->Script ( "pack %s -side left -anchor n -padx 1 -pady 2 -ipady 1", this->VolumesButton->GetWidgetName( ) );
