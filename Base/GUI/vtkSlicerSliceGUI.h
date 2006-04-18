@@ -8,7 +8,7 @@
 #define __vtkSlicerSliceGUI_h
 
 #include "vtkSlicerBaseGUIWin32Header.h"
-#include "vtkSlicerComponentGUI.h"
+#include "vtkSlicerModuleGUI.h"
 #include "vtkSlicerSliceLogic.h"
 #include "vtkSlicerSliceWidgetCollection.h"
 #include "vtkSlicerSliceLogicCollection.h"
@@ -20,11 +20,11 @@ class vtkKWFrame;
 // Description:
 // This class implements Slicer's Slice GUI.
 //
-class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceGUI : public vtkSlicerComponentGUI
+class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceGUI : public vtkSlicerModuleGUI
 {
  public:
     static vtkSlicerSliceGUI* New (  );
-    vtkTypeRevisionMacro ( vtkSlicerSliceGUI, vtkSlicerComponentGUI );
+    vtkTypeRevisionMacro ( vtkSlicerSliceGUI, vtkSlicerModuleGUI );
     void PrintSelf (ostream& os, vtkIndent indent);
 
     // Description:

@@ -19,6 +19,7 @@
 #include "vtkKWMenu.h"
 #include "vtkKWEntry.h"
 #include "vtkKWFrame.h"
+#include "vtkKWFrameWithLabel.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLSliceNode.h"
 #include "vtkMRMLScalarVolumeNode.h"
@@ -534,8 +535,39 @@ void vtkSlicerSliceGUI::Exit ( ) {
 void vtkSlicerSliceGUI::BuildGUI ( vtkKWFrame* f1, vtkKWFrame *f2, vtkKWFrame *f3  ) {
 
     vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-    
 
+    // ---
+    // MODULE GUI FRAME 
+    // configure a page for a volume loading UI for now.
+    // later, switch on the modulesButton in the SlicerControlGUI
+    // ---
+    // create a page
+    this->UIPanel->AddPage ( "Slices", "Slices", NULL );
+    
+    // HELP FRAME
+    vtkKWFrameWithLabel *sliceHelpFrame = vtkKWFrameWithLabel::New ( );
+    sliceHelpFrame->SetParent ( this->UIPanel->GetPageWidget ( "Slices" ) );
+    sliceHelpFrame->Create ( );
+    sliceHelpFrame->CollapseFrame ( );
+    sliceHelpFrame->SetLabelText ("Help");
+    app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
+                  sliceHelpFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Slices")->GetWidgetName());
+
+    // ---
+    // DISPLAY FRAME            
+    vtkKWFrameWithLabel *sliceDisplayFrame = vtkKWFrameWithLabel::New ( );
+    sliceDisplayFrame->SetParent ( this->UIPanel->GetPageWidget ( "Slices" ) );
+    sliceDisplayFrame->Create ( );
+    sliceDisplayFrame->SetLabelText ("Slice information");
+    sliceDisplayFrame->CollapseFrame ( );
+    app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
+                  sliceDisplayFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Slices")->GetWidgetName());
+
+    sliceHelpFrame->Delete();
+    sliceDisplayFrame->Delete();
+
+
+    // CREATE 3 Default SLICE WIDGETS
     this->MainSlice0 = vtkSlicerSliceWidget::New ( );
     this->MainSlice0->SetApplication (app);
     this->MainSlice0->SetParent ( f1 );
