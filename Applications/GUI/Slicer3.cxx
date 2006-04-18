@@ -65,80 +65,8 @@ int Slicer3_main(int argc, char *argv[])
     appGUI->SetApplication ( slicerApp );
     appGUI->SetApplicationLogic ( appLogic );
 
-    // DETECTED MODULES: create modules and logics
-    vtkSlicerVolumesGUI *VolumesGUI = vtkSlicerVolumesGUI::New ( );
-    //vtkSlicerVolumesLogic *VolumesLogic = vtkSlicerVolumesLogic::New ( );
-    VolumesGUI->SetApplication ( slicerApp );
-    VolumesGUI->SetApplicationLogic ( appLogic );
-    VolumesGUI->SetGUIName( "Volumes" );
-    VolumesGUI->GetUIPanel()->SetName ( VolumesGUI->GetGUIName ( ) );
-    VolumesGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWin()->GetMainUserInterfaceManager ( ) );
-    VolumesGUI->GetUIPanel()->Create ( );
-    slicerApp->AddModuleGUI ( VolumesGUI );
-    
-    vtkSlicerModelsGUI *ModelsGUI = vtkSlicerModelsGUI::New ( );
-    //vtkSlicerModelsLogic *modelsLogic = vtkSlicerModelsLogic::New ( );
-    ModelsGUI->SetApplication ( slicerApp );
-    ModelsGUI->SetApplicationLogic ( appLogic );
-    ModelsGUI->SetGUIName( "Models" );
-    ModelsGUI->GetUIPanel()->SetName ( ModelsGUI->GetGUIName ( ) );
-    ModelsGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWin()->GetMainUserInterfaceManager ( ) );
-    ModelsGUI->GetUIPanel()->Create ( );
-    slicerApp->AddModuleGUI ( ModelsGUI );
-
-    vtkSlicerDataGUI *DataGUI = vtkSlicerDataGUI::New ( );
-    //vtkSlicerDataLogic *dataLogic = vtkSlicerDataLogic::New ( );
-    DataGUI->SetApplication ( slicerApp );
-    DataGUI->SetApplicationLogic ( appLogic );
-    DataGUI->SetGUIName( "Data" );
-    DataGUI->GetUIPanel()->SetName ( DataGUI->GetGUIName ( ) );
-    DataGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWin()->GetMainUserInterfaceManager ( ) );
-    DataGUI->GetUIPanel()->Create ( );    
-    slicerApp->AddModuleGUI ( DataGUI );
-
-    vtkGradientAnisotropicDiffusionFilterGUI *GradientAnisotropicDiffusionFilterGUI = vtkGradientAnisotropicDiffusionFilterGUI::New ( );
-    vtkGradientAnisotropicDiffusionFilterLogic *GradientAnisotropicDiffusionFilterLogic  = vtkGradientAnisotropicDiffusionFilterLogic::New ( );
-    GradientAnisotropicDiffusionFilterLogic->SetMRMLScene(scene);
-    GradientAnisotropicDiffusionFilterGUI->SetLogic ( GradientAnisotropicDiffusionFilterLogic );
-    GradientAnisotropicDiffusionFilterGUI->SetApplication ( slicerApp );
-    GradientAnisotropicDiffusionFilterGUI->SetApplicationLogic ( appLogic );
-    GradientAnisotropicDiffusionFilterGUI->SetGUIName( "GradientAnisotropicDiffusionFilter" );
-    GradientAnisotropicDiffusionFilterGUI->GetUIPanel()->SetName ( GradientAnisotropicDiffusionFilterGUI->GetGUIName ( ) );
-    GradientAnisotropicDiffusionFilterGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWin()->GetMainUserInterfaceManager ( ) );
-    GradientAnisotropicDiffusionFilterGUI->GetUIPanel()->Create ( );
-    slicerApp->AddModuleGUI ( GradientAnisotropicDiffusionFilterGUI );
-    
-    // BUILD APPLICATION GUI 
-    appGUI->BuildGUI ( );
-    appGUI->AddGUIObservers ( );
-
-    // Currently refactoring sliceGUI to match pattern of other modules.
-    // For now, done a little differently:
-    vtkSlicerSliceGUI *sliceGUI = vtkSlicerSliceGUI::New ();
-    // assume something is creating a slicelogic for each of the
-    // three default slice widgets in the sliceGUI...
-    vtkSlicerSliceLogic *sliceLogic0 = vtkSlicerSliceLogic::New ( );
-    vtkSlicerSliceLogic *sliceLogic1 = vtkSlicerSliceLogic::New ( );
-    vtkSlicerSliceLogic *sliceLogic2 = vtkSlicerSliceLogic::New ( );
-    // ---
-    // SLICE GUI
-    sliceGUI->SetApplication ( slicerApp);
-    // creates 3 default slice widgets
-    sliceGUI->BuildGUI ( appGUI->GetDefaultSlice0Frame(),
-                         appGUI->GetDefaultSlice1Frame(),
-                         appGUI->GetDefaultSlice2Frame() );
-    sliceGUI->AddGUIObservers();
-    sliceGUI->SetApplicationLogic ( appLogic );
-    // Set mrml scene pointer for the slice GUI
-    // and add observers on mrml.
-    sliceGUI->SetMRMLScene (  appLogic->GetMRMLScene( ) );
-    // Set logic pointers for three slice widgets (0,1,2)
-    // in the GUI, and add observers on that logic.
-    sliceGUI->SetSliceLogic ( sliceLogic0, 0 );
-    sliceGUI->SetSliceLogic ( sliceLogic1, 1 );
-    sliceGUI->SetSliceLogic ( sliceLogic2, 2 );
-
-    
+    // CREATE MODULE LOGICS & GUIS; add to GUI collection
+    // (presumably these will be auto-detected, not listed out as below...)
     // ---
     // Note on vtkSlicerApplication's ModuleGUICollection:
     // right now the vtkSlicerApplication's ModuleGUICollection
@@ -150,21 +78,89 @@ int Slicer3_main(int argc, char *argv[])
     // creates toplevel widgets are not added to this collection.
     // If we need to collect them at some point, we should define 
     // other collections in the vtkSlicerApplication class.
+    // ---
+    vtkSlicerVolumesGUI *volumesGUI = vtkSlicerVolumesGUI::New ( );
+    //vtkSlicerVolumesLogic *VolumesLogic = vtkSlicerVolumesLogic::New ( );
+    volumesGUI->SetApplication ( slicerApp );
+    volumesGUI->SetApplicationLogic ( appLogic );
+    volumesGUI->SetGUIName( "Volumes" );
+    volumesGUI->GetUIPanel()->SetName ( volumesGUI->GetGUIName ( ) );
+    volumesGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWin()->GetMainUserInterfaceManager ( ) );
+    volumesGUI->GetUIPanel()->Create ( );
+    slicerApp->AddModuleGUI ( volumesGUI );
+    //---    
+    vtkSlicerModelsGUI *modelsGUI = vtkSlicerModelsGUI::New ( );
+    //vtkSlicerModelsLogic *modelsLogic = vtkSlicerModelsLogic::New ( );
+    modelsGUI->SetApplication ( slicerApp );
+    modelsGUI->SetApplicationLogic ( appLogic );
+    modelsGUI->SetGUIName( "Models" );
+    modelsGUI->GetUIPanel()->SetName ( modelsGUI->GetGUIName ( ) );
+    modelsGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWin()->GetMainUserInterfaceManager ( ) );
+    modelsGUI->GetUIPanel()->Create ( );
+    slicerApp->AddModuleGUI ( modelsGUI );
+    //---
+    vtkSlicerDataGUI *dataGUI = vtkSlicerDataGUI::New ( );
+    //vtkSlicerDataLogic *dataLogic = vtkSlicerDataLogic::New ( );
+    dataGUI->SetApplication ( slicerApp );
+    dataGUI->SetApplicationLogic ( appLogic );
+    dataGUI->SetGUIName( "Data" );
+    dataGUI->GetUIPanel()->SetName ( dataGUI->GetGUIName ( ) );
+    dataGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWin()->GetMainUserInterfaceManager ( ) );
+    dataGUI->GetUIPanel()->Create ( );    
+    slicerApp->AddModuleGUI ( dataGUI );
+    // ---
+    vtkGradientAnisotropicDiffusionFilterGUI *gradientAnisotropicDiffusionFilterGUI = vtkGradientAnisotropicDiffusionFilterGUI::New ( );
+    vtkGradientAnisotropicDiffusionFilterLogic *gradientAnisotropicDiffusionFilterLogic  = vtkGradientAnisotropicDiffusionFilterLogic::New ( );
+    gradientAnisotropicDiffusionFilterLogic->SetMRMLScene(scene);
+    gradientAnisotropicDiffusionFilterGUI->SetLogic ( gradientAnisotropicDiffusionFilterLogic );
+    gradientAnisotropicDiffusionFilterGUI->SetApplication ( slicerApp );
+    gradientAnisotropicDiffusionFilterGUI->SetApplicationLogic ( appLogic );
+    gradientAnisotropicDiffusionFilterGUI->SetGUIName( "GradientAnisotropicDiffusionFilter" );
+    gradientAnisotropicDiffusionFilterGUI->GetUIPanel()->SetName ( gradientAnisotropicDiffusionFilterGUI->GetGUIName ( ) );
+    gradientAnisotropicDiffusionFilterGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWin()->GetMainUserInterfaceManager ( ) );
+    gradientAnisotropicDiffusionFilterGUI->GetUIPanel()->Create ( );
+    slicerApp->AddModuleGUI ( gradientAnisotropicDiffusionFilterGUI );
+    // ---    
+    vtkSlicerSliceGUI *sliceGUI = vtkSlicerSliceGUI::New ();
+    vtkSlicerSliceLogic *sliceLogic0 = vtkSlicerSliceLogic::New ( );
+    vtkSlicerSliceLogic *sliceLogic1 = vtkSlicerSliceLogic::New ( );
+    vtkSlicerSliceLogic *sliceLogic2 = vtkSlicerSliceLogic::New ( );
+    sliceGUI->SetApplication ( slicerApp);
+    sliceGUI->SetApplicationLogic ( appLogic );
+    sliceGUI->SetGUIName( "Slices" );
+    sliceGUI->GetUIPanel()->SetName ( sliceGUI->GetGUIName ( ) );
+    sliceGUI->GetUIPanel()->SetUserInterfaceManager ( appGUI->GetMainSlicerWin( )->GetMainUserInterfaceManager( ) );
+    sliceGUI->GetUIPanel( )->Create( );
+    slicerApp->AddModuleGUI ( sliceGUI );
+
+
+    // BUILD APPLICATION GUI (this requires collection of module GUIs)
+    appGUI->BuildGUI ( );
+    appGUI->AddGUIObservers ( );
+
 
     // ---
-    // BUILD MODULE GUIs:
-    VolumesGUI->BuildGUI ( );
-    VolumesGUI->AddGUIObservers ( );
-
-    ModelsGUI->BuildGUI ( );
-    ModelsGUI->AddGUIObservers ( );
-
-    DataGUI->BuildGUI ( );
-    DataGUI->AddGUIObservers ( );
-
-    GradientAnisotropicDiffusionFilterGUI->BuildGUI ( );
-    GradientAnisotropicDiffusionFilterGUI->AddGUIObservers ( );
-
+    // BUILD MODULE GUIs (these require appGUI to be built):
+    volumesGUI->BuildGUI ( );
+    volumesGUI->AddGUIObservers ( );
+    // ---
+    modelsGUI->BuildGUI ( );
+    modelsGUI->AddGUIObservers ( );
+    // ---
+    dataGUI->BuildGUI ( );
+    dataGUI->AddGUIObservers ( );
+    // ---
+    gradientAnisotropicDiffusionFilterGUI->BuildGUI ( );
+    gradientAnisotropicDiffusionFilterGUI->AddGUIObservers ( );
+    // ---
+    sliceGUI->BuildGUI ( appGUI->GetDefaultSlice0Frame(),
+                         appGUI->GetDefaultSlice1Frame(),
+                         appGUI->GetDefaultSlice2Frame() );
+    sliceGUI->AddGUIObservers();
+    sliceGUI->SetMRMLScene (  appLogic->GetMRMLScene( ) );
+    sliceGUI->SetSliceLogic ( sliceLogic0, 0 );
+    sliceGUI->SetSliceLogic ( sliceLogic1, 1 );
+    sliceGUI->SetSliceLogic ( sliceLogic2, 2 );
     
     
     // Additional Modules GUI panel configuration.
@@ -179,19 +175,22 @@ int Slicer3_main(int argc, char *argv[])
     int res = slicerApp->StartApplication();
 
     // REMOVE OBSERVERS
-    VolumesGUI->RemoveGUIObservers ( );
-    VolumesGUI->RemoveApplicationLogicObservers ( );
-    VolumesGUI->RemoveLogicObservers ( );
-    VolumesGUI->RemoveMRMLObservers ( );
-    ModelsGUI->RemoveGUIObservers ( );
-    ModelsGUI->RemoveApplicationLogicObservers ( );
-    ModelsGUI->RemoveLogicObservers ( );
-    ModelsGUI->RemoveMRMLObservers ( );
-    DataGUI->RemoveGUIObservers ( );
-    DataGUI->RemoveApplicationLogicObservers ( );
-    DataGUI->RemoveLogicObservers ( );
-    DataGUI->RemoveMRMLObservers ( );
-
+    //---
+    volumesGUI->RemoveGUIObservers ( );
+    volumesGUI->RemoveApplicationLogicObservers ( );
+    volumesGUI->RemoveLogicObservers ( );
+    volumesGUI->RemoveMRMLObservers ( );
+    //---
+    modelsGUI->RemoveGUIObservers ( );
+    modelsGUI->RemoveApplicationLogicObservers ( );
+    modelsGUI->RemoveLogicObservers ( );
+    modelsGUI->RemoveMRMLObservers ( );
+    //---
+    dataGUI->RemoveGUIObservers ( );
+    dataGUI->RemoveApplicationLogicObservers ( );
+    dataGUI->RemoveLogicObservers ( );
+    dataGUI->RemoveMRMLObservers ( );
+    //---
     sliceGUI->RemoveGUIObservers ( );
     sliceGUI->RemoveApplicationLogicObservers();
     sliceGUI->RemoveLogicObservers ( );
@@ -208,9 +207,9 @@ int Slicer3_main(int argc, char *argv[])
     slicerApp->Exit();
 
     // DELETE ALL GUI OBJECTS IN GOOD ORDER
-    VolumesGUI->Delete ( );
-    ModelsGUI->Delete ( );
-    DataGUI->Delete ( );
+    volumesGUI->Delete ( );
+    modelsGUI->Delete ( );
+    dataGUI->Delete ( );
     sliceGUI->Delete ();
     appGUI->Delete();
     appLogic->Delete();
