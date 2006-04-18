@@ -6,6 +6,7 @@
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerApplicationLogic.h"
 #include "vtkSlicerSliceLogic.h"
+#include "vtkSlicerVolumesLogic.h"
 #include "vtkMRMLScene.h"
 #include "vtkSlicerApplicationGUI.h"
 #include "vtkSlicerSliceGUI.h"
@@ -80,16 +81,19 @@ int Slicer3_main(int argc, char *argv[])
     // other collections in the vtkSlicerApplication class.
     // ---
     vtkSlicerVolumesGUI *volumesGUI = vtkSlicerVolumesGUI::New ( );
-    //vtkSlicerVolumesLogic *VolumesLogic = vtkSlicerVolumesLogic::New ( );
-    volumesGUI->SetApplication ( slicerApp );
-    volumesGUI->SetApplicationLogic ( appLogic );
-    volumesGUI->SetGUIName( "Volumes" );
-    volumesGUI->GetUIPanel()->SetName ( volumesGUI->GetGUIName ( ) );
-    volumesGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWin()->GetMainUserInterfaceManager ( ) );
-    volumesGUI->GetUIPanel()->Create ( );
-    slicerApp->AddModuleGUI ( volumesGUI );
-    //---    
-    vtkSlicerModelsGUI *modelsGUI = vtkSlicerModelsGUI::New ( );
+    vtkSlicerVolumesLogic *VolumesLogic = vtkSlicerVolumesLogic::New ( );
+    VolumesLogic->SetMRMLScene(scene);
+    VolumesGUI->SetApplication ( slicerApp );
+    VolumesGUI->SetApplicationLogic ( appLogic );
+    VolumesGUI->SetLogic(VolumesLogic);
+    VolumesGUI->SetGUIName( "Volumes" );
+    VolumesGUI->GetUIPanel()->SetName ( VolumesGUI->GetGUIName ( ) );
+    VolumesGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWin()->GetMainUserInterfaceManager ( ) );
+    VolumesGUI->GetUIPanel()->Create ( );
+    slicerApp->AddModuleGUI ( VolumesGUI );
+    
+    vtkSlicerModelsGUI *ModelsGUI = vtkSlicerModelsGUI::New ( );
+
     //vtkSlicerModelsLogic *modelsLogic = vtkSlicerModelsLogic::New ( );
     modelsGUI->SetApplication ( slicerApp );
     modelsGUI->SetApplicationLogic ( appLogic );
