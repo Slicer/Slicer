@@ -14,6 +14,7 @@
 
 #include "vtkObjectFactory.h"
 #include "vtkCallbackCommand.h"
+#include <vtksys/SystemTools.hxx> 
 
 #include "vtkSlicerVolumesLogic.h"
 
@@ -81,6 +82,10 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (char* filename)
   
   if (volumeNode != NULL)
     {
+    const vtksys_stl::string fname(filename);
+    vtksys_stl::string name = vtksys::SystemTools::GetFilenameName(fname);
+    volumeNode->SetName(name.c_str());
+
     this->GetMRMLScene()->SaveStateForUndo();
 
     this->GetMRMLScene()->AddNode(volumeNode);  
