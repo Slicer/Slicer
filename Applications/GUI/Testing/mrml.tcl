@@ -96,7 +96,7 @@ $::slicefgl UpdateTransforms
 $::slicel SetSliceCompositeNode $::slicecn
 $::slicel SetSliceNode $::slicen
 $::slicel AddObserver ModifiedEvent "puts {Slice Logic Changed}"
-$::slicel AddObserver ModifiedEvent mrmlRender
+$::slicel AddObserver ModifiedEvent mrmlExpose
 
 ##############
 #
@@ -439,24 +439,38 @@ proc mrmlUpdateUndoRedoButtons {} {
     }
 }
 
-set ::renderCount 0 
-proc mrmlRender {} {
 
-puts "render [incr ::renderCount]"
+set ::mrmlRenderPending 0
+proc mrmlExpose {} {
 
+    puts "expose"
     # make the image actor match the output of the reslicing - needs to be fixed in vtkSlicerSliceGUI
     set dimx [expr [lindex [$::slicen GetDimensions] 0] -1]
     set dimy [expr [lindex [$::slicen GetDimensions] 1] -1]
     [$::viewer GetImageActor] SetDisplayExtent 0 $dimx 0 $dimy 0 0
 
+    if { $::mrmlRenderPending } {
+        return
+    }
+    set ::mrmlRenderPending 1
+    after idle mrmlRender
+}
+
+set ::renderCount 0 
+proc mrmlRender {} {
+
+    puts "render [incr ::renderCount]"
+
     # update the widgets and render
     mrmlUpdateMatrices
     $::viewer Render
+
+    set ::mrmlRenderPending 0
 }
 
 # initialize with the current state
 mrmlUpdateUndoRedoButtons
-mrmlRender
+mrmlExpose
 
 
 # Start the application
