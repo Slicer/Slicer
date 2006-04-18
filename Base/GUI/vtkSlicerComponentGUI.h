@@ -8,7 +8,7 @@
 #include "vtkSlicerLogic.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
-#include "vtkSlicerModuleLogic.h"
+#include "vtkSlicerLogic.h"
 
 
 class vtkSlicerGUIUpdate;
@@ -43,7 +43,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerComponentGUI : public vtkKWObject
     // Description:
     // Sets pointer to the application logic and adds observers.
     virtual void SetApplicationLogic ( vtkSlicerApplicationLogic *logic );
-    virtual void SetLogic ( vtkSlicerModuleLogic *logic );
+    virtual void SetLogic ( vtkSlicerLogic *logic );
     virtual void SetMRMLScene ( vtkMRMLScene *mrml );
 
     // Description:
@@ -70,8 +70,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerComponentGUI : public vtkKWObject
     // Description:
     // Create/Remove observers on an individual module logic, used when
     // logic pointers are changed.
-    virtual void AddLogicObserver ( vtkSlicerModuleLogic *logic, int event ) { }
-    virtual void RemoveLogicObserver ( vtkSlicerModuleLogic *logic, int event ) { }
+    virtual void AddLogicObserver ( vtkSlicerLogic *logic, int event ) { }
+    virtual void RemoveLogicObserver ( vtkSlicerLogic *logic, int event ) { }
     
     // Description:
     // Create/Remove observers on mrml in application layer
@@ -106,7 +106,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerComponentGUI : public vtkKWObject
  protected:
     // GUI's interface to the application layer;
     vtkSlicerApplicationLogic *ApplicationLogic;
-    vtkSlicerModuleLogic *Logic;
+    vtkSlicerLogic *Logic;
     vtkMRMLScene *MRMLScene;
     
     // GUI's name, used to raise GUI

@@ -81,7 +81,7 @@ void vtkSlicerComponentGUI::SetApplicationLogic ( vtkSlicerApplicationLogic *log
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerComponentGUI::SetLogic ( vtkSlicerModuleLogic *logic ) {
+void vtkSlicerComponentGUI::SetLogic ( vtkSlicerLogic *logic ) {
 
     // Don't bother if already set.
     if ( logic == this->Logic ) {

@@ -3,6 +3,7 @@
 #include "vtkCommand.h"
 #include "vtkKWWidget.h"
 #include "vtkSlicerVolumesGUI.h"
+#include "vtkSlicerVolumesLogic.h"
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerModuleLogic.h"
 #include "vtkSlicerStyle.h"
@@ -116,14 +117,21 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents ( vtkObject *caller,
                                                      unsigned long event,
                                                      void *callData ) 
 {
-    vtkKWLoadSaveButton *filebrowse = vtkKWLoadSaveButton::SafeDownCast(caller);
-    if (filebrowse == this->LoadVolumeButton  && event == vtkCommand::ModifiedEvent )
+  vtkKWLoadSaveButton *filebrowse = vtkKWLoadSaveButton::SafeDownCast(caller);
+  if (filebrowse == this->LoadVolumeButton  && event == vtkCommand::ModifiedEvent )
+    {
+    // If a file has been selected for loading...
+    if ( filebrowse->GetFileName ( ) ) 
+      {
+      vtkSlicerVolumesLogic* volumeLogic = vtkSlicerVolumesLogic::SafeDownCast(this->Logic);
+      
+      if (volumeLogic->AddArchetypeVolume( filebrowse->GetFileName ( ) ) == NULL) 
         {
-            // If a file has been selected for loading...
-            if ( filebrowse->GetFileName ( ) ) {
-                this->ApplicationLogic->Connect ( filebrowse->GetFileName ( ) );
-            }
+        
         }
+      
+      }
+    }
 }
 
 
@@ -190,7 +198,7 @@ void vtkSlicerVolumesGUI::BuildGUI ( ) {
     this->LoadVolumeButton->Create ( );
     this->LoadVolumeButton->SetText ("Choose a file to load");
     this->LoadVolumeButton->GetLoadSaveDialog()->SetFileTypes(
-                                                              "{ {MRML Document} {.mrml .xml} }");
+                                                              "{ {volume} {*.*} }");
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   volLoadFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Volumes")->GetWidgetName());
     app->Script("pack %s -side top -anchor w -padx 2 -pady 4", 
