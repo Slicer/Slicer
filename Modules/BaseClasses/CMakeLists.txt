@@ -44,6 +44,10 @@ ADD_LIBRARY(ModulesBaseClasses
   ${ModulesBaseClasses_SRCS}
   )
 
+IF(BUILD_SHARED_LIBS)
+  INSTALL_TARGETS(${SLICER3_LIB_INSTALL_DIR} ModulesBaseClasses)
+ENDIF(BUILD_SHARED_LIBS)
+
 TARGET_LINK_LIBRARIES(ModulesBaseClasses 
   MRML
   vtkCommonTCL

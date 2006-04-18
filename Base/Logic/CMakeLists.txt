@@ -56,6 +56,10 @@ ADD_LIBRARY(SlicerBaseLogic
   ${SlicerBaseLogic_SRCS} ${SlicerBaseLogic_TCL_SRCS} 
   )
 
+IF(BUILD_SHARED_LIBS)
+  INSTALL_TARGETS(${SLICER3_LIB_INSTALL_DIR} SlicerBaseLogic)
+ENDIF(BUILD_SHARED_LIBS)
+
 TARGET_LINK_LIBRARIES(SlicerBaseLogic 
   MRML
   vtkITK

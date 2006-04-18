@@ -33,6 +33,7 @@ TARGET_LINK_LIBRARIES( Slicer3
     ITKCommon 
     ITKIO
     ${KWWidgets_LIBRARIES} )
+INSTALL_TARGETS(/bin Slicer3)
 
 # Generate a lightweight C launcher for a *specific* executable.
 # The launcher sets up all the environments variables (PATH, TCLLIBPATH,

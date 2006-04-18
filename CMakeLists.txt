@@ -14,6 +14,13 @@ SET(Slicer3_VERSION_FULL "${Slicer3_VERSION}.${Slicer3_VERSION_PATCH}")
 # Build shared lib by default
 OPTION(BUILD_SHARED_LIBS "Build Slicer3 with shared libraries." ON)
 
+IF(BUILD_SHARED_LIBS)
+  IF(WIN32 AND NOT UNIX)
+    SET(SLICER3_LIB_INSTALL_DIR /bin)
+  ELSE(WIN32 AND NOT UNIX)
+    SET(SLICER3_LIB_INSTALL_DIR /lib)
+  ENDIF(WIN32 AND NOT UNIX)
+ENDIF(BUILD_SHARED_LIBS)
 
 #
 # Top level slicer3 configurations
@@ -104,3 +111,31 @@ ENDIF (Slicer3_BUILD_TESTING)
 # include a test for endianness (used to be done by default)
 INCLUDE (${CMAKE_ROOT}/Modules/TestBigEndian.cmake)
 TEST_BIG_ENDIAN(CMAKE_WORDS_BIGENDIAN)
+
+# If the cmake version includes cpack, use it
+IF(EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake")
+  IF(EXISTS "${CMAKE_ROOT}/Modules/InstallRequiredSystemLibraries.cmake")
+    INCLUDE(InstallRequiredSystemLibraries)
+  ENDIF(EXISTS "${CMAKE_ROOT}/Modules/InstallRequiredSystemLibraries.cmake")
+  SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Medical Visualization and Processing Environment for Research")
+  SET(CPACK_PACKAGE_VENDOR "NA-MIC")
+  SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README.txt")
+  SET(CPACK_PACKAGE_VERSION_MAJOR "${Slicer3_VERSION_MAJOR}")
+  SET(CPACK_PACKAGE_VERSION_MINOR "${Slicer3_VERSION_MINOR}")
+  SET(CPACK_PACKAGE_VERSION_PATCH "${Slicer3_VERSION_PATCH}")
+  SET(CPACK_INSTALL_CMAKE_PROJECTS
+    "${Slicer3_BINARY_DIR};Slicer3;ALL;/")
+  IF(EXISTS "${VTK_DIR}/CMakeCache.txt")
+    SET(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${VTK_DIR};VTK;ALL;/")
+  ENDIF(EXISTS "${VTK_DIR}/CMakeCache.txt")
+  IF(EXISTS "${ITK_DIR}/CMakeCache.txt")
+    SET(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${ITK_DIR};ITK;ALL;/")
+  ENDIF(EXISTS "${ITK_DIR}/CMakeCache.txt")
+  IF(EXISTS "${KWWidgets_DIR}/CMakeCache.txt")
+    SET(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${KWWidgets_DIR};KWWidgets;ALL;/")
+  ENDIF(EXISTS "${KWWidgets_DIR}/CMakeCache.txt")
+
+  SET(CPACK_PACKAGE_EXECUTABLES "Slicer3" "Slicer")
+  INCLUDE(CPack)
+ENDIF(EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake")
+

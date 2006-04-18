@@ -64,6 +64,10 @@ ADD_LIBRARY(GradientAnisotropicDiffusionFilter
   ${GradientAnisotropicDiffusionFilter_TCL_SRCS}
   )
 
+IF(BUILD_SHARED_LIBS)
+  INSTALL_TARGETS(${SLICER3_LIB_INSTALL_DIR} GradientAnisotropicDiffusionFilter)
+ENDIF(BUILD_SHARED_LIBS)
+
 TARGET_LINK_LIBRARIES(GradientAnisotropicDiffusionFilter
   ModulesBaseClasses
   SlicerBaseLogic 
