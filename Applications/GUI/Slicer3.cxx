@@ -23,6 +23,7 @@
 
 #include <vtksys/SystemTools.hxx>
 
+
 extern "C" int Slicerbasegui_Init(Tcl_Interp *interp);
 extern "C" int Slicerbaselogic_Init(Tcl_Interp *interp);
 extern "C" int Mrml_Init(Tcl_Interp *interp);
@@ -172,7 +173,10 @@ int Slicer3_main(int argc, char *argv[])
     mnb->GetNotebook()->AlwaysShowTabsOff();
     mnb->GetNotebook()->ShowOnlyPagesWithSameTagOn();    
 
-    const char *name = slicerApp->GetTclName();
+    // get the Tcl name so the vtk class will be registered in the interpreter as a byproduct
+    const char *name;
+    name = slicerApp->GetTclName();
+    name = appGUI->GetTclName();
 
     // DISPLAY WINDOW AND RUN
     appGUI->DisplayMainSlicerWindow ( );
