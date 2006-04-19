@@ -128,10 +128,10 @@ void vtkSlicerSliceLayerLogic::UpdateTransforms()
           //int AutoThreshold;
 
         }
-      else
-        {
-        this->Reslice->SetInput( NULL ); 
-        }
+      }
+    else
+      {
+      this->Reslice->SetInput( NULL ); 
       }
 
     this->Reslice->SetResliceTransform( this->XYToIJKTransform );
