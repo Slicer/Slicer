@@ -36,14 +36,11 @@ $win Create
 
 #################################3
 # create the mrml scene
-set ::scene [vtkMRMLScene New]
+#set ::scene [vtkMRMLScene New]
 
-## set up global key bindings
-set index [[$win GetEditMenu] AddCommand "&Undo" "" "$::scene Undo; mrmlUpdateUndoRedoButtons"]
-[$win GetEditMenu] SetItemAccelerator $index "Ctrl+Z"
-set index [[$win GetEditMenu] AddCommand "&Redo" "" "$::scene Redo; mrmlUpdateUndoRedoButtons"]
-[$win GetEditMenu] SetItemAccelerator $index "Ctrl+Y"
-
+## get the mrml scene from the current application
+set appGUI [lindex [vtkSlicerApplicationGUI ListInstances] 0]
+set ::scene [[$::appGUI GetApplicationLogic] GetMRMLScene]
 
 # for use when cutting and pasting into the console:
 # set scenefile c:/pieper/bwh/slicer3/latest/Slicer3/Applications/GUI/Testing/mrmlScene.xml
@@ -52,6 +49,11 @@ set scenefile [file dirname [info script]]/mrmlScene.xml
 $::scene SetURL $scenefile
 $::scene Connect
 
+## set up global key bindings
+set index [[$win GetEditMenu] AddCommand "&Undo" "" "$::scene Undo; mrmlUpdateUndoRedoButtons"]
+[$win GetEditMenu] SetItemAccelerator $index "Ctrl+Z"
+set index [[$win GetEditMenu] AddCommand "&Redo" "" "$::scene Redo; mrmlUpdateUndoRedoButtons"]
+[$win GetEditMenu] SetItemAccelerator $index "Ctrl+Y"
 
 #
 # add the needed pieces to display the volumes
@@ -419,6 +421,22 @@ proc mrmlFillMCL {mcl} {
 
 # initialize with the current scene
 mrmlFillMCL $mclwidget
+
+# 
+# set an observer so slice composite node will always see the
+# latest volume node in the background
+#
+
+$::scene AddObserver ModifiedEvent mrmlUpdateBackground
+
+proc mrmlUpdateBackground {} {
+    set nitems [$::scene GetNumberOfNodesByClass "vtkMRMLScalarVolumeNode"]
+    set vnode [$::scene GetNthNodeByClass [expr $nitems -1] "vtkMRMLScalarVolumeNode"]
+    $::slicecn SetBackgroundVolumeID [$vnode GetID]
+    puts "Background is now [$vnode GetID]"
+
+    set dnode [$vnode GetDisplayNode]
+}
 
 proc mrmlUpdateUndoRedoButtons {} {
 
