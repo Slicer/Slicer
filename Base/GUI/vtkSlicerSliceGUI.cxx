@@ -1,291 +1,275 @@
 #include "vtkObject.h"
 #include "vtkObjectFactory.h"
 #include "vtkCommand.h"
+#include "vtkCornerAnnotation.h"
+#include "vtkImageViewer2.h"
+#include "vtkRenderWindow.h"
+#include "vtkImageActor.h"
 
-#include "vtkSlicerSlicesGUI.h"
-#include "vtkSlicerSliceGUICollection.h"
-#include "vtkSlicerOneSliceGUI.h"
+#include "vtkSlicerSliceGUI.h"
+#include "vtkSlicerSliceViewer.h"
+#include "vtkSlicerSliceController.h"
 #include "vtkSlicerSliceLogic.h"
-#include "vtkMRMLSliceNode.h"
 #include "vtkSlicerApplication.h"
-#include "vtkSlicerApplicationLogic.h"
+#include "vtkMRMLSliceNode.h"
 
 #include "vtkKWApplication.h"
+#include "vtkKWWidget.h"
 #include "vtkKWFrame.h"
-#include "vtkKWFrameWithLabel.h"
+#include "vtkKWScale.h"
+#include "vtkKWEntry.h"
+#include "vtkKWScaleWithEntry.h"
+#include "vtkKWRenderWidget.h"
+#include "vtkKWMenu.h"
+#include "vtkKWMenuButton.h"
+
 
 //---------------------------------------------------------------------------
-vtkStandardNewMacro (vtkSlicerSlicesGUI);
-vtkCxxRevisionMacro(vtkSlicerSlicesGUI, "$Revision: 1.0 $");
+vtkStandardNewMacro (vtkSlicerSliceGUI);
+vtkCxxRevisionMacro(vtkSlicerSliceGUI, "$Revision: 1.0 $");
 
 
 //---------------------------------------------------------------------------
-vtkSlicerSlicesGUI::vtkSlicerSlicesGUI (  )
-{
+vtkSlicerSliceGUI::vtkSlicerSliceGUI (  ) {
 
-    this->SliceGUICollection = vtkSlicerSliceGUICollection::New ( );
-    this->MainSliceGUI0 = vtkSlicerOneSliceGUI::New ( );
-    this->MainSliceGUI1 = vtkSlicerOneSliceGUI::New ( );
-    this->MainSliceGUI2 = vtkSlicerOneSliceGUI::New ( );
+    // Create objects and set null pointers
+    this->SliceViewer = vtkSlicerSliceViewer::New ( );
+    this->SliceController = vtkSlicerSliceController::New ( );
+    this->Logic = NULL;
+    this->SliceNode = NULL;
 }
 
 
 //---------------------------------------------------------------------------
-vtkSlicerSlicesGUI::~vtkSlicerSlicesGUI ( )
-{
+vtkSlicerSliceGUI::~vtkSlicerSliceGUI ( ) {
 
-    vtkSlicerOneSliceGUI *s, *nexts;
-
-    // Remove observers, delete individual SliceGUIs and their collection
-    if ( this->SliceGUICollection ) {
-        this->SliceGUICollection->InitTraversal ( );
-        s = vtkSlicerOneSliceGUI::SafeDownCast ( this->SliceGUICollection->GetNextItemAsObject ( ) );
-        while ( s != NULL ) {
-            nexts = vtkSlicerOneSliceGUI::SafeDownCast (this->SliceGUICollection->GetNextItemAsObject ( ) );
-            this->SliceGUICollection->RemoveItem ( s );
-            s->RemoveGUIObservers ( );
-            s->SetModuleLogic ( NULL );
-            s->SetMRMLNode ( NULL );
-            s->Delete ( );
-            s = NULL;
-            s = nexts;
-        }
-        this->SliceGUICollection->Delete ( );
-        this->SliceGUICollection = NULL;
-    }
-
-    if ( this->MainSliceGUI0 )
+    // Remove observers and delete.
+    if ( this->SliceViewer )
         {
-            this->MainSliceGUI0->Delete ( );
-            this->MainSliceGUI0 = NULL;
+            this->SliceViewer->Delete ( );
+            this->SliceViewer = NULL;
         }
-    if ( this->MainSliceGUI1 )
+    if ( this->SliceController )
         {
-            this->MainSliceGUI1->Delete ( );
-            this->MainSliceGUI1 = NULL;
+            this->SliceController->Delete ( );
+            this->SliceController = NULL;
         }
-    if ( this->MainSliceGUI2 )
-        {
-            this->MainSliceGUI2->Delete ( );
-            this->MainSliceGUI2 = NULL;
-        }
-}
-
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerSlicesGUI::AddSliceGUI ( vtkSlicerOneSliceGUI *s )
-{
-
-    // Create if it doesn't exist already
-    if ( this->SliceGUICollection == NULL ) {
-        this->SliceGUICollection = vtkSlicerSliceGUICollection::New();
-    }
-    //Add new sliceGUI
-    this->SliceGUICollection->AddItem ( s );
-
-}
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerSlicesGUI::AddAndObserveSliceGUI ( vtkSlicerOneSliceGUI *s )
-{
-
-    this->AddSliceGUI ( s );
-    s->AddGUIObservers ( );
-}
-
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerSlicesGUI::RemoveSliceGUI ( vtkSlicerOneSliceGUI *s )
-{
-
-    // Remove observers, remove from collection and delete
-    if ( this->SliceGUICollection && s != NULL )
-        {
-            this->SliceGUICollection->InitTraversal ( );
-            vtkSlicerOneSliceGUI *g = vtkSlicerOneSliceGUI::SafeDownCast ( this->SliceGUICollection->GetNextItemAsObject ( ) );
-            while ( g != NULL ) {
-                if ( g == s )
-                    {
-                        g->RemoveGUIObservers ( );
-                        this->SliceGUICollection->RemoveItem ( g );
-                        g->Delete ( );
-                        break;
-                    }
-                g = vtkSlicerOneSliceGUI::SafeDownCast (this->SliceGUICollection->GetNextItemAsObject ( ) );
-            }
-        }
-}
-
-
-//---------------------------------------------------------------------------
-vtkSlicerOneSliceGUI* vtkSlicerSlicesGUI::GetSliceGUI ( int SliceGUINum )
-    {
-    // get slicewidget 0, 1, 2
-    return ( (vtkSlicerOneSliceGUI::SafeDownCast(this->SliceGUICollection->GetItemAsObject( SliceGUINum ) ) ) );
-}
-
-
-
-
-
-//---------------------------------------------------------------------------
-vtkSlicerOneSliceGUI* vtkSlicerSlicesGUI::GetSliceGUI ( char *SliceGUIColor )
-    {
-    // get slicewidget red, yellow, green
-    if ( SliceGUIColor == "r" || SliceGUIColor == "R" )
-        {
-            return ( vtkSlicerOneSliceGUI::SafeDownCast(this->SliceGUICollection->GetItemAsObject( 0 )));
-        } else if ( SliceGUIColor == "g" || SliceGUIColor == "G")
-            {
-                return ( vtkSlicerOneSliceGUI::SafeDownCast(this->SliceGUICollection->GetItemAsObject( 1 )));
-            } else if ( SliceGUIColor == "y" || SliceGUIColor == "Y" )
-                {
-                    return ( vtkSlicerOneSliceGUI::SafeDownCast(this->SliceGUICollection->GetItemAsObject( 2 )));
-                } else {
-                        return NULL;
-                }
-}
-
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerSlicesGUI::AddGUIObservers ( )
-    {
-
-    // Add observers on gui components for all slice widgets
-    if ( this->SliceGUICollection )
-        {
-            this->SliceGUICollection->InitTraversal ( );
-            vtkSlicerOneSliceGUI *g = vtkSlicerOneSliceGUI::SafeDownCast ( this->SliceGUICollection->GetNextItemAsObject ( ) );
-            while ( g != NULL ) {
-                {
-                    g->AddGUIObservers ( );
-                    g = vtkSlicerOneSliceGUI::SafeDownCast (this->SliceGUICollection->GetNextItemAsObject ( ) );
-                }
-            }
-        }
-    }
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerSlicesGUI::RemoveGUIObservers ( )
-    {
-
-    // Remove observers
-    if ( this->SliceGUICollection )
-        {
-            this->SliceGUICollection->InitTraversal ( );
-            vtkSlicerOneSliceGUI *g = vtkSlicerOneSliceGUI::SafeDownCast ( this->SliceGUICollection->GetNextItemAsObject ( ) );
-            while ( g != NULL )
-                {
-                    g->RemoveGUIObservers ( );
-                    g = vtkSlicerOneSliceGUI::SafeDownCast (this->SliceGUICollection->GetNextItemAsObject ( ) );
-                }
-        }
-    }
-
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerSlicesGUI::ProcessGUIEvents ( vtkObject *caller,
-                                           unsigned long event, void *callData)
-    {
-        // Fill in
-    }
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerSlicesGUI::ProcessLogicEvents ( vtkObject *caller,
-                                             unsigned long event, void *callData )
-{
-    // Fill in
-}
- 
-
-//---------------------------------------------------------------------------
-void vtkSlicerSlicesGUI::ProcessMRMLEvents ( vtkObject *caller,
-                                            unsigned long event, void *callData )
-{
-    // Fill in
-}
- 
-
-//---------------------------------------------------------------------------
-void vtkSlicerSlicesGUI::Enter ( )
-{
-    // Fill in
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerSlicesGUI::Exit ( )
-{
-    // Fill in
-}
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerSlicesGUI::BuildGUI ( vtkKWFrame* f1, vtkKWFrame *f2, vtkKWFrame *f3  )
-{
-
-    vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-
-    // ---
-    // MODULE GUI FRAME 
-    // configure a page for a volume loading UI for now.
-    // later, switch on the modulesButton in the SlicerControlGUI
-    // ---
-    // create a page
-    this->UIPanel->AddPage ( "Slices", "Slices", NULL );
+    this->SetModuleLogic ( NULL );
+    this->SetMRMLNode ( NULL );
     
-    // HELP FRAME
-    vtkKWFrameWithLabel *sliceHelpFrame = vtkKWFrameWithLabel::New ( );
-    sliceHelpFrame->SetParent ( this->UIPanel->GetPageWidget ( "Slices" ) );
-    sliceHelpFrame->Create ( );
-    sliceHelpFrame->CollapseFrame ( );
-    sliceHelpFrame->SetLabelText ("Help");
-    app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                  sliceHelpFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Slices")->GetWidgetName());
-
-    // ---
-    // DISPLAY FRAME            
-    vtkKWFrameWithLabel *sliceDisplayFrame = vtkKWFrameWithLabel::New ( );
-    sliceDisplayFrame->SetParent ( this->UIPanel->GetPageWidget ( "Slices" ) );
-    sliceDisplayFrame->Create ( );
-    sliceDisplayFrame->SetLabelText ("Slice information");
-    sliceDisplayFrame->CollapseFrame ( );
-    app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                  sliceDisplayFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Slices")->GetWidgetName());
-
-    sliceHelpFrame->Delete();
-    sliceDisplayFrame->Delete();
-
-    // CREATE 3 Default SLICE GUIs
-    this->MainSliceGUI0->SetApplication ( app );
-    this->MainSliceGUI1->SetApplication ( app );
-    this->MainSliceGUI2->SetApplication ( app );
-
-    this->MainSliceGUI0->BuildGUI ( f1 );
-    this->MainSliceGUI1->BuildGUI ( f2 );
-    this->MainSliceGUI2->BuildGUI ( f3 );
-
-    this->AddSliceGUI ( MainSliceGUI0 );
-    this->AddSliceGUI ( MainSliceGUI1 );
-    this->AddSliceGUI ( MainSliceGUI2 );
 }
 
 
 
-//----------------------------------------------------------------------------
-void vtkSlicerSlicesGUI::PrintSelf(ostream& os, vtkIndent indent)
+//---------------------------------------------------------------------------
+void vtkSlicerSliceGUI::PrintSelf ( ostream& os, vtkIndent indent )
 {
-  this->vtkObject::PrintSelf(os, indent);
-  os << indent << "SlicerSlicesGUI:" << this->GetClassName ( ) << "\n";
-  os << indent << "MainSliceGUI0: " << this->MainSliceGUI0 << endl;
-  os << indent << "MainSliceGUI1: " << this->MainSliceGUI1 << endl;
-  os << indent << "MainSliceGUI2: " << this->MainSliceGUI2 << endl;
-  os << indent << "SliceGUICollection: " << this->SliceGUICollection << endl;
+    this->vtkObject::PrintSelf ( os, indent );
+    os << indent << "SlicerSliceGUI: " << this->GetClassName ( ) << "\n";
+    os << indent << "SliceViewer: " << this->GetSliceViewer ( ) << "\n";
+    os << indent << "SliceController: " << this->GetSliceController ( ) << "\n";
+    os << indent << "Logic: " << this->GetLogic ( ) << "\n";
+    os << indent << "SliceNode: " << this->GetSliceNode ( ) << "\n";
 }
+
+
+
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerSliceGUI::AddGUIObservers ( ) {
+
+    vtkSlicerSliceController *c = this->GetSliceController();
+ 
+    if ( c != NULL )
+        {
+            vtkKWScaleWithEntry *s = c->GetOffsetScale () ;
+            vtkKWEntryWithLabel *e = c->GetFieldOfViewEntry ();
+            vtkKWMenuButtonWithLabel *m = c->GetOrientationMenu ();
+
+            s->AddObserver ( vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
+            s->AddObserver ( vtkKWScale::ScaleValueStartChangingEvent, (vtkCommand *)this->GUICallbackCommand );
+            e->AddObserver ( vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
+            m->AddObserver ( vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
+        }
+}
+
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerSliceGUI::RemoveGUIObservers ( ) {
+
+    vtkSlicerSliceController *c = this->GetSliceController( );
+    if ( c != NULL )
+        {
+            vtkKWScaleWithEntry *s = c->GetOffsetScale () ;
+            vtkKWEntryWithLabel *e = c->GetFieldOfViewEntry ();
+            vtkKWMenuButtonWithLabel *m = c->GetOrientationMenu ();
+
+            s->RemoveObservers (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
+            s->RemoveObservers (vtkKWScale::ScaleValueStartChangingEvent, (vtkCommand *)this->GUICallbackCommand );
+            e->RemoveObservers (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
+            m->RemoveObservers (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
+        }
+}
+
+
+
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerSliceGUI::ProcessGUIEvents ( vtkObject *caller,
+                                              unsigned long event, void *callData )
+{
+
+    vtkKWScaleWithEntry *s = vtkKWScaleWithEntry::SafeDownCast(caller);
+    vtkKWEntryWithLabel *e = vtkKWEntryWithLabel::SafeDownCast(caller);
+    vtkKWMenuButtonWithLabel *o = vtkKWMenuButtonWithLabel::SafeDownCast (caller );
+
+    vtkMRMLScene *mrml = this->GetApplicationLogic()->GetMRMLScene();
+    vtkSlicerSliceController *c = this->GetSliceController( );
+
+    if (mrml != NULL ) {
+        //---
+        // Scale Widget
+        if ( s == c->GetOffsetScale ( ) ) {
+
+            // SET UNDO STATE
+            if ( event == vtkKWScale::ScaleValueStartChangingEvent  ) {
+                mrml->SaveStateForUndo ( this->GetSliceNode() );
+            }
+            // UNDO-ABLE APPLY
+            if ( event == vtkKWScale::ScaleValueStartChangingEvent || event == vtkCommand::ModifiedEvent ) {
+                vtkMatrix4x4 *m = this->GetSliceNode()->GetSliceToRAS ( );
+                m->Identity ( );
+                m->SetElement (2, 3, c->GetOffsetScale()->GetValue ( ) );
+                this->GetSliceNode()->Modified();
+            }
+        }
+    
+        //---
+        // Change Slice Node with new FieldOfView Entry Widget values
+        if ( e == c->GetFieldOfViewEntry() && event == vtkCommand::ModifiedEvent ) {
+            // SET UNDO STATE
+            mrml->SaveStateForUndo ( this->GetSliceNode() );
+            // UNDO-ABLE APPLY
+            double val = c->GetFieldOfViewEntry()->GetWidget()->GetValueAsDouble();
+            if ( val != 0 ) {
+                this->GetSliceNode()->SetFieldOfView ( val, val, val );
+                this->GetSliceNode()->Modified();
+            }
+        }
+
+        //---
+        // Orientation menu
+        if ( o == c->GetOrientationMenu ( ) && event == vtkCommand::ModifiedEvent ) {
+            // SET UNDO STATE
+            //UNDO-ABLE APPLY
+            // TO DO: set the RASToSlice matrix from the menu value
+            c->GetOrientationMenu()->GetWidget()->GetValue ( );
+        }
+    }
+}
+
+
+
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerSliceGUI::ProcessLogicEvents ( vtkObject *caller,
+                                                unsigned long event, void *callData )
+{
+    // process Logic changes
+    vtkSlicerSliceLogic *n = vtkSlicerSliceLogic::SafeDownCast(caller);
+
+    
+    if ( event == vtkCommand::ModifiedEvent && n == this->GetLogic ( ) ) {
+        vtkSlicerSliceController *c = this->GetSliceController( );
+        // UPDATE THE FOV ENTRY
+        double fov = this->GetSliceNode()->GetFieldOfView()[0];
+        char fovstring[80];
+        sprintf (fovstring, "%g", fov);
+        c->GetFieldOfViewEntry()->GetWidget()->SetValue(fovstring);
+        c->GetFieldOfViewEntry()->Modified();
+
+        // UPDATE THE SCALE
+        double fovover2 = this->GetSliceNode()->GetFieldOfView()[2] / 2.;
+        c->GetOffsetScale()->SetRange ( -fovover2, fovover2 );
+        // TODO: set the scale value from the translation part
+        // of the matrix with rotation. 
+        // Set the scale from the Offset in the matrix.
+        vtkMatrix4x4 *m = n->GetSliceNode()->GetSliceToRAS();
+        c->GetOffsetScale()->SetValue ( m->GetElement(2,3) );
+        c->GetOffsetScale()->Modified();
+        
+        vtkSlicerSliceViewer *v = this->GetSliceViewer( );
+        // UPDATE IMAGE VIEWER
+        vtkImageViewer2 *iv = v->GetImageViewer ();
+        vtkKWRenderWidget *rw = v->GetRenderWidget ();
+        if ( n->GetImageData() != NULL )
+            {
+                iv->SetInput ( n->GetImageData( ) );
+            }
+        else
+            {
+                iv->SetInput (NULL);
+            }
+        iv->Render();
+        // configure window, level, camera, etc.
+        rw->ResetCamera ( );
+        vtkCornerAnnotation *ca = rw->GetCornerAnnotation ( );
+        ca->SetImageActor (iv->GetImageActor ( ) );
+        v->Modified ();
+
+    }
+
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerSliceGUI::ProcessMRMLEvents ( vtkObject *caller,
+                                               unsigned long event, void *callData )
+{
+    // Fill in
+}
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerSliceGUI::Enter ( )
+{
+    // Fill in
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerSliceGUI::Exit ( )
+{
+    // Fill in
+}
+
+
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerSliceGUI::BuildGUI ( vtkKWFrame *f )
+{
+
+    vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication ( ) );
+
+    this->SliceController->SetApplication ( app );
+    this->SliceController->SetParent ( f );
+    this->SliceController->Create ( );
+    this->SliceViewer->SetApplication ( app );
+    this->SliceViewer->SetParent ( f );
+    this->SliceViewer->Create ( );
+
+    // pack 
+    this->Script("pack %s -pady 0 -side top -expand false -fill x", SliceController->GetControlFrame()->GetWidgetName() );
+    this->Script("pack %s -pady 2 -padx 2 -side right -expand false", SliceController->GetFieldOfViewEntry()->GetWidgetName());
+    this->Script("pack %s -pady 2 -padx 2 -side right -expand false", SliceController->GetOrientationMenu()->GetWidgetName());
+    this->Script("pack %s -side top -expand false -fill x", SliceController->GetOffsetScale()->GetWidgetName());
+    this->Script("pack %s -anchor c -side top -expand true -fill both", SliceViewer->GetRenderWidget()->GetWidgetName());
+
+}
+
+
+
 

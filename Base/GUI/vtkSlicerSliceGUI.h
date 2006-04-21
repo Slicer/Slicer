@@ -1,19 +1,19 @@
-// .NAME vtkSlicerSlicesGUI 
+// .NAME vtkSlicerSliceGUI 
 // .SECTION Description
-// Main Slice GUI and mediator functions for slicer3.  
-// Manages a collection of individual sliceGUIs, each of which
-// contain a SliceViewer a SliceController, a pointer to
+// Individual Slice GUI and mediator functions for slicer3.
+// Contains a SliceViewer, a Slice Controller, a pointer to
 // SliceLogic and a pointer to a MRMLSliceNode.
 
-#ifndef __vtkSlicerSlicesGUI_h
-#define __vtkSlicerSlicesGUI_h
+
+#ifndef __vtkSlicerSliceGUI_h
+#define __vtkSlicerSliceGUI_h
 
 #include "vtkSlicerBaseGUIWin32Header.h"
-#include "vtkSlicerModuleGUI.h"
+#include "vtkSlicerComponentGUI.h"
+#include "vtkSlicerSliceViewer.h"
+#include "vtkSlicerSliceController.h"
 #include "vtkSlicerSliceLogic.h"
-#include "vtkSlicerSliceGUICollection.h"
 #include "vtkMRMLSliceNode.h"
-#include "vtkSlicerSliceLogic.h"
 
 class vtkObject;
 class vtkKWFrame;
@@ -21,70 +21,40 @@ class vtkKWFrame;
 // Description:
 // This class implements Slicer's Slice GUI.
 //
-class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesGUI : public vtkSlicerModuleGUI
+class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceGUI : public vtkSlicerComponentGUI
 {
  public:
-    static vtkSlicerSlicesGUI* New (  );
-    vtkTypeRevisionMacro ( vtkSlicerSlicesGUI, vtkSlicerModuleGUI );
+    static vtkSlicerSliceGUI* New (  );
+    vtkTypeRevisionMacro ( vtkSlicerSliceGUI, vtkSlicerComponentGUI );
     void PrintSelf (ostream& os, vtkIndent indent);
-
-    // Description:
-    // Get/Set methods for class
-    vtkGetObjectMacro ( SliceGUICollection, vtkSlicerSliceGUICollection );
 
     // Description:
     // Get methods for three default SliceGUIs
     // (Each SliceGUI contains a SliceViewerWidget,
     // SliceControllerWidget, a SliceLogic pointer and
     // a SliceNode pointer.)
-    vtkGetObjectMacro ( MainSliceGUI0, vtkSlicerOneSliceGUI );
-    vtkGetObjectMacro ( MainSliceGUI1, vtkSlicerOneSliceGUI );
-    vtkGetObjectMacro ( MainSliceGUI2, vtkSlicerOneSliceGUI );
+    vtkGetObjectMacro ( SliceViewer, vtkSlicerSliceViewer );
+    vtkGetObjectMacro ( SliceController, vtkSlicerSliceController );
+    vtkGetMacro ( ControllerStyle, int );
+    vtkSetMacro ( ControllerStyle, int );
+    vtkGetObjectMacro ( Logic, vtkSlicerSliceLogic );
+    vtkGetObjectMacro ( SliceNode, vtkMRMLSliceNode );
     
     // Description:
-    // API for setting a SliceNode or SliceLogic in one of the sliceGUIs
-    // in the SliceGUICollection.
-    void SetMRMLNode ( int sliceGUINum, vtkMRMLSliceNode *node)
-        {
-            vtkSlicerOneSliceGUI *g;
-            g = vtkSlicerOneSliceGUI::SafeDownCast(this->SliceGUICollection->GetItemAsObject (sliceGUINum ));
-            g->SetMRMLNode ( node );
-        }
-    void SetAndObserveMRMLNode ( int sliceGUINum, vtkMRMLSliceNode *node )
-        {
-            vtkSlicerOneSliceGUI *g;
-            g = vtkSlicerOneSliceGUI::SafeDownCast(this->SliceGUICollection->GetItemAsObject (sliceGUINum ));
-            g->SetAndObserveMRMLNode ( node );
-        }
-    void SetModuleLogic ( int sliceGUINum, vtkSlicerSliceLogic *logic )
-        {
-            vtkSlicerOneSliceGUI *g;
-            g = vtkSlicerOneSliceGUI::SafeDownCast(this->SliceGUICollection->GetItemAsObject (sliceGUINum ));
-            g->SetModuleLogic ( logic );
-        }
-    void SetAndObserveModuleLogic ( int sliceGUINum, vtkSlicerSliceLogic *logic )
-        {
-            vtkSlicerOneSliceGUI *g;
-            g = vtkSlicerOneSliceGUI::SafeDownCast(this->SliceGUICollection->GetItemAsObject (sliceGUINum ));
-            g->SetAndObserveModuleLogic ( logic );
-        }
-
-    // Description:
-    // Add/Remove a SliceGUI to the SliceGUI Collection.
-    virtual void AddSliceGUI ( vtkSlicerOneSliceGUI *s );
-    virtual void AddAndObserveSliceGUI ( vtkSlicerOneSliceGUI *s );
-    virtual void RemoveSliceGUI (vtkSlicerOneSliceGUI *s );
-    
-    // Description:
-    // Returns a pointer to a Slice GUI contained in the SliceGUICollection
-    // Given its number (0,1,2...) or, if it's one of the first three Slice GUIs
-    // given its color (r, y, g, or R, Y, G).
-    vtkSlicerOneSliceGUI* GetSliceGUI ( int SliceGUINum );
-    vtkSlicerOneSliceGUI* GetSliceGUI ( char *SliceGUIColor );
+    // API for setting SliceNode, SliceLogic and
+    // for both setting and observing them.
+    void SetMRMLNode ( vtkMRMLSliceNode *node )
+        { this->SetMRML ( vtkObjectPointer( &this->SliceNode), node ); }
+    void SetAndObserveMRMLNode ( vtkMRMLSliceNode *node )
+        { this->SetMRML ( vtkObjectPointer( &this->SliceNode), node ); }
+    void SetModuleLogic ( vtkSlicerSliceLogic *logic )
+        { this->SetLogic ( vtkObjectPointer (&this->Logic), logic ); }
+    void SetAndObserveModuleLogic ( vtkSlicerSliceLogic *logic )
+        { this->SetLogic ( vtkObjectPointer (&this->Logic), logic ); }
 
     // Description:
     // Build the SlicesGUI's UIPanel and three main SliceGUIs 
-    virtual void BuildGUI ( vtkKWFrame *f1, vtkKWFrame *f2, vtkKWFrame *f3);
+    virtual void BuildGUI ( vtkKWFrame *f );
 
     // Description:
     // Add/Remove Observers on UIPanel widgets and SliceGUIs.
@@ -100,29 +70,27 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesGUI : public vtkSlicerModuleGUI
     // Description:
     // Processes all events raised by MRML
     virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
-
+    
     // Description:
     // Functions that define and undefine module-specific behaviors.
     virtual void Enter ( );
     virtual void Exit ( );
     
  protected:
-    vtkSlicerSlicesGUI ( );
-    ~vtkSlicerSlicesGUI ( );
+    vtkSlicerSliceGUI ( );
+    ~vtkSlicerSliceGUI ( );
 
     // Description:
     // Three slice widgets by default.
-    vtkSlicerOneSliceGUI *MainSliceGUI0;
-    vtkSlicerOneSliceGUI *MainSliceGUI1;
-    vtkSlicerOneSliceGUI *MainSliceGUI2;
-
-    // Description:
-    // Collection of the above and other slice GUIs
-    vtkSlicerSliceGUICollection *SliceGUICollection;
+    vtkSlicerSliceViewer *SliceViewer;
+    vtkSlicerSliceController *SliceController;
+    int ControllerStyle;
+    vtkSlicerSliceLogic *Logic;
+    vtkMRMLSliceNode *SliceNode;
 
  private:
-    vtkSlicerSlicesGUI ( const vtkSlicerSlicesGUI& ); // Not implemented.
-    void operator = ( const vtkSlicerSlicesGUI& ); //Not implemented.
+    vtkSlicerSliceGUI ( const vtkSlicerSliceGUI& ); // Not implemented.
+    void operator = ( const vtkSlicerSliceGUI& ); //Not implemented.
 }; 
 
 #endif
