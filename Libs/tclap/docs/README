@@ -1,0 +1,5 @@
+
+To generate the manual from the docbook xml you need and xslt processor
+and an xsl file that defines the output.  For example:
+
+xsltproc --stringparam html.stylesheet style.css  /usr/share/sgml/docbook/xsl-stylesheets-1.61.3/xhtml/docbook.xsl manual.xml > manual.html
