@@ -21,20 +21,20 @@ SET(LIB_SRCS
   vtkSlicerColor.cxx
   vtkSlicerFont.cxx
   vtkSlicerApplication.cxx
-  vtkSlicerGUIUpdate.cxx
-  vtkSlicerLogicUpdate.cxx
-  vtkSlicerMRMLUpdate.cxx
   vtkSlicerComponentGUI.cxx
   vtkSlicerModuleGUI.cxx
   vtkSlicerGUICollection.cxx
-  vtkSlicerSliceWidget.cxx
-  vtkSlicerSliceWidgetCollection.cxx
-  vtkSlicerSliceLogicCollection.cxx
+
   vtkSlicerSliceGUI.cxx
+  vtkSlicerSliceGUICollection.cxx
+  vtkSlicerSliceViewer.cxx
+  vtkSlicerSliceController.cxx
+  vtkSlicerSlicesGUI.cxx
   vtkSlicerVolumesGUI.cxx
   vtkSlicerModelsGUI.cxx
   vtkSlicerDataGUI.cxx
   vtkSlicerApplicationGUI.cxx
+    
   vtkSlicerVolumeSelectGUI.cxx
   vtkSlicerSliceControlGUI.cxx
   # Widgets

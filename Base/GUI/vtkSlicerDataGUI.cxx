@@ -1,12 +1,12 @@
 #include "vtkObject.h"
 #include "vtkObjectFactory.h"
 #include "vtkCommand.h"
-#include "vtkKWWidget.h"
-#include "vtkSlicerDataGUI.h"
+
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerModuleLogic.h"
-#include "vtkMRMLNode.h"
-#include "vtkSlicerStyle.h"
+#include "vtkSlicerDataGUI.h"
+
+#include "vtkKWWidget.h"
 #include "vtkKWFrameWithLabel.h"
 
 
@@ -16,124 +16,78 @@ vtkCxxRevisionMacro ( vtkSlicerDataGUI, "$Revision: 1.0 $");
 
 
 //---------------------------------------------------------------------------
-vtkSlicerDataGUI::vtkSlicerDataGUI ( ) {
+vtkSlicerDataGUI::vtkSlicerDataGUI ( )
+{
 
-    //this->SetLogic ( NULL );
+    // class not yet defined!
+    //this->Logic = NULL;
 
 }
 
 
 //---------------------------------------------------------------------------
-vtkSlicerDataGUI::~vtkSlicerDataGUI ( ) {
+vtkSlicerDataGUI::~vtkSlicerDataGUI ( )
+{
 
-    //this->SetLogic ( NULL );
+    // class not yet defined!
+    //this->SetModuleLogic ( NULL );
 }
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerDataGUI::RemoveGUIObservers ( ) {
+void vtkSlicerDataGUI::PrintSelf ( ostream& os, vtkIndent indent )
+{
+    this->vtkObject::PrintSelf ( os, indent );
+
+    os << indent << "SlicerDataGUI: " << this->GetClassName ( ) << "\n";
+    //os << indent << "Logic: " << this->GetLogic ( ) << "\n";
+    // print widgets?
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerDataGUI::RemoveGUIObservers ( )
+{
     // Fill in
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerDataGUI::AddGUIObservers ( ) {
+void vtkSlicerDataGUI::AddGUIObservers ( )
+{
     // Fill in
 }
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerDataGUI::AddLogicObserver ( vtkSlicerModuleLogic *logic, int event ) {
-    // Fill in
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerDataGUI::RemoveLogicObserver ( vtkSlicerModuleLogic *logic, int event ) {
-    // Fill in
-}
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerDataGUI::AddLogicObservers ( ) {
-    // Fill in
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerDataGUI::RemoveLogicObservers ( ) {
-    // Fill in
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerDataGUI::AddMRMLObserver ( vtkMRMLNode *node, int event ) {
-    // Fill in
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerDataGUI::RemoveMRMLObserver ( vtkMRMLNode *node, int event ) {
-    // Fill in
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerDataGUI::AddMRMLObservers ( ) {
-    // Fill in
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerDataGUI::RemoveMRMLObservers ( ) {
-    // Fill in
-}
-
-
-    /*
-//---------------------------------------------------------------------------
-void vtkSlicerDataGUI::SetLogic ( vtkSlicerDataLogic *logic ) {
-
-    // Don't bother if already set.
-    if ( logic == this->Logic ) {
-        return;
-    }
-    // Remove observers from application logic
-    if ( this->Logic != NULL ) {
-        this->RemoveLogicObservers ( );
-    }
-    // Set pointer and add observers if not null
-    this->Logic = logic;
-    if ( this->Logic != NULL ) {
-        this->AddLogicObservers ( );
-    }
-}
-     */
 
 
 //---------------------------------------------------------------------------
 void vtkSlicerDataGUI::ProcessGUIEvents ( vtkObject *caller,
-                                                    unsigned long event,
-                                                    void *callData ) {
+                                          unsigned long event, void *callData )
+{
     // Fill in
 }
 
 
-
 //---------------------------------------------------------------------------
 void vtkSlicerDataGUI::ProcessLogicEvents ( vtkObject *caller,
-                                                    unsigned long event,
-                                                    void *callData ) {
+                                            unsigned long event, void *callData )
+{
     // Fill in
 }
 
 //---------------------------------------------------------------------------
 void vtkSlicerDataGUI::ProcessMRMLEvents ( vtkObject *caller,
-                                                    unsigned long event,
-                                                    void *callData ) {
+                                           unsigned long event, void *callData )
+{
     // Fill in
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerDataGUI::Enter ( ) {
+void vtkSlicerDataGUI::Enter ( )
+{
     // Fill in
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerDataGUI::Exit ( ) {
+void vtkSlicerDataGUI::Exit ( )
+{
     // Fill in
 }
 
@@ -141,7 +95,8 @@ void vtkSlicerDataGUI::Exit ( ) {
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerDataGUI::BuildGUI ( ) {
+void vtkSlicerDataGUI::BuildGUI ( )
+{
 
     vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
     vtkSlicerStyle *style = app->GetSlicerStyle();

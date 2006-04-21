@@ -15,107 +15,59 @@ vtkCxxRevisionMacro ( vtkSlicerModelsGUI, "$Revision: 1.0 $");
 
 
 //---------------------------------------------------------------------------
-vtkSlicerModelsGUI::vtkSlicerModelsGUI ( ) {
+vtkSlicerModelsGUI::vtkSlicerModelsGUI ( )
+{
 
-    //this->SetLogic ( NULL );
+    // classes not yet defined!
+    //this->Logic = NULL;
+    //this->ModelNode = NULL;
     this->LoadModelButton = NULL;
 }
 
 
 //---------------------------------------------------------------------------
-vtkSlicerModelsGUI::~vtkSlicerModelsGUI ( ) {
+vtkSlicerModelsGUI::~vtkSlicerModelsGUI ( )
+{
     if (this->LoadModelButton ) {
         this->LoadModelButton->Delete ( );
         this->LoadModelButton = NULL;
     }
-
-    //this->SetLogic ( NULL );
+    //this->SetModuleLogic ( NULL );
+    //this->SetMRMLNode ( NULL );
 }
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerModelsGUI::RemoveGUIObservers ( ) {
-    this->LoadModelButton->RemoveObservers ( vtkCommand::ModifiedEvent,  (vtkCommand *)this->GUICommand);    
+void vtkSlicerModelsGUI::PrintSelf ( ostream& os, vtkIndent indent )
+{
+    this->vtkObject::PrintSelf ( os, indent );
+
+    os << indent << "SlicerModelsGUI: " << this->GetClassName ( ) << "\n";
+    //os << indent << "ModelNode: " << this->GetVolumeNode ( ) << "\n";
+    //os << indent << "Logic: " << this->GetLogic ( ) << "\n";
+    // print widgets?
 }
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerModelsGUI::AddGUIObservers ( ) {
-
-    this->LoadModelButton->AddObserver ( vtkCommand::ModifiedEvent,  (vtkCommand *)this->GUICommand );    
+void vtkSlicerModelsGUI::RemoveGUIObservers ( )
+{
+    this->LoadModelButton->RemoveObservers ( vtkCommand::ModifiedEvent,  (vtkCommand *)this->GUICallbackCommand );
 }
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerModelsGUI::AddLogicObserver ( vtkSlicerModuleLogic *logic, int event ) {
-    // Fill in
+void vtkSlicerModelsGUI::AddGUIObservers ( )
+{
+
+    this->LoadModelButton->AddObserver ( vtkCommand::ModifiedEvent,  (vtkCommand *)this->GUICallbackCommand );
 }
-
-//---------------------------------------------------------------------------
-void vtkSlicerModelsGUI::RemoveLogicObserver ( vtkSlicerModuleLogic *logic, int event ) {
-    // Fill in
-}
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerModelsGUI::AddLogicObservers ( ) {
-    // Fill in
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerModelsGUI::RemoveLogicObservers ( ) {
-    // Fill in
-}
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerModelsGUI::AddMRMLObserver ( vtkMRMLNode *node, int event ) {
-    // Fill in
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerModelsGUI::RemoveMRMLObserver ( vtkMRMLNode *node, int event ) {
-    // Fill in
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerModelsGUI::AddMRMLObservers ( ) {
-    // Fill in
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerModelsGUI::RemoveMRMLObservers ( ) {
-    // Fill in
-}
-
-
-    /*
-//---------------------------------------------------------------------------
-void vtkSlicerModelsGUI::SetLogic ( vtkSlicerModelsLogic *logic ) {
-
-    // Don't bother if already set.
-    if ( logic == this->Logic ) {
-        return;
-    }
-    // Remove observers from application logic
-    if ( this->Logic != NULL ) {
-        this->RemoveLogicObservers ( );
-    }
-    // Set pointer and add observers if not null
-    this->Logic = logic;
-    if ( this->Logic != NULL ) {
-        this->AddLogicObservers ( );
-    }
-}
-     */
-
 
 
 
 //---------------------------------------------------------------------------
 void vtkSlicerModelsGUI::ProcessGUIEvents ( vtkObject *caller,
-                                                    unsigned long event,
-                                                    void *callData ) 
+                                            unsigned long event, void *callData )
 {
     vtkKWLoadSaveButton *filebrowse = vtkKWLoadSaveButton::SafeDownCast(caller);
     if (filebrowse == this->LoadModelButton  && event == vtkCommand::ModifiedEvent )
@@ -131,32 +83,37 @@ void vtkSlicerModelsGUI::ProcessGUIEvents ( vtkObject *caller,
 
 //---------------------------------------------------------------------------
 void vtkSlicerModelsGUI::ProcessLogicEvents ( vtkObject *caller,
-                                                    unsigned long event,
-                                                    void *callData ) {
-
+                                              unsigned long event, void *callData )
+{
+    // Fill in
 }
 
 //---------------------------------------------------------------------------
 void vtkSlicerModelsGUI::ProcessMRMLEvents ( vtkObject *caller,
-                                                    unsigned long event,
-                                                    void *callData ) {
-
+                                             unsigned long event, void *callData )
+{
+    // Fill in
 }
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerModelsGUI::Enter ( ) {
+void vtkSlicerModelsGUI::Enter ( )
+{
+    // Fill in
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerModelsGUI::Exit ( ) {
+void vtkSlicerModelsGUI::Exit ( )
+{
+    // Fill in
 }
 
 
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerModelsGUI::BuildGUI ( ) {
+void vtkSlicerModelsGUI::BuildGUI ( )
+{
 
     vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
     vtkSlicerStyle *style = app->GetSlicerStyle();

@@ -4,7 +4,7 @@
 
 #include "vtkSlicerSlicesGUI.h"
 #include "vtkSlicerSliceGUICollection.h"
-#include "vtkSlicerOneSliceGUI.h"
+#include "vtkSlicerSliceGUI.h"
 #include "vtkSlicerSliceLogic.h"
 #include "vtkMRMLSliceNode.h"
 #include "vtkSlicerApplication.h"
@@ -24,9 +24,9 @@ vtkSlicerSlicesGUI::vtkSlicerSlicesGUI (  )
 {
 
     this->SliceGUICollection = vtkSlicerSliceGUICollection::New ( );
-    this->MainSliceGUI0 = vtkSlicerOneSliceGUI::New ( );
-    this->MainSliceGUI1 = vtkSlicerOneSliceGUI::New ( );
-    this->MainSliceGUI2 = vtkSlicerOneSliceGUI::New ( );
+    this->MainSliceGUI0 = vtkSlicerSliceGUI::New ( );
+    this->MainSliceGUI1 = vtkSlicerSliceGUI::New ( );
+    this->MainSliceGUI2 = vtkSlicerSliceGUI::New ( );
 }
 
 
@@ -34,14 +34,14 @@ vtkSlicerSlicesGUI::vtkSlicerSlicesGUI (  )
 vtkSlicerSlicesGUI::~vtkSlicerSlicesGUI ( )
 {
 
-    vtkSlicerOneSliceGUI *s, *nexts;
+    vtkSlicerSliceGUI *s, *nexts;
 
     // Remove observers, delete individual SliceGUIs and their collection
     if ( this->SliceGUICollection ) {
         this->SliceGUICollection->InitTraversal ( );
-        s = vtkSlicerOneSliceGUI::SafeDownCast ( this->SliceGUICollection->GetNextItemAsObject ( ) );
+        s = vtkSlicerSliceGUI::SafeDownCast ( this->SliceGUICollection->GetNextItemAsObject ( ) );
         while ( s != NULL ) {
-            nexts = vtkSlicerOneSliceGUI::SafeDownCast (this->SliceGUICollection->GetNextItemAsObject ( ) );
+            nexts = vtkSlicerSliceGUI::SafeDownCast (this->SliceGUICollection->GetNextItemAsObject ( ) );
             this->SliceGUICollection->RemoveItem ( s );
             s->RemoveGUIObservers ( );
             s->SetModuleLogic ( NULL );
@@ -74,7 +74,7 @@ vtkSlicerSlicesGUI::~vtkSlicerSlicesGUI ( )
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerSlicesGUI::AddSliceGUI ( vtkSlicerOneSliceGUI *s )
+void vtkSlicerSlicesGUI::AddSliceGUI ( vtkSlicerSliceGUI *s )
 {
 
     // Create if it doesn't exist already
@@ -88,7 +88,7 @@ void vtkSlicerSlicesGUI::AddSliceGUI ( vtkSlicerOneSliceGUI *s )
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerSlicesGUI::AddAndObserveSliceGUI ( vtkSlicerOneSliceGUI *s )
+void vtkSlicerSlicesGUI::AddAndObserveSliceGUI ( vtkSlicerSliceGUI *s )
 {
 
     this->AddSliceGUI ( s );
@@ -98,14 +98,14 @@ void vtkSlicerSlicesGUI::AddAndObserveSliceGUI ( vtkSlicerOneSliceGUI *s )
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerSlicesGUI::RemoveSliceGUI ( vtkSlicerOneSliceGUI *s )
+void vtkSlicerSlicesGUI::RemoveSliceGUI ( vtkSlicerSliceGUI *s )
 {
 
     // Remove observers, remove from collection and delete
     if ( this->SliceGUICollection && s != NULL )
         {
             this->SliceGUICollection->InitTraversal ( );
-            vtkSlicerOneSliceGUI *g = vtkSlicerOneSliceGUI::SafeDownCast ( this->SliceGUICollection->GetNextItemAsObject ( ) );
+            vtkSlicerSliceGUI *g = vtkSlicerSliceGUI::SafeDownCast ( this->SliceGUICollection->GetNextItemAsObject ( ) );
             while ( g != NULL ) {
                 if ( g == s )
                     {
@@ -114,17 +114,17 @@ void vtkSlicerSlicesGUI::RemoveSliceGUI ( vtkSlicerOneSliceGUI *s )
                         g->Delete ( );
                         break;
                     }
-                g = vtkSlicerOneSliceGUI::SafeDownCast (this->SliceGUICollection->GetNextItemAsObject ( ) );
+                g = vtkSlicerSliceGUI::SafeDownCast (this->SliceGUICollection->GetNextItemAsObject ( ) );
             }
         }
 }
 
 
 //---------------------------------------------------------------------------
-vtkSlicerOneSliceGUI* vtkSlicerSlicesGUI::GetSliceGUI ( int SliceGUINum )
+vtkSlicerSliceGUI* vtkSlicerSlicesGUI::GetSliceGUI ( int SliceGUINum )
     {
     // get slicewidget 0, 1, 2
-    return ( (vtkSlicerOneSliceGUI::SafeDownCast(this->SliceGUICollection->GetItemAsObject( SliceGUINum ) ) ) );
+    return ( (vtkSlicerSliceGUI::SafeDownCast(this->SliceGUICollection->GetItemAsObject( SliceGUINum ) ) ) );
 }
 
 
@@ -132,18 +132,18 @@ vtkSlicerOneSliceGUI* vtkSlicerSlicesGUI::GetSliceGUI ( int SliceGUINum )
 
 
 //---------------------------------------------------------------------------
-vtkSlicerOneSliceGUI* vtkSlicerSlicesGUI::GetSliceGUI ( char *SliceGUIColor )
+vtkSlicerSliceGUI* vtkSlicerSlicesGUI::GetSliceGUI ( char *SliceGUIColor )
     {
     // get slicewidget red, yellow, green
     if ( SliceGUIColor == "r" || SliceGUIColor == "R" )
         {
-            return ( vtkSlicerOneSliceGUI::SafeDownCast(this->SliceGUICollection->GetItemAsObject( 0 )));
+            return ( vtkSlicerSliceGUI::SafeDownCast(this->SliceGUICollection->GetItemAsObject( 0 )));
         } else if ( SliceGUIColor == "g" || SliceGUIColor == "G")
             {
-                return ( vtkSlicerOneSliceGUI::SafeDownCast(this->SliceGUICollection->GetItemAsObject( 1 )));
+                return ( vtkSlicerSliceGUI::SafeDownCast(this->SliceGUICollection->GetItemAsObject( 1 )));
             } else if ( SliceGUIColor == "y" || SliceGUIColor == "Y" )
                 {
-                    return ( vtkSlicerOneSliceGUI::SafeDownCast(this->SliceGUICollection->GetItemAsObject( 2 )));
+                    return ( vtkSlicerSliceGUI::SafeDownCast(this->SliceGUICollection->GetItemAsObject( 2 )));
                 } else {
                         return NULL;
                 }
@@ -159,11 +159,11 @@ void vtkSlicerSlicesGUI::AddGUIObservers ( )
     if ( this->SliceGUICollection )
         {
             this->SliceGUICollection->InitTraversal ( );
-            vtkSlicerOneSliceGUI *g = vtkSlicerOneSliceGUI::SafeDownCast ( this->SliceGUICollection->GetNextItemAsObject ( ) );
+            vtkSlicerSliceGUI *g = vtkSlicerSliceGUI::SafeDownCast ( this->SliceGUICollection->GetNextItemAsObject ( ) );
             while ( g != NULL ) {
                 {
                     g->AddGUIObservers ( );
-                    g = vtkSlicerOneSliceGUI::SafeDownCast (this->SliceGUICollection->GetNextItemAsObject ( ) );
+                    g = vtkSlicerSliceGUI::SafeDownCast (this->SliceGUICollection->GetNextItemAsObject ( ) );
                 }
             }
         }
@@ -178,11 +178,11 @@ void vtkSlicerSlicesGUI::RemoveGUIObservers ( )
     if ( this->SliceGUICollection )
         {
             this->SliceGUICollection->InitTraversal ( );
-            vtkSlicerOneSliceGUI *g = vtkSlicerOneSliceGUI::SafeDownCast ( this->SliceGUICollection->GetNextItemAsObject ( ) );
+            vtkSlicerSliceGUI *g = vtkSlicerSliceGUI::SafeDownCast ( this->SliceGUICollection->GetNextItemAsObject ( ) );
             while ( g != NULL )
                 {
                     g->RemoveGUIObservers ( );
-                    g = vtkSlicerOneSliceGUI::SafeDownCast (this->SliceGUICollection->GetNextItemAsObject ( ) );
+                    g = vtkSlicerSliceGUI::SafeDownCast (this->SliceGUICollection->GetNextItemAsObject ( ) );
                 }
         }
     }

@@ -37,50 +37,50 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesGUI : public vtkSlicerModuleGUI
     // (Each SliceGUI contains a SliceViewerWidget,
     // SliceControllerWidget, a SliceLogic pointer and
     // a SliceNode pointer.)
-    vtkGetObjectMacro ( MainSliceGUI0, vtkSlicerOneSliceGUI );
-    vtkGetObjectMacro ( MainSliceGUI1, vtkSlicerOneSliceGUI );
-    vtkGetObjectMacro ( MainSliceGUI2, vtkSlicerOneSliceGUI );
+    vtkGetObjectMacro ( MainSliceGUI0, vtkSlicerSliceGUI );
+    vtkGetObjectMacro ( MainSliceGUI1, vtkSlicerSliceGUI );
+    vtkGetObjectMacro ( MainSliceGUI2, vtkSlicerSliceGUI );
     
     // Description:
     // API for setting a SliceNode or SliceLogic in one of the sliceGUIs
     // in the SliceGUICollection.
     void SetMRMLNode ( int sliceGUINum, vtkMRMLSliceNode *node)
         {
-            vtkSlicerOneSliceGUI *g;
-            g = vtkSlicerOneSliceGUI::SafeDownCast(this->SliceGUICollection->GetItemAsObject (sliceGUINum ));
+            vtkSlicerSliceGUI *g;
+            g = vtkSlicerSliceGUI::SafeDownCast(this->SliceGUICollection->GetItemAsObject (sliceGUINum ));
             g->SetMRMLNode ( node );
         }
     void SetAndObserveMRMLNode ( int sliceGUINum, vtkMRMLSliceNode *node )
         {
-            vtkSlicerOneSliceGUI *g;
-            g = vtkSlicerOneSliceGUI::SafeDownCast(this->SliceGUICollection->GetItemAsObject (sliceGUINum ));
+            vtkSlicerSliceGUI *g;
+            g = vtkSlicerSliceGUI::SafeDownCast(this->SliceGUICollection->GetItemAsObject (sliceGUINum ));
             g->SetAndObserveMRMLNode ( node );
         }
     void SetModuleLogic ( int sliceGUINum, vtkSlicerSliceLogic *logic )
         {
-            vtkSlicerOneSliceGUI *g;
-            g = vtkSlicerOneSliceGUI::SafeDownCast(this->SliceGUICollection->GetItemAsObject (sliceGUINum ));
+            vtkSlicerSliceGUI *g;
+            g = vtkSlicerSliceGUI::SafeDownCast(this->SliceGUICollection->GetItemAsObject (sliceGUINum ));
             g->SetModuleLogic ( logic );
         }
     void SetAndObserveModuleLogic ( int sliceGUINum, vtkSlicerSliceLogic *logic )
         {
-            vtkSlicerOneSliceGUI *g;
-            g = vtkSlicerOneSliceGUI::SafeDownCast(this->SliceGUICollection->GetItemAsObject (sliceGUINum ));
+            vtkSlicerSliceGUI *g;
+            g = vtkSlicerSliceGUI::SafeDownCast(this->SliceGUICollection->GetItemAsObject (sliceGUINum ));
             g->SetAndObserveModuleLogic ( logic );
         }
 
     // Description:
     // Add/Remove a SliceGUI to the SliceGUI Collection.
-    virtual void AddSliceGUI ( vtkSlicerOneSliceGUI *s );
-    virtual void AddAndObserveSliceGUI ( vtkSlicerOneSliceGUI *s );
-    virtual void RemoveSliceGUI (vtkSlicerOneSliceGUI *s );
+    virtual void AddSliceGUI ( vtkSlicerSliceGUI *s );
+    virtual void AddAndObserveSliceGUI ( vtkSlicerSliceGUI *s );
+    virtual void RemoveSliceGUI (vtkSlicerSliceGUI *s );
     
     // Description:
     // Returns a pointer to a Slice GUI contained in the SliceGUICollection
     // Given its number (0,1,2...) or, if it's one of the first three Slice GUIs
     // given its color (r, y, g, or R, Y, G).
-    vtkSlicerOneSliceGUI* GetSliceGUI ( int SliceGUINum );
-    vtkSlicerOneSliceGUI* GetSliceGUI ( char *SliceGUIColor );
+    vtkSlicerSliceGUI* GetSliceGUI ( int SliceGUINum );
+    vtkSlicerSliceGUI* GetSliceGUI ( char *SliceGUIColor );
 
     // Description:
     // Build the SlicesGUI's UIPanel and three main SliceGUIs 
@@ -112,9 +112,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesGUI : public vtkSlicerModuleGUI
 
     // Description:
     // Three slice widgets by default.
-    vtkSlicerOneSliceGUI *MainSliceGUI0;
-    vtkSlicerOneSliceGUI *MainSliceGUI1;
-    vtkSlicerOneSliceGUI *MainSliceGUI2;
+    vtkSlicerSliceGUI *MainSliceGUI0;
+    vtkSlicerSliceGUI *MainSliceGUI1;
+    vtkSlicerSliceGUI *MainSliceGUI2;
 
     // Description:
     // Collection of the above and other slice GUIs

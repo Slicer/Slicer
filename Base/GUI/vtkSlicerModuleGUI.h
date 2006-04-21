@@ -18,8 +18,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleGUI : public vtkSlicerComponentG
 {
 
  public:
-    static vtkSlicerModuleGUI* New ( ) { return NULL; } ;
+    static vtkSlicerModuleGUI* New ( );
     vtkTypeRevisionMacro ( vtkSlicerModuleGUI, vtkKWObject );
+    void PrintSelf (ostream& os, vtkIndent indent );
 
     // Description:
     // Get/Set pointers to the ApplicationLogic

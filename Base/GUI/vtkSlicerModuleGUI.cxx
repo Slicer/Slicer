@@ -5,6 +5,7 @@
 
 //---------------------------------------------------------------------------
 vtkCxxRevisionMacro(vtkSlicerModuleGUI, "$Revision: 1.0 $");
+vtkStandardNewMacro ( vtkSlicerModuleGUI );
 
 //---------------------------------------------------------------------------
 vtkSlicerModuleGUI::vtkSlicerModuleGUI ( ) {
@@ -24,6 +25,13 @@ vtkSlicerModuleGUI::~vtkSlicerModuleGUI ( ) {
     }
 }
 
+//---------------------------------------------------------------------------
+void vtkSlicerModuleGUI::PrintSelf ( ostream& os, vtkIndent indent )
+{
+    this->vtkObject::PrintSelf ( os, indent );
+    os << indent << "SlicerModuleGUI: " << this->GetClassName ( ) << "\n";
+    os << indent << "UIPanel: " << this->GetUIPanel ( ) << "\n";
+}
 
 
 

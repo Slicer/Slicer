@@ -1,12 +1,13 @@
 #include "vtkObject.h"
 #include "vtkObjectFactory.h"
 #include "vtkCommand.h"
-#include "vtkKWWidget.h"
+
 #include "vtkSlicerVolumesGUI.h"
 #include "vtkSlicerVolumesLogic.h"
 #include "vtkSlicerApplication.h"
-#include "vtkSlicerModuleLogic.h"
-#include "vtkSlicerStyle.h"
+#include "vtkMRMLVolumeNode.h"
+
+#include "vtkKWWidget.h"
 #include "vtkKWFrameWithLabel.h"
 #include "vtkKWFrame.h"
 
@@ -16,157 +17,119 @@ vtkCxxRevisionMacro ( vtkSlicerVolumesGUI, "$Revision: 1.0 $");
 
 
 //---------------------------------------------------------------------------
-vtkSlicerVolumesGUI::vtkSlicerVolumesGUI ( ) {
+vtkSlicerVolumesGUI::vtkSlicerVolumesGUI ( )
+{
 
-    //this->SetLogic ( NULL );
     this->LoadVolumeButton = NULL;
+    this->Logic = NULL;
+    this->VolumeNode = NULL;
 }
 
 
 //---------------------------------------------------------------------------
-vtkSlicerVolumesGUI::~vtkSlicerVolumesGUI ( ) {
+vtkSlicerVolumesGUI::~vtkSlicerVolumesGUI ( )
+{
 
-    if (this->LoadVolumeButton ) {
-        this->LoadVolumeButton->Delete ( );
-        this->LoadVolumeButton = NULL;
-    }
-    //this->SetLogic ( NULL );
+    if (this->LoadVolumeButton )
+        {
+            this->LoadVolumeButton->Delete ( );
+            this->LoadVolumeButton = NULL;
+        }
+    this->SetModuleLogic ( NULL );
+    this->SetMRMLNode ( NULL );
 }
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerVolumesGUI::RemoveGUIObservers ( ) {
+void vtkSlicerVolumesGUI::PrintSelf ( ostream& os, vtkIndent indent )
+{
+    this->vtkObject::PrintSelf ( os, indent );
 
-    this->LoadVolumeButton->RemoveObservers ( vtkCommand::ModifiedEvent,  (vtkCommand *)this->GUICommand);    
+    os << indent << "SlicerVolumesGUI: " << this->GetClassName ( ) << "\n";
+    os << indent << "VolumeNode: " << this->GetVolumeNode ( ) << "\n";
+    os << indent << "Logic: " << this->GetLogic ( ) << "\n";
+    // print widgets?
 }
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerVolumesGUI::AddGUIObservers ( ) {
+void vtkSlicerVolumesGUI::RemoveGUIObservers ( )
+{
+    // Fill in
+    this->LoadVolumeButton->RemoveObservers ( vtkCommand::ModifiedEvent,  (vtkCommand *)this->GUICallbackCommand );
+}
 
+
+//---------------------------------------------------------------------------
+void vtkSlicerVolumesGUI::AddGUIObservers ( )
+{
+
+    // Fill in
     // observer load volume button
-    this->LoadVolumeButton->AddObserver ( vtkCommand::ModifiedEvent,  (vtkCommand *)this->GUICommand );    
+this->LoadVolumeButton->AddObserver ( vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
 }
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerVolumesGUI::AddLogicObserver ( vtkSlicerModuleLogic *logic, int event ) {
-    // Fill in
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerVolumesGUI::RemoveLogicObserver ( vtkSlicerModuleLogic *logic, int event ) {
-    // Fill in
-}
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerVolumesGUI::AddLogicObservers ( ) {
-    // Fill in
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerVolumesGUI::RemoveLogicObservers ( ) {
-    // Fill in
-}
- 
-//---------------------------------------------------------------------------
-void vtkSlicerVolumesGUI::AddMRMLObserver ( vtkMRMLNode *node, int event ) {
-    // Fill in
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerVolumesGUI::RemoveMRMLObserver ( vtkMRMLNode *node, int event ) {
-    // Fill in
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerVolumesGUI::AddMRMLObservers ( ) {
-    // Fill in
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerVolumesGUI::RemoveMRMLObservers ( ) {
-    // Fill in
-}
-
-
-    /*
-//---------------------------------------------------------------------------
-void vtkSlicerVolumesGUI::SetLogic ( vtkSlicerVolumesLogic *logic ) {
-
-    // Don't bother if already set.
-    if ( logic == this->Logic ) {
-        return;
-    }
-    // Remove observers from application logic
-    if ( this->Logic != NULL ) {
-        this->RemoveLogicObservers ( );
-    }
-    // Set pointer and add observers if not null
-    this->Logic = logic;
-    if ( this->Logic != NULL ) {
-        this->AddLogicObservers ( );
-    }
-}
-     */
 
 
 //---------------------------------------------------------------------------
 void vtkSlicerVolumesGUI::ProcessGUIEvents ( vtkObject *caller,
-                                                     unsigned long event,
-                                                     void *callData ) 
+                                             unsigned long event, void *callData )
 {
-  vtkKWLoadSaveButton *filebrowse = vtkKWLoadSaveButton::SafeDownCast(caller);
-  if (filebrowse == this->LoadVolumeButton  && event == vtkCommand::ModifiedEvent )
-    {
-    // If a file has been selected for loading...
-    if ( filebrowse->GetFileName ( ) ) 
-      {
-      vtkSlicerVolumesLogic* volumeLogic = vtkSlicerVolumesLogic::SafeDownCast(this->Logic);
-      
-      if (volumeLogic->AddArchetypeVolume( filebrowse->GetFileName ( ) ) == NULL) 
+
+    // Fill in
+    vtkKWLoadSaveButton *filebrowse = vtkKWLoadSaveButton::SafeDownCast(caller);
+    if (filebrowse == this->LoadVolumeButton  && event == vtkCommand::ModifiedEvent )
         {
-        
-        }
+            // If a file has been selected for loading...
+            if ( filebrowse->GetFileName ( ) ) 
+                {
+                    vtkSlicerVolumesLogic* volumeLogic = this->Logic;
       
-      }
-    }
+                    if (volumeLogic->AddArchetypeVolume( filebrowse->GetFileName ( ) ) == NULL) 
+                        {
+        
+                        }
+      
+                }
+        }
 }
 
 
 
 //---------------------------------------------------------------------------
 void vtkSlicerVolumesGUI::ProcessLogicEvents ( vtkObject *caller,
-                                                     unsigned long event,
-                                                     void *callData ) {
+                                               unsigned long event, void *callData )
+{
     // Fill in
 }
 
 //---------------------------------------------------------------------------
 void vtkSlicerVolumesGUI::ProcessMRMLEvents ( vtkObject *caller,
-                                              unsigned long event,
-                                              void *callData ) {
+                                              unsigned long event, void *callData )
+{
     // Fill in
 }
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerVolumesGUI::Enter ( ) {
+void vtkSlicerVolumesGUI::Enter ( )
+{
     // Fill in
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerVolumesGUI::Exit ( ) {
+void vtkSlicerVolumesGUI::Exit ( )
+{
     // Fill in
 }
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerVolumesGUI::BuildGUI ( ) {
-
+void vtkSlicerVolumesGUI::BuildGUI ( )
+{
+    // Fill in *placeholder GUI*
+    
     vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-    vtkSlicerStyle *style = app->GetSlicerStyle();
+
     // ---
     // MODULE GUI FRAME 
     // configure a page for a volume loading UI for now.

@@ -13,18 +13,14 @@
 =========================================================================auto=*/
 // .NAME vtkSlicerApplicationGUI 
 // .SECTION Description
-// Main application GUI for slicer3.  Points to the ApplicationLogic and
-// reflects changes in that logic back onto the UI.  Also routes changes
-// from the GUI into the Logic to effect the user's desires.
-
+// Main application GUI and mediator methods for slicer3.  
 
 #ifndef __vtkSlicerApplicationGUI_h
 #define __vtkSlicerApplicationGUI_h
 
 #include "vtkSlicerBaseGUIWin32Header.h"
 #include "vtkSlicerComponentGUI.h"
-#include "vtkSlicerVolumesGUI.h"
-#include "vtkSlicerModelsGUI.h"
+
 #include "vtkKWWindow.h"
 #include "vtkKWMenuButton.h"
 #include "vtkKWFrame.h"
@@ -39,8 +35,11 @@ class vtkKWPushButton;
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerComponentGUI
 {
  public:
+    // Description:
+    // Usual vtk class functions
     static vtkSlicerApplicationGUI* New (  );
     vtkTypeRevisionMacro ( vtkSlicerApplicationGUI, vtkSlicerComponentGUI );
+    void PrintSelf ( ostream& os, vtkIndent indent );
 
     // Description:
     // Get/Set Macros for protected vtkSlicerApplicationGUI dimensions
@@ -97,16 +96,21 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // Description:
     // This method builds Slicer's main GUI
     virtual void BuildGUI ( );
+
+    // Description:
+    // Add/Remove observers on widgets in Slicer's main GUI
     virtual void AddGUIObservers ( );
     virtual void RemoveGUIObservers ( );
-    virtual void AddLogicObservers ( );
-    virtual void RemoveLogicObservers ( );
 
-    virtual void ProcessLogicEvents ( vtkObject *caller, unsigned long event,
-                                            void *callData );
-    virtual void ProcessGUIEvents ( vtkObject *caller, unsigned long event,
-                                           void *callData );
+    // Description:
+    // Class's mediator methods for processing events invoked by
+    // the Logic, MRML or GUI objects observed.
+    virtual void ProcessLogicEvents ( vtkObject *caller, unsigned long event, void *callData );
+    virtual void ProcessGUIEvents ( vtkObject *caller, unsigned long event, void *callData );
+    virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
     
+    // Description:
+    // Methods describe behavior on startup and exit.
     virtual void Enter ( );
     virtual void Exit ( );
     

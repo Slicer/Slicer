@@ -15,6 +15,15 @@
 #include <sstream>
 #include "vtkCommand.h"
 #include "vtkCornerAnnotation.h"
+#include "vtkObjectFactory.h"
+#include "vtkToolkits.h"
+// things for temporary MainViewer teapot display.
+#include "vtkActor.h"
+#include "vtkRenderer.h"
+#include "vtkPolyDataMapper.h"
+#include "vtkRenderWindow.h"
+#include "vtkXMLPolyDataReader.h"
+
 #include "vtkKWApplication.h"
 #include "vtkKWFrame.h"
 #include "vtkKWMenu.h"
@@ -25,25 +34,16 @@
 #include "vtkKWUserInterfacePanel.h"
 #include "vtkKWWidget.h"
 #include "vtkKWWindow.h"
-#include "vtkKWWindow.h"
-#include "vtkKWRenderWidget.h"
+
 #include "vtkKWSplitFrame.h"
 #include "vtkKWUserInterfaceManagerNotebook.h"
-#include "vtkObjectFactory.h"
-#include "vtkRenderWindow.h"
+
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerApplicationGUI.h"
 #include "vtkSlicerApplicationGUI.h"
 #include "vtkSlicerApplicationLogic.h"
+#include "vtkSlicerModuleGUI.h"
 #include "vtkSlicerStyle.h"
-#include "vtkToolkits.h"
-// things for temporary MainViewer teapot display.
-#include "vtkActor.h"
-#include "vtkRenderer.h"
-#include "vtkKWRenderWidget.h"
-#include "vtkPolyDataMapper.h"
-#include "vtkRenderWindow.h"
-#include "vtkXMLPolyDataReader.h"
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerApplicationGUI);
@@ -51,9 +51,8 @@ vtkCxxRevisionMacro(vtkSlicerApplicationGUI, "$Revision: 1.0 $");
 
 
 //---------------------------------------------------------------------------
-vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  ) {
-
-
+vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
+{
     //---  
     // widgets used in the Slice module
     this->MainSlicerWin = vtkKWWindow::New ( );
@@ -84,10 +83,10 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  ) {
 
 
 //---------------------------------------------------------------------------
-vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( ) {
+vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
+{
 
     this->RemoveGUIObservers ( );
-    this->RemoveLogicObservers ( );
 
     this->DeleteGUIPanelWidgets ( );
     this->DeleteFrames ( );
@@ -104,52 +103,49 @@ vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( ) {
 }
 
 
+//---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::PrintSelf ( ostream& os, vtkIndent indent )
+{
+    this->vtkObject::PrintSelf ( os, indent );
+
+    os << indent << "SlicerApplicationGUI: " << this->GetClassName ( ) << "\n";
+    os << indent << "MainViewer: " << this->GetMainViewer ( ) << "\n";
+    os << indent << "MainSlicerWin: " << this->GetMainSlicerWin ( ) << "\n";
+    // print widgets?
+}
+
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::AddGUIObservers ( ) {
+void vtkSlicerApplicationGUI::AddGUIObservers ( )
+{
 
     // add observers onto the buttons and menubutton in the SlicerControl frame
-    this->HomeButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICommand );
-    this->DataButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICommand );
-    this->VolumesButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICommand );
-    this->ModelsButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICommand );
-    this->ModulesButton->AddObserver (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICommand );
+    this->HomeButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->DataButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->VolumesButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->ModelsButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->ModulesButton->AddObserver (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
 
 }
-
-
-
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::AddLogicObservers ( ) {
-
+void vtkSlicerApplicationGUI::RemoveGUIObservers ( )
+{
+    this->HomeButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->DataButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->VolumesButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->ModelsButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->ModulesButton->RemoveObservers (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
 }
 
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::RemoveGUIObservers ( ) {
-
-    this->HomeButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICommand );
-    this->DataButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICommand );
-    this->VolumesButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICommand );
-    this->ModelsButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICommand );
-    this->ModulesButton->RemoveObservers (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICommand );    
-}
-
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::RemoveLogicObservers ( ) {
-}
 
 
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::ProcessGUIEvents ( vtkObject *caller,
-                                                   unsigned long event,
-                                                   void *callData ) {
+                                                 unsigned long event, void *callData )
+{
     
     // This code is just a placeholder until the logic is set up to use properly:
     // For now, the GUI controls the GUI instead of going thru the logic...
@@ -213,23 +209,33 @@ void vtkSlicerApplicationGUI::ProcessGUIEvents ( vtkObject *caller,
 
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::ProcessLogicEvents ( vtkObject *caller,
-                                                   unsigned long event,
-                                                   void *callData ) {
-
-}
-
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::Enter ( ) {
+                                                   unsigned long event, void *callData )
+{
+    // Fill in
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::Exit ( ) {
+void vtkSlicerApplicationGUI::ProcessMRMLEvents ( vtkObject *caller,
+                                                  unsigned long event, void *callData )
+{
+    // Fill in
+}
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::Enter ( )
+{
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::BuildGUI ( ) {
+void vtkSlicerApplicationGUI::Exit ( )
+{
+}
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::BuildGUI ( )
+{
 
     // Set up the conventional window: 3Dviewer, slice widgets, UI panel for now.
     if ( this->GetApplication() != NULL ) {
@@ -268,7 +274,8 @@ void vtkSlicerApplicationGUI::BuildGUI ( ) {
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::DisplayMainSlicerWindow ( ) {
+void vtkSlicerApplicationGUI::DisplayMainSlicerWindow ( )
+{
 
     this->MainSlicerWin->Display ( );
 }
@@ -279,7 +286,8 @@ void vtkSlicerApplicationGUI::DisplayMainSlicerWindow ( ) {
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::DeleteGUIPanelWidgets ( ) {
+void vtkSlicerApplicationGUI::DeleteGUIPanelWidgets ( )
+{
     if ( this->HomeButton ) {
         this->HomeButton->Delete ();
         this->HomeButton = NULL;
@@ -303,7 +311,8 @@ void vtkSlicerApplicationGUI::DeleteGUIPanelWidgets ( ) {
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::DeleteFrames ( ) {
+void vtkSlicerApplicationGUI::DeleteFrames ( )
+{
     if ( this->LogoFrame ) {
         this->LogoFrame->Delete ();
         this->LogoFrame = NULL;
@@ -337,7 +346,8 @@ void vtkSlicerApplicationGUI::DeleteFrames ( ) {
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::InitDefaultGUIPanelDimensions ( ) {
+void vtkSlicerApplicationGUI::InitDefaultGUIPanelDimensions ( )
+{
     // specify dims of GUI Panel components here for now.
     this->SetDefaultLogoFrameHeight ( 40 );
     this->SetDefaultSlicerControlFrameHeight ( 60 );
@@ -355,7 +365,8 @@ void vtkSlicerApplicationGUI::InitDefaultGUIPanelDimensions ( ) {
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::InitDefaultSlicePanelDimensions ( ) {
+void vtkSlicerApplicationGUI::InitDefaultSlicePanelDimensions ( )
+{
     // constrain the slice windows to be a particular size
     this->SetDefaultSliceGUIFrameHeight ( 120 );
     this->SetDefaultSliceGUIFrameWidth ( 102 );
@@ -366,7 +377,8 @@ void vtkSlicerApplicationGUI::InitDefaultSlicePanelDimensions ( ) {
 
 }
 //---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::InitDefaultMainViewerDimensions ( ) {
+void vtkSlicerApplicationGUI::InitDefaultMainViewerDimensions ( )
+{
     int h = this->GetDefaultLogoFrameHeight ( ) +
         this->GetDefaultSlicerControlFrameHeight ( ) +
         this->GetDefaultModuleControlPanelHeight ( ) +
@@ -380,7 +392,8 @@ void vtkSlicerApplicationGUI::InitDefaultMainViewerDimensions ( ) {
 
     
 //---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::InitDefaultSlicerWindowDimensions ( ) {
+void vtkSlicerApplicationGUI::InitDefaultSlicerWindowDimensions ( )
+{
 
     int hbuf = 10;
     int vbuf = 60;
@@ -400,7 +413,8 @@ void vtkSlicerApplicationGUI::InitDefaultSlicerWindowDimensions ( ) {
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::BuildMainViewer ( ) {
+void vtkSlicerApplicationGUI::BuildMainViewer ( )
+{
 
     if ( this->GetApplication() != NULL ) {
         vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
@@ -431,13 +445,15 @@ void vtkSlicerApplicationGUI::BuildMainViewer ( ) {
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::BuildLogoGUIPanel ( ) {
+void vtkSlicerApplicationGUI::BuildLogoGUIPanel ( )
+{
 }
 
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::BuildSlicerControlGUIPanel ( ) {
+void vtkSlicerApplicationGUI::BuildSlicerControlGUIPanel ( )
+{
     const char* mName;
     vtkSlicerModuleGUI *m;
     
@@ -493,19 +509,22 @@ void vtkSlicerApplicationGUI::BuildSlicerControlGUIPanel ( ) {
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::BuildSliceControlGUIPanel ( ) {
+void vtkSlicerApplicationGUI::BuildSliceControlGUIPanel ( )
+{
 }
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::BuildViewControlGUIPanel ( ) {
+void vtkSlicerApplicationGUI::BuildViewControlGUIPanel ( )
+{
 }
 
 
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::ConfigureMainSlicerWindow ( ) {
+void vtkSlicerApplicationGUI::ConfigureMainSlicerWindow ( )
+{
 
     if ( this->GetApplication() != NULL ) {
         vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
@@ -524,7 +543,8 @@ void vtkSlicerApplicationGUI::ConfigureMainSlicerWindow ( ) {
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::ConfigureMainViewerPanel ( ) {
+void vtkSlicerApplicationGUI::ConfigureMainViewerPanel ( )
+{
     if ( this->GetApplication() != NULL ) {
         // pointers for convenience
         vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
@@ -538,7 +558,8 @@ void vtkSlicerApplicationGUI::ConfigureMainViewerPanel ( ) {
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::ConfigureSliceViewersPanel ( ) {
+void vtkSlicerApplicationGUI::ConfigureSliceViewersPanel ( )
+{
     if ( this->GetApplication() != NULL ) {
         // pointers for convenience
         vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
@@ -581,7 +602,8 @@ void vtkSlicerApplicationGUI::ConfigureSliceViewersPanel ( ) {
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::ConfigureGUIPanel ( ) {
+void vtkSlicerApplicationGUI::ConfigureGUIPanel ( )
+{
 
     if ( this->GetApplication() != NULL ) {
         // pointers for convenience
