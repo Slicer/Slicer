@@ -201,17 +201,7 @@ void vtkSlicerSlicesGUI::ProcessGUIEvents ( vtkObject *caller,
 void vtkSlicerSlicesGUI::ProcessLogicEvents ( vtkObject *caller,
                                              unsigned long event, void *callData )
 {
-    vtkSlicerApplicationLogic *appLogic = vtkSlicerApplicationLogic::SafeDownCast ( caller );
-
-    if ( appLogic = this->GetApplicationLogic () )
-        {
-            // get activeVolumeID
-        }
-    else
-        {
-            // maybe a sliceLogic has thrown a modified event
-            // search thru SliceGUICollection to see which sLogic
-        }
+    // Fill in
 }
  
 

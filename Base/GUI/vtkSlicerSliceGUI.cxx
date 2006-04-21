@@ -181,48 +181,57 @@ void vtkSlicerSliceGUI::ProcessLogicEvents ( vtkObject *caller,
 {
     // process Logic changes
     vtkSlicerSliceLogic *n = vtkSlicerSliceLogic::SafeDownCast(caller);
-
+    vtkSlicerApplicationLogic *a = vtkSlicerApplicationLogic::SafeDownCast ( caller );
     
-    if ( event == vtkCommand::ModifiedEvent && n == this->GetLogic ( ) ) {
-        vtkSlicerSliceController *c = this->GetSliceController( );
-        // UPDATE THE FOV ENTRY
-        double fov = this->GetSliceNode()->GetFieldOfView()[0];
-        char fovstring[80];
-        sprintf (fovstring, "%g", fov);
-        c->GetFieldOfViewEntry()->GetWidget()->SetValue(fovstring);
-        c->GetFieldOfViewEntry()->Modified();
+    if ( a == this->GetApplicationLogic ( ) )
+        {
+            // get active VolumeID
+            // is this different from the ID of volume in the BG?
+            // if so, make the change
+            // and update the pipeline
+        }
+    else
+        {
+            if ( n == this->GetLogic ( ) ) {
+                vtkSlicerSliceController *c = this->GetSliceController( );
+                // UPDATE THE FOV ENTRY
+                double fov = this->GetSliceNode()->GetFieldOfView()[0];
+                char fovstring[80];
+                sprintf (fovstring, "%g", fov);
+                c->GetFieldOfViewEntry()->GetWidget()->SetValue(fovstring);
+                c->GetFieldOfViewEntry()->Modified();
 
-        // UPDATE THE SCALE
-        double fovover2 = this->GetSliceNode()->GetFieldOfView()[2] / 2.;
-        c->GetOffsetScale()->SetRange ( -fovover2, fovover2 );
-        // TODO: set the scale value from the translation part
-        // of the matrix with rotation. 
-        // Set the scale from the Offset in the matrix.
-        vtkMatrix4x4 *m = n->GetSliceNode()->GetSliceToRAS();
-        c->GetOffsetScale()->SetValue ( m->GetElement(2,3) );
-        c->GetOffsetScale()->Modified();
+                // UPDATE THE SCALE
+                double fovover2 = this->GetSliceNode()->GetFieldOfView()[2] / 2.;
+                c->GetOffsetScale()->SetRange ( -fovover2, fovover2 );
+                // TODO: set the scale value from the translation part
+                // of the matrix with rotation. 
+                // Set the scale from the Offset in the matrix.
+                vtkMatrix4x4 *m = n->GetSliceNode()->GetSliceToRAS();
+                c->GetOffsetScale()->SetValue ( m->GetElement(2,3) );
+                c->GetOffsetScale()->Modified();
         
-        vtkSlicerSliceViewer *v = this->GetSliceViewer( );
-        // UPDATE IMAGE VIEWER
-        vtkImageViewer2 *iv = v->GetImageViewer ();
-        vtkKWRenderWidget *rw = v->GetRenderWidget ();
-        if ( n->GetImageData() != NULL )
-            {
-                iv->SetInput ( n->GetImageData( ) );
-            }
-        else
-            {
-                iv->SetInput (NULL);
-            }
-        iv->Render();
-        // configure window, level, camera, etc.
-        rw->ResetCamera ( );
-        vtkCornerAnnotation *ca = rw->GetCornerAnnotation ( );
-        ca->SetImageActor (iv->GetImageActor ( ) );
-        v->Modified ();
+                vtkSlicerSliceViewer *v = this->GetSliceViewer( );
+                // UPDATE IMAGE VIEWER
+                vtkImageViewer2 *iv = v->GetImageViewer ();
+                vtkKWRenderWidget *rw = v->GetRenderWidget ();
+                if ( n->GetImageData() != NULL )
+                    {
+                        iv->SetInput ( n->GetImageData( ) );
+                    }
+                else
+                    {
+                        iv->SetInput (NULL);
+                    }
+                iv->Render();
+                // configure window, level, camera, etc.
+                rw->ResetCamera ( );
+                vtkCornerAnnotation *ca = rw->GetCornerAnnotation ( );
+                ca->SetImageActor (iv->GetImageActor ( ) );
+                v->Modified ();
 
-    }
-
+            }
+        }
 }
 
 //---------------------------------------------------------------------------
