@@ -44,8 +44,18 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerLogic : public vtkObject
 
   // Description
   // All logic classes need to know about the current mrml scene
-  vtkSetObjectMacro (MRMLScene, vtkMRMLScene);
   vtkGetObjectMacro (MRMLScene, vtkMRMLScene);
+
+  // Description:
+  // API for setting or setting and observing MRMLScene
+  void SetMRMLScene ( vtkMRMLScene *mrml )
+      {
+          this->SetMRML ( vtkObjectPointer( &this->MRMLScene), mrml );
+      }
+  void SetAndObserveMRMLScene ( vtkMRMLScene *mrml )
+      {
+          this->SetMRML ( vtkObjectPointer( &this->MRMLScene), mrml );
+      }
 
   virtual void ProcessMRMLEvents() {};
   virtual void ProcessLogicEvents() {};
@@ -69,9 +79,10 @@ protected:
   static void LogicCallback(vtkObject *__mrmlslice, 
                 unsigned long eid, void *__clientData, void *callData);
 
-  void vtkSlicerLogic::SetMRML(vtkObject **nodePtr, vtkObject *node);
-
-  void vtkSlicerLogic::SetAndObserveMRML(vtkObject **nodePtr, vtkObject *node);
+  // functions that set MRML for the Logic class,
+  // either with or without adding/removing observers on them.
+  void SetMRML(vtkObject **nodePtr, vtkObject *node);
+  void SetAndObserveMRML(vtkObject **nodePtr, vtkObject *node);
   //ETX
 
   // Description:

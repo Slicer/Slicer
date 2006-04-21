@@ -123,6 +123,7 @@ void vtkSlicerLogic::SetMRML(vtkObject **nodePtr, vtkObject *node)
 {
   if ( *nodePtr  )
     {
+    (*nodePtr)->RemoveObservers( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
     (*nodePtr)->Delete();
     }
   
