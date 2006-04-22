@@ -98,26 +98,26 @@
       <description>Print out all of the version info and continue</description>
       </string>
 
-      <string>
+      <boolean>
       <name>Stereo</name>
       <longflag>--stereo</longflag>
       <description>Set the flag to allow use of frame sequential stereo</description>
       <default>false</default>
-      </string>
+      </boolean>
 
-      <string>
+      <boolean>
       <name>OldVoxelShift</name>
       <longflag>--old_voxel_shift</longflag>
       <description>start slicer with voxel coords in corner not center of image pixel</description>
       <default>false</default>
-      </string>
+      </boolean>
 
-      <string>
+      <boolean>
       <name>ImmediateMode</name>
       <longflag>--immediate_mode</longflag>
       <description>Turn on immediate mode rendering (slower)</description>
       <default>false</default>
-      </string>
+      </boolean>
 
 
     </parameters>
