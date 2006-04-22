@@ -265,17 +265,19 @@ void vtkSlicerSliceGUI::BuildGUI ( vtkKWFrame *f )
 
     this->SliceController->SetApplication ( app );
     this->SliceController->SetParent ( f );
-    this->SliceController->Create ( );
+    this->SliceController->Create (  );
     this->SliceViewer->SetApplication ( app );
     this->SliceViewer->SetParent ( f );
-    this->SliceViewer->Create ( );
+    this->SliceViewer->Create (  );
 
     // pack 
     this->Script("pack %s -pady 0 -side top -expand false -fill x", SliceController->GetControlFrame()->GetWidgetName() );
+    this->Script("pack %s -anchor c -side top -expand true -fill both", SliceViewer->GetRenderWidget()->GetWidgetName());
+
+    this->Script("pack %s -side bottom -expand false -fill x", SliceController->GetOffsetScale()->GetWidgetName());
     this->Script("pack %s -pady 2 -padx 2 -side right -expand false", SliceController->GetFieldOfViewEntry()->GetWidgetName());
     this->Script("pack %s -pady 2 -padx 2 -side right -expand false", SliceController->GetOrientationMenu()->GetWidgetName());
-    this->Script("pack %s -side top -expand false -fill x", SliceController->GetOffsetScale()->GetWidgetName());
-    this->Script("pack %s -anchor c -side top -expand true -fill both", SliceViewer->GetRenderWidget()->GetWidgetName());
+
 
 }
 
