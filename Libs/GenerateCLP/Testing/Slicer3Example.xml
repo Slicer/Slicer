@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Application</category>
+  <title>Slicer3</title>
+  <description>The ultimate 3D Segmentation, Registration and Visualization System</description>
+  <version>1.0</version>
+  <documentationurl></documentationurl>
+  <license></license>
+  <contributor>NA-MIC</contributor>
+
+  <parameters>
+    <label>Command Line Parameters</label>
+    <description>Parameters used to start up Slicer3</description>
+
+      <boolean>
+      <name>Threads</name>
+      <longflag>--no_threads</longflag>
+      <description>Disables multi threading</description>
+      <default>false</default>
+      </boolean>
+
+      <boolean>
+      <name>Tkcon</name>
+      <longflag>--no_tkon</longflag>
+      <description>Disables tk console</description>
+      <default>false</default>
+      </boolean>
+
+      <string>
+      <name>LoadDicomDir</name>
+      <longflag>--load_dicom</longflag>
+      <description>Read dicom files from dir</description>
+      </string>
+
+      <string>
+      <name>LoadFreeSurferVolume</name>
+      <longflag>--load_freesurfer_volume</longflag>
+      <description>Read freesurfer file</description>
+      </string>
+
+      <string>
+      <name>LoadFreeSurferLabelVolume</name>
+      <longflag>--load_freesurfer_label_volume</longflag>
+      <description>Read freesurfer label file</description>
+      </string>
+
+      <string>
+      <name>LoadFreeSurferModel</name>
+      <longflag>--load_freesurfer_model</longflag>
+      <description>Read freesurfer model file</description>
+      </string>
+
+      <string>
+      <name>LoadFreeSurferScalar</name>
+      <longflag>--load_freesurfer_scalar</longflag>
+      <description>Read freesurfer scalar file</description>
+      </string>
+
+      <string>
+      <name>LoadFreeSurferAnnot</name>
+      <longflag>--load_freesurfer_annot</longflag>
+      <description>Read freesurfer annotation file</description>
+      </string>
+
+      <string>
+      <name>LoadFreeSurferQA</name>
+      <longflag>--load_freesurfer_qa</longflag>
+      <description>Read freesurfer QA subjects.csh file</description>
+      </string>
+
+      <string>
+      <name>LoadBXH</name>
+      <longflag>--load_bxh</longflag>
+      <description>Read bxh file</description>
+      </string>
+
+      <string>
+      <name>Script</name>
+      <longflag>--script</longflag>
+      <description>Script to execute after slicer loads</description>
+      </string>
+
+      <string>
+      <name>Exec</name>
+      <longflag>--exec</longflag>
+      <description>Some code to execute after slicer loads. (note: cannot specify scene after --exec) (note: use ,. instead of ; between tcl statements)</description>
+      </string>
+
+      <string>
+      <name>Eval</name>
+      <longflag>--eval</longflag>
+      <description>Like --exec, but doesn't load slicer first</description>
+      </string>
+
+      <string>
+      <name>AllInfo</name>
+      <longflag>--all_info</longflag>
+      <description>Print out all of the version info and continue</description>
+      </string>
+
+      <string>
+      <name>Stereo</name>
+      <longflag>--stereo</longflag>
+      <description>Set the flag to allow use of frame sequential stereo</description>
+      <default>false</default>
+      </string>
+
+      <string>
+      <name>OldVoxelShift</name>
+      <longflag>--old_voxel_shift</longflag>
+      <description>start slicer with voxel coords in corner not center of image pixel</description>
+      <default>false</default>
+      </string>
+
+      <string>
+      <name>ImmediateMode</name>
+      <longflag>--immediate_mode</longflag>
+      <description>Turn on immediate mode rendering (slower)</description>
+      <default>false</default>
+      </string>
+
+
+    </parameters>
+
+</executable>
