@@ -16,7 +16,6 @@
 
 #include "vtkSlicerBaseGUIWin32Header.h"
 #include "vtkSlicerModuleGUI.h"
-#include "vtkSlicerSliceWidgetCollection.h"
 
 #include "vtkMRMLScene.h"
 #include "vtkGradientAnisotropicDiffusionFilterLogic.h"
@@ -24,6 +23,7 @@
 
 class vtkSlicerSliceWidget;
 class vtkKWFrame;
+class vtkKWScaleWithEntry;
 class vtkKWPushButton;
 class vtkSlicerVolumeSelectGUI;
 
@@ -39,11 +39,10 @@ class VTK_GRADIENTANISOTROPICDIFFUSIONFILTER_EXPORT vtkGradientAnisotropicDiffus
   vtkSetObjectMacro (Logic, vtkGradientAnisotropicDiffusionFilterLogic);
   
   virtual void BuildGUI ( );
+
   virtual void AddGUIObservers ( );
-  virtual void RemoveGUIObservers ( ){};
-  virtual void AddLogicObservers ( ){};
-  virtual void RemoveLogicObservers ( ){};
-  virtual void RemoveMrmlObservers ( ){};
+  
+  virtual void RemoveGUIObservers ( );
   
   virtual void ProcessLogicEvents ( vtkObject *caller, unsigned long event,
                                   void *callData ){};
@@ -51,6 +50,10 @@ class VTK_GRADIENTANISOTROPICDIFFUSIONFILTER_EXPORT vtkGradientAnisotropicDiffus
                                   void *callData );
   virtual void ProcessMrmlEvents ( vtkObject *caller, unsigned long event,
                                    void *callData );
+  // Description:
+  // Describe behavior at module startup and exit.
+  virtual void Enter ( ){};
+  virtual void Exit ( ){};
 
 protected:
   vtkGradientAnisotropicDiffusionFilterGUI();

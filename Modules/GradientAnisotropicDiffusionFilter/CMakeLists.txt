@@ -4,9 +4,9 @@ PROJECT(GradientAnisotropicDiffusionFilter)
 # Sources
 
 SET(GradientAnisotropicDiffusionFilter_SRCS
-#  vtkGradientAnisotropicDiffusionFilterLogic.cxx
-#  vtkGradientAnisotropicDiffusionFilterGUI.cxx
-#  vtkMRMLGradientAnisotropicDiffusionFilterNode.cxx
+  vtkGradientAnisotropicDiffusionFilterLogic.cxx
+  vtkGradientAnisotropicDiffusionFilterGUI.cxx
+  vtkMRMLGradientAnisotropicDiffusionFilterNode.cxx
 )
 
 # Abstract/pure virtual classes
