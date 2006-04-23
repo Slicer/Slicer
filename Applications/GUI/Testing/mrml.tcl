@@ -118,7 +118,7 @@ proc mrmlMatrices {} {
     $::matrices Create
     $::matrices SetTitle "Matrices"
     $::matrices Display
-    $::matrices SetGeometry 240x1100+730+15
+#    $::matrices SetGeometry 240x1100+730+15
 
     $::matrices SetDeleteWindowProtocolCommand "" "set ::matrices {}"
 
@@ -126,37 +126,37 @@ proc mrmlMatrices {} {
     $::XYToSliceFrame SetParent $::matrices
     $::XYToSliceFrame Create
     $::XYToSliceFrame SetLabelText "XYToSlice"
-    pack [$::XYToSliceFrame GetWidgetName] -side top -anchor nw -expand true -fill both -padx 2 -pady 2
+    pack [$::XYToSliceFrame GetWidgetName] -side top -anchor nw -expand false -fill none -padx 2 -pady 2
 
     set ::XYToSlice [vtkKWMatrix4x4 New]
     $::XYToSlice SetParent [$::XYToSliceFrame GetFrame]
     $::XYToSlice Create
     $::XYToSlice SetMatrix4x4 [$::slicen GetXYToSlice]
-    pack [$::XYToSlice GetWidgetName] -side top -anchor nw -expand true -fill both -padx 2 -pady 2
+    pack [$::XYToSlice GetWidgetName] -side top -anchor nw -expand false -fill none -padx 2 -pady 2
 
     set ::SliceToRASFrame [vtkKWFrameWithLabel New]
     $::SliceToRASFrame SetParent $::matrices
     $::SliceToRASFrame Create
     $::SliceToRASFrame SetLabelText "SliceToRAS"
-    pack [$::SliceToRASFrame GetWidgetName] -side top -anchor nw -expand true -fill both -padx 2 -pady 2
+    pack [$::SliceToRASFrame GetWidgetName] -side top -anchor nw -expand false -fill none -padx 2 -pady 2
 
     set ::SliceToRAS [vtkKWMatrix4x4 New]
     $::SliceToRAS SetParent [$::SliceToRASFrame GetFrame]
     $::SliceToRAS Create
     $::SliceToRAS SetMatrix4x4 [$::slicen GetSliceToRAS]
-    pack [$::SliceToRAS GetWidgetName] -side top -anchor nw -expand true -fill both -padx 2 -pady 2
+    pack [$::SliceToRAS GetWidgetName] -side top -anchor nw -expand false -fill none -padx 2 -pady 2
 
     set ::XYToRASFrame [vtkKWFrameWithLabel New]
     $::XYToRASFrame SetParent $::matrices
     $::XYToRASFrame Create
     $::XYToRASFrame SetLabelText "XYToRAS"
-    pack [$::XYToRASFrame GetWidgetName] -side top -anchor nw -expand true -fill both -padx 2 -pady 2
+    pack [$::XYToRASFrame GetWidgetName] -side top -anchor nw -expand false -fill none -padx 2 -pady 2
 
     set ::XYToRAS [vtkKWMatrix4x4 New]
     $::XYToRAS SetParent [$::XYToRASFrame GetFrame]
     $::XYToRAS Create
     $::XYToRAS SetMatrix4x4 [$::slicen GetXYToRAS]
-    pack [$::XYToRAS GetWidgetName] -side top -anchor nw -expand true -fill both -padx 2 -pady 2
+    pack [$::XYToRAS GetWidgetName] -side top -anchor nw -expand false -fill none -padx 2 -pady 2
 
     set ::RASToIJKMatrixbg [vtkMatrix4x4 New]
 
@@ -164,32 +164,32 @@ proc mrmlMatrices {} {
     $::RASToIJKFrame SetParent $::matrices
     $::RASToIJKFrame Create
     $::RASToIJKFrame SetLabelText "Bg RASToIJK"
-    pack [$::RASToIJKFrame GetWidgetName] -side top -anchor nw -expand true -fill both -padx 2 -pady 2
+    pack [$::RASToIJKFrame GetWidgetName] -side top -anchor nw -expand false -fill none -padx 2 -pady 2
 
     set ::RASToIJK [vtkKWMatrix4x4 New]
     $::RASToIJK SetParent [$::RASToIJKFrame GetFrame]
     $::RASToIJK Create
     $::RASToIJK SetMatrix4x4 $::RASToIJKMatrixbg
-    pack [$::RASToIJK GetWidgetName] -side top -anchor nw -expand true -fill both -padx 2 -pady 2
+    pack [$::RASToIJK GetWidgetName] -side top -anchor nw -expand false -fill none -padx 2 -pady 2
 
     set ::XYToIJKFrame [vtkKWFrameWithLabel New]
     $::XYToIJKFrame SetParent $::matrices
     $::XYToIJKFrame Create
     $::XYToIJKFrame SetLabelText "Bg XYToIJK"
-    pack [$::XYToIJKFrame GetWidgetName] -side top -anchor nw -expand true -fill both -padx 2 -pady 2
+    pack [$::XYToIJKFrame GetWidgetName] -side top -anchor nw -expand false -fill none -padx 2 -pady 2
 
     set ::XYToIJK [vtkKWMatrix4x4 New]
     $::XYToIJK SetParent [$::XYToIJKFrame GetFrame]
     $::XYToIJK Create
     $::XYToIJK SetMatrix4x4 [[$::slicebgl GetXYToIJKTransform] GetMatrix]
-    pack [$::XYToIJK GetWidgetName] -side top -anchor nw -expand true -fill both -padx 2 -pady 2
+    pack [$::XYToIJK GetWidgetName] -side top -anchor nw -expand false -fill none -padx 2 -pady 2
 
     set ::matricesDismiss [vtkKWPushButton New]
     $::matricesDismiss SetParent $::matrices
     $::matricesDismiss Create
     $::matricesDismiss SetText "Dismiss"
     $::matricesDismiss SetCommand "" "$::matrices Delete; set ::matrices {}"
-    pack [$::matricesDismiss GetWidgetName] -side top -anchor nw -expand true -fill both -padx 2 -pady 2
+    pack [$::matricesDismiss GetWidgetName] -side top -anchor nw -expand y -fill x -padx 2 -pady 2
     
 }
 

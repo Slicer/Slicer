@@ -64,11 +64,14 @@ void vtkKWMatrix4x4::Create()
 
   this->MultiColumnList->SetParent(this);
   this->MultiColumnList->Create();
+  this->MultiColumnList->SetHeight(4);
+  this->MultiColumnList->SetSelectionTypeToCell();
 
   int col;
   for (col = 0; col < 4; col++)
     {
     this->MultiColumnList->AddColumn(" ");
+    this->MultiColumnList->SetColumnWidth(col, 7);
     this->MultiColumnList->SetColumnAlignmentToCenter(col);
     this->MultiColumnList->ColumnEditableOn(col);
     }
