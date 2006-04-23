@@ -19,8 +19,8 @@
 #include "vtkSlicerModelsGUI.h"
 #include "vtkSlicerDataGUI.h"
 
-//#include "vtkGradientAnisotropicDiffusionFilterLogic.h"
-//#include "vtkGradientAnisotropicDiffusionFilterGUI.h"
+#include "vtkGradientAnisotropicDiffusionFilterLogic.h"
+#include "vtkGradientAnisotropicDiffusionFilterGUI.h"
 
 #include <vtksys/SystemTools.hxx>
 
@@ -30,8 +30,8 @@ extern "C" int Slicerbaselogic_Init(Tcl_Interp *interp);
 extern "C" int Mrml_Init(Tcl_Interp *interp);
 extern "C" int Vtkitk_Init(Tcl_Interp *interp);
 
-//TODO remove temporary
-//extern "C" int Gradientanisotropicdiffusionfilter_Init(Tcl_Interp *interp);
+//TODO added temporary
+extern "C" int Gradientanisotropicdiffusionfilter_Init(Tcl_Interp *interp);
 
 int Slicer3_main(int argc, char *argv[])
 {
@@ -50,9 +50,8 @@ int Slicer3_main(int argc, char *argv[])
     Slicerbaselogic_Init(interp);
     Mrml_Init(interp);
     Vtkitk_Init(interp);
-
-    //TODO remove temporary
-    //    Gradientanisotropicdiffusionfilter_Init(interp);
+    //TODO added temporary
+    Gradientanisotropicdiffusionfilter_Init(interp);
 
     // Create SlicerGUI application, style, and main window 
     vtkSlicerApplication *slicerApp = vtkSlicerApplication::New ( );
@@ -148,10 +147,10 @@ int Slicer3_main(int argc, char *argv[])
     slicerApp->AddModuleGUI ( slicesGUI );
     
     // --- Gradient anisotropic diffusion filter module
-    /*
+    
     vtkGradientAnisotropicDiffusionFilterGUI *gradientAnisotropicDiffusionFilterGUI = vtkGradientAnisotropicDiffusionFilterGUI::New ( );
     vtkGradientAnisotropicDiffusionFilterLogic *gradientAnisotropicDiffusionFilterLogic  = vtkGradientAnisotropicDiffusionFilterLogic::New ( );
-    gradientAnisotropicDiffusionFilterLogic->SetMRML ( vtkObjectPointer (&volumesLogic->MRMLScene), scene );
+    gradientAnisotropicDiffusionFilterLogic->SetAndObserveMRMLScene ( scene );
     //    gradientAnisotropicDiffusionFilterLogic->SetMRMLScene(scene);
     gradientAnisotropicDiffusionFilterGUI->SetLogic ( gradientAnisotropicDiffusionFilterLogic );
     gradientAnisotropicDiffusionFilterGUI->SetApplication ( slicerApp );
@@ -161,7 +160,7 @@ int Slicer3_main(int argc, char *argv[])
     gradientAnisotropicDiffusionFilterGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWin()->GetMainUserInterfaceManager ( ) );
     gradientAnisotropicDiffusionFilterGUI->GetUIPanel()->Create ( );
     slicerApp->AddModuleGUI ( gradientAnisotropicDiffusionFilterGUI );
-    */
+
     
     // ------------------------------
     // BUILD APPLICATION GUI
@@ -190,8 +189,8 @@ int Slicer3_main(int argc, char *argv[])
     slicesGUI->SetModuleLogic ( 2, sliceLogic2);
 
     // ---
-    //    gradientAnisotropicDiffusionFilterGUI->BuildGUI ( );
-    //    gradientAnisotropicDiffusionFilterGUI->AddGUIObservers ( );
+    gradientAnisotropicDiffusionFilterGUI->BuildGUI ( );
+    gradientAnisotropicDiffusionFilterGUI->AddGUIObservers ( );
     
     // ------------------------------
     // CONFIGURE SlICER'S SHARED GUI PANEL
