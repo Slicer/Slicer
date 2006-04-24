@@ -25,7 +25,7 @@ Version:   $Revision: 1.2 $
 #include "vtkKWWidget.h"
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerApplicationLogic.h"
-#include "vtkSlicerVolumeSelectGUI.h"
+#include "vtkSlicerNodeSelectorWidget.h"
 #include "vtkKWScaleWithEntry.h"
 #include "vtkKWEntryWithLabel.h"
 #include "vtkKWMenuButtonWithLabel.h"
@@ -59,7 +59,7 @@ vtkGradientAnisotropicDiffusionFilterGUI::vtkGradientAnisotropicDiffusionFilterG
   this->ConductanceScale = vtkKWScaleWithEntry::New();
   this->TimeStepScale = vtkKWScaleWithEntry::New();
   this->NumberOfIterationsScale = vtkKWScaleWithEntry::New();
-  this->VolumeSelector = vtkSlicerVolumeSelectGUI::New();
+  this->VolumeSelector = vtkSlicerNodeSelectorWidget::New();
   this->ApplyButton = vtkKWPushButton::New();
   this->Logic = NULL;
 
@@ -125,7 +125,7 @@ void vtkGradientAnisotropicDiffusionFilterGUI::ProcessGUIEvents ( vtkObject *cal
   }
 
   vtkKWScaleWithEntry *s = vtkKWScaleWithEntry::SafeDownCast(caller);
-  vtkSlicerVolumeSelectGUI *v = vtkSlicerVolumeSelectGUI::SafeDownCast(caller);
+  vtkSlicerNodeSelectorWidget *v = vtkSlicerNodeSelectorWidget::SafeDownCast(caller);
   vtkKWPushButton *b = vtkKWPushButton::SafeDownCast(caller);
 
   if ( s == this->ConductanceScale && event == vtkCommand::ModifiedEvent ) {
@@ -212,9 +212,19 @@ void vtkGradientAnisotropicDiffusionFilterGUI::BuildGUI ( )
   app->Script("pack %s -side top -anchor w -padx 2 -pady 4", 
                 this->NumberOfIterationsScale->GetWidgetName());
 
+  this->VolumeSelector->SetNodeClass("vtkMRMLScalarVolumeNode");
   this->VolumeSelector->SetParent( moduleFrame->GetFrame() );
   this->VolumeSelector->Create();
   this->VolumeSelector->SetMRMLScene(this->Logic->GetMRMLScene());
+  this->VolumeSelector->UpdateMenu();
+
+  this->VolumeSelector->SetBorderWidth(2);
+  this->VolumeSelector->SetReliefToGroove();
+  this->VolumeSelector->SetLabelText("Days:");
+  this->VolumeSelector->SetPadX(2);
+  this->VolumeSelector->SetPadY(2);
+  this->VolumeSelector->GetWidget()->GetWidget()->IndicatorVisibilityOff();
+  this->VolumeSelector->GetWidget()->GetWidget()->SetWidth(20);
   this->VolumeSelector->SetLabelText( "Volume Select: ");
   this->VolumeSelector->SetBalloonHelpString("select a volume from the current mrml scene.");
   app->Script("pack %s -side top -anchor w -padx 2 -pady 4", 
