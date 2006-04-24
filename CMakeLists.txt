@@ -1,5 +1,5 @@
 PROJECT( Slicer3 )
-CMAKE_MINIMUM_REQUIRED(VERSION 2.0)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.2)
 MARK_AS_ADVANCED(CMAKE_BACKWARDS_COMPATIBILITY)
 
 #-----------------------------------------------------------------------------
