@@ -36,6 +36,7 @@ SET(LIB_SRCS
   vtkSlicerApplicationGUI.cxx
     
   vtkSlicerVolumeSelectGUI.cxx
+  vtkSlicerNodeSelectorWidget.cxx
   vtkSlicerSliceControlGUI.cxx
   # Widgets
   vtkKWMatrix4x4.cxx
