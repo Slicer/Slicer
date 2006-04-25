@@ -211,6 +211,12 @@ int Slicer3_main(int argc, char *argv[])
 
     // ------------------------------
     // REMOVE OBSERVERS
+    gradientAnisotropicDiffusionFilterGUI->RemoveGUIObservers ( );
+    gradientAnisotropicDiffusionFilterGUI->SetMRMLScene ( NULL );    
+    gradientAnisotropicDiffusionFilterGUI->SetApplicationLogic ( NULL );
+    //gradientAnisotropicDiffusionFilterGUI->SetMRMLNode ( NULL );
+    //gradientAnisotropicDiffusionFilterGUI->SetModuleLogic ( NULL );
+
     volumesGUI->RemoveGUIObservers ( );
     volumesGUI->SetModuleLogic ( NULL );
     volumesGUI->SetApplicationLogic ( NULL );
@@ -252,17 +258,20 @@ int Slicer3_main(int argc, char *argv[])
 
     //--- logic
     appLogic->Delete ();
+    gradientAnisotropicDiffusionFilterLogic->Delete ();
     volumesLogic->Delete();
     sliceLogic0->Delete ();
     sliceLogic1->Delete ();
     sliceLogic2->Delete ();
     
     //--- gui
+    gradientAnisotropicDiffusionFilterGUI->Delete ();
     volumesGUI->Delete ();
     modelsGUI->Delete ();
     dataGUI->Delete ();
     slicesGUI->Delete ();
     appGUI->Delete ();
+    
     slicerApp->Delete ();
 
     return res;
