@@ -534,6 +534,9 @@ void vtkSlicerApplicationGUI::ConfigureMainSlicerWindow ( )
             this->MainSlicerWin->SetSize ( this->GetDefaultSlicerWindowWidth ( ),
                            this->GetDefaultSlicerWindowHeight () );
             //            this->MainSlicerWin->GetMainSplitFrame()->SetFrame1MinimumSize( this->GetDefaultSlicerWindowWidth ( ) );
+            // Configure the minimum width of Slicer's GUI panel.
+            // Panel can be expanded and collapsed entirely, but
+            // can't be resized by hand to a value smaller than what's set.
             this->MainSlicerWin->GetMainSplitFrame()->SetFrame1Size (325 );
             this->MainSlicerWin->GetMainSplitFrame()->SetFrame1MinimumSize (325 );
         }
