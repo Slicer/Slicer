@@ -68,6 +68,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerComponentGUI : public vtkKWObject
         { this->SetLogic ( vtkObjectPointer (&this->ApplicationLogic), logic ); }
     
     // Description:
+    // Add/Remove observers on a GUI.
+    virtual void AddGUIObservers ( ) { };
+    virtual void RemoveGUIObservers ( ) { };
+    
+    // Description:
     // Get/Set the name of the GUI, used to find and raise a GUI.
     vtkSetStringMacro ( GUIName );
     vtkGetStringMacro ( GUIName );
