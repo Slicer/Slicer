@@ -10,10 +10,11 @@
 #include "vtkSlicerBaseGUIWin32Header.h"
 #include "vtkKWApplication.h"
 #include "vtkSlicerStyle.h"
+#include "vtkSlicerGUILayout.h"
 #include "vtkSlicerGUICollection.h"
 
-class vtkSlicerModuleGUI;
 
+class vtkSlicerModuleGUI;
 
 // Description:
 // Contains slicer's style, application and collection of associated guis.
@@ -26,6 +27,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
 
     vtkGetObjectMacro ( SlicerStyle, vtkSlicerStyle );
     vtkSetObjectMacro ( SlicerStyle, vtkSlicerStyle );
+    vtkGetObjectMacro ( MainLayout, vtkSlicerGUILayout );
     
     vtkGetObjectMacro ( ModuleGUICollection, vtkSlicerGUICollection );
 
@@ -48,6 +50,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
     ~vtkSlicerApplication ( );
 
     vtkSlicerStyle *SlicerStyle;
+    vtkSlicerGUILayout *MainLayout;
 
     // Description:
     // Collections of GUIs

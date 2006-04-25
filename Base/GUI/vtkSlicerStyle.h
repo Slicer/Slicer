@@ -119,6 +119,7 @@ class vtkSlicerStyle : public vtkObject
     int WriteCascadingStyleSheet (char * filename);
     
  protected:
+    
     // Font and text
     vtkSlicerFont *Fonts;
     

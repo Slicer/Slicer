@@ -53,6 +53,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGUILayout : public vtkObject
     vtkSetMacro ( DefaultSliceControlFrameHeight, int );
     vtkGetMacro ( DefaultViewControlFrameHeight, int );
     vtkSetMacro ( DefaultViewControlFrameHeight, int );
+    vtkGetMacro ( SliceViewerMinDim, int );
+    vtkSetMacro ( SliceViewerMinDim, int );
 
     virtual void InitializeLayout ( );
     
@@ -81,6 +83,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGUILayout : public vtkObject
     int DefaultSliceControlFrameHeight;    
     int DefaultViewControlFrameHeight;
 
+    // Description:
+    // Minimum size for the Slice Windows
+    int SliceViewerMinDim;
+    
  private:
     vtkSlicerGUILayout ( const vtkSlicerGUILayout& ); // Not implemented
     void operator = ( const vtkSlicerGUILayout& ); // Not implemented

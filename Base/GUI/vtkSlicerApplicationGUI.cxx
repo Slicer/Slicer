@@ -74,9 +74,7 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
     this->ModelsButton = vtkKWPushButton::New();
     this->ModulesButton = vtkKWMenuButton::New();
     this->MainViewer = vtkKWRenderWidget::New ( );
-    this->MainLayout = vtkSlicerGUILayout::New ( );
     
-    this->MainLayout->InitializeLayout ( );
 }
 
 
@@ -239,6 +237,8 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
     // Set up the conventional window: 3Dviewer, slice widgets, UI panel for now.
     if ( this->GetApplication() != NULL ) {
         vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
+
+        app->GetMainLayout()->InitializeLayout ( );
 
         if ( this->MainSlicerWin != NULL ) {
 
@@ -460,12 +460,12 @@ void vtkSlicerApplicationGUI::ConfigureMainSlicerWindow ( )
 {
 
     if ( this->GetApplication() != NULL ) {
-        vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
+        vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication() );
         if ( this->MainSlicerWin != NULL ) {
             this->MainSlicerWin->MainPanelVisibilityOn ();
             this->MainSlicerWin->SecondaryPanelVisibilityOn ();
-            this->MainSlicerWin->SetSize ( this->MainLayout->GetDefaultSlicerWindowWidth ( ),
-                           this->MainLayout->GetDefaultSlicerWindowHeight () );
+            this->MainSlicerWin->SetSize ( app->GetMainLayout()->GetDefaultSlicerWindowWidth ( ),
+                           app->GetMainLayout()->GetDefaultSlicerWindowHeight () );
             //            this->MainSlicerWin->GetMainSplitFrame()->SetFrame1MinimumSize( this->GetDefaultSlicerWindowWidth ( ) );
             // Configure the minimum width of Slicer's GUI panel.
             // Panel can be expanded and collapsed entirely, but
@@ -483,11 +483,11 @@ void vtkSlicerApplicationGUI::ConfigureMainViewerPanel ( )
 {
     if ( this->GetApplication() != NULL ) {
         // pointers for convenience
-        vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
+        vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication() );
 
 
         if ( this->MainSlicerWin != NULL ) {
-            this->MainSlicerWin->GetViewPanelFrame()->SetWidth ( this->MainLayout->GetDefaultMainViewerWidth() );
+            this->MainSlicerWin->GetViewPanelFrame()->SetWidth ( app->GetMainLayout()->GetDefaultMainViewerWidth() );
         }
     }
 
@@ -498,14 +498,14 @@ void vtkSlicerApplicationGUI::ConfigureSliceViewersPanel ( )
 {
     if ( this->GetApplication() != NULL ) {
         // pointers for convenience
-        vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
+        vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication() );
 
         this->MainSlicerWin->GetSecondarySplitFrame()->SetFrame2Size (120);
         this->MainSlicerWin->GetSecondarySplitFrame()->SetFrame2MinimumSize (120);
         
         if ( this->MainSlicerWin != NULL ) {
-            this->MainSlicerWin->GetSecondaryPanelFrame()->SetWidth ( 3 * this->MainLayout->GetDefaultSliceGUIFrameWidth () );
-            this->MainSlicerWin->GetSecondaryPanelFrame()->SetHeight ( this->MainLayout->GetDefaultSliceGUIFrameHeight () );
+            this->MainSlicerWin->GetSecondaryPanelFrame()->SetWidth ( 3 * app->GetMainLayout()->GetDefaultSliceGUIFrameWidth () );
+            this->MainSlicerWin->GetSecondaryPanelFrame()->SetHeight ( app->GetMainLayout()->GetDefaultSliceGUIFrameHeight () );
 
             // Parent and configure Slice0 frame
             this->DefaultSlice0Frame->SetParent ( this->MainSlicerWin->GetSecondaryPanelFrame ( ) );
@@ -536,22 +536,22 @@ void vtkSlicerApplicationGUI::ConfigureGUIPanel ( )
 
     if ( this->GetApplication() != NULL ) {
         // pointers for convenience
-        vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
+        vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication() );
 
         if ( this->MainSlicerWin != NULL ) {
 
-            this->MainSlicerWin->GetMainPanelFrame()->SetWidth ( this->MainLayout->GetDefaultGUIPanelWidth() );
-            this->MainSlicerWin->GetMainPanelFrame()->SetHeight ( this->MainLayout->GetDefaultGUIPanelHeight() );
+            this->MainSlicerWin->GetMainPanelFrame()->SetWidth ( app->GetMainLayout()->GetDefaultGUIPanelWidth() );
+            this->MainSlicerWin->GetMainPanelFrame()->SetHeight ( app->GetMainLayout()->GetDefaultGUIPanelHeight() );
 
             this->LogoFrame->SetParent ( this->MainSlicerWin->GetMainPanelFrame ( ) );
             this->LogoFrame->Create( );
             this->LogoFrame->SetReliefToGroove ( );
-            this->LogoFrame->SetHeight ( this->MainLayout->GetDefaultLogoFrameHeight ( ) );
+            this->LogoFrame->SetHeight ( app->GetMainLayout()->GetDefaultLogoFrameHeight ( ) );
 
             this->SlicerControlFrame->SetParent ( this->MainSlicerWin->GetMainPanelFrame ( ) );
             this->SlicerControlFrame->Create( );
             this->SlicerControlFrame->SetReliefToGroove ( );
-            this->SlicerControlFrame->SetHeight ( this->MainLayout->GetDefaultSlicerControlFrameHeight ( ) );
+            this->SlicerControlFrame->SetHeight ( app->GetMainLayout()->GetDefaultSlicerControlFrameHeight ( ) );
 
             // pack logo and slicer control frames
             app->Script ( "pack %s -side top -fill x -padx 0 -pady 0", this->LogoFrame->GetWidgetName() );
@@ -560,12 +560,12 @@ void vtkSlicerApplicationGUI::ConfigureGUIPanel ( )
             this->SliceControlFrame->SetParent ( this->MainSlicerWin->GetMainPanelFrame ( ) );
             this->SliceControlFrame->Create( );
             this->SliceControlFrame->SetReliefToGroove ( );
-            this->SliceControlFrame->SetHeight ( this->MainLayout->GetDefaultSliceControlFrameHeight ( ) );
+            this->SliceControlFrame->SetHeight ( app->GetMainLayout()->GetDefaultSliceControlFrameHeight ( ) );
             
             this->ViewControlFrame->SetParent ( this->MainSlicerWin->GetMainPanelFrame ( ) );
             this->ViewControlFrame->Create( );
             this->ViewControlFrame->SetReliefToGroove ( );
-            this->ViewControlFrame->SetHeight ( this->MainLayout->GetDefaultViewControlFrameHeight ( ) );
+            this->ViewControlFrame->SetHeight ( app->GetMainLayout()->GetDefaultViewControlFrameHeight ( ) );
             
             // pack slice and view control frames
             app->Script ( "pack %s -side bottom -fill x -padx 0 -pady 0", this->ViewControlFrame->GetWidgetName() );

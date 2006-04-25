@@ -76,6 +76,9 @@ void vtkSlicerGUILayout::InitializeLayout ( )
     this->SetDefaultSlicerWindowWidth ( w + this->GetDefaultGUIPanelWidth ( ) );
     this->SetDefaultSlicerWindowHeight ( h );
 
+    // make a minimum size for slice viewers (RenderWidget Size)
+    this->SetSliceViewerMinDim ( 10 );
+
     // TODO: 3D only layout
     
     // TODO: Lightbox layout:

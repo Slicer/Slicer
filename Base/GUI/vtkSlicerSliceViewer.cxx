@@ -48,6 +48,8 @@ vtkSlicerSliceViewer::~vtkSlicerSliceViewer ( ){
 //---------------------------------------------------------------------------
 void vtkSlicerSliceViewer::Create ( ) {
 
+    vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast ( this->GetParent()->GetApplication() );
+
     // the widget is a frame with an image viewer packed inside
     if (this->IsCreated ( ) ) {
         vtkErrorMacro ( << this->GetClassName() << "already created.");
@@ -60,8 +62,9 @@ void vtkSlicerSliceViewer::Create ( ) {
     this->RenderWidget = vtkKWRenderWidget::New ( );
     this->RenderWidget->SetParent ( this->GetParent( ) );
     this->RenderWidget->Create();
-    this->RenderWidget->SetWidth ( 10 );
-    this->RenderWidget->SetHeight ( 10 );
+    int w = app->GetMainLayout()->GetSliceViewerMinDim ( );
+    this->RenderWidget->SetWidth ( w );
+    this->RenderWidget->SetHeight ( w );
     this->RenderWidget->CornerAnnotationVisibilityOn();
     this->RenderWidget->SetBorderWidth(2);
     this->RenderWidget->SetReliefToGroove ( );

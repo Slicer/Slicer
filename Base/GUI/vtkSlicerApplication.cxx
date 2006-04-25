@@ -25,8 +25,7 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
     this->ModuleGUICollection = vtkSlicerGUICollection::New ( );
     this->SlicerStyle = vtkSlicerStyle::New ( );
     vtkKWFrameWithLabel::SetDefaultLabelFontWeightToNormal( );
-
-
+    this->MainLayout = vtkSlicerGUILayout::New ( );
 }
 
 
@@ -45,7 +44,11 @@ vtkSlicerApplication::~vtkSlicerApplication ( ) {
             this->SlicerStyle->Delete ( );
             this->SlicerStyle = NULL;
         }
-
+    if ( this->MainLayout )
+        {
+            this->MainLayout->Delete ( );
+            this->MainLayout = NULL;
+        }
 
 }
 

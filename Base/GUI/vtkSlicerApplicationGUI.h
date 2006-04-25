@@ -25,7 +25,6 @@
 #include "vtkKWMenuButton.h"
 #include "vtkKWFrame.h"
 #include "vtkKWRenderWidget.h"
-#include "vtkSlicerGUILayout.h"
 
 class vtkObject;
 class vtkKWPushButton;
@@ -44,7 +43,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
 
     // Description:
     // These Get/Set methods for frames in the GUI panel.
-    vtkGetObjectMacro ( MainLayout, vtkSlicerGUILayout );
     vtkGetObjectMacro ( MainViewer, vtkKWRenderWidget );
 
     vtkGetObjectMacro ( SlicerControlFrame, vtkKWFrame );
@@ -133,9 +131,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // Description:
     // Main Slicer window
     vtkKWWindow *MainSlicerWin;
-    // Description:
-    // Contains dimensions for slicer's default layouts
-    vtkSlicerGUILayout *MainLayout;
     
  private:
     vtkSlicerApplicationGUI ( const vtkSlicerApplicationGUI& ); // Not implemented.
