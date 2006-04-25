@@ -25,6 +25,7 @@
 #include "vtkKWMenuButton.h"
 #include "vtkKWFrame.h"
 #include "vtkKWRenderWidget.h"
+#include "vtkSlicerGUILayout.h"
 
 class vtkObject;
 class vtkKWPushButton;
@@ -42,52 +43,22 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     void PrintSelf ( ostream& os, vtkIndent indent );
 
     // Description:
-    // Get/Set Macros for protected vtkSlicerApplicationGUI dimensions
-    vtkGetMacro ( DefaultSlicerWindowWidth, int );
-    vtkSetMacro ( DefaultSlicerWindowWidth, int );
-    vtkGetMacro ( DefaultSlicerWindowHeight, int );
-    vtkSetMacro ( DefaultSlicerWindowHeight, int );
-    vtkGetMacro ( DefaultMainViewerWidth, int);
-    vtkSetMacro ( DefaultMainViewerWidth, int);
-    vtkGetMacro ( DefaultMainViewerHeight, int);
-    vtkSetMacro ( DefaultMainViewerHeight, int);
-    vtkGetMacro ( DefaultSliceGUIFrameHeight, int);
-    vtkSetMacro ( DefaultSliceGUIFrameHeight, int);
-    vtkGetMacro ( DefaultSliceGUIFrameWidth, int);
-    vtkSetMacro ( DefaultSliceGUIFrameWidth, int);
-    vtkGetMacro ( DefaultSliceWindowWidth, int);
-    vtkSetMacro ( DefaultSliceWindowWidth, int);
-    vtkGetMacro ( DefaultSliceWindowHeight, int);
-    vtkSetMacro ( DefaultSliceWindowHeight, int);
-    vtkGetMacro ( DefaultGUIPanelWidth, int);
-    vtkSetMacro ( DefaultGUIPanelWidth, int);
-    vtkGetMacro ( DefaultGUIPanelHeight, int);
-    vtkSetMacro ( DefaultGUIPanelHeight, int);
-    vtkGetMacro ( DefaultLogoFrameHeight, int );
-    vtkSetMacro ( DefaultLogoFrameHeight, int );
-    vtkGetMacro ( DefaultSlicerControlFrameHeight, int );
-    vtkSetMacro ( DefaultSlicerControlFrameHeight, int );
-    vtkGetMacro ( DefaultModuleControlPanelHeight, int );
-    vtkSetMacro ( DefaultModuleControlPanelHeight, int );
-    vtkGetMacro ( DefaultSliceControlFrameHeight, int );
-    vtkSetMacro ( DefaultSliceControlFrameHeight, int );
-    vtkGetMacro ( DefaultViewControlFrameHeight, int );
-    vtkSetMacro ( DefaultViewControlFrameHeight, int );
-
-    // Description:
     // These Get/Set methods for frames in the GUI panel.
+    vtkGetObjectMacro ( MainLayout, vtkSlicerGUILayout );
+    vtkGetObjectMacro ( MainViewer, vtkKWRenderWidget );
+
     vtkGetObjectMacro ( SlicerControlFrame, vtkKWFrame );
     vtkGetObjectMacro ( SliceControlFrame, vtkKWFrame );
     vtkGetObjectMacro ( ViewControlFrame, vtkKWFrame );
+    vtkGetObjectMacro ( DefaultSlice0Frame, vtkKWFrame );
+    vtkGetObjectMacro ( DefaultSlice1Frame, vtkKWFrame );
+    vtkGetObjectMacro ( DefaultSlice2Frame, vtkKWFrame );
+
     vtkGetObjectMacro ( ModulesButton, vtkKWMenuButton );
     vtkGetObjectMacro ( HomeButton, vtkKWPushButton );
     vtkGetObjectMacro ( VolumesButton, vtkKWPushButton );
     vtkGetObjectMacro ( ModelsButton, vtkKWPushButton );
     vtkGetObjectMacro ( DataButton, vtkKWPushButton );
-    vtkGetObjectMacro ( DefaultSlice0Frame, vtkKWFrame );
-    vtkGetObjectMacro ( DefaultSlice1Frame, vtkKWFrame );
-    vtkGetObjectMacro ( DefaultSlice2Frame, vtkKWFrame );
-    vtkGetObjectMacro ( MainViewer, vtkKWRenderWidget );
 
     // Description:
     // Get/Set the main slicer window.
@@ -114,13 +85,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     virtual void Enter ( );
     virtual void Exit ( );
     
-    // Description:
-    // These methods set up default dimensions for the Slicer Window
-    virtual void InitDefaultGUIPanelDimensions ( );
-    virtual void InitDefaultSlicePanelDimensions ( );
-    virtual void InitDefaultMainViewerDimensions ( );
-    virtual void InitDefaultSlicerWindowDimensions ( );
-
     // Description:
     // These methods configure and pack the Slicer Window
     virtual void ConfigureMainSlicerWindow ( );
@@ -169,26 +133,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // Description:
     // Main Slicer window
     vtkKWWindow *MainSlicerWin;
-
     // Description:
-    // Dimensions for the Default Window & components
-    int DefaultSlicerWindowHeight;
-    int DefaultSlicerWindowWidth;
-    int DefaultMainViewerHeight;
-    int DefaultMainViewerWidth;
-    int DefaultSliceGUIFrameHeight;
-    int DefaultSliceGUIFrameWidth;
-    int DefaultSliceWindowHeight;
-    int DefaultSliceWindowWidth;
-    int DefaultGUIPanelHeight;
-    int DefaultGUIPanelWidth;
-    // Description:
-    // Dimensions for specific GUI panel components
-    int DefaultLogoFrameHeight;
-    int DefaultSlicerControlFrameHeight;
-    int DefaultModuleControlPanelHeight;
-    int DefaultSliceControlFrameHeight;    
-    int DefaultViewControlFrameHeight;
+    // Contains dimensions for slicer's default layouts
+    vtkSlicerGUILayout *MainLayout;
     
  private:
     vtkSlicerApplicationGUI ( const vtkSlicerApplicationGUI& ); // Not implemented.

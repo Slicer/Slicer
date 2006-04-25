@@ -32,8 +32,8 @@ SET(LIB_SRCS
   vtkSlicerVolumesGUI.cxx
   vtkSlicerModelsGUI.cxx
   vtkSlicerDataGUI.cxx
+  vtkSlicerGUILayout.cxx    
   vtkSlicerApplicationGUI.cxx
-    
   vtkSlicerVolumeSelectGUI.cxx
   vtkSlicerNodeSelectorWidget.cxx
   vtkSlicerSliceControlGUI.cxx
@@ -43,13 +43,13 @@ SET(LIB_SRCS
 
 # Helper classes
 
-SET_SOURCE_FILES_PROPERTIES(
-    # none yet
-  vtkSlicerGUIUpdate.cxx
-  vtkSlicerLogicUpdate.cxx
-  vtkSlicerMRMLUpdate.cxx
-  WRAP_EXCLUDE
-  )
+#SET_SOURCE_FILES_PROPERTIES(
+ # none yet
+ # vtkSlicerGUIUpdate.cxx
+ # vtkSlicerLogicUpdate.cxx
+ # vtkSlicerMRMLUpdate.cxx
+ # WRAP_EXCLUDE
+ # )
 
 INCLUDE_DIRECTORIES(
   ${SlicerBase_SOURCE_DIR}
