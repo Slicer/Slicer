@@ -11,7 +11,7 @@
 
 #include "vtkKWWidget.h"
 #include "vtkKWRenderWidget.h"
-
+#include "vtkKWFrame.h"
 
 
 //---------------------------------------------------------------------------

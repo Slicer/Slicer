@@ -7,7 +7,8 @@
 #include "vtkImageViewer2.h"
 #include "vtkKWCompositeWidget.h"
 
-                                                            
+class vtkKWFrame;
+
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceViewer : public vtkKWCompositeWidget
 {
     
