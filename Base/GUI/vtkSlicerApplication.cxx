@@ -25,7 +25,7 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
     this->ModuleGUICollection = vtkSlicerGUICollection::New ( );
     this->SlicerStyle = vtkSlicerStyle::New ( );
     vtkKWFrameWithLabel::SetDefaultLabelFontWeightToNormal( );
-    // could initialize Tcl here, no?
+
 
 }
 
@@ -34,12 +34,18 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
 vtkSlicerApplication::~vtkSlicerApplication ( ) {
 
     this->CloseAllWindows ( );
-    if ( this->ModuleGUICollection ) {
-        this->ModuleGUICollection->RemoveAllItems ( );
-        this->ModuleGUICollection->Delete ( );
-        this->ModuleGUICollection = NULL;
-    }
-    this->SetSlicerStyle(NULL);
+    if ( this->ModuleGUICollection )
+        {
+            this->ModuleGUICollection->RemoveAllItems ( );
+            this->ModuleGUICollection->Delete ( );
+            this->ModuleGUICollection = NULL;
+        }
+    if ( this->SlicerStyle )
+        {
+            this->SlicerStyle->Delete ( );
+            this->SlicerStyle = NULL;
+        }
+
 
 }
 
