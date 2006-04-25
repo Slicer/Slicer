@@ -108,18 +108,20 @@ void vtkSlicerNodeSelectorWidget::UpdateMenu()
     vtkKWMenuButton *mb = this->GetWidget()->GetWidget();
     vtkKWMenu *m = mb->GetMenu();
 
-    int index;
     m->DeleteAllItems();
 
+    bool selected = false;
     vtkMRMLNode *node;
-    int nth_rank = 0;
     this->MRMLScene->InitTraversal();
     while ( (node = this->MRMLScene->GetNextNodeByClass(this->NodeClass) ) != NULL)
       {
-      // TODO: figure out how to use the ID instead of the name as the menu indicator
       this->GetWidget()->GetWidget()->GetMenu()->AddRadioButton(node->GetName());
-      m->SetItemSelectedValueAsInt(0, nth_rank++);
+      if (!selected)
+      {
+        this->GetWidget()->GetWidget()->SetValue(node->GetName());
+        selected = true;
       }
+    }
 
 
 }
