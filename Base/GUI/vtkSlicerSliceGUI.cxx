@@ -8,7 +8,7 @@
 
 #include "vtkSlicerSliceGUI.h"
 #include "vtkSlicerSliceViewer.h"
-#include "vtkSlicerSliceController.h"
+#include "vtkSlicerSliceControllerWidget.h"
 #include "vtkSlicerSliceLogic.h"
 #include "vtkSlicerApplication.h"
 #include "vtkMRMLSliceNode.h"
@@ -34,7 +34,7 @@ vtkSlicerSliceGUI::vtkSlicerSliceGUI (  ) {
 
     // Create objects and set null pointers
     this->SliceViewer = vtkSlicerSliceViewer::New ( );
-    this->SliceController = vtkSlicerSliceController::New ( );
+    this->SliceController = vtkSlicerSliceControllerWidget::New ( );
     this->Logic = NULL;
     this->SliceNode = NULL;
 }
@@ -79,7 +79,7 @@ void vtkSlicerSliceGUI::PrintSelf ( ostream& os, vtkIndent indent )
 //---------------------------------------------------------------------------
 void vtkSlicerSliceGUI::AddGUIObservers ( ) {
 
-    vtkSlicerSliceController *c = this->GetSliceController();
+    vtkSlicerSliceControllerWidget *c = this->GetSliceController();
  
     if ( c != NULL )
         {
@@ -99,7 +99,7 @@ void vtkSlicerSliceGUI::AddGUIObservers ( ) {
 //---------------------------------------------------------------------------
 void vtkSlicerSliceGUI::RemoveGUIObservers ( ) {
 
-    vtkSlicerSliceController *c = this->GetSliceController( );
+    vtkSlicerSliceControllerWidget *c = this->GetSliceController( );
     if ( c != NULL )
         {
             vtkKWScaleWithEntry *s = c->GetOffsetScale () ;
@@ -127,7 +127,7 @@ void vtkSlicerSliceGUI::ProcessGUIEvents ( vtkObject *caller,
     vtkKWMenuButtonWithLabel *o = vtkKWMenuButtonWithLabel::SafeDownCast (caller );
 
     vtkMRMLScene *mrml = this->GetApplicationLogic()->GetMRMLScene();
-    vtkSlicerSliceController *c = this->GetSliceController( );
+    vtkSlicerSliceControllerWidget *c = this->GetSliceController( );
 
     if (mrml != NULL ) {
         //---
@@ -193,7 +193,7 @@ void vtkSlicerSliceGUI::ProcessLogicEvents ( vtkObject *caller,
     else
         {
             if ( n == this->GetLogic ( ) ) {
-                vtkSlicerSliceController *c = this->GetSliceController( );
+                vtkSlicerSliceControllerWidget *c = this->GetSliceController( );
                 // UPDATE THE FOV ENTRY
                 double fov = this->GetSliceNode()->GetFieldOfView()[0];
                 char fovstring[80];

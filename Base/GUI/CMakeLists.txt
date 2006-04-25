@@ -24,11 +24,10 @@ SET(LIB_SRCS
   vtkSlicerComponentGUI.cxx
   vtkSlicerModuleGUI.cxx
   vtkSlicerGUICollection.cxx
-
   vtkSlicerSliceGUI.cxx
   vtkSlicerSliceGUICollection.cxx
   vtkSlicerSliceViewer.cxx
-  vtkSlicerSliceController.cxx
+  vtkSlicerSliceControllerWidget.cxx
   vtkSlicerSlicesGUI.cxx
   vtkSlicerVolumesGUI.cxx
   vtkSlicerModelsGUI.cxx

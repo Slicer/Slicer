@@ -11,7 +11,7 @@
 #include "vtkSlicerBaseGUIWin32Header.h"
 #include "vtkSlicerComponentGUI.h"
 #include "vtkSlicerSliceViewer.h"
-#include "vtkSlicerSliceController.h"
+#include "vtkSlicerSliceControllerWidget.h"
 #include "vtkSlicerSliceLogic.h"
 #include "vtkMRMLSliceNode.h"
 
@@ -34,7 +34,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceGUI : public vtkSlicerComponentGU
     // SliceControllerWidget, a SliceLogic pointer and
     // a SliceNode pointer.)
     vtkGetObjectMacro ( SliceViewer, vtkSlicerSliceViewer );
-    vtkGetObjectMacro ( SliceController, vtkSlicerSliceController );
+    vtkGetObjectMacro ( SliceController, vtkSlicerSliceControllerWidget );
     vtkGetMacro ( ControllerStyle, int );
     vtkSetMacro ( ControllerStyle, int );
     vtkGetObjectMacro ( Logic, vtkSlicerSliceLogic );
@@ -83,7 +83,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceGUI : public vtkSlicerComponentGU
     // Description:
     // Three slice widgets by default.
     vtkSlicerSliceViewer *SliceViewer;
-    vtkSlicerSliceController *SliceController;
+    vtkSlicerSliceControllerWidget *SliceController;
     int ControllerStyle;
     vtkSlicerSliceLogic *Logic;
     vtkMRMLSliceNode *SliceNode;

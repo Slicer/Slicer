@@ -2,7 +2,7 @@
 #include "vtkCommand.h"
 #include "vtkImageData.h"
 
-#include "vtkSlicerSliceController.h"
+#include "vtkSlicerSliceControllerWidget.h"
 #include "vtkSlicerApplication.h"
 
 #include "vtkKWWidget.h"
@@ -17,15 +17,15 @@
 
 
 //---------------------------------------------------------------------------
-vtkStandardNewMacro ( vtkSlicerSliceController );
-vtkCxxRevisionMacro ( vtkSlicerSliceController, "$Revision: 1.0 $");
+vtkStandardNewMacro ( vtkSlicerSliceControllerWidget );
+vtkCxxRevisionMacro ( vtkSlicerSliceControllerWidget, "$Revision: 1.0 $");
 
 
 //---------------------------------------------------------------------------
-vtkSlicerSliceController::vtkSlicerSliceController ( ) {
+vtkSlicerSliceControllerWidget::vtkSlicerSliceControllerWidget ( ) {
 
     //---  
-    // widgets comprising the SliceController for now.
+    // widgets comprising the SliceControllerWidget for now.
     this->OffsetScale = NULL;
     this->FieldOfViewEntry = NULL;
     this->OrientationMenu = NULL;
@@ -35,7 +35,7 @@ vtkSlicerSliceController::vtkSlicerSliceController ( ) {
 
 
 //---------------------------------------------------------------------------
-vtkSlicerSliceController::~vtkSlicerSliceController ( ){
+vtkSlicerSliceControllerWidget::~vtkSlicerSliceControllerWidget ( ){
 
     if ( this->OffsetScale ) {
         this->OffsetScale->Delete ( );
@@ -59,7 +59,7 @@ vtkSlicerSliceController::~vtkSlicerSliceController ( ){
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerSliceController::Create ( ) {
+void vtkSlicerSliceControllerWidget::Create ( ) {
 
     // the widget is a frame with some widgets inside
     if (this->IsCreated ( ) ) {
@@ -101,7 +101,7 @@ void vtkSlicerSliceController::Create ( ) {
 
 
 //----------------------------------------------------------------------------
-void vtkSlicerSliceController::PrintSelf(ostream& os, vtkIndent indent)
+void vtkSlicerSliceControllerWidget::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
   // widgets?

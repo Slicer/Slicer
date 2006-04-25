@@ -1,5 +1,5 @@
-#ifndef __vtkSlicerSliceController_h
-#define __vtkSlicerSliceController_h
+#ifndef __vtkSlicerSliceControllerWidget_h
+#define __vtkSlicerSliceControllerWidget_h
 
 #include "vtkSlicerBaseGUIWin32Header.h"
 #include "vtkKWCompositeWidget.h"
@@ -8,12 +8,12 @@
 #include "vtkKWMenuButtonWithLabel.h"
 #include "vtkKWFrame.h"
 
-class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceController : public vtkKWCompositeWidget
+class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceControllerWidget : public vtkKWCompositeWidget
 {
     
  public:
-    static vtkSlicerSliceController* New ( );
-    vtkTypeRevisionMacro ( vtkSlicerSliceController, vtkKWCompositeWidget );
+    static vtkSlicerSliceControllerWidget* New ( );
+    vtkTypeRevisionMacro ( vtkSlicerSliceControllerWidget, vtkKWCompositeWidget );
     void PrintSelf (ostream& os, vtkIndent indent);
     
     // Description:
@@ -26,7 +26,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceController : public vtkKWComposit
 
     // Description:
     // TODO: Use this flag to determine how to display
-    // the SliceController.
+    // the SliceControllerWidget.
     vtkGetMacro ( ControllerStyle, int );
     vtkSetMacro ( ControllerStyle, int );
 
@@ -35,8 +35,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceController : public vtkKWComposit
     virtual void Create ( );
 
  protected:
-    vtkSlicerSliceController ( );
-    ~vtkSlicerSliceController ( );
+    vtkSlicerSliceControllerWidget ( );
+    ~vtkSlicerSliceControllerWidget ( );
     // Slice controller
     int ControllerStyle;
     vtkKWFrame *ControlFrame;
@@ -45,8 +45,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceController : public vtkKWComposit
     vtkKWMenuButtonWithLabel *OrientationMenu;
 
  private:
-    vtkSlicerSliceController (const vtkSlicerSliceController &); //Not implemented
-    void operator=(const vtkSlicerSliceController &);         //Not implemented
+    vtkSlicerSliceControllerWidget (const vtkSlicerSliceControllerWidget &); //Not implemented
+    void operator=(const vtkSlicerSliceControllerWidget &);         //Not implemented
 
 };
 
