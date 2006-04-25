@@ -431,10 +431,10 @@ void vtkSlicerApplicationGUI::BuildSlicerControlGUIPanel ( )
         this->ModulesButton->SetValue ("Modules");
         
         //--- pack everything up.
-        app->Script ( "pack %s -side left -anchor n -padx 1 -pady 2 -ipady 1", this->HomeButton->GetWidgetName( ) );
-        app->Script ( "pack %s -side left -anchor n -padx 1 -pady 2 -ipady 1", this->DataButton->GetWidgetName( ) );
-        app->Script ( "pack %s -side left -anchor n -padx 1 -pady 2 -ipady 1", this->VolumesButton->GetWidgetName( ) );
-        app->Script ( "pack %s -side left -anchor n -padx 1 -pady 2 -ipady 1", this->ModelsButton->GetWidgetName( ) );
+        app->Script ( "pack %s -side left -anchor n -padx 1 -pady 2 -ipady 2", this->HomeButton->GetWidgetName( ) );
+        app->Script ( "pack %s -side left -anchor n -padx 1 -pady 2 -ipady 2", this->DataButton->GetWidgetName( ) );
+        app->Script ( "pack %s -side left -anchor n -padx 1 -pady 2 -ipady 2", this->VolumesButton->GetWidgetName( ) );
+        app->Script ( "pack %s -side left -anchor n -padx 1 -pady 2 -ipady 2", this->ModelsButton->GetWidgetName( ) );
         app->Script ( "pack %s -side left -anchor n -padx 1 -pady 2 -ipady 0", this->ModulesButton->GetWidgetName( ) );
     }
 }
