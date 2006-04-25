@@ -193,23 +193,25 @@ void vtkGradientAnisotropicDiffusionFilterGUI::BuildGUI ( )
   app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                 moduleFrame->GetWidgetName(), this->UIPanel->GetPageWidget("GradientAnisotropicDiffusionFilter")->GetWidgetName());
 
-
   this->ConductanceScale->SetParent( moduleFrame->GetFrame() );
   this->ConductanceScale->SetLabelText("Conductance");
   this->ConductanceScale->Create();
-  app->Script("pack %s -side top -anchor w -padx 2 -pady 4", 
+  int w = this->ConductanceScale->GetScale()->GetWidth ( );
+  app->Script("pack %s -side top -anchor e -padx 20 -pady 4", 
                 this->ConductanceScale->GetWidgetName());
 
   this->TimeStepScale->SetParent( moduleFrame->GetFrame() );
   this->TimeStepScale->SetLabelText("Time Step");
   this->TimeStepScale->Create();
-  app->Script("pack %s -side top -anchor w -padx 2 -pady 4", 
+  this->TimeStepScale->GetScale()->SetWidth ( w );
+  app->Script("pack %s -side top -anchor e -padx 20 -pady 4", 
                 this->TimeStepScale->GetWidgetName());
 
   this->NumberOfIterationsScale->SetParent( moduleFrame->GetFrame() );
-  this->NumberOfIterationsScale->SetLabelText("Number of Iterations");
+  this->NumberOfIterationsScale->SetLabelText("Iterations");
   this->NumberOfIterationsScale->Create();
-  app->Script("pack %s -side top -anchor w -padx 2 -pady 4", 
+  this->NumberOfIterationsScale->GetScale()->SetWidth ( w );
+  app->Script("pack %s -side top -anchor e -padx 20 -pady 4", 
                 this->NumberOfIterationsScale->GetWidgetName());
 
   this->VolumeSelector->SetNodeClass("vtkMRMLScalarVolumeNode");
@@ -224,15 +226,20 @@ void vtkGradientAnisotropicDiffusionFilterGUI::BuildGUI ( )
   this->VolumeSelector->SetPadX(2);
   this->VolumeSelector->SetPadY(2);
   this->VolumeSelector->GetWidget()->GetWidget()->IndicatorVisibilityOff();
-  this->VolumeSelector->GetWidget()->GetWidget()->SetWidth(20);
+  this->VolumeSelector->GetWidget()->GetWidget()->SetWidth(24);
   this->VolumeSelector->SetLabelText( "Volume Select: ");
   this->VolumeSelector->SetBalloonHelpString("select a volume from the current mrml scene.");
-  app->Script("pack %s -side top -anchor w -padx 2 -pady 4", 
+  app->Script("pack %s -side top -anchor e -padx 20 -pady 4", 
                 this->VolumeSelector->GetWidgetName());
 
   this->ApplyButton->SetParent( moduleFrame->GetFrame() );
   this->ApplyButton->Create();
   this->ApplyButton->SetText("Apply");
-  app->Script("pack %s -side top -anchor w -padx 2 -pady 4", 
+  this->ApplyButton->SetWidth ( 8 );
+  app->Script("pack %s -side top -anchor e -padx 20 -pady 10", 
                 this->ApplyButton->GetWidgetName());
+
+
+
+  
 }
