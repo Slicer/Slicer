@@ -75,8 +75,12 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
     this->VolumesButton = vtkKWPushButton::New();
     this->ModelsButton = vtkKWPushButton::New();
     this->AlignmentsButton = vtkKWPushButton::New();
+    
     this->ModulesMenuButton = vtkKWMenuButton::New();
     this->ModulesLabel = vtkKWLabel::New();
+    this->ModulesBack = vtkKWPushButton::New ( );
+    this->ModulesNext = vtkKWPushButton::New ( );
+
     this->MainViewer = vtkKWRenderWidget::New ( );
     
 }
@@ -337,6 +341,14 @@ void vtkSlicerApplicationGUI::DeleteGUIPanelWidgets ( )
         this->ModulesLabel->Delete ( );
         this->ModulesLabel = NULL;
     }
+    if ( this->ModulesBack ) {
+        this->ModulesBack->Delete ( );
+        this->ModulesBack = NULL;
+    }
+    if ( this->ModulesNext ) {
+        this->ModulesNext->Delete ( );
+        this->ModulesNext = NULL;
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -432,50 +444,46 @@ void vtkSlicerApplicationGUI::BuildSlicerControlGUIPanel ( )
         f2->Create ( );
         
         //--- home button
-        //        this->HomeButton->SetParent ( this->SlicerControlFrame );
         this->HomeButton->SetParent ( f1 );
         this->HomeButton->Create ( );
         this->HomeButton->SetWidth ( 9 );
         this->HomeButton->SetText ( "Home" );
         this->HomeButton->SetBalloonHelpString ("Use this button to go to your Home module.");
         //--- data module
-        //        this->DataButton->SetParent ( this->SlicerControlFrame );
         this->DataButton->SetParent ( f1 );
         this->DataButton->Create ( );
         this->DataButton->SetWidth ( 9 );
         this->DataButton->SetText ("Data");
         this->DataButton->SetBalloonHelpString ("Use this button to go to the Data module.");
         //--- volumes module
-        //        this->VolumesButton->SetParent ( this->SlicerControlFrame );
         this->VolumesButton->SetParent ( f1 );
         this->VolumesButton->Create ( );
         this->VolumesButton->SetWidth ( 9 );
         this->VolumesButton->SetText("Volumes");
         this->VolumesButton->SetBalloonHelpString ("Use this button to go to the Volumes module.");
         // --- models module
-        //        this->ModelsButton->SetParent ( this->SlicerControlFrame );
         this->ModelsButton->SetParent ( f1 );
         this->ModelsButton->Create ( );
         this->ModelsButton->SetWidth ( 9 );
         this->ModelsButton->SetText("Models");
         this->ModelsButton->SetBalloonHelpString ("Use this button to go to the Models module.");
         // --- alignments module
-        //        this->AlignmentsButton->SetParent ( this->SlicerControlFrame );
         this->AlignmentsButton->SetParent ( f1 );
         this->AlignmentsButton->Create ( );
         this->AlignmentsButton->SetWidth ( 9 );
         this->AlignmentsButton->SetText("Alignments");
         this->AlignmentsButton->SetBalloonHelpString ("Use this button to go to the Alignments module.");
         
-        //--- ALL modules menu button
+        //--- ALL modules menu button label
         this->ModulesLabel->SetParent ( f2 );
         this->ModulesLabel->Create ( );
         this->ModulesLabel->SetText ( "    Modules:");
         this->ModulesLabel->SetWidth ( 9 );
 
+        //--- All modules menu button
         this->ModulesMenuButton->SetParent ( f2 );
         this->ModulesMenuButton->Create ( );
-        this->ModulesMenuButton->SetWidth ( 36 );
+        this->ModulesMenuButton->SetWidth ( 28 );
         this->ModulesMenuButton->IndicatorVisibilityOn ( );
         this->ModulesMenuButton->SetBalloonHelpString ("Use this pull-down menu to select a Slicer module.");
         //--- ALL modules pull-down menu 
@@ -491,6 +499,20 @@ void vtkSlicerApplicationGUI::BuildSlicerControlGUIPanel ( )
         //--- TODO: make the initial value be module user sets as "home"
         this->ModulesMenuButton->SetValue ("Volumes");
         
+        //--- Next and previous module button
+        this->ModulesNext->SetParent ( f2 );
+        this->ModulesNext->Create ( );
+        this->ModulesNext->SetText ( " > " );
+        this->ModulesNext->SetAnchorToCenter ( );
+        this->ModulesNext->SetWidth ( 2 );
+        this->ModulesNext->SetBalloonHelpString ("Use this button to navigate to the next module in your use history.");
+        this->ModulesBack->SetParent ( f2 );
+        this->ModulesBack->Create ( );
+        this->ModulesBack->SetText ( " < " );
+        this->ModulesBack->SetAnchorToCenter ( );
+        this->ModulesBack->SetWidth ( 2 );
+        this->ModulesBack->SetBalloonHelpString ("Use this button to navigate to the previous module in your use history.");
+        
         //--- pack everything up.
         app->Script ( "pack %s -side top -anchor w -padx 0 -pady 0", f1->GetWidgetName( ) );
         app->Script ( "pack %s -side top -anchor w -padx 0 -pady 0", f2->GetWidgetName( ) );
@@ -501,7 +523,9 @@ void vtkSlicerApplicationGUI::BuildSlicerControlGUIPanel ( )
         app->Script ( "pack %s -side left -anchor n -padx 1 -pady 2", this->ModelsButton->GetWidgetName( ) );
         app->Script ( "pack %s -side left -anchor n -padx 1 -ipadx 1 -pady 2", this->AlignmentsButton->GetWidgetName( ) );
         app->Script ( "pack %s -side left -anchor n -padx 1 -ipadx 1 -pady 2", this->ModulesLabel->GetWidgetName( ) );
-        app->Script ( "pack %s -side left -anchor n -padx 0 -ipadx 1 -pady 2", this->ModulesMenuButton->GetWidgetName( ) );
+        app->Script ( "pack %s -side left -anchor n -padx 1 -ipadx 1 -pady 2", this->ModulesMenuButton->GetWidgetName( ) );
+        app->Script ( "pack %s -side left -anchor n -padx 2 -ipady 2 -pady 2", this->ModulesBack->GetWidgetName( ) );
+        app->Script ( "pack %s -side left -anchor n -padx 1 -ipady 2 -pady 2", this->ModulesNext->GetWidgetName( ) );
 
         f1->Delete ( );
         f2->Delete ( );

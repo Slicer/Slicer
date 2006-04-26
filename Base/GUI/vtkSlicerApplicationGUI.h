@@ -55,6 +55,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
 
     vtkGetObjectMacro ( ModulesMenuButton, vtkKWMenuButton );
     vtkGetObjectMacro ( ModulesLabel, vtkKWLabel );
+    vtkGetObjectMacro ( ModulesBack, vtkKWPushButton );
+    vtkGetObjectMacro ( ModulesNext, vtkKWPushButton );    
+
     vtkGetObjectMacro ( HomeButton, vtkKWPushButton );
     vtkGetObjectMacro ( VolumesButton, vtkKWPushButton );
     vtkGetObjectMacro ( ModelsButton, vtkKWPushButton );
@@ -133,6 +136,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // Widgets for the modules GUI panels
     vtkKWMenuButton *ModulesMenuButton;
     vtkKWLabel *ModulesLabel;
+    vtkKWPushButton *ModulesBack;
+    vtkKWPushButton *ModulesNext;
 
     // Description:
     // Main Slicer window
