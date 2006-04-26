@@ -241,7 +241,8 @@ void vtkSlicerApplicationGUI::Exit ( )
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::BuildGUI ( )
 {
-
+    int i;
+    
     // Set up the conventional window: 3Dviewer, slice widgets, UI panel for now.
     if ( this->GetApplication() != NULL ) {
         vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
@@ -255,6 +256,20 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
             this->MainSlicerWin->MainPanelVisibilityOn ( );
             app->AddWindow ( this->MainSlicerWin );
             this->MainSlicerWin->Create ( );        
+
+            // Construct menu bar and set up global key bindings
+
+            // TODO: Hook up undo, redo, set home
+            //i = this->MainSlicerWin->GetFileMenu()->AddCommand (  );
+            i = this->MainSlicerWin->GetEditMenu()->AddCommand ("Set Home", NULL, NULL);
+            this->MainSlicerWin->GetEditMenu()->SetItemAccelerator ( i, "Ctrl+H");
+            i = this->MainSlicerWin->GetEditMenu()->AddCommand ( "Undo", NULL, NULL );
+            this->MainSlicerWin->GetEditMenu()->SetItemAccelerator ( i, "Ctrl+Z");
+            i = this->MainSlicerWin->GetEditMenu()->AddCommand ( "Redo", NULL, NULL );
+            this->MainSlicerWin->GetEditMenu()->SetItemAccelerator ( i, "Ctrl+Y");
+            //i = this->MainSlicerWin->GetViewMenu()->AddCommand ( ? );
+            //i = this->MainSlicerWin->GetWindowMenu()->AddCommand ( ? );
+            //i = this->MainSlicerWin->GetHelpMenu()->AddCommand ( ? );
 
             // configure default size of GUI
             this->ConfigureMainSlicerWindow ( );
