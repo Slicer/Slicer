@@ -27,6 +27,8 @@
 #include "vtkKWApplication.h"
 #include "vtkKWFrame.h"
 #include "vtkKWMenu.h"
+#include "vtkKWMenuButtonWithLabel.h"
+#include "vtkKWLabel.h"
 #include "vtkKWNotebook.h"
 #include "vtkKWPushButton.h"
 #include "vtkKWRenderWidget.h"
@@ -72,7 +74,9 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
     this->DataButton = vtkKWPushButton::New();
     this->VolumesButton = vtkKWPushButton::New();
     this->ModelsButton = vtkKWPushButton::New();
-    this->ModulesButton = vtkKWMenuButton::New();
+    this->AlignmentsButton = vtkKWPushButton::New();
+    this->ModulesMenuButton = vtkKWMenuButton::New();
+    this->ModulesLabel = vtkKWLabel::New();
     this->MainViewer = vtkKWRenderWidget::New ( );
     
 }
@@ -87,7 +91,6 @@ vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
 
     this->DeleteGUIPanelWidgets ( );
     this->DeleteFrames ( );
-
 
     if ( this->MainViewer ) {
         this->MainViewer->Delete ( );
@@ -122,7 +125,7 @@ void vtkSlicerApplicationGUI::AddGUIObservers ( )
     this->DataButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->VolumesButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ModelsButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->ModulesButton->AddObserver (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->ModulesMenuButton->AddObserver (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
 
 }
 
@@ -134,7 +137,7 @@ void vtkSlicerApplicationGUI::RemoveGUIObservers ( )
     this->DataButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->VolumesButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ModelsButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->ModulesButton->RemoveObservers (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->ModulesMenuButton->RemoveObservers (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
 }
 
 
@@ -163,27 +166,32 @@ void vtkSlicerApplicationGUI::ProcessGUIEvents ( vtkObject *caller,
     if ( pushb == this->HomeButton && event == vtkKWPushButton::InvokedEvent ) {
         vtkSlicerModuleGUI *m = vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Volumes");
         if ( m != NULL ) { m->GetUIPanel()->Raise(); }
-        this->ModulesButton->SetValue ( "Volumes" );
+        this->ModulesMenuButton->SetValue ( "Volumes" );
     }
     else if (pushb == this->DataButton && event == vtkKWPushButton::InvokedEvent ) {
         vtkSlicerModuleGUI *m = vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Data");
         if ( m != NULL ) { m->GetUIPanel()->Raise(); }
-        this->ModulesButton->SetValue ( "Data" );
+        this->ModulesMenuButton->SetValue ( "Data" );
     }
     else if (pushb == this->VolumesButton && event == vtkKWPushButton::InvokedEvent ) {
         vtkSlicerModuleGUI *m = vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Volumes");
         if ( m != NULL ) { m->GetUIPanel()->Raise(); }
-        this->ModulesButton->SetValue ( "Volumes" );
+        this->ModulesMenuButton->SetValue ( "Volumes" );
     }
     else if (pushb == this->ModelsButton && event == vtkKWPushButton::InvokedEvent ) {
         vtkSlicerModuleGUI *m = vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Models");
         if ( m != NULL ) { m->GetUIPanel()->Raise(); }
-        this->ModulesButton->SetValue ( "Models" );
+        this->ModulesMenuButton->SetValue ( "Models" );
+    }
+    else if (pushb == this->AlignmentsButton && event == vtkKWPushButton::InvokedEvent ) {
+        //vtkSlicerModuleGUI *m = vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Alignments");
+        //if ( m != NULL ) { m->GetUIPanel()->Raise(); }
+        this->ModulesMenuButton->SetValue ( "Alignments" );
     }
 
     //--- Process events from menubutton
     //--- TODO: change the Logic's "active module" and raise the appropriate UIPanel.
-    if ( menub == this->ModulesButton && event == vtkCommand::ModifiedEvent )
+    if ( menub == this->ModulesMenuButton && event == vtkCommand::ModifiedEvent )
         {
             if ( app->GetModuleGUICollection ( ) != NULL )
                 {
@@ -192,13 +200,13 @@ void vtkSlicerApplicationGUI::ProcessGUIEvents ( vtkObject *caller,
                     while (m != NULL )
                         {
                             mName = m->GetUIPanel()->GetName();
-                            if ( !strcmp (this->ModulesButton->GetValue(), mName) ) {
+                            if ( !strcmp (this->ModulesMenuButton->GetValue(), mName) ) {
                                 m->GetUIPanel()->Raise();
                                 break;
                             }
                             m = vtkSlicerModuleGUI::SafeDownCast( app->GetModuleGUICollection( )->GetNextItemAsObject( ) );
                         }
-                    //this->ModulesButton->SetValue ( "Modules" );
+                    //this->ModulesMenuButton->SetValue ( "Modules" );
                 }
         }
 }
@@ -302,9 +310,17 @@ void vtkSlicerApplicationGUI::DeleteGUIPanelWidgets ( )
         this->ModelsButton->Delete ();
         this->ModelsButton = NULL;
     }
-    if ( this->ModulesButton ) {
-        this->ModulesButton->Delete();
-        this->ModulesButton = NULL;
+    if ( this->AlignmentsButton ) {
+        this->AlignmentsButton->Delete ( );
+        this->AlignmentsButton = NULL;
+    }
+    if ( this->ModulesMenuButton ) {
+        this->ModulesMenuButton->Delete();
+        this->ModulesMenuButton = NULL;
+    }
+    if ( this->ModulesLabel ) {
+        this->ModulesLabel->Delete ( );
+        this->ModulesLabel = NULL;
     }
 }
 
@@ -392,50 +408,88 @@ void vtkSlicerApplicationGUI::BuildSlicerControlGUIPanel ( )
     
     if ( this->GetApplication( )  != NULL ) {
         vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication() );
+        vtkKWFrame *f1 = vtkKWFrame::New ( );
+        vtkKWFrame *f2 = vtkKWFrame::New ( );
+
+        f1->SetParent (this->SlicerControlFrame );
+        f1->Create ( );
+        f2->SetParent (this->SlicerControlFrame );
+        f2->Create ( );
+        
         //--- home button
-        this->HomeButton->SetParent ( this->SlicerControlFrame );
+        //        this->HomeButton->SetParent ( this->SlicerControlFrame );
+        this->HomeButton->SetParent ( f1 );
         this->HomeButton->Create ( );
-        this->HomeButton->SetWidth ( 7 );
+        this->HomeButton->SetWidth ( 9 );
         this->HomeButton->SetText ( "Home" );
+        this->HomeButton->SetBalloonHelpString ("Use this button to go to your Home module.");
         //--- data module
-        this->DataButton->SetParent ( this->SlicerControlFrame );
+        //        this->DataButton->SetParent ( this->SlicerControlFrame );
+        this->DataButton->SetParent ( f1 );
         this->DataButton->Create ( );
-        this->DataButton->SetWidth ( 7 );
+        this->DataButton->SetWidth ( 9 );
         this->DataButton->SetText ("Data");
+        this->DataButton->SetBalloonHelpString ("Use this button to go to the Data module.");
         //--- volumes module
-        this->VolumesButton->SetParent ( this->SlicerControlFrame );
+        //        this->VolumesButton->SetParent ( this->SlicerControlFrame );
+        this->VolumesButton->SetParent ( f1 );
         this->VolumesButton->Create ( );
-        this->VolumesButton->SetWidth ( 7 );
+        this->VolumesButton->SetWidth ( 9 );
         this->VolumesButton->SetText("Volumes");
+        this->VolumesButton->SetBalloonHelpString ("Use this button to go to the Volumes module.");
         // --- models module
-        this->ModelsButton->SetParent ( this->SlicerControlFrame );
+        //        this->ModelsButton->SetParent ( this->SlicerControlFrame );
+        this->ModelsButton->SetParent ( f1 );
         this->ModelsButton->Create ( );
-        this->ModelsButton->SetWidth ( 7 );
+        this->ModelsButton->SetWidth ( 9 );
         this->ModelsButton->SetText("Models");
+        this->ModelsButton->SetBalloonHelpString ("Use this button to go to the Models module.");
+        // --- alignments module
+        //        this->AlignmentsButton->SetParent ( this->SlicerControlFrame );
+        this->AlignmentsButton->SetParent ( f1 );
+        this->AlignmentsButton->Create ( );
+        this->AlignmentsButton->SetWidth ( 9 );
+        this->AlignmentsButton->SetText("Alignments");
+        this->AlignmentsButton->SetBalloonHelpString ("Use this button to go to the Alignments module.");
         
         //--- ALL modules menu button
-        this->ModulesButton->SetParent ( this->SlicerControlFrame );
-        this->ModulesButton->Create ( );
-        this->ModulesButton->SetWidth ( 10 );
-        this->ModulesButton->IndicatorVisibilityOn ( );
+        this->ModulesLabel->SetParent ( f2 );
+        this->ModulesLabel->Create ( );
+        this->ModulesLabel->SetText ( "    Modules:");
+        this->ModulesLabel->SetWidth ( 9 );
+
+        this->ModulesMenuButton->SetParent ( f2 );
+        this->ModulesMenuButton->Create ( );
+        this->ModulesMenuButton->SetWidth ( 36 );
+        this->ModulesMenuButton->IndicatorVisibilityOn ( );
+        this->ModulesMenuButton->SetBalloonHelpString ("Use this pull-down menu to select a Slicer module.");
         //--- ALL modules pull-down menu 
         if ( app->GetModuleGUICollection ( ) != NULL ) {
             app->GetModuleGUICollection( )->InitTraversal( );
             m = vtkSlicerModuleGUI::SafeDownCast( app->GetModuleGUICollection( )->GetNextItemAsObject( ));
             while ( m != NULL ) {
                 mName = m->GetUIPanel( )->GetName( );
-                this->ModulesButton->GetMenu( )->AddRadioButton( mName );
+                this->ModulesMenuButton->GetMenu( )->AddRadioButton( mName );
                 m = vtkSlicerModuleGUI::SafeDownCast( app->GetModuleGUICollection( )->GetNextItemAsObject( ));
             }
         }
-        this->ModulesButton->SetValue ("Modules");
+        //--- TODO: make the initial value be module user sets as "home"
+        this->ModulesMenuButton->SetValue ("Volumes");
         
         //--- pack everything up.
-        app->Script ( "pack %s -side left -anchor n -padx 1 -pady 2 -ipady 2", this->HomeButton->GetWidgetName( ) );
-        app->Script ( "pack %s -side left -anchor n -padx 1 -pady 2 -ipady 2", this->DataButton->GetWidgetName( ) );
-        app->Script ( "pack %s -side left -anchor n -padx 1 -pady 2 -ipady 2", this->VolumesButton->GetWidgetName( ) );
-        app->Script ( "pack %s -side left -anchor n -padx 1 -pady 2 -ipady 2", this->ModelsButton->GetWidgetName( ) );
-        app->Script ( "pack %s -side left -anchor n -padx 1 -pady 2 -ipady 0", this->ModulesButton->GetWidgetName( ) );
+        app->Script ( "pack %s -side top -anchor w -padx 0 -pady 0", f1->GetWidgetName( ) );
+        app->Script ( "pack %s -side top -anchor w -padx 0 -pady 0", f2->GetWidgetName( ) );
+        
+        app->Script ( "pack %s -side left -anchor n -padx 1 -pady 2", this->HomeButton->GetWidgetName( ) );
+        app->Script ( "pack %s -side left -anchor n -padx 1 -pady 2", this->DataButton->GetWidgetName( ) );
+        app->Script ( "pack %s -side left -anchor n -padx 1 -ipadx 1 -pady 2", this->VolumesButton->GetWidgetName( ) );
+        app->Script ( "pack %s -side left -anchor n -padx 1 -pady 2", this->ModelsButton->GetWidgetName( ) );
+        app->Script ( "pack %s -side left -anchor n -padx 1 -ipadx 1 -pady 2", this->AlignmentsButton->GetWidgetName( ) );
+        app->Script ( "pack %s -side left -anchor n -padx 1 -ipadx 1 -pady 2", this->ModulesLabel->GetWidgetName( ) );
+        app->Script ( "pack %s -side left -anchor n -padx 0 -ipadx 1 -pady 2", this->ModulesMenuButton->GetWidgetName( ) );
+
+        f1->Delete ( );
+        f2->Delete ( );
     }
 }
 

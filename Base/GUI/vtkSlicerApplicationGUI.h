@@ -23,6 +23,7 @@
 
 #include "vtkKWWindow.h"
 #include "vtkKWMenuButton.h"
+#include "vtkKWMenuButtonWithLabel.h"
 #include "vtkKWFrame.h"
 #include "vtkKWRenderWidget.h"
 
@@ -52,11 +53,13 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkGetObjectMacro ( DefaultSlice1Frame, vtkKWFrame );
     vtkGetObjectMacro ( DefaultSlice2Frame, vtkKWFrame );
 
-    vtkGetObjectMacro ( ModulesButton, vtkKWMenuButton );
+    vtkGetObjectMacro ( ModulesMenuButton, vtkKWMenuButton );
+    vtkGetObjectMacro ( ModulesLabel, vtkKWLabel );
     vtkGetObjectMacro ( HomeButton, vtkKWPushButton );
     vtkGetObjectMacro ( VolumesButton, vtkKWPushButton );
     vtkGetObjectMacro ( ModelsButton, vtkKWPushButton );
     vtkGetObjectMacro ( DataButton, vtkKWPushButton );
+    vtkGetObjectMacro ( AlignmentsButton, vtkKWPushButton );
 
     // Description:
     // Get/Set the main slicer window.
@@ -121,13 +124,16 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkKWPushButton *DataButton;
     vtkKWPushButton *VolumesButton;
     vtkKWPushButton *ModelsButton;
+    vtkKWPushButton *AlignmentsButton;
     vtkKWFrame *DefaultSlice0Frame;
     vtkKWFrame *DefaultSlice1Frame;
     vtkKWFrame *DefaultSlice2Frame;
     vtkKWRenderWidget *MainViewer;
     // Description:
     // Widgets for the modules GUI panels
-    vtkKWMenuButton *ModulesButton;
+    vtkKWMenuButton *ModulesMenuButton;
+    vtkKWLabel *ModulesLabel;
+
     // Description:
     // Main Slicer window
     vtkKWWindow *MainSlicerWin;
