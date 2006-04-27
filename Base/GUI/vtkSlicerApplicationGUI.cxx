@@ -32,7 +32,7 @@
 #include "vtkKWNotebook.h"
 #include "vtkKWPushButton.h"
 #include "vtkKWRenderWidget.h"
-#include "vtkKWScaleWithEntry.h"
+#include "vtkKWScale.h"
 #include "vtkKWUserInterfacePanel.h"
 #include "vtkKWWidget.h"
 #include "vtkKWWindow.h"
@@ -69,7 +69,9 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
     this->DefaultSlice1Frame = vtkKWFrame::New ();
     this->DefaultSlice2Frame = vtkKWFrame::New ();
 
-    // ui panel used to display a GUI page for each module.
+    //--- ui for the LogoFrame
+    
+    //--- ui for the SlicerControlFrame,
     this->HomeButton = vtkKWPushButton::New();
     this->DataButton = vtkKWPushButton::New();
     this->VolumesButton = vtkKWPushButton::New();
@@ -81,6 +83,13 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
     this->ModulesBack = vtkKWPushButton::New ( );
     this->ModulesNext = vtkKWPushButton::New ( );
 
+    //--- ui for the SliceControlframe.
+    this->ToggleAnnotationButton = vtkKWPushButton::New ( );
+    this->ToggleFgBgButton = vtkKWPushButton::New ( );
+    this->SliceFadeScale = vtkKWScale::New ( );
+    this->SliceOpacityScale = vtkKWScale::New ( );
+    
+    //--- ui for the ViewControlFrame
     this->MainViewer = vtkKWRenderWidget::New ( );
     
 }
@@ -287,7 +296,6 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
             // Build main GUI panel
             this->BuildLogoGUIPanel ( );
             this->BuildSlicerControlGUIPanel ( );
-            //            this->BuildModuleControlGUIPanel ( );
 
             // Turn off the tabs for pages in the ModuleControlGUI
             this->MainSlicerWin->GetMainNotebook( )->ShowIconsOff ( );
@@ -313,6 +321,7 @@ void vtkSlicerApplicationGUI::DisplayMainSlicerWindow ( )
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::DeleteGUIPanelWidgets ( )
 {
+    //--- widgets from the SlicerControlFrame
     if ( this->HomeButton ) {
         this->HomeButton->Delete ();
         this->HomeButton = NULL;
@@ -349,6 +358,25 @@ void vtkSlicerApplicationGUI::DeleteGUIPanelWidgets ( )
         this->ModulesNext->Delete ( );
         this->ModulesNext = NULL;
     }
+
+    //--- widgets from the SliceControlFrame
+    if ( this->ToggleAnnotationButton ) {
+        this->ToggleAnnotationButton->Delete ( );
+        this->ToggleAnnotationButton = NULL;
+    }
+    if ( this->ToggleFgBgButton ) {
+        this->ToggleFgBgButton->Delete ( );
+        this->ToggleFgBgButton = NULL;
+    }
+    if ( this->SliceFadeScale ) {
+        this->SliceFadeScale->Delete ( );
+        this->SliceFadeScale = NULL;
+    }
+    if ( this->SliceOpacityScale ) {
+        this->SliceOpacityScale->Delete ( );
+        this->SliceOpacityScale = NULL;
+    }
+
 }
 
 //---------------------------------------------------------------------------
@@ -477,7 +505,8 @@ void vtkSlicerApplicationGUI::BuildSlicerControlGUIPanel ( )
         //--- ALL modules menu button label
         this->ModulesLabel->SetParent ( f2 );
         this->ModulesLabel->Create ( );
-        this->ModulesLabel->SetText ( "    Modules:");
+        this->ModulesLabel->SetText ( "Modules:");
+        this->ModulesLabel->SetAnchorToEast ( );
         this->ModulesLabel->SetWidth ( 9 );
 
         //--- All modules menu button
@@ -522,8 +551,8 @@ void vtkSlicerApplicationGUI::BuildSlicerControlGUIPanel ( )
         app->Script ( "pack %s -side left -anchor n -padx 1 -ipadx 1 -pady 2", this->VolumesButton->GetWidgetName( ) );
         app->Script ( "pack %s -side left -anchor n -padx 1 -pady 2", this->ModelsButton->GetWidgetName( ) );
         app->Script ( "pack %s -side left -anchor n -padx 1 -ipadx 1 -pady 2", this->AlignmentsButton->GetWidgetName( ) );
-        app->Script ( "pack %s -side left -anchor n -padx 1 -ipadx 1 -pady 2", this->ModulesLabel->GetWidgetName( ) );
-        app->Script ( "pack %s -side left -anchor n -padx 1 -ipadx 1 -pady 2", this->ModulesMenuButton->GetWidgetName( ) );
+        app->Script ( "pack %s -side left -anchor n -padx 1 -ipadx 1 -pady 3", this->ModulesLabel->GetWidgetName( ) );
+        app->Script ( "pack %s -side left -anchor n -padx 1 -ipady 0 -pady 2", this->ModulesMenuButton->GetWidgetName( ) );
         app->Script ( "pack %s -side left -anchor n -padx 2 -ipady 2 -pady 2", this->ModulesBack->GetWidgetName( ) );
         app->Script ( "pack %s -side left -anchor n -padx 1 -ipady 2 -pady 2", this->ModulesNext->GetWidgetName( ) );
 
@@ -537,6 +566,88 @@ void vtkSlicerApplicationGUI::BuildSlicerControlGUIPanel ( )
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::BuildSliceControlGUIPanel ( )
 {
+
+    //--- Populate the Slice Control Frame
+
+    if ( this->GetApplication( )  != NULL ) {
+        vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication() );
+        //--- create frames
+        vtkKWFrame *f1 = vtkKWFrame::New ( );
+        f1->SetParent ( this->SliceControlFrame );
+        f1->Create ( );
+        vtkKWFrame *f2 = vtkKWFrame::New ( );
+        f2->SetParent ( this->SliceControlFrame );
+        f2->Create ( );
+        vtkKWFrame *f3 = vtkKWFrame::New ( );
+        f3->SetParent ( this->SliceControlFrame );
+        f3->Create ( );
+        
+        //--- pack everything up: buttons, labels, scales
+        app->Script ( "pack %s -side left -anchor n -padx 0 -pady 2", f1->GetWidgetName( ) );
+        app->Script ( "pack %s -side left -anchor n -padx 0 -pady 2", f2->GetWidgetName( ) );
+        app->Script ( "pack %s -side left -anchor n -padx 0 -pady 2", f3->GetWidgetName( ) );
+
+        //--- make buttons for toggling FG/BG and annotations
+        this->ToggleFgBgButton->SetParent ( f1 );
+        this->ToggleFgBgButton->Create ( );
+        this->ToggleFgBgButton->SetWidth ( 16 );
+        this->ToggleFgBgButton->SetText ( "Toggle FG/BG" );
+        this->ToggleAnnotationButton->SetParent ( f1 );
+        this->ToggleAnnotationButton->Create ( );
+        this->ToggleAnnotationButton->SetWidth ( 16 );
+        this->ToggleAnnotationButton->SetText ( "Toggle Annotation" );
+    
+        app->Script ( "pack %s -side top -anchor w -padx 1 -pady 1", this->ToggleFgBgButton->GetWidgetName( ) );
+        app->Script ( "pack %s -side top -anchor w -padx 1 -pady 1", this->ToggleAnnotationButton->GetWidgetName( ) );
+
+        //--- make labels (can't reposition the Scale's labels, so
+        //--- supressing those and using a new set.)
+        vtkKWLabel *fadeLabel = vtkKWLabel::New ( );
+        vtkKWLabel *opacityLabel = vtkKWLabel::New ( );
+        fadeLabel->SetParent ( f2 );
+        fadeLabel->Create ( );
+        fadeLabel->SetWidth ( 14 );
+        fadeLabel->SetAnchorToEast ( );
+        fadeLabel->SetText ( "Fade (FG/BG):");
+        opacityLabel->SetParent ( f2 );
+        opacityLabel->Create ( );
+        opacityLabel->SetWidth ( 14 );
+        opacityLabel->SetAnchorToEast ( );
+        opacityLabel->SetText ( "Opacity (0,1):");
+        app->Script ( "pack %s -side top -anchor e -padx 1 -pady 1", fadeLabel->GetWidgetName( ) );
+        app->Script ( "pack %s -side top -anchor e -padx 1 -pady 2", opacityLabel->GetWidgetName( ) );
+        
+        //--- make scales for sliding slice visibility in the SliceViewers
+        //--- and for sliding slice opacity in the 3D Viewer.
+        this->SliceFadeScale->SetParent ( f3 );
+        this->SliceFadeScale->Create ( );
+        this->SliceFadeScale->SetRange (0.0, 1.0);
+        this->SliceFadeScale->SetResolution ( 0.01 );
+        this->SliceFadeScale->SetValue ( 0.0 );
+        this->SliceFadeScale->SetLength ( 120 );
+        this->SliceFadeScale->SetOrientationToHorizontal ( );
+        this->SliceFadeScale->ValueVisibilityOff ( );
+        this->SliceFadeScale->SetBalloonHelpString ( "Scale fades between FG and BG Slice Layers" );
+
+        this->SliceOpacityScale->SetParent ( f3 );
+        this->SliceOpacityScale->Create ( );
+        this->SliceOpacityScale->SetRange ( 0.0, 1.0 );
+        this->SliceOpacityScale->SetResolution ( 0.01 );
+        this->SliceOpacityScale->SetValue ( 0.0 );
+        this->SliceOpacityScale->SetLength ( 120 );
+        this->SliceOpacityScale->SetOrientationToHorizontal ( );
+        this->SliceOpacityScale->ValueVisibilityOff ( );
+        this->SliceOpacityScale->SetBalloonHelpString ( "Scale sets the opacity of the slice plane in the 3D Viewer" );
+
+        app->Script ( "pack %s -side top -anchor w -padx 0 -pady 1", this->SliceFadeScale->GetWidgetName( ) );
+        app->Script ( "pack %s -side top -anchor w -padx 0 -pady 0", this->SliceOpacityScale->GetWidgetName( ) );
+
+        fadeLabel->Delete ( );
+        opacityLabel->Delete ( );
+        f1->Delete ( );
+        f2->Delete ( );
+        f3->Delete ( );
+    }
 }
 
 
@@ -638,31 +749,30 @@ void vtkSlicerApplicationGUI::ConfigureGUIPanel ( )
 
             this->LogoFrame->SetParent ( this->MainSlicerWin->GetMainPanelFrame ( ) );
             this->LogoFrame->Create( );
-            this->LogoFrame->SetReliefToGroove ( );
             this->LogoFrame->SetHeight ( app->GetMainLayout()->GetDefaultLogoFrameHeight ( ) );
 
             this->SlicerControlFrame->SetParent ( this->MainSlicerWin->GetMainPanelFrame ( ) );
+            this->SlicerControlFrame->SetReliefToGroove ();
             this->SlicerControlFrame->Create( );
-            this->SlicerControlFrame->SetReliefToGroove ( );
             this->SlicerControlFrame->SetHeight ( app->GetMainLayout()->GetDefaultSlicerControlFrameHeight ( ) );
 
             // pack logo and slicer control frames
-            app->Script ( "pack %s -side top -fill x -padx 0 -pady 0", this->LogoFrame->GetWidgetName() );
-            app->Script ( "pack %s -side top -fill x -padx 0 -pady 0", this->SlicerControlFrame->GetWidgetName() );
+            app->Script ( "pack %s -side top -fill x -padx 1 -pady 1", this->LogoFrame->GetWidgetName() );
+            app->Script ( "pack %s -side top -fill x -padx 1 -pady 1", this->SlicerControlFrame->GetWidgetName() );
 
             this->SliceControlFrame->SetParent ( this->MainSlicerWin->GetMainPanelFrame ( ) );
+            this->SliceControlFrame->SetReliefToGroove ();
             this->SliceControlFrame->Create( );
-            this->SliceControlFrame->SetReliefToGroove ( );
             this->SliceControlFrame->SetHeight ( app->GetMainLayout()->GetDefaultSliceControlFrameHeight ( ) );
             
             this->ViewControlFrame->SetParent ( this->MainSlicerWin->GetMainPanelFrame ( ) );
-            this->ViewControlFrame->Create( );
             this->ViewControlFrame->SetReliefToGroove ( );
+            this->ViewControlFrame->Create( );
             this->ViewControlFrame->SetHeight ( app->GetMainLayout()->GetDefaultViewControlFrameHeight ( ) );
             
             // pack slice and view control frames
-            app->Script ( "pack %s -side bottom -fill x -padx 0 -pady 0", this->ViewControlFrame->GetWidgetName() );
-            app->Script ( "pack %s -side bottom -fill x -padx 0 -pady 0", this->SliceControlFrame->GetWidgetName() );
+            app->Script ( "pack %s -side bottom -fill x -padx 1 -pady 1", this->ViewControlFrame->GetWidgetName() );
+            app->Script ( "pack %s -side bottom -fill x -padx 1 -pady 1", this->SliceControlFrame->GetWidgetName() );
 
         }
     }

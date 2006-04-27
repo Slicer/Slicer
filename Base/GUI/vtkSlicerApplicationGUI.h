@@ -29,6 +29,7 @@
 
 class vtkObject;
 class vtkKWPushButton;
+class vtkKWScale;
 
 // Description:
 // This class implements Slicer's main Application GUI.
@@ -63,6 +64,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkGetObjectMacro ( ModelsButton, vtkKWPushButton );
     vtkGetObjectMacro ( DataButton, vtkKWPushButton );
     vtkGetObjectMacro ( AlignmentsButton, vtkKWPushButton );
+
+    vtkGetObjectMacro (ToggleAnnotationButton, vtkKWPushButton );
+    vtkGetObjectMacro (ToggleFgBgButton, vtkKWPushButton );
+    vtkGetObjectMacro (SliceFadeScale, vtkKWScale );
+    vtkGetObjectMacro (SliceOpacityScale, vtkKWScale );
 
     // Description:
     // Get/Set the main slicer window.
@@ -138,6 +144,12 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkKWLabel *ModulesLabel;
     vtkKWPushButton *ModulesBack;
     vtkKWPushButton *ModulesNext;
+    //Description:
+    // Widgets for the SliceControlFrame in the GUI
+    vtkKWPushButton *ToggleAnnotationButton;
+    vtkKWPushButton *ToggleFgBgButton;
+    vtkKWScale *SliceFadeScale;
+    vtkKWScale *SliceOpacityScale;
 
     // Description:
     // Main Slicer window
