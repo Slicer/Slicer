@@ -1,11 +1,6 @@
 #
 # If being build as part of Slicer3, we know where to find tclap include files
-IF(Slicer3_SOURCE_DIR)
-SET(TCLAP_DIR ${Slicer3_SOURCE_DIR}/Libs/tclap)
-ELSE(Slicer3_SOURCE_DIR)
-FIND_PATH(TCLAP_DIR include ../tclap DOC "Location of tclap/include")
-ENDIF(Slicer3_SOURCE_DIR)
-
+SET(TCLAP_DIR ../tclap)
 INCLUDE_DIRECTORIES (${TCLAP_DIR}/include)
 
 UTILITY_SOURCE(GENERATECLP_EXE GenerateCLP ./ GenerateCLP.cxx)
