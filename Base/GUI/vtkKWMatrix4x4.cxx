@@ -48,7 +48,7 @@ vtkKWMatrix4x4::~vtkKWMatrix4x4()
 }
 
 //----------------------------------------------------------------------------
-void vtkKWMatrix4x4::Create()
+void vtkKWMatrix4x4::CreateWidget()
 {
   // Check if already created
 
@@ -60,7 +60,7 @@ void vtkKWMatrix4x4::Create()
 
   // Call the superclass to create the whole widget
 
-  this->Superclass::Create();
+  this->Superclass::CreateWidget();
 
   this->MultiColumnList->SetParent(this);
   this->MultiColumnList->Create();

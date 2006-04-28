@@ -35,10 +35,6 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description:
-  // Create the widget.
-  virtual void Create();
-
-  // Description:
   // the vtk object to manipulate
   vtkGetObjectMacro (Matrix4x4, vtkMatrix4x4);
   vtkSetObjectMacro (Matrix4x4, vtkMatrix4x4);
@@ -70,6 +66,10 @@ public:
 protected:
   vtkKWMatrix4x4();
   ~vtkKWMatrix4x4();
+
+  // Description:
+  // Create the widget.
+  virtual void CreateWidget();
 
   char *Command;
   //char *StartCommand;

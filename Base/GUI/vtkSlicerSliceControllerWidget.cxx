@@ -59,14 +59,14 @@ vtkSlicerSliceControllerWidget::~vtkSlicerSliceControllerWidget ( ){
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerSliceControllerWidget::Create ( ) {
+void vtkSlicerSliceControllerWidget::CreateWidget ( ) {
 
     // the widget is a frame with some widgets inside
     if (this->IsCreated ( ) ) {
         vtkErrorMacro ( << this->GetClassName() << "already created.");
         return;
     }
-    this->Superclass::Create ( );
+    this->Superclass::CreateWidget ( );
     
     this->ControlFrame = vtkKWFrame::New ( );
     this->ControlFrame->SetParent ( this->GetParent( ) );

@@ -16,15 +16,11 @@ class vtkCallbackCommand;
 //
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceControlGUI : public vtkKWCompositeWidget
 {
- public:
+public:
   static vtkSlicerSliceControlGUI* New ( );
   vtkTypeRevisionMacro ( vtkSlicerSliceControlGUI, vtkKWCompositeWidget );
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  // Description:
-  // Create the widget.
-  virtual void Create();
-  
   // Description:
   // Get the sub widgets
   vtkGetObjectMacro(OffsetScale, vtkKWScaleWithEntry);
@@ -63,24 +59,29 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceControlGUI : public vtkKWComposit
   void TransientApply(double val) {this->TransientApply();}; // accept the scale value as arg
   void TransientApply();
     
- protected:
-    // sub widgets.
-    vtkKWScaleWithEntry *OffsetScale;
-    vtkKWSpinBoxWithLabel *FieldOfViewEntry;
-    vtkKWMenuButtonWithLabel *OrientationMenu;
+protected:
+  vtkSlicerSliceControlGUI ( );
+  ~vtkSlicerSliceControlGUI ( );
 
-    vtkMRMLScene *MRMLScene;
-    vtkMRMLSliceNode *SliceNode;
+  // Description:
+  // Create the widget.
+  virtual void CreateWidget();
+  
+  // sub widgets.
+  vtkKWScaleWithEntry *OffsetScale;
+  vtkKWSpinBoxWithLabel *FieldOfViewEntry;
+  vtkKWMenuButtonWithLabel *OrientationMenu;
+
+  vtkMRMLScene *MRMLScene;
+  vtkMRMLSliceNode *SliceNode;
     
-    vtkCallbackCommand *MRMLCallbackCommand;
-    vtkCallbackCommand *WidgetCallbackCommand;
+  vtkCallbackCommand *MRMLCallbackCommand;
+  vtkCallbackCommand *WidgetCallbackCommand;
 
-    vtkSlicerSliceControlGUI ( );
-    ~vtkSlicerSliceControlGUI ( );
 
- private:
-    vtkSlicerSliceControlGUI ( const vtkSlicerSliceControlGUI& ); //Not implemented.
-    void operator = ( const vtkSlicerSliceControlGUI& ); //Not implemented.
+private:
+  vtkSlicerSliceControlGUI ( const vtkSlicerSliceControlGUI& ); //Not implemented.
+  void operator = ( const vtkSlicerSliceControlGUI& ); //Not implemented.
 };
 
 #endif

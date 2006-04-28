@@ -46,7 +46,7 @@ vtkSlicerSliceViewer::~vtkSlicerSliceViewer ( ){
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerSliceViewer::Create ( ) {
+void vtkSlicerSliceViewer::CreateWidget ( ) {
 
     vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast ( this->GetParent()->GetApplication() );
 
@@ -55,7 +55,7 @@ void vtkSlicerSliceViewer::Create ( ) {
         vtkErrorMacro ( << this->GetClassName() << "already created.");
         return;
     }
-    this->Superclass::Create ( );
+    this->Superclass::CreateWidget ( );
     
     //---
     // Create a render widget
