@@ -1,6 +1,6 @@
 #
 # If being build as part of Slicer3, we know where to find tclap include files
-SET(TCLAP_DIR ../tclap)
+SET(TCLAP_DIR ${Slicer3_SOURCE_DIR}/Libs/tclap)
 INCLUDE_DIRECTORIES (${TCLAP_DIR}/include)
 
 UTILITY_SOURCE(GENERATECLP_EXE GenerateCLP ./ GenerateCLP.cxx)
