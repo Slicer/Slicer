@@ -5,7 +5,7 @@ ELSE ( ITK_FOUND )
   MESSAGE ( FATAL_ERROR "Cannot build without ITK" )
 ENDIF ( ITK_FOUND )
 
-INCLUDE(${Slicer3_SOURCE_DIR}/Libs/GenerateCLP/UseGenerateCLP.cmake)
+INCLUDE(../UseGenerateCLP.cmake)
 
 SET ( CLPEXAMPLE1_SOURCE CLPExample1.cxx )
 GENERATECLP(CLPEXAMPLE1_SOURCE CLPExample1.xml)
