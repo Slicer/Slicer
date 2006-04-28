@@ -8,9 +8,6 @@ ENDIF(Slicer3_SOURCE_DIR)
 
 INCLUDE_DIRECTORIES (${TCLAP_DIR}/include)
 
-SET(Slicer3_SOURCE_DIR d:/lorensen/Projects/Slicer3)
-
-
 UTILITY_SOURCE(GENERATECLP_EXE GenerateCLP ./ GenerateCLP.cxx)
 # create the .clp files
 # usage: GENERATE_CLP(foo_SRCS ${XML_FILES})
