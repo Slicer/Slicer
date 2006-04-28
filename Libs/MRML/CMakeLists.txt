@@ -26,6 +26,8 @@ SET(MRML_SRCS
         vtkMRMLVolumeDisplayNode.cxx
         vtkMRMLTransformNode.cxx
         vtkMRMLLinearTransformNode.cxx
+        vtkMRMLFiducialNode.cxx
+        vtkMRMLFiducialListNode.cxx
         vtkMRMLSliceNode.cxx
         vtkMRMLSliceCompositeNode.cxx
         # Note: when you add new node types, add
