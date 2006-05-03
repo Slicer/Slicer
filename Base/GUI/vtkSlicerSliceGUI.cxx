@@ -2,7 +2,7 @@
 #include "vtkObjectFactory.h"
 #include "vtkCommand.h"
 #include "vtkCornerAnnotation.h"
-#include "vtkImageViewer2.h"
+#include "vtkImageViewer.h"
 #include "vtkRenderWindow.h"
 #include "vtkImageActor.h"
 
@@ -140,10 +140,13 @@ void vtkSlicerSliceGUI::ProcessGUIEvents ( vtkObject *caller,
             }
             // UNDO-ABLE APPLY
             if ( event == vtkKWScale::ScaleValueStartChangingEvent || event == vtkCommand::ModifiedEvent ) {
-                vtkMatrix4x4 *m = this->GetSliceNode()->GetSliceToRAS ( );
-                m->Identity ( );
-                m->SetElement (2, 3, c->GetOffsetScale()->GetValue ( ) );
-                this->GetSliceNode()->Modified();
+                if ( this->GetSliceNode() )
+                  {
+                  vtkMatrix4x4 *m = this->GetSliceNode()->GetSliceToRAS ( );
+                  m->Identity ( );
+                  m->SetElement (2, 3, c->GetOffsetScale()->GetValue ( ) );
+                  this->GetSliceNode()->Modified();
+                  }
             }
         }
     
