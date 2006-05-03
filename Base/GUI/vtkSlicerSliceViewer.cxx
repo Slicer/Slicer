@@ -24,8 +24,8 @@ vtkSlicerSliceViewer::vtkSlicerSliceViewer ( ) {
 
     //---  
     // widgets comprising the SliceViewer for now.
-    this->ImageViewer = NULL;
-    this->RenderWidget = NULL;
+    this->ImageViewer = vtkImageViewer2::New();
+    this->RenderWidget = vtkKWRenderWidget::New ( );
 
 }
 
@@ -59,7 +59,6 @@ void vtkSlicerSliceViewer::CreateWidget ( ) {
     
     //---
     // Create a render widget
-    this->RenderWidget = vtkKWRenderWidget::New ( );
     this->RenderWidget->SetParent ( this->GetParent( ) );
     this->RenderWidget->Create();
     int w = app->GetMainLayout()->GetSliceViewerMinDim ( );
@@ -72,7 +71,6 @@ void vtkSlicerSliceViewer::CreateWidget ( ) {
     //---
     // Create an image viewer
     // Use the render window and renderer of the renderwidget
-    this->ImageViewer = vtkImageViewer2::New();
     this->ImageViewer->SetRenderWindow(this->RenderWidget->GetRenderWindow());
     this->ImageViewer->SetRenderer(this->RenderWidget->GetRenderer());
     // use interactor or not?
