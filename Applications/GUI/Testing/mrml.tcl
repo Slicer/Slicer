@@ -45,9 +45,10 @@ set ::scene [[$::appGUI GetApplicationLogic] GetMRMLScene]
 # for use when cutting and pasting into the console:
 # set scenefile c:/pieper/bwh/slicer3/latest/Slicer3/Applications/GUI/Testing/mrmlScene.xml
 
-set scenefile [file dirname [info script]]/mrmlScene.xml
-$::scene SetURL $scenefile
-$::scene Connect
+# For stand along use (read a file):
+##set scenefile [file dirname [info script]]/mrmlScene.xml
+##$::scene SetURL $scenefile
+##$::scene Connect
 
 ## set up global key bindings
 set index [[$win GetEditMenu] AddCommand "&Undo" "" "$::scene Undo; mrmlUpdateUndoRedoButtons"]
@@ -73,32 +74,21 @@ $::slicefgl SetMRMLScene $::scene
 [$::slicebgl GetXYToIJKTransform] AddObserver "" ""
 [$::slicefgl GetXYToIJKTransform] AddObserver "" ""
 
-# a slice node to be controlled by the slicecontrol
-set slicen [vtkMRMLSliceNode New]
-$::scene AddNode $slicen
-#$::slicen SetOrientationToCoronal
-$::slicen SetOrientationToAxial
-$::slicen SetDimensions 512 512 1
-$::slicen SetFieldOfView 128 128 128
-$::slicen UpdateMatrices
-
-# a SliceComposite node for the SliceLogic
-set slicecn [vtkMRMLSliceCompositeNode New]
-$::slicecn SetBackgroundVolumeID vol3
-$::slicecn SetForegroundVolumeID vol1
-$::scene AddNode $slicecn
-
 # a SliceLogic 
 set ::slicel [vtkSlicerSliceLogic New]
-$::slicel SetMRMLScene $::scene
+$::slicel SetAndObserveMRMLScene $::scene
+$::slicel ProcessMRMLEvents
+
 $::slicel SetBackgroundLayer $::slicebgl
 $::slicebgl UpdateTransforms
 $::slicel SetForegroundLayer $::slicefgl
 $::slicefgl UpdateTransforms
-$::slicel SetSliceCompositeNode $::slicecn
-$::slicel SetSliceNode $::slicen
+set ::slicecn [$slicel GetSliceCompositeNode]
 $::slicel AddObserver ModifiedEvent "puts {Slice Logic Changed}"
 $::slicel AddObserver ModifiedEvent mrmlExpose
+
+$::slicel ProcessMRMLEvents
+set ::slicen [$slicel GetSliceNode]
 
 ##############
 #
@@ -260,8 +250,8 @@ pack [$renderwidget GetWidgetName] -side top -fill both -expand y -padx 0 -pady 
 # Use the render window and renderer of the renderwidget
 
 set viewer [vtkImageViewer2 New]
-$viewer SetColorWindow 200
-$viewer SetColorLevel 100
+$viewer SetColorWindow 255
+$viewer SetColorLevel 128
 $viewer SetRenderWindow [$renderwidget GetRenderWindow] 
 $viewer SetRenderer [$renderwidget GetRenderer] 
 $viewer SetInput [$::slicel GetImageData]
@@ -431,8 +421,11 @@ $::scene AddObserver ModifiedEvent mrmlUpdateBackground
 
 proc mrmlUpdateBackground {} {
     set nitems [$::scene GetNumberOfNodesByClass "vtkMRMLScalarVolumeNode"]
+puts "nitems is $nitems"
     set vnode [$::scene GetNthNodeByClass [expr $nitems -1] "vtkMRMLScalarVolumeNode"]
+puts "vnode is $vnode"
     $::slicecn SetBackgroundVolumeID [$vnode GetID]
+    $::slicecn SetForegroundVolumeID [$vnode GetID]
     puts "Background is now [$vnode GetID]"
 
     set dnode [$vnode GetDisplayNode]
