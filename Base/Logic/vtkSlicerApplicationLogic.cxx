@@ -29,6 +29,7 @@ vtkSlicerApplicationLogic::vtkSlicerApplicationLogic()
     this->Slices = NULL;
     this->Modules = NULL;
     this->ActiveSlice = NULL;
+    this->SelectionNode = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -52,6 +53,55 @@ vtkSlicerApplicationLogic::~vtkSlicerApplicationLogic()
   this->SetActiveSlice(NULL);
 
   // TODO - unregister/delete ivars
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerApplicationLogic::ProcessMRMLEvents()
+{
+  cerr << "updating slice logic from a mrml event" << endl ;
+
+
+  //
+  // if you don't have a node yet, look in the scene to see if 
+  // one exists for you to use.  If not, create one and add it to the scene
+  //
+  if ( this->SelectionNode == NULL )
+    {
+    vtkMRMLSelectionNode *node;
+    node = vtkMRMLSelectionNode::SafeDownCast (
+            this->MRMLScene->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
+    if ( node == NULL )
+      {
+      node = vtkMRMLSelectionNode::New();
+      this->MRMLScene->AddNode(node);
+      this->SetSelectionNode (node);
+      node->Delete();
+      }
+      else
+      {
+      this->SetSelectionNode (node);
+      }
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerApplicationLogic::PropagateVolumeSelection()
+{
+  if ( !this->SelectionNode || !this->MRMLScene )
+    {
+    return;
+    }
+
+  int i, nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
+  char *ID = this->SelectionNode->GetActiveVolumeID();
+
+  vtkMRMLSliceCompositeNode *cnode;
+  for (i = 0; i < nnodes; i++)
+    {
+    cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
+            this->MRMLScene->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
+    cnode->SetBackgroundVolumeID( ID );
+    }
 }
 
 //----------------------------------------------------------------------------
