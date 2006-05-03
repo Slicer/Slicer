@@ -24,9 +24,12 @@
 #ifndef __vtkSlicerApplicationLogic_h
 #define __vtkSlicerApplicationLogic_h
 
+#include "vtkMRMLSelectionNode.h"
+
 #include "vtkSlicerBaseLogic.h"
 #include "vtkSlicerLogic.h"
 #include "vtkSlicerSliceLogic.h"
+
 
 #include "vtkCollection.h"
 
@@ -115,6 +118,16 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic : public vtkSlicerL
   vtkGetObjectMacro (ActiveSlice,vtkSlicerSliceLogic);
 
   // Description:
+  // the SelectionNode 
+  vtkSetObjectMacro (SelectionNode,vtkMRMLSelectionNode);
+  vtkGetObjectMacro (SelectionNode,vtkMRMLSelectionNode);
+
+  // Description:
+  // Perform the default behavior related to selecting a volume
+  // (in this case, making it the background for all SliceCompositeNodes)
+  void PropagateVolumeSelection();
+
+  // Description:
   // Create a new Slice with it's associated class instances
   vtkSlicerSliceLogic *CreateSlice ();
 
@@ -129,6 +142,10 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic : public vtkSlicerL
   // the ActiveModule is the default destination of UI events
   //vtkSetObjectMacro (ActiveModule,vtkSlicerModule);
   //vtkGetObjectMacro (ActiveModule,vtkSlicerModule);
+
+  // Description:
+  // Creates a selection node if needed
+  void ProcessMRMLEvents(); 
 
   //
   // Transient Application State
@@ -158,6 +175,7 @@ private:
 
   //vtkSlicerViewLogic *ActiveView;
   vtkSlicerSliceLogic *ActiveSlice;
+  vtkMRMLSelectionNode *SelectionNode;
   //vtkSlicerModuleLogic *ActiveModule;
 
 
