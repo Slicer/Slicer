@@ -119,9 +119,11 @@ void vtkMRMLSliceCompositeNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   vtkMRMLNode::PrintSelf(os,indent);
 
-  os << "BackgroundVolumeID: " << this->BackgroundVolumeID << "\n";
-  os << "ForegroundVolumeID: " << this->ForegroundVolumeID << "\n";
-  os << "Opacity: " << this->Opacity << "\n";
+  os << indent << "BackgroundVolumeID: " << 
+   (this->BackgroundVolumeID ? this->BackgroundVolumeID : "(none)") << "\n";
+  os << indent << "ForegroundVolumeID: " << 
+   (this->ForegroundVolumeID ? this->ForegroundVolumeID : "(none)") << "\n";
+  os << indent << "Opacity: " << this->Opacity << "\n";
 }
 
 
