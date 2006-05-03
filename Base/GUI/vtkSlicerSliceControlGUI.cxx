@@ -256,6 +256,11 @@ void vtkSlicerSliceControlGUI::SetMRMLScene ( vtkMRMLScene  *MRMLScene )
 //----------------------------------------------------------------------------
 void vtkSlicerSliceControlGUI::UpdateWidgets()
 {
+  if ( !this->SliceNode )
+    {
+    return;
+    }
+  
   int modified = 0;
 
   double fov = this->SliceNode->GetFieldOfView()[0];
@@ -315,6 +320,11 @@ void vtkSlicerSliceControlGUI::SetOrientationFromMenu()
 void vtkSlicerSliceControlGUI::TransientApply()
 {
 
+  if ( !this->SliceNode )
+    {
+    return;
+    }
+  
   int modified = 0;
 
   // Set the Field of View from the Entry
