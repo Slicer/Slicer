@@ -66,7 +66,7 @@ void vtkSlicerVolumesGUI::AddGUIObservers ( )
 
     // Fill in
     // observer load volume button
-this->LoadVolumeButton->AddObserver ( vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->LoadVolumeButton->AddObserver ( vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
 }
 
 
@@ -75,20 +75,26 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents ( vtkObject *caller,
                                              unsigned long event, void *callData )
 {
 
-    // Fill in
+    // Find the widget, and process the events from it...
     vtkKWLoadSaveButton *filebrowse = vtkKWLoadSaveButton::SafeDownCast(caller);
     if (filebrowse == this->LoadVolumeButton  && event == vtkCommand::ModifiedEvent )
         {
             // If a file has been selected for loading...
-            if ( filebrowse->GetFileName ( ) ) 
+            char *fileName = filebrowse->GetFileName();
+            if ( fileName ) 
                 {
                     vtkSlicerVolumesLogic* volumeLogic = this->Logic;
       
-                    if (volumeLogic->AddArchetypeVolume( filebrowse->GetFileName ( ) ) == NULL) 
+                    vtkMRMLVolumeNode *volumeNode = volumeLogic->AddArchetypeVolume( fileName );
+                    if ( volumeNode == NULL ) 
                         {
-        
+                        // TODO: generate an error...
                         }
-      
+                        else
+                        {
+                        this->ApplicationLogic->GetSelectionNode()->SetActiveVolumeID( volumeNode->GetID() );
+                        this->ApplicationLogic->PropagateVolumeSelection();
+                        }
                 }
         }
 }
