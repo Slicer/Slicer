@@ -266,6 +266,9 @@ void vtkSlicerSlicesGUI::BuildGUI ( vtkKWFrame* f1, vtkKWFrame *f2, vtkKWFrame *
     this->MainSliceGUI0->SetApplication ( app );
     this->MainSliceGUI1->SetApplication ( app );
     this->MainSliceGUI2->SetApplication ( app );
+    this->MainSliceGUI0->SetApplicationLogic ( this->ApplicationLogic );
+    this->MainSliceGUI1->SetApplicationLogic ( this->ApplicationLogic );
+    this->MainSliceGUI2->SetApplicationLogic ( this->ApplicationLogic );
 
     this->MainSliceGUI0->BuildGUI ( f1 );
     this->MainSliceGUI1->BuildGUI ( f2 );
