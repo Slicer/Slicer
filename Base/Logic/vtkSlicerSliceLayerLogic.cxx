@@ -115,6 +115,13 @@ void vtkSlicerSliceLayerLogic::UpdateTransforms()
       if (id)
         {
         dnode = vtkMRMLVolumeDisplayNode::SafeDownCast (this->MRMLScene->GetNodeByID(id));
+        
+        if ( !dnode )
+          {
+          vtkErrorMacro ("Display Node is NULL");
+          return;
+          }
+
         this->MapToWindowLevelColors->SetWindow(dnode->GetWindow());
         this->MapToWindowLevelColors->SetLevel(dnode->GetLevel());
 
@@ -152,9 +159,9 @@ void vtkSlicerSliceLayerLogic::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "SlicerSliceLayerLogic:             " << this->GetClassName() << "\n";
 
   os << indent << "VolumeNode: " <<
-    (this->VolumeNode ? this->VolumeNode->GetName() : "(none)") << "\n";
+    (this->VolumeNode ? this->VolumeNode->GetID() : "(none)") << "\n";
   os << indent << "SliceNode: " <<
-    (this->SliceNode ? this->SliceNode->GetName() : "(none)") << "\n";
+    (this->SliceNode ? this->SliceNode->GetID() : "(none)") << "\n";
   // TODO: fix printing of vtk objects
   os << indent << "Reslice: " <<
     (this->Reslice ? "this->Reslice" : "(none)") << "\n";
