@@ -48,9 +48,30 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceGUI : public vtkSlicerComponentGU
     void SetAndObserveMRMLNode ( vtkMRMLSliceNode *node )
         { this->SetMRML ( vtkObjectPointer( &this->SliceNode), node ); }
     void SetModuleLogic ( vtkSlicerSliceLogic *logic )
-        { this->SetLogic ( vtkObjectPointer (&this->Logic), logic ); }
+        { 
+        this->SetLogic ( vtkObjectPointer (&this->Logic), logic ); 
+        if ( logic )
+          {
+          this->GetSliceViewer()->GetImageViewer()->SetInput( logic->GetImageData() );
+          }
+          else
+          {
+          this->GetSliceViewer()->GetImageViewer()->SetInput( NULL );
+          }
+        }
+
     void SetAndObserveModuleLogic ( vtkSlicerSliceLogic *logic )
-        { this->SetLogic ( vtkObjectPointer (&this->Logic), logic ); }
+        { 
+        this->SetAndObserveLogic ( vtkObjectPointer (&this->Logic), logic ); 
+        if ( logic )
+          {
+          this->GetSliceViewer()->GetImageViewer()->SetInput( logic->GetImageData() );
+          }
+          else
+          {
+          this->GetSliceViewer()->GetImageViewer()->SetInput( NULL );
+          }
+        }
 
     // Description:
     // Build the SlicesGUI's UIPanel and three main SliceGUIs 
