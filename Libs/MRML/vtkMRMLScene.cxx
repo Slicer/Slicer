@@ -30,6 +30,7 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLFiducialNode.h"
 #include "vtkMRMLFiducialListNode.h"
 #include "vtkMRMLSliceCompositeNode.h"
+#include "vtkMRMLSelectionNode.h"
 #include "vtkMRMLSliceNode.h"
 #include "vtkMRMLVolumeArchetypeStorageNode.h"
 #include "vtkMRMLVolumeDisplayNode.h"
@@ -76,6 +77,9 @@ vtkMRMLScene::vtkMRMLScene()
   
   vtkMRMLSliceCompositeNode *scompn = vtkMRMLSliceCompositeNode::New(); 
   this->RegisterNodeClass( scompn );
+  
+  vtkMRMLSelectionNode *sseln = vtkMRMLSelectionNode::New(); 
+  this->RegisterNodeClass( sseln );
   
   vtkMRMLSliceNode *snode = vtkMRMLSliceNode::New(); 
   this->RegisterNodeClass( snode );
@@ -552,7 +556,10 @@ void vtkMRMLScene::SaveStateForUndo (vtkMRMLNode *node)
   this->ClearRedoStack();
   this->SetUndoOn();
   this->PushIntoUndoStack();
-  this->CopyNodeInUndoStack(node);
+  if ( node )
+    {
+    this->CopyNodeInUndoStack(node);
+    }
 } 
 
 //------------------------------------------------------------------------------
