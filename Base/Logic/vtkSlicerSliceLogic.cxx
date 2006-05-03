@@ -46,6 +46,52 @@ vtkSlicerSliceLogic::~vtkSlicerSliceLogic()
 void vtkSlicerSliceLogic::ProcessMRMLEvents()
 {
   cerr << "updating slice logic from a mrml event" << endl ;
+
+
+  //
+  // if you don't have a node yet, look in the scene to see if 
+  // one exists for you to use.  If not, create one and add it to the scene
+  //
+  if ( this->SliceNode == NULL )
+    {
+    vtkMRMLSliceNode *node;
+    node = vtkMRMLSliceNode::SafeDownCast (
+            this->MRMLScene->GetNthNodeByClass(0, "vtkMRMLSliceNode"));
+    if ( node == NULL )
+      {
+      node = vtkMRMLSliceNode::New();
+      this->MRMLScene->AddNode(node);
+      this->SetSliceNode (node);
+      node->Delete();
+      }
+      else
+      {
+      this->SetSliceNode (node);
+      }
+    }
+
+  //
+  // if you don't have a node yet, look in the scene to see if 
+  // one exists for you to use.  If not, create one and add it to the scene
+  //
+  if ( this->SliceCompositeNode == NULL )
+    {
+    vtkMRMLSliceCompositeNode *node;
+    node = vtkMRMLSliceCompositeNode::SafeDownCast (
+            this->MRMLScene->GetNthNodeByClass(0, "vtkMRMLSliceCompositeNode"));
+    if ( node == NULL )
+      {
+      node = vtkMRMLSliceCompositeNode::New();
+      this->MRMLScene->AddNode(node);
+      this->SetSliceCompositeNode (node);
+      node->Delete();
+      }
+      else
+      {
+      this->SetSliceCompositeNode (node);
+      }
+    }
+
   this->UpdatePipeline();
 }
 
@@ -169,6 +215,7 @@ void vtkSlicerSliceLogic::UpdatePipeline()
       }
 
     // Foreground
+    // TODO: get Opacity from Composite Node
     id = this->SliceCompositeNode->GetForegroundVolumeID();
     vtkMRMLScalarVolumeNode *fgnode = NULL;
     if (id)
