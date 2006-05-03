@@ -137,7 +137,7 @@ int Slicer3_main(int argc, char *argv[])
     sliceLogic1->SetAndObserveMRMLScene ( scene );
     sliceLogic2->SetAndObserveMRMLScene ( scene );
     vtkSlicerSlicesGUI *slicesGUI = vtkSlicerSlicesGUI::New ();
-    slicesGUI->SetApplication ( slicerApp);
+    slicesGUI->SetApplication ( slicerApp );
     slicesGUI->SetAndObserveApplicationLogic ( appLogic );
     slicesGUI->SetAndObserveMRMLScene ( scene );
     slicesGUI->SetGUIName( "Slices" );
