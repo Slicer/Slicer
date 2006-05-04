@@ -64,7 +64,7 @@ void vtkSlicerSliceLogic::ProcessMRMLEvents()
       this->SetSliceNode (node);
       node->Delete();
       }
-      else
+    else
       {
       this->SetSliceNode (node);
       }
@@ -86,7 +86,7 @@ void vtkSlicerSliceLogic::ProcessMRMLEvents()
       this->SetSliceCompositeNode (node);
       node->Delete();
       }
-      else
+    else
       {
       this->SetSliceCompositeNode (node);
       }

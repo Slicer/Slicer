@@ -61,6 +61,12 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLayerLogic : public vtkSlicerLo
   void SetVolumeNode (vtkMRMLVolumeNode *VolumeNode);
 
   // Description:
+  // The volume display node has the render properties of the volume
+  // - this node is set implicitly when the volume is set
+  //   and it is observed by this logic
+  vtkGetObjectMacro (VolumeDisplayNode, vtkMRMLVolumeDisplayNode);
+
+  // Description:
   // The slice node that defines the view 
   vtkGetObjectMacro (SliceNode, vtkMRMLSliceNode);
   void SetSliceNode (vtkMRMLSliceNode *SliceNode);
@@ -106,6 +112,7 @@ protected:
   // Description:
   // the MRML Nodes that define this Logic's parameters
   vtkMRMLVolumeNode *VolumeNode;
+  vtkMRMLVolumeDisplayNode *VolumeDisplayNode;
   vtkMRMLSliceNode *SliceNode;
 
   // Description:

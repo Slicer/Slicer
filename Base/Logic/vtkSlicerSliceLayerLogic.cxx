@@ -28,6 +28,7 @@ vtkStandardNewMacro(vtkSlicerSliceLayerLogic);
 vtkSlicerSliceLayerLogic::vtkSlicerSliceLayerLogic()
 {
   this->VolumeNode = NULL;
+  this->VolumeDisplayNode = NULL;
   this->SliceNode = NULL;
 
   this->XYToIJKTransform = vtkTransform::New();
@@ -80,6 +81,25 @@ void vtkSlicerSliceLayerLogic::SetVolumeNode(vtkMRMLVolumeNode *volumeNode)
 {
   this->SetAndObserveMRML( vtkObjectPointer( &this->VolumeNode ), volumeNode );
 
+  // if there's a display node, observe it
+  vtkMRMLVolumeDisplayNode *dnode = NULL;
+  if ( volumeNode )
+    {
+    const char *id = this->VolumeNode->GetDisplayNodeID();
+    if (id)
+      {
+      dnode = vtkMRMLVolumeDisplayNode::SafeDownCast (this->MRMLScene->GetNodeByID(id));
+      }
+    }
+    if ( dnode )
+      {
+      this->SetAndObserveMRML( vtkObjectPointer( &this->VolumeDisplayNode ), dnode );
+      }
+    else
+      {
+      this->SetMRML( vtkObjectPointer( &this->VolumeNode ), NULL );
+      }
+
   // Update the reslice transform to move this image into XY
   this->UpdateTransforms();
 }
@@ -109,21 +129,16 @@ void vtkSlicerSliceLayerLogic::UpdateTransforms()
       this->VolumeNode->GetRASToIJKMatrix(rasToIJK);
       vtkMatrix4x4::Multiply4x4(rasToIJK, m, m); 
       rasToIJK->Delete();
+      }
+    else
+      {
+      this->Reslice->SetInput( NULL ); 
+      }
 
-      const char *id = this->VolumeNode->GetDisplayNodeID();
-      vtkMRMLVolumeDisplayNode *dnode = NULL;
-      if (id)
-        {
-        dnode = vtkMRMLVolumeDisplayNode::SafeDownCast (this->MRMLScene->GetNodeByID(id));
-        
-        if ( !dnode )
-          {
-          vtkErrorMacro ("Display Node is NULL");
-          return;
-          }
-
-        this->MapToWindowLevelColors->SetWindow(dnode->GetWindow());
-        this->MapToWindowLevelColors->SetLevel(dnode->GetLevel());
+    if (this->VolumeDisplayNode)
+      {
+      this->MapToWindowLevelColors->SetWindow(this->VolumeDisplayNode->GetWindow());
+      this->MapToWindowLevelColors->SetLevel(this->VolumeDisplayNode->GetLevel());
 
         // TODO: update the pipeline with other display values
           //vtkFloatingPointType UpperThreshold;
@@ -134,11 +149,6 @@ void vtkSlicerSliceLayerLogic::UpdateTransforms()
           //int ApplyThreshold;
           //int AutoThreshold;
 
-        }
-      }
-    else
-      {
-      this->Reslice->SetInput( NULL ); 
       }
 
     this->Reslice->SetResliceTransform( this->XYToIJKTransform );

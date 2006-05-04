@@ -104,14 +104,14 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents ( vtkObject *caller,
       
                     vtkMRMLVolumeNode *volumeNode = volumeLogic->AddArchetypeVolume( fileName );
                     if ( volumeNode == NULL ) 
-                        {
-                        // TODO: generate an error...
-                        }
-                        else
-                        {
-                        this->ApplicationLogic->GetSelectionNode()->SetActiveVolumeID( volumeNode->GetID() );
-                        this->ApplicationLogic->PropagateVolumeSelection();
-                        }
+                      {
+                      // TODO: generate an error...
+                      }
+                    else
+                      {
+                      this->ApplicationLogic->GetSelectionNode()->SetActiveVolumeID( volumeNode->GetID() );
+                      this->ApplicationLogic->PropagateVolumeSelection();
+                      }
                 }
         }
 }

@@ -433,7 +433,7 @@ void vtkSlicerApplicationGUI::BuildMainViewer ( )
 
             // put a teapot in there for now.
             vtkXMLPolyDataReader *rwReader = vtkXMLPolyDataReader::New ( );
-            rwReader->SetFileName ( "C:/KWWidgets/Examples/Data/teapot.vtp");
+            rwReader->SetFileName ( "C:/pieper/bwh/slicer3/latest/Slicer3/Libs/KWWidgets/Examples/Data/teapot.vtp");
             vtkPolyDataMapper *rwMapper = vtkPolyDataMapper::New ();
             rwMapper->SetInputConnection (rwReader->GetOutputPort() );
             vtkActor *rwActor = vtkActor::New ( );
