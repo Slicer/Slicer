@@ -1,0 +1,105 @@
+/*=========================================================================
+
+  Module:    $RCSfile: vtkKWWindowLevelThresholdEditor.h,v $
+
+  Copyright (c) Kitware, Inc.
+  All rights reserved.
+  See Copyright.txt or http://www.kitware.com/Copyright.htm for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notice for more information.
+
+=========================================================================*/
+// .NAME vtkKWWindowLevelThresholdEditor -  multi column list box to display/edit matrix4x4
+// .SECTION Description
+// vtkKWWindowLevelThresholdEditor is a widget containing widgets that help view and
+// edit a matrix
+//
+
+#ifndef __vtkKWWindowLevelThresholdEditor_h
+#define __vtkKWWindowLevelThresholdEditor_h
+
+#include "vtkKWCompositeWidget.h"
+
+#include "vtkImageData.h"
+#include "vtkColorTransferFunction.h"
+#include "vtkImageData.h"
+#include "vtkPointData.h"
+
+#include "vtkKWLabel.h"
+#include "vtkKWWindow.h"
+#include "vtkKWRange.h"
+#include "vtkKWColorTransferFunctionEditor.h"
+#include "vtkKWHistogram.h"
+
+#include "vtkSlicerBaseGUI.h"
+
+class VTK_SLICER_BASE_GUI_EXPORT vtkKWWindowLevelThresholdEditor : public vtkKWCompositeWidget
+{
+public:
+  static vtkKWWindowLevelThresholdEditor* New();
+  vtkTypeRevisionMacro(vtkKWWindowLevelThresholdEditor,vtkKWCompositeWidget);
+  void PrintSelf(ostream& os, vtkIndent indent);
+  
+  // Description:
+  // Associated ImageData
+  vtkGetObjectMacro(ImageData, vtkImageData);
+  void SetImageData(vtkImageData* ImageData);
+
+  // Description:
+  // Get/Set Window
+  void SetWindowLevel(double window, double level);
+  double GetWindow();
+  double GetLevel();
+
+
+  // Description:
+  // Get/Set LowerThreshold
+  void SetThreshold(double lower, double upper);
+  double GetUpperThreshold();
+  double GetLowerThreshold();
+
+  
+  // Description:
+  // Command to call when the User manipulates the widget
+  virtual void SetCommand(vtkObject *object, const char *method);
+
+  // TODO: have special commands for start/end events
+  //virtual void SetStartCommand(vtkObject *object, const char *method);
+  //virtual void SetEndCommand(vtkObject *object, const char *method);
+
+  // Description:
+  // TODO: access internal widgets
+  //vtkKWRange* GetXRange() { return this->Range[0]; };
+
+protected:
+  vtkKWWindowLevelThresholdEditor();
+  ~vtkKWWindowLevelThresholdEditor();
+
+  // Description:
+  // Create the widget.
+  virtual void CreateWidget();
+
+  // Update the widget with the current state of MRML 
+  void UpdateHistogram();
+
+  char *Command;
+  //char *StartCommand;
+  //char *EndCommand;
+
+private:
+  vtkKWWindowLevelThresholdEditor(const vtkKWWindowLevelThresholdEditor&); // Not implemented
+  void operator=(const vtkKWWindowLevelThresholdEditor&); // Not implemented
+  
+  vtkImageData *ImageData;
+  vtkKWHistogram *Histogram;
+  vtkColorTransferFunction *TransferFunction;
+  vtkKWColorTransferFunctionEditor *ColorTransferFunctionEditor;
+
+  vtkKWRange *WindoLevelRange;
+  vtkKWRange *ThresholdRange;
+};
+
+#endif
+

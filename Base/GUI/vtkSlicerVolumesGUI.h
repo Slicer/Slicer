@@ -12,6 +12,9 @@
 #include "vtkSlicerVolumesLogic.h"
 #include "vtkMRMLVolumeNode.h"
 
+#include "vtkSlicerNodeSelectorWidget.h"
+#include "vtkKWWindowLevelThresholdEditor.h"
+
 #include "vtkKWLoadSaveButton.h"
 #include "vtkKWLoadSaveDialog.h"
 #include "vtkKWFrame.h"
@@ -31,8 +34,13 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerVolumesGUI : public vtkSlicerModuleGUI
     // Description:
     // Get methods on class members (no Set methods required)
     vtkGetObjectMacro ( LoadVolumeButton, vtkKWLoadSaveButton );
+
     vtkGetObjectMacro ( Logic, vtkSlicerVolumesLogic );
     vtkGetObjectMacro ( VolumeNode, vtkMRMLVolumeNode );
+
+    vtkGetStringMacro ( SelectedVolumeID);
+    vtkSetStringMacro ( SelectedVolumeID );
+
 
     // Description:
     // API for setting VolumeNode, VolumeLogic and
@@ -70,6 +78,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerVolumesGUI : public vtkSlicerModuleGUI
  protected:
     vtkSlicerVolumesGUI ( );
     ~vtkSlicerVolumesGUI ( );
+    
+    char *SelectedVolumeID;
 
     // Module logic and mrml pointers
     vtkSlicerVolumesLogic *Logic;
@@ -77,6 +87,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerVolumesGUI : public vtkSlicerModuleGUI
 
     // Widgets for the Volumes module
     vtkKWLoadSaveButton *LoadVolumeButton;
+    vtkSlicerNodeSelectorWidget* VolumeSelectorWidget;
+    vtkKWWindowLevelThresholdEditor* WindowLevelThresholdEditor;
 
  private:
     vtkSlicerVolumesGUI ( const vtkSlicerVolumesGUI& ); // Not implemented.
