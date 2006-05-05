@@ -98,6 +98,10 @@ ENDIF(WIN32 AND NOT BORLAND AND NOT CYGWIN)
 #### TODO: move the test application to Testing
 #### ADD_EXECUTABLE(${EXE_NAME} WIN32 ${EXE_SRCS} ${RES_FILE})
 #### TARGET_LINK_LIBRARIES(${EXE_NAME} SlicerBaseLogic SlicerBaseGUI MRML ${KWWidgets_LIBRARIES} ${LIB_NAME})
+#### IF(BUILD_TESTING)
+####   ADD_TEST(Test${EXE_NAME} ${EXECUTABLE_OUTPUT_PATH}/${EXE_NAME} --test)
+#### ENDIF(BUILD_TESTING)
+
 
 # If needed, copy the Tcl/Tk support files required at run-time 
 # to initialize Tcl/Tk. This is only triggered if VTK was built
@@ -124,10 +128,6 @@ ENDIF(NOT KWWidgets_SOURCE_DIR AND VTK_TCL_TK_COPY_SUPPORT_LIBRARY)
 # If you are using this CMakeLists.txt file to create your own application
 # based on KWWidgets, you can most likely omit this section too, unless
 # your application supports that feature too.
-
-IF(BUILD_TESTING)
-  ADD_TEST(Test${EXE_NAME} ${EXECUTABLE_OUTPUT_PATH}/${EXE_NAME} --test)
-ENDIF(BUILD_TESTING)
 
 INCLUDE_DIRECTORIES(${SlicerBaseGUI_BINARY_DIR})
 CONFIGURE_FILE(
