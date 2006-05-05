@@ -73,6 +73,12 @@ public:
   // TODO: access internal widgets
   //vtkKWRange* GetXRange() { return this->Range[0]; };
 
+  void ProcessWindowLevelCommand(double min, double max);
+  void ProcessThresholdCommand(double min, double max);
+
+  void ProcessWindowLevelStartCommand(double min, double max);
+  void ProcessThresholdStartCommand(double min, double max);
+
 protected:
   vtkKWWindowLevelThresholdEditor();
   ~vtkKWWindowLevelThresholdEditor();
@@ -81,13 +87,23 @@ protected:
   // Create the widget.
   virtual void CreateWidget();
 
-  // Update the widget with the current state of MRML 
+  // Update the histogramm widget with the current state
   void UpdateHistogram();
+
+  // Update the widgets with the current ImageData
+  void UpdateRangesFromImage();
 
   char *Command;
   //char *StartCommand;
   //char *EndCommand;
 
+//BTX
+  enum
+    {
+      ValueChangedEvent = 10000,
+      ValueStartChangingEvent
+    };
+//ETX
 private:
   vtkKWWindowLevelThresholdEditor(const vtkKWWindowLevelThresholdEditor&); // Not implemented
   void operator=(const vtkKWWindowLevelThresholdEditor&); // Not implemented
