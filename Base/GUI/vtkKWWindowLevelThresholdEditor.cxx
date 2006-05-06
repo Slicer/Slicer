@@ -71,9 +71,9 @@ void vtkKWWindowLevelThresholdEditor::SetImageData(vtkImageData* imageData)
       }
     this->Modified();   
       
-    this->UpdateRangesFromImage();
+    this->UpdateFromImage();
 
-    this->UpdateHistogram();
+    this->UpdateTransferFunction();
     }
 }
 
@@ -83,7 +83,7 @@ void vtkKWWindowLevelThresholdEditor::SetWindowLevel(double window, double level
   
   this->WindoLevelRange->SetRange(level - 0.5*window, level + 0.5*window);
   
-  this->UpdateHistogram();
+  this->UpdateTransferFunction();
 }
 double vtkKWWindowLevelThresholdEditor::GetWindow()
 {
@@ -101,7 +101,7 @@ double vtkKWWindowLevelThresholdEditor::GetLevel()
 void vtkKWWindowLevelThresholdEditor::SetThreshold(double lower, double upper)
 {
   this->ThresholdRange->SetRange(lower, upper);
-  this->UpdateHistogram();
+  this->UpdateTransferFunction();
 }
 
 double vtkKWWindowLevelThresholdEditor::GetLowerThreshold()
@@ -133,7 +133,7 @@ void vtkKWWindowLevelThresholdEditor::CreateWidget()
   // Call the superclass to create the whole widget
   this->Superclass::CreateWidget();
   
-  this->UpdateHistogram();  
+  this->UpdateTransferFunction();  
   
   this->WindoLevelRange->SetParent(this);
   this->WindoLevelRange->Create();
@@ -150,7 +150,7 @@ void vtkKWWindowLevelThresholdEditor::CreateWidget()
   this->ThresholdRange->SetCommand(this, "ProcessThresholdCommand");
   this->ThresholdRange->SetStartCommand(this, "ProcessThresholdStartCommand");
   this->Script(
-    "pack %s -side top -anchor nw -expand n -padx 2 -pady 20", 
+    "pack %s -side left -anchor w -expand n -padx 2 -pady 20", 
     this->ThresholdRange->GetWidgetName());
     
   this->ColorTransferFunctionEditor->SetParent(this);
@@ -167,7 +167,7 @@ void vtkKWWindowLevelThresholdEditor::CreateWidget()
     "hidden, ticks are displayed in the parameter space, the label "
     "and the parameter range are on top, its width is set explicitly. "
     "The range and histogram are based on a real image data.");
-  
+  this->UpdateTransferFunction();
   this->ColorTransferFunctionEditor->SetColorTransferFunction(this->TransferFunction);
   this->ColorTransferFunctionEditor->SetWholeParameterRangeToFunctionRange();
   this->ColorTransferFunctionEditor->SetVisibleParameterRangeToWholeParameterRange();
@@ -190,7 +190,7 @@ void vtkKWWindowLevelThresholdEditor::CreateWidget()
   
   this->Script(
     "pack %s -side top -anchor nw -expand n -padx 2 -pady 20", 
-    ColorTransferFunctionEditor->GetWidgetName());
+    this->ColorTransferFunctionEditor->GetWidgetName());
   
   this->TransferFunction->Delete();
   
@@ -206,7 +206,7 @@ void vtkKWWindowLevelThresholdEditor::CreateWidget()
   // Override the column sorting behavior by always updating 
 }
 
-void vtkKWWindowLevelThresholdEditor::UpdateRangesFromImage()
+void vtkKWWindowLevelThresholdEditor::UpdateFromImage()
 {
   if (this->ImageData != NULL)
   {   
@@ -220,15 +220,15 @@ void vtkKWWindowLevelThresholdEditor::UpdateRangesFromImage()
   }
 }
 //----------------------------------------------------------------------------
-void vtkKWWindowLevelThresholdEditor::UpdateHistogram()
+void vtkKWWindowLevelThresholdEditor::UpdateTransferFunction()
 {
   this->TransferFunction->RemoveAllPoints();
 
   
   this->TransferFunction->SetColorSpaceToRGB();
-  this->TransferFunction->AddRGBPoint(this->GetLowerThreshold(), 179, 179, 231);
+  this->TransferFunction->AddRGBPoint(this->GetLowerThreshold(), 179.0/255, 179.0/255, 231.0/255);
   //this->TransferFunction->AddRGBPoint((range[0] + range[1]) * 0.5, 0.0, 1.0, 1.0);
-  this->TransferFunction->AddRGBPoint(this->GetUpperThreshold(), 179, 179, 231);
+  this->TransferFunction->AddRGBPoint(this->GetUpperThreshold(), 179.0/255, 179.0/255, 231.0/255);
 }
 
 
@@ -254,7 +254,7 @@ void vtkKWWindowLevelThresholdEditor::ProcessWindowLevelCommand(double min, doub
   double range[2];
   range[0] = min;
   range[1] = max;
-  this->UpdateHistogram();
+  this->UpdateTransferFunction();
   this->InvokeEvent(vtkKWWindowLevelThresholdEditor::ValueChangedEvent, range);
 }
 
@@ -263,7 +263,7 @@ void vtkKWWindowLevelThresholdEditor::ProcessWindowLevelStartCommand(double min,
   double range[2];
   range[0] = min;
   range[1] = max;
-  this->UpdateHistogram();
+  this->UpdateTransferFunction();
   this->InvokeEvent(vtkKWWindowLevelThresholdEditor::ValueStartChangingEvent, range);
 }
 
@@ -272,7 +272,7 @@ void vtkKWWindowLevelThresholdEditor::ProcessThresholdCommand(double min, double
   double range[2];
   range[0] = min;
   range[1] = max;
-  this->UpdateHistogram();
+  this->UpdateTransferFunction();
   this->InvokeEvent(vtkKWWindowLevelThresholdEditor::ValueChangedEvent, range);
 }
 
@@ -281,6 +281,6 @@ void vtkKWWindowLevelThresholdEditor::ProcessThresholdStartCommand(double min, d
   double range[2];
   range[0] = min;
   range[1] = max;
-  this->UpdateHistogram();
+  this->UpdateTransferFunction();
   this->InvokeEvent(vtkKWWindowLevelThresholdEditor::ValueStartChangingEvent, range);
 }

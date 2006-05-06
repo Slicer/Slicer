@@ -87,11 +87,11 @@ protected:
   // Create the widget.
   virtual void CreateWidget();
 
-  // Update the histogramm widget with the current state
-  void UpdateHistogram();
+  // Update the transfer widget with the current state
+  void UpdateTransferFunction();
 
   // Update the widgets with the current ImageData
-  void UpdateRangesFromImage();
+  void UpdateFromImage();
 
   char *Command;
   //char *StartCommand;
