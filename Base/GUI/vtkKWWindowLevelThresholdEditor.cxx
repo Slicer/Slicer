@@ -15,6 +15,10 @@
 
 #include "vtkObjectFactory.h"
 
+#include "vtkKWMenuButton.h"
+#include "vtkKWFrame.h"
+#include "vtkKWMenu.h"
+
 //----------------------------------------------------------------------------
 vtkStandardNewMacro( vtkKWWindowLevelThresholdEditor );
 vtkCxxRevisionMacro(vtkKWWindowLevelThresholdEditor, "$Revision: 1.49 $");
@@ -27,7 +31,11 @@ vtkKWWindowLevelThresholdEditor::vtkKWWindowLevelThresholdEditor()
   //this->EndCommand   = NULL;
 
   this->ImageData = NULL;
-  
+
+  this->WindowLevelAutoManual = vtkKWMenuButtonWithLabel::New() ;
+  this->TresholdAutoManual = vtkKWMenuButtonWithLabel::New();
+  this->TresholdApply = vtkKWCheckButtonWithLabel::New();
+
   this->WindoLevelRange = vtkKWRange::New();
   this->ThresholdRange = vtkKWRange::New();
   this->ColorTransferFunctionEditor = vtkKWColorTransferFunctionEditor::New();   
@@ -46,7 +54,9 @@ vtkKWWindowLevelThresholdEditor::~vtkKWWindowLevelThresholdEditor()
     {
     this->SetImageData(NULL);
     }
-  
+  this->WindowLevelAutoManual->Delete();
+  this->TresholdAutoManual->Delete();
+  this->TresholdApply->Delete();
   this->WindoLevelRange->Delete();
   this->ThresholdRange->Delete();
   this->Histogram->Delete();
@@ -100,6 +110,7 @@ double vtkKWWindowLevelThresholdEditor::GetLevel()
  
 void vtkKWWindowLevelThresholdEditor::SetThreshold(double lower, double upper)
 {
+  this->ThresholdRange->SetWholeRange(lower, upper);
   this->ThresholdRange->SetRange(lower, upper);
   this->UpdateTransferFunction();
 }
@@ -134,25 +145,67 @@ void vtkKWWindowLevelThresholdEditor::CreateWidget()
   this->Superclass::CreateWidget();
   
   this->UpdateTransferFunction();  
-  
-  this->WindoLevelRange->SetParent(this);
+
+  vtkKWFrame *winLevelFrame = vtkKWFrame::New ( );
+  winLevelFrame->SetParent (this);
+  winLevelFrame->Create();
+  this->Script(
+    "pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
+    winLevelFrame->GetWidgetName());
+
+  this->WindowLevelAutoManual->SetParent(winLevelFrame);
+  this->WindowLevelAutoManual->Create();
+  this->WindowLevelAutoManual->GetWidget()->GetMenu()->AddRadioButton ( "Auto" );
+  this->WindowLevelAutoManual->GetWidget()->GetMenu()->AddRadioButton ( "Manual" );
+  this->WindowLevelAutoManual->SetLabelText("Window/Level:");
+  this->WindowLevelAutoManual->GetWidget()->SetValue ( "Auto" );
+  this->Script(
+    "pack %s -side left -anchor nw -expand n -padx 2 -pady 2", 
+    this->WindowLevelAutoManual->GetWidgetName());
+
+  this->WindoLevelRange->SetParent(winLevelFrame);
   this->WindoLevelRange->Create();
   this->WindoLevelRange->SymmetricalInteractionOn();
   this->WindoLevelRange->SetCommand(this, "ProcessWindowLevelCommand");
   this->WindoLevelRange->SetStartCommand(this, "ProcessWindowLevelStartCommand");
   this->Script(
-    "pack %s -side top -anchor nw -expand n -padx 2 -pady 20", 
+    "pack %s -side left -anchor nw -expand yes -padx 2 -pady 2", 
     this->WindoLevelRange->GetWidgetName());
   
-  this->ThresholdRange->SetParent(this);
+  vtkKWFrame *threshFrame = vtkKWFrame::New ( );
+  threshFrame->SetParent (this);
+  threshFrame->Create();
+  this->Script(
+    "pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
+    threshFrame->GetWidgetName());
+
+  this->TresholdAutoManual->SetParent(threshFrame);
+  this->TresholdAutoManual->Create();
+  this->TresholdAutoManual->GetWidget()->GetMenu()->AddRadioButton ( "Auto" );
+  this->TresholdAutoManual->GetWidget()->GetMenu()->AddRadioButton ( "Manual" );
+  this->TresholdAutoManual->GetWidget()->SetValue ( "Auto" );
+  this->TresholdAutoManual->SetLabelText("Threshold:");
+  this->Script(
+    "pack %s -side left -anchor nw -expand n -padx 2 -pady 2", 
+    this->TresholdAutoManual->GetWidgetName());
+
+  this->ThresholdRange->SetParent(threshFrame);
   this->ThresholdRange->Create();
   this->ThresholdRange->SymmetricalInteractionOn();
   this->ThresholdRange->SetCommand(this, "ProcessThresholdCommand");
   this->ThresholdRange->SetStartCommand(this, "ProcessThresholdStartCommand");
   this->Script(
-    "pack %s -side left -anchor w -expand n -padx 2 -pady 20", 
+    "pack %s -side left -anchor w -expand n -padx 2 -pady 2", 
     this->ThresholdRange->GetWidgetName());
-    
+
+  this->TresholdApply->SetParent(threshFrame);
+  this->TresholdApply->Create();
+  this->TresholdApply->SetLabelText("Apply");
+  this->Script(
+    "pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
+    this->TresholdApply->GetWidgetName());  
+
+
   this->ColorTransferFunctionEditor->SetParent(this);
   this->ColorTransferFunctionEditor->Create();
   this->ColorTransferFunctionEditor->ExpandCanvasWidthOff();
@@ -189,7 +242,7 @@ void vtkKWWindowLevelThresholdEditor::CreateWidget()
   this->ColorTransferFunctionEditor->SetParameterTicksFormat("%-#6.0f");
   
   this->Script(
-    "pack %s -side top -anchor nw -expand n -padx 2 -pady 20", 
+    "pack %s -side bottom -anchor nw -expand n -padx 2 -pady 20", 
     this->ColorTransferFunctionEditor->GetWidgetName());
   
   this->TransferFunction->Delete();

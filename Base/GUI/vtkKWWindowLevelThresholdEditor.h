@@ -27,6 +27,8 @@
 #include "vtkImageData.h"
 #include "vtkPointData.h"
 
+#include "vtkKWCheckButtonWithLabel.h"
+#include "vtkKWMenuButtonWithLabel.h"
 #include "vtkKWLabel.h"
 #include "vtkKWWindow.h"
 #include "vtkKWRange.h"
@@ -108,6 +110,9 @@ private:
   vtkKWWindowLevelThresholdEditor(const vtkKWWindowLevelThresholdEditor&); // Not implemented
   void operator=(const vtkKWWindowLevelThresholdEditor&); // Not implemented
   
+  vtkKWMenuButtonWithLabel *WindowLevelAutoManual;
+  vtkKWMenuButtonWithLabel *TresholdAutoManual;
+  vtkKWCheckButtonWithLabel  *TresholdApply;
   vtkImageData *ImageData;
   vtkKWHistogram *Histogram;
   vtkColorTransferFunction *TransferFunction;

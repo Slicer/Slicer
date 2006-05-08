@@ -129,13 +129,14 @@ void vtkSlicerNodeSelectorWidget::UpdateMenu()
 //----------------------------------------------------------------------------
 vtkMRMLNode *vtkSlicerNodeSelectorWidget::GetSelected()
 {
-    vtkKWMenuButton *mb = this->GetWidget()->GetWidget();
-    vtkKWMenu *m = mb->GetMenu();
-
-    int nth_rank = m->GetItemSelectedValueAsInt(
-      m->GetIndexOfItem(mb->GetValue()));
-    vtkMRMLNode *n = this->MRMLScene->GetNthNodeByClass (nth_rank, this->NodeClass);
-    return n;
+  vtkMRMLNode *n = NULL;
+  vtkKWMenuButton *mb = this->GetWidget()->GetWidget();
+  vtkKWMenu *m = mb->GetMenu();
+  if (m != NULL ) {  
+    int nth_rank = m->GetIndexOfItem(mb->GetValue());
+    n = this->MRMLScene->GetNthNodeByClass (nth_rank, this->NodeClass);
+  }
+  return n;
 }
 
 //----------------------------------------------------------------------------
