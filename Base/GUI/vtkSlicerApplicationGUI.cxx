@@ -25,6 +25,7 @@
 #include "vtkXMLPolyDataReader.h"
 
 #include "vtkKWApplication.h"
+#include "vtkKWTclInteractor.h"
 #include "vtkKWFrame.h"
 #include "vtkKWMenu.h"
 #include "vtkKWMenuButtonWithLabel.h"
@@ -268,6 +269,13 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
             this->MainSlicerWin->SecondaryPanelVisibilityOn ( );
             this->MainSlicerWin->MainPanelVisibilityOn ( );
             app->AddWindow ( this->MainSlicerWin );
+
+            // Create the console before the window
+            // - this will make the console independent of the main window
+            //   so it can be raised/lowered independently
+            this->MainSlicerWin->GetTclInteractor()->SetApplication(app);
+            this->MainSlicerWin->GetTclInteractor()->Create();
+
             this->MainSlicerWin->Create ( );        
 
             // Construct menu bar and set up global key bindings

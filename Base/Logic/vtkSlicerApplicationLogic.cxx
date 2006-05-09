@@ -101,6 +101,8 @@ void vtkSlicerApplicationLogic::PropagateVolumeSelection()
     cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
             this->MRMLScene->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
     cnode->SetBackgroundVolumeID( ID );
+    // TODO: this is only needed so the image blends have two inputs
+    cnode->SetForegroundVolumeID( ID );
     }
 }
 

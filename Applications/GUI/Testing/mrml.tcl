@@ -58,32 +58,23 @@ set index [[$win GetEditMenu] AddCommand "&Redo" "" "$::scene Redo; mrmlUpdateUn
 
 #
 # add the needed pieces to display the volumes
+# (these all get created automatically once the SliceLogic exists)
 # - a slice node to specify the plane
 # - a SliceComposite node to identify the volumes
 # - a SliceLogic to generate the image data
 # - a SliceLayerLogic for the reslicing and display
 #
 
-# a SliceLayerLogic  - background and foreground
-set ::slicebgl [vtkSlicerSliceLayerLogic New]
-$::slicebgl SetMRMLScene $::scene
-set ::slicefgl [vtkSlicerSliceLayerLogic New]
-$::slicefgl SetMRMLScene $::scene
-
-# turn off the Damn warnings!
-[$::slicebgl GetXYToIJKTransform] AddObserver "" ""
-[$::slicefgl GetXYToIJKTransform] AddObserver "" ""
-
 # a SliceLogic 
 set ::slicel [vtkSlicerSliceLogic New]
 $::slicel SetAndObserveMRMLScene $::scene
 $::slicel ProcessMRMLEvents
+$::slicel ProcessLogicEvents
 
-$::slicel SetBackgroundLayer $::slicebgl
-$::slicebgl UpdateTransforms
-$::slicel SetForegroundLayer $::slicefgl
-$::slicefgl UpdateTransforms
+set ::slicebgl [$slicel GetBackgroundLayer]
+set ::slicefgl [$slicel GetForegroundLayer]
 set ::slicecn [$slicel GetSliceCompositeNode]
+
 $::slicel AddObserver ModifiedEvent "puts {Slice Logic Changed}"
 $::slicel AddObserver ModifiedEvent mrmlExpose
 
@@ -417,17 +408,15 @@ mrmlFillMCL $mclwidget
 # latest volume node in the background
 #
 
-$::scene AddObserver ModifiedEvent mrmlUpdateBackground
+$::slicecn AddObserver ModifiedEvent mrmlUpdateBackground
 
 proc mrmlUpdateBackground {} {
     set nitems [$::scene GetNumberOfNodesByClass "vtkMRMLScalarVolumeNode"]
-puts "nitems is $nitems"
     set vnode [$::scene GetNthNodeByClass [expr $nitems -1] "vtkMRMLScalarVolumeNode"]
-puts "vnode is $vnode"
     $::slicecn SetBackgroundVolumeID [$vnode GetID]
     $::slicecn SetForegroundVolumeID [$vnode GetID]
-    puts "Background is now [$vnode GetID]"
 
+puts "new background"
     set dnode [$vnode GetDisplayNode]
 }
 

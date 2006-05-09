@@ -123,12 +123,12 @@ void vtkSlicerSliceLayerLogic::UpdateTransforms()
 
     if (this->VolumeNode)
       {
-      this->Reslice->SetInput( this->VolumeNode->GetImageData() ); 
-
       vtkMatrix4x4 *rasToIJK = vtkMatrix4x4::New();
       this->VolumeNode->GetRASToIJKMatrix(rasToIJK);
       vtkMatrix4x4::Multiply4x4(rasToIJK, m, m); 
       rasToIJK->Delete();
+
+      this->Reslice->SetInput( this->VolumeNode->GetImageData() ); 
       }
     else
       {

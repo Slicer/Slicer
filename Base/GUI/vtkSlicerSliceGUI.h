@@ -15,6 +15,8 @@
 #include "vtkSlicerSliceLogic.h"
 #include "vtkMRMLSliceNode.h"
 
+#include "vtkImageMapper.h"
+
 class vtkObject;
 class vtkKWFrame;
 
@@ -47,31 +49,31 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceGUI : public vtkSlicerComponentGU
         { this->SetMRML ( vtkObjectPointer( &this->SliceNode), node ); }
     void SetAndObserveMRMLNode ( vtkMRMLSliceNode *node )
         { this->SetMRML ( vtkObjectPointer( &this->SliceNode), node ); }
+
     void SetModuleLogic ( vtkSlicerSliceLogic *logic )
         { 
         this->SetLogic ( vtkObjectPointer (&this->Logic), logic ); 
-        if ( logic )
-          {
-          this->GetSliceViewer()->GetImageViewer()->SetInput( logic->GetImageData() );
-          }
-          else
-          {
-          this->GetSliceViewer()->GetImageViewer()->SetInput( NULL );
-          }
+        this->SetSliceViewerInput();
         }
 
     void SetAndObserveModuleLogic ( vtkSlicerSliceLogic *logic )
         { 
         this->SetAndObserveLogic ( vtkObjectPointer (&this->Logic), logic ); 
-        if ( logic )
-          {
-          this->GetSliceViewer()->GetImageViewer()->SetInput( logic->GetImageData() );
-          }
-          else
-          {
-          this->GetSliceViewer()->GetImageViewer()->SetInput( NULL );
-          }
+        this->SetSliceViewerInput();
         }
+
+    void SetSliceViewerInput()
+      {
+        vtkImageData *idata = NULL;
+        if ( this->GetLogic() )
+          {
+          idata = this->GetLogic()->GetImageData();
+          }
+        if ( this->GetSliceViewer() && this->GetSliceViewer()->GetImageMapper() )
+          {
+          this->GetSliceViewer()->GetImageMapper()->SetInput( idata );
+          }
+      }
 
     // Description:
     // Build the SlicesGUI's UIPanel and three main SliceGUIs 

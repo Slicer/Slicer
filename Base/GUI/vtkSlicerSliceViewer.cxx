@@ -4,6 +4,7 @@
 #include "vtkImageData.h"
 #include "vtkImageViewer2.h"
 #include "vtkRenderWindow.h"
+#include "vtkRenderer.h"
 #include "vtkRenderWindowInteractor.h"
 
 #include "vtkSlicerSliceViewer.h"
@@ -13,6 +14,8 @@
 #include "vtkKWRenderWidget.h"
 #include "vtkKWFrame.h"
 
+#include "vtkImageMapper.h"
+#include "vtkActor2D.h"
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro ( vtkSlicerSliceViewer );
@@ -24,19 +27,30 @@ vtkSlicerSliceViewer::vtkSlicerSliceViewer ( ) {
 
     //---  
     // widgets comprising the SliceViewer for now.
-    this->ImageViewer = vtkImageViewer2::New();
     this->RenderWidget = vtkKWRenderWidget::New ( );
 
+    this->ImageMapper = vtkImageMapper::New();
+    this->ImageMapper->SetColorWindow(255);
+    this->ImageMapper->SetColorLevel(127.5);
+
+    this->Actor2D = vtkActor2D::New();
+    this->Actor2D->SetMapper( this->ImageMapper );
 }
 
 
 //---------------------------------------------------------------------------
 vtkSlicerSliceViewer::~vtkSlicerSliceViewer ( ){
 
-    if ( this->ImageViewer ) {
-        this->ImageViewer->Delete ( );
-        this->ImageViewer = NULL;
+    if ( this->ImageMapper ) {
+        this->ImageMapper->Delete ( );
+        this->ImageMapper = NULL;
     }
+
+    if ( this->Actor2D ) {
+        this->Actor2D->Delete ( );
+        this->Actor2D = NULL;
+    }
+
     if ( this->RenderWidget ) {
         this->RenderWidget->Delete ( );
         this->RenderWidget = NULL;
@@ -69,12 +83,9 @@ void vtkSlicerSliceViewer::CreateWidget ( ) {
     this->RenderWidget->SetReliefToGroove ( );
 
     //---
-    // Create an image viewer
-    // Use the render window and renderer of the renderwidget
-    this->ImageViewer->SetRenderWindow(this->RenderWidget->GetRenderWindow());
-    this->ImageViewer->SetRenderer(this->RenderWidget->GetRenderer());
-    // use interactor or not?
-    this->ImageViewer->SetupInteractor( this->RenderWidget->GetRenderWindow()->GetInteractor());
+    this->RenderWidget->GetRenderer()->AddActor2D( this->Actor2D );
+
+    // need to set up the RenderWidget events to modify the slice node
 
 }
 

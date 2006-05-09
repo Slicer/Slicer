@@ -39,6 +39,7 @@ SET(LIB_SRCS
   vtkSlicerSliceControlGUI.cxx
   # Widgets
   vtkKWMatrix4x4.cxx
+  vtkKWScriptedWidget.cxx
   vtkKWWindowLevelThresholdEditor.cxx
   )
 

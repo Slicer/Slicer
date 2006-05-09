@@ -44,6 +44,7 @@ int Slicer3_main(int argc, char *argv[])
             return 1;
         }
 
+
     // Initialize our Tcl library (i.e. our classes wrapped in Tcl)
 
     Slicerbasegui_Init(interp);
@@ -134,8 +135,14 @@ int Slicer3_main(int argc, char *argv[])
     vtkSlicerSliceLogic *sliceLogic1 = vtkSlicerSliceLogic::New ( );
     vtkSlicerSliceLogic *sliceLogic2 = vtkSlicerSliceLogic::New ( );
     sliceLogic0->SetAndObserveMRMLScene ( scene );
+    sliceLogic0->ProcessMRMLEvents ();
+    sliceLogic0->ProcessLogicEvents ();
     sliceLogic1->SetAndObserveMRMLScene ( scene );
+    sliceLogic1->ProcessMRMLEvents ();
+    sliceLogic1->ProcessLogicEvents ();
     sliceLogic2->SetAndObserveMRMLScene ( scene );
+    sliceLogic2->ProcessMRMLEvents ();
+    sliceLogic2->ProcessLogicEvents ();
     vtkSlicerSlicesGUI *slicesGUI = vtkSlicerSlicesGUI::New ();
     slicesGUI->SetApplication ( slicerApp );
     slicesGUI->SetAndObserveApplicationLogic ( appLogic );
@@ -199,10 +206,30 @@ int Slicer3_main(int argc, char *argv[])
     mnb->GetNotebook()->AlwaysShowTabsOff();
     mnb->GetNotebook()->ShowOnlyPagesWithSameTagOn();    
 
+    //
     // get the Tcl name so the vtk class will be registered in the interpreter as a byproduct
+    // - set some handy variables so it will be easy to access these classes from
+    //   the tkcon
+    // - all the variables are put in the slicer3 tcl namespace for easy access
+    //
     const char *name;
     name = slicerApp->GetTclName();
+    slicerApp->Script ("namespace eval slicer3 set SlicerApplication %s", name);
     name = appGUI->GetTclName();
+    slicerApp->Script ("namespace eval slicer3 set SlicerApplicationGUI %s", name);
+    name = slicesGUI->GetTclName();
+    slicerApp->Script ("namespace eval slicer3 set SlicerSlicesGUI %s", name);
+
+    slicerApp->Script ("namespace eval slicer3 set MRMLScene [$::slicer3::SlicerApplication GetMRMLScene]");
+
+    // TODO
+    //name = sliceLogic0->GetTclName();
+    //slicerApp->Script ("namespace eval slicer3 set SliceLogic0 %s", name);
+    //name = sliceLogic1->GetTclName();
+    //slicerApp->Script ("namespace eval slicer3 set SliceLogic1 %s", name);
+    //name = sliceLogic2->GetTclName();
+    //slicerApp->Script ("namespace eval slicer3 set SliceLogic2 %s", name);
+
 
     // ------------------------------
     // DISPLAY WINDOW AND RUN

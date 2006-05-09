@@ -98,7 +98,24 @@ void vtkSlicerSliceLogic::ProcessMRMLEvents()
 //----------------------------------------------------------------------------
 void vtkSlicerSliceLogic::ProcessLogicEvents()
 {
-    cerr << "updating  slice logic from a logic event" << endl ;
+  //
+  // if we don't have layers yet, create them 
+  //
+  if ( this->BackgroundLayer == NULL )
+    {
+    vtkSlicerSliceLayerLogic *layer = vtkSlicerSliceLayerLogic::New();
+    this->SetBackgroundLayer (layer);
+    this->BackgroundLayer->SetAndObserveMRMLScene( this->MRMLScene );
+    layer->Delete();
+    }
+  if ( this->ForegroundLayer == NULL )
+    {
+    vtkSlicerSliceLayerLogic *layer = vtkSlicerSliceLayerLogic::New();
+    this->SetForegroundLayer (layer);
+    this->ForegroundLayer->SetAndObserveMRMLScene( this->MRMLScene );
+    layer->Delete();
+    }
+
   // This is called when a slice layer is modified, so pass it on
   // to anyone interested in changes to this sub-pipeline
   this->Modified();
@@ -197,7 +214,7 @@ void vtkSlicerSliceLogic::UpdatePipeline()
     // get the background and foreground image data from the layers
     // so we can use them as input to the image blend
     // TODO: change logic to use a volume node superclass rather than
-    // a scalar volume node once the superclass is sorted out
+    // a scalar volume node once the superclass is sorted out for vector/tensor Volumes
 
     const char *id;
     

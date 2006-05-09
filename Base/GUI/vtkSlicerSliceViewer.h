@@ -3,10 +3,11 @@
 
 #include "vtkSlicerBaseGUIWin32Header.h"
 
-#include "vtkKWRenderWidget.h"
-#include "vtkImageViewer2.h"
 #include "vtkKWCompositeWidget.h"
 
+class vtkKWRenderWidget;
+class vtkImageMapper;
+class vtkActor2D;
 class vtkKWFrame;
 
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceViewer : public vtkKWCompositeWidget
@@ -17,7 +18,8 @@ public:
   vtkTypeRevisionMacro ( vtkSlicerSliceViewer, vtkKWCompositeWidget );
   void PrintSelf (ostream& os, vtkIndent indent);
     
-  vtkGetObjectMacro ( ImageViewer, vtkImageViewer2 );
+  vtkGetObjectMacro ( ImageMapper, vtkImageMapper );
+  vtkGetObjectMacro ( Actor2D, vtkActor2D );
   vtkGetObjectMacro ( RenderWidget, vtkKWRenderWidget );
 
 protected:
@@ -30,7 +32,8 @@ protected:
 
   // Slice viewer widgets
   vtkKWRenderWidget *RenderWidget;
-  vtkImageViewer2 *ImageViewer;
+  vtkImageMapper *ImageMapper;
+  vtkActor2D *Actor2D;
 
 private:
   vtkSlicerSliceViewer (const vtkSlicerSliceViewer &); //Not implemented

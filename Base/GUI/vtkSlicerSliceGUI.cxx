@@ -215,22 +215,21 @@ void vtkSlicerSliceGUI::ProcessLogicEvents ( vtkObject *caller,
                 c->GetOffsetScale()->Modified();
         
                 vtkSlicerSliceViewer *v = this->GetSliceViewer( );
-                // UPDATE IMAGE VIEWER
-                vtkImageViewer2 *iv = v->GetImageViewer ();
+                // UPDATE Slice VIEWER
                 vtkKWRenderWidget *rw = v->GetRenderWidget ();
                 if ( n->GetImageData() != NULL )
                     {
-                        iv->SetInput ( n->GetImageData( ) );
+                        v->GetImageMapper()->SetInput ( n->GetImageData( ) );
                     }
                 else
                     {
-                        iv->SetInput (NULL);
+                        v->GetImageMapper()->SetInput (NULL);
                     }
-                iv->Render();
                 // configure window, level, camera, etc.
                 rw->ResetCamera ( );
-                vtkCornerAnnotation *ca = rw->GetCornerAnnotation ( );
-                ca->SetImageActor (iv->GetImageActor ( ) );
+                rw->Render();
+                //vtkCornerAnnotation *ca = rw->GetCornerAnnotation ( );
+                //ca->SetImageActor (iv->GetImageActor ( ) );
                 v->Modified ();
 
             }
