@@ -191,9 +191,9 @@ int Slicer3_main(int argc, char *argv[])
                          appGUI->GetDefaultSlice1Frame(),
                          appGUI->GetDefaultSlice2Frame() );
     slicesGUI->AddGUIObservers();
-    slicesGUI->SetModuleLogic ( 0, sliceLogic0);
-    slicesGUI->SetModuleLogic ( 1, sliceLogic1);
-    slicesGUI->SetModuleLogic ( 2, sliceLogic2);
+    slicesGUI->SetAndObserveModuleLogic ( 0, sliceLogic0);
+    slicesGUI->SetAndObserveModuleLogic ( 1, sliceLogic1);
+    slicesGUI->SetAndObserveModuleLogic ( 2, sliceLogic2);
 
     // ---
     gradientAnisotropicDiffusionFilterGUI->BuildGUI ( );

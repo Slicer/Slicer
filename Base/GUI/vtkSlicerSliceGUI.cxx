@@ -182,6 +182,11 @@ void vtkSlicerSliceGUI::ProcessGUIEvents ( vtkObject *caller,
 void vtkSlicerSliceGUI::ProcessLogicEvents ( vtkObject *caller,
                                                 unsigned long event, void *callData )
 {
+    if ( !caller )
+      {
+      return;
+      }
+
     // process Logic changes
     vtkSlicerSliceLogic *n = vtkSlicerSliceLogic::SafeDownCast(caller);
     vtkSlicerApplicationLogic *a = vtkSlicerApplicationLogic::SafeDownCast ( caller );
@@ -196,6 +201,12 @@ void vtkSlicerSliceGUI::ProcessLogicEvents ( vtkObject *caller,
     else
         {
             if ( n == this->GetLogic ( ) ) {
+
+                if ( n->GetSliceNode() )
+                  {
+                  this->SetAndObserveMRMLNode ( n->GetSliceNode() );
+                  }
+
                 vtkSlicerSliceControllerWidget *c = this->GetSliceController( );
                 // UPDATE THE FOV ENTRY
                 double fov = this->GetSliceNode()->GetFieldOfView()[0];
@@ -228,6 +239,8 @@ void vtkSlicerSliceGUI::ProcessLogicEvents ( vtkObject *caller,
                 // configure window, level, camera, etc.
                 rw->ResetCamera ( );
                 rw->Render();
+
+                // TODO: set up corner annotations
                 //vtkCornerAnnotation *ca = rw->GetCornerAnnotation ( );
                 //ca->SetImageActor (iv->GetImageActor ( ) );
                 v->Modified ();
