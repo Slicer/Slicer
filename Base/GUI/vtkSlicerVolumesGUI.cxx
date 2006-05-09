@@ -9,6 +9,7 @@
 
 #include "vtkKWWidget.h"
 #include "vtkKWMenuButton.h"
+#include "vtkKWMenu.h"
 #include "vtkKWFrameWithLabel.h"
 #include "vtkKWFrame.h"
 
@@ -84,7 +85,7 @@ void vtkSlicerVolumesGUI::AddGUIObservers ( )
     // Fill in
     // observer load volume button
     this->LoadVolumeButton->AddObserver ( vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->VolumeSelectorWidget->GetWidget()->GetWidget()->AddObserver (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );  
+    this->VolumeSelectorWidget->GetWidget()->GetWidget()->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
 }
 
 
@@ -116,9 +117,9 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents ( vtkObject *caller,
              }
            }
         }
-    vtkKWMenuButton *volSelectorMenu = vtkKWMenuButton::SafeDownCast(caller);
+    vtkKWMenu *volSelectorMenu = vtkKWMenu::SafeDownCast(caller);
     //vtkSlicerNodeSelectorWidget *volSelector = vtkSlicerNodeSelectorWidget::SafeDownCast(caller);
-    if (volSelectorMenu == this->VolumeSelectorWidget->GetWidget()->GetWidget() && event == vtkCommand::ModifiedEvent ) 
+    if (volSelectorMenu == this->VolumeSelectorWidget->GetWidget()->GetWidget()->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent ) 
     {
       vtkMRMLVolumeNode *volume = vtkMRMLVolumeNode::SafeDownCast(this->VolumeSelectorWidget->GetSelected());
       this->WindowLevelThresholdEditor->SetImageData(volume->GetImageData());
