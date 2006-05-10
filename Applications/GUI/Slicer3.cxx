@@ -214,21 +214,14 @@ int Slicer3_main(int argc, char *argv[])
     //
     const char *name;
     name = slicerApp->GetTclName();
-    slicerApp->Script ("namespace eval slicer3 set SlicerApplication %s", name);
+    slicerApp->Script ("namespace eval slicer3 set Application %s", name);
     name = appGUI->GetTclName();
-    slicerApp->Script ("namespace eval slicer3 set SlicerApplicationGUI %s", name);
+    slicerApp->Script ("namespace eval slicer3 set ApplicationGUI %s", name);
     name = slicesGUI->GetTclName();
-    slicerApp->Script ("namespace eval slicer3 set SlicerSlicesGUI %s", name);
+    slicerApp->Script ("namespace eval slicer3 set SlicesGUI %s", name);
 
-    slicerApp->Script ("namespace eval slicer3 set MRMLScene [$::slicer3::SlicerApplication GetMRMLScene]");
-
-    // TODO
-    //name = sliceLogic0->GetTclName();
-    //slicerApp->Script ("namespace eval slicer3 set SliceLogic0 %s", name);
-    //name = sliceLogic1->GetTclName();
-    //slicerApp->Script ("namespace eval slicer3 set SliceLogic1 %s", name);
-    //name = sliceLogic2->GetTclName();
-    //slicerApp->Script ("namespace eval slicer3 set SliceLogic2 %s", name);
+    slicerApp->Script ("namespace eval slicer3 set ApplicationLogic [$::slicer3::ApplicationGUI GetApplicationLogic]");
+    slicerApp->Script ("namespace eval slicer3 set MRMLScene [$::slicer3::ApplicationLogic GetMRMLScene]");
 
 
     // ------------------------------
