@@ -17,12 +17,13 @@
 #include "vtkCornerAnnotation.h"
 #include "vtkObjectFactory.h"
 #include "vtkToolkits.h"
-// things for temporary MainViewer teapot display.
+// things for temporary MainViewer display.
+#include "vtkCubeSource.h"
 #include "vtkActor.h"
 #include "vtkRenderer.h"
+#include "vtkCamera.h"
 #include "vtkPolyDataMapper.h"
 #include "vtkRenderWindow.h"
-#include "vtkXMLPolyDataReader.h"
 
 #include "vtkKWApplication.h"
 #include "vtkKWTclInteractor.h"
@@ -438,20 +439,20 @@ void vtkSlicerApplicationGUI::BuildMainViewer ( )
             app->Script  ("pack %s -side top -fill both -expand y -padx 0 -pady 0",
                           this->MainViewer->GetWidgetName ( ) );
             this->MainViewer->SetRendererBackgroundColor ( style->GetViewerBgColor ( ) );
+            this->MainViewer->GetRenderer()->GetActiveCamera()->ParallelProjectionOff();
 
             // put a teapot in there for now.
-            vtkXMLPolyDataReader *rwReader = vtkXMLPolyDataReader::New ( );
-            rwReader->SetFileName ( "C:/pieper/bwh/slicer3/latest/Slicer3/Libs/KWWidgets/Examples/Data/teapot.vtp");
-            vtkPolyDataMapper *rwMapper = vtkPolyDataMapper::New ();
-            rwMapper->SetInputConnection (rwReader->GetOutputPort() );
-            vtkActor *rwActor = vtkActor::New ( );
-            rwActor->SetMapper ( rwMapper );
-            MainViewer->AddViewProp ( rwActor );
+            vtkCubeSource *cubeSource = vtkCubeSource::New();
+            vtkPolyDataMapper *cubeMapper = vtkPolyDataMapper::New ();
+            cubeMapper->SetInputConnection ( cubeSource->GetOutputPort() );
+            vtkActor *cubeActor = vtkActor::New ( );
+            cubeActor->SetMapper ( cubeMapper );
+            MainViewer->AddViewProp ( cubeActor );
             MainViewer->ResetCamera ( );
         
-            rwReader->Delete ();
-            rwActor->Delete ();
-            rwMapper->Delete ();
+            cubeSource->Delete ();
+            cubeActor->Delete ();
+            cubeMapper->Delete ();
         }
     }
 }
