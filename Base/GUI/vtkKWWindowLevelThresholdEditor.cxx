@@ -212,7 +212,7 @@ void vtkKWWindowLevelThresholdEditor::CreateWidget()
   this->ColorTransferFunctionEditor->ExpandCanvasWidthOff();
   this->ColorTransferFunctionEditor->SetCanvasWidth(450);
   this->ColorTransferFunctionEditor->SetCanvasHeight(150);
-  this->ColorTransferFunctionEditor->SetLabelText("Window/Level/Threshold Editor");
+  this->ColorTransferFunctionEditor->SetLabelText("");
   this->ColorTransferFunctionEditor->SetRangeLabelPositionToTop();
   this->ColorTransferFunctionEditor->SetBalloonHelpString(
     "Another color transfer function editor. The point position is now on "
@@ -276,11 +276,21 @@ void vtkKWWindowLevelThresholdEditor::UpdateTransferFunction()
 {
   this->TransferFunction->RemoveAllPoints();
 
-  
+  double range[2] = {0,255};
+  if (this->ImageData)
+  {
+    this->ImageData->GetScalarRange(range);
+  }
+  this->TransferFunction->AdjustRange(range);
   this->TransferFunction->SetColorSpaceToRGB();
-  this->TransferFunction->AddRGBPoint(this->GetLowerThreshold(), 179.0/255, 179.0/255, 231.0/255);
+  this->TransferFunction->AddRGBPoint(range[0], 0, 0, 0);
+  //this->TransferFunction->AddRGBPoint(this->GetLowerThreshold(), 179.0/255, 179.0/255, 231.0/255);
+  this->TransferFunction->AddRGBPoint(this->GetLowerThreshold(), 0, 0, 0);
   //this->TransferFunction->AddRGBPoint((range[0] + range[1]) * 0.5, 0.0, 1.0, 1.0);
-  this->TransferFunction->AddRGBPoint(this->GetUpperThreshold(), 179.0/255, 179.0/255, 231.0/255);
+  //this->TransferFunction->AddRGBPoint(this->GetUpperThreshold(), 179.0/255, 179.0/255, 231.0/255);
+  this->TransferFunction->AddRGBPoint(this->GetUpperThreshold(), 1, 1, 1);
+  this->TransferFunction->AddRGBPoint(range[1], 1, 1, 1);
+  this->TransferFunction->SetAlpha(0.5);
 }
 
 
