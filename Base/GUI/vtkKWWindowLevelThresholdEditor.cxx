@@ -41,6 +41,8 @@ vtkKWWindowLevelThresholdEditor::vtkKWWindowLevelThresholdEditor()
   this->ColorTransferFunctionEditor = vtkKWColorTransferFunctionEditor::New();   
   this->Histogram = vtkKWHistogram::New();
   this->TransferFunction = vtkColorTransferFunction::New();
+  this->ColorTransferFunctionEditor->SetColorTransferFunction(this->TransferFunction);
+  this->TransferFunction->Delete();
 }
 
 //----------------------------------------------------------------------------
@@ -60,7 +62,6 @@ vtkKWWindowLevelThresholdEditor::~vtkKWWindowLevelThresholdEditor()
   this->WindoLevelRange->Delete();
   this->ThresholdRange->Delete();
   this->Histogram->Delete();
-  this->TransferFunction->Delete();
   this->ColorTransferFunctionEditor->Delete();
 
 }
@@ -221,7 +222,6 @@ void vtkKWWindowLevelThresholdEditor::CreateWidget()
     "and the parameter range are on top, its width is set explicitly. "
     "The range and histogram are based on a real image data.");
   this->UpdateTransferFunction();
-  this->ColorTransferFunctionEditor->SetColorTransferFunction(this->TransferFunction);
   this->ColorTransferFunctionEditor->SetWholeParameterRangeToFunctionRange();
   this->ColorTransferFunctionEditor->SetVisibleParameterRangeToWholeParameterRange();
   
@@ -245,7 +245,6 @@ void vtkKWWindowLevelThresholdEditor::CreateWidget()
     "pack %s -side bottom -anchor nw -expand n -padx 2 -pady 20", 
     this->ColorTransferFunctionEditor->GetWidgetName());
   
-  this->TransferFunction->Delete();
   
   this->ColorTransferFunctionEditor->SetHistogramStyleToPolyLine();
   //this->ColorTransferFunctionEditor->SetHistogramColor();
