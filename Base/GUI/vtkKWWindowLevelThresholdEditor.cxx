@@ -212,8 +212,7 @@ void vtkKWWindowLevelThresholdEditor::CreateWidget()
   this->ColorTransferFunctionEditor->ExpandCanvasWidthOff();
   this->ColorTransferFunctionEditor->SetCanvasWidth(450);
   this->ColorTransferFunctionEditor->SetCanvasHeight(150);
-  this->ColorTransferFunctionEditor->SetLabelText("");
-  this->ColorTransferFunctionEditor->SetRangeLabelPositionToTop();
+  this->ColorTransferFunctionEditor->LabelVisibilityOff ();
   this->ColorTransferFunctionEditor->SetBalloonHelpString(
     "Another color transfer function editor. The point position is now on "
     "top, the point style is an arrow down, guidelines are shown for each "
@@ -229,17 +228,17 @@ void vtkKWWindowLevelThresholdEditor::CreateWidget()
   this->ColorTransferFunctionEditor->SetPointStyleToCursorDown();
   this->ColorTransferFunctionEditor->FunctionLineVisibilityOff();
   this->ColorTransferFunctionEditor->PointGuidelineVisibilityOff();
+  // This will disable mobing points on the editor
+  // this->ColorTransferFunctionEditor->PointVisibilityOff(); 
   this->ColorTransferFunctionEditor->PointIndexVisibilityOff();
   this->ColorTransferFunctionEditor->SelectedPointIndexVisibilityOff();
   this->ColorTransferFunctionEditor->MidPointEntryVisibilityOff();
   this->ColorTransferFunctionEditor->SharpnessEntryVisibilityOff();
-  this->ColorTransferFunctionEditor->SetLabelPositionToTop();
   
   //this->ColorTransferFunctionEditor->SetHistogram(this->Histogram);
   
-  this->ColorTransferFunctionEditor->ParameterTicksVisibilityOn();
-  this->ColorTransferFunctionEditor->ComputeValueTicksFromHistogramOn();
-  this->ColorTransferFunctionEditor->SetParameterTicksFormat("%-#6.0f");
+  this->ColorTransferFunctionEditor->ParameterTicksVisibilityOff();
+  this->ColorTransferFunctionEditor->ComputeValueTicksFromHistogramOff();
   
   this->Script(
     "pack %s -side bottom -anchor nw -expand n -padx 2 -pady 20", 
@@ -247,7 +246,9 @@ void vtkKWWindowLevelThresholdEditor::CreateWidget()
   
   
   this->ColorTransferFunctionEditor->SetHistogramStyleToPolyLine();
-  //this->ColorTransferFunctionEditor->SetHistogramColor();
+  this->ColorTransferFunctionEditor->SetHistogramColor(1.0, 0., 0.);
+  this->ColorTransferFunctionEditor->SetHistogramPolyLineWidth (5);
+
   this->ColorTransferFunctionEditor->SetColorRampPositionToCanvas();
   
   this->ColorTransferFunctionEditor->SetColorRampOutlineStyleToNone();
@@ -290,7 +291,9 @@ void vtkKWWindowLevelThresholdEditor::UpdateTransferFunction()
   //this->TransferFunction->AddRGBPoint(this->GetUpperThreshold(), 179.0/255, 179.0/255, 231.0/255);
   this->TransferFunction->AddRGBPoint(this->GetUpperThreshold(), 1, 1, 1);
   this->TransferFunction->AddRGBPoint(range[1], 1, 1, 1);
-  this->TransferFunction->SetAlpha(0.5);
+  this->TransferFunction->SetAlpha(1.0);
+  this->TransferFunction->Build();
+  this->ColorTransferFunctionEditor->Update();
 }
 
 
