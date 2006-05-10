@@ -81,6 +81,14 @@ public:
   void ProcessWindowLevelStartCommand(double min, double max);
   void ProcessThresholdStartCommand(double min, double max);
 
+//BTX
+  enum
+    {
+      ValueChangedEvent = 10000,
+      ValueStartChangingEvent
+    };
+//ETX
+
 protected:
   vtkKWWindowLevelThresholdEditor();
   ~vtkKWWindowLevelThresholdEditor();
@@ -99,13 +107,7 @@ protected:
   //char *StartCommand;
   //char *EndCommand;
 
-//BTX
-  enum
-    {
-      ValueChangedEvent = 10000,
-      ValueStartChangingEvent
-    };
-//ETX
+
 private:
   vtkKWWindowLevelThresholdEditor(const vtkKWWindowLevelThresholdEditor&); // Not implemented
   void operator=(const vtkKWWindowLevelThresholdEditor&); // Not implemented

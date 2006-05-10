@@ -192,7 +192,7 @@ void vtkKWWindowLevelThresholdEditor::CreateWidget()
 
   this->ThresholdRange->SetParent(threshFrame);
   this->ThresholdRange->Create();
-  this->ThresholdRange->SymmetricalInteractionOn();
+  this->ThresholdRange->SymmetricalInteractionOff();
   this->ThresholdRange->SetCommand(this, "ProcessThresholdCommand");
   this->ThresholdRange->SetStartCommand(this, "ProcessThresholdStartCommand");
   this->Script(
@@ -210,7 +210,7 @@ void vtkKWWindowLevelThresholdEditor::CreateWidget()
   this->ColorTransferFunctionEditor->SetParent(this);
   this->ColorTransferFunctionEditor->Create();
   this->ColorTransferFunctionEditor->ExpandCanvasWidthOff();
-  this->ColorTransferFunctionEditor->SetCanvasWidth(450);
+  this->ColorTransferFunctionEditor->SetCanvasWidth(300);
   this->ColorTransferFunctionEditor->SetCanvasHeight(150);
   this->ColorTransferFunctionEditor->LabelVisibilityOff ();
   this->ColorTransferFunctionEditor->SetBalloonHelpString(
@@ -255,6 +255,8 @@ void vtkKWWindowLevelThresholdEditor::CreateWidget()
   
   this->ColorTransferFunctionEditor->SetColorRampHeight(100);
     
+   this->SetWindowLevel(0, 255);
+   this->SetThreshold(0, 255);
 
   // Override the column sorting behavior by always updating 
 }
