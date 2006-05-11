@@ -217,7 +217,7 @@ void vtkMRMLSliceNode::WriteXML(ostream& of, int nIndent)
         }
       }
     }
-  of << indent << "sliceToRAS=\"" << ss.str() << "\" ";
+  of << indent << "sliceToRAS=\"" << ss.str().c_str() << "\" ";
 }
 
 //----------------------------------------------------------------------------
