@@ -26,7 +26,6 @@ Version:   $Revision: 1.14 $
 vtkMRMLTransformNode::vtkMRMLTransformNode()
 {
   this->ParentTransformNodeID = NULL;
-  this->ParentTransformNode = NULL;
   this->TransformToParent = vtkGeneralTransform::New();
   this->TransformToParent->Identity();
 }
@@ -38,10 +37,6 @@ vtkMRMLTransformNode::~vtkMRMLTransformNode()
     {
     delete [] this->ParentTransformNodeID;
     this->ParentTransformNodeID = NULL;
-    }
-  if (this->ParentTransformNode) 
-    {
-    this->ParentTransformNode->Delete();
     }
   if (this->TransformToParent) 
     {
@@ -100,18 +95,15 @@ void vtkMRMLTransformNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLTransformNode::UpdateScene(vtkMRMLScene *scene)
+vtkMRMLTransformNode* vtkMRMLTransformNode::GetParentTransformNode()
 {
-  if (this->GetParentTransformNodeID() == NULL) 
+  vtkMRMLTransformNode* node = NULL;
+  if (this->GetScene() && this->ParentTransformNodeID != NULL )
     {
-    return;
+    vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->ParentTransformNodeID);
+    node = vtkMRMLTransformNode::SafeDownCast(snode);
     }
-  vtkMRMLNode* mnode = scene->GetNodeByID(this->ParentTransformNodeID);
-  if (mnode) 
-    {
-    vtkMRMLTransformNode *node  = dynamic_cast < vtkMRMLTransformNode *>(mnode);
-    this->SetParentTransformNode(node);
-    }
+  return node;
 }
 
 //----------------------------------------------------------------------------
@@ -252,7 +244,7 @@ void  vtkMRMLTransformNode::GetTransformToNode(vtkMRMLTransformNode* node,
 //----------------------------------------------------------------------------
 int vtkMRMLTransformNode::IsTransformNodeMyParent(vtkMRMLTransformNode* node)
 {
-  vtkMRMLTransformNode *parent = this->ParentTransformNode;
+  vtkMRMLTransformNode *parent = this->GetParentTransformNode();
   if (parent != NULL) 
     {
     if (!strcmp(parent->GetID(), node->GetID()) ) 

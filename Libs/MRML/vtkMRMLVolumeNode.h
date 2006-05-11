@@ -126,18 +126,15 @@ class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLNode
 
   // Description:
   // Associated storage MRML node
-  vtkGetObjectMacro(StorageNode, vtkMRMLStorageNode);
-  vtkSetObjectMacro(StorageNode, vtkMRMLStorageNode);
+  vtkMRMLStorageNode* GetStorageNode();
 
   // Description:
   // Associated display MRML node
-  vtkGetObjectMacro(DisplayNode, vtkMRMLVolumeDisplayNode);
-  vtkSetObjectMacro(DisplayNode, vtkMRMLVolumeDisplayNode);
+  vtkMRMLVolumeDisplayNode* GetDisplayNode();
 
   // Description:
   // Associated transform MRML node
-  vtkGetObjectMacro(TransformNode, vtkMRMLTransformNode);
-  vtkSetObjectMacro(TransformNode, vtkMRMLTransformNode);
+  vtkMRMLTransformNode* GetTransformNode();
 
   // Description:
   // Associated ImageData
@@ -165,9 +162,6 @@ protected:
   char *DisplayNodeID;
   char *TransformNodeID;
 
-  vtkMRMLStorageNode         *StorageNode;
-  vtkMRMLVolumeDisplayNode   *DisplayNode;
-  vtkMRMLTransformNode       *TransformNode;
   vtkImageData               *ImageData;
 
 };

@@ -52,7 +52,6 @@ vtkMRMLNode* vtkMRMLLinearTransformNode::CreateNodeInstance()
 vtkMRMLLinearTransformNode::vtkMRMLLinearTransformNode()
 {
   this->ParentTransformNodeID = NULL;
-  this->ParentTransformNode = NULL;
   this->MatrixTransformToParent = vtkMatrix4x4::New();
   this->MatrixTransformToParent->Identity();
 }

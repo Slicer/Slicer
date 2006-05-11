@@ -29,10 +29,6 @@ vtkMRMLVolumeNode::vtkMRMLVolumeNode()
   this->DisplayNodeID = NULL;
   this->TransformNodeID = NULL;
 
-  this->StorageNode = NULL;
-  this->DisplayNode = NULL;
-  this->TransformNode = NULL;
-
   this->IJKToRAS = vtkMatrix4x4::New();
   this->IJKToRAS->Identity();
 
@@ -61,18 +57,6 @@ vtkMRMLVolumeNode::~vtkMRMLVolumeNode()
   if (this->ImageData)  {
   this->ImageData->Delete();
   }
-  
-  if (this->StorageNode)  {
-  this->StorageNode->Delete();
-  }
-  if (this->DisplayNode) 
-    {
-    this->DisplayNode->Delete();
-    }
-  if (this->TransformNode) 
-    {
-    this->TransformNode->Delete();
-    }
 }
 
 //----------------------------------------------------------------------------
@@ -165,18 +149,7 @@ void vtkMRMLVolumeNode::Copy(vtkMRMLNode *anode)
     {
     this->SetImageData(node->ImageData);
     }
-  if (this->StorageNode) 
-    {
-    this->SetStorageNode(node->StorageNode);
-    }  
-  if (this->DisplayNode) 
-    {
-    this->SetDisplayNode(node->DisplayNode);
-    }
-  if (this->TransformNode) 
-    {
-    this->SetTransformNode(node->TransformNode);
-    }
+
   this->SetStorageNodeID(node->StorageNodeID);
   this->SetDisplayNodeID(node->DisplayNodeID);
   this->SetTransformNodeID(node->TransformNodeID);
@@ -211,6 +184,43 @@ void vtkMRMLVolumeNode::PrintSelf(ostream& os, vtkIndent indent)
     this->ImageData->PrintSelf(os, indent.GetNextIndent()); 
     }
 }
+
+//----------------------------------------------------------------------------
+vtkMRMLStorageNode* vtkMRMLVolumeNode::GetStorageNode()
+{
+  vtkMRMLStorageNode* node = NULL;
+  if (this->GetScene() && this->GetStorageNodeID() )
+    {
+    vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->StorageNodeID);
+    node = vtkMRMLStorageNode::SafeDownCast(snode);
+    }
+  return node;
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLVolumeDisplayNode* vtkMRMLVolumeNode::GetDisplayNode()
+{
+  vtkMRMLVolumeDisplayNode* node = NULL;
+  if (this->GetScene() && this->GetDisplayNodeID() )
+    {
+    vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->DisplayNodeID);
+    node = vtkMRMLVolumeDisplayNode::SafeDownCast(snode);
+    }
+  return node;
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLTransformNode* vtkMRMLVolumeNode::GetTransformNode()
+{
+  vtkMRMLTransformNode* node = NULL;
+  if (this->GetScene() && this->GetTransformNodeID() )
+    {
+    vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->TransformNodeID);
+    node = vtkMRMLTransformNode::SafeDownCast(snode);
+    }
+  return node;
+}
+
 
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeNode::SetIjkToRasDirections(double dirs[9])
@@ -439,26 +449,9 @@ void vtkMRMLVolumeNode::UpdateScene(vtkMRMLScene *scene)
     {
     vtkMRMLStorageNode *node  = dynamic_cast < vtkMRMLStorageNode *>(mnode);
     node->ReadData(this);
-    this->SetStorageNode(node);
     }
 
-  if (this->DisplayNodeID != NULL) 
-    {
-    mnode = scene->GetNodeByID(this->DisplayNodeID);
-    vtkMRMLVolumeDisplayNode *displayNode  = dynamic_cast < vtkMRMLVolumeDisplayNode *>(mnode);
-    this->SetDisplayNode(displayNode);
-    }
-
-  if (this->TransformNodeID != NULL) 
-    {
-    mnode = scene->GetNodeByID(this->TransformNodeID);
-    if (mnode) 
-      {
-      vtkMRMLTransformNode *node  = dynamic_cast < vtkMRMLTransformNode *>(mnode);
-      this->SetTransformNode(node);
-      }
-    }
-}
+ }
 
 
  

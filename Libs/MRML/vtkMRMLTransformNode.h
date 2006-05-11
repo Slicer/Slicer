@@ -56,7 +56,7 @@ class VTK_MRML_EXPORT vtkMRMLTransformNode : public vtkMRMLNode
 
   // Description:
   // Finds the storage node and read the data
-  virtual void UpdateScene(vtkMRMLScene *scene);
+  virtual void UpdateScene(vtkMRMLScene *scene){};
 
   // Description:
   // string ID of the parent transform MRML node
@@ -67,8 +67,7 @@ class VTK_MRML_EXPORT vtkMRMLTransformNode : public vtkMRMLNode
   // Description:
   // parent transform MRML node. 
   // If NULL the node at the top
-  vtkGetObjectMacro(ParentTransformNode, vtkMRMLTransformNode);
-  vtkSetObjectMacro(ParentTransformNode, vtkMRMLTransformNode);
+  vtkMRMLTransformNode* GetParentTransformNode();
 
   // Description:
   // 1 if transfrom is linear, 0 otherwise
@@ -116,8 +115,6 @@ protected:
   void operator=(const vtkMRMLTransformNode&);
 
   char *ParentTransformNodeID;
-
-  vtkMRMLTransformNode *ParentTransformNode;
 
   vtkGeneralTransform* TransformToParent;
 

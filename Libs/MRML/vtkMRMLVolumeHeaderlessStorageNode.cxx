@@ -271,7 +271,7 @@ int vtkMRMLVolumeHeaderlessStorageNode::ReadData(vtkMRMLNode *refNode)
   //volNode->SetImageData (reader->GetOutput());
 
   //volNode->SetIjkToRasMatrix(mat);
-  volNode->SetStorageNode(this);
+  volNode->SetStorageNodeID(this->GetID());
   //TODO update scene to send Modified event
   return 1;
 }

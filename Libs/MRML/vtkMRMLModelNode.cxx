@@ -74,7 +74,6 @@ vtkMRMLModelNode::vtkMRMLModelNode()
   this->LUTName = -1;
 
   this->TransformNodeID = NULL;
-  this->TransformNode = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -93,10 +92,6 @@ vtkMRMLModelNode::~vtkMRMLModelNode()
     {
     delete [] this->TransformNodeID;
     this->TransformNodeID = NULL;
-    }
-  if (this->TransformNode) 
-    {
-    this->TransformNode->Delete();
     }
   
 }
@@ -251,10 +246,6 @@ void vtkMRMLModelNode::Copy(vtkMRMLNode *anode)
   this->SetClipping(node->Clipping);
   this->SetPolyData(node->PolyData);
 
-  if (this->TransformNode) 
-    {
-    this->SetTransformNode(node->TransformNode);
-    }
   this->SetTransformNodeID(node->TransformNodeID);
 
 }
@@ -292,14 +283,15 @@ void vtkMRMLModelNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //-----------------------------------------------------------
-
-void vtkMRMLModelNode::UpdateScene(vtkMRMLScene *scene)
+//----------------------------------------------------------------------------
+vtkMRMLTransformNode* vtkMRMLModelNode::GetTransformNode()
 {
-  vtkMRMLNode *mnode = scene->GetNodeByID(this->TransformNodeID);
-  if (mnode) 
+  vtkMRMLTransformNode* node = NULL;
+  if (this->GetScene() && this->GetTransformNodeID() )
     {
-    vtkMRMLTransformNode *node  = dynamic_cast < vtkMRMLTransformNode *>(mnode);
-    this->SetTransformNode(node);
+    vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->TransformNodeID);
+    node = vtkMRMLTransformNode::SafeDownCast(snode);
     }
+  return node;
 }
 

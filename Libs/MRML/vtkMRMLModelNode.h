@@ -62,7 +62,7 @@ public:
 
   // Description:
   // Finds the storage node and read the data
-  virtual void UpdateScene(vtkMRMLScene *scene);
+  virtual void UpdateScene(vtkMRMLScene *scene){};
 
   // Description:
   // Name of the model's color, which is defined by a Color node in a MRML file
@@ -129,9 +129,7 @@ public:
 
   // Description:
   // Associated transform MRML node
-  vtkGetObjectMacro(TransformNode, vtkMRMLTransformNode);
-  vtkSetObjectMacro(TransformNode, vtkMRMLTransformNode);
-
+  vtkMRMLTransformNode* GetTransformNode();
     
   vtkGetObjectMacro(PolyData, vtkPolyData);
   vtkSetObjectMacro(PolyData, vtkPolyData);
@@ -164,7 +162,6 @@ protected:
   vtkFloatingPointType ScalarRange[2];
 
   char *TransformNodeID;
-  vtkMRMLTransformNode       *TransformNode;
 
 };
 

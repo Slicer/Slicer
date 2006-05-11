@@ -220,7 +220,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
   volNode->SetIjkToRasMatrix(mat);
   volNode->SetSpacing(spacing);
   volNode->SetOrigin(reader->GetOutput()->GetOrigin());
-  volNode->SetStorageNode(this);
+  volNode->SetStorageNodeID(this->GetID());
   //TODO update scene to send Modified event
  
   vtkImageChangeInformation *ici = vtkImageChangeInformation::New();
