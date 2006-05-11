@@ -422,7 +422,7 @@ if { ![file exists $::VTK_TEST_FILE] } {
 
     file mkdir $SLICER_LIB/VTK-build
     cd $SLICER_LIB/VTK-build
-v;
+
     set USE_VTK_ANSI_STDLIB ""
     if { $isWindows } {
         if {$MSVC6} {
