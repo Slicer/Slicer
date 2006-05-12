@@ -118,8 +118,9 @@ proc runcmd {args} {
 # - determine the build
 # 
 
-# hack to work around lack of normalize option in older tcl
-set ::SLICER_HOME [file dirname [file dirname [file normalize [info script]]]]
+set script [info script]
+catch {set script [file normalize $script]}
+set ::SLICER_HOME [file dirname [file dirname $script]]
 set cwd [pwd]
 cd [file dirname [info script]]
 cd ..
@@ -208,7 +209,11 @@ runcmd svn checkout http://www.na-mic.org:8000/svn/Slicer3/trunk Slicer3
 
 
 cd $::SLICER_HOME
-runcmd Scripts/genlib.tcl $::GETBUILDTEST(release) $SLICER_LIB
+if { $::GETBUILDTEST(release) != "" } {
+    runcmd Scripts/genlib.tcl $::GETBUILDTEST(release) $SLICER_LIB
+} else {
+    runcmd Scripts/genlib.tcl $SLICER_LIB
+}
 
 cd $::SLICER_BUILD
 runcmd $::CMAKE \
