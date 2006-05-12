@@ -20,6 +20,8 @@
 #include "vtkKWMenu.h"
 #include "vtkKWEntry.h"
 
+#define MIN_RESOLUTION 0.00001
+
 //----------------------------------------------------------------------------
 vtkStandardNewMacro( vtkKWWindowLevelThresholdEditor );
 vtkCxxRevisionMacro(vtkKWWindowLevelThresholdEditor, "$Revision: 1.49 $");
@@ -87,11 +89,12 @@ void vtkKWWindowLevelThresholdEditor::SetImageData(vtkImageData* imageData)
       {
       tempImageData->UnRegister(this);
       }
-    this->Modified();   
       
     this->UpdateFromImage();
 
     this->UpdateTransferFunction();
+
+    this->Modified();   
     }
 }
 
@@ -354,8 +357,15 @@ void vtkKWWindowLevelThresholdEditor::ProcessWindowLevelCommand(double min, doub
   double range[2];
   range[0] = min;
   range[1] = max;
-  this->WindowEntry->SetValueAsDouble(max-min);
-  this->LevelEntry->SetValueAsDouble(0.5*(min+max));
+  double window = max-min;
+  double level = 0.5*(min+max);
+  if (fabs(window - this->GetWindow() ) < MIN_RESOLUTION &&
+      fabs(level - this->GetLevel() ) < MIN_RESOLUTION)
+    {
+    return;
+    }
+  this->WindowEntry->SetValueAsDouble(window);
+  this->LevelEntry->SetValueAsDouble(level);
   this->UpdateTransferFunction();
   this->InvokeEvent(vtkKWWindowLevelThresholdEditor::ValueChangedEvent, range);
 }
@@ -391,6 +401,12 @@ void vtkKWWindowLevelThresholdEditor::ProcessThresholdStartCommand(double min, d
 
 void vtkKWWindowLevelThresholdEditor::ProcessWindowEntryCommand(double window)
 {
+  double *wrange = this->WindowLevelRange->GetRange();
+
+  if (fabs(window - (wrange[1]-wrange[0]) ) < MIN_RESOLUTION)
+    {
+    return;
+    }
   double range[2];
   double level = this->GetLevel();
   range[0] = window - 0.5*level;
@@ -403,6 +419,11 @@ void vtkKWWindowLevelThresholdEditor::ProcessWindowEntryCommand(double window)
 
 void vtkKWWindowLevelThresholdEditor::ProcessLevelEntryCommand(double level)
 {
+  double *wrange = this->WindowLevelRange->GetRange();
+  if (fabs(level - 0.5*(wrange[1]+wrange[0]) ) < MIN_RESOLUTION)
+    {
+    return;
+    }
   double range[2];
   double window = this->GetWindow();
   range[0] = window - 0.5*level;
