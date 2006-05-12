@@ -148,6 +148,8 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents ( vtkObject *caller,
           volume->GetScene()->AddNode(displayNode);
           volume->SetDisplayNodeID(displayNode->GetID());
           }
+        displayNode->SetWindow(this->WindowLevelThresholdEditor->GetWindow());
+        displayNode->SetLevel(this->WindowLevelThresholdEditor->GetLevel());
         displayNode->SetUpperThreshold(this->WindowLevelThresholdEditor->GetUpperThreshold());
         displayNode->SetLowerThreshold(this->WindowLevelThresholdEditor->GetLowerThreshold());
         }       

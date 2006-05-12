@@ -32,6 +32,7 @@
 #include "vtkKWLabel.h"
 #include "vtkKWWindow.h"
 #include "vtkKWRange.h"
+#include "vtkKWEntry.h"
 #include "vtkKWColorTransferFunctionEditor.h"
 #include "vtkKWHistogram.h"
 
@@ -74,6 +75,8 @@ public:
   // Description:
   // TODO: access internal widgets
   //vtkKWRange* GetXRange() { return this->Range[0]; };
+  void ProcessWindowEntryCommand(double win);
+  void ProcessLevelEntryCommand(double level);
 
   void ProcessWindowLevelCommand(double min, double max);
   void ProcessThresholdCommand(double min, double max);
@@ -120,7 +123,9 @@ private:
   vtkColorTransferFunction *TransferFunction;
   vtkKWColorTransferFunctionEditor *ColorTransferFunctionEditor;
 
-  vtkKWRange *WindoLevelRange;
+  vtkKWRange *WindowLevelRange;
+  vtkKWEntry *LevelEntry;
+  vtkKWEntry *WindowEntry;
   vtkKWRange *ThresholdRange;
 };
 
