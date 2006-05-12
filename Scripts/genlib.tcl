@@ -62,6 +62,7 @@ proc Usage { {msg ""} } {
 }
 
 set GENLIB(clean) "false"
+set GENLIB(target) ""
 set isRelease 0
 set strippedargs ""
 set argc [llength $argv]
@@ -92,10 +93,12 @@ for {set i 0} {$i < $argc} {incr i} {
 set argv $strippedargs
 set argc [llength $argv]
 
-if {$argc > 1 } {
+if {$argc != 1 } {
     Usage
     exit 1
 }
+
+set ::SLICER_LIB $argv
 
 
 ################################################################################
@@ -625,11 +628,13 @@ if { ![file exists $::TEEM_TEST_FILE] } {
         -DBUILD_TESTING:BOOL=OFF \
         -DTEEM_ZLIB:BOOL=ON \
         -DTEEM_PNG:BOOL=ON \
-        -DZLIB_INCLUDE_DIR:PATH=$::SLICER_LIB/VTK/Utilities/zlib \
-        -DTEEM_ZLIB_DLLCONF_IPATH:PATH=$::SLICER_LIB/VTK-build/Utilities/zlib \
+        -DTEEM_VTK_MANGLE:BOOL=ON \
+        -DTEEM_VTK_TOOLKITS_IPATH:FILEPATH=$::SLICER_LIB/VTK-build \
+        -DZLIB_INCLUDE_DIR:PATH=$::SLICER_LIB/VTK/Utilities/vtkzlib \
+        -DTEEM_ZLIB_DLLCONF_IPATH:PATH=$::SLICER_LIB/VTK-build/Utilities \
         -DZLIB_LIBRARY:FILEPATH=$::SLICER_LIB/VTK-build/bin/$::VTK_BUILD_SUBDIR/$zlib \
-        -DPNG_PNG_INCLUDE_DIR:PATH=$::SLICER_LIB/VTK/Utilities/png \
-        -DTEEM_PNG_DLLCONF_IPATH:PATH=$::SLICER_LIB/VTK-build/Utilities/png \
+        -DPNG_PNG_INCLUDE_DIR:PATH=$::SLICER_LIB/VTK/Utilities/vtkpng \
+        -DTEEM_PNG_DLLCONF_IPATH:PATH=$::SLICER_LIB/VTK-build/Utilities \
         -DPNG_LIBRARY:FILEPATH=$::SLICER_LIB/VTK-build/bin/$::VTK_BUILD_SUBDIR/$png \
         ../teem
 

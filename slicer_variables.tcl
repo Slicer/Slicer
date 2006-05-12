@@ -77,7 +77,10 @@ set ::SANDBOX_TAG "http://svn.na-mic.org:8000/svn/NAMICSandBox/branches/Slicer-2
 
 # Set library, binary, etc. paths...
 
-set ::SLICER_LIB $::SLICER_HOME/Lib/$::env(BUILD)
+#set ::SLICER_LIB $::SLICER_HOME/Lib/$::env(BUILD) ;# as used in slicer2
+#                                                  ;# now must be set outide 
+#                                                  ;# of this file
+
 set ::TEEM_SRC_DIR  $::SLICER_LIB/teem
 set ::TEEM_BUILD_DIR  $::SLICER_LIB/teem-build
 set ::VTK_DIR  $::SLICER_LIB/VTK-build
@@ -85,7 +88,7 @@ set ::VTK_SRC_DIR $::SLICER_LIB/VTK
 set ::VTK_BUILD_TYPE ""
 set ::VTK_BUILD_SUBDIR ""
 set ::env(VTK_BUILD_TYPE) $::VTK_BUILD_TYPE
-set ::KWWIDGETS_DIR  $::SLICER_LIB/Widgets-build
+set ::KWWidgets_BUILD_DIR  $::SLICER_LIB/KWWidgets-build
 set ::ITK_BINARY_PATH $::SLICER_LIB/Insight-build
 set ::SANDBOX_BIN_DIR $::SLICER_LIB/NAMICSandBox-build/bin
 set ::TCL_BIN_DIR $::SLICER_LIB/tcl-build/bin
@@ -112,7 +115,6 @@ switch $::tcl_platform(os) {
 }
 
 # TODO: identify files for each platform
-set ::KWWidgets_TEST_FILE ""
 
 switch $::tcl_platform(os) {
     "SunOS" -
@@ -126,6 +128,7 @@ switch $::tcl_platform(os) {
         set ::BLT_TEST_FILE $::TCL_BIN_DIR/bltwish24
         set ::TEEM_TEST_FILE $::TEEM_BIN_DIR/unu
         set ::VTK_TEST_FILE $::VTK_DIR/bin/vtk
+        set ::KWWidgets_TEST_FILE $KWWidgets_BUILD_DIR/bin/libKWWidgets.so
         set ::SANDBOX_TEST_FILE $::SANDBOX_BIN_DIR/libSlicerClustering.a
         set ::ALT_SANDBOX_TEST_FILE $::SANDBOX_BIN_DIR/libSlicerClustering.a
         set ::VTK_TCL_LIB $::TCL_LIB_DIR/libtcl8.4.$shared_lib_ext 
@@ -146,6 +149,7 @@ switch $::tcl_platform(os) {
         set ::BLT_TEST_FILE $::TCL_BIN_DIR/bltwish24
         set ::TEEM_TEST_FILE $::TEEM_BIN_DIR/unu
         set ::VTK_TEST_FILE $::VTK_DIR/bin/vtk
+        set ::KWWidgets_TEST_FILE $KWWidgets_BUILD_DIR/bin/libKWWidgets.so
         set ::SANDBOX_TEST_FILE $::SANDBOX_BIN_DIR/libSlicerClustering.so
         set ::ALT_SANDBOX_TEST_FILE $::SANDBOX_BIN_DIR/libSlicerClustering.a
         set ::VTK_TCL_LIB $::TCL_LIB_DIR/libtcl8.4.$shared_lib_ext 
@@ -177,6 +181,7 @@ switch $::tcl_platform(os) {
         set ::BLT_TEST_FILE $::TCL_BIN_DIR/BLT24.dll
         set ::TEEM_TEST_FILE $::TEEM_BIN_DIR/unu.exe
         set ::VTK_TEST_FILE $::VTK_DIR/bin/$::VTK_BUILD_TYPE/vtk.exe
+        set ::KWWidgets_TEST_FILE $KWWidgets_BUILD_DIR/bin/$::env(VTK_BUILD_SUBDIR)/KWWidgets.lib
         set ::SANDBOX_TEST_FILE $::SANDBOX_BIN_DIR/$::VTK_BUILD_TYPE/SlicerClustering.lib
         set ::ALT_SANDBOX_TEST_FILE $::SANDBOX_BIN_DIR/$::VTK_BUILD_TYPE/SlicerClustering.lib
         set ::VTK_TCL_LIB $::TCL_LIB_DIR/tcl84.lib
@@ -211,7 +216,7 @@ switch $::tcl_platform(os) {
         set ::COMPILER_PATH "/usr/bin"
         set ::COMPILER "g++"
         set ::CMAKE $::CMAKE_PATH/bin/cmake
-        set ::MAKE "make"
+        set ::MAKE "make -j 8"
         set ::SERIAL_MAKE "make"
     }
     "Darwin" {
