@@ -34,7 +34,7 @@ proc Usage { {msg ""} } {
 }
 
 set GETBUILDTEST(clean) "false"
-set GETBUILDTEST(release) 0
+set GETBUILDTEST(release) ""
 set GETBUILDTEST(test-type) "Experimental"
 set strippedargs ""
 set argc [llength $argv]
@@ -46,7 +46,7 @@ for {set i 0} {$i < $argc} {incr i} {
             set GETBUILDTEST(clean) "true"
         }
         "--release" {
-            set GETBUILDTEST(release) 1
+            set GETBUILDTEST(release) "--release"
         }
              "-t" -
         "--test-type" {
@@ -145,11 +145,6 @@ if { [file exists $localvarsfile] } {
     exit 1
 }
 
-if ($::GETBUILDTEST(release)) {
-    set ::VTK_BUILD_TYPE "Release"
-    puts "Overriding slicer_variables.tcl; VTK_BUILD_TYPE is $::env(VTK_BUILD_TYPE)"
-}
-
 #initialize platform variables
 foreach v { isSolaris isWindows isDarwin isLinux } { set $v 0 }
 switch $tcl_platform(os) {
@@ -157,6 +152,11 @@ switch $tcl_platform(os) {
     "Linux" { set isLinux 1 }
     "Darwin" { set isDarwin 1 }
     default { set isWindows 1 }
+}
+
+if { $isWindows } {
+    puts stderr "Sorry, getbuildtest isn't for windows yet"
+    exit 1
 }
 
 #
@@ -208,7 +208,7 @@ runcmd svn checkout http://www.na-mic.org:8000/svn/Slicer3/trunk Slicer3
 
 
 cd $::SLICER_HOME
-runcmd Scripts/genlib.tcl $SLICER_LIB
+runcmd Scripts/genlib.tcl $::GETBUILDTEST(release) $SLICER_LIB
 
 cd $::SLICER_BUILD
 runcmd $::CMAKE \
