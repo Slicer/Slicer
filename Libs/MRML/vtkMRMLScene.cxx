@@ -419,7 +419,11 @@ vtkCollection* vtkMRMLScene::GetNodesByName(const char* name)
 vtkMRMLNode* vtkMRMLScene::GetNodeByID(const char* id)
 {
 
-  vtkMRMLNode *node;
+  vtkMRMLNode *node = NULL;
+  if (id == NULL)
+   {
+   return NULL;
+   }
   for (int n=0; n < this->CurrentScene->GetNumberOfItems(); n++) 
     {
     node = (vtkMRMLNode*)this->CurrentScene->GetItemAsObject(n);
