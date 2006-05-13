@@ -155,6 +155,9 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents ( vtkObject *caller,
         displayNode->SetLevel(this->WindowLevelThresholdEditor->GetLevel());
         displayNode->SetUpperThreshold(this->WindowLevelThresholdEditor->GetUpperThreshold());
         displayNode->SetLowerThreshold(this->WindowLevelThresholdEditor->GetLowerThreshold());
+        displayNode->SetAutoWindowLevel(this->WindowLevelThresholdEditor->GetAutoWindowLevel());
+        displayNode->SetAutoThreshold(this->WindowLevelThresholdEditor->GetAutoThreshold());
+        displayNode->SetApplyThreshold(this->WindowLevelThresholdEditor->GetApplyThreshold());
         }       
       }
 } 

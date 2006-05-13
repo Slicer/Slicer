@@ -18,6 +18,7 @@
 #include "vtkKWMenuButton.h"
 #include "vtkKWFrame.h"
 #include "vtkKWMenu.h"
+#include "vtkKWCheckButton.h"
 #include "vtkKWEntry.h"
 
 #define MIN_RESOLUTION 0.00001
@@ -169,10 +170,13 @@ void vtkKWWindowLevelThresholdEditor::CreateWidget()
 
   this->WindowLevelAutoManual->SetParent(winLevelFrame);
   this->WindowLevelAutoManual->Create();
-  this->WindowLevelAutoManual->GetWidget()->GetMenu()->AddRadioButton ( "Auto" );
-  this->WindowLevelAutoManual->GetWidget()->GetMenu()->AddRadioButton ( "Manual" );
+
   this->WindowLevelAutoManual->SetLabelText("Window/Level:");
-  this->WindowLevelAutoManual->GetWidget()->SetValue ( "Auto" );
+  this->WindowLevelAutoManual->GetWidget()->GetMenu()->AddRadioButton ( "Auto");
+  this->WindowLevelAutoManual->GetWidget()->GetMenu()->AddRadioButton ( "Manual");
+  this->WindowLevelAutoManual->GetWidget()->SetValue ( "Manual" );
+  this->WindowLevelAutoManual->GetWidget()->GetMenu()->SetItemCommand(0, this, "ProcessButtonsCommand");
+  this->WindowLevelAutoManual->GetWidget()->GetMenu()->SetItemCommand(1, this, "ProcessButtonsCommand");
   this->Script(
     "pack %s -side left -anchor nw -expand n -padx 2 -pady 2", 
     this->WindowLevelAutoManual->GetWidgetName());
@@ -211,10 +215,12 @@ void vtkKWWindowLevelThresholdEditor::CreateWidget()
 
   this->TresholdAutoManual->SetParent(threshFrame);
   this->TresholdAutoManual->Create();
-  this->TresholdAutoManual->GetWidget()->GetMenu()->AddRadioButton ( "Auto" );
-  this->TresholdAutoManual->GetWidget()->GetMenu()->AddRadioButton ( "Manual" );
-  this->TresholdAutoManual->GetWidget()->SetValue ( "Auto" );
   this->TresholdAutoManual->SetLabelText("Threshold:");
+  this->TresholdAutoManual->GetWidget()->GetMenu()->AddRadioButton ( "Auto"); 
+  this->TresholdAutoManual->GetWidget()->GetMenu()->AddRadioButton ( "Manual");
+  this->TresholdAutoManual->GetWidget()->SetValue ( "Manual" );
+  this->TresholdAutoManual->GetWidget()->GetMenu()->SetItemCommand(0, this, "ProcessButtonsCommand");
+  this->TresholdAutoManual->GetWidget()->GetMenu()->SetItemCommand(1, this, "ProcessButtonsCommand");
   this->Script(
     "pack %s -side left -anchor nw -expand n -padx 2 -pady 2", 
     this->TresholdAutoManual->GetWidgetName());
@@ -231,6 +237,7 @@ void vtkKWWindowLevelThresholdEditor::CreateWidget()
   this->TresholdApply->SetParent(threshFrame);
   this->TresholdApply->Create();
   this->TresholdApply->SetLabelText("Apply");
+  this->TresholdApply->GetWidget()->SetCommand(this, "ProcessCheckButtonCommand");
   this->Script(
     "pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
     this->TresholdApply->GetWidgetName());  
@@ -268,15 +275,17 @@ void vtkKWWindowLevelThresholdEditor::CreateWidget()
   
   this->ColorTransferFunctionEditor->ParameterTicksVisibilityOff();
   this->ColorTransferFunctionEditor->ComputeValueTicksFromHistogramOff();
-  
+  this->ColorTransferFunctionEditor->SetDisableAddAndRemove(1);
+  this->ColorTransferFunctionEditor->SetColorSpaceOptionMenuVisibility(0);
+
   this->Script(
-    "pack %s -side bottom -anchor nw -expand n -padx 2 -pady 20", 
+    "pack %s -side bottom -anchor nw -expand n -padx 2 -pady 2", 
     this->ColorTransferFunctionEditor->GetWidgetName());
   
   
   this->ColorTransferFunctionEditor->SetHistogramStyleToPolyLine();
   this->ColorTransferFunctionEditor->SetHistogramColor(1.0, 0., 0.);
-  this->ColorTransferFunctionEditor->SetHistogramPolyLineWidth (5);
+  this->ColorTransferFunctionEditor->SetHistogramPolyLineWidth (2);
 
   this->ColorTransferFunctionEditor->SetColorRampPositionToCanvas();
   
@@ -432,4 +441,43 @@ void vtkKWWindowLevelThresholdEditor::ProcessLevelEntryCommand(double level)
   this->WindowLevelRange->SetRange(level - 0.5*window, level + 0.5*window);
   this->UpdateTransferFunction();
   this->InvokeEvent(vtkKWWindowLevelThresholdEditor::ValueChangedEvent, range);
+}
+
+int vtkKWWindowLevelThresholdEditor::GetAutoWindowLevel()
+{
+  if (strcmp(this->WindowLevelAutoManual->GetWidget()->GetValue(), "Auto"))
+    {
+    return 1;
+    }
+  else
+    {
+    return 0;
+    }
+}
+
+int vtkKWWindowLevelThresholdEditor::GetAutoThreshold()
+{
+  if (strcmp(this->TresholdAutoManual->GetWidget()->GetValue(), "Auto"))
+    {
+    return 1;
+    }
+  else
+    {
+    return 0;
+    }
+}
+
+int vtkKWWindowLevelThresholdEditor::GetApplyThreshold()
+{
+  return this->TresholdApply->GetWidget()->GetState();
+}
+
+void vtkKWWindowLevelThresholdEditor::ProcessButtonsCommand()
+{
+  this->InvokeEvent(vtkKWWindowLevelThresholdEditor::ValueChangedEvent, NULL);
+}
+
+void vtkKWWindowLevelThresholdEditor::ProcessCheckButtonCommand(int state)
+{
+  this->InvokeEvent(vtkKWWindowLevelThresholdEditor::ValueChangedEvent, NULL);
 }

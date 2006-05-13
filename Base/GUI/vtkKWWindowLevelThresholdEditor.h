@@ -63,6 +63,17 @@ public:
   double GetUpperThreshold();
   double GetLowerThreshold();
 
+  // Description:
+  // Get GetAutoThreshold 0/1
+  int GetAutoThreshold();
+
+  // Description:
+  // Get TresholdApply 0 or 1
+  int GetApplyThreshold();
+
+  // Description:
+  // Get GetAutoWindowLevel 0/1
+  int GetAutoWindowLevel();
   
   // Description:
   // Command to call when the User manipulates the widget
@@ -75,6 +86,10 @@ public:
   // Description:
   // TODO: access internal widgets
   //vtkKWRange* GetXRange() { return this->Range[0]; };
+  void ProcessButtonsCommand();
+
+  void ProcessCheckButtonCommand(int state);
+
   void ProcessWindowEntryCommand(double win);
   void ProcessLevelEntryCommand(double level);
 
