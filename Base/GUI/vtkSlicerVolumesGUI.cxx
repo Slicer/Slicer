@@ -114,9 +114,12 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents ( vtkObject *caller,
                }
              else
              {
+             filebrowse->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
+
                this->ApplicationLogic->GetSelectionNode()->SetActiveVolumeID( volumeNode->GetID() );
                this->ApplicationLogic->PropagateVolumeSelection();
                this->WindowLevelThresholdEditor->SetImageData(volumeNode->GetImageData());
+               
              }
            }
            return;
@@ -226,6 +229,8 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
     this->LoadVolumeButton->SetText ("Choose a file to load");
     this->LoadVolumeButton->GetLoadSaveDialog()->SetFileTypes(
                                                               "{ {volume} {*.*} }");
+    this->LoadVolumeButton->GetLoadSaveDialog()->RetrieveLastPathFromRegistry(
+      "OpenPath");
 
     app->Script("pack %s -side top -anchor w -padx 2 -pady 4", 
                 this->LoadVolumeButton->GetWidgetName());
