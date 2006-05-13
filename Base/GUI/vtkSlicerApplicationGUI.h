@@ -27,9 +27,12 @@
 #include "vtkKWFrame.h"
 #include "vtkKWRenderWidget.h"
 
+#include "vtkRenderWindowInteractor.h"
+
 class vtkObject;
 class vtkKWPushButton;
 class vtkKWScale;
+class vtkImplicitPlaneWidget;
 
 // Description:
 // This class implements Slicer's main Application GUI.
@@ -46,6 +49,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // Description:
     // These Get/Set methods for frames in the GUI panel.
     vtkGetObjectMacro ( MainViewer, vtkKWRenderWidget );
+    vtkRenderWindowInteractor *GetRenderWindowInteractor() {
+        return reinterpret_cast<vtkRenderWindowInteractor *> (this->MainViewer->GetInteractor());
+    };
 
     vtkGetObjectMacro ( SlicerControlFrame, vtkKWFrame );
     vtkGetObjectMacro ( SliceControlFrame, vtkKWFrame );
@@ -73,6 +79,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // Description:
     // Get/Set the main slicer window.
     vtkGetObjectMacro ( MainSlicerWin, vtkKWWindow );
+
+    // Description:
+    // a Plane widget in the main window
+    vtkGetObjectMacro ( PlaneWidget, vtkImplicitPlaneWidget );
     
     // Description:
     // This method builds Slicer's main GUI
@@ -138,6 +148,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkKWFrame *DefaultSlice1Frame;
     vtkKWFrame *DefaultSlice2Frame;
     vtkKWRenderWidget *MainViewer;
+    vtkImplicitPlaneWidget *PlaneWidget;
     // Description:
     // Widgets for the modules GUI panels
     vtkKWMenuButton *ModulesMenuButton;

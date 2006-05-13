@@ -25,6 +25,8 @@
 #include "vtkPolyDataMapper.h"
 #include "vtkRenderWindow.h"
 
+#include "vtkImplicitPlaneWidget.h"
+
 #include "vtkKWApplication.h"
 #include "vtkKWTclInteractor.h"
 #include "vtkKWFrame.h"
@@ -114,6 +116,10 @@ vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
     if ( this->MainSlicerWin ) {
         this->MainSlicerWin->Delete ( );
         this->MainSlicerWin = NULL;
+    }
+    if ( this->PlaneWidget ) {
+        this->PlaneWidget->Delete ( );
+        this->PlaneWidget = NULL;
     }
 }
 
@@ -441,13 +447,20 @@ void vtkSlicerApplicationGUI::BuildMainViewer ( )
             this->MainViewer->SetRendererBackgroundColor ( style->GetViewerBgColor ( ) );
             this->MainViewer->GetRenderer()->GetActiveCamera()->ParallelProjectionOff();
 
-            // put a teapot in there for now.
+            // put in a plane interactor to test
             vtkCubeSource *cubeSource = vtkCubeSource::New();
             vtkPolyDataMapper *cubeMapper = vtkPolyDataMapper::New ();
             cubeMapper->SetInputConnection ( cubeSource->GetOutputPort() );
             vtkActor *cubeActor = vtkActor::New ( );
             cubeActor->SetMapper ( cubeMapper );
-            MainViewer->AddViewProp ( cubeActor );
+            // don't add the actor, so we can see the interactor
+            //MainViewer->AddViewProp ( cubeActor );
+
+            this->PlaneWidget = vtkImplicitPlaneWidget::New();
+            this->PlaneWidget->SetInteractor( this->GetRenderWindowInteractor() );
+            this->PlaneWidget->PlaceWidget();
+            this->PlaneWidget->On();
+
             MainViewer->ResetCamera ( );
         
             cubeSource->Delete ();
