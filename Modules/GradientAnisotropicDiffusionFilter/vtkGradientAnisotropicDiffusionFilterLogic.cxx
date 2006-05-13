@@ -71,7 +71,7 @@ void vtkGradientAnisotropicDiffusionFilterLogic::Apply()
   vtkMRMLScalarVolumeNode *inVolume =  dynamic_cast<vtkMRMLScalarVolumeNode *> (inNode);
   if (inVolume == NULL)
     {
-    vtkErrorMacro("No input volume found with id= " << this->GradientAnisotropicDiffusionFilterNode->GetInputVolumeRef());
+    vtkErrorMacro("No input volume found");
     return;
     }
   

@@ -91,19 +91,17 @@ void vtkGradientAnisotropicDiffusionFilterGUI::PrintSelf(ostream& os, vtkIndent 
 void vtkGradientAnisotropicDiffusionFilterGUI::AddGUIObservers ( ) 
 {
   this->ConductanceScale->AddObserver (vtkKWScale::ScaleValueStartChangingEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->ConductanceScale->AddObserver (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->ConductanceScale->AddObserver (vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 
   this->TimeStepScale->AddObserver (vtkKWScale::ScaleValueStartChangingEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->TimeStepScale->AddObserver (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->TimeStepScale->AddObserver (vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 
   this->NumberOfIterationsScale->AddObserver (vtkKWScale::ScaleValueStartChangingEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->NumberOfIterationsScale->AddObserver (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->NumberOfIterationsScale->AddObserver (vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 
-  this->VolumeSelector->AddObserver (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->VolumeSelector->GetWidget()->GetWidget()->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
 
   this->ApplyButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-
-  this->ApplyButton->AddObserver (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand ); 
 }
 
 
@@ -120,27 +118,24 @@ void vtkGradientAnisotropicDiffusionFilterGUI::ProcessGUIEvents ( vtkObject *cal
                                            unsigned long event,
                                            void *callData ) 
 {
-  if ( !(event == vtkKWScale::ScaleValueStartChangingEvent || event == vtkCommand::ModifiedEvent )) {
-    return;
-  }
 
   vtkKWScaleWithEntry *s = vtkKWScaleWithEntry::SafeDownCast(caller);
-  vtkSlicerNodeSelectorWidget *v = vtkSlicerNodeSelectorWidget::SafeDownCast(caller);
+  vtkKWMenu *v = vtkKWMenu::SafeDownCast(caller);
   vtkKWPushButton *b = vtkKWPushButton::SafeDownCast(caller);
 
-  if ( s == this->ConductanceScale && event == vtkCommand::ModifiedEvent ) {
+  if ( s == this->ConductanceScale && event == vtkKWScale::ScaleValueChangedEvent ) {
     this->Logic->GetGradientAnisotropicDiffusionFilterNode()->SetConductance(this->ConductanceScale->GetValue());
   }
-  else if (s == this->TimeStepScale && event == vtkCommand::ModifiedEvent ) {
+  else if (s == this->TimeStepScale && event == vtkKWScale::ScaleValueChangedEvent ) {
     this->Logic->GetGradientAnisotropicDiffusionFilterNode()->SetTimeStep(this->TimeStepScale->GetValue());
   }
-  else if (s == this->NumberOfIterationsScale && event == vtkCommand::ModifiedEvent ) {
+  else if (s == this->NumberOfIterationsScale && event == vtkKWScale::ScaleValueChangedEvent ) {
     this->Logic->GetGradientAnisotropicDiffusionFilterNode()->SetConductance(this->ConductanceScale->GetValue());
   }
-  else if (v == this->VolumeSelector && event == vtkCommand::ModifiedEvent ) {
+  else if (v == this->VolumeSelector->GetWidget()->GetWidget()->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent ) { 
     this->Logic->GetGradientAnisotropicDiffusionFilterNode()->SetInputVolumeRef(this->VolumeSelector->GetSelected()->GetID());
   }
-  else if (b == this->ApplyButton && event == vtkCommand::ModifiedEvent ) {
+  else if (b == this->ApplyButton && event == vtkKWPushButton::InvokedEvent ) {
     this->Logic->Apply();
   }
 }
@@ -222,7 +217,6 @@ void vtkGradientAnisotropicDiffusionFilterGUI::BuildGUI ( )
 
   this->VolumeSelector->SetBorderWidth(2);
   this->VolumeSelector->SetReliefToGroove();
-  this->VolumeSelector->SetLabelText("Days:");
   this->VolumeSelector->SetPadX(2);
   this->VolumeSelector->SetPadY(2);
   this->VolumeSelector->GetWidget()->GetWidget()->IndicatorVisibilityOff();
