@@ -49,9 +49,14 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // Description:
     // These Get/Set methods for frames in the GUI panel.
     vtkGetObjectMacro ( MainViewer, vtkKWRenderWidget );
+#if 0
+//BTX
+    // TODO: require change to KWWidgets
     vtkRenderWindowInteractor *GetRenderWindowInteractor() {
         return reinterpret_cast<vtkRenderWindowInteractor *> (this->MainViewer->GetInteractor());
     };
+//ETX
+#endif 
 
     vtkGetObjectMacro ( SlicerControlFrame, vtkKWFrame );
     vtkGetObjectMacro ( SliceControlFrame, vtkKWFrame );

@@ -454,12 +454,15 @@ void vtkSlicerApplicationGUI::BuildMainViewer ( )
             vtkActor *cubeActor = vtkActor::New ( );
             cubeActor->SetMapper ( cubeMapper );
             // don't add the actor, so we can see the interactor
-            //MainViewer->AddViewProp ( cubeActor );
+            MainViewer->AddViewProp ( cubeActor );
 
+#if 0
+            // TODO: this requires a change to KWWidgets
             this->PlaneWidget = vtkImplicitPlaneWidget::New();
             this->PlaneWidget->SetInteractor( this->GetRenderWindowInteractor() );
             this->PlaneWidget->PlaceWidget();
             this->PlaneWidget->On();
+#endif
 
             MainViewer->ResetCamera ( );
         
