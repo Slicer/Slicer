@@ -229,7 +229,7 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
     this->LoadVolumeButton = vtkKWLoadSaveButton::New ( );
     this->LoadVolumeButton->SetParent ( volLoadFrame->GetFrame() );
     this->LoadVolumeButton->Create ( );
-    this->LoadVolumeButton->SetText ("Choose a file to load");
+    this->LoadVolumeButton->SetText ("Load Volume");
     this->LoadVolumeButton->GetLoadSaveDialog()->SetFileTypes(
                                                               "{ {volume} {*.*} }");
     this->LoadVolumeButton->GetLoadSaveDialog()->RetrieveLastPathFromRegistry(
@@ -245,25 +245,25 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
     volDisplayFrame->Create ( );
     volDisplayFrame->SetLabelText ("Display");
     volDisplayFrame->SetDefaultLabelFontWeightToNormal( );
-    volDisplayFrame->CollapseFrame ( );
+    volDisplayFrame->ExpandFrame ( );
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   volDisplayFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Volumes")->GetWidgetName());
-
+    
     this->VolumeSelectorWidget = vtkSlicerNodeSelectorWidget::New() ;
     this->VolumeSelectorWidget->SetParent ( volDisplayFrame->GetFrame() );
     this->VolumeSelectorWidget->Create ( );
     this->VolumeSelectorWidget->SetNodeClass("vtkMRMLVolumeNode");
     this->VolumeSelectorWidget->SetMRMLScene(this->GetMRMLScene());
     this->VolumeSelectorWidget->UpdateMenu();
-    this->VolumeSelectorWidget->SetBorderWidth(2);
-    this->VolumeSelectorWidget->SetReliefToGroove();
+    this->VolumeSelectorWidget->SetBorderWidth(0);
+    this->VolumeSelectorWidget->SetReliefToFlat();
     this->VolumeSelectorWidget->SetPadX(2);
     this->VolumeSelectorWidget->SetPadY(2);
     this->VolumeSelectorWidget->GetWidget()->GetWidget()->IndicatorVisibilityOff();
     this->VolumeSelectorWidget->GetWidget()->GetWidget()->SetWidth(24);
-    this->VolumeSelectorWidget->SetLabelText( "Volume Select: ");
+    this->VolumeSelectorWidget->SetLabelText( "Select Volume: ");
     this->VolumeSelectorWidget->SetBalloonHelpString("select a volume from the current mrml scene.");
-    app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+    app->Script ( "pack %s -side top -anchor nw -fill x -expand n -padx 2 -pady 2",
                   this->VolumeSelectorWidget->GetWidgetName());
 
     this->WindowLevelThresholdEditor = vtkKWWindowLevelThresholdEditor::New();

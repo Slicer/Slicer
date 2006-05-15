@@ -4,7 +4,6 @@
 #include "vtkKWWidget.h"
 #include "vtkSlicerModelsGUI.h"
 #include "vtkSlicerApplication.h"
-#include "vtkSlicerStyle.h"
 #include "vtkSlicerModuleLogic.h"
 //#include "vtkSlicerModelsLogic.h"
 #include "vtkKWFrameWithLabel.h"
@@ -116,7 +115,6 @@ void vtkSlicerModelsGUI::BuildGUI ( )
 {
 
     vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-    vtkSlicerStyle *style = app->GetSlicerStyle();
 
     // ---
     // MODULE GUI FRAME 
@@ -147,7 +145,7 @@ void vtkSlicerModelsGUI::BuildGUI ( )
     this->LoadModelButton = vtkKWLoadSaveButton::New ( );
     this->LoadModelButton->SetParent ( modLoadFrame->GetFrame() );
     this->LoadModelButton->Create ( );
-    this->LoadModelButton->SetText ("Choose a file to load");
+    this->LoadModelButton->SetText ("Load Model");
     this->LoadModelButton->GetLoadSaveDialog()->SetFileTypes(
                                                              "{ {MRML Document} {.mrml .xml} }");
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",

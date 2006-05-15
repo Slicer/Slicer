@@ -9,10 +9,9 @@
 
 #include "vtkSlicerBaseGUIWin32Header.h"
 #include "vtkKWApplication.h"
-#include "vtkSlicerStyle.h"
 #include "vtkSlicerGUILayout.h"
 #include "vtkSlicerGUICollection.h"
-
+#include "vtkSlicerTheme.h"
 
 class vtkSlicerModuleGUI;
 
@@ -25,9 +24,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
     static vtkSlicerApplication* New ( );
     vtkTypeRevisionMacro ( vtkSlicerApplication, vtkKWApplication );
 
-    vtkGetObjectMacro ( SlicerStyle, vtkSlicerStyle );
-    vtkSetObjectMacro ( SlicerStyle, vtkSlicerStyle );
     vtkGetObjectMacro ( MainLayout, vtkSlicerGUILayout );
+    vtkGetObjectMacro ( SlicerTheme, vtkSlicerTheme );
     
     vtkGetObjectMacro ( ModuleGUICollection, vtkSlicerGUICollection );
 
@@ -44,14 +42,17 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
     // Sets application behavior.
     virtual void ConfigureApplication ( );
     virtual int StartApplication ( );
+    // Description:
+    // installs rules to specify look & feel.
+    virtual void InstallTheme ( vtkKWTheme *theme );
     
  protected:
     vtkSlicerApplication ( );
     ~vtkSlicerApplication ( );
 
-    vtkSlicerStyle *SlicerStyle;
     vtkSlicerGUILayout *MainLayout;
-
+    vtkSlicerTheme *SlicerTheme;
+    
     // Description:
     // Collections of GUIs
     vtkSlicerGUICollection *ModuleGUICollection;

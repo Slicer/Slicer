@@ -99,7 +99,6 @@ void vtkSlicerDataGUI::BuildGUI ( )
 {
 
     vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-    vtkSlicerStyle *style = app->GetSlicerStyle();
 
     // ---
     // MODULE GUI FRAME 

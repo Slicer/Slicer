@@ -43,7 +43,7 @@ void vtkSlicerGUILayout::InitializeLayout ( )
         this->GetDefaultSliceControlFrameHeight ( ) +
         this->GetDefaultViewControlFrameHeight ( );
     this->SetDefaultGUIPanelHeight ( h );
-    this->SetDefaultGUIPanelWidth ( 300 );
+    this->SetDefaultGUIPanelWidth ( 325 );
 
     // constrain the slice windows to be a particular size
     this->SetDefaultSliceGUIFrameHeight ( 120 );

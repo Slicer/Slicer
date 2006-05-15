@@ -50,7 +50,6 @@
 #include "vtkSlicerApplicationLogic.h"
 #include "vtkSlicerModuleGUI.h"
 #include "vtkSlicerGUILayout.h"
-#include "vtkSlicerStyle.h"
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerApplicationGUI);
@@ -207,7 +206,7 @@ void vtkSlicerApplicationGUI::ProcessGUIEvents ( vtkObject *caller,
     else if (pushb == this->AlignmentsButton && event == vtkKWPushButton::InvokedEvent ) {
         //vtkSlicerModuleGUI *m = vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Alignments");
         //if ( m != NULL ) { m->GetUIPanel()->Raise(); }
-        this->ModulesMenuButton->SetValue ( "Alignments" );
+        this->ModulesMenuButton->SetValue ( "Align" );
     }
 
     //--- Process events from menubutton
@@ -436,7 +435,6 @@ void vtkSlicerApplicationGUI::BuildMainViewer ( )
 
     if ( this->GetApplication() != NULL ) {
         vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-        vtkSlicerStyle *style = app->GetSlicerStyle();
 
         vtkKWWindow *win = this->MainSlicerWin;
         if ( this->MainViewer != NULL ) {
@@ -444,7 +442,6 @@ void vtkSlicerApplicationGUI::BuildMainViewer ( )
             this->MainViewer->Create ( );
             app->Script  ("pack %s -side top -fill both -expand y -padx 0 -pady 0",
                           this->MainViewer->GetWidgetName ( ) );
-            this->MainViewer->SetRendererBackgroundColor ( style->GetViewerBgColor ( ) );
             this->MainViewer->GetRenderer()->GetActiveCamera()->ParallelProjectionOff();
 
             // put in a plane interactor to test
@@ -524,7 +521,7 @@ void vtkSlicerApplicationGUI::BuildSlicerControlGUIPanel ( )
         this->AlignmentsButton->SetParent ( f1 );
         this->AlignmentsButton->Create ( );
         this->AlignmentsButton->SetWidth ( 9 );
-        this->AlignmentsButton->SetText("Alignments");
+        this->AlignmentsButton->SetText("Align");
         this->AlignmentsButton->SetBalloonHelpString ("Use this button to go to the Alignments module.");
         
         //--- ALL modules menu button label
@@ -771,13 +768,13 @@ void vtkSlicerApplicationGUI::ConfigureGUIPanel ( )
 
             this->MainSlicerWin->GetMainPanelFrame()->SetWidth ( app->GetMainLayout()->GetDefaultGUIPanelWidth() );
             this->MainSlicerWin->GetMainPanelFrame()->SetHeight ( app->GetMainLayout()->GetDefaultGUIPanelHeight() );
+            this->MainSlicerWin->GetMainPanelFrame()->SetReliefToSunken();
 
             this->LogoFrame->SetParent ( this->MainSlicerWin->GetMainPanelFrame ( ) );
             this->LogoFrame->Create( );
             this->LogoFrame->SetHeight ( app->GetMainLayout()->GetDefaultLogoFrameHeight ( ) );
 
             this->SlicerControlFrame->SetParent ( this->MainSlicerWin->GetMainPanelFrame ( ) );
-            this->SlicerControlFrame->SetReliefToGroove ();
             this->SlicerControlFrame->Create( );
             this->SlicerControlFrame->SetHeight ( app->GetMainLayout()->GetDefaultSlicerControlFrameHeight ( ) );
 
@@ -786,12 +783,10 @@ void vtkSlicerApplicationGUI::ConfigureGUIPanel ( )
             app->Script ( "pack %s -side top -fill x -padx 1 -pady 1", this->SlicerControlFrame->GetWidgetName() );
 
             this->SliceControlFrame->SetParent ( this->MainSlicerWin->GetMainPanelFrame ( ) );
-            this->SliceControlFrame->SetReliefToGroove ();
             this->SliceControlFrame->Create( );
             this->SliceControlFrame->SetHeight ( app->GetMainLayout()->GetDefaultSliceControlFrameHeight ( ) );
             
             this->ViewControlFrame->SetParent ( this->MainSlicerWin->GetMainPanelFrame ( ) );
-            this->ViewControlFrame->SetReliefToGroove ( );
             this->ViewControlFrame->Create( );
             this->ViewControlFrame->SetHeight ( app->GetMainLayout()->GetDefaultViewControlFrameHeight ( ) );
             

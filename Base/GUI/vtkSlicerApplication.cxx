@@ -23,10 +23,11 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
     this->SetHelpDialogStartingPage ( "http://www.slicer.org" );
 
     this->ModuleGUICollection = vtkSlicerGUICollection::New ( );
-    this->SlicerStyle = vtkSlicerStyle::New ( );
     vtkKWFrameWithLabel::SetDefaultLabelFontWeightToNormal( );
     this->MainLayout = vtkSlicerGUILayout::New ( );
+    this->SlicerTheme = vtkSlicerTheme::New ( );
 }
+
 
 
 //---------------------------------------------------------------------------
@@ -39,18 +40,18 @@ vtkSlicerApplication::~vtkSlicerApplication ( ) {
             this->ModuleGUICollection->Delete ( );
             this->ModuleGUICollection = NULL;
         }
-    if ( this->SlicerStyle )
-        {
-            this->SlicerStyle->Delete ( );
-            this->SlicerStyle = NULL;
-        }
     if ( this->MainLayout )
         {
             this->MainLayout->Delete ( );
             this->MainLayout = NULL;
         }
-
+    if ( this->SlicerTheme )
+        {
+            this->SlicerTheme->Delete ( );
+            this->SlicerTheme = NULL;
+        }
 }
+
 
 //---------------------------------------------------------------------------
 void vtkSlicerApplication::AddModuleGUI ( vtkSlicerModuleGUI *gui ) {
@@ -91,7 +92,17 @@ void vtkSlicerApplication::ConfigureApplication ( ) {
 
 
 
-
+//---------------------------------------------------------------------------
+void vtkSlicerApplication::InstallTheme ( vtkKWTheme *theme )
+{
+    if ( theme != NULL ) {
+        if ( vtkSlicerTheme::SafeDownCast (theme) == this->SlicerTheme ) {
+            this->SetTheme (this->SlicerTheme );
+        } else {
+            this->SetTheme ( theme );
+        }
+    }
+}
 
 
 
