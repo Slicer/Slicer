@@ -193,9 +193,13 @@ int Slicer3_main(int argc, char *argv[])
                          appGUI->GetDefaultSlice1Frame(),
                          appGUI->GetDefaultSlice2Frame() );
     slicesGUI->AddGUIObservers();
-    slicesGUI->SetAndObserveModuleLogic ( 0, sliceLogic0);
-    slicesGUI->SetAndObserveModuleLogic ( 1, sliceLogic1);
-    slicesGUI->SetAndObserveModuleLogic ( 2, sliceLogic2);
+    slicesGUI->SetAndObserveModuleLogic ( 0, sliceLogic0 );
+    slicesGUI->SetAndObserveModuleLogic ( 1, sliceLogic1 );
+    slicesGUI->SetAndObserveModuleLogic ( 2, sliceLogic2 );
+
+    slicesGUI->GetMainSliceGUI0()->GetSliceController()->GetSliceNode()->SetOrientationToAxial();
+    slicesGUI->GetMainSliceGUI1()->GetSliceController()->GetSliceNode()->SetOrientationToSagittal();
+    slicesGUI->GetMainSliceGUI2()->GetSliceController()->GetSliceNode()->SetOrientationToCoronal();
 
     // ---
     gradientAnisotropicDiffusionFilterGUI->BuildGUI ( );
@@ -221,6 +225,10 @@ int Slicer3_main(int argc, char *argv[])
     slicerApp->Script ("namespace eval slicer3 set ApplicationGUI %s", name);
     name = slicesGUI->GetTclName();
     slicerApp->Script ("namespace eval slicer3 set SlicesGUI %s", name);
+    name = volumesGUI->GetTclName();
+    slicerApp->Script ("namespace eval slicer3 set VolumesGUI %s", name);
+    name = modelsGUI->GetTclName();
+    slicerApp->Script ("namespace eval slicer3 set ModelsGUI %s", name);
 
     slicerApp->Script ("namespace eval slicer3 set ApplicationLogic [$::slicer3::ApplicationGUI GetApplicationLogic]");
     slicerApp->Script ("namespace eval slicer3 set MRMLScene [$::slicer3::ApplicationLogic GetMRMLScene]");
