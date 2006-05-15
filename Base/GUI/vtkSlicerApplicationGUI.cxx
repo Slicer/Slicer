@@ -94,6 +94,7 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
     
     //--- ui for the ViewControlFrame
     this->MainViewer = vtkKWRenderWidget::New ( );
+    this->PlaneWidget = NULL;
     
 }
 
@@ -290,9 +291,9 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
             //i = this->MainSlicerWin->GetFileMenu()->AddCommand (  );
             i = this->MainSlicerWin->GetEditMenu()->AddCommand ("Set Home", NULL, NULL);
             this->MainSlicerWin->GetEditMenu()->SetItemAccelerator ( i, "Ctrl+H");
-            i = this->MainSlicerWin->GetEditMenu()->AddCommand ( "Undo", NULL, NULL );
+            i = this->MainSlicerWin->GetEditMenu()->AddCommand ( "Undo", NULL, "$::slicer3::MRMLScene Undo" );
             this->MainSlicerWin->GetEditMenu()->SetItemAccelerator ( i, "Ctrl+Z");
-            i = this->MainSlicerWin->GetEditMenu()->AddCommand ( "Redo", NULL, NULL );
+            i = this->MainSlicerWin->GetEditMenu()->AddCommand ( "Redo", NULL, "$::slicer3::MRMLScene Redo" );
             this->MainSlicerWin->GetEditMenu()->SetItemAccelerator ( i, "Ctrl+Y");
             //i = this->MainSlicerWin->GetViewMenu()->AddCommand ( ? );
             //i = this->MainSlicerWin->GetWindowMenu()->AddCommand ( ? );
