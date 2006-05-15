@@ -2,6 +2,7 @@
 #include "vtkRenderWindow.h"
 
 #include "vtkKWApplication.h"
+#include "vtkKWWindow.h"
 #include "vtkKWNotebook.h"
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerApplicationLogic.h"
@@ -18,6 +19,7 @@
 #include "vtkSlicerVolumesGUI.h"
 #include "vtkSlicerModelsGUI.h"
 #include "vtkSlicerDataGUI.h"
+#include "vtkSlicerTheme.h"
 
 #include "vtkGradientAnisotropicDiffusionFilterLogic.h"
 #include "vtkGradientAnisotropicDiffusionFilterGUI.h"
@@ -56,11 +58,11 @@ int Slicer3_main(int argc, char *argv[])
 
     // Create SlicerGUI application, style, and main window 
     vtkSlicerApplication *slicerApp = vtkSlicerApplication::New ( );
-    slicerApp->GetSlicerStyle()->ApplyPresentation ( );
- 
+    slicerApp->InstallTheme( slicerApp->GetSlicerTheme() );
+
     // Create MRML scene
     vtkMRMLScene *scene = vtkMRMLScene::New();
-
+    
     // Create the application Logic object, 
     // Create the application GUI object
     // and have it observe the Logic
@@ -291,7 +293,6 @@ int Slicer3_main(int argc, char *argv[])
     dataGUI->Delete ();
     slicesGUI->Delete ();
     appGUI->Delete ();
-    
     slicerApp->Delete ();
 
     return res;
