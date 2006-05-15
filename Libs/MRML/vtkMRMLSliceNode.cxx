@@ -57,14 +57,16 @@ vtkMRMLSliceNode::vtkMRMLSliceNode()
   this->SliceToRAS = vtkMatrix4x4::New();
   this->SliceToRAS->Identity();
 
+  this->OrientationString = NULL;
+
     // calculated by UpdateMatrices()
   this->XYToSlice = vtkMatrix4x4::New();
   this->XYToRAS = vtkMatrix4x4::New();
 
   // set the default field of view to a convenient size for looking 
-  // at slices through human heads (a 1mm thick slab 25x25 cm)
-  // TODO: how to represent this as a slab rather than infinitessimal slice?
-  this->SetFieldOfView(250.0, 250.0, 1.0);
+  // at slices through human heads (a 1 pixel thick slab 25x25 cm)
+  // TODO: how best to represent this as a slab rather than infinitessimal slice?
+  this->SetFieldOfView(250.0, 250.0, 250.0);
   this->SetDimensions(256, 256, 1);
   this->SetOrientationToAxial();
 
@@ -101,6 +103,7 @@ void vtkMRMLSliceNode::SetOrientationToAxial()
     // Pz -> Patient Inferior
     this->SliceToRAS->SetElement(2, 2,  1.0);
 
+    this->SetOrientationString( "Axial" );
     this->UpdateMatrices();
 }
 
@@ -122,6 +125,7 @@ void vtkMRMLSliceNode::SetOrientationToSagittal()
     this->SliceToRAS->SetElement(1, 2,  0.0);
     this->SliceToRAS->SetElement(2, 2,  0.0);
 
+    this->SetOrientationString( "Sagittal" );
     this->UpdateMatrices();
 }
 
@@ -144,6 +148,7 @@ void vtkMRMLSliceNode::SetOrientationToCoronal()
     this->SliceToRAS->SetElement(1, 2,  1.0);
     this->SliceToRAS->SetElement(2, 2,  0.0);
 
+    this->SetOrientationString( "Coronal" );
     this->UpdateMatrices();
 }
 

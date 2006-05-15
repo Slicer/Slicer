@@ -66,6 +66,11 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
   void SetOrientationToSagittal();
   void SetOrientationToCoronal();
 
+  // Description
+  // A description of the current orientation
+  vtkGetStringMacro (OrientationString);
+  vtkSetStringMacro (OrientationString);
+
   // Description:
   // Size of the slice plane in millimeters
   vtkGetVector3Macro (FieldOfView, double);
@@ -112,6 +117,8 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
   void UpdateMatrices();
   
 protected:
+
+
   vtkMRMLSliceNode();
   ~vtkMRMLSliceNode();
   vtkMRMLSliceNode(const vtkMRMLSliceNode&);
@@ -124,6 +131,7 @@ protected:
 
   double FieldOfView[3];
   unsigned int Dimensions[3];
+  char *OrientationString;
 
 };
 
