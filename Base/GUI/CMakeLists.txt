@@ -18,6 +18,7 @@ SET(TARGET_BASE_NAME "Slicer3${PROJECT_NAME}Test")
 SET(LIB_NAME "SlicerBaseGUI")
 SET(LIB_SRCS 
   vtkSlicerStyle.cxx
+  vtkSlicerTheme.cxx
   vtkSlicerColor.cxx
   vtkSlicerFont.cxx
   vtkSlicerApplication.cxx
