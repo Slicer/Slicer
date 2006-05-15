@@ -15,9 +15,7 @@
 // .NAME vtkSlicerNodeSelectorWidget - menu to select volumes from current mrml scene
 // .SECTION Description
 // Inherits most behavior from kw widget, but is specialized to observe
-// the current mrml scene and update the entries of the pop up menu to correspond
-// to the currently available volumes.  This widget also has a notion of the current selection
-// that can be observed or set externally
+// the current mrml scene 
 //
 
 
