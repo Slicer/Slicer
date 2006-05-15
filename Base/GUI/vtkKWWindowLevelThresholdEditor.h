@@ -66,14 +66,17 @@ public:
   // Description:
   // Get GetAutoThreshold 0/1
   int GetAutoThreshold();
+  void SetAutoThreshold(int value);
 
   // Description:
   // Get TresholdApply 0 or 1
   int GetApplyThreshold();
+  void SetApplyThreshold(int value);
 
   // Description:
   // Get GetAutoWindowLevel 0/1
   int GetAutoWindowLevel();
+  void SetAutoWindowLevel(int value);
   
   // Description:
   // Command to call when the User manipulates the widget

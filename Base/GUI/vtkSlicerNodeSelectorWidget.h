@@ -53,6 +53,8 @@ public:
   
   vtkMRMLNode *GetSelected();
 
+  void SetSelected(vtkMRMLNode *node);
+
   // Description:
   // reflect the state of the mrml scene in the menu
   void UpdateMenu();

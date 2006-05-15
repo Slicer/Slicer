@@ -472,6 +472,18 @@ int vtkKWWindowLevelThresholdEditor::GetAutoWindowLevel()
     }
 }
 
+void vtkKWWindowLevelThresholdEditor::SetAutoWindowLevel(int value)
+{
+  if (value == 1)
+  {
+  this->WindowLevelAutoManual->GetWidget()->SetValue("Auto");
+  }
+  else if (value == 0)
+  {
+  this->WindowLevelAutoManual->GetWidget()->SetValue("Manual");
+  }
+}
+
 int vtkKWWindowLevelThresholdEditor::GetAutoThreshold()
 {
   if (strcmp(this->TresholdAutoManual->GetWidget()->GetValue(), "Auto"))
@@ -484,9 +496,26 @@ int vtkKWWindowLevelThresholdEditor::GetAutoThreshold()
     }
 }
 
+void vtkKWWindowLevelThresholdEditor::SetAutoThreshold(int value)
+{
+  if (value == 1)
+  {
+  this->TresholdAutoManual->GetWidget()->SetValue("Auto");
+  }
+  else if (value == 0)
+  {
+  this->TresholdAutoManual->GetWidget()->SetValue("Manual");
+  }
+}
+
 int vtkKWWindowLevelThresholdEditor::GetApplyThreshold()
 {
   return this->TresholdApply->GetWidget()->GetState();
+}
+
+void vtkKWWindowLevelThresholdEditor::SetApplyThreshold(int value)
+{
+  this->TresholdApply->GetWidget()->SetState(value);
 }
 
 void vtkKWWindowLevelThresholdEditor::ProcessButtonsCommand()
