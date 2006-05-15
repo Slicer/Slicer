@@ -35,7 +35,6 @@ Version:   $Revision: 1.2 $
 #include "vtkKWEntry.h"
 #include "vtkKWFrame.h"
 #include "vtkSlicerApplication.h"
-#include "vtkSlicerStyle.h"
 #include "vtkKWFrameWithLabel.h"
 #include "vtkKWPushButton.h"
 
@@ -162,7 +161,6 @@ void vtkGradientAnisotropicDiffusionFilterGUI::ProcessMrmlEvents ( vtkObject *ca
 void vtkGradientAnisotropicDiffusionFilterGUI::BuildGUI ( ) 
 {
   vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-  vtkSlicerStyle *style = app->GetSlicerStyle();
     
   this->UIPanel->AddPage ( "GradientAnisotropicDiffusionFilter", "GradientAnisotropicDiffusionFilter", NULL );
   // ---
