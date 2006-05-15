@@ -283,6 +283,7 @@ void vtkMRMLScene::AddNode(vtkMRMLNode *n)
   n->SetSceneRootDir(this->RootDirectory.c_str());
 
   this->CurrentScene->vtkCollection::AddItem((vtkObject *)n);
+  n->SetScene( this );
   this->Modified();
 }
 
