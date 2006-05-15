@@ -112,7 +112,7 @@ void vtkSlicerSliceLayerLogic::UpdateTransforms()
     dimensions[1] = 100;
     dimensions[2] = 100;
 
-    vtkMatrix4x4 *m = this->XYToIJKTransform->GetMatrix();
+    vtkMatrix4x4 *m = vtkMatrix4x4::New();
     m->Identity();
 
     if (this->SliceNode)
@@ -151,6 +151,8 @@ void vtkSlicerSliceLayerLogic::UpdateTransforms()
 
       }
 
+    this->XYToIJKTransform->SetMatrix( m );
+    m->Delete();
     this->Reslice->SetResliceTransform( this->XYToIJKTransform );
 
     this->Reslice->SetOutputExtent( 0, dimensions[0]-1,
