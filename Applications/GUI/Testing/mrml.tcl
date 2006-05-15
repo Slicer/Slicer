@@ -34,7 +34,7 @@ $app AddWindow $win
 $win Create
 
 
-#################################3
+#################################
 # create the mrml scene
 #set ::scene [vtkMRMLScene New]
 
