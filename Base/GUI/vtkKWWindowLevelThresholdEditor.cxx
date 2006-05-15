@@ -171,12 +171,15 @@ void vtkKWWindowLevelThresholdEditor::CreateWidget()
   this->WindowLevelAutoManual->SetParent(winLevelFrame);
   this->WindowLevelAutoManual->Create();
 
+  this->WindowLevelAutoManual->SetLabelWidth(12);
   this->WindowLevelAutoManual->SetLabelText("Window/Level:");
   this->WindowLevelAutoManual->GetWidget()->GetMenu()->AddRadioButton ( "Auto");
   this->WindowLevelAutoManual->GetWidget()->GetMenu()->AddRadioButton ( "Manual");
+  this->WindowLevelAutoManual->GetLabel()->SetJustificationToRight();
   this->WindowLevelAutoManual->GetWidget()->SetValue ( "Manual" );
   this->WindowLevelAutoManual->GetWidget()->GetMenu()->SetItemCommand(0, this, "ProcessButtonsCommand");
   this->WindowLevelAutoManual->GetWidget()->GetMenu()->SetItemCommand(1, this, "ProcessButtonsCommand");
+  this->WindowLevelAutoManual->GetWidget()->SetWidth ( 7 );
   this->Script(
     "pack %s -side left -anchor nw -expand n -padx 2 -pady 2", 
     this->WindowLevelAutoManual->GetWidgetName());
@@ -215,6 +218,9 @@ void vtkKWWindowLevelThresholdEditor::CreateWidget()
 
   this->TresholdAutoManual->SetParent(threshFrame);
   this->TresholdAutoManual->Create();
+  this->TresholdAutoManual->SetLabelWidth(12);
+  this->TresholdAutoManual->GetLabel()->SetJustificationToRight();
+  this->TresholdAutoManual->GetWidget()->SetWidth ( 7 );
   this->TresholdAutoManual->SetLabelText("Threshold:");
   this->TresholdAutoManual->GetWidget()->GetMenu()->AddRadioButton ( "Auto"); 
   this->TresholdAutoManual->GetWidget()->GetMenu()->AddRadioButton ( "Manual");
@@ -234,12 +240,19 @@ void vtkKWWindowLevelThresholdEditor::CreateWidget()
     "pack %s -side left -anchor w -expand n -padx 2 -pady 2", 
     this->ThresholdRange->GetWidgetName());
 
-  this->TresholdApply->SetParent(threshFrame);
+  vtkKWFrame *applyFrame = vtkKWFrame::New ( );
+  applyFrame->SetParent(this);
+  applyFrame->Create();
+  this->Script (
+                "pack %s -side top -anchor nw -expand n -padx 2 -pady 2",
+                applyFrame->GetWidgetName());
+  
+  this->TresholdApply->SetParent(applyFrame);
   this->TresholdApply->Create();
   this->TresholdApply->SetLabelText("Apply");
   this->TresholdApply->GetWidget()->SetCommand(this, "ProcessCheckButtonCommand");
   this->Script(
-    "pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
+    "pack %s -side top -anchor ne -expand n -padx 2 -pady 2", 
     this->TresholdApply->GetWidgetName());  
 
 
@@ -298,7 +311,11 @@ void vtkKWWindowLevelThresholdEditor::CreateWidget()
   this->SetWindowLevel(100, 100);
   this->SetThreshold(0, 255);
 
-  // Override the column sorting behavior by always updating 
+  // Override the column sorting behavior by always updating
+
+   // clean up...
+   applyFrame->Delete();
+
 }
 
 void vtkKWWindowLevelThresholdEditor::UpdateFromImage()
