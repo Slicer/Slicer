@@ -6,9 +6,14 @@
 #include "vtkKWScaleWithEntry.h"
 #include "vtkKWEntryWithLabel.h"
 #include "vtkKWMenuButtonWithLabel.h"
-#include "vtkKWFrame.h"
 
-class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceControllerWidget : public vtkKWCompositeWidget
+#include "vtkSlicerWidget.h"
+#include "vtkSlicerNodeSelectorWidget.h"
+
+#include "vtkMRMLSliceNode.h"
+#include "vtkMRMLSliceCompositeNode.h"
+
+class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceControllerWidget : public vtkSlicerWidget
 {
     
 public:
@@ -19,16 +24,38 @@ public:
   // Description:
   // Get/Set the Widgets in this composite widget.
   vtkGetObjectMacro ( OffsetScale, vtkKWScaleWithEntry );
-  vtkGetObjectMacro ( FieldOfViewEntry, vtkKWEntryWithLabel );
   vtkGetObjectMacro ( OrientationMenu, vtkKWMenuButtonWithLabel );
-  vtkGetObjectMacro ( ControlFrame, vtkKWFrame );
-  vtkSetObjectMacro ( ControlFrame, vtkKWFrame );
+  vtkGetObjectMacro ( ForegroundSelector, vtkSlicerNodeSelectorWidget );
+  vtkGetObjectMacro ( BackgroundSelector, vtkSlicerNodeSelectorWidget );
+  vtkGetObjectMacro ( LabelSelector, vtkSlicerNodeSelectorWidget );
+
+  // Description:
+  // Get/Set the Nodes
+  vtkGetObjectMacro ( SliceCompositeNode, vtkMRMLSliceCompositeNode );
+  void SetSliceCompositeNode (vtkMRMLSliceCompositeNode *scnode)
+    {
+    this->SetAndObserveMRML( vtkObjectPointer(&this->SliceCompositeNode), scnode );
+    }
+  vtkGetObjectMacro ( SliceNode, vtkMRMLSliceNode );
+  void SetSliceNode (vtkMRMLSliceNode *snode)
+    {
+    this->SetAndObserveMRML( vtkObjectPointer(&this->SliceNode), snode );
+    }
+
 
   // Description:
   // TODO: Use this flag to determine how to display
   // the SliceControllerWidget.
   vtkGetMacro ( ControllerStyle, int );
   vtkSetMacro ( ControllerStyle, int );
+
+  // Description:
+  // respond to events from subwidgets of this widget
+  void ProcessWidgetEvents ( vtkObject *caller, unsigned long event, void *callData );
+  
+  // Description:
+  // respond to changes in the mrml scene
+  void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
 
 protected:
   vtkSlicerSliceControllerWidget ( );
@@ -38,12 +65,23 @@ protected:
   // Create the widget.
   virtual void CreateWidget( );
 
-  // Slice controller
+  // TODO: hook this up
   int ControllerStyle;
-  vtkKWFrame *ControlFrame;
+
+  //
+  // Slice controller subwidgets
+  //
   vtkKWScaleWithEntry *OffsetScale;
-  vtkKWEntryWithLabel *FieldOfViewEntry;
   vtkKWMenuButtonWithLabel *OrientationMenu;
+  vtkSlicerNodeSelectorWidget *ForegroundSelector;
+  vtkSlicerNodeSelectorWidget *BackgroundSelector;
+  vtkSlicerNodeSelectorWidget *LabelSelector;
+
+  //
+  // Nodes
+  //
+  vtkMRMLSliceNode *SliceNode;
+  vtkMRMLSliceCompositeNode *SliceCompositeNode;
 
 private:
   vtkSlicerSliceControllerWidget (const vtkSlicerSliceControllerWidget &); //Not implemented

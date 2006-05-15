@@ -13,7 +13,9 @@
 #include "vtkSlicerSliceViewer.h"
 #include "vtkSlicerSliceControllerWidget.h"
 #include "vtkSlicerSliceLogic.h"
+
 #include "vtkMRMLSliceNode.h"
+#include "vtkMRMLSliceCompositeNode.h"
 
 #include "vtkImageMapper.h"
 
@@ -53,16 +55,16 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceGUI : public vtkSlicerComponentGU
     void SetModuleLogic ( vtkSlicerSliceLogic *logic )
         { 
         this->SetLogic ( vtkObjectPointer (&this->Logic), logic ); 
-        this->SetSliceViewerInput();
+        this->SetupViewerAndController();
         }
 
     void SetAndObserveModuleLogic ( vtkSlicerSliceLogic *logic )
         { 
         this->SetAndObserveLogic ( vtkObjectPointer (&this->Logic), logic ); 
-        this->SetSliceViewerInput();
+        this->SetupViewerAndController();
         }
 
-    void SetSliceViewerInput()
+    void SetupViewerAndController()
       {
         vtkImageData *idata = NULL;
         if ( this->GetLogic() )
@@ -73,6 +75,12 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceGUI : public vtkSlicerComponentGU
           {
           this->GetSliceViewer()->GetImageMapper()->SetInput( idata );
           }
+
+        vtkMRMLSliceNode *snode = this->GetLogic()->GetSliceNode();
+        this->GetSliceController()->SetSliceNode (snode);
+
+        vtkMRMLSliceCompositeNode *scnode = this->GetLogic()->GetSliceCompositeNode();
+        this->GetSliceController()->SetSliceCompositeNode (scnode);
       }
 
     // Description:
@@ -107,6 +115,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceGUI : public vtkSlicerComponentGU
     // Three slice widgets by default.
     vtkSlicerSliceViewer *SliceViewer;
     vtkSlicerSliceControllerWidget *SliceController;
+
     int ControllerStyle;
     vtkSlicerSliceLogic *Logic;
     vtkMRMLSliceNode *SliceNode;

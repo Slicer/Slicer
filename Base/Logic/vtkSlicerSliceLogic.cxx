@@ -54,20 +54,10 @@ void vtkSlicerSliceLogic::ProcessMRMLEvents()
   //
   if ( this->SliceNode == NULL )
     {
-    vtkMRMLSliceNode *node;
-    node = vtkMRMLSliceNode::SafeDownCast (
-            this->MRMLScene->GetNthNodeByClass(0, "vtkMRMLSliceNode"));
-    if ( node == NULL )
-      {
-      node = vtkMRMLSliceNode::New();
-      this->MRMLScene->AddNode(node);
-      this->SetSliceNode (node);
-      node->Delete();
-      }
-    else
-      {
-      this->SetSliceNode (node);
-      }
+    vtkMRMLSliceNode *node = vtkMRMLSliceNode::New();
+    this->MRMLScene->AddNode(node);
+    this->SetSliceNode (node);
+    node->Delete();
     }
 
   //
@@ -76,20 +66,10 @@ void vtkSlicerSliceLogic::ProcessMRMLEvents()
   //
   if ( this->SliceCompositeNode == NULL )
     {
-    vtkMRMLSliceCompositeNode *node;
-    node = vtkMRMLSliceCompositeNode::SafeDownCast (
-            this->MRMLScene->GetNthNodeByClass(0, "vtkMRMLSliceCompositeNode"));
-    if ( node == NULL )
-      {
-      node = vtkMRMLSliceCompositeNode::New();
-      this->MRMLScene->AddNode(node);
-      this->SetSliceCompositeNode (node);
-      node->Delete();
-      }
-    else
-      {
-      this->SetSliceCompositeNode (node);
-      }
+    vtkMRMLSliceCompositeNode *node = vtkMRMLSliceCompositeNode::New();
+    this->MRMLScene->AddNode(node);
+    this->SetSliceCompositeNode (node);
+    node->Delete();
     }
 
   this->UpdatePipeline();

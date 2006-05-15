@@ -153,5 +153,7 @@ void vtkSlicerNodeSelectorWidget::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
   os << indent << "MRMLScene: " << this->MRMLScene << endl;
+  os << indent << "Node Class: " << 
+      ((this->NodeClass) ? this->NodeClass : "NULL") << endl;
 }
 

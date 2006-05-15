@@ -80,18 +80,10 @@ void vtkSlicerSliceGUI::PrintSelf ( ostream& os, vtkIndent indent )
 void vtkSlicerSliceGUI::AddGUIObservers ( ) {
 
     vtkSlicerSliceControllerWidget *c = this->GetSliceController();
- 
     if ( c != NULL )
-        {
-            vtkKWScaleWithEntry *s = c->GetOffsetScale () ;
-            vtkKWEntryWithLabel *e = c->GetFieldOfViewEntry ();
-            vtkKWMenuButtonWithLabel *m = c->GetOrientationMenu ();
-
-            s->AddObserver ( vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
-            s->AddObserver ( vtkKWScale::ScaleValueStartChangingEvent, (vtkCommand *)this->GUICallbackCommand );
-            e->AddObserver ( vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
-            m->AddObserver ( vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
-        }
+      {
+      c->AddObserver ( vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
+      }
 }
 
 
@@ -99,18 +91,11 @@ void vtkSlicerSliceGUI::AddGUIObservers ( ) {
 //---------------------------------------------------------------------------
 void vtkSlicerSliceGUI::RemoveGUIObservers ( ) {
 
-    vtkSlicerSliceControllerWidget *c = this->GetSliceController( );
+    vtkSlicerSliceControllerWidget *c = this->GetSliceController();
     if ( c != NULL )
-        {
-            vtkKWScaleWithEntry *s = c->GetOffsetScale () ;
-            vtkKWEntryWithLabel *e = c->GetFieldOfViewEntry ();
-            vtkKWMenuButtonWithLabel *m = c->GetOrientationMenu ();
-
-            s->RemoveObservers (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
-            s->RemoveObservers (vtkKWScale::ScaleValueStartChangingEvent, (vtkCommand *)this->GUICallbackCommand );
-            e->RemoveObservers (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
-            m->RemoveObservers (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
-        }
+      {
+      c->RemoveObservers ( vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
+      }
 }
 
 
@@ -150,18 +135,6 @@ void vtkSlicerSliceGUI::ProcessGUIEvents ( vtkObject *caller,
             }
         }
     
-        //---
-        // Change Slice Node with new FieldOfView Entry Widget values
-        if ( e == c->GetFieldOfViewEntry() && event == vtkCommand::ModifiedEvent ) {
-            // SET UNDO STATE
-            mrml->SaveStateForUndo ( this->GetSliceNode() );
-            // UNDO-ABLE APPLY
-            double val = c->GetFieldOfViewEntry()->GetWidget()->GetValueAsDouble();
-            if ( val != 0 ) {
-                this->GetSliceNode()->SetFieldOfView ( val, val, val );
-                this->GetSliceNode()->Modified();
-            }
-        }
 
         //---
         // Orientation menu
@@ -192,61 +165,37 @@ void vtkSlicerSliceGUI::ProcessLogicEvents ( vtkObject *caller,
     vtkSlicerApplicationLogic *a = vtkSlicerApplicationLogic::SafeDownCast ( caller );
     
     if ( a == this->GetApplicationLogic ( ) )
-        {
-            // get active VolumeID
-            // is this different from the ID of volume in the BG?
-            // if so, make the change
-            // and update the pipeline
-        }
+      {
+      // get active VolumeID
+      // is this different from the ID of volume in the BG?
+      // if so, make the change
+      // and update the pipeline
+      }
     else
+      {
+      if ( n == this->GetLogic ( ) ) 
         {
-            if ( n == this->GetLogic ( ) ) {
+        // UPDATE Slice VIEWER
+        vtkSlicerSliceViewer *v = this->GetSliceViewer( );
+        vtkKWRenderWidget *rw = v->GetRenderWidget ();
+        if ( n->GetImageData() != NULL )
+          {
+          v->GetImageMapper()->SetInput ( n->GetImageData( ) );
+          }
+        else
+          {
+          v->GetImageMapper()->SetInput (NULL);
+          }
+          // configure window, level, camera, etc.
+          rw->ResetCamera ( );
+          rw->Render();
 
-                if ( n->GetSliceNode() )
-                  {
-                  this->SetAndObserveMRMLNode ( n->GetSliceNode() );
-                  }
-
-                vtkSlicerSliceControllerWidget *c = this->GetSliceController( );
-                // UPDATE THE FOV ENTRY
-                double fov = this->GetSliceNode()->GetFieldOfView()[0];
-                char fovstring[80];
-                sprintf (fovstring, "%g", fov);
-                c->GetFieldOfViewEntry()->GetWidget()->SetValue(fovstring);
-                c->GetFieldOfViewEntry()->Modified();
-
-                // UPDATE THE SCALE
-                double fovover2 = this->GetSliceNode()->GetFieldOfView()[2] / 2.;
-                c->GetOffsetScale()->SetRange ( -fovover2, fovover2 );
-                // TODO: set the scale value from the translation part
-                // of the matrix with rotation. 
-                // Set the scale from the Offset in the matrix.
-                vtkMatrix4x4 *m = n->GetSliceNode()->GetSliceToRAS();
-                c->GetOffsetScale()->SetValue ( m->GetElement(2,3) );
-                c->GetOffsetScale()->Modified();
-        
-                vtkSlicerSliceViewer *v = this->GetSliceViewer( );
-                // UPDATE Slice VIEWER
-                vtkKWRenderWidget *rw = v->GetRenderWidget ();
-                if ( n->GetImageData() != NULL )
-                    {
-                        v->GetImageMapper()->SetInput ( n->GetImageData( ) );
-                    }
-                else
-                    {
-                        v->GetImageMapper()->SetInput (NULL);
-                    }
-                // configure window, level, camera, etc.
-                rw->ResetCamera ( );
-                rw->Render();
-
-                // TODO: set up corner annotations
-                //vtkCornerAnnotation *ca = rw->GetCornerAnnotation ( );
-                //ca->SetImageActor (iv->GetImageActor ( ) );
-                v->Modified ();
-
-            }
-        }
+          // TODO: set up corner annotations
+          //vtkCornerAnnotation *ca = rw->GetCornerAnnotation ( );
+          //ca->SetImageActor (iv->GetImageActor ( ) );
+          v->Modified ();
+          }
+       }
 }
 
 //---------------------------------------------------------------------------
@@ -278,7 +227,10 @@ void vtkSlicerSliceGUI::BuildGUI ( vtkKWFrame *f )
 
     vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication ( ) );
 
+    vtkMRMLScene *mrml = this->GetApplicationLogic()->GetMRMLScene();
+
     this->SliceController->SetApplication ( app );
+    this->SliceController->SetAndObserveMRMLScene ( mrml );
     this->SliceController->SetParent ( f );
     this->SliceController->Create (  );
     this->SliceViewer->SetApplication ( app );
@@ -286,12 +238,8 @@ void vtkSlicerSliceGUI::BuildGUI ( vtkKWFrame *f )
     this->SliceViewer->Create (  );
 
     // pack 
-    this->Script("pack %s -pady 0 -side top -expand false -fill x", SliceController->GetControlFrame()->GetWidgetName() );
+    this->Script("pack %s -pady 0 -side top -expand false -fill x", SliceController->GetWidgetName() );
     this->Script("pack %s -anchor c -side top -expand true -fill both", SliceViewer->GetRenderWidget()->GetWidgetName());
-
-    this->Script("pack %s -side bottom -expand false -fill x", SliceController->GetOffsetScale()->GetWidgetName());
-    this->Script("pack %s -pady 2 -padx 2 -side right -expand false", SliceController->GetFieldOfViewEntry()->GetWidgetName());
-    this->Script("pack %s -pady 2 -padx 2 -side right -expand false", SliceController->GetOrientationMenu()->GetWidgetName());
 
 
 }
