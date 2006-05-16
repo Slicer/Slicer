@@ -56,6 +56,7 @@ static void MRMLCallback(vtkObject *__mrmlscene, unsigned long eid, void *__clie
 vtkSlicerNodeSelectorWidget::vtkSlicerNodeSelectorWidget()
 {
   this->NodeClass = NULL;
+  this->NewNodeEnabled = 0;
   this->MRMLScene      = NULL;
   this->MRMLCallbackCommand = vtkCallbackCommand::New();
   this->MRMLCallbackCommand->SetClientData( reinterpret_cast<void *> (this) );
@@ -110,6 +111,11 @@ void vtkSlicerNodeSelectorWidget::UpdateMenu()
 
     m->DeleteAllItems();
 
+    if (this->NewNodeEnabled)
+    {
+      this->GetWidget()->GetWidget()->GetMenu()->AddRadioButton("Create New");
+      this->GetWidget()->GetWidget()->SetValue("Create New");
+    }
     bool selected = false;
     vtkMRMLNode *node;
     this->MRMLScene->InitTraversal();
@@ -132,10 +138,19 @@ vtkMRMLNode *vtkSlicerNodeSelectorWidget::GetSelected()
   vtkMRMLNode *n = NULL;
   vtkKWMenuButton *mb = this->GetWidget()->GetWidget();
   vtkKWMenu *m = mb->GetMenu();
-  if (m != NULL ) {  
-    int nth_rank = m->GetIndexOfItem(mb->GetValue());
-    n = this->MRMLScene->GetNthNodeByClass (nth_rank, this->NodeClass);
-  }
+
+  if (strcmp(mb->GetValue(), "Create New") == 0)
+    {
+    vtkMRMLNode* node = this->MRMLScene->CreateNodeByClass( this->NodeClass );
+    node->SetScene(this->MRMLScene);
+    node->SetID(this->MRMLScene->GetUniqueIDByClass(this->NodeClass));
+    this->MRMLScene->AddNode(node);
+    }
+  else if (m != NULL ) 
+    {  
+      int nth_rank = m->GetIndexOfItem(mb->GetValue());
+      n = this->MRMLScene->GetNthNodeByClass (nth_rank, this->NodeClass);
+    }
   return n;
 }
 
@@ -148,6 +163,14 @@ void vtkSlicerNodeSelectorWidget::SetSelected(vtkMRMLNode *node)
     }
 }
 
+//----------------------------------------------------------------------------
+void vtkSlicerNodeSelectorWidget::SetSelectedNew()
+{
+  if (this->NewNodeEnabled) 
+    {
+    this->GetWidget()->GetWidget()->SetValue("Create New");
+    }
+}
 //----------------------------------------------------------------------------
 void vtkSlicerNodeSelectorWidget::PrintSelf(ostream& os, vtkIndent indent)
 {

@@ -50,10 +50,17 @@ public:
   // Class name of this node, to be set by the user
   vtkSetStringMacro(NodeClass);
   vtkGetStringMacro(NodeClass);
+
+  // Description:
+  // Specifies whether new node creation is enabled
+  vtkBooleanMacro(NewNodeEnabled, int);
+  vtkGetMacro(NewNodeEnabled, int);
+  vtkSetMacro(NewNodeEnabled, int);
   
   vtkMRMLNode *GetSelected();
 
   void SetSelected(vtkMRMLNode *node);
+  void SetSelectedNew();
 
   // Description:
   // reflect the state of the mrml scene in the menu
@@ -64,6 +71,7 @@ protected:
   ~vtkSlicerNodeSelectorWidget();
 
   char *NodeClass;
+  int NewNodeEnabled;
   
   vtkMRMLScene       *MRMLScene;
 
