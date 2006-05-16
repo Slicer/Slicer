@@ -61,8 +61,11 @@ void vtkSlicerVolumeDisplayWidget::SetVolumeNode ( vtkMRMLVolumeNode *node )
 { 
   this->SetMRML ( vtkObjectPointer( &this->VolumeNode), node );
   this->VolumeSelectorWidget->SetSelected(node); 
-  this->ProcessMRMLEvents(node, vtkCommand::ModifiedEvent, NULL);
-  this->ProcessMRMLEvents(node->GetDisplayNode(), vtkCommand::ModifiedEvent, NULL);
+  if ( node )
+    {
+    this->ProcessMRMLEvents(node, vtkCommand::ModifiedEvent, NULL);
+    this->ProcessMRMLEvents(node->GetDisplayNode(), vtkCommand::ModifiedEvent, NULL);
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -111,6 +114,10 @@ void vtkSlicerVolumeDisplayWidget::ProcessWidgetEvents ( vtkObject *caller,
 void vtkSlicerVolumeDisplayWidget::ProcessMRMLEvents ( vtkObject *caller,
                                               unsigned long event, void *callData )
 {
+  if ( !this->VolumeNode )
+    {
+    return;
+    }
   vtkMRMLVolumeNode *volumeNode = vtkMRMLVolumeNode::SafeDownCast(caller);
   if (volumeNode == this->VolumeNode && event == vtkCommand::ModifiedEvent)
     {
@@ -118,7 +125,12 @@ void vtkSlicerVolumeDisplayWidget::ProcessMRMLEvents ( vtkObject *caller,
     this->WindowLevelThresholdEditor->SetImageData(volumeNode->GetImageData());
     return;
     }
-  
+
+  if ( !this->VolumeDisplayNode )
+    {
+    return;
+    }
+
   vtkMRMLVolumeDisplayNode *volumeDisplayNode = vtkMRMLVolumeDisplayNode::SafeDownCast(caller);
   if (volumeDisplayNode == this->VolumeDisplayNode && event == vtkCommand::ModifiedEvent)
     {

@@ -70,17 +70,20 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceGUI : public vtkSlicerComponentGU
         if ( this->GetLogic() )
           {
           idata = this->GetLogic()->GetImageData();
+
+          vtkMRMLSliceNode *snode = this->GetLogic()->GetSliceNode();
+          this->GetSliceController()->SetSliceNode (snode);
+
+          vtkMRMLSliceCompositeNode *scnode = this->GetLogic()->GetSliceCompositeNode();
+          this->GetSliceController()->SetSliceCompositeNode (scnode);
           }
+
         if ( this->GetSliceViewer() && this->GetSliceViewer()->GetImageMapper() )
           {
           this->GetSliceViewer()->GetImageMapper()->SetInput( idata );
           }
 
-        vtkMRMLSliceNode *snode = this->GetLogic()->GetSliceNode();
-        this->GetSliceController()->SetSliceNode (snode);
 
-        vtkMRMLSliceCompositeNode *scnode = this->GetLogic()->GetSliceCompositeNode();
-        this->GetSliceController()->SetSliceCompositeNode (scnode);
       }
 
     // Description:

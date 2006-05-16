@@ -142,7 +142,7 @@ vtkMRMLNode *vtkSlicerNodeSelectorWidget::GetSelected()
 //----------------------------------------------------------------------------
 void vtkSlicerNodeSelectorWidget::SetSelected(vtkMRMLNode *node)
 {
-  if (this->NodeClass == node->GetClassName()) 
+  if (node && this->NodeClass == node->GetClassName()) 
     {
     this->GetWidget()->GetWidget()->SetValue(node->GetName());
     }
