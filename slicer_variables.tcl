@@ -23,31 +23,33 @@ if {[info exists ::env(SLICER_HOME)]} {
     set cwd [pwd]
     cd [file dirname [info script]]
     set ::SLICER_HOME [pwd]
+    set ::env(SLICER_HOME) $::SLICER_HOME
     cd $cwd
 }
 
 # set up variables for the OS Builds, to facilitate the move to solaris9
 # - solaris can be solaris8 or solaris9
-set solaris "solaris8"
-set linux "linux-x86"
-set linux_64 "linux-x86_64"
-set darwin "darwin-ppc"
-set windows "win32"
+set ::SOLARIS "solaris8"
+set ::LINUX "linux-x86"
+set ::LINUX_64 "linux-x86_64"
+set ::DARWIN "darwin-ppc"
+set ::WINDOWS "win32"
+
 #
 # set the default locations for the main components
 #
 switch $::tcl_platform(os) {
-    "SunOS" { set ::env(BUILD) $solaris }
+    "SunOS" { set ::env(BUILD) $::SOLARIS }
     "Linux" {           
         if {$::tcl_platform(machine) == "x86_64"} {
-            set ::env(BUILD) $linux_64 
+            set ::env(BUILD) $::LINUX_64 
         } else {
-            set ::env(BUILD) $linux
+            set ::env(BUILD) $::LINUX
         }
     }       
-    "Darwin" { set ::env(BUILD) $darwin }
+    "Darwin" { set ::env(BUILD) $::DARWIN }
     default { 
-        set ::env(BUILD) $windows 
+        set ::env(BUILD) $::WINDOWS 
         set ::SLICER_HOME [file attributes $::SLICER_HOME -shortname]
         set ::env(SLICER_HOME) $::SLICER_HOME
     }
@@ -86,14 +88,14 @@ set ::SANDBOX_TAG "http://svn.na-mic.org:8000/svn/NAMICSandBox/branches/Slicer-2
 # (as created by getbuildtest.tcl
 if { ![info exists ::SLICER_LIB] } {
     set wd [pwd]
-    cd $SLICER_HOME/../Slicer3-lib
-    set SLICER_LIB [pwd]
+    cd $::SLICER_HOME/../Slicer3-lib
+    set ::SLICER_LIB [pwd]
     cd $wd
 }
 if { ![info exists ::SLICER_BUILD] } {
     set wd [pwd]
-    cd $SLICER_HOME/../Slicer3-build
-    set SLICER_BUILD [pwd]
+    cd $::SLICER_HOME/../Slicer3-build
+    set ::SLICER_BUILD [pwd]
     cd $wd
 }
 
@@ -105,6 +107,7 @@ set ::VTK_BUILD_TYPE ""
 set ::VTK_BUILD_SUBDIR ""
 set ::env(VTK_BUILD_TYPE) $::VTK_BUILD_TYPE
 set ::KWWidgets_BUILD_DIR  $::SLICER_LIB/KWWidgets-build
+set ::KWWIDGETS_DIR  $::SLICER_LIB/KWWidgets
 set ::ITK_BINARY_PATH $::SLICER_LIB/Insight-build
 set ::SANDBOX_BIN_DIR $::SLICER_LIB/NAMICSandBox-build/bin
 set ::TCL_BIN_DIR $::SLICER_LIB/tcl-build/bin
@@ -144,7 +147,7 @@ switch $::tcl_platform(os) {
         set ::BLT_TEST_FILE $::TCL_BIN_DIR/bltwish24
         set ::TEEM_TEST_FILE $::TEEM_BIN_DIR/unu
         set ::VTK_TEST_FILE $::VTK_DIR/bin/vtk
-        set ::KWWidgets_TEST_FILE $KWWidgets_BUILD_DIR/bin/libKWWidgets.$shared_lib_ext
+        set ::KWWidgets_TEST_FILE $::KWWidgets_BUILD_DIR/bin/libKWWidgets.$shared_lib_ext
         set ::SANDBOX_TEST_FILE $::SANDBOX_BIN_DIR/libSlicerClustering.a
         set ::ALT_SANDBOX_TEST_FILE $::SANDBOX_BIN_DIR/libSlicerClustering.a
         set ::VTK_TCL_LIB $::TCL_LIB_DIR/libtcl8.4.$shared_lib_ext 
@@ -165,7 +168,7 @@ switch $::tcl_platform(os) {
         set ::BLT_TEST_FILE $::TCL_BIN_DIR/bltwish24
         set ::TEEM_TEST_FILE $::TEEM_BIN_DIR/unu
         set ::VTK_TEST_FILE $::VTK_DIR/bin/vtk
-        set ::KWWidgets_TEST_FILE $KWWidgets_BUILD_DIR/bin/libKWWidgets.so
+        set ::KWWidgets_TEST_FILE $::KWWidgets_BUILD_DIR/bin/libKWWidgets.so
         set ::SANDBOX_TEST_FILE $::SANDBOX_BIN_DIR/libSlicerClustering.so
         set ::ALT_SANDBOX_TEST_FILE $::SANDBOX_BIN_DIR/libSlicerClustering.a
         set ::VTK_TCL_LIB $::TCL_LIB_DIR/libtcl8.4.$shared_lib_ext 
@@ -197,7 +200,7 @@ switch $::tcl_platform(os) {
         set ::BLT_TEST_FILE $::TCL_BIN_DIR/BLT24.dll
         set ::TEEM_TEST_FILE $::TEEM_BIN_DIR/unu.exe
         set ::VTK_TEST_FILE $::VTK_DIR/bin/$::VTK_BUILD_TYPE/vtk.exe
-        set ::KWWidgets_TEST_FILE $KWWidgets_BUILD_DIR/bin/$::env(VTK_BUILD_SUBDIR)/KWWidgets.lib
+        set ::KWWidgets_TEST_FILE $::KWWidgets_BUILD_DIR/bin/$::env(VTK_BUILD_SUBDIR)/KWWidgets.lib
         set ::SANDBOX_TEST_FILE $::SANDBOX_BIN_DIR/$::VTK_BUILD_TYPE/SlicerClustering.lib
         set ::ALT_SANDBOX_TEST_FILE $::SANDBOX_BIN_DIR/$::VTK_BUILD_TYPE/SlicerClustering.lib
         set ::VTK_TCL_LIB $::TCL_LIB_DIR/tcl84.lib
