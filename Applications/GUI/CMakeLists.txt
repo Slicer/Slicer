@@ -49,6 +49,22 @@ INCLUDE("${KWWidgets_CMAKE_DIR}/KWWidgetsPathsMacros.cmake")
 KWWidgets_GENERATE_SETUP_PATHS_LAUNCHER(
   "${CMAKE_CURRENT_BINARY_DIR}" "Slicer3Launcher" "" "Slicer3")
 
+
+#
+# use the command line utilities
+#
+INCLUDE(${Slicer3_SOURCE_DIR}/Libs/GenerateCLP/UseGenerateCLP.cmake)
+
+GENERATECLP(${SRC} Slicer3.xml)
+
+ADD_TEST(Slicer3CLTest1 ${EXECUTABLE_OUTPUT_PATH}/Slicer3 --help)
+ADD_TEST(Slicer3CLTest2 ${EXECUTABLE_OUTPUT_PATH}/Slicer3 --xml)
+ADD_TEST(Slicer3CLTest3 ${EXECUTABLE_OUTPUT_PATH}/Slicer3 -f ${Slicer3_SOURCE_DIR}/Applications/GUI/Testing/TestScript.tcl)
+ADD_TEST(Slicer3CLTest4 ${EXECUTABLE_OUTPUT_PATH}/Slicer3 --eval "puts testing ,. exit 0")
+
+#
+# make the testing
+#
 IF (Slicer3_BUILD_TESTING)
   SUBDIRS( Testing )
 ENDIF (Slicer3_BUILD_TESTING)
