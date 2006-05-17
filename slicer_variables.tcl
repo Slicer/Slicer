@@ -78,8 +78,24 @@ set ::SANDBOX_TAG "http://svn.na-mic.org:8000/svn/NAMICSandBox/branches/Slicer-2
 # Set library, binary, etc. paths...
 
 #set ::SLICER_LIB $::SLICER_HOME/Lib/$::env(BUILD) ;# as used in slicer2
-#                                                  ;# now must be set outide 
+#                                                  ;# now can be set outide 
 #                                                  ;# of this file
+
+# if SLICER_LIB and SLICER_BUILD haven't been set, 
+# then assume they are in the 'standard' places next to the source tree
+# (as created by getbuildtest.tcl
+if { ![info exists ::SLICER_LIB] } {
+    set wd [pwd]
+    cd $SLICER_HOME/../Slicer3-lib
+    set SLICER_LIB [pwd]
+    cd $wd
+}
+if { ![info exists ::SLICER_BUILD] } {
+    set wd [pwd]
+    cd $SLICER_HOME/../Slicer3-build
+    set SLICER_BUILD [pwd]
+    cd $wd
+}
 
 set ::TEEM_SRC_DIR  $::SLICER_LIB/teem
 set ::TEEM_BUILD_DIR  $::SLICER_LIB/teem-build
@@ -128,7 +144,7 @@ switch $::tcl_platform(os) {
         set ::BLT_TEST_FILE $::TCL_BIN_DIR/bltwish24
         set ::TEEM_TEST_FILE $::TEEM_BIN_DIR/unu
         set ::VTK_TEST_FILE $::VTK_DIR/bin/vtk
-        set ::KWWidgets_TEST_FILE $KWWidgets_BUILD_DIR/bin/libKWWidgets.so
+        set ::KWWidgets_TEST_FILE $KWWidgets_BUILD_DIR/bin/libKWWidgets.$shared_lib_ext
         set ::SANDBOX_TEST_FILE $::SANDBOX_BIN_DIR/libSlicerClustering.a
         set ::ALT_SANDBOX_TEST_FILE $::SANDBOX_BIN_DIR/libSlicerClustering.a
         set ::VTK_TCL_LIB $::TCL_LIB_DIR/libtcl8.4.$shared_lib_ext 
