@@ -359,9 +359,9 @@ proc launch_RunProgram {} {
     # determine the correct arguments and executable for the platform
     #
     if {$::env(BUILD) == $::WINDOWS} {
-        regsub -all "{|}" $::argv "" ::argv
         set slicer3 $::SLICER_BUILD/bin/$::env(VTK_BUILD_SUBDIR)/Slicer3.exe
     } else {
+        # turn curly braces into quotes
         regsub -all "{|}" $::argv "\\\"" ::argv
         set slicer3 $::SLICER_BUILD/bin/Slicer3
     }
