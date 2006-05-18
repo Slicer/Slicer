@@ -287,9 +287,11 @@ proc launch_LicenseDialog {} {
                     set resp "ok"
                 }
             } else {
+                wm withdraw .
                 set resp [tk_messageBox -message $msg -type okcancel -title "Slicer3"]
             }
 
+              wm withdraw .
             if {$resp == "cancel"} {
                 exit
             }

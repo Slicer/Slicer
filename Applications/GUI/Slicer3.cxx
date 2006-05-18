@@ -37,6 +37,7 @@ extern "C" int Vtkitk_Init(Tcl_Interp *interp);
 
 //TODO added temporary
 extern "C" int Gradientanisotropicdiffusionfilter_Init(Tcl_Interp *interp);
+extern "C" int Slicerdaemon_Init(Tcl_Interp *interp);
 
 int Slicer3_main(int argc, char *argv[])
 {
@@ -58,7 +59,7 @@ int Slicer3_main(int argc, char *argv[])
       return ( Tcl_Eval( interp, cmd.c_str() ) );
       }
 
-    // use the startup script passed on command line if it exists
+    // use the startup code passed on command line if it exists
     if ( Eval != "" )
       {    
       std::string cmd = "set ::SLICER(eval) \"" + Eval + "\";";
@@ -76,6 +77,7 @@ int Slicer3_main(int argc, char *argv[])
     Vtkitk_Init(interp);
     //TODO added temporary
     Gradientanisotropicdiffusionfilter_Init(interp);
+    Slicerdaemon_Init(interp);
 
     // Create SlicerGUI application, style, and main window 
     vtkSlicerApplication *slicerApp = vtkSlicerApplication::New ( );
@@ -191,6 +193,10 @@ int Slicer3_main(int argc, char *argv[])
     gradientAnisotropicDiffusionFilterGUI->GetUIPanel()->Create ( );
     slicerApp->AddModuleGUI ( gradientAnisotropicDiffusionFilterGUI );
 
+
+    // --- SlicerDaemon Module
+    
+
     
     // ------------------------------
     // BUILD APPLICATION GUI
@@ -264,18 +270,18 @@ int Slicer3_main(int argc, char *argv[])
     // use the startup script passed on command line if it exists
     if ( Script != "" )
       {    
-      std::string cmd = "source " + File;
-      return ( Tcl_Eval( interp, cmd.c_str() ) );
+      std::string cmd = "source " + Script;
+      Tcl_Eval( interp, cmd.c_str() ) ;
       }
 
-    // use the startup script passed on command line if it exists
+    // use the startup code passed on command line if it exists
     if ( Exec != "" )
       {    
-      std::string cmd = "set ::SLICER(eval) \"" + Eval + "\";";
-      cmd += "regsub -all {\\.,} $::SLICER(eval) \";\" ::SLICER(eval);";
-      cmd += "regsub -all {,\\.} $::SLICER(eval) \";\" ::SLICER(eval);";
-      cmd += "eval $::SLICER(eval);";
-      return ( Tcl_Eval( interp, cmd.c_str() ) );
+      std::string cmd = "set ::SLICER(exec) \"" + Exec + "\";";
+      cmd += "regsub -all {\\.,} $::SLICER(exec) \";\" ::SLICER(exec);";
+      cmd += "regsub -all {,\\.} $::SLICER(exec) \";\" ::SLICER(exec);";
+      cmd += "eval $::SLICER(exec);";
+      Tcl_Eval( interp, cmd.c_str() );
       }
 
     int res = slicerApp->StartApplication();
@@ -372,3 +378,4 @@ int main(int argc, char *argv[])
     return Slicer3_main(argc, argv);
 }
 #endif
+
