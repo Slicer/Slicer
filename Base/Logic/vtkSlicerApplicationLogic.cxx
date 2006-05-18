@@ -58,7 +58,6 @@ vtkSlicerApplicationLogic::~vtkSlicerApplicationLogic()
 //----------------------------------------------------------------------------
 void vtkSlicerApplicationLogic::ProcessMRMLEvents()
 {
-  cerr << "updating slice logic from a mrml event" << endl ;
 
 
   //

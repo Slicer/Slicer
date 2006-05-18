@@ -45,8 +45,6 @@ vtkSlicerSliceLogic::~vtkSlicerSliceLogic()
 //----------------------------------------------------------------------------
 void vtkSlicerSliceLogic::ProcessMRMLEvents()
 {
-  cerr << "updating slice logic from a mrml event" << endl ;
-
 
   //
   // if you don't have a node yet, look in the scene to see if 

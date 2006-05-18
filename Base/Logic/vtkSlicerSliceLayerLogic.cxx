@@ -64,7 +64,6 @@ vtkSlicerSliceLayerLogic::~vtkSlicerSliceLayerLogic()
 //----------------------------------------------------------------------------
 void vtkSlicerSliceLayerLogic::ProcessMRMLEvents()
 {
-    cerr << "updating transforms from a mrml event" << endl ;
   this->UpdateTransforms();
 }
 
