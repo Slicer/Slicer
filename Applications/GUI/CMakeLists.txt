@@ -20,6 +20,10 @@ INCLUDE_DIRECTORIES(
   ${GradientAnisotropicDiffusionFilter_BINARY_DIR}
   ${GradientAnisotropicDiffusionFilter_Init_SOURCE_DIR}
   ${GradientAnisotropicDiffusionFilter_Init_BINARY_DIR}
+  ${SlicerDaemon_SOURCE_DIR}
+  ${SlicerDaemon_BINARY_DIR}
+  ${SlicerDaemon_Init_SOURCE_DIR}
+  ${SlicerDaemon_Init_BINARY_DIR}
   ${VTK_INCLUDE_DIR}
   )
 
@@ -29,6 +33,7 @@ TARGET_LINK_LIBRARIES( Slicer3
     SlicerBaseGUI
     MRML
     GradientAnisotropicDiffusionFilter
+    SlicerDaemon
     vtkITK
     ITKCommon 
     ITKIO
