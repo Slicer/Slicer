@@ -47,8 +47,6 @@ static void MRMLCallback(vtkObject *__mrmlslice, unsigned long eid, void *__clie
     }
   inMRMLCallback = 1;
 
-  cout << "In MRMLCallback" << endl;
-
   vtkMRMLSliceNode *mrmlslice = static_cast<vtkMRMLSliceNode *>(__mrmlslice); // Not used, since it is ivar
 
   vtkSlicerSliceControlGUI *self = reinterpret_cast<vtkSlicerSliceControlGUI *>(__clientData);

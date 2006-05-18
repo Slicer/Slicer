@@ -42,8 +42,6 @@ static void MRMLCallback(vtkObject *__mrmlscene, unsigned long eid, void *__clie
     }
   inMRMLCallback = 1;
 
-  cout << "In MRMLCallback" << endl;
-
   vtkMRMLScene *mrmlscene = static_cast<vtkMRMLScene *>(__mrmlscene); // Not used, since it is ivar
 
   vtkSlicerVolumeSelectGUI *self = reinterpret_cast<vtkSlicerVolumeSelectGUI *>(__clientData);
