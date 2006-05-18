@@ -45,7 +45,7 @@ void vtkSlicerTheme::Install ( )
     // ---
     // Set default font:
     // ---
-    odb->AddFontOptions ( "{Helvetical 8 normal}" );
+    odb->AddFontOptions ( "{Helvetica 8 normal}" );
 
     // ---
     // Background and foreground for all widgets:
