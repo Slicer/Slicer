@@ -23,9 +23,9 @@
 
       <boolean>
       <name>Tkcon</name>
-      <longflag>--no_tkon</longflag>
+      <longflag>--tkcon</longflag>
       <flag>-k</flag>
-      <description>Disables tk console</description>
+      <description>Brings up just the tk console</description>
       <default>false</default>
       <label>Tkcon On/Off</label>
       </boolean>
@@ -115,7 +115,7 @@
       <longflag>--exec</longflag>
       <flag>-e</flag>
       <description>Some code to execute after slicer loads. (note: cannot specify scene after --exec) (note: use ,. instead of ; between tcl statements)</description>
-      <label>Some code to execute</label>
+      <label>Some code to execute after slicer loads</label>
       </string>
 
       <string>

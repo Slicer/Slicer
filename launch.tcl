@@ -337,19 +337,6 @@ proc launch_RunProgram {} {
     set ::argv $newargv
 
 
-    # 
-    # if a tcl script is the first argument on the command line, run it
-    # otherwise, run the default application startup script
-    #
-    set ::argv0 [lindex $::argv 0]
-    if { [string match *.tcl $::argv0] } {
-        set mainscript $::argv0
-        set ::argv [lreplace $::argv 0 0] ;# trim the script name off 
-    } else {
-        set mainscript $::env(SLICER_HOME)/Base/tcl/Go.tcl
-    }
-
-
     #
     # if in batch mode, exec vtk with slicer args and return the exit code of the child
     # process as the exit code of this script.
@@ -384,9 +371,9 @@ proc launch_RunProgram {} {
     #
     if { $::BATCH == "true" } {
         if {$::env(BUILD) == $::WINDOWS} {
-            set ret [catch "exec \"$slicer3\" --file \"$mainscript\" $::argv" res]
+            set ret [catch "exec \"$slicer3\" $::argv" res]
         } else {
-            set ret [catch "exec $slicer3 --file \"$mainscript\" $::argv |& cat" res]
+            set ret [catch "exec $slicer3 $::argv |& cat" res]
         }
         
         # get the actual exit code of the child process
@@ -409,9 +396,9 @@ proc launch_RunProgram {} {
         }
     } else {
         if {$::env(BUILD) == $::WINDOWS} {
-            set fp [open "| \"$slicer3\" --file \"$mainscript\" $::argv" r]
+            set fp [open "| \"$slicer3\" $::argv" r]
         } else {
-            set fp [open "| csh -f -c \"$slicer3 --file $mainscript $::argv \" |& cat" r]
+            set fp [open "| csh -f -c \"$slicer3 $::argv \" |& cat" r]
         }
 
         if {[info exists fp]} {

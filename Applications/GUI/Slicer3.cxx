@@ -255,9 +255,29 @@ int Slicer3_main(int argc, char *argv[])
     slicerApp->Script ("namespace eval slicer3 set MRMLScene [$::slicer3::ApplicationLogic GetMRMLScene]");
 
 
+
     // ------------------------------
     // DISPLAY WINDOW AND RUN
     appGUI->DisplayMainSlicerWindow ( );
+
+    // More command line arguments:
+    // use the startup script passed on command line if it exists
+    if ( Script != "" )
+      {    
+      std::string cmd = "source " + File;
+      return ( Tcl_Eval( interp, cmd.c_str() ) );
+      }
+
+    // use the startup script passed on command line if it exists
+    if ( Exec != "" )
+      {    
+      std::string cmd = "set ::SLICER(eval) \"" + Eval + "\";";
+      cmd += "regsub -all {\\.,} $::SLICER(eval) \";\" ::SLICER(eval);";
+      cmd += "regsub -all {,\\.} $::SLICER(eval) \";\" ::SLICER(eval);";
+      cmd += "eval $::SLICER(eval);";
+      return ( Tcl_Eval( interp, cmd.c_str() ) );
+      }
+
     int res = slicerApp->StartApplication();
 
     // ------------------------------
