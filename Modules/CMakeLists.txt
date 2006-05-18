@@ -3,6 +3,7 @@ PROJECT( Modules )
 SUBDIRS(
   BaseClasses
   GradientAnisotropicDiffusionFilter
+  SlicerDaemon
 )
 
 
