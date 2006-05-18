@@ -268,7 +268,7 @@ proc launch_PostProcessPath {} {
 proc launch_LicenseDialog {} {
 
 
-    set msg "\nSlicer is an experimental software package.\nAny clinical use requires proper research controls.\nSelecting \"Ok\" below binds you to the license agreement.\nSee www.slicer.org for details.\n"
+    set msg "Slicer is an experimental software package.\nAny clinical use requires proper research controls.\nSelecting \"Ok\" below binds you to the license agreement.\nSee www.slicer.org for details.\n"
 
     set ::argv0 [lindex $::argv 0]
     if { $::argv0 == "-y" || $::argv0 == "--agree_to_license" || $::argv0 == "--batch" } {
@@ -277,7 +277,7 @@ proc launch_LicenseDialog {} {
         if { ![file exists $::env(HOME)/.IAgreeToSlicersLicense] } {
 
             if { [catch "package require Tk"] } {
-                puts $msg
+                puts "\n$msg"
                 puts -nonewline "Agree? \[Hit Enter for \"Ok\"\] "
                 flush stdout
                 gets stdin line
@@ -320,6 +320,23 @@ proc launch_FileEvent {fp} {
 
 proc launch_RunProgram {} {
 
+    #
+    # change from tcl escape to shell escape for command line arguments 
+    # that contain spaces -- note that shell notation only works for a single
+    # level of nesting
+    # - change backslashes to forward slashes (for windows paths)
+    # - escape the spaces in each of the arguments
+    # - then remove the curly braces
+    #
+    regsub -all "\\\\" $::argv "/" ::argv
+    set newargv ""
+    foreach a $::argv {
+        regsub -all " " $a "\\\ " a
+        lappend newargv $a
+    }
+    set ::argv $newargv
+
+
     # 
     # if a tcl script is the first argument on the command line, run it
     # otherwise, run the default application startup script
@@ -349,29 +366,31 @@ proc launch_RunProgram {} {
     # work right.
     #
 
+    # 
+    # determine the correct arguments and executable for the platform
     #
-    # run in batch mode 
+    if {$::env(BUILD) == $::WINDOWS} {
+        regsub -all "{|}" $::argv "" ::argv
+        set slicer3 $::SLICER_BUILD/bin/$::env(VTK_BUILD_SUBDIR)/Slicer3.exe
+    } else {
+        regsub -all "{|}" $::argv "\\\"" ::argv
+        set slicer3 $::SLICER_BUILD/bin/Slicer3
+    }
+
+    #
+    # run in batch mode to capture all output or
+    # run in non-batch mode emit output line by line for feedback
+    # - note: use batch mode to capture return code from the process
     #
     if { $::BATCH == "true" } {
-        if {$::env(BUILD) == $::SOLARIS || 
-            $::env(BUILD) == $::DARWIN ||
-            $::env(BUILD) == $::LINUX ||
-            $::env(BUILD) == $::LINUX_64} {
-            # - need to run the specially modified tcl interp in the executable 'vtk' on unix
-            regsub -all "{|}" $::argv "\\\"" ::argv
-            set ret [catch "exec $::env(VTK_DIR)/bin/vtk \"$mainscript\" $::argv |& cat" res]
-        } elseif {$::env(BUILD) == $::WINDOWS} {
-            regsub -all "{|}" $::argv "" ::argv
-            puts "exec \"$::env(TCL_BIN_DIR)/wish84.exe\" \"$mainscript\" $::argv" 
-            set ret [catch "exec \"$::env(TCL_BIN_DIR)/wish84.exe\" \"$mainscript\" $::argv" res]
+        if {$::env(BUILD) == $::WINDOWS} {
+            set ret [catch "exec \"$slicer3\" --file \"$mainscript\" $::argv" res]
         } else {
-            puts stderr "Run: Unknown build: $::env(BUILD)"
-            exit -1
+            set ret [catch "exec $slicer3 --file \"$mainscript\" $::argv |& cat" res]
         }
         
         # get the actual exit code of the child process
         set code [lindex $::errorCode 2]
-        # print the stdout/stderr of the child
 
         # if the errorCode is not an integer value, set it to 1.
         if { ![string is integer -strict $code] } {
@@ -380,6 +399,7 @@ proc launch_RunProgram {} {
             puts "Non-integer error code returned, setting to 1"
         }
         
+        # print the stdout/stderr of the child
         puts stdout $res
         # exit with the status
         if { $ret } {
@@ -387,58 +407,22 @@ proc launch_RunProgram {} {
         } else {
             exit 0
         }
-    }
-
-
-    # change from tcl escape to shell escape for command line arguments 
-    # that contain spaces -- note that shell notation only works for a single
-    # level of nesting
-    # - change backslashes to forward slashes (for windows paths)
-    # - escape the spaces in each of the arguments
-    # - then remove the curly braces
-
-    regsub -all "\\\\" $::argv "/" ::argv
-
-    set newargv ""
-    foreach a $::argv {
-        regsub -all " " $a "\\\ " a
-        lappend newargv $a
-    }
-    set ::argv $newargv
-
-    if {$::env(BUILD) == $::SOLARIS || 
-        $::env(BUILD) == $::DARWIN ||
-        $::env(BUILD) == $::LINUX_64 ||
-        $::env(BUILD) == $::LINUX} {
-            # - need to run the specially modified tcl interp in the executable 'vtk' on unix
-            # - don't put process in background so that jdemo can track its status
-            regsub -all "{|}" $::argv "\\\"" ::argv
-            set fp [open "| csh -f -c \"$::env(VTK_DIR)/bin/vtk $mainscript $::argv \" |& cat" r]
-        } elseif {0 && $::env(BUILD) == $::LINUX} {
-            ## note - this branch not currently used -- linux uses the branch above
-            regsub -all "{|}" $::argv "\\\"" ::argv
-            update
-            catch "eval exec \"$::env(VTK_DIR)/bin/vtk $mainscript $::argv\"" res
-            puts stderr $res
-        } elseif {$::env(BUILD) == $::WINDOWS} {
-            # put slicer in the background on windows so it won't be "Not Responding" in
-            # task manager
-            regsub -all "{|}" $::argv "" ::argv
-            set fp [open "| \"$::env(TCL_BIN_DIR)/wish84.exe\" \"$mainscript\" $::argv" r]
+    } else {
+        if {$::env(BUILD) == $::WINDOWS} {
+            set fp [open "| \"$slicer3\" --file \"$mainscript\" $::argv" r]
         } else {
-            puts stderr "Run: Unknown build: $::env(BUILD)"
-            exit
+            set fp [open "| csh -f -c \"$slicer3 --file $mainscript $::argv \" |& cat" r]
         }
 
-    if {[info exists fp]} {
-        fileevent $fp readable "launch_FileEvent $fp"
-        
-        set ::END 0
-        while { ![catch "pid $fp"] && ![eof $fp] } {
-            vwait ::END
+        if {[info exists fp]} {
+            fileevent $fp readable "launch_FileEvent $fp"
+            
+            set ::END 0
+            while { ![catch "pid $fp"] && ![eof $fp] } {
+                vwait ::END
+            }
         }
     }
-
 }
 
 #######  The actual steps for launching:

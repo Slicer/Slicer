@@ -79,10 +79,6 @@ set ::SANDBOX_TAG "http://svn.na-mic.org:8000/svn/NAMICSandBox/branches/Slicer-2
 
 # Set library, binary, etc. paths...
 
-#set ::SLICER_LIB $::SLICER_HOME/Lib/$::env(BUILD) ;# as used in slicer2
-#                                                  ;# now can be set outide 
-#                                                  ;# of this file
-
 # if SLICER_LIB and SLICER_BUILD haven't been set, 
 # then assume they are in the 'standard' places next to the source tree
 # (as created by getbuildtest.tcl
