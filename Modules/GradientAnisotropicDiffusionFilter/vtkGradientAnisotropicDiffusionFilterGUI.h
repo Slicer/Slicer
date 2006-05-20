@@ -61,10 +61,15 @@ protected:
   vtkGradientAnisotropicDiffusionFilterGUI(const vtkGradientAnisotropicDiffusionFilterGUI&);
   void operator=(const vtkGradientAnisotropicDiffusionFilterGUI&);
 
+  void UpdateGUI();
+  void UpdateMRML();
+  
   vtkKWScaleWithEntry* ConductanceScale;
   vtkKWScaleWithEntry* TimeStepScale;
   vtkKWScaleWithEntry* NumberOfIterationsScale;
   vtkSlicerNodeSelectorWidget* VolumeSelector;
+  vtkSlicerNodeSelectorWidget* OutVolumeSelector;
+  vtkSlicerNodeSelectorWidget* GADNodeSelector;
   vtkKWPushButton* ApplyButton;
   
   vtkGradientAnisotropicDiffusionFilterLogic *Logic;

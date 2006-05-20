@@ -40,7 +40,7 @@ vtkGradientAnisotropicDiffusionFilterLogic* vtkGradientAnisotropicDiffusionFilte
 //----------------------------------------------------------------------------
 vtkGradientAnisotropicDiffusionFilterLogic::vtkGradientAnisotropicDiffusionFilterLogic()
 {
-  GradientAnisotropicDiffusionFilterNode = vtkMRMLGradientAnisotropicDiffusionFilterNode::New();
+  GradientAnisotropicDiffusionFilterNode = NULL;
   GradientAnisotropicDiffusionImageFilter = vtkITKGradientAnisotropicDiffusionImageFilter::New();
 }
 
@@ -48,7 +48,7 @@ vtkGradientAnisotropicDiffusionFilterLogic::vtkGradientAnisotropicDiffusionFilte
 vtkGradientAnisotropicDiffusionFilterLogic::~vtkGradientAnisotropicDiffusionFilterLogic()
 {
   this->GradientAnisotropicDiffusionImageFilter->Delete();
-  this->GradientAnisotropicDiffusionFilterNode->Delete();
+  this->SetGradientAnisotropicDiffusionFilterNode(NULL);
 }
 
 //----------------------------------------------------------------------------
