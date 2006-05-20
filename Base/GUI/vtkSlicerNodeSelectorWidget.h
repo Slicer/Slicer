@@ -57,25 +57,45 @@ public:
   vtkGetMacro(NewNodeEnabled, int);
   vtkSetMacro(NewNodeEnabled, int);
   
+  // Description:
+  // Base name of new node
+  // names are formed by adding a counter to base name
+  vtkSetStringMacro(NewNodeName);
+  vtkGetStringMacro(NewNodeName);
+
   vtkMRMLNode *GetSelected();
 
   void SetSelected(vtkMRMLNode *node);
   void SetSelectedNew();
 
+//BTX
+  enum
+    {
+      NodeSelectedEvent = 10000,
+    };
+//ETX
+
   // Description:
   // reflect the state of the mrml scene in the menu
   void UpdateMenu();
+
+  void ProcessNewNodeCommand();
+  void ProcessCommand();
 
 protected:
   vtkSlicerNodeSelectorWidget();
   ~vtkSlicerNodeSelectorWidget();
 
   char *NodeClass;
+  
+  char *NewNodeName;
   int NewNodeEnabled;
   
   vtkMRMLScene       *MRMLScene;
 
 private:
+
+  int NewNodeCount;
 
   vtkCallbackCommand *MRMLCallbackCommand;
 

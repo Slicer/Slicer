@@ -14,9 +14,12 @@ Version:   $Revision: 1.2 $
 
 #include "vtkSlicerNodeSelectorWidget.h"
 
+
 #include "vtkKWMenu.h"
 #include "vtkKWMenuButton.h"
 #include "vtkKWMenuButtonWithSpinButtons.h"
+
+#include <sstream>
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro( vtkSlicerNodeSelectorWidget );
@@ -54,6 +57,8 @@ static void MRMLCallback(vtkObject *__mrmlscene, unsigned long eid, void *__clie
 vtkSlicerNodeSelectorWidget::vtkSlicerNodeSelectorWidget()
 {
   this->NodeClass = NULL;
+  this->NewNodeName = NULL;
+  this->NewNodeCount = 0;
   this->NewNodeEnabled = 0;
   this->MRMLScene      = NULL;
   this->MRMLCallbackCommand = vtkCallbackCommand::New();
@@ -65,7 +70,7 @@ vtkSlicerNodeSelectorWidget::vtkSlicerNodeSelectorWidget()
 vtkSlicerNodeSelectorWidget::~vtkSlicerNodeSelectorWidget()
 {
   this->SetNodeClass(NULL);
-
+  this->SetNewNodeName(NULL);
   if (this->MRMLScene)
     {
     this->MRMLScene->Delete();
@@ -103,61 +108,109 @@ void vtkSlicerNodeSelectorWidget::UpdateMenu()
       {
       return;
       }
-
     vtkKWMenuButton *mb = this->GetWidget()->GetWidget();
     vtkKWMenu *m = mb->GetMenu();
 
+    vtkMRMLNode *oldSelectedNode = this->GetSelected();
     m->DeleteAllItems();
-
+    int count = 0;
+    
     if (this->NewNodeEnabled)
     {
       this->GetWidget()->GetWidget()->GetMenu()->AddRadioButton("Create New");
+      this->GetWidget()->GetWidget()->GetMenu()->SetItemCommand(count++, this, "ProcessNewNodeCommand");
       this->GetWidget()->GetWidget()->SetValue("Create New");
     }
-    bool selected = false;
-    vtkMRMLNode *node;
+
+    vtkMRMLNode *node = NULL;
+    vtkMRMLNode *selectedNode = NULL;
     this->MRMLScene->InitTraversal();
+    bool selected = false;
     while ( (node = this->MRMLScene->GetNextNodeByClass(this->NodeClass) ) != NULL)
       {
       this->GetWidget()->GetWidget()->GetMenu()->AddRadioButton(node->GetName());
-      if (!selected)
+      this->GetWidget()->GetWidget()->GetMenu()->SetItemCommand(count++, this, "ProcessCommand");
+      if (oldSelectedNode == node)
       {
-        this->GetWidget()->GetWidget()->SetValue(node->GetName());
+        selectedNode = node;
+        selected = true;
+      }
+      else if (!selected)
+      {  
+        selectedNode = node;
         selected = true;
       }
     }
 
-
+    if (selectedNode != NULL)
+    {
+    this->GetWidget()->GetWidget()->SetValue(selectedNode->GetName());
+    }
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLNode *vtkSlicerNodeSelectorWidget::GetSelected()
 {
-  vtkMRMLNode *n = NULL;
+  vtkMRMLNode *node = NULL;
+  vtkKWMenuButton *mb = this->GetWidget()->GetWidget();
+  vtkKWMenu *m = mb->GetMenu();
+
+ if (m != NULL ) 
+    {  
+      int nth_rank = m->GetIndexOfItem(mb->GetValue());
+      if (this->NewNodeEnabled) nth_rank--;
+      node = this->MRMLScene->GetNthNodeByClass (nth_rank, this->NodeClass);
+    }
+  return node;
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerNodeSelectorWidget::ProcessNewNodeCommand()
+{
+  vtkMRMLNode *node = NULL;
   vtkKWMenuButton *mb = this->GetWidget()->GetWidget();
   vtkKWMenu *m = mb->GetMenu();
 
   if (strcmp(mb->GetValue(), "Create New") == 0)
     {
-    vtkMRMLNode* node = this->MRMLScene->CreateNodeByClass( this->NodeClass );
+    node = this->MRMLScene->CreateNodeByClass( this->NodeClass );
+    if (node == NULL)
+    {
+      return;
+    }
     node->SetScene(this->MRMLScene);
-    node->SetID(this->MRMLScene->GetUniqueIDByClass(this->NodeClass));
-    this->MRMLScene->AddNode(node);
+    std::stringstream ss;
+    if (this->NewNodeName)
+      {
+      ss << this->NewNodeName << NewNodeCount++;
+      }
+    else
+      {
+      ss << this->NodeClass << NewNodeCount++;
+      }
+    
+      node->SetName(ss.str().c_str());
+      node->SetID(this->MRMLScene->GetUniqueIDByClass(this->NodeClass));
+      this->MRMLScene->AddNode(node);
     }
-  else if (m != NULL ) 
-    {  
-      int nth_rank = m->GetIndexOfItem(mb->GetValue());
-      n = this->MRMLScene->GetNthNodeByClass (nth_rank, this->NodeClass);
-    }
-  return n;
+    this->SetSelected(node);
 }
+
+
+//----------------------------------------------------------------------------
+void vtkSlicerNodeSelectorWidget::ProcessCommand()
+{
+  this->InvokeEvent(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, NULL);
+}
+
 
 //----------------------------------------------------------------------------
 void vtkSlicerNodeSelectorWidget::SetSelected(vtkMRMLNode *node)
 {
-  if (node && this->NodeClass == node->GetClassName()) 
+  if (node != NULL && strcmp(this->NodeClass, node->GetClassName()) == 0) 
     {
     this->GetWidget()->GetWidget()->SetValue(node->GetName());
+    this->InvokeEvent(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, NULL);
     }
 }
 
