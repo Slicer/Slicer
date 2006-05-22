@@ -27,6 +27,17 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleGUI : public vtkSlicerComponentG
     vtkGetObjectMacro ( UIPanel, vtkKWUserInterfacePanel );
     vtkSetObjectMacro ( UIPanel, vtkKWUserInterfacePanel );
 
+        // Description:
+    // propagate events generated in logic layer to GUI
+    virtual void ProcessLogicEvents ( vtkObject *caller, unsigned long event, void *callData ) { };
+    // Description:
+    // alternative method to propagate events generated in GUI to logic / mrml
+    virtual void ProcessGUIEvents ( vtkObject *caller, unsigned long event, void *callData ) { };
+    
+    // Description:
+    // alternative method to propagate events generated in GUI to logic / mrml
+    virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData ) { };
+
  protected:
 
     // Description:
