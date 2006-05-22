@@ -50,6 +50,7 @@
 #include "vtkSlicerApplicationLogic.h"
 #include "vtkSlicerModuleGUI.h"
 #include "vtkSlicerGUILayout.h"
+#include "vtkSlicerTheme.h"
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerApplicationGUI);
@@ -443,6 +444,9 @@ void vtkSlicerApplicationGUI::BuildMainViewer ( )
             this->MainViewer->Create ( );
             app->Script  ("pack %s -side top -fill both -expand y -padx 0 -pady 0",
                           this->MainViewer->GetWidgetName ( ) );
+            vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication()); 
+            this->MainViewer->SetRendererBackgroundColor ( 
+                app->GetSlicerTheme()->GetSlicerColors()->ViewerBlue );
             this->MainViewer->GetRenderer()->GetActiveCamera()->ParallelProjectionOff();
 
             // put in a plane interactor to test
