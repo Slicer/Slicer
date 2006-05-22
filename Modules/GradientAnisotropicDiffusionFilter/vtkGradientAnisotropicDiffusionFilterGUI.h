@@ -38,6 +38,10 @@ class VTK_GRADIENTANISOTROPICDIFFUSIONFILTER_EXPORT vtkGradientAnisotropicDiffus
   vtkGetObjectMacro (Logic, vtkGradientAnisotropicDiffusionFilterLogic);
   vtkSetObjectMacro (Logic, vtkGradientAnisotropicDiffusionFilterLogic);
   
+  // Description: Get/Set MRML node
+  vtkGetObjectMacro (GradientAnisotropicDiffusionFilterNode, vtkMRMLGradientAnisotropicDiffusionFilterNode);
+  vtkSetObjectMacro (GradientAnisotropicDiffusionFilterNode, vtkMRMLGradientAnisotropicDiffusionFilterNode);
+
   virtual void BuildGUI ( );
 
   virtual void AddGUIObservers ( );
@@ -48,8 +52,8 @@ class VTK_GRADIENTANISOTROPICDIFFUSIONFILTER_EXPORT vtkGradientAnisotropicDiffus
                                   void *callData ){};
   virtual void ProcessGUIEvents ( vtkObject *caller, unsigned long event,
                                   void *callData );
-  virtual void ProcessMrmlEvents ( vtkObject *caller, unsigned long event,
-                                   void *callData );
+  virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, 
+                                  void *callData);
   // Description:
   // Describe behavior at module startup and exit.
   virtual void Enter ( ){};
@@ -73,6 +77,7 @@ protected:
   vtkKWPushButton* ApplyButton;
   
   vtkGradientAnisotropicDiffusionFilterLogic *Logic;
+  vtkMRMLGradientAnisotropicDiffusionFilterNode* GradientAnisotropicDiffusionFilterNode;
 
 };
 

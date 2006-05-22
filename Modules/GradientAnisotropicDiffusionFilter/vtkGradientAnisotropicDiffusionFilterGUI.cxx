@@ -63,6 +63,7 @@ vtkGradientAnisotropicDiffusionFilterGUI::vtkGradientAnisotropicDiffusionFilterG
   this->GADNodeSelector = vtkSlicerNodeSelectorWidget::New();
   this->ApplyButton = vtkKWPushButton::New();
   this->Logic = NULL;
+  this->GradientAnisotropicDiffusionFilterNode = NULL;
 
 }
 
@@ -76,12 +77,8 @@ vtkGradientAnisotropicDiffusionFilterGUI::~vtkGradientAnisotropicDiffusionFilter
   this->OutVolumeSelector->Delete();
   this->GADNodeSelector->Delete();
   this->ApplyButton->Delete();
-  if (this->Logic != NULL) 
-    {
-    this->Logic->Delete();
-    
-    }
-  
+  this->SetLogic(NULL);
+  this->SetGradientAnisotropicDiffusionFilterNode(NULL); 
 }
 
 //----------------------------------------------------------------------------
@@ -155,6 +152,8 @@ void vtkGradientAnisotropicDiffusionFilterGUI::ProcessGUIEvents ( vtkObject *cal
     { 
     vtkMRMLGradientAnisotropicDiffusionFilterNode* n = vtkMRMLGradientAnisotropicDiffusionFilterNode::SafeDownCast(this->GADNodeSelector->GetSelected());
     this->Logic->SetGradientAnisotropicDiffusionFilterNode(n);
+    this->SetGradientAnisotropicDiffusionFilterNode(n);
+    this->SetAndObserveMRML( vtkObjectPointer(&this->GradientAnisotropicDiffusionFilterNode), n);
     this->UpdateGUI();
     }
   else if (b == this->ApplyButton && event == vtkKWPushButton::InvokedEvent ) 
@@ -168,15 +167,19 @@ void vtkGradientAnisotropicDiffusionFilterGUI::ProcessGUIEvents ( vtkObject *cal
 //---------------------------------------------------------------------------
 void vtkGradientAnisotropicDiffusionFilterGUI::UpdateMRML ()
 {
-  vtkMRMLGradientAnisotropicDiffusionFilterNode* n = this->Logic->GetGradientAnisotropicDiffusionFilterNode();
+  vtkMRMLGradientAnisotropicDiffusionFilterNode* n = this->GetGradientAnisotropicDiffusionFilterNode();
   if (n == NULL)
     {
     this->GADNodeSelector->SetSelectedNew();
     this->GADNodeSelector->ProcessNewNodeCommand();
     n = vtkMRMLGradientAnisotropicDiffusionFilterNode::SafeDownCast(this->GADNodeSelector->GetSelected());
     this->Logic->SetGradientAnisotropicDiffusionFilterNode(n);
-    }
-  
+    this->SetGradientAnisotropicDiffusionFilterNode(n);
+    this->SetAndObserveMRML( vtkObjectPointer(&this->GradientAnisotropicDiffusionFilterNode), n);
+   }
+
+  this->GetLogic()->GetMRMLScene()->SaveStateForUndo(n);
+
   n->SetConductance(this->ConductanceScale->GetValue());
   
   n->SetTimeStep(this->TimeStepScale->GetValue());
@@ -192,10 +195,10 @@ void vtkGradientAnisotropicDiffusionFilterGUI::UpdateMRML ()
 //---------------------------------------------------------------------------
 void vtkGradientAnisotropicDiffusionFilterGUI::UpdateGUI ()
 {
-  vtkMRMLGradientAnisotropicDiffusionFilterNode* n = this->Logic->GetGradientAnisotropicDiffusionFilterNode();
+  vtkMRMLGradientAnisotropicDiffusionFilterNode* n = this->GetGradientAnisotropicDiffusionFilterNode();
   if (n != NULL)
     {
-    this->GADNodeSelector->SetSelected(n);
+    //this->GADNodeSelector->SetSelected(n);
   
     this->ConductanceScale->SetValue(n->GetConductance());
     
@@ -206,18 +209,15 @@ void vtkGradientAnisotropicDiffusionFilterGUI::UpdateGUI ()
 }
 
 //---------------------------------------------------------------------------
-void vtkGradientAnisotropicDiffusionFilterGUI::ProcessMrmlEvents ( vtkObject *caller,
+void vtkGradientAnisotropicDiffusionFilterGUI::ProcessMRMLEvents ( vtkObject *caller,
                                             unsigned long event,
                                             void *callData ) 
 {
-  /*
-  vtkMRMLGradientAnisotropicDiffusionFilterNode* node = dynamic_cast<vtkMRMLGradientAnisotropicDiffusionFilterNode *> (this->ApplicationLogic->GetMRMLScene()->GetNextNodeByClass("vtkMRMLGradientAnisotropicDiffusionFilterNode"));
-  
-  if (node == NULL) 
+  vtkMRMLGradientAnisotropicDiffusionFilterNode* node = vtkMRMLGradientAnisotropicDiffusionFilterNode::SafeDownCast(caller);
+  if (node != NULL) 
     {
-    this->SetGradientAnisotropicDiffusionFilterNode(node);
+    this->UpdateGUI();
     }
-  */
 }
 
 
