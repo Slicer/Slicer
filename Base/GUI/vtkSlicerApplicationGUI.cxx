@@ -96,7 +96,9 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
     //--- ui for the ViewControlFrame
     this->MainViewer = vtkKWRenderWidget::New ( );
     this->PlaneWidget = NULL;
-    
+
+    this->LoadSceneDialog = vtkKWLoadSaveDialog::New();
+    this->SaveSceneDialog = vtkKWLoadSaveDialog::New();   
 }
 
 
@@ -122,6 +124,8 @@ vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
         this->PlaneWidget->Delete ( );
         this->PlaneWidget = NULL;
     }
+    this->LoadSceneDialog->Delete();
+    this->SaveSceneDialog->Delete();  
 }
 
 
@@ -149,6 +153,10 @@ void vtkSlicerApplicationGUI::AddGUIObservers ( )
     this->ModelsButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ModulesMenuButton->AddObserver (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
 
+    this->GetMainSlicerWin()->GetFileMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    
+    this->LoadSceneDialog->AddObserver ( vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->SaveSceneDialog->AddObserver ( vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
 }
 
 
@@ -181,6 +189,9 @@ void vtkSlicerApplicationGUI::ProcessGUIEvents ( vtkObject *caller,
     const char *mName;
     vtkKWPushButton *pushb = vtkKWPushButton::SafeDownCast (caller );
     vtkKWMenuButton *menub = vtkKWMenuButton::SafeDownCast (caller );
+    vtkKWMenu *menu = vtkKWMenu::SafeDownCast (caller );
+    vtkKWLoadSaveDialog *filebrowse = vtkKWLoadSaveDialog::SafeDownCast(caller);
+
     vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication() );
         
     // Process events from top row of buttons
@@ -210,7 +221,53 @@ void vtkSlicerApplicationGUI::ProcessGUIEvents ( vtkObject *caller,
         //if ( m != NULL ) { m->GetUIPanel()->Raise(); }
         this->ModulesMenuButton->SetValue ( "Align" );
     }
+    else if (menu == this->GetMainSlicerWin()->GetFileMenu() && event == vtkKWMenu::MenuItemInvokedEvent)
+    {
+      int index = (int) (*((int *)callData));
+      if (index == 2)
+        {
+        this->LoadSceneDialog->Invoke();
+        }
+      else if (index == 3)
+        {
+        this->SaveSceneDialog->Invoke();
+        }
 
+    }
+
+    if (filebrowse == this->LoadSceneDialog  && event == vtkCommand::ModifiedEvent ) 
+      {
+      // If a file has been selected for loading...
+      char *fileName = filebrowse->GetFileName();
+      if ( fileName ) 
+        {
+          if (this->GetMRMLScene()) 
+            {
+            this->GetMRMLScene()->SetURL(fileName);
+            this->GetMRMLScene()->Connect();
+             
+             filebrowse->SaveLastPathToRegistry("OpenPath");
+            }
+        }
+        return;
+      }
+
+    if (filebrowse == this->SaveSceneDialog  && event == vtkCommand::ModifiedEvent ) 
+      {
+      // If a file has been selected for loading...
+      char *fileName = filebrowse->GetFileName();
+      if ( fileName ) 
+        {
+          if (this->GetMRMLScene()) 
+            {
+            this->GetMRMLScene()->SetURL(fileName);
+            this->GetMRMLScene()->Commit();
+             
+             filebrowse->SaveLastPathToRegistry("OpenPath");
+            }
+        }
+        return;
+      }
     //--- Process events from menubutton
     //--- TODO: change the Logic's "active module" and raise the appropriate UIPanel.
     if ( menub == this->ModulesMenuButton && event == vtkCommand::ModifiedEvent )
@@ -290,6 +347,9 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
 
             // TODO: Hook up undo, redo, set home
             //i = this->MainSlicerWin->GetFileMenu()->AddCommand (  );
+            this->GetMainSlicerWin()->GetFileMenu()->AddCommand ("Load Scene", NULL, NULL);
+            this->GetMainSlicerWin()->GetFileMenu()->AddCommand ("Save Scene", NULL, NULL);
+
             i = this->MainSlicerWin->GetEditMenu()->AddCommand ("Set Home", NULL, NULL);
             this->MainSlicerWin->GetEditMenu()->SetItemAccelerator ( i, "Ctrl+H");
             i = this->MainSlicerWin->GetEditMenu()->AddCommand ( "Undo", NULL, "$::slicer3::MRMLScene Undo" );
@@ -317,6 +377,16 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
             this->MainSlicerWin->GetMainNotebook( )->ShowIconsOff ( );
             this->BuildSliceControlGUIPanel ( );
             this->BuildViewControlGUIPanel ( );
+
+            this->LoadSceneDialog->SetParent ( this->MainSlicerWin );
+            this->LoadSceneDialog->Create ( );
+            this->LoadSceneDialog->SetFileTypes("{ {MRML Scene} {*.mrml} }");
+            this->LoadSceneDialog->RetrieveLastPathFromRegistry("OpenPath");
+
+            this->SaveSceneDialog->SetParent ( this->MainSlicerWin );
+            this->SaveSceneDialog->Create ( );
+            this->SaveSceneDialog->SetFileTypes("{ {MRML Scene} {*.mrml} }");
+            this->SaveSceneDialog->RetrieveLastPathFromRegistry("OpenPath");
         }
     }
 }

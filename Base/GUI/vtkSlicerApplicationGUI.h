@@ -26,6 +26,7 @@
 #include "vtkKWMenuButtonWithLabel.h"
 #include "vtkKWFrame.h"
 #include "vtkKWRenderWidget.h"
+#include "vtkKWLoadSaveDialog.h"
 
 #include "vtkRenderWindowInteractor.h"
 
@@ -166,6 +167,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkKWPushButton *ToggleFgBgButton;
     vtkKWScale *SliceFadeScale;
     vtkKWScale *SliceOpacityScale;
+
+    vtkKWLoadSaveDialog *LoadSceneDialog;
+    vtkKWLoadSaveDialog *SaveSceneDialog;
 
     // Description:
     // Main Slicer window
