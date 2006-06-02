@@ -157,7 +157,7 @@ switch $tcl_platform(os) {
 
 if { $isWindows } {
     puts stderr "Sorry, getbuildtest isn't for windows yet"
-    exit 1
+#    exit 1
 }
 
 #
@@ -200,8 +200,6 @@ if { ![file exists $SLICER_BUILD] } {
 # - run the tests
 # - make a package
 #
-
-
 
 
 cd $::SLICER_HOME/..
