@@ -42,7 +42,7 @@ static void MRMLCallback(vtkObject *__mrmlslice, unsigned long eid, void *__clie
 
   if (inMRMLCallback)
     {
-    cout << "*********MRMLCallback called recursively?" << endl;
+    vtkErrorWithObjectMacro (__mrmlslice, << "*********MRMLCallback called recursively?" << endl);
     return;
     }
   inMRMLCallback = 1;
