@@ -483,6 +483,7 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
 
             // Turn off the tabs for pages in the ModuleControlGUI
             this->MainSlicerWin->GetMainNotebook( )->ShowIconsOff ( );
+            this->MainSlicerWin->GetMainNotebook( )->SetUseFrameWithScrollbars ( 1 );
             this->BuildSliceControlGUIPanel ( );
             this->BuildViewControlGUIPanel ( );
 
