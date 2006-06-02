@@ -37,6 +37,7 @@ $win Create
 set sw [vtkKWScriptedWidget New]
 $sw SetApplication $app
 $sw SetParent $win
+# TODO: need to get access to SLICER_HOME
 $sw SetInitializeCommand { source ../../../Slicer3/Base/GUI/Tcl/ScriptedWidgetExample.tcl; ScriptedWidgetExampleInitialize }
 
 $sw Create
