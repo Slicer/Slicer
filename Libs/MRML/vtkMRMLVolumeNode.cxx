@@ -435,6 +435,8 @@ const char* vtkMRMLVolumeNode::ComputeScanOrderFromIjkToRas(vtkMatrix4x4 *ijkToR
  
 }
 
+
+
 //-----------------------------------------------------------
 void vtkMRMLVolumeNode::UpdateScene(vtkMRMLScene *scene)
 {
@@ -451,7 +453,7 @@ void vtkMRMLVolumeNode::UpdateScene(vtkMRMLScene *scene)
     node->ReadData(this);
     }
 
- }
+}
 
 
  

@@ -62,6 +62,11 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeNode : public vtkMRMLVolumeNode
   vtkSetMacro(LabelMap, int);
   vtkBooleanMacro(LabelMap, int);
 
+  // Description:
+  // Make a 'None' volume node with blank image data
+  static void CreateNoneNode(vtkMRMLScene *scene);
+
+
 protected:
   vtkMRMLScalarVolumeNode();
   ~vtkMRMLScalarVolumeNode();

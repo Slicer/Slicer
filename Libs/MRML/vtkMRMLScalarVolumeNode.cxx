@@ -21,6 +21,10 @@ Version:   $Revision: 1.14 $
 #include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLScene.h"
 
+#include "vtkPointData.h"
+#include "vtkDataArray.h"
+
+
 //------------------------------------------------------------------------------
 vtkMRMLScalarVolumeNode* vtkMRMLScalarVolumeNode::New()
 {
@@ -102,6 +106,32 @@ void vtkMRMLScalarVolumeNode::Copy(vtkMRMLNode *anode)
 
   this->SetLabelMap(node->LabelMap);
 }
+
+//-----------------------------------------------------------
+void vtkMRMLScalarVolumeNode::CreateNoneNode(vtkMRMLScene *scene)
+{
+  vtkMRMLScalarVolumeNode *n = vtkMRMLScalarVolumeNode::New();
+  n->SetName("None");
+  n->SetID("None");
+
+  // Create a None volume RGBA of 0, 0, 0 so the filters won't complain
+  // about missing input
+  vtkImageData *id;
+  id = vtkImageData::New();
+  id->SetDimensions(10, 10, 10);
+  id->AllocateScalars();
+  id->GetPointData()->GetScalars()->FillComponent(0, 0.0);
+  id->GetPointData()->GetScalars()->FillComponent(1, 0.0);
+  id->GetPointData()->GetScalars()->FillComponent(2, 0.0);
+  id->GetPointData()->GetScalars()->FillComponent(3, 0.0);
+
+  n->SetImageData(id);
+  scene->AddNode(n);
+
+  n->Delete();
+  id->Delete();
+}
+
 
 //----------------------------------------------------------------------------
 void vtkMRMLScalarVolumeNode::PrintSelf(ostream& os, vtkIndent indent)
