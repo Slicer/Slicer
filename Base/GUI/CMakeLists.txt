@@ -21,6 +21,11 @@ SET(LIB_SRCS
   vtkSlicerTheme.cxx
   vtkSlicerColor.cxx
   vtkSlicerFont.cxx
+  vtkSlicerIcons.cxx
+  vtkSlicerLogoIcons.cxx
+  vtkSlicerModuleNavigationIcons.cxx
+  vtkSlicerToolbarIcons.cxx
+  vtkSlicerViewControlIcons.cxx
   vtkSlicerApplication.cxx
   vtkSlicerComponentGUI.cxx
   vtkSlicerModuleGUI.cxx

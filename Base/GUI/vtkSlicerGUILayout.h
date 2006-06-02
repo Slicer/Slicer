@@ -45,8 +45,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGUILayout : public vtkObject
     vtkSetMacro ( DefaultGUIPanelHeight, int);
     vtkGetMacro ( DefaultLogoFrameHeight, int );
     vtkSetMacro ( DefaultLogoFrameHeight, int );
-    vtkGetMacro ( DefaultSlicerControlFrameHeight, int );
-    vtkSetMacro ( DefaultSlicerControlFrameHeight, int );
+    vtkGetMacro ( DefaultModuleChooseFrameHeight, int );
+    vtkSetMacro ( DefaultModuleChooseFrameHeight, int );
     vtkGetMacro ( DefaultModuleControlPanelHeight, int );
     vtkSetMacro ( DefaultModuleControlPanelHeight, int );
     vtkGetMacro ( DefaultSliceControlFrameHeight, int );
@@ -78,7 +78,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGUILayout : public vtkObject
     // Description:
     // Dimensions for specific GUI panel components
     int DefaultLogoFrameHeight;
-    int DefaultSlicerControlFrameHeight;
+    int DefaultModuleChooseFrameHeight;
     int DefaultModuleControlPanelHeight;
     int DefaultSliceControlFrameHeight;    
     int DefaultViewControlFrameHeight;

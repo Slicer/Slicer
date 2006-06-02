@@ -32,13 +32,13 @@ void vtkSlicerGUILayout::InitializeLayout ( )
     // Default 3D over axi-sag-cor layout:
     // specify dims of GUI Panel components here for now.
     this->SetDefaultLogoFrameHeight ( 40 );
-    this->SetDefaultSlicerControlFrameHeight ( 60 );
+    this->SetDefaultModuleChooseFrameHeight ( 60 );
     this->SetDefaultModuleControlPanelHeight ( 500 );
     this->SetDefaultSliceControlFrameHeight ( 60 );
     this->SetDefaultViewControlFrameHeight ( 240 );
     // entire GUI panel height and width
     h = this->GetDefaultLogoFrameHeight ( ) +
-        this->GetDefaultSlicerControlFrameHeight ( ) +
+        this->GetDefaultModuleChooseFrameHeight ( ) +
         this->GetDefaultModuleControlPanelHeight ( ) +
         this->GetDefaultSliceControlFrameHeight ( ) +
         this->GetDefaultViewControlFrameHeight ( );
@@ -53,7 +53,7 @@ void vtkSlicerGUILayout::InitializeLayout ( )
     w = 3 * this->GetDefaultSliceGUIFrameWidth ( );
 
     h = this->GetDefaultLogoFrameHeight ( ) +
-        this->GetDefaultSlicerControlFrameHeight ( ) +
+        this->GetDefaultModuleChooseFrameHeight ( ) +
         this->GetDefaultModuleControlPanelHeight ( ) +
         this->GetDefaultSliceControlFrameHeight ( ) +
         this->GetDefaultViewControlFrameHeight ( );
@@ -67,7 +67,7 @@ void vtkSlicerGUILayout::InitializeLayout ( )
     int vbuf = 60;
     // make room for window chrome or whatever; have to play with this buffer.
     h = this->GetDefaultLogoFrameHeight ( ) +
-        this->GetDefaultSlicerControlFrameHeight ( ) +
+        this->GetDefaultModuleChooseFrameHeight ( ) +
         this->GetDefaultModuleControlPanelHeight ( ) +
         this->GetDefaultSliceControlFrameHeight ( ) +
         this->GetDefaultViewControlFrameHeight ( ) + hbuf;

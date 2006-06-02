@@ -77,7 +77,7 @@ void vtkSlicerTheme::Install ( )
     // ---
     
     
-    // Slicer Toplevels
+    // Slicer Scales
     odb->AddEntryAsDouble3 ( "vtkKWScale", "SetTroughColor", this->SlicerColors->LightGrey );
     
     // Slicer Frames
