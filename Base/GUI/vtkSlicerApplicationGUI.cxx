@@ -262,6 +262,9 @@ void vtkSlicerApplicationGUI::AddGUIObservers ( )
     
     this->LoadSceneDialog->AddObserver ( vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->SaveSceneDialog->AddObserver ( vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
+
+    this->SliceFadeScale->AddObserver ( vtkKWScale::ScaleValueStartChangingEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->SliceFadeScale->AddObserver ( vtkKWScale::ScaleValueChangingEvent, (vtkCommand *)this->GUICallbackCommand );
 }
 
 
@@ -296,6 +299,7 @@ void vtkSlicerApplicationGUI::ProcessGUIEvents ( vtkObject *caller,
     vtkKWMenuButton *menub = vtkKWMenuButton::SafeDownCast (caller );
     vtkKWMenu *menu = vtkKWMenu::SafeDownCast (caller );
     vtkKWLoadSaveDialog *filebrowse = vtkKWLoadSaveDialog::SafeDownCast(caller);
+    vtkKWScale *scale = vtkKWScale::SafeDownCast(caller);
 
     vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication() );
         
@@ -393,6 +397,27 @@ void vtkSlicerApplicationGUI::ProcessGUIEvents ( vtkObject *caller,
                     //this->ModulesMenuButton->SetValue ( "Modules" );
                 }
         }
+
+    if ( scale == this->SliceFadeScale && event == vtkKWScale::ScaleValueStartChangingEvent )
+      {
+      if (this->GetMRMLScene()) 
+        {
+        this->GetMRMLScene()->SaveStateForUndo();
+        }
+      }
+    if ( scale == this->SliceFadeScale && event == vtkKWScale::ScaleValueChangingEvent )
+      {
+
+      int i, nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
+      vtkMRMLSliceCompositeNode *cnode;
+      for (i = 0; i < nnodes; i++)
+        {
+        cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
+                this->MRMLScene->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
+        cnode->SetOpacity( scale->GetValue() );
+        }
+      }
+
 }
 
 
@@ -452,8 +477,17 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
 
             // TODO: Hook up undo, redo, set home
             //i = this->MainSlicerWin->GetFileMenu()->AddCommand (  );
-            this->GetMainSlicerWin()->GetFileMenu()->AddCommand ("Load Scene", NULL, NULL);
-            this->GetMainSlicerWin()->GetFileMenu()->AddCommand ("Save Scene", NULL, NULL);
+            this->GetMainSlicerWin()->GetFileMenu()->InsertCommand (
+                this->GetMainSlicerWin()->GetFileMenuInsertPosition(),
+                "Load Scene...", NULL, NULL);
+            this->GetMainSlicerWin()->GetFileMenu()->InsertCommand (
+                this->GetMainSlicerWin()->GetFileMenuInsertPosition(),
+                "Save Scene", NULL, NULL);
+            this->GetMainSlicerWin()->GetFileMenu()->InsertCommand (
+                this->GetMainSlicerWin()->GetFileMenuInsertPosition(),
+                "Save Scene As...", NULL, NULL);
+            this->GetMainSlicerWin()->GetFileMenu()->InsertSeparator (
+                this->GetMainSlicerWin()->GetFileMenuInsertPosition());
 
             i = this->MainSlicerWin->GetEditMenu()->AddCommand ("Set Home", NULL, NULL);
             this->MainSlicerWin->GetEditMenu()->SetItemAccelerator ( i, "Ctrl+H");
