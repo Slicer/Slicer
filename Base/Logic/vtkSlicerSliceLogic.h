@@ -41,6 +41,8 @@
 
 #include "vtkImageBlend.h"
 
+class vtkImageData;
+
 class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLogic : public vtkSlicerLogic 
 {
   public:
@@ -113,6 +115,7 @@ protected:
   vtkSlicerSliceLayerLogic *ForegroundLayer;
   double ForegroundOpacity;
   vtkImageBlend *Blend;
+
 };
 
 #endif
