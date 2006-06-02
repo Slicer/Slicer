@@ -464,6 +464,7 @@ if { ![file exists $::VTK_TEST_FILE] } {
             -DX11_Xext_LIB:FILEPATH=/usr/X11R6/lib64/libXext.a \
             -DCMAKE_MODULE_LINKER_FLAGS:STRING=-L/usr/X11R6/lib64 \
             -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON \
+            -DVTK_DEBUG_LEAKS:BOOL=ON \
             -DVTK_USE_64BIT_IDS:BOOL=ON \
             ../VTK
     } else {
