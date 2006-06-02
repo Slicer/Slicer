@@ -99,6 +99,8 @@ void vtkSlicerNodeSelectorWidget::SetMRMLScene( vtkMRMLScene *MRMLScene)
     this->MRMLScene->Register(this);
     this->MRMLScene->AddObserver( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
     }
+
+  this->UpdateMenu();
 }
 
 //----------------------------------------------------------------------------
