@@ -38,7 +38,7 @@ static void MRMLCallback(vtkObject *__mrmlscene, unsigned long eid, void *__clie
 
   if (inMRMLCallback)
     {
-    cout << "*********MRMLCallback called recursively?" << endl;
+    vtkErrorWithObjectMacro (__mrmlscene, << "*********MRMLCallback called recursively?" << endl);
     return;
     }
   inMRMLCallback = 1;
