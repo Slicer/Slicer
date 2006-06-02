@@ -96,7 +96,7 @@ void vtkSlicerSliceLayerLogic::SetVolumeNode(vtkMRMLVolumeNode *volumeNode)
       }
     else
       {
-      this->SetMRML( vtkObjectPointer( &this->VolumeNode ), NULL );
+      this->SetMRML( vtkObjectPointer( &this->VolumeDisplayNode ), NULL );
       }
 
   // Update the reslice transform to move this image into XY
