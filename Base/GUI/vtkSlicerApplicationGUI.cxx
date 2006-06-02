@@ -954,7 +954,7 @@ void vtkSlicerApplicationGUI::BuildToolBar()
         this->OneUpSliceViewIconButton->SetParent ( vtb->GetFrame ( ) );
         this->OneUpSliceViewIconButton->Create ( );
         this->OneUpSliceViewIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetOneUpSliceViewIcon ( ) );
-        this->OneUpSliceViewIconButton->SetBalloonHelpString ( "Display the 3D viewer without any slice windows" );
+        this->OneUpSliceViewIconButton->SetBalloonHelpString ( "Display one slice window with no 3D viewer" );
         vtb->AddWidget (this->OneUpSliceViewIconButton );
         // 4 equal windows icon
         this->FourUpViewIconButton->SetParent ( vtb->GetFrame ( ) );
