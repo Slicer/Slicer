@@ -17,7 +17,6 @@
 
 #include "vtkSlicerSliceLogic.h"
 
-
 vtkCxxRevisionMacro(vtkSlicerSliceLogic, "$Revision: 1.9.12.1 $");
 vtkStandardNewMacro(vtkSlicerSliceLogic);
 
