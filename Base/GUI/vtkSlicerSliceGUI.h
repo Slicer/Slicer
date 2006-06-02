@@ -50,7 +50,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceGUI : public vtkSlicerComponentGU
     void SetMRMLNode ( vtkMRMLSliceNode *node )
         { this->SetMRML ( vtkObjectPointer( &this->SliceNode), node ); }
     void SetAndObserveMRMLNode ( vtkMRMLSliceNode *node )
-        { this->SetMRML ( vtkObjectPointer( &this->SliceNode), node ); }
+        { this->SetAndObserveMRML ( vtkObjectPointer( &this->SliceNode), node ); }
 
     void SetModuleLogic ( vtkSlicerSliceLogic *logic )
         { 
