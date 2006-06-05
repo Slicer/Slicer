@@ -219,7 +219,12 @@ startElement(void *userData, const char *name, const char **)
     arg->m_CxxType = "std::vector<double>";
     arg->m_StringToType = "atof";
     }
-  else if (strcmp(name, "filename") == 0)
+  else if (strcmp(name, "file") == 0)
+    {
+    arg = new CommandLineArg;
+    arg->m_CxxType = "std::string";
+    }
+  else if (strcmp(name, "directory") == 0)
     {
     arg = new CommandLineArg;
     arg->m_CxxType = "std::string";
@@ -263,7 +268,12 @@ endElement(void *userData, const char *name)
     ps->m_AllArgs.push_back(*arg);
     ps->m_Current = 0;
     }
-  else if (strcmp(name, "filename") == 0)
+  else if (strcmp(name, "file") == 0)
+    {
+    ps->m_AllArgs.push_back(*arg);
+    ps->m_Current = 0;
+    }
+  else if (strcmp(name, "directory") == 0)
     {
     ps->m_AllArgs.push_back(*arg);
     ps->m_Current = 0;
