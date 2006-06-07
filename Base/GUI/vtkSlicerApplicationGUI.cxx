@@ -398,6 +398,9 @@ void vtkSlicerApplicationGUI::ProcessGUIEvents ( vtkObject *caller,
                 }
         }
 
+    // Process the Fade scale
+    // -- set save state when manipulation starts
+    // -- adjust the Opacity of every composite node on every event
     if ( scale == this->SliceFadeScale && event == vtkKWScale::ScaleValueStartChangingEvent )
       {
       if (this->GetMRMLScene()) 
@@ -407,7 +410,6 @@ void vtkSlicerApplicationGUI::ProcessGUIEvents ( vtkObject *caller,
       }
     if ( scale == this->SliceFadeScale && event == vtkKWScale::ScaleValueChangingEvent )
       {
-
       int i, nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
       vtkMRMLSliceCompositeNode *cnode;
       for (i = 0; i < nnodes; i++)

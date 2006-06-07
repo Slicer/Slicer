@@ -209,7 +209,6 @@ void vtkSlicerSliceLogic::UpdatePipeline()
       }
 
     // Foreground
-    // TODO: get Opacity from Composite Node
     id = this->SliceCompositeNode->GetForegroundVolumeID();
     vtkMRMLScalarVolumeNode *fgnode = NULL;
     if (id)
@@ -231,6 +230,7 @@ void vtkSlicerSliceLogic::UpdatePipeline()
     if ( this->ForegroundLayer )
       {
       this->Blend->AddInput( this->ForegroundLayer->GetImageData() );
+      this->Blend->SetOpacity( 1, this->SliceCompositeNode->GetOpacity() );
       }
 
     this->Modified();
