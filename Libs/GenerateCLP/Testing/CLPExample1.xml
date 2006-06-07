@@ -84,27 +84,27 @@
   <parameters>
     <label>IO</label>
     <description>Input/output parameters</description>
-    <filename>
+    <file>
       <name>FixedImage</name>
       <label>Fixed Image</label>
       <channel>input</channel>
       <index>0</index>
       <description>Fixed image to register to</description>
-    </filename>
-    <filename>
+    </file>
+    <file>
       <name>MovingImage</name>
       <label>Moving Image</label>
       <channel>input</channel>
       <index>1</index>
       <description>Moving image</description>
-    </filename>
-    <filename>
+    </file>
+    <file>
       <name>OutputImage</name>
       <label>Output Volume</label>
       <channel>output</channel>
       <index>2</index>
       <description>Resampled Moving Image</description>
-    </filename>
+    </file>
   </parameters>
 
 </executable>
