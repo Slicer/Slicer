@@ -265,6 +265,8 @@ void vtkSlicerApplicationGUI::AddGUIObservers ( )
 
     this->SliceFadeScale->AddObserver ( vtkKWScale::ScaleValueStartChangingEvent, (vtkCommand *)this->GUICallbackCommand );
     this->SliceFadeScale->AddObserver ( vtkKWScale::ScaleValueChangingEvent, (vtkCommand *)this->GUICallbackCommand );
+
+    this->ToggleFgBgButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 }
 
 
@@ -398,25 +400,35 @@ void vtkSlicerApplicationGUI::ProcessGUIEvents ( vtkObject *caller,
                 }
         }
 
-    // Process the Fade scale
+    // Process the Fade scale and button
     // -- set save state when manipulation starts
+    // -- toggle the value if needed
     // -- adjust the Opacity of every composite node on every event
-    if ( scale == this->SliceFadeScale && event == vtkKWScale::ScaleValueStartChangingEvent )
+    if ( scale == this->SliceFadeScale && event == vtkKWScale::ScaleValueStartChangingEvent ||
+         pushb == this->ToggleFgBgButton && event == vtkKWPushButton::InvokedEvent )
       {
       if (this->GetMRMLScene()) 
         {
         this->GetMRMLScene()->SaveStateForUndo();
         }
       }
-    if ( scale == this->SliceFadeScale && event == vtkKWScale::ScaleValueChangingEvent )
+
+    if ( scale == this->SliceFadeScale && event == vtkKWScale::ScaleValueChangingEvent ||
+         pushb == this->ToggleFgBgButton && event == vtkKWPushButton::InvokedEvent )
       {
+
+      if ( pushb == this->ToggleFgBgButton && event == vtkKWPushButton::InvokedEvent ) 
+        {
+        this->SliceFadeScale->SetValue( 1.0 - this->SliceFadeScale->GetValue() );
+        }
+
       int i, nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
       vtkMRMLSliceCompositeNode *cnode;
       for (i = 0; i < nnodes; i++)
         {
         cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
                 this->MRMLScene->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
-        cnode->SetOpacity( scale->GetValue() );
+        cnode->SetOpacity( this->SliceFadeScale->GetValue() );
         }
       }
 
