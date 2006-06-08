@@ -96,6 +96,7 @@ int Slicer3_main(int argc, char *argv[])
     vtkSlicerApplicationGUI *appGUI = vtkSlicerApplicationGUI::New ( );
     appGUI->SetApplication ( slicerApp );
     appGUI->SetAndObserveApplicationLogic ( appLogic );
+    appGUI->SetAndObserveMRMLScene ( scene );
 
 
     // ------------------------------
