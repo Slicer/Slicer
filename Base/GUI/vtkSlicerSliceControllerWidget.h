@@ -5,7 +5,7 @@
 #include "vtkKWCompositeWidget.h"
 #include "vtkKWScaleWithEntry.h"
 #include "vtkKWEntryWithLabel.h"
-#include "vtkKWMenuButtonWithLabel.h"
+#include "vtkKWMenuButtonWithSpinButtonsWithLabel.h"
 
 #include "vtkSlicerWidget.h"
 #include "vtkSlicerNodeSelectorWidget.h"
@@ -24,7 +24,7 @@ public:
   // Description:
   // Get/Set the Widgets in this composite widget.
   vtkGetObjectMacro ( OffsetScale, vtkKWScaleWithEntry );
-  vtkGetObjectMacro ( OrientationMenu, vtkKWMenuButtonWithLabel );
+  vtkGetObjectMacro ( OrientationMenu, vtkKWMenuButtonWithSpinButtonsWithLabel );
   vtkGetObjectMacro ( ForegroundSelector, vtkSlicerNodeSelectorWidget );
   vtkGetObjectMacro ( BackgroundSelector, vtkSlicerNodeSelectorWidget );
   vtkGetObjectMacro ( LabelSelector, vtkSlicerNodeSelectorWidget );
@@ -72,7 +72,7 @@ protected:
   // Slice controller subwidgets
   //
   vtkKWScaleWithEntry *OffsetScale;
-  vtkKWMenuButtonWithLabel *OrientationMenu;
+  vtkKWMenuButtonWithSpinButtonsWithLabel *OrientationMenu;
   vtkSlicerNodeSelectorWidget *ForegroundSelector;
   vtkSlicerNodeSelectorWidget *BackgroundSelector;
   vtkSlicerNodeSelectorWidget *LabelSelector;

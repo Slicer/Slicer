@@ -92,13 +92,13 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     //
     // Orientation  (TODO: make this into a vtkSlicerOrientationWidget)
     //
-    this->OrientationMenu = vtkKWMenuButtonWithLabel::New ();
+    this->OrientationMenu = vtkKWMenuButtonWithSpinButtonsWithLabel::New ();
     this->OrientationMenu->SetParent ( this );
     this->OrientationMenu->SetLabelWidth(3);
     this->OrientationMenu->Create ( );
     this->OrientationMenu->SetLabelText ( "Or: ");
-    this->OrientationMenu->GetWidget()->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand);
-    vtkKWMenuButton *mb = this->OrientationMenu->GetWidget();
+    this->OrientationMenu->GetWidget()->GetWidget()->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand);
+    vtkKWMenuButton *mb = this->OrientationMenu->GetWidget()->GetWidget();
     mb->SetWidth ( 8 );
     mb->GetMenu()->AddRadioButton ( "Axial" );
     mb->GetMenu()->AddRadioButton ( "Sagittal" );
@@ -199,9 +199,9 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
     modified = 1;
     }
 
-  if ( vtkKWMenu::SafeDownCast(caller) == this->OrientationMenu->GetWidget()->GetMenu() )
+  if ( vtkKWMenu::SafeDownCast(caller) == this->OrientationMenu->GetWidget()->GetWidget()->GetMenu() )
     {
-    vtkKWMenuButton *mb = this->OrientationMenu->GetWidget();
+    vtkKWMenuButton *mb = this->OrientationMenu->GetWidget()->GetWidget();
     if ( !strcmp (mb->GetValue(), "Axial") )   
       {
       this->SliceNode->SetOrientationToAxial();
@@ -253,7 +253,7 @@ void vtkSlicerSliceControllerWidget::ProcessMRMLEvents ( vtkObject *caller, unsi
   // 
   // Update the menu to match the node
   //
-  vtkKWMenuButton *mb = this->OrientationMenu->GetWidget();
+  vtkKWMenuButton *mb = this->OrientationMenu->GetWidget()->GetWidget();
   mb->SetValue( this->SliceNode->GetOrientationString() );
 
   //

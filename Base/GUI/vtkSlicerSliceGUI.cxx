@@ -22,6 +22,7 @@
 #include "vtkKWRenderWidget.h"
 #include "vtkKWMenu.h"
 #include "vtkKWMenuButton.h"
+#include "vtkKWMenuButtonWithLabel.h"
 
 
 //---------------------------------------------------------------------------
@@ -109,7 +110,7 @@ void vtkSlicerSliceGUI::ProcessGUIEvents ( vtkObject *caller,
 
     vtkKWScaleWithEntry *s = vtkKWScaleWithEntry::SafeDownCast(caller);
     vtkKWEntryWithLabel *e = vtkKWEntryWithLabel::SafeDownCast(caller);
-    vtkKWMenuButtonWithLabel *o = vtkKWMenuButtonWithLabel::SafeDownCast (caller );
+    vtkKWMenuButtonWithSpinButtonsWithLabel *o = vtkKWMenuButtonWithSpinButtonsWithLabel::SafeDownCast (caller );
 
     vtkMRMLScene *mrml = this->GetApplicationLogic()->GetMRMLScene();
     vtkSlicerSliceControllerWidget *c = this->GetSliceController( );
@@ -142,7 +143,7 @@ void vtkSlicerSliceGUI::ProcessGUIEvents ( vtkObject *caller,
             // SET UNDO STATE
             //UNDO-ABLE APPLY
             // TO DO: set the RASToSlice matrix from the menu value
-            c->GetOrientationMenu()->GetWidget()->GetValue ( );
+            c->GetOrientationMenu()->GetWidget()->GetWidget()->GetValue ( );
         }
     }
 }
