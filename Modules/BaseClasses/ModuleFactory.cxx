@@ -1,9 +1,9 @@
 #include "ModuleFactory.h"
 #include "CommandLineModuleDescription.h"
 
-#include "vtksys/Directory.hxx"
-#include "vtksys/SystemTools.hxx"
-#include "vtksys/Process.h"
+#include "itksys/Directory.hxx"
+#include "itksys/SystemTools.hxx"
+#include "itksys/Process.h"
 
 #include "vtk_expat.h"
 
@@ -32,17 +32,17 @@ ModuleFactory
   // path and respond to a command line argument "--xml"
   //
   // should pull the directory or path from some KWWidget resource
-  vtksys::Directory directory;
+  itksys::Directory directory;
   directory.Load("c:/projects/Slicer3-net2003/Plugins");
 
   for ( unsigned int ii=0; ii < directory.GetNumberOfFiles(); ++ii)
     {
     const char *filename = directory.GetFile(ii);
     // skip any directories
-    if (!vtksys::SystemTools::FileIsDirectory(filename))
+    if (!itksys::SystemTools::FileIsDirectory(filename))
       {
       char *command[3];
-      vtksysProcess *process = vtksysProcess_New();
+      itksysProcess *process = itksysProcess_New();
 
       // fullcommand name and the argument to probe the executable
       std::string commandName = std::string(directory.GetPath())
@@ -55,14 +55,14 @@ ModuleFactory
       command[2] = 0;
 
       // setup the command
-      vtksysProcess_SetCommand(process, command);
-      vtksysProcess_SetOption(process,
-                              vtksysProcess_Option_Detach, 0);
-      vtksysProcess_SetOption(process,
-                              vtksysProcess_Option_HideWindow, 1);
+      itksysProcess_SetCommand(process, command);
+      itksysProcess_SetOption(process,
+                              itksysProcess_Option_Detach, 0);
+      itksysProcess_SetOption(process,
+                              itksysProcess_Option_HideWindow, 1);
 
       // execute the command
-      vtksysProcess_Execute(process);
+      itksysProcess_Execute(process);
 
       // Wait for the command to finish
       char *tbuffer;
@@ -70,32 +70,32 @@ ModuleFactory
       int pipe;
       std::string stdoutbuffer;
       std::string stderrbuffer;
-      while ((pipe = vtksysProcess_WaitForData(process ,&tbuffer,
+      while ((pipe = itksysProcess_WaitForData(process ,&tbuffer,
                                                &length, 0)) != 0)
         {
         if (length != 0 && tbuffer != 0)
           {
-          if (pipe == vtksysProcess_Pipe_STDOUT)
+          if (pipe == itksysProcess_Pipe_STDOUT)
             {
             stdoutbuffer = stdoutbuffer.append(tbuffer, length);
             }
-          else if (pipe == vtksysProcess_Pipe_STDERR)
+          else if (pipe == itksysProcess_Pipe_STDERR)
             {
             stderrbuffer = stderrbuffer.append(tbuffer, length);
             }
           }
         }
-      vtksysProcess_WaitForExit(process, 0);
+      itksysProcess_WaitForExit(process, 0);
 
       // check the exit state / error state of the process
-      int result = vtksysProcess_GetState(process);
-      if (result == vtksysProcess_State_Exited)
+      int result = itksysProcess_GetState(process);
+      if (result == itksysProcess_State_Exited)
         {
         // executable exited cleanly and must of done
         // "something" when presented with a "--xml" argument
         // (note that it may have just printed out that it did
         // not understand --xml)
-        if (vtksysProcess_GetExitValue(process) == 0)
+        if (itksysProcess_GetExitValue(process) == 0)
           {
           // executable exited without errors, check if it
           // generated a valid xml description
@@ -116,7 +116,7 @@ ModuleFactory
             // module, later we'll use the name of the module
             // specified in the xml description
             std::string moduleName
-              = vtksys::SystemTools::GetFilenameWithoutExtension(std::string(filename));
+              = itksys::SystemTools::GetFilenameWithoutExtension(std::string(filename));
 
             // Store the module in the list
             this->Modules[moduleName] =  module ;
