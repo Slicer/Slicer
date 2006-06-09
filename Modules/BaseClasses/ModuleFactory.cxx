@@ -1,11 +1,11 @@
 #include "ModuleFactory.h"
+
+#include "ModuleDescriptionParser.h"
 #include "CommandLineModuleDescription.h"
 
 #include "itksys/Directory.hxx"
 #include "itksys/SystemTools.hxx"
 #include "itksys/Process.h"
-
-#include "vtk_expat.h"
 
 void
 ModuleFactory
@@ -107,7 +107,8 @@ ModuleFactory
 
             // Parse the xml to build the description of the module
             // and the parameters
-
+            ModuleDescriptionParser parser;
+            parser.Parse(stdoutbuffer, module);
             
             // Fill in rest of module with results of XML parsing
 
