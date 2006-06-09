@@ -71,28 +71,24 @@ class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLNode
 
   // Description:
   // The order of slices in the volume. One of: LR (left-to-right), 
-  // RL, AP, PA, IS, SI. This information is encoded in the rasToIjkMatrix.
+  // RL, AP, PA, IS, SI. This information is encoded in the rasToIJKMatrix.
   // This matrix can be computed either from corner points, or just he
   // scanOrder.
-  static void ComputeIjkToRasFromScanOrder(char *order, vtkMatrix4x4 *IjkToRas);
-  static const char* ComputeScanOrderFromIjkToRas(vtkMatrix4x4 *IjkToRas);
+  static void ComputeIJKToRASFromScanOrder(char *order, vtkMatrix4x4 *IJKToRAS);
+  static const char* ComputeScanOrderFromIJKToRAS(vtkMatrix4x4 *IJKToRAS);
 
-  void SetIjkToRasDirections(double dirs[9]);
-  void SetIjkToRasDirections(double ir, double ia, double is,
+  void SetIJKToRASDirections(double dirs[3][3]);
+  void SetIJKToRASDirections(double ir, double ia, double is,
                              double jr, double ja, double js,
                              double kr, double ka, double ks);
-  void SetIToRasDirection(double ir, double ia, double is);
-  void SetJToRasDirection(double jr, double ja, double ijs);
-  void SetKToRasDirection(double kr, double ka, double ks);
+  void SetIToRASDirection(double ir, double ia, double is);
+  void SetJToRASDirection(double jr, double ja, double js);
+  void SetKToRASDirection(double kr, double ka, double ks);
 
-  void GetIjkToRasDirections(double dirs[9]);
-  void GetIToRasDirection(double dirs[3]);
-  void GetJToRasDirection(double dirs[3]);
-  void GetKToRasDirection(double dirs[3]);
-  double* GetIjkToRasDirections();
-
-  void GetIjkToRasMatrix(vtkMatrix4x4* mat);
-  void SetIjkToRasMatrix(vtkMatrix4x4* mat);
+  void GetIJKToRASDirections(double dirs[3][3]);
+  void GetIToRASDirection(double dirs[3]);
+  void GetJToRASDirection(double dirs[3]);
+  void GetKToRASDirection(double dirs[3]);
 
   // Description:
   // Spacing and Origin, with the Directions, are the independent
@@ -108,6 +104,12 @@ class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLNode
   // RASToIJK is the inverse of this
   void GetIJKToRASMatrix(vtkMatrix4x4* mat);
   void GetRASToIJKMatrix(vtkMatrix4x4* mat);
+
+  // Description:
+  // Convenience methods to set the directions, spacing, and origin 
+  // from a matrix
+  void SetIJKToRASMatrix(vtkMatrix4x4* mat);
+  void SetRASToIJKMatrix(vtkMatrix4x4* mat);
 
   // Description:
   // String ID of the storage MRML node
@@ -148,13 +150,10 @@ protected:
   vtkMRMLVolumeNode(const vtkMRMLVolumeNode&);
   void operator=(const vtkMRMLVolumeNode&);
 
-  // TODO: this looks redundant - shouldn't there be one variable?
-  double IjkToRasDirections[9];
-  double IToRasDirections[3];
-  double JToRasDirections[3];
-  double KToRasDirections[3];
-  vtkMatrix4x4 *IJKToRAS;
+  // these are unit length direction cosines
+  double IJKToRASDirections[3][3];
 
+  // these are mappings to mm space
   double Spacing[3];
   double Origin[3];
 
