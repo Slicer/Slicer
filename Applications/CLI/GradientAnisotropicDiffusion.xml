@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>filtering</category>
+  <title>Anisotropic Diffusion</title>
+  <description>Runs anisotropic diffusion on a volume</description>
+  <version>1.0</version>
+  <documentationurl></documentationurl>
+  <license></license>
+  <contributor>Bill Lorensen</contributor>
+
+  <parameters>
+    <label>Anisotropic Diffusion Parameters</label>
+    <description>Parameters for the anisotripic diffusion algorithm</description>
+
+    <double>
+      <name>conductance</name>
+      <longflag>--conductance</longflag>
+      <description>Conductance</description>
+      <label>Conductance</label>
+      <default>1</default>
+      <constraints>
+        <minimum>.1</minimum>
+        <maximum>1</maximum>
+        <step>.01</step>
+      </constraints>
+    </double>
+
+    <double>
+      <name>timeStep</name>
+      <longflag>--timeStep</longflag>
+      <description>Time Step</description>
+      <label>Time Step</label>
+      <default>0.1</default>
+      <constraints>
+        <minimum>.1</minimum>
+        <maximum>1</maximum>
+        <step>.01</step>
+      </constraints>
+    </double>
+
+    <integer>
+      <name>numberOfIterations</name>
+      <longflag>--iterations</longflag>
+      <description>Number of iterations</description>
+      <label>Iterations</label>
+      <default>1</default>
+      <constraints>
+        <minimum>1</minimum>
+        <maximum>30</maximum>
+        <step>1</step>
+      </constraints>
+    </integer>
+
+  </parameters>
+
+  <parameters>
+    <label>IO</label>
+    <description>Input/output parameters</description>
+    <image>
+      <name>inputVolume</name>
+      <label>Input Volume</label>
+      <channel>input</channel>
+      <index>0</index>
+      <description>Input volume to be filtered</description>
+    </image>
+    <image>
+      <name>outputVolume</name>
+      <label>Output Volume</label>
+      <channel>output</channel>
+      <index>1</index>
+      <description>Output filtered</description>
+    </image>
+  </parameters>
+
+</executable>

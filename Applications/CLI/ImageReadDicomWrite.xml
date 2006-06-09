@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>filtering</category>
+  <title>Create a DICOM Series</title>
+  <description>Create a DICOM Series</description>
+  <version>1.0</version>
+  <documentationurl></documentationurl>
+  <license></license>
+  <contributor>Bill Lorensen</contributor>
+
+  <parameters>
+    <label>Patient Parameters</label>
+    <description>Parameters that apply to a patient</description>
+
+    <string>
+      <name>patientName</name>
+      <longflag>--patientName</longflag>
+      <description>The name of the patient [0010-0010]</description>
+      <label>Patient Name</label>
+      <default>Anonymous</default>
+    </string>
+
+    <string>
+      <name>patientID</name>
+      <longflag>--patientID</longflag>
+      <description>The patient ID [0010-0020]</description>
+      <label>Patient ID</label>
+      <default>123456</default>
+    </string>
+
+    <string>
+      <name>patientComments</name>
+      <longflag>--patientComments</longflag>
+      <description>Patient comments [0010-4000]</description>
+      <label>Patient Comments</label>
+      <default></default>
+    </string>
+
+ </parameters>
+
+  <parameters>
+    <label>Study Parameters</label>
+    <description>Parameters that apply to a study</description>
+
+    <string>
+      <name>studyID</name>
+      <longflag>--studyID</longflag>
+      <description>The study ID [0020-0010]</description>
+      <label>Study ID</label>
+      <default>123456</default>
+    </string>
+
+    <string>
+      <name>studyDate</name>
+      <longflag>--studyDate</longflag>
+      <description>The date of the study [0008-0020]</description>
+      <label>Study Date</label>
+      <default>20060101</default>
+    </string>
+
+    <string>
+      <name>studyComments</name>
+      <longflag>--studyComments</longflag>
+      <description>Study comments[0032-4000]</description>
+      <label>Study Comments</label>
+      <default></default>
+    </string>
+
+    <string>
+      <name>studyDescription</name>
+      <longflag>--studyDescription</longflag>
+      <description>Study description[0008-1030]</description>
+      <label>Study Comments</label>
+      <default></default>
+    </string>
+
+    <string>
+      <name>modality</name>
+      <longflag>--modality</longflag>
+      <description>Modality [0008-0060]</description>
+      <label>Modality</label>
+      <default>CT</default>
+    </string>
+
+    <string>
+      <name>manufacturer</name>
+      <longflag>--manufacturer</longflag>
+      <description>Manufacturer [0008-0070]</description>
+      <label>Manufacturere</label>
+      <default>GE Medical Systems</default>
+    </string>
+
+    <string>
+      <name>model</name>
+      <longflag>--model</longflag>
+      <description>model [0008-1090]</description>
+      <label>Model</label>
+      <default></default>
+    </string>
+
+ </parameters>
+
+  <parameters>
+    <label>Series Parameters</label>
+    <description>Parameters that apply to a series</description>
+
+    <string>
+      <name>seriesNumber</name>
+      <longflag>--seriesNumber</longflag>
+      <description>The series number [0020-0011]</description>
+      <label>Series Number</label>
+      <default>123456</default>
+    </string>
+
+    <string>
+      <name>seriesDescription</name>
+      <longflag>--seriesDescription</longflag>
+      <description>Series description[0008-103E]</description>
+      <label>Series Description</label>
+      <default></default>
+    </string>
+
+ </parameters>
+
+
+  <parameters>
+    <label>Input</label>
+    <description>Input parameters</description>
+    <image>
+      <name>inputVolume</name>
+      <label>Input Volume</label>
+      <channel>input</channel>
+      <index>0</index>
+      <description>Input volume to be resampled</description>
+    </image>
+  </parameters>
+
+  <parameters>
+    <label>Output</label>
+    <description>Output parameters</description>
+    <directory>
+      <name>dicomDirectory</name>
+      <longflag>--dicomDirectory</longflag>
+      <description>The directory to contain the DICOM series.</description>
+      <label>DICOM Directory</label>
+      <default>./</default>
+    </directory>
+    <string>
+      <name>dicomPrefix</name>
+      <longflag>--dicomPrefix</longflag>
+      <description>The prefix of the DICOM filename.</description>
+      <label>DICOM filename prefix</label>
+      <default>IMG</default>
+    </string>
+    <boolean>
+      <name>reverseImages</name>
+      <longflag>--reverseImages</longflag>
+      <description>Reverse the slices.</description>
+      <label>Reverse Slices</label>
+      <default>false</default>
+    </boolean>
+  </parameters>
+
+</executable>

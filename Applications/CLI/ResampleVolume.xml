@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>filtering</category>
+  <title>Resample Volume</title>
+  <description>Resamples a volume</description>
+  <version>1.0</version>
+  <documentationurl></documentationurl>
+  <license></license>
+  <contributor>Bill Lorensen</contributor>
+
+  <parameters>
+    <label>Resampling Parameters</label>
+    <description>Parameters used for resampling</description>
+
+    <float-vector>
+      <name>outputPixelSpacing</name>
+      <flag>-s</flag>
+      <longflag>--spacing</longflag>
+      <description>Spacing along each dimension (0 means use input spacing)</description>
+      <label>Spacing</label>
+      <default>0,0,0</default>
+    </float-vector>
+
+  </parameters>
+
+  <parameters>
+    <label>IO</label>
+    <description>Input/output parameters</description>
+    <image>
+      <name>InputVolume</name>
+      <label>input Volume</label>
+      <channel>input</channel>
+      <index>0</index>
+      <description>Input volume to be resampled</description>
+    </image>
+    <image>
+      <name>OutputVolume</name>
+      <label>Output Volume</label>
+      <channel>output</channel>
+      <index>1</index>
+      <description>Resampled Volume</description>
+    </image>
+  </parameters>
+
+</executable>
