@@ -5,6 +5,7 @@ PROJECT(ModulesBaseClasses)
 
 SET(ModulesBaseClasses_SRCS
   vtkModule.cxx 
+  ModuleFactory.cxx
 )
 
 # Abstract/pure virtual classes

@@ -28,6 +28,7 @@
 
 #include "vtkModulesBaseClasses.h"
 
+#include "ModuleDescription.h"
 
 class VTK_MODULES_BASE_CLASSES_EXPORT vtkModule : public vtkObject
 {
