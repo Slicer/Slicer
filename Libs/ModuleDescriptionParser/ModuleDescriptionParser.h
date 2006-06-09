@@ -21,7 +21,7 @@ public:
   ModuleDescriptionParser() {};
   ~ModuleDescriptionParser() {};
 
-  void Parse( const std::string& xml, ModuleDescription& description);
+  int Parse( const std::string& xml, ModuleDescription& description);
 };
 
 #endif
