@@ -32,6 +32,7 @@ INCLUDE_DIRECTORIES(
   ${ModulesBaseClasses_BINARY_DIR}
   ${MRML_SOURCE_DIR}
   ${MRML_BINARY_DIR}
+  ${ModuleDescriptionParser_SOURCE_DIR}
   ${VTK_INCLUDE_DIR}
   )
 
@@ -52,6 +53,7 @@ ENDIF(BUILD_SHARED_LIBS)
 TARGET_LINK_LIBRARIES(ModulesBaseClasses 
   MRML
   vtkCommonTCL
+  ModuleDescriptionParser
   )
 
 
