@@ -1,0 +1,3 @@
+Project(ModuleDescriptionParser)
+
+ADD_LIBRARY(ModuleDescriptionParser ModuleDescriptionParser.cxx)
