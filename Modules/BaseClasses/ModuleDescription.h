@@ -28,7 +28,7 @@ public:
     this->Category = cat;
   }
 
-  const std::string&  GetCatagory() const {
+  const std::string&  GetCategory() const {
     return this->Category;
   }
   
