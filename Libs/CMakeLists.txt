@@ -4,5 +4,6 @@ SUBDIRS(
     vtkITK
     MRML
     GenerateCLP
+    ModuleDescriptionParser
 )
 
