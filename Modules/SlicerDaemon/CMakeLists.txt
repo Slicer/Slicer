@@ -84,7 +84,25 @@ IF(BUILD_TESTING)
   SUBDIRS(Testing)
 ENDIF(BUILD_TESTING)
 
+#
+# configure files to drop in the build directory
+#
 CONFIGURE_FILE(
   ${SlicerDaemon_SOURCE_DIR}/vtkSlicerDaemonConfigure.h.in 
   ${SlicerDaemon_BINARY_DIR}/vtkSlicerDaemonConfigure.h
+)
+
+CONFIGURE_FILE(
+  ${SlicerDaemon_SOURCE_DIR}/Tcl/slicerd.tcl
+  ${Slicer3_BINARY_DIR}/slicerd.tcl
+)
+
+CONFIGURE_FILE(
+  ${SlicerDaemon_SOURCE_DIR}/Tcl/slicerget.tcl
+  ${Slicer3_BINARY_DIR}/slicerget.tcl
+)
+
+CONFIGURE_FILE(
+  ${SlicerDaemon_SOURCE_DIR}/Tcl/slicerput.tcl
+  ${Slicer3_BINARY_DIR}/slicerput.tcl
 )

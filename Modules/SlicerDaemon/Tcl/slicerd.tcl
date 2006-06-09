@@ -14,18 +14,9 @@
 # PROCEDURES:  
 #==========================================================================auto=
 
-#=auto==========================================================================
-# Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
-# 
-#  See Doc/copyright/copyright.txt
-#  or http://www.slicer.org/copyright/copyright.txt for details.
-# 
-#  Program:   3D Slicer
-#  Module:    $RCSfile: slicerd.tcl,v $
-#  Date:      $Date: 2006/01/30 20:47:46 $
-#  Version:   $Revision: 1.10 $
-#===============================================================================
-
+#
+# experimental slicer daemon - sp 2006-06-09
+# - ported to slicer3
 #
 # experimental slicer daemon - sp 2005-09-23 
 # - meant to be as simple as possible
@@ -50,15 +41,13 @@ set __comment {
 
 }
 
-# this package contains the vtkTclHelper
-package require vtkQueryAtlas
-
 #
 # returns a listening socket on given port or uses default
 # - local only for security, use ssh tunnels for remote access
 #
 proc slicerd_start { {port 18943} } {
 
+    set ::SLICERD(port) $port
     set ret [ catch {set ::SLICERD(serversock) [socket -server slicerd_sock_cb $port]} res]
 
     if { $ret } {
@@ -131,8 +120,10 @@ proc slicerd_sock_fileevent {sock} {
     switch -glob $line {
         "ls*" {
             puts "listing of scene"
-            foreach volid $::Volume(idList) {
-                puts -nonewline $sock "$volid \"[Volume($volid,node) GetName]\" "
+            set n [$::slicer3::MRMLScene GetNumberOfNodesByClass vtkMRMLVolumeNode]
+            for {set i 0} {$i < $n} {incr i} {
+                set node [$::slicer3::MRMLScene GetNthNodeByClass $i vtkMRMLVolumeNode]
+                puts -nonewline $sock "$i \"[$node GetID] [$node GetName]\" "
             }
             puts $sock ""
             flush $sock
@@ -143,41 +134,43 @@ proc slicerd_sock_fileevent {sock} {
                 flush $sock
                 return
             }
+
             set volid [lindex $line 1]
-            if { [info command Volume($volid,vol)] == "" } {
-                # if the id isn't a number, try looking by name as a pattern
-                set ids [MainVolumesGetVolumesByNamePattern $volid]
-                if { [llength $ids] != 1 } {
-                    puts $sock "get error: bad id"
-                    flush $sock
-                    return
-                } 
-                set volid $ids ;# there's only one and it's our target
+            if { [string is digit $volid] } {
+                set node [$::slicer3::MRMLScene GetNthNodeByClass $volid vtkMRMLVolumeNode]
+            } else {
+                set node [$::slicer3::MRMLScene GetNodeByID $volid]
             }
+            
+            if { $node == "" } {
+                puts $sock "get error: bad id"
+                flush $sock
+                return
+            } 
 
             # calculate the space directions and origin
-            catch "export_matrix Delete"
-            vtkMatrix4x4 export_matrix
-            eval export_matrix DeepCopy [Volume($volid,node) GetRasToIjkMatrix]
-            export_matrix Invert
+            catch "::slicerd::export_matrix Delete"
+            vtkMatrix4x4 ::slicerd::export_matrix
+            $node GetRASToIJKMatrix ::slicerd::export_matrix
+            ::slicerd::export_matrix Invert
             set space_origin [format "(%g, %g, %g)" \
-                [export_matrix GetElement 0 3]\
-                [export_matrix GetElement 1 3]\
-                [export_matrix GetElement 2 3] ]
+                [::slicerd::export_matrix GetElement 0 3]\
+                [::slicerd::export_matrix GetElement 1 3]\
+                [::slicerd::export_matrix GetElement 2 3] ]
             set space_directions [format "(%g, %g, %g) (%g, %g, %g) (%g, %g, %g)" \
-                [export_matrix GetElement 0 0]\
-                [export_matrix GetElement 1 0]\
-                [export_matrix GetElement 2 0]\
-                [export_matrix GetElement 0 1]\
-                [export_matrix GetElement 1 1]\
-                [export_matrix GetElement 2 1]\
-                [export_matrix GetElement 0 2]\
-                [export_matrix GetElement 1 2]\
-                [export_matrix GetElement 2 2] ]
-            export_matrix Delete
+                [::slicerd::export_matrix GetElement 0 0]\
+                [::slicerd::export_matrix GetElement 1 0]\
+                [::slicerd::export_matrix GetElement 2 0]\
+                [::slicerd::export_matrix GetElement 0 1]\
+                [::slicerd::export_matrix GetElement 1 1]\
+                [::slicerd::export_matrix GetElement 2 1]\
+                [::slicerd::export_matrix GetElement 0 2]\
+                [::slicerd::export_matrix GetElement 1 2]\
+                [::slicerd::export_matrix GetElement 2 2] ]
+            ::slicerd::export_matrix Delete
 
             # TODO: should add direction cosines and label_map status
-            set im [Volume($volid,vol) GetOutput]
+            set im [$node GetImageData]
 
             puts stderr "image $volid" 
             puts stderr "scalar_type [$im GetScalarType]" 
@@ -193,18 +186,11 @@ proc slicerd_sock_fileevent {sock} {
             puts $sock "space_directions $space_directions"
             flush $sock
 
-            catch "export_flip Delete"
-            vtkImageFlip export_flip
-            export_flip SetInput $im
-            export_flip SetFilteredAxis 1
-            [export_flip GetOutput] Update
-
-            ::tcl_$sock SetImageData [export_flip GetOutput]
+            ::tcl_$sock SetImageData $im
             fconfigure $sock -translation binary
             ::tcl_$sock SendImageDataScalars $sock
             fconfigure $sock -translation auto
             flush $sock
-            catch "export_flip Delete"
         }
         "put" {
             gets $sock line
@@ -231,12 +217,11 @@ proc slicerd_sock_fileevent {sock} {
 
 
             # add a mrml node
-            set n [MainMrmlAddNode Volume]
-            set i [$n GetID]
-            MainVolumesCreate $i
+            set node [vtkMRMLScalarVolumeNode New]
+            $::slicer3::MRMLScene AddNode $node
     
-            $n SetName $name
-            $n SetDescription "Imported via slicerd"
+            $node SetName $name
+            $node SetDescription "Imported via slicerd"
     
             set idata ::imagedata-[info cmdcount]
             vtkImageData $idata
@@ -249,28 +234,14 @@ proc slicerd_sock_fileevent {sock} {
             fconfigure $sock -translation binary -encoding binary
             ::tcl_$sock ReceiveImageDataScalars $sock
             fconfigure $sock -translation auto
-
-            ::Volume($i,node) SetNumScalars $components
-            ::Volume($i,node) SetScalarType $scalar_type
-
     
-            ::Volume($i,node) SetDimensions [lindex $dimensions 0] [lindex $dimensions 1]
-            ::Volume($i,node) SetImageRange 1 [lindex $dimensions 2]
-            catch "flip Delete"
-            vtkImageFlip flip
-            flip SetFilteredAxis 1
-            flip SetInput $idata
-            flip Update
-            Volume($i,vol) SetImageData [flip GetOutput]
-            Volume($i,vol) Update
-            slicerd_parse_space_directions $i $space_origin $space_directions
+            $node SetImageData $idata
+            slicerd_parse_space_directions $node $space_origin $space_directions
             $idata Delete
-            flip Delete
-            MainUpdateMRML
 
-            Slicer SetOffset 0 0
-            MainSlicesSetVolumeAll Back $i
-            RenderAll
+
+            $node Delete
+
         }
         "eval*" {
             puts $sock [eval $line]
@@ -287,7 +258,7 @@ proc slicerd_sock_fileevent {sock} {
 # convert nrrd-style space directions line into vtk/slicer info
 # - unfortunately, this is some nasty math to do in tcl
 #
-proc slicerd_parse_space_directions {volid space_origin space_directions} {
+proc slicerd_parse_space_directions {node space_origin space_directions} {
 
     #
     # parse the 'space directions' and 'space origin' information into
@@ -337,32 +308,32 @@ puts "space_directions $space_directions"
         lappend unit_space_directions [expr $dir / $spacek]
     }
     
-    ::Volume($volid,node) SetSpacing $spacei $spacej $spacek
-    [::Volume($volid,vol) GetOutput] SetSpacing $spacei $spacej $spacek
+    # In slicer3, all image data has 1 1 1 spacing -- only the RASToIJK matrix matters
+    # [$node GetImageData] SetSpacing $spacei $spacej $spacek
 
 
     #
     # fill the ijk to ras matrix
-    # - use it to calculate the slicer internal matrices (RasToIjk etc)
+    # - use it to calculate the slicer internal matrices (RASToIJK etc)
     #
-    catch "Ijk_matrix Delete"
-    vtkMatrix4x4 Ijk_matrix
-    Ijk_matrix Identity
+    catch "::slicerd::Ijk_matrix Delete"
+    vtkMatrix4x4 ::slicerd::Ijk_matrix
+    ::slicerd::Ijk_matrix Identity
     for {set i 0} {$i < 3} {incr i} {
         for {set j 0} {$j < 3} {incr j} {
             set val [lindex $space_directions [expr 3 * $i + $j]]
-            Ijk_matrix SetElement $j $i $val
+            ::slicerd::Ijk_matrix SetElement $j $i $val
         }
         set val [lindex $space_origin $i]
-        Ijk_matrix SetElement $i 3 $val
+        ::slicerd::Ijk_matrix SetElement $i 3 $val
     }
 
-    set dims [[::Volume($volid,vol) GetOutput] GetDimensions]
+    ::slicerd::Ijk_matrix Invert
 
-    VolumesComputeNodeMatricesFromIjkToRasMatrix2 $volid Ijk_matrix $dims
+    $node SetRASToIJKMatrix ::slicerd::Ijk_matrix
 
-puts [Ijk_matrix Print]
+puts [::slicerd::Ijk_matrix Print]
 
-    Ijk_matrix Delete
+    ::slicerd::Ijk_matrix Delete
 }
 
