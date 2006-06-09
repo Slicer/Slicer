@@ -209,7 +209,7 @@ void vtkSlicerNodeSelectorWidget::ProcessCommand()
 //----------------------------------------------------------------------------
 void vtkSlicerNodeSelectorWidget::SetSelected(vtkMRMLNode *node)
 {
-  if (node != NULL && strcmp(this->NodeClass, node->GetClassName()) == 0) 
+  if ( node != NULL && node->IsA( this->NodeClass ) ) 
     {
     this->GetWidget()->GetWidget()->SetValue(node->GetName());
     this->InvokeEvent(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, NULL);

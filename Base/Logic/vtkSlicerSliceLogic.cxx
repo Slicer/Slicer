@@ -65,6 +65,8 @@ void vtkSlicerSliceLogic::ProcessMRMLEvents()
     {
     vtkMRMLSliceCompositeNode *node = vtkMRMLSliceCompositeNode::New();
     this->MRMLScene->AddNode(node);
+    node->SetBackgroundVolumeID("None");
+    node->SetForegroundVolumeID("None");
     this->SetSliceCompositeNode (node);
     node->Delete();
     }

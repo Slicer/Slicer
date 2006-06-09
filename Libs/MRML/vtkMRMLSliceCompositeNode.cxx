@@ -53,7 +53,7 @@ vtkMRMLSliceCompositeNode::vtkMRMLSliceCompositeNode()
 {
   this->BackgroundVolumeID = NULL;
   this->ForegroundVolumeID = NULL;
-  this->Opacity = 0.5;
+  this->Opacity = 0.0; // start by showing only the background volume
 }
 
 //----------------------------------------------------------------------------
