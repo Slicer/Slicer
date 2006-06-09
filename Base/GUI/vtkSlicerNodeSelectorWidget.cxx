@@ -211,7 +211,14 @@ void vtkSlicerNodeSelectorWidget::SetSelected(vtkMRMLNode *node)
 {
   if ( node != NULL && node->IsA( this->NodeClass ) ) 
     {
-    this->GetWidget()->GetWidget()->SetValue(node->GetName());
+    vtkKWMenuButton *m = this->GetWidget()->GetWidget();
+    if ( !strcmp ( m->GetValue(), node->GetName() ) )
+      {
+      return; // no change, don't propogate events
+      }
+
+    // new value, set it and notify observers
+    m->SetValue(node->GetName());
     this->SetBalloonHelpString(node->GetName());
     this->InvokeEvent(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, NULL);
     }
