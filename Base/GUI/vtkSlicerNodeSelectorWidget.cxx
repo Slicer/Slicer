@@ -212,6 +212,7 @@ void vtkSlicerNodeSelectorWidget::SetSelected(vtkMRMLNode *node)
   if ( node != NULL && node->IsA( this->NodeClass ) ) 
     {
     this->GetWidget()->GetWidget()->SetValue(node->GetName());
+    this->SetBalloonHelpString(node->GetName());
     this->InvokeEvent(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, NULL);
     }
 }
@@ -222,6 +223,7 @@ void vtkSlicerNodeSelectorWidget::SetSelectedNew()
   if (this->NewNodeEnabled) 
     {
     this->GetWidget()->GetWidget()->SetValue("Create New");
+    this->SetBalloonHelpString("Create a new Node");
     }
 }
 //----------------------------------------------------------------------------
