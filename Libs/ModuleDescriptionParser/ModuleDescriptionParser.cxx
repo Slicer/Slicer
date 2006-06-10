@@ -27,68 +27,21 @@ trimTrailing(std::string& s, char* extraneousChars = " \t\n")
     }
 }
 
-/*
-CommandLineArg: A class to hold data parsed from the xml argument
-descriptions.
-*/
-class CommandLineArg
-{
-public:
-  std::string m_Variable;        /* The name of the C++ variable */
-  std::string m_ShortFlag;       /* The short flag for the argument */
-  std::string m_LongFlag;        /* The long flag for the arugment */
-  std::string m_Description;     /* A description for the argument */
-  std::string m_Default;         /* The defaulf for the argument */
-  std::string m_CxxType;         /* The C++ type for the argument */
-  std::string m_StringToType;    /* The function to convert the string */
-                                 /* to the C++ type. */
-  CommandLineArg()
-  {
-    std::string nodefault = "-NODEFAULT-";
-    m_Default = nodefault;
-  }
-
-  /* Comma separated arguments need a temporary variable to store the
-   * string
-   */
-  bool NeedsTemp()
-  {
-    return (m_CxxType == "std::vector<int>" ||
-            m_CxxType == "std::vector<float>" ||
-            m_CxxType == "std::vector<double>");
-  }
-  /* Some types need quotes in the initialization. */
-  bool NeedsQuotes()
-  {
-    return (m_CxxType == "std::vector<int>" ||
-            m_CxxType == "std::vector<float>" ||
-            m_CxxType == "std::vector<double>" ||
-            m_CxxType == "std::string");
-  }
-  bool HasDefault()
-  {
-    return (m_Default != "-NODEFAULT-");
-  }
-};
-
 /* ParserState: A class to keep state information for the parser. This
  * is passed to the expat code as user data.
  */
 class ParserState
 {
 public:
-  std::vector<CommandLineArg> m_AllArgs; /* A vector of command line */
-                                         /* arguments */
-  std::string m_LastTag;                 /* The last tag processed by */
-                                         /* expat */
-  std::string m_Description;             /* Global descripton */
+  std::string LastTag;                         /* The last tag processed by expat */
+  std::string Description;                     /* Global descripton */
 
-  ModuleDescription m_ModuleDescription;
-  CommandLineArg *m_Current;             /* The current command line */
-                                         /* argument */
-  bool m_Debug;                          /* Debug flag */
-  bool m_Error;                          /* Error detected */
-  ParserState():m_Debug(false),m_Error(false){};
+  ModuleDescription ModuleDescription;
+  ModuleParameterGroup *CurrentGroup;          /* The parameter group */
+  ModuleParameter *CurrentParameter;           /* The current parameter */
+  bool Debug;                                  /* Debug flag */
+  bool Error;                                  /* Error detected */
+  ParserState():Debug(false),Error(false){};
 };
 
 /***************************
@@ -98,185 +51,210 @@ void
 startElement(void *userData, const char *name, const char **)
 {
   ParserState *ps = reinterpret_cast<ParserState *>(userData);
-  CommandLineArg *arg = ps->m_Current;
+  ModuleParameter *arg = ps->CurrentParameter;
+  ModuleParameterGroup *group = ps->CurrentGroup;
 
-  ps->m_LastTag.clear();
+  ps->LastTag.clear();
 
-  if (strcmp(name, "integer") == 0)
+  if (strcmp(name, "parameters") == 0)
     {
-    arg = new CommandLineArg;
-    arg->m_CxxType = "int";
+    group = new ModuleParameterGroup;
+    }
+  else if (strcmp(name, "integer") == 0)
+    {
+    arg = new ModuleParameter;
+    arg->SetType("int");
     }
   else if (strcmp(name, "float") == 0)
     {
-    arg = new CommandLineArg;
-    arg->m_CxxType = "float";
+    arg = new ModuleParameter;
+    arg->SetType("float");
     }
   else if (strcmp(name, "double") == 0)
     {
-    arg = new CommandLineArg;
-    arg->m_CxxType = "double";
+    arg = new ModuleParameter;
+    arg->SetType("double");
     }
   else if (strcmp(name, "string") == 0)
     {
-    arg = new CommandLineArg;
-    arg->m_CxxType = "std::string";
+    arg = new ModuleParameter;
+    arg->SetType("std::string");
     }
   else if (strcmp(name, "boolean") == 0)
     {
-    arg = new CommandLineArg;
-    arg->m_CxxType = "bool";
+    arg = new ModuleParameter;
+    arg->SetType("bool");
     }
   else if (strcmp(name, "integer-vector") == 0)
     {
-    arg = new CommandLineArg;
-    arg->m_CxxType = "std::vector<int>";
-    arg->m_StringToType = "atoi";
+    arg = new ModuleParameter;
+    arg->SetType("std::vector<int>");
+    arg->SetStringToType("atoi");
     }
   else if (strcmp(name, "float-vector") == 0)
     {
-    arg = new CommandLineArg;
-    arg->m_CxxType = "std::vector<float>";
-    arg->m_StringToType = "atof";
+    arg = new ModuleParameter;
+    arg->SetType("std::vector<float>");
+    arg->SetStringToType("atof");
     }
   else if (strcmp(name, "double-vector") == 0)
     {
-    arg = new CommandLineArg;
-    arg->m_CxxType = "std::vector<double>";
-    arg->m_StringToType = "atof";
+    arg = new ModuleParameter;
+    arg->SetType("std::vector<double>");
+    arg->SetStringToType("atof");
     }
   else if (strcmp(name, "file") == 0)
     {
-    arg = new CommandLineArg;
-    arg->m_CxxType = "std::string";
+    arg = new ModuleParameter;
+    arg->SetType("std::string");
     }
   else if (strcmp(name, "directory") == 0)
     {
-    arg = new CommandLineArg;
-    arg->m_CxxType = "std::string";
+    arg = new ModuleParameter;
+    arg->SetType("std::string");
     }
   else if (strcmp(name, "image") == 0)
     {
-    arg = new CommandLineArg;
-    arg->m_CxxType = "std::string";
+    arg = new ModuleParameter;
+    arg->SetType("std::string");
     }
-  ps->m_Current = arg;
+  ps->CurrentParameter = arg;
+  ps->CurrentGroup = group;
 }
 
 void
 endElement(void *userData, const char *name)
 {
   ParserState *ps = reinterpret_cast<ParserState *>(userData);
-  CommandLineArg *arg = ps->m_Current;
+  ModuleParameter *arg = ps->CurrentParameter;
+  ModuleParameterGroup *group = ps->CurrentGroup;
 
-  if (strcmp(name, "integer") == 0)
+  if (strcmp(name, "parameters") == 0)
     {
-    ps->m_AllArgs.push_back(*arg);
-    ps->m_Current = 0;
+    ps->CurrentGroup->AddParameter(*arg);
+    ps->ModuleDescription.AddParameterGroup(*ps->CurrentGroup);
+    ps->CurrentGroup = 0;
+    ps->CurrentParameter = 0;
+    }
+  else if (strcmp(name, "integer") == 0)
+    {
+    ps->CurrentGroup->AddParameter(*arg);
+    ps->CurrentParameter = 0;
     }
   else if (strcmp(name, "float") == 0)
     {
-    ps->m_AllArgs.push_back(*arg);
-    ps->m_Current = 0;
+    ps->CurrentGroup->AddParameter(*arg);
+    ps->CurrentParameter = 0;
     }
   else if (strcmp(name, "double") == 0)
     {
-    ps->m_AllArgs.push_back(*arg);
-    ps->m_Current = 0;
+    ps->CurrentGroup->AddParameter(*arg);
+    ps->CurrentParameter = 0;
     }
   else if (strcmp(name, "string") == 0)
     {
-    ps->m_AllArgs.push_back(*arg);
-    ps->m_Current = 0;
+    ps->CurrentGroup->AddParameter(*arg);
+    ps->CurrentParameter = 0;
     }
   else if (strcmp(name, "boolean") == 0)
     {
-    ps->m_AllArgs.push_back(*arg);
-    ps->m_Current = 0;
+    ps->CurrentGroup->AddParameter(*arg);
+    ps->CurrentParameter = 0;
     }
   else if (strcmp(name, "file") == 0)
     {
-    ps->m_AllArgs.push_back(*arg);
-    ps->m_Current = 0;
+    ps->CurrentGroup->AddParameter(*arg);
+    ps->CurrentParameter = 0;
     }
   else if (strcmp(name, "directory") == 0)
     {
-    ps->m_AllArgs.push_back(*arg);
-    ps->m_Current = 0;
+    ps->CurrentGroup->AddParameter(*arg);
+    ps->CurrentParameter = 0;
     }
   else if (strcmp(name, "image") == 0)
     {
-    ps->m_AllArgs.push_back(*arg);
-    ps->m_Current = 0;
+    ps->CurrentGroup->AddParameter(*arg);
+    ps->CurrentParameter = 0;
     }
   else if (strcmp(name, "integer-vector") == 0)
     {
-    ps->m_AllArgs.push_back(*arg);
-    ps->m_Current = 0;
+    ps->CurrentGroup->AddParameter(*arg);
+    ps->CurrentParameter = 0;
     }
   else if (strcmp(name, "float-vector") == 0)
     {
-    ps->m_AllArgs.push_back(*arg);
-    ps->m_Current = 0;
+    ps->CurrentGroup->AddParameter(*arg);
+    ps->CurrentParameter = 0;
     }
   else if (strcmp(name, "double-vector") == 0)
     {
-    ps->m_AllArgs.push_back(*arg);
-    ps->m_Current = 0;
+    ps->CurrentGroup->AddParameter(*arg);
+    ps->CurrentParameter = 0;
     }
   else if (strcmp(name, "flag") == 0)
     {
-    arg->m_ShortFlag = ps->m_LastTag;
-    trimLeading(arg->m_ShortFlag);
-    trimTrailing(arg->m_ShortFlag);
+    std::string temp = ps->LastTag;
+    trimLeading(temp);
+    trimTrailing(temp);
+    arg->SetShortFlag(temp);
     }
   else if (strcmp(name, "longflag") == 0)
     {
-    arg->m_LongFlag = ps->m_LastTag;
-    trimLeading(arg->m_LongFlag);
-    trimTrailing(arg->m_LongFlag);
-    if (arg->m_LongFlag.find("-",2) != std::string::npos)
+    std::string temp = ps->LastTag;
+    trimLeading(temp);
+    trimTrailing(temp);
+    if (temp.find("-",2) != std::string::npos)
       {
-      std::cerr << "GenerateCLP: flags cannot contain \"-\" : " << arg->m_LongFlag << std::endl;
-      ps->m_Error = true;
+      std::cerr << "GenerateCLP: flags cannot contain \"-\" : " << temp << std::endl;
+      ps->Error = true;
       }
-    if (arg->m_Variable.empty())
+    arg->SetLongFlag(temp);
+    if (arg->GetName().empty())
       {
-      arg->m_Variable = std::string(ps->m_LastTag);
-      trimLeading(arg->m_Variable);
-      trimTrailing(arg->m_Variable);
-      trimLeading(arg->m_Variable,"-");
+      arg->SetName(temp);
       }
     }
   else if (strcmp(name, "name") == 0)
     {
-    arg->m_Variable = std::string(ps->m_LastTag);
-    trimLeading(arg->m_Variable);
-    trimTrailing(arg->m_Variable);
+    std::string temp = std::string(ps->LastTag);
+    trimLeading(temp);
+    trimTrailing(temp);
+    arg->SetName(temp);
     }
-  else if (strcmp(name, "description") == 0)
+  else if (strcmp(name, "label") == 0)
     {
-    if (arg)
+    std::string temp = ps->LastTag;
+    trimLeading(temp);
+    trimTrailing(temp);
+    if (group && !arg)
       {
-      arg->m_Description = ps->m_LastTag;
-      trimLeading(arg->m_Description);
-      trimTrailing(arg->m_Description);
+      group->SetLabel(temp);
       }
     else
       {
-      if (ps->m_Description.empty())
-        {
-        ps->m_Description = ps->m_LastTag;
-        trimLeading(ps->m_Description);
-        trimTrailing(ps->m_Description);
-        }
+      arg->SetLabel(temp);
+      }
+    }
+  else if (strcmp(name, "description") == 0)
+    {
+    std::string temp = ps->LastTag;
+    trimLeading(temp);
+    trimTrailing(temp);
+    if (group && !arg)
+      {
+      group->SetDescription(temp);
+      }
+    else
+      {
+      arg->SetDescription(temp);
       }
     }
   else if (strcmp(name, "default") == 0)
     {
-    arg->m_Default = ps->m_LastTag;
-    trimLeading(arg->m_Default);
-    trimTrailing(arg->m_Default);
+    std::string temp = ps->LastTag;
+    trimLeading(temp);
+    trimTrailing(temp);
+    arg->SetDefault(temp);
     }
 }
 
@@ -287,7 +265,7 @@ charData(void *userData, const char *s, int len)
   if (len)
     {
     std::string str(s,len);
-    ps->m_LastTag += str;
+    ps->LastTag += str;
     }
 }
 
@@ -295,12 +273,13 @@ int
 ModuleDescriptionParser::Parse( const std::string& xml, ModuleDescription& description)
 {
   ParserState parserState;
-  parserState.m_ModuleDescription = description;
+  parserState.ModuleDescription = description;
   
   XML_Parser parser = XML_ParserCreate(NULL);
   int done;
 
-  parserState.m_Current = 0;
+  parserState.CurrentParameter = 0;
+  parserState.CurrentGroup = 0;
 
   XML_SetUserData(parser, static_cast<void *>(&parserState));
   XML_SetElementHandler(parser, startElement, endElement);

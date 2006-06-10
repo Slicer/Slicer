@@ -2,8 +2,10 @@
 #define __ModuleDescriptionParser_h
 
 #include <string>
+#include <vector>
 
 class ModuleDescription;
+class ModuleParameterGroup;
 
 #if defined(WIN32) && !defined(ModuleDescriptionParser_STATIC)
 #if defined(ModuleDescriptionParser_EXPORTS)

@@ -48,8 +48,8 @@ public:
     return this->Description;
   }
 
-  void AddParameters(const ModuleParameterGroup &parameters) {
-    this->ParameterGroups.push_back(parameters);
+  void AddParameterGroup(const ModuleParameterGroup &group) {
+    this->ParameterGroups.push_back(group);
   }
 
   const std::vector<ModuleParameterGroup>& GetParameterGroups() const {

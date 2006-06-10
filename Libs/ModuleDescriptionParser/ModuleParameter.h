@@ -19,12 +19,36 @@ public:
     return this->GetProperty("type");
   }
   
+  virtual void SetStringToType(const std::string &stringToType) {
+    this->SetProperty("stringToType", stringToType);
+  }
+
+  virtual std::string GetStringToType() const {
+    return this->GetProperty("stringToType");
+  }
+  
   virtual void SetName(const std::string &name) {
     this->SetProperty("name", name);
   }
 
   virtual std::string GetName() const {
     return this->GetProperty("name");
+  }
+  
+  virtual void SetLongFlag(const std::string &longFlag) {
+    this->SetProperty("longFlag", longFlag);
+  }
+
+  virtual std::string GetLongFlag() const {
+    return this->GetProperty("longFlag");
+  }
+  
+  virtual void SetShortFlag(const std::string &shortFlag) {
+    this->SetProperty("shortFlag", shortFlag);
+  }
+
+  virtual std::string GetShortFlag() const {
+    return this->GetProperty("shortFlag");
   }
   
   virtual void SetLabel(const std::string &label) {
@@ -67,14 +91,6 @@ public:
     return this->GetProperty("default");
   }
   
-  virtual void SetLongFlag(const std::string &flag) {
-    this->SetProperty("longflag", flag);
-  }
-
-  virtual std::string GetLongFlag() const {
-    return this->GetProperty("longflag");
-  }
-  
   virtual void SetFlag(const std::string &flag){
     this->SetProperty("flag", flag);
   }
@@ -91,7 +107,10 @@ public:
     return this->GetProperty("constraints");
   }
   
-
+  virtual std::map<std::string, std::string> GetProperties() const {
+    return Properties;
+  }
+  
 protected:
   virtual void SetProperty(const std::string &key,
                            const std::string &value) {
