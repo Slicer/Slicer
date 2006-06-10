@@ -70,7 +70,7 @@ void vtkMRMLScalarVolumeNode::WriteXML(ostream& of, int nIndent)
   
   vtkIndent indent(nIndent);
   
-  of << indent << "labelMap=/'" << this->LabelMap << "/' ";
+  of << indent << "labelMap=\"" << this->LabelMap << "\" ";
 }
 
 //----------------------------------------------------------------------------

@@ -80,9 +80,9 @@ void vtkMRMLVolumeArchetypeStorageNode::WriteXML(ostream& of, int nIndent)
   vtkIndent indent(nIndent);
   if (this->FileArchetype != NULL) 
     {
-    of << indent << "fileArchetype=/'" << this->FileArchetype << "/' ";
+    of << indent << "fileArchetype=\"" << this->FileArchetype << "\" ";
     }
-  of << indent << "absoluteFileName=/'" << this->AbsoluteFileName << "/' ";
+  of << indent << "absoluteFileName=\"" << this->AbsoluteFileName << "\" ";
 
 }
 
