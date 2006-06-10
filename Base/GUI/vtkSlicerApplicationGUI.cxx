@@ -208,9 +208,6 @@ vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
         this->MainViewer = NULL;
     }
 
-    this->LoadSceneDialog->Delete();
-    this->SaveSceneDialog->Delete();  
-
     if ( this->MainSlicerWin ) {
         this->MainSlicerWin->Delete ( );
         this->MainSlicerWin = NULL;
@@ -231,6 +228,15 @@ vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
         this->PlaneWidget->Delete ( );
         this->PlaneWidget = NULL;
     }
+    if (this->LoadSceneDialog ) 
+    {
+      this->LoadSceneDialog->Delete();
+    }
+
+     if (this->SaveSceneDialog ) 
+    {
+      this->SaveSceneDialog->Delete();
+    }
 }
 
 
@@ -245,7 +251,48 @@ void vtkSlicerApplicationGUI::PrintSelf ( ostream& os, vtkIndent indent )
     // print widgets?
 }
 
+//---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::ProcessLoadSceneCommand()
+{
+    this->LoadSceneDialog->RetrieveLastPathFromRegistry(
+      "OpenPath");
 
+    this->LoadSceneDialog->Invoke();
+    // If a file has been selected for loading...
+    char *fileName = this->LoadSceneDialog->GetFileName();
+    if ( fileName ) 
+      {
+        if (this->GetMRMLScene()) 
+          {
+          this->GetMRMLScene()->SetURL(fileName);
+          this->GetMRMLScene()->Connect();
+          this->LoadSceneDialog->SaveLastPathToRegistry("OpenPath");
+          }
+      }
+    return;
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::ProcessSaveSceneCommand()
+{
+    this->SaveSceneDialog->RetrieveLastPathFromRegistry(
+      "OpenPath");
+
+     this->SaveSceneDialog->Invoke();
+
+    // If a file has been selected for loading...
+    char *fileName = this->SaveSceneDialog->GetFileName();
+    if ( fileName ) 
+      {
+        if (this->GetMRMLScene()) 
+          {
+          this->GetMRMLScene()->SetURL(fileName);
+          this->GetMRMLScene()->Commit();  
+          this->SaveSceneDialog->SaveLastPathToRegistry("OpenPath");
+          }
+      }
+    return;
+}    
 
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::AddGUIObservers ( )
@@ -337,48 +384,16 @@ void vtkSlicerApplicationGUI::ProcessGUIEvents ( vtkObject *caller,
       int index = (int) (*((int *)callData));
       if (index == 2)
         {
-        this->LoadSceneDialog->Invoke();
+          // use command directly instead of this
+          //this->ProcessLoadSceneCommand()
         }
       else if (index == 3)
         {
-        this->SaveSceneDialog->Invoke();
+          // use command directly instead of this
+          //this->ProcessSaveSceneCommand()
         }
-
     }
 
-    if (filebrowse == this->LoadSceneDialog  && event == vtkCommand::ModifiedEvent ) 
-      {
-      // If a file has been selected for loading...
-      char *fileName = filebrowse->GetFileName();
-      if ( fileName ) 
-        {
-          if (this->GetMRMLScene()) 
-            {
-            this->GetMRMLScene()->SetURL(fileName);
-            this->GetMRMLScene()->Connect();
-             
-             filebrowse->SaveLastPathToRegistry("OpenPath");
-            }
-        }
-        return;
-      }
-
-    if (filebrowse == this->SaveSceneDialog  && event == vtkCommand::ModifiedEvent ) 
-      {
-      // If a file has been selected for loading...
-      char *fileName = filebrowse->GetFileName();
-      if ( fileName ) 
-        {
-          if (this->GetMRMLScene()) 
-            {
-            this->GetMRMLScene()->SetURL(fileName);
-            this->GetMRMLScene()->Commit();
-             
-             filebrowse->SaveLastPathToRegistry("OpenPath");
-            }
-        }
-        return;
-      }
     //--- Process events from menubutton
     //--- TODO: change the Logic's "active module" and raise the appropriate UIPanel.
     if ( menub == this->ModulesMenuButton && event == vtkCommand::ModifiedEvent )
@@ -489,17 +504,12 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
 
             // Construct menu bar and set up global key bindings
 
-            // TODO: Hook up undo, redo, set home
-            //i = this->MainSlicerWin->GetFileMenu()->AddCommand (  );
-            this->GetMainSlicerWin()->GetFileMenu()->InsertCommand (
-                this->GetMainSlicerWin()->GetFileMenuInsertPosition(),
-                "Load Scene...", NULL, NULL);
-            this->GetMainSlicerWin()->GetFileMenu()->InsertCommand (
-                this->GetMainSlicerWin()->GetFileMenuInsertPosition(),
-                "Save Scene", NULL, NULL);
-            this->GetMainSlicerWin()->GetFileMenu()->InsertCommand (
-                this->GetMainSlicerWin()->GetFileMenuInsertPosition(),
-                "Save Scene As...", NULL, NULL);
+
+            this->GetMainSlicerWin()->GetFileMenu()->InsertCommand (this->GetMainSlicerWin()->GetFileMenuInsertPosition(),
+                                              "Load Scene", this, "ProcessLoadSceneCommand");
+            this->GetMainSlicerWin()->GetFileMenu()->InsertCommand (this->GetMainSlicerWin()->GetFileMenuInsertPosition(),
+                                               "Save Scene", this, "ProcessSaveSceneCommand");
+
             this->GetMainSlicerWin()->GetFileMenu()->InsertSeparator (
                 this->GetMainSlicerWin()->GetFileMenuInsertPosition());
 
@@ -543,6 +553,7 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
             this->SaveSceneDialog->SetParent ( this->MainSlicerWin );
             this->SaveSceneDialog->Create ( );
             this->SaveSceneDialog->SetFileTypes("{ {MRML Scene} {*.mrml} }");
+            this->SaveSceneDialog->SaveDialogOn();
             this->SaveSceneDialog->RetrieveLastPathFromRegistry("OpenPath");
         }
     }

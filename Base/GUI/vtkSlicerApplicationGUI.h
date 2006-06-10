@@ -192,6 +192,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     virtual void ProcessLogicEvents ( vtkObject *caller, unsigned long event, void *callData );
     virtual void ProcessGUIEvents ( vtkObject *caller, unsigned long event, void *callData );
     virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
+
+    void ProcessLoadSceneCommand();
+    void ProcessSaveSceneCommand();
     
     // Description:
     // Methods describe behavior on startup and exit.
@@ -341,6 +344,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkKWPushButton *FourUpViewIconButton;
     vtkKWPushButton *TabbedViewIconButton;
     vtkKWPushButton *LightBoxViewIconButton;
+
     
     // Description:
     // These widgets tile a composite image
