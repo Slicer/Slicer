@@ -64,7 +64,6 @@ vtkGradientAnisotropicDiffusionFilterGUI::vtkGradientAnisotropicDiffusionFilterG
   this->ApplyButton = vtkKWPushButton::New();
   this->Logic = NULL;
   this->GradientAnisotropicDiffusionFilterNode = NULL;
-
 }
 
 //----------------------------------------------------------------------------
@@ -113,8 +112,22 @@ void vtkGradientAnisotropicDiffusionFilterGUI::AddGUIObservers ( )
 //---------------------------------------------------------------------------
 void vtkGradientAnisotropicDiffusionFilterGUI::RemoveGUIObservers ( )
 {
-    // Fill in
-    this->ApplyButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+  this->ConductanceScale->RemoveObservers (vtkKWScale::ScaleValueStartChangingEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->ConductanceScale->RemoveObservers (vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+
+  this->TimeStepScale->RemoveObservers (vtkKWScale::ScaleValueStartChangingEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->TimeStepScale->RemoveObservers (vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+
+  this->NumberOfIterationsScale->RemoveObservers (vtkKWScale::ScaleValueStartChangingEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->NumberOfIterationsScale->RemoveObservers (vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+
+  this->VolumeSelector->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
+
+  this->OutVolumeSelector->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
+
+  this->GADNodeSelector->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
+
+  this->ApplyButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
 }
 
 //---------------------------------------------------------------------------
@@ -170,16 +183,21 @@ void vtkGradientAnisotropicDiffusionFilterGUI::UpdateMRML ()
   vtkMRMLGradientAnisotropicDiffusionFilterNode* n = this->GetGradientAnisotropicDiffusionFilterNode();
   if (n == NULL)
     {
+    // no parameter node selected yet, create new
     this->GADNodeSelector->SetSelectedNew();
     this->GADNodeSelector->ProcessNewNodeCommand();
     n = vtkMRMLGradientAnisotropicDiffusionFilterNode::SafeDownCast(this->GADNodeSelector->GetSelected());
+
+    // set an observe new node in Logic
     this->Logic->SetGradientAnisotropicDiffusionFilterNode(n);
     this->SetGradientAnisotropicDiffusionFilterNode(n);
     this->SetAndObserveMRML( vtkObjectPointer(&this->GradientAnisotropicDiffusionFilterNode), n);
    }
 
+  // save node parameters for Undo
   this->GetLogic()->GetMRMLScene()->SaveStateForUndo(n);
 
+  // set node parameters from GUI widgets
   n->SetConductance(this->ConductanceScale->GetValue());
   
   n->SetTimeStep(this->TimeStepScale->GetValue());
@@ -198,8 +216,7 @@ void vtkGradientAnisotropicDiffusionFilterGUI::UpdateGUI ()
   vtkMRMLGradientAnisotropicDiffusionFilterNode* n = this->GetGradientAnisotropicDiffusionFilterNode();
   if (n != NULL)
     {
-    //this->GADNodeSelector->SetSelected(n);
-  
+    // set GUI widgest from parameter node
     this->ConductanceScale->SetValue(n->GetConductance());
     
     this->TimeStepScale->SetValue(n->GetTimeStep());
@@ -213,8 +230,9 @@ void vtkGradientAnisotropicDiffusionFilterGUI::ProcessMRMLEvents ( vtkObject *ca
                                             unsigned long event,
                                             void *callData ) 
 {
+  // if parameter node has been changed externally, update GUI widgets with new values
   vtkMRMLGradientAnisotropicDiffusionFilterNode* node = vtkMRMLGradientAnisotropicDiffusionFilterNode::SafeDownCast(caller);
-  if (node != NULL) 
+  if (node != NULL && this->GetGradientAnisotropicDiffusionFilterNode() == node) 
     {
     this->UpdateGUI();
     }

@@ -67,7 +67,9 @@ vtkMRMLGradientAnisotropicDiffusionFilterNode::~vtkMRMLGradientAnisotropicDiffus
 //----------------------------------------------------------------------------
 void vtkMRMLGradientAnisotropicDiffusionFilterNode::WriteXML(ostream& of, int nIndent)
 {
-Superclass::WriteXML(of, nIndent);
+  Superclass::WriteXML(of, nIndent);
+
+  // Write all MRML node attributes into output stream
 
   vtkIndent indent(nIndent);
 
@@ -101,9 +103,9 @@ Superclass::WriteXML(of, nIndent);
 //----------------------------------------------------------------------------
 void vtkMRMLGradientAnisotropicDiffusionFilterNode::ReadXMLAttributes(const char** atts)
 {
-
   vtkMRMLNode::ReadXMLAttributes(atts);
 
+  // Read all MRML node attributes from two arrays of names and values
   const char* attName;
   const char* attValue;
   while (*atts != NULL) 

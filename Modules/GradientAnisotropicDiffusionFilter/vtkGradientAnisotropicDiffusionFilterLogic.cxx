@@ -59,7 +59,7 @@ void vtkGradientAnisotropicDiffusionFilterLogic::PrintSelf(ostream& os, vtkInden
 
 void vtkGradientAnisotropicDiffusionFilterLogic::Apply()
 {
-  // chack if MRML node is present 
+  // check if MRML node is present 
   if (this->GradientAnisotropicDiffusionFilterNode == NULL)
     {
     vtkErrorMacro("No input GradientAnisotropicDiffusionFilterNode found");
@@ -95,15 +95,15 @@ void vtkGradientAnisotropicDiffusionFilterLogic::Apply()
       return;
       }
     }
-  else 
+  if (outVolume == NULL)
     {
-    // create new volume Node and add it to mrml scene
-    this->GetMRMLScene()->SaveStateForUndo();
-    outVolume = vtkMRMLScalarVolumeNode::New();
-    this->GetMRMLScene()->AddNode(outVolume);  
-    outVolume->Delete();
+    vtkErrorMacro("No output volume found");
+    return;
     }
-
+  
+  // set ouput of the filter to VolumeNode's ImageData
   outVolume->SetImageData(this->GradientAnisotropicDiffusionImageFilter->GetOutput());
+
+  // run the filter
   this->GradientAnisotropicDiffusionImageFilter->Update();
 }

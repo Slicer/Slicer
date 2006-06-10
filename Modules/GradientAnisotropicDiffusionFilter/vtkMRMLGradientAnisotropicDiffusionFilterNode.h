@@ -51,20 +51,28 @@ class VTK_GRADIENTANISOTROPICDIFFUSIONFILTER_EXPORT vtkMRMLGradientAnisotropicDi
   // Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "GradientAnisotropicDiffusionFilter";};
 
-
+  // Description:
+  // Get/Set Number of iterations (module parameter)
   vtkGetMacro(NumberOfIterations, int);
   vtkSetMacro(NumberOfIterations, int);
 
+  // Description:
+  // Get/Set Conductance (module parameter)
   vtkGetMacro(Conductance, vtkFloatingPointType);
   vtkSetMacro(Conductance, vtkFloatingPointType);
 
-
+  // Description:
+  // Get/Set time step (module parameter)
   vtkGetMacro(TimeStep, vtkFloatingPointType);
   vtkSetMacro(TimeStep, vtkFloatingPointType);
  
+  // Description:
+  // Get/Set input volume MRML Id
   vtkGetStringMacro(InputVolumeRef);
   vtkSetStringMacro(InputVolumeRef);
   
+  // Description:
+  // Get/Set output volume MRML Id
   vtkGetStringMacro(OutputVolumeRef);
   vtkSetStringMacro(OutputVolumeRef);
 
