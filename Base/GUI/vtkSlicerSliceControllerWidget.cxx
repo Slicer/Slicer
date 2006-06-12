@@ -242,6 +242,7 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
 void vtkSlicerSliceControllerWidget::ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData ) 
 { 
 
+
   if ( !this->SliceNode )
     {
     return;
@@ -292,6 +293,9 @@ void vtkSlicerSliceControllerWidget::ProcessMRMLEvents ( vtkObject *caller, unsi
     modified = 1;
     }
 
+  //
+  // when the composite node changes, update the menus to match
+  //
   if ( caller == this->SliceCompositeNode )
     {
     vtkMRMLNode *node = this->MRMLScene->GetNodeByID( this->SliceCompositeNode->GetForegroundVolumeID() );
