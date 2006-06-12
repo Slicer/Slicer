@@ -340,67 +340,46 @@ int Slicer3_main(int argc, char *argv[])
     int res = slicerApp->StartApplication();
 
     // ------------------------------
-    // REMOVE OBSERVERS
+    // REMOVE OBSERVERS and references to MRML and Logic
     gradientAnisotropicDiffusionFilterGUI->RemoveGUIObservers ( );
-    gradientAnisotropicDiffusionFilterGUI->SetMRMLScene ( NULL );    
-    gradientAnisotropicDiffusionFilterGUI->SetApplicationLogic ( NULL );
-    //gradientAnisotropicDiffusionFilterGUI->SetMRMLNode ( NULL );
-    //gradientAnisotropicDiffusionFilterGUI->SetModuleLogic ( NULL );
-
     volumesGUI->RemoveGUIObservers ( );
-    volumesGUI->SetModuleLogic ( NULL );
-    volumesGUI->SetApplicationLogic ( NULL );
-    volumesGUI->SetMRMLNode ( NULL );
-    volumesGUI->SetMRMLScene ( NULL );
-
     modelsGUI->RemoveGUIObservers ( );
-    //modelsGUI->SetModuleLogic ( NULL );
-    modelsGUI->SetApplicationLogic ( NULL );
-    //modelsGUI->SetMRMLNode ( NULL );
-    modelsGUI->SetMRMLScene ( NULL );
-
     dataGUI->RemoveGUIObservers ( );
-    //dataGUI->SetModuleLogic ( NULL );
-    dataGUI->SetApplicationLogic ( NULL );
-    //dataGUI->SetMRMLNode ( NULL );
-    dataGUI->SetMRMLScene ( NULL );
-
     slicesGUI->RemoveGUIObservers ( );
-    slicesGUI->SetModuleLogic ( 0, NULL);
-    slicesGUI->SetModuleLogic ( 1, NULL);
-    slicesGUI->SetModuleLogic ( 2, NULL);
-    slicesGUI->SetMRMLScene ( NULL );
-    slicesGUI->SetApplicationLogic ( NULL );
+    appGUI->RemoveGUIObservers ( );
 
     // ------------------------------
-    // REMOVE ALL COLLECTED GUI OBJECTS OR DELETE WON'T WORK
-    slicesGUI->GetSliceGUICollection()->RemoveAllItems();
+    // Remove References to Module GUIs
     slicerApp->GetModuleGUICollection ( )->RemoveAllItems ( );
 
     // ------------------------------
-    // EXIT THE APPLICATION
+    // EXIT 
     slicerApp->Exit();
 
     // ------------------------------
     // DELETE 
-    //--- scene
-    scene->Delete ();
-
-    //--- logic
-    appLogic->Delete ();
-    gradientAnisotropicDiffusionFilterLogic->Delete ();
-    volumesLogic->Delete();
-    sliceLogic0->Delete ();
-    sliceLogic1->Delete ();
-    sliceLogic2->Delete ();
     
-    //--- gui
+    //--- delete gui first, removing Refs to Logic and MRML
     gradientAnisotropicDiffusionFilterGUI->Delete ();
     volumesGUI->Delete ();
     modelsGUI->Delete ();
     dataGUI->Delete ();
     slicesGUI->Delete ();
     appGUI->Delete ();
+
+    //--- delete logic next, removing Refs to MRML
+    appLogic->ClearCollections ( );
+    gradientAnisotropicDiffusionFilterLogic->Delete ();
+    volumesLogic->Delete();
+    sliceLogic0->Delete ();
+    sliceLogic1->Delete ();
+    sliceLogic2->Delete ();
+    appLogic->Delete ();
+
+    //--- scene next;
+    scene->Delete ();
+
+    //--- application last
     slicerApp->Delete ();
 
     return res;
