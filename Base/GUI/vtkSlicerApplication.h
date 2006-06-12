@@ -32,7 +32,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
     // Description:
     // This method collects GUIs added to Slicer.
     virtual void AddModuleGUI ( vtkSlicerModuleGUI *gui );
-    virtual vtkSlicerModuleGUI* GetModuleGUIByName ( char *name );
+    virtual vtkSlicerModuleGUI* GetModuleGUIByName ( const char *name );
 
     // Description:
     // These methods manage windows associated with the application

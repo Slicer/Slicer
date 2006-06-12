@@ -36,6 +36,7 @@ class Visitor
      * Constructor. Does nothing.
      */
     Visitor() { }
+    virtual ~Visitor() { }
 
     /**
      * Does nothing. Should be overridden by child.

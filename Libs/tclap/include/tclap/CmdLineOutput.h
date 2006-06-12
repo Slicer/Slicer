@@ -40,8 +40,8 @@ class ArgException;
  */
 class CmdLineOutput 
 {
-
   public:
+    virtual ~CmdLineOutput() {}
     /**
      * Generates some sort of output for the USAGE. 
      * \param c - The CmdLine object the output is generated for. 

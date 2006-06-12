@@ -31,7 +31,7 @@ class vtkKWFrame;
 #ifndef vtkObjectPointer
 #define vtkObjectPointer( xx ) (reinterpret_cast <vtkObject **>( (xx) ))
 #endif
-                                
+
 // Description:
 // This is a base class from which all SlicerAdditionalGUIs are derived,
 // including the main vtkSlicerApplicationGUI
@@ -44,7 +44,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerComponentGUI : public vtkKWObject
     static vtkSlicerComponentGUI* New ( );
     vtkTypeRevisionMacro ( vtkSlicerComponentGUI, vtkKWObject );
     void PrintSelf ( ostream& os, vtkIndent indent );
-    
+
     // Description:
     // Get Macro for ApplicationLogic: GUI class's interface to logic
     // To Set ApplicationLogic, use SetLogic method.
@@ -84,14 +84,17 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerComponentGUI : public vtkKWObject
 
     // Description:
     // propagate events generated in logic layer to GUI
-    virtual void ProcessLogicEvents ( vtkObject *caller, unsigned long event, void *callData ) { };
+    virtual void ProcessLogicEvents ( vtkObject * /*caller*/,
+      unsigned long /*event*/, void * /*callData*/ ) { };
     // Description:
     // alternative method to propagate events generated in GUI to logic / mrml
-    virtual void ProcessGUIEvents ( vtkObject *caller, unsigned long event, void *callData ) { };
+    virtual void ProcessGUIEvents ( vtkObject * /*caller*/, 
+      unsigned long /*event*/, void * /*callData*/ ) { };
     
     // Description:
     // alternative method to propagate events generated in GUI to logic / mrml
-    virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData ) { };
+    virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
+      unsigned long /*event*/, void * /*callData*/ ) { };
 
     // Description:
     // functions that define and undefine module-specific behaviors.

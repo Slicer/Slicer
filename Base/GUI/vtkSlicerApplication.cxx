@@ -65,13 +65,14 @@ void vtkSlicerApplication::AddModuleGUI ( vtkSlicerModuleGUI *gui ) {
 }
 
 //---------------------------------------------------------------------------
-vtkSlicerModuleGUI* vtkSlicerApplication::GetModuleGUIByName ( char *name ) {
-
+vtkSlicerModuleGUI* vtkSlicerApplication::GetModuleGUIByName ( const char *name )
+{
     if ( this->ModuleGUICollection != NULL ) {
         int n = this->ModuleGUICollection->GetNumberOfItems ( );
         int i;
         for (i = 0; i < n; i ++ ) {
-            vtkSlicerModuleGUI *m = vtkSlicerModuleGUI::SafeDownCast( this->ModuleGUICollection->GetItemAsObject(i) );
+            vtkSlicerModuleGUI *m = vtkSlicerModuleGUI::SafeDownCast(
+              this->ModuleGUICollection->GetItemAsObject(i) );
             if ( !strcmp (m->GetGUIName(), name) ) {
                 return (m);
             }

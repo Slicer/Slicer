@@ -39,6 +39,7 @@ class Constraint
 {
 
   public:
+    virtual ~Constraint() {}
     /**
      * Returns a description of the Constraint. 
      */

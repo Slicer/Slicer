@@ -47,17 +47,17 @@ public:
   // Description:
   // Set dependencies between this node and the parent node
   // when parsing XML file
-  virtual void ProcessParentNode(vtkMRMLNode *parentNode){};
+  virtual void ProcessParentNode(vtkMRMLNode *){};
 
   // Description:
   // Set dependencies between this node and a child node
   // when parsing XML file
-  virtual void ProcessChildNode(vtkMRMLNode *childNode){};
+  virtual void ProcessChildNode(vtkMRMLNode *){};
   
   // Description:
   // Updates other nodes in the scene depending on this node
   // This method is called automatically by XML parser after all nodes are created
-  virtual void UpdateScene(vtkMRMLScene *scene) {};
+  virtual void UpdateScene(vtkMRMLScene *) {};
 
   // Description:
   // Write this node's information to a MRML file in XML format.

@@ -146,8 +146,9 @@ void GenerateEchoArgs(std::ofstream &, ParserState &);
  * Utility procedures to trim leading and trailing characters
  *********************/
 void
-trimLeading(std::string& s, char* extraneousChars = " \t\n")
+trimLeading(std::string& s, const char* extraneousChars = " \t\n")
 {
+
   if (s.size())
     {
     s = s.substr(s.find_first_not_of(extraneousChars));
@@ -155,7 +156,7 @@ trimLeading(std::string& s, char* extraneousChars = " \t\n")
 }
 
 void
-trimTrailing(std::string& s, char* extraneousChars = " \t\n")
+trimTrailing(std::string& s, const char* extraneousChars = " \t\n")
 {
   if (s.size())
     {

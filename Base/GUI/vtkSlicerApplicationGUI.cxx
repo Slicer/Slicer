@@ -355,7 +355,8 @@ void vtkSlicerApplicationGUI::ProcessGUIEvents ( vtkObject *caller,
     // Process events from top row of buttons
     // For now, Home button takes us to the Volumes module.
     if ( pushb == this->HomeIconButton && event == vtkKWPushButton::InvokedEvent ) {
-        vtkSlicerModuleGUI *m = vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Volumes");
+        vtkSlicerModuleGUI *m = vtkSlicerApplication::SafeDownCast(
+          this->GetApplication())->GetModuleGUIByName("Volumes");
         if ( m != NULL ) { m->GetUIPanel()->Raise(); }
         this->ModulesMenuButton->SetValue ( "Volumes" );
     }
