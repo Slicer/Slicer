@@ -162,7 +162,7 @@ void vtkSlicerSliceGUI::ProcessLogicEvents ( vtkObject *caller,
       }
 
     // process Logic changes
-    vtkSlicerSliceLogic *n = vtkSlicerSliceLogic::SafeDownCast(caller);
+    vtkSlicerSliceLogic *sliceLogic = vtkSlicerSliceLogic::SafeDownCast(caller);
     vtkSlicerApplicationLogic *a = vtkSlicerApplicationLogic::SafeDownCast ( caller );
     
     if ( a == this->GetApplicationLogic ( ) )
@@ -174,14 +174,14 @@ void vtkSlicerSliceGUI::ProcessLogicEvents ( vtkObject *caller,
       }
     else
       {
-      if ( n == this->GetLogic ( ) ) 
+      if ( sliceLogic == this->GetLogic ( ) ) 
         {
         // UPDATE Slice VIEWER
         vtkSlicerSliceViewer *v = this->GetSliceViewer( );
         vtkKWRenderWidget *rw = v->GetRenderWidget ();
-        if ( n->GetImageData() != NULL )
+        if ( sliceLogic->GetImageData() != NULL )
           {
-          v->GetImageMapper()->SetInput ( n->GetImageData( ) );
+          v->GetImageMapper()->SetInput ( sliceLogic->GetImageData( ) );
           }
         else
           {
