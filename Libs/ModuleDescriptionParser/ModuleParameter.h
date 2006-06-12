@@ -8,6 +8,7 @@ class ModuleParameter
 {
 public:
   ModuleParameter() {}
+  virtual ~ModuleParameter() {}
   ModuleParameter(const ModuleParameter& parameter)
   {
     this->Properties = parameter.Properties;
