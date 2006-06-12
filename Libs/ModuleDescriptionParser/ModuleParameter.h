@@ -3,13 +3,19 @@
 
 #include <map>
 #include <string>
-
+#include <iostream>
 class ModuleParameter
 {
 public:
   ModuleParameter() {}
-  ModuleParameter(const ModuleParameter& parameter) {}
-  void operator=(const ModuleParameter& parameter) {}
+  ModuleParameter(const ModuleParameter& parameter)
+  {
+    this->Properties = parameter.Properties;
+  }
+  void operator=(const ModuleParameter& parameter)
+  {
+    this->Properties = parameter.Properties;
+  }
 
   virtual void SetType(const std::string &type) {
     this->SetProperty("type", type);
@@ -107,7 +113,7 @@ public:
     return this->GetProperty("constraints");
   }
   
-  virtual std::map<std::string, std::string> GetProperties() const {
+  virtual const std::map<std::string, std::string> &GetProperties() const {
     return Properties;
   }
   
@@ -132,5 +138,17 @@ protected:
 private:
   std::map<std::string, std::string> Properties;
 };
+
+std::ostream & operator<<(std::ostream &os, const ModuleParameter &parameter)
+{ 
+  std::map<std::string, std::string>::const_iterator it = parameter.GetProperties().begin();
+  std::cout << "    Parameter" << std::endl;
+  while (it != parameter.GetProperties().end())
+    {
+    os << "      " << (*it).first << ": " << (*it).second << std::endl;
+    ++it;
+    }
+  return os;
+}
 
 #endif

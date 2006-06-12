@@ -12,14 +12,14 @@ public:
   ModuleDescription() {};
   ModuleDescription(const ModuleDescription &md) {
     this->Category = md.Category;
-    this->Title = md.Category;
+    this->Title = md.Title;
     this->Description = md.Description;
     this->ParameterGroups = md.ParameterGroups;
   }
 
   void operator=(const ModuleDescription &md) {
     this->Category = md.Category;
-    this->Title = md.Category;
+    this->Title = md.Title;
     this->Description = md.Description;
     this->ParameterGroups = md.ParameterGroups;
   }
@@ -56,14 +56,27 @@ public:
     return this->ParameterGroups;
   }
 
-protected:
-
 private:
   std::string Category;
   std::string Title;
   std::string Description;
   std::vector<ModuleParameterGroup> ParameterGroups;  
 };
+
+std::ostream & operator<<(std::ostream &os, const ModuleDescription &module)
+  { 
+    os << "Category: " << module.GetCategory() << std::endl;
+    os << "Title: " << module.GetTitle() << std::endl;
+    os << "Description: " << module.GetDescription() << std::endl;
+    os << "ParameterGroups: " << std::endl;
+    std::vector<ModuleParameterGroup>::const_iterator it = module.GetParameterGroups().begin();
+    while (it != module.GetParameterGroups().end())
+      {
+      os << *it;
+      ++it;
+      }
+    return os;
+  }
 
 
 #endif

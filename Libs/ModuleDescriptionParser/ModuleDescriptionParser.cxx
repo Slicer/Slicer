@@ -34,9 +34,7 @@ class ParserState
 {
 public:
   std::string LastTag;                         /* The last tag processed by expat */
-  std::string Description;                     /* Global descripton */
-
-  ModuleDescription ModuleDescription;
+  ModuleDescription CurrentDescription;
   ModuleParameterGroup *CurrentGroup;          /* The parameter group */
   ModuleParameter *CurrentParameter;           /* The current parameter */
   bool Debug;                                  /* Debug flag */
@@ -51,7 +49,7 @@ void
 startElement(void *userData, const char *name, const char **)
 {
   ParserState *ps = reinterpret_cast<ParserState *>(userData);
-  ModuleParameter *arg = ps->CurrentParameter;
+  ModuleParameter *parameter = ps->CurrentParameter;
   ModuleParameterGroup *group = ps->CurrentGroup;
 
   ps->LastTag.clear();
@@ -62,63 +60,63 @@ startElement(void *userData, const char *name, const char **)
     }
   else if (strcmp(name, "integer") == 0)
     {
-    arg = new ModuleParameter;
-    arg->SetType("int");
+    parameter = new ModuleParameter;
+    parameter->SetType("int");
     }
   else if (strcmp(name, "float") == 0)
     {
-    arg = new ModuleParameter;
-    arg->SetType("float");
+    parameter = new ModuleParameter;
+    parameter->SetType("float");
     }
   else if (strcmp(name, "double") == 0)
     {
-    arg = new ModuleParameter;
-    arg->SetType("double");
+    parameter = new ModuleParameter;
+    parameter->SetType("double");
     }
   else if (strcmp(name, "string") == 0)
     {
-    arg = new ModuleParameter;
-    arg->SetType("std::string");
+    parameter = new ModuleParameter;
+    parameter->SetType("std::string");
     }
   else if (strcmp(name, "boolean") == 0)
     {
-    arg = new ModuleParameter;
-    arg->SetType("bool");
+    parameter = new ModuleParameter;
+    parameter->SetType("bool");
     }
   else if (strcmp(name, "integer-vector") == 0)
     {
-    arg = new ModuleParameter;
-    arg->SetType("std::vector<int>");
-    arg->SetStringToType("atoi");
+    parameter = new ModuleParameter;
+    parameter->SetType("std::vector<int>");
+    parameter->SetStringToType("atoi");
     }
   else if (strcmp(name, "float-vector") == 0)
     {
-    arg = new ModuleParameter;
-    arg->SetType("std::vector<float>");
-    arg->SetStringToType("atof");
+    parameter = new ModuleParameter;
+    parameter->SetType("std::vector<float>");
+    parameter->SetStringToType("atof");
     }
   else if (strcmp(name, "double-vector") == 0)
     {
-    arg = new ModuleParameter;
-    arg->SetType("std::vector<double>");
-    arg->SetStringToType("atof");
+    parameter = new ModuleParameter;
+    parameter->SetType("std::vector<double>");
+    parameter->SetStringToType("atof");
     }
   else if (strcmp(name, "file") == 0)
     {
-    arg = new ModuleParameter;
-    arg->SetType("std::string");
+    parameter = new ModuleParameter;
+    parameter->SetType("std::string");
     }
   else if (strcmp(name, "directory") == 0)
     {
-    arg = new ModuleParameter;
-    arg->SetType("std::string");
+    parameter = new ModuleParameter;
+    parameter->SetType("std::string");
     }
   else if (strcmp(name, "image") == 0)
     {
-    arg = new ModuleParameter;
-    arg->SetType("std::string");
+    parameter = new ModuleParameter;
+    parameter->SetType("std::string");
     }
-  ps->CurrentParameter = arg;
+  ps->CurrentParameter = parameter;
   ps->CurrentGroup = group;
 }
 
@@ -126,69 +124,68 @@ void
 endElement(void *userData, const char *name)
 {
   ParserState *ps = reinterpret_cast<ParserState *>(userData);
-  ModuleParameter *arg = ps->CurrentParameter;
+  ModuleParameter *parameter = ps->CurrentParameter;
   ModuleParameterGroup *group = ps->CurrentGroup;
 
   if (strcmp(name, "parameters") == 0)
     {
-    ps->CurrentGroup->AddParameter(*arg);
-    ps->ModuleDescription.AddParameterGroup(*ps->CurrentGroup);
+    ps->CurrentDescription.AddParameterGroup(*ps->CurrentGroup);
     ps->CurrentGroup = 0;
     ps->CurrentParameter = 0;
     }
   else if (strcmp(name, "integer") == 0)
     {
-    ps->CurrentGroup->AddParameter(*arg);
+    ps->CurrentGroup->AddParameter(*parameter);
     ps->CurrentParameter = 0;
     }
   else if (strcmp(name, "float") == 0)
     {
-    ps->CurrentGroup->AddParameter(*arg);
+    ps->CurrentGroup->AddParameter(*parameter);
     ps->CurrentParameter = 0;
     }
   else if (strcmp(name, "double") == 0)
     {
-    ps->CurrentGroup->AddParameter(*arg);
+    ps->CurrentGroup->AddParameter(*parameter);
     ps->CurrentParameter = 0;
     }
   else if (strcmp(name, "string") == 0)
     {
-    ps->CurrentGroup->AddParameter(*arg);
+    ps->CurrentGroup->AddParameter(*parameter);
     ps->CurrentParameter = 0;
     }
   else if (strcmp(name, "boolean") == 0)
     {
-    ps->CurrentGroup->AddParameter(*arg);
+    ps->CurrentGroup->AddParameter(*parameter);
     ps->CurrentParameter = 0;
     }
   else if (strcmp(name, "file") == 0)
     {
-    ps->CurrentGroup->AddParameter(*arg);
+    ps->CurrentGroup->AddParameter(*parameter);
     ps->CurrentParameter = 0;
     }
   else if (strcmp(name, "directory") == 0)
     {
-    ps->CurrentGroup->AddParameter(*arg);
+    ps->CurrentGroup->AddParameter(*parameter);
     ps->CurrentParameter = 0;
     }
   else if (strcmp(name, "image") == 0)
     {
-    ps->CurrentGroup->AddParameter(*arg);
+    ps->CurrentGroup->AddParameter(*parameter);
     ps->CurrentParameter = 0;
     }
   else if (strcmp(name, "integer-vector") == 0)
     {
-    ps->CurrentGroup->AddParameter(*arg);
+    ps->CurrentGroup->AddParameter(*parameter);
     ps->CurrentParameter = 0;
     }
   else if (strcmp(name, "float-vector") == 0)
     {
-    ps->CurrentGroup->AddParameter(*arg);
+    ps->CurrentGroup->AddParameter(*parameter);
     ps->CurrentParameter = 0;
     }
   else if (strcmp(name, "double-vector") == 0)
     {
-    ps->CurrentGroup->AddParameter(*arg);
+    ps->CurrentGroup->AddParameter(*parameter);
     ps->CurrentParameter = 0;
     }
   else if (strcmp(name, "flag") == 0)
@@ -196,7 +193,7 @@ endElement(void *userData, const char *name)
     std::string temp = ps->LastTag;
     trimLeading(temp);
     trimTrailing(temp);
-    arg->SetShortFlag(temp);
+    parameter->SetShortFlag(temp);
     }
   else if (strcmp(name, "longflag") == 0)
     {
@@ -208,10 +205,10 @@ endElement(void *userData, const char *name)
       std::cerr << "GenerateCLP: flags cannot contain \"-\" : " << temp << std::endl;
       ps->Error = true;
       }
-    arg->SetLongFlag(temp);
-    if (arg->GetName().empty())
+    parameter->SetLongFlag(temp);
+    if (parameter->GetName().empty())
       {
-      arg->SetName(temp);
+      parameter->SetName(temp);
       }
     }
   else if (strcmp(name, "name") == 0)
@@ -219,34 +216,52 @@ endElement(void *userData, const char *name)
     std::string temp = std::string(ps->LastTag);
     trimLeading(temp);
     trimTrailing(temp);
-    arg->SetName(temp);
+    parameter->SetName(temp);
     }
   else if (strcmp(name, "label") == 0)
     {
     std::string temp = ps->LastTag;
     trimLeading(temp);
     trimTrailing(temp);
-    if (group && !arg)
+    if (group && !parameter)
       {
       group->SetLabel(temp);
       }
     else
       {
-      arg->SetLabel(temp);
+      parameter->SetLabel(temp);
       }
+    }
+  else if (strcmp(name, "category") == 0)
+    {
+    std::string temp = ps->LastTag;
+    trimLeading(temp);
+    trimTrailing(temp);
+    ps->CurrentDescription.SetCategory(temp);
+    }
+  else if (strcmp(name, "title") == 0)
+    {
+    std::string temp = ps->LastTag;
+    trimLeading(temp);
+    trimTrailing(temp);
+    ps->CurrentDescription.SetTitle(temp);
     }
   else if (strcmp(name, "description") == 0)
     {
     std::string temp = ps->LastTag;
     trimLeading(temp);
     trimTrailing(temp);
-    if (group && !arg)
+    if (!group && !parameter)
+      {
+      ps->CurrentDescription.SetDescription(temp);
+      }
+    else if (group && !parameter)
       {
       group->SetDescription(temp);
       }
     else
       {
-      arg->SetDescription(temp);
+      parameter->SetDescription(temp);
       }
     }
   else if (strcmp(name, "default") == 0)
@@ -254,7 +269,7 @@ endElement(void *userData, const char *name)
     std::string temp = ps->LastTag;
     trimLeading(temp);
     trimTrailing(temp);
-    arg->SetDefault(temp);
+    parameter->SetDefault(temp);
     }
 }
 
@@ -273,7 +288,7 @@ int
 ModuleDescriptionParser::Parse( const std::string& xml, ModuleDescription& description)
 {
   ParserState parserState;
-  parserState.ModuleDescription = description;
+  parserState.CurrentDescription = description;
   
   XML_Parser parser = XML_ParserCreate(NULL);
   int done;
@@ -298,6 +313,7 @@ ModuleDescriptionParser::Parse( const std::string& xml, ModuleDescription& descr
   
   XML_ParserFree(parser);
 
+  description = parserState.CurrentDescription;
   return 0;
 
 }
