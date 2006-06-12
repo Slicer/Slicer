@@ -105,7 +105,7 @@ void vtkMRMLSelectionNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   vtkMRMLNode::PrintSelf(os,indent);
 
-  os << "ActiveVolumeID: " << this->ActiveVolumeID << "\n";
+  os << "ActiveVolumeID: " << ( (this->ActiveVolumeID) ? this->ActiveVolumeID : "None" ) << "\n";
 }
 
 
