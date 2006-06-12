@@ -20,6 +20,7 @@ Version:   $Revision: 1.2 $
 
 #include "vtkGradientAnisotropicDiffusionFilterLogic.h"
 #include "vtkITKGradientAnisotropicDiffusionImageFilter.h"
+#include "vtkGradientAnisotropicDiffusionFilter.h"
 
 #include "vtkMRMLScene.h"
 #include "vtkMRMLScalarVolumeNode.h"
@@ -41,14 +42,11 @@ vtkGradientAnisotropicDiffusionFilterLogic* vtkGradientAnisotropicDiffusionFilte
 vtkGradientAnisotropicDiffusionFilterLogic::vtkGradientAnisotropicDiffusionFilterLogic()
 {
   this->GradientAnisotropicDiffusionFilterNode = NULL;
-  this->GradientAnisotropicDiffusionImageFilter = vtkITKGradientAnisotropicDiffusionImageFilter::New();
 }
 
 //----------------------------------------------------------------------------
 vtkGradientAnisotropicDiffusionFilterLogic::~vtkGradientAnisotropicDiffusionFilterLogic()
 {
-  this->GradientAnisotropicDiffusionImageFilter->Delete();
-  this->GradientAnisotropicDiffusionImageFilter = NULL;
   this->SetGradientAnisotropicDiffusionFilterNode(NULL);
 }
 
@@ -60,6 +58,7 @@ void vtkGradientAnisotropicDiffusionFilterLogic::PrintSelf(ostream& os, vtkInden
 
 void vtkGradientAnisotropicDiffusionFilterLogic::Apply()
 {
+
   // check if MRML node is present 
   if (this->GradientAnisotropicDiffusionFilterNode == NULL)
     {
@@ -68,43 +67,53 @@ void vtkGradientAnisotropicDiffusionFilterLogic::Apply()
     }
   
   // find input volume
-  vtkMRMLNode* inNode = this->GetMRMLScene()->GetNodeByID(this->GradientAnisotropicDiffusionFilterNode->GetInputVolumeRef());
-  vtkMRMLScalarVolumeNode *inVolume =  dynamic_cast<vtkMRMLScalarVolumeNode *> (inNode);
+    vtkMRMLScalarVolumeNode *inVolume = vtkMRMLScalarVolumeNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->GradientAnisotropicDiffusionFilterNode->GetInputVolumeRef()));
   if (inVolume == NULL)
     {
     vtkErrorMacro("No input volume found");
     return;
     }
   
-  this->GradientAnisotropicDiffusionImageFilter->SetInput(inVolume->GetImageData());
-  
-  
-  // set filter parameters
-  this->GradientAnisotropicDiffusionImageFilter->SetConductanceParameter(this->GradientAnisotropicDiffusionFilterNode->GetConductance());
-  this->GradientAnisotropicDiffusionImageFilter->SetNumberOfIterations(this->GradientAnisotropicDiffusionFilterNode->GetNumberOfIterations());
-  this->GradientAnisotropicDiffusionImageFilter->SetTimeStep(this->GradientAnisotropicDiffusionFilterNode->GetTimeStep());
-  
   // find output volume
-  vtkMRMLScalarVolumeNode *outVolume = NULL;
-  if (this->GradientAnisotropicDiffusionFilterNode->GetOutputVolumeRef() != NULL)
-    {
-    vtkMRMLNode* outNode = this->GetMRMLScene()->GetNodeByID(this->GradientAnisotropicDiffusionFilterNode->GetOutputVolumeRef());
-    outVolume =  dynamic_cast<vtkMRMLScalarVolumeNode *> (outNode);
-    if (outVolume == NULL)
-      {
-      vtkErrorMacro("No output volume found with id= " << this->GradientAnisotropicDiffusionFilterNode->GetOutputVolumeRef());
-      return;
-      }
-    }
+  vtkMRMLScalarVolumeNode *outVolume =  vtkMRMLScalarVolumeNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->GradientAnisotropicDiffusionFilterNode->GetOutputVolumeRef()));
   if (outVolume == NULL)
     {
-    vtkErrorMacro("No output volume found");
+    vtkErrorMacro("No output volume found with id= " << this->GradientAnisotropicDiffusionFilterNode->GetOutputVolumeRef());
     return;
     }
-  
-  // set ouput of the filter to VolumeNode's ImageData
-  outVolume->SetImageData(this->GradientAnisotropicDiffusionImageFilter->GetOutput());
+
+  // copy RASToIJK matrix, and other attributes from input to output
+  std::string name (outVolume->GetName());
+  std::string id (outVolume->GetID());
+
+  outVolume->Copy(inVolume);
+
+  outVolume->SetName(name.c_str());
+  outVolume->SetID(id.c_str());
+
+  // create filter
+  //vtkITKGradientAnisotropicDiffusionImageFilter* filter = vtkITKGradientAnisotropicDiffusionImageFilter::New();
+  this->GradientAnisotropicDiffusionImageFilter = vtkITKGradientAnisotropicDiffusionImageFilter::New();
+
+  // set filter input and parameters
+  this->GradientAnisotropicDiffusionImageFilter->SetInput(inVolume->GetImageData());
+
+  this->GradientAnisotropicDiffusionImageFilter->SetConductanceParameter(this->GradientAnisotropicDiffusionFilterNode->GetConductance());
+  this->GradientAnisotropicDiffusionImageFilter->SetNumberOfIterations(this->GradientAnisotropicDiffusionFilterNode->GetNumberOfIterations());
+  this->GradientAnisotropicDiffusionImageFilter->SetTimeStep(this->GradientAnisotropicDiffusionFilterNode->GetTimeStep()); 
 
   // run the filter
   this->GradientAnisotropicDiffusionImageFilter->Update();
+
+  // set ouput of the filter to VolumeNode's ImageData
+  // TODO FIX the bug of the image is deallocated unless we do DeepCopy
+  vtkImageData* image = vtkImageData::New(); 
+  image->DeepCopy( this->GradientAnisotropicDiffusionImageFilter->GetOutput() );
+  outVolume->SetImageData(image);
+  image->Delete();
+
+  //outVolume->SetImageData(this->GradientAnisotropicDiffusionImageFilter->GetOutput());
+
+  // delete the filter
+  this->GradientAnisotropicDiffusionImageFilter->Delete();
 }
