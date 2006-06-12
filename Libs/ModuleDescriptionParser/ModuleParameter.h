@@ -139,7 +139,7 @@ private:
   std::map<std::string, std::string> Properties;
 };
 
-std::ostream & operator<<(std::ostream &os, const ModuleParameter &parameter)
+inline std::ostream & operator<<(std::ostream &os, const ModuleParameter &parameter)
 { 
   std::map<std::string, std::string>::const_iterator it = parameter.GetProperties().begin();
   std::cout << "    Parameter" << std::endl;

@@ -54,7 +54,7 @@ private:
   std::vector<ModuleParameter> Parameters;
 };
 
-std::ostream & operator<<(std::ostream &os, const ModuleParameterGroup &group)
+inline std::ostream & operator<<(std::ostream &os, const ModuleParameterGroup &group)
   { 
     os << "  Label: " << group.GetLabel() << std::endl;
     os << "  Description: " << group.GetDescription() << std::endl;

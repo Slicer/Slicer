@@ -125,7 +125,7 @@ private:
   std::vector<ModuleParameterGroup> ParameterGroups;  
 };
 
-std::ostream & operator<<(std::ostream &os, const ModuleDescription &module)
+inline std::ostream & operator<<(std::ostream &os, const ModuleDescription &module)
   { 
     os << "Category: " << module.GetCategory() << std::endl;
     os << "Title: " << module.GetTitle() << std::endl;
