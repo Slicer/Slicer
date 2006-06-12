@@ -28,10 +28,10 @@ $app SetHelpDialogStartingPage "http://www.kwwidgets.org"
 # Add a window
 # Set 'SupportHelp' to automatically add a menu entry for the help link
 
-set win [vtkKWWindow New]
-$win SupportHelpOn
-$app AddWindow $win
-$win Create
+set ::win [vtkKWWindow New]
+$::win SupportHelpOn
+$app AddWindow $::win
+$::win Create
 
 
 #################################
@@ -51,10 +51,12 @@ set ::scene [[$::appGUI GetApplicationLogic] GetMRMLScene]
 ##$::scene Connect
 
 ## set up global key bindings
-set index [[$win GetEditMenu] AddCommand "&Undo" "" "$::scene Undo; mrmlUpdateUndoRedoButtons"]
-[$win GetEditMenu] SetItemAccelerator $index "Ctrl+Z"
-set index [[$win GetEditMenu] AddCommand "&Redo" "" "$::scene Redo; mrmlUpdateUndoRedoButtons"]
-[$win GetEditMenu] SetItemAccelerator $index "Ctrl+Y"
+set index [[$::win GetEditMenu] AddCommand "&Undo" "" "$::scene Undo; mrmlUpdateUndoRedoButtons"]
+[$::win GetEditMenu] SetItemAccelerator $index "Ctrl+Z"
+set index [[$::win GetEditMenu] AddCommand "&Redo" "" "$::scene Redo; mrmlUpdateUndoRedoButtons"]
+[$::win GetEditMenu] SetItemAccelerator $index "Ctrl+Y"
+
+update
 
 #
 # add the needed pieces to display the volumes
@@ -233,7 +235,7 @@ proc mrmlUpdateMatrices {} {
 #
 
 set renderwidget [vtkKWRenderWidget New]
-$renderwidget SetParent $win
+$renderwidget SetParent $::win
 $renderwidget Create
 pack [$renderwidget GetWidgetName] -side top -fill both -expand y -padx 0 -pady 0
 
@@ -259,22 +261,21 @@ $::matricesButton SetText "Matrices"
 $::matricesButton SetCommand "" "mrmlMatrices; mrmlUpdateMatrices"
 pack [$::matricesButton GetWidgetName] -side top -anchor nw -expand true -fill x -padx 2 -pady 2
 
-# SliceControl widget
-set ::slicec [vtkSlicerSliceControlGUI New]
-$::slicec SetParent $win
-$::slicec Create
-$::slicec SetSliceNode $slicen
-$::slicec SetMRMLScene $::scene
-pack [$::slicec GetWidgetName] -side top -anchor nw -expand false -fill x -padx 2 -pady 2
-$::slicec AddObserver ModifiedEvent mrmlUpdateUndoRedoButtons
+if {0} {
+# SliceControl 
+set ::slicecw [vtkSlicerSliceControllerWidget New]
+$::slicecw SetParent $::win
+$::slicecw Create
+$::slicecw SetSliceNode $slicen
+$::slicecw SetMRMLScene $::scene
+pack [$::slicecw GetWidgetName] -side top -anchor nw -expand false -fill x -padx 2 -pady 2
+$::slicecw AddObserver ModifiedEvent mrmlUpdateUndoRedoButtons
+}
 
-
-# TODO: orientation doesn't work yet
-[$::slicec GetOrientationMenu] SetEnabled 0
 
 # VolumeSelect widget
-set ::volsel [vtkSlicerVolumeSelectGUI New]
-$::volsel SetParent $win
+set ::volsel [vtkSlicerNodeSelectorWidget New]
+$::volsel SetParent $::win
 $::volsel Create
 $::volsel SetMRMLScene $::scene
 $::volsel SetLabelText "Volume Select: "
@@ -284,7 +285,7 @@ $::volsel SetBalloonHelpString \
 
 # Undo button
 set ::Undopb [vtkKWPushButton New]
-$::Undopb SetParent $win
+$::Undopb SetParent $::win
 $::Undopb Create
 $::Undopb SetText "Undo (0)"
 $::Undopb SetEnabled 0
@@ -296,7 +297,7 @@ $::Undopb SetCommand "" "$::scene Undo; mrmlUpdateUndoRedoButtons"
 
 # Redo button
 set ::Redopb [vtkKWPushButton New]
-$::Redopb SetParent $win
+$::Redopb SetParent $::win
 $::Redopb Create
 $::Redopb SetText "Redo (0)"
 $::Redopb SetEnabled 0
@@ -312,7 +313,7 @@ set nodes "vtkMRMLScalarVolumeNode vtkMRMLModelNode"
 foreach n $nodes {
 
   set pb [vtkKWPushButton New]
-  $pb SetParent $win
+  $pb SetParent $::win
   $pb Create
   $pb SetText "$n"
   $pb SetAnchorToWest
@@ -339,7 +340,7 @@ proc mrmlAddNode {nodetype} {
 # Create a multi-column list
 
 set mcl [vtkKWMultiColumnListWithScrollbars New]
-$mcl SetParent $win
+$mcl SetParent $::win
 $mcl Create
 $mcl SetBalloonHelpString \
 "A simple multicolumn list. Columns can be resized moved and sorted.\
@@ -479,15 +480,15 @@ mrmlExpose
 
 
 set ret 0
-$win Display
+$::win Display
 if {!$option_test} {
   $app Start
   set ret [$app GetExitStatus]
 }
-$win Close
+$::win Close
 
 # Deallocate and exit
 
-$win Delete
+$::win Delete
 $app Delete
 
