@@ -58,60 +58,60 @@ startElement(void *userData, const char *name, const char **)
     {
     group = new ModuleParameterGroup;
     }
-  else if (strcmp(name, "integer") == 0)
+  else if (group && strcmp(name, "integer") == 0)
     {
     parameter = new ModuleParameter;
     parameter->SetType("int");
     }
-  else if (strcmp(name, "float") == 0)
+  else if (group && strcmp(name, "float") == 0)
     {
     parameter = new ModuleParameter;
     parameter->SetType("float");
     }
-  else if (strcmp(name, "double") == 0)
+  else if (group && strcmp(name, "double") == 0)
     {
     parameter = new ModuleParameter;
     parameter->SetType("double");
     }
-  else if (strcmp(name, "string") == 0)
+  else if (group && strcmp(name, "string") == 0)
     {
     parameter = new ModuleParameter;
     parameter->SetType("std::string");
     }
-  else if (strcmp(name, "boolean") == 0)
+  else if (group && strcmp(name, "boolean") == 0)
     {
     parameter = new ModuleParameter;
     parameter->SetType("bool");
     }
-  else if (strcmp(name, "integer-vector") == 0)
+  else if (group && strcmp(name, "integer-vector") == 0)
     {
     parameter = new ModuleParameter;
     parameter->SetType("std::vector<int>");
     parameter->SetStringToType("atoi");
     }
-  else if (strcmp(name, "float-vector") == 0)
+  else if (group && strcmp(name, "float-vector") == 0)
     {
     parameter = new ModuleParameter;
     parameter->SetType("std::vector<float>");
     parameter->SetStringToType("atof");
     }
-  else if (strcmp(name, "double-vector") == 0)
+  else if (group && strcmp(name, "double-vector") == 0)
     {
     parameter = new ModuleParameter;
     parameter->SetType("std::vector<double>");
     parameter->SetStringToType("atof");
     }
-  else if (strcmp(name, "file") == 0)
+  else if (group && strcmp(name, "file") == 0)
     {
     parameter = new ModuleParameter;
     parameter->SetType("std::string");
     }
-  else if (strcmp(name, "directory") == 0)
+  else if (group && strcmp(name, "directory") == 0)
     {
     parameter = new ModuleParameter;
     parameter->SetType("std::string");
     }
-  else if (strcmp(name, "image") == 0)
+  else if (group && strcmp(name, "image") == 0)
     {
     parameter = new ModuleParameter;
     parameter->SetType("std::string");
@@ -133,69 +133,69 @@ endElement(void *userData, const char *name)
     ps->CurrentGroup = 0;
     ps->CurrentParameter = 0;
     }
-  else if (strcmp(name, "integer") == 0)
+  else if (group && strcmp(name, "integer") == 0)
     {
     ps->CurrentGroup->AddParameter(*parameter);
     ps->CurrentParameter = 0;
     }
-  else if (strcmp(name, "float") == 0)
+  else if (group && strcmp(name, "float") == 0)
     {
     ps->CurrentGroup->AddParameter(*parameter);
     ps->CurrentParameter = 0;
     }
-  else if (strcmp(name, "double") == 0)
+  else if (group && strcmp(name, "double") == 0)
     {
     ps->CurrentGroup->AddParameter(*parameter);
     ps->CurrentParameter = 0;
     }
-  else if (strcmp(name, "string") == 0)
+  else if (group && strcmp(name, "string") == 0)
     {
     ps->CurrentGroup->AddParameter(*parameter);
     ps->CurrentParameter = 0;
     }
-  else if (strcmp(name, "boolean") == 0)
+  else if (group && strcmp(name, "boolean") == 0)
     {
     ps->CurrentGroup->AddParameter(*parameter);
     ps->CurrentParameter = 0;
     }
-  else if (strcmp(name, "file") == 0)
+  else if (group && strcmp(name, "file") == 0)
     {
     ps->CurrentGroup->AddParameter(*parameter);
     ps->CurrentParameter = 0;
     }
-  else if (strcmp(name, "directory") == 0)
+  else if (group && strcmp(name, "directory") == 0)
     {
     ps->CurrentGroup->AddParameter(*parameter);
     ps->CurrentParameter = 0;
     }
-  else if (strcmp(name, "image") == 0)
+  else if (group && strcmp(name, "image") == 0)
     {
     ps->CurrentGroup->AddParameter(*parameter);
     ps->CurrentParameter = 0;
     }
-  else if (strcmp(name, "integer-vector") == 0)
+  else if (group && strcmp(name, "integer-vector") == 0)
     {
     ps->CurrentGroup->AddParameter(*parameter);
     ps->CurrentParameter = 0;
     }
-  else if (strcmp(name, "float-vector") == 0)
+  else if (group && strcmp(name, "float-vector") == 0)
     {
     ps->CurrentGroup->AddParameter(*parameter);
     ps->CurrentParameter = 0;
     }
-  else if (strcmp(name, "double-vector") == 0)
+  else if (group && strcmp(name, "double-vector") == 0)
     {
     ps->CurrentGroup->AddParameter(*parameter);
     ps->CurrentParameter = 0;
     }
-  else if (strcmp(name, "flag") == 0)
+  else if (parameter && strcmp(name, "flag") == 0)
     {
     std::string temp = ps->LastTag;
     trimLeading(temp);
     trimTrailing(temp);
     parameter->SetShortFlag(temp);
     }
-  else if (strcmp(name, "longflag") == 0)
+  else if (parameter && strcmp(name, "longflag") == 0)
     {
     std::string temp = ps->LastTag;
     trimLeading(temp);
@@ -211,14 +211,14 @@ endElement(void *userData, const char *name)
       parameter->SetName(temp);
       }
     }
-  else if (strcmp(name, "name") == 0)
+  else if (parameter && strcmp(name, "name") == 0)
     {
     std::string temp = std::string(ps->LastTag);
     trimLeading(temp);
     trimTrailing(temp);
     parameter->SetName(temp);
     }
-  else if (strcmp(name, "label") == 0)
+  else if ((group || parameter) && strcmp(name, "label") == 0)
     {
     std::string temp = ps->LastTag;
     trimLeading(temp);
@@ -292,7 +292,7 @@ endElement(void *userData, const char *name)
       parameter->SetDescription(temp);
       }
     }
-  else if (strcmp(name, "default") == 0)
+  else if (parameter && strcmp(name, "default") == 0)
     {
     std::string temp = ps->LastTag;
     trimLeading(temp);
