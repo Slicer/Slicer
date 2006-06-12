@@ -246,6 +246,34 @@ endElement(void *userData, const char *name)
     trimTrailing(temp);
     ps->CurrentDescription.SetTitle(temp);
     }
+  else if (strcmp(name, "version") == 0)
+    {
+    std::string temp = ps->LastTag;
+    trimLeading(temp);
+    trimTrailing(temp);
+    ps->CurrentDescription.SetVersion(temp);
+    }
+  else if (strcmp(name, "documentationurl") == 0)
+    {
+    std::string temp = ps->LastTag;
+    trimLeading(temp);
+    trimTrailing(temp);
+    ps->CurrentDescription.SetDocumentationURL(temp);
+    }
+  else if (strcmp(name, "license") == 0)
+    {
+    std::string temp = ps->LastTag;
+    trimLeading(temp);
+    trimTrailing(temp);
+    ps->CurrentDescription.SetLicense(temp);
+    }
+  else if (strcmp(name, "contributor") == 0)
+    {
+    std::string temp = ps->LastTag;
+    trimLeading(temp);
+    trimTrailing(temp);
+    ps->CurrentDescription.SetContributor(temp);
+    }
   else if (strcmp(name, "description") == 0)
     {
     std::string temp = ps->LastTag;
