@@ -165,13 +165,10 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
     return;
     }
 
-  if ( this->OffsetScale == vtkKWScaleWithEntry::SafeDownCast( caller ) &&
-          event != vtkKWScale::ScaleValueStartChangingEvent )
+  if ( this->OffsetScale->GetWidget() == vtkKWScale::SafeDownCast( caller ) &&
+          event == vtkKWScale::ScaleValueStartChangingEvent )
     {
-    // don't set an undo state when the scale is being dragged
-    }
-    else
-    {
+    // set an undo state when the scale starts being dragged
     this->MRMLScene->SaveStateForUndo( this->SliceNode );
     }
   
