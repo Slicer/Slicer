@@ -48,6 +48,7 @@ vtkGradientAnisotropicDiffusionFilterLogic::vtkGradientAnisotropicDiffusionFilte
 vtkGradientAnisotropicDiffusionFilterLogic::~vtkGradientAnisotropicDiffusionFilterLogic()
 {
   this->GradientAnisotropicDiffusionImageFilter->Delete();
+  this->GradientAnisotropicDiffusionImageFilter = NULL;
   this->SetGradientAnisotropicDiffusionFilterNode(NULL);
 }
 
