@@ -42,16 +42,16 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description:
-  // Getting setting and observing MRMLVolumeNode.
-  vtkGetObjectMacro ( VolumeNode, vtkMRMLVolumeNode );
+  // Getting setting  MRML VolumeNodeID.
+  vtkGetStringMacro ( VolumeNodeID );
+  vtkSetStringMacro ( VolumeNodeID );
+  
   void SetVolumeNode ( vtkMRMLVolumeNode *node );
-  
+
   // Description:
-  // Getting setting and observing MRMLVolumeDisplayNode.
-  vtkGetObjectMacro ( VolumeDisplayNode, vtkMRMLVolumeDisplayNode );
-  void SetVolumeDisplayNode ( vtkMRMLVolumeDisplayNode *node )
-    { this->SetMRML ( vtkObjectPointer( &this->VolumeDisplayNode), node ); };
-  
+  // Getting setting and observing MRML VolumeDisplayNodeID.
+  vtkGetStringMacro ( VolumeDisplayNodeID );
+  vtkSetStringMacro ( VolumeDisplayNodeID );
   
   // Description:
   // alternative method to propagate events generated in GUI to logic / mrml
@@ -69,8 +69,8 @@ protected:
   // Create the widget.
   virtual void CreateWidget();
 
-  vtkMRMLVolumeNode* VolumeNode;
-  vtkMRMLVolumeDisplayNode* VolumeDisplayNode;
+  char* VolumeNodeID;
+  char* VolumeDisplayNodeID;
   
   vtkSlicerNodeSelectorWidget* VolumeSelectorWidget;
   vtkKWWindowLevelThresholdEditor* WindowLevelThresholdEditor;
