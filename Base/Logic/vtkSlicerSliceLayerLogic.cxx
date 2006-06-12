@@ -132,10 +132,28 @@ void vtkSlicerSliceLayerLogic::UpdateTransforms()
 
     if (this->VolumeNode)
       {
+
+      vtkMRMLTransformNode *transformNode = this->VolumeNode->GetTransformNode();
+      if ( transformNode != NULL ) 
+        {
+        if ( !transformNode->IsTransformToWorldLinear() )
+          {
+          vtkErrorMacro ("non linear transforms not yet supported");
+          }
+        else
+          {
+          vtkMatrix4x4 *rasToRAS = vtkMatrix4x4::New();
+          transformNode->GetMatrixTransformToWorld( rasToRAS );
+          vtkMatrix4x4::Multiply4x4(rasToRAS, m, m); 
+          rasToRAS->Delete();
+          }
+        }
+
       vtkMatrix4x4 *rasToIJK = vtkMatrix4x4::New();
       this->VolumeNode->GetRASToIJKMatrix(rasToIJK);
       vtkMatrix4x4::Multiply4x4(rasToIJK, m, m); 
       rasToIJK->Delete();
+
 
       this->Reslice->SetInput( this->VolumeNode->GetImageData() ); 
       }

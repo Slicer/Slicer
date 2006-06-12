@@ -58,6 +58,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModelsGUI : public vtkSlicerModuleGUI
     // Add/Remove observers on widgets in the GUI
     virtual void AddGUIObservers ( );
     virtual void RemoveGUIObservers ( );
+    virtual void RemoveMRMLNodeObservers ( );
+    virtual void RemoveLogicObservers ( );
 
     // Description:
     // Class's mediator methods for processing events invoked by

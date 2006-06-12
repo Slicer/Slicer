@@ -113,14 +113,14 @@ void vtkSlicerSliceGUI::RemoveGUIObservers ( ) {
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerVolumesGUI::RemoveMRMLNodeObservers ( ) {
+void vtkSlicerSliceGUI::RemoveMRMLNodeObservers ( ) {
     // Fill in
 }
 
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerVolumesGUI::RemoveLogicObservers ( ) {
+void vtkSlicerSliceGUI::RemoveLogicObservers ( ) {
     // Fill in
 }
 
