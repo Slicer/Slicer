@@ -51,6 +51,7 @@ vtkSlicerVolumesGUI::~vtkSlicerVolumesGUI ( )
 
     if (this->VolumeDisplayWidget)
       {
+          this->VolumeDisplayWidget->RemoveWidgetObservers ( );
           this->VolumeDisplayWidget->Delete ( );
       }
 

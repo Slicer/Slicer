@@ -61,7 +61,11 @@ public:
   // alternative method to propagate events generated in GUI to logic / mrml
   virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
   
-protected:
+  // Description:
+  // removes observers on widgets in the class
+  virtual void RemoveWidgetObservers ( );
+  
+ protected:
   vtkSlicerVolumeDisplayWidget();
   ~vtkSlicerVolumeDisplayWidget();
 

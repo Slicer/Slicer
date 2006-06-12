@@ -156,6 +156,14 @@ void vtkSlicerVolumeDisplayWidget::ProcessMRMLEvents ( vtkObject *caller,
   
 }
 
+//---------------------------------------------------------------------------
+void vtkSlicerVolumeDisplayWidget::RemoveWidgetObservers ( ) {
+    this->VolumeSelectorWidget->GetWidget()->GetWidget()->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
+    this->WindowLevelThresholdEditor->RemoveObservers(vtkKWWindowLevelThresholdEditor::ValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->WindowLevelThresholdEditor->RemoveObservers(vtkKWWindowLevelThresholdEditor::ValueStartChangingEvent, (vtkCommand *)this->GUICallbackCommand );
+
+}
+
 
 //---------------------------------------------------------------------------
 void vtkSlicerVolumeDisplayWidget::CreateWidget ( )
