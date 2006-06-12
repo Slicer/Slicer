@@ -69,15 +69,42 @@ vtkGradientAnisotropicDiffusionFilterGUI::vtkGradientAnisotropicDiffusionFilterG
 //----------------------------------------------------------------------------
 vtkGradientAnisotropicDiffusionFilterGUI::~vtkGradientAnisotropicDiffusionFilterGUI()
 {
-  this->ConductanceScale->Delete();
-  this->TimeStepScale->Delete();
-  this->NumberOfIterationsScale->Delete();
-  this->VolumeSelector->Delete();
-  this->OutVolumeSelector->Delete();
-  this->GADNodeSelector->Delete();
-  this->ApplyButton->Delete();
-  this->SetLogic(NULL);
-  this->SetGradientAnisotropicDiffusionFilterNode(NULL); 
+    if ( this->ConductanceScale ) {
+        this->ConductanceScale->Delete();
+        this->ConductanceScale = NULL;
+    }
+    if ( this->TimeStepScale ) {
+        this->TimeStepScale->Delete();
+        this->TimeStepScale = NULL;
+    }
+    if ( this->NumberOfIterationsScale ) {
+        this->NumberOfIterationsScale->Delete();
+        this->NumberOfIterationsScale = NULL;
+    }
+    if ( this->VolumeSelector ) {
+        this->VolumeSelector->Delete();
+        this->VolumeSelector = NULL;
+    }
+    if ( this->OutVolumeSelector ) {
+        this->OutVolumeSelector->Delete();
+        this->OutVolumeSelector = NULL;
+    }
+    if ( this->GADNodeSelector ) {
+        this->GADNodeSelector->Delete();
+        this->GADNodeSelector = NULL;
+    }
+    if ( this->ApplyButton ) {
+        this->ApplyButton->Delete();
+        this->ApplyButton = NULL;
+    }
+
+  this->SetLogic (NULL);
+  // wjp test
+  if ( this->GradientAnisotropicDiffusionFilterNode ) {
+      this->SetAndObserveMRML( vtkObjectPointer(&this->GradientAnisotropicDiffusionFilterNode), NULL );
+  }
+  // end wjp test
+  this->SetGradientAnisotropicDiffusionFilterNode (NULL); 
 }
 
 //----------------------------------------------------------------------------
@@ -333,7 +360,7 @@ void vtkGradientAnisotropicDiffusionFilterGUI::BuildGUI ( )
   //this->VolumeSelector->SetPadY(2);
   //this->VolumeSelector->GetWidget()->GetWidget()->IndicatorVisibilityOff();
   //this->VolumeSelector->GetWidget()->GetWidget()->SetWidth(24);
-  this->VolumeSelector->SetLabelText( "Input Volume");
+  this->VolumeSelector->SetLabelText( "Input Volume: ");
   this->VolumeSelector->SetBalloonHelpString("select an input volume from the current mrml scene.");
   app->Script("pack %s -side top -anchor e -padx 20 -pady 4", 
                 this->VolumeSelector->GetWidgetName());
@@ -352,7 +379,7 @@ void vtkGradientAnisotropicDiffusionFilterGUI::BuildGUI ( )
   //this->OutVolumeSelector->SetPadY(2);
   //this->OutVolumeSelector->GetWidget()->GetWidget()->IndicatorVisibilityOff();
   //this->OutVolumeSelector->GetWidget()->GetWidget()->SetWidth(24);
-  this->OutVolumeSelector->SetLabelText( "Output Volume");
+  this->OutVolumeSelector->SetLabelText( "Output Volume: ");
   this->OutVolumeSelector->SetBalloonHelpString("select an output volume from the current mrml scene.");
   app->Script("pack %s -side top -anchor e -padx 20 -pady 4", 
                 this->OutVolumeSelector->GetWidgetName());
