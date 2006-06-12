@@ -52,13 +52,23 @@ vtkSlicerSliceLayerLogic::vtkSlicerSliceLayerLogic()
 //----------------------------------------------------------------------------
 vtkSlicerSliceLayerLogic::~vtkSlicerSliceLayerLogic()
 {
+    if ( this->SliceNode ) {
+        this->SetAndObserveMRML( vtkObjectPointer(&this->SliceNode), NULL );
+    }
+    if ( this->VolumeNode ) {
+        this->SetAndObserveMRML( vtkObjectPointer(&this->VolumeNode), NULL );
+    }
+    if ( this->VolumeDisplayNode ) {
+        this->SetAndObserveMRML( vtkObjectPointer( &this->VolumeDisplayNode ), NULL );
+    }
+
     this->SetSliceNode(NULL);
     this->SetVolumeNode(NULL);
-
     this->XYToIJKTransform->Delete();
     this->Reslice->Delete();
     this->MapToRGBA->Delete();
     this->MapToWindowLevelColors->Delete();
+
 }
 
 //----------------------------------------------------------------------------

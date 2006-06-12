@@ -37,7 +37,8 @@ vtkSlicerVolumesLogic::~vtkSlicerVolumesLogic()
 {
   if (this->ActiveVolumeNode != NULL)
     {
-    this->ActiveVolumeNode->Delete();
+        this->ActiveVolumeNode->Delete();
+        this->ActiveVolumeNode = NULL;
     }
 }
 

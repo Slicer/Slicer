@@ -37,23 +37,39 @@ vtkSlicerApplicationLogic::~vtkSlicerApplicationLogic()
 {
   if (this->Views)
     {
-    this->Views->Delete();
-    this->Views = NULL;
+        this->Views->Delete();
+        this->Views = NULL;
     }
   if (this->Slices)
     {
-    this->Slices->Delete();
-    this->Slices = NULL;
+        this->Slices->Delete();
+        this->Slices = NULL;
     }
   if (this->Modules)
     {
-    this->Modules->Delete();
-    this->Modules = NULL;
+        this->Modules->Delete();
+        this->Modules = NULL;
     }
-  this->SetActiveSlice(NULL);
+  this->SetSelectionNode ( NULL );
+  this->SetActiveSlice ( NULL );
 
   // TODO - unregister/delete ivars
 }
+
+
+//----------------------------------------------------------------------------
+void vtkSlicerApplicationLogic::ClearCollections ( ) {
+    if ( this->Views) {
+        this->Views->RemoveAllItems ( );
+    }
+    if ( this->Slices ) {
+        this->Slices->RemoveAllItems ( );
+    }
+    if ( this->Modules ) {
+        this->Modules->RemoveAllItems ( );
+    }
+}
+
 
 //----------------------------------------------------------------------------
 void vtkSlicerApplicationLogic::ProcessMRMLEvents()

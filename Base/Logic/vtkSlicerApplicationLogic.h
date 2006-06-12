@@ -157,6 +157,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic : public vtkSlicerL
   //    stored in the registry part of the GUI layer
   //
 
+  void ClearCollections ( );
 
 protected:
 

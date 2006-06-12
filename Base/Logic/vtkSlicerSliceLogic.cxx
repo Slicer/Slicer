@@ -36,10 +36,25 @@ vtkSlicerSliceLogic::vtkSlicerSliceLogic()
 //----------------------------------------------------------------------------
 vtkSlicerSliceLogic::~vtkSlicerSliceLogic()
 {
-  this->Blend->Delete();
-
-
+    if ( this->Blend ) {
+        this->Blend->Delete();
+        this->Blend = NULL;
+    }
+    if ( this->BackgroundLayer ) {
+        this->BackgroundLayer->SetAndObserveMRMLScene ( NULL );
+        this->BackgroundLayer->Delete ( );
+        this->BackgroundLayer = NULL;
+    }
+    if  ( this->ForegroundLayer ) {
+        this->ForegroundLayer->SetAndObserveMRMLScene ( NULL );
+        this->ForegroundLayer->Delete ( );
+        this->ForegroundLayer = NULL;
+    }
+    if ( this->SliceCompositeNode ) {
+        this->SetAndObserveMRML( vtkObjectPointer(&this->SliceCompositeNode), NULL );
+    }
 }
+
 
 //----------------------------------------------------------------------------
 void vtkSlicerSliceLogic::ProcessMRMLEvents()
