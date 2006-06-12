@@ -71,6 +71,20 @@ void vtkSlicerSliceLogic::ProcessMRMLEvents()
     node->Delete();
     }
 
+  //
+  // check that our referenced nodes exist, and if not set to None
+  //
+  if ( this->MRMLScene->GetNodeByID( this->SliceCompositeNode->GetForegroundVolumeID() ) == NULL )
+    {
+    this->SliceCompositeNode->SetForegroundVolumeID("None");
+    }
+
+  if ( this->MRMLScene->GetNodeByID( this->SliceCompositeNode->GetBackgroundVolumeID() ) == NULL )
+    {
+    this->SliceCompositeNode->SetBackgroundVolumeID("None");
+    }
+
+
   this->UpdatePipeline();
 }
 
