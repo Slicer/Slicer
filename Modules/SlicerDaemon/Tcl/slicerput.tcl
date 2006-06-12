@@ -13,7 +13,7 @@ array set nrrd_to_vtk_types { char 2 "unsigned char" 3 short 4 ushort 5 int 6 ui
 
 set name [lindex $argv 0]
 if { $name == "" } {
-    set name "from_slicerput"
+    set name ""
 }
 
 

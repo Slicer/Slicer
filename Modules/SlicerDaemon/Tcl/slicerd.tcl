@@ -201,7 +201,12 @@ proc slicerd_sock_fileevent {sock} {
             }
             set name [lindex $line 1]
             if { $name == "" } {
-                set name "slicerd"
+                for {set n 0} {1} {incr n} {
+                  set name "slicerd_$n"
+                  if { [[$::slicer3::MRMLScene GetNodesByName $name] GetNumberOfItems] == 0 } {
+                    break;
+                  }
+                }
             }
 
             gets $sock dimensions
@@ -218,7 +223,6 @@ proc slicerd_sock_fileevent {sock} {
 
             # add a mrml node
             set node [vtkMRMLScalarVolumeNode New]
-            $::slicer3::MRMLScene AddNode $node
     
             $node SetName $name
             $node SetDescription "Imported via slicerd"
@@ -239,9 +243,18 @@ proc slicerd_sock_fileevent {sock} {
             slicerd_parse_space_directions $node $space_origin $space_directions
             $idata Delete
 
+            $::slicer3::MRMLScene AddNode $node
+
+            tk_messageBox -message "node is $node"
+
+            $::slicer3::ApplicationLogic GetSelectionNode
+            tk_messageBox -message "selection node is [[$::slicer3::ApplicationLogic GetSelectionNode] Print]"
+            $node GetID
+            puts "$node GetID"
+            [[$::slicer3::ApplicationLogic GetSelectionNode] SetActiveVolumeID [$node GetID]]
+            $::slicer3::ApplicationLogic PropagateVolumeSelection
 
             $node Delete
-
         }
         "eval*" {
             puts $sock [eval $line]
