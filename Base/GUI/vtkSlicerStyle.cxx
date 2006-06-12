@@ -633,9 +633,9 @@ int vtkSlicerStyle::WriteCascadingStyleSheet (char * filename)
     fprintf(fp, "p,body,ul,pre {font-family:%s;}\n",
             this->Fonts->GetFontAsFamily(this->GetMedFont()));
 
-    fprintf(fp, "table.heading {border:0; cellspacing:0; cellpadding:0; width:100%;}\n");
+    fprintf(fp, "table.heading {border:0; cellspacing:0; cellpadding:0; width:100%%;}\n");
 
-    fprintf(fp, "table.separator {border:0; cellspacing:0; width:100%;}\n");
+    fprintf(fp, "table.separator {border:0; cellspacing:0; width:100%%;}\n");
     fprintf(fp, "table.separatorline {border:0; cellspacing:0; cellpadding:0;}\n");
     fprintf(fp, "td.line1 {background-color:#%s;}\n",
             this->Colors->GetColorAsHex(this->Colors->White));
