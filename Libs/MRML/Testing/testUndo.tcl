@@ -4,7 +4,7 @@ vtkMRMLScene sc
 catch "vs Delete"
 vtkMRMLVolumeArchetypeStorageNode vs
 
-sc SetURL C:/alexy/slicer2-head/Slicer3/Libs/MRML/Testing/undo.xml
+sc SetURL $::SLICER_HOME/../Slicer3/Libs/MRML/Testing/undo.xml
 sc Connect
 
 set n [sc GetNthNodeByClass 0 vtkMRMLVolumeArchetypeStorageNode]
@@ -38,5 +38,8 @@ sc Undo
 puts "GetFileArchetype = [$n GetFileArchetype]"
 
 
+# if we got to here, the test passed
+
+exit 0
 
 
