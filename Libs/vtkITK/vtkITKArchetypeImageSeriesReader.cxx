@@ -35,10 +35,6 @@
 #include "vtkPointData.h"
 #include "vtkDataArray.h"
 
-#ifndef vtkFloatingPointType
-#define vtkFloatingPointType float
-#endif
-
 #include "itkExceptionObject.h"
 
 // Commented out redefinition of ExceptionMacro
@@ -262,8 +258,8 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
   RasToIjkMatrix->Identity();
   IjkToLpsMatrix->Identity();
 
-  vtkFloatingPointType spacing[3];
-  vtkFloatingPointType origin[3];
+  double spacing[3];
+  double origin[3];
   
   // Since we only need origin, spacing and extents, we can use one
   // image type.

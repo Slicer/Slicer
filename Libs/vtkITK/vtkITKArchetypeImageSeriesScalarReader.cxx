@@ -18,10 +18,6 @@
 #include "vtkPointData.h"
 #include "vtkDataArray.h"
 
-#ifndef vtkFloatingPointType
-#define vtkFloatingPointType float
-#endif
-
 #include "itkArchetypeSeriesFileNames.h"
 #include "itkImage.h"
 #include "itkVector.h"

@@ -76,13 +76,13 @@ class VTK_MRML_EXPORT vtkMRMLVolumeDisplayNode : public vtkMRMLNode
 
   // Description:
   // The window value to use when autoWindowLevel is 'no'
-  vtkGetMacro(Window, vtkFloatingPointType);
-  vtkSetMacro(Window, vtkFloatingPointType);
+  vtkGetMacro(Window, double);
+  vtkSetMacro(Window, double);
 
   // Description:
   // The level value to use when autoWindowLevel is 'no'
-  vtkGetMacro(Level, vtkFloatingPointType);
-  vtkSetMacro(Level, vtkFloatingPointType);
+  vtkGetMacro(Level, double);
+  vtkSetMacro(Level, double);
 
   // Description:
   // Specifies whether to apply the threshold
@@ -100,15 +100,15 @@ class VTK_MRML_EXPORT vtkMRMLVolumeDisplayNode : public vtkMRMLNode
   // The upper threshold value to use when autoThreshold is 'no'
   // Warning:
   // XXX-MH Should be floating point....
-  vtkGetMacro(UpperThreshold, vtkFloatingPointType);
-  vtkSetMacro(UpperThreshold, vtkFloatingPointType);
+  vtkGetMacro(UpperThreshold, double);
+  vtkSetMacro(UpperThreshold, double);
 
   // Description:
   // The lower threshold value to use when autoThreshold is 'no'
   // Warning:
   // XXX-MH Should be floating point....
-  vtkGetMacro(LowerThreshold, vtkFloatingPointType);
-  vtkSetMacro(LowerThreshold, vtkFloatingPointType);
+  vtkGetMacro(LowerThreshold, double);
+  vtkSetMacro(LowerThreshold, double);
 
   // Description:
   // Set/Get interpolate reformated slices
@@ -127,10 +127,10 @@ protected:
   // Strings
   char *LUTName;
 
-  vtkFloatingPointType Window;
-  vtkFloatingPointType Level;
-  vtkFloatingPointType UpperThreshold;
-  vtkFloatingPointType LowerThreshold;
+  double Window;
+  double Level;
+  double UpperThreshold;
+  double LowerThreshold;
 
 
   // Booleans

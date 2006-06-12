@@ -454,8 +454,8 @@ void vtkMRMLVolumeNode::ComputeIJKToRASFromScanOrder(char *order, vtkMatrix4x4 *
 //----------------------------------------------------------------------------
 const char* vtkMRMLVolumeNode::ComputeScanOrderFromIJKToRAS(vtkMatrix4x4 *ijkToRAS)
 {
-  vtkFloatingPointType dir[4]={0,0,1,0};
-  vtkFloatingPointType kvec[4];
+  double dir[4]={0,0,1,0};
+  double kvec[4];
  
   ijkToRAS->MultiplyPoint(dir,kvec);
   int max_comp = 0;

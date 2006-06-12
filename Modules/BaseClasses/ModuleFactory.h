@@ -11,7 +11,7 @@ class VTK_MODULES_BASE_CLASSES_EXPORT ModuleFactory
 {
 public:
   ModuleFactory() {};
-  ~ModuleFactory() {};
+  virtual ~ModuleFactory() {};
 
   // Set the search path for modules (both command line modules and
   // shared object modules).
@@ -20,7 +20,7 @@ public:
   // Get the module search path.
   const std::string& GetSearchPath() const { return SearchPath; }
   
-  // Scan for modnules in the module search path.  This will locate
+  // Scan for modules in the module search path.  This will locate
   // command line modules as well as shared object modules.
   virtual void Scan();
 

@@ -58,13 +58,13 @@ class VTK_GRADIENTANISOTROPICDIFFUSIONFILTER_EXPORT vtkMRMLGradientAnisotropicDi
 
   // Description:
   // Get/Set Conductance (module parameter)
-  vtkGetMacro(Conductance, vtkFloatingPointType);
-  vtkSetMacro(Conductance, vtkFloatingPointType);
+  vtkGetMacro(Conductance, double);
+  vtkSetMacro(Conductance, double);
 
   // Description:
   // Get/Set time step (module parameter)
-  vtkGetMacro(TimeStep, vtkFloatingPointType);
-  vtkSetMacro(TimeStep, vtkFloatingPointType);
+  vtkGetMacro(TimeStep, double);
+  vtkSetMacro(TimeStep, double);
  
   // Description:
   // Get/Set input volume MRML Id
@@ -83,8 +83,8 @@ protected:
   vtkMRMLGradientAnisotropicDiffusionFilterNode(const vtkMRMLGradientAnisotropicDiffusionFilterNode&);
   void operator=(const vtkMRMLGradientAnisotropicDiffusionFilterNode&);
 
-  vtkFloatingPointType Conductance;
-  vtkFloatingPointType TimeStep;
+  double Conductance;
+  double TimeStep;
   int NumberOfIterations;
   
   char* InputVolumeRef;

@@ -140,8 +140,8 @@ void vtkSlicerSliceLayerLogic::UpdateTransforms()
       this->MapToWindowLevelColors->SetLevel(this->VolumeDisplayNode->GetLevel());
 
         // TODO: update the pipeline with other display values
-          //vtkFloatingPointType UpperThreshold;
-          //vtkFloatingPointType LowerThreshold;
+          //double UpperThreshold;
+          //double LowerThreshold;
           // Booleans
           //int Interpolate;
           //int AutoWindowLevel;

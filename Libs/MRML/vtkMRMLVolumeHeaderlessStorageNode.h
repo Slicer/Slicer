@@ -88,8 +88,8 @@ class VTK_MRML_EXPORT vtkMRMLVolumeHeaderlessStorageNode : public vtkMRMLStorage
 
   // Description:
   // Three numbers for the dimensions of each voxel, in millimeters
-  vtkGetVector3Macro(FileSpacing, vtkFloatingPointType);
-  vtkSetVector3Macro(FileSpacing, vtkFloatingPointType);
+  vtkGetVector3Macro(FileSpacing, double);
+  vtkSetVector3Macro(FileSpacing, double);
   
   // Description:
   // The type of data in the file. One of: Char, UnsignedChar, Short, 
@@ -150,7 +150,7 @@ protected:
   int FileScalarType;
   int FileNumberOfScalarComponents;
   int FileLittleEndian;
-  vtkFloatingPointType FileSpacing[3];
+  double FileSpacing[3];
   int FileDimensions[3];
 
 

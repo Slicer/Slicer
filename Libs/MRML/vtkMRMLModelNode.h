@@ -112,8 +112,8 @@ public:
 
   // Description:
   // Range of scalar values to render rather than the single color designated by colorName
-  vtkSetVector2Macro(ScalarRange, vtkFloatingPointType);
-  vtkGetVector2Macro(ScalarRange, vtkFloatingPointType);
+  vtkSetVector2Macro(ScalarRange, double);
+  vtkGetVector2Macro(ScalarRange, double);
 
 
   // Description:
@@ -159,7 +159,7 @@ protected:
   int TensorVisibility;
 
   // Arrays
-  vtkFloatingPointType ScalarRange[2];
+  double ScalarRange[2];
 
   char *TransformNodeID;
 

@@ -55,12 +55,12 @@ class VTK_SLICERDAEMON_EXPORT vtkMRMLSlicerDaemonNode : public vtkMRMLNode
   vtkGetMacro(NumberOfIterations, int);
   vtkSetMacro(NumberOfIterations, int);
 
-  vtkGetMacro(Conductance, vtkFloatingPointType);
-  vtkSetMacro(Conductance, vtkFloatingPointType);
+  vtkGetMacro(Conductance, double);
+  vtkSetMacro(Conductance, double);
 
 
-  vtkGetMacro(TimeStep, vtkFloatingPointType);
-  vtkSetMacro(TimeStep, vtkFloatingPointType);
+  vtkGetMacro(TimeStep, double);
+  vtkSetMacro(TimeStep, double);
  
   vtkGetStringMacro(InputVolumeRef);
   vtkSetStringMacro(InputVolumeRef);
@@ -75,8 +75,8 @@ protected:
   vtkMRMLSlicerDaemonNode(const vtkMRMLSlicerDaemonNode&);
   void operator=(const vtkMRMLSlicerDaemonNode&);
 
-  vtkFloatingPointType Conductance;
-  vtkFloatingPointType TimeStep;
+  double Conductance;
+  double TimeStep;
   int NumberOfIterations;
   
   char* InputVolumeRef;
