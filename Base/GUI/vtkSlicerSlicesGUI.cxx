@@ -36,6 +36,9 @@ vtkSlicerSlicesGUI::~vtkSlicerSlicesGUI ( )
 
     vtkSlicerSliceGUI *s, *nexts;
 
+    this->RemoveMRMLNodeObservers ( );
+    this->RemoveLogicObservers ( );
+    
     // Remove observers, delete individual SliceGUIs and their collection
     if ( this->SliceGUICollection ) {
         this->SliceGUICollection->InitTraversal ( );
@@ -43,9 +46,6 @@ vtkSlicerSlicesGUI::~vtkSlicerSlicesGUI ( )
         while ( s != NULL ) {
             nexts = vtkSlicerSliceGUI::SafeDownCast (this->SliceGUICollection->GetNextItemAsObject ( ) );
             this->SliceGUICollection->RemoveItem ( s );
-            s->RemoveGUIObservers ( );
-            s->SetModuleLogic ( NULL );
-            s->SetMRMLNode ( NULL );
             s->Delete ( );
             s = NULL;
             s = nexts;
@@ -53,22 +53,6 @@ vtkSlicerSlicesGUI::~vtkSlicerSlicesGUI ( )
         this->SliceGUICollection->Delete ( );
         this->SliceGUICollection = NULL;
     }
-
-    if ( this->MainSliceGUI0 )
-        {
-            this->MainSliceGUI0->Delete ( );
-            this->MainSliceGUI0 = NULL;
-        }
-    if ( this->MainSliceGUI1 )
-        {
-            this->MainSliceGUI1->Delete ( );
-            this->MainSliceGUI1 = NULL;
-        }
-    if ( this->MainSliceGUI2 )
-        {
-            this->MainSliceGUI2->Delete ( );
-            this->MainSliceGUI2 = NULL;
-        }
 }
 
 
@@ -186,6 +170,17 @@ void vtkSlicerSlicesGUI::RemoveGUIObservers ( )
                 }
         }
     }
+
+//---------------------------------------------------------------------------
+void vtkSlicerSlicesGUI::RemoveMRMLNodeObservers ( ) {
+    // Fill in
+}
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerSlicesGUI::RemoveLogicObservers ( ) {
+    // Fill in
+}
 
 
 

@@ -61,42 +61,140 @@ vtkSlicerViewControlIcons::~vtkSlicerViewControlIcons ( )
 {
 
     // rotate around images
-    this->DeleteIcon ( this->RotateAroundAIconLO );
-    this->DeleteIcon ( this->RotateAroundAIconHI );
-    this->DeleteIcon ( this->RotateAroundPIconLO );
-    this->DeleteIcon ( this->RotateAroundPIconHI );
-    this->DeleteIcon ( this->RotateAroundRIconLO );
-    this->DeleteIcon ( this->RotateAroundRIconHI );
-    this->DeleteIcon ( this->RotateAroundLIconLO );
-    this->DeleteIcon ( this->RotateAroundLIconHI );
-    this->DeleteIcon ( this->RotateAroundSIconLO );
-    this->DeleteIcon ( this->RotateAroundSIconHI );
-    this->DeleteIcon ( this->RotateAroundIIconLO );
-    this->DeleteIcon ( this->RotateAroundIIconHI );
-    this->DeleteIcon ( this->RotateAroundTopCornerIcon );
-    this->DeleteIcon ( this->RotateAroundBottomCornerIcon );
-    this->DeleteIcon ( this->RotateAroundMiddleIcon );
+    if ( this->RotateAroundAIconLO ) {
+        this->RotateAroundAIconLO->Delete ( );
+        this->RotateAroundAIconLO = NULL;
+    }
+    if ( this->RotateAroundAIconHI ) {
+        this->RotateAroundAIconHI->Delete ( );
+        this->RotateAroundAIconHI = NULL;
+    }
+    if ( this->RotateAroundPIconLO ) {
+        this->RotateAroundPIconLO->Delete ( );
+        this->RotateAroundPIconLO = NULL;
+    }
+    if ( this->RotateAroundPIconHI ) {
+        this->RotateAroundPIconHI->Delete ( );
+        this->RotateAroundPIconHI = NULL;
+    }
+    if ( this->RotateAroundRIconLO ) {
+        this->RotateAroundRIconLO->Delete ( );
+        this->RotateAroundRIconLO = NULL;
+    }
+    if ( this->RotateAroundRIconHI ) {
+        this->RotateAroundRIconHI->Delete ( );
+        this->RotateAroundRIconHI = NULL;
+    }
+    if ( this->RotateAroundLIconLO ) {
+        this->RotateAroundLIconLO->Delete ( );
+        this->RotateAroundLIconLO = NULL;
+    }
+    if ( this->RotateAroundLIconHI ) {
+        this->RotateAroundLIconHI->Delete ( );
+        this->RotateAroundLIconHI = NULL;
+    }
+    if ( this->RotateAroundSIconLO ) {
+        this->RotateAroundSIconLO->Delete ( );
+        this->RotateAroundSIconLO = NULL;
+    }
+    if ( this->RotateAroundSIconHI ) {
+        this->RotateAroundSIconHI->Delete ( );
+        this->RotateAroundSIconHI = NULL;
+    }
+    if ( this->RotateAroundIIconLO ) {
+        this->RotateAroundIIconLO->Delete ( );
+        this->RotateAroundIIconLO = NULL;
+    }
+    if ( this->RotateAroundIIconHI ) {
+        this->RotateAroundIIconHI->Delete ( );
+        this->RotateAroundIIconHI = NULL;
+    }
+    if ( this->RotateAroundTopCornerIcon ) {
+        this->RotateAroundTopCornerIcon->Delete ( );
+        this->RotateAroundTopCornerIcon = NULL;
+    }
+    if ( this->RotateAroundBottomCornerIcon ) {
+        this->RotateAroundBottomCornerIcon->Delete ( );
+        this->RotateAroundBottomCornerIcon = NULL;
+    }
+    if ( this->RotateAroundMiddleIcon ) {
+        this->RotateAroundMiddleIcon->Delete ( );
+        this->RotateAroundMiddleIcon = NULL;
+    }
+
 
     // look from images.
-    this->DeleteIcon ( this->LookFromAIconLO );
-    this->DeleteIcon ( this->LookFromAIconHI );
-    this->DeleteIcon ( this->LookFromPIconLO );
-    this->DeleteIcon ( this->LookFromPIconHI );
-    this->DeleteIcon ( this->LookFromRIconLO );
-    this->DeleteIcon ( this->LookFromRIconHI );
-    this->DeleteIcon ( this->LookFromLIconLO );
-    this->DeleteIcon ( this->LookFromLIconHI );
-    this->DeleteIcon ( this->LookFromSIconLO );
-    this->DeleteIcon ( this->LookFromSIconHI );
-    this->DeleteIcon ( this->LookFromIIconLO );
-    this->DeleteIcon ( this->LookFromIIconHI );
-    this->DeleteIcon ( this->LookFromTopCornerIcon );
-    this->DeleteIcon ( this->LookFromBottomCornerIcon );
-    this->DeleteIcon ( this->LookFromMiddleIcon );
+    if ( this->LookFromAIconLO ) {
+        this->LookFromAIconLO->Delete ( );
+        this->LookFromAIconLO = NULL;
+    }
+    if ( this->LookFromAIconHI ) {
+        this->LookFromAIconHI->Delete ( );
+        this->LookFromAIconHI = NULL;
+    }
+    if ( this->LookFromPIconLO ) {
+        this->LookFromPIconLO->Delete ( );
+        this->LookFromPIconLO = NULL;
+    }
+    if ( this->LookFromPIconHI ) {
+        this->LookFromPIconHI->Delete ( );
+        this->LookFromPIconHI = NULL;
+    }
+    if ( this->LookFromRIconLO ) {
+        this->LookFromRIconLO->Delete ( );
+        this->LookFromRIconLO = NULL;
+    }
+    if ( this->LookFromRIconHI ) {
+        this->LookFromRIconHI->Delete ( );
+        this->LookFromRIconHI = NULL;
+    }
+    if ( this->LookFromLIconLO ) {
+        this->LookFromLIconLO->Delete ( );
+        this->LookFromLIconLO = NULL;
+    }
+    if ( this->LookFromLIconHI ) {
+        this->LookFromLIconHI->Delete ( );
+        this->LookFromLIconHI = NULL;
+    }
+    if ( this->LookFromSIconLO ) {
+        this->LookFromSIconLO->Delete ( );
+        this->LookFromSIconLO = NULL;
+    }
+    if ( this->LookFromSIconHI ) {
+        this->LookFromSIconHI->Delete ( );
+        this->LookFromSIconHI = NULL;
+    }
+    if ( this->LookFromIIconLO ) {
+        this->LookFromIIconLO->Delete ( );
+        this->LookFromIIconLO = NULL;
+    }
+    if ( this->LookFromIIconHI ) {
+        this->LookFromIIconHI->Delete ( );
+        this->LookFromIIconHI = NULL;
+    }
+    if ( this->LookFromTopCornerIcon ) {
+        this->LookFromTopCornerIcon->Delete ( );
+        this->LookFromTopCornerIcon = NULL;
+    }
+    if ( this->LookFromBottomCornerIcon ) {
+        this->LookFromBottomCornerIcon->Delete ( );
+        this->LookFromBottomCornerIcon = NULL;
+    }
+    if ( this->LookFromMiddleIcon ) {
+        this->LookFromMiddleIcon->Delete ( );
+        this->LookFromMiddleIcon = NULL;
+    }
 
     // zoom images
-    this->DeleteIcon ( this->NavZoomInIcon );
-    this->DeleteIcon ( this->NavZoomOutIcon );
+    if ( this->NavZoomInIcon ) {
+        this->NavZoomInIcon->Delete ( );
+        this->NavZoomInIcon = NULL;
+    }
+    if ( this->NavZoomOutIcon ) {
+        this->NavZoomOutIcon->Delete ( );
+        this->NavZoomOutIcon = NULL;
+    }
+
 
 }
 

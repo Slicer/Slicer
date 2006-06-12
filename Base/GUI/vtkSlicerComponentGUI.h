@@ -60,17 +60,23 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerComponentGUI : public vtkKWObject
     // for both setting and observing them.
     void SetMRMLScene ( vtkMRMLScene *mrml )
         { this->SetMRML ( vtkObjectPointer( &this->MRMLScene), mrml ); }
+    // Why doesn't this call SetAndObserveMRML?
     void SetAndObserveMRMLScene ( vtkMRMLScene *mrml )
-        { this->SetMRML ( vtkObjectPointer( &this->MRMLScene), mrml ); }
-    void SetApplicationLogic ( vtkSlicerApplicationLogic *logic )
+        { this->SetAndObserveMRML ( vtkObjectPointer( &this->MRMLScene), mrml ); }
+    virtual void SetApplicationLogic ( vtkSlicerApplicationLogic *logic )
         { this->SetLogic ( vtkObjectPointer (&this->ApplicationLogic), logic ); }
+    // Why doesn't this call SetAndObserveLogic?
     void SetAndObserveApplicationLogic ( vtkSlicerApplicationLogic *logic )
-        { this->SetLogic ( vtkObjectPointer (&this->ApplicationLogic), logic ); }
+        { this->SetAndObserveLogic ( vtkObjectPointer (&this->ApplicationLogic), logic ); }
     
     // Description:
     // Add/Remove observers on a GUI.
     virtual void AddGUIObservers ( ) { };
     virtual void RemoveGUIObservers ( ) { };
+    // Description:
+    // Remove all observers on MRML scene, nodes and logic
+    virtual void RemoveMRMLNodeObservers ( ) { };
+    virtual void RemoveLogicObservers ( ) { };
     
     // Description:
     // Get/Set the name of the GUI, used to find and raise a GUI.

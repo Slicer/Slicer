@@ -15,7 +15,6 @@ class vtkSlicerLogoIcons : public vtkSlicerIcons
     void PrintSelf ( ostream& os, vtkIndent indent );
 
     vtkGetObjectMacro ( SlicerLogo, vtkKWIcon);
-    vtkGetObjectMacro ( ContributorLogo, vtkKWIcon );
 
     void AssignImageDataToIcons ( );
     
@@ -23,7 +22,6 @@ class vtkSlicerLogoIcons : public vtkSlicerIcons
     vtkSlicerLogoIcons ( );
     ~vtkSlicerLogoIcons ( );
     vtkKWIcon *SlicerLogo;
-    vtkKWIcon *ContributorLogo;
     
  private:
     vtkSlicerLogoIcons (const vtkSlicerLogoIcons&); // Not implemented

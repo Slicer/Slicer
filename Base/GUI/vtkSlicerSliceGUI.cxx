@@ -45,6 +45,9 @@ vtkSlicerSliceGUI::vtkSlicerSliceGUI (  ) {
 vtkSlicerSliceGUI::~vtkSlicerSliceGUI ( ) {
 
     // Remove observers and delete.
+    this->RemoveMRMLNodeObservers ( );
+    this->RemoveLogicObservers ( );
+    
     if ( this->SliceViewer )
         {
             this->SliceViewer->Delete ( );
@@ -52,12 +55,20 @@ vtkSlicerSliceGUI::~vtkSlicerSliceGUI ( ) {
         }
     if ( this->SliceController )
         {
+            this->SliceController->RemoveGUIObservers ( );
             this->SliceController->Delete ( );
             this->SliceController = NULL;
         }
+
+
+    // wjp test
+    this->SetApplication ( NULL );
+    this->SliceNode = NULL;
+    this->Logic = NULL;
+    // end wjp test
+    
     this->SetModuleLogic ( NULL );
     this->SetMRMLNode ( NULL );
-    
 }
 
 
@@ -100,6 +111,18 @@ void vtkSlicerSliceGUI::RemoveGUIObservers ( ) {
 }
 
 
+
+//---------------------------------------------------------------------------
+void vtkSlicerVolumesGUI::RemoveMRMLNodeObservers ( ) {
+    // Fill in
+}
+
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerVolumesGUI::RemoveLogicObservers ( ) {
+    // Fill in
+}
 
 
 

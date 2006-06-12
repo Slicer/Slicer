@@ -54,7 +54,7 @@ public:
   
   
   void SetAndObserveMRMLScene ( vtkMRMLScene *mrml )
-    { this->SetMRML ( vtkObjectPointer( &this->MRMLScene), mrml ); };
+    { this->SetAndObserveMRML ( vtkObjectPointer( &this->MRMLScene), mrml ); };
   
   // Description:
   // alternative method to propagate events generated in GUI to logic / mrml

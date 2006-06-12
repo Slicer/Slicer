@@ -60,16 +60,25 @@ vtkSlicerSliceControllerWidget::~vtkSlicerSliceControllerWidget ( ){
         this->LabelSelector = NULL;
     }
 
-    if ( this->SliceNode ) {
-        this->SliceNode->Delete ( );
-        this->SliceNode = NULL;
-    }
-    if ( this->SliceCompositeNode ) {
-        this->SliceCompositeNode->Delete ( );
-        this->SliceCompositeNode = NULL;
-    }
-    
+    this->SetSliceNode ( NULL );
+    this->SetSliceCompositeNode ( NULL );
 }
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerSliceControllerWidget::RemoveGUIObservers ( ) {
+
+    this->OrientationMenu->GetWidget()->GetWidget()->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand);
+    this->ForegroundSelector->GetWidget()->GetWidget()->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand);
+    this->BackgroundSelector->GetWidget()->GetWidget()->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand);
+        this->LabelSelector->GetWidget()->GetWidget()->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand);
+    this->OffsetScale->GetWidget()->RemoveObservers ( vtkKWScale::ScaleValueChangingEvent, this->GUICallbackCommand );
+    this->OffsetScale->GetWidget()->RemoveObservers ( vtkKWScale::ScaleValueChangedEvent, this->GUICallbackCommand );
+    this->OffsetScale->GetWidget()->RemoveObservers ( vtkKWScale::ScaleValueStartChangingEvent, this->GUICallbackCommand );
+        
+}
+
+
 
 
 

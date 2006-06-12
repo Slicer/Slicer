@@ -29,6 +29,8 @@ public:
   vtkGetObjectMacro ( BackgroundSelector, vtkSlicerNodeSelectorWidget );
   vtkGetObjectMacro ( LabelSelector, vtkSlicerNodeSelectorWidget );
 
+  void RemoveGUIObservers ( );
+  
   // Description:
   // Get/Set the Nodes
   vtkGetObjectMacro ( SliceCompositeNode, vtkMRMLSliceCompositeNode );

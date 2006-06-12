@@ -71,11 +71,7 @@ vtkSlicerNodeSelectorWidget::~vtkSlicerNodeSelectorWidget()
 {
   this->SetNodeClass(NULL);
   this->SetNewNodeName(NULL);
-  if (this->MRMLScene)
-    {
-    this->MRMLScene->Delete();
-    this->MRMLScene = NULL;
-    }
+  this->SetMRMLScene ( NULL );
   if (this->MRMLCallbackCommand)
     {
     this->MRMLCallbackCommand->Delete();
@@ -89,7 +85,9 @@ void vtkSlicerNodeSelectorWidget::SetMRMLScene( vtkMRMLScene *MRMLScene)
   if ( this->MRMLScene )
     {
     this->MRMLScene->RemoveObserver( this->MRMLCallbackCommand );
-    this->MRMLScene->Delete();
+    this->MRMLScene->Delete ( );
+    this->MRMLScene = NULL;
+    //    this->MRMLScene->Delete();
     }
   
   this->MRMLScene = MRMLScene;

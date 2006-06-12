@@ -27,6 +27,10 @@ vtkSlicerModelsGUI::vtkSlicerModelsGUI ( )
 //---------------------------------------------------------------------------
 vtkSlicerModelsGUI::~vtkSlicerModelsGUI ( )
 {
+
+    this->RemoveMRMLNodeObservers ( );
+    this->RemoveLogicObservers ( );
+    
     if (this->LoadModelButton ) {
         this->LoadModelButton->Delete ( );
         this->LoadModelButton = NULL;
@@ -45,6 +49,17 @@ void vtkSlicerModelsGUI::PrintSelf ( ostream& os, vtkIndent indent )
     //os << indent << "ModelNode: " << this->GetVolumeNode ( ) << "\n";
     //os << indent << "Logic: " << this->GetLogic ( ) << "\n";
     // print widgets?
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerModelsGUI::RemoveMRMLNodeObservers ( ) {
+    // Fill in
+}
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerModelsGUI::RemoveLogicObservers ( ) {
+    // Fill in
 }
 
 

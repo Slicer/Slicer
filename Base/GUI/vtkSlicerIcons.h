@@ -5,6 +5,10 @@
 #include "vtkKWResourceUtilities.h"
 #include "vtkKWIcon.h"
 
+// Description:
+// This class is defined in anticipation of superclass methods that
+// all Slicer Icons will use...
+
 class vtkSlicerIcons : public vtkKWObject
 {
  public:
@@ -12,14 +16,9 @@ class vtkSlicerIcons : public vtkKWObject
     vtkTypeRevisionMacro ( vtkSlicerIcons, vtkKWObject);
     void PrintSelf ( ostream& os, vtkIndent indent );
 
-    vtkGetStringMacro ( SlicerImagePath );
-
-    virtual void DeleteIcon ( vtkKWIcon *icon );
  protected:
     vtkSlicerIcons ( );
     ~vtkSlicerIcons ( );
-
-    char *SlicerImagePath;
     
  private:
     vtkSlicerIcons (const vtkSlicerIcons& ); // Not implemented

@@ -32,6 +32,10 @@ vtkSlicerWidget::vtkSlicerWidget ( )
 //---------------------------------------------------------------------------
 vtkSlicerWidget::~vtkSlicerWidget ( )
 {
+    // remove observers if there are any,
+    // and set null pointers.
+    this->SetAndObserveMRMLScene ( NULL );
+
   // unregister and set null pointers.
   if ( this->MRMLCallbackCommand )
     {
@@ -44,9 +48,6 @@ vtkSlicerWidget::~vtkSlicerWidget ( )
     this->GUICallbackCommand = NULL;
     }
   
-  // remove observers if there are any,
-  // and set null pointers.
-  this->SetMRMLScene ( NULL );
 }
 
 

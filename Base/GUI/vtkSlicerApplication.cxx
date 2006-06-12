@@ -33,13 +33,6 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
 //---------------------------------------------------------------------------
 vtkSlicerApplication::~vtkSlicerApplication ( ) {
 
-    this->CloseAllWindows ( );
-    if ( this->ModuleGUICollection )
-        {
-            this->ModuleGUICollection->RemoveAllItems ( );
-            this->ModuleGUICollection->Delete ( );
-            this->ModuleGUICollection = NULL;
-        }
     if ( this->MainLayout )
         {
             this->MainLayout->Delete ( );
@@ -50,7 +43,14 @@ vtkSlicerApplication::~vtkSlicerApplication ( ) {
             this->SlicerTheme->Delete ( );
             this->SlicerTheme = NULL;
         }
+    if ( this->ModuleGUICollection )
+        {
+            this->ModuleGUICollection->RemoveAllItems ( );
+            this->ModuleGUICollection->Delete ( );
+            this->ModuleGUICollection = NULL;
+        }
 }
+
 
 
 //---------------------------------------------------------------------------
@@ -63,6 +63,7 @@ void vtkSlicerApplication::AddModuleGUI ( vtkSlicerModuleGUI *gui ) {
     // Add a gui
     this->ModuleGUICollection->AddItem ( gui );
 }
+
 
 //---------------------------------------------------------------------------
 vtkSlicerModuleGUI* vtkSlicerApplication::GetModuleGUIByName ( const char *name )

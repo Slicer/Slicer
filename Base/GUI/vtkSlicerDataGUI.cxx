@@ -29,6 +29,8 @@ vtkSlicerDataGUI::vtkSlicerDataGUI ( )
 vtkSlicerDataGUI::~vtkSlicerDataGUI ( )
 {
 
+    this->RemoveMRMLNodeObservers ( );
+    this->RemoveLogicObservers ( );
     // class not yet defined!
     //this->SetModuleLogic ( NULL );
 }
@@ -43,6 +45,19 @@ void vtkSlicerDataGUI::PrintSelf ( ostream& os, vtkIndent indent )
     //os << indent << "Logic: " << this->GetLogic ( ) << "\n";
     // print widgets?
 }
+
+//---------------------------------------------------------------------------
+void vtkSlicerDataGUI::RemoveMRMLNodeObservers ( ) {
+    // Fill in
+}
+
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerDataGUI::RemoveLogicObservers ( ) {
+    // Fill in
+}
+
 
 //---------------------------------------------------------------------------
 void vtkSlicerDataGUI::RemoveGUIObservers ( )

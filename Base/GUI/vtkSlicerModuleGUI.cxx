@@ -19,11 +19,12 @@ vtkSlicerModuleGUI::vtkSlicerModuleGUI ( ) {
 //---------------------------------------------------------------------------
 vtkSlicerModuleGUI::~vtkSlicerModuleGUI ( ) {
 
-    if ( this->UIPanel ) {
+    if ( this->UIPanel != NULL ) {
         this->UIPanel->Delete ( );
         this->UIPanel = NULL;
     }
 }
+
 
 //---------------------------------------------------------------------------
 void vtkSlicerModuleGUI::PrintSelf ( ostream& os, vtkIndent indent )

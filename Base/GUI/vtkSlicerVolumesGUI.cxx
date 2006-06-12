@@ -35,19 +35,23 @@ vtkSlicerVolumesGUI::vtkSlicerVolumesGUI ( )
 //---------------------------------------------------------------------------
 vtkSlicerVolumesGUI::~vtkSlicerVolumesGUI ( )
 {
+
+    this->RemoveMRMLNodeObservers ( );
+    this->RemoveLogicObservers ( );
+    
   if (this->SelectedVolumeID)
     {
-    delete [] this->SelectedVolumeID;
-    this->SelectedVolumeID = NULL;
+        delete [] this->SelectedVolumeID;
+        this->SelectedVolumeID = NULL;
     }
     if (this->LoadVolumeButton )
       {
-      this->LoadVolumeButton->Delete ( );
+          this->LoadVolumeButton->Delete ( );
       }
 
     if (this->VolumeDisplayWidget)
       {
-      this->VolumeDisplayWidget->Delete ( );
+          this->VolumeDisplayWidget->Delete ( );
       }
 
     this->SetModuleLogic ( NULL );
@@ -84,6 +88,16 @@ void vtkSlicerVolumesGUI::AddGUIObservers ( )
     this->LoadVolumeButton->AddObserver ( vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
 }
 
+//---------------------------------------------------------------------------
+void vtkSlicerVolumesGUI::RemoveMRMLNodeObservers ( ) {
+    // Fill in
+}
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerVolumesGUI::RemoveLogicObservers ( ) {
+    // Fill in
+}
 
 
 //---------------------------------------------------------------------------
@@ -194,7 +208,7 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
 
     app->Script("pack %s -side top -anchor w -padx 2 -pady 4", 
                 this->LoadVolumeButton->GetWidgetName());
-
+    
     // ---
     // DISPLAY FRAME            
     this->VolumeDisplayWidget = vtkSlicerVolumeDisplayWidget::New ( );

@@ -64,15 +64,42 @@ vtkKWWindowLevelThresholdEditor::~vtkKWWindowLevelThresholdEditor()
     this->SetImageData(NULL);
     }
 
-  this->LevelEntry->Delete();
-  this->WindowEntry->Delete();
-  this->WindowLevelAutoManual->Delete();
-  this->TresholdAutoManual->Delete();
-  this->TresholdApply->Delete();
-  this->WindowLevelRange->Delete();
-  this->ThresholdRange->Delete();
-  this->Histogram->Delete();
-  this->ColorTransferFunctionEditor->Delete();
+  if ( this->LevelEntry ) {
+      this->LevelEntry->Delete();
+      this->LevelEntry = NULL;
+  }
+  if ( this->WindowEntry ) {
+      this->WindowEntry->Delete();
+      this->WindowEntry = NULL;
+  }
+  if ( this->WindowLevelAutoManual ) {
+      this->WindowLevelAutoManual->Delete();
+      this->WindowLevelAutoManual = NULL ;
+  }
+  if ( this->TresholdAutoManual ) {
+      this->TresholdAutoManual->Delete();
+      this->TresholdAutoManual = NULL;
+  }
+  if ( this->TresholdApply ) {
+      this->TresholdApply->Delete();
+      this->TresholdApply = NULL;
+  }
+  if ( this->WindowLevelRange ) {
+      this->WindowLevelRange->Delete();
+      this->WindowLevelRange = NULL;
+  }
+  if ( this->ThresholdRange ) {
+      this->ThresholdRange->Delete();
+      this->ThresholdRange = NULL;
+  }
+  if ( this->Histogram ) {
+      this->Histogram->Delete();
+      this->Histogram = NULL;
+  }
+  if ( this->ColorTransferFunctionEditor) {
+      this->ColorTransferFunctionEditor->Delete();
+      this->ColorTransferFunctionEditor = NULL;
+  }
 
 }
 
@@ -240,20 +267,20 @@ void vtkKWWindowLevelThresholdEditor::CreateWidget()
     "pack %s -side left -anchor w -expand n -padx 2 -pady 2", 
     this->ThresholdRange->GetWidgetName());
 
-  vtkKWFrame *applyFrame = vtkKWFrame::New ( );
+    vtkKWFrame *applyFrame = vtkKWFrame::New ( );
   applyFrame->SetParent(this);
-  applyFrame->Create();
-  this->Script (
-                "pack %s -side top -anchor nw -expand n -padx 2 -pady 2",
-                applyFrame->GetWidgetName());
+    applyFrame->Create();
+    this->Script (
+                  "pack %s -side top -anchor nw -expand n -padx 2 -pady 2",
+                  applyFrame->GetWidgetName());
   
-  this->TresholdApply->SetParent(applyFrame);
-  this->TresholdApply->Create();
-  this->TresholdApply->SetLabelText("Apply");
-  this->TresholdApply->GetWidget()->SetCommand(this, "ProcessCheckButtonCommand");
-  this->Script(
-    "pack %s -side top -anchor ne -expand n -padx 2 -pady 2", 
-    this->TresholdApply->GetWidgetName());  
+    this->TresholdApply->SetParent(applyFrame);
+    this->TresholdApply->Create();
+    this->TresholdApply->SetLabelText("Apply");
+    this->TresholdApply->GetWidget()->SetCommand(this, "ProcessCheckButtonCommand");
+    this->Script(
+      "pack %s -side right -anchor n -fill x -expand n -padx 2 -pady 2", 
+      this->TresholdApply->GetWidgetName());  
 
 
   this->ColorTransferFunctionEditor->SetParent(this);
@@ -314,7 +341,9 @@ void vtkKWWindowLevelThresholdEditor::CreateWidget()
   // Override the column sorting behavior by always updating
 
    // clean up...
-   applyFrame->Delete();
+  winLevelFrame->Delete ( );
+  threshFrame->Delete ( );
+  applyFrame->Delete();
 
 }
 

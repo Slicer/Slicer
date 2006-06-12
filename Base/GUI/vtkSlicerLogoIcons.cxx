@@ -11,7 +11,6 @@ vtkCxxRevisionMacro ( vtkSlicerLogoIcons, "$Revision: 1.0 $");
 vtkSlicerLogoIcons::vtkSlicerLogoIcons ( )
 {
     this->SlicerLogo = vtkKWIcon::New ( );
-    this->ContributorLogo = vtkKWIcon::New ( );
     this->AssignImageDataToIcons ( );
 }
 
@@ -20,8 +19,10 @@ vtkSlicerLogoIcons::vtkSlicerLogoIcons ( )
 vtkSlicerLogoIcons::~vtkSlicerLogoIcons ( )
 {
 
-    this->DeleteIcon ( this->SlicerLogo );
-    this->DeleteIcon ( this->ContributorLogo );
+    if ( this->SlicerLogo ) {
+            this->SlicerLogo->Delete ( );
+            this->SlicerLogo = NULL;
+        }
 }
 
 //---------------------------------------------------------------------------
@@ -43,6 +44,5 @@ void vtkSlicerLogoIcons::PrintSelf ( ostream& os, vtkIndent indent )
 
     os << indent << "SlicerLogoIcons: " << this->GetClassName ( ) << "\n";
     os << indent << "SlicerLogo: " << this->GetSlicerLogo ( ) << "\n";
-    os << indent << "ContributorLogo: " << this->GetContributorLogo ( ) << "\n";
 
 }

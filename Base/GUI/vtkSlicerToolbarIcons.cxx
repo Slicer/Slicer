@@ -36,23 +36,75 @@ vtkSlicerToolbarIcons::vtkSlicerToolbarIcons ( )
 vtkSlicerToolbarIcons::~vtkSlicerToolbarIcons ( )
 {
     // toolbar icons
-    this->DeleteIcon ( this->HomeIcon);
-    this->DeleteIcon ( this->DataIcon );
-    this->DeleteIcon ( this->VolumeIcon );
-    this->DeleteIcon ( this->ModelIcon );
-    this->DeleteIcon ( this->EditorIcon );
-    this->DeleteIcon ( this->EditorToolboxIcon );
-    this->DeleteIcon ( this->AlignIcon );
-    this->DeleteIcon ( this->ColorIcon );
-    this->DeleteIcon ( this->FiducialsIcon );
-    this->DeleteIcon ( this->SaveSceneIcon );
-    this->DeleteIcon ( this->LoadSceneIcon );
-    this->DeleteIcon ( this->ConventionalViewIcon );
-    this->DeleteIcon ( this->OneUp3DViewIcon );
-    this->DeleteIcon ( this->OneUpSliceViewIcon );
-    this->DeleteIcon ( this->FourUpViewIcon );
-    this->DeleteIcon ( this->TabbedViewIcon );
-    this->DeleteIcon ( this->LightBoxViewIcon );
+    if ( this->HomeIcon ) {
+        this->HomeIcon->Delete ( );
+        this->HomeIcon = NULL;
+    }
+    if ( this->DataIcon ) {
+        this->DataIcon->Delete ( );
+        this->DataIcon = NULL;
+    }
+    if ( this->VolumeIcon ) {
+        this->VolumeIcon->Delete ( );
+        this->VolumeIcon = NULL;
+    }
+    if ( this->ModelIcon ) {
+        this->ModelIcon->Delete ( );
+        this->ModelIcon = NULL;
+    }
+    if ( this->EditorIcon ) {
+        this->EditorIcon->Delete ( );
+        this->EditorIcon = NULL;
+    }
+    if ( this->EditorToolboxIcon ) {
+        this->EditorToolboxIcon->Delete ( );
+        this->EditorToolboxIcon = NULL;
+    }
+    if ( this->AlignIcon ) {
+        this->AlignIcon->Delete ( );
+        this->AlignIcon = NULL;
+    }
+    if ( this->ColorIcon ) {
+        this->ColorIcon->Delete ( );
+        this->ColorIcon = NULL;
+    }
+    if ( this->FiducialsIcon ) {
+        this->FiducialsIcon->Delete ( );
+        this->FiducialsIcon = NULL;
+    }
+    if ( this->SaveSceneIcon ) {
+        this->SaveSceneIcon->Delete ( );
+        this->SaveSceneIcon = NULL;
+    }
+    if ( this->LoadSceneIcon ) {
+        this->LoadSceneIcon->Delete ( );
+        this->LoadSceneIcon = NULL;
+    }
+    if ( this->ConventionalViewIcon ) {
+        this->ConventionalViewIcon->Delete ( );
+        this->ConventionalViewIcon = NULL;
+    }
+    if ( this->OneUp3DViewIcon ) {
+        this->OneUp3DViewIcon->Delete ( );
+        this->OneUp3DViewIcon = NULL;
+    }
+    if ( this->OneUpSliceViewIcon ) {
+        this->OneUpSliceViewIcon->Delete ( );
+        this->OneUpSliceViewIcon = NULL;
+    }
+    if ( this->FourUpViewIcon ) {
+        this->FourUpViewIcon->Delete ( );
+        this->FourUpViewIcon = NULL;
+    }
+    if ( this->TabbedViewIcon ) {
+        this->TabbedViewIcon->Delete ( );
+        this->TabbedViewIcon = NULL;
+    }
+    if ( this->LightBoxViewIcon ) {
+        this->LightBoxViewIcon->Delete ( );
+        this->LightBoxViewIcon = NULL;
+    }
+    
 }
 
 

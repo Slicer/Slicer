@@ -83,14 +83,13 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
     this->ViewToolbar = vtkKWToolbar::New ( );
     
     //--- slicer icons
+    this->SlicerLogoIcons = vtkSlicerLogoIcons::New ();
     this->SlicerViewControlIcons = vtkSlicerViewControlIcons::New();
     this->SlicerToolbarIcons = vtkSlicerToolbarIcons::New ();
-    this->SlicerLogoIcons = vtkSlicerLogoIcons::New ();
     this->SlicerModuleNavigationIcons = vtkSlicerModuleNavigationIcons::New ();
 
     //--- logo widgets to which icons are assigned.
     this->SlicerLogoLabel = vtkKWLabel::New();
-    this->ContributorLogoLabel = vtkKWLabel::New();
 
     //--- toolbar widgets to which icons are assigned.
     this->HomeIconButton = vtkKWPushButton::New ( );
@@ -180,10 +179,13 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
 vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
 {
 
-    this->RemoveGUIObservers ( );
+    this->RemoveMRMLNodeObservers ( );
+    this->RemoveLogicObservers ( );
 
-    this->DeleteToolbarWidgets ( );
-    this->DeleteGUIPanelWidgets ( );
+    if ( this->SlicerLogoIcons ) {
+        this->SlicerLogoIcons->Delete ( );
+        this->SlicerLogoIcons = NULL;
+    }
     if ( this->SlicerViewControlIcons ) {
         this->SlicerViewControlIcons->Delete ( );
         this->SlicerViewControlIcons = NULL;
@@ -192,25 +194,20 @@ vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
         this->SlicerToolbarIcons->Delete ( );
         this->SlicerToolbarIcons = NULL;
     }
-    if ( this->SlicerLogoIcons ) {
-        this->SlicerLogoIcons->Delete ( );
-        this->SlicerLogoIcons = NULL;
-    }
     if ( this->SlicerModuleNavigationIcons ) {
         this->SlicerModuleNavigationIcons->Delete ( );
         this->SlicerModuleNavigationIcons = NULL;
     }
 
-    this->DeleteFrames ( );
+    this->DeleteGUIPanelWidgets ( );
+    this->DeleteToolbarWidgets ( );
 
-    if ( this->MainViewer ) {
-        this->MainViewer->Delete ( );
-        this->MainViewer = NULL;
-    }
-
-    if ( this->MainSlicerWin ) {
-        this->MainSlicerWin->Delete ( );
-        this->MainSlicerWin = NULL;
+    vtkKWWindow *win = this->MainSlicerWin;
+    if ( win ) {
+        vtkKWToolbarSet *tbs = win->GetMainToolbarSet();
+        if (tbs ) {
+            tbs->RemoveAllToolbars () ;
+        }
     }
     if ( this->ModulesToolbar ) {
         this->ModulesToolbar->Delete ( );
@@ -224,19 +221,31 @@ vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
         this->ViewToolbar->Delete ( );
         this->ViewToolbar = NULL;
     }
+
+    this->DeleteFrames ( );
+
+    if ( this->MainViewer ) {
+        this->MainViewer->RemoveAllViewProps ( );
+        this->MainViewer->Delete ( );
+        this->MainViewer = NULL;
+    }
     if ( this->PlaneWidget ) {
         this->PlaneWidget->Delete ( );
         this->PlaneWidget = NULL;
     }
-    if (this->LoadSceneDialog ) 
-    {
-      this->LoadSceneDialog->Delete();
+    if ( this->LoadSceneDialog ) {
+        this->LoadSceneDialog->Delete();
+        this->LoadSceneDialog = NULL;
+    }
+    if ( this->SaveSceneDialog ) {
+        this->SaveSceneDialog->Delete();
+        this->SaveSceneDialog = NULL;
+    }
+    if ( this->MainSlicerWin ) {
+        this->MainSlicerWin->Delete ( );
+        this->MainSlicerWin = NULL;
     }
 
-     if (this->SaveSceneDialog ) 
-    {
-      this->SaveSceneDialog->Delete();
-    }
 }
 
 
@@ -325,7 +334,27 @@ void vtkSlicerApplicationGUI::RemoveGUIObservers ( )
     this->VolumeIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ModelIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ModulesMenuButton->RemoveObservers (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
+
+    this->LoadSceneDialog->RemoveObservers ( vtkCommand::ModifiedEvent, (vtkCommand *) this->GUICallbackCommand );
+    this->SaveSceneDialog->RemoveObservers ( vtkCommand::ModifiedEvent, (vtkCommand *) this->GUICallbackCommand );
+    this->GetMainSlicerWin()->GetFileMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->SliceFadeScale->RemoveObservers ( vtkKWScale::ScaleValueStartChangingEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->SliceFadeScale->RemoveObservers ( vtkKWScale::ScaleValueChangingEvent, (vtkCommand *)this->GUICallbackCommand );    
+    this->ToggleFgBgButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 }
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::RemoveMRMLNodeObservers ( ) {
+    // Fill in
+}
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::RemoveLogicObservers ( ) {
+    // Fill in
+}
+
 
 
 
@@ -541,8 +570,10 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
             this->BuildSlicerControlGUIPanel ( );
 
             // Turn off the tabs for pages in the ModuleControlGUI
-            this->MainSlicerWin->GetMainNotebook( )->ShowIconsOff ( );
-            this->MainSlicerWin->GetMainNotebook( )->SetUseFrameWithScrollbars ( 1 );
+            this->MainSlicerWin->GetMainNotebook()->ShowIconsOff ( );
+            //this->MainSlicerWin->GetMainNotebook()->SetAlwaysShowTabs ( 0 );
+            this->MainSlicerWin->GetMainNotebook()->SetUseFrameWithScrollbars ( 1 );
+            
             this->BuildSliceControlGUIPanel ( );
             this->BuildViewControlGUIPanel ( );
 
@@ -575,6 +606,17 @@ void vtkSlicerApplicationGUI::DisplayMainSlicerWindow ( )
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::DeleteToolbarWidgets ( )
 {
+
+    if ( this->ModulesToolbar ) {
+        this->ModulesToolbar->RemoveAllWidgets( );
+    }
+    if ( this->LoadSaveToolbar ) {
+        this->LoadSaveToolbar->RemoveAllWidgets ( );
+    }
+    if ( this->ViewToolbar ) {
+        this->ViewToolbar->RemoveAllWidgets ( );
+    }
+
     if ( this->HomeIconButton ) {
         this->HomeIconButton->Delete ( );
         this->HomeIconButton = NULL;
@@ -702,10 +744,6 @@ void vtkSlicerApplicationGUI::DeleteGUIPanelWidgets ( )
     if (this->SlicerLogoLabel ) {
         this->SlicerLogoLabel->Delete();
         this->SlicerLogoLabel = NULL;
-    }
-    if (this->ContributorLogoLabel ) {
-        this->ContributorLogoLabel->Delete();
-        this->ContributorLogoLabel = NULL;
     }
 
     //--- widgets from the SliceControlFrame

@@ -33,10 +33,12 @@ vtkSlicerVolumeDisplayWidget::~vtkSlicerVolumeDisplayWidget ( )
   if (this->VolumeSelectorWidget)
     {
     this->VolumeSelectorWidget->Delete();
+    this->VolumeSelectorWidget = NULL;
     }
   if (this->WindowLevelThresholdEditor)
     {
     this->WindowLevelThresholdEditor->Delete();
+    this->WindowLevelThresholdEditor = NULL;
     }
   
   this->SetMRMLScene ( NULL );
@@ -176,7 +178,7 @@ void vtkSlicerVolumeDisplayWidget::CreateWidget ( )
     this->VolumeSelectorWidget->SetMRMLScene(this->GetMRMLScene());
     //this->VolumeSelectorWidget->UpdateMenu();
     this->VolumeSelectorWidget->SetBorderWidth(2);
-    this->VolumeSelectorWidget->SetReliefToGroove();
+    // this->VolumeSelectorWidget->SetReliefToGroove();
     this->VolumeSelectorWidget->SetPadX(2);
     this->VolumeSelectorWidget->SetPadY(2);
     this->VolumeSelectorWidget->GetWidget()->GetWidget()->IndicatorVisibilityOff();

@@ -97,7 +97,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // Description:
     // Get the widgets in the LogoFrame
     vtkGetObjectMacro (SlicerLogoLabel, vtkKWLabel);
-    vtkGetObjectMacro (ContributorLogoLabel, vtkKWLabel);
 
     // Description:
     // Get the widgets in the ModuleChooseFrame
@@ -290,7 +289,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // Description:
     // Widgets for the Logo frame
     vtkKWLabel *SlicerLogoLabel;
-    vtkKWLabel *ContributorLogoLabel;
 
     // Description:
     // Widgets for the modules GUI panels

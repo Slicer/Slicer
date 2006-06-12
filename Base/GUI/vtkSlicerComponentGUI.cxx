@@ -40,28 +40,30 @@ vtkSlicerComponentGUI::vtkSlicerComponentGUI ( )
 //---------------------------------------------------------------------------
 vtkSlicerComponentGUI::~vtkSlicerComponentGUI ( )
 {
+    // remove observers on MRMLScene or ApplicationLogic,
+    this->SetAndObserveMRMLScene ( NULL );
+    this->SetAndObserveApplicationLogic ( NULL );
+
     // unregister and set null pointers.
-    if ( this->MRMLCallbackCommand )
+    if ( this->MRMLCallbackCommand != NULL )
         {
             this->MRMLCallbackCommand->Delete ( );
             this->MRMLCallbackCommand = NULL;
         }
-    if ( this->LogicCallbackCommand )
+    if ( this->LogicCallbackCommand != NULL )
         {
             this->LogicCallbackCommand->Delete ( );
             this->LogicCallbackCommand = NULL;
         }
-    if ( this->GUICallbackCommand )
+    if ( this->GUICallbackCommand != NULL )
         {
             this->GUICallbackCommand->Delete ( );
             this->GUICallbackCommand = NULL;
         }
-        
-    // remove observers if there are any,
+
     // and set null pointers.
-    this->SetMRMLScene ( NULL );
-    this->SetApplicationLogic ( NULL );
     this->GUIName = NULL;
+    this->SetApplication ( NULL );
 }
 
 

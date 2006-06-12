@@ -20,9 +20,18 @@ vtkSlicerModuleNavigationIcons::vtkSlicerModuleNavigationIcons ( )
 vtkSlicerModuleNavigationIcons::~vtkSlicerModuleNavigationIcons ( )
 {
     // module navigation images
-    this->DeleteIcon ( this->ModuleNextIcon );
-    this->DeleteIcon ( this->ModulePrevIcon );
-    this->DeleteIcon ( this->ModuleHistoryIcon );
+    if ( this->ModuleNextIcon ) {
+        this->ModuleNextIcon->Delete ( );
+        this->ModuleNextIcon = NULL;
+    }
+    if ( this->ModulePrevIcon ) {
+        this->ModulePrevIcon->Delete ( );
+        this->ModulePrevIcon = NULL;
+    }
+    if ( this->ModuleHistoryIcon ) {
+        this->ModuleHistoryIcon->Delete ( );
+        this->ModuleHistoryIcon = NULL;
+    }
     
 }
 

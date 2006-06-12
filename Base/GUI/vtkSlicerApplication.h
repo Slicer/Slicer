@@ -45,7 +45,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
     // Description:
     // installs rules to specify look & feel.
     virtual void InstallTheme ( vtkKWTheme *theme );
-    
+
+
  protected:
     vtkSlicerApplication ( );
     ~vtkSlicerApplication ( );
