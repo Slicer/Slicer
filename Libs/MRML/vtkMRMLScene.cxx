@@ -102,7 +102,15 @@ vtkMRMLScene::~vtkMRMLScene()
     {
     delete this->ClassNameList;
     }
-  this->CurrentScene->Delete();
+
+  this->ClearUndoStack ( );
+  this->ClearRedoStack ( );
+  
+  if ( this->CurrentScene != NULL ) {
+      this->CurrentScene->RemoveAllItems ( );
+      this->CurrentScene->Delete();
+      this->CurrentScene = NULL;
+  }
 
   for (unsigned int n=0; n<this->RegisteredNodeClasses.size(); n++) 
     {
