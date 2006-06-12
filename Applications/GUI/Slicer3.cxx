@@ -4,6 +4,7 @@
 #include "vtkKWApplication.h"
 #include "vtkKWWindow.h"
 #include "vtkKWNotebook.h"
+#include "vtkKWRegistryHelper.h"
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerApplicationLogic.h"
 #include "vtkSlicerSliceLogic.h"
@@ -23,6 +24,8 @@
 
 #include "vtkGradientAnisotropicDiffusionFilterLogic.h"
 #include "vtkGradientAnisotropicDiffusionFilterGUI.h"
+
+#include "ModuleFactory.h"
 
 #include <vtksys/SystemTools.hxx>
 
@@ -218,6 +221,35 @@ int Slicer3_main(int argc, char *argv[])
       source $::SLICER_BUILD/slicerd.tcl; slicerd_start              \
     ");
 
+
+    // --- Scan for Modules (currently limited to CommandLineModules)
+    //
+    //
+    ModuleFactory moduleFactory;
+    char modulePath[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
+
+    if (slicerApp->HasRegistryValue(2, "RunTime", "ModulePath"))
+      {
+      slicerApp->GetRegistryValue(2, "RunTime", "ModulePath", modulePath);
+      }
+    else
+      {
+      // use a default search path
+      strcpy(modulePath, ".");
+      }
+    moduleFactory.SetSearchPath( modulePath );
+                                                           
+    moduleFactory.Scan();
+
+    std::vector<std::string> moduleNames = moduleFactory.GetModuleNames();
+    
+    std::vector<std::string>::const_iterator mit = moduleNames.begin();
+
+    while (mit != moduleNames.end())
+      {
+      std::cout << moduleFactory.GetModuleDescription(*mit) << std::endl;
+      ++mit;
+      }
     
     // ------------------------------
     // BUILD APPLICATION GUI
