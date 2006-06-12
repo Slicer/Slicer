@@ -193,6 +193,16 @@ proc slicerd_sock_fileevent {sock} {
             flush $sock
         }
         "put" {
+
+            #
+            # read a volume from the socket (e.g. from slicerput)
+            # - read the protocol tag ("image")
+            # - create a unique name if needed
+            # - parse the header data
+            # - create the image data and mrml node
+            # - make the new volume the default background image
+            #
+          
             gets $sock line
             if { ![string match "image *" $line] } {
                 puts $sock "put error: bad protocol"
@@ -245,13 +255,7 @@ proc slicerd_sock_fileevent {sock} {
 
             $::slicer3::MRMLScene AddNode $node
 
-            tk_messageBox -message "node is $node"
-
-            $::slicer3::ApplicationLogic GetSelectionNode
-            tk_messageBox -message "selection node is [[$::slicer3::ApplicationLogic GetSelectionNode] Print]"
-            $node GetID
-            puts "$node GetID"
-            [[$::slicer3::ApplicationLogic GetSelectionNode] SetActiveVolumeID [$node GetID]]
+            [$::slicer3::ApplicationLogic GetSelectionNode] SetActiveVolumeID [$node GetID]
             $::slicer3::ApplicationLogic PropagateVolumeSelection
 
             $node Delete
