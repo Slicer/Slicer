@@ -36,123 +36,163 @@ public:
 
   void operator=(const ModuleParameter& parameter);
   
-  virtual void SetType(const std::string &type) {
+  virtual void SetTag(const std::string &tag)
+  {
+    this->Tag = tag;
+  }
+
+  virtual std::string GetTag() const
+  {
+    return this->Tag;
+  }
+  
+  virtual void SetType(const std::string &type)
+  {
     this->Type = type;
   }
 
-  virtual std::string GetType() const {
+  virtual std::string GetType() const 
+  {
     return this->Type;
   }
   
-  virtual void SetStringToType(const std::string &stringToType) {
+  virtual void SetStringToType(const std::string &stringToType)
+  {
     this->StringToType = stringToType;
   }
 
-  virtual std::string GetStringToType() const {
+  virtual std::string GetStringToType() const
+  {
     return this->StringToType;
   }
   
-  virtual void SetName(const std::string &name) {
+  virtual void SetName(const std::string &name)
+  {
     this->Name = name;
   }
 
-  virtual std::string GetName() const {
+  virtual std::string GetName() const
+  {
     return this->Name;
   }
   
-  virtual void SetLongFlag(const std::string &longFlag) {
+  virtual void SetLongFlag(const std::string &longFlag)
+  {
     this->LongFlag = longFlag;
   }
 
-  virtual std::string GetLongFlag() const {
+  virtual std::string GetLongFlag() const
+  {
     return this->LongFlag;
   }
   
-  virtual void SetShortFlag(const std::string &shortFlag) {
+  virtual void SetShortFlag(const std::string &shortFlag)
+  {
     this->ShortFlag = shortFlag;
   }
 
-  virtual std::string GetShortFlag() const {
+  virtual std::string GetShortFlag() const
+  {
     return this->ShortFlag;
   }
   
-  virtual void SetLabel(const std::string &label) {
+  virtual void SetLabel(const std::string &label) 
+  {
     this->Label = label;
   }
   
-  virtual std::string GetLabel() const {
+  virtual std::string GetLabel() const
+  {
     return this->Label;
   }
 
-  virtual void SetConstraints(const std::string &constraints) {
+  virtual void SetConstraints(const std::string &constraints)
+  {
     this->Constraints = constraints;
   }
   
-  virtual std::string GetConstraints() const {
+  virtual std::string GetConstraints() const
+  {
     return this->Constraints;
   }
 
-  virtual void SetMaximum(const std::string &maximum) {
+  virtual void SetMaximum(const std::string &maximum)
+  {
     this->Maximum = maximum;
   }
   
-  virtual std::string GetMaximum() const {
+  virtual std::string GetMaximum() const 
+  {
     return this->Maximum;
   }
 
-  virtual void SetMinimum(const std::string &minimum) {
+  virtual void SetMinimum(const std::string &minimum) 
+  {
     this->Minimum = minimum;
   }
   
-  virtual std::string GetMinimum() const {
+  virtual std::string GetMinimum() const 
+  {
     return this->Minimum;
   }
 
-  virtual void SetStep(const std::string &step) {
+  virtual void SetStep(const std::string &step) 
+  {
     this->Step = step;
   }
   
-  virtual std::string GetStep() const {
+  virtual std::string GetStep() const
+  {
     return this->Step;
   }
 
-  virtual void SetDescription(const std::string &description) {
+  virtual void SetDescription(const std::string &description)
+  {
     this->Description = description;
   }
 
-  virtual std::string GetDescription() const {
+  virtual std::string GetDescription() const
+  {
     return this->Description;
   }
   
-  virtual void SetChannel(const std::string &channel) {
+  virtual void SetChannel(const std::string &channel)
+  {
     this->Channel = channel;
   }
 
-  virtual std::string GetChannel() const {
+  virtual std::string GetChannel() const
+  {
     return this->Channel;
   }
   
-  virtual void SetIndex(const std::string &index) {
+  virtual void SetIndex(const std::string &index)
+  {
     this->Index = index;
   }
 
-  virtual std::string GetIndex() const {
+  virtual std::string GetIndex() const
+  {
     return this->Index;
   }
   
-  virtual void SetDefault(const std::string &def) {
+  virtual void SetDefault(const std::string &def)
+  {
     this->Default = def;
   }
 
-  virtual std::string GetDefault() const {
+  virtual std::string GetDefault() const
+  {
     return this->Default;
   }
   
-  virtual void SetFlag(const std::string &flag){
+  virtual void SetFlag(const std::string &flag)
+  {
     this->Flag = flag;
   }
 
-  virtual std::string GetFlag() const {
+  virtual std::string GetFlag() const
+  {
     return this->Flag;
   }
 
@@ -161,6 +201,7 @@ protected:
 
   
 private:
+  std::string Tag;
   std::string Name;
   std::string Description;
   std::string Label;

@@ -2,6 +2,7 @@
 
 ModuleParameter::ModuleParameter(const ModuleParameter& parameter)
 {
+  this->Tag = parameter.Tag;
   this->Name = parameter.Name;
   this->Description = parameter.Description;
   this->Label = parameter.Label;
@@ -21,6 +22,7 @@ ModuleParameter::ModuleParameter(const ModuleParameter& parameter)
 
 void ModuleParameter::operator=(const ModuleParameter& parameter)
 {
+  this->Tag = parameter.Tag;
   this->Name = parameter.Name;
   this->Description = parameter.Description;
   this->Label = parameter.Label;
@@ -41,6 +43,7 @@ void ModuleParameter::operator=(const ModuleParameter& parameter)
 std::ostream & operator<<(std::ostream &os, const ModuleParameter &parameter)
 { 
   std::cout << "    Parameter" << std::endl;
+  os << "      " << "Tag: " << parameter.GetTag() << std::endl;
   os << "      " << "Name: " << parameter.GetName() << std::endl;
   os << "      " << "Description: " << parameter.GetDescription() << std::endl;
   os << "      " << "Label: " << parameter.GetLabel() << std::endl;

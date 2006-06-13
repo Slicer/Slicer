@@ -64,59 +64,70 @@ startElement(void *userData, const char *name, const char **)
   else if (group && strcmp(name, "integer") == 0)
     {
     parameter = new ModuleParameter;
+    parameter->SetTag(name);
     parameter->SetType("int");
     }
   else if (group && strcmp(name, "float") == 0)
     {
     parameter = new ModuleParameter;
+    parameter->SetTag(name);
     parameter->SetType("float");
     }
   else if (group && strcmp(name, "double") == 0)
     {
     parameter = new ModuleParameter;
+    parameter->SetTag(name);
     parameter->SetType("double");
     }
   else if (group && strcmp(name, "string") == 0)
     {
     parameter = new ModuleParameter;
+    parameter->SetTag(name);
     parameter->SetType("std::string");
     }
   else if (group && strcmp(name, "boolean") == 0)
     {
     parameter = new ModuleParameter;
+    parameter->SetTag(name);
     parameter->SetType("bool");
     }
   else if (group && strcmp(name, "integer-vector") == 0)
     {
     parameter = new ModuleParameter;
+    parameter->SetTag(name);
     parameter->SetType("std::vector<int>");
     parameter->SetStringToType("atoi");
     }
   else if (group && strcmp(name, "float-vector") == 0)
     {
     parameter = new ModuleParameter;
+    parameter->SetTag(name);
     parameter->SetType("std::vector<float>");
     parameter->SetStringToType("atof");
     }
   else if (group && strcmp(name, "double-vector") == 0)
     {
     parameter = new ModuleParameter;
+    parameter->SetTag(name);
     parameter->SetType("std::vector<double>");
     parameter->SetStringToType("atof");
     }
   else if (group && strcmp(name, "file") == 0)
     {
     parameter = new ModuleParameter;
+    parameter->SetTag(name);
     parameter->SetType("std::string");
     }
   else if (group && strcmp(name, "directory") == 0)
     {
     parameter = new ModuleParameter;
+    parameter->SetTag(name);
     parameter->SetType("std::string");
     }
   else if (group && strcmp(name, "image") == 0)
     {
     parameter = new ModuleParameter;
+    parameter->SetTag(name);
     parameter->SetType("std::string");
     }
   ps->CurrentParameter = parameter;
