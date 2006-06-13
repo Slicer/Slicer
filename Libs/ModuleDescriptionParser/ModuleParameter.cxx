@@ -11,6 +11,10 @@ ModuleParameter::ModuleParameter(const ModuleParameter& parameter)
   this->Flag = parameter.Flag;
   this->ShortFlag = parameter.ShortFlag;
   this->LongFlag = parameter.LongFlag;
+  this->Constraints = parameter.Constraints;
+  this->Minimum = parameter.Minimum;
+  this->Maximum = parameter.Maximum;
+  this->Step = parameter.Step;
   this->Channel = parameter.Channel;
   this->Index = parameter.Index;
 }
@@ -26,6 +30,10 @@ void ModuleParameter::operator=(const ModuleParameter& parameter)
   this->Flag = parameter.Flag;
   this->ShortFlag = parameter.ShortFlag;
   this->LongFlag = parameter.LongFlag;
+  this->Constraints = parameter.Constraints;
+  this->Minimum = parameter.Minimum;
+  this->Maximum = parameter.Maximum;
+  this->Step = parameter.Step;
   this->Channel = parameter.Channel;
   this->Index = parameter.Index;
 }
@@ -42,6 +50,10 @@ std::ostream & operator<<(std::ostream &os, const ModuleParameter &parameter)
   os << "      " << "Flag: " << parameter.GetFlag() << std::endl;
   os << "      " << "ShortFlag: " << parameter.GetShortFlag() << std::endl;
   os << "      " << "LongFlag: " << parameter.GetLongFlag() << std::endl;
+  os << "      " << "Constraints: " << parameter.GetConstraints() << std::endl;
+  os << "      " << "Minimum: " << parameter.GetMinimum() << std::endl;
+  os << "      " << "Maximum: " << parameter.GetMaximum() << std::endl;
+  os << "      " << "Step: " << parameter.GetStep() << std::endl;
   os << "      " << "Channel: " << parameter.GetChannel() << std::endl;
   os << "      " << "Index: " << parameter.GetIndex() << std::endl;
   

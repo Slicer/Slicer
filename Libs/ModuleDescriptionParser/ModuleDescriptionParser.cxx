@@ -33,13 +33,15 @@ trimTrailing(std::string& s, const char* extraneousChars = " \t\n")
 class ParserState
 {
 public:
-  std::string LastTag;                         /* The last tag processed by expat */
+  std::vector<std::string> LastTag;            /* The last tag processed by expat */
   ModuleDescription CurrentDescription;
   ModuleParameterGroup *CurrentGroup;          /* The parameter group */
   ModuleParameter *CurrentParameter;           /* The current parameter */
   bool Debug;                                  /* Debug flag */
   bool Error;                                  /* Error detected */
-  ParserState():Debug(false),Error(false){};
+  unsigned int Depth;                          /* The depth of the tag */
+
+  ParserState():Debug(false),Error(false),Depth(0){LastTag.reserve(10);};
 };
 
 /***************************
@@ -52,7 +54,8 @@ startElement(void *userData, const char *name, const char **)
   ModuleParameter *parameter = ps->CurrentParameter;
   ModuleParameterGroup *group = ps->CurrentGroup;
 
-  ps->LastTag.clear();
+  ps->Depth++;
+  ps->LastTag[ps->Depth].clear();
 
   if (strcmp(name, "parameters") == 0)
     {
@@ -190,14 +193,14 @@ endElement(void *userData, const char *name)
     }
   else if (parameter && strcmp(name, "flag") == 0)
     {
-    std::string temp = ps->LastTag;
+    std::string temp = ps->LastTag[ps->Depth];
     trimLeading(temp);
     trimTrailing(temp);
     parameter->SetShortFlag(temp);
     }
   else if (parameter && strcmp(name, "longflag") == 0)
     {
-    std::string temp = ps->LastTag;
+    std::string temp = ps->LastTag[ps->Depth];
     trimLeading(temp);
     trimTrailing(temp);
     if (temp.find("-",2) != std::string::npos)
@@ -213,14 +216,14 @@ endElement(void *userData, const char *name)
     }
   else if (parameter && strcmp(name, "name") == 0)
     {
-    std::string temp = std::string(ps->LastTag);
+    std::string temp = std::string(ps->LastTag[ps->Depth]);
     trimLeading(temp);
     trimTrailing(temp);
     parameter->SetName(temp);
     }
   else if ((group || parameter) && strcmp(name, "label") == 0)
     {
-    std::string temp = ps->LastTag;
+    std::string temp = ps->LastTag[ps->Depth];
     trimLeading(temp);
     trimTrailing(temp);
     if (group && !parameter)
@@ -234,49 +237,49 @@ endElement(void *userData, const char *name)
     }
   else if (strcmp(name, "category") == 0)
     {
-    std::string temp = ps->LastTag;
+    std::string temp = ps->LastTag[ps->Depth];
     trimLeading(temp);
     trimTrailing(temp);
     ps->CurrentDescription.SetCategory(temp);
     }
   else if (strcmp(name, "title") == 0)
     {
-    std::string temp = ps->LastTag;
+    std::string temp = ps->LastTag[ps->Depth];
     trimLeading(temp);
     trimTrailing(temp);
     ps->CurrentDescription.SetTitle(temp);
     }
   else if (strcmp(name, "version") == 0)
     {
-    std::string temp = ps->LastTag;
+    std::string temp = ps->LastTag[ps->Depth];
     trimLeading(temp);
     trimTrailing(temp);
     ps->CurrentDescription.SetVersion(temp);
     }
   else if (strcmp(name, "documentationurl") == 0)
     {
-    std::string temp = ps->LastTag;
+    std::string temp = ps->LastTag[ps->Depth];
     trimLeading(temp);
     trimTrailing(temp);
     ps->CurrentDescription.SetDocumentationURL(temp);
     }
   else if (strcmp(name, "license") == 0)
     {
-    std::string temp = ps->LastTag;
+    std::string temp = ps->LastTag[ps->Depth];
     trimLeading(temp);
     trimTrailing(temp);
     ps->CurrentDescription.SetLicense(temp);
     }
   else if (strcmp(name, "contributor") == 0)
     {
-    std::string temp = ps->LastTag;
+    std::string temp = ps->LastTag[ps->Depth];
     trimLeading(temp);
     trimTrailing(temp);
     ps->CurrentDescription.SetContributor(temp);
     }
   else if (strcmp(name, "description") == 0)
     {
-    std::string temp = ps->LastTag;
+    std::string temp = ps->LastTag[ps->Depth];
     trimLeading(temp);
     trimTrailing(temp);
     if (!group && !parameter)
@@ -294,11 +297,40 @@ endElement(void *userData, const char *name)
     }
   else if (parameter && strcmp(name, "default") == 0)
     {
-    std::string temp = ps->LastTag;
+    std::string temp = ps->LastTag[ps->Depth];
     trimLeading(temp);
     trimTrailing(temp);
     parameter->SetDefault(temp);
     }
+  else if (parameter && strcmp(name, "constraints") == 0)
+    {
+    parameter->SetConstraints(name);
+    }
+  else if (parameter &&
+           (strcmp(name, "minimum") == 0))
+    {
+    std::string temp = ps->LastTag[ps->Depth];
+    trimLeading(temp);
+    trimTrailing(temp);
+    parameter->SetMinimum(temp);
+    }
+  else if (parameter &&
+           (strcmp(name, "maximum") == 0))
+    {
+    std::string temp = ps->LastTag[ps->Depth];
+    trimLeading(temp);
+    trimTrailing(temp);
+    parameter->SetMaximum(temp);
+    }
+  else if (parameter &&
+           (strcmp(name, "step") == 0))
+    {
+    std::string temp = ps->LastTag[ps->Depth];
+    trimLeading(temp);
+    trimTrailing(temp);
+    parameter->SetStep(temp);
+    }
+  ps->Depth--;
 }
 
 void
@@ -308,7 +340,7 @@ charData(void *userData, const char *s, int len)
   if (len)
     {
     std::string str(s,len);
-    ps->LastTag += str;
+    ps->LastTag[ps->Depth] += str;
     }
 }
 

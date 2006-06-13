@@ -84,6 +84,38 @@ public:
     return this->Label;
   }
 
+  virtual void SetConstraints(const std::string &constraints) {
+    this->Constraints = constraints;
+  }
+  
+  virtual std::string GetConstraints() const {
+    return this->Constraints;
+  }
+
+  virtual void SetMaximum(const std::string &maximum) {
+    this->Maximum = maximum;
+  }
+  
+  virtual std::string GetMaximum() const {
+    return this->Maximum;
+  }
+
+  virtual void SetMinimum(const std::string &minimum) {
+    this->Minimum = minimum;
+  }
+  
+  virtual std::string GetMinimum() const {
+    return this->Minimum;
+  }
+
+  virtual void SetStep(const std::string &step) {
+    this->Step = step;
+  }
+  
+  virtual std::string GetStep() const {
+    return this->Step;
+  }
+
   virtual void SetDescription(const std::string &description) {
     this->Description = description;
   }
@@ -138,6 +170,10 @@ private:
   std::string Flag;
   std::string ShortFlag;
   std::string LongFlag;
+  std::string Constraints;
+  std::string Minimum;
+  std::string Maximum;
+  std::string Step;
   std::string Channel;
   std::string Index;
 };
