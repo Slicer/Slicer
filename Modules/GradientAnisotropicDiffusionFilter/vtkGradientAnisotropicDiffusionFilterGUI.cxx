@@ -322,11 +322,6 @@ void vtkGradientAnisotropicDiffusionFilterGUI::BuildGUI ( )
   this->GADNodeSelector->UpdateMenu();
 
   this->GADNodeSelector->SetBorderWidth(2);
-  this->GADNodeSelector->SetReliefToGroove();
-  //this->GADNodeSelector->SetPadX(2);
-  //this->GADNodeSelector->SetPadY(2);
-  //this->GADNodeSelector->GetWidget()->GetWidget()->IndicatorVisibilityOff();
-  //this->GADNodeSelector->GetWidget()->GetWidget()->SetWidth(24);
   this->GADNodeSelector->SetLabelText( "GAD Parameters");
   this->GADNodeSelector->SetBalloonHelpString("select a GAD node from the current mrml scene.");
   app->Script("pack %s -side top -anchor e -padx 20 -pady 4", 
@@ -369,11 +364,6 @@ void vtkGradientAnisotropicDiffusionFilterGUI::BuildGUI ( )
   this->VolumeSelector->UpdateMenu();
 
   this->VolumeSelector->SetBorderWidth(2);
-  this->VolumeSelector->SetReliefToGroove();
-  //this->VolumeSelector->SetPadX(2);
-  //this->VolumeSelector->SetPadY(2);
-  //this->VolumeSelector->GetWidget()->GetWidget()->IndicatorVisibilityOff();
-  //this->VolumeSelector->GetWidget()->GetWidget()->SetWidth(24);
   this->VolumeSelector->SetLabelText( "Input Volume: ");
   this->VolumeSelector->SetBalloonHelpString("select an input volume from the current mrml scene.");
   app->Script("pack %s -side top -anchor e -padx 20 -pady 4", 
@@ -388,11 +378,6 @@ void vtkGradientAnisotropicDiffusionFilterGUI::BuildGUI ( )
   this->OutVolumeSelector->UpdateMenu();
 
   this->OutVolumeSelector->SetBorderWidth(2);
-  this->OutVolumeSelector->SetReliefToGroove();
-  //this->OutVolumeSelector->SetPadX(2);
-  //this->OutVolumeSelector->SetPadY(2);
-  //this->OutVolumeSelector->GetWidget()->GetWidget()->IndicatorVisibilityOff();
-  //this->OutVolumeSelector->GetWidget()->GetWidget()->SetWidth(24);
   this->OutVolumeSelector->SetLabelText( "Output Volume: ");
   this->OutVolumeSelector->SetBalloonHelpString("select an output volume from the current mrml scene.");
   app->Script("pack %s -side top -anchor e -padx 20 -pady 4", 
