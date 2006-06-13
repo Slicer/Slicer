@@ -23,10 +23,6 @@
 #include "ModuleDescription.h"
 
 
-class vtkSlicerSliceWidget;
-class vtkKWFrame;
-class vtkKWScaleWithEntry;
-class vtkKWPushButton;
 class vtkSlicerNodeSelectorWidget;
 //BTX
 class ModuleWidgetMap;
@@ -114,13 +110,7 @@ private:
   ModuleWidgetMap *InternalWidgetMap;
 
   
-//   vtkKWScaleWithEntry* ConductanceScale;
-//   vtkKWScaleWithEntry* TimeStepScale;
-//   vtkKWScaleWithEntry* NumberOfIterationsScale;
-  vtkSlicerNodeSelectorWidget* VolumeSelector;
-  vtkSlicerNodeSelectorWidget* OutVolumeSelector;
   vtkSlicerNodeSelectorWidget* CommandLineModuleNodeSelector;
-  vtkKWPushButton* ApplyButton;
   
   vtkCommandLineModuleLogic *Logic;
   vtkMRMLCommandLineModuleNode* CommandLineModuleNode;

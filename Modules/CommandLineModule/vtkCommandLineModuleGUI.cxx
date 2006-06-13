@@ -43,7 +43,6 @@ Version:   $Revision: 1.2 $
 #include "vtkKWSpinBoxWithLabel.h"
 #include "vtkKWCheckButton.h"
 #include "vtkKWCheckButtonWithLabel.h"
-#include "vtkKWScaleWithEntry.h"
 
 #include "itkNumericTraits.h"
 
