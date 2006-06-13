@@ -43,6 +43,9 @@ Version:   $Revision: 1.2 $
 #include "vtkKWSpinBoxWithLabel.h"
 #include "vtkKWCheckButton.h"
 #include "vtkKWCheckButtonWithLabel.h"
+#include "vtkKWLoadSaveButton.h"
+#include "vtkKWLoadSaveButtonWithLabel.h"
+#include "vtkKWLoadSaveDialog.h"
 
 #include "itkNumericTraits.h"
 
@@ -132,6 +135,8 @@ void vtkCommandLineModuleGUI::AddGUIObservers ( )
   this->CommandLineModuleNodeSelector->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
 
   (*this->InternalWidgetMap)["ApplyButton"]->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+
+  (*this->InternalWidgetMap)["DefaultButton"]->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 }
 
 
@@ -142,6 +147,8 @@ void vtkCommandLineModuleGUI::RemoveGUIObservers ( )
   this->CommandLineModuleNodeSelector->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
 
   (*this->InternalWidgetMap)["ApplyButton"]->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+
+  (*this->InternalWidgetMap)["DefaultButton"]->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
 }
 
 //---------------------------------------------------------------------------
@@ -164,6 +171,11 @@ void vtkCommandLineModuleGUI::ProcessGUIEvents ( vtkObject *caller,
     this->UpdateGUI();
     }
   else if (b == (*this->InternalWidgetMap)["ApplyButton"].GetPointer() && event == vtkKWPushButton::InvokedEvent ) 
+    {
+    this->UpdateMRML();
+    this->Logic->Apply();
+    }
+  else if (b == (*this->InternalWidgetMap)["DefaultButton"].GetPointer() && event == vtkKWPushButton::InvokedEvent ) 
     {
     this->UpdateMRML();
     this->Logic->Apply();
@@ -545,6 +557,35 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
         tparameter->SetLabelText( (*pit).GetLabel().c_str());
         parameter = tparameter;
         }
+      else if ((*pit).GetTag() == "directory")
+        {
+        vtkKWLoadSaveButtonWithLabel *tparameter
+          = vtkKWLoadSaveButtonWithLabel::New();
+        tparameter->SetParent( parameterGroupFrame->GetFrame() );
+        tparameter->Create();
+        if ((*pit).GetChannel() == "output")
+          {
+          tparameter->GetWidget()->GetLoadSaveDialog()->SaveDialogOn();
+          }
+        tparameter->SetLabelText( (*pit).GetLabel().c_str() );
+        tparameter->GetWidget()->GetLoadSaveDialog()->ChooseDirectoryOn();
+        tparameter->GetWidget()->GetLoadSaveDialog()->SetInitialFileName( (*pit).GetDefault().c_str() );
+        parameter = tparameter;
+        }
+      else if ((*pit).GetTag() == "file")
+        {
+        vtkKWLoadSaveButtonWithLabel *tparameter
+          = vtkKWLoadSaveButtonWithLabel::New();
+        tparameter->SetParent( parameterGroupFrame->GetFrame() );
+        if ((*pit).GetChannel() == "output")
+          {
+          tparameter->GetWidget()->GetLoadSaveDialog()->SaveDialogOn();
+          }
+        tparameter->Create();
+        tparameter->SetLabelText( (*pit).GetLabel().c_str() );
+        tparameter->GetWidget()->GetLoadSaveDialog()->SetInitialFileName( (*pit).GetDefault().c_str() );
+        parameter = tparameter;
+        }
       else
         {
         vtkKWLabel *tparameter = vtkKWLabel::New();
@@ -570,13 +611,28 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
     }
   
   
+  // Create a "Default" button
+  vtkKWPushButton *defaultB = vtkKWPushButton::New();
+  defaultB->SetParent( moduleFrame->GetFrame() );
+  defaultB->Create();
+  defaultB->SetText("Default");
+  defaultB->SetWidth ( 8 );
+  app->Script("pack %s -side left -anchor w -padx 20 -pady 10", 
+              defaultB->GetWidgetName());
+
+  std::string defaultBalloonHelp("Reset parameters to default.");
+  defaultB->SetBalloonHelpString(defaultBalloonHelp.c_str());
+
+  (*this->InternalWidgetMap)["DefaultButton"] = defaultB;
+  defaultB->Delete();
+
   // Create an "Apply" button
   vtkKWPushButton *apply = vtkKWPushButton::New();
   apply->SetParent( moduleFrame->GetFrame() );
   apply->Create();
   apply->SetText("Apply");
   apply->SetWidth ( 8 );
-  app->Script("pack %s -side top -anchor e -padx 20 -pady 10", 
+  app->Script("pack %s -side right -anchor e -padx 20 -pady 10", 
               apply->GetWidgetName());
 
   std::string applyBalloonHelp("Execute the module");
