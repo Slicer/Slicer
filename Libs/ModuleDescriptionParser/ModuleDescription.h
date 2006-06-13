@@ -1,38 +1,20 @@
 #ifndef __ModuleDescription_h
 #define __ModuleDescription_h
 
+#include "ModuleDescriptionParserWin32Header.h"
+
 #include "ModuleParameterGroup.h"
 
 #include <string>
 #include <vector>
 
-class ModuleDescription
+class ModuleDescriptionParser_EXPORT ModuleDescription
 {
 public:
-  ModuleDescription() {};
-  ModuleDescription(const ModuleDescription &md)
-  {
-    this->Category = md.Category;
-    this->Title = md.Title;
-    this->Description = md.Description;
-    this->Version = md.Version;
-    this->DocumentationURL = md.DocumentationURL;
-    this->License = md.License;
-    this->Contributor = md.Contributor;
-    this->ParameterGroups = md.ParameterGroups;
-  }
+  ModuleDescription();
+  ModuleDescription(const ModuleDescription &md);
 
-  void operator=(const ModuleDescription &md)
-  {
-    this->Category = md.Category;
-    this->Title = md.Title;
-    this->Description = md.Description;
-    this->Version = md.Version;
-    this->DocumentationURL = md.DocumentationURL;
-    this->License = md.License;
-    this->Contributor = md.Contributor;
-    this->ParameterGroups = md.ParameterGroups;
-  }
+  void operator=(const ModuleDescription &md);
 
   void SetCategory(const std::string &cat)
   {
@@ -114,6 +96,11 @@ public:
     return this->ParameterGroups;
   }
 
+  void SetParameterGroups(const std::vector<ModuleParameterGroup>& groups)
+  {
+      this->ParameterGroups = groups;
+  }
+
 private:
   std::string Category;
   std::string Title;
@@ -122,27 +109,12 @@ private:
   std::string DocumentationURL;
   std::string License;
   std::string Contributor;
+
+  template class ModuleDescriptionParser_EXPORT std::allocator<ModuleParameterGroup>;
+  template class ModuleDescriptionParser_EXPORT std::vector<ModuleParameterGroup>;
   std::vector<ModuleParameterGroup> ParameterGroups;  
 };
 
-inline std::ostream & operator<<(std::ostream &os, const ModuleDescription &module)
-  { 
-    os << "Category: " << module.GetCategory() << std::endl;
-    os << "Title: " << module.GetTitle() << std::endl;
-    os << "Description: " << module.GetDescription() << std::endl;
-    os << "Version: " << module.GetVersion() << std::endl;
-    os << "DocumentationURL: " << module.GetDocumentationURL() << std::endl;
-    os << "License: " << module.GetLicense() << std::endl;
-    os << "Contributor: " << module.GetContributor() << std::endl;
-    os << "ParameterGroups: " << std::endl;
-    std::vector<ModuleParameterGroup>::const_iterator it = module.GetParameterGroups().begin();
-    while (it != module.GetParameterGroups().end())
-      {
-      os << *it;
-      ++it;
-      }
-    return os;
-  }
-
+ModuleDescriptionParser_EXPORT std::ostream & operator<<(std::ostream &os, const ModuleDescription &module);
 
 #endif

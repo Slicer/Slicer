@@ -4,18 +4,11 @@
 #include <string>
 #include <vector>
 
+#include "ModuleDescriptionParserWin32Header.h"
+
 class ModuleDescription;
 class ModuleParameterGroup;
 
-#if defined(WIN32) && !defined(ModuleDescriptionParser_STATIC)
-#if defined(ModuleDescriptionParser_EXPORTS)
-#define ModuleDescriptionParser_EXPORT __declspec( dllexport ) 
-#else
-#define ModuleDescriptionParser_EXPORT __declspec( dllimport ) 
-#endif
-#else
-#define ModuleDescriptionParser_EXPORT
-#endif
 
 class ModuleDescriptionParser_EXPORT ModuleDescriptionParser
 {

@@ -1,29 +1,20 @@
 #ifndef __ModuleParameterGroup_h
 #define __ModuleParameterGroup_h
 
+#include "ModuleDescriptionParserWin32Header.h"
 #include "ModuleParameter.h"
 
 #include <vector>
 #include <string>
 
-class ModuleParameterGroup
+class ModuleDescriptionParser_EXPORT ModuleParameterGroup
 {
 public:
   ModuleParameterGroup() {};
-  ModuleParameterGroup(const ModuleParameterGroup &parameters)
-  {
-    this->Label = parameters.Label;
-    this->Description = parameters.Description;
-    this->Parameters = parameters.Parameters;
-  }
+  ModuleParameterGroup(const ModuleParameterGroup &parameters);
 
-  void operator=(const ModuleParameterGroup &parameters)
-  {
-    this->Label = parameters.Label;
-    this->Description = parameters.Description;
-    this->Parameters = parameters.Parameters;
-  }
-  
+  void operator=(const ModuleParameterGroup &parameters);
+
   void SetLabel(const std::string &label) {
     this->Label = label;
   }
@@ -51,21 +42,12 @@ public:
 private:
   std::string Label;
   std::string Description;
+
+  template class ModuleDescriptionParser_EXPORT std::allocator<ModuleParameter>;
+  template class ModuleDescriptionParser_EXPORT std::vector<ModuleParameter>;
   std::vector<ModuleParameter> Parameters;
 };
 
-inline std::ostream & operator<<(std::ostream &os, const ModuleParameterGroup &group)
-  { 
-    os << "  Label: " << group.GetLabel() << std::endl;
-    os << "  Description: " << group.GetDescription() << std::endl;
-    os << "  Parameters: " << std::endl;
-    std::vector<ModuleParameter>::const_iterator it = group.GetParameters().begin();
-    while (it != group.GetParameters().end())
-      {
-      os << *it;
-      ++it;
-      }
-    return os;
-  }
+ModuleDescriptionParser_EXPORT std::ostream & operator<<(std::ostream &os, const ModuleParameterGroup &group);
 
 #endif

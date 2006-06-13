@@ -4,14 +4,16 @@
 #include "vtkModulesBaseClasses.h"
 
 #include "ModuleDescription.h"
-#include <map>
+
 #include <vector>
+
+class ModuleDescriptionMap;
 
 class VTK_MODULES_BASE_CLASSES_EXPORT ModuleFactory
 {
 public:
-  ModuleFactory() {};
-  virtual ~ModuleFactory() {};
+  ModuleFactory();
+  virtual ~ModuleFactory();
 
   // Set the search path for modules (both command line modules and
   // shared object modules).
@@ -39,7 +41,7 @@ protected:
   virtual void ScanForCommandLineModules();
   
 private:
-  std::map<std::string, ModuleDescription> Modules;
+  ModuleDescriptionMap *InternalMap;
 
   std::string SearchPath;
 };

@@ -1,155 +1,148 @@
 #ifndef __ModuleParameter_h
 #define __ModuleParameter_h
 
+#include "ModuleDescriptionParserWin32Header.h"
+
+//#include "itksys/hash_map.hxx"
 #include <map>
 #include <string>
 #include <iostream>
-class ModuleParameter
+
+// Need to define a hash function for strings
+// template<>
+// struct itksys::hash<std::string> {
+//   itksys::hash<char*> h;
+//   size_t operator()(const std::string &s) const {
+//     return h(s.c_str());
+//   };
+// };
+
+
+/** \class ModuleParameter
+ *  \brief Class to describe a single parameter to a module.
+ *
+ * ModuleParameter describes a single parameters to a
+ * module. Information on the parameter type, name, flag, label,
+ * description, channel, index, default, and constraints can be
+ * stored.
+ *
+ */
+class ModuleDescriptionParser_EXPORT ModuleParameter
 {
 public:
   ModuleParameter() {}
   virtual ~ModuleParameter() {}
-  ModuleParameter(const ModuleParameter& parameter)
-  {
-    this->Properties = parameter.Properties;
-  }
-  void operator=(const ModuleParameter& parameter)
-  {
-    this->Properties = parameter.Properties;
-  }
+  ModuleParameter(const ModuleParameter& parameter);
 
+  void operator=(const ModuleParameter& parameter);
+  
   virtual void SetType(const std::string &type) {
-    this->SetProperty("type", type);
+    this->Type = type;
   }
 
   virtual std::string GetType() const {
-    return this->GetProperty("type");
+    return this->Type;
   }
   
   virtual void SetStringToType(const std::string &stringToType) {
-    this->SetProperty("stringToType", stringToType);
+    this->StringToType = stringToType;
   }
 
   virtual std::string GetStringToType() const {
-    return this->GetProperty("stringToType");
+    return this->StringToType;
   }
   
   virtual void SetName(const std::string &name) {
-    this->SetProperty("name", name);
+    this->Name = name;
   }
 
   virtual std::string GetName() const {
-    return this->GetProperty("name");
+    return this->Name;
   }
   
   virtual void SetLongFlag(const std::string &longFlag) {
-    this->SetProperty("longFlag", longFlag);
+    this->LongFlag = longFlag;
   }
 
   virtual std::string GetLongFlag() const {
-    return this->GetProperty("longFlag");
+    return this->LongFlag;
   }
   
   virtual void SetShortFlag(const std::string &shortFlag) {
-    this->SetProperty("shortFlag", shortFlag);
+    this->ShortFlag = shortFlag;
   }
 
   virtual std::string GetShortFlag() const {
-    return this->GetProperty("shortFlag");
+    return this->ShortFlag;
   }
   
   virtual void SetLabel(const std::string &label) {
-    this->SetProperty("label", label);
+    this->Label = label;
   }
   
   virtual std::string GetLabel() const {
-    return this->GetProperty("label");
+    return this->Label;
   }
 
   virtual void SetDescription(const std::string &description) {
-    this->SetProperty("description", description);
+    this->Description = description;
   }
 
   virtual std::string GetDescription() const {
-    return this->GetProperty("description");
+    return this->Description;
   }
   
   virtual void SetChannel(const std::string &channel) {
-    this->SetProperty("channel", channel);
+    this->Channel = channel;
   }
 
   virtual std::string GetChannel() const {
-    return this->GetProperty("channel");
+    return this->Channel;
   }
   
   virtual void SetIndex(const std::string &index) {
-    this->SetProperty("index", index);
+    this->Index = index;
   }
 
   virtual std::string GetIndex() const {
-    return this->GetProperty("index");
+    return this->Index;
   }
   
   virtual void SetDefault(const std::string &def) {
-    this->SetProperty("default", def);
+    this->Default = def;
   }
 
   virtual std::string GetDefault() const {
-    return this->GetProperty("default");
+    return this->Default;
   }
   
   virtual void SetFlag(const std::string &flag){
-    this->SetProperty("flag", flag);
+    this->Flag = flag;
   }
 
   virtual std::string GetFlag() const {
-    return this->GetProperty("flag");
+    return this->Flag;
   }
 
-  virtual void SetConstraints() {
-    this->SetProperty("constraints", "");
-  }
-
-  virtual std::string GetConstraints() const {
-    return this->GetProperty("constraints");
-  }
-  
-  virtual const std::map<std::string, std::string> &GetProperties() const {
-    return Properties;
-  }
   
 protected:
-  virtual void SetProperty(const std::string &key,
-                           const std::string &value) {
-    this->Properties[key] = value;
-  }
 
-  virtual std::string GetProperty(const std::string &key) const {
-    std::map<std::string, std::string>::const_iterator it;
-
-    it = this->Properties.find(key);
-    if (it != this->Properties.end())
-      {
-      return it->second;
-      }
-    
-    return std::string("");
-  }
-
+  
 private:
-  std::map<std::string, std::string> Properties;
+  std::string Name;
+  std::string Description;
+  std::string Label;
+  std::string Type;
+  std::string StringToType;
+  std::string Default;
+  std::string Flag;
+  std::string ShortFlag;
+  std::string LongFlag;
+  std::string Channel;
+  std::string Index;
 };
 
-inline std::ostream & operator<<(std::ostream &os, const ModuleParameter &parameter)
-{ 
-  std::map<std::string, std::string>::const_iterator it = parameter.GetProperties().begin();
-  std::cout << "    Parameter" << std::endl;
-  while (it != parameter.GetProperties().end())
-    {
-    os << "      " << (*it).first << ": " << (*it).second << std::endl;
-    ++it;
-    }
-  return os;
-}
+ModuleDescriptionParser_EXPORT std::ostream & operator<<(std::ostream &os, const ModuleParameter &parameter);
+
 
 #endif

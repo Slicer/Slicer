@@ -25,6 +25,9 @@
 #include "vtkGradientAnisotropicDiffusionFilterLogic.h"
 #include "vtkGradientAnisotropicDiffusionFilterGUI.h"
 
+#include "vtkCommandLineModuleLogic.h"
+#include "vtkCommandLineModuleGUI.h"
+
 #include "ModuleFactory.h"
 
 #include <vtksys/SystemTools.hxx>
@@ -238,19 +241,41 @@ int Slicer3_main(int argc, char *argv[])
       strcpy(modulePath, ".");
       }
     moduleFactory.SetSearchPath( modulePath );
-                                                           
     moduleFactory.Scan();
 
+    // add the modules to the available modules
     std::vector<std::string> moduleNames = moduleFactory.GetModuleNames();
-    
     std::vector<std::string>::const_iterator mit = moduleNames.begin();
-
     while (mit != moduleNames.end())
       {
       std::cout << moduleFactory.GetModuleDescription(*mit) << std::endl;
+
+      // For now, create vtkCommandLineModule* items. When the
+      // ModuleFactory can discover shared object modules, then we'll
+      // come back and generalize this.
+      vtkCommandLineModuleGUI *commandLineModuleGUI
+        = vtkCommandLineModuleGUI::New();
+      vtkCommandLineModuleLogic *commandLineModuleLogic
+        = vtkCommandLineModuleLogic::New ( );
+      
+      // Set the ModuleDescripton on the gui
+      commandLineModuleGUI
+        ->SetModuleDescription( moduleFactory.GetModuleDescription(*mit) );
+
+      // Configure the Logic, GUI, and add to app
+      commandLineModuleLogic->SetAndObserveMRMLScene ( scene );
+      commandLineModuleGUI->SetLogic ( commandLineModuleLogic );
+      commandLineModuleGUI->SetApplication ( slicerApp );
+      commandLineModuleGUI->SetApplicationLogic ( appLogic );
+      commandLineModuleGUI->SetGUIName( moduleFactory.GetModuleDescription(*mit).GetTitle().c_str() );
+      commandLineModuleGUI->GetUIPanel()->SetName ( commandLineModuleGUI->GetGUIName ( ) );
+      commandLineModuleGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWin()->GetMainUserInterfaceManager ( ) );
+      commandLineModuleGUI->GetUIPanel()->Create ( );
+      slicerApp->AddModuleGUI ( commandLineModuleGUI );
+
       ++mit;
       }
-    
+
     // ------------------------------
     // BUILD APPLICATION GUI
     // (this requires collection of module GUIs)
@@ -284,6 +309,20 @@ int Slicer3_main(int argc, char *argv[])
     // ---
     gradientAnisotropicDiffusionFilterGUI->BuildGUI ( );
     gradientAnisotropicDiffusionFilterGUI->AddGUIObservers ( );
+
+    // -- Build the factory discovered modules gui and observers
+    mit = moduleNames.begin();
+    while ( mit != moduleNames.end() )
+      {
+      vtkSlicerModuleGUI *module;
+      module = slicerApp->GetModuleGUIByName( (*mit).c_str() );
+
+      module->BuildGUI();
+      module->AddGUIObservers();
+      
+      ++mit;
+      }
+
     
     // ------------------------------
     // CONFIGURE SlICER'S SHARED GUI PANEL

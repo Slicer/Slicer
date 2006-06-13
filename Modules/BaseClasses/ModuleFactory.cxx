@@ -7,6 +7,8 @@
 #include "itksys/SystemTools.hxx"
 #include "itksys/Process.h"
 
+#include <map>
+
 void
 splitString (std::string &text,
              std::string &separators,
@@ -24,6 +26,21 @@ splitString (std::string &text,
     }
 }
 
+// Private implementaton of an std::map
+class ModuleDescriptionMap : public std::map<std::string, ModuleDescription> {};
+
+
+// ---
+
+ModuleFactory::ModuleFactory()
+{
+  this->InternalMap = new ModuleDescriptionMap;
+}
+
+ModuleFactory::~ModuleFactory()
+{
+  delete this->InternalMap;
+}
 
 std::vector<std::string>
 ModuleFactory
@@ -33,7 +50,7 @@ ModuleFactory
 
   std::map<std::string, ModuleDescription>::const_iterator mit;
 
-  for (mit = this->Modules.begin(); mit != this->Modules.end(); ++mit)
+  for (mit = this->InternalMap->begin(); mit != this->InternalMap->end(); ++mit)
     {
     names.push_back( (*mit).first );
     }
@@ -47,9 +64,9 @@ ModuleFactory
 {
   std::map<std::string, ModuleDescription>::const_iterator mit;
 
-  mit = this->Modules.find(name);
+  mit = this->InternalMap->find(name);
 
-  if (mit != this->Modules.end())
+  if (mit != this->InternalMap->end())
     {
     return (*mit).second;
     }
@@ -183,7 +200,7 @@ ModuleFactory
               parser.Parse(stdoutbuffer, module);
             
               // Store the module in the list
-              this->Modules[module.GetTitle()] =  module ;
+              (*this->InternalMap)[module.GetTitle()] =  module ;
               }
             else
               {
@@ -207,5 +224,5 @@ ModuleFactory
     }
 
   std::cout << "Tested " << numberTested << " files as plugins. Found "
-            << this->Modules.size() << " valid plugins." << std::endl;
+            << this->InternalMap->size() << " valid plugins." << std::endl;
 }
