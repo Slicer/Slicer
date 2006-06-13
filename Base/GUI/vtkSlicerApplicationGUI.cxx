@@ -1549,12 +1549,11 @@ void vtkSlicerApplicationGUI::ConfigureMainSlicerWindow ( )
             this->MainSlicerWin->SecondaryPanelVisibilityOn ();
             this->MainSlicerWin->SetSize ( app->GetMainLayout()->GetDefaultSlicerWindowWidth ( ),
                            app->GetMainLayout()->GetDefaultSlicerWindowHeight () );
-            //            this->MainSlicerWin->GetMainSplitFrame()->SetFrame1MinimumSize( this->GetDefaultSlicerWindowWidth ( ) );
             // Configure the minimum width of Slicer's GUI panel.
             // Panel can be expanded and collapsed entirely, but
             // can't be resized by hand to a value smaller than what's set.
-            this->MainSlicerWin->GetMainSplitFrame()->SetFrame1Size (325 );
-            this->MainSlicerWin->GetMainSplitFrame()->SetFrame1MinimumSize (325 );
+            this->MainSlicerWin->GetMainSplitFrame()->SetFrame1Size (app->GetMainLayout()->GetDefaultGUIPanelWidth() );
+            this->MainSlicerWin->GetMainSplitFrame()->SetFrame1MinimumSize (app->GetMainLayout()->GetDefaultGUIPanelWidth ( ) );
         }
     }
 
@@ -1583,8 +1582,8 @@ void vtkSlicerApplicationGUI::ConfigureSliceViewersPanel ( )
         // pointers for convenience
         vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication() );
 
-        this->MainSlicerWin->GetSecondarySplitFrame()->SetFrame2Size (120);
-        this->MainSlicerWin->GetSecondarySplitFrame()->SetFrame2MinimumSize (120);
+        this->MainSlicerWin->GetSecondarySplitFrame()->SetFrame2Size (app->GetMainLayout()->GetDefaultSliceGUIFrameWidth ( ) );
+        this->MainSlicerWin->GetSecondarySplitFrame()->SetFrame2MinimumSize (app->GetMainLayout()->GetDefaultSliceGUIFrameWidth ( ) );
         
         if ( this->MainSlicerWin != NULL ) {
             this->MainSlicerWin->GetSecondaryPanelFrame()->SetWidth ( 3 * app->GetMainLayout()->GetDefaultSliceGUIFrameWidth () );

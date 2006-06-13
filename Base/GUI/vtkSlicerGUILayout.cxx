@@ -33,7 +33,7 @@ void vtkSlicerGUILayout::InitializeLayout ( )
     // specify dims of GUI Panel components here for now.
     this->SetDefaultLogoFrameHeight ( 40 );
     this->SetDefaultModuleChooseFrameHeight ( 60 );
-    this->SetDefaultModuleControlPanelHeight ( 500 );
+    this->SetDefaultModuleControlPanelHeight ( 450 );
     this->SetDefaultSliceControlFrameHeight ( 60 );
     this->SetDefaultViewControlFrameHeight ( 240 );
     // entire GUI panel height and width
@@ -47,9 +47,9 @@ void vtkSlicerGUILayout::InitializeLayout ( )
 
     // constrain the slice windows to be a particular size
     this->SetDefaultSliceGUIFrameHeight ( 120 );
-    this->SetDefaultSliceGUIFrameWidth ( 102 );
-    this->SetDefaultSliceWindowHeight ( 100 );
-    this->SetDefaultSliceWindowWidth ( 100 );
+    this->SetDefaultSliceGUIFrameWidth ( 175 );
+    this->SetDefaultSliceWindowHeight ( 120 );
+    this->SetDefaultSliceWindowWidth ( 175 );
     w = 3 * this->GetDefaultSliceGUIFrameWidth ( );
 
     h = this->GetDefaultLogoFrameHeight ( ) +
