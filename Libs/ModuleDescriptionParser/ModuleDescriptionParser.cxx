@@ -302,6 +302,20 @@ endElement(void *userData, const char *name)
     trimTrailing(temp);
     parameter->SetDefault(temp);
     }
+  else if (parameter && strcmp(name, "channel") == 0)
+    {
+    std::string temp = ps->LastTag[ps->Depth];
+    trimLeading(temp);
+    trimTrailing(temp);
+    parameter->SetChannel(temp);
+    }
+  else if (parameter && strcmp(name, "index") == 0)
+    {
+    std::string temp = ps->LastTag[ps->Depth];
+    trimLeading(temp);
+    trimTrailing(temp);
+    parameter->SetIndex(temp);
+    }
   else if (parameter && strcmp(name, "constraints") == 0)
     {
     parameter->SetConstraints(name);
