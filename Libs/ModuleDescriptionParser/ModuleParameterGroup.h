@@ -43,8 +43,10 @@ private:
   std::string Label;
   std::string Description;
 
-//  template class ModuleDescriptionParser_EXPORT std::allocator<ModuleParameter>;
-//  template class ModuleDescriptionParser_EXPORT std::vector<ModuleParameter>;
+#if defined(_MSC_VER) && (_MSC_VER > 1300) 
+  template class ModuleDescriptionParser_EXPORT std::allocator<ModuleParameter>;
+  template class ModuleDescriptionParser_EXPORT std::vector<ModuleParameter>;
+#endif
   std::vector<ModuleParameter> Parameters;
 };
 

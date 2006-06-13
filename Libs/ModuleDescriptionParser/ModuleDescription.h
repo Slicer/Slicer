@@ -110,8 +110,10 @@ private:
   std::string License;
   std::string Contributor;
 
-//  template class ModuleDescriptionParser_EXPORT std::allocator<ModuleParameterGroup>;
-//  template class ModuleDescriptionParser_EXPORT std::vector<ModuleParameterGroup>;
+#if defined(_MSC_VER) && (_MSC_VER > 1300) 
+  template class ModuleDescriptionParser_EXPORT std::allocator<ModuleParameterGroup>;
+  template class ModuleDescriptionParser_EXPORT std::vector<ModuleParameterGroup>;
+#endif
   std::vector<ModuleParameterGroup> ParameterGroups;  
 };
 
