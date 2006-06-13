@@ -41,7 +41,7 @@ public:
   bool Error;                                  /* Error detected */
   unsigned int Depth;                          /* The depth of the tag */
 
-  ParserState():Debug(false),Error(false),Depth(0){LastTag.reserve(10);};
+  ParserState():Debug(false),Error(false),Depth(0),LastTag(10){};
 };
 
 /***************************
