@@ -110,8 +110,8 @@ private:
   std::string License;
   std::string Contributor;
 
-  template class ModuleDescriptionParser_EXPORT std::allocator<ModuleParameterGroup>;
-  template class ModuleDescriptionParser_EXPORT std::vector<ModuleParameterGroup>;
+//  template class ModuleDescriptionParser_EXPORT std::allocator<ModuleParameterGroup>;
+//  template class ModuleDescriptionParser_EXPORT std::vector<ModuleParameterGroup>;
   std::vector<ModuleParameterGroup> ParameterGroups;  
 };
 

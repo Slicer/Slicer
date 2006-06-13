@@ -43,8 +43,8 @@ private:
   std::string Label;
   std::string Description;
 
-  template class ModuleDescriptionParser_EXPORT std::allocator<ModuleParameter>;
-  template class ModuleDescriptionParser_EXPORT std::vector<ModuleParameter>;
+//  template class ModuleDescriptionParser_EXPORT std::allocator<ModuleParameter>;
+//  template class ModuleDescriptionParser_EXPORT std::vector<ModuleParameter>;
   std::vector<ModuleParameter> Parameters;
 };
 
