@@ -153,6 +153,7 @@ ModuleFactory
                                 itksysProcess_Option_Detach, 0);
         itksysProcess_SetOption(process,
                                 itksysProcess_Option_HideWindow, 1);
+        itksysProcess_SetTimeout(process, 5.0); // 5 seconds
 
         // execute the command
         itksysProcess_Execute(process);
@@ -219,6 +220,11 @@ ModuleFactory
             std::cout << "\t" << filename << " is not a plugin." << std::endl
                       << "\t" << filename << " exited with errors." << std::endl;
             }
+          }
+        else if (result == itksysProcess_State_Expired)
+          {
+          std::cout << "\t" << filename << " is not a plugin." << std::endl
+                    << "\t" << filename << " timeout exceeded." << std::endl;
           }
         else
           {
