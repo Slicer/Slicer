@@ -6,6 +6,7 @@ ModuleParameterGroup
   this->Label = parameters.Label;
   this->Description = parameters.Description;
   this->Parameters = parameters.Parameters;
+  this->Advanced = parameters.Advanced;
 }
 
 void
@@ -15,10 +16,12 @@ ModuleParameterGroup
   this->Label = parameters.Label;
   this->Description = parameters.Description;
   this->Parameters = parameters.Parameters;
+  this->Advanced = parameters.Advanced;
 }
 
 std::ostream & operator<<(std::ostream &os, const ModuleParameterGroup &group)
 { 
+  os << "  Advanced: " << group.GetAdvanced() << std::endl;
   os << "  Label: " << group.GetLabel() << std::endl;
   os << "  Description: " << group.GetDescription() << std::endl;
   os << "  Parameters: " << std::endl;

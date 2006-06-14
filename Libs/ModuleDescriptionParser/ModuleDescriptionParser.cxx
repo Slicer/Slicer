@@ -33,6 +33,7 @@ trimTrailing(std::string& s, const char* extraneousChars = " \t\n")
 class ParserState
 {
 public:
+  XML_Parser Parser;                           /* The XML parser */
   std::vector<std::string> LastTag;            /* The last tag processed by expat */
   ModuleDescription CurrentDescription;
   ModuleParameterGroup *CurrentGroup;          /* The parameter group */
@@ -48,7 +49,7 @@ public:
  * expat callbacks to process the XML
  ***************************/
 void
-startElement(void *userData, const char *name, const char **)
+startElement(void *userData, const char *name, const char **attrs)
 {
   ParserState *ps = reinterpret_cast<ParserState *>(userData);
   ModuleParameter *parameter = ps->CurrentParameter;
@@ -60,6 +61,11 @@ startElement(void *userData, const char *name, const char **)
   if (strcmp(name, "parameters") == 0)
     {
     group = new ModuleParameterGroup;
+    int attrCount = XML_GetSpecifiedAttributeCount(ps->Parser);
+    if (attrCount == 2 && (strcmp(attrs[0], "advanced") == 0))
+      {
+      group->SetAdvanced(attrs[1]);
+      }
     }
   else if (group && strcmp(name, "integer") == 0)
     {
@@ -378,6 +384,7 @@ ModuleDescriptionParser::Parse( const std::string& xml, ModuleDescription& descr
   XML_Parser parser = XML_ParserCreate(NULL);
   int done;
 
+  parserState.Parser = parser;
   parserState.CurrentParameter = 0;
   parserState.CurrentGroup = 0;
 

@@ -23,12 +23,20 @@ public:
     return this->Label;
   }
 
-  void SetDescription(const std::string &label) {
-    this->Description = label;
+  void SetDescription(const std::string &description) {
+    this->Description = description;
   }
 
   const std::string& GetDescription() const {
     return this->Description;
+  }
+
+  void SetAdvanced(const std::string &advanced) {
+    this->Advanced = advanced;
+  }
+
+  const std::string& GetAdvanced() const {
+    return this->Advanced;
   }
 
   void AddParameter(const ModuleParameter &parameter) {
@@ -42,6 +50,7 @@ public:
 private:
   std::string Label;
   std::string Description;
+  std::string Advanced;
 
 #if defined(_MSC_VER) && (_MSC_VER > 1300) 
   template class ModuleDescriptionParser_EXPORT std::allocator<ModuleParameter>;
