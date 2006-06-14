@@ -100,6 +100,12 @@ ModuleFactory
   // self-describing command-line modules live in a prescribed
   // path and respond to a command line argument "--xml"
   //
+  if (this->SearchPath == "")
+    {
+    std::cout << "Empty module search path." << std::endl;
+    return;
+    }
+  
   std::vector<std::string> modulePaths;
 #ifdef _WIN32
   std::string delim(";");

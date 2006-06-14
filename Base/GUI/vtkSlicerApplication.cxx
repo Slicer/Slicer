@@ -9,6 +9,9 @@
 #include "vtkKWFrameWithLabel.h"
 #include "vtkKWWindowBase.h"
 
+const char *vtkSlicerApplication::ModulePathRegKey = "ModulePath";
+
+
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerApplication);
 vtkCxxRevisionMacro(vtkSlicerApplication, "$Revision: 1.0 $");
@@ -16,6 +19,8 @@ vtkCxxRevisionMacro(vtkSlicerApplication, "$Revision: 1.0 $");
 
 //---------------------------------------------------------------------------
 vtkSlicerApplication::vtkSlicerApplication ( ) {
+
+    strcpy(this->ModulePath, "");
 
     // configure the application before creating
     this->SetName ( "3D Slicer Version 3.0 Alpha" );
@@ -26,6 +31,7 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
     vtkKWFrameWithLabel::SetDefaultLabelFontWeightToNormal( );
     this->MainLayout = vtkSlicerGUILayout::New ( );
     this->SlicerTheme = vtkSlicerTheme::New ( );
+
 }
 
 
@@ -134,4 +140,45 @@ int vtkSlicerApplication::StartApplication ( ) {
     // Clean up and exit
     ret = this->GetExitStatus ( );
     return ret;
+}
+
+
+//----------------------------------------------------------------------------
+void vtkSlicerApplication::RestoreApplicationSettingsFromRegistry()
+{
+  Superclass::RestoreApplicationSettingsFromRegistry();
+  
+  if (this->HasRegistryValue(
+    2, "RunTime", vtkSlicerApplication::ModulePathRegKey))
+    {
+    this->GetRegistryValue(
+      2, "RunTime", vtkSlicerApplication::ModulePathRegKey,
+      this->ModulePath);
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerApplication::SaveApplicationSettingsToRegistry()
+{ 
+  Superclass::SaveApplicationSettingsToRegistry();
+
+  this->SetRegistryValue(
+    2, "RunTime", vtkSlicerApplication::ModulePathRegKey, "%s", 
+    this->ModulePath);
+}
+
+
+void vtkSlicerApplication::SetModulePath(const char* path)
+{
+  if (strcmp(this->ModulePath, path) != 0
+      && strlen(path) < vtkKWRegistryHelper::RegistryKeyValueSizeMax)
+    {
+    strcpy(this->ModulePath, path);
+    this->Modified();
+    }
+}
+
+const char* vtkSlicerApplication::GetModulePath() const
+{
+  return this->ModulePath;
 }

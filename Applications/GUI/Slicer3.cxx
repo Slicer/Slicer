@@ -229,18 +229,7 @@ int Slicer3_main(int argc, char *argv[])
     //
     //
     ModuleFactory moduleFactory;
-    char modulePath[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
-
-    if (slicerApp->HasRegistryValue(2, "RunTime", "ModulePath"))
-      {
-      slicerApp->GetRegistryValue(2, "RunTime", "ModulePath", modulePath);
-      }
-    else
-      {
-      // use a default search path
-      strcpy(modulePath, ".");
-      }
-    moduleFactory.SetSearchPath( modulePath );
+    moduleFactory.SetSearchPath( slicerApp->GetModulePath() );
     moduleFactory.Scan();
 
     // add the modules to the available modules

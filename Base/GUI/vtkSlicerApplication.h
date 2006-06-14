@@ -8,6 +8,7 @@
 #define __vtkSlicerApplication_h
 
 #include "vtkSlicerBaseGUIWin32Header.h"
+#include "vtkKWRegistryHelper.h"
 #include "vtkKWApplication.h"
 #include "vtkSlicerGUILayout.h"
 #include "vtkSlicerGUICollection.h"
@@ -42,11 +43,29 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
     // Sets application behavior.
     virtual void ConfigureApplication ( );
     virtual int StartApplication ( );
+
     // Description:
     // installs rules to specify look & feel.
     virtual void InstallTheme ( vtkKWTheme *theme );
 
+  // Descrition:
+  // Save/Retrieve the application settings to/from registry.
+  // Do not call that method before the application name is known and the
+  // proper registry level set (if any).
+  virtual void RestoreApplicationSettingsFromRegistry();
+  virtual void SaveApplicationSettingsToRegistry();
 
+  // Description:
+  // Some constants
+  //BTX
+  static const char *ModulePathRegKey;
+  //ETX
+
+  // Description:
+  // Set/Get the search path for modules.
+  void SetModulePath(const char *path);
+  const char* GetModulePath() const;
+  
  protected:
     vtkSlicerApplication ( );
     ~vtkSlicerApplication ( );
@@ -57,6 +76,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
     // Description:
     // Collections of GUIs
     vtkSlicerGUICollection *ModuleGUICollection;
+
+    char ModulePath[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
     
  private:
     vtkSlicerApplication ( const vtkSlicerApplication& ); // Not implemented.

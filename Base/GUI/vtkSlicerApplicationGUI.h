@@ -25,7 +25,7 @@
 #include "vtkSlicerModuleNavigationIcons.h"
 #include "vtkSlicerViewControlIcons.h"
 
-#include "vtkKWWindow.h"
+#include "vtkSlicerWindow.h"
 #include "vtkKWMenuButton.h"
 #include "vtkKWMenuButtonWithLabel.h"
 #include "vtkKWFrame.h"
@@ -164,7 +164,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     
     // Description:
     // Get the main slicer window.
-    vtkGetObjectMacro ( MainSlicerWin, vtkKWWindow );
+    vtkGetObjectMacro ( MainSlicerWin, vtkSlicerWindow );
     // Description:
 
     // Get the main slicer toolbars.
@@ -267,7 +267,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
 
     // Description:
     // Main Slicer window
-    vtkKWWindow *MainSlicerWin;
+    vtkSlicerWindow *MainSlicerWin;
 
     // Description:
     // Contains logos and icons

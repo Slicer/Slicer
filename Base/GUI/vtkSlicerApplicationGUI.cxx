@@ -39,7 +39,6 @@
 #include "vtkKWScale.h"
 #include "vtkKWUserInterfacePanel.h"
 #include "vtkKWWidget.h"
-#include "vtkKWWindow.h"
 #include "vtkKWCheckButton.h"
 #include "vtkKWEntry.h"
 #include "vtkKWEntryWithLabel.h"
@@ -50,6 +49,7 @@
 #include "vtkKWSplitFrame.h"
 #include "vtkKWUserInterfaceManagerNotebook.h"
 
+#include "vtkSlicerWindow.h"
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerApplicationGUI.h"
 #include "vtkSlicerApplicationGUI.h"
@@ -75,7 +75,7 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
     //---
 
     //--- slicer main window
-    this->MainSlicerWin = vtkKWWindow::New ( );
+    this->MainSlicerWin = vtkSlicerWindow::New ( );
 
     //--- slicer toolbars
     this->ModulesToolbar = vtkKWToolbar::New ( );
@@ -202,7 +202,7 @@ vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
     this->DeleteGUIPanelWidgets ( );
     this->DeleteToolbarWidgets ( );
 
-    vtkKWWindow *win = this->MainSlicerWin;
+    vtkSlicerWindow *win = this->MainSlicerWin;
     if ( win ) {
         vtkKWToolbarSet *tbs = win->GetMainToolbarSet();
         if (tbs ) {
@@ -894,7 +894,7 @@ void vtkSlicerApplicationGUI::BuildMainViewer ( )
     if ( this->GetApplication() != NULL ) {
         vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
 
-        vtkKWWindow *win = this->MainSlicerWin;
+        vtkSlicerWindow *win = this->MainSlicerWin;
         if ( this->MainViewer != NULL ) {
             this->MainViewer->SetParent (win->GetViewPanelFrame ( ) );
             this->MainViewer->Create ( );
@@ -938,7 +938,7 @@ void vtkSlicerApplicationGUI::BuildToolBar()
         vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
 
         //--- configure the window's main toolbarset.
-        vtkKWWindow *win = this->MainSlicerWin;
+        vtkSlicerWindow *win = this->MainSlicerWin;
         vtkKWToolbarSet *tbs = win->GetMainToolbarSet();
         tbs->SetToolbarsWidgetsFlatAspect ( 1 );
         tbs->BottomSeparatorVisibilityOn ( );

@@ -319,8 +319,11 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
     parameterGroupFrame->SetParent ( moduleFrame->GetFrame() );
     parameterGroupFrame->Create ( );
     parameterGroupFrame->SetLabelText ((*pgit).GetLabel().c_str());
-    parameterGroupFrame->ExpandFrame ( );
-
+    if ((*pgit).GetAdvanced() == "true")
+      {
+      parameterGroupFrame->CollapseFrame ( );
+      }
+    
     std::string parameterGroupBalloonHelp = (*pgit).GetDescription();
     parameterGroupFrame
       ->SetBalloonHelpString(parameterGroupBalloonHelp.c_str());
