@@ -12,6 +12,14 @@ ENDIF(Slicer3_SOURCE_DIR)
 
 INCLUDE_DIRECTORIES (${TCLAP_DIR}/include)
 
+IF(ModuleDescriptionParser_SOURCE_DIR)
+  INCLUDE_DIRECTORIES(
+  ${ModuleDescriptionParser_SOURCE_DIR}
+  )
+ELSE(ModuleDescriptionParser_SOURCE_DIR)
+ENDIF(ModuleDescriptionParser_SOURCE_DIR)
+
+
 UTILITY_SOURCE(GENERATECLP_EXE GenerateCLP ./ GenerateCLP.cxx)
 IF (NOT GENERATECLP_EXE)
   FIND_PROGRAM(GENERATECLP_EXE GenerateCLP DOC "GenerateCLP executable")

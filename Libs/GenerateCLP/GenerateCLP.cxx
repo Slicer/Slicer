@@ -58,331 +58,66 @@
 #include <vector>
 
 #include "GenerateCLP.h"
+#include "ModuleDescriptionParser.h"
+#include "ModuleDescription.h"
+#include "ModuleParameterGroup.h"
+#include "ModuleParameter.h"
 
-/*
-CommandLineArg: A class to hold data parsed from the xml argument
-descriptions.
-*/
-class CommandLineArg
-{
-public:
-  std::string m_Variable;        /* The name of the C++ variable */
-  std::string m_ShortFlag;       /* The short flag for the argument */
-  std::string m_LongFlag;        /* The long flag for the arugment */
-  std::string m_Description;     /* A description for the argument */
-  std::string m_Default;         /* The defaulf for the argument */
-  std::string m_CxxType;         /* The C++ type for the argument */
-  std::string m_StringToType;    /* The function to convert the string */
-                                 /* to the C++ type. */
-  CommandLineArg()
-  {
-    std::string nodefault = "-NODEFAULT-";
-    m_Default = nodefault;
-  }
-
-  /* Comma separated arguments need a temporary variable to store the
-   * string
-   */
-  bool NeedsTemp()
-  {
-    return (m_CxxType == "std::vector<int>" ||
-            m_CxxType == "std::vector<float>" ||
-            m_CxxType == "std::vector<double>");
-  }
-  /* Some types need quotes in the initialization. */
-  bool NeedsQuotes()
-  {
-    return (m_CxxType == "std::vector<int>" ||
-            m_CxxType == "std::vector<float>" ||
-            m_CxxType == "std::vector<double>" ||
-            m_CxxType == "std::string");
-  }
-  bool HasDefault()
-  {
-    return (m_Default != "-NODEFAULT-");
-  }
-};
-
-/* ParserState: A class to keep state information for the parser. This
- * is passed to the expat code as user data.
+/* Comma separated arguments need a temporary variable to store the
+ * string
  */
-class ParserState
+bool NeedsTemp(const ModuleParameter &parameter)
 {
-public:
-  std::vector<CommandLineArg> m_AllArgs; /* A vector of command line */
-                                         /* arguments */
-  std::string m_LastTag;                 /* The last tag processed by */
-                                         /* expat */
-  std::string m_Description;             /* Global descripton */
-  CommandLineArg *m_Current;             /* The current command line */
-                                         /* argument */
-  bool m_Debug;                          /* Debug flag */
-  bool m_Error;                          /* Error detected */
-  ParserState():m_Debug(false),m_Error(false){};
-};
-  
+  std::string type = parameter.GetType();
+  return (type == "std::vector<int>" ||
+          type == "std::vector<float>" ||
+          type == "std::vector<double>");
+}
+/* Some types need quotes in the initialization. */
+bool NeedsQuotes(const ModuleParameter &parameter)
+{
+  std::string type = parameter.GetType();
+  return (type == "std::vector<int>" ||
+          type == "std::vector<float>" ||
+          type == "std::vector<double>" ||
+          type == "std::string");
+}
+bool HasDefault(const ModuleParameter &parameter)
+{
+  return (parameter.GetDefault().size() > 0);
+}
+
+
 /* Generate the preamble to the code. This includes the required
  * include files and code to process comma separated arguments.
  */
-void GeneratePre(std::ofstream &, int, char *[]);
+void GeneratePre(std::ofstream &, ModuleDescription &, int, char *[]);
 
 /* Generate the last statements. This defines the PARSE_ARGS macro */
-void GeneratePost(std::ofstream &);
+void GeneratePost(std::ofstream &, ModuleDescription &);
 
 /* Generate the code that echos the XML file that describes the
  * command line arguments.
  */
-void GenerateXML(std::ofstream &, std::string);
+void GenerateXML(std::ofstream &, ModuleDescription &, std::string);
 
 /* Generate the code that uses TCLAP to parse the command line
  * arguments.
  */
-void GenerateTCLAP(std::ofstream &, ParserState &);
+void GenerateTCLAP(std::ofstream &, ModuleDescription &);
 
 /* Generate code to echo the command line arguments and their values. */
-void GenerateEchoArgs(std::ofstream &, ParserState &);
-
-/*********************
- * Utility procedures to trim leading and trailing characters
- *********************/
-void
-trimLeading(std::string& s, const char* extraneousChars = " \t\n")
-{
-
-  if (s.size())
-    {
-    s = s.substr(s.find_first_not_of(extraneousChars));
-    }
-}
-
-void
-trimTrailing(std::string& s, const char* extraneousChars = " \t\n")
-{
-  if (s.size())
-    {
-    s = s.substr(0, s.find_last_not_of(extraneousChars)+1);
-    }
-}
-
-
-/***************************
- * expat callbacks to process the XML
- ***************************/
-static void
-startElement(void *userData, const char *name, const char **)
-{
-  ParserState *ps = reinterpret_cast<ParserState *>(userData);
-  CommandLineArg *arg = ps->m_Current;
-  if (ps->m_Debug) std::cout << name << std::endl;
-
-  ps->m_LastTag.clear();
-
-  if (strcmp(name, "integer") == 0)
-    {
-    arg = new CommandLineArg;
-    arg->m_CxxType = "int";
-    }
-  else if (strcmp(name, "float") == 0)
-    {
-    arg = new CommandLineArg;
-    arg->m_CxxType = "float";
-    }
-  else if (strcmp(name, "double") == 0)
-    {
-    arg = new CommandLineArg;
-    arg->m_CxxType = "double";
-    }
-  else if (strcmp(name, "string") == 0)
-    {
-    arg = new CommandLineArg;
-    arg->m_CxxType = "std::string";
-    }
-  else if (strcmp(name, "boolean") == 0)
-    {
-    arg = new CommandLineArg;
-    arg->m_CxxType = "bool";
-    }
-  else if (strcmp(name, "integer-vector") == 0)
-    {
-    arg = new CommandLineArg;
-    arg->m_CxxType = "std::vector<int>";
-    arg->m_StringToType = "atoi";
-    }
-  else if (strcmp(name, "float-vector") == 0)
-    {
-    arg = new CommandLineArg;
-    arg->m_CxxType = "std::vector<float>";
-    arg->m_StringToType = "atof";
-    }
-  else if (strcmp(name, "double-vector") == 0)
-    {
-    arg = new CommandLineArg;
-    arg->m_CxxType = "std::vector<double>";
-    arg->m_StringToType = "atof";
-    }
-  else if (strcmp(name, "file") == 0)
-    {
-    arg = new CommandLineArg;
-    arg->m_CxxType = "std::string";
-    }
-  else if (strcmp(name, "directory") == 0)
-    {
-    arg = new CommandLineArg;
-    arg->m_CxxType = "std::string";
-    }
-  else if (strcmp(name, "image") == 0)
-    {
-    arg = new CommandLineArg;
-    arg->m_CxxType = "std::string";
-    }
-  ps->m_Current = arg;
-}
-
-static void
-endElement(void *userData, const char *name)
-{
-  ParserState *ps = reinterpret_cast<ParserState *>(userData);
-  CommandLineArg *arg = ps->m_Current;
-
-  if (strcmp(name, "integer") == 0)
-    {
-    ps->m_AllArgs.push_back(*arg);
-    ps->m_Current = 0;
-    }
-  else if (strcmp(name, "float") == 0)
-    {
-    ps->m_AllArgs.push_back(*arg);
-    ps->m_Current = 0;
-    }
-  else if (strcmp(name, "double") == 0)
-    {
-    ps->m_AllArgs.push_back(*arg);
-    ps->m_Current = 0;
-    }
-  else if (strcmp(name, "string") == 0)
-    {
-    ps->m_AllArgs.push_back(*arg);
-    ps->m_Current = 0;
-    }
-  else if (strcmp(name, "boolean") == 0)
-    {
-    ps->m_AllArgs.push_back(*arg);
-    ps->m_Current = 0;
-    }
-  else if (strcmp(name, "file") == 0)
-    {
-    ps->m_AllArgs.push_back(*arg);
-    ps->m_Current = 0;
-    }
-  else if (strcmp(name, "directory") == 0)
-    {
-    ps->m_AllArgs.push_back(*arg);
-    ps->m_Current = 0;
-    }
-  else if (strcmp(name, "image") == 0)
-    {
-    ps->m_AllArgs.push_back(*arg);
-    ps->m_Current = 0;
-    }
-  else if (strcmp(name, "integer-vector") == 0)
-    {
-    ps->m_AllArgs.push_back(*arg);
-    ps->m_Current = 0;
-    }
-  else if (strcmp(name, "float-vector") == 0)
-    {
-    ps->m_AllArgs.push_back(*arg);
-    ps->m_Current = 0;
-    }
-  else if (strcmp(name, "double-vector") == 0)
-    {
-    ps->m_AllArgs.push_back(*arg);
-    ps->m_Current = 0;
-    }
-  else if (strcmp(name, "flag") == 0)
-    {
-    arg->m_ShortFlag = ps->m_LastTag;
-    trimLeading(arg->m_ShortFlag);
-    trimTrailing(arg->m_ShortFlag);
-    }
-  else if (strcmp(name, "longflag") == 0)
-    {
-    arg->m_LongFlag = ps->m_LastTag;
-    trimLeading(arg->m_LongFlag);
-    trimTrailing(arg->m_LongFlag);
-    if (arg->m_LongFlag.find("-",2) != std::string::npos)
-      {
-      std::cerr << "GenerateCLP: flags cannot contain \"-\" : " << arg->m_LongFlag << std::endl;
-      ps->m_Error = true;
-      }
-    if (arg->m_Variable.empty())
-      {
-      arg->m_Variable = std::string(ps->m_LastTag);
-      trimLeading(arg->m_Variable);
-      trimTrailing(arg->m_Variable);
-      trimLeading(arg->m_Variable,"-");
-      }
-    }
-  else if (strcmp(name, "name") == 0)
-    {
-    if (ps->m_Debug) std::cout << "--------------------" << ps->m_LastTag << std::endl;
-    arg->m_Variable = std::string(ps->m_LastTag);
-    trimLeading(arg->m_Variable);
-    trimTrailing(arg->m_Variable);
-    }
-  else if (strcmp(name, "description") == 0)
-    {
-    if (arg)
-      {
-      arg->m_Description = ps->m_LastTag;
-      trimLeading(arg->m_Description);
-      trimTrailing(arg->m_Description);
-      }
-    else
-      {
-      if (ps->m_Description.empty())
-        {
-        ps->m_Description = ps->m_LastTag;
-        trimLeading(ps->m_Description);
-        trimTrailing(ps->m_Description);
-        }
-      }
-    }
-  else if (strcmp(name, "default") == 0)
-    {
-    arg->m_Default = ps->m_LastTag;
-    trimLeading(arg->m_Default);
-    trimTrailing(arg->m_Default);
-    }
-}
-
-static void
-charData(void *userData, const char *s, int len)
-{
-  ParserState *ps = reinterpret_cast<ParserState *>(userData);
-  if (len)
-    {
-    std::string str(s,len);
-    ps->m_LastTag += str;
-    if (ps->m_Debug) std::cout << "|" << str << "|" << std::endl;
-    }
-}
+void GenerateEchoArgs(std::ofstream &, ModuleDescription &);
 
 int
 main(int argc, char *argv[])
 {
 #include "GenerateCLP.clp"
 
-  ParserState parserState;
+  ModuleDescription module;
+  ModuleDescriptionParser parser;
 
-  XML_Parser parser = XML_ParserCreate(NULL);
-  int done;
-
-  parserState.m_Current = 0;
-
-  XML_SetUserData(parser, static_cast<void *>(&parserState));
-  XML_SetElementHandler(parser, startElement, endElement);
-  XML_SetCharacterDataHandler(parser, charData);
+  // Read the XML file
   std::ifstream fin(InputXML.c_str(),std::ios::in);
   if (fin.fail())
     {
@@ -395,40 +130,40 @@ main(int argc, char *argv[])
   fin.seekg (0, std::ios::end);
   size_t len = fin.tellg();
   fin.seekg (0, std::ios::beg);
-  char * XML = new char[len];
-  do {
+  char * XML = new char[len+1];
   fin.read (XML, len);
-    done = true;
-    if (XML_Parse(parser, XML, len, done) == 0) {
-      fprintf(stderr,
-              "%s at line %d\n",
-              XML_ErrorString(XML_GetErrorCode(parser)),
-              XML_GetCurrentLineNumber(parser));
-      return 1;
-    }
-  } while (!done);
-  fin.close();
-  XML_ParserFree(parser);
+  XML[len] = '\0';
 
-// Print each command line arg
-  std::cerr << "GenerateCLP: Found " << parserState.m_AllArgs.size() << " command line arguments" << std::endl;
-  if (parserState.m_Error)
+  // Parse the module description
+  std::cerr << "GenerateCLP " << argv[1] << " " << argv[2] << std::endl;
+  if (parser.Parse(XML, module))
     {
     std::cerr << "GenerateCLP: One or more errors detected. Code generation aborted." << std::endl;
     return EXIT_FAILURE;
     }
+
+// Print each command line arg
+  std::cerr << "GenerateCLP: Found " << module.GetParameterGroups().size() << " parameters groups" << std::endl;
+  std::vector<ModuleParameterGroup>::const_iterator git;
+  for (git = module.GetParameterGroups().begin();
+       git != module.GetParameterGroups().end();
+       ++git)
+    {
+    std::cerr << "GenerateCLP: Group \"" << (*git).GetLabel() << "\" has " << (*git).GetParameters().size() << " parameters" << std::endl;
+    }
+
 // Do the hard stuff
   std::ofstream sout(OutputCxx.c_str(),std::ios::out);
-  GeneratePre(sout, argc, argv);
-  GenerateXML(sout, InputXML);
-  GenerateTCLAP(sout, parserState);
-  GenerateEchoArgs(sout, parserState);
-  GeneratePost(sout);
-
+  GeneratePre(sout, module, argc, argv);
+  GenerateXML(sout, module, InputXML);
+  GenerateTCLAP(sout, module);
+  GenerateEchoArgs(sout, module);
+  GeneratePost(sout, module);
+  sout.close();
   return (EXIT_SUCCESS);
 }
 
-void GeneratePre(std::ofstream &sout, int argc, char *argv[])
+void GeneratePre(std::ofstream &sout, ModuleDescription &module, int argc, char *argv[])
 {
   sout << "// This file was automatically generated by:" << std::endl;
   sout << "// ";
@@ -466,7 +201,7 @@ void GeneratePre(std::ofstream &sout, int argc, char *argv[])
 
 }
 
-void GenerateXML(std::ofstream &sout, std::string XMLFile)
+void GenerateXML(std::ofstream &sout, ModuleDescription &module, std::string XMLFile)
 {
   std::string EOL(" \\");
   char linec[2048];
@@ -501,7 +236,7 @@ void GenerateXML(std::ofstream &sout, std::string XMLFile)
 
 }
 
-void GenerateEchoArgs(std::ofstream &sout, ParserState &ps)
+void GenerateEchoArgs(std::ofstream &sout, ModuleDescription &module)
 {
   std::string EOL(" \\");
   sout << "#define GENERATE_ECHOARGS \\" << std::endl;
@@ -509,292 +244,335 @@ void GenerateEchoArgs(std::ofstream &sout, ParserState &ps)
   sout << "if (echoSwitch)" << EOL << std::endl;
   sout << "{" << EOL << std::endl;
   sout << "std::cout << \"Command Line Arguments\" << std::endl;" << EOL << std::endl;
-  for (unsigned int i = 0; i < ps.m_AllArgs.size(); i++)
+  std::vector<ModuleParameterGroup>::const_iterator git;
+  std::vector<ModuleParameter>::const_iterator pit;
+  for (git = module.GetParameterGroups().begin();
+       git != module.GetParameterGroups().end();
+       ++git)
     {
-    if (ps.m_AllArgs[i].NeedsTemp())
+    for (pit = git->GetParameters().begin();
+         pit != git->GetParameters().end();
+         ++pit)
       {
-      sout << "std::cout << "
-           << "\"    "
-           << ps.m_AllArgs[i].m_Variable
-           << ": \";"
-           << EOL << std::endl;
-      sout << "for (unsigned int _i =0; _i < "
-           << ps.m_AllArgs[i].m_Variable
-           << ".size(); _i++)"
-           << EOL << std::endl;
-      sout << "{"
-           << EOL << std::endl;
-      sout << "std::cout << "
-           << ps.m_AllArgs[i].m_Variable
-           << "[_i]"
-           << " << \", \";"
-           << EOL << std::endl;
-      sout << "}"
-           << EOL << std::endl;
-      sout << "std::cout <<std::endl;"
-           << EOL << std::endl;
-
-      }
-    else
-      {
-      sout << "std::cout << "
-           << "\"    "
-           << ps.m_AllArgs[i].m_Variable
-           << ": \" << "
-           << ps.m_AllArgs[i].m_Variable
-           << " << std::endl;"
-           << EOL << std::endl;
+      if (NeedsTemp(*pit))
+        {
+        sout << "std::cout << "
+             << "\"    "
+             << pit->GetName()
+             << ": \";"
+             << EOL << std::endl;
+        sout << "for (unsigned int _i =0; _i < "
+             << pit->GetName()
+             << ".size(); _i++)"
+             << EOL << std::endl;
+        sout << "{"
+             << EOL << std::endl;
+        sout << "std::cout << "
+             << pit->GetName()
+             << "[_i]"
+             << " << \", \";"
+             << EOL << std::endl;
+        sout << "}"
+             << EOL << std::endl;
+        sout << "std::cout <<std::endl;"
+             << EOL << std::endl;
+        
+        }
+      else
+        {
+        sout << "std::cout << "
+             << "\"    "
+             << pit->GetName()
+             << ": \" << "
+             << pit->GetName()
+             << " << std::endl;"
+             << EOL << std::endl;
+        }
       }
     }
   sout << "}" << std::endl;
 }
 
-void GenerateTCLAP(std::ofstream &sout, ParserState &ps)
+void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
 {
 
   std::string EOL(" \\");
   sout << "#define GENERATE_TCLAP \\" << std::endl;
 
+  ModuleParameterGroup autoParameters;
+
   // Add a switch argument to echo command line arguments
-  CommandLineArg echoSwitch;
-  echoSwitch.m_CxxType = "bool";
-  echoSwitch.m_Variable = "echoSwitch";
-  echoSwitch.m_LongFlag = "--echo";
-  echoSwitch.m_Description = "Echo the command line arguments";
-  echoSwitch.m_Default = "false";
-  ps.m_AllArgs.push_back (echoSwitch);
+  ModuleParameter echoSwitch;
+  echoSwitch.SetTag("boolean");
+  echoSwitch.SetType("bool");
+  echoSwitch.SetName("echoSwitch");
+  echoSwitch.SetLongFlag("--echo");
+  echoSwitch.SetDescription("Echo the command line arguments");
+  echoSwitch.SetDefault("false");
+  autoParameters.AddParameter(echoSwitch);
 
   // Add a switch argument to produce xml output
-  CommandLineArg xmlSwitch;
-  xmlSwitch.m_CxxType = "bool";
-  xmlSwitch.m_Variable = "xmlSwitch";
-  xmlSwitch.m_LongFlag = "--xml";
-  xmlSwitch.m_Description = "Produce xml description of command line arguments";
-  xmlSwitch.m_Default = "false";
-  ps.m_AllArgs.push_back (xmlSwitch);
+  ModuleParameter xmlSwitch;
+  xmlSwitch.SetTag("boolean");
+  xmlSwitch.SetType("bool");
+  xmlSwitch.SetName("xmlSwitch");
+  xmlSwitch.SetLongFlag("--xml");
+  xmlSwitch.SetDescription("Produce xml description of command line arguments");
+  xmlSwitch.SetDefault("false");
+  autoParameters.AddParameter(xmlSwitch);
+
+  module.AddParameterGroup(autoParameters);
   
   // First pass generates argument declarations
-  for (unsigned int i = 0; i < ps.m_AllArgs.size(); i++)
+  std::vector<ModuleParameterGroup>::const_iterator git;
+  std::vector<ModuleParameter>::const_iterator pit;
+  for (git = module.GetParameterGroups().begin();
+       git != module.GetParameterGroups().end();
+       ++git)
     {
-    if (ps.m_AllArgs[i].NeedsQuotes())
+    for (pit = git->GetParameters().begin();
+         pit != git->GetParameters().end();
+         ++pit)
       {
-      sout << "    "
-           << "std::string"
-           << " "
-           << ps.m_AllArgs[i].m_Variable;
-      if (ps.m_AllArgs[i].NeedsTemp())
-        {
-        sout << "Temp";
-        }
-
-      if (!ps.m_AllArgs[i].HasDefault())
-        {    
-        sout << ";"
-             << EOL << std::endl;
-        }
-      else
-        {
-        sout << " = "
-             << "\""
-             << ps.m_AllArgs[i].m_Default
-             << "\""
-             << ";"
-             << EOL << std::endl;
-        }
-      if (ps.m_AllArgs[i].NeedsTemp())
+      if (NeedsQuotes(*pit))
         {
         sout << "    "
-             << ps.m_AllArgs[i].m_CxxType
+             << "std::string"
              << " "
-             << ps.m_AllArgs[i].m_Variable
-             << ";"
-             << EOL << std::endl;
-        }
-      }
-    else
-      {
-      sout << "    "
-           << ps.m_AllArgs[i].m_CxxType
-           << " "
-           << ps.m_AllArgs[i].m_Variable;
-      if (!ps.m_AllArgs[i].HasDefault())
-        {    
-        sout << ";"
-             << EOL << std::endl;
+             << pit->GetName();
+        if (NeedsTemp(*pit))
+          {
+          sout << "Temp";
+          }
+        
+        if (!HasDefault(*pit))
+          {    
+          sout << ";"
+               << EOL << std::endl;
+          }
+        else
+          {
+          sout << " = "
+               << "\""
+               << pit->GetDefault()
+               << "\""
+               << ";"
+               << EOL << std::endl;
+          }
+        if (NeedsTemp(*pit))
+          {
+          sout << "    "
+               << pit->GetType()
+               << " "
+               << pit->GetName()
+               << ";"
+               << EOL << std::endl;
+          }
         }
       else
         {
-        sout << " = "
-             << ps.m_AllArgs[i].m_Default
-             << ";"
-             << EOL << std::endl;
+        sout << "    "
+             << pit->GetType()
+             << " "
+             << pit->GetName();
+        if (!HasDefault(*pit))
+          {    
+          sout << ";"
+               << EOL << std::endl;
+          }
+        else
+          {
+          sout << " = "
+               << pit->GetDefault()
+               << ";"
+               << EOL << std::endl;
+          }
         }
       }
     }
-
   sout << "try" << EOL << std::endl;
   sout << "  {" << EOL << std::endl;
   sout << "    TCLAP::CmdLine commandLine (" << EOL << std::endl;
   sout << "      argv[0]," << EOL << std::endl;
-  sout << "      " << "\"" << ps.m_Description << "\"," << EOL << std::endl;
+  sout << "      " << "\"" << module.GetDescription() << "\"," << EOL << std::endl;
   sout << "      " << "\"$Revision: 957 $\" );" << EOL << std::endl << EOL << std::endl;
   sout << "      itksys_ios::ostringstream msg;" << EOL << std::endl;
 
   // Second pass generates argument declarations
-  for (unsigned int i = 0; i < ps.m_AllArgs.size(); i++)
+  for (git = module.GetParameterGroups().begin();
+       git != module.GetParameterGroups().end();
+       ++git)
     {
-    sout << "    msg.str(\"\");";
-    sout << "msg << "
-         << "\""
-         << ps.m_AllArgs[i].m_Description;
-    if (ps.m_AllArgs[i].m_Default.empty())
+    for (pit = git->GetParameters().begin();
+         pit != git->GetParameters().end();
+         ++pit)
       {
-      sout << "\";";
-      }
-    else
-      {
-      sout << " (default: \" "
-           << "<< ";
-      if (ps.m_AllArgs[i].HasDefault())
+      sout << "    msg.str(\"\");";
+      sout << "msg << "
+           << "\""
+           << pit->GetDescription();
+      if (pit->GetDefault().empty())
         {
-        sout << ps.m_AllArgs[i].m_Variable;
+        sout << "\";";
         }
       else
         {
-        sout << "\"None\"";
-        }
-
-      if (ps.m_AllArgs[i].NeedsTemp() && ps.m_AllArgs[i].HasDefault())
-        {
-        sout << "Temp";
-        }
-      sout << " << "
-           << "\")"
-           << "\";"
-           << EOL << std::endl;
-      }
-
-    if (ps.m_AllArgs[i].m_CxxType == "bool")
-      {
-      sout << "    TCLAP::SwitchArg "
-           << ps.m_AllArgs[i].m_Variable
-           << "Arg" << "(\""
-           << ps.m_AllArgs[i].m_ShortFlag.replace(0,1,"")
-           << "\", \"" 
-           << ps.m_AllArgs[i].m_LongFlag.replace(0,2,"")
-           << "\", msg.str(), "
-           << false
-           << ", "
-           << "commandLine);"
-           << EOL << std::endl << EOL << std::endl;
-      }
-    else
-      {
-      if (ps.m_AllArgs[i].m_ShortFlag.empty() && ps.m_AllArgs[i].m_LongFlag.empty())
-        {
-        sout << "    TCLAP::UnlabeledValueArg<";
-        sout << ps.m_AllArgs[i].m_CxxType;
-        sout << "> "
-             << ps.m_AllArgs[i].m_Variable
-             << "Arg" << "(\""
-             << ps.m_AllArgs[i].m_Variable
-             << "\", msg.str(), "
-             << !ps.m_AllArgs[i].HasDefault()
-             << ", "
-             << ps.m_AllArgs[i].m_Variable;
-        sout << ", "
-             << "\""
-             << ps.m_AllArgs[i].m_CxxType
-             << "\""
-             << ", "
-             << "commandLine);"
-             << EOL << std::endl << EOL << std::endl;
-        }
-      else
-        {
-        sout << "    TCLAP::ValueArg<";
-        if (ps.m_AllArgs[i].NeedsTemp())
+        sout << " (default: \" "
+             << "<< ";
+        if (HasDefault(*pit))
           {
-          sout << "std::string";
+          sout << pit->GetName();
           }
         else
           {
-          sout << ps.m_AllArgs[i].m_CxxType;
+          sout << "\"None\"";
           }
-        sout << "> "
-             << ps.m_AllArgs[i].m_Variable
-             << "Arg" << "(\""
-             << ps.m_AllArgs[i].m_ShortFlag.replace(0,1,"")
-             << "\", \"" 
-             << ps.m_AllArgs[i].m_LongFlag.replace(0,2,"")
-             << "\", msg.str(), "
-             << false
-             << ", "
-             << ps.m_AllArgs[i].m_Variable;
-        if (ps.m_AllArgs[i].NeedsTemp())
+
+        if (NeedsTemp(*pit) && HasDefault(*pit))
           {
           sout << "Temp";
           }
-        sout << ", "
-             << "\""
-             << ps.m_AllArgs[i].m_CxxType
-             << "\""
+        sout << " << "
+             << "\")"
+             << "\";"
+             << EOL << std::endl;
+        }
+
+      if (pit->GetType() == "bool")
+        {
+        sout << "    TCLAP::SwitchArg "
+             << pit->GetName()
+             << "Arg" << "(\""
+             << pit->GetShortFlag().replace(0,1,"")
+             << "\", \"" 
+             << pit->GetLongFlag().replace(0,2,"")
+             << "\", msg.str(), "
+             << false
              << ", "
              << "commandLine);"
              << EOL << std::endl << EOL << std::endl;
+        }
+      else
+        {
+        if (pit->GetShortFlag().empty() && pit->GetLongFlag().empty())
+          {
+          sout << "    TCLAP::UnlabeledValueArg<";
+          sout << pit->GetType();
+          sout << "> "
+               << pit->GetName()
+               << "Arg" << "(\""
+               << pit->GetName()
+               << "\", msg.str(), "
+               << !HasDefault(*pit)
+               << ", "
+               << pit->GetName();
+          sout << ", "
+               << "\""
+               << pit->GetType()
+               << "\""
+               << ", "
+               << "commandLine);"
+               << EOL << std::endl << EOL << std::endl;
+          }
+        else
+          {
+          sout << "    TCLAP::ValueArg<";
+          if (NeedsTemp(*pit))
+            {
+            sout << "std::string";
+            }
+          else
+            {
+            sout << pit->GetType();
+            }
+          sout << "> "
+               << pit->GetName()
+               << "Arg" << "(\""
+               << pit->GetShortFlag().replace(0,1,"")
+               << "\", \"" 
+               << pit->GetLongFlag().replace(0,2,"")
+               << "\", msg.str(), "
+               << false
+               << ", "
+               << pit->GetName();
+          if (NeedsTemp(*pit))
+            {
+            sout << "Temp";
+            }
+          sout << ", "
+               << "\""
+               << pit->GetType()
+               << "\""
+               << ", "
+               << "commandLine);"
+               << EOL << std::endl << EOL << std::endl;
+          }
         }
       }
     }
   sout << "    commandLine.parse ( argc, (char**) argv );" << EOL << std::endl;
   
   // Third pass generates access to arguments
-  for (unsigned int i = 0; i < ps.m_AllArgs.size(); i++)
+  for (git = module.GetParameterGroups().begin();
+       git != module.GetParameterGroups().end();
+       ++git)
     {
-    sout << "    "
-         << ps.m_AllArgs[i].m_Variable;
-    if (ps.m_AllArgs[i].NeedsTemp())
+    for (pit = git->GetParameters().begin();
+         pit != git->GetParameters().end();
+         ++pit)
       {
-      sout << "Temp";
+      sout << "    "
+           << pit->GetName();
+      if (NeedsTemp(*pit))
+        {
+        sout << "Temp";
+        }
+      sout << " = "
+           << pit->GetName()
+           << "Arg.getValue();"
+           << EOL << std::endl;
       }
-    sout << " = "
-         << ps.m_AllArgs[i].m_Variable
-         << "Arg.getValue();"
-         << EOL << std::endl;
     }
 
 // Finally, for any arrays, split the strings into words
-  for (unsigned int i = 0; i < ps.m_AllArgs.size(); i++)
+  for (git = module.GetParameterGroups().begin();
+       git != module.GetParameterGroups().end();
+       ++git)
     {
-    if (ps.m_AllArgs[i].NeedsTemp())
+    for (pit = git->GetParameters().begin();
+         pit != git->GetParameters().end();
+         ++pit)
       {
-      sout << "      {" << EOL << std::endl;
-      sout << "      std::vector<std::string> words;"
-           << EOL << std::endl;
-      sout << "      std::string sep(\",\");"
-           << EOL << std::endl;
-      sout << "      splitString(" 
-           << ps.m_AllArgs[i].m_Variable
-           << "Temp"
-           << ", "
-           << "sep, "
-           << "words);"
-           << EOL << std::endl;
-      sout << "      for (unsigned int j = 0; j < words.size(); j++)"
-           << EOL << std::endl;
-      sout << "        {"
-           << EOL << std::endl;
-      sout << "        " 
-           << ps.m_AllArgs[i].m_Variable << ".push_back("
-           << ps.m_AllArgs[i].m_StringToType
-           << "(words[j].c_str()));"
-           << EOL << std::endl;
-      sout << "        }"
-           << EOL << std::endl;
-      sout << "      }"
-           << EOL << std::endl;
+      if (NeedsTemp(*pit))
+        {
+        sout << "      {" << EOL << std::endl;
+        sout << "      std::vector<std::string> words;"
+             << EOL << std::endl;
+        sout << "      std::string sep(\",\");"
+             << EOL << std::endl;
+        sout << "      splitString(" 
+             << pit->GetName()
+             << "Temp"
+             << ", "
+             << "sep, "
+             << "words);"
+             << EOL << std::endl;
+        sout << "      for (unsigned int j = 0; j < words.size(); j++)"
+             << EOL << std::endl;
+        sout << "        {"
+             << EOL << std::endl;
+        sout << "        " 
+             << pit->GetName() << ".push_back("
+             << pit->GetStringToType()
+             << "(words[j].c_str()));"
+             << EOL << std::endl;
+        sout << "        }"
+             << EOL << std::endl;
+        sout << "      }"
+             << EOL << std::endl;
+        }
       }
     }
-
   // Wrapup the block and generate the catch block
   sout << "  }" << EOL << std::endl;
   sout << "catch ( TCLAP::ArgException e )" << EOL << std::endl;
@@ -804,7 +582,7 @@ void GenerateTCLAP(std::ofstream &sout, ParserState &ps)
   sout << "    }" << std::endl;
 }
 
-void GeneratePost(std::ofstream &sout)
+void GeneratePost(std::ofstream &sout, ModuleDescription &module)
 {
   sout << "#define PARSE_ARGS GENERATE_XML;GENERATE_TCLAP;GENERATE_ECHOARGS" << std::endl;
 }
