@@ -34,8 +34,17 @@ INCLUDE_DIRECTORIES(
   ${VTK_INCLUDE_DIR}
   )
 
-#ADD_EXECUTABLE (Slicer3 WIN32 ${SRC})
-ADD_EXECUTABLE (Slicer3 ${SRC})
+#
+# with the WIN32_CONSOLE you can see diagnostic output on in a DOS-style
+# cmd window
+#
+OPTION(Slicer3_BUILD_WIN32_CONSOLE "Build Slicer3 executable as a console app on windows (allows debug output)" OFF)
+IF ( Slicer3_BUILD_WIN32_CONSOLE )
+  ADD_EXECUTABLE (Slicer3 ${SRC})
+ELSE ( Slicer3_BUILD_WIN32_CONSOLE )
+  ADD_EXECUTABLE (Slicer3 WIN32 ${SRC})
+ENDIF ( Slicer3_BUILD_WIN32_CONSOLE )
+
 TARGET_LINK_LIBRARIES( Slicer3 
     SlicerBaseLogic
     SlicerBaseGUI
