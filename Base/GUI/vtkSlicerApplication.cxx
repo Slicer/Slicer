@@ -9,6 +9,10 @@
 #include "vtkKWFrameWithLabel.h"
 #include "vtkKWWindowBase.h"
 
+#ifdef WIN32
+#include "vtkKWWin32RegistryHelper.h"
+#endif
+
 const char *vtkSlicerApplication::ModulePathRegKey = "ModulePath";
 
 
@@ -24,6 +28,13 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
 
     // configure the application before creating
     this->SetName ( "3D Slicer Version 3.0 Alpha" );
+
+#ifdef WIN32
+    vtkKWWin32RegistryHelper *regHelper = 
+        vtkKWWin32RegistryHelper::SafeDownCast( this->GetRegistryHelper() );
+    regHelper->SetOrganization("NA-MIC");
+#endif
+
     this->RestoreApplicationSettingsFromRegistry ( );
     this->SetHelpDialogStartingPage ( "http://www.slicer.org" );
 
