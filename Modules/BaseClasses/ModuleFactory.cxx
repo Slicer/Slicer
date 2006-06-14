@@ -225,6 +225,9 @@ ModuleFactory
           std::cout << "\t" << filename << " is not a plugin." << std::endl
                     << "\t" << filename << " did not exit cleanly." << std::endl;
           }
+
+        // clean up
+        itksysProcess_Delete(process);
         }
       }
     }
