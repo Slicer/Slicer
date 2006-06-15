@@ -49,6 +49,7 @@ SET(LIB_SRCS
   vtkKWScriptedWidget.cxx
   vtkKWWindowLevelThresholdEditor.cxx
   vtkSlicerVolumeDisplayWidget.cxx
+  vtkSlicerTransformWidget.cxx
   )
 
 # Helper classes
