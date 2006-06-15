@@ -225,8 +225,8 @@ void vtkGradientAnisotropicDiffusionFilterGUI::UpdateMRML ()
   if (n == NULL)
     {
     // no parameter node selected yet, create new
-    this->GADNodeSelector->SetSelectedNew();
-    this->GADNodeSelector->ProcessNewNodeCommand();
+    this->GADNodeSelector->SetSelectedNew("vtkMRMLGradientAnisotropicDiffusionFilterNode");
+    this->GADNodeSelector->ProcessNewNodeCommand("vtkMRMLGradientAnisotropicDiffusionFilterNode");
     n = vtkMRMLGradientAnisotropicDiffusionFilterNode::SafeDownCast(this->GADNodeSelector->GetSelected());
 
     // set an observe new node in Logic
@@ -315,7 +315,7 @@ void vtkGradientAnisotropicDiffusionFilterGUI::BuildGUI ( )
   
   this->GADNodeSelector->SetNodeClass("vtkMRMLGradientAnisotropicDiffusionFilterNode");
   this->GADNodeSelector->SetNewNodeEnabled(1);
-  this->GADNodeSelector->SetNewNodeName("GADParameters");
+  //this->GADNodeSelector->SetNewNodeName("GADParameters");
   this->GADNodeSelector->SetParent( moduleFrame->GetFrame() );
   this->GADNodeSelector->Create();
   this->GADNodeSelector->SetMRMLScene(this->Logic->GetMRMLScene());
@@ -371,7 +371,7 @@ void vtkGradientAnisotropicDiffusionFilterGUI::BuildGUI ( )
   
   this->OutVolumeSelector->SetNodeClass("vtkMRMLScalarVolumeNode");
   this->OutVolumeSelector->SetNewNodeEnabled(1);
-  this->OutVolumeSelector->SetNewNodeName("GADoutput");
+  //this->OutVolumeSelector->SetNewNodeName("GADoutput");
   this->OutVolumeSelector->SetParent( moduleFrame->GetFrame() );
   this->OutVolumeSelector->Create();
   this->OutVolumeSelector->SetMRMLScene(this->Logic->GetMRMLScene());
