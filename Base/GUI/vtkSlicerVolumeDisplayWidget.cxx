@@ -75,9 +75,8 @@ void vtkSlicerVolumeDisplayWidget::ProcessWidgetEvents ( vtkObject *caller,
                                                          unsigned long event, void *callData )
 {
 
-  vtkKWMenu *volSelectorMenu = vtkKWMenu::SafeDownCast(caller);
-  //vtkSlicerNodeSelectorWidget *volSelector = vtkSlicerNodeSelectorWidget::SafeDownCast(caller);
-  if (volSelectorMenu == this->VolumeSelectorWidget->GetWidget()->GetWidget()->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent ) 
+  vtkSlicerNodeSelectorWidget *volSelector = vtkSlicerNodeSelectorWidget::SafeDownCast(caller);
+  if (volSelector == this->VolumeSelectorWidget && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent ) 
     {
     vtkMRMLVolumeNode *volume = vtkMRMLVolumeNode::SafeDownCast(this->VolumeSelectorWidget->GetSelected());
     if (volume != NULL)
@@ -131,7 +130,10 @@ void vtkSlicerVolumeDisplayWidget::ProcessMRMLEvents ( vtkObject *caller,
   vtkMRMLVolumeNode *volumeNode = vtkMRMLVolumeNode::SafeDownCast(caller);
   if (volumeNode == this->MRMLScene->GetNodeByID(this->VolumeNodeID) && volumeNode != NULL && event == vtkCommand::ModifiedEvent)
     {
-    this->SetVolumeDisplayNodeID(volumeNode->GetDisplayNode()->GetID());
+    if (volumeNode->GetDisplayNode())
+    {
+      this->SetVolumeDisplayNodeID(volumeNode->GetDisplayNode()->GetID());
+    }
     this->WindowLevelThresholdEditor->SetImageData(volumeNode->GetImageData());
     }
 
@@ -158,7 +160,7 @@ void vtkSlicerVolumeDisplayWidget::ProcessMRMLEvents ( vtkObject *caller,
 
 //---------------------------------------------------------------------------
 void vtkSlicerVolumeDisplayWidget::RemoveWidgetObservers ( ) {
-    this->VolumeSelectorWidget->GetWidget()->GetWidget()->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
+    this->VolumeSelectorWidget->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
     this->WindowLevelThresholdEditor->RemoveObservers(vtkKWWindowLevelThresholdEditor::ValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->WindowLevelThresholdEditor->RemoveObservers(vtkKWWindowLevelThresholdEditor::ValueStartChangingEvent, (vtkCommand *)this->GUICallbackCommand );
 
@@ -207,8 +209,7 @@ void vtkSlicerVolumeDisplayWidget::CreateWidget ( )
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                   this->WindowLevelThresholdEditor->GetWidgetName() );
 
-
-    this->VolumeSelectorWidget->GetWidget()->GetWidget()->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
+    this->VolumeSelectorWidget->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
     this->WindowLevelThresholdEditor->AddObserver(vtkKWWindowLevelThresholdEditor::ValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->WindowLevelThresholdEditor->AddObserver(vtkKWWindowLevelThresholdEditor::ValueStartChangingEvent, (vtkCommand *)this->GUICallbackCommand );
     if (this->MRMLScene != NULL)

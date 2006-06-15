@@ -69,9 +69,9 @@ vtkSlicerSliceControllerWidget::~vtkSlicerSliceControllerWidget ( ){
 void vtkSlicerSliceControllerWidget::RemoveGUIObservers ( ) {
 
     this->OrientationMenu->GetWidget()->GetWidget()->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand);
-    this->ForegroundSelector->GetWidget()->GetWidget()->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand);
-    this->BackgroundSelector->GetWidget()->GetWidget()->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand);
-        this->LabelSelector->GetWidget()->GetWidget()->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand);
+    this->ForegroundSelector->RemoveObservers ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, this->GUICallbackCommand);
+    this->BackgroundSelector->RemoveObservers ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, this->GUICallbackCommand);
+    this->LabelSelector->RemoveObservers ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, this->GUICallbackCommand);
     this->OffsetScale->GetWidget()->RemoveObservers ( vtkKWScale::ScaleValueChangingEvent, this->GUICallbackCommand );
     this->OffsetScale->GetWidget()->RemoveObservers ( vtkKWScale::ScaleValueChangedEvent, this->GUICallbackCommand );
     this->OffsetScale->GetWidget()->RemoveObservers ( vtkKWScale::ScaleValueStartChangingEvent, this->GUICallbackCommand );
@@ -125,7 +125,7 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     this->ForegroundSelector->SetNodeClass ("vtkMRMLVolumeNode");
     this->ForegroundSelector->SetMRMLScene( this->MRMLScene );
     this->ForegroundSelector->GetWidget()->GetWidget()->SetMaximumLabelWidth(10);
-    this->ForegroundSelector->GetWidget()->GetWidget()->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand);
+    this->ForegroundSelector->AddObserver ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, this->GUICallbackCommand);
     this->BackgroundSelector = vtkSlicerNodeSelectorWidget::New();
     this->BackgroundSelector->SetParent ( this );
     this->BackgroundSelector->Create ( );
@@ -134,7 +134,7 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     this->BackgroundSelector->SetNodeClass ("vtkMRMLVolumeNode");
     this->BackgroundSelector->SetMRMLScene( this->MRMLScene );
     this->BackgroundSelector->GetWidget()->GetWidget()->SetMaximumLabelWidth(10);
-    this->BackgroundSelector->GetWidget()->GetWidget()->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand);
+    this->BackgroundSelector->AddObserver ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, this->GUICallbackCommand);
     this->LabelSelector = vtkSlicerNodeSelectorWidget::New();
     this->LabelSelector->SetParent ( this );
     this->LabelSelector->Create ( );
@@ -143,7 +143,7 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     this->LabelSelector->SetNodeClass ("vtkMRMLVolumeNode");
     this->LabelSelector->SetMRMLScene( this->MRMLScene );
     this->LabelSelector->GetWidget()->GetWidget()->SetMaximumLabelWidth(10);
-    this->LabelSelector->GetWidget()->GetWidget()->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand);
+    this->LabelSelector->AddObserver ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, this->GUICallbackCommand);
         
     //
     // Create a scale to control the slice number displayed
@@ -225,17 +225,17 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
       }
     }
 
-  if ( vtkKWMenu::SafeDownCast(caller) == this->ForegroundSelector->GetWidget()->GetWidget()->GetMenu() )
+  if ( vtkSlicerNodeSelectorWidget::SafeDownCast(caller) == this->ForegroundSelector )
     {
     this->SliceCompositeNode->SetForegroundVolumeID( 
             this->ForegroundSelector->GetSelected()->GetID() );
     }
-  if ( vtkKWMenu::SafeDownCast(caller) == this->BackgroundSelector->GetWidget()->GetWidget()->GetMenu() )
+  if ( vtkSlicerNodeSelectorWidget::SafeDownCast(caller) == this->BackgroundSelector )
     {
     this->SliceCompositeNode->SetBackgroundVolumeID( 
             this->BackgroundSelector->GetSelected()->GetID() );
     }
-  if ( vtkKWMenu::SafeDownCast(caller) == this->LabelSelector->GetWidget()->GetWidget()->GetMenu() )
+  if ( vtkSlicerNodeSelectorWidget::SafeDownCast(caller) == this->LabelSelector )
     {
         // Nothing yet - TODO: the slice logic needs to handle labelmaps
     }

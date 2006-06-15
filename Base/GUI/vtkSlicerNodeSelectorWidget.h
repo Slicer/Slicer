@@ -47,9 +47,29 @@ public:
   void SetMRMLScene(vtkMRMLScene *MRMLScene);
 
   // Description:
-  // Class name of this node, to be set by the user
-  vtkSetStringMacro(NodeClass);
-  vtkGetStringMacro(NodeClass);
+  // Set class name of this node to select
+  void SetNodeClass(char *className) {
+    NodeClasses.clear();
+    NodeClasses.push_back(std::string(className));
+  };
+
+  // Description:
+  // Add class name of this node to select
+  void AddNodeClass(char *className) {
+    NodeClasses.push_back(std::string(className));
+  };
+
+  // Description:
+  // Get a n-th class name of this node to select
+  const char* GetNodeClass(int ind) {
+    return NodeClasses[ind].c_str();
+  };
+
+  // Description:
+  // Get a number of class names to select
+  int GetNumberOfNodeClasses() {
+    return NodeClasses.size();
+  };
 
   // Description:
   // Specifies whether new node creation is enabled
@@ -57,16 +77,17 @@ public:
   vtkGetMacro(NewNodeEnabled, int);
   vtkSetMacro(NewNodeEnabled, int);
   
-  // Description:
-  // Base name of new node
-  // names are formed by adding a counter to base name
-  vtkSetStringMacro(NewNodeName);
-  vtkGetStringMacro(NewNodeName);
-
+  // Description
+  // Get selected node
   vtkMRMLNode *GetSelected();
 
+  // Description
+  // Set selected node
   void SetSelected(vtkMRMLNode *node);
-  void SetSelectedNew();
+
+  // Description
+  // Get selection to new node of n-th class name
+  void SetSelectedNew(const char *className);
 
 //BTX
   enum
@@ -79,16 +100,19 @@ public:
   // reflect the state of the mrml scene in the menu
   void UpdateMenu();
 
-  void ProcessNewNodeCommand();
-  void ProcessCommand();
+  void ProcessNewNodeCommand(char *className);
+  void ProcessCommand(char *slectedId);
 
 protected:
   vtkSlicerNodeSelectorWidget();
   ~vtkSlicerNodeSelectorWidget();
 
-  char *NodeClass;
+//BTX
+  std::vector<std::string> NodeClasses;
+
+  std::string SelectedID;
+//ETX
   
-  char *NewNodeName;
   int NewNodeEnabled;
   
   vtkMRMLScene       *MRMLScene;
