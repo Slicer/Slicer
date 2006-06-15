@@ -11,6 +11,25 @@
   <parameters>
     <label>Registration Parameters</label>
     <description>Parameters used for registration</description>
+  <string-enumeration>
+      <name>interpolationType</name>
+      <longflag>--interpolation</longflag>
+      <description>Sampling algorithm (linear or sinc)</description>
+      <label>Interpolation</label>
+      <element>linear</element>
+      <element>sinc</element>
+      <default>linear</default>
+  </string-enumeration>
+  <integer-enumeration>
+      <name>selection</name>
+      <longflag>--selection</longflag>
+      <description>Select a number (0 2 4)</description>
+      <label>Selection</label>
+      <element>0</element>
+      <element>2</element>
+      <element>4</element>
+      <default>2</default>
+  </integer-enumeration>
     <integer>
       <name>HistogramBins</name>
       <flag>-b</flag>
