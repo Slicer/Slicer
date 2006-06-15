@@ -61,7 +61,13 @@ public:
   // a class name
   void RegisterNodeClass(vtkMRMLNode* node);
   
+  // Description:
+  // Add a path to the list.
   const char* GetClassNameByTag(const char *tagName);
+
+  // Description:
+  // Add a path to the list.
+  const char* GetTagByClassName(const char *className);
 
   // Description:
   // Add a path to the list.

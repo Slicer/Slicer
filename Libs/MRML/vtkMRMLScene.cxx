@@ -177,6 +177,19 @@ const char* vtkMRMLScene::GetClassNameByTag(const char *tagName)
 }
 
 //------------------------------------------------------------------------------
+const char* vtkMRMLScene::GetTagByClassName(const char *className)
+{
+  for (unsigned int i=0; i<RegisteredNodeClasses.size(); i++) 
+    {
+    if (!strcmp(RegisteredNodeClasses[i]->GetClassName(), className)) 
+      {
+      return (RegisteredNodeClasses[i])->GetNodeTagName();
+      }
+    }
+  return NULL;
+}
+
+//------------------------------------------------------------------------------
 int vtkMRMLScene::Connect()
 {
   if (this->URL == NULL) 
