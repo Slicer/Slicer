@@ -366,6 +366,11 @@ const char* vtkMRMLScene::GetNodeClasses()
 //------------------------------------------------------------------------------
 vtkMRMLNode *vtkMRMLScene::GetNextNodeByClass(const char *className)
 {
+  if ( !this || !this->CurrentScene )
+    {
+    return NULL;
+    }
+
   vtkMRMLNode *node = (vtkMRMLNode*)this->CurrentScene->GetNextItemAsObject();
 
   while (node != NULL && !node->IsA(className)) 
@@ -442,7 +447,7 @@ vtkMRMLNode* vtkMRMLScene::GetNodeByID(const char* id)
 {
 
   vtkMRMLNode *node = NULL;
-  if (id == NULL)
+  if (id == NULL || this == NULL || this->CurrentScene == NULL)
    {
    return NULL;
    }

@@ -88,7 +88,12 @@ public:
 
   // Description:
   // Initialize a traversal (not reentrant!)
-  void InitTraversal() { this->CurrentScene->InitTraversal(); };
+  void InitTraversal() { 
+    if (this && this->CurrentScene) 
+      {
+      this->CurrentScene->InitTraversal(); 
+      }
+  };
   
   // Description:
   // Get the next path in the list.
