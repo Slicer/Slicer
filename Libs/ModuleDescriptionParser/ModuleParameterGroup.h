@@ -55,11 +55,6 @@ private:
   std::string Label;
   std::string Description;
   std::string Advanced;
-
-#if defined(_MSC_VER) && (_MSC_VER > 1300) 
-  template class ModuleDescriptionParser_EXPORT std::allocator<ModuleParameter>;
-  template class ModuleDescriptionParser_EXPORT std::vector<ModuleParameter>;
-#endif
   std::vector<ModuleParameter> Parameters;
 };
 

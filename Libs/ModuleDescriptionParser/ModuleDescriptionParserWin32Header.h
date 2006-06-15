@@ -18,4 +18,8 @@
 #define ModuleDescriptionParser_EXPORT 
 #endif
 
+#if defined(_MSC_VER)
+#  pragma warning (disable: 4251) /* missing DLL-interface */
+#endif
+
 #endif
