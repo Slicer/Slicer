@@ -96,11 +96,23 @@ public:
     return this->ParameterGroups;
   }
 
+  std::vector<ModuleParameterGroup>& GetParameterGroups()
+  {
+    return this->ParameterGroups;
+  }
+  
   void SetParameterGroups(const std::vector<ModuleParameterGroup>& groups)
   {
       this->ParameterGroups = groups;
   }
 
+  bool HasParameter(const std::string& name) const;
+
+  bool SetParameterDefaultValue(const std::string& name,
+                                const std::string& value);
+
+  std::string GetParameterDefaultValue(const std::string& name) const;
+  
 private:
   std::string Category;
   std::string Title;

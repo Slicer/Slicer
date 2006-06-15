@@ -50,3 +50,101 @@ std::ostream & operator<<(std::ostream &os, const ModuleDescription &module)
   return os;
 }
 
+
+bool
+ModuleDescription
+::HasParameter(const std::string& name) const
+{
+  // iterate over each parameter group
+  std::vector<ModuleParameterGroup>::const_iterator pgbeginit
+    = this->ParameterGroups.begin();
+  std::vector<ModuleParameterGroup>::const_iterator pgendit
+    = this->ParameterGroups.end();
+  std::vector<ModuleParameterGroup>::const_iterator pgit;
+  
+  for (pgit = pgbeginit; pgit != pgendit; ++pgit)
+    {
+    // iterate over each parameter in this group
+    std::vector<ModuleParameter>::const_iterator pbeginit
+      = (*pgit).GetParameters().begin();
+    std::vector<ModuleParameter>::const_iterator pendit
+      = (*pgit).GetParameters().end();
+    std::vector<ModuleParameter>::const_iterator pit;
+
+    for (pit = pbeginit; pit != pendit; ++pit)
+      {
+      if ((*pit).GetName() == name)
+        {
+        return true;
+        }
+      }    
+    }
+
+  return false;
+}
+
+bool
+ModuleDescription
+::SetParameterDefaultValue(const std::string& name, const std::string& value)
+{
+  // iterate over each parameter group
+  std::vector<ModuleParameterGroup>::iterator pgbeginit
+    = this->ParameterGroups.begin();
+  std::vector<ModuleParameterGroup>::iterator pgendit
+    = this->ParameterGroups.end();
+  std::vector<ModuleParameterGroup>::iterator pgit;
+  
+  for (pgit = pgbeginit; pgit != pgendit; ++pgit)
+    {
+    // iterate over each parameter in this group
+    std::vector<ModuleParameter>::iterator pbeginit
+      = (*pgit).GetParameters().begin();
+    std::vector<ModuleParameter>::iterator pendit
+      = (*pgit).GetParameters().end();
+    std::vector<ModuleParameter>::iterator pit;
+
+    for (pit = pbeginit; pit != pendit; ++pit)
+      {
+      if ((*pit).GetName() == name)
+        {
+        (*pit).SetDefault(value);
+        return true;
+        }
+      }    
+    }
+
+  return false;
+}
+
+
+std::string
+ModuleDescription
+::GetParameterDefaultValue(const std::string& name) const
+{
+  // iterate over each parameter group
+  std::vector<ModuleParameterGroup>::const_iterator pgbeginit
+    = this->ParameterGroups.begin();
+  std::vector<ModuleParameterGroup>::const_iterator pgendit
+    = this->ParameterGroups.end();
+  std::vector<ModuleParameterGroup>::const_iterator pgit;
+  
+  for (pgit = pgbeginit; pgit != pgendit; ++pgit)
+    {
+    // iterate over each parameter in this group
+    std::vector<ModuleParameter>::const_iterator pbeginit
+      = (*pgit).GetParameters().begin();
+    std::vector<ModuleParameter>::const_iterator pendit
+      = (*pgit).GetParameters().end();
+    std::vector<ModuleParameter>::const_iterator pit;
+
+    for (pit = pbeginit; pit != pendit; ++pit)
+      {
+      if ((*pit).GetName() == name)
+        {
+        return (*pit).GetDefault();
+        }
+      }    
+    }
+
+  return "";
+}
