@@ -18,6 +18,7 @@ ModuleParameter::ModuleParameter(const ModuleParameter& parameter)
   this->Step = parameter.Step;
   this->Channel = parameter.Channel;
   this->Index = parameter.Index;
+  this->Elements = parameter.Elements;
 }
 
 void ModuleParameter::operator=(const ModuleParameter& parameter)
@@ -38,6 +39,7 @@ void ModuleParameter::operator=(const ModuleParameter& parameter)
   this->Step = parameter.Step;
   this->Channel = parameter.Channel;
   this->Index = parameter.Index;
+  this->Elements = parameter.Elements;
 }
 
 std::ostream & operator<<(std::ostream &os, const ModuleParameter &parameter)

@@ -6,6 +6,7 @@
 //#include "itksys/hash_map.hxx"
 #include <map>
 #include <string>
+#include <vector>
 #include <iostream>
 
 // Need to define a hash function for strings
@@ -196,6 +197,16 @@ public:
     return this->Flag;
   }
 
+  const virtual std::vector<std::string> &GetElements() const
+  {
+    return this->Elements;
+  }
+
+  virtual std::vector<std::string> &GetElements()
+  {
+    return this->Elements;
+  }
+
   
 protected:
 
@@ -217,6 +228,7 @@ private:
   std::string Step;
   std::string Channel;
   std::string Index;
+  std::vector<std::string> Elements;
 };
 
 ModuleDescriptionParser_EXPORT std::ostream & operator<<(std::ostream &os, const ModuleParameter &parameter);

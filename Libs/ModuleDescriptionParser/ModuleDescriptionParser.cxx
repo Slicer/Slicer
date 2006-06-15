@@ -40,9 +40,9 @@ public:
   ModuleParameter *CurrentParameter;           /* The current parameter */
   bool Debug;                                  /* Debug flag */
   bool Error;                                  /* Error detected */
-  unsigned int Depth;                          /* The depth of the tag */
+  int Depth;                                   /* The depth of the tag */
 
-  ParserState():Debug(false),Error(false),Depth(0),LastTag(10){};
+  ParserState():Debug(false),Error(false),Depth(-1),LastTag(10){};
 };
 
 /***************************
@@ -117,6 +117,30 @@ startElement(void *userData, const char *name, const char **attrs)
     parameter->SetTag(name);
     parameter->SetType("std::vector<double>");
     parameter->SetStringToType("atof");
+    }
+  else if (group && strcmp(name, "string-enumeration") == 0)
+    {
+    parameter = new ModuleParameter;
+    parameter->SetTag(name);
+    parameter->SetType("std::string");
+    }
+  else if (group && strcmp(name, "integer-enumeration") == 0)
+    {
+    parameter = new ModuleParameter;
+    parameter->SetTag(name);
+    parameter->SetType("int");
+    }
+  else if (group && strcmp(name, "float-enumeration") == 0)
+    {
+    parameter = new ModuleParameter;
+    parameter->SetTag(name);
+    parameter->SetType("float");
+    }
+  else if (group && strcmp(name, "double-enumeration") == 0)
+    {
+    parameter = new ModuleParameter;
+    parameter->SetTag(name);
+    parameter->SetType("double");
     }
   else if (group && strcmp(name, "file") == 0)
     {
@@ -204,6 +228,26 @@ endElement(void *userData, const char *name)
     ps->CurrentParameter = 0;
     }
   else if (group && strcmp(name, "double-vector") == 0)
+    {
+    ps->CurrentGroup->AddParameter(*parameter);
+    ps->CurrentParameter = 0;
+    }
+  else if (group && strcmp(name, "string-enumeration") == 0)
+    {
+    ps->CurrentGroup->AddParameter(*parameter);
+    ps->CurrentParameter = 0;
+    }
+  else if (group && strcmp(name, "integer-enumeration") == 0)
+    {
+    ps->CurrentGroup->AddParameter(*parameter);
+    ps->CurrentParameter = 0;
+    }
+  else if (group && strcmp(name, "float-enumeration") == 0)
+    {
+    ps->CurrentGroup->AddParameter(*parameter);
+    ps->CurrentParameter = 0;
+    }
+  else if (group && strcmp(name, "double-enumeration") == 0)
     {
     ps->CurrentGroup->AddParameter(*parameter);
     ps->CurrentParameter = 0;
@@ -311,6 +355,13 @@ endElement(void *userData, const char *name)
       {
       parameter->SetDescription(temp);
       }
+    }
+  else if (parameter && strcmp(name, "element") == 0)
+    {
+    std::string temp = ps->LastTag[ps->Depth];
+    trimLeading(temp);
+    trimTrailing(temp);
+    parameter->GetElements().push_back(temp);
     }
   else if (parameter && strcmp(name, "default") == 0)
     {
