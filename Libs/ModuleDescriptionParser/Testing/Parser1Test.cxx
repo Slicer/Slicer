@@ -31,7 +31,10 @@ int main (int argc, char *argv[])
 
   ModuleDescription module;
   ModuleDescriptionParser parser;
-  parser.Parse(XML, module);
+  if (parser.Parse(XML, module))
+    {
+    return EXIT_FAILURE;
+    }
 
   std::cout << module;
 
