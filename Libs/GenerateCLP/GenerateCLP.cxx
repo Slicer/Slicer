@@ -82,6 +82,15 @@ bool NeedsQuotes(const ModuleParameter &parameter)
           type == "std::vector<double>" ||
           type == "std::string");
 }
+bool IsEnumeration(const ModuleParameter &parameter)
+{
+  std::string type = parameter.GetTag();
+  return (type == "string-enumeration" ||
+          type == "integer-enumeration" ||
+          type == "float-enumeration" ||
+          type == "double-enumeration" );
+}
+
 bool HasDefault(const ModuleParameter &parameter)
 {
   return (parameter.GetDefault().size() > 0);
@@ -334,7 +343,7 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
          pit != git->GetParameters().end();
          ++pit)
       {
-      if (NeedsQuotes(*pit))
+      if (NeedsQuotes(*pit) && !IsEnumeration(*pit))
         {
         sout << "    "
              << "std::string"
@@ -368,6 +377,58 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
                << ";"
                << EOL << std::endl;
           }
+        }
+      else if (IsEnumeration(*pit))
+        {
+        sout << "    "
+             << pit->GetType()
+             << " ";
+        sout << pit->GetName();
+        if (!HasDefault(*pit))
+          {    
+          sout << ";"
+               << EOL << std::endl;
+          }
+        else
+          {
+          sout << " = ";
+          if (NeedsQuotes(*pit))
+            {
+            sout << "\"";
+            }
+          sout << pit->GetDefault();
+          if (NeedsQuotes(*pit))
+            {
+            sout << "\"";
+            }
+          sout << ";"
+               << EOL << std::endl;
+          }
+        sout << "    "
+             << "std::vector<" << pit->GetType() << "> "
+             <<  pit->GetName() << "Allowed;"
+             << EOL << std::endl;
+        for (unsigned int e = 0; e < (pit->GetElements()).size(); e++)
+          {
+          sout << "    "
+               << pit->GetName() << "Allowed.push_back(";
+          if (NeedsQuotes(*pit))
+            {
+            sout << "\"";
+            }
+          sout << pit->GetElements()[e];
+          if (NeedsQuotes(*pit))
+            {
+            sout << "\"";
+            }
+          sout << "); "
+               << EOL << std::endl;
+          }
+          sout << "    "
+            "TCLAP::ValuesConstraint<" << pit->GetType() << "> "
+               << pit->GetName() << "AllowedVals ("
+               << pit->GetName() << "Allowed); "
+               << EOL << std::endl;
         }
       else
         {
@@ -470,6 +531,26 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
                << "\""
                << pit->GetType()
                << "\""
+               << ", "
+               << "commandLine);"
+               << EOL << std::endl << EOL << std::endl;
+          }
+        else if (IsEnumeration(*pit))
+          {
+          sout << "    TCLAP::ValueArg<";
+          sout << pit->GetType();
+          sout << "> "
+               << pit->GetName()
+               << "Arg" << "(\""
+               << pit->GetShortFlag().replace(0,1,"")
+               << "\", \"" 
+               << pit->GetLongFlag().replace(0,2,"")
+               << "\", msg.str(), "
+               << false
+               << ", "
+               << pit->GetName();
+          sout << ", "
+               << "&" << pit->GetName() << "AllowedVals"
                << ", "
                << "commandLine);"
                << EOL << std::endl << EOL << std::endl;
