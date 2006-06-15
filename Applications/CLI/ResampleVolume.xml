@@ -21,6 +21,16 @@
       <default>0,0,0</default>
     </float-vector>
 
+  <string-enumeration>
+      <name>interpolationType</name>
+      <flag>-i</flag>
+      <longflag>--interpolation</longflag>
+      <description>Sampling algorithm (linear or sinc)</description>
+      <label>Interpolation</label>
+      <element>linear</element>
+      <element>sinc</element>
+      <default>linear</default>
+  </string-enumeration>
   </parameters>
 
   <parameters>
@@ -41,5 +51,4 @@
       <description>Resampled Volume</description>
     </image>
   </parameters>
-
 </executable>
