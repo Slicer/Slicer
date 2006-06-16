@@ -85,6 +85,7 @@ public:
 
   // Description:
   // Get value of a name value pair attribute
+  // or NULL if the name does not exists
   const char* GetAttribute(const char* name);
   
   // Description:
