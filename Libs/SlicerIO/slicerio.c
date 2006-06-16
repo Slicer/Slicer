@@ -586,7 +586,7 @@ int slicerFeof(slicerStream *stream)
 int slicerFseek(slicerStream *stream, long offset, int whence)
 {
     char me[]="slicerFseek", err[ERR_STRLEN];
-    int retVal = -1;
+    Tcl_WideInt retVal = -1;
  
     if (! stream) 
     {
@@ -628,7 +628,7 @@ int slicerFseek(slicerStream *stream, long offset, int whence)
         }
     }
 
-    return retVal;
+    return (int) retVal;
 }
 #define fseek slicerFseek
 
@@ -640,7 +640,7 @@ int slicerFseek(slicerStream *stream, long offset, int whence)
 int slicerFtell(slicerStream *stream)
 {
     char me[]="slicerFtell", err[ERR_STRLEN];
-    int retVal = -1;
+    Tcl_WideInt retVal = -1;
  
     if (! stream) 
     {
@@ -682,7 +682,7 @@ int slicerFtell(slicerStream *stream)
         }
     }
 
-    return retVal;
+    return (int) retVal;
 }
 #define ftell slicerFtell
 

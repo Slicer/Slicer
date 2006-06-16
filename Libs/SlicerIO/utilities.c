@@ -49,7 +49,7 @@ int vaFormatStringLength(const char *format, va_list ap)
     int total;
     char *ptr = (char *)format;
     char *tmp;
-    int minsize = 0;
+    size_t minsize = 0;
 
     /* Start with the length of the format string + 1 for the \0 */
     total = strlen(format) + 1;

@@ -6,7 +6,13 @@ ELSE(TCL_LIBRARY)
     MESSAGE(FATAL_ERROR "Could not find tcl")
 ENDIF (TCL_LIBRARY)
 
-ADD_LIBRARY(slicerio utilities.c slicerio.c)
+ADD_LIBRARY(slicerio STATIC utilities.c slicerio.c)
+
+IF(BUILD_SHARED_LIBS)
+  INSTALL_TARGETS(${SLICER3_LIB_INSTALL_DIR} slicerio)
+ENDIF(BUILD_SHARED_LIBS)
+
+TARGET_LINK_LIBRARIES (slicerio ${TCL_LIBRARY})
 
 ADD_EXECUTABLE(testSlicerIO testSlicerIO.c)
 TARGET_LINK_LIBRARIES(testSlicerIO slicerio ${TCL_LIBRARY})

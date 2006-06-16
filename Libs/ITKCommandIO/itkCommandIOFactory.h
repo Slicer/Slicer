@@ -20,12 +20,16 @@
 #include "itkObjectFactoryBase.h"
 #include "itkImageIOBase.h"
 
+#include "itkCommandIO.h"
+
+#include "itkCommandIOWin32Header.h"
+
 namespace itk
 {
 /** \class CommandIOFactory
  * \brief Create instances of CommandIO objects using an object factory.
  */
-class ITK_EXPORT CommandIOFactory : public ObjectFactoryBase
+class ITKCOMMANDIO_EXPORT CommandIOFactory : public ObjectFactoryBase
 {
 public:  
   /** Standard class typedefs. */

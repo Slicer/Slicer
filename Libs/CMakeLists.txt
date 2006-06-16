@@ -5,5 +5,7 @@ SUBDIRS(
     MRML
     GenerateCLP
     ModuleDescriptionParser
+    SlicerIO
+#    ITKCommandIO
 )
 

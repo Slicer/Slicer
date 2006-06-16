@@ -21,6 +21,8 @@
 #pragma warning ( disable : 4786 )
 #endif
 
+#include "itkCommandIOWin32Header.h"
+
 #include "itkImageIOBase.h"
 #include <fstream>
 #include "NrrdIO/NrrdIO.h"
@@ -36,7 +38,7 @@ namespace itk
  *
  *  \ingroup IOFilters
  */
-class ITK_EXPORT CommandIO : public ImageIOBase
+class ITKCOMMANDIO_EXPORT CommandIO : public ImageIOBase
 {
 public:
   /** Standard class typedefs. */
