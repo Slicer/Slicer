@@ -20,6 +20,9 @@
 #ifndef __vtkMRMLNode_h
 #define __vtkMRMLNode_h
 
+#include <string>
+#include <map>
+
 #include "vtkObject.h"
 
 #include "vtkMRML.h"
@@ -75,6 +78,14 @@ public:
   // Get node XML tag name (like Volume, Model)
   // NOTE: Subclasses should implement this method
   virtual const char* GetNodeTagName() = 0;
+
+  // Description:
+  // Set a name value pair attribute
+  void SetAttribute(const char* name, const char* value);
+
+  // Description:
+  // Get value of a name value pair attribute
+  const char* GetAttribute(const char* name);
   
   // Description:
   // Text description of this node, to be set by the user
@@ -122,6 +133,10 @@ protected:
   int Indent;
 
   vtkMRMLScene *Scene;
+
+  //BTX
+  std::map< std::string, std::string > Attributes;
+  //ETX
 };
 
 #endif
