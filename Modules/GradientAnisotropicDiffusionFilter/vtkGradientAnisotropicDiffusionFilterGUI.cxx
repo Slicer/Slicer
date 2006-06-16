@@ -226,7 +226,7 @@ void vtkGradientAnisotropicDiffusionFilterGUI::UpdateMRML ()
     {
     // no parameter node selected yet, create new
     this->GADNodeSelector->SetSelectedNew("vtkMRMLGradientAnisotropicDiffusionFilterNode");
-    this->GADNodeSelector->ProcessNewNodeCommand("vtkMRMLGradientAnisotropicDiffusionFilterNode");
+    this->GADNodeSelector->ProcessNewNodeCommand("vtkMRMLGradientAnisotropicDiffusionFilterNode", "GADParameters");
     n = vtkMRMLGradientAnisotropicDiffusionFilterNode::SafeDownCast(this->GADNodeSelector->GetSelected());
 
     // set an observe new node in Logic
@@ -313,7 +313,7 @@ void vtkGradientAnisotropicDiffusionFilterGUI::BuildGUI ( )
   app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                 moduleFrame->GetWidgetName(), this->UIPanel->GetPageWidget("GradientAnisotropicDiffusionFilter")->GetWidgetName());
   
-  this->GADNodeSelector->SetNodeClass("vtkMRMLGradientAnisotropicDiffusionFilterNode");
+  this->GADNodeSelector->SetNodeClass("vtkMRMLGradientAnisotropicDiffusionFilterNode", NULL, NULL, "GADParameter");
   this->GADNodeSelector->SetNewNodeEnabled(1);
   //this->GADNodeSelector->SetNewNodeName("GADParameters");
   this->GADNodeSelector->SetParent( moduleFrame->GetFrame() );
@@ -357,7 +357,7 @@ void vtkGradientAnisotropicDiffusionFilterGUI::BuildGUI ( )
   app->Script("pack %s -side top -anchor e -padx 20 -pady 4", 
                 this->NumberOfIterationsScale->GetWidgetName());
 
-  this->VolumeSelector->SetNodeClass("vtkMRMLScalarVolumeNode");
+  this->VolumeSelector->SetNodeClass("vtkMRMLScalarVolumeNode", NULL, NULL, NULL);
   this->VolumeSelector->SetParent( moduleFrame->GetFrame() );
   this->VolumeSelector->Create();
   this->VolumeSelector->SetMRMLScene(this->Logic->GetMRMLScene());
@@ -369,7 +369,7 @@ void vtkGradientAnisotropicDiffusionFilterGUI::BuildGUI ( )
   app->Script("pack %s -side top -anchor e -padx 20 -pady 4", 
                 this->VolumeSelector->GetWidgetName());
   
-  this->OutVolumeSelector->SetNodeClass("vtkMRMLScalarVolumeNode");
+  this->OutVolumeSelector->SetNodeClass("vtkMRMLScalarVolumeNode", NULL, NULL, NULL);
   this->OutVolumeSelector->SetNewNodeEnabled(1);
   //this->OutVolumeSelector->SetNewNodeName("GADoutput");
   this->OutVolumeSelector->SetParent( moduleFrame->GetFrame() );
