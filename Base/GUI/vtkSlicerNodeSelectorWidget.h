@@ -51,14 +51,14 @@ public:
   // also sets:
   // attribute name-value pair to use as additional node filter (optional)
   // nodeName to use as a base name for creating new nodes (optional)
-  void SetNodeClass(char *className, char *attName, char* attValue, char *nodeName);
+  void SetNodeClass(const char *className, const char *attName, const char* attValue, const char *nodeName);
 
   // Description:
   // Add class name of this node to select
   // also sets:
   // attribute name-value pair to use as additional node filter (optional)
   // nodeName to use as a base name for creating new nodes (optional)
-  void AddNodeClass(char *className, char *attName, char* attValue, char *nodeName);
+  void AddNodeClass(const char *className, const char *attName, const char* attValue, const char *nodeName);
 
   // Description:
   // Get a n-th class name of this node to select

@@ -98,17 +98,17 @@ void vtkSlicerNodeSelectorWidget::SetMRMLScene( vtkMRMLScene *MRMLScene)
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerNodeSelectorWidget::SetNodeClass(char *className,
-                                               char *attName, 
-                                               char *attValue,
-                                               char *nodeName) 
+void vtkSlicerNodeSelectorWidget::SetNodeClass(const char *className,
+                                               const char *attName, 
+                                               const char *attValue,
+                                               const char *nodeName) 
 {
   NodeClasses.clear();
   NodeNames.clear();
   AttributeNames.clear();
   AttributeValues.clear();
 
-  char *str = NULL;
+  const char *str = NULL;
 
   if (className)
     {
@@ -127,12 +127,12 @@ void vtkSlicerNodeSelectorWidget::SetNodeClass(char *className,
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerNodeSelectorWidget::AddNodeClass(char *className,
-                                               char *attName, 
-                                               char *attValue,
-                                               char *nodeName) 
+void vtkSlicerNodeSelectorWidget::AddNodeClass(const char *className,
+                                               const char *attName, 
+                                               const char *attValue,
+                                               const char *nodeName) 
 {
-  char *str = NULL;
+  const char *str = NULL;
 
   if (className)
     {
