@@ -39,17 +39,19 @@ SET(LIB_SRCS
   vtkSlicerSlicesGUI.cxx
   vtkSlicerVolumesGUI.cxx
   vtkSlicerModelsGUI.cxx
+  vtkSlicerTransformsGUI.cxx
   vtkSlicerDataGUI.cxx
   vtkSlicerGUILayout.cxx    
   vtkSlicerApplicationGUI.cxx
-  vtkSlicerNodeSelectorWidget.cxx
   # Widgets
+  vtkSlicerNodeSelectorWidget.cxx
   vtkSlicerWidget.cxx
   vtkKWMatrix4x4.cxx
   vtkKWScriptedWidget.cxx
   vtkKWWindowLevelThresholdEditor.cxx
   vtkSlicerVolumeDisplayWidget.cxx
-  vtkSlicerTransformWidget.cxx
+  vtkSlicerTransformManagerWidget.cxx
+  vtkSlicerTransformEditorWidget.cxx
   )
 
 # Helper classes

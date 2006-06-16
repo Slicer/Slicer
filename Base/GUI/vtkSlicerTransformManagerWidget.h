@@ -21,8 +21,8 @@
 //
 
 
-#ifndef __vtkSlicerTransformWidget_h
-#define __vtkSlicerTransformWidget_h
+#ifndef __vtkSlicerTransformManagerWidget_h
+#define __vtkSlicerTransformManagerWidget_h
 
 #include "vtkSlicerWidget.h"
 
@@ -30,12 +30,12 @@ class vtkSlicerNodeSelectorWidget;
 class vtkKWPushButton;
 class vtkKWMatrix4x4;
 
-class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerTransformWidget : public vtkSlicerWidget
+class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerTransformManagerWidget : public vtkSlicerWidget
 {
   
 public:
-  static vtkSlicerTransformWidget* New();
-  vtkTypeRevisionMacro(vtkSlicerTransformWidget,vtkKWCompositeWidget);
+  static vtkSlicerTransformManagerWidget* New();
+  vtkTypeRevisionMacro(vtkSlicerTransformManagerWidget,vtkKWCompositeWidget);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description:
@@ -51,8 +51,8 @@ public:
   virtual void RemoveWidgetObservers ( );
   
  protected:
-  vtkSlicerTransformWidget();
-  ~vtkSlicerTransformWidget();
+  vtkSlicerTransformManagerWidget();
+  ~vtkSlicerTransformManagerWidget();
 
   // Description:
   // Create the widget.
@@ -62,13 +62,11 @@ public:
   vtkSlicerNodeSelectorWidget* TransformSelectorWidget;
   vtkKWPushButton*             AddTransformButton;
   vtkKWPushButton*             RemoveTransformButton;
-  vtkSlicerNodeSelectorWidget* TransformEditSelectorWidget;
-  vtkKWMatrix4x4*              MatrixWidget;
 private:
 
 
-  vtkSlicerTransformWidget(const vtkSlicerTransformWidget&); // Not implemented
-  void operator=(const vtkSlicerTransformWidget&); // Not Implemented
+  vtkSlicerTransformManagerWidget(const vtkSlicerTransformManagerWidget&); // Not implemented
+  void operator=(const vtkSlicerTransformManagerWidget&); // Not Implemented
 };
 
 #endif
