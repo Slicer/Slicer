@@ -24,6 +24,7 @@ SET(MRML_SRCS
         vtkMRMLVolumeHeaderlessStorageNode.cxx
         vtkMRMLModelStorageNode.cxx
         vtkMRMLVolumeDisplayNode.cxx
+        vtkMRMLTransformableNode.cxx
         vtkMRMLTransformNode.cxx
         vtkMRMLLinearTransformNode.cxx
         vtkMRMLFiducialNode.cxx

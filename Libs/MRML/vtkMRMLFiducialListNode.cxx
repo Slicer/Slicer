@@ -60,8 +60,6 @@ vtkMRMLFiducialListNode::vtkMRMLFiducialListNode()
   this->Color[0]=0.4; this->Color[1]=1.0; this->Color[2]=1.0;
   this->Type = NULL;
   this->SetType("default");
-  this->TransformNodeID = NULL;
-  this->TransformNode = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -73,17 +71,6 @@ vtkMRMLFiducialListNode::~vtkMRMLFiducialListNode()
     delete [] this->Type;
     this->Type = NULL;
   }
-
-  if (this->TransformNodeID) 
-    {
-    delete [] this->TransformNodeID;
-    this->TransformNodeID = NULL;
-    }
-  if (this->TransformNode) 
-    {
-    this->TransformNode->Delete();
-    }
-  
 }
 
 //----------------------------------------------------------------------------
@@ -103,11 +90,6 @@ void vtkMRMLFiducialListNode::WriteXML(ostream& of, int nIndent)
   of << " color=\"" << this->Color[0] << " " << 
                     this->Color[1] << " " <<
                     this->Color[2] << "\"";
-
-  if (this->TransformNodeID != NULL) 
-    {
-    of << indent << "transformNodeRef=\"" << this->TransformNodeID << "\" ";
-    }
 }
 
 //----------------------------------------------------------------------------
@@ -154,10 +136,6 @@ void vtkMRMLFiducialListNode::ReadXMLAttributes(const char** atts)
       ss << attValue;
       ss >> this->Visibility;
       }
-    else if (!strcmp(attName, "transformNodeRef")) 
-      {
-      this->SetTransformNodeID(attValue);
-      }
     }  
 }
 
@@ -175,13 +153,6 @@ void vtkMRMLFiducialListNode::Copy(vtkMRMLNode *anode)
   this->SetTextSize(node->TextSize);
   this->SetVisibility(node->Visibility);
   this->SetType(node->Type);
-
-  if (this->TransformNode) 
-    {
-    this->SetTransformNode(node->TransformNode);
-    }
-  this->SetTransformNodeID(node->TransformNodeID);
-
 }
 
 //----------------------------------------------------------------------------
@@ -200,9 +171,6 @@ void vtkMRMLFiducialListNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "Visibility:        " << this->Visibility << "\n";
   os << indent << "Type:              " << this->Type << "\n";
 
-  os << indent << "TransformNodeID: " <<
-    (this->TransformNodeID ? this->TransformNodeID : "(none)") << "\n";
-
   os << "Color:\n";
   for (idx = 0; idx < 3; ++idx)
     {
@@ -214,12 +182,6 @@ void vtkMRMLFiducialListNode::PrintSelf(ostream& os, vtkIndent indent)
 
 void vtkMRMLFiducialListNode::UpdateScene(vtkMRMLScene *scene)
 {
-  vtkMRMLNode *mnode = scene->GetNodeByID(this->TransformNodeID);
-  if (mnode) 
-    {
-    vtkMRMLTransformNode *node  = dynamic_cast < vtkMRMLTransformNode *>(mnode);
-    this->SetTransformNode(node);
-    }
 }
 
 //-----------------------------------------------------------

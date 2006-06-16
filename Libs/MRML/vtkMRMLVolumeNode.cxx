@@ -27,22 +27,23 @@ vtkMRMLVolumeNode::vtkMRMLVolumeNode()
 {
   this->StorageNodeID = NULL;
   this->DisplayNodeID = NULL;
-  this->TransformNodeID = NULL;
 
-  for(int i=0; i<3; i++) 
+  int i,j;
+
+  for(i=0; i<3; i++) 
     {
-    for(int j=0; j<3; j++) 
+    for(j=0; j<3; j++) 
       {
       this->IJKToRASDirections[i][j] = (i == j) ? 1.0 : 0.0;
       }
     }
  
-  for(int i=0; i<3; i++) 
+  for(i=0; i<3; i++) 
     {
     this->Spacing[i] = 1.0;
     }
 
-  for(int i=0; i<3; i++) 
+  for(i=0; i<3; i++) 
     {
     this->Origin[i] = 0.0;
     }
@@ -62,11 +63,6 @@ vtkMRMLVolumeNode::~vtkMRMLVolumeNode()
     {
     delete [] this->DisplayNodeID;
     this->DisplayNodeID = NULL;
-    }
-  if (this->TransformNodeID) 
-    {
-    delete [] this->TransformNodeID;
-    this->TransformNodeID = NULL;
     }
 
   if (this->ImageData)  {
@@ -88,10 +84,6 @@ void vtkMRMLVolumeNode::WriteXML(ostream& of, int nIndent)
   if (this->DisplayNodeID != NULL) 
     {
     of << indent << "displayNodeRef=\"" << this->DisplayNodeID << "\" ";
-    }
-  if (this->TransformNodeID != NULL) 
-    {
-    of << indent << "transformNodeRef=\"" << this->TransformNodeID << "\" ";
     }
 
   std::stringstream ss;
@@ -174,11 +166,7 @@ void vtkMRMLVolumeNode::ReadXMLAttributes(const char** atts)
       {
       this->SetDisplayNodeID(attValue);
       }
-    else if (!strcmp(attName, "transformNodeRef")) 
-      {
-      this->SetTransformNodeID(attValue);
-      }
-    }  
+   }  
 }
 
 //----------------------------------------------------------------------------
@@ -207,7 +195,6 @@ void vtkMRMLVolumeNode::Copy(vtkMRMLNode *anode)
 
   this->SetStorageNodeID(node->StorageNodeID);
   this->SetDisplayNodeID(node->DisplayNodeID);
-  this->SetTransformNodeID(node->TransformNodeID);
 }
 
 //----------------------------------------------------------------------------
@@ -216,9 +203,12 @@ void vtkMRMLVolumeNode::PrintSelf(ostream& os, vtkIndent indent)
   Superclass::PrintSelf(os,indent);
   // Matrices
   os << "IJKToRASDirections:\n";
-  for(int i=0; i<3; i++) 
+
+  int i,j;
+
+  for(i=0; i<3; i++) 
     {
-    for(int j=0; j<3; j++) 
+    for(j=0; j<3; j++) 
       {
       os << indent << " " << this->IJKToRASDirections[i][j];
       }
@@ -227,12 +217,12 @@ void vtkMRMLVolumeNode::PrintSelf(ostream& os, vtkIndent indent)
   os << "\n";
 
   os << "Origin:";
-  for(int j=0; j<3; j++) 
+  for(j=0; j<3; j++) 
     {
     os << indent << " " << this->Origin[j];
     }
   os << "Spacing:";
-  for(int j=0; j<3; j++) 
+  for(j=0; j<3; j++) 
     {
     os << indent << " " << this->Spacing[j];
     }
@@ -277,17 +267,6 @@ vtkMRMLVolumeDisplayNode* vtkMRMLVolumeNode::GetDisplayNode()
   return node;
 }
 
-//----------------------------------------------------------------------------
-vtkMRMLTransformNode* vtkMRMLVolumeNode::GetTransformNode()
-{
-  vtkMRMLTransformNode* node = NULL;
-  if (this->GetScene() && this->GetTransformNodeID() )
-    {
-    vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->TransformNodeID);
-    node = vtkMRMLTransformNode::SafeDownCast(snode);
-    }
-  return node;
-}
 
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeNode::SetIJKToRASDirections(double dirs[3][3])

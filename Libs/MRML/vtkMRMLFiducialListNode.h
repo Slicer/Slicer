@@ -28,11 +28,10 @@
 
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
-#include "vtkMRMLTransformNode.h"
 #include "vtkMRMLFiducialNode.h"
+#include "vtkMRMLTransformableNode.h"
 
-
-class VTK_MRML_EXPORT vtkMRMLFiducialListNode : public vtkMRMLNode
+class VTK_MRML_EXPORT vtkMRMLFiducialListNode : public vtkMRMLTransformableNode
 {
 public:
   static vtkMRMLFiducialListNode *New();
@@ -90,16 +89,6 @@ public:
   vtkSetStringMacro(Type);
   vtkGetStringMacro(Type);
   
-  // Description:
-  // String ID of the transform MRML node
-  vtkSetStringMacro(TransformNodeID);
-  vtkGetStringMacro(TransformNodeID);
-
-  // Description:
-  // Associated transform MRML node
-  vtkGetObjectMacro(TransformNode, vtkMRMLTransformNode);
-  vtkSetObjectMacro(TransformNode, vtkMRMLTransformNode);
-
   int GetNumberOfFiducialNodes() { return this->FiducialList->vtkCollection::GetNumberOfItems(); };
   vtkMRMLFiducialNode* GetNthFiducialNode(int n);
   void AddFiducialNode(vtkMRMLFiducialNode *o) { this->FiducialList->vtkCollection::AddItem(o); this->Modified();};
@@ -120,9 +109,6 @@ protected:
   char  *Type;
 
   vtkCollection *FiducialList;
-
-  char *TransformNodeID;
-  vtkMRMLTransformNode       *TransformNode;
 
 };
 

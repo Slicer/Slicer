@@ -73,7 +73,6 @@ vtkMRMLModelNode::vtkMRMLModelNode()
   // Scalars
   this->LUTName = -1;
 
-  this->TransformNodeID = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -88,12 +87,6 @@ vtkMRMLModelNode::~vtkMRMLModelNode()
     {
     this->PolyData->Delete();
     }
-  if (this->TransformNodeID) 
-    {
-    delete [] this->TransformNodeID;
-    this->TransformNodeID = NULL;
-    }
-  
 }
 
 //----------------------------------------------------------------------------
@@ -143,10 +136,6 @@ void vtkMRMLModelNode::WriteXML(ostream& of, int nIndent)
     {
     of << indent << " scalarRange=\"" << this->ScalarRange[0] << " "
        << this->ScalarRange[1] << "\"";
-    }
-  if (this->TransformNodeID != NULL) 
-    {
-    of << indent << "transformNodeRef=\"" << this->TransformNodeID << "\" ";
     }
 }
 
@@ -215,10 +204,6 @@ void vtkMRMLModelNode::ReadXMLAttributes(const char** atts)
       ss << attValue;
       ss >> TensorVisibility;
       }
-    else if (!strcmp(attName, "transformNodeRef")) 
-      {
-      this->SetTransformNodeID(attValue);
-      }
     }  
 }
 
@@ -246,8 +231,6 @@ void vtkMRMLModelNode::Copy(vtkMRMLNode *anode)
   this->SetClipping(node->Clipping);
   this->SetPolyData(node->PolyData);
 
-  this->SetTransformNodeID(node->TransformNodeID);
-
 }
 
 //----------------------------------------------------------------------------
@@ -266,9 +249,6 @@ void vtkMRMLModelNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "BackfaceCulling:   " << this->BackfaceCulling << "\n";
   os << indent << "Clipping:          " << this->Clipping << "\n";
 
-  os << indent << "TransformNodeID: " <<
-    (this->TransformNodeID ? this->TransformNodeID : "(none)") << "\n";
-
   os << "ScalarRange:\n";
   for (idx = 0; idx < 2; ++idx)
     {
@@ -280,18 +260,5 @@ void vtkMRMLModelNode::PrintSelf(ostream& os, vtkIndent indent)
     this->PolyData->PrintSelf(os, indent.GetNextIndent());
     }
 
-}
-
-//-----------------------------------------------------------
-//----------------------------------------------------------------------------
-vtkMRMLTransformNode* vtkMRMLModelNode::GetTransformNode()
-{
-  vtkMRMLTransformNode* node = NULL;
-  if (this->GetScene() && this->GetTransformNodeID() )
-    {
-    vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->TransformNodeID);
-    node = vtkMRMLTransformNode::SafeDownCast(snode);
-    }
-  return node;
 }
 

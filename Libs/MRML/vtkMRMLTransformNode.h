@@ -24,12 +24,12 @@
 #ifndef __vtkMRMLTransformNode_h
 #define __vtkMRMLTransformNode_h
 
-#include "vtkMRMLNode.h"
+#include "vtkMRMLTransformableNode.h"
 
 #include "vtkGeneralTransform.h"
 #include "vtkMatrix4x4.h"
 
-class VTK_MRML_EXPORT vtkMRMLTransformNode : public vtkMRMLNode
+class VTK_MRML_EXPORT vtkMRMLTransformNode : public vtkMRMLTransformableNode
 {
   public:
   static vtkMRMLTransformNode *New(){return NULL;};
@@ -57,17 +57,6 @@ class VTK_MRML_EXPORT vtkMRMLTransformNode : public vtkMRMLNode
   // Description:
   // Finds the storage node and read the data
   virtual void UpdateScene(vtkMRMLScene *scene){};
-
-  // Description:
-  // string ID of the parent transform MRML node
-  // If NULL the node at the top
-  vtkSetStringMacro(ParentTransformNodeID);
-  vtkGetStringMacro(ParentTransformNodeID);
-
-  // Description:
-  // parent transform MRML node. 
-  // If NULL the node at the top
-  vtkMRMLTransformNode* GetParentTransformNode();
 
   // Description:
   // 1 if transfrom is linear, 0 otherwise
@@ -113,8 +102,6 @@ protected:
   ~vtkMRMLTransformNode();
   vtkMRMLTransformNode(const vtkMRMLTransformNode&);
   void operator=(const vtkMRMLTransformNode&);
-
-  char *ParentTransformNodeID;
 
   vtkGeneralTransform* TransformToParent;
 

@@ -31,11 +31,11 @@
 #include "vtkMRMLNode.h"
 #include "vtkMRMLStorageNode.h"
 #include "vtkMRMLVolumeDisplayNode.h"
-#include "vtkMRMLTransformNode.h"
+#include "vtkMRMLTransformableNode.h"
 
 class vtkImageData;
 
-class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLNode
+class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLTransformableNode
 {
   public:
   static vtkMRMLVolumeNode *New(){return NULL;};
@@ -121,10 +121,6 @@ class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLNode
   vtkSetStringMacro(DisplayNodeID);
   vtkGetStringMacro(DisplayNodeID);
 
-  // Description:
-  // String ID of the transform MRML node
-  vtkSetStringMacro(TransformNodeID);
-  vtkGetStringMacro(TransformNodeID);
 
   // Description:
   // Associated storage MRML node
@@ -133,10 +129,6 @@ class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLNode
   // Description:
   // Associated display MRML node
   vtkMRMLVolumeDisplayNode* GetDisplayNode();
-
-  // Description:
-  // Associated transform MRML node
-  vtkMRMLTransformNode* GetTransformNode();
 
   // Description:
   // Associated ImageData
@@ -159,7 +151,6 @@ protected:
 
   char *StorageNodeID;
   char *DisplayNodeID;
-  char *TransformNodeID;
 
   vtkImageData               *ImageData;
 

@@ -28,9 +28,9 @@
 
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
-#include "vtkMRMLTransformNode.h"
+#include "vtkMRMLTransformableNode.h"
 
-class VTK_MRML_EXPORT vtkMRMLModelNode : public vtkMRMLNode
+class VTK_MRML_EXPORT vtkMRMLModelNode : public vtkMRMLTransformableNode
 {
 public:
   static vtkMRMLModelNode *New();
@@ -121,15 +121,6 @@ public:
   // for this model
   vtkGetMacro(LUTName,int);
   vtkSetMacro(LUTName,int);
-
-  // Description:
-  // String ID of the transform MRML node
-  vtkSetStringMacro(TransformNodeID);
-  vtkGetStringMacro(TransformNodeID);
-
-  // Description:
-  // Associated transform MRML node
-  vtkMRMLTransformNode* GetTransformNode();
     
   vtkGetObjectMacro(PolyData, vtkPolyData);
   vtkSetObjectMacro(PolyData, vtkPolyData);
@@ -160,8 +151,6 @@ protected:
 
   // Arrays
   double ScalarRange[2];
-
-  char *TransformNodeID;
 
 };
 

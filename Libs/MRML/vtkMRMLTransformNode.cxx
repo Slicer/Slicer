@@ -25,7 +25,6 @@ Version:   $Revision: 1.14 $
 //----------------------------------------------------------------------------
 vtkMRMLTransformNode::vtkMRMLTransformNode()
 {
-  this->ParentTransformNodeID = NULL;
   this->TransformToParent = vtkGeneralTransform::New();
   this->TransformToParent->Identity();
 }
@@ -33,11 +32,6 @@ vtkMRMLTransformNode::vtkMRMLTransformNode()
 //----------------------------------------------------------------------------
 vtkMRMLTransformNode::~vtkMRMLTransformNode()
 {
-  if (this->ParentTransformNodeID) 
-    {
-    delete [] this->ParentTransformNodeID;
-    this->ParentTransformNodeID = NULL;
-    }
   if (this->TransformToParent) 
     {
     this->TransformToParent->Delete();
@@ -48,13 +42,6 @@ vtkMRMLTransformNode::~vtkMRMLTransformNode()
 void vtkMRMLTransformNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
-
-  vtkIndent indent(nIndent);
-
-  if (this->ParentTransformNodeID != NULL) 
-    {
-    of << indent << "parentTransformNodeRef=/'" << this->ParentTransformNodeID << "/' ";
-    }
 }
 
 //----------------------------------------------------------------------------
@@ -62,18 +49,6 @@ void vtkMRMLTransformNode::ReadXMLAttributes(const char** atts)
 {
 
   vtkMRMLNode::ReadXMLAttributes(atts);
-
-  const char* attName;
-  const char* attValue;
-  while (*atts != NULL) 
-    {
-    attName = *(atts++);
-    attValue = *(atts++);
-    if (!strcmp(attName, "parentTransformNodeRef")) 
-      {
-      this->SetParentTransformNodeID(attValue);
-      }
-    }  
 }
 
 //----------------------------------------------------------------------------
@@ -82,28 +57,14 @@ void vtkMRMLTransformNode::ReadXMLAttributes(const char** atts)
 void vtkMRMLTransformNode::Copy(vtkMRMLNode *anode)
 {
   Superclass::Copy(anode);
-  vtkMRMLTransformNode *node = (vtkMRMLTransformNode *) anode;
-  this->SetParentTransformNodeID(node->ParentTransformNodeID);
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLTransformNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   vtkMRMLNode::PrintSelf(os,indent);
-  os << indent << "ParentTransformNodeID: " <<
-    (this->ParentTransformNodeID ? this->ParentTransformNodeID : "(none)") << "\n";
-}
-
-//----------------------------------------------------------------------------
-vtkMRMLTransformNode* vtkMRMLTransformNode::GetParentTransformNode()
-{
-  vtkMRMLTransformNode* node = NULL;
-  if (this->GetScene() && this->ParentTransformNodeID != NULL )
-    {
-    vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->ParentTransformNodeID);
-    node = vtkMRMLTransformNode::SafeDownCast(snode);
-    }
-  return node;
+  os << indent << "TransformNodeID: " <<
+    (this->TransformNodeID ? this->TransformNodeID : "(none)") << "\n";
 }
 
 //----------------------------------------------------------------------------
