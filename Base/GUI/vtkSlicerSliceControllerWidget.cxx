@@ -122,7 +122,7 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     this->ForegroundSelector->Create ( );
     this->ForegroundSelector->SetLabelText ("Fg:");
     this->ForegroundSelector->SetLabelWidth(3);
-    this->ForegroundSelector->SetNodeClass ("vtkMRMLVolumeNode");
+    this->ForegroundSelector->SetNodeClass ("vtkMRMLVolumeNode", NULL, NULL, NULL);
     this->ForegroundSelector->SetMRMLScene( this->MRMLScene );
     this->ForegroundSelector->GetWidget()->GetWidget()->SetMaximumLabelWidth(10);
     this->ForegroundSelector->AddObserver ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, this->GUICallbackCommand);
@@ -131,7 +131,7 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     this->BackgroundSelector->Create ( );
     this->BackgroundSelector->SetLabelText ("Bg:");
     this->BackgroundSelector->SetLabelWidth(3);
-    this->BackgroundSelector->SetNodeClass ("vtkMRMLVolumeNode");
+    this->BackgroundSelector->SetNodeClass ("vtkMRMLVolumeNode", NULL, NULL, NULL);
     this->BackgroundSelector->SetMRMLScene( this->MRMLScene );
     this->BackgroundSelector->GetWidget()->GetWidget()->SetMaximumLabelWidth(10);
     this->BackgroundSelector->AddObserver ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, this->GUICallbackCommand);
@@ -140,7 +140,7 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     this->LabelSelector->Create ( );
     this->LabelSelector->SetLabelText ("Lb:");
     this->LabelSelector->SetLabelWidth(3);
-    this->LabelSelector->SetNodeClass ("vtkMRMLVolumeNode");
+    this->LabelSelector->SetNodeClass ("vtkMRMLVolumeNode", NULL, NULL, NULL);
     this->LabelSelector->SetMRMLScene( this->MRMLScene );
     this->LabelSelector->GetWidget()->GetWidget()->SetMaximumLabelWidth(10);
     this->LabelSelector->AddObserver ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, this->GUICallbackCommand);

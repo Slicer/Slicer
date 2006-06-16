@@ -48,21 +48,40 @@ public:
 
   // Description:
   // Set class name of this node to select
-  void SetNodeClass(char *className) {
-    NodeClasses.clear();
-    NodeClasses.push_back(std::string(className));
-  };
+  // also sets:
+  // attribute name-value pair to use as additional node filter (optional)
+  // nodeName to use as a base name for creating new nodes (optional)
+  void SetNodeClass(char *className, char *attName, char* attValue, char *nodeName);
 
   // Description:
   // Add class name of this node to select
-  void AddNodeClass(char *className) {
-    NodeClasses.push_back(std::string(className));
-  };
+  // also sets:
+  // attribute name-value pair to use as additional node filter (optional)
+  // nodeName to use as a base name for creating new nodes (optional)
+  void AddNodeClass(char *className, char *attName, char* attValue, char *nodeName);
 
   // Description:
   // Get a n-th class name of this node to select
   const char* GetNodeClass(int ind) {
     return NodeClasses[ind].c_str();
+  };
+
+  // Description:
+  // Get a n-th base name of this node to select
+  const char* GetNodeName(int ind) {
+    return NodeNames[ind].c_str();
+  };
+
+  // Description:
+  // Get a n-th attribute name of this node to select
+  const char* GetNodeAttributeName(int ind) {
+    return AttributeNames[ind]==std::string("") ? NULL : AttributeNames[ind].c_str();
+  };
+
+  // Description:
+  // Get a n-th attribute name of this node to select
+  const char* GetNodeAttributeValue(int ind) {
+    return AttributeValues[ind]==std::string("") ? NULL : AttributeValues[ind].c_str();
   };
 
   // Description:
@@ -92,7 +111,8 @@ public:
 //BTX
   enum
     {
-      NodeSelectedEvent = 10000,
+      NodeSelectedEvent = 11000,
+      NewNodeEvent = 11001,
     };
 //ETX
 
@@ -100,7 +120,7 @@ public:
   // reflect the state of the mrml scene in the menu
   void UpdateMenu();
 
-  void ProcessNewNodeCommand(char *className);
+  void ProcessNewNodeCommand(char *className, char *nodeName);
   void ProcessCommand(char *slectedId);
 
 protected:
@@ -109,6 +129,9 @@ protected:
 
 //BTX
   std::vector<std::string> NodeClasses;
+  std::vector<std::string> AttributeNames;
+  std::vector<std::string> AttributeValues;
+  std::vector<std::string> NodeNames;
 
   std::string SelectedID;
 //ETX

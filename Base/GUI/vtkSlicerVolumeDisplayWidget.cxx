@@ -184,7 +184,7 @@ void vtkSlicerVolumeDisplayWidget::CreateWidget ( )
     this->VolumeSelectorWidget = vtkSlicerNodeSelectorWidget::New() ;
     this->VolumeSelectorWidget->SetParent ( volDisplayFrame->GetFrame() );
     this->VolumeSelectorWidget->Create ( );
-    this->VolumeSelectorWidget->SetNodeClass("vtkMRMLVolumeNode");
+    this->VolumeSelectorWidget->SetNodeClass("vtkMRMLVolumeNode", NULL, NULL, NULL);
     this->VolumeSelectorWidget->SetMRMLScene(this->GetMRMLScene());
     //this->VolumeSelectorWidget->UpdateMenu();
     this->VolumeSelectorWidget->SetBorderWidth(2);

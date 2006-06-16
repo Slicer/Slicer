@@ -150,7 +150,7 @@ void vtkSlicerTransformManagerWidget::CreateWidget ( )
     this->NodeSelectorWidget = vtkSlicerNodeSelectorWidget::New() ;
     this->NodeSelectorWidget->SetParent ( transformFrame->GetFrame() );
     this->NodeSelectorWidget->Create ( );
-    this->NodeSelectorWidget->AddNodeClass("vtkMRMLTransformableNode");
+    this->NodeSelectorWidget->SetNodeClass("vtkMRMLTransformableNode",NULL, NULL, NULL);
     this->NodeSelectorWidget->SetNewNodeEnabled(0);
     this->NodeSelectorWidget->SetMRMLScene(this->GetMRMLScene());
     this->NodeSelectorWidget->SetBorderWidth(2);
@@ -167,7 +167,7 @@ void vtkSlicerTransformManagerWidget::CreateWidget ( )
     this->TransformSelectorWidget = vtkSlicerNodeSelectorWidget::New();
     this->TransformSelectorWidget->SetParent ( transformFrame->GetFrame() );
     this->TransformSelectorWidget->Create ( );
-    this->TransformSelectorWidget->AddNodeClass("vtkMRMLLinearTransformNode");
+    this->TransformSelectorWidget->AddNodeClass("vtkMRMLLinearTransformNode", NULL, NULL, NULL);
     this->TransformSelectorWidget->SetNewNodeEnabled(0);
     this->TransformSelectorWidget->SetMRMLScene(this->GetMRMLScene());
     this->TransformSelectorWidget->SetBorderWidth(2);

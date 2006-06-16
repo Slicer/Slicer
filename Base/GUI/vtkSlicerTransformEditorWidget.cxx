@@ -105,7 +105,7 @@ void vtkSlicerTransformEditorWidget::CreateWidget ( )
     this->TransformEditSelectorWidget = vtkSlicerNodeSelectorWidget::New();
     this->TransformEditSelectorWidget->SetParent ( transformFrame->GetFrame() );
     this->TransformEditSelectorWidget->Create ( );
-    this->TransformEditSelectorWidget->AddNodeClass("vtkMRMLLinearTransformNode");
+    this->TransformEditSelectorWidget->AddNodeClass("vtkMRMLLinearTransformNode", NULL, NULL, "LinearTransform");
     this->TransformEditSelectorWidget->SetNewNodeEnabled(1);
     this->TransformEditSelectorWidget->SetMRMLScene(this->GetMRMLScene());
     this->TransformEditSelectorWidget->SetBorderWidth(2);
