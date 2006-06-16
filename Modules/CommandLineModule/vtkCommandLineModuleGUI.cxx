@@ -190,8 +190,8 @@ void vtkCommandLineModuleGUI::UpdateMRML ()
   if (n == NULL)
     {
     // no parameter node selected yet, create new
-    this->CommandLineModuleNodeSelector->SetSelectedNew(0);
-    this->CommandLineModuleNodeSelector->ProcessNewNodeCommand("vtkMRMLCommandLineModuleNode");
+    this->CommandLineModuleNodeSelector->SetSelectedNew("vtkMRMLCommandLineModuleNode");
+    this->CommandLineModuleNodeSelector->ProcessNewNodeCommand("vtkMRMLCommandLineModuleNode", "CommandLineModuleNode");
     n = vtkMRMLCommandLineModuleNode::SafeDownCast(this->CommandLineModuleNodeSelector->GetSelected());
 
     // set an observe new node in Logic
@@ -284,7 +284,7 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
   (*this->InternalWidgetMap)["ModuleFrame"] = moduleFrame;
   moduleFrame->Delete();
   
-  this->CommandLineModuleNodeSelector->SetNodeClass("vtkMRMLCommandLineModuleNode");
+  this->CommandLineModuleNodeSelector->SetNodeClass("vtkMRMLCommandLineModuleNode", NULL, NULL, NULL);
   this->CommandLineModuleNodeSelector->SetNewNodeEnabled(1);
   //this->CommandLineModuleNodeSelector->SetNewNodeName((title+" parameters").c_str());
   this->CommandLineModuleNodeSelector->SetParent( moduleFrame->GetFrame() );
@@ -531,7 +531,7 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
         vtkSlicerNodeSelectorWidget *tparameter
           = vtkSlicerNodeSelectorWidget::New();
         
-        tparameter->SetNodeClass("vtkMRMLScalarVolumeNode");
+        tparameter->SetNodeClass("vtkMRMLScalarVolumeNode", NULL, NULL, NULL);
         tparameter->SetParent( parameterGroupFrame->GetFrame() );
         tparameter->Create();
         tparameter->SetMRMLScene(this->Logic->GetMRMLScene());
@@ -547,7 +547,7 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
         vtkSlicerNodeSelectorWidget *tparameter
           = vtkSlicerNodeSelectorWidget::New();
         
-        tparameter->SetNodeClass("vtkMRMLScalarVolumeNode");
+        tparameter->SetNodeClass("vtkMRMLScalarVolumeNode", NULL, NULL, NULL);
         tparameter->SetNewNodeEnabled(1);
 //        tparameter->SetNewNodeName((title+"output").c_str());
         tparameter->SetParent( parameterGroupFrame->GetFrame() );
