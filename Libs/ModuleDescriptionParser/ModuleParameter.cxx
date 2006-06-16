@@ -52,16 +52,27 @@ std::ostream & operator<<(std::ostream &os, const ModuleParameter &parameter)
   os << "      " << "Type: " << parameter.GetType() << std::endl;
   os << "      " << "StringToType: " << parameter.GetStringToType() << std::endl;
   os << "      " << "Default: " << parameter.GetDefault() << std::endl;
-  os << "      " << "Flag: " << parameter.GetFlag() << std::endl;
-  os << "      " << "ShortFlag: " << parameter.GetShortFlag() << std::endl;
-  os << "      " << "LongFlag: " << parameter.GetLongFlag() << std::endl;
+  os << "      " << "Elements: ";
+  std::vector<std::string>::const_iterator eit;  
+  for (eit = parameter.GetElements().begin();
+       eit != parameter.GetElements().end(); ++eit)
+    {
+    if (eit != parameter.GetElements().begin())
+      {
+      os << ", ";
+      }
+    os << *eit;
+    }
+  os << std::endl;
   os << "      " << "Constraints: " << parameter.GetConstraints() << std::endl;
   os << "      " << "Minimum: " << parameter.GetMinimum() << std::endl;
   os << "      " << "Maximum: " << parameter.GetMaximum() << std::endl;
   os << "      " << "Step: " << parameter.GetStep() << std::endl;
+  os << "      " << "Flag: " << parameter.GetFlag() << std::endl;
+  os << "      " << "ShortFlag: " << parameter.GetShortFlag() << std::endl;
+  os << "      " << "LongFlag: " << parameter.GetLongFlag() << std::endl;
   os << "      " << "Channel: " << parameter.GetChannel() << std::endl;
   os << "      " << "Index: " << parameter.GetIndex() << std::endl;
-  
   return os;
 }
 
