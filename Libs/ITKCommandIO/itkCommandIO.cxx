@@ -164,6 +164,7 @@ bool CommandIO::CanReadFile( const char* filename )
         return false;
     }
 
+    itkExceptionMacro("itk::CommandIO:CanReadFile is called.");
     return (fname[0] == '|' ? true : false);
 }
 
