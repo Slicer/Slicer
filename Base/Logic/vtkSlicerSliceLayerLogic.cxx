@@ -18,6 +18,7 @@
 #include "vtkSlicerSliceLayerLogic.h"
 
 #include "vtkMRMLVolumeDisplayNode.h"
+#include "vtkMRMLTransformNode.h"
 
 
 vtkCxxRevisionMacro(vtkSlicerSliceLayerLogic, "$Revision: 1.9.12.1 $");
@@ -133,7 +134,7 @@ void vtkSlicerSliceLayerLogic::UpdateTransforms()
     if (this->VolumeNode)
       {
 
-      vtkMRMLTransformNode *transformNode = this->VolumeNode->GetTransformNode();
+      vtkMRMLTransformNode *transformNode = this->VolumeNode->GetParentTransformNode();
       if ( transformNode != NULL ) 
         {
         if ( !transformNode->IsTransformToWorldLinear() )
