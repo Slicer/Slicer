@@ -39,7 +39,7 @@ class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLTransformableNode
 {
   public:
   static vtkMRMLVolumeNode *New(){return NULL;};
-  vtkTypeMacro(vtkMRMLVolumeNode,vtkMRMLNode);
+  vtkTypeMacro(vtkMRMLVolumeNode,vtkMRMLTransformableNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual vtkMRMLNode* CreateNodeInstance() = 0;

@@ -63,6 +63,7 @@ void vtkSlicerTransformEditorWidget::ProcessWidgetEvents ( vtkObject *caller,
       {
       this->MatrixWidget->EnabledOn();
       this->MatrixWidget->SetMatrix4x4(node->GetMatrixTransformToParent());
+      this->MatrixWidget->UpdateWidget();
       }
     else
       {
@@ -98,7 +99,7 @@ void vtkSlicerTransformEditorWidget::CreateWidget ( )
     transformFrame->Create ( );
     transformFrame->SetLabelText ("Transform Editor");
     transformFrame->SetDefaultLabelFontWeightToNormal( );
-    transformFrame->CollapseFrame ( );
+    //transformFrame->CollapseFrame ( );
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                    transformFrame->GetWidgetName() );
     
@@ -106,6 +107,7 @@ void vtkSlicerTransformEditorWidget::CreateWidget ( )
     this->TransformEditSelectorWidget->SetParent ( transformFrame->GetFrame() );
     this->TransformEditSelectorWidget->Create ( );
     this->TransformEditSelectorWidget->AddNodeClass("vtkMRMLLinearTransformNode", NULL, NULL, "LinearTransform");
+    this->TransformEditSelectorWidget->SetMRMLScene(this->GetMRMLScene());    
     this->TransformEditSelectorWidget->SetNewNodeEnabled(1);
     this->TransformEditSelectorWidget->SetMRMLScene(this->GetMRMLScene());
     this->TransformEditSelectorWidget->SetBorderWidth(2);
@@ -114,7 +116,7 @@ void vtkSlicerTransformEditorWidget::CreateWidget ( )
     this->TransformEditSelectorWidget->SetPadY(2);
     this->TransformEditSelectorWidget->GetWidget()->GetWidget()->IndicatorVisibilityOff();
     this->TransformEditSelectorWidget->GetWidget()->GetWidget()->SetWidth(24);
-    this->TransformEditSelectorWidget->SetLabelText( "Node to Transform: ");
+    this->TransformEditSelectorWidget->SetLabelText( "Transform Node: ");
     this->TransformEditSelectorWidget->SetBalloonHelpString("select a node from the current mrml scene.");
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                   this->TransformEditSelectorWidget->GetWidgetName());
@@ -123,7 +125,7 @@ void vtkSlicerTransformEditorWidget::CreateWidget ( )
     this->MatrixWidget = vtkKWMatrix4x4::New();
     this->MatrixWidget->SetParent( transformFrame->GetFrame() );
     this->MatrixWidget->Create();
-    this->Script("pack %s -side top -anchor e -padx 20 -pady 2", 
+    this->Script("pack %s -side top -anchor e -padx 2 -pady 2", 
                 this->MatrixWidget->GetWidgetName());
 
 

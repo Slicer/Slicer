@@ -49,7 +49,7 @@ class VTK_GRADIENTANISOTROPICDIFFUSIONFILTER_EXPORT vtkMRMLGradientAnisotropicDi
 
   // Description:
   // Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() {return "GradientAnisotropicDiffusionFilter";};
+  virtual const char* GetNodeTagName() {return "GADParameters";};
 
   // Description:
   // Get/Set Number of iterations (module parameter)

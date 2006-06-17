@@ -169,12 +169,17 @@ void vtkSlicerNodeSelectorWidget::UpdateMenu()
     {
       for (c=0; c < this->GetNumberOfNodeClasses(); c++)
       {
-        const char *name = this->MRMLScene->GetTagByClassName(this->GetNodeClass(c));
+        const char *name = this->GetNodeName(c);
+        if (name == NULL || !strcmp(name, "") )
+          {
+          name = this->MRMLScene->GetTagByClassName(this->GetNodeClass(c));
+          }
+
         std::stringstream ss;
-        ss << "Create New " << name;
+        ss << "Create New " << this->MRMLScene->GetTagByClassName(this->GetNodeClass(c));
         
         std::stringstream sc;
-        sc << "ProcessNewNodeCommand " << this->GetNodeClass(c) << " " << this->GetNodeName(c);
+        sc << "ProcessNewNodeCommand " << this->GetNodeClass(c) << " " << name;
 
         this->GetWidget()->GetWidget()->GetMenu()->AddRadioButton(ss.str().c_str());
         this->GetWidget()->GetWidget()->GetMenu()->SetItemCommand(count++, this, sc.str().c_str() );
@@ -220,6 +225,10 @@ void vtkSlicerNodeSelectorWidget::UpdateMenu()
       {
       this->GetWidget()->GetWidget()->SetValue(selectedNode->GetName());
       this->SelectedID = std::string(selectedNode->GetID());
+      if (oldSelectedNode != selectedNode)
+        {
+        this->InvokeEvent(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, NULL);
+        }
       }
 }
 

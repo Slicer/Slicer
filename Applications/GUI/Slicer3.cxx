@@ -20,6 +20,7 @@
 #include "vtkSlicerVolumesGUI.h"
 #include "vtkSlicerModelsGUI.h"
 #include "vtkSlicerDataGUI.h"
+#include "vtkSlicerTransformsGUI.h"
 #include "vtkSlicerTheme.h"
 
 #include "vtkGradientAnisotropicDiffusionFilterLogic.h"
@@ -165,6 +166,17 @@ int Slicer3_main(int argc, char *argv[])
     modelsGUI->GetUIPanel()->Create ( );
     slicerApp->AddModuleGUI ( modelsGUI );
 
+    // --- Transforms module
+    vtkSlicerTransformsGUI *transformsGUI = vtkSlicerTransformsGUI::New ( );
+    transformsGUI->SetApplication ( slicerApp );
+    transformsGUI->SetAndObserveApplicationLogic ( appLogic );
+    transformsGUI->SetAndObserveMRMLScene ( scene );
+    transformsGUI->SetGUIName( "Transforms" );
+    transformsGUI->GetUIPanel()->SetName ( transformsGUI->GetGUIName ( ) );
+    transformsGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWin()->GetMainUserInterfaceManager ( ) );
+    transformsGUI->GetUIPanel()->Create ( );
+    slicerApp->AddModuleGUI ( transformsGUI );
+
     //--- Data module
     //vtkSlicerDataLogic *dataLogic = vtkSlicerDataLogic::New ( );
     //dataLogic->SetAndObserveMRMLScene ( scene );
@@ -280,6 +292,9 @@ int Slicer3_main(int argc, char *argv[])
     modelsGUI->BuildGUI ( );
     modelsGUI->AddGUIObservers ( );
 
+    transformsGUI->BuildGUI ( );
+    transformsGUI->AddGUIObservers ( );
+
     dataGUI->BuildGUI ( );
     dataGUI->AddGUIObservers ( );
 
@@ -337,6 +352,8 @@ int Slicer3_main(int argc, char *argv[])
     slicerApp->Script ("namespace eval slicer3 set VolumesGUI %s", name);
     name = modelsGUI->GetTclName();
     slicerApp->Script ("namespace eval slicer3 set ModelsGUI %s", name);
+    name = transformsGUI->GetTclName();
+    slicerApp->Script ("namespace eval slicer3 set VolumesGUI %s", name);
 
     slicerApp->Script ("namespace eval slicer3 set ApplicationLogic [$::slicer3::ApplicationGUI GetApplicationLogic]");
     slicerApp->Script ("namespace eval slicer3 set MRMLScene [$::slicer3::ApplicationLogic GetMRMLScene]");
@@ -372,6 +389,7 @@ int Slicer3_main(int argc, char *argv[])
     gradientAnisotropicDiffusionFilterGUI->RemoveGUIObservers ( );
     volumesGUI->RemoveGUIObservers ( );
     modelsGUI->RemoveGUIObservers ( );
+    transformsGUI->RemoveGUIObservers ( );
     dataGUI->RemoveGUIObservers ( );
     slicesGUI->RemoveGUIObservers ( );
     appGUI->RemoveGUIObservers ( );
@@ -391,6 +409,7 @@ int Slicer3_main(int argc, char *argv[])
     gradientAnisotropicDiffusionFilterGUI->Delete ();
     volumesGUI->Delete ();
     modelsGUI->Delete ();
+    transformsGUI->Delete ();
     dataGUI->Delete ();
     slicesGUI->Delete ();
     appGUI->Delete ();

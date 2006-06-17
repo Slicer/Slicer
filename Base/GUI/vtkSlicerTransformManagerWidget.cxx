@@ -77,6 +77,7 @@ void vtkSlicerTransformManagerWidget::ProcessWidgetEvents ( vtkObject *caller,
         {
         this->AddTransformButton->EnabledOff();
         this->RemoveTransformButton->EnabledOn();
+        this->TransformSelectorWidget->SetSelected(node->GetParentTransformNode());
         }
       else
         {
@@ -99,6 +100,8 @@ void vtkSlicerTransformManagerWidget::ProcessWidgetEvents ( vtkObject *caller,
     if (node != NULL && tnode != NULL)
       {
       node->SetTransformNodeID(tnode->GetID());
+      this->AddTransformButton->EnabledOff();
+      this->RemoveTransformButton->EnabledOn();
       }
     return;
     }
@@ -109,6 +112,8 @@ void vtkSlicerTransformManagerWidget::ProcessWidgetEvents ( vtkObject *caller,
     if (node != NULL)
       {
       node->SetTransformNodeID(NULL);
+      this->AddTransformButton->EnabledOn();
+      this->RemoveTransformButton->EnabledOff();
       }
     return;
     }
@@ -141,9 +146,9 @@ void vtkSlicerTransformManagerWidget::CreateWidget ( )
     vtkKWFrameWithLabel *transformFrame = vtkKWFrameWithLabel::New ( );
     transformFrame->SetParent ( this->GetParent() );
     transformFrame->Create ( );
-    transformFrame->SetLabelText ("Transform Editor");
+    transformFrame->SetLabelText ("Transform Manager");
     transformFrame->SetDefaultLabelFontWeightToNormal( );
-    transformFrame->CollapseFrame ( );
+    //transformFrame->CollapseFrame ( );
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                    transformFrame->GetWidgetName() );
     
@@ -151,8 +156,8 @@ void vtkSlicerTransformManagerWidget::CreateWidget ( )
     this->NodeSelectorWidget->SetParent ( transformFrame->GetFrame() );
     this->NodeSelectorWidget->Create ( );
     this->NodeSelectorWidget->SetNodeClass("vtkMRMLTransformableNode",NULL, NULL, NULL);
-    this->NodeSelectorWidget->SetNewNodeEnabled(0);
     this->NodeSelectorWidget->SetMRMLScene(this->GetMRMLScene());
+    this->NodeSelectorWidget->SetNewNodeEnabled(0);
     this->NodeSelectorWidget->SetBorderWidth(2);
     // this->NodeSelectorWidget->SetReliefToGroove();
     this->NodeSelectorWidget->SetPadX(2);
@@ -168,6 +173,7 @@ void vtkSlicerTransformManagerWidget::CreateWidget ( )
     this->TransformSelectorWidget->SetParent ( transformFrame->GetFrame() );
     this->TransformSelectorWidget->Create ( );
     this->TransformSelectorWidget->AddNodeClass("vtkMRMLLinearTransformNode", NULL, NULL, NULL);
+    this->TransformSelectorWidget->SetMRMLScene(this->GetMRMLScene());
     this->TransformSelectorWidget->SetNewNodeEnabled(0);
     this->TransformSelectorWidget->SetMRMLScene(this->GetMRMLScene());
     this->TransformSelectorWidget->SetBorderWidth(2);
@@ -176,7 +182,7 @@ void vtkSlicerTransformManagerWidget::CreateWidget ( )
     this->TransformSelectorWidget->SetPadY(2);
     this->TransformSelectorWidget->GetWidget()->GetWidget()->IndicatorVisibilityOff();
     this->TransformSelectorWidget->GetWidget()->GetWidget()->SetWidth(24);
-    this->TransformSelectorWidget->SetLabelText( "Node to Transform: ");
+    this->TransformSelectorWidget->SetLabelText( "Transform Node: ");
     this->TransformSelectorWidget->SetBalloonHelpString("select a node from the current mrml scene.");
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                   this->TransformSelectorWidget->GetWidgetName());
@@ -184,25 +190,29 @@ void vtkSlicerTransformManagerWidget::CreateWidget ( )
     this->AddTransformButton = vtkKWPushButton::New();
     this->AddTransformButton->SetParent( transformFrame->GetFrame() );
     this->AddTransformButton->Create();
-    this->AddTransformButton->SetText("Add Transform To Parent");
-    this->AddTransformButton->SetWidth ( 8 );
-    this->Script("pack %s -side top -anchor e -padx 20 -pady 2", 
+    this->AddTransformButton->SetText("Add Transform");
+    //this->AddTransformButton->SetWidth ( 8 );
+    this->Script("pack %s -side left -anchor e -padx 2 -pady 2", 
                 this->AddTransformButton->GetWidgetName());
 
 
     this->RemoveTransformButton = vtkKWPushButton::New();
     this->RemoveTransformButton->SetParent( transformFrame->GetFrame() );
     this->RemoveTransformButton->Create();
-    this->RemoveTransformButton->SetText("Remove Transform To Parent");
-    this->RemoveTransformButton->SetWidth ( 8 );
-    this->Script("pack %s -side top -anchor e -padx 20 -pady 2", 
+    this->RemoveTransformButton->SetText("Remove Transform");
+    //this->RemoveTransformButton->SetWidth ( 8 );
+    this->Script("pack %s -side right -anchor e -padx 20 -pady 2", 
                 this->RemoveTransformButton->GetWidgetName());
 
+    // add observers
     this->NodeSelectorWidget->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, 
                                            (vtkCommand *)this->GUICallbackCommand );  
     this->TransformSelectorWidget->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, 
                                                (vtkCommand *)this->GUICallbackCommand );
-
+    this->AddTransformButton->AddObserver(vtkKWPushButton::InvokedEvent, 
+                                               (vtkCommand *)this->GUICallbackCommand );
+    this->RemoveTransformButton->AddObserver(vtkKWPushButton::InvokedEvent, 
+                                               (vtkCommand *)this->GUICallbackCommand );
     transformFrame->Delete();
     
 }

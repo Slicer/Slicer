@@ -50,6 +50,8 @@ public:
   // Description:
   // Update the matrix with the current values of the widget
   void UpdateVTK();
+
+  void UpdateElement (int row, int col, double val);
   
   // Description:
   // Command to call when the User manipulates the widget

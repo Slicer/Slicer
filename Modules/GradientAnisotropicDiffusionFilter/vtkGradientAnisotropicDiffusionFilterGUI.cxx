@@ -369,9 +369,8 @@ void vtkGradientAnisotropicDiffusionFilterGUI::BuildGUI ( )
   app->Script("pack %s -side top -anchor e -padx 20 -pady 4", 
                 this->VolumeSelector->GetWidgetName());
   
-  this->OutVolumeSelector->SetNodeClass("vtkMRMLScalarVolumeNode", NULL, NULL, NULL);
+  this->OutVolumeSelector->SetNodeClass("vtkMRMLScalarVolumeNode", NULL, NULL, "GADVolumeOut");
   this->OutVolumeSelector->SetNewNodeEnabled(1);
-  //this->OutVolumeSelector->SetNewNodeName("GADoutput");
   this->OutVolumeSelector->SetParent( moduleFrame->GetFrame() );
   this->OutVolumeSelector->Create();
   this->OutVolumeSelector->SetMRMLScene(this->Logic->GetMRMLScene());

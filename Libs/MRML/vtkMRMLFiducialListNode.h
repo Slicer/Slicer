@@ -35,7 +35,7 @@ class VTK_MRML_EXPORT vtkMRMLFiducialListNode : public vtkMRMLTransformableNode
 {
 public:
   static vtkMRMLFiducialListNode *New();
-  vtkTypeMacro(vtkMRMLFiducialListNode,vtkMRMLNode);
+  vtkTypeMacro(vtkMRMLFiducialListNode,vtkMRMLTransformableNode);
   void PrintSelf(ostream& os, vtkIndent indent);
   
   //--------------------------------------------------------------------------

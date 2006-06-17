@@ -82,6 +82,8 @@ void vtkKWMatrix4x4::CreateWidget()
   this->Script("pack %s -fill both -expand true",
                  this->MultiColumnList->GetWidgetName());
 
+  this->MultiColumnList->SetCellUpdatedCommand(this, "UpdateElement");
+
   // Override the column sorting behavior by always updating 
 }
 
@@ -107,6 +109,11 @@ void vtkKWMatrix4x4::UpdateWidget()
       }
     }
   this->Modified();
+}
+//----------------------------------------------------------------------------
+void vtkKWMatrix4x4::UpdateElement (int row, int col, double val)
+{
+  UpdateVTK();
 }
 
 //----------------------------------------------------------------------------
