@@ -179,7 +179,7 @@ const char* vtkMRMLScene::GetClassNameByTag(const char *tagName)
 //------------------------------------------------------------------------------
 const char* vtkMRMLScene::GetTagByClassName(const char *className)
 {
-  if ( !this || !this->RegisteredNodeClasses )
+  if ( !this )
     {
     return NULL;
     }
