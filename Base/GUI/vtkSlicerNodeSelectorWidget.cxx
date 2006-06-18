@@ -153,7 +153,12 @@ void vtkSlicerNodeSelectorWidget::AddNodeClass(const char *className,
 //----------------------------------------------------------------------------
 void vtkSlicerNodeSelectorWidget::UpdateMenu()
 {
-    if (this->NodeClasses.size() == 0)
+  if ( !this || !this->MRMLScene )
+    {
+    return;
+    }
+
+  if (this->NodeClasses.size() == 0)
       {
       return;
       }
