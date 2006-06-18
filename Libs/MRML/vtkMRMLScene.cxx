@@ -179,11 +179,15 @@ const char* vtkMRMLScene::GetClassNameByTag(const char *tagName)
 //------------------------------------------------------------------------------
 const char* vtkMRMLScene::GetTagByClassName(const char *className)
 {
-  for (unsigned int i=0; i<RegisteredNodeClasses.size(); i++) 
+  if ( !this || !this->RegisteredNodeClasses )
     {
-    if (!strcmp(RegisteredNodeClasses[i]->GetClassName(), className)) 
+    return NULL;
+    }
+  for (unsigned int i=0; i<this->RegisteredNodeClasses.size(); i++) 
+    {
+    if (!strcmp(this->RegisteredNodeClasses[i]->GetClassName(), className)) 
       {
-      return (RegisteredNodeClasses[i])->GetNodeTagName();
+      return (this->RegisteredNodeClasses[i])->GetNodeTagName();
       }
     }
   return NULL;
