@@ -46,6 +46,9 @@ Version:   $Revision: 1.2 $
 #include "vtkKWLoadSaveButton.h"
 #include "vtkKWLoadSaveButtonWithLabel.h"
 #include "vtkKWLoadSaveDialog.h"
+#include "vtkKWRadioButton.h"
+#include "vtkKWRadioButtonSet.h"
+#include "vtkKWRadioButtonSetWithLabel.h"
 
 #include "itkNumericTraits.h"
 
@@ -75,6 +78,13 @@ vtkCommandLineModuleGUI::vtkCommandLineModuleGUI()
   this->CommandLineModuleNode = NULL;
 
   this->InternalWidgetMap = new ModuleWidgetMap;
+
+  this->NewNodeCallbackCommand = vtkCallbackCommand::New ( );
+  this->NewNodeCallbackCommand->SetClientData(reinterpret_cast<void *>(this) );
+  this->NewNodeCallbackCommand
+    ->SetCallback( vtkCommandLineModuleGUI::NewNodeCallback );
+  
+//  this->DebugOn();
 }
 
 //----------------------------------------------------------------------------
@@ -99,6 +109,12 @@ vtkCommandLineModuleGUI::~vtkCommandLineModuleGUI()
   }
   // end wjp test
   this->SetCommandLineModuleNode (NULL);
+
+  if ( this->NewNodeCallbackCommand != NULL )
+    {
+    this->NewNodeCallbackCommand->Delete ( );
+    this->NewNodeCallbackCommand = NULL;
+    }
   
 }
 
@@ -134,9 +150,73 @@ void vtkCommandLineModuleGUI::AddGUIObservers ( )
 {
   this->CommandLineModuleNodeSelector->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
 
+  this->CommandLineModuleNodeSelector->AddObserver (vtkSlicerNodeSelectorWidget::NewNodeEvent, (vtkCommand *)this->NewNodeCallbackCommand );  
+
   (*this->InternalWidgetMap)["ApplyButton"]->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
   (*this->InternalWidgetMap)["DefaultButton"]->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+
+  // add an observer for each widget created
+  ModuleWidgetMap::const_iterator wit;
+  for (wit = this->InternalWidgetMap->begin();
+       wit != this->InternalWidgetMap->end(); ++wit)
+    {
+    // Need to determine what type of widget we are using so we can
+    // set the appropriate type of observer
+    vtkKWSpinBoxWithLabel *sb = vtkKWSpinBoxWithLabel::SafeDownCast((*wit).second);
+    vtkKWScaleWithEntry *se = vtkKWScaleWithEntry::SafeDownCast((*wit).second);
+    vtkKWCheckButtonWithLabel *cb = vtkKWCheckButtonWithLabel::SafeDownCast((*wit).second);
+    vtkKWEntryWithLabel *e = vtkKWEntryWithLabel::SafeDownCast((*wit).second);
+    vtkSlicerNodeSelectorWidget *ns = vtkSlicerNodeSelectorWidget::SafeDownCast((*wit).second);
+    vtkKWLoadSaveButtonWithLabel *lsb = vtkKWLoadSaveButtonWithLabel::SafeDownCast((*wit).second);
+    vtkKWRadioButtonSetWithLabel *rbs = vtkKWRadioButtonSetWithLabel::SafeDownCast((*wit).second);
+
+    if (sb)
+      {
+      sb->AddObserver(vtkKWSpinBox::SpinBoxValueChangedEvent,
+                      (vtkCommand *) this->GUICallbackCommand);
+      }
+    else if (se)
+      {
+      // ScaleWithEntry may use InvokeEntryCommand instead of
+      // InvokeEvent for the entry portion of the widget
+      se->AddObserver(vtkKWScale::ScaleValueStartChangingEvent,
+                      (vtkCommand *) this->GUICallbackCommand);
+      se->AddObserver(vtkKWScale::ScaleValueChangedEvent,
+                      (vtkCommand *) this->GUICallbackCommand);
+      }
+    else if (cb)
+      {
+      cb->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent,
+                      (vtkCommand *) this->GUICallbackCommand);
+      }
+    else if (e)
+      {
+      // Entry uses invoke command instead of InvokeEvent
+      }
+    else if (ns)
+      {
+      ns->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent,
+                      (vtkCommand *) this->GUICallbackCommand);
+      }
+    else if (lsb)
+      {
+      lsb->AddObserver(vtkKWPushButton::InvokedEvent,
+                       (vtkCommand *) this->GUICallbackCommand);
+      }
+    else if (rbs)
+      {
+      int num = rbs->GetWidget()->GetNumberOfWidgets();
+      for (int i=0; i < num; ++i)
+        {
+        int id = rbs->GetWidget()->GetIdOfNthWidget(i);
+        vtkKWRadioButton* rb = rbs->GetWidget()->GetWidget(id);
+        rb->AddObserver(vtkKWRadioButton::SelectedStateChangedEvent,
+                        (vtkCommand *) this->GUICallbackCommand);
+        }
+      }
+    }
+
 }
 
 
@@ -146,9 +226,72 @@ void vtkCommandLineModuleGUI::RemoveGUIObservers ( )
 {
   this->CommandLineModuleNodeSelector->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
 
+  this->CommandLineModuleNodeSelector->RemoveObservers (vtkSlicerNodeSelectorWidget::NewNodeEvent, (vtkCommand *)this->GUICallbackCommand );  
+
   (*this->InternalWidgetMap)["ApplyButton"]->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
 
   (*this->InternalWidgetMap)["DefaultButton"]->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+
+  // remove observers for each widget created
+  ModuleWidgetMap::const_iterator wit;
+  for (wit = this->InternalWidgetMap->begin();
+       wit != this->InternalWidgetMap->end(); ++wit)
+    {
+    // Need to determine what type of widget we are using so we can
+    // set the appropriate type of observer
+    vtkKWSpinBoxWithLabel *sb = vtkKWSpinBoxWithLabel::SafeDownCast((*wit).second);
+    vtkKWScaleWithEntry *se = vtkKWScaleWithEntry::SafeDownCast((*wit).second);
+    vtkKWCheckButtonWithLabel *cb = vtkKWCheckButtonWithLabel::SafeDownCast((*wit).second);
+    vtkKWEntryWithLabel *e = vtkKWEntryWithLabel::SafeDownCast((*wit).second);
+    vtkSlicerNodeSelectorWidget *ns = vtkSlicerNodeSelectorWidget::SafeDownCast((*wit).second);
+    vtkKWLoadSaveButtonWithLabel *lsb = vtkKWLoadSaveButtonWithLabel::SafeDownCast((*wit).second);
+    vtkKWRadioButtonSetWithLabel *rbs = vtkKWRadioButtonSetWithLabel::SafeDownCast((*wit).second);
+
+    if (sb)
+      {
+      sb->RemoveObservers(vtkKWSpinBox::SpinBoxValueChangedEvent,
+                          (vtkCommand *) this->GUICallbackCommand);
+      }
+    else if (se)
+      {
+      // ScaleWithEntry may use InvokeEntryCommand instead of
+      // InvokeEvent for the entry portion of the widget
+      se->RemoveObservers(vtkKWScale::ScaleValueStartChangingEvent,
+                          (vtkCommand *) this->GUICallbackCommand);
+      se->RemoveObservers(vtkKWScale::ScaleValueChangedEvent,
+                      (vtkCommand *) this->GUICallbackCommand);
+      }
+    else if (cb)
+      {
+      cb->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent,
+                      (vtkCommand *) this->GUICallbackCommand);
+      }
+    else if (e)
+      {
+      // Entry uses invoke command instead of InvokeEvent
+      }
+    else if (ns)
+      {
+      ns->RemoveObservers(vtkSlicerNodeSelectorWidget::NodeSelectedEvent,
+                      (vtkCommand *) this->GUICallbackCommand);
+      }
+    else if (lsb)
+      {
+      lsb->RemoveObservers(vtkKWPushButton::InvokedEvent,
+                       (vtkCommand *) this->GUICallbackCommand);
+      }
+    else if (rbs)
+      {
+      int num = rbs->GetWidget()->GetNumberOfWidgets();
+      for (int i=0; i < num; ++i)
+        {
+        int id = rbs->GetWidget()->GetIdOfNthWidget(i);
+        vtkKWRadioButton* rb = rbs->GetWidget()->GetWidget(id);
+        rb->RemoveObservers(vtkKWRadioButton::SelectedStateChangedEvent,
+                        (vtkCommand *) this->GUICallbackCommand);
+        }
+      }
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -156,29 +299,50 @@ void vtkCommandLineModuleGUI::ProcessGUIEvents ( vtkObject *caller,
                                            unsigned long event,
                                            void *callData ) 
 {
-  // Hypothesis: May need to call UpdateMRML() if any gui change would
-  // result in a parameter change.
-
+  //std::cout << "ProcessGUIEvents()" << std::endl;
   vtkKWPushButton *b = vtkKWPushButton::SafeDownCast(caller);
   vtkSlicerNodeSelectorWidget *selector = vtkSlicerNodeSelectorWidget::SafeDownCast(caller);
 
   if (selector == this->CommandLineModuleNodeSelector && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent ) 
-    { 
+    {
+    // Selected a new parameter node
+    //std::cout << "  Selector" << std::endl;
     vtkMRMLCommandLineModuleNode* n = vtkMRMLCommandLineModuleNode::SafeDownCast(this->CommandLineModuleNodeSelector->GetSelected());
     this->Logic->SetCommandLineModuleNode(n);
     this->SetCommandLineModuleNode(n);
     this->SetAndObserveMRML( vtkObjectPointer(&this->CommandLineModuleNode), n);
     this->UpdateGUI();
     }
+  else if (selector == this->CommandLineModuleNodeSelector && event == vtkSlicerNodeSelectorWidget::NewNodeEvent )
+    {
+    // creating a new parameter node
+    //std::cout << "  New node" << std::endl;
+    vtkMRMLCommandLineModuleNode* n = vtkMRMLCommandLineModuleNode::SafeDownCast((vtkObjectBase*)callData);
+    n->SetModuleDescription( this->ModuleDescriptionObject );
+    }
   else if (b == (*this->InternalWidgetMap)["ApplyButton"].GetPointer() && event == vtkKWPushButton::InvokedEvent ) 
     {
+    // Apply button was pressed
+    //std::cout << "  Apply" << std::endl;
     this->UpdateMRML();
     this->Logic->Apply();
     }
   else if (b == (*this->InternalWidgetMap)["DefaultButton"].GetPointer() && event == vtkKWPushButton::InvokedEvent ) 
     {
+    // Defaults button was pressed
+    //std::cout << "  Defaults" << std::endl;
+    //std::cout << this->CommandLineModuleNode << std::endl;
+    this->CommandLineModuleNode
+      ->SetModuleDescription( this->ModuleDescriptionObject);
+    this->UpdateGUI();
+    }
+  else
+    {
+    // Propagate the rest of the gui to the node.  This is sloppy.  We
+    // could check for each type of event and only update the one
+    // parameter that changed.
+    //std::cout << "  Not recognized. Call UpdateMRML()" << std::endl;
     this->UpdateMRML();
-    this->Logic->Apply();
     }
   
 }
@@ -186,38 +350,190 @@ void vtkCommandLineModuleGUI::ProcessGUIEvents ( vtkObject *caller,
 //---------------------------------------------------------------------------
 void vtkCommandLineModuleGUI::UpdateMRML ()
 {
+  //std::cout << "UpdateMRML()" << std::endl;
   vtkMRMLCommandLineModuleNode* n = this->GetCommandLineModuleNode();
   if (n == NULL)
     {
     // no parameter node selected yet, create new
+    //std::cout << "  Creating a new node" << std::endl;
     this->CommandLineModuleNodeSelector->SetSelectedNew("vtkMRMLCommandLineModuleNode");
-    this->CommandLineModuleNodeSelector->ProcessNewNodeCommand("vtkMRMLCommandLineModuleNode", "CommandLineModuleNode");
+    this->CommandLineModuleNodeSelector->ProcessNewNodeCommand("vtkMRMLCommandLineModuleNode", this->ModuleDescriptionObject.GetTitle().c_str());
     n = vtkMRMLCommandLineModuleNode::SafeDownCast(this->CommandLineModuleNodeSelector->GetSelected());
 
+    if (n == NULL)
+      {
+      vtkDebugMacro("No CommandLineModuleNode available");
+      return;
+      }
+    
+    // set the a module description for this node
+    n->SetModuleDescription( this->ModuleDescriptionObject );
+    
     // set an observe new node in Logic
     this->Logic->SetCommandLineModuleNode(n);
     this->SetCommandLineModuleNode(n);
-    this->SetAndObserveMRML( vtkObjectPointer(&this->CommandLineModuleNode), n);
+    this->SetAndObserveMRML( vtkObjectPointer(&this->CommandLineModuleNode),n);
    }
 
   // save node parameters for Undo
   this->GetLogic()->GetMRMLScene()->SaveStateForUndo(n);
 
-  // set node parameters from GUI widgets
-  // For instance,
-  //  n->SetConductance(this->ConductanceScale->GetValue());
-  //  n->SetInputVolumeRef(this->VolumeSelector->GetSelected()->GetID());
-  //  n->SetOutputVolumeRef(this->OutVolumeSelector->GetSelected()->GetID());
+  //  set node parameters from GUI widgets
+  //
+  ModuleWidgetMap::const_iterator wit;
+  for (wit = this->InternalWidgetMap->begin();
+       wit != this->InternalWidgetMap->end(); ++wit)
+    {
+    // Need to determine what type of widget we are using so that we
+    // can get the value.
+    vtkKWSpinBoxWithLabel *sb = vtkKWSpinBoxWithLabel::SafeDownCast((*wit).second);
+    vtkKWScaleWithEntry *se = vtkKWScaleWithEntry::SafeDownCast((*wit).second);
+    vtkKWCheckButtonWithLabel *cb = vtkKWCheckButtonWithLabel::SafeDownCast((*wit).second);
+    vtkKWEntryWithLabel *e = vtkKWEntryWithLabel::SafeDownCast((*wit).second);
+    vtkSlicerNodeSelectorWidget *ns = vtkSlicerNodeSelectorWidget::SafeDownCast((*wit).second);
+    vtkKWLoadSaveButtonWithLabel *lsb = vtkKWLoadSaveButtonWithLabel::SafeDownCast((*wit).second);
+    vtkKWRadioButtonSetWithLabel *rbs = vtkKWRadioButtonSetWithLabel::SafeDownCast((*wit).second);
+
+    if (sb)
+      {
+      // std::cout << "SpinBox" << std::endl;
+      n->SetParameterAsDouble((*wit).first, sb->GetWidget()->GetValue());
+      }
+    else if (se)
+      {
+      n->SetParameterAsDouble((*wit).first, se->GetValue());
+      }
+    else if (cb)
+      {
+      n->SetParameterAsBool((*wit).first, cb->GetWidget()->GetSelectedState());
+      }
+    else if (e)
+      {
+      n->SetParameterAsString((*wit).first, e->GetWidget()->GetValue());
+      }
+    else if (ns)
+      {
+      n->SetParameterAsString((*wit).first, ns->GetSelected()->GetID());
+      }
+    else if (lsb)
+      {
+      n->SetParameterAsString((*wit).first, lsb->GetWidget()->GetFileName());
+      }
+    else if (rbs)
+      {
+      // find out who is set
+      int num = rbs->GetWidget()->GetNumberOfWidgets();
+      for (int i=0; i < num; ++i)
+        {
+        int id = rbs->GetWidget()->GetIdOfNthWidget(i);
+        vtkKWRadioButton* rb = rbs->GetWidget()->GetWidget(id);
+        if (rb->GetSelectedState())
+          {
+          n->SetParameterAsString((*wit).first, rb->GetValue());
+          break;
+          }
+        }
+      }
+    }
 }
 
 //---------------------------------------------------------------------------
 void vtkCommandLineModuleGUI::UpdateGUI ()
 {
+  //std::cout << "UpdateGUI()" << std::endl;
   vtkMRMLCommandLineModuleNode* n = this->GetCommandLineModuleNode();
   if (n != NULL)
     {
     // set GUI widgets from parameter node
-    // this->ConductanceScale->SetValue(n->GetConductance());
+    ModuleWidgetMap::iterator wit;
+
+    // iterate over each parameter group
+    std::vector<ModuleParameterGroup>::const_iterator pgbeginit
+      = this->ModuleDescriptionObject.GetParameterGroups().begin();
+    std::vector<ModuleParameterGroup>::const_iterator pgendit
+      = this->ModuleDescriptionObject.GetParameterGroups().end();
+    std::vector<ModuleParameterGroup>::const_iterator pgit;
+    
+    for (pgit = pgbeginit; pgit != pgendit; ++pgit)
+      {
+      // iterate over each parameter in this group
+      std::vector<ModuleParameter>::const_iterator pbeginit
+        = (*pgit).GetParameters().begin();
+      std::vector<ModuleParameter>::const_iterator pendit
+        = (*pgit).GetParameters().end();
+      std::vector<ModuleParameter>::const_iterator pit;
+      
+      for (pit = pbeginit; pit != pendit; ++pit)
+        {
+        // find a widget with this name
+        wit = this->InternalWidgetMap->find((*pit).GetName());
+        if (wit != this->InternalWidgetMap->end())
+          {
+          // Get the value of this parameter from the node (stored as
+          // a default value in the node's ModuleDescription
+          std::string value = n->GetParameterAsString( (*pit).GetName() );
+
+          // Need to determine what type of widget we are using so that we
+          // can get the value.
+          vtkKWSpinBoxWithLabel *sb
+            = vtkKWSpinBoxWithLabel::SafeDownCast((*wit).second);
+          vtkKWScaleWithEntry *se
+            = vtkKWScaleWithEntry::SafeDownCast((*wit).second);
+          vtkKWCheckButtonWithLabel *cb
+            = vtkKWCheckButtonWithLabel::SafeDownCast((*wit).second);
+          vtkKWEntryWithLabel *e
+            = vtkKWEntryWithLabel::SafeDownCast((*wit).second);
+          vtkSlicerNodeSelectorWidget *ns
+            = vtkSlicerNodeSelectorWidget::SafeDownCast((*wit).second);
+          vtkKWLoadSaveButtonWithLabel *lsb
+            = vtkKWLoadSaveButtonWithLabel::SafeDownCast((*wit).second);
+          vtkKWRadioButtonSetWithLabel *rbs = vtkKWRadioButtonSetWithLabel::SafeDownCast((*wit).second);
+
+          if (sb)
+            {
+            sb->GetWidget()->SetValue(atof(value.c_str()));
+            }
+          else if (se)
+            {
+            se->SetValue(atof(value.c_str()));
+            }
+          else if (cb)
+            {
+            cb->GetWidget()
+              ->SetSelectedState(value=="true" ? 1 : 0 );
+            }
+          else if (e)
+            {
+            e->GetWidget()
+              ->SetValue(value.c_str());
+            }
+          else if (ns)
+            {
+            // Don't know what to do here
+            // ns->GetSelected()->GetID();
+            }
+          else if (lsb)
+            {
+            lsb->GetWidget()->GetLoadSaveDialog()->SetFileName(value.c_str());
+            }
+          else if (rbs)
+            {
+            // set one of the radiobuttons
+            int num = rbs->GetWidget()->GetNumberOfWidgets();
+            for (int i=0; i < num; ++i)
+              {
+              int id = rbs->GetWidget()->GetIdOfNthWidget(i);
+              vtkKWRadioButton* rb = rbs->GetWidget()->GetWidget(id);
+              if (rb->GetValue() == value)
+                {
+                rb->SetSelectedState(1);
+                break;
+                }
+              }
+            }
+          }
+        }    
+      }
     }
 }
 
@@ -226,8 +542,11 @@ void vtkCommandLineModuleGUI::ProcessMRMLEvents ( vtkObject *caller,
                                             unsigned long event,
                                             void *callData ) 
 {
-  // if parameter node has been changed externally, update GUI widgets with new values
-  vtkMRMLCommandLineModuleNode* node = vtkMRMLCommandLineModuleNode::SafeDownCast(caller);
+  //std::cout << "ProcessMRMLEvents()" << std::endl;
+  // if parameter node has been changed externally, update GUI widgets
+  // with new values 
+  vtkMRMLCommandLineModuleNode* node
+    = vtkMRMLCommandLineModuleNode::SafeDownCast(caller);
   if (node != NULL && this->GetCommandLineModuleNode() == node) 
     {
     this->UpdateGUI();
@@ -283,8 +602,8 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
   // Store the module frame widget in a SmartPointer
   (*this->InternalWidgetMap)["ModuleFrame"] = moduleFrame;
   moduleFrame->Delete();
-  
-  this->CommandLineModuleNodeSelector->SetNodeClass("vtkMRMLCommandLineModuleNode", NULL, NULL, NULL);
+
+  this->CommandLineModuleNodeSelector->SetNodeClass("vtkMRMLCommandLineModuleNode", "CommandLineModule", title.c_str(), title.c_str());
   this->CommandLineModuleNodeSelector->SetNewNodeEnabled(1);
   //this->CommandLineModuleNodeSelector->SetNewNodeName((title+" parameters").c_str());
   this->CommandLineModuleNodeSelector->SetParent( moduleFrame->GetFrame() );
@@ -293,12 +612,9 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
   this->CommandLineModuleNodeSelector->UpdateMenu();
 
   this->CommandLineModuleNodeSelector->SetBorderWidth(2);
-  this->CommandLineModuleNodeSelector->SetReliefToGroove();
-  //this->CommandLineModuleNodeSelector->SetPadX(2);
-  //this->CommandLineModuleNodeSelector->SetPadY(2);
-  //this->CommandLineModuleNodeSelector->GetWidget()->GetWidget()->IndicatorVisibilityOff();
-  //this->CommandLineModuleNodeSelector->GetWidget()->GetWidget()->SetWidth(24);
+  this->CommandLineModuleNodeSelector->SetReliefToFlat();
   this->CommandLineModuleNodeSelector->SetLabelText( "Parameter set");
+
   std::string nodeSelectorBalloonHelp = "select a \"" + title + " parameters\" node from the current mrml scene.";
   this->CommandLineModuleNodeSelector->SetBalloonHelpString(nodeSelectorBalloonHelp.c_str());
   app->Script("pack %s -side top -anchor e -padx 20 -pady 4", 
@@ -350,15 +666,17 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
 
       if ((*pit).GetTag() == "integer")
         {
-        if ((*pit).GetConstraints() == "")
+        if (/*true || */ (*pit).GetConstraints() == "")
           {
           vtkKWSpinBoxWithLabel *tparameter = vtkKWSpinBoxWithLabel::New();
           tparameter->SetParent( parameterGroupFrame->GetFrame() );
           tparameter->Create();
           tparameter->SetLabelText((*pit).GetLabel().c_str());
           tparameter->GetWidget()->SetValue(atof((*pit).GetDefault().c_str()));
-          tparameter->GetWidget()->RestrictValuesToIntegersOn();
-          tparameter->GetWidget()->SetValueFormat("%1.0f");
+          tparameter->GetWidget()->SetIncrement(1);
+          tparameter->GetWidget()
+            ->SetRange(itk::NumericTraits<int>::NonpositiveMin(),
+                       itk::NumericTraits<int>::max());
           parameter = tparameter;
           }
         else
@@ -419,6 +737,11 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
           tparameter->Create();
           tparameter->SetLabelText((*pit).GetLabel().c_str());
           tparameter->GetWidget()->SetValue(atof((*pit).GetDefault().c_str()));
+          tparameter->GetWidget()
+            ->SetRange(itk::NumericTraits<float>::NonpositiveMin(),
+                       itk::NumericTraits<float>::max());
+          tparameter->GetWidget()->SetIncrement( 0.1 );
+          tparameter->GetWidget()->SetValueFormat("%f");
           parameter = tparameter;
           }
         else
@@ -471,6 +794,11 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
           tparameter->Create();
           tparameter->SetLabelText((*pit).GetLabel().c_str());
           tparameter->GetWidget()->SetValue(atof((*pit).GetDefault().c_str()));
+          tparameter->GetWidget()
+            ->SetRange(itk::NumericTraits<double>::NonpositiveMin(),
+                       itk::NumericTraits<double>::max());
+          tparameter->GetWidget()->SetIncrement( 0.1 );
+          tparameter->GetWidget()->SetValueFormat("%f");
           parameter = tparameter;
           }
         else
@@ -538,7 +866,7 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
         tparameter->UpdateMenu();
         
         tparameter->SetBorderWidth(2);
-        tparameter->SetReliefToGroove();
+        tparameter->SetReliefToFlat();
         tparameter->SetLabelText( (*pit).GetLabel().c_str());
         parameter = tparameter;
         }
@@ -549,14 +877,14 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
         
         tparameter->SetNodeClass("vtkMRMLScalarVolumeNode", NULL, NULL, NULL);
         tparameter->SetNewNodeEnabled(1);
-//        tparameter->SetNewNodeName((title+"output").c_str());
+        // tparameter->SetNewNodeName((title+" output").c_str());
         tparameter->SetParent( parameterGroupFrame->GetFrame() );
         tparameter->Create();
         tparameter->SetMRMLScene(this->Logic->GetMRMLScene());
         tparameter->UpdateMenu();
         
         tparameter->SetBorderWidth(2);
-        tparameter->SetReliefToGroove();
+        tparameter->SetReliefToFlat();
         tparameter->SetLabelText( (*pit).GetLabel().c_str());
         parameter = tparameter;
         }
@@ -589,6 +917,40 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
         tparameter->GetWidget()->GetLoadSaveDialog()->SetInitialFileName( (*pit).GetDefault().c_str() );
         parameter = tparameter;
         }
+      else if ((*pit).GetTag() == "string-enumeration"
+               || (*pit).GetTag() == "integer-enumeration"
+               || (*pit).GetTag() == "float-enumeration"
+               || (*pit).GetTag() == "double-enumeration")
+        {
+        vtkKWRadioButtonSetWithLabel *tparameter
+          = vtkKWRadioButtonSetWithLabel::New();
+        tparameter->SetParent( parameterGroupFrame->GetFrame() );
+        tparameter->Create();
+        tparameter->SetLabelText( (*pit).GetLabel().c_str() );
+        tparameter->GetWidget()->PackHorizontallyOn();
+        tparameter->GetWidget()->SetMaximumNumberOfWidgetsInPackingDirection(4);
+        std::vector<std::string>::const_iterator sbeginit
+          = (*pit).GetElements().begin();
+        std::vector<std::string>::const_iterator sendit
+          = (*pit).GetElements().end();
+        std::vector<std::string>::const_iterator sit;
+        int id;
+        for(sit = sbeginit, id=0; sit != sendit; ++sit, ++id)
+          {
+          vtkKWRadioButton *b = tparameter->GetWidget()->AddWidget(id);
+          b->SetValue( (*sit).c_str() );
+          b->SetText( (*sit).c_str() );
+          if (*sit == (*pit).GetDefault())
+            {
+            b->SetSelectedState(1);
+            }
+          else
+            {
+            b->SetSelectedState(0);
+            }
+          }
+        parameter = tparameter;
+        }
       else
         {
         vtkKWLabel *tparameter = vtkKWLabel::New();
@@ -608,7 +970,7 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
                     parameter->GetWidgetName() );
 
       // Store the parameter widget in a SmartPointer
-      (*this->InternalWidgetMap)[(*pit).GetLabel()] = parameter;
+      (*this->InternalWidgetMap)[(*pit).GetName()] = parameter;
       parameter->Delete();
       }
     }
@@ -646,4 +1008,33 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
   apply->Delete();
 
   
+}
+
+
+
+//---------------------------------------------------------------------------
+// Description:
+// the NewNodeCallback is a static function that relays observed events from 
+// observed widgets into the GUI's 'ProcessGUIEvents" mediator method, which in
+// turn makes appropriate changes to the application layer.
+//
+void vtkCommandLineModuleGUI::NewNodeCallback ( vtkObject *__caller,
+                                           unsigned long eid, void *__clientData, void *callData)
+{
+    static int inCallback = 0;
+
+    vtkCommandLineModuleGUI *self = reinterpret_cast<vtkCommandLineModuleGUI *>(__clientData);
+
+    if ( inCallback )
+        {
+            vtkErrorWithObjectMacro ( self, "In vtkCommandLineModuleGUI *!* NewNodeCallback called recursively?");
+            return;
+        }
+
+    vtkDebugWithObjectMacro ( self, "In vtkCommandLineModuleGUI NewNodeCallback");
+
+    inCallback = 1;
+    self->ProcessGUIEvents ( __caller, eid, callData );
+    inCallback = 0;
+
 }

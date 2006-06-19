@@ -23,6 +23,7 @@
 
 #include "vtkCommandLineModule.h"
 
+#include "ModuleDescription.h"
 
 class VTK_COMMANDLINEMODULE_EXPORT vtkMRMLCommandLineModuleNode : public vtkMRMLNode
 {
@@ -47,47 +48,36 @@ class VTK_COMMANDLINEMODULE_EXPORT vtkMRMLCommandLineModuleNode : public vtkMRML
 
   // Description:
   // Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() {return "CommandLineModule";};
+  virtual const char* GetNodeTagName()
+    {return "CommandLineModule";};
 
   // Description:
-  // Get/Set Number of iterations (module parameter)
-  vtkGetMacro(NumberOfIterations, int);
-  vtkSetMacro(NumberOfIterations, int);
+  // Get/Set the module description object. THe module description
+  // object is used to cache the current settings for the module.
+  const ModuleDescription& GetModuleDescription() const
+    { return ModuleDescriptionObject; }
+  void SetModuleDescription(const ModuleDescription& description);
 
   // Description:
-  // Get/Set Conductance (module parameter)
-  vtkGetMacro(Conductance, double);
-  vtkSetMacro(Conductance, double);
+  // Get/Set a parameter for the module.
+//BTX
+  void SetParameterAsString(const std::string& name, const std::string& value);
+  void SetParameterAsInt(const std::string& name, int value);
+  void SetParameterAsBool(const std::string& name, bool value);
+  void SetParameterAsDouble(const std::string& name, double value);
+  void SetParameterAsFloat(const std::string& name, float value);
 
-  // Description:
-  // Get/Set time step (module parameter)
-  vtkGetMacro(TimeStep, double);
-  vtkSetMacro(TimeStep, double);
- 
-  // Description:
-  // Get/Set input volume MRML Id
-  vtkGetStringMacro(InputVolumeRef);
-  vtkSetStringMacro(InputVolumeRef);
+  std::string GetParameterAsString(const std::string &name) const;
+//ETX  
   
-  // Description:
-  // Get/Set output volume MRML Id
-  vtkGetStringMacro(OutputVolumeRef);
-  vtkSetStringMacro(OutputVolumeRef);
-
- 
 private:
   vtkMRMLCommandLineModuleNode();
   ~vtkMRMLCommandLineModuleNode();
   vtkMRMLCommandLineModuleNode(const vtkMRMLCommandLineModuleNode&);
   void operator=(const vtkMRMLCommandLineModuleNode&);
 
-  double Conductance;
-  double TimeStep;
-  int NumberOfIterations;
+  ModuleDescription ModuleDescriptionObject;
   
-  char* InputVolumeRef;
-  char* OutputVolumeRef;
-
 };
 
 #endif

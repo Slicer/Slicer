@@ -64,37 +64,50 @@ void vtkCommandLineModuleLogic::Apply()
     return;
     }
   
-  // find input volume
-  vtkMRMLScalarVolumeNode *inVolume = vtkMRMLScalarVolumeNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->CommandLineModuleNode->GetInputVolumeRef()));
-  if (inVolume == NULL)
-    {
-    vtkErrorMacro("No input volume found");
-    return;
-    }
+//   // find input volume
+//   vtkMRMLScalarVolumeNode *inVolume = vtkMRMLScalarVolumeNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->CommandLineModuleNode->GetInputVolumeRef()));
+//   if (inVolume == NULL)
+//     {
+//     vtkErrorMacro("No input volume found");
+//     return;
+//     }
 
   
-  // find output volume
-  vtkMRMLScalarVolumeNode *outVolume =  vtkMRMLScalarVolumeNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->CommandLineModuleNode->GetOutputVolumeRef()));
-  if (outVolume == NULL)
-    {
-    vtkErrorMacro("No output volume found with id= " << this->CommandLineModuleNode->GetOutputVolumeRef());
-    return;
-    }
+//   // find output volume
+//   vtkMRMLScalarVolumeNode *outVolume =  vtkMRMLScalarVolumeNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->CommandLineModuleNode->GetOutputVolumeRef()));
+//   if (outVolume == NULL)
+//     {
+//     vtkErrorMacro("No output volume found with id= " << this->CommandLineModuleNode->GetOutputVolumeRef());
+//     return;
+//     }
 
-  // copy RASToIJK matrix, and other attributes from input to output
-  std::string name (outVolume->GetName());
-  std::string id (outVolume->GetID());
+//   // copy RASToIJK matrix, and other attributes from input to output
+//   std::string name (outVolume->GetName());
+//   std::string id (outVolume->GetID());
 
-  outVolume->Copy(inVolume);
+//   outVolume->Copy(inVolume);
 
-  outVolume->SetName(name.c_str());
-  outVolume->SetID(id.c_str());
+//   outVolume->SetName(name.c_str());
+//   outVolume->SetID(id.c_str());
 
+
+  
   // build the command line
+  //
+  //
 
+  
   // run the filter
+  //
+  //
 
+  
   // import the results
+  //
+  //
+
+
+  
   
   // set ouput of the filter to VolumeNode's ImageData
   // set ouput of the filter to VolumeNode's ImageData

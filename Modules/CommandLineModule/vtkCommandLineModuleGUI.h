@@ -90,6 +90,14 @@ public:
 //   vtkGetMacro(ModuleDescription, ModuleDescription);
 //   vtkSetMacro(ModuleDescription, ModuleDescription);
   
+
+protected:
+  // Callback routine that is used for creating a new node.  This
+  // method is needed to avoid recursive calls to GUICallback()
+  static void NewNodeCallback( vtkObject *__caller,
+                              unsigned long eid, void *__clientData, void *callData );    
+
+  vtkCallbackCommand *NewNodeCallbackCommand;
   
 private:
   vtkCommandLineModuleGUI();
@@ -105,11 +113,10 @@ private:
   // Updates parameters values in MRML node based on GUI widgets 
   void UpdateMRML();
   
-  ModuleDescription ModuleDescriptionObject;  // Should this go in the mrml node?
+  ModuleDescription ModuleDescriptionObject;  
 
   ModuleWidgetMap *InternalWidgetMap;
 
-  
   vtkSlicerNodeSelectorWidget* CommandLineModuleNodeSelector;
   
   vtkCommandLineModuleLogic *Logic;
