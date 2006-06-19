@@ -173,13 +173,11 @@ void vtkCommandLineModuleGUI::AddGUIObservers ( )
 
     if (sb)
       {
-      sb->AddObserver(vtkKWSpinBox::SpinBoxValueChangedEvent,
+      sb->GetWidget()->AddObserver(vtkKWSpinBox::SpinBoxValueChangedEvent,
                       (vtkCommand *) this->GUICallbackCommand);
       }
     else if (se)
       {
-      // ScaleWithEntry may use InvokeEntryCommand instead of
-      // InvokeEvent for the entry portion of the widget
       se->AddObserver(vtkKWScale::ScaleValueStartChangingEvent,
                       (vtkCommand *) this->GUICallbackCommand);
       se->AddObserver(vtkKWScale::ScaleValueChangedEvent,
@@ -187,12 +185,13 @@ void vtkCommandLineModuleGUI::AddGUIObservers ( )
       }
     else if (cb)
       {
-      cb->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent,
+      cb->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent,
                       (vtkCommand *) this->GUICallbackCommand);
       }
     else if (e)
       {
-      // Entry uses invoke command instead of InvokeEvent
+      e->GetWidget()->AddObserver(vtkKWEntry::EntryValueChangedEvent,
+                      (vtkCommand *) this->GUICallbackCommand);
       }
     else if (ns)
       {
@@ -201,7 +200,7 @@ void vtkCommandLineModuleGUI::AddGUIObservers ( )
       }
     else if (lsb)
       {
-      lsb->AddObserver(vtkKWPushButton::InvokedEvent,
+      lsb->GetWidget()->AddObserver(vtkKWPushButton::InvokedEvent,
                        (vtkCommand *) this->GUICallbackCommand);
       }
     else if (rbs)
@@ -226,7 +225,7 @@ void vtkCommandLineModuleGUI::RemoveGUIObservers ( )
 {
   this->CommandLineModuleNodeSelector->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
 
-  this->CommandLineModuleNodeSelector->RemoveObservers (vtkSlicerNodeSelectorWidget::NewNodeEvent, (vtkCommand *)this->GUICallbackCommand );  
+  this->CommandLineModuleNodeSelector->RemoveObservers (vtkSlicerNodeSelectorWidget::NewNodeEvent, (vtkCommand *)this->NewNodeCallbackCommand );  
 
   (*this->InternalWidgetMap)["ApplyButton"]->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
 
@@ -249,13 +248,11 @@ void vtkCommandLineModuleGUI::RemoveGUIObservers ( )
 
     if (sb)
       {
-      sb->RemoveObservers(vtkKWSpinBox::SpinBoxValueChangedEvent,
+      sb->GetWidget()->RemoveObservers(vtkKWSpinBox::SpinBoxValueChangedEvent,
                           (vtkCommand *) this->GUICallbackCommand);
       }
     else if (se)
       {
-      // ScaleWithEntry may use InvokeEntryCommand instead of
-      // InvokeEvent for the entry portion of the widget
       se->RemoveObservers(vtkKWScale::ScaleValueStartChangingEvent,
                           (vtkCommand *) this->GUICallbackCommand);
       se->RemoveObservers(vtkKWScale::ScaleValueChangedEvent,
@@ -263,12 +260,14 @@ void vtkCommandLineModuleGUI::RemoveGUIObservers ( )
       }
     else if (cb)
       {
-      cb->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent,
+      cb->GetWidget()
+        ->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent,
                       (vtkCommand *) this->GUICallbackCommand);
       }
     else if (e)
       {
-      // Entry uses invoke command instead of InvokeEvent
+      e->GetWidget()->RemoveObservers(vtkKWEntry::EntryValueChangedEvent,
+                      (vtkCommand *) this->GUICallbackCommand);
       }
     else if (ns)
       {
@@ -277,7 +276,7 @@ void vtkCommandLineModuleGUI::RemoveGUIObservers ( )
       }
     else if (lsb)
       {
-      lsb->RemoveObservers(vtkKWPushButton::InvokedEvent,
+      lsb->GetWidget()->RemoveObservers(vtkKWPushButton::InvokedEvent,
                        (vtkCommand *) this->GUICallbackCommand);
       }
     else if (rbs)
@@ -666,7 +665,7 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
 
       if ((*pit).GetTag() == "integer")
         {
-        if (/*true || */ (*pit).GetConstraints() == "")
+        if (/* true || */ (*pit).GetConstraints() == "")
           {
           vtkKWSpinBoxWithLabel *tparameter = vtkKWSpinBoxWithLabel::New();
           tparameter->SetParent( parameterGroupFrame->GetFrame() );
