@@ -23,6 +23,7 @@
 #include "itkMacro.h"
 #include "itkMetaDataObject.h"
 #include "itkIOCommon.h"
+#include <iostream>
 
 #if defined(__BORLANDC__) 
 # include <math.h> 
@@ -164,8 +165,24 @@ bool CommandIO::CanReadFile( const char* filename )
         return false;
     }
 
-    itkExceptionMacro("itk::CommandIO:CanReadFile is called.");
-    return (fname[0] == '|' ? true : false);
+#ifdef _WIN32
+    char pathSep = '\';
+#else
+    char pathSep = '/';
+#endif
+
+    std::string f;
+    int index = fname.find_last_of(pathSep);
+    if (index >= 0) 
+    {
+        f = fname.substr(index+1);
+    }
+    else 
+    {
+        f = fname;
+    }
+
+    return (f == "" ? false : (f[0] == '|' ? true : false));
 }
 
 void CommandIO::ReadImageInformation()
@@ -715,10 +732,10 @@ void CommandIO::Read(void* buffer)
 
 bool CommandIO::CanWriteFile( const char * filename )
 {
-#if defined(__BORLANDC__) 
-    // Disable floating point exceptions in Borland 
-    _control87(MCW_EM, MCW_EM); 
-#endif // defined(__BORLANDC__) 
+#if defined(__BORLANDC__)
+    // Disable floating point exceptions in Borland
+    _control87(MCW_EM, MCW_EM);
+#endif // defined(__BORLANDC__)
     std::string fname = filename;
     if (fname == "")
     {
@@ -726,7 +743,24 @@ bool CommandIO::CanWriteFile( const char * filename )
         return false;
     }
 
-    return (fname[0] == '|' ? true : false);
+#ifdef _WIN32
+    char pathSep = '\';
+#else
+    char pathSep = '/';
+#endif
+
+    std::string f;
+    int index = fname.find_last_of(pathSep);
+    if (index >= 0)
+    {
+        f = fname.substr(index+1);
+    }
+    else
+    {
+        f = fname;
+    }
+
+    return (f == "" ? false : (f[0] == '|' ? true : false));
 }
 
   
