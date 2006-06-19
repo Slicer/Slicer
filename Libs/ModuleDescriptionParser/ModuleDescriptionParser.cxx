@@ -64,6 +64,9 @@ startElement(void *userData, const char *element, const char **attrs)
   std::string name(element);
 
   ps->Depth++;
+  // Clear the last tag for this depth
+  ps->LastData[ps->Depth].clear();
+
   // Check for a valid module description file
   //  
   if (ps->Depth == 0 && (name != "executable") )
@@ -82,9 +85,6 @@ startElement(void *userData, const char *element, const char **attrs)
     ps->Error = true;
     return;
     }
-
-  // Clear the last tag for this depth
-  ps->LastData[ps->Depth].clear();
 
   if (name == "parameters")
     {
@@ -440,10 +440,15 @@ endElement(void *userData, const char *element)
     std::string temp = ps->LastData[ps->Depth];
     trimLeading(temp);
     trimTrailing(temp);
-    if (temp.find("-",2) != std::string::npos)
+    if (temp.find_first_of("- ",2) != std::string::npos)
       {
-      std::cerr << "GenerateCLP: flags cannot contain \"-\" : " << temp << std::endl;
+      std::string error("ModuleDescriptionParser Error: <" + std::string(name) + "> flags cannot contain \"-\" or \" \"");
+      ps->ErrorDescription = error;
+      ps->ErrorLine = XML_GetCurrentLineNumber(ps->Parser);
       ps->Error = true;
+      ps->OpenTags.pop();
+      ps->Depth--;
+      return;
       }
     parameter->SetLongFlag(temp);
     if (parameter->GetName().empty())
