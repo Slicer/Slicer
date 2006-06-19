@@ -8,7 +8,7 @@
   Program:   MRML
   Module:    $RCSfile: vtkMRML.h,v $
   Date:      $Date$
-  Version:   $Rev: $
+  Version:   $Rev$
 
 =========================================================================auto=*/
 
