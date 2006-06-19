@@ -120,7 +120,7 @@ public:
   // reflect the state of the mrml scene in the menu
   void UpdateMenu();
 
-  void ProcessNewNodeCommand(char *className, char *nodeName);
+  void ProcessNewNodeCommand(const char *className, const char *nodeName);
   void ProcessCommand(char *slectedId);
 
 protected:

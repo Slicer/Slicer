@@ -182,9 +182,11 @@ void vtkSlicerNodeSelectorWidget::UpdateMenu()
 
         std::stringstream ss;
         ss << "Create New " << this->MRMLScene->GetTagByClassName(this->GetNodeClass(c));
-        
+
+        // Build the command.  Since node name can contain spaces, we
+        // need to quote the node name in the constructed Tcl command
         std::stringstream sc;
-        sc << "ProcessNewNodeCommand " << this->GetNodeClass(c) << " " << name;
+        sc << "ProcessNewNodeCommand " << this->GetNodeClass(c) << " \"" << name << "\"";
 
         this->GetWidget()->GetWidget()->GetMenu()->AddRadioButton(ss.str().c_str());
         this->GetWidget()->GetWidget()->GetMenu()->SetItemCommand(count++, this, sc.str().c_str() );
@@ -245,7 +247,7 @@ vtkMRMLNode *vtkSlicerNodeSelectorWidget::GetSelected()
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerNodeSelectorWidget::ProcessNewNodeCommand(char *className, char *nodeName)
+void vtkSlicerNodeSelectorWidget::ProcessNewNodeCommand(const char *className, const char *nodeName)
 {
   vtkMRMLNode *node = NULL;
   vtkKWMenuButton *mb = this->GetWidget()->GetWidget();
@@ -258,7 +260,12 @@ void vtkSlicerNodeSelectorWidget::ProcessNewNodeCommand(char *className, char *n
     {
       return;
     }
+    // Invoke a new node event giving an observer an opportunity to
+    // configure the node
+    this->InvokeEvent(vtkSlicerNodeSelectorWidget::NewNodeEvent, node);
+
     node->SetScene(this->MRMLScene);
+
     std::stringstream ss;
     const char *name;
     if (nodeName == NULL || !strcmp(nodeName,"") )
@@ -270,7 +277,6 @@ void vtkSlicerNodeSelectorWidget::ProcessNewNodeCommand(char *className, char *n
       name = nodeName;
       }
     ss << name << NewNodeCount++;
-    
     node->SetName(ss.str().c_str());
     node->SetID(this->MRMLScene->GetUniqueIDByClass(className));
     this->MRMLScene->AddNode(node);
@@ -279,6 +285,7 @@ void vtkSlicerNodeSelectorWidget::ProcessNewNodeCommand(char *className, char *n
     // configure the node
     this->InvokeEvent(vtkSlicerNodeSelectorWidget::NewNodeEvent, node);
     }
+
   this->SetSelected(node);
 }
 
