@@ -49,6 +49,7 @@ Version:   $Revision: 1.2 $
 #include "vtkKWRadioButton.h"
 #include "vtkKWRadioButtonSet.h"
 #include "vtkKWRadioButtonSetWithLabel.h"
+#include "vtkKWText.h"
 
 #include "itkNumericTraits.h"
 
@@ -573,9 +574,11 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
   // helpFrame->CollapseFrame ( );
   helpFrame->SetLabelText ("Help");
 
-  vtkKWLabel *helpMessage = vtkKWLabel::New();
+  vtkKWText *helpMessage = vtkKWText::New();
   helpMessage->SetParent( helpFrame->GetFrame() );
   helpMessage->Create();
+  helpMessage->ReadOnlyOn();
+  helpMessage->SetReliefToFlat();
   helpMessage->SetText(this->ModuleDescriptionObject.GetDescription().c_str());
 
   app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
