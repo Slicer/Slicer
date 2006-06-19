@@ -1,3 +1,16 @@
+/*=========================================================================
+
+  Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
+
+  See Doc/copyright/copyright.txt
+  or http://www.slicer.org/copyright/copyright.txt for details.
+
+  Program:   Module Decription parser
+  Module:    $HeadURL$
+  Date:      $Date$
+  Version:   $Revision$
+
+==========================================================================*/
 #include "ModuleDescriptionParser.h"
 
 #include "ModuleDescription.h"
@@ -27,6 +40,13 @@ trimTrailing(std::string& s, const char* extraneousChars = " \t\n")
     {
     s = s.substr(0, s.find_last_not_of(extraneousChars)+1);
     }
+}
+
+void
+trimLeadingAndTrailing(std::string& s, const char* extraneousChars = " \t\n")
+{
+  trimLeading(s, extraneousChars);
+  trimTrailing(s, extraneousChars);
 }
 
 /* ParserState: A class to keep state information for the parser. This
@@ -428,21 +448,42 @@ endElement(void *userData, const char *element)
     ps->CurrentGroup->AddParameter(*parameter);
     ps->CurrentParameter = 0;
     }
-  else if (parameter && (name == "flag"))
+  else if (parameter && (name == "flag" || name == "shortflag"))
     {
     std::string temp = ps->LastData[ps->Depth];
-    trimLeading(temp);
-    trimTrailing(temp);
-    parameter->SetShortFlag(temp);
+    trimLeadingAndTrailing(temp);
+    trimLeading(temp, "-");
+    if (temp.size() > 1)
+      {
+      std::string error("ModuleDescriptionParser Error: <"
+                        + name
+                        + std::string("> can only contain one character. \"") 
+                        + temp
+                        + std::string("\" has more than one character."));
+      ps->ErrorDescription = error;
+      ps->ErrorLine = XML_GetCurrentLineNumber(ps->Parser);
+      ps->Error = true;
+      ps->OpenTags.pop();
+      ps->Depth--;
+      return;
+      }
+    else
+      {
+      parameter->SetShortFlag(temp);
+      }
     }
   else if (parameter && (name == "longflag"))
     {
     std::string temp = ps->LastData[ps->Depth];
-    trimLeading(temp);
-    trimTrailing(temp);
-    if (temp.find_first_of("- ",2) != std::string::npos)
+    trimLeadingAndTrailing(temp);
+    trimLeading(temp, "-");
+    if (temp.find_first_of("- ") != std::string::npos)
       {
-      std::string error("ModuleDescriptionParser Error: <" + std::string(name) + "> flags cannot contain \"-\" or \" \"");
+      std::string error("ModuleDescriptionParser Error: <"
+                        + std::string(name)
+                        + "> longflags cannot contain \" \" or \"-\". The flag is \""
+                        + temp
+                        + std::string("\""));
       ps->ErrorDescription = error;
       ps->ErrorLine = XML_GetCurrentLineNumber(ps->Parser);
       ps->Error = true;
@@ -459,15 +500,13 @@ endElement(void *userData, const char *element)
   else if (parameter && (name == "name"))
     {
     std::string temp = std::string(ps->LastData[ps->Depth]);
-    trimLeading(temp);
-    trimTrailing(temp);
+    trimLeadingAndTrailing(temp);
     parameter->SetName(temp);
     }
   else if ((group || parameter) && (name == "label"))
     {
     std::string temp = ps->LastData[ps->Depth];
-    trimLeading(temp);
-    trimTrailing(temp);
+    trimLeadingAndTrailing(temp);
     if (group && !parameter)
       {
       group->SetLabel(temp);
@@ -480,50 +519,43 @@ endElement(void *userData, const char *element)
   else if (name == "category")
     {
     std::string temp = ps->LastData[ps->Depth];
-    trimLeading(temp);
-    trimTrailing(temp);
+    trimLeadingAndTrailing(temp);
     ps->CurrentDescription.SetCategory(temp);
     }
   else if (name == "title")
     {
     std::string temp = ps->LastData[ps->Depth];
-    trimLeading(temp);
-    trimTrailing(temp);
+    trimLeadingAndTrailing(temp);
     ps->CurrentDescription.SetTitle(temp);
     }
   else if (name == "version")
     {
     std::string temp = ps->LastData[ps->Depth];
-    trimLeading(temp);
-    trimTrailing(temp);
+    trimLeadingAndTrailing(temp);
     ps->CurrentDescription.SetVersion(temp);
     }
   else if (name == "documentationurl")
     {
     std::string temp = ps->LastData[ps->Depth];
-    trimLeading(temp);
-    trimTrailing(temp);
+    trimLeadingAndTrailing(temp);
     ps->CurrentDescription.SetDocumentationURL(temp);
     }
   else if (name == "license")
     {
     std::string temp = ps->LastData[ps->Depth];
-    trimLeading(temp);
-    trimTrailing(temp);
+    trimLeadingAndTrailing(temp);
     ps->CurrentDescription.SetLicense(temp);
     }
   else if (name == "contributor")
     {
     std::string temp = ps->LastData[ps->Depth];
-    trimLeading(temp);
-    trimTrailing(temp);
+    trimLeadingAndTrailing(temp);
     ps->CurrentDescription.SetContributor(temp);
     }
   else if (name ==  "description")
     {
     std::string temp = ps->LastData[ps->Depth];
-    trimLeading(temp);
-    trimTrailing(temp);
+    trimLeadingAndTrailing(temp);
     if (!group && !parameter)
       {
       ps->CurrentDescription.SetDescription(temp);
@@ -540,29 +572,25 @@ endElement(void *userData, const char *element)
   else if (parameter && (name == "element"))
     {
     std::string temp = ps->LastData[ps->Depth];
-    trimLeading(temp);
-    trimTrailing(temp);
+    trimLeadingAndTrailing(temp);
     parameter->GetElements().push_back(temp);
     }
   else if (parameter && (name == "default"))
     {
     std::string temp = ps->LastData[ps->Depth];
-    trimLeading(temp);
-    trimTrailing(temp);
+    trimLeadingAndTrailing(temp);
     parameter->SetDefault(temp);
     }
   else if (parameter && (name == "channel"))
     {
     std::string temp = ps->LastData[ps->Depth];
-    trimLeading(temp);
-    trimTrailing(temp);
+    trimLeadingAndTrailing(temp);
     parameter->SetChannel(temp);
     }
   else if (parameter && (name == "index"))
     {
     std::string temp = ps->LastData[ps->Depth];
-    trimLeading(temp);
-    trimTrailing(temp);
+    trimLeadingAndTrailing(temp);
     parameter->SetIndex(temp);
     }
   else if (parameter && (name == "constraints"))
@@ -572,22 +600,19 @@ endElement(void *userData, const char *element)
   else if (parameter && (name == "minimum"))
     {
     std::string temp = ps->LastData[ps->Depth];
-    trimLeading(temp);
-    trimTrailing(temp);
+    trimLeadingAndTrailing(temp);
     parameter->SetMinimum(temp);
     }
   else if (parameter && (name == "maximum"))
     {
     std::string temp = ps->LastData[ps->Depth];
-    trimLeading(temp);
-    trimTrailing(temp);
+    trimLeadingAndTrailing(temp);
     parameter->SetMaximum(temp);
     }
   else if (parameter && (name == "step"))
     {
     std::string temp = ps->LastData[ps->Depth];
-    trimLeading(temp);
-    trimTrailing(temp);
+    trimLeadingAndTrailing(temp);
     parameter->SetStep(temp);
     }
   ps->OpenTags.pop();
