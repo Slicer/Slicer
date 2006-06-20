@@ -417,7 +417,10 @@ void vtkCommandLineModuleGUI::UpdateMRML ()
       }
     else if (lsb)
       {
-      n->SetParameterAsString((*wit).first, lsb->GetWidget()->GetFileName());
+      if (lsb->GetWidget()->GetFileName())
+        {
+        n->SetParameterAsString((*wit).first, lsb->GetWidget()->GetFileName());
+        }
       }
     else if (rbs)
       {
