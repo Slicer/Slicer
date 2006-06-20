@@ -22,8 +22,22 @@
 #include "expat.h"
 
 /*********************
- * Utility procedures to trim leading and trailing characters
+ * Utility procedures for strings
  *********************/
+void
+replaceSubWithSub(std::string& s, const char *o, const char  *n)
+{
+  if (s.size())
+    {
+    std::string from(o), to(n);
+    std::string::size_type start = 0;
+    while ((start = s.find(from, start)) != std::string::npos)
+      {
+      s.replace(start, to.size(), n);
+      }
+    }
+}
+
 void
 trimLeading(std::string& s, const char* extraneousChars = " \t\n")
 {
@@ -556,6 +570,8 @@ endElement(void *userData, const char *element)
     {
     std::string temp = ps->LastData[ps->Depth];
     trimLeadingAndTrailing(temp);
+    replaceSubWithSub(temp, "\n", " ");
+    replaceSubWithSub(temp, "\"", "'");
     if (!group && !parameter)
       {
       ps->CurrentDescription.SetDescription(temp);
