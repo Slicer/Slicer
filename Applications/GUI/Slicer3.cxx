@@ -249,7 +249,7 @@ int Slicer3_main(int argc, char *argv[])
     std::vector<std::string>::const_iterator mit = moduleNames.begin();
     while (mit != moduleNames.end())
       {
-      std::cout << moduleFactory.GetModuleDescription(*mit) << std::endl;
+      // std::cout << moduleFactory.GetModuleDescription(*mit) << std::endl;
 
       // For now, create vtkCommandLineModule* items. When the
       // ModuleFactory can discover shared object modules, then we'll

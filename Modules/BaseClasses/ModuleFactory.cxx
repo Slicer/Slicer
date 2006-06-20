@@ -132,7 +132,7 @@ ModuleFactory
       // skip any directories
       if (!itksys::SystemTools::FileIsDirectory(filename))
         {
-        std::cout << "Testing " << filename << " as a plugin:" << std::endl;
+        //std::cout << "Testing " << filename << " as a plugin:" << std::endl;
         
         char *command[3];
         itksysProcess *process = itksysProcess_New();
@@ -195,7 +195,7 @@ ModuleFactory
             // generated a valid xml description
             if (stdoutbuffer.compare(0, 5, "<?xml") == 0)
               {
-              std::cout << "\t" << filename << " is a plugin." << std::endl;
+              //std::cout << "\t" << filename << " is a plugin." << std::endl;
               
               // Construct and configure the module object
               CommandLineModuleDescription module;
@@ -211,25 +211,25 @@ ModuleFactory
               }
             else
               {
-              std::cout << "\t" << filename << " is not a plugin." << std::endl
-                        << "\t" << filename << " did not generate an xml description." << std::endl;
+//               std::cout << "\t" << filename << " is not a plugin." << std::endl
+//                         << "\t" << filename << " did not generate an xml description." << std::endl;
               }
             }
           else
             {
-            std::cout << "\t" << filename << " is not a plugin." << std::endl
-                      << "\t" << filename << " exited with errors." << std::endl;
+//             std::cout << "\t" << filename << " is not a plugin." << std::endl
+//                       << "\t" << filename << " exited with errors." << std::endl;
             }
           }
         else if (result == itksysProcess_State_Expired)
           {
-          std::cout << "\t" << filename << " is not a plugin." << std::endl
-                    << "\t" << filename << " timeout exceeded." << std::endl;
+//           std::cout << "\t" << filename << " is not a plugin." << std::endl
+//                     << "\t" << filename << " timeout exceeded." << std::endl;
           }
         else
           {
-          std::cout << "\t" << filename << " is not a plugin." << std::endl
-                    << "\t" << filename << " did not exit cleanly." << std::endl;
+//           std::cout << "\t" << filename << " is not a plugin." << std::endl
+//                     << "\t" << filename << " did not exit cleanly." << std::endl;
           }
 
         // clean up
