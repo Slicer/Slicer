@@ -181,7 +181,7 @@ void vtkCommandLineModuleLogic::Apply()
           
 
           std::string fname = this->TemporaryDirectory + "/"
-            + name + ".mhd";
+            + name + ".nrrd";
           
           image->SetFileArchetype( fname.c_str() );
           image->WriteData(this->MRMLScene->GetNodeByID((*iit).second.GetDefault().c_str()));
@@ -201,7 +201,7 @@ void vtkCommandLineModuleLogic::Apply()
           
 
           std::string fname = this->TemporaryDirectory + "/"
-            + name + ".mhd";
+            + name + ".nrrd";
 
           mrmlIDToFileName[(*iit).second.GetDefault()] = fname;
           commandLineAsString.push_back( fname );
