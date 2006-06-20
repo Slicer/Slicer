@@ -166,7 +166,7 @@ bool CommandIO::CanReadFile( const char* filename )
     }
 
 #ifdef _WIN32
-    char pathSep = '\';
+    char pathSep = '\\';
 #else
     char pathSep = '/';
 #endif
@@ -744,7 +744,7 @@ bool CommandIO::CanWriteFile( const char * filename )
     }
 
 #ifdef _WIN32
-    char pathSep = '\';
+    char pathSep = '\\';
 #else
     char pathSep = '/';
 #endif
