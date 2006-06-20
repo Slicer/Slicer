@@ -23,6 +23,25 @@ Version:   $Revision: 1.2 $
 
 #include "vtkMRMLScene.h"
 #include "vtkMRMLScalarVolumeNode.h"
+#include "vtkMRMLVolumeArchetypeStorageNode.h"
+
+#include "itksys/Process.h"
+
+#include <algorithm>
+
+struct DigitsToCharacters
+{
+  char operator() (char in)
+    {
+      if (in >= 48 && in <= 57)
+        {
+        return in + 17;
+        }
+
+      return in;
+    }
+};
+
 
 vtkCommandLineModuleLogic* vtkCommandLineModuleLogic::New()
 {
@@ -63,23 +82,6 @@ void vtkCommandLineModuleLogic::Apply()
     vtkErrorMacro("No input CommandLineModuleNode found");
     return;
     }
-  
-//   // find input volume
-//   vtkMRMLScalarVolumeNode *inVolume = vtkMRMLScalarVolumeNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->CommandLineModuleNode->GetInputVolumeRef()));
-//   if (inVolume == NULL)
-//     {
-//     vtkErrorMacro("No input volume found");
-//     return;
-//     }
-
-  
-//   // find output volume
-//   vtkMRMLScalarVolumeNode *outVolume =  vtkMRMLScalarVolumeNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->CommandLineModuleNode->GetOutputVolumeRef()));
-//   if (outVolume == NULL)
-//     {
-//     vtkErrorMacro("No output volume found with id= " << this->CommandLineModuleNode->GetOutputVolumeRef());
-//     return;
-//     }
 
 //   // copy RASToIJK matrix, and other attributes from input to output
 //   std::string name (outVolume->GetName());
@@ -95,29 +97,230 @@ void vtkCommandLineModuleLogic::Apply()
   // build the command line
   //
   //
+  std::vector<std::string> commandLineAsString;
 
+  commandLineAsString.push_back( this->CommandLineModuleNode->GetModuleDescription().GetTarget() );
+
+
+  // map to keep track of MRML Ids and filenames
+  typedef std::map<std::string, std::string> MRMLIDToFileNameMap;
+  MRMLIDToFileNameMap mrmlIDToFileName;
   
+  // iterate over each parameter group
+  std::vector<ModuleParameterGroup>::const_iterator pgbeginit
+    = this->CommandLineModuleNode->GetModuleDescription()
+    .GetParameterGroups().begin();
+  std::vector<ModuleParameterGroup>::const_iterator pgendit
+    = this->CommandLineModuleNode->GetModuleDescription()
+    .GetParameterGroups().end();
+  std::vector<ModuleParameterGroup>::const_iterator pgit;
+  
+  for (pgit = pgbeginit; pgit != pgendit; ++pgit)
+    {
+    // iterate over each parameter in this group
+    std::vector<ModuleParameter>::const_iterator pbeginit
+      = (*pgit).GetParameters().begin();
+    std::vector<ModuleParameter>::const_iterator pendit
+      = (*pgit).GetParameters().end();
+    std::vector<ModuleParameter>::const_iterator pit;
+
+    // make a pass for any parameters that have flags
+    for (pit = pbeginit; pit != pendit; ++pit)
+      {
+      if ((*pit).GetLongFlag() != "")
+        {
+        commandLineAsString.push_back(std::string("--")+(*pit).GetLongFlag());
+        if ((*pit).GetTag() != "boolean")
+          {
+          commandLineAsString.push_back((*pit).GetDefault());
+          }
+        }
+      else if ((*pit).GetFlag() != "")
+        {
+        commandLineAsString.push_back(std::string("-")+(*pit).GetFlag());
+        if ((*pit).GetTag() != "boolean")
+          {
+          commandLineAsString.push_back((*pit).GetDefault());
+          }
+        }
+      }
+
+    // now tack on any parameters that are based on indices
+    // (still need to do images associated with flags)
+    std::map<int, ModuleParameter> indexmap;
+    for (pit = pbeginit; pit != pendit; ++pit)
+      {
+      if ((*pit).GetIndex() != "")
+        {
+        indexmap[atoi((*pit).GetIndex().c_str())] = (*pit);
+        }
+      }
+
+    std::map<int, ModuleParameter>::const_iterator iit;
+    for (iit = indexmap.begin(); iit != indexmap.end(); ++iit)
+      {
+      if ((*iit).second.GetTag() != "image")
+        {
+        commandLineAsString.push_back((*iit).second.GetDefault());
+        }
+      else
+        {
+        // Need temporary files
+        if ((*iit).second.GetChannel() == "input")
+          {
+          // Need to write out the data to a temporary file and push
+          // the name of this file on the command line
+          vtkMRMLVolumeArchetypeStorageNode *image
+            = vtkMRMLVolumeArchetypeStorageNode::New();
+
+          // To avoid confusing the Archetype readers, convert any
+          // numbers in the filename to characters [0-9]->[A-J]
+          std::string name = (*iit).second.GetDefault();
+          std::transform(name.begin(), name.end(),
+                         name.begin(), DigitsToCharacters());
+          
+
+          std::string fname = this->TemporaryDirectory + "/"
+            + name + ".mhd";
+          
+          image->SetFileArchetype( fname.c_str() );
+          image->WriteData(this->MRMLScene->GetNodeByID((*iit).second.GetDefault().c_str()));
+
+          commandLineAsString.push_back( image->GetFileArchetype() );
+          image->Delete();
+          }
+        else if ((*iit).second.GetChannel() == "output")
+          {
+          // Need to build a filename, then we will the data back in
+
+          // To avoid confusing the Archetype readers, convert any
+          // numbers in the filename to characters [0-9]->[A-J]
+          std::string name = (*iit).second.GetDefault();
+          std::transform(name.begin(), name.end(),
+                         name.begin(), DigitsToCharacters());
+          
+
+          std::string fname = this->TemporaryDirectory + "/"
+            + name + ".mhd";
+
+          mrmlIDToFileName[(*iit).second.GetDefault()] = fname;
+          commandLineAsString.push_back( fname );
+          }
+        }
+      }
+    }
+
+
+  // copy the command line arguments into an array of pointers to
+  // chars
+  char **command = new char*[commandLineAsString.size()+1];
+  for (std::vector<std::string>::size_type i=0; i < commandLineAsString.size(); ++i)
+    {
+    command[i] = const_cast<char*>(commandLineAsString[i].c_str());
+    }
+  command[commandLineAsString.size()] = 0;
+
+  // print the command line
+  //
+  for (std::vector<std::string>::size_type i=0; i < commandLineAsString.size(); ++i)
+    {
+    std::cout << command[i] << " ";
+    }
+  std::cout << std::endl;
+ 
   // run the filter
   //
   //
+  itksysProcess *process = itksysProcess_New();
 
+  // setup the command
+  itksysProcess_SetCommand(process, command);
+  itksysProcess_SetOption(process,
+                          itksysProcess_Option_Detach, 0);
+  itksysProcess_SetOption(process,
+                          itksysProcess_Option_HideWindow, 0);
+  // itksysProcess_SetTimeout(process, 5.0); // 5 seconds
+
+  // execute the command
+  itksysProcess_Execute(process);
+
+  // Wait for the command to finish
+  char *tbuffer;
+  int length;
+  int pipe;
+  std::string stdoutbuffer;
+  std::string stderrbuffer;
+  while ((pipe = itksysProcess_WaitForData(process ,&tbuffer,
+                                           &length, 0)) != 0)
+    {
+    if (length != 0 && tbuffer != 0)
+      {
+      if (pipe == itksysProcess_Pipe_STDOUT)
+        {
+        stdoutbuffer = stdoutbuffer.append(tbuffer, length);
+        }
+      else if (pipe == itksysProcess_Pipe_STDERR)
+        {
+        stderrbuffer = stderrbuffer.append(tbuffer, length);
+        }
+      }
+    }
+  itksysProcess_WaitForExit(process, 0);
+  
+  // check the exit state / error state of the process
+  int result = itksysProcess_GetState(process);
+  if (result == itksysProcess_State_Exited)
+    {
+    // executable exited cleanly and must of done
+    // "something" 
+    if (itksysProcess_GetExitValue(process) == 0)
+      {
+      // executable exited without errors,
+      std::cout << this->CommandLineModuleNode->GetModuleDescription().GetTitle()
+                << " completed without errors" << std::endl;
+      }
+    else
+      {
+      std::cout << this->CommandLineModuleNode->GetModuleDescription().GetTitle()
+                << " completed with errors" << std::endl;
+      }
+    }
+  else if (result == itksysProcess_State_Expired)
+    {
+    std::cout << this->CommandLineModuleNode->GetModuleDescription().GetTitle()
+              << " timed out" << std::endl;
+    }
+  else
+    {
+    std::cout << this->CommandLineModuleNode->GetModuleDescription().GetTitle()
+              << " unknown termination. " << result << std::endl;
+    }
+  
+  // clean up
+  itksysProcess_Delete(process);
+  
   
   // import the results
   //
   //
+  MRMLIDToFileNameMap::const_iterator id2fn;
 
+  for (id2fn = mrmlIDToFileName.begin();
+       id2fn != mrmlIDToFileName.end();
+       ++id2fn)
+    {
+    vtkMRMLVolumeArchetypeStorageNode *in
+      = vtkMRMLVolumeArchetypeStorageNode::New();
+    in->SetFileArchetype( (*id2fn).second.c_str() );
 
-  
-  
-  // set ouput of the filter to VolumeNode's ImageData
-  // set ouput of the filter to VolumeNode's ImageData
-  // TODO FIX the bug of the image is deallocated unless we do DeepCopy
-//   vtkImageData* image = vtkImageData::New(); 
-//   image->DeepCopy( this->GradientAnisotropicDiffusionImageFilter->GetOutput() );
-//   outVolume->SetImageData(image);
-//   image->Delete();
-  // or
+    in->ReadData( this->MRMLScene->GetNodeByID( (*id2fn).first.c_str() ) );
+    
+    in->Delete();
+    }
+
+  // clean up
   //
-  // outVolume->SetImageData(this->GradientAnisotropicDiffusionImageFilter->GetOutput());
-
+  //
+  delete [] command;
+  
 }

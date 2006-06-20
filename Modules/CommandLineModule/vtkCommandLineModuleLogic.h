@@ -20,6 +20,8 @@
 #include "vtkCommandLineModule.h"
 #include "vtkMRMLCommandLineModuleNode.h"
 
+#include <string>
+
 class VTK_COMMANDLINEMODULE_EXPORT vtkCommandLineModuleLogic : public vtkSlicerModuleLogic
 {
 public:
@@ -35,8 +37,14 @@ public:
   vtkGetObjectMacro (CommandLineModuleNode, vtkMRMLCommandLineModuleNode);
   vtkSetObjectMacro (CommandLineModuleNode, vtkMRMLCommandLineModuleNode);
   
-  // The method that creates and runs VTK or ITK pipeline
+  // The method that creates and runs the command line module
   void Apply();
+
+  // Set/Get the directory to use for temporary files
+  void SetTemporaryDirectory(const char *tempdir)
+    { this->TemporaryDirectory = tempdir; }
+  const char *GetTemporaryDirectory() const
+    { return this->TemporaryDirectory.c_str(); }
   
 private:
   vtkCommandLineModuleLogic();
@@ -45,6 +53,9 @@ private:
   void operator=(const vtkCommandLineModuleLogic&);
 
   vtkMRMLCommandLineModuleNode* CommandLineModuleNode;
+//BTX
+  std::string TemporaryDirectory;
+//ETX
 };
 
 #endif

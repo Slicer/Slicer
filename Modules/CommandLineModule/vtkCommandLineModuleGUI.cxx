@@ -325,13 +325,14 @@ void vtkCommandLineModuleGUI::ProcessGUIEvents ( vtkObject *caller,
     // Apply button was pressed
     //std::cout << "  Apply" << std::endl;
     this->UpdateMRML();
+    this->Logic->SetTemporaryDirectory( ((vtkSlicerApplication*)this->GetApplication())->GetTemporaryDirectory() );
     this->Logic->Apply();
     }
   else if (b == (*this->InternalWidgetMap)["DefaultButton"].GetPointer() && event == vtkKWPushButton::InvokedEvent ) 
     {
     // Defaults button was pressed
-    //std::cout << "  Defaults" << std::endl;
-    //std::cout << this->CommandLineModuleNode << std::endl;
+    // (may need additional code to get any node delection widgets to
+    // return to their default state)
     this->CommandLineModuleNode
       ->SetModuleDescription( this->ModuleDescriptionObject);
     this->UpdateGUI();
@@ -512,8 +513,16 @@ void vtkCommandLineModuleGUI::UpdateGUI ()
             }
           else if (ns)
             {
-            // Don't know what to do here
-            // ns->GetSelected()->GetID();
+            if (value == "None")
+              {
+              // Don't know how to return the widget to the default selection
+              ns->SetSelected(0);
+              }
+            else
+              {
+              ns->SetSelected(this->Logic->GetMRMLScene()
+                              ->GetNodeByID(value.c_str()));
+              }
             }
           else if (lsb)
             {
