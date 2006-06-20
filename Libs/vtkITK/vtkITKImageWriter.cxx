@@ -119,7 +119,7 @@ void ITKWriteVTKImage(vtkITKImageWriter *self, vtkImageData *inputImage, char *f
   vtkFlip->SetFilteredAxis(1);
   vtkFlip->FlipAboutOriginOn();
 
-  vtkExporter->SetInput ( vtkFlip->GetOutput() );
+  vtkExporter->SetInput ( inputImage );
 
   itkImporter = ImageImportType::New();
   ConnectPipelines(vtkExporter, itkImporter);
@@ -129,6 +129,7 @@ void ITKWriteVTKImage(vtkITKImageWriter *self, vtkImageData *inputImage, char *f
   itkImporter->GetOutput()->SetDirection(direction);
   itkImporter->GetOutput()->Update();
   itkImporter->GetOutput()->SetOrigin(origin);
+  itkImporter->GetOutput()->SetSpacing(mag);
   itkImageWriter->SetFileName( fileName );
   itkImageWriter->Update();
 
