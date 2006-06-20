@@ -2,7 +2,20 @@
 <executable>
   <category>filtering</category>
   <title>Resample Volume</title>
-  <description>Resamples a volume</description>
+  <description>
+Resampling an image is a very important task in image analysis.It is
+especially important in the frame of image registration. This module
+implements image resampling through the use of itk Transforms. This
+module uses an Identity Transform. The resampling is controlled by the
+Output Spacing. "Resampling" is performed in space coordinates, not
+pixel/grid coordinates. It is quite important to ensure that image
+spacing is properly set on the images involved. The interpolator is
+required since the mapping from one space to the other will often
+require evaluation of the intensity of the image at non-grid
+positions. Two interpolators are avaliable: linear and sinc. The sinc
+interpolator, although more precise, is much slower than the liner
+interpolator.
+</description>
   <version>1.0</version>
   <documentationurl></documentationurl>
   <license></license>
