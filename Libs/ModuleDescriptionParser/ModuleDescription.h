@@ -100,6 +100,16 @@ public:
     return this->Contributor;
   }
 
+  void SetTarget(const std::string &target)
+  {
+    this->Target = target;
+  }
+
+  const std::string& GetTarget() const
+  {
+    return this->Target;
+  }
+
   void AddParameterGroup(const ModuleParameterGroup &group)
   {
     this->ParameterGroups.push_back(group);
@@ -135,6 +145,7 @@ private:
   std::string DocumentationURL;
   std::string License;
   std::string Contributor;
+  std::string Target;
   std::vector<ModuleParameterGroup> ParameterGroups;  
 };
 
