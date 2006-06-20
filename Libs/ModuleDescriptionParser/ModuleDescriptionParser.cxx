@@ -5,7 +5,7 @@
   See Doc/copyright/copyright.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
 
-  Program:   Module Decription parser
+  Program:   Module Description Parser
   Module:    $HeadURL$
   Date:      $Date$
   Version:   $Revision$
@@ -448,7 +448,7 @@ endElement(void *userData, const char *element)
     ps->CurrentGroup->AddParameter(*parameter);
     ps->CurrentParameter = 0;
     }
-  else if (parameter && (name == "flag" || name == "shortflag"))
+  else if (parameter && (name == "flag"))
     {
     std::string temp = ps->LastData[ps->Depth];
     trimLeadingAndTrailing(temp);
