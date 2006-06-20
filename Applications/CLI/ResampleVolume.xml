@@ -51,7 +51,7 @@ interpolator.
     <description>Input/output parameters</description>
     <image>
       <name>InputVolume</name>
-      <label>input Volume</label>
+      <label>Input Volume</label>
       <channel>input</channel>
       <index>0</index>
       <description>Input volume to be resampled</description>
