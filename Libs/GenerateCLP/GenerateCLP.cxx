@@ -315,7 +315,7 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
   echoSwitch.SetTag("boolean");
   echoSwitch.SetType("bool");
   echoSwitch.SetName("echoSwitch");
-  echoSwitch.SetLongFlag("--echo");
+  echoSwitch.SetLongFlag("echo");
   echoSwitch.SetDescription("Echo the command line arguments");
   echoSwitch.SetDefault("false");
   autoParameters.AddParameter(echoSwitch);
@@ -325,7 +325,7 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
   xmlSwitch.SetTag("boolean");
   xmlSwitch.SetType("bool");
   xmlSwitch.SetName("xmlSwitch");
-  xmlSwitch.SetLongFlag("--xml");
+  xmlSwitch.SetLongFlag("xml");
   xmlSwitch.SetDescription("Produce xml description of command line arguments");
   xmlSwitch.SetDefault("false");
   autoParameters.AddParameter(xmlSwitch);
@@ -504,9 +504,9 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
         sout << "    TCLAP::SwitchArg "
              << pit->GetName()
              << "Arg" << "(\""
-             << pit->GetShortFlag().replace(0,1,"")
+             << pit->GetShortFlag()
              << "\", \"" 
-             << pit->GetLongFlag().replace(0,2,"")
+             << pit->GetLongFlag()
              << "\", msg.str(), "
              << false
              << ", "
@@ -542,9 +542,9 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
           sout << "> "
                << pit->GetName()
                << "Arg" << "(\""
-               << pit->GetShortFlag().replace(0,1,"")
+               << pit->GetShortFlag()
                << "\", \"" 
-               << pit->GetLongFlag().replace(0,2,"")
+               << pit->GetLongFlag()
                << "\", msg.str(), "
                << false
                << ", "
@@ -569,9 +569,9 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
           sout << "> "
                << pit->GetName()
                << "Arg" << "(\""
-               << pit->GetShortFlag().replace(0,1,"")
+               << pit->GetShortFlag()
                << "\", \"" 
-               << pit->GetLongFlag().replace(0,2,"")
+               << pit->GetLongFlag()
                << "\", msg.str(), "
                << false
                << ", "
