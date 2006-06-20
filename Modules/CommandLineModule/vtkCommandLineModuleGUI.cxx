@@ -573,6 +573,7 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
   helpFrame->Create ( );
   // helpFrame->CollapseFrame ( );
   helpFrame->SetLabelText ("Help");
+  helpFrame->CollapseFrame ( );
 
   vtkKWText *helpMessage = vtkKWText::New();
   helpMessage->SetParent( helpFrame->GetFrame() );
