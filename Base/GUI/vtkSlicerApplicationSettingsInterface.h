@@ -12,6 +12,7 @@
 
 class vtkKWFrameWithLabel;
 class vtkKWEntryWithLabel;
+class vtkKWLoadSaveButtonWithLabel;
 
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationSettingsInterface
   : public vtkKWApplicationSettingsInterface
@@ -32,7 +33,9 @@ public:
   // Description:
   // Callbacks. Internal, do not use.
   virtual void ModulePathCallback(char *);
+  virtual void TemporaryDirectoryCallback();
 
+  
 protected:
   vtkSlicerApplicationSettingsInterface();
   ~vtkSlicerApplicationSettingsInterface();
@@ -44,6 +47,7 @@ private:
 
   vtkKWFrameWithLabel *ModuleSettingsFrame;
   vtkKWEntryWithLabel *ModulePathEntry;
+  vtkKWLoadSaveButtonWithLabel *TemporaryDirectoryButton;
 };
 
 

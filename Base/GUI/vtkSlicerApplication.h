@@ -7,6 +7,8 @@
 #ifndef __vtkSlicerApplication_h
 #define __vtkSlicerApplication_h
 
+#include <string>
+
 #include "vtkSlicerBaseGUIWin32Header.h"
 #include "vtkKWRegistryHelper.h"
 #include "vtkKWApplication.h"
@@ -59,12 +61,18 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   // Some constants
   //BTX
   static const char *ModulePathRegKey;
+  static const char *TemporaryDirectoryRegKey;
   //ETX
 
   // Description:
   // Set/Get the search path for modules.
   void SetModulePath(const char *path);
   const char* GetModulePath() const;
+
+  // Description:
+  // Set/Get a directory for temporary file storage
+  void SetTemporaryDirectory(const char *path);
+  const char* GetTemporaryDirectory() const;
   
  protected:
     vtkSlicerApplication ( );
@@ -78,7 +86,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
     vtkSlicerGUICollection *ModuleGUICollection;
 
     char ModulePath[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
-    
+    char TemporaryDirectory[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
+  
  private:
     vtkSlicerApplication ( const vtkSlicerApplication& ); // Not implemented.
     void operator = ( const vtkSlicerApplication& ); //Not implemented.

@@ -13,7 +13,10 @@
 #include "vtkKWWin32RegistryHelper.h"
 #endif
 
+#include "itksys/SystemTools.hxx"
+
 const char *vtkSlicerApplication::ModulePathRegKey = "ModulePath";
+const char *vtkSlicerApplication::TemporaryDirectoryRegKey = "TemporaryDirectory";
 
 
 //---------------------------------------------------------------------------
@@ -157,6 +160,50 @@ int vtkSlicerApplication::StartApplication ( ) {
 //----------------------------------------------------------------------------
 void vtkSlicerApplication::RestoreApplicationSettingsFromRegistry()
 {
+  // Make a good guess before we read from the registry.  Default to a
+  // subdirectory called Slicer3 in a standard temp location.
+#ifdef _WIN32
+  GetTempPath(vtkKWRegistryHelper::RegistryKeyValueSizeMax,
+              this->TemporaryDirectory);
+#else
+  strcpy(this->TemporaryDirectory, "/usr/tmp");
+#endif
+
+  // Tk does not understand Windows short path names, so convert to
+  // long path names and unix slashes
+  std::string temporaryDirectory = this->TemporaryDirectory;
+  temporaryDirectory
+    = itksys::SystemTools::GetActualCaseForPath(temporaryDirectory.c_str());
+  itksys::SystemTools::ConvertToUnixSlashes( temporaryDirectory );
+  
+  std::vector<std::string> pathcomponents;
+  std::string pathWithSlicer;
+  itksys::SystemTools::SplitPath(temporaryDirectory.c_str(), pathcomponents);
+  pathcomponents.push_back("Slicer3");
+  pathWithSlicer = itksys::SystemTools::JoinPath(pathcomponents);
+  
+  itksys::SystemTools::MakeDirectory(pathWithSlicer.c_str());
+  if (pathWithSlicer.size() < vtkKWRegistryHelper::RegistryKeyValueSizeMax)
+    {
+    strcpy(this->TemporaryDirectory, pathWithSlicer.c_str());
+    }
+  else
+    {
+    // path with "Slicer3" attached is too long. Try it without
+    // "Slicer3". If still too long, use the original path. (This path
+    // may have short names in it and hence will not work with Tk).
+    if (temporaryDirectory.size()
+        < vtkKWRegistryHelper::RegistryKeyValueSizeMax)
+      {
+      strcpy(this->TemporaryDirectory, temporaryDirectory.c_str());
+      }
+    vtkWarningMacro("Default temporary directory path " << pathWithSlicer.c_str()
+                    << " is too long to be stored in the registry."
+                    << " Using unmodified temporary directory path "
+                    << this->TemporaryDirectory);
+    }
+
+    
   Superclass::RestoreApplicationSettingsFromRegistry();
   
   if (this->HasRegistryValue(
@@ -166,6 +213,15 @@ void vtkSlicerApplication::RestoreApplicationSettingsFromRegistry()
       2, "RunTime", vtkSlicerApplication::ModulePathRegKey,
       this->ModulePath);
     }
+
+  if (this->HasRegistryValue(
+    2, "RunTime", vtkSlicerApplication::TemporaryDirectoryRegKey))
+    {
+    this->GetRegistryValue(
+      2, "RunTime", vtkSlicerApplication::TemporaryDirectoryRegKey,
+      this->TemporaryDirectory);
+    }
+
 }
 
 //----------------------------------------------------------------------------
@@ -176,20 +232,46 @@ void vtkSlicerApplication::SaveApplicationSettingsToRegistry()
   this->SetRegistryValue(
     2, "RunTime", vtkSlicerApplication::ModulePathRegKey, "%s", 
     this->ModulePath);
+
+  this->SetRegistryValue(
+    2, "RunTime", vtkSlicerApplication::TemporaryDirectoryRegKey, "%s", 
+    this->TemporaryDirectory);
 }
 
 
 void vtkSlicerApplication::SetModulePath(const char* path)
 {
-  if (strcmp(this->ModulePath, path) != 0
-      && strlen(path) < vtkKWRegistryHelper::RegistryKeyValueSizeMax)
+  if (path)
     {
-    strcpy(this->ModulePath, path);
-    this->Modified();
+    if (strcmp(this->ModulePath, path) != 0
+        && strlen(path) < vtkKWRegistryHelper::RegistryKeyValueSizeMax)
+      {
+      strcpy(this->ModulePath, path);
+      this->Modified();
+      }
     }
 }
 
 const char* vtkSlicerApplication::GetModulePath() const
 {
   return this->ModulePath;
+}
+
+
+void vtkSlicerApplication::SetTemporaryDirectory(const char* path)
+{
+  if (path)
+    {
+    if (strcmp(this->TemporaryDirectory, path) != 0
+        && strlen(path) < vtkKWRegistryHelper::RegistryKeyValueSizeMax)
+      {
+      strcpy(this->TemporaryDirectory, path);
+      this->Modified();
+      }
+    }
+}
+
+const char* vtkSlicerApplication::GetTemporaryDirectory() const
+{
+  return this->TemporaryDirectory;
 }

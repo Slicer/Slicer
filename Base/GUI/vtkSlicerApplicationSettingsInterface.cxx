@@ -7,6 +7,9 @@
 #include "vtkKWFrameWithLabel.h"
 #include "vtkKWEntryWithLabel.h"
 #include "vtkKWEntry.h"
+#include "vtkKWLoadSaveDialog.h"
+#include "vtkKWLoadSaveButton.h"
+#include "vtkKWLoadSaveButtonWithLabel.h"
 #include "vtkSlicerApplication.h"
 
 //----------------------------------------------------------------------------
@@ -17,6 +20,7 @@ vtkSlicerApplicationSettingsInterface::vtkSlicerApplicationSettingsInterface()
 {
   this->ModuleSettingsFrame = 0;
   this->ModulePathEntry = 0;
+  this->TemporaryDirectoryButton = 0;
 }
 
 
@@ -32,6 +36,12 @@ vtkSlicerApplicationSettingsInterface::~vtkSlicerApplicationSettingsInterface()
     {
     this->ModulePathEntry->Delete();
     this->ModulePathEntry = 0;
+    }
+
+  if (this->TemporaryDirectoryButton)
+    {
+    this->TemporaryDirectoryButton->Delete();
+    this->TemporaryDirectoryButton = 0;
     }
 }
 
@@ -97,6 +107,34 @@ void vtkSlicerApplicationSettingsInterface::Create()
   tk_cmd << "pack " << this->ModulePathEntry->GetWidgetName()
          << "  -side top -anchor w -expand no -fill x" << endl;
 
+  // --------------------------------------------------------------
+  // Module settings : TemporaryDirectory
+
+  if (!this->TemporaryDirectoryButton)
+    {
+    this->TemporaryDirectoryButton = vtkKWLoadSaveButtonWithLabel::New();
+    }
+
+  this->TemporaryDirectoryButton->SetParent(frame);
+  this->TemporaryDirectoryButton->Create();
+  this->TemporaryDirectoryButton->SetLabelText(
+    ks_("Module Settings|TemporaryDirectory"));
+  this->TemporaryDirectoryButton->GetWidget()->TrimPathFromFileNameOff();
+  this->TemporaryDirectoryButton->GetWidget()
+    ->SetCommand(this, "TemporaryDirectoryCallback");
+  this->TemporaryDirectoryButton->GetWidget()
+    ->GetLoadSaveDialog()->ChooseDirectoryOn();
+  this->TemporaryDirectoryButton->GetWidget()
+    ->GetLoadSaveDialog()->SaveDialogOff();
+  this->TemporaryDirectoryButton->GetWidget()
+    ->GetLoadSaveDialog()->SetTitle("Select a directory for temporary files");
+  this->TemporaryDirectoryButton->SetBalloonHelpString(
+    k_("Temporary directory for intermediate files."));
+
+  tk_cmd << "pack " << this->TemporaryDirectoryButton->GetWidgetName()
+         << "  -side top -anchor w -expand no" << endl;
+  
+
 
   // --------------------------------------------------------------
   // Pack 
@@ -124,6 +162,19 @@ void vtkSlicerApplicationSettingsInterface::ModulePathCallback(char *path)
 }
 
 
+void vtkSlicerApplicationSettingsInterface::TemporaryDirectoryCallback()
+{
+  vtkSlicerApplication *app
+    = vtkSlicerApplication::SafeDownCast(this->GetApplication());
+
+  if (app)
+    {
+    // Store the setting in the application object
+    app->SetTemporaryDirectory(this->TemporaryDirectoryButton->GetWidget()->GetLoadSaveDialog()->GetFileName());
+    }
+}
+
+
 //----------------------------------------------------------------------------
 void vtkSlicerApplicationSettingsInterface::Update()
 {
@@ -137,6 +188,13 @@ void vtkSlicerApplicationSettingsInterface::Update()
     if (this->ModulePathEntry)
       {
       this->ModulePathEntry->GetWidget()->SetValue(app->GetModulePath());
+      }
+    if (this->TemporaryDirectoryButton)
+      {
+      this->TemporaryDirectoryButton->GetWidget()
+        ->SetText(app->GetTemporaryDirectory());
+      this->TemporaryDirectoryButton->GetWidget()
+        ->GetLoadSaveDialog()->SetLastPath(app->GetTemporaryDirectory());
       }
     }
 }
