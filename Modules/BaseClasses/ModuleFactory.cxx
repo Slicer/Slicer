@@ -1,7 +1,7 @@
 #include "ModuleFactory.h"
 
 #include "ModuleDescriptionParser.h"
-#include "CommandLineModuleDescription.h"
+#include "ModuleDescription.h"
 
 #include "itksys/Directory.hxx"
 #include "itksys/SystemTools.hxx"
@@ -198,8 +198,8 @@ ModuleFactory
               //std::cout << "\t" << filename << " is a plugin." << std::endl;
               
               // Construct and configure the module object
-              CommandLineModuleDescription module;
-              module.SetCommandString( filename );
+              ModuleDescription module;
+              module.SetTarget( commandName );
 
               // Parse the xml to build the description of the module
               // and the parameters
