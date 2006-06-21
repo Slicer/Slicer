@@ -1,4 +1,4 @@
-/*=auto=========================================================================
+/*==========================================================================
 
 Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
 
@@ -6,11 +6,11 @@ See Doc/copyright/copyright.txt
 or http://www.slicer.org/copyright/copyright.txt for details.
 
 Program:   3D Slicer
-Module:    $RCSfile: vtkGradientAnisotropicDiffusionFilterGUI.cxx,v $
-Date:      $Date: 2006/03/17 15:10:10 $
-Version:   $Revision: 1.2 $
+Module:    $HeadURL$
+Date:      $Date$
+Version:   $Revision$
 
-=========================================================================auto=*/
+==========================================================================*/
 
 #include <string>
 #include <iostream>
@@ -874,7 +874,10 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
         vtkSlicerNodeSelectorWidget *tparameter
           = vtkSlicerNodeSelectorWidget::New();
         
-        tparameter->SetNodeClass("vtkMRMLScalarVolumeNode", NULL, NULL, NULL);
+        tparameter->SetNodeClass("vtkMRMLScalarVolumeNode",
+                                 NULL,
+                                 NULL,
+                                 (title + " Volume").c_str());
         tparameter->SetParent( parameterGroupFrame->GetFrame() );
         tparameter->Create();
         tparameter->SetMRMLScene(this->Logic->GetMRMLScene());
@@ -890,7 +893,10 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
         vtkSlicerNodeSelectorWidget *tparameter
           = vtkSlicerNodeSelectorWidget::New();
         
-        tparameter->SetNodeClass("vtkMRMLScalarVolumeNode", NULL, NULL, NULL);
+        tparameter->SetNodeClass("vtkMRMLScalarVolumeNode",
+                                 NULL,
+                                 NULL,
+                                 (title + " Volume").c_str());
         tparameter->SetNewNodeEnabled(1);
         // tparameter->SetNewNodeName((title+" output").c_str());
         tparameter->SetParent( parameterGroupFrame->GetFrame() );
