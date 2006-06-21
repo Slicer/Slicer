@@ -438,7 +438,10 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
             {
             sout << "\"";
             }
-          sout << pit->GetElements()[e];
+          std::string element = pit->GetElements()[e];
+          replaceSubWithSub(element, "\"", "\\\"");
+
+          sout << element;
           if (NeedsQuotes(*pit))
             {
             sout << "\"";
