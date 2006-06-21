@@ -31,6 +31,11 @@ GENERATECLP(MedianImageFilter_SOURCE MedianImageFilter.xml)
 ADD_EXECUTABLE ( MedianImageFilter ${MedianImageFilter_SOURCE})
 TARGET_LINK_LIBRARIES ( MedianImageFilter ITKIO ITKBasicFilters ITKCommon)
 
+SET ( ExecutionModelTour_SOURCE ExecutionModelTour.cxx )
+GENERATECLP(ExecutionModelTour_SOURCE ExecutionModelTour.xml)
+ADD_EXECUTABLE ( ExecutionModelTour ${ExecutionModelTour_SOURCE})
+TARGET_LINK_LIBRARIES ( ExecutionModelTour ITKIO ITKBasicFilters ITKCommon)
+
 #IF (Slicer3_BUILD_TESTING)
 #  SUBDIRS( Testing )
 #ENDIF (Slicer3_BUILD_TESTING)
