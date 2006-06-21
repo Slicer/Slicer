@@ -860,7 +860,8 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
       else if ((*pit).GetTag() == "string"
                || (*pit).GetTag() == "integer-vector"
                || (*pit).GetTag() == "float-vector"
-               || (*pit).GetTag() == "double-vector")
+               || (*pit).GetTag() == "double-vector"
+               || (*pit).GetTag() == "string-vector")
         {
         vtkKWEntryWithLabel *tparameter = vtkKWEntryWithLabel::New();
         tparameter->SetParent( parameterGroupFrame->GetFrame() );
