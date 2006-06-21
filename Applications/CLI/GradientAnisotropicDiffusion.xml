@@ -10,7 +10,7 @@
 
   <parameters>
     <label>Anisotropic Diffusion Parameters</label>
-    <description>Parameters for the anisotripic diffusion algorithm</description>
+    <description>Parameters for the anisotropic diffusion algorithm</description>
 
     <double>
       <name>conductance</name>
@@ -30,7 +30,7 @@
       <longflag>--timeStep</longflag>
       <description>Time Step</description>
       <label>Time Step</label>
-      <default>0.1</default>
+      <default>0.0625</default>
       <constraints>
         <minimum>.001</minimum>
         <maximum>1</maximum>
