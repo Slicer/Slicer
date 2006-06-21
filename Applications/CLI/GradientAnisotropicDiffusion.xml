@@ -34,7 +34,7 @@
       <constraints>
         <minimum>.001</minimum>
         <maximum>1</maximum>
-        <step>.01</step>
+        <step>.001</step>
       </constraints>
     </double>
 
