@@ -26,6 +26,11 @@ GENERATECLP(GradientAnisotropicDiffusion_SOURCE GradientAnisotropicDiffusion.xml
 ADD_EXECUTABLE ( GradientAnisotropicDiffusion ${GradientAnisotropicDiffusion_SOURCE})
 TARGET_LINK_LIBRARIES ( GradientAnisotropicDiffusion ITKIO ITKBasicFilters ITKCommon)
 
+SET ( MedianImageFilter_SOURCE MedianImageFilter.cxx )
+GENERATECLP(MedianImageFilter_SOURCE MedianImageFilter.xml)
+ADD_EXECUTABLE ( MedianImageFilter ${MedianImageFilter_SOURCE})
+TARGET_LINK_LIBRARIES ( MedianImageFilter ITKIO ITKBasicFilters ITKCommon)
+
 #IF (Slicer3_BUILD_TESTING)
 #  SUBDIRS( Testing )
 #ENDIF (Slicer3_BUILD_TESTING)
