@@ -60,12 +60,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerComponentGUI : public vtkKWObject
     // for both setting and observing them.
     void SetMRMLScene ( vtkMRMLScene *mrml )
         { this->SetMRML ( vtkObjectPointer( &this->MRMLScene), mrml ); }
-    // Why doesn't this call SetAndObserveMRML?
     void SetAndObserveMRMLScene ( vtkMRMLScene *mrml )
         { this->SetAndObserveMRML ( vtkObjectPointer( &this->MRMLScene), mrml ); }
     virtual void SetApplicationLogic ( vtkSlicerApplicationLogic *logic )
         { this->SetLogic ( vtkObjectPointer (&this->ApplicationLogic), logic ); }
-    // Why doesn't this call SetAndObserveLogic?
     void SetAndObserveApplicationLogic ( vtkSlicerApplicationLogic *logic )
         { this->SetAndObserveLogic ( vtkObjectPointer (&this->ApplicationLogic), logic ); }
     
