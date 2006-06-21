@@ -19,8 +19,8 @@
       <label>Conductance</label>
       <default>1</default>
       <constraints>
-        <minimum>.1</minimum>
-        <maximum>1</maximum>
+        <minimum>0</minimum>
+        <maximum>10</maximum>
         <step>.01</step>
       </constraints>
     </double>
@@ -32,7 +32,7 @@
       <label>Time Step</label>
       <default>0.1</default>
       <constraints>
-        <minimum>.1</minimum>
+        <minimum>.001</minimum>
         <maximum>1</maximum>
         <step>.01</step>
       </constraints>
