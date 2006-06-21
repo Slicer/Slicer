@@ -102,11 +102,9 @@ vtkGradientAnisotropicDiffusionFilterGUI::~vtkGradientAnisotropicDiffusionFilter
     }
 
   this->SetLogic (NULL);
-  // wjp test
   if ( this->GradientAnisotropicDiffusionFilterNode ) {
       this->SetAndObserveMRML( vtkObjectPointer(&this->GradientAnisotropicDiffusionFilterNode), NULL );
   }
-  // end wjp test
   this->SetGradientAnisotropicDiffusionFilterNode (NULL); 
 }
 
