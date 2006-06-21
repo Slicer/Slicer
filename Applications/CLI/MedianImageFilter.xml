@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>filtering</category>
-  <title>Median Filter</title>
+  <category>
+  Filtering
+  </category>
+  <title>
+  Median Filter
+  </title>
   <description>
 The MedianImageFilter is commonly used as a robust approach for
 noise reduction. This filter is particularly efficient against
@@ -9,7 +13,7 @@ noise reduction. This filter is particularly efficient against
 of gray-level outliers. MedianImageFilter computes the value of each output
 pixel as the statistical median of the neighborhood of values around the
 corresponding input pixel.
-</description>
+  </description>
   <version>1.0</version>
   <documentationurl></documentationurl>
   <license></license>
