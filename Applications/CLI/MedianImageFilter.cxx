@@ -1,10 +1,10 @@
 /*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit
-  Module:    $RCSfile: MedianImageFilter.cxx,v $
+  Module:    $HeadURL$
   Language:  C++
-  Date:      $Date: 2005/08/31 13:55:21 $
-  Version:   $Revision: 1.24 $
+  Date:      $Date$
+  Version:   $Revision$
 
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
