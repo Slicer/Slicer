@@ -1,10 +1,10 @@
 /*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit
-  Module:    $RCSfile: GradientAnisotropicDiffusionImageFilter.cxx,v $
+  Module:    $HeadURL$
   Language:  C++
-  Date:      $Date: 2005/08/27 01:45:54 $
-  Version:   $Revision: 1.26 $
+  Date:      $Date$
+  Version:   $Revision$
 
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
@@ -82,8 +82,8 @@ int main( int argc, char * argv[] )
   //  Software Guide : EndLatex 
 
   // Software Guide : BeginCodeSnippet
-  typedef    short   InputPixelType;
-  typedef    short   OutputPixelType;
+  typedef    float   InputPixelType;
+  typedef    float   OutputPixelType;
 
   typedef itk::Image< InputPixelType,  3 >   InputImageType;
   typedef itk::Image< OutputPixelType, 3 >   OutputImageType;
