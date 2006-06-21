@@ -66,9 +66,7 @@
       <label>String Enumeration Parameter</label>
       <default>foo</default>
       <element>foo</element>
-      <element>bar</element>
       <element>"foobar"</element>
-      <element>fooba</element>
       <element>foofoo</element>
     </string-enumeration>
   </parameters>
