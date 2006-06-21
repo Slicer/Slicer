@@ -63,6 +63,21 @@
 #include "ModuleParameterGroup.h"
 #include "ModuleParameter.h"
 
+void
+replaceSubWithSub(std::string& s, const char *o, const char  *n)
+{
+  if (s.size())
+    {
+    std::string from(o), to(n);
+    std::string::size_type start = 0;
+    while ((start = s.find(from, start)) != std::string::npos)
+      {
+      s.replace(start, from.size(), to);
+      start += to.size();
+      }
+    }
+}
+
 /* Comma separated arguments need a temporary variable to store the
  * string
  */
@@ -71,7 +86,8 @@ bool NeedsTemp(const ModuleParameter &parameter)
   std::string type = parameter.GetType();
   return (type == "std::vector<int>" ||
           type == "std::vector<float>" ||
-          type == "std::vector<double>");
+          type == "std::vector<double>" ||
+          type == "std::vector<std::string>");
 }
 /* Some types need quotes in the initialization. */
 bool NeedsQuotes(const ModuleParameter &parameter)
@@ -80,6 +96,7 @@ bool NeedsQuotes(const ModuleParameter &parameter)
   return (type == "std::vector<int>" ||
           type == "std::vector<float>" ||
           type == "std::vector<double>" ||
+          type == "std::vector<std::string>" ||
           type == "std::string");
 }
 bool IsEnumeration(const ModuleParameter &parameter)
@@ -169,6 +186,7 @@ main(int argc, char *argv[])
   GenerateEchoArgs(sout, module);
   GeneratePost(sout, module);
   sout.close();
+
   return (EXIT_SUCCESS);
 }
 
@@ -361,9 +379,11 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
           }
         else
           {
+          std::string defaultString = pit->GetDefault();
+          replaceSubWithSub(defaultString, "\"", "\\\"");
           sout << " = "
                << "\""
-               << pit->GetDefault()
+               << defaultString
                << "\""
                << ";"
                << EOL << std::endl;
@@ -396,7 +416,9 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
             {
             sout << "\"";
             }
-          sout << pit->GetDefault();
+          std::string defaultString = pit->GetDefault();
+          replaceSubWithSub(defaultString, "\"", "\\\"");
+          sout << defaultString;
           if (NeedsQuotes(*pit))
             {
             sout << "\"";
@@ -443,8 +465,10 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
           }
         else
           {
+          std::string defaultString = pit->GetDefault();
+          replaceSubWithSub(defaultString, "\"", "\\\"");
           sout << " = "
-               << pit->GetDefault()
+               << defaultString
                << ";"
                << EOL << std::endl;
           }
@@ -504,7 +528,7 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
         sout << "    TCLAP::SwitchArg "
              << pit->GetName()
              << "Arg" << "(\""
-             << pit->GetShortFlag()
+             << pit->GetFlag()
              << "\", \"" 
              << pit->GetLongFlag()
              << "\", msg.str(), "
@@ -515,7 +539,7 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
         }
       else
         {
-        if (pit->GetShortFlag().empty() && pit->GetLongFlag().empty())
+        if (pit->GetFlag().empty() && pit->GetLongFlag().empty())
           {
           sout << "    TCLAP::UnlabeledValueArg<";
           sout << pit->GetType();
@@ -542,7 +566,7 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
           sout << "> "
                << pit->GetName()
                << "Arg" << "(\""
-               << pit->GetShortFlag()
+               << pit->GetFlag()
                << "\", \"" 
                << pit->GetLongFlag()
                << "\", msg.str(), "
@@ -569,7 +593,7 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
           sout << "> "
                << pit->GetName()
                << "Arg" << "(\""
-               << pit->GetShortFlag()
+               << pit->GetFlag()
                << "\", \"" 
                << pit->GetLongFlag()
                << "\", msg.str(), "

@@ -24,6 +24,19 @@
 /*********************
  * Utility procedures for strings
  *********************/
+
+bool
+startsWithValidVariableChar(std::string &s)
+{
+  return (s.find_first_of("_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ") == 0);
+}
+
+bool
+validVariable(std::string &s)
+{
+  return (startsWithValidVariableChar(s) && s.find_first_not_of("_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789") == std::string::npos);
+}
+
 void
 replaceSubWithSub(std::string& s, const char *o, const char  *n)
 {
@@ -33,7 +46,8 @@ replaceSubWithSub(std::string& s, const char *o, const char  *n)
     std::string::size_type start = 0;
     while ((start = s.find(from, start)) != std::string::npos)
       {
-      s.replace(start, to.size(), n);
+      s.replace(start, from.size(), to);
+      start += to.size();
       }
     }
 }
@@ -247,6 +261,22 @@ startElement(void *userData, const char *element, const char **attrs)
     parameter->SetType("std::vector<float>");
     parameter->SetStringToType("atof");
     }
+  else if (name == "string-vector")
+    {
+    if (!group || (ps->OpenTags.top() != "parameters"))
+      {
+      std::string error("ModuleDescriptionParser Error: <" + name + "> can only be used inside <parameters> but was found inside <" + ps->OpenTags.top() + ">");
+      ps->ErrorDescription = error;
+      ps->ErrorLine = XML_GetCurrentLineNumber(ps->Parser);
+      ps->Error = true;
+      ps->OpenTags.push(name);
+      return;
+      }
+    parameter = new ModuleParameter;
+    parameter->SetTag(name);
+    parameter->SetType("std::vector<std::string>");
+    parameter->SetStringToType("");
+    }
   else if (name == "double-vector")
     {
     if (!group || (ps->OpenTags.top() != "parameters"))
@@ -437,6 +467,11 @@ endElement(void *userData, const char *element)
     ps->CurrentGroup->AddParameter(*parameter);
     ps->CurrentParameter = 0;
     }
+  else if (group && parameter && (name == "string-vector"))
+    {
+    ps->CurrentGroup->AddParameter(*parameter);
+    ps->CurrentParameter = 0;
+    }
   else if (group && parameter && (name == "double-vector"))
     {
     ps->CurrentGroup->AddParameter(*parameter);
@@ -483,7 +518,7 @@ endElement(void *userData, const char *element)
       }
     else
       {
-      parameter->SetShortFlag(temp);
+      parameter->SetFlag(temp);
       }
     }
   else if (parameter && (name == "longflag"))
@@ -491,11 +526,11 @@ endElement(void *userData, const char *element)
     std::string temp = ps->LastData[ps->Depth];
     trimLeadingAndTrailing(temp);
     trimLeading(temp, "-");
-    if (temp.find_first_of("- ") != std::string::npos)
+    if (!validVariable(temp))
       {
       std::string error("ModuleDescriptionParser Error: <"
                         + std::string(name)
-                        + "> longflags cannot contain \" \" or \"-\". The flag is \""
+                        + "> can only contain letters, numbers and underscores and must start with a _ or letter. The offending name is \""
                         + temp
                         + std::string("\""));
       ps->ErrorDescription = error;
@@ -515,6 +550,20 @@ endElement(void *userData, const char *element)
     {
     std::string temp = std::string(ps->LastData[ps->Depth]);
     trimLeadingAndTrailing(temp);
+    if (!validVariable(temp))
+      {
+      std::string error("ModuleDescriptionParser Error: <"
+                        + std::string(name)
+                        + "> can only contain letters, numbers and underscores and must start with an _ or letter. The offending name is \""
+                        + temp
+                        + std::string("\""));
+      ps->ErrorDescription = error;
+      ps->ErrorLine = XML_GetCurrentLineNumber(ps->Parser);
+      ps->Error = true;
+      ps->OpenTags.pop();
+      ps->Depth--;
+      return;
+      }
     parameter->SetName(temp);
     }
   else if ((group || parameter) && (name == "label"))
@@ -672,7 +721,7 @@ ModuleDescriptionParser::Parse( const std::string& xml, ModuleDescription& descr
   XML_SetElementHandler(parser, startElement, endElement);
   XML_SetCharacterDataHandler(parser, charData);
 
-  // Get the length of the file
+  // Parse the XML
   done = true;
   int status = 0;
   if (XML_Parse(parser, xml.c_str(), xml.size(), done) == 0)

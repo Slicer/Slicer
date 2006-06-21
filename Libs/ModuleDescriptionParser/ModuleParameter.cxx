@@ -23,7 +23,6 @@ ModuleParameter::ModuleParameter(const ModuleParameter& parameter)
   this->StringToType = parameter.StringToType;
   this->Default = parameter.Default;
   this->Flag = parameter.Flag;
-  this->ShortFlag = parameter.ShortFlag;
   this->LongFlag = parameter.LongFlag;
   this->Constraints = parameter.Constraints;
   this->Minimum = parameter.Minimum;
@@ -44,7 +43,6 @@ void ModuleParameter::operator=(const ModuleParameter& parameter)
   this->StringToType = parameter.StringToType;
   this->Default = parameter.Default;
   this->Flag = parameter.Flag;
-  this->ShortFlag = parameter.ShortFlag;
   this->LongFlag = parameter.LongFlag;
   this->Constraints = parameter.Constraints;
   this->Minimum = parameter.Minimum;
@@ -82,7 +80,6 @@ std::ostream & operator<<(std::ostream &os, const ModuleParameter &parameter)
   os << "      " << "Maximum: " << parameter.GetMaximum() << std::endl;
   os << "      " << "Step: " << parameter.GetStep() << std::endl;
   os << "      " << "Flag: " << parameter.GetFlag() << std::endl;
-  os << "      " << "ShortFlag: " << parameter.GetShortFlag() << std::endl;
   os << "      " << "LongFlag: " << parameter.GetLongFlag() << std::endl;
   os << "      " << "Channel: " << parameter.GetChannel() << std::endl;
   os << "      " << "Index: " << parameter.GetIndex() << std::endl;

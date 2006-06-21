@@ -100,16 +100,6 @@ public:
     return this->LongFlag;
   }
   
-  virtual void SetShortFlag(const std::string &shortFlag)
-  {
-    this->ShortFlag = shortFlag;
-  }
-
-  virtual std::string GetShortFlag() const
-  {
-    return this->ShortFlag;
-  }
-  
   virtual void SetLabel(const std::string &label) 
   {
     this->Label = label;
@@ -233,7 +223,6 @@ private:
   std::string StringToType;
   std::string Default;
   std::string Flag;
-  std::string ShortFlag;
   std::string LongFlag;
   std::string Constraints;
   std::string Minimum;
