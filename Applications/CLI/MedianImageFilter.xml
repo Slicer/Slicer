@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>filtering</category>
+  <title>Median Filter</title>
+  <description>
+The MedianImageFilter is commonly used as a robust approach for
+noise reduction. This filter is particularly efficient against
+"salt-and-pepper" noise. In other words, it is robust to the presence
+of gray-level outliers. MedianImageFilter computes the value of each output
+pixel as the statistical median of the neighborhood of values around the
+corresponding input pixel.
+</description>
+  <version>1.0</version>
+  <documentationurl></documentationurl>
+  <license></license>
+  <contributor>Bill Lorensen</contributor>
+
+  <parameters>
+    <label>Median Filter Parameters</label>
+    <description>Parameters for the median filter</description>
+
+    <integer-vector>
+      <name>neighborhood</name>
+      <longflag>--neighborhood</longflag>
+      <description>The size of the neighborhood in each dimension</description>
+      <label>Neighborhood Size</label>
+      <default>1,1,1</default>
+    </integer-vector>
+
+  </parameters>
+
+  <parameters>
+    <label>IO</label>
+    <description>Input/output parameters</description>
+    <image>
+      <name>inputVolume</name>
+      <label>Input Volume</label>
+      <channel>input</channel>
+      <index>0</index>
+      <description>Input volume to be filtered</description>
+    </image>
+    <image>
+      <name>outputVolume</name>
+      <label>Output Volume</label>
+      <channel>output</channel>
+      <index>1</index>
+      <description>Output filtered</description>
+    </image>
+  </parameters>
+
+</executable>
