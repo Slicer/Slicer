@@ -29,6 +29,7 @@ Version:   $Revision: 1.2 $
 #include "itksys/SystemTools.hxx"
 
 #include <algorithm>
+#include <set>
 
 struct DigitsToCharacters
 {
@@ -108,7 +109,7 @@ void vtkCommandLineModuleLogic::Apply()
   MRMLIDToFileNameMap mrmlIDToFileName;
 
   // vector of files to delete
-  std::vector<std::string> filesToDelete;
+  std::set<std::string> filesToDelete;
   
   // iterate over each parameter group
   std::vector<ModuleParameterGroup>::const_iterator pgbeginit
@@ -202,7 +203,7 @@ void vtkCommandLineModuleLogic::Apply()
           commandLineAsString.push_back( image->GetFileArchetype() );
           image->Delete();
 
-          filesToDelete.push_back(fname);
+          filesToDelete.insert(fname);
           }
         else if ((*iit).second.GetChannel() == "output")
           {
@@ -232,7 +233,7 @@ void vtkCommandLineModuleLogic::Apply()
           mrmlIDToFileName[(*iit).second.GetDefault()] = fname;
           commandLineAsString.push_back( fname );
 
-          filesToDelete.push_back(fname);
+          filesToDelete.insert(fname);
           }
         }
       }
@@ -352,7 +353,7 @@ void vtkCommandLineModuleLogic::Apply()
   delete [] command;
 
   bool removed;
-  std::vector<std::string>::iterator fit;
+  std::set<std::string>::iterator fit;
   for (fit = filesToDelete.begin(); fit != filesToDelete.end(); ++fit)
     {
     removed = itksys::SystemTools::RemoveFile((*fit).c_str());
