@@ -405,6 +405,7 @@ startElement(void *userData, const char *element, const char **attrs)
       {
       std::string warning("ModuleDescriptionParser Warning: <" + name + "> is an unknown parameter tag");
       std::cout << warning << " at line " << XML_GetCurrentLineNumber(ps->Parser) << std::endl;
+      std::cout << "ModuleDescriptionParser Warning: <title> " << ps->CurrentDescription.GetTitle() << std::endl;
       ps->OpenTags.push(name);
       return;
       }
