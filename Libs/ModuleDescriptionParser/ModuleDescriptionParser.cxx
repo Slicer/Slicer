@@ -398,6 +398,17 @@ startElement(void *userData, const char *element, const char **attrs)
     parameter->SetTag(name);
     parameter->SetType("std::string");
     }
+  else
+    {
+    // Warn if an unknown parameter type is found
+    if (ps->Depth == 2 && name != "label" && name != "description")
+      {
+      std::string warning("ModuleDescriptionParser Warning: <" + name + "> is an unknown parameter tag");
+      std::cout << warning << " at line " << XML_GetCurrentLineNumber(ps->Parser) << std::endl;
+      ps->OpenTags.push(name);
+      return;
+      }
+    }
   ps->CurrentParameter = parameter;
   ps->CurrentGroup = group;
   ps->OpenTags.push(name);
