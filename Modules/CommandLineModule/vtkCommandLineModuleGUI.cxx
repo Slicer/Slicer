@@ -513,10 +513,13 @@ void vtkCommandLineModuleGUI::UpdateGUI ()
             }
           else if (ns)
             {
-            if (value == "None")
+            if (value == "")
               {
-              // Don't know how to return the widget to the default selection
-              ns->SetSelected(0);
+              // No value, use the default "None"-node. THis will not
+              // work if the selector is configured to select something
+              // other than a MRMLScalarVolumeNode
+              ns->SetSelected(this->Logic->GetMRMLScene()
+                              ->GetNodeByID("None"));
               }
             else
               {

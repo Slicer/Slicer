@@ -26,6 +26,7 @@ Version:   $Revision: 1.2 $
 #include "vtkMRMLVolumeArchetypeStorageNode.h"
 
 #include "itksys/Process.h"
+#include "itksys/SystemTools.hxx"
 
 #include <algorithm>
 
@@ -105,6 +106,9 @@ void vtkCommandLineModuleLogic::Apply()
   // map to keep track of MRML Ids and filenames
   typedef std::map<std::string, std::string> MRMLIDToFileNameMap;
   MRMLIDToFileNameMap mrmlIDToFileName;
+
+  // vector of files to delete
+  std::vector<std::string> filesToDelete;
   
   // iterate over each parameter group
   std::vector<ModuleParameterGroup>::const_iterator pgbeginit
@@ -168,6 +172,16 @@ void vtkCommandLineModuleLogic::Apply()
         // Need temporary files
         if ((*iit).second.GetChannel() == "input")
           {
+          // Check to make sure a node was selected
+          if (!this->MRMLScene
+              ->GetNodeByID((*iit).second.GetDefault().c_str())
+              || (*iit).second.GetDefault() == "None")
+            {
+            vtkErrorMacro("No input volume assigned to \""
+                          << (*iit).second.GetLabel().c_str() << "\"");
+            return;
+            }
+          
           // Need to write out the data to a temporary file and push
           // the name of this file on the command line
           vtkMRMLVolumeArchetypeStorageNode *image
@@ -179,7 +193,6 @@ void vtkCommandLineModuleLogic::Apply()
           std::transform(name.begin(), name.end(),
                          name.begin(), DigitsToCharacters());
           
-
           std::string fname = this->TemporaryDirectory + "/"
             + name + ".nrrd";
           
@@ -188,10 +201,23 @@ void vtkCommandLineModuleLogic::Apply()
 
           commandLineAsString.push_back( image->GetFileArchetype() );
           image->Delete();
+
+          filesToDelete.push_back(fname);
           }
         else if ((*iit).second.GetChannel() == "output")
           {
-          // Need to build a filename, then we will the data back in
+          // Check to make sure a node was selected
+          if (!this->MRMLScene
+              ->GetNodeByID((*iit).second.GetDefault().c_str())
+              || (*iit).second.GetDefault() == "None")
+            {
+            vtkErrorMacro("No output volume assigned to \""
+                          << (*iit).second.GetLabel().c_str() << "\"");
+            return;
+            }
+
+          // Need to build a filename and push it on the command line.
+          // we'll read the data back in later
 
           // To avoid confusing the Archetype readers, convert any
           // numbers in the filename to characters [0-9]->[A-J]
@@ -205,6 +231,8 @@ void vtkCommandLineModuleLogic::Apply()
 
           mrmlIDToFileName[(*iit).second.GetDefault()] = fname;
           commandLineAsString.push_back( fname );
+
+          filesToDelete.push_back(fname);
           }
         }
       }
@@ -322,5 +350,15 @@ void vtkCommandLineModuleLogic::Apply()
   //
   //
   delete [] command;
-  
+
+  bool removed;
+  std::vector<std::string>::iterator fit;
+  for (fit = filesToDelete.begin(); fit != filesToDelete.end(); ++fit)
+    {
+    removed = itksys::SystemTools::RemoveFile((*fit).c_str());
+    if (!removed)
+      {
+      std::cout << "Unable to delete temporary file " << *fit << std::endl;
+      }
+    }
 }
