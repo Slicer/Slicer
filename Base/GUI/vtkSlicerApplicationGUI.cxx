@@ -100,7 +100,7 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
     this->EditorToolboxIconButton = vtkKWPushButton::New ( );
     this->ColorIconButton = vtkKWPushButton::New ( );
     this->FiducialsIconButton = vtkKWPushButton::New ( );
-    this->AlignIconButton = vtkKWPushButton::New ( );
+    this->TransformIconButton = vtkKWPushButton::New ( );
     this->SaveSceneIconButton = vtkKWPushButton::New ( );
     this->LoadSceneIconButton = vtkKWPushButton::New ( );
     this->ConventionalViewIconButton = vtkKWPushButton::New ( );
@@ -179,8 +179,6 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
 vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
 {
 
-    this->RemoveMRMLNodeObservers ( );
-    this->RemoveLogicObservers ( );
 
     if ( this->SlicerLogoIcons ) {
         this->SlicerLogoIcons->Delete ( );
@@ -245,7 +243,6 @@ vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
         this->MainSlicerWin->Delete ( );
         this->MainSlicerWin = NULL;
     }
-
 }
 
 
@@ -344,17 +341,6 @@ void vtkSlicerApplicationGUI::RemoveGUIObservers ( )
 }
 
 
-//---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::RemoveMRMLNodeObservers ( ) {
-    // Fill in
-}
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::RemoveLogicObservers ( ) {
-    // Fill in
-}
-
 
 
 
@@ -404,10 +390,10 @@ void vtkSlicerApplicationGUI::ProcessGUIEvents ( vtkObject *caller,
         if ( m != NULL ) { m->GetUIPanel()->Raise(); }
         this->ModulesMenuButton->SetValue ( "Models" );
     }
-    else if (pushb == this->AlignIconButton && event == vtkKWPushButton::InvokedEvent ) {
-        //vtkSlicerModuleGUI *m = vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Alignments");
+    else if (pushb == this->TransformIconButton && event == vtkKWPushButton::InvokedEvent ) {
+        //vtkSlicerModuleGUI *m = vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Transformments");
         //if ( m != NULL ) { m->GetUIPanel()->Raise(); }
-        this->ModulesMenuButton->SetValue ( "Align" );
+        this->ModulesMenuButton->SetValue ( "Transform" );
     }
     else if (menu == this->GetMainSlicerWin()->GetFileMenu() && event == vtkKWMenu::MenuItemInvokedEvent)
     {
@@ -641,9 +627,9 @@ void vtkSlicerApplicationGUI::DeleteToolbarWidgets ( )
         this->EditorToolboxIconButton->Delete ( );
         this->EditorToolboxIconButton = NULL;
     }
-    if ( this->AlignIconButton ) {
-        this->AlignIconButton->Delete ( );
-        this->AlignIconButton = NULL;
+    if ( this->TransformIconButton ) {
+        this->TransformIconButton->Delete ( );
+        this->TransformIconButton = NULL;
     }
     if ( this->ColorIconButton ) {
         this->ColorIconButton->Delete ( );
@@ -905,6 +891,12 @@ void vtkSlicerApplicationGUI::BuildMainViewer ( )
                 app->GetSlicerTheme()->GetSlicerColors()->ViewerBlue );
             this->MainViewer->GetRenderer()->GetActiveCamera()->ParallelProjectionOff();
 
+            // set up antialiasing
+            this->MainViewer->GetRenderWindow()->LineSmoothingOn();
+            this->MainViewer->GetRenderWindow()->PolygonSmoothingOn ( );
+            this->MainViewer->GetRenderWindow()->PointSmoothingOn();
+            // this->MainViewer->SetMultiSamples ( 4 );
+            
             // put in a plane interactor to test
             vtkCubeSource *cubeSource = vtkCubeSource::New();
             vtkPolyDataMapper *cubeMapper = vtkPolyDataMapper::New ();
@@ -948,18 +940,21 @@ void vtkSlicerApplicationGUI::BuildToolBar()
         vtkKWToolbar *mtb = this->GetModulesToolbar ( );
         mtb->SetParent ( tbs->GetToolbarsFrame ( ) );
         mtb->Create();
+        mtb->SetReliefToGroove ( );
         mtb->SetWidgetsPadX ( 3 );
         mtb->SetWidgetsPadY ( 2 );
 
         vtkKWToolbar *ltb = this->GetLoadSaveToolbar ( );
         ltb->SetParent ( tbs->GetToolbarsFrame ( ) );
         ltb->Create();
+        ltb->SetReliefToGroove ( );
         ltb->SetWidgetsPadX ( 3 );
         ltb->SetWidgetsPadY ( 2 );
 
         vtkKWToolbar *vtb = this->GetViewToolbar ( );
         vtb->SetParent ( tbs->GetToolbarsFrame ( ) );
         vtb->Create();
+        vtb->SetReliefToGroove ( );
         vtb->SetWidgetsPadX ( 3 );
         vtb->SetWidgetsPadY ( 2 );
 
@@ -969,105 +964,171 @@ void vtkSlicerApplicationGUI::BuildToolBar()
         tbs->AddToolbar ( this->GetLoadSaveToolbar() );
 
         //--- create icons and the labels that display them and add to toolbar
+
         // home icon
         this->HomeIconButton->SetParent ( mtb->GetFrame ( ));
         this->HomeIconButton->Create ( );
+        this->HomeIconButton->SetReliefToFlat ( );
+        this->HomeIconButton->SetBorderWidth ( 0 );
+        this->HomeIconButton->SetOverReliefToNone ( );
         this->HomeIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetHomeIcon( ) );
         this->HomeIconButton->SetBalloonHelpString ( "Home" );
         mtb->AddWidget ( this->HomeIconButton );
+
         // data module icon
         this->DataIconButton->SetParent ( mtb->GetFrame ( ));
         this->DataIconButton->Create ( );
+        this->DataIconButton->SetReliefToFlat ( );
+        this->DataIconButton->SetBorderWidth ( 0 );
+        this->DataIconButton->SetOverReliefToNone ( );
         this->DataIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetDataIcon ( ) );
         this->DataIconButton->SetBalloonHelpString ( "Data");
         mtb->AddWidget ( this->DataIconButton );
+
         // volume module icon
         this->VolumeIconButton->SetParent ( mtb->GetFrame ( ));
         this->VolumeIconButton->Create ( );
+        this->VolumeIconButton->SetReliefToFlat ( );
+        this->VolumeIconButton->SetBorderWidth ( 0 );
+        this->VolumeIconButton->SetOverReliefToNone ( );
         this->VolumeIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetVolumeIcon ( ));
         this->VolumeIconButton->SetBalloonHelpString ( "Volumes");
         mtb->AddWidget ( this->VolumeIconButton );
+
         // models module icon
         this->ModelIconButton->SetParent (mtb->GetFrame ( ) );
         this->ModelIconButton->Create ( );
+        this->ModelIconButton->SetReliefToFlat ( );
+        this->ModelIconButton->SetBorderWidth ( 0 );
+        this->ModelIconButton->SetOverReliefToNone ( );
         this->ModelIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetModelIcon ( ) );
         this->ModelIconButton->SetBalloonHelpString ( "Models");
         mtb->AddWidget ( this->ModelIconButton );
+
+        // transforms module icon
+        this->TransformIconButton->SetParent ( mtb->GetFrame ( ) );
+        this->TransformIconButton->Create ( );
+        this->TransformIconButton->SetReliefToFlat ( );
+        this->TransformIconButton->SetBorderWidth ( 0 );
+        this->TransformIconButton->SetOverReliefToNone ( );
+        this->TransformIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetTransformIcon ( ) );
+        this->TransformIconButton->SetBalloonHelpString ( "Transforms");
+        mtb->AddWidget ( this->TransformIconButton );
+
         // fiducial utility icon
         this->FiducialsIconButton->SetParent ( mtb->GetFrame ( ) );
         this->FiducialsIconButton->Create ( );
+        this->FiducialsIconButton->SetReliefToFlat ( );
+        this->FiducialsIconButton->SetBorderWidth ( 0 );
+        this->FiducialsIconButton->SetOverReliefToNone ( );
         this->FiducialsIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetFiducialsIcon ( ) );
         this->FiducialsIconButton->SetBalloonHelpString ( "Fiducials");
         mtb->AddWidget ( this->FiducialsIconButton );
+
         // editor module icon
         this->EditorToolboxIconButton->SetParent ( mtb->GetFrame ( ) );
         this->EditorToolboxIconButton->Create ( );
+        this->EditorToolboxIconButton->SetReliefToFlat ( );
+        this->EditorToolboxIconButton->SetBorderWidth ( 0 );
+        this->EditorToolboxIconButton->SetOverReliefToNone ( );
         this->EditorToolboxIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetEditorToolboxIcon ( ) );
         this->EditorToolboxIconButton->SetBalloonHelpString ( "Editor Toolbox");        
         mtb->AddWidget ( this->EditorToolboxIconButton );
         // editor module icon
         this->EditorIconButton->SetParent ( mtb->GetFrame ( ) );
         this->EditorIconButton->Create ( );
+        this->EditorIconButton->SetReliefToFlat ( );
+        this->EditorIconButton->SetBorderWidth ( 0 );
+        this->EditorIconButton->SetOverReliefToNone ( );
         this->EditorIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetEditorIcon ( ) );
         this->EditorIconButton->SetBalloonHelpString ( "Editor");        
         mtb->AddWidget ( this->EditorIconButton );
-        // alignments module icon
-        this->AlignIconButton->SetParent ( mtb->GetFrame ( ) );
-        this->AlignIconButton->Create ( );
-        this->AlignIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetAlignIcon ( ) );
-        this->AlignIconButton->SetBalloonHelpString ( "Alignments");
-        mtb->AddWidget ( this->AlignIconButton );
+
         // color utility icon
         this->ColorIconButton->SetParent ( mtb->GetFrame ( ) );
         this->ColorIconButton->Create ( );
+        this->ColorIconButton->SetReliefToFlat ( );
+        this->ColorIconButton->SetBorderWidth ( 0 );
+        this->ColorIconButton->SetOverReliefToNone ( );
         this->ColorIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetColorIcon ( ) );
         this->ColorIconButton->SetBalloonHelpString ( "Colors");
         mtb->AddWidget ( this->ColorIconButton );
+
         // save scene icon
         this->SaveSceneIconButton->SetParent ( ltb->GetFrame ( ));
         this->SaveSceneIconButton->Create ( );
+        this->SaveSceneIconButton->SetReliefToFlat ( );
+        this->SaveSceneIconButton->SetBorderWidth ( 0 );
+        this->SaveSceneIconButton->SetOverReliefToNone ( );
         this->SaveSceneIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetSaveSceneIcon( ) );
         this->SaveSceneIconButton->SetBalloonHelpString ( "Save a MRML scene to a file.");
         ltb->AddWidget ( this->SaveSceneIconButton );
+
         // load scene icon
         this->LoadSceneIconButton->SetParent ( ltb->GetFrame ( ) );
         this->LoadSceneIconButton->Create();
+        this->LoadSceneIconButton->SetReliefToFlat ( );
+        this->LoadSceneIconButton->SetBorderWidth ( 0 );
+        this->LoadSceneIconButton->SetOverReliefToNone ( );
         this->LoadSceneIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetLoadSceneIcon( ) );
         this->LoadSceneIconButton->SetBalloonHelpString ( "Load a MRML scene.");
         ltb->AddWidget ( this->LoadSceneIconButton );
+
         // conventional view icon
         this->ConventionalViewIconButton->SetParent (vtb->GetFrame ( ) );
         this->ConventionalViewIconButton->Create ( );
+        this->ConventionalViewIconButton->SetReliefToFlat ( );
+        this->ConventionalViewIconButton->SetBorderWidth ( 0 );
+        this->ConventionalViewIconButton->SetOverReliefToNone ( );
         this->ConventionalViewIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetConventionalViewIcon ( ) );        
         this->ConventionalViewIconButton->SetBalloonHelpString ("Display the 3D viewer over 3 slice windows");
         vtb->AddWidget ( this->ConventionalViewIconButton );
         // 3Dview-only icon
         this->OneUp3DViewIconButton->SetParent ( vtb->GetFrame ( ) );
         this->OneUp3DViewIconButton->Create ( );
+        this->OneUp3DViewIconButton->SetReliefToFlat ( );
+        this->OneUp3DViewIconButton->SetBorderWidth ( 0 );
+        this->OneUp3DViewIconButton->SetOverReliefToNone ( );
         this->OneUp3DViewIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetOneUp3DViewIcon ( ) );
         this->OneUp3DViewIconButton->SetBalloonHelpString ( "Display the 3D viewer without any slice windows" );
         vtb->AddWidget (this->OneUp3DViewIconButton );
+
         // Slice view-only icon
         this->OneUpSliceViewIconButton->SetParent ( vtb->GetFrame ( ) );
         this->OneUpSliceViewIconButton->Create ( );
+        this->OneUpSliceViewIconButton->SetReliefToFlat ( );
+        this->OneUpSliceViewIconButton->SetBorderWidth ( 0 );
+        this->OneUpSliceViewIconButton->SetOverReliefToNone ( );
         this->OneUpSliceViewIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetOneUpSliceViewIcon ( ) );
         this->OneUpSliceViewIconButton->SetBalloonHelpString ( "Display one slice window with no 3D viewer" );
         vtb->AddWidget (this->OneUpSliceViewIconButton );
+
         // 4 equal windows icon
         this->FourUpViewIconButton->SetParent ( vtb->GetFrame ( ) );
         this->FourUpViewIconButton->Create ( );
+        this->FourUpViewIconButton->SetReliefToFlat ( );
+        this->FourUpViewIconButton->SetBorderWidth ( 0 );
+        this->FourUpViewIconButton->SetOverReliefToNone ( );
         this->FourUpViewIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetFourUpViewIcon ( ) );
         this->FourUpViewIconButton->SetBalloonHelpString ( "Display the 3D viewer and 3 slice windows in a matrix" );
         vtb->AddWidget ( this->FourUpViewIconButton );
+
         // tabbed view icon
         this->TabbedViewIconButton->SetParent ( vtb->GetFrame ( ) );
         this->TabbedViewIconButton->Create ( );
+        this->TabbedViewIconButton->SetReliefToFlat ( );
+        this->TabbedViewIconButton->SetBorderWidth ( 0 );
+        this->TabbedViewIconButton->SetOverReliefToNone ( );
         this->TabbedViewIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetTabbedViewIcon ( ) );
         this->TabbedViewIconButton->SetBalloonHelpString ( "Display a collection of scenes in a notebook" );
         vtb->AddWidget ( this->TabbedViewIconButton );
+
         // lightbox view icon
         this->LightBoxViewIconButton->SetParent ( vtb->GetFrame ( ));
         this->LightBoxViewIconButton->Create ( );
+        this->LightBoxViewIconButton->SetReliefToFlat ( );
+        this->LightBoxViewIconButton->SetBorderWidth ( 0 );
+        this->LightBoxViewIconButton->SetOverReliefToNone ( );
         this->LightBoxViewIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetLightBoxViewIcon( ) );
         this->LightBoxViewIconButton->SetBalloonHelpString ( "Display a slice-matrix and no 3D view" );
         vtb->AddWidget ( this->LightBoxViewIconButton );

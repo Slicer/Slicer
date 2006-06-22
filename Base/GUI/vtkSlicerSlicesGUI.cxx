@@ -36,8 +36,6 @@ vtkSlicerSlicesGUI::~vtkSlicerSlicesGUI ( )
 
     vtkSlicerSliceGUI *s, *nexts;
 
-    this->RemoveMRMLNodeObservers ( );
-    this->RemoveLogicObservers ( );
     
     // Remove observers, delete individual SliceGUIs and their collection
     if ( this->SliceGUICollection ) {
@@ -170,17 +168,6 @@ void vtkSlicerSlicesGUI::RemoveGUIObservers ( )
                 }
         }
     }
-
-//---------------------------------------------------------------------------
-void vtkSlicerSlicesGUI::RemoveMRMLNodeObservers ( ) {
-    // Fill in
-}
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerSlicesGUI::RemoveLogicObservers ( ) {
-    // Fill in
-}
 
 
 

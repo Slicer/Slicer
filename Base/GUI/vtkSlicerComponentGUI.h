@@ -71,10 +71,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerComponentGUI : public vtkKWObject
     // Add/Remove observers on a GUI.
     virtual void AddGUIObservers ( ) { };
     virtual void RemoveGUIObservers ( ) { };
-    // Description:
-    // Remove all observers on MRML scene, nodes and logic
-    virtual void RemoveMRMLNodeObservers ( ) { };
-    virtual void RemoveLogicObservers ( ) { };
     
     // Description:
     // Get/Set the name of the GUI, used to find and raise a GUI.

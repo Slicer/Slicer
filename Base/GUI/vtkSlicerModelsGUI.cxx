@@ -28,8 +28,6 @@ vtkSlicerModelsGUI::vtkSlicerModelsGUI ( )
 vtkSlicerModelsGUI::~vtkSlicerModelsGUI ( )
 {
 
-    this->RemoveMRMLNodeObservers ( );
-    this->RemoveLogicObservers ( );
     
     if (this->LoadModelButton ) {
         this->LoadModelButton->Delete ( );
@@ -51,16 +49,6 @@ void vtkSlicerModelsGUI::PrintSelf ( ostream& os, vtkIndent indent )
     // print widgets?
 }
 
-//---------------------------------------------------------------------------
-void vtkSlicerModelsGUI::RemoveMRMLNodeObservers ( ) {
-    // Fill in
-}
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerModelsGUI::RemoveLogicObservers ( ) {
-    // Fill in
-}
 
 
 //---------------------------------------------------------------------------

@@ -36,8 +36,6 @@ vtkSlicerVolumesGUI::vtkSlicerVolumesGUI ( )
 vtkSlicerVolumesGUI::~vtkSlicerVolumesGUI ( )
 {
 
-    this->RemoveMRMLNodeObservers ( );
-    this->RemoveLogicObservers ( );
     
   if (this->SelectedVolumeID)
     {
@@ -89,16 +87,6 @@ void vtkSlicerVolumesGUI::AddGUIObservers ( )
     this->LoadVolumeButton->AddObserver ( vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
 }
 
-//---------------------------------------------------------------------------
-void vtkSlicerVolumesGUI::RemoveMRMLNodeObservers ( ) {
-    // Fill in
-}
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerVolumesGUI::RemoveLogicObservers ( ) {
-    // Fill in
-}
 
 
 //---------------------------------------------------------------------------

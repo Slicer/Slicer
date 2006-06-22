@@ -82,7 +82,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkGetObjectMacro (ModelIconButton, vtkKWPushButton );
     vtkGetObjectMacro (EditorIconButton, vtkKWPushButton );
     vtkGetObjectMacro (EditorToolboxIconButton, vtkKWPushButton );
-    vtkGetObjectMacro (AlignIconButton, vtkKWPushButton );
+    vtkGetObjectMacro (TransformIconButton, vtkKWPushButton );
     vtkGetObjectMacro (ColorIconButton, vtkKWPushButton );
     vtkGetObjectMacro (FiducialsIconButton, vtkKWPushButton);
     vtkGetObjectMacro (SaveSceneIconButton, vtkKWPushButton );
@@ -184,8 +184,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // Add/Remove observers on widgets in Slicer's main GUI
     virtual void AddGUIObservers ( );
     virtual void RemoveGUIObservers ( );
-    virtual void RemoveMRMLNodeObservers ( );
-    virtual void RemoveLogicObservers ( );
 
     // Description:
     // Class's mediator methods for processing events invoked by
@@ -333,7 +331,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkKWPushButton *ModelIconButton;
     vtkKWPushButton *EditorIconButton;
     vtkKWPushButton *EditorToolboxIconButton;
-    vtkKWPushButton *AlignIconButton;    
+    vtkKWPushButton *TransformIconButton;    
     vtkKWPushButton *ColorIconButton;
     vtkKWPushButton *FiducialsIconButton;
     vtkKWPushButton *SaveSceneIconButton;

@@ -62,10 +62,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerVolumesGUI : public vtkSlicerModuleGUI
     virtual void AddGUIObservers ( );
     virtual void RemoveGUIObservers ( );
 
-    // Description:
-    // Remove all observers on MRML scene, nodes and logic
-    virtual void RemoveMRMLNodeObservers ( );
-    virtual void RemoveLogicObservers ( );
 
     // Description:
     // Class's mediator methods for processing events invoked by

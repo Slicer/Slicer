@@ -90,8 +90,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesGUI : public vtkSlicerModuleGUI
     // Add/Remove Observers on UIPanel widgets and SliceGUIs.
     virtual void AddGUIObservers ( );
     virtual void RemoveGUIObservers ( );
-    virtual void RemoveMRMLNodeObservers ( );
-    virtual void RemoveLogicObservers ( );
     
     // Description:
     // Processes all events raised by the logic
