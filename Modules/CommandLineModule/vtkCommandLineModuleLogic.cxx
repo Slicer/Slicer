@@ -184,13 +184,29 @@ void vtkCommandLineModuleLogic::Apply()
 
     for (pit = pbeginit; pit != pendit; ++pit)
       {
+      std::string prefix;
+      std::string flag;
+      bool hasFlag = false;
+      
       if ((*pit).GetLongFlag() != "")
+        {
+        prefix = "--";
+        flag = (*pit).GetLongFlag();
+        hasFlag = true;
+        }
+      else if ((*pit).GetFlag() != "")
+        {
+        prefix = "-";
+        flag = (*pit).GetFlag();
+        hasFlag = true;
+        }
+      
+      if (hasFlag)
         {
         if ((*pit).GetTag() != "boolean" && (*pit).GetTag() != "image")
           {
           // simple parameter, write flag and value
-          commandLineAsString.push_back(std::string("--")
-                                        + (*pit).GetLongFlag());
+          commandLineAsString.push_back(prefix + flag);
           commandLineAsString.push_back((*pit).GetDefault());
           }
         if ((*pit).GetTag() == "boolean")
@@ -198,8 +214,7 @@ void vtkCommandLineModuleLogic::Apply()
           // booleans only have a flag (no value)
           if ((*pit).GetDefault() == "true")
             {
-            commandLineAsString.push_back(std::string("--")
-                                          + (*pit).GetLongFlag());
+            commandLineAsString.push_back(prefix + flag);
             }
           }
         if ((*pit).GetTag() == "image")
@@ -210,54 +225,14 @@ void vtkCommandLineModuleLogic::Apply()
           if ((*pit).GetChannel() == "input" && id2fn != nodesToWrite.end())
             {
             // Only put out the flag if the node is in out list
-            commandLineAsString.push_back(std::string("--"
-                                                      + (*pit).GetLongFlag()));
+            commandLineAsString.push_back(prefix + flag);
             commandLineAsString.push_back( (*id2fn).second );
             }
 
           id2fn  = nodesToReload.find( (*pit).GetDefault() );
           if ((*pit).GetChannel() == "output" && id2fn != nodesToReload.end())
             {
-            commandLineAsString.push_back(std::string("--"
-                                                      + (*pit).GetLongFlag()));
-            commandLineAsString.push_back( (*id2fn).second );
-            }
-          }
-        }
-      else if ((*pit).GetFlag() != "")
-        {
-        if ((*pit).GetTag() != "boolean" && (*pit).GetTag() != "image")
-          {
-          // simple parameter, write flag and value
-          commandLineAsString.push_back(std::string("-")+(*pit).GetFlag());
-          commandLineAsString.push_back((*pit).GetDefault());
-          }
-        if ((*pit).GetTag() == "boolean")
-          {
-          // booleans only have a flag (no value)
-          if ((*pit).GetDefault() == "true")
-            {
-            commandLineAsString.push_back(std::string("-")
-                                          + (*pit).GetFlag());
-            }
-          }
-        if ((*pit).GetTag() == "image")
-          {
-          MRMLIDToFileNameMap::const_iterator id2fn;
-          
-          id2fn  = nodesToWrite.find( (*pit).GetDefault() );
-          if ((*pit).GetChannel() == "input"  &&  id2fn != nodesToWrite.end())
-            {
-            // Only put out the flag if the node is in our list
-            commandLineAsString.push_back(std::string("-" + (*pit).GetFlag()));
-            commandLineAsString.push_back( (*id2fn).second );
-            }
-
-          id2fn  = nodesToReload.find( (*pit).GetDefault() );
-          if ((*pit).GetChannel() == "output" && id2fn != nodesToReload.end())
-            {
-            // Only put out the flag if the node is in our list
-            commandLineAsString.push_back(std::string("-" + (*pit).GetFlag()));
+            commandLineAsString.push_back(prefix + flag);
             commandLineAsString.push_back( (*id2fn).second );
             }
           }
