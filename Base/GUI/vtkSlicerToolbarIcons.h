@@ -5,7 +5,7 @@
 #include "vtkKWResourceUtilities.h"
 #include "vtkKWIcon.h"
 #include "vtkSlicerIcons.h"
-#include "./Resources/vtkSlicerToolbarAlign_ImageData.h"
+#include "./Resources/vtkSlicerToolbarTransform_ImageData.h"
 #include "./Resources/vtkSlicerToolbarColor_ImageData.h"
 #include "./Resources/vtkSlicerToolbarConventionalView_ImageData.h"
 #include "./Resources/vtkSlicerToolbarData_ImageData.h"
@@ -38,7 +38,7 @@ class vtkSlicerToolbarIcons : public vtkSlicerIcons
     vtkGetObjectMacro (ModelIcon, vtkKWIcon);
     vtkGetObjectMacro (EditorIcon, vtkKWIcon);
     vtkGetObjectMacro (EditorToolboxIcon, vtkKWIcon);
-    vtkGetObjectMacro (AlignIcon, vtkKWIcon);
+    vtkGetObjectMacro (TransformIcon, vtkKWIcon);
     vtkGetObjectMacro (ColorIcon, vtkKWIcon);
     vtkGetObjectMacro (FiducialsIcon, vtkKWIcon);
     vtkGetObjectMacro (SaveSceneIcon, vtkKWIcon);
@@ -62,7 +62,7 @@ class vtkSlicerToolbarIcons : public vtkSlicerIcons
     vtkKWIcon *ModelIcon;
     vtkKWIcon *EditorIcon;
     vtkKWIcon *EditorToolboxIcon;
-    vtkKWIcon *AlignIcon;
+    vtkKWIcon *TransformIcon;
     vtkKWIcon *ColorIcon;
     vtkKWIcon *FiducialsIcon;
     vtkKWIcon *SaveSceneIcon;

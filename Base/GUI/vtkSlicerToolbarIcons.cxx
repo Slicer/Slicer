@@ -16,7 +16,7 @@ vtkSlicerToolbarIcons::vtkSlicerToolbarIcons ( )
     this->ModelIcon = vtkKWIcon::New();
     this->EditorIcon = vtkKWIcon::New();
     this->EditorToolboxIcon = vtkKWIcon::New();
-    this->AlignIcon = vtkKWIcon::New();
+    this->TransformIcon = vtkKWIcon::New();
     this->ColorIcon = vtkKWIcon::New();
     this->FiducialsIcon = vtkKWIcon::New();
     this->SaveSceneIcon = vtkKWIcon::New();
@@ -60,9 +60,9 @@ vtkSlicerToolbarIcons::~vtkSlicerToolbarIcons ( )
         this->EditorToolboxIcon->Delete ( );
         this->EditorToolboxIcon = NULL;
     }
-    if ( this->AlignIcon ) {
-        this->AlignIcon->Delete ( );
-        this->AlignIcon = NULL;
+    if ( this->TransformIcon ) {
+        this->TransformIcon->Delete ( );
+        this->TransformIcon = NULL;
     }
     if ( this->ColorIcon ) {
         this->ColorIcon->Delete ( );
@@ -142,10 +142,10 @@ void vtkSlicerToolbarIcons::AssignImageDataToIcons ( )
                                        image_ToolbarEditorToolbox_height,
                                        image_ToolbarEditorToolbox_pixel_size, 0, 0 );
     
-    this->AlignIcon->SetImage( image_ToolbarAlign,
-                               image_ToolbarAlign_width,
-                               image_ToolbarAlign_height,
-                               image_ToolbarAlign_pixel_size, 0, 0 );
+    this->TransformIcon->SetImage( image_ToolbarTransform,
+                               image_ToolbarTransform_width,
+                               image_ToolbarTransform_height,
+                               image_ToolbarTransform_pixel_size, 0, 0 );
     
     this->ColorIcon->SetImage( image_ToolbarColor,
                                image_ToolbarColor_width,
@@ -212,7 +212,7 @@ void vtkSlicerToolbarIcons::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "ModelIcon" << this->GetModelIcon ( ) << "\n";
     os << indent << "EditorIcon" << this->GetEditorIcon ( ) << "\n";
     os << indent << "EditorToolboxIcon" << this->GetEditorToolboxIcon ( ) << "\n";
-    os << indent << "AlignIcon" << this->GetAlignIcon ( ) << "\n";    
+    os << indent << "TransformIcon" << this->GetTransformIcon ( ) << "\n";    
     os << indent << "ColorIcon" << this->GetColorIcon ( ) << "\n";
     os << indent << "FiducialsIcon" << this->GetFiducialsIcon ( ) << "\n";
     os << indent << "SaveSceneIcon" << this->GetSaveSceneIcon ( ) << "\n";
