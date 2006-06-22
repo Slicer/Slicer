@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>filtering</category>
+  <category>Filtering.Image Enhancment</category>
   <title>Anisotropic Diffusion</title>
-  <description>Runs anisotropic diffusion on a volume</description>
+  <description>Runs gradient anisotropic diffusion on a volume</description>
   <version>1.0</version>
   <documentationurl></documentationurl>
   <license></license>

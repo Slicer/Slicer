@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
   <category>Application</category>
-  <title>Slicer3</title>
+  <title>Slicer3 Example</title>
   <description>The ultimate 3D Segmentation, Registration and Visualization System</description>
   <version>1.0</version>
   <documentationurl></documentationurl>
