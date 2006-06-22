@@ -69,8 +69,6 @@ vtkGradientAnisotropicDiffusionFilterGUI::vtkGradientAnisotropicDiffusionFilterG
 //----------------------------------------------------------------------------
 vtkGradientAnisotropicDiffusionFilterGUI::~vtkGradientAnisotropicDiffusionFilterGUI()
 {
-    this->RemoveMRMLNodeObservers ( );
-    this->RemoveLogicObservers ( );
     
     if ( this->ConductanceScale ) {
         this->ConductanceScale->Delete();
@@ -158,15 +156,6 @@ void vtkGradientAnisotropicDiffusionFilterGUI::RemoveGUIObservers ( )
   this->ApplyButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
 }
 
-//---------------------------------------------------------------------------
-void vtkGradientAnisotropicDiffusionFilterGUI::RemoveMRMLNodeObservers ( ) {
-    // Fill in.
-}
-
-//---------------------------------------------------------------------------
-void vtkGradientAnisotropicDiffusionFilterGUI::RemoveLogicObservers ( ) {
-    // Fill in
-}
 
 
 //---------------------------------------------------------------------------
