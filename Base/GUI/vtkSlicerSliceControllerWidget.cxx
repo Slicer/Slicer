@@ -4,6 +4,7 @@
 
 #include "vtkSlicerSliceControllerWidget.h"
 #include "vtkSlicerApplication.h"
+#include "vtkSlicerVisibilityIcons.h"
 
 #include "vtkKWWidget.h"
 #include "vtkKWScaleWithEntry.h"
@@ -12,8 +13,8 @@
 #include "vtkKWRenderWidget.h"
 #include "vtkKWMenu.h"
 #include "vtkKWMenuButton.h"
-
-
+#include "vtkKWFrame.h"
+#include "vtkKWPushButton.h"
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro ( vtkSlicerSliceControllerWidget );
@@ -30,7 +31,8 @@ vtkSlicerSliceControllerWidget::vtkSlicerSliceControllerWidget ( ) {
   this->ForegroundSelector = NULL;
   this->BackgroundSelector = NULL;
   this->LabelSelector = NULL;
-
+  this->VisibilityToggle = NULL;
+  this->VisibilityIcons = NULL;
   this->SliceNode = NULL;
   this->SliceCompositeNode = NULL;
 }
@@ -59,25 +61,48 @@ vtkSlicerSliceControllerWidget::~vtkSlicerSliceControllerWidget ( ){
         this->LabelSelector->Delete ( );
         this->LabelSelector = NULL;
     }
+    if ( this->VisibilityToggle ) {
+        this->VisibilityToggle->Delete  ( );
+        this->VisibilityToggle = NULL;
+    }
+    if ( this->VisibilityIcons ) {
+        this->VisibilityIcons->Delete  ( );
+        this->VisibilityIcons = NULL;
+    }
 
     this->SetSliceNode ( NULL );
     this->SetSliceCompositeNode ( NULL );
 }
 
 
+
+
+//----------------------------------------------------------------------------
+void vtkSlicerSliceControllerWidget::AddWidgetObservers ( )
+{
+    this->OrientationMenu->GetWidget()->GetWidget()->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand);
+    this->ForegroundSelector->GetWidget()->GetWidget()->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand);
+    this->BackgroundSelector->GetWidget()->GetWidget()->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand);
+    this->LabelSelector->GetWidget()->GetWidget()->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand);
+    this->OffsetScale->GetWidget()->AddObserver( vtkKWScale::ScaleValueChangingEvent, this->GUICallbackCommand );
+    this->OffsetScale->GetWidget()->AddObserver( vtkKWScale::ScaleValueChangedEvent, this->GUICallbackCommand );
+    this->OffsetScale->GetWidget()->AddObserver( vtkKWScale::ScaleValueStartChangingEvent, this->GUICallbackCommand );
+
+}
+  
+
 //---------------------------------------------------------------------------
-void vtkSlicerSliceControllerWidget::RemoveGUIObservers ( ) {
+void vtkSlicerSliceControllerWidget::RemoveWidgetObservers ( ) {
 
     this->OrientationMenu->GetWidget()->GetWidget()->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand);
-    this->ForegroundSelector->RemoveObservers ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, this->GUICallbackCommand);
-    this->BackgroundSelector->RemoveObservers ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, this->GUICallbackCommand);
-    this->LabelSelector->RemoveObservers ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, this->GUICallbackCommand);
+    this->ForegroundSelector->GetWidget()->GetWidget()->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand);
+    this->BackgroundSelector->GetWidget()->GetWidget()->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand);
+        this->LabelSelector->GetWidget()->GetWidget()->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand);
     this->OffsetScale->GetWidget()->RemoveObservers ( vtkKWScale::ScaleValueChangingEvent, this->GUICallbackCommand );
     this->OffsetScale->GetWidget()->RemoveObservers ( vtkKWScale::ScaleValueChangedEvent, this->GUICallbackCommand );
     this->OffsetScale->GetWidget()->RemoveObservers ( vtkKWScale::ScaleValueStartChangingEvent, this->GUICallbackCommand );
         
 }
-
 
 
 
@@ -106,7 +131,6 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     this->OrientationMenu->SetLabelWidth(3);
     this->OrientationMenu->Create ( );
     this->OrientationMenu->SetLabelText ( "Or: ");
-    this->OrientationMenu->GetWidget()->GetWidget()->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand);
     vtkKWMenuButton *mb = this->OrientationMenu->GetWidget()->GetWidget();
     mb->SetWidth ( 8 );
     mb->GetMenu()->AddRadioButton ( "Axial" );
@@ -125,7 +149,6 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     this->ForegroundSelector->SetNodeClass ("vtkMRMLVolumeNode", NULL, NULL, NULL);
     this->ForegroundSelector->SetMRMLScene( this->MRMLScene );
     this->ForegroundSelector->GetWidget()->GetWidget()->SetMaximumLabelWidth(10);
-    this->ForegroundSelector->AddObserver ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, this->GUICallbackCommand);
     this->BackgroundSelector = vtkSlicerNodeSelectorWidget::New();
     this->BackgroundSelector->SetParent ( this );
     this->BackgroundSelector->Create ( );
@@ -134,7 +157,6 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     this->BackgroundSelector->SetNodeClass ("vtkMRMLVolumeNode", NULL, NULL, NULL);
     this->BackgroundSelector->SetMRMLScene( this->MRMLScene );
     this->BackgroundSelector->GetWidget()->GetWidget()->SetMaximumLabelWidth(10);
-    this->BackgroundSelector->AddObserver ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, this->GUICallbackCommand);
     this->LabelSelector = vtkSlicerNodeSelectorWidget::New();
     this->LabelSelector->SetParent ( this );
     this->LabelSelector->Create ( );
@@ -143,27 +165,45 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     this->LabelSelector->SetNodeClass ("vtkMRMLVolumeNode", NULL, NULL, NULL);
     this->LabelSelector->SetMRMLScene( this->MRMLScene );
     this->LabelSelector->GetWidget()->GetWidget()->SetMaximumLabelWidth(10);
-    this->LabelSelector->AddObserver ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, this->GUICallbackCommand);
-        
+
+    vtkKWFrame *f = vtkKWFrame::New ( );
+    f->SetParent ( this );
+    f->Create ( );
+    //
+    // Create a button to toggle the slice visibility in the main viewer and icons for it
+    //
+    this->VisibilityIcons = vtkSlicerVisibilityIcons::New ( );
+    this->VisibilityToggle = vtkKWPushButton::New ( );
+    this->VisibilityToggle->SetParent ( f );
+    this->VisibilityToggle->Create ( );
+    this->VisibilityToggle->SetReliefToFlat ( );
+    this->VisibilityToggle->SetOverReliefToNone ( );
+    this->VisibilityToggle->SetBorderWidth ( 0 );
+    this->VisibilityToggle->SetImageToIcon ( this->VisibilityIcons->GetInvisibleIcon ( ) );        
+    this->VisibilityToggle->SetBalloonHelpString ( "Toggles slice visibility in the MainViewer." );
+
     //
     // Create a scale to control the slice number displayed
     //
     this->OffsetScale = vtkKWScaleWithEntry::New();
-    this->OffsetScale->SetParent ( this );
+    this->OffsetScale->SetParent ( f );
     this->OffsetScale->Create();
     this->OffsetScale->RangeVisibilityOff ( );
     this->OffsetScale->SetEntryWidth(8);
     this->OffsetScale->SetLabelPositionToLeft();
-    this->OffsetScale->GetWidget()->AddObserver( vtkKWScale::ScaleValueChangingEvent, this->GUICallbackCommand );
-    this->OffsetScale->GetWidget()->AddObserver( vtkKWScale::ScaleValueChangedEvent, this->GUICallbackCommand );
-    this->OffsetScale->GetWidget()->AddObserver( vtkKWScale::ScaleValueStartChangingEvent, this->GUICallbackCommand );
             
     this->Script("grid %s %s -sticky ew", 
             this->OrientationMenu->GetWidgetName(), this->ForegroundSelector->GetWidgetName());
     this->Script("grid %s %s -sticky ew", 
             this->LabelSelector->GetWidgetName(), this->BackgroundSelector->GetWidgetName());
-    this->Script("grid %s -sticky ew -columnspan 2", this->OffsetScale->GetWidgetName());
+    this->Script ( "grid %s -sticky ew -columnspan 2", f->GetWidgetName ( ) );
+    this->Script ("pack %s -side left -expand n -padx 1", this->VisibilityToggle->GetWidgetName ( ) );
+    this->Script("pack %s -side left -fill x -expand y", this->OffsetScale->GetWidgetName());
 
+    // put observers on widgets
+    this->AddWidgetObservers();
+    
+    f->Delete ( );
 }
 
 //----------------------------------------------------------------------------
@@ -246,6 +286,8 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
     }
 
 }
+
+
 
 //----------------------------------------------------------------------------
 void vtkSlicerSliceControllerWidget::ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData ) 

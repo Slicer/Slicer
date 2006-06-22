@@ -6,9 +6,11 @@
 #include "vtkKWScaleWithEntry.h"
 #include "vtkKWEntryWithLabel.h"
 #include "vtkKWMenuButtonWithSpinButtonsWithLabel.h"
+#include "vtkKWPushButton.h"
 
 #include "vtkSlicerWidget.h"
 #include "vtkSlicerNodeSelectorWidget.h"
+#include "vtkSlicerVisibilityIcons.h"
 
 #include "vtkMRMLSliceNode.h"
 #include "vtkMRMLSliceCompositeNode.h"
@@ -28,8 +30,11 @@ public:
   vtkGetObjectMacro ( ForegroundSelector, vtkSlicerNodeSelectorWidget );
   vtkGetObjectMacro ( BackgroundSelector, vtkSlicerNodeSelectorWidget );
   vtkGetObjectMacro ( LabelSelector, vtkSlicerNodeSelectorWidget );
+  vtkGetObjectMacro ( VisibilityToggle, vtkKWPushButton );
+  vtkGetObjectMacro ( VisibilityIcons, vtkSlicerVisibilityIcons );
 
-  void RemoveGUIObservers ( );
+  void RemoveWidgetObservers ( );
+  void AddWidgetObservers ( );
   
   // Description:
   // Get/Set the Nodes
@@ -44,13 +49,12 @@ public:
     this->SetAndObserveMRML( vtkObjectPointer(&this->SliceNode), snode );
     }
 
-
   // Description:
   // TODO: Use this flag to determine how to display
   // the SliceControllerWidget.
   vtkGetMacro ( ControllerStyle, int );
   vtkSetMacro ( ControllerStyle, int );
-
+  
   // Description:
   // respond to events from subwidgets of this widget
   void ProcessWidgetEvents ( vtkObject *caller, unsigned long event, void *callData );
@@ -58,6 +62,10 @@ public:
   // Description:
   // respond to changes in the mrml scene
   void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
+
+  // Description:
+  // respond to changes in the slice logic
+  void ProcessLogicEvents ( vtkObject *caller, unsigned long event, void *callData );
 
 protected:
   vtkSlicerSliceControllerWidget ( );
@@ -78,7 +86,9 @@ protected:
   vtkSlicerNodeSelectorWidget *ForegroundSelector;
   vtkSlicerNodeSelectorWidget *BackgroundSelector;
   vtkSlicerNodeSelectorWidget *LabelSelector;
-
+  vtkKWPushButton *VisibilityToggle;
+  vtkSlicerVisibilityIcons *VisibilityIcons;
+  
   //
   // Nodes
   //

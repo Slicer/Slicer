@@ -23,6 +23,7 @@
 #include "vtkKWMenu.h"
 #include "vtkKWMenuButton.h"
 #include "vtkKWMenuButtonWithLabel.h"
+#include "vtkKWPushButton.h"
 
 
 //---------------------------------------------------------------------------
@@ -44,9 +45,6 @@ vtkSlicerSliceGUI::vtkSlicerSliceGUI (  ) {
 //---------------------------------------------------------------------------
 vtkSlicerSliceGUI::~vtkSlicerSliceGUI ( ) {
 
-    // Remove observers and delete.
-    this->RemoveMRMLNodeObservers ( );
-    this->RemoveLogicObservers ( );
     
     if ( this->SliceViewer )
         {
@@ -55,7 +53,7 @@ vtkSlicerSliceGUI::~vtkSlicerSliceGUI ( ) {
         }
     if ( this->SliceController )
         {
-            this->SliceController->RemoveGUIObservers ( );
+            this->SliceController->RemoveWidgetObservers ( );
             this->SliceController->Delete ( );
             this->SliceController = NULL;
         }
@@ -95,7 +93,10 @@ void vtkSlicerSliceGUI::AddGUIObservers ( ) {
     if ( c != NULL )
       {
       c->AddObserver ( vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
+      c->GetVisibilityToggle()->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
       }
+    
+
 }
 
 
@@ -107,22 +108,10 @@ void vtkSlicerSliceGUI::RemoveGUIObservers ( ) {
     if ( c != NULL )
       {
       c->RemoveObservers ( vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
+      c->GetVisibilityToggle()->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
       }
 }
 
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerSliceGUI::RemoveMRMLNodeObservers ( ) {
-    // Fill in
-}
-
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerSliceGUI::RemoveLogicObservers ( ) {
-    // Fill in
-}
 
 
 
@@ -139,6 +128,18 @@ void vtkSlicerSliceGUI::ProcessGUIEvents ( vtkObject *caller,
     vtkSlicerSliceControllerWidget *c = this->GetSliceController( );
 
     if (mrml != NULL ) {
+        // Toggle the SliceNode's visibility.
+        if ( this->GetSliceController()->GetVisibilityToggle() == vtkKWPushButton::SafeDownCast ( caller ) &&
+             event == vtkKWPushButton::InvokedEvent )
+            {
+                this->MRMLScene->SaveStateForUndo ( this->SliceNode );
+                if ( this->GetLogic()->GetSliceVisible() > 0 ) {
+                    this->GetLogic()->SetSliceVisible ( 0 );
+                } else {
+                    this->GetLogic()->SetSliceVisible ( 1 );
+                }
+            }
+
         //---
         // Scale Widget
         if ( s == c->GetOffsetScale ( ) ) {
@@ -214,6 +215,15 @@ void vtkSlicerSliceGUI::ProcessLogicEvents ( vtkObject *caller,
           rw->ResetCamera ( );
           rw->Render();
 
+          //
+          // Update the VisibilityButton in the SliceController to match the logic state
+          //
+          if ( sliceLogic->GetSliceVisible() > 0 ) {
+              this->GetSliceController()->GetVisibilityToggle()->SetImageToIcon ( this->GetSliceController()->GetVisibilityIcons()->GetVisibleIcon ( ) );        
+          } else {
+              this->GetSliceController()->GetVisibilityToggle()->SetImageToIcon ( this->GetSliceController()->GetVisibilityIcons()->GetInvisibleIcon ( ) );        
+          }
+
           // TODO: set up corner annotations
           //vtkCornerAnnotation *ca = rw->GetCornerAnnotation ( );
           //ca->SetImageActor (iv->GetImageActor ( ) );
@@ -226,7 +236,9 @@ void vtkSlicerSliceGUI::ProcessLogicEvents ( vtkObject *caller,
 void vtkSlicerSliceGUI::ProcessMRMLEvents ( vtkObject *caller,
                                                unsigned long event, void *callData )
 {
-    // Fill in
+
+
+
 }
 
 
