@@ -45,6 +45,11 @@ public:
     { this->TemporaryDirectory = tempdir; }
   const char *GetTemporaryDirectory() const
     { return this->TemporaryDirectory.c_str(); }
+
+protected:
+  //BTX
+  std::string ConstructTemporaryFileName(const std::string& name) const;
+  //ETX
   
 private:
   vtkCommandLineModuleLogic();

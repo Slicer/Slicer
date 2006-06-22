@@ -76,6 +76,23 @@ void vtkCommandLineModuleLogic::PrintSelf(ostream& os, vtkIndent indent)
   
 }
 
+//----------------------------------------------------------------------------
+std::string
+vtkCommandLineModuleLogic
+::ConstructTemporaryFileName(const std::string& name) const
+{
+  std::string fname = name;
+  
+  // To avoid confusing the Archetype readers, convert any
+  // numbers in the filename to characters [0-9]->[A-J]
+  std::transform(fname.begin(), fname.end(),
+                 fname.begin(), DigitsToCharacters());
+  
+  fname = this->TemporaryDirectory + "/" + fname + ".nrrd";
+
+  return fname;
+}
+
 void vtkCommandLineModuleLogic::Apply()
 {
   // check if MRML node is present 
@@ -85,33 +102,16 @@ void vtkCommandLineModuleLogic::Apply()
     return;
     }
 
-//   // copy RASToIJK matrix, and other attributes from input to output
-//   std::string name (outVolume->GetName());
-//   std::string id (outVolume->GetID());
-
-//   outVolume->Copy(inVolume);
-
-//   outVolume->SetName(name.c_str());
-//   outVolume->SetID(id.c_str());
-
-
   
-  // build the command line
-  //
-  //
-  std::vector<std::string> commandLineAsString;
-
-  commandLineAsString.push_back( this->CommandLineModuleNode->GetModuleDescription().GetTarget() );
-
-
   // map to keep track of MRML Ids and filenames
   typedef std::map<std::string, std::string> MRMLIDToFileNameMap;
-  MRMLIDToFileNameMap mrmlIDToFileName;
+  MRMLIDToFileNameMap nodesToReload;
+  MRMLIDToFileNameMap nodesToWrite;
 
   // vector of files to delete
   std::set<std::string> filesToDelete;
   
-  // iterate over each parameter group
+  // iterators for parameter groups
   std::vector<ModuleParameterGroup>::const_iterator pgbeginit
     = this->CommandLineModuleNode->GetModuleDescription()
     .GetParameterGroups().begin();
@@ -119,7 +119,11 @@ void vtkCommandLineModuleLogic::Apply()
     = this->CommandLineModuleNode->GetModuleDescription()
     .GetParameterGroups().end();
   std::vector<ModuleParameterGroup>::const_iterator pgit;
+
   
+  // Make a pass over the parameters and estabilsh which parameters
+  // have images that need to be written before execution or loaded
+  // upon completion. 
   for (pgit = pgbeginit; pgit != pgendit; ++pgit)
     {
     // iterate over each parameter in this group
@@ -129,30 +133,151 @@ void vtkCommandLineModuleLogic::Apply()
       = (*pgit).GetParameters().end();
     std::vector<ModuleParameter>::const_iterator pit;
 
-    // make a pass for any parameters that have flags
+    for (pit = pbeginit; pit != pendit; ++pit)
+      {
+      if ((*pit).GetTag() == "image")
+        {
+        // only keep track of images associated with real nodes
+        if (!this->MRMLScene->GetNodeByID((*pit).GetDefault().c_str())
+            || (*pit).GetDefault() == "None")
+          {
+          continue;
+          }
+
+        std::string fname
+          = this->ConstructTemporaryFileName((*pit).GetDefault());
+
+        filesToDelete.insert(fname);
+
+        if ((*pit).GetChannel() == "input")
+          {
+          nodesToWrite[(*pit).GetDefault()] = fname;
+          }
+        else if ((*pit).GetChannel() == "output")
+          {
+          nodesToReload[(*pit).GetDefault()] = fname;
+          }
+        }
+      }
+    }
+  
+
+  // build the command line
+  //
+  //
+  std::vector<std::string> commandLineAsString;
+
+  // Command to execute
+  commandLineAsString.push_back( this->CommandLineModuleNode
+                                 ->GetModuleDescription().GetTarget() );
+
+
+  // Run over all the parameters with flags
+  for (pgit = pgbeginit; pgit != pgendit; ++pgit)
+    {
+    // iterate over each parameter in this group
+    std::vector<ModuleParameter>::const_iterator pbeginit
+      = (*pgit).GetParameters().begin();
+    std::vector<ModuleParameter>::const_iterator pendit
+      = (*pgit).GetParameters().end();
+    std::vector<ModuleParameter>::const_iterator pit;
+
     for (pit = pbeginit; pit != pendit; ++pit)
       {
       if ((*pit).GetLongFlag() != "")
         {
-        commandLineAsString.push_back(std::string("--")+(*pit).GetLongFlag());
-        if ((*pit).GetTag() != "boolean")
+        if ((*pit).GetTag() != "boolean" && (*pit).GetTag() != "image")
           {
+          // simple parameter, write flag and value
+          commandLineAsString.push_back(std::string("--")
+                                        + (*pit).GetLongFlag());
           commandLineAsString.push_back((*pit).GetDefault());
+          }
+        if ((*pit).GetTag() == "boolean")
+          {
+          // booleans only have a flag (no value)
+          if ((*pit).GetDefault() == "true")
+            {
+            commandLineAsString.push_back(std::string("--")
+                                          + (*pit).GetLongFlag());
+            }
+          }
+        if ((*pit).GetTag() == "image")
+          {
+          MRMLIDToFileNameMap::const_iterator id2fn;
+          
+          id2fn  = nodesToWrite.find( (*pit).GetDefault() );
+          if ((*pit).GetChannel() == "input" && id2fn != nodesToWrite.end())
+            {
+            // Only put out the flag if the node is in out list
+            commandLineAsString.push_back(std::string("--"
+                                                      + (*pit).GetLongFlag()));
+            commandLineAsString.push_back( (*id2fn).second );
+            }
+
+          id2fn  = nodesToReload.find( (*pit).GetDefault() );
+          if ((*pit).GetChannel() == "output" && id2fn != nodesToReload.end())
+            {
+            commandLineAsString.push_back(std::string("--"
+                                                      + (*pit).GetLongFlag()));
+            commandLineAsString.push_back( (*id2fn).second );
+            }
           }
         }
       else if ((*pit).GetFlag() != "")
         {
-        commandLineAsString.push_back(std::string("-")+(*pit).GetFlag());
-        if ((*pit).GetTag() != "boolean")
+        if ((*pit).GetTag() != "boolean" && (*pit).GetTag() != "image")
           {
+          // simple parameter, write flag and value
+          commandLineAsString.push_back(std::string("-")+(*pit).GetFlag());
           commandLineAsString.push_back((*pit).GetDefault());
+          }
+        if ((*pit).GetTag() == "boolean")
+          {
+          // booleans only have a flag (no value)
+          if ((*pit).GetDefault() == "true")
+            {
+            commandLineAsString.push_back(std::string("-")
+                                          + (*pit).GetFlag());
+            }
+          }
+        if ((*pit).GetTag() == "image")
+          {
+          MRMLIDToFileNameMap::const_iterator id2fn;
+          
+          id2fn  = nodesToWrite.find( (*pit).GetDefault() );
+          if ((*pit).GetChannel() == "input"  &&  id2fn != nodesToWrite.end())
+            {
+            // Only put out the flag if the node is in our list
+            commandLineAsString.push_back(std::string("-" + (*pit).GetFlag()));
+            commandLineAsString.push_back( (*id2fn).second );
+            }
+
+          id2fn  = nodesToReload.find( (*pit).GetDefault() );
+          if ((*pit).GetChannel() == "output" && id2fn != nodesToReload.end())
+            {
+            // Only put out the flag if the node is in our list
+            commandLineAsString.push_back(std::string("-" + (*pit).GetFlag()));
+            commandLineAsString.push_back( (*id2fn).second );
+            }
           }
         }
       }
+    }
 
-    // now tack on any parameters that are based on indices
-    // (still need to do images associated with flags)
-    std::map<int, ModuleParameter> indexmap;
+  // now tack on any parameters that are based on indices
+  //
+  // build a list of indices to traverse in order
+  std::map<int, ModuleParameter> indexmap;
+  for (pgit = pgbeginit; pgit != pgendit; ++pgit)
+    {
+    // iterate over each parameter in this group
+    std::vector<ModuleParameter>::const_iterator pbeginit
+      = (*pgit).GetParameters().begin();
+    std::vector<ModuleParameter>::const_iterator pendit
+      = (*pgit).GetParameters().end();
+    std::vector<ModuleParameter>::const_iterator pit;
+  
     for (pit = pbeginit; pit != pendit; ++pit)
       {
       if ((*pit).GetIndex() != "")
@@ -160,80 +285,48 @@ void vtkCommandLineModuleLogic::Apply()
         indexmap[atoi((*pit).GetIndex().c_str())] = (*pit);
         }
       }
+    }
 
-    std::map<int, ModuleParameter>::const_iterator iit;
-    for (iit = indexmap.begin(); iit != indexmap.end(); ++iit)
+  // walk the index parameters in order
+  std::map<int, ModuleParameter>::const_iterator iit;
+  for (iit = indexmap.begin(); iit != indexmap.end(); ++iit)
+    {
+    if ((*iit).second.GetTag() != "image")
       {
-      if ((*iit).second.GetTag() != "image")
+      commandLineAsString.push_back((*iit).second.GetDefault());
+      }
+    else
+      {
+      MRMLIDToFileNameMap::const_iterator id2fn;
+
+      if ((*iit).second.GetChannel() == "input")
         {
-        commandLineAsString.push_back((*iit).second.GetDefault());
-        }
-      else
-        {
-        // Need temporary files
-        if ((*iit).second.GetChannel() == "input")
+        // Check to make sure the index parameter is set
+        id2fn  = nodesToWrite.find( (*iit).second.GetDefault() );
+        if (id2fn != nodesToWrite.end())
           {
-          // Check to make sure a node was selected
-          if (!this->MRMLScene
-              ->GetNodeByID((*iit).second.GetDefault().c_str())
-              || (*iit).second.GetDefault() == "None")
-            {
-            vtkErrorMacro("No input volume assigned to \""
-                          << (*iit).second.GetLabel().c_str() << "\"");
-            return;
-            }
-          
-          // Need to write out the data to a temporary file and push
-          // the name of this file on the command line
-          vtkMRMLVolumeArchetypeStorageNode *image
-            = vtkMRMLVolumeArchetypeStorageNode::New();
-
-          // To avoid confusing the Archetype readers, convert any
-          // numbers in the filename to characters [0-9]->[A-J]
-          std::string name = (*iit).second.GetDefault();
-          std::transform(name.begin(), name.end(),
-                         name.begin(), DigitsToCharacters());
-          
-          std::string fname = this->TemporaryDirectory + "/"
-            + name + ".nrrd";
-          
-          image->SetFileArchetype( fname.c_str() );
-          image->WriteData(this->MRMLScene->GetNodeByID((*iit).second.GetDefault().c_str()));
-
-          commandLineAsString.push_back( image->GetFileArchetype() );
-          image->Delete();
-
-          filesToDelete.insert(fname);
+          commandLineAsString.push_back( (*id2fn).second );
           }
-        else if ((*iit).second.GetChannel() == "output")
+        else
           {
-          // Check to make sure a node was selected
-          if (!this->MRMLScene
-              ->GetNodeByID((*iit).second.GetDefault().c_str())
-              || (*iit).second.GetDefault() == "None")
-            {
-            vtkErrorMacro("No output volume assigned to \""
-                          << (*iit).second.GetLabel().c_str() << "\"");
-            return;
-            }
-
-          // Need to build a filename and push it on the command line.
-          // we'll read the data back in later
-
-          // To avoid confusing the Archetype readers, convert any
-          // numbers in the filename to characters [0-9]->[A-J]
-          std::string name = (*iit).second.GetDefault();
-          std::transform(name.begin(), name.end(),
-                         name.begin(), DigitsToCharacters());
-          
-
-          std::string fname = this->TemporaryDirectory + "/"
-            + name + ".nrrd";
-
-          mrmlIDToFileName[(*iit).second.GetDefault()] = fname;
-          commandLineAsString.push_back( fname );
-
-          filesToDelete.insert(fname);
+          vtkErrorMacro("No input volume assigned to \""
+                        << (*iit).second.GetLabel().c_str() << "\"");
+          return;
+          }
+        }
+      else if ((*iit).second.GetChannel() == "output")
+        {
+        // Check to make sure the index parameter is set
+        id2fn  = nodesToReload.find( (*iit).second.GetDefault() );
+        if (id2fn != nodesToReload.end())
+          {
+          commandLineAsString.push_back( (*id2fn).second );
+          }
+        else
+          {
+          vtkErrorMacro("No output volume assigned to \""
+                        << (*iit).second.GetLabel().c_str() << "\"");
+          return;
           }
         }
       }
@@ -256,7 +349,27 @@ void vtkCommandLineModuleLogic::Apply()
     std::cout << command[i] << " ";
     }
   std::cout << std::endl;
- 
+
+  
+  // write out the input volumes
+  //
+  //
+  MRMLIDToFileNameMap::const_iterator id2fn;
+
+  for (id2fn = nodesToWrite.begin();
+       id2fn != nodesToWrite.end();
+       ++id2fn)
+    {
+    vtkMRMLVolumeArchetypeStorageNode *out
+      = vtkMRMLVolumeArchetypeStorageNode::New();
+    out->SetFileArchetype( (*id2fn).second.c_str() );
+
+    out->WriteData( this->MRMLScene->GetNodeByID( (*id2fn).first.c_str() ) );
+    
+    out->Delete();
+    }
+  
+
   // run the filter
   //
   //
@@ -267,7 +380,7 @@ void vtkCommandLineModuleLogic::Apply()
   itksysProcess_SetOption(process,
                           itksysProcess_Option_Detach, 0);
   itksysProcess_SetOption(process,
-                          itksysProcess_Option_HideWindow, 0);
+                          itksysProcess_Option_HideWindow, 1);
   // itksysProcess_SetTimeout(process, 5.0); // 5 seconds
 
   // execute the command
@@ -332,10 +445,8 @@ void vtkCommandLineModuleLogic::Apply()
   // import the results
   //
   //
-  MRMLIDToFileNameMap::const_iterator id2fn;
-
-  for (id2fn = mrmlIDToFileName.begin();
-       id2fn != mrmlIDToFileName.end();
+  for (id2fn = nodesToReload.begin();
+       id2fn != nodesToReload.end();
        ++id2fn)
     {
     vtkMRMLVolumeArchetypeStorageNode *in
