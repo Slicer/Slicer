@@ -82,6 +82,11 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLogic : public vtkSlicerLogic
   void SetForegroundOpacity (double ForegroundOpacity);
 
   // Description:
+  // The visibility of the slice in the 3DViewer.
+  vtkGetMacro ( SliceVisible, int );
+  vtkSetMacro ( SliceVisible, int );
+
+  // Description:
   // The compositing filter
   // TODO: this will eventually be generalized to a per-layer compositing function
   vtkGetObjectMacro (Blend, vtkImageBlend);
@@ -115,7 +120,8 @@ protected:
   vtkSlicerSliceLayerLogic *ForegroundLayer;
   double ForegroundOpacity;
   vtkImageBlend *Blend;
-
+  int SliceVisible;
+  
 };
 
 #endif
