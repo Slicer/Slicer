@@ -51,7 +51,7 @@
       <longflag>string_vector</longflag>
       <description>A vector of strings</description>
       <label>String Vector Parameter</label>
-      <default>"foo",bar,"foobar"</default>
+      <default>foo,bar,foobar</default>
     </string-vector>
   </parameters>
 
@@ -64,20 +64,19 @@
       <longflag>enumeration</longflag>
       <description>An enumeration of strings</description>
       <label>String Enumeration Parameter</label>
-      <default>foo</default>
-      <element>foo</element>
-      <element>"foobar"</element>
-      <element>garf</element>
-      <element>foo2</element>
-      <element>foof</element>
-      <element>foofo</element>
-      <element>foofoossss</element>
+      <default>Bill</default>
+      <element>Ron</element>
+      <element>Eric</element>
+      <element>Bill</element>
+      <element>Ross</element>
+      <element>Steve</element>
+      <element>Will</element>
     </string-enumeration>
   </parameters>
 
   <parameters>
     <label>Boolean Parameters</label>
-    <description>Variatons on boolean parameters</description>
+    <description>Variations on boolean parameters</description>
     <boolean>
       <name>boolean1</name>
       <longflag>boolean1</longflag>
@@ -92,5 +91,53 @@
       <label>Boolean Default false</label>
       <default>false</default>
     </boolean>
+  </parameters>
+
+  <parameters>
+    <label>File, Directory and Image Parameters</label>
+    <description>Parameters that describe files and direcories.</description>
+    <file>
+      <longflag>file1</longflag>
+      <description>An input file</description>
+      <label>Input file</label>
+      <channel>input</channel>
+    </file>
+    <directory>
+      <longflag>directory1</longflag>
+      <description>An input directory. If no default is specified, the current directory is used,</description>
+      <label>Input directory</label>
+      <channel>input</channel>
+    </directory>
+    <image>
+      <longflag>image1</longflag>
+      <description>An input image</description>
+      <label>Input image</label>
+      <channel>input</channel>
+    </image>
+    <image>
+      <longflag>image2</longflag>
+      <description>An output image</description>
+      <label>Output image</label>
+      <channel>output</channel>
+    </image>
+  </parameters>
+
+  <parameters>
+    <label>Index Parameters</label>
+    <description>Variations on parameters that use index rather than flags.</description>
+    <image>
+      <name>arg0</name>
+      <channel>input</channel>
+      <index>0</index>
+      <description>First index argument is an image</description>
+      <label>Second index argument</label>
+    </image>
+    <image>
+      <name>arg1</name>
+      <channel>output</channel>
+      <index>1</index>
+      <description>Second index argument is an image</description>
+      <label>Second index argument</label>
+    </image>
   </parameters>
 </executable>
