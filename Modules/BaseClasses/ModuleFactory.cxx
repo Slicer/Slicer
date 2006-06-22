@@ -205,9 +205,27 @@ ModuleFactory
               // and the parameters
               ModuleDescriptionParser parser;
               parser.Parse(stdoutbuffer, module);
-            
-              // Store the module in the list
-              (*this->InternalMap)[module.GetTitle()] =  module ;
+
+              // Check to make sure the module is not already in the
+              // list
+              ModuleDescriptionMap::iterator mit
+                = this->InternalMap->find(module.GetTitle());
+
+              if (mit == this->InternalMap->end())
+                {
+                // Store the module in the list
+                (*this->InternalMap)[module.GetTitle()] =  module ;
+                }
+              else
+                {
+                std::cout << "  A module named \"" << module.GetTitle()
+                          << "\" has already been discovered." << std::endl
+                          << "    First discovered at "
+                          << (*mit).second.GetTarget() << std::endl
+                          << "    Then discovered at "
+                          << module.GetTarget() << std::endl
+                          << "    Keeping first module." << std::endl;
+                }
               }
             else
               {
