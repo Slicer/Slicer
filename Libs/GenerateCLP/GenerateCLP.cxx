@@ -551,7 +551,7 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
                << "Arg" << "(\""
                << pit->GetName()
                << "\", msg.str(), "
-               << !HasDefault(*pit)
+               << true
                << ", "
                << pit->GetName();
           sout << ", "
