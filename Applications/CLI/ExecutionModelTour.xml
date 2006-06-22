@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>Tours</category>
+  <category>Demonstration</category>
   <title>Execution Model Tour</title>
   <description>Shows one of each type of parameter.</description>
   <version>1.0</version>
@@ -67,7 +67,30 @@
       <default>foo</default>
       <element>foo</element>
       <element>"foobar"</element>
-      <element>foofoo</element>
+      <element>garf</element>
+      <element>foo2</element>
+      <element>foof</element>
+      <element>foofo</element>
+      <element>foofoossss</element>
     </string-enumeration>
+  </parameters>
+
+  <parameters>
+    <label>Boolean Parameters</label>
+    <description>Variatons on boolean parameters</description>
+    <boolean>
+      <name>boolean1</name>
+      <longflag>boolean1</longflag>
+      <description>A boolean default true</description>
+      <label>Boolean Default true</label>
+      <default>true</default>
+    </boolean>
+    <boolean>
+      <name>boolean2</name>
+      <longflag>boolean3</longflag>
+      <description>A boolean default false</description>
+      <label>Boolean Default false</label>
+      <default>false</default>
+    </boolean>
   </parameters>
 </executable>
