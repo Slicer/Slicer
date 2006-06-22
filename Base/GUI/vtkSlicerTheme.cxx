@@ -70,7 +70,7 @@ void vtkSlicerTheme::Install ( )
     
     odb->AddEntryAsInt ("vtkKWWidget", "SetBorderWidth", 2 );
     odb->AddEntryAsInt ("vtkKWWidget", "SetActiveBorderWidth", 2 );
-
+    odb->AddEntryAsDouble3 ( "vtkKWWidget", "SetTroughColor", this->SlicerColors->LightGrey );
     
     // ---
     // Individual widgets:
@@ -79,7 +79,17 @@ void vtkSlicerTheme::Install ( )
     
     // Slicer Scales
     odb->AddEntryAsDouble3 ( "vtkKWScale", "SetTroughColor", this->SlicerColors->LightGrey );
-    
+
+    // Slicer Scrollbars 
+    odb->AddEntryAsDouble3 ( "vtkKWScrollbar", "SetBackgroundColor",
+                    this->SlicerColors->White );
+    odb->AddEntryAsDouble3 ( "vtkKWScrollbar", "SetForegroundColor",
+                    this->SlicerColors->White );
+    odb->AddEntryAsDouble3 ( "vtkKWScrollbar", "SetActiveBackgroundColor",
+                    this->SlicerColors->White );
+    odb->AddEntryAsDouble3 ( "vtkKWScrollbar", "SetActiveForegroundColor",
+                    this->SlicerColors->White );
+    odb->AddEntryAsDouble3 ( "vtkKWScrollbar", "SetTroughColor", this->SlicerColors->LightGrey );
 
     // Slicer Frames
     odb->AddEntryAsDouble3 ( "vtkKWFrame", "SetBackgroundColor",
@@ -94,24 +104,13 @@ void vtkSlicerTheme::Install ( )
     odb->AddEntryAsInt ( "vtkKWFrame", "SetHighlightThickness", 0 );
     odb->AddEntry ( "vtkKWFrame", "SetRelief", "flat" );
 
-    // Slicer Frames with Scrollbars
-    odb->AddEntryAsDouble3 ( "vtkKWFrameWithScrollbar", "SetBackgroundColor",
+    // Slicer Frames inside Scrolled windows
+    odb->AddEntryAsDouble3 ( "vtkKWFrameWithScrollbar:Frame", "SetBackgroundColor",
                     this->SlicerColors->White );
-    odb->AddEntryAsInt ( "vtkKWFrameWithScrollbar", "SetBorderWidth", 0 );
-    odb->AddEntryAsDouble3 ( "vtkKWFrameWithScrollbar", "SetHighlightColor",
-                             this->SlicerColors->White );
-    odb->AddEntryAsDouble3 ( "vtkKWFrameWithScrollbar", "SetHighlightColor",
-                             this->SlicerColors->White );
-    odb->AddEntryAsDouble3 ( "vtkKWFrameWithScrollbar", "SetHighlightBackground",
-                             this->SlicerColors->White );    
-    odb->AddEntryAsInt ( "vtkKWFrameWithScrollbar", "SetHighlightThickness", 0 );
-    odb->AddEntry ( "vtkKWFrameWithScrollbar", "SetRelief", "flat" );
+    odb->AddEntryAsInt ( "vtkKWFrameWithScrollbar:Frame", "SetBorderWidth", 0 );
+    odb->AddEntryAsInt ( "vtkKWFrameWithScrollbar:Frame", "SetHighlightThickness", 0 );
+    odb->AddEntry ( "vtkKWFrameWithScrollbar:Frame", "SetRelief", "sunken" );
 
-    // Slicer Menubar
-    
-    // Slicer Labels
-
-    
     // Slicer Pushbuttons
     odb->AddEntry ( "vtkKWPushButton", "SetReliefToGroove", NULL );
     odb->AddEntry ( "vtkKWPushButton", "SetDefault", "active" );
@@ -134,16 +133,17 @@ void vtkSlicerTheme::Install ( )
     odb->AddEntryAsDouble3 ("vtkKWMenu", "SetActiveBackgroundColor",
                             this->SlicerColors->ActiveMenuBackgroundColor );
 
-    // Slicer MultiColumnLists
-    
-    
-    // Slicer Menubuttons
-    odb->AddEntry ( "vtkKWMenuButton", "SetReliefToGroove", NULL );
+    // Slicer WidgetWithLabel (scrap the groove around all)
+    odb->AddEntry ( "vtkKWWidgetWithLabel", "SetRelief", "flat" );    
 
+    // Slicer Menubuttons (keeps the groove around the menu button)
+    odb->AddEntry ( "vtkKWMenuButton", "SetReliefToGroove", NULL );
+    
+    // Slicer MultiColumnLists
+    // Slicer Menubar
+    // Slicer Labels
     // Slicer Menus
     // Slicer Entry
-    // Slicer Scales
-    // Slicer Scrollbars
     // Slicer Radiobuttons
     // Slicer Checkbox
     // Slicer Listbox
