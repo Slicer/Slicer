@@ -22,6 +22,11 @@ public:
   vtkGetObjectMacro ( Actor2D, vtkActor2D );
   vtkGetObjectMacro ( RenderWidget, vtkKWRenderWidget );
 
+  // Description:
+  // Add/Remove observers for window interactions
+  void InitializeInteractor();
+  void ShutdownInteractor();
+
 protected:
   vtkSlicerSliceViewer ( );
   ~vtkSlicerSliceViewer ( );

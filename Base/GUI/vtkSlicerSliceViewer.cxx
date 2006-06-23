@@ -89,7 +89,21 @@ void vtkSlicerSliceViewer::CreateWidget ( ) {
 
 }
 
+//---------------------------------------------------------------------------
+void vtkSlicerSliceViewer::InitializeInteractor ( ) {
 
+    vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast ( this->GetParent()->GetApplication() );
+
+
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerSliceViewer::ShutdownInteractor ( ) {
+
+    vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast ( this->GetParent()->GetApplication() );
+
+
+}
 
 //----------------------------------------------------------------------------
 void vtkSlicerSliceViewer::PrintSelf(ostream& os, vtkIndent indent)
