@@ -24,6 +24,8 @@ vtkStandardNewMacro(vtkSlicerLogic);
 vtkSlicerLogic::vtkSlicerLogic()
 {
   this->MRMLScene = NULL;
+  this->InMRMLCallbackFlag = 0;
+  this->InLogicCallbackFlag = 0;
 
   this->MRMLCallbackCommand = vtkCallbackCommand::New();
   this->MRMLCallbackCommand->SetClientData( reinterpret_cast<void *> (this) );
@@ -80,7 +82,7 @@ vtkSlicerLogic::MRMLCallback(vtkObject *__mrmlnode,
 
   vtkSlicerLogic *self = reinterpret_cast<vtkSlicerLogic *>(__clientData);
 
-  if (inMRMLCallback)
+  if (self->GetInMRMLCallbackFlag())
     {
     vtkErrorWithObjectMacro(self, "In vtkSlicerLogic *********MRMLCallback called recursively?");
     return;
@@ -88,9 +90,9 @@ vtkSlicerLogic::MRMLCallback(vtkObject *__mrmlnode,
 
   vtkDebugWithObjectMacro(self, "In vtkSlicerLogic MRMLCallback");
 
-  inMRMLCallback = 1;
+  self->SetInMRMLCallbackFlag(1);
   self->ProcessMRMLEvents();
-  inMRMLCallback = 0;
+  self->SetInMRMLCallbackFlag(0);
 }
 
 //----------------------------------------------------------------------------
@@ -106,7 +108,7 @@ vtkSlicerLogic::LogicCallback(vtkObject *__mrmlnode,
 
   vtkSlicerLogic *self = reinterpret_cast<vtkSlicerLogic *>(__clientData);
 
-  if (inLogicCallback)
+  if (self->GetInLogicCallbackFlag())
     {
     vtkErrorWithObjectMacro(self, "In vtkSlicerLogic *********LogicCallback called recursively?");
     return;
@@ -114,9 +116,9 @@ vtkSlicerLogic::LogicCallback(vtkObject *__mrmlnode,
 
   vtkDebugWithObjectMacro(self, "In vtkSlicerLogic LogicCallback");
 
-  inLogicCallback = 1;
+  self->SetInLogicCallbackFlag(1);
   self->ProcessLogicEvents();
-  inLogicCallback = 0;
+  self->SetInLogicCallbackFlag(0);
 }
 
 //----------------------------------------------------------------------------

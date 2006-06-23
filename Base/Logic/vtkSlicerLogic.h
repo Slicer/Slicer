@@ -60,6 +60,13 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerLogic : public vtkObject
   virtual void ProcessMRMLEvents() {};
   virtual void ProcessLogicEvents() {};
 
+  // Description:
+  // Flags to avoid event loops
+  vtkSetMacro(InLogicCallbackFlag, int);
+  vtkGetMacro(InLogicCallbackFlag, int);
+  vtkSetMacro(InMRMLCallbackFlag, int);
+  vtkGetMacro(InMRMLCallbackFlag, int);
+
   // Additional functionality:
     
 protected:
@@ -89,6 +96,11 @@ protected:
   // Holder for MRML and Logic callbacks
   vtkCallbackCommand *MRMLCallbackCommand;
   vtkCallbackCommand *LogicCallbackCommand;
+
+  // Description:
+  // Flag to avoid event loops
+  int InLogicCallbackFlag;
+  int InMRMLCallbackFlag;
  
 };
 
