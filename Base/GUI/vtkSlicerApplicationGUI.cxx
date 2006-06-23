@@ -1518,9 +1518,10 @@ void vtkSlicerApplicationGUI::BuildViewControlGUIPanel ( )
         // temporary thing until navzoom window is built.
         vtkKWLabel *tmpNavZoom = vtkKWLabel::New ( );
         tmpNavZoom->SetParent (f2);
+        tmpNavZoom->Create();        
         tmpNavZoom->SetWidth ( 20);
         tmpNavZoom->SetHeight (10 );
-        tmpNavZoom->Create();
+
         tmpNavZoom->SetText ( "3DNav / SliceZoom" );
         tmpNavZoom->SetBackgroundColor ( app->GetSlicerTheme()->GetSlicerColors()->ViewerBlue );
 
