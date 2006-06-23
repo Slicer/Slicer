@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>
+  Filtering
+  </category>
+  <title>
+  Otsu Threshold Segmentation
+  </title>
+  <description>
+This filter creates a binary thresholded image that separates an image
+into foreground and background components. The filter computes the
+threshold using the Otsu threshold algorthm, applies that theshold to
+the input image and runs a connected component algortihm.
+  </description>
+  <version>1.0</version>
+  <documentationurl></documentationurl>
+  <license></license>
+  <contributor>Bill Lorensen</contributor>
+
+  <parameters advanced="true">
+    <label>Otsu Parameters</label>
+    <description>Parameters for Otsu Thresholding</description>
+
+    <integer>
+      <name>insideValue</name>
+      <longflag>--insideValue</longflag>
+      <description>The value assigned to pixels that are inside the computed threshold</description>
+      <label>Inside Value</label>
+      <default>255</default>
+    </integer>
+
+    <integer>
+      <name>outsideValue</name>
+      <longflag>--outsideValue</longflag>
+      <description>The value assigned to pixels that are outside the computed threshold</description>
+      <label>Outside Value</label>
+      <default>0</default>
+    </integer>
+
+    <integer>
+      <name>numberOfBins</name>
+      <longflag>--numberOfBins</longflag>
+      <description>The number of bins in the histogram</description>
+      <label>Number of Histogram BinsOutside Value</label>
+      <default>128</default>
+    </integer>
+
+  </parameters>
+
+  <parameters>
+    <label>IO</label>
+    <description>Input/output parameters</description>
+    <image>
+      <name>inputVolume</name>
+      <label>Input Volume</label>
+      <channel>input</channel>
+      <index>0</index>
+      <description>Input volume to be segmented</description>
+    </image>
+
+    <image>
+      <name>outputVolume</name>
+      <label>Output Volume</label>
+      <channel>output</channel>
+      <index>1</index>
+      <description>Output filtered</description>
+    </image>
+  </parameters>
+
+</executable>
