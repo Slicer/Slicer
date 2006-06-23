@@ -29,6 +29,10 @@ vtkSlicerSliceViewer::vtkSlicerSliceViewer ( ) {
     // widgets comprising the SliceViewer for now.
     this->RenderWidget = vtkKWRenderWidget::New ( );
 
+    vtkRenderWindowInteractor *rwi = vtkRenderWindowInteractor::New();
+    this->RenderWidget->GetRenderWindow()->SetInteractor( rwi );
+    rwi->Delete();
+
     this->ImageMapper = vtkImageMapper::New();
     this->ImageMapper->SetColorWindow(255);
     this->ImageMapper->SetColorLevel(127.5);
@@ -92,9 +96,6 @@ void vtkSlicerSliceViewer::CreateWidget ( ) {
 //---------------------------------------------------------------------------
 void vtkSlicerSliceViewer::InitializeInteractor ( ) {
 
-    vtkRenderWindowInteractor *rwi = vtkRenderWindowInteractor::New();
-    this->RenderWidget->GetRenderWindow()->SetInteractor( rwi );
-    rwi->Delete();
 
     this->Script ("source $::SLICER_BUILD/SliceViewerInteractor.tcl");
     this->Script ("SliceViewerAddObservers %s", this->GetTclName());
