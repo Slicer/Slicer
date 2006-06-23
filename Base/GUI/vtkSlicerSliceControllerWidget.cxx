@@ -128,8 +128,9 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     //
     this->OrientationMenu = vtkKWMenuButtonWithSpinButtonsWithLabel::New ();
     this->OrientationMenu->SetParent ( this );
+    this->OrientationMenu->Create ( );    
     this->OrientationMenu->SetLabelWidth(3);
-    this->OrientationMenu->Create ( );
+
     this->OrientationMenu->SetLabelText ( "Or: ");
     vtkKWMenuButton *mb = this->OrientationMenu->GetWidget()->GetWidget();
     mb->SetWidth ( 8 );
