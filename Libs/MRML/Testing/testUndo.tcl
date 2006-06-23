@@ -1,6 +1,4 @@
 
-tk_messageBox -message starting
-
 catch "sc Delete"
 vtkMRMLScene sc
 
