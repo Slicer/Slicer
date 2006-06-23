@@ -51,6 +51,12 @@ GENERATECLP(ExecutionModelTour_SOURCE ExecutionModelTour.xml)
 ADD_EXECUTABLE ( ExecutionModelTour ${ExecutionModelTour_SOURCE})
 TARGET_LINK_LIBRARIES ( ExecutionModelTour ITKIO ITKBasicFilters ITKCommon)
 
+SET ( ModelMaker_SOURCE ModelMaker.cxx)
+GENERATECLP(ModelMaker_SOURCE ModelMaker.xml)
+ADD_EXECUTABLE(ModelMaker ${ModelMaker_SOURCE})
+TARGET_LINK_LIBRARIES (ModelMaker vtkITK)
+INCLUDE_DIRECTORIES(${vtkITK_SOURCE_DIR} ${vtkITK_BINARY_DIR})
+
 #IF (Slicer3_BUILD_TESTING)
 #  SUBDIRS( Testing )
 #ENDIF (Slicer3_BUILD_TESTING)

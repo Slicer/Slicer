@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Application</category>
+  <title>Model Maker</title>
+  <description>
+Create 3D surface models from segmented data.
+Imported from Slicer 2.
+</description>
+  <version>3.0</version>
+  <documentationurl>http://www.slicer.org</documentationurl>
+  <license>slicer3</license>
+  <contributor>Nicole Aucoin</contributor>
+<parameters>
+    <label>IO</label>
+    <description>Input/output parameters</description>
+    <image>
+      <name>InputVolume</name>
+      <label>Input Volume</label>
+      <channel>input</channel>
+      <index>0</index>
+      <description>Input label map.</description>
+      </image>
+    <directory>
+      <name>OutputDirectory</name>
+      <label>Output Directory</label>
+      <channel>output</channel>
+      <index>1</index>
+      <description>Directory in which to save model(s)</description>
+    </directory>
+  </parameters>
+  <parameters>
+  <label>Model Maker Parameters</label>
+  <description>Parameters used for making models.</description>
+  <integer>
+    <name>StartLabel</name>
+    <flag>-s</flag>
+    <longflag>--start</longflag>
+    <description>Voxel value from which to start making models.</description>
+    <label>Start Label</label>
+    <default>1</default>
+  </integer>
+   <string>
+     <name>Name</name>
+     <label>Model Name</label>
+     <flag>-n</flag>
+     <longflag>--name</longflag>
+     <description>Name to use for this model. Ignored if making multiple models, which uses the label name</description>
+     <default>Model</default>
+   </string>
+   <integer>
+     <name>Smooth</name>
+     <label>Smooth</label>
+     <longflag>--smooth</longflag>
+     <description>Number of smoothing iterations</description>
+     <default>15</default>
+     <constraints>
+     <minimum>0</minimum>
+     </constraints>
+   </integer>
+   <integer>
+     <name>Decimate</name>
+     <label>Decimate</label>
+     <longflag>--decimate</longflag>
+     <description>Number of decimation steps</description>
+     <default>1</default>
+     <constraints>
+     <minimum>0</minimum>
+     </constraints>
+   </integer>
+   <boolean>
+     <name>SplitNormals</name>
+     <label>Split Normals</label>
+     <longflag>--splitnormals</longflag>
+     <description>Splitting normals is useful for visualizing sharp features. However it creates holes in surfaces which affects measurements</description>
+     <default>true</default>
+   </boolean>
+   <string-enumeration>
+     <name>FilterType</name>
+     <label>Filter Type</label>
+     <description>Controls the type of smoothing done after the model is built.</description>
+     <longflag>--filtertype</longflag>
+     <default>Sinc</default>
+     <element>Sinc</element>
+     <element>Laplacian</element>
+   </string-enumeration>
+</parameters>
+<parameters>
+  <label>Create Multiple</label>
+  <description>Create more than one model at the same time</description>
+  <integer>
+    <name>EndLabel</name>
+    <label>End Label</label>
+    <flag>-e</flag>
+    <longflag>--end</longflag>
+    <description>Voxel value up to which to continue making models. Skip any values with zero voxels.</description>
+    <default>1</default>
+  </integer>
+  <boolean>
+    <label>Joint Smoothing</label>
+    <description>Perform joint smoothing between all models, so that they will fit together</description>
+    <flag>-j</flag>
+    <longflag>--jointsmooth</longflag>
+    <default>false</default>
+  </boolean>
+</parameters>
+</executable>
