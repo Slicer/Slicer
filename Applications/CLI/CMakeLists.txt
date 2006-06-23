@@ -9,7 +9,7 @@ IF (NOT Slicer3_SOURCE_DIR)
   ENDIF ( ITK_FOUND )
 ENDIF (NOT Slicer3_SOURCE_DIR)
 
-INCLUDE(../../Libs/GenerateCLP/UseGenerateCLP.cmake)
+INCLUDE(${Slicer3_SOURCE_DIR}/Libs/GenerateCLP/UseGenerateCLP.cmake)
 
 SET ( ResampleVolume_SOURCE ResampleVolume.cxx )
 GENERATECLP(ResampleVolume_SOURCE ResampleVolume.xml)
@@ -30,6 +30,16 @@ SET ( MedianImageFilter_SOURCE MedianImageFilter.cxx )
 GENERATECLP(MedianImageFilter_SOURCE MedianImageFilter.xml)
 ADD_EXECUTABLE ( MedianImageFilter ${MedianImageFilter_SOURCE})
 TARGET_LINK_LIBRARIES ( MedianImageFilter ITKIO ITKBasicFilters ITKCommon)
+
+SET ( OtsuThresholdImageFilter_SOURCE OtsuThresholdImageFilter.cxx )
+GENERATECLP(OtsuThresholdImageFilter_SOURCE OtsuThresholdImageFilter.xml)
+ADD_EXECUTABLE ( OtsuThresholdImageFilter ${OtsuThresholdImageFilter_SOURCE})
+TARGET_LINK_LIBRARIES ( OtsuThresholdImageFilter ITKIO ITKBasicFilters ITKCommon)
+
+SET ( VotingBinaryHoleFillingImageFilter_SOURCE VotingBinaryHoleFillingImageFilter.cxx )
+GENERATECLP(VotingBinaryHoleFillingImageFilter_SOURCE VotingBinaryHoleFillingImageFilter.xml)
+ADD_EXECUTABLE ( VotingBinaryHoleFillingImageFilter ${VotingBinaryHoleFillingImageFilter_SOURCE})
+TARGET_LINK_LIBRARIES ( VotingBinaryHoleFillingImageFilter ITKIO ITKBasicFilters ITKCommon)
 
 SET ( ExecutionModelTour_SOURCE ExecutionModelTour.cxx )
 GENERATECLP(ExecutionModelTour_SOURCE ExecutionModelTour.xml)
