@@ -36,6 +36,11 @@ GENERATECLP(OtsuThresholdImageFilter_SOURCE OtsuThresholdImageFilter.xml)
 ADD_EXECUTABLE ( OtsuThresholdImageFilter ${OtsuThresholdImageFilter_SOURCE})
 TARGET_LINK_LIBRARIES ( OtsuThresholdImageFilter ITKIO ITKBasicFilters ITKCommon)
 
+SET ( OtsuThresholdSegmentation_SOURCE OtsuThresholdSegmentation.cxx )
+GENERATECLP(OtsuThresholdSegmentation_SOURCE OtsuThresholdSegmentation.xml)
+ADD_EXECUTABLE ( OtsuThresholdSegmentation ${OtsuThresholdSegmentation_SOURCE})
+TARGET_LINK_LIBRARIES ( OtsuThresholdSegmentation ITKIO ITKBasicFilters ITKCommon)
+
 SET ( VotingBinaryHoleFillingImageFilter_SOURCE VotingBinaryHoleFillingImageFilter.cxx )
 GENERATECLP(VotingBinaryHoleFillingImageFilter_SOURCE VotingBinaryHoleFillingImageFilter.xml)
 ADD_EXECUTABLE ( VotingBinaryHoleFillingImageFilter ${VotingBinaryHoleFillingImageFilter_SOURCE})
