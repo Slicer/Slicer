@@ -28,7 +28,14 @@ proc SliceViewerRemoveObservers {sliceViewer} {
 
 proc SliceViewerHandleEvent {interactor event} {
 
-  puts "got a $event for $interactor at [$interactor GetEventPosition]"
+  puts -nonewline "got a $event for $interactor at [$interactor GetEventPosition]"
+  if { [$interactor GetControlKey] } {
+    puts -nonewline " with control"
+  }
+  if { [$interactor GetShiftKey] } {
+    puts -nonewline " with shift"
+  }
+  puts ""
 
   switch $event {
 

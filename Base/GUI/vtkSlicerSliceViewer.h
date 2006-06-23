@@ -30,9 +30,9 @@ public:
   void InitializeInteractor();
   void ShutdownInteractor();
 
-  vtkKWGenericRenderWindowInteractor *GetRenderWindowInteractor()
+  vtkRenderWindowInteractor *GetRenderWindowInteractor()
     {
-    return vtkKWGenericRenderWindowInteractor::SafeDownCast(
+    return vtkRenderWindowInteractor::SafeDownCast(
                                       this->RenderWidget->GetRenderWindow()->GetInteractor() );
     }
 

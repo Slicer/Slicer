@@ -92,6 +92,10 @@ void vtkSlicerSliceViewer::CreateWidget ( ) {
 //---------------------------------------------------------------------------
 void vtkSlicerSliceViewer::InitializeInteractor ( ) {
 
+    vtkRenderWindowInteractor *rwi = vtkRenderWindowInteractor::New();
+    this->RenderWidget->GetRenderWindow()->SetInteractor( rwi );
+    rwi->Delete();
+
     this->Script ("source $::SLICER_BUILD/SliceViewerInteractor.tcl");
     this->Script ("SliceViewerAddObservers %s", this->GetTclName());
 }
