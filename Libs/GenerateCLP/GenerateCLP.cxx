@@ -149,7 +149,7 @@ main(int argc, char *argv[])
   ModuleDescriptionParser parser;
 
   // Read the XML file
-  std::ifstream fin(InputXML.c_str(),std::ios::in);
+  std::ifstream fin(InputXML.c_str(),std::ios::in|std::ios::binary);
   if (fin.fail())
     {
     std::cerr << argv[0] << ": Cannot open " << InputXML << " for input" << std::endl;
