@@ -374,8 +374,9 @@ void vtkKWWindowLevelThresholdEditor::UpdateTransferFunction()
   if (this->ImageData)
   {
     this->ImageData->GetScalarRange(range);
+    this->TransferFunction->AdjustRange(range);
   }
-  this->TransferFunction->AdjustRange(range);
+  
   this->TransferFunction->SetColorSpaceToRGB();
   this->TransferFunction->AddRGBPoint(range[0], 0, 0, 0);
   //this->TransferFunction->AddRGBPoint(this->GetLowerThreshold(), 179.0/255, 179.0/255, 231.0/255);
