@@ -167,7 +167,19 @@ startElement(void *userData, const char *element, const char **attrs)
       }
     parameter = new ModuleParameter;
     parameter->SetTag(name);
-    parameter->SetType("int");
+    int attrCount = XML_GetSpecifiedAttributeCount(ps->Parser);
+    if (attrCount == 2 && 
+        (strcmp(attrs[0], "multiple") == 0) &&
+        (strcmp(attrs[1], "true") == 0))
+      {
+      parameter->SetMultiple(attrs[1]);
+      parameter->SetType("std::vector<int>");
+      parameter->SetArgType("int");
+      }
+    else
+      {
+      parameter->SetType("int");
+      }
     }
   else if (name == "float")
     {
@@ -181,8 +193,20 @@ startElement(void *userData, const char *element, const char **attrs)
       return;
       }
     parameter = new ModuleParameter;
+    int attrCount = XML_GetSpecifiedAttributeCount(ps->Parser);
+    if (attrCount == 2 && 
+        (strcmp(attrs[0], "multiple") == 0) &&
+        (strcmp(attrs[1], "true") == 0))
+      {
+      parameter->SetMultiple(attrs[1]);
+      parameter->SetType("std::vector<float>");
+      parameter->SetArgType("float");
+      }
+    else
+      {
+      parameter->SetType("float");
+      }
     parameter->SetTag(name);
-    parameter->SetType("float");
     }
   else if (name == "double")
     {
@@ -196,8 +220,20 @@ startElement(void *userData, const char *element, const char **attrs)
       return;
       }
     parameter = new ModuleParameter;
+    int attrCount = XML_GetSpecifiedAttributeCount(ps->Parser);
+    if (attrCount == 2 && 
+        (strcmp(attrs[0], "multiple") == 0) &&
+        (strcmp(attrs[1], "true") == 0))
+      {
+      parameter->SetMultiple(attrs[1]);
+      parameter->SetType("std::vector<double>");
+      parameter->SetArgType("double");
+      }
+    else
+      {
+      parameter->SetType("double");
+      }
     parameter->SetTag(name);
-    parameter->SetType("double");
     }
   else if (name == "string")
     {
@@ -211,8 +247,20 @@ startElement(void *userData, const char *element, const char **attrs)
       return;
       }
     parameter = new ModuleParameter;
+    int attrCount = XML_GetSpecifiedAttributeCount(ps->Parser);
+    if (attrCount == 2 && 
+        (strcmp(attrs[0], "multiple") == 0) &&
+        (strcmp(attrs[1], "true") == 0))
+      {
+      parameter->SetMultiple(attrs[1]);
+      parameter->SetType("std::vector<std::string>");
+      parameter->SetArgType("std::string");
+      }
+    else
+      {
+      parameter->SetType("std::string");
+      }
     parameter->SetTag(name);
-    parameter->SetType("std::string");
     }
   else if (name == "boolean")
     {
@@ -365,8 +413,20 @@ startElement(void *userData, const char *element, const char **attrs)
       return;
       }
     parameter = new ModuleParameter;
+    int attrCount = XML_GetSpecifiedAttributeCount(ps->Parser);
+    if (attrCount == 2 && 
+        (strcmp(attrs[0], "multiple") == 0) &&
+        (strcmp(attrs[1], "true") == 0))
+      {
+      parameter->SetMultiple(attrs[1]);
+      parameter->SetType("std::vector<std::string>");
+      parameter->SetArgType("std::string");
+      }
+    else
+      {
+      parameter->SetType("std::string");
+      }
     parameter->SetTag(name);
-    parameter->SetType("std::string");
     }
   else if (name == "directory")
     {
@@ -380,8 +440,20 @@ startElement(void *userData, const char *element, const char **attrs)
       return;
       }
     parameter = new ModuleParameter;
+    int attrCount = XML_GetSpecifiedAttributeCount(ps->Parser);
+    if (attrCount == 2 && 
+        (strcmp(attrs[0], "multiple") == 0) &&
+        (strcmp(attrs[1], "true") == 0))
+      {
+      parameter->SetMultiple(attrs[1]);
+      parameter->SetType("std::vector<std::string>");
+      parameter->SetArgType("std::string");
+      }
+    else
+      {
+      parameter->SetType("std::string");
+      }
     parameter->SetTag(name);
-    parameter->SetType("std::string");
     }
   else if (name == "image")
     {
@@ -395,8 +467,20 @@ startElement(void *userData, const char *element, const char **attrs)
       return;
       }
     parameter = new ModuleParameter;
+    int attrCount = XML_GetSpecifiedAttributeCount(ps->Parser);
+    if (attrCount == 2 && 
+        (strcmp(attrs[0], "multiple") == 0) &&
+        (strcmp(attrs[1], "true") == 0))
+      {
+      parameter->SetMultiple(attrs[1]);
+      parameter->SetType("std::vector<std::string>");
+      parameter->SetArgType("std::string");
+      }
+    else
+      {
+      parameter->SetType("std::string");
+      }
     parameter->SetTag(name);
-    parameter->SetType("std::string");
     }
   else
     {

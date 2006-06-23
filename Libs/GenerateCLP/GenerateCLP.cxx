@@ -84,20 +84,25 @@ replaceSubWithSub(std::string& s, const char *o, const char  *n)
 bool NeedsTemp(const ModuleParameter &parameter)
 {
   std::string type = parameter.GetType();
-  return (type == "std::vector<int>" ||
-          type == "std::vector<float>" ||
-          type == "std::vector<double>" ||
-          type == "std::vector<std::string>");
+  std::string multi = parameter.GetMultiple();
+  return ((type == "std::vector<int>" ||
+           type == "std::vector<float>" ||
+           type == "std::vector<double>" ||
+           type == "std::vector<std::string>") &&
+          multi != "true"
+    );
 }
 /* Some types need quotes in the initialization. */
 bool NeedsQuotes(const ModuleParameter &parameter)
 {
   std::string type = parameter.GetType();
-  return (type == "std::vector<int>" ||
-          type == "std::vector<float>" ||
-          type == "std::vector<double>" ||
-          type == "std::vector<std::string>" ||
-          type == "std::string");
+  std::string multi = parameter.GetMultiple();
+  return ((type == "std::vector<int>" ||
+           type == "std::vector<float>" ||
+           type == "std::vector<double>" ||
+           type == "std::vector<std::string>" ||
+           type == "std::string") &&
+          multi != "true");
 }
 bool IsEnumeration(const ModuleParameter &parameter)
 {
@@ -110,7 +115,7 @@ bool IsEnumeration(const ModuleParameter &parameter)
 
 bool HasDefault(const ModuleParameter &parameter)
 {
-  return (parameter.GetDefault().size() > 0);
+  return (parameter.GetDefault().size() > 0 && parameter.GetMultiple() != "true");
 }
 
 
@@ -282,6 +287,30 @@ void GenerateEchoArgs(std::ofstream &sout, ModuleDescription &module)
          ++pit)
       {
       if (NeedsTemp(*pit))
+        {
+        sout << "std::cout << "
+             << "\"    "
+             << pit->GetName()
+             << ": \";"
+             << EOL << std::endl;
+        sout << "for (unsigned int _i =0; _i < "
+             << pit->GetName()
+             << ".size(); _i++)"
+             << EOL << std::endl;
+        sout << "{"
+             << EOL << std::endl;
+        sout << "std::cout << "
+             << pit->GetName()
+             << "[_i]"
+             << " << \", \";"
+             << EOL << std::endl;
+        sout << "}"
+             << EOL << std::endl;
+        sout << "std::cout <<std::endl;"
+             << EOL << std::endl;
+        
+        }
+      else if (pit->GetMultiple() == "true")
         {
         sout << "std::cout << "
              << "\"    "
@@ -544,16 +573,26 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
         {
         if (pit->GetFlag().empty() && pit->GetLongFlag().empty())
           {
-          sout << "    TCLAP::UnlabeledValueArg<";
-          sout << pit->GetType();
+          if (pit->GetMultiple() == "true")
+            {
+            sout << "    TCLAP::UnlabeledMultiArg<";
+            sout << pit->GetArgType();            }
+          else
+            {
+            sout << "    TCLAP::UnlabeledValueArg<";
+            sout << pit->GetType();
+            }
           sout << "> "
                << pit->GetName()
                << "Arg" << "(\""
                << pit->GetName()
                << "\", msg.str(), "
-               << true
-               << ", "
-               << pit->GetName();
+               << true;
+          if (pit->GetMultiple() != "true")
+            {
+            sout << ", "
+                 << pit->GetName();
+            }
           sout << ", "
                << "\""
                << pit->GetType()
@@ -584,25 +623,35 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
           }
         else
           {
-          sout << "    TCLAP::ValueArg<";
-          if (NeedsTemp(*pit))
+          if (pit->GetMultiple() == "true")
             {
-            sout << "std::string";
-            }
+            sout << "    TCLAP::MultiArg<";
+            sout << pit->GetArgType();            }
           else
             {
-            sout << pit->GetType();
+            sout << "    TCLAP::ValueArg<";
+            if (NeedsTemp(*pit))
+              {
+              sout << "std::string";
+              }
+            else
+              {
+              sout << pit->GetType();
+              }
             }
-          sout << "> "
+          sout << " > "
                << pit->GetName()
                << "Arg" << "(\""
                << pit->GetFlag()
                << "\", \"" 
                << pit->GetLongFlag()
                << "\", msg.str(), "
-               << false
-               << ", "
-               << pit->GetName();
+               << false;
+          if (pit->GetMultiple() != "true")
+            {
+            sout << ", "
+                 << pit->GetName();
+            }
           if (NeedsTemp(*pit))
             {
             sout << "Temp";

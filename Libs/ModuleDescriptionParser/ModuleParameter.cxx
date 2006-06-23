@@ -20,6 +20,7 @@ ModuleParameter::ModuleParameter(const ModuleParameter& parameter)
   this->Description = parameter.Description;
   this->Label = parameter.Label;
   this->Type = parameter.Type;
+  this->ArgType = parameter.ArgType;
   this->StringToType = parameter.StringToType;
   this->Default = parameter.Default;
   this->Flag = parameter.Flag;
@@ -30,6 +31,7 @@ ModuleParameter::ModuleParameter(const ModuleParameter& parameter)
   this->Step = parameter.Step;
   this->Channel = parameter.Channel;
   this->Index = parameter.Index;
+  this->Multiple = parameter.Multiple;
   this->Elements = parameter.Elements;
 }
 
@@ -40,6 +42,7 @@ void ModuleParameter::operator=(const ModuleParameter& parameter)
   this->Description = parameter.Description;
   this->Label = parameter.Label;
   this->Type = parameter.Type;
+  this->ArgType = parameter.ArgType;
   this->StringToType = parameter.StringToType;
   this->Default = parameter.Default;
   this->Flag = parameter.Flag;
@@ -50,6 +53,7 @@ void ModuleParameter::operator=(const ModuleParameter& parameter)
   this->Step = parameter.Step;
   this->Channel = parameter.Channel;
   this->Index = parameter.Index;
+  this->Multiple = parameter.Multiple;
   this->Elements = parameter.Elements;
 }
 
@@ -61,6 +65,7 @@ std::ostream & operator<<(std::ostream &os, const ModuleParameter &parameter)
   os << "      " << "Description: " << parameter.GetDescription() << std::endl;
   os << "      " << "Label: " << parameter.GetLabel() << std::endl;
   os << "      " << "Type: " << parameter.GetType() << std::endl;
+  os << "      " << "ArgType: " << parameter.GetArgType() << std::endl;
   os << "      " << "StringToType: " << parameter.GetStringToType() << std::endl;
   os << "      " << "Default: " << parameter.GetDefault() << std::endl;
   os << "      " << "Elements: ";
@@ -83,6 +88,7 @@ std::ostream & operator<<(std::ostream &os, const ModuleParameter &parameter)
   os << "      " << "LongFlag: " << parameter.GetLongFlag() << std::endl;
   os << "      " << "Channel: " << parameter.GetChannel() << std::endl;
   os << "      " << "Index: " << parameter.GetIndex() << std::endl;
+  os << "      " << "Multiple: " << parameter.GetMultiple() << std::endl;
   return os;
 }
 

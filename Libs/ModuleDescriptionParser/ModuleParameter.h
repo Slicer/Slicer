@@ -70,6 +70,16 @@ public:
     return this->Type;
   }
   
+  virtual void SetArgType(const std::string &argType)
+  {
+    this->ArgType = argType;
+  }
+
+  virtual std::string GetArgType() const 
+  {
+    return this->ArgType;
+  }
+  
   virtual void SetStringToType(const std::string &stringToType)
   {
     this->StringToType = stringToType;
@@ -200,6 +210,16 @@ public:
     return this->Flag;
   }
 
+  virtual void SetMultiple(const std::string &multiple)
+  {
+    this->Multiple = multiple;
+  }
+
+  virtual std::string GetMultiple() const
+  {
+    return this->Multiple;
+  }
+
   const virtual std::vector<std::string> &GetElements() const
   {
     return this->Elements;
@@ -220,6 +240,7 @@ private:
   std::string Description;
   std::string Label;
   std::string Type;
+  std::string ArgType;
   std::string StringToType;
   std::string Default;
   std::string Flag;
@@ -230,6 +251,7 @@ private:
   std::string Step;
   std::string Channel;
   std::string Index;
+  std::string Multiple;
   std::vector<std::string> Elements;
 };
 
