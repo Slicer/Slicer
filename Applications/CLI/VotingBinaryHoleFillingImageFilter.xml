@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>
+  Filtering
+  </category>
+  <title>
+  Voting Binary Hole Filling
+  </title>
+  <description>
+Applies a voting operationin order to fill-in cavities. This can be
+used for smoothing contours and for filling holes in binary images.
+  </description>
+  <version>1.0</version>
+  <documentationurl></documentationurl>
+  <license></license>
+  <contributor>Bill Lorensen</contributor>
+
+  <parameters>
+    <label>Binary Hole Filling Parameters</label>
+    <description>Parameters for Hole Filling</description>
+
+    <integer-vector>
+      <name>radius</name>
+      <longflag>--radius</longflag>
+      <description>The radius of a hole to be filled</description>
+      <label>Maximum Radius</label>
+      <default>1,1,1</default>
+    </integer-vector>
+
+    <integer>
+      <name>majorityThreshold</name>
+      <longflag>--majorityThreshold</longflag>
+      <description>
+The number of pixels over 50% that will decide whether an OFF pixel
+will become ON or not. For example, if the neighborhood of a pixel has
+124 pixels (excluding itself), the 50% will be 62, and if you set upd
+a Majority threshold of 5, that means that the filter will require 67
+or more neighbor pixels to be ON in order to switch the current OFF
+pixel to ON.
+      </description>
+      <label>Majority Threshold</label>
+      <default>1</default>
+    </integer>
+
+    <integer>
+      <name>background</name>
+      <longflag>--background</longflag>
+      <description>
+      The value associated with the background (not object)
+      </description>
+      <label>Background</label>
+      <default>0</default>
+    </integer>
+
+    <integer>
+      <name>foreground</name>
+      <longflag>--foreground</longflag>
+      <description>
+      The value associated with the foreground (object)
+      </description>
+      <label>Foreground</label>
+      <default>255</default>
+    </integer>
+  </parameters>
+
+  <parameters>
+    <label>IO</label>
+    <description>Input/output parameters</description>
+    <image>
+      <name>inputVolume</name>
+      <label>Input Volume</label>
+      <channel>input</channel>
+      <index>0</index>
+      <description>Input volume to be filtered</description>
+    </image>
+
+    <image>
+      <name>outputVolume</name>
+      <label>Output Volume</label>
+      <channel>output</channel>
+      <index>1</index>
+      <description>Output filtered</description>
+    </image>
+  </parameters>
+
+</executable>
