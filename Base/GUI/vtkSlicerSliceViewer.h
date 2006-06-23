@@ -31,7 +31,7 @@ public:
   vtkKWGenericRenderWindowInteractor *GetRenderWindowInteractor()
     {
     return vtkKWGenericRenderWindowInteractor::SafeDownCast(
-                                      this->RenderWidget->GetInteractor() );
+                                      this->RenderWidget->GetRenderWindow()->GetInteractor() );
     }
 
 protected:
