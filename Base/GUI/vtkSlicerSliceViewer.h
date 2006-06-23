@@ -3,6 +3,8 @@
 
 #include "vtkSlicerBaseGUIWin32Header.h"
 
+#include "vtkRenderWindow.h"
+
 #include "vtkKWCompositeWidget.h"
 #include "vtkKWRenderWidget.h"
 #include "vtkKWGenericRenderWindowInteractor.h"
