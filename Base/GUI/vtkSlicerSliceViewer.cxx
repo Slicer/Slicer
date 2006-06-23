@@ -92,17 +92,14 @@ void vtkSlicerSliceViewer::CreateWidget ( ) {
 //---------------------------------------------------------------------------
 void vtkSlicerSliceViewer::InitializeInteractor ( ) {
 
-    vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast ( this->GetParent()->GetApplication() );
-
-
+    this->Script ("source $::SLICER_BUILD/SliceViewerInteractor.tcl");
+    this->Script ("SliceViewerAddObservers %s", this->GetTclName());
 }
 
 //---------------------------------------------------------------------------
 void vtkSlicerSliceViewer::ShutdownInteractor ( ) {
 
-    vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast ( this->GetParent()->GetApplication() );
-
-
+    this->Script ("SliceViewerRemoveObservers %s", this->GetTclName());
 }
 
 //----------------------------------------------------------------------------

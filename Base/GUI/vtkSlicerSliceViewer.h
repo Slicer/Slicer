@@ -4,6 +4,8 @@
 #include "vtkSlicerBaseGUIWin32Header.h"
 
 #include "vtkKWCompositeWidget.h"
+#include "vtkKWRenderWidget.h"
+#include "vtkKWGenericRenderWindowInteractor.h"
 
 class vtkKWRenderWidget;
 class vtkImageMapper;
@@ -26,6 +28,12 @@ public:
   // Add/Remove observers for window interactions
   void InitializeInteractor();
   void ShutdownInteractor();
+
+  vtkKWGenericRenderWindowInteractor *GetRenderWindowInteractor()
+    {
+    return vtkKWGenericRenderWindowInteractor::SafeDownCast(
+                                      this->GetRenderWidget()->GetInteractor() );
+    }
 
 protected:
   vtkSlicerSliceViewer ( );

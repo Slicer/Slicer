@@ -148,3 +148,7 @@ CONFIGURE_FILE(
   ${SlicerBaseGUI_BINARY_DIR}/vtkSlicerBaseGUIConfigure.h
 )
 
+CONFIGURE_FILE(
+  ${Slicer3_SOURCE_DIR}/Base/GUI/Tcl/SliceViewerInteractor.tcl
+  ${Slicer3_BINARY_DIR}/SliceViewerInteractor.tcl
+)

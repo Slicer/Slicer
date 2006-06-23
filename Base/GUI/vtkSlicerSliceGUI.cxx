@@ -96,6 +96,7 @@ void vtkSlicerSliceGUI::AddGUIObservers ( ) {
       c->GetVisibilityToggle()->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
       }
     
+    this->SliceViewer->InitializeInteractor (  );
 
 }
 
@@ -110,6 +111,8 @@ void vtkSlicerSliceGUI::RemoveGUIObservers ( ) {
       c->RemoveObservers ( vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
       c->GetVisibilityToggle()->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
       }
+
+    this->SliceViewer->ShutdownInteractor (  );
 }
 
 
@@ -277,6 +280,7 @@ void vtkSlicerSliceGUI::BuildGUI ( vtkKWFrame *f )
     this->Script("pack %s -pady 0 -side top -expand false -fill x", SliceController->GetWidgetName() );
     this->Script("pack %s -anchor c -side top -expand true -fill both", SliceViewer->GetRenderWidget()->GetWidgetName());
 
+    this->SliceViewer->InitializeInteractor (  );
 
 }
 
