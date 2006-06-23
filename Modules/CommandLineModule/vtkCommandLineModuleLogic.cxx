@@ -374,11 +374,13 @@ void vtkCommandLineModuleLogic::Apply()
       {
       if (pipe == itksysProcess_Pipe_STDOUT)
         {
+        std::cout << "STDOUT: " << std::string(tbuffer, length) << std::endl;
         stdoutbuffer = stdoutbuffer.append(tbuffer, length);
         }
       else if (pipe == itksysProcess_Pipe_STDERR)
         {
         stderrbuffer = stderrbuffer.append(tbuffer, length);
+        std::cerr << "STDERR: " << std::string(tbuffer, length) << std::endl;
         }
       }
     }
