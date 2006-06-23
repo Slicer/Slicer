@@ -50,7 +50,7 @@ class VTK_MRML_EXPORT vtkMRMLTransformableNode : public vtkMRMLNode
 
   // Description:
   // Observe the reference transform node
-  virtual void UpdateScene(vtkMRMLScene *scene);
+  void UpdateScene(vtkMRMLScene *scene);
 
   // Description:
   // String ID of the transform MRML node
