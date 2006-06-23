@@ -17,6 +17,7 @@ Version:   $Revision: 1.14 $
 #include <sstream>
 
 #include "vtkObjectFactory.h"
+#include "vtkCallbackCommand.h"
 
 #include "vtkMRMLTransformableNode.h"
 
@@ -28,6 +29,9 @@ Version:   $Revision: 1.14 $
 vtkMRMLTransformableNode::vtkMRMLTransformableNode()
 {
   this->TransformNodeID = NULL;
+  this->TransformNodeCallbackCommand = vtkCallbackCommand::New ( );
+  this->TransformNodeCallbackCommand->SetClientData( reinterpret_cast<void *>(this) );
+  this->TransformNodeCallbackCommand->SetCallback( vtkMRMLTransformableNode::TransformNodeCallback );
 }
 
 //----------------------------------------------------------------------------
@@ -35,8 +39,7 @@ vtkMRMLTransformableNode::~vtkMRMLTransformableNode()
 {
   if (this->TransformNodeID) 
     {
-    delete [] this->TransformNodeID;
-    this->TransformNodeID = NULL;
+    SetAndObserveTransformNode(NULL);
     }
 }
 
@@ -67,7 +70,7 @@ void vtkMRMLTransformableNode::ReadXMLAttributes(const char** atts)
     attValue = *(atts++);
     if (!strcmp(attName, "parentTransformNodeRef")) 
       {
-      this->SetTransformNodeID(attValue);
+      this->SetAndObserveTransformNode(attValue);
       }
     }  
 }
@@ -101,4 +104,73 @@ vtkMRMLTransformNode* vtkMRMLTransformableNode::GetParentTransformNode()
     }
   return node;
 }
+
+//----------------------------------------------------------------------------
+void vtkMRMLTransformableNode::SetAndObserveTransformNode(const char *transformNodeID)
+{
+  if (this->TransformNodeID != NULL)
+    {
+    vtkMRMLTransformNode *tnode = this->GetParentTransformNode();
+    if (tnode != NULL)
+      {
+      tnode->RemoveObservers ( vtkMRMLTransformableNode::TransformModifiedEvent, this->TransformNodeCallbackCommand );
+      this->SetTransformNodeID(NULL);
+      }
+    }
+  this->SetTransformNodeID(transformNodeID);
+  vtkMRMLTransformNode *tnode = this->GetParentTransformNode();
+  if (tnode != NULL) 
+    {
+      tnode->AddObserver ( vtkMRMLTransformableNode::TransformModifiedEvent, this->TransformNodeCallbackCommand );
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLTransformableNode::TransformNodeCallback ( vtkObject *__caller,
+                                                       unsigned long eid, 
+                                                       void *__clientData, 
+                                                       void *callData)
+{
+  static int inCallback = 0;
+  
+  vtkMRMLTransformableNode *self = reinterpret_cast<vtkMRMLTransformableNode *>(__clientData);
+  
+  if ( inCallback )
+    {
+    //vtkErrorWithObjectMacro ( self, "In vtkMRMLTransformableNode *!* MRMLCallback called recursively?");
+    //return;
+    }
+  
+  vtkDebugWithObjectMacro ( self, "In vtkMRMLTransformableNode MRMLCallback");
+  
+  inCallback = 1;
+  self->ProcessEvents ( __caller, eid, callData );
+  inCallback = 0;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLTransformableNode::ProcessEvents ( vtkObject *caller,
+                                               unsigned long event, void *callData )
+{
+  vtkMRMLTransformNode *tnode = this->GetParentTransformNode();
+  if (tnode != NULL && tnode == vtkMRMLTransformNode::SafeDownCast(caller) &&
+      event ==  vtkMRMLTransformableNode::TransformModifiedEvent)
+    {
+    //TODO don't send even on the scene but rather have vtkSlicerSliceLayerLogic listen to
+    // TransformModifiedEvent
+    this->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent, NULL);
+    this->InvokeEvent(vtkMRMLTransformableNode::TransformModifiedEvent, NULL);
+    }
+}
+
+//-----------------------------------------------------------
+void vtkMRMLTransformableNode::UpdateScene(vtkMRMLScene *scene)
+{
+  if (this->TransformNodeID != NULL) 
+    {
+    this->SetAndObserveTransformNode(this->TransformNodeID);
+    }
+}
+
+
 // End

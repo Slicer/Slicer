@@ -17,6 +17,7 @@ Version:   $Revision: 1.14 $
 #include <sstream>
 
 #include "vtkObjectFactory.h"
+#include "vtkCallbackCommand.h"
 
 #include "vtkMRMLLinearTransformNode.h"
 #include "vtkMRMLScene.h"
@@ -51,9 +52,11 @@ vtkMRMLNode* vtkMRMLLinearTransformNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLLinearTransformNode::vtkMRMLLinearTransformNode()
 {
-  this->TransformNodeID = NULL;
-  this->MatrixTransformToParent = vtkMatrix4x4::New();
-  this->MatrixTransformToParent->Identity();
+  this->MatrixTransformToParent = NULL;
+
+  vtkMatrix4x4 *matrix  = vtkMatrix4x4::New();
+  matrix->Identity();
+  this->SetAndObserveMatrixTransformToParent(matrix);
 }
 
 //----------------------------------------------------------------------------
@@ -61,7 +64,7 @@ vtkMRMLLinearTransformNode::~vtkMRMLLinearTransformNode()
 {
   if (this->MatrixTransformToParent) 
     {
-    this->MatrixTransformToParent->Delete();
+    this->SetAndObserveMatrixTransformToParent(NULL);
     }
 }
 
@@ -109,10 +112,11 @@ void vtkMRMLLinearTransformNode::ReadXMLAttributes(const char** atts)
     attValue = *(atts++);
     if (!strcmp(attName, "matrixTransformToParent")) 
       {
+      vtkMatrix4x4 *matrix  = vtkMatrix4x4::New();
+      matrix->Identity();
       if (this->MatrixTransformToParent != NULL) 
         {
-        this->MatrixTransformToParent->Delete();
-        this->MatrixTransformToParent = vtkMatrix4x4::New();
+        this->SetAndObserveMatrixTransformToParent(NULL);
         }
       std::stringstream ss;
       double val;
@@ -122,9 +126,10 @@ void vtkMRMLLinearTransformNode::ReadXMLAttributes(const char** atts)
         for (int col=0; col<4; col++) 
           {
           ss >> val;
-          this->MatrixTransformToParent->SetElement(row, col, val);
+          matrix->SetElement(row, col, val);
           }
         }
+      this->SetAndObserveMatrixTransformToParent(matrix);
       }
     }  
 }
@@ -278,5 +283,30 @@ int  vtkMRMLLinearTransformNode::GetMatrixTransformToNode(vtkMRMLTransformNode* 
   return 1;
 }
 
+//----------------------------------------------------------------------------
+void vtkMRMLLinearTransformNode::SetAndObserveMatrixTransformToParent(vtkMatrix4x4 *matrix)
+{
+  if (this->MatrixTransformToParent != NULL)
+    {
+    this->MatrixTransformToParent->RemoveObservers ( vtkCommand::ModifiedEvent, this->TransformNodeCallbackCommand );
+    this->SetMatrixTransformToParent(NULL);
+    }
+  this->SetMatrixTransformToParent(matrix);
+  this->MatrixTransformToParent->AddObserver ( vtkCommand::ModifiedEvent, this->TransformNodeCallbackCommand );
+}
+
+
+//---------------------------------------------------------------------------
+void vtkMRMLLinearTransformNode::ProcessEvents ( vtkObject *caller,
+                                                 unsigned long event, void *callData )
+{
+  Superclass::ProcessEvents ( caller, event, callData );
+
+  if (this->MatrixTransformToParent != NULL && this->MatrixTransformToParent == vtkMatrix4x4::SafeDownCast(caller) &&
+      event ==  vtkCommand::ModifiedEvent)
+    {
+    this->InvokeEvent(vtkMRMLTransformableNode::TransformModifiedEvent, NULL);
+    }
+}
 
 // End

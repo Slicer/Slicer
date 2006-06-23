@@ -16,10 +16,12 @@
 #ifndef __vtkMRMLTransformableNode_h
 #define __vtkMRMLTransformableNode_h
 
+
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
 
 class vtkMRMLTransformNode;
+class vtkCallbackCommand;
 
 class VTK_MRML_EXPORT vtkMRMLTransformableNode : public vtkMRMLNode
 {
@@ -47,16 +49,31 @@ class VTK_MRML_EXPORT vtkMRMLTransformableNode : public vtkMRMLNode
   virtual const char* GetNodeTagName() = 0;
 
   // Description:
-  virtual void UpdateScene(vtkMRMLScene *scene){};
+  // Observe the reference transform node
+  virtual void UpdateScene(vtkMRMLScene *scene);
 
   // Description:
   // String ID of the transform MRML node
-  vtkSetStringMacro(TransformNodeID);
   vtkGetStringMacro(TransformNodeID);
+  void SetAndObserveTransformNode(const char *transformNodeID);
 
   // Description:
   // Associated transform MRML node
   vtkMRMLTransformNode* GetParentTransformNode();
+
+  // Description:
+  // alternative method to propagate events generated in Transform nodes
+  virtual void ProcessEvents ( vtkObject * /*caller*/, 
+                               unsigned long /*event*/, 
+                               void * /*callData*/ );
+
+  //BTX
+  enum
+    {
+      TransformModifiedEvent = 15000,
+    };
+//ETX
+  
 
 protected:
   vtkMRMLTransformableNode();
@@ -64,6 +81,16 @@ protected:
   vtkMRMLTransformableNode(const vtkMRMLTransformableNode&);
   void operator=(const vtkMRMLTransformableNode&);
 
+  //BTX
+  static void TransformNodeCallback( vtkObject *__caller,
+                                     unsigned long eid, 
+                                     void *__clientData,
+                                     void *callData );
+  //ETX
+
+  vtkCallbackCommand* TransformNodeCallbackCommand;
+
+  vtkSetStringMacro(TransformNodeID);
   char *TransformNodeID;
 
 };
