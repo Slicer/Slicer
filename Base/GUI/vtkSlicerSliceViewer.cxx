@@ -29,9 +29,11 @@ vtkSlicerSliceViewer::vtkSlicerSliceViewer ( ) {
     // widgets comprising the SliceViewer for now.
     this->RenderWidget = vtkKWRenderWidget::New ( );
 
+#ifdef _WIN32
     vtkRenderWindowInteractor *rwi = vtkRenderWindowInteractor::New();
     this->RenderWidget->GetRenderWindow()->SetInteractor( rwi );
     rwi->Delete();
+#endif
 
     this->ImageMapper = vtkImageMapper::New();
     this->ImageMapper->SetColorWindow(255);
