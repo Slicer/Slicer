@@ -7,7 +7,6 @@
 #include "vtkKWRenderWidget.h"
 #include "vtkKWGenericRenderWindowInteractor.h"
 
-class vtkKWRenderWidget;
 class vtkImageMapper;
 class vtkActor2D;
 class vtkKWFrame;
