@@ -16,8 +16,6 @@
 #include "vtkKWFrame.h"
 #include "vtkKWPushButton.h"
 
-// glider svn test message
-
 //---------------------------------------------------------------------------
 vtkStandardNewMacro ( vtkSlicerSliceControllerWidget );
 vtkCxxRevisionMacro ( vtkSlicerSliceControllerWidget, "$Revision: 1.0 $");
