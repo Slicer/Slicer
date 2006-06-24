@@ -237,24 +237,25 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
   //   perpendicular to the current slice orientation
   // - basically, multiply the scale value times the z column vector of the
   //   rotation matrix
-  vtkMatrix4x4 *newm = vtkMatrix4x4::New();
-  newm->DeepCopy( this->SliceNode->GetSliceToRAS() );
+  vtkMatrix4x4 *sliceToRAS = vtkMatrix4x4::New();
+  sliceToRAS->DeepCopy( this->SliceNode->GetSliceToRAS() );
   double in[4], out[4];
   in[0] = in[1] = in[3] = 0.;
   in[2] = (double) this->OffsetScale->GetValue();
-  newm->MultiplyPoint(in, out);
-  newm->SetElement( 0, 3, out[0] );
-  newm->SetElement( 1, 3, out[1] );
-  newm->SetElement( 2, 3, out[2] );
+  sliceToRAS->MultiplyPoint(in, out);
+  sliceToRAS->SetElement( 0, 3, out[0] );
+  sliceToRAS->SetElement( 1, 3, out[1] );
+  sliceToRAS->SetElement( 2, 3, out[2] );
  
-  if ( newm->GetElement( 0, 3 ) != this->SliceNode->GetSliceToRAS()->GetElement( 0, 3 ) ||
-       newm->GetElement( 1, 3 ) != this->SliceNode->GetSliceToRAS()->GetElement( 1, 3 ) ||
-       newm->GetElement( 2, 3 ) != this->SliceNode->GetSliceToRAS()->GetElement( 2, 3 ) )
+  if ( sliceToRAS->GetElement( 0, 3 ) != this->SliceNode->GetSliceToRAS()->GetElement( 0, 3 ) ||
+       sliceToRAS->GetElement( 1, 3 ) != this->SliceNode->GetSliceToRAS()->GetElement( 1, 3 ) ||
+       sliceToRAS->GetElement( 2, 3 ) != this->SliceNode->GetSliceToRAS()->GetElement( 2, 3 ) )
     {
-    this->SliceNode->GetSliceToRAS()->DeepCopy( newm );
+    this->SliceNode->GetSliceToRAS()->DeepCopy( sliceToRAS );
     this->SliceNode->UpdateMatrices();
     modified = 1;
     }
+  sliceToRAS->Delete();
 
   if ( vtkKWMenu::SafeDownCast(caller) == this->OrientationMenu->GetWidget()->GetWidget()->GetMenu() )
     {
