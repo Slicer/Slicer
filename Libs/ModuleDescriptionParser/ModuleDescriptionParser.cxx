@@ -57,7 +57,15 @@ trimLeading(std::string& s, const char* extraneousChars = " \t\n")
 {
   if (s.size())
     {
-    s = s.substr(s.find_first_not_of(extraneousChars));
+    std::string::size_type pos = s.find_first_not_of(extraneousChars);
+    if (pos != std::string::npos)
+      {
+      s = s.substr(pos);
+      }
+    else
+      {
+      s = "";
+      }
     }
 }
 
@@ -66,7 +74,15 @@ trimTrailing(std::string& s, const char* extraneousChars = " \t\n")
 {
   if (s.size())
     {
-    s = s.substr(0, s.find_last_not_of(extraneousChars)+1);
+    std::string::size_type pos = s.find_last_not_of(extraneousChars);
+    if (pos != std::string::npos)
+      {
+      s = s.substr(0, pos + 1);
+      }
+    else
+      {
+      s = "";
+      }
     }
 }
 
@@ -714,9 +730,9 @@ endElement(void *userData, const char *element)
   else if (name ==  "description")
     {
     std::string temp = ps->LastData[ps->Depth];
-    trimLeadingAndTrailing(temp);
-    replaceSubWithSub(temp, "\n", " ");
     replaceSubWithSub(temp, "\"", "'");
+    replaceSubWithSub(temp, "\n", " ");
+    trimLeadingAndTrailing(temp);
     if (!group && !parameter)
       {
       ps->CurrentDescription.SetDescription(temp);

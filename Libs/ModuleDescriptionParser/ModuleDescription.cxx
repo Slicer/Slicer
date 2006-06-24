@@ -17,6 +17,7 @@
 
 ModuleDescription::ModuleDescription()
 {
+  this->Description = "No description provided";
 }
 
 
