@@ -190,9 +190,9 @@ void vtkSlicerSliceGUI::ProcessLogicEvents ( vtkObject *caller,
 
     // process Logic changes
     vtkSlicerSliceLogic *sliceLogic = vtkSlicerSliceLogic::SafeDownCast(caller);
-    vtkSlicerApplicationLogic *a = vtkSlicerApplicationLogic::SafeDownCast ( caller );
+    vtkSlicerApplicationLogic *appLogic = vtkSlicerApplicationLogic::SafeDownCast ( caller );
     
-    if ( a == this->GetApplicationLogic ( ) )
+    if ( appLogic == this->GetApplicationLogic ( ) )
       {
       // get active VolumeID
       // is this different from the ID of volume in the BG?
