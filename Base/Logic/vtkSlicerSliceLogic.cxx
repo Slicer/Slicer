@@ -28,7 +28,6 @@ vtkSlicerSliceLogic::vtkSlicerSliceLogic()
   this->SliceNode = NULL;
   this->SliceCompositeNode = NULL;
   this->ForegroundOpacity = 0.5;
-  this->SliceVisible = 0;
   this->Blend = vtkImageBlend::New();
   this->SetForegroundOpacity(this->ForegroundOpacity);
 }
@@ -284,8 +283,6 @@ void vtkSlicerSliceLogic::PrintSelf(ostream& os, vtkIndent indent)
     (this->BackgroundLayer ? "not null" : "(none)") << "\n";
   os << indent << "ForegroundLayer: " <<
     (this->ForegroundLayer ? "not null" : "(none)") << "\n";
-  os << indent << "SliceVisible: " <<
-    (this->SliceVisible ? "not null" : "(none)") << "\n";
   os << indent << "Blend: " <<
     (this->Blend ? "not null" : "(none)") << "\n";
   os << indent << "ForegroundOpacity: " << this->ForegroundOpacity << "\n";
