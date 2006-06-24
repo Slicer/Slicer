@@ -209,13 +209,16 @@ void vtkSlicerSliceGUI::ProcessLogicEvents ( vtkObject *caller,
     //
     // Update the VisibilityButton in the SliceController to match the logic state
     //
-    if ( sliceLogic->GetSliceVisible() > 0 ) {
-        this->GetSliceController()->GetVisibilityToggle()->SetImageToIcon ( 
+    if ( sliceLogic->GetSliceVisible() > 0 ) 
+      {
+      this->GetSliceController()->GetVisibilityToggle()->SetImageToIcon ( 
             this->GetSliceController()->GetVisibilityIcons()->GetVisibleIcon ( ) );        
-    } else {
-        this->GetSliceController()->GetVisibilityToggle()->SetImageToIcon ( 
+      } 
+      else 
+      {
+      this->GetSliceController()->GetVisibilityToggle()->SetImageToIcon ( 
             this->GetSliceController()->GetVisibilityIcons()->GetInvisibleIcon ( ) );        
-    }
+      }
 
     // TODO: set up corner annotations
     //vtkCornerAnnotation *ca = rw->GetCornerAnnotation ( );
