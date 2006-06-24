@@ -184,7 +184,11 @@ void vtkSlicerSliceGUI::ProcessLogicEvents ( vtkObject *caller,
     vtkKWRenderWidget *rw = sliceViewer->GetRenderWidget ();
     sliceViewer->GetImageMapper()->SetInput ( sliceLogic->GetImageData( ) );
     rw->ResetCamera ( );
-    rw->Render();
+
+    // TODO: can this be done directly in C++?
+    // and - how do we know when VTK events are idle?
+    //rw->Render();
+    this->Script("after idle \"%s Render\"", rw->GetTclName());
 
     //
     // Update the VisibilityButton in the SliceController to match the logic state
