@@ -90,6 +90,9 @@ void vtkSlicerSliceControllerWidget::AddWidgetObservers ( )
     this->OffsetScale->GetWidget()->AddObserver( vtkKWScale::ScaleValueChangingEvent, this->GUICallbackCommand );
     this->OffsetScale->GetWidget()->AddObserver( vtkKWScale::ScaleValueChangedEvent, this->GUICallbackCommand );
     this->OffsetScale->GetWidget()->AddObserver( vtkKWScale::ScaleValueStartChangingEvent, this->GUICallbackCommand );
+    this->VisibilityToggle->AddObserver (vtkKWPushButton::InvokedEvent, this->GUICallbackCommand );
+
+    
 
 }
   
@@ -108,6 +111,7 @@ void vtkSlicerSliceControllerWidget::RemoveWidgetObservers ( ) {
     this->OffsetScale->GetWidget()->RemoveObservers ( vtkKWScale::ScaleValueChangingEvent, this->GUICallbackCommand );
     this->OffsetScale->GetWidget()->RemoveObservers ( vtkKWScale::ScaleValueChangedEvent, this->GUICallbackCommand );
     this->OffsetScale->GetWidget()->RemoveObservers ( vtkKWScale::ScaleValueStartChangingEvent, this->GUICallbackCommand );
+    this->VisibilityToggle->RemoveObservers ( vtkKWPushButton::InvokedEvent, this->GUICallbackCommand );
         
 }
 
@@ -222,6 +226,15 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
     return;
     }
 
+  vtkKWPushButton *toggle = vtkKWPushButton::SafeDownCast ( caller );
+  // Toggle the SliceNode's visibility.
+  if ( toggle == this->GetVisibilityToggle() &&
+       event == vtkKWPushButton::InvokedEvent )
+    {
+    this->MRMLScene->SaveStateForUndo ( this->SliceNode );
+    this->SliceNode->SetSliceVisible ( ! this->SliceNode->GetSliceVisible() ); 
+    }
+
   if ( this->OffsetScale->GetWidget() == vtkKWScale::SafeDownCast( caller ) &&
           event == vtkKWScale::ScaleValueStartChangingEvent )
     {
@@ -273,6 +286,7 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
       this->SliceNode->SetOrientationToCoronal();
       }
     }
+
 
   if ( vtkSlicerNodeSelectorWidget::SafeDownCast(caller) == this->ForegroundSelector )
     {
@@ -329,6 +343,20 @@ void vtkSlicerSliceControllerWidget::ProcessMRMLEvents ( vtkObject *caller, unsi
     modified = 1;
     }
 
+
+  //
+  // Update the VisibilityButton in the SliceController to match the logic state
+  //
+  if ( this->SliceNode->GetSliceVisible() > 0 ) 
+      {
+      this->GetVisibilityToggle()->SetImageToIcon ( 
+            this->GetVisibilityIcons()->GetVisibleIcon ( ) );        
+      } 
+      else 
+      {
+      this->GetVisibilityToggle()->SetImageToIcon ( 
+            this->GetVisibilityIcons()->GetInvisibleIcon ( ) );        
+      }
 
   //
   // Set the scale value to match the offset
