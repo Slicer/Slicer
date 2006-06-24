@@ -8,7 +8,8 @@ set ::SliceViewerEvents {
 
 proc SliceViewerAddObservers {sliceViewer} {
 
-  #set interactor [[$sliceViewer GetRenderWidget] GetInteractor]
+  return; # turn off this event manager for now
+
   set interactor [$sliceViewer GetRenderWindowInteractor]
 
   foreach event $::SliceViewerEvents {
@@ -18,7 +19,8 @@ proc SliceViewerAddObservers {sliceViewer} {
 
 proc SliceViewerRemoveObservers {sliceViewer} {
 
-  #set interactor [[$sliceViewer GetRenderWidget] GetInteractor]
+  return; # turn off this event manager for now
+
   set interactor [$sliceViewer GetRenderWindowInteractor]
 
   foreach event $::SliceViewerEvents {
@@ -26,16 +28,20 @@ proc SliceViewerRemoveObservers {sliceViewer} {
   }
 }
 
-proc SliceViewerHandleEvent {interactor event} {
+proc SliceViewerHandleEvent {sliceGUI event} {
 
-  puts -nonewline "got a $event for $interactor at [$interactor GetEventPosition]"
-  if { [$interactor GetControlKey] } {
-    puts -nonewline " with control"
+  set interactor [[$sliceGUI GetSliceViewer] GetRenderWindowInteractor]
+
+  if { [lsearch "MouseMoveEvent ModifiedEvent" $event] == -1 } {
+    puts -nonewline "got a $event for $sliceGUI, interactor $interactor at [$interactor GetEventPosition]"
+    if { [$interactor GetControlKey] } {
+      puts -nonewline " with control"
+    }
+    if { [$interactor GetShiftKey] } {
+      puts -nonewline " with shift"
+    }
+    puts ""
   }
-  if { [$interactor GetShiftKey] } {
-    puts -nonewline " with shift"
-  }
-  puts ""
 
   switch $event {
 
@@ -60,6 +66,13 @@ proc SliceViewerHandleEvent {interactor event} {
     ExposeEvent {
     }
     ConfigureEvent {
+      set size [[[[$sliceGUI GetSliceViewer]  GetRenderWidget]  GetRenderWindow]  GetSize]
+      foreach {x y} $size {}
+      if { $x < $y } { set min $x } else { set min $y }
+      set sliceNode [[$sliceGUI GetLogic]  GetSliceNode]
+      set oldDim [$sliceNode GetDimensions]
+      $sliceNode SetDimensions $min $min [lindex $oldDim 2]
+      puts "[$sliceNode GetDimensions]"
     }
     EnterEvent {
     }
@@ -86,4 +99,3 @@ proc SliceViewerHandleEvent {interactor event} {
   }
 
 }
-

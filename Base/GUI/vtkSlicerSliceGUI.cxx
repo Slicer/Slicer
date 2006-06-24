@@ -96,7 +96,10 @@ void vtkSlicerSliceGUI::AddGUIObservers ( ) {
         vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
       }
     
-    this->SliceViewer->InitializeInteractor (  );
+    this->SliceViewer->InitializeInteractor();
+
+    this->SliceViewer->GetRenderWindowInteractor()->AddObserver (
+        vtkCommand::AnyEvent, (vtkCommand *)this->GUICallbackCommand );
 
 }
 
@@ -112,7 +115,10 @@ void vtkSlicerSliceGUI::RemoveGUIObservers ( ) {
         vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
       }
 
-    this->SliceViewer->ShutdownInteractor (  );
+    this->SliceViewer->ShutdownInteractor();
+
+    this->SliceViewer->GetRenderWindowInteractor()->RemoveObservers (
+        vtkCommand::AnyEvent, (vtkCommand *)this->GUICallbackCommand );
 }
 
 
@@ -124,6 +130,7 @@ void vtkSlicerSliceGUI::ProcessGUIEvents ( vtkObject *caller,
 {
 
   vtkKWPushButton *toggle = vtkKWPushButton::SafeDownCast (caller);
+  vtkRenderWindowInteractor *rwi = vtkRenderWindowInteractor::SafeDownCast (caller);
 
   vtkMRMLScene *mrml = this->GetApplicationLogic()->GetMRMLScene();
   vtkSlicerSliceControllerWidget *sliceControl = this->GetSliceController( );
@@ -139,6 +146,12 @@ void vtkSlicerSliceGUI::ProcessGUIEvents ( vtkObject *caller,
     {
     this->MRMLScene->SaveStateForUndo ( this->SliceNode );
     this->GetLogic()->SetSliceVisible ( ! this->GetLogic()->GetSliceVisible() ); 
+    }
+
+  if ( rwi == this->SliceViewer->GetRenderWindowInteractor() )
+    {
+    this->Script("SliceViewerHandleEvent %s %s", 
+      this->GetTclName(), vtkCommand::GetStringFromEventId(event));
     }
 }
 
