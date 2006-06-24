@@ -183,56 +183,44 @@ void vtkSlicerSliceGUI::ProcessGUIEvents ( vtkObject *caller,
 void vtkSlicerSliceGUI::ProcessLogicEvents ( vtkObject *caller,
                                                 unsigned long event, void *callData )
 {
-    if ( !caller )
-      {
-      return;
-      }
+  if ( !caller )
+    {
+    return;
+    }
 
-    // process Logic changes
-    vtkSlicerSliceLogic *sliceLogic = vtkSlicerSliceLogic::SafeDownCast(caller);
-    vtkSlicerApplicationLogic *appLogic = vtkSlicerApplicationLogic::SafeDownCast ( caller );
-    
-    if ( appLogic == this->GetApplicationLogic ( ) )
-      {
-      // get active VolumeID
-      // is this different from the ID of volume in the BG?
-      // if so, make the change
-      // and update the pipeline
-      }
-    else
-      {
-      if ( sliceLogic == this->GetLogic ( ) ) 
-        {
-        // UPDATE Slice VIEWER
-        vtkSlicerSliceViewer *v = this->GetSliceViewer( );
-        vtkKWRenderWidget *rw = v->GetRenderWidget ();
-        if ( sliceLogic->GetImageData() != NULL )
-          {
-          v->GetImageMapper()->SetInput ( sliceLogic->GetImageData( ) );
-          }
-        else
-          {
-          v->GetImageMapper()->SetInput (NULL);
-          }
-          // configure window, level, camera, etc.
-          rw->ResetCamera ( );
-          rw->Render();
+  // process Logic changes
+  vtkSlicerSliceLogic *sliceLogic = vtkSlicerSliceLogic::SafeDownCast(caller);
+  vtkSlicerApplicationLogic *appLogic = vtkSlicerApplicationLogic::SafeDownCast ( caller );
+  
+  if ( appLogic == this->GetApplicationLogic ( ) )
+    {
+    // Nothing yet
+    }
+  if ( sliceLogic == this->GetLogic ( ) ) 
+    {
+    // sliceLogic contains the pipeline that create viewer's input, so
+    // assume we need to set the image data and render
+    vtkSlicerSliceViewer *sliceViewer = this->GetSliceViewer( );
+    vtkKWRenderWidget *rw = sliceViewer->GetRenderWidget ();
+    sliceViewer->GetImageMapper()->SetInput ( sliceLogic->GetImageData( ) );
+    rw->ResetCamera ( );
+    rw->Render();
 
-          //
-          // Update the VisibilityButton in the SliceController to match the logic state
-          //
-          if ( sliceLogic->GetSliceVisible() > 0 ) {
-              this->GetSliceController()->GetVisibilityToggle()->SetImageToIcon ( this->GetSliceController()->GetVisibilityIcons()->GetVisibleIcon ( ) );        
-          } else {
-              this->GetSliceController()->GetVisibilityToggle()->SetImageToIcon ( this->GetSliceController()->GetVisibilityIcons()->GetInvisibleIcon ( ) );        
-          }
+    //
+    // Update the VisibilityButton in the SliceController to match the logic state
+    //
+    if ( sliceLogic->GetSliceVisible() > 0 ) {
+        this->GetSliceController()->GetVisibilityToggle()->SetImageToIcon ( 
+            this->GetSliceController()->GetVisibilityIcons()->GetVisibleIcon ( ) );        
+    } else {
+        this->GetSliceController()->GetVisibilityToggle()->SetImageToIcon ( 
+            this->GetSliceController()->GetVisibilityIcons()->GetInvisibleIcon ( ) );        
+    }
 
-          // TODO: set up corner annotations
-          //vtkCornerAnnotation *ca = rw->GetCornerAnnotation ( );
-          //ca->SetImageActor (iv->GetImageActor ( ) );
-          v->Modified ();
-          }
-       }
+    // TODO: set up corner annotations
+    //vtkCornerAnnotation *ca = rw->GetCornerAnnotation ( );
+    //ca->SetImageActor (iv->GetImageActor ( ) );
+    }
 }
 
 //---------------------------------------------------------------------------
