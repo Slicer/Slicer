@@ -89,13 +89,6 @@ void vtkSlicerSliceGUI::PrintSelf ( ostream& os, vtkIndent indent )
 //---------------------------------------------------------------------------
 void vtkSlicerSliceGUI::AddGUIObservers ( ) {
 
-    vtkSlicerSliceControllerWidget *sliceControl = this->GetSliceController();
-    if ( sliceControl != NULL )
-      {
-      sliceControl->GetVisibilityToggle()->AddObserver (
-        vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-      }
-    
     this->SliceViewer->InitializeInteractor();
 
     this->SliceViewer->GetRenderWindowInteractor()->AddObserver (
@@ -107,13 +100,6 @@ void vtkSlicerSliceGUI::AddGUIObservers ( ) {
 
 //---------------------------------------------------------------------------
 void vtkSlicerSliceGUI::RemoveGUIObservers ( ) {
-
-    vtkSlicerSliceControllerWidget *sliceControl = this->GetSliceController();
-    if ( sliceControl != NULL )
-      {
-      sliceControl->GetVisibilityToggle()->RemoveObservers ( 
-        vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-      }
 
     this->SliceViewer->ShutdownInteractor();
 
@@ -129,23 +115,12 @@ void vtkSlicerSliceGUI::ProcessGUIEvents ( vtkObject *caller,
                                               unsigned long event, void *callData )
 {
 
-  vtkKWPushButton *toggle = vtkKWPushButton::SafeDownCast (caller);
   vtkRenderWindowInteractor *rwi = vtkRenderWindowInteractor::SafeDownCast (caller);
-
   vtkMRMLScene *mrml = this->GetApplicationLogic()->GetMRMLScene();
-  vtkSlicerSliceControllerWidget *sliceControl = this->GetSliceController( );
 
   if (mrml == NULL ) 
     {
     return;
-    }
-
-  // Toggle the SliceNode's visibility.
-  if ( toggle == this->GetSliceController()->GetVisibilityToggle() &&
-       event == vtkKWPushButton::InvokedEvent )
-    {
-    this->MRMLScene->SaveStateForUndo ( this->SliceNode );
-    this->GetLogic()->SetSliceVisible ( ! this->GetLogic()->GetSliceVisible() ); 
     }
 
   if ( rwi == this->SliceViewer->GetRenderWindowInteractor() )
@@ -189,21 +164,6 @@ void vtkSlicerSliceGUI::ProcessLogicEvents ( vtkObject *caller,
     // and - how do we know when VTK events are idle?
     //rw->Render();
     this->Script("after idle \"%s Render\"", rw->GetTclName());
-
-    //
-    // Update the VisibilityButton in the SliceController to match the logic state
-    //
-    if ( sliceLogic->GetSliceVisible() > 0 ) 
-      {
-      this->GetSliceController()->GetVisibilityToggle()->SetImageToIcon ( 
-            this->GetSliceController()->GetVisibilityIcons()->GetVisibleIcon ( ) );        
-      } 
-      else 
-      {
-      this->GetSliceController()->GetVisibilityToggle()->SetImageToIcon ( 
-            this->GetSliceController()->GetVisibilityIcons()->GetInvisibleIcon ( ) );        
-      }
-
     }
 }
 
@@ -211,7 +171,6 @@ void vtkSlicerSliceGUI::ProcessLogicEvents ( vtkObject *caller,
 void vtkSlicerSliceGUI::ProcessMRMLEvents ( vtkObject *caller,
                                                unsigned long event, void *callData )
 {
-
 
 
 }
