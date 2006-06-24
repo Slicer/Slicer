@@ -69,6 +69,7 @@ vtkMRMLSliceNode::vtkMRMLSliceNode()
   this->SetFieldOfView(250.0, 250.0, 250.0);
   this->SetDimensions(256, 256, 1);
   this->SetOrientationToAxial();
+  this->SetSliceVisible ( 0 );
 
   this->UpdateMatrices();
 }
@@ -347,6 +348,9 @@ void vtkMRMLSliceNode::PrintSelf(ostream& os, vtkIndent indent)
   }
   os << "\n";
 
+  os << indent << "SliceVisible: " <<
+    (this->SliceVisible ? "not null" : "(none)") << "\n";
+  
   os << indent << "SliceToRAS: \n";
   this->SliceToRAS->PrintSelf(os, indent.GetNextIndent());
 

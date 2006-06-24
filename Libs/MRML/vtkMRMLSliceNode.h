@@ -58,6 +58,11 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
   vtkGetObjectMacro (SliceToRAS, vtkMatrix4x4);
   vtkSetObjectMacro (SliceToRAS, vtkMatrix4x4);
 
+ // Description:
+  // The visibility of the slice in the 3DViewer.
+  vtkGetMacro ( SliceVisible, int );
+  vtkSetMacro ( SliceVisible, int );
+
   // Description:
   // 'standard' radiological convention views of patient space
   // these calls adjust the SliceToRAS matrix to position the slice
@@ -134,6 +139,7 @@ protected:
   vtkMatrix4x4 *XYToSlice;
   vtkMatrix4x4 *XYToRAS;
 
+  int SliceVisible;
   double FieldOfView[3];
   unsigned int Dimensions[3];
   char *OrientationString;
