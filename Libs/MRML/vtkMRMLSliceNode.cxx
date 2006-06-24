@@ -153,21 +153,44 @@ void vtkMRMLSliceNode::SetOrientationToCoronal()
 }
 
 //----------------------------------------------------------------------------
+// Local helper to compare matrices -- TODO: is there a standard version of this?
+int vtkMRMLSliceNode::Matrix4x4AreEqual(vtkMatrix4x4 *m1, vtkMatrix4x4 *m2)
+{
+  int i,j;
+  for (i = 0; i < 4; i++)
+    {
+    for (j = 0; j < 4; j++)
+      {
+      if ( m1->GetElement(i, j) != m2->GetElement(i, j) )
+        {
+        return 0;
+        }
+      }
+    }
+    return 1;
+}
+
+//----------------------------------------------------------------------------
+//  Calculate XYToSlice and XYToRAS 
+//  Inputs: Dimenionss, FieldOfView, SliceToRAS
+//
 void vtkMRMLSliceNode::UpdateMatrices()
 {
     double spacing[3];
     unsigned int i;
-    this->XYToSlice->Identity();
+    vtkMatrix4x4 *xyToSlice = vtkMatrix4x4::New();
+    vtkMatrix4x4 *xyToRAS = vtkMatrix4x4::New();
 
     // the mapping from XY output slice pixels to Slice Plane coordinate
+    xyToSlice->Identity();
     for (i = 0; i < 3; i++)
       {
       spacing[i] = this->FieldOfView[i] / this->Dimensions[i];
-      this->XYToSlice->SetElement(i, i, spacing[i]);
-      this->XYToSlice->SetElement(i, 3, -this->FieldOfView[i] / 2.);
+      xyToSlice->SetElement(i, i, spacing[i]);
+      xyToSlice->SetElement(i, 3, -this->FieldOfView[i] / 2.);
       }
-      this->XYToSlice->SetElement(2, 2, 1.);
-      this->XYToSlice->SetElement(2, 3, 0.);
+    xyToSlice->SetElement(2, 2, 1.);
+    xyToSlice->SetElement(2, 3, 0.);
 
     // the mapping from slice plane coordinates to RAS 
     // (the Orienation as in Axial, Sagittal, Coronal)
@@ -183,10 +206,18 @@ void vtkMRMLSliceNode::UpdateMatrices()
     //
     // RAS = XYToRAS * XY
     //
+    vtkMatrix4x4::Multiply4x4(this->SliceToRAS, xyToSlice, xyToRAS);
     
-    vtkMatrix4x4::Multiply4x4(this->SliceToRAS, this->XYToSlice, this->XYToRAS);
+    // check to see if the matrix actually changed
+    if ( !Matrix4x4AreEqual (xyToRAS, this->XYToRAS) )
+      {
+      this->XYToSlice->DeepCopy( xyToSlice );
+      this->XYToRAS->DeepCopy( xyToRAS );
+      this->Modified();
+      }
 
-    this->Modified();
+    xyToSlice->Delete();
+    xyToRAS->Delete();
 }
 
 

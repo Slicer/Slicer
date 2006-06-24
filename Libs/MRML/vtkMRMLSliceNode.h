@@ -112,6 +112,11 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
   vtkGetObjectMacro (XYToRAS, vtkMatrix4x4);
 
   // Description:
+  // helper for comparing to matrices
+  // TODO: is there a standard VTK method?
+  int Matrix4x4AreEqual(vtkMatrix4x4 *m1, vtkMatrix4x4 *m2);
+
+  // Description:
   // Recalculate XYToSlice and XYToRAS in terms or fov, dim, SliceToRAS
   // - called when any of the inputs change
   void UpdateMatrices();
