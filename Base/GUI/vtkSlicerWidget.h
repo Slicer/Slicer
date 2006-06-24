@@ -63,7 +63,19 @@ public:
   // Description:
   // alternative method to propagate events generated in GUI to logic / mrml
   virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData ) { };
-  
+
+  // Description:
+  // Flags to avoid event loops
+  // NOTE: don't use the SetMacro or it call modified itself and generate even more events!
+  vtkGetMacro(InWidgetCallbackFlag, int);
+  void SetInWidgetCallbackFlag (int flag) {
+    this->InWidgetCallbackFlag = flag;
+  }
+  vtkGetMacro(InMRMLCallbackFlag, int);
+  void SetInMRMLCallbackFlag (int flag) {
+    this->InMRMLCallbackFlag = flag;
+  }
+
 
 protected:
   vtkSlicerWidget();
@@ -77,15 +89,15 @@ protected:
   
   //BTX
   // a shared set of functions that call the
-  // virtual ProcessMRMLEvents, ProcessLogicEvents,
+  // virtual ProcessMRMLEvents
   // and ProcessGUIEvents methods in the
   // subclasses, if they are defined.
-  static void MRMLCallback( vtkObject *__caller,
-                            unsigned long eid, void *__clientData, void *callData );
-  static void GUICallback( vtkObject *__caller,
-                           unsigned long eid, void *__clientData, void *callData );    
+  static void MRMLCallback( vtkObject *caller,
+                            unsigned long eid, void *clientData, void *callData );
+  static void WidgetCallback( vtkObject *caller,
+                           unsigned long eid, void *clientData, void *callData );    
   
-  // functions that set MRML and Logic pointers for the GUI class,
+  // functions that set MRML pointers for the GUI class,
   // either with or without adding/removing observers on them.
   void SetMRML ( vtkObject **nodePtr, vtkObject *node );
   void SetAndObserveMRML ( vtkObject **nodePtr, vtkObject *node );
@@ -95,6 +107,11 @@ protected:
   // Holders for MRML, GUI and Logic callbacks
   vtkCallbackCommand *MRMLCallbackCommand;
   vtkCallbackCommand *GUICallbackCommand;
+
+  // Description:
+  // Flag to avoid event loops
+  int InWidgetCallbackFlag;
+  int InMRMLCallbackFlag;
   
   vtkSlicerWidget(const vtkSlicerWidget&); // Not implemented
   void operator=(const vtkSlicerWidget&); // Not Implemented

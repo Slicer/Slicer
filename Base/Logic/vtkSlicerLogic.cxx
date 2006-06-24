@@ -75,12 +75,10 @@ void vtkSlicerLogic::PrintSelf(ostream& os, vtkIndent indent)
 // observed mrml node back into the gui layer for further processing
 //
 void 
-vtkSlicerLogic::MRMLCallback(vtkObject *__mrmlnode, 
-            unsigned long eid, void *__clientData, void *callData)
+vtkSlicerLogic::MRMLCallback(vtkObject *caller, 
+            unsigned long eid, void *clientData, void *callData)
 {
-  static int inMRMLCallback = 0;
-
-  vtkSlicerLogic *self = reinterpret_cast<vtkSlicerLogic *>(__clientData);
+  vtkSlicerLogic *self = reinterpret_cast<vtkSlicerLogic *>(clientData);
 
   if (self->GetInMRMLCallbackFlag())
     {
@@ -101,12 +99,10 @@ vtkSlicerLogic::MRMLCallback(vtkObject *__mrmlnode,
 // observed mrml node back into the gui layer for further processing
 //
 void 
-vtkSlicerLogic::LogicCallback(vtkObject *__mrmlnode, 
-            unsigned long eid, void *__clientData, void *callData)
+vtkSlicerLogic::LogicCallback(vtkObject *caller, 
+            unsigned long eid, void *clientData, void *callData)
 {
-  static int inLogicCallback = 0;
-
-  vtkSlicerLogic *self = reinterpret_cast<vtkSlicerLogic *>(__clientData);
+  vtkSlicerLogic *self = reinterpret_cast<vtkSlicerLogic *>(clientData);
 
   if (self->GetInLogicCallbackFlag())
     {

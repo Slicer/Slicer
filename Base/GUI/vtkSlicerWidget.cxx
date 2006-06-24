@@ -15,26 +15,28 @@ vtkCxxRevisionMacro ( vtkSlicerWidget, "$Revision: 1.0 $" );
 //---------------------------------------------------------------------------
 vtkSlicerWidget::vtkSlicerWidget ( )
 {
-    // Set up callbacks
-    this->MRMLCallbackCommand = vtkCallbackCommand::New ( );
-    this->MRMLCallbackCommand->SetClientData( reinterpret_cast<void *>(this) );
-    this->MRMLCallbackCommand->SetCallback( vtkSlicerWidget::MRMLCallback );
+  // Set up callbacks
+  this->MRMLCallbackCommand = vtkCallbackCommand::New ( );
+  this->MRMLCallbackCommand->SetClientData( reinterpret_cast<void *>(this) );
+  this->MRMLCallbackCommand->SetCallback( vtkSlicerWidget::MRMLCallback );
 
-    this->GUICallbackCommand = vtkCallbackCommand::New ( );
-    this->GUICallbackCommand->SetClientData( reinterpret_cast<void *>(this) );
-    this->GUICallbackCommand->SetCallback( vtkSlicerWidget::GUICallback );
-    
-    // Set null pointers
-    this->MRMLScene = NULL;
+  this->GUICallbackCommand = vtkCallbackCommand::New ( );
+  this->GUICallbackCommand->SetClientData( reinterpret_cast<void *>(this) );
+  this->GUICallbackCommand->SetCallback( vtkSlicerWidget::WidgetCallback );
+  
+  // Set null pointers
+  this->MRMLScene = NULL;
+  this->InWidgetCallbackFlag = 0;
+  this->InMRMLCallbackFlag = 0;
 }
 
 
 //---------------------------------------------------------------------------
 vtkSlicerWidget::~vtkSlicerWidget ( )
 {
-    // remove observers if there are any,
-    // and set null pointers.
-    this->SetAndObserveMRMLScene ( NULL );
+  // remove observers if there are any,
+  // and set null pointers.
+  this->SetAndObserveMRMLScene ( NULL );
 
   // unregister and set null pointers.
   if ( this->MRMLCallbackCommand )
@@ -55,64 +57,59 @@ vtkSlicerWidget::~vtkSlicerWidget ( )
 //---------------------------------------------------------------------------
 void vtkSlicerWidget::PrintSelf ( ostream& os, vtkIndent indent )
 {
-    this->vtkObject::PrintSelf ( os, indent );
-    os << indent << "MRMLScene: " << this->GetMRMLScene ( ) << "\n";
+  this->vtkObject::PrintSelf ( os, indent );
+  os << indent << "MRMLScene: " << this->GetMRMLScene ( ) << "\n";
 }
 
 
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 // Description:
-// the MRMLCallback is a static function that relays observed events from 
-// the observed MRML node into the GUI's 'ProcessMRMLEvents" mediator method,
-// which in turn makes appropriate changes to widgets in the GUI.
+// the MRMLCallback is a static function to relay modified events from the 
+// observed mrml node back into the gui layer for further processing
 //
-void vtkSlicerWidget::MRMLCallback ( vtkObject *__caller,
-                                    unsigned long eid, void *__clientData, void *callData)
+void 
+vtkSlicerWidget::MRMLCallback(vtkObject *caller, 
+            unsigned long eid, void *clientData, void *callData)
 {
-  static int inCallback = 0;
-  
-  vtkSlicerWidget *self = reinterpret_cast<vtkSlicerWidget *>(__clientData);
-  
-  if ( inCallback )
+  vtkSlicerWidget *self = reinterpret_cast<vtkSlicerWidget *>(clientData);
+
+  if (self->GetInMRMLCallbackFlag())
     {
-    vtkErrorWithObjectMacro ( self, "In vtkSlicerWidget *!* MRMLCallback called recursively?");
+    vtkErrorWithObjectMacro(self, "In vtkSlicerWidget *********MRMLCallback called recursively?");
     return;
     }
-  
-  vtkDebugWithObjectMacro ( self, "In vtkSlicerWidget MRMLCallback");
-  
-  inCallback = 1;
-  self->ProcessMRMLEvents ( __caller, eid, callData );
-  inCallback = 0;
+
+  vtkDebugWithObjectMacro(self, "In vtkSlicerWidget MRMLCallback");
+
+  self->SetInMRMLCallbackFlag(1);
+  self->ProcessMRMLEvents(caller, eid, callData);
+  self->SetInMRMLCallbackFlag(0);
 }
 
 //---------------------------------------------------------------------------
 // Description:
-// the GUICallback is a static function that relays observed events from 
+// the WidgetCallback is a static function that relays observed events from 
 // observed widgets into the GUI's 'ProcessWidgetEvents" mediator method, which in
 // turn makes appropriate changes to the application layer.
 //
-void vtkSlicerWidget::GUICallback ( vtkObject *__caller,
-                                   unsigned long eid, void *__clientData, void *callData)
+void 
+vtkSlicerWidget::WidgetCallback(vtkObject *caller, 
+            unsigned long eid, void *clientData, void *callData)
 {
-  static int inCallback = 0;
-  
-  vtkSlicerWidget *self = reinterpret_cast<vtkSlicerWidget *>(__clientData);
-  
-  if ( inCallback )
+  vtkSlicerWidget *self = reinterpret_cast<vtkSlicerWidget *>(clientData);
+
+  if (self->GetInWidgetCallbackFlag())
     {
-    vtkErrorWithObjectMacro ( self, "In vtkSlicerWidget *!* GUICallback called recursively?");
+    vtkErrorWithObjectMacro(self, "In vtkSlicerWidget *********WidgetCallback called recursively?");
     return;
     }
-  
-  vtkDebugWithObjectMacro ( self, "In vtkSlicerWidget GUICallback");
-  
-  inCallback = 1;
-  self->ProcessWidgetEvents ( __caller, eid, callData );
-  inCallback = 0;
-  
-}
 
+  vtkDebugWithObjectMacro(self, "In vtkSlicerWidget WidgetCallback");
+
+  self->SetInWidgetCallbackFlag(1);
+  self->ProcessWidgetEvents(caller, eid, callData);
+  self->SetInWidgetCallbackFlag(0);
+}
 
 
 //---------------------------------------------------------------------------

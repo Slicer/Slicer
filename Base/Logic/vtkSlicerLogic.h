@@ -86,10 +86,10 @@ protected:
   // a shared set of functions that call the 
   // virtual ProcessMRMLEvents and ProcessLogicEvents methods in the
   // subclasses (if they are defined)
-  static void MRMLCallback(vtkObject *__mrmlslice, 
-                unsigned long eid, void *__clientData, void *callData);
-  static void LogicCallback(vtkObject *__mrmlslice, 
-                unsigned long eid, void *__clientData, void *callData);
+  static void MRMLCallback(vtkObject *caller, 
+                unsigned long eid, void *clientData, void *callData);
+  static void LogicCallback(vtkObject *caller, 
+                unsigned long eid, void *clientData, void *callData);
 
   // functions that set MRML for the Logic class,
   // either with or without adding/removing observers on them.
