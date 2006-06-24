@@ -62,9 +62,14 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerLogic : public vtkObject
 
   // Description:
   // Flags to avoid event loops
-  vtkSetMacro(InLogicCallbackFlag, int);
+  // NOTE: don't use the SetMacro or it call modified itself and generate even more events!
+  void SetInLogicCallbackFlag (int flag) {
+    this->InLogicCallbackFlag = flag;
+  }
   vtkGetMacro(InLogicCallbackFlag, int);
-  vtkSetMacro(InMRMLCallbackFlag, int);
+  void SetInMRMLCallbackFlag (int flag) {
+    this->InMRMLCallbackFlag = flag;
+  }
   vtkGetMacro(InMRMLCallbackFlag, int);
 
   // Additional functionality:
