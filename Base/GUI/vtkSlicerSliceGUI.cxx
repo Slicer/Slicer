@@ -123,55 +123,22 @@ void vtkSlicerSliceGUI::ProcessGUIEvents ( vtkObject *caller,
                                               unsigned long event, void *callData )
 {
 
-    vtkKWScaleWithEntry *s = vtkKWScaleWithEntry::SafeDownCast(caller);
-    vtkKWEntryWithLabel *e = vtkKWEntryWithLabel::SafeDownCast(caller);
-    vtkKWMenuButtonWithSpinButtonsWithLabel *o = vtkKWMenuButtonWithSpinButtonsWithLabel::SafeDownCast (caller );
+  vtkKWPushButton *toggle = vtkKWPushButton::SafeDownCast (caller);
 
-    vtkMRMLScene *mrml = this->GetApplicationLogic()->GetMRMLScene();
-    vtkSlicerSliceControllerWidget *c = this->GetSliceController( );
+  vtkMRMLScene *mrml = this->GetApplicationLogic()->GetMRMLScene();
+  vtkSlicerSliceControllerWidget *sliceControl = this->GetSliceController( );
 
-    if (mrml != NULL ) {
-        // Toggle the SliceNode's visibility.
-        if ( this->GetSliceController()->GetVisibilityToggle() == vtkKWPushButton::SafeDownCast ( caller ) &&
-             event == vtkKWPushButton::InvokedEvent )
-            {
-                this->MRMLScene->SaveStateForUndo ( this->SliceNode );
-                if ( this->GetLogic()->GetSliceVisible() > 0 ) {
-                    this->GetLogic()->SetSliceVisible ( 0 );
-                } else {
-                    this->GetLogic()->SetSliceVisible ( 1 );
-                }
-            }
+  if (mrml == NULL ) 
+    {
+    return;
+    }
 
-        //---
-        // Scale Widget
-        if ( s == c->GetOffsetScale ( ) ) {
-
-            // SET UNDO STATE
-            if ( event == vtkKWScale::ScaleValueStartChangingEvent  ) {
-                mrml->SaveStateForUndo ( this->GetSliceNode() );
-            }
-            // UNDO-ABLE APPLY
-            if ( event == vtkKWScale::ScaleValueStartChangingEvent || event == vtkCommand::ModifiedEvent ) {
-                if ( this->GetSliceNode() )
-                  {
-                  vtkMatrix4x4 *m = this->GetSliceNode()->GetSliceToRAS ( );
-                  m->Identity ( );
-                  m->SetElement (2, 3, c->GetOffsetScale()->GetValue ( ) );
-                  this->GetSliceNode()->Modified();
-                  }
-            }
-        }
-    
-
-        //---
-        // Orientation menu
-        if ( o == c->GetOrientationMenu ( ) && event == vtkCommand::ModifiedEvent ) {
-            // SET UNDO STATE
-            //UNDO-ABLE APPLY
-            // TO DO: set the RASToSlice matrix from the menu value
-            c->GetOrientationMenu()->GetWidget()->GetWidget()->GetValue ( );
-        }
+  // Toggle the SliceNode's visibility.
+  if ( toggle == this->GetSliceController()->GetVisibilityToggle() &&
+       event == vtkKWPushButton::InvokedEvent )
+    {
+    this->MRMLScene->SaveStateForUndo ( this->SliceNode );
+    this->GetLogic()->SetSliceVisible ( ! this->GetLogic()->GetSliceVisible() ); 
     }
 }
 
@@ -220,9 +187,6 @@ void vtkSlicerSliceGUI::ProcessLogicEvents ( vtkObject *caller,
             this->GetSliceController()->GetVisibilityIcons()->GetInvisibleIcon ( ) );        
       }
 
-    // TODO: set up corner annotations
-    //vtkCornerAnnotation *ca = rw->GetCornerAnnotation ( );
-    //ca->SetImageActor (iv->GetImageActor ( ) );
     }
 }
 
