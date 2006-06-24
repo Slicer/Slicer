@@ -89,11 +89,11 @@ void vtkSlicerSliceGUI::PrintSelf ( ostream& os, vtkIndent indent )
 //---------------------------------------------------------------------------
 void vtkSlicerSliceGUI::AddGUIObservers ( ) {
 
-    vtkSlicerSliceControllerWidget *c = this->GetSliceController();
-    if ( c != NULL )
+    vtkSlicerSliceControllerWidget *sliceControl = this->GetSliceController();
+    if ( sliceControl != NULL )
       {
-      c->AddObserver ( vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
-      c->GetVisibilityToggle()->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+      sliceControl->GetVisibilityToggle()->AddObserver (
+        vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
       }
     
     this->SliceViewer->InitializeInteractor (  );
@@ -105,11 +105,11 @@ void vtkSlicerSliceGUI::AddGUIObservers ( ) {
 //---------------------------------------------------------------------------
 void vtkSlicerSliceGUI::RemoveGUIObservers ( ) {
 
-    vtkSlicerSliceControllerWidget *c = this->GetSliceController();
-    if ( c != NULL )
+    vtkSlicerSliceControllerWidget *sliceControl = this->GetSliceController();
+    if ( sliceControl != NULL )
       {
-      c->RemoveObservers ( vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
-      c->GetVisibilityToggle()->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+      sliceControl->GetVisibilityToggle()->RemoveObservers ( 
+        vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
       }
 
     this->SliceViewer->ShutdownInteractor (  );
