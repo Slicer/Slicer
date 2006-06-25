@@ -433,6 +433,9 @@ void vtkCommandLineModuleLogic::Apply()
     in->ReadData( this->MRMLScene->GetNodeByID( (*id2fn).first.c_str() ) );
     
     in->Delete();
+
+    this->ApplicationLogic->GetSelectionNode()->SetActiveVolumeID( (*id2fn).first.c_str() );
+    this->ApplicationLogic->PropagateVolumeSelection();
     }
 
   // clean up

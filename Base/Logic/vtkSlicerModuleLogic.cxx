@@ -21,11 +21,13 @@ vtkStandardNewMacro(vtkSlicerModuleLogic);
 //----------------------------------------------------------------------------
 vtkSlicerModuleLogic::vtkSlicerModuleLogic()
 {
+  this->ApplicationLogic = NULL;
 }
 
 //----------------------------------------------------------------------------
 vtkSlicerModuleLogic::~vtkSlicerModuleLogic()
 {
+  this->SetApplicationLogic(NULL);
 }
 
 //----------------------------------------------------------------------------

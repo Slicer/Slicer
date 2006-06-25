@@ -21,9 +21,11 @@
 #ifndef __vtkSlicerModuleLogic_h
 #define __vtkSlicerModuleLogic_h
 
-#include "vtkSlicerLogic.h"
 #include "vtkObject.h"
 #include "vtkObjectFactory.h"
+
+#include "vtkSlicerLogic.h"
+#include "vtkSlicerApplicationLogic.h"
 
 class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerModuleLogic : public vtkSlicerLogic 
 {
@@ -34,15 +36,19 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerModuleLogic : public vtkSlicerLogic
   vtkTypeRevisionMacro(vtkSlicerModuleLogic,vtkSlicerLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  // Additional functionality:
-  //  -- an undo stack (also need helper classes)
-  //  -- a tracing/macro infrastructure
-    
+  // Description:
+  // Get access to overall application state
+  vtkGetObjectMacro(ApplicationLogic, vtkSlicerApplicationLogic);
+  vtkSetObjectMacro(ApplicationLogic, vtkSlicerApplicationLogic);
+
 protected:
   vtkSlicerModuleLogic();
   ~vtkSlicerModuleLogic();
   vtkSlicerModuleLogic(const vtkSlicerModuleLogic&);
   void operator=(const vtkSlicerModuleLogic&);
+
+  vtkSlicerApplicationLogic *ApplicationLogic;
+
 };
 
 #endif

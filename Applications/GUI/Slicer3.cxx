@@ -155,6 +155,7 @@ int Slicer3_main(int argc, char *argv[])
     // --- Models module    
     //vtkSlicerModelLogic *modelLogic = vtkSlicerModelLogic::New ( );
     //modelLogic->SetAndObserveMRMLScene ( scene );
+    //modelLogic->SetApplicationLogic ( appLogic );
     vtkSlicerModelsGUI *modelsGUI = vtkSlicerModelsGUI::New ( );
     modelsGUI->SetApplication ( slicerApp );
     modelsGUI->SetAndObserveApplicationLogic ( appLogic );
@@ -180,6 +181,7 @@ int Slicer3_main(int argc, char *argv[])
     //--- Data module
     //vtkSlicerDataLogic *dataLogic = vtkSlicerDataLogic::New ( );
     //dataLogic->SetAndObserveMRMLScene ( scene );
+    //dataLogic->SetApplicationLogic ( appLogic );
     vtkSlicerDataGUI *dataGUI = vtkSlicerDataGUI::New ( );
     dataGUI->SetApplication ( slicerApp );
     dataGUI->SetAndObserveApplicationLogic ( appLogic );
@@ -229,6 +231,7 @@ int Slicer3_main(int argc, char *argv[])
     vtkGradientAnisotropicDiffusionFilterGUI *gradientAnisotropicDiffusionFilterGUI = vtkGradientAnisotropicDiffusionFilterGUI::New ( );
     vtkGradientAnisotropicDiffusionFilterLogic *gradientAnisotropicDiffusionFilterLogic  = vtkGradientAnisotropicDiffusionFilterLogic::New ( );
     gradientAnisotropicDiffusionFilterLogic->SetAndObserveMRMLScene ( scene );
+    gradientAnisotropicDiffusionFilterLogic->SetApplicationLogic ( appLogic );
     //    gradientAnisotropicDiffusionFilterLogic->SetMRMLScene(scene);
     gradientAnisotropicDiffusionFilterGUI->SetLogic ( gradientAnisotropicDiffusionFilterLogic );
     gradientAnisotropicDiffusionFilterGUI->SetApplication ( slicerApp );
@@ -275,6 +278,7 @@ int Slicer3_main(int argc, char *argv[])
 
       // Configure the Logic, GUI, and add to app
       commandLineModuleLogic->SetAndObserveMRMLScene ( scene );
+      commandLineModuleLogic->SetApplicationLogic (appLogic);
       commandLineModuleGUI->SetLogic ( commandLineModuleLogic );
       commandLineModuleGUI->SetApplication ( slicerApp );
       commandLineModuleGUI->SetApplicationLogic ( appLogic );

@@ -57,6 +57,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerLogic : public vtkObject
           this->SetAndObserveMRML ( vtkObjectPointer( &this->MRMLScene), mrml );
       }
 
+
   virtual void ProcessMRMLEvents() {};
   virtual void ProcessLogicEvents() {};
 
@@ -92,7 +93,7 @@ protected:
                 unsigned long eid, void *clientData, void *callData);
 
   // functions that set MRML for the Logic class,
-  // either with or without adding/removing observers on them.
+  // either with or without adding/removirg observers on them.
   void SetMRML(vtkObject **nodePtr, vtkObject *node);
   void SetAndObserveMRML(vtkObject **nodePtr, vtkObject *node);
   //ETX
