@@ -82,13 +82,16 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceGUI : public vtkSlicerComponentGU
           {
           this->GetSliceViewer()->GetImageMapper()->SetInput( idata );
           }
-
-
       }
 
     // Description:
     // Build the SlicesGUI's UIPanel and three main SliceGUIs 
     virtual void BuildGUI ( vtkKWFrame *f );
+
+    // Description:
+    // Show and hide the GUI
+    virtual void PackGUI ( );
+    virtual void UnpackGUI ( );
 
     // Description:
     // Add/Remove Observers on UIPanel widgets and SliceGUIs.

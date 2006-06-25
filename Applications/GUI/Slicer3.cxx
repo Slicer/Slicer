@@ -192,17 +192,20 @@ int Slicer3_main(int argc, char *argv[])
     slicerApp->AddModuleGUI ( dataGUI );
 
     // --- Slices module
+    // - set up each of the slice logics (these initialize their
+    //   helper classes and nodes the first time the process MRML and
+    //   Logic events)
     vtkSlicerSliceLogic *sliceLogic0 = vtkSlicerSliceLogic::New ( );
-    vtkSlicerSliceLogic *sliceLogic1 = vtkSlicerSliceLogic::New ( );
-    vtkSlicerSliceLogic *sliceLogic2 = vtkSlicerSliceLogic::New ( );
     sliceLogic0->SetMRMLScene ( scene );
     sliceLogic0->ProcessMRMLEvents ();
     sliceLogic0->ProcessLogicEvents ();
     sliceLogic0->SetAndObserveMRMLScene ( scene );
+    vtkSlicerSliceLogic *sliceLogic1 = vtkSlicerSliceLogic::New ( );
     sliceLogic1->SetMRMLScene ( scene );
     sliceLogic1->ProcessMRMLEvents ();
     sliceLogic1->ProcessLogicEvents ();
     sliceLogic1->SetAndObserveMRMLScene ( scene );
+    vtkSlicerSliceLogic *sliceLogic2 = vtkSlicerSliceLogic::New ( );
     sliceLogic2->SetMRMLScene ( scene );
     sliceLogic2->ProcessMRMLEvents ();
     sliceLogic2->ProcessLogicEvents ();
@@ -217,6 +220,9 @@ int Slicer3_main(int argc, char *argv[])
     slicesGUI->GetUIPanel()->SetUserInterfaceManager ( appGUI->GetMainSlicerWin( )->GetMainUserInterfaceManager( ) );
     slicesGUI->GetUIPanel( )->Create( );
     slicerApp->AddModuleGUI ( slicesGUI );
+
+    // Initialize the event handling code for slice viewers
+    Tcl_Eval (interp, "source $::SLICER_BUILD/SliceViewerInteractor.tcl");
     
     // --- Gradient anisotropic diffusion filter module
     

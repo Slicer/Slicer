@@ -199,7 +199,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
 
     void ProcessLoadSceneCommand();
-    void ProcessSaveSceneCommand();
+    void ProcessSaveSceneAsCommand();
     
     // Description:
     // Methods describe behavior on startup and exit.
@@ -211,6 +211,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     virtual void ConfigureMainSlicerWindow ( );
     virtual void ConfigureMainViewerPanel ( );
     virtual void ConfigureSliceViewersPanel ( );
+    virtual void PackSliceViewers ( );
+    virtual void PackFirstSliceViewer ( );
+    virtual void UnpackSliceViewers ( );
     virtual void ConfigureGUIPanel ( );
     
     // Description:

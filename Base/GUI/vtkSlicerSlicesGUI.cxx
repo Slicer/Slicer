@@ -265,7 +265,6 @@ void vtkSlicerSlicesGUI::BuildGUI ( vtkKWFrame* f1, vtkKWFrame *f2, vtkKWFrame *
 }
 
 
-
 //----------------------------------------------------------------------------
 void vtkSlicerSlicesGUI::PrintSelf(ostream& os, vtkIndent indent)
 {

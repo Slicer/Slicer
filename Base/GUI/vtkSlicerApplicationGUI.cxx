@@ -288,7 +288,7 @@ void vtkSlicerApplicationGUI::ProcessLoadSceneCommand()
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::ProcessSaveSceneCommand()
+void vtkSlicerApplicationGUI::ProcessSaveSceneAsCommand()
 {
     this->SaveSceneDialog->RetrieveLastPathFromRegistry(
       "OpenPath");
@@ -530,21 +530,39 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
             // Construct menu bar and set up global key bindings
 
 
+            // 
+            // File Menu
+            //
+            this->GetMainSlicerWin()->GetFileMenu()->InsertCommand (
+                      this->GetMainSlicerWin()->GetFileMenuInsertPosition(),
+                                      "Load Scene...", this, "ProcessLoadSceneCommand");
             this->GetMainSlicerWin()->GetFileMenu()->InsertCommand (this->GetMainSlicerWin()->GetFileMenuInsertPosition(),
-                                              "Load Scene", this, "ProcessLoadSceneCommand");
-            this->GetMainSlicerWin()->GetFileMenu()->InsertCommand (this->GetMainSlicerWin()->GetFileMenuInsertPosition(),
-                                               "Save Scene", this, "ProcessSaveSceneCommand");
+                                               "Save Scene As...", this, "ProcessSaveSceneAsCommand");
 
             this->GetMainSlicerWin()->GetFileMenu()->InsertSeparator (
                 this->GetMainSlicerWin()->GetFileMenuInsertPosition());
 
+            //
+            // Edit Menu
+            //
             i = this->MainSlicerWin->GetEditMenu()->AddCommand ("Set Home", NULL, NULL);
             this->MainSlicerWin->GetEditMenu()->SetItemAccelerator ( i, "Ctrl+H");
             i = this->MainSlicerWin->GetEditMenu()->AddCommand ( "Undo", NULL, "$::slicer3::MRMLScene Undo" );
             this->MainSlicerWin->GetEditMenu()->SetItemAccelerator ( i, "Ctrl+Z");
             i = this->MainSlicerWin->GetEditMenu()->AddCommand ( "Redo", NULL, "$::slicer3::MRMLScene Redo" );
             this->MainSlicerWin->GetEditMenu()->SetItemAccelerator ( i, "Ctrl+Y");
-            //i = this->MainSlicerWin->GetViewMenu()->AddCommand ( ? );
+
+            //
+            // View Menu
+            //
+            this->GetMainSlicerWin()->GetViewMenu()->InsertCommand (
+                      this->GetMainSlicerWin()->GetViewMenuInsertPosition(),
+                                      "Single Slice", NULL, "$::slicer3::ApplicationGUI UnpackSliceViewers ; $::slicer3::ApplicationGUI PackFirstSliceViewer ");
+            this->GetMainSlicerWin()->GetViewMenu()->InsertCommand (
+                      this->GetMainSlicerWin()->GetViewMenuInsertPosition(),
+                                      "Three Slices", NULL, "$::slicer3::ApplicationGUI UnpackSliceViewers ; $::slicer3::ApplicationGUI PackSliceViewers ");
+
+
             //i = this->MainSlicerWin->GetWindowMenu()->AddCommand ( ? );
             //i = this->MainSlicerWin->GetHelpMenu()->AddCommand ( ? );
 
@@ -1750,16 +1768,37 @@ void vtkSlicerApplicationGUI::ConfigureSliceViewersPanel ( )
             this->DefaultSlice2Frame->SetParent ( this->MainSlicerWin->GetSecondaryPanelFrame ( ) );
             this->DefaultSlice2Frame->Create ( );
             
-            // pack them.
-            app->Script ("pack %s -side left  -expand y -fill both -padx 0 -pady 0", this->DefaultSlice0Frame->GetWidgetName( ) );
-            app->Script ("pack %s -side left  -expand y -fill both -padx 0 -pady 0", this->DefaultSlice1Frame->GetWidgetName( ) );
-            app->Script ("pack %s -side left  -expand y -fill both -padx 0 -pady 0", this->DefaultSlice2Frame->GetWidgetName( ) );
-
+            this->PackSliceViewers ( );
 
         }
     }
 
 }
+
+void vtkSlicerApplicationGUI::UnpackSliceViewers ( )
+{
+  // pack them.
+  this->Script ("pack forget %s", this->DefaultSlice0Frame->GetWidgetName( ) );
+  this->Script ("pack forget %s", this->DefaultSlice1Frame->GetWidgetName( ) );
+  this->Script ("pack forget %s", this->DefaultSlice2Frame->GetWidgetName( ) );
+}
+
+void vtkSlicerApplicationGUI::PackSliceViewers ( )
+{
+  this->Script ("pack %s -side left  -expand y -fill both -padx 0 -pady 0", 
+    this->DefaultSlice0Frame->GetWidgetName( ) );
+  this->Script ("pack %s -side left  -expand y -fill both -padx 0 -pady 0", 
+    this->DefaultSlice1Frame->GetWidgetName( ) );
+  this->Script ("pack %s -side left  -expand y -fill both -padx 0 -pady 0", 
+    this->DefaultSlice2Frame->GetWidgetName( ) );
+}
+
+void vtkSlicerApplicationGUI::PackFirstSliceViewer ( )
+{
+  this->Script ("pack %s -side left  -expand y -fill both -padx 0 -pady 0", 
+    this->DefaultSlice0Frame->GetWidgetName( ) );
+}
+
 
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::ConfigureGUIPanel ( )

@@ -40,7 +40,6 @@ vtkSlicerSliceGUI::vtkSlicerSliceGUI (  ) {
     this->Logic = NULL;
     this->SliceNode = NULL;
 
-    this->Script ("source $::SLICER_BUILD/SliceViewerInteractor.tcl");
 }
 
 
@@ -211,10 +210,22 @@ void vtkSlicerSliceGUI::BuildGUI ( vtkKWFrame *f )
     this->SliceViewer->SetParent ( f );
     this->SliceViewer->Create (  );
 
-    // pack 
+    this->PackGUI();
+
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerSliceGUI::PackGUI ()
+{
     this->Script("pack %s -pady 0 -side top -expand false -fill x", SliceController->GetWidgetName() );
     this->Script("pack %s -anchor c -side top -expand true -fill both", SliceViewer->GetRenderWidget()->GetWidgetName());
+}
 
+//---------------------------------------------------------------------------
+void vtkSlicerSliceGUI::UnpackGUI ()
+{
+    this->Script("pack forget %s", SliceController->GetWidgetName() );
+    this->Script("pack forget %s", SliceViewer->GetRenderWidget()->GetWidgetName());
 }
 
 
