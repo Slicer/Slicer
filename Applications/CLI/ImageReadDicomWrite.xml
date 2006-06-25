@@ -33,7 +33,7 @@
       <longflag>--patientComments</longflag>
       <description>Patient comments [0010-4000]</description>
       <label>Patient Comments</label>
-      <default></default>
+      <default>None</default>
     </string>
 
  </parameters>
@@ -63,7 +63,7 @@
       <longflag>--studyComments</longflag>
       <description>Study comments[0032-4000]</description>
       <label>Study Comments</label>
-      <default></default>
+      <default>None</default>
     </string>
 
     <string>
@@ -71,7 +71,7 @@
       <longflag>--studyDescription</longflag>
       <description>Study description[0008-1030]</description>
       <label>Study Comments</label>
-      <default></default>
+      <default>None</default>
     </string>
 
     <string>
@@ -95,7 +95,7 @@
       <longflag>--model</longflag>
       <description>model [0008-1090]</description>
       <label>Model</label>
-      <default></default>
+      <default>None</default>
     </string>
 
  </parameters>
@@ -117,7 +117,7 @@
       <longflag>--seriesDescription</longflag>
       <description>Series description[0008-103E]</description>
       <label>Series Description</label>
-      <default></default>
+      <default>None</default>
     </string>
 
  </parameters>
