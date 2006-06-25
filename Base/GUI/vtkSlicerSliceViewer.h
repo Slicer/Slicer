@@ -26,10 +26,9 @@ public:
   vtkGetObjectMacro ( RenderWidget, vtkKWRenderWidget );
 
   // Description:
-  // Add/Remove observers for window interactions
-  void InitializeInteractor();
-  void ShutdownInteractor();
-
+  // Access the renderwindow interactor -- needed because accessing the
+  // interactor directly from tcl was giving a vtkObject rather than
+  // an interactor.  TODO: can this be removed?
   vtkRenderWindowInteractor *GetRenderWindowInteractor()
     {
     return vtkRenderWindowInteractor::SafeDownCast(

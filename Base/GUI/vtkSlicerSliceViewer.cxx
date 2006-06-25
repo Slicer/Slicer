@@ -95,19 +95,6 @@ void vtkSlicerSliceViewer::CreateWidget ( ) {
 
 }
 
-//---------------------------------------------------------------------------
-void vtkSlicerSliceViewer::InitializeInteractor ( ) {
-
-
-    this->Script ("source $::SLICER_BUILD/SliceViewerInteractor.tcl");
-    this->Script ("SliceViewerAddObservers %s", this->GetTclName());
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerSliceViewer::ShutdownInteractor ( ) {
-
-    this->Script ("SliceViewerRemoveObservers %s", this->GetTclName());
-}
 
 //----------------------------------------------------------------------------
 void vtkSlicerSliceViewer::PrintSelf(ostream& os, vtkIndent indent)

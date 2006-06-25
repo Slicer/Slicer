@@ -39,6 +39,8 @@ vtkSlicerSliceGUI::vtkSlicerSliceGUI (  ) {
     this->SliceController = vtkSlicerSliceControllerWidget::New ( );
     this->Logic = NULL;
     this->SliceNode = NULL;
+
+    this->Script ("source $::SLICER_BUILD/SliceViewerInteractor.tcl");
 }
 
 
@@ -67,6 +69,12 @@ vtkSlicerSliceGUI::~vtkSlicerSliceGUI ( ) {
     
     this->SetModuleLogic ( NULL );
     this->SetMRMLNode ( NULL );
+
+    // give the slice viewer code a chance to free any vtk objects
+    // it allocated.  This can be called with no impact on other 
+    // slice gui instances, since the tcl code automatically re-initializes
+    // if the event handler is called again.
+    this->Script("SliceViewerShutdown");
 }
 
 
@@ -89,8 +97,6 @@ void vtkSlicerSliceGUI::PrintSelf ( ostream& os, vtkIndent indent )
 //---------------------------------------------------------------------------
 void vtkSlicerSliceGUI::AddGUIObservers ( ) {
 
-    this->SliceViewer->InitializeInteractor();
-
     this->SliceViewer->GetRenderWindowInteractor()->AddObserver (
         vtkCommand::AnyEvent, (vtkCommand *)this->GUICallbackCommand );
 
@@ -100,8 +106,6 @@ void vtkSlicerSliceGUI::AddGUIObservers ( ) {
 
 //---------------------------------------------------------------------------
 void vtkSlicerSliceGUI::RemoveGUIObservers ( ) {
-
-    this->SliceViewer->ShutdownInteractor();
 
     this->SliceViewer->GetRenderWindowInteractor()->RemoveObservers (
         vtkCommand::AnyEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -210,8 +214,6 @@ void vtkSlicerSliceGUI::BuildGUI ( vtkKWFrame *f )
     // pack 
     this->Script("pack %s -pady 0 -side top -expand false -fill x", SliceController->GetWidgetName() );
     this->Script("pack %s -anchor c -side top -expand true -fill both", SliceViewer->GetRenderWidget()->GetWidgetName());
-
-    this->SliceViewer->InitializeInteractor (  );
 
 }
 

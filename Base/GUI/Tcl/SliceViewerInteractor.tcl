@@ -1,39 +1,50 @@
 
-set ::SliceViewerEvents {
-    MouseMoveEvent RightButtonPressEvent RightButtonReleaseEvent LeftButtonPressEvent
-    LeftButtonReleaseEvent MiddleButtonPressEvent MiddleButtonReleaseEvent MouseWheelForwardEvent
-    MouseWheelBackwardEvent ExposeEvent ConfigureEvent EnterEvent LeaveEvent
-    TimerEvent KeyPressEvent KeyReleaseEvent CharEvent ExitEvent
+
+#
+# variables to manage interaction state
+# - these can be global since theyere is only ever one interaction
+#   going on at a time in the GUI
+#
+proc SliceViewerInitialize {} {
+
+  if { ![info exists ::SliceViewerMode] } {
+    set ::SliceViewerMode ""
   }
 
-proc SliceViewerAddObservers {sliceViewer} {
-
-  return; # turn off this event manager for now
-
-  set interactor [$sliceViewer GetRenderWindowInteractor]
-
-  foreach event $::SliceViewerEvents {
-    $interactor AddObserver $event "SliceViewerHandleEvent $interactor $event"
-  }
-}
-
-proc SliceViewerRemoveObservers {sliceViewer} {
-
-  return; # turn off this event manager for now
-
-  set interactor [$sliceViewer GetRenderWindowInteractor]
-
-  foreach event $::SliceViewerEvents {
-    $interactor RemoveObserver $event "SliceViewerHandleEvent $interactor $event"
+  set matrices "::SliceViewerStorageXYToRAS ::SliceViewerStorageSliceToRAS ::SliceViewerScratchMatrix" 
+  foreach m $matrices {
+    if { ![info exists $m] } {
+      set $m [vtkMatrix4x4 New]
+    }
   }
 }
 
-set ::SliceViewerMode ""
-set ::SliceViewerStorageXYToRAS [vtkMatrix4x4 New]
-set ::SliceViewerStorageSliceToRAS [vtkMatrix4x4 New]
-set ::SliceViewerScratchMatrix [vtkMatrix4x4 New]
+proc SliceViewerShutdown {} {
+
+  if { [info exists ::SliceViewerMode] } {
+    unset ::SliceViewerMode
+  }
+
+  set matrices "::SliceViewerStorageXYToRAS ::SliceViewerStorageSliceToRAS ::SliceViewerScratchMatrix" 
+  foreach m $matrices {
+    if { [info exists $m] } {
+      $m Delete
+      unset $m
+    }
+  }
+}
+
+#
+# Handle events passes up by the sliceGUI
+#
 
 proc SliceViewerHandleEvent {sliceGUI event} {
+
+  if { ![info exists ::SliceViewerMode] } {
+    # initialize on first call 
+    # -- allows clean shutdown because each vtkSlicerSliceGUI can shutdown in destructor
+    SliceViewerInitialize
+  }
 
   set interactor [[$sliceGUI GetSliceViewer] GetRenderWindowInteractor]
   set sliceNode [[$sliceGUI GetLogic]  GetSliceNode]
@@ -82,9 +93,18 @@ proc SliceViewerHandleEvent {sliceGUI event} {
   switch $event {
 
     MouseMoveEvent {
+      #
+      # Mouse move behavior governed by global mode
+      # - first update the annotation
+      # - then handle modifying the view
+      #
       # puts "background pixel at $i $j $k is $pixel"
+
       switch $::SliceViewerMode {
         Translate {
+          #
+          # Translate
+          #
           set currentRAS [$::SliceViewerStorageXYToRAS MultiplyPoint $x $y 0 1]
           foreach d {dr da ds} start $::SliceViewerStartRAS current $currentRAS {
             set $d [expr $current - $start]
@@ -98,6 +118,9 @@ proc SliceViewerHandleEvent {sliceGUI event} {
           $sliceNode UpdateMatrices
         }
         Zoom {
+          #
+          # Zoom
+          #
           set deltay [expr $y - [lindex $::SliceViewerStartXY 1]]
           set h [lindex [[[[$sliceGUI GetSliceViewer]  GetRenderWidget]  GetRenderWindow]  GetSize] 1]
           set percent [expr ($h + $deltay) / (1.0 * $h)]
@@ -110,31 +133,25 @@ proc SliceViewerHandleEvent {sliceGUI event} {
         }
       }
     }
+
     RightButtonPressEvent {
       set ::SliceViewerMode Zoom
       set ::SliceViewerStorageFieldOfView [$sliceNode GetFieldOfView]
       $::slicer3::MRMLScene SaveStateForUndo $sliceNode
     }
-    RightButtonReleaseEvent {
-    }
-    LeftButtonPressEvent {
-    }
-    LeftButtonReleaseEvent {
-    }
+    RightButtonReleaseEvent { }
+    LeftButtonPressEvent { }
+    LeftButtonReleaseEvent { }
     MiddleButtonPressEvent {
       set ::SliceViewerMode Translate
       $::SliceViewerStorageXYToRAS DeepCopy [$sliceNode GetXYToRAS]
       $::SliceViewerStorageSliceToRAS DeepCopy [$sliceNode GetSliceToRAS]
       $::slicer3::MRMLScene SaveStateForUndo $sliceNode
     }
-    MiddleButtonReleaseEvent {
-    }
-    MouseWheelForwardEvent {
-    }
-    MouseWheelBackwardEvent {
-    }
-    ExposeEvent {
-    }
+    MiddleButtonReleaseEvent { }
+    MouseWheelForwardEvent { }
+    MouseWheelBackwardEvent { }
+    ExposeEvent { }
     ConfigureEvent {
       set size [[[[$sliceGUI GetSliceViewer]  GetRenderWidget]  GetRenderWindow]  GetSize]
       foreach {w h} $size {}
@@ -143,16 +160,11 @@ proc SliceViewerHandleEvent {sliceGUI event} {
       $sliceNode SetDimensions $min $min [lindex $oldDim 2]
       puts "[$sliceNode GetDimensions]"
     }
-    EnterEvent {
-    }
-    LeaveEvent {
-    }
-    TimerEvent {
-    }
-    KeyPressEvent {
-    }
-    KeyReleaseEvent {
-    }
+    EnterEvent { }
+    LeaveEvent { }
+    TimerEvent { }
+    KeyPressEvent { }
+    KeyReleaseEvent { }
     CharEvent {
       puts -nonewline "char event [$interactor GetKeyCode]"
       if { [$interactor GetControlKey] } {
@@ -162,8 +174,7 @@ proc SliceViewerHandleEvent {sliceGUI event} {
         puts -nonewline " with shift"
       }
     }
-    ExitEvent {
-    }
+    ExitEvent { }
 
   }
 
