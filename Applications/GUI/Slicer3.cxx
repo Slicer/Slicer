@@ -195,15 +195,19 @@ int Slicer3_main(int argc, char *argv[])
     vtkSlicerSliceLogic *sliceLogic0 = vtkSlicerSliceLogic::New ( );
     vtkSlicerSliceLogic *sliceLogic1 = vtkSlicerSliceLogic::New ( );
     vtkSlicerSliceLogic *sliceLogic2 = vtkSlicerSliceLogic::New ( );
-    sliceLogic0->SetAndObserveMRMLScene ( scene );
+    sliceLogic0->SetMRMLScene ( scene );
     sliceLogic0->ProcessMRMLEvents ();
     sliceLogic0->ProcessLogicEvents ();
-    sliceLogic1->SetAndObserveMRMLScene ( scene );
+    sliceLogic0->SetAndObserveMRMLScene ( scene );
+    sliceLogic1->SetMRMLScene ( scene );
     sliceLogic1->ProcessMRMLEvents ();
     sliceLogic1->ProcessLogicEvents ();
-    sliceLogic2->SetAndObserveMRMLScene ( scene );
+    sliceLogic1->SetAndObserveMRMLScene ( scene );
+    sliceLogic2->SetMRMLScene ( scene );
     sliceLogic2->ProcessMRMLEvents ();
     sliceLogic2->ProcessLogicEvents ();
+    sliceLogic2->SetAndObserveMRMLScene ( scene );
+
     vtkSlicerSlicesGUI *slicesGUI = vtkSlicerSlicesGUI::New ();
     slicesGUI->SetApplication ( slicerApp );
     slicesGUI->SetAndObserveApplicationLogic ( appLogic );
