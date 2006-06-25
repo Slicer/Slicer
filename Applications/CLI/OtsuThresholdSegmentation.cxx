@@ -54,8 +54,6 @@ int main( int argc, char * argv[] )
     InputImageType, InternalImageType >  CCFilterType;
   typedef itk::RelabelComponentImageFilter<
     InternalImageType, OutputImageType > RelabelType;
-  typedef itk::MinimumMaximumImageFilter<
-    OutputImageType > MinMaxType;
 
 // I/O Types
   typedef itk::ImageFileReader< InputImageType >  ReaderType;
@@ -66,14 +64,12 @@ int main( int argc, char * argv[] )
   OtsuFilterType::Pointer OtsuFilter = OtsuFilterType::New();
   CCFilterType::Pointer CCFilter = CCFilterType::New();
   RelabelType::Pointer RelabelFilter = RelabelType::New();
-  MinMaxType::Pointer MinMaxFilter = MinMaxType::New();
   WriterType::Pointer writer = WriterType::New();
 
 // Watchers
   itk::XMLFilterWatcher OtsuWatcher(OtsuFilter, "Otsu Threshold Image Filter");
   itk::XMLFilterWatcher CCWatcher(CCFilter, "Connected Component Threshold Image Filter");
   itk::XMLFilterWatcher RelabelWatcher(RelabelFilter, "Relabel objects");
-  itk::XMLFilterWatcher MinMaxWatcher(MinMaxFilter, "MinMax");
 
   reader->SetFileName (inputVolume.c_str());
 
@@ -83,23 +79,24 @@ int main( int argc, char * argv[] )
   OtsuFilter->SetNumberOfHistogramBins( numberOfBins );
 
   CCFilter->SetInput (OtsuFilter->GetOutput());
-
+  if (faceConnected)
+    {
+    CCFilter->FullyConnectedOn();
+    }
+  else
+    {
+    CCFilter->FullyConnectedOff();
+    }
   RelabelFilter->SetInput (CCFilter->GetOutput());
-  RelabelFilter->SetMinimumObjectSize(10);
+  RelabelFilter->SetMinimumObjectSize(minimumObjectSize);
 
-  MinMaxFilter->SetInput (RelabelFilter->GetOutput());
-
-  writer->SetInput( MinMaxFilter->GetOutput() );
+  writer->SetInput( RelabelFilter->GetOutput() );
   writer->SetFileName( outputVolume.c_str() );
   writer->Update();
 
 
   int threshold = OtsuFilter->GetThreshold();
   std::cout << "Threshold = " << threshold << std::endl;
-
-  std::cout << "Minimum: " << MinMaxFilter->GetMinimum()
-            << " Maximum: " << MinMaxFilter->GetMaximum()
-            << std::endl;
 
   RelabelFilter->Print(std::cout);
 

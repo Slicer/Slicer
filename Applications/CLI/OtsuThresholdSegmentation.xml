@@ -47,6 +47,32 @@ the input image and runs a connected component algortihm.
 
   </parameters>
 
+  <parameters advanced="true">
+    <label>ConnectedComponent Parameters</label>
+    <description>Parameters for Connected Components</description>
+
+    <boolean>
+      <name>faceConnected</name>
+      <longflag>--faceConnectede</longflag>
+      <description>Adjacent voxels are face connected.</description>
+      <label>Face Connected</label>
+      <default>true</default>
+    </boolean>
+  </parameters>
+
+  <parameters advanced="true">
+    <label>Relabel Component Parameters</label>
+    <description>Parameters for Relabel Components</description>
+
+    <integer>
+      <name>minimumObjectSize</name>
+      <longflag>--minimumObjectSize</longflag>
+      <description>Minimum size of object to retain.</description>
+      <label>Minimum Object Size</label>
+      <default>0</default>
+    </integer>
+  </parameters>
+
   <parameters>
     <label>IO</label>
     <description>Input/output parameters</description>
