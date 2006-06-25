@@ -34,6 +34,20 @@ proc SliceViewerShutdown {} {
   }
 }
 
+proc SliceViewerGetPixel {image i j k} {
+
+  foreach index "i j k" dimension [$image GetDimensions] {
+    set ind [set $index]
+    if { $ind < 0 || $ind >= $dimension } {return "Unknown"}
+  }
+  set n [$image GetNumberOfScalarComponents]
+  for {set c 0} {$c < $n} {incr c} {
+    lappend pixel [$image GetScalarComponentAsDouble $i $j $k $c]
+  }
+  return $pixel
+}
+
+
 #
 # Handle events passes up by the sliceGUI
 #
@@ -47,24 +61,31 @@ proc SliceViewerHandleEvent {sliceGUI event} {
   }
 
   set interactor [[$sliceGUI GetSliceViewer] GetRenderWindowInteractor]
+  set renderWidget [[$sliceGUI GetSliceViewer] GetRenderWidget]
+  set anno [$renderWidget GetCornerAnnotation]
   set sliceNode [[$sliceGUI GetLogic]  GetSliceNode]
   set sliceCompositeNode [[$sliceGUI GetLogic]  GetSliceCompositeNode]
   set background [[$sliceGUI GetLogic]  GetBackgroundLayer]
   set backgroundNode [$background GetVolumeNode]
   set backgroundImage [$backgroundNode GetImageData]
+  set foreground [[$sliceGUI GetLogic]  GetForegroundLayer]
+  set foregroundNode [$foreground GetVolumeNode]
+  set foregroundImage [$foregroundNode GetImageData]
   
   foreach {x y} [$interactor GetEventPosition] {}
 
   set xyToRAS [$sliceNode GetXYToRAS]
   set ras [$xyToRAS MultiplyPoint $x $y 0 1]
+  foreach {r a s t} $ras {}
 
-  set xyToIJK [$background GetXYToIJKTransform]
-  foreach {i j k} [$xyToIJK TransformVector $x $y 0] {}
+  set xyToIJK [[$background GetXYToIJKTransform] GetMatrix]
+  foreach {i j k l} [$xyToIJK MultiplyPoint $x $y 0 1] {}
   foreach v {i j k} { ;# cast to integer
     set $v [expr int([set $v])]
   }
 
-  #set pixel [$backgroundImage GetScalarComponentAsDouble $i $j $k 0]
+
+  set bgPixel [SliceViewerGetPixel $backgroundImage $i $j $k]
 
   set ignoreEvents "MouseMoveEvent ModifiedEvent TimerEvent RenderEvent"
 
@@ -100,6 +121,11 @@ proc SliceViewerHandleEvent {sliceGUI event} {
       #
       # puts "background pixel at $i $j $k is $pixel"
 
+      $anno SetText 0 "Fg:\nBg: $bgPixel"
+      $anno SetText 1 "I: $i\nJ:$j\nK: $k"
+      $anno SetText 2 "X: $x\nY:$y"
+      $anno SetText 3 "R: $r\nA: $a\n S: $s"
+
       switch $::SliceViewerMode {
         Translate {
           #
@@ -131,6 +157,10 @@ proc SliceViewerHandleEvent {sliceGUI event} {
           eval $sliceNode SetFieldOfView $newFOV
           $sliceNode UpdateMatrices
         }
+        default {
+          # need to render to show the annotation
+          $renderWidget Render
+        }
       }
     }
 
@@ -160,8 +190,12 @@ proc SliceViewerHandleEvent {sliceGUI event} {
       $sliceNode SetDimensions $min $min [lindex $oldDim 2]
       puts "[$sliceNode GetDimensions]"
     }
-    EnterEvent { }
-    LeaveEvent { }
+    EnterEvent { 
+      $renderWidget CornerAnnotationVisibilityOn
+    }
+    LeaveEvent { 
+      $renderWidget CornerAnnotationVisibilityOff
+    }
     TimerEvent { }
     KeyPressEvent { }
     KeyReleaseEvent { }
