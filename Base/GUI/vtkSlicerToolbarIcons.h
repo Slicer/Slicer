@@ -22,6 +22,7 @@
 #include "./Resources/vtkSlicerToolbarSaveScene_ImageData.h"
 #include "./Resources/vtkSlicerToolbarTabbedView_ImageData.h"
 #include "./Resources/vtkSlicerToolbarVolume_ImageData.h"
+#include "./Resources/vtkSlicerToolbarMouseModes_ImageData.h"
 
 class vtkSlicerToolbarIcons : public vtkSlicerIcons
 {
@@ -49,6 +50,10 @@ class vtkSlicerToolbarIcons : public vtkSlicerIcons
     vtkGetObjectMacro (FourUpViewIcon, vtkKWIcon);
     vtkGetObjectMacro (TabbedViewIcon, vtkKWIcon);
     vtkGetObjectMacro (LightBoxViewIcon, vtkKWIcon);
+    vtkGetObjectMacro (MousePickIcon, vtkKWIcon );
+    vtkGetObjectMacro (MousePanIcon, vtkKWIcon );
+    vtkGetObjectMacro (MouseRotateIcon, vtkKWIcon );    
+    vtkGetObjectMacro (MouseZoomIcon, vtkKWIcon );
 
     virtual void AssignImageDataToIcons ( );
     
@@ -73,6 +78,10 @@ class vtkSlicerToolbarIcons : public vtkSlicerIcons
     vtkKWIcon *FourUpViewIcon;
     vtkKWIcon *TabbedViewIcon;
     vtkKWIcon *LightBoxViewIcon;
+    vtkKWIcon *MousePickIcon;
+    vtkKWIcon *MousePanIcon;
+    vtkKWIcon *MouseRotateIcon;
+    vtkKWIcon *MouseZoomIcon;
     
  private:
     vtkSlicerToolbarIcons (const vtkSlicerToolbarIcons&); // Not implemented

@@ -27,6 +27,10 @@ vtkSlicerToolbarIcons::vtkSlicerToolbarIcons ( )
     this->FourUpViewIcon = vtkKWIcon::New();
     this->TabbedViewIcon = vtkKWIcon::New();
     this->LightBoxViewIcon = vtkKWIcon::New();
+    this->MousePickIcon = vtkKWIcon::New();
+    this->MousePanIcon = vtkKWIcon::New();
+    this->MouseRotateIcon = vtkKWIcon::New();
+    this->MouseZoomIcon = vtkKWIcon::New();
     this->AssignImageDataToIcons ( );
 }
 
@@ -103,6 +107,22 @@ vtkSlicerToolbarIcons::~vtkSlicerToolbarIcons ( )
     if ( this->LightBoxViewIcon ) {
         this->LightBoxViewIcon->Delete ( );
         this->LightBoxViewIcon = NULL;
+    }
+    if ( this->MousePickIcon ) {
+        this->MousePickIcon->Delete ( );
+        this->MousePickIcon = NULL;
+    }
+    if ( this->MousePanIcon ) {
+        this->MousePanIcon->Delete () ;
+        this->MousePanIcon = NULL;
+    }
+    if ( this->MouseZoomIcon ) {
+        this->MouseZoomIcon->Delete ( );
+        this->MouseZoomIcon = NULL;
+    }
+    if ( this->MouseRotateIcon ) {
+        this->MouseRotateIcon->Delete ( );
+        this->MouseRotateIcon = NULL;
     }
     
 }
@@ -195,7 +215,24 @@ void vtkSlicerToolbarIcons::AssignImageDataToIcons ( )
     this->LightBoxViewIcon->SetImage( image_ToolbarLightBoxView,
                                       image_ToolbarLightBoxView_width,
                                       image_ToolbarLightBoxView_height,
-                                      image_ToolbarLightBoxView_pixel_size, 0, 0);                                      
+                                      image_ToolbarLightBoxView_pixel_size, 0, 0);
+    this->MousePickIcon->SetImage (image_ToolbarMousePick,
+                                   image_ToolbarMousePick_width,
+                                   image_ToolbarMousePick_height,
+                                   image_ToolbarMousePick_pixel_size, 0, 0);
+    this->MousePanIcon->SetImage (image_ToolbarMousePan,
+                                   image_ToolbarMousePan_width,
+                                   image_ToolbarMousePan_height,
+                                   image_ToolbarMousePan_pixel_size, 0, 0);
+    this->MouseRotateIcon->SetImage (image_ToolbarMouseRotate,
+                                   image_ToolbarMouseRotate_width,
+                                   image_ToolbarMouseRotate_height,
+                                   image_ToolbarMouseRotate_pixel_size, 0, 0);
+    this->MouseZoomIcon->SetImage (image_ToolbarMouseZoom,
+                                   image_ToolbarMouseZoom_width,
+                                   image_ToolbarMouseZoom_height,
+                                   image_ToolbarMouseZoom_pixel_size, 0, 0);
+                                   
 }
 
 
@@ -223,5 +260,9 @@ void vtkSlicerToolbarIcons::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "FourUpViewIcon" << this->GetFourUpViewIcon ( ) << "\n";
     os << indent << "TabbedViewIcon" << this->GetTabbedViewIcon ( ) << "\n";
     os << indent << "LightBoxViewIcon" << this->GetLightBoxViewIcon ( ) << "\n";
+    os << indent << "MousePickIcon" << this->GetMousePickIcon ( ) << "\n";
+    os << indent << "MousePanIcon" << this->GetMousePanIcon ( ) << "\n";
+    os << indent << "MouseRotateIcon" << this->GetMouseRotateIcon ( ) << "\n";
+    os << indent << "MouseZoomIcon" << this->GetMouseZoomIcon ( ) << "\n";
 }
 

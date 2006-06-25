@@ -81,6 +81,7 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
     this->ModulesToolbar = vtkKWToolbar::New ( );
     this->LoadSaveToolbar = vtkKWToolbar::New ( );
     this->ViewToolbar = vtkKWToolbar::New ( );
+    this->MouseModeToolbar = vtkKWToolbar::New ( );
     
     //--- slicer icons
     this->SlicerLogoIcons = vtkSlicerLogoIcons::New ();
@@ -109,6 +110,10 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
     this->FourUpViewIconButton = vtkKWPushButton::New ( );
     this->TabbedViewIconButton = vtkKWPushButton::New ( );
     this->LightBoxViewIconButton = vtkKWPushButton::New ( );
+    this->MousePickIconButton = vtkKWPushButton::New ( );
+    this->MousePanIconButton = vtkKWPushButton::New ( );
+    this->MouseRotateIconButton = vtkKWPushButton::New ( );
+    this->MouseZoomIconButton = vtkKWPushButton::New ( );
     
     // Control frames that comprise the Main Slicer GUI
     this->LogoFrame = vtkKWFrame::New();
@@ -218,6 +223,10 @@ vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
     if ( this->ViewToolbar ) {
         this->ViewToolbar->Delete ( );
         this->ViewToolbar = NULL;
+    }
+    if ( this->MouseModeToolbar ) {
+        this->MouseModeToolbar->Delete ( );
+        this->MouseModeToolbar = NULL;
     }
 
     this->DeleteFrames ( );
@@ -671,6 +680,23 @@ void vtkSlicerApplicationGUI::DeleteToolbarWidgets ( )
         this->LightBoxViewIconButton->Delete ( );
         this->LightBoxViewIconButton = NULL;
     }
+    if ( this->MousePickIconButton ) {
+        this->MousePickIconButton->Delete ( );
+        this->MousePickIconButton = NULL;
+    }
+    if ( this->MousePanIconButton ) {
+        this->MousePanIconButton->Delete ( );
+        this->MousePanIconButton = NULL;
+    }
+    if ( this->MouseRotateIconButton ) {
+        this->MouseRotateIconButton->Delete ( );
+        this->MouseRotateIconButton = NULL;
+    }
+    if ( this->MouseZoomIconButton ) {
+        this->MouseZoomIconButton->Delete ( );
+        this->MouseZoomIconButton = NULL;
+    }
+
     
 }
 
@@ -940,6 +966,9 @@ void vtkSlicerApplicationGUI::BuildToolBar()
         vtkKWToolbar *mtb = this->GetModulesToolbar ( );
         mtb->SetParent ( tbs->GetToolbarsFrame ( ) );
         mtb->Create();
+        mtb->SetWidgetsFlatAdditionalPadX ( 0 );
+        mtb->SetWidgetsFlatAdditionalPadY ( 0 );
+        mtb->ResizableOff ( );
         mtb->SetReliefToGroove ( );
         mtb->SetWidgetsPadX ( 3 );
         mtb->SetWidgetsPadY ( 2 );
@@ -947,6 +976,9 @@ void vtkSlicerApplicationGUI::BuildToolBar()
         vtkKWToolbar *ltb = this->GetLoadSaveToolbar ( );
         ltb->SetParent ( tbs->GetToolbarsFrame ( ) );
         ltb->Create();
+        ltb->SetWidgetsFlatAdditionalPadX ( 0 );
+        ltb->SetWidgetsFlatAdditionalPadY ( 0 );
+        ltb->ResizableOff ( );
         ltb->SetReliefToGroove ( );
         ltb->SetWidgetsPadX ( 3 );
         ltb->SetWidgetsPadY ( 2 );
@@ -954,16 +986,50 @@ void vtkSlicerApplicationGUI::BuildToolBar()
         vtkKWToolbar *vtb = this->GetViewToolbar ( );
         vtb->SetParent ( tbs->GetToolbarsFrame ( ) );
         vtb->Create();
+        vtb->SetWidgetsFlatAdditionalPadX ( 0 );
+        vtb->SetWidgetsFlatAdditionalPadY ( 0 );
+        vtb->ResizableOff ( );
         vtb->SetReliefToGroove ( );
         vtb->SetWidgetsPadX ( 3 );
         vtb->SetWidgetsPadY ( 2 );
 
+        vtkKWToolbar *mmtb = this->GetMouseModeToolbar ( );
+        mmtb->SetParent ( tbs->GetToolbarsFrame ( ) );
+        mmtb->Create();
+        mmtb->SetWidgetsFlatAdditionalPadX ( 0 );
+        mmtb->SetWidgetsFlatAdditionalPadY ( 0 );
+        mmtb->ResizableOff ( );
+        mmtb->SetReliefToGroove ( );
+        mmtb->SetWidgetsPadX ( 3 );
+        mmtb->SetWidgetsPadY ( 2 );
+        
         //--- and add toolbars to the window's main toolbar set.        
+        tbs->AddToolbar ( this->GetLoadSaveToolbar() );
         tbs->AddToolbar ( this->GetModulesToolbar() );
         tbs->AddToolbar ( this->GetViewToolbar() );
-        tbs->AddToolbar ( this->GetLoadSaveToolbar() );
-
+        tbs->AddToolbar ( this->GetMouseModeToolbar() );
+        
         //--- create icons and the labels that display them and add to toolbar
+
+        // save scene icon
+        this->SaveSceneIconButton->SetParent ( ltb->GetFrame ( ));
+        this->SaveSceneIconButton->Create ( );
+        this->SaveSceneIconButton->SetReliefToFlat ( );
+        this->SaveSceneIconButton->SetBorderWidth ( 0 );
+        this->SaveSceneIconButton->SetOverReliefToNone ( );
+        this->SaveSceneIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetSaveSceneIcon( ) );
+        this->SaveSceneIconButton->SetBalloonHelpString ( "Save a MRML scene to a file.");
+        ltb->AddWidget ( this->SaveSceneIconButton );
+
+        // load scene icon
+        this->LoadSceneIconButton->SetParent ( ltb->GetFrame ( ) );
+        this->LoadSceneIconButton->Create();
+        this->LoadSceneIconButton->SetReliefToFlat ( );
+        this->LoadSceneIconButton->SetBorderWidth ( 0 );
+        this->LoadSceneIconButton->SetOverReliefToNone ( );
+        this->LoadSceneIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetLoadSceneIcon( ) );
+        this->LoadSceneIconButton->SetBalloonHelpString ( "Load a MRML scene.");
+        ltb->AddWidget ( this->LoadSceneIconButton );
 
         // home icon
         this->HomeIconButton->SetParent ( mtb->GetFrame ( ));
@@ -1054,26 +1120,6 @@ void vtkSlicerApplicationGUI::BuildToolBar()
         this->ColorIconButton->SetBalloonHelpString ( "Colors");
         mtb->AddWidget ( this->ColorIconButton );
 
-        // save scene icon
-        this->SaveSceneIconButton->SetParent ( ltb->GetFrame ( ));
-        this->SaveSceneIconButton->Create ( );
-        this->SaveSceneIconButton->SetReliefToFlat ( );
-        this->SaveSceneIconButton->SetBorderWidth ( 0 );
-        this->SaveSceneIconButton->SetOverReliefToNone ( );
-        this->SaveSceneIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetSaveSceneIcon( ) );
-        this->SaveSceneIconButton->SetBalloonHelpString ( "Save a MRML scene to a file.");
-        ltb->AddWidget ( this->SaveSceneIconButton );
-
-        // load scene icon
-        this->LoadSceneIconButton->SetParent ( ltb->GetFrame ( ) );
-        this->LoadSceneIconButton->Create();
-        this->LoadSceneIconButton->SetReliefToFlat ( );
-        this->LoadSceneIconButton->SetBorderWidth ( 0 );
-        this->LoadSceneIconButton->SetOverReliefToNone ( );
-        this->LoadSceneIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetLoadSceneIcon( ) );
-        this->LoadSceneIconButton->SetBalloonHelpString ( "Load a MRML scene.");
-        ltb->AddWidget ( this->LoadSceneIconButton );
-
         // conventional view icon
         this->ConventionalViewIconButton->SetParent (vtb->GetFrame ( ) );
         this->ConventionalViewIconButton->Create ( );
@@ -1133,9 +1179,50 @@ void vtkSlicerApplicationGUI::BuildToolBar()
         this->LightBoxViewIconButton->SetBalloonHelpString ( "Display a slice-matrix and no 3D view" );
         vtb->AddWidget ( this->LightBoxViewIconButton );
 
+        // mouse mode icons; mouse pick icon
+        this->MousePickIconButton->SetParent (mmtb->GetFrame ( ));
+        this->MousePickIconButton->Create ( );
+        this->MousePickIconButton->SetReliefToFlat ( );
+        this->MousePickIconButton->SetBorderWidth ( 0 );
+        this->MousePickIconButton->SetOverReliefToNone ( );
+        this->MousePickIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetMousePickIcon( ) );
+        this->MousePickIconButton->SetBalloonHelpString ( "Display a slice-matrix and no 3D view" );
+        mmtb->AddWidget ( this->MousePickIconButton );
+
+        // mouse mode icons; mouse pan icon
+        this->MousePanIconButton->SetParent (mmtb->GetFrame ( ));
+        this->MousePanIconButton->Create ( );
+        this->MousePanIconButton->SetReliefToFlat ( );
+        this->MousePanIconButton->SetBorderWidth ( 0 );
+        this->MousePanIconButton->SetOverReliefToNone ( );
+        this->MousePanIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetMousePanIcon( ) );
+        this->MousePanIconButton->SetBalloonHelpString ( "Display a slice-matrix and no 3D view" );
+        mmtb->AddWidget ( this->MousePanIconButton );
+
+        // mouse mode icons; mouse rotate icon
+        this->MouseRotateIconButton->SetParent (mmtb->GetFrame ( ));
+        this->MouseRotateIconButton->Create ( );
+        this->MouseRotateIconButton->SetReliefToFlat ( );
+        this->MouseRotateIconButton->SetBorderWidth ( 0 );
+        this->MouseRotateIconButton->SetOverReliefToNone ( );
+        this->MouseRotateIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetMouseRotateIcon( ) );
+        this->MouseRotateIconButton->SetBalloonHelpString ( "Display a slice-matrix and no 3D view" );
+        mmtb->AddWidget ( this->MouseRotateIconButton );
+
+        // mouse mode icons; mouse zoom  icon
+        this->MouseZoomIconButton->SetParent (mmtb->GetFrame ( ));
+        this->MouseZoomIconButton->Create ( );
+        this->MouseZoomIconButton->SetReliefToFlat ( );
+        this->MouseZoomIconButton->SetBorderWidth ( 0 );
+        this->MouseZoomIconButton->SetOverReliefToNone ( );
+        this->MouseZoomIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetMouseZoomIcon( ) );
+        this->MouseZoomIconButton->SetBalloonHelpString ( "Display a slice-matrix and no 3D view" );
+        mmtb->AddWidget ( this->MouseZoomIconButton );
+
         tbs->ShowToolbar ( this->GetModulesToolbar ( ));
         tbs->ShowToolbar ( this->GetLoadSaveToolbar ( ));
         tbs->ShowToolbar ( this->GetViewToolbar ( ));
+        tbs->ShowToolbar ( this->GetMouseModeToolbar ( ));
     }
 
 }

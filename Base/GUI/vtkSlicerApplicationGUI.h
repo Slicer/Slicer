@@ -93,6 +93,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkGetObjectMacro (FourUpViewIconButton, vtkKWPushButton );
     vtkGetObjectMacro (TabbedViewIconButton, vtkKWPushButton );
     vtkGetObjectMacro (LightBoxViewIconButton, vtkKWPushButton );
+    vtkGetObjectMacro (MousePickIconButton, vtkKWPushButton );
+    vtkGetObjectMacro (MousePanIconButton, vtkKWPushButton );
+    vtkGetObjectMacro (MouseRotateIconButton, vtkKWPushButton );
+    vtkGetObjectMacro (MouseZoomIconButton, vtkKWPushButton );
 
     // Description:
     // Get the widgets in the LogoFrame
@@ -148,6 +152,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkGetObjectMacro (LookFromTopCornerIconButton, vtkKWLabel );
     vtkGetObjectMacro (LookFromBottomCornerIconButton, vtkKWLabel);
 
+
     // Description:
     // Get the Widgets that display the Navigation Zoom images
     // in the ViewControlFrame.
@@ -171,6 +176,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkGetObjectMacro (ModulesToolbar, vtkKWToolbar);
     vtkGetObjectMacro (LoadSaveToolbar, vtkKWToolbar );
     vtkGetObjectMacro (ViewToolbar, vtkKWToolbar);
+    vtkGetObjectMacro (MouseModeToolbar, vtkKWToolbar);
     
     // Description:
     // a Plane widget in the main window
@@ -322,6 +328,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkKWToolbar *ModulesToolbar;
     vtkKWToolbar *LoadSaveToolbar;
     vtkKWToolbar *ViewToolbar;
+    vtkKWToolbar *MouseModeToolbar;
 
     // Description:
     // Widgets that display toolbar icons
@@ -342,6 +349,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkKWPushButton *FourUpViewIconButton;
     vtkKWPushButton *TabbedViewIconButton;
     vtkKWPushButton *LightBoxViewIconButton;
+    vtkKWPushButton *MousePickIconButton;
+    vtkKWPushButton *MousePanIconButton;
+    vtkKWPushButton *MouseRotateIconButton;
+    vtkKWPushButton *MouseZoomIconButton;
 
     
     // Description:
