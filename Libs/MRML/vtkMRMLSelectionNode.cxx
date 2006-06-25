@@ -66,7 +66,7 @@ void vtkMRMLSelectionNode::WriteXML(ostream& of, int nIndent)
 
   vtkIndent indent(nIndent);
 
-  of << indent << "activeVolumeID=\"" << this->ActiveVolumeID << "\" ";
+  of << indent << "activeVolumeID=\"" << (this->ActiveVolumeID ? this->ActiveVolumeID : "NULL") << "\" ";
 
 }
 

@@ -91,10 +91,10 @@ void vtkMRMLVolumeNode::WriteXML(ostream& of, int nIndent)
     {
     for(int j=0; j<3; j++) 
       {
-      ss << this->IJKToRASDirections[i][j];
+      ss << this->IJKToRASDirections[i][j] << " ";
       if ( i != 2 && j != 2 )
         {
-        ss << " ";
+        ss << "  ";
         }
       }
     }
@@ -102,10 +102,10 @@ void vtkMRMLVolumeNode::WriteXML(ostream& of, int nIndent)
 
 
   of << indent << "spacing=\"" 
-    << this->Spacing[0] << this->Spacing[1] << this->Spacing[2] << "\" ";
+    << this->Spacing[0] << " " << this->Spacing[1] << " " << this->Spacing[2] << "\" ";
 
   of << indent << "origin=\"" 
-    << this->Origin[0] << this->Origin[1] << this->Origin[2] << "\" ";
+    << this->Origin[0] << " " << this->Origin[1] << " " << this->Origin[2] << "\" ";
 
 }
 
