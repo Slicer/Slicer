@@ -32,7 +32,7 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
     // configure the application before creating
     this->SetName ( "3D Slicer Version 3.0 Alpha" );
 
-#ifdef WIN32
+#ifdef _WIN32
     vtkKWWin32RegistryHelper *regHelper = 
         vtkKWWin32RegistryHelper::SafeDownCast( this->GetRegistryHelper() );
     regHelper->SetOrganization("NA-MIC");
