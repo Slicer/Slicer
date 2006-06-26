@@ -74,6 +74,13 @@ Imported from Slicer 2.
      <description>Splitting normals is useful for visualizing sharp features. However it creates holes in surfaces which affects measurements</description>
      <default>true</default>
    </boolean>
+   <boolean>
+     <name>PointNormals</name>
+     <label>Point Normals</label>
+     <longflag>--pointnormals</longflag>
+     <description>Calculate the Point Normals?</description>
+     <default>true</default>
+   </boolean>
    <string-enumeration>
      <name>FilterType</name>
      <label>Filter Type</label>
@@ -96,6 +103,7 @@ Imported from Slicer 2.
     <default>1</default>
   </integer>
   <boolean>
+    <name>JointSmoothing</name>
     <label>Joint Smoothing</label>
     <description>Perform joint smoothing between all models, so that they will fit together</description>
     <flag>-j</flag>
