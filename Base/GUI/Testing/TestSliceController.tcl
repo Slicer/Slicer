@@ -6,14 +6,15 @@ catch "w Delete"
 catch "app Delete"
 catch "scene Delete"
 
-### test scene for leaks:
-vtkMRMLScene scene
-scene Delete
-exit
 
 ### test app for leaks:
 vtkSlicerApplication app
 app Delete
+exit
+
+### test scene for leaks:
+vtkMRMLScene scene
+scene Delete
 exit
 
 vtkMRMLScene scene
