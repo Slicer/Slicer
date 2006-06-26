@@ -9,15 +9,15 @@ catch "scene Delete"
 
 ### test app for leaks:
 vtkSlicerApplication app
-app Delete
-exit
+#app Delete
+#exit
 
 ### test scene for leaks:
 vtkMRMLScene scene
-scene Delete
-exit
+#scene Delete
+#exit
 
-vtkMRMLScene scene
+#vtkMRMLScene scene
 
 vtkKWTopLevel t
 t SetApplication app
@@ -31,8 +31,8 @@ w Create
 pack [w GetWidgetName] -fill both -expand true
 t Display
 
-t Delete
-w Delete
+#t Delete
+#w Delete
 
 scene Delete
 app Delete
