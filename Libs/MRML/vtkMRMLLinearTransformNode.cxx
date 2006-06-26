@@ -57,6 +57,7 @@ vtkMRMLLinearTransformNode::vtkMRMLLinearTransformNode()
   vtkMatrix4x4 *matrix  = vtkMatrix4x4::New();
   matrix->Identity();
   this->SetAndObserveMatrixTransformToParent(matrix);
+  matrix->Delete();
 }
 
 //----------------------------------------------------------------------------
@@ -292,7 +293,10 @@ void vtkMRMLLinearTransformNode::SetAndObserveMatrixTransformToParent(vtkMatrix4
     this->SetMatrixTransformToParent(NULL);
     }
   this->SetMatrixTransformToParent(matrix);
-  this->MatrixTransformToParent->AddObserver ( vtkCommand::ModifiedEvent, this->TransformNodeCallbackCommand );
+  if ( this->MatrixTransformToParent )
+    {
+    this->MatrixTransformToParent->AddObserver ( vtkCommand::ModifiedEvent, this->TransformNodeCallbackCommand );
+    }
 }
 
 

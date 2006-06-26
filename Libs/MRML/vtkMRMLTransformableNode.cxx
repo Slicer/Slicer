@@ -41,6 +41,10 @@ vtkMRMLTransformableNode::~vtkMRMLTransformableNode()
     {
     SetAndObserveTransformNode(NULL);
     }
+  if (this->TransformNodeCallbackCommand) 
+    {
+    this->TransformNodeCallbackCommand->Delete();
+    }
 }
 
 //----------------------------------------------------------------------------
