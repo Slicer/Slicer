@@ -1694,7 +1694,7 @@ void vtkSlicerApplicationGUI::BuildViewControlGUIPanel ( )
         this->Script ( "grid %s -row 1 -column 0 -padx 0 -pady 0 -sticky ew", this->NavZoomOutIconButton->GetWidgetName() );
         this->Script ( "grid %s -row 1 -column 1 -padx 0 -pady 0 -sticky ew", this->NavZoomScale->GetWidgetName() );
         this->Script ( "grid %s -row 1 -column 2 -padx 0 -pady 0 -sticky ew", this->NavZoomInIconButton->GetWidgetName() );
-        this->Script ("grid %s -row 0 -columnspan 3 -ipadx 40 -ipady 60 -padx 0 -pady 0 -sticky nsew", tmpNavZoom->GetWidgetName ( ) );
+        this->Script ("grid %s -row 0 -columnspan 3 -ipadx 40 -ipady 0 -padx 0 -pady 0 -sticky nsew", tmpNavZoom->GetWidgetName ( ) );
         
         f1a->Delete();
         f1b->Delete();
@@ -1835,8 +1835,8 @@ void vtkSlicerApplicationGUI::ConfigureGUIPanel ( )
             this->ViewControlFrame->SetHeight ( app->GetMainLayout()->GetDefaultViewControlFrameHeight ( ) );
             
             // pack slice and view control frames
-            app->Script ( "pack %s -side bottom -fill x -padx 1 -pady 10", this->ViewControlFrame->GetWidgetName() );
-            app->Script ( "pack %s -side bottom -fill x -padx 1 -pady 10", this->SliceControlFrame->GetWidgetName() );
+            app->Script ( "pack %s -side bottom -expand n -fill x -padx 1 -pady 10", this->ViewControlFrame->GetWidgetName() );
+            app->Script ( "pack %s -side bottom -expand n -fill x -padx 1 -pady 10", this->SliceControlFrame->GetWidgetName() );
 
         }
     }
