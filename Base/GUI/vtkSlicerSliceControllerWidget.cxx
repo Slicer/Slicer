@@ -211,6 +211,10 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     this->Script ( "grid %s -sticky ew -columnspan 2", f->GetWidgetName ( ) );
     this->Script ("pack %s -side left -expand n -padx 1", this->VisibilityToggle->GetWidgetName ( ) );
     this->Script("pack %s -side left -fill x -expand y", this->OffsetScale->GetWidgetName());
+    this->Script("grid columnconfigure %s 0 -weight 1", 
+                 this->GetWidgetName());
+    this->Script("grid columnconfigure %s 1 -weight 1", 
+                 this->GetWidgetName());
 
     // put observers on widgets
     this->AddWidgetObservers();

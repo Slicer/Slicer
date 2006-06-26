@@ -167,24 +167,26 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
     // create a page
     this->UIPanel->AddPage ( "Volumes", "Volumes", NULL );
     
+    vtkKWWidget *page = this->UIPanel->GetPageWidget ( "Volumes" );
+
     // HELP FRAME
     vtkKWFrameWithLabel *volHelpFrame = vtkKWFrameWithLabel::New ( );
-    volHelpFrame->SetParent ( this->UIPanel->GetPageWidget ( "Volumes" ) );
+    volHelpFrame->SetParent ( page );
     volHelpFrame->Create ( );
     volHelpFrame->CollapseFrame ( );
     volHelpFrame->SetLabelText ("Help");
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                  volHelpFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Volumes")->GetWidgetName());
+                  volHelpFrame->GetWidgetName(), page->GetWidgetName());
 
     // ---
     // LOAD FRAME            
     vtkKWFrameWithLabel *volLoadFrame = vtkKWFrameWithLabel::New ( );
-    volLoadFrame->SetParent ( this->UIPanel->GetPageWidget ( "Volumes" ) );
+    volLoadFrame->SetParent ( page );
     volLoadFrame->Create ( );
     volLoadFrame->SetLabelText ("Load");
     volLoadFrame->ExpandFrame ( );
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                  volLoadFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Volumes")->GetWidgetName());
+                  volLoadFrame->GetWidgetName(), page->GetWidgetName());
     // add a file browser 
     this->LoadVolumeButton = vtkKWLoadSaveButton::New ( );
     this->LoadVolumeButton->SetParent ( volLoadFrame->GetFrame() );
@@ -202,10 +204,10 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
     // DISPLAY FRAME            
     this->VolumeDisplayWidget = vtkSlicerVolumeDisplayWidget::New ( );
     this->VolumeDisplayWidget->SetMRMLScene(this->GetMRMLScene() );
-    this->VolumeDisplayWidget->SetParent ( this->UIPanel->GetPageWidget ( "Volumes" ) );
+    this->VolumeDisplayWidget->SetParent ( page );
     this->VolumeDisplayWidget->Create ( );
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                  this->VolumeDisplayWidget->GetWidgetName(), this->UIPanel->GetPageWidget("Volumes")->GetWidgetName());
+                  this->VolumeDisplayWidget->GetWidgetName(), page->GetWidgetName());
     
     volLoadFrame->Delete();
     volHelpFrame->Delete();

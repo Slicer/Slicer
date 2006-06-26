@@ -141,6 +141,18 @@ void vtkSlicerTransformManagerWidget::RemoveWidgetObservers ( ) {
 //---------------------------------------------------------------------------
 void vtkSlicerTransformManagerWidget::CreateWidget ( )
 {
+  // Check if already created
+
+  if (this->IsCreated())
+    {
+    vtkErrorMacro(<< this->GetClassName() << " already created");
+    return;
+    }
+
+  // Call the superclass to create the whole widget
+
+  this->Superclass::CreateWidget();
+
     // ---
     // Widget FRAME            
     vtkKWFrameWithLabel *transformFrame = vtkKWFrameWithLabel::New ( );
