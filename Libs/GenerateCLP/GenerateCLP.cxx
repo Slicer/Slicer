@@ -564,7 +564,7 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
              << "\", \"" 
              << pit->GetLongFlag()
              << "\", msg.str(), "
-             << false
+             << pit->GetName()
              << ", "
              << "commandLine);"
              << EOL << std::endl << EOL << std::endl;
