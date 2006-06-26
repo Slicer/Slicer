@@ -17,6 +17,9 @@ IF(ModuleDescriptionParser_SOURCE_DIR)
   ${ModuleDescriptionParser_SOURCE_DIR}
   )
 ELSE(ModuleDescriptionParser_SOURCE_DIR)
+  INCLUDE_DIRECTORIES(
+  ${Slicer3_SOURCE_DIR}/Libs/ModuleDescriptionParser
+  )
 ENDIF(ModuleDescriptionParser_SOURCE_DIR)
 
 
