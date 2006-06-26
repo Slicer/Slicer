@@ -29,7 +29,7 @@ namespace itk
 /** \class CommandIOFactory
  * \brief Create instances of CommandIO objects using an object factory.
  */
-class ITKCOMMANDIO_EXPORT CommandIOFactory : public ObjectFactoryBase
+class CommandIO_EXPORT CommandIOFactory : public ObjectFactoryBase
 {
 public:  
   /** Standard class typedefs. */
@@ -44,6 +44,7 @@ public:
   
   /** Method for class instantiation. */
   itkFactorylessNewMacro(Self);
+  static CommandIOFactory* FactoryNew() { return new CommandIOFactory;}
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(CommandIOFactory, ObjectFactoryBase);

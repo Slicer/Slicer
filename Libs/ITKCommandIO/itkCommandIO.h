@@ -38,7 +38,7 @@ namespace itk
  *
  *  \ingroup IOFilters
  */
-class ITKCOMMANDIO_EXPORT CommandIO : public ImageIOBase
+class CommandIO_EXPORT CommandIO : public ImageIOBase
 {
 public:
   /** Standard class typedefs. */

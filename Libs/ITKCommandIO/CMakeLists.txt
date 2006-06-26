@@ -10,16 +10,8 @@ INCLUDE_DIRECTORIES(
 # Library for all of my image formats
 ADD_LIBRARY(CommandIO ${ITKCOMMANDIO_SRCS})
 TARGET_LINK_LIBRARIES(CommandIO 
-  ITKAlgorithms
-  ITKNumerics 
-  ITKCommon
-  ITKBasicFilters
-  ITKNumerics
-  ITKStatistics
-  ITKBasicFilters
   ITKIO
-  ITKDICOMParser
-  slicerio ITKNrrdIO)
+)
 
   
 #

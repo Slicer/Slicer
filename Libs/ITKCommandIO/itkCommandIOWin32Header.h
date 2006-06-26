@@ -22,13 +22,13 @@
 #include <itkCommandIOConfigure.h>
 
 #if defined(WIN32) && !defined(ITKCOMMANDIO_STATIC)
-#if defined(ITKCommandIO_EXPORTS)
-#define ITKCOMMANDIO_EXPORT __declspec( dllexport ) 
+#if defined(CommandIO_EXPORTS)
+#define CommandIO_EXPORT __declspec( dllexport ) 
 #else
-#define ITKCOMMANDIO_EXPORT __declspec( dllimport ) 
+#define CommandIO_EXPORT __declspec( dllimport ) 
 #endif
 #else
-#define ITKCOMMANDIO_EXPORT
+#define CommandIO_EXPORT
 #endif
 
 #endif
