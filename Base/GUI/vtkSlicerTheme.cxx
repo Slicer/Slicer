@@ -82,11 +82,11 @@ void vtkSlicerTheme::Install ( )
 
     // Slicer Scrollbars 
     odb->AddEntryAsDouble3 ( "vtkKWScrollbar", "SetBackgroundColor",
-                    this->SlicerColors->White );
+                    this->SlicerColors->LightGrey );
     odb->AddEntryAsDouble3 ( "vtkKWScrollbar", "SetForegroundColor",
                     this->SlicerColors->White );
     odb->AddEntryAsDouble3 ( "vtkKWScrollbar", "SetActiveBackgroundColor",
-                    this->SlicerColors->White );
+                    this->SlicerColors->LightGrey );
     odb->AddEntryAsDouble3 ( "vtkKWScrollbar", "SetActiveForegroundColor",
                     this->SlicerColors->White );
     odb->AddEntryAsDouble3 ( "vtkKWScrollbar", "SetTroughColor", this->SlicerColors->LightGrey );
