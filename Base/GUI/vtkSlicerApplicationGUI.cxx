@@ -1204,7 +1204,7 @@ void vtkSlicerApplicationGUI::BuildToolBar()
         this->MousePickIconButton->SetBorderWidth ( 0 );
         this->MousePickIconButton->SetOverReliefToNone ( );
         this->MousePickIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetMousePickIcon( ) );
-        this->MousePickIconButton->SetBalloonHelpString ( "Display a slice-matrix and no 3D view" );
+        this->MousePickIconButton->SetBalloonHelpString ( "Set the 3DViewer mouse mode to 'pick'" );
         mmtb->AddWidget ( this->MousePickIconButton );
 
         // mouse mode icons; mouse pan icon
@@ -1214,7 +1214,7 @@ void vtkSlicerApplicationGUI::BuildToolBar()
         this->MousePanIconButton->SetBorderWidth ( 0 );
         this->MousePanIconButton->SetOverReliefToNone ( );
         this->MousePanIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetMousePanIcon( ) );
-        this->MousePanIconButton->SetBalloonHelpString ( "Display a slice-matrix and no 3D view" );
+        this->MousePanIconButton->SetBalloonHelpString ( "Set the 3DViewer mouse mode to 'pan' " );
         mmtb->AddWidget ( this->MousePanIconButton );
 
         // mouse mode icons; mouse rotate icon
@@ -1224,7 +1224,7 @@ void vtkSlicerApplicationGUI::BuildToolBar()
         this->MouseRotateIconButton->SetBorderWidth ( 0 );
         this->MouseRotateIconButton->SetOverReliefToNone ( );
         this->MouseRotateIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetMouseRotateIcon( ) );
-        this->MouseRotateIconButton->SetBalloonHelpString ( "Display a slice-matrix and no 3D view" );
+        this->MouseRotateIconButton->SetBalloonHelpString ( "Set the 3DViewer mouse mode to 'rotate' " );
         mmtb->AddWidget ( this->MouseRotateIconButton );
 
         // mouse mode icons; mouse zoom  icon
@@ -1234,7 +1234,7 @@ void vtkSlicerApplicationGUI::BuildToolBar()
         this->MouseZoomIconButton->SetBorderWidth ( 0 );
         this->MouseZoomIconButton->SetOverReliefToNone ( );
         this->MouseZoomIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetMouseZoomIcon( ) );
-        this->MouseZoomIconButton->SetBalloonHelpString ( "Display a slice-matrix and no 3D view" );
+        this->MouseZoomIconButton->SetBalloonHelpString ( "Set the 3DViewer mouse mode to 'zoom' " );
         mmtb->AddWidget ( this->MouseZoomIconButton );
 
         tbs->ShowToolbar ( this->GetModulesToolbar ( ));
