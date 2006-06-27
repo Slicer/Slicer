@@ -287,7 +287,7 @@ void vtkKWWindowLevelThresholdEditor::CreateWidget()
   this->ColorTransferFunctionEditor->Create();
   this->ColorTransferFunctionEditor->ExpandCanvasWidthOn();
   this->ColorTransferFunctionEditor->SetCanvasWidth(300);
-  this->ColorTransferFunctionEditor->SetCanvasHeight(140);
+  this->ColorTransferFunctionEditor->SetCanvasHeight(126);
   this->ColorTransferFunctionEditor->LabelVisibilityOff ();
   this->ColorTransferFunctionEditor->SetBalloonHelpString(
     "Another color transfer function editor. The point position is now on "
@@ -328,7 +328,8 @@ void vtkKWWindowLevelThresholdEditor::CreateWidget()
   
   this->ColorTransferFunctionEditor->SetColorRampOutlineStyleToNone();
   
-  this->ColorTransferFunctionEditor->SetColorRampHeight(100);
+  this->ColorTransferFunctionEditor->SetColorRampHeight(
+    this->ColorTransferFunctionEditor->GetCanvasHeight() - 2);
   this->ColorTransferFunctionEditor->SetPointMarginToCanvasToNone();
   
   this->ThresholdRange->SetWholeRange(0, 255);
