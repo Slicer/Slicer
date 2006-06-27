@@ -25,13 +25,6 @@ public:
   vtkGetObjectMacro ( Actor2D, vtkActor2D );
   vtkGetObjectMacro ( RenderWidget, vtkKWRenderWidget );
 
-  // Description:
-  // Access the renderwindow interactor
-  vtkRenderWindowInteractor *GetRenderWindowInteractor()
-    {
-    return this->RenderWidget->GetRenderWindowInteractor();
-    }
-
 protected:
   vtkSlicerSliceViewer ( );
   ~vtkSlicerSliceViewer ( );
