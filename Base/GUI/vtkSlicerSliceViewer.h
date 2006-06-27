@@ -26,13 +26,10 @@ public:
   vtkGetObjectMacro ( RenderWidget, vtkKWRenderWidget );
 
   // Description:
-  // Access the renderwindow interactor -- needed because accessing the
-  // interactor directly from tcl was giving a vtkObject rather than
-  // an interactor.  TODO: can this be removed?
+  // Access the renderwindow interactor
   vtkRenderWindowInteractor *GetRenderWindowInteractor()
     {
-    return vtkRenderWindowInteractor::SafeDownCast(
-                                      this->RenderWidget->GetRenderWindow()->GetInteractor() );
+    return this->RenderWidget->GetRenderWindowInteractor();
     }
 
 protected:
