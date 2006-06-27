@@ -78,6 +78,9 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
     this->MainSlicerWin = vtkSlicerWindow::New ( );
 
     //--- slicer toolbars
+    vtkKWToolbar::SetGlobalToolbarAspectToUnChanged();
+    vtkKWToolbar::SetGlobalWidgetsAspectToUnChanged();
+
     this->ModulesToolbar = vtkKWToolbar::New ( );
     this->LoadSaveToolbar = vtkKWToolbar::New ( );
     this->ViewToolbar = vtkKWToolbar::New ( );
@@ -976,7 +979,7 @@ void vtkSlicerApplicationGUI::BuildToolBar()
         //--- configure the window's main toolbarset.
         vtkSlicerWindow *win = this->MainSlicerWin;
         vtkKWToolbarSet *tbs = win->GetMainToolbarSet();
-        tbs->SetToolbarsWidgetsFlatAspect ( 1 );
+        tbs->SetToolbarsWidgetsAspect ( vtkKWToolbar::WidgetsAspectUnChanged );
         tbs->BottomSeparatorVisibilityOn ( );
         tbs->TopSeparatorVisibilityOn ( );
 
