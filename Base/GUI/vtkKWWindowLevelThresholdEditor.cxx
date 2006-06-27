@@ -192,7 +192,7 @@ void vtkKWWindowLevelThresholdEditor::CreateWidget()
   winLevelFrame->SetParent (this);
   winLevelFrame->Create();
   this->Script(
-    "pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
+    "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2", 
     winLevelFrame->GetWidgetName());
 
   this->WindowLevelAutoManual->SetParent(winLevelFrame);
@@ -208,7 +208,7 @@ void vtkKWWindowLevelThresholdEditor::CreateWidget()
   this->WindowLevelAutoManual->GetWidget()->GetMenu()->SetItemCommand(1, this, "ProcessButtonsCommand");
   this->WindowLevelAutoManual->GetWidget()->SetWidth ( 7 );
   this->Script(
-    "pack %s -side left -anchor nw -expand n -padx 2 -pady 2", 
+    "pack %s -side left -anchor nw -expand n -fill x -padx 2 -pady 2", 
     this->WindowLevelAutoManual->GetWidgetName());
 
   this->WindowLevelRange->SetParent(winLevelFrame);
@@ -218,7 +218,7 @@ void vtkKWWindowLevelThresholdEditor::CreateWidget()
   this->WindowLevelRange->SetCommand(this, "ProcessWindowLevelCommand");
   this->WindowLevelRange->SetStartCommand(this, "ProcessWindowLevelStartCommand");
   this->Script(
-    "pack %s -side left -anchor nw -expand yes -padx 2 -pady 2", 
+    "pack %s -side left -anchor nw -expand yes -fill x -padx 2 -pady 2", 
     this->WindowLevelRange->GetWidgetName());
 
   // Window/Level entries
@@ -240,7 +240,7 @@ void vtkKWWindowLevelThresholdEditor::CreateWidget()
   threshFrame->SetParent (this);
   threshFrame->Create();
   this->Script(
-    "pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
+    "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2", 
     threshFrame->GetWidgetName());
 
   this->TresholdAutoManual->SetParent(threshFrame);
@@ -264,7 +264,7 @@ void vtkKWWindowLevelThresholdEditor::CreateWidget()
   this->ThresholdRange->SetCommand(this, "ProcessThresholdCommand");
   this->ThresholdRange->SetStartCommand(this, "ProcessThresholdStartCommand");
   this->Script(
-    "pack %s -side left -anchor w -expand n -padx 2 -pady 2", 
+    "pack %s -side left -anchor w -expand y -fill x -padx 2 -pady 2", 
     this->ThresholdRange->GetWidgetName());
 
     vtkKWFrame *applyFrame = vtkKWFrame::New ( );
@@ -285,9 +285,9 @@ void vtkKWWindowLevelThresholdEditor::CreateWidget()
 
   this->ColorTransferFunctionEditor->SetParent(this);
   this->ColorTransferFunctionEditor->Create();
-  this->ColorTransferFunctionEditor->ExpandCanvasWidthOff();
+  this->ColorTransferFunctionEditor->ExpandCanvasWidthOn();
   this->ColorTransferFunctionEditor->SetCanvasWidth(300);
-  this->ColorTransferFunctionEditor->SetCanvasHeight(150);
+  this->ColorTransferFunctionEditor->SetCanvasHeight(140);
   this->ColorTransferFunctionEditor->LabelVisibilityOff ();
   this->ColorTransferFunctionEditor->SetBalloonHelpString(
     "Another color transfer function editor. The point position is now on "
@@ -296,7 +296,6 @@ void vtkKWWindowLevelThresholdEditor::CreateWidget()
     "hidden, ticks are displayed in the parameter space, the label "
     "and the parameter range are on top, its width is set explicitly. "
     "The range and histogram are based on a real image data.");
-  this->UpdateTransferFunction();
   this->ColorTransferFunctionEditor->SetWholeParameterRangeToFunctionRange();
   this->ColorTransferFunctionEditor->SetVisibleParameterRangeToWholeParameterRange();
   
@@ -305,13 +304,11 @@ void vtkKWWindowLevelThresholdEditor::CreateWidget()
   this->ColorTransferFunctionEditor->FunctionLineVisibilityOff();
   this->ColorTransferFunctionEditor->PointGuidelineVisibilityOff();
   // This will disable mobing points on the editor
-  // this->ColorTransferFunctionEditor->PointVisibilityOff(); 
+  this->ColorTransferFunctionEditor->PointVisibilityOff(); 
   this->ColorTransferFunctionEditor->PointIndexVisibilityOff();
   this->ColorTransferFunctionEditor->SelectedPointIndexVisibilityOff();
   this->ColorTransferFunctionEditor->MidPointEntryVisibilityOff();
   this->ColorTransferFunctionEditor->SharpnessEntryVisibilityOff();
-  
-  //this->ColorTransferFunctionEditor->SetHistogram(this->Histogram);
   
   this->ColorTransferFunctionEditor->ParameterTicksVisibilityOff();
   this->ColorTransferFunctionEditor->ComputeValueTicksFromHistogramOff();
@@ -319,7 +316,7 @@ void vtkKWWindowLevelThresholdEditor::CreateWidget()
   this->ColorTransferFunctionEditor->SetColorSpaceOptionMenuVisibility(0);
 
   this->Script(
-    "pack %s -side bottom -anchor nw -expand n -padx 2 -pady 2", 
+    "pack %s -side bottom -anchor nw -expand y -fill x -padx 2 -pady 2", 
     this->ColorTransferFunctionEditor->GetWidgetName());
   
   
@@ -332,11 +329,14 @@ void vtkKWWindowLevelThresholdEditor::CreateWidget()
   this->ColorTransferFunctionEditor->SetColorRampOutlineStyleToNone();
   
   this->ColorTransferFunctionEditor->SetColorRampHeight(100);
+  this->ColorTransferFunctionEditor->SetPointMarginToCanvasToNone();
   
   this->ThresholdRange->SetWholeRange(0, 255);
   this->WindowLevelRange->SetWholeRange(0, 255);
   this->SetWindowLevel(100, 100);
   this->SetThreshold(0, 255);
+
+  this->UpdateTransferFunction();
 
   // Override the column sorting behavior by always updating
 
@@ -362,6 +362,7 @@ void vtkKWWindowLevelThresholdEditor::UpdateFromImage()
     this->SetThreshold(range[0], range[1]);
 
     // avoid crash when Image not set for histogram
+    this->ColorTransferFunctionEditor->SetHistogram(NULL);
     this->ColorTransferFunctionEditor->SetHistogram(this->Histogram);
   }
 }
