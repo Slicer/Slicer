@@ -378,15 +378,62 @@ void vtkKWWindowLevelThresholdEditor::UpdateTransferFunction()
     this->ImageData->GetScalarRange(range);
     this->TransferFunction->AdjustRange(range);
   }
-  
+  double low = this->GetLowerThreshold();
+  double upper = this->GetUpperThreshold();
+  double min = this->GetLevel() - 0.5 * this->GetWindow();
+  double max = this->GetLevel() + 0.5 * this->GetWindow();
+  double minVal = 0;
+  double maxVal = 1;
+
   this->TransferFunction->SetColorSpaceToRGB();
-  this->TransferFunction->AddRGBPoint(range[0], 0, 0, 0);
-  //this->TransferFunction->AddRGBPoint(this->GetLowerThreshold(), 179.0/255, 179.0/255, 231.0/255);
-  this->TransferFunction->AddRGBPoint(this->GetLowerThreshold(), 0, 0, 0);
-  //this->TransferFunction->AddRGBPoint((range[0] + range[1]) * 0.5, 0.0, 1.0, 1.0);
-  //this->TransferFunction->AddRGBPoint(this->GetUpperThreshold(), 179.0/255, 179.0/255, 231.0/255);
-  this->TransferFunction->AddRGBPoint(this->GetUpperThreshold(), 1, 1, 1);
-  this->TransferFunction->AddRGBPoint(range[1], 1, 1, 1);
+
+  if (low >= max || upper <= min)
+    {
+    this->TransferFunction->AddRGBPoint(range[0], 0, 0, 0);
+    this->TransferFunction->AddRGBPoint(range[1], 0, 0, 0); 
+    }
+  else
+    {
+    if (max <= min)
+      {
+      max = min +0.001;
+      }
+
+    if (low <= range[0])
+      {
+      low = range[0]+0.001;
+      }
+
+    if (min <= range[0])
+      {
+      min = range[0]+0.001;
+      }
+
+    if (upper > range[1])
+      {
+      upper = range[1] - 0.001;
+      }
+
+    if (min <= low)
+      {
+      minVal = (low - min)/(max - min);
+      min = low + 0.001;
+      }
+    
+    if (max >= upper)
+      {
+      maxVal = (upper - min)/(max-min);
+      max = upper - 0.001;
+      }
+    this->TransferFunction->AddRGBPoint(range[0], 0, 0, 0);
+    this->TransferFunction->AddRGBPoint(low, 0, 0, 0);
+    this->TransferFunction->AddRGBPoint(min, minVal, minVal, minVal);
+    this->TransferFunction->AddRGBPoint(max, maxVal, maxVal, maxVal);
+    this->TransferFunction->AddRGBPoint(upper, maxVal, maxVal, maxVal);
+    this->TransferFunction->AddRGBPoint(upper+0.001, 0, 0, 0);
+    this->TransferFunction->AddRGBPoint(range[1], 0, 0, 0);
+    }
+
   this->TransferFunction->SetAlpha(1.0);
   this->TransferFunction->Build();
   this->ColorTransferFunctionEditor->Update();
