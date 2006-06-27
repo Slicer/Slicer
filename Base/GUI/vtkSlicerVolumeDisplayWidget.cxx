@@ -217,7 +217,7 @@ void vtkSlicerVolumeDisplayWidget::CreateWidget ( )
       vtkMRMLVolumeNode *volumeNode = vtkMRMLVolumeNode::SafeDownCast(this->MRMLScene->GetNodeByID(this->VolumeNodeID));
       this->WindowLevelThresholdEditor->SetImageData(volumeNode->GetImageData());
       }
-    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+    this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
                   this->WindowLevelThresholdEditor->GetWidgetName() );
 
     this->VolumeSelectorWidget->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
