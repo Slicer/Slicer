@@ -1,6 +1,5 @@
 #include "vtkSlicerApplicationSettingsInterface.h"
 #include "vtkObjectFactory.h"
-#include "vtkKWInternationalization.h"
 #include "vtkKWWidget.h"
 #include "vtkKWFrame.h"
 #include "vtkKWMenu.h"
@@ -79,8 +78,7 @@ void vtkSlicerApplicationSettingsInterface::Create()
 
   this->ModuleSettingsFrame->SetParent(this->GetPagesParentWidget());
   this->ModuleSettingsFrame->Create();
-  this->ModuleSettingsFrame->SetLabelText(
-    ks_("Application Settings|Module Settings"));
+  this->ModuleSettingsFrame->SetLabelText("Module Settings");
     
   tk_cmd << "pack " << this->ModuleSettingsFrame->GetWidgetName()
          << " -side top -anchor nw -fill x -padx 2 -pady 2 " 
@@ -99,10 +97,10 @@ void vtkSlicerApplicationSettingsInterface::Create()
   this->ModulePathEntry->SetParent(frame);
   this->ModulePathEntry->Create();
   this->ModulePathEntry->SetLabelText(
-    ks_("Module Settings|Module Path"));
+    "Module Path");
   this->ModulePathEntry->GetWidget()->SetCommand(this, "ModulePathCallback");
   this->ModulePathEntry->SetBalloonHelpString(
-    k_("Search path for modules."));
+    "Search path for modules.");
 
   tk_cmd << "pack " << this->ModulePathEntry->GetWidgetName()
          << "  -side top -anchor w -expand no -fill x" << endl;
@@ -117,8 +115,7 @@ void vtkSlicerApplicationSettingsInterface::Create()
 
   this->TemporaryDirectoryButton->SetParent(frame);
   this->TemporaryDirectoryButton->Create();
-  this->TemporaryDirectoryButton->SetLabelText(
-    ks_("Module Settings|TemporaryDirectory"));
+  this->TemporaryDirectoryButton->SetLabelText("TemporaryDirectory");
   this->TemporaryDirectoryButton->GetWidget()->TrimPathFromFileNameOff();
   this->TemporaryDirectoryButton->GetWidget()
     ->SetCommand(this, "TemporaryDirectoryCallback");
@@ -129,7 +126,7 @@ void vtkSlicerApplicationSettingsInterface::Create()
   this->TemporaryDirectoryButton->GetWidget()
     ->GetLoadSaveDialog()->SetTitle("Select a directory for temporary files");
   this->TemporaryDirectoryButton->SetBalloonHelpString(
-    k_("Temporary directory for intermediate files."));
+    "Temporary directory for intermediate files.");
 
   tk_cmd << "pack " << this->TemporaryDirectoryButton->GetWidgetName()
          << "  -side top -anchor w -expand no" << endl;
