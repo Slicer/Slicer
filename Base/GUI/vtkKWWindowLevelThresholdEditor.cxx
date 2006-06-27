@@ -436,6 +436,7 @@ void vtkKWWindowLevelThresholdEditor::UpdateTransferFunction()
 
   this->TransferFunction->SetAlpha(1.0);
   this->TransferFunction->Build();
+  this->ColorTransferFunctionEditor->SetWholeParameterRangeToFunctionRange();
   this->ColorTransferFunctionEditor->Update();
 }
 
