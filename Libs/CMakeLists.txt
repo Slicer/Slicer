@@ -6,6 +6,7 @@ SUBDIRS(
     GenerateCLP
     ModuleDescriptionParser
     SlicerIO
-#    ITKCommandIO
+    ITKCommandIO
+    MRMLIDImageIO
 )
 
