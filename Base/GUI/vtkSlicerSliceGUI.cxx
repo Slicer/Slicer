@@ -96,7 +96,7 @@ void vtkSlicerSliceGUI::PrintSelf ( ostream& os, vtkIndent indent )
 //---------------------------------------------------------------------------
 void vtkSlicerSliceGUI::AddGUIObservers ( ) {
 
-  this->SliceViewer->GetRenderWidget()->GetRenderWindowInteractor()->AddObserver (
+  this->SliceViewer->GetRenderWidget()->GetRenderWindow()->GetInteractor()->AddObserver (
     vtkCommand::AnyEvent, (vtkCommand *)this->GUICallbackCommand );
 
 }
@@ -106,7 +106,7 @@ void vtkSlicerSliceGUI::AddGUIObservers ( ) {
 //---------------------------------------------------------------------------
 void vtkSlicerSliceGUI::RemoveGUIObservers ( ) {
 
-    this->SliceViewer->GetRenderWidget()->GetRenderWindowInteractor()->RemoveObservers (
+    this->SliceViewer->GetRenderWidget()->GetRenderWindow()->GetInteractor()->RemoveObservers (
         vtkCommand::AnyEvent, (vtkCommand *)this->GUICallbackCommand );
 }
 
@@ -126,7 +126,7 @@ void vtkSlicerSliceGUI::ProcessGUIEvents ( vtkObject *caller,
     return;
     }
 
-  if ( rwi == this->SliceViewer->GetRenderWidget()->GetRenderWindowInteractor() )
+  if ( rwi == this->SliceViewer->GetRenderWidget()->GetRenderWindow()->GetInteractor() )
     {
     this->Script("SliceViewerHandleEvent %s %s", 
       this->GetTclName(), vtkCommand::GetStringFromEventId(event));
