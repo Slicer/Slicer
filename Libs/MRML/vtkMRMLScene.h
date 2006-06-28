@@ -13,11 +13,10 @@ Version:   $Revision: 1.18 $
 =========================================================================auto=*/
 //
 //
-// .NAME vtkMRMLScene - a list of actors
+// .NAME vtkMRMLScene - A set of MRML Nodes that supports serialization and undo/redo
 // .SECTION Description
 // vtkMRMLScene represents and provides methods to manipulate a list of
-// MRML objects. The list is core and duplicate
-// entries are not prevented.
+// MRML objects. The list is core and duplicate entries are not prevented.
 //
 // .SECTION see also
 // vtkMRMLNode vtkCollection 
@@ -155,6 +154,13 @@ public:
   void SaveStateForUndo(std::vector<vtkMRMLNode *> nodes);
   //ETX
 
+//BTX
+  // Description:
+  // Get/Set the active Scene - to be used by MRMLIDImageIO
+  static void SetActiveScene(vtkMRMLScene *);
+  static vtkMRMLScene *GetActiveScene();
+//ETX
+
 protected:
   vtkMRMLScene();
   ~vtkMRMLScene();
@@ -203,6 +209,7 @@ private:
 
   char* ClassNameList;
 
+  static vtkMRMLScene *ActiveScene;
 };
 
 #endif

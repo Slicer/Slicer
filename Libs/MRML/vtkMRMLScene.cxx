@@ -119,6 +119,19 @@ vtkMRMLScene::~vtkMRMLScene()
 
 }
 
+
+vtkMRMLScene *vtkMRMLScene::ActiveScene = NULL;
+
+//------------------------------------------------------------------------------
+void vtkMRMLScene::SetActiveScene(vtkMRMLScene *mrmlScene) {
+  vtkMRMLScene::ActiveScene = mrmlScene;
+}
+
+//------------------------------------------------------------------------------
+vtkMRMLScene *vtkMRMLScene::GetActiveScene() {
+  return (vtkMRMLScene::ActiveScene);
+}
+
 //------------------------------------------------------------------------------
 vtkMRMLScene* vtkMRMLScene::New()
 {
