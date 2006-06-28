@@ -353,6 +353,7 @@ void vtkCommandLineModuleGUI::UpdateMRML ()
 {
   //std::cout << "UpdateMRML()" << std::endl;
   vtkMRMLCommandLineModuleNode* n = this->GetCommandLineModuleNode();
+  bool createdNode = false;
   if (n == NULL)
     {
     // no parameter node selected yet, create new
@@ -373,12 +374,14 @@ void vtkCommandLineModuleGUI::UpdateMRML ()
     // set an observe new node in Logic
     this->Logic->SetCommandLineModuleNode(n);
     this->SetCommandLineModuleNode(n);
-    this->SetAndObserveMRML( vtkObjectPointer(&this->CommandLineModuleNode),n);
+    this->SetMRML(vtkObjectPointer(&this->CommandLineModuleNode),n);
+
+    createdNode = true;
    }
 
   // save node parameters for Undo
   this->GetLogic()->GetMRMLScene()->SaveStateForUndo(n);
-
+  
   //  set node parameters from GUI widgets
   //
   ModuleWidgetMap::const_iterator wit;
@@ -439,12 +442,17 @@ void vtkCommandLineModuleGUI::UpdateMRML ()
         }
       }
     }
+
+  if (createdNode)
+    {
+    this->SetAndObserveMRML( vtkObjectPointer(&this->CommandLineModuleNode),n);
+    }
 }
 
 //---------------------------------------------------------------------------
 void vtkCommandLineModuleGUI::UpdateGUI ()
 {
-  //std::cout << "UpdateGUI()" << std::endl;
+  // std::cout << "UpdateGUI()" << std::endl;
   vtkMRMLCommandLineModuleNode* n = this->GetCommandLineModuleNode();
   if (n != NULL)
     {
@@ -539,7 +547,7 @@ void vtkCommandLineModuleGUI::UpdateGUI ()
               {
               int id = rbs->GetWidget()->GetIdOfNthWidget(i);
               vtkKWRadioButton* rb = rbs->GetWidget()->GetWidget(id);
-              if (rb->GetValue() == value)
+              if (rb->GetValue() == value )
                 {
                 rb->SetSelectedState(1);
                 break;
@@ -684,7 +692,7 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
 
       if ((*pit).GetTag() == "integer")
         {
-        if (/* true || */ (*pit).GetConstraints() == "")
+        if ((*pit).GetConstraints() == "")
           {
           vtkKWSpinBoxWithLabel *tparameter = vtkKWSpinBoxWithLabel::New();
           tparameter->SetParent( parameterGroupFrame->GetFrame() );
@@ -693,7 +701,6 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
           tparameter->GetWidget()->SetValue(atof((*pit).GetDefault().c_str()));
           tparameter->GetWidget()->SetIncrement(1);
           tparameter->GetWidget()->RestrictValuesToIntegersOn();
-          tparameter->GetWidget()->SetValueFormat("%.1f");
           tparameter->GetWidget()
             ->SetRange(itk::NumericTraits<int>::NonpositiveMin(),
                        itk::NumericTraits<int>::max());
@@ -1033,8 +1040,6 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
 
   (*this->InternalWidgetMap)["ApplyButton"] = apply;
   apply->Delete();
-
-  
 }
 
 

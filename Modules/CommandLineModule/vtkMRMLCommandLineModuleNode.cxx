@@ -186,7 +186,7 @@ vtkMRMLCommandLineModuleNode
   if (value != this->GetParameterAsString(name))
     {
     this->ModuleDescriptionObject.SetParameterDefaultValue(name, value);
-//    this->Modified();
+    this->Modified();
     }
 }
 
