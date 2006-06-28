@@ -348,8 +348,10 @@ MRMLIDImageIO
     node->GetImageData()->AllocateScalars();
 
     memcpy(node->GetImageData()->GetScalarPointer(), buffer,
+          node->GetImageData()->GetPointData()->GetScalars()->GetNumberOfComponents() *
+          node->GetImageData()->GetPointData()->GetScalars()->GetNumberOfTuples() *
           node->GetImageData()->GetPointData()->GetScalars()->GetDataTypeSize()
-        * node->GetImageData()->GetPointData()->GetScalars()->GetDataSize());
+      );
     }
 }
 
