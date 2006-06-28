@@ -60,7 +60,7 @@ proc SliceViewerHandleEvent {sliceGUI event} {
     SliceViewerInitialize
   }
 
-  set interactor [[$sliceGUI GetSliceViewer] GetRenderWindowInteractor]
+  set interactor [[[$sliceGUI GetSliceViewer] GetRenderWidget] GetRenderWindowInteractor]
   set renderWidget [[$sliceGUI GetSliceViewer] GetRenderWidget]
   set anno [$renderWidget GetCornerAnnotation]
   set sliceNode [[$sliceGUI GetLogic]  GetSliceNode]
