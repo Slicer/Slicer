@@ -1,5 +1,2 @@
-f2b1b48e1466b04340cf978bb780b4b8806a403fdce6a9671738992a81258347  Applications/GUI/Testing/TestData/abct128.nrrd
-3bc5d73a18579f2573d7c01723abc808fb47467af3e13d2d6a084dc8cc07a985  Applications/GUI/Testing/TestData/volone.nrrd
-99aa4028669dafce06ef2d080ae1f34650fe3a922da7af4e7a160b6052ef2b2f  Applications/GUI/Testing/TestData/voltwo.nrrd
 74f68343c15e740122cde8d502e56f768f7adc91954bbfe42944d052209937fc  Base/GUI/ImageData/Thumbs.db
 f258fcd665e5ffc5173a93de52dfd59986f3317cdf5d5a986f0513ffaf1e6017  Libs/MRML/Testing/TestData/moving.nrrd
