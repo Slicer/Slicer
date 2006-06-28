@@ -19,13 +19,11 @@
       <label>Integer Parameter</label>
       <default>30</default>
     </integer>
-    <label>Scalar Parameters With Constraints</label>
-    <description>Variations on scalar parameters</description>
     <double>
       <name>doubleVariable</name>
       <flag>-d</flag>
       <longflag>--double</longflag>
-      <description>An double with constraints</description>
+      <description>A double with constraints</description>
       <label>Double Parameter</label>
       <default>30</default>
       <constraints>
