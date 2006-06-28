@@ -5,11 +5,20 @@
 
 #include "vtkKWFrameWithLabel.h"
 #include "vtkKWMenu.h"
+#include "vtkKWEntry.h"
+#include "vtkKWTree.h"
 #include "vtkKWMenuButton.h"
+#include "vtkKWLabel.h"
+#include "vtkKWIcon.h"
+#include "vtkKWTkUtilities.h"
+#include "vtkKWEntryWithLabel.h"
+#include "vtkKWLabelWithLabel.h"
 
 #include "vtkMRMLTransformNode.h"
 #include "vtkMRMLTransformableNode.h"
+#include "vtkKWTreeWithScrollbars.h"
 
+#include <vtksys/stl/string>
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerMRMLTreeWidget );
@@ -20,6 +29,9 @@ vtkCxxRevisionMacro ( vtkSlicerMRMLTreeWidget, "$Revision: 1.0 $");
 vtkSlicerMRMLTreeWidget::vtkSlicerMRMLTreeWidget ( )
 {
   this->TreeWidget = NULL;
+  this->ContextMenu = NULL;
+  this->NodeID = NULL;
+  this->NodeName = NULL;
 }
 
 
@@ -31,8 +43,25 @@ vtkSlicerMRMLTreeWidget::~vtkSlicerMRMLTreeWidget ( )
     this->TreeWidget->Delete();
     this->TreeWidget = NULL;
     }
-}
 
+  if (this->ContextMenu)
+    {
+    this->ContextMenu->Delete();
+    this->ContextMenu = NULL;
+    }
+
+  if (this->NodeID)
+    {
+    this->NodeID->Delete();
+    this->NodeID = NULL;
+    }
+
+  if (this->NodeName)
+    {
+    this->NodeName->Delete();
+    this->NodeName = NULL;
+    }
+}
 
 //---------------------------------------------------------------------------
 void vtkSlicerMRMLTreeWidget::PrintSelf ( ostream& os, vtkIndent indent )
@@ -48,10 +77,57 @@ void vtkSlicerMRMLTreeWidget::ProcessWidgetEvents ( vtkObject *caller,
                                                     unsigned long event, 
                                                     void *callData )
 {
-  
+  vtkKWTree *tree = this->TreeWidget->GetWidget();
+  if (caller == tree)
+    {
+    // Selection changed
+
+    if (event == vtkKWTree::SelectionChangedEvent)
+      {
+      // For example, one could populate the node inspector
+
+      this->UpdateNodeInspector(this->GetSelectedNodeInTree());
+      }
+
+    // Right click: context menu
+
+    else if (event == vtkKWTree::RightClickOnNodeEvent)
+      {
+      // This code above should be in something like TriggerContextMenu
+
+      if (!this->ContextMenu)
+        {
+        this->ContextMenu = vtkKWMenu::New();
+        }
+      if (!this->ContextMenu->IsCreated())
+        {
+        this->ContextMenu->SetParent(this);
+        this->ContextMenu->Create();
+        }
+      this->ContextMenu->DeleteAllItems();
+
+      int px, py;
+      vtkKWTkUtilities::GetMousePointerCoordinates(tree, &px, &py);
+
+      char command[125];
+
+      // For example, delete the node
+
+      sprintf(command, "DeleteNodeCallback {%s}", (const char *)callData);
+      this->ContextMenu->AddCommand("Delete Node", this, command);
+
+      this->ContextMenu->PopUp(px, py);
+      }
+    }
 } 
 
-
+//---------------------------------------------------------------------------
+void vtkSlicerMRMLTreeWidget::DeleteNodeCallback(const char *id)
+{
+  cout << "I want to delete MRML node " << id << endl;
+  // delete, then repopulate
+  this->UpdateTreeFromMRML();
+}
 
 //---------------------------------------------------------------------------
 void vtkSlicerMRMLTreeWidget::ProcessMRMLEvents ( vtkObject *caller,
@@ -62,14 +138,19 @@ void vtkSlicerMRMLTreeWidget::ProcessMRMLEvents ( vtkObject *caller,
     {
     this->UpdateTreeFromMRML();
     }
-  
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerMRMLTreeWidget::RemoveWidgetObservers ( ) {
-
+void vtkSlicerMRMLTreeWidget::RemoveWidgetObservers ( ) 
+{
+ this->TreeWidget->GetWidget()->RemoveObservers(
+   vtkKWTree::SelectionChangedEvent, 
+   (vtkCommand *)this->GUICallbackCommand);  
+ 
+ this->TreeWidget->GetWidget()->RemoveObservers(
+   vtkKWTree::RightClickOnNodeEvent, 
+   (vtkCommand *)this->GUICallbackCommand);  
 }
-
 
 //---------------------------------------------------------------------------
 void vtkSlicerMRMLTreeWidget::CreateWidget ( )
@@ -86,27 +167,73 @@ void vtkSlicerMRMLTreeWidget::CreateWidget ( )
 
   this->Superclass::CreateWidget();
 
-  // ---
-  // FRAME            
+  // MRML Tree
+
   vtkKWFrameWithLabel *frame = vtkKWFrameWithLabel::New ( );
   frame->SetParent ( this->GetParent() );
   frame->Create ( );
   frame->SetLabelText ("MRML Tree");
-  frame->SetDefaultLabelFontWeightToNormal( );
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                  frame->GetWidgetName() );
 
-  this->TreeWidget = vtkKWTree::New() ;
+  this->TreeWidget = vtkKWTreeWithScrollbars::New() ;
   this->TreeWidget->SetParent ( frame->GetFrame() );
-  this->UpdateTreeFromMRML();
+  this->TreeWidget->VerticalScrollbarVisibilityOn();
+  this->TreeWidget->HorizontalScrollbarVisibilityOff();
   this->TreeWidget->Create ( );
-
-  this->TreeWidget->SelectionFillOn();
   this->TreeWidget->SetBalloonHelpString("MRML Tree");
-  this->TreeWidget->SetBorderWidth(2);
-  this->TreeWidget->SetReliefToGroove();
-  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+  ///  this->TreeWidget->SetBorderWidth(2);
+  //this->TreeWidget->SetReliefToGroove();
+  this->Script ( "pack %s -side top -anchor nw -expand y -fill both -padx 2 -pady 2",
                  this->TreeWidget->GetWidgetName());
+
+  vtkKWTree *tree = this->TreeWidget->GetWidget();
+  tree->SelectionFillOn();
+  tree->SetSelectionModeToSingle();
+  tree->SetHeight(12);
+
+  tree->AddObserver(
+    vtkKWTree::SelectionChangedEvent, 
+    (vtkCommand *)this->GUICallbackCommand );
+
+  tree->AddObserver(
+    vtkKWTree::RightClickOnNodeEvent, 
+    (vtkCommand *)this->GUICallbackCommand);
+
+  this->UpdateTreeFromMRML();
+
+  // MRML Node Inspector
+
+  frame = vtkKWFrameWithLabel::New();
+  frame->SetParent ( this->GetParent() );
+  frame->Create ( );
+  frame->SetLabelText ("MRML Node Inspector");
+  //frame->CollapseFrame ( );
+  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+                 frame->GetWidgetName() );
+
+  int label_width = 10;
+
+  this->NodeID = vtkKWLabelWithLabel::New() ;
+  this->NodeID->SetParent(frame->GetFrame());
+  this->NodeID->SetLabelText("ID:");
+  this->NodeID->Create();
+  this->NodeID->GetWidget()->SetAnchorToWest();
+  this->NodeID->SetLabelWidth(label_width);
+  this->NodeID->SetBalloonHelpString("MRML Node ID");
+  this->Script(
+    "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
+    this->NodeID->GetWidgetName());
+
+  this->NodeName = vtkKWEntryWithLabel::New() ;
+  this->NodeName->SetParent(frame->GetFrame());
+  this->NodeName->SetLabelText("Name:");
+  this->NodeName->Create();
+  this->NodeName->SetLabelWidth(label_width);
+  this->NodeName->SetBalloonHelpString("MRML Node Name");
+  this->Script(
+    "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
+    this->NodeName->GetWidgetName());
 
   frame->Delete();
 }
@@ -115,29 +242,119 @@ void vtkSlicerMRMLTreeWidget::CreateWidget ( )
 void vtkSlicerMRMLTreeWidget::UpdateTreeFromMRML()
   
 {
+  vtksys_stl::string selected_node(
+    this->TreeWidget->GetWidget()->GetSelection());
+  this->TreeWidget->GetWidget()->DeleteAllNodes();
+
   vtkMRMLScene *scene = this->GetMRMLScene();
   vtkMRMLNode *node = NULL;
-  vtkMRMLTransformableNode *transformableNode = NULL;
-  vtkMRMLTransformNode *transformNode = NULL;
-  
+
   scene->InitTraversal();
   while (node=scene->GetNextNode())
     {
-    char *name = node->GetName();
-    char *ID = node->GetID();
-    
-    this->TreeWidget->AddNode(NULL, ID, name);
-    
-    if (node->IsA("vtkMRMLTransformableNode") )
-      {
-      transformableNode = vtkMRMLTransformableNode::SafeDownCast(node);
-      vtkMRMLTransformableNode *parent = transformableNode->GetParentTransformNode();
-      }
-    
+    this->AddNodeToTree(node);
     }
-  
+
+  this->TreeWidget->GetWidget()->SelectNode(selected_node.c_str());
+
+  // At this point you probably want to reset the MRML node inspector fields
+  // in case nothing in the tree is selected anymore (here, we delete all nodes
+  // each time, so nothing will be selected, but it's not a bad thing to 
+  // try to save the old selection, or just update the tree in a smarter
+  // way).
+
+  this->UpdateNodeInspector(this->GetSelectedNodeInTree());
 }
 
+//---------------------------------------------------------------------------
+void vtkSlicerMRMLTreeWidget::AddNodeToTree(vtkMRMLNode *node)
+{
+  if (!node)
+    {
+    return;
+    }
 
+  vtkKWTree *tree = this->TreeWidget->GetWidget();
 
+  char *ID = node->GetID();
+    
+  vtksys_stl::string node_text(node->GetName());
+  if (node_text.size())
+    {
+    node_text += " (";
+    node_text += ID;
+    node_text += ")";
+    }
+  else
+    {
+    node_text = ID;
+    }
+  /*
+  node_text += ": ";
+  node_text += node->GetClassName();
+  */
+  
+  const char *parent_node = NULL;
+  int node_is_transformable = node->IsA("vtkMRMLTransformableNode");
+  if (node_is_transformable)
+    {
+    vtkMRMLTransformableNode *transformableNode = 
+      vtkMRMLTransformableNode::SafeDownCast(node);
+    vtkMRMLTransformableNode *parent = 
+      transformableNode->GetParentTransformNode();
+    if (parent)
+      {
+      parent_node = parent->GetID();
+      if (!tree->HasNode(parent_node))
+        {
+        this->AddNodeToTree(parent);
+        }
+      }
+    }
+  tree->AddNode(parent_node, ID, node_text.c_str());
 
+  // This is how you can set icons for each node. You can either use
+  // predefined icons, or go through the usual resources framework, just
+  // like the toolbar icons are constructed (see SetNodeImage...)
+  if (node_is_transformable)
+    {
+    tree->SetNodeImageToPredefinedIcon(ID, vtkKWIcon::IconWarningMini);
+    tree->SetNodePadX(ID, 20);
+    }
+}
+
+//---------------------------------------------------------------------------
+vtkMRMLNode* vtkSlicerMRMLTreeWidget::GetSelectedNodeInTree()
+{
+  vtksys_stl::string selected_node(
+    this->TreeWidget->GetWidget()->GetSelection());
+
+  vtkMRMLScene *scene = this->GetMRMLScene();
+  vtkMRMLNode *node = NULL, *first_selected_node = NULL;
+  scene->InitTraversal();
+  while (node = scene->GetNextNode())
+    {
+    if (!strcmp(node->GetID(), selected_node.c_str()))
+      {
+      first_selected_node = node;
+      break;
+      }
+    }
+  return first_selected_node;
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerMRMLTreeWidget::UpdateNodeInspector(vtkMRMLNode *node)
+{
+  if (this->NodeID)
+    {
+    this->NodeID->GetWidget()->SetText(
+      node ? node->GetID() : "");
+    }
+
+  if (this->NodeName)
+    {
+    this->NodeName->GetWidget()->SetValue(
+      node ? node->GetName() : "");
+    }
+}
