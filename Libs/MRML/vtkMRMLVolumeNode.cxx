@@ -331,7 +331,7 @@ void vtkMRMLVolumeNode::GetIToRASDirection(double dirs[3])
 {
   for (int i=0; i<3; i++) 
     {
-    dirs[i] = IJKToRASDirections[0][i];
+    dirs[i] = IJKToRASDirections[i][0];
     }
 }
 
@@ -341,7 +341,7 @@ void vtkMRMLVolumeNode::GetJToRASDirection(double dirs[3])
 {
   for (int i=0; i<3; i++) 
     {
-    dirs[i] = IJKToRASDirections[1][3];
+    dirs[i] = IJKToRASDirections[i][1];
     }
 }
 
@@ -351,7 +351,7 @@ void vtkMRMLVolumeNode::GetKToRASDirection(double dirs[3])
 {
   for (int i=0; i<3; i++) 
     {
-    dirs[i] = IJKToRASDirections[2][i];
+    dirs[i] = IJKToRASDirections[i][2];
     }
 }
 
