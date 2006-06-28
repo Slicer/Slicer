@@ -357,6 +357,22 @@ startElement(void *userData, const char *element, const char **attrs)
     parameter->SetType("std::vector<double>");
     parameter->SetStringToType("atof");
     }
+  else if (name == "point")
+    {
+    if (!group || (ps->OpenTags.top() != "parameters"))
+      {
+      std::string error("ModuleDescriptionParser Error: <" + name + "> can only be used inside <parameters> but was found inside <" + ps->OpenTags.top() + ">");
+      ps->ErrorDescription = error;
+      ps->ErrorLine = XML_GetCurrentLineNumber(ps->Parser);
+      ps->Error = true;
+      ps->OpenTags.push(name);
+      return;
+      }
+    parameter = new ModuleParameter;
+    parameter->SetTag(name);
+    parameter->SetType("std::vector<float>");
+    parameter->SetStringToType("atof");
+    }
   else if (name == "string-enumeration")
     {
     if (!group || (ps->OpenTags.top() != "parameters"))
@@ -585,6 +601,11 @@ endElement(void *userData, const char *element)
     ps->CurrentParameter = 0;
     }
   else if (group && parameter && (name == "double-vector"))
+    {
+    ps->CurrentGroup->AddParameter(*parameter);
+    ps->CurrentParameter = 0;
+    }
+  else if (group && parameter && (name == "point"))
     {
     ps->CurrentGroup->AddParameter(*parameter);
     ps->CurrentParameter = 0;
