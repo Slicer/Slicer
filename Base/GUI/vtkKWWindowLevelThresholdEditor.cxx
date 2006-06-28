@@ -471,6 +471,7 @@ void vtkKWWindowLevelThresholdEditor::ProcessWindowLevelStartCommand(double min,
   this->WindowEntry->SetValueAsDouble(max-min);
   this->LevelEntry->SetValueAsDouble(0.5*(min+max));
   this->UpdateTransferFunction();
+  this->SetAutoWindowLevel(0);
   this->InvokeEvent(vtkKWWindowLevelThresholdEditor::ValueStartChangingEvent, range);
 }
 
