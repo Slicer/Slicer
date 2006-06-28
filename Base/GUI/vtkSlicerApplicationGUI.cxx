@@ -929,7 +929,7 @@ void vtkSlicerApplicationGUI::BuildMainViewer ( )
 
         vtkSlicerWindow *win = this->MainSlicerWin;
         if ( this->MainViewer != NULL ) {
-            this->MainViewer->SetParent (win->GetViewPanelFrame ( ) );
+            this->MainViewer->SetParent (win->GetViewFrame ( ) );
             this->MainViewer->Create ( );
             app->Script  ("pack %s -side top -fill both -expand y -padx 0 -pady 0",
                           this->MainViewer->GetWidgetName ( ) );
@@ -1739,7 +1739,7 @@ void vtkSlicerApplicationGUI::ConfigureMainViewerPanel ( )
 
 
         if ( this->MainSlicerWin != NULL ) {
-            this->MainSlicerWin->GetViewPanelFrame()->SetWidth ( app->GetMainLayout()->GetDefaultMainViewerWidth() );
+            this->MainSlicerWin->GetViewFrame()->SetWidth ( app->GetMainLayout()->GetDefaultMainViewerWidth() );
         }
     }
 
