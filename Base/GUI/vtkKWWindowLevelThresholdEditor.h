@@ -135,7 +135,6 @@ private:
   
   vtkKWMenuButtonWithLabel *WindowLevelAutoManual;
   vtkKWMenuButtonWithLabel *TresholdAutoManual;
-  vtkKWCheckButtonWithLabel  *TresholdApply;
   vtkImageData *ImageData;
   vtkKWHistogram *Histogram;
   vtkColorTransferFunction *TransferFunction;

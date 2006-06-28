@@ -38,7 +38,6 @@ vtkKWWindowLevelThresholdEditor::vtkKWWindowLevelThresholdEditor()
 
   this->WindowLevelAutoManual = vtkKWMenuButtonWithLabel::New() ;
   this->TresholdAutoManual = vtkKWMenuButtonWithLabel::New();
-  this->TresholdApply = vtkKWCheckButtonWithLabel::New();
 
   this->WindowLevelRange = vtkKWRange::New();
   this->LevelEntry = vtkKWEntry::New();
@@ -79,10 +78,6 @@ vtkKWWindowLevelThresholdEditor::~vtkKWWindowLevelThresholdEditor()
   if ( this->TresholdAutoManual ) {
       this->TresholdAutoManual->Delete();
       this->TresholdAutoManual = NULL;
-  }
-  if ( this->TresholdApply ) {
-      this->TresholdApply->Delete();
-      this->TresholdApply = NULL;
   }
   if ( this->WindowLevelRange ) {
       this->WindowLevelRange->Delete();
@@ -200,9 +195,8 @@ void vtkKWWindowLevelThresholdEditor::CreateWidget()
 
   this->WindowLevelAutoManual->SetLabelWidth(12);
   this->WindowLevelAutoManual->SetLabelText("Window/Level:");
-  this->WindowLevelAutoManual->GetWidget()->GetMenu()->AddRadioButton ( "Auto");
   this->WindowLevelAutoManual->GetWidget()->GetMenu()->AddRadioButton ( "Manual");
-  this->WindowLevelAutoManual->GetLabel()->SetJustificationToRight();
+  this->WindowLevelAutoManual->GetWidget()->GetMenu()->AddRadioButton ( "Auto");
   this->WindowLevelAutoManual->GetWidget()->SetValue ( "Manual" );
   this->WindowLevelAutoManual->GetWidget()->GetMenu()->SetItemCommand(0, this, "ProcessButtonsCommand");
   this->WindowLevelAutoManual->GetWidget()->GetMenu()->SetItemCommand(1, this, "ProcessButtonsCommand");
@@ -249,11 +243,13 @@ void vtkKWWindowLevelThresholdEditor::CreateWidget()
   this->TresholdAutoManual->GetLabel()->SetJustificationToRight();
   this->TresholdAutoManual->GetWidget()->SetWidth ( 7 );
   this->TresholdAutoManual->SetLabelText("Threshold:");
-  this->TresholdAutoManual->GetWidget()->GetMenu()->AddRadioButton ( "Auto"); 
   this->TresholdAutoManual->GetWidget()->GetMenu()->AddRadioButton ( "Manual");
+  this->TresholdAutoManual->GetWidget()->GetMenu()->AddRadioButton ( "Auto"); 
+  this->TresholdAutoManual->GetWidget()->GetMenu()->AddRadioButton ( "Off");
   this->TresholdAutoManual->GetWidget()->SetValue ( "Manual" );
   this->TresholdAutoManual->GetWidget()->GetMenu()->SetItemCommand(0, this, "ProcessButtonsCommand");
   this->TresholdAutoManual->GetWidget()->GetMenu()->SetItemCommand(1, this, "ProcessButtonsCommand");
+  this->TresholdAutoManual->GetWidget()->GetMenu()->SetItemCommand(2, this, "ProcessButtonsCommand");
   this->Script(
     "pack %s -side left -anchor nw -expand n -padx 2 -pady 2", 
     this->TresholdAutoManual->GetWidgetName());
@@ -273,15 +269,6 @@ void vtkKWWindowLevelThresholdEditor::CreateWidget()
     this->Script (
                   "pack %s -side top -anchor nw -expand n -padx 2 -pady 2",
                   applyFrame->GetWidgetName());
-  
-    this->TresholdApply->SetParent(applyFrame);
-    this->TresholdApply->Create();
-    this->TresholdApply->SetLabelText("Apply");
-    this->TresholdApply->GetWidget()->SetCommand(this, "ProcessCheckButtonCommand");
-    this->Script(
-      "pack %s -side right -anchor n -fill x -expand n -padx 2 -pady 2", 
-      this->TresholdApply->GetWidgetName());  
-
 
   this->ColorTransferFunctionEditor->SetParent(this);
   this->ColorTransferFunctionEditor->Create();
@@ -540,9 +527,11 @@ void vtkKWWindowLevelThresholdEditor::ProcessLevelEntryCommand(double level)
   this->InvokeEvent(vtkKWWindowLevelThresholdEditor::ValueChangedEvent, range);
 }
 
+//--------------------------------------------------
+
 int vtkKWWindowLevelThresholdEditor::GetAutoWindowLevel()
 {
-  if (strcmp(this->WindowLevelAutoManual->GetWidget()->GetValue(), "Auto"))
+  if (!strcmp(this->WindowLevelAutoManual->GetWidget()->GetValue(), "Auto"))
     {
     return 1;
     }
@@ -566,7 +555,7 @@ void vtkKWWindowLevelThresholdEditor::SetAutoWindowLevel(int value)
 
 int vtkKWWindowLevelThresholdEditor::GetAutoThreshold()
 {
-  if (strcmp(this->TresholdAutoManual->GetWidget()->GetValue(), "Auto"))
+  if (!strcmp(this->TresholdAutoManual->GetWidget()->GetValue(), "Auto"))
     {
     return 1;
     }
@@ -590,12 +579,26 @@ void vtkKWWindowLevelThresholdEditor::SetAutoThreshold(int value)
 
 int vtkKWWindowLevelThresholdEditor::GetApplyThreshold()
 {
-  return this->TresholdApply->GetWidget()->GetState();
+   if (!strcmp(this->TresholdAutoManual->GetWidget()->GetValue(), "Off"))
+    {
+    return 0;
+    }
+  else
+    {
+    return 1;
+    }
 }
 
 void vtkKWWindowLevelThresholdEditor::SetApplyThreshold(int value)
 {
-  this->TresholdApply->GetWidget()->SetState(value);
+ if (value == 1)
+  {
+  this->TresholdAutoManual->GetWidget()->SetValue("Auto");
+  }
+  else if (value == 0)
+  {
+  this->TresholdAutoManual->GetWidget()->SetValue("Manual");
+  }
 }
 
 void vtkKWWindowLevelThresholdEditor::ProcessButtonsCommand()
