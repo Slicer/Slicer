@@ -163,7 +163,6 @@ void vtkSlicerModelsGUI::BuildGUI ( )
     modDisplayFrame->Create ( );
     //modDisplayFrame->SetBackgroundColor ( style->GetGUIBgColor() );
     modDisplayFrame->SetLabelText ("Display");
-    modDisplayFrame->SetDefaultLabelFontWeightToNormal( );
     modDisplayFrame->CollapseFrame ( );
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   modDisplayFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Models")->GetWidgetName());

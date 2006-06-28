@@ -159,7 +159,6 @@ void vtkSlicerTransformManagerWidget::CreateWidget ( )
     transformFrame->SetParent ( this->GetParent() );
     transformFrame->Create ( );
     transformFrame->SetLabelText ("Transform Manager");
-    transformFrame->SetDefaultLabelFontWeightToNormal( );
     //transformFrame->CollapseFrame ( );
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                    transformFrame->GetWidgetName() );

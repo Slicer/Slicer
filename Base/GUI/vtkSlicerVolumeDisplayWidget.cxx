@@ -188,7 +188,6 @@ void vtkSlicerVolumeDisplayWidget::CreateWidget ( )
     volDisplayFrame->SetParent ( this->GetParent() );
     volDisplayFrame->Create ( );
     volDisplayFrame->SetLabelText ("Display");
-    volDisplayFrame->SetDefaultLabelFontWeightToNormal( );
     volDisplayFrame->CollapseFrame ( );
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                   volDisplayFrame->GetWidgetName() );

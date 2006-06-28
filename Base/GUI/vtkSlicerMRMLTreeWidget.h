@@ -26,11 +26,14 @@
 
 #include "vtkSlicerWidget.h"
 
-#include "vtkKWTree.h"
-
 #include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
 
+class vtkMRMLNode;
+class vtkKWMenu;
+class vtkKWTreeWithScrollbars;
+class vtkKWEntryWithLabel;
+class vtkKWLabelWithLabel;
 
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerMRMLTreeWidget : public vtkSlicerWidget
 {
@@ -52,7 +55,11 @@ public:
   // removes observers on widgets in the class
   virtual void RemoveWidgetObservers ( );
   
- protected:
+  // Description::
+  // Callbacks
+  virtual void DeleteNodeCallback(const char *id);
+
+protected:
   vtkSlicerMRMLTreeWidget();
   ~vtkSlicerMRMLTreeWidget();
 
@@ -61,10 +68,17 @@ public:
   virtual void CreateWidget();
   
   void UpdateTreeFromMRML();
+  void AddNodeToTree(vtkMRMLNode *node);
+  void UpdateNodeInspector(vtkMRMLNode *node);
+  vtkMRMLNode* GetSelectedNodeInTree();
 
 private:
   
-  vtkKWTree *TreeWidget;
+  vtkKWTreeWithScrollbars *TreeWidget;
+  vtkKWMenu *ContextMenu;
+
+  vtkKWLabelWithLabel *NodeID;
+  vtkKWEntryWithLabel *NodeName;
 
   vtkSlicerMRMLTreeWidget(const vtkSlicerMRMLTreeWidget&); // Not implemented
   void operator=(const vtkSlicerMRMLTreeWidget&); // Not Implemented
