@@ -63,6 +63,7 @@
 #include "ModuleParameterGroup.h"
 #include "ModuleParameter.h"
 
+/* A useful string utility */
 void
 replaceSubWithSub(std::string& s, const char *o, const char  *n)
 {
@@ -130,6 +131,7 @@ void GeneratePost(std::ofstream &, ModuleDescription &);
 /* Generate the code that echos the XML file that describes the
  * command line arguments.
  */
+void GenerateGetXML(std::ofstream &, ModuleDescription &, std::string);
 void GenerateXML(std::ofstream &, ModuleDescription &, std::string);
 
 /* Generate the code that uses TCLAP to parse the command line
@@ -173,7 +175,7 @@ main(int argc, char *argv[])
     return EXIT_FAILURE;
     }
 
-// Print each command line arg
+  // Print each command line arg
   std::cerr << "GenerateCLP: Found " << module.GetParameterGroups().size() << " parameters groups" << std::endl;
   std::vector<ModuleParameterGroup>::const_iterator git;
   for (git = module.GetParameterGroups().begin();
@@ -183,9 +185,10 @@ main(int argc, char *argv[])
     std::cerr << "GenerateCLP: Group \"" << (*git).GetLabel() << "\" has " << (*git).GetParameters().size() << " parameters" << std::endl;
     }
 
-// Do the hard stuff
+  // Do the hard stuff
   std::ofstream sout(OutputCxx.c_str(),std::ios::out);
   GeneratePre(sout, module, argc, argv);
+  GenerateGetXML(sout, module, InputXML);
   GenerateXML(sout, module, InputXML);
   GenerateTCLAP(sout, module);
   GenerateEchoArgs(sout, module);
@@ -226,23 +229,20 @@ void GeneratePre(std::ofstream &sout, ModuleDescription &module, int argc, char 
   sout << "    stop = text.find_first_of(separators, start);" << std::endl;
   sout << "    if ((stop < 0) || (stop > n)) stop = n;" << std::endl;
   sout << "    words.push_back(text.substr(start, stop - start));" << std::endl;
-  sout << "    start = text.find_first_not_of(separators, stop+1);" << 
-    std::endl;
+  sout << "    start = text.find_first_not_of(separators, stop+1);" << std::endl;
   sout << "    }" << std::endl;
   sout << "}" << std::endl;
 
 }
 
-void GenerateXML(std::ofstream &sout, ModuleDescription &module, std::string XMLFile)
+void GenerateGetXML(std::ofstream &sout, ModuleDescription &module, std::string XMLFile)
 {
-  std::string EOL(" \\");
   char linec[2048];
   std::ifstream fin(XMLFile.c_str(),std::ios::in);
 
-  sout << "#define GENERATE_XML \\" << std::endl;
-  // Generate special section to produce xml description
-  sout << "  if (argc >= 2 && (strcmp(argv[1],\"--xml\") == 0))" << EOL << std::endl;
-  sout << "    {" << EOL << std::endl;
+  sout << "std::string GetXMLModuleDescription()" << std::endl;
+  sout << "  {" << std::endl;
+  sout << "  std::string xml;" << std::endl;
 
   while (!fin.eof())
     {
@@ -261,11 +261,24 @@ void GenerateXML(std::ofstream &sout, ModuleDescription &module, std::string XML
         cleanLine += line[j];
         }
       }
-    sout << "std::cout << \"" << cleanLine << "\" << std::endl;" << EOL << std::endl;
+    sout << "  xml += \"" << cleanLine << "\\n\";" << std::endl;
     }
+  sout << "  return xml;" << std::endl;
+  sout << "  }" << std::endl;
+  fin.close();
+}
+
+void GenerateXML(std::ofstream &sout, ModuleDescription &module, std::string XMLFile)
+{
+  std::string EOL(" \\");
+
+  sout << "#define GENERATE_XML \\" << std::endl;
+  // Generate special section to produce xml description
+  sout << "  if (argc >= 2 && (strcmp(argv[1],\"--xml\") == 0))" << EOL << std::endl;
+  sout << "    {" << EOL << std::endl;
+  sout << "    std::cout << GetXMLModuleDescription();" << EOL << std::endl;
   sout << "    return EXIT_SUCCESS;" << EOL << std::endl;
   sout << "    }" << std::endl;
-
 }
 
 void GenerateEchoArgs(std::ofstream &sout, ModuleDescription &module)
