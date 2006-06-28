@@ -121,27 +121,14 @@ void vtkSlicerDataGUI::BuildGUI ( )
     modHelpFrame->SetLabelText ("Help");
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   modHelpFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Data")->GetWidgetName());
-
-    // ---
-    // DISPLAY FRAME            
-    vtkKWFrameWithLabel *modDisplayFrame = vtkKWFrameWithLabel::New ( );
-    modDisplayFrame->SetParent ( this->UIPanel->GetPageWidget ( "Data" ) );
-    modDisplayFrame->Create ( );
-    //modDisplayFrame->SetBackgroundColor ( style->GetGUIBgColor() );
-    modDisplayFrame->SetLabelText ("Display");
-    modDisplayFrame->SetDefaultLabelFontWeightToNormal( );
-    modDisplayFrame->CollapseFrame ( );
-    app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                  modDisplayFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Data")->GetWidgetName());
     
     this->MRMLTreeWidget->SetAndObserveMRMLScene(this->GetMRMLScene() );
-    this->MRMLTreeWidget->SetParent ( modDisplayFrame );
+    this->MRMLTreeWidget->SetParent ( this->UIPanel->GetPageWidget ( "Data" ) );
     this->MRMLTreeWidget->Create ( );
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                  this->MRMLTreeWidget->GetWidgetName(), modDisplayFrame->GetWidgetName());
+                  this->MRMLTreeWidget->GetWidgetName(), this->UIPanel->GetPageWidget( "Data" )->GetWidgetName());
       
     modHelpFrame->Delete ( );
-    modDisplayFrame->Delete ( );
 }
 
 

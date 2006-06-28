@@ -93,7 +93,6 @@ void vtkSlicerMRMLTreeWidget::CreateWidget ( )
   frame->Create ( );
   frame->SetLabelText ("MRML Tree");
   frame->SetDefaultLabelFontWeightToNormal( );
-  frame->CollapseFrame ( );
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                  frame->GetWidgetName() );
 
