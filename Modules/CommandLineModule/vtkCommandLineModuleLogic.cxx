@@ -79,17 +79,30 @@ void vtkCommandLineModuleLogic::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 std::string
 vtkCommandLineModuleLogic
-::ConstructTemporaryFileName(const std::string& name) const
+::ConstructTemporaryFileName(const std::string& name,
+                             bool isCommandLineModule) const
 {
   std::string fname = name;
-  
-  // To avoid confusing the Archetype readers, convert any
-  // numbers in the filename to characters [0-9]->[A-J]
-  std::transform(fname.begin(), fname.end(),
-                 fname.begin(), DigitsToCharacters());
-  
-  fname = this->TemporaryDirectory + "/" + fname + ".nrrd";
 
+  if (isCommandLineModule)
+    {
+    // To avoid confusing the Archetype readers, convert any
+    // numbers in the filename to characters [0-9]->[A-J]
+    std::transform(fname.begin(), fname.end(),
+                   fname.begin(), DigitsToCharacters());
+    
+    fname = this->TemporaryDirectory + "/" + fname + ".nrrd";
+    }
+  else
+    {
+    // If not a command line module, then it is a shared object module
+    char tname[25];
+
+    sprintf(tname, "slicer:%p/%p", this->MRMLScene,
+            this->MRMLScene->GetNodeByID(name.c_str()));
+
+    fname = tname;
+    }
   return fname;
 }
 
@@ -100,6 +113,21 @@ void vtkCommandLineModuleLogic::Apply()
     {
     vtkErrorMacro("No input CommandLineModuleNode found");
     return;
+    }
+
+  // Determine the type of the module: command line or shared object
+  int (*entryPoint)(int argc, char* argv[]);
+  bool isCommandLine = true;
+  
+  std::string target
+    = this->CommandLineModuleNode->GetModuleDescription().GetTarget();
+  std::string::size_type pos
+    = target.find_first_of("slicer:");
+
+  if (pos != std::string::npos && pos == 0)
+    {
+    sscanf(target.c_str(), "slicer:%p", &entryPoint);
+    isCommandLine = false;
     }
 
   
@@ -123,7 +151,7 @@ void vtkCommandLineModuleLogic::Apply()
   
   // Make a pass over the parameters and estabilsh which parameters
   // have images that need to be written before execution or loaded
-  // upon completion. 
+  // upon completion.
   for (pgit = pgbeginit; pgit != pgendit; ++pgit)
     {
     // iterate over each parameter in this group
@@ -145,7 +173,8 @@ void vtkCommandLineModuleLogic::Apply()
           }
 
         std::string fname
-          = this->ConstructTemporaryFileName((*pit).GetDefault());
+          = this->ConstructTemporaryFileName((*pit).GetDefault(),
+                                             isCommandLine);
 
         filesToDelete.insert(fname);
 
@@ -330,94 +359,105 @@ void vtkCommandLineModuleLogic::Apply()
   //
   //
   MRMLIDToFileNameMap::const_iterator id2fn;
-
-  for (id2fn = nodesToWrite.begin();
-       id2fn != nodesToWrite.end();
-       ++id2fn)
-    {
-    vtkMRMLVolumeArchetypeStorageNode *out
-      = vtkMRMLVolumeArchetypeStorageNode::New();
-    out->SetFileArchetype( (*id2fn).second.c_str() );
-
-    out->WriteData( this->MRMLScene->GetNodeByID( (*id2fn).first.c_str() ) );
     
-    out->Delete();
+  if (isCommandLine)
+    {
+    // only need to write out data if running a command line module
+    for (id2fn = nodesToWrite.begin();
+         id2fn != nodesToWrite.end();
+         ++id2fn)
+      {
+      vtkMRMLVolumeArchetypeStorageNode *out
+        = vtkMRMLVolumeArchetypeStorageNode::New();
+      out->SetFileArchetype( (*id2fn).second.c_str() );
+      
+      out->WriteData( this->MRMLScene->GetNodeByID( (*id2fn).first.c_str() ) );
+      
+      out->Delete();
+      }
     }
   
 
   // run the filter
   //
   //
-  itksysProcess *process = itksysProcess_New();
-
-  // setup the command
-  itksysProcess_SetCommand(process, command);
-  itksysProcess_SetOption(process,
-                          itksysProcess_Option_Detach, 0);
-  itksysProcess_SetOption(process,
-                          itksysProcess_Option_HideWindow, 1);
-  // itksysProcess_SetTimeout(process, 5.0); // 5 seconds
-
-  // execute the command
-  itksysProcess_Execute(process);
-
-  // Wait for the command to finish
-  char *tbuffer;
-  int length;
-  int pipe;
-  std::string stdoutbuffer;
-  std::string stderrbuffer;
-  while ((pipe = itksysProcess_WaitForData(process ,&tbuffer,
-                                           &length, 0)) != 0)
+  if (isCommandLine)
     {
-    if (length != 0 && tbuffer != 0)
+    itksysProcess *process = itksysProcess_New();
+    
+    // setup the command
+    itksysProcess_SetCommand(process, command);
+    itksysProcess_SetOption(process,
+                            itksysProcess_Option_Detach, 0);
+    itksysProcess_SetOption(process,
+                            itksysProcess_Option_HideWindow, 1);
+    // itksysProcess_SetTimeout(process, 5.0); // 5 seconds
+    
+    // execute the command
+    itksysProcess_Execute(process);
+    
+    // Wait for the command to finish
+    char *tbuffer;
+    int length;
+    int pipe;
+    std::string stdoutbuffer;
+    std::string stderrbuffer;
+    while ((pipe = itksysProcess_WaitForData(process ,&tbuffer,
+                                             &length, 0)) != 0)
       {
-      if (pipe == itksysProcess_Pipe_STDOUT)
+      if (length != 0 && tbuffer != 0)
         {
-        std::cout << "STDOUT: " << std::string(tbuffer, length) << std::endl;
-        stdoutbuffer = stdoutbuffer.append(tbuffer, length);
-        }
-      else if (pipe == itksysProcess_Pipe_STDERR)
-        {
-        stderrbuffer = stderrbuffer.append(tbuffer, length);
-        std::cerr << "STDERR: " << std::string(tbuffer, length) << std::endl;
+        if (pipe == itksysProcess_Pipe_STDOUT)
+          {
+          std::cout << "STDOUT: " << std::string(tbuffer, length) << std::endl;
+          stdoutbuffer = stdoutbuffer.append(tbuffer, length);
+          }
+        else if (pipe == itksysProcess_Pipe_STDERR)
+          {
+          stderrbuffer = stderrbuffer.append(tbuffer, length);
+          std::cerr << "STDERR: " << std::string(tbuffer, length) << std::endl;
+          }
         }
       }
-    }
-  itksysProcess_WaitForExit(process, 0);
-  
-  // check the exit state / error state of the process
-  int result = itksysProcess_GetState(process);
-  if (result == itksysProcess_State_Exited)
-    {
-    // executable exited cleanly and must of done
-    // "something" 
-    if (itksysProcess_GetExitValue(process) == 0)
+    itksysProcess_WaitForExit(process, 0);
+    
+    // check the exit state / error state of the process
+    int result = itksysProcess_GetState(process);
+    if (result == itksysProcess_State_Exited)
       {
-      // executable exited without errors,
+      // executable exited cleanly and must of done
+      // "something" 
+      if (itksysProcess_GetExitValue(process) == 0)
+        {
+        // executable exited without errors,
+        std::cout << this->CommandLineModuleNode->GetModuleDescription().GetTitle()
+                  << " completed without errors" << std::endl;
+        }
+      else
+        {
+        std::cout << this->CommandLineModuleNode->GetModuleDescription().GetTitle()
+                  << " completed with errors" << std::endl;
+        }
+      }
+    else if (result == itksysProcess_State_Expired)
+      {
       std::cout << this->CommandLineModuleNode->GetModuleDescription().GetTitle()
-                << " completed without errors" << std::endl;
+                << " timed out" << std::endl;
       }
     else
       {
       std::cout << this->CommandLineModuleNode->GetModuleDescription().GetTitle()
-                << " completed with errors" << std::endl;
+                << " unknown termination. " << result << std::endl;
       }
-    }
-  else if (result == itksysProcess_State_Expired)
-    {
-    std::cout << this->CommandLineModuleNode->GetModuleDescription().GetTitle()
-              << " timed out" << std::endl;
+    
+    // clean up
+    itksysProcess_Delete(process);
     }
   else
     {
-    std::cout << this->CommandLineModuleNode->GetModuleDescription().GetTitle()
-              << " unknown termination. " << result << std::endl;
+    // share object module, run it by a direct call
+    (*entryPoint)(commandLineAsString.size(), command);
     }
-  
-  // clean up
-  itksysProcess_Delete(process);
-  
   
   // import the results
   //
@@ -426,13 +466,16 @@ void vtkCommandLineModuleLogic::Apply()
        id2fn != nodesToReload.end();
        ++id2fn)
     {
-    vtkMRMLVolumeArchetypeStorageNode *in
-      = vtkMRMLVolumeArchetypeStorageNode::New();
-    in->SetFileArchetype( (*id2fn).second.c_str() );
-
-    in->ReadData( this->MRMLScene->GetNodeByID( (*id2fn).first.c_str() ) );
-    
-    in->Delete();
+    if (isCommandLine)
+      {
+      vtkMRMLVolumeArchetypeStorageNode *in
+        = vtkMRMLVolumeArchetypeStorageNode::New();
+      in->SetFileArchetype( (*id2fn).second.c_str() );
+      
+      in->ReadData( this->MRMLScene->GetNodeByID( (*id2fn).first.c_str() ) );
+      
+      in->Delete();
+      }
 
     this->ApplicationLogic->GetSelectionNode()->SetActiveVolumeID( (*id2fn).first.c_str() );
     this->ApplicationLogic->PropagateVolumeSelection();
@@ -443,14 +486,17 @@ void vtkCommandLineModuleLogic::Apply()
   //
   delete [] command;
 
-  bool removed;
-  std::set<std::string>::iterator fit;
-  for (fit = filesToDelete.begin(); fit != filesToDelete.end(); ++fit)
+  if (isCommandLine)
     {
-    removed = itksys::SystemTools::RemoveFile((*fit).c_str());
-    if (!removed)
+    bool removed;
+    std::set<std::string>::iterator fit;
+    for (fit = filesToDelete.begin(); fit != filesToDelete.end(); ++fit)
       {
-      std::cout << "Unable to delete temporary file " << *fit << std::endl;
+      removed = itksys::SystemTools::RemoveFile((*fit).c_str());
+      if (!removed)
+        {
+        std::cout << "Unable to delete temporary file " << *fit << std::endl;
+        }
       }
     }
 }

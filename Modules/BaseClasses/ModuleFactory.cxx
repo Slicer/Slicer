@@ -1,3 +1,5 @@
+#include "itkDynamicLoader.h"  // include itk files first 
+
 #include "ModuleFactory.h"
 
 #include "ModuleDescriptionParser.h"
@@ -25,6 +27,32 @@ splitString (std::string &text,
     start = text.find_first_not_of(separators, stop+1);
     }
 }
+
+/**
+ * A file scoped function to determine if a file has
+ * the shared library extension in its name, this converts name to lower
+ * case before the compare, DynamicLoader always uses
+ * lower case for LibExtension values.
+ */
+inline bool 
+NameIsSharedLibrary(const char* name)
+{
+  std::string sname = name;
+  if ( sname.find(itk::DynamicLoader::LibExtension()) != std::string::npos )
+    {
+    return true;
+    }
+  return false;
+}
+
+/**
+ * A file scope typedef to make the cast code to the load
+ * function cleaner to read.
+ */
+typedef std::string (*XMLModuleDescriptionFunction)();
+typedef int (*ModuleEntryPoint)(int argc, char* argv[]);
+
+
 
 // Private implementaton of an std::map
 class ModuleDescriptionMap : public std::map<std::string, ModuleDescription> {};
@@ -80,6 +108,8 @@ void
 ModuleFactory
 ::Scan()
 {
+  // Scan for shared object modules first since they will be higher
+  // performance faster than command line module
   this->ScanForSharedObjectModules();
   this->ScanForCommandLineModules();
 }
@@ -88,7 +118,122 @@ void
 ModuleFactory
 ::ScanForSharedObjectModules()
 {
-  // todo
+  // add any of the self-describing shared object modules available
+  //
+  // self-describing shared object modules live in a prescribed path
+  // and have a prescribed symbol.
+  if (this->SearchPath == "")
+    {
+    std::cout << "Empty module search path." << std::endl;
+    return;
+    }
+  
+  std::vector<std::string> modulePaths;
+#ifdef _WIN32
+  std::string delim(";");
+#else
+  std::string delim(":");
+#endif
+  splitString(this->SearchPath, delim, modulePaths);
+
+  std::vector<std::string>::const_iterator pit;
+  long numberTested = 0;
+  
+  for (pit = modulePaths.begin(); pit != modulePaths.end(); ++pit)
+    {
+    std::cout << "Searching " << *pit << std::endl;
+    
+    itksys::Directory directory;
+    directory.Load( (*pit).c_str() );
+
+    for ( unsigned int ii=0; ii < directory.GetNumberOfFiles(); ++ii)
+      {
+      const char *filename = directory.GetFile(ii);
+      
+      // skip any directories
+      if (!itksys::SystemTools::FileIsDirectory(filename))
+        {
+        // make sure the file has a shared library extension
+        if ( NameIsSharedLibrary(filename) )
+          {
+          numberTested++;
+          
+          // library name 
+          std::string fullLibraryPath = std::string(directory.GetPath())
+            + "/" + filename;
+          std::cout << "Checking " << fullLibraryPath << std::endl;
+          
+          itk::LibHandle lib
+            = itk::DynamicLoader::OpenLibrary(fullLibraryPath.c_str());
+          if ( lib )
+            {
+            // Look for the symbol to get an XML description of the
+            // module and a symbol to execute the module
+            XMLModuleDescriptionFunction xmlFunction
+              = (XMLModuleDescriptionFunction)itk::DynamicLoader::GetSymbolAddress(lib, "GetXMLModuleDescription");
+
+            ModuleEntryPoint entryPoint
+              = (ModuleEntryPoint)itk::DynamicLoader::GetSymbolAddress(lib, "SlicerModuleEntryPoint");
+
+
+            // if the symbols are found, then get the XML descriptions
+            // and cache the entry point to run the module
+            if ( xmlFunction && entryPoint )
+              {
+              std::string xml = (*xmlFunction)();
+
+              // check if the module generated a valid xml description
+              if (xml.compare(0, 5, "<?xml") == 0)
+                {
+                // Construct and configure the module object
+                ModuleDescription module;
+
+                // Set the target as the entry point to call
+                char entryPointAsText[16];
+                sprintf(entryPointAsText, "slicer:%p", entryPoint);
+                module.SetTarget( entryPointAsText );
+
+                // Parse the xml to build the description of the module
+                // and the parameters
+                ModuleDescriptionParser parser;
+                parser.Parse(xml, module);
+
+                // Check to make sure the module is not already in the
+                // list
+                ModuleDescriptionMap::iterator mit
+                  = this->InternalMap->find(module.GetTitle());
+                
+                if (mit == this->InternalMap->end())
+                  {
+                  // Store the module in the list
+                  (*this->InternalMap)[module.GetTitle()] =  module ;
+                  }
+                else
+                  {
+                  std::cout << "  A module named \"" << module.GetTitle()
+                            << "\" has already been discovered." << std::endl
+                            << "    First discovered at "
+                            << (*mit).second.GetTarget() << std::endl
+                            << "    Then discovered at "
+                            << module.GetTarget() << std::endl
+                            << "    Keeping first module." << std::endl;
+                  }
+                }
+              }
+            else
+              {
+              std::cout << "Symbols not found." << std::endl;
+              std::cout << "xmlFunction: " << (void*)xmlFunction << std::endl;
+              std::cout << "entryPoint: " << (void*)entryPoint << std::endl;
+              }
+            }
+          }
+        }
+      }
+    }
+
+  std::cout << "Tested " << numberTested << " files as shared object plugins. Found "
+            << this->InternalMap->size() << " valid plugins." << std::endl;
 }
 
 void
@@ -127,11 +272,11 @@ ModuleFactory
     for ( unsigned int ii=0; ii < directory.GetNumberOfFiles(); ++ii)
       {
       const char *filename = directory.GetFile(ii);
-      numberTested++;
       
       // skip any directories
       if (!itksys::SystemTools::FileIsDirectory(filename))
         {
+        numberTested++;
         //std::cout << "Testing " << filename << " as a plugin:" << std::endl;
         
         char *command[3];

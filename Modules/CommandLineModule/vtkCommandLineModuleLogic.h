@@ -48,7 +48,7 @@ public:
 
 protected:
   //BTX
-  std::string ConstructTemporaryFileName(const std::string& name) const;
+  std::string ConstructTemporaryFileName(const std::string& name, bool isCommandLineModule) const;
   //ETX
   
 private:
