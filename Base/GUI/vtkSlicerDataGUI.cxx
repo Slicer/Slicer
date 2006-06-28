@@ -18,8 +18,7 @@ vtkCxxRevisionMacro ( vtkSlicerDataGUI, "$Revision: 1.0 $");
 //---------------------------------------------------------------------------
 vtkSlicerDataGUI::vtkSlicerDataGUI ( )
 {
-
-    // class not yet defined!
+  MRMLTreeWidget = vtkSlicerMRMLTreeWidget::New();
     //this->Logic = NULL;
 
 }
@@ -28,7 +27,11 @@ vtkSlicerDataGUI::vtkSlicerDataGUI ( )
 //---------------------------------------------------------------------------
 vtkSlicerDataGUI::~vtkSlicerDataGUI ( )
 {
-
+  if (this->MRMLTreeWidget)
+    {
+    this->MRMLTreeWidget->RemoveWidgetObservers ( );
+    this->MRMLTreeWidget->Delete ( );
+    }
     // class not yet defined!
     //this->SetModuleLogic ( NULL );
 }
@@ -130,7 +133,13 @@ void vtkSlicerDataGUI::BuildGUI ( )
     modDisplayFrame->CollapseFrame ( );
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   modDisplayFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Data")->GetWidgetName());
-
+    
+    this->MRMLTreeWidget->SetAndObserveMRMLScene(this->GetMRMLScene() );
+    this->MRMLTreeWidget->SetParent ( modDisplayFrame );
+    this->MRMLTreeWidget->Create ( );
+    app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
+                  this->MRMLTreeWidget->GetWidgetName(), modDisplayFrame->GetWidgetName());
+      
     modHelpFrame->Delete ( );
     modDisplayFrame->Delete ( );
 }

@@ -8,7 +8,8 @@
 #include "vtkSlicerBaseGUIWin32Header.h"
 #include "vtkSlicerModuleGUI.h"
 #include "vtkSlicerModuleLogic.h"
-#include "vtkMRMLNode.h"
+#include "vtkSlicerMRMLTreeWidget.h"
+
 //#include "vtkSlicerDataLogic.h"
 
 // Description:
@@ -73,7 +74,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerDataGUI : public vtkSlicerModuleGUI
     //vtkMRMLNode *MRMLNode;
     
     // Widgets for the Data module
-
+  vtkSlicerMRMLTreeWidget *MRMLTreeWidget;
+  
  private:
     vtkSlicerDataGUI ( const vtkSlicerDataGUI& ); // Not implemented.
     void operator = ( const vtkSlicerDataGUI& ); //Not implemented.

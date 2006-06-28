@@ -53,6 +53,7 @@ SET(LIB_SRCS
   vtkSlicerVolumeDisplayWidget.cxx
   vtkSlicerTransformManagerWidget.cxx
   vtkSlicerTransformEditorWidget.cxx
+  vtkSlicerMRMLTreeWidget.cxx
   )
 
 # Helper classes
