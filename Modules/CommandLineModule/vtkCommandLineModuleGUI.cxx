@@ -692,6 +692,8 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
           tparameter->SetLabelText((*pit).GetLabel().c_str());
           tparameter->GetWidget()->SetValue(atof((*pit).GetDefault().c_str()));
           tparameter->GetWidget()->SetIncrement(1);
+          tparameter->GetWidget()->RestrictValuesToIntegersOn();
+          tparameter->GetWidget()->SetValueFormat("%.1f");
           tparameter->GetWidget()
             ->SetRange(itk::NumericTraits<int>::NonpositiveMin(),
                        itk::NumericTraits<int>::max());
@@ -775,7 +777,7 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
             }
           if ((*pit).GetMaximum() != "")
             {
-            max = atoi((*pit).GetMaximum().c_str());
+            max = atof((*pit).GetMaximum().c_str());
             }
           else
             {
@@ -832,7 +834,7 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
             }
           if ((*pit).GetMaximum() != "")
             {
-            max = atoi((*pit).GetMaximum().c_str());
+            max = atof((*pit).GetMaximum().c_str());
             }
           else
             {
@@ -877,7 +879,6 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
         {
         vtkSlicerNodeSelectorWidget *tparameter
           = vtkSlicerNodeSelectorWidget::New();
-        
         tparameter->SetNodeClass("vtkMRMLScalarVolumeNode",
                                  NULL,
                                  NULL,
@@ -965,6 +966,7 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
           vtkKWRadioButton *b = tparameter->GetWidget()->AddWidget(id);
           b->SetValue( (*sit).c_str() );
           b->SetText( (*sit).c_str() );
+          b->SetAnchorToWest();
           if (*sit == (*pit).GetDefault())
             {
             b->SetSelectedState(1);
