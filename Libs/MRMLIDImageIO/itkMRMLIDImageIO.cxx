@@ -175,7 +175,7 @@ MRMLIDImageIO
     node->GetIToRASDirection( &(m_Direction[0][0]) );
     m_Direction[1].resize(3);
     node->GetJToRASDirection( &(m_Direction[1][0]) );
-    m_Direction[1].resize(3);
+    m_Direction[2].resize(3);
     node->GetKToRASDirection( &(m_Direction[2][0]) );
 
     // Dimensions
@@ -294,10 +294,10 @@ MRMLIDImageIO
     node->GetImageData()->SetDimensions(dim);
     node->SetSpacing( spacing );
 
-    // Center the data
-    origin[0] -=  spacing[0]*dim[0]/2.0;
-    origin[1] -=  spacing[1]*dim[1]/2.0;
-    origin[2] -=  spacing[2]*dim[2]/2.0;
+//     // Center the data
+//     origin[0] =  -spacing[0]*dim[0]/2.0;
+//     origin[1] =  -spacing[1]*dim[1]/2.0;
+//     origin[2] =  -spacing[2]*dim[2]/2.0;
 
     node->SetOrigin( origin );
     
