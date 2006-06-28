@@ -28,8 +28,9 @@
 
 #include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
+#include "vtkMRMLTransformNode.h"
+#include "vtkMRMLTransformableNode.h"
 
-class vtkMRMLNode;
 class vtkKWMenu;
 class vtkKWTreeWithScrollbars;
 class vtkKWEntryWithLabel;
@@ -54,10 +55,17 @@ public:
   // Description:
   // removes observers on widgets in the class
   virtual void RemoveWidgetObservers ( );
+
+  vtkGetObjectMacro(CutNode, vtkMRMLTransformableNode);
+  vtkSetObjectMacro(CutNode, vtkMRMLTransformableNode);
   
   // Description::
   // Callbacks
   virtual void DeleteNodeCallback(const char *id);
+
+  virtual void CutNodeCallback(const char *id);
+
+  virtual void PasteNodeCallback(const char *id);
 
 protected:
   vtkSlicerMRMLTreeWidget();
@@ -71,6 +79,8 @@ protected:
   void AddNodeToTree(vtkMRMLNode *node);
   void UpdateNodeInspector(vtkMRMLNode *node);
   vtkMRMLNode* GetSelectedNodeInTree();
+
+  vtkMRMLTransformableNode* CutNode;
 
 private:
   
