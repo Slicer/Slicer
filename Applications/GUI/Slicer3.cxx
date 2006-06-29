@@ -78,7 +78,7 @@ int Slicer3_main(int argc, char *argv[])
   itkAutoLoadPath = ptemp + ":" + itkAutoLoadPath;
 #endif
   itkAutoLoadPath = "ITK_AUTOLOAD_PATH=" + itkAutoLoadPath;
-  putenv(itkAutoLoadPath.c_str());
+  putenv(const_cast <char *> (itkAutoLoadPath.c_str()));
   
   
   
