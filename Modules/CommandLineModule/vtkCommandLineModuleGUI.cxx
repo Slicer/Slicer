@@ -50,6 +50,8 @@ Version:   $Revision$
 #include "vtkKWRadioButtonSet.h"
 #include "vtkKWRadioButtonSetWithLabel.h"
 #include "vtkKWText.h"
+#include "vtkKWTextWithScrollbars.h"
+#include "vtkKWMessage.h"
 
 #include "itkNumericTraits.h"
 
@@ -598,12 +600,13 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
   helpFrame->SetLabelText ("Help");
   helpFrame->CollapseFrame ( );
 
-  vtkKWText *helpMessage = vtkKWText::New();
+  vtkKWTextWithScrollbars *helpMessage = vtkKWTextWithScrollbars::New();
   helpMessage->SetParent( helpFrame->GetFrame() );
   helpMessage->Create();
-  helpMessage->ReadOnlyOn();
-  helpMessage->SetReliefToFlat();
-  helpMessage->SetText(this->ModuleDescriptionObject.GetDescription().c_str());
+  helpMessage->HorizontalScrollbarVisibilityOff();
+  helpMessage->GetWidget()->ReadOnlyOn();
+  helpMessage->GetWidget()->SetReliefToFlat();
+  helpMessage->GetWidget()->SetText(this->ModuleDescriptionObject.GetDescription().c_str());
 
   app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                 helpMessage->GetWidgetName());
