@@ -47,6 +47,7 @@ extern "C" int Vtkitk_Init(Tcl_Interp *interp);
 //TODO added temporary
 extern "C" int Gradientanisotropicdiffusionfilter_Init(Tcl_Interp *interp);
 extern "C" int Slicerdaemon_Init(Tcl_Interp *interp);
+extern "C" int Commandlinemodule_Init(Tcl_Interp *interp);
 
 int Slicer3_Tcl_Eval ( Tcl_Interp *interp, const char *script )
 {
@@ -108,6 +109,7 @@ int Slicer3_main(int argc, char *argv[])
     //TODO added temporary
     Gradientanisotropicdiffusionfilter_Init(interp);
     Slicerdaemon_Init(interp);
+    Commandlinemodule_Init(interp);
 
     //
     // use the startup script passed on command line if it exists
@@ -280,7 +282,7 @@ int Slicer3_main(int argc, char *argv[])
     ");
 
 
-    // --- Scan for Modules (currently limited to CommandLineModules)
+    // --- Scan for command line and shared object modules
     //
     //
     ModuleFactory moduleFactory;
@@ -438,6 +440,23 @@ int Slicer3_main(int argc, char *argv[])
     slicesGUI->RemoveGUIObservers ( );
     appGUI->RemoveGUIObservers ( );
 
+    // remove the observers from the factory discovered modules
+    // (as we remove the observers, cache the GUIs in a vector so we
+    // can delete them later).
+    mit = moduleNames.begin();
+    std::vector<vtkSlicerModuleGUI*> moduleGUIs;
+    while ( mit != moduleNames.end() )
+      {
+      vtkSlicerModuleGUI *module;
+      module = slicerApp->GetModuleGUIByName( (*mit).c_str() );
+
+      module->RemoveGUIObservers();
+
+      moduleGUIs.push_back(module);
+      
+      ++mit;
+      }
+    
     // ------------------------------
     // Remove References to Module GUIs
     slicerApp->GetModuleGUICollection ( )->RemoveAllItems ( );
@@ -458,6 +477,19 @@ int Slicer3_main(int argc, char *argv[])
     slicesGUI->Delete ();
     appGUI->Delete ();
 
+    // delete the factory discovered module GUIs (as we delete the
+    // GUIs, cache the associated logic instances so we can delete
+    // them later).
+    std::vector<vtkSlicerModuleGUI*>::iterator git;
+    std::vector<vtkSlicerModuleLogic*> moduleLogics;
+    for (git = moduleGUIs.begin(); git != moduleGUIs.end(); ++git)
+      {
+      moduleLogics.push_back(dynamic_cast<vtkCommandLineModuleGUI*>((*git))->GetLogic());
+
+      (*git)->Delete();
+      }
+    moduleGUIs.clear();
+    
     //--- delete logic next, removing Refs to MRML
     appLogic->ClearCollections ( );
     gradientAnisotropicDiffusionFilterLogic->Delete ();
@@ -467,6 +499,14 @@ int Slicer3_main(int argc, char *argv[])
     sliceLogic2->Delete ();
     appLogic->Delete ();
 
+    // delete the factory discovered module Logics
+    std::vector<vtkSlicerModuleLogic*>::iterator lit;
+    for (lit = moduleLogics.begin(); lit != moduleLogics.end(); ++lit)
+      {
+      (*lit)->Delete();
+      }
+    moduleLogics.clear();
+    
     //--- scene next;
     scene->Delete ();
 
