@@ -49,7 +49,7 @@ NameIsSharedLibrary(const char* name)
  * A file scope typedef to make the cast code to the load
  * function cleaner to read.
  */
-typedef std::string (*XMLModuleDescriptionFunction)();
+typedef char * (*XMLModuleDescriptionFunction)();
 typedef int (*ModuleEntryPoint)(int argc, char* argv[]);
 
 
