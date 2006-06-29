@@ -145,6 +145,10 @@ void vtkCommandLineModuleGUI::RemoveLogicObservers()
 //----------------------------------------------------------------------------
 void vtkCommandLineModuleGUI::PrintSelf(ostream& os, vtkIndent indent)
 {
+  this->Superclass::PrintSelf(os, indent);
+
+  os << indent << "ModuleDescription: " << this->GetModuleDescription()
+     << std::endl;
   
 }
 
