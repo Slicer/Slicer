@@ -651,6 +651,19 @@ endElement(void *userData, const char *element)
       }
     else
       {
+      if (!parameter->GetIndex().empty())
+        {
+        std::string error("ModuleDescriptionParser Error: <"
+                          + std::string(name)
+                          + "> cannot be specified because an index has been specified for this parameter."
+                          + std::string("\""));
+        ps->ErrorDescription = error;
+        ps->ErrorLine = XML_GetCurrentLineNumber(ps->Parser);
+        ps->Error = true;
+        ps->OpenTags.pop();
+        ps->Depth--;
+        return;
+        }
       parameter->SetFlag(temp);
       }
     }
@@ -665,6 +678,19 @@ endElement(void *userData, const char *element)
                         + std::string(name)
                         + "> can only contain letters, numbers and underscores and must start with a _ or letter. The offending name is \""
                         + temp
+                        + std::string("\""));
+      ps->ErrorDescription = error;
+      ps->ErrorLine = XML_GetCurrentLineNumber(ps->Parser);
+      ps->Error = true;
+      ps->OpenTags.pop();
+      ps->Depth--;
+      return;
+      }
+    if (!parameter->GetIndex().empty())
+      {
+      std::string error("ModuleDescriptionParser Error: <"
+                        + std::string(name)
+                        + "> cannot be specified because an index has been specified for this parameter."
                         + std::string("\""));
       ps->ErrorDescription = error;
       ps->ErrorLine = XML_GetCurrentLineNumber(ps->Parser);
@@ -787,6 +813,19 @@ endElement(void *userData, const char *element)
     }
   else if (parameter && (name == "index"))
     {
+    if (!parameter->GetLongFlag().empty() || !parameter->GetFlag().empty() )
+      {
+      std::string error("ModuleDescriptionParser Error: <"
+                        + std::string(name)
+                        + "> cannot be specified because a <longflag> and/or <flag> has been specified for this parameter."
+                        + std::string("\""));
+      ps->ErrorDescription = error;
+      ps->ErrorLine = XML_GetCurrentLineNumber(ps->Parser);
+      ps->Error = true;
+      ps->OpenTags.pop();
+      ps->Depth--;
+      return;
+      }
     std::string temp = ps->LastData[ps->Depth];
     trimLeadingAndTrailing(temp);
     parameter->SetIndex(temp);
