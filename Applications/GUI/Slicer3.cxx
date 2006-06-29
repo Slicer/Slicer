@@ -49,6 +49,20 @@ extern "C" int Gradientanisotropicdiffusionfilter_Init(Tcl_Interp *interp);
 extern "C" int Slicerdaemon_Init(Tcl_Interp *interp);
 extern "C" int Commandlinemodule_Init(Tcl_Interp *interp);
 
+struct SpacesToUnderscores
+{
+  char operator() (char in)
+    {
+      if (in == ' ' )
+        {
+        return '_';
+        }
+
+      return in;
+    }
+};
+
+
 int Slicer3_Tcl_Eval ( Tcl_Interp *interp, const char *script )
 {
   if ( Tcl_Eval (interp, script) != TCL_OK )
@@ -425,8 +439,23 @@ int Slicer3_main(int argc, char *argv[])
     slicerApp->Script ("namespace eval slicer3 set ApplicationLogic [$::slicer3::ApplicationGUI GetApplicationLogic]");
     slicerApp->Script ("namespace eval slicer3 set MRMLScene [$::slicer3::ApplicationLogic GetMRMLScene]");
 
+    mit = moduleNames.begin();
+    while ( mit != moduleNames.end() )
+      {
+      vtkSlicerModuleGUI *module;
+      module = slicerApp->GetModuleGUIByName( (*mit).c_str() );
 
+      name = module->GetTclName();
 
+      std::string title = *mit;
+      std::transform(title.begin(), title.end(), title.begin(), SpacesToUnderscores());
+
+      slicerApp->Script ("namespace eval slicer3 set CommandLineModuleGUI_%s %s", title.c_str(), name);
+      
+      ++mit;
+      }
+
+    
     // ------------------------------
     // DISPLAY WINDOW AND RUN
     appGUI->DisplayMainSlicerWindow ( );
