@@ -109,6 +109,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkGetObjectMacro ( ModulesPrev, vtkKWPushButton );
     vtkGetObjectMacro ( ModulesNext, vtkKWPushButton );    
     vtkGetObjectMacro (ModulesHistory, vtkKWPushButton );
+    vtkGetObjectMacro (ModulesRefresh, vtkKWPushButton );
 
     // Description:
     // Get the widgets in the SliceControlFrame
@@ -306,6 +307,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkKWPushButton *ModulesPrev;
     vtkKWPushButton *ModulesNext;
     vtkKWPushButton *ModulesHistory;
+    vtkKWPushButton *ModulesRefresh;
     
     //Description:
     // Widgets for the SliceControlFrame in the GUI

@@ -8,6 +8,7 @@
 #include "./Resources/vtkSlicerModuleHistory_ImageData.h"
 #include "./Resources/vtkSlicerModuleNext_ImageData.h"
 #include "./Resources/vtkSlicerModulePrev_ImageData.h"
+#include "./Resources/vtkSlicerModuleRefresh_ImageData.h"
 
 class vtkSlicerModuleNavigationIcons : public vtkSlicerIcons
 {
@@ -19,6 +20,7 @@ class vtkSlicerModuleNavigationIcons : public vtkSlicerIcons
     vtkGetObjectMacro (ModuleNextIcon, vtkKWIcon);
     vtkGetObjectMacro (ModulePrevIcon, vtkKWIcon);
     vtkGetObjectMacro (ModuleHistoryIcon, vtkKWIcon);
+    vtkGetObjectMacro (ModuleRefreshIcon, vtkKWIcon);
 
     void AssignImageDataToIcons ( );
     
@@ -29,6 +31,7 @@ class vtkSlicerModuleNavigationIcons : public vtkSlicerIcons
     vtkKWIcon *ModulePrevIcon;
     vtkKWIcon *ModuleNextIcon;
     vtkKWIcon *ModuleHistoryIcon;
+    vtkKWIcon *ModuleRefreshIcon;
     
  private:
     vtkSlicerModuleNavigationIcons (const vtkSlicerModuleNavigationIcons&); // Not implemented

@@ -133,6 +133,7 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
     this->ModulesPrev = vtkKWPushButton::New ( );
     this->ModulesNext = vtkKWPushButton::New ( );
     this->ModulesHistory = vtkKWPushButton::New ( );
+    this->ModulesRefresh = vtkKWPushButton::New ( );
     
     //--- ui for the SliceControlframe.
     this->ToggleAnnotationButton = vtkKWPushButton::New ( );
@@ -746,6 +747,10 @@ void vtkSlicerApplicationGUI::DeleteGUIPanelWidgets ( )
         this->ModulesHistory->Delete ( );
         this->ModulesHistory = NULL;
     }
+    if ( this->ModulesRefresh) {
+        this->ModulesRefresh->Delete ( );
+        this->ModulesRefresh = NULL;
+    }
 
     //--- widgets from ViewControlFrame
     if ( this->SpinButton ) {
@@ -1317,6 +1322,12 @@ void vtkSlicerApplicationGUI::BuildSlicerControlGUIPanel ( )
         this->ModulesHistory->SetBorderWidth ( 0 );
         this->ModulesHistory->SetImageToIcon ( this->SlicerModuleNavigationIcons->GetModuleHistoryIcon() );
         this->ModulesHistory->SetBalloonHelpString ("Pop up a window showing your module use history.");
+
+        this->ModulesRefresh->SetParent ( this->ModuleChooseFrame );
+        this->ModulesRefresh->Create ( );
+        this->ModulesRefresh->SetBorderWidth ( 0 );
+        this->ModulesRefresh->SetImageToIcon ( this->SlicerModuleNavigationIcons->GetModuleRefreshIcon() );
+        this->ModulesRefresh->SetBalloonHelpString ("Refresh the list of available modules.");
         
         //--- pack everything up.
         app->Script ( "pack %s -side left -anchor n -padx 1 -ipadx 1 -pady 3", this->ModulesLabel->GetWidgetName( ) );
@@ -1324,6 +1335,7 @@ void vtkSlicerApplicationGUI::BuildSlicerControlGUIPanel ( )
         app->Script ( "pack %s -side left -anchor c -padx 2 -pady 2", this->ModulesPrev->GetWidgetName( ) );
         app->Script ( "pack %s -side left -anchor c -padx 2 -pady 2", this->ModulesNext->GetWidgetName( ) );
         app->Script ( "pack %s -side left -anchor c -padx 2 -pady 2", this->ModulesHistory->GetWidgetName( ) );
+        app->Script ( "pack %s -side left -anchor c -padx 2 -pady 2", this->ModulesRefresh->GetWidgetName( ) );
     }
 }
 
