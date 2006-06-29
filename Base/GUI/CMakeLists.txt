@@ -54,6 +54,7 @@ SET(LIB_SRCS
   vtkSlicerTransformManagerWidget.cxx
   vtkSlicerTransformEditorWidget.cxx
   vtkSlicerMRMLTreeWidget.cxx
+  vtkSlicerViewerGUI.cxx
   )
 
 # Helper classes
