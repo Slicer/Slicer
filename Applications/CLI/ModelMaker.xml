@@ -57,16 +57,17 @@ Imported from Slicer 2.
      <minimum>0</minimum>
      </constraints>
    </integer>
-   <integer>
+   <float>
      <name>Decimate</name>
      <label>Decimate</label>
      <longflag>--decimate</longflag>
-     <description>Number of decimation steps</description>
-     <default>1</default>
+     <description>Target reduction during decimation, as a decimal percentage reduction in the number of polygons.</description>
+     <default>0.25</default>
      <constraints>
-     <minimum>0</minimum>
+     <minimum>0.0</minimum>
+     <maximum>1.0</maximum>
      </constraints>
-   </integer>
+   </float>
    <boolean>
      <name>SplitNormals</name>
      <label>Split Normals</label>
