@@ -143,3 +143,35 @@ TARGET_LINK_LIBRARIES (${CLP}Lib ITKIO ITKBasicFilters)
 #IF (Slicer3_BUILD_TESTING)
 #  SUBDIRS( Testing )
 #ENDIF (Slicer3_BUILD_TESTING)
+
+
+# install each target in the production area (where it would appear in an 
+# installation) and install each target in the developer area (for running 
+# from a build)
+SET(TARGETS
+        ResampleVolume
+        ResampleVolumeLib
+        ExecutionModelTour
+        ImageReadDicomWrite
+        ImageReadDicomWriteLib
+        GradientAnisotropicDiffusion
+        GradientAnisotropicDiffusionLib
+        MedianImageFilter 
+        MedianImageFilterLib
+        OtsuThresholdImageFilter
+        OtsuThresholdImageFilterLib
+        OtsuThresholdSegmentation
+        OtsuThresholdSegmentationLib
+        VotingBinaryHoleFillingImageFilter
+        VotingBinaryHoleFillingImageFilterLib
+        ModelMaker
+        GrayscaleFillHoleImageFilter
+        GrayscaleFillHoleImageFilterLib
+        GrayscaleGrindPeakImageFilter
+        GrayscaleGrindPeakImageFilterLib
+)
+
+FOREACH(target ${TARGETS})
+  INSTALL(TARGETS ${target} RUNTIME DESTINATION Plugins)
+ENDFOREACH(target)
+
