@@ -172,6 +172,7 @@ SET(TARGETS
 )
 
 FOREACH(target ${TARGETS})
-  INSTALL(TARGETS ${target} RUNTIME DESTINATION Plugins)
+  INSTALL(TARGETS ${target} RUNTIME DESTINATION Plugins
+                            LIBRARY DESTINATION Plugins)
 ENDFOREACH(target)
 
