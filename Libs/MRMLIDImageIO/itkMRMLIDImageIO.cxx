@@ -76,7 +76,7 @@ MRMLIDImageIO
   
   // check that the filename starts with the slicer3 scheme
   loc = fname.find("slicer:");
-  if (loc != fname.size() && (loc == 0))
+  if (loc != std::string::npos && (loc == 0))
     {
     this->Scheme = std::string(fname.begin(),
                                fname.begin() + std::string("slicer").size());
@@ -88,7 +88,7 @@ MRMLIDImageIO
       {
       // remote access, pull out a hostname
       hloc = fname.find("/", loc+2);
-      if (hloc == fname.size())
+      if (hloc == std::string::npos)
         {
         // no hostname specified
         return 0;
@@ -99,7 +99,7 @@ MRMLIDImageIO
 
     // now pull off the scene
     hloc = fname.find("/", loc);
-    if (hloc == fname.size())
+    if (hloc == std::string::npos)
       {
       // no scene specified
       return 0;
