@@ -122,14 +122,13 @@ void vtkCommandLineModuleLogic::Apply()
   std::string target
     = this->CommandLineModuleNode->GetModuleDescription().GetTarget();
   std::string::size_type pos
-    = target.find_first_of("slicer:");
+    = target.find("slicer:");
 
   if (pos != std::string::npos && pos == 0)
     {
     sscanf(target.c_str(), "slicer:%p", &entryPoint);
     isCommandLine = false;
     }
-
   
   // map to keep track of MRML Ids and filenames
   typedef std::map<std::string, std::string> MRMLIDToFileNameMap;

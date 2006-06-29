@@ -161,7 +161,7 @@ ModuleFactory
           // library name 
           std::string fullLibraryPath = std::string(directory.GetPath())
             + "/" + filename;
-          std::cout << "Checking " << fullLibraryPath << std::endl;
+          //std::cout << "Checking " << fullLibraryPath << std::endl;
           
           itk::LibHandle lib
             = itk::DynamicLoader::OpenLibrary(fullLibraryPath.c_str());
@@ -222,9 +222,9 @@ ModuleFactory
               }
             else
               {
-              std::cout << "Symbols not found." << std::endl;
-              std::cout << "xmlFunction: " << (void*)xmlFunction << std::endl;
-              std::cout << "entryPoint: " << (void*)entryPoint << std::endl;
+//               std::cout << "Symbols not found." << std::endl;
+//               std::cout << "xmlFunction: " << (void*)xmlFunction << std::endl;
+//               std::cout << "entryPoint: " << (void*)entryPoint << std::endl;
               }
             }
           }
