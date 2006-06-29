@@ -240,7 +240,23 @@ void GenerateGetXML(std::ofstream &sout, ModuleDescription &module, std::string 
   char linec[2048];
   std::ifstream fin(XMLFile.c_str(),std::ios::in);
 
-  sout << "std::string GetXMLModuleDescription()" << std::endl;
+  sout << std::endl;
+  sout << "#ifdef main" << std::endl;
+  sout << "#ifdef WIN32" << std::endl;
+  sout << "#define Slicer_EXPORT __declspec(dllexport)" << std::endl;
+  sout << "#else" << std::endl;
+  sout << "#define Slicer_EXPORT " << std::endl;
+  sout << "#endif" << std::endl;
+  sout << std::endl;
+
+  sout << "extern \"C\" {" << std::endl;
+  sout << "  Slicer_EXPORT char *GetXMLModuleDescription();" << std::endl;
+  sout << "  Slicer_EXPORT int SlicerModuleEntryPoint(int, char*[]);" << std::endl;
+  sout << "}" << std::endl;
+  sout << "#endif" << std::endl;
+  sout << std::endl;
+
+  sout << "char *GetXMLModuleDescription()" << std::endl;
   sout << "  {" << std::endl;
   sout << "  std::string xml;" << std::endl;
 
@@ -263,8 +279,12 @@ void GenerateGetXML(std::ofstream &sout, ModuleDescription &module, std::string 
       }
     sout << "  xml += \"" << cleanLine << "\\n\";" << std::endl;
     }
-  sout << "  return xml;" << std::endl;
+  sout << "  char *xmlChar = new char[xml.size()+1];" << std::endl;
+  sout << "  memcpy (xmlChar, xml.c_str(), xml.size());" << std::endl;
+  sout << "  xmlChar[xml.size()] = '\\0';" << std::endl;
+  sout << "  return xmlChar;" << std::endl;
   sout << "  }" << std::endl;
+
   fin.close();
 }
 
