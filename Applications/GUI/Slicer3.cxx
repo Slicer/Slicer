@@ -61,6 +61,27 @@ int Slicer3_Tcl_Eval ( Tcl_Interp *interp, const char *script )
 
 int Slicer3_main(int argc, char *argv[])
 {
+  // Append the path to the slicer executable to the ITK_AUTOLOAD_PATH
+  // so that Slicer specific ITK factories will be available by
+  // default. We assume any factories to be loaded will be in the same
+  // directory as the slicer executable
+  std::string itkAutoLoadPath;
+  vtksys::SystemTools::GetEnv("ITK_AUTOLOAD_PATH", itkAutoLoadPath);
+
+  std::string ptemp;
+  ptemp = vtksys::SystemTools::CollapseFullPath(argv[0]);
+  ptemp = vtksys::SystemTools::GetFilenamePath(ptemp);
+  ptemp = vtksys::SystemTools::ConvertToOutputPath(ptemp.c_str());
+#if WIN32
+  itkAutoLoadPath = ptemp + ";" + itkAutoLoadPath;
+#else
+  itkAutoLoadPath = ptemp + ":" + itkAutoLoadPath;
+#endif
+  itkAutoLoadPath = "ITK_AUTOLOAD_PATH=" + itkAutoLoadPath;
+  putenv(itkAutoLoadPath.c_str());
+  
+  
+  
     // Initialize Tcl
     // -- create the interp
     // -- set up initial global variables
