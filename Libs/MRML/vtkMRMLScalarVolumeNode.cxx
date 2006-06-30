@@ -118,11 +118,11 @@ void vtkMRMLScalarVolumeNode::CreateNoneNode(vtkMRMLScene *scene)
   // about missing input
   vtkImageData *id;
   id = vtkImageData::New();
-  id->SetDimensions(10, 10, 10);
+  id->SetDimensions(1, 1, 1);
   id->SetNumberOfScalarComponents(4);
   id->AllocateScalars();
   id->GetPointData()->GetScalars()->FillComponent(0, 0.0);
-  id->GetPointData()->GetScalars()->FillComponent(1, 0.0);
+  id->GetPointData()->GetScalars()->FillComponent(1, 125.0);
   id->GetPointData()->GetScalars()->FillComponent(2, 0.0);
   id->GetPointData()->GetScalars()->FillComponent(3, 0.0);
 
