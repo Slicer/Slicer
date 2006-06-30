@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<executable>
+<executable version="1.0" xmlns="http://slicer.org/module-description/1.0#">
   <category>
   Filtering
   </category>
