@@ -6,7 +6,6 @@
 #include "vtkSlicerVolumesLogic.h"
 #include "vtkSlicerApplication.h"
 #include "vtkMRMLVolumeNode.h"
-#include "vtkMRMLVolumeDisplayNode.h"
 
 #include "vtkKWWidget.h"
 #include "vtkKWMenuButton.h"
@@ -105,13 +104,14 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents ( vtkObject *caller,
              vtkSlicerVolumesLogic* volumeLogic = this->Logic;
       
              vtkMRMLVolumeNode *volumeNode = volumeLogic->AddArchetypeVolume( fileName );
+
              if ( volumeNode == NULL ) 
                {
                // TODO: generate an error...
                }
              else
-             {
-             filebrowse->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
+               {
+               filebrowse->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
 
                this->ApplicationLogic->GetSelectionNode()->SetActiveVolumeID( volumeNode->GetID() );
                this->ApplicationLogic->PropagateVolumeSelection();
