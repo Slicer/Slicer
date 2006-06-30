@@ -100,6 +100,11 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLayerLogic : public vtkSlicerLo
   void UpdateTransforms(); 
 
   // Description:
+  // Check that we are observing the correct display node
+  // (correct means the same one that the volume node is referencing)
+  void UpdateNodeReferences(); 
+
+  // Description:
   // The current reslice transform XYToIJK
   vtkGetObjectMacro (XYToIJKTransform, vtkTransform);
     
