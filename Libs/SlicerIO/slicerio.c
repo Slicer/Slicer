@@ -60,9 +60,15 @@ extern __FILE    _iob[_NFILE];
 
 /* For Windows */
 #if defined(__WIN32__)
+#if (_MSC_VER >= 1400)  /* Visual C++ 2005 */
+#define stdin  (&__iob_func()[0])
+#define stdout (&__iob_func()[1])
+#define stderr (&__iob_func()[2])
+#else  /* Visual C++ 2003 */
 #define stdin  (&_iob[0])
 #define stdout (&_iob[1])
 #define stderr (&_iob[2])
+#endif
 #endif
 
 
