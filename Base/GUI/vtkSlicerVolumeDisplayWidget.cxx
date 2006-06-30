@@ -59,14 +59,20 @@ void vtkSlicerVolumeDisplayWidget::PrintSelf ( ostream& os, vtkIndent indent )
     // print widgets?
 }
 
-void vtkSlicerVolumeDisplayWidget::SetVolumeNode ( vtkMRMLVolumeNode *node )
+void vtkSlicerVolumeDisplayWidget::SetVolumeNode ( vtkMRMLVolumeNode *volumeNode )
 { 
-  this->VolumeSelectorWidget->SetSelected(node); 
-  this->SetVolumeNodeID( node->GetID() );
-  this->SetVolumeDisplayNodeID( node->GetDisplayNodeID() );
-  if ( node )
+  // Select this volume node
+  this->VolumeSelectorWidget->SetSelected(volumeNode); 
+
+
+  // 
+  // Set the member variables and do a first process
+  //
+  this->SetVolumeNodeID( volumeNode->GetID() );
+  this->SetVolumeDisplayNodeID( volumeNode->GetDisplayNodeID() );
+  if ( volumeNode )
     {
-    this->ProcessMRMLEvents(node, vtkCommand::ModifiedEvent, NULL);
+    this->ProcessMRMLEvents(volumeNode, vtkCommand::ModifiedEvent, NULL);
     }
 }
 
@@ -75,27 +81,59 @@ void vtkSlicerVolumeDisplayWidget::ProcessWidgetEvents ( vtkObject *caller,
                                                          unsigned long event, void *callData )
 {
 
-  vtkSlicerNodeSelectorWidget *volSelector = vtkSlicerNodeSelectorWidget::SafeDownCast(caller);
-  if (volSelector == this->VolumeSelectorWidget && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent ) 
+  //
+  // process volume selector events
+  //
+  vtkSlicerNodeSelectorWidget *volSelector = 
+      vtkSlicerNodeSelectorWidget::SafeDownCast(caller);
+
+  if (volSelector == this->VolumeSelectorWidget && 
+        event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent ) 
     {
-    vtkMRMLVolumeNode *volume = vtkMRMLVolumeNode::SafeDownCast(this->VolumeSelectorWidget->GetSelected());
+    vtkMRMLVolumeNode *volume = 
+        vtkMRMLVolumeNode::SafeDownCast(this->VolumeSelectorWidget->GetSelected());
+
     if (volume != NULL)
       {
       this->SetVolumeNode(volume);
       this->ProcessMRMLEvents(volume, vtkCommand::ModifiedEvent, NULL);
       }
+
     return;
     }
   
-  vtkKWWindowLevelThresholdEditor *editor = vtkKWWindowLevelThresholdEditor::SafeDownCast(caller);
-  if (editor == this->WindowLevelThresholdEditor && event == vtkKWWindowLevelThresholdEditor::ValueChangedEvent)
+  //
+  // process window/level/threshold events
+  //
+  vtkKWWindowLevelThresholdEditor *editor = 
+      vtkKWWindowLevelThresholdEditor::SafeDownCast(caller);
+
+  if (editor == this->WindowLevelThresholdEditor && 
+        event == vtkKWWindowLevelThresholdEditor::ValueChangedEvent)
     {
     vtkMRMLVolumeDisplayNode *displayNode = NULL;
     if (this->VolumeDisplayNodeID != NULL)
       {
-        displayNode = vtkMRMLVolumeDisplayNode::SafeDownCast (this->MRMLScene->GetNodeByID(this->VolumeDisplayNodeID) );
+        displayNode = 
+          vtkMRMLVolumeDisplayNode::SafeDownCast (this->MRMLScene->GetNodeByID(this->VolumeDisplayNodeID) );
       }
-    if (displayNode)
+    // 
+    // check the volume -- if it doesn't yet have a display node,
+    // we need to create one
+    //
+
+    if (!displayNode)
+      {
+      displayNode = vtkMRMLVolumeDisplayNode::New ();
+      displayNode->SetScene(this->MRMLScene);
+      this->MRMLScene->AddNode (displayNode);
+      vtkMRMLVolumeNode *volumeNode = vtkMRMLVolumeNode::SafeDownCast (
+                this->MRMLScene->GetNodeByID(this->VolumeNodeID) );
+      this->VolumeDisplayNodeID = displayNode->GetID();
+      volumeNode->SetDisplayNodeID( displayNode->GetID() );
+      }
+
+    if ( displayNode )
       {
       displayNode->SetWindow(this->WindowLevelThresholdEditor->GetWindow());
       displayNode->SetLevel(this->WindowLevelThresholdEditor->GetLevel());
@@ -104,10 +142,12 @@ void vtkSlicerVolumeDisplayWidget::ProcessWidgetEvents ( vtkObject *caller,
       displayNode->SetAutoWindowLevel(this->WindowLevelThresholdEditor->GetAutoWindowLevel());
       displayNode->SetAutoThreshold(this->WindowLevelThresholdEditor->GetAutoThreshold());
       displayNode->SetApplyThreshold(this->WindowLevelThresholdEditor->GetApplyThreshold());
+      return;
       }
-    return;
     }       
-  if (editor == this->WindowLevelThresholdEditor && event == vtkKWWindowLevelThresholdEditor::ValueStartChangingEvent)
+
+  if (editor == this->WindowLevelThresholdEditor && 
+        event == vtkKWWindowLevelThresholdEditor::ValueStartChangingEvent)
     {
     if (this->VolumeDisplayNodeID != NULL)
       {
@@ -127,14 +167,17 @@ void vtkSlicerVolumeDisplayWidget::ProcessMRMLEvents ( vtkObject *caller,
     {
     return;
     }
+
   vtkMRMLVolumeNode *volumeNode = vtkMRMLVolumeNode::SafeDownCast(caller);
-  if (volumeNode == this->MRMLScene->GetNodeByID(this->VolumeNodeID) && volumeNode != NULL && event == vtkCommand::ModifiedEvent)
+
+  if (volumeNode == this->MRMLScene->GetNodeByID(this->VolumeNodeID) && 
+        volumeNode != NULL && event == vtkCommand::ModifiedEvent)
     {
     if (volumeNode->GetDisplayNode())
-    {
+      {
       this->SetVolumeDisplayNodeID(volumeNode->GetDisplayNode()->GetID());
-    }
-    this->WindowLevelThresholdEditor->SetImageData(volumeNode->GetImageData());
+      }
+      this->WindowLevelThresholdEditor->SetImageData(volumeNode->GetImageData());
     }
 
   if ( !this->VolumeDisplayNodeID )
@@ -144,18 +187,21 @@ void vtkSlicerVolumeDisplayWidget::ProcessMRMLEvents ( vtkObject *caller,
 
   if (event == vtkCommand::ModifiedEvent)
     {
-    vtkMRMLVolumeDisplayNode *displayNode = vtkMRMLVolumeDisplayNode::SafeDownCast(this->MRMLScene->GetNodeByID(this->VolumeDisplayNodeID));
+    vtkMRMLVolumeDisplayNode *displayNode = 
+        vtkMRMLVolumeDisplayNode::SafeDownCast(
+            this->MRMLScene->GetNodeByID(this->VolumeDisplayNodeID));
     if (displayNode != NULL) 
       {
-      this->WindowLevelThresholdEditor->SetWindowLevel(displayNode->GetWindow(), displayNode->GetLevel() );
-      this->WindowLevelThresholdEditor->SetThreshold(displayNode->GetLowerThreshold(), displayNode->GetUpperThreshold() );
+      this->WindowLevelThresholdEditor->SetWindowLevel(
+            displayNode->GetWindow(), displayNode->GetLevel() );
+      this->WindowLevelThresholdEditor->SetThreshold(
+            displayNode->GetLowerThreshold(), displayNode->GetUpperThreshold() );
       this->WindowLevelThresholdEditor->SetAutoWindowLevel( displayNode->GetAutoWindowLevel() );
       this->WindowLevelThresholdEditor->SetAutoThreshold( displayNode->GetAutoThreshold() );
       this->WindowLevelThresholdEditor->SetApplyThreshold( displayNode->GetApplyThreshold() );
       }
     return;
     }
-  
 }
 
 //---------------------------------------------------------------------------
@@ -230,8 +276,3 @@ void vtkSlicerVolumeDisplayWidget::CreateWidget ( )
     volDisplayFrame->Delete();
     
 }
-
-
-
-
-
