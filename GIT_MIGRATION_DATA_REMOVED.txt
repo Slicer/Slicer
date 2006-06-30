@@ -1,2 +1,3 @@
 74f68343c15e740122cde8d502e56f768f7adc91954bbfe42944d052209937fc  Base/GUI/ImageData/Thumbs.db
 f258fcd665e5ffc5173a93de52dfd59986f3317cdf5d5a986f0513ffaf1e6017  Libs/MRML/Testing/TestData/moving.nrrd
+fce35ad5dd387a1703f2dc41efc19bb4309d7f50e181f0d0d170d0c088d564a8  Modules/MRAblation/.vtkMRAblationLogic.cxx.swo
