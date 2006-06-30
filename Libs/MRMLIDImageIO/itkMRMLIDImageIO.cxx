@@ -336,10 +336,16 @@ MRMLIDImageIO
   node = this->FileNameToVolumeNodePtr( m_FileName.c_str() );
   if (node)
     {
-    // Need to create a VTK ImageData to hang off the node
-    vtkImageData *img = vtkImageData::New();
-    node->SetImageData(img);
-    img->Delete();
+    // Need to create a VTK ImageData to hang off the node if there is
+    // not one already there
+    vtkImageData *img = 0;
+    img = node->GetImageData();
+    if (!img)
+      {
+      img = vtkImageData::New();
+      node->SetImageData(img);
+      img->Delete();
+      }
 
     // Configure the information on the node/image data
     this->WriteImageInformation();
