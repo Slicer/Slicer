@@ -68,6 +68,12 @@
 #include "itkImageRegion.h"
 #include "itkGDCMSeriesFileNames.h"
 #include "itkGDCMImageIO.h"
+#include "itkMetaImageIO.h"
+#include "itkNrrdImageIO.h"
+#include "itkGE5ImageIO.h"
+#include "itkNiftiImageIO.h"
+#include "itkVTKImageIO.h"
+#include "itkAnalyzeImageIO.h"
 #include <itksys/SystemTools.hxx>
 
 vtkCxxRevisionMacro(vtkITKArchetypeImageSeriesReader, "$Revision: 1.13 $");
@@ -180,8 +186,16 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
     return;
     }
 
-  // Test whether the input file is a DICOM file
+  // Some file types require special processing
   itk::GDCMImageIO::Pointer dicomIO = itk::GDCMImageIO::New();
+  itk::MetaImageIO::Pointer metaIO = itk::MetaImageIO::New();
+  itk::NrrdImageIO::Pointer nrrdIO = itk::NrrdImageIO::New();
+  itk::GE5ImageIO::Pointer ge5IO = itk::GE5ImageIO::New();
+  itk::AnalyzeImageIO::Pointer analyzeIO = itk::AnalyzeImageIO::New();
+  itk::NiftiImageIO::Pointer niftiIO = itk::NiftiImageIO::New();
+  itk::VTKImageIO::Pointer vtkIO = itk::VTKImageIO::New();
+
+  // Test whether the input file is a DICOM file
   bool isDicomFile = dicomIO->CanReadFile(this->Archetype);
   if (isDicomFile)
     {
@@ -212,6 +226,23 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
         }
       }
 
+    if (candidateFiles.size() == 0)
+      {
+      candidateFiles.push_back(this->Archetype);
+      }
+    }
+  // Each of these file types can contain a 3D volume in a single file
+  // (or represented by a single file). In this reader we assume that if
+  // a file can contain a 3D volume, we only need that single
+  // file. This means that in this reader, these types cannot read a
+  // volume described in multiple files.
+  else if ( metaIO->CanReadFile(this->Archetype) ||
+            nrrdIO->CanReadFile(this->Archetype) ||
+            ge5IO->CanReadFile(this->Archetype) ||
+            niftiIO->CanReadFile(this->Archetype) ||
+            vtkIO->CanReadFile(this->Archetype) ||
+            analyzeIO->CanReadFile(this->Archetype))
+    {
     if (candidateFiles.size() == 0)
       {
       candidateFiles.push_back(this->Archetype);
