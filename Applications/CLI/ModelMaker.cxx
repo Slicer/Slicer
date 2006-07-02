@@ -178,7 +178,7 @@ int main(int argc, char * argv[])
     }
     if (extents[0] == extents[1] ||
         extents[2] == extents[3] ||
-        extents[3] == extents[5]) 
+        extents[4] == extents[5]) 
     {
         std::cerr << "The volume is not 3D.\n";
         std::cerr << "\tImage data extents: " << extents[0] << " " << extents[1] << " " << extents[2] << " " << extents[3] << " " << extents[4] << " " << extents[5] << endl;
