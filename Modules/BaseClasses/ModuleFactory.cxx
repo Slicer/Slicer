@@ -189,7 +189,7 @@ ModuleFactory
                 ModuleDescription module;
 
                 // Set the target as the entry point to call
-                char entryPointAsText[16];
+                char entryPointAsText[256];
                 sprintf(entryPointAsText, "slicer:%p", entryPoint);
                 module.SetTarget( entryPointAsText );
 
