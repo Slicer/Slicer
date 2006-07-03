@@ -51,38 +51,26 @@ vtkMRMLNode* vtkMRMLModelNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLModelNode::vtkMRMLModelNode()
 {
-
+  this->StorageNodeID = NULL;
+  this->DisplayNodeID = NULL;
   PolyData = NULL;
-
-  // Strings
-  this->Color = NULL;
-
-  // Numbers
-  this->Opacity = 1.0;
-  this->Visibility = 1;
-  this->Clipping = 0;
-  this->BackfaceCulling = 1;
-  this->ScalarVisibility = 0;
-  this->VectorVisibility = 0;
-  this->TensorVisibility = 0;
-  
-  // Arrays
-  this->ScalarRange[0] = 0;
-  this->ScalarRange[1] = 100;
-
-  // Scalars
-  this->LUTName = -1;
 
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLModelNode::~vtkMRMLModelNode()
 {
-  if (this->Color) 
+  if (this->StorageNodeID) 
     {
-    delete [] this->Color;
-    this->Color = NULL;
+    delete [] this->StorageNodeID;
+    this->StorageNodeID = NULL;
     }
+  if (this->DisplayNodeID) 
+    {
+    delete [] this->DisplayNodeID;
+    this->DisplayNodeID = NULL;
+    }
+
   if (this->PolyData) 
     {
     this->PolyData->Delete();
@@ -98,45 +86,15 @@ void vtkMRMLModelNode::WriteXML(ostream& of, int nIndent)
 
   vtkIndent indent(nIndent);
 
-  if (this->Color && strcmp(this->Color, "")) 
+   if (this->StorageNodeID != NULL) 
     {
-    of << indent << " color=\"" << this->Color << "\"";
+    of << indent << "storageNodeRef=\"" << this->StorageNodeID << "\" ";
+    }
+  if (this->DisplayNodeID != NULL) 
+    {
+    of << indent << "displayNodeRef=\"" << this->DisplayNodeID << "\" ";
     }
 
-  //if (this->LUTName && strcmp(this->LUTName,""))
-  if (this->LUTName != -1)
-    {
-    of << indent << " lutName=\"" << this->LUTName << "\"";
-    }
-  
-  // Numbers
-  if (this->Opacity != 1.0)
-    {
-    of << indent << " opacity=\"" << this->Opacity << "\"";
-    }
-  if (this->Visibility != 1)
-    {
-    of << indent << " visibility=\"" << (this->Visibility ? "true" : "false") << "\"";
-    }
-  if (this->Clipping != 0)
-    {
-    of << indent << " clipping=\"" << (this->Clipping ? "true" : "false") << "\"";
-    }
-  if (this->BackfaceCulling != 1)
-    {
-    of << indent << " backfaceCulling=\"" << (this->BackfaceCulling ? "true" : "false") << "\"";
-    }
-  if (this->ScalarVisibility != 0)
-    {
-    of << indent << " scalarVisibility=\"" << (this->ScalarVisibility ? "true" : "false") << "\"";
-    }
-
-  // Arrays
-  if (this->ScalarRange[0] != 0 || this->ScalarRange[1] != 100)
-    {
-    of << indent << " scalarRange=\"" << this->ScalarRange[0] << " "
-       << this->ScalarRange[1] << "\"";
-    }
 }
 
 //----------------------------------------------------------------------------
@@ -151,58 +109,13 @@ void vtkMRMLModelNode::ReadXMLAttributes(const char** atts)
     {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "color")) 
+    if (!strcmp(attName, "storageNodeRef")) 
       {
-      this->SetColor(attValue);
+      this->SetStorageNodeID(attValue);
       }
-    else if (!strcmp(attName, "scalarRange")) 
+    else if (!strcmp(attName, "displayNodeRef")) 
       {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> ScalarRange[0];
-      ss >> ScalarRange[1];
-      }
-    else if (!strcmp(attName, "LUTName")) 
-      {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> LUTName;
-      }
-    else if (!strcmp(attName, "opacity")) 
-      {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> Opacity;
-      }
-    else if (!strcmp(attName, "visibility")) 
-      {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> Visibility;
-      }
-    else if (!strcmp(attName, "backfaceCulling")) 
-      {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> BackfaceCulling;
-      }
-    else if (!strcmp(attName, "scalarVisibility")) 
-      {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> ScalarVisibility;
-      }
-    else if (!strcmp(attName, "vectorVisibility")) 
-      {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> VectorVisibility;
-      }
-    else if (!strcmp(attName, "tensorVisibility")) 
-      {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> TensorVisibility;
+      this->SetDisplayNodeID(attValue);
       }
     }  
 }
@@ -216,19 +129,8 @@ void vtkMRMLModelNode::Copy(vtkMRMLNode *anode)
   vtkMRMLNode::Copy(anode);
   vtkMRMLModelNode *node = (vtkMRMLModelNode *) anode;
 
-  // Strings
-
-  this->SetColor(node->Color);
-
-  // Vectors
-  this->SetScalarRange(node->ScalarRange);
-  
-  // Numbers
-  this->SetOpacity(node->Opacity);
-  this->SetVisibility(node->Visibility);
-  this->SetScalarVisibility(node->ScalarVisibility);
-  this->SetBackfaceCulling(node->BackfaceCulling);
-  this->SetClipping(node->Clipping);
+  this->SetStorageNodeID(node->StorageNodeID);
+  this->SetDisplayNodeID(node->DisplayNodeID);
   this->SetPolyData(node->PolyData);
 
 }
@@ -240,20 +142,12 @@ void vtkMRMLModelNode::PrintSelf(ostream& os, vtkIndent indent)
   
   vtkMRMLNode::PrintSelf(os,indent);
 
-  os << indent << "Color: " <<
-    (this->Color ? this->Color : "(none)") << "\n";
+  os << indent << "StorageNodeID: " <<
+    (this->StorageNodeID ? this->StorageNodeID : "(none)") << "\n";
 
-  os << indent << "Opacity:           " << this->Opacity << "\n";
-  os << indent << "Visibility:        " << this->Visibility << "\n";
-  os << indent << "ScalarVisibility:  " << this->ScalarVisibility << "\n";
-  os << indent << "BackfaceCulling:   " << this->BackfaceCulling << "\n";
-  os << indent << "Clipping:          " << this->Clipping << "\n";
+  os << indent << "DisplayNodeID: " <<
+    (this->DisplayNodeID ? this->DisplayNodeID : "(none)") << "\n";
 
-  os << "ScalarRange:\n";
-  for (idx = 0; idx < 2; ++idx)
-    {
-    os << indent << ", " << this->ScalarRange[idx];
-    }
   os << "\nPoly Data:\n";
   if (this->PolyData) 
     {
@@ -262,3 +156,25 @@ void vtkMRMLModelNode::PrintSelf(ostream& os, vtkIndent indent)
 
 }
 
+vtkMRMLStorageNode* vtkMRMLModelNode::GetStorageNode()
+{
+  vtkMRMLStorageNode* node = NULL;
+  if (this->GetScene() && this->GetStorageNodeID() )
+    {
+    vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->StorageNodeID);
+    node = vtkMRMLStorageNode::SafeDownCast(snode);
+    }
+  return node;
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLModelDisplayNode* vtkMRMLModelNode::GetDisplayNode()
+{
+  vtkMRMLModelDisplayNode* node = NULL;
+  if (this->GetScene() && this->GetDisplayNodeID() )
+    {
+    vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->DisplayNodeID);
+    node = vtkMRMLModelDisplayNode::SafeDownCast(snode);
+    }
+  return node;
+}

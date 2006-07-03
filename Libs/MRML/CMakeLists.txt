@@ -19,10 +19,11 @@ SET(MRML_SRCS
         vtkMRMLScalarVolumeNode.cxx        
         vtkMRMLVectorVolumeNode.cxx        
         vtkMRMLModelNode.cxx
+        vtkMRMLModelStorageNode.cxx
+        vtkMRMLModelDisplayNode.cxx
         vtkMRMLStorageNode.cxx
         vtkMRMLVolumeArchetypeStorageNode.cxx
         vtkMRMLVolumeHeaderlessStorageNode.cxx
-        vtkMRMLModelStorageNode.cxx
         vtkMRMLVolumeDisplayNode.cxx
         vtkMRMLTransformableNode.cxx
         vtkMRMLTransformNode.cxx

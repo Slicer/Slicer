@@ -29,6 +29,8 @@
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
 #include "vtkMRMLTransformableNode.h"
+#include "vtkMRMLStorageNode.h"
+#include "vtkMRMLModelDisplayNode.h"
 
 class VTK_MRML_EXPORT vtkMRMLModelNode : public vtkMRMLTransformableNode
 {
@@ -63,6 +65,26 @@ public:
   // Description:
   // Finds the storage node and read the data
   virtual void UpdateScene(vtkMRMLScene *scene){};
+
+
+  // Description:
+  // String ID of the storage MRML node
+  vtkSetStringMacro(StorageNodeID);
+  vtkGetStringMacro(StorageNodeID);
+
+  // Description:
+  // String ID of the display MRML node
+  vtkSetStringMacro(DisplayNodeID);
+  vtkGetStringMacro(DisplayNodeID);
+
+
+  // Description:
+  // Associated storage MRML node
+  vtkMRMLStorageNode* GetStorageNode();
+
+  // Description:
+  // Associated display MRML node
+  vtkMRMLModelDisplayNode* GetDisplayNode();
 
   // Description:
   // Name of the model's color, which is defined by a Color node in a MRML file
@@ -152,6 +174,8 @@ protected:
   // Arrays
   double ScalarRange[2];
 
+  char *StorageNodeID;
+  char *DisplayNodeID;
 };
 
 #endif

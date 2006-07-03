@@ -233,8 +233,6 @@ void vtkMRMLVolumeNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "DisplayNodeID: " <<
     (this->DisplayNodeID ? this->DisplayNodeID : "(none)") << "\n";
 
-  os << indent << "TransformNodeID: " <<
-    (this->TransformNodeID ? this->TransformNodeID : "(none)") << "\n";
 
   if (this->ImageData != NULL) 
     {
