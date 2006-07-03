@@ -9,6 +9,7 @@
 #include "vtkSlicerBaseGUIWin32Header.h"
 #include "vtkSlicerModuleGUI.h"
 #include "vtkSlicerModuleLogic.h"
+#include "vtkSlicerModelsLogic.h"
 
 //#include "vtkSlicerModelsLogic.h"
 //#include "vtkMRMLModelNode.h"
@@ -50,6 +51,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModelsGUI : public vtkSlicerModuleGUI
         { this->SetLogic ( vtkObjectPointer (&this->Logic), logic ) }
     */
 
+    void SetModuleLogic ( vtkSlicerModelsLogic *logic )
+        { this->SetLogic ( vtkObjectPointer (&this->Logic), logic ); }
+    void SetAndObserveModuleLogic ( vtkSlicerModelsLogic *logic )
+        { this->SetLogic ( vtkObjectPointer (&this->Logic), logic ); }
+
     // Description:
     // This method builds the Models module GUI
     virtual void BuildGUI ( ) ;
@@ -81,6 +87,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModelsGUI : public vtkSlicerModuleGUI
     
     // Widgets for the Models module
     vtkKWLoadSaveButton *LoadModelButton;
+
+    vtkSlicerModelsLogic *Logic;
 
  private:
     vtkSlicerModelsGUI ( const vtkSlicerModelsGUI& ); // Not implemented.

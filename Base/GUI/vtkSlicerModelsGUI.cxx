@@ -18,7 +18,7 @@ vtkSlicerModelsGUI::vtkSlicerModelsGUI ( )
 {
 
     // classes not yet defined!
-    //this->Logic = NULL;
+    this->Logic = NULL;
     //this->ModelNode = NULL;
     this->LoadModelButton = NULL;
 }
@@ -28,13 +28,12 @@ vtkSlicerModelsGUI::vtkSlicerModelsGUI ( )
 vtkSlicerModelsGUI::~vtkSlicerModelsGUI ( )
 {
 
-    
+    this->SetModuleLogic ( NULL );
+
     if (this->LoadModelButton ) {
         this->LoadModelButton->Delete ( );
         this->LoadModelButton = NULL;
     }
-    //this->SetModuleLogic ( NULL );
-    //this->SetMRMLNode ( NULL );
 }
 
 
@@ -71,17 +70,30 @@ void vtkSlicerModelsGUI::AddGUIObservers ( )
 void vtkSlicerModelsGUI::ProcessGUIEvents ( vtkObject *caller,
                                             unsigned long event, void *callData )
 {
-    vtkKWLoadSaveButton *filebrowse = vtkKWLoadSaveButton::SafeDownCast(caller);
-    if (filebrowse == this->LoadModelButton  && event == vtkCommand::ModifiedEvent )
+  vtkKWLoadSaveButton *filebrowse = vtkKWLoadSaveButton::SafeDownCast(caller);
+  if (filebrowse == this->LoadModelButton  && event == vtkCommand::ModifiedEvent )
+    {
+    // If a file has been selected for loading...
+    char *fileName = filebrowse->GetFileName();
+    if ( fileName ) 
+      {
+      vtkSlicerModelsLogic* modelLogic = this->Logic;
+      
+      vtkMRMLModelNode *modelNode = modelLogic->AddModel( fileName );
+      if ( modelNode == NULL ) 
         {
-            // If a file has been selected for loading...
-            if ( this->LoadModelButton->GetFileName ( ) ) {
-                this->ApplicationLogic->Connect ( filebrowse->GetFileName ( ) );
-            }
+        // TODO: generate an error...
         }
-}
-
-
+      else
+        {
+        filebrowse->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
+        
+        }
+      }
+    return;
+    }
+  
+}    
 
 //---------------------------------------------------------------------------
 void vtkSlicerModelsGUI::ProcessLogicEvents ( vtkObject *caller,
@@ -150,7 +162,7 @@ void vtkSlicerModelsGUI::BuildGUI ( )
     this->LoadModelButton->Create ( );
     this->LoadModelButton->SetText ("Load Model");
     this->LoadModelButton->GetLoadSaveDialog()->SetFileTypes(
-                                                             "{ {MRML Document} {.mrml .xml} }");
+                                                             "{ {model} {*.*} }");
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   modLoadFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Models")->GetWidgetName());
     app->Script("pack %s -side top -anchor w -padx 2 -pady 4", 
