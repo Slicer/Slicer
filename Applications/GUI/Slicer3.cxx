@@ -9,6 +9,7 @@
 #include "vtkSlicerApplicationLogic.h"
 #include "vtkSlicerSliceLogic.h"
 #include "vtkSlicerVolumesLogic.h"
+#include "vtkSlicerModelsLogic.h"
 #include "vtkMRMLScene.h"
 #include "vtkSlicerComponentGUI.h"
 #include "vtkSlicerApplicationGUI.h"
@@ -220,14 +221,13 @@ int Slicer3_main(int argc, char *argv[])
     slicerApp->AddModuleGUI ( volumesGUI );
 
     // --- Models module    
-    //vtkSlicerModelLogic *modelLogic = vtkSlicerModelLogic::New ( );
-    //modelLogic->SetAndObserveMRMLScene ( scene );
-    //modelLogic->SetApplicationLogic ( appLogic );
+    vtkSlicerModelsLogic *modelsLogic = vtkSlicerModelsLogic::New ( );
+    modelsLogic->SetAndObserveMRMLScene ( scene );
     vtkSlicerModelsGUI *modelsGUI = vtkSlicerModelsGUI::New ( );
     modelsGUI->SetApplication ( slicerApp );
     modelsGUI->SetAndObserveApplicationLogic ( appLogic );
     modelsGUI->SetAndObserveMRMLScene ( scene );
-    //modelsGUI->SetModuleLogic ( modelLogic );
+    modelsGUI->SetModuleLogic ( modelsLogic );
     modelsGUI->SetGUIName( "Models" );
     modelsGUI->GetUIPanel()->SetName ( modelsGUI->GetGUIName ( ) );
     modelsGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWin()->GetMainUserInterfaceManager ( ) );
@@ -544,6 +544,7 @@ int Slicer3_main(int argc, char *argv[])
     appLogic->ClearCollections ( );
     gradientAnisotropicDiffusionFilterLogic->Delete ();
     volumesLogic->Delete();
+    modelsLogic->Delete();
     sliceLogic0->Delete ();
     sliceLogic1->Delete ();
     sliceLogic2->Delete ();
