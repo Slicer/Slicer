@@ -34,6 +34,7 @@
 
 #include "vtkRenderWindow.h"
 #include "vtkRenderWindowInteractor.h"
+#include "vtkSlicerViewerGUI.h"
 
 class vtkObject;
 class vtkKWPushButton;
@@ -61,7 +62,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkGetObjectMacro ( MainViewer, vtkKWRenderWidget );
 
     vtkRenderWindowInteractor *GetRenderWindowInteractor() {
-        return this->MainViewer->GetRenderWindow()->GetInteractor();
+        return this->ViewerGUI->GetMainViewer()->GetRenderWindow()->GetInteractor();
     };
 
     // Description:
@@ -397,6 +398,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkKWPushButton *NavZoomInIconButton;
     vtkKWPushButton *NavZoomOutIconButton;
     vtkKWScale *NavZoomScale;
+
+    vtkSlicerViewerGUI *ViewerGUI;
     
  private:
     vtkSlicerApplicationGUI ( const vtkSlicerApplicationGUI& ); // Not implemented.

@@ -27,7 +27,7 @@ vtkCxxRevisionMacro ( vtkSlicerViewerGUI, "$Revision: 1.0 $");
 vtkSlicerViewerGUI::vtkSlicerViewerGUI ( )
 {
   this->MainViewer = vtkKWRenderWidget::New ( );
-  //this->Logic = NULL;
+  this->MainSlicerWindow = NULL;
 }
 
 
@@ -40,6 +40,10 @@ vtkSlicerViewerGUI::~vtkSlicerViewerGUI ( )
     this->MainViewer->Delete ( );
     this->MainViewer = NULL;
     }
+  if (this->MainSlicerWindow)
+  {
+    SetMainSlicerWindow(NULL);
+  }
 }
 
 

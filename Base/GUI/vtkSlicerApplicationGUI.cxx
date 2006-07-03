@@ -175,7 +175,7 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
     this->NavZoomScale = vtkKWScale::New ( );
     
     //--- main viewer 
-    this->MainViewer = vtkKWRenderWidget::New ( );
+    this->ViewerGUI = vtkSlicerViewerGUI::New ( );
     this->PlaneWidget = NULL;
 
     this->LoadSceneDialog = vtkKWLoadSaveDialog::New();
@@ -235,10 +235,9 @@ vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
 
     this->DeleteFrames ( );
 
-    if ( this->MainViewer ) {
-        this->MainViewer->RemoveAllViewProps ( );
-        this->MainViewer->Delete ( );
-        this->MainViewer = NULL;
+    if ( this->ViewerGUI ) {
+        this->ViewerGUI->Delete ( );
+        this->ViewerGUI = NULL;
     }
     if ( this->PlaneWidget ) {
         this->PlaneWidget->Delete ( );
@@ -265,7 +264,6 @@ void vtkSlicerApplicationGUI::PrintSelf ( ostream& os, vtkIndent indent )
     this->vtkObject::PrintSelf ( os, indent );
 
     os << indent << "SlicerApplicationGUI: " << this->GetClassName ( ) << "\n";
-    os << indent << "MainViewer: " << this->GetMainViewer ( ) << "\n";
     os << indent << "MainSlicerWin: " << this->GetMainSlicerWin ( ) << "\n";
     // print widgets?
 }
@@ -932,45 +930,21 @@ void vtkSlicerApplicationGUI::BuildMainViewer ( )
     if ( this->GetApplication() != NULL ) {
         vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
 
+
         vtkSlicerWindow *win = this->MainSlicerWin;
-        if ( this->MainViewer != NULL ) {
-            this->MainViewer->SetParent (win->GetViewFrame ( ) );
-            this->MainViewer->Create ( );
-            app->Script  ("pack %s -side top -fill both -expand y -padx 0 -pady 0",
-                          this->MainViewer->GetWidgetName ( ) );
-            vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication()); 
-            this->MainViewer->SetRendererBackgroundColor ( 
-                app->GetSlicerTheme()->GetSlicerColors()->ViewerBlue );
-            this->MainViewer->GetRenderer()->GetActiveCamera()->ParallelProjectionOff();
-
-            // set up antialiasing
-            this->MainViewer->GetRenderWindow()->LineSmoothingOn();
-            this->MainViewer->GetRenderWindow()->PolygonSmoothingOn ( );
-            this->MainViewer->GetRenderWindow()->PointSmoothingOn();
-            // this->MainViewer->SetMultiSamples ( 4 );
-            
-            // put in a plane interactor to test
-            vtkCubeSource *cubeSource = vtkCubeSource::New();
-            vtkPolyDataMapper *cubeMapper = vtkPolyDataMapper::New ();
-            cubeMapper->SetInputConnection ( cubeSource->GetOutputPort() );
-            vtkActor *cubeActor = vtkActor::New ( );
-            cubeActor->SetMapper ( cubeMapper );
-            // don't add the actor, so we can see the interactor
-            MainViewer->AddViewProp ( cubeActor );
-
-            // TODO: this requires a change to KWWidgets
-            this->PlaneWidget = vtkImplicitPlaneWidget::New();
-            // this->PlaneWidget->SetInteractor( this->GetRenderWindowInteractor() );
-            this->PlaneWidget->SetInteractor( this->GetRenderWindowInteractor() );
-            this->PlaneWidget->PlaceWidget();
-            this->PlaneWidget->On();
-
-            MainViewer->ResetCamera ( );
         
-            cubeSource->Delete ();
-            cubeActor->Delete ();
-            cubeMapper->Delete ();
-        }
+        this->ViewerGUI->SetApplication(app);
+        this->ViewerGUI->SetMainSlicerWindow(win);
+        this->ViewerGUI->BuildGUI();
+        this->ViewerGUI->SetAndObserveMRMLScene(this->MRMLScene);
+
+       
+        // TODO: this requires a change to KWWidgets
+        this->PlaneWidget = vtkImplicitPlaneWidget::New();
+        // this->PlaneWidget->SetInteractor( this->GetRenderWindowInteractor() );
+        this->PlaneWidget->SetInteractor( this->GetRenderWindowInteractor() );
+        this->PlaneWidget->PlaceWidget();
+        this->PlaneWidget->On();
     }
 }
 
