@@ -11,6 +11,7 @@ SET(SlicerBaseLogic_SRCS
   vtkSlicerSliceLogic.cxx 
   vtkSlicerSliceLayerLogic.cxx 
   vtkSlicerVolumesLogic.cxx 
+  vtkSlicerModelsLogic.cxx 
 )
 
 # Abstract/pure virtual classes
