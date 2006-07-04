@@ -156,30 +156,60 @@ MRMLIDImageIO
     // VTK is only 3D
     this->SetNumberOfDimensions(3);
 
-    // Spacing
+    // Get spacing, origin and directions from node. The node keeps
+    // these in RAS, ITK needs them in LPS.
+
+    vtkMatrix4x4 *ijkToRas = vtkMatrix4x4::New();
+    node->GetIJKToRASMatrix(ijkToRas);
+
+    vtkMatrix4x4 *rasToLps = vtkMatrix4x4::New();
+    rasToLps->Identity();
+    rasToLps->SetElement(0,0,-1.0);
+    rasToLps->SetElement(1,1,-1.0);
+
+    vtkMatrix4x4 *ijkToLps = vtkMatrix4x4::New();
+    vtkMatrix4x4::Multiply4x4(ijkToRas, rasToLps, ijkToLps);
+
+    // normalize direction vectors and compute the lps spacing
+    double spacing[3];
+    int row;
+    for (row=0; row<3; row++) 
+      {
+      double len =0;
+      int col;
+      for (col=0; col<3; col++) 
+        {
+        len += ijkToLps->GetElement(row, col) * ijkToLps->GetElement(row, col);
+        }
+      len = sqrt(len);
+      spacing[row] = len;
+      for (col=0; col<3; col++) 
+        {
+        ijkToLps->SetElement(row, col,  ijkToLps->GetElement(row, col)/len);
+        }
+      }
+
     m_Spacing.resize(3);
-    m_Spacing[0] = node->GetSpacing()[0];
-    m_Spacing[1] = node->GetSpacing()[1];
-    m_Spacing[2] = node->GetSpacing()[2];
-
-    // Origin
     m_Origin.resize(3);
-    m_Origin[0] = node->GetOrigin()[0];
-    m_Origin[1] = node->GetOrigin()[1];
-    m_Origin[2] = node->GetOrigin()[2];
-
-    // Directions 
     m_Direction.resize(3);
 
-    m_Direction[0].resize(3);
-    node->GetIToRASDirection( &(m_Direction[0][0]) );
-    m_Direction[1].resize(3);
-    node->GetJToRASDirection( &(m_Direction[1][0]) );
-    m_Direction[2].resize(3);
-    node->GetKToRASDirection( &(m_Direction[2][0]) );
+    int col, i=0;
+    for (row=0; row<3; row++) 
+      {
+      m_Direction[row].resize(3);
+      m_Spacing[row] = 0.0;
+      for (col=0; col<3; col++) 
+        {
+        m_Direction[row][col] = ijkToLps->GetElement(row, col);
+        m_Spacing[row] += ijkToLps->GetElement(row, col) * spacing[col];
+        }
+      m_Origin[row] = ijkToLps->GetElement(row,3);
+      m_Spacing[row] = fabs(m_Spacing[row]);
+      }
 
-    // Dimensions
-    this->SetNumberOfDimensions(3);
+    m_Origin[0] *= -1.0; // R -> L
+    m_Origin[1] *= -1.0; // A -> P
+
     this->SetDimensions(0, node->GetImageData()->GetDimensions()[0]);
     this->SetDimensions(1, node->GetImageData()->GetDimensions()[1]);
     this->SetDimensions(2, node->GetImageData()->GetDimensions()[2]);
@@ -216,6 +246,10 @@ MRMLIDImageIO
         this->SetComponentType(UNKNOWNCOMPONENTTYPE);
         break;
       }
+    // Cleanup
+    ijkToRas->Delete();
+    rasToLps->Delete();
+    ijkToLps->Delete();
     }    
 }
 
@@ -251,18 +285,35 @@ MRMLIDImageIO
   node = this->FileNameToVolumeNodePtr( m_FileName.c_str() );
   if (node)
     {
-    // Directions
-    node->SetIToRASDirection(m_Direction[0][0],
-                             m_Direction[0][1],
-                             m_Direction[0][2]);
-    node->SetJToRASDirection(m_Direction[1][0],
-                             m_Direction[1][1],
-                             m_Direction[1][2]);
-    node->SetKToRASDirection(m_Direction[2][0],
-                             m_Direction[2][1],
-                             m_Direction[2][2]);
+    vtkMatrix4x4* ijkToLps = vtkMatrix4x4::New();
+    for (int i = 0; i < 3; i++)
+      {
+      // Get IJK to RAS direction vector
+      for ( unsigned int j=0; j < 3; j++ )
+        {
+        ijkToLps->SetElement(j, i, m_Spacing[i]*m_Direction[j][i]);
+        }
+      if (i < 2)
+        {
+        ijkToLps->SetElement(i, 3, -m_Origin[i]);      
+        }
+      else
+        {
+        ijkToLps->SetElement(i, 3, m_Origin[i]);      
+        }
+      }
+    
+    vtkMatrix4x4* lpsToRas = vtkMatrix4x4::New();
+    lpsToRas->Identity();
+    lpsToRas->SetElement(0,0,-1);
+    lpsToRas->SetElement(1,1,-1);
 
-    // Fill in dimensions, spacing, origin
+    vtkMatrix4x4* ijkToRas = vtkMatrix4x4::New();
+    vtkMatrix4x4::Multiply4x4(ijkToLps, lpsToRas, ijkToRas);
+
+    node->SetIJKToRASMatrix(ijkToRas);
+
+    // Fill in dimensions
     // VTK is only 3D, only copy the first 3 dimensions, fill in with
     // reasonable defaults for the rest
     if (this->GetNumberOfDimensions() > 3)
@@ -273,13 +324,14 @@ MRMLIDImageIO
     
     unsigned int i;
     int dim[3];
-    double spacing[3];
     double origin[3];
+    double spacing[3];
+
     for (i=0; (i < this->GetNumberOfDimensions()) && (i < 3); ++i)
       {
       dim[i] = this->GetDimensions(i);
-      spacing[i] = m_Spacing[i];
-      origin[i] = m_Origin[i];
+      origin[i] = 0.0;
+      spacing[i] = 1.0;
       }
     if (this->GetNumberOfDimensions() < 3)
       {
@@ -287,20 +339,14 @@ MRMLIDImageIO
       for (; i < 3; ++i)
         {
         dim[i] = 1;
-        spacing[i] = 1.0;
         origin[i] = 0.0;
+        spacing[i] = 1.0;
         }
       }
     node->GetImageData()->SetDimensions(dim);
-    node->SetSpacing( spacing );
+    node->GetImageData()->SetOrigin(origin);
+    node->GetImageData()->SetSpacing(spacing);
 
-//     // Center the data
-//     origin[0] =  -spacing[0]*dim[0]/2.0;
-//     origin[1] =  -spacing[1]*dim[1]/2.0;
-//     origin[2] =  -spacing[2]*dim[2]/2.0;
-
-    node->SetOrigin( origin );
-    
     // Number of components, PixelType
     node->GetImageData()
       ->SetNumberOfScalarComponents(this->GetNumberOfComponents());
@@ -324,6 +370,10 @@ MRMLIDImageIO
         node->GetImageData()->SetScalarTypeToShort();
         break;
       }
+    // Cleanup
+    ijkToRas->Delete();
+    lpsToRas->Delete();
+    ijkToLps->Delete();
     }    
 }
 
