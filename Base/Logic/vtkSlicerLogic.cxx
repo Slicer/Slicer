@@ -40,11 +40,7 @@ vtkSlicerLogic::vtkSlicerLogic()
 vtkSlicerLogic::~vtkSlicerLogic()
 {
 
-  if (this->MRMLScene)
-    {
-        this->MRMLScene->Delete();
-    this->MRMLScene = NULL;
-    }
+  this->SetAndObserveMRMLScene (NULL);
       
   if (this->MRMLCallbackCommand)
     {
