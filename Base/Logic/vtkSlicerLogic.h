@@ -50,11 +50,11 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerLogic : public vtkObject
   // API for setting or setting and observing MRMLScene
   void SetMRMLScene ( vtkMRMLScene *mrml )
       {
-          this->SetMRML ( vtkObjectPointer( &this->MRMLScene), mrml );
+      this->SetMRML ( vtkObjectPointer( &this->MRMLScene), mrml );
       }
   void SetAndObserveMRMLScene ( vtkMRMLScene *mrml )
       {
-          this->SetAndObserveMRML ( vtkObjectPointer( &this->MRMLScene), mrml );
+      this->SetAndObserveMRML ( vtkObjectPointer( &this->MRMLScene), mrml );
       }
 
 
