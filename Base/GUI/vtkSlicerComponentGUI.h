@@ -71,6 +71,22 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerComponentGUI : public vtkKWObject
     // Add/Remove observers on a GUI.
     virtual void AddGUIObservers ( ) { };
     virtual void RemoveGUIObservers ( ) { };
+
+    // Description:
+    // Flags to avoid event loops
+    // NOTE: don't use the SetMacro or it call modified itself and generate even more events!
+    void SetInLogicCallbackFlag (int flag) {
+      this->InLogicCallbackFlag = flag;
+    }
+    vtkGetMacro(InLogicCallbackFlag, int);
+    void SetInMRMLCallbackFlag (int flag) {
+      this->InMRMLCallbackFlag = flag;
+    }
+    vtkGetMacro(InMRMLCallbackFlag, int);
+    void SetInGUICallbackFlag (int flag) {
+      this->InGUICallbackFlag = flag;
+    }
+    vtkGetMacro(InGUICallbackFlag, int);
     
     // Description:
     // Get/Set the name of the GUI, used to find and raise a GUI.
@@ -138,6 +154,12 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerComponentGUI : public vtkKWObject
     // constructor, destructor.
     vtkSlicerComponentGUI ( );
     ~vtkSlicerComponentGUI ( );
+
+    // Description:
+    // Flag to avoid event loops
+    int InLogicCallbackFlag;
+    int InMRMLCallbackFlag;
+    int InGUICallbackFlag;
     
  private:
     vtkSlicerComponentGUI ( const vtkSlicerComponentGUI& ); // Not implemented.

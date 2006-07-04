@@ -34,6 +34,12 @@ vtkSlicerComponentGUI::vtkSlicerComponentGUI ( )
     this->MRMLScene = NULL;
     this->ApplicationLogic = NULL;
     this->GUIName = NULL;
+
+    // Instance variable flags for the observers
+    this->InGUICallbackFlag = 0;
+    this->InMRMLCallbackFlag = 0;
+    this->InLogicCallbackFlag = 0;
+
 }
 
 
@@ -79,92 +85,76 @@ void vtkSlicerComponentGUI::PrintSelf ( ostream& os, vtkIndent indent )
 }
 
 
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 // Description:
-// the MRMLCallback is a static function that relays observed events from 
-// the observed MRML node into the GUI's 'ProcessMRMLEvents" mediator method,
-// which in turn makes appropriate changes to widgets in the GUI.
+// the MRMLCallback is a static function to relay modified events from the 
+// observed mrml node back into the gui layer for further processing
 //
-void vtkSlicerComponentGUI::MRMLCallback ( vtkObject *__caller,
-                                           unsigned long eid, void *__clientData, void *callData)
+void 
+vtkSlicerComponentGUI::MRMLCallback(vtkObject *caller, 
+            unsigned long eid, void *clientData, void *callData)
 {
-    static int inCallback = 0;
+  vtkSlicerComponentGUI *self = reinterpret_cast<vtkSlicerComponentGUI *>(clientData);
 
-    vtkSlicerComponentGUI *self = reinterpret_cast<vtkSlicerComponentGUI *>(__clientData);
+  if (self->GetInMRMLCallbackFlag())
+    {
+    vtkErrorWithObjectMacro(self, "In vtkSlicerComponentGUI *********MRMLCallback called recursively?");
+    return;
+    }
 
-    if ( inCallback )
-        {
-            vtkErrorWithObjectMacro ( self, "In vtkSlicerComponentGUI *!* MRMLCallback called recursively?");
-            return;
-        }
+  vtkDebugWithObjectMacro(self, "In vtkSlicerComponentGUI MRMLCallback");
 
-    vtkDebugWithObjectMacro ( self, "In vtkSlicerComponentGUI MRMLCallback");
-
-    inCallback = 1;
-    self->ProcessMRMLEvents ( __caller, eid, callData );
-    inCallback = 0;
-    
+  self->SetInMRMLCallbackFlag(1);
+  self->ProcessMRMLEvents(caller, eid, callData);
+  self->SetInMRMLCallbackFlag(0);
 }
 
-
-
-
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 // Description:
-// the LogicCallback is a static function that relays observed events from 
-// the observed logic into the GUI's 'ProcessLogicEvents" mediator method,
-// which in turn makes appropriate changes to widgets in the GUI.
+// the LogicCallback is a static function to relay modified events from the 
+// observed mrml node back into the gui layer for further processing
 //
-void vtkSlicerComponentGUI::LogicCallback ( vtkObject *__caller,
-                                           unsigned long eid, void *__clientData, void *callData)
+void 
+vtkSlicerComponentGUI::LogicCallback(vtkObject *caller, 
+            unsigned long eid, void *clientData, void *callData)
 {
-    static int inCallback = 0;
+  vtkSlicerComponentGUI *self = reinterpret_cast<vtkSlicerComponentGUI *>(clientData);
 
-    vtkSlicerComponentGUI *self = reinterpret_cast<vtkSlicerComponentGUI *>(__clientData);
+  if (self->GetInLogicCallbackFlag())
+    {
+    vtkErrorWithObjectMacro(self, "In vtkSlicerComponentGUI *********LogicCallback called recursively?");
+    return;
+    }
 
-    if ( inCallback )
-        {
-            vtkErrorWithObjectMacro ( self, "In vtkSlicerComponentGUI *!* LogicCallback called recursively?");
-            return;
-        }
+  vtkDebugWithObjectMacro(self, "In vtkSlicerComponentGUI LogicCallback");
 
-    vtkDebugWithObjectMacro ( self, "In vtkSlicerComponentGUI LogicCallback");
-
-    inCallback = 1;
-    self->ProcessLogicEvents ( __caller, eid, callData );
-    inCallback = 0;
-
+  self->SetInLogicCallbackFlag(1);
+  self->ProcessLogicEvents(caller, eid, callData);
+  self->SetInLogicCallbackFlag(0);
 }
 
-
-
-
-
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 // Description:
-// the GUICallback is a static function that relays observed events from 
-// observed widgets into the GUI's 'ProcessGUIEvents" mediator method, which in
-// turn makes appropriate changes to the application layer.
+// the GUICallback is a static function to relay modified events from the 
+// observed mrml node back into the gui layer for further processing
 //
-void vtkSlicerComponentGUI::GUICallback ( vtkObject *__caller,
-                                           unsigned long eid, void *__clientData, void *callData)
+void 
+vtkSlicerComponentGUI::GUICallback(vtkObject *caller, 
+            unsigned long eid, void *clientData, void *callData)
 {
-    static int inCallback = 0;
+  vtkSlicerComponentGUI *self = reinterpret_cast<vtkSlicerComponentGUI *>(clientData);
 
-    vtkSlicerComponentGUI *self = reinterpret_cast<vtkSlicerComponentGUI *>(__clientData);
+  if (self->GetInGUICallbackFlag())
+    {
+    vtkErrorWithObjectMacro(self, "In vtkSlicerComponentGUI *********GUICallback called recursively?");
+    return;
+    }
 
-    if ( inCallback )
-        {
-            vtkErrorWithObjectMacro ( self, "In vtkSlicerComponentGUI *!* GUICallback called recursively?");
-            return;
-        }
+  vtkDebugWithObjectMacro(self, "In vtkSlicerComponentGUI GUICallback");
 
-    vtkDebugWithObjectMacro ( self, "In vtkSlicerComponentGUI GUICallback");
-
-    inCallback = 1;
-    self->ProcessGUIEvents ( __caller, eid, callData );
-    inCallback = 0;
-
+  self->SetInGUICallbackFlag(1);
+  self->ProcessGUIEvents(caller, eid, callData);
+  self->SetInGUICallbackFlag(0);
 }
 
 
