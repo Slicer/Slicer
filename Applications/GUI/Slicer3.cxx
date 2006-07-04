@@ -168,7 +168,6 @@ int Slicer3_main(int argc, char *argv[])
       return ( Slicer3_Tcl_Eval( interp, cmd.c_str() ) );
       }
 
-
     // Create SlicerGUI application, style, and main window 
     vtkSlicerApplication *slicerApp = vtkSlicerApplication::New ( );
     slicerApp->InstallTheme( slicerApp->GetSlicerTheme() );
@@ -182,6 +181,10 @@ int Slicer3_main(int argc, char *argv[])
     // Create the application GUI object
     // and have it observe the Logic
     vtkSlicerApplicationLogic *appLogic = vtkSlicerApplicationLogic::New( );
+    appLogic->SetMRMLScene ( scene );
+    // pass through event handling once without observing the scene
+    // -- allows any dependent nodes to be created
+    appLogic->ProcessMRMLEvents ();  
     appLogic->SetAndObserveMRMLScene ( scene );
 
     vtkSlicerApplicationGUI *appGUI = vtkSlicerApplicationGUI::New ( );
