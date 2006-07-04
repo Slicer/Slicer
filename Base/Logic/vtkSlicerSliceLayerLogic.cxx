@@ -66,6 +66,10 @@ vtkSlicerSliceLayerLogic::~vtkSlicerSliceLayerLogic()
   this->SetSliceNode(NULL);
   this->SetVolumeNode(NULL);
   this->XYToIJKTransform->Delete();
+
+  this->MapToWindowLevelColors->SetInput( NULL );
+  this->MapToRGBA->SetInput( NULL );
+
   this->Reslice->Delete();
   this->MapToRGBA->Delete();
   this->MapToWindowLevelColors->Delete();
@@ -80,10 +84,13 @@ void vtkSlicerSliceLayerLogic::ProcessMRMLEvents()
 //----------------------------------------------------------------------------
 void vtkSlicerSliceLayerLogic::SetSliceNode(vtkMRMLSliceNode *sliceNode)
 {
-  this->SetAndObserveMRML( vtkObjectPointer(&this->SliceNode), sliceNode );
+  if ( sliceNode != this->SliceNode )
+    {
+    this->SetAndObserveMRML( vtkObjectPointer(&this->SliceNode), sliceNode );
 
-  // Update the reslice transform to move this image into XY
-  this->UpdateTransforms();
+    // Update the reslice transform to move this image into XY
+    this->UpdateTransforms();
+    }
 }
 
 //----------------------------------------------------------------------------
