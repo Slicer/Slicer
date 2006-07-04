@@ -35,22 +35,20 @@ vtkSlicerSliceLogic::vtkSlicerSliceLogic()
 //----------------------------------------------------------------------------
 vtkSlicerSliceLogic::~vtkSlicerSliceLogic()
 {
-    if ( this->Blend ) {
-        this->Blend->Delete();
-        this->Blend = NULL;
+  this->SetSliceNode(NULL);
+
+  if ( this->Blend ) 
+    {
+    this->Blend->Delete();
+    this->Blend = NULL;
     }
-    if ( this->BackgroundLayer ) {
-        this->BackgroundLayer->SetAndObserveMRMLScene ( NULL );
-        this->BackgroundLayer->Delete ( );
-        this->BackgroundLayer = NULL;
-    }
-    if  ( this->ForegroundLayer ) {
-        this->ForegroundLayer->SetAndObserveMRMLScene ( NULL );
-        this->ForegroundLayer->Delete ( );
-        this->ForegroundLayer = NULL;
-    }
-    if ( this->SliceCompositeNode ) {
-        this->SetAndObserveMRML( vtkObjectPointer(&this->SliceCompositeNode), NULL );
+
+  this->SetBackgroundLayer (NULL);
+  this->SetForegroundLayer (NULL);
+
+  if ( this->SliceCompositeNode ) 
+    {
+    this->SetAndObserveMRML( vtkObjectPointer(&this->SliceCompositeNode), NULL );
     }
 }
 
@@ -112,14 +110,12 @@ void vtkSlicerSliceLogic::ProcessLogicEvents()
     {
     vtkSlicerSliceLayerLogic *layer = vtkSlicerSliceLayerLogic::New();
     this->SetBackgroundLayer (layer);
-    this->BackgroundLayer->SetAndObserveMRMLScene( this->MRMLScene );
     layer->Delete();
     }
   if ( this->ForegroundLayer == NULL )
     {
     vtkSlicerSliceLayerLogic *layer = vtkSlicerSliceLayerLogic::New();
     this->SetForegroundLayer (layer);
-    this->ForegroundLayer->SetAndObserveMRMLScene( this->MRMLScene );
     layer->Delete();
     }
 
@@ -166,6 +162,7 @@ void vtkSlicerSliceLogic::SetBackgroundLayer(vtkSlicerSliceLayerLogic *Backgroun
   if (this->BackgroundLayer)
     {
     this->BackgroundLayer->RemoveObserver( this->LogicCallbackCommand );
+    this->BackgroundLayer->SetAndObserveMRMLScene( NULL );
     this->BackgroundLayer->Delete();
     }
   this->BackgroundLayer = BackgroundLayer;
@@ -173,8 +170,9 @@ void vtkSlicerSliceLogic::SetBackgroundLayer(vtkSlicerSliceLayerLogic *Backgroun
   if (this->BackgroundLayer)
     {
     this->BackgroundLayer->Register(this);
-    this->BackgroundLayer->AddObserver( vtkCommand::ModifiedEvent, this->LogicCallbackCommand );
+    this->BackgroundLayer->SetAndObserveMRMLScene( this->MRMLScene );
     this->BackgroundLayer->SetSliceNode(SliceNode);
+    this->BackgroundLayer->AddObserver( vtkCommand::ModifiedEvent, this->LogicCallbackCommand );
     }
 
   this->Modified();
@@ -186,6 +184,7 @@ void vtkSlicerSliceLogic::SetForegroundLayer(vtkSlicerSliceLayerLogic *Foregroun
   if (this->ForegroundLayer)
     {
     this->ForegroundLayer->RemoveObserver( this->LogicCallbackCommand );
+    this->ForegroundLayer->SetAndObserveMRMLScene( NULL );
     this->ForegroundLayer->Delete();
     }
   this->ForegroundLayer = ForegroundLayer;
@@ -193,8 +192,9 @@ void vtkSlicerSliceLogic::SetForegroundLayer(vtkSlicerSliceLayerLogic *Foregroun
   if (this->ForegroundLayer)
     {
     this->ForegroundLayer->Register(this);
-    this->ForegroundLayer->AddObserver( vtkCommand::ModifiedEvent, this->LogicCallbackCommand );
+    this->ForegroundLayer->SetAndObserveMRMLScene( this->MRMLScene );
     this->ForegroundLayer->SetSliceNode(SliceNode);
+    this->ForegroundLayer->AddObserver( vtkCommand::ModifiedEvent, this->LogicCallbackCommand );
     }
 
   this->Modified();
