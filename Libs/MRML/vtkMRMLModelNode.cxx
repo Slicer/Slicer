@@ -138,7 +138,6 @@ void vtkMRMLModelNode::Copy(vtkMRMLNode *anode)
 //----------------------------------------------------------------------------
 void vtkMRMLModelNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  int idx;
   
   vtkMRMLNode::PrintSelf(os,indent);
 
