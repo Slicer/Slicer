@@ -62,7 +62,9 @@ void vtkITKArchetypeImageSeriesScalarReader::ExecuteData(vtkDataObject *output)
     }
 
   vtkImageData *data = vtkImageData::SafeDownCast(output);
-  data->UpdateInformation();
+// removed UpdateInformation: generates an error message
+//   from VTK and doesn't appear to be needed...
+//data->UpdateInformation();
   data->SetExtent(0,0,0,0,0,0);
   data->AllocateScalars();
   data->SetExtent(data->GetWholeExtent());
