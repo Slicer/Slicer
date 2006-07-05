@@ -96,7 +96,9 @@ vtkCommandLineModuleLogic
   else
     {
     // If not a command line module, then it is a shared object module
-    char tname[25];
+    // Must be large enough to hold slicer:, / and two copies of the
+    // ascii representation of the pointer. 256 should be more than enough.
+    char tname[256];
 
     sprintf(tname, "slicer:%p/%p", this->MRMLScene,
             this->MRMLScene->GetNodeByID(name.c_str()));
