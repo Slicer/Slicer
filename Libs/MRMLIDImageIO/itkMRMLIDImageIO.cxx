@@ -281,12 +281,13 @@ MRMLIDImageIO
 ::WriteImageInformation()
 {
   vtkMRMLVolumeNode *node;
+  unsigned int i;
 
   node = this->FileNameToVolumeNodePtr( m_FileName.c_str() );
   if (node)
     {
     vtkMatrix4x4* ijkToLps = vtkMatrix4x4::New();
-    for (int i = 0; i < 3; i++)
+    for (i = 0; i < 3; i++)
       {
       // Get IJK to RAS direction vector
       for ( unsigned int j=0; j < 3; j++ )
@@ -322,7 +323,6 @@ MRMLIDImageIO
                     << this->GetNumberOfDimensions() << ")" );
       }
     
-    unsigned int i;
     int dim[3];
     double origin[3];
     double spacing[3];
