@@ -85,7 +85,7 @@ int main(int argc, char * argv[])
     vtkThreshold * threshold = NULL;
     vtkImageToStructuredPoints * imageToStructuredPoints = NULL;
     vtkGeometryFilter * geometryFilter = NULL;
-    vtkTransform * rot = NULL;
+    vtkTransform * transformIJKtoRAS = NULL;
     vtkReverseSense * reverser = NULL;
     vtkTransformPolyDataFilter * transformer = NULL;
     vtkPolyDataNormals *normals = NULL;
@@ -188,15 +188,14 @@ int main(int argc, char * argv[])
     // Get the RAS to IJK matrix and invert it to get the IJK to RAS which will need
     // to be applied to the model as it will be built in pixel space
 
-    rot = vtkTransform::New();
-    // TODO: get the ras to vtk matrix
-    rot->SetMatrix(reader->GetRasToIjkMatrix());
+    transformIJKtoRAS = vtkTransform::New();
+    transformIJKtoRAS->SetMatrix(reader->GetRasToIjkMatrix());
     if (debug)
     {
         std::cout << "RasToIjk matrix from file = ";
-        rot->GetMatrix()->Print(std::cout);
+        transformIJKtoRAS->GetMatrix()->Print(std::cout);
     }
-    rot->Inverse();
+    transformIJKtoRAS->Inverse();
 
     for (int i = StartLabel; i <= EndLabel; i++)
     {
@@ -252,7 +251,7 @@ int main(int argc, char * argv[])
             imageThreshold->ThresholdBetween(i,i);
             (imageThreshold->GetOutput())->ReleaseDataFlagOn();
             // TODO: add progress
-
+            
             imageToStructuredPoints = vtkImageToStructuredPoints::New();
             imageToStructuredPoints->SetInput(imageThreshold->GetOutput());
             imageToStructuredPoints->Update();
@@ -263,7 +262,9 @@ int main(int argc, char * argv[])
 
             threshold = vtkThreshold::New();
             threshold->SetInput(smoother->GetOutput());
-            threshold->SetAttributeModeToUseCellData();
+            // In VTK 5.0, this is deprecated - the default behaviour seems to
+            // be okay
+            // threshold->SetAttributeModeToUseCellData();
 
             std::cout << "Thresholding to " << i << endl;
             threshold->ThresholdBetween(i,i);
@@ -300,7 +301,7 @@ int main(int argc, char * argv[])
                 imageThreshold->SetInput(NULL);
                 imageToStructuredPoints->SetInput(NULL);
                 mcubes->SetInput(NULL);
-                rot->Delete();
+                transformIJKtoRAS->Delete();
                 imageThreshold->Delete();
                 imageToStructuredPoints->Delete();
                 mcubes->Delete();
@@ -345,11 +346,11 @@ int main(int argc, char * argv[])
             std::cout << "After decimation, number of polygons = " << (decimator->GetOutput())->GetNumberOfPolys() << endl;
         }
 
-        if ((rot->GetMatrix())->Determinant() < 0) 
+        if ((transformIJKtoRAS->GetMatrix())->Determinant() < 0) 
         {
             if (debug)
             {
-                std::cout << "Determinant " << (rot->GetMatrix())->Determinant() << " is less than zero, reversing...\n";
+                std::cout << "Determinant " << (transformIJKtoRAS->GetMatrix())->Determinant() << " is less than zero, reversing...\n";
             }
             reverser = vtkReverseSense::New();
             reverser->SetInput(decimator->GetOutput());
@@ -370,7 +371,7 @@ int main(int argc, char * argv[])
                     std::cerr << "Warning: Smoothing iterations of 1 not allowed for Sinc filter, using 2" << endl;
                     Smooth = 2;
                 }
-                if ((rot->GetMatrix())->Determinant() < 0) 
+                if ((transformIJKtoRAS->GetMatrix())->Determinant() < 0) 
                 {
                     smootherSinc->SetInput(reverser->GetOutput());
                 } 
@@ -394,7 +395,7 @@ int main(int argc, char * argv[])
                 smootherPoly->SetFeatureAngle(60);
                 smootherPoly->SetConvergence(0);
 
-                if ((rot->GetMatrix())->Determinant() < 0) 
+                if ((transformIJKtoRAS->GetMatrix())->Determinant() < 0) 
                 {
                     smootherPoly->SetInput(reverser->GetOutput());
                 } 
@@ -426,7 +427,7 @@ int main(int argc, char * argv[])
         }
         else
         {
-            if ((rot->GetMatrix())->Determinant() < 0)
+            if ((transformIJKtoRAS->GetMatrix())->Determinant() < 0)
             { 
                 transformer->SetInput(reverser->GetOutput());
             }
@@ -436,11 +437,11 @@ int main(int argc, char * argv[])
             }
         }
 
-        transformer->SetTransform(rot);
+        transformer->SetTransform(transformIJKtoRAS);
         if (debug)
         {
             std::cout << "Transforming using inversed matrix:\n";
-            rot->GetMatrix()->Print(std::cout);
+            transformIJKtoRAS->GetMatrix()->Print(std::cout);
         }
 
         // TODO: add progress
@@ -565,10 +566,10 @@ int main(int argc, char * argv[])
         geometryFilter->SetInput(NULL);
         geometryFilter->Delete();
     }
-    if (rot)
+    if (transformIJKtoRAS)
     {
-        rot->SetInput(NULL);
-        rot->Delete();
+        transformIJKtoRAS->SetInput(NULL);
+        transformIJKtoRAS->Delete();
     }
     if (reverser)
     {
