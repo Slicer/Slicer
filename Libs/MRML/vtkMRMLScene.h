@@ -75,6 +75,7 @@ public:
   // Description:
   // Remove a path from the list.
   void RemoveNode(vtkMRMLNode *n) {
+    this->InvokeEvent(this->NodeAddedEvent, n);
     this->CurrentScene->vtkCollection::RemoveItem((vtkObject *)n);
     this->Modified();
   };
@@ -159,6 +160,15 @@ public:
   // Get/Set the active Scene - to be used by MRMLIDImageIO
   static void SetActiveScene(vtkMRMLScene *);
   static vtkMRMLScene *GetActiveScene();
+//ETX
+
+  //BTX
+  enum
+    {
+      NodeAddedEvent = 66000,
+      NodeRemovedEvent = 66001,
+      NodeModifiedEvent = 66002,
+    };
 //ETX
 
 protected:

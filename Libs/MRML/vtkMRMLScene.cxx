@@ -322,6 +322,7 @@ void vtkMRMLScene::AddNode(vtkMRMLNode *n)
 
   this->CurrentScene->vtkCollection::AddItem((vtkObject *)n);
   n->SetScene( this );
+  this->InvokeEvent(this->NodeAddedEvent, n);
   this->Modified();
 }
 
