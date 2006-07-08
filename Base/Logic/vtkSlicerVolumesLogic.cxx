@@ -100,12 +100,14 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (char* filename)
     displayNode->SetWindow(range[1] - range[0]);
     displayNode->SetLevel(0.5 * (range[1] + range[0]) );
 
-    this->GetMRMLScene()->AddNode(volumeNode);  
+    volumeNode->SetStorageNodeID(storageNode->GetID());
+    volumeNode->SetDisplayNodeID(displayNode->GetID());    
+    
     this->GetMRMLScene()->AddNode(storageNode);  
     this->GetMRMLScene()->AddNode(displayNode);  
+    this->GetMRMLScene()->AddNode(volumeNode);  
 
-    volumeNode->SetStorageNodeID(storageNode->GetID());
-    volumeNode->SetDisplayNodeID(displayNode->GetID());
+
     
     this->SetActiveVolumeNode(volumeNode);
     
