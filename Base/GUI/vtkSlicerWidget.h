@@ -23,7 +23,7 @@
 #define __vtkSlicerWidget_h
 
 #include "vtkCallbackCommand.h"
-
+#include "vtkUnsignedLongArray.h"
 #include "vtkKWObject.h"
 #include "vtkSlicerBaseGUIWin32Header.h"
 #include "vtkKWCompositeWidget.h"
@@ -55,6 +55,9 @@ public:
   
   void SetAndObserveMRMLScene ( vtkMRMLScene *mrml )
     { this->SetAndObserveMRML ( vtkObjectPointer( &this->MRMLScene), mrml ); };
+
+  void AddMRMLObserver ( vtkObject *obj, unsigned long event ) 
+    { obj->AddObserver ( event, this->MRMLCallbackCommand ); };
   
   // Description:
   // alternative method to propagate events generated in GUI to logic / mrml
@@ -83,7 +86,7 @@ protected:
 
   // Description:
   // Create the widget.
-  virtual void CreateWidget() = 0;
+  virtual void CreateWidget() {this->Superclass::CreateWidget();};
 
   vtkMRMLScene       *MRMLScene;
   
@@ -101,6 +104,7 @@ protected:
   // either with or without adding/removing observers on them.
   void SetMRML ( vtkObject **nodePtr, vtkObject *node );
   void SetAndObserveMRML ( vtkObject **nodePtr, vtkObject *node );
+
   //ETX
   
   // Description::

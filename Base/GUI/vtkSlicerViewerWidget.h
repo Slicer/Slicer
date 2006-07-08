@@ -21,27 +21,19 @@
 //
 
 
-#ifndef __vtkSlicerMRMLTreeWidget_h
-#define __vtkSlicerMRMLTreeWidget_h
+#ifndef __vtkSlicerViewerWidget_h
+#define __vtkSlicerViewerWidget_h
 
 #include "vtkSlicerWidget.h"
 
-#include "vtkMRMLScene.h"
-#include "vtkMRMLNode.h"
-#include "vtkMRMLTransformNode.h"
-#include "vtkMRMLTransformableNode.h"
+#include "vtkKWRenderWidget.h"
 
-class vtkKWMenu;
-class vtkKWTreeWithScrollbars;
-class vtkKWEntryWithLabel;
-class vtkKWLabelWithLabel;
-
-class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerMRMLTreeWidget : public vtkSlicerWidget
+class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewerWidget : public vtkSlicerWidget
 {
   
 public:
-  static vtkSlicerMRMLTreeWidget* New();
-  vtkTypeRevisionMacro(vtkSlicerMRMLTreeWidget,vtkSlicerWidget);
+  static vtkSlicerViewerWidget* New();
+  vtkTypeRevisionMacro(vtkSlicerViewerWidget,vtkSlicerWidget);
   void PrintSelf(ostream& os, vtkIndent indent);
   
   // Description:
@@ -56,42 +48,24 @@ public:
   // removes observers on widgets in the class
   virtual void RemoveWidgetObservers ( );
 
-  vtkGetObjectMacro(CutNode, vtkMRMLTransformableNode);
-  vtkSetObjectMacro(CutNode, vtkMRMLTransformableNode);
+  vtkGetObjectMacro(MainViewer, vtkKWRenderWidget);
+  vtkSetObjectMacro(MainViewer, vtkKWRenderWidget);  
   
-  // Description::
-  // Callbacks
-  virtual void DeleteNodeCallback(const char *id);
-
-  virtual void CutNodeCallback(const char *id);
-
-  virtual void PasteNodeCallback(const char *id);
-
 protected:
-  vtkSlicerMRMLTreeWidget();
-  ~vtkSlicerMRMLTreeWidget();
+  vtkSlicerViewerWidget();
+  ~vtkSlicerViewerWidget();
+
+  void UpdateFromMRML();
 
   // Description:
   // Create the widget.
   virtual void CreateWidget();
   
-  void UpdateTreeFromMRML();
-  void AddNodeToTree(vtkMRMLNode *node);
-  void UpdateNodeInspector(vtkMRMLNode *node);
-  vtkMRMLNode* GetSelectedNodeInTree();
-
-  vtkMRMLTransformableNode* CutNode;
-
+  vtkKWRenderWidget *MainViewer;
 private:
   
-  vtkKWTreeWithScrollbars *TreeWidget;
-  vtkKWMenu *ContextMenu;
-
-  vtkKWLabelWithLabel *NodeID;
-  vtkKWEntryWithLabel *NodeName;
-
-  vtkSlicerMRMLTreeWidget(const vtkSlicerMRMLTreeWidget&); // Not implemented
-  void operator=(const vtkSlicerMRMLTreeWidget&); // Not Implemented
+  vtkSlicerViewerWidget(const vtkSlicerViewerWidget&); // Not implemented
+  void operator=(const vtkSlicerViewerWidget&); // Not Implemented
 };
 
 #endif

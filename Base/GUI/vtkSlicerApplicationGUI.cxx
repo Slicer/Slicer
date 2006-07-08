@@ -175,7 +175,7 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
     this->NavZoomScale = vtkKWScale::New ( );
     
     //--- main viewer 
-    this->ViewerGUI = vtkSlicerViewerGUI::New ( );
+    this->ViewerWidget = vtkSlicerViewerWidget::New ( );
     this->PlaneWidget = NULL;
 
     this->LoadSceneDialog = vtkKWLoadSaveDialog::New();
@@ -235,9 +235,9 @@ vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
 
     this->DeleteFrames ( );
 
-    if ( this->ViewerGUI ) {
-        this->ViewerGUI->Delete ( );
-        this->ViewerGUI = NULL;
+    if ( this->ViewerWidget ) {
+        this->ViewerWidget->Delete ( );
+        this->ViewerWidget = NULL;
     }
     if ( this->PlaneWidget ) {
         this->PlaneWidget->Delete ( );
@@ -932,11 +932,13 @@ void vtkSlicerApplicationGUI::BuildMainViewer ( )
 
 
         vtkSlicerWindow *win = this->MainSlicerWin;
-        
-        this->ViewerGUI->SetApplication(app);
-        this->ViewerGUI->SetMainSlicerWindow(win);
-        this->ViewerGUI->BuildGUI();
-        this->ViewerGUI->SetAndObserveMRMLScene(this->MRMLScene);
+        this->ViewerWidget->SetParent(win->GetViewFrame());
+        this->ViewerWidget->Create();
+        this->ViewerWidget->SetMRMLScene(this->MRMLScene);
+        this->ViewerWidget->AddMRMLObserver(this->MRMLScene, vtkMRMLScene::NodeAddedEvent);
+        this->ViewerWidget->AddMRMLObserver(this->MRMLScene, vtkMRMLScene::NodeRemovedEvent);
+        this->ViewerWidget->GetMainViewer()->SetRendererBackgroundColor ( 
+              app->GetSlicerTheme()->GetSlicerColors()->ViewerBlue );
 
        
         // TODO: this requires a change to KWWidgets

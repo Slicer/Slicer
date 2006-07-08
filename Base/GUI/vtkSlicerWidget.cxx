@@ -161,4 +161,3 @@ void vtkSlicerWidget::SetAndObserveMRML ( vtkObject **nodePtr, vtkObject *node )
 
 
 
-
