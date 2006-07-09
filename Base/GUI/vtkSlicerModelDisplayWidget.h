@@ -21,37 +21,38 @@
 //
 
 
-#ifndef __vtkSlicerVolumeDisplayWidget_h
-#define __vtkSlicerVolumeDisplayWidget_h
+#ifndef __vtkSlicerModelDisplayWidget_h
+#define __vtkSlicerModelDisplayWidget_h
 
 #include "vtkSlicerWidget.h"
 
 #include "vtkSlicerNodeSelectorWidget.h"
-#include "vtkKWWindowLevelThresholdEditor.h"
+#include "vtkKWCheckButtonWithLabel.h"
+#include "vtkKWScaleWithLabel.h"
 
-#include "vtkMRMLVolumeNode.h"
-#include "vtkMRMLVolumeDisplayNode.h"
+#include "vtkMRMLModelNode.h"
+#include "vtkMRMLModelDisplayNode.h"
 
 
-class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerVolumeDisplayWidget : public vtkSlicerWidget
+class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModelDisplayWidget : public vtkSlicerWidget
 {
   
 public:
-  static vtkSlicerVolumeDisplayWidget* New();
-  vtkTypeRevisionMacro(vtkSlicerVolumeDisplayWidget,vtkSlicerWidget);
+  static vtkSlicerModelDisplayWidget* New();
+  vtkTypeRevisionMacro(vtkSlicerModelDisplayWidget,vtkSlicerWidget);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description:
-  // Getting setting  MRML VolumeNodeID.
-  vtkGetStringMacro ( VolumeNodeID );
-  vtkSetStringMacro ( VolumeNodeID );
+  // Getting setting  MRML ModelNodeID.
+  vtkGetStringMacro ( ModelNodeID );
+  vtkSetStringMacro ( ModelNodeID );
   
-  void SetVolumeNode ( vtkMRMLVolumeNode *node );
+  void SetModelNode ( vtkMRMLModelNode *node );
 
   // Description:
-  // Getting setting and observing MRML VolumeDisplayNodeID.
-  vtkGetStringMacro ( VolumeDisplayNodeID );
-  vtkSetStringMacro ( VolumeDisplayNodeID );
+  // Getting setting and observing MRML ModelDisplayNodeID.
+  vtkGetStringMacro ( ModelDisplayNodeID );
+  vtkSetStringMacro ( ModelDisplayNodeID );
   
   // Description:
   // alternative method to propagate events generated in GUI to logic / mrml
@@ -66,24 +67,28 @@ public:
   virtual void RemoveWidgetObservers ( );
   
  protected:
-  vtkSlicerVolumeDisplayWidget();
-  ~vtkSlicerVolumeDisplayWidget();
+  vtkSlicerModelDisplayWidget();
+  ~vtkSlicerModelDisplayWidget();
 
   // Description:
   // Create the widget.
   virtual void CreateWidget();
 
-  char* VolumeNodeID;
-  char* VolumeDisplayNodeID;
+  void UpdateWidget();
+  void UpdateMRML();
   
-  vtkSlicerNodeSelectorWidget* VolumeSelectorWidget;
-  vtkKWWindowLevelThresholdEditor* WindowLevelThresholdEditor;
+  char* ModelNodeID;
+  char* ModelDisplayNodeID;
+  
+  vtkSlicerNodeSelectorWidget* ModelSelectorWidget;
+  vtkKWCheckButtonWithLabel *VisibilityButton;
+  vtkKWScaleWithLabel  *OpacityScale;
   
 private:
 
 
-  vtkSlicerVolumeDisplayWidget(const vtkSlicerVolumeDisplayWidget&); // Not implemented
-  void operator=(const vtkSlicerVolumeDisplayWidget&); // Not Implemented
+  vtkSlicerModelDisplayWidget(const vtkSlicerModelDisplayWidget&); // Not implemented
+  void operator=(const vtkSlicerModelDisplayWidget&); // Not Implemented
 };
 
 #endif

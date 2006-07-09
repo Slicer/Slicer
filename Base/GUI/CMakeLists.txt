@@ -56,6 +56,7 @@ SET(LIB_SRCS
   vtkSlicerMRMLTreeWidget.cxx
   vtkSlicerViewerGUI.cxx
   vtkSlicerViewerWidget.cxx
+  vtkSlicerModelDisplayWidget.cxx
   )
 
 # Helper classes
