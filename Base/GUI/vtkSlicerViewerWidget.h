@@ -28,6 +28,10 @@
 
 #include "vtkKWRenderWidget.h"
 
+class vtkMRMLModelDisplayNode;
+class vtkPolyData;
+class vtkActor;
+
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewerWidget : public vtkSlicerWidget
 {
   
@@ -48,6 +52,10 @@ public:
   // removes observers on widgets in the class
   virtual void RemoveWidgetObservers ( );
 
+  // Description:
+  // removes observers on widgets in the class
+  virtual void RemoveMRMLObservers ( );
+
   vtkGetObjectMacro(MainViewer, vtkKWRenderWidget);
   vtkSetObjectMacro(MainViewer, vtkKWRenderWidget);  
   
@@ -62,6 +70,13 @@ protected:
   virtual void CreateWidget();
   
   vtkKWRenderWidget *MainViewer;
+
+  void RemoveProps();
+
+  //BTX
+  std::map<const char *, vtkActor *> DisplayedModels;
+  //ETX
+
 private:
   
   vtkSlicerViewerWidget(const vtkSlicerViewerWidget&); // Not implemented

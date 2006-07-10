@@ -141,8 +141,13 @@ void vtkSlicerMRMLTreeWidget::ProcessWidgetEvents ( vtkObject *caller,
 void vtkSlicerMRMLTreeWidget::DeleteNodeCallback(const char *id)
 {
   cout << "I want to delete MRML node " << id << endl;
-  // delete, then repopulate
-  this->GetMRMLScene()->RemoveNode(this->GetMRMLScene()->GetNodeByID(id));
+  // delete node, then repopulate tree
+  vtkMRMLNode *node = this->GetMRMLScene()->GetNodeByID(id);
+  if (node != NULL)
+    {
+    this->GetMRMLScene()->RemoveNode(node);
+    }
+
   this->UpdateTreeFromMRML();
 }
 

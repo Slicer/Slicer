@@ -933,10 +933,8 @@ void vtkSlicerApplicationGUI::BuildMainViewer ( )
 
         vtkSlicerWindow *win = this->MainSlicerWin;
         this->ViewerWidget->SetParent(win->GetViewFrame());
-        this->ViewerWidget->Create();
         this->ViewerWidget->SetMRMLScene(this->MRMLScene);
-        this->ViewerWidget->AddMRMLObserver(this->MRMLScene, vtkMRMLScene::NodeAddedEvent);
-        this->ViewerWidget->AddMRMLObserver(this->MRMLScene, vtkMRMLScene::NodeRemovedEvent);
+        this->ViewerWidget->Create();
         this->ViewerWidget->GetMainViewer()->SetRendererBackgroundColor ( 
               app->GetSlicerTheme()->GetSlicerColors()->ViewerBlue );
 

@@ -31,6 +31,8 @@ vtkSlicerViewerWidget::vtkSlicerViewerWidget ( )
 //---------------------------------------------------------------------------
 vtkSlicerViewerWidget::~vtkSlicerViewerWidget ( )
 {
+  this->RemoveMRMLObservers();
+
   if (this->MainViewer)
     {
     this->MainViewer->RemoveAllViewProps ( );
@@ -69,8 +71,9 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
       this->UpdateFromMRML();
       }
     }
-  if ((vtkPolyData::SafeDownCast(caller) && event == vtkCommand::ModifiedEvent) ||
-      (vtkMRMLModelDisplayNode::SafeDownCast(caller) && event == vtkCommand::ModifiedEvent))
+  else 
+//  if ((vtkPolyData::SafeDownCast(caller) && event == vtkCommand::ModifiedEvent) ||
+//      (vtkMRMLModelDisplayNode::SafeDownCast(caller) && event == vtkCommand::ModifiedEvent))
     {
     this->UpdateFromMRML();
     }
@@ -110,7 +113,10 @@ void vtkSlicerViewerWidget::CreateWidget ( )
   this->Script  ("pack %s -side top -fill both -expand y -padx 0 -pady 0",
                  this->MainViewer->GetWidgetName ( ) );
   this->MainViewer->ResetCamera ( );
-    
+
+  // observe scene for add/remove nodes
+  this->AddMRMLObserver(this->MRMLScene, vtkMRMLScene::NodeAddedEvent);
+  this->AddMRMLObserver(this->MRMLScene, vtkMRMLScene::NodeRemovedEvent);
 }
 
 //---------------------------------------------------------------------------
@@ -119,31 +125,77 @@ void vtkSlicerViewerWidget::UpdateFromMRML()
   vtkMRMLScene *scene = this->GetMRMLScene();
   vtkMRMLNode *node = NULL;
   
-  this->MainViewer->RemoveAllViewProps ( );
+  this->RemoveProps ( );
   
   scene->InitTraversal();
   while (node=scene->GetNextNodeByClass("vtkMRMLModelNode"))
     {
     vtkMRMLModelNode *model = vtkMRMLModelNode::SafeDownCast(node);
-    vtkPolyDataMapper *mapper = vtkPolyDataMapper::New ();
-    mapper->SetInput ( model->GetPolyData() );
 
-    // observe polydata
-    model->GetPolyData()->AddObserver ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
-
-    // observe display node 
-    if (model->GetDisplayNode()) 
+    // add nodes that are not in the list yet
+    if (this->DisplayedModels.find(model->GetID()) == this->DisplayedModels.end() )
       {
-      model->GetDisplayNode()->AddObserver ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+      vtkPolyDataMapper *mapper = vtkPolyDataMapper::New ();
+      mapper->SetInput ( model->GetPolyData() );
+
+      // observe polydata
+      model->AddObserver ( vtkMRMLModelNode::PolyDataModifiedEvent, this->MRMLCallbackCommand );
+
+      // observe display node  
+      model->AddObserver ( vtkMRMLModelNode::DisplayModifiedEvent, this->MRMLCallbackCommand );
+
+      model->AddObserver ( vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand );
+
+      vtkActor *actor = vtkActor::New ( );
+      actor->SetMapper ( mapper );
+      this->MainViewer->AddViewProp ( actor );
+
+      this->DisplayedModels[model->GetID()] = actor;
+
+      actor->Delete();
+      mapper->Delete();
       }
-    vtkActor *actor = vtkActor::New ( );
-    actor->SetMapper ( mapper );
-    // don't add the actor, so we can see the interactor
-    this->MainViewer->AddViewProp ( actor );
-
-    actor->Delete();
-    mapper->Delete();
     }
-   this->MainViewer->ResetCamera ( );
+    this->MainViewer->ResetCamera ( );
 
+}
+//---------------------------------------------------------------------------
+void vtkSlicerViewerWidget::RemoveProps()
+{
+  std::map<const char *, vtkActor *>::iterator iter;
+  std::vector<const char *> removedIDs;
+  for(iter=this->DisplayedModels.begin(); iter != this->DisplayedModels.end(); iter++) 
+    {
+    vtkMRMLModelNode *model = vtkMRMLModelNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(iter->first));
+    if (model == NULL)
+      {
+      this->MainViewer->RemoveViewProp(iter->second);
+      removedIDs.push_back(iter->first);
+      }
+    }
+  for (int i=0; i< removedIDs.size(); i++)
+    {
+    this->DisplayedModels.erase(removedIDs[i]);
+    }
+  
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewerWidget::RemoveMRMLObservers()
+{
+  std::map<const char *, vtkActor *>::iterator iter;
+  for(iter=this->DisplayedModels.begin(); iter != this->DisplayedModels.end(); iter++) 
+    {
+    vtkMRMLModelNode *model = vtkMRMLModelNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(iter->first));
+    if (model == NULL)
+      {
+      model->RemoveObservers ( vtkMRMLModelNode::PolyDataModifiedEvent, this->MRMLCallbackCommand );
+      model->RemoveObservers ( vtkMRMLModelNode::DisplayModifiedEvent, this->MRMLCallbackCommand );
+      model->RemoveObservers ( vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand );
+      }
+    }
+  this->RemoveMRMLObserver(this->MRMLScene, vtkMRMLScene::NodeAddedEvent);
+  this->RemoveMRMLObserver(this->MRMLScene, vtkMRMLScene::NodeRemovedEvent);
+
+  
 }

@@ -58,6 +58,9 @@ public:
 
   void AddMRMLObserver ( vtkObject *obj, unsigned long event ) 
     { obj->AddObserver ( event, this->MRMLCallbackCommand ); };
+
+  void RemoveMRMLObserver ( vtkObject *obj, unsigned long event ) 
+    { obj->RemoveObservers ( event, this->MRMLCallbackCommand ); };
   
   // Description:
   // alternative method to propagate events generated in GUI to logic / mrml
