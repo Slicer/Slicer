@@ -59,13 +59,7 @@ vtkSlicerSliceGUI::~vtkSlicerSliceGUI ( ) {
             this->SliceController = NULL;
         }
 
-
-    // wjp test
-    this->SetApplication ( NULL );
-    this->SliceNode = NULL;
-    this->Logic = NULL;
-    // end wjp test
-    
+    // Remove observers and references 
     this->SetModuleLogic ( NULL );
     this->SetMRMLNode ( NULL );
 
