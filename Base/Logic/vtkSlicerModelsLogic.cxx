@@ -74,11 +74,11 @@ vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel (char* filename)
     storageNode->SetScene(this->GetMRMLScene());
     displayNode->SetScene(this->GetMRMLScene());
 
-    modelNode->SetStorageNodeID(storageNode->GetID());
-    modelNode->SetDisplayNodeID(displayNode->GetID());  
-    
     this->GetMRMLScene()->AddNode(storageNode);  
     this->GetMRMLScene()->AddNode(displayNode);
+    modelNode->SetStorageNodeID(storageNode->GetID());
+    modelNode->SetAndObserveDisplayNodeID(displayNode->GetID());  
+
     this->GetMRMLScene()->AddNode(modelNode);  
 
 
