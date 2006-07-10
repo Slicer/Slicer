@@ -32,6 +32,9 @@
 #include "vtkMRMLStorageNode.h"
 #include "vtkMRMLModelDisplayNode.h"
 
+
+class vtkCallbackCommand;
+
 class VTK_MRML_EXPORT vtkMRMLModelNode : public vtkMRMLTransformableNode
 {
 public:
@@ -74,7 +77,7 @@ public:
 
   // Description:
   // String ID of the display MRML node
-  vtkSetStringMacro(DisplayNodeID);
+  void SetAndObserveDisplayNodeID(const char *DisplayNodeID);
   vtkGetStringMacro(DisplayNodeID);
 
 
@@ -85,67 +88,26 @@ public:
   // Description:
   // Associated display MRML node
   vtkMRMLModelDisplayNode* GetDisplayNode();
-
-  // Description:
-  // Name of the model's color, which is defined by a Color node in a MRML file
-  vtkSetStringMacro(Color);
-  vtkGetStringMacro(Color);
-
-  // Description:
-  // Opacity of the surface expressed as a number from 0 to 1
-  vtkSetMacro(Opacity, float);
-  vtkGetMacro(Opacity, float);
-
-  // Description:
-  // Indicates if the surface is visible
-  vtkBooleanMacro(Visibility, int);
-  vtkGetMacro(Visibility, int);
-  vtkSetMacro(Visibility, int);
-
-  // Description:
-  // Specifies whether to clip the surface with the slice planes
-  vtkBooleanMacro(Clipping, int);
-  vtkGetMacro(Clipping, int);
-  vtkSetMacro(Clipping, int);
-
-  // Description:
-  // Indicates whether to cull (not render) the backface of the surface
-  vtkBooleanMacro(BackfaceCulling, int);
-  vtkGetMacro(BackfaceCulling, int);
-  vtkSetMacro(BackfaceCulling, int);
-
-  // Description:
-  // Indicates whether to render the scalar value associated with each polygon vertex
-  vtkBooleanMacro(ScalarVisibility, int);
-  vtkGetMacro(ScalarVisibility, int);
-  vtkSetMacro(ScalarVisibility, int);
-
-  // Description:
-  // Indicates whether to render the vector value associated with each polygon vertex
-  vtkBooleanMacro(VectorVisibility, int);
-  vtkGetMacro(VectorVisibility, int);
-  vtkSetMacro(VectorVisibility, int);
-
-  // Description:
-  // Indicates whether to render the tensor value associated with each polygon vertex
-  vtkBooleanMacro(TensorVisibility, int);
-  vtkGetMacro(TensorVisibility, int);
-  vtkSetMacro(TensorVisibility, int);
-
-  // Description:
-  // Range of scalar values to render rather than the single color designated by colorName
-  vtkSetVector2Macro(ScalarRange, double);
-  vtkGetVector2Macro(ScalarRange, double);
-
-
-  // Description:
-  // Numerical ID of the color lookup table to use for rendering the overlay
-  // for this model
-  vtkGetMacro(LUTName,int);
-  vtkSetMacro(LUTName,int);
     
   vtkGetObjectMacro(PolyData, vtkPolyData);
-  vtkSetObjectMacro(PolyData, vtkPolyData);
+  void SetAndObservePolyData(vtkPolyData *PolyData);
+
+  // Description:
+  // alternative method to propagate events generated in Display nodes
+  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
+                                   unsigned long /*event*/, 
+                                   void * /*callData*/ );
+
+  //BTX
+  // Description:
+  // DisplayModifiedEvent is generated when display node parameters is changed
+  // PolyDataModifiedEvent is generated when PloyData is changed
+  enum
+    {
+      DisplayModifiedEvent = 17000,
+      PolyDataModifiedEvent = 17001,
+    };
+//ETX
 
 protected:
   vtkMRMLModelNode();
@@ -153,26 +115,13 @@ protected:
   vtkMRMLModelNode(const vtkMRMLModelNode&);
   void operator=(const vtkMRMLModelNode&);
 
+  vtkSetStringMacro(DisplayNodeID);
+
+  vtkSetObjectMacro(PolyData, vtkPolyData);
+
+
   // Data
   vtkPolyData *PolyData;
-
-  // Strings
-  char *Color;
-  int LUTName;
-    
-  // Numbers
-  float Opacity;
-
-  // Booleans
-  int Visibility;
-  int Clipping;
-  int BackfaceCulling;
-  int ScalarVisibility;
-  int VectorVisibility;
-  int TensorVisibility;
-
-  // Arrays
-  double ScalarRange[2];
 
   char *StorageNodeID;
   char *DisplayNodeID;

@@ -75,8 +75,11 @@ public:
   // Description:
   // Remove a path from the list.
   void RemoveNode(vtkMRMLNode *n) {
-    this->InvokeEvent(this->NodeAddedEvent, n);
+    n->Register(this);
     this->CurrentScene->vtkCollection::RemoveItem((vtkObject *)n);
+    this->InvokeEvent(this->NodeRemovedEvent, n);
+    n->UnRegister(this);
+
     this->Modified();
   };
   

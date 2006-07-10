@@ -28,6 +28,7 @@
 #include "vtkMRML.h"
 
 class vtkMRMLScene;
+class vtkCallbackCommand;
 
 class VTK_MRML_EXPORT vtkMRMLNode : public vtkObject
 {
@@ -89,6 +90,18 @@ public:
   const char* GetAttribute(const char* name);
   
   // Description:
+  // method to propagate events generated in mrml
+  virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData ) { };
+
+  // Description:
+  // Flags to avoid event loops
+  // NOTE: don't use the SetMacro or it call modified itself and generate even more events!
+  vtkGetMacro(InMRMLCallbackFlag, int);
+  void SetInMRMLCallbackFlag (int flag) {
+    this->InMRMLCallbackFlag = flag;
+  }
+
+  // Description:
   // Text description of this node, to be set by the user
   vtkSetStringMacro(Description);
   vtkGetStringMacro(Description);
@@ -127,6 +140,20 @@ protected:
   
   vtkSetMacro(Indent, int);
   
+  //BTX
+  // a shared set of functions that call the
+  // virtual ProcessMRMLEvents
+  static void MRMLCallback( vtkObject *caller,
+                            unsigned long eid, void *clientData, void *callData );
+
+  // Description::
+  // Holders for MRML callbacks
+  vtkCallbackCommand *MRMLCallbackCommand;
+
+  // Description:
+  // Flag to avoid event loops
+  int InMRMLCallbackFlag;
+
   char *Description;
   char *SceneRootDir;
   char *Name;

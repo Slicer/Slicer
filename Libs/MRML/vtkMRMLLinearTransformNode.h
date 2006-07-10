@@ -75,9 +75,9 @@ class VTK_MRML_EXPORT vtkMRMLLinearTransformNode : public vtkMRMLTransformNode
 
   // Description:
   // alternative method to propagate events generated in Transform nodes
-  virtual void ProcessEvents ( vtkObject * /*caller*/, 
-                               unsigned long /*event*/, 
-                               void * /*callData*/ );
+  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
+                                   unsigned long /*event*/, 
+                                   void * /*callData*/ );
   
 protected:
   vtkMRMLLinearTransformNode();

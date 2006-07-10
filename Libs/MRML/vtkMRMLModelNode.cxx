@@ -16,6 +16,7 @@ Version:   $Revision: 1.3 $
 #include <sstream>
 
 #include "vtkObjectFactory.h"
+#include "vtkCallbackCommand.h"
 
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLScene.h"
@@ -54,7 +55,6 @@ vtkMRMLModelNode::vtkMRMLModelNode()
   this->StorageNodeID = NULL;
   this->DisplayNodeID = NULL;
   PolyData = NULL;
-
 }
 
 //----------------------------------------------------------------------------
@@ -67,13 +67,12 @@ vtkMRMLModelNode::~vtkMRMLModelNode()
     }
   if (this->DisplayNodeID) 
     {
-    delete [] this->DisplayNodeID;
-    this->DisplayNodeID = NULL;
+    this->SetAndObserveDisplayNodeID( NULL);
     }
 
   if (this->PolyData) 
     {
-    this->PolyData->Delete();
+    this->SetAndObservePolyData(NULL);
     }
 }
 
@@ -177,3 +176,60 @@ vtkMRMLModelDisplayNode* vtkMRMLModelNode::GetDisplayNode()
     }
   return node;
 }
+
+//----------------------------------------------------------------------------
+void vtkMRMLModelNode::SetAndObserveDisplayNodeID(const char *displayNodeID)
+{
+  if (this->DisplayNodeID != NULL)
+    {
+    vtkMRMLModelDisplayNode *dnode = this->GetDisplayNode();
+    if (dnode != NULL)
+      {
+      dnode->RemoveObservers ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+      }
+    }
+  this->SetDisplayNodeID(displayNodeID);
+  vtkMRMLModelDisplayNode *dnode = this->GetDisplayNode();
+  if (dnode != NULL) 
+    {
+    dnode->AddObserver ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLModelNode::SetAndObservePolyData(vtkPolyData *PolyData)
+{
+  if (this->PolyData != NULL)
+    {
+    this->PolyData->RemoveObservers ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+    }
+
+  this->SetPolyData(PolyData);
+  if (PolyData != NULL)
+    {
+    PolyData->AddObserver ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+    }
+}
+
+
+//---------------------------------------------------------------------------
+void vtkMRMLModelNode::ProcessMRMLEvents ( vtkObject *caller,
+                                           unsigned long event, 
+                                           void *callData )
+{
+  Superclass::ProcessMRMLEvents(caller, event, callData);
+
+  vtkMRMLModelDisplayNode *dnode = this->GetDisplayNode();
+  if (dnode != NULL && dnode == vtkMRMLModelDisplayNode::SafeDownCast(caller) &&
+      event ==  vtkCommand::ModifiedEvent)
+    {
+    this->InvokeEvent(vtkMRMLModelNode::DisplayModifiedEvent, NULL);
+    }
+  else if (this->PolyData == vtkPolyData::SafeDownCast(caller) &&
+    event ==  vtkCommand::ModifiedEvent)
+    {
+    this->InvokeEvent(vtkMRMLModelNode::PolyDataModifiedEvent, NULL);
+    }
+  return;
+}
+

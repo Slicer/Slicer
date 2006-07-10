@@ -15,6 +15,7 @@ Version:   $Revision: 1.11 $
 #include "vtkMRMLScene.h"
 
 #include "vtkObjectFactory.h"
+#include "vtkCallbackCommand.h"
 
 //------------------------------------------------------------------------------
 vtkMRMLNode* vtkMRMLNode::New()
@@ -48,6 +49,13 @@ vtkMRMLNode::vtkMRMLNode()
 
   this->SceneRootDir = NULL;
   this->Scene = NULL;
+
+  // Set up callbacks
+  this->MRMLCallbackCommand = vtkCallbackCommand::New ( );
+  this->MRMLCallbackCommand->SetClientData( reinterpret_cast<void *>(this) );
+  this->MRMLCallbackCommand->SetCallback( vtkMRMLNode::MRMLCallback );
+  this->InMRMLCallbackFlag = 0;
+
 }
 
 //----------------------------------------------------------------------------
@@ -56,6 +64,13 @@ vtkMRMLNode::~vtkMRMLNode()
   this->SetDescription(NULL);
   this->SetName(NULL);
   this->SetID(NULL);
+
+  // unregister and set null pointers.
+  if ( this->MRMLCallbackCommand )
+    {
+    this->MRMLCallbackCommand->Delete ( );
+    this->MRMLCallbackCommand = NULL;
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -147,4 +162,29 @@ const char* vtkMRMLNode::GetAttribute(const char* name)
     {
     return iter->second.c_str();
     }
+}
+
+//----------------------------------------------------------------------------
+// Description:
+// the MRMLCallback is a static function to relay modified events from the 
+// observed mrml node back into the gui layer for further processing
+//
+void vtkMRMLNode::MRMLCallback(vtkObject *caller, 
+                               unsigned long eid, 
+                               void *clientData, 
+                               void *callData)
+{
+  vtkMRMLNode *self = reinterpret_cast<vtkMRMLNode *>(clientData);
+
+  if (self->GetInMRMLCallbackFlag())
+    {
+    vtkErrorWithObjectMacro(self, "In vtkMRMLNode *********MRMLCallback called recursively?");
+    return;
+    }
+
+  vtkDebugWithObjectMacro(self, "In vtkMRMLNode MRMLCallback");
+
+  self->SetInMRMLCallbackFlag(1);
+  self->ProcessMRMLEvents(caller, eid, callData);
+  self->SetInMRMLCallbackFlag(0);
 }

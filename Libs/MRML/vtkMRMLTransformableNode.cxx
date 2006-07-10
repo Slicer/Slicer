@@ -29,9 +29,6 @@ Version:   $Revision: 1.14 $
 vtkMRMLTransformableNode::vtkMRMLTransformableNode()
 {
   this->TransformNodeID = NULL;
-  this->TransformNodeCallbackCommand = vtkCallbackCommand::New ( );
-  this->TransformNodeCallbackCommand->SetClientData( reinterpret_cast<void *>(this) );
-  this->TransformNodeCallbackCommand->SetCallback( vtkMRMLTransformableNode::TransformNodeCallback );
 }
 
 //----------------------------------------------------------------------------
@@ -40,10 +37,6 @@ vtkMRMLTransformableNode::~vtkMRMLTransformableNode()
   if (this->TransformNodeID) 
     {
     SetAndObserveTransformNode(NULL);
-    }
-  if (this->TransformNodeCallbackCommand) 
-    {
-    this->TransformNodeCallbackCommand->Delete();
     }
 }
 
@@ -117,7 +110,7 @@ void vtkMRMLTransformableNode::SetAndObserveTransformNode(const char *transformN
     vtkMRMLTransformNode *tnode = this->GetParentTransformNode();
     if (tnode != NULL)
       {
-      tnode->RemoveObservers ( vtkMRMLTransformableNode::TransformModifiedEvent, this->TransformNodeCallbackCommand );
+      tnode->RemoveObservers ( vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand );
       this->SetTransformNodeID(NULL);
       }
     }
@@ -125,36 +118,15 @@ void vtkMRMLTransformableNode::SetAndObserveTransformNode(const char *transformN
   vtkMRMLTransformNode *tnode = this->GetParentTransformNode();
   if (tnode != NULL) 
     {
-      tnode->AddObserver ( vtkMRMLTransformableNode::TransformModifiedEvent, this->TransformNodeCallbackCommand );
+      tnode->AddObserver ( vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand );
     }
 }
 
-//----------------------------------------------------------------------------
-void vtkMRMLTransformableNode::TransformNodeCallback ( vtkObject *__caller,
-                                                       unsigned long eid, 
-                                                       void *__clientData, 
-                                                       void *callData)
-{
-  static int inCallback = 0;
-  
-  vtkMRMLTransformableNode *self = reinterpret_cast<vtkMRMLTransformableNode *>(__clientData);
-  
-  if ( inCallback )
-    {
-    //vtkErrorWithObjectMacro ( self, "In vtkMRMLTransformableNode *!* MRMLCallback called recursively?");
-    //return;
-    }
-  
-  vtkDebugWithObjectMacro ( self, "In vtkMRMLTransformableNode MRMLCallback");
-  
-  inCallback = 1;
-  self->ProcessEvents ( __caller, eid, callData );
-  inCallback = 0;
-}
 
 //---------------------------------------------------------------------------
-void vtkMRMLTransformableNode::ProcessEvents ( vtkObject *caller,
-                                               unsigned long event, void *callData )
+void vtkMRMLTransformableNode::ProcessMRMLEvents ( vtkObject *caller,
+                                                  unsigned long event, 
+                                                  void *callData )
 {
   vtkMRMLTransformNode *tnode = this->GetParentTransformNode();
   if (tnode != NULL && tnode == vtkMRMLTransformNode::SafeDownCast(caller) &&

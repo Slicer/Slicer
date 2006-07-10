@@ -63,16 +63,18 @@ class VTK_MRML_EXPORT vtkMRMLTransformableNode : public vtkMRMLNode
 
   // Description:
   // alternative method to propagate events generated in Transform nodes
-  virtual void ProcessEvents ( vtkObject * /*caller*/, 
-                               unsigned long /*event*/, 
-                               void * /*callData*/ );
+  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
+                                  unsigned long /*event*/, 
+                                  void * /*callData*/ );
 
   //BTX
+  // Description:
+  // TransformModifiedEvent is send when the parent transform is modidied
   enum
     {
       TransformModifiedEvent = 15000,
     };
-//ETX
+ //ETX
   
 
 protected:
@@ -80,15 +82,6 @@ protected:
   ~vtkMRMLTransformableNode();
   vtkMRMLTransformableNode(const vtkMRMLTransformableNode&);
   void operator=(const vtkMRMLTransformableNode&);
-
-  //BTX
-  static void TransformNodeCallback( vtkObject *__caller,
-                                     unsigned long eid, 
-                                     void *__clientData,
-                                     void *callData );
-  //ETX
-
-  vtkCallbackCommand* TransformNodeCallbackCommand;
 
   vtkSetStringMacro(TransformNodeID);
   char *TransformNodeID;

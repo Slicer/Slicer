@@ -289,22 +289,23 @@ void vtkMRMLLinearTransformNode::SetAndObserveMatrixTransformToParent(vtkMatrix4
 {
   if (this->MatrixTransformToParent != NULL)
     {
-    this->MatrixTransformToParent->RemoveObservers ( vtkCommand::ModifiedEvent, this->TransformNodeCallbackCommand );
+    this->MatrixTransformToParent->RemoveObservers ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
     this->SetMatrixTransformToParent(NULL);
     }
   this->SetMatrixTransformToParent(matrix);
   if ( this->MatrixTransformToParent )
     {
-    this->MatrixTransformToParent->AddObserver ( vtkCommand::ModifiedEvent, this->TransformNodeCallbackCommand );
+    this->MatrixTransformToParent->AddObserver ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
     }
 }
 
 
 //---------------------------------------------------------------------------
-void vtkMRMLLinearTransformNode::ProcessEvents ( vtkObject *caller,
-                                                 unsigned long event, void *callData )
+void vtkMRMLLinearTransformNode::ProcessMRMLEvents ( vtkObject *caller,
+                                                    unsigned long event, 
+                                                    void *callData )
 {
-  Superclass::ProcessEvents ( caller, event, callData );
+  Superclass::ProcessMRMLEvents ( caller, event, callData );
 
   if (this->MatrixTransformToParent != NULL && this->MatrixTransformToParent == vtkMatrix4x4::SafeDownCast(caller) &&
       event ==  vtkCommand::ModifiedEvent)
