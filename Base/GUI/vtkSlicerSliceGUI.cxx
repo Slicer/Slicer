@@ -161,8 +161,9 @@ void vtkSlicerSliceGUI::ProcessLogicEvents ( vtkObject *caller,
 
     // TODO: can this be done directly in C++?
     // and - how do we know when VTK events are idle?
-    //rw->Render();
-    this->Script("after idle \"%s Render\"", rw->GetTclName());
+    rw->Render();
+    // Replace this with a flag that says a render is pending...
+    //this->Script("after idle \"%s Render\"", rw->GetTclName());
     }
 }
 
