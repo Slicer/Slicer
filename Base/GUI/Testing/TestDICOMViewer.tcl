@@ -28,7 +28,8 @@ if { 1 } {
   pack [f GetWidgetName] -fill both -expand true
 
   t SetSize 512 512
-  t HideDecorationOn
+  t SetPosition 100 100
+  # t HideDecorationOn
   t Display
 
 
@@ -72,20 +73,26 @@ if { 1 } {
       sliceLogic ProcessLogicEvents
       sliceLogic SetAndObserveMRMLScene scene
 
-        if { 0 } {
+        if { 1 } {
           vtkSlicerSliceGUI sliceGUI
-          sliceGUI SetApplication slicerApp
-          sliceGUI SetApplicationLogic appLogic
-          sliceGUI SetAndObserveMRMLScene scene
-          sliceGUI SetAndObserveModuleLogic sliceLogic
 
-          sliceGUI BuildGUI f
-          sliceGUI AddGUIObservers
+          if { 1 } {
 
-          [[sliceGUI GetSliceController] GetSliceNode] SetOrientationToCoronal
-          pack forget [[sliceGUI GetSliceController] GetWidgetName]
+            sliceGUI SetApplication slicerApp
+            sliceGUI SetApplicationLogic appLogic
+            sliceGUI BuildGUI f
+            sliceGUI SetAndObserveMRMLScene scene
+            sliceGUI SetAndObserveModuleLogic sliceLogic
+            sliceGUI AddGUIObservers
 
-        
+            if { 0 } {
+
+              [[sliceGUI GetSliceController] GetSliceNode] SetOrientationToCoronal
+
+            }
+          }
+
+          tk_messageBox -message "look!"
           sliceGUI Delete
         }
 
@@ -105,8 +112,6 @@ if { 1 } {
 }
 
 
-  update
-  tk_messageBox -message "look!"
 
 appLogic Delete
 scene Delete
