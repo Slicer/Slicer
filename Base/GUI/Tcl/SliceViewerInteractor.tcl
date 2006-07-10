@@ -7,6 +7,10 @@
 #
 proc SliceViewerInitialize {} {
 
+  if { [info exists ::SliceViewerMode] } {
+    return
+  }
+
   if { ![info exists ::SliceViewerMode] } {
     set ::SliceViewerMode ""
   }
@@ -15,6 +19,7 @@ proc SliceViewerInitialize {} {
   foreach m $matrices {
     if { ![info exists $m] } {
       set $m [vtkMatrix4x4 New]
+    puts "created $m"
     }
   }
 }
@@ -27,8 +32,15 @@ proc SliceViewerShutdown {} {
 
   set matrices "::SliceViewerStorageXYToRAS ::SliceViewerStorageSliceToRAS ::SliceViewerScratchMatrix" 
   foreach m $matrices {
+    if { [info command [set $m]] != "" } {
+#puts "deleting $m"
+#puts "not deleting [set $m]"
+#puts [ [set $m] Print ]
+      [set $m] Delete
+#puts [ [set $m] Print ]
+#puts "deleted $m"
+    }
     if { [info exists $m] } {
-      $m Delete
       unset $m
     }
   }
@@ -54,15 +66,16 @@ proc SliceViewerGetPixel {image i j k} {
 
 proc SliceViewerHandleEvent {sliceGUI event} {
 
-  if { ![info exists ::SliceViewerMode] } {
-    # initialize on first call 
-    # -- allows clean shutdown because each vtkSlicerSliceGUI can shutdown in destructor
-    SliceViewerInitialize
-  }
+  # initialize on first call 
+  # -- allows clean shutdown because each vtkSlicerSliceGUI can shutdown in destructor
+  # -- this is very light weight, so no problem calling every time
+  SliceViewerInitialize
 
   set renderer [[[$sliceGUI GetSliceViewer] GetRenderWidget] GetRenderer]
   set interactor [[[$sliceGUI GetSliceViewer] GetRenderWidget] GetRenderWindowInteractor]
-  eval $interactor UpdateSize [$renderer GetSize]
+  if { $event != "ConfigureEvent" } {
+    eval $interactor UpdateSize [$renderer GetSize]
+  }
   set renderWidget [[$sliceGUI GetSliceViewer] GetRenderWidget]
   set anno [$renderWidget GetCornerAnnotation]
   set sliceNode [[$sliceGUI GetLogic]  GetSliceNode]
@@ -89,7 +102,7 @@ proc SliceViewerHandleEvent {sliceGUI event} {
 
   set bgPixel [SliceViewerGetPixel $backgroundImage $i $j $k]
 
-  set ignoreEvents "MouseMoveEvent ModifiedEvent TimerEvent RenderEvent"
+  set ignoreEvents "MouseMoveEvent ModifiedEvent TimerEvent RenderEvent ConfigureEvent"
 
   if { [lsearch $ignoreEvents $event] == -1 } {
     puts -nonewline "got a $event for $sliceGUI, interactor $interactor at xy $x $y, ras $ras"
@@ -190,7 +203,6 @@ proc SliceViewerHandleEvent {sliceGUI event} {
       if { $w < $h } { set min $w } else { set min $h }
       set oldDim [$sliceNode GetDimensions]
       $sliceNode SetDimensions $min $min [lindex $oldDim 2]
-      puts "[$sliceNode GetDimensions]"
     }
     EnterEvent { 
       $renderWidget CornerAnnotationVisibilityOn
@@ -214,4 +226,9 @@ proc SliceViewerHandleEvent {sliceGUI event} {
 
   }
 
+}
+
+if { ![info exists ::localversion] } {
+  set ::localversion 1
+  source c:/pieper/bwh/slicer3/latest/Slicer3/Base/GUI/Tcl/SliceViewerInteractor.tcl
 }
