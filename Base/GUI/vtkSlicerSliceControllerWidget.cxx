@@ -80,6 +80,12 @@ vtkSlicerSliceControllerWidget::~vtkSlicerSliceControllerWidget ( ){
 //----------------------------------------------------------------------------
 void vtkSlicerSliceControllerWidget::AddWidgetObservers ( )
 {
+  if ( this->OffsetScale == NULL ) 
+    {
+    vtkErrorMacro ("Can't add observers because CreateWidget hasn't been called");
+    return;
+    }
+
     this->OrientationMenu->GetWidget()->GetWidget()->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand);
 
 
@@ -99,6 +105,12 @@ void vtkSlicerSliceControllerWidget::AddWidgetObservers ( )
 
 //---------------------------------------------------------------------------
 void vtkSlicerSliceControllerWidget::RemoveWidgetObservers ( ) {
+
+  if ( this->OffsetScale == NULL ) 
+    {
+    vtkErrorMacro ("Can't remove observers because CreateWidget hasn't been called");
+    return;
+    }
 
     this->OrientationMenu->GetWidget()->GetWidget()->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand);
 
