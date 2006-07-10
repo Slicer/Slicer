@@ -19,7 +19,6 @@ proc SliceViewerInitialize {} {
   foreach m $matrices {
     if { ![info exists $m] } {
       set $m [vtkMatrix4x4 New]
-    puts "created $m"
     }
   }
 }
@@ -32,15 +31,8 @@ proc SliceViewerShutdown {} {
 
   set matrices "::SliceViewerStorageXYToRAS ::SliceViewerStorageSliceToRAS ::SliceViewerScratchMatrix" 
   foreach m $matrices {
-    if { [info command [set $m]] != "" } {
-#puts "deleting $m"
-#puts "not deleting [set $m]"
-#puts [ [set $m] Print ]
-      [set $m] Delete
-#puts [ [set $m] Print ]
-#puts "deleted $m"
-    }
     if { [info exists $m] } {
+      [set $m] Delete
       unset $m
     }
   }
