@@ -13,6 +13,7 @@ slicerApp StartApplication
 
 vtkSlicerApplicationLogic appLogic
 vtkMRMLScene scene
+namespace eval slicer3 set MRMLScene scene
 appLogic SetAndObserveMRMLScene scene
 appLogic ProcessMRMLEvents
 
@@ -40,6 +41,7 @@ if { 1 } {
     catch "storageNode Delete"
 
     vtkMRMLScalarVolumeNode volumeNode
+    volumeNode CreateNoneNode scene
     vtkMRMLVolumeDisplayNode displayNode
     vtkMRMLVolumeArchetypeStorageNode storageNode
 
@@ -61,8 +63,6 @@ if { 1 } {
     storageNode SetFileArchetype $dicomArchetype
     storageNode ReadData volumeNode
 
-    [appLogic GetSelectionNode] SetActiveVolumeID [volumeNode GetID]
-    appLogic PropagateVolumeSelection
 
     if { 1 } {
 
@@ -85,11 +85,10 @@ if { 1 } {
             sliceGUI SetAndObserveModuleLogic sliceLogic
             sliceGUI AddGUIObservers
 
-            if { 0 } {
+            [appLogic GetSelectionNode] SetActiveVolumeID [volumeNode GetID]
+            appLogic PropagateVolumeSelection
 
-              [[sliceGUI GetSliceController] GetSliceNode] SetOrientationToCoronal
-
-            }
+            [[sliceGUI GetSliceController] GetSliceNode] SetOrientationToCoronal
           }
 
           tk_messageBox -message "look!"
