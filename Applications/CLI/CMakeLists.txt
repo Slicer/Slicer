@@ -20,6 +20,15 @@ ADD_EXECUTABLE(${CLP} ${${CLP}_SOURCE})
 TARGET_LINK_LIBRARIES (${CLP} ITKIO ITKBasicFilters)
 
 #####################
+SET (CLP CheckerBoard)
+
+SET ( ${CLP}_SOURCE ${CLP}.cxx)
+GENERATECLP(${CLP}_SOURCE ${CLP}.xml)
+ADD_LIBRARY(${CLP}Lib SHARED ${${CLP}_SOURCE})
+SET_TARGET_PROPERTIES (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=SlicerModuleEntryPoint")
+TARGET_LINK_LIBRARIES (${CLP}Lib ITKIO ITKBasicFilters)
+
+#####################
 SET (CLP ResampleVolume)
 
 SET ( ${CLP}_SOURCE ${CLP}.cxx)
