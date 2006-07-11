@@ -12,6 +12,14 @@ ENDIF (NOT Slicer3_SOURCE_DIR)
 INCLUDE(${Slicer3_SOURCE_DIR}/Libs/GenerateCLP/UseGenerateCLP.cmake)
 
 #####################
+SET (CLP LinearRegistration)
+
+SET ( ${CLP}_SOURCE ${CLP}.cxx)
+GENERATECLP(${CLP}_SOURCE ${CLP}.xml)
+ADD_EXECUTABLE(${CLP} ${${CLP}_SOURCE})
+TARGET_LINK_LIBRARIES (${CLP} ITKIO ITKBasicFilters)
+
+#####################
 SET (CLP ResampleVolume)
 
 SET ( ${CLP}_SOURCE ${CLP}.cxx)
