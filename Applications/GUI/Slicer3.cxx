@@ -269,18 +269,18 @@ int Slicer3_main(int argc, char *argv[])
     //   Logic events)
     vtkSlicerSliceLogic *sliceLogic0 = vtkSlicerSliceLogic::New ( );
     sliceLogic0->SetMRMLScene ( scene );
-    sliceLogic0->ProcessMRMLEvents ();
     sliceLogic0->ProcessLogicEvents ();
+    sliceLogic0->ProcessMRMLEvents ();
     sliceLogic0->SetAndObserveMRMLScene ( scene );
     vtkSlicerSliceLogic *sliceLogic1 = vtkSlicerSliceLogic::New ( );
     sliceLogic1->SetMRMLScene ( scene );
-    sliceLogic1->ProcessMRMLEvents ();
     sliceLogic1->ProcessLogicEvents ();
+    sliceLogic1->ProcessMRMLEvents ();
     sliceLogic1->SetAndObserveMRMLScene ( scene );
     vtkSlicerSliceLogic *sliceLogic2 = vtkSlicerSliceLogic::New ( );
     sliceLogic2->SetMRMLScene ( scene );
-    sliceLogic2->ProcessMRMLEvents ();
     sliceLogic2->ProcessLogicEvents ();
+    sliceLogic2->ProcessMRMLEvents ();
     sliceLogic2->SetAndObserveMRMLScene ( scene );
 
     vtkSlicerSlicesGUI *slicesGUI = vtkSlicerSlicesGUI::New ();
