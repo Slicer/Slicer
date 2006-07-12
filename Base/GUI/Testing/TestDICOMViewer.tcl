@@ -89,9 +89,11 @@ if { 1 } {
             appLogic PropagateVolumeSelection
 
             [[sliceGUI GetSliceController] GetSliceNode] SetOrientationToCoronal
+
+            after 1000
           }
 
-          tk_messageBox -message "look!"
+          #tk_messageBox -message "look!"
           sliceGUI Delete
         }
 
