@@ -94,7 +94,7 @@ proc SliceViewerHandleEvent {sliceGUI event} {
 
   set bgPixel [SliceViewerGetPixel $backgroundImage $i $j $k]
 
-  set ignoreEvents "MouseMoveEvent ModifiedEvent TimerEvent RenderEvent ConfigureEvent"
+  set ignoreEvents "MouseMoveEvent ModifiedEvent TimerEvent RenderEvent"
 
   if { [lsearch $ignoreEvents $event] == -1 } {
     puts -nonewline "got a $event for $sliceGUI, interactor $interactor at xy $x $y, ras $ras"
@@ -191,6 +191,7 @@ proc SliceViewerHandleEvent {sliceGUI event} {
     ExposeEvent { }
     ConfigureEvent {
       set size [[[[$sliceGUI GetSliceViewer]  GetRenderWidget]  GetRenderWindow]  GetSize]
+      puts "Configure: Size $size"
       foreach {w h} $size {}
       if { $w < $h } { set min $w } else { set min $h }
       set oldDim [$sliceNode GetDimensions]
