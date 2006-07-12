@@ -5,6 +5,7 @@
 #include "vtkImageViewer.h"
 #include "vtkRenderWindow.h"
 #include "vtkImageActor.h"
+#include "vtkInteractorStyleUser.h"
 
 #include "vtkSlicerSliceGUI.h"
 #include "vtkSlicerSliceViewer.h"
@@ -92,9 +93,25 @@ void vtkSlicerSliceGUI::PrintSelf ( ostream& os, vtkIndent indent )
 //---------------------------------------------------------------------------
 void vtkSlicerSliceGUI::AddGUIObservers ( ) {
 
+#if 0
+  // add a higher than average observer to capture events
   this->SliceViewer->GetRenderWidget()->GetRenderWindowInteractor()->AddObserver (
-    vtkCommand::AnyEvent, (vtkCommand *)this->GUICallbackCommand );
+    vtkCommand::AnyEvent, (vtkCommand *)this->GUICallbackCommand, 1.0 );
 
+#endif
+
+
+
+  // make a user interactor style to process our events
+  // look at the InteractorStyle to get our events
+  vtkRenderWindowInteractor *rwi = this->GetSliceViewer()->GetRenderWidget()->GetRenderWindowInteractor();
+  if (rwi)
+    {
+    vtkInteractorStyleUser *iStyleUser = vtkInteractorStyleUser::New();
+    rwi->SetInteractorStyle (iStyleUser);
+    iStyleUser->AddObserver ( vtkCommand::AnyEvent, (vtkCommand *)this->GUICallbackCommand );
+    iStyleUser->Delete();
+    }
 }
 
 
@@ -102,8 +119,20 @@ void vtkSlicerSliceGUI::AddGUIObservers ( ) {
 //---------------------------------------------------------------------------
 void vtkSlicerSliceGUI::RemoveGUIObservers ( ) {
 
-    this->SliceViewer->GetRenderWidget()->GetRenderWindow()->GetInteractor()->RemoveObservers (
-        vtkCommand::AnyEvent, (vtkCommand *)this->GUICallbackCommand );
+#if 0
+  this->SliceViewer->GetRenderWidget()->GetRenderWindow()->GetInteractor()->RemoveObservers (
+       vtkCommand::AnyEvent, (vtkCommand *)this->GUICallbackCommand );
+#endif
+   
+  vtkRenderWindowInteractor *rwi = this->GetSliceViewer()->GetRenderWidget()->GetRenderWindowInteractor();
+  if (rwi)
+    {
+    vtkInteractorStyle *istyle = vtkInteractorStyle::SafeDownCast(rwi->GetInteractorStyle());
+    if (istyle)
+      {
+      istyle->RemoveObservers ( vtkCommand::AnyEvent, (vtkCommand *)this->GUICallbackCommand );
+      }
+    }
 }
 
 
@@ -113,7 +142,8 @@ void vtkSlicerSliceGUI::RemoveGUIObservers ( ) {
 void vtkSlicerSliceGUI::ProcessGUIEvents ( vtkObject *caller,
                                               unsigned long event, void *callData )
 {
-  vtkRenderWindowInteractor *rwi = vtkRenderWindowInteractor::SafeDownCast (caller);
+  vtkKWGenericRenderWindowInteractor *rwi = vtkKWGenericRenderWindowInteractor::SafeDownCast (caller);
+  vtkInteractorStyleUser *iStyleUser = vtkInteractorStyleUser::SafeDownCast (caller);
 
   vtkMRMLScene *mrml = this->GetApplicationLogic()->GetMRMLScene();
 
@@ -122,7 +152,18 @@ void vtkSlicerSliceGUI::ProcessGUIEvents ( vtkObject *caller,
     return;
     }
 
+#if 0
+  // TODO - this is actually old
   if ( rwi == this->SliceViewer->GetRenderWidget()->GetRenderWindowInteractor() )
+    {
+    this->Script("SliceViewerHandleEvent %s %s", 
+      this->GetTclName(), vtkCommand::GetStringFromEventId(event));
+    }
+#endif
+
+  // handle events from the Interactor Style
+  if (iStyleUser == 
+      this->GetSliceViewer()->GetRenderWidget()->GetRenderWindowInteractor()->GetInteractorStyle())
     {
     this->Script("SliceViewerHandleEvent %s %s", 
       this->GetTclName(), vtkCommand::GetStringFromEventId(event));
