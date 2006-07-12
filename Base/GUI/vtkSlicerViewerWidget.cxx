@@ -173,7 +173,7 @@ void vtkSlicerViewerWidget::RemoveProps()
       removedIDs.push_back(iter->first);
       }
     }
-  for (int i=0; i< removedIDs.size(); i++)
+  for (unsigned int i=0; i< removedIDs.size(); i++)
     {
     this->DisplayedModels.erase(removedIDs[i]);
     }
