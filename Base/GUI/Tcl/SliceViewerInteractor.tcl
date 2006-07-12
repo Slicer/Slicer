@@ -112,8 +112,7 @@ proc SliceViewerHandleEvent {sliceGUI event} {
     set ::SliceViewerStartXY [$interactor GetEventPosition]
   }
 
-  if { [string match "*ReleaseEvent" $event] ||
-        [string match "LeaveEvent" $event] } {
+  if { [string match "*ReleaseEvent" $event] } {
     set ::SliceViewerMode ""
   }
 
