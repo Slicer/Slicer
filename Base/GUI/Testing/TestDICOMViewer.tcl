@@ -1,6 +1,7 @@
 
 catch "t Delete"
 catch "f Delete"
+catch "b Delete"
 catch "slicerApp Delete"
 catch "appLogic Delete"
 catch "scene Delete"
