@@ -58,6 +58,10 @@ public:
 
   vtkGetObjectMacro(MainViewer, vtkKWRenderWidget);
   vtkSetObjectMacro(MainViewer, vtkKWRenderWidget);  
+
+  // Description:
+  // return the current actor corresponding to a give MRML ID
+  vtkActor *GetActorByID (const char *id);
   
 protected:
   vtkSlicerViewerWidget();

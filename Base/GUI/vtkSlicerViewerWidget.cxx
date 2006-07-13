@@ -156,8 +156,7 @@ void vtkSlicerViewerWidget::UpdateFromMRML()
       mapper->Delete();
       }
     }
-    this->MainViewer->ResetCamera ( );
-
+    this->MainViewer->Render ( );
 }
 //---------------------------------------------------------------------------
 void vtkSlicerViewerWidget::RemoveProps()
@@ -198,4 +197,30 @@ void vtkSlicerViewerWidget::RemoveMRMLObservers()
   this->RemoveMRMLObserver(this->MRMLScene, vtkMRMLScene::NodeRemovedEvent);
 
   
+}
+
+
+//---------------------------------------------------------------------------
+  // Description:
+  // return the current actor corresponding to a give MRML ID
+vtkActor *
+vtkSlicerViewerWidget::GetActorByID (const char *id)
+{
+  if ( !id )
+    {
+    return (NULL);
+    }
+
+  std::map<const char *, vtkActor *>::iterator iter;
+  // search for matching string (can't use find, since it would look for 
+  // matching pointer not matching content)
+  for(iter=this->DisplayedModels.begin(); iter != this->DisplayedModels.end(); iter++) 
+    {
+    if ( iter->first && !strcmp( iter->first, id ) )
+      {
+      return (iter->second);
+      }
+    }
+
+  return (NULL);
 }
