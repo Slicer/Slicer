@@ -110,6 +110,9 @@ int Slicer3_main(int argc, char *argv[])
             return 1;
         }
 
+    // Tell KWWidgets to make names like .vtkKWPushButton10 instead of .10 
+    vtkKWWidget::UseClassNameInWidgetNameOn();
+
     //
     // Set a global variable so modules that use tcl can find the 
     // binary dir (where Slicer3.exe is) and the build dir (where tcl scripts are stored)
