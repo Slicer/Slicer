@@ -25,6 +25,7 @@ vtkCxxRevisionMacro ( vtkSlicerViewerWidget, "$Revision: 1.0 $");
 vtkSlicerViewerWidget::vtkSlicerViewerWidget ( )
 {
   this->MainViewer = NULL;  
+  this->RenderPending = 0;  
 }
 
 
@@ -156,8 +157,30 @@ void vtkSlicerViewerWidget::UpdateFromMRML()
       mapper->Delete();
       }
     }
-    this->MainViewer->Render ( );
+    this->RequestRender ( );
 }
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewerWidget::RequestRender()
+{
+  if (this->GetRenderPending())
+    {
+    return;
+    }
+
+  this->SetRenderPending(1);
+  this->Script("after idle \"%s Render\"", this->GetTclName());
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewerWidget::Render()
+{
+  this->MainViewer->Render();
+  this->SetRenderPending(0);
+}
+
+
 //---------------------------------------------------------------------------
 void vtkSlicerViewerWidget::RemoveProps()
 {

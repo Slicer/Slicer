@@ -63,6 +63,20 @@ public:
   // return the current actor corresponding to a give MRML ID
   vtkActor *GetActorByID (const char *id);
   
+  // Description: 
+  // Post a request for a render -- won't be done until the system is
+  // idle, and then only once....
+  void RequestRender();
+
+  // Description: 
+  // Actually do a render (don't wait for idle)
+  void Render();
+
+  // Description: 
+  // Used to track the fact that there is a idle task pending requesting a render
+  vtkSetMacro (RenderPending, int);
+  vtkGetMacro (RenderPending, int);
+
 protected:
   vtkSlicerViewerWidget();
   ~vtkSlicerViewerWidget();
@@ -74,6 +88,7 @@ protected:
   virtual void CreateWidget();
   
   vtkKWRenderWidget *MainViewer;
+  int RenderPending;
 
   void RemoveProps();
 
