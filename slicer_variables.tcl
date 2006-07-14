@@ -231,7 +231,8 @@ switch $::tcl_platform(os) {
         set ::COMPILER_PATH "/usr/bin"
         set ::COMPILER "g++"
         set ::CMAKE $::CMAKE_PATH/bin/cmake
-        set ::MAKE "make -j 8"
+        set numCPUs [lindex [exec grep processor /proc/cpuinfo | wc] 1]
+        set ::MAKE "make -j [expr $numCPUs  2]"
         set ::SERIAL_MAKE "make"
     }
     "Darwin" {
