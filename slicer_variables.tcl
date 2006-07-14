@@ -65,10 +65,10 @@ puts stderr "SLICER_HOME is $::SLICER_HOME"
 # changes in the "Files to test if library has already been built"
 # section below, or genlib will happily build the library again.
 
-set ::CMAKE_TAG "CMake-2-4-1"
+set ::CMAKE_TAG "CMake-2-4-2"
 set ::TEEM_TAG "Teem-1-9-0-patches"
 set ::KWWidgets_TAG "HEAD"
-set ::VTK_TAG "VTK-5-0"
+set ::VTK_TAG "HEAD"
 set ::ITK_TAG "ITK-2-8"
 set ::TCL_TAG "core-8-4-6"
 set ::TK_TAG "core-8-4-6"
