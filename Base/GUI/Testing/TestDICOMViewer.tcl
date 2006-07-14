@@ -29,6 +29,14 @@ if { 1 } {
   f Create
   pack [f GetWidgetName] -fill both -expand true
 
+  vtkKWPushButton b
+  b SetParent f
+  b SetText "Quit"
+  set ::quit 0
+  b SetCommand slicerApp "Evaluate {set ::quit 1}"
+  b Create
+  pack [b GetWidgetName]
+
   t SetSize 512 512
   t SetPosition 100 100
   # t HideDecorationOn
@@ -60,7 +68,8 @@ if { 1 } {
 
 
     #set dicomArchetype [tk_getOpenFile]
-    set dicomArchetype c:/tmp/S2.001
+    #set dicomArchetype c:/tmp/S2.001
+    set dicomArchetype /tmp/1.IMA
     storageNode SetFileArchetype $dicomArchetype
     storageNode ReadData volumeNode
 
@@ -91,10 +100,9 @@ if { 1 } {
 
             [[sliceGUI GetSliceController] GetSliceNode] SetOrientationToCoronal
 
-            after 1000
+            vwait ::quit
           }
 
-          #tk_messageBox -message "look!"
           sliceGUI Delete
         }
 
@@ -108,8 +116,9 @@ if { 1 } {
   }
 
 
-  t Delete
+  b Delete
   f Delete
+  t Delete
 
 }
 
