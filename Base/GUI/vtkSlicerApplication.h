@@ -73,6 +73,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   // Set/Get a directory for temporary file storage
   void SetTemporaryDirectory(const char *path);
   const char* GetTemporaryDirectory() const;
+
+  // Description:
+  // Evaluate a string as a tcl expression
+  const char *Evaluate(const char *expression);
   
  protected:
     vtkSlicerApplication ( );

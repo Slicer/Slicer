@@ -72,6 +72,11 @@ vtkSlicerApplication::~vtkSlicerApplication ( ) {
 }
 
 
+//---------------------------------------------------------------------------
+const char *vtkSlicerApplication::Evaluate(const char *expression) {
+    return (this->Script(expression));
+}
+
 
 //---------------------------------------------------------------------------
 void vtkSlicerApplication::AddModuleGUI ( vtkSlicerModuleGUI *gui ) {
