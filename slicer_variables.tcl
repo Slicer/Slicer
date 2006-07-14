@@ -232,7 +232,7 @@ switch $::tcl_platform(os) {
         set ::COMPILER "g++"
         set ::CMAKE $::CMAKE_PATH/bin/cmake
         set numCPUs [lindex [exec grep processor /proc/cpuinfo | wc] 1]
-        set ::MAKE "make -j [expr $numCPUs  2]"
+        set ::MAKE "make -j [expr $numCPUs * 2]"
         set ::SERIAL_MAKE "make"
     }
     "Darwin" {
