@@ -17,6 +17,7 @@ Version:   $Revision: 1.14 $
 #include <sstream>
 
 #include "vtkObjectFactory.h"
+#include "vtkCallbackCommand.h"
 #include "vtkMatrix4x4.h"
 
 #include "vtkMRMLVolumeNode.h"
@@ -483,11 +484,47 @@ const char* vtkMRMLVolumeNode::ComputeScanOrderFromIJKToRAS(vtkMatrix4x4 *ijkToR
  
 }
 
+//----------------------------------------------------------------------------
+void vtkMRMLVolumeNode::SetAndObserveDisplayNodeID(const char *displayNodeID)
+{
+  if (this->DisplayNodeID != NULL)
+    {
+    vtkMRMLVolumeDisplayNode *dnode = this->GetDisplayNode();
+    if (dnode != NULL)
+      {
+      dnode->RemoveObservers ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+      }
+    }
+  this->SetDisplayNodeID(displayNodeID);
+  vtkMRMLVolumeDisplayNode *dnode = this->GetDisplayNode();
+  if (dnode != NULL) 
+    {
+    dnode->AddObserver ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLVolumeNode::SetAndObserveImageData(vtkImageData *ImageData)
+{
+  if (this->ImageData != NULL)
+    {
+    this->ImageData->RemoveObservers ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+    }
+
+  this->SetImageData(ImageData);
+  if (ImageData != NULL)
+    {
+    ImageData->AddObserver ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+    }
+}
+
 
 
 //-----------------------------------------------------------
 void vtkMRMLVolumeNode::UpdateScene(vtkMRMLScene *scene)
 {
+  Superclass::UpdateScene(scene);
+
   if (this->GetStorageNodeID() == NULL) 
     {
     vtkErrorMacro("No reference StorageNodeID found");
@@ -503,5 +540,40 @@ void vtkMRMLVolumeNode::UpdateScene(vtkMRMLScene *scene)
 
 }
 
+//-----------------------------------------------------------
+void vtkMRMLVolumeNode::UpdateReferences()
+{
+  Superclass::UpdateReferences();
 
- 
+  if (this->DisplayNodeID != NULL && this->Scene->GetNodeByID(this->DisplayNodeID) == NULL)
+    {
+    this->SetAndObserveDisplayNodeID(NULL);
+    }
+ if (this->StorageNodeID != NULL && this->Scene->GetNodeByID(this->StorageNodeID) == NULL)
+    {
+    this->SetStorageNodeID(NULL);
+    }
+}
+
+
+//---------------------------------------------------------------------------
+void vtkMRMLVolumeNode::ProcessMRMLEvents ( vtkObject *caller,
+                                           unsigned long event, 
+                                           void *callData )
+{
+  Superclass::ProcessMRMLEvents(caller, event, callData);
+
+  vtkMRMLVolumeDisplayNode *dnode = this->GetDisplayNode();
+  if (dnode != NULL && dnode == vtkMRMLVolumeDisplayNode::SafeDownCast(caller) &&
+      event ==  vtkCommand::ModifiedEvent)
+    {
+    this->InvokeEvent(vtkMRMLVolumeNode::DisplayModifiedEvent, NULL);
+    }
+  else if (this->ImageData == vtkImageData::SafeDownCast(caller) &&
+    event ==  vtkCommand::ModifiedEvent)
+    {
+    this->InvokeEvent(vtkMRMLVolumeNode::ImageDataModifiedEvent, NULL);
+    }
+  return;
+}
+

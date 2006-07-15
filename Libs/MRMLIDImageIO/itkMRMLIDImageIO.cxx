@@ -393,7 +393,7 @@ MRMLIDImageIO
     if (!img)
       {
       img = vtkImageData::New();
-      node->SetImageData(img);
+      node->SetAndObserveImageData(img);
       img->Delete();
       }
 

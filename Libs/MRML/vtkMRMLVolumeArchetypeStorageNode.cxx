@@ -168,7 +168,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
 
   if (volNode->GetImageData()) 
     {
-    volNode->SetImageData (NULL);
+    volNode->SetAndObserveImageData (NULL);
     }
 
   std::string fullName;
@@ -206,7 +206,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
   ici->SetOutputOrigin( 0, 0, 0 );
   ici->Update();
 
-  volNode->SetImageData (ici->GetOutput());
+  volNode->SetAndObserveImageData (ici->GetOutput());
 
   reader->Delete();
   ici->Delete();

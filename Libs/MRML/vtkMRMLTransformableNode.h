@@ -49,13 +49,18 @@ class VTK_MRML_EXPORT vtkMRMLTransformableNode : public vtkMRMLNode
   virtual const char* GetNodeTagName() = 0;
 
   // Description:
+  // Updates this node if it depends on other nodes 
+  // when the node is deleted in the scene
+  virtual void UpdateReferences();
+
+  // Description:
   // Observe the reference transform node
   virtual void UpdateScene(vtkMRMLScene *scene);
 
   // Description:
   // String ID of the transform MRML node
   vtkGetStringMacro(TransformNodeID);
-  void SetAndObserveTransformNode(const char *transformNodeID);
+  void SetAndObserveTransformNodeID(const char *transformNodeID);
 
   // Description:
   // Associated transform MRML node

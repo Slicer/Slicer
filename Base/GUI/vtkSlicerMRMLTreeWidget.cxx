@@ -158,11 +158,11 @@ void vtkSlicerMRMLTreeWidget::PasteNodeCallback(const char *id)
   vtkMRMLTransformableNode *node = this->GetCutNode();
   if (node != NULL)
     {
-    this->GetMRMLScene()->AddNode(node);
     if (tnode != NULL)
       {
-      node->SetAndObserveTransformNode(tnode->GetID());
+      node->SetAndObserveTransformNodeID(tnode->GetID());
       }
+    this->GetMRMLScene()->AddNode(node);
     }
 
   this->SetCutNode(NULL);
@@ -173,8 +173,11 @@ void vtkSlicerMRMLTreeWidget::PasteNodeCallback(const char *id)
 void vtkSlicerMRMLTreeWidget::CutNodeCallback(const char *id)
 {
   cout << "I want to delete MRML node " << id << endl;
-  this->SetCutNode(vtkMRMLTransformableNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(id) ) );
-  this->GetMRMLScene()->RemoveNode(this->GetMRMLScene()->GetNodeByID(id));
+  vtkMRMLNode *node = this->GetMRMLScene()->GetNodeByID(id);
+  vtkMRMLTransformableNode *tnode = vtkMRMLTransformableNode::SafeDownCast(node);
+  this->SetCutNode(tnode );
+  this->GetMRMLScene()->RemoveNode(node);
+  tnode->SetAndObserveTransformNodeID(NULL);
   this->UpdateTreeFromMRML();
 }
 

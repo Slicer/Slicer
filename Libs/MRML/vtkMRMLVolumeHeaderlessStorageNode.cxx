@@ -250,7 +250,7 @@ int vtkMRMLVolumeHeaderlessStorageNode::ReadData(vtkMRMLNode *refNode)
   if (volNode->GetImageData()) 
     {
     volNode->GetImageData()->Delete();
-    volNode->SetImageData (NULL);
+    volNode->SetAndObserveImageData (NULL);
     }
 
   std::string fullName;

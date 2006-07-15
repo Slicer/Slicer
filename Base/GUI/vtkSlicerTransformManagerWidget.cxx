@@ -99,7 +99,7 @@ void vtkSlicerTransformManagerWidget::ProcessWidgetEvents ( vtkObject *caller,
     vtkMRMLTransformableNode *tnode = vtkMRMLTransformNode::SafeDownCast(this->TransformSelectorWidget->GetSelected());
     if (node != NULL && tnode != NULL)
       {
-      node->SetAndObserveTransformNode(tnode->GetID());
+      node->SetAndObserveTransformNodeID(tnode->GetID());
       this->AddTransformButton->EnabledOff();
       this->RemoveTransformButton->EnabledOn();
       }
@@ -111,7 +111,7 @@ void vtkSlicerTransformManagerWidget::ProcessWidgetEvents ( vtkObject *caller,
     vtkMRMLTransformableNode *node = vtkMRMLTransformableNode::SafeDownCast(this->NodeSelectorWidget->GetSelected());
     if (node != NULL)
       {
-      node->SetAndObserveTransformNode(NULL);
+      node->SetAndObserveTransformNodeID(NULL);
       this->AddTransformButton->EnabledOn();
       this->RemoveTransformButton->EnabledOff();
       }

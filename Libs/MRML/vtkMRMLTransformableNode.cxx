@@ -36,7 +36,7 @@ vtkMRMLTransformableNode::~vtkMRMLTransformableNode()
 {
   if (this->TransformNodeID) 
     {
-    SetAndObserveTransformNode(NULL);
+    SetAndObserveTransformNodeID(NULL);
     }
 }
 
@@ -67,7 +67,7 @@ void vtkMRMLTransformableNode::ReadXMLAttributes(const char** atts)
     attValue = *(atts++);
     if (!strcmp(attName, "parentTransformNodeRef")) 
       {
-      this->SetAndObserveTransformNode(attValue);
+      this->SetAndObserveTransformNodeID(attValue);
       }
     }  
 }
@@ -103,7 +103,7 @@ vtkMRMLTransformNode* vtkMRMLTransformableNode::GetParentTransformNode()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLTransformableNode::SetAndObserveTransformNode(const char *transformNodeID)
+void vtkMRMLTransformableNode::SetAndObserveTransformNodeID(const char *transformNodeID)
 {
   if (this->TransformNodeID != NULL)
     {
@@ -144,9 +144,16 @@ void vtkMRMLTransformableNode::UpdateScene(vtkMRMLScene *scene)
 {
   if (this->TransformNodeID != NULL) 
     {
-    this->SetAndObserveTransformNode(this->TransformNodeID);
+    this->SetAndObserveTransformNodeID(this->TransformNodeID);
     }
 }
 
-
+//-----------------------------------------------------------
+void vtkMRMLTransformableNode::UpdateReferences()
+{
+  if (this->TransformNodeID != NULL && this->Scene->GetNodeByID(this->TransformNodeID) == NULL)
+    {
+    this->SetAndObserveTransformNodeID(NULL);
+    }
+}
 // End

@@ -130,7 +130,7 @@ void vtkSlicerVolumeDisplayWidget::ProcessWidgetEvents ( vtkObject *caller,
       vtkMRMLVolumeNode *volumeNode = vtkMRMLVolumeNode::SafeDownCast (
                 this->MRMLScene->GetNodeByID(this->VolumeNodeID) );
       this->VolumeDisplayNodeID = displayNode->GetID();
-      volumeNode->SetDisplayNodeID( displayNode->GetID() );
+      volumeNode->SetAndObserveDisplayNodeID( displayNode->GetID() );
       }
 
     if ( displayNode )

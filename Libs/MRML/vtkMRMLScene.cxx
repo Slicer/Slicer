@@ -326,6 +326,22 @@ void vtkMRMLScene::AddNode(vtkMRMLNode *n)
   this->Modified();
 }
 
+void vtkMRMLScene::RemoveNode(vtkMRMLNode *n) 
+{
+  n->Register(this);
+  this->CurrentScene->vtkCollection::RemoveItem((vtkObject *)n);
+  this->InvokeEvent(this->NodeRemovedEvent, n);
+  n->UnRegister(this);
+  vtkMRMLNode *node;
+  for (int i=0; i < this->CurrentScene->GetNumberOfItems(); i++) 
+    {
+    node = (vtkMRMLNode*)this->CurrentScene->GetItemAsObject(i);
+    node->UpdateReferences();
+    }
+  this->Modified();
+}
+  
+
 //------------------------------------------------------------------------------
 int vtkMRMLScene::GetNumberOfNodesByClass(const char *className)
 {

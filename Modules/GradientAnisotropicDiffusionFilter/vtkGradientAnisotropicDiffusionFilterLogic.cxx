@@ -109,7 +109,7 @@ void vtkGradientAnisotropicDiffusionFilterLogic::Apply()
   // TODO FIX the bug of the image is deallocated unless we do DeepCopy
   vtkImageData* image = vtkImageData::New(); 
   image->DeepCopy( this->GradientAnisotropicDiffusionImageFilter->GetOutput() );
-  outVolume->SetImageData(image);
+  outVolume->SetAndObserveImageData(image);
   image->Delete();
 
   //outVolume->SetImageData(this->GradientAnisotropicDiffusionImageFilter->GetOutput());

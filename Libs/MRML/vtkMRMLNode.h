@@ -49,6 +49,11 @@ public:
   virtual void ReadXMLAttributes(const char** atts);
 
   // Description:
+  // Updates this node if it depends on other nodes 
+  // when the node is deleted in the scene
+  virtual void UpdateReferences() {};
+
+  // Description:
   // Set dependencies between this node and the parent node
   // when parsing XML file
   virtual void ProcessParentNode(vtkMRMLNode *){};
@@ -60,6 +65,7 @@ public:
   
   // Description:
   // Updates other nodes in the scene depending on this node
+  // or updates this node if it depends on other nodes when the scene is read in
   // This method is called automatically by XML parser after all nodes are created
   virtual void UpdateScene(vtkMRMLScene *) {};
 

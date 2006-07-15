@@ -154,6 +154,40 @@ void vtkMRMLModelNode::PrintSelf(ostream& os, vtkIndent indent)
 
 }
 
+//-----------------------------------------------------------
+void vtkMRMLModelNode::UpdateScene(vtkMRMLScene *scene)
+{
+   Superclass::UpdateScene(scene);
+
+  if (this->GetStorageNodeID() == NULL) 
+    {
+    vtkErrorMacro("No reference StorageNodeID found");
+    return;
+    }
+
+  vtkMRMLNode* mnode = scene->GetNodeByID(this->StorageNodeID);
+  if (mnode) 
+    {
+    vtkMRMLStorageNode *node  = dynamic_cast < vtkMRMLStorageNode *>(mnode);
+    node->ReadData(this);
+    }
+}
+
+//-----------------------------------------------------------
+void vtkMRMLModelNode::UpdateReferences()
+{
+   Superclass::UpdateReferences();
+
+  if (this->DisplayNodeID != NULL && this->Scene->GetNodeByID(this->DisplayNodeID) == NULL)
+    {
+    this->SetAndObserveDisplayNodeID(NULL);
+    }
+ if (this->StorageNodeID != NULL && this->Scene->GetNodeByID(this->StorageNodeID) == NULL)
+    {
+    this->SetStorageNodeID(NULL);
+    }
+}
+
 vtkMRMLStorageNode* vtkMRMLModelNode::GetStorageNode()
 {
   vtkMRMLStorageNode* node = NULL;

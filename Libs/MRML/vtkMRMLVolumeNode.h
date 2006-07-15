@@ -64,6 +64,10 @@ class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLTransformableNode
   // Finds the storage node and read the data
   virtual void UpdateScene(vtkMRMLScene *scene);
 
+  // Description:
+  // Updates this node if it depends on other nodes 
+  // when the node is deleted in the scene
+  virtual void UpdateReferences();
 
   //--------------------------------------------------------------------------
   // RAS->IJK Matrix Calculation
@@ -118,7 +122,7 @@ class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLTransformableNode
 
   // Description:
   // String ID of the display MRML node
-  vtkSetStringMacro(DisplayNodeID);
+  void SetAndObserveDisplayNodeID(const char *DisplayNodeID);
   vtkGetStringMacro(DisplayNodeID);
 
 
@@ -133,14 +137,34 @@ class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLTransformableNode
   // Description:
   // Associated ImageData
   vtkGetObjectMacro(ImageData, vtkImageData);
-  vtkSetObjectMacro(ImageData, vtkImageData);
+  void SetAndObserveImageData(vtkImageData *ImageData);
 
+  // Description:
+  // alternative method to propagate events generated in Display nodes
+  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
+                                   unsigned long /*event*/, 
+                                   void * /*callData*/ );
+
+//BTX
+  // Description:
+  // DisplayModifiedEvent is generated when display node parameters is changed
+  // PolyDataModifiedEvent is generated when PloyData is changed
+  enum
+    {
+      DisplayModifiedEvent = 18000,
+      ImageDataModifiedEvent = 18001,
+    };
+//ETX
   
 protected:
   vtkMRMLVolumeNode();
   ~vtkMRMLVolumeNode();
   vtkMRMLVolumeNode(const vtkMRMLVolumeNode&);
   void operator=(const vtkMRMLVolumeNode&);
+
+  vtkSetStringMacro(DisplayNodeID);
+
+  vtkSetObjectMacro(ImageData, vtkImageData);
 
   // these are unit length direction cosines
   double IJKToRASDirections[3][3];

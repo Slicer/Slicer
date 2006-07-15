@@ -65,9 +65,14 @@ public:
   // Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "Model";};
 
+   // Description:
+  // Updates this node if it depends on other nodes 
+  // when the node is deleted in the scene
+  virtual void UpdateReferences();
+
   // Description:
   // Finds the storage node and read the data
-  virtual void UpdateScene(vtkMRMLScene *scene){};
+  virtual void UpdateScene(vtkMRMLScene *scene);
 
 
   // Description:
@@ -98,7 +103,7 @@ public:
                                    unsigned long /*event*/, 
                                    void * /*callData*/ );
 
-  //BTX
+//BTX
   // Description:
   // DisplayModifiedEvent is generated when display node parameters is changed
   // PolyDataModifiedEvent is generated when PloyData is changed
