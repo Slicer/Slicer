@@ -28,6 +28,7 @@
 
 #include "vtkKWRenderWidget.h"
 
+class vtkMRMLModelNode;
 class vtkMRMLModelDisplayNode;
 class vtkPolyData;
 class vtkActor;
@@ -91,6 +92,8 @@ protected:
   int RenderPending;
 
   void RemoveProps();
+
+  void SetModelDisplayProperty(vtkMRMLModelNode *model,  vtkActor *actor);
 
   //BTX
   std::map<const char *, vtkActor *> DisplayedModels;

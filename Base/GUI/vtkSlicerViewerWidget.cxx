@@ -13,6 +13,8 @@
 
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLModelDisplayNode.h"
+#include "vtkMRMLTransformNode.h"
+#include "vtkMRMLLinearTransformNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkKWWidget.h"
 
@@ -155,8 +157,13 @@ void vtkSlicerViewerWidget::UpdateFromMRML()
 
       actor->Delete();
       mapper->Delete();
-      }
-    }
+      } // end if
+ 
+    vtkActor *actor = this->DisplayedModels.find(model->GetID())->second;
+    this->SetModelDisplayProperty(model, actor);
+
+    } // end while
+
     this->RequestRender ( );
 }
 
@@ -222,6 +229,25 @@ void vtkSlicerViewerWidget::RemoveMRMLObservers()
   
 }
 
+//---------------------------------------------------------------------------
+void vtkSlicerViewerWidget::SetModelDisplayProperty(vtkMRMLModelNode *model,  vtkActor *actor)
+{
+  vtkMRMLTransformNode* tnode = model->GetParentTransformNode();
+  if (tnode != NULL && tnode->IsLinear())
+    {
+    vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
+    vtkMatrix4x4* transformToWorld = vtkMatrix4x4::New();
+    transformToWorld->Identity();
+    lnode->GetMatrixTransformToWorld(transformToWorld);
+    actor->SetUserMatrix(transformToWorld);
+    transformToWorld->Delete();
+    }
+  vtkMRMLModelDisplayNode* dnode = model->GetDisplayNode();
+  if (dnode != NULL)
+    {
+    actor->SetVisibility(dnode->GetVisibility());
+    }
+}
 
 //---------------------------------------------------------------------------
   // Description:
@@ -233,17 +259,13 @@ vtkSlicerViewerWidget::GetActorByID (const char *id)
     {
     return (NULL);
     }
-
-  std::map<const char *, vtkActor *>::iterator iter;
-  // search for matching string (can't use find, since it would look for 
-  // matching pointer not matching content)
-  for(iter=this->DisplayedModels.begin(); iter != this->DisplayedModels.end(); iter++) 
+  std::map<const char *, vtkActor *>::iterator iter = this->DisplayedModels.find(id);
+  if ( iter != this->DisplayedModels.end())
     {
-    if ( iter->first && !strcmp( iter->first, id ) )
-      {
-      return (iter->second);
-      }
+    return iter->second;
     }
+
 
   return (NULL);
 }
+
