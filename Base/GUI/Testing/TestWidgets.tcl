@@ -1,4 +1,8 @@
 
+foreach arg $args {
+  tk_messageBox -message "arg is $arg"
+}
+
 ## admin
 
 if { [file exists c:/Tcl/bin/tkcon.tcl] } {
