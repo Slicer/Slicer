@@ -156,12 +156,13 @@ int Slicer3_main(int argc, char *argv[])
     if ( File != "" )
       {    
 
+      std::string cmd;
 #if 0
 
 // TODO: this works to pass args to the tcl script, but I can't get
 the xml to do what I need...
 
-      std::string cmd = "set args \"\"; ";
+      cmd = "set args \"\"; ";
       std::vector<std::string>::const_iterator argit = Args.begin();
       while (argit != Args.end())
         {
