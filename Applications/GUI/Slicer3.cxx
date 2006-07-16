@@ -155,7 +155,17 @@ int Slicer3_main(int argc, char *argv[])
     //
     if ( File != "" )
       {    
-      std::string cmd = "source " + File;
+
+      std::string cmd = "set args \"\"; ";
+      std::vector<std::string>::const_iterator argit = Args.begin();
+      while (argit != Args.end())
+        {
+        cmd += " lappend args " + *argit + "; ";
+        ++argit;
+        }
+      Slicer3_Tcl_Eval( interp, cmd.c_str() );
+
+      cmd = "source " + File;
       return ( Slicer3_Tcl_Eval( interp, cmd.c_str() ) );
       }
 

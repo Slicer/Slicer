@@ -162,6 +162,14 @@
       <label>Immediate Mode On/Off</label>
       </boolean>
 
+      <string multiple="true">
+      <name>Args</name>
+      <description>Remaining arguments to be passed to scripts (-f or -p)</description>
+      <label>Script Arguments</label>
+      <index>0</index>
+      <default></default>
+      </string>
+
 
     </parameters>
 
