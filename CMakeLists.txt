@@ -98,17 +98,18 @@ INCLUDE("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
 ## check versions of VTK to track CVS HEAD
 #
 
-###FIND_PACKAGE(VTK REQUIRED)
-###IF(EXISTS ${VTK_CMAKE_DIR}/VTKVersionMacros.cmake)
- ###INCLUDE(${VTK_CMAKE_DIR}/VTKVersionMacros.cmake)
-###ELSE(EXISTS ${VTK_CMAKE_DIR}/VTKVersionMacros.cmake)
- ###MESSAGE(FATAL_ERROR "Newer version of VTK Required.  Please update to the VTK cvs HEAD.")
-###ENDIF(EXISTS ${VTK_CMAKE_DIR}/VTKVersionMacros.cmake)
+FIND_PACKAGE(VTK REQUIRED)
+IF(EXISTS ${VTK_CMAKE_DIR}/VTKVersionMacros.cmake)
+ INCLUDE(${VTK_CMAKE_DIR}/VTKVersionMacros.cmake)
+ELSE(EXISTS ${VTK_CMAKE_DIR}/VTKVersionMacros.cmake)
+ MESSAGE("Using local version of VTKVersionMacros for compatibility.")
+ INCLUDE(${Slicer3_SOURCE_DIR}/Scripts/VTKVersionMacros.cmake)
+ENDIF(EXISTS ${VTK_CMAKE_DIR}/VTKVersionMacros.cmake)
 
-###VTK_GET_SOURCE_REVISION_AND_DATE(VTKsource_revision VTKsource_date)
-###IF(VTKsource_revision LESS 1.2196)
-  ###MESSAGE(FATAL_ERROR "Sorry, your VTK library was last updated on ${VTKsource_date}. Its source revision, according to vtkKWWidgetsVersion.h, is ${VTKsource_revision}. Please update to a newer revision.")
-###ENDIF(VTKsource_revision LESS 1.2196) 
+VTK_GET_SOURCE_REVISION_AND_DATE(VTKsource_revision VTKsource_date)
+IF(VTKsource_revision LESS 1.2196)
+  MESSAGE(FATAL_ERROR "Sorry, your VTK library was last updated on ${VTKsource_date}. Its source revision, according to vtkKWWidgetsVersion.h, is ${VTKsource_revision}. Please update to a newer revision.")
+ENDIF(VTKsource_revision LESS 1.2196) 
 
 
 #
