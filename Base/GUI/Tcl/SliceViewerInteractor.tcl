@@ -222,5 +222,7 @@ proc SliceViewerHandleEvent {sliceGUI event} {
 
 if { ![info exists ::localversion] } {
   set ::localversion 1
-  source c:/pieper/bwh/slicer3/latest/Slicer3/Base/GUI/Tcl/SliceViewerInteractor.tcl
+  if { [file exists c:/pieper/bwh/slicer3/latest/Slicer3/Base/GUI/Tcl/SliceViewerInteractor.tcl] } {
+      source c:/pieper/bwh/slicer3/latest/Slicer3/Base/GUI/Tcl/SliceViewerInteractor.tcl
+    }
 }
