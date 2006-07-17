@@ -29,6 +29,7 @@
 #include "vtkSlicerNodeSelectorWidget.h"
 #include "vtkKWCheckButtonWithLabel.h"
 #include "vtkKWScaleWithLabel.h"
+#include "vtkKWSurfaceMaterialPropertyWidget.h"
 
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLModelDisplayNode.h"
@@ -91,6 +92,7 @@ public:
   vtkSlicerNodeSelectorWidget* ModelSelectorWidget;
   vtkKWCheckButtonWithLabel *VisibilityButton;
   vtkKWScaleWithLabel  *OpacityScale;
+  vtkKWSurfaceMaterialPropertyWidget *SurfaceMaterialPropertyWidget;
   
 private:
 

@@ -52,7 +52,7 @@ vtkMRMLNode* vtkMRMLModelDisplayNode::CreateNodeInstance()
 vtkMRMLModelDisplayNode::vtkMRMLModelDisplayNode()
 {
 
-  PolyData = NULL;
+  Property = NULL;
 
   // Strings
   this->Color = NULL;
@@ -83,9 +83,9 @@ vtkMRMLModelDisplayNode::~vtkMRMLModelDisplayNode()
     delete [] this->Color;
     this->Color = NULL;
     }
-  if (this->PolyData) 
+  if (this->Property) 
     {
-    this->PolyData->Delete();
+    this->Property->Delete();
     }
 }
 
@@ -229,7 +229,7 @@ void vtkMRMLModelDisplayNode::Copy(vtkMRMLNode *anode)
   this->SetScalarVisibility(node->ScalarVisibility);
   this->SetBackfaceCulling(node->BackfaceCulling);
   this->SetClipping(node->Clipping);
-  this->SetPolyData(node->PolyData);
+  this->SetProperty(node->Property);
 
 }
 
@@ -255,9 +255,9 @@ void vtkMRMLModelDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
     os << indent << ", " << this->ScalarRange[idx];
     }
   os << "\nPoly Data:\n";
-  if (this->PolyData) 
+  if (this->Property) 
     {
-    this->PolyData->PrintSelf(os, indent.GetNextIndent());
+    this->Property->PrintSelf(os, indent.GetNextIndent());
     }
 
 }

@@ -29,7 +29,7 @@
 
 #include "vtkMatrix4x4.h"
 #include "vtkTransform.h"
-#include "vtkPolyData.h" 
+#include "vtkProperty.h" 
 
 
 class VTK_MRML_EXPORT vtkMRMLModelDisplayNode : public vtkMRMLNode
@@ -121,8 +121,8 @@ public:
   vtkGetMacro(LUTName,int);
   vtkSetMacro(LUTName,int);
     
-  vtkGetObjectMacro(PolyData, vtkPolyData);
-  vtkSetObjectMacro(PolyData, vtkPolyData);
+  vtkGetObjectMacro(Property, vtkProperty);
+  vtkSetObjectMacro(Property, vtkProperty);
 
 protected:
   vtkMRMLModelDisplayNode();
@@ -131,7 +131,7 @@ protected:
   void operator=(const vtkMRMLModelDisplayNode&);
 
   // Data
-  vtkPolyData *PolyData;
+  vtkProperty *Property;
 
   // Strings
   char *Color;

@@ -27,6 +27,7 @@ vtkSlicerModelDisplayWidget::vtkSlicerModelDisplayWidget ( )
     this->ModelSelectorWidget = NULL;
     this->VisibilityButton = NULL;
     this->OpacityScale = NULL;
+    this->SurfaceMaterialPropertyWidget = NULL;
     
 }
 
@@ -48,6 +49,11 @@ vtkSlicerModelDisplayWidget::~vtkSlicerModelDisplayWidget ( )
     {
     this->OpacityScale->Delete();
     this->OpacityScale = NULL;
+    }
+  if (this->SurfaceMaterialPropertyWidget)
+    {
+    this->SurfaceMaterialPropertyWidget->Delete();
+    this->SurfaceMaterialPropertyWidget = NULL;
     }
   
   this->SetMRMLScene ( NULL );
@@ -213,6 +219,10 @@ void vtkSlicerModelDisplayWidget::UpdateWidget()
       {
       this->VisibilityButton->GetWidget()->SetSelectedState(displayNode->GetVisibility());
       this->OpacityScale->GetWidget()->SetValue(displayNode->GetOpacity());
+      if (displayNode->GetProperty() != NULL)
+        {
+        this->SurfaceMaterialPropertyWidget->SetProperty(displayNode->GetProperty());
+        }
       }
     
     return;
@@ -232,6 +242,7 @@ void vtkSlicerModelDisplayWidget::UpdateMRML()
       {
       displayNode->SetVisibility(this->VisibilityButton->GetWidget()->GetSelectedState());
       displayNode->SetOpacity(this->OpacityScale->GetWidget()->GetValue());
+      displayNode->SetProperty(this->SurfaceMaterialPropertyWidget->GetProperty());
       }
     
     return;
@@ -247,7 +258,8 @@ void vtkSlicerModelDisplayWidget::RemoveWidgetObservers ( ) {
   
 //this->OpacityScale->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueStartChangingEvent, (vtkCommand *)this->GUICallbackCommand );
   this->OpacityScale->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-  
+
+  this->SurfaceMaterialPropertyWidget->RemoveObservers(this->SurfaceMaterialPropertyWidget->GetPropertyChangedEvent(), (vtkCommand *)this->GUICallbackCommand );
   /*
   this->MRMLScene->RemoveObservers(vtkMRMLScene::NodeAddedEvent, (vtkCommand *)this->MRMLCallbackCommand );
   this->MRMLScene->RemoveObservers(vtkMRMLScene::NodeRemovedEvent, (vtkCommand *)this->MRMLCallbackCommand );
@@ -315,6 +327,13 @@ void vtkSlicerModelDisplayWidget::CreateWidget ( )
   this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
                  this->OpacityScale->GetWidgetName() );
 
+  this->SurfaceMaterialPropertyWidget = vtkKWSurfaceMaterialPropertyWidget::New();
+  this->SurfaceMaterialPropertyWidget->SetParent ( modelDisplayFrame->GetFrame() );
+  this->SurfaceMaterialPropertyWidget->Create ( );
+  this->SurfaceMaterialPropertyWidget->SetBalloonHelpString("set model opacity value.");
+  this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
+                 this->SurfaceMaterialPropertyWidget->GetWidgetName() );
+
   // add observers
   this->ModelSelectorWidget->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
   
@@ -323,6 +342,8 @@ void vtkSlicerModelDisplayWidget::CreateWidget ( )
   
   this->VisibilityButton->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   
+  this->SurfaceMaterialPropertyWidget->AddObserver(this->SurfaceMaterialPropertyWidget->GetPropertyChangedEvent(), (vtkCommand *)this->GUICallbackCommand );
+
   /*
   if (this->MRMLScene != NULL)
     {
