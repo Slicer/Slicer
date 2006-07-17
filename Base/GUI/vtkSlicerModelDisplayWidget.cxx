@@ -78,8 +78,13 @@ void vtkSlicerModelDisplayWidget::SetModelNode ( vtkMRMLModelNode *modelNode )
   // 
   // Set the member variables and do a first process
   //
+  this->RemoveMRMLObservers();
+
   this->SetModelNodeID( modelNode->GetID() );
   this->SetModelDisplayNodeID( modelNode->GetDisplayNodeID() );
+
+  this->AddMRMLObservers();
+
   if ( modelNode )
     {
     this->ProcessMRMLEvents(modelNode, vtkCommand::ModifiedEvent, NULL);
@@ -138,25 +143,61 @@ void vtkSlicerModelDisplayWidget::ProcessMRMLEvents ( vtkObject *caller,
     {
     vtkMRMLModelDisplayNode *displayNode = modelNode->GetDisplayNode();
     
+
     if (displayNode != NULL && this->ModelDisplayNodeID != NULL)
       {
-      if (strcmp(this->ModelDisplayNodeID, displayNode->GetID()) )
-        {
-        vtkMRMLModelDisplayNode *displayNodeOld = vtkMRMLModelDisplayNode::SafeDownCast(
-          this->MRMLScene->GetNodeByID(this->ModelDisplayNodeID));
-        
-        displayNodeOld->RemoveObservers(vtkCommand::ModifiedEvent,
-                                        (vtkCommand *)this->MRMLCallbackCommand );
-        displayNode->AddObserver(vtkCommand::ModifiedEvent,
-                                 (vtkCommand *)this->MRMLCallbackCommand );
-        }
-      
+      this->RemoveMRMLObservers();
       this->SetModelDisplayNodeID(displayNode->GetID());
+      this->AddMRMLObservers();
       }
     }
   
   this->UpdateWidget();
   
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerModelDisplayWidget::AddMRMLObservers ( )
+{
+  if ( !this->ModelNodeID )
+    {
+    return;
+    }
+
+  vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(this->MRMLScene->GetNodeByID(this->ModelNodeID));
+  
+  if (modelNode != NULL)
+    {
+    vtkMRMLModelDisplayNode *displayNode = modelNode->GetDisplayNode();
+    
+    if (displayNode != NULL)
+      {
+        displayNode->AddObserver(vtkCommand::ModifiedEvent,
+                                 (vtkCommand *)this->MRMLCallbackCommand );      
+      }
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerModelDisplayWidget::RemoveMRMLObservers ( )
+{
+  if ( !this->ModelNodeID )
+    {
+    return;
+    }
+
+  vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(this->MRMLScene->GetNodeByID(this->ModelNodeID));
+  
+  if (modelNode != NULL)
+    {
+    vtkMRMLModelDisplayNode *displayNode = modelNode->GetDisplayNode();
+    
+    if (displayNode != NULL)
+      {
+        displayNode->RemoveObservers(vtkCommand::ModifiedEvent,
+                                        (vtkCommand *)this->MRMLCallbackCommand );
+      }
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -268,6 +309,8 @@ void vtkSlicerModelDisplayWidget::CreateWidget ( )
   this->OpacityScale->SetParent ( modelDisplayFrame->GetFrame() );
   this->OpacityScale->Create ( );
   this->OpacityScale->SetLabelText("Opacity");
+  this->OpacityScale->GetWidget()->SetRange(0,1);
+  this->OpacityScale->GetWidget()->SetResolution(0.1);
   this->OpacityScale->SetBalloonHelpString("set model opacity value.");
   this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
                  this->OpacityScale->GetWidgetName() );

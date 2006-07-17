@@ -65,6 +65,14 @@ public:
   // Description:
   // removes observers on widgets in the class
   virtual void RemoveWidgetObservers ( );
+
+  // Description:
+  // add observers on display node
+  virtual void AddMRMLObservers ( );
+
+  // Description:
+  // remove observers on display node
+  virtual void RemoveMRMLObservers ( );
   
  protected:
   vtkSlicerModelDisplayWidget();

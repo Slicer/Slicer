@@ -6,6 +6,8 @@
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerModuleLogic.h"
 //#include "vtkSlicerModelsLogic.h"
+#include "vtkSlicerModelDisplayWidget.h"
+
 #include "vtkKWFrameWithLabel.h"
 
 //---------------------------------------------------------------------------
@@ -43,7 +45,7 @@ void vtkSlicerModelsGUI::PrintSelf ( ostream& os, vtkIndent indent )
     this->vtkObject::PrintSelf ( os, indent );
 
     os << indent << "SlicerModelsGUI: " << this->GetClassName ( ) << "\n";
-    //os << indent << "ModelNode: " << this->GetVolumeNode ( ) << "\n";
+    //os << indent << "ModelNode: " << this->GetModelNode ( ) << "\n";
     //os << indent << "Logic: " << this->GetLogic ( ) << "\n";
     // print widgets?
 }
@@ -169,19 +171,17 @@ void vtkSlicerModelsGUI::BuildGUI ( )
                 this->LoadModelButton->GetWidgetName());
 
     // ---
-    // DISPLAY FRAME            
-    vtkKWFrameWithLabel *modDisplayFrame = vtkKWFrameWithLabel::New ( );
-    modDisplayFrame->SetParent ( this->UIPanel->GetPageWidget ( "Models" ) );
-    modDisplayFrame->Create ( );
-    //modDisplayFrame->SetBackgroundColor ( style->GetGUIBgColor() );
-    modDisplayFrame->SetLabelText ("Display");
-    modDisplayFrame->CollapseFrame ( );
+    // DISPLAY FRAME               
+    this->ModelDisplayWidget = vtkSlicerModelDisplayWidget::New ( );
+    this->ModelDisplayWidget->SetMRMLScene(this->GetMRMLScene() );
+    this->ModelDisplayWidget->SetParent ( this->UIPanel->GetPageWidget ( "Models" ) );
+    this->ModelDisplayWidget->Create ( );
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                  modDisplayFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Models")->GetWidgetName());
+                  this->ModelDisplayWidget->GetWidgetName(), 
+                  this->UIPanel->GetPageWidget("Models")->GetWidgetName());
 
     modLoadFrame->Delete ( );
     modHelpFrame->Delete ( );
-    modDisplayFrame->Delete ( );
 }
 
 

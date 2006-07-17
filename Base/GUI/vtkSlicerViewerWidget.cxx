@@ -6,6 +6,7 @@
 #include "vtkSlicerColor.h"
 
 #include "vtkActor.h"
+#include "vtkProperty.h"
 #include "vtkRenderer.h"
 #include "vtkCamera.h"
 #include "vtkPolyDataMapper.h"
@@ -246,6 +247,7 @@ void vtkSlicerViewerWidget::SetModelDisplayProperty(vtkMRMLModelNode *model,  vt
   if (dnode != NULL)
     {
     actor->SetVisibility(dnode->GetVisibility());
+    actor->GetProperty()->SetOpacity(dnode->GetOpacity());
     }
 }
 
