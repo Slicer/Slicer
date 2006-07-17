@@ -1,134 +1,134 @@
 
-catch "t Delete"
-catch "f Delete"
-catch "b Delete"
-catch "slicerApp Delete"
-catch "appLogic Delete"
-catch "scene Delete"
-catch "sliceGUI Delete"
+if { [file exists c:/Tcl/bin/tkcon.tcl] } {
+  source c:/Tcl/bin/tkcon.tcl
+  tkcon::Init
+  tkcon::Attach Main
+}
+
+set ::vtkObjects ""
+
+proc vtkNew {class} {
+  set o [$class New]
+  set ::vtkObjects "$o $::vtkObjects"
+  return $o
+}
+
+proc vtkDelete {} {
+  foreach o $::vtkObjects {
+    $o Delete
+  }
+  set ::vtkObjects ""
+}
+
+##
 
 source $::SLICER_BUILD/SliceViewerInteractor.tcl
 
-vtkSlicerApplication slicerApp
-slicerApp StartApplication
+set slicerApp [vtkNew vtkSlicerApplication]
+$slicerApp StartApplication
 
-vtkSlicerApplicationLogic appLogic
-vtkMRMLScene scene
-namespace eval slicer3 set MRMLScene scene
-appLogic SetAndObserveMRMLScene scene
-appLogic ProcessMRMLEvents
+set appLogic [vtkNew vtkSlicerApplicationLogic]
+set scene [vtkNew vtkMRMLScene]
+namespace eval slicer3 set MRMLScene $scene
+$appLogic SetAndObserveMRMLScene $scene
+$appLogic ProcessMRMLEvents
 
 if { 1 } {
 
-  vtkKWTopLevel t
-  t SetApplication slicerApp
-  t Create
+  set topLevel [vtkNew vtkKWTopLevel]
+  $topLevel SetApplication $slicerApp
+  $topLevel Create
 
-  vtkKWFrame f
-  f SetParent t
-  f Create
-  pack [f GetWidgetName] -fill both -expand true
+  set frame [vtkNew vtkKWFrame]
+  $frame SetParent $topLevel
+  $frame Create
+  pack [$frame GetWidgetName] -fill both -expand true
 
-  vtkKWPushButton b
-  b SetParent f
-  b SetText "Quit"
+  set pushButton [vtkNew vtkKWPushButton]
+  $pushButton SetParent $frame
+  $pushButton SetText "Quit"
   set ::quit 0
-  b SetCommand slicerApp "Evaluate {set ::quit 1}"
-  b Create
-  pack [b GetWidgetName]
+  $pushButton SetCommand $slicerApp "Evaluate {set ::quit 1}"
+  $pushButton Create
+  pack [$pushButton GetWidgetName]
 
-  t SetSize 512 512
-  t SetPosition 100 100
-  # t HideDecorationOn
-  t Display
+  $topLevel SetSize 512 512
+  $topLevel SetPosition 100 100
+  # $topLevel HideDecorationOn
+  $topLevel Display
 
 
   if { 1 } {
 
-    catch "volumeNode Delete"
-    catch "displayNode Delete"
-    catch "storageNode Delete"
+    set volumeNode [vtkNew vtkMRMLScalarVolumeNode]
+    $volumeNode CreateNoneNode $scene
+    set displayNode [vtkNew vtkMRMLVolumeDisplayNode]
+    set storageNode [vtkNew vtkMRMLVolumeArchetypeStorageNode]
 
-    vtkMRMLScalarVolumeNode volumeNode
-    volumeNode CreateNoneNode scene
-    vtkMRMLVolumeDisplayNode displayNode
-    vtkMRMLVolumeArchetypeStorageNode storageNode
+    $volumeNode SetScene $scene
+    $displayNode SetScene $scene
+    $storageNode SetScene $scene
 
-    volumeNode SetScene scene
-    displayNode SetScene scene
-    storageNode SetScene scene
+    $scene AddNode $volumeNode
+    $scene AddNode $displayNode
+    $scene AddNode $storageNode
 
-    scene AddNode volumeNode
-    scene AddNode displayNode
-    scene AddNode storageNode
-
-    volumeNode SetName dicom
-    volumeNode SetStorageNodeID [storageNode GetID]
-    volumeNode SetDisplayNodeID [displayNode GetID]
+    $volumeNode SetName dicom
+    $volumeNode SetStorageNodeID [$storageNode GetID]
+    $volumeNode SetAndObserveDisplayNodeID [$displayNode GetID]
 
 
-    #set dicomArchetype [tk_getOpenFile]
-    #set dicomArchetype c:/tmp/S2.001
-    set dicomArchetype /tmp/1.IMA
-    storageNode SetFileArchetype $dicomArchetype
-    storageNode ReadData volumeNode
+    if { [file exists c:/tmp/S2.001] } {
+      set dicomArchetype c:/tmp/S2.001
+    }
+    if { [file exists /tmp/1.IMA] } {
+      set dicomArchetype /tmp/1.IMA
+    }
+    if { ![info exists dicomArchetype] } {
+      set dicomArchetype [tk_getOpenFile]
+    }
+
+    $storageNode SetFileArchetype $dicomArchetype
+    $storageNode ReadData $volumeNode
 
 
     if { 1 } {
 
       catch "sliceLogic Delete"
-      vtkSlicerSliceLogic sliceLogic
-      sliceLogic SetMRMLScene scene
-      sliceLogic ProcessMRMLEvents
-      sliceLogic ProcessLogicEvents
-      sliceLogic SetAndObserveMRMLScene scene
+      set sliceLogic [vtkNew vtkSlicerSliceLogic]
+      $sliceLogic SetMRMLScene $scene
+      $sliceLogic ProcessMRMLEvents
+      $sliceLogic ProcessLogicEvents
+      $sliceLogic SetAndObserveMRMLScene $scene
 
         if { 1 } {
-          vtkSlicerSliceGUI sliceGUI
+          set sliceGUI [vtkNew vtkSlicerSliceGUI]
 
           if { 1 } {
 
-            sliceGUI SetApplication slicerApp
-            sliceGUI SetApplicationLogic appLogic
-            sliceGUI BuildGUI f
-            sliceGUI SetAndObserveMRMLScene scene
-            sliceGUI SetAndObserveModuleLogic sliceLogic
-            sliceGUI AddGUIObservers
+            $sliceGUI SetApplication $slicerApp
+            $sliceGUI SetApplicationLogic $appLogic
+            $sliceGUI BuildGUI $frame
+            $sliceGUI SetAndObserveMRMLScene $scene
+            $sliceGUI SetAndObserveModuleLogic $sliceLogic
+            $sliceGUI AddGUIObservers
 
-            [appLogic GetSelectionNode] SetActiveVolumeID [volumeNode GetID]
-            appLogic PropagateVolumeSelection
+            [$appLogic GetSelectionNode] SetActiveVolumeID [$volumeNode GetID]
+            $appLogic PropagateVolumeSelection
 
-            [[sliceGUI GetSliceController] GetSliceNode] SetOrientationToCoronal
+            [[$sliceGUI GetSliceController] GetSliceNode] SetOrientationToCoronal
 
-            vwait ::quit
           }
-
-          sliceGUI Delete
         }
-
-      sliceLogic Delete
     }
-
-    volumeNode Delete
-    displayNode Delete
-    storageNode Delete
-
   }
-
-
-  b Delete
-  f Delete
-  t Delete
-
 }
 
+vwait ::quit
 
+$slicerApp Exit
 
-appLogic Delete
-scene Delete
-
-slicerApp Exit
-slicerApp Delete
+vtkDelete
 
 #tk_messageBox -message "finished"
 exit
