@@ -69,10 +69,10 @@ ENDIF (NOT KWWidgets_FOUND)
 INCLUDE(${KWWidgets_USE_FILE})
 
 INCLUDE("${KWWidgets_CMAKE_DIR}/KWWidgetsVersionMacros.cmake")
-KWWidgets_GET_SOURCE_REVISION_AND_DATE(source_revision source_date)
-IF(source_revision LESS 1.3)
-  MESSAGE(FATAL_ERROR "Sorry, your KWWidgets library was last updated on ${source_date}. Its source revision, according to vtkKWWidgetsVersion.h, is ${source_revision}. Please update to a newer revision.")
-ENDIF(source_revision LESS 1.3) 
+KWWidgets_GET_SOURCE_REVISION_AND_DATE(KWsource_revision KWsource_date)
+IF(KWsource_revision LESS 1.3)
+  MESSAGE(FATAL_ERROR "Sorry, your KWWidgets library was last updated on ${KWsource_date}. Its source revision, according to vtkKWWidgetsVersion.h, is ${KWsource_revision}. Please update to a newer revision.")
+ENDIF(KWsource_revision LESS 1.3) 
 
 # Generate the default setup paths scripts.
 # Generate some useful scripts that can be used to setup various environment 
@@ -94,8 +94,21 @@ ENDIF(NOT VTK_CMAKE_DIR)
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 INCLUDE("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
 
-# TODO
-# VTK_WRAP_TCL3(${LIB_NAME} LIB_TCL_SRCS ${LIB_SRCS} "")
+#
+## check versions of VTK to track CVS HEAD
+#
+
+FIND_PACKAGE(VTK REQUIRED)
+IF(EXISTS ${VTK_CMAKE_DIR}/VTKVersionMacros.cmake)
+ INCLUDE(${VTK_CMAKE_DIR}/VTKVersionMacros.cmake)
+ELSE(EXISTS ${VTK_CMAKE_DIR}/VTKVersionMacros.cmake)
+ MESSAGE(FATAL_ERROR "Newer version of VTK Required.  Please update to the VTK cvs HEAD.")
+ENDIF(EXISTS ${VTK_CMAKE_DIR}/VTKVersionMacros.cmake)
+
+VTK_GET_SOURCE_REVISION_AND_DATE(VTKsource_revision VTKsource_date)
+IF(VTKsource_revision LESS 1.2196)
+  MESSAGE(FATAL_ERROR "Sorry, your VTK library was last updated on ${VTKsource_date}. Its source revision, according to vtkKWWidgetsVersion.h, is ${VTKsource_revision}. Please update to a newer revision.")
+ENDIF(VTKsource_revision LESS 1.2196) 
 
 
 #
