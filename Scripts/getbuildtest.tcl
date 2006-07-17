@@ -34,6 +34,7 @@ proc Usage { {msg ""} } {
 }
 
 set GETBUILDTEST(clean) "false"
+set GETBUILDTEST(update) ""
 set GETBUILDTEST(release) ""
 set GETBUILDTEST(test-type) "Experimental"
 set strippedargs ""
@@ -44,6 +45,10 @@ for {set i 0} {$i < $argc} {incr i} {
         "--clean" -
         "-f" {
             set GETBUILDTEST(clean) "true"
+        }
+        "--update" -
+        "-u" {
+            set GETBUILDTEST(update) "--update"
         }
         "--release" {
             set GETBUILDTEST(release) "--release"
@@ -202,17 +207,22 @@ if { ![file exists $SLICER_BUILD] } {
 #
 
 
+# svn checkout (does an update if it already exists)
 cd $::SLICER_HOME/..
 runcmd svn checkout http://www.na-mic.org:8000/svn/Slicer3/trunk Slicer3
 
-
+# build the lib with options
 cd $::SLICER_HOME
+set cmd "Scripts/genlib.tcl $SLICER_LIB"
 if { $::GETBUILDTEST(release) != "" } {
-    runcmd Scripts/genlib.tcl $::GETBUILDTEST(release) $SLICER_LIB
-} else {
-    runcmd Scripts/genlib.tcl $SLICER_LIB
-}
+   append cmd $::GETBUILDTEST(release)
+} 
+if { $::GETBUILDTEST(update) != "" } {
+   append cmd $::GETBUILDTEST(update)
+} 
+eval runcmd $cmd
 
+# build the slicer
 cd $::SLICER_BUILD
 runcmd $::CMAKE \
         -G$::GENERATOR \

@@ -57,11 +57,13 @@ proc Usage { {msg ""} } {
     set msg "$msg\n  \[options\] is one of the following:"
     set msg "$msg\n   --help : prints this message and exits"
     set msg "$msg\n   --clean : delete the target first"
+    set msg "$msg\n   --update : do a cvs update even if there's an existing build"
     set msg "$msg\n   --release : compile with optimization flags"
     puts stderr $msg
 }
 
 set GENLIB(clean) "false"
+set GENLIB(update) "false"
 set GENLIB(target) ""
 set isRelease 0
 set strippedargs ""
@@ -72,6 +74,10 @@ for {set i 0} {$i < $argc} {incr i} {
         "--clean" -
         "-f" {
             set GENLIB(clean) "true"
+        }
+        "--update" -
+        "-u" {
+            set GENLIB(update) "true"
         }
         "--release" {
             set isRelease 1
@@ -236,7 +242,7 @@ if {$isWindows} {
 #
 
 # set in slicer_vars
-if { ![file exists $::CMAKE] } {
+if { ![file exists $::CMAKE] || $::GENLIB(update) } {
     file mkdir $::CMAKE_PATH
     cd $SLICER_LIB
 
@@ -265,7 +271,7 @@ if { ![file exists $::CMAKE] } {
 #
 
 # on windows, tcl won't build right, as can't configure, so save commands have to run
-if { ![file exists $::TCL_TEST_FILE] } {
+if { ![file exists $::TCL_TEST_FILE] || $::GENLIB(update) } {
 
     if {$isWindows} {
         puts stderr "Slicer2.6-Lib-win32.zip did not download and unzip correctly."
@@ -289,7 +295,7 @@ if { ![file exists $::TCL_TEST_FILE] } {
     }
 }
 
-if { ![file exists $::TK_TEST_FILE] } {
+if { ![file exists $::TK_TEST_FILE] || $::GENLIB(update) } {
     cd $SLICER_LIB/tcl
 
     runcmd $::CVS -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer login
@@ -322,7 +328,7 @@ if { ![file exists $::TK_TEST_FILE] } {
     }
 }
 
-if { ![file exists $::ITCL_TEST_FILE] } {
+if { ![file exists $::ITCL_TEST_FILE] || $::GENLIB(update) } {
     cd $SLICER_LIB/tcl
 
     runcmd $::CVS -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer login
@@ -347,7 +353,7 @@ if { ![file exists $::ITCL_TEST_FILE] } {
     }
 }
 
-if { ![file exists $::IWIDGETS_TEST_FILE] } {
+if { ![file exists $::IWIDGETS_TEST_FILE] || $::GENLIB(update) } {
     cd $SLICER_LIB/tcl
 
     runcmd $::CVS -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer login
@@ -371,7 +377,7 @@ if { ![file exists $::IWIDGETS_TEST_FILE] } {
 # Get and build blt
 #
 
-if { ![file exists $::BLT_TEST_FILE] } {
+if { ![file exists $::BLT_TEST_FILE] || $::GENLIB(update) } {
     cd $SLICER_LIB/tcl
     
     runcmd $::CVS -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer login
@@ -411,7 +417,7 @@ if { ![file exists $::BLT_TEST_FILE] } {
 # Get and build vtk
 #
 
-if { ![file exists $::VTK_TEST_FILE] } {
+if { ![file exists $::VTK_TEST_FILE] || $::GENLIB(update) } {
     cd $SLICER_LIB
 
     runcmd $::CVS -d :pserver:anonymous:vtk@public.kitware.com:/cvsroot/VTK login
@@ -513,7 +519,7 @@ if { ![file exists $::VTK_TEST_FILE] } {
 # Get and build kwwidgets
 #
 
-if { ![file exists $::KWWidgets_TEST_FILE] } {
+if { ![file exists $::KWWidgets_TEST_FILE] || $::GENLIB(update) } {
     cd $SLICER_LIB
 
     runcmd $::CVS -d :pserver:anoncvs:@www.kwwidgets.org:/cvsroot/KWWidgets login
@@ -551,7 +557,7 @@ if { ![file exists $::KWWidgets_TEST_FILE] } {
 # Get and build itk
 #
 
-if { ![file exists $::ITK_TEST_FILE] } {
+if { ![file exists $::ITK_TEST_FILE] || $::GENLIB(update) } {
     cd $SLICER_LIB
 
     runcmd $::CVS -d :pserver:anoncvs:@www.vtk.org:/cvsroot/Insight login
@@ -590,7 +596,7 @@ if { ![file exists $::ITK_TEST_FILE] } {
 # -- relies on VTK's png and zlib
 #
 
-if { ![file exists $::TEEM_TEST_FILE] } {
+if { ![file exists $::TEEM_TEST_FILE] || $::GENLIB(update) } {
     cd $SLICER_LIB
 
     runcmd $::CVS -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer login 
@@ -656,7 +662,7 @@ if { ![file exists $::TEEM_TEST_FILE] } {
 ################################################################################
 # Get and build the sandbox
 
-if { ![file exists $::SANDBOX_TEST_FILE] && ![file exists $::ALT_SANDBOX_TEST_FILE] } {
+if { ![file exists $::SANDBOX_TEST_FILE] && ![file exists $::ALT_SANDBOX_TEST_FILE] || $::GENLIB(update) } {
     cd $SLICER_LIB
 
     runcmd $::SVN checkout $::SANDBOX_TAG NAMICSandBox 
