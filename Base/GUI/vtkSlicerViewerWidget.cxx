@@ -160,7 +160,8 @@ void vtkSlicerViewerWidget::UpdateFromMRML()
       mapper->Delete();
       } // end if
  
-    vtkActor *actor = this->DisplayedModels.find(model->GetID())->second;
+    //vtkActor *actor = this->DisplayedModels.find(model->GetID())->second;
+    vtkActor *actor = this->DisplayedModels[ model->GetID() ];
     this->SetModelDisplayProperty(model, actor);
 
     } // end while
@@ -262,13 +263,16 @@ vtkSlicerViewerWidget::GetActorByID (const char *id)
     {
     return (NULL);
     }
-  std::map<const char *, vtkActor *>::iterator iter = this->DisplayedModels.find(id);
-  if ( iter != this->DisplayedModels.end())
+
+  std::map<const char *, vtkActor *>::iterator iter;
+  // search for matching string (can't use find, since it would look for 
+  // matching pointer not matching content)
+  for(iter=this->DisplayedModels.begin(); iter != this->DisplayedModels.end(); iter++) 
     {
-    return iter->second;
+    if ( iter->first && !strcmp( iter->first, id ) )
+      {
+      return (iter->second);
+      }
     }
-
-
   return (NULL);
 }
-
