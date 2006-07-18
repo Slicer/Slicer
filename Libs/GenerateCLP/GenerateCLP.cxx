@@ -619,12 +619,16 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
                << pit->GetName()
                << "Arg" << "(\""
                << pit->GetName()
-               << "\", msg.str(), "
-               << true;
+               << "\", msg.str(), ";
           if (pit->GetMultiple() != "true")
             {
-            sout << ", "
+            sout << true
+                 << ", "
                  << pit->GetName();
+            }
+          else
+            {
+            sout << false;
             }
           sout << ", "
                << "\""
