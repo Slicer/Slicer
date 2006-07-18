@@ -34,11 +34,11 @@ set n [sc GetNthNodeByClass 0 vtkMRMLLinearTransformNode]
 puts "Print Transform node 0"
 puts "[$n Print]"
 
-set t0 [$v0 GetTransformNode]
+set t0 [$v0 GetParentTransformNode]
 puts "Print Transform for volume 0"
 puts "[$t0 Print]"
 
-set t1 [$v1 GetTransformNode]
+set t1 [$v1 GetParentTransformNode]
 puts "Print Transform for volume 1"
 puts "[$t1 Print]"
 
