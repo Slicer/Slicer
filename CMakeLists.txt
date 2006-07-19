@@ -68,12 +68,6 @@ ENDIF (NOT KWWidgets_FOUND)
 
 INCLUDE(${KWWidgets_USE_FILE})
 
-INCLUDE("${KWWidgets_CMAKE_DIR}/KWWidgetsVersionMacros.cmake")
-KWWidgets_GET_SOURCE_REVISION_AND_DATE(KWsource_revision KWsource_date)
-IF(KWsource_revision LESS 1.3)
-  MESSAGE(FATAL_ERROR "Sorry, your KWWidgets library was last updated on ${KWsource_date}. Its source revision, according to vtkKWWidgetsVersion.h, is ${KWsource_revision}. Please update to a newer revision.")
-ENDIF(KWsource_revision LESS 1.3) 
-
 # Generate the default setup paths scripts.
 # Generate some useful scripts that can be used to setup various environment 
 # variables and launch the executable properly against external packages.
