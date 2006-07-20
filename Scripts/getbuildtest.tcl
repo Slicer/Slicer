@@ -215,10 +215,10 @@ runcmd svn checkout http://www.na-mic.org:8000/svn/Slicer3/trunk Slicer3
 cd $::SLICER_HOME
 set cmd "Scripts/genlib.tcl $SLICER_LIB"
 if { $::GETBUILDTEST(release) != "" } {
-   append cmd $::GETBUILDTEST(release)
+   append cmd " $::GETBUILDTEST(release)"
 } 
 if { $::GETBUILDTEST(update) != "" } {
-   append cmd $::GETBUILDTEST(update)
+   append cmd " $::GETBUILDTEST(update)"
 } 
 eval runcmd $cmd
 
