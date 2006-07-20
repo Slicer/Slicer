@@ -1,5 +1,13 @@
 Project(ModuleDescriptionParser)
 
+## ITK is required
+FIND_PACKAGE(ITK REQUIRED)
+IF (NOT ITK_FOUND)
+  MESSAGE (FATAL_ERROR "Need ITK to build")
+ENDIF (NOT ITK_FOUND)
+
+INCLUDE(${ITK_USE_FILE})
+
 SET(ModuleDescriptionParser_SRCS
   ModuleParameter.cxx
   ModuleParameterGroup.cxx
@@ -19,6 +27,11 @@ TARGET_LINK_LIBRARIES(ModuleDescriptionParser ITKEXPAT)
 CONFIGURE_FILE(
   ${ModuleDescriptionParser_SOURCE_DIR}/ModuleDescriptionParserConfigure.h.in 
   ${ModuleDescriptionParser_BINARY_DIR}/ModuleDescriptionParserConfigure.h
+)
+
+CONFIGURE_FILE(
+  ${ModuleDescriptionParser_SOURCE_DIR}/ModuleDescriptionParserConfig.cmake.in 
+  ${ModuleDescriptionParser_BINARY_DIR}/ModuleDescriptionParserConfig.cmake 
 )
 
 SUBDIRS(Testing)

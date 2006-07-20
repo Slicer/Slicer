@@ -1,0 +1,3 @@
+# The ITK source tree.
+SET(ModuleDescriptionParser_SOURCE_DIR "@ModuleDescriptionParser_SOURCE_DIR@")
+SET(ModuleDescriptionParser_BINARY_DIR "@ModuleDescriptionParser_BINARY_DIR@")
