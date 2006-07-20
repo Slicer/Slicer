@@ -25,19 +25,19 @@
  * Utility procedures for strings
  *********************/
 
-bool
+static bool
 startsWithValidVariableChar(std::string &s)
 {
   return (s.find_first_of("_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ") == 0);
 }
 
-bool
+static bool
 validVariable(std::string &s)
 {
   return (startsWithValidVariableChar(s) && s.find_first_not_of("_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789") == std::string::npos);
 }
 
-void
+static void
 replaceSubWithSub(std::string& s, const char *o, const char  *n)
 {
   if (s.size())
@@ -52,7 +52,7 @@ replaceSubWithSub(std::string& s, const char *o, const char  *n)
     }
 }
 
-void
+static void
 trimLeading(std::string& s, const char* extraneousChars = " \t\n")
 {
   if (s.size())
@@ -69,7 +69,7 @@ trimLeading(std::string& s, const char* extraneousChars = " \t\n")
     }
 }
 
-void
+static void
 trimTrailing(std::string& s, const char* extraneousChars = " \t\n")
 {
   if (s.size())
@@ -86,7 +86,7 @@ trimTrailing(std::string& s, const char* extraneousChars = " \t\n")
     }
 }
 
-void
+static void
 trimLeadingAndTrailing(std::string& s, const char* extraneousChars = " \t\n")
 {
   trimLeading(s, extraneousChars);
