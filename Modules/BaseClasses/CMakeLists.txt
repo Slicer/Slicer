@@ -33,6 +33,7 @@ INCLUDE_DIRECTORIES(
   ${MRML_SOURCE_DIR}
   ${MRML_BINARY_DIR}
   ${ModuleDescriptionParser_SOURCE_DIR}
+  ${ModuleDescriptionParser_BINARY_DIR}
   ${VTK_INCLUDE_DIR}
   )
 

@@ -15,6 +15,7 @@ INCLUDE_DIRECTORIES (${TCLAP_DIR}/include)
 IF(ModuleDescriptionParser_SOURCE_DIR)
   INCLUDE_DIRECTORIES(
   ${ModuleDescriptionParser_SOURCE_DIR}
+  ${ModuleDescriptionParser_BINARY_DIR}
   )
 ELSE(ModuleDescriptionParser_SOURCE_DIR)
   INCLUDE_DIRECTORIES(

@@ -19,7 +19,7 @@
 #ifndef __ModuleDescriptionParserWin32Header_h
 #define __ModuleDescriptionParserWin32Header_h
 
-//#include <ModuleDescriptionParserConfigure.h>
+#include <ModuleDescriptionParserConfigure.h>
 
 #if defined(WIN32) && !defined(ModuleDescriptionParser_STATIC)
 #if defined(ModuleDescriptionParser_EXPORTS)

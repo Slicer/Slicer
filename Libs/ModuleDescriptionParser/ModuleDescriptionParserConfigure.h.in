@@ -3,7 +3,7 @@
  * These values should only change when the target compile platform changes.
  */
 
-#if defined(WIN32) && !defined(MRMIDIO_STATIC)
+#if defined(WIN32) && !defined(MODULEDESCRIPTIONPARSER_STATIC)
 #pragma warning ( disable : 4275 )
 #endif
 
@@ -16,5 +16,5 @@
 
 #cmakedefine BUILD_SHARED_LIBS
 #ifndef BUILD_SHARED_LIBS
-#define MRMLIDIO_STATIC
+#define MODULEDESCRIPTIONPARSER_STATIC
 #endif

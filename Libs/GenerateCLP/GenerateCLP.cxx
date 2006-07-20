@@ -20,7 +20,7 @@
    include file defines a macro PARSE_ARGS. This macro generates the
    declarations for each command line argument and generates code to
    parse the command line. In addition to user specified coammnd line
-   arguments, cod eto echo the xml file and code to print the command
+   arguments, code to echo the xml file and code to print the command
    line arguments is also generated.
 
    Typical usage is:

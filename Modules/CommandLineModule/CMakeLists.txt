@@ -32,6 +32,7 @@ INCLUDE_DIRECTORIES(
   ${ModulesBaseClasses_SOURCE_DIR}
   ${ModulesBaseClasses_BINARY_DIR}
   ${ModuleDescriptionParser_SOURCE_DIR}
+  ${ModuleDescriptionParser_BINARY_DIR}
   ${CommandLineModule_SOURCE_DIR}
   ${CommandLineModule_BINARY_DIR}
   ${SlicerBase_SOURCE_DIR}
