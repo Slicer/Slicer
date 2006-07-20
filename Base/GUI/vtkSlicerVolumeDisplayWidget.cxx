@@ -210,6 +210,7 @@ void vtkSlicerVolumeDisplayWidget::RemoveWidgetObservers ( ) {
     this->WindowLevelThresholdEditor->RemoveObservers(vtkKWWindowLevelThresholdEditor::ValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->WindowLevelThresholdEditor->RemoveObservers(vtkKWWindowLevelThresholdEditor::ValueStartChangingEvent, (vtkCommand *)this->GUICallbackCommand );
 
+    this->WindowLevelThresholdEditor->SetImageData(NULL);
 }
 
 
