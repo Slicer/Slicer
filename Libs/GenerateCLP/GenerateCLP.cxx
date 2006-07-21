@@ -545,7 +545,8 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
   sout << "    TCLAP::CmdLine commandLine (" << EOL << std::endl;
   sout << "      argv[0]," << EOL << std::endl;
   sout << "      " << "\"" << module.GetDescription() << "\"," << EOL << std::endl;
-  sout << "      " << "\"$Revision: 957 $\" );" << EOL << std::endl << EOL << std::endl;
+  sout << "      " << "\"" << module.GetVersion() << "\"";
+  sout << " );" << EOL << std::endl << EOL << std::endl;
   sout << "      itksys_ios::ostringstream msg;" << EOL << std::endl;
 
   // Second pass generates argument declarations
