@@ -3,8 +3,8 @@
   <category>registration</category>
   <title>Test CLP</title>
   <description>Registers two images together using a rigid transform and MI</description>
-  <version>1.0</version>
-  <documentationurl></documentationurl>
+  <version>0.1.0.$Revision$(alpha)</version>
+  <documentation-url></documentation-url>
   <license></license>
   <contributor>Daniel Blezek</contributor>
 

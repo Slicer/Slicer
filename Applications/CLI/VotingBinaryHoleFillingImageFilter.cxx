@@ -3,8 +3,8 @@
   Program:   Insight Segmentation & Registration Toolkit
   Module:    $RCSfile: VotingBinaryHoleFillingImageFilter.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/20 13:27:52 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date$
+  Version:   $Revision$
 
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.

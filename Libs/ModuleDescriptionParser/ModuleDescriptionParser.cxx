@@ -756,7 +756,7 @@ endElement(void *userData, const char *element)
     trimLeadingAndTrailing(temp);
     ps->CurrentDescription.SetVersion(temp);
     }
-  else if (name == "documentationurl")
+  else if (name == "documentation-url")
     {
     std::string temp = ps->LastData[ps->Depth];
     trimLeadingAndTrailing(temp);

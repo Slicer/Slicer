@@ -3,8 +3,8 @@
   <category>Filtering.Image Enhancment</category>
   <title>Anisotropic Diffusion</title>
   <description>Runs gradient anisotropic diffusion on a volume</description>
-  <version>1.0</version>
-  <documentationurl></documentationurl>
+  <version>0.1.0.$Revision$(alpha)</version>
+  <documentation-url></documentation-url>
   <license></license>
   <contributor>Bill Lorensen</contributor>
 

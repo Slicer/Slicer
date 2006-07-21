@@ -9,8 +9,8 @@
   <description>
 Create a checkerboard volume of two images.
   </description>
-  <version>1.0</version>
-  <documentationurl></documentationurl>
+  <version>0.1.0.$Revision$(alpha)</version>
+  <documentation-url></documentation-url>
   <license></license>
   <contributor>Bill Lorensen</contributor>
   <parameters>

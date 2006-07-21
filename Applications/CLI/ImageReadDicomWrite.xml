@@ -3,8 +3,8 @@
   <category>filtering</category>
   <title>Create a DICOM Series</title>
   <description>Create a DICOM Series</description>
-  <version>1.0</version>
-  <documentationurl></documentationurl>
+  <version>0.1.0.$Revision$(alpha)</version>
+  <documentation-url></documentation-url>
   <license></license>
   <contributor>Bill Lorensen</contributor>
 

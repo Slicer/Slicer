@@ -4,7 +4,7 @@
   <title>NAMIC sample registration</title>
   <description>Registers two images together using a rigid transform and MI</description>
   <version>1.0</version>
-  <documentationurl></documentationurl>
+  <documentation-url></documentation-url>
   <license></license>
   <contributor>Daniel Blezek</contributor>
 

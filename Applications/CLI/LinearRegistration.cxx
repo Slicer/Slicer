@@ -3,8 +3,8 @@
   Program:   Registration stand-alone
   Module:    $RCSfile: $
   Language:  C++
-  Date:      $Date: $
-  Version:   $Revision: $
+  Date:      $Date$
+  Version:   $Revision$
 
 =========================================================================*/
 #include <stdio.h>

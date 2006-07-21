@@ -1,10 +1,10 @@
 /*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit
-  Module:    $HeadURL: http://www.na-mic.org:8000/svn/Slicer3/trunk/Applications/CLI/CheckerBoardImageFilter.cxx $
+  Module:    $HeadURL$
   Language:  C++
-  Date:      $Date: 2006-06-22 15:21:32 -0400 (Thu, 22 Jun 2006) $
-  Version:   $Revision: 662 $
+  Date:      $Date$
+  Version:   $Revision$
 
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.

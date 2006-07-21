@@ -14,8 +14,8 @@ of gray-level outliers. MedianImageFilter computes the value of each output
 pixel as the statistical median of the neighborhood of values around the
 corresponding input pixel.
   </description>
-  <version>1.0</version>
-  <documentationurl></documentationurl>
+  <version>0.1.0.$Revision$(alpha)</version>
+  <documentation-url></documentation-url>
   <license></license>
   <contributor>Bill Lorensen</contributor>
   <parameters>

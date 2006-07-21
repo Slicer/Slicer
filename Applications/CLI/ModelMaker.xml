@@ -7,7 +7,7 @@ Create 3D surface models from segmented data.
 Imported from Slicer 2.
 </description>
   <version>3.0</version>
-  <documentationurl>http://www.slicer.org</documentationurl>
+  <documentation-url>http://www.slicer.org</documentation-url>
   <license>slicer3</license>
   <contributor>Nicole Aucoin</contributor>
 <parameters>
