@@ -213,7 +213,7 @@ runcmd svn checkout http://www.na-mic.org:8000/svn/Slicer3/trunk Slicer3
 
 # build the lib with options
 cd $::SLICER_HOME
-set cmd "Scripts/genlib.tcl $SLICER_LIB"
+set cmd "sh $::SLICER_HOME/Scripts/genlib.tcl $SLICER_LIB"
 if { $::GETBUILDTEST(release) != "" } {
    append cmd " $::GETBUILDTEST(release)"
 } 
@@ -221,6 +221,7 @@ if { $::GETBUILDTEST(update) != "" } {
    append cmd " $::GETBUILDTEST(update)"
 } 
 eval runcmd $cmd
+
 
 # build the slicer
 cd $::SLICER_BUILD
@@ -230,9 +231,16 @@ runcmd $::CMAKE \
         -DKWWidgets_DIR:FILEPATH=$SLICER_LIB/KWWidgets-build \
         $SLICER_HOME
 
-runcmd make
-
-runcmd make $::GETBUILDTEST(test-type)
-
-runcmd make package
+if { $isWindows } {
+    if { $MSVC6 } {
+        eval runcmd $::MAKE Slicer3.dsw /MAKE $::GETBUILDTEST(test-type)
+        eval runcmd $::MAKE Slicer3.dsw /MAKE package
+    } else {
+        runcmd $::MAKE Slicer3.SLN /build $::VTK_BUILD_TYPE $::GETBUILDTEST(test-type)
+        runcmd $::MAKE Slicer3.SLN /build $::VTK_BUILD_TYPE package
+    }
+} else {
+    runcmd $::MAKE $::GETBUILDTEST(test-type)
+    runcmd $::MAKE package
+}
 

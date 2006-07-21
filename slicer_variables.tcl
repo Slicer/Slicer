@@ -294,12 +294,23 @@ switch $::tcl_platform(os) {
 
         #
         ## for Visual Studio 7.1:
-        # - automatically use newest if available
+        # - automatically use newer if available
         #
         if { [file exists "c:/Program Files/Microsoft Visual Studio .NET 2003/Common7/IDE/devenv.exe"] } {
             set ::GENERATOR "Visual Studio 7 .NET 2003" 
             set ::MAKE "c:/Program\ Files/Microsoft\ Visual\ Studio\ .NET 2003/Common7/IDE/devenv"
             set ::COMPILER_PATH "c:/Program\ Files/Microsoft\ Visual\ Studio\ .NET 2003/Vc7/bin"
+        }
+
+        #
+        ## for Visual Studio 8
+        # - automatically use newest if available
+        #
+        if { [file exists "c:/Program Files/Microsoft Visual Studio 8/Common7/IDE/VCExpress.exe"] } {
+            set ::GENERATOR "Visual Studio 8 2005" 
+        
+            set ::MAKE "c:/Program Files/Microsoft Visual Studio 8/Common7/IDE/VCExpress.exe"
+            set ::COMPILER_PATH "c:/Program Files/Microsoft Visual Studio 8/VC/bin"
         }
 
         set ::COMPILER "cl"

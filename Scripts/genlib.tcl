@@ -39,10 +39,6 @@ if {[info exists ::env(SVN)]} {
     set ::SVN svn
 }
 
-# when using this on window, some things will have to be run from the cygwin terminal
-set winMsg "Sorry, this isn't all automated for windows. Open a cygwin terminal and do the following:\n"
-
-
 
 ################################################################################
 #
@@ -53,7 +49,8 @@ proc Usage { {msg ""} } {
     global SLICER
     
     set msg "$msg\nusage: genlib \[options\] \[target\]"
-    set msg "$msg\n  \[target\] is determined automatically if not specified"
+    set msg "$msg\n  \[target\] is the SLICER_LIB directory"
+    set msg "$msg\n             and is determined automatically if not specified"
     set msg "$msg\n  \[options\] is one of the following:"
     set msg "$msg\n   --help : prints this message and exits"
     set msg "$msg\n   --clean : delete the target first"
@@ -248,11 +245,11 @@ if { ![file exists $::CMAKE] || $::GENLIB(update) } {
 
 
     if {$isWindows} {
-        puts stderr "Slicer2.6-Lib-win32.zip did not download and unzip correctly."
+        puts stderr "Slicer2.6-Lib-win32.zip did not download and unzip CMAKE correctly."
         exit
     } else {
         runcmd $::CVS -d :pserver:anonymous:cmake@www.cmake.org:/cvsroot/CMake login
-        runcmd $::CVS -z3 -d :pserver:anonymous@www.cmake.org:/cvsroot/CMake checkout -r $::CMAKE_TAG CMake
+        runcmd $::CVS -q -z3 -d :pserver:anonymous@www.cmake.org:/cvsroot/CMake checkout -r $::CMAKE_TAG CMake
 
         cd $::CMAKE_PATH
         if { $isSolaris } {
@@ -274,7 +271,7 @@ if { ![file exists $::CMAKE] || $::GENLIB(update) } {
 if { ![file exists $::TCL_TEST_FILE] || $::GENLIB(update) } {
 
     if {$isWindows} {
-        puts stderr "Slicer2.6-Lib-win32.zip did not download and unzip correctly."
+        puts stderr "Slicer2.6-Lib-win32.zip did not download and unzip Tcl correctly."
         exit
     }
 
@@ -282,7 +279,7 @@ if { ![file exists $::TCL_TEST_FILE] || $::GENLIB(update) } {
     cd $SLICER_LIB/tcl
 
     runcmd $::CVS -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer login
-    runcmd $::CVS -z3 -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer checkout -r $::TCL_TAG tcl
+    runcmd $::CVS -q -z3 -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer checkout -r $::TCL_TAG tcl
 
     if {$isWindows} {
         # can't do windows
@@ -299,7 +296,7 @@ if { ![file exists $::TK_TEST_FILE] || $::GENLIB(update) } {
     cd $SLICER_LIB/tcl
 
     runcmd $::CVS -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer login
-    runcmd $::CVS -z3 -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer checkout -r $::TK_TAG tk
+    runcmd $::CVS -q -z3 -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer checkout -r $::TK_TAG tk
 
     if {$isDarwin} {
         if { ![file exists $SLICER_HOME/isPatched] } {
@@ -332,7 +329,7 @@ if { ![file exists $::ITCL_TEST_FILE] || $::GENLIB(update) } {
     cd $SLICER_LIB/tcl
 
     runcmd $::CVS -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer login
-    runcmd $::CVS -z3 -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer checkout -r $::ITCL_TAG incrTcl
+    runcmd $::CVS -q -z3 -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer checkout -r $::ITCL_TAG incrTcl
 
     cd $SLICER_LIB/tcl/incrTcl
 
@@ -357,7 +354,7 @@ if { ![file exists $::IWIDGETS_TEST_FILE] || $::GENLIB(update) } {
     cd $SLICER_LIB/tcl
 
     runcmd $::CVS -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer login
-    runcmd $::CVS -z3 -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer checkout -r $::IWIDGETS_TAG iwidgets
+    runcmd $::CVS -q -z3 -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer checkout -r $::IWIDGETS_TAG iwidgets
 
 
     if {$isWindows} {
@@ -381,7 +378,7 @@ if { ![file exists $::BLT_TEST_FILE] || $::GENLIB(update) } {
     cd $SLICER_LIB/tcl
     
     runcmd $::CVS -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer login
-    runcmd $::CVS -z3 -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer co -r $::BLT_TAG blt 
+    runcmd $::CVS -q -z3 -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer co -r $::BLT_TAG blt 
 
     if { $isWindows } {
         # can't do Windows
@@ -421,7 +418,7 @@ if { ![file exists $::VTK_TEST_FILE] || $::GENLIB(update) } {
     cd $SLICER_LIB
 
     runcmd $::CVS -d :pserver:anonymous:vtk@public.kitware.com:/cvsroot/VTK login
-    runcmd $::CVS -z3 -d :pserver:anonymous@public.kitware.com:/cvsroot/VTK checkout -r $::VTK_TAG VTK
+    runcmd $::CVS -q -z3 -d :pserver:anonymous@public.kitware.com:/cvsroot/VTK checkout -r $::VTK_TAG VTK
 
     # Andy's temporary hack to get around wrong permissions in VTK cvs repository
     # catch statement is to make file attributes work with RH 7.3
@@ -523,7 +520,7 @@ if { ![file exists $::KWWidgets_TEST_FILE] || $::GENLIB(update) } {
     cd $SLICER_LIB
 
     runcmd $::CVS -d :pserver:anoncvs:@www.kwwidgets.org:/cvsroot/KWWidgets login
-    runcmd $::CVS -z3 -d :pserver:anoncvs@www.kwwidgets.org:/cvsroot/KWWidgets checkout -r $::KWWidgets_TAG KWWidgets
+    runcmd $::CVS -q -z3 -d :pserver:anoncvs@www.kwwidgets.org:/cvsroot/KWWidgets checkout -r $::KWWidgets_TAG KWWidgets
 
     file mkdir $SLICER_LIB/KWWidgets-build
     cd $SLICER_LIB/KWWidgets-build
@@ -561,7 +558,7 @@ if { ![file exists $::ITK_TEST_FILE] || $::GENLIB(update) } {
     cd $SLICER_LIB
 
     runcmd $::CVS -d :pserver:anoncvs:@www.vtk.org:/cvsroot/Insight login
-    runcmd $::CVS -z3 -d :pserver:anoncvs@www.vtk.org:/cvsroot/Insight checkout -r $::ITK_TAG Insight
+    runcmd $::CVS -q -z3 -d :pserver:anoncvs@www.vtk.org:/cvsroot/Insight checkout -r $::ITK_TAG Insight
 
     file mkdir $SLICER_LIB/Insight-build
     cd $SLICER_LIB/Insight-build
@@ -600,7 +597,7 @@ if { ![file exists $::TEEM_TEST_FILE] || $::GENLIB(update) } {
     cd $SLICER_LIB
 
     runcmd $::CVS -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer login 
-    runcmd $::CVS -z3 -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer checkout -r $::TEEM_TAG teem
+    runcmd $::CVS -q -z3 -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer checkout -r $::TEEM_TAG teem
 
     file mkdir $SLICER_LIB/teem-build
     cd $SLICER_LIB/teem-build
