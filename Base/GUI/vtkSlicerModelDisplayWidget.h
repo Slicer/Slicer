@@ -30,6 +30,7 @@
 #include "vtkKWCheckButtonWithLabel.h"
 #include "vtkKWScaleWithLabel.h"
 #include "vtkKWSurfaceMaterialPropertyWidget.h"
+#include "vtkKWChangeColorButton.h"
 
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLModelDisplayNode.h"
@@ -93,6 +94,7 @@ public:
   vtkKWCheckButtonWithLabel *VisibilityButton;
   vtkKWScaleWithLabel  *OpacityScale;
   vtkKWSurfaceMaterialPropertyWidget *SurfaceMaterialPropertyWidget;
+  vtkKWChangeColorButton *ChangeColorButton;
   
 private:
 

@@ -123,15 +123,18 @@ void vtkSlicerModelDisplayWidget::ProcessWidgetEvents ( vtkObject *caller,
     }
   
   if (this->ModelDisplayNodeID != NULL && 
-    event != this->SurfaceMaterialPropertyWidget->GetPropertyChangingEvent() &&
-    event != vtkKWScale::ScaleValueChangingEvent)
+    !(vtkKWSurfaceMaterialPropertyWidget::SafeDownCast(caller) == this->SurfaceMaterialPropertyWidget && event == this->SurfaceMaterialPropertyWidget->GetPropertyChangedEvent()) &&
+    !(vtkKWScale::SafeDownCast(caller) == this->OpacityScale->GetWidget() && event == vtkKWScale::ScaleValueChangingEvent) &&
+    !(vtkKWScale::SafeDownCast(caller) == this->OpacityScale->GetWidget() && event == vtkKWScale::ScaleValueChangedEvent))
     {
     this->MRMLScene->SaveStateForUndo(this->MRMLScene->GetNodeByID(this->ModelDisplayNodeID));
     }
   
   this->UpdateMRML();
+
   if ((event == this->SurfaceMaterialPropertyWidget->GetPropertyChangingEvent() ||
-       event == this->SurfaceMaterialPropertyWidget->GetPropertyChangedEvent()) &&
+       event == this->SurfaceMaterialPropertyWidget->GetPropertyChangedEvent() ||
+       event == vtkKWChangeColorButton::ColorChangedEvent) &&
       this->ModelDisplayNodeID != NULL)
     {
       vtkMRMLNode *node = this->MRMLScene->GetNodeByID(this->ModelDisplayNodeID);
@@ -239,6 +242,7 @@ void vtkSlicerModelDisplayWidget::UpdateWidget()
       if (displayNode->GetProperty() != NULL)
         {
         this->SurfaceMaterialPropertyWidget->SetProperty(displayNode->GetProperty());
+        this->ChangeColorButton->SetColor(displayNode->GetProperty()->GetColor());
         }
       }
     
@@ -260,6 +264,8 @@ void vtkSlicerModelDisplayWidget::UpdateMRML()
       displayNode->SetVisibility(this->VisibilityButton->GetWidget()->GetSelectedState());
       displayNode->SetOpacity(this->OpacityScale->GetWidget()->GetValue());
       displayNode->SetProperty(this->SurfaceMaterialPropertyWidget->GetProperty());
+      displayNode->GetProperty()->SetColor(this->ChangeColorButton->GetColor());
+
       }
     
     return;
@@ -274,7 +280,10 @@ void vtkSlicerModelDisplayWidget::RemoveWidgetObservers ( ) {
   this->VisibilityButton->GetWidget()->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   
   this->OpacityScale->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueChangingEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->OpacityScale->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueStartChangingEvent, (vtkCommand *)this->GUICallbackCommand );
   this->OpacityScale->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+
+  this->ChangeColorButton->AddObserver(vtkKWChangeColorButton::ColorChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 
   this->SurfaceMaterialPropertyWidget->RemoveObservers(this->SurfaceMaterialPropertyWidget->GetPropertyChangedEvent(), (vtkCommand *)this->GUICallbackCommand );
   this->SurfaceMaterialPropertyWidget->RemoveObservers(this->SurfaceMaterialPropertyWidget->GetPropertyChangingEvent(), (vtkCommand *)this->GUICallbackCommand );
@@ -340,6 +349,16 @@ void vtkSlicerModelDisplayWidget::CreateWidget ( )
   this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
                  this->OpacityScale->GetWidgetName() );
 
+  this->ChangeColorButton = vtkKWChangeColorButton::New();
+  this->ChangeColorButton->SetParent ( modelDisplayFrame->GetFrame() );
+  this->ChangeColorButton->Create ( );
+  this->ChangeColorButton->SetColor(0.0, 1.0, 0.0);
+  this->ChangeColorButton->LabelOutsideButtonOn();
+  this->ChangeColorButton->SetLabelPositionToRight();
+  this->ChangeColorButton->SetBalloonHelpString("set model opacity value.");
+  this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
+                 this->ChangeColorButton->GetWidgetName() );
+
   this->SurfaceMaterialPropertyWidget = vtkKWSurfaceMaterialPropertyWidget::New();
   this->SurfaceMaterialPropertyWidget->SetParent ( modelDisplayFrame->GetFrame() );
   this->SurfaceMaterialPropertyWidget->Create ( );
@@ -350,11 +369,14 @@ void vtkSlicerModelDisplayWidget::CreateWidget ( )
   // add observers
   this->ModelSelectorWidget->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
   
+  this->OpacityScale->GetWidget()->AddObserver(vtkKWScale::ScaleValueStartChangingEvent, (vtkCommand *)this->GUICallbackCommand );
   this->OpacityScale->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangingEvent, (vtkCommand *)this->GUICallbackCommand );
   this->OpacityScale->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   
   this->VisibilityButton->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   
+  this->ChangeColorButton->AddObserver(vtkKWChangeColorButton::ColorChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+
   this->SurfaceMaterialPropertyWidget->AddObserver(this->SurfaceMaterialPropertyWidget->GetPropertyChangedEvent(), (vtkCommand *)this->GUICallbackCommand );
   this->SurfaceMaterialPropertyWidget->AddObserver(this->SurfaceMaterialPropertyWidget->GetPropertyChangingEvent(), (vtkCommand *)this->GUICallbackCommand );
 
