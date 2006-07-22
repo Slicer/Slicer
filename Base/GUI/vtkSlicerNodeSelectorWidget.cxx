@@ -238,6 +238,13 @@ void vtkSlicerNodeSelectorWidget::UpdateMenu()
         this->InvokeEvent(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, NULL);
         }
       }
+    else
+      {
+      this->GetWidget()->GetWidget()->SetValue("");
+      this->SelectedID = std::string("");
+      this->InvokeEvent(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, NULL);
+      }
+      
 }
 
 //----------------------------------------------------------------------------

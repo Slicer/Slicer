@@ -122,7 +122,7 @@ void vtkSlicerVolumeDisplayWidget::ProcessWidgetEvents ( vtkObject *caller,
     // we need to create one
     //
 
-    if (!displayNode)
+    if (VolumeNodeID != NULL && displayNode==NULL)
       {
       displayNode = vtkMRMLVolumeDisplayNode::New ();
       displayNode->SetScene(this->MRMLScene);

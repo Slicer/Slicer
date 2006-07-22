@@ -16,6 +16,7 @@ Version:   $Revision: 1.3 $
 #include <sstream>
 
 #include "vtkObjectFactory.h"
+#include "vtkProperty.h"
 
 #include "vtkMRMLModelDisplayNode.h"
 #include "vtkMRMLScene.h"
@@ -52,7 +53,8 @@ vtkMRMLNode* vtkMRMLModelDisplayNode::CreateNodeInstance()
 vtkMRMLModelDisplayNode::vtkMRMLModelDisplayNode()
 {
 
-  Property = NULL;
+  this->Property = NULL;
+  this->Property = vtkProperty::New();
 
   // Strings
   this->Color = NULL;
@@ -229,7 +231,7 @@ void vtkMRMLModelDisplayNode::Copy(vtkMRMLNode *anode)
   this->SetScalarVisibility(node->ScalarVisibility);
   this->SetBackfaceCulling(node->BackfaceCulling);
   this->SetClipping(node->Clipping);
-  this->SetProperty(node->Property);
+  this->Property->DeepCopy(node->Property);
 
 }
 
