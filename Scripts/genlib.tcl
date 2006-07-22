@@ -541,9 +541,9 @@ if { ![file exists $::KWWidgets_TEST_FILE] || $::GENLIB(update) } {
 
     if {$isWindows} {
         if { $MSVC6 } {
-            runcmd $::MAKE KWWidgetsITK.dsw /MAKE "ALL_BUILD - $::VTK_BUILD_TYPE"
+            runcmd $::MAKE KWWidgets.dsw /MAKE "ALL_BUILD - $::VTK_BUILD_TYPE"
         } else {
-            runcmd $::MAKE KWWidgetsITK.SLN /build  $::VTK_BUILD_TYPE
+            runcmd $::MAKE KWWidgets.SLN /build  $::VTK_BUILD_TYPE
         }
     } else {
         eval runcmd $::MAKE 
