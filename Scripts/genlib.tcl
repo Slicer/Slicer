@@ -226,9 +226,9 @@ if { ![file exists $SLICER_LIB] } {
 
 if {$isWindows} {
     if {![file exists $::CMAKE]} {
-        cd $SLICER_HOME
-        runcmd curl -k -O http://www.na-mic.org/Slicer/Download/External/Slicer2.6-Lib-win32.zip
-        runcmd unzip ./Slicer2.6-Lib-win32.zip
+        cd $SLICER_LIB
+        runcmd curl -k -O http://www.na-mic.org/Slicer/Download/External/Slicer3-lib_win32.zip
+        runcmd unzip ./Slicer3-lib_win32.zip
     }
 }
 
@@ -245,8 +245,10 @@ if { ![file exists $::CMAKE] || $::GENLIB(update) } {
 
 
     if {$isWindows} {
-        puts stderr "Slicer2.6-Lib-win32.zip did not download and unzip CMAKE correctly."
+      if { ! $::GENLIB(update) } {
+        puts stderr "Slicer3-lib_win32.zip did not download and unzip CMAKE correctly."
         exit
+      }
     } else {
         runcmd $::CVS -d :pserver:anonymous:cmake@www.cmake.org:/cvsroot/CMake login
         runcmd $::CVS -q -z3 -d :pserver:anonymous@www.cmake.org:/cvsroot/CMake checkout -r $::CMAKE_TAG CMake
@@ -271,8 +273,10 @@ if { ![file exists $::CMAKE] || $::GENLIB(update) } {
 if { ![file exists $::TCL_TEST_FILE] || $::GENLIB(update) } {
 
     if {$isWindows} {
-        puts stderr "Slicer2.6-Lib-win32.zip did not download and unzip Tcl correctly."
+      if { ! $::GENLIB(update) } {
+        puts stderr "Slicer3-lib_win32.zip did not download and unzip Tcl correctly."
         exit
+      }
     }
 
     file mkdir $SLICER_LIB/tcl
@@ -399,7 +403,7 @@ if { ![file exists $::BLT_TEST_FILE] || $::GENLIB(update) } {
         cd $SLICER_LIB/tcl/blt
         runcmd ./configure --with-tcl=$SLICER_LIB/tcl/tcl/unix --with-tk=$SLICER_LIB/tcl-build --prefix=$SLICER_LIB/tcl-build --enable-shared --x-includes=/usr/X11R6/include --with-cflags=-fno-common
         
-    eval runcmd $::MAKE
+        eval runcmd $::MAKE
         eval runcmd $::MAKE install
     } else {
         cd $SLICER_LIB/tcl/blt
