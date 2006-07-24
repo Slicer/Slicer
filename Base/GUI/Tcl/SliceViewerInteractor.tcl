@@ -193,8 +193,12 @@ proc SliceViewerHandleEvent {sliceGUI event} {
       puts "Configure: Size $size"
       foreach {w h} $size {}
       if { $w < $h } { set min $w } else { set min $h }
-      set oldDim [$sliceNode GetDimensions]
-      $sliceNode SetDimensions $min $min [lindex $oldDim 2]
+      if { $w == "10" && $h == "10" } {
+        puts "ignoring bogus resize"
+      } else {
+        set oldDim [$sliceNode GetDimensions]
+        $sliceNode SetDimensions $min $min [lindex $oldDim 2]
+      }
     }
     EnterEvent { 
       $renderWidget CornerAnnotationVisibilityOn
