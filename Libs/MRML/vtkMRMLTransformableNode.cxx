@@ -49,7 +49,7 @@ void vtkMRMLTransformableNode::WriteXML(ostream& of, int nIndent)
 
   if (this->TransformNodeID != NULL) 
     {
-    of << indent << "transformNodeRef=/'" << this->TransformNodeID << "/' ";
+    of << indent << "transformNodeRef=\"" << this->TransformNodeID << "\" ";
     }
 }
 
