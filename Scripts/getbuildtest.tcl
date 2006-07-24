@@ -240,7 +240,6 @@ if { $isWindows } {
         runcmd $::MAKE Slicer3.SLN /build $::VTK_BUILD_TYPE package
     }
 } else {
-    runcmd $::MAKE $::GETBUILDTEST(test-type)
-    runcmd $::MAKE package
+    eval runcmd $::MAKE $::GETBUILDTEST(test-type)
+    eval runcmd $::MAKE package
 }
-
