@@ -38,6 +38,7 @@
 #include "vtkMRMLSliceNode.h"
 #include "vtkMRMLSliceCompositeNode.h"
 #include "vtkSlicerSliceLayerLogic.h"
+#include "vtkMRMLModelNode.h"
 
 #include "vtkImageBlend.h"
 
@@ -82,6 +83,10 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLogic : public vtkSlicerLogic
   void SetForegroundOpacity (double ForegroundOpacity);
 
   // Description:
+  // Model slice plane 
+  vtkGetObjectMacro (SliceModelNode, vtkMRMLModelNode);
+
+  // Description:
   // The compositing filter
   // TODO: this will eventually be generalized to a per-layer compositing function
   vtkGetObjectMacro (Blend, vtkImageBlend);
@@ -115,6 +120,8 @@ protected:
   vtkSlicerSliceLayerLogic *ForegroundLayer;
   double ForegroundOpacity;
   vtkImageBlend *Blend;
+
+  vtkMRMLModelNode *SliceModelNode;
   
 };
 

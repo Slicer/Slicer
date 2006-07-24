@@ -288,16 +288,19 @@ the xml to do what I need...
     //   helper classes and nodes the first time the process MRML and
     //   Logic events)
     vtkSlicerSliceLogic *sliceLogic0 = vtkSlicerSliceLogic::New ( );
+    sliceLogic0->SetName("Red");
     sliceLogic0->SetMRMLScene ( scene );
     sliceLogic0->ProcessLogicEvents ();
     sliceLogic0->ProcessMRMLEvents ();
     sliceLogic0->SetAndObserveMRMLScene ( scene );
     vtkSlicerSliceLogic *sliceLogic1 = vtkSlicerSliceLogic::New ( );
+    sliceLogic1->SetName("Yellow");
     sliceLogic1->SetMRMLScene ( scene );
     sliceLogic1->ProcessLogicEvents ();
     sliceLogic1->ProcessMRMLEvents ();
     sliceLogic1->SetAndObserveMRMLScene ( scene );
     vtkSlicerSliceLogic *sliceLogic2 = vtkSlicerSliceLogic::New ( );
+    sliceLogic2->SetName("Green");
     sliceLogic2->SetMRMLScene ( scene );
     sliceLogic2->ProcessLogicEvents ();
     sliceLogic2->ProcessMRMLEvents ();

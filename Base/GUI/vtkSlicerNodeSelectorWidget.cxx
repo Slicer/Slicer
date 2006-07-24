@@ -288,6 +288,7 @@ void vtkSlicerNodeSelectorWidget::ProcessNewNodeCommand(const char *className, c
     node->SetName(ss.str().c_str());
     node->SetID(this->MRMLScene->GetUniqueIDByClass(className));
     this->MRMLScene->AddNode(node);
+    node->Delete();
     }
 
   this->SetSelected(node);

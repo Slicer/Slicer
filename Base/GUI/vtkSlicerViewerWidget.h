@@ -78,11 +78,14 @@ public:
   vtkSetMacro (RenderPending, int);
   vtkGetMacro (RenderPending, int);
 
+  // Description:
+  // Updates Actors based on models in the scene
+  void UpdateFromMRML();
+
+
 protected:
   vtkSlicerViewerWidget();
   ~vtkSlicerViewerWidget();
-
-  void UpdateFromMRML();
 
   // Description:
   // Create the widget.

@@ -14,8 +14,14 @@
 
 #include "vtkObjectFactory.h"
 #include "vtkCallbackCommand.h"
+#include "vtkPlaneSource.h"
+#include "vtkPoints.h"
+
+#include "vtkMRMLModelDisplayNode.h"
 
 #include "vtkSlicerSliceLogic.h"
+
+#include <sstream>
 
 vtkCxxRevisionMacro(vtkSlicerSliceLogic, "$Revision: 1.9.12.1 $");
 vtkStandardNewMacro(vtkSlicerSliceLogic);
@@ -30,6 +36,8 @@ vtkSlicerSliceLogic::vtkSlicerSliceLogic()
   this->ForegroundOpacity = 0.5;
   this->Blend = vtkImageBlend::New();
   this->SetForegroundOpacity(this->ForegroundOpacity);
+  this->SliceModelNode = NULL;
+  this->Name = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -50,6 +58,12 @@ vtkSlicerSliceLogic::~vtkSlicerSliceLogic()
     {
     this->SetAndObserveMRML( vtkObjectPointer(&this->SliceCompositeNode), NULL );
     }
+  if (this->SliceModelNode != NULL)
+    {
+    this->SliceModelNode->Delete();
+    }
+  this->SetName(NULL);
+
 }
 
 
@@ -117,6 +131,37 @@ void vtkSlicerSliceLogic::ProcessLogicEvents()
     vtkSlicerSliceLayerLogic *layer = vtkSlicerSliceLayerLogic::New();
     this->SetForegroundLayer (layer);
     layer->Delete();
+    }
+
+  // Update slice plane geometry
+  if (this->SliceNode != NULL && this->SliceModelNode != NULL)
+    {
+    vtkPoints *points = this->SliceModelNode->GetPolyData()->GetPoints();
+    unsigned int *dims = this->SliceNode->GetDimensions();
+    vtkMatrix4x4 *xyToRAS = this->SliceNode->GetXYToRAS();
+
+    double inPt[4]={0,0,0,1};
+    double outPt[4];
+    double *outPt3 = outPt;
+
+    xyToRAS->MultiplyPoint(inPt, outPt);
+    points->SetPoint(0, outPt3);
+
+    inPt[0] = dims[0];
+    xyToRAS->MultiplyPoint(inPt, outPt);
+    points->SetPoint(1, outPt3);
+
+    inPt[0] = 0;
+    inPt[1] = dims[1];
+    xyToRAS->MultiplyPoint(inPt, outPt);
+    points->SetPoint(2, outPt3);
+
+    inPt[0] = dims[0];
+    inPt[1] = dims[1];
+    xyToRAS->MultiplyPoint(inPt, outPt);
+    points->SetPoint(3, outPt3);
+
+    this->SliceModelNode->GetPolyData()->Modified();
     }
 
   // This is called when a slice layer is modified, so pass it on
@@ -263,6 +308,38 @@ void vtkSlicerSliceLogic::UpdatePipeline()
       this->Blend->SetOpacity( 1, this->SliceCompositeNode->GetOpacity() );
       }
 
+    if (this->SliceModelNode == NULL)
+      {
+      this->SliceModelNode = vtkMRMLModelNode::New();
+      this->SliceModelNode->SetScene(this->GetMRMLScene());
+
+      // create plane slice
+      vtkPlaneSource *plane = vtkPlaneSource::New();
+      plane->GetOutput()->Update();
+      this->SliceModelNode->SetAndObservePolyData(plane->GetOutput());
+
+      // create display node and set texture
+      vtkMRMLModelDisplayNode *displayNode = vtkMRMLModelDisplayNode::New();
+      displayNode->SetScene(this->GetMRMLScene());
+      displayNode->SetVisibility(0);
+      displayNode->SetOpacity(1);
+      displayNode->SetColor(1,1,1);
+      displayNode->SetAmbient(1);
+      displayNode->SetDiffuse(0);
+      displayNode->SetAndObserveTextureImageData(this->GetImageData());
+      this->MRMLScene->AddNode(displayNode);
+      this->SliceModelNode->SetAndObserveDisplayNodeID(displayNode->GetID());
+      std::stringstream ss;
+      char name[256];
+      ss << this->Name << " Volume Slice";
+      ss.getline(name,256);
+      this->SliceModelNode->SetName(name);
+      this->MRMLScene->AddNode(this->SliceModelNode);
+
+      plane->Delete();
+      this->SliceModelNode->Delete();
+      displayNode->Delete();
+      }
     this->Modified();
     }
 }

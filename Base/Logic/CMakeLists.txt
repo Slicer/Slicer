@@ -67,6 +67,7 @@ TARGET_LINK_LIBRARIES(SlicerBaseLogic
   vtkITK
   vtkCommonTCL
   vtkFilteringTCL
+  vtkGraphicsTCL
   vtkIOTCL
   )
 

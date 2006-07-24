@@ -937,6 +937,7 @@ void vtkSlicerApplicationGUI::BuildMainViewer ( )
         this->ViewerWidget->Create();
         this->ViewerWidget->GetMainViewer()->SetRendererBackgroundColor ( 
               app->GetSlicerTheme()->GetSlicerColors()->ViewerBlue );
+        this->ViewerWidget->UpdateFromMRML();
 
        
         // TODO: this requires a change to KWWidgets

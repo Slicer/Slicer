@@ -57,10 +57,14 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerLogic : public vtkObject
       this->SetAndObserveMRML ( vtkObjectPointer( &this->MRMLScene), mrml );
       }
 
-
   virtual void ProcessMRMLEvents() {};
   virtual void ProcessLogicEvents() {};
 
+  // Description:
+  // Name of this node
+  vtkSetStringMacro(Name);
+  vtkGetStringMacro(Name);
+  
   // Description:
   // Flags to avoid event loops
   // NOTE: don't use the SetMacro or it call modified itself and generate even more events!
@@ -82,6 +86,8 @@ protected:
   void operator=(const vtkSlicerLogic&);
 
   vtkMRMLScene *MRMLScene;
+
+  char *Name;
 
   //BTX
   // a shared set of functions that call the 
