@@ -29,8 +29,7 @@
 
 #include "vtkMatrix4x4.h"
 #include "vtkTransform.h"
-#include "vtkProperty.h" 
-
+#include "vtkImageData.h"
 
 class VTK_MRML_EXPORT vtkMRMLModelDisplayNode : public vtkMRMLNode
 {
@@ -62,16 +61,35 @@ public:
   // Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "ModelDisplay";};
 
-
   // Description:
-  // Name of the model's color, which is defined by a Color node in a MRML file
-  vtkSetStringMacro(Color);
-  vtkGetStringMacro(Color);
-
+  // Model's color (r,g,b)
+  vtkSetVector3Macro(Color, double);
+  vtkGetVector3Macro(Color, double);
+  
   // Description:
   // Opacity of the surface expressed as a number from 0 to 1
-  vtkSetMacro(Opacity, float);
-  vtkGetMacro(Opacity, float);
+  vtkSetMacro(Opacity, double);
+  vtkGetMacro(Opacity, double);
+
+  // Description:
+  // Ambient of the surface expressed as a number from 0 to 100
+  vtkSetMacro(Ambient, double);
+  vtkGetMacro(Ambient, double);
+  
+  // Description:
+  // Diffuse of the surface expressed as a number from 0 to 100
+  vtkSetMacro(Diffuse, double);
+  vtkGetMacro(Diffuse, double);
+  
+  // Description:
+  // Specular of the surface expressed as a number from 0 to 100
+  vtkSetMacro(Specular, double);
+  vtkGetMacro(Specular, double);
+
+  // Description:
+  // Power of the surface expressed as a number from 0 to 100
+  vtkSetMacro(Power, double);
+  vtkGetMacro(Power, double);
 
   // Description:
   // Indicates if the surface is visible
@@ -120,25 +138,38 @@ public:
   // for this model
   vtkGetMacro(LUTName,int);
   vtkSetMacro(LUTName,int);
-    
-  vtkGetObjectMacro(Property, vtkProperty);
-  vtkSetObjectMacro(Property, vtkProperty);
-
+  
+  // Description:
+  // Associated ImageData
+  vtkGetObjectMacro(TextureImageData, vtkImageData);
+  void SetAndObserveTextureImageData(vtkImageData *ImageData);
+  
+  // Description:
+  // alternative method to propagate events generated in Display nodes
+  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
+                                   unsigned long /*event*/, 
+                                   void * /*callData*/ );
+  
 protected:
   vtkMRMLModelDisplayNode();
   ~vtkMRMLModelDisplayNode();
   vtkMRMLModelDisplayNode(const vtkMRMLModelDisplayNode&);
   void operator=(const vtkMRMLModelDisplayNode&);
 
-  // Data
-  vtkProperty *Property;
-
+  vtkSetObjectMacro(TextureImageData, vtkImageData);
+  
+  vtkImageData    *TextureImageData;
+  
   // Strings
-  char *Color;
   int LUTName;
     
   // Numbers
-  float Opacity;
+  double Opacity;
+  double Ambient;
+  double Diffuse;
+  double Specular;
+  double Power;
+  
 
   // Booleans
   int Visibility;
@@ -150,6 +181,8 @@ protected:
 
   // Arrays
   double ScalarRange[2];
+  double Color[3];
+
 
 };
 

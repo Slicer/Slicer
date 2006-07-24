@@ -7,6 +7,7 @@
 
 #include "vtkActor.h"
 #include "vtkProperty.h"
+#include "vtkTexture.h"
 #include "vtkRenderer.h"
 #include "vtkCamera.h"
 #include "vtkPolyDataMapper.h"
@@ -248,8 +249,21 @@ void vtkSlicerViewerWidget::SetModelDisplayProperty(vtkMRMLModelNode *model,  vt
   if (dnode != NULL)
     {
     actor->SetVisibility(dnode->GetVisibility());
-    actor->SetProperty(dnode->GetProperty());
     actor->GetProperty()->SetOpacity(dnode->GetOpacity());
+    actor->GetProperty()->SetAmbient(dnode->GetAmbient());
+    actor->GetProperty()->SetDiffuse(dnode->GetDiffuse());
+    actor->GetProperty()->SetSpecular(dnode->GetSpecular());
+    actor->GetProperty()->SetSpecularPower(dnode->GetPower());
+    if (dnode->GetTextureImageData() != NULL)
+      {
+      if (actor->GetTexture() == NULL)
+        {
+        vtkTexture *texture = vtkTexture::New();
+        actor->SetTexture(texture);
+        texture->Delete();
+        }
+      actor->GetTexture()->SetInput(dnode->GetTextureImageData());
+      }
     }
 }
 

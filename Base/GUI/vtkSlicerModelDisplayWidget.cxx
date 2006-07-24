@@ -1,5 +1,6 @@
 #include "vtkObject.h"
 #include "vtkObjectFactory.h"
+#include "vtkProperty.h"
 
 #include "vtkSlicerModelDisplayWidget.h"
 
@@ -233,17 +234,18 @@ void vtkSlicerModelDisplayWidget::UpdateWidget()
       {
       this->VisibilityButton->GetWidget()->SetSelectedState(displayNode->GetVisibility());
       this->OpacityScale->GetWidget()->SetValue(displayNode->GetOpacity());
-      if (displayNode->GetProperty() == NULL)
+      if (this->SurfaceMaterialPropertyWidget->GetProperty() == NULL)
         {
         vtkProperty *prop = vtkProperty::New();
-        displayNode->SetProperty(prop);
+        this->SurfaceMaterialPropertyWidget->SetProperty(prop);
         prop->Delete();
         }
-      if (displayNode->GetProperty() != NULL)
-        {
-        this->SurfaceMaterialPropertyWidget->SetProperty(displayNode->GetProperty());
-        this->ChangeColorButton->SetColor(displayNode->GetProperty()->GetColor());
-        }
+        
+      this->SurfaceMaterialPropertyWidget->GetProperty()->SetAmbient(displayNode->GetAmbient());
+      this->SurfaceMaterialPropertyWidget->GetProperty()->SetDiffuse(displayNode->GetDiffuse());
+      this->SurfaceMaterialPropertyWidget->GetProperty()->SetSpecular(displayNode->GetSpecular());
+      this->SurfaceMaterialPropertyWidget->GetProperty()->SetSpecularPower(displayNode->GetPower());
+      this->ChangeColorButton->SetColor(displayNode->GetColor());
       }
     
     return;
@@ -263,8 +265,11 @@ void vtkSlicerModelDisplayWidget::UpdateMRML()
       {
       displayNode->SetVisibility(this->VisibilityButton->GetWidget()->GetSelectedState());
       displayNode->SetOpacity(this->OpacityScale->GetWidget()->GetValue());
-      displayNode->SetProperty(this->SurfaceMaterialPropertyWidget->GetProperty());
-      displayNode->GetProperty()->SetColor(this->ChangeColorButton->GetColor());
+      displayNode->SetAmbient(this->SurfaceMaterialPropertyWidget->GetProperty()->GetAmbient());
+      displayNode->SetDiffuse(this->SurfaceMaterialPropertyWidget->GetProperty()->GetDiffuse());
+      displayNode->SetSpecular(this->SurfaceMaterialPropertyWidget->GetProperty()->GetSpecular());
+      displayNode->SetPower(this->SurfaceMaterialPropertyWidget->GetProperty()->GetSpecularPower());
+      displayNode->SetColor(this->ChangeColorButton->GetColor());
 
       }
     

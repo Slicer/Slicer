@@ -16,7 +16,7 @@ Version:   $Revision: 1.3 $
 #include <sstream>
 
 #include "vtkObjectFactory.h"
-#include "vtkProperty.h"
+#include "vtkCallbackCommand.h"
 
 #include "vtkMRMLModelDisplayNode.h"
 #include "vtkMRMLScene.h"
@@ -53,11 +53,10 @@ vtkMRMLNode* vtkMRMLModelDisplayNode::CreateNodeInstance()
 vtkMRMLModelDisplayNode::vtkMRMLModelDisplayNode()
 {
 
-  this->Property = NULL;
-  this->Property = vtkProperty::New();
-
   // Strings
-  this->Color = NULL;
+  this->Color[0] = 0.5;
+  this->Color[1] = 0.5;
+  this->Color[2] = 0.5;
 
   // Numbers
   this->Opacity = 1.0;
@@ -68,26 +67,28 @@ vtkMRMLModelDisplayNode::vtkMRMLModelDisplayNode()
   this->VectorVisibility = 0;
   this->TensorVisibility = 0;
   
+  this->Ambient = 0;
+  this->Diffuse = 100;
+  this->Specular = 0;
+  this->Power = 1;
+  
   // Arrays
   this->ScalarRange[0] = 0;
   this->ScalarRange[1] = 100;
 
   // Scalars
   this->LUTName = -1;
+  
+  this->TextureImageData = NULL;
 
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLModelDisplayNode::~vtkMRMLModelDisplayNode()
 {
-  if (this->Color) 
+  if (this->TextureImageData) 
     {
-    delete [] this->Color;
-    this->Color = NULL;
-    }
-  if (this->Property) 
-    {
-    this->Property->Delete();
+    this->TextureImageData->Delete();
     }
 }
 
@@ -100,9 +101,11 @@ void vtkMRMLModelDisplayNode::WriteXML(ostream& of, int nIndent)
 
   vtkIndent indent(nIndent);
 
-  if (this->Color && strcmp(this->Color, "")) 
+  if (this->Color)
     {
-    of << indent << " color=\"" << this->Color << "\"";
+    of << indent << " color=\"" << this->Color[0] << " "
+      << this->Color[1] << " "
+      << this->Color[2] << "\"";
     }
 
   //if (this->LUTName && strcmp(this->LUTName,""))
@@ -111,34 +114,26 @@ void vtkMRMLModelDisplayNode::WriteXML(ostream& of, int nIndent)
     of << indent << " lutName=\"" << this->LUTName << "\"";
     }
   
-  // Numbers
-  if (this->Opacity != 1.0)
-    {
-    of << indent << " opacity=\"" << this->Opacity << "\"";
-    }
-  if (this->Visibility != 1)
-    {
-    of << indent << " visibility=\"" << (this->Visibility ? "true" : "false") << "\"";
-    }
-  if (this->Clipping != 0)
-    {
-    of << indent << " clipping=\"" << (this->Clipping ? "true" : "false") << "\"";
-    }
-  if (this->BackfaceCulling != 1)
-    {
-    of << indent << " backfaceCulling=\"" << (this->BackfaceCulling ? "true" : "false") << "\"";
-    }
-  if (this->ScalarVisibility != 0)
-    {
-    of << indent << " scalarVisibility=\"" << (this->ScalarVisibility ? "true" : "false") << "\"";
-    }
+  of << indent << " ambient=\"" << this->Ambient << "\"";
 
-  // Arrays
-  if (this->ScalarRange[0] != 0 || this->ScalarRange[1] != 100)
-    {
-    of << indent << " scalarRange=\"" << this->ScalarRange[0] << " "
-       << this->ScalarRange[1] << "\"";
-    }
+  of << indent << " diffuse=\"" << this->Diffuse << "\"";
+
+  of << indent << " specular=\"" << this->Specular << "\"";
+
+  of << indent << " power=\"" << this->Power << "\"";
+
+  of << indent << " opacity=\"" << this->Opacity << "\"";
+
+  of << indent << " visibility=\"" << (this->Visibility ? "true" : "false") << "\"";
+
+  of << indent << " clipping=\"" << (this->Clipping ? "true" : "false") << "\"";
+
+  of << indent << " backfaceCulling=\"" << (this->BackfaceCulling ? "true" : "false") << "\"";
+
+  of << indent << " scalarVisibility=\"" << (this->ScalarVisibility ? "true" : "false") << "\"";
+
+  of << indent << " scalarRange=\"" << this->ScalarRange[0] << " "
+     << this->ScalarRange[1] << "\"";
 }
 
 //----------------------------------------------------------------------------
@@ -155,7 +150,11 @@ void vtkMRMLModelDisplayNode::ReadXMLAttributes(const char** atts)
     attValue = *(atts++);
     if (!strcmp(attName, "color")) 
       {
-      this->SetColor(attValue);
+      std::stringstream ss;
+      ss << attValue;
+      ss >> Color[0];
+      ss >> Color[1];
+      ss >> Color[2];
       }
     else if (!strcmp(attName, "scalarRange")) 
       {
@@ -169,6 +168,30 @@ void vtkMRMLModelDisplayNode::ReadXMLAttributes(const char** atts)
       std::stringstream ss;
       ss << attValue;
       ss >> LUTName;
+      }
+    else if (!strcmp(attName, "ambient")) 
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> Ambient;
+      }
+    else if (!strcmp(attName, "diffuse")) 
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> Diffuse;
+      }
+    else if (!strcmp(attName, "specular")) 
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> Specular;
+      }
+    else if (!strcmp(attName, "power")) 
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> Power;
       }
     else if (!strcmp(attName, "opacity")) 
       {
@@ -227,11 +250,15 @@ void vtkMRMLModelDisplayNode::Copy(vtkMRMLNode *anode)
   
   // Numbers
   this->SetOpacity(node->Opacity);
+  this->SetAmbient(node->Ambient);
+  this->SetDiffuse(node->Diffuse);
+  this->SetSpecular(node->Specular);
+  this->SetPower(node->Power);
   this->SetVisibility(node->Visibility);
   this->SetScalarVisibility(node->ScalarVisibility);
   this->SetBackfaceCulling(node->BackfaceCulling);
   this->SetClipping(node->Clipping);
-  this->Property->DeepCopy(node->Property);
+  this->SetAndObserveTextureImageData(node->TextureImageData);
 
 }
 
@@ -242,10 +269,12 @@ void vtkMRMLModelDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   
   vtkMRMLNode::PrintSelf(os,indent);
 
-  os << indent << "Color: " <<
-    (this->Color ? this->Color : "(none)") << "\n";
-
+  os << indent << "Color:             " << this->Color << "\n";
   os << indent << "Opacity:           " << this->Opacity << "\n";
+  os << indent << "Ambient:           " << this->Ambient << "\n";
+  os << indent << "Diffuse:           " << this->Diffuse << "\n";
+  os << indent << "Specular:          " << this->Specular << "\n";
+  os << indent << "Power:             " << this->Power << "\n";
   os << indent << "Visibility:        " << this->Visibility << "\n";
   os << indent << "ScalarVisibility:  " << this->ScalarVisibility << "\n";
   os << indent << "BackfaceCulling:   " << this->BackfaceCulling << "\n";
@@ -256,10 +285,35 @@ void vtkMRMLModelDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
     {
     os << indent << ", " << this->ScalarRange[idx];
     }
-  os << "\nPoly Data:\n";
-  if (this->Property) 
+
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLModelDisplayNode::SetAndObserveTextureImageData(vtkImageData *ImageData)
+{
+  if (this->TextureImageData != NULL)
     {
-    this->Property->PrintSelf(os, indent.GetNextIndent());
+    this->TextureImageData->RemoveObservers ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
     }
 
+  this->SetTextureImageData(ImageData);
+  if (this->TextureImageData != NULL)
+    {
+    this->TextureImageData->AddObserver ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLModelDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
+                                           unsigned long event, 
+                                           void *callData )
+{
+  Superclass::ProcessMRMLEvents(caller, event, callData);
+
+  if (this->TextureImageData == vtkImageData::SafeDownCast(caller) &&
+    event ==  vtkCommand::ModifiedEvent)
+    {
+    this->InvokeEvent(vtkCommand::ModifiedEvent, NULL);
+    }
+  return;
 }
