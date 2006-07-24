@@ -68,7 +68,7 @@ vtkMRMLModelDisplayNode::vtkMRMLModelDisplayNode()
   this->TensorVisibility = 0;
   
   this->Ambient = 0;
-  this->Diffuse = 100;
+  this->Diffuse = 1.0;
   this->Specular = 0;
   this->Power = 1;
   

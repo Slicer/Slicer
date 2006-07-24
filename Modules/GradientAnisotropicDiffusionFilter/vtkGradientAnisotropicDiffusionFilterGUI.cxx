@@ -232,10 +232,15 @@ void vtkGradientAnisotropicDiffusionFilterGUI::UpdateMRML ()
   
   n->SetNumberOfIterations(this->NumberOfIterationsScale->GetValue());
   
-  n->SetInputVolumeRef(this->VolumeSelector->GetSelected()->GetID());
-  
-  n->SetOutputVolumeRef(this->OutVolumeSelector->GetSelected()->GetID());
+  if (this->VolumeSelector->GetSelected() != NULL)
+    {
+    n->SetInputVolumeRef(this->VolumeSelector->GetSelected()->GetID());
+    }
 
+  if (this->OutVolumeSelector->GetSelected() != NULL)
+    {
+    n->SetOutputVolumeRef(this->OutVolumeSelector->GetSelected()->GetID());
+    }
 }
 
 //---------------------------------------------------------------------------

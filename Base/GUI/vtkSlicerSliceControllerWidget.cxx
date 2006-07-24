@@ -322,12 +322,14 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
     }
 
 
-  if ( vtkSlicerNodeSelectorWidget::SafeDownCast(caller) == this->ForegroundSelector )
+  if ( vtkSlicerNodeSelectorWidget::SafeDownCast(caller) == this->ForegroundSelector &&
+    this->ForegroundSelector->GetSelected() != NULL)
     {
     this->SliceCompositeNode->SetForegroundVolumeID( 
             this->ForegroundSelector->GetSelected()->GetID() );
     }
-  if ( vtkSlicerNodeSelectorWidget::SafeDownCast(caller) == this->BackgroundSelector )
+  if ( vtkSlicerNodeSelectorWidget::SafeDownCast(caller) == this->BackgroundSelector &&
+    this->BackgroundSelector->GetSelected() != NULL)
     {
     this->SliceCompositeNode->SetBackgroundVolumeID( 
             this->BackgroundSelector->GetSelected()->GetID() );

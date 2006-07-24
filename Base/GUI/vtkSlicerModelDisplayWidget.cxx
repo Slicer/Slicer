@@ -246,6 +246,7 @@ void vtkSlicerModelDisplayWidget::UpdateWidget()
       this->SurfaceMaterialPropertyWidget->GetProperty()->SetSpecular(displayNode->GetSpecular());
       this->SurfaceMaterialPropertyWidget->GetProperty()->SetSpecularPower(displayNode->GetPower());
       this->ChangeColorButton->SetColor(displayNode->GetColor());
+      this->SurfaceMaterialPropertyWidget->Update();
       }
     
     return;
