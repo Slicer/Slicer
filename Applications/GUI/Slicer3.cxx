@@ -563,19 +563,26 @@ the xml to do what I need...
     
     //--- delete logic next, removing Refs to MRML
     appLogic->ClearCollections ( );
+    gradientAnisotropicDiffusionFilterLogic->SetAndObserveMRMLScene ( NULL );
     gradientAnisotropicDiffusionFilterLogic->Delete ();
+    volumesLogic->SetAndObserveMRMLScene ( NULL );
     volumesLogic->Delete();
+    modelsLogic->SetAndObserveMRMLScene ( NULL );
     modelsLogic->Delete();
-    sliceLogic0->Delete ();
-    sliceLogic1->Delete ();
+    sliceLogic2->SetAndObserveMRMLScene ( NULL );
     sliceLogic2->Delete ();
+    sliceLogic1->SetAndObserveMRMLScene ( NULL );
+    sliceLogic1->Delete ();
+    sliceLogic0->SetAndObserveMRMLScene ( NULL );
+    sliceLogic0->Delete ();
+    appLogic->SetAndObserveMRMLScene ( NULL );
     appLogic->Delete ();
-
 
     // delete the factory discovered module Logics
     std::vector<vtkSlicerModuleLogic*>::iterator lit;
     for (lit = moduleLogics.begin(); lit != moduleLogics.end(); ++lit)
       {
+      (*lit)->SetAndObserveMRMLScene ( NULL );
       (*lit)->Delete();
       }
     moduleLogics.clear();
