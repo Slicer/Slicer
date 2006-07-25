@@ -6,7 +6,7 @@
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Program:   3D Slicer
-  Module:    $RCSfile: vtkSlicerNodeSelectorWidget.h,v $
+  Module:    $RCSfile: vtkSlicerViewerWidget.h,v $
   Date:      $Date: 2006/01/08 04:48:05 $
   Version:   $Revision: 1.45 $
 
@@ -79,9 +79,13 @@ public:
   vtkGetMacro (RenderPending, int);
 
   // Description:
+  // Show and hide widget
+  virtual void PackWidget ( );
+  virtual void UnpackWidget ( );
+  
+  // Description:
   // Updates Actors based on models in the scene
   void UpdateFromMRML();
-
 
 protected:
   vtkSlicerViewerWidget();

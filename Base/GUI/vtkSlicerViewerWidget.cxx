@@ -37,10 +37,11 @@ vtkSlicerViewerWidget::vtkSlicerViewerWidget ( )
 vtkSlicerViewerWidget::~vtkSlicerViewerWidget ( )
 {
   this->RemoveMRMLObservers();
-
+  
   if (this->MainViewer)
     {
     this->MainViewer->RemoveAllViewProps ( );
+    this->MainViewer->SetParent ( NULL );
     this->MainViewer->Delete();
     this->MainViewer = NULL;
     }
@@ -115,8 +116,7 @@ void vtkSlicerViewerWidget::CreateWidget ( )
   this->MainViewer->GetRenderWindow()->PointSmoothingOn();
   // this->MainViewer->SetMultiSamples ( 4 );
 
-  this->Script  ("pack %s -side top -fill both -expand y -padx 0 -pady 0",
-                 this->MainViewer->GetWidgetName ( ) );
+  this->PackWidget ( );
   this->MainViewer->ResetCamera ( );
 
   // observe scene for add/remove nodes
@@ -291,3 +291,18 @@ vtkSlicerViewerWidget::GetActorByID (const char *id)
     }
   return (NULL);
 }
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewerWidget::PackWidget ( )
+{
+    this->Script  ("pack %s -side top -fill both -expand y -padx 0 -pady 0",
+                   this->MainViewer->GetWidgetName ( ) );
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewerWidget::UnpackWidget ( )
+{
+    this->Script ( "pack forget %s ", this->MainViewer->GetWidgetName ( ) );
+}
+
