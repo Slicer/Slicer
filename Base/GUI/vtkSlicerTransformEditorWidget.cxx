@@ -61,6 +61,8 @@ void vtkSlicerTransformEditorWidget::ProcessWidgetEvents ( vtkObject *caller,
 
     if (node != NULL)
       {
+      // TODO: there should be a observer added to the transform node so the matrix
+      // will update when the node value changes
       this->MatrixWidget->EnabledOn();
       this->MatrixWidget->SetMatrix4x4(node->GetMatrixTransformToParent());
       this->MatrixWidget->UpdateWidget();
