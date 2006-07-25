@@ -2,24 +2,50 @@
 // .SECTION Description
 // Main application layout for slicer3
 
+#ifndef __vtkSlicerGUILayout_h
+#define __vtkSlicerGUILayout_h
+
 #include "vtkSlicerBaseGUIWin32Header.h"
 #include "vtkObject.h"
 
-#ifndef __vtkSlicerGUILayout_h
-#define __vtkSlicerGUILayout_h
+#include "vtkKWObject.h"
+#include "vtkKWWindow.h"
+#include "vtkKWFrame.h"
+
 
 // Description:
 // This class contains the default dimensions for the various window layouts
 //
-class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGUILayout : public vtkObject
+class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGUILayout : public vtkKWObject
 {
 
  public:
     // Description:
     // Usual vtk class functions
     static vtkSlicerGUILayout* New ( );
-    vtkTypeRevisionMacro ( vtkSlicerGUILayout, vtkObject );
+    vtkTypeRevisionMacro ( vtkSlicerGUILayout, vtkKWObject );
     void PrintSelf ( ostream& os, vtkIndent indent );
+    
+    vtkGetObjectMacro ( MainSlicerWin, vtkKWWindow );
+    vtkSetObjectMacro ( MainSlicerWin, vtkKWWindow );
+    vtkGetMacro (CurrentViewArrangement, int );
+    vtkSetMacro (CurrentViewArrangement, int );
+
+    // Description:
+    // Main Slicer Window layout types
+
+    //BTX
+    enum
+        {
+            SlicerLayoutInitialView = 0,
+            SlicerLayoutDefaultView,
+            SlicerLayoutFourUpView,
+            SlicerLayoutOneUp3DView,
+            SlicerLayoutOneUpSliceView,
+            SlicerLayoutTabbed3DView,
+            SlicerLayoutLightboxView
+        };
+    //ETX
     
    // Description:
     // Get/Set Macros for protected vtkSlicerApplicationGUI dimensions
@@ -56,11 +82,21 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGUILayout : public vtkObject
     vtkGetMacro ( SliceViewerMinDim, int );
     vtkSetMacro ( SliceViewerMinDim, int );
 
-    virtual void InitializeLayout ( );
+    virtual void InitializeLayoutDimensions ( );
+    virtual void ConfigureViews ( int arrangementType );
+    virtual void ConfigureSliceViewersPanel ( );
+    virtual void ConfigureMainViewerPanel ( );
+    virtual void ConfigureMainSlicerWindow ( );
     
  protected:
     vtkSlicerGUILayout ( );
     ~vtkSlicerGUILayout ( );
+    
+    //Description:
+    // Pointer to Slicer's 3Dviewer and
+    // Three main Slice viewers.
+    vtkKWWindow *MainSlicerWin;
+    int CurrentViewArrangement;
     
     // Description:
     // Dimensions for the Default Window & components
