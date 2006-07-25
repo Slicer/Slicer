@@ -18,6 +18,7 @@
 #include "vtkMRMLSliceCompositeNode.h"
 
 #include "vtkImageMapper.h"
+#include "vtkKWFrame.h"
 
 class vtkObject;
 class vtkKWFrame;
@@ -37,6 +38,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceGUI : public vtkSlicerComponentGU
     // (Each SliceGUI contains a SliceViewerWidget,
     // SliceControllerWidget, a SliceLogic pointer and
     // a SliceNode pointer.)
+    vtkGetObjectMacro ( SliceGUIFrame, vtkKWFrame );
     vtkGetObjectMacro ( SliceViewer, vtkSlicerSliceViewer );
     vtkGetObjectMacro ( SliceController, vtkSlicerSliceControllerWidget );
     vtkGetMacro ( ControllerStyle, int );
@@ -87,6 +89,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceGUI : public vtkSlicerComponentGU
     // Description:
     // Build the SlicesGUI's UIPanel and three main SliceGUIs 
     virtual void BuildGUI ( vtkKWFrame *f );
+    virtual void BuildGUI ( vtkKWFrame *f, double *bgColor );
 
     // Description:
     // Show and hide the GUI
@@ -118,9 +121,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceGUI : public vtkSlicerComponentGU
     ~vtkSlicerSliceGUI ( );
 
     // Description:
-    // Three slice widgets by default.
+    // A Slice Viewer, a slice Controller and a containing frame
     vtkSlicerSliceViewer *SliceViewer;
     vtkSlicerSliceControllerWidget *SliceController;
+    vtkKWFrame *SliceGUIFrame;
 
     int ControllerStyle;
     vtkSlicerSliceLogic *Logic;

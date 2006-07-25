@@ -38,6 +38,7 @@ vtkSlicerSliceGUI::vtkSlicerSliceGUI (  ) {
     // Create objects and set null pointers
     this->SliceViewer = vtkSlicerSliceViewer::New ( );
     this->SliceController = vtkSlicerSliceControllerWidget::New ( );
+    this->SliceGUIFrame = vtkKWFrame::New ( );
     this->Logic = NULL;
     this->SliceNode = NULL;
 
@@ -66,6 +67,12 @@ vtkSlicerSliceGUI::~vtkSlicerSliceGUI ( ) {
             this->SliceController = NULL;
         }
 
+    if ( this->SliceGUIFrame )
+      {
+        this->SliceGUIFrame->Delete ( );
+        this->SliceGUIFrame = NULL;
+      }
+
     // Remove observers and references 
     this->SetModuleLogic ( NULL );
     this->SetMRMLNode ( NULL );
@@ -84,6 +91,7 @@ void vtkSlicerSliceGUI::PrintSelf ( ostream& os, vtkIndent indent )
 {
     this->vtkObject::PrintSelf ( os, indent );
     os << indent << "SlicerSliceGUI: " << this->GetClassName ( ) << "\n";
+    os << indent << "SliceGUIFrame: " << this->GetSliceGUIFrame ( ) << "\n";
     os << indent << "SliceViewer: " << this->GetSliceViewer ( ) << "\n";
     os << indent << "SliceController: " << this->GetSliceController ( ) << "\n";
     os << indent << "Logic: " << this->GetLogic ( ) << "\n";
@@ -237,25 +245,59 @@ void vtkSlicerSliceGUI::Exit ( )
 void vtkSlicerSliceGUI::BuildGUI ( vtkKWFrame *f )
 {
 
-    vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication ( ) );
+  if ( this->GetApplication() != NULL )
+    {
+      vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication ( ) );
+      vtkMRMLScene *mrml = this->GetApplicationLogic()->GetMRMLScene();
 
-    vtkMRMLScene *mrml = this->GetApplicationLogic()->GetMRMLScene();
+      this->SliceGUIFrame->SetApplication ( app );
+      this->SliceGUIFrame->SetParent ( f );
+      this->SliceGUIFrame->Create ( );
 
-    this->SliceController->SetApplication ( app );
-    this->SliceController->SetAndObserveMRMLScene ( mrml );
-    this->SliceController->SetParent ( f );
-    this->SliceController->Create (  );
-    this->SliceViewer->SetApplication ( app );
-    this->SliceViewer->SetParent ( f );
-    this->SliceViewer->Create (  );
+      this->SliceController->SetApplication ( app );
+      this->SliceController->SetAndObserveMRMLScene ( mrml );
+      this->SliceController->SetParent ( this->SliceGUIFrame );
+      this->SliceController->Create (  );
 
-    this->PackGUI();
+      this->SliceViewer->SetApplication ( app );
+      this->SliceViewer->SetParent ( this->SliceGUIFrame );
+      this->SliceViewer->Create (  );
 
+      this->PackGUI();
+    }
+}
+
+//-------------------------------------------------------5--------------------
+void vtkSlicerSliceGUI::BuildGUI ( vtkKWFrame *f, double *c )
+{
+
+  if ( this->GetApplication() != NULL )
+    {
+      vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication ( ) );
+      vtkMRMLScene *mrml = this->GetApplicationLogic()->GetMRMLScene();
+
+      this->SliceGUIFrame->SetApplication ( app );
+      this->SliceGUIFrame->SetParent ( f );
+      this->SliceGUIFrame->Create ( );
+
+      this->SliceController->SetApplication ( app );
+      this->SliceController->SetAndObserveMRMLScene ( mrml );
+      this->SliceController->SetParent ( this->SliceGUIFrame );
+      this->SliceController->Create (  );
+      this->SliceController->ApplyColorCode ( c );
+
+      this->SliceViewer->SetApplication ( app );
+      this->SliceViewer->SetParent ( this->SliceGUIFrame );
+      this->SliceViewer->Create (  );
+
+      this->PackGUI();
+    }
 }
 
 //---------------------------------------------------------------------------
 void vtkSlicerSliceGUI::PackGUI ()
 {
+    this->Script("pack %s -pady 0 -side left -expand y -fill both -padx 0 -pady 0", SliceGUIFrame->GetWidgetName() );
     this->Script("pack %s -pady 0 -side top -expand false -fill x", SliceController->GetWidgetName() );
     this->Script("pack %s -anchor c -side top -expand true -fill both", SliceViewer->GetRenderWidget()->GetWidgetName());
 }
@@ -263,6 +305,7 @@ void vtkSlicerSliceGUI::PackGUI ()
 //---------------------------------------------------------------------------
 void vtkSlicerSliceGUI::UnpackGUI ()
 {
+    this->Script("pack forget %s", SliceGUIFrame->GetWidgetName() );
     this->Script("pack forget %s", SliceController->GetWidgetName() );
     this->Script("pack forget %s", SliceViewer->GetRenderWidget()->GetWidgetName());
 }

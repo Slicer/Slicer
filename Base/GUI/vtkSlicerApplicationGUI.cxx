@@ -57,6 +57,7 @@
 #include "vtkSlicerModuleGUI.h"
 #include "vtkSlicerGUILayout.h"
 #include "vtkSlicerTheme.h"
+#include "vtkSlicerColor.h"
 #include "vtkSlicerToolbarIcons.h"
 #include "vtkSlicerLogoIcons.h"
 #include "vtkSlicerModuleNavigationIcons.h"
@@ -123,9 +124,9 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
     this->ModuleChooseFrame = vtkKWFrame::New();
     this->SliceControlFrame = vtkKWFrame::New();    
     this->ViewControlFrame = vtkKWFrame::New();    
-    this->DefaultSlice0Frame = vtkKWFrame::New ();
-    this->DefaultSlice1Frame = vtkKWFrame::New ();
-    this->DefaultSlice2Frame = vtkKWFrame::New ();
+    //    this->DefaultSlice0Frame = vtkKWFrame::New ();
+    //    this->DefaultSlice1Frame = vtkKWFrame::New ();
+    //    this->DefaultSlice2Frame = vtkKWFrame::New ();
 
     //--- ui for the ModuleChooseFrame,
     this->ModulesMenuButton = vtkKWMenuButton::New();
@@ -586,9 +587,6 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
 
             this->MainSlicerWin->Create ( );        
 
-            // Make and pack frames that will contain the 3 default slice windows.
-            this->BuildViewerFrames ( );
-            
             // configure initial GUI layout
             layout->ConfigureMainSlicerWindow ( );
             layout->ConfigureMainViewerPanel ( );
@@ -642,7 +640,7 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
                                       "Single Slice", NULL, "$::slicer3::ApplicationGUI UnpackMainSliceViewerFrames ; $::slicer3::ApplicationGUI PackFirstSliceViewerFrame ");
             this->GetMainSlicerWin()->GetViewMenu()->InsertCommand (
                       this->GetMainSlicerWin()->GetViewMenuInsertPosition(),
-                                      "Three Slices", NULL, "$::slicer3::ApplicationGUI UnpackMainSliceViewerFrames ; $::slicer3::ApplicationGUI PackMainSliceViewerFrames ");
+                                      "Three Slices", NULL, "$::slicer3::ApplicationGUI UnpackMainSliceViewerFrames ; $::slicer3::ApplicationGUI PackFirstSliceViewerFrame ");
 
 
             //i = this->MainSlicerWin->GetWindowMenu()->AddCommand ( ? );
@@ -784,7 +782,6 @@ void vtkSlicerApplicationGUI::DestroyMainViewer ( )
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::DestroyMainSliceViewers ( )
 {
-  this->UnpackMainSliceViewerFrames ( );
     if ( this->MainSliceGUI0 )
       {
         if ( this->SliceGUICollection != NULL )
@@ -1118,37 +1115,9 @@ void vtkSlicerApplicationGUI::DeleteFrames ( )
         this->ViewControlFrame->Delete ( );
         this->ViewControlFrame = NULL;
     }
-    if ( this->DefaultSlice0Frame ) {
-        this->DefaultSlice0Frame->Delete ();
-        this->DefaultSlice0Frame = NULL;
-    }
-    if ( this->DefaultSlice1Frame ) {
-        this->DefaultSlice1Frame->Delete ();
-        this->DefaultSlice1Frame = NULL;
-    }
-    if ( this->DefaultSlice2Frame ) {
-        this->DefaultSlice2Frame->Delete ();
-        this->DefaultSlice2Frame = NULL;
-    }
 }
 
 
-//---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::BuildViewerFrames ( )
-{
-      // Parent and configure Slice0 frame
-    this->DefaultSlice0Frame->SetParent ( this->MainSlicerWin->GetSecondaryPanelFrame ( ) );
-    this->DefaultSlice0Frame->Create ( );
-
-    // Parent and configure Slice1 frame
-    this->DefaultSlice1Frame->SetParent ( this->MainSlicerWin->GetSecondaryPanelFrame ( ) );
-    this->DefaultSlice1Frame->Create ( );
-
-    // Parent and configure Slice2 frame
-    this->DefaultSlice2Frame->SetParent ( this->MainSlicerWin->GetSecondaryPanelFrame ( ) );
-    this->DefaultSlice2Frame->Create ( );
-    this->PackMainSliceViewerFrames ( );
-}
 
 
 //---------------------------------------------------------------------------
@@ -1183,6 +1152,8 @@ void vtkSlicerApplicationGUI::BuildMainSliceViewers ( )
   if ( this->GetApplication() != NULL )
     {
       vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
+      vtkSlicerColor *color = app->GetSlicerTheme()->GetSlicerColors ( );
+
 
       // CREATE 3 Default SLICE GUIs
       this->MainSliceGUI0 = vtkSlicerSliceGUI::New ( );
@@ -1201,9 +1172,13 @@ void vtkSlicerApplicationGUI::BuildMainSliceViewers ( )
       this->MainSliceGUI1->SetApplicationLogic ( this->ApplicationLogic );
       this->MainSliceGUI2->SetApplicationLogic ( this->ApplicationLogic );
 
-      this->MainSliceGUI0->BuildGUI ( this->DefaultSlice0Frame );
-      this->MainSliceGUI1->BuildGUI ( this->DefaultSlice1Frame );
-      this->MainSliceGUI2->BuildGUI ( this->DefaultSlice2Frame );
+      this->MainSliceGUI0->BuildGUI ( this->MainSlicerWin->GetSecondaryPanelFrame ( ), color->SliceGUIRed );
+      this->MainSliceGUI1->BuildGUI ( this->MainSlicerWin->GetSecondaryPanelFrame ( ), color->SliceGUIYellow );
+      this->MainSliceGUI2->BuildGUI ( this->MainSlicerWin->GetSecondaryPanelFrame ( ), color->SliceGUIGreen );
+      
+      //      this->MainSliceGUI0->BuildGUI ( this->DefaultSlice0Frame );
+      //      this->MainSliceGUI1->BuildGUI ( this->DefaultSlice1Frame );
+      //      this->MainSliceGUI2->BuildGUI ( this->DefaultSlice2Frame );
     }  
 }
 
@@ -1648,8 +1623,6 @@ void vtkSlicerApplicationGUI::PopulateModuleChooseList ( )
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::BuildModuleChooseGUIPanel ( )
 {
-    const char* mName;
-    vtkSlicerModuleGUI *m;
     
     if ( this->GetApplication( )  != NULL ) {
         vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication() );
@@ -1668,21 +1641,6 @@ void vtkSlicerApplicationGUI::BuildModuleChooseGUIPanel ( )
         this->ModulesMenuButton->IndicatorVisibilityOn ( );
         this->ModulesMenuButton->SetBalloonHelpString ("Select a Slicer module.");
 
-        /*
-        //--- ALL modules pull-down menu 
-        if ( app->GetModuleGUICollection ( ) != NULL ) {
-            app->GetModuleGUICollection( )->InitTraversal( );
-            m = vtkSlicerModuleGUI::SafeDownCast( app->GetModuleGUICollection( )->GetNextItemAsObject( ));
-            while ( m != NULL ) {
-                mName = m->GetUIPanel( )->GetName( );
-                this->ModulesMenuButton->GetMenu( )->AddRadioButton( mName );
-                m = vtkSlicerModuleGUI::SafeDownCast( app->GetModuleGUICollection( )->GetNextItemAsObject( ));
-            }
-        }
-        //--- TODO: make the initial value be module user sets as "home"
-        this->ModulesMenuButton->SetValue ("Volumes");
-        */
-        
         //--- Next and previous module button
         this->ModulesNext->SetParent ( this->ModuleChooseFrame );
         this->ModulesNext->Create ( );
@@ -2152,22 +2110,6 @@ void vtkSlicerApplicationGUI::ConfigureSliceViewersPanel ( )
         if ( this->MainSlicerWin != NULL ) {
             this->MainSlicerWin->GetSecondaryPanelFrame()->SetWidth ( 3 * layout->GetDefaultSliceGUIFrameWidth () );
             this->MainSlicerWin->GetSecondaryPanelFrame()->SetHeight ( layout->GetDefaultSliceGUIFrameHeight () );
-
-            // Parent and configure Slice0 frame
-            this->DefaultSlice0Frame->SetParent ( this->MainSlicerWin->GetSecondaryPanelFrame ( ) );
-            this->DefaultSlice0Frame->Create ( );
-
-            // Parent and configure Slice1 frame
-            this->DefaultSlice1Frame->SetParent ( this->MainSlicerWin->GetSecondaryPanelFrame ( ) );
-            this->DefaultSlice1Frame->Create ( );
-
-            // Parent and configure Slice2 frame
-            this->DefaultSlice2Frame->SetParent ( this->MainSlicerWin->GetSecondaryPanelFrame ( ) );
-            this->DefaultSlice2Frame->Create ( );
-
-            // Pack these frames.
-            this->PackMainSliceViewerFrames ( );
-
         }
     }
 
@@ -2176,42 +2118,12 @@ void vtkSlicerApplicationGUI::ConfigureSliceViewersPanel ( )
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::UnpackMainSliceViewerFrames ( )
-{
-  // pack them.
-    if ( this->GetApplication() != NULL )
-      {
-        vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication() );
-        app->Script ("pack forget %s", this->DefaultSlice0Frame->GetWidgetName( ) );
-        app->Script ("pack forget %s", this->DefaultSlice1Frame->GetWidgetName( ) );
-        app->Script ("pack forget %s", this->DefaultSlice2Frame->GetWidgetName( ) );
-      }
-}
-
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::PackMainSliceViewerFrames ( )
-{
-    if ( this->GetApplication() != NULL )
-      {
-        vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication() );
-        app->Script ("pack %s -side left  -expand y -fill both -padx 0 -pady 0", 
-                      this->DefaultSlice0Frame->GetWidgetName( ) );
-        app->Script ("pack %s -side left  -expand y -fill both -padx 0 -pady 0", 
-                      this->DefaultSlice1Frame->GetWidgetName( ) );
-        app->Script ("pack %s -side left  -expand y -fill both -padx 0 -pady 0", 
-                      this->DefaultSlice2Frame->GetWidgetName( ) );
-      }
-}
-
-
-
-//---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::PackFirstSliceViewerFrame ( )
 {
+  /*
   this->Script ("pack %s -side left  -expand y -fill both -padx 0 -pady 0", 
     this->DefaultSlice0Frame->GetWidgetName( ) );
+  */
 }
 
 

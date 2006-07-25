@@ -7,6 +7,7 @@
 #include "vtkKWEntryWithLabel.h"
 #include "vtkKWMenuButtonWithSpinButtonsWithLabel.h"
 #include "vtkKWPushButton.h"
+#include "vtkKWFrame.h"
 
 #include "vtkSlicerWidget.h"
 #include "vtkSlicerNodeSelectorWidget.h"
@@ -32,7 +33,8 @@ public:
   vtkGetObjectMacro ( LabelSelector, vtkSlicerNodeSelectorWidget );
   vtkGetObjectMacro ( VisibilityToggle, vtkKWPushButton );
   vtkGetObjectMacro ( VisibilityIcons, vtkSlicerVisibilityIcons );
-
+  vtkGetObjectMacro ( ScaleFrame, vtkKWFrame );
+  
   void RemoveWidgetObservers ( );
   void AddWidgetObservers ( );
   
@@ -67,6 +69,11 @@ public:
   // respond to changes in the slice logic
   void ProcessLogicEvents ( vtkObject *caller, unsigned long event, void *callData );
 
+  // Description:
+  // applies a background color to the controller
+  virtual void ApplyColorCode ( double *c );
+
+
 protected:
   vtkSlicerSliceControllerWidget ( );
   ~vtkSlicerSliceControllerWidget ( );
@@ -88,7 +95,9 @@ protected:
   vtkSlicerNodeSelectorWidget *LabelSelector;
   vtkKWPushButton *VisibilityToggle;
   vtkSlicerVisibilityIcons *VisibilityIcons;
-  
+  vtkKWFrame *ScaleFrame;
+  vtkKWFrame *ColorCodeFrame;
+
   //
   // Nodes
   //

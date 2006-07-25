@@ -9,11 +9,11 @@
 #include "vtkKWWidget.h"
 #include "vtkKWScaleWithEntry.h"
 #include "vtkKWEntryWithLabel.h"
+#include "vtkKWEntry.h"
 #include "vtkKWScale.h"
 #include "vtkKWRenderWidget.h"
 #include "vtkKWMenu.h"
 #include "vtkKWMenuButton.h"
-#include "vtkKWFrame.h"
 #include "vtkKWPushButton.h"
 
 //---------------------------------------------------------------------------
@@ -35,6 +35,8 @@ vtkSlicerSliceControllerWidget::vtkSlicerSliceControllerWidget ( ) {
   this->VisibilityIcons = NULL;
   this->SliceNode = NULL;
   this->SliceCompositeNode = NULL;
+  this->ScaleFrame = NULL;
+  this->ColorCodeFrame = NULL;
 }
 
 
@@ -69,6 +71,16 @@ vtkSlicerSliceControllerWidget::~vtkSlicerSliceControllerWidget ( ){
         this->VisibilityIcons->Delete  ( );
         this->VisibilityIcons = NULL;
     }
+    if ( this->ScaleFrame )
+      {
+        this->ScaleFrame->Delete ( );
+        this->ScaleFrame = NULL;
+      }
+    if ( this->ColorCodeFrame )
+      {
+        this->ColorCodeFrame->Delete ( );
+        this->ColorCodeFrame = NULL;
+      }
 
     this->SetSliceNode ( NULL );
     this->SetSliceCompositeNode ( NULL );
@@ -129,6 +141,14 @@ void vtkSlicerSliceControllerWidget::RemoveWidgetObservers ( ) {
 
 
 
+//---------------------------------------------------------------------------
+void vtkSlicerSliceControllerWidget::ApplyColorCode ( double *c )
+{
+  this->ColorCodeFrame->SetBackgroundColor (c[0], c[1], c[2] );
+}
+
+
+
 
 //---------------------------------------------------------------------------
 void vtkSlicerSliceControllerWidget::CreateWidget ( ) 
@@ -143,8 +163,17 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     if (this->IsCreated ( ) ) {
         vtkErrorMacro ( << this->GetClassName() << "already created.");
         return;
+        
     }
     this->Superclass::CreateWidget ( );
+    
+    //
+    // A stripe that color codes the SliceGUI this controller belongs to.
+    //
+    this->ColorCodeFrame = vtkKWFrame::New ( );
+    this->ColorCodeFrame->SetParent ( this );
+    this->ColorCodeFrame->Create ( );
+    this->ColorCodeFrame->SetHeight ( 7 );
     
     //
     // Orientation  (TODO: make this into a vtkSlicerOrientationWidget)
@@ -190,15 +219,19 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     this->LabelSelector->SetMRMLScene( this->MRMLScene );
     this->LabelSelector->GetWidget()->GetWidget()->SetMaximumLabelWidth(10);
 
-    vtkKWFrame *f = vtkKWFrame::New ( );
-    f->SetParent ( this );
-    f->Create ( );
+    //
+    // Create the frame to contain scale and visibility toggle
+    //
+    this->ScaleFrame = vtkKWFrame::New ();
+    this->ScaleFrame->SetParent ( this );
+    this->ScaleFrame->Create ( );
+
     //
     // Create a button to toggle the slice visibility in the main viewer and icons for it
     //
     this->VisibilityIcons = vtkSlicerVisibilityIcons::New ( );
     this->VisibilityToggle = vtkKWPushButton::New ( );
-    this->VisibilityToggle->SetParent ( f );
+    this->VisibilityToggle->SetParent ( this->ScaleFrame );
     this->VisibilityToggle->Create ( );
     this->VisibilityToggle->SetReliefToFlat ( );
     this->VisibilityToggle->SetOverReliefToNone ( );
@@ -210,28 +243,25 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     // Create a scale to control the slice number displayed
     //
     this->OffsetScale = vtkKWScaleWithEntry::New();
-    this->OffsetScale->SetParent ( f );
+    this->OffsetScale->SetParent ( this->ScaleFrame );
     this->OffsetScale->Create();
     this->OffsetScale->RangeVisibilityOff ( );
     this->OffsetScale->SetEntryWidth(8);
     this->OffsetScale->SetLabelPositionToLeft();
             
+    this->Script ( "grid %s -sticky ew -columnspan 2", this->ColorCodeFrame->GetWidgetName ( ) );
     this->Script("grid %s %s -sticky ew", 
-            this->OrientationMenu->GetWidgetName(), this->ForegroundSelector->GetWidgetName());
+                 this->OrientationMenu->GetWidgetName(), this->ForegroundSelector->GetWidgetName());
     this->Script("grid %s %s -sticky ew", 
             this->LabelSelector->GetWidgetName(), this->BackgroundSelector->GetWidgetName());
-    this->Script ( "grid %s -sticky ew -columnspan 2", f->GetWidgetName ( ) );
+    this->Script ( "grid %s -sticky ew -columnspan 2", this->ScaleFrame->GetWidgetName ( ) );
     this->Script ("pack %s -side left -expand n -padx 1", this->VisibilityToggle->GetWidgetName ( ) );
     this->Script("pack %s -side left -fill x -expand y", this->OffsetScale->GetWidgetName());
-    this->Script("grid columnconfigure %s 0 -weight 1", 
-                 this->GetWidgetName());
-    this->Script("grid columnconfigure %s 1 -weight 1", 
-                 this->GetWidgetName());
+    this->Script("grid columnconfigure %s 0 -weight 1", this->GetWidgetName());
+    this->Script("grid columnconfigure %s 1 -weight 1", this->GetWidgetName());
 
     // put observers on widgets
     this->AddWidgetObservers();
-    
-    f->Delete ( );
 }
 
 //----------------------------------------------------------------------------

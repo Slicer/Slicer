@@ -80,9 +80,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkGetObjectMacro ( ModuleChooseFrame, vtkKWFrame );
     vtkGetObjectMacro ( SliceControlFrame, vtkKWFrame );
     vtkGetObjectMacro ( ViewControlFrame, vtkKWFrame );
-    vtkGetObjectMacro ( DefaultSlice0Frame, vtkKWFrame );
-    vtkGetObjectMacro ( DefaultSlice1Frame, vtkKWFrame );
-    vtkGetObjectMacro ( DefaultSlice2Frame, vtkKWFrame );
+    //    vtkGetObjectMacro ( DefaultSlice0Frame, vtkKWFrame );
+    //    vtkGetObjectMacro ( DefaultSlice1Frame, vtkKWFrame );
+    //    vtkGetObjectMacro ( DefaultSlice2Frame, vtkKWFrame );
 
     // Description:
     // Get the widgets that display the toolbar icons
@@ -222,9 +222,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     virtual void ConfigureMainSlicerWindow ( );
     virtual void ConfigureMainViewerPanel ( );
     virtual void ConfigureSliceViewersPanel ( );
-    virtual void PackMainSliceViewerFrames ( );
     virtual void PackFirstSliceViewerFrame ( );
-    virtual void UnpackMainSliceViewerFrames ( );
 
     virtual void DisplayConventionalView ( );
     virtual void DisplayOneUp3DView ( );
@@ -248,7 +246,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // These methods populate the various GUI Panel frames
     virtual void BuildGUIPanel ( );
     virtual void BuildToolBar ( );
-    virtual void BuildViewerFrames ( );
     virtual void BuildMainViewer ( );
     virtual void DestroyMainViewer ( );
     virtual void BuildMainSliceViewers ( );
@@ -324,9 +321,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkKWFrame *ModuleChooseFrame;
     vtkKWFrame *SliceControlFrame;
     vtkKWFrame *ViewControlFrame;
-    vtkKWFrame *DefaultSlice0Frame;
-    vtkKWFrame *DefaultSlice1Frame;
-    vtkKWFrame *DefaultSlice2Frame;
+    //    vtkKWFrame *DefaultSlice0Frame;
+    //    vtkKWFrame *DefaultSlice1Frame;
+    //    vtkKWFrame *DefaultSlice2Frame;
     vtkKWRenderWidget *MainViewer;
     vtkImplicitPlaneWidget *PlaneWidget;
     
