@@ -64,6 +64,13 @@ void vtkSlicerColor::DefineDefaultColorPalette ( ) {
     this->SetColor(this->MediumBlue,  .4588, .5647, .6823 );
     this->SetColor(this->ViewerBlue, .70196, .70196, .90588 );  
     this->SetColor(this->LightBlue, .82, .82, 1.0);
+
+    // RedSliceControllerGUI
+    this->SetColor(this->SliceGUIRed,  .9568, .2529, .2529);
+    // YellowSliceControllerGUI    
+    this->SetColor(this->SliceGUIYellow,  .9333, .8392, .3019 );
+    // GreenSliceControllerGUI
+    this->SetColor(this->SliceGUIGreen,  .4337, .6909, .298);
 }
 
 
