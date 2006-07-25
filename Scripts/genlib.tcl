@@ -483,6 +483,30 @@ if { ![file exists $::VTK_TEST_FILE] || $::GENLIB(update) } {
             -DVTK_DEBUG_LEAKS:BOOL=ON \
             -DVTK_USE_64BIT_IDS:BOOL=ON \
             ../VTK
+    } elseif { $isDarwin } {
+        set OpenGLString "-framework OpenGL;/usr/X11R6/lib/libGL.dylib"
+        runcmd $::CMAKE \
+            -G$GENERATOR \
+            -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
+            -DBUILD_SHARED_LIBS:BOOL=ON \
+            -DCMAKE_SKIP_RPATH:BOOL=ON \
+            -DCMAKE_CXX_COMPILER:STRING=$COMPILER_PATH/$COMPILER \
+            -DCMAKE_CXX_COMPILER_FULLPATH:FILEPATH=$COMPILER_PATH/$COMPILER \
+            -DBUILD_TESTING:BOOL=OFF \
+            -DVTK_USE_CARBON:BOOL=OFF \
+            -DVTK_USE_X:BOOL=ON \
+            -DVTK_WRAP_TCL:BOOL=ON \
+            -DVTK_USE_HYBRID:BOOL=ON \
+            -DVTK_USE_PATENTED:BOOL=ON \
+            -DOPENGL_INCLUDE_DIR:PATH=/usr/X11R6/include \
+            -DTCL_INCLUDE_PATH:PATH=$TCL_INCLUDE_DIR \
+            -DTK_INCLUDE_PATH:PATH=$TCL_INCLUDE_DIR \
+            -DTCL_LIBRARY:FILEPATH=$::VTK_TCL_LIB \
+            -DTK_LIBRARY:FILEPATH=$::VTK_TK_LIB \
+            -DTCL_TCLSH:FILEPATH=$::VTK_TCLSH \
+            -DOPENGL_gl_LIBRARY:STRING=$OpenGLString \
+            $USE_VTK_ANSI_STDLIB \
+            ../VTK
     } else {
         runcmd $::CMAKE \
             -G$GENERATOR \
@@ -506,14 +530,6 @@ if { ![file exists $::VTK_TEST_FILE] || $::GENLIB(update) } {
             ../VTK
     }
 
-
-    if { $isDarwin } {
-        # Darwin will fail on the first make, then succeed on the second
-        catch "eval runcmd $::MAKE"
-        set OpenGLString "-framework OpenGL -lgl"
-        runcmd $::CMAKE -G$GENERATOR -DOPENGL_gl_LIBRARY:STRING=$OpenGLString -DVTK_USE_SYSTEM_ZLIB:BOOL=ON ../VTK
-    }
-    
     if { $isWindows } {
         if { $MSVC6 } {
             runcmd $::MAKE VTK.dsw /MAKE "ALL_BUILD - $::VTK_BUILD_TYPE"
