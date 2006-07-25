@@ -25,6 +25,17 @@ public:
   vtkGetObjectMacro ( Actor2D, vtkActor2D );
   vtkGetObjectMacro ( RenderWidget, vtkKWRenderWidget );
 
+  // Description: 
+  // Used to track the fact that there is a idle task pending requesting a render
+  vtkSetMacro (RenderPending, int);
+  vtkGetMacro (RenderPending, int);
+
+  // Description:
+  // Request Render posts a request to the event queue for processing when
+  // all other user events have been handled.  Render does the actual render.
+  void RequestRender();
+  void Render();
+
 protected:
   vtkSlicerSliceViewer ( );
   ~vtkSlicerSliceViewer ( );
@@ -37,6 +48,8 @@ protected:
   vtkKWRenderWidget *RenderWidget;
   vtkImageMapper *ImageMapper;
   vtkActor2D *Actor2D;
+  
+  int RenderPending;
 
 private:
   vtkSlicerSliceViewer (const vtkSlicerSliceViewer &); //Not implemented

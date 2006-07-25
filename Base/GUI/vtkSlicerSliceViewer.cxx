@@ -36,6 +36,8 @@ vtkSlicerSliceViewer::vtkSlicerSliceViewer ( ) {
 
     this->Actor2D = vtkActor2D::New();
     this->Actor2D->SetMapper( this->ImageMapper );
+
+    this->RenderPending = 0;
 }
 
 
@@ -99,6 +101,24 @@ void vtkSlicerSliceViewer::CreateWidget ( ) {
 
 }
 
+//---------------------------------------------------------------------------
+void vtkSlicerSliceViewer::RequestRender()
+{
+  if (this->GetRenderPending())
+    {
+    return;
+    }
+
+  this->SetRenderPending(1);
+  this->Script("after idle \"%s Render\"", this->GetTclName());
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerSliceViewer::Render()
+{
+  this->GetRenderWidget()->Render();
+  this->SetRenderPending(0);
+}
 
 //----------------------------------------------------------------------------
 void vtkSlicerSliceViewer::PrintSelf(ostream& os, vtkIndent indent)
