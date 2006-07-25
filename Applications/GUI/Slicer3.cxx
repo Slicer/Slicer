@@ -157,11 +157,8 @@ int Slicer3_main(int argc, char *argv[])
       {    
 
       std::string cmd;
-#if 0
 
-// TODO: this works to pass args to the tcl script, but I can't get
-the xml to do what I need...
-
+      // Pass arguments to the Tcl script
       cmd = "set args \"\"; ";
       std::vector<std::string>::const_iterator argit = Args.begin();
       while (argit != Args.end())
@@ -170,7 +167,6 @@ the xml to do what I need...
         ++argit;
         }
       Slicer3_Tcl_Eval( interp, cmd.c_str() );
-#endif
 
       cmd = "source " + File;
       return ( Slicer3_Tcl_Eval( interp, cmd.c_str() ) );
