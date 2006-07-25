@@ -41,7 +41,7 @@ vtkSlicerSliceGUI::vtkSlicerSliceGUI (  ) {
     this->SliceGUIFrame = vtkKWFrame::New ( );
     this->Logic = NULL;
     this->SliceNode = NULL;
-
+    this->CurrentGUIEvent = NULL;
 }
 
 
@@ -113,6 +113,7 @@ void vtkSlicerSliceGUI::AddGUIObservers ( ) {
 #endif
 
 
+  this->RemoveGUIObservers();
 
   // make a user interactor style to process our events
   // look at the InteractorStyle to get our events
@@ -177,8 +178,9 @@ void vtkSlicerSliceGUI::ProcessGUIEvents ( vtkObject *caller,
   if (iStyleUser == 
       this->GetSliceViewer()->GetRenderWidget()->GetRenderWindowInteractor()->GetInteractorStyle())
     {
-    this->Script("SliceViewerHandleEvent %s %s", 
-      this->GetTclName(), vtkCommand::GetStringFromEventId(event));
+    this->SetCurrentGUIEvent( vtkCommand::GetStringFromEventId(event) );
+    this->Script( "SliceViewerHandleEvent %s %s", 
+      this->GetTclName(), vtkCommand::GetStringFromEventId(event) );
     }
 }
 
@@ -211,20 +213,16 @@ void vtkSlicerSliceGUI::ProcessLogicEvents ( vtkObject *caller,
     vtkKWRenderWidget *rw = sliceViewer->GetRenderWidget ();
     sliceViewer->GetImageMapper()->SetInput ( sliceLogic->GetImageData( ) );
     rw->ResetCamera ( );
-
-    // TODO: can this be done directly in C++?
-    // and - how do we know when VTK events are idle?
-    rw->Render();
-    // Replace this with a flag that says a render is pending...
-    //this->Script("after idle \"%s Render\"", rw->GetTclName());
+    sliceViewer->RequestRender ( );
     }
 }
+
+
 
 //---------------------------------------------------------------------------
 void vtkSlicerSliceGUI::ProcessMRMLEvents ( vtkObject *caller,
                                                unsigned long event, void *callData )
 {
-
 
 }
 
