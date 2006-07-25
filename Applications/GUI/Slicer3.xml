@@ -168,15 +168,14 @@
      spaces in them even if I put them in quotes.  That is:
 		Slicer3 "my args" split
      gives me a vector of three strings rather than two.
+-->
 
       <string multiple="true">
       <name>Args</name>
       <description>Remaining arguments to be passed to scripts (-f or -p)</description>
       <label>Script Arguments</label>
       <index>1</index>
-      <default>" "</default>
       </string>
--->
 
     </parameters>
 
