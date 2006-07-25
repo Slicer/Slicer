@@ -24,6 +24,7 @@
 #include "vtkSlicerLogoIcons.h"
 #include "vtkSlicerModuleNavigationIcons.h"
 #include "vtkSlicerViewControlIcons.h"
+#include "vtkSlicerSliceLogic.h"
 
 #include "vtkSlicerWindow.h"
 #include "vtkKWMenuButton.h"
@@ -35,6 +36,8 @@
 #include "vtkRenderWindow.h"
 #include "vtkRenderWindowInteractor.h"
 #include "vtkSlicerViewerWidget.h"
+#include "vtkSlicerSliceGUI.h"
+#include "vtkSlicerSliceGUICollection.h"
 
 class vtkObject;
 class vtkKWPushButton;
@@ -65,6 +68,12 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
         return this->ViewerWidget->GetMainViewer()->GetRenderWindow()->GetInteractor();
     };
 
+    vtkGetObjectMacro (MainSliceGUI0, vtkSlicerSliceGUI);
+    vtkGetObjectMacro (MainSliceGUI1, vtkSlicerSliceGUI);
+    vtkGetObjectMacro (MainSliceGUI2, vtkSlicerSliceGUI);
+    vtkGetObjectMacro (SliceGUICollection, vtkSlicerSliceGUICollection);
+    vtkSetObjectMacro (SliceGUICollection, vtkSlicerSliceGUICollection);
+    
     // Description:
     // Get the frames that populate the Slicer GUI
     vtkGetObjectMacro ( LogoFrame, vtkKWFrame);
@@ -213,21 +222,45 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     virtual void ConfigureMainSlicerWindow ( );
     virtual void ConfigureMainViewerPanel ( );
     virtual void ConfigureSliceViewersPanel ( );
-    virtual void PackSliceViewers ( );
-    virtual void PackFirstSliceViewer ( );
-    virtual void UnpackSliceViewers ( );
-    virtual void ConfigureGUIPanel ( );
+    virtual void PackMainSliceViewerFrames ( );
+    virtual void PackFirstSliceViewerFrame ( );
+    virtual void UnpackMainSliceViewerFrames ( );
+
+    virtual void DisplayConventionalView ( );
+    virtual void DisplayOneUp3DView ( );
+    virtual void DisplayOneUpSliceView ( );
+    virtual void DisplayFourUpView ( );
+    virtual void DisplayTabbed3DView ( );
+    virtual void DisplayLightboxView ( );
+
+    virtual void AddSliceGUIToCollection ( vtkSlicerSliceGUI *s );
+    virtual void RemoveSliceGUIFromCollection ( vtkSlicerSliceGUI *s);
+    virtual void ConfigureMainSliceViewers ( );
+    virtual void AddMainSliceViewersToCollection ( );
+    virtual void RemoveMainSliceViewersFromCollection ( );
+    virtual void AddMainSliceViewerObservers ( );
+    virtual void RemoveMainSliceViewerObservers ( );
+    virtual void SetAndObserveMainSliceLogic ( vtkSlicerSliceLogic *l1,
+                                               vtkSlicerSliceLogic *l2,
+                                               vtkSlicerSliceLogic *l3 );
     
     // Description:
     // These methods populate the various GUI Panel frames
+    virtual void BuildGUIPanel ( );
     virtual void BuildToolBar ( );
+    virtual void BuildViewerFrames ( );
     virtual void BuildMainViewer ( );
+    virtual void DestroyMainViewer ( );
+    virtual void BuildMainSliceViewers ( );
+    virtual void DestroyMainSliceViewers ( );
     virtual void BuildLogoGUIPanel ( );
-    virtual void BuildSlicerControlGUIPanel ( );
+    virtual void BuildModuleChooseGUIPanel ( );
+    virtual void PopulateModuleChooseList ( );
     virtual void BuildSliceControlGUIPanel ( );
     virtual void BuildViewControlGUIPanel ( );
     virtual void AssignViewControlIcons ( );
     virtual void MakeViewControlRolloverBehavior ( );
+    virtual void ReconfigureViews ( int arrangementType );
 
     // Desrciption:
     // These methods delete widgets belonging to components of the Slicer Window
@@ -296,7 +329,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkKWFrame *DefaultSlice2Frame;
     vtkKWRenderWidget *MainViewer;
     vtkImplicitPlaneWidget *PlaneWidget;
-
+    
     // Description:
     // Widgets for the Logo frame
     vtkKWLabel *SlicerLogoLabel;
@@ -400,6 +433,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkKWScale *NavZoomScale;
 
     vtkSlicerViewerWidget *ViewerWidget;
+    vtkSlicerSliceGUI *MainSliceGUI0;
+    vtkSlicerSliceGUI *MainSliceGUI1;
+    vtkSlicerSliceGUI *MainSliceGUI2;
+    vtkSlicerSliceGUICollection *SliceGUICollection;
     
  private:
     vtkSlicerApplicationGUI ( const vtkSlicerApplicationGUI& ); // Not implemented.

@@ -5,6 +5,7 @@
 #include "vtkImageViewer2.h"
 #include "vtkRenderWindow.h"
 #include "vtkRenderer.h"
+#include "vtkViewport.h"
 #include "vtkRenderWindowInteractor.h"
 
 #include "vtkSlicerSliceViewer.h"
@@ -41,19 +42,28 @@ vtkSlicerSliceViewer::vtkSlicerSliceViewer ( ) {
 //---------------------------------------------------------------------------
 vtkSlicerSliceViewer::~vtkSlicerSliceViewer ( ){
 
-    if ( this->ImageMapper ) {
-        this->ImageMapper->Delete ( );
-        this->ImageMapper = NULL;
-    }
-
-    if ( this->Actor2D ) {
+    if ( this->Actor2D )
+      {
+        if ( this->RenderWidget )
+          {
+            this->RenderWidget->GetRenderer()->RemoveActor2D ( this->Actor2D);
+          }
+        this->Actor2D->SetMapper ( NULL );
         this->Actor2D->Delete ( );
         this->Actor2D = NULL;
-    }
+      }
+
+    if ( this->ImageMapper )
+      {
+      this->ImageMapper->Delete ( );
+      this->ImageMapper = NULL;
+      }
+
 
     if ( this->RenderWidget ) {
-        this->RenderWidget->Delete ( );
-        this->RenderWidget = NULL;
+      this->RenderWidget->SetParent ( NULL );
+      this->RenderWidget->Delete ( );
+      this->RenderWidget = NULL;
     }
 }
 

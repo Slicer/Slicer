@@ -24,9 +24,6 @@ vtkSlicerSlicesGUI::vtkSlicerSlicesGUI (  )
 {
 
     this->SliceGUICollection = vtkSlicerSliceGUICollection::New ( );
-    this->MainSliceGUI0 = vtkSlicerSliceGUI::New ( );
-    this->MainSliceGUI1 = vtkSlicerSliceGUI::New ( );
-    this->MainSliceGUI2 = vtkSlicerSliceGUI::New ( );
 }
 
 
@@ -135,39 +132,29 @@ vtkSlicerSliceGUI* vtkSlicerSlicesGUI::GetSliceGUI ( char *SliceGUIColor )
 
 //---------------------------------------------------------------------------
 void vtkSlicerSlicesGUI::AddGUIObservers ( )
-    {
-
-    // Add observers on gui components for all slice widgets
-    if ( this->SliceGUICollection )
-        {
-            this->SliceGUICollection->InitTraversal ( );
-            vtkSlicerSliceGUI *g = vtkSlicerSliceGUI::SafeDownCast ( this->SliceGUICollection->GetNextItemAsObject ( ) );
-            while ( g != NULL ) {
-                {
-                    g->AddGUIObservers ( );
-                    g = vtkSlicerSliceGUI::SafeDownCast (this->SliceGUICollection->GetNextItemAsObject ( ) );
-                }
-            }
-        }
-    }
+{
+  // TODO: add observers for all widgets in slicesGUIs UIpanel.
+}
 
 
 //---------------------------------------------------------------------------
 void vtkSlicerSlicesGUI::RemoveGUIObservers ( )
-    {
+{
 
-    // Remove observers
-    if ( this->SliceGUICollection )
+  // TODO: remove observers on all widgets in slicesGUIs UIpanel.
+      
+  // Remove any observers on any SliceGUIs in the collection
+  if ( this->SliceGUICollection )
+    {
+      this->SliceGUICollection->InitTraversal ( );
+      vtkSlicerSliceGUI *g = vtkSlicerSliceGUI::SafeDownCast ( this->SliceGUICollection->GetNextItemAsObject ( ) );
+      while ( g != NULL )
         {
-            this->SliceGUICollection->InitTraversal ( );
-            vtkSlicerSliceGUI *g = vtkSlicerSliceGUI::SafeDownCast ( this->SliceGUICollection->GetNextItemAsObject ( ) );
-            while ( g != NULL )
-                {
-                    g->RemoveGUIObservers ( );
-                    g = vtkSlicerSliceGUI::SafeDownCast (this->SliceGUICollection->GetNextItemAsObject ( ) );
-                }
+          g->RemoveGUIObservers ( );
+          g = vtkSlicerSliceGUI::SafeDownCast (this->SliceGUICollection->GetNextItemAsObject ( ) );
         }
     }
+}
 
 
 
@@ -209,7 +196,7 @@ void vtkSlicerSlicesGUI::Exit ( )
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerSlicesGUI::BuildGUI ( vtkKWFrame* f1, vtkKWFrame *f2, vtkKWFrame *f3  )
+void vtkSlicerSlicesGUI::BuildGUI (  )
 {
 
     vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
@@ -244,24 +231,6 @@ void vtkSlicerSlicesGUI::BuildGUI ( vtkKWFrame* f1, vtkKWFrame *f2, vtkKWFrame *
     sliceHelpFrame->Delete();
     sliceDisplayFrame->Delete();
 
-    // CREATE 3 Default SLICE GUIs
-    this->MainSliceGUI0->SetApplication ( app );
-    this->MainSliceGUI1->SetApplication ( app );
-    this->MainSliceGUI2->SetApplication ( app );
-    this->MainSliceGUI0->SetAndObserveMRMLScene ( this->MRMLScene );
-    this->MainSliceGUI1->SetAndObserveMRMLScene ( this->MRMLScene );
-    this->MainSliceGUI2->SetAndObserveMRMLScene ( this->MRMLScene );
-    this->MainSliceGUI0->SetApplicationLogic ( this->ApplicationLogic );
-    this->MainSliceGUI1->SetApplicationLogic ( this->ApplicationLogic );
-    this->MainSliceGUI2->SetApplicationLogic ( this->ApplicationLogic );
-
-    this->MainSliceGUI0->BuildGUI ( f1 );
-    this->MainSliceGUI1->BuildGUI ( f2 );
-    this->MainSliceGUI2->BuildGUI ( f3 );
-
-    this->AddSliceGUI ( MainSliceGUI0 );
-    this->AddSliceGUI ( MainSliceGUI1 );
-    this->AddSliceGUI ( MainSliceGUI2 );
 }
 
 
@@ -270,9 +239,6 @@ void vtkSlicerSlicesGUI::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->vtkObject::PrintSelf(os, indent);
   os << indent << "SlicerSlicesGUI:" << this->GetClassName ( ) << "\n";
-  os << indent << "MainSliceGUI0: " << this->MainSliceGUI0 << endl;
-  os << indent << "MainSliceGUI1: " << this->MainSliceGUI1 << endl;
-  os << indent << "MainSliceGUI2: " << this->MainSliceGUI2 << endl;
   os << indent << "SliceGUICollection: " << this->SliceGUICollection << endl;
 }
 

@@ -50,6 +50,10 @@ vtkSlicerSliceGUI::~vtkSlicerSliceGUI ( ) {
     
     this->RemoveGUIObservers ();
 
+    // Unpack and set parents to be NULL
+    this->SliceController->SetParent ( NULL );
+    this->SliceViewer->SetParent ( NULL );
+
     if ( this->SliceViewer )
         {
             this->SliceViewer->Delete ( );

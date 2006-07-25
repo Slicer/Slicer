@@ -33,15 +33,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesGUI : public vtkSlicerModuleGUI
     vtkGetObjectMacro ( SliceGUICollection, vtkSlicerSliceGUICollection );
 
     // Description:
-    // Get methods for three default SliceGUIs
-    // (Each SliceGUI contains a SliceViewerWidget,
-    // SliceControllerWidget, a SliceLogic pointer and
-    // a SliceNode pointer.)
-    vtkGetObjectMacro ( MainSliceGUI0, vtkSlicerSliceGUI );
-    vtkGetObjectMacro ( MainSliceGUI1, vtkSlicerSliceGUI );
-    vtkGetObjectMacro ( MainSliceGUI2, vtkSlicerSliceGUI );
-    
-    // Description:
     // API for setting a SliceNode or SliceLogic in one of the sliceGUIs
     // in the SliceGUICollection.
     void SetMRMLNode ( int sliceGUINum, vtkMRMLSliceNode *node)
@@ -84,7 +75,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesGUI : public vtkSlicerModuleGUI
 
     // Description:
     // Build the SlicesGUI's UIPanel and three main SliceGUIs 
-    virtual void BuildGUI ( vtkKWFrame *f1, vtkKWFrame *f2, vtkKWFrame *f3);
+    virtual void BuildGUI ( );
 
     // Description:
     // Add/Remove Observers on UIPanel widgets and SliceGUIs.
@@ -109,12 +100,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesGUI : public vtkSlicerModuleGUI
  protected:
     vtkSlicerSlicesGUI ( );
     ~vtkSlicerSlicesGUI ( );
-
-    // Description:
-    // Three slice widgets by default.
-    vtkSlicerSliceGUI *MainSliceGUI0;
-    vtkSlicerSliceGUI *MainSliceGUI1;
-    vtkSlicerSliceGUI *MainSliceGUI2;
 
     // Description:
     // Collection of the above and other slice GUIs
