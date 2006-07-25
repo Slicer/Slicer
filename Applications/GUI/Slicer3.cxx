@@ -207,11 +207,13 @@ the xml to do what I need...
     appLogic->ProcessMRMLEvents ();  
     appLogic->SetAndObserveMRMLScene ( scene );
 
+    // CREATE APPLICATION GUI, including the main window
     vtkSlicerApplicationGUI *appGUI = vtkSlicerApplicationGUI::New ( );
     appGUI->SetApplication ( slicerApp );
     appGUI->SetAndObserveApplicationLogic ( appLogic );
     appGUI->SetAndObserveMRMLScene ( scene );
-
+    appGUI->BuildGUI ( );
+    appGUI->AddGUIObservers ( );
 
     // ------------------------------
     // CREATE MODULE LOGICS & GUIS; add to GUI collection
@@ -229,7 +231,9 @@ the xml to do what I need...
     // other collections in the vtkSlicerApplication class.
 
     // ADD INDIVIDUAL MODULES
+    // (these require appGUI to be built):
     // --- Volumes module
+
     vtkSlicerVolumesLogic *volumesLogic = vtkSlicerVolumesLogic::New ( );
     volumesLogic->SetAndObserveMRMLScene ( scene );
     vtkSlicerVolumesGUI *volumesGUI = vtkSlicerVolumesGUI::New ( );
@@ -242,6 +246,9 @@ the xml to do what I need...
     volumesGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWin()->GetMainUserInterfaceManager ( ) );
     volumesGUI->GetUIPanel()->Create ( );
     slicerApp->AddModuleGUI ( volumesGUI );
+    volumesGUI->BuildGUI ( );
+    volumesGUI->AddGUIObservers ( );
+
 
     // --- Models module    
     vtkSlicerModelsLogic *modelsLogic = vtkSlicerModelsLogic::New ( );
@@ -256,6 +263,8 @@ the xml to do what I need...
     modelsGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWin()->GetMainUserInterfaceManager ( ) );
     modelsGUI->GetUIPanel()->Create ( );
     slicerApp->AddModuleGUI ( modelsGUI );
+    modelsGUI->BuildGUI ( );
+    modelsGUI->AddGUIObservers ( );
 
     // --- Transforms module
     vtkSlicerTransformsGUI *transformsGUI = vtkSlicerTransformsGUI::New ( );
@@ -267,6 +276,8 @@ the xml to do what I need...
     transformsGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWin()->GetMainUserInterfaceManager ( ) );
     transformsGUI->GetUIPanel()->Create ( );
     slicerApp->AddModuleGUI ( transformsGUI );
+    transformsGUI->BuildGUI ( );
+    transformsGUI->AddGUIObservers ( );
 
     //--- Data module
     //vtkSlicerDataLogic *dataLogic = vtkSlicerDataLogic::New ( );
@@ -282,6 +293,8 @@ the xml to do what I need...
     dataGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWin()->GetMainUserInterfaceManager ( ) );
     dataGUI->GetUIPanel()->Create ( );    
     slicerApp->AddModuleGUI ( dataGUI );
+    dataGUI->BuildGUI ( );
+    dataGUI->AddGUIObservers ( );
 
     // --- Slices module
     // - set up each of the slice logics (these initialize their
@@ -315,12 +328,11 @@ the xml to do what I need...
     slicesGUI->GetUIPanel()->SetUserInterfaceManager ( appGUI->GetMainSlicerWin( )->GetMainUserInterfaceManager( ) );
     slicesGUI->GetUIPanel( )->Create( );
     slicerApp->AddModuleGUI ( slicesGUI );
+    slicesGUI->BuildGUI ();
+    slicesGUI->AddGUIObservers ( );
 
-    // Initialize the event handling code for slice viewers
-    Slicer3_Tcl_Eval (interp, "source $::SLICER_BUILD/SliceViewerInteractor.tcl");
-    
+
     // --- Gradient anisotropic diffusion filter module
-    
     vtkGradientAnisotropicDiffusionFilterGUI *gradientAnisotropicDiffusionFilterGUI = vtkGradientAnisotropicDiffusionFilterGUI::New ( );
     vtkGradientAnisotropicDiffusionFilterLogic *gradientAnisotropicDiffusionFilterLogic  = vtkGradientAnisotropicDiffusionFilterLogic::New ( );
     gradientAnisotropicDiffusionFilterLogic->SetAndObserveMRMLScene ( scene );
@@ -334,6 +346,8 @@ the xml to do what I need...
     gradientAnisotropicDiffusionFilterGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWin()->GetMainUserInterfaceManager ( ) );
     gradientAnisotropicDiffusionFilterGUI->GetUIPanel()->Create ( );
     slicerApp->AddModuleGUI ( gradientAnisotropicDiffusionFilterGUI );
+    gradientAnisotropicDiffusionFilterGUI->BuildGUI ( );
+    gradientAnisotropicDiffusionFilterGUI->AddGUIObservers ( );
 
 
     // --- SlicerDaemon Module
@@ -383,44 +397,6 @@ the xml to do what I need...
 
       ++mit;
       }
-
-    // ------------------------------
-    // BUILD APPLICATION GUI
-    // (this requires collection of module GUIs)
-    appGUI->BuildGUI ( );
-    appGUI->AddGUIObservers ( );
-
-    // ------------------------------
-    // BUILD MODULE GUIs
-    // (these require appGUI to be built):
-    volumesGUI->BuildGUI ( );
-    volumesGUI->AddGUIObservers ( );
-
-    modelsGUI->BuildGUI ( );
-    modelsGUI->AddGUIObservers ( );
-
-    transformsGUI->BuildGUI ( );
-    transformsGUI->AddGUIObservers ( );
-
-    dataGUI->BuildGUI ( );
-    dataGUI->AddGUIObservers ( );
-
-    slicesGUI->BuildGUI ( appGUI->GetDefaultSlice0Frame(),
-                         appGUI->GetDefaultSlice1Frame(),
-                         appGUI->GetDefaultSlice2Frame() );
-    slicesGUI->AddGUIObservers();
-    slicesGUI->SetAndObserveModuleLogic ( 0, sliceLogic0 );
-    slicesGUI->SetAndObserveModuleLogic ( 1, sliceLogic1 );
-    slicesGUI->SetAndObserveModuleLogic ( 2, sliceLogic2 );
-
-    slicesGUI->GetMainSliceGUI0()->GetSliceController()->GetSliceNode()->SetOrientationToAxial();
-    slicesGUI->GetMainSliceGUI1()->GetSliceController()->GetSliceNode()->SetOrientationToSagittal();
-    slicesGUI->GetMainSliceGUI2()->GetSliceController()->GetSliceNode()->SetOrientationToCoronal();
-
-    // ---
-    gradientAnisotropicDiffusionFilterGUI->BuildGUI ( );
-    gradientAnisotropicDiffusionFilterGUI->AddGUIObservers ( );
-
     // -- Build the factory discovered modules gui and observers
     mit = moduleNames.begin();
     while ( mit != moduleNames.end() )
@@ -434,6 +410,15 @@ the xml to do what I need...
       ++mit;
       }
 
+    // create the three main slice viewers after slicesGUI is created
+    appGUI->PopulateModuleChooseList ( );
+    appGUI->SetSliceGUICollection ( slicesGUI->GetSliceGUICollection() );
+    appGUI->AddMainSliceViewersToCollection ( );
+    appGUI->AddMainSliceViewerObservers ( );
+    appGUI->SetAndObserveMainSliceLogic ( sliceLogic0, sliceLogic1, sliceLogic2 );
+    appGUI->ConfigureMainSliceViewers ( );
+    // Initialize the event handling code for slice viewers
+    Slicer3_Tcl_Eval (interp, "source $::SLICER_BUILD/SliceViewerInteractor.tcl");
     
     // ------------------------------
     // CONFIGURE SlICER'S SHARED GUI PANEL
@@ -455,6 +440,7 @@ the xml to do what I need...
     slicerApp->Script ("namespace eval slicer3 set ApplicationGUI %s", name);
     name = slicesGUI->GetTclName();
     slicerApp->Script ("namespace eval slicer3 set SlicesGUI %s", name);
+
     name = volumesGUI->GetTclName();
     slicerApp->Script ("namespace eval slicer3 set VolumesGUI %s", name);
     name = modelsGUI->GetTclName();
@@ -464,6 +450,7 @@ the xml to do what I need...
 
     slicerApp->Script ("namespace eval slicer3 set ApplicationLogic [$::slicer3::ApplicationGUI GetApplicationLogic]");
     slicerApp->Script ("namespace eval slicer3 set MRMLScene [$::slicer3::ApplicationLogic GetMRMLScene]");
+
 
     mit = moduleNames.begin();
     while ( mit != moduleNames.end() )
@@ -506,6 +493,7 @@ the xml to do what I need...
 
     int res = slicerApp->StartApplication();
 
+
     // ------------------------------
     // REMOVE OBSERVERS and references to MRML and Logic
     gradientAnisotropicDiffusionFilterGUI->RemoveGUIObservers ( );
@@ -515,6 +503,10 @@ the xml to do what I need...
     dataGUI->RemoveGUIObservers ( );
     slicesGUI->RemoveGUIObservers ( );
     appGUI->RemoveGUIObservers ( );
+
+    // remove all from the slicesGUI collection of sliceGUIs
+    slicesGUI->GetSliceGUICollection()->RemoveAllItems ( );
+    appGUI->SetSliceGUICollection ( NULL );
 
     // remove the observers from the factory discovered modules
     // (as we remove the observers, cache the GUIs in a vector so we
@@ -533,6 +525,7 @@ the xml to do what I need...
       ++mit;
       }
     
+
     // ------------------------------
     // Remove References to Module GUIs
     slicerApp->GetModuleGUICollection ( )->RemoveAllItems ( );
@@ -545,6 +538,7 @@ the xml to do what I need...
     // DELETE 
     
     //--- delete gui first, removing Refs to Logic and MRML
+
     gradientAnisotropicDiffusionFilterGUI->Delete ();
     volumesGUI->Delete ();
     modelsGUI->Delete ();
@@ -552,6 +546,7 @@ the xml to do what I need...
     dataGUI->Delete ();
     slicesGUI->Delete ();
     appGUI->Delete ();
+
 
     // delete the factory discovered module GUIs (as we delete the
     // GUIs, cache the associated logic instances so we can delete
@@ -575,6 +570,7 @@ the xml to do what I need...
     sliceLogic1->Delete ();
     sliceLogic2->Delete ();
     appLogic->Delete ();
+
 
     // delete the factory discovered module Logics
     std::vector<vtkSlicerModuleLogic*>::iterator lit;
