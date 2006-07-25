@@ -34,8 +34,7 @@ proc CsysWidgetRemove {} {
 
   set sliceGUIs [vtkSlicerSliceGUI ListInstances]
   foreach sliceGUI $sliceGUIs {
-    set renderWidget [[$sliceGUI GetSliceViewer] GetRenderWidget]
-    CsysWidgetDelete $sliceGUI $renderWidget
+    CsysWidgetDelete $sliceGUI 
   }
 }
 
@@ -45,62 +44,64 @@ proc CsysWidgetAdd {} {
 
   set sliceGUIs [vtkSlicerSliceGUI ListInstances]
   foreach sliceGUI $sliceGUIs {
-    set renderWidget [[$sliceGUI GetSliceViewer] GetRenderWidget]
-    CsysWidgetCreate $sliceGUI $renderWidget
+    CsysWidgetCreate $sliceGUI
   }
 }
 
-proc CsysWidgetCreate { tag renderWidget } {
+proc CsysWidgetCreate { sliceGUI } {
 
+  set renderWidget [[$sliceGUI GetSliceViewer] GetRenderWidget]
+  set interactorStyle [[$renderWidget GetRenderWindowInteractor] GetInteractorStyle]
+ 
+  set o(sphere) [vtkNew vtkSphereSource $sliceGUI]
+  set o(mapper) [vtkNew vtkPolyDataMapper2D $sliceGUI]
+  set o(actor) [vtkNew vtkActor2D $sliceGUI]
+  $o(mapper) SetInput [$o(sphere) GetOutput]
+  $o(actor) SetMapper $o(mapper)
+  [$renderWidget GetRenderer] AddActor2D $o(actor)
+
+  foreach l {1 2} {
+    set o(leader,$l) [vtkNew vtkLeaderActor2D $sliceGUI]
+    $o(leader,$l) SetArrowPlacementToBoth
+    $o(leader,$l) SetMaximumArrowSize 7
+    set o(leaderMapper,$l) [vtkNew vtkPolyDataMapper2D $sliceGUI]
+    $o(leader,$l) SetMapper $o(leaderMapper,$l)
+    [$renderWidget GetRenderer] AddActor2D $o(leader,$l)
+  }
+  
+  CsysWidgetUpdate $sliceGUI [array get o]
+}
+
+proc CsysWidgetUpdate { sliceGUI objs } {
+  array set o $objs
+
+  set renderWidget [[$sliceGUI GetSliceViewer] GetRenderWidget]
   set size [[$renderWidget GetRenderWindow]  GetSize]
   foreach {w h} $size {}
   foreach d {w h} c {cx cy} { set $c [expr [set $d] / 2.0] }
 
+  $o(sphere) SetRadius 5
+  $o(sphere) SetCenter $cx $cy 0
 
-  set interactorStyle [[$renderWidget GetRenderWindowInteractor] GetInteractorStyle]
- 
-  set sphere [vtkNew vtkSphereSource $tag]
-  $sphere SetRadius 5
-  $sphere SetCenter $cx $cy 0
-  set mapper [vtkNew vtkPolyDataMapper2D $tag]
-  set actor [vtkNew vtkActor2D $tag]
-  $mapper SetInput [$sphere GetOutput]
-  $actor SetMapper $mapper
+  $o(leader,1) SetPosition  [expr ($cx - 15) / $w] [expr $cy / $h]
+  $o(leader,1) SetPosition2 [expr ($cx + 15) / $w] [expr $cy / $h]
+  $o(leader,2) SetPosition  [expr $cx / $w] [expr ($cy - 15) / $h]
+  $o(leader,2) SetPosition2 [expr $cx / $w] [expr ($cy + 15) / $h]
 
-  [$renderWidget GetRenderer] AddActor2D $actor
-
-  foreach l {1 2} {
-    set leader($l) [vtkNew vtkLeaderActor2D $tag]
-    $leader($l) SetArrowPlacementToBoth
-    $leader($l) SetMaximumArrowSize 7
-    set leaderMapper($l) [vtkNew vtkPolyDataMapper2D $tag]
-    $leader($l) SetMapper $leaderMapper($l)
-    [$renderWidget GetRenderer] AddActor2D $leader($l)
-  }
-
-  $leader(1) SetPosition  [expr ($cx - 15) / $w] [expr $cy / $h]
-  $leader(1) SetPosition2 [expr ($cx + 15) / $w] [expr $cy / $h]
-  $leader(2) SetPosition  [expr $cx / $w] [expr ($cy - 15) / $h]
-  $leader(2) SetPosition2 [expr $cx / $w] [expr ($cy + 15) / $h]
-  
-  $renderWidget Render
-
+  [$sliceGUI GetSliceViewer] RequestRender
 }
 
-CsysWidgetUpdate { tag renderWidget } {
+proc CsysWidgetDelete { sliceGUI } {
 
-}
-
-proc CsysWidgetDelete { tag renderWidget } {
-  # todo - remove actors
+  set renderWidget [[$sliceGUI GetSliceViewer] GetRenderWidget]
   set actors [[$renderWidget GetRenderer] GetActors2D]
   $actors InitTraversal
   while { 1 } {
     set actor [$actors GetNextActor2D]
     if { $actor == "" } { break }
-    if { [vtkExists $actor $tag] } {
+    if { [vtkExists $actor $sliceGUI] } {
       [$renderWidget GetRenderer] RemoveActor2D $actor
     }
   }
-  vtkDelete $tag
+  vtkDelete $sliceGUI
 }
