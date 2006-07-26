@@ -179,7 +179,7 @@ proc SliceViewerHandleEvent {sliceGUI event} {
     LeftButtonPressEvent {
       if { [info command SeedSWidget] != "" } {
         set seedSWidget [SeedSWidget #auto $sliceGUI]
-        $seedSWidget place $x $y 0
+        $seedSWidget place $r $a $s
       }
     }
     LeftButtonReleaseEvent { }

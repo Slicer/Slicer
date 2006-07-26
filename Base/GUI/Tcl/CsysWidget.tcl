@@ -41,10 +41,12 @@ if { [itcl::find class SWidget] == "" } {
     variable _vtkObjects ""
     variable _pickState "outside"
     variable _actionState ""
+    variable _glyphScale 10
 
     variable o ;# array of the objects for this widget, for convenient cleanup
     variable _actors "" ;# list of actors for removing from the renderer
-    variable _observerTag ;# save so destructor can remove observer
+    variable _guiObserverTag ;# save so destructor can remove observer
+    variable _nodeObserverTag ;# save so destructor can remove observer
 
     # methods
     method getObjects {} {return [array get o]}
@@ -96,6 +98,8 @@ if { [itcl::find class SeedSWidget] == "" } {
     method place {x y z} {}
     method highlight {} {}
     method createGlyph {} {}
+    method rasToXY {rasPoint} {}
+    method xyToRAS {xyPoint} {}
   }
 }
 
@@ -115,20 +119,20 @@ itcl::body SeedSWidget::constructor {sliceGUI} {
   [$renderWidget GetRenderer] AddActor2D $o(actor)
   lappend _actors $o(actor)
 
-  set size [[$renderWidget GetRenderWindow]  GetSize]
-  foreach {w h} $size {}
-  foreach d {w h} c {cx cy} { set $c [expr [set $d] / 2.0] }
-
-  set _startPosition "$cx $cy 0"
-  set _currentPosition "$cx $cy 0"
+  set _startPosition "0 0 0"
+  set _currentPosition "0 0 0"
 
   $this processEvent
-  set _observerTag [$sliceGUI AddObserver AnyEvent "$this processEvent"]
+  set _guiObserverTag [$sliceGUI AddObserver AnyEvent "$this processEvent"]
+  set node [[$sliceGUI GetLogic] GetSliceNode]
+  set _nodeObserverTag [$sliceGUI AddObserver ModifiedEvent "$this processEvent"]
 }
 
 itcl::body SeedSWidget::destructor {} {
 
-  $sliceGUI RemoveObserver $_observerTag
+  $sliceGUI RemoveObserver $_guiObserverTag
+  set node [[$sliceGUI GetLogic] GetSliceNode]
+  $node RemoveObserver $_nodeObserverTag
 
   set renderer [[[$sliceGUI GetSliceViewer] GetRenderWidget] GetRenderer]
   foreach a $_actors {
@@ -141,10 +145,7 @@ itcl::body SeedSWidget::destructor {} {
 # ------------------------------------------------------------------
 
 itcl::body SeedSWidget::createGlyph {} {
-
-
   # make a star shaped array of lines around the center
-  set scale 10.
   set polyData [vtkNew vtkPolyData]
   set points [vtkPoints New]
   set lines [vtkCellArray New]
@@ -154,11 +155,11 @@ itcl::body SeedSWidget::createGlyph {} {
   set TWOPI [expr $PI * 2]
   set PIoverFOUR [expr $PI / 4]
   for { set angle 0 } { $angle <= $TWOPI } { set angle [expr $angle + $PIoverFOUR] } {
-    set x [expr $scale * 0.3 * cos($angle)]
-    set y [expr $scale * 0.3 * sin($angle)]
+    set x [expr $_glyphScale * 0.3 * cos($angle)]
+    set y [expr $_glyphScale * 0.3 * sin($angle)]
     set p0 [$points InsertNextPoint $x $y 0]
-    set x [expr $scale * cos($angle)]
-    set y [expr $scale * sin($angle)]
+    set x [expr $_glyphScale * cos($angle)]
+    set y [expr $_glyphScale * sin($angle)]
     set p1 [$points InsertNextPoint $x $y 0]
     set idList [vtkIdList New]
     $idList InsertNextId $p0
@@ -176,9 +177,9 @@ itcl::body SeedSWidget::pick {} {
   set renderWidget [[$sliceGUI GetSliceViewer] GetRenderWidget]
   set interactor [$renderWidget GetRenderWindowInteractor]
 
-  foreach {cx cy cz} $_currentPosition {}
+  foreach {x y} [$this rasToXY $_currentPosition] {}
   foreach {ex ey} [$interactor GetEventPosition] {}
-  if { [expr abs($ex - $cx) < 15] && [expr abs($ey - $cy) < 15] } {
+  if { [expr abs($ex - $x) < 15] && [expr abs($ey - $y) < 15] } {
     set _pickState "over"
   } else {
     set _pickState "outside"
@@ -186,13 +187,14 @@ itcl::body SeedSWidget::pick {} {
 }
 
 itcl::body SeedSWidget::place {x y z} {
-  # TODO: this should be in RAS
   set _currentPosition "$x $y $z"
   $this positionActors
 }
 
 itcl::body SeedSWidget::positionActors { } {
-  eval $o(actor) SetPosition [lrange $_currentPosition 0 1]
+
+  set xyzw [$this rasToXY $_currentPosition]
+  eval $o(actor) SetPosition [lrange $xyzw 0 1]
 }
 
 itcl::body SeedSWidget::highlight { } {
@@ -246,7 +248,7 @@ itcl::body SeedSWidget::processEvent { } {
             "dragging" {
               set renderWidget [[$sliceGUI GetSliceViewer] GetRenderWidget]
               set interactor [$renderWidget GetRenderWindowInteractor]
-              set _currentPosition "[$interactor GetEventPosition] 0"
+              set _currentPosition [$this xyToRAS [$interactor GetEventPosition]]
             }
             default {
               set _description "Press left mouse button to begin dragging"
@@ -268,6 +270,23 @@ itcl::body SeedSWidget::processEvent { } {
 }
 
 
+# return x y for a give r a s
+itcl::body SeedSWidget::rasToXY { rasPoint } {
+  set node [[$sliceGUI GetLogic] GetSliceNode]
+  set rasToXY [vtkMatrix4x4 New]
+  $rasToXY DeepCopy [$node GetXYToRAS]
+  $rasToXY Invert
+  set xyzw [eval $rasToXY MultiplyPoint $rasPoint 1]
+  $rasToXY Delete
+  return [lrange $xyzw 0 1]
+}
+
+# return r a s for a given x y
+itcl::body SeedSWidget::xyToRAS { xyPoint } {
+  set node [[$sliceGUI GetLogic] GetSliceNode]
+  set rast [eval [$node GetXYToRAS] MultiplyPoint $xyPoint 0 1]
+  return [lrange $rast 0 2]
+}
 
 
 
