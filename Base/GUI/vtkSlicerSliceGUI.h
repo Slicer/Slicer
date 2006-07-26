@@ -122,6 +122,15 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceGUI : public vtkSlicerComponentGU
     void SetGUICommandAbortFlag ( int flag );
 
     // Description:
+    // Flag saying that one of the observers wants to grab the events.
+    // This doesn't prevent other observers from seeing the events, but they
+    // can check the flag and decide not to process the event if some other
+    // observer has grabbed it.  Observers can use the value of this flag to
+    // do state mangement (the observer is responsible for creating a unique id)
+    vtkGetStringMacro ( GrabID );
+    vtkSetStringMacro ( GrabID );
+
+    // Description:
     // Functions that define and undefine module-specific behaviors.
     virtual void Enter ( );
     virtual void Exit ( );
@@ -141,6 +150,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceGUI : public vtkSlicerComponentGU
     vtkMRMLSliceNode *SliceNode;
 
     char *CurrentGUIEvent;
+    char *GrabID;
 
 
  private:

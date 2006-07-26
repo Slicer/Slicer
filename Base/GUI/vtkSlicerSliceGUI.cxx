@@ -42,6 +42,7 @@ vtkSlicerSliceGUI::vtkSlicerSliceGUI (  ) {
     this->Logic = NULL;
     this->SliceNode = NULL;
     this->CurrentGUIEvent = NULL;
+    this->GrabID = NULL;
 }
 
 
