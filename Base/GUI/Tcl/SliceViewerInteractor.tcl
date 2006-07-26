@@ -204,9 +204,11 @@ proc SliceViewerHandleEvent {sliceGUI event} {
     }
     EnterEvent { 
       $renderWidget CornerAnnotationVisibilityOn
+      [$::slicer3::ApplicationGUI GetMainSlicerWin]  SetStatusText "Middle Button: Pan; Left Button: Zoom"
     }
     LeaveEvent { 
       $renderWidget CornerAnnotationVisibilityOff
+      [$::slicer3::ApplicationGUI GetMainSlicerWin]  SetStatusText ""
     }
     TimerEvent { }
     KeyPressEvent { }
