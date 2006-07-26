@@ -111,11 +111,16 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceGUI : public vtkSlicerComponentGU
     // Processes all events raised by MRML
     virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
 
-    // Description
+    // Description:
     // Utility for accessing the event that is most recently triggered on the GUI
     vtkGetStringMacro ( CurrentGUIEvent );
     vtkSetStringMacro ( CurrentGUIEvent );
     
+    // Description:
+    // Allow scripts using to 'swallow' events (actual callback command
+    // isn't correctly wrapped in vtk to allow access)
+    void SetGUICommandAbortFlag ( int flag );
+
     // Description:
     // Functions that define and undefine module-specific behaviors.
     virtual void Enter ( );

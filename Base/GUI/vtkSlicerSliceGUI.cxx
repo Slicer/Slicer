@@ -149,6 +149,11 @@ void vtkSlicerSliceGUI::RemoveGUIObservers ( ) {
 }
 
 
+//---------------------------------------------------------------------------
+void vtkSlicerSliceGUI::SetGUICommandAbortFlag ( int flag )
+{
+  this->GetGUICallbackCommand()->SetAbortFlag(flag);
+}
 
 
 //---------------------------------------------------------------------------

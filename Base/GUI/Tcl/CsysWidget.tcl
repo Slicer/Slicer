@@ -82,8 +82,11 @@ proc CsysWidgetUpdate { sliceGUI objs } {
   foreach d {w h} c {cx cy} { set $c [expr [set $d] / 2.0] }
 
   foreach {ex ey} [$interactor GetEventPosition] {}
-  if { [expr abs($ex - $cx > 15)] &&  [expr abs($ex - $cx > 15)] } {
-    [$sliceGUI GetGUICallbackCommand] SetAbortFlag 1
+  if { [expr abs($ex - $cx) < 15] &&  [expr abs($ey - $cy) < 15] } {
+    puts "aborting"
+    $sliceGUI SetGUICommandAbortFlag 1
+  } else {
+    puts "not aborting"
   }
 
   $o(sphere) SetRadius 5
