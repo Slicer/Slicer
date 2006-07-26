@@ -179,8 +179,12 @@ void vtkSlicerSliceGUI::ProcessGUIEvents ( vtkObject *caller,
       this->GetSliceViewer()->GetRenderWidget()->GetRenderWindowInteractor()->GetInteractorStyle())
     {
     this->SetCurrentGUIEvent( vtkCommand::GetStringFromEventId(event) );
-    this->Script( "SliceViewerHandleEvent %s %s", 
-      this->GetTclName(), vtkCommand::GetStringFromEventId(event) );
+    this->InvokeEvent (event, NULL);
+    if ( !this->GUICallbackCommand->GetAbortFlag() )
+      {
+      this->Script( "SliceViewerHandleEvent %s %s", 
+        this->GetTclName(), vtkCommand::GetStringFromEventId(event) );
+      }
     }
 }
 

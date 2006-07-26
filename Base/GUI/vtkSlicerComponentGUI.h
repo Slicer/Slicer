@@ -73,6 +73,13 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerComponentGUI : public vtkKWObject
     virtual void RemoveGUIObservers ( ) { };
 
     // Description:
+    // Callback commands so that tcl scripts can set Abort flag when
+    // they process events
+    vtkGetObjectMacro (MRMLCallbackCommand, vtkCallbackCommand);
+    vtkGetObjectMacro (LogicCallbackCommand, vtkCallbackCommand);
+    vtkGetObjectMacro (GUICallbackCommand, vtkCallbackCommand);
+
+    // Description:
     // Flags to avoid event loops
     // NOTE: don't use the SetMacro or it call modified itself and generate even more events!
     void SetInLogicCallbackFlag (int flag) {

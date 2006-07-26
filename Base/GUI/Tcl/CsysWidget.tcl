@@ -51,7 +51,6 @@ proc CsysWidgetAdd {} {
 proc CsysWidgetCreate { sliceGUI } {
 
   set renderWidget [[$sliceGUI GetSliceViewer] GetRenderWidget]
-  set interactorStyle [[$renderWidget GetRenderWindowInteractor] GetInteractorStyle]
  
   set o(sphere) [vtkNew vtkSphereSource $sliceGUI]
   set o(mapper) [vtkNew vtkPolyDataMapper2D $sliceGUI]
@@ -70,15 +69,22 @@ proc CsysWidgetCreate { sliceGUI } {
   }
   
   CsysWidgetUpdate $sliceGUI [array get o]
+  $sliceGUI AddObserver AnyEvent "CsysWidgetUpdate $sliceGUI \"[array get o]\""
 }
 
 proc CsysWidgetUpdate { sliceGUI objs } {
   array set o $objs
 
   set renderWidget [[$sliceGUI GetSliceViewer] GetRenderWidget]
+  set interactor [$renderWidget GetRenderWindowInteractor]
   set size [[$renderWidget GetRenderWindow]  GetSize]
   foreach {w h} $size {}
   foreach d {w h} c {cx cy} { set $c [expr [set $d] / 2.0] }
+
+  foreach {ex ey} [$interactor GetEventPosition] {}
+  if { [expr abs($ex - $cx > 15)] &&  [expr abs($ex - $cx > 15)] } {
+    [$sliceGUI GetGUICallbackCommand] SetAbortFlag 1
+  }
 
   $o(sphere) SetRadius 5
   $o(sphere) SetCenter $cx $cy 0
