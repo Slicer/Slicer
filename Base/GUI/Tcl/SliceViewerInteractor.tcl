@@ -192,12 +192,14 @@ proc SliceViewerHandleEvent {sliceGUI event} {
       set size [[[[$sliceGUI GetSliceViewer]  GetRenderWidget]  GetRenderWindow]  GetSize]
       puts "Configure: Size $size"
       foreach {w h} $size {}
-      if { $w < $h } { set min $w } else { set min $h }
       if { $w == "10" && $h == "10" } {
         puts "ignoring bogus resize"
       } else {
+        set oldFOV [$sliceNode GetFieldOfView]
         set oldDim [$sliceNode GetDimensions]
-        $sliceNode SetDimensions $min $min [lindex $oldDim 2]
+        set oldPixelSize [expr [lindex $oldFOV 0] / (1. * [lindex $oldDim 0])]
+        $sliceNode SetDimensions $w $h [lindex $oldDim 2]
+        $sliceNode SetFieldOfView [expr $oldPixelSize * $w] [expr $oldPixelSize * $h] [lindex $oldFOV 2]
       }
     }
     EnterEvent { 
