@@ -165,7 +165,7 @@ proc SliceViewerHandleEvent {sliceGUI event} {
         }
         default {
           # need to render to show the annotation
-          $renderWidget Render
+          [$sliceGUI GetSliceViewer] RequestRender
         }
       }
     }
