@@ -176,7 +176,12 @@ proc SliceViewerHandleEvent {sliceGUI event} {
       $::slicer3::MRMLScene SaveStateForUndo $sliceNode
     }
     RightButtonReleaseEvent { }
-    LeftButtonPressEvent { }
+    LeftButtonPressEvent {
+      if { [info command SeedSWidget] != "" } {
+        set seedSWidget [SeedSWidget #auto $sliceGUI]
+        $seedSWidget place $x $y 0
+      }
+    }
     LeftButtonReleaseEvent { }
     MiddleButtonPressEvent {
       set ::SliceViewerMode Translate
@@ -194,6 +199,7 @@ proc SliceViewerHandleEvent {sliceGUI event} {
       foreach {w h} $size {}
       if { $w == "10" && $h == "10" } {
         puts "ignoring bogus resize"
+        puts [$sliceGUI Print]
       } else {
         set oldFOV [$sliceNode GetFieldOfView]
         set oldDim [$sliceNode GetDimensions]
