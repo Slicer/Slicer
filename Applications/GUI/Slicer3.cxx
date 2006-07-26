@@ -163,7 +163,7 @@ int Slicer3_main(int argc, char *argv[])
       std::vector<std::string>::const_iterator argit = Args.begin();
       while (argit != Args.end())
         {
-        cmd += " lappend args " + *argit + "; ";
+        cmd += " lappend args \"" + *argit + "\"; ";
         ++argit;
         }
       Slicer3_Tcl_Eval( interp, cmd.c_str() );
