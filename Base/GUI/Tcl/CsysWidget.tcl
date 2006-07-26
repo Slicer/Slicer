@@ -201,6 +201,7 @@ itcl::body SeedSWidget::highlight { } {
 
   set property [$o(actor) GetProperty]
   $property SetColor 1 1 1
+  $property SetLineWidth 1
   switch $_actionState {
     "dragging" {
       $property SetColor 0 1 0
@@ -209,6 +210,7 @@ itcl::body SeedSWidget::highlight { } {
       switch $_pickState {
         "over" {
           $property SetColor 0 1 1
+          $property SetLineWidth 2
         }
       }
     }
