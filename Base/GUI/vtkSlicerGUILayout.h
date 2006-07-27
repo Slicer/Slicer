@@ -43,6 +43,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGUILayout : public vtkKWObject
             SlicerLayoutOneUp3DView,
             SlicerLayoutOneUpSliceView,
             SlicerLayoutTabbed3DView,
+            SlicerLayoutTabbedSliceView,
             SlicerLayoutLightboxView
         };
     //ETX
@@ -65,6 +66,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGUILayout : public vtkKWObject
     vtkSetMacro ( DefaultSliceWindowWidth, int);
     vtkGetMacro ( DefaultSliceWindowHeight, int);
     vtkSetMacro ( DefaultSliceWindowHeight, int);
+    vtkGetMacro ( DefaultQuadrantHeight, int );
+    vtkSetMacro ( DefaultQuadrantHeight, int );
+    vtkGetMacro ( DefaultQuadrantWidth, int );
+    vtkSetMacro ( DefaultQuadrantWidth, int );
     vtkGetMacro ( DefaultGUIPanelWidth, int);
     vtkSetMacro ( DefaultGUIPanelWidth, int);
     vtkGetMacro ( DefaultGUIPanelHeight, int);
@@ -83,7 +88,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGUILayout : public vtkKWObject
     vtkSetMacro ( SliceViewerMinDim, int );
 
     virtual void InitializeLayoutDimensions ( );
-    virtual void ConfigureViews ( int arrangementType );
     virtual void ConfigureSliceViewersPanel ( );
     virtual void ConfigureMainViewerPanel ( );
     virtual void ConfigureMainSlicerWindow ( );
@@ -110,6 +114,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGUILayout : public vtkKWObject
     int DefaultSliceWindowWidth;
     int DefaultGUIPanelHeight;
     int DefaultGUIPanelWidth;
+    int DefaultQuadrantHeight;
+    int DefaultQuadrantWidth;
     
     // Description:
     // Dimensions for specific GUI panel components

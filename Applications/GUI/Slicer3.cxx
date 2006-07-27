@@ -409,9 +409,8 @@ int Slicer3_main(int argc, char *argv[])
     // create the three main slice viewers after slicesGUI is created
     appGUI->PopulateModuleChooseList ( );
     appGUI->SetSliceGUICollection ( slicesGUI->GetSliceGUICollection() );
-    appGUI->AddMainSliceViewersToCollection ( );
-    appGUI->AddMainSliceViewerObservers ( );
     appGUI->SetAndObserveMainSliceLogic ( sliceLogic0, sliceLogic1, sliceLogic2 );
+    appGUI->AddMainSliceViewersToCollection ( );
     appGUI->ConfigureMainSliceViewers ( );
     // Initialize the event handling code for slice viewers
     Slicer3_Tcl_Eval (interp, "source $::SLICER_BUILD/SliceViewerInteractor.tcl");

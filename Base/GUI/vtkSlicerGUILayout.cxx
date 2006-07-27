@@ -28,40 +28,6 @@ vtkSlicerGUILayout::~vtkSlicerGUILayout ( )
 }
 
 
-//---------------------------------------------------------------------------
-void vtkSlicerGUILayout::ConfigureViews ( int arrangementType )
-{
-  if ( this->MainSlicerWin != NULL ) 
-    {
-      switch ( arrangementType )
-        {
-        case SlicerLayoutInitialView:
-          this->SetCurrentViewArrangement ( this->SlicerLayoutInitialView);
-          break;
-        case SlicerLayoutDefaultView:
-          this->SetCurrentViewArrangement ( this->SlicerLayoutDefaultView);
-          break;
-        case SlicerLayoutFourUpView:
-          this->SetCurrentViewArrangement ( this->SlicerLayoutFourUpView);
-          break;
-        case SlicerLayoutOneUp3DView:
-          this->SetCurrentViewArrangement ( this->SlicerLayoutOneUp3DView);
-          break;
-        case SlicerLayoutOneUpSliceView:
-          this->SetCurrentViewArrangement ( this->SlicerLayoutOneUpSliceView);
-          break;
-        case SlicerLayoutTabbed3DView:
-          this->SetCurrentViewArrangement ( this->SlicerLayoutTabbed3DView);
-          break;
-        case SlicerLayoutLightboxView:
-          this->SetCurrentViewArrangement ( this->SlicerLayoutLightboxView);
-          break;
-        default:
-          break;
-        }
-    }
-}
-
 
 //---------------------------------------------------------------------------
 void vtkSlicerGUILayout::InitializeLayoutDimensions ( )
@@ -103,7 +69,8 @@ void vtkSlicerGUILayout::InitializeLayoutDimensions ( )
   // set up default Slicer Window size here for now
   this->SetDefaultMainViewerHeight ( h - this->GetDefaultSliceGUIFrameHeight () );
   this->SetDefaultMainViewerWidth ( w );
-
+  this->SetDefaultQuadrantHeight ( h / 2 );
+  this->SetDefaultQuadrantWidth ( w / 2 );
 
   int hbuf = 10;
   int vbuf = 60;

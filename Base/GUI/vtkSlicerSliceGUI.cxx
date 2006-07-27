@@ -271,7 +271,7 @@ void vtkSlicerSliceGUI::BuildGUI ( vtkKWFrame *f )
       this->SliceViewer->SetParent ( this->SliceGUIFrame );
       this->SliceViewer->Create (  );
 
-      this->PackGUI();
+      //      this->PackGUI();
     }
 }
 

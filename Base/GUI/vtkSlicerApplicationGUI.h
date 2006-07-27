@@ -71,6 +71,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkGetObjectMacro (MainSliceGUI0, vtkSlicerSliceGUI);
     vtkGetObjectMacro (MainSliceGUI1, vtkSlicerSliceGUI);
     vtkGetObjectMacro (MainSliceGUI2, vtkSlicerSliceGUI);
+    vtkGetObjectMacro (MainSliceLogic0, vtkSlicerSliceLogic);
+    vtkGetObjectMacro (MainSliceLogic1, vtkSlicerSliceLogic);
+    vtkGetObjectMacro (MainSliceLogic2, vtkSlicerSliceLogic);
+
     vtkGetObjectMacro (SliceGUICollection, vtkSlicerSliceGUICollection);
     vtkSetObjectMacro (SliceGUICollection, vtkSlicerSliceGUICollection);
     
@@ -229,6 +233,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     virtual void DisplayOneUpSliceView ( );
     virtual void DisplayFourUpView ( );
     virtual void DisplayTabbed3DView ( );
+    virtual void DisplayTabbedSliceView ( );
     virtual void DisplayLightboxView ( );
 
     virtual void AddSliceGUIToCollection ( vtkSlicerSliceGUI *s );
@@ -246,10 +251,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // These methods populate the various GUI Panel frames
     virtual void BuildGUIPanel ( );
     virtual void BuildToolBar ( );
-    virtual void BuildMainViewer ( );
+    virtual void BuildMainViewer ( int arrangementType);
     virtual void DestroyMainViewer ( );
-    virtual void BuildMainSliceViewers ( );
-    virtual void DestroyMainSliceViewers ( );
     virtual void BuildLogoGUIPanel ( );
     virtual void BuildModuleChooseGUIPanel ( );
     virtual void PopulateModuleChooseList ( );
@@ -257,7 +260,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     virtual void BuildViewControlGUIPanel ( );
     virtual void AssignViewControlIcons ( );
     virtual void MakeViewControlRolloverBehavior ( );
-    virtual void ReconfigureViews ( int arrangementType );
 
     // Desrciption:
     // These methods delete widgets belonging to components of the Slicer Window
@@ -434,6 +436,13 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkSlicerSliceGUI *MainSliceGUI1;
     vtkSlicerSliceGUI *MainSliceGUI2;
     vtkSlicerSliceGUICollection *SliceGUICollection;
+    vtkSlicerSliceLogic *MainSliceLogic0;
+    vtkSlicerSliceLogic *MainSliceLogic1;    
+    vtkSlicerSliceLogic *MainSliceLogic2;
+    // Description:
+    // Used to tag all pages added to the tabbed notebook
+    // arrangement of the main viewer.
+    //const static int ViewerPageTag = 1000;
     
  private:
     vtkSlicerApplicationGUI ( const vtkSlicerApplicationGUI& ); // Not implemented.
