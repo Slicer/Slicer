@@ -79,8 +79,12 @@ vtkMRMLModelStorageNode::~vtkMRMLModelStorageNode()
 
 void vtkMRMLModelStorageNode::WriteXML(ostream& of, int nIndent)
 {
-  vtkErrorMacro("NOT IMPLEMENTED YET");
-  (void)of; (void)nIndent;
+  Superclass::WriteXML(of, nIndent);
+  vtkIndent indent(nIndent);
+  if (this->FileName != NULL) 
+    {
+    of << indent << "fileName=\"" << this->FileName << "\" ";
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -95,7 +99,7 @@ void vtkMRMLModelStorageNode::ReadXMLAttributes(const char** atts)
     {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "FileName")) 
+    if (!strcmp(attName, "fileName")) 
       {
       this->SetFileName(attValue);
       }

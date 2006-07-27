@@ -25,6 +25,7 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLLinearTransformNode.h"
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLModelStorageNode.h"
+#include "vtkMRMLModelDisplayNode.h"
 #include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLVectorVolumeNode.h"
 #include "vtkMRMLFiducialNode.h"
@@ -62,6 +63,9 @@ vtkMRMLScene::vtkMRMLScene()
   
   vtkMRMLModelStorageNode *modelstorenode = vtkMRMLModelStorageNode::New(); 
   this->RegisterNodeClass( modelstorenode );
+
+  vtkMRMLModelDisplayNode *modeldisplaynode = vtkMRMLModelDisplayNode::New(); 
+  this->RegisterNodeClass( modeldisplaynode );
   
   vtkMRMLScalarVolumeNode *svoln = vtkMRMLScalarVolumeNode::New(); 
   this->RegisterNodeClass( svoln );
