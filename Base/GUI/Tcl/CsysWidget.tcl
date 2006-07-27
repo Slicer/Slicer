@@ -125,7 +125,7 @@ itcl::body SeedSWidget::constructor {sliceGUI} {
   $this processEvent
   set _guiObserverTag [$sliceGUI AddObserver AnyEvent "$this processEvent"]
   set node [[$sliceGUI GetLogic] GetSliceNode]
-  set _nodeObserverTag [$sliceGUI AddObserver ModifiedEvent "$this processEvent"]
+  set _nodeObserverTag [$node AddObserver ModifiedEvent "$this processEvent"]
 }
 
 itcl::body SeedSWidget::destructor {} {
@@ -202,9 +202,11 @@ itcl::body SeedSWidget::highlight { } {
   set property [$o(actor) GetProperty]
   $property SetColor 1 1 1
   $property SetLineWidth 1
+  set _description ""
   switch $_actionState {
     "dragging" {
       $property SetColor 0 1 0
+      set _description "Move mouse with left button down to drag"
     }
     default {
       switch $_pickState {
@@ -235,14 +237,12 @@ itcl::body SeedSWidget::processEvent { } {
   switch $_pickState {
     "outside" {
       set _actionState ""
-      set _description ""
     }
     "over" {
       $sliceGUI SetGUICommandAbortFlag 1
       switch $event {
         "LeftButtonPressEvent" {
           set _actionState "dragging"
-          set _description "Move mouse with left button down to drag"
           $sliceGUI SetGrabID $this
         }
         "MouseMoveEvent" {
@@ -253,7 +253,6 @@ itcl::body SeedSWidget::processEvent { } {
               set _currentPosition [$this xyToRAS [$interactor GetEventPosition]]
             }
             default {
-              set _description "Press left mouse button to begin dragging"
             }
           }
         }
