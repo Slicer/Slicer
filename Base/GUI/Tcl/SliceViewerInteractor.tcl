@@ -194,9 +194,20 @@ proc SliceViewerHandleEvent {sliceGUI event} {
     MouseWheelBackwardEvent { }
     ExposeEvent { }
     ConfigureEvent {
-      set size [[[[$sliceGUI GetSliceViewer]  GetRenderWidget]  GetRenderWindow]  GetSize]
-      puts "Configure: Size $size"
-      foreach {w h} $size {}
+      if {0} {
+        set size [[[[$sliceGUI GetSliceViewer]  GetRenderWidget]  GetRenderWindow]  GetSize]
+        foreach {w h} $size {}
+        # the different parts of kww doen't have the same size info!
+        puts "Configure: Size $size"
+        puts "rw width [[[$sliceGUI GetSliceViewer]  GetRenderWidget]  GetWidth]"
+        puts "rw height [[[$sliceGUI GetSliceViewer]  GetRenderWidget]  GetHeight]"
+        puts "widget width [winfo width [[[$sliceGUI GetSliceViewer]  GetRenderWidget]  GetWidgetName]]"
+        puts "widget height [winfo height [[[$sliceGUI GetSliceViewer]  GetRenderWidget]  GetWidgetName]]"
+      }
+      set tkwindow [[[$sliceGUI GetSliceViewer]  GetRenderWidget]  GetWidgetName]
+      set w [winfo width $tkwindow]
+      set h [winfo height $tkwindow]
+
       if { $w == "10" && $h == "10" } {
         puts "ignoring bogus resize"
         puts [$sliceGUI Print]
