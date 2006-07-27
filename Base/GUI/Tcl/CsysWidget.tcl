@@ -200,7 +200,7 @@ itcl::body SeedSWidget::positionActors { } {
 itcl::body SeedSWidget::highlight { } {
 
   set property [$o(actor) GetProperty]
-  $property SetColor 1 1 1
+  $property SetColor 1 0 0
   $property SetLineWidth 1
   set _description ""
   switch $_actionState {
@@ -211,7 +211,7 @@ itcl::body SeedSWidget::highlight { } {
     default {
       switch $_pickState {
         "over" {
-          $property SetColor 0 1 1
+          $property SetColor 1 1 0
           $property SetLineWidth 2
         }
       }
@@ -343,12 +343,12 @@ itcl::body CsysSWidget::constructor {sliceGUI} {
   $o(sphere) SetRadius 5
   
   $this processEvent
-  set _observerTag [$sliceGUI AddObserver AnyEvent "$this processEvent"]
+  set _guiObserverTag [$sliceGUI AddObserver AnyEvent "$this processEvent"]
 }
 
 itcl::body CsysSWidget::destructor {} {
 
-  $sliceGUI RemoveObserver $_observerTag
+  $sliceGUI RemoveObserver $_guiObserverTag
 
   set renderer [[[$sliceGUI GetSliceViewer] GetRenderWidget] GetRenderer]
   foreach a $_actors {
