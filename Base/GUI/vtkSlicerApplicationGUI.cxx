@@ -1096,25 +1096,25 @@ void vtkSlicerApplicationGUI::BuildMainViewer ( int arrangementType)
       // parent the sliceGUI  based on selected view arrangement & build
       switch ( arrangementType )
         {
-        case layout->SlicerLayoutInitialView:
+        case vtkSlicerGUILayout::SlicerLayoutInitialView:
           this->DisplayConventionalView ( );
           break;
-        case layout->SlicerLayoutDefaultView:
+        case vtkSlicerGUILayout::SlicerLayoutDefaultView:
           this->DisplayConventionalView ( );
           break;
-        case layout->SlicerLayoutFourUpView:
+        case vtkSlicerGUILayout::SlicerLayoutFourUpView:
           this->DisplayFourUpView ( );
           break;
-        case layout->SlicerLayoutOneUp3DView:
+        case vtkSlicerGUILayout::SlicerLayoutOneUp3DView:
           this->DisplayOneUp3DView ( );
           break;
-        case layout->SlicerLayoutOneUpSliceView:
+        case vtkSlicerGUILayout::SlicerLayoutOneUpSliceView:
           this->DisplayOneUpSliceView ( );
           break;
-        case layout->SlicerLayoutTabbed3DView:
+        case vtkSlicerGUILayout::SlicerLayoutTabbed3DView:
           this->DisplayTabbed3DView ( );
           break;
-        case layout->SlicerLayoutLightboxView:
+        case vtkSlicerGUILayout::SlicerLayoutLightboxView:
           this->DisplayLightboxView ( );
           break;
         default:
