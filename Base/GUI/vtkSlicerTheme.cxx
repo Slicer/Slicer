@@ -94,6 +94,8 @@ void vtkSlicerTheme::Install ( )
     // Slicer Frames
     odb->AddEntryAsDouble3 ( "vtkKWFrame", "SetBackgroundColor",
                     this->SlicerColors->White );
+    odb->AddEntryAsDouble3 ( "vtkSlicerModuleGUI*vtkKWFrame", "SetBackgroundColor",
+                             this->SlicerColors->LightGrey );
     odb->AddEntryAsInt ( "vtkKWFrame", "SetBorderWidth", 0 );
     odb->AddEntryAsDouble3 ( "vtkKWFrame", "SetHighlightColor",
                              this->SlicerColors->White );
