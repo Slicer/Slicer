@@ -158,7 +158,8 @@ proc SliceViewerHandleEvent {sliceGUI event} {
       $anno SetText 0 "Fg:\nBg: $bgPixel"
       $anno SetText 1 "I: $i\nJ:$j\nK: $k"
       $anno SetText 2 "X: $x\nY:$y"
-      $anno SetText 3 "R: $r\nA: $a\n S: $s"
+      set rasText [format "R: %.1f\nA: %.1f\nS: %.1f" $r $a $s]
+      $anno SetText 3 $rasText
 
       switch $::SliceViewerMode {
         "Translate" {
