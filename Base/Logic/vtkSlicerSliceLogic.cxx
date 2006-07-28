@@ -31,11 +31,14 @@ vtkSlicerSliceLogic::vtkSlicerSliceLogic()
 {
   this->BackgroundLayer = NULL;
   this->ForegroundLayer = NULL;
+  this->LabelLayer = NULL;
   this->SliceNode = NULL;
   this->SliceCompositeNode = NULL;
   this->ForegroundOpacity = 0.5;
+  this->LabelOpacity = 1.0;
   this->Blend = vtkImageBlend::New();
   this->SetForegroundOpacity(this->ForegroundOpacity);
+  this->SetLabelOpacity(this->LabelOpacity);
   this->SliceModelNode = NULL;
   this->Name = NULL;
   this->SliceModelNodeID = NULL;
@@ -54,6 +57,7 @@ vtkSlicerSliceLogic::~vtkSlicerSliceLogic()
 
   this->SetBackgroundLayer (NULL);
   this->SetForegroundLayer (NULL);
+  this->SetLabelLayer (NULL);
 
   if ( this->SliceCompositeNode ) 
     {
@@ -96,6 +100,7 @@ void vtkSlicerSliceLogic::ProcessMRMLEvents()
     this->MRMLScene->AddNode(node);
     node->SetBackgroundVolumeID("None");
     node->SetForegroundVolumeID("None");
+    node->SetLabelVolumeID("None");
     this->SetSliceCompositeNode (node);
     node->Delete();
     }
@@ -106,6 +111,11 @@ void vtkSlicerSliceLogic::ProcessMRMLEvents()
   if ( this->MRMLScene->GetNodeByID( this->SliceCompositeNode->GetForegroundVolumeID() ) == NULL )
     {
     this->SliceCompositeNode->SetForegroundVolumeID("None");
+    }
+
+  if ( this->MRMLScene->GetNodeByID( this->SliceCompositeNode->GetLabelVolumeID() ) == NULL )
+    {
+    this->SliceCompositeNode->SetLabelVolumeID("None");
     }
 
   if ( this->MRMLScene->GetNodeByID( this->SliceCompositeNode->GetBackgroundVolumeID() ) == NULL )
@@ -136,6 +146,12 @@ void vtkSlicerSliceLogic::ProcessLogicEvents()
     {
     vtkSlicerSliceLayerLogic *layer = vtkSlicerSliceLayerLogic::New();
     this->SetForegroundLayer (layer);
+    layer->Delete();
+    }
+  if ( this->LabelLayer == NULL )
+    {
+    vtkSlicerSliceLayerLogic *layer = vtkSlicerSliceLayerLogic::New();
+    this->SetLabelLayer (layer);
     layer->Delete();
     }
 
@@ -197,6 +213,10 @@ void vtkSlicerSliceLogic::SetSliceNode(vtkMRMLSliceNode *sliceNode)
     {
     this->ForegroundLayer->SetSliceNode(sliceNode);
     }
+  if (this->LabelLayer)
+    {
+    this->LabelLayer->SetSliceNode(sliceNode);
+    }
 
   this->Modified();
 
@@ -256,6 +276,28 @@ void vtkSlicerSliceLogic::SetForegroundLayer(vtkSlicerSliceLayerLogic *Foregroun
   this->Modified();
 }
 
+//----------------------------------------------------------------------------
+void vtkSlicerSliceLogic::SetLabelLayer(vtkSlicerSliceLayerLogic *LabelLayer)
+{
+  if (this->LabelLayer)
+    {
+    this->LabelLayer->RemoveObserver( this->LogicCallbackCommand );
+    this->LabelLayer->SetAndObserveMRMLScene( NULL );
+    this->LabelLayer->Delete();
+    }
+  this->LabelLayer = LabelLayer;
+
+  if (this->LabelLayer)
+    {
+    this->LabelLayer->Register(this);
+    this->LabelLayer->SetAndObserveMRMLScene( this->MRMLScene );
+    this->LabelLayer->SetSliceNode(SliceNode);
+    this->LabelLayer->AddObserver( vtkCommand::ModifiedEvent, this->LogicCallbackCommand );
+    }
+
+  this->Modified();
+}
+
 
 //----------------------------------------------------------------------------
 void vtkSlicerSliceLogic::SetForegroundOpacity(double ForegroundOpacity)
@@ -265,6 +307,18 @@ void vtkSlicerSliceLogic::SetForegroundOpacity(double ForegroundOpacity)
   if ( this->Blend->GetOpacity(1) != this->ForegroundOpacity )
     {
     this->Blend->SetOpacity(1, this->ForegroundOpacity);
+    this->Modified();
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerSliceLogic::SetLabelOpacity(double LabelOpacity)
+{
+  this->LabelOpacity = LabelOpacity;
+
+  if ( this->Blend->GetOpacity(2) != this->LabelOpacity )
+    {
+    this->Blend->SetOpacity(2, this->LabelOpacity);
     this->Modified();
     }
 }
@@ -307,7 +361,20 @@ void vtkSlicerSliceLogic::UpdatePipeline()
       this->ForegroundLayer->SetVolumeNode (fgnode);
       }
 
-    // Now update the image blend with the background and foreground
+    // Label
+    id = this->SliceCompositeNode->GetLabelVolumeID();
+    vtkMRMLScalarVolumeNode *lbnode = NULL;
+    if (id)
+      {
+      lbnode = vtkMRMLScalarVolumeNode::SafeDownCast (this->MRMLScene->GetNodeByID(id));
+      }
+    
+    if (this->LabelLayer)
+      {
+      this->LabelLayer->SetVolumeNode (lbnode);
+      }
+
+    // Now update the image blend with the background and foreground and label
     this->Blend->RemoveAllInputs ( );
     if ( this->BackgroundLayer )
       {
@@ -316,7 +383,12 @@ void vtkSlicerSliceLogic::UpdatePipeline()
     if ( this->ForegroundLayer )
       {
       this->Blend->AddInput( this->ForegroundLayer->GetImageData() );
-      this->Blend->SetOpacity( 1, this->SliceCompositeNode->GetOpacity() );
+      this->Blend->SetOpacity( 1, this->SliceCompositeNode->GetForegroundOpacity() );
+      }
+    if ( this->LabelLayer )
+      {
+      this->Blend->AddInput( this->LabelLayer->GetImageData() );
+      this->Blend->SetOpacity( 2, this->SliceCompositeNode->GetLabelOpacity() );
       }
 
     if ( this->SliceModelNode && 
@@ -346,9 +418,12 @@ void vtkSlicerSliceLogic::PrintSelf(ostream& os, vtkIndent indent)
     (this->BackgroundLayer ? "not null" : "(none)") << "\n";
   os << indent << "ForegroundLayer: " <<
     (this->ForegroundLayer ? "not null" : "(none)") << "\n";
+  os << indent << "LabelLayer: " <<
+    (this->LabelLayer ? "not null" : "(none)") << "\n";
   os << indent << "Blend: " <<
     (this->Blend ? "not null" : "(none)") << "\n";
   os << indent << "ForegroundOpacity: " << this->ForegroundOpacity << "\n";
+  os << indent << "LabelOpacity: " << this->LabelOpacity << "\n";
 
 }
 

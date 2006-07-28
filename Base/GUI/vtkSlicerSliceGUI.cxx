@@ -222,7 +222,7 @@ void vtkSlicerSliceGUI::ProcessLogicEvents ( vtkObject *caller,
     vtkSlicerSliceViewer *sliceViewer = this->GetSliceViewer( );
     vtkKWRenderWidget *rw = sliceViewer->GetRenderWidget ();
     sliceViewer->GetImageMapper()->SetInput ( sliceLogic->GetImageData( ) );
-    rw->ResetCamera ( );
+    //rw->ResetCamera ( );
     sliceViewer->RequestRender ( );
     }
 }

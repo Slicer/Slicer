@@ -366,7 +366,8 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
     }
   if ( vtkSlicerNodeSelectorWidget::SafeDownCast(caller) == this->LabelSelector )
     {
-        // Nothing yet - TODO: the slice logic needs to handle labelmaps
+    this->SliceCompositeNode->SetLabelVolumeID( 
+            this->LabelSelector->GetSelected()->GetID() );
     }
 
   if ( modified )
@@ -482,14 +483,17 @@ void vtkSlicerSliceControllerWidget::ProcessMRMLEvents ( vtkObject *caller, unsi
       {
       this->ForegroundSelector->SetSelected(node);
       }
-    }
 
-  if ( caller == this->SliceCompositeNode )
-    {
-    vtkMRMLNode *node = this->MRMLScene->GetNodeByID( this->SliceCompositeNode->GetBackgroundVolumeID() );
+    node = this->MRMLScene->GetNodeByID( this->SliceCompositeNode->GetBackgroundVolumeID() );
     if ( node )
       {
       this->BackgroundSelector->SetSelected(node);
+      }
+
+    node = this->MRMLScene->GetNodeByID( this->SliceCompositeNode->GetLabelVolumeID() );
+    if ( node )
+      {
+      this->LabelSelector->SetSelected(node);
       }
     }
 

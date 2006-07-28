@@ -62,11 +62,24 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
   vtkSetStringMacro (ForegroundVolumeID);
 
   // Description:
+  // the ID of a MRMLVolumeNode
+  // TODO: make this an arbitrary list of layers
+  vtkGetStringMacro (LabelVolumeID);
+  vtkSetStringMacro (LabelVolumeID);
+
+  // Description:
   // opacity of the Foreground for rendering over background
   // TODO: make this an arbitrary list of layers
   // TODO: make different composite types (checkerboard, etc)
-  vtkGetMacro (Opacity, double);
-  vtkSetMacro (Opacity, double);
+  vtkGetMacro (ForegroundOpacity, double);
+  vtkSetMacro (ForegroundOpacity, double);
+
+  // Description:
+  // opacity of the Label for rendering over background
+  // TODO: make this an arbitrary list of layers
+  // TODO: make different composite types (checkerboard, etc)
+  vtkGetMacro (LabelOpacity, double);
+  vtkSetMacro (LabelOpacity, double);
 
 
 protected:
@@ -77,7 +90,9 @@ protected:
 
   char *BackgroundVolumeID;
   char *ForegroundVolumeID;
-  double Opacity;
+  char *LabelVolumeID;
+  double ForegroundOpacity;
+  double LabelOpacity;
 
 };
 

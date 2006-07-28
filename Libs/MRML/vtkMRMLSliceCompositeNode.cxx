@@ -53,7 +53,9 @@ vtkMRMLSliceCompositeNode::vtkMRMLSliceCompositeNode()
 {
   this->BackgroundVolumeID = NULL;
   this->ForegroundVolumeID = NULL;
-  this->Opacity = 0.0; // start by showing only the background volume
+  this->LabelVolumeID = NULL;
+  this->ForegroundOpacity = 0.0; // start by showing only the background volume
+  this->LabelOpacity = 1.0; // Show the label if there is one
 }
 
 //----------------------------------------------------------------------------
@@ -70,7 +72,8 @@ void vtkMRMLSliceCompositeNode::WriteXML(ostream& of, int nIndent)
 
   of << indent << "backgroundVolumeID=\"" << this->BackgroundVolumeID << "\" ";
   of << indent << "foregroundVolumeID=\"" << this->ForegroundVolumeID << "\" ";
-  of << indent << "opacity=\"" << this->Opacity << "\" ";
+  of << indent << "forgroundOpacity=\"" << this->ForegroundOpacity << "\" ";
+  of << indent << "labelOpacity=\"" << this->LabelOpacity << "\" ";
 
 }
 
@@ -94,9 +97,13 @@ void vtkMRMLSliceCompositeNode::ReadXMLAttributes(const char** atts)
       {
       this->SetForegroundVolumeID(attValue);
       }
-    if (!strcmp(attName, "opacity")) 
+    if (!strcmp(attName, "foregroundOpacity")) 
       {
-      this->SetOpacity( atof(attValue) );
+      this->SetForegroundOpacity( atof(attValue) );
+      }
+    if (!strcmp(attName, "labelOpacity")) 
+      {
+      this->SetLabelOpacity( atof(attValue) );
       }
     }
 }
@@ -111,7 +118,8 @@ void vtkMRMLSliceCompositeNode::Copy(vtkMRMLNode *anode)
 
   this->SetBackgroundVolumeID(node->GetBackgroundVolumeID());
   this->SetForegroundVolumeID(node->GetForegroundVolumeID());
-  this->SetOpacity(node->GetOpacity());
+  this->SetForegroundOpacity(node->GetForegroundOpacity());
+  this->SetLabelOpacity(node->GetLabelOpacity());
 }
 
 //----------------------------------------------------------------------------
@@ -123,7 +131,8 @@ void vtkMRMLSliceCompositeNode::PrintSelf(ostream& os, vtkIndent indent)
    (this->BackgroundVolumeID ? this->BackgroundVolumeID : "(none)") << "\n";
   os << indent << "ForegroundVolumeID: " << 
    (this->ForegroundVolumeID ? this->ForegroundVolumeID : "(none)") << "\n";
-  os << indent << "Opacity: " << this->Opacity << "\n";
+  os << indent << "ForegroundOpacity: " << this->ForegroundOpacity << "\n";
+  os << indent << "LabelOpacity: " << this->LabelOpacity << "\n";
 }
 
 

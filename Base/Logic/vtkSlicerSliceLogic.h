@@ -76,11 +76,24 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLogic : public vtkSlicerLogic
   void SetForegroundLayer (vtkSlicerSliceLayerLogic *ForegroundLayer);
 
   // Description:
+  // The Label slice layer
+  // TODO: this will eventually be generalized to a list of layers
+  vtkGetObjectMacro (LabelLayer, vtkSlicerSliceLayerLogic);
+  void SetLabelLayer (vtkSlicerSliceLayerLogic *LabelLayer);
+
+  // Description:
   // The opacity of the forground slice layer
   // TODO: this will eventually be generalized to a per-layer compositing function
   // -- could be checkerboard or other filter
   vtkGetMacro (ForegroundOpacity, double);
   void SetForegroundOpacity (double ForegroundOpacity);
+
+  // Description:
+  // The opacity of the Label slice layer
+  // TODO: this will eventually be generalized to a per-layer compositing function
+  // -- could be checkerboard or other filter
+  vtkGetMacro (LabelOpacity, double);
+  void SetLabelOpacity (double LabelOpacity);
 
   // Description:
   // Model slice plane 
@@ -123,7 +136,9 @@ protected:
   vtkMRMLSliceCompositeNode *SliceCompositeNode;
   vtkSlicerSliceLayerLogic *BackgroundLayer;
   vtkSlicerSliceLayerLogic *ForegroundLayer;
+  vtkSlicerSliceLayerLogic *LabelLayer;
   double ForegroundOpacity;
+  double LabelOpacity;
   vtkImageBlend *Blend;
 
   vtkMRMLModelNode *SliceModelNode;

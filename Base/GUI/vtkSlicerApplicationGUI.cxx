@@ -374,6 +374,9 @@ void vtkSlicerApplicationGUI::AddGUIObservers ( )
     this->SliceFadeScale->AddObserver ( vtkKWScale::ScaleValueChangingEvent, (vtkCommand *)this->GUICallbackCommand );
 
     this->ToggleFgBgButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+
+    this->SliceOpacityScale->AddObserver ( vtkKWScale::ScaleValueStartChangingEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->SliceOpacityScale->AddObserver ( vtkKWScale::ScaleValueChangingEvent, (vtkCommand *)this->GUICallbackCommand );
 }
 
 
@@ -392,6 +395,8 @@ void vtkSlicerApplicationGUI::RemoveGUIObservers ( )
     this->GetMainSlicerWin()->GetFileMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->SliceFadeScale->RemoveObservers ( vtkKWScale::ScaleValueStartChangingEvent, (vtkCommand *)this->GUICallbackCommand );
     this->SliceFadeScale->RemoveObservers ( vtkKWScale::ScaleValueChangingEvent, (vtkCommand *)this->GUICallbackCommand );    
+    this->SliceOpacityScale->RemoveObservers ( vtkKWScale::ScaleValueStartChangingEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->SliceOpacityScale->RemoveObservers ( vtkKWScale::ScaleValueChangingEvent, (vtkCommand *)this->GUICallbackCommand );    
     this->ToggleFgBgButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
     this->RemoveMainSliceViewerObservers ( );
@@ -548,7 +553,31 @@ void vtkSlicerApplicationGUI::ProcessGUIEvents ( vtkObject *caller,
         {
         cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
                 this->MRMLScene->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
-        cnode->SetOpacity( this->SliceFadeScale->GetValue() );
+        cnode->SetForegroundOpacity( this->SliceFadeScale->GetValue() );
+        }
+      }
+
+    // Process the label Opacity scale 
+    // -- set save state when manipulation starts
+    // -- adjust the Opacity of every composite node on every event
+    if ( scale == this->SliceOpacityScale && event == vtkKWScale::ScaleValueStartChangingEvent )
+      {
+      if (this->GetMRMLScene()) 
+        {
+        this->GetMRMLScene()->SaveStateForUndo();
+        }
+      }
+
+    if ( scale == this->SliceOpacityScale && event == vtkKWScale::ScaleValueChangingEvent )
+      {
+
+      int i, nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
+      vtkMRMLSliceCompositeNode *cnode;
+      for (i = 0; i < nnodes; i++)
+        {
+        cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
+                this->MRMLScene->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
+        cnode->SetLabelOpacity( this->SliceOpacityScale->GetValue() );
         }
       }
 
@@ -1926,7 +1955,7 @@ void vtkSlicerApplicationGUI::BuildSliceControlGUIPanel ( )
         opacityLabel->Create ( );
         opacityLabel->SetWidth ( 14 );
         opacityLabel->SetAnchorToEast ( );
-        opacityLabel->SetText ( "Opacity (0,1):");
+        opacityLabel->SetText ( "Label Opacity:");
         app->Script ( "pack %s -side top -anchor e -padx 1 -pady 1", fadeLabel->GetWidgetName( ) );
         app->Script ( "pack %s -side top -anchor e -padx 1 -pady 2", opacityLabel->GetWidgetName( ) );
         
@@ -1950,7 +1979,7 @@ void vtkSlicerApplicationGUI::BuildSliceControlGUIPanel ( )
         this->SliceOpacityScale->SetLength ( 120 );
         this->SliceOpacityScale->SetOrientationToHorizontal ( );
         this->SliceOpacityScale->ValueVisibilityOff ( );
-        this->SliceOpacityScale->SetBalloonHelpString ( "Scale sets the opacity of the slice plane in the 3D Viewer" );
+        this->SliceOpacityScale->SetBalloonHelpString ( "Scale sets the opacity label overlay" );
 
         app->Script ( "pack %s -side top -anchor w -padx 0 -pady 1", this->SliceFadeScale->GetWidgetName( ) );
         app->Script ( "pack %s -side top -anchor w -padx 0 -pady 0", this->SliceOpacityScale->GetWidgetName( ) );
