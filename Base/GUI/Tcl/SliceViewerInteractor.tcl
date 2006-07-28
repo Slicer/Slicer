@@ -51,6 +51,34 @@ proc SliceViewerGetPixel {image i j k} {
   return $pixel
 }
 
+proc SliceViewerSetPixelBlock {image i j k size value} {
+
+  for {set ii [expr $i - $size]} {$ii <= [expr $i + $size]} {incr ii} {
+    for {set jj [expr $j - $size]} {$jj <= [expr $j + $size]} {incr jj} {
+      for {set kk [expr $k - $size]} {$kk <= [expr $k + $size]} {incr kk} {
+        SliceViewerSetPixel $image $ii $jj $kk $value
+      }
+    }
+  }
+}
+
+proc SliceViewerSetPixel {image i j k value} {
+
+  foreach index "i j k" dimension [$image GetDimensions] {
+    set ind [set $index]
+    if { $ind < 0 || $ind >= $dimension } {return -1}
+  }
+  set n [$image GetNumberOfScalarComponents]
+  for {set c 0} {$c < $n} {incr c} {
+    set v [lindex $value $c]
+    if { $v != "" } { 
+      $image SetScalarComponentFromDouble $i $j $k $c $v
+      $image Modified
+    }
+  }
+  return 0
+}
+
 
 #
 # Handle events passes up by the sliceGUI
@@ -88,7 +116,7 @@ proc SliceViewerHandleEvent {sliceGUI event} {
   set xyToIJK [[$background GetXYToIJKTransform] GetMatrix]
   foreach {i j k l} [$xyToIJK MultiplyPoint $x $y 0 1] {}
   foreach v {i j k} { ;# cast to integer
-    set $v [expr int([set $v])]
+    set $v [expr int(round([set $v]))]
   }
 
 
@@ -119,7 +147,7 @@ proc SliceViewerHandleEvent {sliceGUI event} {
 
   switch $event {
 
-    MouseMoveEvent {
+    "MouseMoveEvent" {
       #
       # Mouse move behavior governed by global mode
       # - first update the annotation
@@ -133,7 +161,7 @@ proc SliceViewerHandleEvent {sliceGUI event} {
       $anno SetText 3 "R: $r\nA: $a\n S: $s"
 
       switch $::SliceViewerMode {
-        Translate {
+        "Translate" {
           #
           # Translate
           #
@@ -149,7 +177,7 @@ proc SliceViewerHandleEvent {sliceGUI event} {
           [$sliceNode GetSliceToRAS] DeepCopy $::SliceViewerScratchMatrix
           $sliceNode UpdateMatrices
         }
-        Zoom {
+        "Zoom" {
           #
           # Zoom
           #
@@ -163,6 +191,11 @@ proc SliceViewerHandleEvent {sliceGUI event} {
           eval $sliceNode SetFieldOfView $newFOV
           $sliceNode UpdateMatrices
         }
+        "Paint" {
+          SliceViewerSetPixel $backgroundImage $i $j $k 0
+          #SliceViewerSetPixelBlock $backgroundImage $i $j $k 2 0
+          $backgroundNode Modified ;# TODO: the layer logic should be observing the volume node ImageDataChangedEvent
+        }
         default {
           # need to render to show the annotation
           [$sliceGUI GetSliceViewer] RequestRender
@@ -170,36 +203,47 @@ proc SliceViewerHandleEvent {sliceGUI event} {
       }
     }
 
-    RightButtonPressEvent {
-      set ::SliceViewerMode Zoom
+    "RightButtonPressEvent" {
+      set ::SliceViewerMode "Zoom"
       set ::SliceViewerStorageFieldOfView [$sliceNode GetFieldOfView]
       $::slicer3::MRMLScene SaveStateForUndo $sliceNode
     }
-    RightButtonReleaseEvent { }
-    LeftButtonPressEvent {
+    "RightButtonReleaseEvent" { }
+    "LeftButtonPressEvent" {
       if { [info command SeedSWidget] != "" } {
         if { [$interactor GetControlKey] } {
           set seedSWidget [SeedSWidget #auto $sliceGUI]
           $seedSWidget place $r $a $s
         }
       }
+## Testing
+      set ::SliceViewerMode "Paint"
+      SliceViewerSetPixel $backgroundImage $i $j $k 0
+      #SliceViewerSetPixelBlock $backgroundImage $i $j $k 2 0
+      $backgroundNode Modified ;# TODO: the layer logic should be observing the volume node ImageDataChangedEvent
+      puts "$backgroundNode Modified"
+## Testing
     }
-    LeftButtonReleaseEvent { }
-    MiddleButtonPressEvent {
-      set ::SliceViewerMode Translate
+    "LeftButtonReleaseEvent" { }
+    "MiddleButtonPressEvent" {
+      set ::SliceViewerMode "Translate"
       $::SliceViewerStorageXYToRAS DeepCopy [$sliceNode GetXYToRAS]
       $::SliceViewerStorageSliceToRAS DeepCopy [$sliceNode GetSliceToRAS]
       $::slicer3::MRMLScene SaveStateForUndo $sliceNode
     }
-    MiddleButtonReleaseEvent { }
-    MouseWheelForwardEvent { }
-    MouseWheelBackwardEvent { }
-    ExposeEvent { }
-    ConfigureEvent {
+    "MiddleButtonReleaseEvent" { }
+    "MouseWheelForwardEvent" { }
+    "MouseWheelBackwardEvent" { }
+    "ExposeEvent" { }
+    "ConfigureEvent" {
+
       if {0} {
+        #
+        # the different parts of kww doen't have the same size info!
+        # -- the tk widget appears to always have the correct size info, so use it
+        #
         set size [[[[$sliceGUI GetSliceViewer]  GetRenderWidget]  GetRenderWindow]  GetSize]
         foreach {w h} $size {}
-        # the different parts of kww doen't have the same size info!
         puts "Configure: Size $size"
         puts "rw width [[[$sliceGUI GetSliceViewer]  GetRenderWidget]  GetWidth]"
         puts "rw height [[[$sliceGUI GetSliceViewer]  GetRenderWidget]  GetHeight]"
@@ -223,18 +267,24 @@ proc SliceViewerHandleEvent {sliceGUI event} {
             [expr $oldPixelSize * $w] [expr $oldPixelSize * $h] [lindex $oldFOV 2]
       }
     }
-    EnterEvent { 
+    "EnterEvent" { 
       $renderWidget CornerAnnotationVisibilityOn
       [$::slicer3::ApplicationGUI GetMainSlicerWin]  SetStatusText "Middle Button: Pan; Left Button: Zoom"
     }
-    LeaveEvent { 
+    "LeaveEvent" { 
       $renderWidget CornerAnnotationVisibilityOff
       [$::slicer3::ApplicationGUI GetMainSlicerWin]  SetStatusText ""
     }
-    TimerEvent { }
-    KeyPressEvent { }
-    KeyReleaseEvent { }
-    CharEvent {
+    "TimerEvent" { }
+    "KeyPressEvent" { 
+      switch [$interactor GetKeyCode] {
+        "v" {
+          $sliceNode SetSliceVisible [expr ![$sliceNode GetSliceVisible]]
+        }
+      }
+    }
+    "KeyReleaseEvent" { }
+    "CharEvent" {
       puts -nonewline "char event [$interactor GetKeyCode]"
       if { [$interactor GetControlKey] } {
         puts -nonewline " with control"
@@ -242,16 +292,9 @@ proc SliceViewerHandleEvent {sliceGUI event} {
       if { [$interactor GetShiftKey] } {
         puts -nonewline " with shift"
       }
+      puts ""
     }
-    ExitEvent { }
+    "ExitEvent" { }
 
   }
-
-}
-
-if { ![info exists ::localversion] } {
-  set ::localversion 1
-  if { [file exists c:/pieper/bwh/slicer3/latest/Slicer3/Base/GUI/Tcl/SliceViewerInteractor.tcl] } {
-      source c:/pieper/bwh/slicer3/latest/Slicer3/Base/GUI/Tcl/SliceViewerInteractor.tcl
-    }
 }
