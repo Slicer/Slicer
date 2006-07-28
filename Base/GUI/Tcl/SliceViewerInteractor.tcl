@@ -193,8 +193,8 @@ proc SliceViewerHandleEvent {sliceGUI event} {
           $sliceNode UpdateMatrices
         }
         "Paint" {
-          SliceViewerSetPixel $backgroundImage $i $j $k 0
-          #SliceViewerSetPixelBlock $backgroundImage $i $j $k 2 0
+          SliceViewerSetPixel $backgroundImage $i $j $k $::paintPixel
+          #SliceViewerSetPixelBlock $backgroundImage $i $j $k 2 $::paintPixel
           $backgroundNode Modified ;# TODO: the layer logic should be observing the volume node ImageDataChangedEvent
         }
         default {
@@ -219,7 +219,8 @@ proc SliceViewerHandleEvent {sliceGUI event} {
       }
 ## Testing
       set ::SliceViewerMode "Paint"
-      SliceViewerSetPixel $backgroundImage $i $j $k 0
+      set ::paintPixel [SliceViewerGetPixel $backgroundImage $i $j $k]
+      SliceViewerSetPixel $backgroundImage $i $j $k $::paintPixel
       #SliceViewerSetPixelBlock $backgroundImage $i $j $k 2 0
       $backgroundNode Modified ;# TODO: the layer logic should be observing the volume node ImageDataChangedEvent
       puts "$backgroundNode Modified"
