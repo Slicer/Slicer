@@ -178,8 +178,10 @@ proc SliceViewerHandleEvent {sliceGUI event} {
     RightButtonReleaseEvent { }
     LeftButtonPressEvent {
       if { [info command SeedSWidget] != "" } {
-        set seedSWidget [SeedSWidget #auto $sliceGUI]
-        $seedSWidget place $r $a $s
+        if { [$interactor GetControlKey] } {
+          set seedSWidget [SeedSWidget #auto $sliceGUI]
+          $seedSWidget place $r $a $s
+        }
       }
     }
     LeftButtonReleaseEvent { }
@@ -204,6 +206,7 @@ proc SliceViewerHandleEvent {sliceGUI event} {
         puts "widget width [winfo width [[[$sliceGUI GetSliceViewer]  GetRenderWidget]  GetWidgetName]]"
         puts "widget height [winfo height [[[$sliceGUI GetSliceViewer]  GetRenderWidget]  GetWidgetName]]"
       }
+
       set tkwindow [[[$sliceGUI GetSliceViewer]  GetRenderWidget]  GetWidgetName]
       set w [winfo width $tkwindow]
       set h [winfo height $tkwindow]
@@ -216,7 +219,8 @@ proc SliceViewerHandleEvent {sliceGUI event} {
         set oldDim [$sliceNode GetDimensions]
         set oldPixelSize [expr [lindex $oldFOV 0] / (1. * [lindex $oldDim 0])]
         $sliceNode SetDimensions $w $h [lindex $oldDim 2]
-        $sliceNode SetFieldOfView [expr $oldPixelSize * $w] [expr $oldPixelSize * $h] [lindex $oldFOV 2]
+        $sliceNode SetFieldOfView \
+            [expr $oldPixelSize * $w] [expr $oldPixelSize * $h] [lindex $oldFOV 2]
       }
     }
     EnterEvent { 

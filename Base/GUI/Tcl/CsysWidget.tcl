@@ -5,9 +5,11 @@ package require Itcl
 #
 if {0} { ;# comment
 
-  a class for collecting information about a slicer widget 
+  SWidget a class for collecting information about a slicer widget 
   including it's vtk class instances and it's interaction
-  state
+  state.
+
+  Parent class of other SWidgets
 
 # TODO : 
 
@@ -45,8 +47,8 @@ if { [itcl::find class SWidget] == "" } {
 
     variable o ;# array of the objects for this widget, for convenient cleanup
     variable _actors "" ;# list of actors for removing from the renderer
-    variable _guiObserverTag ;# save so destructor can remove observer
-    variable _nodeObserverTag ;# save so destructor can remove observer
+    variable _guiObserverTags ;# save so destructor can remove observer
+    variable _nodeObserverTags ;# save so destructor can remove observer
 
     # methods
     method getObjects {} {return [array get o]}
@@ -73,6 +75,17 @@ if { [itcl::find class SWidget] == "" } {
   }
 }
 
+#########################################################
+#
+if {0} { ;# comment
+
+  SeedSWidget  - used for Fiducials
+
+# TODO : 
+
+}
+#
+#########################################################
 # ------------------------------------------------------------------
 #                             SeedSWidget
 # ------------------------------------------------------------------
@@ -123,16 +136,25 @@ itcl::body SeedSWidget::constructor {sliceGUI} {
   set _currentPosition "0 0 0"
 
   $this processEvent
-  set _guiObserverTag [$sliceGUI AddObserver AnyEvent "$this processEvent"]
+
+  set _guiObserverTags ""
+  lappend _guiObserverTags [$sliceGUI AddObserver DeleteEvent "itcl::delete $this"]
+  lappend _guiObserverTags [$sliceGUI AddObserver AnyEvent "$this processEvent"]
   set node [[$sliceGUI GetLogic] GetSliceNode]
-  set _nodeObserverTag [$node AddObserver ModifiedEvent "$this processEvent"]
+  lappend _nodeObserverTags [$node AddObserver DeleteEvent "itcl::delete $this"]
+  lappend _nodeObserverTags [$node AddObserver AnyEvent "$this processEvent"]
 }
 
 itcl::body SeedSWidget::destructor {} {
 
-  $sliceGUI RemoveObserver $_guiObserverTag
+  foreach tag $_guiObserverTags {
+    $sliceGUI RemoveObserver $tag
+  }
+
   set node [[$sliceGUI GetLogic] GetSliceNode]
-  $node RemoveObserver $_nodeObserverTag
+  foreach tag $_nodeObserverTags {
+    $node RemoveObserver $tag
+  }
 
   set renderer [[[$sliceGUI GetSliceViewer] GetRenderWidget] GetRenderer]
   foreach a $_actors {
@@ -290,6 +312,20 @@ itcl::body SeedSWidget::xyToRAS { xyPoint } {
 }
 
 
+proc SeedSWidget::ManyWidgetTest { sliceGUI } {
+
+  set s 0
+  for { set r -95. } { $r <= 95. } { set r [expr $r + 20] } {
+    puts [time {
+      for { set a -95. } { $a <= 95. } { set a [expr $a + 20] } {
+        set seedSWidget [SeedSWidget #auto $sliceGUI]
+        $seedSWidget place $r $a $s
+      }
+    }]
+  }
+}
+
+if {0} {
 
 # ------------------------------------------------------------------
 #                             CsysSWidget
@@ -479,3 +515,4 @@ proc CsysWidgetAdd {} {
   }
 }
 
+}
