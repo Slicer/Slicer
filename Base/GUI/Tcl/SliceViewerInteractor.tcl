@@ -40,6 +40,7 @@ proc SliceViewerShutdown {} {
 
 proc SliceViewerGetPixel {image i j k} {
 
+  if { $image == "" } { return "" }
   foreach index "i j k" dimension [$image GetDimensions] {
     set ind [set $index]
     if { $ind < 0 || $ind >= $dimension } {return "Unknown"}
@@ -100,12 +101,6 @@ proc SliceViewerHandleEvent {sliceGUI event} {
   set anno [$renderWidget GetCornerAnnotation]
   set sliceNode [[$sliceGUI GetLogic]  GetSliceNode]
   set sliceCompositeNode [[$sliceGUI GetLogic]  GetSliceCompositeNode]
-  set background [[$sliceGUI GetLogic]  GetBackgroundLayer]
-  set backgroundNode [$background GetVolumeNode]
-  set backgroundImage [$backgroundNode GetImageData]
-  set foreground [[$sliceGUI GetLogic]  GetForegroundLayer]
-  set foregroundNode [$foreground GetVolumeNode]
-  set foregroundImage [$foregroundNode GetImageData]
   
   foreach {x y} [$interactor GetEventPosition] {}
 
@@ -113,14 +108,23 @@ proc SliceViewerHandleEvent {sliceGUI event} {
   set ras [$xyToRAS MultiplyPoint $x $y 0 1]
   foreach {r a s t} $ras {}
 
-  set xyToIJK [[$background GetXYToIJKTransform] GetMatrix]
-  foreach {i j k l} [$xyToIJK MultiplyPoint $x $y 0 1] {}
-  foreach v {i j k} { ;# cast to integer
-    set $v [expr int(round([set $v]))]
+  # 
+  # get the logic, node, image, ijk coords, and pixel for each layer
+  # - store these in a layers array for easy access
+  #
+  foreach layer {background foreground label} {
+    set layers($layer,logic) [[$sliceGUI GetLogic]  Get[string totitle $layer]Layer]
+    set layers($layer,node) [$layers($layer,logic) GetVolumeNode]
+    set layers($layer,image) [$layers($layer,node) GetImageData]
+
+    set xyToIJK [[$layers($layer,logic) GetXYToIJKTransform] GetMatrix]
+    foreach {i j k l} [$xyToIJK MultiplyPoint $x $y 0 1] {}
+    foreach v {i j k} { ;# cast to integer
+      set layers($layer,$v) [expr int(round([set $v]))]
+    }
+    set layers($layer,pixel) [SliceViewerGetPixel $layers($layer,image) \
+                    $layers($layer,i) $layers($layer,j) $layers($layer,k)]
   }
-
-
-  set bgPixel [SliceViewerGetPixel $backgroundImage $i $j $k]
 
   set ignoreEvents "MouseMoveEvent ModifiedEvent TimerEvent RenderEvent"
 
@@ -155,8 +159,9 @@ proc SliceViewerHandleEvent {sliceGUI event} {
       #
       # puts "background pixel at $i $j $k is $pixel"
 
-      $anno SetText 0 "Fg:\nBg: $bgPixel"
-      $anno SetText 1 "I: $i\nJ:$j\nK: $k"
+      $anno SetText 0 "Lb: $layers(label,pixel)\nFg: $layers(foreground,pixel)\nBg: $layers(background,pixel)"
+      $anno SetText 1 [format "Bg I: %d\nBg J: %d\nBg K: %d" \
+                    $layers(background,i) $layers(background,j) $layers(background,k)]
       $anno SetText 2 "X: $x\nY:$y"
       set rasText [format "R: %.1f\nA: %.1f\nS: %.1f" $r $a $s]
       $anno SetText 3 $rasText
@@ -193,9 +198,10 @@ proc SliceViewerHandleEvent {sliceGUI event} {
           $sliceNode UpdateMatrices
         }
         "Paint" {
-          SliceViewerSetPixel $backgroundImage $i $j $k $::paintPixel
-          #SliceViewerSetPixelBlock $backgroundImage $i $j $k 2 $::paintPixel
-          $backgroundNode Modified ;# TODO: the layer logic should be observing the volume node ImageDataChangedEvent
+          SliceViewerSetPixel $layers(label,image) \
+                        $layers(label,i) $layers(label,j) $layers(label,k) $::paintPixel
+          #SliceViewerSetPixelBlock $layers(label,image) $i $j $k 5 $::paintPixel
+          $layers(label,node) Modified ;# TODO: the layer logic should be observing the volume node ImageDataChangedEvent
         }
         default {
           # need to render to show the annotation
@@ -219,11 +225,12 @@ proc SliceViewerHandleEvent {sliceGUI event} {
       }
 ## Testing
       set ::SliceViewerMode "Paint"
-      set ::paintPixel [SliceViewerGetPixel $backgroundImage $i $j $k]
-      SliceViewerSetPixel $backgroundImage $i $j $k $::paintPixel
-      #SliceViewerSetPixelBlock $backgroundImage $i $j $k 2 0
-      $backgroundNode Modified ;# TODO: the layer logic should be observing the volume node ImageDataChangedEvent
-      puts "$backgroundNode Modified"
+      set ::paintPixel [SliceViewerGetPixel $layers(label,image) \
+                    $layers(label,i) $layers(label,j) $layers(label,k)]
+      SliceViewerSetPixel $layers(label,image) \
+                    $layers(label,i) $layers(label,j) $layers(label,k) 0
+      #SliceViewerSetPixelBlock $layers(label,image) $i $j $k 2 $::paintPixel
+      $layers(label,node) Modified ;# TODO: the layer logic should be observing the volume node ImageDataChangedEvent
 ## Testing
     }
     "LeftButtonReleaseEvent" { }
