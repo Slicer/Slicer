@@ -44,6 +44,7 @@ class vtkKWPushButton;
 class vtkKWToolbar;
 class vtkKWScale;
 class vtkImplicitPlaneWidget;
+class vtkLogoWidget;
 class vtkKWCheckButton;
 class vtkKWEntryWithLabel;
 class vtkKWLabel;
@@ -60,13 +61,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkTypeRevisionMacro ( vtkSlicerApplicationGUI, vtkSlicerComponentGUI );
     void PrintSelf ( ostream& os, vtkIndent indent );
 
-    // Description:
-    // These Get/Set methods for frames in the GUI panel.
-    vtkGetObjectMacro ( MainViewer, vtkKWRenderWidget );
-
     vtkRenderWindowInteractor *GetRenderWindowInteractor() {
         return this->ViewerWidget->GetMainViewer()->GetRenderWindow()->GetInteractor();
     };
+
+    vtkGetObjectMacro (ViewerWidget, vtkSlicerViewerWidget);
 
     vtkGetObjectMacro (MainSliceGUI0, vtkSlicerSliceGUI);
     vtkGetObjectMacro (MainSliceGUI1, vtkSlicerSliceGUI);
@@ -196,6 +195,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // Description:
     // a Plane widget in the main window
     vtkGetObjectMacro ( PlaneWidget, vtkImplicitPlaneWidget );
+
+    // Description:
+    // a logo widget in the main window
+    vtkGetObjectMacro ( LogoWidget, vtkLogoWidget );
     
     // Description:
     // This method builds Slicer's main GUI
@@ -327,9 +330,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     //    vtkKWFrame *DefaultSlice0Frame;
     //    vtkKWFrame *DefaultSlice1Frame;
     //    vtkKWFrame *DefaultSlice2Frame;
-    vtkKWRenderWidget *MainViewer;
     vtkImplicitPlaneWidget *PlaneWidget;
-    
+    vtkLogoWidget *LogoWidget;
+
     // Description:
     // Widgets for the Logo frame
     vtkKWLabel *SlicerLogoLabel;
