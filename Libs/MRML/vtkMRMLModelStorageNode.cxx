@@ -206,6 +206,17 @@ int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
     modelNode->SetAndObservePolyData(reader->GetOutput());
     reader->Update();
     }
+  else 
+    {
+    vtkErrorMacro("Cannot read model fle");
+    return 0;
+    }
+    
+  if (modelNode->GetPolyData() != NULL) 
+    {
+    modelNode->GetPolyData()->Modified();
+    }
+
     return 1;
 }
 

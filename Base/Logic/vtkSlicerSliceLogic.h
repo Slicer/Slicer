@@ -87,6 +87,11 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLogic : public vtkSlicerLogic
   vtkGetObjectMacro (SliceModelNode, vtkMRMLModelNode);
 
   // Description:
+  // String ID of the slice model MRML node
+  vtkGetStringMacro(SliceModelNodeID);
+  vtkSetStringMacro(SliceModelNodeID);
+
+  // Description:
   // The compositing filter
   // TODO: this will eventually be generalized to a per-layer compositing function
   vtkGetObjectMacro (Blend, vtkImageBlend);
@@ -122,7 +127,9 @@ protected:
   vtkImageBlend *Blend;
 
   vtkMRMLModelNode *SliceModelNode;
-  
+  char *SliceModelNodeID;
+
+  void CreateSliceModel();
 };
 
 #endif

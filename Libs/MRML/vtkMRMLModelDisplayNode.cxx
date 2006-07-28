@@ -86,10 +86,7 @@ vtkMRMLModelDisplayNode::vtkMRMLModelDisplayNode()
 //----------------------------------------------------------------------------
 vtkMRMLModelDisplayNode::~vtkMRMLModelDisplayNode()
 {
-  if (this->TextureImageData) 
-    {
-    this->TextureImageData->Delete();
-    }
+  this->SetAndObserveTextureImageData(NULL);
 }
 
 //----------------------------------------------------------------------------

@@ -163,6 +163,8 @@ void vtkSlicerViewerWidget::UpdateFromMRML()
  
     //vtkActor *actor = this->DisplayedModels.find(model->GetID())->second;
     vtkActor *actor = this->DisplayedModels[ model->GetID() ];
+    vtkPolyDataMapper *mapper = vtkPolyDataMapper::SafeDownCast (actor->GetMapper());
+    mapper->SetInput ( model->GetPolyData() );
     this->SetModelDisplayProperty(model, actor);
 
     } // end while

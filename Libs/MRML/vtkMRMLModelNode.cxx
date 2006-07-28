@@ -65,15 +65,9 @@ vtkMRMLModelNode::~vtkMRMLModelNode()
     delete [] this->StorageNodeID;
     this->StorageNodeID = NULL;
     }
-  if (this->DisplayNodeID) 
-    {
-    this->SetAndObserveDisplayNodeID( NULL);
-    }
+  this->SetAndObserveDisplayNodeID( NULL);
 
-  if (this->PolyData) 
-    {
-    this->SetAndObservePolyData(NULL);
-    }
+  this->SetAndObservePolyData(NULL);
 }
 
 //----------------------------------------------------------------------------
@@ -171,6 +165,8 @@ void vtkMRMLModelNode::UpdateScene(vtkMRMLScene *scene)
     vtkMRMLStorageNode *node  = dynamic_cast < vtkMRMLStorageNode *>(mnode);
     node->ReadData(this);
     }
+   this->SetAndObserveDisplayNodeID(this->GetDisplayNodeID());
+   this->SetAndObservePolyData(this->GetPolyData());
 }
 
 //-----------------------------------------------------------

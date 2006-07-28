@@ -60,15 +60,10 @@ vtkMRMLVolumeNode::~vtkMRMLVolumeNode()
     delete [] this->StorageNodeID;
     this->StorageNodeID = NULL;
     }
-  if (this->DisplayNodeID) 
-    {
-    delete [] this->DisplayNodeID;
-    this->DisplayNodeID = NULL;
-    }
 
-  if (this->ImageData)  {
-  this->ImageData->Delete();
-  }
+  this->SetAndObserveDisplayNodeID(NULL);
+  this->SetAndObserveImageData(NULL);
+
 }
 
 //----------------------------------------------------------------------------
@@ -537,6 +532,8 @@ void vtkMRMLVolumeNode::UpdateScene(vtkMRMLScene *scene)
     vtkMRMLStorageNode *node  = dynamic_cast < vtkMRMLStorageNode *>(mnode);
     node->ReadData(this);
     }
+   this->SetAndObserveDisplayNodeID(this->GetDisplayNodeID());
+   this->SetAndObserveImageData(this->GetImageData());
 
 }
 
