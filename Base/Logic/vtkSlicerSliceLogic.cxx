@@ -168,6 +168,11 @@ void vtkSlicerSliceLogic::ProcessLogicEvents()
     points->SetPoint(3, outPt3);
 
     this->SliceModelNode->GetPolyData()->Modified();
+    vtkMRMLModelDisplayNode *modelDisplayNode = this->SliceModelNode->GetDisplayNode();
+    if ( modelDisplayNode )
+      {
+      modelDisplayNode->SetVisibility( this->SliceNode->GetSliceVisible() );
+      }
     }
 
   // This is called when a slice layer is modified, so pass it on
@@ -312,6 +317,13 @@ void vtkSlicerSliceLogic::UpdatePipeline()
       {
       this->Blend->AddInput( this->ForegroundLayer->GetImageData() );
       this->Blend->SetOpacity( 1, this->SliceCompositeNode->GetOpacity() );
+      }
+
+    if ( this->SliceModelNode && 
+          this->SliceModelNode->GetDisplayNode() &&
+            this->SliceNode ) 
+      {
+      this->SliceModelNode->GetDisplayNode()->SetVisibility( this->SliceNode->GetSliceVisible() );
       }
 
     this->Modified();
