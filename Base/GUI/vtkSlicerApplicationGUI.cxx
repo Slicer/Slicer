@@ -302,6 +302,28 @@ void vtkSlicerApplicationGUI::ProcessLoadSceneCommand()
 }
 
 //---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::ProcessImportSceneCommand()
+{
+    this->LoadSceneDialog->RetrieveLastPathFromRegistry(
+      "OpenPath");
+
+    this->LoadSceneDialog->Invoke();
+    // If a file has been selected for loading...
+    char *fileName = this->LoadSceneDialog->GetFileName();
+    if ( fileName ) 
+      {
+        if (this->GetMRMLScene()) 
+          {
+          this->GetMRMLScene()->SetURL(fileName);
+          this->GetMRMLScene()->Import();
+          this->LoadSceneDialog->SaveLastPathToRegistry("OpenPath");
+          }
+      }
+    return;
+}
+
+
+//---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::ProcessSaveSceneAsCommand()
 {
     this->SaveSceneDialog->RetrieveLastPathFromRegistry(
@@ -617,6 +639,11 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
             this->GetMainSlicerWin()->GetFileMenu()->InsertCommand (
                       this->GetMainSlicerWin()->GetFileMenuInsertPosition(),
                                       "Load Scene...", this, "ProcessLoadSceneCommand");
+
+            this->GetMainSlicerWin()->GetFileMenu()->InsertCommand (
+                      this->GetMainSlicerWin()->GetFileMenuInsertPosition(),
+                                      "Import Scene...", this, "ProcessImportSceneCommand");
+
             this->GetMainSlicerWin()->GetFileMenu()->InsertCommand (this->GetMainSlicerWin()->GetFileMenuInsertPosition(),
                                                "Save Scene As...", this, "ProcessSaveSceneAsCommand");
 

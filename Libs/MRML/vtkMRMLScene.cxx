@@ -213,23 +213,9 @@ const char* vtkMRMLScene::GetTagByClassName(const char *className)
 //------------------------------------------------------------------------------
 int vtkMRMLScene::Connect()
 {
-  if (this->URL == NULL) 
-    {
-    vtkErrorMacro("Need URL specified");
-    return 0;
-    }
-  this->RootDirectory = vtksys::SystemTools::GetParentDirectory(this->GetURL());   
-  this->RootDirectory = this->RootDirectory + vtksys_stl::string("/");
-
   bool undoFlag = this->GetUndoFlag();
-  this->SetUndoOff();
 
-  this->CurrentScene->RemoveAllItems();
-  vtkMRMLParser* parser = vtkMRMLParser::New();
-  parser->SetMRMLScene(this);
-  parser->SetFileName(URL);
-  parser->Parse();
-  parser->Delete();
+  int res = this->LoadIntoScene(true);
 
   // create node references
   int nnodes = this->CurrentScene->GetNumberOfItems();
@@ -242,6 +228,67 @@ int vtkMRMLScene::Connect()
     }
 
   this->SetUndoFlag(undoFlag);
+  
+  return res;
+}
+
+//------------------------------------------------------------------------------
+int vtkMRMLScene::Import()
+{
+  bool undoFlag = this->GetUndoFlag();
+
+  // save current scene state
+  vtkCollection* scene = vtkCollection::New();
+  int nnodes = this->CurrentScene->GetNumberOfItems();
+  vtkMRMLNode *node = NULL;
+  int n;
+  for (n=0; n<nnodes; n++) 
+    {
+    node = (vtkMRMLNode *)this->CurrentScene->GetItemAsObject(n);
+    scene->AddItem(node);
+    }
+
+  int res = this->LoadIntoScene(false);
+
+  if (res)
+    {
+    nnodes = this->CurrentScene->GetNumberOfItems();
+    for (n=0; n<nnodes; n++) 
+      {
+      node = (vtkMRMLNode *)this->CurrentScene->GetItemAsObject(n);
+      if (!scene->IsItemPresent(node))
+      node->UpdateScene(this);
+      }
+    }
+  scene->RemoveAllItems();
+  scene->Delete();
+
+  this->SetUndoFlag(undoFlag);
+
+  return res;
+}
+
+//------------------------------------------------------------------------------
+int vtkMRMLScene::LoadIntoScene(bool removeItems)
+{
+  if (this->URL == NULL) 
+    {
+    vtkErrorMacro("Need URL specified");
+    return 0;
+    }
+  this->RootDirectory = vtksys::SystemTools::GetParentDirectory(this->GetURL());   
+  this->RootDirectory = this->RootDirectory + vtksys_stl::string("/");
+
+  this->SetUndoOff();
+  if (removeItems)
+    {
+    this->CurrentScene->RemoveAllItems();
+    }
+  vtkMRMLParser* parser = vtkMRMLParser::New();
+  parser->SetMRMLScene(this);
+  parser->SetFileName(URL);
+  parser->Parse();
+  parser->Delete();
 
   return 1;
 }

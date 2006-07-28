@@ -214,6 +214,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
 
     void ProcessLoadSceneCommand();
+    void ProcessImportSceneCommand();
     void ProcessSaveSceneAsCommand();
     
     // Description:

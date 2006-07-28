@@ -45,17 +45,28 @@ public:
   vtkTypeMacro(vtkMRMLScene,vtkCollection);
   void PrintSelf(ostream& os, vtkIndent indent);
 
+  // Description:
   // Filename should be flie://path/file.xml
   vtkSetStringMacro(URL);
   vtkGetStringMacro(URL);
   
+  // Description:
+  // Create new scene from URL
   int Connect();
   
+  // Description:
+  // Add the scene from URL
+  int Import();
+
+  // Description:
+  // Save scene into URL
   int Commit(const char* url=NULL);
 
+  // Description:
   // Create node with a given class
   vtkMRMLNode* CreateNodeByClass(const char* className);
 
+  // Description:
   // Register node class with the Scene so that it can create it from
   // a class name
   void RegisterNodeClass(vtkMRMLNode* node);
@@ -211,6 +222,8 @@ private:
   void RemoveItem(int i) { this->CurrentScene->vtkCollection::RemoveItem(i); this->Modified();};
   int  IsItemPresent(vtkObject *o) { return this->CurrentScene->vtkCollection::IsItemPresent(o);};
   
+  int LoadIntoScene(bool removeItems);
+
   unsigned long ErrorCode;
 
   char* ClassNameList;
