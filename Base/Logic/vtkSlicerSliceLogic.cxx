@@ -34,8 +34,8 @@ vtkSlicerSliceLogic::vtkSlicerSliceLogic()
   this->LabelLayer = NULL;
   this->SliceNode = NULL;
   this->SliceCompositeNode = NULL;
-  this->ForegroundOpacity = 0.5;
-  this->LabelOpacity = 1.0;
+  this->ForegroundOpacity = 0.5; // Start by blending fg/bg
+  this->LabelOpacity = 0.0;  // Start with invisible label for now
   this->Blend = vtkImageBlend::New();
   this->SetForegroundOpacity(this->ForegroundOpacity);
   this->SetLabelOpacity(this->LabelOpacity);

@@ -1929,11 +1929,11 @@ void vtkSlicerApplicationGUI::BuildSliceControlGUIPanel ( )
         app->Script ( "pack %s -side left -anchor n -padx 0 -pady 5", f2->GetWidgetName( ) );
         app->Script ( "pack %s -side left -anchor n -padx 0 -pady 5", f3->GetWidgetName( ) );
 
-        //--- make buttons for toggling FG/BG and annotations
+        //--- make buttons for toggling Bg/Fg and annotations
         this->ToggleFgBgButton->SetParent ( f1 );
         this->ToggleFgBgButton->Create ( );
         this->ToggleFgBgButton->SetWidth ( 16 );
-        this->ToggleFgBgButton->SetText ( "Toggle FG/BG" );
+        this->ToggleFgBgButton->SetText ( "Toggle Bg/Fg" );
         this->ToggleAnnotationButton->SetParent ( f1 );
         this->ToggleAnnotationButton->Create ( );
         this->ToggleAnnotationButton->SetWidth ( 16 );
@@ -1950,7 +1950,7 @@ void vtkSlicerApplicationGUI::BuildSliceControlGUIPanel ( )
         fadeLabel->Create ( );
         fadeLabel->SetWidth ( 14 );
         fadeLabel->SetAnchorToEast ( );
-        fadeLabel->SetText ( "Fade (FG/BG):");
+        fadeLabel->SetText ( "Fade (Bg/Fg):");
         opacityLabel->SetParent ( f2 );
         opacityLabel->Create ( );
         opacityLabel->SetWidth ( 14 );
@@ -1969,7 +1969,7 @@ void vtkSlicerApplicationGUI::BuildSliceControlGUIPanel ( )
         this->SliceFadeScale->SetLength ( 120 );
         this->SliceFadeScale->SetOrientationToHorizontal ( );
         this->SliceFadeScale->ValueVisibilityOff ( );
-        this->SliceFadeScale->SetBalloonHelpString ( "Scale fades between FG and BG Slice Layers" );
+        this->SliceFadeScale->SetBalloonHelpString ( "Scale fades between Bg and Fg Slice Layers" );
 
         this->SliceOpacityScale->SetParent ( f3 );
         this->SliceOpacityScale->Create ( );

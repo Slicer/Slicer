@@ -186,6 +186,7 @@ void vtkSlicerSliceGUI::ProcessGUIEvents ( vtkObject *caller,
     {
     this->SetCurrentGUIEvent( vtkCommand::GetStringFromEventId(event) );
     this->InvokeEvent (event, NULL);
+
     if ( !this->GUICallbackCommand->GetAbortFlag() )
       {
       this->Script( "SliceViewerHandleEvent %s %s", 
