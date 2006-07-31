@@ -489,7 +489,7 @@ if { ![file exists $::VTK_TEST_FILE] || $::GENLIB(update) } {
             -G$GENERATOR \
             -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
             -DBUILD_SHARED_LIBS:BOOL=ON \
-            -DCMAKE_SKIP_RPATH:BOOL=ON \
+            -DCMAKE_SKIP_RPATH:BOOL=OFF \
             -DCMAKE_CXX_COMPILER:STRING=$COMPILER_PATH/$COMPILER \
             -DCMAKE_CXX_COMPILER_FULLPATH:FILEPATH=$COMPILER_PATH/$COMPILER \
             -DBUILD_TESTING:BOOL=OFF \
@@ -593,7 +593,18 @@ if { ![file exists $::ITK_TEST_FILE] || $::GENLIB(update) } {
     cd $SLICER_LIB/Insight-build
 
 
-
+    if {$isDarwin} {
+    runcmd $::CMAKE \
+        -G$GENERATOR \
+        -DCMAKE_CXX_COMPILER:STRING=$COMPILER_PATH/$COMPILER \
+        -DCMAKE_CXX_COMPILER_FULLPATH:FILEPATH=$COMPILER_PATH/$COMPILER \
+        -DBUILD_SHARED_LIBS:BOOL=ON \
+        -DCMAKE_SKIP_RPATH:BOOL=OFF \
+        -DBUILD_EXAMPLES:BOOL=OFF \
+        -DBUILD_TESTING:BOOL=OFF \
+        -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
+        ../Insight
+    } else {
     runcmd $::CMAKE \
         -G$GENERATOR \
         -DCMAKE_CXX_COMPILER:STRING=$COMPILER_PATH/$COMPILER \
@@ -604,6 +615,7 @@ if { ![file exists $::ITK_TEST_FILE] || $::GENLIB(update) } {
         -DBUILD_TESTING:BOOL=OFF \
         -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
         ../Insight
+    }
 
     if {$isWindows} {
         if { $MSVC6 } {
