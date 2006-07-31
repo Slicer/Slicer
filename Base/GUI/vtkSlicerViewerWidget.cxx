@@ -221,7 +221,7 @@ void vtkSlicerViewerWidget::RemoveMRMLObservers()
   for(iter=this->DisplayedModels.begin(); iter != this->DisplayedModels.end(); iter++) 
     {
     vtkMRMLModelNode *model = vtkMRMLModelNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(iter->first));
-    if (model == NULL)
+    if (model != NULL)
       {
       model->RemoveObservers ( vtkMRMLModelNode::PolyDataModifiedEvent, this->MRMLCallbackCommand );
       model->RemoveObservers ( vtkMRMLModelNode::DisplayModifiedEvent, this->MRMLCallbackCommand );

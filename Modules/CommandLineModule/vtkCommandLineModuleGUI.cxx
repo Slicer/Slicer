@@ -421,7 +421,7 @@ void vtkCommandLineModuleGUI::UpdateMRML ()
       {
       n->SetParameterAsString((*wit).first, e->GetWidget()->GetValue());
       }
-    else if (ns)
+    else if (ns && ns->GetSelected() != NULL)
       {
       n->SetParameterAsString((*wit).first, ns->GetSelected()->GetID());
       }

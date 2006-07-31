@@ -134,7 +134,7 @@ void vtkMRMLTransformableNode::ProcessMRMLEvents ( vtkObject *caller,
     {
     //TODO don't send even on the scene but rather have vtkSlicerSliceLayerLogic listen to
     // TransformModifiedEvent
-    this->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent, NULL);
+    //this->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent, NULL);
     this->InvokeEvent(vtkMRMLTransformableNode::TransformModifiedEvent, NULL);
     }
 }

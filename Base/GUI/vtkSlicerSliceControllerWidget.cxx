@@ -364,7 +364,8 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
     this->SliceCompositeNode->SetBackgroundVolumeID( 
             this->BackgroundSelector->GetSelected()->GetID() );
     }
-  if ( vtkSlicerNodeSelectorWidget::SafeDownCast(caller) == this->LabelSelector )
+  if ( vtkSlicerNodeSelectorWidget::SafeDownCast(caller) == this->LabelSelector &&
+    this->LabelSelector->GetSelected() != NULL)
     {
     this->SliceCompositeNode->SetLabelVolumeID( 
             this->LabelSelector->GetSelected()->GetID() );
