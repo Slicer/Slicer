@@ -236,7 +236,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     virtual void DisplayOneUp3DView ( );
     virtual void DisplayOneUpSliceView ( );
     virtual void DisplayFourUpView ( );
-    virtual void DisplayTabbed3DView ( );
+    virtual void DisplayTabbed3DViewSliceViewers ( );
     virtual void DisplayTabbedSliceView ( );
     virtual void DisplayLightboxView ( );
 
@@ -256,7 +256,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     virtual void BuildGUIPanel ( );
     virtual void BuildToolBar ( );
     virtual void BuildMainViewer ( int arrangementType);
-    virtual void DestroyMainViewer ( );
+    virtual void DestroyMain3DViewer ( );
+    virtual void DestroyMainSliceViewers ( );
+    virtual void CreateMain3DViewer ( int arrangementType );
+    virtual void CreateMainSliceViewers ( int arrangementType );
     virtual void BuildLogoGUIPanel ( );
     virtual void BuildModuleChooseGUIPanel ( );
     virtual void PopulateModuleChooseList ( );
@@ -264,6 +267,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     virtual void BuildViewControlGUIPanel ( );
     virtual void AssignViewControlIcons ( );
     virtual void MakeViewControlRolloverBehavior ( );
+    virtual void Save3DViewConfig ( );
+    virtual void Restore3DViewConfig ( );
 
     // Desrciption:
     // These methods delete widgets belonging to components of the Slicer Window
@@ -446,7 +451,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // Description:
     // Used to tag all pages added to the tabbed notebook
     // arrangement of the main viewer.
-    //const static int ViewerPageTag = 1000;
+    int ViewerPageTag;
+    // Description:
+
+    // contains the visible prop bounds for the main 3Dviewer's renderer
+    double MainRendererBBox[6];
     
  private:
     vtkSlicerApplicationGUI ( const vtkSlicerApplicationGUI& ); // Not implemented.

@@ -30,6 +30,7 @@ vtkSlicerViewerWidget::vtkSlicerViewerWidget ( )
 {
   this->MainViewer = NULL;  
   this->RenderPending = 0;  
+  this->ViewerFrame = NULL;
 }
 
 
@@ -40,10 +41,13 @@ vtkSlicerViewerWidget::~vtkSlicerViewerWidget ( )
   
   if (this->MainViewer)
     {
-    this->MainViewer->RemoveAllViewProps ( );
-    this->MainViewer->SetParent ( NULL );
-    this->MainViewer->Delete();
-    this->MainViewer = NULL;
+      this->SetMRMLScene ( NULL );
+      this->MainViewer->RemoveAllViewProps ( );
+      this->MainViewer->SetParent ( NULL );
+      this->MainViewer->Delete();
+      this->MainViewer = NULL;
+      this->ViewerFrame->Delete ( );
+      this->ViewerFrame = NULL;
     }
 }
 
@@ -81,7 +85,7 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
 //  if ((vtkPolyData::SafeDownCast(caller) && event == vtkCommand::ModifiedEvent) ||
 //      (vtkMRMLModelDisplayNode::SafeDownCast(caller) && event == vtkCommand::ModifiedEvent))
     {
-    this->UpdateFromMRML();
+      this->UpdateFromMRML();
     }
 }
 
@@ -103,8 +107,12 @@ void vtkSlicerViewerWidget::CreateWidget ( )
   
   this->Superclass::CreateWidget();
 
+  this->ViewerFrame = vtkKWFrame::New ( );
+  this->ViewerFrame->SetParent ( this->GetParent ( ) );
+  this->ViewerFrame->Create ( );
+  
   this->MainViewer = vtkKWRenderWidget::New ( );  
-  this->MainViewer->SetParent (this->GetParent() );
+  this->MainViewer->SetParent (this->ViewerFrame );
   this->MainViewer->Create ( );
 
   //this->MainViewer->SetRendererBackgroundColor (vtkSlicerColor::ViewerBlue ); 
@@ -130,6 +138,7 @@ void vtkSlicerViewerWidget::UpdateFromMRML()
   vtkMRMLScene *scene = this->GetMRMLScene();
   vtkMRMLNode *node = NULL;
   
+
   this->RemoveProps ( );
   
   scene->InitTraversal();
@@ -170,6 +179,7 @@ void vtkSlicerViewerWidget::UpdateFromMRML()
     } // end while
 
     this->RequestRender ( );
+
 }
 
 
@@ -298,7 +308,9 @@ vtkSlicerViewerWidget::GetActorByID (const char *id)
 //---------------------------------------------------------------------------
 void vtkSlicerViewerWidget::PackWidget ( )
 {
-    this->Script  ("pack %s -side top -fill both -expand y -padx 0 -pady 0",
+    this->Script  ("pack %s -side left -fill both -expand y -padx 0 -pady 0",
+                   this->ViewerFrame->GetWidgetName ( ) );
+    this->Script  ("pack %s -side top -anchor c  -fill both -expand y -padx 0 -pady 0",
                    this->MainViewer->GetWidgetName ( ) );
 }
 
@@ -306,5 +318,6 @@ void vtkSlicerViewerWidget::PackWidget ( )
 void vtkSlicerViewerWidget::UnpackWidget ( )
 {
     this->Script ( "pack forget %s ", this->MainViewer->GetWidgetName ( ) );
+    this->Script ( "pack forget %s ", this->ViewerFrame->GetWidgetName ( ) );
 }
 

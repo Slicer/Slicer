@@ -250,7 +250,7 @@ void vtkSlicerSliceGUI::Exit ( )
     // Fill in
 }
 
-//-------------------------------------------------------5--------------------
+//----------------------------------------------------------------------------
 void vtkSlicerSliceGUI::BuildGUI ( vtkKWFrame *f )
 {
 
@@ -276,7 +276,7 @@ void vtkSlicerSliceGUI::BuildGUI ( vtkKWFrame *f )
     }
 }
 
-//-------------------------------------------------------5--------------------
+//-----------------------------------------------------------------------------
 void vtkSlicerSliceGUI::BuildGUI ( vtkKWFrame *f, double *c )
 {
 
@@ -299,14 +299,17 @@ void vtkSlicerSliceGUI::BuildGUI ( vtkKWFrame *f, double *c )
       this->SliceViewer->SetParent ( this->SliceGUIFrame );
       this->SliceViewer->Create (  );
 
-      this->PackGUI();
+      if ( f )
+        {
+          this->PackGUI();
+        }
     }
 }
 
 //---------------------------------------------------------------------------
 void vtkSlicerSliceGUI::PackGUI ()
 {
-    this->Script("pack %s -pady 0 -side left -expand y -fill both -padx 0 -pady 0", SliceGUIFrame->GetWidgetName() );
+    this->Script("pack %s -side left -expand y -fill both -padx 0 -pady 0", SliceGUIFrame->GetWidgetName() );
     this->Script("pack %s -pady 0 -side top -expand false -fill x", SliceController->GetWidgetName() );
     this->Script("pack %s -anchor c -side top -expand true -fill both", SliceViewer->GetRenderWidget()->GetWidgetName());
 }

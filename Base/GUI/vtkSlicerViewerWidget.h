@@ -27,6 +27,7 @@
 #include "vtkSlicerWidget.h"
 
 #include "vtkKWRenderWidget.h"
+#include "vtkKWFrame.h"
 
 class vtkMRMLModelNode;
 class vtkMRMLModelDisplayNode;
@@ -58,7 +59,8 @@ public:
   virtual void RemoveMRMLObservers ( );
 
   vtkGetObjectMacro(MainViewer, vtkKWRenderWidget);
-  vtkSetObjectMacro(MainViewer, vtkKWRenderWidget);  
+  vtkSetObjectMacro(MainViewer, vtkKWRenderWidget);
+  vtkGetObjectMacro (ViewerFrame, vtkKWFrame );
 
   // Description:
   // return the current actor corresponding to a give MRML ID
@@ -96,6 +98,7 @@ protected:
   virtual void CreateWidget();
   
   vtkKWRenderWidget *MainViewer;
+  vtkKWFrame *ViewerFrame;
   int RenderPending;
 
   void RemoveProps();
