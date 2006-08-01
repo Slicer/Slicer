@@ -58,6 +58,7 @@ vtkSlicerNodeSelectorWidget::vtkSlicerNodeSelectorWidget()
 {
   this->NewNodeCount = 0;
   this->NewNodeEnabled = 0;
+  this->NoneEnabled = 0;
   this->MRMLScene      = NULL;
   this->MRMLCallbackCommand = vtkCallbackCommand::New();
   this->MRMLCallbackCommand->SetClientData( reinterpret_cast<void *> (this) );
@@ -195,6 +196,12 @@ void vtkSlicerNodeSelectorWidget::UpdateMenu()
       }
     }
 
+    if (this->NoneEnabled) 
+      {
+      this->GetWidget()->GetWidget()->GetMenu()->AddRadioButton("None");
+      this->GetWidget()->GetWidget()->GetMenu()->SetItemCommand(count++, this, "ProcessCommand None");
+      }
+
     vtkMRMLNode *node = NULL;
     vtkMRMLNode *selectedNode = NULL;
     this->MRMLScene->InitTraversal();
@@ -221,7 +228,7 @@ void vtkSlicerNodeSelectorWidget::UpdateMenu()
               selectedNode = node;
               selected = true;
             }
-            else if (!selected)
+            else if (!selected && !this->NoneEnabled)
             {  
               selectedNode = node;
               selected = true;
@@ -240,8 +247,13 @@ void vtkSlicerNodeSelectorWidget::UpdateMenu()
       }
     else
       {
-      this->GetWidget()->GetWidget()->SetValue("");
-      this->SelectedID = std::string("");
+      char *name = "";
+      if (this->NoneEnabled)
+        {
+        name = "None";
+        }
+      this->GetWidget()->GetWidget()->SetValue(name);
+      this->SelectedID = std::string(name);
       this->InvokeEvent(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, NULL);
       }
       

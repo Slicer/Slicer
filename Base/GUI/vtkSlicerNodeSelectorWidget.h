@@ -96,6 +96,12 @@ public:
   vtkGetMacro(NewNodeEnabled, int);
   vtkSetMacro(NewNodeEnabled, int);
   
+  // Description:
+  // Specifies whether or not None can be selected
+  vtkBooleanMacro(NoneEnabled, int);
+  vtkGetMacro(NoneEnabled, int);
+  vtkSetMacro(NoneEnabled, int);
+
   // Description
   // Get selected node
   vtkMRMLNode *GetSelected();
@@ -137,7 +143,9 @@ protected:
 //ETX
   
   int NewNodeEnabled;
-  
+
+  int NoneEnabled;
+
   vtkMRMLScene       *MRMLScene;
 
 private:

@@ -310,6 +310,7 @@ void vtkGradientAnisotropicDiffusionFilterGUI::BuildGUI ( )
   
   this->GADNodeSelector->SetNodeClass("vtkMRMLGradientAnisotropicDiffusionFilterNode", NULL, NULL, "GADParameter");
   this->GADNodeSelector->SetNewNodeEnabled(1);
+  this->GADNodeSelector->NoneEnabledOn();
   //this->GADNodeSelector->SetNewNodeName("GADParameters");
   this->GADNodeSelector->SetParent( moduleFrame->GetFrame() );
   this->GADNodeSelector->Create();

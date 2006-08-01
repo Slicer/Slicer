@@ -68,10 +68,10 @@ void vtkSlicerVolumeDisplayWidget::SetVolumeNode ( vtkMRMLVolumeNode *volumeNode
   // 
   // Set the member variables and do a first process
   //
-  this->SetVolumeNodeID( volumeNode->GetID() );
-  this->SetVolumeDisplayNodeID( volumeNode->GetDisplayNodeID() );
-  if ( volumeNode )
-    {
+  if ( volumeNode != NULL)
+    {  
+    this->SetVolumeNodeID( volumeNode->GetID() );
+    this->SetVolumeDisplayNodeID( volumeNode->GetDisplayNodeID() );
     this->ProcessMRMLEvents(volumeNode, vtkCommand::ModifiedEvent, NULL);
     }
 }
@@ -125,7 +125,11 @@ void vtkSlicerVolumeDisplayWidget::ProcessWidgetEvents ( vtkObject *caller,
     if (VolumeNodeID != NULL && displayNode==NULL)
       {
         vtkMRMLVolumeNode *volumeNode = vtkMRMLVolumeNode::SafeDownCast (this->MRMLScene->GetNodeByID(this->VolumeNodeID) );
-        if (volumeNode != NULL)
+        if (volumeNode == NULL)
+          {
+          return;
+          }
+        else 
           {
           displayNode = vtkMRMLVolumeDisplayNode::New ();
           displayNode->SetScene(this->MRMLScene);
@@ -155,7 +159,11 @@ void vtkSlicerVolumeDisplayWidget::ProcessWidgetEvents ( vtkObject *caller,
     {
     if (this->VolumeDisplayNodeID != NULL)
       {
-      this->MRMLScene->SaveStateForUndo(this->MRMLScene->GetNodeByID(this->VolumeDisplayNodeID));
+      vtkMRMLNode *displayNode = this->MRMLScene->GetNodeByID(this->VolumeDisplayNodeID);
+      if (displayNode != NULL)
+        {
+        this->MRMLScene->SaveStateForUndo(this->MRMLScene->GetNodeByID(this->VolumeDisplayNodeID));
+        }
       }
     return;
     }       
@@ -174,8 +182,17 @@ void vtkSlicerVolumeDisplayWidget::ProcessMRMLEvents ( vtkObject *caller,
 
   vtkMRMLVolumeNode *volumeNode = vtkMRMLVolumeNode::SafeDownCast(caller);
 
-  if (volumeNode == this->MRMLScene->GetNodeByID(this->VolumeNodeID) && 
-        volumeNode != NULL && event == vtkCommand::ModifiedEvent)
+  vtkMRMLVolumeNode *curVolumeNode = vtkMRMLVolumeNode::SafeDownCast(this->MRMLScene->GetNodeByID(this->VolumeNodeID));
+
+  if (curVolumeNode == NULL)
+    {
+    this->SetVolumeNode(NULL);
+    this->SetVolumeDisplayNodeID(NULL);
+    return;
+    }
+
+  if (volumeNode == curVolumeNode && 
+      volumeNode != NULL && event == vtkCommand::ModifiedEvent)
     {
     if (volumeNode->GetDisplayNode())
       {
