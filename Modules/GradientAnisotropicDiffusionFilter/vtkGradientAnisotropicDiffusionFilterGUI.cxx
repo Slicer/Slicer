@@ -181,15 +181,18 @@ void vtkGradientAnisotropicDiffusionFilterGUI::ProcessGUIEvents ( vtkObject *cal
     {
     this->UpdateMRML();
     }
-  else if (selector == this->VolumeSelector && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent ) 
+  else if (selector == this->VolumeSelector && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent &&
+    this->VolumeSelector->GetSelected() != NULL) 
     { 
     this->UpdateMRML();
     }
-  else if (selector == this->OutVolumeSelector && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent ) 
+  else if (selector == this->OutVolumeSelector && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent  &&
+    this->OutVolumeSelector->GetSelected() != NULL) 
     { 
     this->UpdateMRML();
     }
-  if (selector == this->GADNodeSelector && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent ) 
+  if (selector == this->GADNodeSelector && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent  &&
+    this->GADNodeSelector->GetSelected() != NULL) 
     { 
     vtkMRMLGradientAnisotropicDiffusionFilterNode* n = vtkMRMLGradientAnisotropicDiffusionFilterNode::SafeDownCast(this->GADNodeSelector->GetSelected());
     this->Logic->SetGradientAnisotropicDiffusionFilterNode(n);

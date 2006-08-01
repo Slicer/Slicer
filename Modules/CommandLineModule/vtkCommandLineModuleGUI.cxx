@@ -308,6 +308,14 @@ void vtkCommandLineModuleGUI::ProcessGUIEvents ( vtkObject *caller,
   //std::cout << "ProcessGUIEvents()" << std::endl;
   vtkKWPushButton *b = vtkKWPushButton::SafeDownCast(caller);
   vtkSlicerNodeSelectorWidget *selector = vtkSlicerNodeSelectorWidget::SafeDownCast(caller);
+  if (selector != NULL && selector != this->CommandLineModuleNodeSelector)
+    {
+    return;
+    }
+  else if (selector == this->CommandLineModuleNodeSelector && selector->GetSelected() == NULL)
+    {
+    return;
+    }
 
   if (selector == this->CommandLineModuleNodeSelector && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent ) 
     {
