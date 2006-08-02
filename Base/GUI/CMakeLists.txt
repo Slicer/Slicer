@@ -44,7 +44,7 @@ SET(LIB_SRCS
   vtkSlicerDataGUI.cxx
   vtkSlicerGUILayout.cxx    
   vtkSlicerApplicationGUI.cxx
-  # Widgets
+  # KW Widgets
   vtkSlicerNodeSelectorWidget.cxx
   vtkSlicerWidget.cxx
   vtkKWMatrix4x4.cxx
@@ -57,6 +57,9 @@ SET(LIB_SRCS
   vtkSlicerViewerGUI.cxx
   vtkSlicerViewerWidget.cxx
   vtkSlicerModelDisplayWidget.cxx
+  # W Widgets
+  vtkUserWidget.cxx
+  vtkUserRepresentation.cxx
   )
 
 # Helper classes
@@ -152,7 +155,44 @@ CONFIGURE_FILE(
   ${SlicerBaseGUI_BINARY_DIR}/vtkSlicerBaseGUIConfigure.h
 )
 
+#
+# install the tcl package for the gui
+#
+SET(SlicerBaseGUITcl_DIR ${Slicer3_BINARY_DIR}/SlicerBaseGUITcl)
+
+FILE(MAKE_DIRECTORY ${SlicerBaseGUITcl_DIR})
+CONFIGURE_FILE(
+  ${Slicer3_SOURCE_DIR}/Base/GUI/Tcl/pkgIndex.tcl
+  ${SlicerBaseGUITcl_DIR}/pkgIndex.tcl
+  COPYONLY
+)
 CONFIGURE_FILE(
   ${Slicer3_SOURCE_DIR}/Base/GUI/Tcl/SliceViewerInteractor.tcl
-  ${Slicer3_BINARY_DIR}/SliceViewerInteractor.tcl
+  ${SlicerBaseGUITcl_DIR}/SliceViewerInteractor.tcl
+  COPYONLY
+)
+CONFIGURE_FILE(
+  ${Slicer3_SOURCE_DIR}/Base/GUI/Tcl/SWidget.tcl
+  ${SlicerBaseGUITcl_DIR}/SWidget.tcl
+  COPYONLY
+)
+CONFIGURE_FILE(
+  ${Slicer3_SOURCE_DIR}/Base/GUI/Tcl/SliceSWidget.tcl
+  ${SlicerBaseGUITcl_DIR}/SliceSWidget.tcl
+  COPYONLY
+)
+CONFIGURE_FILE(
+  ${Slicer3_SOURCE_DIR}/Base/GUI/Tcl/SeedSWidget.tcl
+  ${SlicerBaseGUITcl_DIR}/SeedSWidget.tcl
+  COPYONLY
+)
+CONFIGURE_FILE(
+  ${Slicer3_SOURCE_DIR}/Base/GUI/Tcl/PaintSWidget.tcl
+  ${SlicerBaseGUITcl_DIR}/PaintSWidget.tcl
+  COPYONLY
+)
+CONFIGURE_FILE(
+  ${Slicer3_SOURCE_DIR}/Base/GUI/Tcl/CsysSWidget.tcl
+  ${SlicerBaseGUITcl_DIR}/CsysSWidget.tcl
+  COPYONLY
 )

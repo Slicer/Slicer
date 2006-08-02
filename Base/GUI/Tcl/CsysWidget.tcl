@@ -26,8 +26,6 @@ if { [itcl::find class SWidget] == "" } {
   itcl::class SWidget {
 
     constructor {} {
-      # make a unique name associated with this object
-      set _name [namespace tail $this]
     }
 
     destructor {
@@ -39,13 +37,12 @@ if { [itcl::find class SWidget] == "" } {
     public variable description ""  ;# a status string describing the current state
     public variable sliceGUI ""  ;# the sliceGUI on which the SWidget lives
 
-    variable _name ""
     variable _vtkObjects ""
     variable _pickState "outside"
     variable _actionState ""
     variable _glyphScale 10
 
-    variable o ;# array of the objects for this widget, for convenient cleanup
+    variable o ;# array of the objects for this widget, for convenient access
     variable _actors "" ;# list of actors for removing from the renderer
     variable _guiObserverTags ;# save so destructor can remove observer
     variable _nodeObserverTags ;# save so destructor can remove observer
@@ -248,6 +245,7 @@ itcl::body SeedSWidget::processEvent { } {
   if { ! ($grabID == "" || $grabID == $this) } {
     return ;# some other widget wants these events
   }
+
   if { $grabID != $this } {
     # only check pick if we haven't grabbed (avoid 'dropping' the widget
     # when the mouse moves quickly)

@@ -1,309 +1,38 @@
 
+package require Itcl
 
-#
-# variables to manage interaction state
-# - these can be global since theyere is only ever one interaction
-#   going on at a time in the GUI
-#
-proc SliceViewerInitialize {} {
 
-  if { [info exists ::SliceViewerMode] } {
-    return
-  }
-
-  if { ![info exists ::SliceViewerMode] } {
-    set ::SliceViewerMode ""
-  }
-
-  set matrices "::SliceViewerStorageXYToRAS ::SliceViewerStorageSliceToRAS ::SliceViewerScratchMatrix" 
-  foreach m $matrices {
-    if { ![info exists $m] } {
-      set $m [vtkMatrix4x4 New]
+proc SliceViewerFindWidgets { sliceGUI } {
+  # find the SliceSWidget for a given gui
+  set sswidgets ""
+  foreach ssw [itcl::find objects -class SliceSWidget] {
+    if { [$ssw cget -sliceGUI] == $sliceGUI } {
+      lappend sswidgets $ssw
     }
   }
+  return $sswidgets
 }
 
-proc SliceViewerShutdown {} {
-
-  if { [info exists ::SliceViewerMode] } {
-    unset ::SliceViewerMode
-  }
-
-  set matrices "::SliceViewerStorageXYToRAS ::SliceViewerStorageSliceToRAS ::SliceViewerScratchMatrix" 
-  foreach m $matrices {
-    if { [info exists $m] } {
-      [set $m] Delete
-      unset $m
-    }
+proc SliceViewerInitialize { sliceGUI } {
+  if { [SliceViewerFindWidgets $sliceGUI] == "" } {
+    SliceSWidget #auto $sliceGUI
   }
 }
 
-proc SliceViewerGetPixel {image i j k} {
 
-  if { $image == "" } { return "" }
-  foreach index "i j k" dimension [$image GetDimensions] {
-    set ind [set $index]
-    if { $ind < 0 || $ind >= $dimension } {return "Unknown"}
-  }
-  set n [$image GetNumberOfScalarComponents]
-  for {set c 0} {$c < $n} {incr c} {
-    lappend pixel [$image GetScalarComponentAsDouble $i $j $k $c]
-  }
-  return $pixel
-}
-
-proc SliceViewerSetPixelBlock {image i j k size value} {
-
-  for {set ii [expr $i - $size]} {$ii <= [expr $i + $size]} {incr ii} {
-    for {set jj [expr $j - $size]} {$jj <= [expr $j + $size]} {incr jj} {
-      for {set kk [expr $k - $size]} {$kk <= [expr $k + $size]} {incr kk} {
-        SliceViewerSetPixel $image $ii $jj $kk $value
-      }
-    }
+proc SliceViewerShutdown { sliceGUI } {
+  
+  # find the SliceSWidget that owns the sliceGUI and delete it
+  foreach ssw [SliceViewerFindWidgets $sliceGUI] {
+    itcl::delete $ssw
   }
 }
-
-proc SliceViewerSetPixel {image i j k value} {
-
-  foreach index "i j k" dimension [$image GetDimensions] {
-    set ind [set $index]
-    if { $ind < 0 || $ind >= $dimension } {return -1}
-  }
-  set n [$image GetNumberOfScalarComponents]
-  for {set c 0} {$c < $n} {incr c} {
-    set v [lindex $value $c]
-    if { $v != "" } { 
-      $image SetScalarComponentFromDouble $i $j $k $c $v
-      $image Modified
-    }
-  }
-  return 0
-}
-
-
-#
-# Handle events passes up by the sliceGUI
-#
 
 proc SliceViewerHandleEvent {sliceGUI event} {
 
   # initialize on first call 
   # -- allows clean shutdown because each vtkSlicerSliceGUI can shutdown in destructor
   # -- this is very light weight, so no problem calling every time
-  SliceViewerInitialize
 
-  set renderer [[[$sliceGUI GetSliceViewer] GetRenderWidget] GetRenderer]
-  set interactor [[[$sliceGUI GetSliceViewer] GetRenderWidget] GetRenderWindowInteractor]
-  if { $event != "ConfigureEvent" } {
-    eval $interactor UpdateSize [$renderer GetSize]
-  }
-  set renderWidget [[$sliceGUI GetSliceViewer] GetRenderWidget]
-  set anno [$renderWidget GetCornerAnnotation]
-  set sliceNode [[$sliceGUI GetLogic]  GetSliceNode]
-  set sliceCompositeNode [[$sliceGUI GetLogic]  GetSliceCompositeNode]
-  
-  foreach {x y} [$interactor GetEventPosition] {}
-
-  set xyToRAS [$sliceNode GetXYToRAS]
-  set ras [$xyToRAS MultiplyPoint $x $y 0 1]
-  foreach {r a s t} $ras {}
-
-  # 
-  # get the logic, node, image, ijk coords, and pixel for each layer
-  # - store these in a layers array for easy access
-  #
-  foreach layer {background foreground label} {
-    set layers($layer,logic) [[$sliceGUI GetLogic]  Get[string totitle $layer]Layer]
-    set layers($layer,node) [$layers($layer,logic) GetVolumeNode]
-    set layers($layer,image) [$layers($layer,node) GetImageData]
-
-    set xyToIJK [[$layers($layer,logic) GetXYToIJKTransform] GetMatrix]
-    foreach {i j k l} [$xyToIJK MultiplyPoint $x $y 0 1] {}
-    foreach v {i j k} { ;# cast to integer
-      set layers($layer,$v) [expr int(round([set $v]))]
-    }
-    set layers($layer,pixel) [SliceViewerGetPixel $layers($layer,image) \
-                    $layers($layer,i) $layers($layer,j) $layers($layer,k)]
-  }
-
-  set ignoreEvents "MouseMoveEvent ModifiedEvent TimerEvent RenderEvent"
-
-  if { [lsearch $ignoreEvents $event] == -1 } {
-    puts -nonewline "got a $event for $sliceGUI, interactor $interactor at xy $x $y, ras $ras"
-    if { [$interactor GetControlKey] } {
-      puts -nonewline " with control"
-    }
-    if { [$interactor GetShiftKey] } {
-      puts -nonewline " with shift"
-    }
-    puts ""
-  }
-
-  if { [string match "*PressEvent" $event] } {
-    set ::SliceViewerStartRAS $ras 
-    set ::SliceViewerStartXY [$interactor GetEventPosition]
-  }
-
-  if { [string match "*ReleaseEvent" $event] } {
-    set ::SliceViewerMode ""
-  }
-
-
-  switch $event {
-
-    "MouseMoveEvent" {
-      #
-      # Mouse move behavior governed by global mode
-      # - first update the annotation
-      # - then handle modifying the view
-      #
-      # puts "background pixel at $i $j $k is $pixel"
-
-      $anno SetText 0 "Lb: $layers(label,pixel)\nFg: $layers(foreground,pixel)\nBg: $layers(background,pixel)"
-      $anno SetText 1 [format "Bg I: %d\nBg J: %d\nBg K: %d" \
-                    $layers(background,i) $layers(background,j) $layers(background,k)]
-      $anno SetText 2 "X: $x\nY:$y"
-      set rasText [format "R: %.1f\nA: %.1f\nS: %.1f" $r $a $s]
-      $anno SetText 3 $rasText
-
-      switch $::SliceViewerMode {
-        "Translate" {
-          #
-          # Translate
-          #
-          set currentRAS [$::SliceViewerStorageXYToRAS MultiplyPoint $x $y 0 1]
-          foreach d {dr da ds} start $::SliceViewerStartRAS current $currentRAS {
-            set $d [expr $current - $start]
-          }
-          $::SliceViewerScratchMatrix DeepCopy $::SliceViewerStorageSliceToRAS
-          foreach d {dr da ds} i {0 1 2} {
-            set v [$::SliceViewerScratchMatrix GetElement $i 3]
-            $::SliceViewerScratchMatrix SetElement $i 3 [expr $v - [set $d]]
-          }
-          [$sliceNode GetSliceToRAS] DeepCopy $::SliceViewerScratchMatrix
-          $sliceNode UpdateMatrices
-        }
-        "Zoom" {
-          #
-          # Zoom
-          #
-          set deltay [expr $y - [lindex $::SliceViewerStartXY 1]]
-          set h [lindex [[[[$sliceGUI GetSliceViewer]  GetRenderWidget]  GetRenderWindow]  GetSize] 1]
-          set percent [expr ($h + $deltay) / (1.0 * $h)]
-          set newFOV ""
-          foreach f $::SliceViewerStorageFieldOfView {
-            lappend newFOV [expr $f * $percent]
-          }
-          eval $sliceNode SetFieldOfView $newFOV
-          $sliceNode UpdateMatrices
-        }
-        "Paint" {
-          SliceViewerSetPixel $layers(label,image) \
-                        $layers(label,i) $layers(label,j) $layers(label,k) $::paintPixel
-          #SliceViewerSetPixelBlock $layers(label,image) $i $j $k 5 $::paintPixel
-          $layers(label,node) Modified ;# TODO: the layer logic should be observing the volume node ImageDataChangedEvent
-        }
-        default {
-          # need to render to show the annotation
-          [$sliceGUI GetSliceViewer] RequestRender
-        }
-      }
-    }
-
-    "RightButtonPressEvent" {
-      set ::SliceViewerMode "Zoom"
-      set ::SliceViewerStorageFieldOfView [$sliceNode GetFieldOfView]
-      $::slicer3::MRMLScene SaveStateForUndo $sliceNode
-    }
-    "RightButtonReleaseEvent" { }
-    "LeftButtonPressEvent" {
-      if { [info command SeedSWidget] != "" } {
-        if { [$interactor GetControlKey] } {
-          set seedSWidget [SeedSWidget #auto $sliceGUI]
-          $seedSWidget place $r $a $s
-        }
-      }
-## Testing
-      set ::SliceViewerMode "Paint"
-      set ::paintPixel [SliceViewerGetPixel $layers(label,image) \
-                    $layers(label,i) $layers(label,j) $layers(label,k)]
-      SliceViewerSetPixel $layers(label,image) \
-                    $layers(label,i) $layers(label,j) $layers(label,k) 0
-      #SliceViewerSetPixelBlock $layers(label,image) $i $j $k 2 $::paintPixel
-      $layers(label,node) Modified ;# TODO: the layer logic should be observing the volume node ImageDataChangedEvent
-## Testing
-    }
-    "LeftButtonReleaseEvent" { }
-    "MiddleButtonPressEvent" {
-      set ::SliceViewerMode "Translate"
-      $::SliceViewerStorageXYToRAS DeepCopy [$sliceNode GetXYToRAS]
-      $::SliceViewerStorageSliceToRAS DeepCopy [$sliceNode GetSliceToRAS]
-      $::slicer3::MRMLScene SaveStateForUndo $sliceNode
-    }
-    "MiddleButtonReleaseEvent" { }
-    "MouseWheelForwardEvent" { }
-    "MouseWheelBackwardEvent" { }
-    "ExposeEvent" { }
-    "ConfigureEvent" {
-
-      if {0} {
-        #
-        # the different parts of kww doen't have the same size info!
-        # -- the tk widget appears to always have the correct size info, so use it
-        #
-        set size [[[[$sliceGUI GetSliceViewer]  GetRenderWidget]  GetRenderWindow]  GetSize]
-        foreach {w h} $size {}
-        puts "Configure: Size $size"
-        puts "rw width [[[$sliceGUI GetSliceViewer]  GetRenderWidget]  GetWidth]"
-        puts "rw height [[[$sliceGUI GetSliceViewer]  GetRenderWidget]  GetHeight]"
-        puts "widget width [winfo width [[[$sliceGUI GetSliceViewer]  GetRenderWidget]  GetWidgetName]]"
-        puts "widget height [winfo height [[[$sliceGUI GetSliceViewer]  GetRenderWidget]  GetWidgetName]]"
-      }
-
-      set tkwindow [[[$sliceGUI GetSliceViewer]  GetRenderWidget]  GetWidgetName]
-      set w [winfo width $tkwindow]
-      set h [winfo height $tkwindow]
-
-      if { $w == "10" && $h == "10" } {
-        puts "ignoring bogus resize"
-        puts [$sliceGUI Print]
-      } else {
-        set oldFOV [$sliceNode GetFieldOfView]
-        set oldDim [$sliceNode GetDimensions]
-        set oldPixelSize [expr [lindex $oldFOV 0] / (1. * [lindex $oldDim 0])]
-        $sliceNode SetDimensions $w $h [lindex $oldDim 2]
-        $sliceNode SetFieldOfView \
-            [expr $oldPixelSize * $w] [expr $oldPixelSize * $h] [lindex $oldFOV 2]
-      }
-    }
-    "EnterEvent" { 
-      $renderWidget CornerAnnotationVisibilityOn
-      [$::slicer3::ApplicationGUI GetMainSlicerWin]  SetStatusText "Middle Button: Pan; Left Button: Zoom"
-    }
-    "LeaveEvent" { 
-      $renderWidget CornerAnnotationVisibilityOff
-      [$::slicer3::ApplicationGUI GetMainSlicerWin]  SetStatusText ""
-    }
-    "TimerEvent" { }
-    "KeyPressEvent" { 
-      switch [$interactor GetKeyCode] {
-        "v" {
-          $sliceNode SetSliceVisible [expr ![$sliceNode GetSliceVisible]]
-        }
-      }
-    }
-    "KeyReleaseEvent" { }
-    "CharEvent" {
-      puts -nonewline "char event [$interactor GetKeyCode]"
-      if { [$interactor GetControlKey] } {
-        puts -nonewline " with control"
-      }
-      if { [$interactor GetShiftKey] } {
-        puts -nonewline " with shift"
-      }
-      puts ""
-    }
-    "ExitEvent" { }
-
-  }
+  SliceViewerInitialize $sliceGUI
 }

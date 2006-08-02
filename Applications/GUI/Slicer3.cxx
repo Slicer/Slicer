@@ -123,14 +123,16 @@ int Slicer3_main(int argc, char *argv[])
       {
       one_up = "/..";
       }
-    char cmd[512];
+    char cmd[2048];
     sprintf(cmd, "                                                   \
       set ::SLICER_BIN [file dirname [info nameofexecutable]];       \
       if { $::tcl_platform(platform) == \"windows\"} {               \
         set ::SLICER_BUILD [file normalize $SLICER_BIN/..%s]         \
       } else {                                                       \
         set ::SLICER_BUILD [file normalize $SLICER_BIN/..]           \
-      }                                                              \
+      };                                                             \
+      lappend auto_path $::SLICER_BUILD/SlicerBaseGUITcl;            \
+      package require SlicerBaseGUITcl;                              \
     ", one_up.c_str());
 
     Slicer3_Tcl_Eval( interp, cmd);
