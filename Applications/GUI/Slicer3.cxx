@@ -414,8 +414,6 @@ int Slicer3_main(int argc, char *argv[])
     appGUI->SetAndObserveMainSliceLogic ( sliceLogic0, sliceLogic1, sliceLogic2 );
     appGUI->AddMainSliceViewersToCollection ( );
     appGUI->ConfigureMainSliceViewers ( );
-    // Initialize the event handling code for slice viewers
-    Slicer3_Tcl_Eval (interp, "source $::SLICER_BUILD/SliceViewerInteractor.tcl");
     
     // ------------------------------
     // CONFIGURE SlICER'S SHARED GUI PANEL
