@@ -58,8 +58,8 @@ SET(LIB_SRCS
   vtkSlicerViewerWidget.cxx
   vtkSlicerModelDisplayWidget.cxx
   # W Widgets
-  vtkUserWidget.cxx
-  vtkUserRepresentation.cxx
+  ##vtkUserWidget.cxx
+  ##vtkUserRepresentation.cxx
   )
 
 # Helper classes
