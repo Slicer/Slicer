@@ -22,7 +22,7 @@
 // -- disp
 // -- uses a current slice view specification (typically set by vtkSlicerSliceLogic)
 // - Outputs
-// -- RGBA vtkImageData for the given slice
+// -- Colors vtkImageData for the given slice
 // -- image is mapped through current window/level and lookup table
 //
 // This class can also be used for resampling volumes for further computation.
@@ -43,7 +43,7 @@
 #include "vtkMRMLSliceNode.h"
 
 #include "vtkImageReslice.h"
-#include "vtkImageMapToRGBA.h"
+#include "vtkImageMapToColors.h"
 #include "vtkImageMapToWindowLevelColors.h"
 
 class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLayerLogic : public vtkSlicerLogic 
@@ -83,7 +83,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLayerLogic : public vtkSlicerLo
 
   // Description:
   // The image map that applies the lookup table
-  vtkGetObjectMacro (MapToRGBA, vtkImageMapToRGBA);
+  vtkGetObjectMacro (MapToColors, vtkImageMapToColors);
 
   // Description:
   // Get the output of the pipeline for this layer
@@ -94,7 +94,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLayerLogic : public vtkSlicerLo
       } 
     else
       {
-      return (this->GetMapToRGBA()->GetOutput()); 
+      return (this->GetMapToColors()->GetOutput()); 
       }
   };
 
@@ -132,7 +132,7 @@ protected:
   // Description:
   // the VTK class instances that implement this Logic's operations
   vtkImageReslice *Reslice;
-  vtkImageMapToRGBA *MapToRGBA;
+  vtkImageMapToColors *MapToColors;
   vtkImageMapToWindowLevelColors *MapToWindowLevelColors;
 
   // TODO: make this a vtkAbstractTransform for non-linear

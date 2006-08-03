@@ -35,7 +35,7 @@ vtkSlicerSliceLayerLogic::vtkSlicerSliceLayerLogic()
   this->XYToIJKTransform = vtkTransform::New();
 
   this->Reslice = vtkImageReslice::New();
-  this->MapToRGBA = vtkImageMapToRGBA::New();
+  this->MapToColors = vtkImageMapToColors::New();
   this->MapToWindowLevelColors = vtkImageMapToWindowLevelColors::New();
 
   this->Reslice->SetBackgroundLevel(128);
@@ -46,7 +46,7 @@ vtkSlicerSliceLayerLogic::vtkSlicerSliceLayerLogic()
   this->Reslice->SetOutputDimensionality( 2 );
 
   this->MapToWindowLevelColors->SetInput( this->Reslice->GetOutput() );
-  this->MapToRGBA->SetInput( this->MapToWindowLevelColors->GetOutput() );
+  this->MapToColors->SetInput( this->MapToWindowLevelColors->GetOutput() );
 
 }
 
@@ -72,10 +72,10 @@ vtkSlicerSliceLayerLogic::~vtkSlicerSliceLayerLogic()
   this->XYToIJKTransform->Delete();
 
   this->MapToWindowLevelColors->SetInput( NULL );
-  this->MapToRGBA->SetInput( NULL );
+  this->MapToColors->SetInput( NULL );
 
   this->Reslice->Delete();
-  this->MapToRGBA->Delete();
+  this->MapToColors->Delete();
   this->MapToWindowLevelColors->Delete();
 }
 
@@ -260,8 +260,8 @@ void vtkSlicerSliceLayerLogic::PrintSelf(ostream& os, vtkIndent indent)
   // TODO: fix printing of vtk objects
   os << indent << "Reslice: " <<
     (this->Reslice ? "this->Reslice" : "(none)") << "\n";
-  os << indent << "MapToRGBA: " <<
-    (this->MapToRGBA ? "this->MapToRGBA" : "(none)") << "\n";
+  os << indent << "MapToColors: " <<
+    (this->MapToColors ? "this->MapToColors" : "(none)") << "\n";
   os << indent << "MapToWindowLevelColors: " <<
     (this->MapToWindowLevelColors ? "this->MapToWindowLevelColors" : "(none)") << "\n";
 }
