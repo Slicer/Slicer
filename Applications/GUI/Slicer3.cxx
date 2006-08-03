@@ -193,7 +193,6 @@ int Slicer3_main(int argc, char *argv[])
     // Create MRML scene
     vtkMRMLScene *scene = vtkMRMLScene::New();
     vtkMRMLScene::SetActiveScene( scene );
-    vtkMRMLScalarVolumeNode::CreateNoneNode(scene);
     
     // Create the application Logic object, 
     // Create the application GUI object

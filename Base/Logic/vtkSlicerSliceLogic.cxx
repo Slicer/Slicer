@@ -375,20 +375,26 @@ void vtkSlicerSliceLogic::UpdatePipeline()
       }
 
     // Now update the image blend with the background and foreground and label
+    // -- layer 0 opacity is ignored, but since not all inputs may be non-null, 
+    //    we keep track so that someone could, for example, have a NULL background
+    //    with a non-null foreground and label and everything will work with the 
+    //    label opacity
     this->Blend->RemoveAllInputs ( );
+    int layerIndex = 0;
     if ( this->BackgroundLayer )
       {
       this->Blend->AddInput( this->BackgroundLayer->GetImageData() );
+      this->Blend->SetOpacity( layerIndex++, 1.0 );
       }
     if ( this->ForegroundLayer )
       {
       this->Blend->AddInput( this->ForegroundLayer->GetImageData() );
-      this->Blend->SetOpacity( 1, this->SliceCompositeNode->GetForegroundOpacity() );
+      this->Blend->SetOpacity( layerIndex++, this->SliceCompositeNode->GetForegroundOpacity() );
       }
     if ( this->LabelLayer )
       {
       this->Blend->AddInput( this->LabelLayer->GetImageData() );
-      this->Blend->SetOpacity( 2, this->SliceCompositeNode->GetLabelOpacity() );
+      this->Blend->SetOpacity( layerIndex++, this->SliceCompositeNode->GetLabelOpacity() );
       }
 
     if ( this->SliceModelNode && 

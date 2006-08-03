@@ -87,7 +87,16 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLayerLogic : public vtkSlicerLo
 
   // Description:
   // Get the output of the pipeline for this layer
-  vtkImageData *GetImageData () { return (this->GetMapToRGBA()->GetOutput()); };
+  vtkImageData *GetImageData () { 
+    if ( this->GetVolumeNode() == NULL ) 
+      {
+      return NULL;
+      } 
+    else
+      {
+      return (this->GetMapToRGBA()->GetOutput()); 
+      }
+  };
 
   // Description:
   // provide the virtual method that updates this Logic based

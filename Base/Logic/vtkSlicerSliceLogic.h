@@ -111,7 +111,16 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLogic : public vtkSlicerLogic
 
   // Description:
   // the tail of the pipeline
-  vtkImageData *GetImageData () { return (this->Blend->GetOutput()); };
+  // -- returns NULL if none of the inputs exist
+  vtkImageData *GetImageData () { 
+    if ( (this->GetBackgroundLayer() != NULL && this->GetBackgroundLayer()->GetImageData() != NULL) ||
+         (this->GetForegroundLayer() != NULL && this->GetForegroundLayer()->GetImageData() != NULL) ||
+         (this->GetLabelLayer() != NULL && this->GetLabelLayer()->GetImageData() != NULL) ) {
+      return (this->Blend->GetOutput()); 
+    } else {
+      return NULL;
+    }
+  };
 
   // Description:
   // update the pipeline to reflect the current state of the nodes

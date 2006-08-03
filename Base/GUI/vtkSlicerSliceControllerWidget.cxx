@@ -357,23 +357,41 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
     }
 
 
-  if ( vtkSlicerNodeSelectorWidget::SafeDownCast(caller) == this->ForegroundSelector &&
-    this->ForegroundSelector->GetSelected() != NULL)
+  if ( vtkSlicerNodeSelectorWidget::SafeDownCast(caller) == this->ForegroundSelector )
     {
-    this->SliceCompositeNode->SetForegroundVolumeID( 
-            this->ForegroundSelector->GetSelected()->GetID() );
+    if  (this->ForegroundSelector->GetSelected() != NULL)
+      {
+      this->SliceCompositeNode->SetForegroundVolumeID( 
+              this->ForegroundSelector->GetSelected()->GetID() );
+      } 
+    else
+      {
+      this->SliceCompositeNode->SetForegroundVolumeID( NULL );
+      }
     }
-  if ( vtkSlicerNodeSelectorWidget::SafeDownCast(caller) == this->BackgroundSelector &&
-    this->BackgroundSelector->GetSelected() != NULL)
+  if ( vtkSlicerNodeSelectorWidget::SafeDownCast(caller) == this->BackgroundSelector )
     {
-    this->SliceCompositeNode->SetBackgroundVolumeID( 
-            this->BackgroundSelector->GetSelected()->GetID() );
+    if  (this->BackgroundSelector->GetSelected() != NULL)
+      {
+      this->SliceCompositeNode->SetBackgroundVolumeID( 
+              this->BackgroundSelector->GetSelected()->GetID() );
+      } 
+    else
+      {
+      this->SliceCompositeNode->SetBackgroundVolumeID( NULL );
+      }
     }
-  if ( vtkSlicerNodeSelectorWidget::SafeDownCast(caller) == this->LabelSelector &&
-    this->LabelSelector->GetSelected() != NULL)
+  if ( vtkSlicerNodeSelectorWidget::SafeDownCast(caller) == this->LabelSelector )
     {
-    this->SliceCompositeNode->SetLabelVolumeID( 
-            this->LabelSelector->GetSelected()->GetID() );
+    if  (this->LabelSelector->GetSelected() != NULL)
+      {
+      this->SliceCompositeNode->SetLabelVolumeID( 
+              this->LabelSelector->GetSelected()->GetID() );
+      } 
+    else
+      {
+      this->SliceCompositeNode->SetLabelVolumeID( NULL );
+      }
     }
 
   if ( modified )
