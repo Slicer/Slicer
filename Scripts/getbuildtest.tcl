@@ -26,10 +26,11 @@ proc Usage { {msg ""} } {
     set msg "$msg\nusage: getbuildtest \[options\] \[target\]"
     set msg "$msg\n  \[target\] is determined automatically if not specified"
     set msg "$msg\n  \[options\] is one of the following:"
-    set msg "$msg\n   --help : prints this message and exits"
-    set msg "$msg\n   --clean : delete lib and build directories first"
+    set msg "$msg\n   h --help : prints this message and exits"
+    set msg "$msg\n   -f --clean : delete lib and build directories first"
     set msg "$msg\n   -t --test-type : CTest test target"
     set msg "$msg\n   --release : compile with optimization flags"
+    set msg "$msg\n   -u --update : does a cvs/svn update on each lib"
     puts stderr $msg
 }
 
