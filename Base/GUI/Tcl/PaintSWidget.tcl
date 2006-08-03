@@ -257,6 +257,11 @@ itcl::body PaintSWidget::paintBrush {} {
   foreach {x y} [$_interactor GetEventPosition] {}
   $this queryLayers $x $y
 
+  if { $_layers(label,node) == "" } {
+    # if there's no label, we can't paint
+    return
+  }
+
   # get the brush bounding box in ijk coordinates
   set bounds [[$o(brush) GetPoints] GetBounds]
   set left [expr $x + [lindex $bounds 0]]
