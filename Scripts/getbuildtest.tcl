@@ -161,11 +161,6 @@ switch $tcl_platform(os) {
     default { set isWindows 1 }
 }
 
-if { $isWindows } {
-    puts stderr "Sorry, getbuildtest isn't for windows yet"
-#    exit 1
-}
-
 #
 # Deletes both SLICER_LIB and SLICER_BUILD if clean option given
 #
