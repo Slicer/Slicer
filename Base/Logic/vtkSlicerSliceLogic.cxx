@@ -381,17 +381,17 @@ void vtkSlicerSliceLogic::UpdatePipeline()
     //    label opacity
     this->Blend->RemoveAllInputs ( );
     int layerIndex = 0;
-    if ( this->BackgroundLayer )
+    if ( this->BackgroundLayer && this->BackgroundLayer->GetImageData() )
       {
       this->Blend->AddInput( this->BackgroundLayer->GetImageData() );
       this->Blend->SetOpacity( layerIndex++, 1.0 );
       }
-    if ( this->ForegroundLayer )
+    if ( this->ForegroundLayer && this->ForegroundLayer->GetImageData() )
       {
       this->Blend->AddInput( this->ForegroundLayer->GetImageData() );
       this->Blend->SetOpacity( layerIndex++, this->SliceCompositeNode->GetForegroundOpacity() );
       }
-    if ( this->LabelLayer )
+    if ( this->LabelLayer && this->LabelLayer->GetImageData() )
       {
       this->Blend->AddInput( this->LabelLayer->GetImageData() );
       this->Blend->SetOpacity( layerIndex++, this->SliceCompositeNode->GetLabelOpacity() );
@@ -402,6 +402,7 @@ void vtkSlicerSliceLogic::UpdatePipeline()
             this->SliceNode ) 
       {
       this->SliceModelNode->GetDisplayNode()->SetVisibility( this->SliceNode->GetSliceVisible() );
+      this->SliceModelNode->GetDisplayNode()->SetAndObserveTextureImageData(this->GetImageData());
       }
 
     this->Modified();

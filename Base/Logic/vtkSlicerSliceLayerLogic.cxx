@@ -147,6 +147,7 @@ void vtkSlicerSliceLayerLogic::UpdateNodeReferences ()
 //----------------------------------------------------------------------------
 void vtkSlicerSliceLayerLogic::UpdateTransforms()
 {
+  int labelMap = 0;  // keep track so label maps don't get interpolated
 
   // Ensure display node matches the one we are observing
   this->UpdateNodeReferences();
@@ -195,6 +196,7 @@ void vtkSlicerSliceLayerLogic::UpdateTransforms()
     vtkMRMLScalarVolumeNode *scalarVolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast (this->VolumeNode);
     if ( scalarVolumeNode && scalarVolumeNode->GetLabelMap() )
       {
+      labelMap = 1;
       this->Reslice->SetInterpolationModeToNearestNeighbor();
       }
     else
@@ -221,7 +223,7 @@ void vtkSlicerSliceLayerLogic::UpdateTransforms()
         //int ApplyThreshold;
         //int AutoThreshold;
         
-    if ( this->VolumeDisplayNode->GetInterpolate() )
+    if ( this->VolumeDisplayNode->GetInterpolate() && !labelMap )
       {
       this->Reslice->SetInterpolationModeToLinear();
       }

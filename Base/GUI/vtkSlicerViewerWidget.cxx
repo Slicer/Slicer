@@ -280,6 +280,7 @@ void vtkSlicerViewerWidget::SetModelDisplayProperty(vtkMRMLModelNode *model,  vt
       if (actor->GetTexture() == NULL)
         {
         vtkTexture *texture = vtkTexture::New();
+        texture->SetInterpolate(1);
         actor->SetTexture(texture);
         texture->Delete();
         }
