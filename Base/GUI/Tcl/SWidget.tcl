@@ -125,16 +125,24 @@ itcl::body SWidget::queryLayers { x y } {
   foreach layer {background foreground label} {
     set _layers($layer,logic) [[$sliceGUI GetLogic]  Get[string totitle $layer]Layer]
     set _layers($layer,node) [$_layers($layer,logic) GetVolumeNode]
-    set _layers($layer,image) [$_layers($layer,node) GetImageData]
+    if { $_layers($layer,node) == "" } {
+      set _layers($layer,image) ""
+      set _layers($layer,xyToIJK) ""
+      foreach v {i j k} { 
+        set _layers($layer,$v) 0
+      }
+      set _layers($layer,pixel) "None"
+    } else {
+      set _layers($layer,image) [$_layers($layer,node) GetImageData]
 
-    set _layers($layer,xyToIJK) [[$_layers($layer,logic) GetXYToIJKTransform] GetMatrix]
-    foreach {i j k l} [$_layers($layer,xyToIJK) MultiplyPoint $x $y 0 1] {}
-    foreach v {i j k} { ;# cast to integer
-      set _layers($layer,$v) [expr int(round([set $v]))]
+      set _layers($layer,xyToIJK) [[$_layers($layer,logic) GetXYToIJKTransform] GetMatrix]
+      foreach {i j k l} [$_layers($layer,xyToIJK) MultiplyPoint $x $y 0 1] {}
+      foreach v {i j k} { ;# cast to integer
+        set _layers($layer,$v) [expr int(round([set $v]))]
+      }
+      set _layers($layer,pixel) [$this getPixel $_layers($layer,image) \
+                      $_layers($layer,i) $_layers($layer,j) $_layers($layer,k)]
     }
-    set _layers($layer,ijk) "i j k"
-    set _layers($layer,pixel) [$this getPixel $_layers($layer,image) \
-                    $_layers($layer,i) $_layers($layer,j) $_layers($layer,k)]
   }
 }
 
