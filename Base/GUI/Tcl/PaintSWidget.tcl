@@ -318,6 +318,14 @@ itcl::body PaintSWidget::paintBrush {} {
   }
 
   #
+  # prepare ijkToXY mapping
+  #
+  set ijkToXY [vtkMatrix4x4 New]
+  $ijkToXY DeepCopy $_layers(label,xyToIJK)
+  $ijkToXY Invert
+  set radiusSquared [expr $radius * $radius]
+
+  #
   # now rasterize the plane 
   #
   foreach index {i j k l} start $tlIJK {
@@ -339,9 +347,14 @@ itcl::body PaintSWidget::paintBrush {} {
       # draw the pixel
       # - only if it's inside the radius
       # - if threshold mode, only if it's between min max
-      #
+      # - note that xy could be done using deltas for speed
       
-      if { 1 } { 
+      set xyzw [$ijkToXY MultiplyPoint $coord(i) $coord(j) $coord(k) 1]
+      set deltaX [expr ($x - [lindex $xyzw 0])]
+      set deltaY [expr ($y - [lindex $xyzw 1])]
+      set distanceSquared [expr $deltaX * $deltaX + $deltaY * $deltaY]
+
+      if { $distanceSquared < $radiusSquared } { 
         # calc ijkToRAS of pixel is less than radius from paint point
         if { $thresholdPaint } {
           set bg [$this getPixel $_layers(background,image) $i $j $k]
@@ -368,6 +381,7 @@ itcl::body PaintSWidget::paintBrush {} {
   # the node, but the Logic isn't yet observing the ImageDataChangedEvent
   $_layers(label,node) Modified
 
+  $ijkToXY Delete
   return
   
 
