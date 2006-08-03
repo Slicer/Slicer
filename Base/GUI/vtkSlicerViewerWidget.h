@@ -84,6 +84,8 @@ public:
   // Show and hide widget
   virtual void PackWidget ( );
   virtual void UnpackWidget ( );
+  virtual void GridWidget ( int row, int col );
+  virtual void UngridWidget ( );
   
   // Description:
   // Updates Actors based on models in the scene

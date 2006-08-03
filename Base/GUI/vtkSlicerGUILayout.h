@@ -56,16 +56,12 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGUILayout : public vtkKWObject
     vtkSetMacro ( DefaultSlicerWindowHeight, int );
     vtkGetMacro ( DefaultMainViewerWidth, int);
     vtkSetMacro ( DefaultMainViewerWidth, int);
-    vtkGetMacro ( DefaultMainViewerHeight, int);
-    vtkSetMacro ( DefaultMainViewerHeight, int);
+    vtkGetMacro ( Default3DViewerHeight, int);
+    vtkSetMacro ( Default3DViewerHeight, int);
     vtkGetMacro ( DefaultSliceGUIFrameHeight, int);
     vtkSetMacro ( DefaultSliceGUIFrameHeight, int);
     vtkGetMacro ( DefaultSliceGUIFrameWidth, int);
     vtkSetMacro ( DefaultSliceGUIFrameWidth, int);
-    vtkGetMacro ( DefaultSliceWindowWidth, int);
-    vtkSetMacro ( DefaultSliceWindowWidth, int);
-    vtkGetMacro ( DefaultSliceWindowHeight, int);
-    vtkSetMacro ( DefaultSliceWindowHeight, int);
     vtkGetMacro ( DefaultQuadrantHeight, int );
     vtkSetMacro ( DefaultQuadrantHeight, int );
     vtkGetMacro ( DefaultQuadrantWidth, int );
@@ -88,10 +84,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGUILayout : public vtkKWObject
     vtkSetMacro ( SliceViewerMinDim, int );
 
     virtual void InitializeLayoutDimensions ( );
-    virtual void ConfigureSliceViewersPanel ( );
-    virtual void ConfigureMainViewerPanel ( );
-    virtual void ConfigureMainSlicerWindow ( );
-    
+    virtual void InitializeMainSlicerWindowSize ( );
+    virtual void ConfigureMainSlicerWindowPanels ( );
+
  protected:
     vtkSlicerGUILayout ( );
     ~vtkSlicerGUILayout ( );
@@ -106,12 +101,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGUILayout : public vtkKWObject
     // Dimensions for the Default Window & components
     int DefaultSlicerWindowHeight;
     int DefaultSlicerWindowWidth;
-    int DefaultMainViewerHeight;
+    int Default3DViewerHeight;
     int DefaultMainViewerWidth;
     int DefaultSliceGUIFrameHeight;
     int DefaultSliceGUIFrameWidth;
-    int DefaultSliceWindowHeight;
-    int DefaultSliceWindowWidth;
     int DefaultGUIPanelHeight;
     int DefaultGUIPanelWidth;
     int DefaultQuadrantHeight;

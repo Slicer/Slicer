@@ -65,8 +65,13 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
         return this->ViewerWidget->GetMainViewer()->GetRenderWindow()->GetInteractor();
     };
 
+    // Description:
+    // The main 3D Viewer Widget
     vtkGetObjectMacro (ViewerWidget, vtkSlicerViewerWidget);
 
+    // Description:
+    // The main three Slice Viewers and temporary storage
+    // of their logic nodes used during view reconfiguration
     vtkGetObjectMacro (MainSliceGUI0, vtkSlicerSliceGUI);
     vtkGetObjectMacro (MainSliceGUI1, vtkSlicerSliceGUI);
     vtkGetObjectMacro (MainSliceGUI2, vtkSlicerSliceGUI);
@@ -74,6 +79,15 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkGetObjectMacro (MainSliceLogic1, vtkSlicerSliceLogic);
     vtkGetObjectMacro (MainSliceLogic2, vtkSlicerSliceLogic);
 
+    // Description:
+    // A frame used in the MainViewFrame of SlicerMainWin
+    // when lightbox view is being displayed.
+    vtkGetObjectMacro ( LightboxFrame, vtkKWFrame );
+    
+    // Description:
+    // A pointer to the SliceGUI's SliceGUICollection so
+    // the three main Slice Viewers can be added and
+    // removed from the collection as required.
     vtkGetObjectMacro (SliceGUICollection, vtkSlicerSliceGUICollection);
     vtkSetObjectMacro (SliceGUICollection, vtkSlicerSliceGUICollection);
     
@@ -227,9 +241,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     
     // Description:
     // These methods configure and pack the Slicer Window
-    virtual void ConfigureMainSlicerWindow ( );
-    virtual void ConfigureMainViewerPanel ( );
-    virtual void ConfigureSliceViewersPanel ( );
     virtual void PackFirstSliceViewerFrame ( );
 
     virtual void DisplayConventionalView ( );
@@ -444,6 +455,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkSlicerSliceGUI *MainSliceGUI0;
     vtkSlicerSliceGUI *MainSliceGUI1;
     vtkSlicerSliceGUI *MainSliceGUI2;
+    vtkKWFrame *LightboxFrame;
     vtkSlicerSliceGUICollection *SliceGUICollection;
     vtkSlicerSliceLogic *MainSliceLogic0;
     vtkSlicerSliceLogic *MainSliceLogic1;    

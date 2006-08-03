@@ -43,107 +43,83 @@ void vtkSlicerGUILayout::InitializeLayoutDimensions ( )
   this->SetDefaultModuleControlPanelHeight ( 450 );
   this->SetDefaultSliceControlFrameHeight ( 60 );
   this->SetDefaultViewControlFrameHeight ( 240 );
+  //
   // entire GUI panel height and width
+  //
   h = this->GetDefaultLogoFrameHeight ( ) +
     this->GetDefaultModuleChooseFrameHeight ( ) +
     this->GetDefaultModuleControlPanelHeight ( ) +
     this->GetDefaultSliceControlFrameHeight ( ) +
     this->GetDefaultViewControlFrameHeight ( );
   this->SetDefaultGUIPanelHeight ( h );
-  //    this->SetDefaultGUIPanelWidth ( 325 );
+  // this is a good value which accommodates the
+  // horizontal extent of the ModuleChooseFrame widgets.
   this->SetDefaultGUIPanelWidth ( 400 );
 
-  // constrain the slice windows to be a particular size
-  this->SetDefaultSliceGUIFrameHeight ( 120 );
-  this->SetDefaultSliceGUIFrameWidth ( 175 );
-  this->SetDefaultSliceWindowHeight ( 120 );
-  this->SetDefaultSliceWindowWidth ( 175 );
-  w = 3 * this->GetDefaultSliceGUIFrameWidth ( );
+  // set the slice windows to be a default size
+  this->SetDefaultSliceGUIFrameHeight ( 350 );
+  this->SetDefaultSliceGUIFrameWidth ( 300);
 
-  h = this->GetDefaultLogoFrameHeight ( ) +
-    this->GetDefaultModuleChooseFrameHeight ( ) +
-    this->GetDefaultModuleControlPanelHeight ( ) +
-    this->GetDefaultSliceControlFrameHeight ( ) +
-    this->GetDefaultViewControlFrameHeight ( );
+  h = this->GetDefaultGUIPanelHeight ( );
+  this->SetDefault3DViewerHeight ( h - this->GetDefaultSliceGUIFrameHeight () );
   w = 3 * this->GetDefaultSliceGUIFrameWidth ( );
-  // set up default Slicer Window size here for now
-  this->SetDefaultMainViewerHeight ( h - this->GetDefaultSliceGUIFrameHeight () );
   this->SetDefaultMainViewerWidth ( w );
+
   this->SetDefaultQuadrantHeight ( h / 2 );
   this->SetDefaultQuadrantWidth ( w / 2 );
 
+  // make room for window chrome, menubar, toolbar, statusbar, etc.;
+  // have to play with these buffers.
   int hbuf = 10;
   int vbuf = 60;
-  // make room for window chrome or whatever; have to play with this buffer.
-  h = this->GetDefaultLogoFrameHeight ( ) +
-    this->GetDefaultModuleChooseFrameHeight ( ) +
-    this->GetDefaultModuleControlPanelHeight ( ) +
-    this->GetDefaultSliceControlFrameHeight ( ) +
-    this->GetDefaultViewControlFrameHeight ( ) + hbuf;
-  w = 3 * this->GetDefaultSliceGUIFrameWidth ( );
-  w = w + this->GetDefaultGUIPanelWidth ( ) + hbuf;
-  this->SetDefaultSlicerWindowWidth ( w + this->GetDefaultGUIPanelWidth ( ) );
+
+  h = this->GetDefaultGUIPanelHeight ( ) + vbuf;
+  w = (3 * this->GetDefaultSliceGUIFrameWidth() ) + this->GetDefaultGUIPanelWidth() + hbuf;
+  this->SetDefaultSlicerWindowWidth ( w );
   this->SetDefaultSlicerWindowHeight ( h );
 
   // make a minimum size for slice viewers (RenderWidget Size)
   this->SetSliceViewerMinDim ( 10 );
 
-  // TODO: 3D only layout
-    
-  // TODO: Lightbox layout:
-
-  // TODO: tabbed viewer notebook layout:
-
-  // TODO: 4-up 3D-axi-sag-cor layout:
 }
 
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerGUILayout::ConfigureMainSlicerWindow ( )
+void vtkSlicerGUILayout::InitializeMainSlicerWindowSize ( )
 {
-
   if ( this->MainSlicerWin != NULL )
     {
-      this->MainSlicerWin->MainPanelVisibilityOn ();
-      this->MainSlicerWin->SecondaryPanelVisibilityOn ();
       this->MainSlicerWin->SetSize ( this->GetDefaultSlicerWindowWidth ( ),
                                      this->GetDefaultSlicerWindowHeight () );
-      // Configure the minimum width of Slicer's GUI panel.
-      // Panel can be expanded and collapsed entirely, but
-      // can't be resized by hand to a value smaller than what's set.
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerGUILayout::ConfigureMainSlicerWindowPanels ( )
+{
+
+  if ( this->MainSlicerWin != NULL )
+    {
+      // Configure the minimum width of Slicer's GUI panel
+      // and Main Viewer panels. Panels can be expanded and
+      // collapsed entirely or can  be resized by hand.
+      //
+      this->MainSlicerWin->MainPanelVisibilityOn ();
+      this->MainSlicerWin->SecondaryPanelVisibilityOn ();
+      //
+      //--- this split frame divides Slicer's GUI Panel with the Viewer Panel
+      //
       this->MainSlicerWin->GetMainSplitFrame()->SetFrame1Size (this->GetDefaultGUIPanelWidth() );
       this->MainSlicerWin->GetMainSplitFrame()->SetFrame1MinimumSize (this->GetDefaultGUIPanelWidth ( ) );
+      //
+      //--- this split frame divides Slicer's 3DViewer from the Slice Viewers
+      //--- in the conventional layout. Frame1 is the bottom (slice viewer) frame.
+      // 
+      this->MainSlicerWin->GetSecondarySplitFrame()->SetFrame1Size ( this->GetDefaultSliceGUIFrameHeight () );
     }
 }
 
-
-//---------------------------------------------------------------------------
-void vtkSlicerGUILayout::ConfigureMainViewerPanel ( )
-{
-
-  if ( this->MainSlicerWin != NULL )
-    {
-      this->MainSlicerWin->GetViewFrame()->SetWidth ( this->GetDefaultMainViewerWidth() );
-    }
-}
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerGUILayout::ConfigureSliceViewersPanel ( )
-{
-
-  if ( this->MainSlicerWin != NULL )
-    {
-    this->MainSlicerWin->GetSecondarySplitFrame()->SetFrame2Size (this->GetDefaultSliceGUIFrameWidth ( ) );
-    this->MainSlicerWin->GetSecondarySplitFrame()->SetFrame2MinimumSize (this->GetDefaultSliceGUIFrameWidth ( ) );
-        
-    this->MainSlicerWin->GetSecondaryPanelFrame()->SetWidth ( 3 * this->GetDefaultSliceGUIFrameWidth () );
-    this->MainSlicerWin->GetSecondaryPanelFrame()->SetHeight ( this->GetDefaultSliceGUIFrameHeight () );
-
-    }
-
-}
 
 
 

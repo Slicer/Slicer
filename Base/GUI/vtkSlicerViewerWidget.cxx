@@ -3,6 +3,7 @@
 #include "vtkPolyData.h"
 
 #include "vtkSlicerViewerWidget.h"
+#include "vtkSlicerApplication.h"
 #include "vtkSlicerColor.h"
 
 #include "vtkActor.h"
@@ -115,8 +116,15 @@ void vtkSlicerViewerWidget::CreateWidget ( )
   this->MainViewer->SetParent (this->ViewerFrame );
   this->MainViewer->Create ( );
 
-  //this->MainViewer->SetRendererBackgroundColor (vtkSlicerColor::ViewerBlue ); 
+  // Set the viewer's minimum dimension to be the same as that for
+  // the three main Slice viewers.
   this->MainViewer->GetRenderer()->GetActiveCamera()->ParallelProjectionOff();
+  if ( this->GetApplication() != NULL )
+    {
+      vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();      
+      this->MainViewer->SetWidth ( app->GetMainLayout()->GetSliceViewerMinDim() );
+      this->MainViewer->SetHeight ( app->GetMainLayout()->GetSliceViewerMinDim() );
+    }
     
     // set up antialiasing
   this->MainViewer->GetRenderWindow()->LineSmoothingOn();
@@ -124,7 +132,7 @@ void vtkSlicerViewerWidget::CreateWidget ( )
   this->MainViewer->GetRenderWindow()->PointSmoothingOn();
   // this->MainViewer->SetMultiSamples ( 4 );
 
-  this->PackWidget ( );
+  //this->PackWidget ( );
   this->MainViewer->ResetCamera ( );
 
   // observe scene for add/remove nodes
@@ -314,6 +322,16 @@ void vtkSlicerViewerWidget::PackWidget ( )
                    this->MainViewer->GetWidgetName ( ) );
 }
 
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewerWidget::GridWidget ( int row, int col )
+{
+    this->Script  ("grid %s -row %d -column %d -sticky news -padx 0 -pady 0",
+                   this->ViewerFrame->GetWidgetName ( ), row, col );
+    this->Script  ("pack %s -side top -anchor c  -fill both -expand y -padx 0 -pady 0",
+                   this->MainViewer->GetWidgetName ( ) );
+}
+
 //---------------------------------------------------------------------------
 void vtkSlicerViewerWidget::UnpackWidget ( )
 {
@@ -321,3 +339,10 @@ void vtkSlicerViewerWidget::UnpackWidget ( )
     this->Script ( "pack forget %s ", this->ViewerFrame->GetWidgetName ( ) );
 }
 
+  
+//---------------------------------------------------------------------------
+void vtkSlicerViewerWidget::UngridWidget ( )
+{
+    this->Script ( "grid forget %s ", this->MainViewer->GetWidgetName ( ) );
+    this->Script ( "pack forget %s ", this->ViewerFrame->GetWidgetName ( ) );
+}

@@ -272,7 +272,7 @@ void vtkSlicerSliceGUI::BuildGUI ( vtkKWFrame *f )
       this->SliceViewer->SetParent ( this->SliceGUIFrame );
       this->SliceViewer->Create (  );
 
-      //      this->PackGUI();
+       this->PackGUI();
     }
 }
 
@@ -298,11 +298,6 @@ void vtkSlicerSliceGUI::BuildGUI ( vtkKWFrame *f, double *c )
       this->SliceViewer->SetApplication ( app );
       this->SliceViewer->SetParent ( this->SliceGUIFrame );
       this->SliceViewer->Create (  );
-
-      if ( f )
-        {
-          this->PackGUI();
-        }
     }
 }
 
@@ -314,6 +309,8 @@ void vtkSlicerSliceGUI::PackGUI ()
     this->Script("pack %s -anchor c -side top -expand true -fill both", SliceViewer->GetRenderWidget()->GetWidgetName());
 }
 
+
+
 //---------------------------------------------------------------------------
 void vtkSlicerSliceGUI::UnpackGUI ()
 {
@@ -322,6 +319,21 @@ void vtkSlicerSliceGUI::UnpackGUI ()
     this->Script("pack forget %s", SliceViewer->GetRenderWidget()->GetWidgetName());
 }
 
+//---------------------------------------------------------------------------
+void vtkSlicerSliceGUI::GridGUI ( int row, int col )
+{
 
+    this->Script("grid %s -row %d -column %d -sticky news -padx 0 -pady 0", SliceGUIFrame->GetWidgetName(), row, col );
+    this->Script("pack %s -pady 0 -side top -expand false -fill x", SliceController->GetWidgetName() );
+    this->Script("pack %s -anchor c -side top -expand true -fill both", SliceViewer->GetRenderWidget()->GetWidgetName());
 
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerSliceGUI::UngridGUI ()
+{
+    this->Script("grid forget %s", SliceGUIFrame->GetWidgetName() );
+    this->Script("pack forget %s", SliceController->GetWidgetName() );
+    this->Script("pack forget %s", SliceViewer->GetRenderWidget()->GetWidgetName());
+}
 

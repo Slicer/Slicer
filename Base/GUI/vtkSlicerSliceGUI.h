@@ -95,6 +95,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceGUI : public vtkSlicerComponentGU
     // Show and hide the GUI
     virtual void PackGUI ( );
     virtual void UnpackGUI ( );
+    virtual void GridGUI ( int row, int col);
+    virtual void UngridGUI ( );
 
     // Description:
     // Add/Remove Observers on UIPanel widgets and SliceGUIs.
