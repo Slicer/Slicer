@@ -32,6 +32,9 @@
 #include "vtkCommandLineModuleLogic.h"
 #include "vtkCommandLineModuleGUI.h"
 
+#include "vtkScriptedModuleLogic.h"
+#include "vtkScriptedModuleGUI.h"
+
 #include "ModuleFactory.h"
 
 #include <vtksys/SystemTools.hxx>
@@ -49,6 +52,7 @@ extern "C" int Vtkitk_Init(Tcl_Interp *interp);
 extern "C" int Gradientanisotropicdiffusionfilter_Init(Tcl_Interp *interp);
 extern "C" int Slicerdaemon_Init(Tcl_Interp *interp);
 extern "C" int Commandlinemodule_Init(Tcl_Interp *interp);
+extern "C" int Scriptedmodule_Init(Tcl_Interp *interp);
 
 struct SpacesToUnderscores
 {
@@ -151,6 +155,7 @@ int Slicer3_main(int argc, char *argv[])
     Gradientanisotropicdiffusionfilter_Init(interp);
     Slicerdaemon_Init(interp);
     Commandlinemodule_Init(interp);
+    Scriptedmodule_Init(interp);
 
     //
     // use the startup script passed on command line if it exists

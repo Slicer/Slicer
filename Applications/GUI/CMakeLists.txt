@@ -24,6 +24,8 @@ INCLUDE_DIRECTORIES(
   ${CommandLineModule_BINARY_DIR}
   ${CommandLineModule_Init_SOURCE_DIR}
   ${CommandLineModule_Init_BINARY_DIR}
+  ${ScriptedModule_SOURCE_DIR}
+  ${ScriptedModule_BINARY_DIR}
   ${SlicerDaemon_SOURCE_DIR}
   ${SlicerDaemon_BINARY_DIR}
   ${SlicerDaemon_Init_SOURCE_DIR}
@@ -51,6 +53,7 @@ TARGET_LINK_LIBRARIES( Slicer3
     MRML
     GradientAnisotropicDiffusionFilter
     CommandLineModule
+    ScriptedModule
     SlicerDaemon
     ModuleDescriptionParser
     ModulesBaseClasses
