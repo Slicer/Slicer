@@ -87,9 +87,8 @@ void vtkSlicerSliceViewer::CreateWidget ( ) {
     // Create a render widget
     this->RenderWidget->SetParent ( this->GetParent( ) );
     this->RenderWidget->Create();
-    int w = app->GetMainLayout()->GetSliceViewerMinDim ( );
-    this->RenderWidget->SetWidth ( w );
-    this->RenderWidget->SetHeight ( w );
+    this->RenderWidget->SetWidth ( app->GetMainLayout()->GetSliceViewerMinDim() );
+    this->RenderWidget->SetHeight ( app->GetMainLayout()->GetSliceViewerMinDim() );
     this->RenderWidget->CornerAnnotationVisibilityOn();
     this->RenderWidget->SetBorderWidth(2);
     this->RenderWidget->SetReliefToGroove ( );
