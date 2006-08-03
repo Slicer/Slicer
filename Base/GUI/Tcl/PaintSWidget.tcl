@@ -334,7 +334,25 @@ itcl::body PaintSWidget::paintBrush {} {
       foreach v {i j k} {
         set $v [expr int(round($coord($v)))]
       }
-      $this setPixel $_layers(label,image) $i $j $k $paintColor
+
+      #
+      # draw the pixel
+      # - only if it's inside the radius
+      # - if threshold mode, only if it's between min max
+      #
+      
+      if { 1 } { 
+        # calc ijkToRAS of pixel is less than radius from paint point
+        if { $thresholdPaint } {
+          set bg [$this getPixel $_layers(background,image) $i $j $k]
+          if { $bg >= $thresholdMin && $bg <= $thresholdMax } {
+            $this setPixel $_layers(label,image) $i $j $k $paintColor
+          }
+        } else {
+          $this setPixel $_layers(label,image) $i $j $k $paintColor
+        }
+      }
+
       foreach v {i j k} {
         set coord($v) [expr $coord($v) + $columnDelta($v)]
       }
