@@ -191,6 +191,16 @@ void vtkSlicerSliceLayerLogic::UpdateTransforms()
 
 
     this->Reslice->SetInput( this->VolumeNode->GetImageData() ); 
+
+    vtkMRMLScalarVolumeNode *scalarVolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast (this->VolumeNode);
+    if ( scalarVolumeNode && scalarVolumeNode->GetLabelMap() )
+      {
+      this->Reslice->SetInterpolationModeToNearestNeighbor();
+      }
+    else
+      {
+      this->Reslice->SetInterpolationModeToLinear();
+      }
     }
   else
     {
@@ -210,6 +220,15 @@ void vtkSlicerSliceLayerLogic::UpdateTransforms()
         //int AutoWindowLevel;
         //int ApplyThreshold;
         //int AutoThreshold;
+        
+    if ( this->VolumeDisplayNode->GetInterpolate() )
+      {
+      this->Reslice->SetInterpolationModeToLinear();
+      }
+    else
+      {
+      this->Reslice->SetInterpolationModeToNearestNeighbor();
+      }
 
     }
 
