@@ -127,8 +127,8 @@ itcl::body SWidget::queryLayers { x y } {
     set _layers($layer,node) [$_layers($layer,logic) GetVolumeNode]
     set _layers($layer,image) [$_layers($layer,node) GetImageData]
 
-    set xyToIJK [[$_layers($layer,logic) GetXYToIJKTransform] GetMatrix]
-    foreach {i j k l} [$xyToIJK MultiplyPoint $x $y 0 1] {}
+    set _layers($layer,xyToIJK) [[$_layers($layer,logic) GetXYToIJKTransform] GetMatrix]
+    foreach {i j k l} [$_layers($layer,xyToIJK) MultiplyPoint $x $y 0 1] {}
     foreach v {i j k} { ;# cast to integer
       set _layers($layer,$v) [expr int(round([set $v]))]
     }
