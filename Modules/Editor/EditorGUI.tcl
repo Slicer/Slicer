@@ -10,8 +10,6 @@ proc EditorDestructor {this} {
 
 proc EditorBuildGUI {this} {
 
-  tk_messageBox -message "Okay, let's get to work!"
-
   # TODO: create and register the node class
   # TODO: make a node to store our parameters
 
