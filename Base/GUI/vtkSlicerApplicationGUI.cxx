@@ -106,6 +106,7 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
     this->EditorToolboxIconButton = vtkKWPushButton::New ( );
     this->ColorIconButton = vtkKWPushButton::New ( );
     this->FiducialsIconButton = vtkKWPushButton::New ( );
+    this->MeasurementsIconButton = vtkKWPushButton::New ( );
     this->TransformIconButton = vtkKWPushButton::New ( );
     this->SaveSceneIconButton = vtkKWPushButton::New ( );
     this->LoadSceneIconButton = vtkKWPushButton::New ( );
@@ -113,7 +114,8 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
     this->OneUp3DViewIconButton = vtkKWPushButton::New ( );
     this->OneUpSliceViewIconButton = vtkKWPushButton::New ( );
     this->FourUpViewIconButton = vtkKWPushButton::New ( );
-    this->TabbedViewIconButton = vtkKWPushButton::New ( );
+    this->Tabbed3DViewIconButton = vtkKWPushButton::New ( );
+    this->TabbedSliceViewIconButton = vtkKWPushButton::New ( );
     this->LightBoxViewIconButton = vtkKWPushButton::New ( );
     this->MousePickIconButton = vtkKWPushButton::New ( );
     this->MousePanIconButton = vtkKWPushButton::New ( );
@@ -369,7 +371,8 @@ void vtkSlicerApplicationGUI::AddGUIObservers ( )
     this->OneUp3DViewIconButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->OneUpSliceViewIconButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->FourUpViewIconButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->TabbedViewIconButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->Tabbed3DViewIconButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->TabbedSliceViewIconButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->LightBoxViewIconButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
     this->GetMainSlicerWin()->GetFileMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -395,7 +398,13 @@ void vtkSlicerApplicationGUI::RemoveGUIObservers ( )
     this->DataIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->VolumeIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ModelIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-
+    this->ConventionalViewIconButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->OneUp3DViewIconButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->OneUpSliceViewIconButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->FourUpViewIconButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->Tabbed3DViewIconButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->TabbedSliceViewIconButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->LightBoxViewIconButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
     this->LoadSceneDialog->RemoveObservers ( vtkCommand::ModifiedEvent, (vtkCommand *) this->GUICallbackCommand );
     this->SaveSceneDialog->RemoveObservers ( vtkCommand::ModifiedEvent, (vtkCommand *) this->GUICallbackCommand );
@@ -496,12 +505,20 @@ void vtkSlicerApplicationGUI::ProcessGUIEvents ( vtkObject *caller,
         this->BuildMainViewer ( vtkSlicerGUILayout::SlicerLayoutFourUpView );
         this->AddMainSliceViewersToCollection ( );
       }
-    else if ( pushb == this->TabbedViewIconButton && event == vtkKWPushButton::InvokedEvent )
+    else if ( pushb == this->Tabbed3DViewIconButton && event == vtkKWPushButton::InvokedEvent )
       {
         this->RemoveMainSliceViewersFromCollection ( );            
         this->BuildMainViewer ( vtkSlicerGUILayout::SlicerLayoutTabbed3DView );
         this->AddMainSliceViewersToCollection ( );
       }
+    else if ( pushb == this->TabbedSliceViewIconButton && event == vtkKWPushButton::InvokedEvent )
+      {
+        // TODO: fix this. 
+        //        this->RemoveMainSliceViewersFromCollection ( );            
+        //        this->BuildMainViewer ( vtkSlicerGUILayout::SlicerLayoutTabbedSliceView );
+        //        this->AddMainSliceViewersToCollection ( );
+      }
+
     else if ( pushb == this->LightBoxViewIconButton && event == vtkKWPushButton::InvokedEvent )
       {
         // TODO: implement this
@@ -926,6 +943,10 @@ void vtkSlicerApplicationGUI::DeleteToolbarWidgets ( )
         this->FiducialsIconButton->Delete ( );
         this->FiducialsIconButton = NULL;
     }
+    if ( this->MeasurementsIconButton ) {
+        this->MeasurementsIconButton->Delete ( );
+        this->MeasurementsIconButton = NULL;
+    }
     if ( this->SaveSceneIconButton ) {
         this->SaveSceneIconButton->Delete ( );
         this->SaveSceneIconButton = NULL;
@@ -950,9 +971,13 @@ void vtkSlicerApplicationGUI::DeleteToolbarWidgets ( )
         this->FourUpViewIconButton->Delete ( );
         this->FourUpViewIconButton = NULL;
     }
-    if ( this->TabbedViewIconButton ) {
-        this->TabbedViewIconButton->Delete ( );
-        this->TabbedViewIconButton = NULL;
+    if ( this->Tabbed3DViewIconButton ) {
+        this->Tabbed3DViewIconButton->Delete ( );
+        this->Tabbed3DViewIconButton = NULL;
+    }
+    if ( this->TabbedSliceViewIconButton ) {
+        this->TabbedSliceViewIconButton->Delete ( );
+        this->TabbedSliceViewIconButton = NULL;
     }
     if ( this->LightBoxViewIconButton ) {
         this->LightBoxViewIconButton->Delete ( );
@@ -1268,6 +1293,9 @@ void vtkSlicerApplicationGUI::CreateMainSliceViewers ( int arrangementType )
         case vtkSlicerGUILayout::SlicerLayoutTabbed3DView:
           this->DisplayTabbed3DViewSliceViewers ( );
           break;
+        case vtkSlicerGUILayout::SlicerLayoutTabbedSliceView:
+          this->DisplayTabbedSliceView ( );
+          break;
         case vtkSlicerGUILayout::SlicerLayoutLightboxView:
           this->DisplayLightboxView ( );
           break;
@@ -1526,19 +1554,19 @@ void vtkSlicerApplicationGUI::DisplayTabbedSliceView ( )
       this->MainSlicerWin->SetSecondaryPanelVisibility ( 0 );
 
       // Red slice viewer
-      this->MainSliceGUI0->BuildGUI ( this->MainSlicerWin->GetMainPanelFrame ( ), color->SliceGUIRed );
+      this->MainSliceGUI0->BuildGUI ( this->MainSlicerWin->GetViewFrame ( ), color->SliceGUIRed );
       this->MainSliceGUI0->PackGUI ( );
       // Yellow slice viewer
       this->MainSlicerWin->GetMainNotebook()->AddPage("yellow slice", NULL, NULL, this->ViewerPageTag );
-      this->MainSliceGUI1->BuildGUI ( this->MainSlicerWin->GetMainPanelFrame ( ), color->SliceGUIYellow );
+      this->MainSliceGUI1->BuildGUI ( this->MainSlicerWin->GetViewFrame ( ), color->SliceGUIYellow );
       this->MainSliceGUI1->PackGUI ( );
       // Green slice viewer          
       this->MainSlicerWin->GetMainNotebook()->AddPage("green slice", NULL, NULL, this->ViewerPageTag );
-      this->MainSliceGUI2->BuildGUI ( this->MainSlicerWin->GetMainPanelFrame ( ), color->SliceGUIGreen );
+      this->MainSliceGUI2->BuildGUI ( this->MainSlicerWin->GetViewFrame ( ), color->SliceGUIGreen );
       this->MainSliceGUI2->PackGUI ( );      
       // Tab the Slice views
       this->MainSlicerWin->GetViewNotebook()->SetAlwaysShowTabs ( 1 );
-      layout->SetCurrentViewArrangement ( vtkSlicerGUILayout::SlicerLayoutTabbed3DView );
+      layout->SetCurrentViewArrangement ( vtkSlicerGUILayout::SlicerLayoutTabbedSliceView );
     }
 }
 
@@ -1862,6 +1890,16 @@ void vtkSlicerApplicationGUI::BuildToolBar()
         this->EditorIconButton->SetBalloonHelpString ( "Editor");        
         mtb->AddWidget ( this->EditorIconButton );
 
+        // measurements module icon
+        this->MeasurementsIconButton->SetParent ( mtb->GetFrame ( ) );
+        this->MeasurementsIconButton->Create ( );
+        this->MeasurementsIconButton->SetReliefToFlat ( );
+        this->MeasurementsIconButton->SetBorderWidth ( 0 );
+        this->MeasurementsIconButton->SetOverReliefToNone ( );
+        this->MeasurementsIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetMeasurementsIcon ( ) );
+        this->MeasurementsIconButton->SetBalloonHelpString ( "Measurements");        
+        mtb->AddWidget ( this->MeasurementsIconButton );
+
         // color utility icon
         this->ColorIconButton->SetParent ( mtb->GetFrame ( ) );
         this->ColorIconButton->Create ( );
@@ -1912,14 +1950,24 @@ void vtkSlicerApplicationGUI::BuildToolBar()
         vtb->AddWidget ( this->FourUpViewIconButton );
 
         // tabbed view icon
-        this->TabbedViewIconButton->SetParent ( vtb->GetFrame ( ) );
-        this->TabbedViewIconButton->Create ( );
-        this->TabbedViewIconButton->SetReliefToFlat ( );
-        this->TabbedViewIconButton->SetBorderWidth ( 0 );
-        this->TabbedViewIconButton->SetOverReliefToNone ( );
-        this->TabbedViewIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetTabbedViewIcon ( ) );
-        this->TabbedViewIconButton->SetBalloonHelpString ( "Display a collection of scenes in a notebook" );
-        vtb->AddWidget ( this->TabbedViewIconButton );
+        this->TabbedSliceViewIconButton->SetParent ( vtb->GetFrame ( ) );
+        this->TabbedSliceViewIconButton->Create ( );
+        this->TabbedSliceViewIconButton->SetReliefToFlat ( );
+        this->TabbedSliceViewIconButton->SetBorderWidth ( 0 );
+        this->TabbedSliceViewIconButton->SetOverReliefToNone ( );
+        this->TabbedSliceViewIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetTabbedSliceViewIcon ( ) );
+        this->TabbedSliceViewIconButton->SetBalloonHelpString ( "Display a collection of scenes in a notebook" );
+        vtb->AddWidget ( this->TabbedSliceViewIconButton );
+
+        // tabbed view icon
+        this->Tabbed3DViewIconButton->SetParent ( vtb->GetFrame ( ) );
+        this->Tabbed3DViewIconButton->Create ( );
+        this->Tabbed3DViewIconButton->SetReliefToFlat ( );
+        this->Tabbed3DViewIconButton->SetBorderWidth ( 0 );
+        this->Tabbed3DViewIconButton->SetOverReliefToNone ( );
+        this->Tabbed3DViewIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetTabbed3DViewIcon ( ) );
+        this->Tabbed3DViewIconButton->SetBalloonHelpString ( "Display a collection of scenes in a notebook" );
+        vtb->AddWidget ( this->Tabbed3DViewIconButton );
 
         // lightbox view icon
         this->LightBoxViewIconButton->SetParent ( vtb->GetFrame ( ));
