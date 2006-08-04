@@ -118,6 +118,7 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
     this->TabbedSliceViewIconButton = vtkKWPushButton::New ( );
     this->LightBoxViewIconButton = vtkKWPushButton::New ( );
     this->MousePickIconButton = vtkKWPushButton::New ( );
+    this->MousePlaceFiducialIconButton = vtkKWPushButton::New ( );
     this->MousePanIconButton = vtkKWPushButton::New ( );
     this->MouseRotateIconButton = vtkKWPushButton::New ( );
     this->MouseZoomIconButton = vtkKWPushButton::New ( );
@@ -986,6 +987,10 @@ void vtkSlicerApplicationGUI::DeleteToolbarWidgets ( )
     if ( this->MousePickIconButton ) {
         this->MousePickIconButton->Delete ( );
         this->MousePickIconButton = NULL;
+    }
+    if ( this->MousePlaceFiducialIconButton ) {
+        this->MousePlaceFiducialIconButton->Delete ( );
+        this->MousePlaceFiducialIconButton = NULL;
     }
     if ( this->MousePanIconButton ) {
         this->MousePanIconButton->Delete ( );
@@ -2018,6 +2023,16 @@ void vtkSlicerApplicationGUI::BuildToolBar()
         this->MouseZoomIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetMouseZoomIcon( ) );
         this->MouseZoomIconButton->SetBalloonHelpString ( "Set the 3DViewer mouse mode to 'zoom' " );
         mmtb->AddWidget ( this->MouseZoomIconButton );
+
+        // mouse mode icons; mouse pick icon
+        this->MousePlaceFiducialIconButton->SetParent (mmtb->GetFrame ( ));
+        this->MousePlaceFiducialIconButton->Create ( );
+        this->MousePlaceFiducialIconButton->SetReliefToFlat ( );
+        this->MousePlaceFiducialIconButton->SetBorderWidth ( 0 );
+        this->MousePlaceFiducialIconButton->SetOverReliefToNone ( );
+        this->MousePlaceFiducialIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetMousePlaceFiducialIcon( ) );
+        this->MousePlaceFiducialIconButton->SetBalloonHelpString ( "Set the 3DViewer mouse mode to 'pick'" );
+        mmtb->AddWidget ( this->MousePlaceFiducialIconButton );
 
         tbs->ShowToolbar ( this->GetModulesToolbar ( ));
         tbs->ShowToolbar ( this->GetLoadSaveToolbar ( ));

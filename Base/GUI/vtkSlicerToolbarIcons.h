@@ -44,6 +44,7 @@ class vtkSlicerToolbarIcons : public vtkSlicerIcons
     vtkGetObjectMacro (MousePanIcon, vtkKWIcon );
     vtkGetObjectMacro (MouseRotateIcon, vtkKWIcon );    
     vtkGetObjectMacro (MouseZoomIcon, vtkKWIcon );
+    vtkGetObjectMacro (MousePlaceFiducialIcon, vtkKWIcon );
 
     virtual void AssignImageDataToIcons ( );
     
@@ -74,7 +75,8 @@ class vtkSlicerToolbarIcons : public vtkSlicerIcons
     vtkKWIcon *MousePanIcon;
     vtkKWIcon *MouseRotateIcon;
     vtkKWIcon *MouseZoomIcon;
-    
+    vtkKWIcon *MousePlaceFiducialIcon;
+
  private:
     vtkSlicerToolbarIcons (const vtkSlicerToolbarIcons&); // Not implemented
     void operator = ( const vtkSlicerToolbarIcons& ); // Not implemented

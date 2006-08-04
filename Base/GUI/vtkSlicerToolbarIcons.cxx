@@ -33,6 +33,7 @@ vtkSlicerToolbarIcons::vtkSlicerToolbarIcons ( )
     this->MousePanIcon = vtkKWIcon::New();
     this->MouseRotateIcon = vtkKWIcon::New();
     this->MouseZoomIcon = vtkKWIcon::New();
+    this->MousePlaceFiducialIcon = vtkKWIcon::New ( );
     this->AssignImageDataToIcons ( );
 }
 
@@ -121,6 +122,10 @@ vtkSlicerToolbarIcons::~vtkSlicerToolbarIcons ( )
     if ( this->MousePickIcon ) {
         this->MousePickIcon->Delete ( );
         this->MousePickIcon = NULL;
+    }
+    if ( this->MousePlaceFiducialIcon ) {
+        this->MousePlaceFiducialIcon->Delete ( );
+        this->MousePlaceFiducialIcon = NULL;
     }
     if ( this->MousePanIcon ) {
         this->MousePanIcon->Delete () ;
@@ -253,6 +258,10 @@ void vtkSlicerToolbarIcons::AssignImageDataToIcons ( )
                                    image_ToolbarMouseZoom_width,
                                    image_ToolbarMouseZoom_height,
                                    image_ToolbarMouseZoom_pixel_size, 0, 0);
+    this->MousePlaceFiducialIcon->SetImage (image_ToolbarMousePlaceFiducial,
+                                   image_ToolbarMousePlaceFiducial_width,
+                                   image_ToolbarMousePlaceFiducial_height,
+                                   image_ToolbarMousePlaceFiducial_pixel_size, 0, 0);
                                    
 }
 
@@ -287,5 +296,6 @@ void vtkSlicerToolbarIcons::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "MousePanIcon" << this->GetMousePanIcon ( ) << "\n";
     os << indent << "MouseRotateIcon" << this->GetMouseRotateIcon ( ) << "\n";
     os << indent << "MouseZoomIcon" << this->GetMouseZoomIcon ( ) << "\n";
+    os << indent << "MousePlaceFiducialIcon" << this->GetMousePlaceFiducialIcon ( ) << "\n";
 }
 

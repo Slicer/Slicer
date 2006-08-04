@@ -126,6 +126,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkGetObjectMacro (MousePanIconButton, vtkKWPushButton );
     vtkGetObjectMacro (MouseRotateIconButton, vtkKWPushButton );
     vtkGetObjectMacro (MouseZoomIconButton, vtkKWPushButton );
+    vtkGetObjectMacro (MousePlaceFiducialIconButton, vtkKWPushButton );
 
     // Description:
     // Get the widgets in the LogoFrame
@@ -412,6 +413,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkKWPushButton *TabbedSliceViewIconButton;
     vtkKWPushButton *LightBoxViewIconButton;
     vtkKWPushButton *MousePickIconButton;
+    vtkKWPushButton *MousePlaceFiducialIconButton;
     vtkKWPushButton *MousePanIconButton;
     vtkKWPushButton *MouseRotateIconButton;
     vtkKWPushButton *MouseZoomIconButton;
