@@ -5,24 +5,12 @@
 #include "vtkKWResourceUtilities.h"
 #include "vtkKWIcon.h"
 #include "vtkSlicerIcons.h"
-#include "./Resources/vtkSlicerToolbarTransform_ImageData.h"
-#include "./Resources/vtkSlicerToolbarColor_ImageData.h"
-#include "./Resources/vtkSlicerToolbarConventionalView_ImageData.h"
-#include "./Resources/vtkSlicerToolbarData_ImageData.h"
-#include "./Resources/vtkSlicerToolbarEditorToolbox_ImageData.h"
-#include "./Resources/vtkSlicerToolbarEditor_ImageData.h"
-#include "./Resources/vtkSlicerToolbarFiducials_ImageData.h"
-#include "./Resources/vtkSlicerToolbarFourUpView_ImageData.h"
-#include "./Resources/vtkSlicerToolbarHome_ImageData.h"
-#include "./Resources/vtkSlicerToolbarLightBoxView_ImageData.h"
-#include "./Resources/vtkSlicerToolbarLoadScene_ImageData.h"
-#include "./Resources/vtkSlicerToolbarModel_ImageData.h"
-#include "./Resources/vtkSlicerToolbarOneUp3DView_ImageData.h"
-#include "./Resources/vtkSlicerToolbarOneUpSliceView_ImageData.h"
-#include "./Resources/vtkSlicerToolbarSaveScene_ImageData.h"
-#include "./Resources/vtkSlicerToolbarTabbedView_ImageData.h"
-#include "./Resources/vtkSlicerToolbarVolume_ImageData.h"
-#include "./Resources/vtkSlicerToolbarMouseModes_ImageData.h"
+
+#include "./Resources/vtkSlicerLoadSaveToolbar_ImageData.h"
+#include "./Resources/vtkSlicerMouseModeToolbar_ImageData.h"
+#include "./Resources/vtkSlicerViewToolbar_ImageData.h"
+#include "./Resources/vtkSlicerModuleToolbar_ImageData.h"
+
 
 class vtkSlicerToolbarIcons : public vtkSlicerIcons
 {
@@ -42,13 +30,15 @@ class vtkSlicerToolbarIcons : public vtkSlicerIcons
     vtkGetObjectMacro (TransformIcon, vtkKWIcon);
     vtkGetObjectMacro (ColorIcon, vtkKWIcon);
     vtkGetObjectMacro (FiducialsIcon, vtkKWIcon);
+    vtkGetObjectMacro (MeasurementsIcon, vtkKWIcon );
     vtkGetObjectMacro (SaveSceneIcon, vtkKWIcon);
     vtkGetObjectMacro (LoadSceneIcon, vtkKWIcon);
     vtkGetObjectMacro (ConventionalViewIcon, vtkKWIcon);
     vtkGetObjectMacro (OneUp3DViewIcon, vtkKWIcon);
     vtkGetObjectMacro (OneUpSliceViewIcon, vtkKWIcon );
     vtkGetObjectMacro (FourUpViewIcon, vtkKWIcon);
-    vtkGetObjectMacro (TabbedViewIcon, vtkKWIcon);
+    vtkGetObjectMacro (TabbedSliceViewIcon, vtkKWIcon);
+    vtkGetObjectMacro (Tabbed3DViewIcon, vtkKWIcon);
     vtkGetObjectMacro (LightBoxViewIcon, vtkKWIcon);
     vtkGetObjectMacro (MousePickIcon, vtkKWIcon );
     vtkGetObjectMacro (MousePanIcon, vtkKWIcon );
@@ -70,13 +60,15 @@ class vtkSlicerToolbarIcons : public vtkSlicerIcons
     vtkKWIcon *TransformIcon;
     vtkKWIcon *ColorIcon;
     vtkKWIcon *FiducialsIcon;
+    vtkKWIcon *MeasurementsIcon;
     vtkKWIcon *SaveSceneIcon;
     vtkKWIcon *LoadSceneIcon;
     vtkKWIcon *ConventionalViewIcon;
     vtkKWIcon *OneUp3DViewIcon;
     vtkKWIcon *OneUpSliceViewIcon;
     vtkKWIcon *FourUpViewIcon;
-    vtkKWIcon *TabbedViewIcon;
+    vtkKWIcon *TabbedSliceViewIcon;
+    vtkKWIcon *Tabbed3DViewIcon;
     vtkKWIcon *LightBoxViewIcon;
     vtkKWIcon *MousePickIcon;
     vtkKWIcon *MousePanIcon;

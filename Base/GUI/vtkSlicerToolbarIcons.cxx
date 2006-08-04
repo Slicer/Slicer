@@ -19,13 +19,15 @@ vtkSlicerToolbarIcons::vtkSlicerToolbarIcons ( )
     this->TransformIcon = vtkKWIcon::New();
     this->ColorIcon = vtkKWIcon::New();
     this->FiducialsIcon = vtkKWIcon::New();
+    this->MeasurementsIcon = vtkKWIcon::New();
     this->SaveSceneIcon = vtkKWIcon::New();
     this->LoadSceneIcon = vtkKWIcon::New();
     this->ConventionalViewIcon = vtkKWIcon::New();
     this->OneUp3DViewIcon = vtkKWIcon::New();
     this->OneUpSliceViewIcon = vtkKWIcon::New();
     this->FourUpViewIcon = vtkKWIcon::New();
-    this->TabbedViewIcon = vtkKWIcon::New();
+    this->TabbedSliceViewIcon = vtkKWIcon::New();
+    this->Tabbed3DViewIcon = vtkKWIcon::New();
     this->LightBoxViewIcon = vtkKWIcon::New();
     this->MousePickIcon = vtkKWIcon::New();
     this->MousePanIcon = vtkKWIcon::New();
@@ -76,6 +78,10 @@ vtkSlicerToolbarIcons::~vtkSlicerToolbarIcons ( )
         this->FiducialsIcon->Delete ( );
         this->FiducialsIcon = NULL;
     }
+    if ( this->MeasurementsIcon ) {
+      this->MeasurementsIcon->Delete ( );
+      this->MeasurementsIcon = NULL;
+    }
     if ( this->SaveSceneIcon ) {
         this->SaveSceneIcon->Delete ( );
         this->SaveSceneIcon = NULL;
@@ -100,9 +106,13 @@ vtkSlicerToolbarIcons::~vtkSlicerToolbarIcons ( )
         this->FourUpViewIcon->Delete ( );
         this->FourUpViewIcon = NULL;
     }
-    if ( this->TabbedViewIcon ) {
-        this->TabbedViewIcon->Delete ( );
-        this->TabbedViewIcon = NULL;
+    if ( this->Tabbed3DViewIcon ) {
+        this->Tabbed3DViewIcon->Delete ( );
+        this->Tabbed3DViewIcon = NULL;
+    }
+    if ( this->TabbedSliceViewIcon ) {
+        this->TabbedSliceViewIcon->Delete ( );
+        this->TabbedSliceViewIcon = NULL;
     }
     if ( this->LightBoxViewIcon ) {
         this->LightBoxViewIcon->Delete ( );
@@ -177,6 +187,12 @@ void vtkSlicerToolbarIcons::AssignImageDataToIcons ( )
                                    image_ToolbarFiducials_height,
                                    image_ToolbarFiducials_pixel_size, 0, 0 );
     
+    this->MeasurementsIcon->SetImage( image_ToolbarMeasurements,
+                                   image_ToolbarMeasurements_width,
+                                   image_ToolbarMeasurements_height,
+                                   image_ToolbarMeasurements_pixel_size, 0, 0 );
+    
+
     this->SaveSceneIcon->SetImage( image_ToolbarSaveScene,
                                    image_ToolbarSaveScene_width,
                                    image_ToolbarSaveScene_height,
@@ -207,11 +223,16 @@ void vtkSlicerToolbarIcons::AssignImageDataToIcons ( )
                                     image_ToolbarFourUpView_height,
                                     image_ToolbarFourUpView_pixel_size, 0, 0 );
     
-    this->TabbedViewIcon->SetImage( image_ToolbarTabbedView,
-                                    image_ToolbarTabbedView_width,
-                                    image_ToolbarTabbedView_height,
-                                    image_ToolbarTabbedView_pixel_size, 0 , 0 );
+    this->Tabbed3DViewIcon->SetImage( image_ToolbarTabbed3DView,
+                                    image_ToolbarTabbed3DView_width,
+                                    image_ToolbarTabbed3DView_height,
+                                    image_ToolbarTabbed3DView_pixel_size, 0 , 0 );
     
+    this->TabbedSliceViewIcon->SetImage( image_ToolbarTabbedSliceView,
+                                    image_ToolbarTabbedSliceView_width,
+                                    image_ToolbarTabbedSliceView_height,
+                                    image_ToolbarTabbedSliceView_pixel_size, 0 , 0 );
+
     this->LightBoxViewIcon->SetImage( image_ToolbarLightBoxView,
                                       image_ToolbarLightBoxView_width,
                                       image_ToolbarLightBoxView_height,
@@ -252,13 +273,15 @@ void vtkSlicerToolbarIcons::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "TransformIcon" << this->GetTransformIcon ( ) << "\n";    
     os << indent << "ColorIcon" << this->GetColorIcon ( ) << "\n";
     os << indent << "FiducialsIcon" << this->GetFiducialsIcon ( ) << "\n";
+    os << indent << "MeasurementsIcon" << this->GetMeasurementsIcon ( ) << "\n";
     os << indent << "SaveSceneIcon" << this->GetSaveSceneIcon ( ) << "\n";
     os << indent << "LoadSceneIcon" << this->GetLoadSceneIcon ( ) << "\n";
     os << indent << "ConventionalViewIcon" << this->GetConventionalViewIcon ( ) << "\n";
     os << indent << "OneUp3DViewIcon" << this->GetOneUp3DViewIcon ( ) << "\n";
     os << indent << "OneUpSliceViewIcon" << this->GetOneUpSliceViewIcon ( ) << "\n";
     os << indent << "FourUpViewIcon" << this->GetFourUpViewIcon ( ) << "\n";
-    os << indent << "TabbedViewIcon" << this->GetTabbedViewIcon ( ) << "\n";
+    os << indent << "TabbedSliceViewIcon" << this->GetTabbedSliceViewIcon ( ) << "\n";
+    os << indent << "Tabbed3DViewIcon" << this->GetTabbed3DViewIcon ( ) << "\n";
     os << indent << "LightBoxViewIcon" << this->GetLightBoxViewIcon ( ) << "\n";
     os << indent << "MousePickIcon" << this->GetMousePickIcon ( ) << "\n";
     os << indent << "MousePanIcon" << this->GetMousePanIcon ( ) << "\n";

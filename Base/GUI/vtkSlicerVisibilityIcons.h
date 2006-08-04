@@ -5,8 +5,8 @@
 #include "vtkKWResourceUtilities.h"
 #include "vtkKWIcon.h"
 #include "vtkSlicerIcons.h"
-#include "./Resources/vtkSlicerSliceVisible.h"
-#include "./Resources/vtkSlicerSliceInvisible.h"
+#include "./Resources/vtkSlicerVisibility_ImageData.h"
+
 
 class vtkSlicerVisibilityIcons : public vtkSlicerIcons
 {

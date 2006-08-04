@@ -5,10 +5,7 @@
 #include "vtkKWResourceUtilities.h"
 #include "vtkKWIcon.h"
 #include "vtkSlicerIcons.h"
-#include "./Resources/vtkSlicerModuleHistory_ImageData.h"
-#include "./Resources/vtkSlicerModuleNext_ImageData.h"
-#include "./Resources/vtkSlicerModulePrev_ImageData.h"
-#include "./Resources/vtkSlicerModuleRefresh_ImageData.h"
+#include "./Resources/vtkSlicerModuleChoose_ImageData.h"
 
 class vtkSlicerModuleNavigationIcons : public vtkSlicerIcons
 {
