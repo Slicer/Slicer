@@ -412,20 +412,6 @@ int Slicer3_main(int argc, char *argv[])
       ++mit;
       }
 
-    // create the three main slice viewers after slicesGUI is created
-    appGUI->PopulateModuleChooseList ( );
-    appGUI->SetSliceGUICollection ( slicesGUI->GetSliceGUICollection() );
-    appGUI->SetAndObserveMainSliceLogic ( sliceLogic0, sliceLogic1, sliceLogic2 );
-    appGUI->AddMainSliceViewersToCollection ( );
-    appGUI->ConfigureMainSliceViewers ( );
-    
-    // ------------------------------
-    // CONFIGURE SlICER'S SHARED GUI PANEL
-    // Additional Modules GUI panel configuration.
-    vtkKWUserInterfaceManagerNotebook *mnb = vtkKWUserInterfaceManagerNotebook::SafeDownCast (appGUI->GetMainSlicerWin()->GetMainUserInterfaceManager());
-    mnb->GetNotebook()->AlwaysShowTabsOff();
-    mnb->GetNotebook()->ShowOnlyPagesWithSameTagOn();    
-
     //
     // get the Tcl name so the vtk class will be registered in the interpreter as a byproduct
     // - set some handy variables so it will be easy to access these classes from
@@ -470,6 +456,65 @@ int Slicer3_main(int argc, char *argv[])
       ++mit;
       }
 
+    //
+    // process any ScriptedModules
+    // - scan for pkgIndex.tcl files 
+    // - load the corresponding packages
+    // - create scripted logic and scripted gui instances for the module
+    // - have the GUI construct itself
+    //
+
+    std::string tclCommand = "set ::SLICER_PACKAGES(list) {};";
+    tclCommand += "set dirs [glob $::SLICER_BUILD/Modules/Packages/*]; ";
+    tclCommand += "foreach d $dirs { ";
+    tclCommand += "  if { [file exists $d/pkgIndex.tcl] } {";
+    tclCommand += "    lappend ::SLICER_PACKAGES(list) [file tail $d];";
+    tclCommand += "    lappend ::auto_path $d;";
+    tclCommand += "  }";
+    tclCommand += "} ";
+    Slicer3_Tcl_Eval( interp, tclCommand.c_str() );
+
+    tclCommand = "";
+    tclCommand += "foreach package $::SLICER_PACKAGES(list) { ";
+    tclCommand += "  package require $package;";
+    tclCommand += "  set ::SLICER_PACKAGES($package,logic) [vtkScriptedModuleLogic New];";
+    tclCommand += "  set logic $::SLICER_PACKAGES($package,logic);";
+    tclCommand += "  $logic SetModuleName $package;";
+    tclCommand += "  $logic SetAndObserveMRMLScene $::slicer3::MRMLScene;";
+    tclCommand += "  $logic SetApplicationLogic $::slicer3::ApplicationLogic;";
+    tclCommand += "  set ::SLICER_PACKAGES($package,gui) [vtkScriptedModuleGUI New];";
+    tclCommand += "  set gui $::SLICER_PACKAGES($package,gui);";
+    tclCommand += "  $gui SetModuleName $package;";
+    tclCommand += "  $gui SetLogic $logic;";
+    tclCommand += "  $gui SetApplication $::slicer3::Application;";
+    tclCommand += "  $gui SetGUIName $package;";
+    tclCommand += "  [$gui GetUIPanel] SetName $package;";
+    tclCommand += "  [$gui GetUIPanel] SetUserInterfaceManager [[$::slicer3::ApplicationGUI GetMainSlicerWin] GetMainUserInterfaceManager];";
+    tclCommand += "  [$gui GetUIPanel] Create;";
+    tclCommand += "  $::slicer3::Application AddModuleGUI $gui;" ;
+    tclCommand += "  $gui BuildGUI;";
+    tclCommand += "  $gui AddGUIObservers;";
+    tclCommand += "";
+    tclCommand += "}";
+    Slicer3_Tcl_Eval( interp, tclCommand.c_str() );
+
+    //
+    // create the three main slice viewers after slicesGUI is created
+    //
+    appGUI->PopulateModuleChooseList ( );
+    appGUI->SetSliceGUICollection ( slicesGUI->GetSliceGUICollection() );
+    appGUI->SetAndObserveMainSliceLogic ( sliceLogic0, sliceLogic1, sliceLogic2 );
+    appGUI->AddMainSliceViewersToCollection ( );
+    appGUI->ConfigureMainSliceViewers ( );
+    
+    // ------------------------------
+    // CONFIGURE SlICER'S SHARED GUI PANEL
+    // Additional Modules GUI panel configuration.
+    vtkKWUserInterfaceManagerNotebook *mnb = vtkKWUserInterfaceManagerNotebook::SafeDownCast (appGUI->GetMainSlicerWin()->GetMainUserInterfaceManager());
+    mnb->GetNotebook()->AlwaysShowTabsOff();
+    mnb->GetNotebook()->ShowOnlyPagesWithSameTagOn();    
+
+
     
     // ------------------------------
     // DISPLAY WINDOW AND RUN
@@ -493,6 +538,9 @@ int Slicer3_main(int argc, char *argv[])
       Slicer3_Tcl_Eval( interp, cmd.c_str() );
       }
 
+    //
+    // Run!  - this will return when the user exits
+    //
     int res = slicerApp->StartApplication();
 
 
@@ -526,6 +574,13 @@ int Slicer3_main(int argc, char *argv[])
       
       ++mit;
       }
+
+    // remove the observers from the scripted modules
+    tclCommand = "";
+    tclCommand += "foreach package $::SLICER_PACKAGES(list) { ";
+    tclCommand += "  $::SLICER_PACKAGES($package,gui) RemoveGUIObservers;";
+    tclCommand += "}";
+    Slicer3_Tcl_Eval( interp, tclCommand.c_str() );
     
 
     // ------------------------------
@@ -549,6 +604,11 @@ int Slicer3_main(int argc, char *argv[])
     slicesGUI->Delete ();
     appGUI->Delete ();
 
+    tclCommand = "";
+    tclCommand += "foreach package $::SLICER_PACKAGES(list) { ";
+    tclCommand += "  $::SLICER_PACKAGES($package,gui) Delete;";
+    tclCommand += "}";
+    Slicer3_Tcl_Eval( interp, tclCommand.c_str() );
 
     // delete the factory discovered module GUIs (as we delete the
     // GUIs, cache the associated logic instances so we can delete
@@ -588,6 +648,14 @@ int Slicer3_main(int argc, char *argv[])
       (*lit)->Delete();
       }
     moduleLogics.clear();
+
+    // delete the scripted logics
+    tclCommand = "";
+    tclCommand += "foreach package $::SLICER_PACKAGES(list) { ";
+    tclCommand += "  $::SLICER_PACKAGES($package,logic) SetAndObserveMRMLScene {};";
+    tclCommand += "  $::SLICER_PACKAGES($package,logic) Delete;";
+    tclCommand += "}";
+    Slicer3_Tcl_Eval( interp, tclCommand.c_str() );
     
     //--- scene next;
     scene->Delete ();
@@ -623,4 +691,5 @@ int main(int argc, char *argv[])
     return Slicer3_main(argc, argv);
 }
 #endif
+
 

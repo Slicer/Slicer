@@ -281,6 +281,7 @@ void vtkGradientAnisotropicDiffusionFilterGUI::ProcessMRMLEvents ( vtkObject *ca
 void vtkGradientAnisotropicDiffusionFilterGUI::BuildGUI ( ) 
 {
   vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
+  // TODO: this assumes there will only ever be one GAD node...
   vtkMRMLGradientAnisotropicDiffusionFilterNode* gadNode = vtkMRMLGradientAnisotropicDiffusionFilterNode::New();
   this->Logic->GetMRMLScene()->RegisterNodeClass(gadNode);
 

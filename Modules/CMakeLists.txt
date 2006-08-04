@@ -6,6 +6,7 @@ SUBDIRS(
   ScriptedModule
   GradientAnisotropicDiffusionFilter
   SlicerDaemon
+  Editor
 )
 
 

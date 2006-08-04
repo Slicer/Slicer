@@ -53,11 +53,12 @@ class VTK_SCRIPTED_EXPORT vtkMRMLScriptedModuleNode : public vtkMRMLNode
   // Get/Set a parameter for the module.
 //BTX
   void SetParameter(const std::string& name, const std::string& value);
-  std::string GetParameter(const std::string &name) const;
+  const std::string* GetParameter(const std::string &name) const;
 //ETX  
 
   void SetParameter(const char *name, const char *value);
   void RequestParameter(const char *name);
+  const char *GetParameter(const char *name);
   vtkSetStringMacro(Value);
   vtkGetStringMacro(Value);
 

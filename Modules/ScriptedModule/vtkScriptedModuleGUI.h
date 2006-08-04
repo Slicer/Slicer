@@ -75,6 +75,11 @@ public:
   virtual void Enter ( ){};
   virtual void Exit ( ){};
 
+  // Description: The name of the Module - this is used to 
+  // construct the proc invocations
+  vtkGetStringMacro (ModuleName);
+  vtkSetStringMacro (ModuleName);
+
 protected:
   
 private:
@@ -93,6 +98,7 @@ private:
   
   vtkScriptedModuleLogic *Logic;
   vtkMRMLScriptedModuleNode* ScriptedModuleNode;
+  char *ModuleName;
 
 };
 

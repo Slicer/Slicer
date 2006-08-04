@@ -131,7 +131,8 @@ vtkMRMLScriptedModuleNode
 {
   // Set the default value of the named parameter with the value
   // specified
-  if (value != this->GetParameter(name))
+  const std::string *currentValue = this->GetParameter(name);
+  if (currentValue == NULL || (currentValue != NULL && value != *currentValue ) )
     {
     this->Parameters[name] = value;
     this->Modified();
@@ -140,7 +141,7 @@ vtkMRMLScriptedModuleNode
 
 
 //----------------------------------------------------------------------------
-std::string
+const std::string *
 vtkMRMLScriptedModuleNode
 ::GetParameter(const std::string& name) const
 {
@@ -148,11 +149,17 @@ vtkMRMLScriptedModuleNode
     {
     return (NULL);
     }
-  return this->Parameters.find(name)->second;
-
-  // return this->Parameters[name];
+  return &(this->Parameters.find(name)->second);
 }
 
+//----------------------------------------------------------------------------
+const char *
+vtkMRMLScriptedModuleNode
+::GetParameter(const char *name)
+{
+  this->RequestParameter(name);
+  return (this->GetValue());
+}
 
 //----------------------------------------------------------------------------
 void
@@ -170,8 +177,8 @@ vtkMRMLScriptedModuleNode
 ::RequestParameter(const char *name)
 {
   std::string sname(name);
-  std::string svalue = this->GetParameter(sname);
-  this->SetValue (svalue.c_str());
+  const std::string *svaluep = this->GetParameter(sname);
+  this->SetValue (svaluep->c_str());
 }
 
 

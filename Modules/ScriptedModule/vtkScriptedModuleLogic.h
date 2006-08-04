@@ -36,6 +36,11 @@ public:
   // Description: Get/Set MRML node storing parameter values
   vtkGetObjectMacro (ScriptedModuleNode, vtkMRMLScriptedModuleNode);
   vtkSetObjectMacro (ScriptedModuleNode, vtkMRMLScriptedModuleNode);
+
+  // Description: The name of the Module - this is used to 
+  // construct the proc invocations
+  vtkGetStringMacro (ModuleName);
+  vtkSetStringMacro (ModuleName);
   
 protected:
   
@@ -46,6 +51,7 @@ private:
   void operator=(const vtkScriptedModuleLogic&);
 
   vtkMRMLScriptedModuleNode* ScriptedModuleNode;
+  char *ModuleName;
 };
 
 #endif

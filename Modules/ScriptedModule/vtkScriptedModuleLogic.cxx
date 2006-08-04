@@ -40,6 +40,7 @@ vtkScriptedModuleLogic* vtkScriptedModuleLogic::New()
 vtkScriptedModuleLogic::vtkScriptedModuleLogic()
 {
   this->ScriptedModuleNode = NULL;
+  this->ModuleName = NULL;
 }
 
 //----------------------------------------------------------------------------

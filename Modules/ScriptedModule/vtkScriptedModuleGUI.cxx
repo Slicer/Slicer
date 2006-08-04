@@ -18,6 +18,7 @@ Version:   $Revision: 979 $
 
 #include "vtkObjectFactory.h"
 
+#include "vtkKWApplication.h"
 #include "vtkScriptedModuleGUI.h"
 
 //------------------------------------------------------------------------------
@@ -39,6 +40,7 @@ vtkScriptedModuleGUI::vtkScriptedModuleGUI()
 {
   this->Logic = NULL;
   this->ScriptedModuleNode = NULL;
+  this->ModuleName = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -54,13 +56,16 @@ vtkScriptedModuleGUI::~vtkScriptedModuleGUI()
 
 void vtkScriptedModuleGUI::RemoveMRMLNodeObservers()
 {
-  // Need to implement - JVM
+  this->GetApplication()->Script("%sRemoveMRMLNodeObservers %s", 
+    this->GetModuleName(), this->GetTclName());
 }
 
 
 void vtkScriptedModuleGUI::RemoveLogicObservers()
 {
-  // Need to implement - JVM
+  this->GetApplication()->Script("%sRemoveLogicObservers %s", 
+    this->GetModuleName(), this->GetTclName());
+  // Need to implement - SDP
 }
 
 
@@ -73,6 +78,8 @@ void vtkScriptedModuleGUI::PrintSelf(ostream& os, vtkIndent indent)
 //---------------------------------------------------------------------------
 void vtkScriptedModuleGUI::AddGUIObservers ( ) 
 {
+  this->GetApplication()->Script("%sAddGUIObservers %s", 
+    this->GetModuleName(), this->GetTclName());
 }
 
 
@@ -80,6 +87,8 @@ void vtkScriptedModuleGUI::AddGUIObservers ( )
 //---------------------------------------------------------------------------
 void vtkScriptedModuleGUI::RemoveGUIObservers ( )
 {
+  this->GetApplication()->Script("%sRemoveGUIObservers %s", 
+    this->GetModuleName(), this->GetTclName());
 }
 
 //---------------------------------------------------------------------------
@@ -87,16 +96,21 @@ void vtkScriptedModuleGUI::ProcessGUIEvents ( vtkObject *caller,
                                            unsigned long event,
                                            void *callData ) 
 {
+  // TODO: map the object and event to strings for tcl
 }
 
 //---------------------------------------------------------------------------
 void vtkScriptedModuleGUI::UpdateMRML ()
 {
+  this->GetApplication()->Script("%sUpdateMRML %s", 
+    this->GetModuleName(), this->GetTclName());
 }
 
 //---------------------------------------------------------------------------
 void vtkScriptedModuleGUI::UpdateGUI ()
 {
+  this->GetApplication()->Script("%sUpdateGUI %s", 
+    this->GetModuleName(), this->GetTclName());
 }
 
 //---------------------------------------------------------------------------
@@ -104,6 +118,8 @@ void vtkScriptedModuleGUI::ProcessMRMLEvents ( vtkObject *caller,
                                             unsigned long event,
                                             void *callData ) 
 {
+  // TODO: map the object and event to strings for tcl
+  
   //std::cout << "ProcessMRMLEvents()" << std::endl;
   // if parameter node has been changed externally, update GUI widgets
   // with new values 
@@ -121,5 +137,7 @@ void vtkScriptedModuleGUI::ProcessMRMLEvents ( vtkObject *caller,
 //---------------------------------------------------------------------------
 void vtkScriptedModuleGUI::BuildGUI ( ) 
 {
+  this->GetApplication()->Script("%sBuildGUI %s", 
+    this->GetModuleName(), this->GetTclName());
 }
 
