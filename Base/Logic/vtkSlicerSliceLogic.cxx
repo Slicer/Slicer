@@ -77,11 +77,21 @@ vtkSlicerSliceLogic::~vtkSlicerSliceLogic()
 //----------------------------------------------------------------------------
 void vtkSlicerSliceLogic::ProcessMRMLEvents()
 {
+  if ( this->GetSliceModelNodeID() == NULL || this->GetSliceModelNode() == NULL || this->MRMLScene->GetNodeByID( this->GetSliceModelNodeID() ) == NULL )
+    {
+    this->CreateSliceModel();
+    }
 
   //
   // if you don't have a node yet, look in the scene to see if 
   // one exists for you to use.  If not, create one and add it to the scene
   //
+
+  if ( this->SliceNode != NULL && this->MRMLScene->GetNodeByID(this->SliceNode->GetID()) == NULL)
+    {
+    this->SetSliceNode(NULL);
+    }
+
   if ( this->SliceNode == NULL )
     {
     vtkMRMLSliceNode *node = vtkMRMLSliceNode::New();
@@ -94,6 +104,11 @@ void vtkSlicerSliceLogic::ProcessMRMLEvents()
   // if you don't have a node yet, look in the scene to see if 
   // one exists for you to use.  If not, create one and add it to the scene
   //
+  if ( this->SliceCompositeNode != NULL && this->MRMLScene->GetNodeByID(this->SliceCompositeNode->GetID()) == NULL)
+    {
+    this->SetSliceCompositeNode(NULL);
+    }
+
   if ( this->SliceCompositeNode == NULL )
     {
     vtkMRMLSliceCompositeNode *node = vtkMRMLSliceCompositeNode::New();
@@ -123,10 +138,6 @@ void vtkSlicerSliceLogic::ProcessMRMLEvents()
     this->SliceCompositeNode->SetBackgroundVolumeID("None");
     }
   
-  if ( this->GetSliceModelNodeID() == NULL || this->GetSliceModelNode() == NULL || this->MRMLScene->GetNodeByID( this->GetSliceModelNodeID() ) == NULL )
-    {
-    this->CreateSliceModel();
-    }
   this->UpdatePipeline();
 }
 
@@ -156,7 +167,8 @@ void vtkSlicerSliceLogic::ProcessLogicEvents()
     }
 
   // Update slice plane geometry
-  if (this->SliceNode != NULL &&  this->GetSliceModelNodeID() != NULL && this->GetSliceModelNode() != NULL && this->MRMLScene->GetNodeByID( this->GetSliceModelNodeID() ) != NULL )
+  if (this->SliceNode != NULL &&  this->GetSliceModelNodeID() != NULL && this->GetSliceModelNode() != NULL 
+    && this->MRMLScene->GetNodeByID( this->GetSliceModelNodeID() ) != NULL && this->SliceModelNode->GetPolyData() != NULL )
     {
     vtkPoints *points = this->SliceModelNode->GetPolyData()->GetPoints();
     unsigned int *dims = this->SliceNode->GetDimensions();

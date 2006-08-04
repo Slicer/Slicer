@@ -359,36 +359,36 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
 
   if ( vtkSlicerNodeSelectorWidget::SafeDownCast(caller) == this->ForegroundSelector )
     {
-    if  (this->ForegroundSelector->GetSelected() != NULL)
+    if  (this->ForegroundSelector->GetSelected() != NULL && this->SliceCompositeNode != NULL)
       {
       this->SliceCompositeNode->SetForegroundVolumeID( 
               this->ForegroundSelector->GetSelected()->GetID() );
       } 
-    else
+    else if (this->SliceCompositeNode != NULL)
       {
       this->SliceCompositeNode->SetForegroundVolumeID( NULL );
       }
     }
   if ( vtkSlicerNodeSelectorWidget::SafeDownCast(caller) == this->BackgroundSelector )
     {
-    if  (this->BackgroundSelector->GetSelected() != NULL)
+    if  (this->BackgroundSelector->GetSelected() != NULL && this->SliceCompositeNode != NULL)
       {
       this->SliceCompositeNode->SetBackgroundVolumeID( 
               this->BackgroundSelector->GetSelected()->GetID() );
       } 
-    else
+    else if (this->SliceCompositeNode != NULL)
       {
       this->SliceCompositeNode->SetBackgroundVolumeID( NULL );
       }
     }
   if ( vtkSlicerNodeSelectorWidget::SafeDownCast(caller) == this->LabelSelector )
     {
-    if  (this->LabelSelector->GetSelected() != NULL)
+    if  (this->LabelSelector->GetSelected() != NULL && this->SliceCompositeNode != NULL)
       {
       this->SliceCompositeNode->SetLabelVolumeID( 
               this->LabelSelector->GetSelected()->GetID() );
       } 
-    else
+    else if (this->SliceCompositeNode != NULL)
       {
       this->SliceCompositeNode->SetLabelVolumeID( NULL );
       }

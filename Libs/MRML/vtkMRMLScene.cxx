@@ -282,7 +282,11 @@ int vtkMRMLScene::LoadIntoScene(bool removeItems)
   this->SetUndoOff();
   if (removeItems)
     {
-    this->CurrentScene->RemoveAllItems();
+    for (int i=0; i < this->CurrentScene->GetNumberOfItems(); i++) 
+      {
+      this->RemoveItem(i);
+      }
+    this->Modified();
     }
   vtkMRMLParser* parser = vtkMRMLParser::New();
   parser->SetMRMLScene(this);

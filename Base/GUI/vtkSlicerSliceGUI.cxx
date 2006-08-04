@@ -234,7 +234,14 @@ void vtkSlicerSliceGUI::ProcessLogicEvents ( vtkObject *caller,
 void vtkSlicerSliceGUI::ProcessMRMLEvents ( vtkObject *caller,
                                                unsigned long event, void *callData )
 {
+  if ( this->GetLogic() )
+    {
+    vtkMRMLSliceNode *snode = this->GetLogic()->GetSliceNode();
+    this->GetSliceController()->SetSliceNode (snode);
 
+    vtkMRMLSliceCompositeNode *scnode = this->GetLogic()->GetSliceCompositeNode();
+    this->GetSliceController()->SetSliceCompositeNode (scnode);
+    }
 }
 
 
