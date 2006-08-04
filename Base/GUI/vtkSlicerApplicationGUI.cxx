@@ -1961,7 +1961,7 @@ void vtkSlicerApplicationGUI::BuildToolBar()
         this->TabbedSliceViewIconButton->SetBorderWidth ( 0 );
         this->TabbedSliceViewIconButton->SetOverReliefToNone ( );
         this->TabbedSliceViewIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetTabbedSliceViewIcon ( ) );
-        this->TabbedSliceViewIconButton->SetBalloonHelpString ( "Display a collection of scenes in a notebook" );
+        this->TabbedSliceViewIconButton->SetBalloonHelpString ( "Display a collection of slices in a notebook" );
         vtb->AddWidget ( this->TabbedSliceViewIconButton );
 
         // tabbed view icon
@@ -2031,7 +2031,7 @@ void vtkSlicerApplicationGUI::BuildToolBar()
         this->MousePlaceFiducialIconButton->SetBorderWidth ( 0 );
         this->MousePlaceFiducialIconButton->SetOverReliefToNone ( );
         this->MousePlaceFiducialIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetMousePlaceFiducialIcon( ) );
-        this->MousePlaceFiducialIconButton->SetBalloonHelpString ( "Set the 3DViewer mouse mode to 'pick'" );
+        this->MousePlaceFiducialIconButton->SetBalloonHelpString ( "Set the 3DViewer mouse mode to 'place fiducials'" );
         mmtb->AddWidget ( this->MousePlaceFiducialIconButton );
 
         tbs->ShowToolbar ( this->GetModulesToolbar ( ));
