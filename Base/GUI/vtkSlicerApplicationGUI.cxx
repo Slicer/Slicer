@@ -1971,7 +1971,7 @@ void vtkSlicerApplicationGUI::BuildToolBar()
         this->Tabbed3DViewIconButton->SetBorderWidth ( 0 );
         this->Tabbed3DViewIconButton->SetOverReliefToNone ( );
         this->Tabbed3DViewIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetTabbed3DViewIcon ( ) );
-        this->Tabbed3DViewIconButton->SetBalloonHelpString ( "Display a collection of scenes in a notebook" );
+        this->Tabbed3DViewIconButton->SetBalloonHelpString ( "Display a collection of 3D views in a notebook" );
         vtb->AddWidget ( this->Tabbed3DViewIconButton );
 
         // lightbox view icon
