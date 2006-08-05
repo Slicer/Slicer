@@ -40,7 +40,6 @@ Version:   $Revision: 1.18 $
 //------------------------------------------------------------------------------
 vtkMRMLScene::vtkMRMLScene() 
 {
-  this->URL = NULL;
   this->ClassNameList = NULL;
   this->RegisteredNodeClasses.clear();
   this->UniqueIDByClass.clear();
@@ -98,10 +97,6 @@ vtkMRMLScene::vtkMRMLScene()
 //------------------------------------------------------------------------------
 vtkMRMLScene::~vtkMRMLScene() 
 {
-  if (this->URL) 
-    {
-    delete this->URL;
-    }
   if (this->ClassNameList) 
     {
     delete this->ClassNameList;
@@ -271,7 +266,7 @@ int vtkMRMLScene::Import()
 //------------------------------------------------------------------------------
 int vtkMRMLScene::LoadIntoScene(bool removeItems)
 {
-  if (this->URL == NULL) 
+  if (this->URL == "") 
     {
     vtkErrorMacro("Need URL specified");
     return 0;
@@ -293,7 +288,7 @@ int vtkMRMLScene::LoadIntoScene(bool removeItems)
     }
   vtkMRMLParser* parser = vtkMRMLParser::New();
   parser->SetMRMLScene(this);
-  parser->SetFileName(URL);
+  parser->SetFileName(URL.c_str());
   parser->Parse();
   parser->Delete();
 
@@ -305,7 +300,7 @@ int vtkMRMLScene::Commit(const char* url)
 {
   if (url == NULL) 
     {
-    url = this->URL;
+    url = this->URL.c_str();
     }
 
   vtkMRMLNode *node;

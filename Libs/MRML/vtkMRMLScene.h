@@ -47,8 +47,12 @@ public:
 
   // Description:
   // Filename should be flie://path/file.xml
-  vtkSetStringMacro(URL);
-  vtkGetStringMacro(URL);
+  void SetURL(const char *url) {
+    this->URL = vtksys_stl::string(url); 
+  };
+  const char *GetURL() {
+    return this->URL.c_str();
+  };
   
   // Description:
   // Create new scene from URL
@@ -199,9 +203,9 @@ protected:
   std::list< vtkCollection* >  RedoStack;
   //ETX
   
-  char *URL;
 
   //BTX
+  vtksys_stl::string         URL;
   std::map< std::string, int> UniqueIDByClass;
   std::vector< std::string >  UniqueIDs;
   std::vector< vtkMRMLNode* > RegisteredNodeClasses;

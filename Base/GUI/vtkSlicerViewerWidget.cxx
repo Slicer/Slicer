@@ -286,6 +286,10 @@ void vtkSlicerViewerWidget::SetModelDisplayProperty(vtkMRMLModelNode *model,  vt
         }
       actor->GetTexture()->SetInput(dnode->GetTextureImageData());
       }
+    else
+      {
+      actor->SetTexture(NULL);
+      }
     }
 }
 

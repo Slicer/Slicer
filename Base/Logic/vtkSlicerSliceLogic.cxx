@@ -88,10 +88,7 @@ vtkSlicerSliceLogic::~vtkSlicerSliceLogic()
 //----------------------------------------------------------------------------
 void vtkSlicerSliceLogic::ProcessMRMLEvents()
 {
-  if ( this->GetSliceModelNode() == NULL || this->MRMLScene->GetNodeByID( this->GetSliceModelNode()->GetID() ) == NULL )
-    {
-    this->CreateSliceModel();
-    }
+  this->CreateSliceModel();
 
   //
   // if you don't have a node yet, look in the scene to see if 
@@ -465,44 +462,41 @@ void vtkSlicerSliceLogic::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 void vtkSlicerSliceLogic::CreateSliceModel()
 {
- if ( this->GetSliceModelNode() != NULL && this->MRMLScene->GetNodeByID( this->GetSliceModelNode()->GetID() ) == NULL )
+  if ( this->SliceModelNode == NULL) 
+  {
+    this->SliceModelNode = vtkMRMLModelNode::New();
+    this->SliceModelNode->SetScene(this->GetMRMLScene());
+    // create plane slice
+    this->PlaneSource = vtkPlaneSource::New();
+    this->PlaneSource->GetOutput()->Update();
+    this->SliceModelNode->SetAndObservePolyData(this->PlaneSource->GetOutput());
+
+    // create display node and set texture
+    this->SliceModelDisplayNode = vtkMRMLModelDisplayNode::New();
+    this->SliceModelDisplayNode->SetScene(this->GetMRMLScene());
+    this->SliceModelDisplayNode->SetVisibility(0);
+    this->SliceModelDisplayNode->SetOpacity(1);
+    this->SliceModelDisplayNode->SetColor(1,1,1);
+    this->SliceModelDisplayNode->SetAmbient(1);
+    this->SliceModelDisplayNode->SetDiffuse(0);
+    this->SliceModelDisplayNode->SetAndObserveTextureImageData(this->GetImageData());
+
+    std::stringstream ss;
+    char name[256];
+    ss << this->Name << " Volume Slice";
+    ss.getline(name,256);
+    this->SliceModelNode->SetName(name);
+    this->SliceModelNode->SetAndObserveDisplayNodeID(this->SliceModelDisplayNode->GetID());
+  }
+
+  if (this->SliceModelNode != NULL && this->MRMLScene->GetNodeByID( this->GetSliceModelNode()->GetID() ) == NULL )
     {
-    this->SliceModelNode->SetAndObservePolyData(NULL);
-    this->SliceModelDisplayNode->SetAndObserveTextureImageData(NULL);
-    this->SliceModelNode->SetAndObserveDisplayNodeID(NULL);
-
-    this->SliceModelDisplayNode->Delete();
-    this->SliceModelDisplayNode = NULL;
-    this->PlaneSource->Delete();
-    this->PlaneSource = NULL;
-    this->SliceModelNode->Delete();
-    this->SliceModelNode = NULL; 
+    this->MRMLScene->AddNode(this->SliceModelDisplayNode);
+    this->MRMLScene->AddNode(this->SliceModelNode);
+    this->SliceModelNode->SetAndObserveDisplayNodeID(this->SliceModelDisplayNode->GetID());
+    this->SliceModelDisplayNode->SetAndObserveTextureImageData(this->GetImageData());
     }
-  this->SliceModelNode = vtkMRMLModelNode::New();
-  this->SliceModelNode->SetScene(this->GetMRMLScene());
-  // create plane slice
-  this->PlaneSource = vtkPlaneSource::New();
-  this->PlaneSource->GetOutput()->Update();
-  this->SliceModelNode->SetAndObservePolyData(this->PlaneSource->GetOutput());
 
-  // create display node and set texture
-  this->SliceModelDisplayNode = vtkMRMLModelDisplayNode::New();
-  this->SliceModelDisplayNode->SetScene(this->GetMRMLScene());
-  this->SliceModelDisplayNode->SetVisibility(0);
-  this->SliceModelDisplayNode->SetOpacity(1);
-  this->SliceModelDisplayNode->SetColor(1,1,1);
-  this->SliceModelDisplayNode->SetAmbient(1);
-  this->SliceModelDisplayNode->SetDiffuse(0);
-  this->SliceModelDisplayNode->SetAndObserveTextureImageData(this->GetImageData());
-
-  std::stringstream ss;
-  char name[256];
-  ss << this->Name << " Volume Slice";
-  ss.getline(name,256);
-  this->SliceModelNode->SetName(name);
-  this->MRMLScene->AddNode(this->SliceModelNode);
-  this->SetSliceModelNodeID(this->SliceModelNode->GetID());
-  this->MRMLScene->AddNode(this->SliceModelDisplayNode);
-  this->SliceModelNode->SetAndObserveDisplayNodeID(this->SliceModelDisplayNode->GetID());
 }
+
 
