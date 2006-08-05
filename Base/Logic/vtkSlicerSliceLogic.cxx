@@ -98,37 +98,42 @@ void vtkSlicerSliceLogic::ProcessMRMLEvents()
   // one exists for you to use.  If not, create one and add it to the scene
   //
 
-  if ( this->SliceNode != NULL && this->MRMLScene->GetNodeByID(this->SliceNode->GetID()) == NULL)
-    {
-    this->SetSliceNode(NULL);
-    }
-
   if ( this->SliceNode == NULL )
     {
     vtkMRMLSliceNode *node = vtkMRMLSliceNode::New();
+    this->SetSliceNode (node);
+    }  
+    
+  if ( this->SliceNode != NULL && this->MRMLScene->GetNodeByID(this->SliceNode->GetID()) == NULL)
+    {
+    vtkMRMLSliceNode *node = this->SliceNode;
+    this->SetSliceNode (NULL);
     this->MRMLScene->AddNode(node);
     this->SetSliceNode (node);
-    node->Delete();
     }
+
+ 
 
   //
   // if you don't have a node yet, look in the scene to see if 
   // one exists for you to use.  If not, create one and add it to the scene
   //
-  if ( this->SliceCompositeNode != NULL && this->MRMLScene->GetNodeByID(this->SliceCompositeNode->GetID()) == NULL)
-    {
-    this->SetSliceCompositeNode(NULL);
-    }
 
   if ( this->SliceCompositeNode == NULL )
     {
     vtkMRMLSliceCompositeNode *node = vtkMRMLSliceCompositeNode::New();
-    this->MRMLScene->AddNode(node);
     node->SetBackgroundVolumeID("None");
     node->SetForegroundVolumeID("None");
     node->SetLabelVolumeID("None");
     this->SetSliceCompositeNode (node);
-    node->Delete();
+    }
+
+  if ( this->SliceCompositeNode != NULL && this->MRMLScene->GetNodeByID(this->SliceCompositeNode->GetID()) == NULL)
+    {
+    vtkMRMLSliceCompositeNode *node = this->SliceCompositeNode;
+    this->SetSliceCompositeNode (NULL);
+    this->MRMLScene->AddNode(node);
+    this->SetSliceCompositeNode (node);
     }
 
   //

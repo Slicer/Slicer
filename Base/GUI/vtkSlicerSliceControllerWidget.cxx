@@ -282,7 +282,7 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
     this->SetSliceCompositeNode(NULL);
     }
 
-  if ( !this->SliceNode || !this->SliceCompositeNode)
+  if ( !this->SliceNode)
     {
     return;
     }
@@ -427,7 +427,7 @@ void vtkSlicerSliceControllerWidget::ProcessMRMLEvents ( vtkObject *caller, unsi
     this->SetSliceCompositeNode(NULL);
     }
 
-  if ( !this->SliceNode || !this->SliceCompositeNode)
+  if ( !this->SliceNode)
     {
     return;
     }
