@@ -1,8 +1,8 @@
 <MRML>
 <ModelStorage
-id="vtkMRMLModelStorageNode1" name="" fileName="TestData/cube.vtk" ></ModelStorage>
+id="vtkMRMLModelStorageNodeXXX" name="" fileName="TestData/cube.vtk" ></ModelStorage>
 <ModelDisplay
-id="vtkMRMLModelDisplayNode1" name=""  color="0.5 0.5 0.5" ambient="0" diffuse="1" specular="0" power="1" opacity="1" visibility="true" clipping="false" backfaceCulling="true" scalarVisibility="false" scalarRange="0 100"></ModelDisplay>
+id="vtkMRMLModelDisplayNodeXXX" name=""  color="0.5 0.5 0.5" ambient="0" diffuse="1" specular="0" power="1" opacity="1" visibility="true" clipping="false" backfaceCulling="true" scalarVisibility="false" scalarRange="0 100"></ModelDisplay>
 <Model
-id="vtkMRMLModelNode1" name="cube.vtk" storageNodeRef="vtkMRMLModelStorageNode1" displayNodeRef="vtkMRMLModelDisplayNode1" ></Model>
+id="vtkMRMLModelNodeXXX" name="cube.vtk" storageNodeRef="vtkMRMLModelStorageNodeXXX" displayNodeRef="vtkMRMLModelDisplayNodeXXX" ></Model>
 </MRML>

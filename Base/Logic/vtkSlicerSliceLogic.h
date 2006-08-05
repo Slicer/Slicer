@@ -43,6 +43,8 @@
 #include "vtkImageBlend.h"
 
 class vtkImageData;
+class vtkPlaneSource;
+class vtkMRMLModelDisplayNode;
 
 class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLogic : public vtkSlicerLogic 
 {
@@ -152,6 +154,8 @@ protected:
 
   vtkMRMLModelNode *SliceModelNode;
   char *SliceModelNodeID;
+  vtkPlaneSource  *PlaneSource;
+  vtkMRMLModelDisplayNode *SliceModelDisplayNode;
 
   void CreateSliceModel();
 };

@@ -42,6 +42,8 @@ vtkSlicerSliceLogic::vtkSlicerSliceLogic()
   this->SliceModelNode = NULL;
   this->Name = NULL;
   this->SliceModelNodeID = NULL;
+  this->PlaneSource = NULL;
+  this->SliceModelDisplayNode = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -67,6 +69,15 @@ vtkSlicerSliceLogic::~vtkSlicerSliceLogic()
     {
     this->SliceModelNode->Delete();
     }
+  if (this->PlaneSource != NULL)
+    {
+    this->PlaneSource->Delete();
+    }
+  if (this->SliceModelDisplayNode != NULL)
+    {
+    this->SliceModelDisplayNode->Delete();
+    }
+
   this->SetName(NULL);
 
   this->SetSliceModelNodeID(NULL);
@@ -77,7 +88,7 @@ vtkSlicerSliceLogic::~vtkSlicerSliceLogic()
 //----------------------------------------------------------------------------
 void vtkSlicerSliceLogic::ProcessMRMLEvents()
 {
-  if ( this->GetSliceModelNodeID() == NULL || this->GetSliceModelNode() == NULL || this->MRMLScene->GetNodeByID( this->GetSliceModelNodeID() ) == NULL )
+  if ( this->GetSliceModelNode() == NULL || this->MRMLScene->GetNodeByID( this->GetSliceModelNode()->GetID() ) == NULL )
     {
     this->CreateSliceModel();
     }
@@ -167,8 +178,8 @@ void vtkSlicerSliceLogic::ProcessLogicEvents()
     }
 
   // Update slice plane geometry
-  if (this->SliceNode != NULL &&  this->GetSliceModelNodeID() != NULL && this->GetSliceModelNode() != NULL 
-    && this->MRMLScene->GetNodeByID( this->GetSliceModelNodeID() ) != NULL && this->SliceModelNode->GetPolyData() != NULL )
+  if (this->SliceNode != NULL && this->GetSliceModelNode() != NULL 
+    && this->MRMLScene->GetNodeByID( this->SliceModelNode->GetID() ) != NULL && this->SliceModelNode->GetPolyData() != NULL )
     {
     vtkPoints *points = this->SliceModelNode->GetPolyData()->GetPoints();
     unsigned int *dims = this->SliceNode->GetDimensions();
@@ -449,22 +460,35 @@ void vtkSlicerSliceLogic::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 void vtkSlicerSliceLogic::CreateSliceModel()
 {
+ if ( this->GetSliceModelNode() != NULL && this->MRMLScene->GetNodeByID( this->GetSliceModelNode()->GetID() ) == NULL )
+    {
+    this->SliceModelNode->SetAndObservePolyData(NULL);
+    this->SliceModelDisplayNode->SetAndObserveTextureImageData(NULL);
+    this->SliceModelNode->SetAndObserveDisplayNodeID(NULL);
+
+    this->SliceModelDisplayNode->Delete();
+    this->SliceModelDisplayNode = NULL;
+    this->PlaneSource->Delete();
+    this->PlaneSource = NULL;
+    this->SliceModelNode->Delete();
+    this->SliceModelNode = NULL; 
+    }
   this->SliceModelNode = vtkMRMLModelNode::New();
   this->SliceModelNode->SetScene(this->GetMRMLScene());
   // create plane slice
-  vtkPlaneSource *plane = vtkPlaneSource::New();
-  plane->GetOutput()->Update();
-  this->SliceModelNode->SetAndObservePolyData(plane->GetOutput());
+  this->PlaneSource = vtkPlaneSource::New();
+  this->PlaneSource->GetOutput()->Update();
+  this->SliceModelNode->SetAndObservePolyData(this->PlaneSource->GetOutput());
 
   // create display node and set texture
-  vtkMRMLModelDisplayNode *displayNode = vtkMRMLModelDisplayNode::New();
-  displayNode->SetScene(this->GetMRMLScene());
-  displayNode->SetVisibility(0);
-  displayNode->SetOpacity(1);
-  displayNode->SetColor(1,1,1);
-  displayNode->SetAmbient(1);
-  displayNode->SetDiffuse(0);
-  displayNode->SetAndObserveTextureImageData(this->GetImageData());
+  this->SliceModelDisplayNode = vtkMRMLModelDisplayNode::New();
+  this->SliceModelDisplayNode->SetScene(this->GetMRMLScene());
+  this->SliceModelDisplayNode->SetVisibility(0);
+  this->SliceModelDisplayNode->SetOpacity(1);
+  this->SliceModelDisplayNode->SetColor(1,1,1);
+  this->SliceModelDisplayNode->SetAmbient(1);
+  this->SliceModelDisplayNode->SetDiffuse(0);
+  this->SliceModelDisplayNode->SetAndObserveTextureImageData(this->GetImageData());
 
   std::stringstream ss;
   char name[256];
@@ -473,10 +497,7 @@ void vtkSlicerSliceLogic::CreateSliceModel()
   this->SliceModelNode->SetName(name);
   this->MRMLScene->AddNode(this->SliceModelNode);
   this->SetSliceModelNodeID(this->SliceModelNode->GetID());
-  this->MRMLScene->AddNode(displayNode);
-  this->SliceModelNode->SetAndObserveDisplayNodeID(displayNode->GetID());
-  plane->Delete();
-  this->SliceModelNode->Delete();
-  displayNode->Delete();
+  this->MRMLScene->AddNode(this->SliceModelDisplayNode);
+  this->SliceModelNode->SetAndObserveDisplayNodeID(this->SliceModelDisplayNode->GetID());
 }
 

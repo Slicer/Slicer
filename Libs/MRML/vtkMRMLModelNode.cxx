@@ -155,7 +155,7 @@ void vtkMRMLModelNode::UpdateScene(vtkMRMLScene *scene)
 
   if (this->GetStorageNodeID() == NULL) 
     {
-    vtkErrorMacro("No reference StorageNodeID found");
+    //vtkErrorMacro("No reference StorageNodeID found");
     return;
     }
 
@@ -164,9 +164,9 @@ void vtkMRMLModelNode::UpdateScene(vtkMRMLScene *scene)
     {
     vtkMRMLStorageNode *node  = dynamic_cast < vtkMRMLStorageNode *>(mnode);
     node->ReadData(this);
+    this->SetAndObservePolyData(this->GetPolyData());
+    this->SetAndObserveDisplayNodeID(this->GetDisplayNodeID());
     }
-   this->SetAndObserveDisplayNodeID(this->GetDisplayNodeID());
-   this->SetAndObservePolyData(this->GetPolyData());
 }
 
 //-----------------------------------------------------------

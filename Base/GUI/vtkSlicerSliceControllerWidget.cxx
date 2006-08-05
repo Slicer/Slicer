@@ -272,11 +272,22 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
 //----------------------------------------------------------------------------
 void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, unsigned long event, void *callData ) 
 { 
-  if ( !this->SliceNode )
+   if (this->SliceNode != NULL && this->MRMLScene->GetNodeByID(this->SliceNode->GetID()) == NULL)
+    {
+    this->SetSliceNode(NULL);
+    }
+
+  if (this->SliceCompositeNode != NULL && this->MRMLScene->GetNodeByID(this->SliceCompositeNode->GetID()) == NULL)
+    {
+    this->SetSliceCompositeNode(NULL);
+    }
+
+  if ( !this->SliceNode || !this->SliceCompositeNode)
     {
     return;
     }
-
+  
+ 
   vtkKWPushButton *toggle = vtkKWPushButton::SafeDownCast ( caller );
   // Toggle the SliceNode's visibility.
   if ( toggle == this->GetVisibilityToggle() &&
@@ -406,9 +417,17 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
 //----------------------------------------------------------------------------
 void vtkSlicerSliceControllerWidget::ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData ) 
 { 
+  if (this->SliceNode != NULL && this->MRMLScene->GetNodeByID(this->SliceNode->GetID()) == NULL)
+    {
+    this->SetSliceNode(NULL);
+    }
 
+  if (this->SliceCompositeNode != NULL && this->MRMLScene->GetNodeByID(this->SliceCompositeNode->GetID()) == NULL)
+    {
+    this->SetSliceCompositeNode(NULL);
+    }
 
-  if ( !this->SliceNode )
+  if ( !this->SliceNode || !this->SliceCompositeNode)
     {
     return;
     }
