@@ -32,7 +32,7 @@ if { [itcl::find class PaintSWidget] == "" } {
     destructor {}
 
     public variable paintColor 1
-    public variable thresholdPaint 1
+    public variable thresholdPaint 0
     public variable thresholdMin 1
     public variable thresholdMax 1
     public variable radius 10
@@ -254,6 +254,13 @@ itcl::body PaintSWidget::paintPoint {} {
 
 itcl::body PaintSWidget::paintBrush {} {
 
+  #
+  # paint with a brush that is circular in XY space 
+  # (could be streched or rotate when transformed to IJK)
+  # - make sure to hit ever pixel in IJK space 
+  # - apply the threshold if selected
+  #
+
   foreach {x y} [$_interactor GetEventPosition] {}
   $this queryLayers $x $y
 
@@ -313,15 +320,6 @@ itcl::body PaintSWidget::paintBrush {} {
     set columnDelta($index) [expr $columnSpan($index) / $maxColumnSpan]
   }
 
-  # this shouldn't happen...
-  if { $maxRowIndex == $maxColumnIndex } {
-    puts $sortedRowSpans
-    puts [parray rowSpan]
-    puts $sortedColumnSpans
-    puts [parray columnSpan]
-    error "maxRowSpan == maxColumnSpan"
-  }
-
   #
   # prepare ijkToXY mapping
   #
@@ -332,6 +330,22 @@ itcl::body PaintSWidget::paintBrush {} {
 
   #
   # now rasterize the plane 
+  # - what follows can easily be converted to a 
+  #   vtk class for efficiency - it's in tcl now for
+  #   convenience in working out the behavior
+  # - it would also be possible to pre-compute the ijkToXY
+  #   deltas for the linear case for the radius calculation
+  # Outline or rasterizing is:
+  # - start at upper left of image
+  # - coord(i), coord(j), coord(k) is current pixel
+  # - coord is updated using the deltas calculated above 
+  # -- e.g. rowDelta(i) is the change in i with respect to incrementing
+  #    along a single pixel along the 'row'.  For the maxRowIndex this is 1,
+  #    but for others it's less than 1 for subpixel accuracy
+  # - each pixel location is mapped back to XY coordinates to check
+  #   if it's in the brush circle
+  # - in thresholdPaint mode, the label is only painted if the background
+  #   is inside the threshold range
   #
   foreach index {i j k l} start $tlIJK {
     set rowStart($index) $start
@@ -353,6 +367,7 @@ itcl::body PaintSWidget::paintBrush {} {
       # - only if it's inside the radius
       # - if threshold mode, only if it's between min max
       # - note that xy could be done using deltas for speed
+      #
       
       set xyzw [$ijkToXY MultiplyPoint $coord(i) $coord(j) $coord(k) 1]
       set deltaX [expr ($x - [lindex $xyzw 0])]
@@ -389,61 +404,6 @@ itcl::body PaintSWidget::paintBrush {} {
   $ijkToXY Delete
   return
   
-
-  # paint the corners
-  foreach coord { tlIJK trIJK blIJK brIJK } {
-    foreach v {i j k l} c [set $coord] {
-      set $v [expr int(round($c))]
-    }
-    $this setPixel $_layers(label,image) $i $j $k $paintColor
-  }
-
-
-  #
-  # make ijkPoints be the brush (circle) in ijk space
-  # - get un-rounded (float) IJK coordinates
-  # - transform each screen space coord of brush to ijk
-  #
-  set xyToIJK [[$_layers(label,logic) GetXYToIJKTransform] GetMatrix]
-  foreach {i j k l} [$xyToIJK MultiplyPoint $x $y 0 1] {}
-
-  set ijkPoints [vtkPoints New]
-  set points [$o(brush) GetPoints]
-  set numPoints [$points GetNumberOfPoints]
-  for {set i 0} {$i < $numPoints} {incr i} {
-    set brushXYZ [$points GetPoint $i]
-    set bX [expr $x + [lindex $brushXYZ 0]]
-    set bY [expr $y + [lindex $brushXYZ 1]]
-    set bZ [expr 0  + [lindex $brushXYZ 2]]
-    set brushIJK [$xyToIJK MultiplyPoint $bX $bY $bZ 1]
-    eval $ijkPoints InsertNextPoint [lrange $brushIJK 0 2]
-
-    # for now, just the outside
-    foreach v {ii jj kk ll} bVal $brushIJK {
-      set $v [expr int(round($bVal))]
-    }
-    $this setPixel $_layers(label,image) $ii $jj $kk $paintColor
-  }
-
-  set bounds [$ijkPoints GetBounds]
-  if { [lindex $bounds 0] == [lindex $bounds 1] } {
-    set fillIndex "j"
-  } else {
-    set fillIndex "i"
-  }
-
-  if { $fillIndex == "i" } {
-    set startRow [ expr int([lindex $bounds 0]) ]
-    set endRow [ expr int([lindex $bounds 1]) + 1 ]
-
-  }
-
-
-
-  # TODO: Modified should be called on the image itself, not
-  # the node, but the Logic isn't yet observing the ImageDataChangedEvent
-  $_layers(label,node) Modified
-
 }
 
 proc PaintSWidget::AddPaint {} {

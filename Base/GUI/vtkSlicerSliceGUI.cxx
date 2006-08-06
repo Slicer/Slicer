@@ -82,7 +82,7 @@ vtkSlicerSliceGUI::~vtkSlicerSliceGUI ( ) {
     // it allocated.  This can be called with no impact on other 
     // slice gui instances, since the tcl code automatically re-initializes
     // if the event handler is called again.
-    this->Script("SliceViewerShutdown");
+    this->Script("SliceViewerShutdown %s", this->GetTclName());
 }
 
 

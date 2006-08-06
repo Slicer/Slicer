@@ -24,7 +24,7 @@ proc SliceViewerShutdown { sliceGUI } {
   
   # find the SliceSWidget that owns the sliceGUI and delete it
   foreach ssw [SliceViewerFindWidgets $sliceGUI] {
-    itcl::delete $ssw
+    itcl::delete object $ssw
   }
 }
 

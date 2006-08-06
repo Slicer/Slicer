@@ -96,7 +96,13 @@ void vtkScriptedModuleGUI::ProcessGUIEvents ( vtkObject *caller,
                                            unsigned long event,
                                            void *callData ) 
 {
-  // TODO: map the object and event to strings for tcl
+  vtkKWObject *kwObject = vtkKWObject::SafeDownCast(caller);
+
+  if (kwObject != NULL)
+    {
+    this->GetApplication()->Script("%sProcessGUIEvents %s %s %ld", 
+      this->GetModuleName(), this->GetTclName(), kwObject->GetTclName(), event);
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -140,4 +146,12 @@ void vtkScriptedModuleGUI::BuildGUI ( )
   this->GetApplication()->Script("%sBuildGUI %s", 
     this->GetModuleName(), this->GetTclName());
 }
+
+
+//---------------------------------------------------------------------------
+unsigned long vtkScriptedModuleGUI::AddObserverByNumber ( vtkObject *observee, unsigned long event ) {
+
+  return ( observee->AddObserver(event, (vtkCommand *)this->GUICallbackCommand) );
+} 
+
 

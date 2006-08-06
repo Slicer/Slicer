@@ -80,6 +80,10 @@ public:
   vtkGetStringMacro (ModuleName);
   vtkSetStringMacro (ModuleName);
 
+  // Description: set an observer by number (work around
+  // limitation in kwwidgets tcl wrapping)
+  unsigned long AddObserverByNumber (vtkObject *observee, unsigned long event);
+
 protected:
   
 private:
