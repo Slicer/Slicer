@@ -332,6 +332,11 @@ void vtkSlicerMRMLTreeWidget::AddNodeToTree(vtkMRMLNode *node)
 
   vtkKWTree *tree = this->TreeWidget->GetWidget();
 
+  if (tree->HasNode(node->GetID()))
+    {
+    return;
+    }
+
   char *ID = node->GetID();
     
   vtksys_stl::string node_text(node->GetName());
@@ -361,10 +366,8 @@ void vtkSlicerMRMLTreeWidget::AddNodeToTree(vtkMRMLNode *node)
     if (parent)
       {
       parent_node = parent->GetID();
-      if (!tree->HasNode(parent_node))
-        {
-        this->AddNodeToTree(parent);
-        }
+      this->AddNodeToTree(parent);
+
       }
     }
   tree->AddNode(parent_node, ID, node_text.c_str());

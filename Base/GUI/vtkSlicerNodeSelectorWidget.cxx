@@ -228,7 +228,7 @@ void vtkSlicerNodeSelectorWidget::UpdateMenu()
               selectedNode = node;
               selected = true;
             }
-            else if (!selected && !this->NoneEnabled)
+            else if (!selected)
             {  
               selectedNode = node;
               selected = true;
@@ -236,6 +236,7 @@ void vtkSlicerNodeSelectorWidget::UpdateMenu()
           }
        }
     }
+    
     if (selectedNode != NULL)
       {
       this->GetWidget()->GetWidget()->SetValue(selectedNode->GetName());
