@@ -109,6 +109,7 @@ void vtkSlicerApplicationLogic::PropagateVolumeSelection()
 
   int i, nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
   char *ID = this->SelectionNode->GetActiveVolumeID();
+  char *labelID = this->SelectionNode->GetActiveLabelVolumeID();
 
   vtkMRMLSliceCompositeNode *cnode;
   for (i = 0; i < nnodes; i++)
@@ -116,6 +117,7 @@ void vtkSlicerApplicationLogic::PropagateVolumeSelection()
     cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
             this->MRMLScene->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
     cnode->SetBackgroundVolumeID( ID );
+    cnode->SetLabelVolumeID( labelID );
     }
 }
 

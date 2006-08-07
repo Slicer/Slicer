@@ -73,10 +73,10 @@ itcl::body PaintSWidget::constructor {sliceGUI} {
   $this processEvent
 
   set _guiObserverTags ""
-  lappend _guiObserverTags [$sliceGUI AddObserver DeleteEvent "itcl::delete $this"]
+  lappend _guiObserverTags [$sliceGUI AddObserver DeleteEvent "itcl::delete object $this"]
   lappend _guiObserverTags [$sliceGUI AddObserver AnyEvent "$this processEvent"]
   set node [[$sliceGUI GetLogic] GetSliceNode]
-  lappend _nodeObserverTags [$node AddObserver DeleteEvent "itcl::delete $this"]
+  lappend _nodeObserverTags [$node AddObserver DeleteEvent "itcl::delete object $this"]
   lappend _nodeObserverTags [$node AddObserver AnyEvent "$this processEvent"]
 }
 
@@ -184,7 +184,7 @@ itcl::body PaintSWidget::processEvent { } {
   if { [info command $sliceGUI] == "" } {
     # the sliceGUI was deleted behind our back, so we need to 
     # self destruct
-    itcl::delete $this
+    itcl::delete object $this
     return
   }
 

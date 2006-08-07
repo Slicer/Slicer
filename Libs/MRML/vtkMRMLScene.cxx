@@ -367,7 +367,7 @@ void vtkMRMLScene::AddNode(vtkMRMLNode *n)
   //TODO convert URL to Root directory
   //n->SetSceneRootDir("");
 
-  if (n->GetID() == NULL) 
+  if (n->GetID() == NULL || n->GetID()[0] == '\0') 
     {
     n->SetID(this->GetUniqueIDByClass(n->GetClassName()));
     }

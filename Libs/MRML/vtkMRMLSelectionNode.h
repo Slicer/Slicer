@@ -55,6 +55,11 @@ class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
   vtkGetStringMacro (ActiveVolumeID);
   vtkSetStringMacro (ActiveVolumeID);
 
+  // Description:
+  // the ID of a MRMLVolumeNode
+  vtkGetStringMacro (ActiveLabelVolumeID);
+  vtkSetStringMacro (ActiveLabelVolumeID);
+
 
 protected:
   vtkMRMLSelectionNode();
@@ -63,6 +68,7 @@ protected:
   void operator=(const vtkMRMLSelectionNode&);
 
   char *ActiveVolumeID;
+  char *ActiveLabelVolumeID;
 
 };
 

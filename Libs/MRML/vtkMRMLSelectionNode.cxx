@@ -52,11 +52,22 @@ vtkMRMLNode* vtkMRMLSelectionNode::CreateNodeInstance()
 vtkMRMLSelectionNode::vtkMRMLSelectionNode()
 {
   this->ActiveVolumeID = NULL;
+  this->ActiveLabelVolumeID = NULL;
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLSelectionNode::~vtkMRMLSelectionNode()
 {
+  if (this->ActiveVolumeID)
+    {
+    delete [] this->ActiveVolumeID;
+    this->ActiveVolumeID = NULL;
+    }
+  if (this->ActiveLabelVolumeID)
+    {
+    delete [] this->ActiveLabelVolumeID;
+    this->ActiveLabelVolumeID = NULL;
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -67,6 +78,7 @@ void vtkMRMLSelectionNode::WriteXML(ostream& of, int nIndent)
   vtkIndent indent(nIndent);
 
   of << indent << "activeVolumeID=\"" << (this->ActiveVolumeID ? this->ActiveVolumeID : "NULL") << "\" ";
+  of << indent << "activeLabelVolumeID=\"" << (this->ActiveLabelVolumeID ? this->ActiveLabelVolumeID : "NULL") << "\" ";
 
 }
 
@@ -86,6 +98,10 @@ void vtkMRMLSelectionNode::ReadXMLAttributes(const char** atts)
       {
       this->SetActiveVolumeID(attValue);
       }
+    if (!strcmp(attName, "activeLabelVolumeID")) 
+      {
+      this->SetActiveLabelVolumeID(attValue);
+      }
     }
 }
 
@@ -98,6 +114,7 @@ void vtkMRMLSelectionNode::Copy(vtkMRMLNode *anode)
   vtkMRMLSelectionNode *node = vtkMRMLSelectionNode::SafeDownCast(anode);
 
   this->SetActiveVolumeID(node->GetActiveVolumeID());
+  this->SetActiveLabelVolumeID(node->GetActiveLabelVolumeID());
 }
 
 //----------------------------------------------------------------------------
@@ -106,6 +123,7 @@ void vtkMRMLSelectionNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLNode::PrintSelf(os,indent);
 
   os << "ActiveVolumeID: " << ( (this->ActiveVolumeID) ? this->ActiveVolumeID : "None" ) << "\n";
+  os << "ActiveLabelVolumeID: " << ( (this->ActiveLabelVolumeID) ? this->ActiveLabelVolumeID : "None" ) << "\n";
 }
 
 
