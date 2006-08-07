@@ -9,6 +9,9 @@ proc EditorDestructor {this} {
 }
 
 # Note: not a method - this is invoked directly by the GUI
+# - remove the GUI from the current Application
+# - re-source the code (this file)
+# - re-build the GUI
 proc EditorReload { {this ""} } {
 
   if { $this == "" } {
@@ -35,6 +38,8 @@ proc EditorTearDownGUI {this} {
   $::Editor($this,volumesCreate) Delete
   $::Editor($this,volumesSelect) Delete
   $::Editor($this,volumesFrame) Delete
+  $::Editor($this,paintEnable) Delete
+  $::Editor($this,paintLabel) Delete
   $::Editor($this,paintFrame) Delete
   $::Editor($this,helpFrame) Delete
   set pageWidget [[$this GetUIPanel] GetPageWidget "Editor"]
@@ -98,6 +103,23 @@ proc EditorBuildGUI {this} {
   pack [$::Editor($this,paintFrame) GetWidgetName] \
     -side top -anchor nw -fill x -padx 2 -pady 2 -in [$pageWidget GetWidgetName]
 
+  set ::Editor($this,paintEnable) [vtkKWCheckButtonWithLabel New]
+  $::Editor($this,paintEnable) SetParent $::Editor($this,paintFrame)
+  $::Editor($this,paintEnable) Create
+  $::Editor($this,paintEnable) SetLabelText "Enable Painting: "
+  pack [$::Editor($this,paintEnable) GetWidgetName] \
+    -side top -anchor e -fill x -padx 2 -pady 2 
+
+  set ::Editor($this,paintLabel) [vtkKWThumbWheel New]
+  $::Editor($this,paintLabel) SetParent $::Editor($this,paintFrame)
+  $::Editor($this,paintLabel) Create
+  $::Editor($this,paintLabel) DisplayEntryAndLabelOnTopOn
+  $::Editor($this,paintLabel) DisplayEntryOn
+  $::Editor($this,paintLabel) DisplayLabelOn
+  [$::Editor($this,paintLabel) GetLabel] SetText "Label: "
+  pack [$::Editor($this,paintLabel) GetWidgetName] \
+    -side top -anchor e -fill x -padx 2 -pady 2 
+
   #
   # Rebuild Button
   #
@@ -112,6 +134,8 @@ proc EditorBuildGUI {this} {
 proc EditorAddGUIObservers {this} {
   $this AddObserverByNumber $::Editor($this,rebuildButton) 10000 
   $this AddObserverByNumber $::Editor($this,volumesCreate) 10000 
+  $this AddObserverByNumber $::Editor($this,paintEnable) 10000 
+  $this AddObserverByNumber $::Editor($this,paintLabel) 10001 
 }
 
 proc EditorRemoveGUIObservers {this} {
@@ -135,6 +159,18 @@ proc EditorProcessGUIEvents {this caller event} {
     switch $event {
       "10000" {
         EditorCreateLabelVolume $this
+      }
+    }
+  } elseif { $caller == $::Editor($this,paintEnable) } {
+    switch $event {
+      "10000" {
+        ::PaintSWidget::TogglePaint
+      }
+    }
+  } elseif { $caller == $::Editor($this,paintLabel) } {
+    switch $event {
+      "10001" {
+        ::PaintSWidget::ConfigureAll -paintColor [$::Editor($this,paintLabel) GetValue]
       }
     }
   }
