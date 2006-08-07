@@ -88,7 +88,6 @@ void vtkSlicerApplicationLogic::ProcessMRMLEvents()
     if ( node == NULL )
       {
       node = vtkMRMLSelectionNode::New();
-      this->MRMLScene->AddNode(node);
       this->SetSelectionNode (node);
       node->Delete();
       }
@@ -96,6 +95,10 @@ void vtkSlicerApplicationLogic::ProcessMRMLEvents()
       {
       this->SetSelectionNode (node);
       }
+    }
+  if (this->MRMLScene->GetNodeByID(this->SelectionNode->GetID()) == NULL)
+    {
+    this->MRMLScene->AddNode(this->SelectionNode);
     }
 }
 

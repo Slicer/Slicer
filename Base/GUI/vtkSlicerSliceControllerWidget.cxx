@@ -282,6 +282,64 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
     this->SetSliceCompositeNode(NULL);
     }
 
+// Update orientation if needed
+  if ( vtkKWMenu::SafeDownCast(caller) == this->OrientationMenu->GetWidget()->GetWidget()->GetMenu() )
+    {
+    vtkKWMenuButton *mb = this->OrientationMenu->GetWidget()->GetWidget();
+    if ( !strcmp (mb->GetValue(), "Axial") )   
+      {
+      this->SliceNode->SetOrientationToAxial();
+      }
+    if ( !strcmp (mb->GetValue(), "Sagittal") )   
+      {
+      this->SliceNode->SetOrientationToSagittal();
+      }
+    if ( !strcmp (mb->GetValue(), "Coronal") )   
+      {
+      this->SliceNode->SetOrientationToCoronal();
+      }
+    }
+
+
+  if ( vtkSlicerNodeSelectorWidget::SafeDownCast(caller) == this->ForegroundSelector )
+    {
+    if  (this->ForegroundSelector->GetSelected() != NULL && this->SliceCompositeNode != NULL)
+      {
+      this->SliceCompositeNode->SetForegroundVolumeID( 
+              this->ForegroundSelector->GetSelected()->GetID() );
+      } 
+    else if (this->SliceCompositeNode != NULL)
+      {
+      this->SliceCompositeNode->SetForegroundVolumeID( NULL );
+      }
+    }
+
+  if ( vtkSlicerNodeSelectorWidget::SafeDownCast(caller) == this->BackgroundSelector )
+    {
+    if  (this->BackgroundSelector->GetSelected() != NULL && this->SliceCompositeNode != NULL)
+      {
+      this->SliceCompositeNode->SetBackgroundVolumeID( 
+              this->BackgroundSelector->GetSelected()->GetID() );
+      } 
+    else if (this->SliceCompositeNode != NULL)
+      {
+      this->SliceCompositeNode->SetBackgroundVolumeID( NULL );
+      }
+    }
+
+  if ( vtkSlicerNodeSelectorWidget::SafeDownCast(caller) == this->LabelSelector )
+    {
+    if  (this->LabelSelector->GetSelected() != NULL && this->SliceCompositeNode != NULL)
+      {
+      this->SliceCompositeNode->SetLabelVolumeID( 
+              this->LabelSelector->GetSelected()->GetID() );
+      } 
+    else if (this->SliceCompositeNode != NULL)
+      {
+      this->SliceCompositeNode->SetLabelVolumeID( NULL );
+      }
+    }
+
   if ( !this->SliceNode)
     {
     return;
@@ -349,61 +407,6 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
     }
   sliceToRAS->Delete();
 
-  // Update orientation if needed
-  if ( vtkKWMenu::SafeDownCast(caller) == this->OrientationMenu->GetWidget()->GetWidget()->GetMenu() )
-    {
-    vtkKWMenuButton *mb = this->OrientationMenu->GetWidget()->GetWidget();
-    if ( !strcmp (mb->GetValue(), "Axial") )   
-      {
-      this->SliceNode->SetOrientationToAxial();
-      }
-    if ( !strcmp (mb->GetValue(), "Sagittal") )   
-      {
-      this->SliceNode->SetOrientationToSagittal();
-      }
-    if ( !strcmp (mb->GetValue(), "Coronal") )   
-      {
-      this->SliceNode->SetOrientationToCoronal();
-      }
-    }
-
-
-  if ( vtkSlicerNodeSelectorWidget::SafeDownCast(caller) == this->ForegroundSelector )
-    {
-    if  (this->ForegroundSelector->GetSelected() != NULL && this->SliceCompositeNode != NULL)
-      {
-      this->SliceCompositeNode->SetForegroundVolumeID( 
-              this->ForegroundSelector->GetSelected()->GetID() );
-      } 
-    else if (this->SliceCompositeNode != NULL)
-      {
-      this->SliceCompositeNode->SetForegroundVolumeID( NULL );
-      }
-    }
-  if ( vtkSlicerNodeSelectorWidget::SafeDownCast(caller) == this->BackgroundSelector )
-    {
-    if  (this->BackgroundSelector->GetSelected() != NULL && this->SliceCompositeNode != NULL)
-      {
-      this->SliceCompositeNode->SetBackgroundVolumeID( 
-              this->BackgroundSelector->GetSelected()->GetID() );
-      } 
-    else if (this->SliceCompositeNode != NULL)
-      {
-      this->SliceCompositeNode->SetBackgroundVolumeID( NULL );
-      }
-    }
-  if ( vtkSlicerNodeSelectorWidget::SafeDownCast(caller) == this->LabelSelector )
-    {
-    if  (this->LabelSelector->GetSelected() != NULL && this->SliceCompositeNode != NULL)
-      {
-      this->SliceCompositeNode->SetLabelVolumeID( 
-              this->LabelSelector->GetSelected()->GetID() );
-      } 
-    else if (this->SliceCompositeNode != NULL)
-      {
-      this->SliceCompositeNode->SetLabelVolumeID( NULL );
-      }
-    }
 
   if ( modified )
     {

@@ -209,21 +209,41 @@ const char* vtkMRMLScene::GetTagByClassName(const char *className)
 int vtkMRMLScene::Connect()
 {
   bool undoFlag = this->GetUndoFlag();
-
-  int res = this->LoadIntoScene(true);
-
-  // create node references
-  int nnodes = this->CurrentScene->GetNumberOfItems();
-  vtkMRMLNode *node = NULL;
-  int n;
-  for (n=0; n<nnodes; n++) 
+  
+  this->SetUndoOff();
+  
+  this->CurrentScene->RemoveAllItems();
+  
+  this->InvokeEvent(this->SceneCloseEvent, NULL);
+  
+  int res = this->LoadIntoScene(this->CurrentScene);
+  
+  if (res)
     {
-    node = (vtkMRMLNode *)this->CurrentScene->GetItemAsObject(n);
-    node->UpdateScene(this);
-    }
-
+    
+    // create node references
+    int nnodes = this->CurrentScene->GetNumberOfItems();
+    vtkMRMLNode *node = NULL;
+    int n;
+    for (n=0; n<nnodes; n++)
+      {
+      node = (vtkMRMLNode *)this->CurrentScene->GetItemAsObject(n);
+      node->UpdateScene(this);
+      }
+    
+    // send events
+    this->InvokeEvent(this->NewSceneEvent, NULL);
+    for (n=0; n<nnodes; n++) 
+      {
+      node = (vtkMRMLNode *)this->CurrentScene->GetItemAsObject(n);
+      this->InvokeEvent(this->NodeAddedEvent, node);
+      }
+    this->Modified();
+  }
+  
   this->SetUndoFlag(undoFlag);
   
+    
   return res;
 }
 
@@ -231,27 +251,27 @@ int vtkMRMLScene::Connect()
 int vtkMRMLScene::Import()
 {
   bool undoFlag = this->GetUndoFlag();
-
-  // save current scene state
-  vtkCollection* scene = vtkCollection::New();
-  int nnodes = this->CurrentScene->GetNumberOfItems();
-  vtkMRMLNode *node = NULL;
   int n;
-  for (n=0; n<nnodes; n++) 
-    {
-    node = (vtkMRMLNode *)this->CurrentScene->GetItemAsObject(n);
-    scene->AddItem(node);
-    }
 
-  int res = this->LoadIntoScene(false);
-
+  this->SetUndoOff();
+  
+  // read nodes into a temp scene  
+  vtkCollection* scene = vtkCollection::New();
+  
+  int res = this->LoadIntoScene(scene);
+  
   if (res)
     {
-    nnodes = this->CurrentScene->GetNumberOfItems();
+    vtkMRMLNode *node;
+    int nnodes = scene->GetNumberOfItems();
     for (n=0; n<nnodes; n++) 
       {
-      node = (vtkMRMLNode *)this->CurrentScene->GetItemAsObject(n);
-      if (!scene->IsItemPresent(node))
+      node = (vtkMRMLNode *)scene->GetItemAsObject(n);
+      this->AddNode(node);
+      }
+    for (n=0; n<nnodes; n++) 
+      {
+      node = (vtkMRMLNode *)scene->GetItemAsObject(n);
       node->UpdateScene(this);
       }
     }
@@ -264,7 +284,7 @@ int vtkMRMLScene::Import()
 }
 
 //------------------------------------------------------------------------------
-int vtkMRMLScene::LoadIntoScene(bool removeItems)
+int vtkMRMLScene::LoadIntoScene(vtkCollection* nodeCollection)
 {
   if (this->URL == "") 
     {
@@ -274,20 +294,12 @@ int vtkMRMLScene::LoadIntoScene(bool removeItems)
   this->RootDirectory = vtksys::SystemTools::GetParentDirectory(this->GetURL());   
   this->RootDirectory = this->RootDirectory + vtksys_stl::string("/");
 
-  this->SetUndoOff();
-  if (removeItems)
-    {
-    /**
-    for (int i=0; i < this->CurrentScene->GetNumberOfItems(); i++) 
-      {
-      this->RemoveItem(i);
-      }
-    this->Modified();
-    ***/
-    this->CurrentScene->RemoveAllItems();
-    }
   vtkMRMLParser* parser = vtkMRMLParser::New();
   parser->SetMRMLScene(this);
+  if (nodeCollection != this->CurrentScene)
+    {
+    parser->SetNodeCollection(nodeCollection);
+    }
   parser->SetFileName(URL.c_str());
   parser->Parse();
   parser->Delete();
@@ -362,7 +374,7 @@ int vtkMRMLScene::Commit(const char* url)
   return 1;
 }
 
-void vtkMRMLScene::AddNode(vtkMRMLNode *n)
+void vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
 {
   //TODO convert URL to Root directory
   //n->SetSceneRootDir("");
@@ -375,6 +387,11 @@ void vtkMRMLScene::AddNode(vtkMRMLNode *n)
 
   this->CurrentScene->vtkCollection::AddItem((vtkObject *)n);
   n->SetScene( this );
+}
+
+void vtkMRMLScene::AddNode(vtkMRMLNode *n)
+{
+  this->AddNodeNoNotify(n);
   this->InvokeEvent(this->NodeAddedEvent, n);
   this->Modified();
 }

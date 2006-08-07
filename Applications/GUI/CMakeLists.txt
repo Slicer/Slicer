@@ -95,6 +95,7 @@ ADD_TEST(Slicer3CLTest3 ${EXECUTABLE_OUTPUT_PATH}/Slicer3 -f ${Slicer3_SOURCE_DI
 ADD_TEST(Slicer3CLTest4 ${EXECUTABLE_OUTPUT_PATH}/Slicer3 --eval "puts testing ,. exit 0")
 ADD_TEST(Slicer3CLTest5 ${EXECUTABLE_OUTPUT_PATH}/Slicer3 --exec "puts testing ,. exit 0")
 ADD_TEST(Slicer3CLTest6 ${EXECUTABLE_OUTPUT_PATH}/Slicer3 --script ${Slicer3_SOURCE_DIR}/Applications/GUI/Testing/TestScript.tcl)
+ADD_TEST(Slicer3CLTest7 ${EXECUTABLE_OUTPUT_PATH}/Slicer3 --script ${Slicer3_SOURCE_DIR}/Applications/GUI/Testing/LoadSceneTest.tcl)
 
 #
 # MRML Tests

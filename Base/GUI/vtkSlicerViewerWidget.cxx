@@ -77,7 +77,7 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
     && (event == vtkMRMLScene::NodeAddedEvent || event == vtkMRMLScene::NodeRemovedEvent ) )
     {
     vtkMRMLNode *node = (vtkMRMLNode*) (callData);
-    if (node->IsA("vtkMRMLModelNode") )
+    if (node != NULL && node->IsA("vtkMRMLModelNode") )
       {
       this->UpdateFromMRML();
       }

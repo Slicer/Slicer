@@ -59,9 +59,12 @@ public:
   
   vtkMRMLScene* GetMRMLScene() {return this->MRMLScene;};
   void SetMRMLScene(vtkMRMLScene* scene) {this->MRMLScene = scene;};
+
+  vtkCollection* GetNodeCollection() {return this->NodeCollection;};
+  void SetNodeCollection(vtkCollection* scene) {this->NodeCollection = scene;};
   
 protected:
-  vtkMRMLParser() {MRMLScene=NULL;};
+  vtkMRMLParser() : MRMLScene(NULL),NodeCollection(NULL){};
   ~vtkMRMLParser() {};
   vtkMRMLParser(const vtkMRMLParser&);
   void operator=(const vtkMRMLParser&);
@@ -71,6 +74,7 @@ protected:
 
 private:
   vtkMRMLScene* MRMLScene;
+  vtkCollection* NodeCollection;
 //BTX
   std::stack< vtkMRMLNode *> NodeStack;
 //ETX

@@ -63,8 +63,14 @@ void vtkMRMLParser::StartElement(const char* tagName, const char** atts)
 
   this->NodeStack.push(node);
 
-  this->MRMLScene->AddNode(node);
-
+  if (this->NodeCollection)
+    {
+    this->NodeCollection->vtkCollection::AddItem((vtkObject *)node);
+    }
+  else
+    {
+    this->MRMLScene->AddNodeNoNotify(node);
+    }
   node->Delete();
 }
 

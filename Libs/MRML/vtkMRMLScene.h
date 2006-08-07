@@ -84,8 +84,12 @@ public:
   const char* GetTagByClassName(const char *className);
 
   // Description:
-  // Add a path to the list.
+  // Add a node to the scene and send NewNode and SceneModified events.
   void AddNode(vtkMRMLNode *n);
+
+  // Description:
+  // Add a node to the scene.
+  void AddNodeNoNotify(vtkMRMLNode *n);
   
   // Description:
   // Remove a path from the list.
@@ -178,7 +182,8 @@ public:
     {
       NodeAddedEvent = 66000,
       NodeRemovedEvent = 66001,
-      NodeModifiedEvent = 66002,
+      NewSceneEvent = 66002,
+      SceneCloseEvent = 66003,
     };
 //ETX
 
@@ -226,7 +231,7 @@ private:
   void RemoveItem(int i) { this->CurrentScene->vtkCollection::RemoveItem(i); this->Modified();};
   int  IsItemPresent(vtkObject *o) { return this->CurrentScene->vtkCollection::IsItemPresent(o);};
   
-  int LoadIntoScene(bool removeItems);
+  int LoadIntoScene(vtkCollection* scene);
 
   unsigned long ErrorCode;
 

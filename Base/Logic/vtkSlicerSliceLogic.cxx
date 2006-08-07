@@ -41,7 +41,6 @@ vtkSlicerSliceLogic::vtkSlicerSliceLogic()
   this->SetLabelOpacity(this->LabelOpacity);
   this->SliceModelNode = NULL;
   this->Name = NULL;
-  this->SliceModelNodeID = NULL;
   this->PlaneSource = NULL;
   this->SliceModelDisplayNode = NULL;
 }
@@ -80,8 +79,6 @@ vtkSlicerSliceLogic::~vtkSlicerSliceLogic()
 
   this->SetName(NULL);
 
-  this->SetSliceModelNodeID(NULL);
-
 }
 
 
@@ -99,14 +96,17 @@ void vtkSlicerSliceLogic::ProcessMRMLEvents()
     {
     vtkMRMLSliceNode *node = vtkMRMLSliceNode::New();
     this->SetSliceNode (node);
+    node->Delete();
     }  
     
   if ( this->SliceNode != NULL && this->MRMLScene->GetNodeByID(this->SliceNode->GetID()) == NULL)
     {
     vtkMRMLSliceNode *node = this->SliceNode;
+    node->Register(this);
     this->SetSliceNode (NULL);
-    this->MRMLScene->AddNode(node);
+    this->MRMLScene->AddNodeNoNotify(node);
     this->SetSliceNode (node);
+    node->UnRegister(this);
     }
 
  
@@ -123,14 +123,17 @@ void vtkSlicerSliceLogic::ProcessMRMLEvents()
     node->SetForegroundVolumeID("None");
     node->SetLabelVolumeID("None");
     this->SetSliceCompositeNode (node);
+    node->Delete();
     }
 
   if ( this->SliceCompositeNode != NULL && this->MRMLScene->GetNodeByID(this->SliceCompositeNode->GetID()) == NULL)
     {
     vtkMRMLSliceCompositeNode *node = this->SliceCompositeNode;
+    node->Register(this);
     this->SetSliceCompositeNode (NULL);
-    this->MRMLScene->AddNode(node);
+    this->MRMLScene->AddNodeNoNotify(node);
     this->SetSliceCompositeNode (node);
+    node->UnRegister(this);
     }
 
   //
