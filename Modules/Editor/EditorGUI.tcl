@@ -186,11 +186,11 @@ proc EditorBuildGUI {this} {
 proc EditorAddGUIObservers {this} {
   $this AddObserverByNumber $::Editor($this,rebuildButton) 10000 
   $this AddObserverByNumber $::Editor($this,volumesCreate) 10000 
-  $this AddObserverByNumber $::Editor($this,paintEnable) 10000 
+  $this AddObserverByNumber [$::Editor($this,paintEnable) GetWidget] 10000 
   $this AddObserverByNumber $::Editor($this,paintLabel) 10001 
   $this AddObserverByNumber $::Editor($this,paintRange) 10001 
-  $this AddObserverByNumber $::Editor($this,paintThreshold) 10000 
-  $this AddObserverByNumber $::Editor($this,paintOver) 10000 
+  $this AddObserverByNumber [$::Editor($this,paintThreshold) GetWidget] 10000 
+  $this AddObserverByNumber [$::Editor($this,paintOver) GetWidget] 10000 
   $this AddObserverByNumber $::Editor($this,paintRadius) 10001 
 }
 
@@ -217,7 +217,7 @@ proc EditorProcessGUIEvents {this caller event} {
         EditorCreateLabelVolume $this
       }
     }
-  } elseif { $caller == $::Editor($this,paintEnable) } {
+  } elseif { $caller == [$::Editor($this,paintEnable) GetWidget] } {
     switch $event {
       "10000" {
         ::PaintSWidget::TogglePaint
