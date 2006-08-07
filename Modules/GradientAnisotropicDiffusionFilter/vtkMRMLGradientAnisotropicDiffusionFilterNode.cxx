@@ -132,15 +132,11 @@ void vtkMRMLGradientAnisotropicDiffusionFilterNode::ReadXMLAttributes(const char
       }
     else if (!strcmp(attName, "InputVolumeRef"))
       {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> this->InputVolumeRef;
+      this->SetInputVolumeRef(attValue);
       }
     else if (!strcmp(attName, "OutputVolumeRef"))
       {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> this->OutputVolumeRef;
+      this->SetOutputVolumeRef(attValue);
       }
     }
 }
