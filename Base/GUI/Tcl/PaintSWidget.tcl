@@ -367,6 +367,8 @@ itcl::body PaintSWidget::paintBrush {} {
     }
 
     for {set column 0} {$column <= $maxColumnSpan} {incr column} {
+
+      # make a rounded i,j,k for this pixel
       foreach v {i j k} {
         set $v [expr int(round($coord($v)))]
       }
@@ -385,19 +387,19 @@ itcl::body PaintSWidget::paintBrush {} {
 
       if { $distanceSquared < $radiusSquared } { 
         # calc ijkToRAS of pixel is less than radius from paint point
-        if { ! $paintOver } {
-          if { [$this getPixel $_layers(label,image) $i $j $k] != 0 } {
-            # if not in paint over mode, don't overwrite a nonzero label
-            continue
-          }
-        }
-        if { $thresholdPaint } {
-          set bg [$this getPixel $_layers(background,image) $i $j $k]
-          if { $bg >= $thresholdMin && $bg <= $thresholdMax } {
+
+        if { (! $paintOver) && ( [$this getPixel $_layers(label,image) $i $j $k] != 0 ) } {
+          # if not in paint over mode, don't overwrite a nonzero label
+        } else {
+          # otherwise, try to do the painting
+          if { $thresholdPaint } {
+            set bg [$this getPixel $_layers(background,image) $i $j $k]
+            if { $bg >= $thresholdMin && $bg <= $thresholdMax } {
+              $this setPixel $_layers(label,image) $i $j $k $paintColor
+            }
+          } else {
             $this setPixel $_layers(label,image) $i $j $k $paintColor
           }
-        } else {
-          $this setPixel $_layers(label,image) $i $j $k $paintColor
         }
       }
 
