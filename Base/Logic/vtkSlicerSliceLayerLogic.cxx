@@ -213,9 +213,6 @@ void vtkSlicerSliceLayerLogic::UpdateTransforms()
 
   if (this->VolumeDisplayNode)
     {
-    this->MapToWindowLevelColors->SetWindow(this->VolumeDisplayNode->GetWindow());
-    this->MapToWindowLevelColors->SetLevel(this->VolumeDisplayNode->GetLevel());
-
       // TODO: update the pipeline with other display values
         //double UpperThreshold;
         //double LowerThreshold;
@@ -237,12 +234,19 @@ void vtkSlicerSliceLayerLogic::UpdateTransforms()
     if ( labelMap ) 
       {
       // a label map bypasses the window/level mapping 
-      this->MapToColors->SetInput( this->Reslice->GetOutput() );
+      //this->MapToColors->SetInput( this->Reslice->GetOutput() );
+
+      // Reset window/level to default so colors go through unchanged
+      this->MapToWindowLevelColors->SetWindow(255.);
+      this->MapToWindowLevelColors->SetLevel(127.5);
       } 
     else
       {
       // a non-label map is windowed first, then mapped through lookup table
-      this->MapToColors->SetInput( this->MapToWindowLevelColors->GetOutput() );
+      //this->MapToColors->SetInput( this->MapToWindowLevelColors->GetOutput() );
+      this->MapToWindowLevelColors->SetWindow(this->VolumeDisplayNode->GetWindow());
+      this->MapToWindowLevelColors->SetLevel(this->VolumeDisplayNode->GetLevel());
+
       }
 
     }

@@ -36,6 +36,8 @@ if { [itcl::find class PaintSWidget] == "" } {
     public variable thresholdMin 1
     public variable thresholdMax 1
     public variable radius 10
+    public variable paintDropper 0
+    public variable paintOver 1
 
     variable _startPosition "0 0 0"
     variable _currentPosition "0 0 0"
@@ -202,6 +204,13 @@ itcl::body PaintSWidget::processEvent { } {
   switch $event {
     "LeftButtonPressEvent" {
       set _actionState "painting"
+      if { $paintDropper } {
+        # in Dropper mode, set the paint color to be the first pixel you touch
+        foreach {x y} [$_interactor GetEventPosition] {}
+        $this queryLayers $x $y
+        set paintColor [$this getPixel $_layers(label,image) \
+          $_layers(label,i) $_layers(label,j) $_layers(label,k)]
+      }
       $sliceGUI SetGUICommandAbortFlag 1
       $sliceGUI SetGrabID $this
       [$_renderWidget GetRenderWindow] HideCursor
@@ -376,6 +385,12 @@ itcl::body PaintSWidget::paintBrush {} {
 
       if { $distanceSquared < $radiusSquared } { 
         # calc ijkToRAS of pixel is less than radius from paint point
+        if { ! $paintOver } {
+          if { [$this getPixel $_layers(label,image) $i $j $k] != 0 } {
+            # if not in paint over mode, don't overwrite a nonzero label
+            continue
+          }
+        }
         if { $thresholdPaint } {
           set bg [$this getPixel $_layers(background,image) $i $j $k]
           if { $bg >= $thresholdMin && $bg <= $thresholdMax } {

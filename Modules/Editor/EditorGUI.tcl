@@ -40,6 +40,7 @@ proc EditorTearDownGUI {this} {
   $::Editor($this,volumesFrame) Delete
   $::Editor($this,paintThreshold) Delete
   $::Editor($this,paintOver) Delete
+  $::Editor($this,paintDropper) Delete
   $::Editor($this,paintRadius) Delete
   $::Editor($this,paintRange) Delete
   $::Editor($this,paintEnable) Delete
@@ -146,12 +147,12 @@ proc EditorBuildGUI {this} {
   pack [$::Editor($this,paintOver) GetWidgetName] \
     -side top -anchor e -fill x -padx 2 -pady 2 
 
-  set ::Editor($this,paintOver) [vtkKWCheckButtonWithLabel New]
-  $::Editor($this,paintOver) SetParent [$::Editor($this,paintFrame) GetFrame]
-  $::Editor($this,paintOver) Create
-  $::Editor($this,paintOver) SetLabelText "Eye Dropper: "
-  $::Editor($this,paintOver) SetBalloonHelpString "Set the label number automatically by sampling the pixel location where the brush stroke starts."
-  pack [$::Editor($this,paintOver) GetWidgetName] \
+  set ::Editor($this,paintDropper) [vtkKWCheckButtonWithLabel New]
+  $::Editor($this,paintDropper) SetParent [$::Editor($this,paintFrame) GetFrame]
+  $::Editor($this,paintDropper) Create
+  $::Editor($this,paintDropper) SetLabelText "Eye Dropper: "
+  $::Editor($this,paintDropper) SetBalloonHelpString "Set the label number automatically by sampling the pixel location where the brush stroke starts."
+  pack [$::Editor($this,paintDropper) GetWidgetName] \
     -side top -anchor e -fill x -padx 2 -pady 2 
 
   set ::Editor($this,paintThreshold) [vtkKWCheckButtonWithLabel New]
@@ -191,6 +192,7 @@ proc EditorAddGUIObservers {this} {
   $this AddObserverByNumber $::Editor($this,paintRange) 10001 
   $this AddObserverByNumber [$::Editor($this,paintThreshold) GetWidget] 10000 
   $this AddObserverByNumber [$::Editor($this,paintOver) GetWidget] 10000 
+  $this AddObserverByNumber [$::Editor($this,paintDropper) GetWidget] 10000 
   $this AddObserverByNumber $::Editor($this,paintRadius) 10001 
 }
 
@@ -229,6 +231,38 @@ proc EditorProcessGUIEvents {this caller event} {
         ::PaintSWidget::ConfigureAll -paintColor [$::Editor($this,paintLabel) GetValue]
       }
     }
+  } elseif { $caller == $::Editor($this,paintRadius) } {
+    switch $event {
+      "10001" {
+        ::PaintSWidget::ConfigureAll -radius [$::Editor($this,paintRadius) GetValue]
+      }
+    }
+  } elseif { $caller == [$::Editor($this,paintOver) GetWidget] } {
+    switch $event {
+      "10000" {
+        ::PaintSWidget::ConfigureAll -paintOver [[$::Editor($this,paintOver) GetWidget] GetSelectedState]
+      }
+    }
+  } elseif { $caller == [$::Editor($this,paintDropper) GetWidget] } {
+    switch $event {
+      "10000" {
+        ::PaintSWidget::ConfigureAll -paintDropper [[$::Editor($this,paintDropper) GetWidget] GetSelectedState]
+      }
+    }
+  } elseif { $caller == [$::Editor($this,paintThreshold) GetWidget] } {
+    switch $event {
+      "10000" {
+        ::PaintSWidget::ConfigureAll -thresholdPaint [[$::Editor($this,paintThreshold) GetWidget] GetSelectedState]
+      }
+    }
+  } elseif { $caller == $::Editor($this,paintRange) } {
+    switch $event {
+      "10001" {
+        foreach {lo hi} [$::Editor($this,paintRange) GetRange] {}
+        ::PaintSWidget::ConfigureAll -thresholdMin $lo -thresholdMax $hi
+        puts "::PaintSWidget::ConfigureAll -thresholdMin $lo -thresholdMax $hi"
+      }
+    }
   }
 }
 
@@ -249,11 +283,17 @@ proc EditorCreateLabelVolume {this} {
     return;
   }
 
+  # create a display node
+  set labelDisplayNode [vtkMRMLVolumeDisplayNode New]
+  [[$this GetLogic] GetMRMLScene] AddNode $labelDisplayNode
+
+  # create a volume node as copy of source volume
   set labelNode [vtkMRMLScalarVolumeNode New]
   $labelNode Copy $volumeNode
   $labelNode SetLabelMap 1
   $labelNode SetName "[$volumeNode GetName]-label"
   $labelNode SetID ""  ;# clear ID so a new one is generated
+  $labelNode SetAndObserveDisplayNodeID [$labelDisplayNode GetID]
 
   # make an image data of the same size and shape as the input volume,
   # but filled with zeros
@@ -267,14 +307,34 @@ proc EditorCreateLabelVolume {this} {
   $labelNode SetAndObserveImageData [$thresh GetOutput]
   $thresh Delete
 
+  # add the label volume to the scene
   [[$this GetLogic] GetMRMLScene] AddNode $labelNode
 
+  # make the source node the active background, and the label node the active label
   set selectionNode [[[$this GetLogic] GetApplicationLogic]  GetSelectionNode]
+  $selectionNode SetActiveVolumeID [$volumeNode GetID]
   $selectionNode SetActiveLabelVolumeID [$labelNode GetID]
   [[$this GetLogic] GetApplicationLogic]  PropagateVolumeSelection
 
   $labelNode Delete
 
+  # TODO: this is just so I can see the results for now
+  EditorSetRandomLabelColormap 
 }
 
+proc EditorSetRandomLabelColormap {} {
+
+  # TODO: once the mrml label map functionality is set up this will migrate
+  # into the vtkSlicerVolumesDisplay -- the label map should be part of the DisplayNode
+  set lut [vtkLookupTable New]
+  $lut SetTableValue 0  0 0 0 0
+  $lut SetRange 0 255
+  for {set i 1} {$i < 256} {incr i} {
+    $lut SetTableValue $i [expr rand()] [expr rand()] [expr rand()] 1.0
+  }
+  foreach g {0 1 2} {
+    [[[$::slicer3::ApplicationGUI GetMainSliceLogic$g] GetLabelLayer] GetMapToColors] SetLookupTable $lut
+  }
+  $lut Delete
+}
 
