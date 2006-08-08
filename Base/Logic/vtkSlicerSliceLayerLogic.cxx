@@ -45,6 +45,7 @@ vtkSlicerSliceLayerLogic::vtkSlicerSliceLayerLogic()
   this->Reslice->SetOutputSpacing( 1, 1, 1 );
   this->Reslice->SetOutputDimensionality( 2 );
 
+  // non-label maps go through window/level before color map
   this->MapToWindowLevelColors->SetInput( this->Reslice->GetOutput() );
   this->MapToColors->SetInput( this->MapToWindowLevelColors->GetOutput() );
 
@@ -157,12 +158,12 @@ void vtkSlicerSliceLayerLogic::UpdateTransforms()
   dimensions[1] = 100;
   dimensions[2] = 100;
 
-  vtkMatrix4x4 *m = vtkMatrix4x4::New();
-  m->Identity();
+  vtkMatrix4x4 *xyToIJK = vtkMatrix4x4::New();
+  xyToIJK->Identity();
 
   if (this->SliceNode)
     {
-    vtkMatrix4x4::Multiply4x4(this->SliceNode->GetXYToRAS(), m, m);
+    vtkMatrix4x4::Multiply4x4(this->SliceNode->GetXYToRAS(), xyToIJK, xyToIJK);
     this->SliceNode->GetDimensions(dimensions);
     }
 
@@ -180,14 +181,15 @@ void vtkSlicerSliceLayerLogic::UpdateTransforms()
         {
         vtkMatrix4x4 *rasToRAS = vtkMatrix4x4::New();
         transformNode->GetMatrixTransformToWorld( rasToRAS );
-        vtkMatrix4x4::Multiply4x4(rasToRAS, m, m); 
+        rasToRAS->Invert();
+        vtkMatrix4x4::Multiply4x4(rasToRAS, xyToIJK, xyToIJK); 
         rasToRAS->Delete();
         }
       }
 
     vtkMatrix4x4 *rasToIJK = vtkMatrix4x4::New();
     this->VolumeNode->GetRASToIJKMatrix(rasToIJK);
-    vtkMatrix4x4::Multiply4x4(rasToIJK, m, m); 
+    vtkMatrix4x4::Multiply4x4(rasToIJK, xyToIJK, xyToIJK); 
     rasToIJK->Delete();
 
 
@@ -232,10 +234,21 @@ void vtkSlicerSliceLayerLogic::UpdateTransforms()
       this->Reslice->SetInterpolationModeToNearestNeighbor();
       }
 
+    if ( labelMap ) 
+      {
+      // a label map bypasses the window/level mapping 
+      this->MapToColors->SetInput( this->Reslice->GetOutput() );
+      } 
+    else
+      {
+      // a non-label map is windowed first, then mapped through lookup table
+      this->MapToColors->SetInput( this->MapToWindowLevelColors->GetOutput() );
+      }
+
     }
 
-  this->XYToIJKTransform->SetMatrix( m );
-  m->Delete();
+  this->XYToIJKTransform->SetMatrix( xyToIJK );
+  xyToIJK->Delete();
   this->Reslice->SetResliceTransform( this->XYToIJKTransform );
 
   this->Reslice->SetOutputExtent( 0, dimensions[0]-1,
