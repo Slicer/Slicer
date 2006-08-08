@@ -494,10 +494,12 @@ void vtkSlicerSliceLogic::CreateSliceModel()
 
   if (this->SliceModelNode != NULL && this->MRMLScene->GetNodeByID( this->GetSliceModelNode()->GetID() ) == NULL )
     {
+    this->SetMRMLScene(this->GetMRMLScene());
     this->MRMLScene->AddNode(this->SliceModelDisplayNode);
     this->MRMLScene->AddNode(this->SliceModelNode);
     this->SliceModelNode->SetAndObserveDisplayNodeID(this->SliceModelDisplayNode->GetID());
     this->SliceModelDisplayNode->SetAndObserveTextureImageData(this->GetImageData());
+    this->SetAndObserveMRMLScene(this->GetMRMLScene());
     }
 
 }

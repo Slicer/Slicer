@@ -98,7 +98,9 @@ void vtkSlicerApplicationLogic::ProcessMRMLEvents()
     }
   if (this->MRMLScene->GetNodeByID(this->SelectionNode->GetID()) == NULL)
     {
+    this->SetMRMLScene(this->GetMRMLScene());
     this->MRMLScene->AddNode(this->SelectionNode);
+    this->SetAndObserveMRMLScene(this->GetMRMLScene());
     }
 }
 
