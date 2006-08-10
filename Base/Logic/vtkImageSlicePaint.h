@@ -36,6 +36,7 @@
 #include "vtkImageInPlaceFilter.h"
 
 #include "vtkImageData.h"
+#include "vtkMatrix4x4.h"
 
 class VTK_SLICER_BASE_LOGIC_EXPORT vtkImageSlicePaint : public vtkObject
 {
@@ -57,6 +58,20 @@ public:
   vtkGetVector3Macro(BottomRight, int);
 
   // Description:
+  // The center and radius of the brush are in world space 
+  // - ijk coordinates are mapped to work to see of pixels
+  //   are within the brush before applying the threshold/paint operation
+  vtkSetVector3Macro(BrushCenter, double);
+  vtkGetVector3Macro(BrushCenter, double);
+  vtkSetMacro(BrushRadius, double);
+  vtkGetMacro(BrushRadius, double);
+
+  // Description:
+  // The reference image for threshold calculations
+  vtkSetObjectMacro(BackgroundImage, vtkImageData);
+  vtkGetObjectMacro(BackgroundImage, vtkImageData);
+
+  // Description:
   // The place to store data pulled out
   vtkSetObjectMacro(WorkingImage, vtkImageData);
   vtkGetObjectMacro(WorkingImage, vtkImageData);
@@ -70,8 +85,47 @@ public:
   // The place to get data to be replaced
   vtkSetObjectMacro(ReplaceImage, vtkImageData);
   vtkGetObjectMacro(ReplaceImage, vtkImageData);
-  
+
+  // Description:
+  // matrices to map from voxel coordinates (IJK) to world
+  vtkSetObjectMacro(BackgroundIJKToWorld, vtkMatrix4x4);
+  vtkGetObjectMacro(BackgroundIJKToWorld, vtkMatrix4x4);
+  vtkSetObjectMacro(WorkingIJKToWorld, vtkMatrix4x4);
+  vtkGetObjectMacro(WorkingIJKToWorld, vtkMatrix4x4);
+
+  // Description:
+  // PaintLabel is the value that gets painted into the Working Image
+  vtkSetMacro(PaintLabel, double); 
+  vtkGetMacro(PaintLabel, double); 
+
+  // Description:
+  // PaintOver mode on means that the pixel value should be set in 
+  // the working image even if it is non-zero. 
+  vtkSetMacro(PaintOver, int); 
+  vtkGetMacro(PaintOver, int); 
+
+  // Description:
+  // ThresholdPaint mode on means check the background value and
+  // only set the label map if the background is inside the range
+  // (also obeys the PaintOver flag)
+  vtkSetMacro(ThresholdPaint, int); 
+  vtkGetMacro(ThresholdPaint, int); 
+
+  // Description:
+  // Min/Max for the ThresholdPaint mode
+  vtkSetVector2Macro(ThresholdPaintRange, double);
+  vtkGetVector2Macro(ThresholdPaintRange, double);
+
+  // Description:
+  // Apply the paint operation
+  void Paint();
+ 
+  // Description:
+  // Extract the current paint region to the ExtractImage
   void Extract();
+
+  // Description:
+  // Replace the current paint region with the ReplaceImage
   void Replace();
 
 protected:
@@ -83,9 +137,20 @@ protected:
   int BottomLeft[3];
   int BottomRight[3];
 
+  vtkImageData *BackgroundImage;
   vtkImageData *WorkingImage;
   vtkImageData *ExtractImage;
   vtkImageData *ReplaceImage;
+
+  vtkMatrix4x4 *BackgroundIJKToWorld;
+  vtkMatrix4x4 *WorkingIJKToWorld;
+
+  double PaintLabel;
+  double BrushCenter[3]; // in World Coordinates
+  double BrushRadius;
+  int ThresholdPaint;
+  double ThresholdPaintRange[2];
+  int PaintOver;
 
 private:
   vtkImageSlicePaint(const vtkImageSlicePaint&);  // Not implemented.

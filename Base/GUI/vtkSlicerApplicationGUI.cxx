@@ -2214,7 +2214,7 @@ void vtkSlicerApplicationGUI::BuildSliceControlGUIPanel ( )
         this->SliceOpacityScale->Create ( );
         this->SliceOpacityScale->SetRange ( 0.0, 1.0 );
         this->SliceOpacityScale->SetResolution ( 0.01 );
-        this->SliceOpacityScale->SetValue ( 0.0 );
+        this->SliceOpacityScale->SetValue ( 1.0 );
         this->SliceOpacityScale->SetLength ( 120 );
         this->SliceOpacityScale->SetOrientationToHorizontal ( );
         this->SliceOpacityScale->ValueVisibilityOff ( );

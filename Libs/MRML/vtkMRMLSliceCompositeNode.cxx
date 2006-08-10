@@ -55,8 +55,7 @@ vtkMRMLSliceCompositeNode::vtkMRMLSliceCompositeNode()
   this->ForegroundVolumeID = NULL;
   this->LabelVolumeID = NULL;
   this->ForegroundOpacity = 0.0; // start by showing only the background volume
-  // TODO: LabelOpacity should be 1.0 by default once the 'None' volume is fixed
-  this->LabelOpacity = 0.0; // Show the label if there is one
+  this->LabelOpacity = 1.0; // Show the label if there is one
 }
 
 //----------------------------------------------------------------------------

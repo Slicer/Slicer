@@ -32,8 +32,21 @@ void vtkImageSlicePaint::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "BottomLeft : " << this->BottomLeft[0] << " " << this->BottomLeft[1] << " " << this->BottomLeft[2] << "\n";
   os << indent << "BottomRight : " << this->BottomRight[0] << " " << this->BottomRight[1] << " " << this->BottomRight[2] << "\n";
 
-  os << indent << "ExtractImage: " << this->GetReplaceImage() << "\n";
+  os << indent << "PaintLabel: " << this->GetPaintLabel() << "\n";
+  os << indent << "BrushCenter : " << this->BrushCenter[0] << " " << this->BrushCenter[1] << " " << this->BrushCenter[2] << "\n";
+  os << indent << "BrushRadius: " << this->GetBrushRadius() << "\n";
+
+  os << indent << "BackgroundImage: " << this->GetBackgroundImage() << "\n";
+  os << indent << "WorkingImage: " << this->GetWorkingImage() << "\n";
+  os << indent << "ExtractImage: " << this->GetExtractImage() << "\n";
   os << indent << "ReplaceImage: " << this->GetReplaceImage() << "\n";
+
+  os << indent << "BackgroundIJKToWorld: " << this->GetBackgroundIJKToWorld() << "\n";
+  os << indent << "WorkingIJKToWorld: " << this->GetWorkingIJKToWorld() << "\n";
+
+  os << indent << "ThresholdPaint: " << this->GetThresholdPaint() << "\n";
+  os << indent << "ThresholdPaintRange: " << this->GetThresholdPaintRange()[0] << ", " <<  this->GetThresholdPaintRange()[1] << "\n";
+  os << indent << "PaintOver: " << this->GetPaintOver() << "\n";
 }
 
 //----------------------------------------------------------------------------
@@ -44,15 +57,28 @@ vtkImageSlicePaint::vtkImageSlicePaint()
     this->TopLeft[i] = this->TopLeft[i] = this->BottomLeft[i] = this->BottomRight[i] = 0;
     }
   
+  this->BackgroundImage = NULL;
   this->WorkingImage = NULL;
   this->ExtractImage = NULL;
   this->ReplaceImage = NULL;
+
+  this->PaintLabel = 1;
+  this->BrushCenter[0] = this->BrushCenter[1] = this->BrushCenter[2] = 0.0;
+  this->BrushRadius = 0;
+
+  this->BackgroundIJKToWorld = NULL;
+  this->WorkingIJKToWorld = NULL;
+
+  this->ThresholdPaint = 0;
+  this->ThresholdPaintRange[0] = 0;
+  this->ThresholdPaintRange[1] = VTK_DOUBLE_MAX;
+  this->PaintOver = 1;
 }
 
 
 
 template <class T>
-void vtkImageSlicePaintExtract(vtkImageSlicePaint *self, T *ptr)
+void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *ptr)
 {
   int deltaTopRow[3];
   int deltaBottomRow[3];
@@ -92,30 +118,41 @@ void vtkImageSlicePaintExtract(vtkImageSlicePaint *self, T *ptr)
       }
     }
 
-  // Get the point to the extact image if available
+  if ( maxRowDelta == 0 || maxColumnDelta == 0 )
+    {
+    // the region is a singularity - can't draw anything
+    //vtkErrorWithObjectMacro (self, << "a delta is zero: maxRowDelta = " << maxRowDelta << ", maxColumnDelta = " << maxColumnDelta << "\n" );
+    return;
+    }
+
+  // Get the pointer to the extact image if available
   vtkImageData *extractImage = self->GetExtractImage();
   T *extractPtr = NULL;
+  int extracting = 0;
   if ( extractImage != NULL )
     {
     extractImage->SetDimensions(maxColumnDelta, maxRowDelta, 1);
     extractImage->SetScalarType( self->GetWorkingImage()->GetScalarType() );
     extractImage->AllocateScalars();
-    extractPtr = (T *)extractImage->GetScalarPointer();
+    extracting = 1;
     }
 
+
+  double radiusSquared = self->GetBrushRadius() * self->GetBrushRadius();
   double dIJKdRStart[3];
   double dIJKdREnd[3];
   double dIJKdC[3];
   double rowStart[3];
   double rowEnd[3];
+  T label = (T) self->GetPaintLabel();
   
   // now calculate the change in IJK coordinates per row step
   for (int i = 0; i < 3; i++)
     {
     rowStart[i] = self->GetTopLeft()[i];
     rowEnd[i] = self->GetTopRight()[i];
-    dIJKdRStart[i] = deltaLeftColumn[i] / maxColumnDelta;
-    dIJKdREnd[i] = deltaRightColumn[i] / maxColumnDelta;
+    dIJKdRStart[i] = deltaLeftColumn[i] / maxRowDelta;
+    dIJKdREnd[i] = deltaRightColumn[i] / maxRowDelta;
     }
 
   // Now loop across the columns and across the rows
@@ -123,6 +160,7 @@ void vtkImageSlicePaintExtract(vtkImageSlicePaint *self, T *ptr)
   double ijk[3];
   int intIJK[3];
   T *workingPtr;
+  T oldValue;
   for (int row = 0; row <= maxRowDelta; row++)
     {
     for (int i = 0; i < 3; i++)
@@ -132,12 +170,7 @@ void vtkImageSlicePaintExtract(vtkImageSlicePaint *self, T *ptr)
       }
     for (int column = 0; column <= maxColumnDelta; column++)
       {
-      extractPtr = (T *)(self->GetWorkingImage()->GetScalarPointer(column, row, 0));
-      if ( extractPtr ) 
-        {
-        *extractPtr = (T) 100; // FOR NOW...
-        //*extractPtr = (T)(value);
-        }
+
       for (int i = 0; i < 3; i++)
         {
         if ( ijk[i] - floor(ijk[i]) > 0.5 )
@@ -153,26 +186,62 @@ void vtkImageSlicePaintExtract(vtkImageSlicePaint *self, T *ptr)
       workingPtr = (T *)(self->GetWorkingImage()->GetScalarPointer(intIJK));
       if ( workingPtr ) 
         {
-        *workingPtr = (T) 100; // FOR NOW...
+        oldValue = *workingPtr;
+
+
+        *workingPtr = label; // TODO: need to work on multicomponent images
+
+
+        }
+      else
+        {
+        vtkErrorWithObjectMacro (self, 
+          << "can't get working image pointer for " 
+          << intIJK[0] << " " << intIJK[1] << " " << intIJK[2] << "\n");
+        return; // we got out of the region somehow and there will be error messages...
         }
 
+      if ( extracting )
+        {
+        extractPtr = (T *)(self->GetExtractImage()->GetScalarPointer(column, row, 0));
+        if ( extractPtr ) 
+          {
+          *extractPtr = oldValue;
+          }
+        else
+          {
+          vtkErrorWithObjectMacro (self, 
+            << "can't get extract image pointer for " << row << " " << column << "\n");
+          return; // we got out of the region somehow and there will be error messages...
+          }
+
+        }
+
+
+      // update the ijk index for the next column
       for (int i = 0; i < 3; i++)
         {
         ijk[i] += dIJKdC[i];
         }
       }
+
+    // update the ijk index for the next row
     for (int i = 0; i < 3; i++)
       {
       rowStart[i] += dIJKdRStart[i];
       rowEnd[i] += dIJKdREnd[i];
       }
-    
     }
-  self->Modified();
+
+  self->GetWorkingImage()->Modified();
+  if (self->GetExtractImage())
+    {
+    self->GetExtractImage()->Modified();
+    }
 }
 
 //----------------------------------------------------------------------------
-void vtkImageSlicePaint::Extract()
+void vtkImageSlicePaint::Paint()
 {
   void *ptr = NULL;
   
@@ -186,7 +255,7 @@ void vtkImageSlicePaint::Extract()
   switch (this->GetWorkingImage()->GetScalarType())
     {
     vtkTemplateMacro( 
-      vtkImageSlicePaintExtract (this, (VTK_TT *)ptr ) );
+      vtkImageSlicePaintPaint (this, (VTK_TT *)ptr ) );
     default: 
       {
       vtkErrorMacro(<< "Execute: Unknown ScalarType\n");
@@ -197,8 +266,14 @@ void vtkImageSlicePaint::Extract()
 }
 
 //----------------------------------------------------------------------------
-void vtkImageSlicePaint::Replace()
+void vtkImageSlicePaint::Extract()
 {
+  // TODO: this will pull out the image to save
 }
 
+//----------------------------------------------------------------------------
+void vtkImageSlicePaint::Replace()
+{
+  // TODO: this will put the image back into the volume
+}
 
