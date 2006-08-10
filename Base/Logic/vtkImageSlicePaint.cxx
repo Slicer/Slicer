@@ -54,11 +54,11 @@ vtkImageSlicePaint::vtkImageSlicePaint()
 template <class T>
 void vtkImageSlicePaintExtract(vtkImageSlicePaint *self, T *ptr)
 {
-  double deltaTopRow[3];
-  double deltaBottomRow[3];
-  double deltaRightColumn[3];
-  double deltaLeftColumn[3];
-  double maxRowDelta = 0, maxColumnDelta = 0;
+  int deltaTopRow[3];
+  int deltaBottomRow[3];
+  int deltaRightColumn[3];
+  int deltaLeftColumn[3];
+  int maxRowDelta = 0, maxColumnDelta = 0;
   int maxRowIndex, maxColumnIndex;
 
   // first get the width and height of the extracted region
@@ -67,27 +67,27 @@ void vtkImageSlicePaintExtract(vtkImageSlicePaint *self, T *ptr)
   for (int i = 0; i < 3; i++)
     {
     deltaTopRow[i] = self->GetTopRight()[i] - self->GetTopLeft()[i];
-    if ( fabs(deltaTopRow[i]) > maxRowDelta )
+    if ( abs(deltaTopRow[i]) > maxRowDelta )
       {
-      maxRowDelta = fabs(deltaTopRow[i]);
+      maxRowDelta = abs(deltaTopRow[i]);
       maxRowIndex = i;
       }
     deltaBottomRow[i] = self->GetBottomRight()[i] - self->GetBottomLeft()[i];
-    if ( fabs(deltaBottomRow[i]) > maxRowDelta )
+    if ( abs(deltaBottomRow[i]) > maxRowDelta )
       {
-      maxRowDelta = fabs(deltaBottomRow[i]);
+      maxRowDelta = abs(deltaBottomRow[i]);
       maxRowIndex = i;
       }
     deltaLeftColumn[i] = self->GetBottomLeft()[i] - self->GetTopLeft()[i];
-    if ( fabs(deltaLeftColumn[i]) > maxColumnDelta )
+    if ( abs(deltaLeftColumn[i]) > maxColumnDelta )
       {
-      maxColumnDelta = fabs(deltaLeftColumn[i]);
+      maxColumnDelta = abs(deltaLeftColumn[i]);
       maxColumnIndex = i;
       }
     deltaRightColumn[i] = self->GetBottomRight()[i] - self->GetTopRight()[i];
-    if ( fabs(deltaRightColumn[i]) > maxColumnDelta )
+    if ( abs(deltaRightColumn[i]) > maxColumnDelta )
       {
-      maxColumnDelta = fabs(deltaRightColumn[i]);
+      maxColumnDelta = abs(deltaRightColumn[i]);
       maxColumnIndex = i;
       }
     }
@@ -142,11 +142,11 @@ void vtkImageSlicePaintExtract(vtkImageSlicePaint *self, T *ptr)
         {
         if ( ijk[i] - floor(ijk[i]) > 0.5 )
           {
-          intIJK[i] = floor(ijk[i]) + 1;
+          intIJK[i] = static_cast <int> (floor(ijk[i]) + 1);
           }
         else
           {
-          intIJK[i] = floor(ijk[i]);
+          intIJK[i] = static_cast<int> (floor(ijk[i]));
           }
         }
 
