@@ -122,7 +122,6 @@ void vtkImageSlicePaintExtract(vtkImageSlicePaint *self, T *ptr)
   // and fill in each pixel as we go
   double ijk[3];
   int intIJK[3];
-  T *ptr;
   T *workingPtr;
   for (int row = 0; row <= maxRowDelta; row++)
     {
@@ -133,11 +132,11 @@ void vtkImageSlicePaintExtract(vtkImageSlicePaint *self, T *ptr)
       }
     for (int column = 0; column <= maxColumnDelta; column++)
       {
-      ptr = (T *)(self->GetWorkingImage()->GetScalarPointer(column, row, 0));
-      if ( ptr ) 
+      extractPtr = (T *)(self->GetWorkingImage()->GetScalarPointer(column, row, 0));
+      if ( extractPtr ) 
         {
-        *ptr = (T) 100; // FOR NOW...
-        //*ptr = (T)(value);
+        *extractPtr = (T) 100; // FOR NOW...
+        //*extractPtr = (T)(value);
         }
       for (int i = 0; i < 3; i++)
         {
@@ -155,7 +154,6 @@ void vtkImageSlicePaintExtract(vtkImageSlicePaint *self, T *ptr)
       if ( workingPtr ) 
         {
         *workingPtr = (T) 100; // FOR NOW...
-        //*ptr = (T)(value);
         }
 
       for (int i = 0; i < 3; i++)
