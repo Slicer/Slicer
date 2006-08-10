@@ -12,6 +12,9 @@ SET(SlicerBaseLogic_SRCS
   vtkSlicerSliceLayerLogic.cxx 
   vtkSlicerVolumesLogic.cxx 
   vtkSlicerModelsLogic.cxx 
+  # slicer's vtk extensions
+  vtkImageReplace.cxx 
+  vtkImageSlicePaint.cxx 
 )
 
 # Abstract/pure virtual classes
