@@ -67,27 +67,27 @@ void vtkImageSlicePaintExtract(vtkImageSlicePaint *self, T *ptr)
   for (int i = 0; i < 3; i++)
     {
     deltaTopRow[i] = self->GetTopRight()[i] - self->GetTopLeft()[i];
-    if ( abs(deltaTopRow[i]) > maxRowDelta )
+    if ( fabs(deltaTopRow[i]) > maxRowDelta )
       {
-      maxRowDelta = abs(deltaTopRow[i]);
+      maxRowDelta = fabs(deltaTopRow[i]);
       maxRowIndex = i;
       }
     deltaBottomRow[i] = self->GetBottomRight()[i] - self->GetBottomLeft()[i];
-    if ( abs(deltaBottomRow[i]) > maxRowDelta )
+    if ( fabs(deltaBottomRow[i]) > maxRowDelta )
       {
-      maxRowDelta = abs(deltaBottomRow[i]);
+      maxRowDelta = fabs(deltaBottomRow[i]);
       maxRowIndex = i;
       }
     deltaLeftColumn[i] = self->GetBottomLeft()[i] - self->GetTopLeft()[i];
-    if ( abs(deltaLeftColumn[i]) > maxColumnDelta )
+    if ( fabs(deltaLeftColumn[i]) > maxColumnDelta )
       {
-      maxColumnDelta = abs(deltaLeftColumn[i]);
+      maxColumnDelta = fabs(deltaLeftColumn[i]);
       maxColumnIndex = i;
       }
     deltaRightColumn[i] = self->GetBottomRight()[i] - self->GetTopRight()[i];
-    if ( abs(deltaRightColumn[i]) > maxColumnDelta )
+    if ( fabs(deltaRightColumn[i]) > maxColumnDelta )
       {
-      maxColumnDelta = abs(deltaRightColumn[i]);
+      maxColumnDelta = fabs(deltaRightColumn[i]);
       maxColumnIndex = i;
       }
     }
