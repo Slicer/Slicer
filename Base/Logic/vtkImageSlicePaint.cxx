@@ -58,7 +58,7 @@ void vtkImageSlicePaintExtract(vtkImageSlicePaint *self, T *ptr)
   double deltaBottomRow[3];
   double deltaRightColumn[3];
   double deltaLeftColumn[3];
-  int maxRowDelta = 0, maxColumnDelta = 0;
+  double maxRowDelta = 0, maxColumnDelta = 0;
   int maxRowIndex, maxColumnIndex;
 
   // first get the width and height of the extracted region
