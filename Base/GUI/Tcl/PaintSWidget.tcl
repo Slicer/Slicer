@@ -332,10 +332,16 @@ itcl::body PaintSWidget::paintBrush {} {
   # - assume uniform scaling between XY and RAS
   set xyToRAS [$_sliceNode GetXYToRAS]
   set brushCenter [lrange [$xyToRAS MultiplyPoint $x $y 0 1] 0 2]
-  set brushWorld [lrange [$xyToRAS MultiplyPoint $radius $radius 0 0] 0 2]
-  foreach {brx bry brz} $brushWorld {}
-  set brushRadius [expr sqrt( ($brx * $brx) + ($bry * $bry) + ($brz * $brz) ) ]
-  puts "brushWorld $brushWorld"
+  set worldScale [lrange [$xyToRAS MultiplyPoint 1 1 1 0] 0 2]
+  set scale 1
+  foreach c $worldScale {
+    if { $c != 1 } { 
+      set scale $c
+      break
+    }
+  }
+  set brushRadius [expr $scale * $radius]
+  puts "worldScale $worldScale"
   puts "radius $brushRadius"
 
   #

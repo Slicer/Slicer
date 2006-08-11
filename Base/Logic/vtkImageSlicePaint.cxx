@@ -235,33 +235,31 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *ptr)
             {
             // don't write 
             }
-          else
+          else // okay to paint 
             {
             if ( thresholdPaint )
               {
               double bgIJK[3];
               int intbgIJK[3];
+
+              // get the background pixel
               transform3(backgroundWorldToIJK, workingWorld, bgIJK);
-              for (int i = 0; i < 3; i++)
-                {
-                intbgIJK[i] = paintRound(bgIJK[i]);
-                }
+              for (int i = 0; i < 3; i++) { intbgIJK[i] = paintRound(bgIJK[i]); }
               T *bgPtr = (T *) background->GetScalarPointer(intbgIJK);
+
               if ( *bgPtr > thresholdPaintRange[0] && *bgPtr < thresholdPaintRange[1] )
                 {
                 *workingPtr = label; // TODO: need to work on multicomponent images
-                vtkDebugWithObjectMacro(self, << "painting " << intbgIJK[0] << " " << intbgIJK[1] << " " << intbgIJK[2] << "\n");
-                vtkDebugWithObjectMacro(self, << "row " << row << " " << "column " << " " << column << "\n");
                 }
               }
-            else
+            else // Not in thresholdPaint
               {
               *workingPtr = label; // TODO: need to work on multicomponent images
               }
             }
           }
         }
-      else
+      else  // working pointer was null
         {
         vtkErrorWithObjectMacro (self, 
           << "can't get working image pointer for " 
