@@ -341,8 +341,6 @@ itcl::body PaintSWidget::paintBrush {} {
     }
   }
   set brushRadius [expr $scale * $radius]
-  puts "worldScale $worldScale"
-  puts "radius $brushRadius"
 
   #
   # set up the painter class and let 'r rip!

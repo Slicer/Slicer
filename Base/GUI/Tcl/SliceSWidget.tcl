@@ -157,16 +157,18 @@ itcl::body SliceSWidget::processEvent { } {
           # Zoom
           #
           set deltay [expr $y - [lindex $_actionStartXY 1]]
-          # set h [$_renderWidget GetHeight] -- TODO: does not work!
           set tkwindow [$_renderWidget  GetWidgetName]
           set h [winfo height $tkwindow]
           set percent [expr ($h + $deltay) / (1.0 * $h)]
+
+          # the factor operation is so 'z' isn't changed and the 
+          # slider can still move through the full range
           set newFOV ""
-          foreach f $_actionStartFOV {
-            # TODO: the dimension corresponding to 'z' shouldn't be changed
-            lappend newFOV [expr $f * $percent]
+          foreach f $_actionStartFOV factor "$percent $percent 1" {
+            lappend newFOV [expr $f * $factor]
           }
           eval $_sliceNode SetFieldOfView $newFOV
+
           $_sliceNode UpdateMatrices
           $sliceGUI SetGUICommandAbortFlag 1
         }
@@ -252,19 +254,72 @@ itcl::body SliceSWidget::processEvent { } {
         "p" {
           PaintSWidget::TogglePaint
         }
+        "f" {
+          #
+          # fit the view to the background volume
+          # - figure out the image dimensions mapped to view space
+          # - set the field of view to include the full dimensions
+          # - reset the pan/zoom/slice to origin
+          #
+          set ijkToRAS [vtkMatrix4x4 New]
+          set dims [$_layers(background,image) GetDimensions]
+          $_layers(background,node) GetIJKToRASMatrix $ijkToRAS
+          set rasDims [eval $ijkToRAS MultiplyPoint $dims 0]
+          $ijkToRAS Delete
+
+          set rasToSlice [vtkMatrix4x4 New]
+          $rasToSlice DeepCopy [$_sliceNode GetSliceToRAS]
+          foreach r {0 1 2} {$rasToSlice SetElement $r 3  0}
+          $rasToSlice Invert
+          set sliceDims [eval $rasToSlice MultiplyPoint $rasDims ]
+          $rasToSlice Delete
+
+
+          set absSliceDims ""
+          foreach d $sliceDims {
+            lappend absSliceDims [expr abs($d)]
+          }
+
+          set tkwindow [$_renderWidget  GetWidgetName]
+          set w [winfo width $tkwindow]
+          set h [winfo height $tkwindow]
+          set aspect [expr $w / ($h * 1.0)]
+          foreach {fx fy fz fw} $absSliceDims {}
+          if { $w > $h } {
+            set fx [expr $fx * $aspect]
+          } else {
+            set fy [expr $fy / $aspect]
+          }
+          $_sliceNode SetFieldOfView $fx $fy $fz
+
+          # reset to origin
+          $o(scratchMatrix) DeepCopy [$_sliceNode GetSliceToRAS]
+          foreach i {0 1 2} {
+            $o(scratchMatrix) SetElement $i 3  0
+          }
+          [$_sliceNode GetSliceToRAS] DeepCopy $o(scratchMatrix)
+
+          $_sliceNode UpdateMatrices
+          $sliceGUI SetGUICommandAbortFlag 1
+        }
+        default {
+          puts "[$_interactor GetKeyCode]"
+        }
       }
     }
     "KeyReleaseEvent" { 
     }
     "CharEvent" {
-      puts -nonewline "char event [$_interactor GetKeyCode]"
-      if { [$_interactor GetControlKey] } {
-        puts -nonewline " with control"
+      if { 0 } { 
+        puts -nonewline "char event [$_interactor GetKeyCode]"
+        if { [$_interactor GetControlKey] } {
+          puts -nonewline " with control"
+        }
+        if { [$_interactor GetShiftKey] } {
+          puts -nonewline " with shift"
+        }
+        puts ""
       }
-      if { [$_interactor GetShiftKey] } {
-        puts -nonewline " with shift"
-      }
-      puts ""
     }
     "ExitEvent" { }
 
