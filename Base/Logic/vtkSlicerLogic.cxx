@@ -34,6 +34,8 @@ vtkSlicerLogic::vtkSlicerLogic()
   this->LogicCallbackCommand = vtkCallbackCommand::New();
   this->LogicCallbackCommand->SetClientData( reinterpret_cast<void *> (this) );
   this->LogicCallbackCommand->SetCallback(vtkSlicerLogic::LogicCallback);
+
+  this->Events = vtkIntArray::New();
 }
 
 //----------------------------------------------------------------------------
@@ -52,6 +54,10 @@ vtkSlicerLogic::~vtkSlicerLogic()
     {
     this->LogicCallbackCommand->Delete();
     this->LogicCallbackCommand = NULL;
+    }
+  if (this->Events)
+    {
+    this->Events->Delete();
     }
 }
 
@@ -118,7 +124,10 @@ void vtkSlicerLogic::SetMRML(vtkObject **nodePtr, vtkObject *node)
 {
   if ( *nodePtr  )
     {
-    (*nodePtr)->RemoveObservers( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+    for (int i=0; i<this->Events->GetNumberOfComponents(); i++)
+      {
+      (*nodePtr)->RemoveObservers(this->Events->GetValue(i), this->MRMLCallbackCommand );
+      }
     (*nodePtr)->Delete();
     }
   
@@ -135,7 +144,11 @@ void vtkSlicerLogic::SetAndObserveMRML(vtkObject **nodePtr, vtkObject *node)
 {
   if ( *nodePtr  )
     {
-    (*nodePtr)->RemoveObservers( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+    for (int i=0; i<this->Events->GetNumberOfComponents(); i++)
+      {
+      (*nodePtr)->RemoveObservers(this->Events->GetValue(i), this->MRMLCallbackCommand );
+      }
+    this->Events->Reset();
     (*nodePtr)->Delete();
     }
   
@@ -144,6 +157,35 @@ void vtkSlicerLogic::SetAndObserveMRML(vtkObject **nodePtr, vtkObject *node)
   if ( *nodePtr  )
     {
     (*nodePtr)->Register(this);
+    this->Events->InsertNextValue(vtkCommand::ModifiedEvent);
     (*nodePtr)->AddObserver( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
     }
 }
+
+//----------------------------------------------------------------------------
+void vtkSlicerLogic::SetAndObserveMRMLEvents(vtkObject **nodePtr, vtkObject *node, vtkIntArray *events)
+{
+  if ( *nodePtr  )
+    {
+    for (int i=0; i<this->Events->GetNumberOfComponents(); i++)
+      {
+      (*nodePtr)->RemoveObservers(this->Events->GetValue(i), this->MRMLCallbackCommand );
+      }
+    this->Events->Reset();
+    (*nodePtr)->Delete();
+    }
+  
+  *nodePtr  = node ;
+
+  if ( *nodePtr  )
+    {
+    (*nodePtr)->Register(this);
+    for (int i=0; i<events->GetNumberOfComponents(); i++)
+      {
+      this->Events->InsertNextValue(events->GetValue(i));
+      (*nodePtr)->AddObserver(events->GetValue(i), this->MRMLCallbackCommand );
+      }
+    }
+}
+
+

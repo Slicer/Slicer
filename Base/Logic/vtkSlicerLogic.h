@@ -24,6 +24,7 @@
 #include "vtkSlicerBaseLogic.h"
 #include "vtkObject.h"
 #include "vtkObjectFactory.h"
+#include "vtkIntArray.h"
 
 #include "vtkMRMLScene.h"
 
@@ -102,6 +103,7 @@ protected:
   // either with or without adding/removirg observers on them.
   void SetMRML(vtkObject **nodePtr, vtkObject *node);
   void SetAndObserveMRML(vtkObject **nodePtr, vtkObject *node);
+  void SetAndObserveMRMLEvents(vtkObject **nodePtr, vtkObject *node, vtkIntArray *events);
   //ETX
 
   // Description:
@@ -113,7 +115,9 @@ protected:
   // Flag to avoid event loops
   int InLogicCallbackFlag;
   int InMRMLCallbackFlag;
- 
+
+  // Observed Events
+  vtkIntArray *Events;
 };
 
 #endif
