@@ -81,11 +81,12 @@ void transform3 (vtkMatrix4x4 *m, double *in, double *out)
 {
   int i;
   if (m == NULL)
-    {
+    { // treat NULL as Identity
     for (i = 0; i < 3; i++) { out[i] = in[i]; }
     return;
     }
 
+  // otherwise to a homogeneous transform 
   double in4[4], out4[4];
   for (i = 0; i < 3; i++) { in4[i] = in[i]; }
   in4[3] = 1.0;
@@ -109,7 +110,6 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *ptr)
   int deltaRightColumn[3];
   int deltaLeftColumn[3];
   int maxRowDelta = 0, maxColumnDelta = 0;
-  int maxRowIndex, maxColumnIndex;
 
   // first get the width and height of the extracted region
   // as the maximum distance along any of the edges
@@ -117,35 +117,31 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *ptr)
   for (int i = 0; i < 3; i++)
     {
     deltaTopRow[i] = self->GetTopRight()[i] - self->GetTopLeft()[i];
-    if ( abs(deltaTopRow[i]) > maxRowDelta )
+    if ( abs(deltaTopRow[i]) > maxColumnDelta )
       {
-      maxRowDelta = abs(deltaTopRow[i]);
-      maxRowIndex = i;
+      maxColumnDelta = abs(deltaTopRow[i]);
       }
     deltaBottomRow[i] = self->GetBottomRight()[i] - self->GetBottomLeft()[i];
-    if ( abs(deltaBottomRow[i]) > maxRowDelta )
+    if ( abs(deltaBottomRow[i]) > maxColumnDelta )
       {
-      maxRowDelta = abs(deltaBottomRow[i]);
-      maxRowIndex = i;
+      maxColumnDelta = abs(deltaBottomRow[i]);
       }
     deltaLeftColumn[i] = self->GetBottomLeft()[i] - self->GetTopLeft()[i];
-    if ( abs(deltaLeftColumn[i]) > maxColumnDelta )
+    if ( abs(deltaLeftColumn[i]) > maxRowDelta )
       {
-      maxColumnDelta = abs(deltaLeftColumn[i]);
-      maxColumnIndex = i;
+      maxRowDelta = abs(deltaLeftColumn[i]);
       }
     deltaRightColumn[i] = self->GetBottomRight()[i] - self->GetTopRight()[i];
-    if ( abs(deltaRightColumn[i]) > maxColumnDelta )
+    if ( abs(deltaRightColumn[i]) > maxRowDelta )
       {
-      maxColumnDelta = abs(deltaRightColumn[i]);
-      maxColumnIndex = i;
+      maxRowDelta = abs(deltaRightColumn[i]);
       }
     }
 
   if ( maxRowDelta == 0 || maxColumnDelta == 0 )
     {
     // the region is a singularity - can't draw anything
-    //vtkErrorWithObjectMacro (self, << "a delta is zero: maxRowDelta = " << maxRowDelta << ", maxColumnDelta = " << maxColumnDelta << "\n" );
+    vtkDebugWithObjectMacro (self, << "a delta is zero: maxRowDelta = " << maxRowDelta << ", maxColumnDelta = " << maxColumnDelta << "\n" );
     return;
     }
 
@@ -216,10 +212,7 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *ptr)
     for (int column = 0; column <= maxColumnDelta; column++)
       {
 
-      for (int i = 0; i < 3; i++)
-        {
-        intIJK[i] = paintRound (ijk[i]);
-        }
+      for (int i = 0; i < 3; i++) { intIJK[i] = paintRound (ijk[i]); }
 
       workingPtr = (T *)(self->GetWorkingImage()->GetScalarPointer(intIJK));
       if ( workingPtr ) 
@@ -228,12 +221,12 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *ptr)
 
         double workingWorld[3];
         transform3 (workingIJKToWorld, ijk, workingWorld);
-        double dist2 = 0.0;
+        double distSquared = 0.0;
         for (int i = 0; i < 3; i++)
           {
-          dist2 += (workingWorld[i] - brushCenter[i]) * (workingWorld[i] - brushCenter[i]);
+          distSquared += (workingWorld[i] - brushCenter[i]) * (workingWorld[i] - brushCenter[i]);
           }
-        if ( dist2 < radiusSquared )
+        if ( distSquared < radiusSquared )
           {
           // Now we're inside the brush, so we need to decide how to paint
           // - apply paintOver rule to avoid overwriting existing data
@@ -257,6 +250,8 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *ptr)
               if ( *bgPtr > thresholdPaintRange[0] && *bgPtr < thresholdPaintRange[1] )
                 {
                 *workingPtr = label; // TODO: need to work on multicomponent images
+                vtkDebugWithObjectMacro(self, << "painting " << intbgIJK[0] << " " << intbgIJK[1] << " " << intbgIJK[2] << "\n");
+                vtkDebugWithObjectMacro(self, << "row " << row << " " << "column " << " " << column << "\n");
                 }
               }
             else

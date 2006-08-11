@@ -278,7 +278,12 @@ itcl::body PaintSWidget::paintBrush {} {
     return
   }
 
+  #
   # get the brush bounding box in ijk coordinates
+  # - get the xy bounds
+  # - transform to ijk
+  # - clamp the bounds to the dimensions of the label image
+  #
   set bounds [[$o(brush) GetPoints] GetBounds]
   set left [expr $x + [lindex $bounds 0]]
   set right [expr $x + [lindex $bounds 1]]
@@ -290,12 +295,6 @@ itcl::body PaintSWidget::paintBrush {} {
   set trIJK [$xyToIJK MultiplyPoint $right $top 0 1]
   set blIJK [$xyToIJK MultiplyPoint $left $bottom 0 1]
   set brIJK [$xyToIJK MultiplyPoint $right $bottom 0 1]
-
-  puts "region was: "
-  puts " $tlIJK"
-  puts " $trIJK"
-  puts " $blIJK"
-  puts " $brIJK"
 
   set dims [$_layers(label,image) GetDimensions]
   foreach v {i j k} c [lrange $tlIJK 0 2] d $dims {
@@ -319,27 +318,54 @@ itcl::body PaintSWidget::paintBrush {} {
     if { $br($v) >= $d } { set br($v) [expr $d - 1] }
   }
 
-  puts "region is: "
-  puts " $tl(i) $tl(j) $tl(k)"
-  puts " $tr(i) $tr(j) $tr(k)"
-  puts " $bl(i) $bl(j) $bl(k)"
-  puts " $br(i) $br(j) $br(k)"
-  puts "dims are $dims"
 
+  #
+  # get the ijk to ras matrices 
+  #
+  set backgroundIJKToRAS [vtkMatrix4x4 New]
+  $_layers(background,node) GetIJKToRASMatrix $backgroundIJKToRAS
+  set labelIJKToRAS [vtkMatrix4x4 New]
+  $_layers(label,node) GetIJKToRASMatrix $labelIJKToRAS
+
+  #
+  # get the brush center and radius in World
+  # - assume uniform scaling between XY and RAS
+  set xyToRAS [$_sliceNode GetXYToRAS]
+  set brushCenter [lrange [$xyToRAS MultiplyPoint $x $y 0 1] 0 2]
+  set brushWorld [lrange [$xyToRAS MultiplyPoint $radius $radius 0 0] 0 2]
+  foreach {brx bry brz} $brushWorld {}
+  set brushRadius [expr sqrt( ($brx * $brx) + ($bry * $bry) + ($brz * $brz) ) ]
+  puts "brushWorld $brushWorld"
+  puts "radius $brushRadius"
+
+  #
+  # set up the painter class and let 'r rip!
+  #
   set extractImage [vtkImageData New]
   set painter [vtkImageSlicePaint New]
+  $painter SetBackgroundImage $_layers(background,image)
+  $painter SetBackgroundIJKToWorld $backgroundIJKToRAS
   $painter SetWorkingImage $_layers(label,image)
+  $painter SetWorkingIJKToWorld $labelIJKToRAS
   $painter SetTopLeft $tl(i) $tl(j) $tl(k)
   $painter SetTopRight $tr(i) $tr(j) $tr(k)
   $painter SetBottomLeft $bl(i) $bl(j) $bl(k)
   $painter SetBottomRight $br(i) $br(j) $br(k)
+  eval $painter SetBrushCenter $brushCenter
+  $painter SetBrushRadius $brushRadius
   $painter SetPaintLabel $paintColor
   $painter SetPaintOver $paintOver
   $painter SetThresholdPaint $thresholdPaint
   $painter SetThresholdPaintRange $thresholdMin $thresholdMax
   $painter Paint
+
   $painter Delete
+  $labelIJKToRAS Delete
+  $backgroundIJKToRAS Delete
+
   $_layers(label,node) Modified
+
+
   return
 
 
