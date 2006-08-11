@@ -76,6 +76,30 @@ vtkImageSlicePaint::vtkImageSlicePaint()
 }
 
 
+static
+void transform3 (vtkMatrix4x4 *m, double *in, double *out)
+{
+  int i;
+  if (m == NULL)
+    {
+    for (i = 0; i < 3; i++) { out[i] = in[i]; }
+    return;
+    }
+
+  double in4[4], out4[4];
+  for (i = 0; i < 3; i++) { in4[i] = in[i]; }
+  in4[3] = 1.0;
+  m->MultiplyPoint(in4, out4);
+  for (i = 0; i < 3; i++) { out[i] = out4[i]; }
+}
+
+static
+int paintRound (double in)
+{
+  if ( in - floor(in) > 0.5 ) { return (static_cast <int> (floor(in) + 1)); }
+  return (static_cast<int> (floor(in)));
+}
+
 
 template <class T>
 void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *ptr)
@@ -139,6 +163,7 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *ptr)
 
 
   double radiusSquared = self->GetBrushRadius() * self->GetBrushRadius();
+  double *brushCenter = self->GetBrushCenter();
   double dIJKdRStart[3];
   double dIJKdREnd[3];
   double dIJKdC[3];
@@ -157,30 +182,43 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *ptr)
 
   // Now loop across the columns and across the rows
   // and fill in each pixel as we go
+  // - get matrices to relate the label IJK to the background IJK
+  //   by going first to world, then back to ijk.
+  //   (not that this is linear, so deltas could be precomputed for
+  //   efficiency, but probably aren't needed)
+  // - cache some values to avoid call overhead per pixel
+  //    
+  vtkMatrix4x4 *workingIJKToWorld = self->GetWorkingIJKToWorld();
+  vtkMatrix4x4 *backgroundIJKToWorld = self->GetBackgroundIJKToWorld();
+  vtkMatrix4x4 *backgroundWorldToIJK = vtkMatrix4x4::New();
+  backgroundWorldToIJK->DeepCopy( backgroundIJKToWorld );
+  backgroundWorldToIJK->Invert();
+  vtkImageData *background = self->GetBackgroundImage();
   double ijk[3];
   int intIJK[3];
   T *workingPtr;
   T oldValue;
+  int paintOver = self->GetPaintOver();
+  int thresholdPaint = self->GetThresholdPaint();
+  double *thresholdPaintRange = self->GetThresholdPaintRange();
+
+  // row loop
   for (int row = 0; row <= maxRowDelta; row++)
     {
+
     for (int i = 0; i < 3; i++)
       {
       dIJKdC[i] = (rowEnd[i] - rowStart[i]) / maxColumnDelta;
       ijk[i] = rowStart[i];
       }
+
+    // column loop
     for (int column = 0; column <= maxColumnDelta; column++)
       {
 
       for (int i = 0; i < 3; i++)
         {
-        if ( ijk[i] - floor(ijk[i]) > 0.5 )
-          {
-          intIJK[i] = static_cast <int> (floor(ijk[i]) + 1);
-          }
-        else
-          {
-          intIJK[i] = static_cast<int> (floor(ijk[i]));
-          }
+        intIJK[i] = paintRound (ijk[i]);
         }
 
       workingPtr = (T *)(self->GetWorkingImage()->GetScalarPointer(intIJK));
@@ -188,10 +226,45 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *ptr)
         {
         oldValue = *workingPtr;
 
-
-        *workingPtr = label; // TODO: need to work on multicomponent images
-
-
+        double workingWorld[3];
+        transform3 (workingIJKToWorld, ijk, workingWorld);
+        double dist2 = 0.0;
+        for (int i = 0; i < 3; i++)
+          {
+          dist2 += (workingWorld[i] - brushCenter[i]) * (workingWorld[i] - brushCenter[i]);
+          }
+        if ( dist2 < radiusSquared )
+          {
+          // Now we're inside the brush, so we need to decide how to paint
+          // - apply paintOver rule to avoid overwriting existing data
+          // - apply threshold rule to only paint where backround fits constraints
+          if ( !paintOver && oldValue != 0 )
+            {
+            // don't write 
+            }
+          else
+            {
+            if ( thresholdPaint )
+              {
+              double bgIJK[3];
+              int intbgIJK[3];
+              transform3(backgroundWorldToIJK, workingWorld, bgIJK);
+              for (int i = 0; i < 3; i++)
+                {
+                intbgIJK[i] = paintRound(bgIJK[i]);
+                }
+              T *bgPtr = (T *) background->GetScalarPointer(intbgIJK);
+              if ( *bgPtr > thresholdPaintRange[0] && *bgPtr < thresholdPaintRange[1] )
+                {
+                *workingPtr = label; // TODO: need to work on multicomponent images
+                }
+              }
+            else
+              {
+              *workingPtr = label; // TODO: need to work on multicomponent images
+              }
+            }
+          }
         }
       else
         {
@@ -214,9 +287,7 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *ptr)
             << "can't get extract image pointer for " << row << " " << column << "\n");
           return; // we got out of the region somehow and there will be error messages...
           }
-
         }
-
 
       // update the ijk index for the next column
       for (int i = 0; i < 3; i++)
@@ -232,6 +303,8 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *ptr)
       rowEnd[i] += dIJKdREnd[i];
       }
     }
+
+  backgroundWorldToIJK->Delete();
 
   self->GetWorkingImage()->Modified();
   if (self->GetExtractImage())
