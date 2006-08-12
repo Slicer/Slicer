@@ -129,7 +129,15 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLogic : public vtkSlicerLogic
   // the input logic (the slice layers in this case)
   void ProcessMRMLEvents(); 
   void ProcessLogicEvents(); 
-    
+
+  // Description:
+  // manage and syncronise the SliceNode
+  void UpdateSliceNode();
+
+  // Description:
+  // manage and syncronise the SliceCompositeNode
+  void UpdateSliceCompositeNode();
+
 protected:
   vtkSlicerSliceLogic();
   ~vtkSlicerSliceLogic();

@@ -124,7 +124,7 @@ void vtkSlicerLogic::SetMRML(vtkObject **nodePtr, vtkObject *node)
 {
   if ( *nodePtr  )
     {
-    for (int i=0; i<this->Events->GetNumberOfComponents(); i++)
+    for (int i=0; i<this->Events->GetNumberOfTuples(); i++)
       {
       (*nodePtr)->RemoveObservers(this->Events->GetValue(i), this->MRMLCallbackCommand );
       }
@@ -144,7 +144,7 @@ void vtkSlicerLogic::SetAndObserveMRML(vtkObject **nodePtr, vtkObject *node)
 {
   if ( *nodePtr  )
     {
-    for (int i=0; i<this->Events->GetNumberOfComponents(); i++)
+    for (int i=0; i<this->Events->GetNumberOfTuples(); i++)
       {
       (*nodePtr)->RemoveObservers(this->Events->GetValue(i), this->MRMLCallbackCommand );
       }
@@ -167,7 +167,7 @@ void vtkSlicerLogic::SetAndObserveMRMLEvents(vtkObject **nodePtr, vtkObject *nod
 {
   if ( *nodePtr  )
     {
-    for (int i=0; i<this->Events->GetNumberOfComponents(); i++)
+    for (int i=0; i<this->Events->GetNumberOfTuples(); i++)
       {
       (*nodePtr)->RemoveObservers(this->Events->GetValue(i), this->MRMLCallbackCommand );
       }
@@ -180,7 +180,7 @@ void vtkSlicerLogic::SetAndObserveMRMLEvents(vtkObject **nodePtr, vtkObject *nod
   if ( *nodePtr  )
     {
     (*nodePtr)->Register(this);
-    for (int i=0; i<events->GetNumberOfComponents(); i++)
+    for (int i=0; i<events->GetNumberOfTuples(); i++)
       {
       this->Events->InsertNextValue(events->GetValue(i));
       (*nodePtr)->AddObserver(events->GetValue(i), this->MRMLCallbackCommand );

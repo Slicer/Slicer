@@ -125,7 +125,12 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
   // Recalculate XYToSlice and XYToRAS in terms or fov, dim, SliceToRAS
   // - called when any of the inputs change
   void UpdateMatrices();
-  
+
+  // Description:
+  // Name of the layout
+  vtkGetStringMacro (LayoutName);
+  vtkSetStringMacro (LayoutName);
+
 protected:
 
 
@@ -143,6 +148,8 @@ protected:
   double FieldOfView[3];
   unsigned int Dimensions[3];
   char *OrientationString;
+
+  char* LayoutName;
 
 };
 

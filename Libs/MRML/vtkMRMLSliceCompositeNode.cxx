@@ -56,6 +56,7 @@ vtkMRMLSliceCompositeNode::vtkMRMLSliceCompositeNode()
   this->LabelVolumeID = NULL;
   this->ForegroundOpacity = 0.0; // start by showing only the background volume
   this->LabelOpacity = 1.0; // Show the label if there is one
+  this->LayoutName = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -74,7 +75,7 @@ void vtkMRMLSliceCompositeNode::WriteXML(ostream& of, int nIndent)
   of << indent << "foregroundVolumeID=\"" << this->ForegroundVolumeID << "\" ";
   of << indent << "forgroundOpacity=\"" << this->ForegroundOpacity << "\" ";
   of << indent << "labelOpacity=\"" << this->LabelOpacity << "\" ";
-
+  of << indent << "layoutName=\"" << this->LayoutName << "\" ";
 }
 
 //----------------------------------------------------------------------------
@@ -93,17 +94,21 @@ void vtkMRMLSliceCompositeNode::ReadXMLAttributes(const char** atts)
       {
       this->SetBackgroundVolumeID(attValue);
       }
-    if (!strcmp(attName, "foregroundVolumeID")) 
+    else if (!strcmp(attName, "foregroundVolumeID")) 
       {
       this->SetForegroundVolumeID(attValue);
       }
-    if (!strcmp(attName, "foregroundOpacity")) 
+    else if (!strcmp(attName, "foregroundOpacity")) 
       {
       this->SetForegroundOpacity( atof(attValue) );
       }
-    if (!strcmp(attName, "labelOpacity")) 
+    else if (!strcmp(attName, "labelOpacity")) 
       {
       this->SetLabelOpacity( atof(attValue) );
+      }
+   else if (!strcmp(attName, "layoutName")) 
+      {
+      this->SetLayoutName( attValue );
       }
     }
 }

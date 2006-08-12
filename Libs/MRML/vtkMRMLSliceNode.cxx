@@ -70,6 +70,7 @@ vtkMRMLSliceNode::vtkMRMLSliceNode()
   this->SetDimensions(256, 256, 1);
   this->SetOrientationToAxial();
   this->SetSliceVisible ( 0 );
+  this->LayoutName = NULL;
 
   this->UpdateMatrices();
 }
@@ -255,6 +256,8 @@ void vtkMRMLSliceNode::WriteXML(ostream& of, int nIndent)
       }
     }
   of << indent << "sliceToRAS=\"" << ss.str().c_str() << "\" ";
+  of << indent << "layoutName=\"" << this->LayoutName << "\" ";
+
 }
 
 //----------------------------------------------------------------------------
@@ -281,7 +284,11 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
         this->FieldOfView[i] = val;
         }
       }
-    if (!strcmp(attName, "dimensions")) 
+   else if (!strcmp(attName, "layoutName")) 
+      {
+      this->SetLayoutName( attValue );
+      }
+   else if (!strcmp(attName, "dimensions")) 
       {
       std::stringstream ss;
       unsigned int val;
@@ -293,7 +300,7 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
         this->Dimensions[i] = val;
         }
       }
-    if (!strcmp(attName, "sliceToRAS")) 
+    else if (!strcmp(attName, "sliceToRAS")) 
       {
       std::stringstream ss;
       double val;

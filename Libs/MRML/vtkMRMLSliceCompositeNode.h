@@ -81,6 +81,10 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
   vtkGetMacro (LabelOpacity, double);
   vtkSetMacro (LabelOpacity, double);
 
+  // Description:
+  // Name of the layout
+  vtkGetStringMacro (LayoutName);
+  vtkSetStringMacro (LayoutName);
 
 protected:
   vtkMRMLSliceCompositeNode();
@@ -93,6 +97,8 @@ protected:
   char *LabelVolumeID;
   double ForegroundOpacity;
   double LabelOpacity;
+
+  char* LayoutName;
 
 };
 
