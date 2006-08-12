@@ -51,6 +51,12 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
   virtual const char* GetNodeTagName() {return "SliceComposite";};
 
   // Description:
+  // Updates other nodes in the scene depending on this node
+  // or updates this node if it depends on other nodes when the scene is read in
+  // This method is called automatically by XML parser after all nodes are created
+  virtual void UpdateScene(vtkMRMLScene *);
+
+  // Description:
   // the ID of a MRMLVolumeNode
   vtkGetStringMacro (BackgroundVolumeID);
   vtkSetStringMacro (BackgroundVolumeID);

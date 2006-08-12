@@ -18,6 +18,7 @@ Version:   $Revision: 1.2 $
 
 #include "vtkObjectFactory.h"
 #include "vtkMRMLSliceNode.h"
+#include "vtkMRMLScene.h"
 
 #include "vtkTransform.h"
 #include "vtkMatrix4x4.h"
@@ -257,6 +258,7 @@ void vtkMRMLSliceNode::WriteXML(ostream& of, int nIndent)
     }
   of << indent << "sliceToRAS=\"" << ss.str().c_str() << "\" ";
   of << indent << "layoutName=\"" << this->LayoutName << "\" ";
+  of << indent << "orientation=\"" << this->OrientationString << "\" ";
 
 }
 
@@ -284,7 +286,11 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
         this->FieldOfView[i] = val;
         }
       }
-   else if (!strcmp(attName, "layoutName")) 
+   else if (!strcmp(attName, "orientation")) 
+      {
+      this->SetOrientationString( attValue );
+      }
+    else if (!strcmp(attName, "layoutName")) 
       {
       this->SetLayoutName( attValue );
       }
@@ -365,5 +371,24 @@ void vtkMRMLSliceNode::PrintSelf(ostream& os, vtkIndent indent)
   this->XYToRAS->PrintSelf(os, indent.GetNextIndent());
 }
 
-
+//----------------------------------------------------------------------------
+void vtkMRMLSliceNode::UpdateScene(vtkMRMLScene* scene)
+{
+  vtkMRMLSliceNode *node= NULL;
+  int nnodes = scene->GetNumberOfNodesByClass("vtkMRMLSliceNode");
+  for (int n=0; n<nnodes; n++)
+    {
+    node = vtkMRMLSliceNode::SafeDownCast (
+          scene->GetNthNodeByClass(n, "vtkMRMLSliceNode"));
+    if (node != this && !strcmp(node->GetLayoutName(), this->GetLayoutName()))
+      {
+      break;
+      }
+    node = NULL;
+    }
+  if (node != NULL)
+    {
+    scene->RemoveNode(node);
+    }
+}
 // End

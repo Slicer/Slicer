@@ -267,13 +267,19 @@ int vtkMRMLScene::Import()
     for (n=0; n<nnodes; n++) 
       {
       node = (vtkMRMLNode *)scene->GetItemAsObject(n);
-      this->AddNode(node);
+      this->AddNodeNoNotify(node);
       }
     for (n=0; n<nnodes; n++) 
       {
       node = (vtkMRMLNode *)scene->GetItemAsObject(n);
       node->UpdateScene(this);
       }
+    for (n=0; n<nnodes; n++) 
+      {
+      node = (vtkMRMLNode *)scene->GetItemAsObject(n);
+      this->InvokeEvent(this->NodeAddedEvent, node);
+      }
+      this->Modified();
     }
   scene->RemoveAllItems();
   scene->Delete();
@@ -379,10 +385,11 @@ void vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
   //TODO convert URL to Root directory
   //n->SetSceneRootDir("");
 
-  if (n->GetID() == NULL || n->GetID()[0] == '\0') 
+  if (n->GetID() == NULL || n->GetID()[0] == '\0' || this->GetNodeByID(n->GetID()) != NULL) 
     {
     n->SetID(this->GetUniqueIDByClass(n->GetClassName()));
     }
+
   n->SetSceneRootDir(this->RootDirectory.c_str());
 
   this->CurrentScene->vtkCollection::AddItem((vtkObject *)n);

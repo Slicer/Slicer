@@ -18,6 +18,7 @@ Version:   $Revision: 1.2 $
 
 #include "vtkObjectFactory.h"
 #include "vtkMRMLSliceCompositeNode.h"
+#include "vtkMRMLScene.h"
 
 #include "vtkMatrix4x4.h"
 
@@ -140,5 +141,24 @@ void vtkMRMLSliceCompositeNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "LabelOpacity: " << this->LabelOpacity << "\n";
 }
 
-
+//----------------------------------------------------------------------------
+void vtkMRMLSliceCompositeNode::UpdateScene(vtkMRMLScene* scene)
+{
+  vtkMRMLSliceCompositeNode *node= NULL;
+  int nnodes = scene->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
+  for (int n=0; n<nnodes; n++)
+    {
+    node = vtkMRMLSliceCompositeNode::SafeDownCast (
+          scene->GetNthNodeByClass(n, "vtkMRMLSliceCompositeNode"));
+    if (node != this && !strcmp(node->GetLayoutName(), this->GetLayoutName()))
+      {
+      break;
+      }
+    node = NULL;
+    }
+  if (node != NULL)
+    {
+    scene->RemoveNode(node);
+    }
+}
 // End

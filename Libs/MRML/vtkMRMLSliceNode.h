@@ -49,6 +49,12 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
   virtual void Copy(vtkMRMLNode *node);
 
   // Description:
+  // Updates other nodes in the scene depending on this node
+  // or updates this node if it depends on other nodes when the scene is read in
+  // This method is called automatically by XML parser after all nodes are created
+  virtual void UpdateScene(vtkMRMLScene *);
+
+  // Description:
   // Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "Slice";};
 
