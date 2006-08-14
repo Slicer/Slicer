@@ -229,10 +229,11 @@ itcl::body SliceSWidget::processEvent { } {
       } else {
         set oldFOV [$_sliceNode GetFieldOfView]
         set oldDim [$_sliceNode GetDimensions]
-        set oldPixelSize [expr [lindex $oldFOV 0] / (1. * [lindex $oldDim 0])]
+        set oldPixelSize0 [expr [lindex $oldFOV 0] / (1. * [lindex $oldDim 0])]
+        set oldPixelSize1 [expr [lindex $oldFOV 1] / (1. * [lindex $oldDim 1])]
         $_sliceNode SetDimensions $w $h [lindex $oldDim 2]
         $_sliceNode SetFieldOfView \
-            [expr $oldPixelSize * $w] [expr $oldPixelSize * $h] [lindex $oldFOV 2]
+            [expr $oldPixelSize0 * $w] [expr $oldPixelSize1 * $h] [lindex $oldFOV 2]
       }
     }
     "EnterEvent" { 
@@ -274,7 +275,6 @@ itcl::body SliceSWidget::processEvent { } {
           set sliceDims [eval $rasToSlice MultiplyPoint $rasDims ]
           $rasToSlice Delete
 
-
           set absSliceDims ""
           foreach d $sliceDims {
             lappend absSliceDims [expr abs($d)]
@@ -283,13 +283,16 @@ itcl::body SliceSWidget::processEvent { } {
           set tkwindow [$_renderWidget  GetWidgetName]
           set w [winfo width $tkwindow]
           set h [winfo height $tkwindow]
-          set aspect [expr $w / ($h * 1.0)]
+
           foreach {fx fy fz fw} $absSliceDims {}
-          if { $w > $h } {
-            set fx [expr $fx * $aspect]
+          if { $h > $w } {
+            set pixelSize [expr $fx / (1.0 * $w)]
+            set fy [expr $pixelSize * $h]
           } else {
-            set fy [expr $fy / $aspect]
+            set pixelSize [expr $fy / (1.0 * $h)]
+            set fx [expr $pixelSize * $w]
           }
+
           $_sliceNode SetFieldOfView $fx $fy $fz
 
           # reset to origin
