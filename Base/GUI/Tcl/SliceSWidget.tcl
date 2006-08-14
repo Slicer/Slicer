@@ -261,6 +261,7 @@ itcl::body SliceSWidget::processEvent { } {
           # - figure out the image dimensions mapped to view space
           # - set the field of view to include the full dimensions
           # - reset the pan/zoom/slice to origin
+          # TODO: this logic should be moved into the SliceNode
           #
           set ijkToRAS [vtkMatrix4x4 New]
           set dims [$_layers(background,image) GetDimensions]

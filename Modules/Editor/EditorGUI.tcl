@@ -36,6 +36,7 @@ proc EditorReload { {this ""} } {
 proc EditorTearDownGUI {this} {
 
   $::Editor($this,volumesCreate) Delete
+  $::Editor($this,volumeName) Delete
   $::Editor($this,volumesSelect) Delete
   $::Editor($this,volumesFrame) Delete
   $::Editor($this,paintThreshold) Delete
@@ -90,6 +91,14 @@ proc EditorBuildGUI {this} {
   $::Editor($this,volumesSelect) SetLabelText "Source Volume:"
   $::Editor($this,volumesSelect) SetBalloonHelpString "The Source Volume will define the dimensions and directions for the new label map"
   pack [$::Editor($this,volumesSelect) GetWidgetName] -side top -anchor e -padx 2 -pady 2 
+
+  set ::Editor($this,volumeName) [vtkKWEntryWithLabel New]
+  $::Editor($this,volumeName) SetParent [$::Editor($this,volumesFrame) GetFrame]
+  $::Editor($this,volumeName) Create
+  $::Editor($this,volumeName) SetLabelText "Name for label map volume: "
+  $::Editor($this,volumeName) SetBalloonHelpString \
+    "Leave blank for automatic label name based on input name."
+  pack [$::Editor($this,volumeName) GetWidgetName] -side top -anchor e -padx 2 -pady 2 
 
   set ::Editor($this,volumesCreate) [vtkKWPushButton New]
   $::Editor($this,volumesCreate) SetParent [$::Editor($this,volumesFrame) GetFrame]
@@ -291,7 +300,12 @@ proc EditorCreateLabelVolume {this} {
   set labelNode [vtkMRMLScalarVolumeNode New]
   $labelNode Copy $volumeNode
   $labelNode SetLabelMap 1
-  $labelNode SetName "[$volumeNode GetName]-label"
+  set name [[$::Editor($this,volumeName) GetWidget] GetValue]
+  if { $name != "" } {
+    $labelNode SetName $name
+  } else {
+    $labelNode SetName "[$volumeNode GetName]-label"
+  }
   $labelNode SetID ""  ;# clear ID so a new one is generated
   $labelNode SetAndObserveDisplayNodeID [$labelDisplayNode GetID]
 

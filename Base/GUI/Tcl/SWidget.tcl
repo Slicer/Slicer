@@ -134,7 +134,6 @@ itcl::body SWidget::queryLayers { x y } {
       set _layers($layer,pixel) "None"
     } else {
       set _layers($layer,image) [$_layers($layer,node) GetImageData]
-
       set _layers($layer,xyToIJK) [[$_layers($layer,logic) GetXYToIJKTransform] GetMatrix]
       foreach {i j k l} [$_layers($layer,xyToIJK) MultiplyPoint $x $y 0 1] {}
       foreach v {i j k} { ;# cast to integer
