@@ -284,6 +284,7 @@ itcl::body SliceSWidget::processEvent { } {
           set w [winfo width $tkwindow]
           set h [winfo height $tkwindow]
 
+          # fit fov to min dimension of window
           foreach {fx fy fz fw} $absSliceDims {}
           if { $h > $w } {
             set pixelSize [expr $fx / (1.0 * $w)]
@@ -291,6 +292,17 @@ itcl::body SliceSWidget::processEvent { } {
           } else {
             set pixelSize [expr $fy / (1.0 * $h)]
             set fx [expr $pixelSize * $w]
+          }
+
+          # if volume is still too big, shrink some more
+          foreach {dx dy dz dw} $absSliceDims {}
+          if { $dx > $fx } {
+            set fy [expr $fy / ($fx / ($dx * 1.0))]
+            set fx $dx
+          }
+          if { $dy > $fy } {
+            set fx [expr $fx / ($fy / ($dy * 1.0))]
+            set fy $dy
           }
 
           $_sliceNode SetFieldOfView $fx $fy $fz
