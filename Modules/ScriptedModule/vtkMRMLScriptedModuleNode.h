@@ -49,6 +49,11 @@ class VTK_SCRIPTED_EXPORT vtkMRMLScriptedModuleNode : public vtkMRMLNode
   virtual const char* GetNodeTagName()
     {return "ScriptedModule";};
 
+  // Description: The name of the Module - this is used to 
+  // customize the node selectors and other things
+  vtkGetStringMacro (ModuleName);
+  vtkSetStringMacro (ModuleName);
+
   // Description:
   // Get/Set a parameter for the module.
 //BTX
@@ -68,6 +73,8 @@ protected:
   std::map<std::string, std::string> Parameters;
 //ETX
   char *Value;
+
+  char *ModuleName;
   
 private:
   vtkMRMLScriptedModuleNode();
