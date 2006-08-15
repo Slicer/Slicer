@@ -58,7 +58,12 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerLogic : public vtkObject
       this->SetAndObserveMRML ( vtkObjectPointer( &this->MRMLScene), mrml );
       }
 
-  virtual void ProcessMRMLEvents() {};
+  void SetAndObserveMRMLSceneEvents ( vtkMRMLScene *mrml, vtkIntArray *events )
+      {
+      this->SetAndObserveMRMLEvents ( vtkObjectPointer( &this->MRMLScene), mrml, events );
+      }
+  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
+      unsigned long /*event*/, void * /*callData*/ ) { };
   virtual void ProcessLogicEvents() {};
 
   // Description:

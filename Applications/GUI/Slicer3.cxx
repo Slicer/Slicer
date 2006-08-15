@@ -206,7 +206,7 @@ int Slicer3_main(int argc, char *argv[])
     appLogic->SetMRMLScene ( scene );
     // pass through event handling once without observing the scene
     // -- allows any dependent nodes to be created
-    appLogic->ProcessMRMLEvents ();  
+    appLogic->ProcessMRMLEvents (scene, vtkCommand::ModifiedEvent, NULL);  
     appLogic->SetAndObserveMRMLScene ( scene );
 
     // CREATE APPLICATION GUI, including the main window
@@ -302,24 +302,29 @@ int Slicer3_main(int argc, char *argv[])
     // - set up each of the slice logics (these initialize their
     //   helper classes and nodes the first time the process MRML and
     //   Logic events)
+    vtkIntArray *events = vtkIntArray::New();
+    events->InsertNextValue(vtkCommand::ModifiedEvent);
+    events->InsertNextValue(vtkMRMLScene::NewSceneEvent);
+    events->InsertNextValue(vtkMRMLScene::SceneCloseEvent);
+
     vtkSlicerSliceLogic *sliceLogic0 = vtkSlicerSliceLogic::New ( );
     sliceLogic0->SetName("Red");
     sliceLogic0->SetMRMLScene ( scene );
     sliceLogic0->ProcessLogicEvents ();
-    sliceLogic0->ProcessMRMLEvents ();
-    sliceLogic0->SetAndObserveMRMLScene ( scene );
+    sliceLogic0->ProcessMRMLEvents (scene, vtkCommand::ModifiedEvent, NULL);
+    sliceLogic0->SetAndObserveMRMLSceneEvents ( scene, events );
     vtkSlicerSliceLogic *sliceLogic1 = vtkSlicerSliceLogic::New ( );
     sliceLogic1->SetName("Yellow");
     sliceLogic1->SetMRMLScene ( scene );
     sliceLogic1->ProcessLogicEvents ();
-    sliceLogic1->ProcessMRMLEvents ();
-    sliceLogic1->SetAndObserveMRMLScene ( scene );
+    sliceLogic1->ProcessMRMLEvents (scene, vtkCommand::ModifiedEvent, NULL);
+    sliceLogic1->SetAndObserveMRMLSceneEvents ( scene, events );
     vtkSlicerSliceLogic *sliceLogic2 = vtkSlicerSliceLogic::New ( );
     sliceLogic2->SetName("Green");
     sliceLogic2->SetMRMLScene ( scene );
     sliceLogic2->ProcessLogicEvents ();
-    sliceLogic2->ProcessMRMLEvents ();
-    sliceLogic2->SetAndObserveMRMLScene ( scene );
+    sliceLogic2->ProcessMRMLEvents (scene, vtkCommand::ModifiedEvent, NULL);
+    sliceLogic2->SetAndObserveMRMLSceneEvents ( scene, events );
 
     vtkSlicerSlicesGUI *slicesGUI = vtkSlicerSlicesGUI::New ();
     slicesGUI->SetApplication ( slicerApp );

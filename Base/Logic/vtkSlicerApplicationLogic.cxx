@@ -72,7 +72,9 @@ void vtkSlicerApplicationLogic::ClearCollections ( ) {
 
 
 //----------------------------------------------------------------------------
-void vtkSlicerApplicationLogic::ProcessMRMLEvents()
+void vtkSlicerApplicationLogic::ProcessMRMLEvents(vtkObject * /*caller*/, 
+                                            unsigned long /*event*/, 
+                                            void * /*callData*/ )
 {
 
 

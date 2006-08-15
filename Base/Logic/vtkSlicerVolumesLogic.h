@@ -51,8 +51,9 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerVolumesLogic : public vtkSlicerLogic
 
   // Description:
   // Update logic state when MRML scene chenges
-  void ProcessMRMLEvents(); 
-    
+  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
+                                  unsigned long /*event*/, 
+                                  void * /*callData*/ );    
 protected:
   vtkSlicerVolumesLogic();
   ~vtkSlicerVolumesLogic();

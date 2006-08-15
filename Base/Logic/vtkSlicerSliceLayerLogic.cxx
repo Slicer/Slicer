@@ -81,7 +81,9 @@ vtkSlicerSliceLayerLogic::~vtkSlicerSliceLayerLogic()
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerSliceLayerLogic::ProcessMRMLEvents()
+void vtkSlicerSliceLayerLogic::ProcessMRMLEvents(vtkObject * /*caller*/, 
+                                            unsigned long /*event*/, 
+                                            void * /*callData*/)
 {
   this->UpdateTransforms();
 }
@@ -139,7 +141,7 @@ void vtkSlicerSliceLayerLogic::UpdateNodeReferences ()
       {
       this->SetAndObserveMRML( vtkObjectPointer( &this->VolumeDisplayNode ), displayNode );
       }
-    else
+    else if (this->VolumeDisplayNode)
       {
       this->SetMRML( vtkObjectPointer( &this->VolumeDisplayNode ), NULL );
       }

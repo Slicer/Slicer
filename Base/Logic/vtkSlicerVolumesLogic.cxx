@@ -43,7 +43,9 @@ vtkSlicerVolumesLogic::~vtkSlicerVolumesLogic()
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerVolumesLogic::ProcessMRMLEvents()
+void vtkSlicerVolumesLogic::ProcessMRMLEvents(vtkObject * /*caller*/, 
+                                            unsigned long /*event*/, 
+                                            void * /*callData*/)
 {
   // TODO: implement if needed
 }

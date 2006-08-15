@@ -187,13 +187,21 @@ void vtkSlicerSliceLogic::UpdateSliceCompositeNode()
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerSliceLogic::ProcessMRMLEvents()
+void vtkSlicerSliceLogic::ProcessMRMLEvents(vtkObject * caller, 
+                                            unsigned long event, 
+                                            void * callData )
 {
  //
   // if you don't have a node yet, look in the scene to see if 
   // one exists for you to use.  If not, create one and add it to the scene
   //  
-  
+  if (event == vtkMRMLScene::SceneCloseEvent) 
+    {
+    this->SetSliceCompositeNode (NULL);
+    this->SetSliceNode (NULL);
+    return;
+    }
+
   this->CreateSliceModel();
 
   this->UpdateSliceNode();
@@ -217,8 +225,11 @@ void vtkSlicerSliceLogic::ProcessMRMLEvents()
     {
     this->SliceCompositeNode->SetBackgroundVolumeID("None");
     }
-  
-  this->UpdatePipeline();
+    
+  if (event != vtkMRMLScene::NewSceneEvent) 
+    {
+    this->UpdatePipeline();
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -558,14 +569,19 @@ void vtkSlicerSliceLogic::CreateSliceModel()
 
   if (this->SliceModelNode != NULL && this->MRMLScene->GetNodeByID( this->GetSliceModelNode()->GetID() ) == NULL )
     {
+    vtkIntArray *events = vtkIntArray::New();
+    for (int i=0; i<this->Events->GetNumberOfTuples(); i++)
+      {
+      events->InsertNextValue(this->Events->GetValue(i));
+      }
     this->SetMRMLScene(this->GetMRMLScene());
     this->MRMLScene->AddNode(this->SliceModelDisplayNode);
     this->MRMLScene->AddNode(this->SliceModelNode);
     this->SliceModelNode->SetAndObserveDisplayNodeID(this->SliceModelDisplayNode->GetID());
     this->SliceModelDisplayNode->SetAndObserveTextureImageData(this->GetImageData());
-    this->SetAndObserveMRMLScene(this->GetMRMLScene());
+    this->SetAndObserveMRMLSceneEvents(this->GetMRMLScene(), events);
+    events->Delete();
     }
-
 }
 
 

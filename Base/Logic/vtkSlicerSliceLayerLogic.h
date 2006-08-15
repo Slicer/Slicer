@@ -101,8 +101,9 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLayerLogic : public vtkSlicerLo
   // Description:
   // provide the virtual method that updates this Logic based
   // on mrml changes
-  void ProcessMRMLEvents(); 
-
+  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
+                                  unsigned long /*event*/, 
+                                  void * /*callData*/ );
   // Description:
   // set the Reslice transforms to reflect the current state
   // of the VolumeNode and the SliceNode

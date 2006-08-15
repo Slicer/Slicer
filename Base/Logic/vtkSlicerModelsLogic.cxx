@@ -42,7 +42,9 @@ vtkSlicerModelsLogic::~vtkSlicerModelsLogic()
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerModelsLogic::ProcessMRMLEvents()
+void vtkSlicerModelsLogic::ProcessMRMLEvents(vtkObject * /*caller*/, 
+                                            unsigned long /*event*/, 
+                                            void * /*callData*/)
 {
   // TODO: implement if needed
 }

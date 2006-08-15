@@ -91,7 +91,7 @@ vtkSlicerLogic::MRMLCallback(vtkObject *caller,
   vtkDebugWithObjectMacro(self, "In vtkSlicerLogic MRMLCallback");
 
   self->SetInMRMLCallbackFlag(1);
-  self->ProcessMRMLEvents();
+  self->ProcessMRMLEvents(caller, eid, callData);
   self->SetInMRMLCallbackFlag(0);
 }
 

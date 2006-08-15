@@ -239,6 +239,13 @@ int vtkMRMLScene::Connect()
       this->InvokeEvent(this->NodeAddedEvent, node);
       }
     this->Modified();
+
+    // node are modified
+    for (n=0; n<nnodes; n++) 
+      {
+      node = (vtkMRMLNode *)this->CurrentScene->GetItemAsObject(n);
+      node->Modified();
+      }
   }
   
   this->SetUndoFlag(undoFlag);
@@ -278,6 +285,12 @@ int vtkMRMLScene::Import()
       {
       node = (vtkMRMLNode *)scene->GetItemAsObject(n);
       this->InvokeEvent(this->NodeAddedEvent, node);
+      }
+    // node are modified
+    for (n=0; n<nnodes; n++) 
+      {
+      node = (vtkMRMLNode *)this->CurrentScene->GetItemAsObject(n);
+      node->Modified();
       }
       this->Modified();
     }
