@@ -171,6 +171,8 @@ vtkMRMLNode* vtkMRMLScene::CreateNodeByClass(const char* className)
 //------------------------------------------------------------------------------
 void vtkMRMLScene::RegisterNodeClass(vtkMRMLNode* node) 
 {
+  // TODO: who Delete()s these?
+  // -- should Register here and the callers should Delete
   this->RegisteredNodeClasses.push_back(node);
   this->RegisteredNodeTags.push_back(std::string(node->GetNodeTagName()));
 }

@@ -3,10 +3,12 @@
 #
 
 proc EditorConstructor {this} {
+
 }
 
 proc EditorDestructor {this} {
 }
+
 
 # Note: not a method - this is invoked directly by the GUI
 # - remove the GUI from the current Application
@@ -35,6 +37,7 @@ proc EditorReload { {this ""} } {
 # Note: not a method - this is invoked directly by the GUI
 proc EditorTearDownGUI {this} {
 
+  $::Editor($this,nodeSelector) Delete
   $::Editor($this,volumesCreate) Delete
   $::Editor($this,volumeName) Delete
   $::Editor($this,volumesSelect) Delete
@@ -55,7 +58,19 @@ proc EditorTearDownGUI {this} {
 
 proc EditorBuildGUI {this} {
 
-  # TODO: create and register the node class
+  #
+  # create and register the node class
+  # - since this is a generic type of node, only do it if 
+  #   it hasn't already been done by another module
+  #
+
+  set mrmlScene [[$this GetLogic] GetMRMLScene]
+  set tag [$mrmlScene GetTagByClassName "vtkMRMLScriptedModuleNode"]
+  if { $tag == "" } {
+    set node [vtkMRMLScriptedModuleNode New]
+    $mrmlScene RegisterNodeClass $node
+  }
+
   # TODO: make a node to store our parameters
 
   [$this GetUIPanel] AddPage "Editor" "Editor" ""
@@ -70,6 +85,20 @@ proc EditorBuildGUI {this} {
   $::Editor($this,helpFrame) CollapseFrame
   $::Editor($this,helpFrame) SetLabelText "Help"
   pack [$::Editor($this,helpFrame) GetWidgetName] \
+    -side top -anchor nw -fill x -padx 2 -pady 2 -in [$pageWidget GetWidgetName]
+
+  set ::Editor($this,nodeSelector) [vtkSlicerNodeSelectorWidget New]
+  $::Editor($this,nodeSelector) SetNodeClass "vtkMRMLScriptedModuleNode" "ModuleName" "Editor" "EditorParameter"
+  $::Editor($this,nodeSelector) SetNewNodeEnabled 1
+  $::Editor($this,nodeSelector) NoneEnabledOn
+  $::Editor($this,nodeSelector) NewNodeEnabledOn
+  $::Editor($this,nodeSelector) SetParent $pageWidget
+  $::Editor($this,nodeSelector) Create
+  $::Editor($this,nodeSelector) SetMRMLScene [[$this GetLogic] GetMRMLScene]
+  $::Editor($this,nodeSelector) UpdateMenu
+  $::Editor($this,nodeSelector) SetLabelText "Editor Parameters"
+  $::Editor($this,nodeSelector) SetBalloonHelpString "Select Editor parameters from current scene or create new ones"
+  pack [$::Editor($this,nodeSelector) GetWidgetName] \
     -side top -anchor nw -fill x -padx 2 -pady 2 -in [$pageWidget GetWidgetName]
 
   #
@@ -208,6 +237,9 @@ proc EditorAddGUIObservers {this} {
 proc EditorRemoveGUIObservers {this} {
 }
 
+proc EditorRemoveLogicObservers {this} {
+}
+
 proc EditorRemoveMRMLNodeObservers {this} {
 }
 
@@ -273,9 +305,61 @@ proc EditorProcessGUIEvents {this caller event} {
       }
     }
   }
+
+  EditorUpdateMRML $this
 }
 
+proc EditorUpdateMRML
+
 proc EditorProcessMRMLEvents {this caller event} {
+
+if {0} {
+   elseif { $caller == [$::Editor($this,paintEnable) GetWidget] } {
+    switch $event {
+      "10000" {
+        ::PaintSWidget::TogglePaint
+      }
+    }
+  } elseif { $caller == $::Editor($this,paintLabel) } {
+    switch $event {
+      "10001" {
+        ::PaintSWidget::ConfigureAll -paintColor [$::Editor($this,paintLabel) GetValue]
+      }
+    }
+  } elseif { $caller == $::Editor($this,paintRadius) } {
+    switch $event {
+      "10001" {
+        ::PaintSWidget::ConfigureAll -radius [$::Editor($this,paintRadius) GetValue]
+      }
+    }
+  } elseif { $caller == [$::Editor($this,paintOver) GetWidget] } {
+    switch $event {
+      "10000" {
+        ::PaintSWidget::ConfigureAll -paintOver [[$::Editor($this,paintOver) GetWidget] GetSelectedState]
+      }
+    }
+  } elseif { $caller == [$::Editor($this,paintDropper) GetWidget] } {
+    switch $event {
+      "10000" {
+        ::PaintSWidget::ConfigureAll -paintDropper [[$::Editor($this,paintDropper) GetWidget] GetSelectedState]
+      }
+    }
+  } elseif { $caller == [$::Editor($this,paintThreshold) GetWidget] } {
+    switch $event {
+      "10000" {
+        ::PaintSWidget::ConfigureAll -thresholdPaint [[$::Editor($this,paintThreshold) GetWidget] GetSelectedState]
+      }
+    }
+  } elseif { $caller == $::Editor($this,paintRange) } {
+    switch $event {
+      "10001" {
+        foreach {lo hi} [$::Editor($this,paintRange) GetRange] {}
+        ::PaintSWidget::ConfigureAll -thresholdMin $lo -thresholdMax $hi
+        puts "::PaintSWidget::ConfigureAll -thresholdMin $lo -thresholdMax $hi"
+      }
+    }
+  }
+}
 }
 
 proc EditorEnter {this} {
