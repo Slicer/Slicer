@@ -37,8 +37,8 @@ vtkSlicerVolumesLogic::~vtkSlicerVolumesLogic()
 {
   if (this->ActiveVolumeNode != NULL)
     {
-        this->ActiveVolumeNode->Delete();
-        this->ActiveVolumeNode = NULL;
+    this->ActiveVolumeNode->Delete();
+    this->ActiveVolumeNode = NULL;
     }
 }
 
@@ -122,6 +122,39 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (char* filename)
   displayNode->Delete();
 
   return volumeNode;
+}
+
+
+//----------------------------------------------------------------------------
+int vtkSlicerVolumesLogic::SaveArchetypeVolume (char* filename, vtkMRMLVolumeNode *volumeNode)
+{
+  if (volumeNode == NULL || filename == NULL)
+    {
+    return 0;
+    }
+  
+  vtkMRMLVolumeArchetypeStorageNode *storageNode = NULL;
+  vtkMRMLStorageNode *snode = volumeNode->GetStorageNode();
+  if (snode != NULL)
+    {
+    storageNode = vtkMRMLVolumeArchetypeStorageNode::SafeDownCast(snode);
+    }
+  if (storageNode == NULL)
+    {
+    storageNode = vtkMRMLVolumeArchetypeStorageNode::New();
+    storageNode->SetScene(this->GetMRMLScene());
+    this->GetMRMLScene()->AddNode(storageNode);  
+    volumeNode->SetStorageNodeID(storageNode->GetID());
+    }
+
+  storageNode->SetAbsoluteFileName(true);
+  storageNode->SetFileArchetype(filename);
+
+  int res = storageNode->WriteData(volumeNode);
+
+  storageNode->Delete();
+  
+  return res;
 }
 
 //----------------------------------------------------------------------------

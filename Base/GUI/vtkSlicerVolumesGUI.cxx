@@ -27,6 +27,7 @@ vtkSlicerVolumesGUI::vtkSlicerVolumesGUI ( )
     this->SelectedVolumeID = NULL;
 
     this->LoadVolumeButton = NULL;
+    this->SaveVolumeButton = NULL;
     this->VolumeDisplayWidget = NULL;
 }
 
@@ -34,26 +35,33 @@ vtkSlicerVolumesGUI::vtkSlicerVolumesGUI ( )
 //---------------------------------------------------------------------------
 vtkSlicerVolumesGUI::~vtkSlicerVolumesGUI ( )
 {
-
+  this->RemoveGUIObservers();
     
   if (this->SelectedVolumeID)
     {
-        delete [] this->SelectedVolumeID;
-        this->SelectedVolumeID = NULL;
+    delete [] this->SelectedVolumeID;
+    this->SelectedVolumeID = NULL;
     }
-    if (this->LoadVolumeButton )
-      {
-          this->LoadVolumeButton->Delete ( );
-      }
+  if (this->LoadVolumeButton )
+    {
+    this->LoadVolumeButton->Delete ( );
+    }
+  if (this->SaveVolumeButton )
+    {
+    this->SaveVolumeButton->Delete ( );
+    }
 
-    if (this->VolumeDisplayWidget)
-      {
-          this->VolumeDisplayWidget->RemoveWidgetObservers ( );
-          this->VolumeDisplayWidget->Delete ( );
-      }
+  if (this->VolumeDisplayWidget)
+    {
+    this->VolumeDisplayWidget->Delete ( );
+    }
+  if (this->VolumeSelectorWidget)
+    {
+    this->VolumeSelectorWidget->Delete ( );
+    }
 
-    this->SetModuleLogic ( NULL );
-    this->SetMRMLNode ( NULL );
+  this->SetModuleLogic ( NULL );
+  this->SetMRMLNode ( NULL );
 }
 
 
@@ -74,6 +82,7 @@ void vtkSlicerVolumesGUI::RemoveGUIObservers ( )
 {
     // Fill in
     this->LoadVolumeButton->RemoveObservers ( vtkCommand::ModifiedEvent,  (vtkCommand *)this->GUICallbackCommand );
+    this->SaveVolumeButton->RemoveObservers ( vtkCommand::ModifiedEvent,  (vtkCommand *)this->GUICallbackCommand );
 }
 
 
@@ -84,6 +93,7 @@ void vtkSlicerVolumesGUI::AddGUIObservers ( )
     // Fill in
     // observer load volume button
     this->LoadVolumeButton->AddObserver ( vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->SaveVolumeButton->AddObserver ( vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
 }
 
 
@@ -92,34 +102,52 @@ void vtkSlicerVolumesGUI::AddGUIObservers ( )
 void vtkSlicerVolumesGUI::ProcessGUIEvents ( vtkObject *caller,
                                              unsigned long event, void *callData )
 {
-
-    // Find the widget, and process the events from it...
-    vtkKWLoadSaveButton *filebrowse = vtkKWLoadSaveButton::SafeDownCast(caller);
-    if (filebrowse == this->LoadVolumeButton  && event == vtkCommand::ModifiedEvent )
+  // Find the widget, and process the events from it...
+  vtkKWLoadSaveButton *filebrowse = vtkKWLoadSaveButton::SafeDownCast(caller);
+  if (filebrowse == this->LoadVolumeButton  && event == vtkCommand::ModifiedEvent )
+    {
+    // If a file has been selected for loading...
+    char *fileName = filebrowse->GetFileName();
+    if ( fileName ) 
       {
-        // If a file has been selected for loading...
-        char *fileName = filebrowse->GetFileName();
-        if ( fileName ) 
-          {
-             vtkSlicerVolumesLogic* volumeLogic = this->Logic;
-      
-             vtkMRMLVolumeNode *volumeNode = volumeLogic->AddArchetypeVolume( fileName );
+         vtkSlicerVolumesLogic* volumeLogic = this->Logic;
+  
+         vtkMRMLVolumeNode *volumeNode = volumeLogic->AddArchetypeVolume( fileName );
 
-             if ( volumeNode == NULL ) 
-               {
-               // TODO: generate an error...
-               }
-             else
-               {
-               filebrowse->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
-
-               this->ApplicationLogic->GetSelectionNode()->SetActiveVolumeID( volumeNode->GetID() );
-               this->ApplicationLogic->PropagateVolumeSelection();
-               this->VolumeDisplayWidget->SetVolumeNode(volumeNode);               
-             }
+         if ( volumeNode == NULL ) 
+           {
+           // TODO: generate an error...
            }
-           return;
-        }
+         else
+           {
+           filebrowse->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
+
+           this->ApplicationLogic->GetSelectionNode()->SetActiveVolumeID( volumeNode->GetID() );
+           this->ApplicationLogic->PropagateVolumeSelection();
+           this->VolumeDisplayWidget->SetVolumeNode(volumeNode);               
+         }
+       }
+       return;
+    }
+    else if (filebrowse == this->SaveVolumeButton  && event == vtkCommand::ModifiedEvent )
+      {
+      // If a file has been selected for saving...
+      char *fileName = filebrowse->GetFileName();
+      if ( fileName ) 
+      {
+        vtkSlicerVolumesLogic* volumeLogic = this->Logic;
+        vtkMRMLVolumeNode *volNode = vtkMRMLVolumeNode::SafeDownCast(this->VolumeSelectorWidget->GetSelected());
+        if ( !volumeLogic->SaveArchetypeVolume( fileName, volNode ))
+          {
+         // TODO: generate an error...
+          }
+        else
+          {
+          filebrowse->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");           
+          }
+       }
+       return;
+    }
 } 
 
 
@@ -196,7 +224,6 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
                                                               "{ {volume} {*.*} }");
     this->LoadVolumeButton->GetLoadSaveDialog()->RetrieveLastPathFromRegistry(
       "OpenPath");
-
     app->Script("pack %s -side top -anchor w -padx 2 -pady 4", 
                 this->LoadVolumeButton->GetWidgetName());
     
@@ -208,8 +235,47 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
     this->VolumeDisplayWidget->Create ( );
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   this->VolumeDisplayWidget->GetWidgetName(), page->GetWidgetName());
+
+    // ---
+    // Save FRAME            
+    vtkKWFrameWithLabel *volSaveFrame = vtkKWFrameWithLabel::New ( );
+    volSaveFrame->SetParent ( page );
+    volSaveFrame->Create ( );
+    volSaveFrame->SetLabelText ("Save");
+    volSaveFrame->ExpandFrame ( );
+    app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
+                  volSaveFrame->GetWidgetName(), page->GetWidgetName());
+
+    // selector for save
+    this->VolumeSelectorWidget = vtkSlicerNodeSelectorWidget::New() ;
+    this->VolumeSelectorWidget->SetParent ( volSaveFrame->GetFrame() );
+    this->VolumeSelectorWidget->Create ( );
+    this->VolumeSelectorWidget->SetNodeClass("vtkMRMLVolumeNode", NULL, NULL, NULL);
+    this->VolumeSelectorWidget->SetMRMLScene(this->GetMRMLScene());
+    this->VolumeSelectorWidget->SetBorderWidth(2);
+    this->VolumeSelectorWidget->SetPadX(2);
+    this->VolumeSelectorWidget->SetPadY(2);
+    this->VolumeSelectorWidget->GetWidget()->GetWidget()->IndicatorVisibilityOff();
+    this->VolumeSelectorWidget->GetWidget()->GetWidget()->SetWidth(24);
+    this->VolumeSelectorWidget->SetLabelText( "Volume To Save: ");
+    this->VolumeSelectorWidget->SetBalloonHelpString("select a volume from the current  scene.");
+    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+                  this->VolumeSelectorWidget->GetWidgetName());
+
+    this->SaveVolumeButton = vtkKWLoadSaveButton::New ( );
+    this->SaveVolumeButton->SetParent ( volSaveFrame->GetFrame() );
+    this->SaveVolumeButton->Create ( );
+    this->SaveVolumeButton->SetText ("Save Volume");
+    this->SaveVolumeButton->GetLoadSaveDialog()->SaveDialogOn();
+    this->SaveVolumeButton->GetLoadSaveDialog()->SetFileTypes(
+                                                              "{ {volume} {*.*} }");
+    this->SaveVolumeButton->GetLoadSaveDialog()->RetrieveLastPathFromRegistry(
+      "OpenPath");
+     app->Script("pack %s -side top -anchor w -padx 2 -pady 4", 
+                this->SaveVolumeButton->GetWidgetName());
     
     volLoadFrame->Delete();
+    volSaveFrame->Delete();
     volHelpFrame->Delete();
 }
 

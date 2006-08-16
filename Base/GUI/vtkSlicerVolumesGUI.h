@@ -12,6 +12,7 @@
 #include "vtkSlicerVolumesLogic.h"
 #include "vtkMRMLVolumeNode.h"
 
+#include "vtkSlicerNodeSelectorWidget.h"
 #include "vtkSlicerVolumeDisplayWidget.h"
 
 #include "vtkKWLoadSaveButton.h"
@@ -87,6 +88,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerVolumesGUI : public vtkSlicerModuleGUI
 
     // Widgets for the Volumes module
     vtkKWLoadSaveButton *LoadVolumeButton;
+    vtkSlicerNodeSelectorWidget* VolumeSelectorWidget;
+    vtkKWLoadSaveButton *SaveVolumeButton;
     vtkSlicerVolumeDisplayWidget *VolumeDisplayWidget;
 
  private:

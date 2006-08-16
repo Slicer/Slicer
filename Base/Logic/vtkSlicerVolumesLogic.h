@@ -50,6 +50,10 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerVolumesLogic : public vtkSlicerLogic
   vtkMRMLVolumeNode* AddArchetypeVolume (char* filename);
 
   // Description:
+  // Write volume's image data to a specified file
+  int SaveArchetypeVolume (char* filename, vtkMRMLVolumeNode *volumeNode);
+
+  // Description:
   // Update logic state when MRML scene chenges
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
                                   unsigned long /*event*/, 
