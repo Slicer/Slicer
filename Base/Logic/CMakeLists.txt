@@ -12,6 +12,8 @@ SET(SlicerBaseLogic_SRCS
   vtkSlicerSliceLayerLogic.cxx 
   vtkSlicerVolumesLogic.cxx 
   vtkSlicerModelsLogic.cxx 
+  vtkSlicerFiducialsLogic.cxx
+
   # slicer's vtk extensions
   vtkImageSlicePaint.cxx 
 )
