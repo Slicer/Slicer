@@ -70,9 +70,16 @@ public:
   // Get/Set for orientation 
   vtkSetVector4Macro(OrientationWXYZ,float);
   vtkGetVectorMacro(OrientationWXYZ,float,4);
-  
+
   void SetOrientationWXYZFromMatrix4x4(vtkMatrix4x4 *mat);
-  
+
+  // Get/Set for Name
+  vtkSetStringMacro(Name);
+  vtkGetStringMacro(Name);
+
+  // Get/Set for Selected
+  vtkGetMacro(Selected, bool);
+  vtkSetMacro(Selected, bool);
 
 protected:
   vtkMRMLFiducialNode();
@@ -83,7 +90,8 @@ protected:
   // Data
   float XYZ[3];
   float OrientationWXYZ[4];
-
+  char *Name;
+  bool Selected;  
 };
 
 #endif

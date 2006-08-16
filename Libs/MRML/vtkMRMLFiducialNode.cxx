@@ -54,12 +54,19 @@ vtkMRMLNode* vtkMRMLFiducialNode::CreateNodeInstance()
 vtkMRMLFiducialNode::vtkMRMLFiducialNode()
 {
   this->XYZ[0] = this->XYZ[1] = this->XYZ[2] = 0.0;
-  this->OrientationWXYZ[0] = this->OrientationWXYZ[1] = this->OrientationWXYZ[2] = 0.0;
+  this->OrientationWXYZ[0] = this->OrientationWXYZ[1] = this->OrientationWXYZ[2]  = this->OrientationWXYZ[3] = 0.0;
+  this->Name = NULL;
+  this->Selected = true;
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLFiducialNode::~vtkMRMLFiducialNode()
 {
+    if (this->Name)
+    {
+        delete [] this->Name;
+        this->Name = NULL;
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -77,6 +84,12 @@ void vtkMRMLFiducialNode::WriteXML(ostream& of, int nIndent)
                                 this->OrientationWXYZ[1] << " " <<
                                 this->OrientationWXYZ[2] << " " << 
                                 this->OrientationWXYZ[3] << "\"";
+  if (this->Name != NULL)
+  {
+      of << " name=\"" << this->Name << "\"";
+  }
+  of << " selected=\"" << this->Selected << "\"";
+  
 }
 
 //----------------------------------------------------------------------------
@@ -108,6 +121,14 @@ void vtkMRMLFiducialNode::ReadXMLAttributes(const char** atts)
       ss >> this->OrientationWXYZ[2];
       ss >> this->OrientationWXYZ[3];
       }
+    else if (!strcmp(attName, "name"))
+    {
+        this->SetName(attValue);
+    }
+    else if (!strcmp(attName, "selected"))
+    {
+        this->SetSelected(attValue);
+    }
   }
 }
 
@@ -123,6 +144,9 @@ void vtkMRMLFiducialNode::Copy(vtkMRMLNode *anode)
   // Vectors
   this->SetOrientationWXYZ(node->OrientationWXYZ);
   this->SetXYZ(node->XYZ);
+
+  this->SetName(node->GetName());
+  this->SetSelected(node->GetSelected());
 }
 
 //----------------------------------------------------------------------------
@@ -142,6 +166,10 @@ void vtkMRMLFiducialNode::PrintSelf(ostream& os, vtkIndent indent)
   os << this->OrientationWXYZ[2] << ", " ;
   os << this->OrientationWXYZ[3] << ")" << "\n";
 
+  // Name:
+  os << indent << "Name: " << (this->Name ? this->Name : "(none)") << "\n";
+
+  os << indent << "Selected: " << this->Selected << "\n";
 }
 
 //-----------------------------------------------------------
