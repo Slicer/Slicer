@@ -16,6 +16,7 @@ Version:   $Revision: 1.3 $
 #include <sstream>
 
 #include "vtkObjectFactory.h"
+#include "vtkCallbackCommand.h"
 
 #include "vtkMRMLFiducialListNode.h"
 #include "vtkMRMLScene.h"
@@ -58,8 +59,8 @@ vtkMRMLFiducialListNode::vtkMRMLFiducialListNode()
   this->TextSize = 4.5;
   this->Visibility = 1;
   this->Color[0]=0.4; this->Color[1]=1.0; this->Color[2]=1.0;
-  this->Type = NULL;
-  this->SetType("default");
+  this->Name = "NewList";
+  this->DisplayNodeID = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -67,10 +68,12 @@ vtkMRMLFiducialListNode::~vtkMRMLFiducialListNode()
 {
   this->FiducialList->Delete();
 
-  if (this->Type) {
-    delete [] this->Type;
-    this->Type = NULL;
+  if (this->Name) {
+      delete [] this->Name;
+      this->Name = NULL;
   }
+
+  this->SetAndObserveDisplayNodeID( NULL);
 }
 
 //----------------------------------------------------------------------------
@@ -82,7 +85,13 @@ void vtkMRMLFiducialListNode::WriteXML(ostream& of, int nIndent)
   
   vtkIndent indent(nIndent);
 
-  of << " type=\"" << this->Type << "\"";
+  of << indent << "name=\"" << (this->Name ? "(none)" : this->Name) << "\"";
+      
+  if (this->DisplayNodeID != NULL) 
+  {
+      of << indent << "displayNodeRef=\"" << this->DisplayNodeID << "\" ";
+  }
+  
   of << " symbolSize=\"" << this->SymbolSize << "\"";
   of << " textSize=\"" << this->TextSize << "\"";
   of << " visibility=\"" << this->Visibility << "\"";
@@ -104,19 +113,17 @@ void vtkMRMLFiducialListNode::ReadXMLAttributes(const char** atts)
     {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "color")) 
+    if (!strcmp(attName, "name"))
+    {
+        this->SetName(attName);
+    }
+    else  if (!strcmp(attName, "color")) 
       {
       std::stringstream ss;
       ss << attValue;
       ss >> this->Color[0];
       ss >> this->Color[1];
       ss >> this->Color[2];
-      }
-    else if (!strcmp(attName, "type")) 
-      {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> this->Type;
       }
     else if (!strcmp(attName, "symbolSize")) 
       {
@@ -136,6 +143,10 @@ void vtkMRMLFiducialListNode::ReadXMLAttributes(const char** atts)
       ss << attValue;
       ss >> this->Visibility;
       }
+    else if (!strcmp(attName, "displayNodeRef")) 
+    {
+        this->SetDisplayNodeID(attValue);
+    }
     }  
 }
 
@@ -148,11 +159,13 @@ void vtkMRMLFiducialListNode::Copy(vtkMRMLNode *anode)
   vtkMRMLNode::Copy(anode);
   vtkMRMLFiducialListNode *node = (vtkMRMLFiducialListNode *) anode;
 
+  this->SetName(node->Name);
   this->SetColor(node->Color);
   this->SetSymbolSize(node->SymbolSize);
   this->SetTextSize(node->TextSize);
   this->SetVisibility(node->Visibility);
-  this->SetType(node->Type);
+
+  this->SetDisplayNodeID(node->DisplayNodeID);
 }
 
 //----------------------------------------------------------------------------
@@ -162,14 +175,19 @@ void vtkMRMLFiducialListNode::PrintSelf(ostream& os, vtkIndent indent)
   
   vtkMRMLNode::PrintSelf(os,indent);
 
- os << indent << "Symbol size: (";
+  os << indent << "Name: " <<
+      (this->Name ? this->Name : "(none)") << "\n";
+  
+  os << indent << "DisplayNodeID: " <<
+    (this->DisplayNodeID ? this->DisplayNodeID : "(none)") << "\n";
+  
+  os << indent << "Symbol size: (";
   os << indent << this->SymbolSize << ") \n ";
 
   os << indent << "Text size: (";
   os << indent << this->TextSize << ") \n ";
 
   os << indent << "Visibility:        " << this->Visibility << "\n";
-  os << indent << "Type:              " << this->Type << "\n";
 
   os << "Color:\n";
   for (idx = 0; idx < 3; ++idx)
@@ -182,6 +200,23 @@ void vtkMRMLFiducialListNode::PrintSelf(ostream& os, vtkIndent indent)
 
 void vtkMRMLFiducialListNode::UpdateScene(vtkMRMLScene *scene)
 {
+    Superclass::UpdateScene(scene);
+    /*
+    if (this->GetStorageNodeID() == NULL) 
+    {
+        //vtkErrorMacro("No reference StorageNodeID found");
+        return;
+    }
+
+    vtkMRMLNode* mnode = scene->GetNodeByID(this->StorageNodeID);
+    if (mnode) 
+    {
+        vtkMRMLStorageNode *node  = dynamic_cast < vtkMRMLStorageNode *>(mnode);
+        node->ReadData(this);
+        //this->SetAndObservePolyData(this->GetPolyData());
+        this->SetAndObserveDisplayNodeID(this->GetDisplayNodeID());
+    }
+    */
 }
 
 //-----------------------------------------------------------
@@ -197,3 +232,62 @@ vtkMRMLFiducialNode* vtkMRMLFiducialListNode::GetNthFiducialNode(int n)
     return (vtkMRMLFiducialNode*)this->FiducialList->GetItemAsObject(n);
     }
 }
+
+//-----------------------------------------------------------
+void vtkMRMLFiducialListNode::UpdateReferences()
+{
+   Superclass::UpdateReferences();
+
+  if (this->DisplayNodeID != NULL && this->Scene->GetNodeByID(this->DisplayNodeID) == NULL)
+    {
+    this->SetAndObserveDisplayNodeID(NULL);
+    }
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLFiducialListDisplayNode* vtkMRMLFiducialListNode::GetDisplayNode()
+{
+  vtkMRMLFiducialListDisplayNode* node = NULL;
+  if (this->GetScene() && this->GetDisplayNodeID() )
+    {
+    vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->DisplayNodeID);
+    node = vtkMRMLFiducialListDisplayNode::SafeDownCast(snode);
+    }
+  return node;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLFiducialListNode::SetAndObserveDisplayNodeID(const char *displayNodeID)
+{
+  if (this->DisplayNodeID != NULL)
+    {
+    vtkMRMLFiducialListDisplayNode *dnode = this->GetDisplayNode();
+    if (dnode != NULL)
+      {
+      dnode->RemoveObservers ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+      }
+    }
+  this->SetDisplayNodeID(displayNodeID);
+  vtkMRMLFiducialListDisplayNode *dnode = this->GetDisplayNode();
+  if (dnode != NULL) 
+    {
+    dnode->AddObserver ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLFiducialListNode::ProcessMRMLEvents ( vtkObject *caller,
+                                           unsigned long event, 
+                                           void *callData )
+{
+  Superclass::ProcessMRMLEvents(caller, event, callData);
+
+  vtkMRMLFiducialListDisplayNode *dnode = this->GetDisplayNode();
+  if (dnode != NULL && dnode == vtkMRMLFiducialListDisplayNode::SafeDownCast(caller) &&
+      event ==  vtkCommand::ModifiedEvent)
+    {
+    this->InvokeEvent(vtkMRMLFiducialListNode::DisplayModifiedEvent, NULL);
+    }
+  return;
+}
+

@@ -30,6 +30,7 @@
 #include "vtkMRMLNode.h"
 #include "vtkMRMLFiducialNode.h"
 #include "vtkMRMLTransformableNode.h"
+#include "vtkMRMLFiducialListDisplayNode.h"
 
 class VTK_MRML_EXPORT vtkMRMLFiducialListNode : public vtkMRMLTransformableNode
 {
@@ -62,9 +63,22 @@ public:
   virtual const char* GetNodeTagName() {return "FiducialList";};
 
   // Description:
-  // Finds the storage node and read the data
+  // 
   virtual void UpdateScene(vtkMRMLScene *scene);
 
+  // Description:
+  // String ID of the display MRML node
+  void SetAndObserveDisplayNodeID(const char *DisplayNodeID);
+  vtkGetStringMacro(DisplayNodeID);
+
+  // Description:
+  // Associated display MRML node
+  vtkMRMLFiducialListDisplayNode* GetDisplayNode();
+
+  // Description:
+  // update display node ids
+  void UpdateReferences();
+  
   // Description:
   // Get/Set for Symbol size
   vtkSetMacro(SymbolSize,float);
@@ -86,8 +100,10 @@ public:
   vtkSetVector3Macro(Color,float);
   vtkGetVectorMacro(Color,float,3);
   
-  vtkSetStringMacro(Type);
-  vtkGetStringMacro(Type);
+  // Description:
+  // Get/Set for the list name
+  vtkSetStringMacro(Name);
+  vtkGetStringMacro(Name);
   
   int GetNumberOfFiducialNodes() { return this->FiducialList->vtkCollection::GetNumberOfItems(); };
   vtkMRMLFiducialNode* GetNthFiducialNode(int n);
@@ -96,18 +112,36 @@ public:
   void RemoveFiducialNode(int i) { this->FiducialList->vtkCollection::RemoveItem(i); this->Modified();};
   int  IsFiducialNodePresent(vtkMRMLFiducialNode *o) { return this->FiducialList->vtkCollection::IsItemPresent(o);};
 
+  void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
+
+  //BTX
+  // Description:
+  // DisplayModifiedEvent is generated when display node parameters is changed
+  // PolyDataModifiedEvent is generated when something else is changed
+  enum
+    {
+      DisplayModifiedEvent = 19000,
+      PolyDataModifiedEvent = 19001,
+    };
+//ETX
+
 protected:
   vtkMRMLFiducialListNode();
   ~vtkMRMLFiducialListNode();
   vtkMRMLFiducialListNode(const vtkMRMLFiducialListNode&);
   void operator=(const vtkMRMLFiducialListNode&);
 
+  vtkSetStringMacro(DisplayNodeID);
+
   float SymbolSize;
   float TextSize;
   int Visibility;
   float Color[3];
-  char  *Type;
 
+  char *DisplayNodeID;
+
+  char *Name;
+  
   vtkCollection *FiducialList;
 
 };
