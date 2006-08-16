@@ -10,6 +10,7 @@
 #include "vtkSlicerSliceLogic.h"
 #include "vtkSlicerVolumesLogic.h"
 #include "vtkSlicerModelsLogic.h"
+#include "vtkSlicerFiducialsLogic.h"
 #include "vtkMRMLScene.h"
 #include "vtkSlicerComponentGUI.h"
 #include "vtkSlicerApplicationGUI.h"
@@ -20,6 +21,7 @@
 #include "vtkSlicerGUICollection.h"
 #include "vtkSlicerVolumesGUI.h"
 #include "vtkSlicerModelsGUI.h"
+#include "vtkSlicerFiducialsGUI.h"
 #include "vtkSlicerDataGUI.h"
 #include "vtkSlicerTransformsGUI.h"
 #include "vtkSlicerTheme.h"
@@ -268,6 +270,22 @@ int Slicer3_main(int argc, char *argv[])
     modelsGUI->BuildGUI ( );
     modelsGUI->AddGUIObservers ( );
 
+    // --- Fiducials module    
+    vtkSlicerFiducialsLogic *fiducialsLogic = vtkSlicerFiducialsLogic::New ( );
+    fiducialsLogic->SetAndObserveMRMLScene ( scene );
+    vtkSlicerFiducialsGUI *fiducialsGUI = vtkSlicerFiducialsGUI::New ( );
+    fiducialsGUI->SetApplication ( slicerApp );
+    fiducialsGUI->SetAndObserveApplicationLogic ( appLogic );
+    fiducialsGUI->SetAndObserveMRMLScene ( scene );
+    fiducialsGUI->SetModuleLogic ( fiducialsLogic );
+    fiducialsGUI->SetGUIName( "Fiducials" );
+    fiducialsGUI->GetUIPanel()->SetName ( fiducialsGUI->GetGUIName ( ) );
+    fiducialsGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWin()->GetMainUserInterfaceManager ( ) );
+    fiducialsGUI->GetUIPanel()->Create ( );
+    slicerApp->AddModuleGUI ( fiducialsGUI );
+    fiducialsGUI->BuildGUI ( );
+    fiducialsGUI->AddGUIObservers ( );
+
     // --- Transforms module
     vtkSlicerTransformsGUI *transformsGUI = vtkSlicerTransformsGUI::New ( );
     transformsGUI->SetApplication ( slicerApp );
@@ -435,6 +453,8 @@ int Slicer3_main(int argc, char *argv[])
     slicerApp->Script ("namespace eval slicer3 set VolumesGUI %s", name);
     name = modelsGUI->GetTclName();
     slicerApp->Script ("namespace eval slicer3 set ModelsGUI %s", name);
+    name = fiducialsGUI->GetTclName();
+    slicerApp->Script ("namespace eval slicer3 set FiducialsGUI %s", name);
     name = transformsGUI->GetTclName();
     slicerApp->Script ("namespace eval slicer3 set VolumesGUI %s", name);
 
@@ -554,6 +574,7 @@ int Slicer3_main(int argc, char *argv[])
     gradientAnisotropicDiffusionFilterGUI->RemoveGUIObservers ( );
     volumesGUI->RemoveGUIObservers ( );
     modelsGUI->RemoveGUIObservers ( );
+    fiducialsGUI->RemoveGUIObservers ( );
     transformsGUI->RemoveGUIObservers ( );
     dataGUI->RemoveGUIObservers ( );
     slicesGUI->RemoveGUIObservers ( );
@@ -604,6 +625,7 @@ int Slicer3_main(int argc, char *argv[])
     gradientAnisotropicDiffusionFilterGUI->Delete ();
     volumesGUI->Delete ();
     modelsGUI->Delete ();
+    fiducialsGUI->Delete ();
     transformsGUI->Delete ();
     dataGUI->Delete ();
     slicesGUI->Delete ();
@@ -636,6 +658,8 @@ int Slicer3_main(int argc, char *argv[])
     volumesLogic->Delete();
     modelsLogic->SetAndObserveMRMLScene ( NULL );
     modelsLogic->Delete();
+    fiducialsLogic->SetAndObserveMRMLScene ( NULL );
+    fiducialsLogic->Delete();
     sliceLogic2->SetAndObserveMRMLScene ( NULL );
     sliceLogic2->Delete ();
     sliceLogic1->SetAndObserveMRMLScene ( NULL );
