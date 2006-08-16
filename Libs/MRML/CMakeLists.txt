@@ -33,6 +33,7 @@ SET(MRML_SRCS
         vtkMRMLSliceNode.cxx
         vtkMRMLSliceCompositeNode.cxx
         vtkMRMLSelectionNode.cxx
+        vtkMRMLFiducialListDisplayNode.cxx
         # Note: when you add new node types, add
         # register code to the vtkMRMLScene constructor
 )
