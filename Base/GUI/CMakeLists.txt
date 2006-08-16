@@ -40,6 +40,7 @@ SET(LIB_SRCS
   vtkSlicerSlicesGUI.cxx
   vtkSlicerVolumesGUI.cxx
   vtkSlicerModelsGUI.cxx
+  vtkSlicerFiducialsGUI.cxx
   vtkSlicerTransformsGUI.cxx
   vtkSlicerDataGUI.cxx
   vtkSlicerGUILayout.cxx    

@@ -367,6 +367,8 @@ void vtkSlicerApplicationGUI::AddGUIObservers ( )
     this->DataIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->VolumeIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ModelIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->FiducialsIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    
     // view configuration icon button observers...
     this->ConventionalViewIconButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->OneUp3DViewIconButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -399,6 +401,7 @@ void vtkSlicerApplicationGUI::RemoveGUIObservers ( )
     this->DataIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->VolumeIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ModelIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->FiducialsIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ConventionalViewIconButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->OneUp3DViewIconButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->OneUpSliceViewIconButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -475,6 +478,12 @@ void vtkSlicerApplicationGUI::ProcessGUIEvents ( vtkObject *caller,
         if ( m != NULL ) { m->GetUIPanel()->Raise(); }
         this->ModulesMenuButton->SetValue ( "Models" );
       }
+    else if (pushb == this->FiducialsIconButton && event == vtkKWPushButton::InvokedEvent )
+    {
+        vtkSlicerModuleGUI *m = vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Fiducials");
+        if ( m != NULL ) { m->GetUIPanel()->Raise(); } else { std::cerr << "ERROR:  no slicer module gui found for Fiducials\n"; }
+        this->ModulesMenuButton->SetValue ( "Fiducials" );
+    }
     else if (pushb == this->TransformIconButton && event == vtkKWPushButton::InvokedEvent )
       {
         //vtkSlicerModuleGUI *m = vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Transformments");
