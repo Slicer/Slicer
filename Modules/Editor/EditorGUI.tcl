@@ -309,7 +309,8 @@ proc EditorProcessGUIEvents {this caller event} {
   EditorUpdateMRML $this
 }
 
-proc EditorUpdateMRML
+proc EditorUpdateMRML {this} {
+}
 
 proc EditorProcessMRMLEvents {this caller event} {
 
