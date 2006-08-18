@@ -55,7 +55,9 @@ vtkMRMLFiducialNode::vtkMRMLFiducialNode()
 {
   this->XYZ[0] = this->XYZ[1] = this->XYZ[2] = 0.0;
   this->OrientationWXYZ[0] = this->OrientationWXYZ[1] = this->OrientationWXYZ[2]  = this->OrientationWXYZ[3] = 0.0;
+  // so that the SetName macro won't try to free memory
   this->Name = NULL;
+  this->SetName("");
   this->Selected = true;
 }
 

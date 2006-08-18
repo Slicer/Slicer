@@ -59,8 +59,10 @@ vtkMRMLFiducialListNode::vtkMRMLFiducialListNode()
   this->TextSize = 4.5;
   this->Visibility = 1;
   this->Color[0]=0.4; this->Color[1]=1.0; this->Color[2]=1.0;
-  this->Name = "NewList";
+  this->Name = NULL;
+  this->SetName("");
   this->DisplayNodeID = NULL;
+  this->SetDisplayNodeID("");
 }
 
 //----------------------------------------------------------------------------
@@ -286,7 +288,7 @@ void vtkMRMLFiducialListNode::ProcessMRMLEvents ( vtkObject *caller,
   if (dnode != NULL && dnode == vtkMRMLFiducialListDisplayNode::SafeDownCast(caller) &&
       event ==  vtkCommand::ModifiedEvent)
     {
-    this->InvokeEvent(vtkMRMLFiducialListNode::DisplayModifiedEvent, NULL);
+        this->InvokeEvent(vtkMRMLFiducialListNode::DisplayModifiedEvent, NULL);
     }
   return;
 }
