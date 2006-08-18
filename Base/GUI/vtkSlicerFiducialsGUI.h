@@ -36,7 +36,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     
     // Description:
     // Get methods on class members ( no Set methods required. )
-    vtkGetObjectMacro ( AddFiducialsButton, vtkKWPushButton);
+    vtkGetObjectMacro ( AddFiducialListButton, vtkKWPushButton);
+    vtkGetObjectMacro ( AddFiducialButton, vtkKWPushButton);
     vtkGetObjectMacro ( Logic, vtkSlicerFiducialsLogic);
     vtkGetObjectMacro ( FiducialListNode, vtkMRMLFiducialListNode );
     
@@ -105,7 +106,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     char *FiducialListNodeID;
     
     // Widgets for the Fiducials module
-    vtkKWPushButton *AddFiducialsButton;
+    // add a list
+    vtkKWPushButton *AddFiducialListButton;
+    // add a point
+    vtkKWPushButton *AddFiducialButton;
     vtkKWMultiColumnListWithScrollbars *MultiColumnList;
     // the columns that hold the
     // name, x, y, z, orientation x y z w, selected

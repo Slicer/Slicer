@@ -29,9 +29,10 @@ vtkSlicerFiducialsGUI::vtkSlicerFiducialsGUI ( )
     this->FiducialListSelectorWidget = NULL;
     this->FiducialListNode = NULL;
     this->FiducialListNodeID = "(none)";
-    this->AddFiducialsButton = NULL;
 
-//    this->MultiColumnList = vtkKWMultiColumnListWithScrollbars::New ();
+    this->AddFiducialListButton = NULL;
+    this->AddFiducialButton = NULL;
+    
     this->MultiColumnList = NULL;
     this->NumberOfColumns = 9;
     std::cout << "vtkSlicerFiducialsGUI: constructor done\n";
@@ -49,10 +50,15 @@ vtkSlicerFiducialsGUI::~vtkSlicerFiducialsGUI ( )
         this->FiducialListSelectorWidget->Delete();
         this->FiducialListSelectorWidget = NULL;
     }
-    
-    if (this->AddFiducialsButton ) {
-        this->AddFiducialsButton->Delete ( );
-        this->AddFiducialsButton = NULL;
+
+    if (this->AddFiducialListButton ) {
+        this->AddFiducialListButton->Delete ( );
+        this->AddFiducialListButton = NULL;
+    }
+     
+    if (this->AddFiducialButton ) {
+        this->AddFiducialButton->Delete ( );
+        this->AddFiducialButton = NULL;
     }
 
     this->MultiColumnList->Delete();
@@ -78,8 +84,9 @@ void vtkSlicerFiducialsGUI::PrintSelf ( ostream& os, vtkIndent indent )
 void vtkSlicerFiducialsGUI::RemoveGUIObservers ( )
 {
     std::cout << "vtkSlicerFiducialsGUI: RemoveGUIObservers\n";
-    this->FiducialListSelectorWidget->RemoveObservers(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
-    this->AddFiducialsButton->RemoveObservers ( vtkCommand::ModifiedEvent,  (vtkCommand *)this->GUICallbackCommand );
+    this->FiducialListSelectorWidget->RemoveObservers(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->AddFiducialListButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->AddFiducialButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
 }
 
@@ -89,8 +96,8 @@ void vtkSlicerFiducialsGUI::AddGUIObservers ( )
 {
     std::cout << "vtkSlicerFiducialsGUI: AddGUIObservers\n";
     this->FiducialListSelectorWidget->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
-//    this->AddFiducialsButton->AddObserver ( vtkCommand::ModifiedEvent,  (vtkCommand *)this->GUICallbackCommand );
-    this->AddFiducialsButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+    this->AddFiducialListButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+    this->AddFiducialButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
 }
 
 
@@ -126,7 +133,22 @@ void vtkSlicerFiducialsGUI::ProcessGUIEvents ( vtkObject *caller,
         return;
     }
   vtkKWPushButton *button = vtkKWPushButton::SafeDownCast(caller);
-  if (button == this->AddFiducialsButton  && event ==  vtkKWPushButton::InvokedEvent)
+  if (button == this->AddFiducialListButton && event ==  vtkKWPushButton::InvokedEvent)
+    {
+       std::cout << "vtkSlicerFiducialsGUI: ProcessGUIEvent: Add Fiducial List Button event: " << event << ".\n";
+       vtkSlicerFiducialsLogic* modelLogic = this->GetLogic();
+        if (modelLogic == NULL)
+        {
+            // TODO; generate an error...
+            std::cerr << " ERROR getting the Logic of the Fiducials Gui\n";
+            return;
+        }
+        // add tjhe new list
+        modelLogic->AddFiducials();
+        std::cerr << "Done adding fiducials list\n";
+        return;
+    }
+  if (button == this->AddFiducialButton  && event ==  vtkKWPushButton::InvokedEvent)
     {
        std::cout << "vtkSlicerFiducialsGUI: ProcessGUIEvent: Add Fiducial Button event: " << event << ".\n";
 
@@ -141,9 +163,9 @@ void vtkSlicerFiducialsGUI::ProcessGUIEvents ( vtkObject *caller,
         // is there an active list?
         if (modelLogic->GetActiveFiducialListNode() == NULL)
         {
-            // make a new one
-            modelLogic->AddFiducials();
-            std::cerr << "Done adding fiducials list\n";
+            // 
+            std::cerr << "ERROR: No Fiducial List, add one first!\n";
+            return;
         }
         
         vtkMRMLFiducialNode *modelNode = modelLogic->AddFiducial( );
@@ -153,7 +175,6 @@ void vtkSlicerFiducialsGUI::ProcessGUIEvents ( vtkObject *caller,
             std::cerr << "ERROR adding a new fiducial point\n";
             return;
         }
-        modelNode->SetName("newfid");
         
         std::cout << "Adding a row to the table...\n";
         this->MultiColumnList->GetWidget()->AddRow();
@@ -222,6 +243,10 @@ void vtkSlicerFiducialsGUI::ProcessMRMLEvents ( vtkObject *caller,
     {
         std::cout << "\tmodified event on the fiducial list node.\n";
     }
+    else if (node == this->FiducialListSelectorWidget->GetSelected() && event == vtkCommand::ModifiedEvent)
+    {
+        std::cout << "\tmodified event on the fiducial list selected node.\n";
+    }
     else
     {
         // std::cerr << "vtkSlicerFiducialsGUI ProcessMRMLEvent: UNKNOWN caller/event pair\n";
@@ -287,6 +312,16 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   displayFrame->GetWidgetName(),
                   this->UIPanel->GetPageWidget("Fiducials")->GetWidgetName());
+
+
+    // new list button
+    this->AddFiducialListButton = vtkKWPushButton::New ( );
+    this->AddFiducialListButton->SetParent ( displayFrame->GetFrame() );
+    this->AddFiducialListButton->Create ( );
+    this->AddFiducialListButton->SetText ("New Fiducial List");
+    
+    app->Script("pack %s -side top -anchor w -padx 2 -pady 4", 
+                this->AddFiducialListButton->GetWidgetName());
     
     // node selector
     this->FiducialListSelectorWidget = vtkSlicerNodeSelectorWidget::New() ;
@@ -363,13 +398,13 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     this->MultiColumnList->GetWidget()->SetCellUpdatedCommand(this, "UpdateElement");
 
      // add an add fiducial button
-    this->AddFiducialsButton = vtkKWPushButton::New ( );
-    this->AddFiducialsButton->SetParent ( listFrame->GetFrame() );
-    this->AddFiducialsButton->Create ( );
-    this->AddFiducialsButton->SetText ("Add Fiducial Point");
+    this->AddFiducialButton = vtkKWPushButton::New ( );
+    this->AddFiducialButton->SetParent ( listFrame->GetFrame() );
+    this->AddFiducialButton->Create ( );
+    this->AddFiducialButton->SetText ("Add Fiducial Point");
     
     app->Script("pack %s -side top -anchor w -padx 2 -pady 4", 
-                this->AddFiducialsButton->GetWidgetName());
+                this->AddFiducialButton->GetWidgetName());
 
     if (this->MRMLScene != NULL)
     {
