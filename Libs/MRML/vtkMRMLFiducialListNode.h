@@ -102,8 +102,8 @@ public:
   
   // Description:
   // Get/Set for the list name
-  vtkSetStringMacro(Name);
-  vtkGetStringMacro(Name);
+//  vtkSetStringMacro(Name);
+//  vtkGetStringMacro(Name);
   
   int GetNumberOfFiducialNodes() { return this->FiducialList->vtkCollection::GetNumberOfItems(); };
   vtkMRMLFiducialNode* GetNthFiducialNode(int n);
@@ -140,7 +140,7 @@ protected:
 
   char *DisplayNodeID;
 
-  char *Name;
+//  char *Name;
   
   vtkCollection *FiducialList;
 
