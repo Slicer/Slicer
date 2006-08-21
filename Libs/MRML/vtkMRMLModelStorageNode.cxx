@@ -26,7 +26,7 @@ Version:   $Revision: 1.2 $
 #include "vtkSTLReader.h"
 //TODO: read in a free surfer file
 //#include "vtkFSSurfaceReader.h"
-
+#include "vtkPolyDataWriter.h"
 
 
 // Initialize static member that controls resampling -- 
@@ -220,8 +220,41 @@ int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
     return 1;
 }
 
+//----------------------------------------------------------------------------
 int vtkMRMLModelStorageNode::WriteData(vtkMRMLNode *refNode)
 {
-  vtkErrorMacro("NOT IMPLEMENTED YET");
+  // test whether refNode is a valid node to hold a model
+  if (!refNode->IsA("vtkMRMLModelNode") ) 
+    {
+    vtkErrorMacro("Reference node is not a vtkMRMLModelNode");
+    return 0;
+    }
+  
+  vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(refNode);
+  
+  std::string fullName;
+  if (this->SceneRootDir != NULL) 
+    {
+    fullName = std::string(this->SceneRootDir) + std::string(this->GetFileName());
+    }
+  else 
+    {
+    fullName = std::string(this->GetFileName());
+    }
+  
+  if (fullName == std::string("")) 
+    {
+    vtkErrorMacro("vtkMRMLModelNode: File name not specified");
+    return 0;
+    }
+
+  vtkPolyDataWriter *writer = vtkPolyDataWriter::New();
+  writer->SetFileName(fullName.c_str());
+  writer->SetInput( modelNode->GetPolyData() );
+
+  writer->Write();
+
+  writer->Delete();    
+  
   return 1;
 }

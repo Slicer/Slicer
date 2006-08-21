@@ -214,6 +214,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
   return 1;
 }
 
+//----------------------------------------------------------------------------
 int vtkMRMLVolumeArchetypeStorageNode::WriteData(vtkMRMLNode *refNode)
 {
   // test whether refNode is a valid node to hold a volume

@@ -92,6 +92,39 @@ vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel (char* filename)
 
   return modelNode;  
 }
+//----------------------------------------------------------------------------
+int vtkSlicerModelsLogic::SaveModel (char* filename, vtkMRMLModelNode *modelNode)
+{
+   if (modelNode == NULL || filename == NULL)
+    {
+    return 0;
+    }
+  
+  vtkMRMLModelStorageNode *storageNode = NULL;
+  vtkMRMLStorageNode *snode = modelNode->GetStorageNode();
+  if (snode != NULL)
+    {
+    storageNode = vtkMRMLModelStorageNode::SafeDownCast(snode);
+    }
+  if (storageNode == NULL)
+    {
+    storageNode = vtkMRMLModelStorageNode::New();
+    storageNode->SetScene(this->GetMRMLScene());
+    this->GetMRMLScene()->AddNode(storageNode);  
+    modelNode->SetStorageNodeID(storageNode->GetID());
+    }
+
+  //storageNode->SetAbsoluteFileName(true);
+  storageNode->SetFileName(filename);
+
+  int res = storageNode->WriteData(modelNode);
+
+  storageNode->Delete();
+  
+  return res;
+
+}
+
 
 //----------------------------------------------------------------------------
 void vtkSlicerModelsLogic::PrintSelf(ostream& os, vtkIndent indent)

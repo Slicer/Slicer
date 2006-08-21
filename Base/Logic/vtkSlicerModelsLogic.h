@@ -50,6 +50,10 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerModelsLogic : public vtkSlicerLogic
   vtkMRMLModelNode* AddModel (char* filename);
 
   // Description:
+  // Write model's polydata  to a specified file
+  int SaveModel (char* filename, vtkMRMLModelNode *modelNode);
+
+  // Description:
   // Update logic state when MRML scene chenges
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
                                   unsigned long /*event*/, 

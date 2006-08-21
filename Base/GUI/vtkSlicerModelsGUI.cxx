@@ -9,6 +9,7 @@
 #include "vtkSlicerModelDisplayWidget.h"
 
 #include "vtkKWFrameWithLabel.h"
+#include "vtkKWMenuButton.h"
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerModelsGUI );
@@ -23,18 +24,29 @@ vtkSlicerModelsGUI::vtkSlicerModelsGUI ( )
     this->Logic = NULL;
     //this->ModelNode = NULL;
     this->LoadModelButton = NULL;
+    this->SaveModelButton = NULL;
+    this->ModelSelectorWidget = NULL;
 }
 
 
 //---------------------------------------------------------------------------
 vtkSlicerModelsGUI::~vtkSlicerModelsGUI ( )
 {
+  this->RemoveGUIObservers();
 
-    this->SetModuleLogic ( NULL );
+  this->SetModuleLogic ( NULL );
 
-    if (this->LoadModelButton ) {
-        this->LoadModelButton->Delete ( );
-        this->LoadModelButton = NULL;
+  if (this->LoadModelButton ) 
+    {
+    this->LoadModelButton->Delete ( );
+    }    
+  if (this->SaveModelButton ) 
+    {
+    this->SaveModelButton->Delete ( );
+    }
+  if (this->ModelSelectorWidget ) 
+    {
+    this->ModelSelectorWidget->Delete ( );
     }
 }
 
@@ -55,15 +67,16 @@ void vtkSlicerModelsGUI::PrintSelf ( ostream& os, vtkIndent indent )
 //---------------------------------------------------------------------------
 void vtkSlicerModelsGUI::RemoveGUIObservers ( )
 {
-    this->LoadModelButton->RemoveObservers ( vtkCommand::ModifiedEvent,  (vtkCommand *)this->GUICallbackCommand );
+  this->LoadModelButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+  this->SaveModelButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
 }
 
 
 //---------------------------------------------------------------------------
 void vtkSlicerModelsGUI::AddGUIObservers ( )
 {
-
-    this->LoadModelButton->AddObserver ( vtkCommand::ModifiedEvent,  (vtkCommand *)this->GUICallbackCommand );
+  this->LoadModelButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+  this->SaveModelButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
 }
 
 
@@ -73,7 +86,7 @@ void vtkSlicerModelsGUI::ProcessGUIEvents ( vtkObject *caller,
                                             unsigned long event, void *callData )
 {
   vtkKWLoadSaveButton *filebrowse = vtkKWLoadSaveButton::SafeDownCast(caller);
-  if (filebrowse == this->LoadModelButton  && event == vtkCommand::ModifiedEvent )
+  if (filebrowse == this->LoadModelButton  && event == vtkKWPushButton::InvokedEvent )
     {
     // If a file has been selected for loading...
     char *fileName = filebrowse->GetFileName();
@@ -94,7 +107,25 @@ void vtkSlicerModelsGUI::ProcessGUIEvents ( vtkObject *caller,
       }
     return;
     }
-  
+  else if (filebrowse == this->SaveModelButton  && event == vtkKWPushButton::InvokedEvent )
+      {
+      // If a file has been selected for saving...
+      char *fileName = filebrowse->GetFileName();
+      if ( fileName ) 
+      {
+        vtkSlicerModelsLogic* ModelLogic = this->Logic;
+        vtkMRMLModelNode *volNode = vtkMRMLModelNode::SafeDownCast(this->ModelSelectorWidget->GetSelected());
+        if ( !ModelLogic->SaveModel( fileName, volNode ))
+          {
+         // TODO: generate an error...
+          }
+        else
+          {
+          filebrowse->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");           
+          }
+       }
+       return;
+    } 
 }    
 
 //---------------------------------------------------------------------------
@@ -179,9 +210,48 @@ void vtkSlicerModelsGUI::BuildGUI ( )
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   this->ModelDisplayWidget->GetWidgetName(), 
                   this->UIPanel->GetPageWidget("Models")->GetWidgetName());
+    // ---
+    // Save FRAME            
+    vtkKWFrameWithLabel *modelSaveFrame = vtkKWFrameWithLabel::New ( );
+    modelSaveFrame->SetParent ( this->UIPanel->GetPageWidget ( "Models" ) );
+    modelSaveFrame->Create ( );
+    modelSaveFrame->SetLabelText ("Save");
+    modelSaveFrame->ExpandFrame ( );
+    app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
+                  modelSaveFrame->GetWidgetName(), 
+                  this->UIPanel->GetPageWidget ( "Models" )->GetWidgetName());
 
+    // selector for save
+    this->ModelSelectorWidget = vtkSlicerNodeSelectorWidget::New() ;
+    this->ModelSelectorWidget->SetParent ( modelSaveFrame->GetFrame() );
+    this->ModelSelectorWidget->Create ( );
+    this->ModelSelectorWidget->SetNodeClass("vtkMRMLModelNode", NULL, NULL, NULL);
+    this->ModelSelectorWidget->SetMRMLScene(this->GetMRMLScene());
+    this->ModelSelectorWidget->SetBorderWidth(2);
+    this->ModelSelectorWidget->SetPadX(2);
+    this->ModelSelectorWidget->SetPadY(2);
+    this->ModelSelectorWidget->GetWidget()->GetWidget()->IndicatorVisibilityOff();
+    this->ModelSelectorWidget->GetWidget()->GetWidget()->SetWidth(24);
+    this->ModelSelectorWidget->SetLabelText( "Model To Save: ");
+    this->ModelSelectorWidget->SetBalloonHelpString("select a Model from the current  scene.");
+    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+                  this->ModelSelectorWidget->GetWidgetName());
+
+    this->SaveModelButton = vtkKWLoadSaveButton::New ( );
+    this->SaveModelButton->SetParent ( modelSaveFrame->GetFrame() );
+    this->SaveModelButton->Create ( );
+    this->SaveModelButton->SetText ("Save Model");
+    this->SaveModelButton->GetLoadSaveDialog()->SaveDialogOn();
+    this->SaveModelButton->GetLoadSaveDialog()->SetFileTypes(
+                                                              "{ {Model} {*.*} }");
+    this->SaveModelButton->GetLoadSaveDialog()->RetrieveLastPathFromRegistry(
+      "OpenPath");
+     app->Script("pack %s -side top -anchor w -padx 2 -pady 4", 
+                this->SaveModelButton->GetWidgetName());
+    
     modLoadFrame->Delete ( );
     modHelpFrame->Delete ( );
+    modelSaveFrame->Delete();
 }
 
 

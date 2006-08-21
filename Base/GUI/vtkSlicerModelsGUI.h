@@ -10,6 +10,7 @@
 #include "vtkSlicerModuleGUI.h"
 #include "vtkSlicerModuleLogic.h"
 #include "vtkSlicerModelsLogic.h"
+#include "vtkSlicerNodeSelectorWidget.h"
 
 //#include "vtkSlicerModelsLogic.h"
 //#include "vtkMRMLModelNode.h"
@@ -89,6 +90,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModelsGUI : public vtkSlicerModuleGUI
     
     // Widgets for the Models module
     vtkKWLoadSaveButton *LoadModelButton;
+    vtkKWLoadSaveButton *SaveModelButton;
+    vtkSlicerNodeSelectorWidget* ModelSelectorWidget;
 
     vtkSlicerModelDisplayWidget *ModelDisplayWidget;
 
