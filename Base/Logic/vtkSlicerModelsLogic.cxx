@@ -112,6 +112,7 @@ int vtkSlicerModelsLogic::SaveModel (char* filename, vtkMRMLModelNode *modelNode
     storageNode->SetScene(this->GetMRMLScene());
     this->GetMRMLScene()->AddNode(storageNode);  
     modelNode->SetStorageNodeID(storageNode->GetID());
+    storageNode->Delete();
     }
 
   //storageNode->SetAbsoluteFileName(true);
@@ -119,7 +120,6 @@ int vtkSlicerModelsLogic::SaveModel (char* filename, vtkMRMLModelNode *modelNode
 
   int res = storageNode->WriteData(modelNode);
 
-  storageNode->Delete();
   
   return res;
 

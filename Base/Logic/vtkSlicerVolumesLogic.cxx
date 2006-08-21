@@ -145,6 +145,7 @@ int vtkSlicerVolumesLogic::SaveArchetypeVolume (char* filename, vtkMRMLVolumeNod
     storageNode->SetScene(this->GetMRMLScene());
     this->GetMRMLScene()->AddNode(storageNode);  
     volumeNode->SetStorageNodeID(storageNode->GetID());
+    storageNode->Delete();
     }
 
   storageNode->SetAbsoluteFileName(true);
@@ -152,7 +153,6 @@ int vtkSlicerVolumesLogic::SaveArchetypeVolume (char* filename, vtkMRMLVolumeNod
 
   int res = storageNode->WriteData(volumeNode);
 
-  storageNode->Delete();
   
   return res;
 }
