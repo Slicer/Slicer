@@ -5,6 +5,7 @@
 #include "vtkSlicerModelsGUI.h"
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerModuleLogic.h"
+#include "vtkSlicerVisibilityIcons.h"
 
 #include "vtkKWMessage.h"
 #include "vtkKWMultiColumnList.h"
@@ -32,6 +33,9 @@ vtkSlicerFiducialsGUI::vtkSlicerFiducialsGUI ( )
 
     this->AddFiducialListButton = NULL;
     this->AddFiducialButton = NULL;
+
+    this->VisibilityToggle = NULL;
+    this->VisibilityIcons = NULL;
     
     this->MultiColumnList = NULL;
     this->NumberOfColumns = 9;
@@ -61,6 +65,16 @@ vtkSlicerFiducialsGUI::~vtkSlicerFiducialsGUI ( )
         this->AddFiducialButton = NULL;
     }
 
+    if (this->VisibilityToggle) {
+        this->VisibilityToggle->Delete();
+        this->VisibilityToggle = NULL;
+    }
+
+    if ( this->VisibilityIcons ) {
+        this->VisibilityIcons->Delete  ( );
+        this->VisibilityIcons = NULL;
+    }
+
     this->MultiColumnList->Delete();
 
     this->SetFiducialListNodeID("(none)");
@@ -87,6 +101,7 @@ void vtkSlicerFiducialsGUI::RemoveGUIObservers ( )
     this->FiducialListSelectorWidget->RemoveObservers(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->AddFiducialListButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->AddFiducialButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->VisibilityToggle->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
 }
 
@@ -98,6 +113,8 @@ void vtkSlicerFiducialsGUI::AddGUIObservers ( )
     this->FiducialListSelectorWidget->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
     this->AddFiducialListButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
     this->AddFiducialButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+
+    this->VisibilityToggle->AddObserver (vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
 }
 
 
@@ -143,8 +160,14 @@ void vtkSlicerFiducialsGUI::ProcessGUIEvents ( vtkObject *caller,
             std::cerr << " ERROR getting the Logic of the Fiducials Gui\n";
             return;
         }
-        // add tjhe new list
-        modelLogic->AddFiducials();
+        // add the new list and set it selected
+//        modelLogic->AddFiducials();
+
+        this->SetFiducialListNode(modelLogic->AddFiducials());
+
+        // now update the fiducial list pane for the new list
+        this->ProcessMRMLEvents(this->FiducialListSelectorWidget->GetSelected(), vtkCommand::ModifiedEvent, callData);
+        
         std::cerr << "Done adding fiducials list\n";
         return;
     }
@@ -176,7 +199,7 @@ void vtkSlicerFiducialsGUI::ProcessGUIEvents ( vtkObject *caller,
             return;
         }
         
-        std::cout << "Adding a row to the table...\n";
+        // std::cout << "Adding a row to the table...\n";
         this->MultiColumnList->GetWidget()->AddRow();
         int NumberOfRows = this->MultiColumnList->GetWidget()->GetNumberOfRows();
         if (NumberOfRows == -1)
@@ -220,6 +243,34 @@ void vtkSlicerFiducialsGUI::ProcessGUIEvents ( vtkObject *caller,
         this->MultiColumnList->GetWidget()->SetCellEditWindowToCheckButton(row,8);
         this->MultiColumnList->GetWidget()->SetCellTextAsInt(row,8,(modelNode->GetSelected() ? 1 : 0));
     }
+  if (button == this->GetVisibilityToggle()  && event ==  vtkKWPushButton::InvokedEvent)
+    {
+       std::cout << "vtkSlicerFiducialsGUI: ProcessGUIEvent: Visibility  button event: " << event << ".\n";
+       // get the active list
+       vtkSlicerFiducialsLogic* modelLogic = this->GetLogic();
+        if (modelLogic == NULL)
+        {
+            // TODO; generate an error...
+            std::cerr << " ERROR getting the Logic of the Fiducials Gui\n";
+            return;
+        }
+
+        // is there an active list?
+        if (modelLogic->GetActiveFiducialListNode() == NULL)
+        {
+            // 
+            std::cerr << "ERROR: No Fiducial List, add one first!\n";
+            return;
+        }
+       // save state for undo
+        this->MRMLScene->SaveStateForUndo(modelLogic->GetActiveFiducialListNode());
+       // change the visibility
+        modelLogic->GetActiveFiducialListNode()->SetVisibility( ! modelLogic->GetActiveFiducialListNode()->GetVisibility());
+        // update the icon via  process mrml event that should get pushed
+        this->ProcessMRMLEvents(caller, event, callData); //modelLogic->GetActiveFiducialListNode(), event, callData);
+
+    }
+
   return;
 }
 
@@ -242,15 +293,94 @@ void vtkSlicerFiducialsGUI::ProcessMRMLEvents ( vtkObject *caller,
     if (node == this->FiducialListNode && event == vtkCommand::ModifiedEvent)
     {
         std::cout << "\tmodified event on the fiducial list node.\n";
+        // update the table 
+        return;
     }
-    else if (node == this->FiducialListSelectorWidget->GetSelected() && event == vtkCommand::ModifiedEvent)
+    if (node == this->FiducialListSelectorWidget->GetSelected() && event == vtkCommand::ModifiedEvent)
     {
         std::cout << "\tmodified event on the fiducial list selected node.\n";
+        //std::cout << "\t\t selected = " << this->FiducialListSelectorWidget->GetSelected() << "\n";
+        if (this->GetLogic())
+        {
+            //std::cout << "\t\t active = " << this->GetLogic()->GetActiveFiducialListNode() << "\n";
+            // when the list is created, it's set active, but when select it
+            // from the drop down menu, need to set it active
+            if ( this->GetLogic()->GetActiveFiducialListNode() !=  this->FiducialListSelectorWidget->GetSelected())
+            {
+                // select it first off
+                this->GetLogic()->SetActiveFiducialListNode((vtkMRMLFiducialListNode *)(this->FiducialListSelectorWidget->GetSelected()));
+                
+            }
+
+            // visib  will get handled below
+
+            // clear out the multi column list box and fill it in with the
+            // new list
+            this->MultiColumnList->GetWidget()->DeleteAllRows();
+            // get the points in the active fid list
+            vtkMRMLFiducialListNode *listNode  = this->GetLogic()->GetActiveFiducialListNode();
+            // add rows for each point
+            int numPoints = listNode->GetNumberOfFiducialNodes();
+            float *xyz;
+            float *wxyz;
+            for (int row = 0; row < numPoints; row++)
+            {
+                //std::cout << "Adding point " << row << " to the table" << endl;
+                vtkMRMLFiducialNode * pointNode = listNode->GetNthFiducialNode(row);
+                // add a row for this point
+                this->MultiColumnList->GetWidget()->AddRow();
+                
+                // now populate it
+                xyz = pointNode->GetXYZ();
+                wxyz = pointNode->GetOrientationWXYZ();
+                
+                if (pointNode->GetName() != NULL)
+                {
+                    this->MultiColumnList->GetWidget()->SetCellText(row,0,pointNode->GetName());
+                }
+                else
+                {
+                    this->MultiColumnList->GetWidget()->SetCellText(row,0,"(none)");
+                }
+                if (xyz != NULL)
+                {
+                    this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,1,xyz[0]);
+                    this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,2,xyz[1]);
+                    this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,3,xyz[2]);
+                }
+                if (wxyz != NULL)
+                {
+                    this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,4,wxyz[0]);
+                    this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,5,wxyz[1]);
+                    this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,6,wxyz[2]);
+                    this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,7,wxyz[3]);
+                }
+                // selected
+                this->MultiColumnList->GetWidget()->SetCellTextAsInt(row,8,(pointNode->GetSelected() ? 1 : 0));
+            }
+        }
     }
-    else
+
+    // update the visibility button to match the logic state
+    vtkSlicerFiducialsLogic* modelLogic = this->GetLogic();
+    if ((modelLogic != NULL))
+        //&& (node == modelLogic->GetActiveFiducialListNode()) &&
+        //(event == vtkKWPushButton::InvokedEvent))
     {
-        // std::cerr << "vtkSlicerFiducialsGUI ProcessMRMLEvent: UNKNOWN caller/event pair\n";
+        //std::cout << "\tupdating the visibility button\n";
+        if (modelLogic->GetActiveFiducialListNode()->GetVisibility() > 0)
+        {
+            this->GetVisibilityToggle()->SetImageToIcon(
+                this->GetVisibilityIcons()->GetVisibleIcon());
+        }
+        else
+        {
+            this->GetVisibilityToggle()->SetImageToIcon(
+                this->GetVisibilityIcons()->GetInvisibleIcon());
+        }
     }
+
+//    std::cerr << "vtkSlicerFiducialsGUI::ProcessMRMLEvents  mismatched caller and event (" << event << ")\n";
 }
 
 
@@ -339,6 +469,34 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                   this->FiducialListSelectorWidget->GetWidgetName());
     this->FiducialListSelectorWidget->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
+ 
+
+    // ---
+    // LIST FRAME
+    
+    vtkKWFrameWithLabel *listFrame = vtkKWFrameWithLabel::New();
+    listFrame->SetParent( page );
+    listFrame->Create();
+    listFrame->SetLabelText("Fiducial List");
+    listFrame->ExpandFrame();
+    app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
+                  listFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Fiducials")->GetWidgetName());
+
+    // visibility
+    this->VisibilityIcons = vtkSlicerVisibilityIcons::New ( );
+    this->VisibilityToggle = vtkKWPushButton::New();
+    this->VisibilityToggle->SetParent ( listFrame->GetFrame() );
+    this->VisibilityToggle->Create ( );
+    this->VisibilityToggle->SetReliefToFlat ( );
+    this->VisibilityToggle->SetOverReliefToNone ( );
+    this->VisibilityToggle->SetBorderWidth ( 0 );
+    this->VisibilityToggle->SetImageToIcon ( this->VisibilityIcons->GetInvisibleIcon ( ) );        
+    this->VisibilityToggle->SetBalloonHelpString ( "Toggles fiducial list visibility in the MainViewer." );
+    this->VisibilityToggle->SetText ("Visibility");
+    
+    app->Script("pack %s -side top -anchor w -padx 2 -pady 4", 
+                this->VisibilityToggle->GetWidgetName());
+ 
     // text scale
 
     // text color
@@ -347,18 +505,7 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
 
     // symbol color
     
-
-    // ---
-    // LIST FRAME
-    vtkKWFrameWithLabel *listFrame = vtkKWFrameWithLabel::New();
-    listFrame->SetParent( page );
-    listFrame->Create();
-    listFrame->SetLabelText("Fiducial List");
-    listFrame->ExpandFrame();
-    app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                  listFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Fiducials")->GetWidgetName());
-    
-    // add the multicolumn list
+    // add the multicolumn list to show the points
     this->MultiColumnList = vtkKWMultiColumnListWithScrollbars::New ( );
     this->MultiColumnList->SetParent ( listFrame->GetFrame() );
     this->MultiColumnList->Create ( );
@@ -457,7 +604,7 @@ void vtkSlicerFiducialsGUI::SetFiducialListNode (vtkMRMLFiducialListNode *fiduci
     
     // select this fiducial list node
     
-    std::cout << "SetFiducialListNode : setting the selector widget to " << fiducialListNode->GetID() << endl;
+//    std::cout << "SetFiducialListNode : setting the selector widget to " << fiducialListNode->GetID() << endl;
     
     this->FiducialListSelectorWidget->SetSelected(fiducialListNode);
 
