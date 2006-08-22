@@ -92,19 +92,21 @@ vtkMRMLFiducialListNode* vtkSlicerFiducialsLogic::AddFiducials ()
    this->GetMRMLScene()->SaveStateForUndo();
 
     modelNode->SetScene(this->GetMRMLScene());
-    this->GetMRMLScene()->AddNode(displayNode);
-    modelNode->SetAndObserveDisplayNodeID(displayNode->GetID());
-    displayNode->SetScene(this->GetMRMLScene());
-
-    this->GetMRMLScene()->AddNode(modelNode);
-
-    // now that the list node is in a scene, give it a unique name
+   
+    // now that the list node has a scene, give it a unique name
     if (modelNode != NULL && modelNode->GetScene() != NULL)
     {
         modelNode->SetName(modelNode->GetScene()->GetUniqueIDByClass("FiducialList"));
     } else {
         std::cerr << "modelNode Scene is null, not changing the model node name\n";
     }
+
+    this->GetMRMLScene()->AddNode(displayNode);
+    modelNode->SetAndObserveDisplayNodeID(displayNode->GetID());
+    displayNode->SetScene(this->GetMRMLScene());
+
+    this->GetMRMLScene()->AddNode(modelNode);
+
     // set it to be active
     this->SetActiveFiducialListNode(modelNode);
         
