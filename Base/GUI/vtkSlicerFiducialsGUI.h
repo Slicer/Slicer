@@ -16,6 +16,7 @@
 
 #include "vtkKWFrame.h"
 #include "vtkKWPushButton.h"
+#include "vtkSlicerVisibilityIcons.h"
 
 // Description:
 // This class implements Slicer's Fiducials GUI
@@ -24,6 +25,7 @@
 class vtkKWMultiColumnListWithScrollbars;
 class vtkKWPushButton;
 class vtkKWMessage;
+class vtkSlicerVisibilityIcons;
 
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleGUI
 {
@@ -38,6 +40,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     // Get methods on class members ( no Set methods required. )
     vtkGetObjectMacro ( AddFiducialListButton, vtkKWPushButton);
     vtkGetObjectMacro ( AddFiducialButton, vtkKWPushButton);
+    vtkGetObjectMacro ( VisibilityToggle, vtkKWPushButton);
+    vtkGetObjectMacro ( VisibilityIcons, vtkSlicerVisibilityIcons);
     vtkGetObjectMacro ( Logic, vtkSlicerFiducialsLogic);
     vtkGetObjectMacro ( FiducialListNode, vtkMRMLFiducialListNode );
     
@@ -110,6 +114,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     vtkKWPushButton *AddFiducialListButton;
     // add a point
     vtkKWPushButton *AddFiducialButton;
+    // list visibility
+    vtkKWPushButton *VisibilityToggle;
+    vtkSlicerVisibilityIcons *VisibilityIcons;
+    
+    // display the points on the list
     vtkKWMultiColumnListWithScrollbars *MultiColumnList;
     // the columns that hold the
     // name, x, y, z, orientation x y z w, selected
