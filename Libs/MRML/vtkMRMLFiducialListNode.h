@@ -86,10 +86,10 @@ public:
 
 
   // Description:
-  // Get/Set for Symbol size
+  // Get/Set for list visibility size
   vtkSetMacro(Visibility,int);
   vtkGetMacro(Visibility,int);
-  
+
   // Description:
   // Get/Set for Text size
   vtkSetMacro(TextSize,float);
