@@ -157,12 +157,14 @@ void vtkSlicerTheme::Install ( )
 
     // Slicer MultiColumnListsWithScrollbars
     // scroll bars
-    odb->AddEntryAsInt("vtkKWScrollbar", "SetWidth", 2); // not implemented
+    odb->AddEntryAsInt("vtkKWScrollbar", "SetWidth", 10);
     odb->AddEntryAsDouble3("vtkKWScrollbar", "SetTroughColor", this->SlicerColors->RecessedColor);
     
     // Slicer Checkbutton
     odb->AddEntry( "vtkKWCheckButton", "IndicatorVisibilityOn", NULL);
     odb->AddEntryAsDouble3( "vtkKWCheckButton", "SetSelectColor", this->SlicerColors->HighlightColor);
+    // background should give contrast when the button is not selected.
+    odb->AddEntryAsDouble3( "vtkKWCheckButton", "SetBackgroundColor", this->SlicerColors->LightGrey);
     
     // Slicer Menubar
     // Slicer Labels
