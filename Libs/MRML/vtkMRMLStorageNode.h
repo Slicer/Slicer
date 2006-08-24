@@ -64,12 +64,18 @@ class VTK_MRML_EXPORT vtkMRMLStorageNode : public vtkMRMLNode
   // Get node XML tag name (like Storage, Model)
   virtual const char* GetNodeTagName() = 0;
 
-  
+    // Description:
+  // A file name or one name in a series
+  vtkSetStringMacro(FileName);
+  vtkGetStringMacro(FileName);
+
 protected:
   vtkMRMLStorageNode();
   ~vtkMRMLStorageNode();
   vtkMRMLStorageNode(const vtkMRMLStorageNode&);
   void operator=(const vtkMRMLStorageNode&);
+
+  char *FileName;
 
 };
 

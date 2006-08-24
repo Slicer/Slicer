@@ -53,7 +53,6 @@ vtkMRMLNode* vtkMRMLVolumeHeaderlessStorageNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLVolumeHeaderlessStorageNode::vtkMRMLVolumeHeaderlessStorageNode()
 {
-  this->Filename = NULL;
   this->FileScanOrder = NULL;
   this->FileScalarType = VTK_SHORT;
   this->FileNumberOfScalarComponents = 0;
@@ -74,11 +73,6 @@ vtkMRMLVolumeHeaderlessStorageNode::vtkMRMLVolumeHeaderlessStorageNode()
 //----------------------------------------------------------------------------
 vtkMRMLVolumeHeaderlessStorageNode::~vtkMRMLVolumeHeaderlessStorageNode()
 {
-  if (this->Filename) 
-    {
-    delete [] this->Filename;
-    this->Filename = NULL;
-    }
   if (this->FileScanOrder) 
     {
     delete [] this->FileScanOrder;
@@ -127,10 +121,7 @@ void vtkMRMLVolumeHeaderlessStorageNode::ReadXMLAttributes(const char** atts)
     {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "filename")) 
-      {
-      this->SetFilename(attValue);
-      }
+
     if (!strcmp(attName, "fileScanOrder")) 
       {
       this->SetFileScanOrder(attValue);
@@ -181,7 +172,6 @@ void vtkMRMLVolumeHeaderlessStorageNode::Copy(vtkMRMLNode *anode)
   Superclass::Copy(anode);
   vtkMRMLVolumeHeaderlessStorageNode *node = (vtkMRMLVolumeHeaderlessStorageNode *) anode;
 
-  this->SetFilename(node->Filename);
   this->SetFileScanOrder(node->FileScanOrder);
   this->SetFileSpacing(node->FileSpacing);
   this->SetFileDimensions(node->FileDimensions);
@@ -198,8 +188,6 @@ void vtkMRMLVolumeHeaderlessStorageNode::PrintSelf(ostream& os, vtkIndent indent
   vtkMRMLStorageNode::PrintSelf(os,indent);
   int idx;
 
-  os << indent << "Filename: " <<
-    (this->Filename ? this->Filename : "(none)") << "\n";
   os << indent << "FileScanOrder: " <<
     (this->FileScanOrder ? this->FileScanOrder : "(none)") << "\n";
   os << indent << "FileLittleEndian:  " << this->FileLittleEndian << "\n";
@@ -256,11 +244,11 @@ int vtkMRMLVolumeHeaderlessStorageNode::ReadData(vtkMRMLNode *refNode)
   std::string fullName;
   if (this->SceneRootDir != NULL) 
     {
-    fullName = std::string(this->SceneRootDir) + std::string(this->GetFilename());
+    fullName = std::string(this->SceneRootDir) + std::string(this->GetFileName());
     }
   else 
     {
-    fullName = std::string(this->GetFilename());
+    fullName = std::string(this->GetFileName());
     }
 
   if (fullName == std::string("")) 
@@ -303,11 +291,11 @@ int vtkMRMLVolumeHeaderlessStorageNode::WriteData(vtkMRMLNode *refNode)
   std::string fullName;
   if (this->SceneRootDir != NULL) 
     {
-    fullName = std::string(this->SceneRootDir) + std::string(this->GetFilename());
+    fullName = std::string(this->SceneRootDir) + std::string(this->GetFileName());
     }
   else 
     {
-    fullName = std::string(this->GetFilename());
+    fullName = std::string(this->GetFileName());
     }
   
   if (fullName == std::string("")) 

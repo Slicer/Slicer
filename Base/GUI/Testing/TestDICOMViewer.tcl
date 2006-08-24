@@ -88,7 +88,7 @@ if { 1 } {
       set dicomArchetype [tk_getOpenFile]
     }
 
-    $storageNode SetFileArchetype $dicomArchetype
+    $storageNode SetFileName $dicomArchetype
     $storageNode ReadData $volumeNode
 
 

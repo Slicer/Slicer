@@ -64,27 +64,16 @@ vtkMRMLNode* vtkMRMLModelStorageNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLModelStorageNode::vtkMRMLModelStorageNode()
 {
-  this->FileName = NULL;
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLModelStorageNode::~vtkMRMLModelStorageNode()
 {
-  if (this->FileName) 
-    {
-    delete [] this->FileName;
-    this->FileName = NULL;
-    }
 }
 
 void vtkMRMLModelStorageNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
-  vtkIndent indent(nIndent);
-  if (this->FileName != NULL) 
-    {
-    of << indent << "fileName=\"" << this->FileName << "\" ";
-    }
 }
 
 //----------------------------------------------------------------------------
@@ -92,18 +81,6 @@ void vtkMRMLModelStorageNode::ReadXMLAttributes(const char** atts)
 {
 
   vtkMRMLStorageNode::ReadXMLAttributes(atts);
-
-  const char* attName;
-  const char* attValue;
-  while (*atts != NULL) 
-    {
-    attName = *(atts++);
-    attValue = *(atts++);
-    if (!strcmp(attName, "fileName")) 
-      {
-      this->SetFileName(attValue);
-      }
-    }
 }
 
 //----------------------------------------------------------------------------
@@ -112,9 +89,6 @@ void vtkMRMLModelStorageNode::ReadXMLAttributes(const char** atts)
 void vtkMRMLModelStorageNode::Copy(vtkMRMLNode *anode)
 {
   Superclass::Copy(anode);
-  vtkMRMLModelStorageNode *node = (vtkMRMLModelStorageNode *) anode;
-
-  this->SetFileName(node->FileName);
 }
 
 //----------------------------------------------------------------------------

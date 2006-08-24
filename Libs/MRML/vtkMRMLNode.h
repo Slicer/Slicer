@@ -132,6 +132,14 @@ public:
   // ID use by other nodes to reference this node in XML
   vtkSetStringMacro(ID);
   vtkGetStringMacro(ID);
+
+  // Description:
+  // Describes if the data has been modified
+  vtkGetMacro(ModifiedSinceRead, int);
+  vtkSetMacro(ModifiedSinceRead, int);
+  vtkBooleanMacro(ModifiedSinceRead, int);
+
+
   
   vtkMRMLScene* GetScene() {return this->Scene;};
   void SetScene(vtkMRMLScene* scene) {this->Scene = scene;};
@@ -165,6 +173,8 @@ protected:
   char *Name;
   char *ID;
   int Indent;
+
+  int  ModifiedSinceRead;
 
   vtkMRMLScene *Scene;
 

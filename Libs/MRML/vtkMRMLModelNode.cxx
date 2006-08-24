@@ -258,6 +258,7 @@ void vtkMRMLModelNode::ProcessMRMLEvents ( vtkObject *caller,
   else if (this->PolyData == vtkPolyData::SafeDownCast(caller) &&
     event ==  vtkCommand::ModifiedEvent)
     {
+    this->ModifiedSinceRead = true;
     this->InvokeEvent(vtkMRMLModelNode::PolyDataModifiedEvent, NULL);
     }
   return;

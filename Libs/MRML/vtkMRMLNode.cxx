@@ -55,6 +55,7 @@ vtkMRMLNode::vtkMRMLNode()
   this->MRMLCallbackCommand->SetClientData( reinterpret_cast<void *>(this) );
   this->MRMLCallbackCommand->SetCallback( vtkMRMLNode::MRMLCallback );
   this->InMRMLCallbackFlag = 0;
+  this->ModifiedSinceRead = false;
 
 }
 

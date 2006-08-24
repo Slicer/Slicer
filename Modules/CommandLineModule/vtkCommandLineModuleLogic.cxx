@@ -370,7 +370,7 @@ void vtkCommandLineModuleLogic::Apply()
       {
       vtkMRMLVolumeArchetypeStorageNode *out
         = vtkMRMLVolumeArchetypeStorageNode::New();
-      out->SetFileArchetype( (*id2fn).second.c_str() );
+      out->SetFileName( (*id2fn).second.c_str() );
       
       out->WriteData( this->MRMLScene->GetNodeByID( (*id2fn).first.c_str() ) );
       
@@ -471,7 +471,7 @@ void vtkCommandLineModuleLogic::Apply()
       {
       vtkMRMLVolumeArchetypeStorageNode *in
         = vtkMRMLVolumeArchetypeStorageNode::New();
-      in->SetFileArchetype( (*id2fn).second.c_str() );
+      in->SetFileName( (*id2fn).second.c_str() );
       
       in->ReadData( this->MRMLScene->GetNodeByID( (*id2fn).first.c_str() ) );
       

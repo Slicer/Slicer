@@ -72,11 +72,6 @@ class VTK_MRML_EXPORT vtkMRMLVolumeHeaderlessStorageNode : public vtkMRMLStorage
   virtual const char* GetNodeTagName()  {return "VolumeHeaderlessStorage";};
 
   // Description:
-  // A file name or one name in a series
-  vtkGetStringMacro(Filename);
-  vtkSetStringMacro(Filename);
-
-  // Description:
   // Scan order in the file
   vtkGetStringMacro(FileScanOrder);
   vtkSetStringMacro(FileScanOrder);
@@ -143,8 +138,6 @@ protected:
   ~vtkMRMLVolumeHeaderlessStorageNode();
   vtkMRMLVolumeHeaderlessStorageNode(const vtkMRMLVolumeHeaderlessStorageNode&);
   void operator=(const vtkMRMLVolumeHeaderlessStorageNode&);
-
-  char *Filename;
 
   char *FileScanOrder;
   int FileScalarType;

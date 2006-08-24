@@ -12,31 +12,31 @@ set n [sc GetNthNodeByClass 0 vtkMRMLVolumeArchetypeStorageNode]
 puts "Print Storage node 0"
 puts "[$n Print]"
 
-puts "GetFileArchetype = [$n GetFileArchetype]"
+puts "GetFileName = [$n GetFileName]"
 
 sc SaveStateForUndo $n
-$n SetFileArchetype ff1
-puts "GetFileArchetype = [$n GetFileArchetype]"
+$n SetFileName ff1
+puts "GetFileName = [$n GetFileName]"
 
 sc SaveStateForUndo $n
-$n SetFileArchetype ff2
-puts "GetFileArchetype = [$n GetFileArchetype]"
+$n SetFileName ff2
+puts "GetFileName = [$n GetFileName]"
 
 sc SaveStateForUndo $n
-$n SetFileArchetype ff3
-puts "GetFileArchetype = [$n GetFileArchetype]"
+$n SetFileName ff3
+puts "GetFileName = [$n GetFileName]"
 
 puts Undo
 sc Undo
-puts "GetFileArchetype = [$n GetFileArchetype]"
+puts "GetFileName = [$n GetFileName]"
 
 puts Undo
 sc Undo
-puts "GetFileArchetype = [$n GetFileArchetype]"
+puts "GetFileName = [$n GetFileName]"
 
 puts Undo
 sc Undo
-puts "GetFileArchetype = [$n GetFileArchetype]"
+puts "GetFileName = [$n GetFileName]"
 
 
 # if we got to here, the test passed

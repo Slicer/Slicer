@@ -339,7 +339,28 @@ void vtkSlicerApplicationGUI::ProcessSaveSceneAsCommand()
     this->SaveSceneDialog->RetrieveLastPathFromRegistry(
       "OpenPath");
 
-     this->SaveSceneDialog->Invoke();
+    this->MRMLScene->InitTraversal();
+    vtkMRMLNode *node;
+    std::vector<std::string> names;
+    std::vector<std::string> types;
+    while ( (node = this->MRMLScene->GetNextNodeByClass("vtkMRMLVolumeNode") ) != NULL)
+      {
+      if (node->GetModifiedSinceRead()) 
+        {
+        names.push_back(std::string(node->GetName()));
+        types.push_back(std::string("Volume Node"));
+        }
+      }
+     while ( (node = this->MRMLScene->GetNextNodeByClass("vtkMRMLModelNode") ) != NULL)
+      {
+      if (node->GetModifiedSinceRead()) 
+        {
+        names.push_back(std::string(node->GetName()));
+        types.push_back(std::string("Model Node"));
+        }
+      }
+   
+    this->SaveSceneDialog->Invoke();
 
     // If a file has been selected for loading...
     char *fileName = this->SaveSceneDialog->GetFileName();

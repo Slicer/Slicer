@@ -69,7 +69,7 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (char* filename)
   vtkMRMLVolumeArchetypeStorageNode *storageNode = vtkMRMLVolumeArchetypeStorageNode::New();
 
   storageNode->SetAbsoluteFileName(true);
-  storageNode->SetFileArchetype(filename);
+  storageNode->SetFileName(filename);
   if (storageNode->ReadData(scalarNode) == 0)
     {
     // cannot read scalar data, try vector
@@ -149,7 +149,7 @@ int vtkSlicerVolumesLogic::SaveArchetypeVolume (char* filename, vtkMRMLVolumeNod
     }
 
   storageNode->SetAbsoluteFileName(true);
-  storageNode->SetFileArchetype(filename);
+  storageNode->SetFileName(filename);
 
   int res = storageNode->WriteData(volumeNode);
 

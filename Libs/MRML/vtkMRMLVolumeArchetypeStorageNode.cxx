@@ -60,28 +60,18 @@ vtkMRMLNode* vtkMRMLVolumeArchetypeStorageNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLVolumeArchetypeStorageNode::vtkMRMLVolumeArchetypeStorageNode()
 {
-  this->FileArchetype = NULL;
   this->AbsoluteFileName = 0;
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLVolumeArchetypeStorageNode::~vtkMRMLVolumeArchetypeStorageNode()
 {
-  if (this->FileArchetype) 
-    {
-    delete [] this->FileArchetype;
-    this->FileArchetype = NULL;
-    }
 }
 
 void vtkMRMLVolumeArchetypeStorageNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
   vtkIndent indent(nIndent);
-  if (this->FileArchetype != NULL) 
-    {
-    of << indent << "fileArchetype=\"" << this->FileArchetype << "\" ";
-    }
   of << indent << "absoluteFileName=\"" << this->AbsoluteFileName << "\" ";
 
 }
@@ -98,10 +88,6 @@ void vtkMRMLVolumeArchetypeStorageNode::ReadXMLAttributes(const char** atts)
     {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "fileArchetype")) 
-      {
-      this->SetFileArchetype(attValue);
-      }
     if (!strcmp(attName, "absoluteFileName")) 
       {
       std::stringstream ss;
@@ -119,7 +105,6 @@ void vtkMRMLVolumeArchetypeStorageNode::Copy(vtkMRMLNode *anode)
   Superclass::Copy(anode);
   vtkMRMLVolumeArchetypeStorageNode *node = (vtkMRMLVolumeArchetypeStorageNode *) anode;
 
-  this->SetFileArchetype(node->FileArchetype);
   this->SetAbsoluteFileName(node->AbsoluteFileName);
 }
 
@@ -128,8 +113,6 @@ void vtkMRMLVolumeArchetypeStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 {  
   vtkMRMLStorageNode::PrintSelf(os,indent);
 
-  os << indent << "FileArchetype: " <<
-    (this->FileArchetype ? this->FileArchetype : "(none)") << "\n";
   os << indent << "AbsoluteFileName: " << this->AbsoluteFileName << "\n";
 }
 
@@ -174,11 +157,11 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
   std::string fullName;
   if (this->AbsoluteFileName == 0 && this->SceneRootDir != NULL) 
     {
-    fullName = std::string(this->SceneRootDir) + std::string(this->GetFileArchetype());
+    fullName = std::string(this->SceneRootDir) + std::string(this->GetFileName());
     }
   else 
     {
-    fullName = std::string(this->GetFileArchetype());
+    fullName = std::string(this->GetFileName());
     }
   
   if (fullName == std::string("")) 
@@ -228,7 +211,7 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteData(vtkMRMLNode *refNode)
   
   if ( refNode->IsA("vtkMRMLScalarVolumeNode") ) 
     {
-    volNode = dynamic_cast <vtkMRMLScalarVolumeNode *> (refNode);
+    volNode = vtkMRMLScalarVolumeNode::SafeDownCast(refNode);
     }
   
   if (volNode->GetImageData() == NULL) 
@@ -239,11 +222,11 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteData(vtkMRMLNode *refNode)
   std::string fullName;
   if (this->SceneRootDir != NULL) 
     {
-    fullName = std::string(this->SceneRootDir) + std::string(this->GetFileArchetype());
+    fullName = std::string(this->SceneRootDir) + std::string(this->GetFileName());
     }
   else 
     {
-    fullName = std::string(this->GetFileArchetype());
+    fullName = std::string(this->GetFileName());
     }
   
   if (fullName == std::string("")) 

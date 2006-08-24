@@ -569,6 +569,7 @@ void vtkMRMLVolumeNode::ProcessMRMLEvents ( vtkObject *caller,
   else if (this->ImageData == vtkImageData::SafeDownCast(caller) &&
     event ==  vtkCommand::ModifiedEvent)
     {
+    this->ModifiedSinceRead = true;
     this->InvokeEvent(vtkMRMLVolumeNode::ImageDataModifiedEvent, NULL);
     }
   return;

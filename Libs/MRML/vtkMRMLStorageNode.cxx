@@ -28,35 +28,63 @@ Version:   $Revision: 1.2 $
 //----------------------------------------------------------------------------
 vtkMRMLStorageNode::vtkMRMLStorageNode()
 {
+  this->FileName = NULL;
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLStorageNode::~vtkMRMLStorageNode()
 {
+  if (this->FileName) 
+    {
+    delete [] this->FileName;
+    this->FileName = NULL;
+    }
 }
 
 void vtkMRMLStorageNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
+  vtkIndent indent(nIndent);
+
+  if (this->FileName != NULL) 
+    {
+    of << indent << "fileName=\"" << this->FileName << "\" ";
+    }
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLStorageNode::ReadXMLAttributes(const char** atts)
 {
   vtkMRMLNode::ReadXMLAttributes(atts);
+  const char* attName;
+  const char* attValue;
+  while (*atts != NULL) 
+    {
+    attName = *(atts++);
+    attValue = *(atts++);
+    if (!strcmp(attName, "fileName")) 
+      {
+      this->SetFileName(attValue);
+      }
+    }
 }
 
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, StorageID
-void vtkMRMLStorageNode::Copy(vtkMRMLNode *node)
+void vtkMRMLStorageNode::Copy(vtkMRMLNode *anode)
 {
-  Superclass::Copy(node);
+  Superclass::Copy(anode);
+  vtkMRMLStorageNode *node = (vtkMRMLStorageNode *) anode;
+  this->SetFileName(node->FileName);
+
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   vtkMRMLNode::PrintSelf(os,indent);
+  os << indent << "FileName: " <<
+    (this->FileName ? this->FileName : "(none)") << "\n";
 }
 
