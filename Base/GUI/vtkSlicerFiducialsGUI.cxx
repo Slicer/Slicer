@@ -75,6 +75,7 @@ vtkSlicerFiducialsGUI::~vtkSlicerFiducialsGUI ( )
         this->VisibilityIcons = NULL;
     }
 
+    this->MultiColumnList->GetWidget()->Delete();
     this->MultiColumnList->Delete();
 
     this->SetFiducialListNodeID("(none)");
@@ -226,6 +227,9 @@ void vtkSlicerFiducialsGUI::ProcessGUIEvents ( vtkObject *caller,
             std::cerr << "WARNING: new fiducial doesn't have a name\n";
             this->MultiColumnList->GetWidget()->SetCellText(row,0,"(none)");
         }
+        // make it editable
+        this->MultiColumnList->GetWidget()->SetCellEditWindowToEntry(row,0);
+        this->MultiColumnList->GetWidget()->CellEditableOn(row,0);
         if (xyz != NULL)
         {
             this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,1,xyz[0]);
@@ -240,8 +244,13 @@ void vtkSlicerFiducialsGUI::ProcessGUIEvents ( vtkObject *caller,
             this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,7,wxyz[3]);
         }
         // selected
-        this->MultiColumnList->GetWidget()->SetCellEditWindowToCheckButton(row,8);
         this->MultiColumnList->GetWidget()->SetCellTextAsInt(row,8,(modelNode->GetSelected() ? 1 : 0));
+        // set up the editing widgets (the last one, selected, uses a checkbox)
+        //for (int c = 0; c < this->NumberOfColumns-1; c++)
+        {
+            //this->MultiColumnList->GetWidget()->SetCellWindowCommand(row, 0, this, "CellCallBack");
+        }
+        this->MultiColumnList->GetWidget()->SetCellWindowCommandToCheckButton(row,8);
     }
   if (button == this->GetVisibilityToggle()  && event ==  vtkKWPushButton::InvokedEvent)
     {
@@ -357,6 +366,7 @@ void vtkSlicerFiducialsGUI::ProcessMRMLEvents ( vtkObject *caller,
                 }
                 // selected
                 this->MultiColumnList->GetWidget()->SetCellTextAsInt(row,8,(pointNode->GetSelected() ? 1 : 0));
+                this->MultiColumnList->GetWidget()->SetCellWindowCommandToCheckButton(row,8);
             }
         }
     }
@@ -511,9 +521,11 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     this->MultiColumnList->Create ( );
     this->MultiColumnList->SetHeight(4);
     this->MultiColumnList->GetWidget()->SetSelectionTypeToCell();
+    
     // set up the columns of data for each point
     // name, x, y, z, orientation w, x, y, z, selected
     this->MultiColumnList->GetWidget()->AddColumn("Name");
+    this->MultiColumnList->GetWidget()->ColumnEditableOn(0);
     this->MultiColumnList->GetWidget()->AddColumn("X");
     this->MultiColumnList->GetWidget()->AddColumn("Y");
     this->MultiColumnList->GetWidget()->AddColumn("Z");
@@ -523,21 +535,17 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     this->MultiColumnList->GetWidget()->AddColumn("OrZ");
     this->MultiColumnList->GetWidget()->AddColumn("Selected");
 
+    // make the selected column editable by checkbox
+    this->MultiColumnList->GetWidget()->SetColumnEditWindowToCheckButton(8);
+    
+    
     // now set the attributes that are equal across the columns
-    this->MultiColumnList->GetWidget()->SetColumnLabelBackgroundColor(0.5,1.0,0.5);
-    this->MultiColumnList->GetWidget()->SetSelectionBackgroundColor(0.5,0.5,1.0);
-    this->MultiColumnList->GetWidget()->SetSelectionForegroundColor(0.0,0.0,0.0);
     int col;
     for (col = 0; col < this->NumberOfColumns; col++)
     {        
-        this->MultiColumnList->GetWidget()->SetColumnWidth(col, 8);
+        this->MultiColumnList->GetWidget()->SetColumnWidth(col, 12);
         this->MultiColumnList->GetWidget()->SetColumnAlignmentToLeft(col);
         this->MultiColumnList->GetWidget()->ColumnEditableOn(col);
-        if (0 && col % 2 == 0)
-        {
-            // every other row is a different colour, and that over rides this
-            this->MultiColumnList->GetWidget()->SetColumnBackgroundColor(col, 0.8, 0.8, 0.8);
-        }
     }
     app->Script ( "pack %s -fill both -expand true",
                   this->MultiColumnList->GetWidgetName());
@@ -565,13 +573,84 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerFiducialsGUI::UpdateElement(int row, int col, double val)
+void vtkSlicerFiducialsGUI::UpdateElement(int row, int col, char * str)
 {
-    std::cout << "vtkSlicerFiducialsGUI: UpdateElement " << row << " " << col << " " << val << "\n";
-    cout << "row = " << row << ", col = " << col << ", val = " << val << endl;
-    UpdateVTK();
-}
+    std::cout << "vtkSlicerFiducialsGUI: UpdateElement " << row << " " << col << " " << str << "\n";
+    cout << "row = " << row << ", col = " << col << ", str = " << str << endl;
 
+    // make sure that the row and column exists in the table
+    if ((row >= 0) && (row < this->MultiColumnList->GetWidget()->GetNumberOfRows()) &&
+        (col >= 0) && (col < this->MultiColumnList->GetWidget()->GetNumberOfColumns()))
+        {
+            vtkSlicerFiducialsLogic* modelLogic = this->GetLogic();
+            if (modelLogic == NULL)
+            {
+                // TODO; generate an error...
+                std::cerr << "UpdateElement: ERROR getting the Logic of the Fiducials Gui\n";
+                return;
+            }
+            // is there an active list?
+            if (modelLogic->GetActiveFiducialListNode() == NULL)
+            {
+                // 
+                std::cerr << "UpdateElement: ERROR: No Fiducial List, add one first!\n";
+                return;
+            }
+        
+            // get the fiducial point at that row in the table
+            vtkMRMLFiducialNode * node = modelLogic->GetActiveFiducialListNode()->GetNthFiducialNode(row);
+            if (node == NULL)
+            {
+                std::cerr << "UpdateElement: ERROR: null node at row " << row << endl;
+                return;
+            }
+            std::cout << "\tgot the " << row << "th fiducial node from the active list\n";
+            // now update the requested value
+            if (col == 0)
+            {
+                std:: cout << "\tsetting the name?\n";
+                node->SetName(str);
+            }
+            else if (col > 0 && col < 4)
+            {
+                std::cout << "\tsetting position...\n";
+                // get the current xyz
+                float * xyz = node->GetXYZ();
+                // now set the new one
+                float newCoordinate = atof(str);
+                if (col == 1) { node->SetXYZ(newCoordinate, xyz[1], xyz[2]); }
+                if (col == 2) { node->SetXYZ(xyz[0], newCoordinate, xyz[2]); }
+                if (col == 3) { node->SetXYZ(xyz[0], xyz[1], newCoordinate); }
+            }
+            else if (col > 3 && col < 8)
+            {
+                std::cout << "\tsetting orientation...\n";
+                float * wxyz = node->GetOrientationWXYZ();
+                float newCoordinate = atof(str);
+                if (col == 4) { node->SetOrientationWXYZ(newCoordinate, wxyz[1], wxyz[2], wxyz[3]); }
+                if (col == 5) { node->SetOrientationWXYZ(wxyz[0], newCoordinate, wxyz[2], wxyz[3]); }
+                if (col == 6) { node->SetOrientationWXYZ(wxyz[0], wxyz[1], newCoordinate, wxyz[3]); }
+                if (col == 7) { node->SetOrientationWXYZ(wxyz[0], wxyz[1], wxyz[2], newCoordinate); }
+            }
+            else if (col == 8)
+            {
+                std::cout << "\tsetting node selected to " << str << endl;
+                // selected
+                node->SetSelected(atoi(str));
+            }
+            else
+            {
+                std::cerr << "UpdateElement: ERROR: invalid column number " << col << ", valid values are 0-" << this->NumberOfColumns << endl;
+                return;
+            }
+            //UpdateVTK();
+        }
+    else
+    {
+        std::cout << "Invalid row " << row << " or column " << col <<  ", valid columns are 0-" << this->NumberOfColumns << "\n";
+    }
+}
+    
 //---------------------------------------------------------------------------
 void vtkSlicerFiducialsGUI::UpdateVTK()
 {
@@ -616,3 +695,4 @@ void vtkSlicerFiducialsGUI::SetFiducialListNode (vtkMRMLFiducialListNode *fiduci
         this->ProcessMRMLEvents(fiducialListNode, vtkCommand::ModifiedEvent, NULL);
     }
 }
+
