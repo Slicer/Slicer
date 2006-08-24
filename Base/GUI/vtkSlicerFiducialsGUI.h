@@ -80,7 +80,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     virtual void Enter ( );
     virtual void Exit ( );
 
-    virtual void UpdateElement(int row, int col, double val);
+    virtual void UpdateElement(int row, int col, char * str);
     virtual void UpdateVTK();
 
     // Description:
