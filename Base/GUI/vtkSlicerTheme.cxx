@@ -142,6 +142,28 @@ void vtkSlicerTheme::Install ( )
     odb->AddEntry ( "vtkKWMenuButton", "SetReliefToGroove", NULL );
     
     // Slicer MultiColumnLists
+    // font
+    odb->AddEntry ( "vtkKWMultiColumnList", "SetFont", "{Helvetica 8 normal}" );
+    // column header 
+    odb->AddEntryAsDouble3 ( "vtkKWMultiColumnList", "SetColumnLabelBackgroundColor",
+                             this->SlicerColors->MediumBlue );
+    odb->AddEntryAsDouble3 ( "vtkKWMultiColumnList", "SetColumnLabelForegroundColor",
+                             this->SlicerColors->White );
+    // selection
+    odb->AddEntryAsDouble3 ( "vtkKWMultiColumnList", "SetSelectionBackgroundColor",
+         this->SlicerColors->ActiveMenuBackgroundColor);
+    odb->AddEntryAsDouble3 ( "vtkKWMultiColumnList", "SetSelectionForegroundColor",
+         this->SlicerColors->ActiveTextColor);
+
+    // Slicer MultiColumnListsWithScrollbars
+    // scroll bars
+    odb->AddEntryAsInt("vtkKWScrollbar", "SetWidth", 2); // not implemented
+    odb->AddEntryAsDouble3("vtkKWScrollbar", "SetTroughColor", this->SlicerColors->RecessedColor);
+    
+    // Slicer Checkbutton
+    odb->AddEntry( "vtkKWCheckButton", "IndicatorVisibilityOn", NULL);
+    odb->AddEntryAsDouble3( "vtkKWCheckButton", "SetSelectColor", this->SlicerColors->HighlightColor);
+    
     // Slicer Menubar
     // Slicer Labels
     // Slicer Menus
