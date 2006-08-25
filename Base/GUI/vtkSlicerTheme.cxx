@@ -163,8 +163,6 @@ void vtkSlicerTheme::Install ( )
     // Slicer Checkbutton
     odb->AddEntry( "vtkKWCheckButton", "IndicatorVisibilityOn", NULL);
     odb->AddEntryAsDouble3( "vtkKWCheckButton", "SetSelectColor", this->SlicerColors->HighlightColor);
-    // background should give contrast when the button is not selected.
-    odb->AddEntryAsDouble3( "vtkKWCheckButton", "SetBackgroundColor", this->SlicerColors->LightGrey);
     
     // Slicer Menubar
     // Slicer Labels
