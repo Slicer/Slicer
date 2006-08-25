@@ -38,11 +38,11 @@ if { [itcl::find class DrawSWidget] == "" } {
     public variable drawOver 1
 
     # methods
-    method processEvent {} {}
+    method processEvent { {caller ""} } {}
     method positionActors {} {}
     method apply {} {}
     method createPolyData {} {}
-    method addPoint {x y} {}
+    method addPoint {r a s} {}
   }
 }
 
@@ -53,6 +53,8 @@ itcl::body DrawSWidget::constructor {sliceGUI} {
 
   $this configure -sliceGUI $sliceGUI
  
+  set o(xyPoints) [vtkNew vtkPoints]
+  set o(rasPoints) [vtkNew vtkPoints]
   set o(polyData) [$this createPolyData]
   set o(mapper) [vtkNew vtkPolyDataMapper2D]
   set o(actor) [vtkNew vtkActor2D]
@@ -68,10 +70,10 @@ itcl::body DrawSWidget::constructor {sliceGUI} {
 
   set _guiObserverTags ""
   lappend _guiObserverTags [$sliceGUI AddObserver DeleteEvent "itcl::delete object $this"]
-  lappend _guiObserverTags [$sliceGUI AddObserver AnyEvent "$this processEvent"]
+  lappend _guiObserverTags [$sliceGUI AddObserver AnyEvent "$this processEvent $sliceGUI"]
   set node [[$sliceGUI GetLogic] GetSliceNode]
   lappend _nodeObserverTags [$node AddObserver DeleteEvent "itcl::delete object $this"]
-  lappend _nodeObserverTags [$node AddObserver AnyEvent "$this processEvent"]
+  lappend _nodeObserverTags [$node AddObserver AnyEvent "$this processEvent $node"]
 }
 
 itcl::body DrawSWidget::destructor {} {
@@ -103,15 +105,13 @@ itcl::body DrawSWidget::destructor {} {
 itcl::body DrawSWidget::createPolyData {} {
   # make a single-polyline polydata
   set polyData [vtkNew vtkPolyData]
-  set points [vtkPoints New]
   set lines [vtkCellArray New]
 
-  $polyData SetPoints $points
+  $polyData SetPoints $o(xyPoints)
   $polyData SetLines $lines
   set polyLine [vtkPolyLine New]
   $lines InsertNextCell $polyLine
 
-  $points Delete
   $lines Delete
   $polyLine Delete
   return $polyData
@@ -121,26 +121,27 @@ if { 0 } {
   itcl::delete class DrawSWidget; source c:/pieper/bwh/slicer3/latest/slicer3/Base/GUI/Tcl/DrawSWidget.tcl; ::DrawSWidget::AddDraw
 }
 
-itcl::body DrawSWidget::addPoint {x y} {
+itcl::body DrawSWidget::addPoint {r a s} {
 
-  set points [$o(polyData) GetPoints]
-  set p [$points InsertNextPoint $x $y 0]
+  set p [$o(rasPoints) InsertNextPoint $r $a $s]
   set lines [$o(polyData) GetLines]
   set idArray [$lines GetData]
   $idArray InsertNextTuple1 $p
   $idArray SetTuple1 0 [expr [$idArray GetNumberOfTuples] - 1]
-  $o(polyData) Modified
+  $this positionActors
 }
 
 itcl::body DrawSWidget::positionActors { } {
-
-  return
-  # TODO: update the polygon position 
-  set xyzw [$this rasToXY $_currentPosition]
-  eval $o(actor) SetPosition [lrange $xyzw 0 1]
+  set rasToXY [vtkTransform New]
+  $rasToXY SetMatrix [$_sliceNode GetXYToRAS]
+  $rasToXY Inverse
+  $o(xyPoints) Reset
+  $rasToXY TransformPoints $o(rasPoints) $o(xyPoints)
+  $rasToXY Delete
+  $o(polyData) Modified
 }
 
-itcl::body DrawSWidget::processEvent { } {
+itcl::body DrawSWidget::processEvent { {caller ""} } {
 
   if { [info command $sliceGUI] == "" } {
     # the sliceGUI was deleted behind our back, so we need to 
@@ -149,40 +150,45 @@ itcl::body DrawSWidget::processEvent { } {
     return
   }
 
-  set grabID [$sliceGUI GetGrabID]
-  if { ($grabID != "") && ($grabID != $this) } {
-    # some other widget wants these events
-    # -- we can position wrt the current slice node
-    $this positionActors
-    [$sliceGUI GetSliceViewer] RequestRender
-    return 
-  }
+  if { $caller == $sliceGUI } {
 
-  set event [$sliceGUI GetCurrentGUIEvent] 
-
-  switch $event {
-    "LeftButtonPressEvent" {
-      foreach {x y} [$_interactor GetEventPosition] {}
-      $this addPoint $x $y
-      set _actionState "drawing" ;# rubber band line
-      $sliceGUI SetGUICommandAbortFlag 1
-      $sliceGUI SetGrabID $this
+    set grabID [$sliceGUI GetGrabID]
+    if { ($grabID != "") && ($grabID != $this) } {
+      # some other widget wants these events
+      # -- we can position wrt the current slice node
+      $this positionActors
+      [$sliceGUI GetSliceViewer] RequestRender
+      return 
     }
-    "MouseMoveEvent" {
-      switch $_actionState {
-        "drawing" {
-          foreach {x y} [$_interactor GetEventPosition] {}
-          $this addPoint $x $y
-        }
-        default {
+
+    set event [$sliceGUI GetCurrentGUIEvent] 
+    set ras [$this xyToRAS [$_interactor GetEventPosition]]
+
+    switch $event {
+      "LeftButtonPressEvent" {
+        set _actionState "drawing"
+        eval $this addPoint $ras
+        $sliceGUI SetGUICommandAbortFlag 1
+        $sliceGUI SetGrabID $this
+      }
+      "MouseMoveEvent" {
+        switch $_actionState {
+          "drawing" {
+            eval $this addPoint $ras
+          }
+          default {
+          }
         }
       }
+      "LeftButtonReleaseEvent" {
+        set _actionState ""
+        $sliceGUI SetGrabID ""
+        set _description ""
+      }
     }
-    "LeftButtonReleaseEvent" {
-      set _actionState ""
-      $sliceGUI SetGrabID ""
-      set _description ""
-    }
+  } else { 
+    # events from the node... nothing particular to do
+    # except the default update of the actors
   }
 
   $this positionActors
