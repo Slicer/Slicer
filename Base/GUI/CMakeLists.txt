@@ -193,6 +193,11 @@ CONFIGURE_FILE(
   COPYONLY
 )
 CONFIGURE_FILE(
+  ${Slicer3_SOURCE_DIR}/Base/GUI/Tcl/DrawSWidget.tcl
+  ${SlicerBaseGUITcl_DIR}/DrawSWidget.tcl
+  COPYONLY
+)
+CONFIGURE_FILE(
   ${Slicer3_SOURCE_DIR}/Base/GUI/Tcl/CsysSWidget.tcl
   ${SlicerBaseGUITcl_DIR}/CsysSWidget.tcl
   COPYONLY

@@ -384,6 +384,7 @@ proc EditorCreateLabelVolume {this} {
   # create a volume node as copy of source volume
   set labelNode [vtkMRMLScalarVolumeNode New]
   $labelNode Copy $volumeNode
+  $labelNode SetStorageNodeID ""
   $labelNode SetLabelMap 1
   set name [[$::Editor($this,volumeName) GetWidget] GetValue]
   if { $name != "" } {
