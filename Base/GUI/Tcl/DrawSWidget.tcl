@@ -70,7 +70,10 @@ itcl::body DrawSWidget::constructor {sliceGUI} {
 
   set _guiObserverTags ""
   lappend _guiObserverTags [$sliceGUI AddObserver DeleteEvent "itcl::delete object $this"]
-  lappend _guiObserverTags [$sliceGUI AddObserver AnyEvent "$this processEvent $sliceGUI"]
+  foreach event { LeftButtonPressEvent LeftButtonReleaseEvent MouseMoveEvent } {
+    lappend _guiObserverTags [$sliceGUI AddObserver $event "$this processEvent $sliceGUI"]
+  }
+
   set node [[$sliceGUI GetLogic] GetSliceNode]
   lappend _nodeObserverTags [$node AddObserver DeleteEvent "itcl::delete object $this"]
   lappend _nodeObserverTags [$node AddObserver AnyEvent "$this processEvent $node"]
@@ -128,7 +131,6 @@ itcl::body DrawSWidget::addPoint {r a s} {
   set idArray [$lines GetData]
   $idArray InsertNextTuple1 $p
   $idArray SetTuple1 0 [expr [$idArray GetNumberOfTuples] - 1]
-  $this positionActors
 }
 
 itcl::body DrawSWidget::positionActors { } {
@@ -166,8 +168,13 @@ itcl::body DrawSWidget::processEvent { {caller ""} } {
 
     switch $event {
       "LeftButtonPressEvent" {
-        set _actionState "drawing"
-        eval $this addPoint $ras
+        if { ! [$_interactor GetShiftKey] } {
+          set _actionState "drawing"
+          eval $this addPoint $ras
+        } else {
+          set _actionState ""
+          $this apply
+        }
         $sliceGUI SetGUICommandAbortFlag 1
         $sliceGUI SetGrabID $this
       }
@@ -185,6 +192,9 @@ itcl::body DrawSWidget::processEvent { {caller ""} } {
         $sliceGUI SetGrabID ""
         set _description ""
       }
+      default {
+        # other events...
+      }
     }
   } else { 
     # events from the node... nothing particular to do
@@ -197,12 +207,14 @@ itcl::body DrawSWidget::processEvent { {caller ""} } {
 
 itcl::body DrawSWidget::apply {} {
 
-  #
-  # draw with a brush that is circular in XY space 
-  # (could be streched or rotate when transformed to IJK)
-  # - make sure to hit ever pixel in IJK space 
-  # - apply the threshold if selected
-  #
+  set lines [$o(polyData) GetLines]
+  set idArray [$lines GetData]
+  set p [$idArray GetTuple1 1]
+  $idArray InsertNextTuple1 $p
+  $idArray SetTuple1 0 [expr [$idArray GetNumberOfTuples] - 1]
+  $this positionActors
+
+  return
 
   foreach {x y} [$_interactor GetEventPosition] {}
   $this queryLayers $x $y

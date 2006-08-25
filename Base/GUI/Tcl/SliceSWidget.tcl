@@ -52,7 +52,14 @@ itcl::body SliceSWidget::constructor {sliceGUI} {
 
   set _guiObserverTags ""
   lappend _guiObserverTags [$sliceGUI AddObserver DeleteEvent "itcl::delete object $this"]
-  lappend _guiObserverTags [$sliceGUI AddObserver AnyEvent "$this processEvent"]
+  set events {  "MouseMoveEvent" "RightButtonPressEvent" "RightButtonReleaseEvent"
+    "LeftButtonPressEvent" "LeftButtonReleaseEvent" "MiddleButtonPressEvent"
+    "MiddleButtonReleaseEvent" "MouseWheelForwardEvent" "MouseWheelBackwardEvent"
+    "ExposeEvent" "ConfigureEvent" "EnterEvent" "LeaveEvent"
+    "TimerEvent" "KeyPressEvent" "KeyReleaseEvent"
+    "CharEvent" "ExitEvent" }
+  foreach event $events {
+    lappend _guiObserverTags [$sliceGUI AddObserver $event "$this processEvent"]    }
   set node [[$sliceGUI GetLogic] GetSliceNode]
   lappend _nodeObserverTags [$node AddObserver DeleteEvent "itcl::delete object $this"]
   lappend _nodeObserverTags [$node AddObserver AnyEvent "$this processEvent"]
@@ -78,6 +85,7 @@ itcl::body SliceSWidget::destructor {} {
     }
   }
 }
+
 
 
 # ------------------------------------------------------------------

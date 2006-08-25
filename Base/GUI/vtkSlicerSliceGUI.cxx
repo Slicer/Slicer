@@ -106,14 +106,6 @@ void vtkSlicerSliceGUI::PrintSelf ( ostream& os, vtkIndent indent )
 //---------------------------------------------------------------------------
 void vtkSlicerSliceGUI::AddGUIObservers ( ) {
 
-#if 0
-  // add a higher than average observer to capture events
-  this->SliceViewer->GetRenderWidget()->GetRenderWindowInteractor()->AddObserver (
-    vtkCommand::AnyEvent, (vtkCommand *)this->GUICallbackCommand, 1.0 );
-
-#endif
-
-
   this->RemoveGUIObservers();
 
   // make a user interactor style to process our events
@@ -161,8 +153,10 @@ void vtkSlicerSliceGUI::SetGUICommandAbortFlag ( int flag )
 void vtkSlicerSliceGUI::ProcessGUIEvents ( vtkObject *caller,
                                               unsigned long event, void *callData )
 {
-  vtkKWGenericRenderWindowInteractor *rwi = vtkKWGenericRenderWindowInteractor::SafeDownCast (caller);
-  vtkInteractorStyleUser *iStyleUser = vtkInteractorStyleUser::SafeDownCast (caller);
+  vtkKWGenericRenderWindowInteractor *rwi = 
+        vtkKWGenericRenderWindowInteractor::SafeDownCast (caller);
+  vtkInteractorStyleUser *iStyleUser = 
+        vtkInteractorStyleUser::SafeDownCast (caller);
 
   vtkMRMLScene *mrml = this->GetApplicationLogic()->GetMRMLScene();
 
@@ -171,21 +165,14 @@ void vtkSlicerSliceGUI::ProcessGUIEvents ( vtkObject *caller,
     return;
     }
 
-#if 0
-  // TODO - this is actually old
-  if ( rwi == this->SliceViewer->GetRenderWidget()->GetRenderWindowInteractor() )
-    {
-    this->Script("SliceViewerHandleEvent %s %s", 
-      this->GetTclName(), vtkCommand::GetStringFromEventId(event));
-    }
-#endif
-
   // handle events from the Interactor Style
   if (iStyleUser == 
-      this->GetSliceViewer()->GetRenderWidget()->GetRenderWindowInteractor()->GetInteractorStyle())
+      this->GetSliceViewer()->GetRenderWidget()->
+          GetRenderWindowInteractor()->GetInteractorStyle())
     {
     this->SetCurrentGUIEvent( vtkCommand::GetStringFromEventId(event) );
     this->InvokeEvent (event, NULL);
+    this->SetCurrentGUIEvent( "" ); // avoid extra processing of same event
 
     if ( !this->GUICallbackCommand->GetAbortFlag() )
       {

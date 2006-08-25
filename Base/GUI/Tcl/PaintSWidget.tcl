@@ -76,7 +76,8 @@ itcl::body PaintSWidget::constructor {sliceGUI} {
 
   set _guiObserverTags ""
   lappend _guiObserverTags [$sliceGUI AddObserver DeleteEvent "itcl::delete object $this"]
-  lappend _guiObserverTags [$sliceGUI AddObserver AnyEvent "$this processEvent"]
+  foreach event {LeftButtonPressEvent LeftButtonReleaseEvent MouseMoveEvent EnterEvent LeaveEvent} {
+    lappend _guiObserverTags [$sliceGUI AddObserver $event "$this processEvent"]    }
   set node [[$sliceGUI GetLogic] GetSliceNode]
   lappend _nodeObserverTags [$node AddObserver DeleteEvent "itcl::delete object $this"]
   lappend _nodeObserverTags [$node AddObserver AnyEvent "$this processEvent"]
