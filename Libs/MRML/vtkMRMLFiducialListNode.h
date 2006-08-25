@@ -81,8 +81,8 @@ public:
   
   // Description:
   // Get/Set for Symbol scale
-  vtkSetMacro(SymbolScale,float);
-  vtkGetMacro(SymbolScale,float);
+  vtkSetMacro(SymbolScale,double);
+  vtkGetMacro(SymbolScale,double);
 
 
   // Description:
@@ -92,8 +92,8 @@ public:
 
   // Description:
   // Get/Set for Text scale
-  vtkSetMacro(TextScale,float);
-  vtkGetMacro(TextScale,float);
+  vtkSetMacro(TextScale,double);
+  vtkGetMacro(TextScale,double);
   
   // Description:
   // Get/Set for Glyph and Text color
@@ -133,8 +133,8 @@ protected:
 
   vtkSetStringMacro(DisplayNodeID);
 
-  float SymbolScale;
-  float TextScale;
+  double SymbolScale;
+  double TextScale;
   int Visibility;
   double Color[3];
 
