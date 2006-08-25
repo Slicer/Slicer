@@ -17,6 +17,7 @@
 #include "vtkKWFrame.h"
 #include "vtkKWPushButton.h"
 #include "vtkSlicerVisibilityIcons.h"
+#include "vtkKWChangeColorButton.h"
 
 // Description:
 // This class implements Slicer's Fiducials GUI
@@ -26,6 +27,7 @@ class vtkKWMultiColumnListWithScrollbars;
 class vtkKWPushButton;
 class vtkKWMessage;
 class vtkSlicerVisibilityIcons;
+class vtkKWChangeColorButton;
 
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleGUI
 {
@@ -42,6 +44,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     vtkGetObjectMacro ( AddFiducialButton, vtkKWPushButton);
     vtkGetObjectMacro ( VisibilityToggle, vtkKWPushButton);
     vtkGetObjectMacro ( VisibilityIcons, vtkSlicerVisibilityIcons);
+    vtkGetObjectMacro ( ListColorButton, vtkKWChangeColorButton);
     vtkGetObjectMacro ( Logic, vtkSlicerFiducialsLogic);
     vtkGetObjectMacro ( FiducialListNode, vtkMRMLFiducialListNode );
     
@@ -117,6 +120,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     // list visibility
     vtkKWPushButton *VisibilityToggle;
     vtkSlicerVisibilityIcons *VisibilityIcons;
+
+    // list colour
+    vtkKWChangeColorButton *ListColorButton;
     
     // display the points on the list
     vtkKWMultiColumnListWithScrollbars *MultiColumnList;

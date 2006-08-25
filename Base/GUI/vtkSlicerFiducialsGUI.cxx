@@ -36,6 +36,8 @@ vtkSlicerFiducialsGUI::vtkSlicerFiducialsGUI ( )
 
     this->VisibilityToggle = NULL;
     this->VisibilityIcons = NULL;
+
+    this->ListColorButton = NULL;
     
     this->MultiColumnList = NULL;
     this->NumberOfColumns = 9;
@@ -75,6 +77,11 @@ vtkSlicerFiducialsGUI::~vtkSlicerFiducialsGUI ( )
         this->VisibilityIcons = NULL;
     }
 
+    if (this->ListColorButton) {
+        this->ListColorButton->Delete();
+        this->ListColorButton = NULL;
+    }
+
     this->MultiColumnList->GetWidget()->Delete();
     this->MultiColumnList->Delete();
 
@@ -103,7 +110,7 @@ void vtkSlicerFiducialsGUI::RemoveGUIObservers ( )
     this->AddFiducialListButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->AddFiducialButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->VisibilityToggle->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-
+    this->ListColorButton->RemoveObservers (vtkKWChangeColorButton::ColorChangedEvent, (vtkCommand *)this->GUICallbackCommand);
 }
 
 
@@ -116,6 +123,7 @@ void vtkSlicerFiducialsGUI::AddGUIObservers ( )
     this->AddFiducialButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
 
     this->VisibilityToggle->AddObserver (vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+    this->ListColorButton->AddObserver (vtkKWChangeColorButton::ColorChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 }
 
 
@@ -280,6 +288,35 @@ void vtkSlicerFiducialsGUI::ProcessGUIEvents ( vtkObject *caller,
 
     }
 
+  // list colour
+  vtkKWChangeColorButton *colorButton = vtkKWChangeColorButton::SafeDownCast(caller);
+  if (colorButton == this->ListColorButton && event == vtkKWChangeColorButton::ColorChangedEvent)
+  {
+      std::cout << "ProcessGUIEvents: list colour button change event\n";
+      // get the active list
+       vtkSlicerFiducialsLogic* modelLogic = this->GetLogic();
+        if (modelLogic == NULL)
+        {
+            // TODO; generate an error...
+            std::cerr << " ERROR getting the Logic of the Fiducials Gui\n";
+            return;
+        }
+
+        // is there an active list?
+        if (modelLogic->GetActiveFiducialListNode() == NULL)
+        {
+            // 
+            std::cerr << "ERROR: No Fiducial List, add one first!\n";
+            return;
+        }
+       // save state for undo
+        this->MRMLScene->SaveStateForUndo(modelLogic->GetActiveFiducialListNode());
+       // change the colour
+        modelLogic->GetActiveFiducialListNode()->SetColor(this->ListColorButton->GetColor());
+        // update the icon via  process mrml event that should get pushed
+        // this->ProcessMRMLEvents(caller, event, callData); 
+
+  }
   return;
 }
 
@@ -371,7 +408,7 @@ void vtkSlicerFiducialsGUI::ProcessMRMLEvents ( vtkObject *caller,
         }
     }
 
-    // update the visibility button to match the logic state
+    // update the visibility, color buttons to match the logic state
     vtkSlicerFiducialsLogic* modelLogic = this->GetLogic();
     if ((modelLogic != NULL))
         //&& (node == modelLogic->GetActiveFiducialListNode()) &&
@@ -387,6 +424,18 @@ void vtkSlicerFiducialsGUI::ProcessMRMLEvents ( vtkObject *caller,
         {
             this->GetVisibilityToggle()->SetImageToIcon(
                 this->GetVisibilityIcons()->GetInvisibleIcon());
+        }
+
+        // color
+        double *nodeColor = modelLogic->GetActiveFiducialListNode()->GetColor();
+        double *buttonColor = this->ListColorButton->GetColor();
+        if (nodeColor != NULL && buttonColor != NULL && 
+            (nodeColor[0] != buttonColor[0] ||
+             nodeColor[1] != buttonColor[1] ||
+             nodeColor[2] != buttonColor[2]))
+        {
+            std::cout << "Updating list color button\n";
+            this->ListColorButton->SetColor(nodeColor);
         }
     }
 
@@ -509,11 +558,18 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
  
     // text scale
 
-    // text color
-
     // symbol scale
 
-    // symbol color
+    // color
+    this->ListColorButton = vtkKWChangeColorButton::New();
+    this->ListColorButton->SetParent( listFrame->GetFrame() );
+    this->ListColorButton->Create();
+    this->ListColorButton->SetBorderWidth(0);
+    this->ListColorButton->SetBalloonHelpString("Change the colour of the fiducial list symbols and text in the MainViewer");
+    
+    this->ListColorButton->SetDialogTitle("List symbol and text color");
+    app->Script("pack %s -side top -anchor w -padx 2 -pady 2",
+                this->ListColorButton->GetWidgetName());
     
     // add the multicolumn list to show the points
     this->MultiColumnList = vtkKWMultiColumnListWithScrollbars::New ( );
