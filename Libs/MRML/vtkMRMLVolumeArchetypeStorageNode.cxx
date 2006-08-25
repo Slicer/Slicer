@@ -133,7 +133,10 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
     vtkErrorMacro("Reference node is not a vtkMRMLVolumeNode");
     return 0;         
     }
-
+  if (this->GetFileName() == NULL) 
+    {
+      return 0;
+    }
   vtkMRMLVolumeNode *volNode;
 
   vtkITKArchetypeImageSeriesReader* reader;

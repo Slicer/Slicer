@@ -118,6 +118,7 @@ void vtkSlicerWidget::SetMRML ( vtkObject **nodePtr, vtkObject *node )
   // Delete 
   if ( *nodePtr )
     {
+    ( *nodePtr )->RemoveObservers ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
     ( *nodePtr )->Delete ( );
     *nodePtr = NULL;
     }

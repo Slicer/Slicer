@@ -13,6 +13,9 @@
 =========================================================================auto=*/
 
 #include <sstream>
+#include <string>
+#include <vtksys/SystemTools.hxx> 
+
 #include "vtkCommand.h"
 #include "vtkCornerAnnotation.h"
 #include "vtkObjectFactory.h"
@@ -46,6 +49,7 @@
 #include "vtkKWResourceUtilities.h"
 #include "vtkKWToolbarSet.h"
 #include "vtkKWToolbar.h"
+#include "vtkKWDialog.h"
 
 #include "vtkKWSplitFrame.h"
 #include "vtkKWUserInterfaceManagerNotebook.h"
@@ -63,6 +67,7 @@
 #include "vtkSlicerLogoIcons.h"
 #include "vtkSlicerModuleNavigationIcons.h"
 #include "vtkSlicerViewControlIcons.h"
+#include "vtkSlicerMRMLSaveDataWidget.h"
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerApplicationGUI);
@@ -200,6 +205,10 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
     //--- so that they can be identified and deleted when 
     //--- viewer is reformatted.
     this->ViewerPageTag = 1999;
+
+    this->SaveDataWidget = NULL;
+    this->SaveDataDialog = NULL;      
+
 }
 
 
@@ -277,6 +286,15 @@ vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
     this->MainSliceLogic0 = NULL;
     this->MainSliceLogic1 = NULL;
     this->MainSliceLogic2 = NULL;
+
+    if (this->SaveDataWidget)
+      {
+      this->SaveDataWidget->Delete();
+      }
+    if (this->SaveDataDialog)
+      {
+      this->SaveDataDialog->Delete();
+      }
 }
 
 
@@ -339,39 +357,58 @@ void vtkSlicerApplicationGUI::ProcessSaveSceneAsCommand()
     this->SaveSceneDialog->RetrieveLastPathFromRegistry(
       "OpenPath");
 
-    this->MRMLScene->InitTraversal();
-    vtkMRMLNode *node;
-    std::vector<std::string> names;
-    std::vector<std::string> types;
-    while ( (node = this->MRMLScene->GetNextNodeByClass("vtkMRMLVolumeNode") ) != NULL)
-      {
-      if (node->GetModifiedSinceRead()) 
-        {
-        names.push_back(std::string(node->GetName()));
-        types.push_back(std::string("Volume Node"));
-        }
-      }
-     while ( (node = this->MRMLScene->GetNextNodeByClass("vtkMRMLModelNode") ) != NULL)
-      {
-      if (node->GetModifiedSinceRead()) 
-        {
-        names.push_back(std::string(node->GetName()));
-        types.push_back(std::string("Model Node"));
-        }
-      }
+    
    
     this->SaveSceneDialog->Invoke();
 
-    // If a file has been selected for loading...
+
+
+    // If a file has been selected for saving...
     char *fileName = this->SaveSceneDialog->GetFileName();
     if ( fileName ) 
       {
-        if (this->GetMRMLScene()) 
-          {
-          this->GetMRMLScene()->SetURL(fileName);
-          this->GetMRMLScene()->Commit();  
-          this->SaveSceneDialog->SaveLastPathToRegistry("OpenPath");
-          }
+      this->SaveDataDialog = vtkKWDialog::New();
+      this->SaveDataDialog->SetParent ( this->MainSlicerWin );
+      this->SaveDataDialog->SetTitle("Save Unsaved Data");
+      this->SaveDataDialog->SetSize(400, 100);
+      this->SaveDataDialog->Create ( );
+      //this->Script ( "pack %s -fill both -expand true",
+      //            this->SaveDataDialog->GetWidgetName());
+      
+      this->SaveDataWidget = vtkSlicerMRMLSaveDataWidget::New();
+      this->SaveDataWidget->SetParent ( this->SaveDataDialog);
+      this->SaveDataWidget->SetAndObserveMRMLScene(this->GetMRMLScene());
+
+      vtksys_stl::string dir =  vtksys::SystemTools::GetParentDirectory(fileName);   
+      dir = dir + vtksys_stl::string("/");
+      this->SaveDataWidget->SetFileDirectoryName(dir.c_str());
+
+      this->SaveDataWidget->Create();
+      this->SaveDataWidget->AddObserver ( vtkSlicerMRMLSaveDataWidget::DataSavedEvent,  (vtkCommand *)this->GUICallbackCommand );
+
+      // TODO: make update event driven so that we don't have to call this
+      int nrows = this->SaveDataWidget->UpdateFromMRML();
+
+      if (nrows > 0) 
+      {
+        
+        this->Script("pack %s -side top -anchor w -padx 2 -pady 4", 
+                  this->SaveDataWidget->GetWidgetName());
+        this->SaveDataDialog->Invoke ( );
+      }
+
+      this->SaveDataWidget->RemoveObservers ( vtkSlicerMRMLSaveDataWidget::DataSavedEvent,  (vtkCommand *)this->GUICallbackCommand );
+      this->SaveDataWidget->Delete();
+      this->SaveDataDialog->Delete();      
+      this->SaveDataWidget=NULL;
+      this->SaveDataDialog=NULL;      
+
+      if (this->GetMRMLScene()) 
+        {
+        this->GetMRMLScene()->SetURL(fileName);
+        this->GetMRMLScene()->Commit();  
+        this->SaveSceneDialog->SaveLastPathToRegistry("OpenPath");
+        }
       }
     return;
 }    
@@ -652,7 +689,12 @@ void vtkSlicerApplicationGUI::ProcessGUIEvents ( vtkObject *caller,
         }
       }
 
-}
+   vtkSlicerMRMLSaveDataWidget *saveDataWidget = vtkSlicerMRMLSaveDataWidget::SafeDownCast(caller);
+   if (saveDataWidget == this->SaveDataWidget && event == vtkSlicerMRMLSaveDataWidget::DataSavedEvent)
+    {
+    this->SaveDataDialog->OK();
+    }
+  }
 
 
 //---------------------------------------------------------------------------

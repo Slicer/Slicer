@@ -58,6 +58,7 @@ SET(LIB_SRCS
   vtkSlicerViewerGUI.cxx
   vtkSlicerViewerWidget.cxx
   vtkSlicerModelDisplayWidget.cxx
+  vtkSlicerMRMLSaveDataWidget.cxx
   # W Widgets
   ##vtkUserWidget.cxx
   ##vtkUserRepresentation.cxx

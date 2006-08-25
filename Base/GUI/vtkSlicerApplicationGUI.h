@@ -48,6 +48,8 @@ class vtkLogoWidget;
 class vtkKWCheckButton;
 class vtkKWEntryWithLabel;
 class vtkKWLabel;
+class vtkKWDialog;
+class vtkSlicerMRMLSaveDataWidget;
 
 // Description:
 // This class implements Slicer's main Application GUI.
@@ -474,6 +476,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
 
     // contains the visible prop bounds for the main 3Dviewer's renderer
     double MainRendererBBox[6];
+
+    vtkSlicerMRMLSaveDataWidget *SaveDataWidget;
+    vtkKWDialog                 *SaveDataDialog;
     
  private:
     vtkSlicerApplicationGUI ( const vtkSlicerApplicationGUI& ); // Not implemented.
