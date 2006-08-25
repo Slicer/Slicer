@@ -1,5 +1,6 @@
 
 set renderWidget [[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer]
+set renderWindow [$renderWidget GetRenderWindow]
 set renderer [$renderWidget GetRenderer]
 
 #
@@ -55,6 +56,7 @@ $sphereMapper SetScalarRange 0 $numberOfCells
 $renderWidget RemoveAllViewProps
 $renderer AddActor $sphereActor
 
+$renderWindow SetSwapBuffers 0
 $renderWidget Render
 
 set viewer [vtkImageViewer New]
@@ -67,6 +69,13 @@ $windowToImage ReadFrontBufferOff
 $windowToImage SetInput [$renderWidget GetRenderWindow]
 $viewer SetInput [$windowToImage GetOutput]
 $viewer Render
+
+$renderWindow SetSwapBuffers 1
+$sphereMapper SetScalarVisibility 0
+[$sphereActor GetProperty] SetAmbient 0
+[$sphereActor GetProperty] SetDiffuse 1
+$renderWidget Render
+
 
 #
 # query the cell number at the mouse location
