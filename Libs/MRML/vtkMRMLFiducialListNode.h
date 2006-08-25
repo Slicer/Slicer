@@ -80,25 +80,25 @@ public:
   void UpdateReferences();
   
   // Description:
-  // Get/Set for Symbol size
-  vtkSetMacro(SymbolSize,float);
-  vtkGetMacro(SymbolSize,float);
+  // Get/Set for Symbol scale
+  vtkSetMacro(SymbolScale,float);
+  vtkGetMacro(SymbolScale,float);
 
 
   // Description:
-  // Get/Set for list visibility size
+  // Get/Set for list visibility 
   vtkSetMacro(Visibility,int);
   vtkGetMacro(Visibility,int);
 
   // Description:
-  // Get/Set for Text size
-  vtkSetMacro(TextSize,float);
-  vtkGetMacro(TextSize,float);
+  // Get/Set for Text scale
+  vtkSetMacro(TextScale,float);
+  vtkGetMacro(TextScale,float);
   
   // Description:
   // Get/Set for Glyph and Text color
-  vtkSetVector3Macro(Color,float);
-  vtkGetVectorMacro(Color,float,3);
+  vtkSetVector3Macro(Color,double);
+  vtkGetVectorMacro(Color,double,3);
   
   // Description:
   // Get/Set for the list name
@@ -133,15 +133,13 @@ protected:
 
   vtkSetStringMacro(DisplayNodeID);
 
-  float SymbolSize;
-  float TextSize;
+  float SymbolScale;
+  float TextScale;
   int Visibility;
-  float Color[3];
+  double Color[3];
 
   char *DisplayNodeID;
 
-//  char *Name;
-  
   vtkCollection *FiducialList;
 
 };

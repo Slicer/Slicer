@@ -55,8 +55,8 @@ vtkMRMLFiducialListNode::vtkMRMLFiducialListNode()
 
   this->FiducialList = vtkCollection::New();
   this->Indent = 1;
-  this->SymbolSize = 6.0;
-  this->TextSize = 4.5;
+  this->SymbolScale = 6.0;
+  this->TextScale = 4.5;
   this->Visibility = 1;
   this->Color[0]=0.4; this->Color[1]=1.0; this->Color[2]=1.0;
   this->Name = NULL;
@@ -94,8 +94,8 @@ void vtkMRMLFiducialListNode::WriteXML(ostream& of, int nIndent)
       of << indent << "displayNodeRef=\"" << this->DisplayNodeID << "\" ";
   }
   
-  of << " symbolSize=\"" << this->SymbolSize << "\"";
-  of << " textSize=\"" << this->TextSize << "\"";
+  of << " symbolScale=\"" << this->SymbolScale << "\"";
+  of << " textScale=\"" << this->TextScale << "\"";
   of << " visibility=\"" << this->Visibility << "\"";
   
   of << " color=\"" << this->Color[0] << " " << 
@@ -127,17 +127,17 @@ void vtkMRMLFiducialListNode::ReadXMLAttributes(const char** atts)
       ss >> this->Color[1];
       ss >> this->Color[2];
       }
-    else if (!strcmp(attName, "symbolSize")) 
+    else if (!strcmp(attName, "symbolScale")) 
       {
       std::stringstream ss;
       ss << attValue;
-      ss >> this->SymbolSize;
+      ss >> this->SymbolScale;
       }
-    else if (!strcmp(attName, "textSize")) 
+    else if (!strcmp(attName, "textScale")) 
       {
       std::stringstream ss;
       ss << attValue;
-      ss >> this->TextSize;
+      ss >> this->TextScale;
       }
     else if (!strcmp(attName, "visibility")) 
       {
@@ -163,8 +163,8 @@ void vtkMRMLFiducialListNode::Copy(vtkMRMLNode *anode)
 
   this->SetName(node->Name);
   this->SetColor(node->Color);
-  this->SetSymbolSize(node->SymbolSize);
-  this->SetTextSize(node->TextSize);
+  this->SetSymbolScale(node->SymbolScale);
+  this->SetTextScale(node->TextScale);
   this->SetVisibility(node->Visibility);
 
   this->SetDisplayNodeID(node->DisplayNodeID);
@@ -183,11 +183,11 @@ void vtkMRMLFiducialListNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "DisplayNodeID: " <<
     (this->DisplayNodeID ? this->DisplayNodeID : "(none)") << "\n";
   
-  os << indent << "Symbol size: (";
-  os << indent << this->SymbolSize << ") \n ";
+  os << indent << "Symbol scale: (";
+  os << indent << this->SymbolScale << ") \n ";
 
-  os << indent << "Text size: (";
-  os << indent << this->TextSize << ") \n ";
+  os << indent << "Text scale: (";
+  os << indent << this->TextScale << ") \n ";
 
   os << indent << "Visibility:        " << this->Visibility << "\n";
 
