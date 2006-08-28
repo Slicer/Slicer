@@ -55,6 +55,15 @@ public:
   };
   
   // Description:
+  // Root directory, where URL is pointing
+  void SetRootDirectory(const char *dir) {
+    this->RootDirectory = vtksys_stl::string(dir); 
+  };
+  const char *GetRootDirectory() {
+    return this->RootDirectory.c_str();
+  };
+  
+  // Description:
   // Create new scene from URL
   int Connect();
   
@@ -187,7 +196,7 @@ public:
     };
 //ETX
 
-  int IsFilePathRelative(char * filepath);
+  int IsFilePathRelative(const char * filepath);
 
 protected:
   vtkMRMLScene();

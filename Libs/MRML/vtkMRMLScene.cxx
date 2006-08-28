@@ -1067,7 +1067,7 @@ void vtkMRMLScene::ClearRedoStack()
   this->RedoStack.clear();
 }
 
-int vtkMRMLScene::IsFilePathRelative(char * filepath)
+int vtkMRMLScene::IsFilePathRelative(const char * filepath)
 {
   vtksys_stl::vector<vtksys_stl::string> components;
   vtksys::SystemTools::SplitPath((const char*)filepath, components);

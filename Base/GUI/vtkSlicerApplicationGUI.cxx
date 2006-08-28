@@ -15,6 +15,7 @@
 #include <sstream>
 #include <string>
 #include <vtksys/SystemTools.hxx> 
+#include <itksys/SystemTools.hxx> 
 
 #include "vtkCommand.h"
 #include "vtkCornerAnnotation.h"
@@ -405,6 +406,23 @@ void vtkSlicerApplicationGUI::ProcessSaveSceneAsCommand()
 
       if (this->GetMRMLScene()) 
         {
+        // convert absolute paths to relative
+        this->MRMLScene->InitTraversal();
+
+        vtkMRMLNode *node;
+        while ( (node = this->MRMLScene->GetNextNodeByClass("vtkMRMLStorageNode") ) != NULL)
+          {
+          vtkMRMLStorageNode *snode = vtkMRMLStorageNode::SafeDownCast(node);
+          if (!this->MRMLScene->IsFilePathRelative(snode->GetFileName()))
+            {
+            vtksys_stl::string directory = vtksys::SystemTools::GetParentDirectory(fileName);   
+            directory = directory + vtksys_stl::string("/");
+
+            itksys_stl::string relPath = itksys::SystemTools::RelativePath((const char*)directory.c_str(), snode->GetFileName());
+            snode->SetFileName(relPath.c_str());
+            }
+          }
+
         this->GetMRMLScene()->SetURL(fileName);
         this->GetMRMLScene()->Commit();  
         this->SaveSceneDialog->SaveLastPathToRegistry("OpenPath");

@@ -1,5 +1,6 @@
 #include "vtkObject.h"
 #include "vtkObjectFactory.h"
+#include <itksys/SystemTools.hxx> 
 
 #include "vtkSlicerMRMLSaveDataWidget.h"
 
@@ -70,7 +71,8 @@ void vtkSlicerMRMLSaveDataWidget::ProcessWidgetEvents ( vtkObject *caller,
         vtkMRMLNode *node = this->MRMLScene->GetNodeByID(this->Nodes[row].c_str());
         vtkMRMLStorageNode* snode = vtkMRMLStorageNode::SafeDownCast(this->MRMLScene->GetNodeByID(this->StorageNodes[row].c_str()));
         std::string fileName (this->MultiColumnList->GetWidget()->GetCellText(row, 3));
-        snode->SetFileName(fileName.c_str());
+        const char *filePath = fileName.c_str();
+        snode->SetFileName(filePath);
         int res = snode->WriteData(node);
         if (res)
           {
