@@ -120,7 +120,6 @@ int vtkSlicerMRMLSaveDataWidget::UpdateFromMRML()
         filename += std::string(node->GetName());
         filename += std::string(".nrrd");
         storageNode->SetFileName(filename.c_str());
-        storageNode->SetAbsoluteFileName(1);
         snode = storageNode;
         }
       this->Nodes.push_back(node->GetID());

@@ -187,6 +187,8 @@ public:
     };
 //ETX
 
+  int IsFilePathRelative(char * filepath);
+
 protected:
   vtkMRMLScene();
   ~vtkMRMLScene();

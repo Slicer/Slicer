@@ -242,7 +242,7 @@ int vtkMRMLVolumeHeaderlessStorageNode::ReadData(vtkMRMLNode *refNode)
     }
 
   std::string fullName;
-  if (this->SceneRootDir != NULL) 
+    if (this->SceneRootDir != NULL && this->Scene->IsFilePathRelative(this->GetFileName())) 
     {
     fullName = std::string(this->SceneRootDir) + std::string(this->GetFileName());
     }
@@ -250,7 +250,6 @@ int vtkMRMLVolumeHeaderlessStorageNode::ReadData(vtkMRMLNode *refNode)
     {
     fullName = std::string(this->GetFileName());
     }
-
   if (fullName == std::string("")) 
     {
     vtkErrorMacro("vtkMRMLVolumeNode: File name not specified");
@@ -289,15 +288,14 @@ int vtkMRMLVolumeHeaderlessStorageNode::WriteData(vtkMRMLNode *refNode)
     }
   
   std::string fullName;
-  if (this->SceneRootDir != NULL) 
+  if (this->SceneRootDir != NULL && this->Scene->IsFilePathRelative(this->GetFileName())) 
     {
     fullName = std::string(this->SceneRootDir) + std::string(this->GetFileName());
     }
   else 
     {
     fullName = std::string(this->GetFileName());
-    }
-  
+    } 
   if (fullName == std::string("")) 
     {
     vtkErrorMacro("vtkMRMLVolumeNode: File name not specified");

@@ -18,6 +18,7 @@ Version:   $Revision: 1.2 $
 
 #include "vtkObjectFactory.h"
 #include "vtkMRMLModelStorageNode.h"
+#include "vtkMRMLScene.h"
 
 #include "vtkMatrix4x4.h"
 
@@ -125,7 +126,7 @@ int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
     }
 
   std::string fullName;
-  if (this->SceneRootDir != NULL) 
+  if (this->SceneRootDir != NULL && this->Scene->IsFilePathRelative(this->GetFileName())) 
     {
     fullName = std::string(this->SceneRootDir) + std::string(this->GetFileName());
     }
@@ -133,7 +134,6 @@ int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
     {
     fullName = std::string(this->GetFileName());
     }
-
   if (fullName == std::string("")) 
     {
     vtkErrorMacro("vtkMRMLModelNode: File name not specified");
@@ -207,15 +207,14 @@ int vtkMRMLModelStorageNode::WriteData(vtkMRMLNode *refNode)
   vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(refNode);
   
   std::string fullName;
-  if (this->SceneRootDir != NULL) 
+  if (this->SceneRootDir != NULL && this->Scene->IsFilePathRelative(this->GetFileName())) 
     {
     fullName = std::string(this->SceneRootDir) + std::string(this->GetFileName());
     }
   else 
     {
     fullName = std::string(this->GetFileName());
-    }
-  
+    }  
   if (fullName == std::string("")) 
     {
     vtkErrorMacro("vtkMRMLModelNode: File name not specified");

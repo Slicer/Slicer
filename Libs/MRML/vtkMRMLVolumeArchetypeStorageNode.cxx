@@ -60,7 +60,6 @@ vtkMRMLNode* vtkMRMLVolumeArchetypeStorageNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLVolumeArchetypeStorageNode::vtkMRMLVolumeArchetypeStorageNode()
 {
-  this->AbsoluteFileName = 0;
 }
 
 //----------------------------------------------------------------------------
@@ -72,7 +71,6 @@ void vtkMRMLVolumeArchetypeStorageNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
   vtkIndent indent(nIndent);
-  of << indent << "absoluteFileName=\"" << this->AbsoluteFileName << "\" ";
 
 }
 
@@ -81,20 +79,6 @@ void vtkMRMLVolumeArchetypeStorageNode::ReadXMLAttributes(const char** atts)
 {
 
   vtkMRMLStorageNode::ReadXMLAttributes(atts);
-
-  const char* attName;
-  const char* attValue;
-  while (*atts != NULL) 
-    {
-    attName = *(atts++);
-    attValue = *(atts++);
-    if (!strcmp(attName, "absoluteFileName")) 
-      {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> this->AbsoluteFileName;
-      }
-    }
 }
 
 //----------------------------------------------------------------------------
@@ -104,8 +88,6 @@ void vtkMRMLVolumeArchetypeStorageNode::Copy(vtkMRMLNode *anode)
 {
   Superclass::Copy(anode);
   vtkMRMLVolumeArchetypeStorageNode *node = (vtkMRMLVolumeArchetypeStorageNode *) anode;
-
-  this->SetAbsoluteFileName(node->AbsoluteFileName);
 }
 
 //----------------------------------------------------------------------------
@@ -113,7 +95,6 @@ void vtkMRMLVolumeArchetypeStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 {  
   vtkMRMLStorageNode::PrintSelf(os,indent);
 
-  os << indent << "AbsoluteFileName: " << this->AbsoluteFileName << "\n";
 }
 
 //----------------------------------------------------------------------------
@@ -158,7 +139,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
     }
 
   std::string fullName;
-  if (this->AbsoluteFileName == 0 && this->SceneRootDir != NULL) 
+  if (this->SceneRootDir != NULL && this->Scene->IsFilePathRelative(this->GetFileName())) 
     {
     fullName = std::string(this->SceneRootDir) + std::string(this->GetFileName());
     }
@@ -223,7 +204,7 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteData(vtkMRMLNode *refNode)
     }
   
   std::string fullName;
-  if (this->SceneRootDir != NULL) 
+  if (this->SceneRootDir != NULL && this->Scene->IsFilePathRelative(this->GetFileName())) 
     {
     fullName = std::string(this->SceneRootDir) + std::string(this->GetFileName());
     }

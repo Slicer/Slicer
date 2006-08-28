@@ -71,9 +71,6 @@ class VTK_MRML_EXPORT vtkMRMLVolumeArchetypeStorageNode : public vtkMRMLStorageN
   // Get node XML tag name (like Storage, Model)
   virtual const char* GetNodeTagName()  {return "VolumeArchetypeStorage";};
 
-  vtkBooleanMacro(AbsoluteFileName, int);
-  vtkGetMacro(AbsoluteFileName, int);
-  vtkSetMacro(AbsoluteFileName, int);
 
 protected:
 
@@ -82,8 +79,6 @@ protected:
   ~vtkMRMLVolumeArchetypeStorageNode();
   vtkMRMLVolumeArchetypeStorageNode(const vtkMRMLVolumeArchetypeStorageNode&);
   void operator=(const vtkMRMLVolumeArchetypeStorageNode&);
-
-  int AbsoluteFileName;
 
 };
 
