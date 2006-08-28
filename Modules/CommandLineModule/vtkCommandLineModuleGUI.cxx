@@ -95,6 +95,7 @@ vtkCommandLineModuleGUI::~vtkCommandLineModuleGUI()
 {
   this->RemoveMRMLNodeObservers();
   this->RemoveLogicObservers();
+  this->RemoveGUIObservers();
 
   // Delete all the widgets
   delete this->InternalWidgetMap;
