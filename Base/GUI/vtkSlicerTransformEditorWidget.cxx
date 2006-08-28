@@ -29,11 +29,13 @@ vtkSlicerTransformEditorWidget::~vtkSlicerTransformEditorWidget ( )
 {
   if (this->TransformEditSelectorWidget)
     {
+    this->TransformEditSelectorWidget->SetParent(NULL);
     this->TransformEditSelectorWidget->Delete();
     this->TransformEditSelectorWidget = NULL;
     }  
   if (this->MatrixWidget)
     {
+    this->MatrixWidget->SetParent(NULL);
     this->MatrixWidget->Delete();
     this->MatrixWidget = NULL;
     }  

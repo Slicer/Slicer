@@ -177,7 +177,7 @@ class vtkSlicerStyle : public vtkObject
     int PadY;
 
     vtkSlicerStyle ( );
-    ~vtkSlicerStyle ( );
+    virtual ~vtkSlicerStyle ( );
         
  private:
     vtkSlicerStyle ( const vtkSlicerStyle&); // Not implemented

@@ -52,7 +52,7 @@ public:
   
  protected:
   vtkSlicerTransformManagerWidget();
-  ~vtkSlicerTransformManagerWidget();
+  virtual ~vtkSlicerTransformManagerWidget();
 
   // Description:
   // Create the widget.

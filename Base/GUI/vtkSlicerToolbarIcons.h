@@ -50,7 +50,7 @@ class vtkSlicerToolbarIcons : public vtkSlicerIcons
     
  protected:
     vtkSlicerToolbarIcons ( );
-    ~vtkSlicerToolbarIcons ( );
+    virtual ~vtkSlicerToolbarIcons ( );
     
     vtkKWIcon *HomeIcon;
     vtkKWIcon *DataIcon;

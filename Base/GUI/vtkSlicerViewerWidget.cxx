@@ -47,6 +47,7 @@ vtkSlicerViewerWidget::~vtkSlicerViewerWidget ( )
       this->MainViewer->SetParent ( NULL );
       this->MainViewer->Delete();
       this->MainViewer = NULL;
+      this->ViewerFrame->SetParent ( NULL );
       this->ViewerFrame->Delete ( );
       this->ViewerFrame = NULL;
     }

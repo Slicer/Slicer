@@ -399,6 +399,8 @@ void vtkSlicerApplicationGUI::ProcessSaveSceneAsCommand()
       }
 
       this->SaveDataWidget->RemoveObservers ( vtkSlicerMRMLSaveDataWidget::DataSavedEvent,  (vtkCommand *)this->GUICallbackCommand );
+      this->SaveDataWidget->SetParent(NULL);
+      this->SaveDataDialog->SetParent(NULL);    
       this->SaveDataWidget->Delete();
       this->SaveDataDialog->Delete();      
       this->SaveDataWidget=NULL;

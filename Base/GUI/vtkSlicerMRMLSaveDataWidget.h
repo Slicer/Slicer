@@ -73,7 +73,7 @@ public:
 
 protected:
   vtkSlicerMRMLSaveDataWidget();
-  ~vtkSlicerMRMLSaveDataWidget();
+  virtual ~vtkSlicerMRMLSaveDataWidget();
 
   // Description:
   // Create the widget.

@@ -43,6 +43,7 @@ vtkKWMatrix4x4::~vtkKWMatrix4x4()
     }
 
   this->SetMatrix4x4(NULL);
+  this->MultiColumnList->SetParent(NULL);
   this->MultiColumnList->Delete();
 
 }

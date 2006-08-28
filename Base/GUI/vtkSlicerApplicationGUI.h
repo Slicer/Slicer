@@ -329,7 +329,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     
  protected:
     vtkSlicerApplicationGUI ( );
-    ~vtkSlicerApplicationGUI ( );
+    virtual ~vtkSlicerApplicationGUI ( );
 
     // Description:
     // Main Slicer window

@@ -30,6 +30,7 @@ vtkSlicerDataGUI::~vtkSlicerDataGUI ( )
   if (this->MRMLTreeWidget)
     {
     this->MRMLTreeWidget->RemoveWidgetObservers ( );
+    this->MRMLTreeWidget->SetParent (NULL );
     this->MRMLTreeWidget->Delete ( );
     }
     // class not yet defined!

@@ -38,21 +38,25 @@ vtkSlicerModelDisplayWidget::~vtkSlicerModelDisplayWidget ( )
 {
   if (this->ModelSelectorWidget)
     {
+    this->ModelSelectorWidget->SetParent(NULL);
     this->ModelSelectorWidget->Delete();
     this->ModelSelectorWidget = NULL;
     }
   if (this->VisibilityButton)
     {
+    this->VisibilityButton->SetParent(NULL);
     this->VisibilityButton->Delete();
     this->VisibilityButton = NULL;
     }
   if (this->OpacityScale)
     {
+    this->OpacityScale->SetParent(NULL);
     this->OpacityScale->Delete();
     this->OpacityScale = NULL;
     }
   if (this->SurfaceMaterialPropertyWidget)
     {
+    this->SurfaceMaterialPropertyWidget->SetParent(NULL);
     this->SurfaceMaterialPropertyWidget->Delete();
     this->SurfaceMaterialPropertyWidget = NULL;
     }

@@ -89,7 +89,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGUILayout : public vtkKWObject
 
  protected:
     vtkSlicerGUILayout ( );
-    ~vtkSlicerGUILayout ( );
+    virtual ~vtkSlicerGUILayout ( );
     
     //Description:
     // Pointer to Slicer's 3Dviewer and

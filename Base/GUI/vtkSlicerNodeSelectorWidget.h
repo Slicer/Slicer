@@ -131,7 +131,7 @@ public:
 
 protected:
   vtkSlicerNodeSelectorWidget();
-  ~vtkSlicerNodeSelectorWidget();
+  virtual ~vtkSlicerNodeSelectorWidget();
 
 //BTX
   std::vector<std::string> NodeClasses;

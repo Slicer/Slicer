@@ -75,7 +75,7 @@ class VTK_GRADIENTANISOTROPICDIFFUSIONFILTER_EXPORT vtkGradientAnisotropicDiffus
 
 protected:
   vtkGradientAnisotropicDiffusionFilterGUI();
-  ~vtkGradientAnisotropicDiffusionFilterGUI();
+  virtual ~vtkGradientAnisotropicDiffusionFilterGUI();
   vtkGradientAnisotropicDiffusionFilterGUI(const vtkGradientAnisotropicDiffusionFilterGUI&);
   void operator=(const vtkGradientAnisotropicDiffusionFilterGUI&);
 

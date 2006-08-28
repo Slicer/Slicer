@@ -25,7 +25,7 @@ public:
 
 protected:
   vtkSlicerWindow();
-  ~vtkSlicerWindow();
+  virtual ~vtkSlicerWindow();
 
   vtkSlicerWindow(const vtkSlicerWindow&); // Not implemented
   void operator=(const vtkSlicerWindow&); // Not implemented

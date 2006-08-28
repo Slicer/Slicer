@@ -47,7 +47,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerTransformsGUI : public vtkSlicerModule
 
  protected:
     vtkSlicerTransformsGUI ( );
-    ~vtkSlicerTransformsGUI ( );
+    virtual ~vtkSlicerTransformsGUI ( );
     
     // Widgets for the Volumes module
     vtkSlicerTransformManagerWidget *TransformManagerWidget;

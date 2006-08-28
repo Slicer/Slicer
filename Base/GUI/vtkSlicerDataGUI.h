@@ -67,7 +67,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerDataGUI : public vtkSlicerModuleGUI
     
  protected:
     vtkSlicerDataGUI ( );
-    ~vtkSlicerDataGUI ( );
+    virtual ~vtkSlicerDataGUI ( );
 
     // Logic pointer for the Data module
     //vtkSlicerDataLogic *Logic;

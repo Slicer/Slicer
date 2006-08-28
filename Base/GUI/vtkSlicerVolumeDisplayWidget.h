@@ -67,7 +67,7 @@ public:
   
  protected:
   vtkSlicerVolumeDisplayWidget();
-  ~vtkSlicerVolumeDisplayWidget();
+  virtual ~vtkSlicerVolumeDisplayWidget();
 
   // Description:
   // Create the widget.

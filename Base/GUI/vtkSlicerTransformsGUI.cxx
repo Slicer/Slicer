@@ -31,15 +31,18 @@ vtkSlicerTransformsGUI::vtkSlicerTransformsGUI ( )
 //---------------------------------------------------------------------------
 vtkSlicerTransformsGUI::~vtkSlicerTransformsGUI ( )
 {
+  //this->UIPanel->RemovePage("Transforms");
 
   if (this->TransformManagerWidget)
     {
     this->TransformManagerWidget->RemoveWidgetObservers ( );
+    this->TransformManagerWidget->SetParent(NULL);
     this->TransformManagerWidget->Delete ( );
     }
   if (this->TransformEditorWidget)
     {
     this->TransformEditorWidget->RemoveWidgetObservers ( );
+    this->TransformEditorWidget->SetParent (NULL);
     this->TransformEditorWidget->Delete ( );
     }
 

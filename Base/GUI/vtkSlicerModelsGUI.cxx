@@ -26,6 +26,7 @@ vtkSlicerModelsGUI::vtkSlicerModelsGUI ( )
     this->LoadModelButton = NULL;
     this->SaveModelButton = NULL;
     this->ModelSelectorWidget = NULL;
+    this->ModelDisplayWidget = NULL;
 }
 
 
@@ -38,16 +39,25 @@ vtkSlicerModelsGUI::~vtkSlicerModelsGUI ( )
 
   if (this->LoadModelButton ) 
     {
+    this->LoadModelButton->SetParent(NULL);
     this->LoadModelButton->Delete ( );
     }    
   if (this->SaveModelButton ) 
     {
+    this->SaveModelButton->SetParent(NULL);
     this->SaveModelButton->Delete ( );
     }
   if (this->ModelSelectorWidget ) 
     {
+    this->ModelSelectorWidget->SetParent(NULL);
     this->ModelSelectorWidget->Delete ( );
     }
+  if (this->ModelDisplayWidget ) 
+    {
+    this->ModelDisplayWidget->SetParent(NULL);
+    this->ModelDisplayWidget->Delete ( );
+    }
+
 }
 
 

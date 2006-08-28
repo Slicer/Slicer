@@ -85,7 +85,7 @@ public:
 
 protected:
   vtkSlicerWidget();
-  ~vtkSlicerWidget();
+  virtual ~vtkSlicerWidget();
 
   // Description:
   // Create the widget.

@@ -40,7 +40,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGUICollection : public vtkCollection
 
 protected:
   vtkSlicerGUICollection();
-  ~vtkSlicerGUICollection() ;
+  virtual ~vtkSlicerGUICollection() ;
 
 private:
   // hide the standard AddItem from the user and the compiler.

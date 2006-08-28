@@ -76,7 +76,7 @@ public:
 
 protected:
   vtkSlicerSliceControllerWidget ( );
-  ~vtkSlicerSliceControllerWidget ( );
+  virtual ~vtkSlicerSliceControllerWidget ( );
 
   // Description:
   // Create the widget.

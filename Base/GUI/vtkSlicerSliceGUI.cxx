@@ -58,18 +58,21 @@ vtkSlicerSliceGUI::~vtkSlicerSliceGUI ( ) {
 
     if ( this->SliceViewer )
         {
+            this->SliceViewer->SetParent(NULL );
             this->SliceViewer->Delete ( );
             this->SliceViewer = NULL;
         }
     if ( this->SliceController )
         {
             this->SliceController->RemoveWidgetObservers ( );
+            this->SliceController->SetParent(NULL );
             this->SliceController->Delete ( );
             this->SliceController = NULL;
         }
 
     if ( this->SliceGUIFrame )
       {
+        this->SliceGUIFrame->SetParent(NULL );
         this->SliceGUIFrame->Delete ( );
         this->SliceGUIFrame = NULL;
       }

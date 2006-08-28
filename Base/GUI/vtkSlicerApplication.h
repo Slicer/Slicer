@@ -80,7 +80,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   
  protected:
     vtkSlicerApplication ( );
-    ~vtkSlicerApplication ( );
+    virtual ~vtkSlicerApplication ( );
 
     vtkSlicerGUILayout *MainLayout;
     vtkSlicerTheme *SlicerTheme;

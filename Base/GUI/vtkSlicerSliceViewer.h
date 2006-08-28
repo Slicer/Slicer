@@ -38,7 +38,7 @@ public:
 
 protected:
   vtkSlicerSliceViewer ( );
-  ~vtkSlicerSliceViewer ( );
+  virtual ~vtkSlicerSliceViewer ( );
 
   // Description:
   // Create the widget.

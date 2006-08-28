@@ -32,11 +32,13 @@ vtkSlicerVolumeDisplayWidget::~vtkSlicerVolumeDisplayWidget ( )
 {
   if (this->VolumeSelectorWidget)
     {
+    this->VolumeSelectorWidget->SetParent(NULL);
     this->VolumeSelectorWidget->Delete();
     this->VolumeSelectorWidget = NULL;
     }
   if (this->WindowLevelThresholdEditor)
     {
+    this->WindowLevelThresholdEditor->SetParent(NULL);
     this->WindowLevelThresholdEditor->Delete();
     this->WindowLevelThresholdEditor = NULL;
     }

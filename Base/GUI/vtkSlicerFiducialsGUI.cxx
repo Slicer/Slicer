@@ -55,21 +55,25 @@ vtkSlicerFiducialsGUI::~vtkSlicerFiducialsGUI ( )
 
     if (this->FiducialListSelectorWidget)
     {
+        this->FiducialListSelectorWidget->SetParent(NULL);
         this->FiducialListSelectorWidget->Delete();
         this->FiducialListSelectorWidget = NULL;
     }
 
     if (this->AddFiducialListButton ) {
+        this->AddFiducialListButton->SetParent (NULL );
         this->AddFiducialListButton->Delete ( );
         this->AddFiducialListButton = NULL;
     }
      
     if (this->AddFiducialButton ) {
+        this->AddFiducialButton->SetParent (NULL );
         this->AddFiducialButton->Delete ( );
         this->AddFiducialButton = NULL;
     }
 
     if (this->VisibilityToggle) {
+        this->VisibilityToggle->SetParent(NULL);
         this->VisibilityToggle->Delete();
         this->VisibilityToggle = NULL;
     }
@@ -80,21 +84,24 @@ vtkSlicerFiducialsGUI::~vtkSlicerFiducialsGUI ( )
     }
 
     if (this->ListColorButton) {
+        this->ListColorButton->SetParent(NULL);
         this->ListColorButton->Delete();
         this->ListColorButton = NULL;
     }
 
     if (this->ListSymbolScale) {
+        this->ListSymbolScale->SetParent(NULL);
         this->ListSymbolScale->Delete();
         this->ListSymbolScale = NULL;
     }
 
     if (this->ListTextScale) {
+        this->ListTextScale->SetParent(NULL);
         this->ListTextScale->Delete();
         this->ListTextScale = NULL;
     }
 
-    this->MultiColumnList->GetWidget()->Delete();
+    this->MultiColumnList->SetParent(NULL);
     this->MultiColumnList->Delete();
 
     this->SetFiducialListNodeID("(none)");

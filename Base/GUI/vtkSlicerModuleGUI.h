@@ -51,7 +51,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleGUI : public vtkSlicerComponentG
     
     // constructor, destructor.
     vtkSlicerModuleGUI ( );
-    ~vtkSlicerModuleGUI ( );
+    virtual ~vtkSlicerModuleGUI ( );
     
  private:
     vtkSlicerModuleGUI ( const vtkSlicerModuleGUI& ); // Not implemented.

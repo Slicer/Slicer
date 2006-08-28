@@ -23,7 +23,7 @@ class vtkSlicerModuleNavigationIcons : public vtkSlicerIcons
     
  protected:
     vtkSlicerModuleNavigationIcons ( );
-    ~vtkSlicerModuleNavigationIcons ( );
+    virtual ~vtkSlicerModuleNavigationIcons ( );
 
     vtkKWIcon *ModulePrevIcon;
     vtkKWIcon *ModuleNextIcon;

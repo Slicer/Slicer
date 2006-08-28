@@ -23,7 +23,7 @@ class vtkSlicerTheme : public vtkKWTheme
     
  protected:
     vtkSlicerTheme ( );
-    ~vtkSlicerTheme ( );
+    virtual ~vtkSlicerTheme ( );
     vtkSlicerColor *SlicerColors;
     
  private:

@@ -45,19 +45,23 @@ vtkSlicerVolumesGUI::~vtkSlicerVolumesGUI ( )
     }
   if (this->LoadVolumeButton )
     {
+    this->LoadVolumeButton->SetParent(NULL );
     this->LoadVolumeButton->Delete ( );
     }
   if (this->SaveVolumeButton )
     {
+    this->SaveVolumeButton->SetParent(NULL );
     this->SaveVolumeButton->Delete ( );
     }
 
   if (this->VolumeDisplayWidget)
     {
+    this->VolumeDisplayWidget->SetParent(NULL );
     this->VolumeDisplayWidget->Delete ( );
     }
   if (this->VolumeSelectorWidget)
     {
+    this->VolumeSelectorWidget->SetParent(NULL );
     this->VolumeSelectorWidget->Delete ( );
     }
 

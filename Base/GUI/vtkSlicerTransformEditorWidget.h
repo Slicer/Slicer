@@ -52,7 +52,7 @@ public:
   
  protected:
   vtkSlicerTransformEditorWidget();
-  ~vtkSlicerTransformEditorWidget();
+  virtual ~vtkSlicerTransformEditorWidget();
 
   // Description:
   // Create the widget.

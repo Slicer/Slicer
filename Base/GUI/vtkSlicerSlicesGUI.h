@@ -99,7 +99,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesGUI : public vtkSlicerModuleGUI
     
  protected:
     vtkSlicerSlicesGUI ( );
-    ~vtkSlicerSlicesGUI ( );
+    virtual ~vtkSlicerSlicesGUI ( );
 
     // Description:
     // Collection of the above and other slice GUIs

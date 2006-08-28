@@ -71,30 +71,37 @@ vtkGradientAnisotropicDiffusionFilterGUI::~vtkGradientAnisotropicDiffusionFilter
 {
     
     if ( this->ConductanceScale ) {
+        this->ConductanceScale->SetParent(NULL);
         this->ConductanceScale->Delete();
         this->ConductanceScale = NULL;
     }
     if ( this->TimeStepScale ) {
+        this->TimeStepScale->SetParent(NULL);
         this->TimeStepScale->Delete();
         this->TimeStepScale = NULL;
     }
     if ( this->NumberOfIterationsScale ) {
+        this->NumberOfIterationsScale->SetParent(NULL);
         this->NumberOfIterationsScale->Delete();
         this->NumberOfIterationsScale = NULL;
     }
     if ( this->VolumeSelector ) {
+        this->VolumeSelector->SetParent(NULL);
         this->VolumeSelector->Delete();
         this->VolumeSelector = NULL;
     }
     if ( this->OutVolumeSelector ) {
+        this->OutVolumeSelector->SetParent(NULL);
         this->OutVolumeSelector->Delete();
         this->OutVolumeSelector = NULL;
     }
     if ( this->GADNodeSelector ) {
+        this->GADNodeSelector->SetParent(NULL);
         this->GADNodeSelector->Delete();
         this->GADNodeSelector = NULL;
     }
     if ( this->ApplyButton ) {
+        this->ApplyButton->SetParent(NULL);
         this->ApplyButton->Delete();
         this->ApplyButton = NULL;
     }

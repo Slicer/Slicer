@@ -78,7 +78,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerVolumesGUI : public vtkSlicerModuleGUI
 
  protected:
     vtkSlicerVolumesGUI ( );
-    ~vtkSlicerVolumesGUI ( );
+    virtual ~vtkSlicerVolumesGUI ( );
     
     char *SelectedVolumeID;
 

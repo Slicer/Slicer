@@ -101,7 +101,7 @@ protected:
   
 private:
   vtkCommandLineModuleGUI();
-  ~vtkCommandLineModuleGUI();
+  virtual ~vtkCommandLineModuleGUI();
   vtkCommandLineModuleGUI(const vtkCommandLineModuleGUI&);
   void operator=(const vtkCommandLineModuleGUI&);
 

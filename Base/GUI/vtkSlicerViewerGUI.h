@@ -54,7 +54,7 @@ public:
   
 protected:
   vtkSlicerViewerGUI ( );
-  ~vtkSlicerViewerGUI ( );
+  virtual ~vtkSlicerViewerGUI ( );
   
   void UpdateFromMRML();
   

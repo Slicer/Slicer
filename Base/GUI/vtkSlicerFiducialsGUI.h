@@ -107,7 +107,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     
  protected:
     vtkSlicerFiducialsGUI ( );
-    ~vtkSlicerFiducialsGUI ( );
+    virtual ~vtkSlicerFiducialsGUI ( );
 
     // Module logic and mrml pointers
     vtkSlicerFiducialsLogic *Logic;

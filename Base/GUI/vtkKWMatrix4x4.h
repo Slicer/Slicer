@@ -67,7 +67,7 @@ public:
 
 protected:
   vtkKWMatrix4x4();
-  ~vtkKWMatrix4x4();
+  virtual ~vtkKWMatrix4x4();
 
   // Description:
   // Create the widget.

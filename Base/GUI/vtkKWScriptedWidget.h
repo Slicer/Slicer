@@ -55,7 +55,7 @@ public:
 
 protected:
   vtkKWScriptedWidget();
-  ~vtkKWScriptedWidget();
+  virtual ~vtkKWScriptedWidget();
 
   // Description:
   // Create the widget.

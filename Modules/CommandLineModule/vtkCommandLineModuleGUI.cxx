@@ -101,6 +101,7 @@ vtkCommandLineModuleGUI::~vtkCommandLineModuleGUI()
   
   if ( this->CommandLineModuleNodeSelector )
     {
+    this->CommandLineModuleNodeSelector->SetParent(NULL);
     this->CommandLineModuleNodeSelector->Delete();
     this->CommandLineModuleNodeSelector = NULL;
     }

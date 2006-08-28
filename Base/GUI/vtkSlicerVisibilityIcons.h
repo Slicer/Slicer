@@ -22,7 +22,7 @@ class vtkSlicerVisibilityIcons : public vtkSlicerIcons
     
  protected:
     vtkSlicerVisibilityIcons ( );
-    ~vtkSlicerVisibilityIcons ( );
+    virtual ~vtkSlicerVisibilityIcons ( );
     vtkKWIcon *VisibleIcon;
     vtkKWIcon *InvisibleIcon;
     

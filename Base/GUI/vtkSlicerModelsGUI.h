@@ -82,7 +82,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModelsGUI : public vtkSlicerModuleGUI
 
  protected:
     vtkSlicerModelsGUI ( );
-    ~vtkSlicerModelsGUI ( );
+    virtual ~vtkSlicerModelsGUI ( );
 
     // Module logic and mrml pointers (classes not yet built!)
     //vtkSlicerModelsLogic *Logic;

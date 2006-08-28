@@ -36,10 +36,12 @@ vtkSlicerMRMLSaveDataWidget::~vtkSlicerMRMLSaveDataWidget ( )
 {
   if (this->MultiColumnList)
     {
+    this->MultiColumnList->SetParent(NULL);
     this->MultiColumnList->Delete();
     }
   if (this->OkButton)
     {
+    this->OkButton->SetParent(NULL);
     this->OkButton->Delete();
     }
   

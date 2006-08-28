@@ -64,26 +64,32 @@ vtkKWWindowLevelThresholdEditor::~vtkKWWindowLevelThresholdEditor()
     }
 
   if ( this->LevelEntry ) {
+      this->LevelEntry->SetParent(NULL);
       this->LevelEntry->Delete();
       this->LevelEntry = NULL;
   }
   if ( this->WindowEntry ) {
+      this->WindowEntry->SetParent(NULL);
       this->WindowEntry->Delete();
       this->WindowEntry = NULL;
   }
   if ( this->WindowLevelAutoManual ) {
+      this->WindowLevelAutoManual->SetParent(NULL);
       this->WindowLevelAutoManual->Delete();
       this->WindowLevelAutoManual = NULL ;
   }
   if ( this->TresholdAutoManual ) {
+      this->TresholdAutoManual->SetParent(NULL);
       this->TresholdAutoManual->Delete();
       this->TresholdAutoManual = NULL;
   }
   if ( this->WindowLevelRange ) {
+      this->WindowLevelRange->SetParent(NULL);
       this->WindowLevelRange->Delete();
       this->WindowLevelRange = NULL;
   }
   if ( this->ThresholdRange ) {
+      this->ThresholdRange->SetParent(NULL);
       this->ThresholdRange->Delete();
       this->ThresholdRange = NULL;
   }
@@ -92,6 +98,7 @@ vtkKWWindowLevelThresholdEditor::~vtkKWWindowLevelThresholdEditor()
       this->Histogram = NULL;
   }
   if ( this->ColorTransferFunctionEditor) {
+      this->ColorTransferFunctionEditor->SetParent(NULL);
       this->ColorTransferFunctionEditor->Delete();
       this->ColorTransferFunctionEditor = NULL;
   }

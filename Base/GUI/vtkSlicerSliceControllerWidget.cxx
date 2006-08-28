@@ -44,26 +44,32 @@ vtkSlicerSliceControllerWidget::vtkSlicerSliceControllerWidget ( ) {
 vtkSlicerSliceControllerWidget::~vtkSlicerSliceControllerWidget ( ){
 
     if ( this->OffsetScale ) {
+        this->OffsetScale->SetParent(NULL);
         this->OffsetScale->Delete ( );
         this->OffsetScale = NULL;
     }
     if ( this->OrientationMenu ) {
+        this->OrientationMenu->SetParent(NULL);
         this->OrientationMenu->Delete ( );
         this->OrientationMenu = NULL;
     }
     if ( this->ForegroundSelector ) {
+        this->ForegroundSelector->SetParent(NULL);
         this->ForegroundSelector->Delete ( );
         this->ForegroundSelector = NULL;
     }
     if ( this->BackgroundSelector ) {
+        this->BackgroundSelector->SetParent(NULL);
         this->BackgroundSelector->Delete ( );
         this->BackgroundSelector = NULL;
     }
     if ( this->LabelSelector ) {
+        this->LabelSelector->SetParent(NULL);
         this->LabelSelector->Delete ( );
         this->LabelSelector = NULL;
     }
     if ( this->VisibilityToggle ) {
+        this->VisibilityToggle->SetParent(NULL);
         this->VisibilityToggle->Delete  ( );
         this->VisibilityToggle = NULL;
     }
@@ -73,11 +79,13 @@ vtkSlicerSliceControllerWidget::~vtkSlicerSliceControllerWidget ( ){
     }
     if ( this->ScaleFrame )
       {
+        this->ScaleFrame->SetParent(NULL);
         this->ScaleFrame->Delete ( );
         this->ScaleFrame = NULL;
       }
     if ( this->ColorCodeFrame )
       {
+        this->ColorCodeFrame->SetParent(NULL);
         this->ColorCodeFrame->Delete ( );
         this->ColorCodeFrame = NULL;
       }

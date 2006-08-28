@@ -33,21 +33,25 @@ vtkSlicerTransformManagerWidget::~vtkSlicerTransformManagerWidget ( )
 {
   if (this->NodeSelectorWidget)
     {
+    this->NodeSelectorWidget->SetParent(NULL);
     this->NodeSelectorWidget->Delete();
     this->NodeSelectorWidget = NULL;
     }
   if (this->TransformSelectorWidget)
     {
+    this->TransformSelectorWidget->SetParent(NULL);
     this->TransformSelectorWidget->Delete();
     this->TransformSelectorWidget = NULL;
     }
   if (this->AddTransformButton)
     {
+    this->AddTransformButton->SetParent(NULL);
     this->AddTransformButton->Delete();
     this->AddTransformButton = NULL;
     }  
   if (this->RemoveTransformButton)
     {
+    this->RemoveTransformButton->SetParent(NULL);
     this->RemoveTransformButton->Delete();
     this->RemoveTransformButton = NULL;
     }  

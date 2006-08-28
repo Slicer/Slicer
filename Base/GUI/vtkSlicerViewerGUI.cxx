@@ -37,6 +37,7 @@ vtkSlicerViewerGUI::~vtkSlicerViewerGUI ( )
   if ( this->MainViewer ) 
     {
     this->MainViewer->RemoveAllViewProps ( );
+    this->MainViewer->SetParent (NULL );
     this->MainViewer->Delete ( );
     this->MainViewer = NULL;
     }

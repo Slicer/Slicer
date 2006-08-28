@@ -160,7 +160,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerComponentGUI : public vtkKWObject
     
     // constructor, destructor.
     vtkSlicerComponentGUI ( );
-    ~vtkSlicerComponentGUI ( );
+    virtual ~vtkSlicerComponentGUI ( );
 
     // Description:
     // Flag to avoid event loops

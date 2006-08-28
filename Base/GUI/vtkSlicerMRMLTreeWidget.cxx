@@ -41,12 +41,14 @@ vtkSlicerMRMLTreeWidget::~vtkSlicerMRMLTreeWidget ( )
 {
   if (this->TreeWidget)
     {
+    this->TreeWidget->SetParent(NULL);
     this->TreeWidget->Delete();
     this->TreeWidget = NULL;
     }
 
   if (this->ContextMenu)
     {
+    this->ContextMenu->SetParent(NULL);
     this->ContextMenu->Delete();
     this->ContextMenu = NULL;
     }

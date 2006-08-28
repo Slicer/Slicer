@@ -69,7 +69,7 @@ class vtkSlicerViewControlIcons : public vtkSlicerIcons
     
  protected:
     vtkSlicerViewControlIcons ( );
-    ~vtkSlicerViewControlIcons ( );
+    virtual ~vtkSlicerViewControlIcons ( );
 
     vtkKWIcon *RotateAroundAIconLO;
     vtkKWIcon *RotateAroundAIconHI;

@@ -93,7 +93,7 @@ public:
 
 protected:
   vtkSlicerViewerWidget();
-  ~vtkSlicerViewerWidget();
+  virtual ~vtkSlicerViewerWidget();
 
   // Description:
   // Create the widget.

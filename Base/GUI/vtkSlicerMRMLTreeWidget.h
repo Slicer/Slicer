@@ -69,7 +69,7 @@ public:
 
 protected:
   vtkSlicerMRMLTreeWidget();
-  ~vtkSlicerMRMLTreeWidget();
+  virtual ~vtkSlicerMRMLTreeWidget();
 
   // Description:
   // Create the widget.
