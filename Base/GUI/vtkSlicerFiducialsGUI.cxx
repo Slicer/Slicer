@@ -217,7 +217,7 @@ void vtkSlicerFiducialsGUI::ProcessGUIEvents ( vtkObject *caller,
     {
        std::cout << "vtkSlicerFiducialsGUI: ProcessGUIEvent: Add Fiducial Button event: " << event << ".\n";
      
-        vtkMRMLFiducialNode *modelNode = modelLogic->AddFiducial( );
+        vtkMRMLFiducial *modelNode = modelLogic->AddFiducial( );
         if ( modelNode == NULL ) 
         {
             // TODO: generate an error...
@@ -243,9 +243,9 @@ void vtkSlicerFiducialsGUI::ProcessGUIEvents ( vtkObject *caller,
         
         xyz = modelNode->GetXYZ();
         wxyz = modelNode->GetOrientationWXYZ();
-        if (modelNode->GetName() != NULL)
+        if (modelNode->GetLabelText() != NULL)
         {
-            this->MultiColumnList->GetWidget()->SetCellText(row,0,modelNode->GetName());
+            this->MultiColumnList->GetWidget()->SetCellText(row,0,modelNode->GetLabelText());
         }
         else
         {
@@ -353,13 +353,13 @@ void vtkSlicerFiducialsGUI::ProcessMRMLEvents ( vtkObject *caller,
             // get the points in the active fid list
             vtkMRMLFiducialListNode *listNode  = this->GetLogic()->GetActiveFiducialListNode();
             // add rows for each point
-            int numPoints = listNode->GetNumberOfFiducialNodes();
+            int numPoints = listNode->GetNumberOfFiducials();
             float *xyz;
             float *wxyz;
             for (int row = 0; row < numPoints; row++)
             {
                 //std::cout << "Adding point " << row << " to the table" << endl;
-                vtkMRMLFiducialNode * pointNode = listNode->GetNthFiducialNode(row);
+                vtkMRMLFiducial * pointNode = listNode->GetNthFiducial(row);
                 // add a row for this point
                 this->MultiColumnList->GetWidget()->AddRow();
                 
@@ -367,9 +367,9 @@ void vtkSlicerFiducialsGUI::ProcessMRMLEvents ( vtkObject *caller,
                 xyz = pointNode->GetXYZ();
                 wxyz = pointNode->GetOrientationWXYZ();
                 
-                if (pointNode->GetName() != NULL)
+                if (pointNode->GetLabelText() != NULL)
                 {
-                    this->MultiColumnList->GetWidget()->SetCellText(row,0,pointNode->GetName());
+                    this->MultiColumnList->GetWidget()->SetCellText(row,0,pointNode->GetLabelText());
                 }
                 else
                 {
@@ -677,7 +677,7 @@ void vtkSlicerFiducialsGUI::UpdateElement(int row, int col, char * str)
             }
         
             // get the fiducial point at that row in the table
-            vtkMRMLFiducialNode * node = modelLogic->GetActiveFiducialListNode()->GetNthFiducialNode(row);
+            vtkMRMLFiducial * node = modelLogic->GetActiveFiducialListNode()->GetNthFiducial(row);
             if (node == NULL)
             {
                 std::cerr << "UpdateElement: ERROR: null node at row " << row << endl;
@@ -688,7 +688,7 @@ void vtkSlicerFiducialsGUI::UpdateElement(int row, int col, char * str)
             if (col == 0)
             {
                 std:: cout << "\tsetting the name?\n";
-                node->SetName(str);
+                node->SetLabelText(str);
             }
             else if (col > 0 && col < 4)
             {

@@ -27,7 +27,7 @@
 #include "vtkSlicerLogic.h"
 
 #include "vtkMRML.h"
-#include "vtkMRMLFiducialNode.h"
+#include "vtkMRMLFiducial.h"
 #include "vtkMRMLFiducialListNode.h"
 
 class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerFiducialsLogic : public vtkSlicerLogic 
@@ -49,7 +49,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerFiducialsLogic : public vtkSlicerLog
   vtkMRMLFiducialListNode* AddFiducials();
   // Create a new mrml node and associated display node for a new point on
   // a list
-  vtkMRMLFiducialNode *AddFiducial();
+  vtkMRMLFiducial *AddFiducial();
 
   // Description:
   // Update logic state when MRML scene chenges

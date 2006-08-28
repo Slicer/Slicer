@@ -11,7 +11,7 @@
 #include "vtkSlicerModuleLogic.h"
 #include "vtkSlicerNodeSelectorWidget.h"
 #include "vtkSlicerFiducialsLogic.h"
-#include "vtkMRMLFiducialNode.h"
+#include "vtkMRMLFiducial.h"
 #include "vtkMRMLFiducialListNode.h"
 
 #include "vtkKWFrame.h"

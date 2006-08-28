@@ -18,7 +18,7 @@
 
 #include "vtkSlicerFiducialsLogic.h"
 
-#include "vtkMRMLFiducialNode.h"
+#include "vtkMRMLFiducial.h"
 #include "vtkMRMLFiducialListNode.h"
 #include "vtkMRMLFiducialListDisplayNode.h"
 
@@ -117,32 +117,30 @@ vtkMRMLFiducialListNode* vtkSlicerFiducialsLogic::AddFiducials ()
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLFiducialNode *vtkSlicerFiducialsLogic::AddFiducial()
+vtkMRMLFiducial *vtkSlicerFiducialsLogic::AddFiducial()
 {
     // get the Fiducials list
     //vtkMRMLFiducialListNode *listNode = this->GetActiveFiducialListNode();
-    // make a new fiducial node
-    vtkMRMLFiducialNode * modelNode = vtkMRMLFiducialNode::New();
+    // make a new fiducial object
+    vtkMRMLFiducial * fiducial = vtkMRMLFiducial::New();
     
     // add it to the list
     if (this->GetActiveFiducialListNode() != NULL)
     {
-        this->GetActiveFiducialListNode()->AddFiducialNode(modelNode);
+        this->GetActiveFiducialListNode()->AddFiducial(fiducial);
+    
+        this->GetMRMLScene()->SaveStateForUndo();
+
+        // give it a unique name based on the list it's in
+        fiducial->SetLabelText(this->GetActiveFiducialListNode()->GetScene()->GetUniqueIDByClass(this->GetActiveFiducialListNode()->GetName()));
     }
     else
     {
         std::cerr << "Error: the active ficucials list node is NULL\n";
         return NULL;
     }
-    this->GetMRMLScene()->SaveStateForUndo();
-
-    modelNode->SetScene(this->GetMRMLScene());
-
-    // now that the point is in the scene, give it a unique name
-    modelNode->SetName(modelNode->GetScene()->GetUniqueIDByClass(this->GetActiveFiducialListNode()->GetName()));
-    
-    modelNode->Delete();
-    return modelNode;
+    fiducial->Delete();
+    return fiducial;
     
 
 /*
