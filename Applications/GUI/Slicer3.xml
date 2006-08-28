@@ -162,6 +162,14 @@
       <label>Immediate Mode On/Off</label>
       </boolean>
 
+      <boolean>
+      <name>VTKDebugOn</name>
+      <longflag>--vtk_debug</longflag>
+      <description>Turn on vtk's debug macros (lots of output)</description>
+      <default>false</default>
+      <label>VTK Debug Mode On/Off</label>
+      </boolean>
+
 <!-- this does okay for passing the arguments, but it doesn't allow me
      to leave the argument off (even when I put in a default value).
      Also, it doesn't look like I can pass in argument strings that have
