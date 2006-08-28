@@ -33,6 +33,7 @@ void vtkSlicerColor::DefineDefaultColorPalette ( ) {
     this->SetColor(this->DarkGrey, 0.25, 0.25, 0.25 );
     this->SetColor(this->MediumGrey,  0.65, 0.65, 0.65 );
     this->SetColor(this->LightGrey,  0.829, 0.829, 0.829 );
+    this->SetColor(this->LightestGrey, 0.9, 0.9, 0.9 );
 
     // warm, soft brown grey
     this->SetColor(this->Cornsilk2,  .93, .9098, .804 );
@@ -95,6 +96,7 @@ void vtkSlicerColor::DefineSlicerColorNames ( ) {
     this->SetColor (this->ErrorMessageColor, this->BrightRed );
 
     this->SetColor (this->GUIBgColor, this->White );
+    //    this->SetColor(this->GUIBgColor, 0.8039, 0.7529, 0.69019);
     this->SetColor (this->ViewerBgColor, this->ViewerBlue );
     this->SetColor (this->SliceBgColor, this->Black );
     this->SetColor (this->RecessedColor, this->LightGrey );
