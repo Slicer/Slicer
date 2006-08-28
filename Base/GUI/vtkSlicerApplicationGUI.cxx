@@ -902,7 +902,10 @@ void vtkSlicerApplicationGUI::DestroyMainSliceViewers ( )
       //
       if ( this->MainSliceGUI0 )
         {
-          this->MainSliceLogic0->Register ( this );
+          if (this->MainSliceLogic0 != NULL)
+            {
+            this->MainSliceLogic0->Register ( this );
+            }
           this->MainSliceGUI0->SetAndObserveMRMLScene (NULL );
           this->MainSliceGUI0->SetAndObserveModuleLogic ( NULL );
           this->MainSliceGUI0->RemoveGUIObservers ( );
@@ -921,7 +924,10 @@ void vtkSlicerApplicationGUI::DestroyMainSliceViewers ( )
 
       if ( this->MainSliceGUI1 )
         {
-          this->MainSliceLogic1->Register ( this );
+          if (this->MainSliceLogic1 != NULL)
+            {
+            this->MainSliceLogic1->Register ( this );
+            }          
           this->MainSliceGUI1->SetAndObserveMRMLScene (NULL );
           this->MainSliceGUI1->SetAndObserveModuleLogic ( NULL );
           this->MainSliceGUI1->RemoveGUIObservers ( );
@@ -940,7 +946,10 @@ void vtkSlicerApplicationGUI::DestroyMainSliceViewers ( )
 
       if ( this->MainSliceGUI2 )
         {
-          this->MainSliceLogic2->Register ( this );
+          if (this->MainSliceLogic2 != NULL)
+            {
+            this->MainSliceLogic2->Register ( this );
+            }          
           this->MainSliceGUI2->SetAndObserveMRMLScene (NULL );
           this->MainSliceGUI2->SetAndObserveModuleLogic ( NULL );
           this->MainSliceGUI2->RemoveGUIObservers ( );
@@ -1913,12 +1922,15 @@ void vtkSlicerApplicationGUI::SetAndObserveMainSliceLogic ( vtkSlicerSliceLogic 
             this->GetMainSliceGUI2()->SetAndObserveModuleLogic ( l2 );
             // save the main slice logic to reassign when viewers are
             // destroyed and recreated during view layout changes.
+
+            /**
             this->MainSliceLogic0 = this->MainSliceGUI0->GetLogic ( );
             this->MainSliceLogic0->Register( this );
             this->MainSliceLogic1 = this->MainSliceGUI1->GetLogic ( );
             this->MainSliceLogic1->Register( this );
             this->MainSliceLogic2 = this->MainSliceGUI2->GetLogic ( );
             this->MainSliceLogic2->Register( this );
+            **/
           }
 }
 
