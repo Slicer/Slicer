@@ -20,7 +20,8 @@ class vtkSlicerColor : public vtkObject
     double DarkGrey [3];
     double MediumGrey [3];
     double LightGrey [3];
-
+    double LightestGrey [3];
+    
     double SagittalColor[3];
     double AxialColor[3];
     double CoronalColor[3];
