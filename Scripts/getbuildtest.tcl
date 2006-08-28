@@ -236,6 +236,10 @@ if { $isWindows } {
         runcmd $::MAKE Slicer3.SLN /build $::VTK_BUILD_TYPE package
     }
 } else {
-    eval runcmd $::MAKE $::GETBUILDTEST(test-type)
-    eval runcmd $::MAKE package
+    set buildReturn [catch "eval runcmd $::MAKE $::GETBUILDTEST(test-type)"]
+    set packageReturn [catch "eval runcmd $::MAKE package"]
+
+    puts "\nResults: "
+    puts "build [if $buildReturn "concat failed" "concat succeeded"]"
+    puts "package [if $packageReturn "concat failed" "concat succeeded"]"
 }
