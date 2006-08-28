@@ -28,7 +28,7 @@ SET(MRML_SRCS
         vtkMRMLTransformableNode.cxx
         vtkMRMLTransformNode.cxx
         vtkMRMLLinearTransformNode.cxx
-        vtkMRMLFiducialNode.cxx
+        vtkMRMLFiducial.cxx
         vtkMRMLFiducialListNode.cxx
         vtkMRMLSliceNode.cxx
         vtkMRMLSliceCompositeNode.cxx

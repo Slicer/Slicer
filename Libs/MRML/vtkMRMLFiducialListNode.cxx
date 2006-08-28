@@ -222,7 +222,7 @@ void vtkMRMLFiducialListNode::UpdateScene(vtkMRMLScene *scene)
 }
 
 //-----------------------------------------------------------
-vtkMRMLFiducialNode* vtkMRMLFiducialListNode::GetNthFiducialNode(int n)
+vtkMRMLFiducial* vtkMRMLFiducialListNode::GetNthFiducial(int n)
 {
 
   if(n < 0 || n >= this->FiducialList->GetNumberOfItems()) 
@@ -231,7 +231,7 @@ vtkMRMLFiducialNode* vtkMRMLFiducialListNode::GetNthFiducialNode(int n)
     }
   else 
     {
-    return (vtkMRMLFiducialNode*)this->FiducialList->GetItemAsObject(n);
+    return (vtkMRMLFiducial*)this->FiducialList->GetItemAsObject(n);
     }
 }
 

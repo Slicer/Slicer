@@ -6,39 +6,34 @@
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Program:   3D Slicer
-  Module:    $RCSfile: vtkMRMLFiducialNode.h,v $
+  Module:    $RCSfile: vtkMRMLFiducial.h,v $
   Date:      $Date: 2006/03/19 17:12:28 $
   Version:   $Revision: 1.6 $
 
 =========================================================================auto=*/
-// .NAME vtkMRMLFiducialNode - MRML node to represent a 3D surface model.
+// .NAME vtkMRMLFiducial - MRML object to represent a 3D point.
 // .SECTION Description
-// Model nodes describe polygonal data.  They indicate where the model is 
-// stored on disk, and how to render it (color, opacity, etc).  Models 
-// are assumed to have been constructed with the orientation and voxel 
-// dimensions of the original segmented volume.
 
-#ifndef __vtkMRMLFiducialNode_h
-#define __vtkMRMLFiducialNode_h
+#ifndef __vtkMRMLFiducial_h
+#define __vtkMRMLFiducial_h
 
 
 #include "vtkMatrix4x4.h"
 
 #include "vtkMRML.h"
-#include "vtkMRMLNode.h"
 
-class VTK_MRML_EXPORT vtkMRMLFiducialNode : public vtkMRMLNode
+#include "vtkObject.h"
+
+class VTK_MRML_EXPORT vtkMRMLFiducial : public vtkObject
 {
 public:
-  static vtkMRMLFiducialNode *New();
-  vtkTypeMacro(vtkMRMLFiducialNode,vtkMRMLNode);
+  static vtkMRMLFiducial *New();
+  vtkTypeMacro(vtkMRMLFiducial,vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
   
   //--------------------------------------------------------------------------
-  // MRMLNode methods
+  // MRML methods
   //--------------------------------------------------------------------------
-
-  virtual vtkMRMLNode* CreateNodeInstance();
 
   // Description:
   // Set node attributes
@@ -51,16 +46,8 @@ public:
 
   // Description:
   // Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node);
-  
-  // Description:
-  // Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() {return "Fiducial";};
+  virtual void Copy(vtkObject *node);
 
-  // Description:
-  // Set dependencies between this node and the parent node
-  // when parsing XML file
-  virtual void ProcessParentNode(vtkMRMLNode *parentNode);
 
   // Description:
   // Get/Set for Point
@@ -73,24 +60,24 @@ public:
 
   void SetOrientationWXYZFromMatrix4x4(vtkMatrix4x4 *mat);
 
-  // Get/Set for Name
-  vtkSetStringMacro(Name);
-  vtkGetStringMacro(Name);
+  // Get/Set for LabelText
+  vtkSetStringMacro(LabelText);
+  vtkGetStringMacro(LabelText);
 
   // Get/Set for Selected
   vtkGetMacro(Selected, bool);
   vtkSetMacro(Selected, bool);
 
 protected:
-  vtkMRMLFiducialNode();
-  ~vtkMRMLFiducialNode();
-  vtkMRMLFiducialNode(const vtkMRMLFiducialNode&);
-  void operator=(const vtkMRMLFiducialNode&);
+  vtkMRMLFiducial();
+  ~vtkMRMLFiducial();
+  vtkMRMLFiducial(const vtkMRMLFiducial&);
+  void operator=(const vtkMRMLFiducial&);
 
   // Data
   float XYZ[3];
   float OrientationWXYZ[4];
-  char *Name;
+  char *LabelText;
   bool Selected;  
 };
 

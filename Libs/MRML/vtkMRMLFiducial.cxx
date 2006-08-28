@@ -6,7 +6,7 @@ See Doc/copyright/copyright.txt
 or http://www.slicer.org/copyright/copyright.txt for details.
 
 Program:   3D Slicer
-Module:    $RCSfile: vtkMRMLFiducialNode.cxx,v $
+Module:    $RCSfile: vtkMRMLFiducial.cxx,v $
 Date:      $Date: 2006/03/03 22:26:39 $
 Version:   $Revision: 1.3 $
 
@@ -15,70 +15,62 @@ Version:   $Revision: 1.3 $
 #include <iostream>
 #include <sstream>
 
+#include "vtkObject.h"
 #include "vtkObjectFactory.h"
 #include "vtkMath.h"
 
-#include "vtkMRMLFiducialNode.h"
-#include "vtkMRMLFiducialListNode.h"
-#include "vtkMRMLScene.h"
+#include "vtkMRMLFiducial.h"
+//#include "vtkMRMLFiducialListNode.h"
+//#include "vtkMRMLScene.h"
 
 //------------------------------------------------------------------------------
-vtkMRMLFiducialNode* vtkMRMLFiducialNode::New()
+vtkMRMLFiducial* vtkMRMLFiducial::New()
 {
   // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLFiducialNode");
+  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLFiducial");
   if(ret)
     {
-    return (vtkMRMLFiducialNode*)ret;
+    return (vtkMRMLFiducial*)ret;
     }
   // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLFiducialNode;
-}
-
-//-----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLFiducialNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLFiducialNode");
-  if(ret)
-    {
-    return (vtkMRMLFiducialNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLFiducialNode;
+  return new vtkMRMLFiducial;
 }
 
 
 //----------------------------------------------------------------------------
-vtkMRMLFiducialNode::vtkMRMLFiducialNode()
+vtkMRMLFiducial::vtkMRMLFiducial()
 {
   this->XYZ[0] = this->XYZ[1] = this->XYZ[2] = 0.0;
   this->OrientationWXYZ[0] = this->OrientationWXYZ[1] = this->OrientationWXYZ[2]  = 0.0;
   this->OrientationWXYZ[3] = 1.0;
-  // so that the SetName macro won't try to free memory
-  this->Name = NULL;
-  this->SetName("");
+  // so that the SetLabelText macro won't try to free memory
+  this->LabelText = NULL;
+  this->SetLabelText("");
   this->Selected = true;
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLFiducialNode::~vtkMRMLFiducialNode()
+vtkMRMLFiducial::~vtkMRMLFiducial()
 {
-    if (this->Name)
+    if (this->LabelText)
     {
-        delete [] this->Name;
-        this->Name = NULL;
+        delete [] this->LabelText;
+        this->LabelText = NULL;
     }
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLFiducialNode::WriteXML(ostream& of, int nIndent)
+void vtkMRMLFiducial::WriteXML(ostream& of, int nIndent)
 {
   // Write all attributes not equal to their defaults
   
-  Superclass::WriteXML(of, nIndent);
+  //Superclass::WriteXML(of, nIndent);
 
+  if (this->LabelText != NULL)
+  {
+      of << " name=\"" << this->LabelText << "\"";
+  }
+  
   of << " xyz=\"" << this->XYZ[0] << " " << 
                     this->XYZ[1] << " " <<
                     this->XYZ[2] << "\"";
@@ -87,19 +79,16 @@ void vtkMRMLFiducialNode::WriteXML(ostream& of, int nIndent)
                                 this->OrientationWXYZ[1] << " " <<
                                 this->OrientationWXYZ[2] << " " << 
                                 this->OrientationWXYZ[3] << "\"";
-  if (this->Name != NULL)
-  {
-      of << " name=\"" << this->Name << "\"";
-  }
+  
   of << " selected=\"" << this->Selected << "\"";
   
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLFiducialNode::ReadXMLAttributes(const char** atts)
+void vtkMRMLFiducial::ReadXMLAttributes(const char** atts)
 {
 
-  vtkMRMLNode::ReadXMLAttributes(atts);
+    //vtkMRMLNode::ReadXMLAttributes(atts);
 
   const char* attName;
   const char* attValue;
@@ -124,9 +113,9 @@ void vtkMRMLFiducialNode::ReadXMLAttributes(const char** atts)
       ss >> this->OrientationWXYZ[2];
       ss >> this->OrientationWXYZ[3];
       }
-    else if (!strcmp(attName, "name"))
+    else if (!strcmp(attName, "labeltext"))
     {
-        this->SetName(attValue);
+        this->SetLabelText(attValue);
     }
     else if (!strcmp(attName, "selected"))
     {
@@ -138,24 +127,24 @@ void vtkMRMLFiducialNode::ReadXMLAttributes(const char** atts)
 
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
-// Does NOT copy: ID, FilePrefix, Name, ID
-void vtkMRMLFiducialNode::Copy(vtkMRMLNode *anode)
+// Does NOT copy: ID, FilePrefix, LabelText, ID
+void vtkMRMLFiducial::Copy(vtkObject *anode)
 {
-  vtkMRMLNode::Copy(anode);
-  vtkMRMLFiducialNode *node = (vtkMRMLFiducialNode *) anode;
+//  vtkObject::Copy(anode);
+  vtkMRMLFiducial *node = (vtkMRMLFiducial *) anode;
 
   // Vectors
   this->SetOrientationWXYZ(node->OrientationWXYZ);
   this->SetXYZ(node->XYZ);
 
-  this->SetName(node->GetName());
+  this->SetLabelText(node->GetLabelText());
   this->SetSelected(node->GetSelected());
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLFiducialNode::PrintSelf(ostream& os, vtkIndent indent)
+void vtkMRMLFiducial::PrintSelf(ostream& os, vtkIndent indent)
 {  
-  vtkMRMLNode::PrintSelf(os,indent);
+  vtkObject::PrintSelf(os,indent);
 
   os << indent << "XYZ: (";
   os << indent << this->XYZ[0] << ", " << this->XYZ[1] << ", " << this->XYZ[2]
@@ -169,25 +158,15 @@ void vtkMRMLFiducialNode::PrintSelf(ostream& os, vtkIndent indent)
   os << this->OrientationWXYZ[2] << ", " ;
   os << this->OrientationWXYZ[3] << ")" << "\n";
 
-  // Name:
-  os << indent << "Name: " << (this->Name ? this->Name : "(none)") << "\n";
+  // LabelText:
+  os << indent << "LabelText: " << (this->LabelText ? this->LabelText : "(none)") << "\n";
 
   os << indent << "Selected: " << this->Selected << "\n";
 }
 
-//-----------------------------------------------------------
-
-void vtkMRMLFiducialNode::ProcessParentNode(vtkMRMLNode *parentNode)
-{
-  vtkMRMLFiducialListNode *node  = dynamic_cast < vtkMRMLFiducialListNode *>(parentNode);
-  if (node)
-    {
-    node->AddFiducialNode(this);
-    }
-}
 
 //----------------------------------------------------------------------------
-void vtkMRMLFiducialNode::SetOrientationWXYZFromMatrix4x4(vtkMatrix4x4 *mat)
+void vtkMRMLFiducial::SetOrientationWXYZFromMatrix4x4(vtkMatrix4x4 *mat)
 {
     // copied from: vtkTransform::GetOrientationWXYZ 
     int i;

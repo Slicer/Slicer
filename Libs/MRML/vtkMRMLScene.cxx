@@ -28,7 +28,6 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLModelDisplayNode.h"
 #include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLVectorVolumeNode.h"
-#include "vtkMRMLFiducialNode.h"
 #include "vtkMRMLFiducialListNode.h"
 #include "vtkMRMLSliceCompositeNode.h"
 #include "vtkMRMLSelectionNode.h"
@@ -71,9 +70,6 @@ vtkMRMLScene::vtkMRMLScene()
   
   vtkMRMLVectorVolumeNode *vvoln = vtkMRMLVectorVolumeNode::New(); 
   this->RegisterNodeClass( vvoln );
-
-  vtkMRMLFiducialNode *fidn = vtkMRMLFiducialNode::New(); 
-  this->RegisterNodeClass( fidn );
 
   vtkMRMLFiducialListNode *fidln = vtkMRMLFiducialListNode::New(); 
   this->RegisterNodeClass( fidln );

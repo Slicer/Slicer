@@ -28,7 +28,7 @@
 
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
-#include "vtkMRMLFiducialNode.h"
+#include "vtkMRMLFiducial.h"
 #include "vtkMRMLTransformableNode.h"
 #include "vtkMRMLFiducialListDisplayNode.h"
 
@@ -105,12 +105,12 @@ public:
 //  vtkSetStringMacro(Name);
 //  vtkGetStringMacro(Name);
   
-  int GetNumberOfFiducialNodes() { return this->FiducialList->vtkCollection::GetNumberOfItems(); };
-  vtkMRMLFiducialNode* GetNthFiducialNode(int n);
-  void AddFiducialNode(vtkMRMLFiducialNode *o) { this->FiducialList->vtkCollection::AddItem(o); this->Modified();};
-  void RemoveFiducialNode(vtkMRMLFiducialNode *o) { this->FiducialList->vtkCollection::RemoveItem(o); this->Modified();};
-  void RemoveFiducialNode(int i) { this->FiducialList->vtkCollection::RemoveItem(i); this->Modified();};
-  int  IsFiducialNodePresent(vtkMRMLFiducialNode *o) { return this->FiducialList->vtkCollection::IsItemPresent(o);};
+  int GetNumberOfFiducials() { return this->FiducialList->vtkCollection::GetNumberOfItems(); };
+  vtkMRMLFiducial* GetNthFiducial(int n);
+  void AddFiducial(vtkMRMLFiducial *o) { this->FiducialList->vtkCollection::AddItem(o); this->Modified();};
+  void RemoveFiducial(vtkMRMLFiducial *o) { this->FiducialList->vtkCollection::RemoveItem(o); this->Modified();};
+  void RemoveFiducial(int i) { this->FiducialList->vtkCollection::RemoveItem(i); this->Modified();};
+  int  IsFiducialPresent(vtkMRMLFiducial *o) { return this->FiducialList->vtkCollection::IsItemPresent(o);};
 
   void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
 
