@@ -247,18 +247,22 @@ vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
         }
     }
     if ( this->ModulesToolbar ) {
+      this->ModulesToolbar->SetParent ( NULL );
         this->ModulesToolbar->Delete ( );
         this->ModulesToolbar = NULL;
     }
     if ( this->LoadSaveToolbar ) {
+      this->LoadSaveToolbar->SetParent ( NULL );
         this->LoadSaveToolbar->Delete ( );
         this->LoadSaveToolbar = NULL;
     }
     if ( this->ViewToolbar ) {
+      this->ViewToolbar->SetParent ( NULL );
         this->ViewToolbar->Delete ( );
         this->ViewToolbar = NULL;
     }
     if ( this->MouseModeToolbar ) {
+      this->MouseModeToolbar->SetParent ( NULL );
         this->MouseModeToolbar->Delete ( );
         this->MouseModeToolbar = NULL;
     }
@@ -273,14 +277,17 @@ vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
     this->DeleteFrames ( );
 
     if ( this->LoadSceneDialog ) {
+      this->LoadSceneDialog->SetParent ( NULL );
         this->LoadSceneDialog->Delete();
         this->LoadSceneDialog = NULL;
     }
     if ( this->SaveSceneDialog ) {
+      this->SaveSceneDialog->SetParent ( NULL );
         this->SaveSceneDialog->Delete();
         this->SaveSceneDialog = NULL;
     }
     if ( this->MainSlicerWin ) {
+      this->MainSlicerWin->SetParent ( NULL );
         this->MainSlicerWin->Delete ( );
         this->MainSlicerWin = NULL;
     }
@@ -290,10 +297,12 @@ vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
 
     if (this->SaveDataWidget)
       {
+        this->SaveDataWidget->SetParent ( NULL );
       this->SaveDataWidget->Delete();
       }
     if (this->SaveDataDialog)
       {
+        this->SaveDataDialog->SetParent ( NULL );
       this->SaveDataDialog->Delete();
       }
 }
@@ -1026,98 +1035,122 @@ void vtkSlicerApplicationGUI::DeleteToolbarWidgets ( )
     }
 
     if ( this->HomeIconButton ) {
+      this->HomeIconButton->SetParent ( NULL );
         this->HomeIconButton->Delete ( );
         this->HomeIconButton = NULL;
     }
     if ( this->DataIconButton ) {
+      this->DataIconButton->SetParent ( NULL );
         this->DataIconButton->Delete ( );
         this->DataIconButton = NULL;
     }
     if ( this->VolumeIconButton ) {
+      this->VolumeIconButton->SetParent ( NULL );
         this->VolumeIconButton->Delete ( );
         this->VolumeIconButton = NULL;
     }
     if ( this->ModelIconButton ) {
+      this->ModelIconButton->SetParent ( NULL );
         this->ModelIconButton->Delete ( );
         this->ModelIconButton = NULL;
     }
     if ( this->EditorIconButton ) {
+      this->EditorIconButton->SetParent ( NULL );
         this->EditorIconButton->Delete ( );
         this->EditorIconButton = NULL;
     }
     if ( this->EditorToolboxIconButton ) {
+      this->EditorToolboxIconButton->SetParent ( NULL );
         this->EditorToolboxIconButton->Delete ( );
         this->EditorToolboxIconButton = NULL;
     }
     if ( this->TransformIconButton ) {
+      this->TransformIconButton->SetParent ( NULL );
         this->TransformIconButton->Delete ( );
         this->TransformIconButton = NULL;
     }
     if ( this->ColorIconButton ) {
+      this->ColorIconButton->SetParent ( NULL );
         this->ColorIconButton->Delete ( );
         this->ColorIconButton = NULL;
     }
     if ( this->FiducialsIconButton ) {
+      this->FiducialsIconButton->SetParent ( NULL );
         this->FiducialsIconButton->Delete ( );
         this->FiducialsIconButton = NULL;
     }
     if ( this->MeasurementsIconButton ) {
+      this->MeasurementsIconButton->SetParent ( NULL );
         this->MeasurementsIconButton->Delete ( );
         this->MeasurementsIconButton = NULL;
     }
     if ( this->SaveSceneIconButton ) {
+      this->SaveSceneIconButton->SetParent ( NULL );
         this->SaveSceneIconButton->Delete ( );
         this->SaveSceneIconButton = NULL;
     }
     if ( this->LoadSceneIconButton ) {
+      this->LoadSceneIconButton->SetParent ( NULL );
         this->LoadSceneIconButton->Delete ( );
         this->LoadSceneIconButton = NULL;
     }
     if ( this->ConventionalViewIconButton ) {
+      this->ConventionalViewIconButton->SetParent ( NULL );
         this->ConventionalViewIconButton->Delete ( );
         this->ConventionalViewIconButton = NULL;
     }
     if ( this->OneUp3DViewIconButton ) {
+      this->OneUp3DViewIconButton->SetParent ( NULL );
         this->OneUp3DViewIconButton->Delete ( );
         this->OneUp3DViewIconButton = NULL;
     }
     if ( this->OneUpSliceViewIconButton ) {
+      this->OneUpSliceViewIconButton->SetParent ( NULL );
         this->OneUpSliceViewIconButton->Delete ( );
         this->OneUpSliceViewIconButton = NULL;
     }
     if ( this->FourUpViewIconButton ) {
+      this->FourUpViewIconButton->SetParent ( NULL );
         this->FourUpViewIconButton->Delete ( );
         this->FourUpViewIconButton = NULL;
     }
     if ( this->Tabbed3DViewIconButton ) {
+      this->Tabbed3DViewIconButton->SetParent ( NULL );
         this->Tabbed3DViewIconButton->Delete ( );
         this->Tabbed3DViewIconButton = NULL;
     }
     if ( this->TabbedSliceViewIconButton ) {
+      this->TabbedSliceViewIconButton->SetParent ( NULL );
         this->TabbedSliceViewIconButton->Delete ( );
         this->TabbedSliceViewIconButton = NULL;
     }
     if ( this->LightBoxViewIconButton ) {
+      this->LightBoxViewIconButton->SetParent ( NULL );
         this->LightBoxViewIconButton->Delete ( );
         this->LightBoxViewIconButton = NULL;
     }
     if ( this->MousePickIconButton ) {
+      this->MousePickIconButton->SetParent ( NULL );
         this->MousePickIconButton->Delete ( );
         this->MousePickIconButton = NULL;
     }
     if ( this->MousePlaceFiducialIconButton ) {
+      this->MousePlaceFiducialIconButton->SetParent ( NULL );
         this->MousePlaceFiducialIconButton->Delete ( );
         this->MousePlaceFiducialIconButton = NULL;
     }
     if ( this->MousePanIconButton ) {
+      this->MousePanIconButton->SetParent ( NULL );
         this->MousePanIconButton->Delete ( );
         this->MousePanIconButton = NULL;
     }
     if ( this->MouseRotateIconButton ) {
+      this->MouseRotateIconButton->SetParent ( NULL );      
         this->MouseRotateIconButton->Delete ( );
         this->MouseRotateIconButton = NULL;
     }
     if ( this->MouseZoomIconButton ) {
+      this->MouseZoomIconButton->SetParent ( NULL );
         this->MouseZoomIconButton->Delete ( );
         this->MouseZoomIconButton = NULL;
     }
@@ -1131,162 +1164,201 @@ void vtkSlicerApplicationGUI::DeleteGUIPanelWidgets ( )
 {
     //--- widgets from the ModuleChooseFrame
     if ( this->ModulesMenuButton ) {
+      this->ModulesMenuButton->SetParent ( NULL );
         this->ModulesMenuButton->Delete();
         this->ModulesMenuButton = NULL;
     }
     if ( this->ModulesLabel ) {
+      this->ModulesLabel->SetParent ( NULL );
         this->ModulesLabel->Delete ( );
         this->ModulesLabel = NULL;
     }
     if ( this->ModulesPrev ) {
+      this->ModulesPrev->SetParent ( NULL );
         this->ModulesPrev->Delete ( );
         this->ModulesPrev = NULL;
     }
     if ( this->ModulesNext ) {
+      this->ModulesNext->SetParent ( NULL );
         this->ModulesNext->Delete ( );
         this->ModulesNext = NULL;
     }
     if ( this->ModulesHistory) {
+      this->ModulesHistory->SetParent ( NULL );
         this->ModulesHistory->Delete ( );
         this->ModulesHistory = NULL;
     }
     if ( this->ModulesRefresh) {
+      this->ModulesRefresh->SetParent ( NULL );
         this->ModulesRefresh->Delete ( );
         this->ModulesRefresh = NULL;
     }
 
     //--- widgets from ViewControlFrame
     if ( this->SpinButton ) {
+      this->SpinButton->SetParent ( NULL );
         this->SpinButton->Delete();
         this->SpinButton = NULL;
     }
     if ( this->RockButton) {
+      this->RockButton->SetParent ( NULL );
         this->RockButton->Delete();
         this->RockButton = NULL;
     }
     if ( this->OrthoButton ) {
+      this->OrthoButton->SetParent ( NULL );
         this->OrthoButton->Delete();
         this->OrthoButton = NULL;
     }
     if ( this->CenterButton ) {
+      this->CenterButton->SetParent ( NULL );      
         this->CenterButton->Delete();
         this->CenterButton = NULL;
     }
     if ( this->SelectButton ) {
+      this->SelectButton->SetParent ( NULL );
         this->SelectButton->Delete();
         this->SelectButton = NULL;
     }
     if ( this->FOVEntry ) {
+      this->FOVEntry->SetParent ( NULL );
         this->FOVEntry->Delete();
         this->FOVEntry= NULL;
     }
 
     //--- widgets from LogoFrame
     if (this->SlicerLogoLabel ) {
+      this->SlicerLogoLabel->SetParent ( NULL );
         this->SlicerLogoLabel->Delete();
         this->SlicerLogoLabel = NULL;
     }
 
     //--- widgets from the SliceControlFrame
     if ( this->ToggleAnnotationButton ) {
+      this->ToggleAnnotationButton->SetParent ( NULL );
         this->ToggleAnnotationButton->Delete ( );
         this->ToggleAnnotationButton = NULL;
     }
     if ( this->ToggleFgBgButton ) {
+      this->ToggleFgBgButton->SetParent ( NULL );
         this->ToggleFgBgButton->Delete ( );
         this->ToggleFgBgButton = NULL;
     }
     if ( this->SliceFadeScale ) {
+      this->SliceFadeScale->SetParent ( NULL );
         this->SliceFadeScale->Delete ( );
         this->SliceFadeScale = NULL;
     }
+
     if ( this->SliceOpacityScale ) {
+      this->SliceOpacityScale->SetParent ( NULL );
         this->SliceOpacityScale->Delete ( );
         this->SliceOpacityScale = NULL;
     }
 
     //--- widgets from the ViewControlFrame
     if ( this->RotateAroundAIconButton ) {
+      this->RotateAroundAIconButton->SetParent ( NULL );      
         this->RotateAroundAIconButton->Delete ( );
         this->RotateAroundAIconButton = NULL;
     }
     if ( this->RotateAroundPIconButton ) {
+      this->RotateAroundPIconButton->SetParent ( NULL );
         this->RotateAroundPIconButton->Delete ( );
         this->RotateAroundPIconButton = NULL;
     }
     if ( this->RotateAroundRIconButton ) {
+      this->RotateAroundRIconButton->SetParent ( NULL );
         this->RotateAroundRIconButton->Delete ( );
         this->RotateAroundRIconButton = NULL;
     }
     if ( this->RotateAroundLIconButton ) {
+      this->RotateAroundLIconButton->SetParent ( NULL );
         this->RotateAroundLIconButton->Delete ( );
         this->RotateAroundLIconButton = NULL;
     }
     if ( this->RotateAroundSIconButton ) {
+      this->RotateAroundSIconButton->SetParent ( NULL );
         this->RotateAroundSIconButton->Delete ( );
         this->RotateAroundSIconButton = NULL;
     }
     if ( this->RotateAroundIIconButton ) {
+      this->RotateAroundIIconButton->SetParent ( NULL );
         this->RotateAroundIIconButton->Delete ( );
         this->RotateAroundIIconButton = NULL;
     }
     if ( this->RotateAroundMiddleIconButton ) {
+      this->RotateAroundMiddleIconButton->SetParent ( NULL );
         this->RotateAroundMiddleIconButton->Delete ( );
         this->RotateAroundMiddleIconButton = NULL;
     }
     if ( this->RotateAroundTopCornerIconButton ) {
+      this->RotateAroundTopCornerIconButton->SetParent ( NULL );
         this->RotateAroundTopCornerIconButton->Delete ( );
         this->RotateAroundTopCornerIconButton = NULL;
     }
     if ( this->RotateAroundBottomCornerIconButton ) {
+      this->RotateAroundBottomCornerIconButton->SetParent ( NULL );
         this->RotateAroundBottomCornerIconButton->Delete ( );
         this->RotateAroundBottomCornerIconButton = NULL;
     }
     if ( this->LookFromAIconButton ) {
+      this->LookFromAIconButton->SetParent ( NULL );
         this->LookFromAIconButton->Delete ( );
         this->LookFromAIconButton = NULL;
     }
     if ( this->LookFromPIconButton ) {
+      this->LookFromPIconButton->SetParent ( NULL );
         this->LookFromPIconButton->Delete ( );
         this->LookFromPIconButton = NULL;
     }
     if ( this->LookFromRIconButton ) {
+      this->LookFromRIconButton->SetParent ( NULL );
         this->LookFromRIconButton->Delete ( );
         this->LookFromRIconButton = NULL;
     }
     if ( this->LookFromLIconButton ) {
+      this->LookFromLIconButton->SetParent ( NULL );
         this->LookFromLIconButton->Delete ( );
         this->LookFromLIconButton = NULL;
     }
     if ( this->LookFromSIconButton ) {
+      this->LookFromSIconButton->SetParent ( NULL );
         this->LookFromSIconButton->Delete ( );
         this->LookFromSIconButton = NULL;
     }
     if ( this->LookFromIIconButton ) {
+      this->LookFromIIconButton->SetParent ( NULL );
         this->LookFromIIconButton->Delete ( );
         this->LookFromIIconButton = NULL;
     }
     if ( this->LookFromMiddleIconButton ) {
+      this->LookFromMiddleIconButton->SetParent ( NULL );
         this->LookFromMiddleIconButton->Delete ( );
         this->LookFromMiddleIconButton = NULL;
     }
     if ( this->LookFromTopCornerIconButton ) {
+      this->LookFromTopCornerIconButton->SetParent ( NULL );
         this->LookFromTopCornerIconButton->Delete ( );
         this->LookFromTopCornerIconButton = NULL;
     }
     if ( this->LookFromBottomCornerIconButton ) {
+      this->LookFromBottomCornerIconButton->SetParent ( NULL );
         this->LookFromBottomCornerIconButton->Delete ( );
         this->LookFromBottomCornerIconButton = NULL;
     }
     if ( this->NavZoomInIconButton ) {
+      this->NavZoomInIconButton->SetParent ( NULL );
         this->NavZoomInIconButton->Delete ( );
         this->NavZoomInIconButton = NULL;
     }
     if ( this->NavZoomOutIconButton ) {
+      this->NavZoomOutIconButton->SetParent ( NULL );
         this->NavZoomOutIconButton->Delete ( );
         this->NavZoomOutIconButton = NULL;
     }
     if ( this->NavZoomScale ) {
+      this->NavZoomScale->SetParent ( NULL );
         this->NavZoomScale->Delete ( );
         this->NavZoomScale = NULL;
     }
@@ -1296,18 +1368,22 @@ void vtkSlicerApplicationGUI::DeleteGUIPanelWidgets ( )
 void vtkSlicerApplicationGUI::DeleteFrames ( )
 {
     if ( this->LogoFrame ) {
+      this->LogoFrame->SetParent ( NULL );
         this->LogoFrame->Delete ();
         this->LogoFrame = NULL;
     }
     if ( this->ModuleChooseFrame ) {
+      this->ModuleChooseFrame->SetParent ( NULL );
         this->ModuleChooseFrame->Delete ();
         this->ModuleChooseFrame = NULL;
     }
     if ( this->SliceControlFrame ) {
+      this->SliceControlFrame->SetParent ( NULL );
         this->SliceControlFrame->Delete ( );
         this->SliceControlFrame = NULL;
     }
     if ( this->ViewControlFrame ) {
+      this->ViewControlFrame->SetParent ( NULL );
         this->ViewControlFrame->Delete ( );
         this->ViewControlFrame = NULL;
     }
