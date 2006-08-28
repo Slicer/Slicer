@@ -436,7 +436,7 @@ void vtkSlicerApplicationGUI::AddGUIObservers ( )
 {
 
     // add observer onto the menubutton in the SlicerControl frame
-  this->ModulesMenuButton->AddObserver (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->ModulesMenuButton->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     
     // add observers onto the module icon buttons 
     this->HomeIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -444,6 +444,7 @@ void vtkSlicerApplicationGUI::AddGUIObservers ( )
     this->VolumeIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ModelIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->FiducialsIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->TransformIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     
     // view configuration icon button observers...
     this->ConventionalViewIconButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -472,7 +473,7 @@ void vtkSlicerApplicationGUI::AddGUIObservers ( )
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::RemoveGUIObservers ( )
 {
-  this->ModulesMenuButton->RemoveObservers (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->ModulesMenuButton->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->HomeIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->DataIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->VolumeIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -531,27 +532,26 @@ void vtkSlicerApplicationGUI::ProcessGUIEvents ( vtkObject *caller,
     // For now, Home button takes us to the Volumes module.
     if ( pushb == this->HomeIconButton && event == vtkKWPushButton::InvokedEvent )
       {
-        vtkSlicerModuleGUI *m = vtkSlicerApplication::SafeDownCast(
-                                                                   this->GetApplication())->GetModuleGUIByName("Volumes");
-        if ( m != NULL ) { m->GetUIPanel()->Raise(); }
+        vtkSlicerModuleGUI *m = vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Volumes");
+        if ( m != NULL ) { m->GetUIPanel()->Raise(); } else { std::cerr << "ERROR:  no slicer module gui found for Volumes\n"; }
         this->ModulesMenuButton->SetValue ( "Volumes" );
       }
     else if (pushb == this->DataIconButton && event == vtkKWPushButton::InvokedEvent )
       {
         vtkSlicerModuleGUI *m = vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Data");
-        if ( m != NULL ) { m->GetUIPanel()->Raise(); }
+        if ( m != NULL ) { m->GetUIPanel()->Raise(); } else { std::cerr << "ERROR:  no slicer module gui found for Data\n"; }
         this->ModulesMenuButton->SetValue ( "Data" );
       }
     else if (pushb == this->VolumeIconButton && event == vtkKWPushButton::InvokedEvent )
       {
         vtkSlicerModuleGUI *m = vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Volumes");
-        if ( m != NULL ) { m->GetUIPanel()->Raise(); }
+        if ( m != NULL ) { m->GetUIPanel()->Raise(); } else { std::cerr << "ERROR:  no slicer module gui found for Volumes\n"; }
         this->ModulesMenuButton->SetValue ( "Volumes" );
       }
     else if (pushb == this->ModelIconButton && event == vtkKWPushButton::InvokedEvent )
       {
         vtkSlicerModuleGUI *m = vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Models");
-        if ( m != NULL ) { m->GetUIPanel()->Raise(); }
+        if ( m != NULL ) { m->GetUIPanel()->Raise(); } else { std::cerr << "ERROR:  no slicer module gui found for Models\n"; }
         this->ModulesMenuButton->SetValue ( "Models" );
       }
     else if (pushb == this->FiducialsIconButton && event == vtkKWPushButton::InvokedEvent )
@@ -562,9 +562,15 @@ void vtkSlicerApplicationGUI::ProcessGUIEvents ( vtkObject *caller,
     }
     else if (pushb == this->TransformIconButton && event == vtkKWPushButton::InvokedEvent )
       {
-        //vtkSlicerModuleGUI *m = vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Transformments");
-        //if ( m != NULL ) { m->GetUIPanel()->Raise(); }
-        this->ModulesMenuButton->SetValue ( "Transform" );
+        vtkSlicerModuleGUI *m = vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Transforms");
+        if ( m != NULL ) { m->GetUIPanel()->Raise(); } else { std::cerr << "ERROR:  no slicer module gui found for Transforms\n"; }
+        this->ModulesMenuButton->SetValue ( "Transforms" );
+      }
+    else if (pushb == this->EditorIconButton && event == vtkKWPushButton::InvokedEvent )
+      {
+        vtkSlicerModuleGUI *m = vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Editor");
+        if ( m != NULL ) { m->GetUIPanel()->Raise(); } else { std::cerr << "ERROR:  no slicer module gui found for Editor\n"; }
+        this->ModulesMenuButton->SetValue ( "Editor" );
       }
     else if ( pushb == this->ConventionalViewIconButton && event == vtkKWPushButton::InvokedEvent )
       {
@@ -632,7 +638,7 @@ void vtkSlicerApplicationGUI::ProcessGUIEvents ( vtkObject *caller,
     //--- Process events from menubutton
     //--- TODO: change the Logic's "active module" and raise the appropriate UIPanel.
     //    if ( menub == this->ModulesMenuButton && event == vtkCommand::ModifiedEvent )
-    if ( menub == this->ModulesMenuButton && event == vtkCommand::ModifiedEvent )
+    if ( menu == this->ModulesMenuButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
         {
             if ( app->GetModuleGUICollection ( ) != NULL )
                 {
@@ -789,9 +795,13 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
 
             // Turn off the tabs for pages in the ModuleControlGUI
             this->MainSlicerWin->GetMainNotebook()->ShowIconsOff ( );
+
+            this->MainSlicerWin->GetMainNotebook()->SetReliefToFlat();
+            this->MainSlicerWin->GetMainNotebook()->SetBorderWidth ( 0 );
+            this->MainSlicerWin->GetMainNotebook()->SetHighlightThickness ( 0 );
+
             //this->MainSlicerWin->GetMainNotebook()->SetAlwaysShowTabs ( 0 );
             this->MainSlicerWin->GetMainNotebook()->SetUseFrameWithScrollbars ( 1 );
-            
             // Build 3DViewer and Slice Viewers
 
             this->RemoveMainSliceViewersFromCollection ( );            
@@ -851,6 +861,17 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
             this->SaveSceneDialog->SaveDialogOn();
             this->SaveSceneDialog->RetrieveLastPathFromRegistry("OpenPath");
         }
+
+        //
+        // influence the theme of the ApplicationGUI
+        //
+        // toolbar color
+        // GUI Panel
+        // Logo GUI panel
+        // Module choose GUI Panel
+        // Slice Control
+        // View Control
+
     }
 }
 
@@ -1422,7 +1443,7 @@ void vtkSlicerApplicationGUI::CreateMain3DViewer ( int arrangementType )
            (arrangementType != vtkSlicerGUILayout::SlicerLayoutLightboxView ) &&
            (arrangementType != vtkSlicerGUILayout::SlicerLayoutTabbedSliceView) )
         {
-          this->MainSlicerWin->GetMainNotebook()->RemovePagesMatchingTag(this->ViewerPageTag );      
+          this->MainSlicerWin->GetViewNotebook()->RemovePagesMatchingTag(this->ViewerPageTag );      
           this->ViewerWidget = vtkSlicerViewerWidget::New ( );
           this->ViewerWidget->SetApplication( app );
           if ( arrangementType == vtkSlicerGUILayout::SlicerLayoutFourUpView )
@@ -1656,11 +1677,11 @@ void vtkSlicerApplicationGUI::DisplayTabbedSliceView ( )
       this->MainSliceGUI0->BuildGUI ( this->MainSlicerWin->GetViewFrame ( ), color->SliceGUIRed );
       this->MainSliceGUI0->PackGUI ( );
       // Yellow slice viewer
-      this->MainSlicerWin->GetMainNotebook()->AddPage("yellow slice", NULL, NULL, this->ViewerPageTag );
+      this->MainSlicerWin->GetViewNotebook()->AddPage("yellow slice", NULL, NULL, this->ViewerPageTag );
       this->MainSliceGUI1->BuildGUI ( this->MainSlicerWin->GetViewFrame ( ), color->SliceGUIYellow );
       this->MainSliceGUI1->PackGUI ( );
       // Green slice viewer          
-      this->MainSlicerWin->GetMainNotebook()->AddPage("green slice", NULL, NULL, this->ViewerPageTag );
+      this->MainSlicerWin->GetViewNotebook()->AddPage("green slice", NULL, NULL, this->ViewerPageTag );
       this->MainSliceGUI2->BuildGUI ( this->MainSlicerWin->GetViewFrame ( ), color->SliceGUIGreen );
       this->MainSliceGUI2->PackGUI ( );      
       // Tab the Slice views
@@ -1838,7 +1859,7 @@ void vtkSlicerApplicationGUI::BuildToolBar()
         vtkKWToolbarSet *tbs = win->GetMainToolbarSet();
         tbs->SetToolbarsWidgetsAspect ( vtkKWToolbar::WidgetsAspectUnChanged );
         tbs->BottomSeparatorVisibilityOn ( );
-        tbs->TopSeparatorVisibilityOn ( );
+        tbs->TopSeparatorVisibilityOff ( );
 
         //--- configure toolbars
         vtkKWToolbar *mtb = this->GetModulesToolbar ( );
@@ -2128,6 +2149,17 @@ void vtkSlicerApplicationGUI::BuildToolBar()
         this->MousePlaceFiducialIconButton->SetBalloonHelpString ( "Set the 3DViewer mouse mode to 'place fiducials'" );
         mmtb->AddWidget ( this->MousePlaceFiducialIconButton );
 
+        //
+        // apply default style
+        //
+        // pale goldenrod
+        /*
+        tbs->GetToolbarsFrame()->SetBackgroundColor (0.9333, 0.90980, 0.6666);
+        this->GetModulesToolbar()->GetFrame()->SetBackgroundColor ( 0.9333, 0.90980, 0.6666);
+        this->GetLoadSaveToolbar()->GetFrame()->SetBackgroundColor ( 0.9333, 0.90980, 0.6666);
+        this->GetViewToolbar()->GetFrame()->SetBackgroundColor ( 0.9333, 0.90980, 0.6666);
+        this->GetMouseModeToolbar()->GetFrame()->SetBackgroundColor ( 0.9333, 0.90980, 0.6666);
+        */
         tbs->ShowToolbar ( this->GetModulesToolbar ( ));
         tbs->ShowToolbar ( this->GetLoadSaveToolbar ( ));
         tbs->ShowToolbar ( this->GetViewToolbar ( ));
