@@ -60,7 +60,7 @@ void vtkSlicerTheme::Install ( )
     odb->AddEntryAsDouble3 ( "vtkKWWidget", "SetActiveBackgroundColor",
                              this->SlicerColors->GUIBgColor );
     odb->AddEntryAsDouble3 ( "vtkKWWidget", "SetBackgroundColor",
-                    this->SlicerColors->White );
+                    this->SlicerColors->GUIBgColor );
 
     odb->AddEntryAsInt ("vtkKWWidget", "SetHighlightThickness", 0 );
     odb->AddEntryAsDouble3 ( "vtkKWWidget", "SetHighlightBackground",
@@ -93,22 +93,31 @@ void vtkSlicerTheme::Install ( )
 
     // Slicer Frames
     odb->AddEntryAsDouble3 ( "vtkKWFrame", "SetBackgroundColor",
-                    this->SlicerColors->White );
-    odb->AddEntryAsDouble3 ( "vtkSlicerModuleGUI*vtkKWFrame", "SetBackgroundColor",
-                             this->SlicerColors->LightGrey );
+                    this->SlicerColors->GUIBgColor );
     odb->AddEntryAsInt ( "vtkKWFrame", "SetBorderWidth", 0 );
     odb->AddEntryAsDouble3 ( "vtkKWFrame", "SetHighlightColor",
-                             this->SlicerColors->White );
+                             this->SlicerColors->GUIBgColor );
     odb->AddEntryAsDouble3 ( "vtkKWFrame", "SetHighlightColor",
-                             this->SlicerColors->White );
+                             this->SlicerColors->GUIBgColor );
     odb->AddEntryAsDouble3 ( "vtkKWFrame", "SetHighlightBackground",
-                             this->SlicerColors->White );    
+                             this->SlicerColors->GUIBgColor );    
     odb->AddEntryAsInt ( "vtkKWFrame", "SetHighlightThickness", 0 );
     odb->AddEntry ( "vtkKWFrame", "SetRelief", "flat" );
+    
+    /*
+    odb->AddEntryAsDouble3 ( "vtkKWFrameWithLabel:LabelFrame", "SetBackgroundColor",
+                             this->SlicerColors->LightestGrey );    
+    odb->AddEntryAsInt ( "vtkKWFrameWithLabel:LabelFrame", "SetHighlightThickness", 1 );
+    odb->AddEntry ( "vtkKWFrameWithLabel:LabelFrame", "SetReliefToGroove", NULL );
+    odb->AddEntryAsDouble3 ( "vtkKWFrameWithLabel:Label", "SetBackgroundColor",
+                             this->SlicerColors->LightestGrey );
+    odb->AddEntryAsInt ( "vtkKWFrameWithLabel:Label", "SetWidth", 40 );
+    */    
+
 
     // Slicer Frames inside Scrolled windows
     odb->AddEntryAsDouble3 ( "vtkKWFrameWithScrollbar:Frame", "SetBackgroundColor",
-                    this->SlicerColors->White );
+                    this->SlicerColors->GUIBgColor );
     odb->AddEntryAsInt ( "vtkKWFrameWithScrollbar:Frame", "SetBorderWidth", 0 );
     odb->AddEntryAsInt ( "vtkKWFrameWithScrollbar:Frame", "SetHighlightThickness", 0 );
     odb->AddEntry ( "vtkKWFrameWithScrollbar:Frame", "SetRelief", "sunken" );
