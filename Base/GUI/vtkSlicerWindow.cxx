@@ -13,6 +13,11 @@ vtkSlicerWindow::vtkSlicerWindow()
 
 vtkSlicerWindow::~vtkSlicerWindow()
 {
+  if (this->ApplicationSettingsInterface)
+    {
+    this->ApplicationSettingsInterface->Delete(); 
+    this->ApplicationSettingsInterface = NULL;
+    }
 }
 
 //----------------------------------------------------------------------------
