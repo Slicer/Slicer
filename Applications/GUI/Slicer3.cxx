@@ -588,6 +588,7 @@ int Slicer3_main(int argc, char *argv[])
     //
     int res = slicerApp->StartApplication();
 
+    appGUI->GetMainSlicerWin()->Close();
 
     // ------------------------------
     // REMOVE OBSERVERS and references to MRML and Logic

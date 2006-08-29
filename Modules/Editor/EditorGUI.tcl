@@ -37,20 +37,18 @@ proc EditorReload { {this ""} } {
 # Note: not a method - this is invoked directly by the GUI
 proc EditorTearDownGUI {this} {
 
-  $::Editor($this,nodeSelector) Delete
-  $::Editor($this,volumesCreate) Delete
-  $::Editor($this,volumeName) Delete
-  $::Editor($this,volumesSelect) Delete
-  $::Editor($this,volumesFrame) Delete
-  $::Editor($this,paintThreshold) Delete
-  $::Editor($this,paintOver) Delete
-  $::Editor($this,paintDropper) Delete
-  $::Editor($this,paintRadius) Delete
-  $::Editor($this,paintRange) Delete
-  $::Editor($this,paintEnable) Delete
-  $::Editor($this,paintLabel) Delete
-  $::Editor($this,paintFrame) Delete
-  $::Editor($this,helpFrame) Delete
+  set widgets {
+    nodeSelector volumesCreate volumeName volumesSelect
+    volumesFrame paintThreshold paintOver paintDropper
+    paintRadius paintRange paintEnable paintLabel
+    paintFrame helpFrame
+  }
+
+  foreach w $widgets {
+    $::Editor($this,$w) SetParent ""
+    $::Editor($this,$w) Delete
+  }
+
   set pageWidget [[$this GetUIPanel] GetPageWidget "Editor"]
   [$this GetUIPanel] RemovePage "Editor"
 
