@@ -198,7 +198,7 @@ void vtkMRMLFiducialListDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   
   vtkMRMLNode::PrintSelf(os,indent);
 
-  os << indent << "Color:             " << this->Color << "\n";
+  os << indent << "Color:             " << this->Color[0] << ", " << this->Color[1] << ", " << this->Color[2] << "\n";
   os << indent << "Opacity:           " << this->Opacity << "\n";
   os << indent << "Ambient:           " << this->Ambient << "\n";
   os << indent << "Diffuse:           " << this->Diffuse << "\n";
