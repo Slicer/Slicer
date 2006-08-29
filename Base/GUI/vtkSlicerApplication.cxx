@@ -54,21 +54,21 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
 vtkSlicerApplication::~vtkSlicerApplication ( ) {
 
     if ( this->MainLayout )
-        {
-            this->MainLayout->Delete ( );
-            this->MainLayout = NULL;
-        }
+      {
+      this->MainLayout->Delete ( );
+      this->MainLayout = NULL;
+      }
     if ( this->SlicerTheme )
-        {
-            this->SlicerTheme->Delete ( );
-            this->SlicerTheme = NULL;
-        }
+      {
+      this->SlicerTheme->Delete ( );
+      this->SlicerTheme = NULL;
+      }
     if ( this->ModuleGUICollection )
-        {
-            this->ModuleGUICollection->RemoveAllItems ( );
-            this->ModuleGUICollection->Delete ( );
-            this->ModuleGUICollection = NULL;
-        }
+      {
+      this->ModuleGUICollection->RemoveAllItems ( );
+      this->ModuleGUICollection->Delete ( );
+      this->ModuleGUICollection = NULL;
+      }
 }
 
 

@@ -86,8 +86,14 @@ void vtkSlicerVolumesGUI::PrintSelf ( ostream& os, vtkIndent indent )
 void vtkSlicerVolumesGUI::RemoveGUIObservers ( )
 {
     // Fill in
-    this->LoadVolumeButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
-    this->SaveVolumeButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+    if (this->LoadVolumeButton)
+      {
+      this->LoadVolumeButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+      }
+    if (this->SaveVolumeButton)
+      {
+      this->SaveVolumeButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+      }
 }
 
 

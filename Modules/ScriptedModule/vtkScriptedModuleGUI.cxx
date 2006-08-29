@@ -56,16 +56,21 @@ vtkScriptedModuleGUI::~vtkScriptedModuleGUI()
 
 void vtkScriptedModuleGUI::RemoveMRMLNodeObservers()
 {
-  this->GetApplication()->Script("%sRemoveMRMLNodeObservers %s", 
-    this->GetModuleName(), this->GetTclName());
+  if (this->GetApplication())
+    {
+    this->GetApplication()->Script("%sRemoveMRMLNodeObservers %s", 
+      this->GetModuleName(), this->GetTclName());
+    }
 }
 
 
 void vtkScriptedModuleGUI::RemoveLogicObservers()
 {
-  this->GetApplication()->Script("%sRemoveLogicObservers %s", 
-    this->GetModuleName(), this->GetTclName());
-  // Need to implement - SDP
+  if (this->GetApplication())
+    {
+    this->GetApplication()->Script("%sRemoveLogicObservers %s", 
+      this->GetModuleName(), this->GetTclName());
+    }
 }
 
 
@@ -78,8 +83,11 @@ void vtkScriptedModuleGUI::PrintSelf(ostream& os, vtkIndent indent)
 //---------------------------------------------------------------------------
 void vtkScriptedModuleGUI::AddGUIObservers ( ) 
 {
-  this->GetApplication()->Script("%sAddGUIObservers %s", 
-    this->GetModuleName(), this->GetTclName());
+  if (this->GetApplication())
+    {
+    this->GetApplication()->Script("%sAddGUIObservers %s", 
+      this->GetModuleName(), this->GetTclName());
+    }
 }
 
 
@@ -87,8 +95,11 @@ void vtkScriptedModuleGUI::AddGUIObservers ( )
 //---------------------------------------------------------------------------
 void vtkScriptedModuleGUI::RemoveGUIObservers ( )
 {
-  this->GetApplication()->Script("%sRemoveGUIObservers %s", 
-    this->GetModuleName(), this->GetTclName());
+  if (this->GetApplication())
+    {
+    this->GetApplication()->Script("%sRemoveGUIObservers %s", 
+      this->GetModuleName(), this->GetTclName());
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -108,15 +119,21 @@ void vtkScriptedModuleGUI::ProcessGUIEvents ( vtkObject *caller,
 //---------------------------------------------------------------------------
 void vtkScriptedModuleGUI::UpdateMRML ()
 {
-  this->GetApplication()->Script("%sUpdateMRML %s", 
-    this->GetModuleName(), this->GetTclName());
+  if (this->GetApplication())
+    {
+    this->GetApplication()->Script("%sUpdateMRML %s", 
+      this->GetModuleName(), this->GetTclName());
+    }
 }
 
 //---------------------------------------------------------------------------
 void vtkScriptedModuleGUI::UpdateGUI ()
 {
-  this->GetApplication()->Script("%sUpdateGUI %s", 
-    this->GetModuleName(), this->GetTclName());
+  if (this->GetApplication())
+    {
+    this->GetApplication()->Script("%sUpdateGUI %s", 
+      this->GetModuleName(), this->GetTclName());
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -143,8 +160,11 @@ void vtkScriptedModuleGUI::ProcessMRMLEvents ( vtkObject *caller,
 //---------------------------------------------------------------------------
 void vtkScriptedModuleGUI::BuildGUI ( ) 
 {
-  this->GetApplication()->Script("%sBuildGUI %s", 
-    this->GetModuleName(), this->GetTclName());
+  if (this->GetApplication())
+    {
+    this->GetApplication()->Script("%sBuildGUI %s", 
+      this->GetModuleName(), this->GetTclName());
+    }
 }
 
 

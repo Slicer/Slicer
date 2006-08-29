@@ -197,13 +197,16 @@ void vtkSlicerMRMLTreeWidget::ProcessMRMLEvents ( vtkObject *caller,
 //---------------------------------------------------------------------------
 void vtkSlicerMRMLTreeWidget::RemoveWidgetObservers ( ) 
 {
- this->TreeWidget->GetWidget()->RemoveObservers(
-   vtkKWTree::SelectionChangedEvent, 
-   (vtkCommand *)this->GUICallbackCommand);  
+  if (this->TreeWidget) 
+    {
+    this->TreeWidget->GetWidget()->RemoveObservers(
+      vtkKWTree::SelectionChangedEvent, 
+      (vtkCommand *)this->GUICallbackCommand);  
  
- this->TreeWidget->GetWidget()->RemoveObservers(
-   vtkKWTree::RightClickOnNodeEvent, 
-   (vtkCommand *)this->GUICallbackCommand);  
+    this->TreeWidget->GetWidget()->RemoveObservers(
+      vtkKWTree::RightClickOnNodeEvent, 
+      (vtkCommand *)this->GUICallbackCommand);  
+    }
 }
 
 //---------------------------------------------------------------------------

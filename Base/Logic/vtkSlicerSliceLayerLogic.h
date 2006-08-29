@@ -120,7 +120,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLayerLogic : public vtkSlicerLo
     
 protected:
   vtkSlicerSliceLayerLogic();
-  ~vtkSlicerSliceLayerLogic();
+  virtual ~vtkSlicerSliceLayerLogic();
   vtkSlicerSliceLayerLogic(const vtkSlicerSliceLayerLogic&);
   void operator=(const vtkSlicerSliceLayerLogic&);
 

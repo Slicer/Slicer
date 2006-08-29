@@ -87,7 +87,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerLogic : public vtkObject
     
 protected:
   vtkSlicerLogic();
-  ~vtkSlicerLogic();
+  virtual ~vtkSlicerLogic();
   vtkSlicerLogic(const vtkSlicerLogic&);
   void operator=(const vtkSlicerLogic&);
 

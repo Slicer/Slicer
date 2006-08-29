@@ -60,7 +60,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerVolumesLogic : public vtkSlicerLogic
                                   void * /*callData*/ );    
 protected:
   vtkSlicerVolumesLogic();
-  ~vtkSlicerVolumesLogic();
+  virtual ~vtkSlicerVolumesLogic();
   vtkSlicerVolumesLogic(const vtkSlicerVolumesLogic&);
   void operator=(const vtkSlicerVolumesLogic&);
 

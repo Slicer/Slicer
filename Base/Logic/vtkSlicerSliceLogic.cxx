@@ -161,9 +161,6 @@ void vtkSlicerSliceLogic::UpdateSliceCompositeNode()
     if ( node == NULL )
       {
       node = vtkMRMLSliceCompositeNode::New();
-      node->SetBackgroundVolumeID("None");
-      node->SetForegroundVolumeID("None");
-      node->SetLabelVolumeID("None");
       node->SetLayoutName(this->GetName());
       this->SetSliceCompositeNode (node);
       node->Delete();
@@ -213,17 +210,17 @@ void vtkSlicerSliceLogic::ProcessMRMLEvents(vtkObject * caller,
   //
   if ( this->MRMLScene->GetNodeByID( this->SliceCompositeNode->GetForegroundVolumeID() ) == NULL )
     {
-    this->SliceCompositeNode->SetForegroundVolumeID("None");
+    this->SliceCompositeNode->SetForegroundVolumeID(NULL);
     }
 
   if ( this->MRMLScene->GetNodeByID( this->SliceCompositeNode->GetLabelVolumeID() ) == NULL )
     {
-    this->SliceCompositeNode->SetLabelVolumeID("None");
+    this->SliceCompositeNode->SetLabelVolumeID(NULL);
     }
 
   if ( this->MRMLScene->GetNodeByID( this->SliceCompositeNode->GetBackgroundVolumeID() ) == NULL )
     {
-    this->SliceCompositeNode->SetBackgroundVolumeID("None");
+    this->SliceCompositeNode->SetBackgroundVolumeID(NULL);
     }
     
   if (event != vtkMRMLScene::NewSceneEvent) 

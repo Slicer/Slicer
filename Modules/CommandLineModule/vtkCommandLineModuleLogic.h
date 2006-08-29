@@ -53,7 +53,7 @@ protected:
   
 private:
   vtkCommandLineModuleLogic();
-  ~vtkCommandLineModuleLogic();
+  virtual ~vtkCommandLineModuleLogic();
   vtkCommandLineModuleLogic(const vtkCommandLineModuleLogic&);
   void operator=(const vtkCommandLineModuleLogic&);
 

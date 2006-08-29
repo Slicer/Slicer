@@ -147,7 +147,7 @@ vtkSlicerComponentGUI::GUICallback(vtkObject *caller,
   if (self->GetInGUICallbackFlag())
     {
     vtkErrorWithObjectMacro(self, "In vtkSlicerComponentGUI *********GUICallback called recursively?");
-    return;
+    //return;
     }
 
   vtkDebugWithObjectMacro(self, "In vtkSlicerComponentGUI GUICallback");

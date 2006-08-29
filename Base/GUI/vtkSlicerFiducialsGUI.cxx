@@ -101,8 +101,11 @@ vtkSlicerFiducialsGUI::~vtkSlicerFiducialsGUI ( )
         this->ListTextScale = NULL;
     }
 
-    this->MultiColumnList->SetParent(NULL);
-    this->MultiColumnList->Delete();
+    if (this->MultiColumnList) {
+      this->MultiColumnList->SetParent(NULL);
+      this->MultiColumnList->Delete();
+      this->MultiColumnList = NULL;
+    }
 
     this->SetFiducialListNodeID("(none)");
 }
