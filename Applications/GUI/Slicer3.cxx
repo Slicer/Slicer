@@ -600,6 +600,7 @@ int Slicer3_main(int argc, char *argv[])
     dataGUI->RemoveGUIObservers ( );
     slicesGUI->RemoveGUIObservers ( );
     appGUI->RemoveGUIObservers ( );
+    appGUI->SetAndObserveMainSliceLogic ( NULL, NULL, NULL );
 
     // remove all from the slicesGUI collection of sliceGUIs
     slicesGUI->GetSliceGUICollection()->RemoveAllItems ( );
