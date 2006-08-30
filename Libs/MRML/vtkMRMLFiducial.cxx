@@ -62,26 +62,65 @@ vtkMRMLFiducial::~vtkMRMLFiducial()
 //----------------------------------------------------------------------------
 void vtkMRMLFiducial::WriteXML(ostream& of, int nIndent)
 {
-  // Write all attributes not equal to their defaults
+  // Write all attributes, since the parsing of the string is dependent on the
+  // order here
   
   //Superclass::WriteXML(of, nIndent);
 
+    // now that it's not a first class node, write it out simply
   if (this->LabelText != NULL)
   {
-      of << " name=\"" << this->LabelText << "\"";
+      of << "labeltext " << this->LabelText;
   }
   
-  of << " xyz=\"" << this->XYZ[0] << " " << 
+  of << " xyz " << this->XYZ[0] << " " << 
                     this->XYZ[1] << " " <<
-                    this->XYZ[2] << "\"";
+                    this->XYZ[2];
 
-  of << " orientationWxyz=\"" << this->OrientationWXYZ[0] << " " << 
+  of << " orientationwxyz " << this->OrientationWXYZ[0] << " " << 
                                 this->OrientationWXYZ[1] << " " <<
                                 this->OrientationWXYZ[2] << " " << 
-                                this->OrientationWXYZ[3] << "\"";
+                                this->OrientationWXYZ[3];
   
-  of << " selected=\"" << this->Selected << "\"";
+  of << " selected " << this->Selected;
   
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLFiducial::ReadXMLString(const char *keyValuePairs)
+{
+    // used because the fiducial list gloms together the point's key and
+    // values into one long string, VERY dependent on the order it's written
+    // out in when WriteXML is used
+
+    // insert the string into a stream
+    std::stringstream ss;
+    ss << keyValuePairs;
+
+    char keyName[1024];
+    // now get out the labeltext key
+    ss >> keyName;
+    // now get the label text value
+    ss >> this->LabelText;
+
+    // get the xyz key
+    ss >> keyName;
+    // now get the x, y, z values
+    ss >> this->XYZ[0];
+    ss >> this->XYZ[1];
+    ss >> this->XYZ[2];
+
+    // get the orientation key
+    ss >> keyName;
+    // now get the w, x, y, z values
+    ss >> this->OrientationWXYZ[0];
+    ss >> this->OrientationWXYZ[1];
+    ss >> this->OrientationWXYZ[2];
+    ss >> this->OrientationWXYZ[3];
+
+    // get the selected flag
+    ss >> keyName;
+    ss >> this->Selected;
 }
 
 //----------------------------------------------------------------------------
@@ -92,6 +131,9 @@ void vtkMRMLFiducial::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
+
+  std::cout << "vtkMRMLFiducial::ReadXMLAttributes\n";
+  
   while (*atts != NULL) 
     {
     attName = *(atts++);
@@ -146,21 +188,22 @@ void vtkMRMLFiducial::PrintSelf(ostream& os, vtkIndent indent)
 {  
   vtkObject::PrintSelf(os,indent);
 
+  // LabelText:
+  os << indent << "LabelText: " << (this->LabelText ? this->LabelText : "(none)") << "\n";
+
+  // location
   os << indent << "XYZ: (";
-  os << indent << this->XYZ[0] << ", " << this->XYZ[1] << ", " << this->XYZ[2]
+  os << this->XYZ[0] << ", " << this->XYZ[1] << ", " << this->XYZ[2]
      << ") \n" ;
   
   // OrientationWXYZ
   os << indent << "OrientationWXYZ: (";
-  os << indent ;
   os << this->OrientationWXYZ[0] << ", " ;
   os << this->OrientationWXYZ[1] << ", " ;
   os << this->OrientationWXYZ[2] << ", " ;
   os << this->OrientationWXYZ[3] << ")" << "\n";
 
-  // LabelText:
-  os << indent << "LabelText: " << (this->LabelText ? this->LabelText : "(none)") << "\n";
-
+  // selected flag
   os << indent << "Selected: " << this->Selected << "\n";
 }
 
