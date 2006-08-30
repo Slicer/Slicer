@@ -2008,7 +2008,7 @@ void vtkSlicerApplicationGUI::BuildToolBar()
         this->SaveSceneIconButton->SetBorderWidth ( 0 );
         this->SaveSceneIconButton->SetOverReliefToNone ( );
         this->SaveSceneIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetSaveSceneIcon( ) );
-        this->SaveSceneIconButton->SetBalloonHelpString ( "Save a MRML scene to a file.");
+        this->SaveSceneIconButton->SetBalloonHelpString ( "Save a MRML scene or data to a file.");
         ltb->AddWidget ( this->SaveSceneIconButton );
 
         // load scene icon
