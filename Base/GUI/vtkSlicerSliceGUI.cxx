@@ -169,9 +169,9 @@ void vtkSlicerSliceGUI::ProcessGUIEvents ( vtkObject *caller,
     }
 
   // handle events from the Interactor Style
-  if (iStyleUser == 
-      this->GetSliceViewer()->GetRenderWidget()->
-          GetRenderWindowInteractor()->GetInteractorStyle())
+  if (iStyleUser == this->GetSliceViewer()->GetRenderWidget()->
+                        GetRenderWindowInteractor()->GetInteractorStyle() &&
+      this->GetLogic() != NULL)
     {
     this->SetCurrentGUIEvent( vtkCommand::GetStringFromEventId(event) );
     this->InvokeEvent (event, NULL);
