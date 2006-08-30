@@ -71,6 +71,9 @@ vtkMRMLScene::vtkMRMLScene()
   vtkMRMLVectorVolumeNode *vvoln = vtkMRMLVectorVolumeNode::New(); 
   this->RegisterNodeClass( vvoln );
 
+  vtkMRMLFiducialListDisplayNode *fidlistdisplaynode = vtkMRMLFiducialListDisplayNode::New();
+  this->RegisterNodeClass ( fidlistdisplaynode );
+  
   vtkMRMLFiducialListNode *fidln = vtkMRMLFiducialListNode::New(); 
   this->RegisterNodeClass( fidln );
   
