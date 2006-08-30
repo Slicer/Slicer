@@ -573,6 +573,8 @@ int Slicer3_main(int argc, char *argv[])
       Slicer3_Tcl_Eval( interp, cmd.c_str() ) ;
       }
 
+    int res; // return code (exit code)
+
     // use the startup code passed on command line if it exists
     if ( Exec != "" )
       {    
@@ -580,15 +582,19 @@ int Slicer3_main(int argc, char *argv[])
       cmd += "regsub -all {\\.,} $::SLICER(exec) \";\" ::SLICER(exec);";
       cmd += "regsub -all {,\\.} $::SLICER(exec) \";\" ::SLICER(exec);";
       cmd += "eval $::SLICER(exec);";
-      Slicer3_Tcl_Eval( interp, cmd.c_str() );
+      res = Slicer3_Tcl_Eval( interp, cmd.c_str() );
       }
+    else
+      {
 
-    //
-    // Run!  - this will return when the user exits
-    //
-    int res = slicerApp->StartApplication();
+      //
+      // Run!  - this will return when the user exits
+      //
+      res = slicerApp->StartApplication();
 
-    appGUI->GetMainSlicerWin()->Close();
+      appGUI->GetMainSlicerWin()->Close();
+
+      }
 
     // ------------------------------
     // REMOVE OBSERVERS and references to MRML and Logic
