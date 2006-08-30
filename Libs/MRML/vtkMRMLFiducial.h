@@ -40,6 +40,11 @@ public:
   virtual void ReadXMLAttributes( const char** atts);
 
   // Description:
+  // Set node attributes from an unparsed string of keys and values
+  virtual void ReadXMLString(const char *keyValuePairs);
+  
+
+  // Description:
   // Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
