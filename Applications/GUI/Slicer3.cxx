@@ -584,17 +584,13 @@ int Slicer3_main(int argc, char *argv[])
       cmd += "eval $::SLICER(exec);";
       res = Slicer3_Tcl_Eval( interp, cmd.c_str() );
       }
-    else
-      {
 
-      //
-      // Run!  - this will return when the user exits
-      //
-      res = slicerApp->StartApplication();
+    //
+    // Run!  - this will return when the user exits
+    //
+    res = slicerApp->StartApplication();
 
-      appGUI->GetMainSlicerWin()->Close();
-
-      }
+    appGUI->GetMainSlicerWin()->Close();
 
     // ------------------------------
     // REMOVE OBSERVERS and references to MRML and Logic
@@ -748,5 +744,6 @@ int main(int argc, char *argv[])
     return Slicer3_main(argc, argv);
 }
 #endif
+
 
 
