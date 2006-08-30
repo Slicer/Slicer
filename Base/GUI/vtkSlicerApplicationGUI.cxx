@@ -902,10 +902,6 @@ void vtkSlicerApplicationGUI::DestroyMainSliceViewers ( )
       //
       if ( this->MainSliceGUI0 )
         {
-          if (this->MainSliceLogic0 != NULL)
-            {
-            this->MainSliceLogic0->Register ( this );
-            }
           this->MainSliceGUI0->SetAndObserveMRMLScene (NULL );
           this->MainSliceGUI0->SetAndObserveModuleLogic ( NULL );
           this->MainSliceGUI0->RemoveGUIObservers ( );
@@ -924,10 +920,6 @@ void vtkSlicerApplicationGUI::DestroyMainSliceViewers ( )
 
       if ( this->MainSliceGUI1 )
         {
-          if (this->MainSliceLogic1 != NULL)
-            {
-            this->MainSliceLogic1->Register ( this );
-            }          
           this->MainSliceGUI1->SetAndObserveMRMLScene (NULL );
           this->MainSliceGUI1->SetAndObserveModuleLogic ( NULL );
           this->MainSliceGUI1->RemoveGUIObservers ( );
@@ -946,10 +938,6 @@ void vtkSlicerApplicationGUI::DestroyMainSliceViewers ( )
 
       if ( this->MainSliceGUI2 )
         {
-          if (this->MainSliceLogic2 != NULL)
-            {
-            this->MainSliceLogic2->Register ( this );
-            }          
           this->MainSliceGUI2->SetAndObserveMRMLScene (NULL );
           this->MainSliceGUI2->SetAndObserveModuleLogic ( NULL );
           this->MainSliceGUI2->RemoveGUIObservers ( );
@@ -1420,40 +1408,6 @@ void vtkSlicerApplicationGUI::BuildMainViewer ( int arrangementType)
       this->CreateMainSliceViewers ( arrangementType );
       this->CreateMain3DViewer (arrangementType );
       this->Restore3DViewConfig ( );
-
-      // add observers on GUI, MRML 
-      if ( this->MainSliceGUI0 )
-        {
-          this->MainSliceGUI0->AddGUIObservers ( );
-          this->MainSliceGUI0->SetAndObserveMRMLScene ( this->MRMLScene );
-        }
-      if ( this->MainSliceGUI1 )
-        {
-          this->MainSliceGUI1->AddGUIObservers ( );
-          this->MainSliceGUI1->SetAndObserveMRMLScene ( this->MRMLScene );
-        }
-      if ( this->MainSliceGUI2 )
-        {
-          this->MainSliceGUI2->AddGUIObservers ( );
-          this->MainSliceGUI2->SetAndObserveMRMLScene ( this->MRMLScene );
-        }
-
-      // add observers on Logic
-      if ( this->MainSliceLogic0 )
-        {
-          this->MainSliceGUI0->SetAndObserveModuleLogic ( this->MainSliceLogic0 );
-          this->MainSliceLogic0->UnRegister ( this );
-        }
-      if (this->MainSliceLogic1 )
-        {
-          this->MainSliceGUI1->SetAndObserveModuleLogic ( this->MainSliceLogic1 );
-          this->MainSliceLogic1->UnRegister ( this );
-        }
-      if (this->MainSliceLogic2 )
-        {
-          this->MainSliceGUI2->SetAndObserveModuleLogic ( this->MainSliceLogic2 );
-          this->MainSliceLogic2->UnRegister ( this );
-        }
     }
 }
 
@@ -1509,6 +1463,38 @@ void vtkSlicerApplicationGUI::CreateMainSliceViewers ( int arrangementType )
         default:
           break;
         }
+      // TO DO: move this into CreateMainSliceViewers?
+      // add observers on GUI, MRML 
+      if ( this->MainSliceGUI0 )
+        {
+          this->MainSliceGUI0->AddGUIObservers ( );
+          this->MainSliceGUI0->SetAndObserveMRMLScene ( this->MRMLScene );
+        }
+      if ( this->MainSliceGUI1 )
+        {
+          this->MainSliceGUI1->AddGUIObservers ( );
+          this->MainSliceGUI1->SetAndObserveMRMLScene ( this->MRMLScene );
+        }
+      if ( this->MainSliceGUI2 )
+        {
+          this->MainSliceGUI2->AddGUIObservers ( );
+          this->MainSliceGUI2->SetAndObserveMRMLScene ( this->MRMLScene );
+        }
+
+      // add observers on Logic
+      if ( this->MainSliceLogic0 )
+        {
+          this->MainSliceGUI0->SetAndObserveModuleLogic ( this->MainSliceLogic0 );
+        }
+      if (this->MainSliceLogic1 )
+        {
+          this->MainSliceGUI1->SetAndObserveModuleLogic ( this->MainSliceLogic1 );
+        }
+      if (this->MainSliceLogic2 )
+        {
+          this->MainSliceGUI2->SetAndObserveModuleLogic ( this->MainSliceLogic2 );
+        }
+
     }
 }
 
@@ -1915,23 +1901,18 @@ void vtkSlicerApplicationGUI::SetAndObserveMainSliceLogic ( vtkSlicerSliceLogic 
                                                             vtkSlicerSliceLogic *l2 )
 {
 
-        if ( this->MainSliceGUI0 && this->MainSliceGUI1 && this->MainSliceGUI2 )
-          {
-            this->GetMainSliceGUI0()->SetAndObserveModuleLogic ( l0 );
-            this->GetMainSliceGUI1()->SetAndObserveModuleLogic ( l1 );
-            this->GetMainSliceGUI2()->SetAndObserveModuleLogic ( l2 );
-            // save the main slice logic to reassign when viewers are
-            // destroyed and recreated during view layout changes.
+  if ( this->MainSliceGUI0 && this->MainSliceGUI1 && this->MainSliceGUI2 )
+    {
+      this->GetMainSliceGUI0()->SetAndObserveModuleLogic ( l0 );
+      this->GetMainSliceGUI1()->SetAndObserveModuleLogic ( l1 );
+      this->GetMainSliceGUI2()->SetAndObserveModuleLogic ( l2 );
+    }
+  // Set and register the main slice logic here to reassign when
+  // viewers are destroyed and recreated during view layout changes.
+  this->SetMainSliceLogic0 ( l0 );
+  this->SetMainSliceLogic1 ( l1 );
+  this->SetMainSliceLogic2 ( l2 );
 
-            /**
-            this->MainSliceLogic0 = this->MainSliceGUI0->GetLogic ( );
-            this->MainSliceLogic0->Register( this );
-            this->MainSliceLogic1 = this->MainSliceGUI1->GetLogic ( );
-            this->MainSliceLogic1->Register( this );
-            this->MainSliceLogic2 = this->MainSliceGUI2->GetLogic ( );
-            this->MainSliceLogic2->Register( this );
-            **/
-          }
 }
 
 

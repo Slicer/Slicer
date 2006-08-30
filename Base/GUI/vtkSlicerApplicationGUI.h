@@ -78,8 +78,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkGetObjectMacro (MainSliceGUI1, vtkSlicerSliceGUI);
     vtkGetObjectMacro (MainSliceGUI2, vtkSlicerSliceGUI);
     vtkGetObjectMacro (MainSliceLogic0, vtkSlicerSliceLogic);
+    vtkSetObjectMacro (MainSliceLogic0, vtkSlicerSliceLogic);
     vtkGetObjectMacro (MainSliceLogic1, vtkSlicerSliceLogic);
+    vtkSetObjectMacro (MainSliceLogic1, vtkSlicerSliceLogic);
     vtkGetObjectMacro (MainSliceLogic2, vtkSlicerSliceLogic);
+    vtkSetObjectMacro (MainSliceLogic2, vtkSlicerSliceLogic);
 
     // Description:
     // A frame used in the MainViewFrame of SlicerMainWin
