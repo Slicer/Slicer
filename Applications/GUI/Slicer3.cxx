@@ -576,6 +576,10 @@ int Slicer3_main(int argc, char *argv[])
     int res; // return code (exit code)
 
     // use the startup code passed on command line if it exists
+    // Example for csh to exit after startup:
+    //
+    // ./Slicer3 --exec 'after idle $::slicer3::Application Exit' 
+    //
     if ( Exec != "" )
       {    
       std::string cmd = "set ::SLICER(exec) \"" + Exec + "\";";
