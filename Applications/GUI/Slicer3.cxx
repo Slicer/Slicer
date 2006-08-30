@@ -590,6 +590,33 @@ int Slicer3_main(int argc, char *argv[])
       }
 
     //
+    // if there was no script file, the Args should hold a mrml file
+    //
+    if ( File == ""  && Args.size() != 0)
+    {
+        std::vector<std::string>::const_iterator argit = Args.begin();
+        while (argit != Args.end())
+        {
+            std::cout << "Arg =  " << *argit << endl;
+            std::string fileName;
+            fileName.append(*argit);
+            // is it a MRML or XML file?
+            if (fileName.find(".mrml",0) != std::string::npos ||
+                fileName.find(".xml",0) != std::string::npos)
+            {
+                std::cout << fileName << " is a MRML or XML file, setting MRML scene file name and connecting\n";
+                appLogic->GetMRMLScene()->SetURL(fileName.c_str());
+                // and then load it
+                int errorCode = appLogic->GetMRMLScene()->Connect();
+                if (errorCode)
+                {
+                    std::cerr << "ERROR loading MRML file " << fileName << endl;
+                }
+            }                    
+            ++argit;
+        }
+    }
+    //
     // Run!  - this will return when the user exits
     //
     res = slicerApp->StartApplication();
