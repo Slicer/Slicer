@@ -86,12 +86,10 @@ void vtkMRMLFiducialListNode::WriteXML(ostream& of, int nIndent)
   Superclass::WriteXML(of, nIndent);
   
   vtkIndent indent(nIndent);
-
-  of << indent << "name=\"" << (this->Name ? "(none)" : this->Name) << "\"";
       
   if (this->DisplayNodeID != NULL) 
   {
-      of << indent << "displayNodeRef=\"" << this->DisplayNodeID << "\" ";
+      of << indent << " displayNodeRef=\"" << this->DisplayNodeID << "\" ";
   }
   
   of << " symbolScale=\"" << this->SymbolScale << "\"";
@@ -101,6 +99,20 @@ void vtkMRMLFiducialListNode::WriteXML(ostream& of, int nIndent)
   of << " color=\"" << this->Color[0] << " " << 
                     this->Color[1] << " " <<
                     this->Color[2] << "\"";
+
+  if (this->GetNumberOfFiducials() > 0)
+  {
+      of << " fiducials=\"";
+      for (int idx = 0; idx < this->GetNumberOfFiducials(); idx++)
+      {
+          if (this->GetNthFiducial(idx) != NULL)
+          {
+              of << "\n";
+              this->GetNthFiducial(idx)->WriteXML(of, nIndent);
+          }
+      }
+      of << "\"";
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -112,44 +124,94 @@ void vtkMRMLFiducialListNode::ReadXMLAttributes(const char** atts)
   const char* attName;
   const char* attValue;
   while (*atts != NULL) 
-    {
-    attName = *(atts++);
-    attValue = *(atts++);
-    if (!strcmp(attName, "name"))
-    {
-        this->SetName(attName);
-    }
-    else  if (!strcmp(attName, "color")) 
+  {
+      attName = *(atts++);
+      attValue = *(atts++);
+      if (!strcmp(attName, "name"))
       {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> this->Color[0];
-      ss >> this->Color[1];
-      ss >> this->Color[2];
+          this->SetName(attValue);
       }
-    else if (!strcmp(attName, "symbolScale")) 
+      else if (!strcmp(attName, "id"))
       {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> this->SymbolScale;
+          this->SetID(attValue);
       }
-    else if (!strcmp(attName, "textScale")) 
+      else  if (!strcmp(attName, "color")) 
       {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> this->TextScale;
+          std::stringstream ss;
+          ss << attValue;
+          ss >> this->Color[0];
+          ss >> this->Color[1];
+          ss >> this->Color[2];
       }
-    else if (!strcmp(attName, "visibility")) 
+      else if (!strcmp(attName, "symbolScale")) 
       {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> this->Visibility;
+          std::stringstream ss;
+          ss << attValue;
+          ss >> this->SymbolScale;
       }
-    else if (!strcmp(attName, "displayNodeRef")) 
-    {
-        this->SetDisplayNodeID(attValue);
-    }
-    }  
+      else if (!strcmp(attName, "textScale")) 
+      {
+          std::stringstream ss;
+          ss << attValue;
+          ss >> this->TextScale;
+      }
+      else if (!strcmp(attName, "visibility")) 
+      {
+          std::stringstream ss;
+          ss << attValue;
+          ss >> this->Visibility;
+      }
+      else if (!strcmp(attName, "displayNodeRef")) 
+      {
+          this->SetDisplayNodeID(attValue);
+      }
+      else if (!strcmp(attName, "fiducials"))
+      {
+          
+          // need to add fiducials and parse out the list of fiducial points
+          // assume labeltext is first, extract that part of the attValue
+          char *fiducials = (char *)attValue;
+          char *labelTextPtr;
+          labelTextPtr = strstr (fiducials,"labeltext");
+          //std::cout << "Starting to parse out the fiducial list, setting it up for tokenisation\n";
+          while (labelTextPtr != NULL)
+          {
+              //std::cout << "current label text pt = " << labelTextPtr << endl;
+              
+              // find the end of this point, new line or end quote
+              labelTextPtr = strstr (fiducials," labeltext");
+              if (labelTextPtr != NULL)
+              {
+                  // replace the space with a carriage return
+                  labelTextPtr = strncpy(labelTextPtr, "\nlabeltext", 1);
+              }
+          }
+          // now parse the string into tokens by the newline
+          labelTextPtr = strtok(fiducials, "\n");
+          while (labelTextPtr != NULL)
+          {
+              //std::cout << "got a token: " << labelTextPtr << endl;
+              // now make a new point
+              vtkMRMLFiducial *newPoint = vtkMRMLFiducial::New();
+              if (newPoint != NULL)
+              {
+                  // now pass it the stuff to parse out and set itself from
+                  newPoint->ReadXMLString(labelTextPtr);
+                  // and add it to this list
+                  this->AddFiducial(newPoint);
+                  // delete it since the list has a pointer to it
+                  newPoint->Delete();
+              } else {
+                  std::cerr << "ERROR making a new MRML fiducial!\n";
+              }
+              labelTextPtr = strtok(NULL, "\n");
+          }
+      }
+      else
+      {
+          std::cerr << "Unknown attribute name " << attName << endl;
+      }
+  }
 }
 
 
@@ -184,18 +246,33 @@ void vtkMRMLFiducialListNode::PrintSelf(ostream& os, vtkIndent indent)
     (this->DisplayNodeID ? this->DisplayNodeID : "(none)") << "\n";
   
   os << indent << "Symbol scale: (";
-  os << indent << this->SymbolScale << ") \n ";
+  os << indent << this->SymbolScale << ")\n";
 
   os << indent << "Text scale: (";
-  os << indent << this->TextScale << ") \n ";
+  os << indent << this->TextScale << ")\n";
 
-  os << indent << "Visibility:        " << this->Visibility << "\n";
+  os << indent << "Visibility: (";
+  os << indent << this->Visibility << ")\n";
 
-  os << "Color:\n";
+  os << indent << "Color: (";
   for (idx = 0; idx < 3; ++idx)
     {
-    os << indent << ", " << this->Color[idx];
+        os << indent << this->Color[idx];
+        if (idx < 2) { os << ", "; } else { os << ")\n"; }
     }
+
+  if (this->GetNumberOfFiducials() > 0)
+  {
+      os << indent << "Fiducial points:\n";
+      for (idx = 0; idx < this->GetNumberOfFiducials(); idx++)
+      {
+          os << indent << " Point " << idx << ":\n";
+          if (this->GetNthFiducial(idx) != NULL)
+          {
+              this->GetNthFiducial(idx)->PrintSelf(os,indent.GetNextIndent());
+          }
+      }
+  }
 }
 
 //-----------------------------------------------------------
