@@ -594,6 +594,7 @@ int Slicer3_main(int argc, char *argv[])
     //
     res = slicerApp->StartApplication();
 
+    appGUI->GetMainSlicerWin()->PrepareForDelete();
     appGUI->GetMainSlicerWin()->Close();
 
     // ------------------------------
