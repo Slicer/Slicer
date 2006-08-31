@@ -43,8 +43,10 @@ INCLUDE_DIRECTORIES(
 OPTION(Slicer3_BUILD_WIN32_CONSOLE "Build Slicer3 executable as a console app on windows (allows debug output)" OFF)
 IF ( Slicer3_BUILD_WIN32_CONSOLE )
   ADD_EXECUTABLE (Slicer3 ${SRC})
+  ADD_EXECUTABLE (Slicer3Bare Slicer3Bare.cxx)
 ELSE ( Slicer3_BUILD_WIN32_CONSOLE )
   ADD_EXECUTABLE (Slicer3 WIN32 ${SRC})
+  ADD_EXECUTABLE (Slicer3Bare WIN32 Slicer3Bare.cxx)
 ENDIF ( Slicer3_BUILD_WIN32_CONSOLE )
 
 TARGET_LINK_LIBRARIES( Slicer3 
@@ -62,6 +64,22 @@ TARGET_LINK_LIBRARIES( Slicer3
     ITKIO
     ${KWWidgets_LIBRARIES} )
 INSTALL_TARGETS(/bin Slicer3)
+
+TARGET_LINK_LIBRARIES( Slicer3Bare
+    SlicerBaseLogic
+    SlicerBaseGUI
+    MRML
+    GradientAnisotropicDiffusionFilter
+    CommandLineModule
+    ScriptedModule
+    SlicerDaemon
+    ModuleDescriptionParser
+    ModulesBaseClasses
+    vtkITK
+    ITKCommon 
+    ITKIO
+    ${KWWidgets_LIBRARIES} )
+INSTALL_TARGETS(/bin Slicer3Bare)
 
 # Generate a lightweight C launcher for a *specific* executable.
 # The launcher sets up all the environments variables (PATH, TCLLIBPATH,

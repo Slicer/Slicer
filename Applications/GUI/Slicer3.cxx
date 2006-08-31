@@ -704,6 +704,8 @@ int Slicer3_main(int argc, char *argv[])
     // ------------------------------
     // Remove References to Module GUIs
     slicerApp->GetModuleGUICollection ( )->RemoveAllItems ( );
+    slicerApp->GetTheme()->SetApplication( NULL );
+    slicerApp->SetTheme( NULL );
 
     // ------------------------------
     // EXIT 

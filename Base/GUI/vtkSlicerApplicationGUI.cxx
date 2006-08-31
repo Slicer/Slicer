@@ -269,6 +269,7 @@ vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
 
     if ( this->SliceGUICollection )
       {
+        this->SliceGUICollection->RemoveAllItems();
         this->SetSliceGUICollection ( NULL );
       }
 
