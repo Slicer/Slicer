@@ -143,9 +143,13 @@ void vtkSlicerLogic::SetMRML(vtkObject **nodePtr, vtkObject *node)
 //----------------------------------------------------------------------------
 void vtkSlicerLogic::SetAndObserveMRML(vtkObject **nodePtr, vtkObject *node)
 {
+  //
+  // TODO: the fact that there's only a single Events array for the class
+  // means that only ONE MRML node can be observed by any subclass
+  //
   if ( *nodePtr  )
     {
-    for (int i=0; i<this->Events->GetNumberOfTuples(); i++)
+    for (int i=0; i<this->Events->GetSize(); i++)
       {
       (*nodePtr)->RemoveObservers(this->Events->GetValue(i), this->MRMLCallbackCommand );
       }
