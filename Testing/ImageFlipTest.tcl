@@ -6,13 +6,19 @@ foreach inst {e vorig vflip vflipNoOpt flip flipNoOpt} {
 vtkImageEllipsoidSource e
 e SetCenter 75 75 0
 
-vtkImageViewer vorig
-vtkImageViewer vflip
-vtkImageViewer vflipNoOpt
-
 vtkImageFlip flip
 vtkImageFlip flipNoOpt
 
+set xpos 20
+set ypos 20
+foreach v {vorig vflip vflipNoOpt} {
+  vtkImageViewer $v
+  $v SetPosition $xpos $ypos
+  incr xpos 350
+  $v SetColorWindow 255
+  $v SetColorLevel 128
+  $v Render
+}
 
 vorig SetInput [e GetOutput]
 
@@ -24,12 +30,6 @@ foreach f {flip flipNoOpt} {
 flipNoOpt OptimizationOff
 
 
-set xpos 20
-set ypos 20
 foreach v {vorig vflip vflipNoOpt} {
-  $v SetColorWindow 255
-  $v SetColorLevel 128
   $v Render
-  $v SetPosition $xpos $ypos
-  incr xpos 300
 }
