@@ -81,6 +81,9 @@ int Slicer3_Tcl_Eval ( Tcl_Interp *interp, const char *script )
 }
 
 //#define MODULES_DEBUG
+//#define SLICES_DEBUG
+//#define MODELS_DEBUG
+//#define VOLUMES_DEBUG
 
 int Slicer3_main(int argc, char *argv[])
 {
@@ -260,6 +263,7 @@ int Slicer3_main(int argc, char *argv[])
     // (these require appGUI to be built):
     // --- Volumes module
 
+#ifndef VOLUMES_DEBUG
     vtkSlicerVolumesLogic *volumesLogic = vtkSlicerVolumesLogic::New ( );
     volumesLogic->SetAndObserveMRMLScene ( scene );
     vtkSlicerVolumesGUI *volumesGUI = vtkSlicerVolumesGUI::New ( );
@@ -274,7 +278,9 @@ int Slicer3_main(int argc, char *argv[])
     slicerApp->AddModuleGUI ( volumesGUI );
     volumesGUI->BuildGUI ( );
     volumesGUI->AddGUIObservers ( );
+#endif
 
+#ifndef MODELS_DEBUG
 
     // --- Models module    
     vtkSlicerModelsLogic *modelsLogic = vtkSlicerModelsLogic::New ( );
@@ -291,6 +297,7 @@ int Slicer3_main(int argc, char *argv[])
     slicerApp->AddModuleGUI ( modelsGUI );
     modelsGUI->BuildGUI ( );
     modelsGUI->AddGUIObservers ( );
+#endif
 
 #ifndef MODULES_DEBUG
 
@@ -342,6 +349,8 @@ int Slicer3_main(int argc, char *argv[])
 
 #endif
 
+#ifndef SLICES_DEBUG
+
     // --- Slices module
     // - set up each of the slice logics (these initialize their
     //   helper classes and nodes the first time the process MRML and
@@ -381,6 +390,7 @@ int Slicer3_main(int argc, char *argv[])
     slicerApp->AddModuleGUI ( slicesGUI );
     slicesGUI->BuildGUI ();
     slicesGUI->AddGUIObservers ( );
+#endif
 
 #ifndef MODULES_DEBUG
 
@@ -476,8 +486,10 @@ int Slicer3_main(int argc, char *argv[])
     name = slicesGUI->GetTclName();
     slicerApp->Script ("namespace eval slicer3 set SlicesGUI %s", name);
 
+#ifndef VOLUMES_DEBUG
     name = volumesGUI->GetTclName();
     slicerApp->Script ("namespace eval slicer3 set VolumesGUI %s", name);
+#endif
     name = modelsGUI->GetTclName();
     slicerApp->Script ("namespace eval slicer3 set ModelsGUI %s", name);
     name = fiducialsGUI->GetTclName();
@@ -556,10 +568,12 @@ int Slicer3_main(int argc, char *argv[])
     // create the three main slice viewers after slicesGUI is created
     //
     appGUI->PopulateModuleChooseList ( );
+#ifndef SLICES_DEBUG
     appGUI->SetSliceGUICollection ( slicesGUI->GetSliceGUICollection() );
     appGUI->SetAndObserveMainSliceLogic ( sliceLogic0, sliceLogic1, sliceLogic2 );
     appGUI->AddMainSliceViewersToCollection ( );
     appGUI->ConfigureMainSliceViewers ( );
+#endif
     
     // ------------------------------
     // CONFIGURE SlICER'S SHARED GUI PANEL
@@ -638,20 +652,28 @@ int Slicer3_main(int argc, char *argv[])
 #ifndef MODULES_DEBUG
     gradientAnisotropicDiffusionFilterGUI->RemoveGUIObservers ( );
 #endif
+#ifndef VOLUMES_DEBUG
     volumesGUI->RemoveGUIObservers ( );
+#endif
+#ifndef MODELS_DEBUG
     modelsGUI->RemoveGUIObservers ( );
+#endif
 #ifndef MODULES_DEBUG
     fiducialsGUI->RemoveGUIObservers ( );
     transformsGUI->RemoveGUIObservers ( );
     dataGUI->RemoveGUIObservers ( );
 #endif
+#ifndef SLICES_DEBUG
     slicesGUI->RemoveGUIObservers ( );
+#endif
     appGUI->RemoveGUIObservers ( );
+#ifndef SLICES_DEBUG
     appGUI->SetAndObserveMainSliceLogic ( NULL, NULL, NULL );
 
     // remove all from the slicesGUI collection of sliceGUIs
     slicesGUI->GetSliceGUICollection()->RemoveAllItems ( );
     appGUI->SetSliceGUICollection ( NULL );
+#endif
 
 #ifndef MODULES_DEBUG
     // remove the observers from the factory discovered modules
@@ -695,14 +717,20 @@ int Slicer3_main(int argc, char *argv[])
 #ifndef MODULES_DEBUG
     gradientAnisotropicDiffusionFilterGUI->Delete ();
 #endif
+#ifndef VOLUMES_DEBUG
     volumesGUI->Delete ();
+#endif
+#ifndef MODELS_DEBUG
     modelsGUI->Delete ();
+#endif
 #ifndef MODULES_DEBUG
     fiducialsGUI->Delete ();
     transformsGUI->Delete ();
     dataGUI->Delete ();
 #endif
+#ifndef SLICES_DEBUG
     slicesGUI->Delete ();
+#endif
     appGUI->Delete ();
 
 #ifndef MODULES_DEBUG
@@ -732,20 +760,26 @@ int Slicer3_main(int argc, char *argv[])
     gradientAnisotropicDiffusionFilterLogic->SetAndObserveMRMLScene ( NULL );
     gradientAnisotropicDiffusionFilterLogic->Delete ();
 #endif
+#ifndef VOLUMES_DEBUG
     volumesLogic->SetAndObserveMRMLScene ( NULL );
     volumesLogic->Delete();
+#endif
+#ifndef MODELS_DEBUG
     modelsLogic->SetAndObserveMRMLScene ( NULL );
     modelsLogic->Delete();
+#endif
 #ifndef MODULES_DEBUG
     fiducialsLogic->SetAndObserveMRMLScene ( NULL );
     fiducialsLogic->Delete();
 #endif
+#ifndef SLICES_DEBUG
     sliceLogic2->SetAndObserveMRMLScene ( NULL );
     sliceLogic2->Delete ();
     sliceLogic1->SetAndObserveMRMLScene ( NULL );
     sliceLogic1->Delete ();
     sliceLogic0->SetAndObserveMRMLScene ( NULL );
     sliceLogic0->Delete ();
+#endif
     appLogic->SetAndObserveMRMLScene ( NULL );
     appLogic->Delete ();
 
