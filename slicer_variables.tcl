@@ -99,7 +99,7 @@ set ::TEEM_SRC_DIR  $::SLICER_LIB/teem
 set ::TEEM_BUILD_DIR  $::SLICER_LIB/teem-build
 set ::VTK_DIR  $::SLICER_LIB/VTK-build
 set ::VTK_SRC_DIR $::SLICER_LIB/VTK
-set ::VTK_BUILD_TYPE ""
+set ::VTK_BUILD_TYPE "Debug"
 set ::VTK_BUILD_SUBDIR ""
 set ::env(VTK_BUILD_TYPE) $::VTK_BUILD_TYPE
 set ::KWWidgets_BUILD_DIR  $::SLICER_LIB/KWWidgets-build
@@ -178,16 +178,9 @@ switch $::tcl_platform(os) {
     "Windows NT" {
     # Windows NT currently covers WinNT, Win2000, XP Home, XP Pro
 
-        #
-        ### Set your peferred build type: 
-        #
-        #set ::VTK_BUILD_TYPE RelWithDebInfo ;# good if you have the full (expensive) compiler
-        #set ::VTK_BUILD_TYPE Release  ;# faster, but no debugging
-        set ::VTK_BUILD_TYPE Debug  ;# a good default
         set ::VTK_BUILD_SUBDIR $::VTK_BUILD_TYPE
         set ::TEEM_BIN_DIR  $::TEEM_BUILD_DIR/bin/$::VTK_BUILD_TYPE
 
-        set ::env(VTK_BUILD_TYPE) $::VTK_BUILD_TYPE
         set ::env(VTK_BUILD_SUBDIR) $::VTK_BUILD_SUBDIR
         set ::TCL_TEST_FILE $::TCL_BIN_DIR/tclsh84.exe
         set ::TK_TEST_FILE  $::TCL_BIN_DIR/wish84.exe
