@@ -225,6 +225,7 @@ runcmd $::CMAKE \
         -G$::GENERATOR \
         -DITK_DIR:FILEPATH=$ITK_BINARY_PATH \
         -DKWWidgets_DIR:FILEPATH=$SLICER_LIB/KWWidgets-build \
+        -DCMAKE_BUILD_TYPE=$::VTK_BUILD_TYPE \
         $SLICER_HOME
 
 if { $isWindows } {
