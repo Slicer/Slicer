@@ -225,6 +225,16 @@ void vtkSlicerViewerWidget::UpdateFiducialsFromMRML()
       {
       flist->AddObserver ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
       }
+    if (flist->HasObserver ( vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand ) == 0)
+      {
+      flist->AddObserver ( vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand );
+      }
+      // observe display node  
+    if (flist->HasObserver ( vtkMRMLFiducialListNode::DisplayModifiedEvent, this->MRMLCallbackCommand ) == 0)
+      {
+      flist->AddObserver ( vtkMRMLFiducialListNode::DisplayModifiedEvent, this->MRMLCallbackCommand );
+      }
+
     for (int f=0; f<flist->GetNumberOfFiducials(); f++)
       {
       vtkMRMLFiducial *fnode = flist->GetNthFiducial(f);
@@ -234,29 +244,21 @@ void vtkSlicerViewerWidget::UpdateFiducialsFromMRML()
       glyph->SetGlyphTypeToDiamond();
       float *xyz = fnode->GetXYZ();
       glyph->SetCenter(xyz[0], xyz[1], xyz[2]);
+      glyph->SetScale(flist->GetSymbolScale());
 
       vtkPolyDataMapper *mapper = vtkPolyDataMapper::New ();
       mapper->SetInput ( glyph->GetOutput() );
 
-      // observe fiducial node data
+      //observe fiducial node data
       if (fnode->HasObserver(vtkCommand::ModifiedEvent, this->MRMLCallbackCommand ) == 0) 
         {
         fnode->AddObserver ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
-        }
-
-      // observe display node  
-      if (fnode->HasObserver ( vtkMRMLFiducialListNode::DisplayModifiedEvent, this->MRMLCallbackCommand ) == 0)
-        {
-        fnode->AddObserver ( vtkMRMLFiducialListNode::DisplayModifiedEvent, this->MRMLCallbackCommand );
-        }
-      if (fnode->HasObserver ( vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand ) == 0)
-        {
-        fnode->AddObserver ( vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand );
         }
       vtkActor *actor = vtkActor::New ( );
       actor->SetMapper ( mapper );
       this->MainViewer->AddViewProp ( actor );
 
+      this->SetFiducialDisplayProperty(flist, actor);
       this->DisplayedFiducials[aid.c_str()] = actor;
       
       glyph->Delete();
@@ -358,6 +360,8 @@ void vtkSlicerViewerWidget::RemoveFiducialObservers()
     std::string nid = this->GetFiducialNodeID(aid, index);
     vtkMRMLFiducialListNode *flist = vtkMRMLFiducialListNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(nid.c_str()));
     flist->RemoveObservers ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+    flist->RemoveObservers ( vtkMRMLFiducialListNode::DisplayModifiedEvent, this->MRMLCallbackCommand );
+    flist->RemoveObservers ( vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand );
     if (flist)
       {
       vtkMRMLFiducial *fnode = flist->GetNthFiducial(index);
@@ -365,8 +369,6 @@ void vtkSlicerViewerWidget::RemoveFiducialObservers()
       if (fnode != NULL)
         {
         fnode->RemoveObservers ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
-        fnode->RemoveObservers ( vtkMRMLFiducialListNode::DisplayModifiedEvent, this->MRMLCallbackCommand );
-        fnode->RemoveObservers ( vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand );
         }
       }
   }  
