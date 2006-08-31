@@ -80,6 +80,8 @@ int Slicer3_Tcl_Eval ( Tcl_Interp *interp, const char *script )
   return 0;
 }
 
+//#define MODULES_DEBUG
+
 int Slicer3_main(int argc, char *argv[])
 {
   // Append the path to the slicer executable to the ITK_AUTOLOAD_PATH
@@ -290,6 +292,8 @@ int Slicer3_main(int argc, char *argv[])
     modelsGUI->BuildGUI ( );
     modelsGUI->AddGUIObservers ( );
 
+#ifndef MODULES_DEBUG
+
     // --- Fiducials module    
     vtkSlicerFiducialsLogic *fiducialsLogic = vtkSlicerFiducialsLogic::New ( );
     fiducialsLogic->SetAndObserveMRMLScene ( scene );
@@ -336,6 +340,8 @@ int Slicer3_main(int argc, char *argv[])
     dataGUI->BuildGUI ( );
     dataGUI->AddGUIObservers ( );
 
+#endif
+
     // --- Slices module
     // - set up each of the slice logics (these initialize their
     //   helper classes and nodes the first time the process MRML and
@@ -376,6 +382,7 @@ int Slicer3_main(int argc, char *argv[])
     slicesGUI->BuildGUI ();
     slicesGUI->AddGUIObservers ( );
 
+#ifndef MODULES_DEBUG
 
     // --- Gradient anisotropic diffusion filter module
     vtkGradientAnisotropicDiffusionFilterGUI *gradientAnisotropicDiffusionFilterGUI = vtkGradientAnisotropicDiffusionFilterGUI::New ( );
@@ -543,6 +550,8 @@ int Slicer3_main(int argc, char *argv[])
     tclCommand += "}";
     Slicer3_Tcl_Eval( interp, tclCommand.c_str() );
 
+#endif
+
     //
     // create the three main slice viewers after slicesGUI is created
     //
@@ -626,12 +635,16 @@ int Slicer3_main(int argc, char *argv[])
 
     // ------------------------------
     // REMOVE OBSERVERS and references to MRML and Logic
+#ifndef MODULES_DEBUG
     gradientAnisotropicDiffusionFilterGUI->RemoveGUIObservers ( );
+#endif
     volumesGUI->RemoveGUIObservers ( );
     modelsGUI->RemoveGUIObservers ( );
+#ifndef MODULES_DEBUG
     fiducialsGUI->RemoveGUIObservers ( );
     transformsGUI->RemoveGUIObservers ( );
     dataGUI->RemoveGUIObservers ( );
+#endif
     slicesGUI->RemoveGUIObservers ( );
     appGUI->RemoveGUIObservers ( );
     appGUI->SetAndObserveMainSliceLogic ( NULL, NULL, NULL );
@@ -640,6 +653,7 @@ int Slicer3_main(int argc, char *argv[])
     slicesGUI->GetSliceGUICollection()->RemoveAllItems ( );
     appGUI->SetSliceGUICollection ( NULL );
 
+#ifndef MODULES_DEBUG
     // remove the observers from the factory discovered modules
     // (as we remove the observers, cache the GUIs in a vector so we
     // can delete them later).
@@ -663,7 +677,7 @@ int Slicer3_main(int argc, char *argv[])
     tclCommand += "  $::SLICER_PACKAGES($package,gui) RemoveGUIObservers;";
     tclCommand += "}";
     Slicer3_Tcl_Eval( interp, tclCommand.c_str() );
-    
+#endif    
 
     // ------------------------------
     // Remove References to Module GUIs
@@ -678,15 +692,20 @@ int Slicer3_main(int argc, char *argv[])
     
     //--- delete gui first, removing Refs to Logic and MRML
 
+#ifndef MODULES_DEBUG
     gradientAnisotropicDiffusionFilterGUI->Delete ();
+#endif
     volumesGUI->Delete ();
     modelsGUI->Delete ();
+#ifndef MODULES_DEBUG
     fiducialsGUI->Delete ();
     transformsGUI->Delete ();
     dataGUI->Delete ();
+#endif
     slicesGUI->Delete ();
     appGUI->Delete ();
 
+#ifndef MODULES_DEBUG
     tclCommand = "";
     tclCommand += "foreach package $::SLICER_PACKAGES(list) { ";
     tclCommand += "  $::SLICER_PACKAGES($package,gui) Delete;";
@@ -705,17 +724,22 @@ int Slicer3_main(int argc, char *argv[])
       (*git)->Delete();
       }
     moduleGUIs.clear();
+#endif
     
     //--- delete logic next, removing Refs to MRML
     appLogic->ClearCollections ( );
+#ifndef MODULES_DEBUG
     gradientAnisotropicDiffusionFilterLogic->SetAndObserveMRMLScene ( NULL );
     gradientAnisotropicDiffusionFilterLogic->Delete ();
+#endif
     volumesLogic->SetAndObserveMRMLScene ( NULL );
     volumesLogic->Delete();
     modelsLogic->SetAndObserveMRMLScene ( NULL );
     modelsLogic->Delete();
+#ifndef MODULES_DEBUG
     fiducialsLogic->SetAndObserveMRMLScene ( NULL );
     fiducialsLogic->Delete();
+#endif
     sliceLogic2->SetAndObserveMRMLScene ( NULL );
     sliceLogic2->Delete ();
     sliceLogic1->SetAndObserveMRMLScene ( NULL );
@@ -725,6 +749,7 @@ int Slicer3_main(int argc, char *argv[])
     appLogic->SetAndObserveMRMLScene ( NULL );
     appLogic->Delete ();
 
+#ifndef MODULES_DEBUG
     // delete the factory discovered module Logics
     std::vector<vtkSlicerModuleLogic*>::iterator lit;
     for (lit = moduleLogics.begin(); lit != moduleLogics.end(); ++lit)
@@ -742,6 +767,8 @@ int Slicer3_main(int argc, char *argv[])
     tclCommand += "}";
     Slicer3_Tcl_Eval( interp, tclCommand.c_str() );
     
+#endif
+
     //--- scene next;
     scene->Delete ();
 
