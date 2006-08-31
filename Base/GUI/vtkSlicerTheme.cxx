@@ -51,8 +51,6 @@ void vtkSlicerTheme::Install ( )
     // Background and foreground for all widgets:
     // ---
     odb->AddBackgroundColorOptions( this->SlicerColors->GUIBgColor );
-    odb->AddEntryAsDouble3 ( "vtkKWWidget", "SetForegroundColor",
-                    this->SlicerColors->ActiveTextColor);
     odb->AddEntryAsDouble3 ( "vtkKWWidget", "SetDisabledForegroundColor",
                     this->SlicerColors->DisabledTextColor );
     odb->AddEntryAsDouble3 ( "vtkKWWidget", "SetActiveForegroundColor",
@@ -83,12 +81,8 @@ void vtkSlicerTheme::Install ( )
     // Slicer Scrollbars 
     odb->AddEntryAsDouble3 ( "vtkKWScrollbar", "SetBackgroundColor",
                     this->SlicerColors->LightGrey );
-    odb->AddEntryAsDouble3 ( "vtkKWScrollbar", "SetForegroundColor",
-                    this->SlicerColors->White );
     odb->AddEntryAsDouble3 ( "vtkKWScrollbar", "SetActiveBackgroundColor",
                     this->SlicerColors->LightGrey );
-    odb->AddEntryAsDouble3 ( "vtkKWScrollbar", "SetActiveForegroundColor",
-                    this->SlicerColors->White );
     odb->AddEntryAsDouble3 ( "vtkKWScrollbar", "SetTroughColor", this->SlicerColors->LightGrey );
 
     // Slicer Frames
