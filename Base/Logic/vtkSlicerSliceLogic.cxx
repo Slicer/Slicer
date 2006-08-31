@@ -35,7 +35,7 @@ vtkSlicerSliceLogic::vtkSlicerSliceLogic()
   this->SliceNode = NULL;
   this->SliceCompositeNode = NULL;
   this->ForegroundOpacity = 0.5; // Start by blending fg/bg
-  this->LabelOpacity = 0.0;  // Start with invisible label for now
+  this->LabelOpacity = 1.0;
   this->Blend = vtkImageBlend::New();
   this->SetForegroundOpacity(this->ForegroundOpacity);
   this->SetLabelOpacity(this->LabelOpacity);
@@ -150,7 +150,8 @@ void vtkSlicerSliceLogic::UpdateSliceCompositeNode()
     node = NULL;
     }
 
-  if ( this->SliceCompositeNode != NULL && node != NULL && strcmp(this->SliceCompositeNode->GetID(), node->GetID()) != 0 )
+  if ( this->SliceCompositeNode != NULL && node != NULL && 
+        strcmp(this->SliceCompositeNode->GetID(), node->GetID()) != 0 )
     {
     // local SliceCompositeNode is out of sync with the scene
     this->SetSliceCompositeNode (NULL);
@@ -256,7 +257,8 @@ void vtkSlicerSliceLogic::ProcessLogicEvents()
 
   // Update slice plane geometry
   if (this->SliceNode != NULL && this->GetSliceModelNode() != NULL 
-    && this->MRMLScene->GetNodeByID( this->SliceModelNode->GetID() ) != NULL && this->SliceModelNode->GetPolyData() != NULL )
+      && this->MRMLScene->GetNodeByID( this->SliceModelNode->GetID() ) != NULL && 
+        this->SliceModelNode->GetPolyData() != NULL )
     {
     vtkPoints *points = this->SliceModelNode->GetPolyData()->GetPoints();
     unsigned int *dims = this->SliceNode->GetDimensions();
