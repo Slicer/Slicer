@@ -1,3 +1,6 @@
+#include <string>
+#include <sstream>
+
 #include "vtkObject.h"
 #include "vtkObjectFactory.h"
 #include "vtkPolyData.h"
@@ -12,10 +15,13 @@
 #include "vtkRenderer.h"
 #include "vtkCamera.h"
 #include "vtkPolyDataMapper.h"
+#include "vtkGlyphSource2D.h"
 #include "vtkRenderWindow.h"
 
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLModelDisplayNode.h"
+#include "vtkMRMLFiducialListNode.h"
+#include "vtkMRMLFiducialListDisplayNode.h"
 #include "vtkMRMLTransformNode.h"
 #include "vtkMRMLLinearTransformNode.h"
 #include "vtkMRMLScene.h"
@@ -32,6 +38,7 @@ vtkSlicerViewerWidget::vtkSlicerViewerWidget ( )
   this->MainViewer = NULL;  
   this->RenderPending = 0;  
   this->ViewerFrame = NULL;
+  this->ProcessingMRMLEvent = 0;
 }
 
 
@@ -74,6 +81,11 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
                                                 unsigned long event, 
                                                 void *callData )
 { 
+  if (this->ProcessingMRMLEvent != 0 )
+    return;
+
+  this->ProcessingMRMLEvent = event;
+
   if ( vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene 
     && (event == vtkMRMLScene::NodeAddedEvent || event == vtkMRMLScene::NodeRemovedEvent ) )
     {
@@ -89,6 +101,7 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
     {
       this->UpdateFromMRML();
     }
+  this->ProcessingMRMLEvent = 0;
 }
 
 //---------------------------------------------------------------------------
@@ -144,11 +157,20 @@ void vtkSlicerViewerWidget::CreateWidget ( )
 //---------------------------------------------------------------------------
 void vtkSlicerViewerWidget::UpdateFromMRML()
 {
+  this->RemoveModelProps ( );
+  this->RemoveFiducialProps ( );
+
+  this->UpdateFiducialsFromMRML();
+  this->UpdateModelsFromMRML();
+
+  this->RequestRender ( );
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewerWidget::UpdateModelsFromMRML()
+{
   vtkMRMLScene *scene = this->GetMRMLScene();
   vtkMRMLNode *node = NULL;
-  
-
-  this->RemoveProps ( );
   
   scene->InitTraversal();
   while (node=scene->GetNextNodeByClass("vtkMRMLModelNode"))
@@ -187,8 +209,61 @@ void vtkSlicerViewerWidget::UpdateFromMRML()
 
     } // end while
 
-    this->RequestRender ( );
+}
 
+//---------------------------------------------------------------------------
+void vtkSlicerViewerWidget::UpdateFiducialsFromMRML()
+{
+  vtkMRMLScene *scene = this->GetMRMLScene();
+  vtkMRMLNode *node = NULL;
+
+  scene->InitTraversal();
+  while (node=scene->GetNextNodeByClass("vtkMRMLFiducialListNode"))
+    {
+    vtkMRMLFiducialListNode *flist = vtkMRMLFiducialListNode::SafeDownCast(node);
+    if (flist->HasObserver ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand ) == 0)
+      {
+      flist->AddObserver ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+      }
+    for (int f=0; f<flist->GetNumberOfFiducials(); f++)
+      {
+      vtkMRMLFiducial *fnode = flist->GetNthFiducial(f);
+      std::string aid = this->GetFiducialActorID(flist->GetID(), f);
+
+      vtkGlyphSource2D *glyph = vtkGlyphSource2D::New();
+      glyph->SetGlyphTypeToDiamond();
+      float *xyz = fnode->GetXYZ();
+      glyph->SetCenter(xyz[0], xyz[1], xyz[2]);
+
+      vtkPolyDataMapper *mapper = vtkPolyDataMapper::New ();
+      mapper->SetInput ( glyph->GetOutput() );
+
+      // observe fiducial node data
+      if (fnode->HasObserver(vtkCommand::ModifiedEvent, this->MRMLCallbackCommand ) == 0) 
+        {
+        fnode->AddObserver ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+        }
+
+      // observe display node  
+      if (fnode->HasObserver ( vtkMRMLFiducialListNode::DisplayModifiedEvent, this->MRMLCallbackCommand ) == 0)
+        {
+        fnode->AddObserver ( vtkMRMLFiducialListNode::DisplayModifiedEvent, this->MRMLCallbackCommand );
+        }
+      if (fnode->HasObserver ( vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand ) == 0)
+        {
+        fnode->AddObserver ( vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand );
+        }
+      vtkActor *actor = vtkActor::New ( );
+      actor->SetMapper ( mapper );
+      this->MainViewer->AddViewProp ( actor );
+
+      this->DisplayedFiducials[aid.c_str()] = actor;
+      
+      glyph->Delete();
+      actor->Delete();
+      mapper->Delete();
+    } // and for
+  } // end while
 }
 
 
@@ -213,7 +288,7 @@ void vtkSlicerViewerWidget::Render()
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerViewerWidget::RemoveProps()
+void vtkSlicerViewerWidget::RemoveModelProps()
 {
   std::map<const char *, vtkActor *>::iterator iter;
   std::vector<const char *> removedIDs;
@@ -234,7 +309,29 @@ void vtkSlicerViewerWidget::RemoveProps()
 }
 
 //---------------------------------------------------------------------------
+void vtkSlicerViewerWidget::RemoveFiducialProps()
+{
+  std::map<const char *, vtkActor *>::iterator iter;
+  for(iter=this->DisplayedFiducials.begin(); iter != this->DisplayedFiducials.end(); iter++) 
+    {
+    this->MainViewer->RemoveViewProp(iter->second);
+    }
+  this->DisplayedFiducials.clear();
+}
+
+//---------------------------------------------------------------------------
 void vtkSlicerViewerWidget::RemoveMRMLObservers()
+{
+  this->RemoveModelObservers();
+  this->RemoveFiducialObservers();  
+  
+  this->RemoveMRMLObserver(this->MRMLScene, vtkMRMLScene::NodeAddedEvent);
+  this->RemoveMRMLObserver(this->MRMLScene, vtkMRMLScene::NodeRemovedEvent);
+
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewerWidget::RemoveModelObservers()
 {
   std::map<const char *, vtkActor *>::iterator iter;
   for(iter=this->DisplayedModels.begin(); iter != this->DisplayedModels.end(); iter++) 
@@ -247,10 +344,32 @@ void vtkSlicerViewerWidget::RemoveMRMLObservers()
       model->RemoveObservers ( vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand );
       }
     }
-  this->RemoveMRMLObserver(this->MRMLScene, vtkMRMLScene::NodeAddedEvent);
-  this->RemoveMRMLObserver(this->MRMLScene, vtkMRMLScene::NodeRemovedEvent);
+}
 
-  
+//---------------------------------------------------------------------------
+void vtkSlicerViewerWidget::RemoveFiducialObservers()
+{
+
+  std::map<const char *, vtkActor *>::iterator iter;
+  for(iter=this->DisplayedFiducials.begin(); iter != this->DisplayedFiducials.end(); iter++) 
+    {
+    const char *aid = iter->first;
+    int index;
+    std::string nid = this->GetFiducialNodeID(aid, index);
+    vtkMRMLFiducialListNode *flist = vtkMRMLFiducialListNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(nid.c_str()));
+    flist->RemoveObservers ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+    if (flist)
+      {
+      vtkMRMLFiducial *fnode = flist->GetNthFiducial(index);
+
+      if (fnode != NULL)
+        {
+        fnode->RemoveObservers ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+        fnode->RemoveObservers ( vtkMRMLFiducialListNode::DisplayModifiedEvent, this->MRMLCallbackCommand );
+        fnode->RemoveObservers ( vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand );
+        }
+      }
+  }  
 }
 
 //---------------------------------------------------------------------------
@@ -295,6 +414,33 @@ void vtkSlicerViewerWidget::SetModelDisplayProperty(vtkMRMLModelNode *model,  vt
 }
 
 //---------------------------------------------------------------------------
+void vtkSlicerViewerWidget::SetFiducialDisplayProperty(vtkMRMLFiducialListNode *model,  vtkActor *actor)
+{
+  vtkMRMLTransformNode* tnode = model->GetParentTransformNode();
+  if (tnode != NULL && tnode->IsLinear())
+    {
+    vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
+    vtkMatrix4x4* transformToWorld = vtkMatrix4x4::New();
+    transformToWorld->Identity();
+    lnode->GetMatrixTransformToWorld(transformToWorld);
+    actor->SetUserMatrix(transformToWorld);
+    transformToWorld->Delete();
+    }
+  vtkMRMLFiducialListDisplayNode* dnode = model->GetDisplayNode();
+  if (dnode != NULL)
+    {
+    actor->SetVisibility(dnode->GetVisibility());
+    actor->GetProperty()->SetColor(dnode->GetColor());
+    actor->GetProperty()->SetOpacity(dnode->GetOpacity());
+    actor->GetProperty()->SetAmbient(dnode->GetAmbient());
+    actor->GetProperty()->SetDiffuse(dnode->GetDiffuse());
+    actor->GetProperty()->SetSpecular(dnode->GetSpecular());
+    actor->GetProperty()->SetSpecularPower(dnode->GetPower());
+    actor->SetTexture(NULL);
+    }
+}
+
+//---------------------------------------------------------------------------
   // Description:
   // return the current actor corresponding to a give MRML ID
 vtkActor *
@@ -311,6 +457,55 @@ vtkSlicerViewerWidget::GetActorByID (const char *id)
   for(iter=this->DisplayedModels.begin(); iter != this->DisplayedModels.end(); iter++) 
     {
     if ( iter->first && !strcmp( iter->first, id ) )
+      {
+      return (iter->second);
+      }
+    }
+  return (NULL);
+}
+
+//---------------------------------------------------------------------------
+std::string
+vtkSlicerViewerWidget::GetFiducialActorID (const char *id, int index)
+{
+  std::stringstream ss;
+  ss << id << " " << index;
+  std::string sid;
+  ss >> sid;
+  return sid;
+}
+
+//---------------------------------------------------------------------------
+std::string
+vtkSlicerViewerWidget::GetFiducialNodeID (const char *actorid, int &index)
+{
+  std::stringstream ss;
+  std::string sid;
+  ss << actorid;
+  ss >> sid;
+  ss >> index;
+  return sid;
+}
+
+//---------------------------------------------------------------------------
+  // Description:
+  // return the current actor corresponding to a give MRML ID
+vtkActor *
+vtkSlicerViewerWidget::GetFiducialActorByID (const char *id, int index)
+{
+  if ( !id )
+    {
+    return (NULL);
+    }
+  
+  std::string sid = this->GetFiducialActorID(id, index);
+
+  std::map<const char *, vtkActor *>::iterator iter;
+  // search for matching string (can't use find, since it would look for 
+  // matching pointer not matching content)
+  for(iter=this->DisplayedFiducials.begin(); iter != this->DisplayedFiducials.end(); iter++) 
+    {
+    if ( iter->first && !strcmp( iter->first, sid.c_str() ) )
       {
       return (iter->second);
       }

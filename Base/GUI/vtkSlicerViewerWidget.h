@@ -31,6 +31,8 @@
 
 class vtkMRMLModelNode;
 class vtkMRMLModelDisplayNode;
+class vtkMRMLFiducialListNode;
+class vtkMRMLFiducialListDisplayNode;
 class vtkPolyData;
 class vtkActor;
 
@@ -63,9 +65,13 @@ public:
   vtkGetObjectMacro (ViewerFrame, vtkKWFrame );
 
   // Description:
-  // return the current actor corresponding to a give MRML ID
+  // return the current model actor corresponding to a give MRML ID
   vtkActor *GetActorByID (const char *id);
   
+  // Description:
+  // return the current actor corresponding to a give MRML ID and fiducial index
+  vtkActor *GetFiducialActorByID(const char *id, int index);
+
   // Description: 
   // Post a request for a render -- won't be done until the system is
   // idle, and then only once....
@@ -103,13 +109,27 @@ protected:
   vtkKWFrame *ViewerFrame;
   int RenderPending;
 
-  void RemoveProps();
+  void RemoveModelProps();
+  void RemoveFiducialProps();
+
+  void RemoveModelObservers();
+  void RemoveFiducialObservers();
+
+  void UpdateFiducialsFromMRML();
+  void UpdateModelsFromMRML();
 
   void SetModelDisplayProperty(vtkMRMLModelNode *model,  vtkActor *actor);
+  void SetFiducialDisplayProperty(vtkMRMLFiducialListNode *model,  vtkActor *actor);
 
   //BTX
   std::map<const char *, vtkActor *> DisplayedModels;
+  std::map<const char *, vtkActor *> DisplayedFiducials;
+  std::string GetFiducialActorID (const char *id, int index);
+  std::string GetFiducialNodeID (const char *actorid, int &index);
+
   //ETX
+
+  int ProcessingMRMLEvent;
 
 private:
   
