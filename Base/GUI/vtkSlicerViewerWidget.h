@@ -33,8 +33,10 @@ class vtkMRMLModelNode;
 class vtkMRMLModelDisplayNode;
 class vtkMRMLFiducialListNode;
 class vtkMRMLFiducialListDisplayNode;
+class vtkMRMLFiducial;
 class vtkPolyData;
 class vtkActor;
+class vtkTextActor3D;
 
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewerWidget : public vtkSlicerWidget
 {
@@ -119,11 +121,14 @@ protected:
   void UpdateModelsFromMRML();
 
   void SetModelDisplayProperty(vtkMRMLModelNode *model,  vtkActor *actor);
-  void SetFiducialDisplayProperty(vtkMRMLFiducialListNode *model,  vtkActor *actor);
+  void SetFiducialDisplayProperty(vtkMRMLFiducialListNode *flist, vtkMRMLFiducial *fnode,
+                                  vtkActor *actor, vtkTextActor3D *textActor);
 
   //BTX
   std::map<const char *, vtkActor *> DisplayedModels;
   std::map<const char *, vtkActor *> DisplayedFiducials;
+  std::map<const char *, vtkTextActor3D *> DisplayedTextFiducials;
+
   std::string GetFiducialActorID (const char *id, int index);
   std::string GetFiducialNodeID (const char *actorid, int &index);
 

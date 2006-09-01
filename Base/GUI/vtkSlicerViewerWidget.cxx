@@ -10,6 +10,7 @@
 #include "vtkSlicerColor.h"
 
 #include "vtkActor.h"
+#include "vtkTextActor3D.h"
 #include "vtkProperty.h"
 #include "vtkTexture.h"
 #include "vtkRenderer.h"
@@ -242,9 +243,6 @@ void vtkSlicerViewerWidget::UpdateFiducialsFromMRML()
 
       vtkGlyphSource2D *glyph = vtkGlyphSource2D::New();
       glyph->SetGlyphTypeToDiamond();
-      float *xyz = fnode->GetXYZ();
-      glyph->SetCenter(xyz[0], xyz[1], xyz[2]);
-      glyph->SetScale(flist->GetSymbolScale());
 
       vtkPolyDataMapper *mapper = vtkPolyDataMapper::New ();
       mapper->SetInput ( glyph->GetOutput() );
@@ -258,12 +256,20 @@ void vtkSlicerViewerWidget::UpdateFiducialsFromMRML()
       actor->SetMapper ( mapper );
       this->MainViewer->AddViewProp ( actor );
 
-      this->SetFiducialDisplayProperty(flist, actor);
+      // handle text
+      vtkTextActor3D *textActor = vtkTextActor3D::New();
+      textActor->SetInput(fnode->GetLabelText());
+      this->MainViewer->AddViewProp ( textActor );
+
+      this->SetFiducialDisplayProperty(flist, fnode, actor, textActor);
+
       this->DisplayedFiducials[aid.c_str()] = actor;
+      this->DisplayedTextFiducials[aid.c_str()] = textActor;
       
       glyph->Delete();
       actor->Delete();
       mapper->Delete();
+      textActor->Delete();
     } // and for
   } // end while
 }
@@ -313,12 +319,22 @@ void vtkSlicerViewerWidget::RemoveModelProps()
 //---------------------------------------------------------------------------
 void vtkSlicerViewerWidget::RemoveFiducialProps()
 {
+  // glyph actors
   std::map<const char *, vtkActor *>::iterator iter;
   for(iter=this->DisplayedFiducials.begin(); iter != this->DisplayedFiducials.end(); iter++) 
     {
     this->MainViewer->RemoveViewProp(iter->second);
     }
   this->DisplayedFiducials.clear();
+
+  // text actors
+  std::map<const char *, vtkTextActor3D *>::iterator titer;
+  for(titer=this->DisplayedTextFiducials.begin(); titer != this->DisplayedTextFiducials.end(); titer++) 
+    {
+    this->MainViewer->RemoveViewProp(titer->second);
+    }
+  this->DisplayedTextFiducials.clear();
+
 }
 
 //---------------------------------------------------------------------------
@@ -416,9 +432,18 @@ void vtkSlicerViewerWidget::SetModelDisplayProperty(vtkMRMLModelNode *model,  vt
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerViewerWidget::SetFiducialDisplayProperty(vtkMRMLFiducialListNode *model,  vtkActor *actor)
+void vtkSlicerViewerWidget::SetFiducialDisplayProperty(vtkMRMLFiducialListNode *flist, 
+                                                       vtkMRMLFiducial *fnode,
+                                                       vtkActor *actor, vtkTextActor3D *textActor)
 {
-  vtkMRMLTransformNode* tnode = model->GetParentTransformNode();
+  float *xyz = fnode->GetXYZ();
+  actor->SetPosition(xyz[0], xyz[1], xyz[2]);
+  actor->SetScale(flist->GetSymbolScale());
+
+  textActor->SetPosition(xyz[0], xyz[1], xyz[2]);
+  textActor->SetScale(flist->GetTextScale());
+
+  vtkMRMLTransformNode* tnode = flist->GetParentTransformNode();
   if (tnode != NULL && tnode->IsLinear())
     {
     vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
@@ -426,9 +451,10 @@ void vtkSlicerViewerWidget::SetFiducialDisplayProperty(vtkMRMLFiducialListNode *
     transformToWorld->Identity();
     lnode->GetMatrixTransformToWorld(transformToWorld);
     actor->SetUserMatrix(transformToWorld);
+    textActor->SetUserMatrix(transformToWorld);
     transformToWorld->Delete();
     }
-  vtkMRMLFiducialListDisplayNode* dnode = model->GetDisplayNode();
+  vtkMRMLFiducialListDisplayNode* dnode = flist->GetDisplayNode();
   if (dnode != NULL)
     {
     actor->SetVisibility(dnode->GetVisibility());
