@@ -10,13 +10,14 @@
 #include "vtkSlicerColor.h"
 
 #include "vtkActor.h"
-#include "vtkTextActor3D.h"
+#include "vtkFollower.h"
 #include "vtkProperty.h"
 #include "vtkTexture.h"
 #include "vtkRenderer.h"
 #include "vtkCamera.h"
 #include "vtkPolyDataMapper.h"
 #include "vtkGlyphSource2D.h"
+#include "vtkVectorText.h"
 #include "vtkRenderWindow.h"
 
 #include "vtkMRMLModelNode.h"
@@ -257,8 +258,16 @@ void vtkSlicerViewerWidget::UpdateFiducialsFromMRML()
       this->MainViewer->AddViewProp ( actor );
 
       // handle text
-      vtkTextActor3D *textActor = vtkTextActor3D::New();
-      textActor->SetInput(fnode->GetLabelText());
+      vtkVectorText *vtext = vtkVectorText::New();
+      vtext->SetText(fnode->GetLabelText());
+
+      vtkPolyDataMapper *textMapper = vtkPolyDataMapper::New ();
+      textMapper->SetInput ( vtext->GetOutput() );
+
+      vtkFollower *textActor = vtkFollower::New();
+      textActor->SetCamera(this->MainViewer->GetRenderer()->GetActiveCamera());
+      textActor->SetMapper(textMapper);
+
       this->MainViewer->AddViewProp ( textActor );
 
       this->SetFiducialDisplayProperty(flist, fnode, actor, textActor);
@@ -269,6 +278,9 @@ void vtkSlicerViewerWidget::UpdateFiducialsFromMRML()
       glyph->Delete();
       actor->Delete();
       mapper->Delete();
+
+      vtext->Delete();
+      textMapper->Delete();
       textActor->Delete();
     } // and for
   } // end while
@@ -328,7 +340,7 @@ void vtkSlicerViewerWidget::RemoveFiducialProps()
   this->DisplayedFiducials.clear();
 
   // text actors
-  std::map<const char *, vtkTextActor3D *>::iterator titer;
+  std::map<const char *, vtkFollower *>::iterator titer;
   for(titer=this->DisplayedTextFiducials.begin(); titer != this->DisplayedTextFiducials.end(); titer++) 
     {
     this->MainViewer->RemoveViewProp(titer->second);
@@ -434,7 +446,7 @@ void vtkSlicerViewerWidget::SetModelDisplayProperty(vtkMRMLModelNode *model,  vt
 //---------------------------------------------------------------------------
 void vtkSlicerViewerWidget::SetFiducialDisplayProperty(vtkMRMLFiducialListNode *flist, 
                                                        vtkMRMLFiducial *fnode,
-                                                       vtkActor *actor, vtkTextActor3D *textActor)
+                                                       vtkActor *actor, vtkFollower *textActor)
 {
   float *xyz = fnode->GetXYZ();
   actor->SetPosition(xyz[0], xyz[1], xyz[2]);
