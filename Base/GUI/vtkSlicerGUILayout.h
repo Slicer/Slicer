@@ -76,8 +76,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGUILayout : public vtkKWObject
     vtkSetMacro ( DefaultModuleChooseFrameHeight, int );
     vtkGetMacro ( DefaultModuleControlPanelHeight, int );
     vtkSetMacro ( DefaultModuleControlPanelHeight, int );
-    vtkGetMacro ( DefaultSliceControlFrameHeight, int );
-    vtkSetMacro ( DefaultSliceControlFrameHeight, int );
+    vtkGetMacro ( DefaultSlicesControlFrameHeight, int );
+    vtkSetMacro ( DefaultSlicesControlFrameHeight, int );
     vtkGetMacro ( DefaultViewControlFrameHeight, int );
     vtkSetMacro ( DefaultViewControlFrameHeight, int );
     vtkGetMacro ( SliceViewerMinDim, int );
@@ -115,7 +115,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGUILayout : public vtkKWObject
     int DefaultLogoFrameHeight;
     int DefaultModuleChooseFrameHeight;
     int DefaultModuleControlPanelHeight;
-    int DefaultSliceControlFrameHeight;    
+    int DefaultSlicesControlFrameHeight;    
     int DefaultViewControlFrameHeight;
 
     // Description:

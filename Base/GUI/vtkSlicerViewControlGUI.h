@@ -22,7 +22,7 @@ class vtkKWEntryWithLabel;
 class vtkSlicerViewControlIcons;
 
 // Description:
-// This class implements Slicer's Application Toolbar 
+// This class implements Slicer's 3DView Control Panel on Slicer's main GUI Panel.
 //
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerComponentGUI
 {

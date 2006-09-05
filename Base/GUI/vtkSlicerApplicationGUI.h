@@ -22,6 +22,7 @@
 #include "vtkSlicerComponentGUI.h"
 #include "vtkSlicerToolbarGUI.h"
 #include "vtkSlicerViewControlGUI.h"
+#include "vtkSlicerSlicesControlGUI.h"
 #include "vtkSlicerLogoIcons.h"
 #include "vtkSlicerModuleNavigationIcons.h"
 #include "vtkSlicerViewControlIcons.h"
@@ -100,20 +101,19 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // Get the frames that populate the Slicer GUI
     vtkGetObjectMacro ( LogoFrame, vtkKWFrame);
     vtkGetObjectMacro ( ModuleChooseFrame, vtkKWFrame );
-    vtkGetObjectMacro ( SliceControlFrame, vtkKWFrame );
+    vtkGetObjectMacro ( SlicesControlFrame, vtkKWFrame );
     vtkGetObjectMacro ( ViewControlFrame, vtkKWFrame );
-    //    vtkGetObjectMacro ( DefaultSlice0Frame, vtkKWFrame );
-    //    vtkGetObjectMacro ( DefaultSlice1Frame, vtkKWFrame );
-    //    vtkGetObjectMacro ( DefaultSlice2Frame, vtkKWFrame );
 
     // Description:
     // Get the application Toolbar.
     vtkGetObjectMacro ( ApplicationToolbar, vtkSlicerToolbarGUI );
-
     // Description:
     // Get the GUI containing widgets for controlling the 3D View
     vtkGetObjectMacro ( ViewControlGUI, vtkSlicerViewControlGUI );
-
+    // Description:
+    // Get the GUI containing widgets for controlling the Slice Views
+    vtkGetObjectMacro ( SlicesControlGUI, vtkSlicerSlicesControlGUI );
+    
     // Description:
     // Get the widgets in the LogoFrame
     vtkGetObjectMacro (SlicerLogoLabel, vtkKWLabel);
@@ -127,12 +127,14 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkGetObjectMacro (ModulesHistory, vtkKWPushButton );
     vtkGetObjectMacro (ModulesRefresh, vtkKWPushButton );
 
+    /*
     // Description:
-    // Get the widgets in the SliceControlFrame
+    // Get the widgets in the SlicesControlFrame
     vtkGetObjectMacro (ToggleAnnotationButton, vtkKWPushButton );
     vtkGetObjectMacro (ToggleFgBgButton, vtkKWPushButton );
     vtkGetObjectMacro (SliceFadeScale, vtkKWScale );
     vtkGetObjectMacro (SliceOpacityScale, vtkKWScale );
+    */
 
     // Description:
     // Get the class containing all slicer GUI images for logos/icons
@@ -181,6 +183,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // These methods configure and pack the Slicer Window
     virtual void PackFirstSliceViewerFrame ( );
 
+    // Description:
+    // These methods configure the Main Viewer's layout
     virtual void DisplayConventionalView ( );
     virtual void DisplayOneUp3DView ( );
     virtual void DisplayOneUpSliceView ( );
@@ -189,6 +193,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     virtual void DisplayTabbedSliceView ( );
     virtual void DisplayLightboxView ( );
 
+    // Description:
+    // Methods to manage Slice viewers
     virtual void AddSliceGUIToCollection ( vtkSlicerSliceGUI *s );
     virtual void RemoveSliceGUIFromCollection ( vtkSlicerSliceGUI *s);
     virtual void ConfigureMainSliceViewers ( );
@@ -211,8 +217,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     virtual void BuildLogoGUIPanel ( );
     virtual void BuildModuleChooseGUIPanel ( );
     virtual void PopulateModuleChooseList ( );
+    /*
     virtual void BuildSliceControlGUIPanel ( );
-
+    */
+    
     virtual void Save3DViewConfig ( );
     virtual void Restore3DViewConfig ( );
 
@@ -241,7 +249,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // Widgets for the main Slicer UI panel    
     vtkKWFrame *LogoFrame;
     vtkKWFrame *ModuleChooseFrame;
-    vtkKWFrame *SliceControlFrame;
+    vtkKWFrame *SlicesControlFrame;
     vtkKWFrame *ViewControlFrame;
     vtkImplicitPlaneWidget *PlaneWidget;
     vtkLogoWidget *LogoWidget;
@@ -259,20 +267,23 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkKWPushButton *ModulesHistory;
     vtkKWPushButton *ModulesRefresh;
     
+    /*
     //Description:
-    // Widgets for the SliceControlFrame in the GUI
+    // Widgets for the SlicesControlFrame in the GUI
     vtkKWPushButton *ToggleAnnotationButton;
     vtkKWPushButton *ToggleFgBgButton;
     vtkKWScale *SliceFadeScale;
     vtkKWScale *SliceOpacityScale;
+    */
 
     vtkKWLoadSaveDialog *LoadSceneDialog;
     vtkKWLoadSaveDialog *SaveSceneDialog;
 
     // Description:
-    // Main Slicer toolbar
+    // Main Slicer toolbar and components
     vtkSlicerToolbarGUI *ApplicationToolbar;
     vtkSlicerViewControlGUI *ViewControlGUI;
+    vtkSlicerSlicesControlGUI *SlicesControlGUI;
     
     vtkSlicerViewerWidget *ViewerWidget;
     vtkSlicerSliceGUI *MainSliceGUI0;

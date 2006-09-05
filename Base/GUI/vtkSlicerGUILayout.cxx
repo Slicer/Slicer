@@ -41,7 +41,7 @@ void vtkSlicerGUILayout::InitializeLayoutDimensions ( )
   this->SetDefaultLogoFrameHeight ( 40 );
   this->SetDefaultModuleChooseFrameHeight ( 60 );
   this->SetDefaultModuleControlPanelHeight ( 450 );
-  this->SetDefaultSliceControlFrameHeight ( 60 );
+  this->SetDefaultSlicesControlFrameHeight ( 60 );
   this->SetDefaultViewControlFrameHeight ( 240 );
   //
   // entire GUI panel height and width
@@ -49,7 +49,7 @@ void vtkSlicerGUILayout::InitializeLayoutDimensions ( )
   h = this->GetDefaultLogoFrameHeight ( ) +
     this->GetDefaultModuleChooseFrameHeight ( ) +
     this->GetDefaultModuleControlPanelHeight ( ) +
-    this->GetDefaultSliceControlFrameHeight ( ) +
+    this->GetDefaultSlicesControlFrameHeight ( ) +
     this->GetDefaultViewControlFrameHeight ( );
   this->SetDefaultGUIPanelHeight ( h );
   // this is a good value which accommodates the

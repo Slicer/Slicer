@@ -51,7 +51,6 @@
 #include "vtkSlicerWindow.h"
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerApplicationGUI.h"
-#include "vtkSlicerApplicationGUI.h"
 #include "vtkSlicerApplicationLogic.h"
 #include "vtkSlicerModuleGUI.h"
 #include "vtkSlicerGUILayout.h"
@@ -78,6 +77,7 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
 
     this->ApplicationToolbar = vtkSlicerToolbarGUI::New ( );
     this->ViewControlGUI = vtkSlicerViewControlGUI::New ( );
+    this->SlicesControlGUI = vtkSlicerSlicesControlGUI::New ( );
     
     //--- slicer icons
     this->SlicerLogoIcons = vtkSlicerLogoIcons::New ();
@@ -89,7 +89,7 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
     // Control frames that comprise the Main Slicer GUI
     this->LogoFrame = vtkKWFrame::New();
     this->ModuleChooseFrame = vtkKWFrame::New();
-    this->SliceControlFrame = vtkKWFrame::New();    
+    this->SlicesControlFrame = vtkKWFrame::New();    
     this->ViewControlFrame = vtkKWFrame::New();    
 
     //--- ui for the ModuleChooseFrame,
@@ -100,11 +100,13 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
     this->ModulesHistory = vtkKWPushButton::New ( );
     this->ModulesRefresh = vtkKWPushButton::New ( );
     
+    /*
     //--- ui for the SliceControlframe.
     this->ToggleAnnotationButton = vtkKWPushButton::New ( );
     this->ToggleFgBgButton = vtkKWPushButton::New ( );
     this->SliceFadeScale = vtkKWScale::New ( );
     this->SliceOpacityScale = vtkKWScale::New ( );
+    */
     
     //--- main viewer and 3 main slice views
     this->ViewerWidget = NULL;
@@ -145,7 +147,10 @@ vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
         this->SlicerLogoIcons = NULL;
     }
 
-    this->ViewControlGUI->Delete ( );
+    if ( this->ViewControlGUI ) {
+      this->ViewControlGUI->Delete ( );
+      this->ViewControlGUI = NULL;
+    }
     
     if ( this->SlicerModuleNavigationIcons ) {
         this->SlicerModuleNavigationIcons->Delete ( );
@@ -154,7 +159,14 @@ vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
 
     this->DeleteGUIPanelWidgets ( );
 
-    this->ApplicationToolbar->Delete ( );
+    if ( this->SlicesControlGUI ) {
+      this->SlicesControlGUI->Delete ( );
+      this->SlicesControlGUI = NULL;
+    }
+    if ( this->ApplicationToolbar ) {
+      this->ApplicationToolbar->Delete ( );
+      this->ApplicationToolbar = NULL;
+    }
 
     if ( this->SliceGUICollection )
       {
@@ -346,6 +358,10 @@ void vtkSlicerApplicationGUI::AddGUIObservers ( )
     this->LoadSceneDialog->AddObserver ( vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->SaveSceneDialog->AddObserver ( vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
 
+    this->GetViewControlGUI()->AddGUIObservers ( );
+    this->GetSlicesControlGUI ( )->AddGUIObservers ( );
+    
+    /*
     this->SliceFadeScale->AddObserver ( vtkKWScale::ScaleValueStartChangingEvent, (vtkCommand *)this->GUICallbackCommand );
     this->SliceFadeScale->AddObserver ( vtkKWScale::ScaleValueChangingEvent, (vtkCommand *)this->GUICallbackCommand );
 
@@ -353,6 +369,7 @@ void vtkSlicerApplicationGUI::AddGUIObservers ( )
 
     this->SliceOpacityScale->AddObserver ( vtkKWScale::ScaleValueStartChangingEvent, (vtkCommand *)this->GUICallbackCommand );
     this->SliceOpacityScale->AddObserver ( vtkKWScale::ScaleValueChangingEvent, (vtkCommand *)this->GUICallbackCommand );
+    */
 }
 
 
@@ -365,12 +382,18 @@ void vtkSlicerApplicationGUI::RemoveGUIObservers ( )
     this->LoadSceneDialog->RemoveObservers ( vtkCommand::ModifiedEvent, (vtkCommand *) this->GUICallbackCommand );
     this->SaveSceneDialog->RemoveObservers ( vtkCommand::ModifiedEvent, (vtkCommand *) this->GUICallbackCommand );
     this->GetMainSlicerWin()->GetFileMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+
+    this->GetViewControlGUI ( )->RemoveGUIObservers ( );
+    this->GetSlicesControlGUI ( )->RemoveGUIObservers ( );
+    
+    /*
     this->SliceFadeScale->RemoveObservers ( vtkKWScale::ScaleValueStartChangingEvent, (vtkCommand *)this->GUICallbackCommand );
     this->SliceFadeScale->RemoveObservers ( vtkKWScale::ScaleValueChangingEvent, (vtkCommand *)this->GUICallbackCommand );    
     this->SliceOpacityScale->RemoveObservers ( vtkKWScale::ScaleValueStartChangingEvent, (vtkCommand *)this->GUICallbackCommand );
     this->SliceOpacityScale->RemoveObservers ( vtkKWScale::ScaleValueChangingEvent, (vtkCommand *)this->GUICallbackCommand );    
     this->ToggleFgBgButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-
+    */
+    
     this->RemoveMainSliceViewerObservers ( );
 
 }
@@ -440,6 +463,7 @@ void vtkSlicerApplicationGUI::ProcessGUIEvents ( vtkObject *caller,
                 }
         }
 
+    /*
     // Process the Fade scale and button
     // -- set save state when manipulation starts
     // -- toggle the value if needed
@@ -495,6 +519,7 @@ void vtkSlicerApplicationGUI::ProcessGUIEvents ( vtkObject *caller,
         cnode->SetLabelOpacity( this->SliceOpacityScale->GetValue() );
         }
       }
+    */    
 
    vtkSlicerMRMLSaveDataWidget *saveDataWidget = vtkSlicerMRMLSaveDataWidget::SafeDownCast(caller);
    if (saveDataWidget == this->SaveDataWidget && event == vtkSlicerMRMLSaveDataWidget::DataSavedEvent)
@@ -577,7 +602,13 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
             this->BuildGUIPanel ( );
             this->BuildLogoGUIPanel ( );
             this->BuildModuleChooseGUIPanel ( );
-            this->BuildSliceControlGUIPanel ( );
+
+            vtkSlicerSlicesControlGUI *scGUI = this->GetSlicesControlGUI ( );
+            scGUI->SetApplicationGUI ( this );
+            scGUI->SetApplication ( app );
+            scGUI->BuildGUI ( this->SlicesControlFrame );
+
+            /*            this->BuildSliceControlGUIPanel ( );*/
 
             vtkSlicerViewControlGUI *vcGUI = this->GetViewControlGUI ( );
             vcGUI->SetApplicationGUI ( this );
@@ -842,7 +873,8 @@ void vtkSlicerApplicationGUI::DeleteGUIPanelWidgets ( )
         this->SlicerLogoLabel = NULL;
     }
 
-    //--- widgets from the SliceControlFrame
+    /*
+    //--- widgets from the SlicesControlFrame
     if ( this->ToggleAnnotationButton ) {
       this->ToggleAnnotationButton->SetParent ( NULL );
         this->ToggleAnnotationButton->Delete ( );
@@ -864,6 +896,7 @@ void vtkSlicerApplicationGUI::DeleteGUIPanelWidgets ( )
         this->SliceOpacityScale->Delete ( );
         this->SliceOpacityScale = NULL;
     }
+    */
 }
 
 //---------------------------------------------------------------------------
@@ -879,10 +912,10 @@ void vtkSlicerApplicationGUI::DeleteFrames ( )
         this->ModuleChooseFrame->Delete ();
         this->ModuleChooseFrame = NULL;
     }
-    if ( this->SliceControlFrame ) {
-      this->SliceControlFrame->SetParent ( NULL );
-        this->SliceControlFrame->Delete ( );
-        this->SliceControlFrame = NULL;
+    if ( this->SlicesControlFrame ) {
+      this->SlicesControlFrame->SetParent ( NULL );
+        this->SlicesControlFrame->Delete ( );
+        this->SlicesControlFrame = NULL;
     }
     if ( this->ViewControlFrame ) {
       this->ViewControlFrame->SetParent ( NULL );
@@ -1523,7 +1556,7 @@ void vtkSlicerApplicationGUI::BuildModuleChooseGUIPanel ( )
 }
 
 
-
+/*
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::BuildSliceControlGUIPanel ( )
 {
@@ -1532,17 +1565,17 @@ void vtkSlicerApplicationGUI::BuildSliceControlGUIPanel ( )
 
     if ( this->GetApplication( )  != NULL ) {
         vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication() );
-        this->SliceControlFrame->SetReliefToGroove();
+        this->SlicesControlFrame->SetReliefToGroove();
         
         //--- create frames
         vtkKWFrame *f1 = vtkKWFrame::New ( );
-        f1->SetParent ( this->SliceControlFrame );
+        f1->SetParent ( this->SlicesControlFrame );
         f1->Create ( );
         vtkKWFrame *f2 = vtkKWFrame::New ( );
-        f2->SetParent ( this->SliceControlFrame );
+        f2->SetParent ( this->SlicesControlFrame );
         f2->Create ( );
         vtkKWFrame *f3 = vtkKWFrame::New ( );
-        f3->SetParent ( this->SliceControlFrame );
+        f3->SetParent ( this->SlicesControlFrame );
         f3->Create ( );
         
         //--- pack everything up: buttons, labels, scales
@@ -1612,7 +1645,7 @@ void vtkSlicerApplicationGUI::BuildSliceControlGUIPanel ( )
         f3->Delete ( );
     }
 }
-
+*/
 
 
 
@@ -1652,9 +1685,9 @@ void vtkSlicerApplicationGUI::BuildGUIPanel ( )
             this->ModuleChooseFrame->Create( );
             this->ModuleChooseFrame->SetHeight ( layout->GetDefaultModuleChooseFrameHeight ( ) );
 
-            this->SliceControlFrame->SetParent ( this->MainSlicerWin->GetMainPanelFrame ( ) );
-            this->SliceControlFrame->Create( );
-            this->SliceControlFrame->SetHeight ( layout->GetDefaultSliceControlFrameHeight ( ) );
+            this->SlicesControlFrame->SetParent ( this->MainSlicerWin->GetMainPanelFrame ( ) );
+            this->SlicesControlFrame->Create( );
+            this->SlicesControlFrame->SetHeight ( layout->GetDefaultSlicesControlFrameHeight ( ) );
             
             this->ViewControlFrame->SetParent ( this->MainSlicerWin->GetMainPanelFrame ( ) );
             this->ViewControlFrame->Create( );
@@ -1666,7 +1699,7 @@ void vtkSlicerApplicationGUI::BuildGUIPanel ( )
 
             // pack slice and view control frames
             app->Script ( "pack %s -side bottom -expand n -fill x -padx 1 -pady 10", this->ViewControlFrame->GetWidgetName() );
-            app->Script ( "pack %s -side bottom -expand n -fill x -padx 1 -pady 10", this->SliceControlFrame->GetWidgetName() );
+            app->Script ( "pack %s -side bottom -expand n -fill x -padx 1 -pady 10", this->SlicesControlFrame->GetWidgetName() );
 
         }
     }
