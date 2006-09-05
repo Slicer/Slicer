@@ -90,6 +90,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModelsGUI : public vtkSlicerModuleGUI
     
     // Widgets for the Models module
     vtkKWLoadSaveButton *LoadModelButton;
+    vtkKWLoadSaveButton *LoadModelDirectoryButton;
     vtkKWLoadSaveButton *SaveModelButton;
     vtkSlicerNodeSelectorWidget* ModelSelectorWidget;
 

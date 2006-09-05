@@ -45,9 +45,14 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerModelsLogic : public vtkSlicerLogic
   void SetActiveModelNode (vtkMRMLModelNode *ActiveModelNode);
 
   // Description:
-  // Create new mrml node and associated storage node.
-  // Read image data from a specified file
+  // Create new mrml model node and
+  // read it's polydata from a specified file
   vtkMRMLModelNode* AddModel (char* filename);
+
+  // Description:
+  // Create model nodes and
+  // read their polydata from a specified directory
+  int AddModels (const char* dirname, const char* suffix );
 
   // Description:
   // Write model's polydata  to a specified file

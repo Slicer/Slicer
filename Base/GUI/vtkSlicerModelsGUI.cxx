@@ -24,6 +24,7 @@ vtkSlicerModelsGUI::vtkSlicerModelsGUI ( )
     this->Logic = NULL;
     //this->ModelNode = NULL;
     this->LoadModelButton = NULL;
+    this->LoadModelDirectoryButton = NULL;
     this->SaveModelButton = NULL;
     this->ModelSelectorWidget = NULL;
     this->ModelDisplayWidget = NULL;
@@ -41,6 +42,11 @@ vtkSlicerModelsGUI::~vtkSlicerModelsGUI ( )
     {
     this->LoadModelButton->SetParent(NULL);
     this->LoadModelButton->Delete ( );
+    }    
+  if (this->LoadModelDirectoryButton ) 
+    {
+    this->LoadModelDirectoryButton->SetParent(NULL);
+    this->LoadModelDirectoryButton->Delete ( );
     }    
   if (this->SaveModelButton ) 
     {
@@ -81,6 +87,10 @@ void vtkSlicerModelsGUI::RemoveGUIObservers ( )
     {
     this->LoadModelButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
     }
+  if (this->LoadModelDirectoryButton)
+    {
+    this->LoadModelDirectoryButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+    }
   if (this->SaveModelButton)
     {
     this->SaveModelButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
@@ -92,6 +102,7 @@ void vtkSlicerModelsGUI::RemoveGUIObservers ( )
 void vtkSlicerModelsGUI::AddGUIObservers ( )
 {
   this->LoadModelButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+  this->LoadModelDirectoryButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
   this->SaveModelButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
 }
 
@@ -112,6 +123,26 @@ void vtkSlicerModelsGUI::ProcessGUIEvents ( vtkObject *caller,
       
       vtkMRMLModelNode *modelNode = modelLogic->AddModel( fileName );
       if ( modelNode == NULL ) 
+        {
+        // TODO: generate an error...
+        }
+      else
+        {
+        filebrowse->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
+        
+        }
+      }
+    return;
+    }
+    else if (filebrowse == this->LoadModelDirectoryButton  && event == vtkKWPushButton::InvokedEvent )
+    {
+    // If a file has been selected for loading...
+    char *fileName = filebrowse->GetFileName();
+    if ( fileName ) 
+      {
+      vtkSlicerModelsLogic* modelLogic = this->Logic;
+      
+      if (modelLogic->AddModels( fileName, ".vtk") == 0)
         {
         // TODO: generate an error...
         }
@@ -204,6 +235,8 @@ void vtkSlicerModelsGUI::BuildGUI ( )
     modLoadFrame->Create ( );
     modLoadFrame->SetLabelText ("Load");
     modLoadFrame->ExpandFrame ( );
+    app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
+                  modLoadFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Models")->GetWidgetName());
 
     // add a file browser 
     this->LoadModelButton = vtkKWLoadSaveButton::New ( );
@@ -212,10 +245,17 @@ void vtkSlicerModelsGUI::BuildGUI ( )
     this->LoadModelButton->SetText ("Load Model");
     this->LoadModelButton->GetLoadSaveDialog()->SetFileTypes(
                                                              "{ {model} {*.*} }");
-    app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                  modLoadFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Models")->GetWidgetName());
-    app->Script("pack %s -side top -anchor w -padx 2 -pady 4", 
+    app->Script("pack %s -side left -anchor w -padx 2 -pady 4", 
                 this->LoadModelButton->GetWidgetName());
+
+   // add a file browser 
+    this->LoadModelDirectoryButton = vtkKWLoadSaveButton::New ( );
+    this->LoadModelDirectoryButton->SetParent ( modLoadFrame->GetFrame() );
+    this->LoadModelDirectoryButton->Create ( );
+    this->LoadModelDirectoryButton->SetText ("Load Model Directory");
+    this->LoadModelDirectoryButton->GetLoadSaveDialog()->ChooseDirectoryOn();
+    app->Script("pack %s -side left -anchor w -padx 2 -pady 4", 
+                this->LoadModelDirectoryButton->GetWidgetName());
 
     // ---
     // DISPLAY FRAME               

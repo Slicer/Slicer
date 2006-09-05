@@ -14,7 +14,8 @@
 
 #include "vtkObjectFactory.h"
 #include "vtkCallbackCommand.h"
-#include <vtksys/SystemTools.hxx> 
+#include <itksys/SystemTools.hxx> 
+#include <itksys/Directory.hxx> 
 
 #include "vtkSlicerModelsLogic.h"
 
@@ -57,6 +58,34 @@ void vtkSlicerModelsLogic::SetActiveModelNode(vtkMRMLModelNode *activeNode)
 }
 
 //----------------------------------------------------------------------------
+int vtkSlicerModelsLogic::AddModels (const char* dirname, const char* suffix )
+{
+  std::string ssuf = suffix;
+  itksys::Directory dir;
+  dir.Load(dirname);
+ 
+  int nfiles = dir.GetNumberOfFiles();
+  int res = 1;
+  for (int i=0; i<nfiles; i++) {
+    const char* filename = dir.GetFile(i);
+    std::string sname = filename;
+    if (!itksys::SystemTools::FileIsDirectory(filename))
+      {
+      if ( sname.find(ssuf) != std::string::npos )
+        {
+        std::string fullPath = std::string(dir.GetPath())
+            + "/" + filename;
+        if (this->AddModel((char *)fullPath.c_str()) == NULL) 
+          {
+          res = 0;
+          }
+        }
+      }
+  }
+  return res;
+}
+
+//----------------------------------------------------------------------------
 vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel (char* filename)
 {
   vtkMRMLModelNode *modelNode = vtkMRMLModelNode::New();
@@ -66,8 +95,8 @@ vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel (char* filename)
   storageNode->SetFileName(filename);
   if (storageNode->ReadData(modelNode) != 0)
     {
-    const vtksys_stl::string fname(filename);
-    vtksys_stl::string name = vtksys::SystemTools::GetFilenameName(fname);
+    const itksys_stl::string fname(filename);
+    itksys_stl::string name = itksys::SystemTools::GetFilenameName(fname);
     modelNode->SetName(name.c_str());
 
     this->GetMRMLScene()->SaveStateForUndo();
