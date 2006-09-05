@@ -74,6 +74,8 @@ int Slicer3_Tcl_Eval ( Tcl_Interp *interp, const char *script )
 {
   if ( Tcl_Eval (interp, script) != TCL_OK )
     {
+    // TODO: need to figure out how to turn on the stdio channels
+    // so puts will work from scripts in windows...
     cerr << "Error: " << Tcl_GetStringResult( interp ) << "\n";
     return 1;
     }
