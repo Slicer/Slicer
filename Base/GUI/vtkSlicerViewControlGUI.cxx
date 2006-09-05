@@ -512,14 +512,15 @@ void vtkSlicerViewControlGUI::LeaveLookFromICallback ( ) {
 //---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
 {
-  //
-  //--- toolbars
-  //
-  //--- configure the window's main toolbarset.
-  vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast ( this->GetApplicationGUI ( ) );
-  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( p->GetApplication() );
 
-    if ( app  != NULL ) {
+  vtkSlicerApplicationGUI *p = this->GetApplicationGUI ( );
+  
+  // populate the application's 3DView control GUI panel
+  if ( p != NULL )
+    {
+    if ( p->GetApplication() != NULL )
+      {
+      vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( p->GetApplication() );
         vtkSlicerGUILayout *layout = app->GetMainLayout ( );
 
         vtkKWFrame *f1 = vtkKWFrame::New ( );
@@ -708,8 +709,8 @@ void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
         f1b->Delete();
         f1->Delete();
         f2->Delete();
+      }
     }
-
 }
 
 
