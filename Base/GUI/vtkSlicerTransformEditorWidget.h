@@ -60,6 +60,7 @@ public:
 
   vtkSlicerNodeSelectorWidget* TransformEditSelectorWidget;
   vtkKWMatrix4x4*              MatrixWidget;
+
 private:
 
 

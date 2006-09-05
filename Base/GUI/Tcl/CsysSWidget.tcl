@@ -28,14 +28,17 @@ if { [itcl::find class CsysSWidget] == "" } {
     constructor {args} {}
     destructor {}
 
-    variable _startPosition "0 0 0"
-    variable _currentPosition "0 0 0"
+    variable _startXYPosition "0 0"
+    variable _currentXYPosition "0 0"
+    variable _radius 15
 
     # methods
     method processEvent {} {}
+    method createGlyph { {polyData ""} } {}
     method positionActors {} {}
-    method pick {} {}
     method highlight {} {}
+    method getTransform {} {}
+    method updateTransform {} {}
   }
 }
 
@@ -46,31 +49,54 @@ itcl::body CsysSWidget::constructor {sliceGUI} {
 
   $this configure -sliceGUI $sliceGUI
   set renderWidget [[$sliceGUI GetSliceViewer] GetRenderWidget]
- 
-  set o(sphere) [vtkNew vtkSphereSource]
-  set o(mapper) [vtkNew vtkPolyDataMapper2D]
-  set o(actor) [vtkNew vtkActor2D]
-  $o(mapper) SetInput [$o(sphere) GetOutput]
-  $o(actor) SetMapper $o(mapper)
-  [$renderWidget GetRenderer] AddActor2D $o(actor)
-  lappend _actors $o(actor)
+
+  foreach a {origin cursor} {
+    set o($a,axes) [vtkNew vtkPolyData]
+    $this createGlyph $o($a,axes)
+    set o($a,mapper) [vtkNew vtkPolyDataMapper2D]
+    set o($a,actor) [vtkNew vtkActor2D]
+    $o($a,mapper) SetInput $o($a,axes)
+    $o($a,actor) SetMapper $o($a,mapper)
+    [$renderWidget GetRenderer] AddActor2D $o($a,actor)
+    lappend _actors $o($a,actor)
+    puts "o($a,actor) is $o($a,actor)"
+  }
 
   set size [[$renderWidget GetRenderWindow]  GetSize]
   foreach {w h} $size {}
   foreach d {w h} c {cx cy} { set $c [expr [set $d] / 2.0] }
 
-  set _startPosition "$cx $cy 0"
-  set _currentPosition "$cx $cy 0"
+  $o(origin,actor) SetPosition $cx $cy
 
-  $o(sphere) SetRadius 5
+  # matrix to store the transform value at the start of the interaction
+  set o(_startMatrix) [vtkNew vtkMatrix4x4]
   
   $this processEvent
-  set _guiObserverTag [$sliceGUI AddObserver AnyEvent "$this processEvent"]
+
+  lappend _guiObserverTags [$sliceGUI AddObserver DeleteEvent "itcl::delete object $this"]
+  set events {LeftButtonPressEvent LeftButtonReleaseEvent MouseMoveEvent EnterEvent LeaveEvent} 
+  foreach event $events { 
+    lappend _guiObserverTags [$sliceGUI AddObserver $event "$this processEvent"]
+  }
+
+  set node [[$sliceGUI GetLogic] GetSliceNode]
+  lappend _nodeObserverTags [$node AddObserver DeleteEvent "itcl::delete object $this"]
+  lappend _nodeObserverTags [$node AddObserver AnyEvent "$this processEvent"]
 }
 
 itcl::body CsysSWidget::destructor {} {
 
-  $sliceGUI RemoveObserver $_guiObserverTag
+  if { [info command $sliceGUI] != "" } {
+    foreach tag $_guiObserverTags {
+      $sliceGUI RemoveObserver $tag
+    }
+  }
+
+  if { [info command $_sliceNode] != "" } {
+    foreach tag $_nodeObserverTags {
+      $_sliceNode RemoveObserver $tag
+    }
+  }
 
   set renderer [[[$sliceGUI GetSliceViewer] GetRenderWidget] GetRenderer]
   foreach a $_actors {
@@ -82,41 +108,142 @@ itcl::body CsysSWidget::destructor {} {
 #                             METHODS
 # ------------------------------------------------------------------
 
-itcl::body CsysSWidget::pick {} {
-
-  set renderWidget [[$sliceGUI GetSliceViewer] GetRenderWidget]
-  set interactor [$renderWidget GetRenderWindowInteractor]
-
-  foreach {cx cy cz} $_currentPosition {}
-  foreach {ex ey} [$interactor GetEventPosition] {}
-  if { [expr abs($ex - $cx) < 15] && [expr abs($ey - $cy) < 15] } {
-    set _pickState "over"
-  } else {
-    set _pickState "outside"
+itcl::body CsysSWidget::createGlyph { {polyData ""} } {
+  # make a circle 
+  if { $polyData == "" } {
+    set polyData [vtkNew vtkPolyData]
   }
+  set points [vtkPoints New]
+  set lines [vtkCellArray New]
+  $polyData SetPoints $points
+  $polyData SetLines $lines
+  set PI 3.1415926
+  set TWOPI [expr $PI * 2]
+  set PIoverFOUR [expr $PI / 4]
+  set prevPoint ""
+  set firstPoint ""
+  for { set angle 0 } { $angle <= $TWOPI } { set angle [expr $angle + $PIoverFOUR] } {
+    set x [expr $_radius * cos($angle)]
+    set y [expr $_radius * sin($angle)]
+    set p [$points InsertNextPoint $x $y 0]
+    if { $prevPoint != "" } {
+      set idList [vtkIdList New]
+      $idList InsertNextId $prevPoint
+      $idList InsertNextId $p
+      $polyData InsertNextCell 3 $idList  ;# 3 is a VTK_LINE
+      $idList Delete
+    }
+    set prevPoint $p
+    if { $firstPoint == "" } {
+      set firstPoint $p
+    }
+  }
+  # make the last line in the circle
+  set idList [vtkIdList New]
+  $idList InsertNextId $p
+  $idList InsertNextId $firstPoint
+  $polyData InsertNextCell 3 $idList  ;# 3 is a VTK_LINE
+  $idList Delete
+
+  # make the axes
+  set r2 [expr $_radius * 2.0]
+  set p0 [$points InsertNextPoint -$r2 0 0]
+  set p1 [$points InsertNextPoint  $r2 0 0]
+  set p2 [$points InsertNextPoint  0 -$r2 0]
+  set p3 [$points InsertNextPoint  0  $r2 0]
+  set idList [vtkIdList New]
+  $idList InsertNextId $p0
+  $idList InsertNextId $p1
+  $polyData InsertNextCell 3 $idList  ;# 3 is a VTK_LINE
+  $idList Delete
+  set idList [vtkIdList New]
+  $idList InsertNextId $p2
+  $idList InsertNextId $p3
+  $polyData InsertNextCell 3 $idList  ;# 3 is a VTK_LINE
+  $idList Delete
+
+  $points Delete
+  $lines Delete
+  return $polyData
+}
+
+itcl::body CsysSWidget::getTransform {} {
+
+  eval $this queryLayers $_currentXYPosition
+
+  set node ""
+  foreach layer {foreground background} {
+    if { $_layers($layer,node) != "" } {
+      set node $_layers($layer,node) 
+      break
+    }
+  }
+  
+  if { $node == "" } { 
+    return ""
+  }
+
+  # TODO: the scene should probably be a ivar of the SWidget
+  return [$::slicer3::MRMLScene GetNodeByID [$node GetTransformNodeID]]
+}
+
+
+itcl::body CsysSWidget::updateTransform {} {
+
+  set transformNode [$this getTransform]
+
+  if { $transformNode == "" } {
+    return
+  }
+
+  set startRAS [$this xyToRAS $_startXYPosition]
+  set currentRAS [$this xyToRAS $_currentXYPosition]
+
+  foreach d {dr da ds} s $startRAS c $currentRAS {
+    set $d [expr $c - $s]
+  }
+
+  set matrix [$transformNode GetMatrixTransformToParent]
+  foreach d {dr da ds} i {0 1 2} {
+    set start [$o(_startMatrix) GetElement $i 3]
+    $matrix SetElement $i 3 [expr $start + [set $d]]
+  }
+  $transformNode Modified
 
 }
 
 itcl::body CsysSWidget::positionActors { } {
-  eval $o(sphere) SetCenter $_currentPosition
+
+  eval $o(cursor,actor) SetPosition $_currentXYPosition
 }
 
 itcl::body CsysSWidget::highlight { } {
 
-  set property [$o(actor) GetProperty]
-  $property SetColor 1 1 1
+  # for the origin
   switch $_actionState {
-    "dragging" {
-      $property SetColor 0 1 0
+    "active" - "translating" - "rotating" {
+      set property [$o(origin,actor) GetProperty]
+      $property SetColor 1 1 0
     }
     default {
-      switch $_pickState {
-        "over" {
-          $property SetColor 0 1 1
-        }
-      }
+      set property [$o(origin,actor) GetProperty]
+      $property SetColor .65 .65 0
     }
   }
+
+  # for the cursor
+  switch $_actionState {
+    "translating" - "rotating" {
+      set property [$o(cursor,actor) GetProperty]
+      $property SetColor 1 0 0
+      $property SetOpacity 0.5
+      $o(cursor,actor) VisibilityOn
+    }
+    default {
+      $o(cursor,actor) VisibilityOff
+    }
+  }
+
 }
 
 itcl::body CsysSWidget::processEvent { } {
@@ -126,43 +253,45 @@ itcl::body CsysSWidget::processEvent { } {
   if { ! ($grabID == "" || $grabID == $this) } {
     return ;# some other widget wants these events
   }
-  if { $grabID != $this } {
-    # only check pick if we haven't grabbed (avoid 'dropping' the widget
-    # when the mouse moves quickly)
-    $this pick
-  }
 
+  set renderWidget [[$sliceGUI GetSliceViewer] GetRenderWidget]
+  set interactor [$renderWidget GetRenderWindowInteractor]
+  set _currentXYPosition [$interactor GetEventPosition]
   set event [$sliceGUI GetCurrentGUIEvent] 
 
-  switch $_pickState {
-    "outside" {
+  switch $event {
+    "EnterEvent" {
+      set transformNode [$this getTransform]
+      if { $transformNode != "" } {
+        set _actionState "active"
+        set _description "Left mouse to translate, Control-left mouse to rotate"
+      }
+    }
+    "LeaveEvent" {
       set _actionState ""
       set _description ""
     }
-    "over" {
-      $sliceGUI SetGUICommandAbortFlag 1
-      switch $event {
-        "LeftButtonPressEvent" {
-          set _actionState "dragging"
-          set _description "Move mouse with left button down to drag"
-          $sliceGUI SetGrabID $this
+    "LeftButtonPressEvent" {
+      $sliceGUI SetGrabID $this
+      set transformNode [$this getTransform]
+      if { $transformNode != "" } {
+        $o(_startMatrix) DeepCopy [$transformNode GetMatrixTransformToParent]
+        set _startXYPosition $_currentXYPosition
+        if { [$_interactor GetControlKey] } {
+          set _actionState "rotating"
+        } else {
+          set _actionState "translating"
         }
-        "MouseMoveEvent" {
-          switch $_actionState {
-            "dragging" {
-              set renderWidget [[$sliceGUI GetSliceViewer] GetRenderWidget]
-              set interactor [$renderWidget GetRenderWindowInteractor]
-              set _currentPosition "[$interactor GetEventPosition] 0"
-            }
-            default {
-              set _description "Press left mouse button to begin dragging"
-            }
-          }
-        }
-        "LeftButtonReleaseEvent" {
-          set _actionState ""
-          $sliceGUI SetGrabID ""
-          set _description ""
+      }
+    }
+    "LeftButtonReleaseEvent" {
+      set _actionState "active"
+      $sliceGUI SetGrabID ""
+    }
+    "MouseMoveEvent" {
+      switch $_actionState {
+        "translating" - "rotating" {
+          $this updateTransform
         }
       }
     }
@@ -181,7 +310,7 @@ itcl::body CsysSWidget::processEvent { } {
 #    slicer interface -- create and remove the widgets
 # ------------------------------------------------------------------
 
-proc CsysWidgetRemove {} {
+proc CsysSWidgetRemove {} {
 
   foreach csys [itcl::find objects -class CsysSWidget] {
     set sliceGUI [$csys cget -sliceGUI]
@@ -190,9 +319,9 @@ proc CsysWidgetRemove {} {
   }
 }
 
-proc CsysWidgetAdd {} {
+proc CsysSWidgetAdd {} {
 
-  CsysWidgetRemove
+  CsysSWidgetRemove
 
   set n [[$::slicer3::SlicesGUI GetSliceGUICollection] GetNumberOfItems]
   for {set i 0} {$i < $n} {incr i} {
