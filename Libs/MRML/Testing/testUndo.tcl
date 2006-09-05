@@ -38,6 +38,8 @@ puts Undo
 sc Undo
 puts "GetFileName = [$n GetFileName]"
 
+vs Delete
+sc Delete
 
 # if we got to here, the test passed
 
