@@ -5,38 +5,29 @@ vtkMRMLScene sc
 catch "vs Delete"
 vtkMRMLVolumeArchetypeStorageNode vs
 
+tk_messageBox -message "$::SLICER_BUILD/../Slicer3/Libs/MRML/Testing/undo.xml"
+
 sc SetURL $::SLICER_BUILD/../Slicer3/Libs/MRML/Testing/undo.xml
 sc Connect
 
 set n [sc GetNthNodeByClass 0 vtkMRMLVolumeArchetypeStorageNode]
-puts "Print Storage node 0"
-puts "[$n Print]"
-
-puts "GetFileName = [$n GetFileName]"
 
 sc SaveStateForUndo $n
 $n SetFileName ff1
-puts "GetFileName = [$n GetFileName]"
 
 sc SaveStateForUndo $n
 $n SetFileName ff2
-puts "GetFileName = [$n GetFileName]"
 
 sc SaveStateForUndo $n
 $n SetFileName ff3
-puts "GetFileName = [$n GetFileName]"
 
-puts Undo
 sc Undo
-puts "GetFileName = [$n GetFileName]"
 
-puts Undo
 sc Undo
-puts "GetFileName = [$n GetFileName]"
 
-puts Undo
 sc Undo
-puts "GetFileName = [$n GetFileName]"
+
+tk_messageBox -message "call undo"
 
 vs Delete
 sc Delete

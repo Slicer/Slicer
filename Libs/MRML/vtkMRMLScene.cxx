@@ -835,6 +835,7 @@ void vtkMRMLScene::CopyNodeInUndoStack(vtkMRMLNode *copyNode)
       undoScene->ReplaceItem (n, snode);
       }
     }
+  snode->Delete();
 }
 
 //------------------------------------------------------------------------------
@@ -857,6 +858,7 @@ void vtkMRMLScene::CopyNodeInRedoStack(vtkMRMLNode *copyNode)
       undoScene->ReplaceItem (n, snode);
       }
     }
+  snode->Delete();
 }
 
 //------------------------------------------------------------------------------
@@ -1052,6 +1054,7 @@ void vtkMRMLScene::ClearUndoStack()
   for(iter=this->UndoStack.begin(); iter != this->UndoStack.end(); iter++) 
     {
     (*iter)->RemoveAllItems();
+    (*iter)->Delete();
     }
   this->UndoStack.clear();
 }
@@ -1062,6 +1065,7 @@ void vtkMRMLScene::ClearRedoStack()
   for(iter=this->RedoStack.begin(); iter != this->RedoStack.end(); iter++) 
     {
     (*iter)->RemoveAllItems();
+    (*iter)->Delete();
     }
   this->RedoStack.clear();
 }
