@@ -20,7 +20,7 @@
 
 #include "vtkSlicerBaseGUIWin32Header.h"
 #include "vtkSlicerComponentGUI.h"
-#include "vtkSlicerToolbarIcons.h"
+#include "vtkSlicerToolbarGUI.h"
 #include "vtkSlicerLogoIcons.h"
 #include "vtkSlicerModuleNavigationIcons.h"
 #include "vtkSlicerViewControlIcons.h"
@@ -41,7 +41,6 @@
 
 class vtkObject;
 class vtkKWPushButton;
-class vtkKWToolbar;
 class vtkKWScale;
 class vtkImplicitPlaneWidget;
 class vtkLogoWidget;
@@ -107,31 +106,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     //    vtkGetObjectMacro ( DefaultSlice2Frame, vtkKWFrame );
 
     // Description:
-    // Get the widgets that display the toolbar icons
-    vtkGetObjectMacro (HomeIconButton, vtkKWPushButton); 
-    vtkGetObjectMacro (DataIconButton, vtkKWPushButton);
-    vtkGetObjectMacro (VolumeIconButton, vtkKWPushButton );
-    vtkGetObjectMacro (ModelIconButton, vtkKWPushButton );
-    vtkGetObjectMacro (EditorIconButton, vtkKWPushButton );
-    vtkGetObjectMacro (EditorToolboxIconButton, vtkKWPushButton );
-    vtkGetObjectMacro (TransformIconButton, vtkKWPushButton );
-    vtkGetObjectMacro (ColorIconButton, vtkKWPushButton );
-    vtkGetObjectMacro (FiducialsIconButton, vtkKWPushButton);
-    vtkGetObjectMacro (MeasurementsIconButton, vtkKWPushButton);
-    vtkGetObjectMacro (SaveSceneIconButton, vtkKWPushButton );
-    vtkGetObjectMacro (LoadSceneIconButton, vtkKWPushButton );
-    vtkGetObjectMacro (ConventionalViewIconButton, vtkKWPushButton );    
-    vtkGetObjectMacro (OneUp3DViewIconButton, vtkKWPushButton );
-    vtkGetObjectMacro (OneUpSliceViewIconButton, vtkKWPushButton );
-    vtkGetObjectMacro (FourUpViewIconButton, vtkKWPushButton );
-    vtkGetObjectMacro (Tabbed3DViewIconButton, vtkKWPushButton );
-    vtkGetObjectMacro (TabbedSliceViewIconButton, vtkKWPushButton );
-    vtkGetObjectMacro (LightBoxViewIconButton, vtkKWPushButton );
-    vtkGetObjectMacro (MousePickIconButton, vtkKWPushButton );
-    vtkGetObjectMacro (MousePanIconButton, vtkKWPushButton );
-    vtkGetObjectMacro (MouseRotateIconButton, vtkKWPushButton );
-    vtkGetObjectMacro (MouseZoomIconButton, vtkKWPushButton );
-    vtkGetObjectMacro (MousePlaceFiducialIconButton, vtkKWPushButton );
+    // Get the application Toolbar.
+    vtkGetObjectMacro ( ApplicationToolbar, vtkSlicerToolbarGUI );
 
     // Description:
     // Get the widgets in the LogoFrame
@@ -198,7 +174,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
 
     // Description:
     // Get the class containing all slicer GUI images for logos/icons
-    vtkGetObjectMacro (SlicerToolbarIcons, vtkSlicerToolbarIcons);
     vtkGetObjectMacro (SlicerLogoIcons, vtkSlicerLogoIcons );
     vtkGetObjectMacro (SlicerModuleNavigationIcons, vtkSlicerModuleNavigationIcons );
     vtkGetObjectMacro (SlicerViewControlIcons, vtkSlicerViewControlIcons );
@@ -208,12 +183,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkGetObjectMacro ( MainSlicerWin, vtkSlicerWindow );
     // Description:
 
-    // Get the main slicer toolbars.
-    vtkGetObjectMacro (ModulesToolbar, vtkKWToolbar);
-    vtkGetObjectMacro (LoadSaveToolbar, vtkKWToolbar );
-    vtkGetObjectMacro (ViewToolbar, vtkKWToolbar);
-    vtkGetObjectMacro (MouseModeToolbar, vtkKWToolbar);
-    
     // Description:
     // a Plane widget in the main window
     vtkGetObjectMacro ( PlaneWidget, vtkImplicitPlaneWidget );
@@ -273,7 +242,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // Description:
     // These methods populate the various GUI Panel frames
     virtual void BuildGUIPanel ( );
-    virtual void BuildToolBar ( );
     virtual void BuildMainViewer ( int arrangementType);
     virtual void DestroyMain3DViewer ( );
     virtual void DestroyMainSliceViewers ( );
@@ -291,7 +259,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
 
     // Desrciption:
     // These methods delete widgets belonging to components of the Slicer Window
-    virtual void DeleteToolbarWidgets ( );
     virtual void DeleteGUIPanelWidgets ( );
     virtual void DeleteFrames ( );
 
@@ -338,9 +305,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // Main Slicer window
     vtkSlicerWindow *MainSlicerWin;
 
-    // Description:
-    // Contains logos and icons
-    vtkSlicerToolbarIcons *SlicerToolbarIcons;
     vtkSlicerLogoIcons *SlicerLogoIcons;
     vtkSlicerModuleNavigationIcons *SlicerModuleNavigationIcons;
     vtkSlicerViewControlIcons *SlicerViewControlIcons;
@@ -390,39 +354,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkKWLoadSaveDialog *SaveSceneDialog;
 
     // Description:
-    // Main Slicer toolbars
-    vtkKWToolbar *ModulesToolbar;
-    vtkKWToolbar *LoadSaveToolbar;
-    vtkKWToolbar *ViewToolbar;
-    vtkKWToolbar *MouseModeToolbar;
-
-    // Description:
-    // Widgets that display toolbar icons
-    vtkKWPushButton *HomeIconButton;
-    vtkKWPushButton *DataIconButton;
-    vtkKWPushButton *VolumeIconButton;
-    vtkKWPushButton *ModelIconButton;
-    vtkKWPushButton *EditorIconButton;
-    vtkKWPushButton *EditorToolboxIconButton;
-    vtkKWPushButton *TransformIconButton;    
-    vtkKWPushButton *ColorIconButton;
-    vtkKWPushButton *FiducialsIconButton;
-    vtkKWPushButton *MeasurementsIconButton;
-    vtkKWPushButton *SaveSceneIconButton;
-    vtkKWPushButton *LoadSceneIconButton;
-    vtkKWPushButton *ConventionalViewIconButton;
-    vtkKWPushButton *OneUp3DViewIconButton;
-    vtkKWPushButton *OneUpSliceViewIconButton;
-    vtkKWPushButton *FourUpViewIconButton;
-    vtkKWPushButton *Tabbed3DViewIconButton;
-    vtkKWPushButton *TabbedSliceViewIconButton;
-    vtkKWPushButton *LightBoxViewIconButton;
-    vtkKWPushButton *MousePickIconButton;
-    vtkKWPushButton *MousePlaceFiducialIconButton;
-    vtkKWPushButton *MousePanIconButton;
-    vtkKWPushButton *MouseRotateIconButton;
-    vtkKWPushButton *MouseZoomIconButton;
-
+    // Main Slicer toolbar
+    vtkSlicerToolbarGUI *ApplicationToolbar;
     
     // Description:
     // These widgets tile a composite image
@@ -471,6 +404,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkSlicerSliceLogic *MainSliceLogic0;
     vtkSlicerSliceLogic *MainSliceLogic1;    
     vtkSlicerSliceLogic *MainSliceLogic2;
+
     // Description:
     // Used to tag all pages added to the tabbed notebook
     // arrangement of the main viewer.
