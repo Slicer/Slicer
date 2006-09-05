@@ -238,10 +238,16 @@ itcl::body CsysSWidget::updateTransform {} {
         set $d [expr [set $d] / $currLength] 
       }
 
+      set dot [CsysSWidget::dot $vorigR $vorigA $vorigS  $vcurrR $vcurrA $vcurrS]
       set toTheRight [CsysSWidget::cross $vorigR $vorigA $vorigS  $vcurrR $vcurrA $vcurrS]
 
       set length [eval $math Norm $toTheRight]
       set angleW [expr asin( $length ) * [$math RadiansToDegrees]]
+
+      if { $dot < 0 && $angleW < 0 } {
+        set angleW [expr 180. - $angleW]
+      }
+
       puts "angle is $angleW"
       foreach v $toTheRight n {normRightX normRightY normRightZ} {
         set $n [expr $v / $length]
@@ -271,6 +277,13 @@ proc CsysSWidget::cross {x0 x1 x2  y0 y1 y2} {
   set Zy [expr $x2 * $y0 - $x0 * $y2]
   set Zz [expr $x0 * $y1 - $x1 * $y0];
   return "$Zx $Zy $Zz"
+
+}
+
+# TODO: this should really be accessible from vtkMath
+proc CsysSWidget::dot {x0 x1 x2  y0 y1 y2} {
+
+  return [expr $x0 * $y0 + $x1 * $y1 + $x2 * $y2]
 
 }
 
