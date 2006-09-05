@@ -21,6 +21,7 @@
 #include "vtkSlicerBaseGUIWin32Header.h"
 #include "vtkSlicerComponentGUI.h"
 #include "vtkSlicerToolbarGUI.h"
+#include "vtkSlicerViewControlGUI.h"
 #include "vtkSlicerLogoIcons.h"
 #include "vtkSlicerModuleNavigationIcons.h"
 #include "vtkSlicerViewControlIcons.h"
@@ -110,6 +111,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkGetObjectMacro ( ApplicationToolbar, vtkSlicerToolbarGUI );
 
     // Description:
+    // Get the GUI containing widgets for controlling the 3D View
+    vtkGetObjectMacro ( ViewControlGUI, vtkSlicerViewControlGUI );
+
+    // Description:
     // Get the widgets in the LogoFrame
     vtkGetObjectMacro (SlicerLogoLabel, vtkKWLabel);
 
@@ -130,53 +135,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkGetObjectMacro (SliceOpacityScale, vtkKWScale );
 
     // Description:
-    // Get the widgets in the ViewControlFrame
-    vtkGetObjectMacro (SpinButton, vtkKWCheckButton);
-    vtkGetObjectMacro (RockButton, vtkKWCheckButton);
-    vtkGetObjectMacro (OrthoButton, vtkKWCheckButton);
-    vtkGetObjectMacro (CenterButton, vtkKWPushButton);
-    vtkGetObjectMacro (SelectButton, vtkKWMenuButton);
-    vtkGetObjectMacro (FOVEntry, vtkKWEntryWithLabel);
-    
-    // Description:
-    // Get the Widgets that display the RotateAround image
-    // in the ViewControlFrame.
-    vtkGetObjectMacro (RotateAroundAIconButton, vtkKWLabel );
-    vtkGetObjectMacro (RotateAroundPIconButton, vtkKWLabel );
-    vtkGetObjectMacro (RotateAroundRIconButton, vtkKWLabel );
-    vtkGetObjectMacro (RotateAroundLIconButton, vtkKWLabel );
-    vtkGetObjectMacro (RotateAroundSIconButton, vtkKWLabel );
-    vtkGetObjectMacro (RotateAroundIIconButton, vtkKWLabel );
-    vtkGetObjectMacro (RotateAroundMiddleIconButton, vtkKWLabel );
-    vtkGetObjectMacro (RotateAroundTopCornerIconButton, vtkKWLabel );
-    vtkGetObjectMacro (RotateAroundBottomCornerIconButton, vtkKWLabel);
-
-    // Description:
-    // Get the Widgets that display the LookFrom image
-    // in the ViewControlFrame.
-    vtkGetObjectMacro (LookFromAIconButton, vtkKWLabel );
-    vtkGetObjectMacro (LookFromPIconButton, vtkKWLabel );
-    vtkGetObjectMacro (LookFromRIconButton, vtkKWLabel );
-    vtkGetObjectMacro (LookFromLIconButton, vtkKWLabel );
-    vtkGetObjectMacro (LookFromSIconButton, vtkKWLabel );
-    vtkGetObjectMacro (LookFromIIconButton, vtkKWLabel );
-    vtkGetObjectMacro (LookFromMiddleIconButton, vtkKWLabel );
-    vtkGetObjectMacro (LookFromTopCornerIconButton, vtkKWLabel );
-    vtkGetObjectMacro (LookFromBottomCornerIconButton, vtkKWLabel);
-
-
-    // Description:
-    // Get the Widgets that display the Navigation Zoom images
-    // in the ViewControlFrame.
-    vtkGetObjectMacro (NavZoomInIconButton, vtkKWPushButton );
-    vtkGetObjectMacro (NavZoomOutIconButton, vtkKWPushButton );
-    vtkGetObjectMacro (NavZoomScale, vtkKWScale );
-
-    // Description:
     // Get the class containing all slicer GUI images for logos/icons
     vtkGetObjectMacro (SlicerLogoIcons, vtkSlicerLogoIcons );
     vtkGetObjectMacro (SlicerModuleNavigationIcons, vtkSlicerModuleNavigationIcons );
-    vtkGetObjectMacro (SlicerViewControlIcons, vtkSlicerViewControlIcons );
     
     // Description:
     // Get the main slicer window.
@@ -251,9 +212,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     virtual void BuildModuleChooseGUIPanel ( );
     virtual void PopulateModuleChooseList ( );
     virtual void BuildSliceControlGUIPanel ( );
-    virtual void BuildViewControlGUIPanel ( );
-    virtual void AssignViewControlIcons ( );
-    virtual void MakeViewControlRolloverBehavior ( );
+
     virtual void Save3DViewConfig ( );
     virtual void Restore3DViewConfig ( );
 
@@ -265,37 +224,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // Description:
     // Display Slicer's main window
     virtual void DisplayMainSlicerWindow ( );
-
-    // Description:
-    // Groups of callbacks that handle the state change of
-    // rollover images in the ViewControlFrame. These
-    // callbacks only update the visual behavior of the GUI,
-    // but don't impact the application state at all.
-    void EnterLookFromACallback ( );
-    void LeaveLookFromACallback ( );
-    void EnterLookFromPCallback ( );
-    void LeaveLookFromPCallback ( );
-    void EnterLookFromRCallback ( );
-    void LeaveLookFromRCallback ( );    
-    void EnterLookFromLCallback ( );
-    void LeaveLookFromLCallback ( );
-    void EnterLookFromSCallback ( );
-    void LeaveLookFromSCallback ( );
-    void EnterLookFromICallback ( );
-    void LeaveLookFromICallback ( );
-
-    void EnterRotateAroundACallback ( );
-    void LeaveRotateAroundACallback ( );
-    void EnterRotateAroundPCallback ( );
-    void LeaveRotateAroundPCallback ( );
-    void EnterRotateAroundRCallback ( );
-    void LeaveRotateAroundRCallback ( );    
-    void EnterRotateAroundLCallback ( );
-    void LeaveRotateAroundLCallback ( );
-    void EnterRotateAroundSCallback ( );
-    void LeaveRotateAroundSCallback ( );
-    void EnterRotateAroundICallback ( );
-    void LeaveRotateAroundICallback ( );
     
  protected:
     vtkSlicerApplicationGUI ( );
@@ -315,9 +243,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkKWFrame *ModuleChooseFrame;
     vtkKWFrame *SliceControlFrame;
     vtkKWFrame *ViewControlFrame;
-    //    vtkKWFrame *DefaultSlice0Frame;
-    //    vtkKWFrame *DefaultSlice1Frame;
-    //    vtkKWFrame *DefaultSlice2Frame;
     vtkImplicitPlaneWidget *PlaneWidget;
     vtkLogoWidget *LogoWidget;
 
@@ -341,60 +266,14 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkKWScale *SliceFadeScale;
     vtkKWScale *SliceOpacityScale;
 
-    //Description:
-    // Widgets for the ViewControlFrame in the GUI
-    vtkKWCheckButton *SpinButton;
-    vtkKWCheckButton *RockButton;
-    vtkKWCheckButton *OrthoButton;
-    vtkKWPushButton *CenterButton;
-    vtkKWMenuButton *SelectButton;
-    vtkKWEntryWithLabel *FOVEntry;
-    
     vtkKWLoadSaveDialog *LoadSceneDialog;
     vtkKWLoadSaveDialog *SaveSceneDialog;
 
     // Description:
     // Main Slicer toolbar
     vtkSlicerToolbarGUI *ApplicationToolbar;
+    vtkSlicerViewControlGUI *ViewControlGUI;
     
-    // Description:
-    // These widgets tile a composite image
-    // for automatically rotating the view
-    // around a selected axis. The composite image
-    // displays state during mouseover.
-    vtkKWLabel *RotateAroundAIconButton;
-    vtkKWLabel *RotateAroundPIconButton;
-    vtkKWLabel *RotateAroundRIconButton;
-    vtkKWLabel *RotateAroundLIconButton;
-    vtkKWLabel *RotateAroundSIconButton;
-    vtkKWLabel *RotateAroundIIconButton;
-    vtkKWLabel *RotateAroundMiddleIconButton;    
-    vtkKWLabel *RotateAroundTopCornerIconButton;
-    vtkKWLabel *RotateAroundBottomCornerIconButton;
-    
-    // Description:
-    // These widgets tile a composite image
-    // for automatically positioning the camera down
-    // a selected axis and pointing at origin. The composite 
-    // image displays state during mouseover.
-    vtkKWLabel *LookFromAIconButton;
-    vtkKWLabel *LookFromPIconButton;
-    vtkKWLabel *LookFromRIconButton;
-    vtkKWLabel *LookFromLIconButton;
-    vtkKWLabel *LookFromSIconButton;
-    vtkKWLabel *LookFromIIconButton;
-    vtkKWLabel *LookFromMiddleIconButton;    
-    vtkKWLabel *LookFromTopCornerIconButton;
-    vtkKWLabel *LookFromBottomCornerIconButton;
-
-    // Description:
-    // These widgets display icons that indicate
-    // zoom-in and zoom-out functionality in the
-    // ViewControlFrame's Navigation widget
-    vtkKWPushButton *NavZoomInIconButton;
-    vtkKWPushButton *NavZoomOutIconButton;
-    vtkKWScale *NavZoomScale;
-
     vtkSlicerViewerWidget *ViewerWidget;
     vtkSlicerSliceGUI *MainSliceGUI0;
     vtkSlicerSliceGUI *MainSliceGUI1;
@@ -409,8 +288,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // Used to tag all pages added to the tabbed notebook
     // arrangement of the main viewer.
     int ViewerPageTag;
-    // Description:
 
+    // Description:
     // contains the visible prop bounds for the main 3Dviewer's renderer
     double MainRendererBBox[6];
 

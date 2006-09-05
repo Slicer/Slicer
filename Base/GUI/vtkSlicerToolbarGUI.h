@@ -1,6 +1,7 @@
 // .NAME vtkSlicerToolbarGUI
 // .SECTION Description
-// Main Data GUI and mediator methods for slicer3.
+// Main Data GUI and mediator methods for
+// the application Toolbar in slicer3.
 
 #ifndef __vtkSlicerToolbarGUI_h
 #define __vtkSlicerToolbarGUI_h
