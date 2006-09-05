@@ -131,6 +131,7 @@ void vtkMRMLLinearTransformNode::ReadXMLAttributes(const char** atts)
           }
         }
       this->SetAndObserveMatrixTransformToParent(matrix);
+      matrix->Delete();
       }
     }  
 }
@@ -279,6 +280,7 @@ int  vtkMRMLLinearTransformNode::GetMatrixTransformToNode(vtkMRMLTransformNode* 
     xform->DeepCopy(transformToNode);
     vtkMatrix4x4::Multiply4x4(xform, transformToWorld2, transformToNode);
     xform->Delete();
+    transformToWorld2->Delete();
     }
   // TODO: what does this return code mean?
   return 1;

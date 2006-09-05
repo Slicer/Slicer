@@ -68,3 +68,8 @@ mm0 Identity
 $t0 GetMatrixTransformToNode $t1 mm0
 puts "Print GetMatrixTransformToNode from 0 to 1"
 puts "[mm0 Print]"
+
+mm0 Delete
+mm1 Delete
+sc Delete
+
