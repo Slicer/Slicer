@@ -98,15 +98,15 @@ void vtkSlicerTheme::Install ( )
     odb->AddEntryAsInt ( "vtkKWFrame", "SetHighlightThickness", 0 );
     odb->AddEntry ( "vtkKWFrame", "SetRelief", "flat" );
     
-    /*
-    odb->AddEntryAsDouble3 ( "vtkKWFrameWithLabel:LabelFrame", "SetBackgroundColor",
+
+    // Module collapsing frames
+    odb->AddEntryAsDouble3 ( "vtkSlicerModuleCollapsibleFrame:LabelFrame", "SetBackgroundColor",
                              this->SlicerColors->LightestGrey );    
-    odb->AddEntryAsInt ( "vtkKWFrameWithLabel:LabelFrame", "SetHighlightThickness", 1 );
-    odb->AddEntry ( "vtkKWFrameWithLabel:LabelFrame", "SetReliefToGroove", NULL );
-    odb->AddEntryAsDouble3 ( "vtkKWFrameWithLabel:Label", "SetBackgroundColor",
+    odb->AddEntryAsInt ( "vtkSlicerModuleCollapsibleFrame:LabelFrame", "SetHighlightThickness", 1 );
+    odb->AddEntry ( "vtkSlicerModuleCollapsibleFrame:LabelFrame", "SetReliefToGroove", NULL );
+    odb->AddEntryAsDouble3 ( "vtkSlicerModuleCollapsibleFrame:Label", "SetBackgroundColor",
                              this->SlicerColors->LightestGrey );
-    odb->AddEntryAsInt ( "vtkKWFrameWithLabel:Label", "SetWidth", 40 );
-    */    
+    odb->AddEntryAsInt ( "vtkSlicerModuleCollapsibleFrame:Label", "SetWidth", 40 );
 
 
     // Slicer Frames inside Scrolled windows
