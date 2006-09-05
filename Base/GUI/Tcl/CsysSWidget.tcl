@@ -199,18 +199,81 @@ itcl::body CsysSWidget::updateTransform {} {
   set startRAS [$this xyToRAS $_startXYPosition]
   set currentRAS [$this xyToRAS $_currentXYPosition]
 
-  foreach d {dr da ds} s $startRAS c $currentRAS {
-    set $d [expr $c - $s]
-  }
+  switch $_actionState {
+    "translating" {
+      foreach d {dr da ds} s $startRAS c $currentRAS {
+        set $d [expr $c - $s]
+      }
 
-  set matrix [$transformNode GetMatrixTransformToParent]
-  foreach d {dr da ds} i {0 1 2} {
-    set start [$o(_startMatrix) GetElement $i 3]
-    $matrix SetElement $i 3 [expr $start + [set $d]]
+      set matrix [$transformNode GetMatrixTransformToParent]
+      foreach d {dr da ds} i {0 1 2} {
+        set start [$o(_startMatrix) GetElement $i 3]
+        $matrix SetElement $i 3 [expr $start + [set $d]]
+      }
+      $transformNode Modified
+    }
+    "rotating" {
+      set renderWidget [[$sliceGUI GetSliceViewer] GetRenderWidget]
+      set size [[$renderWidget GetRenderWindow]  GetSize]
+      foreach {w h} $size {}
+      foreach d {w h} c {cx cy} { set $c [expr [set $d] / 2.0] }
+      set centerRAS [$this xyToRAS "$cx $cy"]
+
+      set math [vtkMath New]
+
+      # get the normalized vectors from the center to the start point and to the current point
+      foreach d {vorigR vorigA vorigS} s $startRAS c $centerRAS { 
+        set $d [expr $s - $c] 
+      }
+      set origLength [$math Norm $vorigR $vorigA $vorigS]
+      foreach d {vorigR vorigA vorigS} { 
+        set $d [expr [set $d] / $origLength] 
+      }
+
+      foreach d {vcurrR vcurrA vcurrS} cc $currentRAS c $centerRAS { 
+        set $d [expr $cc - $c] 
+      }
+      set currLength [$math Norm $vcurrR $vcurrA $vcurrS]
+      foreach d {vcurrR vcurrA vcurrS} { 
+        set $d [expr [set $d] / $currLength] 
+      }
+
+      set toTheRight [CsysSWidget::cross $vorigR $vorigA $vorigS  $vcurrR $vcurrA $vcurrS]
+
+      set length [eval $math Norm $toTheRight]
+      set angleW [expr asin( $length ) * [$math RadiansToDegrees]]
+      puts "angle is $angleW"
+      foreach v $toTheRight n {normRightX normRightY normRightZ} {
+        set $n [expr $v / $length]
+      }
+
+      set rotation [vtkTransform New]
+      $rotation RotateWXYZ $angleW $normRightX $normRightY $normRightZ
+
+      puts [$rotation Print]
+
+      set matrix [$transformNode GetMatrixTransformToParent] 
+      $o(_startMatrix) Multiply4x4 [$rotation GetMatrix] $o(_startMatrix) $matrix
+      $matrix Modified
+      $transformNode Modified
+
+      $math Delete
+      $rotation Delete
+    }
   }
-  $transformNode Modified
 
 }
+
+# TODO: this should really be accessible from vtkMath
+proc CsysSWidget::cross {x0 x1 x2  y0 y1 y2} {
+
+  set Zx [expr $x1 * $y2 - $x2 * $y1]
+  set Zy [expr $x2 * $y0 - $x0 * $y2]
+  set Zz [expr $x0 * $y1 - $x1 * $y0];
+  return "$Zx $Zy $Zz"
+
+}
+
 
 itcl::body CsysSWidget::positionActors { } {
 
