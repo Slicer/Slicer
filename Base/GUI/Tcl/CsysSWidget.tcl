@@ -218,6 +218,7 @@ itcl::body CsysSWidget::updateTransform {} {
       foreach {w h} $size {}
       foreach d {w h} c {cx cy} { set $c [expr [set $d] / 2.0] }
       set centerRAS [$this xyToRAS "$cx $cy"]
+      set minusCenterRAS [CsysSWidget::scale -1 $centerRAS]
 
       set math [vtkMath New]
 
@@ -244,19 +245,18 @@ itcl::body CsysSWidget::updateTransform {} {
       set length [eval $math Norm $toTheRight]
       set angleW [expr asin( $length ) * [$math RadiansToDegrees]]
 
-      if { $dot < 0 && $angleW < 0 } {
+      if { $dot < 0 } {
         set angleW [expr 180. - $angleW]
       }
 
-      puts "angle is $angleW"
       foreach v $toTheRight n {normRightX normRightY normRightZ} {
         set $n [expr $v / $length]
       }
 
       set rotation [vtkTransform New]
+      eval $rotation Translate $centerRAS
       $rotation RotateWXYZ $angleW $normRightX $normRightY $normRightZ
-
-      puts [$rotation Print]
+      eval $rotation Translate $minusCenterRAS
 
       set matrix [$transformNode GetMatrixTransformToParent] 
       $o(_startMatrix) Multiply4x4 [$rotation GetMatrix] $o(_startMatrix) $matrix
@@ -268,6 +268,17 @@ itcl::body CsysSWidget::updateTransform {} {
     }
   }
 
+}
+
+# TODO: this should really be accessible from vtkMath
+proc CsysSWidget::scale {sfactor v {v1 ""} {v2 ""} } {
+
+  if { [llength $v] == 1 } {
+    set v [list $v $v1 $v2]
+  }
+  return [list [expr $sfactor * [lindex $v 0]] \
+               [expr $sfactor * [lindex $v 1]] \
+               [expr $sfactor * [lindex $v 2]] ]
 }
 
 # TODO: this should really be accessible from vtkMath
@@ -351,6 +362,7 @@ itcl::body CsysSWidget::processEvent { } {
       $sliceGUI SetGrabID $this
       set transformNode [$this getTransform]
       if { $transformNode != "" } {
+        $::slicer3::MRMLScene SaveStateForUndo $transformNode
         $o(_startMatrix) DeepCopy [$transformNode GetMatrixTransformToParent]
         set _startXYPosition $_currentXYPosition
         if { [$_interactor GetControlKey] } {
