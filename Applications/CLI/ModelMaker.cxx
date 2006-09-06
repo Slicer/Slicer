@@ -28,7 +28,6 @@ Version:   $Revision$
 #include "vtkImageToStructuredPoints.h"
 #include "vtkGeometryFilter.h"
 #include "vtkDecimatePro.h"
-#include "vtkWindowedSincPolyDataFilter.h"
 #include "vtkSmoothPolyDataFilter.h"
 #include "vtkTransformPolyDataFilter.h"
 #include "vtkReverseSense.h"
@@ -92,7 +91,6 @@ int main(int argc, char * argv[])
     vtkStripper * stripper = NULL;
     vtkPolyDataWriter * writer = NULL;
 
-
     // check for the input file
     FILE * infile;
     infile = fopen(InputVolume.c_str(),"r");
@@ -139,6 +137,7 @@ int main(int argc, char * argv[])
         cubes->SetInput(image);
         cubes->GenerateValues((EndLabel-StartLabel +1), StartLabel, EndLabel);
         cubes->Update();
+cubes->ReleaseDataFlagOn();
 
         if (JointSmoothing)
         {
@@ -155,6 +154,7 @@ int main(int argc, char * argv[])
             smoother->NormalizeCoordinatesOn();
             std::cout << "Smoothing..." << endl;
             smoother->Update();
+smoother->ReleaseDataFlagOn();
         }
         std::cout    << "Making histogram..." <<    endl;
         hist->Update();
@@ -165,7 +165,6 @@ int main(int argc, char * argv[])
     }
 
     // ModelMakerMarch
-
     int labelFrequency;
     std::string labelName;
 
@@ -184,7 +183,6 @@ int main(int argc, char * argv[])
         std::cerr << "\tImage data extents: " << extents[0] << " " << extents[1] << " " << extents[2] << " " << extents[3] << " " << extents[4] << " " << extents[5] << endl;
         return EXIT_FAILURE;
     }
-
     // Get the RAS to IJK matrix and invert it to get the IJK to RAS which will need
     // to be applied to the model as it will be built in pixel space
 
@@ -196,7 +194,6 @@ int main(int argc, char * argv[])
         transformIJKtoRAS->GetMatrix()->Print(std::cout);
     }
     transformIJKtoRAS->Inverse();
-
     for (int i = StartLabel; i <= EndLabel; i++)
     {
         if (makeMultiple)
@@ -224,7 +221,7 @@ int main(int argc, char * argv[])
             std::stringstream    stream;
             stream <<    i;
             std::string stringI =    stream.str();
-            labelName    = Name + stringI;
+            labelName    = Name + "_" + stringI;
         } 
         else 
         {
@@ -232,7 +229,6 @@ int main(int argc, char * argv[])
             labelName = Name;
         }
         std::cout    << "Making model " << labelName    << endl;
-
 
 
         // threshold
@@ -250,11 +246,13 @@ int main(int argc, char * argv[])
             std::cout << "Thresholding to " << i << endl;
             imageThreshold->ThresholdBetween(i,i);
             (imageThreshold->GetOutput())->ReleaseDataFlagOn();
+imageThreshold->ReleaseDataFlagOn();
             // TODO: add progress
             
             imageToStructuredPoints = vtkImageToStructuredPoints::New();
             imageToStructuredPoints->SetInput(imageThreshold->GetOutput());
             imageToStructuredPoints->Update();
+            imageToStructuredPoints->ReleaseDataFlagOn();
         } 
         else 
         {
@@ -269,12 +267,13 @@ int main(int argc, char * argv[])
             std::cout << "Thresholding to " << i << endl;
             threshold->ThresholdBetween(i,i);
             (threshold->GetOutput())->ReleaseDataFlagOn();
+threshold->ReleaseDataFlagOn();
 
             geometryFilter = vtkGeometryFilter::New();
             geometryFilter->SetInput(threshold->GetOutput());
+           geometryFilter->ReleaseDataFlagOn();
 
         }
-
 
         if (JointSmoothing == 0)
         {
@@ -383,6 +382,8 @@ int main(int argc, char * argv[])
                 smootherSinc->FeatureEdgeSmoothingOff();
                 smootherSinc->BoundarySmoothingOff();
                 (smootherSinc->GetOutput())->ReleaseDataFlagOn();
+// smootherSinc->ReleaseDataFlagOn();
+
                 //TODO: insert progress
                 std::cout << "Smoothing...\n";
                 smootherSinc->Update();
@@ -407,6 +408,8 @@ int main(int argc, char * argv[])
                 smootherPoly->FeatureEdgeSmoothingOff();
                 smootherPoly->BoundarySmoothingOff();
                 (smootherPoly->GetOutput())->ReleaseDataFlagOn();
+//smootherPoly->ReleaseDataFlagOn();
+
                 //TODO: insert progress
                 std::cout << "Smoothing...\n";
                 smootherPoly->Update();
@@ -477,7 +480,16 @@ int main(int argc, char * argv[])
         writer = vtkPolyDataWriter::New();
         writer->SetInput(stripper->GetOutput());
         //writer->SetFileType(2);
-        std::string fileName = OutputDirectory + "/" + labelName + ".vtk";
+        std::string fileName;
+        if (OutputDirectory != "")
+        {
+            fileName = OutputDirectory + "/" + labelName + ".vtk";
+        }
+        else
+        {
+            std::cout << "WARNING: output directory is an empty string...\n";
+            fileName = labelName + ".vtk";
+        }
         writer->SetFileName(fileName.c_str());
         // TODO: add progress
         std::cout << "Writing model " << " " << labelName << " to file " << writer->GetFileName()  << endl;
@@ -485,7 +497,6 @@ int main(int argc, char * argv[])
 
         writer->SetInput(NULL);
         writer->Delete();
-
     } // end of loop over labels
 
 
@@ -508,16 +519,17 @@ int main(int argc, char * argv[])
         }
         std::cout << endl;
     }
-
     // Clean up
 
     if (cubes) 
     {
+        std::cout << "Deleting cubes...\n";
         cubes->SetInput(NULL);
         cubes->Delete();
     }
     if (smoother)
     {
+        std::cout << "Deleting Smoother...\n";
         smoother->SetInput(NULL);
         smoother->Delete();
     }    
@@ -553,6 +565,7 @@ int main(int argc, char * argv[])
     }
     if (threshold)
     {
+        cout << "Deleting threshold\n";
         threshold->SetInput(NULL);
         threshold->Delete();
     }
@@ -563,6 +576,7 @@ int main(int argc, char * argv[])
     }
     if (geometryFilter)
     {
+        cout << "Deleting geometry filter\n";
         geometryFilter->SetInput(NULL);
         geometryFilter->Delete();
     }
@@ -593,8 +607,10 @@ int main(int argc, char * argv[])
     }
     if (ici)
     {
+        std::cout << "Deleting ici\n";
         ici->Delete();
     }
+    reader->Delete();
     if (debug)
     {
         char waiting;
