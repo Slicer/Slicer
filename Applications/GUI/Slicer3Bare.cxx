@@ -2,6 +2,7 @@
 #include "vtkRenderWindow.h"
 
 #include "vtkKWApplication.h"
+#include "vtkKWBalloonHelpManager.h"
 #include "vtkKWWindow.h"
 #include "vtkKWNotebook.h"
 #include "vtkKWRegistryHelper.h"
@@ -315,8 +316,8 @@ int Slicer3_main(int argc, char *argv[])
 #endif
 
 #ifndef APPGUI_DEBUG
-    name = appGUI->GetViewerWidget()->GetTclName();
-    slicerApp->Script ("namespace eval slicer3 set ViewerWidget %s", name);
+    //name = appGUI->GetViewerWidget()->GetTclName();
+    //slicerApp->Script ("namespace eval slicer3 set ViewerWidget %s", name);
 #endif
 
     slicerApp->Script ("namespace eval slicer3 set ApplicationLogic [$::slicer3::ApplicationGUI GetApplicationLogic]");
@@ -389,6 +390,7 @@ int Slicer3_main(int argc, char *argv[])
     slicerApp->GetModuleGUICollection ( )->RemoveAllItems ( );
     slicerApp->GetTheme()->SetApplication( NULL );
     slicerApp->SetTheme( NULL );
+
     // ------------------------------
     // EXIT 
     slicerApp->Exit();
@@ -441,6 +443,10 @@ int Slicer3_main(int argc, char *argv[])
     scene->Delete ();
 
     //--- application last
+    if ( slicerApp->GetBalloonHelpManager() )
+      {
+      slicerApp->GetBalloonHelpManager()->SetApplication(NULL);
+      }
     slicerApp->Delete ();
 
     return res;
