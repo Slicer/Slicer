@@ -1,7 +1,5 @@
 set slicerApp [vtkSlicerApplication New]
 
-#set theme [vtkSlicerTheme New]
-#$slicerApp SetTheme $theme
 set theme [$slicerApp GetSlicerTheme]
 $slicerApp InstallTheme $theme
 
@@ -17,6 +15,10 @@ $appGUI SetAndObserveApplicationLogic $appLogic
 $appGUI SetAndObserveMRMLScene $scene
 $appGUI BuildGUI
 $appGUI AddGUIObservers
+
+set res [$slicerApp StartApplication]
+
+$slicerApp Exit
 
 
 $appGUI Delete
@@ -34,6 +36,9 @@ $scene Delete
 
 
 exit 0
+
+
+#################################################################
 
     // CREATE APPLICATION GUI, including the main window
 #ifndef APPGUI_DEBUG
