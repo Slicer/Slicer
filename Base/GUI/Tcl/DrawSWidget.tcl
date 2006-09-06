@@ -163,28 +163,36 @@ itcl::body DrawSWidget::addPoint {r a s} {
 
 itcl::body DrawSWidget::apply {} {
 
+  # first, close the polyline back to the first point
   set lines [$o(polyData) GetLines]
   set idArray [$lines GetData]
   set p [$idArray GetTuple1 1]
   $idArray InsertNextTuple1 $p
   $idArray SetTuple1 0 [expr [$idArray GetNumberOfTuples] - 1]
 
-
-  set idList [vtkIdList New]
-  set size [$idArray GetNumberOfTuples]
-  for {set i 1} {$i < $size} {incr i} {
-    $idList InsertNextId [$idArray GetTuple1 $i]
+  # now copy the ids over into the polygon list
+  if { 0 } {
+    set idList [vtkIdList New]
+    set size [$idArray GetNumberOfTuples]
+    for {set i 1} {$i < $size} {incr i} {
+      $idList InsertNextId [$idArray GetTuple1 $i]
+    }
+    [$o(polyData) GetPolys] InsertNextCell $idList
+    $idList Delete
   }
-  [$o(polyData) GetPolys] InsertNextCell $idList
-  $idList Delete
 
-  set idList [vtkIdList New]
-  set polygon [$o(polyData) GetCell 1]
-  $polygon Triangulate $idList
-  [$o(polyData) GetLines] InsertNextCell $idList
-  $idList Delete
+  # triangulate the polygon into a new idList
+  # and insert the result as a new set of lines
+  if { 1 } {
+    set idList [vtkIdList New]
+    set polygon [$o(polyData) GetCell 1]
+    $polygon Triangulate $idList
+    [$o(polyData) GetLines] InsertNextCell $idList
+    $idList Delete
+  }
 
 
+  # reset the polylines for next outline
   $idArray Reset
   $idArray InsertNextTuple1 0
 
