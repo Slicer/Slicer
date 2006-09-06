@@ -10,6 +10,7 @@ set scene [vtkMRMLScene New]
 set appGUI [vtkSlicerApplicationGUI New]
 
 set appLogic [vtkSlicerApplicationLogic New]
+$appLogic SetMRMLScene $scene
 
 $appGUI SetApplication $slicerApp
 $appGUI SetAndObserveApplicationLogic $appLogic
