@@ -49,6 +49,7 @@ extern "C" int Slicerbasegui_Init(Tcl_Interp *interp);
 extern "C" int Slicerbaselogic_Init(Tcl_Interp *interp);
 extern "C" int Mrml_Init(Tcl_Interp *interp);
 extern "C" int Vtkitk_Init(Tcl_Interp *interp);
+extern "C" int Freesurfer_Init(Tcl_Interp *interp);
 
 //TODO added temporary
 extern "C" int Gradientanisotropicdiffusionfilter_Init(Tcl_Interp *interp);
@@ -180,6 +181,7 @@ int Slicer3_main(int argc, char *argv[])
     Slicerbaselogic_Init(interp);
     Mrml_Init(interp);
     Vtkitk_Init(interp);
+    Freesurfer_Init(interp);
     //TODO added temporary
     Gradientanisotropicdiffusionfilter_Init(interp);
     Slicerdaemon_Init(interp);
