@@ -61,7 +61,7 @@ vtkCxxRevisionMacro(vtkSlicerApplicationGUI, "$Revision: 1.0 $");
 // temporary crud for vtkDebugLeak hunting. Will remove
 // these and other related #ifndefs-#endifs throughout.
 
-#define LOGODISPLAY_DEBUG
+//#define LOGODISPLAY_DEBUG
 //#define TOOLBAR_DEBUG
 //#define VIEWCONTROL_DEBUG
 //#define SLICESCONTROL_DEBUG
@@ -85,6 +85,13 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
     this->ViewControlFrame = vtkKWFrame::New();
     this->LightboxFrame = NULL;
 
+    // initialize in case any are not defined.
+    this->ApplicationToolbar = NULL;
+    this->ViewControlGUI = NULL;
+    this->SlicesControlGUI = NULL;
+    this->ModuleChooseGUI = NULL;
+    this->LogoDisplayGUI = NULL;
+    
     //--- GUIs containing components packed inside the Frames
 #ifndef TOOLBAR_DEBUG
     this->ApplicationToolbar = vtkSlicerToolbarGUI::New ( );
@@ -1290,10 +1297,10 @@ void vtkSlicerApplicationGUI::PopulateModuleChooseList ( )
     const char* mName;
     vtkSlicerModuleGUI *m;
 
-    if ( this->GetApplication( )  != NULL ) {
+    if (  (this->GetApplication( )  != NULL ) && (this->GetModuleChooseGUI() != NULL) ) {
         vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication() );
         //--- ALL modules pull-down menu 
-        if ( app->GetModuleGUICollection ( ) != NULL ) {
+        if ( (app->GetModuleGUICollection ( ) != NULL)  ) {
             app->GetModuleGUICollection( )->InitTraversal( );
             m = vtkSlicerModuleGUI::SafeDownCast( app->GetModuleGUICollection( )->GetNextItemAsObject( ));
             while ( m != NULL ) {
@@ -1305,7 +1312,6 @@ void vtkSlicerApplicationGUI::PopulateModuleChooseList ( )
         //--- TODO: make the initial value be module user sets as "home"
         this->GetModuleChooseGUI()->GetModulesMenuButton()->SetValue ("Volumes");
     }
-
 }
 
 
