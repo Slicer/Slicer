@@ -9,12 +9,21 @@ set scene [vtkMRMLScene New]
 
 set appGUI [vtkSlicerApplicationGUI New]
 
+set appLogic [vtkSlicerApplicationLogic New]
+
+$appGUI SetApplication $slicerApp
+$appGUI SetAndObserveApplicationLogic $appLogic
+$appGUI SetAndObserveMRMLScene $scene
+$appGUI BuildGUI
+$appGUI AddGUIObservers
+
 
 $appGUI Delete
 
 $slicerApp SetTheme ""
 $theme SetApplication ""
-#$theme Delete
+
+$appLogic Delete
 
 if { [$slicerApp GetBalloonHelpManager] != "" } {
   [$slicerApp GetBalloonHelpManager] SetApplication ""
