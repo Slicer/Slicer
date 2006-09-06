@@ -128,6 +128,8 @@ void vtkSlicerSlicesControlGUI::ProcessGUIEvents ( vtkObject *caller,
 
               if ( pushb == this->ToggleFgBgButton && event == vtkKWPushButton::InvokedEvent ) 
                 {
+                  // it seems like this following statement should be handled
+                  // in ProcessMRMLEvents, after the Composite node changes, no?
                   this->SliceFadeScale->SetValue( 1.0 - this->SliceFadeScale->GetValue() );
                 }
 

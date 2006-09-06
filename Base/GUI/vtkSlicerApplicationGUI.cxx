@@ -37,12 +37,10 @@
 #include "vtkKWFrame.h"
 #include "vtkKWMenu.h"
 #include "vtkKWMenuButton.h"
-#include "vtkKWLabel.h"
 #include "vtkKWNotebook.h"
 #include "vtkKWRenderWidget.h"
 #include "vtkKWUserInterfacePanel.h"
 #include "vtkKWResourceUtilities.h"
-
 #include "vtkKWSplitFrame.h"
 #include "vtkKWUserInterfaceManagerNotebook.h"
 
@@ -54,8 +52,6 @@
 #include "vtkSlicerGUILayout.h"
 #include "vtkSlicerTheme.h"
 #include "vtkSlicerColor.h"
-#include "vtkSlicerLogoIcons.h"
-#include "vtkSlicerModuleNavigationIcons.h"
 #include "vtkSlicerMRMLSaveDataWidget.h"
 
 //---------------------------------------------------------------------------
@@ -73,17 +69,13 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
     //--- slicer main window
     this->MainSlicerWin = vtkSlicerWindow::New ( );
 
+    //--- slicer application gui panel components.
     this->ApplicationToolbar = vtkSlicerToolbarGUI::New ( );
     this->ViewControlGUI = vtkSlicerViewControlGUI::New ( );
     this->SlicesControlGUI = vtkSlicerSlicesControlGUI::New ( );
     this->ModuleChooseGUI = vtkSlicerModuleChooseGUI::New ( );
+    this->LogoDisplayGUI = vtkSlicerLogoDisplayGUI::New ( );
     
-    //--- slicer icons
-    this->SlicerLogoIcons = vtkSlicerLogoIcons::New ();
-
-    //--- logo widgets to which icons are assigned.
-    this->SlicerLogoLabel = vtkKWLabel::New();
-
     // Control frames that comprise the Main Slicer GUI
     this->LogoFrame = vtkKWFrame::New();
     this->ModuleChooseFrame = vtkKWFrame::New();
@@ -123,23 +115,18 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
 vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
 {
 
-
-    if ( this->SlicerLogoIcons ) {
-        this->SlicerLogoIcons->Delete ( );
-        this->SlicerLogoIcons = NULL;
-    }
-
     if ( this->ViewControlGUI ) {
       this->ViewControlGUI->Delete ( );
       this->ViewControlGUI = NULL;
     }
-    
     if ( this->ModuleChooseGUI ) {
       this->ModuleChooseGUI->Delete ();
       this->ModuleChooseGUI = NULL;
     }
-
-    this->DeleteGUIPanelWidgets ( );
+    if ( this->LogoDisplayGUI ) {
+      this->LogoDisplayGUI->Delete ( );
+      this->LogoDisplayGUI = NULL;
+    }
 
     if ( this->SlicesControlGUI ) {
       this->SlicesControlGUI->Delete ( );
@@ -158,7 +145,28 @@ vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
 
     this->DestroyMain3DViewer ( );
     this->DestroyMainSliceViewers ( );
-    this->DeleteFrames ( );
+
+    // Delete frames
+    if ( this->LogoFrame ) {
+      this->LogoFrame->SetParent ( NULL );
+        this->LogoFrame->Delete ();
+        this->LogoFrame = NULL;
+    }
+    if ( this->ModuleChooseFrame ) {
+      this->ModuleChooseFrame->SetParent ( NULL );
+        this->ModuleChooseFrame->Delete ();
+        this->ModuleChooseFrame = NULL;
+    }
+    if ( this->SlicesControlFrame ) {
+      this->SlicesControlFrame->SetParent ( NULL );
+        this->SlicesControlFrame->Delete ( );
+        this->SlicesControlFrame = NULL;
+    }
+    if ( this->ViewControlFrame ) {
+      this->ViewControlFrame->SetParent ( NULL );
+        this->ViewControlFrame->Delete ( );
+        this->ViewControlFrame = NULL;
+    }
 
     if ( this->LoadSceneDialog ) {
       this->LoadSceneDialog->SetParent ( NULL );
@@ -339,19 +347,23 @@ void vtkSlicerApplicationGUI::AddGUIObservers ( )
   this->GetViewControlGUI()->AddGUIObservers ( );
   this->GetSlicesControlGUI ( )->AddGUIObservers ( );
   this->GetModuleChooseGUI ( )->AddGUIObservers ( );
+  this->GetLogoDisplayGUI ( )->AddGUIObservers ( );
 }
 
 
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::RemoveGUIObservers ( )
 {
+    this->GetMainSlicerWin()->GetFileMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    
     this->LoadSceneDialog->RemoveObservers ( vtkCommand::ModifiedEvent, (vtkCommand *) this->GUICallbackCommand );
     this->SaveSceneDialog->RemoveObservers ( vtkCommand::ModifiedEvent, (vtkCommand *) this->GUICallbackCommand );
-    this->GetMainSlicerWin()->GetFileMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
     this->GetApplicationToolbar()->RemoveGUIObservers ( );
     this->GetViewControlGUI ( )->RemoveGUIObservers ( );
     this->GetSlicesControlGUI ( )->RemoveGUIObservers ( );
+    this->GetModuleChooseGUI ( )->RemoveGUIObservers ( );
+    this->GetLogoDisplayGUI ( )->RemoveGUIObservers ( );
     
     this->RemoveMainSliceViewerObservers ( );
 
@@ -451,10 +463,15 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
             layout->InitializeMainSlicerWindowSize ( );
             layout->ConfigureMainSlicerWindowPanels ( );
 
-            // Build main GUI and components
-            this->BuildGUIPanel ( );
-            this->BuildLogoGUIPanel ( );
+            // Build main GUI frames and components that fill them
+            this->BuildGUIFrames ( );
 
+            // Build Logo GUI panel
+            vtkSlicerLogoDisplayGUI *logos = this->GetLogoDisplayGUI ( );
+            logos->SetApplicationGUI ( this );
+            logos->SetApplication ( app );
+            logos->BuildGUI ( this->LogoFrame );
+            
             // Build toolbar
             vtkSlicerToolbarGUI *appTB = this->GetApplicationToolbar ( );
             appTB->SetApplicationGUI ( this );
@@ -547,16 +564,6 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
             this->SaveSceneDialog->SaveDialogOn();
             this->SaveSceneDialog->RetrieveLastPathFromRegistry("OpenPath");
         }
-
-        //
-        // influence the theme of the ApplicationGUI
-        //
-        // toolbar color
-        // GUI Panel
-        // Logo GUI panel
-        // Module choose GUI Panel
-        // Slice Control
-        // View Control
 
     }
 }
@@ -693,48 +700,6 @@ void vtkSlicerApplicationGUI::DisplayMainSlicerWindow ( )
 }
 
     
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::DeleteGUIPanelWidgets ( )
-{
-
-    //--- widgets from LogoFrame
-    if (this->SlicerLogoLabel ) {
-      this->SlicerLogoLabel->SetParent ( NULL );
-        this->SlicerLogoLabel->Delete();
-        this->SlicerLogoLabel = NULL;
-    }
-
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::DeleteFrames ( )
-{
-    if ( this->LogoFrame ) {
-      this->LogoFrame->SetParent ( NULL );
-        this->LogoFrame->Delete ();
-        this->LogoFrame = NULL;
-    }
-    if ( this->ModuleChooseFrame ) {
-      this->ModuleChooseFrame->SetParent ( NULL );
-        this->ModuleChooseFrame->Delete ();
-        this->ModuleChooseFrame = NULL;
-    }
-    if ( this->SlicesControlFrame ) {
-      this->SlicesControlFrame->SetParent ( NULL );
-        this->SlicesControlFrame->Delete ( );
-        this->SlicesControlFrame = NULL;
-    }
-    if ( this->ViewControlFrame ) {
-      this->ViewControlFrame->SetParent ( NULL );
-        this->ViewControlFrame->Delete ( );
-        this->ViewControlFrame = NULL;
-    }
-}
-
-
-
 
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::BuildMainViewer ( int arrangementType)
@@ -1267,22 +1232,6 @@ void vtkSlicerApplicationGUI::SetAndObserveMainSliceLogic ( vtkSlicerSliceLogic 
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::BuildLogoGUIPanel ( )
-{
-    if ( this->GetApplication( )  != NULL ) {
-        vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast ( this->GetApplication () );
-        this->SlicerLogoLabel->SetParent ( this->LogoFrame );
-        this->SlicerLogoLabel->Create();
-        this->SlicerLogoLabel->SetImageToIcon ( this->SlicerLogoIcons->GetSlicerLogo() );
-        this->SlicerLogoLabel->SetBalloonHelpString ("placeholder logo");
-        app->Script ( "pack %s -side top -anchor w -padx 2 -pady 0", this->SlicerLogoLabel->GetWidgetName( ) );        
-    }
-    
-}
-
-
-
-//---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::PopulateModuleChooseList ( )
 {
     const char* mName;
@@ -1320,7 +1269,7 @@ void vtkSlicerApplicationGUI::PackFirstSliceViewerFrame ( )
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::BuildGUIPanel ( )
+void vtkSlicerApplicationGUI::BuildGUIFrames ( )
 {
 
 

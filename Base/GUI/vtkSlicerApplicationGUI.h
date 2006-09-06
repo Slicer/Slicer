@@ -24,8 +24,8 @@
 #include "vtkSlicerViewControlGUI.h"
 #include "vtkSlicerSlicesControlGUI.h"
 #include "vtkSlicerModuleChooseGUI.h"
+#include "vtkSlicerLogoDisplayGUI.h"
 
-#include "vtkSlicerLogoIcons.h"
 #include "vtkSlicerSliceLogic.h"
 
 #include "vtkSlicerWindow.h"
@@ -112,14 +112,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkGetObjectMacro ( SlicesControlGUI, vtkSlicerSlicesControlGUI );
     // Get the GUI containing the widgets to select modules.
     vtkGetObjectMacro ( ModuleChooseGUI, vtkSlicerModuleChooseGUI );
-    
-    // Description:
-    // Get the widgets in the LogoFrame
-    vtkGetObjectMacro (SlicerLogoLabel, vtkKWLabel);
-
-    // Description:
-    // Get the class containing all slicer GUI images for logos/icons
-    vtkGetObjectMacro (SlicerLogoIcons, vtkSlicerLogoIcons );
+    // Get the GUI containing the widgets to display logos
+    vtkGetObjectMacro ( LogoDisplayGUI, vtkSlicerLogoDisplayGUI );
     
     // Description:
     // Get the main slicer window.
@@ -129,10 +123,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // Description:
     // a Plane widget in the main window
     vtkGetObjectMacro ( PlaneWidget, vtkImplicitPlaneWidget );
-
-    // Description:
-    // a logo widget in the main window
-    vtkGetObjectMacro ( LogoWidget, vtkLogoWidget );
     
     // Description:
     // This method builds Slicer's main GUI
@@ -188,23 +178,16 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     
     // Description:
     // These methods populate the various GUI Panel frames
-    virtual void BuildGUIPanel ( );
+    virtual void BuildGUIFrames ( );
     virtual void BuildMainViewer ( int arrangementType);
     virtual void DestroyMain3DViewer ( );
     virtual void DestroyMainSliceViewers ( );
     virtual void CreateMain3DViewer ( int arrangementType );
     virtual void CreateMainSliceViewers ( int arrangementType );
-    virtual void BuildLogoGUIPanel ( );
     virtual void PopulateModuleChooseList ( );
 
-    
     virtual void Save3DViewConfig ( );
     virtual void Restore3DViewConfig ( );
-
-    // Desrciption:
-    // These methods delete widgets belonging to components of the Slicer Window
-    virtual void DeleteGUIPanelWidgets ( );
-    virtual void DeleteFrames ( );
 
     // Description:
     // Display Slicer's main window
@@ -217,22 +200,18 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // Description:
     // Main Slicer window
     vtkSlicerWindow *MainSlicerWin;
-
-    vtkSlicerLogoIcons *SlicerLogoIcons;
     
     // Description:
-    // Widgets for the main Slicer UI panel    
+    // Frames for the main Slicer UI panel    
     vtkKWFrame *LogoFrame;
     vtkKWFrame *ModuleChooseFrame;
     vtkKWFrame *SlicesControlFrame;
     vtkKWFrame *ViewControlFrame;
-    vtkImplicitPlaneWidget *PlaneWidget;
-    vtkLogoWidget *LogoWidget;
 
     // Description:
-    // Widgets for the Logo frame
-    vtkKWLabel *SlicerLogoLabel;
-    
+    // Frame for Lightbox viewing (not yet implemented)
+    vtkKWFrame *LightboxFrame;
+
     // Description:
     // Widgets for the File menu
     vtkKWLoadSaveDialog *LoadSceneDialog;
@@ -244,21 +223,19 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkSlicerViewControlGUI *ViewControlGUI;
     vtkSlicerSlicesControlGUI *SlicesControlGUI;
     vtkSlicerModuleChooseGUI *ModuleChooseGUI;
+    vtkSlicerLogoDisplayGUI *LogoDisplayGUI;
     
     // Description:
     // Main Slicer 3D Viewer
     vtkSlicerViewerWidget *ViewerWidget;
+    vtkImplicitPlaneWidget *PlaneWidget;
+    double MainRendererBBox[6];
+
     // Description:
     // Main 3 Slice Viewers
     vtkSlicerSliceGUI *MainSliceGUI0;
     vtkSlicerSliceGUI *MainSliceGUI1;
     vtkSlicerSliceGUI *MainSliceGUI2;
-    // Description:
-    // Frame for Lightbox viewing (not yet implemented)
-    vtkKWFrame *LightboxFrame;
-    // Description:
-    // Collection of SliceViewers
-    vtkSlicerSliceGUICollection *SliceGUICollection;
     // Description:
     // Logic for three main slice viewers. We keep
     // pointers to these so that they may be reassigned
@@ -267,16 +244,14 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkSlicerSliceLogic *MainSliceLogic0;
     vtkSlicerSliceLogic *MainSliceLogic1;    
     vtkSlicerSliceLogic *MainSliceLogic2;
+    // Description:
+    // Collection of SliceViewers
+    vtkSlicerSliceGUICollection *SliceGUICollection;
 
     // Description:
     // Used to tag all pages added to the tabbed notebook
     // arrangement of the main viewer.
     int ViewerPageTag;
-
-    // Description:
-    // contains the visible prop bounds for the main 3Dviewer's renderer
-    // Used for the ViewNav Widget.
-    double MainRendererBBox[6];
 
     vtkSlicerMRMLSaveDataWidget *SaveDataWidget;
     vtkKWDialog                 *SaveDataDialog;

@@ -48,6 +48,7 @@ SET(LIB_SRCS
   vtkSlicerViewControlGUI.cxx
   vtkSlicerSlicesControlGUI.cxx
   vtkSlicerModuleChooseGUI.cxx
+  vtkSlicerLogoDisplayGUI.cxx
   vtkSlicerApplicationGUI.cxx
   # KW Widgets
   vtkSlicerModuleCollapsibleFrame.cxx
