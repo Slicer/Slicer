@@ -56,6 +56,8 @@ vtkSlicerToolbarGUI::vtkSlicerToolbarGUI ( )
   this->MousePanIconButton = vtkKWPushButton::New ( );
   this->MouseRotateIconButton = vtkKWPushButton::New ( );
   this->MouseZoomIconButton = vtkKWPushButton::New ( );
+
+  this->ApplicationGUI = NULL;
   
   
 }
@@ -209,14 +211,19 @@ vtkSlicerToolbarGUI::~vtkSlicerToolbarGUI ( )
     
 
     // Remove the toolbars from the window's toolbar set
-    vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast ( this->GetApplicationGUI ( ) );
-    vtkSlicerWindow *win = p->GetMainSlicerWin();
-    if ( win ) {
-      vtkKWToolbarSet *tbs = win->GetMainToolbarSet ( );
-      if (tbs) {
-        tbs->RemoveAllToolbars ( );
+    vtkSlicerApplicationGUI *p = this->GetApplicationGUI ( );
+    if ( p ) 
+      {
+      vtkSlicerWindow *win = p->GetMainSlicerWin();
+      if ( win ) 
+        {
+        vtkKWToolbarSet *tbs = win->GetMainToolbarSet ( );
+        if (tbs) 
+          {
+          tbs->RemoveAllToolbars ( );
+          }
+        }
       }
-    }
    
   // Delete the toolbars
   if ( this->ModulesToolbar ) {
@@ -457,7 +464,7 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   //--- toolbars
   //
   //--- configure the window's main toolbarset.
-  vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast ( this->GetApplicationGUI ( ) );
+  vtkSlicerApplicationGUI *p = this->GetApplicationGUI ( );
   vtkSlicerWindow *win = p->GetMainSlicerWin();
 
   vtkKWToolbarSet *tbs = win->GetMainToolbarSet();
