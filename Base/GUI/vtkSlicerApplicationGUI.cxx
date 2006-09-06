@@ -58,6 +58,14 @@
 vtkStandardNewMacro (vtkSlicerApplicationGUI);
 vtkCxxRevisionMacro(vtkSlicerApplicationGUI, "$Revision: 1.0 $");
 
+// temporary crud for vtkDebugLeak hunting. Will remove
+// these and other related #ifndefs-#endifs throughout.
+
+//#define LOGODISPLAY_DEBUG
+//#define TOOLBAR_DEBUG
+//#define VIEWCONTROL_DEBUG
+//#define SLICESCONTROL_DEBUG
+//#define MODULECHOOSE_DEBUG
 
 //---------------------------------------------------------------------------
 vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
@@ -69,43 +77,55 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
     //--- slicer main window
     this->MainSlicerWin = vtkSlicerWindow::New ( );
 
-    //--- slicer application gui panel components.
-    this->ApplicationToolbar = vtkSlicerToolbarGUI::New ( );
-    this->ViewControlGUI = vtkSlicerViewControlGUI::New ( );
-    this->SlicesControlGUI = vtkSlicerSlicesControlGUI::New ( );
-    this->ModuleChooseGUI = vtkSlicerModuleChooseGUI::New ( );
-    this->LogoDisplayGUI = vtkSlicerLogoDisplayGUI::New ( );
-    
-    // Control frames that comprise the Main Slicer GUI
+    // Frames that comprise the Main Slicer GUI
+
     this->LogoFrame = vtkKWFrame::New();
     this->ModuleChooseFrame = vtkKWFrame::New();
-    this->SlicesControlFrame = vtkKWFrame::New();    
-    this->ViewControlFrame = vtkKWFrame::New();    
+    this->SlicesControlFrame = vtkKWFrame::New();
+    this->ViewControlFrame = vtkKWFrame::New();
+    this->LightboxFrame = NULL;
 
-    //--- main viewer and 3 main slice views
+    //--- GUIs containing components packed inside the Frames
+#ifndef TOOLBAR_DEBUG
+    this->ApplicationToolbar = vtkSlicerToolbarGUI::New ( );
+#endif
+#ifndef VIEWCONTROL_DEBUG
+    this->ViewControlGUI = vtkSlicerViewControlGUI::New ( );
+#endif
+#ifndef SLICESCONTROL_DEBUG
+    this->SlicesControlGUI = vtkSlicerSlicesControlGUI::New ( );
+#endif
+#ifndef MODULECHOOSE_DEBUG    
+    this->ModuleChooseGUI = vtkSlicerModuleChooseGUI::New ( );
+#endif
+#ifndef LOGODISPLAY_DEBUG    
+    this->LogoDisplayGUI = vtkSlicerLogoDisplayGUI::New ( );
+#endif
+    
+    //--- Main viewer, 3 main slice viewers and collection.
     this->ViewerWidget = NULL;
     this->MainSliceGUI0 = NULL;
     this->MainSliceGUI1 = NULL;
     this->MainSliceGUI2 = NULL;
-
-    //--- save the main slice logic in these.
+    this->SliceGUICollection = NULL;
+    
+    //--- Save the main slice logic in these.
     this->MainSliceLogic0 = NULL;
     this->MainSliceLogic1 = NULL;
     this->MainSliceLogic2 = NULL;
-    this->SliceGUICollection = NULL;
-    this->PlaneWidget = NULL;
-    this->LightboxFrame = NULL;
 
+    this->PlaneWidget = NULL;
+
+    //--- Save and load scene dialogs, widgets
     this->LoadSceneDialog = vtkKWLoadSaveDialog::New();
     this->SaveSceneDialog = vtkKWLoadSaveDialog::New();   
+    this->SaveDataWidget = NULL;
+    this->SaveDataDialog = NULL;      
 
     //--- unique tag used to mark all view notebook pages
     //--- so that they can be identified and deleted when 
     //--- viewer is reformatted.
     this->ViewerPageTag = 1999;
-
-    this->SaveDataWidget = NULL;
-    this->SaveDataDialog = NULL;      
 
 }
 
@@ -127,7 +147,6 @@ vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
       this->LogoDisplayGUI->Delete ( );
       this->LogoDisplayGUI = NULL;
     }
-
     if ( this->SlicesControlGUI ) {
       this->SlicesControlGUI->Delete ( );
       this->SlicesControlGUI = NULL;
@@ -136,7 +155,6 @@ vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
       this->ApplicationToolbar->Delete ( );
       this->ApplicationToolbar = NULL;
     }
-
     if ( this->SliceGUICollection )
       {
         this->SliceGUICollection->RemoveAllItems();
@@ -342,12 +360,21 @@ void vtkSlicerApplicationGUI::AddGUIObservers ( )
     
   this->LoadSceneDialog->AddObserver ( vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->SaveSceneDialog->AddObserver ( vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
-
+#ifndef TOOLBAR_DEBUG
   this->GetApplicationToolbar()->AddGUIObservers ( );
+#endif
+#ifndef VIEWCONTROL_DEBUG
   this->GetViewControlGUI()->AddGUIObservers ( );
+#endif
+#ifndef SLICESCONTROL_DEBUG
   this->GetSlicesControlGUI ( )->AddGUIObservers ( );
+#endif
+#ifndef MODULECHOOSE_DEBUG
   this->GetModuleChooseGUI ( )->AddGUIObservers ( );
+#endif
+#ifndef LOGODISPLAY_DEBUG
   this->GetLogoDisplayGUI ( )->AddGUIObservers ( );
+#endif
 }
 
 
@@ -359,12 +386,21 @@ void vtkSlicerApplicationGUI::RemoveGUIObservers ( )
     this->LoadSceneDialog->RemoveObservers ( vtkCommand::ModifiedEvent, (vtkCommand *) this->GUICallbackCommand );
     this->SaveSceneDialog->RemoveObservers ( vtkCommand::ModifiedEvent, (vtkCommand *) this->GUICallbackCommand );
 
+#ifndef TOOLBAR_DEBUG
     this->GetApplicationToolbar()->RemoveGUIObservers ( );
+#endif
+#ifndef VIEWCONTROL_DEBUG
     this->GetViewControlGUI ( )->RemoveGUIObservers ( );
+#endif
+#ifndef SLICESCONTROL_DEBUG
     this->GetSlicesControlGUI ( )->RemoveGUIObservers ( );
+#endif
+#ifndef MODULECHOOSE_DEBUG    
     this->GetModuleChooseGUI ( )->RemoveGUIObservers ( );
+#endif
+#ifndef LOGODISPLAY_DEBUG
     this->GetLogoDisplayGUI ( )->RemoveGUIObservers ( );
-    
+#endif    
     this->RemoveMainSliceViewerObservers ( );
 
 }
@@ -467,34 +503,42 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
             this->BuildGUIFrames ( );
 
             // Build Logo GUI panel
+#ifndef LOGODISPLAY_DEBUG
             vtkSlicerLogoDisplayGUI *logos = this->GetLogoDisplayGUI ( );
             logos->SetApplicationGUI ( this );
             logos->SetApplication ( app );
             logos->BuildGUI ( this->LogoFrame );
-            
+#endif            
             // Build toolbar
+#ifndef TOOLBAR_DEBUG
             vtkSlicerToolbarGUI *appTB = this->GetApplicationToolbar ( );
             appTB->SetApplicationGUI ( this );
             appTB->SetApplication ( app );
             appTB->BuildGUI ( );
+#endif
 
             // Build Module Selection GUI Panel
+#ifndef MODULECHOOSE_DEBUG
             vtkSlicerModuleChooseGUI * mcGUI = this->GetModuleChooseGUI ( );
             mcGUI->SetApplicationGUI ( this );
             mcGUI->SetApplication ( app );
             mcGUI->BuildGUI ( this->ModuleChooseFrame );
-
+#endif
             // Build SlicesControl panel
+#ifndef SLICESCONTROL_DEBUG            
             vtkSlicerSlicesControlGUI *scGUI = this->GetSlicesControlGUI ( );
             scGUI->SetApplicationGUI ( this );
             scGUI->SetApplication ( app );
             scGUI->BuildGUI ( this->SlicesControlFrame );
+#endif
 
             // Build 3DView Control panel
+#ifndef VIEWCONTROL_DEBUG
             vtkSlicerViewControlGUI *vcGUI = this->GetViewControlGUI ( );
             vcGUI->SetApplicationGUI ( this );
             vcGUI->SetApplication ( app );
             vcGUI->BuildGUI ( this->ViewControlFrame );
+#endif
 
             // Turn off the tabs for pages in the ModuleControlGUI
             this->MainSlicerWin->GetMainNotebook()->ShowIconsOff ( );
