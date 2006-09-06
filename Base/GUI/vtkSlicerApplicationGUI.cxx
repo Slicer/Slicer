@@ -64,6 +64,8 @@ vtkCxxRevisionMacro(vtkSlicerApplicationGUI, "$Revision: 1.0 $");
 //#define LOGODISPLAY_DEBUG
 //#define TOOLBAR_DEBUG
 //#define VIEWCONTROL_DEBUG
+//#define SLICEVIEWER_DEBUG
+//#define MENU_DEBUG
 //#define SLICESCONTROL_DEBUG
 //#define MODULECHOOSE_DEBUG
 
@@ -213,9 +215,10 @@ vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
         this->SaveSceneDialog = NULL;
     }
     if ( this->MainSlicerWin ) {
+      this->GetApplication()->RemoveWindow ( this->MainSlicerWin );
       this->MainSlicerWin->SetParent ( NULL );
-        this->MainSlicerWin->Delete ( );
-        this->MainSlicerWin = NULL;
+      this->MainSlicerWin->Delete ( );
+      this->MainSlicerWin = NULL;
     }
     this->MainSliceLogic0 = NULL;
     this->MainSliceLogic1 = NULL;
@@ -231,6 +234,7 @@ vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
         this->SaveDataDialog->SetParent ( NULL );
       this->SaveDataDialog->Delete();
       }
+    this->SetApplication(NULL);
 }
 
 
@@ -567,10 +571,13 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
             this->MainSlicerWin->GetMainNotebook()->SetUseFrameWithScrollbars ( 1 );
             // Build 3DViewer and Slice Viewers
 
+#ifndef SLICEVIEWER_DEBUG
             this->RemoveMainSliceViewersFromCollection ( );            
             this->BuildMainViewer ( vtkSlicerGUILayout::SlicerLayoutDefaultView );
             this->AddMainSliceViewersToCollection ( );            
+#endif
 
+#ifndef MENU_DEBUG
             // Construct menu bar and set up global key bindings
             // 
             // File Menu
@@ -623,6 +630,7 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
             this->SaveSceneDialog->SetFileTypes("{ {MRML Scene} {*.mrml} }");
             this->SaveSceneDialog->SaveDialogOn();
             this->SaveSceneDialog->RetrieveLastPathFromRegistry("OpenPath");
+#endif
         }
 
     }
