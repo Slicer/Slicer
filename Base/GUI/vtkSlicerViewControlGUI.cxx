@@ -309,6 +309,11 @@ void vtkSlicerViewControlGUI::ProcessGUIEvents ( vtkObject *caller,
   if ( this->GetApplicationGUI() != NULL )
     {
       vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));
+      vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( p->GetApplication() );
+      if ( app != NULL )
+        {
+          // Fill in.
+        }
     }
 }
 

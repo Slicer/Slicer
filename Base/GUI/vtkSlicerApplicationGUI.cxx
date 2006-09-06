@@ -36,12 +36,10 @@
 #include "vtkKWWidget.h"
 #include "vtkKWFrame.h"
 #include "vtkKWMenu.h"
-#include "vtkKWMenuButtonWithLabel.h"
+#include "vtkKWMenuButton.h"
 #include "vtkKWLabel.h"
 #include "vtkKWNotebook.h"
-#include "vtkKWPushButton.h"
 #include "vtkKWRenderWidget.h"
-#include "vtkKWScale.h"
 #include "vtkKWUserInterfacePanel.h"
 #include "vtkKWResourceUtilities.h"
 
@@ -78,10 +76,10 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
     this->ApplicationToolbar = vtkSlicerToolbarGUI::New ( );
     this->ViewControlGUI = vtkSlicerViewControlGUI::New ( );
     this->SlicesControlGUI = vtkSlicerSlicesControlGUI::New ( );
+    this->ModuleChooseGUI = vtkSlicerModuleChooseGUI::New ( );
     
     //--- slicer icons
     this->SlicerLogoIcons = vtkSlicerLogoIcons::New ();
-    this->SlicerModuleNavigationIcons = vtkSlicerModuleNavigationIcons::New ();
 
     //--- logo widgets to which icons are assigned.
     this->SlicerLogoLabel = vtkKWLabel::New();
@@ -92,14 +90,6 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
     this->SlicesControlFrame = vtkKWFrame::New();    
     this->ViewControlFrame = vtkKWFrame::New();    
 
-    //--- ui for the ModuleChooseFrame,
-    this->ModulesMenuButton = vtkKWMenuButton::New();
-    this->ModulesLabel = vtkKWLabel::New();
-    this->ModulesPrev = vtkKWPushButton::New ( );
-    this->ModulesNext = vtkKWPushButton::New ( );
-    this->ModulesHistory = vtkKWPushButton::New ( );
-    this->ModulesRefresh = vtkKWPushButton::New ( );
-    
     //--- main viewer and 3 main slice views
     this->ViewerWidget = NULL;
     this->MainSliceGUI0 = NULL;
@@ -144,9 +134,9 @@ vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
       this->ViewControlGUI = NULL;
     }
     
-    if ( this->SlicerModuleNavigationIcons ) {
-        this->SlicerModuleNavigationIcons->Delete ( );
-        this->SlicerModuleNavigationIcons = NULL;
+    if ( this->ModuleChooseGUI ) {
+      this->ModuleChooseGUI->Delete ();
+      this->ModuleChooseGUI = NULL;
     }
 
     this->DeleteGUIPanelWidgets ( );
@@ -340,32 +330,26 @@ void vtkSlicerApplicationGUI::ProcessSaveSceneAsCommand()
 void vtkSlicerApplicationGUI::AddGUIObservers ( )
 {
 
-    // add observer onto the menubutton in the SlicerControl frame
-  this->ModulesMenuButton->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->GetMainSlicerWin()->GetFileMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     
-  this->GetApplicationToolbar()->AddGUIObservers ( );
-  
-    this->GetMainSlicerWin()->GetFileMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    
-    this->LoadSceneDialog->AddObserver ( vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->SaveSceneDialog->AddObserver ( vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->LoadSceneDialog->AddObserver ( vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->SaveSceneDialog->AddObserver ( vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
 
-    this->GetViewControlGUI()->AddGUIObservers ( );
-    this->GetSlicesControlGUI ( )->AddGUIObservers ( );
-    
+  this->GetApplicationToolbar()->AddGUIObservers ( );
+  this->GetViewControlGUI()->AddGUIObservers ( );
+  this->GetSlicesControlGUI ( )->AddGUIObservers ( );
+  this->GetModuleChooseGUI ( )->AddGUIObservers ( );
 }
 
 
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::RemoveGUIObservers ( )
 {
-  this->ModulesMenuButton->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->GetApplicationToolbar()->RemoveGUIObservers ( );
-  
     this->LoadSceneDialog->RemoveObservers ( vtkCommand::ModifiedEvent, (vtkCommand *) this->GUICallbackCommand );
     this->SaveSceneDialog->RemoveObservers ( vtkCommand::ModifiedEvent, (vtkCommand *) this->GUICallbackCommand );
     this->GetMainSlicerWin()->GetFileMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
+    this->GetApplicationToolbar()->RemoveGUIObservers ( );
     this->GetViewControlGUI ( )->RemoveGUIObservers ( );
     this->GetSlicesControlGUI ( )->RemoveGUIObservers ( );
     
@@ -390,61 +374,17 @@ void vtkSlicerApplicationGUI::ProcessGUIEvents ( vtkObject *caller,
     // Observers on that logic should raise and lower the appropriate page.
     // So for now, the GUI is controlling the GUI instead of going thru the logic.
     //---
-    vtkSlicerModuleGUI * m;
-    const char *mName;
-    vtkKWPushButton *pushb = vtkKWPushButton::SafeDownCast (caller );
-    vtkKWMenuButton *menub = vtkKWMenuButton::SafeDownCast (caller );
-    vtkKWMenu *menu = vtkKWMenu::SafeDownCast (caller );
-    vtkKWLoadSaveDialog *filebrowse = vtkKWLoadSaveDialog::SafeDownCast(caller);
-    vtkKWScale *scale = vtkKWScale::SafeDownCast(caller);
 
+    vtkKWLoadSaveDialog *filebrowse = vtkKWLoadSaveDialog::SafeDownCast(caller);
     vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication() );
     vtkSlicerGUILayout *layout = app->GetMainLayout ( );
         
-    if (menu == this->GetMainSlicerWin()->GetFileMenu() && event == vtkKWMenu::MenuItemInvokedEvent)
-    {
-      int index = (int) (*((int *)callData));
-      if (index == 2)
-        {
-          // use command directly instead of this
-          //this->ProcessLoadSceneCommand()
-        }
-      else if (index == 3)
-        {
-          // use command directly instead of this
-          //this->ProcessSaveSceneCommand()
-        }
-    }
-
-    //--- Process events from menubutton
-    //--- TODO: change the Logic's "active module" and raise the appropriate UIPanel.
-    //    if ( menub == this->ModulesMenuButton && event == vtkCommand::ModifiedEvent )
-    if ( menu == this->ModulesMenuButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
-        {
-            if ( app->GetModuleGUICollection ( ) != NULL )
-                {
-                    app->GetModuleGUICollection( )->InitTraversal( );
-                    m = vtkSlicerModuleGUI::SafeDownCast( app->GetModuleGUICollection( )->GetNextItemAsObject( ) );
-                    while (m != NULL )
-                        {
-                            mName = m->GetUIPanel()->GetName();
-                            if ( !strcmp (this->ModulesMenuButton->GetValue(), mName) ) {
-                                m->GetUIPanel()->Raise();
-                                break;
-                            }
-                            m = vtkSlicerModuleGUI::SafeDownCast( app->GetModuleGUICollection( )->GetNextItemAsObject( ) );
-                        }
-                    //this->ModulesMenuButton->SetValue ( "Modules" );
-                }
-        }
-
-
-   vtkSlicerMRMLSaveDataWidget *saveDataWidget = vtkSlicerMRMLSaveDataWidget::SafeDownCast(caller);
-   if (saveDataWidget == this->SaveDataWidget && event == vtkSlicerMRMLSaveDataWidget::DataSavedEvent)
-    {
-    this->SaveDataDialog->OK();
-    }
-  }
+    vtkSlicerMRMLSaveDataWidget *saveDataWidget = vtkSlicerMRMLSaveDataWidget::SafeDownCast(caller);
+    if (saveDataWidget == this->SaveDataWidget && event == vtkSlicerMRMLSaveDataWidget::DataSavedEvent)
+      {
+        this->SaveDataDialog->OK();
+      }
+}
 
 
 //---------------------------------------------------------------------------
@@ -514,13 +454,18 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
             // Build main GUI and components
             this->BuildGUIPanel ( );
             this->BuildLogoGUIPanel ( );
-            this->BuildModuleChooseGUIPanel ( );
 
             // Build toolbar
             vtkSlicerToolbarGUI *appTB = this->GetApplicationToolbar ( );
             appTB->SetApplicationGUI ( this );
             appTB->SetApplication ( app );
             appTB->BuildGUI ( );
+
+            // Build Module Selection GUI Panel
+            vtkSlicerModuleChooseGUI * mcGUI = this->GetModuleChooseGUI ( );
+            mcGUI->SetApplicationGUI ( this );
+            mcGUI->SetApplication ( app );
+            mcGUI->BuildGUI ( this->ModuleChooseFrame );
 
             // Build SlicesControl panel
             vtkSlicerSlicesControlGUI *scGUI = this->GetSlicesControlGUI ( );
@@ -753,37 +698,6 @@ void vtkSlicerApplicationGUI::DisplayMainSlicerWindow ( )
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::DeleteGUIPanelWidgets ( )
 {
-    //--- widgets from the ModuleChooseFrame
-    if ( this->ModulesMenuButton ) {
-      this->ModulesMenuButton->SetParent ( NULL );
-        this->ModulesMenuButton->Delete();
-        this->ModulesMenuButton = NULL;
-    }
-    if ( this->ModulesLabel ) {
-      this->ModulesLabel->SetParent ( NULL );
-        this->ModulesLabel->Delete ( );
-        this->ModulesLabel = NULL;
-    }
-    if ( this->ModulesPrev ) {
-      this->ModulesPrev->SetParent ( NULL );
-        this->ModulesPrev->Delete ( );
-        this->ModulesPrev = NULL;
-    }
-    if ( this->ModulesNext ) {
-      this->ModulesNext->SetParent ( NULL );
-        this->ModulesNext->Delete ( );
-        this->ModulesNext = NULL;
-    }
-    if ( this->ModulesHistory) {
-      this->ModulesHistory->SetParent ( NULL );
-        this->ModulesHistory->Delete ( );
-        this->ModulesHistory = NULL;
-    }
-    if ( this->ModulesRefresh) {
-      this->ModulesRefresh->SetParent ( NULL );
-        this->ModulesRefresh->Delete ( );
-        this->ModulesRefresh = NULL;
-    }
 
     //--- widgets from LogoFrame
     if (this->SlicerLogoLabel ) {
@@ -1382,72 +1296,14 @@ void vtkSlicerApplicationGUI::PopulateModuleChooseList ( )
             m = vtkSlicerModuleGUI::SafeDownCast( app->GetModuleGUICollection( )->GetNextItemAsObject( ));
             while ( m != NULL ) {
                 mName = m->GetUIPanel( )->GetName( );
-                this->ModulesMenuButton->GetMenu( )->AddRadioButton( mName );
+                this->GetModuleChooseGUI()->GetModulesMenuButton()->GetMenu( )->AddRadioButton( mName );
                 m = vtkSlicerModuleGUI::SafeDownCast( app->GetModuleGUICollection( )->GetNextItemAsObject( ));
             }
         }
         //--- TODO: make the initial value be module user sets as "home"
-        this->ModulesMenuButton->SetValue ("Volumes");
+        this->GetModuleChooseGUI()->GetModulesMenuButton()->SetValue ("Volumes");
     }
 
-}
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::BuildModuleChooseGUIPanel ( )
-{
-    
-    if ( this->GetApplication( )  != NULL ) {
-        vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication() );
-        
-        //--- ALL modules menu button label
-        this->ModulesLabel->SetParent ( this->ModuleChooseFrame );
-        this->ModulesLabel->Create ( );
-
-        this->ModulesLabel->SetText ( "Modules:");
-        this->ModulesLabel->SetAnchorToWest ( );
-        this->ModulesLabel->SetWidth ( 7 );
-
-        //--- All modules menu button
-        this->ModulesMenuButton->SetParent ( this->ModuleChooseFrame );
-        this->ModulesMenuButton->Create ( );
-        this->ModulesMenuButton->SetWidth ( 28 );
-        this->ModulesMenuButton->IndicatorVisibilityOn ( );
-        this->ModulesMenuButton->SetBalloonHelpString ("Select a Slicer module.");
-
-        //--- Next and previous module button
-        this->ModulesNext->SetParent ( this->ModuleChooseFrame );
-        this->ModulesNext->Create ( );
-        this->ModulesNext->SetBorderWidth ( 0 );
-        this->ModulesNext->SetImageToIcon ( this->SlicerModuleNavigationIcons->GetModuleNextIcon() );
-        this->ModulesNext->SetBalloonHelpString ("Navigate to the next module in your use history.");
-
-        this->ModulesPrev->SetParent ( this->ModuleChooseFrame );
-        this->ModulesPrev->Create ( );
-        this->ModulesPrev->SetBorderWidth ( 0 );
-        this->ModulesPrev->SetImageToIcon ( this->SlicerModuleNavigationIcons->GetModulePrevIcon() );
-        this->ModulesPrev->SetBalloonHelpString ("Navigate to the previous module in your use history.");
-        
-        this->ModulesHistory->SetParent ( this->ModuleChooseFrame );
-        this->ModulesHistory->Create ( );
-        this->ModulesHistory->SetBorderWidth ( 0 );
-        this->ModulesHistory->SetImageToIcon ( this->SlicerModuleNavigationIcons->GetModuleHistoryIcon() );
-        this->ModulesHistory->SetBalloonHelpString ("Pop up a window showing your module use history.");
-
-        this->ModulesRefresh->SetParent ( this->ModuleChooseFrame );
-        this->ModulesRefresh->Create ( );
-        this->ModulesRefresh->SetBorderWidth ( 0 );
-        this->ModulesRefresh->SetImageToIcon ( this->SlicerModuleNavigationIcons->GetModuleRefreshIcon() );
-        this->ModulesRefresh->SetBalloonHelpString ("Refresh the list of available modules.");
-        
-        //--- pack everything up.
-        app->Script ( "pack %s -side left -anchor n -padx 1 -ipadx 1 -pady 3", this->ModulesLabel->GetWidgetName( ) );
-        app->Script ( "pack %s -side left -anchor n -padx 1 -ipady 0 -pady 2", this->ModulesMenuButton->GetWidgetName( ) );
-        app->Script ( "pack %s -side left -anchor c -padx 2 -pady 2", this->ModulesPrev->GetWidgetName( ) );
-        app->Script ( "pack %s -side left -anchor c -padx 2 -pady 2", this->ModulesNext->GetWidgetName( ) );
-        app->Script ( "pack %s -side left -anchor c -padx 2 -pady 2", this->ModulesHistory->GetWidgetName( ) );
-        app->Script ( "pack %s -side left -anchor c -padx 2 -pady 2", this->ModulesRefresh->GetWidgetName( ) );
-    }
 }
 
 

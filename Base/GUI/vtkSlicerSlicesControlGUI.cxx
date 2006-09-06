@@ -105,7 +105,8 @@ void vtkSlicerSlicesControlGUI::ProcessGUIEvents ( vtkObject *caller,
   if ( this->GetApplicationGUI() != NULL )
     {
       vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));
-      if ( p->GetApplication() != NULL )
+      vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( p->GetApplication() );
+      if ( app != NULL )
         {
 
           // Process the Fade scale and button
