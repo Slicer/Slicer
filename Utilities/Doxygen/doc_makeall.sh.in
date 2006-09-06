@@ -156,6 +156,10 @@ export VTK_TAGFILE_DEST_DIR="$DOXTEMP"
 export DOWNLOAD_EXTRA_TAGFILE=@DOCUMENTATION_DOWNLOAD_EXTRA_TAGFILE@
 export EXTRA_TAGFILE=@DOXYGEN_EXTRA_TAGFILENAME@
 export EXTRA_TAGFILE_REMOTE_DIR="@DOXYGEN_EXTRA_TAGFILE_REMOTE_DIR@"
+export EXTRA_TAGFILE1=@DOXYGEN_EXTRA_TAGFILENAME1@
+export EXTRA_TAGFILE1_REMOTE_DIR="@DOXYGEN_EXTRA_TAGFILE_REMOTE_DIR1@"
+export EXTRA_TAGFILE2=@DOXYGEN_EXTRA_TAGFILENAME2@
+export EXTRA_TAGFILE2_REMOTE_DIR="@DOXYGEN_EXTRA_TAGFILE_REMOTE_DIR2@"
 export EXTRA_TAGFILE_DEST_DIR="$DOXTEMP"
 
 echoexit()
@@ -230,13 +234,29 @@ if test "x$DOWNLOAD_VTK_TAGFILE" == "xON" ; then
 fi
 
 if test "x$DOWNLOAD_EXTRA_TAGFILE" == "xON" ; then
-    if test "x$EXTRA_TAGFILE" != "x" ; then
-        if test "x$WGET_PROG" != "xNOTFOUND" ; then
+    if test "x$WGET_PROG" != "xNOTFOUND" ; then
+        if test "x$EXTRA_TAGFILE" != "x" ; then
             $WGET_PROG -nd -nH \
                 "$EXTRA_TAGFILE_REMOTE_DIR/$EXTRA_TAGFILE.gz" \
                 -O "$EXTRA_TAGFILE_DEST_DIR/$EXTRA_TAGFILE.gz"
             if test "x$GZIP_PROG" != "xNOTFOUND" ; then
                 $GZIP_PROG -f -d "$EXTRA_TAGFILE_DEST_DIR/$EXTRA_TAGFILE.gz"
+            fi        
+        fi        
+        if test "x$EXTRA_TAGFILE1" != "x" ; then
+            $WGET_PROG -nd -nH \
+                "$EXTRA_TAGFILE1_REMOTE_DIR/$EXTRA_TAGFILE1.gz" \
+                -O "$EXTRA_TAGFILE_DEST_DIR/$EXTRA_TAGFILE1.gz"
+            if test "x$GZIP_PROG" != "xNOTFOUND" ; then
+                $GZIP_PROG -f -d "$EXTRA_TAGFILE_DEST_DIR/$EXTRA_TAGFILE1.gz"
+            fi        
+        fi        
+        if test "x$EXTRA_TAGFILE2" != "x" ; then
+            $WGET_PROG -nd -nH \
+                "$EXTRA_TAGFILE2_REMOTE_DIR/$EXTRA_TAGFILE2.gz" \
+                -O "$EXTRA_TAGFILE_DEST_DIR/$EXTRA_TAGFILE2.gz"
+            if test "x$GZIP_PROG" != "xNOTFOUND" ; then
+                $GZIP_PROG -f -d "$EXTRA_TAGFILE_DEST_DIR/$EXTRA_TAGFILE2.gz"
             fi        
         fi        
     fi
@@ -315,6 +335,12 @@ if test "x$RM_PROG" != "xNOTFOUND" ; then
     if test "x$DOWNLOAD_EXTRA_TAGFILE" == "xON" ; then
         if test "x$EXTRA_TAGFILE" != "x" ; then
             $RM_PROG -f "$EXTRA_TAGFILE_DEST_DIR/$EXTRA_TAGFILE"
+        fi
+        if test "x$EXTRA_TAGFILE1" != "x" ; then
+            $RM_PROG -f "$EXTRA_TAGFILE1_DEST_DIR/$EXTRA_TAGFILE1"
+        fi
+        if test "x$EXTRA_TAGFILE2" != "x" ; then
+            $RM_PROG -f "$EXTRA_TAGFILE2_DEST_DIR/$EXTRA_TAGFILE2"
         fi
     fi
 

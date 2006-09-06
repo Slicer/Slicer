@@ -10,7 +10,8 @@ IF (BUILD_DOCUMENTATION)
   SET(DOCUMENTATION_DOWNLOAD_EXTRA_TAGFILE ON)
   SET(DOXYGEN_EXTRA_TAGFILENAME "ParaViewNightlyDoc.tag")
   SET(DOXYGEN_EXTRA_TAGFILE_REMOTE_DIR "http://www.paraview.org/doc/nightly")
-
+  SET(DOXYGEN_EXTRA_TAGFILENAME1 "InsightDoxygen.tag")
+  SET(DOXYGEN_EXTRA_TAGFILE_REMOTE_DIR1 "http://www.itk.org/Doxygen/")
   SET(DOXYGEN_PROJECT_NAME "Slicer3")
   SET(DOXYGEN_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
   SET(DOXYGEN_PROJECT_SOURCE_DIR "${Slicer3_SOURCE_DIR}")
@@ -51,6 +52,7 @@ IF (BUILD_DOCUMENTATION)
   SET(DOXYGEN_IGNORE_PREFIX "vtkKW vtkPV vtkSM vtk vtkITK vtkMRML vtkKW vtkSlicer itk")
   SET(DOXYGEN_TAG_FILES
     "\"@CMAKE_CURRENT_BINARY_DIR@/vtkNightlyDoc.tag=http://www.vtk.org/doc/nightly/html\"\\
+    \"@CMAKE_CURRENT_BINARY_DIR@/InsightDoxygen.tag=http://www.itk.org/Doxygen/html\"\\
     \"@CMAKE_CURRENT_BINARY_DIR@/ParaViewNightlyDoc.tag=http://www.paraview.org/doc/nightly/html\"")
 
   #
