@@ -8,5 +8,6 @@ SUBDIRS(
     SlicerIO
     ITKCommandIO
     MRMLIDImageIO
+    FreeSurfer
 )
 
