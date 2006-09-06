@@ -215,7 +215,10 @@ vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
         this->SaveSceneDialog = NULL;
     }
     if ( this->MainSlicerWin ) {
-      this->GetApplication()->RemoveWindow ( this->MainSlicerWin );
+      if ( this->GetApplication() )
+        {
+        this->GetApplication()->RemoveWindow ( this->MainSlicerWin );
+        }
       this->MainSlicerWin->SetParent ( NULL );
       this->MainSlicerWin->Delete ( );
       this->MainSlicerWin = NULL;
