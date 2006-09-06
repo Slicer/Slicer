@@ -61,7 +61,7 @@ vtkCxxRevisionMacro(vtkSlicerApplicationGUI, "$Revision: 1.0 $");
 // temporary crud for vtkDebugLeak hunting. Will remove
 // these and other related #ifndefs-#endifs throughout.
 
-//#define LOGODISPLAY_DEBUG
+#define LOGODISPLAY_DEBUG
 //#define TOOLBAR_DEBUG
 //#define VIEWCONTROL_DEBUG
 //#define SLICESCONTROL_DEBUG
@@ -134,27 +134,36 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
 //---------------------------------------------------------------------------
 vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
 {
-
+#ifndef VIEWCONTROL_DEBUG
     if ( this->ViewControlGUI ) {
       this->ViewControlGUI->Delete ( );
       this->ViewControlGUI = NULL;
     }
+#endif
+#ifndef MODULECHOOSE_DEBUG
     if ( this->ModuleChooseGUI ) {
       this->ModuleChooseGUI->Delete ();
       this->ModuleChooseGUI = NULL;
     }
+    #endif
+#ifndef LOGODISPLAY_DEBUG
     if ( this->LogoDisplayGUI ) {
       this->LogoDisplayGUI->Delete ( );
       this->LogoDisplayGUI = NULL;
     }
+#endif
+#ifndef SLICESCONTROL_DEBUG
     if ( this->SlicesControlGUI ) {
       this->SlicesControlGUI->Delete ( );
       this->SlicesControlGUI = NULL;
     }
+#endif
+#ifndef TOOLBAR_DEBUG
     if ( this->ApplicationToolbar ) {
       this->ApplicationToolbar->Delete ( );
       this->ApplicationToolbar = NULL;
     }
+#endif
     if ( this->SliceGUICollection )
       {
         this->SliceGUICollection->RemoveAllItems();
