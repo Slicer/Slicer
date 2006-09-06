@@ -26,7 +26,7 @@ Version:   $Revision: 1.2 $
 #include "vtkPolyDataReader.h"
 #include "vtkSTLReader.h"
 //TODO: read in a free surfer file
-//#include "vtkFSSurfaceReader.h"
+#include "vtkFSSurfaceReader.h"
 #include "vtkPolyDataWriter.h"
 
 
@@ -168,10 +168,10 @@ int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
             extention == std::string(".pial") ) 
     {
     //TODO: read in a free surfer file
-    //vtkFSSurfaceReader *reader = vtkFSSurfaceReader::New();
-    //reader->SetFileName(fullName.c_str());
-    //reader->Update();
-    //modelNode->SetPolyData(reader->GetOutput());
+    vtkFSSurfaceReader *reader = vtkFSSurfaceReader::New();
+    reader->SetFileName(fullName.c_str());
+    reader->Update();
+    modelNode->SetAndObservePolyData(reader->GetOutput());
     }  
   else if (extention == std::string(".stl")) 
     {

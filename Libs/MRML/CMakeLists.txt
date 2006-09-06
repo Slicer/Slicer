@@ -54,6 +54,8 @@ INCLUDE_DIRECTORIES(
   ${vtkITK_BINARY_DIR}
   ${ITK_INCLUDE_DIR}
   ${VTK_INCLUDE_DIR}
+  ${FreeSurfer_SOURCE_DIR}
+  ${FreeSurfer_BINARY_DIR}
   )
 
 # --------------------------------------------------------------------------
@@ -87,6 +89,7 @@ TARGET_LINK_LIBRARIES(MRML
   ITKBasicFilters
   ITKIO
   ITKDICOMParser
+  FreeSurfer
   )
 
 
