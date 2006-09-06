@@ -1,34 +1,29 @@
 set slicerApp [vtkSlicerApplication New]
+
 #set theme [vtkSlicerTheme New]
 #$slicerApp SetTheme $theme
-#$slicerApp SetTheme ""
-#$theme SetApplication ""
-#$theme Delete
-$slicerApp Delete
-
-
-#set slicerApp [vtkSlicerApplication New]
-#puts [[$slicerApp GetSlicerTheme] Print]
-#$slicerApp Delete
+set theme [$slicerApp GetSlicerTheme]
+$slicerApp InstallTheme $theme
 
 set scene [vtkMRMLScene New]
+
+set appGUI [vtkSlicerApplicationGUI New]
+
+
+$appGUI Delete
+
+$slicerApp SetTheme ""
+$theme SetApplication ""
+#$theme Delete
+
+if { [$slicerApp GetBalloonHelpManager] != "" } {
+  [$slicerApp GetBalloonHelpManager] SetApplication ""
+}
+$slicerApp Delete
 $scene Delete
 
-exit 0
 
-    // Create MRML scene
-    vtkMRMLScene *scene = vtkMRMLScene::New();
-    vtkMRMLScene::SetActiveScene( scene );
-    
-    // Create the application Logic object, 
-    // Create the application GUI object
-    // and have it observe the Logic
-    vtkSlicerApplicationLogic *appLogic = vtkSlicerApplicationLogic::New( );
-    appLogic->SetMRMLScene ( scene );
-    // pass through event handling once without observing the scene
-    // -- allows any dependent nodes to be created
-    appLogic->ProcessMRMLEvents (scene, vtkCommand::ModifiedEvent, NULL);  
-    appLogic->SetAndObserveMRMLScene ( scene );
+exit 0
 
     // CREATE APPLICATION GUI, including the main window
 #ifndef APPGUI_DEBUG
