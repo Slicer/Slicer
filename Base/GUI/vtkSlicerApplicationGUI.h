@@ -127,15 +127,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkGetObjectMacro (ModulesHistory, vtkKWPushButton );
     vtkGetObjectMacro (ModulesRefresh, vtkKWPushButton );
 
-    /*
-    // Description:
-    // Get the widgets in the SlicesControlFrame
-    vtkGetObjectMacro (ToggleAnnotationButton, vtkKWPushButton );
-    vtkGetObjectMacro (ToggleFgBgButton, vtkKWPushButton );
-    vtkGetObjectMacro (SliceFadeScale, vtkKWScale );
-    vtkGetObjectMacro (SliceOpacityScale, vtkKWScale );
-    */
-
     // Description:
     // Get the class containing all slicer GUI images for logos/icons
     vtkGetObjectMacro (SlicerLogoIcons, vtkSlicerLogoIcons );
@@ -217,9 +208,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     virtual void BuildLogoGUIPanel ( );
     virtual void BuildModuleChooseGUIPanel ( );
     virtual void PopulateModuleChooseList ( );
-    /*
-    virtual void BuildSliceControlGUIPanel ( );
-    */
     
     virtual void Save3DViewConfig ( );
     virtual void Restore3DViewConfig ( );
@@ -267,15 +255,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkKWPushButton *ModulesHistory;
     vtkKWPushButton *ModulesRefresh;
     
-    /*
-    //Description:
-    // Widgets for the SlicesControlFrame in the GUI
-    vtkKWPushButton *ToggleAnnotationButton;
-    vtkKWPushButton *ToggleFgBgButton;
-    vtkKWScale *SliceFadeScale;
-    vtkKWScale *SliceOpacityScale;
-    */
-
     vtkKWLoadSaveDialog *LoadSceneDialog;
     vtkKWLoadSaveDialog *SaveSceneDialog;
 
