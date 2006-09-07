@@ -259,6 +259,8 @@ void vtkSlicerMRMLTreeWidget::CreateWidget ( )
 
   this->UpdateTreeFromMRML();
 
+  frame->Delete();
+
   // MRML Node Inspector
 
   frame = vtkKWFrameWithLabel::New();

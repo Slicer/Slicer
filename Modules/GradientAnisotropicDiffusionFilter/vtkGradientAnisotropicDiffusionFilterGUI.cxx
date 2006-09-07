@@ -307,6 +307,7 @@ void vtkGradientAnisotropicDiffusionFilterGUI::BuildGUI ( )
   helpFrame->SetLabelText ("Help");
   app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                 helpFrame->GetWidgetName(), this->UIPanel->GetPageWidget("GradientAnisotropicDiffusionFilter")->GetWidgetName());
+  helpFrame->Delete();
 
   vtkKWFrameWithLabel *moduleFrame = vtkKWFrameWithLabel::New ( );
   moduleFrame->SetParent ( this->UIPanel->GetPageWidget ( "GradientAnisotropicDiffusionFilter" ) );
@@ -394,7 +395,7 @@ void vtkGradientAnisotropicDiffusionFilterGUI::BuildGUI ( )
   app->Script("pack %s -side top -anchor e -padx 20 -pady 10", 
                 this->ApplyButton->GetWidgetName());
 
-
+  moduleFrame->Delete();
 
   
 }
