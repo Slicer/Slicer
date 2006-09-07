@@ -694,6 +694,7 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     }
 
      
+    helpMessage->Delete ( );
     displayFrame->Delete ( );
     listFrame->Delete();
     modHelpFrame->Delete ( );
