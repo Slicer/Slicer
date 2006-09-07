@@ -68,148 +68,175 @@ vtkSlicerViewControlGUI::~vtkSlicerViewControlGUI ( )
 
   if ( this->SlicerViewControlIcons )
     {
-      this->SlicerViewControlIcons->Delete ( );
-      this->SlicerViewControlIcons = NULL;
+    this->SlicerViewControlIcons->Delete ( );
+    this->SlicerViewControlIcons = NULL;
     }
 
-     //--- widgets from ViewControlFrame
-    if ( this->SpinButton ) {
-      this->SpinButton->SetParent ( NULL );
-        this->SpinButton->Delete();
-        this->SpinButton = NULL;
+   //--- widgets from ViewControlFrame
+  if ( this->SpinButton ) 
+    {
+    this->SpinButton->SetParent ( NULL );
+    this->SpinButton->Delete();
+    this->SpinButton = NULL;
     }
-    if ( this->RockButton) {
-      this->RockButton->SetParent ( NULL );
-        this->RockButton->Delete();
-        this->RockButton = NULL;
+  if ( this->RockButton) 
+    {
+    this->RockButton->SetParent ( NULL );
+    this->RockButton->Delete();
+    this->RockButton = NULL;
     }
-    if ( this->OrthoButton ) {
-      this->OrthoButton->SetParent ( NULL );
-        this->OrthoButton->Delete();
-        this->OrthoButton = NULL;
+  if ( this->OrthoButton ) 
+    {
+    this->OrthoButton->SetParent ( NULL );
+    this->OrthoButton->Delete();
+    this->OrthoButton = NULL;
     }
-    if ( this->CenterButton ) {
-      this->CenterButton->SetParent ( NULL );      
-        this->CenterButton->Delete();
-        this->CenterButton = NULL;
+  if ( this->CenterButton ) 
+    {
+    this->CenterButton->SetParent ( NULL );      
+    this->CenterButton->Delete();
+    this->CenterButton = NULL;
     }
-    if ( this->SelectButton ) {
-      this->SelectButton->SetParent ( NULL );
-        this->SelectButton->Delete();
-        this->SelectButton = NULL;
+  if ( this->SelectButton ) 
+    {
+    this->SelectButton->SetParent ( NULL );
+    this->SelectButton->Delete();
+    this->SelectButton = NULL;
     }
-    if ( this->FOVEntry ) {
-      this->FOVEntry->SetParent ( NULL );
-        this->FOVEntry->Delete();
-        this->FOVEntry= NULL;
+  if ( this->FOVEntry ) 
+    {
+    this->FOVEntry->SetParent ( NULL );
+    this->FOVEntry->Delete();
+    this->FOVEntry= NULL;
     }
-        if ( this->RotateAroundAIconButton ) {
-      this->RotateAroundAIconButton->SetParent ( NULL );      
-        this->RotateAroundAIconButton->Delete ( );
-        this->RotateAroundAIconButton = NULL;
+  if ( this->RotateAroundAIconButton ) 
+    {
+    this->RotateAroundAIconButton->SetParent ( NULL );      
+    this->RotateAroundAIconButton->Delete ( );
+    this->RotateAroundAIconButton = NULL;
     }
-    if ( this->RotateAroundPIconButton ) {
-      this->RotateAroundPIconButton->SetParent ( NULL );
-        this->RotateAroundPIconButton->Delete ( );
-        this->RotateAroundPIconButton = NULL;
+  if ( this->RotateAroundPIconButton ) 
+    {
+    this->RotateAroundPIconButton->SetParent ( NULL );
+    this->RotateAroundPIconButton->Delete ( );
+    this->RotateAroundPIconButton = NULL;
+   }
+  if ( this->RotateAroundRIconButton ) 
+    {
+    this->RotateAroundRIconButton->SetParent ( NULL );
+    this->RotateAroundRIconButton->Delete ( );
+    this->RotateAroundRIconButton = NULL;
     }
-    if ( this->RotateAroundRIconButton ) {
-      this->RotateAroundRIconButton->SetParent ( NULL );
-        this->RotateAroundRIconButton->Delete ( );
-        this->RotateAroundRIconButton = NULL;
+  if ( this->RotateAroundLIconButton ) 
+    {
+    this->RotateAroundLIconButton->SetParent ( NULL );
+    this->RotateAroundLIconButton->Delete ( );
+    this->RotateAroundLIconButton = NULL;
     }
-    if ( this->RotateAroundLIconButton ) {
-      this->RotateAroundLIconButton->SetParent ( NULL );
-        this->RotateAroundLIconButton->Delete ( );
-        this->RotateAroundLIconButton = NULL;
+  if ( this->RotateAroundSIconButton ) 
+    {
+    this->RotateAroundSIconButton->SetParent ( NULL );
+    this->RotateAroundSIconButton->Delete ( );
+    this->RotateAroundSIconButton = NULL;
     }
-    if ( this->RotateAroundSIconButton ) {
-      this->RotateAroundSIconButton->SetParent ( NULL );
-        this->RotateAroundSIconButton->Delete ( );
-        this->RotateAroundSIconButton = NULL;
+  if ( this->RotateAroundIIconButton ) 
+    {
+    this->RotateAroundIIconButton->SetParent ( NULL );
+    this->RotateAroundIIconButton->Delete ( );
+    this->RotateAroundIIconButton = NULL;
     }
-    if ( this->RotateAroundIIconButton ) {
-      this->RotateAroundIIconButton->SetParent ( NULL );
-        this->RotateAroundIIconButton->Delete ( );
-        this->RotateAroundIIconButton = NULL;
+  if ( this->RotateAroundMiddleIconButton ) 
+    {
+    this->RotateAroundMiddleIconButton->SetParent ( NULL );
+    this->RotateAroundMiddleIconButton->Delete ( );
+    this->RotateAroundMiddleIconButton = NULL;
     }
-    if ( this->RotateAroundMiddleIconButton ) {
-      this->RotateAroundMiddleIconButton->SetParent ( NULL );
-        this->RotateAroundMiddleIconButton->Delete ( );
-        this->RotateAroundMiddleIconButton = NULL;
+  if ( this->RotateAroundTopCornerIconButton ) 
+    {
+    this->RotateAroundTopCornerIconButton->SetParent ( NULL );
+    this->RotateAroundTopCornerIconButton->Delete ( );
+    this->RotateAroundTopCornerIconButton = NULL;
     }
-    if ( this->RotateAroundTopCornerIconButton ) {
-      this->RotateAroundTopCornerIconButton->SetParent ( NULL );
-        this->RotateAroundTopCornerIconButton->Delete ( );
-        this->RotateAroundTopCornerIconButton = NULL;
+  if ( this->RotateAroundBottomCornerIconButton ) 
+    {
+    this->RotateAroundBottomCornerIconButton->SetParent ( NULL );
+    this->RotateAroundBottomCornerIconButton->Delete ( );
+    this->RotateAroundBottomCornerIconButton = NULL;
     }
-    if ( this->RotateAroundBottomCornerIconButton ) {
-      this->RotateAroundBottomCornerIconButton->SetParent ( NULL );
-        this->RotateAroundBottomCornerIconButton->Delete ( );
-        this->RotateAroundBottomCornerIconButton = NULL;
+  if ( this->LookFromAIconButton ) 
+    {
+    this->LookFromAIconButton->SetParent ( NULL );
+    this->LookFromAIconButton->Delete ( );
+    this->LookFromAIconButton = NULL;
     }
-    if ( this->LookFromAIconButton ) {
-      this->LookFromAIconButton->SetParent ( NULL );
-        this->LookFromAIconButton->Delete ( );
-        this->LookFromAIconButton = NULL;
+  if ( this->LookFromPIconButton ) 
+    {
+    this->LookFromPIconButton->SetParent ( NULL );
+    this->LookFromPIconButton->Delete ( );
+    this->LookFromPIconButton = NULL;
     }
-    if ( this->LookFromPIconButton ) {
-      this->LookFromPIconButton->SetParent ( NULL );
-        this->LookFromPIconButton->Delete ( );
-        this->LookFromPIconButton = NULL;
+  if ( this->LookFromRIconButton ) 
+    {
+    this->LookFromRIconButton->SetParent ( NULL );
+    this->LookFromRIconButton->Delete ( );
+    this->LookFromRIconButton = NULL;
     }
-    if ( this->LookFromRIconButton ) {
-      this->LookFromRIconButton->SetParent ( NULL );
-        this->LookFromRIconButton->Delete ( );
-        this->LookFromRIconButton = NULL;
+  if ( this->LookFromLIconButton ) 
+    {
+    this->LookFromLIconButton->SetParent ( NULL );
+    this->LookFromLIconButton->Delete ( );
+    this->LookFromLIconButton = NULL;
     }
-    if ( this->LookFromLIconButton ) {
-      this->LookFromLIconButton->SetParent ( NULL );
-        this->LookFromLIconButton->Delete ( );
-        this->LookFromLIconButton = NULL;
+  if ( this->LookFromSIconButton ) 
+    {
+    this->LookFromSIconButton->SetParent ( NULL );
+    this->LookFromSIconButton->Delete ( );
+    this->LookFromSIconButton = NULL;
     }
-    if ( this->LookFromSIconButton ) {
-      this->LookFromSIconButton->SetParent ( NULL );
-        this->LookFromSIconButton->Delete ( );
-        this->LookFromSIconButton = NULL;
+  if ( this->LookFromIIconButton ) 
+    {
+    this->LookFromIIconButton->SetParent ( NULL );
+    this->LookFromIIconButton->Delete ( );
+    this->LookFromIIconButton = NULL;
     }
-    if ( this->LookFromIIconButton ) {
-      this->LookFromIIconButton->SetParent ( NULL );
-        this->LookFromIIconButton->Delete ( );
-        this->LookFromIIconButton = NULL;
+  if ( this->LookFromMiddleIconButton ) 
+    {
+    this->LookFromMiddleIconButton->SetParent ( NULL );
+    this->LookFromMiddleIconButton->Delete ( );
+    this->LookFromMiddleIconButton = NULL;
     }
-    if ( this->LookFromMiddleIconButton ) {
-      this->LookFromMiddleIconButton->SetParent ( NULL );
-        this->LookFromMiddleIconButton->Delete ( );
-        this->LookFromMiddleIconButton = NULL;
+  if ( this->LookFromTopCornerIconButton ) 
+    {
+    this->LookFromTopCornerIconButton->SetParent ( NULL );
+    this->LookFromTopCornerIconButton->Delete ( );
+    this->LookFromTopCornerIconButton = NULL;
     }
-    if ( this->LookFromTopCornerIconButton ) {
-      this->LookFromTopCornerIconButton->SetParent ( NULL );
-        this->LookFromTopCornerIconButton->Delete ( );
-        this->LookFromTopCornerIconButton = NULL;
+  if ( this->LookFromBottomCornerIconButton ) 
+    {
+    this->LookFromBottomCornerIconButton->SetParent ( NULL );
+    this->LookFromBottomCornerIconButton->Delete ( );
+    this->LookFromBottomCornerIconButton = NULL;
     }
-    if ( this->LookFromBottomCornerIconButton ) {
-      this->LookFromBottomCornerIconButton->SetParent ( NULL );
-        this->LookFromBottomCornerIconButton->Delete ( );
-        this->LookFromBottomCornerIconButton = NULL;
+  if ( this->NavZoomInIconButton ) 
+    {
+    this->NavZoomInIconButton->SetParent ( NULL );
+    this->NavZoomInIconButton->Delete ( );
+    this->NavZoomInIconButton = NULL;
     }
-    if ( this->NavZoomInIconButton ) {
-      this->NavZoomInIconButton->SetParent ( NULL );
-        this->NavZoomInIconButton->Delete ( );
-        this->NavZoomInIconButton = NULL;
+  if ( this->NavZoomOutIconButton ) 
+    {
+    this->NavZoomOutIconButton->SetParent ( NULL );
+    this->NavZoomOutIconButton->Delete ( );
+    this->NavZoomOutIconButton = NULL;
     }
-    if ( this->NavZoomOutIconButton ) {
-      this->NavZoomOutIconButton->SetParent ( NULL );
-        this->NavZoomOutIconButton->Delete ( );
-        this->NavZoomOutIconButton = NULL;
-    }
-    if ( this->NavZoomScale ) {
-      this->NavZoomScale->SetParent ( NULL );
-        this->NavZoomScale->Delete ( );
-        this->NavZoomScale = NULL;
+  if ( this->NavZoomScale ) 
+    {
+    this->NavZoomScale->SetParent ( NULL );
+    this->NavZoomScale->Delete ( );
+    this->NavZoomScale = NULL;
     }
 
-    this->SetApplicationGUI ( NULL );
+  this->SetApplicationGUI ( NULL );
 }
 
 
