@@ -83,7 +83,7 @@ int Slicer3_Tcl_Eval ( Tcl_Interp *interp, const char *script )
   return 0;
 }
 
-//#define MODULES_DEBUG
+#define MODULES_DEBUG
 //#define SLICES_DEBUG
 //#define MODELS_DEBUG
 //#define VOLUMES_DEBUG
@@ -353,7 +353,6 @@ int Slicer3_main(int argc, char *argv[])
 
 #endif
 
-#ifndef SLICES_DEBUG
 
     // --- Slices module
     // - set up each of the slice logics (these initialize their
@@ -382,7 +381,9 @@ int Slicer3_main(int argc, char *argv[])
     sliceLogic2->ProcessLogicEvents ();
     sliceLogic2->ProcessMRMLEvents (scene, vtkCommand::ModifiedEvent, NULL);
     sliceLogic2->SetAndObserveMRMLSceneEvents ( scene, events );
+    events->Delete();
 
+#ifndef SLICES_DEBUG
     vtkSlicerSlicesGUI *slicesGUI = vtkSlicerSlicesGUI::New ();
     slicesGUI->SetApplication ( slicerApp );
     slicesGUI->SetAndObserveApplicationLogic ( appLogic );
@@ -778,13 +779,13 @@ int Slicer3_main(int argc, char *argv[])
     fiducialsLogic->SetAndObserveMRMLScene ( NULL );
     fiducialsLogic->Delete();
 #endif
-#ifndef SLICES_DEBUG
     sliceLogic2->SetAndObserveMRMLScene ( NULL );
     sliceLogic2->Delete ();
     sliceLogic1->SetAndObserveMRMLScene ( NULL );
     sliceLogic1->Delete ();
     sliceLogic0->SetAndObserveMRMLScene ( NULL );
     sliceLogic0->Delete ();
+#ifndef SLICES_DEBUG
 #endif
     appLogic->SetAndObserveMRMLScene ( NULL );
     appLogic->Delete ();

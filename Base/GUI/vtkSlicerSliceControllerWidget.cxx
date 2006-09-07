@@ -519,6 +519,7 @@ void vtkSlicerSliceControllerWidget::ProcessMRMLEvents ( vtkObject *caller, unsi
   // bring the translation into slice space
   // and overwrite the z part
   sliceToRAS->MultiplyPoint(v1, v2);
+  sliceToRAS->Delete();
 
   if ( v2[2] != (double) this->OffsetScale->GetValue() )
     {

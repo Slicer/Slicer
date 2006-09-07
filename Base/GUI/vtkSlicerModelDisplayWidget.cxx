@@ -60,6 +60,12 @@ vtkSlicerModelDisplayWidget::~vtkSlicerModelDisplayWidget ( )
     this->SurfaceMaterialPropertyWidget->Delete();
     this->SurfaceMaterialPropertyWidget = NULL;
     }
+  if (this->ChangeColorButton)
+    {
+    this->ChangeColorButton->SetParent(NULL);
+    this->ChangeColorButton->Delete();
+    this->ChangeColorButton= NULL;
+    }
   
   this->SetMRMLScene ( NULL );
   this->SetModelNodeID (NULL);
