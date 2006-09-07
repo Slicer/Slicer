@@ -83,7 +83,7 @@ int Slicer3_Tcl_Eval ( Tcl_Interp *interp, const char *script )
   return 0;
 }
 
-#define MODULES_DEBUG
+//#define MODULES_DEBUG
 //#define SLICES_DEBUG
 //#define MODELS_DEBUG
 //#define VOLUMES_DEBUG
@@ -844,6 +844,7 @@ int main(int argc, char *argv[])
     return Slicer3_main(argc, argv);
 }
 #endif
+
 
 
 
