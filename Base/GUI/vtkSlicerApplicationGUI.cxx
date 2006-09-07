@@ -145,6 +145,8 @@ vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
 {
 #ifndef VIEWCONTROL_DEBUG
     if ( this->ViewControlGUI ) {
+      this->ViewControlGUI->SetApplicationGUI(NULL);
+      this->ViewControlGUI->SetApplication(NULL);
       this->ViewControlGUI->Delete ( );
       this->ViewControlGUI = NULL;
     }
@@ -154,7 +156,7 @@ vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
       this->ModuleChooseGUI->Delete ();
       this->ModuleChooseGUI = NULL;
     }
-    #endif
+#endif
 #ifndef LOGODISPLAY_DEBUG
     if ( this->LogoDisplayGUI ) {
       this->LogoDisplayGUI->Delete ( );
@@ -218,6 +220,11 @@ vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
       if ( this->GetApplication() )
         {
         this->GetApplication()->RemoveWindow ( this->MainSlicerWin );
+        vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication() );
+        if ( app->GetMainLayout() )
+          {
+          app->GetMainLayout()->SetMainSlicerWin(NULL);
+          }
         }
       this->MainSlicerWin->SetParent ( NULL );
       this->MainSlicerWin->Delete ( );
@@ -229,12 +236,12 @@ vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
 
     if (this->SaveDataWidget)
       {
-        this->SaveDataWidget->SetParent ( NULL );
+      this->SaveDataWidget->SetParent ( NULL );
       this->SaveDataWidget->Delete();
       }
     if (this->SaveDataDialog)
       {
-        this->SaveDataDialog->SetParent ( NULL );
+      this->SaveDataDialog->SetParent ( NULL );
       this->SaveDataDialog->Delete();
       }
     this->SetApplication(NULL);

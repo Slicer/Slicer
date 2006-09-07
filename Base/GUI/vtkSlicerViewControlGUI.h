@@ -76,6 +76,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
     vtkGetObjectMacro (NavZoomInIconButton, vtkKWPushButton );
     vtkGetObjectMacro (NavZoomOutIconButton, vtkKWPushButton );
     vtkGetObjectMacro (NavZoomScale, vtkKWScale );
+    vtkGetObjectMacro (NavZoom, vtkKWLabel );
 
     // Description:
     // Get the main slicer toolbars.
@@ -157,6 +158,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
     vtkKWPushButton *NavZoomInIconButton;
     vtkKWPushButton *NavZoomOutIconButton;
     vtkKWScale *NavZoomScale;
+    vtkKWLabel *NavZoom;
 
        // Description:
     // These widgets tile a composite image

@@ -1,3 +1,4 @@
+
 set slicerApp [vtkSlicerApplication New]
 
 set theme [$slicerApp GetSlicerTheme]
