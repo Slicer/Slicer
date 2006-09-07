@@ -40,12 +40,15 @@ vtkFSSurfaceReader::vtkFSSurfaceReader()
 {
   vtkPolyData *output = vtkPolyData::New();
   this->SetOutput(output);
+
   // Releasing data for pipeline parallism.
   // Filters will know it is empty. 
   output->ReleaseData();
   output->Delete();
   this->ExecutePiece = this->ExecuteNumberOfPieces = 0;
   this->ExecuteGhostLevel = 0;
+
+  
 }
 
 vtkFSSurfaceReader::~vtkFSSurfaceReader()
@@ -66,7 +69,6 @@ vtkPolyData *vtkFSSurfaceReader::GetOutput()
     {
     return NULL;
     }
-  
 #if (VTK_MAJOR_VERSION >= 5)
   return (vtkPolyData *)(this->GetOutput(0));
 #else
@@ -78,9 +80,9 @@ vtkPolyData *vtkFSSurfaceReader::GetOutput()
 vtkPolyData *vtkFSSurfaceReader::GetOutput(int idx)
 {
 #if (VTK_MAJOR_VERSION >= 5)
-  return (vtkPolyData*)( this->GetOutputDataObject(idx) );
+    return vtkPolyData::SafeDownCast( this->GetOutputDataObject(idx) );
 #else
-  return (vtkPolyData*)( this->vtkSource::GetOutput(idx) );
+    return vtkPolyData::SafeDownCast( this->vtkSource::GetOutput(idx) );
 #endif
 }
 
@@ -133,8 +135,15 @@ void vtkFSSurfaceReader::ComputeInputUpdateExtents(vtkDataObject *data)
 }
 #endif
 
-void vtkFSSurfaceReader::Execute()
+int vtkFSSurfaceReader::RequestData(
+        vtkInformation *,
+        vtkInformationVector **,
+        vtkInformationVector *outputVector)
 {
+    vtkInformation *outInfo = outputVector->GetInformationObject(0);
+//  vtkPolyData *output = this->GetOutput();
+    vtkPolyData *output = vtkPolyData::SafeDownCast(
+        outInfo->Get(vtkDataObject::DATA_OBJECT()));
   FILE* surfaceFile;
   int magicNumber;
   char line[256];
@@ -150,7 +159,7 @@ void vtkFSSurfaceReader::Execute()
   vtkIdType faceIndices[4];
   vtkPoints *outputVertices;
   vtkCellArray *outputFaces;
-  vtkPolyData *output = this->GetOutput();
+  
 #if FS_CALC_NORMALS
   vtkFloatArray *outputNormals;
   FSVertex* vertices;
@@ -167,14 +176,14 @@ void vtkFSSurfaceReader::Execute()
 #endif
   int totalSteps = 1;
   int thisStep = 0;
-  
-  vtkDebugMacro(<<"Reading vtk polygonal data...");
+    
+  vtkDebugMacro(<<"RequestData: Reading vtk polygonal data...");
 
   // Try to open the file.
   surfaceFile = fopen(this->FileName, "rb") ;
   if (!surfaceFile) {
     vtkErrorMacro (<< "Could not open file " << this->FileName);
-    return;
+    return 1;
   }  
 
   // Get the three byte magic number. We support two file types.
@@ -183,7 +192,7 @@ void vtkFSSurfaceReader::Execute()
       magicNumber != vtkFSSurfaceReader::FS_NEW_QUAD_FILE_MAGIC_NUMBER &&
       magicNumber != vtkFSSurfaceReader::FS_TRIANGLE_FILE_MAGIC_NUMBER) {
     vtkErrorMacro (<< "vtkFSSurfaceReader.cxx Execute: Wrong file type when loading " << this->FileName << "\n magic number = " << magicNumber << ". Supported ar " << vtkFSSurfaceReader::FS_QUAD_FILE_MAGIC_NUMBER << ", " << vtkFSSurfaceReader::FS_NEW_QUAD_FILE_MAGIC_NUMBER << ", and " << vtkFSSurfaceReader::FS_TRIANGLE_FILE_MAGIC_NUMBER );
-    return;
+    return 1;
   }
 
 #if FS_DEBUG
@@ -515,9 +524,11 @@ void vtkFSSurfaceReader::Execute()
 #endif
 
   
-  outputFaces->Squeeze(); 
+  outputFaces->Squeeze();
   output->SetPolys(outputFaces);
   outputFaces->Delete();
+
+  return 1;
 }
 //----------------------------------------------------------------------------
 #if (VTK_MAJOR_VERSION >= 5)

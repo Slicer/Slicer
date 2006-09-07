@@ -23,6 +23,7 @@
 #include "vtkFreeSurferWin32Header.h"
 #include "vtkDataReader.h"
 #include "vtkInformation.h"
+#include "vtkInformationVector.h"
 #include "vtkPolyData.h"
 
 // Prints debugging info.
@@ -33,6 +34,7 @@
 #define FS_CALC_NORMALS 0
 
 class vtkInformation;
+class vtkInformationVector;
 class vtkPolyData;
 class VTK_FreeSurfer_EXPORT vtkFSSurfaceReader : public vtkDataReader
 {
@@ -60,11 +62,17 @@ public:
       FS_MAX_NUM_FACES_PER_VERTEX = 10, // kinda arbitrary
   };
   //ETX
+
+  int RequestData(
+      vtkInformation *,
+      vtkInformationVector **,
+      vtkInformationVector *outputVector);
+  
 protected:
   vtkFSSurfaceReader();
   ~vtkFSSurfaceReader();
 
-  void Execute();
+  //void Execute();
 
   // Update extent of PolyData is specified in pieces.  
   // Since all DataObjects should be able to set UpdateExent as pieces,
