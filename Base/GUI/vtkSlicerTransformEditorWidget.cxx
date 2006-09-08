@@ -7,6 +7,8 @@
 #include "vtkKWMenuButton.h"
 #include "vtkKWPushButton.h"
 #include "vtkKWMenu.h"
+#include "vtkKWScaleWithEntry.h"
+
 #include "vtkSlicerNodeSelectorWidget.h"
 #include "vtkKWMatrix4x4.h"
 
@@ -24,6 +26,9 @@ vtkSlicerTransformEditorWidget::vtkSlicerTransformEditorWidget ( )
   this->MatrixWidget = NULL;
   this->IdentityButton = NULL;
   this->InvertButton = NULL;
+  this->TranslationScaleLR = NULL;
+  this->TranslationScalePA = NULL;
+  this->TranslationScaleIS = NULL;
 }
 
 
@@ -55,6 +60,24 @@ vtkSlicerTransformEditorWidget::~vtkSlicerTransformEditorWidget ( )
     this->InvertButton->Delete();
     this->InvertButton = NULL;
     } 
+  if (this->TranslationScaleLR)
+    {
+    this->TranslationScaleLR->SetParent(NULL);
+    this->TranslationScaleLR->Delete();
+    this->TranslationScaleLR = NULL;
+    } 
+  if (this->TranslationScalePA)
+    {
+    this->TranslationScalePA->SetParent(NULL);
+    this->TranslationScalePA->Delete();
+    this->TranslationScalePA = NULL;
+    } 
+  if (this->TranslationScaleIS)
+    {
+    this->TranslationScaleIS->SetParent(NULL);
+    this->TranslationScaleIS->Delete();
+    this->TranslationScaleIS = NULL;
+    } 
   this->SetMRMLScene ( NULL );
 }
 
@@ -78,11 +101,15 @@ void vtkSlicerTransformEditorWidget::ProcessWidgetEvents ( vtkObject *caller,
 
     if (node != NULL)
       {
-      // TODO: there should be a observer added to the transform node so the matrix
       // will update when the node value changes
+      vtkMatrix4x4 *matrix = node->GetMatrixTransformToParent();
       this->MatrixWidget->EnabledOn();
-      this->MatrixWidget->SetAndObserveMatrix4x4(node->GetMatrixTransformToParent());
+      this->MatrixWidget->SetAndObserveMatrix4x4(matrix);
       this->MatrixWidget->UpdateWidget();
+      this->TranslationScaleLR->SetValue(matrix->GetElement(3,0));
+      this->TranslationScalePA->SetValue(matrix->GetElement(3,1));
+      this->TranslationScaleIS->SetValue(matrix->GetElement(3,2));
+      this->MatrixWidget->GetMatrix4x4()->AddObserver (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
       }
     else
       {
@@ -101,6 +128,12 @@ void vtkSlicerTransformEditorWidget::ProcessWidgetEvents ( vtkObject *caller,
     this->MatrixWidget->GetMatrix4x4()->Invert();
     this->MatrixWidget->UpdateWidget();
   }
+  else if (this->MatrixWidget->GetMatrix4x4() == vtkMatrix4x4::SafeDownCast(caller) && event == vtkCommand::ModifiedEvent)
+    {
+    this->TranslationScaleLR->SetValue(this->MatrixWidget->GetMatrix4x4()->GetElement(3,0));
+    this->TranslationScalePA->SetValue(this->MatrixWidget->GetMatrix4x4()->GetElement(3,1));
+    this->TranslationScaleIS->SetValue(this->MatrixWidget->GetMatrix4x4()->GetElement(3,2));
+    }
 
 
 } 
@@ -119,7 +152,7 @@ void vtkSlicerTransformEditorWidget::RemoveWidgetObservers ( ) {
   this->TransformEditSelectorWidget->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->IdentityButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->InvertButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  
+  this->MatrixWidget->GetMatrix4x4()->RemoveObservers (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
 }
 
 
@@ -173,6 +206,48 @@ void vtkSlicerTransformEditorWidget::CreateWidget ( )
     this->Script("pack %s -side top -anchor e -padx 2 -pady 2", 
                 this->MatrixWidget->GetWidgetName());
 
+    // Translation FRAME            
+    vtkKWFrameWithLabel *translateFrame = vtkKWFrameWithLabel::New ( );
+    translateFrame->SetParent ( transformFrame->GetFrame() );
+    translateFrame->Create ( );
+    translateFrame->SetLabelText ("Translation");
+    //transformFrame->CollapseFrame ( );
+    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+                   translateFrame->GetWidgetName() );
+    
+    this->TranslationScaleLR =  vtkKWScaleWithEntry::New() ;
+    this->TranslationScaleLR->SetParent( translateFrame->GetFrame() );
+    this->TranslationScaleLR->Create();
+    this->TranslationScaleLR->SetLabelText("LR");
+    this->TranslationScaleLR->SetWidth ( 20 );
+    this->TranslationScaleLR->SetCommand(this, "TransformChangingCallback");
+    this->TranslationScaleLR->SetEndCommand(this, "TransformChangedCallback");
+    this->TranslationScaleLR->SetEntryCommand(this, "TransformChangedCallback");
+    this->Script("pack %s -side top -anchor e -padx 20 -pady 10", 
+                  this->TranslationScaleLR->GetWidgetName());
+
+    this->TranslationScalePA =  vtkKWScaleWithEntry::New() ;
+    this->TranslationScalePA->SetParent( translateFrame->GetFrame() );
+    this->TranslationScalePA->Create();
+    this->TranslationScalePA->SetLabelText("PA");
+    this->TranslationScalePA->SetWidth ( 20 );
+    this->TranslationScalePA->SetCommand(this, "TransformChangingCallback");
+    this->TranslationScalePA->SetEndCommand(this, "TransformChangedCallback");
+    this->TranslationScalePA->SetEntryCommand(this, "TransformChangedCallback");
+    this->Script("pack %s -side top -anchor e -padx 20 -pady 10", 
+                  this->TranslationScalePA->GetWidgetName());
+
+    this->TranslationScaleIS =  vtkKWScaleWithEntry::New() ;
+    this->TranslationScaleIS->SetParent( translateFrame->GetFrame() );
+    this->TranslationScaleIS->Create();
+    this->TranslationScaleIS->SetLabelText("IS");
+    this->TranslationScaleIS->SetWidth ( 20 );
+    this->TranslationScaleIS->SetCommand(this, "TransformChangingCallback");
+    this->TranslationScaleIS->SetEndCommand(this, "TransformChangedCallback");
+    this->TranslationScaleIS->SetEntryCommand(this, "TransformChangedCallback");
+    this->Script("pack %s -side top -anchor e -padx 20 -pady 10", 
+                  this->TranslationScaleIS->GetWidgetName());
+
     this->IdentityButton = vtkKWPushButton::New();
     this->IdentityButton->SetParent( transformFrame->GetFrame() );
     this->IdentityButton->Create();
@@ -195,12 +270,41 @@ void vtkSlicerTransformEditorWidget::CreateWidget ( )
 
     this->InvertButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
-
     transformFrame->Delete();
-    
+    translateFrame->Delete();
 }
 
+void vtkSlicerTransformEditorWidget::TransformChangedCallback(double)
+{
+  vtkMRMLLinearTransformNode *node = vtkMRMLLinearTransformNode::SafeDownCast(this->TransformEditSelectorWidget->GetSelected());
 
+  if (node != NULL)
+    {
+    // will update when the node value changes
+    vtkMatrix4x4 *matrix = node->GetMatrixTransformToParent();
+    matrix->SetElement(3,0, this->TranslationScaleLR->GetValue());
+    matrix->SetElement(3,1, this->TranslationScalePA->GetValue());
+    matrix->SetElement(3,2, this->TranslationScaleIS->GetValue());
+    this->MatrixWidget->EnabledOn();
+    this->MatrixWidget->UpdateWidget();
+    }
+}
+
+void vtkSlicerTransformEditorWidget::TransformChangingCallback(double)
+{
+  vtkMRMLLinearTransformNode *node = vtkMRMLLinearTransformNode::SafeDownCast(this->TransformEditSelectorWidget->GetSelected());
+
+  if (node != NULL)
+    {
+    // will update when the node value changes
+    vtkMatrix4x4 *matrix = node->GetMatrixTransformToParent();
+    matrix->SetElement(3,0, this->TranslationScaleLR->GetValue());
+    matrix->SetElement(3,1, this->TranslationScalePA->GetValue());
+    matrix->SetElement(3,2, this->TranslationScaleIS->GetValue());
+    this->MatrixWidget->EnabledOn();
+    this->MatrixWidget->UpdateWidget();
+    }
+}
 
 
 

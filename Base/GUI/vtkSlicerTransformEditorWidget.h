@@ -29,6 +29,7 @@
 class vtkSlicerNodeSelectorWidget;
 class vtkKWPushButton;
 class vtkKWMatrix4x4;
+class vtkKWScaleWithEntry;
 
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerTransformEditorWidget : public vtkSlicerWidget
 {
@@ -50,6 +51,9 @@ public:
   // removes observers on widgets in the class
   virtual void RemoveWidgetObservers ( );
   
+  void TransformChangedCallback(double);
+  void TransformChangingCallback(double);
+
  protected:
   vtkSlicerTransformEditorWidget();
   virtual ~vtkSlicerTransformEditorWidget();
@@ -62,6 +66,9 @@ public:
   vtkKWMatrix4x4*              MatrixWidget;
   vtkKWPushButton*             IdentityButton;
   vtkKWPushButton*             InvertButton;
+  vtkKWScaleWithEntry* TranslationScaleLR;
+  vtkKWScaleWithEntry* TranslationScalePA;
+  vtkKWScaleWithEntry* TranslationScaleIS;
 
 private:
 
