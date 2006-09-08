@@ -20,6 +20,8 @@
 #ifndef __vtkKWMatrix4x4_h
 #define __vtkKWMatrix4x4_h
 
+#include "vtkCallbackCommand.h"
+
 #include "vtkKWCompositeWidget.h"
 
 #include "vtkMatrix4x4.h" // Needed for some constants
@@ -38,6 +40,7 @@ public:
   // the vtk object to manipulate
   vtkGetObjectMacro (Matrix4x4, vtkMatrix4x4);
   vtkSetObjectMacro (Matrix4x4, vtkMatrix4x4);
+  void SetAndObserveMatrix4x4(vtkMatrix4x4 *matrix);
 
   // Description:
   // the listbox widget
@@ -84,6 +87,9 @@ protected:
 private:
   vtkKWMatrix4x4(const vtkKWMatrix4x4&); // Not implemented
   void operator=(const vtkKWMatrix4x4&); // Not implemented
+
+  vtkCallbackCommand *MRMLCallbackCommand;
+
 };
 
 #endif

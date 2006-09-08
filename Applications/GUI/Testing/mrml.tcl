@@ -114,7 +114,7 @@ proc mrmlMatrices {} {
     set ::XYToSlice [vtkKWMatrix4x4 New]
     $::XYToSlice SetParent [$::XYToSliceFrame GetFrame]
     $::XYToSlice Create
-    $::XYToSlice SetMatrix4x4 [$::slicen GetXYToSlice]
+    $::XYToSlice SetAndObserveMatrix4x4 [$::slicen GetXYToSlice]
     pack [$::XYToSlice GetWidgetName] -side top -anchor nw -expand false -fill none -padx 2 -pady 2
 
     set ::SliceToRASFrame [vtkKWFrameWithLabel New]
@@ -126,7 +126,7 @@ proc mrmlMatrices {} {
     set ::SliceToRAS [vtkKWMatrix4x4 New]
     $::SliceToRAS SetParent [$::SliceToRASFrame GetFrame]
     $::SliceToRAS Create
-    $::SliceToRAS SetMatrix4x4 [$::slicen GetSliceToRAS]
+    $::SliceToRAS SetAndObserveMatrix4x4 [$::slicen GetSliceToRAS]
     pack [$::SliceToRAS GetWidgetName] -side top -anchor nw -expand false -fill none -padx 2 -pady 2
 
     set ::XYToRASFrame [vtkKWFrameWithLabel New]
@@ -138,7 +138,7 @@ proc mrmlMatrices {} {
     set ::XYToRAS [vtkKWMatrix4x4 New]
     $::XYToRAS SetParent [$::XYToRASFrame GetFrame]
     $::XYToRAS Create
-    $::XYToRAS SetMatrix4x4 [$::slicen GetXYToRAS]
+    $::XYToRAS SetAndObserveMatrix4x4 [$::slicen GetXYToRAS]
     pack [$::XYToRAS GetWidgetName] -side top -anchor nw -expand false -fill none -padx 2 -pady 2
 
     set ::RASToIJKMatrixbg [vtkMatrix4x4 New]
@@ -152,7 +152,7 @@ proc mrmlMatrices {} {
     set ::RASToIJK [vtkKWMatrix4x4 New]
     $::RASToIJK SetParent [$::RASToIJKFrame GetFrame]
     $::RASToIJK Create
-    $::RASToIJK SetMatrix4x4 $::RASToIJKMatrixbg
+    $::RASToIJK SetAndObserveMatrix4x4 $::RASToIJKMatrixbg
     pack [$::RASToIJK GetWidgetName] -side top -anchor nw -expand false -fill none -padx 2 -pady 2
 
     set ::XYToIJKFrame [vtkKWFrameWithLabel New]
@@ -164,7 +164,7 @@ proc mrmlMatrices {} {
     set ::XYToIJK [vtkKWMatrix4x4 New]
     $::XYToIJK SetParent [$::XYToIJKFrame GetFrame]
     $::XYToIJK Create
-    $::XYToIJK SetMatrix4x4 [[$::slicebgl GetXYToIJKTransform] GetMatrix]
+    $::XYToIJK SetAndObserveMatrix4x4 [[$::slicebgl GetXYToIJKTransform] GetMatrix]
     pack [$::XYToIJK GetWidgetName] -side top -anchor nw -expand false -fill none -padx 2 -pady 2
 
     set ::matricesDismiss [vtkKWPushButton New]

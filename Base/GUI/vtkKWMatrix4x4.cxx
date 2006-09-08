@@ -11,6 +11,8 @@
      PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
+#include "vtkCommand.h"
+
 #include "vtkKWMatrix4x4.h"
 
 #include "vtkKWMultiColumnList.h"
@@ -19,6 +21,32 @@
 //----------------------------------------------------------------------------
 vtkStandardNewMacro( vtkKWMatrix4x4 );
 vtkCxxRevisionMacro(vtkKWMatrix4x4, "$Revision: 1.49 $");
+
+//----------------------------------------------------------------------------
+// Description:
+// the MRMLCallback is a static function to relay modified events from the 
+// observed mrml scene back into the logic layer for further processing
+// - this can also end up calling observers of the logic (i.e. in the GUI)
+//
+static void MRMLCallback(vtkObject *__mrmlscene, unsigned long eid, void *__clientData, void *callData)
+{
+  static int inMRMLCallback = 0;
+
+
+  if (inMRMLCallback)
+    {
+    vtkErrorWithObjectMacro (__mrmlscene, << "*********MRMLCallback called recursively?" << endl);
+    return;
+    }
+  inMRMLCallback = 1;
+
+  vtkKWMatrix4x4 *self = reinterpret_cast<vtkKWMatrix4x4 *>(__clientData);
+
+  self->UpdateWidget();
+
+  inMRMLCallback = 0;
+}
+
 
 //----------------------------------------------------------------------------
 vtkKWMatrix4x4::vtkKWMatrix4x4()
@@ -31,6 +59,10 @@ vtkKWMatrix4x4::vtkKWMatrix4x4()
 
   this->MultiColumnList = vtkKWMultiColumnList::New();
 
+  this->MRMLCallbackCommand = vtkCallbackCommand::New();
+  this->MRMLCallbackCommand->SetClientData( reinterpret_cast<void *> (this) );
+  this->MRMLCallbackCommand->SetCallback(MRMLCallback);
+
   this->UpdateWidget();
 }
 
@@ -41,7 +73,15 @@ vtkKWMatrix4x4::~vtkKWMatrix4x4()
     {
     delete [] this->Command;
     }
-
+  if ( this->Matrix4x4 )
+    {
+    this->Matrix4x4->RemoveObservers( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+    }
+  if (this->MRMLCallbackCommand)
+    {
+    this->MRMLCallbackCommand->Delete();
+    this->MRMLCallbackCommand = NULL;
+    }
   this->SetMatrix4x4(NULL);
   this->MultiColumnList->SetParent(NULL);
   this->MultiColumnList->Delete();
@@ -151,3 +191,23 @@ void vtkKWMatrix4x4::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "Matrix4x4: " << this->GetMatrix4x4() << endl;
 }
 
+//----------------------------------------------------------------------------
+void vtkKWMatrix4x4::SetAndObserveMatrix4x4(vtkMatrix4x4 *matrix)
+{
+  if ( this->Matrix4x4 )
+    {
+    this->Matrix4x4->RemoveObserver( this->MRMLCallbackCommand );
+    this->Matrix4x4->Delete ( );
+    this->Matrix4x4 = NULL;
+    }
+  
+  this->Matrix4x4 = matrix;
+
+  if ( this->Matrix4x4 )
+    {
+    this->Matrix4x4->Register(this);
+    this->Matrix4x4->AddObserver( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+    }
+
+  this->UpdateWidget();
+}

@@ -60,6 +60,8 @@ public:
 
   vtkSlicerNodeSelectorWidget* TransformEditSelectorWidget;
   vtkKWMatrix4x4*              MatrixWidget;
+  vtkKWPushButton*             IdentityButton;
+  vtkKWPushButton*             InvertButton;
 
 private:
 

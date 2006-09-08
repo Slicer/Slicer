@@ -5,6 +5,7 @@
 
 #include "vtkKWFrameWithLabel.h"
 #include "vtkKWMenuButton.h"
+#include "vtkKWPushButton.h"
 #include "vtkKWMenu.h"
 #include "vtkSlicerNodeSelectorWidget.h"
 #include "vtkKWMatrix4x4.h"
@@ -19,8 +20,10 @@ vtkCxxRevisionMacro ( vtkSlicerTransformEditorWidget, "$Revision: 1.0 $");
 //---------------------------------------------------------------------------
 vtkSlicerTransformEditorWidget::vtkSlicerTransformEditorWidget ( )
 {
-    this->TransformEditSelectorWidget = NULL;
-    this->MatrixWidget = NULL;
+  this->TransformEditSelectorWidget = NULL;
+  this->MatrixWidget = NULL;
+  this->IdentityButton = NULL;
+  this->InvertButton = NULL;
 }
 
 
@@ -40,6 +43,18 @@ vtkSlicerTransformEditorWidget::~vtkSlicerTransformEditorWidget ( )
     this->MatrixWidget = NULL;
     }  
 
+  if (this->IdentityButton)
+    {
+    this->IdentityButton->SetParent(NULL);
+    this->IdentityButton->Delete();
+    this->IdentityButton = NULL;
+    } 
+  if (this->InvertButton)
+    {
+    this->InvertButton->SetParent(NULL);
+    this->InvertButton->Delete();
+    this->InvertButton = NULL;
+    } 
   this->SetMRMLScene ( NULL );
 }
 
@@ -66,7 +81,7 @@ void vtkSlicerTransformEditorWidget::ProcessWidgetEvents ( vtkObject *caller,
       // TODO: there should be a observer added to the transform node so the matrix
       // will update when the node value changes
       this->MatrixWidget->EnabledOn();
-      this->MatrixWidget->SetMatrix4x4(node->GetMatrixTransformToParent());
+      this->MatrixWidget->SetAndObserveMatrix4x4(node->GetMatrixTransformToParent());
       this->MatrixWidget->UpdateWidget();
       }
     else
@@ -76,6 +91,18 @@ void vtkSlicerTransformEditorWidget::ProcessWidgetEvents ( vtkObject *caller,
 
     return;
     }
+  else if ( this->IdentityButton == vtkKWPushButton::SafeDownCast(caller) && event == vtkKWPushButton::InvokedEvent )
+  {
+    this->MatrixWidget->GetMatrix4x4()->Identity();
+    this->MatrixWidget->UpdateWidget();
+  }
+  else if ( this->InvertButton == vtkKWPushButton::SafeDownCast(caller) && event == vtkKWPushButton::InvokedEvent )
+  {
+    this->MatrixWidget->GetMatrix4x4()->Invert();
+    this->MatrixWidget->UpdateWidget();
+  }
+
+
 } 
 
 
@@ -88,7 +115,10 @@ void vtkSlicerTransformEditorWidget::ProcessMRMLEvents ( vtkObject *caller,
 
 //---------------------------------------------------------------------------
 void vtkSlicerTransformEditorWidget::RemoveWidgetObservers ( ) {
+
   this->TransformEditSelectorWidget->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
+  this->IdentityButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->InvertButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   
 }
 
@@ -143,9 +173,28 @@ void vtkSlicerTransformEditorWidget::CreateWidget ( )
     this->Script("pack %s -side top -anchor e -padx 2 -pady 2", 
                 this->MatrixWidget->GetWidgetName());
 
+    this->IdentityButton = vtkKWPushButton::New();
+    this->IdentityButton->SetParent( transformFrame->GetFrame() );
+    this->IdentityButton->Create();
+    this->IdentityButton->SetText("Identity");
+    this->IdentityButton->SetWidth ( 8 );
+    this->Script("pack %s -side left -anchor e -padx 20 -pady 10", 
+                  this->IdentityButton->GetWidgetName());
+
+    this->InvertButton = vtkKWPushButton::New();
+    this->InvertButton->SetParent( transformFrame->GetFrame() );
+    this->InvertButton->Create();
+    this->InvertButton->SetText("Invert");
+    this->InvertButton->SetWidth ( 8 );
+    this->Script("pack %s -side left -anchor e -padx 20 -pady 10", 
+                  this->InvertButton->GetWidgetName());
 
     this->TransformEditSelectorWidget->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, 
                                            (vtkCommand *)this->GUICallbackCommand );  
+    this->IdentityButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+
+    this->InvertButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+
 
     transformFrame->Delete();
     
