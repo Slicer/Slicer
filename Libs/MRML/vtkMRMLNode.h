@@ -94,6 +94,13 @@ public:
   // Get value of a name value pair attribute
   // or NULL if the name does not exists
   const char* GetAttribute(const char* name);
+
+  // Description:
+  // Describes if the node is hidden
+  vtkGetMacro(HideFromEditors, int);
+  vtkSetMacro(HideFromEditors, int);
+  vtkBooleanMacro(HideFromEditors, int);
+
   
   // Description:
   // method to propagate events generated in mrml
@@ -173,6 +180,7 @@ protected:
   char *Name;
   char *ID;
   int Indent;
+  int HideFromEditors;
 
   int  ModifiedSinceRead;
 

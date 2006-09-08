@@ -15,6 +15,7 @@
 #include "vtkKWLabelWithLabel.h"
 
 #include "vtkMRMLTransformNode.h"
+#include "vtkMRMLLinearTransformNode.h"
 #include "vtkMRMLTransformableNode.h"
 #include "vtkKWTreeWithScrollbars.h"
 
@@ -82,6 +83,7 @@ void vtkSlicerMRMLTreeWidget::ProcessWidgetEvents ( vtkObject *caller,
                                                     void *callData )
 {
   vtkKWTree *tree = this->TreeWidget->GetWidget();
+  vtkKWEntry *entry = this->NodeName->GetWidget();
   if (caller == tree)
     {
     // Selection changed
@@ -117,10 +119,16 @@ void vtkSlicerMRMLTreeWidget::ProcessWidgetEvents ( vtkObject *caller,
       
       vtkMRMLNode *node = this->GetMRMLScene()->GetNodeByID((const char *)callData);
 
+      if ( node == NULL || (node != NULL && node->IsA("vtkMRMLTransformNode")) )
+        {
+        // scene or transform
+        sprintf(command, "InsertTransformNodeCallback {%s}", (const char *)callData);
+        this->ContextMenu->AddCommand("Insert Transform Node", this, command);
+        }
       if ((node == NULL || (node != NULL && node->IsA("vtkMRMLTransformNode"))) &&
         this->GetCutNode() != NULL)
         {
-        // scene or transform
+        // scene or transform and cut node exists
         sprintf(command, "PasteNodeCallback {%s}", (const char *)callData);
         this->ContextMenu->AddCommand("Paste Node", this, command);
         }
@@ -136,6 +144,20 @@ void vtkSlicerMRMLTreeWidget::ProcessWidgetEvents ( vtkObject *caller,
         }
       this->ContextMenu->PopUp(px, py);
       }
+    }
+  else if (caller == entry) 
+    {
+    if (event == vtkKWEntry::EntryValueChangedEvent) 
+      {
+      vtkMRMLNode *node = this->GetSelectedNodeInTree();
+      if (node)
+        {
+        node->SetName(entry->GetValue());
+        this->UpdateTreeFromMRML();
+        this->GetMRMLScene()->InvokeEvent(vtkMRMLScene::NodeAddedEvent);
+        }
+      }
+
     }
 } 
 
@@ -169,6 +191,21 @@ void vtkSlicerMRMLTreeWidget::PasteNodeCallback(const char *id)
 
   this->SetCutNode(NULL);
   this->UpdateTreeFromMRML();
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerMRMLTreeWidget::InsertTransformNodeCallback(const char *id)
+{
+  vtkMRMLTransformNode *tnode = vtkMRMLTransformNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(id));
+  vtkMRMLLinearTransformNode *node = vtkMRMLLinearTransformNode::New();
+  this->GetMRMLScene()->AddNodeNoNotify(node);
+  if (tnode != NULL)
+    {
+    node->SetAndObserveTransformNodeID(tnode->GetID());
+    }
+  node->SetName(node->GetID());
+  this->UpdateTreeFromMRML();
+  this->GetMRMLScene()->InvokeEvent(vtkMRMLScene::NodeAddedEvent);
 }
 
 //---------------------------------------------------------------------------
@@ -206,6 +243,11 @@ void vtkSlicerMRMLTreeWidget::RemoveWidgetObservers ( )
     this->TreeWidget->GetWidget()->RemoveObservers(
       vtkKWTree::RightClickOnNodeEvent, 
       (vtkCommand *)this->GUICallbackCommand);  
+    }
+  if (this->NodeName)
+    {
+    this->NodeName->GetWidget()->RemoveObservers(  vtkKWEntry::EntryValueChangedEvent,
+                                                 (vtkCommand *)this->GUICallbackCommand );
     }
 }
 
@@ -294,6 +336,9 @@ void vtkSlicerMRMLTreeWidget::CreateWidget ( )
     "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
     this->NodeName->GetWidgetName());
 
+  this->NodeName->GetWidget()->AddObserver(  vtkKWEntry::EntryValueChangedEvent,
+                                            (vtkCommand *)this->GUICallbackCommand );
+
   frame->Delete();
 }
 
@@ -337,6 +382,11 @@ void vtkSlicerMRMLTreeWidget::AddNodeToTree(vtkMRMLNode *node)
     return;
     }
 
+  if (node->GetHideFromEditors())
+   {
+    return;
+   }
+
   vtkKWTree *tree = this->TreeWidget->GetWidget();
 
   if (tree->HasNode(node->GetID()))
@@ -363,8 +413,8 @@ void vtkSlicerMRMLTreeWidget::AddNodeToTree(vtkMRMLNode *node)
   */
   
   const char *parent_node = "Scene";
-  int node_is_transformable = node->IsA("vtkMRMLTransformableNode");
-  if (node_is_transformable)
+  int isTransformable = node->IsA("vtkMRMLTransformableNode");
+  if (isTransformable)
     {
     vtkMRMLTransformableNode *transformableNode = 
       vtkMRMLTransformableNode::SafeDownCast(node);
@@ -382,10 +432,10 @@ void vtkSlicerMRMLTreeWidget::AddNodeToTree(vtkMRMLNode *node)
   // This is how you can set icons for each node. You can either use
   // predefined icons, or go through the usual resources framework, just
   // like the toolbar icons are constructed (see SetNodeImage...)
-  if (node_is_transformable)
+  if (isTransformable)
     {
-    tree->SetNodeImageToPredefinedIcon(ID, vtkKWIcon::IconWarningMini);
-    tree->SetNodePadX(ID, 20);
+    //tree->SetNodeImageToPredefinedIcon(ID, vtkKWIcon::IconWarningMini);
+    //tree->SetNodePadX(ID, 20);
     }
 }
 

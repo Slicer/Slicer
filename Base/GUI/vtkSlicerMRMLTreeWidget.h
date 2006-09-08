@@ -67,6 +67,8 @@ public:
 
   virtual void PasteNodeCallback(const char *id);
 
+  virtual void InsertTransformNodeCallback(const char *id);
+
 protected:
   vtkSlicerMRMLTreeWidget();
   virtual ~vtkSlicerMRMLTreeWidget();

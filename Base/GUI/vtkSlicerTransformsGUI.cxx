@@ -23,7 +23,6 @@ vtkCxxRevisionMacro ( vtkSlicerTransformsGUI, "$Revision: 1.0 $");
 vtkSlicerTransformsGUI::vtkSlicerTransformsGUI ( )
 {
 
-    this->TransformManagerWidget = NULL;
     this->TransformEditorWidget = NULL;
 }
 
@@ -33,12 +32,6 @@ vtkSlicerTransformsGUI::~vtkSlicerTransformsGUI ( )
 {
   //this->UIPanel->RemovePage("Transforms");
 
-  if (this->TransformManagerWidget)
-    {
-    this->TransformManagerWidget->RemoveWidgetObservers ( );
-    this->TransformManagerWidget->SetParent(NULL);
-    this->TransformManagerWidget->Delete ( );
-    }
   if (this->TransformEditorWidget)
     {
     this->TransformEditorWidget->RemoveWidgetObservers ( );
@@ -117,16 +110,8 @@ void vtkSlicerTransformsGUI::BuildGUI ( )
                 helpFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Transforms")->GetWidgetName());
   
   // ---
-  this->TransformManagerWidget = vtkSlicerTransformManagerWidget::New ( );
-  this->TransformManagerWidget->SetMRMLScene(this->GetMRMLScene() );
-  this->TransformManagerWidget->SetParent ( this->UIPanel->GetPageWidget ( "Transforms" ) );
-  this->TransformManagerWidget->Create ( );
-  app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                this->TransformManagerWidget->GetWidgetName(), this->UIPanel->GetPageWidget("Transforms")->GetWidgetName());
-  
-  // ---
   this->TransformEditorWidget = vtkSlicerTransformEditorWidget::New ( );
-  this->TransformEditorWidget->SetMRMLScene(this->GetMRMLScene() );
+  this->TransformEditorWidget->SetAndObserveMRMLScene(this->GetMRMLScene() );
   this->TransformEditorWidget->SetParent ( this->UIPanel->GetPageWidget ( "Transforms" ) );
   this->TransformEditorWidget->Create ( );
   app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",

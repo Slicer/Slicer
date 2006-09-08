@@ -29,6 +29,7 @@ Version:   $Revision: 1.14 $
 vtkMRMLTransformableNode::vtkMRMLTransformableNode()
 {
   this->TransformNodeID = NULL;
+  this->HideFromEditors = 0;
 }
 
 //----------------------------------------------------------------------------
@@ -69,7 +70,7 @@ void vtkMRMLTransformableNode::ReadXMLAttributes(const char** atts)
       {
       this->SetAndObserveTransformNodeID(attValue);
       }
-    }  
+    }
 }
 
 //----------------------------------------------------------------------------

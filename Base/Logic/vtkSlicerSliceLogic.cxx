@@ -543,6 +543,8 @@ void vtkSlicerSliceLogic::CreateSliceModel()
   {
     this->SliceModelNode = vtkMRMLModelNode::New();
     this->SliceModelNode->SetScene(this->GetMRMLScene());
+    this->SliceModelNode->SetHideFromEditors(1);
+
     // create plane slice
     this->PlaneSource = vtkPlaneSource::New();
     this->PlaneSource->GetOutput()->Update();

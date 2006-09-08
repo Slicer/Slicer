@@ -36,6 +36,13 @@ static void MRMLCallback(vtkObject *__mrmlscene, unsigned long eid, void *__clie
 {
   static int inMRMLCallback = 0;
 
+  vtkSlicerNodeSelectorWidget *self = reinterpret_cast<vtkSlicerNodeSelectorWidget *>(__clientData);
+
+  if (!strcmp(self->GetNodeClass(0), "vtkMRMLLinearTransformNode") )
+  {
+    int foo = 0;
+  }
+
   if (inMRMLCallback)
     {
     vtkErrorWithObjectMacro (__mrmlscene, << "*********MRMLCallback called recursively?" << endl);
@@ -44,8 +51,6 @@ static void MRMLCallback(vtkObject *__mrmlscene, unsigned long eid, void *__clie
   inMRMLCallback = 1;
 
   vtkMRMLScene *mrmlscene = static_cast<vtkMRMLScene *>(__mrmlscene); // Not used, since it is ivar
-
-  vtkSlicerNodeSelectorWidget *self = reinterpret_cast<vtkSlicerNodeSelectorWidget *>(__clientData);
 
   self->UpdateMenu();
 

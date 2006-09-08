@@ -17,6 +17,7 @@ Version:   $Revision: 1.11 $
 #include "vtkObjectFactory.h"
 #include "vtkCallbackCommand.h"
 
+#include <sstream>
 //------------------------------------------------------------------------------
 vtkMRMLNode* vtkMRMLNode::New()
 {
@@ -50,6 +51,8 @@ vtkMRMLNode::vtkMRMLNode()
   this->SceneRootDir = NULL;
   this->Scene = NULL;
 
+  this->HideFromEditors = 1;
+
   // Set up callbacks
   this->MRMLCallbackCommand = vtkCallbackCommand::New ( );
   this->MRMLCallbackCommand->SetClientData( reinterpret_cast<void *>(this) );
@@ -80,7 +83,8 @@ void vtkMRMLNode::Copy(vtkMRMLNode *node)
   this->SetDescription(node->GetDescription());
   this->SetName(node->GetName());
   this->SetID( node->GetID() );
-  
+  this->SetHideFromEditors(node->HideFromEditors);
+
   this->SetScene(node->GetScene());
 }
 
@@ -100,6 +104,8 @@ void vtkMRMLNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "Description: " <<
     (this->Description ? this->Description : "(none)") << "\n";
 
+  os << indent << "hideFromEditors=\"" << this->HideFromEditors << "\n";
+
 }
 
 //----------------------------------------------------------------------------
@@ -118,6 +124,8 @@ void vtkMRMLNode::WriteXML(ostream& of, int nIndent)
     {
     of << indent << "description=\"" << this->Description << "\" ";
     }
+  of << indent << " hideFromEditors=\"" << (this->HideFromEditors ? "true" : "false") << "\"";
+
 }
 
 //----------------------------------------------------------------------------
@@ -141,7 +149,14 @@ void vtkMRMLNode::ReadXMLAttributes(const char** atts)
       {
       this->SetDescription(attValue);
       }
+    else if (!strcmp(attName, "hideFromEditors")) 
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> HideFromEditors;
+      }
     } 
+
   return;
 }
 
