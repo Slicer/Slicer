@@ -240,7 +240,7 @@ void vtkGradientAnisotropicDiffusionFilterGUI::UpdateMRML ()
   
   n->SetTimeStep(this->TimeStepScale->GetValue());
   
-  n->SetNumberOfIterations(this->NumberOfIterationsScale->GetValue());
+  n->SetNumberOfIterations((int)floor(this->NumberOfIterationsScale->GetValue()));
   
   if (this->VolumeSelector->GetSelected() != NULL)
     {
