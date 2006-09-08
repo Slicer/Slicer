@@ -48,11 +48,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerVolumesGUI : public vtkSlicerModuleGUI
     void SetMRMLNode ( vtkMRMLVolumeNode *node )
         { this->SetMRML ( vtkObjectPointer( &this->VolumeNode), node ); }
     void SetAndObserveMRMLNode ( vtkMRMLVolumeNode *node )
-        { this->SetMRML ( vtkObjectPointer( &this->VolumeNode), node ); }
+        { this->SetAndObserveMRML ( vtkObjectPointer( &this->VolumeNode), node ); }
     void SetModuleLogic ( vtkSlicerVolumesLogic *logic )
         { this->SetLogic ( vtkObjectPointer (&this->Logic), logic ); }
     void SetAndObserveModuleLogic ( vtkSlicerVolumesLogic *logic )
-        { this->SetLogic ( vtkObjectPointer (&this->Logic), logic ); }
+        { this->SetAndObserveLogic ( vtkObjectPointer (&this->Logic), logic ); }
 
     // Description:
     // This method builds the Volumes module GUI

@@ -62,11 +62,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     void SetMRMLNode ( vtkMRMLFiducialListNode *node )
         { this->SetMRML ( vtkObjectPointer( &this->FiducialListNode), node ); }
     void SetAndObserveMRMLNode ( vtkMRMLFiducialListNode *node )
-        { this->SetMRML ( vtkObjectPointer( &this->FiducialListNode), node ); }
+        { this->SetAndObserveMRML ( vtkObjectPointer( &this->FiducialListNode), node ); }
     void SetModuleLogic ( vtkSlicerFiducialsLogic *logic )
     { this->SetLogic ( vtkObjectPointer (&this->Logic), logic ); }
     void SetAndObserveModuleLogic ( vtkSlicerFiducialsLogic *logic )
-    { this->SetLogic ( vtkObjectPointer (&this->Logic), logic ); }
+    { this->SetAndObserveLogic ( vtkObjectPointer (&this->Logic), logic ); }
 
     // Description:
     // This method builds the Fiducials module GUI

@@ -37,11 +37,12 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerDataGUI : public vtkSlicerModuleGUI
     void SetMRMLNode ( vtkMRMLNode *node )
         { this->SetMRML ( vtkObjectPointer( &this->MRMLNode), node ); }
     void SetAndObserveMRMLNode ( vtkMRMLNode *node )
-        { this->SetMRML ( vtkObjectPointer( &this->MRMLNode), node ); }
+        { this->SetAndObserveMRML ( vtkObjectPointer( &this->MRMLNode), node ); }
+
     void SetModuleLogic ( vtkSlicerDataLogic *logic )
         { this->SetLogic ( vtkObjectPointer (&this->Logic), logic ) }
     void SetAndObserveModuleLogic ( vtkSlicerDataLogic *logic )
-        { this->SetLogic ( vtkObjectPointer (&this->Logic), logic ) }
+        { this->SetAndObserveLogic ( vtkObjectPointer (&this->Logic), logic ) }
     */
     
     // Description:
