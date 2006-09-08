@@ -46,6 +46,7 @@ vtkScriptedModuleGUI::vtkScriptedModuleGUI()
 //----------------------------------------------------------------------------
 vtkScriptedModuleGUI::~vtkScriptedModuleGUI()
 {
+
   this->RemoveMRMLNodeObservers();
   this->RemoveLogicObservers();
 
@@ -163,6 +164,16 @@ void vtkScriptedModuleGUI::BuildGUI ( )
   if (this->GetApplication())
     {
     this->GetApplication()->Script("%sBuildGUI %s", 
+      this->GetModuleName(), this->GetTclName());
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkScriptedModuleGUI::TearDownGUI ( ) 
+{
+  if (this->GetApplication())
+    {
+    this->GetApplication()->Script("%sTearDownGUI %s", 
       this->GetModuleName(), this->GetTclName());
     }
 }

@@ -41,6 +41,10 @@ public:
   virtual void BuildGUI ( );
 
   // Description:
+  // Delete Widgets
+  virtual void TearDownGUI ( );
+
+  // Description:
   // Add obsereves to GUI widgets
   virtual void AddGUIObservers ( );
   
