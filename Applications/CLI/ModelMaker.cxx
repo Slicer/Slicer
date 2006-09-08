@@ -198,7 +198,7 @@ smoother->ReleaseDataFlagOn();
     {
         if (makeMultiple)
         {
-            labelFrequency = (((hist->GetOutput())->GetPointData())->GetScalars())->GetTuple1(i);
+            labelFrequency = (int)floor((((hist->GetOutput())->GetPointData())->GetScalars())->GetTuple1(i));
             if (debug)
             {
                 if (labelFrequency > 0) 
