@@ -55,7 +55,7 @@ protected:
   int ReadInt3 (FILE* iFile, int& oInt);
   int ReadInt2 (FILE* iFile, int& oInt);
   int ReadFloat (FILE* iFile, float& oInt);
-
+  
 private:
   vtkFSSurfaceScalarReader(const vtkFSSurfaceScalarReader&);  // Not implemented.
   void operator=(const vtkFSSurfaceScalarReader&);  // Not implemented.
