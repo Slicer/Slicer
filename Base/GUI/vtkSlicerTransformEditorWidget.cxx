@@ -223,6 +223,7 @@ void vtkSlicerTransformEditorWidget::CreateWidget ( )
     this->TranslationScaleLR->Create();
     this->TranslationScaleLR->SetLabelText("LR");
     this->TranslationScaleLR->SetWidth ( 20 );
+    this->TranslationScaleLR->SetStartCommand(this, "TransformChangingCallback");
     this->TranslationScaleLR->SetCommand(this, "TransformChangingCallback");
     this->TranslationScaleLR->SetEndCommand(this, "TransformChangedCallback");
     this->TranslationScaleLR->SetEntryCommand(this, "TransformChangedCallback");
@@ -234,6 +235,7 @@ void vtkSlicerTransformEditorWidget::CreateWidget ( )
     this->TranslationScalePA->Create();
     this->TranslationScalePA->SetLabelText("PA");
     this->TranslationScalePA->SetWidth ( 20 );
+    this->TranslationScalePA->SetStartCommand(this, "TransformChangingCallback");
     this->TranslationScalePA->SetCommand(this, "TransformChangingCallback");
     this->TranslationScalePA->SetEndCommand(this, "TransformChangedCallback");
     this->TranslationScalePA->SetEntryCommand(this, "TransformChangedCallback");
@@ -245,6 +247,7 @@ void vtkSlicerTransformEditorWidget::CreateWidget ( )
     this->TranslationScaleIS->Create();
     this->TranslationScaleIS->SetLabelText("IS");
     this->TranslationScaleIS->SetWidth ( 20 );
+    this->TranslationScaleIS->SetStartCommand(this, "TransformChangingCallback");
     this->TranslationScaleIS->SetCommand(this, "TransformChangingCallback");
     this->TranslationScaleIS->SetEndCommand(this, "TransformChangedCallback");
     this->TranslationScaleIS->SetEntryCommand(this, "TransformChangedCallback");
@@ -293,19 +296,15 @@ void vtkSlicerTransformEditorWidget::TransformChangedCallback(double)
     }
 }
 
-void vtkSlicerTransformEditorWidget::TransformChangingCallback(double)
+void vtkSlicerTransformEditorWidget::TransformChangingCallback(double val)
 {
   vtkMRMLLinearTransformNode *node = vtkMRMLLinearTransformNode::SafeDownCast(this->TransformEditSelectorWidget->GetSelected());
+  
 
   if (node != NULL)
     {
-    // will update when the node value changes
-    vtkMatrix4x4 *matrix = node->GetMatrixTransformToParent();
-    matrix->SetElement(3,0, this->TranslationScaleLR->GetValue());
-    matrix->SetElement(3,1, this->TranslationScalePA->GetValue());
-    matrix->SetElement(3,2, this->TranslationScaleIS->GetValue());
-    this->MatrixWidget->EnabledOn();
-    this->MatrixWidget->UpdateWidget();
+    this->MRMLScene->SaveStateForUndo(node);
+    this->TransformChangedCallback(val);
     }
 }
 
