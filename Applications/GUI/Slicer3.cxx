@@ -83,7 +83,8 @@ int Slicer3_Tcl_Eval ( Tcl_Interp *interp, const char *script )
   return 0;
 }
 
-//#define MODULES_DEBUG
+//#define CLIMODULES_DEBUG
+//#define TCLMODULES_DEBUG
 //#define SLICES_DEBUG
 //#define MODELS_DEBUG
 //#define VOLUMES_DEBUG
@@ -303,7 +304,6 @@ int Slicer3_main(int argc, char *argv[])
     modelsGUI->AddGUIObservers ( );
 #endif
 
-#ifndef MODULES_DEBUG
 
     // --- Fiducials module    
     vtkSlicerFiducialsLogic *fiducialsLogic = vtkSlicerFiducialsLogic::New ( );
@@ -351,8 +351,6 @@ int Slicer3_main(int argc, char *argv[])
     dataGUI->BuildGUI ( );
     dataGUI->AddGUIObservers ( );
 
-#endif
-
 
     // --- Slices module
     // - set up each of the slice logics (these initialize their
@@ -397,7 +395,6 @@ int Slicer3_main(int argc, char *argv[])
     slicesGUI->AddGUIObservers ( );
 #endif
 
-#ifndef MODULES_DEBUG
 
     // --- Gradient anisotropic diffusion filter module
     vtkGradientAnisotropicDiffusionFilterGUI *gradientAnisotropicDiffusionFilterGUI = vtkGradientAnisotropicDiffusionFilterGUI::New ( );
@@ -424,6 +421,7 @@ int Slicer3_main(int argc, char *argv[])
     ");
 
 
+#ifndef CLIMODULES_DEBUG
     // --- Scan for command line and shared object modules
     //
     //
@@ -476,6 +474,7 @@ int Slicer3_main(int argc, char *argv[])
       
       ++mit;
       }
+#endif
 
     //
     // get the Tcl name so the vtk class will be registered in the interpreter as a byproduct
@@ -509,6 +508,7 @@ int Slicer3_main(int argc, char *argv[])
     slicerApp->Script ("namespace eval slicer3 set MRMLScene [$::slicer3::ApplicationLogic GetMRMLScene]");
 
 
+#ifndef CLIMODULES_DEBUG
     mit = moduleNames.begin();
     while ( mit != moduleNames.end() )
       {
@@ -524,7 +524,9 @@ int Slicer3_main(int argc, char *argv[])
       
       ++mit;
       }
+#endif
 
+#ifndef TCLMODULES_DEBUG
     //
     // process any ScriptedModules
     // - scan for pkgIndex.tcl files 
@@ -566,7 +568,6 @@ int Slicer3_main(int argc, char *argv[])
     tclCommand += "";
     tclCommand += "}";
     Slicer3_Tcl_Eval( interp, tclCommand.c_str() );
-
 #endif
 
     //
@@ -654,20 +655,16 @@ int Slicer3_main(int argc, char *argv[])
 
     // ------------------------------
     // REMOVE OBSERVERS and references to MRML and Logic
-#ifndef MODULES_DEBUG
     gradientAnisotropicDiffusionFilterGUI->RemoveGUIObservers ( );
-#endif
 #ifndef VOLUMES_DEBUG
     volumesGUI->RemoveGUIObservers ( );
 #endif
 #ifndef MODELS_DEBUG
     modelsGUI->RemoveGUIObservers ( );
 #endif
-#ifndef MODULES_DEBUG
     fiducialsGUI->RemoveGUIObservers ( );
     transformsGUI->RemoveGUIObservers ( );
     dataGUI->RemoveGUIObservers ( );
-#endif
 #ifndef SLICES_DEBUG
     slicesGUI->RemoveGUIObservers ( );
 #endif
@@ -680,7 +677,7 @@ int Slicer3_main(int argc, char *argv[])
     appGUI->SetSliceGUICollection ( NULL );
 #endif
 
-#ifndef MODULES_DEBUG
+#ifndef CLIMODULES_DEBUG
     // remove the observers from the factory discovered modules
     // (as we remove the observers, cache the GUIs in a vector so we
     // can delete them later).
@@ -697,14 +694,17 @@ int Slicer3_main(int argc, char *argv[])
       
       ++mit;
       }
+#endif    
 
+#ifndef TCLMODULES_DEBUG
     // remove the observers from the scripted modules
     tclCommand = "";
     tclCommand += "foreach package $::SLICER_PACKAGES(list) { ";
     tclCommand += "  $::SLICER_PACKAGES($package,gui) RemoveGUIObservers;";
+    tclCommand += "  $::SLICER_PACKAGES($package,gui) TearDownGUI;";
     tclCommand += "}";
     Slicer3_Tcl_Eval( interp, tclCommand.c_str() );
-#endif    
+#endif 
 
     // ------------------------------
     // Remove References to Module GUIs
@@ -721,32 +721,30 @@ int Slicer3_main(int argc, char *argv[])
     
     //--- delete gui first, removing Refs to Logic and MRML
 
-#ifndef MODULES_DEBUG
     gradientAnisotropicDiffusionFilterGUI->Delete ();
-#endif
 #ifndef VOLUMES_DEBUG
     volumesGUI->Delete ();
 #endif
 #ifndef MODELS_DEBUG
     modelsGUI->Delete ();
 #endif
-#ifndef MODULES_DEBUG
     fiducialsGUI->Delete ();
     transformsGUI->Delete ();
     dataGUI->Delete ();
-#endif
 #ifndef SLICES_DEBUG
     slicesGUI->Delete ();
 #endif
     appGUI->Delete ();
 
-#ifndef MODULES_DEBUG
+#ifndef TCLMODULES_DEBUG
     tclCommand = "";
     tclCommand += "foreach package $::SLICER_PACKAGES(list) { ";
     tclCommand += "  $::SLICER_PACKAGES($package,gui) Delete;";
     tclCommand += "}";
     Slicer3_Tcl_Eval( interp, tclCommand.c_str() );
+#endif
 
+#ifndef CLIMODULES_DEBUG
     // delete the factory discovered module GUIs (as we delete the
     // GUIs, cache the associated logic instances so we can delete
     // them later).
@@ -763,10 +761,8 @@ int Slicer3_main(int argc, char *argv[])
     
     //--- delete logic next, removing Refs to MRML
     appLogic->ClearCollections ( );
-#ifndef MODULES_DEBUG
     gradientAnisotropicDiffusionFilterLogic->SetAndObserveMRMLScene ( NULL );
     gradientAnisotropicDiffusionFilterLogic->Delete ();
-#endif
 #ifndef VOLUMES_DEBUG
     volumesLogic->SetAndObserveMRMLScene ( NULL );
     volumesLogic->Delete();
@@ -775,10 +771,8 @@ int Slicer3_main(int argc, char *argv[])
     modelsLogic->SetAndObserveMRMLScene ( NULL );
     modelsLogic->Delete();
 #endif
-#ifndef MODULES_DEBUG
     fiducialsLogic->SetAndObserveMRMLScene ( NULL );
     fiducialsLogic->Delete();
-#endif
     sliceLogic2->SetAndObserveMRMLScene ( NULL );
     sliceLogic2->Delete ();
     sliceLogic1->SetAndObserveMRMLScene ( NULL );
@@ -790,7 +784,7 @@ int Slicer3_main(int argc, char *argv[])
     appLogic->SetAndObserveMRMLScene ( NULL );
     appLogic->Delete ();
 
-#ifndef MODULES_DEBUG
+#ifndef CLIMODULES_DEBUG
     // delete the factory discovered module Logics
     std::vector<vtkSlicerModuleLogic*>::iterator lit;
     for (lit = moduleLogics.begin(); lit != moduleLogics.end(); ++lit)
@@ -799,7 +793,9 @@ int Slicer3_main(int argc, char *argv[])
       (*lit)->Delete();
       }
     moduleLogics.clear();
+#endif
 
+#ifndef TCLMODULES_DEBUG
     // delete the scripted logics
     tclCommand = "";
     tclCommand += "foreach package $::SLICER_PACKAGES(list) { ";
@@ -807,8 +803,8 @@ int Slicer3_main(int argc, char *argv[])
     tclCommand += "  $::SLICER_PACKAGES($package,logic) Delete;";
     tclCommand += "}";
     Slicer3_Tcl_Eval( interp, tclCommand.c_str() );
-    
 #endif
+    
 
     //--- scene next;
     scene->Delete ();
@@ -844,6 +840,7 @@ int main(int argc, char *argv[])
     return Slicer3_main(argc, argv);
 }
 #endif
+
 
 
 
