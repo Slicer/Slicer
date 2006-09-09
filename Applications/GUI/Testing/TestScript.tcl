@@ -1,2 +1,9 @@
 puts "hoot!"
-after idle "$::slicer3::Application Exit"
+
+if { [info exists ::slicer3::Application] } {
+  # the application exists, so exit with full shutdown
+  $::slicer3::Application Exit
+} else {
+  # no application, so just exit the program directly
+  exit 0
+}
