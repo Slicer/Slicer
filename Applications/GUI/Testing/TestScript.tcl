@@ -1,2 +1,2 @@
 puts "hoot!"
-exit 0
+after idle "$::slicer3::Application Exit"
