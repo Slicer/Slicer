@@ -44,25 +44,26 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     
     // Description:
     // Get methods on class members ( no Set methods required. )
-    vtkGetObjectMacro ( AddFiducialListButton, vtkKWPushButton);
     vtkGetObjectMacro ( AddFiducialButton, vtkKWPushButton);
     vtkGetObjectMacro ( VisibilityToggle, vtkKWPushButton);
     vtkGetObjectMacro ( VisibilityIcons, vtkSlicerVisibilityIcons);
     vtkGetObjectMacro ( ListColorButton, vtkKWChangeColorButton);
     vtkGetObjectMacro ( ListSymbolScale, vtkKWScaleWithEntry);
     vtkGetObjectMacro ( ListTextScale, vtkKWScaleWithEntry);
+    vtkGetObjectMacro ( ListOpacity, vtkKWScaleWithEntry);
     vtkGetObjectMacro ( Logic, vtkSlicerFiducialsLogic);
-    vtkGetObjectMacro ( FiducialListNode, vtkMRMLFiducialListNode );
     
     // Description:
     // API for setting FiducialListNode, Logic and
     // for both setting and observing them.
     
-   
+    /*
     void SetMRMLNode ( vtkMRMLFiducialListNode *node )
         { this->SetMRML ( vtkObjectPointer( &this->FiducialListNode), node ); }
     void SetAndObserveMRMLNode ( vtkMRMLFiducialListNode *node )
         { this->SetAndObserveMRML ( vtkObjectPointer( &this->FiducialListNode), node ); }
+    */
+    
     void SetModuleLogic ( vtkSlicerFiducialsLogic *logic )
     { this->SetLogic ( vtkObjectPointer (&this->Logic), logic ); }
     void SetAndObserveModuleLogic ( vtkSlicerFiducialsLogic *logic )
@@ -83,6 +84,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     virtual void ProcessLogicEvents ( vtkObject *caller, unsigned long event, void *callData );
     virtual void ProcessGUIEvents ( vtkObject *caller, unsigned long event, void *callData );
     virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
+
+    // Description:
+    // Once know that the GUI has to be cleared and updated to show elements
+    // from a new list, use this call
+    virtual void SetGUIFromList(vtkMRMLFiducialListNode * activeFiducialListNode);
     
     // Description:
     // Methods describe behavior at module enter and exit.
@@ -95,8 +101,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     // Description:
     // Getting and setting the mrml fiducail list node id
     vtkGetStringMacro(FiducialListNodeID);
-    vtkSetStringMacro(FiducialListNodeID);
-
+    //vtkSetStringMacro(FiducialListNodeID);
+    void SetFiducialListNodeID(char *id);
+    
     // Description:
     // Which fiducial list node are we displaying in this gui?
     vtkSlicerNodeSelectorWidget* FiducialListSelectorWidget;
@@ -104,7 +111,16 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     // Description:
     // Set the selected node, the fid list id, and update the widgets
     void SetFiducialListNode(vtkMRMLFiducialListNode *fiducialListNode);
-    
+
+    //BTX
+    // Description:
+    // FiducialListIDModifiedEvent is generated when the FiducialListNodeID is
+    // changed
+    enum
+    {
+        FiducialListIDModifiedEvent = 20000,
+    };
+    //ETX
  protected:
     vtkSlicerFiducialsGUI ( );
     virtual ~vtkSlicerFiducialsGUI ( );
@@ -113,14 +129,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     vtkSlicerFiducialsLogic *Logic;
 
 
-    vtkMRMLFiducialListNode *FiducialListNode;
-
-    // The ID of the fiducial list node
+    // The ID of the fiducial list node that is currently displayed in the GUI
     char *FiducialListNodeID;
     
     // Widgets for the Fiducials module
-    // add a list
-    vtkKWPushButton *AddFiducialListButton;
     // add a point
     vtkKWPushButton *AddFiducialButton;
     // list visibility
@@ -134,6 +146,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     vtkKWScaleWithEntry *ListSymbolScale;
     // text scale
     vtkKWScaleWithEntry *ListTextScale;
+
+    // opacity
+    vtkKWScaleWithEntry *ListOpacity;
     
     // display the points on the list
     vtkKWMultiColumnListWithScrollbars *MultiColumnList;
