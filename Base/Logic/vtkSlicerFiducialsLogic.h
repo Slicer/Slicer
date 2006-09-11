@@ -40,16 +40,11 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerFiducialsLogic : public vtkSlicerLog
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description:
-  // The currently active mrml volume node 
-  vtkGetObjectMacro (ActiveFiducialListNode, vtkMRMLFiducialListNode);
-  void SetActiveFiducialListNode (vtkMRMLFiducialListNode *ActiveFiducialListNode);
-
-  // Description:
   // Create new mrml node and associated display node for a full list
-  vtkMRMLFiducialListNode* AddFiducials();
+//  vtkMRMLFiducialListNode* AddFiducials();
   // Create a new mrml node and associated display node for a new point on
   // a list
-  vtkMRMLFiducial *AddFiducial();
+//  vtkMRMLFiducial *AddFiducial();
 
   // Description:
   // Update logic state when MRML scene chenges
@@ -61,9 +56,6 @@ protected:
   vtkSlicerFiducialsLogic(const vtkSlicerFiducialsLogic&);
   void operator=(const vtkSlicerFiducialsLogic&);
 
-  // Description:
-  //
-  vtkMRMLFiducialListNode *ActiveFiducialListNode;
 };
 
 #endif
