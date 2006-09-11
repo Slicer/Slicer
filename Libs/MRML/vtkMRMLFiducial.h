@@ -69,6 +69,10 @@ public:
   vtkSetStringMacro(LabelText);
   vtkGetStringMacro(LabelText);
 
+  // Get/Set for ID
+  vtkGetStringMacro(ID);
+  vtkSetStringMacro(ID);
+  
   // Get/Set for Selected
   vtkGetMacro(Selected, bool);
   vtkSetMacro(Selected, bool);
@@ -83,7 +87,8 @@ protected:
   float XYZ[3];
   float OrientationWXYZ[4];
   char *LabelText;
-  bool Selected;  
+  bool Selected;
+  char *ID;
 };
 
 #endif

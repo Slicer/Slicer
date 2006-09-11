@@ -46,6 +46,8 @@ vtkMRMLFiducial::vtkMRMLFiducial()
   // so that the SetLabelText macro won't try to free memory
   this->LabelText = NULL;
   this->SetLabelText("");
+  this->ID = NULL;
+  this->SetID("");
   this->Selected = true;
 }
 
@@ -56,6 +58,11 @@ vtkMRMLFiducial::~vtkMRMLFiducial()
     {
         delete [] this->LabelText;
         this->LabelText = NULL;
+    }
+    if (this->ID)
+    {
+        delete [] this->ID;
+        this->ID = NULL;
     }
 }
 
@@ -68,9 +75,13 @@ void vtkMRMLFiducial::WriteXML(ostream& of, int nIndent)
   //Superclass::WriteXML(of, nIndent);
 
     // now that it's not a first class node, write it out simply
+    if (this->ID != NULL)
+    {
+        of << "id = " << this->ID;
+    }
   if (this->LabelText != NULL)
   {
-      of << "labeltext " << this->LabelText;
+      of << " labeltext " << this->LabelText;
   }
   
   of << " xyz " << this->XYZ[0] << " " << 
@@ -98,6 +109,11 @@ void vtkMRMLFiducial::ReadXMLString(const char *keyValuePairs)
     ss << keyValuePairs;
 
     char keyName[1024];
+
+    // get out the id
+    ss >> keyName;
+    ss >> this->ID;
+    
     // now get out the labeltext key
     ss >> keyName;
     // now get the label text value
@@ -155,6 +171,10 @@ void vtkMRMLFiducial::ReadXMLAttributes(const char** atts)
       ss >> this->OrientationWXYZ[2];
       ss >> this->OrientationWXYZ[3];
       }
+    else if (!strcmp(attName, "id"))
+    {
+        this->SetID(attValue);
+    }
     else if (!strcmp(attName, "labeltext"))
     {
         this->SetLabelText(attValue);
@@ -188,6 +208,9 @@ void vtkMRMLFiducial::PrintSelf(ostream& os, vtkIndent indent)
 {  
   vtkObject::PrintSelf(os,indent);
 
+  // ID
+  os << indent << "ID: " << (this->ID ? this->ID : "(none)") << "\n";
+  
   // LabelText:
   os << indent << "LabelText: " << (this->LabelText ? this->LabelText : "(none)") << "\n";
 
