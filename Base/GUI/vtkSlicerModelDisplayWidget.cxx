@@ -36,6 +36,9 @@ vtkSlicerModelDisplayWidget::vtkSlicerModelDisplayWidget ( )
 //---------------------------------------------------------------------------
 vtkSlicerModelDisplayWidget::~vtkSlicerModelDisplayWidget ( )
 {
+  this->RemoveMRMLObservers();
+  this->RemoveWidgetObservers();
+
   if (this->ModelSelectorWidget)
     {
     this->ModelSelectorWidget->SetParent(NULL);
