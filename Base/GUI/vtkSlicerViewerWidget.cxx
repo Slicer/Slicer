@@ -23,7 +23,6 @@
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLModelDisplayNode.h"
 #include "vtkMRMLFiducialListNode.h"
-#include "vtkMRMLFiducialListDisplayNode.h"
 #include "vtkMRMLTransformNode.h"
 #include "vtkMRMLLinearTransformNode.h"
 #include "vtkMRMLScene.h"
@@ -88,6 +87,8 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
 
   this->ProcessingMRMLEvent = event;
 
+  vtkDebugMacro("processing event " << event);
+  
   if ( vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene 
     && (event == vtkMRMLScene::NodeAddedEvent || event == vtkMRMLScene::NodeRemovedEvent ) )
     {
@@ -97,6 +98,11 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
       this->UpdateFromMRML();
       }
     }
+/*  else if (event == vtkMRMLFiducialListNode::DisplayModifiedEvent)
+    {
+      // do a more lightweight update on the fiducial list nodes
+      }
+      */
   else 
 //  if ((vtkPolyData::SafeDownCast(caller) && event == vtkCommand::ModifiedEvent) ||
 //      (vtkMRMLModelDisplayNode::SafeDownCast(caller) && event == vtkCommand::ModifiedEvent))
@@ -178,7 +184,7 @@ void vtkSlicerViewerWidget::UpdateModelsFromMRML()
   while (node=scene->GetNextNodeByClass("vtkMRMLModelNode"))
     {
     vtkMRMLModelNode *model = vtkMRMLModelNode::SafeDownCast(node);
-
+    
     // add nodes that are not in the list yet
     if (this->DisplayedModels.find(model->GetID()) == this->DisplayedModels.end() )
       {
@@ -221,64 +227,67 @@ void vtkSlicerViewerWidget::UpdateFiducialsFromMRML()
 
   scene->InitTraversal();
   while (node=scene->GetNextNodeByClass("vtkMRMLFiducialListNode"))
-    {
-    vtkMRMLFiducialListNode *flist = vtkMRMLFiducialListNode::SafeDownCast(node);
-    if (flist->HasObserver ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand ) == 0)
+  {
+      vtkMRMLFiducialListNode *flist = vtkMRMLFiducialListNode::SafeDownCast(node);
+      
+      if (flist->HasObserver ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand ) == 0)
       {
-      flist->AddObserver ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+          flist->AddObserver ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
       }
-    if (flist->HasObserver ( vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand ) == 0)
+      if (flist->HasObserver ( vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand ) == 0)
       {
-      flist->AddObserver ( vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand );
+          flist->AddObserver ( vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand );
       }
-      // observe display node  
-    if (flist->HasObserver ( vtkMRMLFiducialListNode::DisplayModifiedEvent, this->MRMLCallbackCommand ) == 0)
-      {
-      flist->AddObserver ( vtkMRMLFiducialListNode::DisplayModifiedEvent, this->MRMLCallbackCommand );
+      // observe display node
+      if (flist->HasObserver ( vtkMRMLFiducialListNode::DisplayModifiedEvent, this->MRMLCallbackCommand ) == 0)
+      {     
+          flist->AddObserver ( vtkMRMLFiducialListNode::DisplayModifiedEvent, this->MRMLCallbackCommand );
       }
-
+      
     for (int f=0; f<flist->GetNumberOfFiducials(); f++)
-      {
+      {          
       vtkMRMLFiducial *fnode = flist->GetNthFiducial(f);
-      std::string aid = this->GetFiducialActorID(flist->GetID(), f);
-
       vtkGlyphSource2D *glyph = vtkGlyphSource2D::New();
       glyph->SetGlyphTypeToDiamond();
-
+      glyph->SetColor(flist->GetColor());
+          
       vtkPolyDataMapper *mapper = vtkPolyDataMapper::New ();
       mapper->SetInput ( glyph->GetOutput() );
-
+      
       //observe fiducial node data
       if (fnode->HasObserver(vtkCommand::ModifiedEvent, this->MRMLCallbackCommand ) == 0) 
-        {
-        fnode->AddObserver ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
-        }
+      {
+          fnode->AddObserver (vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+      }
       vtkActor *actor = vtkActor::New ( );
       actor->SetMapper ( mapper );
       this->MainViewer->AddViewProp ( actor );
-
+      
       // handle text
       vtkVectorText *vtext = vtkVectorText::New();
       vtext->SetText(fnode->GetLabelText());
-
+      
       vtkPolyDataMapper *textMapper = vtkPolyDataMapper::New ();
       textMapper->SetInput ( vtext->GetOutput() );
-
+      
       vtkFollower *textActor = vtkFollower::New();
       textActor->SetCamera(this->MainViewer->GetRenderer()->GetActiveCamera());
       textActor->SetMapper(textMapper);
-
+      
       this->MainViewer->AddViewProp ( textActor );
-
       this->SetFiducialDisplayProperty(flist, fnode, actor, textActor);
-
-      this->DisplayedFiducials[aid.c_str()] = actor;
-      this->DisplayedTextFiducials[aid.c_str()] = textActor;
+      vtkDebugMacro("After setting disp props, actor vis = " << actor->GetVisibility() << ", adding actor to displayed fid list with first string " << fnode->GetID() << ", current size = " << this->DisplayedFiducials.size());
+      // need to use a constant string as the key to the map, use the
+      // fiducial point's id
+      this->DisplayedFiducials[fnode->GetID()] = actor;
+      vtkDebugMacro("\tnew size of displayed fids = " << this->DisplayedFiducials.size());
+      
+      this->DisplayedTextFiducials[fnode->GetID()] = textActor;
       
       glyph->Delete();
       actor->Delete();
-      mapper->Delete();
-
+      
+      mapper->Delete();       
       vtext->Delete();
       textMapper->Delete();
       textActor->Delete();
@@ -332,6 +341,7 @@ void vtkSlicerViewerWidget::RemoveModelProps()
 void vtkSlicerViewerWidget::RemoveFiducialProps()
 {
   // glyph actors
+    int idx = 0;
   std::map<const char *, vtkActor *>::iterator iter;
   for(iter=this->DisplayedFiducials.begin(); iter != this->DisplayedFiducials.end(); iter++) 
     {
@@ -387,8 +397,16 @@ void vtkSlicerViewerWidget::RemoveFiducialObservers()
     int index;
     std::string nid = this->GetFiducialNodeID(aid, index);
     vtkMRMLFiducialListNode *flist = vtkMRMLFiducialListNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(nid.c_str()));
+    if (flist == NULL)
+    {
+        std::cerr << "RemoveFiducialObservers: failed to find vtkMRMLFiducialListNode from node id " << aid << endl;
+        break;
+    }
     flist->RemoveObservers ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
-    flist->RemoveObservers ( vtkMRMLFiducialListNode::DisplayModifiedEvent, this->MRMLCallbackCommand );
+    if (flist->HasObserver( vtkMRMLFiducialListNode::DisplayModifiedEvent, this->MRMLCallbackCommand ) == 1)
+    {
+        flist->RemoveObservers ( vtkMRMLFiducialListNode::DisplayModifiedEvent, this->MRMLCallbackCommand );
+    }
     flist->RemoveObservers ( vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand );
     if (flist)
       {
@@ -466,18 +484,40 @@ void vtkSlicerViewerWidget::SetFiducialDisplayProperty(vtkMRMLFiducialListNode *
     textActor->SetUserMatrix(transformToWorld);
     transformToWorld->Delete();
     }
-  vtkMRMLFiducialListDisplayNode* dnode = flist->GetDisplayNode();
-  if (dnode != NULL)
-    {
-    actor->SetVisibility(dnode->GetVisibility());
-    actor->GetProperty()->SetColor(dnode->GetColor());
-    actor->GetProperty()->SetOpacity(dnode->GetOpacity());
-    actor->GetProperty()->SetAmbient(dnode->GetAmbient());
-    actor->GetProperty()->SetDiffuse(dnode->GetDiffuse());
-    actor->GetProperty()->SetSpecular(dnode->GetSpecular());
-    actor->GetProperty()->SetSpecularPower(dnode->GetPower());
-    actor->SetTexture(NULL);
-    }
+
+  actor->SetVisibility(flist->GetVisibility());
+  textActor->SetVisibility(flist->GetVisibility());
+  actor->GetProperty()->SetColor(flist->GetColor());
+  textActor->GetProperty()->SetColor(flist->GetColor());
+  actor->GetProperty()->SetOpacity(flist->GetOpacity());
+  textActor->GetProperty()->SetOpacity(flist->GetOpacity());
+  actor->GetProperty()->SetAmbient(flist->GetAmbient());
+  textActor->GetProperty()->SetAmbient(flist->GetAmbient());
+  actor->GetProperty()->SetDiffuse(flist->GetDiffuse());
+  textActor->GetProperty()->SetDiffuse(flist->GetDiffuse());
+  actor->GetProperty()->SetSpecular(flist->GetSpecular());
+  textActor->GetProperty()->SetSpecular(flist->GetSpecular());
+  actor->GetProperty()->SetSpecularPower(flist->GetPower());
+  textActor->GetProperty()->SetSpecularPower(flist->GetPower());
+  actor->SetTexture(NULL);
+}
+
+//---------------------------------------------------------------------------
+// returns the fiducial list's id from the fiducial point's id
+std::string
+vtkSlicerViewerWidget::GetFiducialNodeID (const char *actorid, int &index)
+{
+    // take the index off the actor id to get the fiducial node's id
+    std::string actorString = actorid;
+    std::cout << "GetFiducialNodeID: actorString = " << actorString << ", index = " << index << endl;
+    
+  std::stringstream ss;
+  std::string sid;
+  ss << actorid;
+  ss >> sid;
+  ss >> index;
+  std::cout << "GetFiducialNodeID: actor id = " << actorid << ", got sid " << sid << endl;
+  return sid;
 }
 
 //---------------------------------------------------------------------------
@@ -505,29 +545,6 @@ vtkSlicerViewerWidget::GetActorByID (const char *id)
 }
 
 //---------------------------------------------------------------------------
-std::string
-vtkSlicerViewerWidget::GetFiducialActorID (const char *id, int index)
-{
-  std::stringstream ss;
-  ss << id << " " << index;
-  std::string sid;
-  ss >> sid;
-  return sid;
-}
-
-//---------------------------------------------------------------------------
-std::string
-vtkSlicerViewerWidget::GetFiducialNodeID (const char *actorid, int &index)
-{
-  std::stringstream ss;
-  std::string sid;
-  ss << actorid;
-  ss >> sid;
-  ss >> index;
-  return sid;
-}
-
-//---------------------------------------------------------------------------
   // Description:
   // return the current actor corresponding to a give MRML ID
 vtkActor *
@@ -537,8 +554,7 @@ vtkSlicerViewerWidget::GetFiducialActorByID (const char *id, int index)
     {
     return (NULL);
     }
-  
-  std::string sid = this->GetFiducialActorID(id, index);
+  std::string sid = id;
 
   std::map<const char *, vtkActor *>::iterator iter;
   // search for matching string (can't use find, since it would look for 
