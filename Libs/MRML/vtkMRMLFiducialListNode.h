@@ -30,7 +30,6 @@
 #include "vtkMRMLNode.h"
 #include "vtkMRMLFiducial.h"
 #include "vtkMRMLTransformableNode.h"
-#include "vtkMRMLFiducialListDisplayNode.h"
 
 class VTK_MRML_EXPORT vtkMRMLFiducialListNode : public vtkMRMLTransformableNode
 {
@@ -67,50 +66,42 @@ public:
   virtual void UpdateScene(vtkMRMLScene *scene);
 
   // Description:
-  // String ID of the display MRML node
-  void SetAndObserveDisplayNodeID(const char *DisplayNodeID);
-  vtkGetStringMacro(DisplayNodeID);
-
-  // Description:
-  // Associated display MRML node
-  vtkMRMLFiducialListDisplayNode* GetDisplayNode();
-
-  // Description:
   // update display node ids
   void UpdateReferences();
   
   // Description:
   // Get/Set for Symbol scale
-  vtkSetMacro(SymbolScale,double);
+//  vtkSetMacro(SymbolScale,double);
+  void SetSymbolScale(double scale);
   vtkGetMacro(SymbolScale,double);
 
 
   // Description:
   // Get/Set for list visibility 
-  vtkSetMacro(Visibility,int);
+  //vtkSetMacro(Visibility,int);
+  void SetVisibility(int visible);
   vtkGetMacro(Visibility,int);
 
   // Description:
   // Get/Set for Text scale
-  vtkSetMacro(TextScale,double);
+  //vtkSetMacro(TextScale,double);
+  void SetTextScale(double scale);
   vtkGetMacro(TextScale,double);
   
   // Description:
   // Get/Set for Glyph and Text color
-  vtkSetVector3Macro(Color,double);
+  //vtkSetVector3Macro(Color,double);
+  void SetColor(double r, double g, double b);
+  void SetColor(double c[3]);
   vtkGetVectorMacro(Color,double,3);
   
-  // Description:
-  // Get/Set for the list name
-//  vtkSetStringMacro(Name);
-//  vtkGetStringMacro(Name);
   
-  int GetNumberOfFiducials() { return this->FiducialList->vtkCollection::GetNumberOfItems(); };
+  int GetNumberOfFiducials();
   vtkMRMLFiducial* GetNthFiducial(int n);
-  void AddFiducial(vtkMRMLFiducial *o) { this->FiducialList->vtkCollection::AddItem(o); this->Modified();};
-  void RemoveFiducial(vtkMRMLFiducial *o) { this->FiducialList->vtkCollection::RemoveItem(o); this->Modified();};
-  void RemoveFiducial(int i) { this->FiducialList->vtkCollection::RemoveItem(i); this->Modified();};
-  int  IsFiducialPresent(vtkMRMLFiducial *o) { return this->FiducialList->vtkCollection::IsItemPresent(o);};
+  int AddFiducial( );
+  void RemoveFiducial(vtkMRMLFiducial *o);
+  void RemoveFiducial(int i);
+  int  IsFiducialPresent(vtkMRMLFiducial *o);
 
   void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
 
@@ -125,23 +116,51 @@ public:
     };
 //ETX
 
+  // Description:
+  // Opacity of the fiducial surface expressed as a number from 0 to 1
+//  vtkSetMacro(Opacity, double);
+  void SetOpacity(double opacity);
+  vtkGetMacro(Opacity, double);
+
+  // Description:
+  // Ambient of the fiducial surface expressed as a number from 0 to 100
+  vtkSetMacro(Ambient, double);
+  vtkGetMacro(Ambient, double);
+  
+  // Description:
+  // Diffuse of the fiducial surface expressed as a number from 0 to 100
+  vtkSetMacro(Diffuse, double);
+  vtkGetMacro(Diffuse, double);
+  
+  // Description:
+  // Specular of the fiducial surface expressed as a number from 0 to 100
+  vtkSetMacro(Specular, double);
+  vtkGetMacro(Specular, double);
+
+  // Description:
+  // Power of the fiducial surface expressed as a number from 0 to 100
+  vtkSetMacro(Power, double);
+  vtkGetMacro(Power, double);
+
 protected:
   vtkMRMLFiducialListNode();
   ~vtkMRMLFiducialListNode();
   vtkMRMLFiducialListNode(const vtkMRMLFiducialListNode&);
   void operator=(const vtkMRMLFiducialListNode&);
 
-  vtkSetStringMacro(DisplayNodeID);
-
   double SymbolScale;
   double TextScale;
   int Visibility;
   double Color[3];
 
-  char *DisplayNodeID;
-
   vtkCollection *FiducialList;
-
+  
+  // Numbers relating to the display of the fiducials
+  double Opacity;
+  double Ambient;
+  double Diffuse;
+  double Specular;
+  double Power;
 };
 
 #endif
