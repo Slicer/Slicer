@@ -94,7 +94,7 @@ void vtkMRMLModelNode::WriteXML(ostream& of, int nIndent)
 void vtkMRMLModelNode::ReadXMLAttributes(const char** atts)
 {
 
-  vtkMRMLNode::ReadXMLAttributes(atts);
+  Superclass::ReadXMLAttributes(atts);
 
   const char* attName;
   const char* attValue;
