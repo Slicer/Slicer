@@ -55,18 +55,18 @@ vtkSlicerSliceLayerLogic::vtkSlicerSliceLayerLogic()
 vtkSlicerSliceLayerLogic::~vtkSlicerSliceLayerLogic()
 {
   if ( this->SliceNode ) 
-  {
+    {
     this->SetAndObserveMRML( vtkObjectPointer(&this->SliceNode), NULL );
-  }
+    }
   if ( this->VolumeNode ) 
-  {
+    {
     this->VolumeNode->RemoveObservers ( vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand );
     this->SetAndObserveMRML( vtkObjectPointer(&this->VolumeNode), NULL );
-  }
+    }
   if ( this->VolumeDisplayNode )
-  {
+    {
     this->SetAndObserveMRML( vtkObjectPointer( &this->VolumeDisplayNode ), NULL );
-  }
+    }
 
   this->SetSliceNode(NULL);
   this->SetVolumeNode(NULL);
@@ -109,7 +109,7 @@ void vtkSlicerSliceLayerLogic::SetVolumeNode(vtkMRMLVolumeNode *volumeNode)
     }
 
   this->SetAndObserveMRML( vtkObjectPointer( &this->VolumeNode ), volumeNode );
- if (this->VolumeNode != NULL)
+  if (this->VolumeNode != NULL)
     {
     this->VolumeNode->AddObserver ( vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand );
     }
