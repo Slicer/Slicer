@@ -124,7 +124,7 @@ void vtkMRMLNode::WriteXML(ostream& of, int nIndent)
     {
     of << indent << "description=\"" << this->Description << "\" ";
     }
-  of << indent << " hideFromEditors=\"" << (this->HideFromEditors ? "true" : "false") << "\"";
+  of << indent << " hideFromEditors=\"" << (this->HideFromEditors ? "true" : "false") << "\" ";
 
 }
 

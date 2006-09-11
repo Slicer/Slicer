@@ -46,7 +46,7 @@ vtkMRMLScene::vtkMRMLScene()
   this->CurrentScene =  vtkCollection::New();
   this->UndoStackSize = 100;
   this->UndoFlag = true;
-
+  this->InUndo = false;
   //
   // Register all the 'built-in' nodes for the library
   //
@@ -709,6 +709,11 @@ const char* vtkMRMLScene::GetUniqueIDByClass(const char* className)
 //
 void vtkMRMLScene::SaveStateForUndo (vtkMRMLNode *node)
 {
+  if (this->InUndo) 
+    {
+    return;
+    }
+
   this->ClearRedoStack();
   this->SetUndoOn();
   this->PushIntoUndoStack();
@@ -721,6 +726,10 @@ void vtkMRMLScene::SaveStateForUndo (vtkMRMLNode *node)
 //------------------------------------------------------------------------------
 void vtkMRMLScene::SaveStateForUndo (std::vector<vtkMRMLNode *> nodes)
 {
+  if (this->InUndo) 
+    {
+    return;
+    }
   this->ClearRedoStack();
   this->SetUndoOn();
   this->PushIntoUndoStack();
@@ -735,6 +744,11 @@ void vtkMRMLScene::SaveStateForUndo (std::vector<vtkMRMLNode *> nodes)
 //------------------------------------------------------------------------------
 void vtkMRMLScene::SaveStateForUndo (vtkCollection* nodes)
 {
+  if (this->InUndo) 
+    {
+    return;
+    }
+
   this->ClearRedoStack();
   this->SetUndoOn();
   this->PushIntoUndoStack();
@@ -754,6 +768,11 @@ void vtkMRMLScene::SaveStateForUndo (vtkCollection* nodes)
 //------------------------------------------------------------------------------
 void vtkMRMLScene::SaveStateForUndo ()
 {
+  if (this->InUndo) 
+    {
+    return;
+    }
+
   this->ClearRedoStack();
   this->SetUndoOn();
   this->PushIntoUndoStack();
@@ -871,6 +890,8 @@ void vtkMRMLScene::Undo()
     return;
     }
 
+  this->InUndo = true;
+
   int nnodes;
   int n;
   unsigned int nn;
@@ -890,16 +911,22 @@ void vtkMRMLScene::Undo()
       }
     }
 
-  vtkCollection* undoScene = dynamic_cast < vtkCollection *>( this->UndoStack.back() );;
-  //std::hash_map<std::string, vtkMRMLNode*> undoMap;
   std::map<std::string, vtkMRMLNode*> undoMap;
-  nnodes = undoScene->GetNumberOfItems();
-  for (n=0; n<nnodes; n++) 
+  //std::hash_map<std::string, vtkMRMLNode*> undoMap;
+
+  vtkCollection* undoScene = NULL;
+
+  if (!this->UndoStack.empty())
     {
-    vtkMRMLNode *node  = dynamic_cast < vtkMRMLNode *>(undoScene->GetItemAsObject(n));
-    if (node) 
+    undoScene = dynamic_cast < vtkCollection *>( this->UndoStack.back() );
+    nnodes = undoScene->GetNumberOfItems();
+    for (n=0; n<nnodes; n++) 
       {
-      undoMap[node->GetID()] = node;
+      vtkMRMLNode *node  = dynamic_cast < vtkMRMLNode *>(undoScene->GetItemAsObject(n));
+      if (node) 
+        {
+        undoMap[node->GetID()] = node;
+        }
       }
     }
 
@@ -948,12 +975,19 @@ void vtkMRMLScene::Undo()
     this->RemoveNode(removeNodes[nn]);
     }
 
-  undoScene->RemoveAllItems();
-  undoScene->Delete();
+  if (undoScene)
+    {
+    undoScene->RemoveAllItems();
+    undoScene->Delete();
+    }
 
-  UndoStack.pop_back();
-
+  if (!this->UndoStack.empty())
+   {
+   UndoStack.pop_back();
+   }
   this->Modified();
+
+  this->InUndo = false;
 }
 
 void vtkMRMLScene::Redo()
@@ -982,16 +1016,22 @@ void vtkMRMLScene::Redo()
       }
     }
 
-  vtkCollection* undoScene = dynamic_cast < vtkCollection *>( this->RedoStack.back() );;
   //std::hash_map<std::string, vtkMRMLNode*> undoMap;
   std::map<std::string, vtkMRMLNode*> undoMap;
-  nnodes = undoScene->GetNumberOfItems();
-  for (n=0; n<nnodes; n++) 
+
+  vtkCollection* undoScene = NULL;
+
+  if (!this->RedoStack.empty())
     {
-    vtkMRMLNode *node  = dynamic_cast < vtkMRMLNode *>(undoScene->GetItemAsObject(n));
-    if (node) 
+    undoScene = dynamic_cast < vtkCollection *>( this->RedoStack.back() );;
+    nnodes = undoScene->GetNumberOfItems();
+    for (n=0; n<nnodes; n++) 
       {
-      undoMap[node->GetID()] = node;
+      vtkMRMLNode *node  = dynamic_cast < vtkMRMLNode *>(undoScene->GetItemAsObject(n));
+      if (node) 
+        {
+        undoMap[node->GetID()] = node;
+        }
       }
     }
 
@@ -1040,8 +1080,11 @@ void vtkMRMLScene::Redo()
     this->RemoveNode(removeNodes[nn]);
     }
 
-  undoScene->RemoveAllItems();
-  undoScene->Delete();
+  if (undoScene)
+    {
+    undoScene->RemoveAllItems();
+    undoScene->Delete();
+    }
 
   RedoStack.pop_back();
 

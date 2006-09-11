@@ -62,6 +62,8 @@ public:
   // Create the widget.
   virtual void CreateWidget();
 
+  void UpdateTranslationSliders();
+
   vtkSlicerNodeSelectorWidget* TransformEditSelectorWidget;
   vtkKWMatrix4x4*              MatrixWidget;
   vtkKWPushButton*             IdentityButton;
@@ -69,6 +71,8 @@ public:
   vtkKWScaleWithEntry* TranslationScaleLR;
   vtkKWScaleWithEntry* TranslationScalePA;
   vtkKWScaleWithEntry* TranslationScaleIS;
+
+  bool ProcessingCallback;
 
 private:
 

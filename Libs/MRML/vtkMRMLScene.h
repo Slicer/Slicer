@@ -214,6 +214,9 @@ protected:
   vtkCollection* CurrentScene;
   int UndoStackSize;
   bool UndoFlag;
+  
+  bool InUndo;
+
   //BTX
   std::list< vtkCollection* >  UndoStack;
   std::list< vtkCollection* >  RedoStack;

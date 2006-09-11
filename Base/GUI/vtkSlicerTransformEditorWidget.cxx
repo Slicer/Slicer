@@ -29,6 +29,7 @@ vtkSlicerTransformEditorWidget::vtkSlicerTransformEditorWidget ( )
   this->TranslationScaleLR = NULL;
   this->TranslationScalePA = NULL;
   this->TranslationScaleIS = NULL;
+  this->ProcessingCallback = false;
 }
 
 
@@ -93,9 +94,15 @@ void vtkSlicerTransformEditorWidget::PrintSelf ( ostream& os, vtkIndent indent )
 void vtkSlicerTransformEditorWidget::ProcessWidgetEvents ( vtkObject *caller,
                                                          unsigned long event, void *callData )
 {
+  if (this->ProcessingCallback)
+    {
+    return;
+    }
+
+  this->ProcessingCallback = true;
 
   if (this->TransformEditSelectorWidget == vtkSlicerNodeSelectorWidget::SafeDownCast(caller)
-      && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent ) 
+       && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent ) 
     {
     vtkMRMLLinearTransformNode *node = vtkMRMLLinearTransformNode::SafeDownCast(this->TransformEditSelectorWidget->GetSelected());
 
@@ -106,35 +113,36 @@ void vtkSlicerTransformEditorWidget::ProcessWidgetEvents ( vtkObject *caller,
       this->MatrixWidget->EnabledOn();
       this->MatrixWidget->SetAndObserveMatrix4x4(matrix);
       this->MatrixWidget->UpdateWidget();
-      this->TranslationScaleLR->SetValue(matrix->GetElement(3,0));
-      this->TranslationScalePA->SetValue(matrix->GetElement(3,1));
-      this->TranslationScaleIS->SetValue(matrix->GetElement(3,2));
-      this->MatrixWidget->GetMatrix4x4()->AddObserver (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
+      this->MatrixWidget->GetMatrix4x4()->AddObserver (vtkCommand::ModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand );
       }
     else
       {
       this->MatrixWidget->EnabledOff();
       }
-
-    return;
     }
   else if ( this->IdentityButton == vtkKWPushButton::SafeDownCast(caller) && event == vtkKWPushButton::InvokedEvent )
-  {
+    {
+    vtkMRMLLinearTransformNode *node = vtkMRMLLinearTransformNode::SafeDownCast(this->TransformEditSelectorWidget->GetSelected());
+    if (node != NULL)
+      {
+      this->MRMLScene->SaveStateForUndo(node);
+      }
+
     this->MatrixWidget->GetMatrix4x4()->Identity();
     this->MatrixWidget->UpdateWidget();
-  }
+    }
   else if ( this->InvertButton == vtkKWPushButton::SafeDownCast(caller) && event == vtkKWPushButton::InvokedEvent )
-  {
+    {
+    vtkMRMLLinearTransformNode *node = vtkMRMLLinearTransformNode::SafeDownCast(this->TransformEditSelectorWidget->GetSelected());
+    if (node != NULL)
+      {
+      this->MRMLScene->SaveStateForUndo(node);
+      }
+
     this->MatrixWidget->GetMatrix4x4()->Invert();
     this->MatrixWidget->UpdateWidget();
-  }
-  else if (this->MatrixWidget->GetMatrix4x4() == vtkMatrix4x4::SafeDownCast(caller) && event == vtkCommand::ModifiedEvent)
-    {
-    this->TranslationScaleLR->SetValue(this->MatrixWidget->GetMatrix4x4()->GetElement(3,0));
-    this->TranslationScalePA->SetValue(this->MatrixWidget->GetMatrix4x4()->GetElement(3,1));
-    this->TranslationScaleIS->SetValue(this->MatrixWidget->GetMatrix4x4()->GetElement(3,2));
     }
-
+    this->ProcessingCallback = false;
 
 } 
 
@@ -144,6 +152,10 @@ void vtkSlicerTransformEditorWidget::ProcessWidgetEvents ( vtkObject *caller,
 void vtkSlicerTransformEditorWidget::ProcessMRMLEvents ( vtkObject *caller,
                                               unsigned long event, void *callData )
 {
+  if (this->MatrixWidget->GetMatrix4x4() == vtkMatrix4x4::SafeDownCast(caller) && event == vtkCommand::ModifiedEvent)
+    {
+    this->UpdateTranslationSliders();
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -223,6 +235,7 @@ void vtkSlicerTransformEditorWidget::CreateWidget ( )
     this->TranslationScaleLR->Create();
     this->TranslationScaleLR->SetLabelText("LR");
     this->TranslationScaleLR->SetWidth ( 20 );
+    this->TranslationScaleLR->SetRange(-200, 200);
     this->TranslationScaleLR->SetStartCommand(this, "TransformChangingCallback");
     this->TranslationScaleLR->SetCommand(this, "TransformChangingCallback");
     this->TranslationScaleLR->SetEndCommand(this, "TransformChangedCallback");
@@ -233,6 +246,7 @@ void vtkSlicerTransformEditorWidget::CreateWidget ( )
     this->TranslationScalePA =  vtkKWScaleWithEntry::New() ;
     this->TranslationScalePA->SetParent( translateFrame->GetFrame() );
     this->TranslationScalePA->Create();
+    this->TranslationScalePA->SetRange(-200, 200);
     this->TranslationScalePA->SetLabelText("PA");
     this->TranslationScalePA->SetWidth ( 20 );
     this->TranslationScalePA->SetStartCommand(this, "TransformChangingCallback");
@@ -245,6 +259,7 @@ void vtkSlicerTransformEditorWidget::CreateWidget ( )
     this->TranslationScaleIS =  vtkKWScaleWithEntry::New() ;
     this->TranslationScaleIS->SetParent( translateFrame->GetFrame() );
     this->TranslationScaleIS->Create();
+    this->TranslationScaleIS->SetRange(-200, 200);
     this->TranslationScaleIS->SetLabelText("IS");
     this->TranslationScaleIS->SetWidth ( 20 );
     this->TranslationScaleIS->SetStartCommand(this, "TransformChangingCallback");
@@ -282,25 +297,34 @@ void vtkSlicerTransformEditorWidget::CreateWidget ( )
 
 void vtkSlicerTransformEditorWidget::TransformChangedCallback(double)
 {
-  vtkMRMLLinearTransformNode *node = vtkMRMLLinearTransformNode::SafeDownCast(this->TransformEditSelectorWidget->GetSelected());
+ if (this->ProcessingCallback)
+    {
+    return;
+    }
 
+  vtkMRMLLinearTransformNode *node = vtkMRMLLinearTransformNode::SafeDownCast(this->TransformEditSelectorWidget->GetSelected());
   if (node != NULL)
     {
+    this->ProcessingCallback = true;
     // will update when the node value changes
     vtkMatrix4x4 *matrix = node->GetMatrixTransformToParent();
-    matrix->SetElement(3,0, this->TranslationScaleLR->GetValue());
-    matrix->SetElement(3,1, this->TranslationScalePA->GetValue());
-    matrix->SetElement(3,2, this->TranslationScaleIS->GetValue());
+    matrix->SetElement(0,3, this->TranslationScaleLR->GetValue());
+    matrix->SetElement(1,3, this->TranslationScalePA->GetValue());
+    matrix->SetElement(2,3, this->TranslationScaleIS->GetValue());
     this->MatrixWidget->EnabledOn();
     this->MatrixWidget->UpdateWidget();
+    this->ProcessingCallback = false;
     }
 }
 
 void vtkSlicerTransformEditorWidget::TransformChangingCallback(double val)
 {
-  vtkMRMLLinearTransformNode *node = vtkMRMLLinearTransformNode::SafeDownCast(this->TransformEditSelectorWidget->GetSelected());
-  
+  if (this->ProcessingCallback)
+    {
+    return;
+    }
 
+  vtkMRMLLinearTransformNode *node = vtkMRMLLinearTransformNode::SafeDownCast(this->TransformEditSelectorWidget->GetSelected());
   if (node != NULL)
     {
     this->MRMLScene->SaveStateForUndo(node);
@@ -308,5 +332,12 @@ void vtkSlicerTransformEditorWidget::TransformChangingCallback(double val)
     }
 }
 
-
-
+void vtkSlicerTransformEditorWidget::UpdateTranslationSliders()
+{
+   if (this->MatrixWidget->GetMatrix4x4() != NULL)
+      {
+      this->TranslationScaleLR->SetValue(this->MatrixWidget->GetMatrix4x4()->GetElement(0,3));
+      this->TranslationScalePA->SetValue(this->MatrixWidget->GetMatrix4x4()->GetElement(1,3));
+      this->TranslationScaleIS->SetValue(this->MatrixWidget->GetMatrix4x4()->GetElement(2,3));
+      }
+}
