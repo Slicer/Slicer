@@ -1312,23 +1312,33 @@ void vtkSlicerApplicationGUI::SetAndObserveMainSliceLogic ( vtkSlicerSliceLogic 
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::PopulateModuleChooseList ( )
 {
-    const char* mName;
-    vtkSlicerModuleGUI *m;
 
-    if (  (this->GetApplication( )  != NULL ) && (this->GetModuleChooseGUI() != NULL) ) {
-        vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication() );
-        //--- ALL modules pull-down menu 
-        if ( (app->GetModuleGUICollection ( ) != NULL)  ) {
-            app->GetModuleGUICollection( )->InitTraversal( );
-            m = vtkSlicerModuleGUI::SafeDownCast( app->GetModuleGUICollection( )->GetNextItemAsObject( ));
-            while ( m != NULL ) {
-                mName = m->GetUIPanel( )->GetName( );
-                this->GetModuleChooseGUI()->GetModulesMenuButton()->GetMenu( )->AddRadioButton( mName );
-                m = vtkSlicerModuleGUI::SafeDownCast( app->GetModuleGUICollection( )->GetNextItemAsObject( ));
-            }
+  const char* mName;
+  vtkSlicerModuleGUI *m;
+
+  if ( (this->GetApplication( )  != NULL ) && (this->GetModuleChooseGUI() != NULL) ) 
+    {
+    vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication() );
+    //
+    //--- ALL modules pull-down menu 
+    // - remove any existing items
+    // - add one menu button per module
+    // - set the Data Module as default
+    //
+    if ( (app->GetModuleGUICollection ( ) != NULL) ) 
+      {
+      this->GetModuleChooseGUI()->GetModulesMenuButton()->GetMenu( )->DeleteAllItems();
+      app->GetModuleGUICollection( )->InitTraversal( );
+      m = vtkSlicerModuleGUI::SafeDownCast( app->GetModuleGUICollection( )->GetNextItemAsObject( ));
+      while ( m != NULL ) 
+        {
+        mName = m->GetUIPanel( )->GetName( );
+        this->GetModuleChooseGUI()->GetModulesMenuButton()->GetMenu( )->AddRadioButton( mName );
+        m = vtkSlicerModuleGUI::SafeDownCast( app->GetModuleGUICollection( )->GetNextItemAsObject( ));
         }
-        //--- TODO: make the initial value be module user sets as "home"
-        this->GetModuleChooseGUI()->GetModulesMenuButton()->SetValue ("Volumes");
+      }
+    //--- TODO: make the initial value be module user sets as "home"
+    this->GetModuleChooseGUI()->GetModulesMenuButton()->SetValue ("Data");
     }
 }
 
