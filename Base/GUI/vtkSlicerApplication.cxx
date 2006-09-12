@@ -89,6 +89,16 @@ void vtkSlicerApplication::AddModuleGUI ( vtkSlicerModuleGUI *gui ) {
     this->ModuleGUICollection->AddItem ( gui );
 }
 
+//---------------------------------------------------------------------------
+void vtkSlicerApplication::RemoveModuleGUI ( vtkSlicerModuleGUI *gui ) {
+
+    // Create if it doesn't exist already
+    if ( this->ModuleGUICollection == NULL ) {
+        this->ModuleGUICollection = vtkSlicerGUICollection::New ( );
+    } 
+    // Remove a gui
+    this->ModuleGUICollection->RemoveItem ( gui );
+}
 
 //---------------------------------------------------------------------------
 vtkSlicerModuleGUI* vtkSlicerApplication::GetModuleGUIByName ( const char *name )
