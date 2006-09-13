@@ -6,22 +6,20 @@ proc TestFiducial {} {
   set numberOfFiducials [$fiducialList GetNumberOfFiducials]
 
   for {set f 0} {$f < $numberOfFiducials} {incr f} {
-    set fiducial [$fiducialList GetNthFiducial $f]
-    $fiducial SetLabelText RenameTest$f
-    $fiducial SetXYZ $f $f $f
-    $fiducial SetOrientationWXYZ $f $f $f 1
+    $fiducialList SetNthFiducialLabelText $f RenameTest$f
+    $fiducialList SetNthFiducialXYZ $f $f $f $f
+    $fiducialList SetNthFiducialOrientation $f $f $f $f 1
   }
 
 
   for {set f 0} {$f < $numberOfFiducials} {incr f} {
-    set fiducial [$fiducialList GetNthFiducial $f]
-    if { [$fiducial GetLabelText] != "RenameTest$f" } {
+    if { [$fiducialList GetNthFiducialLabelText $f] != "RenameTest$f" } {
       error "fiducial name didn't change ($fiducial)"
     }
-    if { [string trim [$fiducial GetXYZ]] != "$f $f $f" } {
+    if { [string trim [$fiducialList GetNthFiducialXYZ $f]] != "$f $f $f" } {
       error "fiducial XYZ didn't change ($fiducial) (XYZ is [$fiducial GetXYZ] not $f $f $f)"
     }
-    if { [string trim [$fiducial GetOrientationWXYZ]] != "$f $f $f 1" } {
+    if { [string trim [$fiducialList GetNthFiducialOrientation $f]] != "$f $f $f 1" } {
       error "fiducial OrientationWXYZ didn't change ($fiducial)"
     }
   }
