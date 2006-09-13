@@ -48,6 +48,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     vtkGetObjectMacro ( VisibilityToggle, vtkKWPushButton);
     vtkGetObjectMacro ( VisibilityIcons, vtkSlicerVisibilityIcons);
     vtkGetObjectMacro ( ListColorButton, vtkKWChangeColorButton);
+    vtkGetObjectMacro ( ListSelectedColorButton, vtkKWChangeColorButton);
     vtkGetObjectMacro ( ListSymbolScale, vtkKWScaleWithEntry);
     vtkGetObjectMacro ( ListTextScale, vtkKWScaleWithEntry);
     vtkGetObjectMacro ( ListOpacity, vtkKWScaleWithEntry);
@@ -96,7 +97,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     virtual void Exit ( );
 
     virtual void UpdateElement(int row, int col, char * str);
-    virtual void UpdateVTK();
 
     // Description:
     // Getting and setting the mrml fiducail list node id
@@ -142,6 +142,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     // list colour
     vtkKWChangeColorButton *ListColorButton;
 
+    // list selected fiducial colour
+    vtkKWChangeColorButton *ListSelectedColorButton;
+    
     // symbol scale
     vtkKWScaleWithEntry *ListSymbolScale;
     // text scale
@@ -155,7 +158,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     // the columns that hold the
     // name, x, y, z, orientation x y z w, selected
     int NumberOfColumns;
-
+    
 private:
     vtkSlicerFiducialsGUI ( const vtkSlicerFiducialsGUI& ); // Not implemented.
     void operator = ( const vtkSlicerFiducialsGUI& ); //Not implemented.
