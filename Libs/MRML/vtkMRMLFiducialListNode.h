@@ -94,11 +94,39 @@ public:
   void SetColor(double r, double g, double b);
   void SetColor(double c[3]);
   vtkGetVectorMacro(Color,double,3);
-  
-  
+
+  // Description:
+  // Get/Set for colour for when a fiducial is selected
+  void SetSelectedColor(double r, double g, double b);
+  void SetSelectedColor(double c[3]);
+  vtkGetVectorMacro(SelectedColor,double,3);
+
+
+  // Description:
+  // Get the number of fiducials in the list
   int GetNumberOfFiducials();
-  vtkMRMLFiducial* GetNthFiducial(int n);
+  
+  // Description:
+  // Restrict access to the fiducial points, pass in a value via the list
+  // so that the appropriate events can be invoked. Returns 0 on success
+  int SetNthFiducialXYZ(int n, float x, float y, float z);
+  int SetNthFiducialOrientation(int n, float w, float x, float y, float z);
+  int SetNthFiducialLabelText(int n, const char *text);
+  int SetNthFiducialSelected(int n, bool flag);
+  int SetNthFiducialID(int n, const char *id);
+
+  // Description:
+  // Get the elements of the fiducial points
+  float *GetNthFiducialXYZ(int n);
+  float *GetNthFiducialOrientation(int n);
+  const char *GetNthFiducialLabelText(int n);
+  bool GetNthFiducialSelected(int n);
+  const char *GetNthFiducialID(int n);
+  
+  // Description:
+  // Add a fiducial point to the list with default values
   int AddFiducial( );
+  
   void RemoveFiducial(vtkMRMLFiducial *o);
   void RemoveFiducial(int i);
   int  IsFiducialPresent(vtkMRMLFiducial *o);
@@ -113,6 +141,7 @@ public:
     {
       DisplayModifiedEvent = 19000,
       PolyDataModifiedEvent = 19001,
+      FiducialModifiedEvent = 19002,
     };
 //ETX
 
@@ -148,11 +177,16 @@ protected:
   vtkMRMLFiducialListNode(const vtkMRMLFiducialListNode&);
   void operator=(const vtkMRMLFiducialListNode&);
 
+  // disallow access to the fiducial points by outside classes, have them use
+  // SetNthFiducial
+  vtkMRMLFiducial* GetNthFiducial(int n);
+  
   double SymbolScale;
   double TextScale;
   int Visibility;
   double Color[3];
-
+  double SelectedColor[3];
+  
   vtkCollection *FiducialList;
   
   // Numbers relating to the display of the fiducials
