@@ -121,7 +121,7 @@ protected:
   void UpdateModelsFromMRML();
 
   void SetModelDisplayProperty(vtkMRMLModelNode *model,  vtkActor *actor);
-  void SetFiducialDisplayProperty(vtkMRMLFiducialListNode *flist, vtkMRMLFiducial *fnode,
+  void SetFiducialDisplayProperty(vtkMRMLFiducialListNode *flist, int n,
                                   vtkActor *actor, vtkFollower *textActor);
 
   //BTX
