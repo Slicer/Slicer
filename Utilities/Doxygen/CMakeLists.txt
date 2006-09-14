@@ -34,7 +34,7 @@ IF (BUILD_DOCUMENTATION)
     SET(modules_paths ${modules_paths} "${module_path}")
   ENDFOREACH(mod)
   LIST(SORT modules)
-  MESSAGE("Found modules: ${modules}")
+  #MESSAGE("Found modules: ${modules}")
 
   SET(DOXYGEN_SOURCE_LOCATIONS)
   FOREACH(module ${modules})
