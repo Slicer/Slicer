@@ -189,7 +189,6 @@ void vtkSlicerFiducialsGUI::ProcessGUIEvents ( vtkObject *caller,
     if (fidList == this->MRMLScene->GetNodeByID(this->GetFiducialListNodeID()) &&
         event == vtkCommand::ModifiedEvent)
     {
-//        std::cout << "vtkSlicerFiducialsGUI: ProcessGUIEvent list node modified event " << event << endl;
         return;
     }
     
@@ -271,7 +270,6 @@ void vtkSlicerFiducialsGUI::ProcessGUIEvents ( vtkObject *caller,
 void vtkSlicerFiducialsGUI::ProcessLogicEvents ( vtkObject *caller,
                                               unsigned long event, void *callData )
 {
-    // std::cout << "vtkSlicerFiducialsGUI: Process Logic Events " << event << ".\n";
     // Fill in
 }
 
@@ -338,55 +336,100 @@ void vtkSlicerFiducialsGUI::ProcessMRMLEvents ( vtkObject *caller,
 //---------------------------------------------------------------------------
 void vtkSlicerFiducialsGUI::SetGUIFromList(vtkMRMLFiducialListNode * activeFiducialListNode)
 {
-    // clear out the multi column list box and fill it in with the
-    // new list
+    int numPoints = activeFiducialListNode->GetNumberOfFiducials();
+    bool deleteFlag = true;
+    
+    if (numPoints != this->MultiColumnList->GetWidget()->GetNumberOfRows())
+    {
+        vtkDebugMacro("SetGUIFromList: numPoints " << numPoints << " doesn't match number of rows " << this->MultiColumnList->GetWidget()->GetNumberOfRows() << ", so deleting all of them and starting from scratch\n");
+    
+        // clear out the multi column list box and fill it in with the
+        // new list
         this->MultiColumnList->GetWidget()->DeleteAllRows();
-
-        // add rows for each point
-        int numPoints = activeFiducialListNode->GetNumberOfFiducials();
+    }
+    else
+    {
+        deleteFlag = false;
+    }
+    // a rows for each point
+        
         float *xyz;
         float *wxyz;
         for (int row = 0; row < numPoints; row++)
         {
-            vtkDebugMacro("SetGUIFromList: Adding point " << row << " to the table" << endl);
             // add a row for this point
-            this->MultiColumnList->GetWidget()->AddRow();
-            
+            if (deleteFlag)
+            {
+                vtkDebugMacro("SetGUIFromList: Adding point " << row << " to the table" << endl);
+                this->MultiColumnList->GetWidget()->AddRow();
+            }
             // now populate it
             xyz = activeFiducialListNode->GetNthFiducialXYZ(row);
             wxyz = activeFiducialListNode->GetNthFiducialOrientation(row);
             
             if (activeFiducialListNode->GetNthFiducialLabelText(row) != NULL)
             {
-                this->MultiColumnList->GetWidget()->SetCellText(row,0,activeFiducialListNode->GetNthFiducialLabelText(row));
+                if (strcmp(this->MultiColumnList->GetWidget()->GetCellText(row,0), activeFiducialListNode->GetNthFiducialLabelText(row)) != 0)
+                {
+                    this->MultiColumnList->GetWidget()->SetCellText(row,0,activeFiducialListNode->GetNthFiducialLabelText(row));
+                }               
             }
             else
             {
-                this->MultiColumnList->GetWidget()->SetCellText(row,0,"(none)");
+                if (strcmp(this->MultiColumnList->GetWidget()->GetCellText(row,0), "(none)") != 0)
+                {
+                    this->MultiColumnList->GetWidget()->SetCellText(row,0,"(none)");
+                }
             }
             if (xyz != NULL)
             {
-                this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,1,xyz[0]);
-                this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,2,xyz[1]);
-                this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,3,xyz[2]);
+                // always set it if it's a new row added because all were
+                // deleted, because the numerical default is 0
+                if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row,1) != xyz[0])
+                {
+                    this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,1,xyz[0]);
+                } 
+                if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row,2) != xyz[1])
+                {
+                    this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,2,xyz[1]);
+                }
+                if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row,3) != xyz[2])
+                {
+                    this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,3,xyz[2]);
+                }
             }
             if (wxyz != NULL)
             {
-                this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,4,wxyz[0]);
-                this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,5,wxyz[1]);
-                this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,6,wxyz[2]);
-                this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,7,wxyz[3]);
+                if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row,4) != wxyz[0])
+                {
+                    this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,4,wxyz[0]);
+                }
+                if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row,5) != wxyz[1])
+                {
+                    this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,5,wxyz[1]);
+                }
+                if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row,6) != wxyz[2])
+                {
+                    this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,6,wxyz[2]);
+                }
+                if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row,7) != wxyz[3])
+                {
+                    this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,7,wxyz[3]);
+                }
             }
             // selected
-            this->MultiColumnList->GetWidget()->SetCellTextAsInt(row,8,(activeFiducialListNode->GetNthFiducialSelected(row) ? 1 : 0));
-            this->MultiColumnList->GetWidget()->SetCellWindowCommandToCheckButton(row,8);
+            if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsInt(row,8) != (activeFiducialListNode->GetNthFiducialSelected(row) ? 1 : 0))
+            {
+                this->MultiColumnList->GetWidget()->SetCellTextAsInt(row,8,(activeFiducialListNode->GetNthFiducialSelected(row) ? 1 : 0));
+                this->MultiColumnList->GetWidget()->SetCellWindowCommandToCheckButton(row,8);
+            }
         }
         
         vtkDebugMacro("Now going to update GUI from the logic's active list");
     // update the visibility, color, scale buttons to match the displayed list's
     if (activeFiducialListNode == NULL)
     {
-        std::cerr << "vtkSlicerFiducialsGUI::ProcessMRMLEvents: ERROR: no active fiducial list node in the gui class!\n";                return;
+        std::cerr << "vtkSlicerFiducialsGUI::SetGUIFromList: ERROR: no active fiducial list node in the gui class!\n";                return;
     }
     vtkDebugMacro(<< "\tupdating the visibility button\n");
     if (this->GetVisibilityToggle() != NULL &&
@@ -480,16 +523,12 @@ void vtkSlicerFiducialsGUI::SetGUIFromList(vtkMRMLFiducialListNode * activeFiduc
 void vtkSlicerFiducialsGUI::Enter ( )
 {
     std::cout << "vtkSlicerFiducialsGUI: Enter\n";
-    // Fill in - try to go back to the last fiducial
 }
 
 //---------------------------------------------------------------------------
 void vtkSlicerFiducialsGUI::Exit ( )
 {
     std::cout <<  "vtkSlicerFiducialsGUI: Exit\n";
-    // Fill in
-    // save the last fiducial we were looking at
-    // this->ViewingRow = this->MultiColumnList->?
 }
 
 
@@ -784,12 +823,7 @@ void vtkSlicerFiducialsGUI::SetFiducialListNode (vtkMRMLFiducialListNode *fiduci
 
 //---------------------------------------------------------------------------
 void vtkSlicerFiducialsGUI::SetFiducialListNodeID (char * id)
-{    
-    if (id == NULL)
-    {
-        std::cerr << "SetFiducialListNodeID: NULL input id, returning.\n";
-        return;
-    }
+{
     if (this->GetFiducialListNodeID() != NULL &&
         strcmp(id,this->GetFiducialListNodeID()) == 0)
     {
@@ -810,9 +844,16 @@ void vtkSlicerFiducialsGUI::SetFiducialListNodeID (char * id)
     {
         // probably wasn't set yet
     }
+       
     // set the id properly - see the vtkSetStringMacro
     this->FiducialListNodeID = id;
 
+    if (id == NULL)
+    {
+        std::cerr << "SetFiducialListNodeID: NULL input id, removed observers and returning.\n";
+        return;
+    }
+    
     // get the new node
     fidlist = vtkMRMLFiducialListNode::SafeDownCast(this->MRMLScene->GetNodeByID(this->GetFiducialListNodeID()));
     // set up observers on the new node
