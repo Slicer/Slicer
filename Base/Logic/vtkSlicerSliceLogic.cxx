@@ -544,6 +544,7 @@ void vtkSlicerSliceLogic::CreateSliceModel()
     this->SliceModelNode = vtkMRMLModelNode::New();
     this->SliceModelNode->SetScene(this->GetMRMLScene());
     this->SliceModelNode->SetHideFromEditors(1);
+    this->SliceModelNode->SetSaveWithScene(0);
 
     // create plane slice
     this->PlaneSource = vtkPlaneSource::New();
@@ -559,6 +560,7 @@ void vtkSlicerSliceLogic::CreateSliceModel()
     this->SliceModelDisplayNode->SetAmbient(1);
     this->SliceModelDisplayNode->SetDiffuse(0);
     this->SliceModelDisplayNode->SetAndObserveTextureImageData(this->GetImageData());
+    this->SliceModelDisplayNode->SetSaveWithScene(0);
 
     std::stringstream ss;
     char name[256];

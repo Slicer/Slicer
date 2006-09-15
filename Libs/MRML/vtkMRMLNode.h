@@ -146,7 +146,11 @@ public:
   vtkSetMacro(ModifiedSinceRead, int);
   vtkBooleanMacro(ModifiedSinceRead, int);
 
-
+  // Description:
+  // Save node with MRML scene
+  vtkGetMacro(SaveWithScene, int);
+  vtkSetMacro(SaveWithScene, int);
+  vtkBooleanMacro(SaveWithScene, int);
   
   vtkMRMLScene* GetScene() {return this->Scene;};
   void SetScene(vtkMRMLScene* scene) {this->Scene = scene;};
@@ -183,6 +187,7 @@ protected:
   int HideFromEditors;
 
   int  ModifiedSinceRead;
+  int  SaveWithScene;
 
   vtkMRMLScene *Scene;
 

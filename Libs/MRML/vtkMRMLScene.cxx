@@ -359,6 +359,11 @@ int vtkMRMLScene::Commit(const char* url)
   for (n=0; n < this->CurrentScene->GetNumberOfItems(); n++) 
     {
     node = (vtkMRMLNode*)this->CurrentScene->GetItemAsObject(n);
+    if (!node->GetSaveWithScene())
+      {
+      continue;
+      }
+
     deltaIndent = node->GetIndent();
     if ( deltaIndent < 0 ) 
       {

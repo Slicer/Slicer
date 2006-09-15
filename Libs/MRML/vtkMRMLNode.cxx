@@ -59,6 +59,7 @@ vtkMRMLNode::vtkMRMLNode()
   this->MRMLCallbackCommand->SetCallback( vtkMRMLNode::MRMLCallback );
   this->InMRMLCallbackFlag = 0;
   this->ModifiedSinceRead = false;
+  this->SaveWithScene = true;
 
 }
 
