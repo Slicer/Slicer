@@ -651,6 +651,20 @@ void vtkMRMLFiducialListNode::RemoveFiducial(int i)
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLFiducialListNode::RemoveAllFiducials()
+{
+    int numPoints = this->GetNumberOfFiducials();
+    for (int f = numPoints - 1; f >= 0; f--)
+    {
+        // as remove them from the end of the list, the size of the list
+        // will shrink as the iterator f reduces
+        this->FiducialList->vtkCollection::RemoveItem(f);
+        this->InvokeEvent(vtkMRMLScene::NodeRemovedEvent, NULL);
+    }
+    this->Modified();
+}
+
+//----------------------------------------------------------------------------
 int vtkMRMLFiducialListNode::IsFiducialPresent(vtkMRMLFiducial *o)
 {
     return this->FiducialList->vtkCollection::IsItemPresent(o);

@@ -138,6 +138,7 @@ public:
   
   void RemoveFiducial(vtkMRMLFiducial *o);
   void RemoveFiducial(int i);
+  void RemoveAllFiducials();
   int  IsFiducialPresent(vtkMRMLFiducial *o);
 
   void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
