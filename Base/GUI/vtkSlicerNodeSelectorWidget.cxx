@@ -212,6 +212,11 @@ void vtkSlicerNodeSelectorWidget::UpdateMenu()
       const char *className = this->GetNodeClass(c);
       while ( (node = this->MRMLScene->GetNextNodeByClass(className) ) != NULL)
         {
+        if (node->GetHideFromEditors())
+          {
+          continue;
+          }
+
         // If there is a Attribute Name-Value  specified, then only include nodes that
         // match both the NodeClass and Attribute
         if (this->GetNodeAttributeName(c)== NULL  ||

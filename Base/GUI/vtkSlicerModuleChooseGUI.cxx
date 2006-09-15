@@ -140,9 +140,9 @@ void vtkSlicerModuleChooseGUI::SelectModule ( const char *moduleName )
           if ( !strcmp (moduleName, mName) ) 
            {
             m->GetUIPanel()->Raise();
-            this->RemoveGUIObservers();
-            this->ModulesMenuButton->GetMenu()->SelectItem(moduleName);
-            this->AddGUIObservers();
+            //this->RemoveGUIObservers();
+            //this->ModulesMenuButton->GetMenu()->SelectItem(moduleName);
+            //this->AddGUIObservers();
             break;
            }
           m = vtkSlicerModuleGUI::SafeDownCast( app->GetModuleGUICollection( )->GetNextItemAsObject( ) );

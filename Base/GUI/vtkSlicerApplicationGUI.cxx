@@ -455,6 +455,7 @@ void vtkSlicerApplicationGUI::ProcessGUIEvents ( vtkObject *caller,
   if (event == vtkSlicerModuleGUI::ModuleSelectedEvent) 
     {
     this->SelectModule((const char*)callData);
+    return;
     }
   vtkKWLoadSaveDialog *filebrowse = vtkKWLoadSaveDialog::SafeDownCast(caller);
   vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication() );
@@ -496,7 +497,10 @@ void vtkSlicerApplicationGUI::Exit ( )
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::SelectModule ( const char *moduleName )
 {
-  this->ModuleChooseGUI->SelectModule(moduleName);
+  //this->ModuleChooseGUI->SelectModule(moduleName);
+  vtkSlicerModuleGUI *m = vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName(moduleName);
+  if ( m != NULL ) { m->GetUIPanel()->Raise(); } else { std::cerr << "ERROR:  no slicer module gui found for " << moduleName<< "\n"; }
+  this->GetModuleChooseGUI()->GetModulesMenuButton()->SetValue ( moduleName );
 }
 
 //---------------------------------------------------------------------------

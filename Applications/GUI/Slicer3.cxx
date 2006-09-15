@@ -647,6 +647,9 @@ int Slicer3_main(int argc, char *argv[])
             ++argit;
         }
     }
+
+    appGUI->SelectModule("Volumes");
+
     //
     // Run!  - this will return when the user exits
     //
