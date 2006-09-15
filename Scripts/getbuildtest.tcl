@@ -241,6 +241,6 @@ if { $isWindows } {
     set packageReturn [catch "eval runcmd $::MAKE package"]
 
     puts "\nResults: "
-    puts "build [if $buildReturn "concat failed" "concat succeeded"]"
+    puts "build of \"$::GETBUILDTEST(test-type)\" [if $buildReturn "concat failed" "concat succeeded"]"
     puts "package [if $packageReturn "concat failed" "concat succeeded"]"
 }
