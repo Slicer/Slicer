@@ -149,7 +149,7 @@ void vtkSlicerLogic::SetAndObserveMRML(vtkObject **nodePtr, vtkObject *node)
   //
   if ( *nodePtr  )
     {
-    for (int i=0; i<this->Events->GetSize(); i++)
+    for (int i=0; i<this->Events->GetNumberOfTuples(); i++)
       {
       (*nodePtr)->RemoveObservers(this->Events->GetValue(i), this->MRMLCallbackCommand );
       }
