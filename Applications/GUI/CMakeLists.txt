@@ -1,5 +1,41 @@
 PROJECT( GUI )
 
+#########################################################################
+# Enable shared link forwarding support if needed.
+SET(SLICER_EXE_SUFFIX)
+SET(SLICER_EXE_INSTALL ${SLICER_INSTALL_BIN_DIR})
+IF(BUILD_SHARED_LIBS)
+  IF(NOT WIN32)
+    SET(SLICER_NEED_SHARED_FORWARD 1)
+    SET(SLICER_EXE_SUFFIX -real)
+    SET(SLICER_EXE_INSTALL ".")
+    SET(SLICER_FORWARD_DIR_BUILD "${EXECUTABLE_OUTPUT_PATH}")
+    SET(SLICER_FORWARD_DIR_INSTALL "${SLICER_EXE_INSTALL}")
+    SET(SLICER_FORWARD_PATH_BUILD "\"${SLICER_FORWARD_DIR_BUILD}\"")
+    SET(SLICER_FORWARD_PATH_INSTALL
+      "\"../lib\",\"../lib/KWWidgets\",\"../lib/InsightToolkit\"")
+  ENDIF(NOT WIN32)
+ENDIF(BUILD_SHARED_LIBS)
+# Add main server executables.
+SET(SLICER_EXE_LIST Slicer3 Slicer3Bare)
+
+# Add shared link forwarding executables if necessary.
+IF(SLICER_NEED_SHARED_FORWARD)
+  FOREACH(slicer_exe ${SLICER_EXE_LIST})
+    SET(SLICER_FORWARD_EXE ${slicer_exe}${SLICER_EXE_SUFFIX})
+    CONFIGURE_FILE(
+      ${CMAKE_CURRENT_SOURCE_DIR}/Slicer3-forward.c.in
+      ${CMAKE_CURRENT_BINARY_DIR}/${slicer_exe}-forward.c
+      @ONLY IMMEDIATE)
+    ADD_EXECUTABLE(${slicer_exe}
+      ${CMAKE_CURRENT_BINARY_DIR}/${slicer_exe}-forward.c)
+    ADD_DEPENDENCIES(${slicer_exe} ${slicer_exe}${SLICER_EXE_SUFFIX})
+    INSTALL(TARGETS ${slicer_exe}
+      DESTINATION bin
+      COMPONENT Runtime)
+  ENDFOREACH(slicer_exe)
+ENDIF(SLICER_NEED_SHARED_FORWARD)
+
 SET (SRC
     Slicer3.cxx
 )
@@ -42,14 +78,14 @@ INCLUDE_DIRECTORIES(
 #
 OPTION(Slicer3_BUILD_WIN32_CONSOLE "Build Slicer3 executable as a console app on windows (allows debug output)" OFF)
 IF ( Slicer3_BUILD_WIN32_CONSOLE )
-  ADD_EXECUTABLE (Slicer3 ${SRC})
-  ADD_EXECUTABLE (Slicer3Bare Slicer3Bare.cxx)
+  ADD_EXECUTABLE (Slicer3${SLICER_EXE_SUFFIX} ${SRC})
+  ADD_EXECUTABLE (Slicer3Bare${SLICER_EXE_SUFFIX} Slicer3Bare.cxx)
 ELSE ( Slicer3_BUILD_WIN32_CONSOLE )
-  ADD_EXECUTABLE (Slicer3 WIN32 ${SRC})
-  ADD_EXECUTABLE (Slicer3Bare WIN32 Slicer3Bare.cxx)
+  ADD_EXECUTABLE (Slicer3${SLICER_EXE_SUFFIX} WIN32 ${SRC})
+  ADD_EXECUTABLE (Slicer3Bare${SLICER_EXE_SUFFIX} WIN32 Slicer3Bare.cxx)
 ENDIF ( Slicer3_BUILD_WIN32_CONSOLE )
 
-TARGET_LINK_LIBRARIES( Slicer3 
+TARGET_LINK_LIBRARIES( Slicer3${SLICER_EXE_SUFFIX}
     SlicerBaseLogic
     SlicerBaseGUI
     MRML
@@ -63,9 +99,9 @@ TARGET_LINK_LIBRARIES( Slicer3
     ITKCommon 
     ITKIO
     ${KWWidgets_LIBRARIES} )
-INSTALL_TARGETS(/bin Slicer3)
+INSTALL_TARGETS(/bin Slicer3${SLICER_EXE_SUFFIX})
 
-TARGET_LINK_LIBRARIES( Slicer3Bare
+TARGET_LINK_LIBRARIES( Slicer3Bare${SLICER_EXE_SUFFIX}
     SlicerBaseLogic
     SlicerBaseGUI
     MRML
@@ -79,7 +115,7 @@ TARGET_LINK_LIBRARIES( Slicer3Bare
     ITKCommon 
     ITKIO
     ${KWWidgets_LIBRARIES} )
-INSTALL_TARGETS(/bin Slicer3Bare)
+INSTALL_TARGETS(/bin Slicer3Bare${SLICER_EXE_SUFFIX})
 
 # Generate a lightweight C launcher for a *specific* executable.
 # The launcher sets up all the environments variables (PATH, TCLLIBPATH,

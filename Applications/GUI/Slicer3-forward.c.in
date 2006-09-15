@@ -1,0 +1,15 @@
+#define vtksys_SHARED_FORWARD_DIR_BUILD "@SLICER_FORWARD_DIR_BUILD@"
+#define vtksys_SHARED_FORWARD_PATH_BUILD @SLICER_FORWARD_PATH_BUILD@
+#define vtksys_SHARED_FORWARD_PATH_INSTALL @SLICER_FORWARD_PATH_INSTALL@
+#define vtksys_SHARED_FORWARD_EXE_BUILD "@SLICER_FORWARD_DIR_BUILD@/@SLICER_FORWARD_EXE@"
+#define vtksys_SHARED_FORWARD_EXE_INSTALL "@SLICER_FORWARD_DIR_INSTALL@/@SLICER_FORWARD_EXE@"
+#define vtksys_SHARED_FORWARD_OPTION_PRINT "--print"
+#define vtksys_SHARED_FORWARD_OPTION_LDD "--ldd"
+
+#include <vtksys/SharedForward.h>
+
+int main(int argc, char** argv)
+{
+  return vtksys_shared_forward_to_real(argc, argv);
+}
+

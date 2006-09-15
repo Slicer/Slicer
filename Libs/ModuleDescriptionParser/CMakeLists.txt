@@ -35,3 +35,4 @@ CONFIGURE_FILE(
 )
 
 SUBDIRS(Testing)
+INSTALL_TARGETS(/lib ModuleDescriptionParser)
