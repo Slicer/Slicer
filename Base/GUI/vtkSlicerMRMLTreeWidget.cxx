@@ -136,6 +136,9 @@ void vtkSlicerMRMLTreeWidget::ProcessWidgetEvents ( vtkObject *caller,
         {
         sprintf(command, "CutNodeCallback {%s}", (const char *)callData);
         this->ContextMenu->AddCommand("Cut Node", this, command);
+  
+        sprintf(command, "SelectNodeCallback {%s}", (const char *)callData);
+        this->ContextMenu->AddCommand("Go To Editor...", this, command);
         }
       if (node != NULL)
         {
@@ -220,6 +223,15 @@ void vtkSlicerMRMLTreeWidget::CutNodeCallback(const char *id)
   this->UpdateTreeFromMRML();
 }
 
+//---------------------------------------------------------------------------
+void vtkSlicerMRMLTreeWidget::SelectNodeCallback(const char *id)
+{
+  vtkMRMLNode *node = this->GetMRMLScene()->GetNodeByID(id);
+  if (node != NULL)
+    {
+    this->InvokeEvent(vtkSlicerMRMLTreeWidget::SelectedEvent, node);
+    }
+}
 //---------------------------------------------------------------------------
 void vtkSlicerMRMLTreeWidget::ProcessMRMLEvents ( vtkObject *caller,
                                                   unsigned long event, 

@@ -192,6 +192,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // Description:
     // Display Slicer's main window
     virtual void DisplayMainSlicerWindow ( );
+
+    // Description:
+    // Raise module's panel.
+    void SelectModule ( const char *moduleName );
+
     
  protected:
     vtkSlicerApplicationGUI ( );

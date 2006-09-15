@@ -350,6 +350,8 @@ int Slicer3_main(int argc, char *argv[])
     slicerApp->AddModuleGUI ( dataGUI );
     dataGUI->BuildGUI ( );
     dataGUI->AddGUIObservers ( );
+    dataGUI->AddObserver (vtkSlicerModuleGUI::ModuleSelectedEvent, (vtkCommand *)appGUI->GetGUICallbackCommand() );
+      
 
 
     // --- Slices module

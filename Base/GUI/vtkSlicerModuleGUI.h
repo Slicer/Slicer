@@ -40,7 +40,12 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleGUI : public vtkSlicerComponentG
     // alternative method to propagate events generated in GUI to logic / mrml
     virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
       unsigned long /*event*/, void * /*callData*/ ) { };
-
+ //BTX
+  enum
+    {
+      ModuleSelectedEvent = 73300,
+   };
+//ETX
  protected:
 
     // Description:

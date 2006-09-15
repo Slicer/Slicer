@@ -69,6 +69,14 @@ public:
 
   virtual void InsertTransformNodeCallback(const char *id);
 
+  virtual void SelectNodeCallback(const char *id);
+
+//BTX
+  enum
+    {
+      SelectedEvent = 73400,
+   };
+//ETX
 protected:
   vtkSlicerMRMLTreeWidget();
   virtual ~vtkSlicerMRMLTreeWidget();

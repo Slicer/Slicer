@@ -53,13 +53,14 @@ void vtkSlicerDataGUI::PrintSelf ( ostream& os, vtkIndent indent )
 //---------------------------------------------------------------------------
 void vtkSlicerDataGUI::RemoveGUIObservers ( )
 {
-    // Fill in
+  this->MRMLTreeWidget->RemoveObservers (vtkSlicerMRMLTreeWidget::SelectedEvent, (vtkCommand *)this->GUICallbackCommand );
 }
 
 //---------------------------------------------------------------------------
 void vtkSlicerDataGUI::AddGUIObservers ( )
 {
-    // Fill in
+  this->MRMLTreeWidget->AddObserver (vtkSlicerMRMLTreeWidget::SelectedEvent, (vtkCommand *)this->GUICallbackCommand );
+
 }
 
 
@@ -67,7 +68,26 @@ void vtkSlicerDataGUI::AddGUIObservers ( )
 void vtkSlicerDataGUI::ProcessGUIEvents ( vtkObject *caller,
                                           unsigned long event, void *callData )
 {
-    // Fill in
+  const char *moduleName;
+  vtkMRMLNode *node = (vtkMRMLNode *)callData;
+  if (node->IsA("vtkMRMLVolumeNode"))
+    {
+    moduleName = "Volumes";
+    }
+  else if (node->IsA("vtkMRMLModelNode"))
+    {
+    moduleName = "Models";
+    }
+  else if (node->IsA("vtkMRMLTransformNode"))
+    {
+    moduleName = "Transforms";
+    }
+  else if (node->IsA("vtkMRMLFiducialListNode"))
+    {
+    moduleName = "Fiducials";
+    }
+
+  this->InvokeEvent(vtkSlicerModuleGUI::ModuleSelectedEvent, (void *)moduleName);
 }
 
 
@@ -128,7 +148,7 @@ void vtkSlicerDataGUI::BuildGUI ( )
     this->MRMLTreeWidget->Create ( );
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   this->MRMLTreeWidget->GetWidgetName(), this->UIPanel->GetPageWidget( "Data" )->GetWidgetName());
-      
+    
     modHelpFrame->Delete ( );
 }
 

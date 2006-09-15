@@ -101,7 +101,7 @@ void vtkSlicerModuleChooseGUI::RemoveGUIObservers ( )
 //---------------------------------------------------------------------------
 void vtkSlicerModuleChooseGUI::AddGUIObservers ( )
 {
-      // add observer onto the menubutton in the ModuleChoose GUI Panel
+  // add observer onto the menubutton in the ModuleChoose GUI Panel
   this->ModulesMenuButton->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 }
 
@@ -110,56 +110,46 @@ void vtkSlicerModuleChooseGUI::AddGUIObservers ( )
 void vtkSlicerModuleChooseGUI::ProcessGUIEvents ( vtkObject *caller,
                                           unsigned long event, void *callData )
 {
-    vtkKWMenuButton *menub = vtkKWMenuButton::SafeDownCast (caller );
-    vtkKWPushButton *pushb = vtkKWPushButton::SafeDownCast (caller );
-    vtkKWMenu *menu = vtkKWMenu::SafeDownCast (caller );
-    vtkSlicerModuleGUI * m;
-    const char *mName;
+  vtkKWMenu *menu = vtkKWMenu::SafeDownCast (caller );
 
-  if ( this->GetApplicationGUI() != NULL )
+  if ( menu == this->ModulesMenuButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
     {
-      vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));
-      vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( p->GetApplication() );
-      if ( app != NULL )
-        {
-          //--- Process events from menubutton
-          //--- TODO: change the Logic's "active module" and raise the appropriate UIPanel.
-          //    if ( menub == this->ModulesMenuButton && event == vtkCommand::ModifiedEvent )
-           if (menu == p->GetMainSlicerWin()->GetFileMenu() && event == vtkKWMenu::MenuItemInvokedEvent)
-             {
-               int index = (int) (*((int *)callData));
-               if (index == 2)
-                 {
-                   // use command directly instead of this
-                   //this->ProcessLoadSceneCommand()
-                 }
-               else if (index == 3)
-                 {
-                   // use command directly instead of this
-                   //this->ProcessSaveSceneCommand()
-                 }
-             }
-           if ( menu == this->ModulesMenuButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
-            {
-              if ( app->GetModuleGUICollection ( ) != NULL )
-                {
-                  app->GetModuleGUICollection( )->InitTraversal( );
-                  m = vtkSlicerModuleGUI::SafeDownCast( app->GetModuleGUICollection( )->GetNextItemAsObject( ) );
-                  while (m != NULL )
-                    {
-                      mName = m->GetUIPanel()->GetName();
-                      if ( !strcmp (this->ModulesMenuButton->GetValue(), mName) ) {
-                        m->GetUIPanel()->Raise();
-                        break;
-                      }
-                      m = vtkSlicerModuleGUI::SafeDownCast( app->GetModuleGUICollection( )->GetNextItemAsObject( ) );
-                    }
-                }
-            }
-        }
+    this->SelectModule(this->ModulesMenuButton->GetValue());
     }
 }
 
+ 
+//---------------------------------------------------------------------------
+void vtkSlicerModuleChooseGUI::SelectModule ( const char *moduleName )
+{
+  if ( this->GetApplicationGUI() != NULL )
+    {
+    vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));
+    vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( p->GetApplication() );
+
+    if ( app != NULL && app->GetModuleGUICollection ( ) != NULL )
+      {
+      vtkSlicerModuleGUI * m;
+      const char *mName;
+
+      app->GetModuleGUICollection( )->InitTraversal( );
+      m = vtkSlicerModuleGUI::SafeDownCast( app->GetModuleGUICollection( )->GetNextItemAsObject( ) );
+      while (m != NULL )
+        {
+          mName = m->GetUIPanel()->GetName();
+          if ( !strcmp (moduleName, mName) ) 
+           {
+            m->GetUIPanel()->Raise();
+            this->RemoveGUIObservers();
+            this->ModulesMenuButton->GetMenu()->SelectItem(moduleName);
+            this->AddGUIObservers();
+            break;
+           }
+          m = vtkSlicerModuleGUI::SafeDownCast( app->GetModuleGUICollection( )->GetNextItemAsObject( ) );
+        } // end while
+      } // end if ( app != NULL
+    }
+}
 
 //---------------------------------------------------------------------------
 void vtkSlicerModuleChooseGUI::ProcessLogicEvents ( vtkObject *caller,

@@ -41,7 +41,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleChooseGUI : public vtkSlicerComp
     // Get the main slicer toolbars.
     vtkGetObjectMacro (ApplicationGUI, vtkSlicerApplicationGUI );
     virtual void SetApplicationGUI ( vtkSlicerApplicationGUI *appGUI );
-    
+ 
+    // Description:
+    // Raise module's panel.
+    void SelectModule ( const char *moduleName );
+
     // Description:
     // This method builds the Data module's GUI
     virtual void BuildGUI ( vtkKWFrame *appF ) ;

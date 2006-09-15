@@ -443,25 +443,28 @@ void vtkSlicerApplicationGUI::RemoveGUIObservers ( )
 void vtkSlicerApplicationGUI::ProcessGUIEvents ( vtkObject *caller,
                                                  unsigned long event, void *callData )
 {
-    
-    // This code is just a placeholder until the logic is set up to use properly:
-    // For now, the GUI controls the GUI instead of going thru the logic...
-    // TODO:
-    // Actually, these events want to set "activeModule" in the logic;
-    // using this->Logic->SetActiveModule ( ) which is currently commented out.
-    // Observers on that logic should raise and lower the appropriate page.
-    // So for now, the GUI is controlling the GUI instead of going thru the logic.
-    //---
-
-    vtkKWLoadSaveDialog *filebrowse = vtkKWLoadSaveDialog::SafeDownCast(caller);
-    vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication() );
-    vtkSlicerGUILayout *layout = app->GetMainLayout ( );
-        
-    vtkSlicerMRMLSaveDataWidget *saveDataWidget = vtkSlicerMRMLSaveDataWidget::SafeDownCast(caller);
-    if (saveDataWidget == this->SaveDataWidget && event == vtkSlicerMRMLSaveDataWidget::DataSavedEvent)
-      {
-        this->SaveDataDialog->OK();
-      }
+  
+  // This code is just a placeholder until the logic is set up to use properly:
+  // For now, the GUI controls the GUI instead of going thru the logic...
+  // TODO:
+  // Actually, these events want to set "activeModule" in the logic;
+  // using this->Logic->SetActiveModule ( ) which is currently commented out.
+  // Observers on that logic should raise and lower the appropriate page.
+  // So for now, the GUI is controlling the GUI instead of going thru the logic.
+  //---
+  if (event == vtkSlicerModuleGUI::ModuleSelectedEvent) 
+    {
+    this->SelectModule((const char*)callData);
+    }
+  vtkKWLoadSaveDialog *filebrowse = vtkKWLoadSaveDialog::SafeDownCast(caller);
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication() );
+  vtkSlicerGUILayout *layout = app->GetMainLayout ( );
+      
+  vtkSlicerMRMLSaveDataWidget *saveDataWidget = vtkSlicerMRMLSaveDataWidget::SafeDownCast(caller);
+  if (saveDataWidget == this->SaveDataWidget && event == vtkSlicerMRMLSaveDataWidget::DataSavedEvent)
+    {
+      this->SaveDataDialog->OK();
+    }
 }
 
 
@@ -490,6 +493,11 @@ void vtkSlicerApplicationGUI::Exit ( )
 {
 }
 
+//---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::SelectModule ( const char *moduleName )
+{
+  this->ModuleChooseGUI->SelectModule(moduleName);
+}
 
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::BuildGUI ( )
