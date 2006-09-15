@@ -46,6 +46,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     // Get methods on class members ( no Set methods required. )
     vtkGetObjectMacro ( AddFiducialButton, vtkKWPushButton);
     vtkGetObjectMacro ( RemoveFiducialButton, vtkKWPushButton);
+    vtkGetObjectMacro ( RemoveFiducialsButton, vtkKWPushButton);
     vtkGetObjectMacro ( VisibilityToggle, vtkKWPushButton);
     vtkGetObjectMacro ( VisibilityIcons, vtkSlicerVisibilityIcons);
     vtkGetObjectMacro ( ListColorButton, vtkKWChangeColorButton);
@@ -139,6 +140,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     // remove the last selected (multi column list definition of selected)
     // point
     vtkKWPushButton *RemoveFiducialButton;
+    // remove all the fiducial points on this list
+    vtkKWPushButton *RemoveFiducialsButton;
     
     // list visibility
     vtkKWPushButton *VisibilityToggle;

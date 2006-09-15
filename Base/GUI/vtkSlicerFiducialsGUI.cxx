@@ -32,6 +32,7 @@ vtkSlicerFiducialsGUI::vtkSlicerFiducialsGUI ( )
 
     this->AddFiducialButton = NULL;
     this->RemoveFiducialButton = NULL;
+    this->RemoveFiducialsButton = NULL;
     
     this->VisibilityToggle = NULL;
     this->VisibilityIcons = NULL;
@@ -70,6 +71,12 @@ vtkSlicerFiducialsGUI::~vtkSlicerFiducialsGUI ( )
         this->RemoveFiducialButton->SetParent (NULL );
         this->RemoveFiducialButton->Delete ( );
         this->RemoveFiducialButton = NULL;
+    }
+
+    if (this->RemoveFiducialsButton ) {
+        this->RemoveFiducialsButton->SetParent (NULL );
+        this->RemoveFiducialsButton->Delete ( );
+        this->RemoveFiducialsButton = NULL;
     }
 
     if (this->VisibilityToggle) {
@@ -143,6 +150,8 @@ void vtkSlicerFiducialsGUI::RemoveGUIObservers ( )
     this->FiducialListSelectorWidget->RemoveObservers(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->AddFiducialButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->RemoveFiducialButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->RemoveFiducialsButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+
     this->VisibilityToggle->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ListColorButton->RemoveObservers (vtkKWChangeColorButton::ColorChangedEvent, (vtkCommand *)this->GUICallbackCommand);
     this->ListSelectedColorButton->RemoveObservers (vtkKWChangeColorButton::ColorChangedEvent, (vtkCommand *)this->GUICallbackCommand);
@@ -161,6 +170,7 @@ void vtkSlicerFiducialsGUI::AddGUIObservers ( )
     this->FiducialListSelectorWidget->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
     this->AddFiducialButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
     this->RemoveFiducialButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+    this->RemoveFiducialsButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
     
     this->VisibilityToggle->AddObserver (vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
     this->ListColorButton->AddObserver (vtkKWChangeColorButton::ColorChangedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -254,6 +264,13 @@ void vtkSlicerFiducialsGUI::ProcessGUIEvents ( vtkObject *caller,
             std::cerr << "Selected rows (" << numRows << ") not 1, just pick one to delete for now\n";
             return;
         }
+    }
+  if (button == this->RemoveFiducialsButton && event == vtkKWPushButton::InvokedEvent)
+    {
+        vtkDebugMacro("vtkSlicerFiducialsGUI: ProcessGUIEvent: Remove Fiducials Button event: " << event << ".\n");
+        // save state for undo
+        this->MRMLScene->SaveStateForUndo();
+        activeFiducialListNode->RemoveAllFiducials();
     }
   if (button == this->GetVisibilityToggle()  && event ==  vtkKWPushButton::InvokedEvent)
     {
@@ -764,15 +781,27 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     this->AddFiducialButton->SetParent ( listFrame->GetFrame() );
     this->AddFiducialButton->Create ( );
     this->AddFiducialButton->SetText ("Add Fiducial Point");
+    this->AddFiducialButton->SetBalloonHelpString("Add a fiducial point to the current list");
     
     // add a remove fiducial button
     this->RemoveFiducialButton = vtkKWPushButton::New ( );
     this->RemoveFiducialButton->SetParent ( listFrame->GetFrame() );
     this->RemoveFiducialButton->Create ( );
     this->RemoveFiducialButton->SetText ("Remove Fiducial Point");
+    this->RemoveFiducialButton->SetBalloonHelpString("Remove the last fiducial that was clicked on in the table from the list.");
+
+
+    // add a remove all fiducials from this list button
+    this->RemoveFiducialsButton = vtkKWPushButton::New ( );
+    this->RemoveFiducialsButton->SetParent ( listFrame->GetFrame() );
+    this->RemoveFiducialsButton->Create ( );
+    this->RemoveFiducialsButton->SetText ("Remove All Fiducial Points");
+    this->RemoveFiducialsButton->SetBalloonHelpString("Remove all fiducial points from the list.");
   
-    app->Script("pack %s %s -side top -anchor w -padx 2 -pady 4", 
-                this->AddFiducialButton->GetWidgetName(), this->RemoveFiducialButton->GetWidgetName());
+    app->Script("pack %s %s %s -side top -anchor w -padx 2 -pady 4", 
+                this->AddFiducialButton->GetWidgetName(),
+                this->RemoveFiducialButton->GetWidgetName(),
+                this->RemoveFiducialsButton->GetWidgetName());
 
     if (this->MRMLScene != NULL)
     {
@@ -867,6 +896,7 @@ void vtkSlicerFiducialsGUI::SetFiducialListNode (vtkMRMLFiducialListNode *fiduci
 void vtkSlicerFiducialsGUI::SetFiducialListNodeID (char * id)
 {
     if (this->GetFiducialListNodeID() != NULL &&
+        id != NULL &&
         strcmp(id,this->GetFiducialListNodeID()) == 0)
     {
         vtkDebugMacro("no change in id, not doing anything for now: " << id << endl);
