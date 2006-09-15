@@ -117,10 +117,19 @@ public:
 
   // Description:
   // Get the elements of the fiducial points
+  // Return a three element float holding the position
   float *GetNthFiducialXYZ(int n);
+  // Get the position for tcl wrapping
+  const char * GetNthFiducialXYZString (int n);
+  // get the orientation of the nth fiducial
   float *GetNthFiducialOrientation(int n);
+  const char *GetNthFiducialOrientationString(int n);
+  // get the label text of the nth fiducial
   const char *GetNthFiducialLabelText(int n);
+  // get the selected state on the nth fiducial
   bool GetNthFiducialSelected(int n);
+  const char *GetNthFiducialSelectedString(int n);
+  // get the id of the nth fiducial
   const char *GetNthFiducialID(int n);
   
   // Description:
@@ -195,6 +204,11 @@ protected:
   double Diffuse;
   double Specular;
   double Power;
+
+private:
+  // for use when returning values to tcl
+  char tempXYZString[1024];
+  char tempOrientationString[1024];
 };
 
 #endif
