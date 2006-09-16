@@ -105,7 +105,7 @@ void vtkMRMLNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "Description: " <<
     (this->Description ? this->Description : "(none)") << "\n";
 
-  os << indent << "hideFromEditors=\"" << this->HideFromEditors << "\n";
+  os << indent << "HideFromEditors: " << this->HideFromEditors << "\n";
 
 }
 
@@ -115,7 +115,7 @@ void vtkMRMLNode::WriteXML(ostream& of, int nIndent)
   vtkIndent indent(nIndent);
   if (this->ID != NULL) 
     {
-    of << indent << "id=\"" << this->ID << "\" ";
+    of << indent << " id=\"" << this->ID << "\" ";
     }
   if (this->Name != NULL) 
     {
