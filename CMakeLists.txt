@@ -34,6 +34,11 @@ SET (EXECUTABLE_OUTPUT_PATH ${Slicer3_BINARY_DIR}/bin/
         CACHE PATH 
         "Single output directory for building all executables." 
         FORCE)
+#
+# Slicer libraries subdirectory
+#
+SET (SLICER_LIBRARIES_DIR "${Slicer3_BINARY_DIR}/lib/Slicer3")
+
 
 # Add the testing directories
 
@@ -158,12 +163,7 @@ IF(BUILD_DOCUMENTATION)
   SUBDIRS(Utilities/Doxygen)
 ENDIF(BUILD_DOCUMENTATION)
 
-#INSTALL(DIRECTORY "${Slicer3_BINARY_DIR}/SlicerBaseGUITcl"
-#  DESTINATION SlicerBaseGUITcl)
-
+# CMAke 2.4 does not have INSTALL(DIRECTORY ...) do it manually
 #INSTALL(DIRECTORY "${Slicer3_BINARY_DIR}/Modules/Packages"
-#  DESTINATION Modules)
-
-INSTALL(FILES "${Slicer3_BINARY_DIR}/slicerd.tcl"
-  DESTINATION .)
-
+#  DESTINATION lib/Slicer3/Modules)
+INSTALL(CODE "EXECUTE_PROCESS\(COMMAND \"${CMAKE_COMMAND}\" -E copy_directory \"${SLICER_LIBRARIES_DIR}/Modules/Packages\" \"\${CMAKE_INSTALL_PREFIX}/lib/Slicer3/Modules/Packages\"\)")

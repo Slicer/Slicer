@@ -94,15 +94,29 @@ CONFIGURE_FILE(
 
 CONFIGURE_FILE(
   ${SlicerDaemon_SOURCE_DIR}/Tcl/slicerd.tcl
-  ${Slicer3_BINARY_DIR}/slicerd.tcl
+  ${SLICER_LIBRARIES_DIR}/slicerd.tcl
 )
 
 CONFIGURE_FILE(
   ${SlicerDaemon_SOURCE_DIR}/Tcl/slicerget.tcl
-  ${Slicer3_BINARY_DIR}/slicerget.tcl
+  ${SLICER_LIBRARIES_DIR}/slicerget.tcl
 )
 
 CONFIGURE_FILE(
   ${SlicerDaemon_SOURCE_DIR}/Tcl/slicerput.tcl
-  ${Slicer3_BINARY_DIR}/slicerput.tcl
+  ${SLICER_LIBRARIES_DIR}/slicerput.tcl
 )
+
+INSTALL(FILES
+  "${SLICER_LIBRARIES_DIR}/slicerd.tcl"
+  DESTINATION lib/Slicer3)
+
+INSTALL(FILES
+  "${SLICER_LIBRARIES_DIR}/slicerput.tcl"
+  DESTINATION lib/Slicer3)
+
+INSTALL(FILES
+  "${SLICER_LIBRARIES_DIR}/slicerget.tcl"
+  DESTINATION lib/Slicer3)
+
+

@@ -166,7 +166,7 @@ CONFIGURE_FILE(
 #
 # install the tcl package for the gui
 #
-SET(SlicerBaseGUITcl_DIR ${Slicer3_BINARY_DIR}/SlicerBaseGUITcl)
+SET(SlicerBaseGUITcl_DIR "${SLICER_LIBRARIES_DIR}/SlicerBaseGUITcl")
 
 FILE(MAKE_DIRECTORY ${SlicerBaseGUITcl_DIR})
 CONFIGURE_FILE(
@@ -209,3 +209,8 @@ CONFIGURE_FILE(
   ${SlicerBaseGUITcl_DIR}/CsysSWidget.tcl
   COPYONLY
 )
+
+# CMAke 2.4 does not have INSTALL(DIRECTORY ...) do it manually
+#INSTALL(DIRECTORY "${Slicer3_BINARY_DIR}/SlicerBaseGUITcl"
+#  DESTINATION lib/Slicer3)
+INSTALL(CODE "EXECUTE_PROCESS\(COMMAND \"${CMAKE_COMMAND}\" -E copy_directory \"${SLICER_LIBRARIES_DIR}/SlicerBaseGUITcl\" \"\${CMAKE_INSTALL_PREFIX}/lib/Slicer3/SlicerBaseGUITcl\"\)")

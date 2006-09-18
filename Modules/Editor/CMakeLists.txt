@@ -7,12 +7,12 @@ PROJECT(Editor)
 # - copy over the tcl package files to the build directory
 #
 
-SET (Package_DIR ${Slicer3_BINARY_DIR}/Modules/Packages)
+SET (Package_DIR ${SLICER_LIBRARIES_DIR}/Modules/Packages)
 IF (NOT EXISTS ${Package_DIR})
   FILE(MAKE_DIRECTORY ${Package_DIR})
 ENDIF (NOT EXISTS ${Package_DIR})
 
-SET(Editor_DIR ${Slicer3_BINARY_DIR}/Modules/Packages/Editor)
+SET(Editor_DIR ${Package_DIR}/Editor)
 
 FILE(MAKE_DIRECTORY ${Editor_DIR})
 CONFIGURE_FILE( pkgIndex.tcl ${Editor_DIR}/pkgIndex.tcl COPYONLY)
