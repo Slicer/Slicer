@@ -37,7 +37,8 @@ SET (EXECUTABLE_OUTPUT_PATH ${Slicer3_BINARY_DIR}/bin/
 #
 # Slicer libraries subdirectory
 #
-SET (SLICER_LIBRARIES_DIR "${Slicer3_BINARY_DIR}/lib/Slicer3")
+SET (SLICER_INSTALL_LIBRARIES_DIR "lib/Slicer3")
+SET (SLICER_LIBRARIES_DIR "${Slicer3_BINARY_DIR}/${SLICER_INSTALL_LIBRARIES_DIR}")
 
 
 # Add the testing directories
@@ -165,5 +166,5 @@ ENDIF(BUILD_DOCUMENTATION)
 
 # CMAke 2.4 does not have INSTALL(DIRECTORY ...) do it manually
 #INSTALL(DIRECTORY "${Slicer3_BINARY_DIR}/Modules/Packages"
-#  DESTINATION lib/Slicer3/Modules)
-INSTALL(CODE "EXECUTE_PROCESS\(COMMAND \"${CMAKE_COMMAND}\" -E copy_directory \"${SLICER_LIBRARIES_DIR}/Modules/Packages\" \"\${CMAKE_INSTALL_PREFIX}/lib/Slicer3/Modules/Packages\"\)")
+#  DESTINATION ${SLICER_INSTALL_LIBRARIES_DIR}/Modules)
+INSTALL(CODE "EXECUTE_PROCESS\(COMMAND \"${CMAKE_COMMAND}\" -E copy_directory \"${SLICER_LIBRARIES_DIR}/Modules/Packages\" \"\${CMAKE_INSTALL_PREFIX}/${SLICER_INSTALL_LIBRARIES_DIR}/Modules/Packages\"\)")

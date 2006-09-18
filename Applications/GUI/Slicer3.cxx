@@ -166,7 +166,8 @@ int Slicer3_main(int argc, char *argv[])
       int returnCode;
 
       // Pass arguments to the Tcl script
-      cmd =  "lappend auto_path $::SLICER_BUILD/lib/Slicer3/SlicerBaseGUITcl; ";
+      cmd =  "lappend auto_path $::SLICER_BUILD/"
+        SLICER_INSTALL_LIBRARIES_DIR "/SlicerBaseGUITcl; ";
       cmd += "package require SlicerBaseGUITcl; ";
       returnCode = Slicer3_Tcl_Eval( interp, cmd.c_str() );
       if ( returnCode )
@@ -419,7 +420,8 @@ int Slicer3_main(int argc, char *argv[])
     // --- SlicerDaemon Module
     // need to source the slicerd.tcl script here
     Slicer3_Tcl_Eval( interp, "                                              \
-      source $::SLICER_BUILD/lib/Slicer3/slicerd.tcl; slicerd_start              \
+      source $::SLICER_BUILD/"                                               \
+      SLICER_INSTALL_LIBRARIES_DIR "/slicerd.tcl; slicerd_start              \
     ");
 
 
@@ -538,7 +540,8 @@ int Slicer3_main(int argc, char *argv[])
     //
 
     std::string tclCommand = "set ::SLICER_PACKAGES(list) {};";
-    tclCommand += "set dirs [glob $::SLICER_BUILD/lib/Slicer3/Modules/Packages/*]; ";
+    tclCommand += "set dirs [glob $::SLICER_BUILD/"
+      SLICER_INSTALL_LIBRARIES_DIR "/Modules/Packages/*]; ";
     tclCommand += "foreach d $dirs { ";
     tclCommand += "  if { [file exists $d/pkgIndex.tcl] } {";
     tclCommand += "    lappend ::SLICER_PACKAGES(list) [file tail $d];";

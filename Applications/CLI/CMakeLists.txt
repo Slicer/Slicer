@@ -11,6 +11,8 @@ ENDIF (NOT Slicer3_SOURCE_DIR)
 
 INCLUDE(${Slicer3_SOURCE_DIR}/Libs/GenerateCLP/UseGenerateCLP.cmake)
 
+SET(LIBRARY_OUTPUT_PATH "${SLICER_LIBRARIES_DIR}/Plugins")
+
 #####################
 SET (CLP LinearRegistration)
 
@@ -189,7 +191,8 @@ SET(TARGETS
 )
 
 FOREACH(target ${TARGETS})
-  INSTALL(TARGETS ${target} RUNTIME DESTINATION Plugins
-                            LIBRARY DESTINATION Plugins)
+  INSTALL(TARGETS ${target}
+    RUNTIME DESTINATION ${SLICER_INSTALL_LIBRARIES_DIR}/Plugins
+    LIBRARY DESTINATION ${SLICER_INSTALL_LIBRARIES_DIR}/Plugins)
 ENDFOREACH(target)
 
