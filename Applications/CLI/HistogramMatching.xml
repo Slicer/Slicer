@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>
+  Filtering
+  </category>
+  <title>
+  Histogram Matching
+  </title>
+  <description>
+Normalizes the grayscale values of a source image based on the
+grayscale values of a reference image.  This filter uses a histogram
+matching technique where the histograms of the two images are matched
+only at a specified number of quantile values.
+
+The filter was orginally designed to normalize MR images of the same
+MR protocol and same body part. The algorithm works best if background
+pixels are excluded from both the source and reference histograms.  A
+simple background exclusion method is to exclude all pixels whose
+grayscale values are smaller than the mean grayscale value.
+ThresholdAtMeanIntensity switches on this simple background exclusion
+method.
+
+Number of match points governs the number of quantile values to be
+matched.
+
+The filter assumes that both the source and reference are of the same
+type and that the input and output image type have the same number of
+dimension and have scalar pixel types.
+  </description>
+  <version>0.1.0.$Revision$(alpha)</version>
+  <documentation-url></documentation-url>
+  <license></license>
+  <contributor>Bill Lorensen</contributor>
+
+  <parameters>
+    <label>Histogram Matching Parameters</label>
+    <description>Parameters for Histogram Matching</description>
+
+    <integer>
+      <name>numberOfHistogramLevels</name>
+      <longflag>--numberOfHistogramLevels</longflag>
+      <description>The number of hisogram levels to use</description>
+      <label>Number of Histogram Levels</label>
+      <default>128</default>
+    </integer>
+
+    <integer>
+      <name>numberOfMatchPoints</name>
+      <longflag>--numberOfMatchPoints</longflag>
+      <description>The number of match points to use</description>
+      <label>Number of Match Points</label>
+      <default>10</default>
+    </integer>
+
+    <boolean>
+      <name>thresholdAtMeanIntensity</name>
+      <longflag>--threshold</longflag>
+      <description>If on, only pixels above the mean in each volume are thresholded.</description>
+      <label>Threshold at mean</label>
+      <default>false</default>
+    </boolean>
+
+  </parameters>
+  <parameters>
+    <label>IO</label>
+    <description>Input/output parameters</description>
+    <image>
+      <name>inputVolume</name>
+      <label>Input Volume</label>
+      <channel>input</channel>
+      <index>0</index>
+      <description>Input volume to be filtered</description>
+    </image>
+    <image>
+      <name>referenceVolume</name>
+      <label>Reference Volume</label>
+      <channel>input</channel>
+      <index>1</index>
+      <description>Input volume whose histogram will be matched</description>
+    </image>
+    <image>
+      <name>outputVolume</name>
+      <label>Output Volume</label>
+      <channel>output</channel>
+      <index>2</index>
+      <description>Output volume. This is the input volume with intensities matched to the reference volume.</description>
+    </image>
+  </parameters>
+
+</executable>
