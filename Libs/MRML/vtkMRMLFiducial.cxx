@@ -48,7 +48,7 @@ vtkMRMLFiducial::vtkMRMLFiducial()
   this->SetLabelText("");
   this->ID = NULL;
   this->SetID("");
-  this->Selected = true;
+  this->Selected = false;
 }
 
 //----------------------------------------------------------------------------
