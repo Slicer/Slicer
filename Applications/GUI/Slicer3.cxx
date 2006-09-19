@@ -98,7 +98,23 @@ int Slicer3_main(int argc, char *argv[])
   std::string itkAutoLoadPath;
   vtksys::SystemTools::GetEnv("ITK_AUTOLOAD_PATH", itkAutoLoadPath);
 
+  std::string programPath;
+  std::string errorMessage;
+  if ( !vtksys::SystemTools::FindProgramPath(argv[0],
+      programPath, errorMessage) )
+    {
+    cerr << "Error: Cannot find Slicer3 executable" << endl;
+    return 1;
+    }
+
   std::string ptemp;
+  cout << "Using slicer executable: " << programPath.c_str() << endl;
+  ptemp = vtksys::SystemTools::GetFilenamePath(programPath.c_str());
+  std::string tclEnv = "TCL_LIBPATH=";
+  tclEnv = ptemp += "/../lib/Slicer3/tcl";
+  cout << "Set environment: " << tclEnv.c_str() << endl;
+  putenv(const_cast <char *> (tclEnv.c_str()));
+
   ptemp = vtksys::SystemTools::CollapseFullPath(argv[0]);
   ptemp = vtksys::SystemTools::GetFilenamePath(ptemp);
   ptemp = vtksys::SystemTools::ConvertToOutputPath(ptemp.c_str());
