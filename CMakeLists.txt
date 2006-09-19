@@ -132,33 +132,10 @@ ENDIF (Slicer3_BUILD_TESTING)
 INCLUDE (${CMAKE_ROOT}/Modules/TestBigEndian.cmake)
 TEST_BIG_ENDIAN(CMAKE_WORDS_BIGENDIAN)
 
-# If the cmake version includes cpack, use it
-IF(EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake")
-  IF(EXISTS "${CMAKE_ROOT}/Modules/InstallRequiredSystemLibraries.cmake")
-    INCLUDE(InstallRequiredSystemLibraries)
-  ENDIF(EXISTS "${CMAKE_ROOT}/Modules/InstallRequiredSystemLibraries.cmake")
-  SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Medical Visualization and Processing Environment for Research")
-  SET(CPACK_PACKAGE_VENDOR "NA-MIC")
-  SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README.txt")
-  SET(CPACK_PACKAGE_VERSION_MAJOR "${Slicer3_VERSION_MAJOR}")
-  SET(CPACK_PACKAGE_VERSION_MINOR "${Slicer3_VERSION_MINOR}")
-  SET(CPACK_PACKAGE_VERSION_PATCH "${Slicer3_VERSION_PATCH}")
-  SET(CPACK_INSTALL_CMAKE_PROJECTS
-    "${Slicer3_BINARY_DIR};Slicer3;ALL;/")
-  IF(EXISTS "${VTK_DIR}/CMakeCache.txt")
-    SET(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${VTK_DIR};VTK;ALL;/")
-  ENDIF(EXISTS "${VTK_DIR}/CMakeCache.txt")
-  IF(EXISTS "${ITK_DIR}/CMakeCache.txt")
-    SET(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${ITK_DIR};ITK;ALL;/")
-  ENDIF(EXISTS "${ITK_DIR}/CMakeCache.txt")
-  IF(EXISTS "${KWWidgets_DIR}/CMakeCache.txt")
-    SET(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${KWWidgets_DIR};KWWidgets;ALL;/")
-  ENDIF(EXISTS "${KWWidgets_DIR}/CMakeCache.txt")
+# Package slicer
+SUBDIRS(Utilities/Package)
 
-  SET(CPACK_PACKAGE_EXECUTABLES "Slicer3" "Slicer")
-  INCLUDE(CPack)
-ENDIF(EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake")
-
+# Documentation
 OPTION(BUILD_DOCUMENTATION "Build Slicer3 Documentation" OFF)
 IF(BUILD_DOCUMENTATION)
   SUBDIRS(Utilities/Doxygen)

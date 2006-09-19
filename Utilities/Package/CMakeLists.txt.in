@@ -1,0 +1,7 @@
+PROJECT(InstallLibraries)
+
+SET(TCL_DIR "@TCL_DIR@")
+IF(TCL_DIR)
+  MESSAGE("Install Slicer3 Tcl")
+  
+ENDIF(TCL_DIR)
