@@ -13,7 +13,7 @@ IF(BUILD_SHARED_LIBS)
     SET(SLICER_FORWARD_DIR_INSTALL "${SLICER_EXE_INSTALL}")
     SET(SLICER_FORWARD_PATH_BUILD "\"${SLICER_FORWARD_DIR_BUILD}\"")
     SET(SLICER_FORWARD_PATH_INSTALL
-      "\"../lib\",\"../lib/KWWidgets\",\"../lib/InsightToolkit\"")
+      "\"../lib\",\"../lib/KWWidgets\",\"../lib/InsightToolkit\",\"../lib/Slicer3/tcl/lib\"")
   ENDIF(NOT WIN32)
 ENDIF(BUILD_SHARED_LIBS)
 # Add main server executables.
