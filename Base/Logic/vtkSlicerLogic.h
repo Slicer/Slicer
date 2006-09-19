@@ -25,8 +25,12 @@
 #include "vtkObject.h"
 #include "vtkObjectFactory.h"
 #include "vtkIntArray.h"
+#include "vtkUnsignedLongArray.h"
 
 #include "vtkMRMLScene.h"
+
+#include <map>
+#include <string>
 
 class vtkCallbackCommand;
 
@@ -109,6 +113,11 @@ protected:
   void SetMRML(vtkObject **nodePtr, vtkObject *node);
   void SetAndObserveMRML(vtkObject **nodePtr, vtkObject *node);
   void SetAndObserveMRMLEvents(vtkObject **nodePtr, vtkObject *node, vtkIntArray *events);
+
+  void RemoveMRMLEvents(vtkObject *nodePtr);
+  void AddMRMLEvents(vtkObject *nodePtr, vtkIntArray *events);
+  void GetMRMLEvents(vtkIntArray *events);
+
   //ETX
 
   // Description:
@@ -121,8 +130,12 @@ protected:
   int InLogicCallbackFlag;
   int InMRMLCallbackFlag;
 
-  // Observed Events
-  vtkIntArray *Events;
+
+  //BTX
+  vtkIntArray  *Events;
+  vtkUnsignedLongArray  *ObserverTags;
+  //ETX
+
 };
 
 #endif

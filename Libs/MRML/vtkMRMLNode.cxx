@@ -66,10 +66,18 @@ vtkMRMLNode::vtkMRMLNode()
 //----------------------------------------------------------------------------
 vtkMRMLNode::~vtkMRMLNode()
 {
-  this->SetDescription(NULL);
-  this->SetName(NULL);
-  this->SetID(NULL);
-
+  if (this->Description)
+    {
+    delete [] this->Description;
+    }
+  if (this->Name)
+    {
+    delete [] this->Name;
+    }
+  if (this->ID)
+    {
+    delete [] this->ID;
+    }
   // unregister and set null pointers.
   if ( this->MRMLCallbackCommand )
     {

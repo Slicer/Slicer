@@ -573,16 +573,13 @@ void vtkSlicerSliceLogic::CreateSliceModel()
   if (this->SliceModelNode != NULL && this->MRMLScene->GetNodeByID( this->GetSliceModelNode()->GetID() ) == NULL )
     {
     vtkIntArray *events = vtkIntArray::New();
-    for (int i=0; i<this->Events->GetNumberOfTuples(); i++)
-      {
-      events->InsertNextValue(this->Events->GetValue(i));
-      }
-    this->SetMRMLScene(this->GetMRMLScene());
+    //this->GetMRMLEvents(this->GetMRMLScene(), events);
+    //this->SetMRMLScene(this->GetMRMLScene());
     this->MRMLScene->AddNode(this->SliceModelDisplayNode);
     this->MRMLScene->AddNode(this->SliceModelNode);
     this->SliceModelNode->SetAndObserveDisplayNodeID(this->SliceModelDisplayNode->GetID());
     this->SliceModelDisplayNode->SetAndObserveTextureImageData(this->GetImageData());
-    this->SetAndObserveMRMLSceneEvents(this->GetMRMLScene(), events);
+    //this->SetAndObserveMRMLSceneEvents(this->GetMRMLScene(), events);
     events->Delete();
     }
 }
