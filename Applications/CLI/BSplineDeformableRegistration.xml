@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>registration</category>
+  <title>Deformable BSpline registration</title>
+  <description>Registers two images together using a mutual information metric and BSpline transform</description>
+  <version>0.1.0.$Revision: 916 $(alpha)</version>
+  <documentation-url></documentation-url>
+  <license></license>
+  <contributor>Bill Lorensen</contributor>
+
+  <parameters>
+    <label>Registration Parameters</label>
+    <description>Parameters used for registration</description>
+    <integer>
+      <name>gridSize</name>
+      <flag>-g</flag>
+      <longflag>--gridSize</longflag>
+      <description>Number of grid points on interior</description>
+      <label>Grid Size</label>
+      <default>5</default>
+      <constraints>
+        <minimum>3</minimum>
+        <maximum>20</maximum>
+        <step>1</step>
+      </constraints>
+    </integer>
+    <integer>
+      <name>HistogramBins</name>
+      <flag>-b</flag>
+      <longflag>--histogrambins</longflag>
+      <description>Number of histogram bins to use for Mattes Mutual Information</description>
+      <label>Histogram Bins</label>
+      <default>30</default>
+      <constraints>
+        <minimum>1</minimum>
+        <maximum>500</maximum>
+        <step>5</step>
+      </constraints>
+    </integer>
+
+    <integer>
+      <name>SpatialSamples</name>
+      <flag>-s</flag>
+      <longflag>--spatialsamples</longflag>
+      <description>Number of spatial samples to use in estimating Mattes Mutual Information</description>
+      <label>Spatial Samples</label>
+      <default>50000</default>
+      <constraints>
+        <minimum>1000</minimum>
+        <maximum>500000</maximum>
+        <step>1000</step>
+      </constraints>
+    </integer>
+  </parameters>
+
+  <parameters>
+    <label>IO</label>
+    <description>Input/output parameters</description>
+    <image>
+      <name>fixedImageFileName</name>
+      <label>Fixed Image</label>
+      <channel>input</channel>
+      <index>0</index>
+      <description>Fixed image to register to</description>
+    </image>
+    <image>
+      <name>movingImageFileName</name>
+      <label>Moving Image</label>
+      <channel>input</channel>
+      <index>1</index>
+      <description>Moving image</description>
+    </image>
+    <image>
+      <name>resampledImageFileName</name>
+      <label>Output Volume</label>
+      <channel>output</channel>
+      <index>2</index>
+      <description>Resampled Moving Image</description>
+    </image>
+  </parameters>
+
+</executable>
