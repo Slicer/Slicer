@@ -22,6 +22,22 @@ ADD_EXECUTABLE(${CLP} ${${CLP}_SOURCE})
 TARGET_LINK_LIBRARIES (${CLP} ITKIO ITKBasicFilters)
 
 #####################
+SET (CLP AffineRegistration)
+
+SET ( ${CLP}_SOURCE ${CLP}.cxx)
+GENERATECLP(${CLP}_SOURCE ${CLP}.xml)
+ADD_EXECUTABLE(${CLP} ${${CLP}_SOURCE})
+TARGET_LINK_LIBRARIES (${CLP} ITKIO ITKBasicFilters)
+
+#####################
+SET (CLP BSplineDeformableRegistration)
+
+SET ( ${CLP}_SOURCE ${CLP}.cxx)
+GENERATECLP(${CLP}_SOURCE ${CLP}.xml)
+ADD_EXECUTABLE(${CLP} ${${CLP}_SOURCE})
+TARGET_LINK_LIBRARIES (${CLP} ITKStatistics ITKIO ITKBasicFilters)
+
+#####################
 SET (CLP CheckerBoard)
 
 SET ( ${CLP}_SOURCE ${CLP}.cxx)
@@ -87,6 +103,18 @@ TARGET_LINK_LIBRARIES (${CLP} ITKIO ITKBasicFilters)
 ADD_LIBRARY(${CLP}Lib SHARED ${${CLP}_SOURCE})
 SET_TARGET_PROPERTIES (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=SlicerModuleEntryPoint")
 TARGET_LINK_LIBRARIES (${CLP}Lib ITKIO ITKBasicFilters)
+
+#####################
+SET (CLP HistogramMatching)
+
+SET ( ${CLP}_SOURCE ${CLP}.cxx)
+GENERATECLP(${CLP}_SOURCE ${CLP}.xml)
+ADD_EXECUTABLE(${CLP} ${${CLP}_SOURCE})
+TARGET_LINK_LIBRARIES (${CLP} ITKIO ITKBasicFilters ITKStatistics)
+
+ADD_LIBRARY(${CLP}Lib SHARED ${${CLP}_SOURCE})
+SET_TARGET_PROPERTIES (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=SlicerModuleEntryPoint")
+TARGET_LINK_LIBRARIES (${CLP}Lib ITKIO ITKBasicFilters ITKStatistics)
 
 #####################
 SET (CLP OtsuThresholdImageFilter)
@@ -188,6 +216,10 @@ SET(TARGETS
         GrayscaleFillHoleImageFilterLib
         GrayscaleGrindPeakImageFilter
         GrayscaleGrindPeakImageFilterLib
+        HistogramMatching
+        LinearRegistration
+        AffineRegistration
+        BSplineDeformableRegistration
 )
 
 FOREACH(target ${TARGETS})
