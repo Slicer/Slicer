@@ -52,7 +52,7 @@ proc ScriptedModulesRemove {} {
   foreach package $::SLICER_PACKAGES(list) { 
     set gui $::SLICER_PACKAGES($package,gui)
     $::slicer3::Application RemoveModuleGUI $gui
-    [$gui GetUIPanel] SetUserInterfaceManager [[$::slicer3::ApplicationGUI GetMainSlicerWin] GetMainUserInterfaceManager]
+    $gui SetLogic ""
     $::SLICER_PACKAGES($package,gui) RemoveGUIObservers
     $::SLICER_PACKAGES($package,gui) TearDownGUI
   }
