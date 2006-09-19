@@ -193,8 +193,8 @@ void vtkSlicerLogic::RemoveMRMLEvents(vtkObject *nodePtr)
 {
   if (nodePtr)
     {
-    if (nodePtr->IsA("vtkMRMLSliceNode"))
-    std::cout << "remove\n";
+    //if (nodePtr->IsA("vtkMRMLSliceNode"))
+    //std::cout << "remove\n";
 
     for (int i=0; i < this->ObserverTags->GetNumberOfTuples(); i++)
       {
@@ -210,8 +210,8 @@ void vtkSlicerLogic::AddMRMLEvents(vtkObject *nodePtr, vtkIntArray *events)
 {
   if (nodePtr)
     {
-    if (nodePtr->IsA("vtkMRMLSliceNode"))
-    std::cout <<"add\n";
+    //if (nodePtr->IsA("vtkMRMLSliceNode"))
+    //std::cout <<"add\n";
 
     for (int i=0; i<events->GetNumberOfTuples(); i++)
       {
