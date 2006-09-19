@@ -110,8 +110,8 @@ int Slicer3_main(int argc, char *argv[])
   std::string ptemp;
   cout << "Using slicer executable: " << programPath.c_str() << endl;
   ptemp = vtksys::SystemTools::GetFilenamePath(programPath.c_str());
-  std::string tclEnv = "TCL_LIBPATH=";
-  tclEnv = ptemp += "/../lib/Slicer3/tcl";
+  std::string tclEnv = "TCL_LIBRARY=";
+  tclEnv += ptemp + "/../lib/Slicer3/tcl/lib/tcl8.4";
   cout << "Set environment: " << tclEnv.c_str() << endl;
   putenv(const_cast <char *> (tclEnv.c_str()));
 
