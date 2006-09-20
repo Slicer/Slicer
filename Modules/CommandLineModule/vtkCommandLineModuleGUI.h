@@ -122,6 +122,8 @@ private:
   vtkCommandLineModuleLogic *Logic;
   vtkMRMLCommandLineModuleNode* CommandLineModuleNode;
 
+  bool CreatingNewNode;
+
 };
 
 #endif

@@ -52,6 +52,7 @@ vtkMRMLNode* vtkMRMLCommandLineModuleNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLCommandLineModuleNode::vtkMRMLCommandLineModuleNode()
 {
+    this->HideFromEditors = false;
 }
 
 //----------------------------------------------------------------------------

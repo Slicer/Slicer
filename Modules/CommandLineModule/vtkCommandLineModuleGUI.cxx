@@ -86,7 +86,7 @@ vtkCommandLineModuleGUI::vtkCommandLineModuleGUI()
   this->NewNodeCallbackCommand->SetClientData(reinterpret_cast<void *>(this) );
   this->NewNodeCallbackCommand
     ->SetCallback( vtkCommandLineModuleGUI::NewNodeCallback );
-  
+  this->CreatingNewNode = false;
 //  this->DebugOn();
 }
 
@@ -316,14 +316,14 @@ void vtkCommandLineModuleGUI::ProcessGUIEvents ( vtkObject *caller,
                                            unsigned long event,
                                            void *callData ) 
 {
+  if (this->CreatingNewNode) 
+    {
+    return;
+    }
   //std::cout << "ProcessGUIEvents()" << std::endl;
   vtkKWPushButton *b = vtkKWPushButton::SafeDownCast(caller);
   vtkSlicerNodeSelectorWidget *selector = vtkSlicerNodeSelectorWidget::SafeDownCast(caller);
   if (selector != NULL && selector != this->CommandLineModuleNodeSelector)
-    {
-    return;
-    }
-  else if (selector == this->CommandLineModuleNodeSelector && selector->GetSelected() == NULL)
     {
     return;
     }
@@ -333,6 +333,10 @@ void vtkCommandLineModuleGUI::ProcessGUIEvents ( vtkObject *caller,
     // Selected a new parameter node
     //std::cout << "  Selector" << std::endl;
     vtkMRMLCommandLineModuleNode* n = vtkMRMLCommandLineModuleNode::SafeDownCast(this->CommandLineModuleNodeSelector->GetSelected());
+    if (n == NULL) 
+      {
+      return;
+      }
     this->Logic->SetCommandLineModuleNode(n);
     this->SetCommandLineModuleNode(n);
     this->SetAndObserveMRML( vtkObjectPointer(&this->CommandLineModuleNode), n);
@@ -344,6 +348,10 @@ void vtkCommandLineModuleGUI::ProcessGUIEvents ( vtkObject *caller,
     //std::cout << "  New node" << std::endl;
     vtkMRMLCommandLineModuleNode* n = vtkMRMLCommandLineModuleNode::SafeDownCast((vtkObjectBase*)callData);
     n->SetModuleDescription( this->ModuleDescriptionObject );
+    }
+  else if (selector == this->CommandLineModuleNodeSelector && selector->GetSelected() == NULL)
+    {
+    return;
     }
   else if (b == (*this->InternalWidgetMap)["ApplyButton"].GetPointer() && event == vtkKWPushButton::InvokedEvent ) 
     {
@@ -358,9 +366,12 @@ void vtkCommandLineModuleGUI::ProcessGUIEvents ( vtkObject *caller,
     // Defaults button was pressed
     // (may need additional code to get any node delection widgets to
     // return to their default state)
-    this->CommandLineModuleNode
-      ->SetModuleDescription( this->ModuleDescriptionObject);
-    this->UpdateGUI();
+    if (this->CommandLineModuleNode != NULL) 
+      {
+      this->CommandLineModuleNode
+        ->SetModuleDescription( this->ModuleDescriptionObject);
+      this->UpdateGUI();
+      }
     }
   else
     {
@@ -384,8 +395,10 @@ void vtkCommandLineModuleGUI::UpdateMRML ()
     // no parameter node selected yet, create new
     //std::cout << "  Creating a new node" << std::endl;
     this->CommandLineModuleNodeSelector->SetSelectedNew("vtkMRMLCommandLineModuleNode");
+    this->CreatingNewNode = true;
     this->CommandLineModuleNodeSelector->ProcessNewNodeCommand("vtkMRMLCommandLineModuleNode", this->ModuleDescriptionObject.GetTitle().c_str());
     n = vtkMRMLCommandLineModuleNode::SafeDownCast(this->CommandLineModuleNodeSelector->GetSelected());
+    this->CreatingNewNode = false;
 
     if (n == NULL)
       {
@@ -593,6 +606,10 @@ void vtkCommandLineModuleGUI::ProcessMRMLEvents ( vtkObject *caller,
   //std::cout << "ProcessMRMLEvents()" << std::endl;
   // if parameter node has been changed externally, update GUI widgets
   // with new values 
+ if (this->CreatingNewNode) 
+    {
+    return;
+    }
   vtkMRMLCommandLineModuleNode* node
     = vtkMRMLCommandLineModuleNode::SafeDownCast(caller);
   if (node != NULL && this->GetCommandLineModuleNode() == node) 
@@ -936,6 +953,7 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
                                  NULL,
                                  (title + " Volume").c_str());
         tparameter->SetNewNodeEnabled(1);
+        tparameter->SetNoneEnabled(1);
         // tparameter->SetNewNodeName((title+" output").c_str());
         tparameter->SetParent( parameterGroupFrame->GetFrame() );
         tparameter->Create();
