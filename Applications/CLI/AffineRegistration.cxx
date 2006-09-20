@@ -18,6 +18,7 @@
 #include "itkOrientedImage.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
+#include "itkOrientImageFilter.h"
 
 // ITK Stuff
 // Registration
@@ -90,6 +91,7 @@ PARSE_ARGS;
 
   Volume::Pointer fixed, moving;
   typedef itk::ImageFileReader<Volume> FileReaderType;
+
   FileReaderType::Pointer FixedReader = FileReaderType::New();
   FileReaderType::Pointer MovingReader = FileReaderType::New();
   FixedReader->SetFileName ( fixedImageFileName.c_str() );
@@ -122,9 +124,19 @@ PARSE_ARGS;
   moving = MovingReader->GetOutput();
 
 
-  fixed->Print ( std::cout );
-  moving->Print ( std::cout );
+  typedef itk::OrientImageFilter<Volume,Volume> OrientFilterType;
+  OrientFilterType::Pointer orientFixed = OrientFilterType::New();
+  OrientFilterType::Pointer orientMoving = OrientFilterType::New();
 
+  orientFixed->UseImageDirectionOn();
+  orientFixed->SetDesiredCoordinateOrientationToAxial();
+  orientFixed->SetInput (fixed);
+  orientFixed->Update();
+
+  orientMoving->UseImageDirectionOn();
+  orientMoving->SetDesiredCoordinateOrientationToAxial();
+  orientMoving->SetInput (moving);
+  orientMoving->Update();
 
   typedef itk::MattesMutualInformationImageToImageMetric<Volume, Volume>
     MetricType; 
@@ -147,8 +159,8 @@ PARSE_ARGS;
   registration->SetOptimizer ( optimizer );
   registration->SetInterpolator ( interpolator );
   registration->SetTransform ( transform );
-  registration->SetFixedImage ( fixed );
-  registration->SetMovingImage ( moving );
+  registration->SetFixedImage ( orientFixed->GetOutput() );
+  registration->SetMovingImage ( orientMoving->GetOutput() );
 
   optimizer->SetNumberOfIterations ( Iterations );
   optimizer->SetMinimumStepLength ( .0005 );
@@ -168,7 +180,29 @@ PARSE_ARGS;
   CommandIterationUpdate::Pointer observer = CommandIterationUpdate::New();
   optimizer->AddObserver( itk::IterationEvent(), observer );
 
-  transform->SetIdentity();
+  // Initialize the transform
+  TransformType::InputPointType centerFixed;
+  Volume::RegionType::SizeType sizeFixed = orientFixed->GetOutput()->GetLargestPossibleRegion().GetSize();
+  // Find the center
+  Volume::IndexType indexFixed;
+  for ( unsigned j = 0; j < 3; j++ )
+    {
+    indexFixed[j] = (long) ( (sizeFixed[j]-1) / 2.0 );
+    }
+  orientFixed->GetOutput()->TransformIndexToPhysicalPoint ( indexFixed, centerFixed );
+
+  TransformType::InputPointType centerMoving;
+  Volume::RegionType::SizeType sizeMoving = orientMoving->GetOutput()->GetLargestPossibleRegion().GetSize();
+  // Find the center
+  Volume::IndexType indexMoving;
+  for ( unsigned j = 0; j < 3; j++ )
+    {
+    indexMoving[j] = (long) ( (sizeMoving[j]-1) / 2.0 );
+    }
+  orientMoving->GetOutput()->TransformIndexToPhysicalPoint ( indexMoving, centerMoving );
+
+  transform->Translate(centerMoving-centerFixed);
+  std::cout << "---------------" << centerMoving-centerFixed << std::endl;
   registration->SetInitialTransformParameters ( transform->GetParameters() );
   
   metric->SetNumberOfHistogramBins ( HistogramBins );
@@ -196,14 +230,10 @@ PARSE_ARGS;
 
   transform->SetParameters ( registration->GetLastTransformParameters() );
 
-  fixed->Print ( std::cout );
-  moving->Print ( std::cout );
-  transform->Print ( std::cout );
-  
-  Resample->SetInput ( moving ); 
+  Resample->SetInput ( orientMoving->GetOutput() ); 
   Resample->SetTransform ( transform );
   Resample->SetInterpolator ( Interpolator );
-  Resample->SetOutputParametersFromImage ( fixed );
+  Resample->SetOutputParametersFromImage ( orientFixed->GetOutput() );
   
   Resample->Update();
   typedef itk::ImageFileWriter<Volume> WriterType;
