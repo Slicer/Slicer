@@ -242,6 +242,19 @@ void vtkSlicerFiducialsGUI::ProcessGUIEvents ( vtkObject *caller,
   if (button == this->RemoveFiducialButton && event == vtkKWPushButton::InvokedEvent)
     {
         vtkDebugMacro("vtkSlicerFiducialsGUI: ProcessGUIEvent: Remove Fiducial Button event: " << event << ".\n");
+        // check to see if should confirm
+        const char * confirmDelete = ((vtkSlicerApplication *)this->GetApplication())->GetConfirmDelete();
+        int confirmDeleteFlag = 0;
+        if (confirmDelete != NULL &&
+            strncmp(confirmDelete, "1", 1) == 0)
+        {
+            vtkDebugMacro("vtkSlicerFiducialsGUI: ProcessGUIEvent: confirm delete flag is 1\n");
+            confirmDeleteFlag = 1;
+        }
+        else
+        {
+            vtkDebugMacro("Not confirming deletes, confirmDelete = '" << confirmDelete << "'\n");
+        }
         // save state for undo
         this->MRMLScene->SaveStateForUndo();
         
@@ -252,9 +265,12 @@ void vtkSlicerFiducialsGUI::ProcessGUIEvents ( vtkObject *caller,
         {
             int row[1];
             this->MultiColumnList->GetWidget()->GetSelectedRows(row);
-            
-            // confirm that really want to remove this fiducial?
-            std::cout << "Removing fiducial " << row[0] << endl;
+
+            if (confirmDeleteFlag)
+            {
+                // confirm that really want to remove this fiducial
+                std::cout << "Removing fiducial " << row[0] << endl;
+            }
             
             // then remove that fiducial by index
             activeFiducialListNode->RemoveFiducial(row[0]);
@@ -388,6 +404,10 @@ void vtkSlicerFiducialsGUI::ProcessMRMLEvents ( vtkObject *caller,
 //---------------------------------------------------------------------------
 void vtkSlicerFiducialsGUI::SetGUIFromList(vtkMRMLFiducialListNode * activeFiducialListNode)
 {
+    if (activeFiducialListNode == NULL)
+    {
+        return;
+    }
     int numPoints = activeFiducialListNode->GetNumberOfFiducials();
     bool deleteFlag = true;
     
@@ -415,65 +435,71 @@ void vtkSlicerFiducialsGUI::SetGUIFromList(vtkMRMLFiducialListNode * activeFiduc
                 vtkDebugMacro("SetGUIFromList: Adding point " << row << " to the table" << endl);
                 this->MultiColumnList->GetWidget()->AddRow();
             }
+            vtkDebugMacro("SetGUIFromList: getting " << row << "th fiducial xyz - total fids = " << numPoints);
             // now populate it
             xyz = activeFiducialListNode->GetNthFiducialXYZ(row);
+            if (xyz == NULL)
+            {
+                std::cerr << "SetGUIFromList: ERROR: got null xyz for point " << row << endl;
+            }
+            vtkDebugMacro("Getting nth fiducial orientation");            
             wxyz = activeFiducialListNode->GetNthFiducialOrientation(row);
             
             if (activeFiducialListNode->GetNthFiducialLabelText(row) != NULL)
             {
-                if (strcmp(this->MultiColumnList->GetWidget()->GetCellText(row,0), activeFiducialListNode->GetNthFiducialLabelText(row)) != 0)
+                if (strcmp(this->MultiColumnList->GetWidget()->GetCellText(row,this->NameColumn), activeFiducialListNode->GetNthFiducialLabelText(row)) != 0)
                 {
-                    this->MultiColumnList->GetWidget()->SetCellText(row,0,activeFiducialListNode->GetNthFiducialLabelText(row));
+                    this->MultiColumnList->GetWidget()->SetCellText(row,this->NameColumn,activeFiducialListNode->GetNthFiducialLabelText(row));
                 }               
             }
             else
             {
-                if (strcmp(this->MultiColumnList->GetWidget()->GetCellText(row,0), "(none)") != 0)
+                if (strcmp(this->MultiColumnList->GetWidget()->GetCellText(row,this->NameColumn), "(none)") != 0)
                 {
-                    this->MultiColumnList->GetWidget()->SetCellText(row,0,"(none)");
+                    this->MultiColumnList->GetWidget()->SetCellText(row,this->NameColumn,"(none)");
                 }
+            }
+             // selected
+            if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsInt(row,this->SelectedColumn) != (activeFiducialListNode->GetNthFiducialSelected(row) ? 1 : 0))
+            {
+                this->MultiColumnList->GetWidget()->SetCellTextAsInt(row,this->SelectedColumn,(activeFiducialListNode->GetNthFiducialSelected(row) ? 1 : 0));
+                this->MultiColumnList->GetWidget()->SetCellWindowCommandToCheckButton(row,this->SelectedColumn);
             }
             if (xyz != NULL)
             {
                 // always set it if it's a new row added because all were
                 // deleted, because the numerical default is 0
-                if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row,1) != xyz[0])
+                if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row,this->XColumn) != xyz[0])
                 {
-                    this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,1,xyz[0]);
+                    this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,this->XColumn,xyz[0]);
                 } 
-                if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row,2) != xyz[1])
+                if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row,this->YColumn) != xyz[1])
                 {
-                    this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,2,xyz[1]);
+                    this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,this->YColumn,xyz[1]);
                 }
-                if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row,3) != xyz[2])
+                if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row,this->ZColumn) != xyz[2])
                 {
-                    this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,3,xyz[2]);
+                    this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,this->ZColumn,xyz[2]);
                 }
             }
             if (wxyz != NULL)
             {
-                if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row,4) != wxyz[0])
+                if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row,this->OrWColumn) != wxyz[0])
                 {
-                    this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,4,wxyz[0]);
+                    this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,this->OrWColumn,wxyz[0]);
                 }
-                if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row,5) != wxyz[1])
+                if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row,this->OrXColumn) != wxyz[1])
                 {
-                    this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,5,wxyz[1]);
+                    this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,this->OrXColumn,wxyz[1]);
                 }
-                if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row,6) != wxyz[2])
+                if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row,this->OrYColumn) != wxyz[2])
                 {
-                    this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,6,wxyz[2]);
+                    this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,this->OrYColumn,wxyz[2]);
                 }
-                if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row,7) != wxyz[3])
+                if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row,this->OrZColumn) != wxyz[3])
                 {
-                    this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,7,wxyz[3]);
+                    this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,this->OrZColumn,wxyz[3]);
                 }
-            }
-            // selected
-            if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsInt(row,8) != (activeFiducialListNode->GetNthFiducialSelected(row) ? 1 : 0))
-            {
-                this->MultiColumnList->GetWidget()->SetCellTextAsInt(row,8,(activeFiducialListNode->GetNthFiducialSelected(row) ? 1 : 0));
-                this->MultiColumnList->GetWidget()->SetCellWindowCommandToCheckButton(row,8);
             }
         }
         
@@ -748,8 +774,9 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     this->MultiColumnList->GetWidget()->MovableRowsOff();
     this->MultiColumnList->GetWidget()->MovableColumnsOff();
     // set up the columns of data for each point
-    // name, x, y, z, orientation w, x, y, z, selected
+    // refer to the header file for order
     this->MultiColumnList->GetWidget()->AddColumn("Name");
+    this->MultiColumnList->GetWidget()->AddColumn("Selected");
     this->MultiColumnList->GetWidget()->AddColumn("X");
     this->MultiColumnList->GetWidget()->AddColumn("Y");
     this->MultiColumnList->GetWidget()->AddColumn("Z");
@@ -757,11 +784,9 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     this->MultiColumnList->GetWidget()->AddColumn("OrX");
     this->MultiColumnList->GetWidget()->AddColumn("OrY");
     this->MultiColumnList->GetWidget()->AddColumn("OrZ");
-    this->MultiColumnList->GetWidget()->AddColumn("Selected");
-
-    // make the selected column editable by checkbox
-    this->MultiColumnList->GetWidget()->SetColumnEditWindowToCheckButton(8);
     
+    // make the selected column editable by checkbox
+    this->MultiColumnList->GetWidget()->SetColumnEditWindowToCheckButton(this->SelectedColumn);
     
     // now set the attributes that are equal across the columns
     int col;
@@ -838,34 +863,34 @@ void vtkSlicerFiducialsGUI::UpdateElement(int row, int col, char * str)
             }
         
             // now update the requested value
-            if (col == 0)
+            if (col == this->NameColumn)
             {
                 activeFiducialListNode->SetNthFiducialLabelText(row, str);
             }
-            else if (col > 0 && col < 4)
+            else if (col == this->SelectedColumn)
+            {
+                // selected
+                vtkDebugMacro("UpdateElement: setting node " <<  activeFiducialListNode->GetNthFiducialLabelText(row) << "'s selected flag to " << str << endl);
+                activeFiducialListNode->SetNthFiducialSelected(row, atoi(str));
+            }
+            else if (col >= this->XColumn && col <= this->ZColumn)
             {
                 // get the current xyz
                 float * xyz = activeFiducialListNode->GetNthFiducialXYZ(row);
                 // now set the new one
                 float newCoordinate = atof(str);
-                if (col == 1) { activeFiducialListNode->SetNthFiducialXYZ(row, newCoordinate, xyz[1], xyz[2]); }
-                if (col == 2) { activeFiducialListNode->SetNthFiducialXYZ(row, xyz[0], newCoordinate, xyz[2]); }
-                if (col == 3) { activeFiducialListNode->SetNthFiducialXYZ(row, xyz[0], xyz[1], newCoordinate); }
+                if (col == this->XColumn) { activeFiducialListNode->SetNthFiducialXYZ(row, newCoordinate, xyz[1], xyz[2]); }
+                if (col == this->YColumn) { activeFiducialListNode->SetNthFiducialXYZ(row, xyz[0], newCoordinate, xyz[2]); }
+                if (col == this->ZColumn) { activeFiducialListNode->SetNthFiducialXYZ(row, xyz[0], xyz[1], newCoordinate); }
             }
-            else if (col > 3 && col < 8)
+            else if (col >= this->OrWColumn  && col <= this->OrZColumn)
             {
                 float * wxyz = activeFiducialListNode->GetNthFiducialOrientation(row);
                 float newCoordinate = atof(str);
-                if (col == 4) { activeFiducialListNode->SetNthFiducialOrientation(row, newCoordinate, wxyz[1], wxyz[2], wxyz[3]); }
-                if (col == 5) { activeFiducialListNode->SetNthFiducialOrientation(row, wxyz[0], newCoordinate, wxyz[2], wxyz[3]); }
-                if (col == 6) { activeFiducialListNode->SetNthFiducialOrientation(row, wxyz[0], wxyz[1], newCoordinate, wxyz[3]); }
-                if (col == 7) { activeFiducialListNode->SetNthFiducialOrientation(row, wxyz[0], wxyz[1], wxyz[2], newCoordinate); }
-            }
-            else if (col == 8)
-            {
-                // selected
-                vtkDebugMacro("UpdateElement: setting node " <<  activeFiducialListNode->GetNthFiducialLabelText(row) << "'s selected flag to " << str << endl);
-                activeFiducialListNode->SetNthFiducialSelected(row, atoi(str));
+                if (col == this->OrWColumn) { activeFiducialListNode->SetNthFiducialOrientation(row, newCoordinate, wxyz[1], wxyz[2], wxyz[3]); }
+                if (col == this->OrXColumn) { activeFiducialListNode->SetNthFiducialOrientation(row, wxyz[0], newCoordinate, wxyz[2], wxyz[3]); }
+                if (col == this->OrYColumn) { activeFiducialListNode->SetNthFiducialOrientation(row, wxyz[0], wxyz[1], newCoordinate, wxyz[3]); }
+                if (col == this->OrZColumn) { activeFiducialListNode->SetNthFiducialOrientation(row, wxyz[0], wxyz[1], wxyz[2], newCoordinate); }
             }
             else
             {

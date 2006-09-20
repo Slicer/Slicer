@@ -166,6 +166,23 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     // the columns that hold the
     // name, x, y, z, orientation x y z w, selected
     int NumberOfColumns;
+
+    //BTX
+    // Description:
+    // The column orders in the list box
+    enum
+    {
+        NameColumn = 0,
+        SelectedColumn = 1,
+        XColumn = 2,
+        YColumn = 3,
+        ZColumn = 4,
+        OrWColumn = 5,
+        OrXColumn = 6,
+        OrYColumn = 7,
+        OrZColumn = 8,
+    };
+    //ETX
     
 private:
     vtkSlicerFiducialsGUI ( const vtkSlicerFiducialsGUI& ); // Not implemented.
