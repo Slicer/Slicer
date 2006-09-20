@@ -14,14 +14,14 @@
 #include <iostream>
 
 #include "AffineRegistrationCLP.h"
-#include "itkCommand.h"
+
+// ITK Stuff
+// Registration
 #include "itkOrientedImage.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 #include "itkOrientImageFilter.h"
 
-// ITK Stuff
-// Registration
 #include "itkRegularStepGradientDescentOptimizer.h"
 #include "itkImageFileWriter.h"
 #include "itkImageRegistrationMethod.h"
@@ -29,7 +29,6 @@
 #include "itkMattesMutualInformationImageToImageMetric.h"
 #include "itkAffineTransform.h"
 #include "itkResampleImageFilter.h"
-#include "itkStdStreamLogOutput.h"
 
 //  The following section of code implements a Command observer
 //  used to monitor the evolution of the registration process.
@@ -67,40 +66,28 @@ public:
     }
 };
 
-typedef itk::OrientedImage<signed short, 3> Volume;
+const    unsigned int  ImageDimension = 3;
+typedef  signed short  PixelType;
+typedef itk::OrientedImage<PixelType, ImageDimension> ImageType;
 
 int main ( int argc, char* argv[] ) 
 {  
-  itk::StdStreamLogOutput::Pointer coutput = itk::StdStreamLogOutput::New();
-  coutput->SetStream(std::cout);
+  PARSE_ARGS;
 
-PARSE_ARGS;
   bool DoInitializeTransform = false;
   int RandomSeed = 1234567;
 
-  std::cout << "Parsed arguments" << std::endl
-            << "HistogramBins: " << HistogramBins << std::endl
-            << "RandomSeed: " << RandomSeed << std::endl
-            << "SpatialSamples: " << SpatialSamples << std::endl
-            << "TranslationScale: " << TranslationScale << std::endl
-            << "DoInitializeTransform: " << DoInitializeTransform << std::endl
-            << "fixedImageFileName: " << fixedImageFileName << std::endl
-            << "movingImageFileName: " << movingImageFileName << std::endl
-            << "resampledImageFileName: " << resampledImageFileName << std::endl
-            << std::endl;
+  ImageType::Pointer fixed, moving;
+  typedef itk::ImageFileReader<ImageType> FileReaderType;
 
-  Volume::Pointer fixed, moving;
-  typedef itk::ImageFileReader<Volume> FileReaderType;
-
-  FileReaderType::Pointer FixedReader = FileReaderType::New();
-  FileReaderType::Pointer MovingReader = FileReaderType::New();
-  FixedReader->SetFileName ( fixedImageFileName.c_str() );
-  MovingReader->SetFileName ( movingImageFileName.c_str() );
+  FileReaderType::Pointer fixedReader = FileReaderType::New();
+  FileReaderType::Pointer movingReader = FileReaderType::New();
+  fixedReader->SetFileName ( fixedImageFileName.c_str() );
+  movingReader->SetFileName ( movingImageFileName.c_str() );
 
   try
     {
-    FixedReader->Update();
-    std::cout << "Fixed read!" << std::endl;
+    fixedReader->Update();
     }
   catch( itk::ExceptionObject & err )
     {
@@ -111,8 +98,7 @@ PARSE_ARGS;
   // read in the moving image and do nothing
   try
     {
-    MovingReader->Update();
-    std::cout << "Moving read!" << std::endl;
+    movingReader->Update();
     }
   catch( itk::ExceptionObject & err )
     {
@@ -120,11 +106,11 @@ PARSE_ARGS;
     return EXIT_FAILURE;
     }
 
-  fixed = FixedReader->GetOutput();
-  moving = MovingReader->GetOutput();
+  fixed = fixedReader->GetOutput();
+  moving = movingReader->GetOutput();
 
 
-  typedef itk::OrientImageFilter<Volume,Volume> OrientFilterType;
+  typedef itk::OrientImageFilter<ImageType,ImageType> OrientFilterType;
   OrientFilterType::Pointer orientFixed = OrientFilterType::New();
   OrientFilterType::Pointer orientMoving = OrientFilterType::New();
 
@@ -138,13 +124,13 @@ PARSE_ARGS;
   orientMoving->SetInput (moving);
   orientMoving->Update();
 
-  typedef itk::MattesMutualInformationImageToImageMetric<Volume, Volume>
+  typedef itk::MattesMutualInformationImageToImageMetric<ImageType, ImageType>
     MetricType; 
   typedef itk::RegularStepGradientDescentOptimizer
     OptimizerType;    
-  typedef itk::LinearInterpolateImageFunction<Volume, double>
+  typedef itk::LinearInterpolateImageFunction<ImageType, double>
     InterpolatorType;
-  typedef itk::ImageRegistrationMethod<Volume,Volume>
+  typedef itk::ImageRegistrationMethod<ImageType,ImageType>
     RegistrationType;
   typedef itk::AffineTransform<double>
     TransformType;
@@ -166,6 +152,7 @@ PARSE_ARGS;
   optimizer->SetMinimumStepLength ( .0005 );
   optimizer->SetMaximumStepLength ( 10.0 );
   optimizer->SetMinimize(true);   
+
   typedef OptimizerType::ScalesType OptimizerScalesType;
   OptimizerScalesType scales( transform->GetNumberOfParameters() );
   scales.Fill ( 1.0 );
@@ -182,9 +169,9 @@ PARSE_ARGS;
 
   // Initialize the transform
   TransformType::InputPointType centerFixed;
-  Volume::RegionType::SizeType sizeFixed = orientFixed->GetOutput()->GetLargestPossibleRegion().GetSize();
+  ImageType::RegionType::SizeType sizeFixed = orientFixed->GetOutput()->GetLargestPossibleRegion().GetSize();
   // Find the center
-  Volume::IndexType indexFixed;
+  ImageType::IndexType indexFixed;
   for ( unsigned j = 0; j < 3; j++ )
     {
     indexFixed[j] = (long) ( (sizeFixed[j]-1) / 2.0 );
@@ -192,9 +179,9 @@ PARSE_ARGS;
   orientFixed->GetOutput()->TransformIndexToPhysicalPoint ( indexFixed, centerFixed );
 
   TransformType::InputPointType centerMoving;
-  Volume::RegionType::SizeType sizeMoving = orientMoving->GetOutput()->GetLargestPossibleRegion().GetSize();
+  ImageType::RegionType::SizeType sizeMoving = orientMoving->GetOutput()->GetLargestPossibleRegion().GetSize();
   // Find the center
-  Volume::IndexType indexMoving;
+  ImageType::IndexType indexMoving;
   for ( unsigned j = 0; j < 3; j++ )
     {
     indexMoving[j] = (long) ( (sizeMoving[j]-1) / 2.0 );
@@ -222,27 +209,27 @@ PARSE_ARGS;
     exit ( EXIT_FAILURE );
     }
 
-  typedef itk::ResampleImageFilter<Volume,Volume> ResampleType;
-  ResampleType::Pointer Resample = ResampleType::New();
+  typedef itk::ResampleImageFilter<ImageType,ImageType> ResampleType;
+  ResampleType::Pointer resample = ResampleType::New();
 
-  typedef itk::LinearInterpolateImageFunction<Volume, double> ResampleInterpolatorType;
+  typedef itk::LinearInterpolateImageFunction<ImageType, double> ResampleInterpolatorType;
   ResampleInterpolatorType::Pointer Interpolator = ResampleInterpolatorType::New();
 
   transform->SetParameters ( registration->GetLastTransformParameters() );
 
-  Resample->SetInput ( orientMoving->GetOutput() ); 
-  Resample->SetTransform ( transform );
-  Resample->SetInterpolator ( Interpolator );
-  Resample->SetOutputParametersFromImage ( orientFixed->GetOutput() );
+  resample->SetInput ( orientMoving->GetOutput() ); 
+  resample->SetTransform ( transform );
+  resample->SetInterpolator ( Interpolator );
+  resample->SetOutputParametersFromImage ( orientFixed->GetOutput() );
   
-  Resample->Update();
-  typedef itk::ImageFileWriter<Volume> WriterType;
-  WriterType::Pointer ResampledWriter = WriterType::New();
-  ResampledWriter->SetFileName ( resampledImageFileName.c_str() );
-  ResampledWriter->SetInput ( Resample->GetOutput() );
+  resample->Update();
+  typedef itk::ImageFileWriter<ImageType> WriterType;
+  WriterType::Pointer resampledWriter = WriterType::New();
+  resampledWriter->SetFileName ( resampledImageFileName.c_str() );
+  resampledWriter->SetInput ( resample->GetOutput() );
   try
     {
-    ResampledWriter->Write();
+    resampledWriter->Write();
     }
   catch( itk::ExceptionObject & err )
     { 
