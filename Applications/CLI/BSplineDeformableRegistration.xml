@@ -12,6 +12,15 @@
     <label>Registration Parameters</label>
     <description>Parameters used for registration</description>
     <integer>
+      <name>Iterations</name>
+      <flag>-i</flag>
+      <longflag>--iterations</longflag>
+      <description>Number of iterations</description>
+      <label>Iterations</label>
+      <default>200</default>
+    </integer>
+
+    <integer>
       <name>gridSize</name>
       <flag>-g</flag>
       <longflag>--gridSize</longflag>

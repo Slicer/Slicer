@@ -324,7 +324,7 @@ int main( int argc, char *argv[] )
 
   optimizer->SetCostFunctionConvergenceFactor( 1e+1 );
   optimizer->SetProjectedGradientTolerance( 1e-7 );
-  optimizer->SetMaximumNumberOfIterations( 500 );
+  optimizer->SetMaximumNumberOfIterations( Iterations );
   optimizer->SetMaximumNumberOfEvaluations( 500 );
   optimizer->SetMaximumNumberOfCorrections( 12 );
 
