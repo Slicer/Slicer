@@ -185,14 +185,15 @@ int Slicer3_main(int argc, char *argv[])
       // Pass arguments to the Tcl script
       cmd =  "lappend auto_path \"" + slicerBinDir + "/../"
         SLICER_INSTALL_LIBRARIES_DIR "\"; ";
+      cmd +=  "lappend auto_path \"" + slicerBinDir + "/../../"
+        SLICER_INSTALL_LIBRARIES_DIR "\"; ";
       cmd += "puts $auto_path; ";
       cmd += "package require SlicerBaseGUITcl; ";
-      cout << "Load SlicerBaseGUITcl: " << cmd.c_str() << endl;
       cout.flush();
       returnCode = Slicer3_Tcl_Eval( interp, cmd.c_str() );
       if ( returnCode )
         {
-      cerr << "Load SlicerBaseGUITcl: " << cmd.c_str() << endl;
+        cerr << "Load SlicerBaseGUITcl: " << cmd.c_str() << endl;
         return ( returnCode );
         }
     }
