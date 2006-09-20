@@ -9,6 +9,7 @@
 #include "vtkKWLoadSaveDialog.h"
 #include "vtkKWLoadSaveButton.h"
 #include "vtkKWLoadSaveButtonWithLabel.h"
+#include "vtkKWCheckButton.h"
 #include "vtkSlicerApplication.h"
 
 //----------------------------------------------------------------------------
@@ -17,14 +18,30 @@ vtkCxxRevisionMacro(vtkSlicerApplicationSettingsInterface, "$Revision: 1.0 $");
 
 vtkSlicerApplicationSettingsInterface::vtkSlicerApplicationSettingsInterface()
 {
+  this->SlicerSettingsFrame = 0;
+  this->ConfirmDeleteCheckButton = 0;
+    
   this->ModuleSettingsFrame = 0;
   this->ModulePathEntry = 0;
   this->TemporaryDirectoryButton = 0;
+  
 }
 
 
 vtkSlicerApplicationSettingsInterface::~vtkSlicerApplicationSettingsInterface()
 {
+  if (this->SlicerSettingsFrame)
+    {
+      this->SlicerSettingsFrame->Delete();
+      this->SlicerSettingsFrame = 0;
+    }
+
+  if (this->ConfirmDeleteCheckButton)
+  {
+    this->ConfirmDeleteCheckButton->Delete();
+    this->ConfirmDeleteCheckButton = NULL;
+  }
+      
   if (this->ModuleSettingsFrame)
     {
     this->ModuleSettingsFrame->Delete();
@@ -69,7 +86,44 @@ void vtkSlicerApplicationSettingsInterface::Create()
   page = this->GetPageWidget(this->GetName());
 
   // --------------------------------------------------------------
-  // Interface settings : main frame
+  // Slicer Interface settings : main frame
+  if (!this->SlicerSettingsFrame)
+  {
+      this->SlicerSettingsFrame = vtkKWFrameWithLabel::New();
+  }
+  this->SlicerSettingsFrame->SetParent(this->GetPagesParentWidget());
+  this->SlicerSettingsFrame->Create();
+  this->SlicerSettingsFrame->SetLabelText("Slicer Settings");
+
+  tk_cmd << "pack " << this->SlicerSettingsFrame->GetWidgetName()
+         << " -side top -anchor nw -fill x -padx 2 -pady 2 " 
+         << " -in " << page->GetWidgetName() << endl;
+  
+  frame = this->SlicerSettingsFrame->GetFrame();
+
+  
+  // --------------------------------------------------------------
+  // Slicer interface settings : Confirm on delete ?
+
+  if (!this->ConfirmDeleteCheckButton)
+    {
+    this->ConfirmDeleteCheckButton = vtkKWCheckButton::New();
+    }
+  this->ConfirmDeleteCheckButton->SetParent(frame);
+  this->ConfirmDeleteCheckButton->Create();
+  this->ConfirmDeleteCheckButton->SetText(
+    "Confirm delete");
+  this->ConfirmDeleteCheckButton->SetCommand(this, "ConfirmDeleteCallback");
+  // keep it off as the default
+  this->ConfirmDeleteCheckButton->SelectedStateOff();
+  this->ConfirmDeleteCheckButton->SetBalloonHelpString(
+    "A confirmation dialog will be presented to the user on deleting nodes.");
+
+  tk_cmd << "pack " << this->ConfirmDeleteCheckButton->GetWidgetName()
+         << "  -side top -anchor w -expand no -fill none" << endl;
+  
+  // --------------------------------------------------------------
+  // Module Interface settings : main frame
 
   if (!this->ModuleSettingsFrame)
     {
@@ -146,6 +200,17 @@ void vtkSlicerApplicationSettingsInterface::Create()
 }
 
 //----------------------------------------------------------------------------
+void vtkSlicerApplicationSettingsInterface::ConfirmDeleteCallback(int state)
+{
+    vtkSlicerApplication *app
+        = vtkSlicerApplication::SafeDownCast(this->GetApplication());
+    if (app)
+    {
+        app->SetConfirmDelete(state ? "1" : "0");       
+    }
+}
+
+//----------------------------------------------------------------------------
 void vtkSlicerApplicationSettingsInterface::ModulePathCallback(char *path)
 {
   vtkSlicerApplication *app
@@ -182,6 +247,12 @@ void vtkSlicerApplicationSettingsInterface::Update()
     {
     // Pull values from the application object and put them in the
     // settings interface widgets
+        if (this->ConfirmDeleteCheckButton)
+        {
+            this->ConfirmDeleteCheckButton->SetSelectedState(
+                (strncmp(app->GetConfirmDelete(), "1", 1) == 0) ? 1 : 0);
+        }
+        
     if (this->ModulePathEntry)
       {
       this->ModulePathEntry->GetWidget()->SetValue(app->GetModulePath());

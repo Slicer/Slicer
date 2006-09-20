@@ -13,6 +13,7 @@
 class vtkKWFrameWithLabel;
 class vtkKWEntryWithLabel;
 class vtkKWLoadSaveButtonWithLabel;
+class vtkKWCheckButton;
 
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationSettingsInterface
   : public vtkKWApplicationSettingsInterface
@@ -31,10 +32,13 @@ public:
   virtual void Update();
 
   // Description:
-  // Callbacks. Internal, do not use.
+  // Callbacks for the Module application settings. Internal, do not use.
   virtual void ModulePathCallback(char *);
   virtual void TemporaryDirectoryCallback();
 
+  // Description:
+  // Callbacks for the Slicer application settings
+  virtual void ConfirmDeleteCallback(int state);
   
 protected:
   vtkSlicerApplicationSettingsInterface();
@@ -45,6 +49,9 @@ private:
   vtkSlicerApplicationSettingsInterface(const vtkSlicerApplicationSettingsInterface&); // Not implemented
   void operator=(const vtkSlicerApplicationSettingsInterface&); // Not Implemented
 
+  vtkKWFrameWithLabel *SlicerSettingsFrame;
+  vtkKWCheckButton  *ConfirmDeleteCheckButton;
+  
   vtkKWFrameWithLabel *ModuleSettingsFrame;
   vtkKWEntryWithLabel *ModulePathEntry;
   vtkKWLoadSaveButtonWithLabel *TemporaryDirectoryButton;

@@ -17,7 +17,7 @@
 
 const char *vtkSlicerApplication::ModulePathRegKey = "ModulePath";
 const char *vtkSlicerApplication::TemporaryDirectoryRegKey = "TemporaryDirectory";
-
+const char *vtkSlicerApplication::ConfirmDeleteRegKey = "ConfirmDelete";
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerApplication);
@@ -29,6 +29,8 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
 
     strcpy(this->ModulePath, "");
 
+    strcpy(this->ConfirmDelete, "");
+    
     // configure the application before creating
     this->SetName ( "3D Slicer Version 3.0 Alpha" );
 
@@ -220,6 +222,14 @@ void vtkSlicerApplication::RestoreApplicationSettingsFromRegistry()
 
     
   Superclass::RestoreApplicationSettingsFromRegistry();
+
+  if (this->HasRegistryValue(
+    2, "RunTime", vtkSlicerApplication::ConfirmDeleteRegKey))
+    {
+    this->GetRegistryValue(
+      2, "RunTime", vtkSlicerApplication::ConfirmDeleteRegKey,
+      this->ConfirmDelete);
+    }
   
   if (this->HasRegistryValue(
     2, "RunTime", vtkSlicerApplication::ModulePathRegKey))
@@ -245,6 +255,10 @@ void vtkSlicerApplication::SaveApplicationSettingsToRegistry()
   Superclass::SaveApplicationSettingsToRegistry();
 
   this->SetRegistryValue(
+    2, "RunTime", vtkSlicerApplication::ConfirmDeleteRegKey, "%s", 
+    this->ConfirmDelete);
+  
+  this->SetRegistryValue(
     2, "RunTime", vtkSlicerApplication::ModulePathRegKey, "%s", 
     this->ModulePath);
 
@@ -253,6 +267,23 @@ void vtkSlicerApplication::SaveApplicationSettingsToRegistry()
     this->TemporaryDirectory);
 }
 
+void vtkSlicerApplication::SetConfirmDelete(const char* state)
+{
+    if (state)
+    {
+        if (strcmp(this->ConfirmDelete, state) != 0
+        && strlen(state) < vtkKWRegistryHelper::RegistryKeyValueSizeMax)
+        {
+            strcpy(this->ConfirmDelete, state);
+            this->Modified();
+        }
+    }
+}
+
+const char *vtkSlicerApplication::GetConfirmDelete() const
+{
+    return this->ConfirmDelete;
+}
 
 void vtkSlicerApplication::SetModulePath(const char* path)
 {

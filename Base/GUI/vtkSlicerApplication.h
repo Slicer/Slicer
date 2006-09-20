@@ -61,10 +61,16 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   // Description:
   // Some constants
   //BTX
+  static const char *ConfirmDeleteRegKey;
   static const char *ModulePathRegKey;
   static const char *TemporaryDirectoryRegKey;
   //ETX
 
+  // Descrition:
+  // Set/Get the confirm delete flag
+  void SetConfirmDelete(const char* state);
+  const char* GetConfirmDelete() const;
+  
   // Description:
   // Set/Get the search path for modules.
   void SetModulePath(const char *path);
@@ -90,6 +96,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
     // Collections of GUIs
     vtkSlicerGUICollection *ModuleGUICollection;
 
+    char ConfirmDelete[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
     char ModulePath[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
     char TemporaryDirectory[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
   
