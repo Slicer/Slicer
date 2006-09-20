@@ -56,6 +56,8 @@
 #include "itkLBFGSBOptimizer.h"
 #include "itkOnePlusOneEvolutionaryOptimizer.h"
 #include "itkNormalVariateGenerator.h" 
+#include "itkOrientedImage.h"
+#include "itkOrientImageFilter.h"
 
 // Software Guide : EndCodeSnippet
 
@@ -124,9 +126,8 @@ int main( int argc, char *argv[] )
   typedef  signed short  PixelType;
   typedef  signed short  OutputPixelType;
 
-  typedef itk::Image< PixelType, ImageDimension >       FixedImageType;
-  typedef itk::Image< PixelType, ImageDimension >       MovingImageType;
-  typedef itk::Image< OutputPixelType, ImageDimension > OutputImageType;
+  typedef itk::OrientedImage< PixelType, ImageDimension >       InputImageType;
+  typedef itk::OrientedImage< OutputPixelType, ImageDimension > OutputImageType;
 
   PARSE_ARGS;
 
@@ -159,16 +160,16 @@ int main( int argc, char *argv[] )
 #endif
 
   typedef itk::MattesMutualInformationImageToImageMetric< 
-                                    FixedImageType, 
-                                    MovingImageType >    MetricType;
+                                    InputImageType, 
+                                    InputImageType >    MetricType;
 
   typedef itk:: LinearInterpolateImageFunction< 
-                                    MovingImageType,
+                                    InputImageType,
                                     double          >    InterpolatorType;
 
   typedef itk::ImageRegistrationMethod< 
-                                    FixedImageType, 
-                                    MovingImageType >    RegistrationType;
+                                    InputImageType, 
+                                    OutputImageType >    RegistrationType;
 
   MetricType::Pointer         metric        = MetricType::New();
   OptimizerType::Pointer      optimizer     = OptimizerType::New();
@@ -194,8 +195,9 @@ int main( int argc, char *argv[] )
   registration->SetTransform( transform );
   // Software Guide : EndCodeSnippet
 
-  typedef itk::ImageFileReader< FixedImageType  > FixedImageReaderType;
-  typedef itk::ImageFileReader< MovingImageType > MovingImageReaderType;
+  typedef itk::ImageFileReader< InputImageType > FixedImageReaderType;
+  typedef itk::ImageFileReader< InputImageType > MovingImageReaderType;
+  typedef itk::OrientImageFilter<InputImageType,InputImageType> OrientFilterType;
 
   FixedImageReaderType::Pointer  fixedImageReader  = FixedImageReaderType::New();
   MovingImageReaderType::Pointer movingImageReader = MovingImageReaderType::New();
@@ -203,26 +205,36 @@ int main( int argc, char *argv[] )
   fixedImageReader->SetFileName(  fixedImageFileName.c_str() );
   movingImageReader->SetFileName( movingImageFileName.c_str() );
 
-  FixedImageType::ConstPointer fixedImage = fixedImageReader->GetOutput();
+  OrientFilterType::Pointer fixedOrient = OrientFilterType::New();
+  OrientFilterType::Pointer movingOrient = OrientFilterType::New();
 
-  registration->SetFixedImage(  fixedImage   );
-  registration->SetMovingImage(   movingImageReader->GetOutput()   );
+  fixedOrient->UseImageDirectionOn();
+  fixedOrient->SetDesiredCoordinateOrientationToAxial();
+  fixedOrient->SetInput (fixedImageReader->GetOutput());
+
+  movingOrient->UseImageDirectionOn();
+  movingOrient->SetDesiredCoordinateOrientationToAxial();
+  movingOrient->SetInput (movingImageReader->GetOutput());
+
+  InputImageType::ConstPointer fixedImage = fixedImageReader->GetOutput();
+
+  registration->SetFixedImage(  fixedOrient->GetOutput()   );
+  registration->SetMovingImage(   movingOrient->GetOutput()   );
 
 
   // Add a time probe
   itk::TimeProbesCollectorBase collector;
 
   collector.Start( "Read fixed volume" );
-  fixedImageReader->Update();
+  fixedOrient->Update();
+  fixedOrient->GetOutput()->Print(std::cout);
   collector.Stop( "Read fixed volume" );
 
   collector.Start( "Read moving volume" );
-  movingImageReader->Update();
+  movingOrient->Update();
+  movingOrient->GetOutput()->Print(std::cout);
   collector.Stop( "Read moving volume" );
 
-  FixedImageType::RegionType fixedRegion = fixedImage->GetBufferedRegion();
-  
-   registration->SetFixedImageRegion( fixedRegion );
 
   //  Software Guide : BeginLatex
   //
@@ -253,12 +265,13 @@ int main( int argc, char *argv[] )
   bsplineRegion.SetSize( totalGridSize );
 
   typedef TransformType::SpacingType SpacingType;
-  SpacingType spacing = fixedImage->GetSpacing();
+  SpacingType spacing = fixedOrient->GetOutput()->GetSpacing();
 
   typedef TransformType::OriginType OriginType;
-  OriginType origin = fixedImage->GetOrigin();;
+  OriginType origin = fixedOrient->GetOutput()->GetOrigin();;
 
-  FixedImageType::SizeType fixedImageSize = fixedRegion.GetSize();
+  InputImageType::RegionType fixedRegion = fixedOrient->GetOutput()->GetLargestPossibleRegion();
+  InputImageType::SizeType fixedImageSize = fixedRegion.GetSize();
 
   for(unsigned int r=0; r<ImageDimension; r++)
     {
@@ -397,9 +410,6 @@ int main( int argc, char *argv[] )
   OptimizerType::ParametersType finalParameters = 
                     registration->GetLastTransformParameters();
 
-//  std::cout << "Last Transform Parameters" << std::endl;
-//  std::cout << finalParameters << std::endl;
-
 
   // Software Guide : BeginCodeSnippet
   transform->SetParameters( finalParameters );
@@ -407,24 +417,21 @@ int main( int argc, char *argv[] )
 
 
   typedef itk::ResampleImageFilter< 
-                            MovingImageType, 
-                            FixedImageType >    ResampleFilterType;
+                            InputImageType, 
+                            OutputImageType >    ResampleFilterType;
 
   ResampleFilterType::Pointer resample = ResampleFilterType::New();
 
   resample->SetTransform( transform );
-  resample->SetInput( movingImageReader->GetOutput() );
-
-  resample->SetSize(    fixedImage->GetLargestPossibleRegion().GetSize() );
-  resample->SetOutputOrigin(  fixedImage->GetOrigin() );
-  resample->SetOutputSpacing( fixedImage->GetSpacing() );
+  resample->SetInput( movingOrient->GetOutput() );
+  resample->SetOutputParametersFromImage ( fixedOrient->GetOutput() );
   resample->SetDefaultPixelValue( 100 );
   collector.Start( "Resample" );
   resample->Update();
   collector.Stop( "Resample" );
   
   typedef itk::CastImageFilter< 
-                        FixedImageType,
+                        InputImageType,
                         OutputImageType > CastFilterType;
                     
   typedef itk::ImageFileWriter< OutputImageType >  WriterType;
