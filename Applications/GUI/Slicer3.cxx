@@ -109,9 +109,10 @@ int Slicer3_main(int argc, char *argv[])
 
   std::string ptemp;
   cout << "Using slicer executable: " << programPath.c_str() << endl;
-  ptemp = vtksys::SystemTools::GetFilenamePath(programPath.c_str());
+  std::string slicerBinDir
+    = vtksys::SystemTools::GetFilenamePath(programPath.c_str());
   std::string tclEnv = "TCL_LIBRARY=";
-  tclEnv += ptemp + "/../lib/Slicer3/tcl/lib/tcl8.4";
+  tclEnv += slicerBinDir + "/../lib/Slicer3/tcl/lib/tcl8.4";
   cout << "Set environment: " << tclEnv.c_str() << endl;
   putenv(const_cast <char *> (tclEnv.c_str()));
 
@@ -182,12 +183,16 @@ int Slicer3_main(int argc, char *argv[])
       int returnCode;
 
       // Pass arguments to the Tcl script
-      cmd =  "lappend auto_path $::SLICER_BUILD/"
-        SLICER_INSTALL_LIBRARIES_DIR "/SlicerBaseGUITcl; ";
+      cmd =  "lappend auto_path \"" + slicerBinDir + "/../"
+        SLICER_INSTALL_LIBRARIES_DIR "\"; ";
+      cmd += "puts $auto_path; ";
       cmd += "package require SlicerBaseGUITcl; ";
+      cout << "Load SlicerBaseGUITcl: " << cmd.c_str() << endl;
+      cout.flush();
       returnCode = Slicer3_Tcl_Eval( interp, cmd.c_str() );
       if ( returnCode )
         {
+      cerr << "Load SlicerBaseGUITcl: " << cmd.c_str() << endl;
         return ( returnCode );
         }
     }
