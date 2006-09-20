@@ -759,9 +759,12 @@ if { ![file exists $::SANDBOX_TEST_FILE] && ![file exists $::ALT_SANDBOX_TEST_FI
             # However then it doesn't pick up this needed library
             cd $SLICER_LIB/NAMICSandBox-build/SpectralClustering
             runcmd $::MAKE SpectralClustering.SLN /build  $::VTK_BUILD_TYPE
-            # this one in independent
+            # this one is independent
             cd $SLICER_LIB/NAMICSandBox-build/Distributions
             runcmd $::MAKE Distributions.SLN /build  $::VTK_BUILD_TYPE
+            # this one is independent
+            cd $SLICER_LIB/NAMICSandBox-build/MGHImageIOConverter
+            runcmd $::MAKE MGHImageIOConverter.SLN /build $::VTK_BUILD_TYPE
         }
     } else {
 
@@ -776,6 +779,8 @@ if { ![file exists $::SANDBOX_TEST_FILE] && ![file exists $::ALT_SANDBOX_TEST_FI
         cd $SLICER_LIB/NAMICSandBox-build/SlicerTractClusteringImplementation   
         eval runcmd $::MAKE 
         cd $SLICER_LIB/NAMICSandBox-build/Distributions
+        eval runcmd $::MAKE
+        cd $SLICER_LIB/NAMICSandBox-build/MGHImageIOConverter
         eval runcmd $::MAKE
         cd $SLICER_LIB/NAMICSandBox-build
     }
