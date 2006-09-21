@@ -69,6 +69,8 @@ vtkMRMLFiducialListNode::vtkMRMLFiducialListNode()
   this->Diffuse = 1.0;
   this->Specular = 0;
   this->Power = 1;
+
+//  this->DebugOn();
 }
 
 //----------------------------------------------------------------------------
@@ -371,7 +373,12 @@ int vtkMRMLFiducialListNode::GetNumberOfFiducials()
 //-----------------------------------------------------------
 vtkMRMLFiducial* vtkMRMLFiducialListNode::GetNthFiducial(int n)
 {
-
+    vtkDebugMacro("GetNthFiducial: getting item by index number: " << n);
+    if (this->FiducialList == NULL)
+    {
+        std::cerr << "GetNthFiducial: ERROR: fiducial list is null\n";
+        return NULL;
+    }
   if(n < 0 || n >= this->FiducialList->GetNumberOfItems()) 
     {
         std::cerr << "vtkMRMLFiducialListNode::GetNthFiducial: index out of bounds, " << n << " is less than zero or more than the number of items: " << this->FiducialList->GetNumberOfItems() << endl;
@@ -592,7 +599,10 @@ int vtkMRMLFiducialListNode::AddFiducial()
     vtkMRMLFiducial * fiducial = vtkMRMLFiducial::New();
 
     // give the point a unique name based on the list name
-    fiducial->SetID(this->GetScene()->GetUniqueIDByClass(this->GetName()));
+    int nameLength = strlen(this->GetName());
+    char nameString[nameLength + 2];
+    sprintf(nameString, "%s-P", this->GetName());
+    fiducial->SetID(this->GetScene()->GetUniqueIDByClass(nameString));
     // use the same for the label text for now
     fiducial->SetLabelText(fiducial->GetID());
     
