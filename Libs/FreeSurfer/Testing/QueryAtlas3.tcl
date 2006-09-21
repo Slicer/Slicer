@@ -25,6 +25,9 @@ proc QueryAtlasInit { {filename ""} } {
   QueryAtlasRenderView
 }
 
+#
+# Add the model with the filename to the scene
+#
 proc QueryAtlasAddModel {} {
 
   # load the data
@@ -55,6 +58,10 @@ proc QueryAtlasAddModel {} {
   $modelDisplayNode Delete
 }
 
+#
+# use the freesurfer annotation code to put 
+# label scalars onto the model
+#
 proc QueryAtlasAddAnnotations {} {
 
   set fileName $::QA(filename)/../../label/lh.aparc.annot
@@ -120,8 +127,13 @@ proc QueryAtlasAddAnnotations {} {
   }
 }
 
-
+#
+# convert a number to an RGBA 
+# - A is always 255 (on transp)
+# - number is incremented first so that 0 means background
+#
 proc QueryAtlasNumberToRGBA {number} {
+  set number [expr $number + 1]
   set r [expr $number / (256 * 256)]
   set number [expr $number % (256 * 256)]
   set g [expr $number / 256]
@@ -130,13 +142,20 @@ proc QueryAtlasNumberToRGBA {number} {
   return "$r $g $b 255"
 }
 
+#
+# convert a RGBA to number
+# - decrement by 1 to avoid ambiguity, since 0 is background
+#
 proc QueryAtlasRGBAToNumber {rgba} {
   foreach {r g b a} $rgba {}
-  return [expr $r * (256*256) + $g * 256 + $b] 
+  return [expr $r * (256*256) + $g * 256 + $b - 1] 
 }
 
 
-
+#
+# set up a picking version of the polyData that can be used
+# to render to the back buffer
+#
 proc QueryAtlasInitializePicker {} {
 
   #
@@ -146,17 +165,23 @@ proc QueryAtlasInitializePicker {} {
   # - mapper comes from the actor
   #
   set modelNode [$::slicer3::MRMLScene GetNodeByID $::QA(modelNodeID)]
-  set polyData [$modelNode GetPolyData]
-  set actor [[$::slicer3::ApplicationGUI GetViewerWidget] GetActorByID $::QA(modelNodeID)]
-  set mapper [$actor GetMapper]
+  set ::QA(polyData) [vtkPolyData New]
+  $::QA(polyData) DeepCopy [$modelNode GetPolyData]
+  set ::QA(actor) [vtkActor New]
+  set ::QA(mapper) [vtkPolyDataMapper New]
+  $::QA(mapper) SetInput $::QA(polyData)
+  $::QA(actor) SetMapper $::QA(mapper)
 
   #
   # instrument the polydata with cell number colors
+  # - note: even though the array is named CellNumberColors here,
+  #   vtk will (sometimes?) rename it to "Opaque Colors" as part of the first 
+  #   render pass
   #
 
-  $polyData Update
+  $::QA(polyData) Update
 
-  set cellData [$polyData GetCellData]
+  set cellData [$::QA(polyData) GetCellData]
   set cellNumberColors [$cellData GetArray "CellNumberColors"] 
   if { $cellNumberColors == "" } {
     set cellNumberColors [vtkUnsignedCharArray New]
@@ -170,15 +195,29 @@ proc QueryAtlasInitializePicker {} {
   $cellNumberColors Initialize
   $cellNumberColors SetNumberOfComponents 4
 
-  set numberOfCells [$polyData GetNumberOfCells]
+  set numberOfCells [$::QA(polyData) GetNumberOfCells]
   for {set i 0} {$i < $numberOfCells} {incr i} {
     eval $cellNumberColors InsertNextTuple4 [QueryAtlasNumberToRGBA $i]
   }
 
   set ::QA(cellData) $cellData
   set ::QA(numberOfCells) $numberOfCells
-  set ::QA(mapper) $mapper
-  set ::QA(actor) $actor
+
+  set scalarNames {"CellNumberColors" "Opaque Colors"}
+  foreach scalarName $scalarNames {
+    if { [$::QA(cellData) GetScalars $scalarName] != "" } {
+      $::QA(cellData) SetActiveScalars $scalarName
+      break
+    }
+  }
+  $::QA(mapper) SetScalarModeToUseCellData
+  $::QA(mapper) SetScalarVisibility 1
+  $::QA(mapper) SetScalarMaterialModeToAmbient
+  $::QA(mapper) SetScalarMaterialModeToDiffuse
+  $::QA(mapper) SetScalarRange 0 $::QA(numberOfCells)
+  [$::QA(actor) GetProperty] SetAmbient 1.0
+  [$::QA(actor) GetProperty] SetDiffuse 0.0
+
 
   #
   # add the mouse move callback
@@ -193,8 +232,15 @@ proc QueryAtlasInitializePicker {} {
   set renderer [$renderWidget GetRenderer]
   set interactor [$renderWidget GetRenderWindowInteractor] 
   $interactor AddObserver MouseMoveEvent "QueryAtlasPickCallback $renderer $interactor $::QA(windowToImage)"
+
+  $renderer AddActor $::QA(actor)
+  $::QA(actor) SetVisibility 1
 }
 
+
+#
+# re-render the picking model from the current camera location
+#
 proc QueryAtlasRenderView {} {
 
   #
@@ -203,11 +249,6 @@ proc QueryAtlasRenderView {} {
   set renderWidget [[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer]
   set renderWindow [$renderWidget GetRenderWindow]
   set renderer [$renderWidget GetRenderer]
-
-  # if needed - remove other props and only add ours 
-  # (need to keep track of others somehow so we can restore them)
-  #$renderWidget RemoveAllViewProps
-  #$renderer AddActor $actor
 
   #
   # draw the image and get the pixels
@@ -218,7 +259,7 @@ proc QueryAtlasRenderView {} {
   #
   $renderWindow SetSwapBuffers 0
   puts "render renderWidget"; update
-  set renderState [QueryAtlasOverrideRenderState $::QA(cellData) $::QA(numberOfCells) $::QA(mapper) $::QA(actor)]
+  set renderState [QueryAtlasOverrideRenderState $renderer]
   $renderWidget Render
   puts "...render done"; update
 
@@ -235,7 +276,7 @@ proc QueryAtlasRenderView {} {
   puts "...render done"; update
 
   $renderWindow SetSwapBuffers 1
-  QueryAtlasRestoreRenderState $::QA(cellData) $::QA(mapper) $::QA(actor) $renderState
+  QueryAtlasRestoreRenderState $renderer $renderState
 
   puts "render renderWidget"; update
   $renderWidget Render
@@ -243,54 +284,43 @@ proc QueryAtlasRenderView {} {
 
 }
 
-proc QueryAtlasOverrideRenderState {cellData numberOfCells mapper actor} {
+proc QueryAtlasOverrideRenderState {renderer} {
 
   #
   # save the render state before overriding it with the 
   # parameters needed for cell rendering
   #
-  if { [$cellData GetScalars] == "" } {
-    set state(activeScalars) ""
-  } else {
-    set state(activeScalars) [[$cellData GetScalars] GetName]
-  }
-  set state(scalarVisibility) [$mapper GetScalarVisibility]
-  set state(immediateModeRendering) [$mapper GetImmediateModeRendering]
-  set state(scalarMode) [$mapper GetScalarMode]
-  set state(scalarMaterialMode) [$mapper GetScalarMaterialMode]
-  set state(scalarRange) [$mapper GetScalarRange]
-  set state(ambient) [[$actor GetProperty] GetAmbient]
-  set state(diffuse) [[$actor GetProperty] GetDiffuse]
 
-  $cellData SetActiveScalars "CellNumberColors"
-  $cellData SetActiveScalars "Opaque Colors"
-  $mapper SetImmediateModeRendering 1
-  $mapper SetScalarModeToUseCellData
-  $mapper SetScalarVisibility 1
-  $mapper SetScalarMaterialModeToAmbient
-  $mapper SetScalarMaterialModeToDiffuse
-  $mapper SetScalarRange 0 $numberOfCells
-  [$actor GetProperty] SetAmbient 1.0
-  [$actor GetProperty] SetDiffuse 0.0
+  set actors [$renderer GetActors]
+  set numberOfItems [$actors GetNumberOfItems]
+  for {set i 0} {$i < $numberOfItems} {incr i} {
+    set actor [$actors GetItemAsObject $i]
+    set state($i,visibility) [$actor GetVisibility]
+    $actor SetVisibility 0
+  }
+
+  set state(background) [$renderer GetBackground]
+  $renderer SetBackground 0 0 0
+  #$renderer AddActor $::QA(actor)
+  $::QA(actor) SetVisibility 1
 
   return [array get state]
 }
 
-proc QueryAtlasRestoreRenderState {cellData mapper actor renderState} {
+proc QueryAtlasRestoreRenderState {renderer renderState} {
 
   array set state $renderState
 
-  if { $state(activeScalars) != "" } {
-    $cellData SetActiveScalars $state(activeScalars)
+  #$renderer RemoveActor $::QA(actor)
+  eval $renderer SetBackground $state(background)
+
+  set actors [$renderer GetActors]
+  set numberOfItems [$actors GetNumberOfItems]
+  for {set i 0} {$i < $numberOfItems} {incr i} {
+    set actor [$actors GetItemAsObject $i]
+    $actor SetVisibility $state($i,visibility)
   }
-  $mapper SetScalarVisibility $state(scalarVisibility)
-  $mapper SetImmediateModeRendering $state(immediateModeRendering) 
-  $mapper SetScalarMode $state(scalarMode)
-  $mapper SetScalarModeToUsePointData
-  $mapper SetScalarMaterialMode $state(scalarMaterialMode)
-  eval $mapper SetScalarRange $state(scalarRange)
-  [$actor GetProperty] SetAmbient $state(ambient)
-  [$actor GetProperty] SetDiffuse $state(diffuse)
+  $::QA(actor) SetVisibility 0
 }
 
 #
@@ -310,4 +340,7 @@ proc QueryAtlasPickCallback {renderer interactor windowToImage} {
     lappend color [[$windowToImage GetOutput] GetScalarComponentAsFloat $x $y 0 $c]
   }
   puts "[format {%4d %4d} $x $y]:  [QueryAtlasRGBAToNumber $color] ($color)"
+
+  
+
 }
