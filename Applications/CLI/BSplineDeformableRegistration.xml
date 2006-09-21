@@ -60,6 +60,24 @@
         <step>1000</step>
       </constraints>
     </integer>
+
+    <boolean>
+      <name>ConstrainDeformation</name>
+      <longflag>constrain</longflag>
+      <description>Constrain the deformation to the amount specified in Maximum Deformation</description>
+      <label>Constrain Deformation</label>
+      <default>false</default>
+    </boolean>
+
+    <float>
+      <name>MaximumDeformation</name>
+      <flag>-m</flag>
+      <longflag>--maximumDeformation</longflag>
+      <description>If Constrain Deformation is checked, limit the deformation to this amount.</description>
+      <label>Maximum Deformation</label>
+      <default>1</default>
+    </float>
+
   </parameters>
 
   <parameters>

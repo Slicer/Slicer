@@ -130,6 +130,16 @@ int main( int argc, char *argv[] )
   typedef itk::OrientedImage< OutputPixelType, ImageDimension > OutputImageType;
 
   PARSE_ARGS;
+  std::cout << "Command Line Arguments" << std::endl;
+  std::cout << "    Iterations: " << Iterations << std::endl;
+  std::cout << "    gridSize: " << gridSize << std::endl;
+  std::cout << "    HistogramBins: " << HistogramBins << std::endl;
+  std::cout << "    SpatialSamples: " << SpatialSamples << std::endl;
+  std::cout << "    ConstrainDeformation: " << ConstrainDeformation << std::endl;
+  std::cout << "    MaximumDeformation: " << MaximumDeformation << std::endl;
+  std::cout << "    fixedImageFileName: " << fixedImageFileName << std::endl;
+  std::cout << "    movingImageFileName: " << movingImageFileName << std::endl;
+  std::cout << "    resampledImageFileName: " << resampledImageFileName << std::endl;
 
   //  Software Guide : BeginLatex
   //
@@ -324,13 +334,19 @@ int main( int argc, char *argv[] )
   OptimizerType::BoundSelectionType boundSelect( transform->GetNumberOfParameters() );
   OptimizerType::BoundValueType upperBound( transform->GetNumberOfParameters() );
   OptimizerType::BoundValueType lowerBound( transform->GetNumberOfParameters() );
+  if (ConstrainDeformation)
+    {
+    boundSelect.Fill( 2 );
+    upperBound.Fill(  MaximumDeformation );
+    lowerBound.Fill( -MaximumDeformation );
+    }
+  else
+    {
+    boundSelect.Fill( 0 );
+    upperBound.Fill( 0.0 );
+    lowerBound.Fill( 0.0 );
+    }
 
-  boundSelect.Fill( 2 );
-  upperBound.Fill( 10.0 );
-  lowerBound.Fill( -10.0 );
-  boundSelect.Fill( 0 );
-  upperBound.Fill( 0.0 );
-  lowerBound.Fill( 0.0 );
   optimizer->SetBoundSelection( boundSelect );
   optimizer->SetUpperBound( upperBound );
   optimizer->SetLowerBound( lowerBound );
