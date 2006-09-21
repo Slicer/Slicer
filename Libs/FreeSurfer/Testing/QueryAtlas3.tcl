@@ -204,11 +204,6 @@ proc QueryAtlasRenderView {} {
   set renderWindow [$renderWidget GetRenderWindow]
   set renderer [$renderWidget GetRenderer]
 
-  #
-  # set the render parameters to draw with the cell labels
-  #
-  set renderState [QueryAtlasOverrideRenderState $::QA(cellData) $::QA(numberOfCells) $::QA(mapper) $::QA(actor)]
-
   # if needed - remove other props and only add ours 
   # (need to keep track of others somehow so we can restore them)
   #$renderWidget RemoveAllViewProps
@@ -216,9 +211,14 @@ proc QueryAtlasRenderView {} {
 
   #
   # draw the image and get the pixels
+  # - set the render parameters to draw with the cell labels
+  # - draw in the back buffer
+  # - pull out the pixels
+  # - restore the draw state and render
   #
   $renderWindow SetSwapBuffers 0
   puts "render renderWidget"; update
+  set renderState [QueryAtlasOverrideRenderState $::QA(cellData) $::QA(numberOfCells) $::QA(mapper) $::QA(actor)]
   $renderWidget Render
   puts "...render done"; update
 
@@ -262,16 +262,16 @@ proc QueryAtlasOverrideRenderState {cellData numberOfCells mapper actor} {
   set state(ambient) [[$actor GetProperty] GetAmbient]
   set state(diffuse) [[$actor GetProperty] GetDiffuse]
 
-  parray state
-
   $cellData SetActiveScalars "CellNumberColors"
+  $cellData SetActiveScalars "Opaque Colors"
   $mapper SetImmediateModeRendering 1
-  $mapper SetScalarVisibility 1
   $mapper SetScalarModeToUseCellData
+  $mapper SetScalarVisibility 1
   $mapper SetScalarMaterialModeToAmbient
+  $mapper SetScalarMaterialModeToDiffuse
   $mapper SetScalarRange 0 $numberOfCells
-  [$actor GetProperty] SetAmbient 1
-  [$actor GetProperty] SetDiffuse 0
+  [$actor GetProperty] SetAmbient 1.0
+  [$actor GetProperty] SetDiffuse 0.0
 
   return [array get state]
 }
@@ -286,6 +286,7 @@ proc QueryAtlasRestoreRenderState {cellData mapper actor renderState} {
   $mapper SetScalarVisibility $state(scalarVisibility)
   $mapper SetImmediateModeRendering $state(immediateModeRendering) 
   $mapper SetScalarMode $state(scalarMode)
+  $mapper SetScalarModeToUsePointData
   $mapper SetScalarMaterialMode $state(scalarMaterialMode)
   eval $mapper SetScalarRange $state(scalarRange)
   [$actor GetProperty] SetAmbient $state(ambient)
