@@ -61,13 +61,9 @@ SET(LIB_SRCS
   vtkSlicerTransformManagerWidget.cxx
   vtkSlicerTransformEditorWidget.cxx
   vtkSlicerMRMLTreeWidget.cxx
-  vtkSlicerViewerGUI.cxx
   vtkSlicerViewerWidget.cxx
   vtkSlicerModelDisplayWidget.cxx
   vtkSlicerMRMLSaveDataWidget.cxx
-  # W Widgets
-  ##vtkUserWidget.cxx
-  ##vtkUserRepresentation.cxx
   )
 
 # Helper classes
