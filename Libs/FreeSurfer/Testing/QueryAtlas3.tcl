@@ -85,7 +85,7 @@ proc QueryAtlasAddAnnotations {} {
           $scalars SetName "labels"
           [$polydata GetPointData] AddArray $scalars
           [$polydata GetPointData] SetActiveScalars "labels"
-          #$scalars Delete
+          $scalars Delete
       } 
       set scalaridx [[$polydata GetPointData] SetActiveScalars "labels"]
       set scalars [[$polydata GetPointData] GetArray $scalaridx]
@@ -114,8 +114,7 @@ proc QueryAtlasAddAnnotations {} {
       set entries [lsort -integer [array names _labels]]
 
       # print them out
-      parray ::vtkFreeSurferReadersLabels_$::QA(modelNodeID)
-      set ::QA(labels) [array get _labels]
+      set ::QA(labelMap) [array get _labels]
 
       # make the scalars visible
       $mapper SetScalarRange  [lindex $entries 0] [lindex $entries end]
@@ -339,8 +338,38 @@ proc QueryAtlasPickCallback {renderer interactor windowToImage} {
   foreach c {0 1 2 3} {
     lappend color [[$windowToImage GetOutput] GetScalarComponentAsFloat $x $y 0 $c]
   }
-  puts "[format {%4d %4d} $x $y]:  [QueryAtlasRGBAToNumber $color] ($color)"
+  #puts "[format {%4d %4d} $x $y]:  [QueryAtlasRGBAToNumber $color] ($color)"
 
+
+  set cell [$::QA(polyData) GetCell [QueryAtlasRGBAToNumber $color]]
+
+  set labels [[$::QA(polyData) GetPointData] GetScalars "labels"]
+
+  array set labelMap $::QA(labelMap)
+  set pointLabels ""
+  set numberOfPoints [$cell GetNumberOfPoints]
+
+  for {set p 0} {$p < $numberOfPoints} {incr p} {
+    set index [$cell GetPointId $p]
+    set pointLabel [$labels GetValue $index]
+    if { [info exists labelMap($pointLabel)] } {
+      set labelName $labelMap($pointLabel)
+      if { [lsearch $pointLabels $labelName] == -1 } {
+        lappend pointLabels $labelName
+      }
+    } else {
+      lappend pointLabels "unknown"
+    }
+  }
+  regsub -all " " $pointLabels "/" pointLabels
+
+  if { ![info exists ::QA(lastLabels)] } {
+    set ::QA(lastLabels) ""
+  }
   
+  if { $pointLabels != $::QA(lastLabels) } {
+    set ::QA(lastLabels) $pointLabels 
+    puts $pointLabels
+  }
 
 }
