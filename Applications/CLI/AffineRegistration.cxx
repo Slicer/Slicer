@@ -30,6 +30,8 @@
 #include "itkAffineTransform.h"
 #include "itkResampleImageFilter.h"
 
+#include "itkTimeProbesCollectorBase.h"
+
 //  The following section of code implements a Command observer
 //  used to monitor the evolution of the registration process.
 //
@@ -72,58 +74,13 @@ typedef itk::OrientedImage<PixelType, ImageDimension> ImageType;
 
 int main ( int argc, char* argv[] ) 
 {  
+  //
+  // Command line processing
+  //
   PARSE_ARGS;
 
-  bool DoInitializeTransform = false;
-  int RandomSeed = 1234567;
-
-  ImageType::Pointer fixed, moving;
   typedef itk::ImageFileReader<ImageType> FileReaderType;
-
-  FileReaderType::Pointer fixedReader = FileReaderType::New();
-  FileReaderType::Pointer movingReader = FileReaderType::New();
-  fixedReader->SetFileName ( fixedImageFileName.c_str() );
-  movingReader->SetFileName ( movingImageFileName.c_str() );
-
-  try
-    {
-    fixedReader->Update();
-    }
-  catch( itk::ExceptionObject & err )
-    {
-    std::cerr << "Error Reading Fixed image: " << std::endl;
-    return EXIT_FAILURE;
-    }
-
-  // read in the moving image and do nothing
-  try
-    {
-    movingReader->Update();
-    }
-  catch( itk::ExceptionObject & err )
-    {
-    std::cerr << "Error Reading Moving image: " << std::endl;
-    return EXIT_FAILURE;
-    }
-
-  fixed = fixedReader->GetOutput();
-  moving = movingReader->GetOutput();
-
-
   typedef itk::OrientImageFilter<ImageType,ImageType> OrientFilterType;
-  OrientFilterType::Pointer orientFixed = OrientFilterType::New();
-  OrientFilterType::Pointer orientMoving = OrientFilterType::New();
-
-  orientFixed->UseImageDirectionOn();
-  orientFixed->SetDesiredCoordinateOrientationToAxial();
-  orientFixed->SetInput (fixed);
-  orientFixed->Update();
-
-  orientMoving->UseImageDirectionOn();
-  orientMoving->SetDesiredCoordinateOrientationToAxial();
-  orientMoving->SetInput (moving);
-  orientMoving->Update();
-
   typedef itk::MattesMutualInformationImageToImageMetric<ImageType, ImageType>
     MetricType; 
   typedef itk::RegularStepGradientDescentOptimizer
@@ -132,42 +89,97 @@ int main ( int argc, char* argv[] )
     InterpolatorType;
   typedef itk::ImageRegistrationMethod<ImageType,ImageType>
     RegistrationType;
-  typedef itk::AffineTransform<double>
-    TransformType;
-
-  MetricType::Pointer         metric        = MetricType::New();
-  OptimizerType::Pointer      optimizer     = OptimizerType::New();
-  InterpolatorType::Pointer   interpolator  = InterpolatorType::New();
-  RegistrationType::Pointer   registration  = RegistrationType::New();
-  TransformType::Pointer      transform     = TransformType::New();
-
-  registration->SetMetric ( metric );
-  registration->SetOptimizer ( optimizer );
-  registration->SetInterpolator ( interpolator );
-  registration->SetTransform ( transform );
-  registration->SetFixedImage ( orientFixed->GetOutput() );
-  registration->SetMovingImage ( orientMoving->GetOutput() );
-
-  optimizer->SetNumberOfIterations ( Iterations );
-  optimizer->SetMinimumStepLength ( .0005 );
-  optimizer->SetMaximumStepLength ( 10.0 );
-  optimizer->SetMinimize(true);   
-
+  typedef itk::AffineTransform<double> TransformType;
   typedef OptimizerType::ScalesType OptimizerScalesType;
+  typedef itk::ResampleImageFilter<ImageType,ImageType> ResampleType;
+  typedef itk::LinearInterpolateImageFunction<ImageType, double> ResampleInterpolatorType;
+  typedef itk::ImageFileWriter<ImageType> WriterType;
+
+  bool DoInitializeTransform = false;
+  int RandomSeed = 1234567;
+
+  // Add a time probe
+  itk::TimeProbesCollectorBase collector;
+
+  /////////////////////////////////////////////////////////////////////////////
+  // Read the fixed and moving volumes
+  //
+  FileReaderType::Pointer fixedReader = FileReaderType::New();
+    fixedReader->SetFileName ( fixedImageFileName.c_str() );
+
+  try
+    {
+    collector.Start( "Read fixed volume" );
+    fixedReader->Update();
+    collector.Stop( "Read fixed volume" );
+    }
+  catch( itk::ExceptionObject & err )
+    {
+    std::cerr << "Error Reading Fixed image: " << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  FileReaderType::Pointer movingReader = FileReaderType::New();
+    movingReader->SetFileName ( movingImageFileName.c_str() );
+
+  try
+    {
+    collector.Start( "Read moving volume" );
+    movingReader->Update();
+    collector.Stop( "Read moving volume" );
+    }
+  catch( itk::ExceptionObject & err )
+    {
+    std::cerr << "Error Reading Moving image: " << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  /////////////////////////////////////////////////////////////////////////////
+  // Reorient the volumes to a consistent acquisition direction
+  //
+  OrientFilterType::Pointer orientFixed = OrientFilterType::New();
+    orientFixed->UseImageDirectionOn();
+    orientFixed->SetDesiredCoordinateOrientationToAxial();
+    orientFixed->SetInput (fixedReader->GetOutput());
+    collector.Start( "Orient fixed volume" );
+    orientFixed->Update();
+    collector.Stop( "Orient fixed volume" );
+
+  OrientFilterType::Pointer orientMoving = OrientFilterType::New();
+    orientMoving->UseImageDirectionOn();
+    orientMoving->SetDesiredCoordinateOrientationToAxial();
+    orientMoving->SetInput (movingReader->GetOutput());
+    collector.Start( "Orient moving volume" );
+    orientMoving->Update();
+    collector.Stop( "Orient moving volume" );
+
+  /////////////////////////////////////////////////////////////////////////////
+  // Register the volumes
+  //
+
+  OptimizerType::Pointer      optimizer     = OptimizerType::New();
+    optimizer->SetNumberOfIterations ( Iterations );
+    optimizer->SetMinimumStepLength ( .0005 );
+    optimizer->SetMaximumStepLength ( 10.0 );
+    optimizer->SetMinimize(true);   
+
+  TransformType::Pointer transform = TransformType::New();
   OptimizerScalesType scales( transform->GetNumberOfParameters() );
-  scales.Fill ( 1.0 );
+    scales.Fill ( 1.0 );
   for( unsigned j = 9; j < 12; j++ )
     {
     scales[j] = 1.0 / vnl_math_sqr(TranslationScale);
     }
-  optimizer->SetScales( scales );
+    optimizer->SetScales( scales );
 
   // Create the Command observer and register it with the optimizer.
   //
   CommandIterationUpdate::Pointer observer = CommandIterationUpdate::New();
-  optimizer->AddObserver( itk::IterationEvent(), observer );
+    optimizer->AddObserver( itk::IterationEvent(), observer );
 
+  /////////////////////////////////////////////////////////////////////////////
   // Initialize the transform
+  //
   TransformType::InputPointType centerFixed;
   ImageType::RegionType::SizeType sizeFixed = orientFixed->GetOutput()->GetLargestPossibleRegion().GetSize();
   // Find the center
@@ -190,14 +202,26 @@ int main ( int argc, char* argv[] )
 
   transform->Translate(centerMoving-centerFixed);
   std::cout << "---------------" << centerMoving-centerFixed << std::endl;
-  registration->SetInitialTransformParameters ( transform->GetParameters() );
   
-  metric->SetNumberOfHistogramBins ( HistogramBins );
-  metric->SetNumberOfSpatialSamples( SpatialSamples );
+  MetricType::Pointer         metric        = MetricType::New();
+    metric->SetNumberOfHistogramBins ( HistogramBins );
+    metric->SetNumberOfSpatialSamples( SpatialSamples );
+
+  InterpolatorType::Pointer interpolator = InterpolatorType::New();
+  RegistrationType::Pointer registration = RegistrationType::New();
+    registration->SetTransform ( transform );
+    registration->SetInitialTransformParameters ( transform->GetParameters() );
+    registration->SetMetric ( metric );
+    registration->SetOptimizer ( optimizer );
+    registration->SetInterpolator ( interpolator );
+    registration->SetFixedImage ( orientFixed->GetOutput() );
+    registration->SetMovingImage ( orientMoving->GetOutput() );
 
   try
     {
+    collector.Start( "Register" );
     registration->StartRegistration();     
+    collector.Stop( "Register" );
     } 
   catch( itk::ExceptionObject & err )
     {
@@ -209,27 +233,36 @@ int main ( int argc, char* argv[] )
     exit ( EXIT_FAILURE );
     }
 
-  typedef itk::ResampleImageFilter<ImageType,ImageType> ResampleType;
+  /////////////////////////////////////////////////////////////////////////////
+  // Resample using the registration results
+  //
   ResampleType::Pointer resample = ResampleType::New();
-
-  typedef itk::LinearInterpolateImageFunction<ImageType, double> ResampleInterpolatorType;
   ResampleInterpolatorType::Pointer Interpolator = ResampleInterpolatorType::New();
 
-  transform->SetParameters ( registration->GetLastTransformParameters() );
+    transform->SetParameters ( registration->GetLastTransformParameters() );
 
-  resample->SetInput ( orientMoving->GetOutput() ); 
-  resample->SetTransform ( transform );
-  resample->SetInterpolator ( Interpolator );
-  resample->SetOutputParametersFromImage ( orientFixed->GetOutput() );
-  
-  resample->Update();
-  typedef itk::ImageFileWriter<ImageType> WriterType;
+    resample->SetInput ( orientMoving->GetOutput() ); 
+    resample->SetTransform ( transform );
+    resample->SetInterpolator ( Interpolator );
+    resample->SetOutputOrigin ( orientFixed->GetOutput()->GetOrigin() );
+    resample->SetOutputSpacing ( orientFixed->GetOutput()->GetSpacing() );
+    resample->SetOutputDirection ( orientFixed->GetOutput()->GetDirection() );
+    resample->SetSize ( orientFixed->GetOutput()->GetLargestPossibleRegion().GetSize() );
+    collector.Start( "Resample" );
+    resample->Update();
+    collector.Stop( "Resample" );
+
+  /////////////////////////////////////////////////////////////////////////////
+  // Write the registerded volume
+  //
   WriterType::Pointer resampledWriter = WriterType::New();
-  resampledWriter->SetFileName ( resampledImageFileName.c_str() );
-  resampledWriter->SetInput ( resample->GetOutput() );
+    resampledWriter->SetFileName ( resampledImageFileName.c_str() );
+    resampledWriter->SetInput ( resample->GetOutput() );
   try
     {
+    collector.Start( "Write volume" );
     resampledWriter->Write();
+    collector.Stop( "Write volume" );
     }
   catch( itk::ExceptionObject & err )
     { 
@@ -237,6 +270,9 @@ int main ( int argc, char* argv[] )
     exit ( EXIT_FAILURE );
     }
   
+  // Report the time taken by the registration
+  collector.Report();
+
   exit ( EXIT_SUCCESS );
 }
   
