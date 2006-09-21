@@ -19,6 +19,7 @@ CONFIGURE_FILE(
 
 # If the cmake version includes cpack, use it
 INCLUDE(InstallRequiredSystemLibraries)
+INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/InstallDebugSystemLibraries.cmake)
 SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Medical Visualization and Processing Environment for Research")
 SET(CPACK_PACKAGE_VENDOR "NA-MIC")
 SET(CPACK_PACKAGE_DESCRIPTION_FILE "${Slicer3_SOURCE_DIR}/README.txt")
