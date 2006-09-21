@@ -84,7 +84,7 @@ int Slicer3_Tcl_Eval ( Tcl_Interp *interp, const char *script )
 }
 
 //#define CLIMODULES_DEBUG
-//#define TCLMODULES_DEBUG
+#define TCLMODULES_DEBUG
 //#define SLICES_DEBUG
 //#define MODELS_DEBUG
 //#define VOLUMES_DEBUG
@@ -174,6 +174,23 @@ int Slicer3_main(int argc, char *argv[])
       {
       vtkObject::GlobalWarningDisplayOn();
       }
+
+    //
+    // load the gui tcl package (for the interactive widgets)
+    //
+    {    
+      std::string cmd;
+      int returnCode;
+
+      // Pass arguments to the Tcl script
+      cmd =  "package require Itcl;";
+      returnCode = Slicer3_Tcl_Eval( interp, cmd.c_str() );
+      if ( returnCode )
+        {
+        cerr << "Error: slicer requires the Itcl package (" << cmd.c_str() << ")" << endl;
+        return ( returnCode );
+        }
+    }
 
     //
     // load the gui tcl package (for the interactive widgets)

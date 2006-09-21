@@ -1,4 +1,6 @@
 
+package require Itcl
+
 package provide SlicerBaseGUITcl 3.0
 
 #########################################################
