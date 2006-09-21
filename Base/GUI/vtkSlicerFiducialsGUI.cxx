@@ -680,11 +680,54 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                   this->FiducialListSelectorWidget->GetWidgetName());
     
+    // scale frame
+    vtkKWFrame *scaleFrame = vtkKWFrame::New();
+    scaleFrame->SetParent ( displayFrame->GetFrame() );
+    scaleFrame->Create ( );
+    app->Script ("pack %s -side top -anchor nw -fill x -pady 0 -in %s",
+                 scaleFrame->GetWidgetName(),
+                 displayFrame->GetFrame()->GetWidgetName());
+    
+    // text scale
+    this->ListTextScale = vtkKWScaleWithEntry::New();
+    this->ListTextScale->SetParent( scaleFrame );
+    this->ListTextScale->Create();
+    this->ListTextScale->SetLabelText("Text Scale:");
+    this->ListTextScale->SetBalloonHelpString ( "Set the scale of the fiducial list points text.");
+    this->ListTextScale->GetWidget()->SetRange(0.0, 20.0);
+    this->ListTextScale->GetWidget()->SetOrientationToHorizontal ();
+    this->ListTextScale->GetWidget()->SetResolution(0.5);
+    this->ListTextScale->SetEntryWidth(5);
+    //app->Script("pack %s -side top -anchor w -padx 2 -pady 2", 
+    //            this->ListTextScale->GetWidgetName());
+
+    // symbol scale
+    this->ListSymbolScale = vtkKWScaleWithEntry::New();
+    this->ListSymbolScale->SetParent( scaleFrame );
+    this->ListSymbolScale->Create();
+    this->ListSymbolScale->SetLabelText("Symbol Scale:");
+    this->ListSymbolScale->SetBalloonHelpString ( "Set the scale of the fiducial list symbols.");
+    this->ListSymbolScale->GetWidget()->SetRange(0.0, 80.0);
+    this->ListSymbolScale->GetWidget()->SetOrientationToHorizontal();
+    this->ListSymbolScale->GetWidget()->SetResolution(0.5);
+    this->ListSymbolScale->SetEntryWidth(5);
+
+    app->Script("pack %s %s -side left -anchor w -padx 2 -pady 2 -in %s", 
+                this->ListTextScale->GetWidgetName(), this->ListSymbolScale->GetWidgetName(),
+                scaleFrame->GetWidgetName());
+
+        // visibility and opacity frame
+    vtkKWFrame *visibilityOpacityFrame = vtkKWFrame::New();
+    visibilityOpacityFrame->SetParent ( displayFrame->GetFrame() );
+    visibilityOpacityFrame->Create ( );
+    app->Script ("pack %s -side top -anchor nw -fill x -pady 0 -in %s",
+                 visibilityOpacityFrame->GetWidgetName(),
+                 displayFrame->GetFrame()->GetWidgetName());
     
     // visibility
     this->VisibilityIcons = vtkSlicerVisibilityIcons::New ( );
     this->VisibilityToggle = vtkKWPushButton::New();
-    this->VisibilityToggle->SetParent ( displayFrame->GetFrame() );
+    this->VisibilityToggle->SetParent ( visibilityOpacityFrame );
     this->VisibilityToggle->Create ( );
     this->VisibilityToggle->SetReliefToFlat ( );
     this->VisibilityToggle->SetOverReliefToNone ( );
@@ -693,12 +736,9 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     this->VisibilityToggle->SetBalloonHelpString ( "Toggles fiducial list visibility in the MainViewer." );
     this->VisibilityToggle->SetText ("Visibility");
     
-    //app->Script("pack %s -side left -anchor w -padx 2 -pady 4", 
-    //            this->VisibilityToggle->GetWidgetName());
-
     // opacity
     this->ListOpacity = vtkKWScaleWithEntry::New();
-    this->ListOpacity->SetParent( displayFrame->GetFrame() );
+    this->ListOpacity->SetParent( visibilityOpacityFrame );
     this->ListOpacity->Create();
     this->ListOpacity->SetLabelText("Opacity:");
     this->ListOpacity->SetBalloonHelpString ( "Set the opacity of the fiducial list symbols.");
@@ -706,39 +746,21 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     this->ListOpacity->GetWidget()->SetOrientationToHorizontal();
     this->ListOpacity->GetWidget()->SetResolution(0.1);
     this->ListOpacity->SetEntryWidth(5);
-    app->Script("pack %s %s -side top -anchor w -padx 2 -pady 2", 
-                this->VisibilityToggle->GetWidgetName(), this->ListOpacity->GetWidgetName());
+    app->Script("pack %s %s -side left -anchor w -padx 2 -pady 2 -in %s", 
+                this->VisibilityToggle->GetWidgetName(), this->ListOpacity->GetWidgetName(),
+                visibilityOpacityFrame->GetWidgetName());
 
-        // text scale
-    this->ListTextScale = vtkKWScaleWithEntry::New();
-    this->ListTextScale->SetParent( displayFrame->GetFrame() );
-    this->ListTextScale->Create();
-    this->ListTextScale->SetLabelText("Text Scale:");
-    this->ListTextScale->SetBalloonHelpString ( "Set the scale of the fiducial list points text.");
-    this->ListTextScale->GetWidget()->SetRange(0.0, 20.0);
-    this->ListTextScale->GetWidget()->SetOrientationToHorizontal ();
-    this->ListTextScale->GetWidget()->SetResolution(0.5);
-    this->ListTextScale->SetEntryWidth(5);
-    app->Script("pack %s -side top -anchor w -padx 2 -pady 2", 
-                this->ListTextScale->GetWidgetName());
-
-    // symbol scale
-    this->ListSymbolScale = vtkKWScaleWithEntry::New();
-    this->ListSymbolScale->SetParent( displayFrame->GetFrame() );
-    this->ListSymbolScale->Create();
-    this->ListSymbolScale->SetLabelText("Symbol Scale:");
-    this->ListSymbolScale->SetBalloonHelpString ( "Set the scale of the fiducial list symbols.");
-    this->ListSymbolScale->GetWidget()->SetRange(0.0, 80.0);
-    this->ListSymbolScale->GetWidget()->SetOrientationToHorizontal();
-    this->ListSymbolScale->GetWidget()->SetResolution(0.5);
-    this->ListSymbolScale->SetEntryWidth(5);
-    app->Script("pack %s -side top -anchor w -padx 2 -pady 2", 
-                this->ListSymbolScale->GetWidgetName());
-
+    // colour frame
+    vtkKWFrame *colourFrame = vtkKWFrame::New();
+    colourFrame->SetParent ( displayFrame->GetFrame() );
+    colourFrame->Create ( );
+    app->Script ("pack %s -side top -anchor nw -fill x -pady 0 -in %s",
+                 colourFrame->GetWidgetName(),
+                 displayFrame->GetFrame()->GetWidgetName());
     
     // color
     this->ListColorButton = vtkKWChangeColorButton::New();
-    this->ListColorButton->SetParent( displayFrame->GetFrame() );
+    this->ListColorButton->SetParent( colourFrame );
     this->ListColorButton->Create();
     this->ListColorButton->SetBorderWidth(0);
     this->ListColorButton->SetBalloonHelpString("Change the colour of the fiducial list symbols and text in the MainViewer");
@@ -747,7 +769,7 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
 
     // selected colour
     this->ListSelectedColorButton = vtkKWChangeColorButton::New();
-    this->ListSelectedColorButton->SetParent( displayFrame->GetFrame() );
+    this->ListSelectedColorButton->SetParent( colourFrame );
     this->ListSelectedColorButton->Create();
     this->ListSelectedColorButton->SetBorderWidth(0);
     this->ListSelectedColorButton->SetBalloonHelpString("Change the colour of the selected fiducial list symbols and text in the MainViewer");
@@ -756,8 +778,9 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     this->ListSelectedColorButton->SetLabelText("Set Selected Color");
 
     // pack the colours 
-    app->Script("pack %s %s -side top -anchor w -padx 2 -pady 2",
-                this->ListColorButton->GetWidgetName(), this->ListSelectedColorButton->GetWidgetName());
+    app->Script("pack %s %s -side left -anchor w -padx 4 -pady 2 -in %s",
+                this->ListColorButton->GetWidgetName(), this->ListSelectedColorButton->GetWidgetName(),
+                colourFrame->GetWidgetName());
     
     // ---
     // LIST FRAME
@@ -770,8 +793,6 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   listFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Fiducials")->GetWidgetName());
 
-    
-    
 
     
     // add the multicolumn list to show the points
@@ -801,25 +822,38 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     int col;
     for (col = 0; col < this->NumberOfColumns; col++)
     {        
-        this->MultiColumnList->GetWidget()->SetColumnWidth(col, 12);
+        this->MultiColumnList->GetWidget()->SetColumnWidth(col, 6);
         this->MultiColumnList->GetWidget()->SetColumnAlignmentToLeft(col);
         this->MultiColumnList->GetWidget()->ColumnEditableOn(col);
     }
+    // set the name column width to be higher
+    this->MultiColumnList->GetWidget()->SetColumnWidth(this->NameColumn, 15);
+    // set the selected column width a bit higher
+    this->MultiColumnList->GetWidget()->SetColumnWidth(this->SelectedColumn, 9);
+    
     app->Script ( "pack %s -fill both -expand true",
                   this->MultiColumnList->GetWidgetName());
 //                  listFrame->GetWidgetName());
     this->MultiColumnList->GetWidget()->SetCellUpdatedCommand(this, "UpdateElement");
 
+    // button frame
+    vtkKWFrame *buttonFrame = vtkKWFrame::New();
+    buttonFrame->SetParent ( listFrame->GetFrame() );
+    buttonFrame->Create ( );
+    app->Script ("pack %s -side top -anchor nw -fill x -pady 0 -in %s",
+                 buttonFrame->GetWidgetName(),
+                 listFrame->GetFrame()->GetWidgetName());
+    
      // add an add fiducial button
     this->AddFiducialButton = vtkKWPushButton::New ( );
-    this->AddFiducialButton->SetParent ( listFrame->GetFrame() );
+    this->AddFiducialButton->SetParent ( buttonFrame );
     this->AddFiducialButton->Create ( );
     this->AddFiducialButton->SetText ("Add Fiducial Point");
     this->AddFiducialButton->SetBalloonHelpString("Add a fiducial point to the current list");
     
     // add a remove fiducial button
     this->RemoveFiducialButton = vtkKWPushButton::New ( );
-    this->RemoveFiducialButton->SetParent ( listFrame->GetFrame() );
+    this->RemoveFiducialButton->SetParent ( buttonFrame );
     this->RemoveFiducialButton->Create ( );
     this->RemoveFiducialButton->SetText ("Remove Fiducial Point");
     this->RemoveFiducialButton->SetBalloonHelpString("Remove the last fiducial that was clicked on in the table from the list.");
@@ -827,12 +861,12 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
 
     // add a remove all fiducials from this list button
     this->RemoveFiducialsButton = vtkKWPushButton::New ( );
-    this->RemoveFiducialsButton->SetParent ( listFrame->GetFrame() );
+    this->RemoveFiducialsButton->SetParent ( buttonFrame );
     this->RemoveFiducialsButton->Create ( );
     this->RemoveFiducialsButton->SetText ("Remove All Fiducial Points");
     this->RemoveFiducialsButton->SetBalloonHelpString("Remove all fiducial points from the list.");
   
-    app->Script("pack %s %s %s -side top -anchor w -padx 2 -pady 4", 
+    app->Script("pack %s %s %s -side left -anchor w -padx 4 -pady 2", 
                 this->AddFiducialButton->GetWidgetName(),
                 this->RemoveFiducialButton->GetWidgetName(),
                 this->RemoveFiducialsButton->GetWidgetName());
