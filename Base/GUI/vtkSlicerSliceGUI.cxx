@@ -111,6 +111,13 @@ void vtkSlicerSliceGUI::AddGUIObservers ( ) {
 
   this->RemoveGUIObservers();
 
+#if 0
+  // this version doesn't get ConfigureEvents
+  // so we observe the interactor style instead
+  vtkRenderWindowInteractor *rwi = this->GetSliceViewer()->GetRenderWidget()->GetRenderWindowInteractor();
+  rwi->AddObserver ( vtkCommand::AnyEvent, (vtkCommand *)this->GUICallbackCommand );
+#endif
+
   // make a user interactor style to process our events
   // look at the InteractorStyle to get our events
   vtkRenderWindowInteractor *rwi = this->GetSliceViewer()->GetRenderWidget()->GetRenderWindowInteractor();
@@ -129,8 +136,10 @@ void vtkSlicerSliceGUI::AddGUIObservers ( ) {
 void vtkSlicerSliceGUI::RemoveGUIObservers ( ) {
 
 #if 0
-  this->SliceViewer->GetRenderWidget()->GetRenderWindow()->GetInteractor()->RemoveObservers (
-       vtkCommand::AnyEvent, (vtkCommand *)this->GUICallbackCommand );
+  // this version doesn't get ConfigureEvents
+  // so we observe the interactor style instead
+  vtkRenderWindowInteractor *rwi = this->GetSliceViewer()->GetRenderWidget()->GetRenderWindowInteractor();
+  rwi->RemoveObservers ( vtkCommand::AnyEvent, (vtkCommand *)this->GUICallbackCommand );
 #endif
    
   vtkRenderWindowInteractor *rwi = this->GetSliceViewer()->GetRenderWidget()->GetRenderWindowInteractor();
