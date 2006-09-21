@@ -416,6 +416,11 @@ proc EditorCreateLabelVolume {this} {
 
   $labelNode Delete
 
+  # update the editor range to be the full range of the background image
+  set range [[$volumeNode GetImageData] GetScalarRange]
+  eval $::Editor($this,paintRange) SetWholeRange $range
+  eval $::Editor($this,paintRange) SetRange $range
+
   # TODO: this is just so I can see the results for now
   EditorSetRandomLabelColormap 
 }
