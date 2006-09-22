@@ -947,7 +947,7 @@ void vtkSlicerApplicationGUI::CreateMain3DViewer ( int arrangementType )
           // TODO: this requires a change to KWWidgets
           this->PlaneWidget = vtkImplicitPlaneWidget::New();
           this->PlaneWidget->SetInteractor( this->GetRenderWindowInteractor() );
-          this->PlaneWidget->PlaceWidget();
+          this->PlaneWidget->PlaceWidget(-128, 128, -128, 128, -128, 128);
           this->PlaneWidget->On();
         }
     }
