@@ -36,7 +36,7 @@ proc ScriptedModulesCreate {} {
     $gui SetApplication $::slicer3::Application
     $gui SetGUIName $package
     [$gui GetUIPanel] SetName $package
-    [$gui GetUIPanel] SetUserInterfaceManager [[$::slicer3::ApplicationGUI GetMainSlicerWin] GetMainUserInterfaceManager]
+    [$gui GetUIPanel] SetUserInterfaceManager [[$::slicer3::ApplicationGUI GetMainSlicerWindow] GetMainUserInterfaceManager]
     [$gui GetUIPanel] Create
     $::slicer3::Application AddModuleGUI $gui
     $gui BuildGUI

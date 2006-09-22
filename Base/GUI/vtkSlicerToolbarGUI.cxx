@@ -214,7 +214,7 @@ vtkSlicerToolbarGUI::~vtkSlicerToolbarGUI ( )
     vtkSlicerApplicationGUI *p = this->GetApplicationGUI ( );
     if ( p ) 
       {
-      vtkSlicerWindow *win = p->GetMainSlicerWin();
+      vtkSlicerWindow *win = p->GetMainSlicerWindow();
       if ( win ) 
         {
         vtkKWToolbarSet *tbs = win->GetMainToolbarSet ( );
@@ -465,7 +465,7 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   //
   //--- configure the window's main toolbarset.
   vtkSlicerApplicationGUI *p = this->GetApplicationGUI ( );
-  vtkSlicerWindow *win = p->GetMainSlicerWin();
+  vtkSlicerWindow *win = p->GetMainSlicerWindow();
 
   vtkKWToolbarSet *tbs = win->GetMainToolbarSet();
   tbs->SetToolbarsWidgetsAspect ( vtkKWToolbar::WidgetsAspectUnChanged );

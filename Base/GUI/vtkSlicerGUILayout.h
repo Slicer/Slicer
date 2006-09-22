@@ -26,8 +26,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGUILayout : public vtkKWObject
     vtkTypeRevisionMacro ( vtkSlicerGUILayout, vtkKWObject );
     void PrintSelf ( ostream& os, vtkIndent indent );
     
-    vtkGetObjectMacro ( MainSlicerWin, vtkKWWindow );
-    vtkSetObjectMacro ( MainSlicerWin, vtkKWWindow );
+    vtkGetObjectMacro ( MainSlicerWindow, vtkKWWindow );
+    vtkSetObjectMacro ( MainSlicerWindow, vtkKWWindow );
     vtkGetMacro (CurrentViewArrangement, int );
     vtkSetMacro (CurrentViewArrangement, int );
 
@@ -94,7 +94,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGUILayout : public vtkKWObject
     //Description:
     // Pointer to Slicer's 3Dviewer and
     // Three main Slice viewers.
-    vtkKWWindow *MainSlicerWin;
+    vtkKWWindow *MainSlicerWindow;
     int CurrentViewArrangement;
     
     // Description:

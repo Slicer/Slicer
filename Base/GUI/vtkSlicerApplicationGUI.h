@@ -117,7 +117,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     
     // Description:
     // Get the main slicer window.
-    vtkGetObjectMacro ( MainSlicerWin, vtkSlicerWindow );
+    vtkGetObjectMacro ( MainSlicerWindow, vtkSlicerWindow );
     // Description:
 
     // Description:
@@ -204,7 +204,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
 
     // Description:
     // Main Slicer window
-    vtkSlicerWindow *MainSlicerWin;
+    vtkSlicerWindow *MainSlicerWindow;
     
     // Description:
     // Frames for the main Slicer UI panel    

@@ -318,7 +318,7 @@ int Slicer3_main(int argc, char *argv[])
     volumesGUI->SetModuleLogic ( volumesLogic );
     volumesGUI->SetGUIName( "Volumes" );
     volumesGUI->GetUIPanel()->SetName ( volumesGUI->GetGUIName ( ) );
-    volumesGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWin()->GetMainUserInterfaceManager ( ) );
+    volumesGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
     volumesGUI->GetUIPanel()->Create ( );
     slicerApp->AddModuleGUI ( volumesGUI );
     volumesGUI->BuildGUI ( );
@@ -337,7 +337,7 @@ int Slicer3_main(int argc, char *argv[])
     modelsGUI->SetModuleLogic ( modelsLogic );
     modelsGUI->SetGUIName( "Models" );
     modelsGUI->GetUIPanel()->SetName ( modelsGUI->GetGUIName ( ) );
-    modelsGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWin()->GetMainUserInterfaceManager ( ) );
+    modelsGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
     modelsGUI->GetUIPanel()->Create ( );
     slicerApp->AddModuleGUI ( modelsGUI );
     modelsGUI->BuildGUI ( );
@@ -355,7 +355,7 @@ int Slicer3_main(int argc, char *argv[])
     fiducialsGUI->SetModuleLogic ( fiducialsLogic );
     fiducialsGUI->SetGUIName( "Fiducials" );
     fiducialsGUI->GetUIPanel()->SetName ( fiducialsGUI->GetGUIName ( ) );
-    fiducialsGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWin()->GetMainUserInterfaceManager ( ) );
+    fiducialsGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
     fiducialsGUI->GetUIPanel()->Create ( );
     slicerApp->AddModuleGUI ( fiducialsGUI );
     fiducialsGUI->BuildGUI ( );
@@ -368,7 +368,7 @@ int Slicer3_main(int argc, char *argv[])
     transformsGUI->SetAndObserveMRMLScene ( scene );
     transformsGUI->SetGUIName( "Transforms" );
     transformsGUI->GetUIPanel()->SetName ( transformsGUI->GetGUIName ( ) );
-    transformsGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWin()->GetMainUserInterfaceManager ( ) );
+    transformsGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
     transformsGUI->GetUIPanel()->Create ( );
     slicerApp->AddModuleGUI ( transformsGUI );
     transformsGUI->BuildGUI ( );
@@ -385,7 +385,7 @@ int Slicer3_main(int argc, char *argv[])
     //dataGUI->SetModuleLogic ( dataLogic );
     dataGUI->SetGUIName( "Data" );
     dataGUI->GetUIPanel()->SetName ( dataGUI->GetGUIName ( ) );
-    dataGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWin()->GetMainUserInterfaceManager ( ) );
+    dataGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
     dataGUI->GetUIPanel()->Create ( );    
     slicerApp->AddModuleGUI ( dataGUI );
     dataGUI->BuildGUI ( );
@@ -430,7 +430,7 @@ int Slicer3_main(int argc, char *argv[])
     slicesGUI->SetAndObserveMRMLScene ( scene );
     slicesGUI->SetGUIName( "Slices" );
     slicesGUI->GetUIPanel()->SetName ( slicesGUI->GetGUIName ( ) );
-    slicesGUI->GetUIPanel()->SetUserInterfaceManager ( appGUI->GetMainSlicerWin( )->GetMainUserInterfaceManager( ) );
+    slicesGUI->GetUIPanel()->SetUserInterfaceManager ( appGUI->GetMainSlicerWindow( )->GetMainUserInterfaceManager( ) );
     slicesGUI->GetUIPanel( )->Create( );
     slicerApp->AddModuleGUI ( slicesGUI );
     slicesGUI->BuildGUI ();
@@ -449,7 +449,7 @@ int Slicer3_main(int argc, char *argv[])
     gradientAnisotropicDiffusionFilterGUI->SetApplicationLogic ( appLogic );
     gradientAnisotropicDiffusionFilterGUI->SetGUIName( "GradientAnisotropicDiffusionFilter" );
     gradientAnisotropicDiffusionFilterGUI->GetUIPanel()->SetName ( gradientAnisotropicDiffusionFilterGUI->GetGUIName ( ) );
-    gradientAnisotropicDiffusionFilterGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWin()->GetMainUserInterfaceManager ( ) );
+    gradientAnisotropicDiffusionFilterGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
     gradientAnisotropicDiffusionFilterGUI->GetUIPanel()->Create ( );
     slicerApp->AddModuleGUI ( gradientAnisotropicDiffusionFilterGUI );
     gradientAnisotropicDiffusionFilterGUI->BuildGUI ( );
@@ -499,7 +499,7 @@ int Slicer3_main(int argc, char *argv[])
       commandLineModuleGUI->SetApplicationLogic ( appLogic );
       commandLineModuleGUI->SetGUIName( moduleFactory.GetModuleDescription(*mit).GetTitle().c_str() );
       commandLineModuleGUI->GetUIPanel()->SetName ( commandLineModuleGUI->GetGUIName ( ) );
-      commandLineModuleGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWin()->GetMainUserInterfaceManager ( ) );
+      commandLineModuleGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
       commandLineModuleGUI->GetUIPanel()->Create ( );
       slicerApp->AddModuleGUI ( commandLineModuleGUI );
 
@@ -604,7 +604,7 @@ int Slicer3_main(int argc, char *argv[])
     tclCommand += "  $gui SetApplication $::slicer3::Application;";
     tclCommand += "  $gui SetGUIName $package;";
     tclCommand += "  [$gui GetUIPanel] SetName $package;";
-    tclCommand += "  [$gui GetUIPanel] SetUserInterfaceManager [[$::slicer3::ApplicationGUI GetMainSlicerWin] GetMainUserInterfaceManager];";
+    tclCommand += "  [$gui GetUIPanel] SetUserInterfaceManager [[$::slicer3::ApplicationGUI GetMainSlicerWindow] GetMainUserInterfaceManager];";
     tclCommand += "  [$gui GetUIPanel] Create;";
     tclCommand += "  $::slicer3::Application AddModuleGUI $gui;" ;
     tclCommand += "  $gui BuildGUI;";
@@ -628,7 +628,7 @@ int Slicer3_main(int argc, char *argv[])
     // ------------------------------
     // CONFIGURE SlICER'S SHARED GUI PANEL
     // Additional Modules GUI panel configuration.
-    vtkKWUserInterfaceManagerNotebook *mnb = vtkKWUserInterfaceManagerNotebook::SafeDownCast (appGUI->GetMainSlicerWin()->GetMainUserInterfaceManager());
+    vtkKWUserInterfaceManagerNotebook *mnb = vtkKWUserInterfaceManagerNotebook::SafeDownCast (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager());
     mnb->GetNotebook()->AlwaysShowTabsOff();
     mnb->GetNotebook()->ShowOnlyPagesWithSameTagOn();    
 
@@ -697,8 +697,8 @@ int Slicer3_main(int argc, char *argv[])
     //
     res = slicerApp->StartApplication();
 
-    appGUI->GetMainSlicerWin()->PrepareForDelete();
-    appGUI->GetMainSlicerWin()->Close();
+    appGUI->GetMainSlicerWindow()->PrepareForDelete();
+    appGUI->GetMainSlicerWindow()->Close();
 
     // ------------------------------
     // REMOVE OBSERVERS and references to MRML and Logic

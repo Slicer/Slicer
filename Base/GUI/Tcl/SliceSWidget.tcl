@@ -246,11 +246,11 @@ itcl::body SliceSWidget::processEvent { } {
     }
     "EnterEvent" { 
       $_renderWidget CornerAnnotationVisibilityOn
-      [$::slicer3::ApplicationGUI GetMainSlicerWin]  SetStatusText "Middle Button: Pan; Right Button: Zoom"
+      [$::slicer3::ApplicationGUI GetMainSlicerWindow]  SetStatusText "Middle Button: Pan; Right Button: Zoom"
     }
     "LeaveEvent" { 
       $_renderWidget CornerAnnotationVisibilityOff
-      [$::slicer3::ApplicationGUI GetMainSlicerWin]  SetStatusText ""
+      [$::slicer3::ApplicationGUI GetMainSlicerWindow]  SetStatusText ""
     }
     "TimerEvent" { }
     "KeyPressEvent" { 

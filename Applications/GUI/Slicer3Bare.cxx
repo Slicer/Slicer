@@ -224,7 +224,7 @@ int Slicer3_main(int argc, char *argv[])
     volumesGUI->SetModuleLogic ( volumesLogic );
     volumesGUI->SetGUIName( "Volumes" );
     volumesGUI->GetUIPanel()->SetName ( volumesGUI->GetGUIName ( ) );
-    volumesGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWin()->GetMainUserInterfaceManager ( ) );
+    volumesGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
     volumesGUI->GetUIPanel()->Create ( );
     slicerApp->AddModuleGUI ( volumesGUI );
     volumesGUI->BuildGUI ( );
@@ -243,7 +243,7 @@ int Slicer3_main(int argc, char *argv[])
     modelsGUI->SetModuleLogic ( modelsLogic );
     modelsGUI->SetGUIName( "Models" );
     modelsGUI->GetUIPanel()->SetName ( modelsGUI->GetGUIName ( ) );
-    modelsGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWin()->GetMainUserInterfaceManager ( ) );
+    modelsGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
     modelsGUI->GetUIPanel()->Create ( );
     slicerApp->AddModuleGUI ( modelsGUI );
     modelsGUI->BuildGUI ( );
@@ -286,7 +286,7 @@ int Slicer3_main(int argc, char *argv[])
     slicesGUI->SetAndObserveMRMLScene ( scene );
     slicesGUI->SetGUIName( "Slices" );
     slicesGUI->GetUIPanel()->SetName ( slicesGUI->GetGUIName ( ) );
-    slicesGUI->GetUIPanel()->SetUserInterfaceManager ( appGUI->GetMainSlicerWin( )->GetMainUserInterfaceManager( ) );
+    slicesGUI->GetUIPanel()->SetUserInterfaceManager ( appGUI->GetMainSlicerWindow( )->GetMainUserInterfaceManager( ) );
     slicesGUI->GetUIPanel( )->Create( );
     slicerApp->AddModuleGUI ( slicesGUI );
     slicesGUI->BuildGUI ();
@@ -341,7 +341,7 @@ int Slicer3_main(int argc, char *argv[])
     // CONFIGURE SlICER'S SHARED GUI PANEL
     // Additional Modules GUI panel configuration.
 #ifndef APPGUI_DEBUG
-    vtkKWUserInterfaceManagerNotebook *mnb = vtkKWUserInterfaceManagerNotebook::SafeDownCast (appGUI->GetMainSlicerWin()->GetMainUserInterfaceManager());
+    vtkKWUserInterfaceManagerNotebook *mnb = vtkKWUserInterfaceManagerNotebook::SafeDownCast (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager());
     mnb->GetNotebook()->AlwaysShowTabsOff();
     mnb->GetNotebook()->ShowOnlyPagesWithSameTagOn();    
 
@@ -359,8 +359,8 @@ int Slicer3_main(int argc, char *argv[])
     res = slicerApp->StartApplication();
 
 #ifndef APPGUI_DEBUG
-    appGUI->GetMainSlicerWin()->PrepareForDelete();
-    appGUI->GetMainSlicerWin()->Close();
+    appGUI->GetMainSlicerWindow()->PrepareForDelete();
+    appGUI->GetMainSlicerWindow()->Close();
 #endif
 
     // ------------------------------

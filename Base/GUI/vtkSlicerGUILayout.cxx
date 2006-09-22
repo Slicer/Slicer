@@ -16,7 +16,7 @@ vtkCxxRevisionMacro ( vtkSlicerGUILayout, "$Revision: 1.0 $" );
 vtkSlicerGUILayout::vtkSlicerGUILayout ( )
 {
 
-  this->MainSlicerWin = NULL;
+  this->MainSlicerWindow = NULL;
   this->SetCurrentViewArrangement ( this->SlicerLayoutInitialView);
 }
 
@@ -24,7 +24,7 @@ vtkSlicerGUILayout::vtkSlicerGUILayout ( )
 //---------------------------------------------------------------------------
 vtkSlicerGUILayout::~vtkSlicerGUILayout ( )
 {
-  this->SetMainSlicerWin ( NULL );
+  this->SetMainSlicerWindow ( NULL );
 }
 
 
@@ -88,9 +88,9 @@ void vtkSlicerGUILayout::InitializeLayoutDimensions ( )
 //---------------------------------------------------------------------------
 void vtkSlicerGUILayout::InitializeMainSlicerWindowSize ( )
 {
-  if ( this->MainSlicerWin != NULL )
+  if ( this->MainSlicerWindow != NULL )
     {
-      this->MainSlicerWin->SetSize ( this->GetDefaultSlicerWindowWidth ( ),
+      this->MainSlicerWindow->SetSize ( this->GetDefaultSlicerWindowWidth ( ),
                                      this->GetDefaultSlicerWindowHeight () );
     }
 }
@@ -99,24 +99,24 @@ void vtkSlicerGUILayout::InitializeMainSlicerWindowSize ( )
 void vtkSlicerGUILayout::ConfigureMainSlicerWindowPanels ( )
 {
 
-  if ( this->MainSlicerWin != NULL )
+  if ( this->MainSlicerWindow != NULL )
     {
       // Configure the minimum width of Slicer's GUI panel
       // and Main Viewer panels. Panels can be expanded and
       // collapsed entirely or can  be resized by hand.
       //
-      this->MainSlicerWin->MainPanelVisibilityOn ();
-      this->MainSlicerWin->SecondaryPanelVisibilityOn ();
+      this->MainSlicerWindow->MainPanelVisibilityOn ();
+      this->MainSlicerWindow->SecondaryPanelVisibilityOn ();
       //
       //--- this split frame divides Slicer's GUI Panel with the Viewer Panel
       //
-      this->MainSlicerWin->GetMainSplitFrame()->SetFrame1Size (this->GetDefaultGUIPanelWidth() );
-      this->MainSlicerWin->GetMainSplitFrame()->SetFrame1MinimumSize (this->GetDefaultGUIPanelWidth ( ) );
+      this->MainSlicerWindow->GetMainSplitFrame()->SetFrame1Size (this->GetDefaultGUIPanelWidth() );
+      this->MainSlicerWindow->GetMainSplitFrame()->SetFrame1MinimumSize (this->GetDefaultGUIPanelWidth ( ) );
       //
       //--- this split frame divides Slicer's 3DViewer from the Slice Viewers
       //--- in the conventional layout. Frame1 is the bottom (slice viewer) frame.
       // 
-      this->MainSlicerWin->GetSecondarySplitFrame()->SetFrame1Size ( this->GetDefaultSliceGUIFrameHeight () );
+      this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame1Size ( this->GetDefaultSliceGUIFrameHeight () );
     }
 }
 

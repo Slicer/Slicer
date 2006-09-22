@@ -4,7 +4,7 @@
 
 proc moduleFrame {module} {
     set appGUI [vtkSlicerApplicationGUI ListInstances]
-    set moduleFrame [[[[$appGUI GetMainSlicerWin] GetMainNotebook] GetFrame $module] GetWidgetName]
+    set moduleFrame [[[[$appGUI GetMainSlicerWindow] GetMainNotebook] GetFrame $module] GetWidgetName]
     return $moduleFrame
 }
 
