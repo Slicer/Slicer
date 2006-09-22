@@ -87,6 +87,8 @@ vtkCommandLineModuleGUI::vtkCommandLineModuleGUI()
   this->NewNodeCallbackCommand
     ->SetCallback( vtkCommandLineModuleGUI::NewNodeCallback );
   this->CreatingNewNode = false;
+  this->InUpdateMRML = false;
+  this->InUpdateGUI = false;
 //  this->DebugOn();
 }
 
@@ -386,7 +388,12 @@ void vtkCommandLineModuleGUI::ProcessGUIEvents ( vtkObject *caller,
 
 //---------------------------------------------------------------------------
 void vtkCommandLineModuleGUI::UpdateMRML ()
-{
+{ 
+  if (this->InUpdateGUI) {
+    return;
+  }
+
+  this->InUpdateMRML = true;
   //std::cout << "UpdateMRML()" << std::endl;
   vtkMRMLCommandLineModuleNode* n = this->GetCommandLineModuleNode();
   bool createdNode = false;
@@ -402,6 +409,7 @@ void vtkCommandLineModuleGUI::UpdateMRML ()
 
     if (n == NULL)
       {
+      this->InUpdateMRML = false;
       vtkDebugMacro("No CommandLineModuleNode available");
       return;
       }
@@ -485,11 +493,18 @@ void vtkCommandLineModuleGUI::UpdateMRML ()
     {
     this->SetAndObserveMRML( vtkObjectPointer(&this->CommandLineModuleNode),n);
     }
+  this->InUpdateMRML = false;
 }
 
 //---------------------------------------------------------------------------
 void vtkCommandLineModuleGUI::UpdateGUI ()
 {
+  if (this->InUpdateMRML) {
+    return;
+  }
+
+  this->InUpdateGUI = true;
+
   // std::cout << "UpdateGUI()" << std::endl;
   vtkMRMLCommandLineModuleNode* n = this->GetCommandLineModuleNode();
   if (n != NULL)
@@ -596,6 +611,8 @@ void vtkCommandLineModuleGUI::UpdateGUI ()
         }    
       }
     }
+    this->InUpdateGUI = false;
+
 }
 
 //---------------------------------------------------------------------------

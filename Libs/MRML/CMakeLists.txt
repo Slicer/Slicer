@@ -21,6 +21,7 @@ SET(MRML_SRCS
         vtkMRMLModelNode.cxx
         vtkMRMLModelStorageNode.cxx
         vtkMRMLModelDisplayNode.cxx
+        vtkMRMLClipModelsNode.cxx
         vtkMRMLStorageNode.cxx
         vtkMRMLVolumeArchetypeStorageNode.cxx
         vtkMRMLVolumeHeaderlessStorageNode.cxx

@@ -123,6 +123,8 @@ private:
   vtkMRMLCommandLineModuleNode* CommandLineModuleNode;
 
   bool CreatingNewNode;
+  bool InUpdateMRML;
+  bool InUpdateGUI;
 
 };
 
