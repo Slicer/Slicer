@@ -42,6 +42,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
     vtkGetObjectMacro (LoadSaveToolbar, vtkKWToolbar );
     vtkGetObjectMacro (ViewToolbar, vtkKWToolbar);
     vtkGetObjectMacro (MouseModeToolbar, vtkKWToolbar);
+    vtkGetObjectMacro (UndoRedoToolbar, vtkKWToolbar);
 
 
     // Description:
@@ -66,10 +67,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
     vtkGetObjectMacro (TabbedSliceViewIconButton, vtkKWPushButton );
     vtkGetObjectMacro (LightBoxViewIconButton, vtkKWPushButton );
     vtkGetObjectMacro (MousePickIconButton, vtkKWPushButton );
-    vtkGetObjectMacro (MousePanIconButton, vtkKWPushButton );
-    vtkGetObjectMacro (MouseRotateIconButton, vtkKWPushButton );
-    vtkGetObjectMacro (MouseZoomIconButton, vtkKWPushButton );
+    vtkGetObjectMacro (MouseTransformViewIconButton, vtkKWPushButton );
     vtkGetObjectMacro (MousePlaceFiducialIconButton, vtkKWPushButton );
+    vtkGetObjectMacro (UndoIconButton, vtkKWPushButton );
+    vtkGetObjectMacro (RedoIconButton, vtkKWPushButton );
 
     // Description:
     // This method builds the Data module's GUI
@@ -102,6 +103,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
     vtkKWToolbar *LoadSaveToolbar;
     vtkKWToolbar *ViewToolbar;
     vtkKWToolbar *MouseModeToolbar;
+    vtkKWToolbar *UndoRedoToolbar;
 
     // Description:
     // Contains icons
@@ -109,6 +111,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
     
     // Description:
     // Widgets that display toolbar icons
+    vtkKWPushButton *UndoIconButton;
+    vtkKWPushButton *RedoIconButton;
     vtkKWPushButton *HomeIconButton;
     vtkKWPushButton *DataIconButton;
     vtkKWPushButton *VolumeIconButton;
@@ -130,9 +134,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
     vtkKWPushButton *LightBoxViewIconButton;
     vtkKWPushButton *MousePickIconButton;
     vtkKWPushButton *MousePlaceFiducialIconButton;
-    vtkKWPushButton *MousePanIconButton;
-    vtkKWPushButton *MouseRotateIconButton;
-    vtkKWPushButton *MouseZoomIconButton;
+    vtkKWPushButton *MouseTransformViewIconButton;
     
     vtkSlicerApplicationGUI *ApplicationGUI;
     

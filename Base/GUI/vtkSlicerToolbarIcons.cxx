@@ -30,10 +30,10 @@ vtkSlicerToolbarIcons::vtkSlicerToolbarIcons ( )
     this->Tabbed3DViewIcon = vtkKWIcon::New();
     this->LightBoxViewIcon = vtkKWIcon::New();
     this->MousePickIcon = vtkKWIcon::New();
-    this->MousePanIcon = vtkKWIcon::New();
-    this->MouseRotateIcon = vtkKWIcon::New();
-    this->MouseZoomIcon = vtkKWIcon::New();
+    this->MouseTransformViewIcon = vtkKWIcon::New();
     this->MousePlaceFiducialIcon = vtkKWIcon::New ( );
+    this->UndoIcon = vtkKWIcon::New ( );
+    this->RedoIcon = vtkKWIcon::New ( );
     this->AssignImageDataToIcons ( );
 }
 
@@ -42,104 +42,127 @@ vtkSlicerToolbarIcons::vtkSlicerToolbarIcons ( )
 //---------------------------------------------------------------------------
 vtkSlicerToolbarIcons::~vtkSlicerToolbarIcons ( )
 {
-    // toolbar icons
-    if ( this->HomeIcon ) {
-        this->HomeIcon->Delete ( );
-        this->HomeIcon = NULL;
+  // toolbar icons
+  if ( this->HomeIcon )
+    {
+    this->HomeIcon->Delete ( );
+    this->HomeIcon = NULL;
     }
-    if ( this->DataIcon ) {
-        this->DataIcon->Delete ( );
-        this->DataIcon = NULL;
+  if ( this->DataIcon )
+    {
+    this->DataIcon->Delete ( );
+    this->DataIcon = NULL;
     }
-    if ( this->VolumeIcon ) {
-        this->VolumeIcon->Delete ( );
-        this->VolumeIcon = NULL;
+  if ( this->VolumeIcon )
+    {
+    this->VolumeIcon->Delete ( );
+    this->VolumeIcon = NULL;
     }
-    if ( this->ModelIcon ) {
-        this->ModelIcon->Delete ( );
-        this->ModelIcon = NULL;
+  if ( this->ModelIcon )
+    {
+    this->ModelIcon->Delete ( );
+    this->ModelIcon = NULL;
     }
-    if ( this->EditorIcon ) {
-        this->EditorIcon->Delete ( );
-        this->EditorIcon = NULL;
+  if ( this->EditorIcon )
+    {
+    this->EditorIcon->Delete ( );
+    this->EditorIcon = NULL;
     }
-    if ( this->EditorToolboxIcon ) {
-        this->EditorToolboxIcon->Delete ( );
-        this->EditorToolboxIcon = NULL;
+  if ( this->EditorToolboxIcon )
+    {
+    this->EditorToolboxIcon->Delete ( );
+    this->EditorToolboxIcon = NULL;
     }
-    if ( this->TransformIcon ) {
-        this->TransformIcon->Delete ( );
-        this->TransformIcon = NULL;
+  if ( this->TransformIcon )
+    {
+    this->TransformIcon->Delete ( );
+    this->TransformIcon = NULL;
     }
-    if ( this->ColorIcon ) {
-        this->ColorIcon->Delete ( );
-        this->ColorIcon = NULL;
+  if ( this->ColorIcon )
+    {
+    this->ColorIcon->Delete ( );
+    this->ColorIcon = NULL;
     }
-    if ( this->FiducialsIcon ) {
-        this->FiducialsIcon->Delete ( );
-        this->FiducialsIcon = NULL;
+  if ( this->FiducialsIcon )
+    {
+    this->FiducialsIcon->Delete ( );
+    this->FiducialsIcon = NULL;
     }
-    if ( this->MeasurementsIcon ) {
-      this->MeasurementsIcon->Delete ( );
-      this->MeasurementsIcon = NULL;
+  if ( this->MeasurementsIcon )
+    {
+    this->MeasurementsIcon->Delete ( );
+    this->MeasurementsIcon = NULL;
     }
-    if ( this->SaveSceneIcon ) {
-        this->SaveSceneIcon->Delete ( );
-        this->SaveSceneIcon = NULL;
+  if ( this->SaveSceneIcon )
+    {
+    this->SaveSceneIcon->Delete ( );
+    this->SaveSceneIcon = NULL;
     }
-    if ( this->LoadSceneIcon ) {
-        this->LoadSceneIcon->Delete ( );
-        this->LoadSceneIcon = NULL;
+  if ( this->LoadSceneIcon )
+    {
+    this->LoadSceneIcon->Delete ( );
+    this->LoadSceneIcon = NULL;
     }
-    if ( this->ConventionalViewIcon ) {
-        this->ConventionalViewIcon->Delete ( );
-        this->ConventionalViewIcon = NULL;
+  if ( this->ConventionalViewIcon )
+    {
+    this->ConventionalViewIcon->Delete ( );
+    this->ConventionalViewIcon = NULL;
     }
-    if ( this->OneUp3DViewIcon ) {
-        this->OneUp3DViewIcon->Delete ( );
-        this->OneUp3DViewIcon = NULL;
+  if ( this->OneUp3DViewIcon )
+    {
+    this->OneUp3DViewIcon->Delete ( );
+    this->OneUp3DViewIcon = NULL;
     }
-    if ( this->OneUpSliceViewIcon ) {
-        this->OneUpSliceViewIcon->Delete ( );
-        this->OneUpSliceViewIcon = NULL;
+  if ( this->OneUpSliceViewIcon )
+    {
+    this->OneUpSliceViewIcon->Delete ( );
+    this->OneUpSliceViewIcon = NULL;
     }
-    if ( this->FourUpViewIcon ) {
-        this->FourUpViewIcon->Delete ( );
-        this->FourUpViewIcon = NULL;
+  if ( this->FourUpViewIcon )
+    {
+    this->FourUpViewIcon->Delete ( );
+    this->FourUpViewIcon = NULL;
     }
-    if ( this->Tabbed3DViewIcon ) {
-        this->Tabbed3DViewIcon->Delete ( );
-        this->Tabbed3DViewIcon = NULL;
+  if ( this->Tabbed3DViewIcon )
+    {
+    this->Tabbed3DViewIcon->Delete ( );
+    this->Tabbed3DViewIcon = NULL;
     }
-    if ( this->TabbedSliceViewIcon ) {
-        this->TabbedSliceViewIcon->Delete ( );
-        this->TabbedSliceViewIcon = NULL;
+  if ( this->TabbedSliceViewIcon )
+    {
+    this->TabbedSliceViewIcon->Delete ( );
+    this->TabbedSliceViewIcon = NULL;
     }
-    if ( this->LightBoxViewIcon ) {
-        this->LightBoxViewIcon->Delete ( );
-        this->LightBoxViewIcon = NULL;
+  if ( this->LightBoxViewIcon )
+    {
+    this->LightBoxViewIcon->Delete ( );
+    this->LightBoxViewIcon = NULL;
     }
-    if ( this->MousePickIcon ) {
-        this->MousePickIcon->Delete ( );
-        this->MousePickIcon = NULL;
+  if ( this->MousePickIcon )
+    {
+    this->MousePickIcon->Delete ( );
+    this->MousePickIcon = NULL;
     }
-    if ( this->MousePlaceFiducialIcon ) {
-        this->MousePlaceFiducialIcon->Delete ( );
-        this->MousePlaceFiducialIcon = NULL;
+  if ( this->MousePlaceFiducialIcon )
+    {
+    this->MousePlaceFiducialIcon->Delete ( );
+    this->MousePlaceFiducialIcon = NULL;
     }
-    if ( this->MousePanIcon ) {
-        this->MousePanIcon->Delete () ;
-        this->MousePanIcon = NULL;
+  if ( this->MouseTransformViewIcon )
+    {
+    this->MouseTransformViewIcon->Delete ( );
+    this->MouseTransformViewIcon = NULL;
     }
-    if ( this->MouseZoomIcon ) {
-        this->MouseZoomIcon->Delete ( );
-        this->MouseZoomIcon = NULL;
+  if ( this->UndoIcon )
+    {
+    this->UndoIcon->Delete ( );
+    this->UndoIcon = NULL;
     }
-    if ( this->MouseRotateIcon ) {
-        this->MouseRotateIcon->Delete ( );
-        this->MouseRotateIcon = NULL;
+  if ( this->RedoIcon )
+    {
+    this->RedoIcon->Delete ( );
+    this->RedoIcon = NULL;
     }
-    
 }
 
 
@@ -246,23 +269,23 @@ void vtkSlicerToolbarIcons::AssignImageDataToIcons ( )
                                    image_ToolbarMousePick_width,
                                    image_ToolbarMousePick_height,
                                    image_ToolbarMousePick_pixel_size, 0, 0);
-    this->MousePanIcon->SetImage (image_ToolbarMousePan,
-                                   image_ToolbarMousePan_width,
-                                   image_ToolbarMousePan_height,
-                                   image_ToolbarMousePan_pixel_size, 0, 0);
-    this->MouseRotateIcon->SetImage (image_ToolbarMouseRotate,
+    this->MouseTransformViewIcon->SetImage (image_ToolbarMouseRotate,
                                    image_ToolbarMouseRotate_width,
                                    image_ToolbarMouseRotate_height,
                                    image_ToolbarMouseRotate_pixel_size, 0, 0);
-    this->MouseZoomIcon->SetImage (image_ToolbarMouseZoom,
-                                   image_ToolbarMouseZoom_width,
-                                   image_ToolbarMouseZoom_height,
-                                   image_ToolbarMouseZoom_pixel_size, 0, 0);
     this->MousePlaceFiducialIcon->SetImage (image_ToolbarMousePlaceFiducial,
                                    image_ToolbarMousePlaceFiducial_width,
                                    image_ToolbarMousePlaceFiducial_height,
                                    image_ToolbarMousePlaceFiducial_pixel_size, 0, 0);
-                                   
+    this->UndoIcon->SetImage ( image_ToolbarUndo,
+                               image_ToolbarUndo_width,
+                               image_ToolbarUndo_height,
+                               image_ToolbarUndo_pixel_size, 0, 0);
+    this->RedoIcon->SetImage ( image_ToolbarRedo,
+                               image_ToolbarRedo_width,
+                               image_ToolbarRedo_height,
+                               image_ToolbarRedo_pixel_size, 0, 0);
+
 }
 
 
@@ -293,9 +316,9 @@ void vtkSlicerToolbarIcons::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "Tabbed3DViewIcon" << this->GetTabbed3DViewIcon ( ) << "\n";
     os << indent << "LightBoxViewIcon" << this->GetLightBoxViewIcon ( ) << "\n";
     os << indent << "MousePickIcon" << this->GetMousePickIcon ( ) << "\n";
-    os << indent << "MousePanIcon" << this->GetMousePanIcon ( ) << "\n";
-    os << indent << "MouseRotateIcon" << this->GetMouseRotateIcon ( ) << "\n";
-    os << indent << "MouseZoomIcon" << this->GetMouseZoomIcon ( ) << "\n";
+    os << indent << "MouseTransformViewIcon" << this->GetMouseTransformViewIcon ( ) << "\n";
     os << indent << "MousePlaceFiducialIcon" << this->GetMousePlaceFiducialIcon ( ) << "\n";
+    os << indent << "UndoIcon" << this->GetUndoIcon ( ) << "\n";
+    os << indent << "RedoIcon" << this->GetRedoIcon ( ) << "\n";
 }
 

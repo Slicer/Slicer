@@ -31,6 +31,7 @@ vtkSlicerToolbarGUI::vtkSlicerToolbarGUI ( )
   this->LoadSaveToolbar = vtkKWToolbar::New ( );
   this->ViewToolbar = vtkKWToolbar::New ( );
   this->MouseModeToolbar = vtkKWToolbar::New ( );
+  this->UndoRedoToolbar = vtkKWToolbar::New ( );
 
   this->HomeIconButton = vtkKWPushButton::New ( );
   this->DataIconButton = vtkKWPushButton::New ( );
@@ -53,9 +54,9 @@ vtkSlicerToolbarGUI::vtkSlicerToolbarGUI ( )
   this->LightBoxViewIconButton = vtkKWPushButton::New ( );
   this->MousePickIconButton = vtkKWPushButton::New ( );
   this->MousePlaceFiducialIconButton = vtkKWPushButton::New ( );
-  this->MousePanIconButton = vtkKWPushButton::New ( );
-  this->MouseRotateIconButton = vtkKWPushButton::New ( );
-  this->MouseZoomIconButton = vtkKWPushButton::New ( );
+  this->MouseTransformViewIconButton = vtkKWPushButton::New ( );
+  this->UndoIconButton = vtkKWPushButton::New ( );
+  this->RedoIconButton = vtkKWPushButton::New ( );
 
   this->ApplicationGUI = NULL;
   
@@ -68,149 +69,183 @@ vtkSlicerToolbarGUI::~vtkSlicerToolbarGUI ( )
 {
 
   // Delete Toolbar Icons
-   if ( this->SlicerToolbarIcons ) {
-        this->SlicerToolbarIcons->Delete ( );
-        this->SlicerToolbarIcons = NULL;
+  if ( this->SlicerToolbarIcons )
+    {
+    this->SlicerToolbarIcons->Delete ( );
+    this->SlicerToolbarIcons = NULL;
     }
 
-   // Remove widgets from Toolbars
-    if ( this->ModulesToolbar ) {
-        this->ModulesToolbar->RemoveAllWidgets( );
+  // Remove widgets from Toolbars
+  if ( this->ModulesToolbar )
+    {
+    this->ModulesToolbar->RemoveAllWidgets( );
     }
-    if ( this->LoadSaveToolbar ) {
-        this->LoadSaveToolbar->RemoveAllWidgets ( );
+  if ( this->LoadSaveToolbar )
+    {
+    this->LoadSaveToolbar->RemoveAllWidgets ( );
     }
-    if ( this->ViewToolbar ) {
-        this->ViewToolbar->RemoveAllWidgets ( );
+  if ( this->ViewToolbar )
+    {
+    this->ViewToolbar->RemoveAllWidgets ( );
     }
-    if ( this->MouseModeToolbar ) {
-      this->MouseModeToolbar->RemoveAllWidgets ( );
+  if ( this->UndoRedoToolbar )
+    {
+    this->UndoRedoToolbar->RemoveAllWidgets ( );
+    }
+  if ( this->MouseModeToolbar )
+    {
+    this->MouseModeToolbar->RemoveAllWidgets ( );
     }
 
-    // Delete the widgets
-    if ( this->HomeIconButton ) {
-      this->HomeIconButton->SetParent ( NULL );
-        this->HomeIconButton->Delete ( );
-        this->HomeIconButton = NULL;
+  // Delete the widgets
+  if ( this->HomeIconButton )
+    {
+    this->HomeIconButton->SetParent ( NULL );
+    this->HomeIconButton->Delete ( );
+    this->HomeIconButton = NULL;
     }
-    if ( this->DataIconButton ) {
-      this->DataIconButton->SetParent ( NULL );
-        this->DataIconButton->Delete ( );
-        this->DataIconButton = NULL;
+  if ( this->DataIconButton )
+    {
+    this->DataIconButton->SetParent ( NULL );
+    this->DataIconButton->Delete ( );
+    this->DataIconButton = NULL;
     }
-    if ( this->VolumeIconButton ) {
-      this->VolumeIconButton->SetParent ( NULL );
-        this->VolumeIconButton->Delete ( );
-        this->VolumeIconButton = NULL;
+  if ( this->VolumeIconButton )
+    {
+    this->VolumeIconButton->SetParent ( NULL );
+    this->VolumeIconButton->Delete ( );
+    this->VolumeIconButton = NULL;
     }
-    if ( this->ModelIconButton ) {
-      this->ModelIconButton->SetParent ( NULL );
-        this->ModelIconButton->Delete ( );
-        this->ModelIconButton = NULL;
+  if ( this->ModelIconButton )
+    {
+    this->ModelIconButton->SetParent ( NULL );
+    this->ModelIconButton->Delete ( );
+    this->ModelIconButton = NULL;
     }
-    if ( this->EditorIconButton ) {
-      this->EditorIconButton->SetParent ( NULL );
-        this->EditorIconButton->Delete ( );
-        this->EditorIconButton = NULL;
+  if ( this->EditorIconButton )
+    {
+    this->EditorIconButton->SetParent ( NULL );
+    this->EditorIconButton->Delete ( );
+    this->EditorIconButton = NULL;
     }
-    if ( this->EditorToolboxIconButton ) {
-      this->EditorToolboxIconButton->SetParent ( NULL );
-        this->EditorToolboxIconButton->Delete ( );
-        this->EditorToolboxIconButton = NULL;
+  if ( this->EditorToolboxIconButton )
+    {
+    this->EditorToolboxIconButton->SetParent ( NULL );
+    this->EditorToolboxIconButton->Delete ( );
+    this->EditorToolboxIconButton = NULL;
     }
-    if ( this->TransformIconButton ) {
-      this->TransformIconButton->SetParent ( NULL );
-        this->TransformIconButton->Delete ( );
-        this->TransformIconButton = NULL;
+  if ( this->TransformIconButton )
+    {
+    this->TransformIconButton->SetParent ( NULL );
+    this->TransformIconButton->Delete ( );
+    this->TransformIconButton = NULL;
     }
-    if ( this->ColorIconButton ) {
-      this->ColorIconButton->SetParent ( NULL );
-        this->ColorIconButton->Delete ( );
-        this->ColorIconButton = NULL;
+  if ( this->ColorIconButton )
+    {
+    this->ColorIconButton->SetParent ( NULL );
+    this->ColorIconButton->Delete ( );
+    this->ColorIconButton = NULL;
     }
-    if ( this->FiducialsIconButton ) {
-      this->FiducialsIconButton->SetParent ( NULL );
-        this->FiducialsIconButton->Delete ( );
-        this->FiducialsIconButton = NULL;
+  if ( this->FiducialsIconButton )
+    {
+    this->FiducialsIconButton->SetParent ( NULL );
+    this->FiducialsIconButton->Delete ( );
+    this->FiducialsIconButton = NULL;
     }
-    if ( this->MeasurementsIconButton ) {
-      this->MeasurementsIconButton->SetParent ( NULL );
-        this->MeasurementsIconButton->Delete ( );
-        this->MeasurementsIconButton = NULL;
+  if ( this->MeasurementsIconButton )
+    {
+    this->MeasurementsIconButton->SetParent ( NULL );
+    this->MeasurementsIconButton->Delete ( );
+    this->MeasurementsIconButton = NULL;
     }
-    if ( this->SaveSceneIconButton ) {
-      this->SaveSceneIconButton->SetParent ( NULL );
-        this->SaveSceneIconButton->Delete ( );
-        this->SaveSceneIconButton = NULL;
+  if ( this->SaveSceneIconButton )
+    {
+    this->SaveSceneIconButton->SetParent ( NULL );
+    this->SaveSceneIconButton->Delete ( );
+    this->SaveSceneIconButton = NULL;
     }
-    if ( this->LoadSceneIconButton ) {
-      this->LoadSceneIconButton->SetParent ( NULL );
-        this->LoadSceneIconButton->Delete ( );
-        this->LoadSceneIconButton = NULL;
+  if ( this->LoadSceneIconButton )
+    {
+    this->LoadSceneIconButton->SetParent ( NULL );
+    this->LoadSceneIconButton->Delete ( );
+    this->LoadSceneIconButton = NULL;
     }
-    if ( this->ConventionalViewIconButton ) {
-      this->ConventionalViewIconButton->SetParent ( NULL );
-        this->ConventionalViewIconButton->Delete ( );
-        this->ConventionalViewIconButton = NULL;
+  if ( this->ConventionalViewIconButton )
+    {
+    this->ConventionalViewIconButton->SetParent ( NULL );
+    this->ConventionalViewIconButton->Delete ( );
+    this->ConventionalViewIconButton = NULL;
     }
-    if ( this->OneUp3DViewIconButton ) {
-      this->OneUp3DViewIconButton->SetParent ( NULL );
-        this->OneUp3DViewIconButton->Delete ( );
-        this->OneUp3DViewIconButton = NULL;
+  if ( this->OneUp3DViewIconButton )
+    {
+    this->OneUp3DViewIconButton->SetParent ( NULL );
+    this->OneUp3DViewIconButton->Delete ( );
+    this->OneUp3DViewIconButton = NULL;
     }
-    if ( this->OneUpSliceViewIconButton ) {
-      this->OneUpSliceViewIconButton->SetParent ( NULL );
-        this->OneUpSliceViewIconButton->Delete ( );
-        this->OneUpSliceViewIconButton = NULL;
+  if ( this->OneUpSliceViewIconButton )
+    {
+    this->OneUpSliceViewIconButton->SetParent ( NULL );
+    this->OneUpSliceViewIconButton->Delete ( );
+    this->OneUpSliceViewIconButton = NULL;
     }
-    if ( this->FourUpViewIconButton ) {
-      this->FourUpViewIconButton->SetParent ( NULL );
-        this->FourUpViewIconButton->Delete ( );
-        this->FourUpViewIconButton = NULL;
+  if ( this->FourUpViewIconButton )
+    {
+    this->FourUpViewIconButton->SetParent ( NULL );
+    this->FourUpViewIconButton->Delete ( );
+    this->FourUpViewIconButton = NULL;
     }
-    if ( this->Tabbed3DViewIconButton ) {
-      this->Tabbed3DViewIconButton->SetParent ( NULL );
-        this->Tabbed3DViewIconButton->Delete ( );
-        this->Tabbed3DViewIconButton = NULL;
+  if ( this->Tabbed3DViewIconButton )
+    {
+    this->Tabbed3DViewIconButton->SetParent ( NULL );
+    this->Tabbed3DViewIconButton->Delete ( );
+    this->Tabbed3DViewIconButton = NULL;
     }
-    if ( this->TabbedSliceViewIconButton ) {
-      this->TabbedSliceViewIconButton->SetParent ( NULL );
-        this->TabbedSliceViewIconButton->Delete ( );
-        this->TabbedSliceViewIconButton = NULL;
+  if ( this->TabbedSliceViewIconButton )
+    {
+    this->TabbedSliceViewIconButton->SetParent ( NULL );
+    this->TabbedSliceViewIconButton->Delete ( );
+    this->TabbedSliceViewIconButton = NULL;
     }
-    if ( this->LightBoxViewIconButton ) {
-      this->LightBoxViewIconButton->SetParent ( NULL );
-        this->LightBoxViewIconButton->Delete ( );
-        this->LightBoxViewIconButton = NULL;
+  if ( this->LightBoxViewIconButton )
+    {
+    this->LightBoxViewIconButton->SetParent ( NULL );
+    this->LightBoxViewIconButton->Delete ( );
+    this->LightBoxViewIconButton = NULL;
     }
-    if ( this->MousePickIconButton ) {
-      this->MousePickIconButton->SetParent ( NULL );
-        this->MousePickIconButton->Delete ( );
-        this->MousePickIconButton = NULL;
+  if ( this->MousePickIconButton )
+    {
+    this->MousePickIconButton->SetParent ( NULL );
+    this->MousePickIconButton->Delete ( );
+    this->MousePickIconButton = NULL;
     }
-    if ( this->MousePlaceFiducialIconButton ) {
-      this->MousePlaceFiducialIconButton->SetParent ( NULL );
-        this->MousePlaceFiducialIconButton->Delete ( );
-        this->MousePlaceFiducialIconButton = NULL;
+  if ( this->MousePlaceFiducialIconButton )
+    {
+    this->MousePlaceFiducialIconButton->SetParent ( NULL );
+    this->MousePlaceFiducialIconButton->Delete ( );
+    this->MousePlaceFiducialIconButton = NULL;
     }
-    if ( this->MousePanIconButton ) {
-      this->MousePanIconButton->SetParent ( NULL );
-        this->MousePanIconButton->Delete ( );
-        this->MousePanIconButton = NULL;
+  if ( this->MouseTransformViewIconButton )
+    {
+    this->MouseTransformViewIconButton->SetParent ( NULL );      
+    this->MouseTransformViewIconButton->Delete ( );
+    this->MouseTransformViewIconButton = NULL;
     }
-    if ( this->MouseRotateIconButton ) {
-      this->MouseRotateIconButton->SetParent ( NULL );      
-        this->MouseRotateIconButton->Delete ( );
-        this->MouseRotateIconButton = NULL;
+  if ( this->UndoIconButton )
+    {
+    this->UndoIconButton->SetParent ( NULL );
+    this->UndoIconButton->Delete ( );
+    this->UndoIconButton = NULL;
     }
-    if ( this->MouseZoomIconButton ) {
-      this->MouseZoomIconButton->SetParent ( NULL );
-        this->MouseZoomIconButton->Delete ( );
-        this->MouseZoomIconButton = NULL;
+  if ( this->RedoIconButton )
+    {
+    this->RedoIconButton->SetParent ( NULL );
+    this->RedoIconButton->Delete ( );
+    this->RedoIconButton = NULL;
     }
+
     
 
-    // Remove the toolbars from the window's toolbar set
+  // Remove the toolbars from the window's toolbar set
     vtkSlicerApplicationGUI *p = this->GetApplicationGUI ( );
     if ( p ) 
       {
@@ -225,27 +260,37 @@ vtkSlicerToolbarGUI::~vtkSlicerToolbarGUI ( )
         }
       }
    
-  // Delete the toolbars
-  if ( this->ModulesToolbar ) {
+    // Delete the toolbars
+    if ( this->ModulesToolbar )
+      {
       this->ModulesToolbar->SetParent ( NULL );
-        this->ModulesToolbar->Delete ( );
-        this->ModulesToolbar = NULL;
-    }
-    if ( this->LoadSaveToolbar ) {
+      this->ModulesToolbar->Delete ( );
+      this->ModulesToolbar = NULL;
+      }
+    if ( this->LoadSaveToolbar )
+      {
       this->LoadSaveToolbar->SetParent ( NULL );
-        this->LoadSaveToolbar->Delete ( );
-        this->LoadSaveToolbar = NULL;
-    }
-    if ( this->ViewToolbar ) {
+      this->LoadSaveToolbar->Delete ( );
+      this->LoadSaveToolbar = NULL;
+      }
+    if ( this->UndoRedoToolbar )
+      {
+      this->UndoRedoToolbar->SetParent ( NULL );
+      this->UndoRedoToolbar->Delete ( );
+      this->UndoRedoToolbar = NULL;
+      }
+    if ( this->ViewToolbar )
+      {
       this->ViewToolbar->SetParent ( NULL );
-        this->ViewToolbar->Delete ( );
-        this->ViewToolbar = NULL;
-    }
-    if ( this->MouseModeToolbar ) {
+      this->ViewToolbar->Delete ( );
+      this->ViewToolbar = NULL;
+      }
+    if ( this->MouseModeToolbar )
+      {
       this->MouseModeToolbar->SetParent ( NULL );
-        this->MouseModeToolbar->Delete ( );
-        this->MouseModeToolbar = NULL;
-    }
+      this->MouseModeToolbar->Delete ( );
+      this->MouseModeToolbar = NULL;
+      }
 
     this->SetApplicationGUI ( NULL );
 }
@@ -279,7 +324,8 @@ void vtkSlicerToolbarGUI::RemoveGUIObservers ( )
     this->Tabbed3DViewIconButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->TabbedSliceViewIconButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->LightBoxViewIconButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-
+    this->UndoIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->RedoIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
 }
 
@@ -303,7 +349,8 @@ void vtkSlicerToolbarGUI::AddGUIObservers ( )
     this->Tabbed3DViewIconButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->TabbedSliceViewIconButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->LightBoxViewIconButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-
+    this->UndoIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->RedoIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 }
 
 
@@ -370,6 +417,7 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
                   p->GetModuleChooseGUI()->GetModulesMenuButton()->SetValue ( "Editor" );
                 }
             }
+          
           if ( pushb == this->ConventionalViewIconButton && event == vtkKWPushButton::InvokedEvent )
             {
 
@@ -417,6 +465,14 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
                 p->BuildMainViewer ( vtkSlicerGUILayout::SlicerLayoutLightboxView );
                 p->AddMainSliceViewersToCollection ( );
               */
+            }
+          else if ( pushb == this->UndoIconButton && event == vtkKWPushButton::InvokedEvent )
+            {
+            // FILL IN
+            }
+          else if ( pushb == this->RedoIconButton && event == vtkKWPushButton::InvokedEvent )
+            {
+            // FILL IN
             }
         }
     }
@@ -503,6 +559,16 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   vtb->SetWidgetsPadX ( 3 );
   vtb->SetWidgetsPadY ( 2 );
 
+  vtkKWToolbar *urtb = this->GetUndoRedoToolbar ( );
+  urtb->SetParent ( tbs->GetToolbarsFrame ( ) );
+  urtb->Create();
+  urtb->SetWidgetsFlatAdditionalPadX ( 0 );
+  urtb->SetWidgetsFlatAdditionalPadY ( 0 );
+  urtb->ResizableOff ( );
+  urtb->SetReliefToGroove ( );
+  urtb->SetWidgetsPadX ( 3 );
+  urtb->SetWidgetsPadY ( 2 );
+  
   vtkKWToolbar *mmtb = this->GetMouseModeToolbar ( );
   mmtb->SetParent ( tbs->GetToolbarsFrame ( ) );
   mmtb->Create();
@@ -516,6 +582,7 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   //--- and add toolbars to the window's main toolbar set.        
   tbs->AddToolbar ( this->GetLoadSaveToolbar() );
   tbs->AddToolbar ( this->GetModulesToolbar() );
+  tbs->AddToolbar ( this->GetUndoRedoToolbar () );
   tbs->AddToolbar ( this->GetViewToolbar() );
   tbs->AddToolbar ( this->GetMouseModeToolbar() );
         
@@ -641,6 +708,27 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   this->ColorIconButton->SetBalloonHelpString ( "Colors");
   mtb->AddWidget ( this->ColorIconButton );
 
+  // undo icon
+  this->UndoIconButton->SetParent ( urtb->GetFrame ( ) );
+  this->UndoIconButton->Create ( );
+  this->UndoIconButton->SetReliefToFlat ( );
+  this->UndoIconButton->SetBorderWidth ( 0 );
+  this->UndoIconButton->SetOverReliefToNone ( );
+  this->UndoIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetUndoIcon ( ) );
+  this->UndoIconButton->SetBalloonHelpString ( "Undo (or use keyboard Ctrl+Z)");
+  urtb->AddWidget ( this->UndoIconButton );
+
+  // redo icon
+  this->RedoIconButton->SetParent ( urtb->GetFrame ( ) );
+  this->RedoIconButton->Create ( );
+  this->RedoIconButton->SetReliefToFlat ( );
+  this->RedoIconButton->SetBorderWidth ( 0 );
+  this->RedoIconButton->SetOverReliefToNone ( );
+  this->RedoIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetRedoIcon ( ) );
+  this->RedoIconButton->SetBalloonHelpString ( "Redo (or use keyboard Ctrl+Y)");
+  urtb->AddWidget ( this->RedoIconButton );
+
+
   // conventional view icon
   this->ConventionalViewIconButton->SetParent (vtb->GetFrame ( ) );
   this->ConventionalViewIconButton->Create ( );
@@ -720,35 +808,15 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   this->MousePickIconButton->SetBalloonHelpString ( "Set the 3DViewer mouse mode to 'pick'" );
   mmtb->AddWidget ( this->MousePickIconButton );
 
-  // mouse mode icons; mouse pan icon
-  this->MousePanIconButton->SetParent (mmtb->GetFrame ( ));
-  this->MousePanIconButton->Create ( );
-  this->MousePanIconButton->SetReliefToFlat ( );
-  this->MousePanIconButton->SetBorderWidth ( 0 );
-  this->MousePanIconButton->SetOverReliefToNone ( );
-  this->MousePanIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetMousePanIcon( ) );
-  this->MousePanIconButton->SetBalloonHelpString ( "Set the 3DViewer mouse mode to 'pan' " );
-  mmtb->AddWidget ( this->MousePanIconButton );
-
   // mouse mode icons; mouse rotate icon
-  this->MouseRotateIconButton->SetParent (mmtb->GetFrame ( ));
-  this->MouseRotateIconButton->Create ( );
-  this->MouseRotateIconButton->SetReliefToFlat ( );
-  this->MouseRotateIconButton->SetBorderWidth ( 0 );
-  this->MouseRotateIconButton->SetOverReliefToNone ( );
-  this->MouseRotateIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetMouseRotateIcon( ) );
-  this->MouseRotateIconButton->SetBalloonHelpString ( "Set the 3DViewer mouse mode to 'rotate' " );
-  mmtb->AddWidget ( this->MouseRotateIconButton );
-
-  // mouse mode icons; mouse zoom  icon
-  this->MouseZoomIconButton->SetParent (mmtb->GetFrame ( ));
-  this->MouseZoomIconButton->Create ( );
-  this->MouseZoomIconButton->SetReliefToFlat ( );
-  this->MouseZoomIconButton->SetBorderWidth ( 0 );
-  this->MouseZoomIconButton->SetOverReliefToNone ( );
-  this->MouseZoomIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetMouseZoomIcon( ) );
-  this->MouseZoomIconButton->SetBalloonHelpString ( "Set the 3DViewer mouse mode to 'zoom' " );
-  mmtb->AddWidget ( this->MouseZoomIconButton );
+  this->MouseTransformViewIconButton->SetParent (mmtb->GetFrame ( ));
+  this->MouseTransformViewIconButton->Create ( );
+  this->MouseTransformViewIconButton->SetReliefToFlat ( );
+  this->MouseTransformViewIconButton->SetBorderWidth ( 0 );
+  this->MouseTransformViewIconButton->SetOverReliefToNone ( );
+  this->MouseTransformViewIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetMouseTransformViewIcon( ) );
+  this->MouseTransformViewIconButton->SetBalloonHelpString ( "Set the 3DViewer mouse mode to 'transform view' " );
+  mmtb->AddWidget ( this->MouseTransformViewIconButton );
 
   // mouse mode icons; mouse pick icon
   this->MousePlaceFiducialIconButton->SetParent (mmtb->GetFrame ( ));
@@ -774,6 +842,7 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   tbs->ShowToolbar ( this->GetModulesToolbar ( ));
   tbs->ShowToolbar ( this->GetLoadSaveToolbar ( ));
   tbs->ShowToolbar ( this->GetViewToolbar ( ));
+  tbs->ShowToolbar ( this->GetUndoRedoToolbar ( ));
   tbs->ShowToolbar ( this->GetMouseModeToolbar ( ));
 
 }

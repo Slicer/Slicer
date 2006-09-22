@@ -10,7 +10,7 @@
 #include "./Resources/vtkSlicerMouseModeToolbar_ImageData.h"
 #include "./Resources/vtkSlicerViewToolbar_ImageData.h"
 #include "./Resources/vtkSlicerModuleToolbar_ImageData.h"
-
+#include "./Resources/vtkSlicerUndoRedoToolbar_ImageData.h"
 
 class vtkSlicerToolbarIcons : public vtkSlicerIcons
 {
@@ -41,10 +41,10 @@ class vtkSlicerToolbarIcons : public vtkSlicerIcons
     vtkGetObjectMacro (Tabbed3DViewIcon, vtkKWIcon);
     vtkGetObjectMacro (LightBoxViewIcon, vtkKWIcon);
     vtkGetObjectMacro (MousePickIcon, vtkKWIcon );
-    vtkGetObjectMacro (MousePanIcon, vtkKWIcon );
-    vtkGetObjectMacro (MouseRotateIcon, vtkKWIcon );    
-    vtkGetObjectMacro (MouseZoomIcon, vtkKWIcon );
+    vtkGetObjectMacro (MouseTransformViewIcon, vtkKWIcon );    
     vtkGetObjectMacro (MousePlaceFiducialIcon, vtkKWIcon );
+    vtkGetObjectMacro (UndoIcon, vtkKWIcon );
+    vtkGetObjectMacro (RedoIcon, vtkKWIcon );
 
     virtual void AssignImageDataToIcons ( );
     
@@ -72,10 +72,11 @@ class vtkSlicerToolbarIcons : public vtkSlicerIcons
     vtkKWIcon *Tabbed3DViewIcon;
     vtkKWIcon *LightBoxViewIcon;
     vtkKWIcon *MousePickIcon;
-    vtkKWIcon *MousePanIcon;
-    vtkKWIcon *MouseRotateIcon;
-    vtkKWIcon *MouseZoomIcon;
+    vtkKWIcon *MouseTransformViewIcon;
     vtkKWIcon *MousePlaceFiducialIcon;
+    vtkKWIcon *UndoIcon;
+    vtkKWIcon *RedoIcon;    
+
 
  private:
     vtkSlicerToolbarIcons (const vtkSlicerToolbarIcons&); // Not implemented
