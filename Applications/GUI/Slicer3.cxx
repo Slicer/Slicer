@@ -84,7 +84,7 @@ int Slicer3_Tcl_Eval ( Tcl_Interp *interp, const char *script )
 }
 
 //#define CLIMODULES_DEBUG
-#define TCLMODULES_DEBUG
+//#define TCLMODULES_DEBUG
 //#define SLICES_DEBUG
 //#define MODELS_DEBUG
 //#define VOLUMES_DEBUG
