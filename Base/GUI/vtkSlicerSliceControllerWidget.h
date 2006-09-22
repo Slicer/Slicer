@@ -16,6 +16,8 @@
 #include "vtkMRMLSliceNode.h"
 #include "vtkMRMLSliceCompositeNode.h"
 
+#include "vtkSlicerSliceLogic.h"
+
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceControllerWidget : public vtkSlicerWidget
 {
     
@@ -50,6 +52,11 @@ public:
     {
     this->SetAndObserveMRML( vtkObjectPointer(&this->SliceNode), snode );
     }
+
+  // Description:
+  // slice logic controlling the slice to be manipulated
+  vtkSetObjectMacro ( SliceLogic, vtkSlicerSliceLogic );
+  vtkGetObjectMacro ( SliceLogic, vtkSlicerSliceLogic );
 
   // Description:
   // TODO: Use this flag to determine how to display
@@ -103,6 +110,11 @@ protected:
   //
   vtkMRMLSliceNode *SliceNode;
   vtkMRMLSliceCompositeNode *SliceCompositeNode;
+
+  //
+  // Logic
+  //
+  vtkSlicerSliceLogic *SliceLogic;
 
 private:
   vtkSlicerSliceControllerWidget (const vtkSlicerSliceControllerWidget &); //Not implemented

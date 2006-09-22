@@ -35,6 +35,7 @@ vtkSlicerSliceControllerWidget::vtkSlicerSliceControllerWidget ( ) {
   this->VisibilityIcons = NULL;
   this->SliceNode = NULL;
   this->SliceCompositeNode = NULL;
+  this->SliceLogic = NULL;
   this->ScaleFrame = NULL;
   this->ColorCodeFrame = NULL;
 }
@@ -92,6 +93,7 @@ vtkSlicerSliceControllerWidget::~vtkSlicerSliceControllerWidget ( ){
 
     this->SetSliceNode ( NULL );
     this->SetSliceCompositeNode ( NULL );
+    this->SetSliceLogic ( NULL );
 }
 
 
@@ -372,49 +374,11 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
   
   int modified = 0;
 
-  //
-  // Set the Offset from the Scale
-  // - get the current translation in RAS space and convert it to Slice space
-  //   by transforming it by the invers of the upper 3x3 of SliceToRAS
-  // - replace the z value of the translation with the new value given by the slider
-  // - this preserves whatever translation was already in place
-  //
-
-  vtkMatrix4x4 *sliceToRAS = vtkMatrix4x4::New();
-  sliceToRAS->DeepCopy( this->SliceNode->GetSliceToRAS() );
-  for (int i = 0; i < 3; i++)
+  if ( (double) this->OffsetScale->GetValue() != this->SliceLogic->GetSliceOffset() )
     {
-    sliceToRAS->SetElement( i, 3, 0.0 );  // Zero out the tranlation portion
-    }
-  sliceToRAS->Invert();
-  double v1[4], v2[4];
-  for (int i = 0; i < 4; i++)
-    { // get the translation back as a vector
-    v1[i] = this->SliceNode->GetSliceToRAS()->GetElement( i, 3 );
-    }
-  // bring the translation into slice space
-  // and overwrite the z part
-  sliceToRAS->MultiplyPoint(v1, v2);
-  v2[2] = (double) this->OffsetScale->GetValue();
-  // Now bring the new translation vector back into RAS space
-  sliceToRAS->Invert();
-  sliceToRAS->MultiplyPoint(v2, v1);
-  for (int i = 0; i < 4; i++)
-    {
-    sliceToRAS->SetElement( i, 3, v1[i] );
-    }
- 
-  // if the translation has changed, update the rest of the matrices
-  if ( sliceToRAS->GetElement( 0, 3 ) != this->SliceNode->GetSliceToRAS()->GetElement( 0, 3 ) ||
-       sliceToRAS->GetElement( 1, 3 ) != this->SliceNode->GetSliceToRAS()->GetElement( 1, 3 ) ||
-       sliceToRAS->GetElement( 2, 3 ) != this->SliceNode->GetSliceToRAS()->GetElement( 2, 3 ) )
-    {
-    this->SliceNode->GetSliceToRAS()->DeepCopy( sliceToRAS );
-    this->SliceNode->UpdateMatrices();
+    this->SliceLogic->SetSliceOffset( (double) this->OffsetScale->GetValue() );
     modified = 1;
     }
-  sliceToRAS->Delete();
-
 
   if ( modified )
     {
@@ -482,51 +446,10 @@ void vtkSlicerSliceControllerWidget::ProcessMRMLEvents ( vtkObject *caller, unsi
   //
   // Set the scale value to match the offset
   //
-  // Since translation is a scalar multiple of the Pz column of the
-  // SliceToRAS upper 3x3, find a non-zero entry in that column
-  // and calculate the scalar from that.
-#if 0
-  vtkMatrix4x4 *m = this->SliceNode->GetSliceToRAS();
-  int i;
-  double s;
-  for (i = 0; i < 3; i++)
+  if ( (double) this->OffsetScale->GetValue() != this->SliceLogic->GetSliceOffset() )
     {
-    if ( m->GetElement( i, 2 ) != 0.0 )
-      { 
-      s = m->GetElement( i, 3 ) / m->GetElement( i, 2 ); 
-      }
+    this->OffsetScale->SetValue( this->SliceLogic->GetSliceOffset() );
     }
-#endif
-
-  //
-  // Set the scale value to match the offset
-  //
-  // - get the current translation in RAS space and convert it to Slice space
-  //   by transforming it by the invers of the upper 3x3 of SliceToRAS
-  //
-  vtkMatrix4x4 *sliceToRAS = vtkMatrix4x4::New();
-  sliceToRAS->DeepCopy( this->SliceNode->GetSliceToRAS() );
-  for (int i = 0; i < 3; i++)
-    {
-    sliceToRAS->SetElement( i, 3, 0.0 );  // Zero out the tranlation portion
-    }
-  sliceToRAS->Invert();
-  double v1[4], v2[4];
-  for (int i = 0; i < 4; i++)
-    { // get the translation back as a vector
-    v1[i] = this->SliceNode->GetSliceToRAS()->GetElement( i, 3 );
-    }
-  // bring the translation into slice space
-  // and overwrite the z part
-  sliceToRAS->MultiplyPoint(v1, v2);
-  sliceToRAS->Delete();
-
-  if ( v2[2] != (double) this->OffsetScale->GetValue() )
-    {
-    this->OffsetScale->SetValue( v2[2] );
-    modified = 1;
-    }
-
 
   //
   // when the composite node changes, update the menus to match

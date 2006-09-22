@@ -25,12 +25,17 @@ if { [itcl::find class SliceSWidget] == "" } {
     constructor {args} {}
     destructor {}
 
+    public variable sliceStep 1  ;# the size of the slice increment/decrement
+
     variable _actionStartRAS "0 0 0"
     variable _actionStartXY "0 0"
     variable _actionStartFOV "250 250 250"
 
     # methods
     method processEvent {} {}
+    method incrementSlice {} {}
+    method decrementSlice {} {}
+    method moveSlice { delta } {}
   }
 }
 
@@ -224,8 +229,14 @@ itcl::body SliceSWidget::processEvent { } {
       $sliceGUI SetGrabID ""
       $sliceGUI SetGUICommandAbortFlag 1
     }
-    "MouseWheelForwardEvent" { $this incrementSlice }
-    "MouseWheelBackwardEvent" {  $this decrementSlice }
+    "MouseWheelForwardEvent" { 
+      $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
+      $this incrementSlice 
+    }
+    "MouseWheelBackwardEvent" {
+      $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
+      $this decrementSlice 
+    }
     "ExposeEvent" { }
     "ConfigureEvent" {
       set tkwindow [$_renderWidget  GetWidgetName]
@@ -301,3 +312,18 @@ itcl::body SliceSWidget::processEvent { } {
 
 }
 
+itcl::body SliceSWidget::incrementSlice {} {
+  $this moveSlice $sliceStep
+}
+
+itcl::body SliceSWidget::decrementSlice {} {
+  $this moveSlice [expr -1.0 * $sliceStep]
+}
+
+itcl::body SliceSWidget::moveSlice { delta } {
+  set logic [$sliceGUI GetLogic]
+  set offset [$logic GetSliceOffset]
+  puts "offset was $offset"
+  $logic SetSliceOffset [expr $offset + $delta]
+  puts "offset is [$logic GetSliceOffset]"
+}

@@ -677,13 +677,95 @@ void vtkSlicerSliceLogic::FitSliceToAll(int width, int height)
 }
 
 // Get/Set the current distance from the origin to the slice plane
+
 double vtkSlicerSliceLogic::GetSliceOffset()
 {
-  return 0.0;
+  //
+  // - get the current translation in RAS space and convert it to Slice space
+  //   by transforming it by the inverse of the upper 3x3 of SliceToRAS
+  // - pull out the Z translation part
+  //
+
+  vtkMRMLSliceNode *sliceNode = this->GetSliceNode();
+
+  if ( !sliceNode )
+    {
+    return 0.0;
+    }
+
+  vtkMatrix4x4 *sliceToRAS = vtkMatrix4x4::New();
+  sliceToRAS->DeepCopy( this->SliceNode->GetSliceToRAS() );
+  for (int i = 0; i < 3; i++)
+    {
+    sliceToRAS->SetElement( i, 3, 0.0 );  // Zero out the tranlation portion
+    }
+  sliceToRAS->Invert();
+  double v1[4], v2[4];
+  for (int i = 0; i < 4; i++)
+    { // get the translation back as a vector
+    v1[i] = sliceNode->GetSliceToRAS()->GetElement( i, 3 );
+    }
+  // bring the translation into slice space
+  // and overwrite the z part
+  sliceToRAS->MultiplyPoint(v1, v2);
+  sliceToRAS->Delete();
+
+  return ( v2[2] );
+
 }
 
 void vtkSlicerSliceLogic::SetSliceOffset(double offset)
 {
+  //
+  // Set the Offset
+  // - get the current translation in RAS space and convert it to Slice space
+  //   by transforming it by the invers of the upper 3x3 of SliceToRAS
+  // - replace the z value of the translation with the new value given by the slider
+  // - this preserves whatever translation was already in place
+  //
+
+  vtkMRMLSliceNode *sliceNode = this->GetSliceNode();
+
+  if ( !sliceNode )
+    {
+    return;
+    }
+
+  vtkMatrix4x4 *sliceToRAS = vtkMatrix4x4::New();
+  sliceToRAS->DeepCopy( this->SliceNode->GetSliceToRAS() );
+  for (int i = 0; i < 3; i++)
+    {
+    sliceToRAS->SetElement( i, 3, 0.0 );  // Zero out the tranlation portion
+    }
+  sliceToRAS->Invert();
+  double v1[4], v2[4];
+  for (int i = 0; i < 4; i++)
+    { // get the translation back as a vector
+    v1[i] = sliceNode->GetSliceToRAS()->GetElement( i, 3 );
+    }
+  // bring the translation into slice space
+  // and overwrite the z part
+  sliceToRAS->MultiplyPoint(v1, v2);
+
+  v2[2] = offset;
+
+  // Now bring the new translation vector back into RAS space
+  sliceToRAS->Invert();
+  sliceToRAS->MultiplyPoint(v2, v1);
+  for (int i = 0; i < 4; i++)
+    {
+    sliceToRAS->SetElement( i, 3, v1[i] );
+    }
+ 
+  // if the translation has changed, update the rest of the matrices
+  if ( sliceToRAS->GetElement( 0, 3 ) != sliceNode->GetSliceToRAS()->GetElement( 0, 3 ) ||
+       sliceToRAS->GetElement( 1, 3 ) != sliceNode->GetSliceToRAS()->GetElement( 1, 3 ) ||
+       sliceToRAS->GetElement( 2, 3 ) != sliceNode->GetSliceToRAS()->GetElement( 2, 3 ) )
+    {
+    sliceNode->GetSliceToRAS()->DeepCopy( sliceToRAS );
+    sliceNode->UpdateMatrices();
+    }
+  sliceToRAS->Delete();
 }
 
 

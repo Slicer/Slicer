@@ -78,6 +78,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceGUI : public vtkSlicerComponentGU
 
           vtkMRMLSliceCompositeNode *scnode = this->GetLogic()->GetSliceCompositeNode();
           this->GetSliceController()->SetSliceCompositeNode (scnode);
+
+          this->GetSliceController()->SetSliceLogic( this->GetLogic() );
           }
 
         if ( this->GetSliceViewer() && this->GetSliceViewer()->GetImageMapper() )
