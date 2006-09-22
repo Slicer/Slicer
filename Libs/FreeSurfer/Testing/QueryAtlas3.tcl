@@ -9,6 +9,7 @@ proc QueryAtlasInit { {filename ""} } {
   } else {
     set candidates {
       set fileName /projects/birn/freesurfer/data/bert/surf/lh.pial
+      set fileName i:/fBIRN-AHM2006/fbph2-000670986943/surf/lh.pial
       set fileName c:/data/fBIRN-AHM2006/fbph2-000648622547/surf/lh.pial
     }
     foreach c $candidates {
