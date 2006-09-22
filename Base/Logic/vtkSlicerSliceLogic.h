@@ -140,6 +140,20 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLogic : public vtkSlicerLogic
   // manage and syncronise the SliceCompositeNode
   void UpdateSliceCompositeNode();
 
+  // Description:
+  // adjust the node's field of view to match the extent of current background volume
+  void FitSliceToBackground(int width, int height);
+
+  // Description:
+  // adjust the node's field of view to match the extent of all volume layers
+  // TODO: not yet implemented
+  void FitSliceToAll(int width, int height);
+
+  // Description:
+  // Get/Set the current distance from the origin to the slice plane
+  double GetSliceOffset();
+  void SetSliceOffset(double offset);
+
 protected:
   vtkSlicerSliceLogic();
   ~vtkSlicerSliceLogic();

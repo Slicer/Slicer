@@ -224,8 +224,8 @@ itcl::body SliceSWidget::processEvent { } {
       $sliceGUI SetGrabID ""
       $sliceGUI SetGUICommandAbortFlag 1
     }
-    "MouseWheelForwardEvent" { }
-    "MouseWheelBackwardEvent" { }
+    "MouseWheelForwardEvent" { $this incrementSlice }
+    "MouseWheelBackwardEvent" {  $this decrementSlice }
     "ExposeEvent" { }
     "ConfigureEvent" {
       set tkwindow [$_renderWidget  GetWidgetName]
@@ -255,82 +255,29 @@ itcl::body SliceSWidget::processEvent { } {
     "TimerEvent" { }
     "KeyPressEvent" { 
       $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
-      switch [$_interactor GetKeyCode] {
+      switch [$_interactor GetKeySym] {
         "v" {
           $sliceGUI SetGUICommandAbortFlag 1
           $_sliceNode SetSliceVisible [expr ![$_sliceNode GetSliceVisible]]
         }
-        "p" {
-          PaintSWidget::TogglePaint
-        }
         "f" {
-          #
-          # fit the view to the background volume
-          # - if there's a background image,
-          # - figure out the image dimensions mapped to view space
-          # - set the field of view to include the full dimensions
-          # - reset the pan/zoom/slice to origin
-          # TODO: this logic should be moved into the SliceNode
-          #
-          if { $_layers(background,image) != "" } {
-            set ijkToRAS [vtkMatrix4x4 New]
-            set dims [$_layers(background,image) GetDimensions]
-            $_layers(background,node) GetIJKToRASMatrix $ijkToRAS
-            set rasDims [eval $ijkToRAS MultiplyPoint $dims 0]
-            $ijkToRAS Delete
 
-            set rasToSlice [vtkMatrix4x4 New]
-            $rasToSlice DeepCopy [$_sliceNode GetSliceToRAS]
-            foreach r {0 1 2} {$rasToSlice SetElement $r 3  0}
-            $rasToSlice Invert
-            set sliceDims [eval $rasToSlice MultiplyPoint $rasDims ]
-            $rasToSlice Delete
-
-            set absSliceDims ""
-            foreach d $sliceDims {
-              lappend absSliceDims [expr abs($d)]
-            }
-
-            set tkwindow [$_renderWidget  GetWidgetName]
-            set w [winfo width $tkwindow]
-            set h [winfo height $tkwindow]
-
-            # fit fov to min dimension of window
-            foreach {fx fy fz fw} $absSliceDims {}
-            if { $h > $w } {
-              set pixelSize [expr $fx / (1.0 * $w)]
-              set fy [expr $pixelSize * $h]
-            } else {
-              set pixelSize [expr $fy / (1.0 * $h)]
-              set fx [expr $pixelSize * $w]
-            }
-
-            # if volume is still too big, shrink some more
-            foreach {dx dy dz dw} $absSliceDims {}
-            if { $dx > $fx } {
-              set fy [expr $fy / ($fx / ($dx * 1.0))]
-              set fx $dx
-            }
-            if { $dy > $fy } {
-              set fx [expr $fx / ($fy / ($dy * 1.0))]
-              set fy $dy
-            }
-
-            $_sliceNode SetFieldOfView $fx $fy $fz
-
-            # reset to origin
-            $o(scratchMatrix) DeepCopy [$_sliceNode GetSliceToRAS]
-            foreach i {0 1 2} {
-              $o(scratchMatrix) SetElement $i 3  0
-            }
-            [$_sliceNode GetSliceToRAS] DeepCopy $o(scratchMatrix)
-
-            $_sliceNode UpdateMatrices
-            $sliceGUI SetGUICommandAbortFlag 1
-          }
+          # use c++ version of calculation
+          set tkwindow [$_renderWidget  GetWidgetName]
+          set w [winfo width $tkwindow]
+          set h [winfo height $tkwindow]
+          [$sliceGUI GetLogic] FitSliceToBackground $w $h
+          $_sliceNode UpdateMatrices
+          $sliceGUI SetGUICommandAbortFlag 1
+        }
+        Left - Down {
+          $this decrementSlice
+        }
+        Right - Up {
+          $this incrementSlice
         }
         default {
-          puts "[$_interactor GetKeyCode]"
+          puts "[$_interactor GetKeyCode], [$_interactor GetKeySym]"
         }
       }
     }

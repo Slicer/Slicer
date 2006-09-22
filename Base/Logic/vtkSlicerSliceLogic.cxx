@@ -584,4 +584,106 @@ void vtkSlicerSliceLogic::CreateSliceModel()
     }
 }
 
+// adjust the node's field of view to match the extent of current background volume
+void vtkSlicerSliceLogic::FitSliceToBackground(int width, int height)
+{
+  vtkMRMLSliceNode *sliceNode = this->GetSliceNode();
+  vtkMRMLSliceCompositeNode *compositeNode = this->GetSliceCompositeNode();
+  vtkMRMLScalarVolumeNode *backgroundNode = NULL;
+
+  if ( !sliceNode || !compositeNode )
+    {
+    return;
+    }
+  
+  backgroundNode = vtkMRMLScalarVolumeNode::SafeDownCast (
+      this->MRMLScene->GetNodeByID( compositeNode->GetBackgroundVolumeID() ));
+
+  vtkImageData *backgroundImage;
+  if ( !backgroundNode || ! (backgroundImage = backgroundNode->GetImageData()) )
+    {
+    return;
+    }
+
+
+  vtkMatrix4x4 *ijkToRAS = vtkMatrix4x4::New();
+  int dimensions[3];
+  double doubleDimensions[4], rasDimensions[4], sliceDimensions[4], absSliceDimensions[4];
+  backgroundImage->GetDimensions(dimensions);
+  doubleDimensions[0] = dimensions[0];
+  doubleDimensions[1] = dimensions[1];
+  doubleDimensions[2] = dimensions[2];
+  doubleDimensions[3] = 0;
+  backgroundNode->GetIJKToRASMatrix (ijkToRAS);
+  ijkToRAS->MultiplyPoint( doubleDimensions, rasDimensions );
+  ijkToRAS->Delete();
+
+
+  vtkMatrix4x4 *rasToSlice = vtkMatrix4x4::New();
+  rasToSlice->DeepCopy(sliceNode->GetSliceToRAS());
+  rasToSlice->SetElement(0, 3, 0.0);
+  rasToSlice->SetElement(1, 3, 0.0);
+  rasToSlice->SetElement(2, 3, 0.0);
+  rasToSlice->Invert();
+  rasToSlice->MultiplyPoint( rasDimensions, sliceDimensions );
+  rasToSlice->Delete();
+
+  double fitX, fitY, fitZ, displayX, displayY;
+  displayX = fitX = absSliceDimensions[0] = fabs(sliceDimensions[0]);
+  displayY = fitY = absSliceDimensions[1] = fabs(sliceDimensions[1]);
+  fitZ = absSliceDimensions[2] = fabs(sliceDimensions[2]);
+
+
+  // fit fov to min dimension of window
+  double pixelSize;
+  if ( height > width )
+    {
+    pixelSize = fitX / (1.0 * width);
+    fitY = pixelSize * height;
+    }
+  else
+    {
+    pixelSize = fitY / (1.0 * height);
+    fitX = pixelSize * width;
+    }
+
+  // if volume is still too big, shrink some more
+  if ( displayX > fitX )
+    {
+    fitY = fitY / ( fitX / (displayX * 1.0) );
+    fitX = displayX;
+    }
+  if ( displayY > fitY )
+    {
+    fitX = fitX / ( fitY / (displayY * 1.0) );
+    fitY = displayY;
+    }
+
+  sliceNode->SetFieldOfView(fitX, fitY, fitZ);
+
+  vtkMatrix4x4 *sliceToRAS = vtkMatrix4x4::New();
+  sliceToRAS->DeepCopy(sliceNode->GetSliceToRAS());
+  sliceToRAS->SetElement(0, 3, 0.0);
+  sliceToRAS->SetElement(1, 3, 0.0);
+  sliceToRAS->SetElement(2, 3, 0.0);
+  sliceNode->GetSliceToRAS()->DeepCopy(sliceToRAS);
+  sliceToRAS->Delete();
+
+}
+
+// adjust the node's field of view to match the extent of all volume layers
+void vtkSlicerSliceLogic::FitSliceToAll(int width, int height)
+{
+}
+
+// Get/Set the current distance from the origin to the slice plane
+double vtkSlicerSliceLogic::GetSliceOffset()
+{
+  return 0.0;
+}
+
+void vtkSlicerSliceLogic::SetSliceOffset(double offset)
+{
+}
+
 
