@@ -99,7 +99,7 @@ set ::TEEM_SRC_DIR  $::SLICER_LIB/teem
 set ::TEEM_BUILD_DIR  $::SLICER_LIB/teem-build
 set ::VTK_DIR  $::SLICER_LIB/VTK-build
 set ::VTK_SRC_DIR $::SLICER_LIB/VTK
-set ::VTK_BUILD_TYPE "Debug"
+set ::VTK_BUILD_TYPE "RelWithDebInfo"
 set ::VTK_BUILD_SUBDIR ""
 set ::env(VTK_BUILD_TYPE) $::VTK_BUILD_TYPE
 set ::KWWidgets_BUILD_DIR  $::SLICER_LIB/KWWidgets-build
