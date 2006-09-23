@@ -78,6 +78,15 @@
       <default>1</default>
     </float>
 
+    <integer>
+      <name>DefaultPixelValue</name>
+      <flag>-d</flag>
+      <longflag>--default</longflag>
+      <description>Default pixel value if resmapled pixel is outside of volume.</description>
+      <label>Default Pixel Value</label>
+      <default>0</default>
+    </integer>
+
   </parameters>
 
   <parameters>

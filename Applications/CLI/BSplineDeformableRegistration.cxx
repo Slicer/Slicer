@@ -38,7 +38,6 @@
 #include "itkImageRegistrationMethod.h"
 #include "itkMattesMutualInformationImageToImageMetric.h"
 #include "itkLinearInterpolateImageFunction.h"
-#include "itkImage.h"
 
 #include "itkTimeProbesCollectorBase.h"
 
@@ -248,13 +247,10 @@ int main( int argc, char *argv[] )
 
   //  Software Guide : BeginLatex
   //
-  //  Here we define the parameters of the BSplineDeformableTransform grid.  We
-  //  arbitrarily decide to use a grid with $5 \times 5$ nodes within the image. 
+  //  Here we define the parameters of the BSplineDeformableTransform grid.
   //  The reader should note that the B-spline computation requires a
   //  finite support region ( 1 grid node at the lower borders and 2
-  //  grid nodes at upper borders). Therefore in this example, we set
-  //  the grid size to be $8 \times 8$ and place the grid origin such that
-  //  grid node (1,1) coincides with the first pixel in the fixed image.
+  //  grid nodes at upper borders).
   // 
   //  \index{BSplineDeformableTransform}
   //
@@ -306,8 +302,6 @@ int main( int argc, char *argv[] )
 
   transform->SetParameters( parameters );
   //  Software Guide : EndCodeSnippet
-
-
 
   //  Software Guide : BeginLatex
   //  
@@ -441,7 +435,7 @@ int main( int argc, char *argv[] )
   resample->SetTransform( transform );
   resample->SetInput( movingOrient->GetOutput() );
   resample->SetOutputParametersFromImage ( fixedOrient->GetOutput() );
-  resample->SetDefaultPixelValue( 100 );
+  resample->SetDefaultPixelValue( DefaultPixelValue );
   collector.Start( "Resample" );
   resample->Update();
   collector.Stop( "Resample" );
