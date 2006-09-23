@@ -14,6 +14,7 @@ vtkSlicerModuleNavigationIcons::vtkSlicerModuleNavigationIcons ( )
     this->ModuleNextIcon = vtkKWIcon::New ( );
     this->ModuleHistoryIcon = vtkKWIcon::New ( );
     this->ModuleRefreshIcon = vtkKWIcon::New ( );
+    this->ModuleSearchIcon = vtkKWIcon::New ( );
     this->AssignImageDataToIcons ( );
 }
 
@@ -36,6 +37,10 @@ vtkSlicerModuleNavigationIcons::~vtkSlicerModuleNavigationIcons ( )
     if ( this->ModuleRefreshIcon ) {
         this->ModuleRefreshIcon->Delete ( );
         this->ModuleRefreshIcon = NULL;
+    }
+    if ( this->ModuleSearchIcon ) {
+        this->ModuleSearchIcon->Delete ( );
+        this->ModuleSearchIcon = NULL;
     }
     
 }
@@ -65,6 +70,11 @@ void vtkSlicerModuleNavigationIcons::AssignImageDataToIcons ( )
                                        image_ModuleNext_width,
                                        image_ModuleNext_height,
                                        image_ModuleNext_pixel_size, 0, 0);
+
+    this->ModuleSearchIcon->SetImage( image_ModuleSearch,
+                                       image_ModuleSearch_width,
+                                       image_ModuleSearch_height,
+                                       image_ModuleSearch_pixel_size, 0, 0);
 }
 
 
@@ -80,6 +90,7 @@ void vtkSlicerModuleNavigationIcons::PrintSelf ( ostream& os, vtkIndent indent )
    os << indent << "ModulePrev" << this->GetModulePrevIcon () << "\n";
    os << indent << "ModuleHistory" << this->GetModuleHistoryIcon () << "\n";
    os << indent << "ModuleRefresh" << this->GetModuleRefreshIcon () << "\n";
+      os << indent << "ModuleSearch" << this->GetModuleSearchIcon () << "\n";
    
 }
 

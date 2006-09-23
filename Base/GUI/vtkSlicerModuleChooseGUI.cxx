@@ -31,6 +31,7 @@ vtkSlicerModuleChooseGUI::vtkSlicerModuleChooseGUI ( )
     this->ModulesNext = vtkKWPushButton::New ( );
     this->ModulesHistory = vtkKWPushButton::New ( );
     this->ModulesRefresh = vtkKWPushButton::New ( );
+    this->ModulesSearch = vtkKWPushButton::New ( );
     this->SlicerModuleNavigationIcons = vtkSlicerModuleNavigationIcons::New ( );
 }
 
@@ -72,6 +73,11 @@ vtkSlicerModuleChooseGUI::~vtkSlicerModuleChooseGUI ( )
       this->ModulesRefresh->SetParent ( NULL );
         this->ModulesRefresh->Delete ( );
         this->ModulesRefresh = NULL;
+    }
+    if ( this->ModulesSearch) {
+      this->ModulesSearch->SetParent ( NULL );
+        this->ModulesSearch->Delete ( );
+        this->ModulesSearch = NULL;
     }
     this->SetApplicationGUI ( NULL );
 }
@@ -140,9 +146,6 @@ void vtkSlicerModuleChooseGUI::SelectModule ( const char *moduleName )
           if ( !strcmp (moduleName, mName) ) 
            {
             m->GetUIPanel()->Raise();
-            //this->RemoveGUIObservers();
-            //this->ModulesMenuButton->GetMenu()->SelectItem(moduleName);
-            //this->AddGUIObservers();
             break;
            }
           m = vtkSlicerModuleGUI::SafeDownCast( app->GetModuleGUICollection( )->GetNextItemAsObject( ) );
@@ -211,7 +214,7 @@ void vtkSlicerModuleChooseGUI::BuildGUI ( vtkKWFrame *appF )
       //--- All modules menu button
       this->ModulesMenuButton->SetParent ( appF );
       this->ModulesMenuButton->Create ( );
-      this->ModulesMenuButton->SetWidth ( 28 );
+      this->ModulesMenuButton->SetWidth ( 24 );
       this->ModulesMenuButton->IndicatorVisibilityOn ( );
       this->ModulesMenuButton->SetBalloonHelpString ("Select a Slicer module.");
 
@@ -220,33 +223,40 @@ void vtkSlicerModuleChooseGUI::BuildGUI ( vtkKWFrame *appF )
       this->ModulesNext->Create ( );
       this->ModulesNext->SetBorderWidth ( 0 );
       this->ModulesNext->SetImageToIcon ( this->SlicerModuleNavigationIcons->GetModuleNextIcon() );
-      this->ModulesNext->SetBalloonHelpString ("Navigate to the next module in your use history.");
+      this->ModulesNext->SetBalloonHelpString ("Go to next module.");
 
       this->ModulesPrev->SetParent ( appF );
       this->ModulesPrev->Create ( );
       this->ModulesPrev->SetBorderWidth ( 0 );
       this->ModulesPrev->SetImageToIcon ( this->SlicerModuleNavigationIcons->GetModulePrevIcon() );
-      this->ModulesPrev->SetBalloonHelpString ("Navigate to the previous module in your use history.");
+      this->ModulesPrev->SetBalloonHelpString ("Go to previous module.");
         
       this->ModulesHistory->SetParent ( appF );
       this->ModulesHistory->Create ( );
       this->ModulesHistory->SetBorderWidth ( 0 );
       this->ModulesHistory->SetImageToIcon ( this->SlicerModuleNavigationIcons->GetModuleHistoryIcon() );
-      this->ModulesHistory->SetBalloonHelpString ("Pop up a window showing your module use history.");
+      this->ModulesHistory->SetBalloonHelpString ("List all visited modules.");
 
       this->ModulesRefresh->SetParent ( appF );
       this->ModulesRefresh->Create ( );
       this->ModulesRefresh->SetBorderWidth ( 0 );
       this->ModulesRefresh->SetImageToIcon ( this->SlicerModuleNavigationIcons->GetModuleRefreshIcon() );
       this->ModulesRefresh->SetBalloonHelpString ("Refresh the list of available modules.");
-        
+
+      this->ModulesSearch->SetParent ( appF );
+      this->ModulesSearch->Create ( );
+      this->ModulesSearch->SetBorderWidth ( 0 );
+      this->ModulesSearch->SetImageToIcon ( this->SlicerModuleNavigationIcons->GetModuleSearchIcon() );
+      this->ModulesSearch->SetBalloonHelpString ("Search for a module (or use keyboard Ctrl+F).");
+
       //--- pack everything up.
-      app->Script ( "pack %s -side left -anchor n -padx 1 -ipadx 1 -pady 3", this->ModulesLabel->GetWidgetName( ) );
-      app->Script ( "pack %s -side left -anchor n -padx 1 -ipady 0 -pady 2", this->ModulesMenuButton->GetWidgetName( ) );
-      app->Script ( "pack %s -side left -anchor c -padx 2 -pady 2", this->ModulesPrev->GetWidgetName( ) );
-      app->Script ( "pack %s -side left -anchor c -padx 2 -pady 2", this->ModulesNext->GetWidgetName( ) );
-      app->Script ( "pack %s -side left -anchor c -padx 2 -pady 2", this->ModulesHistory->GetWidgetName( ) );
-      app->Script ( "pack %s -side left -anchor c -padx 2 -pady 2", this->ModulesRefresh->GetWidgetName( ) );
+      app->Script ( "pack %s -side left -anchor n -padx 0 -ipadx 0 -pady 3", this->ModulesLabel->GetWidgetName( ) );
+      app->Script ( "pack %s -side left -anchor ne -padx 0 -ipady 1 -pady 2", this->ModulesMenuButton->GetWidgetName( ) );
+      app->Script ( "pack %s -side left -anchor c -padx 1 -pady 2", this->ModulesHistory->GetWidgetName( ) );
+      app->Script ( "pack %s -side left -anchor c -padx 1 -pady 2", this->ModulesPrev->GetWidgetName( ) );
+      app->Script ( "pack %s -side left -anchor c -padx 1 -pady 2", this->ModulesNext->GetWidgetName( ) );
+      app->Script ( "pack %s -side left -anchor c -padx 1 -pady 2", this->ModulesSearch->GetWidgetName( ) );
+      app->Script ( "pack %s -side left -anchor c -padx 1 -pady 2", this->ModulesRefresh->GetWidgetName( ) );
     }
   }
 

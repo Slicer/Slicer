@@ -35,6 +35,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleChooseGUI : public vtkSlicerComp
     vtkGetObjectMacro ( ModulesNext, vtkKWPushButton );    
     vtkGetObjectMacro (ModulesHistory, vtkKWPushButton );
     vtkGetObjectMacro (ModulesRefresh, vtkKWPushButton );
+    vtkGetObjectMacro (ModulesSearch, vtkKWPushButton );
     vtkGetObjectMacro ( SlicerModuleNavigationIcons, vtkSlicerModuleNavigationIcons );
 
     // Description:
@@ -82,6 +83,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleChooseGUI : public vtkSlicerComp
     vtkKWPushButton *ModulesNext;
     vtkKWPushButton *ModulesHistory;
     vtkKWPushButton *ModulesRefresh;
+    vtkKWPushButton *ModulesSearch;
     vtkSlicerModuleNavigationIcons *SlicerModuleNavigationIcons;
     
  private:

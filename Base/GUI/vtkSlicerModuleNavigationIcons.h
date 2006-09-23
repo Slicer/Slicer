@@ -18,6 +18,7 @@ class vtkSlicerModuleNavigationIcons : public vtkSlicerIcons
     vtkGetObjectMacro (ModulePrevIcon, vtkKWIcon);
     vtkGetObjectMacro (ModuleHistoryIcon, vtkKWIcon);
     vtkGetObjectMacro (ModuleRefreshIcon, vtkKWIcon);
+    vtkGetObjectMacro (ModuleSearchIcon, vtkKWIcon );
 
     void AssignImageDataToIcons ( );
     
@@ -29,6 +30,7 @@ class vtkSlicerModuleNavigationIcons : public vtkSlicerIcons
     vtkKWIcon *ModuleNextIcon;
     vtkKWIcon *ModuleHistoryIcon;
     vtkKWIcon *ModuleRefreshIcon;
+    vtkKWIcon *ModuleSearchIcon;
     
  private:
     vtkSlicerModuleNavigationIcons (const vtkSlicerModuleNavigationIcons&); // Not implemented
