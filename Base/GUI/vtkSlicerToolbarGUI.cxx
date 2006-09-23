@@ -589,16 +589,6 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   //
   //--- create icons and the labels that display them and add to toolbar
   //
-  // save scene icon
-  this->SaveSceneIconButton->SetParent ( ltb->GetFrame ( ));
-  this->SaveSceneIconButton->Create ( );
-  this->SaveSceneIconButton->SetReliefToFlat ( );
-  this->SaveSceneIconButton->SetBorderWidth ( 0 );
-  this->SaveSceneIconButton->SetOverReliefToNone ( );
-  this->SaveSceneIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetSaveSceneIcon( ) );
-  this->SaveSceneIconButton->SetBalloonHelpString ( "Save a MRML scene or data to a file.");
-  ltb->AddWidget ( this->SaveSceneIconButton );
-
   // load scene icon
   this->LoadSceneIconButton->SetParent ( ltb->GetFrame ( ) );
   this->LoadSceneIconButton->Create();
@@ -608,6 +598,16 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   this->LoadSceneIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetLoadSceneIcon( ) );
   this->LoadSceneIconButton->SetBalloonHelpString ( "Load a MRML scene.");
   ltb->AddWidget ( this->LoadSceneIconButton );
+
+  // save scene icon
+  this->SaveSceneIconButton->SetParent ( ltb->GetFrame ( ));
+  this->SaveSceneIconButton->Create ( );
+  this->SaveSceneIconButton->SetReliefToFlat ( );
+  this->SaveSceneIconButton->SetBorderWidth ( 0 );
+  this->SaveSceneIconButton->SetOverReliefToNone ( );
+  this->SaveSceneIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetSaveSceneIcon( ) );
+  this->SaveSceneIconButton->SetBalloonHelpString ( "Save a MRML scene or data to a file.");
+  ltb->AddWidget ( this->SaveSceneIconButton );
 
   // home icon
   this->HomeIconButton->SetParent ( mtb->GetFrame ( ));
