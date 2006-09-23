@@ -17,7 +17,7 @@
       <longflag>--iterations</longflag>
       <description>Number of iterations</description>
       <label>Iterations</label>
-      <default>200</default>
+      <default>20</default>
     </integer>
 
     <integer>
