@@ -111,13 +111,14 @@ void vtkSlicerSliceGUI::AddGUIObservers ( ) {
 
   this->RemoveGUIObservers();
 
-  // this version doesn't get ConfigureEvents
+#if 0
+  // this version doesn't handle the startup case correctly (windows don't appear)
   // so we observe the interactor style instead
   vtkRenderWindowInteractor *rwi = this->GetSliceViewer()->GetRenderWidget()->GetRenderWindowInteractor();
   rwi->SetInteractorStyle (NULL);
   rwi->AddObserver ( vtkCommand::AnyEvent, (vtkCommand *)this->GUICallbackCommand );
+#endif
 
-#if 0
   // make a user interactor style to process our events
   // look at the InteractorStyle to get our events
   vtkRenderWindowInteractor *rwi = this->GetSliceViewer()->GetRenderWidget()->GetRenderWindowInteractor();
@@ -128,7 +129,6 @@ void vtkSlicerSliceGUI::AddGUIObservers ( ) {
     iStyleUser->AddObserver ( vtkCommand::AnyEvent, (vtkCommand *)this->GUICallbackCommand );
     iStyleUser->Delete();
     }
-#endif
 }
 
 
@@ -136,12 +136,13 @@ void vtkSlicerSliceGUI::AddGUIObservers ( ) {
 //---------------------------------------------------------------------------
 void vtkSlicerSliceGUI::RemoveGUIObservers ( ) {
 
+#if 0
   // this version doesn't get ConfigureEvents
   // so we observe the interactor style instead
   vtkRenderWindowInteractor *rwi = this->GetSliceViewer()->GetRenderWidget()->GetRenderWindowInteractor();
   rwi->RemoveObserver ( (vtkCommand *)this->GUICallbackCommand );
+#endif
    
-#if 0
   vtkRenderWindowInteractor *rwi = this->GetSliceViewer()->GetRenderWidget()->GetRenderWindowInteractor();
   if (rwi)
     {
@@ -151,7 +152,6 @@ void vtkSlicerSliceGUI::RemoveGUIObservers ( ) {
       istyle->RemoveObservers ( vtkCommand::AnyEvent, (vtkCommand *)this->GUICallbackCommand );
       }
     }
-#endif
 }
 
 
