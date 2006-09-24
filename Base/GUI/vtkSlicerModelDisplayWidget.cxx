@@ -27,6 +27,7 @@ vtkSlicerModelDisplayWidget::vtkSlicerModelDisplayWidget ( )
 
     this->ModelSelectorWidget = NULL;
     this->VisibilityButton = NULL;
+    this->ClippingButton = NULL;
     this->OpacityScale = NULL;
     this->SurfaceMaterialPropertyWidget = NULL;
     
@@ -50,6 +51,12 @@ vtkSlicerModelDisplayWidget::~vtkSlicerModelDisplayWidget ( )
     this->VisibilityButton->SetParent(NULL);
     this->VisibilityButton->Delete();
     this->VisibilityButton = NULL;
+    }
+  if (this->ClippingButton)
+    {
+    this->ClippingButton->SetParent(NULL);
+    this->ClippingButton->Delete();
+    this->ClippingButton = NULL;
     }
   if (this->OpacityScale)
     {
@@ -246,6 +253,7 @@ void vtkSlicerModelDisplayWidget::UpdateWidget()
     if (displayNode != NULL) 
       {
       this->VisibilityButton->GetWidget()->SetSelectedState(displayNode->GetVisibility());
+      this->ClippingButton->GetWidget()->SetSelectedState(displayNode->GetClipping());
       this->OpacityScale->GetWidget()->SetValue(displayNode->GetOpacity());
       if (this->SurfaceMaterialPropertyWidget->GetProperty() == NULL)
         {
@@ -278,6 +286,7 @@ void vtkSlicerModelDisplayWidget::UpdateMRML()
     if (displayNode != NULL) 
       {
       displayNode->SetVisibility(this->VisibilityButton->GetWidget()->GetSelectedState());
+      displayNode->SetClipping(this->ClippingButton->GetWidget()->GetSelectedState());
       displayNode->SetOpacity(this->OpacityScale->GetWidget()->GetValue());
       displayNode->SetAmbient(this->SurfaceMaterialPropertyWidget->GetProperty()->GetAmbient());
       displayNode->SetDiffuse(this->SurfaceMaterialPropertyWidget->GetProperty()->GetDiffuse());
@@ -297,6 +306,8 @@ void vtkSlicerModelDisplayWidget::RemoveWidgetObservers ( ) {
   this->ModelSelectorWidget->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
   
   this->VisibilityButton->GetWidget()->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+
+  this->ClippingButton->GetWidget()->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   
   this->OpacityScale->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueChangingEvent, (vtkCommand *)this->GUICallbackCommand );
   this->OpacityScale->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueStartChangingEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -357,6 +368,14 @@ void vtkSlicerModelDisplayWidget::CreateWidget ( )
   this->VisibilityButton->SetBalloonHelpString("set model visibility.");
   this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
                  this->VisibilityButton->GetWidgetName() );
+
+  this->ClippingButton = vtkKWCheckButtonWithLabel::New();
+  this->ClippingButton->SetParent ( modelDisplayFrame->GetFrame() );
+  this->ClippingButton->Create ( );
+  this->ClippingButton->SetLabelText("Clipping");
+  this->ClippingButton->SetBalloonHelpString("set model clipping with RGB slice planes.");
+  this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
+                 this->ClippingButton->GetWidgetName() );
   
   this->OpacityScale = vtkKWScaleWithLabel::New();
   this->OpacityScale->SetParent ( modelDisplayFrame->GetFrame() );
@@ -393,6 +412,8 @@ void vtkSlicerModelDisplayWidget::CreateWidget ( )
   this->OpacityScale->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   
   this->VisibilityButton->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+
+  this->ClippingButton->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   
   this->ChangeColorButton->AddObserver(vtkKWChangeColorButton::ColorChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 
