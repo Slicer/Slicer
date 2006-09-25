@@ -5,8 +5,8 @@
 #include "vtkImageViewer.h"
 #include "vtkRenderWindow.h"
 #include "vtkImageActor.h"
-#include "vtkInteractorStyleUser.h"
 
+#include "vtkSlicerInteractorStyle.h"
 #include "vtkSlicerSliceGUI.h"
 #include "vtkSlicerSliceViewer.h"
 #include "vtkSlicerSliceControllerWidget.h"
@@ -124,10 +124,10 @@ void vtkSlicerSliceGUI::AddGUIObservers ( ) {
   vtkRenderWindowInteractor *rwi = this->GetSliceViewer()->GetRenderWidget()->GetRenderWindowInteractor();
   if (rwi)
     {
-    vtkInteractorStyleUser *iStyleUser = vtkInteractorStyleUser::New();
-    rwi->SetInteractorStyle (iStyleUser);
-    iStyleUser->AddObserver ( vtkCommand::AnyEvent, (vtkCommand *)this->GUICallbackCommand );
-    iStyleUser->Delete();
+    vtkSlicerInteractorStyle *iStyle = vtkSlicerInteractorStyle::New();
+    rwi->SetInteractorStyle (iStyle);
+    iStyle->AddObserver ( vtkCommand::AnyEvent, (vtkCommand *)this->GUICallbackCommand );
+    iStyle->Delete();
     }
 }
 
@@ -146,7 +146,7 @@ void vtkSlicerSliceGUI::RemoveGUIObservers ( ) {
   vtkRenderWindowInteractor *rwi = this->GetSliceViewer()->GetRenderWidget()->GetRenderWindowInteractor();
   if (rwi)
     {
-    vtkInteractorStyle *istyle = vtkInteractorStyle::SafeDownCast(rwi->GetInteractorStyle());
+    vtkSlicerInteractorStyle *istyle = vtkSlicerInteractorStyle::SafeDownCast(rwi->GetInteractorStyle());
     if (istyle)
       {
       istyle->RemoveObservers ( vtkCommand::AnyEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -168,8 +168,8 @@ void vtkSlicerSliceGUI::ProcessGUIEvents ( vtkObject *caller,
 {
   vtkKWGenericRenderWindowInteractor *rwi = 
         vtkKWGenericRenderWindowInteractor::SafeDownCast (caller);
-  vtkInteractorStyleUser *iStyleUser = 
-        vtkInteractorStyleUser::SafeDownCast (caller);
+  vtkSlicerInteractorStyle *iStyle = 
+        vtkSlicerInteractorStyle::SafeDownCast (caller);
 
   vtkMRMLScene *mrml = this->GetApplicationLogic()->GetMRMLScene();
 
@@ -179,7 +179,7 @@ void vtkSlicerSliceGUI::ProcessGUIEvents ( vtkObject *caller,
     }
 
   // handle events from the Interactor Style
-  if (iStyleUser == this->GetSliceViewer()->GetRenderWidget()->
+  if (iStyle == this->GetSliceViewer()->GetRenderWidget()->
                         GetRenderWindowInteractor()->GetInteractorStyle() &&
       this->GetLogic() != NULL)
     {

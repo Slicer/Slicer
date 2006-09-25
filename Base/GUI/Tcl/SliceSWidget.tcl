@@ -151,7 +151,7 @@ itcl::body SliceSWidget::processEvent { } {
         "Translate" {
           #
           # Translate
-          #
+          # TODO: move calculation to vtkSlicerSliceLogic
           set currentRAS [$o(storeXYToRAS) MultiplyPoint $x $y 0 1]
           foreach d {dr da ds} start $_actionStartRAS current $currentRAS {
             set $d [expr $current - $start]
@@ -168,7 +168,7 @@ itcl::body SliceSWidget::processEvent { } {
         "Zoom" {
           #
           # Zoom
-          #
+          # TODO: move calculation to vtkSlicerSliceLogic
           set deltay [expr $y - [lindex $_actionStartXY 1]]
           set tkwindow [$_renderWidget  GetWidgetName]
           set h [winfo height $tkwindow]
