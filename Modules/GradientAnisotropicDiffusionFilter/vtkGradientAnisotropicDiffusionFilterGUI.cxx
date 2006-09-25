@@ -108,7 +108,7 @@ vtkGradientAnisotropicDiffusionFilterGUI::~vtkGradientAnisotropicDiffusionFilter
 
   this->SetLogic (NULL);
   if ( this->GradientAnisotropicDiffusionFilterNode ) {
-      this->SetAndObserveMRML( vtkObjectPointer(&this->GradientAnisotropicDiffusionFilterNode), NULL );
+      vtkSetAndObserveMRMLNodeMacro( this->GradientAnisotropicDiffusionFilterNode, NULL );
   }
   this->SetGradientAnisotropicDiffusionFilterNode (NULL); 
 }
@@ -204,7 +204,7 @@ void vtkGradientAnisotropicDiffusionFilterGUI::ProcessGUIEvents ( vtkObject *cal
     vtkMRMLGradientAnisotropicDiffusionFilterNode* n = vtkMRMLGradientAnisotropicDiffusionFilterNode::SafeDownCast(this->GADNodeSelector->GetSelected());
     this->Logic->SetGradientAnisotropicDiffusionFilterNode(n);
     this->SetGradientAnisotropicDiffusionFilterNode(n);
-    this->SetAndObserveMRML( vtkObjectPointer(&this->GradientAnisotropicDiffusionFilterNode), n);
+    vtkSetAndObserveMRMLNodeMacro( this->GradientAnisotropicDiffusionFilterNode, n);
     this->UpdateGUI();
     }
   else if (b == this->ApplyButton && event == vtkKWPushButton::InvokedEvent ) 
@@ -229,7 +229,7 @@ void vtkGradientAnisotropicDiffusionFilterGUI::UpdateMRML ()
     // set an observe new node in Logic
     this->Logic->SetGradientAnisotropicDiffusionFilterNode(n);
     this->SetGradientAnisotropicDiffusionFilterNode(n);
-    this->SetAndObserveMRML( vtkObjectPointer(&this->GradientAnisotropicDiffusionFilterNode), n);
+    vtkSetAndObserveMRMLNodeMacro(this->GradientAnisotropicDiffusionFilterNode, n);
    }
 
   // save node parameters for Undo

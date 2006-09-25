@@ -112,7 +112,7 @@ vtkCommandLineModuleGUI::~vtkCommandLineModuleGUI()
   this->SetLogic (NULL);
   // wjp test
   if ( this->CommandLineModuleNode ) {
-      this->SetAndObserveMRML( vtkObjectPointer(&this->CommandLineModuleNode), NULL );
+      vtkSetAndObserveMRMLNodeMacro( this->CommandLineModuleNode, NULL );
   }
   // end wjp test
   this->SetCommandLineModuleNode (NULL);
@@ -341,7 +341,7 @@ void vtkCommandLineModuleGUI::ProcessGUIEvents ( vtkObject *caller,
       }
     this->Logic->SetCommandLineModuleNode(n);
     this->SetCommandLineModuleNode(n);
-    this->SetAndObserveMRML( vtkObjectPointer(&this->CommandLineModuleNode), n);
+    vtkSetAndObserveMRMLNodeMacro( this->CommandLineModuleNode, n);
     this->UpdateGUI();
     }
   else if (selector == this->CommandLineModuleNodeSelector && event == vtkSlicerNodeSelectorWidget::NewNodeEvent )
@@ -420,7 +420,7 @@ void vtkCommandLineModuleGUI::UpdateMRML ()
     // set an observe new node in Logic
     this->Logic->SetCommandLineModuleNode(n);
     this->SetCommandLineModuleNode(n);
-    this->SetMRML(vtkObjectPointer(&this->CommandLineModuleNode),n);
+    vtkSetAndObserveMRMLNodeMacro(this->CommandLineModuleNode,n);
 
     createdNode = true;
    }
@@ -491,7 +491,7 @@ void vtkCommandLineModuleGUI::UpdateMRML ()
 
   if (createdNode)
     {
-    this->SetAndObserveMRML( vtkObjectPointer(&this->CommandLineModuleNode),n);
+    vtkSetAndObserveMRMLNodeMacro( this->CommandLineModuleNode,n);
     }
   this->InUpdateMRML = false;
 }
