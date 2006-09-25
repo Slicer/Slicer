@@ -138,6 +138,7 @@ void vtkSlicerModuleCollapsibleFrame::CreateWidget()
 
   this->Label->LabelVisibilityOn();
   this->GetLabel()->SetBinding("<Button-1>", this, "LabelSingleClickCallback");
+  this->GetLabelFrame()->SetBinding("<Button-1>", this, "LabelSingleClickCallback");
 
   label = this->GetLabelIcon();
   label->SetImageToPredefinedIcon(vtkKWIcon::IconLock);
@@ -160,39 +161,49 @@ void vtkSlicerModuleCollapsibleFrame::CreateWidget()
 
   this->IconData->SetImage(vtkKWIcon::IconShrink);
 
-  this->Icon->SetParent(this);
+//  this->Icon->SetParent(this);
+  this->Icon->SetParent(this->LabelFrame);
   this->Icon->Create();
   this->Icon->SetImageToIcon(this->IconData);
   this->Icon->SetBalloonHelpString(
     ks_("Frame With Label|Shrink or expand the frame"));
   
+
   this->Script(
     "pack %s -fill x -expand y -side top", this->ExternalMarginFrame->GetWidgetName());
   this->Script(
-    "pack %s -fill both -expand y -side top", this->CollapsibleFrame->GetWidgetName());
+               "pack %s -fill both -expand y -side top", this->LabelFrame->GetWidgetName());
   this->Script(
-    "pack %s -fill x -expand y -side top", this->InternalMarginFrame->GetWidgetName());
-
+               "pack %s -fill both -expand y -side top", this->CollapsibleFrame->GetWidgetName());
   this->Script(
-    "pack %s -padx 2 -pady 2 -fill both -expand yes -side top",
-               this->Frame->GetWidgetName());
-
+               "pack %s -fill x -expand y -side top", this->InternalMarginFrame->GetWidgetName());
   this->Script(
-    "pack %s -anchor nw -side left -fill both -expand y -padx 2 -pady 0",
-    this->Label->GetWidgetName());
+               "pack %s -padx 2 -pady 2 -fill both -expand yes -side top", this->Frame->GetWidgetName());
 
+/*
   this->Script("place %s -relx 0 -relwidth 1.0 -x 5 -y 0 -anchor nw",
                this->LabelFrame->GetWidgetName());
-  this->Label->Raise();
+*/
+  this->Script (
+    "pack %s -anchor nw -side left  -padx 2 -pady 0",
+    this->Icon->GetWidgetName ( ));
+  this->Script(
+    "pack %s -anchor nw -side left -padx 2 -pady 0",
+    this->Label->GetWidgetName());
 
+/*  this->Label->Raise();
+ */
+
+  this->GetLabel()->SetBinding("<Button-1>", this, "LabelSingleClickCallback");
+
+/*
   this->Icon->SetBinding("<ButtonRelease-1>",this,"CollapseButtonCallback");
-
   // If the label frame get resize, reset the margins
-
   vtksys_stl::string callback("catch {");
   callback += this->GetTclName();
   callback += " AdjustMarginCallback}";
   this->LabelFrame->SetBinding("<Configure>", NULL, callback.c_str());
+*/
 }
 
 //----------------------------------------------------------------------------

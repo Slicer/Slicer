@@ -101,20 +101,29 @@ void vtkSlicerTheme::Install ( )
 
     // Module collapsing frames
     odb->AddEntryAsDouble3 ( "vtkSlicerModuleCollapsibleFrame:LabelFrame", "SetBackgroundColor",
-                             this->SlicerColors->LightestGrey );    
+                             this->SlicerColors->LightestGreyBlue );    
     odb->AddEntryAsInt ( "vtkSlicerModuleCollapsibleFrame:LabelFrame", "SetHighlightThickness", 1 );
     odb->AddEntry ( "vtkSlicerModuleCollapsibleFrame:LabelFrame", "SetReliefToGroove", NULL );
     odb->AddEntryAsDouble3 ( "vtkSlicerModuleCollapsibleFrame:Label", "SetBackgroundColor",
-                             this->SlicerColors->LightestGrey );
-    odb->AddEntryAsInt ( "vtkSlicerModuleCollapsibleFrame:Label", "SetWidth", 40 );
+                             this->SlicerColors->LightestGreyBlue );
+    odb->AddEntryAsDouble3 ( "vtkSlicerModuleCollapsibleFrame:Icon", "SetBackgroundColor",
+                             this->SlicerColors->LightestGreyBlue );
+    // Main Module Tabs
 
 
+    
     // Slicer Frames inside Scrolled windows
     odb->AddEntryAsDouble3 ( "vtkKWFrameWithScrollbar:Frame", "SetBackgroundColor",
                     this->SlicerColors->GUIBgColor );
     odb->AddEntryAsInt ( "vtkKWFrameWithScrollbar:Frame", "SetBorderWidth", 0 );
     odb->AddEntryAsInt ( "vtkKWFrameWithScrollbar:Frame", "SetHighlightThickness", 0 );
     odb->AddEntry ( "vtkKWFrameWithScrollbar:Frame", "SetRelief", "sunken" );
+
+    // Slicer Frames inside notebooks
+    // wjptest
+    odb->AddEntry ( "vtkKWNotebook:Body", "SetRelief", "flat" );
+    odb->AddEntryAsDouble3 ( "vtkKWNotebook", "SetBackgroundColor", this->SlicerColors->GUIBgColor );
+
 
     // Slicer Pushbuttons
     odb->AddEntry ( "vtkKWPushButton", "SetReliefToGroove", NULL );

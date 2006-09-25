@@ -5,6 +5,7 @@
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerModuleLogic.h"
 #include "vtkSlicerDataGUI.h"
+#include "vtkSlicerModuleCollapsibleFrame.h"
 
 #include "vtkKWWidget.h"
 #include "vtkKWFrameWithLabel.h"
@@ -125,6 +126,8 @@ void vtkSlicerDataGUI::BuildGUI ( )
 {
 
     vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
+  // Define your help text here.
+  const char *help = "**Data Module:** Displays and permits operations on the MRML tree. ";
 
     // ---
     // MODULE GUI FRAME 
@@ -135,7 +138,7 @@ void vtkSlicerDataGUI::BuildGUI ( )
     this->UIPanel->AddPage ( "Data", "Data", NULL );
     
     // HELP FRAME
-    vtkKWFrameWithLabel *modHelpFrame = vtkKWFrameWithLabel::New ( );
+    vtkSlicerModuleCollapsibleFrame *modHelpFrame = vtkSlicerModuleCollapsibleFrame::New ( );
     modHelpFrame->SetParent ( this->UIPanel->GetPageWidget ( "Data" ) );
     modHelpFrame->Create ( );
     modHelpFrame->CollapseFrame ( );
@@ -143,13 +146,35 @@ void vtkSlicerDataGUI::BuildGUI ( )
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   modHelpFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Data")->GetWidgetName());
     
+    // configure the parent classes help text widget
+    this->HelpText->SetParent ( modHelpFrame->GetFrame() );
+    this->HelpText->Create ( );
+    this->HelpText->SetText ( help );
+    this->HelpText->SetReliefToFlat ( );
+    this->HelpText->SetWrapToWord ( );
+    this->HelpText->ReadOnlyOn ( );
+    this->HelpText->QuickFormattingOn ( );
+    this->HelpText->SetBalloonHelpString ( "" );
+    app->Script ( "pack %s -side top -fill x -expand y -anchor w -padx 2 -pady 4",
+                  this->HelpText->GetWidgetName ( ) );
+
+    // INSPECT FRAME
+    vtkSlicerModuleCollapsibleFrame *inspectModifyFrame = vtkSlicerModuleCollapsibleFrame::New ( );
+    inspectModifyFrame->SetParent ( this->UIPanel->GetPageWidget ( "Data" ) );
+    inspectModifyFrame->Create ( );
+    inspectModifyFrame->CollapseFrame ( );
+    inspectModifyFrame->SetLabelText ("Display & modify scene");
+    app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
+                  inspectModifyFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Data")->GetWidgetName());
+    
     this->MRMLTreeWidget->SetAndObserveMRMLScene(this->GetMRMLScene() );
-    this->MRMLTreeWidget->SetParent ( this->UIPanel->GetPageWidget ( "Data" ) );
+    this->MRMLTreeWidget->SetParent ( inspectModifyFrame->GetFrame() );
     this->MRMLTreeWidget->Create ( );
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                  this->MRMLTreeWidget->GetWidgetName(), this->UIPanel->GetPageWidget( "Data" )->GetWidgetName());
+                  this->MRMLTreeWidget->GetWidgetName(), inspectModifyFrame->GetFrame()->GetWidgetName());
     
     modHelpFrame->Delete ( );
+    inspectModifyFrame->Delete ( );
 }
 
 

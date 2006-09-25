@@ -33,6 +33,7 @@ SET(LIB_SRCS
   vtkSlicerComponentGUI.cxx
   vtkSlicerModuleGUI.cxx
   vtkSlicerGUICollection.cxx
+  #vtkSlicerTabbedNotebookModuleExampleGUI.cxx
   vtkSlicerSliceGUI.cxx
   vtkSlicerSliceGUICollection.cxx
   vtkSlicerSliceViewer.cxx

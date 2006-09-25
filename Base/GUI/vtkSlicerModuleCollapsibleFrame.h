@@ -153,12 +153,14 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleCollapsibleFrame : public vtkKWC
   // Description:
   // Get the internal frame responsible for drawing the collapsible border.
   vtkGetObjectMacro(CollapsibleFrame, vtkKWFrame);
-
+  vtkGetObjectMacro (Icon, vtkKWLabel);
+  
   // Description:
   // Callbacks. Internal, do not use.
   virtual void AdjustMarginCallback();
   virtual void CollapseButtonCallback();
   virtual void LabelSingleClickCallback();
+  
 
  protected:
   vtkSlicerModuleCollapsibleFrame();

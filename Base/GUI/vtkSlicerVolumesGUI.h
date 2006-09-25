@@ -41,7 +41,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerVolumesGUI : public vtkSlicerModuleGUI
     vtkGetStringMacro ( SelectedVolumeID);
     vtkSetStringMacro ( SelectedVolumeID );
 
-
     // Description:
     // API for setting VolumeNode, VolumeLogic and
     // for both setting and observing them.

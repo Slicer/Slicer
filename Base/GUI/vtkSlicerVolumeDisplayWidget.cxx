@@ -3,7 +3,7 @@
 
 #include "vtkSlicerVolumeDisplayWidget.h"
 
-#include "vtkKWFrameWithLabel.h"
+#include "vtkKWFrame.h"
 #include "vtkKWMenu.h"
 #include "vtkKWMenuButton.h"
 
@@ -254,16 +254,14 @@ void vtkSlicerVolumeDisplayWidget::CreateWidget ( )
 
     // ---
     // DISPLAY FRAME            
-    vtkKWFrameWithLabel *volDisplayFrame = vtkKWFrameWithLabel::New ( );
+    vtkKWFrame *volDisplayFrame = vtkKWFrame::New ( );
     volDisplayFrame->SetParent ( this->GetParent() );
     volDisplayFrame->Create ( );
-    volDisplayFrame->SetLabelText ("Display");
-    volDisplayFrame->CollapseFrame ( );
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                   volDisplayFrame->GetWidgetName() );
 
     this->VolumeSelectorWidget = vtkSlicerNodeSelectorWidget::New() ;
-    this->VolumeSelectorWidget->SetParent ( volDisplayFrame->GetFrame() );
+    this->VolumeSelectorWidget->SetParent ( volDisplayFrame );
     this->VolumeSelectorWidget->Create ( );
     this->VolumeSelectorWidget->SetNodeClass("vtkMRMLVolumeNode", NULL, NULL, NULL);
     this->VolumeSelectorWidget->SetMRMLScene(this->GetMRMLScene());
@@ -279,7 +277,7 @@ void vtkSlicerVolumeDisplayWidget::CreateWidget ( )
                   this->VolumeSelectorWidget->GetWidgetName());
 
     this->WindowLevelThresholdEditor = vtkKWWindowLevelThresholdEditor::New();
-    this->WindowLevelThresholdEditor->SetParent ( volDisplayFrame->GetFrame() );
+    this->WindowLevelThresholdEditor->SetParent ( volDisplayFrame );
     this->WindowLevelThresholdEditor->Create ( );
     if (this->VolumeNodeID != NULL)
       {

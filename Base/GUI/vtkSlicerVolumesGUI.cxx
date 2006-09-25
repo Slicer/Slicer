@@ -6,6 +6,7 @@
 #include "vtkSlicerVolumesLogic.h"
 #include "vtkSlicerApplication.h"
 #include "vtkMRMLVolumeNode.h"
+#include "vtkSlicerModuleCollapsibleFrame.h"
 
 #include "vtkKWWidget.h"
 #include "vtkKWMenuButton.h"
@@ -192,9 +193,10 @@ void vtkSlicerVolumesGUI::Exit ( )
 //---------------------------------------------------------------------------
 void vtkSlicerVolumesGUI::BuildGUI ( )
 {
-    // Fill in *placeholder GUI*
-    
-    vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
+
+  vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
+  // Define your help text here.
+  const char *help = "**Volumes Module:** Load, save and adjust display parameters of volume data. ";
 
     // ---
     // MODULE GUI FRAME 
@@ -207,7 +209,7 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
     vtkKWWidget *page = this->UIPanel->GetPageWidget ( "Volumes" );
 
     // HELP FRAME
-    vtkKWFrameWithLabel *volHelpFrame = vtkKWFrameWithLabel::New ( );
+    vtkSlicerModuleCollapsibleFrame *volHelpFrame = vtkSlicerModuleCollapsibleFrame::New ( );
     volHelpFrame->SetParent ( page );
     volHelpFrame->Create ( );
     volHelpFrame->CollapseFrame ( );
@@ -215,9 +217,21 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   volHelpFrame->GetWidgetName(), page->GetWidgetName());
 
+    // configure the parent classes help text widget
+    this->HelpText->SetParent ( volHelpFrame->GetFrame() );
+    this->HelpText->Create ( );
+    this->HelpText->SetText ( help );
+    this->HelpText->SetReliefToFlat ( );
+    this->HelpText->SetWrapToWord ( );
+    this->HelpText->ReadOnlyOn ( );
+    this->HelpText->QuickFormattingOn ( );
+    this->HelpText->SetBalloonHelpString ( "" );
+    app->Script ( "pack %s -side top -fill x -expand y -anchor w -padx 2 -pady 4",
+                  this->HelpText->GetWidgetName ( ) );
+
     // ---
     // LOAD FRAME            
-    vtkKWFrameWithLabel *volLoadFrame = vtkKWFrameWithLabel::New ( );
+    vtkSlicerModuleCollapsibleFrame *volLoadFrame = vtkSlicerModuleCollapsibleFrame::New ( );
     volLoadFrame->SetParent ( page );
     volLoadFrame->Create ( );
     volLoadFrame->SetLabelText ("Load");
@@ -238,20 +252,28 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
     
     // ---
     // DISPLAY FRAME            
+    vtkSlicerModuleCollapsibleFrame *volDisplayFrame = vtkSlicerModuleCollapsibleFrame::New ( );    
+    volDisplayFrame->SetParent ( page );
+    volDisplayFrame->Create ( );
+    volDisplayFrame->SetLabelText ("Display");
+    volDisplayFrame->ExpandFrame ( );
+    app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
+                  volDisplayFrame->GetWidgetName(), page->GetWidgetName());
+
     this->VolumeDisplayWidget = vtkSlicerVolumeDisplayWidget::New ( );
     this->VolumeDisplayWidget->SetMRMLScene(this->GetMRMLScene() );
-    this->VolumeDisplayWidget->SetParent ( page );
+    this->VolumeDisplayWidget->SetParent ( volDisplayFrame->GetFrame() );
     this->VolumeDisplayWidget->Create ( );
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                  this->VolumeDisplayWidget->GetWidgetName(), page->GetWidgetName());
+                  this->VolumeDisplayWidget->GetWidgetName(), volDisplayFrame->GetFrame()->GetWidgetName());
 
     // ---
     // Save FRAME            
-    vtkKWFrameWithLabel *volSaveFrame = vtkKWFrameWithLabel::New ( );
+    vtkSlicerModuleCollapsibleFrame *volSaveFrame = vtkSlicerModuleCollapsibleFrame::New ( );
     volSaveFrame->SetParent ( page );
     volSaveFrame->Create ( );
     volSaveFrame->SetLabelText ("Save");
-    volSaveFrame->ExpandFrame ( );
+    volSaveFrame->CollapseFrame ( );
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   volSaveFrame->GetWidgetName(), page->GetWidgetName());
 
@@ -285,6 +307,7 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
     
     volLoadFrame->Delete();
     volSaveFrame->Delete();
+    volDisplayFrame->Delete ();
     volHelpFrame->Delete();
 }
 

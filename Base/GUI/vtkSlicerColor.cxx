@@ -34,6 +34,7 @@ void vtkSlicerColor::DefineDefaultColorPalette ( ) {
     this->SetColor(this->MediumGrey,  0.65, 0.65, 0.65 );
     this->SetColor(this->LightGrey,  0.829, 0.829, 0.829 );
     this->SetColor(this->LightestGrey, 0.9, 0.9, 0.9 );
+    this->SetColor(this->LightestGreyBlue, 0.9, 0.9, 1.0);
 
     // warm, soft brown grey
     this->SetColor(this->Cornsilk2,  .93, .9098, .804 );

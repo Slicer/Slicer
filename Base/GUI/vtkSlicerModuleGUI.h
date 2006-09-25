@@ -6,7 +6,7 @@
 #include "vtkSlicerBaseGUIWin32Header.h"
 #include "vtkKWUserInterfacePanel.h"
 #include "vtkSlicerComponentGUI.h"
-
+#include "vtkKWText.h"
 
 // Description:
 // This is a base class from which all SlicerModuleGUIs that include
@@ -26,6 +26,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleGUI : public vtkSlicerComponentG
     // Get/Set pointers to the ApplicationLogic
     vtkGetObjectMacro ( UIPanel, vtkKWUserInterfacePanel );
     vtkSetObjectMacro ( UIPanel, vtkKWUserInterfacePanel );
+    // Description:
+    // Get the help text widget.
+    vtkGetObjectMacro ( HelpText, vtkKWText );
 
         // Description:
     // propagate events generated in logic layer to GUI
@@ -53,6 +56,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleGUI : public vtkSlicerComponentG
     // and is raised in Slicer's shared GUI panel when the module
     // is selected for use.
     vtkKWUserInterfacePanel *UIPanel;
+    // Description:
+    // Every module gui has a text widget that contains basic
+    // information about the module's contents and how to use it.
+    vtkKWText *HelpText;
     
     // constructor, destructor.
     vtkSlicerModuleGUI ( );
