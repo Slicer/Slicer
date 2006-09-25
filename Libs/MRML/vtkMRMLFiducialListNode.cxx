@@ -599,17 +599,12 @@ int vtkMRMLFiducialListNode::AddFiducial()
     vtkMRMLFiducial * fiducial = vtkMRMLFiducial::New();
 
     // give the point a unique name based on the list name
-    int nameLength = strlen(this->GetName());
-    char nameString[1024];
-    if (nameLength < 1022)
-    {
-      sprintf(nameString, "%s-P", this->GetName());
-      fiducial->SetID(this->GetScene()->GetUniqueIDByClass(nameString));
-    }
-    else
-    {
-      fiducial->SetID(this->GetScene()->GetUniqueIDByClass(this->GetName()));
-    }
+    std::stringstream ss;
+    ss << this->GetName();
+    ss << "-P";
+    std::string nameString;
+    ss >> nameString;
+    fiducial->SetID(this->GetScene()->GetUniqueIDByClass(nameString.c_str()));
     // use the same for the label text for now
     fiducial->SetLabelText(fiducial->GetID());
     
