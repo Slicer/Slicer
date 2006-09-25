@@ -9,7 +9,6 @@
 #include "vtkKWApplication.h"
 
 
-
 vtkCxxRevisionMacro ( vtkSlicerComponentGUI, "$Revision: 1.0 $" );
 vtkStandardNewMacro ( vtkSlicerComponentGUI );
 
@@ -52,20 +51,20 @@ vtkSlicerComponentGUI::~vtkSlicerComponentGUI ( )
 
     // unregister and set null pointers.
     if ( this->MRMLCallbackCommand != NULL )
-        {
-            this->MRMLCallbackCommand->Delete ( );
-            this->MRMLCallbackCommand = NULL;
-        }
+      {
+      this->MRMLCallbackCommand->Delete ( );
+      this->MRMLCallbackCommand = NULL;
+      }
     if ( this->LogicCallbackCommand != NULL )
-        {
-            this->LogicCallbackCommand->Delete ( );
-            this->LogicCallbackCommand = NULL;
-        }
+      {
+      this->LogicCallbackCommand->Delete ( );
+      this->LogicCallbackCommand = NULL;
+      }
     if ( this->GUICallbackCommand != NULL )
-        {
-            this->GUICallbackCommand->Delete ( );
-            this->GUICallbackCommand = NULL;
-        }
+      {
+      this->GUICallbackCommand->Delete ( );
+      this->GUICallbackCommand = NULL;
+      }
 
     // and set null pointers.
     this->GUIName = NULL;
