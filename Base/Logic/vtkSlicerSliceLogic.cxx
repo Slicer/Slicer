@@ -62,7 +62,7 @@ vtkSlicerSliceLogic::~vtkSlicerSliceLogic()
 
   if ( this->SliceCompositeNode ) 
     {
-    this->SetAndObserveMRML( vtkObjectPointer(&this->SliceCompositeNode), NULL );
+    vtkSetAndObserveMRMLNodeMacro( this->SliceCompositeNode, NULL );
     }
   if (this->SliceModelNode != NULL)
     {
@@ -305,7 +305,7 @@ void vtkSlicerSliceLogic::SetSliceNode(vtkMRMLSliceNode *sliceNode)
     // will notify us when things have changed.
     // This class takes care of passing the one slice node to each of the layers
     // so that users of this class only need to set the node one place.
-  this->SetMRML( vtkObjectPointer(&this->SliceNode), sliceNode );
+  vtkSetMRMLNodeMacro( this->SliceNode, sliceNode );
 
   if (this->BackgroundLayer)
     {
@@ -329,7 +329,7 @@ void vtkSlicerSliceLogic::SetSliceCompositeNode(vtkMRMLSliceCompositeNode *slice
 {
     // Observe the composite node, since this holds the parameters for
     // this pipeline
-  this->SetAndObserveMRML( vtkObjectPointer(&this->SliceCompositeNode), sliceCompositeNode );
+  vtkSetAndObserveMRMLNodeMacro( this->SliceCompositeNode, sliceCompositeNode );
   this->UpdatePipeline();
 
 }

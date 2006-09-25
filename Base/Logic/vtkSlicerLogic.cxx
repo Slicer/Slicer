@@ -27,16 +27,13 @@ vtkSlicerLogic::vtkSlicerLogic()
   this->InMRMLCallbackFlag = 0;
   this->InLogicCallbackFlag = 0;
 
-  this->MRMLCallbackCommand = vtkCallbackCommand::New();
-  this->MRMLCallbackCommand->SetClientData( reinterpret_cast<void *> (this) );
-  this->MRMLCallbackCommand->SetCallback(vtkSlicerLogic::MRMLCallback);
+  this->MRMLObserverManager = vtkObserverManager::New();
+  this->MRMLObserverManager->GetCallbackCommand()->SetClientData( reinterpret_cast<void *> (this) );
+  this->MRMLObserverManager->GetCallbackCommand()->SetCallback(vtkSlicerLogic::MRMLCallback);
 
   this->LogicCallbackCommand = vtkCallbackCommand::New();
   this->LogicCallbackCommand->SetClientData( reinterpret_cast<void *> (this) );
   this->LogicCallbackCommand->SetCallback(vtkSlicerLogic::LogicCallback);
-
-  this->Events = vtkIntArray::New(); 
-  this->ObserverTags  = vtkUnsignedLongArray::New();
 
 }
 
@@ -46,26 +43,15 @@ vtkSlicerLogic::~vtkSlicerLogic()
    
   this->SetAndObserveMRMLScene (NULL);
 
-  if (this->MRMLCallbackCommand)
+  if (this->MRMLObserverManager)
     {
-    this->MRMLCallbackCommand->Delete();
-    this->MRMLCallbackCommand = NULL;
+    this->MRMLObserverManager->Delete();
     }
 
   if (this->LogicCallbackCommand)
     {
     this->LogicCallbackCommand->Delete();
-    this->LogicCallbackCommand = NULL;
     }
-  if (this->Events) 
-    { 
-    this->Events->Delete(); 
-    } 
-  if (this->ObserverTags) 
-    { 
-    this->ObserverTags->Delete(); 
-    } 
-
 }
 
 //----------------------------------------------------------------------------
@@ -126,112 +112,3 @@ vtkSlicerLogic::LogicCallback(vtkObject *caller,
   self->SetInLogicCallbackFlag(0);
 }
 
-//----------------------------------------------------------------------------
-void vtkSlicerLogic::SetMRML(vtkObject **nodePtr, vtkObject *node)
-{
-  this->RemoveMRMLEvents(*nodePtr);
-
-  if (*nodePtr)
-    {
-    (*nodePtr)->Delete();
-    }
-
-  *nodePtr  = node ;
-
-  if ( *nodePtr  )
-    {
-    (*nodePtr)->Register(this);
-    }
-}
-
-//----------------------------------------------------------------------------
-void vtkSlicerLogic::SetAndObserveMRML(vtkObject **nodePtr, vtkObject *node)
-{
-  this->RemoveMRMLEvents(*nodePtr);
-
-  if (*nodePtr)
-    {
-    (*nodePtr)->Delete();
-    }
-
-  *nodePtr  = node ;
-
-  if ( *nodePtr  )
-    {
-    (*nodePtr)->Register(this);
-
-    vtkIntArray *events = vtkIntArray::New();
-    events->InsertNextValue(vtkCommand::ModifiedEvent);
-    this->AddMRMLEvents(*nodePtr, events);
-    events->Delete();   
-  }
-
-
-}
-
-//----------------------------------------------------------------------------
-void vtkSlicerLogic::SetAndObserveMRMLEvents(vtkObject **nodePtr, vtkObject *node, vtkIntArray *events)
-{
-   this->RemoveMRMLEvents(*nodePtr);
-
-   if (*nodePtr)
-     {
-     (*nodePtr)->Delete();
-     }
-   
-  *nodePtr  = node ;
-
-  if ( *nodePtr  )
-    {
-    (*nodePtr)->Register(this);
-    this->AddMRMLEvents(*nodePtr, events);
-    }
-}
-
-//----------------------------------------------------------------------------
-void vtkSlicerLogic::RemoveMRMLEvents(vtkObject *nodePtr) 
-{
-  if (nodePtr)
-    {
-    //if (nodePtr->IsA("vtkMRMLSliceNode"))
-    //std::cout << "remove\n";
-
-    for (int i=0; i < this->ObserverTags->GetNumberOfTuples(); i++)
-      {
-      (nodePtr)->RemoveObservers(this->ObserverTags->GetValue(i) );
-      }
-    this->ObserverTags->Reset();
-    this->Events->Reset();
-    }
-}
-
-//----------------------------------------------------------------------------
-void vtkSlicerLogic::AddMRMLEvents(vtkObject *nodePtr, vtkIntArray *events) 
-{
-  if (nodePtr)
-    {
-    //if (nodePtr->IsA("vtkMRMLSliceNode"))
-    //std::cout <<"add\n";
-
-    for (int i=0; i<events->GetNumberOfTuples(); i++)
-      {
-      unsigned long tag = nodePtr->AddObserver(events->GetValue(i), this->MRMLCallbackCommand );
-      this->ObserverTags->InsertNextValue(tag);
-      this->Events->InsertNextValue(events->GetValue(i));
-      }
-    }
-
-}
-
-//----------------------------------------------------------------------------
-void vtkSlicerLogic::GetMRMLEvents(vtkIntArray *events) 
-{
-  events->Reset();
-  if (this->Events) 
-    {
-    for (int i=0; i<this->Events->GetNumberOfTuples(); i++)
-      {
-      events->InsertNextValue(this->Events->GetValue(i));
-      }
-    }
-}

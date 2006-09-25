@@ -53,7 +53,7 @@ void vtkSlicerModelsLogic::ProcessMRMLEvents(vtkObject * /*caller*/,
 //----------------------------------------------------------------------------
 void vtkSlicerModelsLogic::SetActiveModelNode(vtkMRMLModelNode *activeNode)
 {
-  this->SetMRML( vtkObjectPointer(&this->ActiveModelNode), activeNode );
+  vtkSetMRMLNodeMacro(this->ActiveModelNode, activeNode );
   this->Modified();
 }
 

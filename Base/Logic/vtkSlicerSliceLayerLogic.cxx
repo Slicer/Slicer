@@ -56,16 +56,15 @@ vtkSlicerSliceLayerLogic::~vtkSlicerSliceLayerLogic()
 {
   if ( this->SliceNode ) 
     {
-    this->SetAndObserveMRML( vtkObjectPointer(&this->SliceNode), NULL );
+    vtkSetAndObserveMRMLNodeMacro(this->SliceNode, NULL );
     }
   if ( this->VolumeNode ) 
     {
-    this->VolumeNode->RemoveObservers ( vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand );
-    this->SetAndObserveMRML( vtkObjectPointer(&this->VolumeNode), NULL );
+    vtkSetAndObserveMRMLNodeMacro( this->VolumeNode, NULL );
     }
   if ( this->VolumeDisplayNode )
     {
-    this->SetAndObserveMRML( vtkObjectPointer( &this->VolumeDisplayNode ), NULL );
+    vtkSetAndObserveMRMLNodeMacro( this->VolumeDisplayNode , NULL );
     }
 
   this->SetSliceNode(NULL);
@@ -93,7 +92,7 @@ void vtkSlicerSliceLayerLogic::SetSliceNode(vtkMRMLSliceNode *sliceNode)
 {
   if ( sliceNode != this->SliceNode )
     {
-    this->SetAndObserveMRML( vtkObjectPointer(&this->SliceNode), sliceNode );
+    vtkSetAndObserveMRMLNodeMacro( this->SliceNode, sliceNode );
 
     // Update the reslice transform to move this image into XY
     this->UpdateTransforms();
@@ -103,16 +102,11 @@ void vtkSlicerSliceLayerLogic::SetSliceNode(vtkMRMLSliceNode *sliceNode)
 //----------------------------------------------------------------------------
 void vtkSlicerSliceLayerLogic::SetVolumeNode(vtkMRMLVolumeNode *volumeNode)
 {
-  if (this->VolumeNode != NULL)
-    {
-    this->VolumeNode->RemoveObservers ( vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand );
-    }
-
-  this->SetAndObserveMRML( vtkObjectPointer( &this->VolumeNode ), volumeNode );
-  if (this->VolumeNode != NULL)
-    {
-    this->VolumeNode->AddObserver ( vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand );
-    }
+  vtkIntArray *events = vtkIntArray::New();
+  events->InsertNextValue(vtkMRMLTransformableNode::TransformModifiedEvent);
+  events->InsertNextValue(vtkCommand::ModifiedEvent);
+  vtkSetAndObserveMRMLNodeEventsMacro(this->VolumeNode, volumeNode, events );
+  events->Delete();
 
   // Update the reslice transform to move this image into XY
   this->UpdateTransforms();
@@ -139,11 +133,11 @@ void vtkSlicerSliceLayerLogic::UpdateNodeReferences ()
 
     if ( displayNode )
       {
-      this->SetAndObserveMRML( vtkObjectPointer( &this->VolumeDisplayNode ), displayNode );
+      vtkSetAndObserveMRMLNodeMacro( this->VolumeDisplayNode, displayNode );
       }
     else if (this->VolumeDisplayNode)
       {
-      this->SetMRML( vtkObjectPointer( &this->VolumeDisplayNode ), NULL );
+      vtkSetMRMLNodeMacro( this->VolumeDisplayNode, NULL );
       }
 }
 

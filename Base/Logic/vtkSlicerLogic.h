@@ -28,15 +28,22 @@
 #include "vtkUnsignedLongArray.h"
 
 #include "vtkMRMLScene.h"
+#include "vtkObserverManager.h"
 
-#include <map>
 #include <string>
 
-class vtkCallbackCommand;
-
-#ifndef vtkObjectPointer
-#define vtkObjectPointer(xx) (reinterpret_cast <vtkObject **>( (xx) ))
+#ifndef vtkSetMRMLNodeMacro
+#define vtkSetMRMLNodeMacro(node,value)  {this->MRMLObserverManager->SetObject ( vtkObjectPointer( &(node)), (value) );};
 #endif
+
+#ifndef vtkSetAndObserveMRMLNodeMacro
+#define vtkSetAndObserveMRMLNodeMacro(node,value)  {this->MRMLObserverManager->SetAndObserveObject ( vtkObjectPointer( &(node)), (value) );};
+#endif
+
+#ifndef vtkSetAndObserveMRMLNodeEventsMacro
+#define vtkSetAndObserveMRMLNodeEventsMacro(node,value,events)  {this->MRMLObserverManager->SetAndObserveObjectEvents ( vtkObjectPointer( &(node)), (value), (events));};
+#endif
+
 
 class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerLogic : public vtkObject 
 {
@@ -55,19 +62,22 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerLogic : public vtkObject
   // API for setting or setting and observing MRMLScene
   void SetMRMLScene ( vtkMRMLScene *mrml )
       {
-      this->SetMRML ( vtkObjectPointer( &this->MRMLScene), mrml );
+      this->MRMLObserverManager->SetObject ( vtkObjectPointer( &this->MRMLScene), mrml );
       }
+
   void SetAndObserveMRMLScene ( vtkMRMLScene *mrml )
       {
-      this->SetAndObserveMRML ( vtkObjectPointer( &this->MRMLScene), mrml );
+      this->MRMLObserverManager->SetAndObserveObject ( vtkObjectPointer( &this->MRMLScene), mrml );
       }
 
   void SetAndObserveMRMLSceneEvents ( vtkMRMLScene *mrml, vtkIntArray *events )
       {
-      this->SetAndObserveMRMLEvents ( vtkObjectPointer( &this->MRMLScene), mrml, events );
+      this->MRMLObserverManager->SetAndObserveObjectEvents ( vtkObjectPointer( &this->MRMLScene), mrml, events );
       }
+
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
       unsigned long /*event*/, void * /*callData*/ ) { };
+
   virtual void ProcessLogicEvents() {};
 
   // Description:
@@ -108,21 +118,10 @@ protected:
   static void LogicCallback(vtkObject *caller, 
                 unsigned long eid, void *clientData, void *callData);
 
-  // functions that set MRML for the Logic class,
-  // either with or without adding/removirg observers on them.
-  void SetMRML(vtkObject **nodePtr, vtkObject *node);
-  void SetAndObserveMRML(vtkObject **nodePtr, vtkObject *node);
-  void SetAndObserveMRMLEvents(vtkObject **nodePtr, vtkObject *node, vtkIntArray *events);
-
-  void RemoveMRMLEvents(vtkObject *nodePtr);
-  void AddMRMLEvents(vtkObject *nodePtr, vtkIntArray *events);
-  void GetMRMLEvents(vtkIntArray *events);
-
   //ETX
 
   // Description:
   // Holder for MRML and Logic callbacks
-  vtkCallbackCommand *MRMLCallbackCommand;
   vtkCallbackCommand *LogicCallbackCommand;
 
   // Description:
@@ -131,10 +130,7 @@ protected:
   int InMRMLCallbackFlag;
 
 
-  //BTX
-  vtkIntArray  *Events;
-  vtkUnsignedLongArray  *ObserverTags;
-  //ETX
+  vtkObserverManager *MRMLObserverManager;
 
 };
 

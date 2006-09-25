@@ -53,7 +53,7 @@ void vtkSlicerVolumesLogic::ProcessMRMLEvents(vtkObject * /*caller*/,
 //----------------------------------------------------------------------------
 void vtkSlicerVolumesLogic::SetActiveVolumeNode(vtkMRMLVolumeNode *activeNode)
 {
-  this->SetMRML( vtkObjectPointer(&this->ActiveVolumeNode), activeNode );
+  vtkSetMRMLNodeMacro(this->ActiveVolumeNode, activeNode );
   this->Modified();
 }
 
