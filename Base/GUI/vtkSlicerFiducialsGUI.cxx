@@ -832,6 +832,10 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
         this->MultiColumnList->GetWidget()->SetColumnWidth(col, 6);
         this->MultiColumnList->GetWidget()->SetColumnAlignmentToLeft(col);
         this->MultiColumnList->GetWidget()->ColumnEditableOn(col);
+        if (col >= this->XColumn && col <= this->OrZColumn)
+        {
+            this->MultiColumnList->GetWidget()->SetColumnEditWindowToSpinBox(col);
+        }
     }
     // set the name column width to be higher
     this->MultiColumnList->GetWidget()->SetColumnWidth(this->NameColumn, 15);
@@ -891,7 +895,7 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
 //---------------------------------------------------------------------------
 void vtkSlicerFiducialsGUI::UpdateElement(int row, int col, char * str)
 {
-    vtkDebugMacro("row = " << row << ", col = " << col << ", str = " << str << "\n");
+    vtkDebugMacro("UpdateElement: row = " << row << ", col = " << col << ", str = " << str << "\n");
 
     // make sure that the row and column exists in the table
     if ((row >= 0) && (row < this->MultiColumnList->GetWidget()->GetNumberOfRows()) &&
