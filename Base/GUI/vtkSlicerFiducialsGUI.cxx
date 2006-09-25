@@ -270,7 +270,6 @@ void vtkSlicerFiducialsGUI::ProcessGUIEvents ( vtkObject *caller,
         
         // get the row that was last selected
         int numRows = this->MultiColumnList->GetWidget()->GetNumberOfSelectedRows();
-        int row[1];
         if (numRows == 1)
         {
             int row[1];
@@ -925,7 +924,7 @@ void vtkSlicerFiducialsGUI::UpdateElement(int row, int col, char * str)
             {
                 // selected
                 vtkDebugMacro("UpdateElement: setting node " <<  activeFiducialListNode->GetNthFiducialLabelText(row) << "'s selected flag to " << str << endl);
-                activeFiducialListNode->SetNthFiducialSelected(row, atoi(str));
+                activeFiducialListNode->SetNthFiducialSelected(row, (atoi(str) == 1));
             }
             else if (col >= this->XColumn && col <= this->ZColumn)
             {

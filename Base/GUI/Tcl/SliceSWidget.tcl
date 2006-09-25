@@ -47,12 +47,30 @@ itcl::body SliceSWidget::constructor {sliceGUI} {
 
   $this configure -sliceGUI $sliceGUI
  
+  # create matrices to store transform state
   set o(storeXYToRAS) [$this vtkNew vtkMatrix4x4]
   set o(storeSliceToRAS) [$this vtkNew vtkMatrix4x4]
   set o(scratchMatrix) [$this vtkNew vtkMatrix4x4]
 
+  # set the annotation property
   [$_annotation GetTextProperty] SetColor 1 1 1
   [$_annotation GetTextProperty] SetShadow 1
+
+  # create an actor as feedback for the focus state
+  set o(focusIcon) [vtkNew vtkSphereSource]
+  $o(focusIcon) SetRadius 5
+  set o(focusMapper) [vtkNew vtkPolyDataMapper2D]
+  set o(focusActor) [vtkNew vtkActor2D]
+  $o(focusMapper) SetInput [$o(focusIcon) GetOutput]
+  $o(focusActor) SetMapper $o(focusMapper)
+  [$o(focusActor) GetProperty] SetColor 1 1 0
+  $o(focusActor) VisibilityOff
+  [$_renderWidget GetRenderer] AddActor2D $o(focusActor)
+  lappend _actors $o(focusActor)
+
+  # TODO:
+  # create text actors for L/R, I/S, P/A
+
 
   $this processEvent
 
@@ -71,6 +89,8 @@ itcl::body SliceSWidget::constructor {sliceGUI} {
   set node [[$sliceGUI GetLogic] GetSliceNode]
   lappend _nodeObserverTags [$node AddObserver DeleteEvent "itcl::delete object $this"]
   lappend _nodeObserverTags [$node AddObserver AnyEvent "$this processEvent"]
+
+
 }
 
 
@@ -311,13 +331,12 @@ itcl::body SliceSWidget::processEvent { } {
       }
     }
     "FocusInEvent" {
-      # TODO: no good way to add an observer for Focus in/out events
-      # since it's not in the vtkCommand list of known events
-      # and you can't create an event on it's number either
-      puts "$sliceGUI got focus!"
+      $o(focusActor) VisibilityOn
+      [$sliceGUI GetSliceViewer] RequestRender
     }
     "FocusOutEvent" {
-      puts "$sliceGUI lost focus!"
+      $o(focusActor) VisibilityOff
+      [$sliceGUI GetSliceViewer] RequestRender
     }
     "ExitEvent" { }
   }
