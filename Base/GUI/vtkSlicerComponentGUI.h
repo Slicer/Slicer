@@ -19,6 +19,7 @@
 #include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
 #include "vtkSlicerLogic.h"
+#include "vtkObserverManager.h"
 
 
 class vtkCallbackCommmand;
@@ -28,8 +29,19 @@ class vtkSlicerMRMLUpdate;
 class vtkKWApplication;
 class vtkKWFrame;
 
-#ifndef vtkObjectPointer
-#define vtkObjectPointer( xx ) (reinterpret_cast <vtkObject **>( (xx) ))
+
+#include <string>
+
+#ifndef vtkSetMRMLNodeMacro
+#define vtkSetMRMLNodeMacro(node,value)  {this->MRMLObserverManager->SetObject ( vtkObjectPointer( &(node)), (value) );};
+#endif
+
+#ifndef vtkSetAndObserveMRMLNodeMacro
+#define vtkSetAndObserveMRMLNodeMacro(node,value)  {this->MRMLObserverManager->SetAndObserveObject ( vtkObjectPointer( &(node)), (value) );};
+#endif
+
+#ifndef vtkSetAndObserveMRMLNodeEventsMacro
+#define vtkSetAndObserveMRMLNodeEventsMacro(node,value,events)  {this->MRMLObserverManager->SetAndObserveObjectEvents ( vtkObjectPointer( &(node)), (value), (events));};
 #endif
 
 // Description:
@@ -39,138 +51,144 @@ class vtkKWFrame;
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerComponentGUI : public vtkKWObject
 {
 
- public:
-    // The usual vtk class functions
-    static vtkSlicerComponentGUI* New ( );
-    vtkTypeRevisionMacro ( vtkSlicerComponentGUI, vtkKWObject );
-    void PrintSelf ( ostream& os, vtkIndent indent );
+public:
+  // The usual vtk class functions
+  static vtkSlicerComponentGUI* New ( );
+  vtkTypeRevisionMacro ( vtkSlicerComponentGUI, vtkKWObject );
+  void PrintSelf ( ostream& os, vtkIndent indent );
+  
+  // Description:
+  // Get Macro for ApplicationLogic: GUI class's interface to logic
+  // To Set ApplicationLogic, use SetLogic method.
+  vtkGetObjectMacro ( ApplicationLogic, vtkSlicerApplicationLogic );
+  
+  // Description:
+  // GetMacro for MRML scene: GUI class's interface to mrml.
+  // To Set MRMLScene, use SetMRML method.
+  vtkGetObjectMacro ( MRMLScene, vtkMRMLScene );
+  
+  // Description:
+  // API for setting or setting and observing MRMLScene
+  void SetMRMLScene ( vtkMRMLScene *mrml )
+    {
+      this->MRMLObserverManager->SetObject ( vtkObjectPointer( &this->MRMLScene), mrml );
+      }
 
-    // Description:
-    // Get Macro for ApplicationLogic: GUI class's interface to logic
-    // To Set ApplicationLogic, use SetLogic method.
-    vtkGetObjectMacro ( ApplicationLogic, vtkSlicerApplicationLogic );
+  void SetAndObserveMRMLScene ( vtkMRMLScene *mrml )
+      {
+      this->MRMLObserverManager->SetAndObserveObject ( vtkObjectPointer( &this->MRMLScene), mrml );
+      }
 
-    // Description:
-    // GetMacro for MRML scene: GUI class's interface to mrml.
-    // To Set MRMLScene, use SetMRML method.
-    vtkGetObjectMacro ( MRMLScene, vtkMRMLScene );
-
-    // Description:
-    // API for setting MRMLScene, ApplicationLogic and
-    // for both setting and observing them.
-    void SetMRMLScene ( vtkMRMLScene *mrml )
-        { this->SetMRML ( vtkObjectPointer( &this->MRMLScene), mrml ); }
-    void SetAndObserveMRMLScene ( vtkMRMLScene *mrml )
-        { this->SetAndObserveMRML ( vtkObjectPointer( &this->MRMLScene), mrml ); }
-    virtual void SetApplicationLogic ( vtkSlicerApplicationLogic *logic )
-        { this->SetLogic ( vtkObjectPointer (&this->ApplicationLogic), logic ); }
-    void SetAndObserveApplicationLogic ( vtkSlicerApplicationLogic *logic )
-        { this->SetAndObserveLogic ( vtkObjectPointer (&this->ApplicationLogic), logic ); }
-    
-    // Description:
-    // Add/Remove observers on a GUI.
-    virtual void AddGUIObservers ( ) { };
-    virtual void RemoveGUIObservers ( ) { };
-
-    // Description:
-    // Callback commands so that tcl scripts can set Abort flag when
-    // they process events
-    vtkGetObjectMacro (MRMLCallbackCommand, vtkCallbackCommand);
-    vtkGetObjectMacro (LogicCallbackCommand, vtkCallbackCommand);
-    vtkGetObjectMacro (GUICallbackCommand, vtkCallbackCommand);
-
-    // Description:
-    // Flags to avoid event loops
-    // NOTE: don't use the SetMacro or it call modified itself and generate even more events!
-    void SetInLogicCallbackFlag (int flag) {
-      this->InLogicCallbackFlag = flag;
+  void SetAndObserveMRMLSceneEvents ( vtkMRMLScene *mrml, vtkIntArray *events )
+      {
+      this->MRMLObserverManager->SetAndObserveObjectEvents ( vtkObjectPointer( &this->MRMLScene), mrml, events );
+      }
+  virtual void SetApplicationLogic ( vtkSlicerApplicationLogic *logic )
+    { this->SetLogic ( vtkObjectPointer (&this->ApplicationLogic), logic );};
+  
+  void SetAndObserveApplicationLogic ( vtkSlicerApplicationLogic *logic )
+    { this->SetAndObserveLogic ( vtkObjectPointer (&this->ApplicationLogic) , logic ); };
+  
+  void SetLogic ( vtkObject **logicPtr, vtkObject *logic );
+  void SetAndObserveLogic ( vtkObject **logicPtr, vtkObject *logic );
+  
+  // Description:
+  // Add/Remove observers on a GUI.
+  virtual void AddGUIObservers ( ) { };
+  virtual void RemoveGUIObservers ( ) { };
+  
+  // Description:
+  // Callback commands so that tcl scripts can set Abort flag when
+  // they process events
+  vtkGetObjectMacro (LogicCallbackCommand, vtkCallbackCommand);
+  vtkGetObjectMacro (GUICallbackCommand, vtkCallbackCommand);
+  
+  // Description:
+  // Flags to avoid event loops
+  // NOTE: don't use the SetMacro or it call modified itself and generate even more events!
+  void SetInLogicCallbackFlag (int flag) {
+    this->InLogicCallbackFlag = flag;
+  }
+  vtkGetMacro(InLogicCallbackFlag, int);
+  void SetInMRMLCallbackFlag (int flag) {
+    this->InMRMLCallbackFlag = flag;
+  }
+  vtkGetMacro(InMRMLCallbackFlag, int);
+  void SetInGUICallbackFlag (int flag) {
+    this->InGUICallbackFlag = flag;
     }
-    vtkGetMacro(InLogicCallbackFlag, int);
-    void SetInMRMLCallbackFlag (int flag) {
-      this->InMRMLCallbackFlag = flag;
-    }
-    vtkGetMacro(InMRMLCallbackFlag, int);
-    void SetInGUICallbackFlag (int flag) {
-      this->InGUICallbackFlag = flag;
-    }
-    vtkGetMacro(InGUICallbackFlag, int);
-    
-    // Description:
-    // Get/Set the name of the GUI, used to find and raise a GUI.
-    vtkSetStringMacro ( GUIName );
-    vtkGetStringMacro ( GUIName );
-    
-    // Description:
-    // Specifies all widgets for this GUI
-    // Define function in subclasses.
-    virtual void BuildGUI ( ) { };
-
-    // Description:
-    // propagate events generated in logic layer to GUI
-    virtual void ProcessLogicEvents ( vtkObject * /*caller*/,
-      unsigned long /*event*/, void * /*callData*/ ) { };
-    // Description:
-    // alternative method to propagate events generated in GUI to logic / mrml
-    virtual void ProcessGUIEvents ( vtkObject * /*caller*/, 
-      unsigned long /*event*/, void * /*callData*/ ) { };
-    
-    // Description:
-    // alternative method to propagate events generated in GUI to logic / mrml
-    virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
-      unsigned long /*event*/, void * /*callData*/ ) { };
-
-    // Description:
-    // functions that define and undefine module-specific behaviors.
-    virtual void Enter ( ) { };
-    virtual void Exit ( ) { };
-
- protected:
-    // GUI's interface to the application layer;
-    vtkSlicerApplicationLogic *ApplicationLogic;
-    vtkMRMLScene *MRMLScene;
-    
-    // GUI's name, used to raise GUI
-    char *GUIName;
-
-    //BTX
-    // a shared set of functions that call the
-    // virtual ProcessMRMLEvents, ProcessLogicEvents,
-    // and ProcessGUIEvents methods in the
-    // subclasses, if they are defined.
-    static void MRMLCallback( vtkObject *__caller,
-                              unsigned long eid, void *__clientData, void *callData );
-    static void LogicCallback( vtkObject *__caller,
-                              unsigned long eid, void *__clientData, void *callData );
-    static void GUICallback( vtkObject *__caller,
-                              unsigned long eid, void *__clientData, void *callData );    
-    
-    // functions that set MRML and Logic pointers for the GUI class,
-    // either with or without adding/removing observers on them.
-    void SetMRML ( vtkObject **nodePtr, vtkObject *node );
-    void SetAndObserveMRML ( vtkObject **nodePtr, vtkObject *node );
-    void SetLogic ( vtkObject **logicPtr, vtkObject *logic );
-    void SetAndObserveLogic ( vtkObject **logicPtr, vtkObject *logic );
-    //ETX
-    
-    // Description::
-    // Holders for MRML, GUI and Logic callbacks
-    vtkCallbackCommand *MRMLCallbackCommand;
-    vtkCallbackCommand *LogicCallbackCommand;
-    vtkCallbackCommand *GUICallbackCommand;
-    
-    // constructor, destructor.
-    vtkSlicerComponentGUI ( );
-    virtual ~vtkSlicerComponentGUI ( );
-
-    // Description:
-    // Flag to avoid event loops
-    int InLogicCallbackFlag;
-    int InMRMLCallbackFlag;
-    int InGUICallbackFlag;
-    
- private:
-    vtkSlicerComponentGUI ( const vtkSlicerComponentGUI& ); // Not implemented.
-    void operator = ( const vtkSlicerComponentGUI& ); // Not implemented.
+  vtkGetMacro(InGUICallbackFlag, int);
+  
+  // Description:
+  // Get/Set the name of the GUI, used to find and raise a GUI.
+  vtkSetStringMacro ( GUIName );
+  vtkGetStringMacro ( GUIName );
+  
+  // Description:
+  // Specifies all widgets for this GUI
+  // Define function in subclasses.
+  virtual void BuildGUI ( ) { };
+  
+  // Description:
+  // propagate events generated in logic layer to GUI
+  virtual void ProcessLogicEvents ( vtkObject * /*caller*/,
+                                    unsigned long /*event*/, void * /*callData*/ ) { };
+  // Description:
+  // alternative method to propagate events generated in GUI to logic / mrml
+  virtual void ProcessGUIEvents ( vtkObject * /*caller*/, 
+                                  unsigned long /*event*/, void * /*callData*/ ) { };
+  
+  // Description:
+  // alternative method to propagate events generated in GUI to logic / mrml
+  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
+                                   unsigned long /*event*/, void * /*callData*/ ) { };
+  
+  // Description:
+  // functions that define and undefine module-specific behaviors.
+  virtual void Enter ( ) { };
+  virtual void Exit ( ) { };
+  
+protected:
+  // GUI's interface to the application layer;
+  vtkSlicerApplicationLogic *ApplicationLogic;
+  vtkMRMLScene *MRMLScene;
+  
+  // GUI's name, used to raise GUI
+  char *GUIName;
+  
+  //BTX
+  // a shared set of functions that call the
+  // virtual ProcessMRMLEvents, ProcessLogicEvents,
+  // and ProcessGUIEvents methods in the
+  // subclasses, if they are defined.
+  static void MRMLCallback( vtkObject *__caller,
+                            unsigned long eid, void *__clientData, void *callData );
+  static void LogicCallback( vtkObject *__caller,
+                             unsigned long eid, void *__clientData, void *callData );
+  static void GUICallback( vtkObject *__caller,
+                           unsigned long eid, void *__clientData, void *callData );    
+  //ETX
+  
+  // Description::
+  // Holders for MRML, GUI and Logic callbacks
+  vtkCallbackCommand *LogicCallbackCommand;
+  vtkCallbackCommand *GUICallbackCommand;
+  
+  // constructor, destructor.
+  vtkSlicerComponentGUI ( );
+  virtual ~vtkSlicerComponentGUI ( );
+  
+  // Description:
+  // Flag to avoid event loops
+  int InLogicCallbackFlag;
+  int InMRMLCallbackFlag;
+  int InGUICallbackFlag;
+  
+  vtkObserverManager *MRMLObserverManager;
+  
+private:
+  vtkSlicerComponentGUI ( const vtkSlicerComponentGUI& ); // Not implemented.
+  void operator = ( const vtkSlicerComponentGUI& ); // Not implemented.
 };
 
 

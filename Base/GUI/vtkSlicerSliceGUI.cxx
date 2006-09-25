@@ -80,7 +80,7 @@ vtkSlicerSliceGUI::~vtkSlicerSliceGUI ( ) {
 
     // Remove observers and references 
     this->SetModuleLogic ( NULL );
-    this->SetMRMLNode ( NULL );
+    vtkSetMRMLNodeMacro ( this->SliceNode, NULL );
 
     // give the slice viewer code a chance to free any vtk objects
     // it allocated.  This can be called with no impact on other 

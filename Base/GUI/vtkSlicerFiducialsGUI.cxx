@@ -878,15 +878,6 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
                 this->RemoveFiducialButton->GetWidgetName(),
                 this->RemoveFiducialsButton->GetWidgetName());
 
-    if (this->MRMLScene != NULL)
-    {
-        if (this->MRMLScene->HasObserver(vtkCommand::ModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand ) == 0)
-        {
-            this->MRMLScene->AddObserver(vtkCommand::ModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand );
-        }
-        // add in observers on node added/removed
-    }
-     
     // deleting frame widgets
     buttonFrame->Delete ();
     colourFrame->Delete ();
@@ -983,49 +974,33 @@ void vtkSlicerFiducialsGUI::SetFiducialListNodeID (char * id)
 
     // get the old node
     vtkMRMLFiducialListNode *fidlist = vtkMRMLFiducialListNode::SafeDownCast(this->MRMLScene->GetNodeByID(this->GetFiducialListNodeID()));
-    if (fidlist != NULL)
-    {
-        // remove observers on old node
-        fidlist->RemoveObservers(vtkMRMLFiducialListNode::DisplayModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand);
-        fidlist->RemoveObservers(vtkCommand::ModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand);
-        fidlist->RemoveObservers(vtkMRMLFiducialListNode::FiducialModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand);
-    }
-    else
-    {
-        // probably wasn't set yet
-    }
        
     // set the id properly - see the vtkSetStringMacro
     this->FiducialListNodeID = id;
 
     if (id == NULL)
-    {
-        std::cerr << "SetFiducialListNodeID: NULL input id, removed observers and returning.\n";
-        return;
-    }
+      {
+      std::cerr << "SetFiducialListNodeID: NULL input id, removed observers and returning.\n";
+      return;
+      }
     
     // get the new node
     fidlist = vtkMRMLFiducialListNode::SafeDownCast(this->MRMLScene->GetNodeByID(this->GetFiducialListNodeID()));
     // set up observers on the new node
     if (fidlist != NULL)
-    {
-        if (fidlist->HasObserver(vtkMRMLFiducialListNode::DisplayModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand) == 0)
-        {
-            fidlist->AddObserver(vtkMRMLFiducialListNode::DisplayModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand);
-        }
-        if (fidlist->HasObserver(vtkCommand::ModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand) == 0)
-        {
-            fidlist->AddObserver(vtkCommand::ModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand);
-        }
-        if (fidlist->HasObserver(vtkMRMLFiducialListNode::FiducialModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand) == 0)
-        {
-            fidlist->AddObserver(vtkMRMLFiducialListNode::FiducialModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand);
-        }
-        // set up the GUI
-        this->SetGUIFromList(fidlist);
-    }
+      {
+      vtkIntArray *events = vtkIntArray::New();
+      events->InsertNextValue(vtkCommand::ModifiedEvent);
+      events->InsertNextValue(vtkMRMLFiducialListNode::DisplayModifiedEvent);
+      events->InsertNextValue(vtkMRMLFiducialListNode::FiducialModifiedEvent);
+      vtkSetAndObserveMRMLNodeMacro(fidlist, events);
+      events->Delete();
+
+      // set up the GUI
+      this->SetGUIFromList(fidlist);
+      }
     else
-    {
+      {
         std::cerr << "ERROR: unable to get the mrml fiducial node to observe!\n";
-    }
+      }
 }

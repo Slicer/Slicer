@@ -50,9 +50,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceGUI : public vtkSlicerComponentGU
     // API for setting SliceNode, SliceLogic and
     // for both setting and observing them.
     void SetMRMLNode ( vtkMRMLSliceNode *node )
-        { this->SetMRML ( vtkObjectPointer( &this->SliceNode), node ); }
+        { vtkSetMRMLNodeMacro ( this->SliceNode, node ); }
     void SetAndObserveMRMLNode ( vtkMRMLSliceNode *node )
-        { this->SetAndObserveMRML ( vtkObjectPointer( &this->SliceNode), node ); }
+        { vtkSetAndObserveMRMLNodeMacro (this->SliceNode, node ); }
 
     void SetModuleLogic ( vtkSlicerSliceLogic *logic )
         { 
