@@ -422,21 +422,6 @@ float * vtkMRMLFiducialListNode::GetNthFiducialXYZ(int n)
 }
 
 //----------------------------------------------------------------------------
-const char *vtkMRMLFiducialListNode::GetNthFiducialXYZString(int n)
-{
-    vtkMRMLFiducial *node = this->GetNthFiducial(n);
-    if (node != NULL)
-    {
-        sprintf(this->tempXYZString, "%g %g %g", node->GetXYZ()[0], node->GetXYZ()[1], node->GetXYZ()[2]);
-        return this->tempXYZString;
-    }
-    else
-    {
-        return "0.0 0.0 0.0";
-    }
-}
-
-//----------------------------------------------------------------------------
 int vtkMRMLFiducialListNode::SetNthFiducialOrientation(int n, float w, float x, float y, float z)
 {
     vtkMRMLFiducial *node = this->GetNthFiducial(n);
@@ -464,21 +449,6 @@ float * vtkMRMLFiducialListNode::GetNthFiducialOrientation(int n)
     {
         return NULL;
     }
-}
-
-//----------------------------------------------------------------------------
-const char * vtkMRMLFiducialListNode::GetNthFiducialOrientationString(int n)
-{
-    vtkMRMLFiducial *node = this->GetNthFiducial(n);
-    if (node != NULL)
-    {
-        sprintf(this->tempOrientationString, "%g %g %g %g", node->GetOrientationWXYZ()[0], node->GetOrientationWXYZ()[1], node->GetOrientationWXYZ()[2], node->GetOrientationWXYZ()[3]);
-        return this->tempOrientationString;
-    }
-    else
-    {
-        return "0.0 0.0 0.0 1.0";
-    }    
 }
 
 //----------------------------------------------------------------------------
@@ -541,26 +511,6 @@ bool vtkMRMLFiducialListNode::GetNthFiducialSelected(int n)
     }
 }
 
-//----------------------------------------------------------------------------
-const char *vtkMRMLFiducialListNode::GetNthFiducialSelectedString(int n)
-{
-    vtkMRMLFiducial *node = this->GetNthFiducial(n);
-    if (node != NULL)
-    {
-        if (node->GetSelected())
-        {
-            return "1";
-        }
-        else
-        {
-            return "0";
-        }
-    }
-    else
-    {
-        return "0";
-    }    
-}
 //----------------------------------------------------------------------------
 int vtkMRMLFiducialListNode::SetNthFiducialID(int n, const char *id)
 {
