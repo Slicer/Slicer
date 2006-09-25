@@ -256,7 +256,7 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
     volDisplayFrame->SetParent ( page );
     volDisplayFrame->Create ( );
     volDisplayFrame->SetLabelText ("Display");
-    volDisplayFrame->ExpandFrame ( );
+    volDisplayFrame->CollapseFrame ( );
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   volDisplayFrame->GetWidgetName(), page->GetWidgetName());
 
