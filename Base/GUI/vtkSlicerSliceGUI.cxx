@@ -15,16 +15,17 @@
 #include "vtkMRMLSliceNode.h"
 
 #include "vtkKWApplication.h"
+#include "vtkKWEvent.h"
 #include "vtkKWWidget.h"
 #include "vtkKWFrame.h"
 #include "vtkKWScale.h"
 #include "vtkKWEntry.h"
 #include "vtkKWScaleWithEntry.h"
-#include "vtkKWRenderWidget.h"
 #include "vtkKWMenu.h"
 #include "vtkKWMenuButton.h"
 #include "vtkKWMenuButtonWithLabel.h"
 #include "vtkKWPushButton.h"
+#include "vtkKWRenderWidget.h"
 
 
 //---------------------------------------------------------------------------
@@ -121,13 +122,19 @@ void vtkSlicerSliceGUI::AddGUIObservers ( ) {
 
   // make a user interactor style to process our events
   // look at the InteractorStyle to get our events
-  vtkRenderWindowInteractor *rwi = this->GetSliceViewer()->GetRenderWidget()->GetRenderWindowInteractor();
+  vtkKWRenderWidget *rw = this->GetSliceViewer()->GetRenderWidget();
+  vtkRenderWindowInteractor *rwi = rw->GetRenderWindowInteractor();
   if (rwi)
     {
     vtkSlicerInteractorStyle *iStyle = vtkSlicerInteractorStyle::New();
     rwi->SetInteractorStyle (iStyle);
     iStyle->AddObserver ( vtkCommand::AnyEvent, (vtkCommand *)this->GUICallbackCommand );
     iStyle->Delete();
+    
+    // These events tell us where the key and mouse wheel events will be sent, 
+    // so we need to track them.  They only come from the KW layer, not from VTK
+    rw->AddObserver ( vtkKWEvent::FocusInEvent, (vtkCommand *)this->GUICallbackCommand );
+    rw->AddObserver ( vtkKWEvent::FocusOutEvent, (vtkCommand *)this->GUICallbackCommand );
     }
 }
 
@@ -143,7 +150,8 @@ void vtkSlicerSliceGUI::RemoveGUIObservers ( ) {
   rwi->RemoveObserver ( (vtkCommand *)this->GUICallbackCommand );
 #endif
    
-  vtkRenderWindowInteractor *rwi = this->GetSliceViewer()->GetRenderWidget()->GetRenderWindowInteractor();
+  vtkKWRenderWidget *rw = this->GetSliceViewer()->GetRenderWidget();
+  vtkRenderWindowInteractor *rwi = rw->GetRenderWindowInteractor();
   if (rwi)
     {
     vtkSlicerInteractorStyle *istyle = vtkSlicerInteractorStyle::SafeDownCast(rwi->GetInteractorStyle());
@@ -151,9 +159,11 @@ void vtkSlicerSliceGUI::RemoveGUIObservers ( ) {
       {
       istyle->RemoveObservers ( vtkCommand::AnyEvent, (vtkCommand *)this->GUICallbackCommand );
       }
+
+    rw->RemoveObservers ( vtkKWEvent::FocusInEvent, (vtkCommand *)this->GUICallbackCommand );
+    rw->RemoveObservers ( vtkKWEvent::FocusOutEvent, (vtkCommand *)this->GUICallbackCommand );
     }
 }
-
 
 //---------------------------------------------------------------------------
 void vtkSlicerSliceGUI::SetGUICommandAbortFlag ( int flag )
@@ -166,6 +176,8 @@ void vtkSlicerSliceGUI::SetGUICommandAbortFlag ( int flag )
 void vtkSlicerSliceGUI::ProcessGUIEvents ( vtkObject *caller,
                                               unsigned long event, void *callData )
 {
+  vtkKWRenderWidget *rw = 
+        vtkKWRenderWidget::SafeDownCast (caller);
   vtkKWGenericRenderWindowInteractor *rwi = 
         vtkKWGenericRenderWindowInteractor::SafeDownCast (caller);
   vtkSlicerInteractorStyle *iStyle = 
@@ -193,6 +205,24 @@ void vtkSlicerSliceGUI::ProcessGUIEvents ( vtkObject *caller,
         this->GetTclName(), vtkCommand::GetStringFromEventId(event) );
       }
     }
+
+  if (rw == this->GetSliceViewer()->GetRenderWidget() &&
+      this->GetLogic() != NULL)
+    {
+    this->SetCurrentGUIEvent( vtkKWEvent::GetStringFromEventId(event) );
+    // don't invoke the real event, since there's no way for the tcl
+    // layer to set an observer on it.  It won't matter because the callback
+    // will look at the CurrentGUIEvent string to decide what to do.
+    this->InvokeEvent (vtkCommand::UserEvent, NULL);
+    this->SetCurrentGUIEvent( "" ); // avoid extra processing of same event
+
+    if ( !this->GUICallbackCommand->GetAbortFlag() )
+      {
+      this->Script( "SliceViewerHandleEvent %s %s", 
+        this->GetTclName(), vtkKWEvent::GetStringFromEventId(event) );
+      }
+    }
+
 }
 
 

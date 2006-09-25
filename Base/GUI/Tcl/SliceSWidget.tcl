@@ -30,6 +30,7 @@ if { [itcl::find class SliceSWidget] == "" } {
     variable _actionStartRAS "0 0 0"
     variable _actionStartXY "0 0"
     variable _actionStartFOV "250 250 250"
+    variable _kwObserverTags ""
 
     # methods
     method processEvent {} {}
@@ -62,13 +63,16 @@ itcl::body SliceSWidget::constructor {sliceGUI} {
     "MiddleButtonReleaseEvent" "MouseWheelForwardEvent" "MouseWheelBackwardEvent"
     "ExposeEvent" "ConfigureEvent" "EnterEvent" "LeaveEvent"
     "TimerEvent" "KeyPressEvent" "KeyReleaseEvent"
-    "CharEvent" "ExitEvent" }
+    "CharEvent" "ExitEvent" "UserEvent" }
   foreach event $events {
-    lappend _guiObserverTags [$sliceGUI AddObserver $event "$this processEvent"]    }
+    lappend _guiObserverTags [$sliceGUI AddObserver $event "$this processEvent"]    
+  }
+
   set node [[$sliceGUI GetLogic] GetSliceNode]
   lappend _nodeObserverTags [$node AddObserver DeleteEvent "itcl::delete object $this"]
   lappend _nodeObserverTags [$node AddObserver AnyEvent "$this processEvent"]
 }
+
 
 itcl::body SliceSWidget::destructor {} {
 
@@ -281,10 +285,10 @@ itcl::body SliceSWidget::processEvent { } {
           $_sliceNode UpdateMatrices
           $sliceGUI SetGUICommandAbortFlag 1
         }
-        Left - Down {
+        "Left" - "Down" {
           $this decrementSlice
         }
-        Right - Up {
+        "Right" - "Up" {
           $this incrementSlice
         }
         default {
@@ -306,11 +310,20 @@ itcl::body SliceSWidget::processEvent { } {
         puts ""
       }
     }
+    "FocusInEvent" {
+      # TODO: no good way to add an observer for Focus in/out events
+      # since it's not in the vtkCommand list of known events
+      # and you can't create an event on it's number either
+      puts "$sliceGUI got focus!"
+    }
+    "FocusOutEvent" {
+      puts "$sliceGUI lost focus!"
+    }
     "ExitEvent" { }
-
   }
-
 }
+
+
 
 itcl::body SliceSWidget::incrementSlice {} {
   $this moveSlice $sliceStep
@@ -323,7 +336,5 @@ itcl::body SliceSWidget::decrementSlice {} {
 itcl::body SliceSWidget::moveSlice { delta } {
   set logic [$sliceGUI GetLogic]
   set offset [$logic GetSliceOffset]
-  puts "offset was $offset"
   $logic SetSliceOffset [expr $offset + $delta]
-  puts "offset is [$logic GetSliceOffset]"
 }
