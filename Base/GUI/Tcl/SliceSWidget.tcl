@@ -130,14 +130,11 @@ itcl::body SliceSWidget::processEvent { } {
     return
   }
 
-  set grabID [$sliceGUI GetGrabID]
-  if { ($grabID != "" && $grabID != $this) } {
-    return ;# some other widget wants these events
-  }
-
   #
   # get the current event info
   # - the event type
+  # - check to see if another widget is grabbing
+  #   (we'll process some events even if we don't have grab)
   # - the actual x y location of the event
   # - fill the layers info with local info
   # - get the RAS space location of the event
@@ -147,6 +144,19 @@ itcl::body SliceSWidget::processEvent { } {
     # this call is needed (shouldn't be)
     eval $_interactor UpdateSize [$_renderer GetSize]
   }
+
+  #
+  # if another widget has the grab, let this go unless
+  # it is a focus event, in which case we want to update
+  # out display icon
+  #
+  set grabID [$sliceGUI GetGrabID]
+  if { ($grabID != "" && $grabID != $this) } {
+    if { ![string match "Focus*Event" $event] } {
+      return ;# some other widget wants these events
+    }
+  }
+
   foreach {x y} [$_interactor GetEventPosition] {}
   $this queryLayers $x $y
   set xyToRAS [$_sliceNode GetXYToRAS]
