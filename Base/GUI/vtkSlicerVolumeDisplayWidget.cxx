@@ -292,7 +292,7 @@ void vtkSlicerVolumeDisplayWidget::CreateWidget ( )
     this->WindowLevelThresholdEditor->AddObserver(vtkKWWindowLevelThresholdEditor::ValueStartChangingEvent, (vtkCommand *)this->GUICallbackCommand );
     if (this->MRMLScene != NULL)
       {
-      this->MRMLScene->AddObserver(vtkCommand::ModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand );
+      this->SetAndObserveMRMLScene(this->MRMLScene);
       }
 
     volDisplayFrame->Delete();

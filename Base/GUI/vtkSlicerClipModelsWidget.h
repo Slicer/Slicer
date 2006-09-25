@@ -28,7 +28,7 @@ public:
   vtkGetObjectMacro ( ClipModelsNode, vtkMRMLClipModelsNode );
   void SetClipModelsNode (vtkMRMLClipModelsNode *snode)
     {
-    this->SetAndObserveMRML( vtkObjectPointer(&this->ClipModelsNode), snode );
+    vtkSetAndObserveMRMLNodeMacro( this->ClipModelsNode, snode );
     }
 
 

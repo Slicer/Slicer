@@ -16,9 +16,10 @@ vtkCxxRevisionMacro ( vtkSlicerWidget, "$Revision: 1.0 $" );
 vtkSlicerWidget::vtkSlicerWidget ( )
 {
   // Set up callbacks
-  this->MRMLCallbackCommand = vtkCallbackCommand::New ( );
-  this->MRMLCallbackCommand->SetClientData( reinterpret_cast<void *>(this) );
-  this->MRMLCallbackCommand->SetCallback( vtkSlicerWidget::MRMLCallback );
+  this->MRMLObserverManager = vtkObserverManager::New();
+  this->MRMLObserverManager->GetCallbackCommand()->SetClientData( reinterpret_cast<void *> (this) );
+  this->MRMLObserverManager->GetCallbackCommand()->SetCallback(vtkSlicerWidget::MRMLCallback);
+  this->MRMLCallbackCommand = this->MRMLObserverManager->GetCallbackCommand();
 
   this->GUICallbackCommand = vtkCallbackCommand::New ( );
   this->GUICallbackCommand->SetClientData( reinterpret_cast<void *>(this) );
@@ -38,12 +39,11 @@ vtkSlicerWidget::~vtkSlicerWidget ( )
   // and set null pointers.
   this->SetAndObserveMRMLScene ( NULL );
 
-  // unregister and set null pointers.
-  if ( this->MRMLCallbackCommand )
+  if (this->MRMLObserverManager)
     {
-    this->MRMLCallbackCommand->Delete ( );
-    this->MRMLCallbackCommand = NULL;
-    }
+    this->MRMLObserverManager->Delete();
+    }  
+
   if ( this->GUICallbackCommand )
     {
     this->GUICallbackCommand->Delete ( );
@@ -109,51 +109,6 @@ vtkSlicerWidget::WidgetCallback(vtkObject *caller,
   self->SetInWidgetCallbackFlag(1);
   self->ProcessWidgetEvents(caller, eid, callData);
   self->SetInWidgetCallbackFlag(0);
-}
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerWidget::SetMRML ( vtkObject **nodePtr, vtkObject *node )
-{
-  // Delete 
-  if ( *nodePtr )
-    {
-    ( *nodePtr )->RemoveObservers ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
-    ( *nodePtr )->Delete ( );
-    *nodePtr = NULL;
-    }
-  
-  // Set 
-  *nodePtr = node;
-  
-  // Register 
-  if ( *nodePtr )
-    {
-    ( *nodePtr )->Register ( this );
-    }
-}
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerWidget::SetAndObserveMRML ( vtkObject **nodePtr, vtkObject *node )
-{
-  // Remove observers and delete
-  if ( *nodePtr )
-    {
-    ( *nodePtr )->RemoveObservers ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
-    ( *nodePtr )->Delete ( );
-    *nodePtr = NULL;
-    }
-  
-  // Set
-  *nodePtr = node;
-  
-  // Register and add observers
-  if ( *nodePtr )
-    {
-    ( *nodePtr )->Register ( this );
-    ( *nodePtr )->AddObserver ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
-    }
 }
 
 

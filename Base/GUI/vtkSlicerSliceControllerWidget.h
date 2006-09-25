@@ -45,12 +45,12 @@ public:
   vtkGetObjectMacro ( SliceCompositeNode, vtkMRMLSliceCompositeNode );
   void SetSliceCompositeNode (vtkMRMLSliceCompositeNode *scnode)
     {
-    this->SetAndObserveMRML( vtkObjectPointer(&this->SliceCompositeNode), scnode );
+    vtkSetAndObserveMRMLNodeMacro(this->SliceCompositeNode, scnode );
     }
   vtkGetObjectMacro ( SliceNode, vtkMRMLSliceNode );
   void SetSliceNode (vtkMRMLSliceNode *snode)
     {
-    this->SetAndObserveMRML( vtkObjectPointer(&this->SliceNode), snode );
+    vtkSetAndObserveMRMLNodeMacro(this->SliceNode, snode );
     }
 
   // Description:

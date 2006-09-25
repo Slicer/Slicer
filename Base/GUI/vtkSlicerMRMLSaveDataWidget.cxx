@@ -273,7 +273,7 @@ void vtkSlicerMRMLSaveDataWidget::CreateWidget ( )
   
   if (this->MRMLScene != NULL)
     {
-    this->MRMLScene->AddObserver(vtkCommand::ModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand );
+    this->SetAndObserveMRMLScene(this->MRMLScene);
     }
   
     

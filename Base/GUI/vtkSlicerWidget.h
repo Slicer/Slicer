@@ -30,13 +30,22 @@
 
 #include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
+#include "vtkObserverManager.h"
 
 class vtkCallbackCommmand;
 
-#ifndef vtkObjectPointer
-#define vtkObjectPointer( xx ) (reinterpret_cast <vtkObject **>( (xx) ))
+#ifndef vtkSetMRMLNodeMacro
+#define vtkSetMRMLNodeMacro(node,value)  {this->MRMLObserverManager->SetObject ( vtkObjectPointer( &(node)), (value) );};
 #endif
-       
+
+#ifndef vtkSetAndObserveMRMLNodeMacro
+#define vtkSetAndObserveMRMLNodeMacro(node,value)  {this->MRMLObserverManager->SetAndObserveObject ( vtkObjectPointer( &(node)), (value) );};
+#endif
+
+#ifndef vtkSetAndObserveMRMLNodeEventsMacro
+#define vtkSetAndObserveMRMLNodeEventsMacro(node,value,events)  {this->MRMLObserverManager->SetAndObserveObjectEvents ( vtkObjectPointer( &(node)), (value), (events));};
+#endif
+      
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerWidget : public vtkKWCompositeWidget
 {
   
@@ -49,18 +58,22 @@ public:
   // Getting setting and observing MRMLScene.
   vtkGetObjectMacro ( MRMLScene, vtkMRMLScene );
   
+  // Description:
+  // API for setting or setting and observing MRMLScene
   void SetMRMLScene ( vtkMRMLScene *mrml )
-    { this->SetMRML ( vtkObjectPointer( &this->MRMLScene), mrml ); };
-  
-  
+    {
+    this->MRMLObserverManager->SetObject ( vtkObjectPointer( &this->MRMLScene), mrml );
+    }
+
   void SetAndObserveMRMLScene ( vtkMRMLScene *mrml )
-    { this->SetAndObserveMRML ( vtkObjectPointer( &this->MRMLScene), mrml ); };
+    {
+    this->MRMLObserverManager->SetAndObserveObject ( vtkObjectPointer( &this->MRMLScene), mrml );
+    }
 
-  void AddMRMLObserver ( vtkObject *obj, unsigned long event ) 
-    { obj->AddObserver ( event, this->MRMLCallbackCommand ); };
-
-  void RemoveMRMLObserver ( vtkObject *obj, unsigned long event ) 
-    { obj->RemoveObservers ( event, this->MRMLCallbackCommand ); };
+  void SetAndObserveMRMLSceneEvents ( vtkMRMLScene *mrml, vtkIntArray *events )
+    {
+    this->MRMLObserverManager->SetAndObserveObjectEvents ( vtkObjectPointer( &this->MRMLScene), mrml, events );
+    }
   
   // Description:
   // alternative method to propagate events generated in GUI to logic / mrml
@@ -92,7 +105,9 @@ protected:
   virtual void CreateWidget() {this->Superclass::CreateWidget();};
 
   vtkMRMLScene       *MRMLScene;
-  
+
+  vtkObserverManager *MRMLObserverManager;
+
   //BTX
   // a shared set of functions that call the
   // virtual ProcessMRMLEvents
@@ -102,12 +117,6 @@ protected:
                             unsigned long eid, void *clientData, void *callData );
   static void WidgetCallback( vtkObject *caller,
                            unsigned long eid, void *clientData, void *callData );    
-  
-  // functions that set MRML pointers for the GUI class,
-  // either with or without adding/removing observers on them.
-  void SetMRML ( vtkObject **nodePtr, vtkObject *node );
-  void SetAndObserveMRML ( vtkObject **nodePtr, vtkObject *node );
-
   //ETX
   
   // Description::

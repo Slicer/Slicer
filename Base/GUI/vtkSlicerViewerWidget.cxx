@@ -165,8 +165,12 @@ void vtkSlicerViewerWidget::CreateWidget ( )
   this->MainViewer->ResetCamera ( );
 
   // observe scene for add/remove nodes
-  this->AddMRMLObserver(this->MRMLScene, vtkMRMLScene::NodeAddedEvent);
-  this->AddMRMLObserver(this->MRMLScene, vtkMRMLScene::NodeRemovedEvent);
+  vtkIntArray *events = vtkIntArray::New();
+  events->InsertNextValue(vtkCommand::ModifiedEvent);
+  events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
+  events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
+  this->SetAndObserveMRMLSceneEvents(this->MRMLScene, events);
+  events->Delete();
 }
 
 //---------------------------------------------------------------------------
@@ -457,10 +461,8 @@ void vtkSlicerViewerWidget::RemoveMRMLObservers()
 {
   this->RemoveModelObservers();
   this->RemoveFiducialObservers();  
-  
-  this->RemoveMRMLObserver(this->MRMLScene, vtkMRMLScene::NodeAddedEvent);
-  this->RemoveMRMLObserver(this->MRMLScene, vtkMRMLScene::NodeRemovedEvent);
 
+  this->SetAndObserveMRMLScene(NULL);
 }
 
 //---------------------------------------------------------------------------
