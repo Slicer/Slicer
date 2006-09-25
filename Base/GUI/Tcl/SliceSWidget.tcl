@@ -58,13 +58,14 @@ itcl::body SliceSWidget::constructor {sliceGUI} {
 
   # create an actor as feedback for the focus state
   set o(focusIcon) [vtkNew vtkSphereSource]
-  $o(focusIcon) SetRadius 5
+  $o(focusIcon) SetRadius 2
   set o(focusMapper) [vtkNew vtkPolyDataMapper2D]
   set o(focusActor) [vtkNew vtkActor2D]
   $o(focusMapper) SetInput [$o(focusIcon) GetOutput]
   $o(focusActor) SetMapper $o(focusMapper)
   [$o(focusActor) GetProperty] SetColor 1 1 0
   $o(focusActor) VisibilityOff
+  $o(focusActor) SetPosition 3 3
   [$_renderWidget GetRenderer] AddActor2D $o(focusActor)
   lappend _actors $o(focusActor)
 
