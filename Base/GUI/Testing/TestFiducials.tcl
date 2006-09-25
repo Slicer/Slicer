@@ -1,7 +1,10 @@
 
 
-proc TestFiducial {} {
-  set fiducialList [$::slicer3::MRMLScene GetNodeByID vtkMRMLFiducialListNode1] 
+proc TestFiducial { {nodeNumber -1} } {
+    if {$nodeNumber == -1} {
+        set nodeNumber 1
+    }
+    set fiducialList [$::slicer3::MRMLScene GetNodeByID vtkMRMLFiducialListNode${nodeNumber}] 
 
   set numberOfFiducials [$fiducialList GetNumberOfFiducials]
 
@@ -18,11 +21,11 @@ proc TestFiducial {} {
     if { [$fiducialList GetNthFiducialLabelText $f] != "RenameTest$f" } {
       error "fiducial name didn't change ($f)"
     }
-    if { [string trim [$fiducialList GetNthFiducialXYZString $f]] != "$tenf $tenf $tenf" } {
-      error "fiducial XYZ didn't change ($f) (XYZ is [$fiducialList GetNthFiducialXYZString $f] not $tenf $tenf $tenf)"
+    if { [string trim [$fiducialList GetNthFiducialXYZ $f]] != "$tenf $tenf $tenf" } {
+      error "fiducial XYZ didn't change ($f) (XYZ is [$fiducialList GetNthFiducialXYZ $f] not $tenf $tenf $tenf)"
     }
-    if { [string trim [$fiducialList GetNthFiducialOrientationString $f]] != "$f $f $f 1" } {
-        error "fiducial OrientationWXYZ didn't change ($f) (WXYZ is [$fiducialList GetNthFiducialOrientationString $f] not $f $f $f 1)"
+    if { [string trim [$fiducialList GetNthFiducialOrientation $f]] != "$f $f $f 1" } {
+        error "fiducial OrientationWXYZ didn't change ($f) (WXYZ is [$fiducialList GetNthFiducialOrientation $f] not $f $f $f 1)"
     }
   }
 
