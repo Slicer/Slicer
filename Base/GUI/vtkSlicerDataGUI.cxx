@@ -159,22 +159,22 @@ void vtkSlicerDataGUI::BuildGUI ( )
                   this->HelpText->GetWidgetName ( ) );
 
     // INSPECT FRAME
-    vtkSlicerModuleCollapsibleFrame *inspectModifyFrame = vtkSlicerModuleCollapsibleFrame::New ( );
-    inspectModifyFrame->SetParent ( this->UIPanel->GetPageWidget ( "Data" ) );
-    inspectModifyFrame->Create ( );
-    inspectModifyFrame->CollapseFrame ( );
-    inspectModifyFrame->SetLabelText ("Display & modify scene");
+    vtkSlicerModuleCollapsibleFrame *displayModifyFrame = vtkSlicerModuleCollapsibleFrame::New ( );
+    displayModifyFrame->SetParent ( this->UIPanel->GetPageWidget ( "Data" ) );
+    displayModifyFrame->Create ( );
+    displayModifyFrame->ExpandFrame ( );
+    displayModifyFrame->SetLabelText ("Display & modify scene");
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                  inspectModifyFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Data")->GetWidgetName());
+                  displayModifyFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Data")->GetWidgetName());
     
     this->MRMLTreeWidget->SetAndObserveMRMLScene(this->GetMRMLScene() );
-    this->MRMLTreeWidget->SetParent ( inspectModifyFrame->GetFrame() );
+    this->MRMLTreeWidget->SetParent ( displayModifyFrame->GetFrame() );
     this->MRMLTreeWidget->Create ( );
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                  this->MRMLTreeWidget->GetWidgetName(), inspectModifyFrame->GetFrame()->GetWidgetName());
+                  this->MRMLTreeWidget->GetWidgetName(), displayModifyFrame->GetFrame()->GetWidgetName());
     
     modHelpFrame->Delete ( );
-    inspectModifyFrame->Delete ( );
+    displayModifyFrame->Delete ( );
 }
 
 
