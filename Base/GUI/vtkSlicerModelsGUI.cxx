@@ -7,6 +7,7 @@
 #include "vtkSlicerModuleLogic.h"
 //#include "vtkSlicerModelsLogic.h"
 #include "vtkSlicerModelDisplayWidget.h"
+#include "vtkSlicerModuleCollapsibleFrame.h"
 
 #include "vtkKWFrameWithLabel.h"
 #include "vtkKWMenuButton.h"
@@ -210,7 +211,9 @@ void vtkSlicerModelsGUI::BuildGUI ( )
 {
 
     vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-
+  // Define your help text here.
+  const char *help = "**Models Module:** Load, save and adjust display parameters of models. ";
+  
     // ---
     // MODULE GUI FRAME 
     // configure a page for a model loading UI for now.
@@ -220,7 +223,7 @@ void vtkSlicerModelsGUI::BuildGUI ( )
     this->UIPanel->AddPage ( "Models", "Models", NULL );
     
     // HELP FRAME
-    vtkKWFrameWithLabel *modHelpFrame = vtkKWFrameWithLabel::New ( );
+    vtkSlicerModuleCollapsibleFrame *modHelpFrame = vtkSlicerModuleCollapsibleFrame::New ( );
     modHelpFrame->SetParent ( this->UIPanel->GetPageWidget ( "Models" ) );
     modHelpFrame->Create ( );
     modHelpFrame->CollapseFrame ( );
@@ -228,9 +231,21 @@ void vtkSlicerModelsGUI::BuildGUI ( )
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   modHelpFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Models")->GetWidgetName());
 
+    // configure the parent classes help text widget
+    this->HelpText->SetParent ( modHelpFrame->GetFrame() );
+    this->HelpText->Create ( );
+    this->HelpText->SetText ( help );
+    this->HelpText->SetReliefToFlat ( );
+    this->HelpText->SetWrapToWord ( );
+    this->HelpText->ReadOnlyOn ( );
+    this->HelpText->QuickFormattingOn ( );
+    this->HelpText->SetBalloonHelpString ( "" );
+    app->Script ( "pack %s -side top -fill x -expand y -anchor w -padx 2 -pady 4",
+                  this->HelpText->GetWidgetName ( ) );
+
     // ---
     // LOAD FRAME            
-    vtkKWFrameWithLabel *modLoadFrame = vtkKWFrameWithLabel::New ( );
+    vtkSlicerModuleCollapsibleFrame *modLoadFrame = vtkSlicerModuleCollapsibleFrame::New ( );
     modLoadFrame->SetParent ( this->UIPanel->GetPageWidget ( "Models" ) );
     modLoadFrame->Create ( );
     modLoadFrame->SetLabelText ("Load");
@@ -259,20 +274,30 @@ void vtkSlicerModelsGUI::BuildGUI ( )
 
     // ---
     // DISPLAY FRAME               
+    // ---
+    // LOAD FRAME            
+    vtkSlicerModuleCollapsibleFrame *modDisplayFrame = vtkSlicerModuleCollapsibleFrame::New ( );
+    modDisplayFrame->SetParent ( this->UIPanel->GetPageWidget ( "Models" ) );
+    modDisplayFrame->Create ( );
+    modDisplayFrame->SetLabelText ("Display");
+    modDisplayFrame->CollapseFrame ( );
+    app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
+                  modDisplayFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Models")->GetWidgetName());
+
     this->ModelDisplayWidget = vtkSlicerModelDisplayWidget::New ( );
     this->ModelDisplayWidget->SetMRMLScene(this->GetMRMLScene() );
-    this->ModelDisplayWidget->SetParent ( this->UIPanel->GetPageWidget ( "Models" ) );
+    this->ModelDisplayWidget->SetParent ( modDisplayFrame->GetFrame() );
     this->ModelDisplayWidget->Create ( );
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   this->ModelDisplayWidget->GetWidgetName(), 
-                  this->UIPanel->GetPageWidget("Models")->GetWidgetName());
+                  modDisplayFrame->GetFrame()->GetWidgetName());
     // ---
     // Save FRAME            
-    vtkKWFrameWithLabel *modelSaveFrame = vtkKWFrameWithLabel::New ( );
+    vtkSlicerModuleCollapsibleFrame *modelSaveFrame = vtkSlicerModuleCollapsibleFrame::New ( );
     modelSaveFrame->SetParent ( this->UIPanel->GetPageWidget ( "Models" ) );
     modelSaveFrame->Create ( );
     modelSaveFrame->SetLabelText ("Save");
-    modelSaveFrame->ExpandFrame ( );
+    modelSaveFrame->CollapseFrame ( );
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   modelSaveFrame->GetWidgetName(), 
                   this->UIPanel->GetPageWidget ( "Models" )->GetWidgetName());
@@ -307,6 +332,7 @@ void vtkSlicerModelsGUI::BuildGUI ( )
     
     modLoadFrame->Delete ( );
     modHelpFrame->Delete ( );
+    modDisplayFrame->Delete ( );
     modelSaveFrame->Delete();
 }
 

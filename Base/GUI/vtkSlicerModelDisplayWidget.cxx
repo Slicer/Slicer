@@ -5,6 +5,7 @@
 #include "vtkSlicerModelDisplayWidget.h"
 
 #include "vtkKWFrameWithLabel.h"
+#include "vtkKWFrame.h"
 #include "vtkKWMenu.h"
 #include "vtkKWScale.h"
 #include "vtkKWMenuButton.h"
@@ -337,16 +338,18 @@ void vtkSlicerModelDisplayWidget::CreateWidget ( )
   
   // ---
   // DISPLAY FRAME            
-  vtkKWFrameWithLabel *modelDisplayFrame = vtkKWFrameWithLabel::New ( );
+  vtkKWFrame *modelDisplayFrame = vtkKWFrame::New ( );
   modelDisplayFrame->SetParent ( this->GetParent() );
   modelDisplayFrame->Create ( );
+/*
   modelDisplayFrame->SetLabelText ("Display");
   modelDisplayFrame->CollapseFrame ( );
+*/
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                  modelDisplayFrame->GetWidgetName() );
 
   this->ModelSelectorWidget = vtkSlicerNodeSelectorWidget::New() ;
-  this->ModelSelectorWidget->SetParent ( modelDisplayFrame->GetFrame() );
+  this->ModelSelectorWidget->SetParent ( modelDisplayFrame );
   this->ModelSelectorWidget->Create ( );
   this->ModelSelectorWidget->SetNodeClass("vtkMRMLModelNode", NULL, NULL, NULL);
   this->ModelSelectorWidget->SetMRMLScene(this->GetMRMLScene());
@@ -362,7 +365,7 @@ void vtkSlicerModelDisplayWidget::CreateWidget ( )
                  this->ModelSelectorWidget->GetWidgetName());
 
   this->VisibilityButton = vtkKWCheckButtonWithLabel::New();
-  this->VisibilityButton->SetParent ( modelDisplayFrame->GetFrame() );
+  this->VisibilityButton->SetParent ( modelDisplayFrame );
   this->VisibilityButton->Create ( );
   this->VisibilityButton->SetLabelText("Visibility");
   this->VisibilityButton->SetBalloonHelpString("set model visibility.");
@@ -370,7 +373,7 @@ void vtkSlicerModelDisplayWidget::CreateWidget ( )
                  this->VisibilityButton->GetWidgetName() );
 
   this->ClippingButton = vtkKWCheckButtonWithLabel::New();
-  this->ClippingButton->SetParent ( modelDisplayFrame->GetFrame() );
+  this->ClippingButton->SetParent ( modelDisplayFrame );
   this->ClippingButton->Create ( );
   this->ClippingButton->SetLabelText("Clipping");
   this->ClippingButton->SetBalloonHelpString("set model clipping with RGB slice planes.");
@@ -378,7 +381,7 @@ void vtkSlicerModelDisplayWidget::CreateWidget ( )
                  this->ClippingButton->GetWidgetName() );
   
   this->OpacityScale = vtkKWScaleWithLabel::New();
-  this->OpacityScale->SetParent ( modelDisplayFrame->GetFrame() );
+  this->OpacityScale->SetParent ( modelDisplayFrame );
   this->OpacityScale->Create ( );
   this->OpacityScale->SetLabelText("Opacity");
   this->OpacityScale->GetWidget()->SetRange(0,1);
@@ -388,7 +391,7 @@ void vtkSlicerModelDisplayWidget::CreateWidget ( )
                  this->OpacityScale->GetWidgetName() );
 
   this->ChangeColorButton = vtkKWChangeColorButton::New();
-  this->ChangeColorButton->SetParent ( modelDisplayFrame->GetFrame() );
+  this->ChangeColorButton->SetParent ( modelDisplayFrame );
   this->ChangeColorButton->Create ( );
   this->ChangeColorButton->SetColor(0.0, 1.0, 0.0);
   this->ChangeColorButton->LabelOutsideButtonOn();
@@ -398,7 +401,7 @@ void vtkSlicerModelDisplayWidget::CreateWidget ( )
                  this->ChangeColorButton->GetWidgetName() );
 
   this->SurfaceMaterialPropertyWidget = vtkKWSurfaceMaterialPropertyWidget::New();
-  this->SurfaceMaterialPropertyWidget->SetParent ( modelDisplayFrame->GetFrame() );
+  this->SurfaceMaterialPropertyWidget->SetParent ( modelDisplayFrame );
   this->SurfaceMaterialPropertyWidget->Create ( );
   this->SurfaceMaterialPropertyWidget->SetBalloonHelpString("set model opacity value.");
   this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
