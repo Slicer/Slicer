@@ -6,6 +6,7 @@
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerModuleLogic.h"
 #include "vtkSlicerVisibilityIcons.h"
+#include "vtkSlicerModuleCollapsibleFrame.h"
 
 #include "vtkKWMessage.h"
 #include "vtkKWMultiColumnList.h"
@@ -625,6 +626,8 @@ void vtkSlicerFiducialsGUI::Exit ( )
 void vtkSlicerFiducialsGUI::BuildGUI ( )
 {
     vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
+  // Define your help text here.
+  const char *help = "**Fiducials Module:** Creates and manages lists of Fiducial points. ";
 
     // ---
     // MODULE GUI FRAME 
@@ -637,7 +640,7 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     vtkKWWidget *page = this->UIPanel->GetPageWidget ( "Fiducials" );
     
     // HELP FRAME
-    vtkKWFrameWithLabel *modHelpFrame = vtkKWFrameWithLabel::New ( );
+    vtkSlicerModuleCollapsibleFrame *modHelpFrame = vtkSlicerModuleCollapsibleFrame::New ( );
     modHelpFrame->SetParent (page );
     modHelpFrame->Create ( );
     modHelpFrame->CollapseFrame ( );
@@ -645,16 +648,21 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   modHelpFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Fiducials")->GetWidgetName());
 
-    vtkKWMessage *helpMessage = vtkKWMessage::New();
-    helpMessage->SetParent(modHelpFrame->GetFrame());
-    helpMessage->Create();
-    helpMessage->SetWidth(100);
-    helpMessage->SetText("Create and manage Fiducial lists.");
-    app->Script ( "pack %s", helpMessage->GetWidgetName());
-                  
+    // configure the parent classes help text widget
+    this->HelpText->SetParent ( modHelpFrame->GetFrame() );
+    this->HelpText->Create ( );
+    this->HelpText->SetText ( help );
+    this->HelpText->SetReliefToFlat ( );
+    this->HelpText->SetWrapToWord ( );
+    this->HelpText->ReadOnlyOn ( );
+    this->HelpText->QuickFormattingOn ( );
+    this->HelpText->SetBalloonHelpString ( "" );
+    app->Script ( "pack %s -side top -fill x -expand y -anchor w -padx 2 -pady 4",
+                  this->HelpText->GetWidgetName ( ) );
+
     // ---
     // DISPLAY FRAME            
-    vtkKWFrameWithLabel *displayFrame = vtkKWFrameWithLabel::New ( );
+    vtkSlicerModuleCollapsibleFrame *displayFrame = vtkSlicerModuleCollapsibleFrame::New ( );
     displayFrame->SetParent ( page );
     displayFrame->Create ( );
     displayFrame->SetLabelText ("Display");
@@ -785,7 +793,7 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     // ---
     // LIST FRAME
     
-    vtkKWFrameWithLabel *listFrame = vtkKWFrameWithLabel::New();
+    vtkSlicerModuleCollapsibleFrame *listFrame = vtkSlicerModuleCollapsibleFrame::New();
     listFrame->SetParent( page );
     listFrame->Create();
     listFrame->SetLabelText("Fiducial List");
@@ -848,14 +856,14 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     this->AddFiducialButton = vtkKWPushButton::New ( );
     this->AddFiducialButton->SetParent ( buttonFrame );
     this->AddFiducialButton->Create ( );
-    this->AddFiducialButton->SetText ("Add Fiducial Point");
+    this->AddFiducialButton->SetText ("Add Fiducial");
     this->AddFiducialButton->SetBalloonHelpString("Add a fiducial point to the current list");
     
     // add a remove fiducial button
     this->RemoveFiducialButton = vtkKWPushButton::New ( );
     this->RemoveFiducialButton->SetParent ( buttonFrame );
     this->RemoveFiducialButton->Create ( );
-    this->RemoveFiducialButton->SetText ("Remove Fiducial Point");
+    this->RemoveFiducialButton->SetText ("Remove Fiducial");
     this->RemoveFiducialButton->SetBalloonHelpString("Remove the last fiducial that was clicked on in the table from the list.");
 
 
@@ -863,7 +871,7 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     this->RemoveFiducialsButton = vtkKWPushButton::New ( );
     this->RemoveFiducialsButton->SetParent ( buttonFrame );
     this->RemoveFiducialsButton->Create ( );
-    this->RemoveFiducialsButton->SetText ("Remove All Fiducial Points");
+    this->RemoveFiducialsButton->SetText ("Remove All Fiducials");
     this->RemoveFiducialsButton->SetBalloonHelpString("Remove all fiducial points from the list.");
   
     app->Script("pack %s %s %s -side left -anchor w -padx 4 -pady 2", 
@@ -879,9 +887,12 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
         }
         // add in observers on node added/removed
     }
-
      
-    helpMessage->Delete ( );
+    // deleting frame widgets
+    buttonFrame->Delete ();
+    colourFrame->Delete ();
+    visibilityOpacityFrame->Delete ();
+    scaleFrame->Delete();    
     displayFrame->Delete ( );
     listFrame->Delete();
     modHelpFrame->Delete ( );
