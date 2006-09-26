@@ -646,6 +646,7 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
   vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
   vtkMRMLCommandLineModuleNode* node = vtkMRMLCommandLineModuleNode::New();
   this->Logic->GetMRMLScene()->RegisterNodeClass(node);
+  node->Delete();
 
   this->UIPanel->AddPage ( title.c_str(), title.c_str(), NULL );
 

@@ -63,6 +63,8 @@ vtkMRMLGradientAnisotropicDiffusionFilterNode::vtkMRMLGradientAnisotropicDiffusi
 //----------------------------------------------------------------------------
 vtkMRMLGradientAnisotropicDiffusionFilterNode::~vtkMRMLGradientAnisotropicDiffusionFilterNode()
 {
+   this->SetInputVolumeRef( NULL );
+   this->SetOutputVolumeRef( NULL );
 }
 
 //----------------------------------------------------------------------------
@@ -91,12 +93,26 @@ void vtkMRMLGradientAnisotropicDiffusionFilterNode::WriteXML(ostream& of, int nI
   }
   {
     std::stringstream ss;
-    ss << this->InputVolumeRef;
+    if ( this->InputVolumeRef )
+      {
+      ss << this->InputVolumeRef;
+      }
+    else
+      {
+      ss << "NULL";
+      }
     of << indent << "InputVolumeRef='" << ss.str() << "' ";
   }
   {
     std::stringstream ss;
-    ss << this->OutputVolumeRef;
+    if ( this->OutputVolumeRef )
+      {
+      ss << this->OutputVolumeRef;
+      }
+    else
+      {
+      ss << "NULL";
+      }
     of << indent << "OutputVolumeRef='" << ss.str() << "' ";
   }
 }
@@ -166,7 +182,9 @@ void vtkMRMLGradientAnisotropicDiffusionFilterNode::PrintSelf(ostream& os, vtkIn
   os << indent << "Conductance:   " << this->Conductance << "\n";
   os << indent << "NumberOfIterations:   " << this->NumberOfIterations << "\n";
   os << indent << "TimeStep:   " << this->TimeStep << "\n";
-  os << indent << "InputVolumeRef:   " << this->InputVolumeRef << "\n";
-  os << indent << "OutputVolumeRef:   " << this->OutputVolumeRef << "\n";
+  os << indent << "InputVolumeRef:   " << 
+   (this->InputVolumeRef ? this->InputVolumeRef : "(none)") << "\n";
+  os << indent << "OutputVolumeRef:   " << 
+   (this->OutputVolumeRef ? this->OutputVolumeRef : "(none)") << "\n";
 }
 

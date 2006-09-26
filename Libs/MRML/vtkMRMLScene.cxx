@@ -49,45 +49,61 @@ vtkMRMLScene::vtkMRMLScene()
   this->InUndo = false;
   //
   // Register all the 'built-in' nodes for the library
+  // - note: the scene will maintain a registered pointer to the nodes,
+  //   so we delete them here (same should be done by any module that 
+  //   creates nodes).
   //
   vtkMRMLScalarVolumeNode *volumenode = vtkMRMLScalarVolumeNode::New(); 
   this->RegisterNodeClass( volumenode );
+  volumenode->Delete();
 
   vtkMRMLModelNode *modelnode = vtkMRMLModelNode::New(); 
   this->RegisterNodeClass( modelnode );
+  modelnode->Delete();
   
   vtkMRMLLinearTransformNode *linxnode = vtkMRMLLinearTransformNode::New(); 
   this->RegisterNodeClass( linxnode );
+  linxnode->Delete();
   
   vtkMRMLModelStorageNode *modelstorenode = vtkMRMLModelStorageNode::New(); 
   this->RegisterNodeClass( modelstorenode );
+  modelstorenode->Delete();
 
   vtkMRMLModelDisplayNode *modeldisplaynode = vtkMRMLModelDisplayNode::New(); 
   this->RegisterNodeClass( modeldisplaynode );
+  modeldisplaynode->Delete();
   
   vtkMRMLScalarVolumeNode *svoln = vtkMRMLScalarVolumeNode::New(); 
   this->RegisterNodeClass( svoln );
+  svoln->Delete();
   
   vtkMRMLVectorVolumeNode *vvoln = vtkMRMLVectorVolumeNode::New(); 
   this->RegisterNodeClass( vvoln );
+  vvoln->Delete();
   
   vtkMRMLFiducialListNode *fidln = vtkMRMLFiducialListNode::New(); 
   this->RegisterNodeClass( fidln );
+  fidln->Delete();
   
   vtkMRMLSliceCompositeNode *scompn = vtkMRMLSliceCompositeNode::New(); 
   this->RegisterNodeClass( scompn );
+  scompn->Delete();
   
   vtkMRMLSelectionNode *sseln = vtkMRMLSelectionNode::New(); 
   this->RegisterNodeClass( sseln );
+  sseln->Delete();
   
   vtkMRMLSliceNode *snode = vtkMRMLSliceNode::New(); 
   this->RegisterNodeClass( snode );
+  snode->Delete();
   
   vtkMRMLVolumeArchetypeStorageNode *astoren = vtkMRMLVolumeArchetypeStorageNode::New(); 
   this->RegisterNodeClass( astoren );
+  astoren->Delete();
   
   vtkMRMLVolumeDisplayNode *vdisn = vtkMRMLVolumeDisplayNode::New(); 
   this->RegisterNodeClass( vdisn );
+  vdisn->Delete();
 }
 
 //------------------------------------------------------------------------------
@@ -111,7 +127,6 @@ vtkMRMLScene::~vtkMRMLScene()
     {
     this->RegisteredNodeClasses[n]->Delete();
     }
-
 }
 
 
@@ -167,8 +182,7 @@ vtkMRMLNode* vtkMRMLScene::CreateNodeByClass(const char* className)
 //------------------------------------------------------------------------------
 void vtkMRMLScene::RegisterNodeClass(vtkMRMLNode* node) 
 {
-  // TODO: who Delete()s these?
-  // -- should Register here and the callers should Delete
+  node->Register(this);
   this->RegisteredNodeClasses.push_back(node);
   this->RegisteredNodeTags.push_back(std::string(node->GetNodeTagName()));
 }

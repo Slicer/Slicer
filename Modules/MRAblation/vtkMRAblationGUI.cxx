@@ -298,8 +298,9 @@ void vtkMRAblationGUI::ProcessMRMLEvents ( vtkObject *caller,
 void vtkMRAblationGUI::BuildGUI ( ) 
 {
   vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-  vtkMRMLMRAblationNode* gadNode = vtkMRMLMRAblationNode::New();
-  this->Logic->GetMRMLScene()->RegisterNodeClass(gadNode);
+  vtkMRMLMRAblationNode* mraNode = vtkMRMLMRAblationNode::New();
+  this->Logic->GetMRMLScene()->RegisterNodeClass(mraNode);
+  mraNode->Delete();
 
   this->UIPanel->AddPage ( "MRAblation", "MRAblation", NULL );
   // ---
