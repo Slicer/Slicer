@@ -164,14 +164,18 @@ int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
     modelNode->SetAndObservePolyData(reader->GetOutput());
     }  
   else if ( extention == std::string(".orig") ||
-            extention == std::string(".inflated") || 
+            extention == std::string(".inflated") ||
+            extention == std::string(".sphere") ||
+            extention == std::string(".white") ||
+            extention == std::string(".smoothwm") ||
             extention == std::string(".pial") ) 
     {
-    //TODO: read in a free surfer file
+    //read in a free surfer file
     vtkFSSurfaceReader *reader = vtkFSSurfaceReader::New();
     reader->SetFileName(fullName.c_str());
     reader->Update();
     modelNode->SetAndObservePolyData(reader->GetOutput());
+    reader->Delete();
     }  
   else if (extention == std::string(".stl")) 
     {
@@ -182,7 +186,7 @@ int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
     }
   else 
     {
-    vtkErrorMacro("Cannot read model fle");
+    vtkErrorMacro("Cannot read model file '" << name.c_str() << "'");
     return 0;
     }
     
