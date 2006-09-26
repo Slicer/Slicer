@@ -83,8 +83,9 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
 
     this->LogoFrame = vtkKWFrame::New();
     this->ModuleChooseFrame = vtkKWFrame::New();
-    this->SlicesControlFrame = vtkKWFrame::New();
-    this->ViewControlFrame = vtkKWFrame::New();
+    this->SlicesControlFrame = vtkSlicerModuleCollapsibleFrame::New();
+    this->ViewControlFrame = vtkSlicerModuleCollapsibleFrame::New();
+    this->DropShadowFrame = vtkKWFrame::New();
     this->LightboxFrame = NULL;
 
     // initialize in case any are not defined.
@@ -195,10 +196,15 @@ vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
         this->ModuleChooseFrame->Delete ();
         this->ModuleChooseFrame = NULL;
     }
+    if ( this->DropShadowFrame ) {
+      this->DropShadowFrame->SetParent ( NULL );
+        this->DropShadowFrame->Delete ( );
+        this->DropShadowFrame = NULL;
+    }
     if ( this->SlicesControlFrame ) {
       this->SlicesControlFrame->SetParent ( NULL );
-        this->SlicesControlFrame->Delete ( );
-        this->SlicesControlFrame = NULL;
+      this->SlicesControlFrame->Delete ( );
+      this->SlicesControlFrame = NULL;
     }
     if ( this->ViewControlFrame ) {
       this->ViewControlFrame->SetParent ( NULL );
@@ -571,7 +577,7 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
             vtkSlicerSlicesControlGUI *scGUI = this->GetSlicesControlGUI ( );
             scGUI->SetApplicationGUI ( this );
             scGUI->SetApplication ( app );
-            scGUI->BuildGUI ( this->SlicesControlFrame );
+            scGUI->BuildGUI ( this->SlicesControlFrame->GetFrame() );
 #endif
 
             // Build 3DView Control panel
@@ -579,18 +585,12 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
             vtkSlicerViewControlGUI *vcGUI = this->GetViewControlGUI ( );
             vcGUI->SetApplicationGUI ( this );
             vcGUI->SetApplication ( app );
-            vcGUI->BuildGUI ( this->ViewControlFrame );
+            vcGUI->BuildGUI ( this->ViewControlFrame->GetFrame() );
 #endif
 
-            // Turn off the tabs for pages in the ModuleControlGUI
-            this->MainSlicerWindow->GetMainNotebook()->ShowIconsOff ( );
-
-            this->MainSlicerWindow->GetMainNotebook()->SetReliefToFlat();
-            this->MainSlicerWindow->GetMainNotebook()->SetBorderWidth ( 0 );
-            this->MainSlicerWindow->GetMainNotebook()->SetHighlightThickness ( 0 );
-
-            //this->MainSlicerWindow->GetMainNotebook()->SetAlwaysShowTabs ( 0 );
             this->MainSlicerWindow->GetMainNotebook()->SetUseFrameWithScrollbars ( 1 );
+            this->MainSlicerWindow->GetMainNotebook()->SetEnablePageTabContextMenu ( 0 );
+            
             // Build 3DViewer and Slice Viewers
 
 #ifndef SLICEVIEWER_DEBUG
@@ -1371,7 +1371,6 @@ void vtkSlicerApplicationGUI::PackFirstSliceViewerFrame ( )
 void vtkSlicerApplicationGUI::BuildGUIFrames ( )
 {
 
-
     if ( this->GetApplication() != NULL ) {
         // pointers for convenience
         vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication() );
@@ -1390,22 +1389,32 @@ void vtkSlicerApplicationGUI::BuildGUIFrames ( )
             this->ModuleChooseFrame->SetParent ( this->MainSlicerWindow->GetMainPanelFrame ( ) );
             this->ModuleChooseFrame->Create( );
             this->ModuleChooseFrame->SetHeight ( layout->GetDefaultModuleChooseFrameHeight ( ) );
-
-            this->SlicesControlFrame->SetParent ( this->MainSlicerWindow->GetMainPanelFrame ( ) );
-            this->SlicesControlFrame->Create( );
-            this->SlicesControlFrame->SetHeight ( layout->GetDefaultSlicesControlFrameHeight ( ) );
             
-            this->ViewControlFrame->SetParent ( this->MainSlicerWindow->GetMainPanelFrame ( ) );
+            this->DropShadowFrame->SetParent ( this->MainSlicerWindow->GetMainPanelFrame() );
+            this->DropShadowFrame->Create ( );
+            // why is the theme not setting this???
+            this->DropShadowFrame->SetBackgroundColor ( 0.9, 0.9, 1.0);
+
+            this->SlicesControlFrame->SetParent ( this->DropShadowFrame );
+            this->SlicesControlFrame->Create( );
+            this->SlicesControlFrame->ExpandFrame ( );
+            this->SlicesControlFrame->SetLabelText ( "Manipulate Slice Views");
+            this->SlicesControlFrame->GetFrame()->SetHeight ( layout->GetDefaultSlicesControlFrameHeight ( ) );
+            
+            this->ViewControlFrame->SetParent ( this->DropShadowFrame );
             this->ViewControlFrame->Create( );
-            this->ViewControlFrame->SetHeight (layout->GetDefaultViewControlFrameHeight ( ) );
+            this->ViewControlFrame->ExpandFrame ( );
+            this->ViewControlFrame->SetLabelText ( "Manipulate 3D View" );
+            this->ViewControlFrame->GetFrame()->SetHeight (layout->GetDefaultViewControlFrameHeight ( ) );
             
             // pack logo and slicer control frames
             this->Script ( "pack %s -side top -fill x -padx 1 -pady 1", this->LogoFrame->GetWidgetName() );
             app->Script ( "pack %s -side top -fill x -padx 1 -pady 10", this->ModuleChooseFrame->GetWidgetName() );
-
+            
             // pack slice and view control frames
-            app->Script ( "pack %s -side bottom -expand n -fill x -padx 1 -pady 10", this->ViewControlFrame->GetWidgetName() );
-            app->Script ( "pack %s -side bottom -expand n -fill x -padx 1 -pady 10", this->SlicesControlFrame->GetWidgetName() );
+            app->Script ( "pack %s -side bottom -expand n -fill x -padx 1 -ipady 1 -pady 0", this->DropShadowFrame->GetWidgetName() );
+            app->Script ( "pack %s -side bottom -expand n -fill x -padx 0 -ipady 5 -pady 2", this->ViewControlFrame->GetWidgetName() );
+            app->Script ( "pack %s -side bottom -expand n -fill x -padx 0 -ipady 5 -pady 1", this->SlicesControlFrame->GetWidgetName() );
 
         }
     }

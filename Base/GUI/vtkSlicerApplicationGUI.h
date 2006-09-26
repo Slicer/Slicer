@@ -30,6 +30,7 @@
 
 #include "vtkSlicerWindow.h"
 #include "vtkKWFrame.h"
+#include "vtkSlicerModuleCollapsibleFrame.h"
 #include "vtkKWRenderWidget.h"
 #include "vtkKWLoadSaveDialog.h"
 
@@ -90,8 +91,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // Get the frames that populate the Slicer GUI
     vtkGetObjectMacro ( LogoFrame, vtkKWFrame);
     vtkGetObjectMacro ( ModuleChooseFrame, vtkKWFrame );
-    vtkGetObjectMacro ( SlicesControlFrame, vtkKWFrame );
-    vtkGetObjectMacro ( ViewControlFrame, vtkKWFrame );
+    vtkGetObjectMacro ( DropShadowFrame, vtkKWFrame );
+    vtkGetObjectMacro ( SlicesControlFrame, vtkSlicerModuleCollapsibleFrame );
+    vtkGetObjectMacro ( ViewControlFrame, vtkSlicerModuleCollapsibleFrame );
 
     // Description:
     // A frame used in the MainViewFrame of SlicerMainWin
@@ -210,8 +212,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // Frames for the main Slicer UI panel    
     vtkKWFrame *LogoFrame;
     vtkKWFrame *ModuleChooseFrame;
-    vtkKWFrame *SlicesControlFrame;
-    vtkKWFrame *ViewControlFrame;
+    vtkKWFrame *DropShadowFrame;
+    vtkSlicerModuleCollapsibleFrame *SlicesControlFrame;
+    vtkSlicerModuleCollapsibleFrame *ViewControlFrame;
 
     // Description:
     // Frame for Lightbox viewing (not yet implemented)
