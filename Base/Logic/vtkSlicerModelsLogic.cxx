@@ -113,9 +113,15 @@ vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel (char* filename)
     this->GetMRMLScene()->AddNode(modelNode);  
 
     this->Modified();  
-    }
 
-  modelNode->Delete();
+    modelNode->Delete();
+    }
+  else
+    {
+    vtkDebugMacro("Couldn't read file, returning null model node: " << filename);
+    modelNode->Delete();
+    modelNode = NULL;
+    }
   storageNode->Delete();
   displayNode->Delete();
 
