@@ -131,8 +131,14 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     vtkSlicerFiducialsLogic *Logic;
 
 
+    // Description:
     // The ID of the fiducial list node that is currently displayed in the GUI
+    // TODO: probably redundant
     char *FiducialListNodeID;
+
+    // Description:
+    // The the fiducial list node that is currently displayed in the GUI
+    vtkMRMLFiducialListNode *FiducialListNode;
     
     // Widgets for the Fiducials module
     // add a point

@@ -30,6 +30,7 @@ vtkSlicerFiducialsGUI::vtkSlicerFiducialsGUI ( )
     this->Logic = NULL;
     this->FiducialListSelectorWidget = NULL;
     this->FiducialListNodeID = NULL; // "(none)";
+    this->FiducialListNode = NULL; // "(none)";
 
     this->AddFiducialButton = NULL;
     this->RemoveFiducialButton = NULL;
@@ -129,6 +130,7 @@ vtkSlicerFiducialsGUI::~vtkSlicerFiducialsGUI ( )
 
     //this->SetFiducialListNodeID("(none)");
     this->SetFiducialListNodeID(NULL);
+    vtkSetMRMLNodeMacro(this->FiducialListNode, NULL);
 }
 
 
@@ -997,11 +999,11 @@ void vtkSlicerFiducialsGUI::SetFiducialListNodeID (char * id)
       events->InsertNextValue(vtkCommand::ModifiedEvent);
       events->InsertNextValue(vtkMRMLFiducialListNode::DisplayModifiedEvent);
       events->InsertNextValue(vtkMRMLFiducialListNode::FiducialModifiedEvent);
-      vtkSetAndObserveMRMLNodeMacro(fidlist, events);
+      vtkSetAndObserveMRMLNodeEventsMacro(this->FiducialListNode, fidlist, events);
       events->Delete();
 
       // set up the GUI
-      this->SetGUIFromList(fidlist);
+      this->SetGUIFromList(this->FiducialListNode);
       }
     else
       {
