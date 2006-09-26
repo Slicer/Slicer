@@ -47,6 +47,8 @@ vtkSlicerFiducialsGUI::vtkSlicerFiducialsGUI ( )
     
     this->MultiColumnList = NULL;
     this->NumberOfColumns = 9;
+
+//    this->DebugOn();
 }
 
 
@@ -986,7 +988,7 @@ void vtkSlicerFiducialsGUI::SetFiducialListNodeID (char * id)
 
     if (id == NULL)
       {
-      std::cerr << "SetFiducialListNodeID: NULL input id, removed observers and returning.\n";
+      vtkDebugMacro("SetFiducialListNodeID: NULL input id, removed observers and returning.\n");
       return;
       }
     
@@ -995,6 +997,10 @@ void vtkSlicerFiducialsGUI::SetFiducialListNodeID (char * id)
     // set up observers on the new node
     if (fidlist != NULL)
       {
+      if (this->GetDebug())
+        {
+        fidlist->DebugOn();
+        }
       vtkIntArray *events = vtkIntArray::New();
       events->InsertNextValue(vtkCommand::ModifiedEvent);
       events->InsertNextValue(vtkMRMLFiducialListNode::DisplayModifiedEvent);
