@@ -126,6 +126,9 @@ void vtkSlicerModelsGUI::ProcessGUIEvents ( vtkObject *caller,
       if ( modelNode == NULL ) 
         {
         // TODO: generate an error...
+        vtkErrorMacro("Unable to read model file " << fileName);
+        // reset the file browse button text
+        this->LoadModelButton->SetText ("Load Model");
         }
       else
         {
