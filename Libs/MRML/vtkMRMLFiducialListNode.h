@@ -112,7 +112,7 @@ public:
   int SetNthFiducialXYZ(int n, float x, float y, float z);
   int SetNthFiducialOrientation(int n, float w, float x, float y, float z);
   int SetNthFiducialLabelText(int n, const char *text);
-  int SetNthFiducialSelected(int n, bool flag);
+  int SetNthFiducialSelected(int n, int flag);
   int SetNthFiducialID(int n, const char *id);
 
   // Description:
@@ -124,7 +124,7 @@ public:
   // get the label text of the nth fiducial
   const char *GetNthFiducialLabelText(int n);
   // get the selected state on the nth fiducial
-  bool GetNthFiducialSelected(int n);
+  int GetNthFiducialSelected(int n);
   // get the id of the nth fiducial
   const char *GetNthFiducialID(int n);
   

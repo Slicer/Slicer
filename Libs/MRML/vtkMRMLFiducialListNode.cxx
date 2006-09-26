@@ -482,7 +482,7 @@ const char *vtkMRMLFiducialListNode::GetNthFiducialLabelText(int n)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLFiducialListNode::SetNthFiducialSelected(int n, bool flag)
+int vtkMRMLFiducialListNode::SetNthFiducialSelected(int n, int flag)
 {
     vtkMRMLFiducial *node = this->GetNthFiducial(n);
     if (node == NULL)
@@ -490,7 +490,7 @@ int vtkMRMLFiducialListNode::SetNthFiducialSelected(int n, bool flag)
         vtkErrorMacro("Unable to get fiducial number " << n);
         return 1;
     }
-    node->SetSelected(flag);
+    node->SetSelected((flag == 0 ? false : true));
     
     // the list contents have been modified
     this->InvokeEvent(vtkMRMLFiducialListNode::FiducialModifiedEvent, NULL);
@@ -498,16 +498,16 @@ int vtkMRMLFiducialListNode::SetNthFiducialSelected(int n, bool flag)
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLFiducialListNode::GetNthFiducialSelected(int n)
+int vtkMRMLFiducialListNode::GetNthFiducialSelected(int n)
 {
     vtkMRMLFiducial *node = this->GetNthFiducial(n);
     if (node != NULL)
     {
-        return node->GetSelected();
+        return (node->GetSelected() ? 1 : 0);
     }
     else
     {
-        return false;
+        return 0;
     }
 }
 
