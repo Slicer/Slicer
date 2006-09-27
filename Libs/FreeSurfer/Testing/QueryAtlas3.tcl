@@ -231,7 +231,7 @@ proc QueryAtlasInitializePicker {} {
   set interactor [$renderWidget GetRenderWindowInteractor] 
   set style [$interactor GetInteractorStyle] 
 
-  $style AddObserver MouseMoveEvent "QueryAtlasPickCallback $renderer $interactor $::QA(windowToImage)"
+  $interactor AddObserver MouseMoveEvent "QueryAtlasPickCallback $renderer $interactor $::QA(windowToImage)"
   $style AddObserver EndInteractionEvent "QueryAtlasRenderView"
 
   $renderer AddActor $::QA(actor)
