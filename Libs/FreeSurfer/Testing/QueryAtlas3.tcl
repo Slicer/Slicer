@@ -213,7 +213,6 @@ proc QueryAtlasInitializePicker {} {
   $::QA(mapper) SetScalarModeToUseCellData
   $::QA(mapper) SetScalarVisibility 1
   $::QA(mapper) SetScalarMaterialModeToAmbient
-  $::QA(mapper) SetScalarMaterialModeToDiffuse
   $::QA(mapper) SetScalarRange 0 $::QA(numberOfCells)
   [$::QA(actor) GetProperty] SetAmbient 1.0
   [$::QA(actor) GetProperty] SetDiffuse 0.0
@@ -258,10 +257,8 @@ proc QueryAtlasRenderView {} {
   # - restore the draw state and render
   #
   $renderWindow SetSwapBuffers 0
-  puts "render renderWidget"; update
   set renderState [QueryAtlasOverrideRenderState $renderer]
   $renderWidget Render
-  puts "...render done"; update
 
   $::QA(viewer) SetColorWindow 255
   $::QA(viewer) SetColorLevel 127.5
@@ -271,16 +268,11 @@ proc QueryAtlasRenderView {} {
   $::QA(windowToImage) SetInput [$renderWidget GetRenderWindow]
   $::QA(windowToImage) Modified
   $::QA(viewer) SetInput [$::QA(windowToImage) GetOutput]
-  puts "render viewer"; update
   $::QA(viewer) Render
-  puts "...render done"; update
 
   $renderWindow SetSwapBuffers 1
   QueryAtlasRestoreRenderState $renderer $renderState
-
-  puts "render renderWidget"; update
   $renderWidget Render
-  puts "...render done"; update
 
 }
 
@@ -289,7 +281,9 @@ proc QueryAtlasOverrideRenderState {renderer} {
   #
   # save the render state before overriding it with the 
   # parameters needed for cell rendering
+  # - is just background color and visibility state of all actors
   #
+
 
   set actors [$renderer GetActors]
   set numberOfItems [$actors GetNumberOfItems]
@@ -301,7 +295,6 @@ proc QueryAtlasOverrideRenderState {renderer} {
 
   set state(background) [$renderer GetBackground]
   $renderer SetBackground 0 0 0
-  #$renderer AddActor $::QA(actor)
   $::QA(actor) SetVisibility 1
 
   return [array get state]
@@ -311,7 +304,6 @@ proc QueryAtlasRestoreRenderState {renderer renderState} {
 
   array set state $renderState
 
-  #$renderer RemoveActor $::QA(actor)
   eval $renderer SetBackground $state(background)
 
   set actors [$renderer GetActors]
