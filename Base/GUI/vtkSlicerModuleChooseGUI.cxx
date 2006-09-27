@@ -146,6 +146,7 @@ void vtkSlicerModuleChooseGUI::SelectModule ( const char *moduleName )
           if ( !strcmp (moduleName, mName) ) 
            {
             m->GetUIPanel()->Raise();
+            p->GetMainSlicerWindow()->SetStatusText ( mName );
             break;
            }
           m = vtkSlicerModuleGUI::SafeDownCast( app->GetModuleGUICollection( )->GetNextItemAsObject( ) );
@@ -251,7 +252,7 @@ void vtkSlicerModuleChooseGUI::BuildGUI ( vtkKWFrame *appF )
 
       //--- pack everything up.
       app->Script ( "pack %s -side left -anchor n -padx 0 -ipadx 0 -pady 3", this->ModulesLabel->GetWidgetName( ) );
-      app->Script ( "pack %s -side left -anchor ne -padx 0 -ipady 1 -pady 2", this->ModulesMenuButton->GetWidgetName( ) );
+      app->Script ( "pack %s -side left -anchor se -padx 0 -ipady 0 -pady 0", this->ModulesMenuButton->GetWidgetName( ) );
       app->Script ( "pack %s -side left -anchor c -padx 1 -pady 2", this->ModulesHistory->GetWidgetName( ) );
       app->Script ( "pack %s -side left -anchor c -padx 1 -pady 2", this->ModulesPrev->GetWidgetName( ) );
       app->Script ( "pack %s -side left -anchor c -padx 1 -pady 2", this->ModulesNext->GetWidgetName( ) );

@@ -32,16 +32,17 @@ vtkSlicerLogoDisplayGUI::vtkSlicerLogoDisplayGUI ( )
 vtkSlicerLogoDisplayGUI::~vtkSlicerLogoDisplayGUI ( )
 {
 
-    if ( this->SlicerLogoIcons ) {
-        this->SlicerLogoIcons->Delete ( );
-        this->SlicerLogoIcons = NULL;
-    }
-    if ( this->SlicerLogoLabel ) {
+    if ( this->SlicerLogoIcons )
+      {
+      this->SlicerLogoIcons->Delete ( );
+      this->SlicerLogoIcons = NULL;
+      }
+    if ( this->SlicerLogoLabel )
+      {
       this->SlicerLogoLabel->SetParent ( NULL );
       this->SlicerLogoLabel->Delete ( );
       this->SlicerLogoLabel = NULL;
-    }
-
+      }
     this->SetApplicationGUI ( NULL );
 }
 
@@ -137,13 +138,16 @@ void vtkSlicerLogoDisplayGUI::BuildGUI ( vtkKWFrame *appF )
     if ( p->GetApplication() != NULL )
       {
         vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( p->GetApplication() );
+
         this->SlicerLogoLabel->SetParent ( appF );
         this->SlicerLogoLabel->Create();
         this->SlicerLogoLabel->SetImageToIcon ( this->SlicerLogoIcons->GetSlicerLogo() );
         this->SlicerLogoLabel->SetBalloonHelpString ("placeholder logo");
-        app->Script ( "pack %s -side top -anchor w -padx 2 -pady 0", this->SlicerLogoLabel->GetWidgetName( ) );    
+        app->Script ( "place %s -anchor nw -padx 2 -pady 0", this->SlicerLogoLabel->GetWidgetName( ) );    
+
       }
     }
+
 }
 
 

@@ -158,6 +158,10 @@ void vtkSlicerTheme::Install ( )
     // Slicer Menubuttons (keeps the groove around the menu button)
     odb->AddEntry ( "vtkKWMenuButton", "SetReliefToGroove", NULL );
     
+    // Slicer vtkKWSeparators
+    odb->AddEntryAsDouble3 ( "vtkKWSeparator", "SetBackgroundColor",
+                             this->SlicerColors->GUIBgColor );
+
     // Slicer MultiColumnLists
     // font
     odb->AddEntry ( "vtkKWMultiColumnList", "SetFont", "{Helvetica 8 normal}" );
@@ -173,7 +177,12 @@ void vtkSlicerTheme::Install ( )
          this->SlicerColors->ActiveTextColor);
     // MulticolumnList
     odb->AddEntryAsDouble3 ("vtkKWMultiColumnList", "SetStripeBackgroundColor",
-                   this->SlicerColors->LightestGreyBlue );    
+                   this->SlicerColors->LightestGreyBlue );
+
+    // Window's status fame
+    odb->AddEntryAsDouble3 ( "vtkKWWindow:TrayFrame", "SetBackgroundColor",
+                    this->SlicerColors->MediumCoolStone );    
+
 
     // Slicer MultiColumnListsWithScrollbars
     // scroll bars
