@@ -67,6 +67,9 @@ void vtkSlicerViewerInteractorStyle::OnMouseMove()
       this->Spin();
       this->InvokeEvent(vtkCommand::InteractionEvent, NULL);
       break;
+    default:
+      this->InvokeEvent(vtkCommand::MouseMoveEvent, NULL);
+      break;
     }
 }
 

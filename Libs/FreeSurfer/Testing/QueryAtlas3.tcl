@@ -229,7 +229,10 @@ proc QueryAtlasInitializePicker {} {
   set renderWidget [[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer]
   set renderer [$renderWidget GetRenderer]
   set interactor [$renderWidget GetRenderWindowInteractor] 
-  $interactor AddObserver MouseMoveEvent "QueryAtlasPickCallback $renderer $interactor $::QA(windowToImage)"
+  set style [$interactor GetInteractorStyle] 
+
+  $style AddObserver MouseMoveEvent "QueryAtlasPickCallback $renderer $interactor $::QA(windowToImage)"
+  $style AddObserver EndInteractionEvent "QueryAtlasRenderView"
 
   $renderer AddActor $::QA(actor)
   $::QA(actor) SetVisibility 1
