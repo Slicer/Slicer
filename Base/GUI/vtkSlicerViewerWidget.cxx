@@ -4,10 +4,12 @@
 #include "vtkObject.h"
 #include "vtkObjectFactory.h"
 #include "vtkPolyData.h"
+#include "vtkRenderWindowInteractor.h"
 
 #include "vtkSlicerViewerWidget.h"
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerColor.h"
+#include "vtkSlicerViewerInteractorStyle.h"
 
 #include "vtkActor.h"
 #include "vtkFollower.h"
@@ -146,6 +148,17 @@ void vtkSlicerViewerWidget::CreateWidget ( )
   this->MainViewer = vtkKWRenderWidget::New ( );  
   this->MainViewer->SetParent (this->ViewerFrame );
   this->MainViewer->Create ( );
+
+  // make a Slicer viewer interactor style to process our events
+  // look at the InteractorStyle to get our events
+  vtkRenderWindowInteractor *rwi = this->MainViewer->GetRenderWindowInteractor();
+  if (rwi)
+    {
+    vtkSlicerViewerInteractorStyle *iStyle = vtkSlicerViewerInteractorStyle::New();
+    rwi->SetInteractorStyle (iStyle);
+    iStyle->Delete();
+    }
+
 
   // Set the viewer's minimum dimension to be the same as that for
   // the three main Slice viewers.

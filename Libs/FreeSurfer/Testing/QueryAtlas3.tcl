@@ -217,7 +217,6 @@ proc QueryAtlasInitializePicker {} {
   [$::QA(actor) GetProperty] SetAmbient 1.0
   [$::QA(actor) GetProperty] SetDiffuse 0.0
 
-
   #
   # add the mouse move callback
   # - create the classes that will be used every render and in the callback

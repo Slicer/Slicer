@@ -16,7 +16,7 @@
 // .NAME vtkSlicerInteractorStyle - provides customizable interaction routines
 // 
 // .SECTION Description
-// Based on the vtkInteractorStyleUser, but with MouseWheelEvents
+// Based on the vtkInteractorStyleUser, but with MouseWheelEvents.
 // The most common way to customize user interaction is to write a subclass
 // of vtkInteractorStyle: vtkSlicerInteractorStyle allows you to customize
 // the interaction to without subclassing vtkInteractorStyle.  This is

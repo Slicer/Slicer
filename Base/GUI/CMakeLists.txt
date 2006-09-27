@@ -68,6 +68,7 @@ SET(LIB_SRCS
   vtkSlicerClipModelsWidget.cxx
   # VTK Replacement classes
   vtkSlicerInteractorStyle.cxx
+  vtkSlicerViewerInteractorStyle.cxx
   )
 
 # Helper classes
