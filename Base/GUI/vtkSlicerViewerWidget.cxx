@@ -50,14 +50,14 @@ vtkSlicerViewerWidget::~vtkSlicerViewerWidget ( )
   
   if (this->MainViewer)
     {
-      this->SetMRMLScene ( NULL );
-      this->MainViewer->RemoveAllViewProps ( );
-      this->MainViewer->SetParent ( NULL );
-      this->MainViewer->Delete();
-      this->MainViewer = NULL;
-      this->ViewerFrame->SetParent ( NULL );
-      this->ViewerFrame->Delete ( );
-      this->ViewerFrame = NULL;
+    this->SetMRMLScene ( NULL );
+    this->MainViewer->RemoveAllViewProps ( );
+    this->MainViewer->SetParent ( NULL );
+    this->MainViewer->Delete();
+    this->MainViewer = NULL;
+    this->ViewerFrame->SetParent ( NULL );
+    this->ViewerFrame->Delete ( );
+    this->ViewerFrame = NULL;
     }
 }
 
@@ -83,7 +83,9 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
                                                 void *callData )
 { 
   if (this->ProcessingMRMLEvent != 0 )
+    {
     return;
+    }
 
   this->ProcessingMRMLEvent = event;
 
@@ -100,21 +102,21 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
     }
   else if (event == vtkMRMLFiducialListNode::DisplayModifiedEvent)
     {
-      // do a more lightweight update on the fiducial list nodes
-        vtkDebugMacro("vtkSlicerViewerWidget::ProcessMRMLEvents got a vtkMRMLFiducialListNode::DisplayModifiedEvent, just calling update fids from mrml\n");
-        this->UpdateFiducialsFromMRML();
+    // do a more lightweight update on the fiducial list nodes
+    vtkDebugMacro("vtkSlicerViewerWidget::ProcessMRMLEvents got a vtkMRMLFiducialListNode::DisplayModifiedEvent, just calling update fids from mrml\n");
+    this->UpdateFiducialsFromMRML();
     }
   else if (event == vtkMRMLFiducialListNode::FiducialModifiedEvent)
   {
-      vtkDebugMacro("vtkSlicerViewerWidget::ProcessMRMLEvents got a FiducialModifiedEvent, removing props and updating from mrml...\n");
-      this->RemoveFiducialProps ( );
-      this->UpdateFiducialsFromMRML();
+  vtkDebugMacro("vtkSlicerViewerWidget::ProcessMRMLEvents got a FiducialModifiedEvent, removing props and updating from mrml...\n");
+  this->RemoveFiducialProps ( );
+  this->UpdateFiducialsFromMRML();
   }
   else 
 //  if ((vtkPolyData::SafeDownCast(caller) && event == vtkCommand::ModifiedEvent) ||
 //      (vtkMRMLModelDisplayNode::SafeDownCast(caller) && event == vtkCommand::ModifiedEvent))
     {
-      this->UpdateFromMRML();
+    this->UpdateFromMRML();
     }
   this->ProcessingMRMLEvent = 0;
 }
@@ -150,9 +152,9 @@ void vtkSlicerViewerWidget::CreateWidget ( )
   this->MainViewer->GetRenderer()->GetActiveCamera()->ParallelProjectionOff();
   if ( this->GetApplication() != NULL )
     {
-      vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();      
-      this->MainViewer->SetWidth ( app->GetMainLayout()->GetSliceViewerMinDim() );
-      this->MainViewer->SetHeight ( app->GetMainLayout()->GetSliceViewerMinDim() );
+    vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();      
+    this->MainViewer->SetWidth ( app->GetMainLayout()->GetSliceViewerMinDim() );
+    this->MainViewer->SetHeight ( app->GetMainLayout()->GetSliceViewerMinDim() );
     }
     
     // set up antialiasing
@@ -239,153 +241,154 @@ void vtkSlicerViewerWidget::UpdateFiducialsFromMRML()
   vtkDebugMacro("Starting to update the viewer's actors, glyphs for the fid lists.");
   scene->InitTraversal();
   while (node=scene->GetNextNodeByClass("vtkMRMLFiducialListNode"))
-  {
-      vtkMRMLFiducialListNode *flist = vtkMRMLFiducialListNode::SafeDownCast(node);
-      
-      if (flist->HasObserver ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand ) == 0)
+    {
+    vtkMRMLFiducialListNode *flist = vtkMRMLFiducialListNode::SafeDownCast(node);
+    
+    if (flist->HasObserver ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand ) == 0)
       {
-          flist->AddObserver ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+      flist->AddObserver ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
       }
-      if (flist->HasObserver ( vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand ) == 0)
+    if (flist->HasObserver ( vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand ) == 0)
       {
-          flist->AddObserver ( vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand );
+      flist->AddObserver ( vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand );
       }
-      // observe display node
-      if (flist->HasObserver ( vtkMRMLFiducialListNode::DisplayModifiedEvent, this->MRMLCallbackCommand ) == 0)
+    // observe display node
+    if (flist->HasObserver ( vtkMRMLFiducialListNode::DisplayModifiedEvent, this->MRMLCallbackCommand ) == 0)
       {     
-          flist->AddObserver ( vtkMRMLFiducialListNode::DisplayModifiedEvent, this->MRMLCallbackCommand );
+      flist->AddObserver ( vtkMRMLFiducialListNode::DisplayModifiedEvent, this->MRMLCallbackCommand );
       }
-      // fiducial point modified?
-      if (flist->HasObserver ( vtkMRMLFiducialListNode::FiducialModifiedEvent, this->MRMLCallbackCommand ) == 0)
+    // fiducial point modified?
+    if (flist->HasObserver ( vtkMRMLFiducialListNode::FiducialModifiedEvent, this->MRMLCallbackCommand ) == 0)
       {
-          flist->AddObserver( vtkMRMLFiducialListNode::FiducialModifiedEvent, this->MRMLCallbackCommand );
+      flist->AddObserver( vtkMRMLFiducialListNode::FiducialModifiedEvent, this->MRMLCallbackCommand );
       }
-      for (int f=0; f<flist->GetNumberOfFiducials(); f++)
+
+    for (int f=0; f<flist->GetNumberOfFiducials(); f++)
       {
-          // check to see if this fiducial has actors in the DisplayFiducials
-          // map
-          int actorExists = 0;
-          std::map<const char *, vtkActor *>::iterator iter;
+      // check to see if this fiducial has actors in the DisplayFiducials
+      // map
+      int actorExists = 0;
+      std::map<const char *, vtkActor *>::iterator iter;
 
-          iter = this->DisplayedFiducials.find(flist->GetNthFiducialID(f));
-          if (iter != this->DisplayedFiducials.end())
+      iter = this->DisplayedFiducials.find(flist->GetNthFiducialID(f));
+      if (iter != this->DisplayedFiducials.end())
+        {
+        actorExists = 1;
+        }
+      vtkGlyphSource2D *glyph = vtkGlyphSource2D::New();;
+      vtkPolyDataMapper *mapper = NULL;
+      vtkActor *actor = NULL;
+      if (actorExists)
+        {
+        // actor is in the list, get it and the mapper
+        actor = iter->second;
+        glyph->SetOutput(iter->second->GetMapper()->GetInput());              
+        }
+      else
+        {
+        // no actor, allocate vars and set up the pipeline
+        mapper = vtkPolyDataMapper::New ();
+        mapper->SetInput ( glyph->GetOutput() );
+        actor = vtkActor::New ( );
+        actor->SetMapper ( mapper );
+        this->MainViewer->AddViewProp ( actor );
+        }
+
+      if (glyph != NULL)
+        {
+        glyph->SetGlyphTypeToDiamond();
+        if (flist->GetNthFiducialSelected(f))
           {
-              actorExists = 1;
+          glyph->SetColor(flist->GetSelectedColor());
           }
-          vtkGlyphSource2D *glyph = vtkGlyphSource2D::New();;
-          vtkPolyDataMapper *mapper = NULL;
-          vtkActor *actor = NULL;
-          if (actorExists)
+        else
           {
-              // actor is in the list, get it and the mapper
-              actor = iter->second;
-              glyph->SetOutput(iter->second->GetMapper()->GetInput());              
+          glyph->SetColor(flist->GetColor());
           }
-          else
+        } 
+  
+  
+      // handle text
+      // check to see if this fiducial follower has actors in the
+      // DisplayedTextFiducials map
+      int textActorExists = 0;
+      std::map<const char *, vtkFollower *>::iterator titer;
+
+      titer = this->DisplayedTextFiducials.find(flist->GetNthFiducialID(f));
+      if (titer != this->DisplayedTextFiducials.end())
+        {
+        textActorExists = 1;
+        }
+
+      vtkVectorText *vtext = vtkVectorText::New();
+      vtkPolyDataMapper *textMapper;
+      vtkFollower *textActor;
+      if (textActorExists)
+        {
+        // get it out of the map
+        textActor = titer->second;
+        vtext->SetOutput(titer->second->GetMapper()->GetInput());
+        }
+      else
+        {
+        textMapper = vtkPolyDataMapper::New ();
+        textMapper->SetInput ( vtext->GetOutput() );
+        
+        textActor = vtkFollower::New();
+        textActor->SetCamera(this->MainViewer->GetRenderer()->GetActiveCamera());
+        textActor->SetMapper(textMapper);
+        
+        this->MainViewer->AddViewProp ( textActor );
+        }
+      vtext->SetText(flist->GetNthFiducialLabelText(f));
+
+      // set the display properties on the actor and the text actor
+      this->SetFiducialDisplayProperty(flist, f, actor, textActor);
+
+
+      // save the actors and clean up, if necessary
+      if (!actorExists)
+        {
+        vtkDebugMacro("After setting disp props, actor vis = " << actor->GetVisibility() << ", adding actor to displayed fid list with first string " << flist->GetNthFiducialID(f) << ", current size = " << this->DisplayedFiducials.size());
+        
+        // need to use a constant string as the key to the map, use the
+        // fiducial point's id
+        this->DisplayedFiducials[flist->GetNthFiducialID(f)] = actor;
+        vtkDebugMacro("\tnew size of displayed fids = " << this->DisplayedFiducials.size());
+
+        // only call delete if made them new, they didn't exist before
+        if (glyph != NULL)
           {
-              // no actor, allocate vars and set up the pipeline
-              mapper = vtkPolyDataMapper::New ();
-              mapper->SetInput ( glyph->GetOutput() );
-              actor = vtkActor::New ( );
-              actor->SetMapper ( mapper );
-              this->MainViewer->AddViewProp ( actor );
+          glyph->Delete();
           }
-
-          if (glyph != NULL)
+        if (actor != NULL)
           {
-              glyph->SetGlyphTypeToDiamond();
-              if (flist->GetNthFiducialSelected(f))
-              {
-                  glyph->SetColor(flist->GetSelectedColor());
-              }
-              else
-              {
-                  glyph->SetColor(flist->GetColor());
-              }
-          } 
-      
-      
-          // handle text
-          // check to see if this fiducial follower has actors in the
-          // DisplayedTextFiducials map
-          int textActorExists = 0;
-          std::map<const char *, vtkFollower *>::iterator titer;
-
-          titer = this->DisplayedTextFiducials.find(flist->GetNthFiducialID(f));
-          if (titer != this->DisplayedTextFiducials.end())
-          {
-              textActorExists = 1;
+          actor->Delete();
           }
-
-          vtkVectorText *vtext = vtkVectorText::New();
-          vtkPolyDataMapper *textMapper;
-          vtkFollower *textActor;
-          if (textActorExists)
+        if (mapper != NULL)
           {
-              // get it out of the map
-              textActor = titer->second;
-              vtext->SetOutput(titer->second->GetMapper()->GetInput());
+          mapper->Delete();
           }
-          else
+      }
+
+      if (!textActorExists)
+        {
+        this->DisplayedTextFiducials[flist->GetNthFiducialID(f)] = textActor;
+
+        // only delete them if made them new
+        if (vtext != NULL)
           {
-              textMapper = vtkPolyDataMapper::New ();
-              textMapper->SetInput ( vtext->GetOutput() );
-              
-              textActor = vtkFollower::New();
-              textActor->SetCamera(this->MainViewer->GetRenderer()->GetActiveCamera());
-              textActor->SetMapper(textMapper);
-              
-              this->MainViewer->AddViewProp ( textActor );
+          vtext->Delete();
           }
-          vtext->SetText(flist->GetNthFiducialLabelText(f));
-
-          // set the display properties on the actor and the text actor
-          this->SetFiducialDisplayProperty(flist, f, actor, textActor);
-
-
-          // save the actors and clean up, if necessary
-          if (!actorExists)
+        if (textMapper != NULL)
           {
-              vtkDebugMacro("After setting disp props, actor vis = " << actor->GetVisibility() << ", adding actor to displayed fid list with first string " << flist->GetNthFiducialID(f) << ", current size = " << this->DisplayedFiducials.size());
-              
-              // need to use a constant string as the key to the map, use the
-              // fiducial point's id
-              this->DisplayedFiducials[flist->GetNthFiducialID(f)] = actor;
-              vtkDebugMacro("\tnew size of displayed fids = " << this->DisplayedFiducials.size());
-
-              // only call delete if made them new, they didn't exist before
-              if (glyph != NULL)
-              {
-                  glyph->Delete();
-              }
-              if (actor != NULL)
-              {
-                  actor->Delete();
-              }
-              if (mapper != NULL)
-              {
-                  mapper->Delete();
-              }
+          textMapper->Delete();
           }
-
-          if (!textActorExists)
+        if (textActor != NULL)
           {
-              this->DisplayedTextFiducials[flist->GetNthFiducialID(f)] = textActor;
-
-              // only delete them if made them new
-              if (vtext != NULL)
-              {
-                  vtext->Delete();
-              }
-              if (textMapper != NULL)
-              {
-                  textMapper->Delete();
-              }
-              if (textActor != NULL)
-              {
-                  textActor->Delete();
-              }
+          textActor->Delete();
           }
+      }
     } // end for
   } // end while
   // render
@@ -495,21 +498,21 @@ void vtkSlicerViewerWidget::RemoveFiducialObservers()
     {
         vtkDebugMacro("Removing observers on fiducial list " << flist->GetID());
         if (flist->HasObserver (vtkCommand::ModifiedEvent, this->MRMLCallbackCommand ) == 1)
-        {
-            flist->RemoveObservers ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
-        }
+          {
+          flist->RemoveObservers ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+          }
         if (flist->HasObserver( vtkMRMLFiducialListNode::DisplayModifiedEvent, this->MRMLCallbackCommand ) == 1)
-        {
-            flist->RemoveObservers ( vtkMRMLFiducialListNode::DisplayModifiedEvent, this->MRMLCallbackCommand );
-        }
+          {
+          flist->RemoveObservers ( vtkMRMLFiducialListNode::DisplayModifiedEvent, this->MRMLCallbackCommand );
+          }
         if (flist->HasObserver( vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand ) == 1)
-        {
-            flist->RemoveObservers ( vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand );
-        }
+          {
+          flist->RemoveObservers ( vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand );
+          }
         if (flist->HasObserver(vtkMRMLFiducialListNode::FiducialModifiedEvent, this->MRMLCallbackCommand ) == 1)
-        {
-            flist->RemoveObservers ( vtkMRMLFiducialListNode::FiducialModifiedEvent, this->MRMLCallbackCommand );
-        }
+          {
+          flist->RemoveObservers ( vtkMRMLFiducialListNode::FiducialModifiedEvent, this->MRMLCallbackCommand );
+          }
     }
 }
 
@@ -583,15 +586,15 @@ void vtkSlicerViewerWidget::SetFiducialDisplayProperty(vtkMRMLFiducialListNode *
   actor->SetVisibility(flist->GetVisibility());
   textActor->SetVisibility(flist->GetVisibility());
   if (selected)
-  {
-      actor->GetProperty()->SetColor(flist->GetSelectedColor());
-      textActor->GetProperty()->SetColor(flist->GetSelectedColor());
-  }
+    {
+    actor->GetProperty()->SetColor(flist->GetSelectedColor());
+    textActor->GetProperty()->SetColor(flist->GetSelectedColor());
+    }
   else
-  {
-      actor->GetProperty()->SetColor(flist->GetColor());
-      textActor->GetProperty()->SetColor(flist->GetColor());
-  }
+    {
+    actor->GetProperty()->SetColor(flist->GetColor());
+    textActor->GetProperty()->SetColor(flist->GetColor());
+    }
   actor->GetProperty()->SetOpacity(flist->GetOpacity());
   textActor->GetProperty()->SetOpacity(flist->GetOpacity());
   actor->GetProperty()->SetAmbient(flist->GetAmbient());
@@ -610,9 +613,9 @@ void vtkSlicerViewerWidget::SetFiducialDisplayProperty(vtkMRMLFiducialListNode *
 std::string
 vtkSlicerViewerWidget::GetFiducialNodeID (const char *actorid, int &index)
 {
-    // take the index off the actor id to get the fiducial node's id
-    std::string actorString = actorid;
-    std::cout << "GetFiducialNodeID: actorString = " << actorString << ", index = " << index << endl;
+  // take the index off the actor id to get the fiducial node's id
+  std::string actorString = actorid;
+  std::cout << "GetFiducialNodeID: actorString = " << actorString << ", index = " << index << endl;
     
   std::stringstream ss;
   std::string sid;
@@ -677,33 +680,33 @@ vtkSlicerViewerWidget::GetFiducialActorByID (const char *id, int index)
 //---------------------------------------------------------------------------
 void vtkSlicerViewerWidget::PackWidget ( )
 {
-    this->Script  ("pack %s -side left -fill both -expand y -padx 0 -pady 0",
-                   this->ViewerFrame->GetWidgetName ( ) );
-    this->Script  ("pack %s -side top -anchor c  -fill both -expand y -padx 0 -pady 0",
-                   this->MainViewer->GetWidgetName ( ) );
+  this->Script  ("pack %s -side left -fill both -expand y -padx 0 -pady 0",
+                 this->ViewerFrame->GetWidgetName ( ) );
+  this->Script  ("pack %s -side top -anchor c  -fill both -expand y -padx 0 -pady 0",
+                 this->MainViewer->GetWidgetName ( ) );
 }
 
 
 //---------------------------------------------------------------------------
 void vtkSlicerViewerWidget::GridWidget ( int row, int col )
 {
-    this->Script  ("grid %s -row %d -column %d -sticky news -padx 0 -pady 0",
-                   this->ViewerFrame->GetWidgetName ( ), row, col );
-    this->Script  ("pack %s -side top -anchor c  -fill both -expand y -padx 0 -pady 0",
-                   this->MainViewer->GetWidgetName ( ) );
+  this->Script  ("grid %s -row %d -column %d -sticky news -padx 0 -pady 0",
+                 this->ViewerFrame->GetWidgetName ( ), row, col );
+  this->Script  ("pack %s -side top -anchor c  -fill both -expand y -padx 0 -pady 0",
+                 this->MainViewer->GetWidgetName ( ) );
 }
 
 //---------------------------------------------------------------------------
 void vtkSlicerViewerWidget::UnpackWidget ( )
 {
-    this->Script ( "pack forget %s ", this->MainViewer->GetWidgetName ( ) );
-    this->Script ( "pack forget %s ", this->ViewerFrame->GetWidgetName ( ) );
+  this->Script ( "pack forget %s ", this->MainViewer->GetWidgetName ( ) );
+  this->Script ( "pack forget %s ", this->ViewerFrame->GetWidgetName ( ) );
 }
 
   
 //---------------------------------------------------------------------------
 void vtkSlicerViewerWidget::UngridWidget ( )
 {
-    this->Script ( "grid forget %s ", this->MainViewer->GetWidgetName ( ) );
-    this->Script ( "pack forget %s ", this->ViewerFrame->GetWidgetName ( ) );
+  this->Script ( "grid forget %s ", this->MainViewer->GetWidgetName ( ) );
+  this->Script ( "pack forget %s ", this->ViewerFrame->GetWidgetName ( ) );
 }
