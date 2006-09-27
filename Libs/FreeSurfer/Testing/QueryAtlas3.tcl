@@ -342,27 +342,32 @@ proc QueryAtlasPickCallback {renderer interactor windowToImage} {
   #puts "[format {%4d %4d} $x $y]:  [QueryAtlasRGBAToNumber $color] ($color)"
 
 
-  set cell [$::QA(polyData) GetCell [QueryAtlasRGBAToNumber $color]]
+  set cellNumber [QueryAtlasRGBAToNumber $color]
+  if { $cellNumber >= 0 && $cellNumber < [$::QA(polyData) GetNumberOfCells] } {
+    set cell [$::QA(polyData) GetCell $cellNumber]
 
-  set labels [[$::QA(polyData) GetPointData] GetScalars "labels"]
+    set labels [[$::QA(polyData) GetPointData] GetScalars "labels"]
 
-  array set labelMap $::QA(labelMap)
-  set pointLabels ""
-  set numberOfPoints [$cell GetNumberOfPoints]
+    array set labelMap $::QA(labelMap)
+    set pointLabels ""
+    set numberOfPoints [$cell GetNumberOfPoints]
 
-  for {set p 0} {$p < $numberOfPoints} {incr p} {
-    set index [$cell GetPointId $p]
-    set pointLabel [$labels GetValue $index]
-    if { [info exists labelMap($pointLabel)] } {
-      set labelName $labelMap($pointLabel)
-      if { [lsearch $pointLabels $labelName] == -1 } {
-        lappend pointLabels $labelName
+    for {set p 0} {$p < $numberOfPoints} {incr p} {
+      set index [$cell GetPointId $p]
+      set pointLabel [$labels GetValue $index]
+      if { [info exists labelMap($pointLabel)] } {
+        set labelName $labelMap($pointLabel)
+        if { [lsearch $pointLabels $labelName] == -1 } {
+          lappend pointLabels $labelName
+        }
+      } else {
+        lappend pointLabels "unknown"
       }
-    } else {
-      lappend pointLabels "unknown"
     }
+    regsub -all " " $pointLabels "/" pointLabels
+  } else {
+    set pointLabels "background"
   }
-  regsub -all " " $pointLabels "/" pointLabels
 
   if { ![info exists ::QA(lastLabels)] } {
     set ::QA(lastLabels) ""
