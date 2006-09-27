@@ -157,12 +157,6 @@ void vtkSlicerViewerWidget::CreateWidget ( )
     this->MainViewer->SetHeight ( app->GetMainLayout()->GetSliceViewerMinDim() );
     }
     
-    // set up antialiasing
-  this->MainViewer->GetRenderWindow()->LineSmoothingOn();
-  this->MainViewer->GetRenderWindow()->PolygonSmoothingOn ( );
-  this->MainViewer->GetRenderWindow()->PointSmoothingOn();
-  // this->MainViewer->SetMultiSamples ( 4 );
-
   //this->PackWidget ( );
   this->MainViewer->ResetCamera ( );
 
