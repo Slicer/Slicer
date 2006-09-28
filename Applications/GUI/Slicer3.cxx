@@ -25,6 +25,8 @@
 #include "vtkSlicerDataGUI.h"
 #include "vtkSlicerTransformsGUI.h"
 #include "vtkSlicerTheme.h"
+#include "vtkSlicerWindow.h"
+#include "vtkSlicerApplicationSettingsInterface.h"
 
 #include "vtkSlicerConfigure.h" // for VTKSLICER_CONFIGURATION_TYPES
 
@@ -472,6 +474,7 @@ int Slicer3_main(int argc, char *argv[])
     if ( strlen(slicerApp->GetModulePath()) == 0 )
       {
       slicerApp->SetModulePath( slicerBinDir.c_str() );
+      appGUI->GetMainSlicerWindow()->GetApplicationSettingsInterface()->Update();
       }
     ModuleFactory moduleFactory;
     moduleFactory.SetSearchPath( slicerApp->GetModulePath() );
