@@ -458,16 +458,17 @@ int Slicer3_main(int argc, char *argv[])
 
     // --- SlicerDaemon Module
     // need to source the slicerd.tcl script here
-    Slicer3_Tcl_Eval( interp, "                                              \
-      source $::SLICER_BUILD/"                                               \
-      SLICER_INSTALL_LIBRARIES_DIR "/slicerd.tcl; slicerd_start              \
-    ");
 
 
 #ifndef CLIMODULES_DEBUG
     // --- Scan for command line and shared object modules
     //
+    // - set the module path the the default if there isn't something set already
     //
+    if ( strlen(slicerApp->GetModulePath()) == 0 )
+      {
+      slicerApp->SetModulePath( slicerBinDir.c_str() );
+      }
     ModuleFactory moduleFactory;
     moduleFactory.SetSearchPath( slicerApp->GetModulePath() );
     moduleFactory.Scan();
