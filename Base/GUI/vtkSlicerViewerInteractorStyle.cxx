@@ -349,7 +349,8 @@ void vtkSlicerViewerInteractorStyle::Dolly()
   double *center = this->CurrentRenderer->GetCenter();
   int dy = rwi->GetEventPosition()[1] - rwi->GetLastEventPosition()[1];
   double dyf = this->MotionFactor * (double)(dy) / (double)(center[1]);
-  this->Dolly(pow((double)1.1, dyf));
+  // Slicer: pull mouse towards you to bring models closer (opposite of vtk)
+  this->Dolly(pow((double)1.1, -1. * dyf)); 
 }
 
 //----------------------------------------------------------------------------
