@@ -410,9 +410,24 @@ proc QueryAtlasMenuCreate {} {
   catch "destroy $qaMenu"
 
   menu $qaMenu
-  $qaMenu insert end command -label "Google..." -command QueryAtlasQueryGoogle
+  $qaMenu insert end command -label "Google..." -command "QueryAtlasQuery google"
+  $qaMenu insert end command -label "Wikipedia..." -command "QueryAtlasQuery wikipedia"
 
   
   eval $qaMenu post $::QA(lastXY)
 
 }
+
+
+proc QueryAtlasQuery { site } {
+
+  switch $site {
+    "google" {
+      $::slicer3::Application OpenLink http://www.google.com/search?q=$::QA(lastLabels)
+    }
+    "wikipedia" {
+      $::slicer3::Application OpenLink http://www.google.com/search?q=$::QA(lastLabels)+site:en.wikipedia.org
+    }
+  }
+}
+
