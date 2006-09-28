@@ -458,6 +458,10 @@ int Slicer3_main(int argc, char *argv[])
 
     // --- SlicerDaemon Module
     // need to source the slicerd.tcl script here
+    Slicer3_Tcl_Eval( interp, "                                              \
+      source $::SLICER_BUILD/"                                               \
+      SLICER_INSTALL_LIBRARIES_DIR "/slicerd.tcl; slicerd_start              \
+    ");
 
 
 #ifndef CLIMODULES_DEBUG
@@ -888,6 +892,8 @@ int main(int argc, char *argv[])
     return Slicer3_main(argc, argv);
 }
 #endif
+
+
 
 
 
