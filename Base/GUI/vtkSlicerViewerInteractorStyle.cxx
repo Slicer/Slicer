@@ -190,7 +190,8 @@ void vtkSlicerViewerInteractorStyle::OnMouseWheelForward()
   
   this->StartDolly();
   double factor = this->MotionFactor * 0.2 * this->MouseWheelMotionFactor;
-  this->Dolly(pow((double)1.1, factor));
+  // Slicer; invert direction to match right button drag
+  this->Dolly(pow((double)1.1, -1. * factor));
   this->EndDolly();
 }
 
@@ -206,7 +207,8 @@ void vtkSlicerViewerInteractorStyle::OnMouseWheelBackward()
   
   this->StartDolly();
   double factor = this->MotionFactor * -0.2 * this->MouseWheelMotionFactor;
-  this->Dolly(pow((double)1.1, factor));
+  // Slicer; invert direction to match right button drag
+  this->Dolly(pow((double)1.1, -1. * factor));
   this->EndDolly();
 }
 
