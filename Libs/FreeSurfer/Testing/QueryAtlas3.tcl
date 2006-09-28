@@ -24,6 +24,7 @@ proc QueryAtlasInit { {filename ""} } {
   QueryAtlasAddAnnotations 
   QueryAtlasInitializePicker 
   QueryAtlasRenderView
+
 }
 
 #
@@ -231,7 +232,8 @@ proc QueryAtlasInitializePicker {} {
   set interactor [$renderWidget GetRenderWindowInteractor] 
   set style [$interactor GetInteractorStyle] 
 
-  $interactor AddObserver MouseMoveEvent "QueryAtlasPickCallback $renderer $interactor $::QA(windowToImage)"
+  $interactor AddObserver MouseMoveEvent "QueryAtlasPickCallback"
+  $interactor AddObserver RightButtonReleaseEvent "QueryAtlasMenuCreate"
   $style AddObserver EndInteractionEvent "QueryAtlasRenderView"
 
   $renderer AddActor $::QA(actor)
@@ -262,12 +264,22 @@ proc QueryAtlasRenderView {} {
   set renderState [QueryAtlasOverrideRenderState $renderer]
   $renderWidget Render
 
+
+  $::QA(windowToImage) SetInput [$renderWidget GetRenderWindow]
+
+  if { [$renderWindow GetSize] != [$::QA(viewer) GetSize] } {
+    $::QA(windowToImage) Delete
+    set ::QA(windowToImage) [vtkWindowToImageFilter New]
+    $::QA(viewer) Delete
+    set ::QA(viewer) [vtkImageViewer New]
+    $::QA(windowToImage) SetInput [$renderWidget GetRenderWindow]
+  }
+
   $::QA(viewer) SetColorWindow 255
   $::QA(viewer) SetColorLevel 127.5
   $::QA(windowToImage) SetInputBufferTypeToRGBA
   $::QA(windowToImage) ShouldRerenderOn
   $::QA(windowToImage) ReadFrontBufferOff
-  $::QA(windowToImage) SetInput [$renderWidget GetRenderWindow]
   $::QA(windowToImage) Modified
   $::QA(viewer) SetInput [$::QA(windowToImage) GetOutput]
   $::QA(viewer) Render
@@ -320,22 +332,35 @@ proc QueryAtlasRestoreRenderState {renderer renderState} {
 #
 # query the cell number at the mouse location
 #
-proc QueryAtlasPickCallback {renderer interactor windowToImage} {
+proc QueryAtlasPickCallback {} {
 
   if { ![info exists ::QA(viewer)] } {
     return
   }
 
+  set renderWidget [[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer]
+  set renderWindow [$renderWidget GetRenderWindow]
+  set interactor [$renderWidget GetRenderWindowInteractor] 
+  set renderer [$renderWidget GetRenderer]
+
+  # if the window size has changed, re-render
+  if { [$renderWindow GetSize] != [$::QA(viewer) GetSize] } {
+    QueryAtlasRenderView
+  }
+
+  # get the color under the mouse
   eval $interactor UpdateSize [$renderer GetSize]
   foreach {x y} [$interactor GetEventPosition] {}
-  $windowToImage Update
+  $::QA(windowToImage) Update
   set color ""
   foreach c {0 1 2 3} {
-    lappend color [[$windowToImage GetOutput] GetScalarComponentAsFloat $x $y 0 $c]
+    lappend color [[$::QA(windowToImage) GetOutput] GetScalarComponentAsFloat $x $y 0 $c]
   }
-  #puts "[format {%4d %4d} $x $y]:  [QueryAtlasRGBAToNumber $color] ($color)"
+  set ::QA(lastXY) [winfo pointerxy [$renderWidget GetWidgetName]]
 
 
+  # convert the color to a cell index and get the cooresponding
+  # label names from the vertices
   set cellNumber [QueryAtlasRGBAToNumber $color]
   if { $cellNumber >= 0 && $cellNumber < [$::QA(polyData) GetNumberOfCells] } {
     set cell [$::QA(polyData) GetCell $cellNumber]
@@ -363,6 +388,9 @@ proc QueryAtlasPickCallback {renderer interactor windowToImage} {
     set pointLabels "background"
   }
 
+  #
+  # update the label
+  #
   if { ![info exists ::QA(lastLabels)] } {
     set ::QA(lastLabels) ""
   }
@@ -371,5 +399,20 @@ proc QueryAtlasPickCallback {renderer interactor windowToImage} {
     set ::QA(lastLabels) $pointLabels 
     puts $pointLabels
   }
+
+}
+
+
+proc QueryAtlasMenuCreate {} {
+
+  set parent [[$::slicer3::ApplicationGUI GetMainSlicerWindow] GetWidgetName]
+  set qaMenu $parent.qaMenu
+  catch "destroy $qaMenu"
+
+  menu $qaMenu
+  $qaMenu insert end command -label "Google..." -command QueryAtlasQueryGoogle
+
+  
+  eval $qaMenu post $::QA(lastXY)
 
 }
