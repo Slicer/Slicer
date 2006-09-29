@@ -30,7 +30,7 @@ IF(SLICER_NEED_SHARED_FORWARD)
       ${CMAKE_CURRENT_SOURCE_DIR}/Slicer3-forward.c.in
       ${CMAKE_CURRENT_BINARY_DIR}/${slicer_exe}-forward.c
       @ONLY IMMEDIATE)
-    ADD_EXECUTABLE(${slicer_exe}
+    ADD_EXECUTABLE(${slicer_exe} WIN32
       ${CMAKE_CURRENT_BINARY_DIR}/${slicer_exe}-forward.c)
     ADD_DEPENDENCIES(${slicer_exe} ${slicer_exe}${SLICER_EXE_SUFFIX})
     INSTALL(TARGETS ${slicer_exe}

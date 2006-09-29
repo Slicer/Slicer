@@ -43,6 +43,18 @@
 
 #include <vtksys/SystemTools.hxx>
 
+#ifdef _WIN32
+#  define slicerCerr(x) \
+  do { \
+    vtkstd::ostringstream str; \
+    str << x; \
+    MessageBox(NULL, str.str().c_str(), "Slicer Error", MB_OK);\
+  } while (0)
+#else
+#  define slicerCerr(x) \
+  cerr << x
+#endif
+
 
 // Get the automated arg parsing code
 #include "Slicer3CLP.h"
@@ -79,7 +91,7 @@ int Slicer3_Tcl_Eval ( Tcl_Interp *interp, const char *script )
     {
     // TODO: need to figure out how to turn on the stdio channels
     // so puts will work from scripts in windows...
-    cerr << "Error: " << Tcl_GetStringResult( interp ) << "\n";
+    slicerCerr("Error: " << Tcl_GetStringResult( interp ) << "\n");
     return 1;
     }
   return 0;
@@ -105,17 +117,29 @@ int Slicer3_main(int argc, char *argv[])
   if ( !vtksys::SystemTools::FindProgramPath(argv[0],
       programPath, errorMessage) )
     {
-    cerr << "Error: Cannot find Slicer3 executable" << endl;
+    slicerCerr("Error: Cannot find Slicer3 executable" << endl);
     return 1;
     }
 
   std::string ptemp;
-  cout << "Using slicer executable: " << programPath.c_str() << endl;
+  cerr << "Using slicer executable: " << programPath.c_str() << endl;
   std::string slicerBinDir
     = vtksys::SystemTools::GetFilenamePath(programPath.c_str());
+  std::string tmpName = slicerBinDir + "/../lib/Slicer3/slicerd.tcl";
+  if ( !vtksys::SystemTools::FileExists(tmpName.c_str()) )
+    {
+    // Handle Visual Studio IntDir
+    slicerBinDir = slicerBinDir + "/..";
+    tmpName = slicerBinDir + "/../lib/Slicer3/slicerd.tcl";
+    if ( !vtksys::SystemTools::FileExists(tmpName.c_str()) )
+      {
+      slicerCerr("Error: Cannot find Slicer3 libraries" << endl);
+      return 1;
+      }
+    }
   std::string tclEnv = "TCL_LIBRARY=";
   tclEnv += slicerBinDir + "/../lib/Slicer3/tcl/lib/tcl8.4";
-  cout << "Set environment: " << tclEnv.c_str() << endl;
+  cerr << "Set environment: " << tclEnv.c_str() << endl;
   putenv(const_cast <char *> (tclEnv.c_str()));
 
   ptemp = vtksys::SystemTools::CollapseFullPath(argv[0]);
@@ -140,7 +164,7 @@ int Slicer3_main(int argc, char *argv[])
     Tcl_Interp *interp = vtkKWApplication::InitializeTcl(argc, argv, &cerr);
     if (!interp)
         {
-            cerr << "Error: InitializeTcl failed" << endl ;
+            slicerCerr("Error: InitializeTcl failed" << endl );
             return 1;
         }
 
@@ -189,7 +213,7 @@ int Slicer3_main(int argc, char *argv[])
       returnCode = Slicer3_Tcl_Eval( interp, cmd.c_str() );
       if ( returnCode )
         {
-        cerr << "Error: slicer requires the Itcl package (" << cmd.c_str() << ")" << endl;
+        slicerCerr("Error: slicer requires the Itcl package (" << cmd.c_str() << ")" << endl);
         return ( returnCode );
         }
     }
@@ -206,13 +230,12 @@ int Slicer3_main(int argc, char *argv[])
         SLICER_INSTALL_LIBRARIES_DIR "\"; ";
       cmd +=  "lappend auto_path \"" + slicerBinDir + "/../../"
         SLICER_INSTALL_LIBRARIES_DIR "\"; ";
-      cmd += "puts $auto_path; ";
+      //cmd += "puts $auto_path; ";
       cmd += "package require SlicerBaseGUITcl; ";
-      cout.flush();
       returnCode = Slicer3_Tcl_Eval( interp, cmd.c_str() );
       if ( returnCode )
         {
-        cerr << "Load SlicerBaseGUITcl: " << cmd.c_str() << endl;
+        slicerCerr("Load SlicerBaseGUITcl: " << cmd.c_str() << endl);
         return ( returnCode );
         }
     }
@@ -460,10 +483,19 @@ int Slicer3_main(int argc, char *argv[])
 
     // --- SlicerDaemon Module
     // need to source the slicerd.tcl script here
+
+    {
+      std::string cmd;
+      cmd =  "source \"" + slicerBinDir + "/../"
+        SLICER_INSTALL_LIBRARIES_DIR "/slicerd.tcl\"; slicerd_start; ";
+      /*
     Slicer3_Tcl_Eval( interp, "                                              \
       source $::SLICER_BUILD/"                                               \
       SLICER_INSTALL_LIBRARIES_DIR "/slicerd.tcl; slicerd_start              \
     ");
+    */
+      Slicer3_Tcl_Eval(interp, cmd.c_str());
+    }
 
 
 #ifndef CLIMODULES_DEBUG
@@ -485,7 +517,7 @@ int Slicer3_main(int argc, char *argv[])
     std::vector<std::string>::const_iterator mit = moduleNames.begin();
     while (mit != moduleNames.end())
       {
-      // std::cout << moduleFactory.GetModuleDescription(*mit) << std::endl;
+      // slicerCerr(moduleFactory.GetModuleDescription(*mit) << endl);
 
       // For now, create vtkCommandLineModule* items. When the
       // ModuleFactory can discover shared object modules, then we'll
@@ -587,8 +619,8 @@ int Slicer3_main(int argc, char *argv[])
     //
 
     std::string tclCommand = "set ::SLICER_PACKAGES(list) {};";
-    tclCommand += "set dirs [glob $::SLICER_BUILD/"
-      SLICER_INSTALL_LIBRARIES_DIR "/Modules/Packages/*]; ";
+    tclCommand += "set dirs [glob \"" + slicerBinDir + "/../"
+      SLICER_INSTALL_LIBRARIES_DIR "/Modules/Packages/*\"]; ";
     tclCommand += "foreach d $dirs { ";
     tclCommand += "  if { [file exists $d/pkgIndex.tcl] } {";
     tclCommand += "    lappend ::SLICER_PACKAGES(list) [file tail $d];";
@@ -678,20 +710,20 @@ int Slicer3_main(int argc, char *argv[])
         std::vector<std::string>::const_iterator argit = Args.begin();
         while (argit != Args.end())
         {
-            std::cout << "Arg =  " << *argit << endl;
+            cerr << "Arg =  " << *argit << endl;
             std::string fileName;
             fileName.append(*argit);
             // is it a MRML or XML file?
             if (fileName.find(".mrml",0) != std::string::npos ||
                 fileName.find(".xml",0) != std::string::npos)
             {
-                std::cout << fileName << " is a MRML or XML file, setting MRML scene file name and connecting\n";
+                cerr << fileName << " is a MRML or XML file, setting MRML scene file name and connecting\n";
                 appLogic->GetMRMLScene()->SetURL(fileName.c_str());
                 // and then load it
                 int errorCode = appLogic->GetMRMLScene()->Connect();
                 if (errorCode)
                 {
-                    std::cerr << "ERROR loading MRML file " << fileName << endl;
+                    slicerCerr("ERROR loading MRML file " << fileName << endl);
                 }
             }                    
             ++argit;
