@@ -185,7 +185,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
     }
   else
     {
-    reader->SetUseNativeOriginOff();
+    reader->SetUseNativeOriginOn();
     }
   reader->Update();
 
