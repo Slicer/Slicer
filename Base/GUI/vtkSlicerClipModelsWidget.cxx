@@ -126,54 +126,54 @@ void vtkSlicerClipModelsWidget::CreateWidget ( )
   this->RedSliceClipStateMenu = vtkKWMenuButtonWithLabel::New();
   this->RedSliceClipStateMenu->SetParent(frame);
   this->RedSliceClipStateMenu->Create();
-  this->RedSliceClipStateMenu->SetLabelWidth(12);
+  this->RedSliceClipStateMenu->SetLabelWidth(18);
   this->RedSliceClipStateMenu->SetLabelText("Red Slice Clipping:");
   this->RedSliceClipStateMenu->GetWidget()->GetMenu()->AddRadioButton ( "Off");
   this->RedSliceClipStateMenu->GetWidget()->GetMenu()->AddRadioButton ( "Positive Space");
   this->RedSliceClipStateMenu->GetWidget()->GetMenu()->AddRadioButton ( "Negative Space");
   this->RedSliceClipStateMenu->GetWidget()->SetValue ( "Off" );
   this->Script(
-    "pack %s -side left -anchor nw -expand n -fill x -padx 2 -pady 2", 
+    "pack %s -side top -anchor nw -expand n -fill x -padx 2 -pady 2", 
     this->RedSliceClipStateMenu->GetWidgetName());
 
   this->YellowSliceClipStateMenu = vtkKWMenuButtonWithLabel::New();
   this->YellowSliceClipStateMenu->SetParent(frame);
   this->YellowSliceClipStateMenu->Create();
-  this->YellowSliceClipStateMenu->SetLabelWidth(12);
+  this->YellowSliceClipStateMenu->SetLabelWidth(18);
   this->YellowSliceClipStateMenu->SetLabelText("Yellow Slice Clipping:");
   this->YellowSliceClipStateMenu->GetWidget()->GetMenu()->AddRadioButton ( "Off");
   this->YellowSliceClipStateMenu->GetWidget()->GetMenu()->AddRadioButton ( "Positive Space");
   this->YellowSliceClipStateMenu->GetWidget()->GetMenu()->AddRadioButton ( "Negative Space");
   this->YellowSliceClipStateMenu->GetWidget()->SetValue ( "Off" );
-  this->YellowSliceClipStateMenu->GetWidget()->SetWidth ( 7 );
+  //this->YellowSliceClipStateMenu->GetWidget()->SetWidth ( 7 );
   this->Script(
-    "pack %s -side left -anchor nw -expand n -fill x -padx 2 -pady 2", 
+    "pack %s -side top -anchor nw -expand n -fill x -padx 2 -pady 2", 
     this->YellowSliceClipStateMenu->GetWidgetName());
 
   this->GreenSliceClipStateMenu = vtkKWMenuButtonWithLabel::New();
   this->GreenSliceClipStateMenu->SetParent(frame);
   this->GreenSliceClipStateMenu->Create();
-  this->GreenSliceClipStateMenu->SetLabelWidth(12);
+  this->GreenSliceClipStateMenu->SetLabelWidth(18);
   this->GreenSliceClipStateMenu->SetLabelText("Green Slice Clipping:");
   this->GreenSliceClipStateMenu->GetWidget()->GetMenu()->AddRadioButton ( "Off");
   this->GreenSliceClipStateMenu->GetWidget()->GetMenu()->AddRadioButton ( "Positive Space");
   this->GreenSliceClipStateMenu->GetWidget()->GetMenu()->AddRadioButton ( "Negative Space");
   this->GreenSliceClipStateMenu->GetWidget()->SetValue ( "Off" );
   this->Script(
-    "pack %s -side left -anchor nw -expand n -fill x -padx 2 -pady 2", 
+    "pack %s -side top -anchor nw -expand n -fill x -padx 2 -pady 2", 
     this->GreenSliceClipStateMenu->GetWidgetName());
 
   this->ClipTypeMenu = vtkKWMenuButtonWithLabel::New();  
   this->ClipTypeMenu->SetParent(frame);
   this->ClipTypeMenu->Create();
-  this->ClipTypeMenu->SetLabelWidth(12);
+  //this->ClipTypeMenu->SetLabelWidth(12);
   this->ClipTypeMenu->SetLabelText("Clip Type:");
   this->ClipTypeMenu->GetWidget()->GetMenu()->AddRadioButton ( "Intersection");
   this->ClipTypeMenu->GetWidget()->GetMenu()->AddRadioButton ( "Union");
   this->ClipTypeMenu->GetWidget()->SetValue ( "Intersection" );
-  this->ClipTypeMenu->GetWidget()->SetWidth ( 7 );
+  //this->ClipTypeMenu->GetWidget()->SetWidth ( 7 );
   this->Script(
-    "pack %s -side left -anchor nw -expand n -fill x -padx 2 -pady 2", 
+    "pack %s -side top -anchor nw -expand n -fill x -padx 2 -pady 2", 
     this->ClipTypeMenu->GetWidgetName());
 
 }

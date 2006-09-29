@@ -11,6 +11,7 @@
 #include "vtkSlicerModuleLogic.h"
 #include "vtkSlicerModelsLogic.h"
 #include "vtkSlicerNodeSelectorWidget.h"
+#include "vtkSlicerClipModelsWidget.h"
 
 //#include "vtkSlicerModelsLogic.h"
 //#include "vtkMRMLModelNode.h"
@@ -96,6 +97,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModelsGUI : public vtkSlicerModuleGUI
     vtkSlicerNodeSelectorWidget* ModelSelectorWidget;
 
     vtkSlicerModelDisplayWidget *ModelDisplayWidget;
+
+    vtkSlicerClipModelsWidget *ClipModelsWidget;
 
     vtkSlicerModelsLogic *Logic;
 

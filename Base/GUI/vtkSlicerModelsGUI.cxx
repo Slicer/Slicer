@@ -29,6 +29,7 @@ vtkSlicerModelsGUI::vtkSlicerModelsGUI ( )
     this->SaveModelButton = NULL;
     this->ModelSelectorWidget = NULL;
     this->ModelDisplayWidget = NULL;
+    this->ClipModelsWidget = NULL;
 }
 
 
@@ -64,7 +65,11 @@ vtkSlicerModelsGUI::~vtkSlicerModelsGUI ( )
     this->ModelDisplayWidget->SetParent(NULL);
     this->ModelDisplayWidget->Delete ( );
     }
-
+  if (this->ClipModelsWidget ) 
+    {
+    this->ClipModelsWidget->SetParent(NULL);
+    this->ClipModelsWidget->Delete ( );
+    }
 }
 
 
@@ -275,10 +280,8 @@ void vtkSlicerModelsGUI::BuildGUI ( )
     app->Script("pack %s -side left -anchor w -padx 2 -pady 4", 
                 this->LoadModelDirectoryButton->GetWidgetName());
 
-    // ---
-    // DISPLAY FRAME               
-    // ---
-    // LOAD FRAME            
+  
+    // DISPLAY FRAME            
     vtkSlicerModuleCollapsibleFrame *modDisplayFrame = vtkSlicerModuleCollapsibleFrame::New ( );
     modDisplayFrame->SetParent ( this->UIPanel->GetPageWidget ( "Models" ) );
     modDisplayFrame->Create ( );
@@ -294,6 +297,24 @@ void vtkSlicerModelsGUI::BuildGUI ( )
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   this->ModelDisplayWidget->GetWidgetName(), 
                   modDisplayFrame->GetFrame()->GetWidgetName());
+
+    // Clip FRAME  
+    vtkSlicerModuleCollapsibleFrame *clipFrame = vtkSlicerModuleCollapsibleFrame::New ( );
+    clipFrame->SetParent ( this->UIPanel->GetPageWidget ( "Models" ) );
+    clipFrame->Create ( );
+    clipFrame->SetLabelText ("Clipping");
+    clipFrame->CollapseFrame ( );
+    app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
+                  clipFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Models")->GetWidgetName());
+
+    this->ClipModelsWidget = vtkSlicerClipModelsWidget::New ( );
+    this->ClipModelsWidget->SetMRMLScene(this->GetMRMLScene() );
+    this->ClipModelsWidget->SetParent ( clipFrame->GetFrame() );
+    this->ClipModelsWidget->Create ( );
+    app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
+                  this->ClipModelsWidget->GetWidgetName(), 
+                  clipFrame->GetFrame()->GetWidgetName());
+
     // ---
     // Save FRAME            
     vtkSlicerModuleCollapsibleFrame *modelSaveFrame = vtkSlicerModuleCollapsibleFrame::New ( );
@@ -336,6 +357,7 @@ void vtkSlicerModelsGUI::BuildGUI ( )
     modLoadFrame->Delete ( );
     modHelpFrame->Delete ( );
     modDisplayFrame->Delete ( );
+    clipFrame->Delete ( );
     modelSaveFrame->Delete();
 }
 
