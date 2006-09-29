@@ -21,6 +21,8 @@
 #include "vtkGlyphSource2D.h"
 #include "vtkVectorText.h"
 #include "vtkRenderWindow.h"
+#include "vtkImplicitBoolean.h"
+#include "vtkPlane.h"
 
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLModelDisplayNode.h"
@@ -28,6 +30,8 @@
 #include "vtkMRMLTransformNode.h"
 #include "vtkMRMLLinearTransformNode.h"
 #include "vtkMRMLScene.h"
+#include "vtkMRMLClipModelsNode.h"
+
 #include "vtkKWWidget.h"
 
 //---------------------------------------------------------------------------
@@ -42,6 +46,11 @@ vtkSlicerViewerWidget::vtkSlicerViewerWidget ( )
   this->RenderPending = 0;  
   this->ViewerFrame = NULL;
   this->ProcessingMRMLEvent = 0;
+
+  this->SlicePlanes = NULL;
+  this->RedSlicePlane = NULL;
+  this->GreenSlicePlane = NULL;
+  this->YellowSlicePlane = NULL;
 }
 
 
@@ -61,6 +70,11 @@ vtkSlicerViewerWidget::~vtkSlicerViewerWidget ( )
     this->ViewerFrame->Delete ( );
     this->ViewerFrame = NULL;
     }
+
+  this->SlicePlanes->Delete();
+  this->RedSlicePlane->Delete();
+  this->GreenSlicePlane->Delete();
+  this->YellowSlicePlane->Delete();
 }
 
 //---------------------------------------------------------------------------
@@ -78,6 +92,89 @@ void vtkSlicerViewerWidget::ProcessWidgetEvents ( vtkObject *caller,
                                                   void *callData )
 {
 } 
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewerWidget::CreateClipSlices()
+{
+  this->SlicePlanes = vtkImplicitBoolean::New();
+  this->SlicePlanes->SetOperationTypeToIntersection();
+  this->RedSlicePlane = vtkPlane::New();
+  this->GreenSlicePlane = vtkPlane::New();
+  this->YellowSlicePlane = vtkPlane::New();
+
+  this->ClipType = vtkMRMLClipModelsNode::ClipIntersection;
+  this->RedSliceClipState = vtkMRMLClipModelsNode::ClipOff;
+  this->YellowSliceClipState = vtkMRMLClipModelsNode::ClipOff;
+  this->GreenSliceClipState = vtkMRMLClipModelsNode::ClipOff;
+
+}
+
+//---------------------------------------------------------------------------
+int vtkSlicerViewerWidget::UpdateClipSlicesFormMRML(vtkMRMLClipModelsNode *clipNode)
+{
+  int same = 1;
+
+  if ( clipNode->GetClipType() != this->ClipType)
+  {
+    same = 0;
+    this->ClipType = clipNode->GetClipType();
+    if (this->ClipType == vtkMRMLClipModelsNode::ClipIntersection) 
+      {
+      this->SlicePlanes->SetOperationTypeToIntersection();
+      }
+    else if (this->ClipType == vtkMRMLClipModelsNode::ClipUnion) 
+      {
+      this->SlicePlanes->SetOperationTypeToUnion();
+      }
+    else 
+      {
+      vtkErrorMacro("vtkMRMLClipModelsNode:: Invalid Clip Type");
+      }
+  }
+
+  if (clipNode->GetRedSliceClipState() != this->RedSliceClipState)
+    {
+    if (this->RedSliceClipState == vtkMRMLClipModelsNode::ClipOff)
+      {
+      this->SlicePlanes->AddFunction(this->RedSlicePlane);
+      }
+    else if (clipNode->GetRedSliceClipState() == vtkMRMLClipModelsNode::ClipOff)
+      {
+      this->SlicePlanes->RemoveFunction(this->RedSlicePlane);
+      }
+    same = 0;
+    this->RedSliceClipState = clipNode->GetRedSliceClipState();
+    }
+
+  if (clipNode->GetGreenSliceClipState() != this->GreenSliceClipState)
+    {
+    if (this->GreenSliceClipState == vtkMRMLClipModelsNode::ClipOff)
+      {
+      this->SlicePlanes->AddFunction(this->GreenSlicePlane);
+      }
+    else if (clipNode->GetGreenSliceClipState() == vtkMRMLClipModelsNode::ClipOff)
+      {
+      this->SlicePlanes->RemoveFunction(this->GreenSlicePlane);
+      }
+    same = 0;
+    this->GreenSliceClipState = clipNode->GetGreenSliceClipState();
+    }
+
+  if (clipNode->GetYellowSliceClipState() != this->YellowSliceClipState)
+    {
+    if (this->YellowSliceClipState == vtkMRMLClipModelsNode::ClipOff)
+      {
+      this->SlicePlanes->AddFunction(this->YellowSlicePlane);
+      }
+    else if (clipNode->GetYellowSliceClipState() == vtkMRMLClipModelsNode::ClipOff)
+      {
+      this->SlicePlanes->RemoveFunction(this->YellowSlicePlane);
+      }
+    same = 0;
+    this->YellowSliceClipState = clipNode->GetYellowSliceClipState();
+    }
+  return same;
+}
 
 //---------------------------------------------------------------------------
 void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,

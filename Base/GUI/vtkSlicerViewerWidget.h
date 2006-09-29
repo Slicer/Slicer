@@ -34,9 +34,12 @@ class vtkMRMLModelDisplayNode;
 class vtkMRMLFiducialListNode;
 class vtkMRMLFiducialListDisplayNode;
 class vtkMRMLFiducial;
+class vtkMRMLClipModelsNode;
 class vtkPolyData;
 class vtkActor;
 class vtkFollower;
+class vtkImplicitBoolean;
+class vtkPlane;
 
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewerWidget : public vtkSlicerWidget
 {
@@ -120,6 +123,9 @@ protected:
   void UpdateFiducialsFromMRML();
   void UpdateModelsFromMRML();
 
+  void CreateClipSlices();
+  int UpdateClipSlicesFormMRML(vtkMRMLClipModelsNode *clipNode);
+
   void SetModelDisplayProperty(vtkMRMLModelNode *model,  vtkActor *actor);
   void SetFiducialDisplayProperty(vtkMRMLFiducialListNode *flist, int n,
                                   vtkActor *actor, vtkFollower *textActor);
@@ -135,6 +141,18 @@ protected:
   //ETX
 
   int ProcessingMRMLEvent;
+
+  vtkMRMLClipModelsNode *ClipModelsNode;
+
+  vtkImplicitBoolean *SlicePlanes;
+  vtkPlane *RedSlicePlane;
+  vtkPlane *GreenSlicePlane;
+  vtkPlane *YellowSlicePlane;
+
+  int ClipType;
+  int RedSliceClipState;
+  int YellowSliceClipState;
+  int GreenSliceClipState;
 
 private:
   
