@@ -350,13 +350,14 @@ proc QueryAtlasPickCallback {} {
 
   # get the color under the mouse
   eval $interactor UpdateSize [$renderer GetSize]
-  foreach {x y} [$interactor GetEventPosition] {}
+  set ::QA(lastWindowXY) [$interactor GetEventPosition]
+  foreach {x y} $::QA(lastWindowXY) {}
   $::QA(windowToImage) Update
   set color ""
   foreach c {0 1 2 3} {
     lappend color [[$::QA(windowToImage) GetOutput] GetScalarComponentAsFloat $x $y 0 $c]
   }
-  set ::QA(lastXY) [winfo pointerxy [$renderWidget GetWidgetName]]
+  set ::QA(lastRootXY) [winfo pointerxy [$renderWidget GetWidgetName]]
 
 
   # convert the color to a cell index and get the cooresponding
@@ -400,8 +401,33 @@ proc QueryAtlasPickCallback {} {
     puts $pointLabels
   }
 
+  QueryAtlasUpdateCursor
 }
 
+proc QueryAtlasUpdateCursor {} {
+
+  set viewer [$::slicer3::ApplicationGUI GetViewerWidget]
+  if { ![info exists ::QA(cursor,actor)] } {
+    #set ::QA(cursor,source) [vtkSphereSource New]
+    #set ::QA(cursor,actor) [vtkActor2D New]
+    #set ::QA(cursor,mapper) [vtkPolyDataMapper2D New]
+    #$::QA(cursor,mapper) SetInput [$::QA(cursor,source) GetOutput]
+    #$::QA(cursor,actor) SetMapper $::QA(cursor,mapper)
+
+    set ::QA(cursor,actor) [vtkTextActor New]
+    set ::QA(cursor,mapper) [vtkTextMapper New]
+    $::QA(cursor,actor) SetMapper $::QA(cursor,mapper)
+
+    set renderWidget [$viewer GetMainViewer]
+    set renderer [$renderWidget GetRenderer]
+    $renderer AddActor2D $::QA(cursor,actor)
+
+  }
+
+  eval $::QA(cursor,actor) SetInput $::QA(lastLabels) 
+  eval $::QA(cursor,actor) SetPosition $::QA(lastWindowXY) 
+  $viewer RequestRender
+}
 
 proc QueryAtlasMenuCreate {} {
 
@@ -414,7 +440,7 @@ proc QueryAtlasMenuCreate {} {
   $qaMenu insert end command -label "Wikipedia..." -command "QueryAtlasQuery wikipedia"
 
   
-  eval $qaMenu post $::QA(lastXY)
+  eval $qaMenu post $::QA(lastRootXY)
 
 }
 
