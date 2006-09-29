@@ -60,6 +60,7 @@ vtkMRMLNode* vtkMRMLVolumeArchetypeStorageNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLVolumeArchetypeStorageNode::vtkMRMLVolumeArchetypeStorageNode()
 {
+  this->CenterImage = 1;
 }
 
 //----------------------------------------------------------------------------
@@ -72,13 +73,31 @@ void vtkMRMLVolumeArchetypeStorageNode::WriteXML(ostream& of, int nIndent)
   Superclass::WriteXML(of, nIndent);
   vtkIndent indent(nIndent);
 
+  std::stringstream ss;
+  ss << this->CenterImage;
+  of << indent << "centerImage=\"" << ss.str() << "\" ";
+
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeArchetypeStorageNode::ReadXMLAttributes(const char** atts)
 {
 
-  vtkMRMLStorageNode::ReadXMLAttributes(atts);
+  Superclass::ReadXMLAttributes(atts);
+
+  const char* attName;
+  const char* attValue;
+  while (*atts != NULL) 
+    {
+    attName = *(atts++);
+    attValue = *(atts++);
+    if (!strcmp(attName, "centerImage")) 
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->CenterImage;
+      }
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -88,12 +107,15 @@ void vtkMRMLVolumeArchetypeStorageNode::Copy(vtkMRMLNode *anode)
 {
   Superclass::Copy(anode);
   vtkMRMLVolumeArchetypeStorageNode *node = (vtkMRMLVolumeArchetypeStorageNode *) anode;
+
+  this->SetCenterImage(node->CenterImage);
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeArchetypeStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 {  
   vtkMRMLStorageNode::PrintSelf(os,indent);
+  os << indent << "CenterImage:   " << this->CenterImage << "\n";
 
 }
 
@@ -157,7 +179,14 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
   reader->SetArchetype(fullName.c_str());
   reader->SetOutputScalarTypeToNative();
   reader->SetDesiredCoordinateOrientationToNative();
-  reader->SetUseNativeOriginOff();
+  if (this->CenterImage) 
+    {
+    reader->SetUseNativeOriginOff();
+    }
+  else
+    {
+    reader->SetUseNativeOriginOff();
+    }
   reader->Update();
 
   // set volume attributes

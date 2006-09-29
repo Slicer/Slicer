@@ -31,6 +31,7 @@ vtkSlicerVolumesGUI::vtkSlicerVolumesGUI ( )
     this->LoadVolumeButton = NULL;
     this->SaveVolumeButton = NULL;
     this->VolumeDisplayWidget = NULL;
+    this->CenterImageMenu = NULL;
 }
 
 
@@ -65,6 +66,11 @@ vtkSlicerVolumesGUI::~vtkSlicerVolumesGUI ( )
     this->VolumeSelectorWidget->SetParent(NULL );
     this->VolumeSelectorWidget->Delete ( );
     }
+  if (this->CenterImageMenu)
+    {
+    this->CenterImageMenu->SetParent(NULL );
+    this->CenterImageMenu->Delete ( );
+    }
 
   this->SetModuleLogic ( NULL );
    vtkSetMRMLNodeMacro (this->VolumeNode, NULL );
@@ -95,6 +101,10 @@ void vtkSlicerVolumesGUI::RemoveGUIObservers ( )
       {
       this->SaveVolumeButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
       }
+    if ( this->CenterImageMenu)
+      {
+      this->CenterImageMenu->GetWidget()->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand);
+      }
 }
 
 
@@ -106,6 +116,8 @@ void vtkSlicerVolumesGUI::AddGUIObservers ( )
     // observer load volume button
     this->LoadVolumeButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->SaveVolumeButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->CenterImageMenu->GetWidget()->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand);
+
 }
 
 
@@ -122,8 +134,21 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents ( vtkObject *caller,
     char *fileName = filebrowse->GetFileName();
     if ( fileName ) 
       {
+
+       vtkKWMenuButton *mb = this->CenterImageMenu->GetWidget();
+       int centered;
+       if ( !strcmp (mb->GetValue(), "Centered") )   
+         {
+         centered = 1;
+         }
+       else 
+         {
+         centered = 0;
+         }
+
+
       vtkSlicerVolumesLogic* volumeLogic = this->Logic;
-      vtkMRMLVolumeNode *volumeNode = volumeLogic->AddArchetypeVolume( fileName );
+      vtkMRMLVolumeNode *volumeNode = volumeLogic->AddArchetypeVolume( fileName, centered );
       if ( volumeNode == NULL ) 
         {
         //TODO: generate an error...
@@ -247,9 +272,21 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
                                                               "{ {volume} {*.*} }");
     this->LoadVolumeButton->GetLoadSaveDialog()->RetrieveLastPathFromRegistry(
       "OpenPath");
-    app->Script("pack %s -side top -anchor w -padx 2 -pady 4", 
+    app->Script("pack %s -side left -anchor nw -padx 2 -pady 4", 
                 this->LoadVolumeButton->GetWidgetName());
-    
+   
+    this->CenterImageMenu = vtkKWMenuButtonWithLabel::New();
+    this->CenterImageMenu->SetParent(volLoadFrame->GetFrame());
+    this->CenterImageMenu->Create();
+    this->CenterImageMenu->SetLabelWidth(12);
+    this->CenterImageMenu->SetLabelText("Image Origin:");
+    this->CenterImageMenu->GetWidget()->GetMenu()->AddRadioButton ( "Centered");
+    this->CenterImageMenu->GetWidget()->GetMenu()->AddRadioButton ( "From File");
+    this->CenterImageMenu->GetWidget()->SetValue ( "Centered" );
+    this->Script(
+      "pack %s -side left -anchor nw -expand n -fill x -padx 2 -pady 2", 
+      this->CenterImageMenu->GetWidgetName());
+
     // ---
     // DISPLAY FRAME            
     vtkSlicerModuleCollapsibleFrame *volDisplayFrame = vtkSlicerModuleCollapsibleFrame::New ( );    

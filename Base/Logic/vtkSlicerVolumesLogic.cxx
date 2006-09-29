@@ -58,7 +58,7 @@ void vtkSlicerVolumesLogic::SetActiveVolumeNode(vtkMRMLVolumeNode *activeNode)
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (char* filename)
+vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (char* filename, int centerImage)
 {
   vtkMRMLVolumeNode *volumeNode = NULL;
   
@@ -69,6 +69,7 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (char* filename)
   vtkMRMLVolumeArchetypeStorageNode *storageNode = vtkMRMLVolumeArchetypeStorageNode::New();
 
   storageNode->SetFileName(filename);
+  storageNode->SetCenterImage(centerImage);
   if (storageNode->ReadData(scalarNode) == 0)
     {
     // cannot read scalar data, try vector

@@ -71,6 +71,11 @@ class VTK_MRML_EXPORT vtkMRMLVolumeArchetypeStorageNode : public vtkMRMLStorageN
   // Get node XML tag name (like Storage, Model)
   virtual const char* GetNodeTagName()  {return "VolumeArchetypeStorage";};
 
+  // Description:
+  // Center image on read
+  vtkGetMacro(CenterImage, int);
+  vtkSetMacro(CenterImage, int);
+
 
 protected:
 
@@ -79,6 +84,8 @@ protected:
   ~vtkMRMLVolumeArchetypeStorageNode();
   vtkMRMLVolumeArchetypeStorageNode(const vtkMRMLVolumeArchetypeStorageNode&);
   void operator=(const vtkMRMLVolumeArchetypeStorageNode&);
+
+  int CenterImage;
 
 };
 
