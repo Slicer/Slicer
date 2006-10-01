@@ -116,6 +116,17 @@ void vtkSlicerViewerWidget::CreateClipSlices()
 //---------------------------------------------------------------------------
 int vtkSlicerViewerWidget::UpdateClipSlicesFormMRML()
 {
+  if (this->MRMLScene == NULL)
+    {
+    return 0;
+    }
+
+  vtkMRMLClipModelsNode *clipNode = vtkMRMLClipModelsNode::SafeDownCast(this->MRMLScene->GetNthNodeByClass(0, "vtkMRMLClipModelsNode"));
+  if (clipNode != this->ClipModelsNode) 
+    {
+    vtkSetAndObserveMRMLNodeMacro(this->ClipModelsNode, clipNode);
+    }
+
   if (this->ClipModelsNode == NULL)
     {
     return 0;
