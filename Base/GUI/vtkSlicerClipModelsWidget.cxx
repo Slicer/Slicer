@@ -3,11 +3,15 @@
 
 #include "vtkSlicerClipModelsWidget.h"
 #include "vtkSlicerApplication.h"
+#include "vtkSlicerNodeSelectorWidget.h"
 
 #include "vtkKWWidget.h"
 #include "vtkKWMenuButton.h"
 #include "vtkKWMenu.h"
 #include "vtkKWFrameWithLabel.h"
+#include "vtkKWMenuButtonWithLabel.h"
+
+#include "vtkMRMLClipModelsNode.h"
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro ( vtkSlicerClipModelsWidget );
@@ -23,6 +27,8 @@ vtkSlicerClipModelsWidget::vtkSlicerClipModelsWidget ( )
   this->YellowSliceClipStateMenu = NULL;
   this->GreenSliceClipStateMenu = NULL;
   this->ClipTypeMenu = NULL;
+  this->ClipModelsNodeSelector = NULL;
+  this->ClipModelsNode = NULL;
 }
 
 
@@ -56,8 +62,15 @@ vtkSlicerClipModelsWidget::~vtkSlicerClipModelsWidget ( )
     this->ClipTypeMenu->Delete ( );
     this->ClipTypeMenu = NULL;
     }
+    
+  if ( this->ClipModelsNodeSelector ) 
+    {
+    this->ClipModelsNodeSelector->SetParent(NULL);
+    this->ClipModelsNodeSelector->Delete ( );
+    this->ClipModelsNodeSelector = NULL;
+    }
   this->SetMRMLScene(NULL);
-  this->SetClipModelsNode(NULL);
+  vtkSetAndObserveMRMLNodeMacro(this->ClipModelsNode, NULL);
   
 }
 
@@ -76,6 +89,8 @@ void vtkSlicerClipModelsWidget::AddWidgetObservers ( )
 
   this->ClipTypeMenu->GetWidget()->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand);
 
+  this->ClipModelsNodeSelector->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
+
 }
   
 //---------------------------------------------------------------------------
@@ -91,7 +106,7 @@ void vtkSlicerClipModelsWidget::RemoveWidgetObservers ( ) {
   this->RedSliceClipStateMenu->GetWidget()->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand);
   this->GreenSliceClipStateMenu->GetWidget()->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand);
   this->ClipTypeMenu->GetWidget()->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand);
-
+  this->ClipModelsNodeSelector->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
 }
 
 //---------------------------------------------------------------------------
@@ -118,11 +133,29 @@ void vtkSlicerClipModelsWidget::CreateWidget ( )
   vtkKWFrameWithLabel *frame = vtkKWFrameWithLabel::New ( );
   frame->SetParent ( this->GetParent() );
   frame->Create ( );
-  frame->SetLabelText ("Display");
+  frame->SetLabelText ("Clipping");
   frame->CollapseFrame ( );
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                  frame->GetWidgetName() );
-  
+
+  this->ClipModelsNodeSelector = vtkSlicerNodeSelectorWidget::New();
+  this->ClipModelsNodeSelector->SetNodeClass("vtkMRMLClipModelsNode", NULL, NULL, "ClipModelsParameter");
+  this->ClipModelsNodeSelector->SetNewNodeEnabled(1);
+  this->ClipModelsNodeSelector->NoneEnabledOn();
+  //this->ClipModelsNodeSelector->SetNewNodeName("GADParameters");
+  this->ClipModelsNodeSelector->SetParent( frame );
+  this->ClipModelsNodeSelector->Create();
+  this->ClipModelsNodeSelector->SetMRMLScene(this->GetMRMLScene());
+  this->ClipModelsNodeSelector->UpdateMenu();
+
+  /** Fdon't show it for now
+  this->ClipModelsNodeSelector->SetBorderWidth(2);
+  this ->ClipModelsNodeSelector->SetLabelText( "Clip Models Parameter");
+  this->ClipModelsNodeSelector->SetBalloonHelpString("select Clip node.");
+  app->Script("pack %s -side top -anchor e -padx 20 -pady 4", 
+                this->ClipModelsNodeSelector->GetWidgetName());
+  ***/
+
   this->RedSliceClipStateMenu = vtkKWMenuButtonWithLabel::New();
   this->RedSliceClipStateMenu->SetParent(frame);
   this->RedSliceClipStateMenu->Create();
@@ -176,6 +209,7 @@ void vtkSlicerClipModelsWidget::CreateWidget ( )
     "pack %s -side top -anchor nw -expand n -fill x -padx 2 -pady 2", 
     this->ClipTypeMenu->GetWidgetName());
 
+  this->AddWidgetObservers();
 }
 
 //----------------------------------------------------------------------------
@@ -183,71 +217,85 @@ void vtkSlicerClipModelsWidget::ProcessWidgetEvents ( vtkObject *caller,
                                                unsigned long event, 
                                                void *callData ) 
 { 
-  // Update orientation if needed
-  if ( vtkKWMenu::SafeDownCast(caller) == this->YellowSliceClipStateMenu->GetWidget()->GetMenu() )
-    {
-    vtkKWMenuButton *mb = this->YellowSliceClipStateMenu->GetWidget();
-    if ( !strcmp (mb->GetValue(), "Off") )   
-      {
-      this->ClipModelsNode->SetYellowSliceClipState(vtkMRMLClipModelsNode::ClipOff);
-      }
-    else if ( !strcmp (mb->GetValue(), "Positive Space") )   
-      {
-      this->ClipModelsNode->SetYellowSliceClipState(vtkMRMLClipModelsNode::ClipPositiveSpace);
-      }
-    else if ( !strcmp (mb->GetValue(), "Negative Space") )   
-      {
-      this->ClipModelsNode->SetYellowSliceClipState(vtkMRMLClipModelsNode::ClipNegativeSpace);
-      }
+  if (this->ClipModelsNodeSelector  ==  vtkSlicerNodeSelectorWidget::SafeDownCast(caller) 
+      && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent) 
+    { 
+    vtkMRMLClipModelsNode* n = vtkMRMLClipModelsNode::SafeDownCast(this->ClipModelsNodeSelector->GetSelected());
+    vtkSetAndObserveMRMLNodeMacro( this->ClipModelsNode, n);
+    this->UpdateGUI();
     }
-  
-  if ( vtkKWMenu::SafeDownCast(caller) == this->RedSliceClipStateMenu->GetWidget()->GetMenu() )
+  else 
     {
-    vtkKWMenuButton *mb = this->RedSliceClipStateMenu->GetWidget();
-    if ( !strcmp (mb->GetValue(), "Off") )   
-      {
-      this->ClipModelsNode->SetRedSliceClipState(vtkMRMLClipModelsNode::ClipOff);
-      }
-    else if ( !strcmp (mb->GetValue(), "Positive Space") )   
-      {
-      this->ClipModelsNode->SetRedSliceClipState(vtkMRMLClipModelsNode::ClipPositiveSpace);
-      }
-    else if ( !strcmp (mb->GetValue(), "Negative Space") )   
-      {
-      this->ClipModelsNode->SetRedSliceClipState(vtkMRMLClipModelsNode::ClipNegativeSpace);
-      }
+    this->UpdateMRML();
     }
-  
-  if ( vtkKWMenu::SafeDownCast(caller) == this->GreenSliceClipStateMenu->GetWidget()->GetMenu() )
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerClipModelsWidget::UpdateMRML()
+{
+  if (this->ClipModelsNode == NULL)
     {
-    vtkKWMenuButton *mb = this->GreenSliceClipStateMenu->GetWidget();
-    if ( !strcmp (mb->GetValue(), "Off") )   
-      {
-      this->ClipModelsNode->SetGreenSliceClipState(vtkMRMLClipModelsNode::ClipOff);
-      }
-    else if ( !strcmp (mb->GetValue(), "Positive Space") )   
-      {
-      this->ClipModelsNode->SetGreenSliceClipState(vtkMRMLClipModelsNode::ClipPositiveSpace);
-      }
-    else if ( !strcmp (mb->GetValue(), "Negative Space") )   
-      {
-      this->ClipModelsNode->SetGreenSliceClipState(vtkMRMLClipModelsNode::ClipNegativeSpace);
-      }
-    }
-  
-  
-  if ( vtkKWMenu::SafeDownCast(caller) == this->ClipTypeMenu->GetWidget()->GetMenu() )
+    // no parameter node selected yet, create new
+    this->ClipModelsNodeSelector->SetSelectedNew("vtkMRMLClipModelsNode");
+    this->ClipModelsNodeSelector->ProcessNewNodeCommand("vtkMRMLClipModelsNode", "ClipModelsParameters");
+    vtkMRMLClipModelsNode *n = vtkMRMLClipModelsNode::SafeDownCast(this->ClipModelsNodeSelector->GetSelected());
+
+    // set an observe new node 
+    vtkSetAndObserveMRMLNodeMacro(this->ClipModelsNode, n);
+   }
+
+  vtkKWMenuButton *mb = this->YellowSliceClipStateMenu->GetWidget();
+  if ( !strcmp (mb->GetValue(), "Off") )   
     {
-    vtkKWMenuButton *mb = this->ClipTypeMenu->GetWidget();
-    if ( !strcmp (mb->GetValue(), "Intersection") )   
-      {
-      this->ClipModelsNode->SetClipType(vtkMRMLClipModelsNode::ClipIntersection);
-      }
-    else if ( !strcmp (mb->GetValue(), "Union") )   
-      {
-      this->ClipModelsNode->SetClipType(vtkMRMLClipModelsNode::ClipUnion);
-      }
+    this->ClipModelsNode->SetYellowSliceClipState(vtkMRMLClipModelsNode::ClipOff);
     }
+  else if ( !strcmp (mb->GetValue(), "Positive Space") )   
+    {
+    this->ClipModelsNode->SetYellowSliceClipState(vtkMRMLClipModelsNode::ClipPositiveSpace);
+    }
+  else if ( !strcmp (mb->GetValue(), "Negative Space") )   
+    {
+    this->ClipModelsNode->SetYellowSliceClipState(vtkMRMLClipModelsNode::ClipNegativeSpace);
+    }
+
+  mb = this->RedSliceClipStateMenu->GetWidget();
+  if ( !strcmp (mb->GetValue(), "Off") )   
+    {
+    this->ClipModelsNode->SetRedSliceClipState(vtkMRMLClipModelsNode::ClipOff);
+    }
+  else if ( !strcmp (mb->GetValue(), "Positive Space") )   
+    {
+    this->ClipModelsNode->SetRedSliceClipState(vtkMRMLClipModelsNode::ClipPositiveSpace);
+    }
+  else if ( !strcmp (mb->GetValue(), "Negative Space") )   
+    {
+    this->ClipModelsNode->SetRedSliceClipState(vtkMRMLClipModelsNode::ClipNegativeSpace);
+    }
+
+  mb = this->GreenSliceClipStateMenu->GetWidget();
+  if ( !strcmp (mb->GetValue(), "Off") )   
+    {
+    this->ClipModelsNode->SetGreenSliceClipState(vtkMRMLClipModelsNode::ClipOff);
+    }
+  else if ( !strcmp (mb->GetValue(), "Positive Space") )   
+    {
+    this->ClipModelsNode->SetGreenSliceClipState(vtkMRMLClipModelsNode::ClipPositiveSpace);
+    }
+  else if ( !strcmp (mb->GetValue(), "Negative Space") )   
+    {
+    this->ClipModelsNode->SetGreenSliceClipState(vtkMRMLClipModelsNode::ClipNegativeSpace);
+    }
+
+  mb = this->ClipTypeMenu->GetWidget();
+  if ( !strcmp (mb->GetValue(), "Intersection") )   
+    {
+    this->ClipModelsNode->SetClipType(vtkMRMLClipModelsNode::ClipIntersection);
+    }
+  else if ( !strcmp (mb->GetValue(), "Union") )   
+    {
+    this->ClipModelsNode->SetClipType(vtkMRMLClipModelsNode::ClipUnion);
+    }
+
 }
 
 
@@ -255,11 +303,16 @@ void vtkSlicerClipModelsWidget::ProcessWidgetEvents ( vtkObject *caller,
 //----------------------------------------------------------------------------
 void vtkSlicerClipModelsWidget::ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData ) 
 { 
+  this->UpdateGUI();
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerClipModelsWidget::UpdateGUI()
+{
   if ( this->ClipModelsNode == NULL)
     {
     return;
     }
-  
   // 
   // Update the menu to match the node
   //

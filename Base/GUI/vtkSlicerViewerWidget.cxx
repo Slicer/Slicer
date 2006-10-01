@@ -47,6 +47,8 @@ vtkSlicerViewerWidget::vtkSlicerViewerWidget ( )
   this->ViewerFrame = NULL;
   this->ProcessingMRMLEvent = 0;
 
+  this->ClipModelsNode = NULL;
+
   this->SlicePlanes = NULL;
   this->RedSlicePlane = NULL;
   this->GreenSlicePlane = NULL;
@@ -70,6 +72,8 @@ vtkSlicerViewerWidget::~vtkSlicerViewerWidget ( )
     this->ViewerFrame->Delete ( );
     this->ViewerFrame = NULL;
     }
+
+  vtkSetMRMLNodeMacro(this->ClipModelsNode, NULL);
 
   this->SlicePlanes->Delete();
   this->RedSlicePlane->Delete();
@@ -110,14 +114,19 @@ void vtkSlicerViewerWidget::CreateClipSlices()
 }
 
 //---------------------------------------------------------------------------
-int vtkSlicerViewerWidget::UpdateClipSlicesFormMRML(vtkMRMLClipModelsNode *clipNode)
+int vtkSlicerViewerWidget::UpdateClipSlicesFormMRML()
 {
+  if (this->ClipModelsNode == NULL)
+    {
+    return 0;
+    }
+
   int same = 1;
 
-  if ( clipNode->GetClipType() != this->ClipType)
+  if ( this->ClipModelsNode->GetClipType() != this->ClipType)
   {
     same = 0;
-    this->ClipType = clipNode->GetClipType();
+    this->ClipType = this->ClipModelsNode->GetClipType();
     if (this->ClipType == vtkMRMLClipModelsNode::ClipIntersection) 
       {
       this->SlicePlanes->SetOperationTypeToIntersection();
@@ -132,46 +141,46 @@ int vtkSlicerViewerWidget::UpdateClipSlicesFormMRML(vtkMRMLClipModelsNode *clipN
       }
   }
 
-  if (clipNode->GetRedSliceClipState() != this->RedSliceClipState)
+  if (this->ClipModelsNode->GetRedSliceClipState() != this->RedSliceClipState)
     {
     if (this->RedSliceClipState == vtkMRMLClipModelsNode::ClipOff)
       {
       this->SlicePlanes->AddFunction(this->RedSlicePlane);
       }
-    else if (clipNode->GetRedSliceClipState() == vtkMRMLClipModelsNode::ClipOff)
+    else if (this->ClipModelsNode->GetRedSliceClipState() == vtkMRMLClipModelsNode::ClipOff)
       {
       this->SlicePlanes->RemoveFunction(this->RedSlicePlane);
       }
     same = 0;
-    this->RedSliceClipState = clipNode->GetRedSliceClipState();
+    this->RedSliceClipState = this->ClipModelsNode->GetRedSliceClipState();
     }
 
-  if (clipNode->GetGreenSliceClipState() != this->GreenSliceClipState)
+  if (this->ClipModelsNode->GetGreenSliceClipState() != this->GreenSliceClipState)
     {
     if (this->GreenSliceClipState == vtkMRMLClipModelsNode::ClipOff)
       {
       this->SlicePlanes->AddFunction(this->GreenSlicePlane);
       }
-    else if (clipNode->GetGreenSliceClipState() == vtkMRMLClipModelsNode::ClipOff)
+    else if (this->ClipModelsNode->GetGreenSliceClipState() == vtkMRMLClipModelsNode::ClipOff)
       {
       this->SlicePlanes->RemoveFunction(this->GreenSlicePlane);
       }
     same = 0;
-    this->GreenSliceClipState = clipNode->GetGreenSliceClipState();
+    this->GreenSliceClipState = this->ClipModelsNode->GetGreenSliceClipState();
     }
 
-  if (clipNode->GetYellowSliceClipState() != this->YellowSliceClipState)
+  if (this->ClipModelsNode->GetYellowSliceClipState() != this->YellowSliceClipState)
     {
     if (this->YellowSliceClipState == vtkMRMLClipModelsNode::ClipOff)
       {
       this->SlicePlanes->AddFunction(this->YellowSlicePlane);
       }
-    else if (clipNode->GetYellowSliceClipState() == vtkMRMLClipModelsNode::ClipOff)
+    else if (this->ClipModelsNode->GetYellowSliceClipState() == vtkMRMLClipModelsNode::ClipOff)
       {
       this->SlicePlanes->RemoveFunction(this->YellowSlicePlane);
       }
     same = 0;
-    this->YellowSliceClipState = clipNode->GetYellowSliceClipState();
+    this->YellowSliceClipState = this->ClipModelsNode->GetYellowSliceClipState();
     }
   return same;
 }
@@ -196,6 +205,18 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
     vtkMRMLNode *node = (vtkMRMLNode*) (callData);
     if (node != NULL && node->IsA("vtkMRMLModelNode") )
       {
+      this->UpdateFromMRML();
+      }
+    else if (node != NULL && node->IsA("vtkMRMLClipModelsNode") )
+      {
+      if (event == vtkMRMLScene::NodeAddedEvent)
+        {
+          vtkSetAndObserveMRMLNodeMacro(this->ClipModelsNode, node);
+        }
+      else if (event == vtkMRMLScene::NodeRemovedEvent)
+        {
+          vtkSetMRMLNodeMacro(this->ClipModelsNode, NULL);
+        }
       this->UpdateFromMRML();
       }
     }
@@ -277,11 +298,15 @@ void vtkSlicerViewerWidget::CreateWidget ( )
   events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
   this->SetAndObserveMRMLSceneEvents(this->MRMLScene, events);
   events->Delete();
+
+  this->CreateClipSlices();
 }
 
 //---------------------------------------------------------------------------
 void vtkSlicerViewerWidget::UpdateFromMRML()
 {
+  this->UpdateClipSlicesFormMRML();
+
   this->RemoveModelProps ( );
   this->RemoveFiducialProps ( );
 

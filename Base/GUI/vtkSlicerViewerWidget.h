@@ -28,6 +28,7 @@
 
 #include "vtkKWRenderWidget.h"
 #include "vtkKWFrame.h"
+#include "vtkMRMLClipModelsNode.h"
 
 class vtkMRMLModelNode;
 class vtkMRMLModelDisplayNode;
@@ -48,7 +49,15 @@ public:
   static vtkSlicerViewerWidget* New();
   vtkTypeRevisionMacro(vtkSlicerViewerWidget,vtkSlicerWidget);
   void PrintSelf(ostream& os, vtkIndent indent);
-  
+
+  // Description:
+  // Get/Set the Clip Nodes
+  vtkGetObjectMacro ( ClipModelsNode, vtkMRMLClipModelsNode );
+  void SetClipModelsNode (vtkMRMLClipModelsNode *snode)
+    {
+    vtkSetAndObserveMRMLNodeMacro( this->ClipModelsNode, snode );
+    }
+
   // Description:
   // alternative method to propagate events generated in GUI to logic / mrml
   virtual void ProcessWidgetEvents ( vtkObject *caller, unsigned long event, void *callData );
@@ -124,7 +133,7 @@ protected:
   void UpdateModelsFromMRML();
 
   void CreateClipSlices();
-  int UpdateClipSlicesFormMRML(vtkMRMLClipModelsNode *clipNode);
+  int UpdateClipSlicesFormMRML();
 
   void SetModelDisplayProperty(vtkMRMLModelNode *model,  vtkActor *actor);
   void SetFiducialDisplayProperty(vtkMRMLFiducialListNode *flist, int n,

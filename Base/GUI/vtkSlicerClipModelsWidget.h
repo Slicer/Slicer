@@ -3,13 +3,15 @@
 
 #include "vtkSlicerBaseGUIWin32Header.h"
 #include "vtkKWCompositeWidget.h"
-#include "vtkKWMenuButtonWithLabel.h"
 #include "vtkKWFrame.h"
 
 #include "vtkSlicerWidget.h"
 #include "vtkSlicerVisibilityIcons.h"
 
 #include "vtkMRMLClipModelsNode.h"
+
+class vtkSlicerNodeSelectorWidget;
+class vtkKWMenuButtonWithLabel;
 
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerClipModelsWidget : public vtkSlicerWidget
 {
@@ -24,7 +26,7 @@ public:
   void AddWidgetObservers ( );
   
   // Description:
-  // Get/Set the Nodes
+  // Get/Set the Clip Nodes
   vtkGetObjectMacro ( ClipModelsNode, vtkMRMLClipModelsNode );
   void SetClipModelsNode (vtkMRMLClipModelsNode *snode)
     {
@@ -53,6 +55,9 @@ protected:
   // Create the widget.
   virtual void CreateWidget( );
 
+  void UpdateGUI();
+  void UpdateMRML();
+
   //
   // Slice controller subwidgets
   //
@@ -62,6 +67,7 @@ protected:
   
   vtkKWMenuButtonWithLabel *ClipTypeMenu;
 
+  vtkSlicerNodeSelectorWidget *ClipModelsNodeSelector;
   //
   // Nodes
   //
