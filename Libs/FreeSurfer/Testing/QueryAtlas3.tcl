@@ -232,8 +232,11 @@ proc QueryAtlasInitializePicker {} {
   set interactor [$renderWidget GetRenderWindowInteractor] 
   set style [$interactor GetInteractorStyle] 
 
+  $interactor AddObserver EnterEvent "QueryAtlasCursorVisibility on"
+  $interactor AddObserver LeaveEvent "QueryAtlasCursorVisibility off"
   $interactor AddObserver MouseMoveEvent "QueryAtlasPickCallback"
-  $interactor AddObserver RightButtonReleaseEvent "QueryAtlasMenuCreate"
+  $interactor AddObserver RightButtonPressEvent "QueryAtlasMenuCreate start"
+  $interactor AddObserver RightButtonReleaseEvent "QueryAtlasMenuCreate end"
   $style AddObserver EndInteractionEvent "QueryAtlasRenderView"
 
   $renderer AddActor $::QA(actor)
@@ -404,15 +407,22 @@ proc QueryAtlasPickCallback {} {
   QueryAtlasUpdateCursor
 }
 
+proc QueryAtlasCursorVisibility { onoff } {
+
+  if { $onoff == "on" } {
+    $::QA(cursor,actor) SetVisibility 1
+  } else {
+    $::QA(cursor,actor) SetVisibility 0
+  }
+  set viewer [$::slicer3::ApplicationGUI GetViewerWidget]
+  $viewer RequestRender
+
+}
+
 proc QueryAtlasUpdateCursor {} {
 
   set viewer [$::slicer3::ApplicationGUI GetViewerWidget]
   if { ![info exists ::QA(cursor,actor)] } {
-    #set ::QA(cursor,source) [vtkSphereSource New]
-    #set ::QA(cursor,actor) [vtkActor2D New]
-    #set ::QA(cursor,mapper) [vtkPolyDataMapper2D New]
-    #$::QA(cursor,mapper) SetInput [$::QA(cursor,source) GetOutput]
-    #$::QA(cursor,actor) SetMapper $::QA(cursor,mapper)
 
     set ::QA(cursor,actor) [vtkTextActor New]
     set ::QA(cursor,mapper) [vtkTextMapper New]
@@ -426,22 +436,43 @@ proc QueryAtlasUpdateCursor {} {
 
   eval $::QA(cursor,actor) SetInput $::QA(lastLabels) 
   eval $::QA(cursor,actor) SetPosition $::QA(lastWindowXY) 
-  $viewer RequestRender
+  if { $::QA(lastLabels) == "background" } {
+    QueryAtlasCursorVisibility off
+  } else {
+    QueryAtlasCursorVisibility on
+  }
 }
 
-proc QueryAtlasMenuCreate {} {
+proc QueryAtlasMenuCreate { state } {
 
-  set parent [[$::slicer3::ApplicationGUI GetMainSlicerWindow] GetWidgetName]
-  set qaMenu $parent.qaMenu
-  catch "destroy $qaMenu"
+  set renderWidget [[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer]
+  set interactor [$renderWidget GetRenderWindowInteractor] 
+  set position [$interactor GetEventPosition]
 
-  menu $qaMenu
-  $qaMenu insert end command -label "Google..." -command "QueryAtlasQuery google"
-  $qaMenu insert end command -label "Wikipedia..." -command "QueryAtlasQuery wikipedia"
+  #
+  # save the event position when the menu action started (when the right mouse
+  # button was pressed) and only post the menu if the position is the same.  
+  # If they aren't the same, do nothing since this was a dolly(zoom) action.
+  #
+  switch $state {
+    "start" {
+      set ::QA(menu,startPosition) $position
+    }
+    "end" {
+      if { $::QA(menu,startPosition) == $position } {
+        set parent [[$::slicer3::ApplicationGUI GetMainSlicerWindow] GetWidgetName]
+        set qaMenu $parent.qaMenu
+        catch "destroy $qaMenu"
 
-  
-  eval $qaMenu post $::QA(lastRootXY)
+        menu $qaMenu
+        $qaMenu insert end command -label "Google..." -command "QueryAtlasQuery google"
+        $qaMenu insert end command -label "Wikipedia..." -command "QueryAtlasQuery wikipedia"
 
+        
+        eval $qaMenu post $::QA(lastRootXY)
+      }
+    }
+  }
 }
 
 
