@@ -21,6 +21,8 @@ Version:   $Revision: 1.2 $
 #include "vtkMRMLScene.h"
 
 #include "vtkMatrix4x4.h"
+#include "vtkPolyDataNormals.h"
+#include "vtkStripper.h"
 
 #include "vtkBYUReader.h" 
 #include "vtkPolyDataReader.h"
@@ -171,11 +173,21 @@ int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
             extention == std::string(".pial") ) 
     {
     //read in a free surfer file
+    // -- create normals and triangle strips also
     vtkFSSurfaceReader *reader = vtkFSSurfaceReader::New();
+    vtkPolyDataNormals *normals = vtkPolyDataNormals::New();
+    vtkStripper *stripper = vtkStripper::New();
+
     reader->SetFileName(fullName.c_str());
-    reader->Update();
-    modelNode->SetAndObservePolyData(reader->GetOutput());
+    normals->SetSplitting(0);
+    normals->SetInput( reader->GetOutput() );
+    stripper->SetInput( normals->GetOutput() );
+    stripper->Update();
+    modelNode->SetAndObservePolyData(stripper->GetOutput());
+
     reader->Delete();
+    normals->Delete();
+    stripper->Delete();
     }  
   else if (extention == std::string(".stl")) 
     {
