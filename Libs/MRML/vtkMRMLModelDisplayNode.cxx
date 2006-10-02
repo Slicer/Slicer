@@ -129,6 +129,10 @@ void vtkMRMLModelDisplayNode::WriteXML(ostream& of, int nIndent)
 
   of << indent << " scalarVisibility=\"" << (this->ScalarVisibility ? "true" : "false") << "\"";
 
+  of << indent << " vectorVisibility=\"" << (this->VectorVisibility ? "true" : "false") << "\"";
+
+  of << indent << " tensorVisibility=\"" << (this->TensorVisibility ? "true" : "false") << "\"";
+
   of << indent << " scalarRange=\"" << this->ScalarRange[0] << " "
      << this->ScalarRange[1] << "\"";
 }
@@ -198,33 +202,69 @@ void vtkMRMLModelDisplayNode::ReadXMLAttributes(const char** atts)
       }
     else if (!strcmp(attName, "visibility")) 
       {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> Visibility;
+      if (!strcmp(attValue,"true")) 
+        {
+        this->Visibility = 1;
+        }
+      else
+        {
+        this->Visibility = 0;
+        }
       }
+    else if (!strcmp(attName, "clipping")) 
+      {
+      if (!strcmp(attValue,"true")) 
+        {
+        this->Clipping = 1;
+        }
+      else
+        {
+        this->Clipping = 0;
+        }
+     }
     else if (!strcmp(attName, "backfaceCulling")) 
       {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> BackfaceCulling;
+      if (!strcmp(attValue,"true")) 
+        {
+        this->BackfaceCulling = 1;
+        }
+      else
+        {
+        this->BackfaceCulling = 0;
+        }
       }
     else if (!strcmp(attName, "scalarVisibility")) 
       {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> ScalarVisibility;
+      if (!strcmp(attValue,"true")) 
+        {
+        this->ScalarVisibility = 1;
+        }
+      else
+        {
+        this->ScalarVisibility = 0;
+        }
       }
     else if (!strcmp(attName, "vectorVisibility")) 
       {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> VectorVisibility;
+      if (!strcmp(attValue,"true")) 
+        {
+        this->VectorVisibility = 1;
+        }
+      else
+        {
+        this->VectorVisibility = 0;
+        }
       }
     else if (!strcmp(attName, "tensorVisibility")) 
       {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> TensorVisibility;
+      if (!strcmp(attValue,"true")) 
+        {
+        this->TensorVisibility = 1;
+        }
+      else
+        {
+        this->TensorVisibility = 0;
+        }
       }
     }  
 }

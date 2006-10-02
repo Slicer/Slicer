@@ -60,6 +60,7 @@ vtkSlicerNodeSelectorWidget::vtkSlicerNodeSelectorWidget()
   this->NewNodeCount = 0;
   this->NewNodeEnabled = 0;
   this->NoneEnabled = 0;
+  this->ShowHidden = 0;
   this->MRMLScene      = NULL;
   this->MRMLCallbackCommand = vtkCallbackCommand::New();
   this->MRMLCallbackCommand->SetClientData( reinterpret_cast<void *> (this) );
@@ -212,7 +213,7 @@ void vtkSlicerNodeSelectorWidget::UpdateMenu()
       const char *className = this->GetNodeClass(c);
       while ( (node = this->MRMLScene->GetNextNodeByClass(className) ) != NULL)
         {
-        if (node->GetHideFromEditors())
+        if (!this->ShowHidden && node->GetHideFromEditors())
           {
           continue;
           }

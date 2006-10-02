@@ -29,6 +29,7 @@
 #include "vtkKWRenderWidget.h"
 #include "vtkKWFrame.h"
 #include "vtkMRMLClipModelsNode.h"
+#include "vtkMRMLSliceNode.h"
 
 class vtkMRMLModelNode;
 class vtkMRMLModelDisplayNode;
@@ -144,6 +145,8 @@ protected:
   std::map<const char *, vtkActor *> DisplayedFiducials;
   std::map<const char *, vtkFollower *> DisplayedTextFiducials;
 
+  std::map<const char *, int> DisplayedModelsClipState;
+
   std::string GetFiducialActorID (const char *id, int index);
   std::string GetFiducialNodeID (const char *actorid, int &index);
 
@@ -152,6 +155,10 @@ protected:
   int ProcessingMRMLEvent;
 
   vtkMRMLClipModelsNode *ClipModelsNode;
+
+  vtkMRMLSliceNode *RedSliceNode;
+  vtkMRMLSliceNode *GreenSliceNode;
+  vtkMRMLSliceNode *YellowSliceNode;
 
   vtkImplicitBoolean *SlicePlanes;
   vtkPlane *RedSlicePlane;
@@ -162,6 +169,8 @@ protected:
   int RedSliceClipState;
   int YellowSliceClipState;
   int GreenSliceClipState;
+
+  bool ClippingOn;
 
 private:
   

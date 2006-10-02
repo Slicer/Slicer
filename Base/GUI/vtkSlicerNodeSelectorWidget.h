@@ -102,6 +102,12 @@ public:
   vtkGetMacro(NoneEnabled, int);
   vtkSetMacro(NoneEnabled, int);
 
+  // Description:
+  // Specifies whether or not show hidden nodes
+  vtkBooleanMacro(ShowHidden, int);
+  vtkGetMacro(ShowHidden, int);
+  vtkSetMacro(ShowHidden, int);
+
   // Description
   // Get selected node
   vtkMRMLNode *GetSelected();
@@ -145,6 +151,8 @@ protected:
   int NewNodeEnabled;
 
   int NoneEnabled;
+
+  int ShowHidden;
 
   vtkMRMLScene       *MRMLScene;
 

@@ -141,8 +141,8 @@ void vtkSlicerClipModelsWidget::CreateWidget ( )
   this->ClipModelsNodeSelector = vtkSlicerNodeSelectorWidget::New();
   this->ClipModelsNodeSelector->SetNodeClass("vtkMRMLClipModelsNode", NULL, NULL, "ClipModelsParameter");
   this->ClipModelsNodeSelector->SetNewNodeEnabled(1);
-  this->ClipModelsNodeSelector->NoneEnabledOn();
-  //this->ClipModelsNodeSelector->SetNewNodeName("GADParameters");
+  this->ClipModelsNodeSelector->NoneEnabledOff();
+  this->ClipModelsNodeSelector->SetShowHidden(1);
   this->ClipModelsNodeSelector->SetParent( frame );
   this->ClipModelsNodeSelector->Create();
   this->ClipModelsNodeSelector->SetMRMLScene(this->GetMRMLScene());

@@ -52,7 +52,7 @@ vtkMRMLNode* vtkMRMLClipModelsNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLClipModelsNode::vtkMRMLClipModelsNode()
 {
-
+  this->HideFromEditors = true;
   this->ClipType = 0;
   this->RedSliceClipState = 0;
   this->YellowSliceClipState = 0;
