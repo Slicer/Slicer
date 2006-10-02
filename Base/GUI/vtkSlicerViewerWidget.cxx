@@ -185,39 +185,6 @@ int vtkSlicerViewerWidget::UpdateClipSlicesFormMRML()
     {
     return 0;
     }
-  
-  // set slice plane normals and origins
-  vtkMatrix4x4 *sliceMatrix = NULL;
-  double normal[3];
-  double origin[3];
-  int i;
-
-  sliceMatrix = this->RedSliceNode->GetSliceToRAS();
-  for (i=0; i<3; i++) 
-    {
-    normal[i] = sliceMatrix->GetElement(i,2);
-    origin[i] = sliceMatrix->GetElement(i,3);
-    }
-  this->RedSlicePlane->SetNormal(normal);
-  this->RedSlicePlane->SetOrigin(origin);
-
-  sliceMatrix = this->GreenSliceNode->GetSliceToRAS();
-  for (i=0; i<3; i++) 
-    {
-    normal[i] = sliceMatrix->GetElement(i,2);
-    origin[i] = sliceMatrix->GetElement(i,3);
-    }
-  this->GreenSlicePlane->SetNormal(normal);
-  this->GreenSlicePlane->SetOrigin(origin);
-
-  sliceMatrix = this->YellowSliceNode->GetSliceToRAS();
-  for (i=0; i<3; i++) 
-    {
-    normal[i] = sliceMatrix->GetElement(i,2);
-    origin[i] = sliceMatrix->GetElement(i,3);
-    }
-  this->YellowSlicePlane->SetNormal(normal);
-  this->YellowSlicePlane->SetOrigin(origin);
 
   int modifiedState = 0;
 
@@ -292,6 +259,51 @@ int vtkSlicerViewerWidget::UpdateClipSlicesFormMRML()
     {
     this->ClippingOn = true;
     }
+
+  // set slice plane normals and origins
+  vtkMatrix4x4 *sliceMatrix = NULL;
+  double normal[3];
+  double origin[3];
+  int i;
+
+  sliceMatrix = this->RedSliceNode->GetSliceToRAS();
+  for (i=0; i<3; i++) 
+    {
+    normal[i] = sliceMatrix->GetElement(i,2);
+    if (this->RedSliceClipState == vtkMRMLClipModelsNode::ClipNegativeSpace)
+      {
+      normal[i] = - normal[i];
+      }
+    origin[i] = sliceMatrix->GetElement(i,3);
+    }
+  this->RedSlicePlane->SetNormal(normal);
+  this->RedSlicePlane->SetOrigin(origin);
+
+  sliceMatrix = this->GreenSliceNode->GetSliceToRAS();
+  for (i=0; i<3; i++) 
+    {
+    normal[i] = sliceMatrix->GetElement(i,2);
+    if (this->GreenSliceClipState == vtkMRMLClipModelsNode::ClipNegativeSpace)
+      {
+      normal[i] = - normal[i];
+      }
+    origin[i] = sliceMatrix->GetElement(i,3);
+    }
+  this->GreenSlicePlane->SetNormal(normal);
+  this->GreenSlicePlane->SetOrigin(origin);
+
+  sliceMatrix = this->YellowSliceNode->GetSliceToRAS();
+  for (i=0; i<3; i++) 
+    {
+    normal[i] = sliceMatrix->GetElement(i,2);
+    if (this->YellowSliceClipState == vtkMRMLClipModelsNode::ClipNegativeSpace)
+      {
+      normal[i] = - normal[i];
+      }
+    origin[i] = sliceMatrix->GetElement(i,3);
+    }
+  this->YellowSlicePlane->SetNormal(normal);
+  this->YellowSlicePlane->SetOrigin(origin);
 
   return modifiedState;
 }
@@ -443,7 +455,7 @@ void vtkSlicerViewerWidget::UpdateModelsFromMRML()
       vtkMRMLModelDisplayNode *modelDisplayNode = model->GetDisplayNode();
 
       vtkClipPolyData *clipper = NULL;
-      if (modelDisplayNode != NULL && modelDisplayNode->GetClipping())
+      if (this->ClippingOn && modelDisplayNode != NULL && modelDisplayNode->GetClipping())
         {
         clipper = vtkClipPolyData::New();
         clipper->SetClipFunction(this->SlicePlanes);

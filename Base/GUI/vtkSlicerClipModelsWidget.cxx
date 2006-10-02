@@ -130,12 +130,10 @@ void vtkSlicerClipModelsWidget::CreateWidget ( )
   
   // ---
   //  FRAME            
-  vtkKWFrameWithLabel *frame = vtkKWFrameWithLabel::New ( );
+  vtkKWFrame *frame = vtkKWFrame::New ( );
   frame->SetParent ( this->GetParent() );
   frame->Create ( );
-  frame->SetLabelText ("Clipping");
-  frame->CollapseFrame ( );
-  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+  this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2", 
                  frame->GetWidgetName() );
 
   this->ClipModelsNodeSelector = vtkSlicerNodeSelectorWidget::New();
@@ -210,6 +208,8 @@ void vtkSlicerClipModelsWidget::CreateWidget ( )
     this->ClipTypeMenu->GetWidgetName());
 
   this->AddWidgetObservers();
+
+  frame->Delete();
 }
 
 //----------------------------------------------------------------------------
