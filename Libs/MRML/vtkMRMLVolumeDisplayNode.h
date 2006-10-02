@@ -98,15 +98,11 @@ class VTK_MRML_EXPORT vtkMRMLVolumeDisplayNode : public vtkMRMLNode
 
   // Description:
   // The upper threshold value to use when autoThreshold is 'no'
-  // Warning:
-  // XXX-MH Should be floating point....
   vtkGetMacro(UpperThreshold, double);
   vtkSetMacro(UpperThreshold, double);
 
   // Description:
   // The lower threshold value to use when autoThreshold is 'no'
-  // Warning:
-  // XXX-MH Should be floating point....
   vtkGetMacro(LowerThreshold, double);
   vtkSetMacro(LowerThreshold, double);
 
