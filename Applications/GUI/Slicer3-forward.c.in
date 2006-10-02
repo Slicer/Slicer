@@ -15,112 +15,113 @@ int Launcher_main(int argc, char** argv)
 
 #ifdef _WIN32
 #include <windows.h>
-int __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR lpCmdLine, int)
+int __stdcall WinMain(HINSTANCE h1, HINSTANCE h2, LPSTR lpCmdLine, int i1)
 {
   int argc;
   char **argv;
   int ret;
-  if (!cmd_line || !argc || !argv)
+  size_t lpCmdLine_len;
+  size_t i;
+  int j;
+  size_t pos;
+  int argc_idx = 1;
+  if (!lpCmdLine)
     {
-    return;
+    return 1;
     }
 
   // A space delimites an argument except when it is inside a quote
 
-  (*argc) = 1;
+  argc = 1;
 
-  size_t cmd_line_len = strlen(cmd_line);
+  lpCmdLine_len = strlen(lpCmdLine);
 
-  size_t i;
-  for (i = 0; i < cmd_line_len; i++)
+  for (i = 0; i < lpCmdLine_len; i++)
     {
-    while (isspace(cmd_line[i]) && i < cmd_line_len)
+    while (isspace(lpCmdLine[i]) && i < lpCmdLine_len)
       {
       i++;
       }
-    if (i < cmd_line_len)
+    if (i < lpCmdLine_len)
       {
-      if (cmd_line[i] == '\"')
+      if (lpCmdLine[i] == '\"')
         {
         i++;
-        while (cmd_line[i] != '\"' && i < cmd_line_len)
+        while (lpCmdLine[i] != '\"' && i < lpCmdLine_len)
           {
           i++;
           }
-        (*argc)++;
+        argc++;
         }
       else
         {
-        while (!isspace(cmd_line[i]) && i < cmd_line_len)
+        while (!isspace(lpCmdLine[i]) && i < lpCmdLine_len)
           {
           i++;
           }
-        (*argc)++;
+        argc++;
         }
       }
     }
 
-  (*argv) = new char* [(*argc) + 1];
-  (*argv)[(*argc)] = NULL;
+  argv = (char**)malloc(sizeof(char*) * (argc + 1));
+  argv[argc] = NULL;
 
   // Set the first arg to be the exec name
 
-  (*argv)[0] = new char [1024];
+  argv[0] = (char*)malloc(sizeof(char)* 1024);
 #ifdef _WIN32
-  ::GetModuleFileName(0, (*argv)[0], 1024);
+  GetModuleFileName(0, argv[0], 1024);
 #else
-  (*argv)[0][0] = '\0';
+  argv[0][0] = '\0';
 #endif
 
   // Allocate the others
 
-  int j;
-  for (j = 1; j < (*argc); j++)
+  for (j = 1; j < argc; j++)
     {
-    (*argv)[j] = new char [cmd_line_len + 10];
+    argv[j] = (char*)malloc(sizeof(char)*(lpCmdLine_len + 10));
     }
 
   // Grab the args
 
-  size_t pos;
-  int argc_idx = 1;
 
-  for (i = 0; i < cmd_line_len; i++)
+  for (i = 0; i < lpCmdLine_len; i++)
     {
-    while (isspace(cmd_line[i]) && i < cmd_line_len)
+    while (isspace(lpCmdLine[i]) && i < lpCmdLine_len)
       {
       i++;
       }
-    if (i < cmd_line_len)
+    if (i < lpCmdLine_len)
       {
-      if (cmd_line[i] == '\"')
+      if (lpCmdLine[i] == '\"')
         {
         i++;
         pos = i;
-        while (cmd_line[i] != '\"' && i < cmd_line_len)
+        while (lpCmdLine[i] != '\"' && i < lpCmdLine_len)
           {
           i++;
           }
-        memcpy((*argv)[argc_idx], &cmd_line[pos], i - pos);
-        (*argv)[argc_idx][i - pos] = '\0';
+        memcpy(argv[argc_idx], &lpCmdLine[pos], i - pos);
+        argv[argc_idx][i - pos] = '\0';
         argc_idx++;
         }
       else
         {
         pos = i;
-        while (!isspace(cmd_line[i]) && i < cmd_line_len)
+        while (!isspace(lpCmdLine[i]) && i < lpCmdLine_len)
           {
           i++;
           }
-        memcpy((*argv)[argc_idx], &cmd_line[pos], i - pos);
-        (*argv)[argc_idx][i - pos] = '\0';
+        memcpy(argv[argc_idx], &lpCmdLine[pos], i - pos);
+        argv[argc_idx][i - pos] = '\0';
         argc_idx++;
         }
       }
     }
   ret = Launcher_main(argc, argv);
-  for (int i = 0; i < argc; i++) { delete [] argv[i]; }
-  delete [] argv;
+  for (i = 0; i < argc; i++) { free( argv[i] ); }
+  free( argv );
   return ret;
 }
 
