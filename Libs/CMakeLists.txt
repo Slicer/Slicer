@@ -11,5 +11,6 @@ SUBDIRS(
     SlicerIO
     ITKCommandIO
     MRMLIDImageIO
+    MGHImageIO
 )
 
