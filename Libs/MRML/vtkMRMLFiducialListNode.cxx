@@ -152,7 +152,8 @@ void vtkMRMLFiducialListNode::ReadXMLAttributes(const char** atts)
       }
       else if (!strcmp(attName, "id"))
       {
-          this->SetID(attValue);
+      // id is already set at the vtkMRMLNode level
+      //    this->SetID(attValue);
       }
       else  if (!strcmp(attName, "color")) 
       {
@@ -220,39 +221,41 @@ void vtkMRMLFiducialListNode::ReadXMLAttributes(const char** atts)
       }
       else if (!strcmp(attName, "fiducials"))
       {
-          
+          vtkDebugMacro("ReadXMLAttributes: found a fiducials list: " << (char*)attValue << endl);
           // need to add fiducials and parse out the list of fiducial points
           // assume labeltext is first, extract that part of the attValue
           char *fiducials = (char *)attValue;
           char *labelTextPtr;
-          labelTextPtr = strstr (fiducials,"labeltext");
-          //std::cout << "Starting to parse out the fiducial list, setting it up for tokenisation\n";
+          labelTextPtr = strstr (fiducials,"id ");
+          vtkDebugMacro( "ReadXMLAttributes: Starting to parse out the fiducial list, setting it up for tokenisation\n");
           while (labelTextPtr != NULL)
           {
-              //std::cout << "current label text pt = " << labelTextPtr << endl;
-              
+              vtkDebugMacro( "current label text pt = " << labelTextPtr << endl);
+          
               // find the end of this point, new line or end quote
-              labelTextPtr = strstr (fiducials," labeltext");
+              labelTextPtr = strstr (fiducials," id");
               if (labelTextPtr != NULL)
               {
                   // replace the space with a carriage return
-                  labelTextPtr = strncpy(labelTextPtr, "\nlabeltext", 1);
+                  labelTextPtr = strncpy(labelTextPtr, "\nid", 1);
               }
           }
           // now parse the string into tokens by the newline
           labelTextPtr = strtok(fiducials, "\n");
+          vtkDebugMacro( "\nGetting tokens from the list, to make new points.\n");
           while (labelTextPtr != NULL)
           {
-              //std::cout << "got a token: " << labelTextPtr << endl;
+              vtkDebugMacro( "got a token, adding a fiducial for: " << labelTextPtr << endl);
               // now make a new point
               int pointIndex = this->AddFiducial();
+              vtkDebugMacro( "new point index = " << pointIndex << endl);
               vtkMRMLFiducial *newPoint = this->GetNthFiducial(pointIndex);
+
               if (newPoint != NULL)
               {
                   // now pass it the stuff to parse out and set itself from
+                  vtkDebugMacro( "ReadXMLAttributes: passing the text pointer for point index " << pointIndex <<  " to the new point: " << labelTextPtr << endl);
                   newPoint->ReadXMLString(labelTextPtr);
-                  // delete it since the list has a pointer to it
-                  newPoint->Delete();
               } else {
                   std::cerr << "ERROR making a new MRML fiducial!\n";
               }
