@@ -77,7 +77,7 @@ void vtkMRMLFiducial::WriteXML(ostream& of, int nIndent)
     // now that it's not a first class node, write it out simply
     if (this->ID != NULL)
     {
-        of << "id = " << this->ID;
+        of << "id " << this->ID;
     }
   if (this->LabelText != NULL)
   {
@@ -113,11 +113,13 @@ void vtkMRMLFiducial::ReadXMLString(const char *keyValuePairs)
     // get out the id
     ss >> keyName;
     ss >> this->ID;
+    vtkDebugMacro("ReadXMLString: got id " << this->ID);
     
     // now get out the labeltext key
     ss >> keyName;
     // now get the label text value
     ss >> this->LabelText;
+    vtkDebugMacro("ReadXMLString: got label text " << this->LabelText);
 
     // get the xyz key
     ss >> keyName;
