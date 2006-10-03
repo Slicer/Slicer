@@ -721,9 +721,9 @@ int Slicer3_main(int argc, char *argv[])
                 appLogic->GetMRMLScene()->SetURL(fileName.c_str());
                 // and then load it
                 int errorCode = appLogic->GetMRMLScene()->Connect();
-                if (errorCode)
+                if (errorCode != 1)
                 {
-                    slicerCerr("ERROR loading MRML file " << fileName << endl);
+                    slicerCerr("ERROR loading MRML file " << fileName << ", error code = " << errorCode << endl);
                 }
             }                    
             ++argit;
