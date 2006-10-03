@@ -34,18 +34,46 @@ vtkSlicerSliceLayerLogic::vtkSlicerSliceLayerLogic()
 
   this->XYToIJKTransform = vtkTransform::New();
 
+  // Create the parts for the layer pipeline
   this->Reslice = vtkImageReslice::New();
+  this->ResliceThreshold = vtkImageThreshold::New();
+  this->ResliceAppendComponents = vtkImageAppendComponents::New();
+  this->ResliceExtractLuminance = vtkImageExtractComponents::New();
+  this->ResliceExtractAlpha = vtkImageExtractComponents::New();
+  this->ResliceAlphaCast = vtkImageCast::New();
+  this->AlphaLogic = vtkImageLogic::New();
   this->MapToColors = vtkImageMapToColors::New();
+  this->LookupTable = vtkLookupTable::New();
   this->Threshold = vtkImageThreshold::New();
   this->AppendComponents = vtkImageAppendComponents::New();
   this->MapToWindowLevelColors = vtkImageMapToWindowLevelColors::New();
 
-  this->Reslice->SetBackgroundLevel(128);
+  // Set parameters that won't change based on input
+  this->Reslice->SetBackgroundColor(128, 0, 0, 0); // only first two are used
   this->Reslice->AutoCropOutputOff();
   this->Reslice->SetOptimization(1);
   this->Reslice->SetOutputOrigin( 0, 0, 0 );
   this->Reslice->SetOutputSpacing( 1, 1, 1 );
   this->Reslice->SetOutputDimensionality( 2 );
+
+  this->ResliceThreshold->ThresholdBetween(1, 0); // i.e. everything is Out
+  this->ResliceThreshold->ReplaceOutOn();
+  this->ResliceThreshold->SetOutValue(255);
+
+  this->ResliceAlphaCast->SetOutputScalarTypeToUnsignedChar();
+
+  this->AlphaLogic->SetOperationToAnd();
+  this->AlphaLogic->SetOutputTrueValue(255);
+
+  this->MapToColors->SetOutputFormatToRGB();
+  this->MapToColors->SetLookupTable( this->LookupTable );
+  this->LookupTable->SetRampToLinear();
+  this->LookupTable->SetTableRange(0, 255);
+  this->LookupTable->SetHueRange(0, 0);
+  this->LookupTable->SetSaturationRange(0, 0);
+  this->LookupTable->SetValueRange(0, 1);
+  this->LookupTable->SetAlphaRange(1, 1); // not used
+  this->LookupTable->Build();
 
 }
 
@@ -77,9 +105,16 @@ vtkSlicerSliceLayerLogic::~vtkSlicerSliceLayerLogic()
 
   this->Reslice->Delete();
   this->MapToColors->Delete();
+  this->LookupTable->Delete();
   this->Threshold->Delete();
   this->AppendComponents->Delete();
   this->MapToWindowLevelColors->Delete();
+  this->ResliceThreshold->Delete();
+  this->ResliceAppendComponents->Delete();
+  this->ResliceExtractLuminance->Delete();
+  this->ResliceExtractAlpha->Delete();
+  this->ResliceAlphaCast->Delete();
+  this->AlphaLogic->Delete();
 }
 
 //----------------------------------------------------------------------------
@@ -169,6 +204,7 @@ void vtkSlicerSliceLayerLogic::UpdateTransforms()
   if (this->VolumeNode)
     {
 
+    // Apply the transform, if it exists
     vtkMRMLTransformNode *transformNode = this->VolumeNode->GetParentTransformNode();
     if ( transformNode != NULL ) 
       {
@@ -192,8 +228,6 @@ void vtkSlicerSliceLayerLogic::UpdateTransforms()
     rasToIJK->Delete();
 
 
-    this->Reslice->SetInput( this->VolumeNode->GetImageData() ); 
-
     vtkMRMLScalarVolumeNode *scalarVolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast (this->VolumeNode);
     if ( scalarVolumeNode && scalarVolumeNode->GetLabelMap() )
       {
@@ -204,22 +238,47 @@ void vtkSlicerSliceLayerLogic::UpdateTransforms()
       {
       this->Reslice->SetInterpolationModeToLinear();
       }
+
+    // Prime the imaging pipeline
+    // - add an alpha channel to the input data
+    this->ResliceThreshold->SetInput( this->VolumeNode->GetImageData() ); 
+    this->ResliceAppendComponents->RemoveAllInputs();
+    this->ResliceAppendComponents->SetInput(0, this->VolumeNode->GetImageData() ); 
+    this->ResliceAppendComponents->SetInput(1, this->ResliceThreshold->GetOutput() );
+    this->Reslice->SetInput( this->ResliceAppendComponents->GetOutput() ); 
+
     }
   else
     {
+
+    this->ResliceAppendComponents->RemoveAllInputs();
+    this->ResliceAppendComponents->SetInput( 0, NULL ); 
+    this->ResliceThreshold->SetInput( NULL ); 
     this->Reslice->SetInput( NULL ); 
+
     }
+
 
   if (this->VolumeDisplayNode)
     {
-      // TODO: update the pipeline with other display values
-        //double UpperThreshold;
-        //double LowerThreshold;
-        // Booleans
-        //int Interpolate;
-        //int AutoWindowLevel;
-        //int ApplyThreshold;
-        //int AutoThreshold;
+    //
+    // Configure the imaging pipeline
+    //
+    // - make an alpha channel for the image data from the node
+    // - perform the reslice 
+    // - extract the luminance and alpha for individual processing
+    // -- use the luminance to get a second alpha channel
+    // -- or the two alpha channels
+    // - run the luminance through the window level and color maps
+    // - append the alpha channel to the final RGB image
+    //
+
+    this->ResliceExtractLuminance->SetInput(this->Reslice->GetOutput() );
+    this->ResliceExtractLuminance->SetComponents(0);
+
+    this->ResliceExtractAlpha->SetInput(this->Reslice->GetOutput() );
+    this->ResliceExtractAlpha->SetComponents(1);
+    this->ResliceAlphaCast->SetInput( this->ResliceExtractAlpha->GetOutput() );
         
     if ( this->VolumeDisplayNode->GetInterpolate() && !labelMap )
       {
@@ -228,26 +287,6 @@ void vtkSlicerSliceLayerLogic::UpdateTransforms()
     else
       {
       this->Reslice->SetInterpolationModeToNearestNeighbor();
-      }
-
-    this->MapToWindowLevelColors->SetInput( this->Reslice->GetOutput() );
-    this->MapToWindowLevelColors->SetOutputFormatToRGB();
-    this->AppendComponents->RemoveAllInputs();
-    this->AppendComponents->SetInput(0, this->MapToWindowLevelColors->GetOutput() );
-
-    if ( this->VolumeDisplayNode->GetApplyThreshold() )
-      {
-      // if thresholding is needed, insert the thresholder and 
-      // append the result to the output of the window/level
-      this->Threshold->SetInput( this->Reslice->GetOutput() );
-      this->Threshold->SetOutputScalarTypeToUnsignedChar();
-      this->Threshold->ReplaceInOn();
-      this->Threshold->SetInValue(255);
-      this->Threshold->ReplaceOutOn();
-      this->Threshold->SetOutValue(0);
-      this->Threshold->ThresholdBetween( this->VolumeDisplayNode->GetLowerThreshold(), this->VolumeDisplayNode->GetUpperThreshold() );
-
-      this->AppendComponents->SetInput(1, this->Threshold->GetOutput() );
       }
 
     if ( labelMap ) 
@@ -263,10 +302,37 @@ void vtkSlicerSliceLayerLogic::UpdateTransforms()
       this->MapToWindowLevelColors->SetLevel(this->VolumeDisplayNode->GetLevel());
 
       }
-    }
 
-  // map to colors not used yet - need color lookup table support in mrml...
-  //this->MapToColors->SetInput( this->MapToWindowLevelColors->GetOutput() );
+    this->MapToWindowLevelColors->SetInput( this->ResliceExtractLuminance->GetOutput() );
+    this->MapToWindowLevelColors->SetOutputFormatToLuminance();
+    this->MapToColors->SetInput( this->MapToWindowLevelColors->GetOutput() );
+    this->AppendComponents->RemoveAllInputs();
+    this->AppendComponents->SetInput(0, this->MapToColors->GetOutput() );
+
+    this->Threshold->SetInput( this->ResliceExtractLuminance->GetOutput() );
+    this->Threshold->SetOutputScalarTypeToUnsignedChar();
+
+    if ( this->VolumeDisplayNode->GetApplyThreshold() )
+      {
+      this->Threshold->ReplaceInOn();
+      this->Threshold->SetInValue(255);
+      this->Threshold->ReplaceOutOn();
+      this->Threshold->SetOutValue(0);
+      this->Threshold->ThresholdBetween( this->VolumeDisplayNode->GetLowerThreshold(), 
+                                         this->VolumeDisplayNode->GetUpperThreshold() );
+      }
+    else
+      {
+      this->Threshold->ReplaceInOff();
+      this->Threshold->ReplaceOutOff();
+      }
+
+    this->AlphaLogic->SetInput1( this->ResliceAlphaCast->GetOutput() );
+    this->AlphaLogic->SetInput2( this->Threshold->GetOutput() );
+
+    this->AppendComponents->SetInput(1, this->AlphaLogic->GetOutput() );
+
+    }
 
   this->XYToIJKTransform->SetMatrix( xyToIJK );
   xyToIJK->Delete();

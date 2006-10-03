@@ -44,9 +44,13 @@
 
 #include "vtkImageReslice.h"
 #include "vtkImageMapToColors.h"
+#include "vtkLookupTable.h"
 #include "vtkImageMapToWindowLevelColors.h"
 #include "vtkImageThreshold.h"
 #include "vtkImageAppendComponents.h"
+#include "vtkImageLogic.h"
+#include "vtkImageExtractComponents.h"
+#include "vtkImageCast.h"
 
 class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLayerLogic : public vtkSlicerLogic 
 {
@@ -142,8 +146,15 @@ protected:
 
   // Description:
   // the VTK class instances that implement this Logic's operations
+  vtkImageThreshold *ResliceThreshold;
+  vtkImageAppendComponents *ResliceAppendComponents;
+  vtkImageExtractComponents *ResliceExtractLuminance;
+  vtkImageExtractComponents *ResliceExtractAlpha;
+  vtkImageCast *ResliceAlphaCast;
+  vtkImageLogic *AlphaLogic;
   vtkImageReslice *Reslice;
   vtkImageMapToColors *MapToColors;
+  vtkLookupTable *LookupTable;
   vtkImageThreshold *Threshold;
   vtkImageAppendComponents *AppendComponents;
   vtkImageMapToWindowLevelColors *MapToWindowLevelColors;
