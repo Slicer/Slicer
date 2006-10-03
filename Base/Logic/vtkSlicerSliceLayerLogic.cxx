@@ -36,6 +36,8 @@ vtkSlicerSliceLayerLogic::vtkSlicerSliceLayerLogic()
 
   this->Reslice = vtkImageReslice::New();
   this->MapToColors = vtkImageMapToColors::New();
+  this->Threshold = vtkImageThreshold::New();
+  this->AppendComponents = vtkImageAppendComponents::New();
   this->MapToWindowLevelColors = vtkImageMapToWindowLevelColors::New();
 
   this->Reslice->SetBackgroundLevel(128);
@@ -44,10 +46,6 @@ vtkSlicerSliceLayerLogic::vtkSlicerSliceLayerLogic()
   this->Reslice->SetOutputOrigin( 0, 0, 0 );
   this->Reslice->SetOutputSpacing( 1, 1, 1 );
   this->Reslice->SetOutputDimensionality( 2 );
-
-  // non-label maps go through window/level before color map
-  this->MapToWindowLevelColors->SetInput( this->Reslice->GetOutput() );
-  this->MapToColors->SetInput( this->MapToWindowLevelColors->GetOutput() );
 
 }
 
@@ -71,11 +69,16 @@ vtkSlicerSliceLayerLogic::~vtkSlicerSliceLayerLogic()
   this->SetVolumeNode(NULL);
   this->XYToIJKTransform->Delete();
 
+  this->Reslice->SetInput( NULL );
+  this->Threshold->SetInput( NULL );
+  this->AppendComponents->SetInput( NULL );
   this->MapToWindowLevelColors->SetInput( NULL );
   this->MapToColors->SetInput( NULL );
 
   this->Reslice->Delete();
   this->MapToColors->Delete();
+  this->Threshold->Delete();
+  this->AppendComponents->Delete();
   this->MapToWindowLevelColors->Delete();
 }
 
@@ -227,11 +230,28 @@ void vtkSlicerSliceLayerLogic::UpdateTransforms()
       this->Reslice->SetInterpolationModeToNearestNeighbor();
       }
 
+    this->MapToWindowLevelColors->SetInput( this->Reslice->GetOutput() );
+    this->MapToWindowLevelColors->SetOutputFormatToRGB();
+    this->AppendComponents->RemoveAllInputs();
+    this->AppendComponents->SetInput(0, this->MapToWindowLevelColors->GetOutput() );
+
+    if ( this->VolumeDisplayNode->GetApplyThreshold() )
+      {
+      // if thresholding is needed, insert the thresholder and 
+      // append the result to the output of the window/level
+      this->Threshold->SetInput( this->Reslice->GetOutput() );
+      this->Threshold->SetOutputScalarTypeToUnsignedChar();
+      this->Threshold->ReplaceInOn();
+      this->Threshold->SetInValue(255);
+      this->Threshold->ReplaceOutOn();
+      this->Threshold->SetOutValue(0);
+      this->Threshold->ThresholdBetween( this->VolumeDisplayNode->GetLowerThreshold(), this->VolumeDisplayNode->GetUpperThreshold() );
+
+      this->AppendComponents->SetInput(1, this->Threshold->GetOutput() );
+      }
+
     if ( labelMap ) 
       {
-      // a label map bypasses the window/level mapping 
-      //this->MapToColors->SetInput( this->Reslice->GetOutput() );
-
       // Reset window/level to default so colors go through unchanged
       this->MapToWindowLevelColors->SetWindow(255.);
       this->MapToWindowLevelColors->SetLevel(127.5);
@@ -239,13 +259,14 @@ void vtkSlicerSliceLayerLogic::UpdateTransforms()
     else
       {
       // a non-label map is windowed first, then mapped through lookup table
-      //this->MapToColors->SetInput( this->MapToWindowLevelColors->GetOutput() );
       this->MapToWindowLevelColors->SetWindow(this->VolumeDisplayNode->GetWindow());
       this->MapToWindowLevelColors->SetLevel(this->VolumeDisplayNode->GetLevel());
 
       }
-
     }
+
+  // map to colors not used yet - need color lookup table support in mrml...
+  //this->MapToColors->SetInput( this->MapToWindowLevelColors->GetOutput() );
 
   this->XYToIJKTransform->SetMatrix( xyToIJK );
   xyToIJK->Delete();

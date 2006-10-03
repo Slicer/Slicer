@@ -45,6 +45,8 @@
 #include "vtkImageReslice.h"
 #include "vtkImageMapToColors.h"
 #include "vtkImageMapToWindowLevelColors.h"
+#include "vtkImageThreshold.h"
+#include "vtkImageAppendComponents.h"
 
 class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLayerLogic : public vtkSlicerLogic 
 {
@@ -86,6 +88,14 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLayerLogic : public vtkSlicerLo
   vtkGetObjectMacro (MapToColors, vtkImageMapToColors);
 
   // Description:
+  // The filter that applies the threshold
+  vtkGetObjectMacro (Threshold, vtkImageThreshold);
+
+  // Description:
+  // The add the alpha channel onto the image
+  vtkGetObjectMacro (AppendComponents, vtkImageAppendComponents);
+
+  // Description:
   // Get the output of the pipeline for this layer
   vtkImageData *GetImageData () { 
     if ( this->GetVolumeNode() == NULL ) 
@@ -94,7 +104,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLayerLogic : public vtkSlicerLo
       } 
     else
       {
-      return (this->GetMapToColors()->GetOutput()); 
+      return (this->GetAppendComponents()->GetOutput()); 
       }
   };
 
@@ -134,6 +144,8 @@ protected:
   // the VTK class instances that implement this Logic's operations
   vtkImageReslice *Reslice;
   vtkImageMapToColors *MapToColors;
+  vtkImageThreshold *Threshold;
+  vtkImageAppendComponents *AppendComponents;
   vtkImageMapToWindowLevelColors *MapToWindowLevelColors;
 
   // TODO: make this a vtkAbstractTransform for non-linear
