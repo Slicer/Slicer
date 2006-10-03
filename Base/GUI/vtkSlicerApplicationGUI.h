@@ -41,7 +41,6 @@
 #include "vtkSlicerSliceGUICollection.h"
 
 class vtkObject;
-class vtkImplicitPlaneWidget;
 class vtkLogoWidget;
 class vtkKWLabel;
 class vtkKWDialog;
@@ -122,10 +121,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkGetObjectMacro ( MainSlicerWindow, vtkSlicerWindow );
     // Description:
 
-    // Description:
-    // a Plane widget in the main window
-    vtkGetObjectMacro ( PlaneWidget, vtkImplicitPlaneWidget );
-    
     // Description:
     // This method builds Slicer's main GUI
     virtual void BuildGUI ( );
@@ -236,7 +231,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // Description:
     // Main Slicer 3D Viewer
     vtkSlicerViewerWidget *ViewerWidget;
-    vtkImplicitPlaneWidget *PlaneWidget;
     double MainRendererBBox[6];
 
     // Description:

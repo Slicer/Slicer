@@ -29,7 +29,6 @@
 #include "vtkCamera.h"
 #include "vtkPolyDataMapper.h"
 #include "vtkRenderWindow.h"
-#include "vtkImplicitPlaneWidget.h"
 
 #include "vtkKWApplication.h"
 #include "vtkKWTclInteractor.h"
@@ -124,7 +123,6 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
     this->MainSliceLogic1 = NULL;
     this->MainSliceLogic2 = NULL;
 
-    this->PlaneWidget = NULL;
 
     //--- Save and load scene dialogs, widgets
     this->LoadSceneDialog = vtkKWLoadSaveDialog::New();
@@ -749,24 +747,18 @@ void vtkSlicerApplicationGUI::DestroyMain3DViewer ( )
       //
       if ( this->ViewerWidget )
         {
-          if ( this->PlaneWidget )
-            {
-              this->PlaneWidget->SetInteractor( NULL );
-              this->PlaneWidget->Delete ( );
-              this->PlaneWidget = NULL;
-            }
-          this->ViewerWidget->RemoveMRMLObservers ( );
-          if ( layout->GetCurrentViewArrangement() == vtkSlicerGUILayout::SlicerLayoutFourUpView )
-            {
-              this->ViewerWidget->UngridWidget ( );
-            }
-          else
-            {
-              this->ViewerWidget->UnpackWidget ( );
-            }
-          this->ViewerWidget->SetParent ( NULL );
-          this->ViewerWidget->Delete ( );
-          this->ViewerWidget = NULL;
+        this->ViewerWidget->RemoveMRMLObservers ( );
+        if ( layout->GetCurrentViewArrangement() == vtkSlicerGUILayout::SlicerLayoutFourUpView )
+          {
+            this->ViewerWidget->UngridWidget ( );
+          }
+        else
+          {
+            this->ViewerWidget->UnpackWidget ( );
+          }
+        this->ViewerWidget->SetParent ( NULL );
+        this->ViewerWidget->Delete ( );
+        this->ViewerWidget = NULL;
         }
     }
 }
@@ -943,12 +935,6 @@ void vtkSlicerApplicationGUI::CreateMain3DViewer ( int arrangementType )
             {
               this->ViewerWidget->PackWidget();
             }
-
-          // TODO: this requires a change to KWWidgets
-          this->PlaneWidget = vtkImplicitPlaneWidget::New();
-          this->PlaneWidget->SetInteractor( this->GetRenderWindowInteractor() );
-          this->PlaneWidget->PlaceWidget(-128, 128, -128, 128, -128, 128);
-          this->PlaneWidget->On();
         }
     }
 }
