@@ -505,7 +505,8 @@ int Slicer3_main(int argc, char *argv[])
     //
     if ( strlen(slicerApp->GetModulePath()) == 0 )
       {
-      slicerApp->SetModulePath( slicerBinDir.c_str() );
+      std::string packageDir = slicerBinDir + "/lib/Slicer3/Plugins";
+      slicerApp->SetModulePath( packageDir.c_str() );
       appGUI->GetMainSlicerWindow()->GetApplicationSettingsInterface()->Update();
       }
     ModuleFactory moduleFactory;
