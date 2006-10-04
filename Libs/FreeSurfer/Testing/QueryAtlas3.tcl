@@ -15,12 +15,14 @@ proc QueryAtlasInit { {filename ""} } {
     foreach c $candidates {
       if { [file exists $c] } {
         set ::QA(filename) $c
+        set ::QA(directory) [file dirname [file dirname $::QA(filename)]]
         break
       }
     }
   }
 
   QueryAtlasAddModel
+  QueryAtlasAddVolumes
   QueryAtlasAddAnnotations 
   QueryAtlasInitializePicker 
   QueryAtlasRenderView
@@ -58,6 +60,29 @@ proc QueryAtlasAddModel {} {
   $modelNode Delete
   $modelStorageNode Delete
   $modelDisplayNode Delete
+}
+
+proc QueryAtlasAddVolumes {} {
+
+
+  set fileName $::QA(directory)/mri/brain.mgz
+
+  set volumesLogic [$::slicer3::VolumesGUI GetLogic]
+  set centered 0
+  set volumeNode [$volumesLogic AddArchetypeVolume $fileName $centered]
+
+  set selectionNode [$::slicer3::ApplicationLogic GetSelectionNode]
+  set ::QA(volumeNodeID) [$volumeNode GetID]
+  $selectionNode SetActiveVolumeID $::QA(volumeNodeID)
+  $::slicer3::ApplicationLogic PropagateVolumeSelection
+
+  set volumeDisplayNode [$volumeNode GetDisplayNode]
+
+  $volumeDisplayNode SetWindow 216
+  $volumeDisplayNode SetLevel 108
+  $volumeDisplayNode SetUpperThreshold 216
+  $volumeDisplayNode SetLowerThreshold 30.99
+  $volumeDisplayNode SetApplyThreshold 1
 }
 
 #
@@ -401,7 +426,6 @@ proc QueryAtlasPickCallback {} {
   
   if { $pointLabels != $::QA(lastLabels) } {
     set ::QA(lastLabels) $pointLabels 
-    puts $pointLabels
   }
 
   QueryAtlasUpdateCursor
