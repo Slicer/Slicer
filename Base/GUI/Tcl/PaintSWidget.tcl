@@ -288,14 +288,16 @@ itcl::body PaintSWidget::paintAddPoint {x y} {
 
 itcl::body PaintSWidget::paintApply {} {
 
-  set renderer [$_renderWidget GetRenderer]
-  foreach a $_feedbackActors {
-    $renderer RemoveActor2D $a
-    set property [$a GetProperty]
-    $property SetColor 1 1 0
-    $property SetOpacity .9
+  if { 0 } {
+    set renderer [$_renderWidget GetRenderer]
+    foreach a $_feedbackActors {
+      $renderer RemoveActor2D $a
+      set property [$a GetProperty]
+      $property SetColor 1 1 0
+      $property SetOpacity .9
+    }
+    [$sliceGUI GetSliceViewer] Render
   }
-  [$sliceGUI GetSliceViewer] Render
 
   foreach xy $_paintCoordinates {
     eval $this paintBrush $xy
