@@ -38,17 +38,22 @@ if { [itcl::find class PaintSWidget] == "" } {
     public variable radius 10
     public variable paintDropper 0
     public variable paintOver 1
+    public variable delayedPaint 1
 
     variable _startPosition "0 0 0"
     variable _currentPosition "0 0 0"
+    variable _paintCoordinates ""
+    variable _feedbackActors ""
 
     # methods
     method processEvent {} {}
     method positionActors {} {}
     method highlight {} {}
     method createGlyph { {polyData ""} } {}
-    method paintPoint {} {}
-    method paintBrush {} {}
+    method paintBrush {x y} {}
+    method paintAddPoint {x y} {}
+    method paintFeedback {} {}
+    method paintApply {} {}
   }
 }
 
@@ -221,13 +226,15 @@ itcl::body PaintSWidget::processEvent { } {
       set _currentPosition [$this xyToRAS [$_interactor GetEventPosition]]
       switch $_actionState {
         "painting" {
-          $this paintBrush
+          foreach {x y} [$_interactor GetEventPosition] {}
+          $this paintAddPoint $x $y
         }
         default {
         }
       }
     }
     "LeftButtonReleaseEvent" {
+      $this paintApply
       [$_renderWidget GetRenderWindow] ShowCursor
       set _actionState ""
       $sliceGUI SetGrabID ""
@@ -248,21 +255,56 @@ itcl::body PaintSWidget::processEvent { } {
   [$sliceGUI GetSliceViewer] RequestRender
 }
 
-itcl::body PaintSWidget::paintPoint {} {
+itcl::body PaintSWidget::paintFeedback {} {
 
-  foreach {x y} [$_interactor GetEventPosition] {}
-  $this queryLayers $x $y
+  set renderer [$_renderWidget GetRenderer]
 
-  $this setPixel $_layers(label,image) \
-    $_layers(label,i) $_layers(label,j) $_layers(label,k) \
-      $paintColor
-  # TODO: Modified should be called on the image itself, not
-  # the node, but the Logic isn't yet observing the ImageDataChangedEvent
-  $_layers(label,node) Modified
+  foreach a $_feedbackActors {
+    $renderer RemoveActor2D $a
+    $a Delete
+  }
+  set _feedbackActors ""
 
+  foreach xy $_paintCoordinates {
+    set a [vtkActor2D New]
+    lappend _feedbackActors $a
+    $a SetMapper $o(mapper)
+    eval $a SetPosition $xy
+    set property [$a GetProperty]
+    $property SetColor .7 .7 0
+    $property SetOpacity .5
+    $renderer AddActor2D $a
+  }
 }
 
-itcl::body PaintSWidget::paintBrush {} {
+itcl::body PaintSWidget::paintAddPoint {x y} {
+  lappend _paintCoordinates "$x $y"
+  if { !$delayedPaint } {
+    $this paintApply
+  } else {
+    paintFeedback 
+  }
+}
+
+itcl::body PaintSWidget::paintApply {} {
+
+  set renderer [$_renderWidget GetRenderer]
+  foreach a $_feedbackActors {
+    $renderer RemoveActor2D $a
+    set property [$a GetProperty]
+    $property SetColor 1 1 0
+    $property SetOpacity .9
+  }
+  [$sliceGUI GetSliceViewer] Render
+
+  foreach xy $_paintCoordinates {
+    eval $this paintBrush $xy
+  }
+  set _paintCoordinates ""
+  paintFeedback
+}
+
+itcl::body PaintSWidget::paintBrush {x y} {
 
   #
   # paint with a brush that is circular in XY space 
@@ -271,7 +313,6 @@ itcl::body PaintSWidget::paintBrush {} {
   # - apply the threshold if selected
   #
 
-  foreach {x y} [$_interactor GetEventPosition] {}
   $this queryLayers $x $y
 
   if { $_layers(label,node) == "" } {
@@ -369,7 +410,6 @@ itcl::body PaintSWidget::paintBrush {} {
   $backgroundIJKToRAS Delete
 
   $_layers(label,node) Modified
-
 
   return
 
