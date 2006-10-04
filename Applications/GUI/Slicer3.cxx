@@ -583,7 +583,7 @@ int Slicer3_main(int argc, char *argv[])
     name = fiducialsGUI->GetTclName();
     slicerApp->Script ("namespace eval slicer3 set FiducialsGUI %s", name);
     name = transformsGUI->GetTclName();
-    slicerApp->Script ("namespace eval slicer3 set VolumesGUI %s", name);
+    slicerApp->Script ("namespace eval slicer3 set TransformsGUI %s", name);
 
     name = appGUI->GetViewerWidget()->GetTclName();
     slicerApp->Script ("namespace eval slicer3 set ViewerWidget %s", name);
