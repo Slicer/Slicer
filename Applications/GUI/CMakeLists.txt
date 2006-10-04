@@ -20,7 +20,7 @@ IF(BUILD_SHARED_LIBS)
   ENDIF(WIN32)
 ENDIF(BUILD_SHARED_LIBS)
 # Add main server executables.
-SET(SLICER_EXE_LIST Slicer3 Slicer3Bare)
+SET(SLICER_EXE_LIST Slicer3)
 
 # Add shared link forwarding executables if necessary.
 IF(SLICER_NEED_SHARED_FORWARD)
@@ -82,10 +82,8 @@ INCLUDE_DIRECTORIES(
 OPTION(Slicer3_BUILD_WIN32_CONSOLE "Build Slicer3 executable as a console app on windows (allows debug output)" OFF)
 IF ( Slicer3_BUILD_WIN32_CONSOLE )
   ADD_EXECUTABLE (Slicer3${SLICER_EXE_SUFFIX} ${SRC})
-  ADD_EXECUTABLE (Slicer3Bare${SLICER_EXE_SUFFIX} Slicer3Bare.cxx)
 ELSE ( Slicer3_BUILD_WIN32_CONSOLE )
   ADD_EXECUTABLE (Slicer3${SLICER_EXE_SUFFIX} WIN32 ${SRC})
-  ADD_EXECUTABLE (Slicer3Bare${SLICER_EXE_SUFFIX} WIN32 Slicer3Bare.cxx)
 ENDIF ( Slicer3_BUILD_WIN32_CONSOLE )
 
 TARGET_LINK_LIBRARIES( Slicer3${SLICER_EXE_SUFFIX}
@@ -103,22 +101,6 @@ TARGET_LINK_LIBRARIES( Slicer3${SLICER_EXE_SUFFIX}
     ITKIO
     ${KWWidgets_LIBRARIES} )
 INSTALL_TARGETS(/bin Slicer3${SLICER_EXE_SUFFIX})
-
-TARGET_LINK_LIBRARIES( Slicer3Bare${SLICER_EXE_SUFFIX}
-    SlicerBaseLogic
-    SlicerBaseGUI
-    MRML
-    GradientAnisotropicDiffusionFilter
-    CommandLineModule
-    ScriptedModule
-    SlicerDaemon
-    ModuleDescriptionParser
-    ModulesBaseClasses
-    vtkITK
-    ITKCommon 
-    ITKIO
-    ${KWWidgets_LIBRARIES} )
-INSTALL_TARGETS(/bin Slicer3Bare${SLICER_EXE_SUFFIX})
 
 # Generate a lightweight C launcher for a *specific* executable.
 # The launcher sets up all the environments variables (PATH, TCLLIBPATH,
