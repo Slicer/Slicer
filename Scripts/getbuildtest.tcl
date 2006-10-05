@@ -233,8 +233,15 @@ if { $isWindows } {
         eval runcmd $::MAKE Slicer3.dsw /MAKE $::GETBUILDTEST(test-type)
         eval runcmd $::MAKE Slicer3.dsw /MAKE package
     } else {
-        runcmd $::MAKE Slicer3.SLN /build $::VTK_BUILD_TYPE $::GETBUILDTEST(test-type)
-        runcmd $::MAKE Slicer3.SLN /build $::VTK_BUILD_TYPE package
+        # tell cmake explicitly what command line to run when doing the ctest builds
+        set makeCmd "$::MAKE Slicer3.sln /build $::VTK_BUILD_TYPE /project ALL_BUILD"
+        runcmd $::CMAKE -DMAKECOMMAND:STRING=$makeCmd $SLICER_HOME
+
+        # running ctest through visual studio is broken in cmake2.4, so run ctest directly
+        # runcmd $::MAKE Slicer3.SLN /build $::VTK_BUILD_TYPE /project $::GETBUILDTEST(test-type)
+        runcmd $::CMAKE_PATH/bin/ctest -D $::GETBUILDTEST(test-type) -C $::VTK_BUILD_TYPE
+
+        runcmd $::MAKE Slicer3.SLN /build $::VTK_BUILD_TYPE /project PACKAGE
     }
 } else {
     set buildReturn [catch "eval runcmd $::MAKE $::GETBUILDTEST(test-type)"]
