@@ -291,9 +291,9 @@ void vtkSlicerSliceLayerLogic::UpdateTransforms()
 
     if ( labelMap ) 
       {
-      // Reset window/level to default so colors go through unchanged
-      this->MapToWindowLevelColors->SetWindow(255.);
-      this->MapToWindowLevelColors->SetLevel(127.5);
+      // Don't put label maps through the window/level filter,
+      // because this will map them to unsigned char
+      this->MapToColors->SetInput( this->ResliceExtractLuminance->GetOutput() );
       } 
     else
       {
@@ -301,11 +301,11 @@ void vtkSlicerSliceLayerLogic::UpdateTransforms()
       this->MapToWindowLevelColors->SetWindow(this->VolumeDisplayNode->GetWindow());
       this->MapToWindowLevelColors->SetLevel(this->VolumeDisplayNode->GetLevel());
 
+      this->MapToWindowLevelColors->SetInput( this->ResliceExtractLuminance->GetOutput() );
+      this->MapToWindowLevelColors->SetOutputFormatToLuminance();
+      this->MapToColors->SetInput( this->MapToWindowLevelColors->GetOutput() );
       }
 
-    this->MapToWindowLevelColors->SetInput( this->ResliceExtractLuminance->GetOutput() );
-    this->MapToWindowLevelColors->SetOutputFormatToLuminance();
-    this->MapToColors->SetInput( this->MapToWindowLevelColors->GetOutput() );
     this->AppendComponents->RemoveAllInputs();
     this->AppendComponents->SetInput(0, this->MapToColors->GetOutput() );
 
