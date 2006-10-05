@@ -426,14 +426,18 @@ proc EditorCreateLabelVolume {this} {
   EditorSetRandomLabelColormap 
 }
 
-proc EditorSetRandomLabelColormap {} {
+proc EditorSetRandomLabelColormap { {size 255} } {
 
   # TODO: once the mrml label map functionality is set up this will migrate
   # into the vtkSlicerVolumesDisplay -- the label map should be part of the DisplayNode
+  # get a lut with:
+  # [[[$::slicer3::ApplicationGUI GetMainSliceLogic0] GetLabelLayer] GetMapToColors] GetLookupTable
+
   set lut [vtkLookupTable New]
   $lut SetTableValue 0  0 0 0 0
-  $lut SetRange 0 255
-  for {set i 1} {$i < 256} {incr i} {
+  $lut SetRange 0 $size
+  $lut SetNumberOfColors [expr $size + 1]
+  for {set i 1} {$i <= $size} {incr i} {
     $lut SetTableValue $i [expr rand()] [expr rand()] [expr rand()] 1.0
   }
   foreach g {0 1 2} {
