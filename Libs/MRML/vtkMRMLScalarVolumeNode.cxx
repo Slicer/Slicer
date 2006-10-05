@@ -112,7 +112,8 @@ void vtkMRMLScalarVolumeNode::CreateNoneNode(vtkMRMLScene *scene)
 {
   vtkMRMLScalarVolumeNode *n = vtkMRMLScalarVolumeNode::New();
   n->SetName("None");
-  n->SetID("None");
+  // the scene will set the id
+//  n->SetID("None");
 
   // Create a None volume RGBA of 0, 0, 0 so the filters won't complain
   // about missing input

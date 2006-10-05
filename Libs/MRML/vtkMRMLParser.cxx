@@ -48,11 +48,13 @@ void vtkMRMLParser::StartElement(const char* tagName, const char** atts)
   node->SetScene(this->MRMLScene);
   node->ReadXMLAttributes(atts);
 
+  // ID will be set by AddNodeNoNotify
+  /*
   if (node->GetID() == NULL) 
     {
     node->SetID(this->MRMLScene->GetUniqueIDByClass(className));
     }
-
+  */
   if (!this->NodeStack.empty()) 
     {
     vtkMRMLNode* parentNode = this->NodeStack.top();
