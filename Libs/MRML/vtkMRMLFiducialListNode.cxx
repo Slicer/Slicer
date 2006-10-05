@@ -264,7 +264,7 @@ void vtkMRMLFiducialListNode::ReadXMLAttributes(const char** atts)
       }
       else
       {
-          std::cerr << "Unknown attribute name " << attName << endl;
+      vtkDebugMacro("ReadXMLAttributes: Unknown attribute name " << attName);
       }
   }
   vtkDebugMacro("Finished reading in xml attributes, list id = " << this->GetID() << " and name = " << this->GetName() << endl);
@@ -563,7 +563,7 @@ int vtkMRMLFiducialListNode::AddFiducial()
   ss << "-P";
   std::string nameString;
   ss >> nameString;
-  fiducial->SetID(this->GetScene()->GetUniqueIDByClass(nameString.c_str()));
+  fiducial->SetID(this->GetScene()->GetUniqueNameByString(nameString.c_str()));
   // use the same for the label text for now
   fiducial->SetLabelText(fiducial->GetID());
   
