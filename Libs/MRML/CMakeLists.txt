@@ -35,6 +35,7 @@ SET(MRML_SRCS
         vtkMRMLSliceCompositeNode.cxx
         vtkMRMLSelectionNode.cxx
         vtkObserverManager.cxx
+        vtkMRMLColorNode.cxx
         # Note: when you add new node types, add
         # register code to the vtkMRMLScene constructor
 )
