@@ -436,7 +436,7 @@ void vtkSlicerFiducialsGUI::SetGUIFromList(vtkMRMLFiducialListNode * activeFiduc
     {
         deleteFlag = false;
     }
-    // a rows for each point
+    // a row for each point
         
         float *xyz;
         float *wxyz;
