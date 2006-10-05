@@ -151,7 +151,15 @@ public:
   // returns list of names
   const char* GetNodeClasses();
   
-  const char* GetUniqueIDByClass(const char* className);
+  const char* GetUniqueNameByString(const char* className);
+  // Description:
+  // Explore the MRML tree to find the next unique index for use as an ID,
+  // starting from 1
+  int GetUniqueIDIndexByClass(const char* className);
+  // Description:
+  // Explore the MRML tree to find the next unique index for use as an ID,
+  // starting from hint
+  int GetUniqueIDIndexByClassFromIndex(const char* className, int hint);
   
   void InsertAfterNode( vtkMRMLNode *item, vtkMRMLNode *newItem);
   void InsertBeforeNode( vtkMRMLNode *item, vtkMRMLNode *newItem);

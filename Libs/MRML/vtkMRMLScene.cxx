@@ -36,6 +36,7 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLVolumeArchetypeStorageNode.h"
 #include "vtkMRMLVolumeDisplayNode.h"
 #include "vtkMRMLVolumeHeaderlessStorageNode.h"
+#include "vtkMRMLColorNode.h"
 
 //------------------------------------------------------------------------------
 vtkMRMLScene::vtkMRMLScene() 
@@ -110,6 +111,10 @@ vtkMRMLScene::vtkMRMLScene()
   vtkMRMLVolumeDisplayNode *vdisn = vtkMRMLVolumeDisplayNode::New(); 
   this->RegisterNodeClass( vdisn );
   vdisn->Delete();
+
+  vtkMRMLColorNode *vcn = vtkMRMLColorNode::New();
+  this->RegisterNodeClass ( vcn );
+  vcn->Delete();
 }
 
 //------------------------------------------------------------------------------
@@ -419,10 +424,22 @@ void vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
 {
   //TODO convert URL to Root directory
   //n->SetSceneRootDir("");
-
   if (n->GetID() == NULL || n->GetID()[0] == '\0' || this->GetNodeByID(n->GetID()) != NULL) 
     {
-    n->SetID(this->GetUniqueIDByClass(n->GetClassName()));
+    //std::cout << "\n";
+    if (n->GetID() == NULL && n->GetName() != NULL && strcmp(n->GetName(), "None") == 0)
+      {
+      // deal with the special case of the none volume, set the ID to None as
+      // well
+      std::cout << "\nAddNodeNoNotify: have the None volume name, setting it's ID to None...\n";
+      n->SetID("None");
+      }
+    else
+      {
+      //n->SetID(this->GetUniqueIDByClass(n->GetClassName()));
+      n->ConstructAndSetID(n->GetClassName(), this->GetUniqueIDIndexByClass(n->GetClassName()));
+      vtkDebugMacro("AddNodeNoNotify: got unique id for new " << n->GetClassName() << " node: " << n->GetID() << endl);
+      }
     }
 
   n->SetSceneRootDir(this->RootDirectory.c_str());
@@ -681,7 +698,37 @@ void vtkMRMLScene::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //------------------------------------------------------------------------------
-const char* vtkMRMLScene::GetUniqueIDByClass(const char* className)
+int vtkMRMLScene::GetUniqueIDIndexByClass(const char* className)
+{
+  return this->GetUniqueIDIndexByClassFromIndex(className, 1);
+}
+
+//------------------------------------------------------------------------------
+int vtkMRMLScene::GetUniqueIDIndexByClassFromIndex(const char* className, int hint)
+{
+  this->InitTraversal();
+  
+  std::string candidateName;
+  int index = hint;
+  vtkMRMLNode * node = this->GetNextNodeByClass(className);
+  while (node != NULL)
+    {    
+    candidateName = node->ConstructID(className, index);
+    if (strcmp(node->GetID(), candidateName.c_str()) == 0)
+      {
+      // a node has this id already
+      index++;
+      // start over
+      this->InitTraversal();
+      }
+    node = this->GetNextNodeByClass(className);
+    }
+  vtkDebugMacro("GetUniqueIDIndexByClassFromIndex: returning index " << index);
+  return index;
+}
+
+//------------------------------------------------------------------------------
+const char* vtkMRMLScene::GetUniqueNameByString(const char* className)
 {
   std::string sname(className);
   if (UniqueIDByClass.find(sname) == UniqueIDByClass.end() ) 
@@ -715,7 +762,18 @@ const char* vtkMRMLScene::GetUniqueIDByClass(const char* className)
       }
     else 
       {
-      break;
+      // double check that no node has this name
+      if (this->GetNodesByName(name.c_str())->GetNumberOfItems() == 0)
+        {
+        break;
+        }
+      else
+        {
+        vtkDebugMacro("GetUniqueNameByString: Thought we had a valid index " << id << ", but found a name that matches " << name.c_str() << endl);
+        nameExists = true;
+        id++;
+        continue;
+        }
       }
     }
   UniqueIDByClass[className] = id + 1;
