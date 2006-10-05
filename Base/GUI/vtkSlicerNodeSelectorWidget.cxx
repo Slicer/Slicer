@@ -304,9 +304,14 @@ void vtkSlicerNodeSelectorWidget::ProcessNewNodeCommand(const char *className, c
       {
       name = nodeName;
       }
-    ss << name << NewNodeCount++;
+    NewNodeCount++;
+//    ss << name << NewNodeCount;
+    vtkDebugMacro("Node selector process new node, new node count is " << NewNodeCount);
+    ss << this->MRMLScene->GetUniqueNameByString(name);
     node->SetName(ss.str().c_str());
-    node->SetID(this->MRMLScene->GetUniqueIDByClass(className));
+    vtkDebugMacro("\tset the name to " << node->GetName() << endl);
+    // the ID is set in the call to AddNode
+    //node->SetID(this->MRMLScene->GetUniqueIDByClass(className));
     this->MRMLScene->AddNode(node);
     node->Delete();
     }
