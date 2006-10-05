@@ -64,17 +64,18 @@ proc QueryAtlasAddModel {} {
 
 proc QueryAtlasAddVolumes {} {
 
-
-  set fileName $::QA(directory)/mri/brain.mgz
-
+  set selectionNode [$::slicer3::ApplicationLogic GetSelectionNode]
   set volumesLogic [$::slicer3::VolumesGUI GetLogic]
   set centered 0
+
+  #
+  # add the brain image
+  #
+  set fileName $::QA(directory)/mri/brain.mgz
+
   set volumeNode [$volumesLogic AddArchetypeVolume $fileName $centered]
 
-  set selectionNode [$::slicer3::ApplicationLogic GetSelectionNode]
-  set ::QA(volumeNodeID) [$volumeNode GetID]
-  $selectionNode SetActiveVolumeID $::QA(volumeNodeID)
-  $::slicer3::ApplicationLogic PropagateVolumeSelection
+  set ::QA(brain,volumeNodeID) [$volumeNode GetID]
 
   set volumeDisplayNode [$volumeNode GetDisplayNode]
 
@@ -83,6 +84,35 @@ proc QueryAtlasAddVolumes {} {
   $volumeDisplayNode SetUpperThreshold 216
   $volumeDisplayNode SetLowerThreshold 30.99
   $volumeDisplayNode SetApplyThreshold 1
+
+
+  #
+  # add the segmentation image
+  #
+  set fileName $::QA(directory)/mri/aparc+aseg.mgz
+
+  set volumeNode [$volumesLogic AddArchetypeVolume $fileName $centered]
+  $volumeNode SetLabelMap 1
+
+  set ::QA(label,volumeNodeID) [$volumeNode GetID]
+
+  set volumeDisplayNode [$volumeNode GetDisplayNode]
+
+  $volumeDisplayNode SetApplyThreshold 0
+
+
+  #
+  # make brain be background and segmentation be label map
+  #
+  $selectionNode SetActiveVolumeID $::QA(brain,volumeNodeID)
+  $selectionNode SetActiveLabelVolumeID $::QA(label,volumeNodeID)
+  $::slicer3::ApplicationLogic PropagateVolumeSelection
+  
+  #
+  # TODO: set up the real freesurfer aparc+aseg color map
+  # - needs the labels to not go through window/level
+  #
+  EditorSetRandomLabelColormap 2500
 }
 
 #
