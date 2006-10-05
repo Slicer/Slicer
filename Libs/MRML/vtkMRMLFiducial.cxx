@@ -183,7 +183,19 @@ void vtkMRMLFiducial::ReadXMLAttributes(const char** atts)
     }
     else if (!strcmp(attName, "selected"))
     {
-        this->SetSelected(attValue);
+        std::stringstream ss;
+        ss << attValue;
+        int sel;
+        ss >> sel;
+        std::cout << "selected value = " << attValue << ", sel = " << sel << endl;
+        if (sel == 1)
+          {
+          this->SetSelected(true);
+          }
+        else
+          {
+          this->SetSelected(false);
+          }
     }
   }
 }
