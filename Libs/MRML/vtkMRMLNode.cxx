@@ -91,7 +91,8 @@ void vtkMRMLNode::Copy(vtkMRMLNode *node)
 {
   this->SetDescription(node->GetDescription());
   this->SetName(node->GetName());
-  this->SetID( node->GetID() );
+  // don't copy the ID, let it be set when the copied node is added to the scene?
+  // this->SetID( node->GetID() );
   this->SetHideFromEditors(node->HideFromEditors);
 
   this->SetScene(node->GetScene());
@@ -212,4 +213,20 @@ void vtkMRMLNode::MRMLCallback(vtkObject *caller,
   self->SetInMRMLCallbackFlag(1);
   self->ProcessMRMLEvents(caller, eid, callData);
   self->SetInMRMLCallbackFlag(0);
+}
+
+//----------------------------------------------------------------------------
+const char*  vtkMRMLNode::ConstructID(const char * str, int index)
+{
+    std::stringstream ss;
+    ss << str;
+    ss << index;
+    ss >> this->TempID;
+    return this->TempID.c_str();
+}
+
+//----------------------------------------------------------------------------
+void  vtkMRMLNode::ConstructAndSetID(const char * str, int index)
+{
+    this->SetID(this->ConstructID(str, index));
 }

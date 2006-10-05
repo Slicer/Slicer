@@ -32,6 +32,12 @@ class vtkCallbackCommand;
 
 class VTK_MRML_EXPORT vtkMRMLNode : public vtkObject
 {
+  //BTX
+  // Description:
+  // make the vtkMRMLScene a friend so that AddNodeNoNotify can call
+  // SetID, but that's the only class that is allowed to do so
+    friend class vtkMRMLScene;
+  //ETX
 public:
   static vtkMRMLNode *New();
   vtkTypeMacro(vtkMRMLNode,vtkObject);
@@ -137,7 +143,7 @@ public:
   
   // Description:
   // ID use by other nodes to reference this node in XML
-  vtkSetStringMacro(ID);
+//  vtkSetStringMacro(ID);
   vtkGetStringMacro(ID);
 
   // Description:
@@ -155,6 +161,7 @@ public:
   vtkMRMLScene* GetScene() {return this->Scene;};
   void SetScene(vtkMRMLScene* scene) {this->Scene = scene;};
 
+  
 protected:
   
   vtkMRMLNode();
@@ -193,6 +200,26 @@ protected:
 
   //BTX
   std::map< std::string, std::string > Attributes;
+  //ETX
+
+private:
+  // Description:
+  // ID use by other nodes to reference this node in XML
+  vtkSetStringMacro(ID);
+  
+  // Description:
+  // Return the string that can be used for the id given a string and an
+  // index
+  const char* ConstructID(const char * str, int index);
+
+  // Description:
+  // Set the ID from a string and an index, calls ConstructID
+  void ConstructAndSetID(const char * str, int index);
+
+  //BTX
+  // Description:
+  // Variable used to manage constructed ids
+  std::string TempID;
   //ETX
 };
 
