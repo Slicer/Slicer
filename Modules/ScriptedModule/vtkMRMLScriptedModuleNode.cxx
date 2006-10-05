@@ -81,7 +81,10 @@ void vtkMRMLScriptedModuleNode::WriteXML(ostream& of, int nIndent)
 
   vtkIndent indent(nIndent);
 
-  of << "ModuleName = '" << this->ModuleName << "' ";
+  if (this->ModuleName != NULL)
+    {
+    of << "ModuleName = '" << this->ModuleName << "' ";
+    }
 
   std::map<std::string, std::string>::iterator iter;
 
