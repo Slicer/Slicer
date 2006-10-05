@@ -89,7 +89,7 @@ void vtkGradientAnisotropicDiffusionFilterLogic::Apply()
   outVolume->Copy(inVolume);
 
   outVolume->SetName(name.c_str());
-  outVolume->SetID(id.c_str());
+  //outVolume->SetID(id.c_str());
 
   // create filter
   //vtkITKGradientAnisotropicDiffusionImageFilter* filter = vtkITKGradientAnisotropicDiffusionImageFilter::New();

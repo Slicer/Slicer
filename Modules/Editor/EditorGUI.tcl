@@ -391,7 +391,8 @@ proc EditorCreateLabelVolume {this} {
   } else {
     $labelNode SetName "[$volumeNode GetName]-label"
   }
-  $labelNode SetID ""  ;# clear ID so a new one is generated
+  # Copy won't copy the ID 
+  # $labelNode SetID ""  ;# clear ID so a new one is generated
   $labelNode SetAndObserveDisplayNodeID [$labelDisplayNode GetID]
 
   # make an image data of the same size and shape as the input volume,

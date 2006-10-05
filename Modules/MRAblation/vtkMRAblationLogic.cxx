@@ -253,7 +253,8 @@ void vtkMRAblationLogic::Apply(vtkSlicerVolumesGUI *volsGUI)
                     sprintf(name, "tmap-%d", count);
                     mapNode->SetName(name);
                     sprintf(name,"vtkMRMLScalarVolumeNode%d", (noOfTimepoints * 4 + count));
-                    mapNode->SetID(name);
+                    // ID is set in AddNode
+                    //mapNode->SetID(name);
                     mapNode->SetScene(this->GetMRMLScene());
                     this->GetMRMLScene()->AddNode(mapNode);
 
