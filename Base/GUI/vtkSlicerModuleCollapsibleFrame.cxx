@@ -139,7 +139,6 @@ void vtkSlicerModuleCollapsibleFrame::CreateWidget()
   this->Label->LabelVisibilityOn();
   this->GetLabel()->SetBinding("<Button-1>", this, "LabelSingleClickCallback");
   this->GetLabelFrame()->SetBinding("<Button-1>", this, "LabelSingleClickCallback");
-
   label = this->GetLabelIcon();
   label->SetImageToPredefinedIcon(vtkKWIcon::IconLock);
   label->SetBorderWidth(0);
@@ -165,9 +164,9 @@ void vtkSlicerModuleCollapsibleFrame::CreateWidget()
   this->Icon->SetParent(this->LabelFrame);
   this->Icon->Create();
   this->Icon->SetImageToIcon(this->IconData);
-  this->Icon->SetBalloonHelpString(
-    ks_("Frame With Label|Shrink or expand the frame"));
-  
+  this->Icon->SetBalloonHelpString(ks_("Frame With Label|Shrink or expand the frame"));
+    this->GetIcon()->SetBinding("<Button-1>", this, "LabelSingleClickCallback");
+
 
   this->Script(
     "pack %s -fill x -expand y -side top", this->ExternalMarginFrame->GetWidgetName());
