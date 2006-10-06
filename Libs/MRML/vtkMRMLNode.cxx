@@ -102,7 +102,7 @@ void vtkMRMLNode::Copy(vtkMRMLNode *node)
   this->SetDescription(node->GetDescription());
   this->SetName(node->GetName());
   // don't copy the ID, let it be set when the copied node is added to the scene?
-  // this->SetID( node->GetID() );
+  this->SetID( node->GetID() );
   this->SetHideFromEditors(node->HideFromEditors);
 
   this->SetScene(node->GetScene());
