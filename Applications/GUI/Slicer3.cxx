@@ -503,9 +503,26 @@ int Slicer3_main(int argc, char *argv[])
     //
     // - set the module path the the default if there isn't something set already
     //
+    // NB: don't want to use the registry value of the module path, because 
+    // there is only one value even if you have multiple versions of 
+    // slicer installed, you may get conflicts.
+    //
+    //
+#ifdef _WIN32
+  std::string delim(";");
+#else
+  std::string delim(":");
+#endif
+    std::string packageDir = slicerBinDir + "/lib/Slicer3/Plugins";
+
+    // TODO: want to add the bin directory as a default location so fresh
+    // builds include the module, but don't do this for now, since 
+    // many executables will be here for in release packages
+    //
+    //packageDir += delim + slicerBinDir;
+
     if ( strlen(slicerApp->GetModulePath()) == 0 )
       {
-      std::string packageDir = slicerBinDir + "/lib/Slicer3/Plugins";
       slicerApp->SetModulePath( packageDir.c_str() );
       appGUI->GetMainSlicerWindow()->GetApplicationSettingsInterface()->Update();
       }
