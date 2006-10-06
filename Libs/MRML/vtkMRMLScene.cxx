@@ -499,6 +499,7 @@ std::list< std::string > vtkMRMLScene::GetNodeClassesList()
     node = (vtkMRMLNode*)this->CurrentScene->GetItemAsObject(n);
     classes.push_back(node->GetClassName());
     }
+  classes.sort();
   classes.unique();
   return classes;
   
