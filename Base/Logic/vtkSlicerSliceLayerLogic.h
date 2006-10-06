@@ -96,8 +96,32 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLayerLogic : public vtkSlicerLo
   vtkGetObjectMacro (Threshold, vtkImageThreshold);
 
   // Description:
+  // The filter that applies the threshold to the input of the Reslice
+  // so there's a fully opaque alpha channel within the image
+  // but fully transparent outside of the image
+  vtkGetObjectMacro (ResliceThreshold, vtkImageThreshold);
+
+  // Description:
   // The add the alpha channel onto the image
   vtkGetObjectMacro (AppendComponents, vtkImageAppendComponents);
+
+  // Description:
+  // The add the alpha channel onto the image before the reslice
+  vtkGetObjectMacro (ResliceAppendComponents, vtkImageAppendComponents);
+
+  // Description:
+  // Extract the two channels after reslice for separate processing
+  vtkGetObjectMacro (ResliceExtractLuminance, vtkImageExtractComponents);
+  vtkGetObjectMacro (ResliceExtractAlpha, vtkImageExtractComponents);
+
+  // Description:
+  // Used to convert the alpha channel of the reslice output to be unsigned char
+  // so it can be blended with the image based threshold
+  vtkGetObjectMacro (ResliceAlphaCast, vtkImageCast);
+
+  // Description:
+  // combine the reslice with the threshold 
+  vtkGetObjectMacro (AlphaLogic, vtkImageLogic);
 
   // Description:
   // Get the output of the pipeline for this layer

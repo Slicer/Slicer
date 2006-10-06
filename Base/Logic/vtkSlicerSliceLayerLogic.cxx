@@ -323,8 +323,12 @@ void vtkSlicerSliceLayerLogic::UpdateTransforms()
       }
     else
       {
-      this->Threshold->ReplaceInOff();
-      this->Threshold->ReplaceOutOff();
+      // don't apply threshold - alpha channel becomes 255 everywhere
+      this->Threshold->ThresholdBetween( 1, 0 ); 
+      this->Threshold->ReplaceInOn();
+      this->Threshold->SetInValue(255);
+      this->Threshold->ReplaceOutOn();
+      this->Threshold->SetOutValue(255);
       }
 
     this->AlphaLogic->SetInput1( this->ResliceAlphaCast->GetOutput() );
