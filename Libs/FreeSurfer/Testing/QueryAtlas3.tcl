@@ -8,9 +8,9 @@ proc QueryAtlasInit { {filename ""} } {
     set ::QA(filename) $filename
   } else {
     set candidates {
-      set fileName /projects/birn/freesurfer/data/bert/surf/lh.pial
-      set fileName i:/fBIRN-AHM2006/fbph2-000670986943/surf/lh.pial
-      set fileName c:/data/fBIRN-AHM2006/fbph2-000648622547/surf/lh.pial
+      /projects/birn/freesurfer/data/bert/surf/lh.pial
+      i:/fBIRN-AHM2006/fbph2-000670986943/surf/lh.pial
+      c:/data/fBIRN-AHM2006/fbph2-000648622547/surf/lh.pial
     }
     foreach c $candidates {
       if { [file exists $c] } {
@@ -66,7 +66,7 @@ proc QueryAtlasAddVolumes {} {
 
   set selectionNode [$::slicer3::ApplicationLogic GetSelectionNode]
   set volumesLogic [$::slicer3::VolumesGUI GetLogic]
-  set centered 0
+  set centered 1
 
   #
   # add the brain image
@@ -85,6 +85,16 @@ proc QueryAtlasAddVolumes {} {
   $volumeDisplayNode SetLowerThreshold 30.99
   $volumeDisplayNode SetApplyThreshold 1
 
+  #
+  # add the function image
+  #
+  set fileName [file dirname $::QA(directory)]/sirp-hp65-stc-to7-gam.feat/stats/zstat8.nii
+
+  set volumeNode [$volumesLogic AddArchetypeVolume $fileName $centered]
+
+  set ::QA(functional,volumeNodeID) [$volumeNode GetID]
+  set volumeDisplayNode [$volumeNode GetDisplayNode]
+
 
   #
   # add the segmentation image
@@ -97,9 +107,6 @@ proc QueryAtlasAddVolumes {} {
   set ::QA(label,volumeNodeID) [$volumeNode GetID]
 
   set volumeDisplayNode [$volumeNode GetDisplayNode]
-
-  $volumeDisplayNode SetApplyThreshold 0
-
 
   #
   # make brain be background and segmentation be label map
