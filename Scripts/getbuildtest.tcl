@@ -31,13 +31,17 @@ proc Usage { {msg ""} } {
     set msg "$msg\n   -t --test-type : CTest test target"
     set msg "$msg\n   --release : compile with optimization flags"
     set msg "$msg\n   -u --update : does a cvs/svn update on each lib"
+    set msg "$msg\n   --version-patch : set the patch string for the build (used by installer)"
+    set msg "$msg\n                   : default version-patch is the current date"
+    set msg "$msg\n   --tag : same as version-patch"
     puts stderr $msg
 }
 
-set GETBUILDTEST(clean) "false"
-set GETBUILDTEST(update) ""
-set GETBUILDTEST(release) ""
-set GETBUILDTEST(test-type) "Experimental"
+set ::GETBUILDTEST(clean) "false"
+set ::GETBUILDTEST(update) ""
+set ::GETBUILDTEST(release) ""
+set ::GETBUILDTEST(test-type) "Experimental"
+set ::GETBUILDTEST(version-patch) ""
 set strippedargs ""
 set argc [llength $argv]
 for {set i 0} {$i < $argc} {incr i} {
@@ -45,14 +49,14 @@ for {set i 0} {$i < $argc} {incr i} {
     switch -glob -- $a {
         "--clean" -
         "-f" {
-            set GETBUILDTEST(clean) "true"
+            set ::GETBUILDTEST(clean) "true"
         }
         "--update" -
         "-u" {
-            set GETBUILDTEST(update) "--update"
+            set ::GETBUILDTEST(update) "--update"
         }
         "--release" {
-            set GETBUILDTEST(release) "--release"
+            set ::GETBUILDTEST(release) "--release"
         }
              "-t" -
         "--test-type" {
@@ -60,7 +64,16 @@ for {set i 0} {$i < $argc} {incr i} {
                 if { $i == $argc } {
                     Usage "Missing test-type argument"
                 } else {
-                    set GETBUILDTEST(test-type) [lindex $argv $i]
+                    set ::GETBUILDTEST(test-type) [lindex $argv $i]
+                }
+        }
+        "--tag" -
+        "--version-patch" {
+                incr i
+                if { $i == $argc } {
+                    Usage "Missing version-patch argument"
+                } else {
+                    set ::GETBUILDTEST(version-patch) [lindex $argv $i]
                 }
         }
         "--help" -
@@ -165,7 +178,7 @@ switch $tcl_platform(os) {
 # Deletes both SLICER_LIB and SLICER_BUILD if clean option given
 #
 # tcl file delete is broken on Darwin, so use rm -rf instead
-if { $GETBUILDTEST(clean) } {
+if { $::GETBUILDTEST(clean) } {
     puts "Deleting slicer lib files..."
     if { $isDarwin } {
         runcmd rm -rf $SLICER_LIB
@@ -218,6 +231,10 @@ if { $::GETBUILDTEST(update) != "" } {
 } 
 eval runcmd $cmd
 
+if { $::GETBUILDTEST(version-patch) == "" } {
+  # TODO: add build type (win32, etc) here...
+  set ::GETBUILDTEST(version-patch) [clock format [clock seconds] -format %Y-%m-%d]
+}
 
 # build the slicer
 cd $::SLICER_BUILD
@@ -226,6 +243,7 @@ runcmd $::CMAKE \
         -DITK_DIR:FILEPATH=$ITK_BINARY_PATH \
         -DKWWidgets_DIR:FILEPATH=$SLICER_LIB/KWWidgets-build \
         -DCMAKE_BUILD_TYPE=$::VTK_BUILD_TYPE \
+        -DSlicer3_VERSION_PATCH=$::GETBUILDTEST(version-patch) \
         $SLICER_HOME
 
 if { $isWindows } {
