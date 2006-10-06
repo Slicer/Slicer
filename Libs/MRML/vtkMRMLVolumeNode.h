@@ -177,6 +177,7 @@ protected:
   char *DisplayNodeID;
 
   vtkImageData               *ImageData;
+  vtkMRMLVolumeDisplayNode   *VolumeDisplayNode;
 
 };
 

@@ -91,6 +91,8 @@ protected:
   vtkSetStringMacro(TransformNodeID);
   char *TransformNodeID;
 
+  vtkMRMLTransformNode* TransformNode;
+
 };
 
 #endif

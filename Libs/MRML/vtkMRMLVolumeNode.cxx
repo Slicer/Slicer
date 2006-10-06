@@ -28,7 +28,6 @@ vtkMRMLVolumeNode::vtkMRMLVolumeNode()
 {
   this->StorageNodeID = NULL;
   this->DisplayNodeID = NULL;
-
   int i,j;
 
   for(i=0; i<3; i++) 
@@ -50,6 +49,8 @@ vtkMRMLVolumeNode::vtkMRMLVolumeNode()
     }
 
   this->ImageData = NULL;
+  this->VolumeDisplayNode = NULL;
+
 }
 
 //----------------------------------------------------------------------------
@@ -482,20 +483,13 @@ const char* vtkMRMLVolumeNode::ComputeScanOrderFromIJKToRAS(vtkMatrix4x4 *ijkToR
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeNode::SetAndObserveDisplayNodeID(const char *displayNodeID)
 {
-  if (this->DisplayNodeID != NULL)
-    {
-    vtkMRMLVolumeDisplayNode *dnode = this->GetDisplayNode();
-    if (dnode != NULL)
-      {
-      dnode->RemoveObservers ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
-      }
-    }
+  vtkSetAndObserveMRMLObjectMacro(this->VolumeDisplayNode, NULL);
+
   this->SetDisplayNodeID(displayNodeID);
+
   vtkMRMLVolumeDisplayNode *dnode = this->GetDisplayNode();
-  if (dnode != NULL) 
-    {
-    dnode->AddObserver ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
-    }
+
+  vtkSetAndObserveMRMLObjectMacro(this->VolumeDisplayNode, dnode);
 }
 
 //----------------------------------------------------------------------------
@@ -511,6 +505,7 @@ void vtkMRMLVolumeNode::SetAndObserveImageData(vtkImageData *ImageData)
     {
     ImageData->AddObserver ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
     }
+  //vtkSetAndObserveMRMLObjectMacro(this->ImageData, ImageData);
 }
 
 

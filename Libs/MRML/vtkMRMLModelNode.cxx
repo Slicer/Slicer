@@ -54,6 +54,7 @@ vtkMRMLModelNode::vtkMRMLModelNode()
 {
   this->StorageNodeID = NULL;
   this->DisplayNodeID = NULL;
+  this->ModelDisplayNode = NULL;
   PolyData = NULL;
 }
 
@@ -210,35 +211,20 @@ vtkMRMLModelDisplayNode* vtkMRMLModelNode::GetDisplayNode()
 //----------------------------------------------------------------------------
 void vtkMRMLModelNode::SetAndObserveDisplayNodeID(const char *displayNodeID)
 {
-  if (this->DisplayNodeID != NULL)
-    {
-    vtkMRMLModelDisplayNode *dnode = this->GetDisplayNode();
-    if (dnode != NULL)
-      {
-      dnode->RemoveObservers ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
-      }
-    }
+  vtkSetAndObserveMRMLObjectMacro(this->ModelDisplayNode, NULL);
+
   this->SetDisplayNodeID(displayNodeID);
+
   vtkMRMLModelDisplayNode *dnode = this->GetDisplayNode();
-  if (dnode != NULL) 
-    {
-    dnode->AddObserver ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
-    }
+
+  vtkSetAndObserveMRMLObjectMacro(this->ModelDisplayNode, dnode);
+
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLModelNode::SetAndObservePolyData(vtkPolyData *PolyData)
+void vtkMRMLModelNode::SetAndObservePolyData(vtkPolyData *polyData)
 {
-  if (this->PolyData != NULL)
-    {
-    this->PolyData->RemoveObservers ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
-    }
-
-  this->SetPolyData(PolyData);
-  if (PolyData != NULL)
-    {
-    PolyData->AddObserver ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
-    }
+  vtkSetAndObserveMRMLObjectMacro(this->PolyData, polyData);
 }
 
 

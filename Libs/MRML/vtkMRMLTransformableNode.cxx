@@ -18,6 +18,7 @@ Version:   $Revision: 1.14 $
 
 #include "vtkObjectFactory.h"
 #include "vtkCallbackCommand.h"
+#include "vtkIntArray.h"
 
 #include "vtkMRMLTransformableNode.h"
 
@@ -28,8 +29,11 @@ Version:   $Revision: 1.14 $
 //----------------------------------------------------------------------------
 vtkMRMLTransformableNode::vtkMRMLTransformableNode()
 {
-  this->TransformNodeID = NULL;
   this->HideFromEditors = 0;
+
+  this->TransformNodeID = NULL;
+  this->TransformNode = NULL;
+
 }
 
 //----------------------------------------------------------------------------
@@ -106,21 +110,16 @@ vtkMRMLTransformNode* vtkMRMLTransformableNode::GetParentTransformNode()
 //----------------------------------------------------------------------------
 void vtkMRMLTransformableNode::SetAndObserveTransformNodeID(const char *transformNodeID)
 {
-  if (this->TransformNodeID != NULL)
-    {
-    vtkMRMLTransformNode *tnode = this->GetParentTransformNode();
-    if (tnode != NULL)
-      {
-      tnode->RemoveObservers ( vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand );
-      this->SetTransformNodeID(NULL);
-      }
-    }
+  vtkSetAndObserveMRMLObjectMacro(this->TransformNode, NULL);
+
   this->SetTransformNodeID(transformNodeID);
+
   vtkMRMLTransformNode *tnode = this->GetParentTransformNode();
-  if (tnode != NULL) 
-    {
-      tnode->AddObserver ( vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand );
-    }
+
+  vtkIntArray *events = vtkIntArray::New();
+  events->InsertNextValue(vtkMRMLTransformableNode::TransformModifiedEvent);
+  vtkSetAndObserveMRMLObjectEventsMacro(this->TransformNode, tnode, events);
+  events->Delete();
 }
 
 

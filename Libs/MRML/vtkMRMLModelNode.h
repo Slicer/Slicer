@@ -130,6 +130,8 @@ protected:
 
   char *StorageNodeID;
   char *DisplayNodeID;
+
+  vtkMRMLModelDisplayNode *ModelDisplayNode;
 };
 
 #endif

@@ -26,6 +26,20 @@
 #include "vtkObject.h"
 
 #include "vtkMRML.h"
+#include "vtkObserverManager.h"
+
+#ifndef vtkSetMRMLObjectMacro
+#define vtkSetMRMLObjectMacro(node,value)  {this->MRMLObserverManager->SetObject ( vtkObjectPointer( &(node)), (value) );};
+#endif
+
+#ifndef vtkSetAndObserveMRMLObjectMacro
+#define vtkSetAndObserveMRMLObjectMacro(node,value)  {this->MRMLObserverManager->SetAndObserveObject ( vtkObjectPointer( &(node)), (value) );};
+#endif
+
+#ifndef vtkSetAndObserveMRMLObjectEventsMacro
+#define vtkSetAndObserveMRMLObjectEventsMacro(node,value,events)  {this->MRMLObserverManager->SetAndObserveObjectEvents ( vtkObjectPointer( &(node)), (value), (events));};
+#endif
+
 
 class vtkMRMLScene;
 class vtkCallbackCommand;
@@ -202,6 +216,8 @@ protected:
   std::map< std::string, std::string > Attributes;
   //ETX
 
+  vtkObserverManager *MRMLObserverManager;
+
 private:
   // Description:
   // ID use by other nodes to reference this node in XML
@@ -221,6 +237,7 @@ private:
   // Variable used to manage constructed ids
   std::string TempID;
   //ETX
+
 };
 
 #endif

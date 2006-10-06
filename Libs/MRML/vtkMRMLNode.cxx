@@ -61,6 +61,11 @@ vtkMRMLNode::vtkMRMLNode()
   this->ModifiedSinceRead = false;
   this->SaveWithScene = true;
 
+  this->MRMLObserverManager = vtkObserverManager::New();
+  this->MRMLObserverManager->GetCallbackCommand()->SetClientData( reinterpret_cast<void *> (this) );
+  this->MRMLObserverManager->GetCallbackCommand()->SetCallback(vtkMRMLNode::MRMLCallback);
+
+
 }
 
 //----------------------------------------------------------------------------
@@ -78,12 +83,17 @@ vtkMRMLNode::~vtkMRMLNode()
     {
     delete [] this->ID;
     }
+  if (this->MRMLObserverManager)
+    {
+    this->MRMLObserverManager->Delete();
+    }
   // unregister and set null pointers.
   if ( this->MRMLCallbackCommand )
     {
     this->MRMLCallbackCommand->Delete ( );
     this->MRMLCallbackCommand = NULL;
     }
+
 }
 
 //----------------------------------------------------------------------------
