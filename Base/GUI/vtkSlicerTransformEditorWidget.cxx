@@ -12,6 +12,7 @@
 
 #include "vtkSlicerNodeSelectorWidget.h"
 #include "vtkKWMatrix4x4.h"
+#include "vtkTransform.h"
 
 #include "vtkMRMLLinearTransformNode.h"
 
@@ -38,6 +39,11 @@ vtkSlicerTransformEditorWidget::vtkSlicerTransformEditorWidget ( )
   this->RotationCoordinateSystemMenu = NULL;
 
   this->ProcessingCallback = false;
+
+  this->RotationAxis = -1;
+
+  this->RotationMatrix = vtkMatrix4x4::New();
+
 }
 
 
@@ -115,6 +121,11 @@ vtkSlicerTransformEditorWidget::~vtkSlicerTransformEditorWidget ( )
     this->RotationCoordinateSystemMenu = NULL;
     }
 
+  if (this->RotationMatrix)
+    {
+    this->RotationMatrix->Delete();
+    }
+
   this->SetMRMLScene ( NULL );
 }
 
@@ -166,6 +177,8 @@ void vtkSlicerTransformEditorWidget::ProcessWidgetEvents ( vtkObject *caller,
 
     this->MatrixWidget->GetMatrix4x4()->Identity();
     this->MatrixWidget->UpdateWidget();
+    this->RotationAxis = -1;
+    this->ResetRotationSliders(this->RotationAxis);
     }
   else if ( this->InvertButton == vtkKWPushButton::SafeDownCast(caller) && event == vtkKWPushButton::InvokedEvent )
     {
@@ -177,17 +190,22 @@ void vtkSlicerTransformEditorWidget::ProcessWidgetEvents ( vtkObject *caller,
 
     this->MatrixWidget->GetMatrix4x4()->Invert();
     this->MatrixWidget->UpdateWidget();
+    this->RotationAxis = -1;  
+    this->ResetRotationSliders(this->RotationAxis);
     }
   else if (this->RotationCoordinateSystemMenu == vtkKWMenuButtonWithLabel::SafeDownCast(caller))
     {
     vtkKWMenuButton *mb = this->RotationCoordinateSystemMenu->GetWidget();
     if ( !strcmp (mb->GetValue(), "Global") )   
       {
-        // TODO
+      this->RotationAxis = -1;
+      this->ResetRotationSliders(this->RotationAxis);
       }
     else if ( !strcmp (mb->GetValue(), "Local") )   
       {
-        // TODO
+      this->RotationAxis = -1;  
+      this->ResetRotationSliders(this->RotationAxis);
+
       }
     }
 
@@ -324,7 +342,7 @@ void vtkSlicerTransformEditorWidget::CreateWidget ( )
     rotateFrame->SetParent ( transformFrame->GetFrame() );
     rotateFrame->Create ( );
     rotateFrame->SetLabelText ("Rotation");
-    rotateFrame->CollapseFrame ( );
+    //rotateFrame->CollapseFrame ( );
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                    rotateFrame->GetWidgetName() );
     
@@ -334,10 +352,10 @@ void vtkSlicerTransformEditorWidget::CreateWidget ( )
     this->RotationScaleLR->SetLabelText("LR");
     this->RotationScaleLR->SetWidth ( 20 );
     this->RotationScaleLR->SetRange(-200, 200);
-    this->RotationScaleLR->SetStartCommand(this, "RotationChangingCallback");
-    this->RotationScaleLR->SetCommand(this, "RotationChangingCallback");
-    this->RotationScaleLR->SetEndCommand(this, "RotationChangedCallback");
-    this->RotationScaleLR->SetEntryCommand(this, "RotationChangedCallback");
+    this->RotationScaleLR->SetStartCommand(this, "RotationLRChangingCallback");
+    this->RotationScaleLR->SetCommand(this, "RotationLRChangingCallback");
+    this->RotationScaleLR->SetEndCommand(this, "RotationLRChangedCallback");
+    this->RotationScaleLR->SetEntryCommand(this, "RotationLRChangedCallback");
     this->Script("pack %s -side top -anchor e -padx 20 -pady 10", 
                   this->RotationScaleLR->GetWidgetName());
 
@@ -347,10 +365,10 @@ void vtkSlicerTransformEditorWidget::CreateWidget ( )
     this->RotationScalePA->SetRange(-200, 200);
     this->RotationScalePA->SetLabelText("PA");
     this->RotationScalePA->SetWidth ( 20 );
-    this->RotationScalePA->SetStartCommand(this, "RotationChangingCallback");
-    this->RotationScalePA->SetCommand(this, "RotationChangingCallback");
-    this->RotationScalePA->SetEndCommand(this, "RotationChangedCallback");
-    this->RotationScalePA->SetEntryCommand(this, "RotationChangedCallback");
+    this->RotationScalePA->SetStartCommand(this, "RotationPAChangingCallback");
+    this->RotationScalePA->SetCommand(this, "RotationPAChangingCallback");
+    this->RotationScalePA->SetEndCommand(this, "RotationPAChangedCallback");
+    this->RotationScalePA->SetEntryCommand(this, "RotationPAChangedCallback");
     this->Script("pack %s -side top -anchor e -padx 20 -pady 10", 
                   this->RotationScalePA->GetWidgetName());
 
@@ -360,23 +378,23 @@ void vtkSlicerTransformEditorWidget::CreateWidget ( )
     this->RotationScaleIS->SetRange(-200, 200);
     this->RotationScaleIS->SetLabelText("IS");
     this->RotationScaleIS->SetWidth ( 20 );
-    this->RotationScaleIS->SetStartCommand(this, "RotationChangingCallback");
-    this->RotationScaleIS->SetCommand(this, "RotationChangingCallback");
-    this->RotationScaleIS->SetEndCommand(this, "RotationChangedCallback");
-    this->RotationScaleIS->SetEntryCommand(this, "RotationChangedCallback");
+    this->RotationScaleIS->SetStartCommand(this, "RotationISChangingCallback");
+    this->RotationScaleIS->SetCommand(this, "RotationISChangingCallback");
+    this->RotationScaleIS->SetEndCommand(this, "RotationISChangedCallback");
+    this->RotationScaleIS->SetEntryCommand(this, "RotationISChangedCallback");
     this->Script("pack %s -side top -anchor e -padx 20 -pady 10", 
                   this->RotationScaleIS->GetWidgetName());
 
     this->RotationCoordinateSystemMenu = vtkKWMenuButtonWithLabel::New();
-    this->RotationCoordinateSystemMenu->SetParent(rotateFrame->GetFrame());
+    this->RotationCoordinateSystemMenu->SetParent(transformFrame->GetFrame());
     this->RotationCoordinateSystemMenu->Create();
-    this->RotationCoordinateSystemMenu->SetLabelWidth(18);
-    this->RotationCoordinateSystemMenu->SetLabelText("Rotation Reference:");
+    this->RotationCoordinateSystemMenu->SetLabelWidth(16);
+    this->RotationCoordinateSystemMenu->SetLabelText("Coordinate Reference:");
     this->RotationCoordinateSystemMenu->GetWidget()->GetMenu()->AddRadioButton ( "Global");
     this->RotationCoordinateSystemMenu->GetWidget()->GetMenu()->AddRadioButton ( "Local");
     this->RotationCoordinateSystemMenu->GetWidget()->SetValue ( "Global" );
     this->Script(
-                 "pack %s -side top -anchor nw -expand n -fill x -padx 2 -pady 2", 
+                 "pack %s -side left -anchor e -expand n -fill x -padx 5 -pady 10", 
                  this->RotationCoordinateSystemMenu->GetWidgetName());
 
 
@@ -387,7 +405,7 @@ void vtkSlicerTransformEditorWidget::CreateWidget ( )
     this->IdentityButton->Create();
     this->IdentityButton->SetText("Identity");
     this->IdentityButton->SetWidth ( 8 );
-    this->Script("pack %s -side left -anchor e -padx 20 -pady 10", 
+    this->Script("pack %s -side left -anchor e -padx 5 -pady 10", 
                   this->IdentityButton->GetWidgetName());
 
     this->InvertButton = vtkKWPushButton::New();
@@ -395,7 +413,7 @@ void vtkSlicerTransformEditorWidget::CreateWidget ( )
     this->InvertButton->Create();
     this->InvertButton->SetText("Invert");
     this->InvertButton->SetWidth ( 8 );
-    this->Script("pack %s -side left -anchor e -padx 20 -pady 10", 
+    this->Script("pack %s -side left -anchor e -padx 5 -pady 10", 
                   this->InvertButton->GetWidgetName());
 
     this->TransformEditSelectorWidget->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, 
@@ -417,20 +435,30 @@ void vtkSlicerTransformEditorWidget::TransformChangedCallback(double)
     {
     return;
     }
+  this->ProcessingCallback = true;
 
-  vtkMRMLLinearTransformNode *node = vtkMRMLLinearTransformNode::SafeDownCast(this->TransformEditSelectorWidget->GetSelected());
-  if (node != NULL)
-    {
-    this->ProcessingCallback = true;
-    // will update when the node value changes
-    vtkMatrix4x4 *matrix = node->GetMatrixTransformToParent();
-    matrix->SetElement(0,3, this->TranslationScaleLR->GetValue());
-    matrix->SetElement(1,3, this->TranslationScalePA->GetValue());
-    matrix->SetElement(2,3, this->TranslationScaleIS->GetValue());
-    this->MatrixWidget->EnabledOn();
-    this->MatrixWidget->UpdateWidget();
-    this->ProcessingCallback = false;
-    }
+  vtkTransform* transform = this->GetCurrentTransformInCoordinateSystem();
+  // will update when the node value changes
+  vtkMatrix4x4 *matrix = transform->GetMatrix();
+  double transLR = this->TranslationScaleLR->GetValue() - matrix->GetElement(0,3);
+  double transPA = this->TranslationScalePA->GetValue() - matrix->GetElement(1,3);
+  double transIS = this->TranslationScaleIS->GetValue() - matrix->GetElement(2,3);
+
+  transform->Translate(transLR, transPA, transIS);
+
+  matrix = transform->GetMatrix();
+
+  this->MatrixWidget->EnabledOn();
+  this->MatrixWidget->GetMatrix4x4()->DeepCopy(matrix);
+
+  this->MatrixWidget->UpdateWidget();
+
+  transform->Delete();
+
+  this->RotationAxis = -1;
+  this->ResetRotationSliders(this->RotationAxis);
+
+  this->ProcessingCallback = false;
 }
 
 void vtkSlicerTransformEditorWidget::TransformChangingCallback(double val)
@@ -448,30 +476,85 @@ void vtkSlicerTransformEditorWidget::TransformChangingCallback(double val)
     }
 }
 
+////----------------------------
+void vtkSlicerTransformEditorWidget::RotationLRChangedCallback(double value)
+{
+ this->RotationChangedCallback(0, value);
+}
 
-void vtkSlicerTransformEditorWidget::RotationChangedCallback(double)
+void vtkSlicerTransformEditorWidget::RotationLRChangingCallback(double value)
+{
+ this->RotationChangingCallback(0, value);
+}
+
+void vtkSlicerTransformEditorWidget::RotationPAChangedCallback(double value)
+{
+ this->RotationChangedCallback(1, value);
+}
+
+void vtkSlicerTransformEditorWidget::RotationPAChangingCallback(double value)
+{
+ this->RotationChangingCallback(1, value);
+}
+
+void vtkSlicerTransformEditorWidget::RotationISChangedCallback(double value)
+{
+ this->RotationChangedCallback(2, value);
+}
+
+void vtkSlicerTransformEditorWidget::RotationISChangingCallback(double value)
+{
+ this->RotationChangingCallback(2, value);
+}
+
+///----
+void vtkSlicerTransformEditorWidget::RotationChangedCallback(int axis, double value)
 {
  if (this->ProcessingCallback)
     {
     return;
     }
+  this->ProcessingCallback = true;
 
-  vtkMRMLLinearTransformNode *node = vtkMRMLLinearTransformNode::SafeDownCast(this->TransformEditSelectorWidget->GetSelected());
-  if (node != NULL)
+  this->ResetRotationSliders(axis);
+
+  vtkTransform* transform = this->GetCurrentTransformInCoordinateSystem();
+
+
+  if (axis != this->RotationAxis) 
     {
-    this->ProcessingCallback = true;
-    // will update when the node value changes
-    vtkMatrix4x4 *matrix = node->GetMatrixTransformToParent();
-    matrix->SetElement(0,3, this->TranslationScaleLR->GetValue());
-    matrix->SetElement(1,3, this->TranslationScalePA->GetValue());
-    matrix->SetElement(2,3, this->TranslationScaleIS->GetValue());
-    this->MatrixWidget->EnabledOn();
-    this->MatrixWidget->UpdateWidget();
-    this->ProcessingCallback = false;
+    this->RotationAxis = axis;
+    transform->GetMatrix(this->RotationMatrix);
     }
+
+  transform->SetMatrix(this->RotationMatrix);
+  if (axis == 0) 
+    {
+    transform->RotateX(value);
+    }
+  else if (axis == 1) 
+    {
+    transform->RotateY(value);
+    }
+  else if (axis == 2) 
+    {
+    transform->RotateZ(value);
+    }
+
+  vtkMatrix4x4 *matrix = transform->GetMatrix();
+
+  this->MatrixWidget->EnabledOn();
+  this->MatrixWidget->GetMatrix4x4()->DeepCopy(matrix);
+
+  this->MatrixWidget->UpdateWidget();
+
+  transform->Delete();
+
+  this->ProcessingCallback = false;
 }
 
-void vtkSlicerTransformEditorWidget::RotationChangingCallback(double val)
+
+void vtkSlicerTransformEditorWidget::RotationChangingCallback(int axis, double val)
 {
   if (this->ProcessingCallback)
     {
@@ -482,11 +565,11 @@ void vtkSlicerTransformEditorWidget::RotationChangingCallback(double val)
   if (node != NULL)
     {
     this->MRMLScene->SaveStateForUndo(node);
-    this->TransformChangedCallback(val);
+    this->RotationChangedCallback(axis, val);
     }
 }
 
-
+///----------------------------------------------
 void vtkSlicerTransformEditorWidget::UpdateTranslationSliders()
 {
    if (this->MatrixWidget->GetMatrix4x4() != NULL)
@@ -497,12 +580,57 @@ void vtkSlicerTransformEditorWidget::UpdateTranslationSliders()
       }
 }
 
-void vtkSlicerTransformEditorWidget::ResetRotationSliders()
+void vtkSlicerTransformEditorWidget::ResetRotationSliders(int axis)
 {
-   if (this->MatrixWidget->GetMatrix4x4() != NULL)
+  if (axis == -1)
+    {
+    this->RotationScaleLR->SetValue(0);
+    this->RotationScalePA->SetValue(0);
+    this->RotationScaleIS->SetValue(0);
+    }
+  if (axis == 0)
+    {
+    this->RotationScalePA->SetValue(0);
+    this->RotationScaleIS->SetValue(0);
+    }
+  if (axis == 1)
+    {
+    this->RotationScaleLR->SetValue(0);
+    this->RotationScaleIS->SetValue(0);
+    }
+  if (axis == 2)
+    {
+    this->RotationScaleLR->SetValue(0);
+    this->RotationScalePA->SetValue(0);
+    }
+
+}
+
+vtkTransform* 
+vtkSlicerTransformEditorWidget::GetCurrentTransformInCoordinateSystem()
+{
+  vtkTransform* transform = vtkTransform::New();
+  transform->Identity();
+
+  vtkMRMLLinearTransformNode *node = vtkMRMLLinearTransformNode::SafeDownCast(this->TransformEditSelectorWidget->GetSelected());
+  if (node != NULL)
+    {
+    vtkMatrix4x4 *matrix = node->GetMatrixTransformToParent();
+
+    if (matrix)
       {
-      this->RotationScaleLR->SetValue(0);
-      this->RotationScalePA->SetValue(0);
-      this->RotationScaleIS->SetValue(0);
+      transform->SetMatrix(matrix);
       }
+
+    vtkKWMenuButton *mb = this->RotationCoordinateSystemMenu->GetWidget();
+    if ( !strcmp (mb->GetValue(), "Global") )   
+      {
+        transform->PostMultiply();
+      }
+    else if ( !strcmp (mb->GetValue(), "Local") )   
+      {
+        transform->PreMultiply();       
+      }
+    }
+  return transform;
 }

@@ -32,6 +32,9 @@ class vtkKWMatrix4x4;
 class vtkKWScaleWithEntry;
 class vtkKWMenuButtonWithLabel;
 
+class vtkTransform;
+class vtkMatrix4x4;
+
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerTransformEditorWidget : public vtkSlicerWidget
 {
   
@@ -54,8 +57,17 @@ public:
   
   void TransformChangedCallback(double);
   void TransformChangingCallback(double);
-  void RotationChangedCallback(double);
-  void RotationChangingCallback(double);
+
+  void RotationLRChangedCallback(double);
+  void RotationLRChangingCallback(double);
+  void RotationPAChangedCallback(double);
+  void RotationPAChangingCallback(double);
+  void RotationISChangedCallback(double);
+  void RotationISChangingCallback(double);
+
+  void RotationChangedCallback(int axis, double value);
+  void RotationChangingCallback(int axis, double value);
+
 
  protected:
   vtkSlicerTransformEditorWidget();
@@ -66,7 +78,9 @@ public:
   virtual void CreateWidget();
 
   void UpdateTranslationSliders();
-  void ResetRotationSliders();
+  void ResetRotationSliders(int axis);
+
+  vtkTransform* GetCurrentTransformInCoordinateSystem();
 
   vtkSlicerNodeSelectorWidget* TransformEditSelectorWidget;
   vtkKWMatrix4x4*              MatrixWidget;
@@ -83,6 +97,10 @@ public:
   vtkKWMenuButtonWithLabel* RotationCoordinateSystemMenu;
 
   bool ProcessingCallback;
+
+  int               RotationAxis;
+  vtkMatrix4x4*     RotationMatrix;
+
 
 private:
 
