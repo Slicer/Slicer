@@ -88,6 +88,11 @@ void vtkSlicerMRMLTreeWidget::ProcessWidgetEvents ( vtkObject *caller,
     {
     // Selection changed
 
+    vtksys_stl::string selected(
+    this->TreeWidget->GetWidget()->GetSelection());
+
+    //std::cout << "Selected = " << selected << "\n";
+
     if (event == vtkKWTree::SelectionChangedEvent)
       {
       // For example, one could populate the node inspector
@@ -118,6 +123,8 @@ void vtkSlicerMRMLTreeWidget::ProcessWidgetEvents ( vtkObject *caller,
       char command[125];
       
       vtkMRMLNode *node = this->GetMRMLScene()->GetNodeByID((const char *)callData);
+
+      this->TreeWidget->GetWidget()->SelectNode(node->GetID());
 
       if ( node == NULL || (node != NULL && node->IsA("vtkMRMLTransformNode")) )
         {
@@ -167,7 +174,7 @@ void vtkSlicerMRMLTreeWidget::ProcessWidgetEvents ( vtkObject *caller,
 //---------------------------------------------------------------------------
 void vtkSlicerMRMLTreeWidget::DeleteNodeCallback(const char *id)
 {
-  cout << "I want to delete MRML node " << id << endl;
+  // cout << "I want to delete MRML node " << id << endl;
   // delete node, then repopulate tree
   vtkMRMLNode *node = this->GetMRMLScene()->GetNodeByID(id);
   if (node != NULL)
@@ -214,7 +221,7 @@ void vtkSlicerMRMLTreeWidget::InsertTransformNodeCallback(const char *id)
 //---------------------------------------------------------------------------
 void vtkSlicerMRMLTreeWidget::CutNodeCallback(const char *id)
 {
-  cout << "I want to delete MRML node " << id << endl;
+  //cout << "I want to delete MRML node " << id << endl;
   vtkMRMLNode *node = this->GetMRMLScene()->GetNodeByID(id);
   vtkMRMLTransformableNode *tnode = vtkMRMLTransformableNode::SafeDownCast(node);
   this->SetCutNode(tnode );
@@ -300,6 +307,7 @@ void vtkSlicerMRMLTreeWidget::CreateWidget ( )
 
   vtkKWTree *tree = this->TreeWidget->GetWidget();
   tree->SelectionFillOn();
+  //tree->SetSelectionModeToMultiple ();
   tree->SetSelectionModeToSingle();
   tree->SetHeight(12);
 
