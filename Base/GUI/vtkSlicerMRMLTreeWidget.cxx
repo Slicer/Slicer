@@ -124,7 +124,10 @@ void vtkSlicerMRMLTreeWidget::ProcessWidgetEvents ( vtkObject *caller,
       
       vtkMRMLNode *node = this->GetMRMLScene()->GetNodeByID((const char *)callData);
 
-      this->TreeWidget->GetWidget()->SelectNode(node->GetID());
+      if (node != NULL)
+        {
+        this->TreeWidget->GetWidget()->SelectNode(node->GetID());
+        }
 
       if ( node == NULL || (node != NULL && node->IsA("vtkMRMLTransformNode")) )
         {
