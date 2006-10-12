@@ -224,7 +224,16 @@ void vtkMRMLModelNode::SetAndObserveDisplayNodeID(const char *displayNodeID)
 //----------------------------------------------------------------------------
 void vtkMRMLModelNode::SetAndObservePolyData(vtkPolyData *polyData)
 {
-  vtkSetAndObserveMRMLObjectMacro(this->PolyData, polyData);
+if (this->PolyData != NULL)
+    {
+    this->PolyData->RemoveObservers ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+    }
+
+  this->SetPolyData(PolyData);
+  if (PolyData != NULL)
+    {
+    PolyData->AddObserver ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+    }
 }
 
 
