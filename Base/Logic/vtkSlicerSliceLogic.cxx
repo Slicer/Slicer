@@ -567,6 +567,8 @@ void vtkSlicerSliceLogic::CreateSliceModel()
     ss << this->Name << " Volume Slice";
     ss.getline(name,256);
     this->SliceModelNode->SetName(name);
+
+
     this->SliceModelNode->SetAndObserveDisplayNodeID(this->SliceModelDisplayNode->GetID());
   }
 
@@ -582,6 +584,27 @@ void vtkSlicerSliceLogic::CreateSliceModel()
     //this->SetAndObserveMRMLSceneEvents(this->GetMRMLScene(), events);
     events->Delete();
     }
+
+  // update the description to refer back to the slice and composite nodes
+  // TODO: this doesn't need to be done unless the ID change, but it needs
+  // to happen after they have been set, so do it every event for now
+  if ( this->SliceModelNode != NULL ) {
+    char description[256];
+    std::stringstream ssD;
+    vtkMRMLSliceNode *sliceNode = this->GetSliceNode();
+    if ( sliceNode )
+      {
+      ssD << " SliceID " << sliceNode->GetID();
+      }
+    vtkMRMLSliceCompositeNode *compositeNode = this->GetSliceCompositeNode();
+    if ( compositeNode )
+      {
+      ssD << " CompositeID " << compositeNode->GetID();
+      }
+
+    ssD.getline(description,256);
+    this->SliceModelNode->SetDescription(description);
+  }
 }
 
 // adjust the node's field of view to match the extent of current background volume

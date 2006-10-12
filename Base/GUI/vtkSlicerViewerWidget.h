@@ -82,6 +82,10 @@ public:
   // Description:
   // return the current model actor corresponding to a give MRML ID
   vtkActor *GetActorByID (const char *id);
+
+  // Description:
+  // return the current node ID corresponding to a given vtkActor
+  const char *GetIDByActor (vtkActor *actor);
   
   // Description:
   // return the current actor corresponding to a give MRML ID and fiducial index

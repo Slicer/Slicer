@@ -954,6 +954,28 @@ vtkSlicerViewerWidget::GetActorByID (const char *id)
 
 //---------------------------------------------------------------------------
   // Description:
+  // return the ID for the given actor 
+const char *
+vtkSlicerViewerWidget::GetIDByActor (vtkActor *actor)
+{
+  if ( !actor )
+    {
+    return (NULL);
+    }
+
+  std::map<const char *, vtkActor *>::iterator iter;
+  for(iter=this->DisplayedModels.begin(); iter != this->DisplayedModels.end(); iter++) 
+    {
+    if ( iter->second && ( iter->second == actor ) )
+      {
+      return (iter->first);
+      }
+    }
+  return (NULL);
+}
+
+//---------------------------------------------------------------------------
+  // Description:
   // return the current actor corresponding to a give MRML ID
 vtkActor *
 vtkSlicerViewerWidget::GetFiducialActorByID (const char *id, int index)
