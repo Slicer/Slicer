@@ -141,52 +141,52 @@ proc QueryAtlasAddAnnotations {} {
 
   if [file exists $fileName] {
 
-      set polydata [$modelNode GetPolyData]
-      set scalaridx [[$polydata GetPointData] SetActiveScalars "labels"]
+    set polydata [$modelNode GetPolyData]
+    set scalaridx [[$polydata GetPointData] SetActiveScalars "labels"]
 
-      if { $scalaridx == "-1" } {
-          set scalars [vtkIntArray New]
-          $scalars SetName "labels"
-          [$polydata GetPointData] AddArray $scalars
-          [$polydata GetPointData] SetActiveScalars "labels"
-          $scalars Delete
-      } 
-      set scalaridx [[$polydata GetPointData] SetActiveScalars "labels"]
-      set scalars [[$polydata GetPointData] GetArray $scalaridx]
+    if { $scalaridx == "-1" } {
+        set scalars [vtkIntArray New]
+        $scalars SetName "labels"
+        [$polydata GetPointData] AddArray $scalars
+        [$polydata GetPointData] SetActiveScalars "labels"
+        $scalars Delete
+    } 
+    set scalaridx [[$polydata GetPointData] SetActiveScalars "labels"]
+    set scalars [[$polydata GetPointData] GetArray $scalaridx]
 
-      set lut [vtkLookupTable New]
-      set fssar [vtkFSSurfaceAnnotationReader New]
+    set lut [vtkLookupTable New]
+    set fssar [vtkFSSurfaceAnnotationReader New]
 
-      $fssar SetFileName $fileName
-      $fssar SetOutput $scalars
-      $fssar SetColorTableOutput $lut
-      # try reading an internal colour table first
-      $fssar UseExternalColorTableFileOff
+    $fssar SetFileName $fileName
+    $fssar SetOutput $scalars
+    $fssar SetColorTableOutput $lut
+    # try reading an internal colour table first
+    $fssar UseExternalColorTableFileOff
 
-      set retval [$fssar ReadFSAnnotation]
-      if {$retval == 6} {
-          error "ERROR: no internal colour table"
-      }
+    set retval [$fssar ReadFSAnnotation]
+    if {$retval == 6} {
+        error "ERROR: no internal colour table"
+    }
 
-      # set the look up table
-      $mapper SetLookupTable $lut
-      
-      array unset _labels
-      array set _labels [$fssar GetColorTableNames]
-      array unset ::vtkFreeSurferReadersLabels_$::QA(modelNodeID)
-      array set ::vtkFreeSurferReadersLabels_$::QA(modelNodeID) [array get _labels]
-      set entries [lsort -integer [array names _labels]]
+    # set the look up table
+    $mapper SetLookupTable $lut
+    
+    array unset _labels
+    array set _labels [$fssar GetColorTableNames]
+    array unset ::vtkFreeSurferReadersLabels_$::QA(modelNodeID)
+    array set ::vtkFreeSurferReadersLabels_$::QA(modelNodeID) [array get _labels]
+    set entries [lsort -integer [array names _labels]]
 
-      # print them out
-      set ::QA(labelMap) [array get _labels]
+    # print them out
+    set ::QA(labelMap) [array get _labels]
 
-      # make the scalars visible
-      $mapper SetScalarRange  [lindex $entries 0] [lindex $entries end]
-      $mapper SetScalarVisibility 1
+    # make the scalars visible
+    $mapper SetScalarRange  [lindex $entries 0] [lindex $entries end]
+    $mapper SetScalarVisibility 1
 
-      $lut Delete
-      $fssar Delete
-      [$viewer GetMainViewer] Reset
+    $lut Delete
+    $fssar Delete
+    [$viewer GetMainViewer] Reset
   }
 }
 
@@ -220,6 +220,12 @@ proc QueryAtlasRGBAToNumber {rgba} {
 # to render to the back buffer
 #
 proc QueryAtlasInitializePicker {} {
+
+  #
+  # add a prop picker to figure out if the mouse is actually over the model
+  # and to identify the slice planes
+  #
+  set ::QA(propPicker) [vtkPropPicker New]
 
   #
   # get the polydata for the model
@@ -355,6 +361,12 @@ proc QueryAtlasRenderView {} {
 
 }
 
+#####################################
+# Override/Restore render state 
+# - set up for rendering the cell picker and then
+#   restore the state afterwards
+#
+
 proc QueryAtlasOverrideRenderState {renderer} {
 
   #
@@ -403,6 +415,9 @@ proc QueryAtlasPickCallback {} {
     return
   }
 
+
+
+
   set renderWidget [[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer]
   set renderWindow [$renderWidget GetRenderWindow]
   set interactor [$renderWidget GetRenderWindowInteractor] 
@@ -413,20 +428,45 @@ proc QueryAtlasPickCallback {} {
     QueryAtlasRenderView
   }
 
-  # get the color under the mouse
+  # 
+  # get the event location
+  #
   eval $interactor UpdateSize [$renderer GetSize]
   set ::QA(lastWindowXY) [$interactor GetEventPosition]
   foreach {x y} $::QA(lastWindowXY) {}
+  set ::QA(lastRootXY) [winfo pointerxy [$renderWidget GetWidgetName]]
+
+
+  #
+  # use the prop picker to see if we're over the model, or the slices
+  #
+  set viewer [$::slicer3::ApplicationGUI GetViewerWidget] 
+  set actor [$viewer GetActorByID $::QA(modelNodeID)]
+
+  if { [$::QA(propPicker) PickProp $x $y $renderer] } {
+    set prop [$::QA(propPicker) GetViewProp]
+    if { $prop == $actor} {
+      puts "over actor"
+    } else {
+      puts "not over actor"
+    }
+  }
+
+  #
+  # get the color under the mouse
+  #
   $::QA(windowToImage) Update
   set color ""
   foreach c {0 1 2 3} {
     lappend color [[$::QA(windowToImage) GetOutput] GetScalarComponentAsFloat $x $y 0 $c]
   }
-  set ::QA(lastRootXY) [winfo pointerxy [$renderWidget GetWidgetName]]
 
 
+
+  #
   # convert the color to a cell index and get the cooresponding
   # label names from the vertices
+  #
   set cellNumber [QueryAtlasRGBAToNumber $color]
   if { $cellNumber >= 0 && $cellNumber < [$::QA(polyData) GetNumberOfCells] } {
     set cell [$::QA(polyData) GetCell $cellNumber]
