@@ -229,10 +229,10 @@ if (this->PolyData != NULL)
     this->PolyData->RemoveObservers ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
     }
 
-  this->SetPolyData(PolyData);
-  if (PolyData != NULL)
+  this->SetPolyData(polyData);
+  if (this->PolyData != NULL)
     {
-    PolyData->AddObserver ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+    this->PolyData->AddObserver ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
     }
 }
 
