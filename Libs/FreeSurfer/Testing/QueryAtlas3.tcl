@@ -27,6 +27,7 @@ proc QueryAtlasInit { {filename ""} } {
   QueryAtlasInitializePicker 
   QueryAtlasRenderView
 
+  QueryAtlasUpdateCursor
 }
 
 #
@@ -224,8 +225,11 @@ proc QueryAtlasInitializePicker {} {
   #
   # add a prop picker to figure out if the mouse is actually over the model
   # and to identify the slice planes
+  # and a pickRenderer and picker to find the actual world space pick point
+  # under the mouse for a slice plane
   #
   set ::QA(propPicker) [vtkPropPicker New]
+  set ::QA(cellPicker) [vtkCellPicker New]
 
   #
   # get the polydata for the model
@@ -305,6 +309,8 @@ proc QueryAtlasInitializePicker {} {
   $interactor AddObserver MouseMoveEvent "QueryAtlasPickCallback"
   $interactor AddObserver RightButtonPressEvent "QueryAtlasMenuCreate start"
   $interactor AddObserver RightButtonReleaseEvent "QueryAtlasMenuCreate end"
+  $style AddObserver StartInteractionEvent "QueryAtlasCursorVisibility off"
+  $style AddObserver EndInteractionEvent "QueryAtlasCursorVisibility on"
   $style AddObserver EndInteractionEvent "QueryAtlasRenderView"
 
   $renderer AddActor $::QA(actor)
@@ -406,6 +412,33 @@ proc QueryAtlasRestoreRenderState {renderer renderState} {
   $::QA(actor) SetVisibility 0
 }
 
+### utility routine that should be provided by vtkCell
+proc QueryAtlasPCoordsToWorld {cell pCoords} {
+    
+  if { [$cell GetClassName] != "vtkQuad" } {
+    return "0 0 0"
+  }
+
+  foreach {r s t} $pCoords {}
+  set rm [expr 1. - $r]
+  set sm [expr 1. - $s]
+  set sf0 [expr $rm * $sm]
+  set sf1 [expr $r * $sm]
+  set sf2 [expr $r * $s]
+  set sf3 [expr $rm * $s]
+
+  set points [$cell GetPoints]
+  foreach {x0 x1 x2} "0 0 0" {}
+  foreach p "0 1 2 3" {
+    set point [$points GetPoint $p]
+    foreach c "0 1 2" pp $point {
+      set x$c [expr [set x$c] + $pp * [set sf$p]]
+    }
+  }
+  return "$x0 $x1 $x2"
+}
+
+
 #
 # query the cell number at the mouse location
 #
@@ -415,6 +448,10 @@ proc QueryAtlasPickCallback {} {
     return
   }
 
+  if { [$::QA(cursor,actor) GetVisibility] == 0 } {
+    # if the cursor isn't on, don't bother to calculate labels
+    return
+  }
 
 
 
@@ -446,10 +483,32 @@ proc QueryAtlasPickCallback {} {
   if { [$::QA(propPicker) PickProp $x $y $renderer] } {
     set prop [$::QA(propPicker) GetViewProp]
     if { $prop == $actor} {
-      puts "over actor"
+      puts "over query actor"
     } else {
-      puts "not over actor"
-    }
+      set id [$viewer GetIDByActor $prop]
+      puts "over mrml \"$id\" at [$::QA(propPicker) GetPickPosition]"
+      set node [$::slicer3::MRMLScene GetNodeByID $id]
+      if { [$node GetDescription] != "" } {
+        array set nodes [$node GetDescription]
+        set nodes(sliceNode) [$::slicer3::MRMLScene GetNodeByID $nodes(SliceID)]
+        set nodes(compositeNode) [$::slicer3::MRMLScene GetNodeByID $nodes(CompositeID)]
+
+        set propCollection [$::QA(cellPicker) GetPickList]
+        $propCollection RemoveAllItems
+        $propCollection AddItem [$::QA(propPicker) GetViewProp]
+        $::QA(cellPicker) PickFromListOn
+        $::QA(cellPicker) Pick $x $y 0 $renderer
+        set cellID [$::QA(cellPicker) GetCellId]
+        set pCoords [$::QA(cellPicker) GetPCoords]
+        if { $cellID != -1 } {
+          puts "position is $cellID, $pCoords"
+          set polyData [[$prop GetMapper] GetInput]
+          set cell [$polyData GetCell $cellID]
+          set rasPoint [QueryAtlasPCoordsToWorld $cell $pCoords]
+          puts $rasPoint
+        }
+      }
+   }
   }
 
   #
@@ -537,11 +596,9 @@ proc QueryAtlasUpdateCursor {} {
 
   eval $::QA(cursor,actor) SetInput $::QA(lastLabels) 
   eval $::QA(cursor,actor) SetPosition $::QA(lastWindowXY) 
-  if { $::QA(lastLabels) == "background" } {
-    QueryAtlasCursorVisibility off
-  } else {
-    QueryAtlasCursorVisibility on
-  }
+
+  set viewer [$::slicer3::ApplicationGUI GetViewerWidget]
+  $viewer RequestRender
 }
 
 proc QueryAtlasMenuCreate { state } {
