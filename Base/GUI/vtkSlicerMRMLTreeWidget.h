@@ -31,6 +31,8 @@
 #include "vtkMRMLTransformNode.h"
 #include "vtkMRMLTransformableNode.h"
 
+#include <vtksys/stl/string>
+
 class vtkKWMenu;
 class vtkKWTreeWithScrollbars;
 class vtkKWEntryWithLabel;
@@ -55,9 +57,6 @@ public:
   // Description:
   // removes observers on widgets in the class
   virtual void RemoveWidgetObservers ( );
-
-  vtkGetObjectMacro(CutNode, vtkMRMLTransformableNode);
-  vtkSetObjectMacro(CutNode, vtkMRMLTransformableNode);
   
   // Description::
   // Callbacks
@@ -90,7 +89,15 @@ protected:
   void UpdateNodeInspector(vtkMRMLNode *node);
   vtkMRMLNode* GetSelectedNodeInTree();
 
-  vtkMRMLTransformableNode* CutNode;
+  int IsLeafSelected(const char* leaf);
+  void SetSelectesLeaves();
+
+  void ClearCutNodes();
+
+  //BTX
+  std::vector< vtkMRMLTransformableNode* > CutNodes;
+  std::vector<vtksys_stl::string> SelectedLeaves;
+  //ETX
 
 private:
   

@@ -19,8 +19,6 @@
 #include "vtkMRMLTransformableNode.h"
 #include "vtkKWTreeWithScrollbars.h"
 
-#include <vtksys/stl/string>
-
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerMRMLTreeWidget );
 vtkCxxRevisionMacro ( vtkSlicerMRMLTreeWidget, "$Revision: 1.0 $");
@@ -33,7 +31,6 @@ vtkSlicerMRMLTreeWidget::vtkSlicerMRMLTreeWidget ( )
   this->ContextMenu = NULL;
   this->NodeID = NULL;
   this->NodeName = NULL;
-  this->CutNode = NULL;
 }
 
 
@@ -65,7 +62,7 @@ vtkSlicerMRMLTreeWidget::~vtkSlicerMRMLTreeWidget ( )
     this->NodeName->Delete();
     this->NodeName = NULL;
     }
-  this->SetCutNode(NULL);
+  this->ClearCutNodes();
 }
 
 //---------------------------------------------------------------------------
@@ -96,7 +93,7 @@ void vtkSlicerMRMLTreeWidget::ProcessWidgetEvents ( vtkObject *caller,
     if (event == vtkKWTree::SelectionChangedEvent)
       {
       // For example, one could populate the node inspector
-
+      this->SetSelectesLeaves();
       this->UpdateNodeInspector(this->GetSelectedNodeInTree());
       }
 
@@ -124,36 +121,51 @@ void vtkSlicerMRMLTreeWidget::ProcessWidgetEvents ( vtkObject *caller,
       
       vtkMRMLNode *node = this->GetMRMLScene()->GetNodeByID((const char *)callData);
 
-      if (node != NULL)
+      if (!this->IsLeafSelected((const char *)callData))
         {
-        this->TreeWidget->GetWidget()->SelectNode(node->GetID());
+        this->TreeWidget->GetWidget()->ClearSelection();
+        this->TreeWidget->GetWidget()->SelectNode((const char *)callData);
+        this->SelectedLeaves.clear();
+        this->SelectedLeaves.push_back((const char *)callData);
         }
 
-      if ( node == NULL || (node != NULL && node->IsA("vtkMRMLTransformNode")) )
+      if (this->SelectedLeaves.size() > 1)
         {
-        // scene or transform
-        sprintf(command, "InsertTransformNodeCallback {%s}", (const char *)callData);
-        this->ContextMenu->AddCommand("Insert Transform Node", this, command);
-        }
-      if ((node == NULL || (node != NULL && node->IsA("vtkMRMLTransformNode"))) &&
-        this->GetCutNode() != NULL)
-        {
-        // scene or transform and cut node exists
-        sprintf(command, "PasteNodeCallback {%s}", (const char *)callData);
-        this->ContextMenu->AddCommand("Paste Node", this, command);
-        }
-      if (node != NULL && node->IsA("vtkMRMLTransformableNode") )
-        {
+        // multiple nodes selected
         sprintf(command, "CutNodeCallback {%s}", (const char *)callData);
         this->ContextMenu->AddCommand("Cut Node", this, command);
-  
-        sprintf(command, "SelectNodeCallback {%s}", (const char *)callData);
-        this->ContextMenu->AddCommand("Go To Editor...", this, command);
-        }
-      if (node != NULL)
-        {
+
         sprintf(command, "DeleteNodeCallback {%s}", (const char *)callData);
         this->ContextMenu->AddCommand("Delete Node", this, command);
+        }
+      else {
+        // single node selected
+        if ( node == NULL || (node != NULL && node->IsA("vtkMRMLTransformNode")) )
+          {
+          // scene or transform
+          sprintf(command, "InsertTransformNodeCallback {%s}", (const char *)callData);
+          this->ContextMenu->AddCommand("Insert Transform Node", this, command);
+          }
+        if ((node == NULL || (node != NULL && node->IsA("vtkMRMLTransformNode"))) &&
+          this->CutNodes.size() > 0)
+          {
+          // scene or transform and cut node exists
+          sprintf(command, "PasteNodeCallback {%s}", (const char *)callData);
+          this->ContextMenu->AddCommand("Paste Node", this, command);
+          }
+        if (node != NULL && node->IsA("vtkMRMLTransformableNode") )
+          {
+          sprintf(command, "CutNodeCallback {%s}", (const char *)callData);
+          this->ContextMenu->AddCommand("Cut Node", this, command);
+    
+          sprintf(command, "SelectNodeCallback {%s}", (const char *)callData);
+          this->ContextMenu->AddCommand("Go To Editor...", this, command);
+          }
+        if (node != NULL)
+          {
+          sprintf(command, "DeleteNodeCallback {%s}", (const char *)callData);
+          this->ContextMenu->AddCommand("Delete Node", this, command);
+          }
         }
       this->ContextMenu->PopUp(px, py);
       }
@@ -179,12 +191,14 @@ void vtkSlicerMRMLTreeWidget::DeleteNodeCallback(const char *id)
 {
   // cout << "I want to delete MRML node " << id << endl;
   // delete node, then repopulate tree
-  vtkMRMLNode *node = this->GetMRMLScene()->GetNodeByID(id);
-  if (node != NULL)
+  for (int i=0; i<this->SelectedLeaves.size(); i++)
     {
-    this->GetMRMLScene()->RemoveNode(node);
+    vtkMRMLNode *node = this->GetMRMLScene()->GetNodeByID(this->SelectedLeaves[i].c_str());
+    if (node != NULL)
+      {
+      this->GetMRMLScene()->RemoveNode(node);
+      }
     }
-
   this->UpdateTreeFromMRML();
 }
 
@@ -192,17 +206,19 @@ void vtkSlicerMRMLTreeWidget::DeleteNodeCallback(const char *id)
 void vtkSlicerMRMLTreeWidget::PasteNodeCallback(const char *id)
 {
   vtkMRMLTransformNode *tnode = vtkMRMLTransformNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(id));
-  vtkMRMLTransformableNode *node = this->GetCutNode();
-  if (node != NULL)
+  for (int i=0; i< this->CutNodes.size(); i++)
     {
-    if (tnode != NULL)
+    vtkMRMLTransformableNode *node = this->CutNodes[i];
+    if (node != NULL)
       {
-      node->SetAndObserveTransformNodeID(tnode->GetID());
+      if (tnode != NULL)
+        {
+        node->SetAndObserveTransformNodeID(tnode->GetID());
+        }
+      this->GetMRMLScene()->AddNode(node);
       }
-    this->GetMRMLScene()->AddNode(node);
     }
-
-  this->SetCutNode(NULL);
+  this->ClearCutNodes();
   this->UpdateTreeFromMRML();
 }
 
@@ -225,11 +241,17 @@ void vtkSlicerMRMLTreeWidget::InsertTransformNodeCallback(const char *id)
 void vtkSlicerMRMLTreeWidget::CutNodeCallback(const char *id)
 {
   //cout << "I want to delete MRML node " << id << endl;
-  vtkMRMLNode *node = this->GetMRMLScene()->GetNodeByID(id);
-  vtkMRMLTransformableNode *tnode = vtkMRMLTransformableNode::SafeDownCast(node);
-  this->SetCutNode(tnode );
-  this->GetMRMLScene()->RemoveNode(node);
-  tnode->SetAndObserveTransformNodeID(NULL);
+  this->ClearCutNodes();
+
+  for (int i=0; i<this->SelectedLeaves.size(); i++)
+    {
+    vtkMRMLNode *node = this->GetMRMLScene()->GetNodeByID((const char *)this->SelectedLeaves[i].c_str());
+    vtkMRMLTransformableNode *tnode = vtkMRMLTransformableNode::SafeDownCast(node);
+    tnode->Register(this);
+    this->CutNodes.push_back(tnode );
+    this->GetMRMLScene()->RemoveNode(node);
+    tnode->SetAndObserveTransformNodeID(NULL);
+    }
   this->UpdateTreeFromMRML();
 }
 
@@ -310,8 +332,8 @@ void vtkSlicerMRMLTreeWidget::CreateWidget ( )
 
   vtkKWTree *tree = this->TreeWidget->GetWidget();
   tree->SelectionFillOn();
-  //tree->SetSelectionModeToMultiple ();
-  tree->SetSelectionModeToSingle();
+  tree->SetSelectionModeToMultiple ();
+  //tree->SetSelectionModeToSingle();
   tree->SetHeight(12);
 
   tree->AddObserver(
@@ -496,4 +518,53 @@ void vtkSlicerMRMLTreeWidget::UpdateNodeInspector(vtkMRMLNode *node)
     this->NodeName->GetWidget()->SetValue(
       node ? node->GetName() : "");
     }
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerMRMLTreeWidget::SetSelectesLeaves()
+{
+  this->SelectedLeaves.clear();
+
+  vtksys_stl::string selectedLeaves(
+    this->TreeWidget->GetWidget()->GetSelection());
+
+  vtksys_stl::string::size_type locStart = 0;
+  vtksys_stl::string::size_type locEnd = 0;
+  do 
+    {
+    locEnd = selectedLeaves.find( " ", locStart );
+    if (locEnd != vtksys_stl::string::npos)
+      {
+      vtksys_stl::string selectedLeaf = selectedLeaves.substr(locStart, locEnd-locStart);
+      this->SelectedLeaves.push_back(selectedLeaf);
+      locStart = locEnd+1;
+      }
+    }
+  while (locEnd != vtksys_stl::string::npos) ;
+  vtksys_stl::string selectedLeaf = selectedLeaves.substr(locStart);
+  this->SelectedLeaves.push_back(selectedLeaf);
+}
+
+//---------------------------------------------------------------------------
+int vtkSlicerMRMLTreeWidget::IsLeafSelected(const char *leaf)
+{
+  vtksys_stl::string sleaf(leaf);
+
+  for (int i=0; i<this->SelectedLeaves.size(); i++)
+    {
+    if (this->SelectedLeaves[i].compare(sleaf) == 0)
+      {
+      return 1;
+      }
+    }
+  return 0;
+}
+
+void vtkSlicerMRMLTreeWidget::ClearCutNodes()
+{
+  for (int i=0; i<this->CutNodes.size(); i++)
+    {
+    this->CutNodes[i]->UnRegister(this);
+    }
+  this->CutNodes.clear();
 }
