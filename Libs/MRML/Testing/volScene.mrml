@@ -5,7 +5,7 @@ displayNodeRef="display1" transformNodeRef="xform1"></Volume>
 
 <Volume
 name="head2" description="somebodys2" id="vol2" storageNodeRef="storage2"
-displayNodeRef="display1" transformNodeRef="xform2"></Volume>
+displayNodeRef="display1" transformNodeRef="xform3"></Volume>
 
 <VolumeArchetypeStorage
 fileName="TestData/fixed.nrrd" id="storage1"></VolumeArchetypeStorage>
@@ -20,5 +20,9 @@ name="disp1" id="display1" level="128" window="100"></VolumeDisplay>
 name="matXform1" id="xform1" matrixTransformToParent="1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"></LinearTransform>
 
 <LinearTransform
-name="matXform2" id="xform2" matrixTransformToParent="1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"></LinearTransform>
+name="matXform2" id="xform2" matrixTransformToParent="1 0 0 0 0 5 0 0 0 0 1 0 0 0 0 1"></LinearTransform>
+
+<LinearTransform
+name="matXform3" id="xform3" matrixTransformToParent="1 0 0 0 0 2 0 0 0 0 1 0 0 0 0 1"></LinearTransform>
+
 </MRML>
