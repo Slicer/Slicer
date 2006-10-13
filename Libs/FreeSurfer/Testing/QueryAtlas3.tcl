@@ -1,4 +1,3 @@
-# assume that the model /projects/birn/freesurfer/data/bert/surf/lh.pial has been read in as the first model, fourth after the default ones
 
 proc QueryAtlasInit { {filename ""} } {
   
@@ -188,6 +187,24 @@ proc QueryAtlasAddAnnotations {} {
     $lut Delete
     $fssar Delete
     [$viewer GetMainViewer] Reset
+  }
+
+  #
+  # read the freesurfer labels for the aseg+aparc
+  #
+  set lutFile $::SLICER_BUILD/../Slicer3/Libs/FreeSurfer/Testing/FreeSurferColorLUT.txt
+  if { [file exists $lutFile] } {
+    set fp [open $lutFile "r"]
+    while { ![eof $fp] } {
+      gets $fp line
+      if { [scan $line "%d %s %d %d %d" label name r g b] == 5 } {
+        set ::QAFS($label,name) $name
+        set ::QAFS($label,rgb) "$r $g $b"
+      }
+    }
+    close $fp
+  } else {
+    puts stderr "Error!  No lut file $lutFile found..."
   }
 
 }
@@ -530,7 +547,11 @@ proc QueryAtlasPickCallback {} {
             set $var [expr int(round($val))]
           }
           set labelValue [$imageData GetScalarComponentAsDouble $i $j $k 0]
-          set pointLabels "label: $labelValue, ijk $ijk"
+          if { [info exists ::QAFS($labelValue,name)] } {
+            set pointLabels "$::QAFS($labelValue,name)"
+          } else {
+            set pointLabels "label: $labelValue, ijk $ijk"
+          }
           $rasToIJK Delete
         }
       }
