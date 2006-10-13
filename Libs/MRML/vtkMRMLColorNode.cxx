@@ -127,7 +127,91 @@ void vtkMRMLColorNode::ReadXMLAttributes(const char** atts)
   vtkDebugMacro("Finished reading in xml attributes, list id = " << this->GetID() << " and name = " << this->GetName() << endl);
 }
 
+//----------------------------------------------------------------------------
+void vtkMRMLColorNode::ReadTextAttributes (const char *fileName)
+{
 
+  // open the file for reading input
+  fstream fstr;
+
+  fstr.open(fileName, fstream::in);
+
+  if (fstr.is_open())
+    {
+    // clear out the table
+    this->SetTypeToFile();
+    this->LookupTable->SetNumberOfColors(0);
+    this->Names.clear();
+    char line[1024];
+    // save the valid lines in a vector, parse them once know the max id
+    std::vector<std::string>lines;
+    int maxID = 0;
+    while (fstr.good())
+      {
+      fstr.getline(line, 1024);
+      
+      // does it start with a #?
+      if (line[0] == '#')
+        {
+        vtkDebugMacro("Comment line, skipping:\n\"" << line << "\"");
+        }
+      else
+        {
+        // is it empty?
+        if (line[0] == '\0')
+          {
+          vtkDebugMacro("Empty line, skipping:\n\"" << line << "\"");
+          }
+        else
+          {
+          vtkDebugMacro("got a line: \n\"" << line << "\"");
+          lines.push_back(std::string(line));
+          std::stringstream ss;
+          ss << line;
+          int id;
+          ss >> id;
+          if (id > maxID)
+            {
+            maxID = id;
+            }
+          }
+        }
+      }
+    fstr.close();
+    // now parse out the valid lines and set up the colour lookup table
+    vtkDebugMacro("The largest id is " << maxID);
+    this->LookupTable->SetNumberOfColors(maxID + 1); // for zero
+    for (int i = 0; i < lines.size(); i++)
+      {
+      std::stringstream ss;
+      ss << lines[i];
+      int id;
+      std::string name;
+      double r, g, b, a;
+      ss >> id;
+      ss >> name;
+      ss >> r;
+      ss >> g;
+      ss >> b;
+      ss >> a;
+      vtkDebugMacro("id " << id << ", name = " << name.c_str() << ", r = " << r << ", g = " << g << ", b = " << b << ", a = " << a);
+      // the file values are 0-255, colour look up table needs 0-1
+      r = r / 255.0;
+      g = g / 255.0;
+      b = b / 255.0;
+      a = a / 255.0;
+      vtkDebugMacro("Adding colour at id " << id << " and then pushing name " << name.c_str());
+      this->LookupTable->SetTableValue(id, r, g, b, a);
+      // TODO: need to associate the names with the ids as the numbers may not
+      // be continuous
+      this->AddColorName(name.c_str());
+      }
+    }
+  else
+    {
+    std::cerr << "ERROR opening colour file " << fileName << endl;
+    }
+}
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, ID
@@ -223,6 +307,12 @@ void vtkMRMLColorNode::SetTypeToFMRIPA()
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLColorNode::SetTypeToFile()
+{
+    this->SetType(this->File);
+}
+
+//----------------------------------------------------------------------------
 const char* vtkMRMLColorNode::GetTypeAsString()
 {
   if (this->Type == this->Labels)
@@ -244,6 +334,10 @@ const char* vtkMRMLColorNode::GetTypeAsString()
   if (this->Type == this->FMRIPA)
     {
     return "fMRIPA";
+    }
+  if (this->Type == this->File)
+    {
+    return "File";
     }
   return "(unknown)";
 }
@@ -320,7 +414,10 @@ void vtkMRMLColorNode::SetType(int type)
       this->LookupTable->Build();
       this->SetNamesFromColors();
       }
-    
+    if (this->Type == this->File)
+      {
+      std::cout << "Set type to file, use ReadTextAttributes next...\n";
+      }
     // invoke a modified event
     this->Modified();
     

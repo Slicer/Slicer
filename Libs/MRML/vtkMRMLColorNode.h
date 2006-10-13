@@ -51,6 +51,12 @@ public:
 
 
   // Description:
+  // Read in a text file holding colour table elements
+  // id name r g b a
+  // comments start with a hash mark
+  virtual void ReadTextAttributes (const char *fileName);
+  
+  // Description:
   // Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
   
@@ -74,6 +80,7 @@ public:
   void SetTypeToOcean();
   void SetTypeToGrey();
   void SetTypeToFMRIPA();
+  void SetTypeToFile();
 
   void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
 
@@ -92,6 +99,7 @@ public:
       Grey = 3,
       Ocean = 4,
       FMRIPA = 5,
+      File = 6,
     };
   //ETX
 
