@@ -563,7 +563,6 @@ proc QueryAtlasPickCallback {} {
       #
       # get the color under the mouse from label image
       #
-      $::QA(windowToImage) Update
       set color ""
       foreach c {0 1 2 3} {
         lappend color [[$::QA(windowToImage) GetOutput] GetScalarComponentAsFloat $x $y 0 $c]
@@ -677,6 +676,9 @@ proc QueryAtlasMenuCreate { state } {
         menu $qaMenu
         $qaMenu insert end command -label "Google..." -command "QueryAtlasQuery google"
         $qaMenu insert end command -label "Wikipedia..." -command "QueryAtlasQuery wikipedia"
+        $qaMenu insert end command -label "PubMed..." -command "QueryAtlasQuery pubmed"
+        $qaMenu insert end command -label "J Neuroscience..." -command "QueryAtlasQuery jneurosci"
+        $qaMenu insert end command -label "IBVD..." -command "QueryAtlasQuery ibvd"
 
         
         eval $qaMenu post $::QA(lastRootXY)
@@ -688,12 +690,33 @@ proc QueryAtlasMenuCreate { state } {
 
 proc QueryAtlasQuery { site } {
 
+  regsub -all "/" $::QA(lastLabels) "+" terms
+  regsub -all -- "-" $terms "+" terms
+  regsub -all "ctx" $terms "cortex" terms
+  regsub -all "rh" $terms "right+hemisphere" terms
+  regsub -all "lh" $terms "left+hemisphere" terms
+
   switch $site {
     "google" {
-      $::slicer3::Application OpenLink http://www.google.com/search?q=$::QA(lastLabels)
+      $::slicer3::Application OpenLink http://www.google.com/search?q=$terms
     }
     "wikipedia" {
-      $::slicer3::Application OpenLink http://www.google.com/search?q=$::QA(lastLabels)+site:en.wikipedia.org
+      $::slicer3::Application OpenLink http://www.google.com/search?q=$terms+site:en.wikipedia.org
+    }
+    "pubmed" {
+      $::slicer3::Application OpenLink \
+        http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=search&db=PubMed&term=$terms
+    }
+    "jneurosci" {
+        $::slicer3::Application OpenLink \
+          http://www.jneurosci.org/cgi/search?volume=&firstpage=&sendit=Search&author1=&author2=&titleabstract=&fulltext=$terms
+    }
+    "ibvd" {
+      regsub -all "Left\\+" $terms "" terms ;# TODO ivbd has a different way of handling side
+      regsub -all "Right\\+" $terms "" terms ;# TODO ivbd has a different way of handling side
+      regsub -all "\\+" $terms "," commaterms
+      $::slicer3::Application OpenLink \
+        http://www.cma.mgh.harvard.edu/ibvd/search.php?f_submission=true&f_free=$commaterms
     }
   }
 }
