@@ -22,6 +22,7 @@
 #define __vtkMRMLColorNode_h
 
 #include <string>
+#include <vector>
 
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
@@ -61,8 +62,8 @@ public:
   // 
   virtual void UpdateScene(vtkMRMLScene *scene);
 
-  vtkGetObjectMacro(Color, vtkLookupTable);
-  vtkSetObjectMacro(Color, vtkLookupTable);
+  vtkGetObjectMacro(LookupTable, vtkLookupTable);
+  vtkSetObjectMacro(LookupTable, vtkLookupTable);
 
   // Description:
   // Get/Set for Type
@@ -72,18 +73,25 @@ public:
   void SetTypeToRandom();
   void SetTypeToOcean();
   void SetTypeToGrey();
+  void SetTypeToFMRIPA();
 
   void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
 
   //BTX
   // Description:
   // The list of valid table types
+  // Labels - the Slicer default editor labels
+  // Random - 255 random colors
+  // Grey - greyscale ramp
+  // Ocean - bluish ramp
+  // FMRIPA - fMRI Positive Activation map
   enum
     {
       Labels = 1,
       Random = 2,
       Grey = 3,
       Ocean = 4,
+      FMRIPA = 5,
     };
   //ETX
 
@@ -104,6 +112,16 @@ public:
     };
 //ETX
 
+  // Description:
+  // Get the 0th based nth name of this colour
+  const char *GetColorName(int ind);
+  // Description:
+  // Add a color name to the vector
+  void AddColorName(const char *name);
+  // Description:
+  // Set the 0th based nth name of this colour
+  void SetColorName(int ind, const char *name);
+
 protected:
   vtkMRMLColorNode();
   ~vtkMRMLColorNode();
@@ -111,14 +129,24 @@ protected:
   void operator=(const vtkMRMLColorNode&);
 
   // Description:
+  // Set values in the names vector from the colour rgba entries in the colour
+  // table
+  void SetNamesFromColors();
+  
+  // Description:
   // Which type of look up table does this node hold? 
   // Valid values are in the enumerated list
   int Type;
 
   // Description: 
   // The look up table, constructed according to the Type
-  vtkLookupTable *Color;
-  
+  vtkLookupTable *LookupTable;
+
+  //BTX
+  // Description:
+  // A vector of names for the color table elements
+  std::vector<std::string> Names;
+  //ETX
 };
 
 #endif

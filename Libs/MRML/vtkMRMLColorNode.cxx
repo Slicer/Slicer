@@ -53,16 +53,16 @@ vtkMRMLNode* vtkMRMLColorNode::CreateNodeInstance()
 vtkMRMLColorNode::vtkMRMLColorNode()
 {
 
-  this->Color = vtkLookupTable::New();
-  this->Type = this->Labels;
+  this->LookupTable = vtkLookupTable::New();
+  this->SetTypeToGrey();
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLColorNode::~vtkMRMLColorNode()
 {
-    if (this->Color)
+    if (this->LookupTable)
     {
-        this->Color->Delete();
+        this->LookupTable->Delete();
     }
   if (this->Name) {
 
@@ -137,7 +137,7 @@ void vtkMRMLColorNode::Copy(vtkMRMLNode *anode)
   vtkMRMLColorNode *node = (vtkMRMLColorNode *) anode;
 
   this->SetName(node->Name);
-  this->SetColor(node->Color);
+  this->SetLookupTable(node->LookupTable);
   this->SetType(node->Type);
 
 }
@@ -145,7 +145,6 @@ void vtkMRMLColorNode::Copy(vtkMRMLNode *anode)
 //----------------------------------------------------------------------------
 void vtkMRMLColorNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  int idx;
   
   vtkMRMLNode::PrintSelf(os,indent);
 
@@ -153,10 +152,22 @@ void vtkMRMLColorNode::PrintSelf(ostream& os, vtkIndent indent)
       (this->Name ? this->Name : "(none)") << "\n";
   
 
-  os << indent << "Type: (";
-  os << indent << this->Type << ")\n";
+  os << indent << "Type: (" << this->GetTypeAsString() << ")\n";
 
-  os << indent << "Color: (";
+  if (this->LookupTable != NULL)
+    {
+    os << indent << "Look up table:\n";
+    this->LookupTable->PrintSelf(os, indent.GetNextIndent());
+    }
+  
+  if (this->Names.size() > 0)
+    {
+    os << indent << "Color Names:\n";
+    for (int i = 0; i < this->Names.size(); i++)
+      {
+      os << indent << indent << i << " " << this->GetColorName(i) << endl;
+      }
+    }
 }
 
 //-----------------------------------------------------------
@@ -206,23 +217,33 @@ void vtkMRMLColorNode::SetTypeToGrey()
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLColorNode::SetTypeToFMRIPA()
+{
+    this->SetType(this->FMRIPA);
+}
+
+//----------------------------------------------------------------------------
 const char* vtkMRMLColorNode::GetTypeAsString()
 {
   if (this->Type == this->Labels)
     {
-      return "Labels";
+    return "Labels";
     }
   if (this->Type == this->Random)
     {
-      return "Random";
+    return "Random";
     }
   if (this->Type == this->Grey)
     {
-      return "Grey";
+    return "Grey";
     }
   if (this->Type == this->Ocean)
     {
-      return "Ocean";
+    return "Ocean";
+    }
+  if (this->Type == this->FMRIPA)
+    {
+    return "fMRIPA";
     }
   return "(unknown)";
 }
@@ -241,8 +262,6 @@ void vtkMRMLColorNode::ProcessMRMLEvents ( vtkObject *caller,
         this->InvokeEvent(vtkMRMLColorNode::DisplayModifiedEvent, NULL);
     }
 */
-  // check for one of the fiducials being modified, if so, trigger a modified
-  // event on the list
   return;
 }
 
@@ -255,10 +274,113 @@ void vtkMRMLColorNode::SetType(int type)
     }
     vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting Type to " << type);
     this->Type = type;
-   
+    this->SetName(this->GetTypeAsString());
+    
+    if (this->Type == this->Random)
+      {
+
+      int size = 255;
+      
+      this->LookupTable->SetTableValue(0, 0, 0, 0, 0);
+      this->LookupTable->SetRange(0, size);
+      this->LookupTable->SetNumberOfColors(size + 1);
+      for (int i = 1; i <= size; i++)
+        {
+        // table values have to be 0-1
+        double r = (rand()%255)/255.0;
+        double g = (rand()%255)/255.0;
+        double b = (rand()%255)/255.0;
+       
+        this->LookupTable->SetTableValue(i, r, g, b, 1.0);
+        }
+      this->SetNamesFromColors();
+      }
+
+    if (this->Type == this->FMRIPA)
+      {
+      int size = 20;
+      this->LookupTable->SetNumberOfTableValues(size);
+      this->LookupTable->SetHueRange(0, 0.16667);
+      this->LookupTable->SetSaturationRange(1, 1);
+      this->LookupTable->SetValueRange(1, 1);
+      this->LookupTable->SetRampToLinear();
+      this->LookupTable->Build();
+      this->SetNamesFromColors();
+      }
+
+    if (this->Type == this->Grey)
+      {
+      // from vtkSlicerSliceLayerLogic.cxx
+      this->LookupTable->SetRampToLinear();
+      this->LookupTable->SetTableRange(0, 255);
+      this->LookupTable->SetHueRange(0, 0);
+      this->LookupTable->SetSaturationRange(0, 0);
+      this->LookupTable->SetValueRange(0, 1);
+      this->LookupTable->SetAlphaRange(1, 1); // not used
+      this->LookupTable->Build();
+      this->SetNamesFromColors();
+      }
+    
     // invoke a modified event
     this->Modified();
     
-    // invoke a  modified event
+    // invoke a type  modified event
     this->InvokeEvent(vtkMRMLColorNode::TypeModifiedEvent);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLColorNode::SetNamesFromColors()
+{
+  int size = this->LookupTable->GetNumberOfColors();
+  double *rgba;
+  // reset the names
+  this->Names.clear();
+  this->Names.resize(size);
+  for (int i = 0; i < size; i++)
+    {
+    rgba = this->LookupTable->GetTableValue(i);
+    std::stringstream ss;
+    ss << "R=";
+    ss << rgba[0];
+    ss << " G=";
+    ss << rgba[1];
+    ss << " B=";
+    ss << rgba[2];
+    ss << " A=";
+    ss << rgba[3];
+    vtkDebugMacro("SetNamesFromColors: " << i << " Name = " << ss.str().c_str());
+    this->SetColorName(i, ss.str().c_str());
+    }
+}
+
+//---------------------------------------------------------------------------
+const char *vtkMRMLColorNode::GetColorName(int ind)
+{
+  if (ind < this->Names.size() && ind >= 0)
+    {
+    return this->Names[ind].c_str();
+    }
+  else
+    {
+    return "invalid";
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLColorNode::SetColorName(int ind, const char *name)
+{
+  if (ind < this->Names.size() && ind >= 0)
+    {
+    this->Names[ind] = std::string(name);
+    }
+  else
+    {
+    std::cerr << "ERROR: SetColorName, index was out of bounds: " << ind << ", current size is " << this->Names.size() << endl;
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLColorNode::AddColorName(const char *name)
+{
+  this->Names.push_back(std::string(name));
 }
