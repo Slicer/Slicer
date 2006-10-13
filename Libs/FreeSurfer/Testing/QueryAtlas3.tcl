@@ -20,6 +20,8 @@ proc QueryAtlasInit { {filename ""} } {
     }
   }
 
+  QueryAtlasAddBIRNLogo
+
   QueryAtlasAddModel
   QueryAtlasAddVolumes
   QueryAtlasAddAnnotations 
@@ -28,6 +30,78 @@ proc QueryAtlasInit { {filename ""} } {
 
   QueryAtlasUpdateCursor
 }
+
+proc QueryAtlasAddBIRNLogo {} {
+
+  #
+  # generic logo setup
+  # - BIRN specific config below
+  #
+  set reader [vtkPNGReader New]
+  set texture [vtkTexture New]
+  set polyData [vtkPolyData New]
+  set points [vtkPoints New]
+  set polys [vtkCellArray New]
+  set tc [vtkFloatArray New]
+  set textureMapper [vtkPolyDataMapper2D New]
+  set textureActor [vtkActor2D New]
+  set imageProperty [vtkProperty2D New]
+
+  $points SetNumberOfPoints 4
+  $polyData SetPoints $points
+  $polys InsertNextCell 4
+  foreach p "0 1 2 3" {
+    $polys InsertCellPoint 0
+  }
+  $polyData SetPolys($polys)
+
+  $tc SetNumberOfComponents 2
+  $tc SetNumberOfTuples 4
+  set tcs { {0.0 0.0} {1.0 0.0} {1.0 1.0} {0.0 1.0} }
+  foreach tcoords $tcs {
+    foreach i "0 1" tcoords $tcoords {
+      $tc InsertComponent $i $tcoord
+    }
+  }
+  [$polyData GetPointData] SetTCoords $tc
+
+  $textureMapper SetInput $polyData
+  $textureActor SetMapper $textureMapper
+
+  $imageProperty SetOpacity 0.25
+
+
+  set logoFile $::SLICER_BUILD/../Slicer3/Libs/FreeSurfer/Testing/birn-new-big.png
+  set ::QA(logo,actor) $textureActor
+
+  set viewer [$::slicer3::ApplicationGUI GetViewerWidget]
+  set renderWidget [$viewer GetMainViewer]
+  set renderer [$renderWidget GetRenderer]
+  $renderer AddActor2D $::QA(logo,actor)
+
+  $reader Delete
+  $texture Delete
+  $polyData Delete
+  $points Delete
+  $polys Delete
+  $tc Delete
+  $textureMapper Delete
+  $imageProperty Delete
+
+  if { 0 } {
+  #78 :  // Set up parameters from thw superclass
+  #79 :double size[2];
+  #80 :this->GetSize(size);
+  #81 :this->Position2Coordinate->SetValue(0.04*size[0], 0.04*size[1]);
+  #82 :this->ProportionalResize = 1;
+  #83 :this->Moving = 1;
+  #84 :this->ShowBorder = vtkBorderRepresentation::BORDER_ACTIVE;
+  #85 :this->PositionCoordinate->SetValue(0.9, 0.025);
+  #86 :this->Position2Coordinate->SetValue(0.075, 0.075); 
+  }
+}
+
+
 
 #
 # Add the model with the filename to the scene
