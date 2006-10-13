@@ -44,6 +44,8 @@ SET(MRML_SRCS
 
 SET_SOURCE_FILES_PROPERTIES(
   vtkMRMLNode.cxx 
+  vtkMRMLVolumeNode.cxx
+  vtkMRMLTransformNode.cxx
   ABSTRACT
   )
 
