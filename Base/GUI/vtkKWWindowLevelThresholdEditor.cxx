@@ -367,7 +367,7 @@ void vtkKWWindowLevelThresholdEditor::UpdateTransferFunction()
   this->TransferFunction->RemoveAllPoints();
 
   double range[2] = {0,255};
-  if (this->ImageData)
+  if ( this->ImageData && this->TransferFunction->GetSize() != 0 )
   {
     this->ImageData->GetScalarRange(range);
     this->TransferFunction->AdjustRange(range);
