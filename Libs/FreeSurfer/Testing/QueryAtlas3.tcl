@@ -189,6 +189,7 @@ proc QueryAtlasAddAnnotations {} {
     $fssar Delete
     [$viewer GetMainViewer] Reset
   }
+
 }
 
 #
@@ -518,7 +519,19 @@ proc QueryAtlasPickCallback {} {
           set polyData [[$prop GetMapper] GetInput]
           set cell [$polyData GetCell $cellID]
           set rasPoint [QueryAtlasPCoordsToWorld $cell $pCoords]
-          set pointLabels $rasPoint
+
+          set labelID [$nodes(compositeNode) GetLabelVolumeID]
+          set nodes(labelNode) [$::slicer3::MRMLScene GetNodeByID $labelID]
+          set rasToIJK [vtkMatrix4x4 New]
+          $nodes(labelNode) GetRASToIJKMatrix $rasToIJK
+          set ijk [lrange [eval $rasToIJK MultiplyPoint $rasPoint 1] 0 2]
+          set imageData [$nodes(labelNode) GetImageData]
+          foreach var {i j k} val $ijk {
+            set $var [expr int(round($val))]
+          }
+          set labelValue [$imageData GetScalarComponentAsDouble $i $j $k 0]
+          set pointLabels "label: $labelValue, ijk $ijk"
+          $rasToIJK Delete
         }
       }
 
@@ -566,6 +579,11 @@ proc QueryAtlasPickCallback {} {
         set pointLabels "background"
       }
     }
+
+    default {
+      set pointLabels "background"
+    }
+
   }
 
   #
