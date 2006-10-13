@@ -85,7 +85,7 @@ void vtkMRMLClipModelsNode::WriteXML(ostream& of, int nIndent)
 void vtkMRMLClipModelsNode::ReadXMLAttributes(const char** atts)
 {
 
-  vtkMRMLNode::ReadXMLAttributes(atts);
+  Superclass::ReadXMLAttributes(atts);
 
   const char* attName;
   const char* attValue;
@@ -126,7 +126,7 @@ void vtkMRMLClipModelsNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, ID
 void vtkMRMLClipModelsNode::Copy(vtkMRMLNode *anode)
 {
-  vtkMRMLNode::Copy(anode);
+  Superclass::Copy(anode);
   vtkMRMLClipModelsNode *node = (vtkMRMLClipModelsNode *) anode;
 
   this->SetClipType(node->ClipType);
@@ -138,7 +138,7 @@ void vtkMRMLClipModelsNode::Copy(vtkMRMLNode *anode)
 //----------------------------------------------------------------------------
 void vtkMRMLClipModelsNode::PrintSelf(ostream& os, vtkIndent indent)
 {  
-  vtkMRMLNode::PrintSelf(os,indent);
+  Superclass::PrintSelf(os,indent);
 
   os << indent << "ClipType:        " << this->ClipType << "\n";
   os << indent << "YellowSliceClipState: " << this->YellowSliceClipState << "\n";

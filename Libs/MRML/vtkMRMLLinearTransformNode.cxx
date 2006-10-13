@@ -103,7 +103,7 @@ void vtkMRMLLinearTransformNode::WriteXML(ostream& of, int nIndent)
 void vtkMRMLLinearTransformNode::ReadXMLAttributes(const char** atts)
 {
 
-  vtkMRMLNode::ReadXMLAttributes(atts);
+  Superclass::ReadXMLAttributes(atts);
 
   const char* attName;
   const char* attValue;
@@ -155,7 +155,7 @@ void vtkMRMLLinearTransformNode::Copy(vtkMRMLNode *anode)
 //----------------------------------------------------------------------------
 void vtkMRMLLinearTransformNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  vtkMRMLNode::PrintSelf(os,indent);
+  Superclass::PrintSelf(os,indent);
 
   if (this->MatrixTransformToParent != NULL) 
     {

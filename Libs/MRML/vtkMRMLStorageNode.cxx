@@ -55,7 +55,7 @@ void vtkMRMLStorageNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLStorageNode::ReadXMLAttributes(const char** atts)
 {
-  vtkMRMLNode::ReadXMLAttributes(atts);
+  Superclass::ReadXMLAttributes(atts);
   const char* attName;
   const char* attValue;
   while (*atts != NULL) 
@@ -83,7 +83,7 @@ void vtkMRMLStorageNode::Copy(vtkMRMLNode *anode)
 //----------------------------------------------------------------------------
 void vtkMRMLStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  vtkMRMLNode::PrintSelf(os,indent);
+  Superclass::PrintSelf(os,indent);
   os << indent << "FileName: " <<
     (this->FileName ? this->FileName : "(none)") << "\n";
 }

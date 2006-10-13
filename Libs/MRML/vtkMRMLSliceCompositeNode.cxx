@@ -87,7 +87,7 @@ void vtkMRMLSliceCompositeNode::WriteXML(ostream& of, int nIndent)
 void vtkMRMLSliceCompositeNode::ReadXMLAttributes(const char** atts)
 {
 
-  vtkMRMLNode::ReadXMLAttributes(atts);
+  Superclass::ReadXMLAttributes(atts);
 
   const char* attName;
   const char* attValue;
@@ -160,7 +160,7 @@ void vtkMRMLSliceCompositeNode::Copy(vtkMRMLNode *anode)
 //----------------------------------------------------------------------------
 void vtkMRMLSliceCompositeNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  vtkMRMLNode::PrintSelf(os,indent);
+  Superclass::PrintSelf(os,indent);
 
   os << indent << "BackgroundVolumeID: " << 
    (this->BackgroundVolumeID ? this->BackgroundVolumeID : "(none)") << "\n";

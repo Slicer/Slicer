@@ -138,7 +138,7 @@ void vtkMRMLFiducialListNode::WriteXML(ostream& of, int nIndent)
 void vtkMRMLFiducialListNode::ReadXMLAttributes(const char** atts)
 {
 
-  vtkMRMLNode::ReadXMLAttributes(atts);
+  Superclass::ReadXMLAttributes(atts);
 
   const char* attName;
   const char* attValue;
@@ -276,7 +276,7 @@ void vtkMRMLFiducialListNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, ID
 void vtkMRMLFiducialListNode::Copy(vtkMRMLNode *anode)
 {
-  vtkMRMLNode::Copy(anode);
+  Superclass::Copy(anode);
   vtkMRMLFiducialListNode *node = (vtkMRMLFiducialListNode *) anode;
 
   this->SetName(node->Name);
@@ -298,7 +298,7 @@ void vtkMRMLFiducialListNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   int idx;
   
-  vtkMRMLNode::PrintSelf(os,indent);
+  Superclass::PrintSelf(os,indent);
 
   os << indent << "Name: " <<
       (this->Name ? this->Name : "(none)") << "\n";

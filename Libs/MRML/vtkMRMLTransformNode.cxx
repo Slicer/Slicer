@@ -48,7 +48,7 @@ void vtkMRMLTransformNode::WriteXML(ostream& of, int nIndent)
 void vtkMRMLTransformNode::ReadXMLAttributes(const char** atts)
 {
 
-  vtkMRMLNode::ReadXMLAttributes(atts);
+  Superclass::ReadXMLAttributes(atts);
 }
 
 //----------------------------------------------------------------------------
@@ -62,7 +62,7 @@ void vtkMRMLTransformNode::Copy(vtkMRMLNode *anode)
 //----------------------------------------------------------------------------
 void vtkMRMLTransformNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  vtkMRMLNode::PrintSelf(os,indent);
+  Superclass::PrintSelf(os,indent);
   os << indent << "TransformNodeID: " <<
     (this->TransformNodeID ? this->TransformNodeID : "(none)") << "\n";
 }

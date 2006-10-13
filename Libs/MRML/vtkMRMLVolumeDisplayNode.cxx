@@ -137,7 +137,7 @@ void vtkMRMLVolumeDisplayNode::WriteXML(ostream& of, int nIndent)
 void vtkMRMLVolumeDisplayNode::ReadXMLAttributes(const char** atts)
 {
 
-  vtkMRMLNode::ReadXMLAttributes(atts);
+  Superclass::ReadXMLAttributes(atts);
 
   const char* attName;
   const char* attValue;
@@ -219,7 +219,7 @@ void vtkMRMLVolumeDisplayNode::Copy(vtkMRMLNode *anode)
 void vtkMRMLVolumeDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   
-  vtkMRMLNode::PrintSelf(os,indent);
+  Superclass::PrintSelf(os,indent);
 
   os << indent << "LUTName: " <<
     (this->LUTName ? this->LUTName : "(none)") << "\n";

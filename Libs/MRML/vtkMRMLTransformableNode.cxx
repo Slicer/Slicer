@@ -62,7 +62,7 @@ void vtkMRMLTransformableNode::WriteXML(ostream& of, int nIndent)
 void vtkMRMLTransformableNode::ReadXMLAttributes(const char** atts)
 {
 
-  vtkMRMLNode::ReadXMLAttributes(atts);
+  Superclass::ReadXMLAttributes(atts);
 
   const char* attName;
   const char* attValue;
@@ -90,7 +90,7 @@ void vtkMRMLTransformableNode::Copy(vtkMRMLNode *anode)
 //----------------------------------------------------------------------------
 void vtkMRMLTransformableNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  vtkMRMLNode::PrintSelf(os,indent);
+  Superclass::PrintSelf(os,indent);
   os << indent << "TransformNodeID: " <<
     (this->TransformNodeID ? this->TransformNodeID : "(none)") << "\n";
 }
@@ -142,11 +142,15 @@ void vtkMRMLTransformableNode::ProcessMRMLEvents ( vtkObject *caller,
 //-----------------------------------------------------------
 void vtkMRMLTransformableNode::UpdateScene(vtkMRMLScene *scene)
 {
+  Superclass::UpdateScene(scene);
+  this->SetAndObserveTransformNodeID(this->TransformNodeID);
 }
 
 //-----------------------------------------------------------
 void vtkMRMLTransformableNode::UpdateReferences()
 {
+   Superclass::UpdateReferences();
+
   if (this->TransformNodeID != NULL && this->Scene->GetNodeByID(this->TransformNodeID) == NULL)
     {
     this->SetAndObserveTransformNodeID(NULL);

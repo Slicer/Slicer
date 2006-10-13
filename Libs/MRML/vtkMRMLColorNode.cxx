@@ -89,7 +89,7 @@ void vtkMRMLColorNode::WriteXML(ostream& of, int nIndent)
 void vtkMRMLColorNode::ReadXMLAttributes(const char** atts)
 {
 
-  vtkMRMLNode::ReadXMLAttributes(atts);
+  Superclass::ReadXMLAttributes(atts);
 
   const char* attName;
   const char* attValue;
@@ -133,7 +133,7 @@ void vtkMRMLColorNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, ID
 void vtkMRMLColorNode::Copy(vtkMRMLNode *anode)
 {
-  vtkMRMLNode::Copy(anode);
+  Superclass::Copy(anode);
   vtkMRMLColorNode *node = (vtkMRMLColorNode *) anode;
 
   this->SetName(node->Name);
@@ -146,7 +146,7 @@ void vtkMRMLColorNode::Copy(vtkMRMLNode *anode)
 void vtkMRMLColorNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   
-  vtkMRMLNode::PrintSelf(os,indent);
+  Superclass::PrintSelf(os,indent);
 
   os << indent << "Name: " <<
       (this->Name ? this->Name : "(none)") << "\n";

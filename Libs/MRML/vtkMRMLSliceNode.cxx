@@ -266,7 +266,7 @@ void vtkMRMLSliceNode::WriteXML(ostream& of, int nIndent)
 void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
 {
 
-  vtkMRMLNode::ReadXMLAttributes(atts);
+  Superclass::ReadXMLAttributes(atts);
 
   const char* attName;
   const char* attValue;
@@ -348,7 +348,7 @@ void vtkMRMLSliceNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   int idx;
   
-  vtkMRMLNode::PrintSelf(os,indent);
+  Superclass::PrintSelf(os,indent);
   os << "FieldOfView:\n ";
   for (idx = 0; idx < 3; ++idx) {
     os << indent << " " << this->FieldOfView[idx];

@@ -141,7 +141,7 @@ void vtkMRMLModelDisplayNode::WriteXML(ostream& of, int nIndent)
 void vtkMRMLModelDisplayNode::ReadXMLAttributes(const char** atts)
 {
 
-  vtkMRMLNode::ReadXMLAttributes(atts);
+  Superclass::ReadXMLAttributes(atts);
 
   const char* attName;
   const char* attValue;
@@ -275,7 +275,7 @@ void vtkMRMLModelDisplayNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, ID
 void vtkMRMLModelDisplayNode::Copy(vtkMRMLNode *anode)
 {
-  vtkMRMLNode::Copy(anode);
+  Superclass::Copy(anode);
   vtkMRMLModelDisplayNode *node = (vtkMRMLModelDisplayNode *) anode;
 
   // Strings
@@ -304,7 +304,7 @@ void vtkMRMLModelDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   int idx;
   
-  vtkMRMLNode::PrintSelf(os,indent);
+  Superclass::PrintSelf(os,indent);
 
   os << indent << "Color:             " << this->Color << "\n";
   os << indent << "Opacity:           " << this->Opacity << "\n";

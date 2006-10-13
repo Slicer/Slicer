@@ -56,7 +56,9 @@ class VTK_MRML_EXPORT vtkMRMLTransformNode : public vtkMRMLTransformableNode
 
   // Description:
   // Finds the storage node and read the data
-  virtual void UpdateScene(vtkMRMLScene *scene){};
+  virtual void UpdateScene(vtkMRMLScene *scene){
+     Superclass::UpdateScene(scene);
+ };
 
   // Description:
   // 1 if transfrom is linear, 0 otherwise

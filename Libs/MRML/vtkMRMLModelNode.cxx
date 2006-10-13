@@ -120,7 +120,7 @@ void vtkMRMLModelNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, ID
 void vtkMRMLModelNode::Copy(vtkMRMLNode *anode)
 {
-  vtkMRMLNode::Copy(anode);
+  Superclass::Copy(anode);
   vtkMRMLModelNode *node = (vtkMRMLModelNode *) anode;
 
   this->SetStorageNodeID(node->StorageNodeID);
@@ -133,7 +133,7 @@ void vtkMRMLModelNode::Copy(vtkMRMLNode *anode)
 void vtkMRMLModelNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   
-  vtkMRMLNode::PrintSelf(os,indent);
+  Superclass::PrintSelf(os,indent);
 
   os << indent << "StorageNodeID: " <<
     (this->StorageNodeID ? this->StorageNodeID : "(none)") << "\n";
