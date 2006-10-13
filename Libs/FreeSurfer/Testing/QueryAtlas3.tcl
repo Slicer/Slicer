@@ -453,12 +453,15 @@ proc QueryAtlasPickCallback {} {
     return
   }
 
-
-
-  set renderWidget [[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer]
+  #
+  # get access to the standard view parts
+  #
+  set viewer [$::slicer3::ApplicationGUI GetViewerWidget] 
+  set renderWidget [$viewer GetMainViewer]
   set renderWindow [$renderWidget GetRenderWindow]
   set interactor [$renderWidget GetRenderWindowInteractor] 
   set renderer [$renderWidget GetRenderer]
+  set actor [$viewer GetActorByID $::QA(modelNodeID)]
 
   # if the window size has changed, re-render
   if { [$renderWindow GetSize] != [$::QA(viewer) GetSize] } {
@@ -476,17 +479,28 @@ proc QueryAtlasPickCallback {} {
 
   #
   # use the prop picker to see if we're over the model, or the slices
+  # - set the 'hit' variable accordingly for later processing
   #
-  set viewer [$::slicer3::ApplicationGUI GetViewerWidget] 
-  set actor [$viewer GetActorByID $::QA(modelNodeID)]
-
+  set hit ""
   if { [$::QA(propPicker) PickProp $x $y $renderer] } {
     set prop [$::QA(propPicker) GetViewProp]
     if { $prop == $actor} {
-      puts "over query actor"
+      set hit "QueryActor"
     } else {
       set id [$viewer GetIDByActor $prop]
-      puts "over mrml \"$id\" at [$::QA(propPicker) GetPickPosition]"
+      set hit "Model"
+    }
+  }
+
+
+  #
+  # set the 'pointlabels' depending on the thing picked
+  #
+
+  switch $hit {
+
+    "Model" {
+
       set node [$::slicer3::MRMLScene GetNodeByID $id]
       if { [$node GetDescription] != "" } {
         array set nodes [$node GetDescription]
@@ -501,56 +515,57 @@ proc QueryAtlasPickCallback {} {
         set cellID [$::QA(cellPicker) GetCellId]
         set pCoords [$::QA(cellPicker) GetPCoords]
         if { $cellID != -1 } {
-          puts "position is $cellID, $pCoords"
           set polyData [[$prop GetMapper] GetInput]
           set cell [$polyData GetCell $cellID]
           set rasPoint [QueryAtlasPCoordsToWorld $cell $pCoords]
-          puts $rasPoint
+          set pointLabels $rasPoint
         }
       }
-   }
-  }
 
-  #
-  # get the color under the mouse
-  #
-  $::QA(windowToImage) Update
-  set color ""
-  foreach c {0 1 2 3} {
-    lappend color [[$::QA(windowToImage) GetOutput] GetScalarComponentAsFloat $x $y 0 $c]
-  }
+    }
 
+    "QueryActor" {
 
+      #
+      # get the color under the mouse from label image
+      #
+      $::QA(windowToImage) Update
+      set color ""
+      foreach c {0 1 2 3} {
+        lappend color [[$::QA(windowToImage) GetOutput] GetScalarComponentAsFloat $x $y 0 $c]
+      }
 
-  #
-  # convert the color to a cell index and get the cooresponding
-  # label names from the vertices
-  #
-  set cellNumber [QueryAtlasRGBAToNumber $color]
-  if { $cellNumber >= 0 && $cellNumber < [$::QA(polyData) GetNumberOfCells] } {
-    set cell [$::QA(polyData) GetCell $cellNumber]
+      #
+      # convert the color to a cell index and get the cooresponding
+      # label names from the vertices
+      #
+      set cellNumber [QueryAtlasRGBAToNumber $color]
+      if { $cellNumber >= 0 && $cellNumber < [$::QA(polyData) GetNumberOfCells] } {
+        set cell [$::QA(polyData) GetCell $cellNumber]
 
-    set labels [[$::QA(polyData) GetPointData] GetScalars "labels"]
+        set labels [[$::QA(polyData) GetPointData] GetScalars "labels"]
 
-    array set labelMap $::QA(labelMap)
-    set pointLabels ""
-    set numberOfPoints [$cell GetNumberOfPoints]
+        array set labelMap $::QA(labelMap)
+        set pointLabels ""
+        set numberOfPoints [$cell GetNumberOfPoints]
 
-    for {set p 0} {$p < $numberOfPoints} {incr p} {
-      set index [$cell GetPointId $p]
-      set pointLabel [$labels GetValue $index]
-      if { [info exists labelMap($pointLabel)] } {
-        set labelName $labelMap($pointLabel)
-        if { [lsearch $pointLabels $labelName] == -1 } {
-          lappend pointLabels $labelName
+        for {set p 0} {$p < $numberOfPoints} {incr p} {
+          set index [$cell GetPointId $p]
+          set pointLabel [$labels GetValue $index]
+          if { [info exists labelMap($pointLabel)] } {
+            set labelName $labelMap($pointLabel)
+            if { [lsearch $pointLabels $labelName] == -1 } {
+              lappend pointLabels $labelName
+            }
+          } else {
+            lappend pointLabels "unknown"
+          }
         }
+        regsub -all " " $pointLabels "/" pointLabels
       } else {
-        lappend pointLabels "unknown"
+        set pointLabels "background"
       }
     }
-    regsub -all " " $pointLabels "/" pointLabels
-  } else {
-    set pointLabels "background"
   }
 
   #
@@ -594,10 +609,8 @@ proc QueryAtlasUpdateCursor {} {
 
   }
 
-  eval $::QA(cursor,actor) SetInput $::QA(lastLabels) 
+  $::QA(cursor,actor) SetInput $::QA(lastLabels) 
   eval $::QA(cursor,actor) SetPosition $::QA(lastWindowXY) 
-
-  set viewer [$::slicer3::ApplicationGUI GetViewerWidget]
   $viewer RequestRender
 }
 
