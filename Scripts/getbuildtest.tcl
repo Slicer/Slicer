@@ -243,7 +243,7 @@ runcmd $::CMAKE \
         -DITK_DIR:FILEPATH=$ITK_BINARY_PATH \
         -DKWWidgets_DIR:FILEPATH=$SLICER_LIB/KWWidgets-build \
         -DCMAKE_BUILD_TYPE=$::VTK_BUILD_TYPE \
-        -DSlicer3_VERSION_PATCH=$::GETBUILDTEST(version-patch) \
+        -DSlicer3_VERSION_PATCH:STRING=$::GETBUILDTEST(version-patch) \
         $SLICER_HOME
 
 if { $isWindows } {
