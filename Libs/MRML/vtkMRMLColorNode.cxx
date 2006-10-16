@@ -88,7 +88,19 @@ void vtkMRMLColorNode::WriteXML(ostream& of, int nIndent)
     {
     of << " filename=\"" << this->FileName << "\"";
     }
-  of << " color=\"" <<  "\"";
+  // only print out the look up table if ?
+  if (this->LookupTable != NULL) // && this->Type != this->File
+    {
+    of << " numcolors=\"" << this->LookupTable->GetNumberOfTableValues() << "\"";
+    of << " colors=\"";
+    for (int i = 0; i < this->LookupTable->GetNumberOfTableValues(); i++)
+      {
+      double *rgba;
+      rgba = this->LookupTable->GetTableValue(i);
+      of <<  i << " '" << this->GetColorName(i) << "' " << rgba[0] << " " << rgba[1] << " " << rgba[2] << " " << rgba[3] << " ";
+      }
+    of << "\"";
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -99,6 +111,7 @@ void vtkMRMLColorNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
+  int numColours;
   while (*atts != NULL) 
   {
       attName = *(atts++);
@@ -111,13 +124,38 @@ void vtkMRMLColorNode::ReadXMLAttributes(const char** atts)
       {
           // handled at the vtkMRMLNode level
       }
-      else  if (!strcmp(attName, "color")) 
+      else if (!strcmp(attName, "numcolors"))
+        {
+        std::stringstream ss;
+        ss << attValue;
+        ss >> numColours;
+        std::cout << "Setting the look up table size to " << numColours << "\n";
+        this->LookupTable->SetNumberOfTableValues(numColours);
+        this->Names.clear();
+        this->Names.resize(numColours);
+        }
+      else  if (!strcmp(attName, "colors")) 
       {
+      for (int i = 0; i < this->LookupTable->GetNumberOfTableValues(); i++)
+        {
+        std::cout << "Reading colour " << i << endl;
           std::stringstream ss;
           ss << attValue;
-          //ss >> this->Color[0];
-          //ss >> this->Color[1];
-          //ss >> this->Color[2];
+          // index name r g b a
+          int index;
+          std::string name;
+          double r, g, b, a;
+          ss >> index;
+          // TODO: allow for spaces in names
+          ss >> name;          
+          ss >> r;
+          ss >> g;
+          ss >> b;
+          ss >> a;
+          vtkDebugMacro("Adding colour at index " << index << " and then setting name " << name.c_str());
+          this->LookupTable->SetTableValue(index, r, g, b, a);
+          this->SetColorName(index, name.c_str());
+        }
       }
       else if (!strcmp(attName, "type")) 
       {
@@ -218,8 +256,6 @@ void vtkMRMLColorNode::ReadFile ()
       a = a / 255.0;
       vtkDebugMacro("Adding colour at id " << id << " and then pushing name " << name.c_str());
       this->LookupTable->SetTableValue(id, r, g, b, a);
-      // TODO: need to associate the names with the ids as the numbers may not
-      // be continuous
       this->SetColorName(id, name.c_str());
       }
     }
@@ -727,7 +763,14 @@ const char *vtkMRMLColorNode::GetColorName(int ind)
 {
     if (ind < this->Names.size() && ind >= 0)
     {
-    return this->Names[ind].c_str();
+    if (strcmp(this->Names[ind].c_str(), "") == 0)
+      {
+      return "(none)";
+      }
+    else
+      {
+      return this->Names[ind].c_str();
+      }
     }
   else
     {
