@@ -20,7 +20,7 @@ proc QueryAtlasInit { {filename ""} } {
     }
   }
 
-  QueryAtlasAddBIRNLogo
+  #QueryAtlasAddBIRNLogo
 
   QueryAtlasAddModel
   QueryAtlasAddVolumes
@@ -47,20 +47,25 @@ proc QueryAtlasAddBIRNLogo {} {
   set textureActor [vtkActor2D New]
   set imageProperty [vtkProperty2D New]
 
-  $points SetNumberOfPoints 4
+  #$points SetNumberOfPoints 4
+  set corners { {0.0 0.0 0.0} {1.0 0.0 0.0} {1.0 1.0 0.0} {0.0 1.0 0.0} }
+  foreach corner $corners {
+    eval $points InsertNextPoint $corner
+  }
+
   $polyData SetPoints $points
   $polys InsertNextCell 4
   foreach p "0 1 2 3" {
     $polys InsertCellPoint 0
   }
-  $polyData SetPolys($polys)
+  $polyData SetPolys $polys
 
   $tc SetNumberOfComponents 2
   $tc SetNumberOfTuples 4
   set tcs { {0.0 0.0} {1.0 0.0} {1.0 1.0} {0.0 1.0} }
-  foreach tcoords $tcs {
-    foreach i "0 1" tcoords $tcoords {
-      $tc InsertComponent $i $tcoord
+  foreach tcoords $tcs point {0 1 2 3} {
+    foreach i "0 1" tcoord $tcoords {
+      $tc InsertComponent $point $i $tcoord
     }
   }
   [$polyData GetPointData] SetTCoords $tc
@@ -71,6 +76,9 @@ proc QueryAtlasAddBIRNLogo {} {
   $imageProperty SetOpacity 0.25
 
 
+  #
+  # birn logo specific
+  #
   set logoFile $::SLICER_BUILD/../Slicer3/Libs/FreeSurfer/Testing/birn-new-big.png
   set ::QA(logo,actor) $textureActor
 
@@ -624,7 +632,7 @@ proc QueryAtlasPickCallback {} {
           if { [info exists ::QAFS($labelValue,name)] } {
             set pointLabels "$::QAFS($labelValue,name)"
           } else {
-            set pointLabels "label: $labelValue, ijk $ijk"
+            set pointLabels "label: $labelValue (no name available), ijk $ijk"
           }
           $rasToIJK Delete
         }
@@ -714,6 +722,7 @@ proc QueryAtlasUpdateCursor {} {
     set ::QA(cursor,actor) [vtkTextActor New]
     set ::QA(cursor,mapper) [vtkTextMapper New]
     $::QA(cursor,actor) SetMapper $::QA(cursor,mapper)
+    [$::QA(cursor,actor) GetTextProperty] ShadowOn
 
     set renderWidget [$viewer GetMainViewer]
     set renderer [$renderWidget GetRenderer]
