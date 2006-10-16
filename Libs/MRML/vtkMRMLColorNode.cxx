@@ -54,7 +54,9 @@ vtkMRMLColorNode::vtkMRMLColorNode()
 {
 
   this->LookupTable = vtkLookupTable::New();
+  this->FileName = NULL;
   this->SetTypeToGrey();
+  
 }
 
 //----------------------------------------------------------------------------
@@ -64,10 +66,10 @@ vtkMRMLColorNode::~vtkMRMLColorNode()
     {
         this->LookupTable->Delete();
     }
-  if (this->Name) {
+  if (this->FileName) {
 
-      delete [] this->Name;
-      this->Name = NULL;
+      delete [] this->FileName;
+      this->FileName = NULL;
   }
 }
 
@@ -81,7 +83,11 @@ void vtkMRMLColorNode::WriteXML(ostream& of, int nIndent)
   vtkIndent indent(nIndent);
   
   of << " type=\"" << this->GetTypeAsString() << "\"";
-  
+
+  if (this->Type == this->File && this->FileName != NULL)
+    {
+    of << " filename=\"" << this->FileName << "\"";
+    }
   of << " color=\"" <<  "\"";
 }
 
@@ -115,10 +121,19 @@ void vtkMRMLColorNode::ReadXMLAttributes(const char** atts)
       }
       else if (!strcmp(attName, "type")) 
       {
-          std::stringstream ss;
-          ss << attValue;
-          ss >> this->Type;
+      int type;
+      std::stringstream ss;
+      ss << attValue;
+      ss >> type;
+      this->SetType(type);
       }
+      else if (!strcmp(attName, "filename"))
+        {
+        this->SetFileName(attValue);
+        // read in the file with the colours
+        std::cout << "Reading file " << this->FileName << endl;
+        this->ReadFile();
+        }
       else
       {
           std::cerr << "Unknown attribute name " << attName << endl;
@@ -128,13 +143,13 @@ void vtkMRMLColorNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLColorNode::ReadTextAttributes (const char *fileName)
+void vtkMRMLColorNode::ReadFile ()
 {
 
   // open the file for reading input
   fstream fstr;
 
-  fstr.open(fileName, fstream::in);
+  fstr.open(this->FileName, fstream::in);
 
   if (fstr.is_open())
     {
@@ -181,7 +196,8 @@ void vtkMRMLColorNode::ReadTextAttributes (const char *fileName)
     // now parse out the valid lines and set up the colour lookup table
     vtkDebugMacro("The largest id is " << maxID);
     this->LookupTable->SetNumberOfColors(maxID + 1); // for zero
-    for (int i = 0; i < lines.size(); i++)
+    this->Names.resize(maxID + 1);
+    for (unsigned int i = 0; i < lines.size(); i++)
       {
       std::stringstream ss;
       ss << lines[i];
@@ -204,12 +220,12 @@ void vtkMRMLColorNode::ReadTextAttributes (const char *fileName)
       this->LookupTable->SetTableValue(id, r, g, b, a);
       // TODO: need to associate the names with the ids as the numbers may not
       // be continuous
-      this->AddColorName(name.c_str());
+      this->SetColorName(id, name.c_str());
       }
     }
   else
     {
-    std::cerr << "ERROR opening colour file " << fileName << endl;
+    std::cerr << "ERROR opening colour file " << this->FileName << endl;
     }
 }
 //----------------------------------------------------------------------------
@@ -223,7 +239,7 @@ void vtkMRMLColorNode::Copy(vtkMRMLNode *anode)
   this->SetName(node->Name);
   this->SetLookupTable(node->LookupTable);
   this->SetType(node->Type);
-
+  this->SetFileName(node->FileName);
 }
 
 //----------------------------------------------------------------------------
@@ -247,7 +263,7 @@ void vtkMRMLColorNode::PrintSelf(ostream& os, vtkIndent indent)
   if (this->Names.size() > 0)
     {
     os << indent << "Color Names:\n";
-    for (int i = 0; i < this->Names.size(); i++)
+    for (int i = 0; (int)i < this->Names.size(); i++)
       {
       os << indent << indent << i << " " << this->GetColorName(i) << endl;
       }
@@ -277,15 +293,21 @@ void vtkMRMLColorNode::UpdateScene(vtkMRMLScene *scene)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLColorNode::SetTypeToLabels()
+void vtkMRMLColorNode::SetTypeToGrey()
 {
-    this->SetType(this->Labels);
+    this->SetType(this->Grey);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLColorNode::SetTypeToRandom()
+void vtkMRMLColorNode::SetTypeToIron()
 {
-    this->SetType(this->Random);
+    this->SetType(this->Iron);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLColorNode::SetTypeToRainbow()
+{
+    this->SetType(this->Rainbow);
 }
 
 //----------------------------------------------------------------------------
@@ -295,15 +317,46 @@ void vtkMRMLColorNode::SetTypeToOcean()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLColorNode::SetTypeToGrey()
+void vtkMRMLColorNode::SetTypeToDesert()
 {
-    this->SetType(this->Grey);
+    this->SetType(this->Desert);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLColorNode::SetTypeToInvGrey()
+{
+    this->SetType(this->InvGrey);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLColorNode::SetTypeToReverseRainbow()
+{
+    this->SetType(this->ReverseRainbow);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLColorNode::SetTypeToFMRI()
+{
+    this->SetType(this->FMRI);
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLColorNode::SetTypeToFMRIPA()
 {
     this->SetType(this->FMRIPA);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLColorNode::SetTypeToLabels()
+{
+    this->SetType(this->Labels);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLColorNode::SetTypeToRandom()
+{
+  
+  this->SetType(this->Random);
 }
 
 //----------------------------------------------------------------------------
@@ -315,6 +368,42 @@ void vtkMRMLColorNode::SetTypeToFile()
 //----------------------------------------------------------------------------
 const char* vtkMRMLColorNode::GetTypeAsString()
 {
+  if (this->Type == this->Grey)
+    {
+    return "Grey";
+    }
+  if (this->Type == this->Iron)
+    {
+    return "Iron";
+    }
+  if (this->Type == this->Rainbow)
+    {
+    return "Rainbow";
+    }
+  if (this->Type == this->Ocean)
+    {
+    return "Ocean";
+    }
+  if (this->Type == this->Desert)
+    {
+    return "Desert";
+    }
+  if (this->Type == this->InvGrey)
+    {
+    return "InvertedGrey";
+    }
+  if (this->Type == this->ReverseRainbow)
+    {
+    return "ReverseRainbow";
+    }
+  if (this->Type == this->FMRI)
+    {
+    return "fMRI";
+    }
+  if (this->Type == this->FMRIPA)
+    {
+    return "fMRIPA";
+    }
   if (this->Type == this->Labels)
     {
     return "Labels";
@@ -322,18 +411,6 @@ const char* vtkMRMLColorNode::GetTypeAsString()
   if (this->Type == this->Random)
     {
     return "Random";
-    }
-  if (this->Type == this->Grey)
-    {
-    return "Grey";
-    }
-  if (this->Type == this->Ocean)
-    {
-    return "Ocean";
-    }
-  if (this->Type == this->FMRIPA)
-    {
-    return "fMRIPA";
     }
   if (this->Type == this->File)
     {
@@ -363,16 +440,229 @@ void vtkMRMLColorNode::ProcessMRMLEvents ( vtkObject *caller,
 void vtkMRMLColorNode::SetType(int type)
 {
     if (this->Type == type)
-    {
-        return;
-    }
-    vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting Type to " << type);
+      {
+      vtkDebugMacro("SetType: type is already set to " << type <<  " = " << this->GetTypeAsString());
+      return;
+      }
+    
     this->Type = type;
     this->SetName(this->GetTypeAsString());
-    
-    if (this->Type == this->Random)
-      {
 
+    vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting Type to " << type << " = " << this->GetTypeAsString());
+
+    this->LookupTable->Delete();
+    this->LookupTable = vtkLookupTable::New();
+    
+    if (this->Type == this->Grey)
+      {
+      // from vtkSlicerSliceLayerLogic.cxx
+      this->LookupTable->SetRampToLinear();
+      this->LookupTable->SetTableRange(0, 255);
+      this->LookupTable->SetHueRange(0, 0);
+      this->LookupTable->SetSaturationRange(0, 0);
+      this->LookupTable->SetValueRange(0, 1);
+      this->LookupTable->SetAlphaRange(1, 1); // not used
+      this->LookupTable->Build();
+      this->SetNamesFromColors();
+      }
+    else if (this->Type == this->Iron)
+      {
+      this->LookupTable->SetNumberOfTableValues(156);
+      this->LookupTable->SetHueRange(0, 0.15);
+      this->LookupTable->SetSaturationRange(1,1);
+      this->LookupTable->SetValueRange(1,1);
+      this->LookupTable->SetRampToLinear();
+      this->LookupTable->Build();
+      this->SetNamesFromColors();
+      }
+
+    else if (this->Type == this->Rainbow)
+      {
+      this->LookupTable->SetNumberOfTableValues(256);
+      this->LookupTable->SetHueRange(0, 0.8);
+      this->LookupTable->SetSaturationRange(1,1);
+      this->LookupTable->SetValueRange(1,1);
+      this->LookupTable->SetRampToLinear();
+      this->LookupTable->Build();
+      this->SetNamesFromColors();
+      }
+
+    else if (this->Type == this->Ocean)
+      {
+      this->LookupTable->SetNumberOfTableValues(256);
+      this->LookupTable->SetHueRange(0.666667, 0.5);
+      this->LookupTable->SetSaturationRange(1,1);
+      this->LookupTable->SetValueRange(1,1);
+      this->LookupTable->SetRampToLinear();
+      this->LookupTable->Build();
+      this->SetNamesFromColors();
+      }
+    else if (this->Type == this->Desert)
+      {
+      this->LookupTable->SetNumberOfTableValues(256);
+      this->LookupTable->SetHueRange(0, 0.1);
+      this->LookupTable->SetSaturationRange(1,1);
+      this->LookupTable->SetValueRange(1,1);
+      this->LookupTable->SetRampToLinear();
+      this->LookupTable->Build();
+      this->SetNamesFromColors();
+      }
+    
+    else if (this->Type == this->InvGrey)
+      {
+      this->LookupTable->SetNumberOfTableValues(256);
+      this->LookupTable->SetHueRange(0,0);
+      this->LookupTable->SetSaturationRange(0,0);
+      this->LookupTable->SetValueRange(1,0);
+      this->LookupTable->SetRampToLinear();
+      this->LookupTable->Build();
+      this->SetNamesFromColors();
+      }
+
+    else if (this->Type == this->ReverseRainbow)
+      {
+      this->LookupTable->SetNumberOfTableValues(256);
+      this->LookupTable->SetHueRange(0.8, 1);
+      this->LookupTable->SetSaturationRange(1,1);
+      this->LookupTable->SetValueRange(1,1);
+      this->LookupTable->SetRampToLinear();
+      this->LookupTable->Build();
+      this->SetNamesFromColors();
+      }
+    
+    else if (this->Type == this->FMRI)
+      {
+      // Use different numbers of table values for neg and pos
+      // to make sure -1 is represented by blue
+
+      // From green to blue
+      vtkLookupTable *neg = vtkLookupTable::New();
+      neg->SetNumberOfTableValues(23);
+      neg->SetHueRange(0.5, 0.66667);
+      neg->SetSaturationRange( 1, 1);
+      neg->SetValueRange(1, 1);
+      neg->SetRampToLinear();
+      neg->Build();
+
+      // From red to yellow
+      vtkLookupTable *pos = vtkLookupTable::New();
+      pos->SetNumberOfTableValues(20);
+      pos->SetHueRange(0,0.16667);
+      pos->SetSaturationRange(1,1);
+      pos->SetValueRange(1,1);
+      pos->SetRampToLinear();
+      pos->Build();
+
+      this->LookupTable->SetNumberOfTableValues(43);
+      this->LookupTable->SetRampToLinear();
+      this->LookupTable->Build();
+
+      for (int i = 0; i < 23; i++)
+        {
+        this->LookupTable->SetTableValue(i, neg->GetTableValue(i));
+        }
+      for (int i = 0; i < 20; i++)
+        {
+        this->LookupTable->SetTableValue(i+23, pos->GetTableValue(i));
+        }
+      
+      pos->Delete();
+      neg->Delete();
+      }
+    
+    else if (this->Type == this->FMRIPA)
+      {
+      int size = 20;
+      this->LookupTable->SetNumberOfTableValues(size);
+      this->LookupTable->SetHueRange(0, 0.16667);
+      this->LookupTable->SetSaturationRange(1, 1);
+      this->LookupTable->SetValueRange(1, 1);
+      this->LookupTable->SetRampToLinear();
+      this->LookupTable->Build();
+      this->SetNamesFromColors();
+      }
+
+    else if (this->Type == this->Labels)
+      {
+      // from Slicer2's Colors.xml
+      this->LookupTable->SetNumberOfTableValues(21);
+      this->Names.clear();
+      this->Names.resize(this->LookupTable->GetNumberOfTableValues());
+      
+      this->SetColorName(0, "Black");
+      this->LookupTable->SetTableValue(0, 0, 0, 0, 1.0);
+
+      this->SetColorName(1, "jake");
+      this->LookupTable->SetTableValue(1, 0.2, 0.5, 0.8, 1.0);
+
+      this->SetColorName(2, "Skin");
+      this->LookupTable->SetTableValue(2, 1.0, 0.8, 0.7, 1.0);
+
+      this->SetColorName(3, "Brain");
+      this->LookupTable->SetTableValue(3, 1.0, 1.0, 1.0, 1.0);
+
+      this->SetColorName(4, "Ventricles");
+      this->LookupTable->SetTableValue(4, 0.4, 0.7, 1.0, 1.0);
+
+      this->SetColorName(5, "Vessels");
+      this->LookupTable->SetTableValue(5, 0.9, 0.5, 0.5, 1.0);
+
+      this->SetColorName(6, "Tumor");
+      this->LookupTable->SetTableValue(6, 0.5, 0.9, 0.5, 1.0);
+
+      this->SetColorName(7, "fMRI-high");
+      this->LookupTable->SetTableValue(7, 0.5, 0.9, 0.9, 1.0);
+
+      this->SetColorName(8, "fMRI-low");
+      this->LookupTable->SetTableValue(8, 0.9, 0.9, 0.5, 1.0);
+
+      this->SetColorName(9, "Pre-Gyrus");
+      this->LookupTable->SetTableValue(9, 0.9, 0.7, 0.9, 1.0);
+
+      this->SetColorName(10, "Post-Gyrus");
+      this->LookupTable->SetTableValue(10, 0.9, 0.9, 0.5, 1.0);
+
+      this->SetColorName(11, "jake");
+      this->LookupTable->SetTableValue(11, 0.2, 0.5, 0.8, 1.0);
+
+      this->SetColorName(12, "elwood");
+      this->LookupTable->SetTableValue(12, 0.2, 0.8, 0.5, 1.0);
+
+      this->SetColorName(13, "gato");
+      this->LookupTable->SetTableValue(13, 0.8, 0.5, 0.2, 1.0);
+
+      this->SetColorName(14, "avery");
+      this->LookupTable->SetTableValue(14, 0.8, 0.2, 0.5, 1.0);
+
+      this->SetColorName(15, "mambazo");
+      this->LookupTable->SetTableValue(15, 0.5, 0.2, 0.8, 1.0);
+
+      this->SetColorName(16, "domino");
+      this->LookupTable->SetTableValue(16, 0.5, 0.8, 0.2, 1.0);
+
+      this->SetColorName(17, "monk");
+      this->LookupTable->SetTableValue(17, 0.2, 0.2, 0.8, 1.0);
+
+      this->SetColorName(18, "forest");
+      this->LookupTable->SetTableValue(18, 0.8, 0.8, 0.2, 1.0);
+
+      this->SetColorName(19, "dylan");
+      this->LookupTable->SetTableValue(19, 0.2, 0.8, 0.8, 1.0);
+
+      this->SetColorName(20, "kales");
+      this->LookupTable->SetTableValue(20, 0.5, 0.5, 0.5, 1.0);
+      /*
+      this->SetColorName(300, "fMRI-neg");
+      this->LookupTable->SetTableValue(300, 0.0, 0.8, 1.0, 1.0);
+
+      this->SetColorName(301, "fMRI-pos");
+      this->LookupTable->SetTableValue(301, 1.0, 1.0, 0.0, 1.0);
+      */
+      
+      }
+    
+    else if (this->Type == this->Random)
+      {
       int size = 255;
       
       this->LookupTable->SetTableValue(0, 0, 0, 0, 0);
@@ -387,36 +677,18 @@ void vtkMRMLColorNode::SetType(int type)
        
         this->LookupTable->SetTableValue(i, r, g, b, 1.0);
         }
-      this->SetNamesFromColors();
+      this->SetNamesFromColors();      
+      }
+    
+    else if (this->Type == this->File)
+      {
+      std::cout << "Set type to file, call SetFileName and ReadFile next...\n";
       }
 
-    if (this->Type == this->FMRIPA)
+    else
       {
-      int size = 20;
-      this->LookupTable->SetNumberOfTableValues(size);
-      this->LookupTable->SetHueRange(0, 0.16667);
-      this->LookupTable->SetSaturationRange(1, 1);
-      this->LookupTable->SetValueRange(1, 1);
-      this->LookupTable->SetRampToLinear();
-      this->LookupTable->Build();
-      this->SetNamesFromColors();
-      }
-
-    if (this->Type == this->Grey)
-      {
-      // from vtkSlicerSliceLayerLogic.cxx
-      this->LookupTable->SetRampToLinear();
-      this->LookupTable->SetTableRange(0, 255);
-      this->LookupTable->SetHueRange(0, 0);
-      this->LookupTable->SetSaturationRange(0, 0);
-      this->LookupTable->SetValueRange(0, 1);
-      this->LookupTable->SetAlphaRange(1, 1); // not used
-      this->LookupTable->Build();
-      this->SetNamesFromColors();
-      }
-    if (this->Type == this->File)
-      {
-      std::cout << "Set type to file, use ReadTextAttributes next...\n";
+      std::cerr << "vtkMRMLColorNode: SetType ERROR, unknown type " << type << endl;
+      return;
       }
     // invoke a modified event
     this->Modified();
@@ -453,7 +725,7 @@ void vtkMRMLColorNode::SetNamesFromColors()
 //---------------------------------------------------------------------------
 const char *vtkMRMLColorNode::GetColorName(int ind)
 {
-  if (ind < this->Names.size() && ind >= 0)
+    if (ind < this->Names.size() && ind >= 0)
     {
     return this->Names[ind].c_str();
     }
@@ -466,7 +738,7 @@ const char *vtkMRMLColorNode::GetColorName(int ind)
 //---------------------------------------------------------------------------
 void vtkMRMLColorNode::SetColorName(int ind, const char *name)
 {
-  if (ind < this->Names.size() && ind >= 0)
+    if (ind < this->Names.size() && ind >= 0)
     {
     this->Names[ind] = std::string(name);
     }

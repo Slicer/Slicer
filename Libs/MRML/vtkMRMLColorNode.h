@@ -54,7 +54,7 @@ public:
   // Read in a text file holding colour table elements
   // id name r g b a
   // comments start with a hash mark
-  virtual void ReadTextAttributes (const char *fileName);
+  virtual void ReadFile ();
   
   // Description:
   // Copy the node's attributes to this object
@@ -75,11 +75,17 @@ public:
   // Get/Set for Type
   void SetType(int type);
   vtkGetMacro(Type,int);
+  void SetTypeToGrey();
+  void SetTypeToIron();
+  void SetTypeToRainbow();
+  void SetTypeToOcean();
+  void SetTypeToDesert();
+  void SetTypeToInvGrey();
+  void SetTypeToReverseRainbow();
+  void SetTypeToFMRI();
+  void SetTypeToFMRIPA();
   void SetTypeToLabels();
   void SetTypeToRandom();
-  void SetTypeToOcean();
-  void SetTypeToGrey();
-  void SetTypeToFMRIPA();
   void SetTypeToFile();
 
   void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
@@ -87,19 +93,33 @@ public:
   //BTX
   // Description:
   // The list of valid table types
+ 
+  // Grey - greyscale ramp
+  // Iron - neutral
+  // Rainbow - red-orange-yellow-blue-indigo-violet
+  // Ocean - bluish ramp
+  // Desert - orange ramp
+  // InvGrey - inverted greyscale ramp
+  // ReverseRainbow - inverted Rainbow
+  // FMRI - fMRI map
+  // FMRIPA - fMRI Positive Activation map
   // Labels - the Slicer default editor labels
   // Random - 255 random colors
-  // Grey - greyscale ramp
-  // Ocean - bluish ramp
-  // FMRIPA - fMRI Positive Activation map
+  // File - read in from file
   enum
     {
-      Labels = 1,
-      Random = 2,
-      Grey = 3,
+      Grey = 1,
+      Iron = 2,
+      Rainbow = 3,
       Ocean = 4,
-      FMRIPA = 5,
-      File = 6,
+      Desert = 5,
+      InvGrey = 6,
+      ReverseRainbow = 7,
+      FMRI = 8,
+      FMRIPA = 9,
+      Labels = 10,
+      Random = 11,
+      File = 12,
     };
   //ETX
 
@@ -130,6 +150,11 @@ public:
   // Set the 0th based nth name of this colour
   void SetColorName(int ind, const char *name);
 
+  // Description:
+  // Name of the file name from which to read color information
+  vtkSetStringMacro(FileName);
+  vtkGetStringMacro(FileName);
+  
 protected:
   vtkMRMLColorNode();
   ~vtkMRMLColorNode();
@@ -155,6 +180,10 @@ protected:
   // A vector of names for the color table elements
   std::vector<std::string> Names;
   //ETX
+
+  // Description:
+  // A file name to read text attributes from
+  char *FileName;
 };
 
 #endif
