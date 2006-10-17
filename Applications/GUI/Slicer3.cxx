@@ -11,6 +11,7 @@
 #include "vtkSlicerVolumesLogic.h"
 #include "vtkSlicerModelsLogic.h"
 #include "vtkSlicerFiducialsLogic.h"
+#include "vtkSlicerColorLogic.h"
 #include "vtkMRMLScene.h"
 #include "vtkSlicerComponentGUI.h"
 #include "vtkSlicerApplicationGUI.h"
@@ -22,6 +23,7 @@
 #include "vtkSlicerVolumesGUI.h"
 #include "vtkSlicerModelsGUI.h"
 #include "vtkSlicerFiducialsGUI.h"
+#include "vtkSlicerColorGUI.h"
 #include "vtkSlicerDataGUI.h"
 #include "vtkSlicerTransformsGUI.h"
 #include "vtkSlicerTheme.h"
@@ -386,6 +388,24 @@ int Slicer3_main(int argc, char *argv[])
     fiducialsGUI->BuildGUI ( );
     fiducialsGUI->AddGUIObservers ( );
 
+
+    // -- Color module
+     vtkSlicerColorLogic *colorLogic = vtkSlicerColorLogic::New ( );
+    colorLogic->SetAndObserveMRMLScene ( scene );
+    vtkSlicerColorGUI *colorGUI = vtkSlicerColorGUI::New ( );
+    colorGUI->SetApplication ( slicerApp );
+    colorGUI->SetAndObserveApplicationLogic ( appLogic );
+    colorGUI->SetAndObserveMRMLScene ( scene );
+    colorGUI->SetModuleLogic ( colorLogic );
+    colorGUI->SetGUIName( "Color" );
+    colorGUI->GetUIPanel()->SetName ( colorGUI->GetGUIName ( ) );
+    colorGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
+    colorGUI->GetUIPanel()->Create ( );
+    slicerApp->AddModuleGUI ( colorGUI );
+    colorGUI->BuildGUI ( );
+    colorGUI->AddGUIObservers ( );
+
+    
     // --- Transforms module
     vtkSlicerTransformsGUI *transformsGUI = vtkSlicerTransformsGUI::New ( );
     transformsGUI->SetApplication ( slicerApp );
@@ -599,6 +619,8 @@ int Slicer3_main(int argc, char *argv[])
     slicerApp->Script ("namespace eval slicer3 set ModelsGUI %s", name);
     name = fiducialsGUI->GetTclName();
     slicerApp->Script ("namespace eval slicer3 set FiducialsGUI %s", name);
+    name = colorGUI->GetTclName();
+    slicerApp->Script ("namespace eval slicer3 set ColorGUI %s", name);
     name = transformsGUI->GetTclName();
     slicerApp->Script ("namespace eval slicer3 set TransformsGUI %s", name);
 
@@ -768,6 +790,7 @@ int Slicer3_main(int argc, char *argv[])
     modelsGUI->RemoveGUIObservers ( );
 #endif
     fiducialsGUI->RemoveGUIObservers ( );
+    colorGUI->RemoveGUIObservers ( );
     transformsGUI->RemoveGUIObservers ( );
     dataGUI->RemoveGUIObservers ( );
 #ifndef SLICES_DEBUG
@@ -834,6 +857,7 @@ int Slicer3_main(int argc, char *argv[])
     modelsGUI->Delete ();
 #endif
     fiducialsGUI->Delete ();
+    colorGUI->Delete();
     transformsGUI->Delete ();
     dataGUI->Delete ();
 #ifndef SLICES_DEBUG
@@ -878,6 +902,8 @@ int Slicer3_main(int argc, char *argv[])
 #endif
     fiducialsLogic->SetAndObserveMRMLScene ( NULL );
     fiducialsLogic->Delete();
+    colorLogic->SetAndObserveMRMLScene ( NULL );
+    colorLogic->Delete();
     sliceLogic2->SetAndObserveMRMLScene ( NULL );
     sliceLogic2->Delete ();
     sliceLogic1->SetAndObserveMRMLScene ( NULL );
