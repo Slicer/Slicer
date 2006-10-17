@@ -420,26 +420,39 @@ int vtkMRMLScene::Commit(const char* url)
   return 1;
 }
 
+//------------------------------------------------------------------------------
+void vtkMRMLScene::RequestNodeID(vtkMRMLNode *node, const char *ID)
+{
+    if (node == NULL || ID == NULL)
+      {
+      return;
+      }
+    // is this ID in use?
+    if (this->GetNodeByID(ID) == NULL)
+      {
+      // not used yet, set it
+      vtkDebugMacro("vtkMRMLScene::RequestNodeID: ID " << ID << " not in use, setting node's ID");
+      node->SetID(ID);
+      }
+    else
+      {
+      // it's used already, get a unique id postfix for this class and use
+      // that in conjunction with the ID
+      node->ConstructAndSetID(ID, GetUniqueIDIndexByClass(node->GetClassName()));
+      vtkDebugMacro("vtkMRMLScene::RequestNodeID: ID " << ID << " was in use, set the node id to " << node->GetID());
+      }
+}
+
+//------------------------------------------------------------------------------
 void vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
 {
   //TODO convert URL to Root directory
   //n->SetSceneRootDir("");
   if (n->GetID() == NULL || n->GetID()[0] == '\0' || this->GetNodeByID(n->GetID()) != NULL) 
     {
-    //std::cout << "\n";
-    if (n->GetID() == NULL && n->GetName() != NULL && strcmp(n->GetName(), "None") == 0)
-      {
-      // deal with the special case of the none volume, set the ID to None as
-      // well
-      std::cout << "\nAddNodeNoNotify: have the None volume name, setting it's ID to None...\n";
-      n->SetID("None");
-      }
-    else
-      {
-      //n->SetID(this->GetUniqueIDByClass(n->GetClassName()));
-      n->ConstructAndSetID(n->GetClassName(), this->GetUniqueIDIndexByClass(n->GetClassName()));
-      vtkDebugMacro("AddNodeNoNotify: got unique id for new " << n->GetClassName() << " node: " << n->GetID() << endl);
-      }
+    //n->SetID(this->GetUniqueIDByClass(n->GetClassName()));
+    n->ConstructAndSetID(n->GetClassName(), this->GetUniqueIDIndexByClass(n->GetClassName()));
+    vtkDebugMacro("AddNodeNoNotify: got unique id for new " << n->GetClassName() << " node: " << n->GetID() << endl);
     }
 
   n->SetSceneRootDir(this->RootDirectory.c_str());
@@ -448,6 +461,7 @@ void vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
   n->SetScene( this );
 }
 
+//------------------------------------------------------------------------------
 void vtkMRMLScene::AddNode(vtkMRMLNode *n)
 {
   this->AddNodeNoNotify(n);
@@ -455,6 +469,7 @@ void vtkMRMLScene::AddNode(vtkMRMLNode *n)
   this->Modified();
 }
 
+//------------------------------------------------------------------------------
 void vtkMRMLScene::RemoveNode(vtkMRMLNode *n) 
 {
   n->Register(this);
@@ -469,7 +484,6 @@ void vtkMRMLScene::RemoveNode(vtkMRMLNode *n)
     }
   this->Modified();
 }
-  
 
 //------------------------------------------------------------------------------
 int vtkMRMLScene::GetNumberOfNodesByClass(const char *className)

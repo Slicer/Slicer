@@ -95,6 +95,13 @@ public:
   const char* GetTagByClassName(const char *className);
 
   // Description:
+  // Called by another class to request that the node's id be set to the given
+  // string
+  // If the id is not in use, set it, otherwise, useit as a base for a unique
+  // id and then set it
+  void RequestNodeID(vtkMRMLNode *node, const char *ID);
+  
+  // Description:
   // Add a node to the scene and send NewNode and SceneModified events.
   void AddNode(vtkMRMLNode *n);
 
