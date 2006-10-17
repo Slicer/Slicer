@@ -323,12 +323,22 @@ void vtkSlicerSliceLayerLogic::UpdateTransforms()
       }
     else
       {
-      // don't apply threshold - alpha channel becomes 255 everywhere
-      this->Threshold->ThresholdBetween( 1, 0 ); 
-      this->Threshold->ReplaceInOn();
-      this->Threshold->SetInValue(255);
-      this->Threshold->ReplaceOutOn();
-      this->Threshold->SetOutValue(255);
+      vtkMRMLScalarVolumeNode *scalarVolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast (this->VolumeNode);
+      if ( scalarVolumeNode->GetLabelMap() )
+        {
+        // don't apply threshold - let it come from the label map
+        this->Threshold->ReplaceInOff();
+        this->Threshold->ReplaceOutOff();
+        } 
+      else
+        {
+        // don't apply threshold - alpha channel becomes 255 everywhere
+        this->Threshold->ThresholdBetween( 1, 0 ); 
+        this->Threshold->ReplaceInOn();
+        this->Threshold->SetInValue(255);
+        this->Threshold->ReplaceOutOn();
+        this->Threshold->SetOutValue(255);
+        }
       }
 
     this->AlphaLogic->SetInput1( this->ResliceAlphaCast->GetOutput() );
