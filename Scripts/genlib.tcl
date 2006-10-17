@@ -61,7 +61,6 @@ proc Usage { {msg ""} } {
 
 set GENLIB(clean) "false"
 set GENLIB(update) "false"
-set GENLIB(target) ""
 set isRelease 0
 set strippedargs ""
 set argc [llength $argv]
@@ -96,12 +95,13 @@ for {set i 0} {$i < $argc} {incr i} {
 set argv $strippedargs
 set argc [llength $argv]
 
-if {$argc != 1 } {
-    Usage
-    exit 1
+set ::SLICER_LIB ""
+if {$argc > 1 } {
+  Usage
+  exit 1
+} else {
+  set ::SLICER_LIB $argv
 }
-
-set ::SLICER_LIB $argv
 
 
 ################################################################################
@@ -149,6 +149,11 @@ cd [file dirname [info script]]
 cd ..
 set SLICER_HOME [pwd]
 cd $cwd
+
+if { $::SLICER_LIB == "" } {
+  set ::SLICER_LIB [file dirname $::SLICER_HOME]/Slicer3-lib
+  puts "SLICER_LIB is $::SLICER_LIB"
+}
 
 #######
 #
