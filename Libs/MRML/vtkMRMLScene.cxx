@@ -91,6 +91,10 @@ vtkMRMLScene::vtkMRMLScene()
   vtkMRMLFiducialListNode *fidln = vtkMRMLFiducialListNode::New(); 
   this->RegisterNodeClass( fidln );
   fidln->Delete();
+
+  vtkMRMLColorNode *cn = vtkMRMLColorNode::New();
+  this->RegisterNodeClass ( cn );
+  cn->Delete();
   
   vtkMRMLSliceCompositeNode *scompn = vtkMRMLSliceCompositeNode::New(); 
   this->RegisterNodeClass( scompn );
