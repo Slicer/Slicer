@@ -124,6 +124,11 @@ public:
   //ETX
 
   // Description:
+  // Return the lowest and the highest integers, for use in looping
+  int GetFirstType() { return this->Grey; };
+  int GetLastType () { return this->File; };
+  
+  // Description:
   // return a text string describing the colour look up table type
   const char * GetTypeAsString();
 
