@@ -82,7 +82,7 @@ void vtkMRMLColorNode::WriteXML(ostream& of, int nIndent)
   
   vtkIndent indent(nIndent);
   
-  of << " type=\"" << this->GetTypeAsString() << "\"";
+  of << " type=\"" << this->GetType() << "\"";
 
   if (this->Type == this->File && this->FileName != NULL)
     {
@@ -97,7 +97,7 @@ void vtkMRMLColorNode::WriteXML(ostream& of, int nIndent)
       {
       double *rgba;
       rgba = this->LookupTable->GetTableValue(i);
-      of <<  i << " '" << this->GetColorName(i) << "' " << rgba[0] << " " << rgba[1] << " " << rgba[2] << " " << rgba[3] << " ";
+      of <<  i << " '" << this->GetColorNameWithoutSpaces(i, "_") << "' " << rgba[0] << " " << rgba[1] << " " << rgba[2] << " " << rgba[3] << " ";
       }
     of << "\"";
     }
@@ -129,32 +129,31 @@ void vtkMRMLColorNode::ReadXMLAttributes(const char** atts)
         std::stringstream ss;
         ss << attValue;
         ss >> numColours;
-        std::cout << "Setting the look up table size to " << numColours << "\n";
+        vtkDebugMacro("Setting the look up table size to " << numColours << "\n");
         this->LookupTable->SetNumberOfTableValues(numColours);
         this->Names.clear();
         this->Names.resize(numColours);
         }
       else  if (!strcmp(attName, "colors")) 
       {
+      std::stringstream ss;
       for (int i = 0; i < this->LookupTable->GetNumberOfTableValues(); i++)
         {
-        std::cout << "Reading colour " << i << endl;
-          std::stringstream ss;
-          ss << attValue;
-          // index name r g b a
-          int index;
-          std::string name;
-          double r, g, b, a;
-          ss >> index;
-          // TODO: allow for spaces in names
-          ss >> name;          
-          ss >> r;
-          ss >> g;
-          ss >> b;
-          ss >> a;
-          vtkDebugMacro("Adding colour at index " << index << " and then setting name " << name.c_str());
-          this->LookupTable->SetTableValue(index, r, g, b, a);
-          this->SetColorName(index, name.c_str());
+        vtkDebugMacro("Reading colour " << i << " of " << this->LookupTable->GetNumberOfTableValues() << endl);
+        ss << attValue;
+        // index name r g b a
+        int index;
+        std::string name;
+        double r, g, b, a;
+        ss >> index;
+        ss >> name;          
+        ss >> r;
+        ss >> g;
+        ss >> b;
+        ss >> a;
+        vtkDebugMacro("Adding colour at index " << index << ", r = " << r << ", g = " << g << ", b = " << b << ", a = " << a << " and then setting name to " << name.c_str() << endl);
+        this->LookupTable->SetTableValue(index, r, g, b, a);
+        this->SetColorNameWithSpaces(index, name.c_str(), "_");
         }
       }
       else if (!strcmp(attName, "type")) 
@@ -779,6 +778,27 @@ const char *vtkMRMLColorNode::GetColorName(int ind)
 }
 
 //---------------------------------------------------------------------------
+const char *vtkMRMLColorNode::GetColorNameWithoutSpaces(int ind, const char *subst)
+{
+  std::string name = std::string(this->GetColorName(ind));
+  if (strstr(name.c_str(), " ") != NULL)
+    {
+    std::string::size_type spaceIndex = name.find( " ", 0 );
+    while (spaceIndex != std::string::npos)
+      {
+      name.replace(spaceIndex, 1, subst, 0, strlen(subst));
+      spaceIndex = name.find( " ", spaceIndex );
+      }
+    return name.c_str();
+    }
+  else
+    {
+    // no spaces, return it as is
+    return name.c_str();
+    }
+}
+
+//---------------------------------------------------------------------------
 void vtkMRMLColorNode::SetColorName(int ind, const char *name)
 {
     if (ind < this->Names.size() && ind >= 0)
@@ -788,6 +808,24 @@ void vtkMRMLColorNode::SetColorName(int ind, const char *name)
   else
     {
     std::cerr << "ERROR: SetColorName, index was out of bounds: " << ind << ", current size is " << this->Names.size() << endl;
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLColorNode::SetColorNameWithSpaces(int ind, const char *name, const char *subst)
+{
+ 
+  std::string nameString = std::string(name);
+  std::string substString = std::string(subst);
+   // does the input name have the subst character in it?
+  if (strstr(name, substString.c_str()) != NULL)
+    {
+    this->SetColorName(ind, nameString.c_str());
+    }
+  else
+    {
+    // no substitutions necessary
+    this->SetColorName(ind, name);
     }
 }
 

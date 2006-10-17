@@ -144,12 +144,21 @@ public:
   // Get the 0th based nth name of this colour
   const char *GetColorName(int ind);
   // Description:
+  // Get the 0th based nth name of this colour, replacing the spaces with
+  // subst
+  const char *GetColorNameWithoutSpaces(int ind, const char *subst);
+  
+  // Description:
   // Add a color name to the vector
   void AddColorName(const char *name);
   // Description:
   // Set the 0th based nth name of this colour
   void SetColorName(int ind, const char *name);
-
+  // Description:
+  // Set the 0th based nth name of this colour, replacing the subst character
+  // with spaces
+  void SetColorNameWithSpaces(int ind, const char *name, const char *subst);
+  
   // Description:
   // Name of the file name from which to read color information
   vtkSetStringMacro(FileName);
