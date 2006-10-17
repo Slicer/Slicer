@@ -93,4 +93,5 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
       node->Delete();
       }
     }
+  basicNode->Delete();
 }
