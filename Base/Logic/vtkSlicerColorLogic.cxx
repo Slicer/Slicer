@@ -70,7 +70,7 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
     return;
     }
   vtkMRMLColorNode *basicNode = vtkMRMLColorNode::New();
-  for (int i = basicNode->GetFirstType(); i < basicNode->GetLastType(); i++)
+  for (int i = basicNode->GetFirstType(); i <= basicNode->GetLastType(); i++)
     {
     // don't add a File node
     if (i != basicNode->File)
