@@ -69,23 +69,28 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
     std::cerr << "vtkSlicerColorLogic::AddDefaultColorNodes: no scene to which to add nodes\n";
     return;
     }
-  for (int i = vtkMRMLColorNode::Grey; i < vtkMRMLColorNode::File; i++)
+  vtkMRMLColorNode *basicNode = vtkMRMLColorNode::New();
+  for (int i = basicNode->GetFirstType(); i < basicNode->GetLastType(); i++)
     {
-    vtkMRMLColorNode *node = vtkMRMLColorNode::New();
-    node->SetType(i);
-    node->SaveWithSceneOff();
-    std::string name = std::string(node->GetClassName()) + std::string(node->GetTypeAsString());
-    std::cout << "vtkSlicerColorLogic::AddDefaultColorNodes: requesting id " << name.c_str() << endl;
-    //this->GetMRMLScene()->RequestNodeID(node, name.c_str());
-    if (this->GetMRMLScene()->GetNodeByID(name.c_str()) == NULL)
+    // don't add a File node
+    if (i != basicNode->File)
       {
-      this->GetMRMLScene()->AddNode(node);
-      std::cout << "vtkSlicerColorLogic::AddDefaultColorNodes: added node " << node->GetID() << ", will eventually try to name it " << name.c_str() << endl;
+      vtkMRMLColorNode *node = vtkMRMLColorNode::New();
+      node->SetType(i);
+      node->SaveWithSceneOff();
+      std::string name = std::string(node->GetClassName()) + std::string(node->GetTypeAsString());
+      vtkDebugMacro("vtkSlicerColorLogic::AddDefaultColorNodes: requesting id " << name.c_str() << endl);
+      this->GetMRMLScene()->RequestNodeID(node, name.c_str());
+      if (this->GetMRMLScene()->GetNodeByID(node->GetID()) == NULL)
+        {
+        this->GetMRMLScene()->AddNode(node);
+        vtkDebugMacro("vtkSlicerColorLogic::AddDefaultColorNodes: added node " << node->GetID() << ", requested name was " << name.c_str() << endl);
+        }
+      else
+        {
+        std::cout << "vtkSlicerColorLogic::AddDefaultColorNodes: didn't add node " << node->GetID() << " as it was already in the scene.\n";
+        }
+      node->Delete();
       }
-    else
-      {
-      std::cout << "vtkSlicerColorLogic::AddDefaultColorNodes: didn't add node " << node->GetID() << " as it was already in the scene.\n";
-      }
-    node->Delete();
-    }    
+    }
 }
