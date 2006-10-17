@@ -42,6 +42,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerColorGUI : public vtkSlicerModuleGUI
     // Get methods on class members ( no Set methods required. )
 //    vtkGetObjectMacro ( AddFiducialButton, vtkKWPushButton);
     vtkGetObjectMacro ( Logic, vtkSlicerColorLogic);
+    vtkGetObjectMacro ( ColorNodeTypeScale, vtkKWScale);
     
     // Description:
     // API for setting ColorNode, Logic and
@@ -94,6 +95,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerColorGUI : public vtkSlicerModuleGUI
     // Description:
     // Which color node are we displaying in this gui?
     vtkSlicerNodeSelectorWidget* ColorSelectorWidget;
+
+    // type of the colour node
+    vtkKWScale *ColorNodeTypeScale;
     
     // Description:
     // Set the selected node, the color id, and update the widgets

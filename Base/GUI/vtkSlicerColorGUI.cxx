@@ -32,6 +32,8 @@ vtkSlicerColorGUI::vtkSlicerColorGUI ( )
     this->ColorNodeID = NULL; // "(none)";
     this->ColorNode = NULL; // "(none)";
 
+    this->ColorNodeTypeScale = NULL;
+    
     //this->DebugOn();
 }
 
@@ -47,6 +49,12 @@ vtkSlicerColorGUI::~vtkSlicerColorGUI ( )
         this->ColorSelectorWidget->SetParent(NULL);
         this->ColorSelectorWidget->Delete();
         this->ColorSelectorWidget = NULL;
+    }
+
+    if (this->ColorNodeTypeScale) {
+        this->ColorNodeTypeScale->SetParent(NULL);
+        this->ColorNodeTypeScale->Delete();
+        this->ColorNodeTypeScale = NULL;
     }
     
     //this->SetColorNodeID("(none)");
@@ -72,7 +80,8 @@ void vtkSlicerColorGUI::RemoveGUIObservers ( )
 {
     vtkDebugMacro("vtkSlicerColorGUI: RemoveGUIObservers\n");
     this->ColorSelectorWidget->RemoveObservers(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
-    //this->AddFiducialButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->ColorNodeTypeScale->RemoveObservers(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+
     this->RemoveObservers (vtkSlicerColorGUI::ColorIDModifiedEvent, (vtkCommand *)this->GUICallbackCommand);
 }
 
@@ -82,7 +91,9 @@ void vtkSlicerColorGUI::AddGUIObservers ( )
 {
     vtkDebugMacro("vtkSlicerColorGUI: AddGUIObservers\n");
     this->ColorSelectorWidget->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
-   
+
+    this->ColorNodeTypeScale->AddObserver (vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+    
     this->AddObserver(vtkSlicerColorGUI::ColorIDModifiedEvent, (vtkCommand *)this->GUICallbackCommand);
 }
 
@@ -99,6 +110,8 @@ void vtkSlicerColorGUI::ProcessGUIEvents ( vtkObject *caller,
         event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent )
     {
         vtkDebugMacro("vtkSlicerColorGUI: ProcessGUIEvent Node Selector Event: " << event << ".\n");
+        std::cout << "vtkSlicerColorGUI: ProcessGUIEvent Node Selector Event: " << event << ".\n";
+        
         vtkMRMLColorNode *colorNode =
             vtkMRMLColorNode::SafeDownCast(this->ColorSelectorWidget->GetSelected());
         if (colorNode != NULL)
@@ -107,6 +120,12 @@ void vtkSlicerColorGUI::ProcessGUIEvents ( vtkObject *caller,
         }
         return;
     }
+    // process id changed events
+    if (event == vtkSlicerColorGUI::ColorIDModifiedEvent)
+      {
+      std::cout << "vtkSlicerColorGUI::ProcessGUIEvents : got a colour id modified event.\n";     
+      }
+        
     vtkMRMLColorNode *colorNode =
         vtkMRMLColorNode::SafeDownCast(caller);
     if (colorNode== this->MRMLScene->GetNodeByID(this->GetColorNodeID()) &&
@@ -133,6 +152,18 @@ void vtkSlicerColorGUI::ProcessGUIEvents ( vtkObject *caller,
           return;
       }
   }
+
+  // color node type scale
+  vtkKWScale *scale = vtkKWScale::SafeDownCast(caller);
+  if (scale == this->ColorNodeTypeScale && event == vtkKWScale::ScaleValueChangedEvent)
+    {
+    std::cout << "vtkSlicerColorGUI: color node type changed...\n";
+    activeColorNode->SetType((int)(this->ColorNodeTypeScale->GetValue()));
+    // update the label text too
+    std::string newLabel = std::string("Node Type: ") + std::string(activeColorNode->GetTypeAsString());
+    this->ColorNodeTypeScale->SetLabelText(newLabel.c_str());
+    }
+  
   // save state for undo
   this->MRMLScene->SaveStateForUndo(activeColorNode);
 
@@ -190,11 +221,11 @@ void vtkSlicerColorGUI::ProcessMRMLEvents ( vtkObject *caller,
     {
         vtkDebugMacro("\tmodified event on the color selected node.\n");
         if (activeColorNode !=  vtkMRMLColorNode::SafeDownCast(this->ColorSelectorWidget->GetSelected()))
-        {
-            // select it first off
-            this->SetColorNode(vtkMRMLColorNode::SafeDownCast(this->ColorSelectorWidget->GetSelected()));
-        }
-        SetGUIFromNode(activeColorNode);
+          {
+          // select it  and update the gui
+          std::cout << "vtkSlicerColorGUI::ProcessMRMLEvents: modified event on the color selected node, setting the color node\n";
+          this->SetColorNode(vtkMRMLColorNode::SafeDownCast(this->ColorSelectorWidget->GetSelected()));
+          }
         return;        
     }    
 
@@ -211,6 +242,15 @@ void vtkSlicerColorGUI::SetGUIFromNode(vtkMRMLColorNode * activeColorNode)
     {
         return;
     }
+    
+    int scale = activeColorNode->GetType();
+    if (this->ColorNodeTypeScale != NULL &&
+        scale != this->ColorNodeTypeScale->GetValue())
+      {
+      this->ColorNodeTypeScale->SetValue(scale);
+      std::string newLabel = std::string("Node Type: ") + std::string(activeColorNode->GetTypeAsString());
+      this->ColorNodeTypeScale->SetLabelText(newLabel.c_str());
+      }
 }
 //---------------------------------------------------------------------------
 void vtkSlicerColorGUI::Enter ( )
@@ -277,7 +317,7 @@ void vtkSlicerColorGUI::BuildGUI ( )
                   this->UIPanel->GetPageWidget("Color")->GetWidgetName());
   
     // node selector
-    this->ColorSelectorWidget = vtkSlicerNodeSelectorWidget::New() ;
+    this->ColorSelectorWidget = vtkSlicerNodeSelectorWidget::New();
     this->ColorSelectorWidget->SetParent(displayFrame->GetFrame());
     this->ColorSelectorWidget->Create();
     this->ColorSelectorWidget->SetNodeClass("vtkMRMLColorNode", NULL, NULL, NULL);
@@ -293,7 +333,22 @@ void vtkSlicerColorGUI::BuildGUI ( )
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                   this->ColorSelectorWidget->GetWidgetName());
     
-   
+
+    // type
+    this->ColorNodeTypeScale = vtkKWScale::New();
+    this->ColorNodeTypeScale->SetParent( displayFrame );
+    this->ColorNodeTypeScale->Create();
+    this->ColorNodeTypeScale->SetLabelText("Node Type:             ");
+    this->ColorNodeTypeScale->SetLength(200);
+    this->ColorNodeTypeScale->SetBalloonHelpString ( "Set the type of the color node.");
+    vtkMRMLColorNode *basicNode = vtkMRMLColorNode::New();
+    this->ColorNodeTypeScale->SetRange(basicNode->GetFirstType(), basicNode->GetLastType());
+    basicNode->Delete();
+    this->ColorNodeTypeScale->SetOrientationToHorizontal ();
+    this->ColorNodeTypeScale->SetResolution(1.0);
+    app->Script("pack %s -side top -anchor w -padx 2 -pady 2", 
+                this->ColorNodeTypeScale->GetWidgetName());
+    
     // deleting frame widgets
     displayFrame->Delete ( );
     modHelpFrame->Delete ( );
