@@ -53,6 +53,8 @@ vtkMRMLNode* vtkMRMLColorNode::CreateNodeInstance()
 vtkMRMLColorNode::vtkMRMLColorNode()
 {
 
+  this->Name = NULL;
+  this->SetName("");
   this->LookupTable = vtkLookupTable::New();
   this->FileName = NULL;
   this->SetTypeToGrey();
@@ -481,7 +483,7 @@ void vtkMRMLColorNode::SetType(int type)
       }
     
     this->Type = type;
-    this->SetName(this->GetTypeAsString());
+    //this->SetName(this->GetTypeAsString());
 
     vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting Type to " << type << " = " << this->GetTypeAsString());
 
