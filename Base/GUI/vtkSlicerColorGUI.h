@@ -105,7 +105,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerColorGUI : public vtkSlicerModuleGUI
     // changed
     enum
     {
-        ColorIDModifiedEvent = 20000,
+        ColorIDModifiedEvent = 30000,
     };
     //ETX
  protected:
