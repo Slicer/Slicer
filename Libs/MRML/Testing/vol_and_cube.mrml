@@ -12,20 +12,20 @@
 </Slice>
 
 <SliceComposite
-  id="vtkMRMLSliceCompositeNode1" name="filered"  hideFromEditors="true" 
+  id="vtkMRMLSliceCompositeNode1" name="fileCompred"  hideFromEditors="true" 
   backgroundVolumeID="vtkMRMLScalarVolumeNode1" foregroundVolumeID="" 
   labelVolumeID="" labelOpacity="1" layoutName="Red" >
 </SliceComposite>
 
 <Slice
-id="filevtkMRMLSliceNode2" name="greenSatittal"  hideFromEditors="true" 
+id="filevtkMRMLSliceNode2" name="greenSagittal"  hideFromEditors="true" 
 fieldOfView="250 250 250" dimensions="256 256 1" 
 sliceToRAS="0 0 1 0 -1 0 0 0 0 1 0 0 0 0 0 1" layoutName="Green" 
 orientation="Sagittal" >
 </Slice>
 
 <SliceComposite
-id="vtkMRMLSliceCompositeNode2" name="fileyellow"  hideFromEditors="true" 
+id="vtkMRMLSliceCompositeNode2" name="fileCompyellow"  hideFromEditors="true" 
 backgroundVolumeID="vtkMRMLScalarVolumeNode1" foregroundVolumeID="" 
 labelVolumeID="" labelOpacity="1" layoutName="Yellow" ></SliceComposite>
 
@@ -36,7 +36,7 @@ labelVolumeID="" labelOpacity="1" layoutName="Yellow" ></SliceComposite>
 </Slice>
 
 <SliceComposite
-  id="vtkMRMLSliceCompositeNode3" name="filegreen"  hideFromEditors="true" 
+  id="vtkMRMLSliceCompositeNode3" name="fileCompgreen"  hideFromEditors="true" 
   backgroundVolumeID="vtkMRMLScalarVolumeNode1" foregroundVolumeID="" labelVolumeID="" 
   labelOpacity="1" layoutName="Green" >
 </SliceComposite>
