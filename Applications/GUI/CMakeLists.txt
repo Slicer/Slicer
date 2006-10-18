@@ -59,6 +59,10 @@ INCLUDE_DIRECTORIES(
   ${GradientAnisotropicDiffusionFilter_BINARY_DIR}
   ${GradientAnisotropicDiffusionFilter_Init_SOURCE_DIR}
   ${GradientAnisotropicDiffusionFilter_Init_BINARY_DIR}
+  ${QueryAtlas_SOURCE_DIR}
+  ${QueryAtlas_BINARY_DIR}
+  ${QueryAtlas_Init_SOURCE_DIR}
+  ${QueryAtlas_Init_BINARY_DIR}
   ${CommandLineModule_SOURCE_DIR}
   ${CommandLineModule_BINARY_DIR}
   ${CommandLineModule_Init_SOURCE_DIR}
@@ -91,6 +95,7 @@ TARGET_LINK_LIBRARIES( Slicer3${SLICER_EXE_SUFFIX}
     SlicerBaseGUI
     MRML
     GradientAnisotropicDiffusionFilter
+    QueryAtlas
     CommandLineModule
     ScriptedModule
     SlicerDaemon

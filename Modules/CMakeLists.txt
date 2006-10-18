@@ -7,6 +7,7 @@ SUBDIRS(
   GradientAnisotropicDiffusionFilter
   SlicerDaemon
   Editor
+  QueryAtlas
 )
 
 

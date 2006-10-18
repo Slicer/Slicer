@@ -35,6 +35,9 @@
 #include "vtkGradientAnisotropicDiffusionFilterLogic.h"
 #include "vtkGradientAnisotropicDiffusionFilterGUI.h"
 
+#include "vtkQueryAtlasLogic.h"
+#include "vtkQueryAtlasGUI.h"
+
 #include "vtkCommandLineModuleLogic.h"
 #include "vtkCommandLineModuleGUI.h"
 
@@ -509,6 +512,23 @@ int Slicer3_main(int argc, char *argv[])
     gradientAnisotropicDiffusionFilterGUI->AddGUIObservers ( );
 
 
+    //--- Query Atlas Module
+    vtkQueryAtlasGUI *queryAtlasGUI = vtkQueryAtlasGUI::New ( );
+    vtkQueryAtlasLogic *queryAtlasLogic  = vtkQueryAtlasLogic::New ( );
+    queryAtlasLogic->SetAndObserveMRMLScene ( scene );
+    queryAtlasLogic->SetApplicationLogic ( appLogic );
+    queryAtlasLogic->SetMRMLScene(scene);
+    queryAtlasGUI->SetApplication ( slicerApp );
+    queryAtlasGUI->SetApplicationLogic ( appLogic );
+    queryAtlasGUI->SetGUIName( "QueryAtlas" );
+    queryAtlasGUI->GetUIPanel()->SetName ( queryAtlasGUI->GetGUIName ( ) );
+    queryAtlasGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
+    queryAtlasGUI->GetUIPanel()->Create ( );
+    slicerApp->AddModuleGUI ( queryAtlasGUI );
+    queryAtlasGUI->BuildGUI ( );
+    queryAtlasGUI->AddGUIObservers ( );
+    
+
     // --- SlicerDaemon Module
     // need to source the slicerd.tcl script here
 
@@ -791,6 +811,9 @@ int Slicer3_main(int argc, char *argv[])
     // ------------------------------
     // REMOVE OBSERVERS and references to MRML and Logic
     gradientAnisotropicDiffusionFilterGUI->RemoveGUIObservers ( );
+
+    queryAtlasGUI->RemoveGUIObservers ( );
+
 #ifndef VOLUMES_DEBUG
     volumesGUI->RemoveGUIObservers ( );
 #endif
@@ -858,6 +881,8 @@ int Slicer3_main(int argc, char *argv[])
     //--- delete gui first, removing Refs to Logic and MRML
 
     gradientAnisotropicDiffusionFilterGUI->Delete ();
+    queryAtlasGUI->Delete ( );
+    
 #ifndef VOLUMES_DEBUG
     volumesGUI->Delete ();
 #endif
@@ -898,8 +923,13 @@ int Slicer3_main(int argc, char *argv[])
     
     //--- delete logic next, removing Refs to MRML
     appLogic->ClearCollections ( );
+
     gradientAnisotropicDiffusionFilterLogic->SetAndObserveMRMLScene ( NULL );
     gradientAnisotropicDiffusionFilterLogic->Delete ();
+    
+    queryAtlasLogic->SetAndObserveMRMLScene ( NULL );
+    queryAtlasLogic->Delete ( );
+    
 #ifndef VOLUMES_DEBUG
     volumesLogic->SetAndObserveMRMLScene ( NULL );
     volumesLogic->Delete();
