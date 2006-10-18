@@ -27,7 +27,8 @@ vtkStandardNewMacro(vtkSlicerColorLogic);
 //----------------------------------------------------------------------------
 vtkSlicerColorLogic::vtkSlicerColorLogic()
 {
-    this->AddDefaultColorNodes();
+  vtkDebugMacro("vtkSlicerColorLogic: constructor trying to add default colour nodes\n");
+  this->AddDefaultColorNodes();
 }
 
 //----------------------------------------------------------------------------
@@ -41,10 +42,12 @@ void vtkSlicerColorLogic::ProcessMRMLEvents(vtkObject * caller,
                                             unsigned long event,
                                             void * callData)
 {
+  vtkDebugMacro("vtkSlicerColorLogic::ProcessMRMLEvents: got an event " << event);
+  
   // when there's a new scene, add the default nodes
   if (event == vtkMRMLScene::NewSceneEvent)
     {
-    std::cout << "vtkSlicerColorLogic::ProcessMRMLEvents: got a NewScene event " << event << endl;
+    vtkDebugMacro("vtkSlicerColorLogic::ProcessMRMLEvents: got a NewScene event " << event);
     this->AddDefaultColorNodes();
     }
 }
@@ -84,11 +87,11 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
       if (this->GetMRMLScene()->GetNodeByID(node->GetID()) == NULL)
         {
         this->GetMRMLScene()->AddNode(node);
-        vtkDebugMacro("vtkSlicerColorLogic::AddDefaultColorNodes: added node " << node->GetID() << ", requested name was " << name.c_str() << endl);
+        vtkDebugMacro("vtkSlicerColorLogic::AddDefaultColorNodes: added node " << node->GetID() << ", requested name was " << name.c_str() << ", type = " << node->GetTypeAsString() << endl);
         }
       else
         {
-        std::cout << "vtkSlicerColorLogic::AddDefaultColorNodes: didn't add node " << node->GetID() << " as it was already in the scene.\n";
+        vtkDebugMacro("vtkSlicerColorLogic::AddDefaultColorNodes: didn't add node " << node->GetID() << " as it was already in the scene.\n");
         }
       node->Delete();
       }
