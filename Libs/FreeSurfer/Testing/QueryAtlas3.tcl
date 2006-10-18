@@ -7,9 +7,11 @@ proc QueryAtlasInit { {filename ""} } {
     set ::QA(filename) $filename
   } else {
     set candidates {
-      /projects/birn/freesurfer/data/bert/surf/lh.pial
+      /workspace/pieper/fBIRN-AHM2006/fbph2-000670986943/surf/lh.pial
+      /projects/birn/data/fBIRN-AHM2006/fbph2-000670986943/surf/lh.pial
       i:/fBIRN-AHM2006/fbph2-000670986943/surf/lh.pial
       c:/data/fBIRN-AHM2006/fbph2-000648622547/surf/lh.pial
+      /projects/birn/freesurfer/data/bert/surf/lh.pial
     }
     foreach c $candidates {
       if { [file exists $c] } {
@@ -20,7 +22,7 @@ proc QueryAtlasInit { {filename ""} } {
     }
   }
 
-  #QueryAtlasAddBIRNLogo
+  QueryAtlasAddBIRNLogo
 
   QueryAtlasAddModel
   QueryAtlasAddVolumes
@@ -32,6 +34,32 @@ proc QueryAtlasInit { {filename ""} } {
 }
 
 proc QueryAtlasAddBIRNLogo {} {
+
+  set renderWidget [[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer]
+  set interactor [$renderWidget GetRenderWindowInteractor] 
+
+  #
+  # add the BIRN logo if possible (logo widget was added
+  # after VTK 5, so not included in some builds)
+  #
+  if { [info command vtkLogoWidget] != "" } {
+
+    # Logo
+    set logoFile $::SLICER_BUILD/../Slicer3/Libs/FreeSurfer/Testing/birn-new-big.png
+    set logoRep [vtkLogoRepresentation New]
+    set reader [vtkPNGReader New]
+    $reader SetFileName $logoFile
+    $logoRep SetImage [$reader GetOutput]
+    [$logoRep GetImageProperty] SetOpacity .75
+
+    set logoWidget [vtkLogoWidget New]
+    $logoWidget SetInteractor $interactor
+    $logoWidget SetRepresentation $logoRep
+
+    $logoWidget On
+  }
+
+  return
 
   #
   # generic logo setup
@@ -210,7 +238,7 @@ proc QueryAtlasAddVolumes {} {
 #
 proc QueryAtlasAddAnnotations {} {
 
-  set fileName $::QA(filename)/../../label/lh.aparc.annot
+  set fileName [file dirname $::QA(filename)]/../label/lh.aparc.annot
 
   # get the model out of the scene
   set modelNode [$::slicer3::MRMLScene GetNodeByID $::QA(modelNodeID)]
