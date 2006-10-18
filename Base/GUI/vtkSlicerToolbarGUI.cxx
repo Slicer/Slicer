@@ -317,6 +317,7 @@ void vtkSlicerToolbarGUI::RemoveGUIObservers ( )
     this->VolumeIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ModelIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->FiducialsIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->ColorIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ConventionalViewIconButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->OneUp3DViewIconButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->OneUpSliceViewIconButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -340,6 +341,7 @@ void vtkSlicerToolbarGUI::AddGUIObservers ( )
     this->ModelIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->FiducialsIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->TransformIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->ColorIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     
     // view configuration icon button observers...
     this->ConventionalViewIconButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -408,6 +410,13 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
                   if ( m != NULL ) { m->GetUIPanel()->Raise(); } else { std::cerr << "ERROR:  no slicer module gui found for Fiducials\n"; }
                   p->GetModuleChooseGUI()->GetModulesMenuButton()->SetValue ( "Fiducials" );
                   p->GetMainSlicerWindow()->SetStatusText ( "Fiducials");
+                }
+              else if (pushb == this->ColorIconButton && event == vtkKWPushButton::InvokedEvent )
+                {
+                  vtkSlicerModuleGUI *m = vtkSlicerApplication::SafeDownCast(p->GetApplication())->GetModuleGUIByName("Color");
+                  if ( m != NULL ) { m->GetUIPanel()->Raise(); } else { std::cerr << "ERROR:  no slicer module gui found for Color\n"; }
+                  p->GetModuleChooseGUI()->GetModulesMenuButton()->SetValue ( "Color" );
+                  p->GetMainSlicerWindow()->SetStatusText ( "Color");
                 }
               else if (pushb == this->TransformIconButton && event == vtkKWPushButton::InvokedEvent )
                 {
