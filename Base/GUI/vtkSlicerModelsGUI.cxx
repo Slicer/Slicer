@@ -266,6 +266,7 @@ void vtkSlicerModelsGUI::BuildGUI ( )
     this->LoadModelButton->SetParent ( modLoadFrame->GetFrame() );
     this->LoadModelButton->Create ( );
     this->LoadModelButton->SetText ("Load Model");
+    this->LoadModelButton->GetLoadSaveDialog()->RetrieveLastPathFromRegistry("OpenPath");
     this->LoadModelButton->GetLoadSaveDialog()->SetFileTypes(
                                                              "{ {model} {*.*} }");
     app->Script("pack %s -side left -anchor w -padx 2 -pady 4", 
