@@ -81,13 +81,14 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
       vtkMRMLColorNode *node = vtkMRMLColorNode::New();
       node->SetType(i);
       node->SaveWithSceneOff();
-      std::string name = std::string(node->GetClassName()) + std::string(node->GetTypeAsString());
-      vtkDebugMacro("vtkSlicerColorLogic::AddDefaultColorNodes: requesting id " << name.c_str() << endl);
-      this->GetMRMLScene()->RequestNodeID(node, name.c_str());
+      node->SetName(node->GetTypeAsString());      
+      std::string id = std::string(node->GetClassName()) + std::string(node->GetTypeAsString());
+      vtkDebugMacro("vtkSlicerColorLogic::AddDefaultColorNodes: requesting id " << id.c_str() << endl);
+      this->GetMRMLScene()->RequestNodeID(node, id.c_str());
       if (this->GetMRMLScene()->GetNodeByID(node->GetID()) == NULL)
         {
         this->GetMRMLScene()->AddNode(node);
-        vtkDebugMacro("vtkSlicerColorLogic::AddDefaultColorNodes: added node " << node->GetID() << ", requested name was " << name.c_str() << ", type = " << node->GetTypeAsString() << endl);
+        vtkDebugMacro("vtkSlicerColorLogic::AddDefaultColorNodes: added node " << node->GetID() << ", requested id was " << id.c_str() << ", type = " << node->GetTypeAsString() << endl);
         }
       else
         {
