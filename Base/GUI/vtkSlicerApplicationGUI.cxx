@@ -265,8 +265,7 @@ void vtkSlicerApplicationGUI::PrintSelf ( ostream& os, vtkIndent indent )
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::ProcessLoadSceneCommand()
 {
-    this->LoadSceneDialog->RetrieveLastPathFromRegistry(
-      "OpenPath");
+    this->LoadSceneDialog->RetrieveLastPathFromRegistry("OpenPath");
 
     this->LoadSceneDialog->Invoke();
     // If a file has been selected for loading...

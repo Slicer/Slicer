@@ -79,25 +79,28 @@ void vtkSlicerApplicationLogic::ProcessMRMLEvents(vtkObject * /*caller*/,
 
 
   //
-  // if you don't have a node yet, look in the scene to see if 
-  // one exists for you to use.  If not, create one and add it to the scene
+  // Look for a selection node in the scene
+  // - we always use the first one in the scene
+  // - if it doesn't match the one we had, we switch
+  // - if there isn't one, we create one
+  // - we add it to the scene if needed
   //
-  if ( this->SelectionNode == NULL )
+  vtkMRMLSelectionNode *node;
+  node = vtkMRMLSelectionNode::SafeDownCast (
+          this->MRMLScene->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
+
+  if ( node == NULL )
     {
-    vtkMRMLSelectionNode *node;
-    node = vtkMRMLSelectionNode::SafeDownCast (
-            this->MRMLScene->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
-    if ( node == NULL )
-      {
-      node = vtkMRMLSelectionNode::New();
-      this->SetSelectionNode (node);
-      node->Delete();
-      }
-      else
-      {
-      this->SetSelectionNode (node);
-      }
+    node = vtkMRMLSelectionNode::New();
+    this->SetSelectionNode (node);
+    node->Delete();
     }
+
+  if ( this->SelectionNode != node )
+    {
+      this->SetSelectionNode (node);
+    }
+
   if (this->MRMLScene->GetNodeByID(this->SelectionNode->GetID()) == NULL)
     {
     this->SetMRMLScene(this->GetMRMLScene());

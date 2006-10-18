@@ -248,10 +248,6 @@ void vtkSlicerNodeSelectorWidget::UpdateMenu()
       {
       this->GetWidget()->GetWidget()->SetValue(selectedNode->GetName());
       this->SelectedID = std::string(selectedNode->GetID());
-      if (oldSelectedNode != selectedNode)
-        {
-        this->InvokeEvent(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, NULL);
-        }
       }
     else
       {
@@ -262,9 +258,12 @@ void vtkSlicerNodeSelectorWidget::UpdateMenu()
         }
       this->GetWidget()->GetWidget()->SetValue(name);
       this->SelectedID = std::string(name);
+      }
+
+    if (oldSelectedNode != selectedNode)
+      {
       this->InvokeEvent(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, NULL);
       }
-      
 }
 
 //----------------------------------------------------------------------------
