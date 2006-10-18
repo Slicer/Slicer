@@ -264,15 +264,12 @@ void vtkSlicerColorGUI::Exit ( )
     vtkDebugMacro("vtkSlicerColorGUI: Exit\n");
 }
 
-
-
-
 //---------------------------------------------------------------------------
 void vtkSlicerColorGUI::BuildGUI ( )
 {
     vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
   // Define your help text here.
-  const char *help = "**Color Module:** Manages color look up tables.\nTables are used by mappers to translate between an integer and a colour value for display of models and volumes.\nSlicer supports three kinds of tables:\n1. Continuous scales, like the greyscale table.\n2. Parametric tables, defined by an equation, such as the FMRIPA table. 3. Discreet tables, such as those read in from a file.";
+  const char *help = "**Color Module:** Manages color look up tables.\nTables are used by mappers to translate between an integer and a colour value for display of models and volumes.\nSlicer supports three kinds of tables:\n1. Continuous scales, like the greyscale table.\n2. Parametric tables, defined by an equation, such as the FMRIPA table.\n3. Discreet tables, such as those read in from a file.";
 
     // ---
     // MODULE GUI FRAME 
@@ -322,6 +319,7 @@ void vtkSlicerColorGUI::BuildGUI ( )
     this->ColorSelectorWidget->Create();
     this->ColorSelectorWidget->SetNodeClass("vtkMRMLColorNode", NULL, NULL, NULL);
     this->ColorSelectorWidget->NewNodeEnabledOn();
+    this->ColorSelectorWidget->ShowHiddenOn();
     this->ColorSelectorWidget->SetMRMLScene(this->GetMRMLScene());
     this->ColorSelectorWidget->SetBorderWidth(2);
     this->ColorSelectorWidget->SetPadX(2);
