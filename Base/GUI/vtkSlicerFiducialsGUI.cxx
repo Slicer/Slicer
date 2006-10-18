@@ -654,12 +654,12 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     // configure the parent classes help text widget
     this->HelpText->SetParent ( modHelpFrame->GetFrame() );
     this->HelpText->Create ( );
-    this->HelpText->SetText ( help );
-    this->HelpText->SetReliefToFlat ( );
-    this->HelpText->SetWrapToWord ( );
-    this->HelpText->ReadOnlyOn ( );
-    this->HelpText->QuickFormattingOn ( );
-    this->HelpText->SetBalloonHelpString ( "" );
+    this->HelpText->GetWidget()->SetText ( help );
+    this->HelpText->GetWidget()->SetReliefToFlat ( );
+    this->HelpText->GetWidget()->SetWrapToWord ( );
+    this->HelpText->GetWidget()->ReadOnlyOn ( );
+    this->HelpText->GetWidget()->QuickFormattingOn ( );
+    this->HelpText->GetWidget()->SetBalloonHelpString ( "" );
     app->Script ( "pack %s -side top -fill x -expand y -anchor w -padx 2 -pady 4",
                   this->HelpText->GetWidgetName ( ) );
 

@@ -12,7 +12,7 @@ vtkStandardNewMacro ( vtkSlicerModuleGUI );
 vtkSlicerModuleGUI::vtkSlicerModuleGUI ( ) {
 
     this->UIPanel = vtkKWUserInterfacePanel::New ( );
-    this->HelpText = vtkKWText::New ( );
+    this->HelpText = vtkKWTextWithScrollbars::New ( );
 }
 
 

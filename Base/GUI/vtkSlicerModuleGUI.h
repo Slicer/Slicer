@@ -7,6 +7,7 @@
 #include "vtkKWUserInterfacePanel.h"
 #include "vtkSlicerComponentGUI.h"
 #include "vtkKWText.h"
+#include "vtkKWTextWithScrollbars.h"
 
 // Description:
 // This is a base class from which all SlicerModuleGUIs that include
@@ -28,7 +29,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleGUI : public vtkSlicerComponentG
     vtkSetObjectMacro ( UIPanel, vtkKWUserInterfacePanel );
     // Description:
     // Get the help text widget.
-    vtkGetObjectMacro ( HelpText, vtkKWText );
+    vtkGetObjectMacro (HelpText, vtkKWTextWithScrollbars );
 
         // Description:
     // propagate events generated in logic layer to GUI
@@ -59,7 +60,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleGUI : public vtkSlicerComponentG
     // Description:
     // Every module gui has a text widget that contains basic
     // information about the module's contents and how to use it.
-    vtkKWText *HelpText;
+    vtkKWTextWithScrollbars *HelpText;
     
     // constructor, destructor.
     vtkSlicerModuleGUI ( );
