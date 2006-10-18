@@ -27,12 +27,12 @@ orientation="Sagittal" >
 <SliceComposite
 id="vtkMRMLSliceCompositeNode2" name="fileyellow"  hideFromEditors="true" 
 backgroundVolumeID="vtkMRMLScalarVolumeNode1" foregroundVolumeID="" 
-labelVolumeID="" labelOpacity="1" layoutName="Red" ></SliceComposite>
+labelVolumeID="" labelOpacity="1" layoutName="Yellow" ></SliceComposite>
 
 <Slice
   id="filevtkMRMLSliceNode3" name="redCoronal"  hideFromEditors="true" 
   fieldOfView="250 250 250" dimensions="256 256 1" 
-  sliceToRAS="-1 0 0 0 0 0 1 0 0 1 0 0 0 0 0 1" layoutName="Green" orientation="Coronal" >
+  sliceToRAS="-1 0 0 0 0 0 1 0 0 1 0 0 0 0 0 1" layoutName="Red" orientation="Coronal" >
 </Slice>
 
 <SliceComposite
