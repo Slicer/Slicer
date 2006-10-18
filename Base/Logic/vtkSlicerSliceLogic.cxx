@@ -98,7 +98,8 @@ void vtkSlicerSliceLogic::UpdateSliceNode()
     node = NULL;
     }
 
-  if ( this->SliceNode != NULL && node != NULL && strcmp(this->SliceNode->GetID(), node->GetID()) != 0 )
+  if ( this->SliceNode != NULL && node != NULL && 
+    strcmp(this->SliceNode->GetID(), node->GetID()) != 0 )
     {
     // local SliceNode is out of sync with the scene
     this->SetSliceNode (NULL);
@@ -118,7 +119,6 @@ void vtkSlicerSliceLogic::UpdateSliceNode()
       this->SetSliceNode (node);
       }
     }
-
 
   if ( this->MRMLScene->GetNodeByID(this->SliceNode->GetID()) == NULL)
     {
