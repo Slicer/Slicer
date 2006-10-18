@@ -444,69 +444,119 @@ void vtkSlicerViewerWidget::UpdateModelsFromMRML()
 {
   vtkMRMLScene *scene = this->GetMRMLScene();
   vtkMRMLNode *node = NULL;
+  std::vector<vtkMRMLModelNode *> slices;
+
+  // find volume slices
+  scene->InitTraversal();
+  bool clearDisplayedModels = false;
+  while (node=scene->GetNextNodeByClass("vtkMRMLModelNode"))
+    {
+    vtkMRMLModelNode *model = vtkMRMLModelNode::SafeDownCast(node);
+    // render slices last so that transparent objects are rendered in fron of them
+    if (!strcmp(model->GetName(), "Red Volume Slice") ||
+        !strcmp(model->GetName(), "Green Volume Slice") ||
+        !strcmp(model->GetName(), "Yellow Volume Slice"))
+      {
+      slices.push_back(model);
+      if (this->DisplayedModels.find(model->GetID()) == this->DisplayedModels.end() )
+        {
+        clearDisplayedModels = true;
+        }
+      }
+    }
+
+  if (clearDisplayedModels)
+    {
+    this->MainViewer->RemoveAllViewProps();
+    this->DisplayedModels.clear();
+    }
+
+  // render slices first
+  for (int i=0; i<slices.size(); i++)
+    {
+    vtkMRMLModelNode *model = slices[i];
+    // add nodes that are not in the list yet
+    if (this->DisplayedModels.find(model->GetID()) == this->DisplayedModels.end() )
+      {
+      this->UpdateModel(model);
+      } 
+    //vtkActor *actor = this->DisplayedModels.find(model->GetID())->second;
+    vtkActor *actor = this->DisplayedModels[ model->GetID() ];
+    this->SetModelDisplayProperty(model, actor);
+    }
   
+  // render the rest of the models
   scene->InitTraversal();
   while (node=scene->GetNextNodeByClass("vtkMRMLModelNode"))
     {
     vtkMRMLModelNode *model = vtkMRMLModelNode::SafeDownCast(node);
+    // render slices last so that transparent objects are rendered in fron of them
+    if (!strcmp(model->GetName(), "Red Volume Slice") ||
+        !strcmp(model->GetName(), "Green Volume Slice") ||
+        !strcmp(model->GetName(), "Yellow Volume Slice"))
+      {
+      continue;
+      }
     // add nodes that are not in the list yet
     if (this->DisplayedModels.find(model->GetID()) == this->DisplayedModels.end() )
       {
-      vtkMRMLModelDisplayNode *modelDisplayNode = model->GetDisplayNode();
-
-      vtkClipPolyData *clipper = NULL;
-      if (this->ClippingOn && modelDisplayNode != NULL && modelDisplayNode->GetClipping())
-        {
-        clipper = vtkClipPolyData::New();
-        clipper->SetClipFunction(this->SlicePlanes);
-        clipper->SetValue( 0.0);
-        }
-
-      vtkPolyDataMapper *mapper = vtkPolyDataMapper::New ();
-      if (clipper)
-        {
-        clipper->SetInput ( model->GetPolyData() );
-        clipper->Update();
-        mapper->SetInput ( clipper->GetOutput() );
-        }
-      else
-        {
-        mapper->SetInput ( model->GetPolyData() );
-        }
-      // observe polydata
-      model->AddObserver ( vtkMRMLModelNode::PolyDataModifiedEvent, this->MRMLCallbackCommand );
-
-      // observe display node  
-      model->AddObserver ( vtkMRMLModelNode::DisplayModifiedEvent, this->MRMLCallbackCommand );
-
-      model->AddObserver ( vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand );
-
-      vtkActor *actor = vtkActor::New ( );
-      actor->SetMapper ( mapper );
-      this->MainViewer->AddViewProp ( actor );
-
-      this->DisplayedModels[model->GetID()] = actor;
-      if (clipper)
-        {
-        this->DisplayedModelsClipState[model->GetID()] = 1;
-        clipper->Delete();
-        }
-      else
-        {
-        this->DisplayedModelsClipState[model->GetID()] = 0;
-        }
-      actor->Delete();
-      mapper->Delete();
-      } // end if
- 
+      this->UpdateModel(model);
+      } 
     //vtkActor *actor = this->DisplayedModels.find(model->GetID())->second;
     vtkActor *actor = this->DisplayedModels[ model->GetID() ];
-    vtkPolyDataMapper *mapper = vtkPolyDataMapper::SafeDownCast (actor->GetMapper());
-    //mapper->SetInput ( model->GetPolyData() );
     this->SetModelDisplayProperty(model, actor);
-
     } // end while
 
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewerWidget::UpdateModel(vtkMRMLModelNode *model)
+{
+  vtkMRMLModelDisplayNode *modelDisplayNode = model->GetDisplayNode();
+
+  vtkClipPolyData *clipper = NULL;
+  if (this->ClippingOn && modelDisplayNode != NULL && modelDisplayNode->GetClipping())
+    {
+    clipper = vtkClipPolyData::New();
+    clipper->SetClipFunction(this->SlicePlanes);
+    clipper->SetValue( 0.0);
+    }
+
+  vtkPolyDataMapper *mapper = vtkPolyDataMapper::New ();
+  if (clipper)
+    {
+    clipper->SetInput ( model->GetPolyData() );
+    clipper->Update();
+    mapper->SetInput ( clipper->GetOutput() );
+    }
+  else
+    {
+    mapper->SetInput ( model->GetPolyData() );
+    }
+  // observe polydata
+  model->AddObserver ( vtkMRMLModelNode::PolyDataModifiedEvent, this->MRMLCallbackCommand );
+
+  // observe display node  
+  model->AddObserver ( vtkMRMLModelNode::DisplayModifiedEvent, this->MRMLCallbackCommand );
+
+  model->AddObserver ( vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand );
+
+  vtkActor *actor = vtkActor::New ( );
+  actor->SetMapper ( mapper );
+  this->MainViewer->AddViewProp ( actor );
+
+  this->DisplayedModels[model->GetID()] = actor;
+  if (clipper)
+    {
+    this->DisplayedModelsClipState[model->GetID()] = 1;
+    clipper->Delete();
+    }
+  else
+    {
+    this->DisplayedModelsClipState[model->GetID()] = 0;
+    }
+  actor->Delete();
+  mapper->Delete();
 }
 
 //---------------------------------------------------------------------------

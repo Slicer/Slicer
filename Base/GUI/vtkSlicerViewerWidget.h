@@ -136,6 +136,7 @@ protected:
 
   void UpdateFiducialsFromMRML();
   void UpdateModelsFromMRML();
+  void UpdateModel(vtkMRMLModelNode *model);
 
   void CreateClipSlices();
   int UpdateClipSlicesFormMRML();
