@@ -144,4 +144,36 @@ void vtkMRMLScalarVolumeNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 
- 
+//----------------------------------------------------------------------------
+void vtkMRMLScalarVolumeNode::SetLabelMap(int flag)
+{
+    if (this->LabelMap == flag)
+      {
+      return;
+      }
+    std::cout << "vtkMRMLScalarVolumeNode::SetLabelMap: flag = " << flag << endl;
+    vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting LabelMap to " << flag);
+    this->LabelMap = flag;
+
+    if (this->GetDisplayNode() != NULL)
+      {
+      if (this->LabelMap == 1)
+        {
+        // set the display node's color node to be Labels
+        std::cout << "Label map is 1, need to update the display node to be labels\n";     
+        this->GetDisplayNode()->SetAndObserveColorNodeID("vtkMRMLColorNodeLabels");
+        }
+      else
+        {
+        std::cout << "Lable map is not 1, updating color node in display to be grey (this is too restrictive)\n";
+        this->GetDisplayNode()->SetAndObserveColorNodeID("vtkMRMLColorNodeGrey");
+        }
+      }
+    else
+      {
+      std::cerr << "ERROR: no display node associated with this scalar volume, not changing color node\n";
+      }
+
+     // invoke a modified event
+    this->Modified();
+}

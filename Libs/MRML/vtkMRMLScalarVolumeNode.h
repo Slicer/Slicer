@@ -59,7 +59,7 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeNode : public vtkMRMLVolumeNode
   // segmentation that labels each voxel according to its tissue type.  
   // The alternative is a gray-level or color image.
   vtkGetMacro(LabelMap, int);
-  vtkSetMacro(LabelMap, int);
+  void SetLabelMap(int flag);
   vtkBooleanMacro(LabelMap, int);
 
   // Description:
