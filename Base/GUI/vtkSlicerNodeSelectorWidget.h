@@ -135,6 +135,8 @@ public:
   void ProcessNewNodeCommand(const char *className, const char *nodeName);
   void ProcessCommand(char *slectedId);
 
+  bool CheckNodeClass(vtkMRMLNode *node);
+
 protected:
   vtkSlicerNodeSelectorWidget();
   virtual ~vtkSlicerNodeSelectorWidget();

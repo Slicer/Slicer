@@ -46,9 +46,14 @@ static void MRMLCallback(vtkObject *__mrmlscene, unsigned long eid, void *__clie
 
   vtkMRMLScene *mrmlscene = static_cast<vtkMRMLScene *>(__mrmlscene); // Not used, since it is ivar
 
+  vtkMRMLNode *node = reinterpret_cast<vtkMRMLNode *>(callData);
+
   vtkSlicerNodeSelectorWidget *self = reinterpret_cast<vtkSlicerNodeSelectorWidget *>(__clientData);
 
-  self->UpdateMenu();
+  if (node == NULL || self->CheckNodeClass(node))
+    {
+    self->UpdateMenu();
+    }
 
   inMRMLCallback = 0;
 }
@@ -100,6 +105,21 @@ void vtkSlicerNodeSelectorWidget::SetMRMLScene( vtkMRMLScene *MRMLScene)
 
   this->UpdateMenu();
 }
+
+//----------------------------------------------------------------------------
+bool vtkSlicerNodeSelectorWidget::CheckNodeClass(vtkMRMLNode *node)
+{
+  for (int c=0; c < this->GetNumberOfNodeClasses(); c++)
+    {
+    const char *className = this->GetNodeClass(c);
+    if (node->IsA(className))
+      {
+      return true;
+      }
+    }
+  return false;
+}
+
 
 //----------------------------------------------------------------------------
 void vtkSlicerNodeSelectorWidget::SetNodeClass(const char *className,

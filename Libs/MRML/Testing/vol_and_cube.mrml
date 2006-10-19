@@ -69,7 +69,7 @@ id="vtkMRMLModelStorageNode1" name=""  hideFromEditors="true" fileName="TestData
 </ModelDisplay>
 
 <Model
-  id="vtkMRMLModelNode4" name="cube.vtk"  hideFromEditors="false" 
+  id="vtkMRMLModelNode1" name="cube.vtk"  hideFromEditors="false" 
   storageNodeRef="vtkMRMLModelStorageNode1" displayNodeRef="vtkMRMLModelDisplayNode4" >
 </Model>
 
