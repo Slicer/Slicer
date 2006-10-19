@@ -78,7 +78,8 @@ proc EditorBuildGUI {this} {
   #
   # help frame
   #
-  set ::Editor($this,helpFrame) [vtkKWFrameWithLabel New]
+  #set ::Editor($this,helpFrame) [vtkKWFrameWithLabel New]
+  set ::Editor($this,helpFrame) [vtkSlicerModuleCollapsibleFrame New]
   $::Editor($this,helpFrame) SetParent $pageWidget
   $::Editor($this,helpFrame) Create
   $::Editor($this,helpFrame) CollapseFrame
@@ -103,7 +104,8 @@ proc EditorBuildGUI {this} {
   #
   # Editor Volumes
   #
-  set ::Editor($this,volumesFrame) [vtkKWFrameWithLabel New]
+  #set ::Editor($this,volumesFrame) [vtkKWFrameWithLabel New]
+  set ::Editor($this,volumesFrame) [vtkSlicerModuleCollapsibleFrame New]
   $::Editor($this,volumesFrame) SetParent $pageWidget
   $::Editor($this,volumesFrame) Create
   $::Editor($this,volumesFrame) SetLabelText "Volumes"
@@ -139,7 +141,8 @@ proc EditorBuildGUI {this} {
   #
   # Editor Paint
   #
-  set ::Editor($this,paintFrame) [vtkKWFrameWithLabel New]
+  #set ::Editor($this,paintFrame) [vtkKWFrameWithLabel New]
+  set ::Editor($this,paintFrame) [vtkSlicerModuleCollapsibleFrame New]
   $::Editor($this,paintFrame) SetParent $pageWidget
   $::Editor($this,paintFrame) Create
   $::Editor($this,paintFrame) SetLabelText "Paint"
