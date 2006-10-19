@@ -35,7 +35,7 @@ Version:   $Revision: 1.2 $
 #include "vtkKWEntry.h"
 #include "vtkKWFrame.h"
 #include "vtkSlicerApplication.h"
-#include "vtkKWFrameWithLabel.h"
+#include "vtkSlicerModuleCollapsibleFrame.h"
 #include "vtkKWPushButton.h"
 
 //------------------------------------------------------------------------------
@@ -289,6 +289,9 @@ void vtkGradientAnisotropicDiffusionFilterGUI::BuildGUI ( )
 {
   vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
 
+  const char *help = "**GradientAnisotropicDiffusionFilter Module:**...";
+
+
   vtkMRMLGradientAnisotropicDiffusionFilterNode* gadNode = vtkMRMLGradientAnisotropicDiffusionFilterNode::New();
   this->Logic->GetMRMLScene()->RegisterNodeClass(gadNode);
   gadNode->Delete();
@@ -301,7 +304,7 @@ void vtkGradientAnisotropicDiffusionFilterGUI::BuildGUI ( )
   // ---
     
   // HELP FRAME
-  vtkKWFrameWithLabel *helpFrame = vtkKWFrameWithLabel::New ( );
+  vtkSlicerModuleCollapsibleFrame *helpFrame = vtkSlicerModuleCollapsibleFrame::New ( );
   helpFrame->SetParent ( this->UIPanel->GetPageWidget ( "GradientAnisotropicDiffusionFilter" ) );
   helpFrame->Create ( );
   helpFrame->CollapseFrame ( );
@@ -310,7 +313,21 @@ void vtkGradientAnisotropicDiffusionFilterGUI::BuildGUI ( )
                 helpFrame->GetWidgetName(), this->UIPanel->GetPageWidget("GradientAnisotropicDiffusionFilter")->GetWidgetName());
   helpFrame->Delete();
 
-  vtkKWFrameWithLabel *moduleFrame = vtkKWFrameWithLabel::New ( );
+    // configure the parent classes help text widget
+    this->HelpText->SetParent ( helpFrame->GetFrame() );
+    this->HelpText->Create ( );
+    this->HelpText->SetHorizontalScrollbarVisibility ( 0 );
+    this->HelpText->SetVerticalScrollbarVisibility ( 1 );
+    this->HelpText->GetWidget()->SetText ( help );
+    this->HelpText->GetWidget()->SetReliefToFlat ( );
+    this->HelpText->GetWidget()->SetWrapToWord ( );
+    this->HelpText->GetWidget()->ReadOnlyOn ( );
+    this->HelpText->GetWidget()->QuickFormattingOn ( );
+    this->HelpText->GetWidget()->SetBalloonHelpString ( "" );
+    app->Script ( "pack %s -side top -fill x -expand y -anchor w -padx 2 -pady 4",
+                  this->HelpText->GetWidgetName ( ) );
+
+  vtkSlicerModuleCollapsibleFrame *moduleFrame = vtkSlicerModuleCollapsibleFrame::New ( );
   moduleFrame->SetParent ( this->UIPanel->GetPageWidget ( "GradientAnisotropicDiffusionFilter" ) );
   moduleFrame->Create ( );
   moduleFrame->SetLabelText ("Gradient Anisotropic Diffusion Filter");
