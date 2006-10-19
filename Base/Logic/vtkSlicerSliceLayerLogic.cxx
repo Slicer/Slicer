@@ -19,7 +19,7 @@
 
 #include "vtkMRMLVolumeDisplayNode.h"
 #include "vtkMRMLTransformNode.h"
-
+#include "vtkMRMLColorNode.h"
 
 vtkCxxRevisionMacro(vtkSlicerSliceLayerLogic, "$Revision: 1.9.12.1 $");
 vtkStandardNewMacro(vtkSlicerSliceLayerLogic);
@@ -43,7 +43,6 @@ vtkSlicerSliceLayerLogic::vtkSlicerSliceLayerLogic()
   this->ResliceAlphaCast = vtkImageCast::New();
   this->AlphaLogic = vtkImageLogic::New();
   this->MapToColors = vtkImageMapToColors::New();
-  this->LookupTable = vtkLookupTable::New();
   this->Threshold = vtkImageThreshold::New();
   this->AppendComponents = vtkImageAppendComponents::New();
   this->MapToWindowLevelColors = vtkImageMapToWindowLevelColors::New();
@@ -66,15 +65,14 @@ vtkSlicerSliceLayerLogic::vtkSlicerSliceLayerLogic()
   this->AlphaLogic->SetOutputTrueValue(255);
 
   this->MapToColors->SetOutputFormatToRGB();
-  this->MapToColors->SetLookupTable( this->LookupTable );
-  this->LookupTable->SetRampToLinear();
-  this->LookupTable->SetTableRange(0, 255);
-  this->LookupTable->SetHueRange(0, 0);
-  this->LookupTable->SetSaturationRange(0, 0);
-  this->LookupTable->SetValueRange(0, 1);
-  this->LookupTable->SetAlphaRange(1, 1); // not used
-  this->LookupTable->Build();
 
+  if (this->VolumeDisplayNode != NULL
+      && this->VolumeDisplayNode->GetColorNode() != NULL)
+    {
+    // if there's a volume display node which has a valid color node, use it's
+    // look up table
+    this->MapToColors->SetLookupTable( this->VolumeDisplayNode->GetColorNode()->GetLookupTable());
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -92,7 +90,7 @@ vtkSlicerSliceLayerLogic::~vtkSlicerSliceLayerLogic()
     {
     vtkSetAndObserveMRMLNodeMacro( this->VolumeDisplayNode , NULL );
     }
-
+  
   this->SetSliceNode(NULL);
   this->SetVolumeNode(NULL);
   this->XYToIJKTransform->Delete();
@@ -105,7 +103,6 @@ vtkSlicerSliceLayerLogic::~vtkSlicerSliceLayerLogic()
 
   this->Reslice->Delete();
   this->MapToColors->Delete();
-  this->LookupTable->Delete();
   this->Threshold->Delete();
   this->AppendComponents->Delete();
   this->MapToWindowLevelColors->Delete();
@@ -118,11 +115,27 @@ vtkSlicerSliceLayerLogic::~vtkSlicerSliceLayerLogic()
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerSliceLayerLogic::ProcessMRMLEvents(vtkObject * /*caller*/, 
-                                            unsigned long /*event*/, 
+void vtkSlicerSliceLayerLogic::ProcessMRMLEvents(vtkObject * caller, 
+                                            unsigned long event, 
                                             void * /*callData*/)
 {
+  if (this->VolumeDisplayNode == vtkMRMLVolumeDisplayNode::SafeDownCast(caller) &&
+      event == vtkCommand::ModifiedEvent)
+    {
+    // reset the colour look up table
+    if (this->VolumeDisplayNode != NULL
+      && this->VolumeDisplayNode->GetColorNode() != NULL)
+      {
+      vtkDebugMacro("vtkSlicerSliceLayerLogic::ProcessMRMLEvents: got a volume display node modified event, updating the map to colors!\n");
+      this->MapToColors->SetLookupTable( this->VolumeDisplayNode->GetColorNode()->GetLookupTable());
+      }
+    else
+      {      
+      vtkDebugMacro("vtkSlicerSliceLayerLogic::ProcessMRMLEvents: volume display node " << (this->VolumeDisplayNode == NULL ? " is null" : "is set, but") << ", not updating map to colors (color node may be null)\n");
+      }
+    }
   this->UpdateTransforms();
+  
 }
 
 //----------------------------------------------------------------------------
@@ -168,7 +181,7 @@ void vtkSlicerSliceLayerLogic::UpdateNodeReferences ()
       {
       return;
       }
-
+    vtkDebugMacro("vtkSlicerSliceLayerLogic::UpdateNodeReferences: new display node = " << (displayNode == NULL ? "null" : "valid") << endl);
     if ( displayNode )
       {
       vtkSetAndObserveMRMLNodeMacro( this->VolumeDisplayNode, displayNode );
@@ -186,7 +199,7 @@ void vtkSlicerSliceLayerLogic::UpdateTransforms()
 
   // Ensure display node matches the one we are observing
   this->UpdateNodeReferences();
-
+  
   unsigned int dimensions[3];
   dimensions[0] = 100;  // dummy values until SliceNode is set
   dimensions[1] = 100;
@@ -289,6 +302,19 @@ void vtkSlicerSliceLayerLogic::UpdateTransforms()
       this->Reslice->SetInterpolationModeToNearestNeighbor();
       }
 
+    // update the lookup table
+    if (this->VolumeDisplayNode->GetColorNode())
+      {
+      if (this->VolumeDisplayNode->GetColorNode()->GetLookupTable() != this->MapToColors->GetLookupTable())
+        {
+        vtkDebugMacro("vtkSlicerSliceLayerLogic::UpdateTransforms: volume display node lut isn't the same as the map to colours lut, resetting the map to cols\n");
+        this->MapToColors->SetLookupTable(this->VolumeDisplayNode->GetColorNode()->GetLookupTable());
+        }
+      }
+    else
+      {
+      vtkDebugMacro("vtkSlicerSliceLayerLogic::UpdateTransforms: volume display node doesn't have a color node, not updating the map to colours\n");
+      }
     if ( labelMap ) 
       {
       // Don't put label maps through the window/level filter,
@@ -365,18 +391,48 @@ void vtkSlicerSliceLayerLogic::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->vtkObject::PrintSelf(os, indent);
 
+  vtkIndent nextIndent;
+  nextIndent = indent.GetNextIndent();
+  
   os << indent << "SlicerSliceLayerLogic:             " << this->GetClassName() << "\n";
 
   os << indent << "VolumeNode: " <<
     (this->VolumeNode ? this->VolumeNode->GetID() : "(none)") << "\n";
   os << indent << "SliceNode: " <<
     (this->SliceNode ? this->SliceNode->GetID() : "(none)") << "\n";
-  // TODO: fix printing of vtk objects
-  os << indent << "Reslice: " <<
-    (this->Reslice ? "this->Reslice" : "(none)") << "\n";
-  os << indent << "MapToColors: " <<
-    (this->MapToColors ? "this->MapToColors" : "(none)") << "\n";
-  os << indent << "MapToWindowLevelColors: " <<
-    (this->MapToWindowLevelColors ? "this->MapToWindowLevelColors" : "(none)") << "\n";
+
+  os << indent << "VolumeDisplayNode: " <<
+    (this->VolumeDisplayNode ? this->VolumeDisplayNode->GetID() : "(none)") << "\n";
+  if (this->VolumeDisplayNode)
+    {
+    this->VolumeDisplayNode->PrintSelf(os, nextIndent);
+    }
+  os << indent << "Reslice:\n";
+  if (this->Reslice)
+    {
+    this->Reslice->PrintSelf(os, nextIndent);
+    }
+  else
+    {
+    os << indent << " (NULL)\n";
+    }
+  os << indent << "MapToColors:\n";
+  if (this->MapToColors)
+    {
+    this->MapToColors->PrintSelf(os, nextIndent);
+    }
+  else
+    {
+    os << indent << " (NULL)\n";
+    }
+  os << indent << "MapToWindowLevelColors:\n";
+  if (this->MapToWindowLevelColors)
+    {
+    this->MapToWindowLevelColors->PrintSelf(os, nextIndent);
+    }
+  else
+    {
+    os << indent << " (NULL)\n";
+    }
 }
 

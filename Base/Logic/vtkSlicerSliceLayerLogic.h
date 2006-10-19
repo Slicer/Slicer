@@ -44,7 +44,7 @@
 
 #include "vtkImageReslice.h"
 #include "vtkImageMapToColors.h"
-#include "vtkLookupTable.h"
+
 #include "vtkImageMapToWindowLevelColors.h"
 #include "vtkImageThreshold.h"
 #include "vtkImageAppendComponents.h"
@@ -90,7 +90,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLayerLogic : public vtkSlicerLo
   // Description:
   // The image map that applies the lookup table
   vtkGetObjectMacro (MapToColors, vtkImageMapToColors);
-
+  
   // Description:
   // The filter that applies the threshold
   vtkGetObjectMacro (Threshold, vtkImageThreshold);
@@ -178,7 +178,6 @@ protected:
   vtkImageLogic *AlphaLogic;
   vtkImageReslice *Reslice;
   vtkImageMapToColors *MapToColors;
-  vtkLookupTable *LookupTable;
   vtkImageThreshold *Threshold;
   vtkImageAppendComponents *AppendComponents;
   vtkImageMapToWindowLevelColors *MapToWindowLevelColors;

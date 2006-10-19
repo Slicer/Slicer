@@ -55,7 +55,7 @@ vtkMRMLNode* vtkMRMLScalarVolumeNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLScalarVolumeNode::vtkMRMLScalarVolumeNode()
 {
-  this->LabelMap = 0;
+  this->SetLabelMap(0);
 }
 
 //----------------------------------------------------------------------------
@@ -151,7 +151,6 @@ void vtkMRMLScalarVolumeNode::SetLabelMap(int flag)
       {
       return;
       }
-    std::cout << "vtkMRMLScalarVolumeNode::SetLabelMap: flag = " << flag << endl;
     vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting LabelMap to " << flag);
     this->LabelMap = flag;
 
@@ -160,18 +159,18 @@ void vtkMRMLScalarVolumeNode::SetLabelMap(int flag)
       if (this->LabelMap == 1)
         {
         // set the display node's color node to be Labels
-        std::cout << "Label map is 1, need to update the display node to be labels\n";     
+        vtkDebugMacro("Label map is 1, need to update the display node to be labels\n");
         this->GetDisplayNode()->SetAndObserveColorNodeID("vtkMRMLColorNodeLabels");
         }
       else
         {
-        std::cout << "Lable map is not 1, updating color node in display to be grey (this is too restrictive)\n";
+        vtkDebugMacro("Label map is not 1, updating color node in display to be grey (this is too restrictive)\n");
         this->GetDisplayNode()->SetAndObserveColorNodeID("vtkMRMLColorNodeGrey");
         }
       }
     else
       {
-      std::cerr << "ERROR: no display node associated with this scalar volume, not changing color node\n";
+      vtkErrorMacro("ERROR: no display node associated with this scalar volume, not changing color node\n");
       }
 
      // invoke a modified event

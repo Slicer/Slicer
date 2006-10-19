@@ -69,6 +69,17 @@ vtkMRMLVolumeDisplayNode::vtkMRMLVolumeDisplayNode()
   this->UpperThreshold = VTK_SHORT_MAX;
   this->ColorNodeID = NULL;
   this->ColorNode = NULL;
+
+  // set up a default color node
+  this->SetAndObserveColorNodeID("vtkMRMLColorNodeGrey");
+  if (this->ColorNode == NULL)
+    {
+    vtkDebugMacro("vtkMRMLVolumeDisplayNode: FAILED setting default greyscale color node, it's still null\n");
+                  }
+    else
+      {
+      vtkDebugMacro("vtkMRMLVolumeDisplayNode: set up the default color node as grey\n");
+      }
 }
 
 //----------------------------------------------------------------------------
