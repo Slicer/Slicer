@@ -125,6 +125,8 @@ void vtkQueryAtlasGUI::BuildGUI ( )
     // configure the parent classes help text widget
     this->HelpText->SetParent ( modHelpFrame->GetFrame() );
     this->HelpText->Create ( );
+    this->HelpText->SetHorizontalScrollbarVisibility ( 0 );
+    this->HelpText->SetVerticalScrollbarVisibility ( 1 );
     this->HelpText->GetWidget()->SetText ( help );
     this->HelpText->GetWidget()->SetReliefToFlat ( );
     this->HelpText->GetWidget()->SetWrapToWord ( );
