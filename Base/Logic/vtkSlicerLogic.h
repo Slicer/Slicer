@@ -21,6 +21,8 @@
 #ifndef __vtkSlicerLogic_h
 #define __vtkSlicerLogic_h
 
+#include "vtkCommand.h"
+
 #include "vtkSlicerBaseLogic.h"
 #include "vtkObject.h"
 #include "vtkObjectFactory.h"
@@ -32,18 +34,42 @@
 
 #include <string>
 
+//BTX
+
 #ifndef vtkSetMRMLNodeMacro
-#define vtkSetMRMLNodeMacro(node,value)  {this->MRMLObserverManager->SetObject ( vtkObjectPointer( &(node)), (value) );};
+#define vtkSetMRMLNodeMacro(node,value)  { \
+  vtkObject *oldNode = (node); \
+  this->MRMLObserverManager->SetObject ( vtkObjectPointer( &(node)), (value) ); \
+  if ( oldNode != (node) ) \
+    { \
+    this->InvokeEvent (vtkCommand::ModifiedEvent); \
+    } \
+};
 #endif
 
 #ifndef vtkSetAndObserveMRMLNodeMacro
-#define vtkSetAndObserveMRMLNodeMacro(node,value)  {this->MRMLObserverManager->SetAndObserveObject ( vtkObjectPointer( &(node)), (value) );};
+#define vtkSetAndObserveMRMLNodeMacro(node,value)  { \
+  vtkObject *oldNode = (node); \
+  this->MRMLObserverManager->SetAndObserveObject ( vtkObjectPointer( &(node) ), (value) ); \
+  if ( oldNode != (node) ) \
+    { \
+    this->InvokeEvent (vtkCommand::ModifiedEvent); \
+    } \
+};
 #endif
 
 #ifndef vtkSetAndObserveMRMLNodeEventsMacro
-#define vtkSetAndObserveMRMLNodeEventsMacro(node,value,events)  {this->MRMLObserverManager->SetAndObserveObjectEvents ( vtkObjectPointer( &(node)), (value), (events));};
+#define vtkSetAndObserveMRMLNodeEventsMacro(node,value,events)  { \
+  vtkObject *oldNode = (node); \
+  this->MRMLObserverManager->SetAndObserveObjectEvents ( vtkObjectPointer( &(node)), (value), (events)); \
+  if ( oldNode != (node) ) \
+    { \
+    this->InvokeEvent (vtkCommand::ModifiedEvent); \
+    } \
+};
 #endif
 
+//ETX
 
 class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerLogic : public vtkObject 
 {
@@ -61,19 +87,34 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerLogic : public vtkObject
   // Description:
   // API for setting or setting and observing MRMLScene
   void SetMRMLScene ( vtkMRMLScene *mrml )
+    {
+    vtkObject *oldValue = this->MRMLScene;
+    this->MRMLObserverManager->SetObject ( vtkObjectPointer( &this->MRMLScene), mrml );
+    if ( oldValue != this->MRMLScene )
       {
-      this->MRMLObserverManager->SetObject ( vtkObjectPointer( &this->MRMLScene), mrml );
+      this->InvokeEvent (vtkCommand::ModifiedEvent);
       }
+    }
 
   void SetAndObserveMRMLScene ( vtkMRMLScene *mrml )
+    {
+    vtkObject *oldValue = this->MRMLScene;
+    this->MRMLObserverManager->SetAndObserveObject ( vtkObjectPointer( &this->MRMLScene), mrml );
+    if ( oldValue != this->MRMLScene )
       {
-      this->MRMLObserverManager->SetAndObserveObject ( vtkObjectPointer( &this->MRMLScene), mrml );
+      this->InvokeEvent (vtkCommand::ModifiedEvent);
       }
+    }
 
   void SetAndObserveMRMLSceneEvents ( vtkMRMLScene *mrml, vtkIntArray *events )
+    {
+    vtkObject *oldValue = this->MRMLScene;
+    this->MRMLObserverManager->SetAndObserveObjectEvents ( vtkObjectPointer( &this->MRMLScene), mrml, events );
+    if ( oldValue != this->MRMLScene )
       {
-      this->MRMLObserverManager->SetAndObserveObjectEvents ( vtkObjectPointer( &this->MRMLScene), mrml, events );
+      this->InvokeEvent (vtkCommand::ModifiedEvent);
       }
+    }
 
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
       unsigned long /*event*/, void * /*callData*/ ) { };

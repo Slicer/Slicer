@@ -293,7 +293,8 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
     }
 
 // Update orientation if needed
-  if ( vtkKWMenu::SafeDownCast(caller) == this->OrientationMenu->GetWidget()->GetWidget()->GetMenu() )
+  if ( this->SliceNode != NULL && 
+       vtkKWMenu::SafeDownCast(caller) == this->OrientationMenu->GetWidget()->GetWidget()->GetMenu() )
     {
     vtkKWMenuButton *mb = this->OrientationMenu->GetWidget()->GetWidget();
     if ( !strcmp (mb->GetValue(), "Axial") )   

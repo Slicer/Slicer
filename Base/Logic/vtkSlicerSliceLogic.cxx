@@ -93,6 +93,7 @@ void vtkSlicerSliceLogic::UpdateSliceNode()
           this->MRMLScene->GetNthNodeByClass(n, "vtkMRMLSliceNode"));
     if (!strcmp(node->GetLayoutName(), this->GetName()))
       {
+std::cerr << "found the " << this->GetName() << " node and will use it!\n";
       break;
       }
     node = NULL;
@@ -103,12 +104,14 @@ void vtkSlicerSliceLogic::UpdateSliceNode()
     {
     // local SliceNode is out of sync with the scene
     this->SetSliceNode (NULL);
+std::cerr << "logic " << this->GetName() << " out of sync\n";
     }
 
   if ( this->SliceNode == NULL )
     {
     if ( node == NULL )
       {
+std::cerr << "logic " << this->GetName() << " created new node\n";
       node = vtkMRMLSliceNode::New();
       node->SetLayoutName(this->GetName());
       this->SetSliceNode (node);
@@ -116,6 +119,8 @@ void vtkSlicerSliceLogic::UpdateSliceNode()
       }
     else
       {
+std::cerr << "logic " << this->GetName() << " set to " << node->GetID() << "\n";
+
       this->SetSliceNode (node);
       }
     }
@@ -127,6 +132,7 @@ void vtkSlicerSliceLogic::UpdateSliceNode()
     node->Register(this);
     this->SetSliceNode (NULL);
     this->MRMLScene->AddNodeNoNotify(node);
+std::cerr << "logic " << this->GetName() << " added " << node->GetID() << "\n";
     this->SetSliceNode (node);
     node->UnRegister(this);
     }

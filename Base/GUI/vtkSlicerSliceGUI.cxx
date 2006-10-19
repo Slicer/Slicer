@@ -248,6 +248,10 @@ void vtkSlicerSliceGUI::ProcessLogicEvents ( vtkObject *caller,
     }
   if ( sliceLogic == this->GetLogic ( ) ) 
     {
+    vtkMRMLSliceNode *snode = this->GetLogic()->GetSliceNode();
+    this->SetAndObserveMRMLNode( snode );
+    this->SetupViewerAndController();
+
     // sliceLogic contains the pipeline that create viewer's input, so
     // assume we need to set the image data and render
     vtkSlicerSliceViewer *sliceViewer = this->GetSliceViewer( );
@@ -266,11 +270,15 @@ void vtkSlicerSliceGUI::ProcessMRMLEvents ( vtkObject *caller,
 {
   if ( this->GetLogic() )
     {
+      /*
     vtkMRMLSliceNode *snode = this->GetLogic()->GetSliceNode();
-    this->GetSliceController()->SetSliceNode (snode);
 
+    this->SetAndObserveMRMLNode( snode );
+    this->SetupViewerAndController();
     vtkMRMLSliceCompositeNode *scnode = this->GetLogic()->GetSliceCompositeNode();
+    this->GetSliceController()->SetSliceNode (snode);
     this->GetSliceController()->SetSliceCompositeNode (scnode);
+    */
     }
 }
 

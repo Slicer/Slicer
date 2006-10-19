@@ -322,6 +322,7 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
         }
       }
     }
+  this->UpdateMatrices();
 }
 
 //----------------------------------------------------------------------------
