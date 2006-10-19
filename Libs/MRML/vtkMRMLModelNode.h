@@ -87,11 +87,11 @@ public:
 
 
   // Description:
-  // Associated storage MRML node
+  // Get associated storage MRML node
   vtkMRMLStorageNode* GetStorageNode();
 
   // Description:
-  // Associated display MRML node
+  // Get associated display MRML node
   vtkMRMLModelDisplayNode* GetDisplayNode();
     
   vtkGetObjectMacro(PolyData, vtkPolyData);

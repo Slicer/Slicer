@@ -17,6 +17,7 @@ Version:   $Revision: 1.2 $
 #include <sstream>
 
 #include "vtkObjectFactory.h"
+#include "vtkCallbackCommand.h"
 
 #include "vtkMRMLVolumeDisplayNode.h"
 #include "vtkMRMLScene.h"
@@ -66,6 +67,8 @@ vtkMRMLVolumeDisplayNode::vtkMRMLVolumeDisplayNode()
   this->ApplyThreshold = 0;
   this->LowerThreshold = VTK_SHORT_MIN;
   this->UpperThreshold = VTK_SHORT_MAX;
+  this->ColorNodeID = NULL;
+  this->ColorNode = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -76,6 +79,7 @@ vtkMRMLVolumeDisplayNode::~vtkMRMLVolumeDisplayNode()
     delete [] this->LUTName;
     this->LUTName = NULL;
     }
+  this->SetAndObserveColorNodeID( NULL);
 }
 
 //----------------------------------------------------------------------------
@@ -130,6 +134,10 @@ void vtkMRMLVolumeDisplayNode::WriteXML(ostream& of, int nIndent)
   ss << this->AutoThreshold;
   of << indent << "autoThreshold=\"" << ss.str() << "\" ";
   }
+  if (this->ColorNodeID != NULL) 
+    {
+    of << indent << "colorNodeRef=\"" << this->ColorNodeID << "\" ";
+    }
 
 }
 
@@ -193,6 +201,11 @@ void vtkMRMLVolumeDisplayNode::ReadXMLAttributes(const char** atts)
       ss << attValue;
       ss >> this->AutoThreshold;
       }
+    else if (!strcmp(attName, "colorNodeRef")) 
+      {
+      this->SetColorNodeID(attValue);
+      }
+
     }  
 }
 
@@ -213,6 +226,8 @@ void vtkMRMLVolumeDisplayNode::Copy(vtkMRMLNode *anode)
   this->SetUpperThreshold(node->UpperThreshold);
   this->SetLowerThreshold(node->LowerThreshold);
   this->SetInterpolate(node->Interpolate);
+  this->SetColorNodeID(node->ColorNodeID);
+
 }
 
 //----------------------------------------------------------------------------
@@ -232,5 +247,69 @@ void vtkMRMLVolumeDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "UpperThreshold:    " << this->UpperThreshold << "\n";
   os << indent << "LowerThreshold:    " << this->LowerThreshold << "\n";
   os << indent << "Interpolate:       " << this->Interpolate << "\n";
+  os << indent << "ColorNodeID: " <<
+    (this->ColorNodeID ? this->ColorNodeID : "(none)") << "\n";
+
 }
+
+//-----------------------------------------------------------
+void vtkMRMLVolumeDisplayNode::UpdateScene(vtkMRMLScene *scene)
+{
+   Superclass::UpdateScene(scene);
+
+   this->SetAndObserveColorNodeID(this->GetColorNodeID());
+}
+
+//-----------------------------------------------------------
+void vtkMRMLVolumeDisplayNode::UpdateReferences()
+{
+   Superclass::UpdateReferences();
+
+  if (this->ColorNodeID != NULL && this->Scene->GetNodeByID(this->ColorNodeID) == NULL)
+    {
+    this->SetAndObserveColorNodeID(NULL);
+    }
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLColorNode* vtkMRMLVolumeDisplayNode::GetColorNode()
+{
+  vtkMRMLColorNode* node = NULL;
+  if (this->GetScene() && this->GetColorNodeID() )
+    {
+    vtkMRMLNode* cnode = this->GetScene()->GetNodeByID(this->ColorNodeID);
+    node = vtkMRMLColorNode::SafeDownCast(cnode);
+    }
+  return node;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLVolumeDisplayNode::SetAndObserveColorNodeID(const char *colorNodeID)
+{
+  vtkSetAndObserveMRMLObjectMacro(this->ColorNode, NULL);
+
+  this->SetColorNodeID(colorNodeID);
+
+  vtkMRMLColorNode *cnode = this->GetColorNode();
+
+  vtkSetAndObserveMRMLObjectMacro(this->ColorNode, cnode);
+
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLVolumeDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
+                                           unsigned long event, 
+                                           void *callData )
+{
+  Superclass::ProcessMRMLEvents(caller, event, callData);
+
+  vtkMRMLColorNode *cnode = this->GetColorNode();
+  if (cnode != NULL && cnode == vtkMRMLColorNode::SafeDownCast(caller) &&
+      event ==  vtkCommand::ModifiedEvent)
+    {
+    this->InvokeEvent(vtkCommand::ModifiedEvent, NULL);
+    }
+  return;
+}
+
 

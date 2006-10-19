@@ -80,6 +80,8 @@ vtkMRMLModelDisplayNode::vtkMRMLModelDisplayNode()
   this->LUTName = -1;
   
   this->TextureImageData = NULL;
+  this->ColorNodeID = NULL;
+  this->ColorNode = NULL;
 
 }
 
@@ -87,6 +89,8 @@ vtkMRMLModelDisplayNode::vtkMRMLModelDisplayNode()
 vtkMRMLModelDisplayNode::~vtkMRMLModelDisplayNode()
 {
   this->SetAndObserveTextureImageData(NULL);
+  this->SetAndObserveColorNodeID( NULL);
+
 }
 
 //----------------------------------------------------------------------------
@@ -135,6 +139,12 @@ void vtkMRMLModelDisplayNode::WriteXML(ostream& of, int nIndent)
 
   of << indent << " scalarRange=\"" << this->ScalarRange[0] << " "
      << this->ScalarRange[1] << "\"";
+
+  if (this->ColorNodeID != NULL) 
+    {
+    of << indent << "colorNodeRef=\"" << this->ColorNodeID << "\" ";
+    }
+
 }
 
 //----------------------------------------------------------------------------
@@ -266,6 +276,11 @@ void vtkMRMLModelDisplayNode::ReadXMLAttributes(const char** atts)
         this->TensorVisibility = 0;
         }
       }
+    else if (!strcmp(attName, "colorNodeRef")) 
+      {
+      this->SetColorNodeID(attValue);
+      }
+
     }  
 }
 
@@ -296,6 +311,7 @@ void vtkMRMLModelDisplayNode::Copy(vtkMRMLNode *anode)
   this->SetBackfaceCulling(node->BackfaceCulling);
   this->SetClipping(node->Clipping);
   this->SetAndObserveTextureImageData(node->TextureImageData);
+  this->SetColorNodeID(node->ColorNodeID);
 
 }
 
@@ -322,6 +338,8 @@ void vtkMRMLModelDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
     {
     os << indent << ", " << this->ScalarRange[idx];
     }
+  os << indent << "ColorNodeID: " <<
+    (this->ColorNodeID ? this->ColorNodeID : "(none)") << "\n";
 
 }
 
@@ -340,6 +358,51 @@ void vtkMRMLModelDisplayNode::SetAndObserveTextureImageData(vtkImageData *ImageD
     }
 }
 
+
+//-----------------------------------------------------------
+void vtkMRMLModelDisplayNode::UpdateScene(vtkMRMLScene *scene)
+{
+   Superclass::UpdateScene(scene);
+
+   this->SetAndObserveColorNodeID(this->GetColorNodeID());
+}
+
+//-----------------------------------------------------------
+void vtkMRMLModelDisplayNode::UpdateReferences()
+{
+   Superclass::UpdateReferences();
+
+  if (this->ColorNodeID != NULL && this->Scene->GetNodeByID(this->ColorNodeID) == NULL)
+    {
+    this->SetAndObserveColorNodeID(NULL);
+    }
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLColorNode* vtkMRMLModelDisplayNode::GetColorNode()
+{
+  vtkMRMLColorNode* node = NULL;
+  if (this->GetScene() && this->GetColorNodeID() )
+    {
+    vtkMRMLNode* cnode = this->GetScene()->GetNodeByID(this->ColorNodeID);
+    node = vtkMRMLColorNode::SafeDownCast(cnode);
+    }
+  return node;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLModelDisplayNode::SetAndObserveColorNodeID(const char *colorNodeID)
+{
+  vtkSetAndObserveMRMLObjectMacro(this->ColorNode, NULL);
+
+  this->SetColorNodeID(colorNodeID);
+
+  vtkMRMLColorNode *cnode = this->GetColorNode();
+
+  vtkSetAndObserveMRMLObjectMacro(this->ColorNode, cnode);
+
+}
+
 //---------------------------------------------------------------------------
 void vtkMRMLModelDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
                                            unsigned long event, 
@@ -349,6 +412,14 @@ void vtkMRMLModelDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
 
   if (this->TextureImageData == vtkImageData::SafeDownCast(caller) &&
     event ==  vtkCommand::ModifiedEvent)
+    {
+    this->InvokeEvent(vtkCommand::ModifiedEvent, NULL);
+    return;
+    }
+
+  vtkMRMLColorNode *cnode = this->GetColorNode();
+  if (cnode != NULL && cnode == vtkMRMLColorNode::SafeDownCast(caller) &&
+      event ==  vtkCommand::ModifiedEvent)
     {
     this->InvokeEvent(vtkCommand::ModifiedEvent, NULL);
     }

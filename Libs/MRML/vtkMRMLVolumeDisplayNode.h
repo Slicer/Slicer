@@ -27,6 +27,7 @@
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
 #include "vtkMRMLStorageNode.h"
+#include "vtkMRMLColorNode.h"
 
 #include "vtkMatrix4x4.h"
 #include "vtkTransform.h"
@@ -112,13 +113,41 @@ class VTK_MRML_EXPORT vtkMRMLVolumeDisplayNode : public vtkMRMLNode
   vtkSetMacro(Interpolate, int);
   vtkBooleanMacro(Interpolate, int);
 
+  // Description:
+  // Updates this node if it depends on other nodes 
+  // when the node is deleted in the scene
+  virtual void UpdateReferences();
+
+  // Description:
+  // Finds the storage node and read the data
+  virtual void UpdateScene(vtkMRMLScene *scene);
   
+  // Description:
+  // String ID of the color MRML node
+  void SetAndObserveColorNodeID(const char *ColorNodeID);
+  vtkGetStringMacro(ColorNodeID);
+
+  // Description:
+  // Get associated color MRML node
+  vtkMRMLColorNode* GetColorNode();
+
+  // Description:
+  // alternative method to propagate events generated in Display nodes
+  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
+                                   unsigned long /*event*/, 
+                                   void * /*callData*/ );
+ 
 protected:
   vtkMRMLVolumeDisplayNode();
   ~vtkMRMLVolumeDisplayNode();
   vtkMRMLVolumeDisplayNode(const vtkMRMLVolumeDisplayNode&);
   void operator=(const vtkMRMLVolumeDisplayNode&);
 
+  char *ColorNodeID;
+
+  vtkSetStringMacro(ColorNodeID);
+
+  vtkMRMLColorNode *ColorNode;
 
   // Strings
   char *LUTName;
