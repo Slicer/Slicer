@@ -388,6 +388,8 @@ proc EditorCreateLabelVolume {this} {
   $labelNode Copy $volumeNode
   $labelNode SetStorageNodeID ""
   $labelNode SetLabelMap 1
+  # set the display node to have a label map lookup table
+  $labelDisplayNode SetAndObserveColorNodeID "vtkMRMLColorNodeLabels"
   set name [[$::Editor($this,volumeName) GetWidget] GetValue]
   if { $name != "" } {
     $labelNode SetName $name
@@ -427,7 +429,8 @@ proc EditorCreateLabelVolume {this} {
   eval $::Editor($this,paintRange) SetRange $range
 
   # TODO: this is just so I can see the results for now
-  EditorSetRandomLabelColormap 
+  #puts "Setting the label map to colour for the slices"
+  EditorSetLabelColormap 
 }
 
 proc EditorSetRandomLabelColormap { {size 255} } {
@@ -436,17 +439,16 @@ proc EditorSetRandomLabelColormap { {size 255} } {
   # into the vtkSlicerVolumesDisplay -- the label map should be part of the DisplayNode
   # get a lut with:
   # [[[$::slicer3::ApplicationGUI GetMainSliceLogic0] GetLabelLayer] GetMapToColors] GetLookupTable
+    foreach g {0 1 2} {
+        puts "Setting logic $g label map to label colors..."
+        [[[[$::slicer3::ApplicationGUI GetMainSliceLogic$g] GetLabelLayer] GetVolumeDisplayNode] GetColorNode] SetTypeToRandom
+    }
+}
 
-  set lut [vtkLookupTable New]
-  $lut SetTableValue 0  0 0 0 0
-  $lut SetRange 0 $size
-  $lut SetNumberOfColors [expr $size + 1]
-  for {set i 1} {$i <= $size} {incr i} {
-    $lut SetTableValue $i [expr rand()] [expr rand()] [expr rand()] 1.0
-  }
-  foreach g {0 1 2} {
-    [[[$::slicer3::ApplicationGUI GetMainSliceLogic$g] GetLabelLayer] GetMapToColors] SetLookupTable $lut
-  }
-  $lut Delete
+proc EditorSetLabelColormap {} {
+    foreach g {0 1 2} {
+        puts "EditorGUI: Setting logic $g label map to label colors..."
+        [[[[$::slicer3::ApplicationGUI GetMainSliceLogic$g] GetLabelLayer] GetVolumeDisplayNode] GetColorNode] SetTypeToLabels
+    }
 }
 
