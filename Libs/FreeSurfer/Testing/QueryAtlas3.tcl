@@ -183,7 +183,7 @@ proc QueryAtlasAddVolumes {} {
   #
   set fileName $::QA(directory)/mri/brain.mgz
 
-  set volumeNode [$volumesLogic AddArchetypeVolume $fileName $centered]
+  set volumeNode [$volumesLogic AddArchetypeVolume $fileName $centered 0]
 
   set ::QA(brain,volumeNodeID) [$volumeNode GetID]
 
@@ -200,7 +200,7 @@ proc QueryAtlasAddVolumes {} {
   #
   set fileName [file dirname $::QA(directory)]/sirp-hp65-stc-to7-gam.feat/stats/zstat8.nii
 
-  set volumeNode [$volumesLogic AddArchetypeVolume $fileName $centered]
+  set volumeNode [$volumesLogic AddArchetypeVolume $fileName $centered 0]
 
   set ::QA(functional,volumeNodeID) [$volumeNode GetID]
   set volumeDisplayNode [$volumeNode GetDisplayNode]
@@ -211,8 +211,7 @@ proc QueryAtlasAddVolumes {} {
   #
   set fileName $::QA(directory)/mri/aparc+aseg.mgz
 
-  set volumeNode [$volumesLogic AddArchetypeVolume $fileName $centered]
-  $volumeNode SetLabelMap 1
+  set volumeNode [$volumesLogic AddArchetypeVolume $fileName $centered 1]
 
   set ::QA(label,volumeNodeID) [$volumeNode GetID]
 
