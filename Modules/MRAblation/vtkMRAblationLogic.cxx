@@ -191,7 +191,7 @@ void vtkMRAblationLogic::Apply(vtkSlicerVolumesGUI *volsGUI)
                         char fileName[size];
                         strcpy(fileName, first.c_str());
                         vtkSlicerVolumesLogic* volumeLogic = volsGUI->GetLogic();
-                        vtkMRMLVolumeNode *volumeNode = volumeLogic->AddArchetypeVolume( fileName );
+                        vtkMRMLVolumeNode *volumeNode = volumeLogic->AddArchetypeVolume( fileName, 1, 0 );
                         if ( volumeNode == NULL )
                         {
                             // TODO: generate an error...
