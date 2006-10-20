@@ -55,9 +55,8 @@ vtkMRMLColorNode::vtkMRMLColorNode()
 
   this->Name = NULL;
   this->SetName("");
-  this->LookupTable = vtkLookupTable::New();
+  this->LookupTable = NULL;
   this->FileName = NULL;
-  this->SetTypeToGrey();
   
 }
 
@@ -194,7 +193,7 @@ void vtkMRMLColorNode::ReadFile ()
     {
     // clear out the table
     this->SetTypeToFile();
-    this->LookupTable->SetNumberOfColors(0);
+    this->LookupTable->SetNumberOfTableValues(0);
     this->Names.clear();
     char line[1024];
     // save the valid lines in a vector, parse them once know the max id
@@ -234,7 +233,14 @@ void vtkMRMLColorNode::ReadFile ()
     fstr.close();
     // now parse out the valid lines and set up the colour lookup table
     vtkDebugMacro("The largest id is " << maxID);
-    this->LookupTable->SetNumberOfColors(maxID + 1); // for zero
+    this->LookupTable->SetNumberOfTableValues(maxID + 1); // for zero
+    this->LookupTable->SetNumberOfColors(maxID + 1);
+    this->LookupTable->SetTableRange(0, maxID);
+    // init the table to black/opactity 0, just in case we're missing values
+    for (unsigned int i = 0; i < maxID+1; i++)
+      {
+      this->LookupTable->SetTableValue(i, 0.0, 0.0, 0.0, 0.0);
+      } 
     this->Names.resize(maxID + 1);
     for (unsigned int i = 0; i < lines.size(); i++)
       {
@@ -476,7 +482,8 @@ void vtkMRMLColorNode::ProcessMRMLEvents ( vtkObject *caller,
 //---------------------------------------------------------------------------
 void vtkMRMLColorNode::SetType(int type)
 {
-    if (this->Type == type)
+    if (this->LookupTable != NULL &&
+        this->Type == type)
       {
       vtkDebugMacro("SetType: type is already set to " << type <<  " = " << this->GetTypeAsString());
       return;
@@ -487,8 +494,14 @@ void vtkMRMLColorNode::SetType(int type)
 
     vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting Type to " << type << " = " << this->GetTypeAsString());
 
-    this->LookupTable->Delete();
-    this->LookupTable = vtkLookupTable::New();
+    //this->LookupTable->Delete();
+    if (this->LookupTable == NULL)
+      {
+      vtkDebugMacro("vtkMRMLColorNode::SetType Creating a new lookup table (was null) of type " << this->GetTypeAsString() << "\n");
+      this->LookupTable = vtkLookupTable::New();
+      // as a default, set the table range to 255
+      this->LookupTable->SetTableRange(0, 255);
+      }
     
     if (this->Type == this->Grey)
       {
@@ -505,11 +518,12 @@ void vtkMRMLColorNode::SetType(int type)
     else if (this->Type == this->Iron)
       {
       this->LookupTable->SetNumberOfTableValues(156);
+      this->LookupTable->SetTableRange(0, 156);
       this->LookupTable->SetHueRange(0, 0.15);
       this->LookupTable->SetSaturationRange(1,1);
       this->LookupTable->SetValueRange(1,1);
       this->LookupTable->SetRampToLinear();
-      this->LookupTable->Build();
+      this->LookupTable->ForceBuild();
       this->SetNamesFromColors();
       }
 
@@ -520,7 +534,7 @@ void vtkMRMLColorNode::SetType(int type)
       this->LookupTable->SetSaturationRange(1,1);
       this->LookupTable->SetValueRange(1,1);
       this->LookupTable->SetRampToLinear();
-      this->LookupTable->Build();
+      this->LookupTable->ForceBuild();
       this->SetNamesFromColors();
       }
 
@@ -531,7 +545,7 @@ void vtkMRMLColorNode::SetType(int type)
       this->LookupTable->SetSaturationRange(1,1);
       this->LookupTable->SetValueRange(1,1);
       this->LookupTable->SetRampToLinear();
-      this->LookupTable->Build();
+      this->LookupTable->ForceBuild();
       this->SetNamesFromColors();
       }
     else if (this->Type == this->Desert)
@@ -541,7 +555,7 @@ void vtkMRMLColorNode::SetType(int type)
       this->LookupTable->SetSaturationRange(1,1);
       this->LookupTable->SetValueRange(1,1);
       this->LookupTable->SetRampToLinear();
-      this->LookupTable->Build();
+      this->LookupTable->ForceBuild();
       this->SetNamesFromColors();
       }
     
@@ -552,7 +566,7 @@ void vtkMRMLColorNode::SetType(int type)
       this->LookupTable->SetSaturationRange(0,0);
       this->LookupTable->SetValueRange(1,0);
       this->LookupTable->SetRampToLinear();
-      this->LookupTable->Build();
+      this->LookupTable->ForceBuild();
       this->SetNamesFromColors();
       }
 
@@ -563,7 +577,7 @@ void vtkMRMLColorNode::SetType(int type)
       this->LookupTable->SetSaturationRange(1,1);
       this->LookupTable->SetValueRange(1,1);
       this->LookupTable->SetRampToLinear();
-      this->LookupTable->Build();
+      this->LookupTable->ForceBuild();
       this->SetNamesFromColors();
       }
     
@@ -591,8 +605,9 @@ void vtkMRMLColorNode::SetType(int type)
       pos->Build();
 
       this->LookupTable->SetNumberOfTableValues(43);
+      this->LookupTable->SetTableRange(0,43);
       this->LookupTable->SetRampToLinear();
-      this->LookupTable->Build();
+      this->LookupTable->ForceBuild();
 
       for (int i = 0; i < 23; i++)
         {
@@ -611,11 +626,12 @@ void vtkMRMLColorNode::SetType(int type)
       {
       int size = 20;
       this->LookupTable->SetNumberOfTableValues(size);
+      this->LookupTable->SetTableRange(0,size);
       this->LookupTable->SetHueRange(0, 0.16667);
       this->LookupTable->SetSaturationRange(1, 1);
       this->LookupTable->SetValueRange(1, 1);
       this->LookupTable->SetRampToLinear();
-      this->LookupTable->Build();
+      this->LookupTable->ForceBuild();
       this->SetNamesFromColors();
       }
 
@@ -623,6 +639,7 @@ void vtkMRMLColorNode::SetType(int type)
       {
       // from Slicer2's Colors.xml
       this->LookupTable->SetNumberOfTableValues(21);
+      this->LookupTable->SetTableRange(0,21);
       this->Names.clear();
       this->Names.resize(this->LookupTable->GetNumberOfTableValues());
       
@@ -704,7 +721,7 @@ void vtkMRMLColorNode::SetType(int type)
       
       this->LookupTable->SetTableValue(0, 0, 0, 0, 0);
       this->LookupTable->SetRange(0, size);
-      this->LookupTable->SetNumberOfColors(size + 1);
+      this->LookupTable->SetNumberOfTableValues(size + 1);
       for (int i = 1; i <= size; i++)
         {
         // table values have to be 0-1
