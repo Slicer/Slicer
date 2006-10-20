@@ -84,6 +84,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerVolumesGUI : public vtkSlicerModuleGUI
     // Widgets for the Volumes module
     vtkKWLoadSaveButton *LoadVolumeButton;
     vtkKWMenuButtonWithLabel *CenterImageMenu;
+    vtkKWCheckButton *LabelMapCheckButton;
     vtkSlicerNodeSelectorWidget* VolumeSelectorWidget;
     vtkKWLoadSaveButton *SaveVolumeButton;
     vtkSlicerVolumeDisplayWidget *VolumeDisplayWidget;

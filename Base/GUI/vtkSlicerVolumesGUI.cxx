@@ -10,6 +10,7 @@
 
 #include "vtkKWWidget.h"
 #include "vtkKWMenuButton.h"
+#include "vtkKWCheckButton.h"
 #include "vtkKWMenu.h"
 #include "vtkKWFrameWithLabel.h"
 #include "vtkKWFrame.h"
@@ -32,6 +33,7 @@ vtkSlicerVolumesGUI::vtkSlicerVolumesGUI ( )
     this->SaveVolumeButton = NULL;
     this->VolumeDisplayWidget = NULL;
     this->CenterImageMenu = NULL;
+    this->LabelMapCheckButton = NULL;
 }
 
 
@@ -71,6 +73,11 @@ vtkSlicerVolumesGUI::~vtkSlicerVolumesGUI ( )
     this->CenterImageMenu->SetParent(NULL );
     this->CenterImageMenu->Delete ( );
     }
+  if (this->LabelMapCheckButton)
+    {
+    this->LabelMapCheckButton->SetParent(NULL );
+    this->LabelMapCheckButton->Delete ( );
+    }
 
   this->SetModuleLogic ( NULL );
    vtkSetMRMLNodeMacro (this->VolumeNode, NULL );
@@ -105,6 +112,10 @@ void vtkSlicerVolumesGUI::RemoveGUIObservers ( )
       {
       this->CenterImageMenu->GetWidget()->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand);
       }
+    if (this->LabelMapCheckButton)
+      {
+      this->LabelMapCheckButton->RemoveObservers ( vtkKWCheckButton::SelectedStateChangedEvent,  (vtkCommand *)this->GUICallbackCommand );
+      } 
 }
 
 
@@ -117,7 +128,7 @@ void vtkSlicerVolumesGUI::AddGUIObservers ( )
     this->LoadVolumeButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->SaveVolumeButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->CenterImageMenu->GetWidget()->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand);
-
+    this->LabelMapCheckButton->AddObserver ( vtkKWCheckButton::SelectedStateChangedEvent,  (vtkCommand *)this->GUICallbackCommand );
 }
 
 
@@ -146,9 +157,18 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents ( vtkObject *caller,
          centered = 0;
          }
 
+       int labelMap;
+       if ( this->LabelMapCheckButton->GetSelectedState() )
+         {
+         labelMap = 1;
+         }
+       else
+         {
+         labelMap = 0;
+         }
 
       vtkSlicerVolumesLogic* volumeLogic = this->Logic;
-      vtkMRMLVolumeNode *volumeNode = volumeLogic->AddArchetypeVolume( fileName, centered );
+      vtkMRMLVolumeNode *volumeNode = volumeLogic->AddArchetypeVolume( fileName, centered, labelMap );
       if ( volumeNode == NULL ) 
         {
         //TODO: generate an error...
@@ -288,6 +308,16 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
     this->Script(
       "pack %s -side left -anchor nw -expand n -fill x -padx 2 -pady 2", 
       this->CenterImageMenu->GetWidgetName());
+
+    // is this a lable map?
+    this->LabelMapCheckButton = vtkKWCheckButton::New();
+    this->LabelMapCheckButton->SetParent(volLoadFrame->GetFrame());
+    this->LabelMapCheckButton->Create();
+    this->LabelMapCheckButton->SelectedStateOff();
+    this->LabelMapCheckButton->SetText("Label Map");
+    this->Script(
+      "pack %s -side left -anchor nw -expand n -fill x -padx 2 -pady 2", 
+      this->LabelMapCheckButton->GetWidgetName());
 
     // ---
     // DISPLAY FRAME            
