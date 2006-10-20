@@ -165,6 +165,7 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
     }
   else if ( (b == this->ClearButton) && (event == vtkKWPushButton::InvokedEvent ) )
     {
+    this->DeleteAllSearchTerms();
     }
   else if ( (b == this->AddTermButton) && (event == vtkKWPushButton::InvokedEvent ) )
     {
@@ -176,9 +177,11 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
     }
   else if ( (b == this->SelectAllButton) && (event == vtkKWPushButton::InvokedEvent ) )
     {
+    this->SelectAllSearchTerms ( );
     }
   else if ( (b == this->SelectNoneButton) && (event == vtkKWPushButton::InvokedEvent ) )
     {
+    this->DeselectAllSearchTerms ( );
     }  
     else if ( (m == this->SearchTargetMenuButton->GetMenu() ) && (event == vtkKWMenu::MenuItemInvokedEvent ) )
     {
@@ -327,18 +330,18 @@ void vtkQueryAtlasGUI::BuildGUI ( )
     this->SearchTermMultiColumnList->Create ( );
 //    this->SearchTermMultiColumnList->SetBalloonHelpString ("Use the 'Add new term' button to create a new row in this widget and then click in the 'Search term' column to enter your new search term. Select or disable the term's use in your search by selecting the checkbox next to it. The space for one search term is created by default." );
     this->SearchTermMultiColumnList->SetWidth(0);
-    this->SearchTermMultiColumnList->SetHeight(0);
+    this->SearchTermMultiColumnList->SetHeight(1);
     this->SearchTermMultiColumnList->GetWidget()->SetSelectionTypeToCell ( );
     this->SearchTermMultiColumnList->GetWidget()->MovableRowsOff ( );
     this->SearchTermMultiColumnList->GetWidget()->MovableColumnsOff ( );
 
-    this->SearchTermMultiColumnList->GetWidget()->AddColumn ( "Select");
+    this->SearchTermMultiColumnList->GetWidget()->AddColumn ( "Use");
 //    this->SearchTermMultiColumnList->GetWidget()->ColumnEditableOn ( this->SelectionColumn );
     this->SearchTermMultiColumnList->GetWidget()->SetColumnWidth (this->SelectionColumn, 5);
     this->SearchTermMultiColumnList->GetWidget()->SetColumnAlignmentToCenter ( this->SelectionColumn );
     this->SearchTermMultiColumnList->GetWidget()->SetColumnResizable ( this->SelectionColumn, 0 );
 
-    this->SearchTermMultiColumnList->GetWidget()->AddColumn ( "Search Term" );
+    this->SearchTermMultiColumnList->GetWidget()->AddColumn ( "Search Terms" );
     this->SearchTermMultiColumnList->GetWidget()->ColumnEditableOn ( this->SearchTermColumn );
     this->SearchTermMultiColumnList->GetWidget()->SetColumnWidth (this->SearchTermColumn, 35);
     this->SearchTermMultiColumnList->GetWidget()->SetColumnAlignmentToLeft (this->SearchTermColumn );
@@ -415,10 +418,48 @@ void vtkQueryAtlasGUI::BuildGUI ( )
 }
 
 
+
+//---------------------------------------------------------------------------
+void vtkQueryAtlasGUI::SelectAllSearchTerms ( )
+{
+  vtkDebugMacro("vtkQueryAtlasGUI: ProcessGUIEvent: Select All SearchTerms event. \n");  
+  int numrows = this->SearchTermMultiColumnList->GetWidget()->GetNumberOfRows();
+  int i;
+  for ( i = 0; i < numrows; i++ )
+    {
+    this->SearchTermMultiColumnList->GetWidget()->SetCellText ( i, this->SelectionColumn, "1" );
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkQueryAtlasGUI::DeselectAllSearchTerms ( )
+{
+  vtkDebugMacro("vtkQueryAtlasGUI: ProcessGUIEvent: Deselect All SearchTerms event. \n");  
+  int numrows = this->SearchTermMultiColumnList->GetWidget()->GetNumberOfRows();
+  int i;
+  for ( i = 0; i < numrows; i++ )
+    {
+    this->SearchTermMultiColumnList->GetWidget()->SetCellText ( i, this->SelectionColumn, "0" );
+    }
+}
+
+
+//---------------------------------------------------------------------------
+void vtkQueryAtlasGUI::DeleteAllSearchTerms ( )
+{
+  vtkDebugMacro("vtkQueryAtlasGUI: ProcessGUIEvent: Clear All SearchTerms event. \n");
+  int numrows = this->SearchTermMultiColumnList->GetWidget()->GetNumberOfRows();
+  // remove each row
+  this->SearchTermMultiColumnList->GetWidget()->DeleteAllRows();
+}
+
+
+
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::AddNewSearchTerm ( )
 {
     // default search terms in list
+  vtkDebugMacro("vtkQueryAtlasGUI: ProcessGUIEvent: Adding New SearchTerms event. \n");
     int i = this->SearchTermMultiColumnList->GetWidget()->GetNumberOfRows();
     this->SearchTermMultiColumnList->GetWidget()->InsertCellTextAsInt ( i, this->SelectionColumn, 0 );
     this->SearchTermMultiColumnList->GetWidget()->SetCellWindowCommandToCheckButton (i, this->SelectionColumn );
