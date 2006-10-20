@@ -12,6 +12,11 @@
 #include "vtkSlicerNodeSelectorWidget.h"
 #include "vtkQueryAtlasLogic.h"
 
+class vtkKWPushButton;
+class vtkKWMultiColumnListWithScrollbars;
+class vtkKWMenuButton;
+
+
 // Description:
 // This class implements Slicer's QueryAtlas GUI
 //
@@ -28,6 +33,16 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     // Description:
     // Get methods on class members ( no Set methods required. )
     vtkGetObjectMacro ( Logic, vtkQueryAtlasLogic);
+    vtkGetObjectMacro ( LoadSceneButton, vtkKWPushButton );
+    vtkGetObjectMacro ( SearchButton, vtkKWPushButton );
+    vtkGetObjectMacro ( ClearButton, vtkKWPushButton );
+    vtkGetObjectMacro ( SelectAllButton, vtkKWPushButton );
+    vtkGetObjectMacro ( SelectNoneButton, vtkKWPushButton );    
+    vtkGetObjectMacro ( AddTermButton, vtkKWPushButton );    
+    vtkGetObjectMacro ( DeleteTermButton, vtkKWPushButton );    
+    vtkGetObjectMacro ( SearchTermMultiColumnList, vtkKWMultiColumnListWithScrollbars );
+    vtkGetObjectMacro ( SearchTargetMenuButton, vtkKWMenuButton );
+    vtkGetMacro ( NumberOfColumns, int );
     
     void SetModuleLogic ( vtkQueryAtlasLogic *logic )
     { this->SetLogic ( vtkObjectPointer (&this->Logic), logic ); }
@@ -55,6 +70,11 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     virtual void Enter ( );
     virtual void Exit ( );
 
+    // Description:
+    // Methods to add and delete search terms.
+    virtual void AddNewSearchTerm ( );
+    virtual void DeleteSelectedSearchTerms ( );
+
  protected:
     vtkQueryAtlasGUI ( );
     virtual ~vtkQueryAtlasGUI ( );
@@ -62,6 +82,28 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     // Module logic and mrml pointers
     vtkQueryAtlasLogic *Logic;
 
+    // widgets
+    vtkKWPushButton *LoadSceneButton;
+    vtkKWPushButton *SearchButton;
+    vtkKWPushButton *ClearButton;
+    vtkKWPushButton *SelectAllButton;
+    vtkKWPushButton *SelectNoneButton;
+    vtkKWPushButton *AddTermButton;
+    vtkKWPushButton *DeleteTermButton;
+    vtkKWMultiColumnListWithScrollbars *SearchTermMultiColumnList;
+    vtkKWMenuButton *SearchTargetMenuButton;
+    int NumberOfColumns;
+
+    //BTX
+    // Description:
+    // The column orders in the list box
+    // add here as the need arises.
+    enum
+      {
+        SelectionColumn = 0,
+        SearchTermColumn = 1,
+      };
+    //ETX
 
 private:
     vtkQueryAtlasGUI ( const vtkQueryAtlasGUI& ); // Not implemented.

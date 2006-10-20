@@ -1,7 +1,13 @@
 #include "vtkObject.h"
 #include "vtkObjectFactory.h"
 #include "vtkCommand.h"
+
 #include "vtkKWWidget.h"
+#include "vtkKWPushButton.h"
+#include "vtkKWMenu.h"
+#include "vtkKWMenuButton.h"
+#include "vtkKWMultiColumnList.h"
+#include "vtkKWMultiColumnListWithScrollbars.h"
 
 #include "vtkSlicerModelsGUI.h"
 #include "vtkSlicerApplication.h"
@@ -19,6 +25,17 @@ vtkCxxRevisionMacro ( vtkQueryAtlasGUI, "$Revision: 1.0 $");
 vtkQueryAtlasGUI::vtkQueryAtlasGUI ( )
 {
     this->Logic = NULL;
+    this->LoadSceneButton = NULL;
+    this->SelectAllButton = NULL;
+    this->SelectNoneButton = NULL;
+    this->SearchButton = NULL;
+    this->ClearButton = NULL;
+    this->AddTermButton = NULL;
+    this->DeleteTermButton = NULL;    
+    this->SearchTermMultiColumnList = NULL;
+    this->SearchTargetMenuButton = NULL;
+    this->NumberOfColumns = 2;
+    
     //this->DebugOn();
 }
 
@@ -28,6 +45,62 @@ vtkQueryAtlasGUI::~vtkQueryAtlasGUI ( )
 {
 
     this->SetModuleLogic ( NULL );
+    if ( this->LoadSceneButton )
+      {
+      this->LoadSceneButton->SetParent ( NULL );
+      this->LoadSceneButton->Delete ( );
+      this->LoadSceneButton = NULL;
+      }
+    if ( this->SearchButton )
+      {
+      this->SearchButton->SetParent ( NULL );
+      this->SearchButton->Delete ( );
+      this->SearchButton = NULL;
+      }
+    if ( this->ClearButton )
+      {
+      this->ClearButton->SetParent ( NULL );
+      this->ClearButton->Delete ( );
+      this->ClearButton = NULL;
+      }
+    if ( this->AddTermButton )
+      {
+      this->AddTermButton->SetParent ( NULL );
+      this->AddTermButton->Delete ( );
+      this->AddTermButton = NULL;
+      }
+    if ( this->DeleteTermButton )
+      {
+      this->DeleteTermButton->SetParent ( NULL );
+      this->DeleteTermButton->Delete ( );
+      this->DeleteTermButton = NULL;
+      }
+
+    if ( this->SelectAllButton )
+      {
+      this->SelectAllButton->SetParent ( NULL );
+      this->SelectAllButton->Delete ( );
+      this->SelectAllButton = NULL;
+      }
+    if ( this->SelectNoneButton )
+      {
+      this->SelectNoneButton->SetParent ( NULL );
+      this->SelectNoneButton->Delete ( );
+      this->SelectNoneButton = NULL;
+      }
+    
+    if ( this->SearchTermMultiColumnList )
+      {
+      this->SearchTermMultiColumnList->SetParent ( NULL );
+      this->SearchTermMultiColumnList->Delete ( );
+      this->SearchTermMultiColumnList = NULL;
+      }
+    if ( this->SearchTargetMenuButton )
+      {
+      this->SearchTargetMenuButton->SetParent ( NULL );
+      this->SearchTargetMenuButton->Delete ( );
+      this->SearchTargetMenuButton = NULL;      
+      }
 }
 
 
@@ -38,7 +111,9 @@ void vtkQueryAtlasGUI::PrintSelf ( ostream& os, vtkIndent indent )
 
     os << indent << "QueryAtlasGUI: " << this->GetClassName ( ) << "\n";
     os << indent << "Logic: " << this->GetLogic ( ) << "\n";
+
     // print widgets?
+    os << indent << "LoadSceneButton" << this->GetLoadSceneButton ( ) << "\n";
 }
 
 
@@ -46,14 +121,30 @@ void vtkQueryAtlasGUI::PrintSelf ( ostream& os, vtkIndent indent )
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::RemoveGUIObservers ( )
 {
-    vtkDebugMacro("vtkQueryAtlasGUI: RemoveGUIObservers\n");
+  vtkDebugMacro("vtkQueryAtlasGUI: RemoveGUIObservers\n");
+  this->LoadSceneButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->SearchButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );    
+  this->ClearButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->AddTermButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->DeleteTermButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->SelectAllButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->SelectNoneButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+//  this->SearchTargetMenuButton->GetMenu()->RemoveObservers(vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 }
 
 
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::AddGUIObservers ( )
 {
-    vtkDebugMacro("vtkQueryAtlasGUI: AddGUIObservers\n");
+  vtkDebugMacro("vtkQueryAtlasGUI: AddGUIObservers\n");
+  this->LoadSceneButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->SearchButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->ClearButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->AddTermButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->DeleteTermButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
+  this->SelectAllButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->SelectNoneButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+//  this->SearchTargetMenuButton->GetMenu()->AddObserver(vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );    
 }
 
 
@@ -63,7 +154,34 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
                                             unsigned long event, void *callData )
 {
     // nothing to do here yet...
-    vtkSlicerNodeSelectorWidget *colorSelector = vtkSlicerNodeSelectorWidget::SafeDownCast(caller);
+  vtkKWPushButton *b = vtkKWPushButton::SafeDownCast ( caller );
+  vtkKWMenu *m = vtkKWMenu::SafeDownCast ( caller );
+
+  if ( (b == this->LoadSceneButton) && (event == vtkKWPushButton::InvokedEvent ) )
+    {
+    }
+  else if ( (b == this->SearchButton) && (event == vtkKWPushButton::InvokedEvent ) )
+    {
+    }
+  else if ( (b == this->ClearButton) && (event == vtkKWPushButton::InvokedEvent ) )
+    {
+    }
+  else if ( (b == this->AddTermButton) && (event == vtkKWPushButton::InvokedEvent ) )
+    {
+    this->AddNewSearchTerm();
+    }
+  else if ( (b == this->DeleteTermButton) && (event == vtkKWPushButton::InvokedEvent ) )
+    {
+    }
+  else if ( (b == this->SelectAllButton) && (event == vtkKWPushButton::InvokedEvent ) )
+    {
+    }
+  else if ( (b == this->SelectNoneButton) && (event == vtkKWPushButton::InvokedEvent ) )
+    {
+    }  
+    else if ( (m == this->SearchTargetMenuButton->GetMenu() ) && (event == vtkKWMenu::MenuItemInvokedEvent ) )
+    {
+    }
     return;
 }
 
@@ -147,23 +265,166 @@ void vtkQueryAtlasGUI::BuildGUI ( )
                   loadFrame->GetWidgetName(),
                   this->UIPanel->GetPageWidget("QueryAtlas")->GetWidgetName());
     
+    // add button to load a scene. this is wrong widget, but for now let it sit.
+    this->LoadSceneButton = vtkKWPushButton::New ( );
+    this->LoadSceneButton->SetParent ( loadFrame->GetFrame() );
+    this->LoadSceneButton->Create();
+    this->LoadSceneButton->SetText ( "LoadScene" );
+    this->LoadSceneButton->SetBalloonHelpString ( "Select all search terms for use");
+    app->Script ( "pack %s -side top -padx 3 -pady 3", this->LoadSceneButton->GetWidgetName() );
+
+
     // ---
     // QUERY FRAME
     vtkSlicerModuleCollapsibleFrame *queryFrame = vtkSlicerModuleCollapsibleFrame::New ( );
     queryFrame->SetParent ( page );
     queryFrame->Create ( );
     queryFrame->SetLabelText ("Query Options");
-    queryFrame->CollapseFrame ( );
+    queryFrame->ExpandFrame ( );
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   queryFrame->GetWidgetName(),
                   this->UIPanel->GetPageWidget("QueryAtlas")->GetWidgetName());
+
+    // add and pack top button frame
+    vtkKWFrame *tbframe = vtkKWFrame::New ( );
+    tbframe->SetParent ( queryFrame->GetFrame() );
+    tbframe->Create ( );
+    app->Script ( "pack %s -side top -fill x -expand n",  tbframe->GetWidgetName() );
+
+    // add search terms and delete highlighted search terms buttons
+    this->AddTermButton = vtkKWPushButton::New ( );
+    this->AddTermButton->SetParent ( tbframe );
+    this->AddTermButton->Create();
+    this->AddTermButton->SetWidth ( 15 );
+    this->AddTermButton->SetText ( "Add search term" );
+    this->AddTermButton->SetBalloonHelpString ( "Add a new search term" );
+
+    this->DeleteTermButton = vtkKWPushButton::New ( );
+    this->DeleteTermButton->SetParent ( tbframe );
+    this->DeleteTermButton->Create();
+    this->DeleteTermButton->SetWidth ( 15 );
+    this->DeleteTermButton->SetText ( "Delete selected" );
+    this->DeleteTermButton->SetBalloonHelpString ( "Delete highlighted search terms" );
+
+    // grid buttons into place
+    app->Script ( "grid %s -row 0 -column 0 -sticky e -padx 6 -pady 3",
+                  this->AddTermButton->GetWidgetName() );
+    app->Script ( "grid %s -row 0 -column 1 -sticky e -padx 6 -pady 3",
+                  this->DeleteTermButton->GetWidgetName());
     
+    // add multi-column list box for search terms
+    // IDEA: click 'add term' button and get a new row in this widget.
+    // widget (for now) had two columns, first has a radiobutton in it
+    // for marking the row for use in search, second is an entry widget
+    // in which user types a search term.
+    // Delete button above works when a row is highlighted. how is
+    // that accomplished? maybe a better way. Just delete rows with
+    // radio button selected? (select for use and for deletion?)
+    // grrr. i don't yet understand how this widget works.
+    this->SearchTermMultiColumnList = vtkKWMultiColumnListWithScrollbars::New ( );
+    this->SearchTermMultiColumnList->SetParent ( queryFrame->GetFrame() );
+    this->SearchTermMultiColumnList->Create ( );
+//    this->SearchTermMultiColumnList->SetBalloonHelpString ("Use the 'Add new term' button to create a new row in this widget and then click in the 'Search term' column to enter your new search term. Select or disable the term's use in your search by selecting the checkbox next to it. The space for one search term is created by default." );
+    this->SearchTermMultiColumnList->SetWidth(0);
+    this->SearchTermMultiColumnList->SetHeight(0);
+    this->SearchTermMultiColumnList->GetWidget()->SetSelectionTypeToCell ( );
+    this->SearchTermMultiColumnList->GetWidget()->MovableRowsOff ( );
+    this->SearchTermMultiColumnList->GetWidget()->MovableColumnsOff ( );
+
+    this->SearchTermMultiColumnList->GetWidget()->AddColumn ( "Select");
+//    this->SearchTermMultiColumnList->GetWidget()->ColumnEditableOn ( this->SelectionColumn );
+    this->SearchTermMultiColumnList->GetWidget()->SetColumnWidth (this->SelectionColumn, 5);
+    this->SearchTermMultiColumnList->GetWidget()->SetColumnAlignmentToCenter ( this->SelectionColumn );
+
+    this->SearchTermMultiColumnList->GetWidget()->AddColumn ( "Search Term" );
+    this->SearchTermMultiColumnList->GetWidget()->ColumnEditableOn ( this->SearchTermColumn );
+    this->SearchTermMultiColumnList->GetWidget()->SetColumnWidth (this->SearchTermColumn, 35);
+    this->SearchTermMultiColumnList->GetWidget()->SetColumnAlignmentToLeft (this->SearchTermColumn );
+
+    // default search terms in list
+    this->AddNewSearchTerm ( );
+    app->Script ( "pack %s -side top -fill x -expand true", this->SearchTermMultiColumnList->GetWidgetName() );
+
+    // add and pack bottom button frame
+    vtkKWFrame *bbframe = vtkKWFrame::New ( );
+    bbframe->SetParent ( queryFrame->GetFrame() );
+    bbframe->Create ( );
+    app->Script ( "pack %s -side top -fill x -expand n",  bbframe->GetWidgetName() );
+
+    // add search, clear, select all, select none buttons
+    this->SelectAllButton = vtkKWPushButton::New ( );
+    this->SelectAllButton->SetParent ( bbframe );
+    this->SelectAllButton->Create();
+    this->SelectAllButton->SetWidth ( 10 );
+    this->SelectAllButton->SetText ( "Mark all" );
+    this->SelectAllButton->SetBalloonHelpString ( "Marck all search terms for use");
+
+    this->SelectNoneButton = vtkKWPushButton::New ( );
+    this->SelectNoneButton->SetParent ( bbframe );
+    this->SelectNoneButton->Create();
+    this->SelectNoneButton->SetWidth ( 10 );
+    this->SelectNoneButton->SetText ( "Unmark all" );
+    this->SelectNoneButton->SetBalloonHelpString ( "Unmark all search terms.");
+
+    this->SearchButton = vtkKWPushButton::New ( );
+    this->SearchButton->SetParent ( bbframe );
+    this->SearchButton->Create();
+    this->SearchButton->SetWidth ( 10 );
+    this->SearchButton->SetText ( "Search" );
+    this->SearchButton->SetBalloonHelpString ( "Start a search using the selected search terms" );
+
+    this->ClearButton = vtkKWPushButton::New ( );
+    this->ClearButton->SetParent ( bbframe );
+    this->ClearButton->Create();
+    this->ClearButton->SetWidth ( 10 );
+    this->ClearButton->SetText ( "Clear" );
+    this->SearchButton->SetBalloonHelpString ( "Clear all search terms" );
+
+    // grid buttons into place.
+    app->Script ( "grid %s -row 0 -column 0 -sticky e -padx 6 -pady 3",
+                  this->SelectAllButton->GetWidgetName() );
+    app->Script ( "grid %s -row 0 -column 1 -sticky w -padx 6 -pady 3",
+                  this->SelectNoneButton->GetWidgetName() );
+    app->Script ( "grid %s -row 1 -column 0 -sticky e -padx 6 -pady 3",
+                  this->SearchButton->GetWidgetName());
+    app->Script ( "grid %s -row 1 -column 1 -sticky w -padx 6 -pady 3",
+                  this->ClearButton->GetWidgetName() );
+
+    // ---
+    // DISPLAY FRAME
+    vtkSlicerModuleCollapsibleFrame *displayFrame = vtkSlicerModuleCollapsibleFrame::New ( );
+    displayFrame->SetParent ( page );
+    displayFrame->Create ( );
+    displayFrame->SetLabelText ("Display Options");
+    displayFrame->CollapseFrame ( );
+    app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
+                  displayFrame->GetWidgetName(),
+                  this->UIPanel->GetPageWidget("QueryAtlas")->GetWidgetName());
 
     
     // deleting frame widgets
+    tbframe->Delete ( );
+    bbframe->Delete ( );
+    displayFrame->Delete ( );
     queryFrame->Delete ( );
     loadFrame->Delete ( );
     modHelpFrame->Delete ( );
 }
 
 
+//---------------------------------------------------------------------------
+void vtkQueryAtlasGUI::AddNewSearchTerm ( )
+{
+    // default search terms in list
+    int i = this->SearchTermMultiColumnList->GetWidget()->GetNumberOfRows();
+    this->SearchTermMultiColumnList->GetWidget()->InsertCellTextAsInt ( i, this->SelectionColumn, 0 );
+    this->SearchTermMultiColumnList->GetWidget()->SetCellWindowCommandToCheckButton (i, this->SelectionColumn );
+    this->SearchTermMultiColumnList->GetWidget()->InsertCellText (i, this->SearchTermColumn, "edit search term here" );
+    this->SearchTermMultiColumnList->GetWidget()->SetColumnEditWindowToEntry (this->SearchTermColumn);
+}
+
+
+//---------------------------------------------------------------------------
+void vtkQueryAtlasGUI::DeleteSelectedSearchTerms ( )
+{
+}

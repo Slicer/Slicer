@@ -107,6 +107,7 @@ int Slicer3_Tcl_Eval ( Tcl_Interp *interp, const char *script )
 //#define SLICES_DEBUG
 //#define MODELS_DEBUG
 //#define VOLUMES_DEBUG
+//#define QUERYATLAS_DEBUG
 
 int Slicer3_main(int argc, char *argv[])
 {
@@ -512,6 +513,7 @@ int Slicer3_main(int argc, char *argv[])
     gradientAnisotropicDiffusionFilterGUI->AddGUIObservers ( );
 
 
+#ifndef QUERYATLAS_DEBUG
     //--- Query Atlas Module
     vtkQueryAtlasGUI *queryAtlasGUI = vtkQueryAtlasGUI::New ( );
     vtkQueryAtlasLogic *queryAtlasLogic  = vtkQueryAtlasLogic::New ( );
@@ -527,7 +529,7 @@ int Slicer3_main(int argc, char *argv[])
     slicerApp->AddModuleGUI ( queryAtlasGUI );
     queryAtlasGUI->BuildGUI ( );
     queryAtlasGUI->AddGUIObservers ( );
-    
+#endif
 
     // --- SlicerDaemon Module
     // need to source the slicerd.tcl script here
@@ -812,7 +814,9 @@ int Slicer3_main(int argc, char *argv[])
     // REMOVE OBSERVERS and references to MRML and Logic
     gradientAnisotropicDiffusionFilterGUI->RemoveGUIObservers ( );
 
+#ifndef QUERYATLAS_DEBUG
     queryAtlasGUI->RemoveGUIObservers ( );
+#endif
 
 #ifndef VOLUMES_DEBUG
     volumesGUI->RemoveGUIObservers ( );
@@ -881,7 +885,9 @@ int Slicer3_main(int argc, char *argv[])
     //--- delete gui first, removing Refs to Logic and MRML
 
     gradientAnisotropicDiffusionFilterGUI->Delete ();
+#ifndef QUERYATLAS_DEBUG
     queryAtlasGUI->Delete ( );
+#endif
     
 #ifndef VOLUMES_DEBUG
     volumesGUI->Delete ();
@@ -927,8 +933,10 @@ int Slicer3_main(int argc, char *argv[])
     gradientAnisotropicDiffusionFilterLogic->SetAndObserveMRMLScene ( NULL );
     gradientAnisotropicDiffusionFilterLogic->Delete ();
     
+#ifndef QUERYATLAS_DEBUG
     queryAtlasLogic->SetAndObserveMRMLScene ( NULL );
     queryAtlasLogic->Delete ( );
+#endif
     
 #ifndef VOLUMES_DEBUG
     volumesLogic->SetAndObserveMRMLScene ( NULL );
