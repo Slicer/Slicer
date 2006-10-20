@@ -58,7 +58,7 @@ void vtkSlicerVolumesLogic::SetActiveVolumeNode(vtkMRMLVolumeNode *activeNode)
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (char* filename, int centerImage)
+vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (char* filename, int centerImage, int labelMap)
 {
   vtkMRMLVolumeNode *volumeNode = NULL;
   
@@ -80,6 +80,7 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (char* filename, in
     }
   else
     {
+    scalarNode->SetLabelMap(labelMap);
     volumeNode = scalarNode;
     }
   
