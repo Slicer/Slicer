@@ -77,6 +77,7 @@ public:
   char* VolumeDisplayNodeID;
   
   vtkSlicerNodeSelectorWidget* VolumeSelectorWidget;
+  vtkSlicerNodeSelectorWidget* ColorSelectorWidget;
   vtkKWWindowLevelThresholdEditor* WindowLevelThresholdEditor;
   
 private:

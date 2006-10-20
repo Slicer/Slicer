@@ -23,6 +23,7 @@ vtkSlicerVolumeDisplayWidget::vtkSlicerVolumeDisplayWidget ( )
     this->VolumeDisplayNodeID = NULL;
 
     this->VolumeSelectorWidget = NULL;
+    this->ColorSelectorWidget = NULL;
     this->WindowLevelThresholdEditor = NULL;
 }
 
@@ -35,6 +36,12 @@ vtkSlicerVolumeDisplayWidget::~vtkSlicerVolumeDisplayWidget ( )
     this->VolumeSelectorWidget->SetParent(NULL);
     this->VolumeSelectorWidget->Delete();
     this->VolumeSelectorWidget = NULL;
+    }
+  if (this->ColorSelectorWidget)
+    {
+    this->ColorSelectorWidget->SetParent(NULL);
+    this->ColorSelectorWidget->Delete();
+    this->ColorSelectorWidget = NULL;
     }
   if (this->WindowLevelThresholdEditor)
     {
@@ -103,7 +110,38 @@ void vtkSlicerVolumeDisplayWidget::ProcessWidgetEvents ( vtkObject *caller,
 
     return;
     }
-  
+
+  //
+  // process color selector events
+  //
+  vtkSlicerNodeSelectorWidget *colSelector = 
+      vtkSlicerNodeSelectorWidget::SafeDownCast(caller);
+  if (colSelector == this->ColorSelectorWidget && 
+        event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent ) 
+    {
+    vtkMRMLColorNode *color =
+      vtkMRMLColorNode::SafeDownCast(this->ColorSelectorWidget->GetSelected());
+    if (color != NULL)
+      {
+      // get the volume display node
+      vtkMRMLVolumeDisplayNode *displayNode = NULL;
+      if (this->VolumeDisplayNodeID != NULL)
+        {
+        displayNode = 
+          vtkMRMLVolumeDisplayNode::SafeDownCast (this->MRMLScene->GetNodeByID(this->VolumeDisplayNodeID) );
+        if (displayNode != NULL)
+          {
+          // set and observe it's colour node id
+          if (strcmp(displayNode->GetColorNodeID(), color->GetID()) != 0)
+            {
+            // there's a change, set it
+            displayNode->SetAndObserveColorNodeID(color->GetID());
+            }
+          }        
+        }
+      }
+    return;
+    }
   //
   // process window/level/threshold events
   //
@@ -222,6 +260,8 @@ void vtkSlicerVolumeDisplayWidget::ProcessMRMLEvents ( vtkObject *caller,
       this->WindowLevelThresholdEditor->SetAutoWindowLevel( displayNode->GetAutoWindowLevel() );
       this->WindowLevelThresholdEditor->SetAutoThreshold( displayNode->GetAutoThreshold() );
       this->WindowLevelThresholdEditor->SetApplyThreshold( displayNode->GetApplyThreshold() );
+      // set the color node selector to reflect the volume's color node
+      this->ColorSelectorWidget->SetSelected(displayNode->GetColorNode());
       }
     return;
     }
@@ -229,7 +269,8 @@ void vtkSlicerVolumeDisplayWidget::ProcessMRMLEvents ( vtkObject *caller,
 
 //---------------------------------------------------------------------------
 void vtkSlicerVolumeDisplayWidget::RemoveWidgetObservers ( ) {
-    this->VolumeSelectorWidget->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
+    this->VolumeSelectorWidget->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->ColorSelectorWidget->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->WindowLevelThresholdEditor->RemoveObservers(vtkKWWindowLevelThresholdEditor::ValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->WindowLevelThresholdEditor->RemoveObservers(vtkKWWindowLevelThresholdEditor::ValueStartChangingEvent, (vtkCommand *)this->GUICallbackCommand );
 
@@ -276,6 +317,25 @@ void vtkSlicerVolumeDisplayWidget::CreateWidget ( )
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                   this->VolumeSelectorWidget->GetWidgetName());
 
+    // a selector to change the color node associated with this display
+    this->ColorSelectorWidget = vtkSlicerNodeSelectorWidget::New() ;
+    this->ColorSelectorWidget->SetParent ( volDisplayFrame );
+    this->ColorSelectorWidget->Create ( );
+    this->ColorSelectorWidget->SetNodeClass("vtkMRMLColorNode", NULL, NULL, NULL);
+    this->ColorSelectorWidget->ShowHiddenOn();
+    this->ColorSelectorWidget->SetMRMLScene(this->GetMRMLScene());
+    this->ColorSelectorWidget->SetBorderWidth(2);
+    // this->ColorSelectorWidget->SetReliefToGroove();
+    this->ColorSelectorWidget->SetPadX(2);
+    this->ColorSelectorWidget->SetPadY(2);
+    this->ColorSelectorWidget->GetWidget()->GetWidget()->IndicatorVisibilityOff();
+    this->ColorSelectorWidget->GetWidget()->GetWidget()->SetWidth(24);
+    this->ColorSelectorWidget->SetLabelText( "Color Select: ");
+    this->ColorSelectorWidget->SetBalloonHelpString("select a volume from the current mrml scene.");
+    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+                  this->ColorSelectorWidget->GetWidgetName());
+
+    
     this->WindowLevelThresholdEditor = vtkKWWindowLevelThresholdEditor::New();
     this->WindowLevelThresholdEditor->SetParent ( volDisplayFrame );
     this->WindowLevelThresholdEditor->Create ( );
@@ -287,7 +347,8 @@ void vtkSlicerVolumeDisplayWidget::CreateWidget ( )
     this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
                   this->WindowLevelThresholdEditor->GetWidgetName() );
 
-    this->VolumeSelectorWidget->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
+    this->VolumeSelectorWidget->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->ColorSelectorWidget->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->WindowLevelThresholdEditor->AddObserver(vtkKWWindowLevelThresholdEditor::ValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->WindowLevelThresholdEditor->AddObserver(vtkKWWindowLevelThresholdEditor::ValueStartChangingEvent, (vtkCommand *)this->GUICallbackCommand );
     if (this->MRMLScene != NULL)
