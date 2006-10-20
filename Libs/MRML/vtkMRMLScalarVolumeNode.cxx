@@ -153,7 +153,7 @@ void vtkMRMLScalarVolumeNode::SetLabelMap(int flag)
       }
     vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting LabelMap to " << flag);
     this->LabelMap = flag;
-
+/*
     if (this->GetDisplayNode() != NULL)
       {
       if (this->LabelMap == 1)
@@ -172,7 +172,7 @@ void vtkMRMLScalarVolumeNode::SetLabelMap(int flag)
       {
       vtkErrorMacro("ERROR: no display node associated with this scalar volume, not changing color node\n");
       }
-
+*/
      // invoke a modified event
     this->Modified();
 }
