@@ -172,6 +172,7 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
     }
   else if ( (b == this->DeleteTermButton) && (event == vtkKWPushButton::InvokedEvent ) )
     {
+    this->DeleteSelectedSearchTerms ();
     }
   else if ( (b == this->SelectAllButton) && (event == vtkKWPushButton::InvokedEvent ) )
     {
@@ -335,11 +336,13 @@ void vtkQueryAtlasGUI::BuildGUI ( )
 //    this->SearchTermMultiColumnList->GetWidget()->ColumnEditableOn ( this->SelectionColumn );
     this->SearchTermMultiColumnList->GetWidget()->SetColumnWidth (this->SelectionColumn, 5);
     this->SearchTermMultiColumnList->GetWidget()->SetColumnAlignmentToCenter ( this->SelectionColumn );
+    this->SearchTermMultiColumnList->GetWidget()->SetColumnResizable ( this->SelectionColumn, 0 );
 
     this->SearchTermMultiColumnList->GetWidget()->AddColumn ( "Search Term" );
     this->SearchTermMultiColumnList->GetWidget()->ColumnEditableOn ( this->SearchTermColumn );
     this->SearchTermMultiColumnList->GetWidget()->SetColumnWidth (this->SearchTermColumn, 35);
     this->SearchTermMultiColumnList->GetWidget()->SetColumnAlignmentToLeft (this->SearchTermColumn );
+    this->SearchTermMultiColumnList->GetWidget()->SetColumnResizable ( this->SearchTermColumn, 0 );
 
     // default search terms in list
     this->AddNewSearchTerm ( );
@@ -427,4 +430,42 @@ void vtkQueryAtlasGUI::AddNewSearchTerm ( )
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::DeleteSelectedSearchTerms ( )
 {
+  vtkDebugMacro("vtkQueryAtlasGUI: ProcessGUIEvent: DeleteSearchTerm event\n");
+  // check to see if should confirm
+  const char * confirmDelete = ((vtkSlicerApplication *)this->GetApplication())->GetConfirmDelete();
+  int confirmDeleteFlag = 0;
+  if (confirmDelete != NULL &&
+      strncmp(confirmDelete, "1", 1) == 0)
+    {
+    vtkDebugMacro("vtkQueryAtlasGUI: ProcessGUIEvent: confirm delete flag is 1\n");
+    confirmDeleteFlag = 1;
+    }
+  else
+    {
+    vtkDebugMacro("Not confirming deletes, confirmDelete = '" << confirmDelete << "'\n");
+    }
+  // save state for undo hrm... not populating the mrml node yet with these search terms, so...
+  //this->MRMLScene->SaveStateForUndo();
+        
+  // get the row that was last selected
+  int numRows = this->SearchTermMultiColumnList->GetWidget()->GetNumberOfSelectedRows();
+  if (numRows == 1)
+    {
+    int row[1];
+    this->SearchTermMultiColumnList->GetWidget()->GetSelectedRows(row);
+
+    if (confirmDeleteFlag)
+      {
+      // confirm that really want to remove this term
+      std::cout << "Deleting search term " << row[0] << endl;
+      }
+            
+    // then remove that row by index
+    this->SearchTermMultiColumnList->GetWidget()->DeleteRow ( row[0] );
+    }
+  else
+    {
+    std::cerr << "Selected rows (" << numRows << ") not 1, just pick one to delete for now\n";
+    return;
+    }
 }
