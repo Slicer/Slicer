@@ -38,7 +38,7 @@ if { [itcl::find class PaintSWidget] == "" } {
     public variable radius 10
     public variable paintDropper 0
     public variable paintOver 1
-    public variable delayedPaint 1
+    public variable delayedPaint 0
 
     variable _startPosition "0 0 0"
     variable _currentPosition "0 0 0"
