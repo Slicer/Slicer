@@ -174,7 +174,6 @@ proc QueryAtlasAddModel {} {
 
 proc QueryAtlasAddVolumes {} {
 
-  set selectionNode [$::slicer3::ApplicationLogic GetSelectionNode]
   set volumesLogic [$::slicer3::VolumesGUI GetLogic]
   set centered 1
 
@@ -206,6 +205,12 @@ proc QueryAtlasAddVolumes {} {
 
   set ::QA(functional,volumeNodeID) [$volumeNode GetID]
   set volumeDisplayNode [$volumeNode GetDisplayNode]
+  $volumeDisplayNode SetAndObserveColorNodeID "vtkMRMLColorNodeIron"
+  $volumeDisplayNode SetWindow 3.3
+  $volumeDisplayNode SetLevel 3
+  $volumeDisplayNode SetUpperThreshold 6.8
+  $volumeDisplayNode SetLowerThreshold 1.34
+  $volumeDisplayNode SetApplyThreshold 1
 
 
   #
@@ -226,11 +231,15 @@ proc QueryAtlasAddVolumes {} {
   $volumeDisplayNode SetAndObserveColorNodeID [$colorNode GetID]
 
   #
-  # make brain be background and segmentation be label map
+  # make brain be background, functional foreground, and segmentation be label map
   #
-  $selectionNode SetActiveVolumeID $::QA(brain,volumeNodeID)
-  $selectionNode SetActiveLabelVolumeID $::QA(label,volumeNodeID)
-  $::slicer3::ApplicationLogic PropagateVolumeSelection
+  set nNodes [$::slicer3::MRMLScene GetNumberOfNodesByClass "vtkMRMLSliceCompositeNode"]
+  for { set i 0 } { $i < $nNodes } { incr i } {
+    set cnode [$::slicer3::MRMLScene GetNthNodeByClass $i "vtkMRMLSliceCompositeNode"]
+    $cnode SetBackgroundVolumeID $::QA(brain,volumeNodeID)
+    $cnode SetForegroundVolumeID $::QA(functional,volumeNodeID)
+    $cnode SetLabelVolumeID $::QA(label,volumeNodeID)
+  }
 }
 
 #
@@ -424,8 +433,8 @@ proc QueryAtlasInitializePicker {} {
   # - create the classes that will be used every render and in the callback
   # - add the callback with the current render info
   #
-  if { ![info exists ::QA(viewer)] } {
-    set ::QA(viewer) [vtkImageViewer New]
+  if { ![info exists ::QA(windowToImage)] } {
+    #set ::QA(viewer) [vtkImageViewer New]
     set ::QA(windowToImage) [vtkWindowToImageFilter New]
   }
   set renderWidget [[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer]
@@ -473,22 +482,24 @@ proc QueryAtlasRenderView {} {
 
   $::QA(windowToImage) SetInput [$renderWidget GetRenderWindow]
 
-  if { [$renderWindow GetSize] != [$::QA(viewer) GetSize] } {
+  set imageSize [lrange [[$::QA(windowToImage) GetOutput] GetDimensions] 0 1]
+  if { [$renderWindow GetSize] != $imageSize } {
     $::QA(windowToImage) Delete
     set ::QA(windowToImage) [vtkWindowToImageFilter New]
-    $::QA(viewer) Delete
-    set ::QA(viewer) [vtkImageViewer New]
+    #$::QA(viewer) Delete
+    #set ::QA(viewer) [vtkImageViewer New]
     $::QA(windowToImage) SetInput [$renderWidget GetRenderWindow]
   }
 
-  $::QA(viewer) SetColorWindow 255
-  $::QA(viewer) SetColorLevel 127.5
+  #$::QA(viewer) SetColorWindow 255
+  #$::QA(viewer) SetColorLevel 127.5
   $::QA(windowToImage) SetInputBufferTypeToRGBA
   $::QA(windowToImage) ShouldRerenderOn
   $::QA(windowToImage) ReadFrontBufferOff
   $::QA(windowToImage) Modified
-  $::QA(viewer) SetInput [$::QA(windowToImage) GetOutput]
-  $::QA(viewer) Render
+  #$::QA(viewer) SetInput [$::QA(windowToImage) GetOutput]
+  [$::QA(windowToImage) GetOutput] Update
+  #$::QA(viewer) Render
 
   $renderWindow SetSwapBuffers 1
   QueryAtlasRestoreRenderState $renderer $renderState
@@ -573,7 +584,7 @@ proc QueryAtlasPCoordsToWorld {cell pCoords} {
 #
 proc QueryAtlasPickCallback {} {
 
-  if { ![info exists ::QA(viewer)] } {
+  if { ![info exists ::QA(windowToImage)] } {
     return
   }
 
@@ -593,7 +604,8 @@ proc QueryAtlasPickCallback {} {
   set actor [$viewer GetActorByID $::QA(modelNodeID)]
 
   # if the window size has changed, re-render
-  if { [$renderWindow GetSize] != [$::QA(viewer) GetSize] } {
+  set imageSize [lrange [[$::QA(windowToImage) GetOutput] GetDimensions] 0 1]
+  if { [$renderWindow GetSize] != $imageSize } {
     QueryAtlasRenderView
   }
 
@@ -752,6 +764,8 @@ proc QueryAtlasUpdateCursor {} {
     set ::QA(cursor,mapper) [vtkTextMapper New]
     $::QA(cursor,actor) SetMapper $::QA(cursor,mapper)
     [$::QA(cursor,actor) GetTextProperty] ShadowOn
+    [$::QA(cursor,actor) GetTextProperty] SetFontSize 20
+    [$::QA(cursor,actor) GetTextProperty] SetFontFamilyToTimes
 
     set renderWidget [$viewer GetMainViewer]
     set renderer [$renderWidget GetRenderer]
