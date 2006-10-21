@@ -189,6 +189,8 @@ proc QueryAtlasAddVolumes {} {
 
   set volumeDisplayNode [$volumeNode GetDisplayNode]
 
+  $volumeDisplayNode SetAndObserveColorNodeID "vtkMRMLColorNodeGrey"
+
   $volumeDisplayNode SetWindow 216
   $volumeDisplayNode SetLevel 108
   $volumeDisplayNode SetUpperThreshold 216
@@ -217,18 +219,18 @@ proc QueryAtlasAddVolumes {} {
 
   set volumeDisplayNode [$volumeNode GetDisplayNode]
 
+  set colorNode [vtkMRMLColorNode New]
+  $colorNode SetFileName $::SLICER_BUILD/../Slicer3/Libs/FreeSurfer/Testing/FreeSurferColorLUT.txt
+  $colorNode ReadFile
+  $::slicer3::MRMLScene AddNode $colorNode
+  $volumeDisplayNode SetAndObserveColorNodeID [$colorNode GetID]
+
   #
   # make brain be background and segmentation be label map
   #
   $selectionNode SetActiveVolumeID $::QA(brain,volumeNodeID)
   $selectionNode SetActiveLabelVolumeID $::QA(label,volumeNodeID)
   $::slicer3::ApplicationLogic PropagateVolumeSelection
-  
-  #
-  # TODO: set up the real freesurfer aparc+aseg color map
-  # - needs the labels to not go through window/level
-  #
-  EditorSetRandomLabelColormap 2500
 }
 
 #
@@ -757,9 +759,11 @@ proc QueryAtlasUpdateCursor {} {
 
   }
 
-  $::QA(cursor,actor) SetInput $::QA(lastLabels) 
-  eval $::QA(cursor,actor) SetPosition $::QA(lastWindowXY) 
-  $viewer RequestRender
+  if { [info exists ::QA(lastLabels)] && [info exists ::QA(lastWindowXY)] } {
+    $::QA(cursor,actor) SetInput $::QA(lastLabels) 
+    eval $::QA(cursor,actor) SetPosition $::QA(lastWindowXY) 
+    $viewer RequestRender
+  } 
 }
 
 proc QueryAtlasMenuCreate { state } {
