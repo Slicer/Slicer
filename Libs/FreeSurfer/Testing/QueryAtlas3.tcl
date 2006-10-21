@@ -729,6 +729,11 @@ proc QueryAtlasPickCallback {} {
 
   }
 
+  regsub -all -- "-" $pointLabels " " pointLabels
+  regsub -all "ctx" $pointLabels "Cortex" pointLabels
+  regsub -all "rh" $pointLabels "Right" pointLabels
+  regsub -all "lh" $pointLabels "Left" pointLabels
+
   #
   # update the label
   #
