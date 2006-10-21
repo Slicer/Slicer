@@ -111,6 +111,19 @@ void vtkSlicerSliceLogic::UpdateSliceNode()
       {
       node = vtkMRMLSliceNode::New();
       node->SetLayoutName(this->GetName());
+
+      if ( !strcmp( this->GetName(), "Red" ) )
+        {
+        node->SetOrientationToAxial();
+        }
+      if ( !strcmp( this->GetName(), "Yellow" ) )
+        {
+        node->SetOrientationToSagittal();
+        }
+      if ( !strcmp( this->GetName(), "Green" ) )
+        {
+        node->SetOrientationToCoronal();
+        }
       this->SetSliceNode (node);
       node->Delete();
       }
