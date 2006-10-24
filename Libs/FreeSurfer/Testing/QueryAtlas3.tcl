@@ -794,7 +794,9 @@ proc QueryAtlasUpdateCursor {} {
 
   if { [info exists ::QA(lastLabels)] && [info exists ::QA(lastWindowXY)] } {
     $::QA(cursor,actor) SetInput $::QA(lastLabels) 
-    eval $::QA(cursor,actor) SetPosition $::QA(lastWindowXY) 
+    foreach {x y} $::QA(lastWindowXY) {}
+    set y [expr $y + 15]
+    $::QA(cursor,actor) SetPosition $x $y
     $viewer RequestRender
   } 
 }
@@ -804,6 +806,11 @@ proc QueryAtlasMenuCreate { state } {
   set renderWidget [[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer]
   set interactor [$renderWidget GetRenderWindowInteractor] 
   set position [$interactor GetEventPosition]
+
+
+  if { ![info exists ::QA(menu,useTerms)] } {
+    set ::QA(menu,useTerms) 1
+  }
 
   #
   # save the event position when the menu action started (when the right mouse
@@ -824,13 +831,16 @@ proc QueryAtlasMenuCreate { state } {
         menu $qaMenu
         $qaMenu insert end command -label $::QA(lastLabels) -command ""
         $qaMenu insert end separator
-        $qaMenu insert end command -label "Add To Search Terms" -command "QueryAtlasAddTerms"
-        $qaMenu insert end separator
         $qaMenu insert end command -label "Google..." -command "QueryAtlasQuery google"
         $qaMenu insert end command -label "Wikipedia..." -command "QueryAtlasQuery wikipedia"
         $qaMenu insert end command -label "PubMed..." -command "QueryAtlasQuery pubmed"
         $qaMenu insert end command -label "J Neuroscience..." -command "QueryAtlasQuery jneurosci"
         $qaMenu insert end command -label "IBVD..." -command "QueryAtlasQuery ibvd"
+
+        $qaMenu insert end separator
+        $qaMenu insert end checkbutton -label "Use Search Terms" -variable ::QA(menu,useTerms)
+        $qaMenu insert end command -label "Add To Search Terms" -command "QueryAtlasAddTerms"
+        $qaMenu insert end command -label "Remove All Search Terms" -command "QueryAtlasRemoveTerms"
 
         
         foreach {x y} $::QA(lastRootXY) {}
@@ -840,15 +850,53 @@ proc QueryAtlasMenuCreate { state } {
   }
 }
 
+proc QueryAtlasRemoveTerms {} {
+
+  $::slicer3::ApplicationGUI SelectModule QueryAtlas
+  set mcl [[$::slicer3::QueryAtlasGUI GetSearchTermMultiColumnList] GetWidget]
+
+  $mcl DeleteAllRows
+}
+
+proc QueryAtlasGetTerms {} {
+
+  $::slicer3::ApplicationGUI SelectModule QueryAtlas
+  set mcl [[$::slicer3::QueryAtlasGUI GetSearchTermMultiColumnList] GetWidget]
+
+  set terms ""
+  set n [$mcl GetNumberOfRows]
+  for {set i 0} {$i < $n} {incr i} {
+    # TODO: figure out the mcl checkbutton access
+    if { 1 || [$mcl GetCellTextAsInt $i 0] } {
+      set term [$mcl GetCellText $i 1]
+      if { ![string match "enter*" $term] } {
+        set terms "$terms+[$mcl GetCellText $i 1]"
+      }
+    }
+  }
+  return $terms
+}
+
 proc QueryAtlasAddTerms {} {
 
   $::slicer3::ApplicationGUI SelectModule QueryAtlas
+  set mcl [[$::slicer3::QueryAtlasGUI GetSearchTermMultiColumnList] GetWidget]
 
+  set i [$mcl GetNumberOfRows]
+  $::slicer3::QueryAtlasGUI AddNewSearchTerm
+  $mcl SetCellTextAsInt $i 0 1
+  $mcl SetCellText $i 1 $::QA(lastLabels)
 }
 
 proc QueryAtlasQuery { site } {
 
-  regsub -all "/" $::QA(lastLabels) "+" terms
+  set terms $::QA(lastLabels)
+
+  if { $::QA(menu,useTerms) } {
+    set terms "$terms+[QueryAtlasGetTerms]"
+  }
+
+  regsub -all "/" $terms "+" terms
   regsub -all -- "-" $terms "+" terms
   regsub -all "ctx" $terms "cortex" terms
   regsub -all "rh" $terms "right+hemisphere" terms
