@@ -195,14 +195,25 @@ proc QueryAtlasAddVolumes {} {
   $volumeDisplayNode SetUpperThreshold 216
   $volumeDisplayNode SetLowerThreshold 30.99
   $volumeDisplayNode SetApplyThreshold 1
+  $volumeDisplayNode SetAutoThreshold 0
 
   #
   # add the function image
+  # - requires translation to correct space
   #
+
+  set transformNode [vtkMRMLLinearTransformNode New]
+  set matrix [$transformNode GetMatrixTransformToParent]
+  $matrix Identity
+  $matrix SetElement 0 3  6
+  $matrix SetElement 1 3  13
+  $matrix SetElement 2 3  13
+  $::slicer3::MRMLScene AddNode $transformNode
+
   set fileName [file dirname $::QA(directory)]/sirp-hp65-stc-to7-gam.feat/stats/zstat8.nii
 
   set volumeNode [$volumesLogic AddArchetypeVolume $fileName $centered 0]
-
+  $volumeNode SetAndObserveTransformNodeID [$transformNode GetID]
   set ::QA(functional,volumeNodeID) [$volumeNode GetID]
   set volumeDisplayNode [$volumeNode GetDisplayNode]
   $volumeDisplayNode SetAndObserveColorNodeID "vtkMRMLColorNodeIron"
@@ -216,10 +227,11 @@ proc QueryAtlasAddVolumes {} {
   #
   # add the segmentation image
   #
+
+
   set fileName $::QA(directory)/mri/aparc+aseg.mgz
 
   set volumeNode [$volumesLogic AddArchetypeVolume $fileName $centered 1]
-
   set ::QA(label,volumeNodeID) [$volumeNode GetID]
 
   set volumeDisplayNode [$volumeNode GetDisplayNode]
@@ -239,6 +251,8 @@ proc QueryAtlasAddVolumes {} {
     $cnode SetBackgroundVolumeID $::QA(brain,volumeNodeID)
     $cnode SetForegroundVolumeID $::QA(functional,volumeNodeID)
     $cnode SetLabelVolumeID $::QA(label,volumeNodeID)
+    $cnode SetForegroundOpacity 1
+    $cnode SetLabelOpacity 0.5
   }
 }
 
@@ -802,11 +816,16 @@ proc QueryAtlasMenuCreate { state } {
     }
     "end" {
       if { $::QA(menu,startPosition) == $position } {
+
         set parent [[$::slicer3::ApplicationGUI GetMainSlicerWindow] GetWidgetName]
         set qaMenu $parent.qaMenu
         catch "destroy $qaMenu"
 
         menu $qaMenu
+        $qaMenu insert end command -label $::QA(lastLabels) -command ""
+        $qaMenu insert end separator
+        $qaMenu insert end command -label "Add To Search Terms" -command "QueryAtlasAddTerms"
+        $qaMenu insert end separator
         $qaMenu insert end command -label "Google..." -command "QueryAtlasQuery google"
         $qaMenu insert end command -label "Wikipedia..." -command "QueryAtlasQuery wikipedia"
         $qaMenu insert end command -label "PubMed..." -command "QueryAtlasQuery pubmed"
@@ -814,12 +833,18 @@ proc QueryAtlasMenuCreate { state } {
         $qaMenu insert end command -label "IBVD..." -command "QueryAtlasQuery ibvd"
 
         
-        eval $qaMenu post $::QA(lastRootXY)
+        foreach {x y} $::QA(lastRootXY) {}
+        $qaMenu post $x $y
       }
     }
   }
 }
 
+proc QueryAtlasAddTerms {} {
+
+  $::slicer3::ApplicationGUI SelectModule QueryAtlas
+
+}
 
 proc QueryAtlasQuery { site } {
 
@@ -845,11 +870,19 @@ proc QueryAtlasQuery { site } {
           http://www.jneurosci.org/cgi/search?volume=&firstpage=&sendit=Search&author1=&author2=&titleabstract=&fulltext=$terms
     }
     "ibvd" {
-      regsub -all "Left\\+" $terms "" terms ;# TODO ivbd has a different way of handling side
-      regsub -all "Right\\+" $terms "" terms ;# TODO ivbd has a different way of handling side
+      regsub -all "Left\+" $terms "" terms ;# TODO ivbd has a different way of handling side
+      regsub -all "left\+" $terms "" terms ;# TODO ivbd has a different way of handling side
+      regsub -all "Right\+" $terms "" terms ;# TODO ivbd has a different way of handling side
+      regsub -all "right\+" $terms "" terms ;# TODO ivbd has a different way of handling side
       regsub -all "\\+" $terms "," commaterms
-      $::slicer3::Application OpenLink \
-        http://www.cma.mgh.harvard.edu/ibvd/search.php?f_submission=true&f_free=$commaterms
+
+      if { 0 } {
+        set terms "human,normal,$commaterms"
+        set url http://www.cma.mgh.harvard.edu/ibvd/search.php?f_submission=true&f_free=$commaterms
+      } else {
+        set url http://www.cma.mgh.harvard.edu/ibvd/how_big.php?structure=$terms
+      }
+      $::slicer3::Application OpenLink $url
     }
   }
 }
