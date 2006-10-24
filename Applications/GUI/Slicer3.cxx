@@ -72,6 +72,7 @@ extern "C" int Freesurfer_Init(Tcl_Interp *interp);
 
 //TODO added temporary
 extern "C" int Gradientanisotropicdiffusionfilter_Init(Tcl_Interp *interp);
+extern "C" int Queryatlas_Init(Tcl_Interp *interp);
 extern "C" int Slicerdaemon_Init(Tcl_Interp *interp);
 extern "C" int Commandlinemodule_Init(Tcl_Interp *interp);
 extern "C" int Scriptedmodule_Init(Tcl_Interp *interp);
@@ -256,6 +257,7 @@ int Slicer3_main(int argc, char *argv[])
     Freesurfer_Init(interp);
     //TODO added temporary
     Gradientanisotropicdiffusionfilter_Init(interp);
+    Queryatlas_Init(interp);
     Slicerdaemon_Init(interp);
     Commandlinemodule_Init(interp);
     Scriptedmodule_Init(interp);
@@ -653,6 +655,8 @@ int Slicer3_main(int argc, char *argv[])
     slicerApp->Script ("namespace eval slicer3 set ColorGUI %s", name);
     name = transformsGUI->GetTclName();
     slicerApp->Script ("namespace eval slicer3 set TransformsGUI %s", name);
+    name = queryAtlasGUI->GetTclName();
+    slicerApp->Script ("namespace eval slicer3 set QueryAtlasGUI %s", name);
 
     name = appGUI->GetViewerWidget()->GetTclName();
     slicerApp->Script ("namespace eval slicer3 set ViewerWidget %s", name);
