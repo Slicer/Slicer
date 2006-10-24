@@ -73,6 +73,7 @@ void vtkSlicerVolumeDisplayWidget::SetVolumeNode ( vtkMRMLVolumeNode *volumeNode
   // Select this volume node
   this->VolumeSelectorWidget->SetSelected(volumeNode); 
 
+  // TODO: display node modified events are not being observed
 
   // 
   // Set the member variables and do a first process
