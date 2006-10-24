@@ -890,7 +890,11 @@ proc QueryAtlasAddTerms {} {
 
 proc QueryAtlasQuery { site } {
 
-  set terms $::QA(lastLabels)
+  if { $::QA(lastLabels) == "background" || $::QA(lastLabels) == "Unknown" } {
+    set terms ""
+  } else {
+    set terms $::QA(lastLabels)
+  }
 
   if { $::QA(menu,useTerms) } {
     set terms "$terms+[QueryAtlasGetTerms]"
