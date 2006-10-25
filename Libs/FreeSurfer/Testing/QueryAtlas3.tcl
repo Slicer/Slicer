@@ -869,7 +869,7 @@ proc QueryAtlasGetTerms {} {
     # TODO: figure out the mcl checkbutton access
     if { 1 || [$mcl GetCellTextAsInt $i 0] } {
       set term [$mcl GetCellText $i 1]
-      if { ![string match "enter*" $term] } {
+      if { ![string match "edit*" $term] } {
         set terms "$terms+[$mcl GetCellText $i 1]"
       }
     }
