@@ -191,7 +191,7 @@ startElement(void *userData, const char *element, const char **attrs)
       parameter->SetMultiple(attrs[1]);
       parameter->SetType("std::vector<int>");
       parameter->SetArgType("int");
-      }
+      parameter->SetStringToType("atoi");      }
     else
       {
       parameter->SetType("int");
@@ -217,6 +217,7 @@ startElement(void *userData, const char *element, const char **attrs)
       parameter->SetMultiple(attrs[1]);
       parameter->SetType("std::vector<float>");
       parameter->SetArgType("float");
+      parameter->SetStringToType("atof");
       }
     else
       {
@@ -244,6 +245,7 @@ startElement(void *userData, const char *element, const char **attrs)
       parameter->SetMultiple(attrs[1]);
       parameter->SetType("std::vector<double>");
       parameter->SetArgType("double");
+      parameter->SetStringToType("atof");
       }
     else
       {
@@ -271,7 +273,7 @@ startElement(void *userData, const char *element, const char **attrs)
       parameter->SetMultiple(attrs[1]);
       parameter->SetType("std::vector<std::string>");
       parameter->SetArgType("std::string");
-      }
+      parameter->SetStringToType("");      }
     else
       {
       parameter->SetType("std::string");
@@ -307,6 +309,7 @@ startElement(void *userData, const char *element, const char **attrs)
     parameter = new ModuleParameter;
     parameter->SetTag(name);
     parameter->SetType("std::vector<int>");
+    parameter->SetArgType("int");
     parameter->SetStringToType("atoi");
     }
   else if (name == "float-vector")
@@ -323,6 +326,7 @@ startElement(void *userData, const char *element, const char **attrs)
     parameter = new ModuleParameter;
     parameter->SetTag(name);
     parameter->SetType("std::vector<float>");
+    parameter->SetArgType("float");
     parameter->SetStringToType("atof");
     }
   else if (name == "string-vector")
@@ -339,6 +343,7 @@ startElement(void *userData, const char *element, const char **attrs)
     parameter = new ModuleParameter;
     parameter->SetTag(name);
     parameter->SetType("std::vector<std::string>");
+    parameter->SetArgType("std::string");
     parameter->SetStringToType("");
     }
   else if (name == "double-vector")
@@ -355,6 +360,7 @@ startElement(void *userData, const char *element, const char **attrs)
     parameter = new ModuleParameter;
     parameter->SetTag(name);
     parameter->SetType("std::vector<double>");
+    parameter->SetArgType("double");
     parameter->SetStringToType("atof");
     }
   else if (name == "point")
@@ -369,9 +375,65 @@ startElement(void *userData, const char *element, const char **attrs)
       return;
       }
     parameter = new ModuleParameter;
+    int attrCount = XML_GetSpecifiedAttributeCount(ps->Parser);
+    // Parse attribute pairs
+    for (int attr=0; attr < (attrCount / 2); attr++)
+      {
+      if ((strcmp(attrs[2*attr], "multiple") == 0))
+        {
+        if ((strcmp(attrs[2*attr+1], "true") == 0) ||
+            (strcmp(attrs[2*attr+1], "false") == 0))
+          {
+          parameter->SetMultiple(attrs[2*attr+1]);
+          parameter->SetType("std::vector<std::vector<float> >");
+          parameter->SetArgType("float");
+          parameter->SetStringToType("atof");
+          }
+        else
+          {
+          std::string error("ModuleDescriptionParser Error: \"" + std::string(attrs[2*attr+1]) + "\" is not a valid argument for the attribute \"multiple\". Only \"true\" and \"false\" are accepted.");
+          ps->ErrorDescription = error;
+          ps->ErrorLine = XML_GetCurrentLineNumber(ps->Parser);
+          ps->Error = true;
+          ps->OpenTags.push(name);
+          return;
+          }
+        }
+      else if ((strcmp(attrs[2*attr], "coordinateSystem") == 0))
+        {
+        if ((strcmp(attrs[2*attr+1], "ijk") == 0) ||
+            (strcmp(attrs[2*attr+1], "lps") == 0) ||
+            (strcmp(attrs[2*attr+1], "ras") == 0))
+          {
+          parameter->SetCoordinateSystem(attrs[2*attr+1]);
+          }
+        else
+          {
+          std::string error("ModuleDescriptionParser Error: \"" + std::string(attrs[2*attr+1]) + "\" is not a valid coordinate system. Only \"ijk\", \"lps\" and \"ras\" are accepted.");
+          ps->ErrorDescription = error;
+          ps->ErrorLine = XML_GetCurrentLineNumber(ps->Parser);
+          ps->Error = true;
+          ps->OpenTags.push(name);
+          return;
+          }
+        }
+      else
+        {
+          std::string error("ModuleDescriptionParser Error: " + std::string(attrs[2*attr]) + " is not a valid attribute for the tag" + name);
+          ps->ErrorDescription = error;
+          ps->ErrorLine = XML_GetCurrentLineNumber(ps->Parser);
+          ps->Error = true;
+          ps->OpenTags.push(name);
+          return;
+        }
+      }
+    if (parameter->GetMultiple() != "true")
+      {
+      parameter->SetType("std::vector<float>");
+      parameter->SetArgType("float");
+      parameter->SetStringToType("atof");
+      }
     parameter->SetTag(name);
-    parameter->SetType("std::vector<float>");
-    parameter->SetStringToType("atof");
     }
   else if (name == "string-enumeration")
     {
@@ -514,6 +576,33 @@ startElement(void *userData, const char *element, const char **attrs)
       }
     parameter->SetTag(name);
     }
+  else if (name == "geometry")
+    {
+    if (!group || (ps->OpenTags.top() != "parameters"))
+      {
+      std::string error("ModuleDescriptionParser Error: <" + name + "> can only be used inside <parameters> but was found inside <" + ps->OpenTags.top() + ">");
+      ps->ErrorDescription = error;
+      ps->ErrorLine = XML_GetCurrentLineNumber(ps->Parser);
+      ps->Error = true;
+      ps->OpenTags.push(name);
+      return;
+      }
+    parameter = new ModuleParameter;
+    int attrCount = XML_GetSpecifiedAttributeCount(ps->Parser);
+    if (attrCount == 2 && 
+        (strcmp(attrs[0], "multiple") == 0) &&
+        (strcmp(attrs[1], "true") == 0))
+      {
+      parameter->SetMultiple(attrs[1]);
+      parameter->SetType("std::vector<std::string>");
+      parameter->SetArgType("std::string");
+      }
+    else
+      {
+      parameter->SetType("std::string");
+      }
+    parameter->SetTag(name);
+    }
   else
     {
     // Warn if an unknown parameter type is found
@@ -529,6 +618,7 @@ startElement(void *userData, const char *element, const char **attrs)
   ps->CurrentParameter = parameter;
   ps->CurrentGroup = group;
   ps->OpenTags.push(name);
+
 }
 
 void
@@ -581,6 +671,11 @@ endElement(void *userData, const char *element)
     ps->CurrentParameter = 0;
     }
   else if (group && parameter && (name == "image"))
+    {
+    ps->CurrentGroup->AddParameter(*parameter);
+    ps->CurrentParameter = 0;
+    }
+  else if (group && parameter && (name == "geometry"))
     {
     ps->CurrentGroup->AddParameter(*parameter);
     ps->CurrentParameter = 0;

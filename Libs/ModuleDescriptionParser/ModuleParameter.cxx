@@ -33,6 +33,7 @@ ModuleParameter::ModuleParameter(const ModuleParameter& parameter)
   this->Index = parameter.Index;
   this->Multiple = parameter.Multiple;
   this->Elements = parameter.Elements;
+  this->CoordinateSystem = parameter.CoordinateSystem;
 }
 
 void ModuleParameter::operator=(const ModuleParameter& parameter)
@@ -55,6 +56,7 @@ void ModuleParameter::operator=(const ModuleParameter& parameter)
   this->Index = parameter.Index;
   this->Multiple = parameter.Multiple;
   this->Elements = parameter.Elements;
+  this->CoordinateSystem = parameter.CoordinateSystem;
 }
 
 std::ostream & operator<<(std::ostream &os, const ModuleParameter &parameter)
@@ -89,6 +91,7 @@ std::ostream & operator<<(std::ostream &os, const ModuleParameter &parameter)
   os << "      " << "Channel: " << parameter.GetChannel() << std::endl;
   os << "      " << "Index: " << parameter.GetIndex() << std::endl;
   os << "      " << "Multiple: " << parameter.GetMultiple() << std::endl;
+  os << "      " << "CoordinateSystem: " << parameter.GetCoordinateSystem() << std::endl;
   return os;
 }
 

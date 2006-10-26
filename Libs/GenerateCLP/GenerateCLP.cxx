@@ -86,24 +86,25 @@ bool NeedsTemp(const ModuleParameter &parameter)
 {
   std::string type = parameter.GetType();
   std::string multi = parameter.GetMultiple();
-  return ((type == "std::vector<int>" ||
+  return (((type == "std::vector<int>" ||
            type == "std::vector<float>" ||
            type == "std::vector<double>" ||
-           type == "std::vector<std::string>") &&
-          multi != "true"
-    );
+           type == "std::vector<std::string>") ||
+           type == "std::vector<std::vector<float> >"));
 }
 /* Some types need quotes in the initialization. */
 bool NeedsQuotes(const ModuleParameter &parameter)
 {
   std::string type = parameter.GetType();
   std::string multi = parameter.GetMultiple();
-  return ((type == "std::vector<int>" ||
+  return (((type == "std::vector<int>" ||
            type == "std::vector<float>" ||
            type == "std::vector<double>" ||
            type == "std::vector<std::string>" ||
            type == "std::string") &&
-          multi != "true");
+           multi != "true") ||
+           type == "std::vector<std::vector<float> >"
+);
 }
 bool IsEnumeration(const ModuleParameter &parameter)
 {
@@ -112,6 +113,12 @@ bool IsEnumeration(const ModuleParameter &parameter)
           type == "integer-enumeration" ||
           type == "float-enumeration" ||
           type == "double-enumeration" );
+}
+
+bool IsVectorOfVectors(const ModuleParameter &parameter)
+{
+  std::string type = parameter.GetType();
+  return (type == "std::vector<std::vector<float> >");
 }
 
 bool HasDefault(const ModuleParameter &parameter)
@@ -319,7 +326,7 @@ void GenerateEchoArgs(std::ofstream &sout, ModuleDescription &module)
          pit != git->GetParameters().end();
          ++pit)
       {
-      if (NeedsTemp(*pit))
+      if (NeedsTemp(*pit) && pit->GetMultiple() != "true")
         {
         sout << "std::cout << "
              << "\"    "
@@ -343,6 +350,21 @@ void GenerateEchoArgs(std::ofstream &sout, ModuleDescription &module)
              << EOL << std::endl;
         
         }
+      else if (NeedsTemp(*pit) && pit->GetMultiple() == "true")
+        {
+        sout << "for (unsigned int _i= 0; _i < " << pit->GetName() << "Temp.size(); _i++)" << EOL << std::endl;
+        sout << "{" << EOL << std::endl;
+        sout << "std::cout << \"" << pit->GetName() << "[\" << _i << \"]: \";" << EOL << std::endl;
+        sout << "std::vector<std::string> words;" << EOL << std::endl;
+        sout << "words.clear();" << EOL << std::endl;
+        sout << "splitString(" << pit->GetName() << "Temp[_i], std::string(\",\"), words);" << EOL << std::endl;
+        sout << "for (unsigned int _j= 0; _j < words.size(); _j++)" << EOL << std::endl;
+        sout << "{" << EOL << std::endl;
+        sout << "std::cout <<  words[_j] << \" \";" << EOL << std::endl;
+        sout << "}" << EOL << std::endl;
+        sout << "std::cout << std::endl;" << EOL << std::endl;
+        sout << "}" << EOL << std::endl;
+        }
       else if (pit->GetMultiple() == "true")
         {
         sout << "std::cout << "
@@ -365,7 +387,6 @@ void GenerateEchoArgs(std::ofstream &sout, ModuleDescription &module)
              << EOL << std::endl;
         sout << "std::cout <<std::endl;"
              << EOL << std::endl;
-        
         }
       else
         {
@@ -423,12 +444,23 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
          pit != git->GetParameters().end();
          ++pit)
       {
-      if (NeedsQuotes(*pit) && !IsEnumeration(*pit))
+      if (!IsEnumeration(*pit))
         {
-        sout << "    "
-             << "std::string"
-             << " "
-             << pit->GetName();
+        sout << "    ";
+        if (pit->GetMultiple() == "true")
+          {
+          sout << "std::vector<std::string>";
+          }
+        else if (NeedsQuotes(*pit))
+          {
+          sout << "std::string";
+          }
+        else
+          {
+          sout << pit->GetType();
+          }
+        sout << " ";
+        sout << pit->GetName();
         if (NeedsTemp(*pit))
           {
           sout << "Temp";
@@ -443,12 +475,18 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
           {
           std::string defaultString = pit->GetDefault();
           replaceSubWithSub(defaultString, "\"", "\\\"");
-          sout << " = "
-               << "\""
-               << defaultString
-               << "\""
-               << ";"
-               << EOL << std::endl;
+          sout << " = ";
+          if (NeedsQuotes(*pit))
+            {
+            sout << "\"";
+            }
+          sout << defaultString;
+          if (NeedsQuotes(*pit))
+            {
+            sout << "\"";
+            }
+          sout << ";";
+          sout << EOL << std::endl;
           }
         if (NeedsTemp(*pit))
           {
@@ -460,7 +498,7 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
                << EOL << std::endl;
           }
         }
-      else if (IsEnumeration(*pit))
+      else // IsEnumeration(*pit)
         {
         sout << "    "
              << pit->GetType()
@@ -517,27 +555,6 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
                << pit->GetName() << "Allowed); "
                << EOL << std::endl;
         }
-      else
-        {
-        sout << "    "
-             << pit->GetType()
-             << " "
-             << pit->GetName();
-        if (!HasDefault(*pit))
-          {    
-          sout << ";"
-               << EOL << std::endl;
-          }
-        else
-          {
-          std::string defaultString = pit->GetDefault();
-          replaceSubWithSub(defaultString, "\"", "\\\"");
-          sout << " = "
-               << defaultString
-               << ";"
-               << EOL << std::endl;
-          }
-        }
       }
     }
   sout << "try" << EOL << std::endl;
@@ -549,7 +566,7 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
   sout << " );" << EOL << std::endl << EOL << std::endl;
   sout << "      itksys_ios::ostringstream msg;" << EOL << std::endl;
 
-  // Second pass generates argument declarations
+  // Second pass generates TCLAP declarations
   for (git = module.GetParameterGroups().begin();
        git != module.GetParameterGroups().end();
        ++git)
@@ -664,7 +681,15 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
           if (pit->GetMultiple() == "true")
             {
             sout << "    TCLAP::MultiArg<";
-            sout << pit->GetArgType();            }
+            if (NeedsTemp(*pit))
+              {
+              sout << "std::string";
+              }
+            else
+              {
+              sout << pit->GetType();
+              }
+            }
           else
             {
             sout << "    TCLAP::ValueArg<";
@@ -689,10 +714,10 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
             {
             sout << ", "
                  << pit->GetName();
-            }
-          if (NeedsTemp(*pit))
-            {
-            sout << "Temp";
+            if (NeedsTemp(*pit))
+              {
+              sout << "Temp";
+              }
             }
           sout << ", "
                << "\""
@@ -738,9 +763,9 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
          pit != git->GetParameters().end();
          ++pit)
       {
-      if (NeedsTemp(*pit))
+      if (NeedsTemp(*pit) && pit->GetMultiple() != "true")
         {
-        sout << "      {" << EOL << std::endl;
+        sout << "      { " << "/* Assignment for " << pit->GetName() << " */" << EOL << std::endl;
         sout << "      std::vector<std::string> words;"
              << EOL << std::endl;
         sout << "      std::string sep(\",\");"
@@ -752,24 +777,60 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
              << "sep, "
              << "words);"
              << EOL << std::endl;
-        sout << "      for (unsigned int j = 0; j < words.size(); j++)"
+        sout << "      for (unsigned int _j = 0; _j < words.size(); _j++)"
              << EOL << std::endl;
         sout << "        {"
              << EOL << std::endl;
         sout << "        " 
              << pit->GetName() << ".push_back("
              << pit->GetStringToType()
-             << "(words[j].c_str()));"
+             << "(words[_j].c_str()));"
              << EOL << std::endl;
         sout << "        }"
              << EOL << std::endl;
         sout << "      }"
              << EOL << std::endl;
         }
+      else if (NeedsTemp(*pit) && pit->GetMultiple() == "true")
+        {
+        sout << "      { " << "/* Assignment for " << pit->GetName() << " */" << EOL << std::endl;
+        sout << "      for (unsigned int _i = 0; _i < ";
+        sout << pit->GetName() << "Temp.size(); _i++)" << EOL << std::endl;
+        sout << "        {" << EOL << std::endl;
+        sout << "        std::vector<std::string> words;" << EOL << std::endl;
+        sout << "        std::vector<" << pit->GetArgType() << "> elements;" << EOL << std::endl;
+        sout << "        words.clear();" << EOL << std::endl;
+        sout << "        splitString(" << pit->GetName() << "Temp[_i], std::string(\",\"), words);" << EOL << std::endl;
+        if (IsVectorOfVectors(*pit))
+          {
+          sout << "        for (unsigned int _j= 0; _j < words.size(); _j++)" << EOL << std::endl;
+          sout << "          {" << EOL << std::endl;
+          sout << "          elements.push_back("
+               << pit->GetStringToType()
+               << "(words[_j].c_str()));"
+               << EOL << std::endl;
+          sout << "          }" << EOL << std::endl;
+          sout << "        " << pit->GetName() << ".push_back(elements);"
+               << EOL << std::endl;
+          }
+        else
+          {
+          sout << "        for (unsigned int _j= 0; _j < words.size(); _j++)" << EOL << std::endl;
+          sout << "          {" << EOL << std::endl;
+          sout << "            " << pit->GetName() << ".push_back("
+               << pit->GetStringToType()
+               << "(words[_j].c_str()));"
+               << EOL << std::endl;
+          sout << "          }" << EOL << std::endl;
+          }
+        sout << "        }" << EOL << std::endl;
+        sout << "      }"
+             << EOL << std::endl;
+        }
       }
     }
   // Wrapup the block and generate the catch block
-  sout << "  }" << EOL << std::endl;
+  sout << "      }" << EOL << std::endl;
   sout << "catch ( TCLAP::ArgException e )" << EOL << std::endl;
   sout << "  {" << EOL << std::endl;
   sout << "  std::cerr << \"error: \" << e.error() << \" for arg \" << e.argId() << std::endl;" << EOL << std::endl;
