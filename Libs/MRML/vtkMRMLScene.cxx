@@ -140,6 +140,29 @@ vtkMRMLScene::~vtkMRMLScene()
     }
 }
 
+//------------------------------------------------------------------------------
+void vtkMRMLScene::Clear() 
+{
+  this->SetUndoOff();
+  
+  this->CurrentScene->RemoveAllItems();
+  
+  vtkMRMLNode *node;
+  for (int n=0; n < this->CurrentScene->GetNumberOfItems(); n++) 
+    {
+    node = (vtkMRMLNode*)this->CurrentScene->GetItemAsObject(n);
+    this->RemoveNode(node);
+    }
+
+  this->InvokeEvent(this->SceneCloseEvent, NULL);
+
+  this->ClearUndoStack ( );
+  this->ClearRedoStack ( );
+
+  this->SetUndoOn();
+
+  this->Modified();
+}
 
 vtkMRMLScene *vtkMRMLScene::ActiveScene = NULL;
 

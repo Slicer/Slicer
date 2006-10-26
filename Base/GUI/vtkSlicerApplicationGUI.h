@@ -140,6 +140,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     void ProcessLoadSceneCommand();
     void ProcessImportSceneCommand();
     void ProcessSaveSceneAsCommand();
+    void ProcessCloseSceneCommand();
     
     // Description:
     // Methods describe behavior on startup and exit.

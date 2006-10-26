@@ -76,6 +76,10 @@ public:
   int Commit(const char* url=NULL);
 
   // Description:
+  // Remove nodes and clear undo/redo stacks
+  void Clear();
+
+  // Description:
   // Create node with a given class
   vtkMRMLNode* CreateNodeByClass(const char* className);
 

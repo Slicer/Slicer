@@ -42,6 +42,7 @@
 #include "vtkKWResourceUtilities.h"
 #include "vtkKWSplitFrame.h"
 #include "vtkKWUserInterfaceManagerNotebook.h"
+#include "vtkKWMessageDialog.h"
 
 #include "vtkSlicerWindow.h"
 #include "vtkSlicerApplication.h"
@@ -303,6 +304,23 @@ void vtkSlicerApplicationGUI::ProcessImportSceneCommand()
     return;
 }
 
+
+//---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::ProcessCloseSceneCommand()
+{
+  vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+  dialog->SetParent ( this->MainSlicerWindow );
+  dialog->SetStyleToOkCancel();
+  dialog->SetText("Are you sure you want to close scene?");
+  dialog->Create ( );
+  if (dialog->Invoke())
+  {
+    if (this->GetMRMLScene()) 
+      {
+      this->MRMLScene->Clear();
+      }
+  }
+}  
 
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::ProcessSaveSceneAsCommand()
@@ -611,6 +629,9 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
 
             this->GetMainSlicerWindow()->GetFileMenu()->InsertCommand (this->GetMainSlicerWindow()->GetFileMenuInsertPosition(),
                                                "Save Scene As...", this, "ProcessSaveSceneAsCommand");
+
+            this->GetMainSlicerWindow()->GetFileMenu()->InsertCommand (this->GetMainSlicerWindow()->GetFileMenuInsertPosition(),
+                                               "Close Scene", this, "ProcessCloseSceneCommand");
 
             this->GetMainSlicerWindow()->GetFileMenu()->InsertSeparator (
                 this->GetMainSlicerWindow()->GetFileMenuInsertPosition());
