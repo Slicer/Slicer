@@ -442,6 +442,9 @@ void vtkSlicerTransformEditorWidget::TransformChangedCallback(double)
   vtkTransform* transform = this->GetCurrentTransformInCoordinateSystem();
   // will update when the node value changes
   vtkMatrix4x4 *matrix = transform->GetMatrix();
+
+  transform->SetMatrix(matrix);
+
   double transLR = this->TranslationScaleLR->GetValue() - matrix->GetElement(0,3);
   double transPA = this->TranslationScalePA->GetValue() - matrix->GetElement(1,3);
   double transIS = this->TranslationScaleIS->GetValue() - matrix->GetElement(2,3);
