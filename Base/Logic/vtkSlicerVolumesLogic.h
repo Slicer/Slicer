@@ -47,7 +47,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerVolumesLogic : public vtkSlicerLogic
   // Description:
   // Create new mrml node and associated storage node.
   // Read image data from a specified file
-  vtkMRMLVolumeNode* AddArchetypeVolume (char* filename, int centerImage, int labelMap);
+  vtkMRMLVolumeNode* AddArchetypeVolume (char* filename, int centerImage, int labelMap, const char* volname);
 
   // Description:
   // Write volume's image data to a specified file

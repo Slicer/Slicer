@@ -58,7 +58,7 @@ void vtkSlicerVolumesLogic::SetActiveVolumeNode(vtkMRMLVolumeNode *activeNode)
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (char* filename, int centerImage, int labelMap)
+vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (char* filename, int centerImage, int labelMap, const char* volname)
 {
   vtkMRMLVolumeNode *volumeNode = NULL;
   
@@ -86,9 +86,16 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (char* filename, in
   
   if (volumeNode != NULL)
     {
-    const vtksys_stl::string fname(filename);
-    vtksys_stl::string name = vtksys::SystemTools::GetFilenameName(fname);
-    volumeNode->SetName(name.c_str());
+    if (volname == NULL)
+      {
+      const vtksys_stl::string fname(filename);
+      vtksys_stl::string name = vtksys::SystemTools::GetFilenameName(fname);
+      volumeNode->SetName(name.c_str());
+      }
+    else
+      {
+      volumeNode->SetName(volname);
+      }
 
     this->GetMRMLScene()->SaveStateForUndo();
 
@@ -110,8 +117,6 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (char* filename, in
     
     this->GetMRMLScene()->AddNode(volumeNode);  
 
-
-    
     this->SetActiveVolumeNode(volumeNode);
     
     this->Modified();  

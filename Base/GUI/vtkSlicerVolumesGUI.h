@@ -15,9 +15,10 @@
 #include "vtkSlicerNodeSelectorWidget.h"
 #include "vtkSlicerVolumeDisplayWidget.h"
 
-#include "vtkKWLoadSaveButton.h"
-#include "vtkKWLoadSaveDialog.h"
-#include "vtkKWFrame.h"
+class vtkKWPushButton;
+class vtkKWLoadSaveButtonWithLabel;
+class vtkKWLoadSaveButton;
+class vtkKWEntryWithLabel;
 
 // Description:
 // This class implements Slicer's Volumes GUI
@@ -33,7 +34,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerVolumesGUI : public vtkSlicerModuleGUI
     
     // Description:
     // Get methods on class members (no Set methods required)
-    vtkGetObjectMacro ( LoadVolumeButton, vtkKWLoadSaveButton );
+    vtkGetObjectMacro ( LoadVolumeButton, vtkKWLoadSaveButtonWithLabel );
 
     vtkGetObjectMacro ( Logic, vtkSlicerVolumesLogic );
     vtkGetObjectMacro ( VolumeNode, vtkMRMLVolumeNode );
@@ -82,11 +83,16 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerVolumesGUI : public vtkSlicerModuleGUI
     vtkMRMLVolumeNode *VolumeNode;
 
     // Widgets for the Volumes module
-    vtkKWLoadSaveButton *LoadVolumeButton;
+    vtkKWLoadSaveButtonWithLabel *LoadVolumeButton;
+    vtkKWEntryWithLabel  *NameEntry;
     vtkKWMenuButtonWithLabel *CenterImageMenu;
     vtkKWCheckButton *LabelMapCheckButton;
+    vtkKWPushButton *ApplyButton;
+
     vtkSlicerNodeSelectorWidget* VolumeSelectorWidget;
+
     vtkKWLoadSaveButton *SaveVolumeButton;
+
     vtkSlicerVolumeDisplayWidget *VolumeDisplayWidget;
 
  private:
