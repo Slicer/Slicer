@@ -357,7 +357,8 @@ void GenerateEchoArgs(std::ofstream &sout, ModuleDescription &module)
         sout << "std::cout << \"" << pit->GetName() << "[\" << _i << \"]: \";" << EOL << std::endl;
         sout << "std::vector<std::string> words;" << EOL << std::endl;
         sout << "words.clear();" << EOL << std::endl;
-        sout << "splitString(" << pit->GetName() << "Temp[_i], std::string(\",\"), words);" << EOL << std::endl;
+        sout << "      std::string sep(\",\");" << EOL << std::endl;
+        sout << "splitString(" << pit->GetName() << "Temp[_i], sep, words);" << EOL << std::endl;
         sout << "for (unsigned int _j= 0; _j < words.size(); _j++)" << EOL << std::endl;
         sout << "{" << EOL << std::endl;
         sout << "std::cout <<  words[_j] << \" \";" << EOL << std::endl;
@@ -800,7 +801,8 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
         sout << "        std::vector<std::string> words;" << EOL << std::endl;
         sout << "        std::vector<" << pit->GetArgType() << "> elements;" << EOL << std::endl;
         sout << "        words.clear();" << EOL << std::endl;
-        sout << "        splitString(" << pit->GetName() << "Temp[_i], std::string(\",\"), words);" << EOL << std::endl;
+        sout << "      std::string sep(\",\");" << EOL << std::endl;
+        sout << "        splitString(" << pit->GetName() << "Temp[_i], sep, words);" << EOL << std::endl;
         if (IsVectorOfVectors(*pit))
           {
           sout << "        for (unsigned int _j= 0; _j < words.size(); _j++)" << EOL << std::endl;
