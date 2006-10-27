@@ -15,6 +15,7 @@ SET(ModuleDescriptionParser_SRCS
   ModuleParameterGroup.cxx
   ModuleDescription.cxx
   ModuleDescriptionParser.cxx
+  ModuleProcessInformation.cxx
 )
 
 INCLUDE_DIRECTORIES(

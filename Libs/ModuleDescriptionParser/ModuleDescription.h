@@ -19,6 +19,8 @@
 
 #include "ModuleParameterGroup.h"
 
+#include "ModuleProcessInformation.h"
+
 #include <string>
 #include <vector>
 
@@ -136,6 +138,10 @@ public:
                                 const std::string& value);
 
   std::string GetParameterDefaultValue(const std::string& name) const;
+
+  const ModuleProcessInformation* GetProcessInformation() const
+    {return &ProcessInformation;}
+  
   
 private:
   std::string Category;
@@ -147,6 +153,8 @@ private:
   std::string Contributor;
   std::string Target;
   std::vector<ModuleParameterGroup> ParameterGroups;  
+
+  ModuleProcessInformation ProcessInformation;
 };
 
 ModuleDescriptionParser_EXPORT std::ostream & operator<<(std::ostream &os, const ModuleDescription &module);

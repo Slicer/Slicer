@@ -32,6 +32,8 @@ ModuleDescription::ModuleDescription(const ModuleDescription &md)
   this->Contributor = md.Contributor;
   this->Target = md.Target;
   this->ParameterGroups = md.ParameterGroups;
+
+  this->ProcessInformation.Initialize();
 }
 
 void
@@ -46,6 +48,7 @@ ModuleDescription::operator=(const ModuleDescription &md)
   this->Contributor = md.Contributor;
   this->Target = md.Target;
   this->ParameterGroups = md.ParameterGroups;
+  this->ProcessInformation = md.ProcessInformation;
 }
 
 std::ostream & operator<<(std::ostream &os, const ModuleDescription &module)
@@ -58,6 +61,9 @@ std::ostream & operator<<(std::ostream &os, const ModuleDescription &module)
   os << "License: " << module.GetLicense() << std::endl;
   os << "Contributor: " << module.GetContributor() << std::endl;
   os << "Target: " << module.GetTarget() << std::endl;
+
+  os << "ProcessInformation: " << *(module.GetProcessInformation());
+  
   os << "ParameterGroups: " << std::endl;
   std::vector<ModuleParameterGroup>::const_iterator it = module.GetParameterGroups().begin();
   while (it != module.GetParameterGroups().end())
