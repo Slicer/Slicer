@@ -18,18 +18,15 @@
 // are assumed to have been constructed with the orientation and voxel 
 // dimensions of the original segmented volume.
 
-#ifndef __vtkMRMLClipModelsNode_h
+#ifndef __vtkMRMLCameraNode_h
 #define __vtkMRMLCameraNode_h
 
 #include <string>
 
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
-#include "vtkMRMLStorageNode.h"
 
-#include "vtkMatrix4x4.h"
-#include "vtkTransform.h"
-#include "vtkImageData.h"
+#include "vtkCamera.h"
 
 class VTK_MRML_EXPORT vtkMRMLCameraNode : public vtkMRMLNode
 {
@@ -62,30 +59,55 @@ public:
   virtual const char* GetNodeTagName() {return "Camera";};
 
   // Description:
-  // camera position Position
-  vtkSetVector3Macro(Position, double);
-  vtkGetVector3Macro(Position, double);
-  
-  // Description:
-  // camera position Focal Point
-  vtkSetVector3Macro(FocalPoint, double);
-  vtkGetVector3Macro(FocalPoint, double);
-  
-  // Description:
-  // camera position ViewUp
-  vtkSetVector3Macro(ViewUp, double);
-  vtkGetVector3Macro(ViewUp, double);
+  // camera Position 
+  void SetPosition(double position[3]) 
+    {
+    this->Camera->SetPosition(position);
+    };
+  double *GetPosition()
+    {
+      return this->Camera->GetPosition();
+    };
 
+  // Description:
+  // camera Focal Point 
+  void SetFocalPoint(double focalPoint[3]) 
+    {
+    this->Camera->SetFocalPoint(focalPoint);
+    };
+  double *GetFocalPoint()
+    {
+      return this->Camera->GetFocalPoint();
+    };
+
+  // Description:
+  // camera position 
+  void SetViewUp(double viewUp[3]) 
+    {
+    this->Camera->SetViewUp(viewUp);
+    };
+  double *GetViewUp()
+    {
+      return this->Camera->GetViewUp();
+    };
+  
+  // Description:
+  // alternative method to propagate events generated in Camera nodes
+  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
+                                   unsigned long /*event*/, 
+                                   void * /*callData*/ );
 protected:
   vtkMRMLCameraNode();
   ~vtkMRMLCameraNode();
   vtkMRMLCameraNode(const vtkMRMLCameraNode&);
   void operator=(const vtkMRMLCameraNode&);
 
-  double Position[3];
-  double FocalPoint[3];
-  double ViewUp[3];
-
+  // Description:
+  // vtkCamera
+  vtkGetObjectMacro(Camera, vtkCamera); 
+  vtkSetObjectMacro(Camera, vtkCamera); 
+  void SetAndObserveCamera(vtkCamera *camera);
+  vtkCamera *Camera;
 };
 
 #endif

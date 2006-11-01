@@ -29,11 +29,13 @@ vtkStandardNewMacro(vtkSlicerViewerInteractorStyle);
 vtkSlicerViewerInteractorStyle::vtkSlicerViewerInteractorStyle() 
 {
   this->MotionFactor   = 10.0;
+  this->CameraNode = NULL;
 }
 
 //----------------------------------------------------------------------------
 vtkSlicerViewerInteractorStyle::~vtkSlicerViewerInteractorStyle() 
 {
+  this->SetCameraNode(NULL);
 }
 
 //----------------------------------------------------------------------------

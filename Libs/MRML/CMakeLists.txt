@@ -88,6 +88,7 @@ TARGET_LINK_LIBRARIES(MRML
   vtkFilteringTCL
   vtkIOTCL
   vtkGraphicsTCL
+  vtkRenderingTCL
   ITKAlgorithms
   ITKNumerics 
   ITKCommon

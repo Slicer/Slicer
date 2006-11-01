@@ -37,7 +37,11 @@
 
 #include "vtkSlicerBaseGUIWin32Header.h"
 
+#include "vtkObject.h"
 #include "vtkInteractorStyle.h"
+
+#include "vtkMRML.h"
+#include "vtkMRMLCameraNode.h"
 
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewerInteractorStyle : public vtkInteractorStyle
 {
@@ -67,10 +71,17 @@ public:
   virtual void Spin();
   virtual void Pan();
   virtual void Dolly();
-  
+
+  // Description:
+  // Get/Set the CamerNode
+  vtkGetObjectMacro ( CameraNode, vtkMRMLCameraNode );
+  vtkSetObjectMacro ( CameraNode, vtkMRMLCameraNode );
+ 
 protected:
   vtkSlicerViewerInteractorStyle();
   ~vtkSlicerViewerInteractorStyle();
+
+  vtkMRMLCameraNode *CameraNode;
 
   double MotionFactor;
 

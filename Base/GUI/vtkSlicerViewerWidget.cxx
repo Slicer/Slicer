@@ -49,6 +49,8 @@ vtkSlicerViewerWidget::vtkSlicerViewerWidget ( )
   this->ViewerFrame = NULL;
   this->ProcessingMRMLEvent = 0;
 
+  this->CameraNode = NULL;
+
   this->ClipModelsNode = NULL;
   this->RedSliceNode = NULL;
   this->GreenSliceNode = NULL;
@@ -363,6 +365,56 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
     }
   this->ProcessingMRMLEvent = 0;
 }
+//---------------------------------------------------------------------------
+void vtkSlicerViewerWidget::UpdateCameraNode()
+{
+  vtkMRMLCameraNode *node = vtkMRMLCameraNode::SafeDownCast (
+          this->MRMLScene->GetNthNodeByClass(0, "vtkMRMLCameraNode"));
+
+  // TODO if there are multiple Cameras in the scene use GetLayoutName
+
+  if ( this->CameraNode != NULL && node != NULL && 
+        strcmp(this->CameraNode->GetID(), node->GetID()) != 0 )
+    {
+    // local CameraNode is out of sync with the scene
+    this->SetCameraNode (NULL);
+    }
+
+  if ( this->CameraNode == NULL )
+    {
+    if ( node == NULL )
+      {
+      node = vtkMRMLCameraNode::New();
+      this->SetCameraNode (node);
+      node->Delete();
+      }
+    else
+      {
+      this->SetCameraNode (node);
+      }
+    }
+
+  if ( this->MRMLScene->GetNodeByID(this->CameraNode->GetID()) == NULL)
+    {
+    // local node not in the scene
+    node = this->CameraNode;
+    node->Register(this);
+    this->SetCameraNode (NULL);
+    this->MRMLScene->AddNodeNoNotify(node);
+    this->SetCameraNode (node);
+    node->UnRegister(this);
+    }
+  vtkRenderWindowInteractor *rwi = this->MainViewer->GetRenderWindowInteractor();
+  if (rwi)
+    {
+    vtkInteractorObserver *iobs = rwi->GetInteractorStyle();
+    vtkSlicerViewerInteractorStyle *istyle = vtkSlicerViewerInteractorStyle::SafeDownCast(iobs);
+    if (istyle)
+      {
+      istyle->SetCameraNode(this->CameraNode);
+      }
+    }
+}
 
 //---------------------------------------------------------------------------
 void vtkSlicerViewerWidget::RemoveWidgetObservers ( ) 
@@ -428,6 +480,8 @@ void vtkSlicerViewerWidget::CreateWidget ( )
 //---------------------------------------------------------------------------
 void vtkSlicerViewerWidget::UpdateFromMRML()
 {
+  this->UpdateCameraNode();
+
   this->UpdateClipSlicesFormMRML();
 
   this->RemoveModelProps ( );

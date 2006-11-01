@@ -30,13 +30,13 @@
 #include "vtkKWFrame.h"
 #include "vtkMRMLClipModelsNode.h"
 #include "vtkMRMLSliceNode.h"
+#include "vtkMRMLCameraNode.h"
 
 class vtkMRMLModelNode;
 class vtkMRMLModelDisplayNode;
 class vtkMRMLFiducialListNode;
 class vtkMRMLFiducialListDisplayNode;
 class vtkMRMLFiducial;
-class vtkMRMLClipModelsNode;
 class vtkPolyData;
 class vtkActor;
 class vtkFollower;
@@ -79,6 +79,13 @@ public:
   vtkSetObjectMacro(MainViewer, vtkKWRenderWidget);
   vtkGetObjectMacro (ViewerFrame, vtkKWFrame );
 
+  // Description:
+  // Get/Set the CamerNode
+  vtkGetObjectMacro(CameraNode, vtkMRMLCameraNode);
+  void SetAndObserveCameraNode (vtkMRMLCameraNode *snode)
+    {
+    vtkSetAndObserveMRMLNodeMacro( this->CameraNode, snode );
+    };
   // Description:
   // return the current model actor corresponding to a give MRML ID
   vtkActor *GetActorByID (const char *id);
@@ -124,6 +131,9 @@ protected:
   // Create the widget.
   virtual void CreateWidget();
   
+  vtkSetObjectMacro(CameraNode, vtkMRMLCameraNode);
+  void UpdateCameraNode();
+
   vtkKWRenderWidget *MainViewer;
   vtkKWFrame *ViewerFrame;
   int RenderPending;
@@ -176,6 +186,8 @@ protected:
   int GreenSliceClipState;
 
   bool ClippingOn;
+
+  vtkMRMLCameraNode *CameraNode;
 
 private:
   

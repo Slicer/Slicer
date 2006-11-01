@@ -52,23 +52,16 @@ vtkMRMLNode* vtkMRMLCameraNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLCameraNode::vtkMRMLCameraNode()
 {
-  this->Position[0] = 0.0;
-  this->Position[1] = 0.0;
-  this->Position[2] = 0.0;
-
-  this->FocalPoint[0] = 0.0;
-  this->FocalPoint[1] = 0.0;
-  this->FocalPoint[2] = 0.0;
-
-  this->ViewUp[0] = 0.0;
-  this->ViewUp[1] = 1.0;
-  this->ViewUp[2] = 0.0;
-
+  this->Camera = NULL;
+  vtkCamera *camera = vtkCamera::New();
+  this->SetAndObserveCamera(camera); 
+  camera->Delete();
  }
 
 //----------------------------------------------------------------------------
 vtkMRMLCameraNode::~vtkMRMLCameraNode()
 {
+  this->SetAndObserveCamera(NULL);
 }
 
 //----------------------------------------------------------------------------
@@ -80,24 +73,20 @@ void vtkMRMLCameraNode::WriteXML(ostream& of, int nIndent)
 
   vtkIndent indent(nIndent);
 
-  if (this->Position)
-    {
-    of << indent << " position=\"" << this->Position[0] << " "
-      << this->Position[1] << " "
-      << this->Position[2] << "\"";
-    }
-  if (this->FocalPoint)
-    {
-    of << indent << " focalPoint=\"" << this->FocalPoint[0] << " "
-      << this->FocalPoint[1] << " "
-      << this->FocalPoint[2] << "\"";
-    }
-  if (this->ViewUp)
-    {
-    of << indent << " viewUp=\"" << this->ViewUp[0] << " "
-      << this->ViewUp[1] << " "
-      << this->ViewUp[2] << "\"";
-    }
+  double *position = this->GetPosition();
+  of << indent << " position=\"" << position[0] << " "
+    << position[1] << " "
+    << position[2] << "\"";
+
+  double *focalPoint = this->GetFocalPoint();
+  of << indent << " focalPoint=\"" << focalPoint[0] << " "
+    << focalPoint[1] << " "
+    << focalPoint[2] << "\"";
+
+  double *viewUp = this->GetViewUp();
+    of << indent << " viewUp=\"" << viewUp[0] << " "
+      << viewUp[1] << " "
+      << viewUp[2] << "\"";
 }
 
 //----------------------------------------------------------------------------
@@ -116,25 +105,31 @@ void vtkMRMLCameraNode::ReadXMLAttributes(const char** atts)
       {
       std::stringstream ss;
       ss << attValue;
+      double Position[3];
       ss >> Position[0];
       ss >> Position[1];
       ss >> Position[2];
+      this->SetPosition(Position);
       }
     else if (!strcmp(attName, "focalPoint")) 
       {
       std::stringstream ss;
       ss << attValue;
+      double FocalPoint[3];
       ss >> FocalPoint[0];
       ss >> FocalPoint[1];
       ss >> FocalPoint[2];
+      this->SetFocalPoint(FocalPoint);
       }
     else if (!strcmp(attName, "viewUp")) 
       {
       std::stringstream ss;
       ss << attValue;
+      double ViewUp[3];
       ss >> ViewUp[0];
       ss >> ViewUp[1];
       ss >> ViewUp[2];
+      this->SetViewUp(ViewUp);
       }
 
     }  
@@ -150,9 +145,9 @@ void vtkMRMLCameraNode::Copy(vtkMRMLNode *anode)
   vtkMRMLCameraNode *node = (vtkMRMLCameraNode *) anode;
 
 
-  this->SetPosition(node->Position);
-  this->SetFocalPoint(node->FocalPoint);
-  this->SetViewUp(node->ViewUp);
+  this->SetPosition(node->GetPosition());
+  this->SetFocalPoint(node->GetFocalPoint());
+  this->SetViewUp(node->GetViewUp());
 }
 
 //----------------------------------------------------------------------------
@@ -165,16 +160,46 @@ void vtkMRMLCameraNode::PrintSelf(ostream& os, vtkIndent indent)
   os << "Position:\n";
   for (idx = 0; idx < 2; ++idx)
     {
-    os << indent << ", " << this->Position[idx];
+    os << indent << ", " << (this->GetPosition())[idx];
     }
   os << "FocalPoint:\n";
   for (idx = 0; idx < 2; ++idx)
     {
-    os << indent << ", " << this->FocalPoint[idx];
+    os << indent << ", " << (this->GetFocalPoint())[idx];
     }
   os << "ViewUp:\n";
   for (idx = 0; idx < 2; ++idx)
     {
-    os << indent << ", " << this->ViewUp[idx];
+    os << indent << ", " << (this->GetViewUp())[idx];
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLCameraNode::SetAndObserveCamera(vtkCamera *camera)
+{
+  if (this->Camera != NULL)
+    {
+    this->Camera->RemoveObservers ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+    this->SetCamera(NULL);
+    }
+  this->SetCamera(camera);
+  if ( this->Camera )
+    {
+    this->Camera->AddObserver ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+    }
+}
+
+
+//---------------------------------------------------------------------------
+void vtkMRMLCameraNode::ProcessMRMLEvents ( vtkObject *caller,
+                                            unsigned long event, 
+                                            void *callData )
+{
+  Superclass::ProcessMRMLEvents ( caller, event, callData );
+
+  if (this->Camera != NULL && this->Camera == vtkCamera::SafeDownCast(caller) &&
+      event ==  vtkCommand::ModifiedEvent)
+    {
+    this->InvokeEvent(vtkCommand::ModifiedEvent, NULL);
     }
 }
