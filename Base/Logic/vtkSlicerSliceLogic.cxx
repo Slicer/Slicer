@@ -553,6 +553,14 @@ void vtkSlicerSliceLogic::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 void vtkSlicerSliceLogic::CreateSliceModel()
 {
+
+  if (this->SliceModelNode != NULL && this->MRMLScene->GetNodeByID( this->GetSliceModelNode()->GetID() ) == NULL )
+    {
+    this->SliceModelNode->SetAndObserveDisplayNodeID(NULL);
+    this->SliceModelNode->Delete();
+    this->SliceModelNode = NULL;
+    }
+
   if ( this->SliceModelNode == NULL) 
   {
     this->SliceModelNode = vtkMRMLModelNode::New();
