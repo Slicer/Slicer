@@ -182,7 +182,7 @@ proc QueryAtlasAddVolumes {} {
   #
   set fileName $::QA(directory)/mri/brain.mgz
 
-  set volumeNode [$volumesLogic AddArchetypeVolume $fileName $centered 0]
+  set volumeNode [$volumesLogic AddArchetypeVolume $fileName $centered 0 brain]
 
   set ::QA(brain,volumeNodeID) [$volumeNode GetID]
 
@@ -212,7 +212,7 @@ proc QueryAtlasAddVolumes {} {
 
   set fileName [file dirname $::QA(directory)]/sirp-hp65-stc-to7-gam.feat/stats/zstat8.nii
 
-  set volumeNode [$volumesLogic AddArchetypeVolume $fileName $centered 0]
+  set volumeNode [$volumesLogic AddArchetypeVolume $fileName $centered 0 zstat8]
   $volumeNode SetAndObserveTransformNodeID [$transformNode GetID]
   set ::QA(functional,volumeNodeID) [$volumeNode GetID]
   set volumeDisplayNode [$volumeNode GetDisplayNode]
@@ -231,7 +231,7 @@ proc QueryAtlasAddVolumes {} {
 
   set fileName $::QA(directory)/mri/aparc+aseg.mgz
 
-  set volumeNode [$volumesLogic AddArchetypeVolume $fileName $centered 1]
+  set volumeNode [$volumesLogic AddArchetypeVolume $fileName $centered 1 aparc+aseg]
   set ::QA(label,volumeNodeID) [$volumeNode GetID]
 
   set volumeDisplayNode [$volumeNode GetDisplayNode]
@@ -836,6 +836,7 @@ proc QueryAtlasMenuCreate { state } {
         $qaMenu insert end command -label "PubMed..." -command "QueryAtlasQuery pubmed"
         $qaMenu insert end command -label "J Neuroscience..." -command "QueryAtlasQuery jneurosci"
         $qaMenu insert end command -label "IBVD..." -command "QueryAtlasQuery ibvd"
+        $qaMenu insert end command -label "MetaSearch..." -command "QueryAtlasQuery metasearch"
 
         $qaMenu insert end separator
         $qaMenu insert end checkbutton -label "Use Search Terms" -variable ::QA(menu,useTerms)
@@ -935,6 +936,10 @@ proc QueryAtlasQuery { site } {
         set url http://www.cma.mgh.harvard.edu/ibvd/how_big.php?structure=$terms
       }
       $::slicer3::Application OpenLink $url
+    }
+    "metasearch" {
+        $::slicer3::Application OpenLink \
+          https://loci.ucsd.edu/qametasearch/query.do?query=$terms
     }
   }
 }
