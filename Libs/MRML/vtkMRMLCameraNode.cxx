@@ -52,6 +52,7 @@ vtkMRMLNode* vtkMRMLCameraNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLCameraNode::vtkMRMLCameraNode()
 {
+  this->Active = 0;
   this->Camera = NULL;
   vtkCamera *camera = vtkCamera::New();
   this->SetAndObserveCamera(camera); 
@@ -87,6 +88,9 @@ void vtkMRMLCameraNode::WriteXML(ostream& of, int nIndent)
     of << indent << " viewUp=\"" << viewUp[0] << " "
       << viewUp[1] << " "
       << viewUp[2] << "\"";
+
+  of << indent << " active=\"" << (this->Active ? "true" : "false") << "\"";
+
 }
 
 //----------------------------------------------------------------------------
@@ -131,7 +135,17 @@ void vtkMRMLCameraNode::ReadXMLAttributes(const char** atts)
       ss >> ViewUp[2];
       this->SetViewUp(ViewUp);
       }
-
+    else if (!strcmp(attName, "active")) 
+      {
+      if (!strcmp(attValue,"true")) 
+        {
+        this->Active = 1;
+        }
+      else
+        {
+        this->Active = 0;
+        }
+      }
     }  
 }
 
@@ -148,6 +162,7 @@ void vtkMRMLCameraNode::Copy(vtkMRMLNode *anode)
   this->SetPosition(node->GetPosition());
   this->SetFocalPoint(node->GetFocalPoint());
   this->SetViewUp(node->GetViewUp());
+  this->SetActive(node->GetActive());
 }
 
 //----------------------------------------------------------------------------
@@ -172,6 +187,8 @@ void vtkMRMLCameraNode::PrintSelf(ostream& os, vtkIndent indent)
     {
     os << indent << ", " << (this->GetViewUp())[idx];
     }
+  os << indent << "Active:        " << this->Active << "\n";
+
 }
 
 //----------------------------------------------------------------------------

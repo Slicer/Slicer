@@ -37,6 +37,7 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLVolumeDisplayNode.h"
 #include "vtkMRMLVolumeHeaderlessStorageNode.h"
 #include "vtkMRMLColorNode.h"
+#include "vtkMRMLCameraNode.h"
 
 //------------------------------------------------------------------------------
 vtkMRMLScene::vtkMRMLScene() 
@@ -115,6 +116,10 @@ vtkMRMLScene::vtkMRMLScene()
   vtkMRMLColorNode *vcn = vtkMRMLColorNode::New();
   this->RegisterNodeClass ( vcn );
   vcn->Delete();
+
+  vtkMRMLCameraNode *camera = vtkMRMLCameraNode::New();
+  this->RegisterNodeClass ( camera );
+  camera->Delete();
 }
 
 //------------------------------------------------------------------------------

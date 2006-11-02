@@ -59,6 +59,12 @@ public:
   virtual const char* GetNodeTagName() {return "Camera";};
 
   // Description:
+  // Indicates if the camera is active
+  vtkBooleanMacro(Active, int);
+  vtkGetMacro(Active, int);
+  vtkSetMacro(Active, int);
+
+  // Description:
   // camera Position 
   void SetPosition(double position[3]) 
     {
@@ -108,6 +114,8 @@ protected:
   vtkSetObjectMacro(Camera, vtkCamera); 
   void SetAndObserveCamera(vtkCamera *camera);
   vtkCamera *Camera;
+
+  int Active;
 };
 
 #endif
