@@ -89,6 +89,10 @@ void vtkMRMLCameraNode::WriteXML(ostream& of, int nIndent)
       << viewUp[1] << " "
       << viewUp[2] << "\"";
 
+  of << indent << " parallelProjection=\"" << (this->GetParallelProjection() ? "true" : "false") << "\"";
+
+  of << indent << " parallelScale=\"" << this->GetParallelScale() << "\"";
+
   of << indent << " active=\"" << (this->Active ? "true" : "false") << "\"";
 
 }
@@ -135,6 +139,26 @@ void vtkMRMLCameraNode::ReadXMLAttributes(const char** atts)
       ss >> ViewUp[2];
       this->SetViewUp(ViewUp);
       }
+    else if (!strcmp(attName, "parallelProjection")) 
+      {
+      if (!strcmp(attValue,"true")) 
+        {
+        this->SetParallelProjection(1);
+        }
+      else
+        {
+        this->SetParallelProjection(0);
+        }
+      }
+    else if (!strcmp(attName, "parallelScale")) 
+      {
+      std::stringstream ss;
+      ss << attValue;
+      double parallelScale;
+      ss >> parallelScale;
+      this->SetParallelScale(parallelScale);
+      }
+
     else if (!strcmp(attName, "active")) 
       {
       if (!strcmp(attValue,"true")) 
@@ -162,6 +186,8 @@ void vtkMRMLCameraNode::Copy(vtkMRMLNode *anode)
   this->SetPosition(node->GetPosition());
   this->SetFocalPoint(node->GetFocalPoint());
   this->SetViewUp(node->GetViewUp());
+  this->SetParallelProjection(node->GetParallelProjection());
+  this->SetParallelScale(node->GetParallelScale());
   this->SetActive(node->GetActive());
 }
 
@@ -220,3 +246,24 @@ void vtkMRMLCameraNode::ProcessMRMLEvents ( vtkObject *caller,
     this->InvokeEvent(vtkCommand::ModifiedEvent, NULL);
     }
 }
+
+//----------------------------------------------------------------------------
+void vtkMRMLCameraNode::MakeOthersInActive()
+{
+  if (this->Scene == NULL)
+    {
+    return;
+    }
+  vtkMRMLCameraNode *node = NULL;
+  int nnodes = this->Scene->GetNumberOfNodesByClass("vtkMRMLCameraNode");
+  for (int n=0; n<nnodes; n++)
+    {
+    node = vtkMRMLCameraNode::SafeDownCast (
+       this->Scene->GetNthNodeByClass(n, "vtkMRMLCameraNode"));
+    if (node != this)
+      {
+      node->SetActive(0);
+      }
+    }
+}
+

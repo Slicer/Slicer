@@ -1,8 +1,24 @@
 <MRML>
+<Selection
+ id="vtkMRMLSelectionNode1" name=""  hideFromEditors="true" activeVolumeID="NULL" activeLabelVolumeID="NULL" ></Selection>
+<Camera
+ id="vtkMRMLCameraNode1" name=""  hideFromEditors="true"  position="1.26247 0.628757 -0.668912" focalPoint="0 0 0" viewUp="-0.566328 0.729902 -0.382773" parallelProjection="false" parallelScale="0" active="true"></Camera>
+<Slice
+ id="vtkMRMLSliceNode1" name=""  hideFromEditors="true" fieldOfView="283.203 261.719 250" dimensions="290 268 1" sliceToRAS="-1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1" layoutName="Red" orientation="Axial" ></Slice>
+<SliceComposite
+ id="vtkMRMLSliceCompositeNode1" name=""  hideFromEditors="true" backgroundVolumeID="" foregroundVolumeID="" labelVolumeID="" labelOpacity="1" layoutName="Red" ></SliceComposite>
+<Slice
+ id="vtkMRMLSliceNode2" name=""  hideFromEditors="true" fieldOfView="250 250 250" dimensions="256 256 1" sliceToRAS="0 0 1 0 -1 0 0 0 0 1 0 0 0 0 0 1" layoutName="Yellow" orientation="Sagittal" ></Slice>
+<SliceComposite
+ id="vtkMRMLSliceCompositeNode2" name=""  hideFromEditors="true" backgroundVolumeID="" foregroundVolumeID="" labelVolumeID="" labelOpacity="1" layoutName="Yellow" ></SliceComposite>
+<Slice
+ id="vtkMRMLSliceNode3" name=""  hideFromEditors="true" fieldOfView="250 250 250" dimensions="256 256 1" sliceToRAS="-1 0 0 0 0 0 1 0 0 1 0 0 0 0 0 1" layoutName="Green" orientation="Coronal" ></Slice>
+<SliceComposite
+ id="vtkMRMLSliceCompositeNode3" name=""  hideFromEditors="true" backgroundVolumeID="" foregroundVolumeID="" labelVolumeID="" labelOpacity="1" layoutName="Green" ></SliceComposite>
 <ModelStorage
-id="vtkMRMLModelStorageNodeXXX" name="" fileName="TestData/cube.vtk" ></ModelStorage>
+ id="vtkMRMLModelStorageNode1" name=""  hideFromEditors="true" fileName="TestData/cube.vtk" ></ModelStorage>
 <ModelDisplay
-id="vtkMRMLModelDisplayNodeXXX" name=""  color="0.5 0.5 0.5" ambient="0" diffuse="1" specular="0" power="1" opacity="1" visibility="true" clipping="false" backfaceCulling="true" scalarVisibility="false" scalarRange="0 100"></ModelDisplay>
+ id="vtkMRMLModelDisplayNode4" name=""  hideFromEditors="true"  color="0.5 0.5 0.5" ambient="0" diffuse="1" specular="0" power="1" opacity="1" visibility="true" clipping="false" backfaceCulling="true" scalarVisibility="false" vectorVisibility="false" tensorVisibility="false" scalarRange="0 100"></ModelDisplay>
 <Model
-id="vtkMRMLModelNode1" name="cube.vtk" storageNodeRef="vtkMRMLModelStorageNodeXXX" displayNodeRef="vtkMRMLModelDisplayNodeXXX" ></Model>
+ id="vtkMRMLModelNode4" name="cube.vtk"  hideFromEditors="false" storageNodeRef="vtkMRMLModelStorageNode1" displayNodeRef="vtkMRMLModelDisplayNode4" ></Model>
 </MRML>

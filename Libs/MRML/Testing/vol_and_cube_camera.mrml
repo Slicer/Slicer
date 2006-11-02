@@ -26,5 +26,7 @@
 <Model
  id="vtkMRMLModelNode1" name="cube.vtk"  hideFromEditors="false" storageNodeRef="vtkMRMLModelStorageNode1" displayNodeRef="vtkMRMLModelDisplayNode4" ></Model>
 <Camera
- id="vtkMRMLCameraNode1" name=""  hideFromEditors="true"  position="0 0 1" focalPoint="0 0 0" viewUp="0 1 0" active="true"></Camera>
+ id="vtkMRMLCameraNode1" name=""  hideFromEditors="true"  position="1.33413 1.60042 2.61819" focalPoint="0 0 0" viewUp="-0.100915 0.870923 -0.480946" parallelProjection="false" parallelScale="0" active="true"></Camera>
+<GADParameters
+ id="vtkMRMLGradientAnisotropicDiffusionFilterNode1" name="GADParameters1"  hideFromEditors="false" Conductance='1' NumberOfIterations='1' TimeStep='0.1' InputVolumeRef='vtkMRMLScalarVolumeNode1' OutputVolumeRef='vtkMRMLScalarVolumeNode1' ></GADParameters>
 </MRML>

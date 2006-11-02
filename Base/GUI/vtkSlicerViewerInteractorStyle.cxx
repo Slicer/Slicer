@@ -235,7 +235,16 @@ void vtkSlicerViewerInteractorStyle::Rotate()
   double rxf = (double)dx * delta_azimuth * this->MotionFactor;
   double ryf = (double)dy * delta_elevation * this->MotionFactor;
   
-  vtkCamera *camera = this->CurrentRenderer->GetActiveCamera();
+  vtkCamera *camera = NULL;
+  if (this->CameraNode)
+    {
+    camera = this->CameraNode->GetCamera();
+    }
+  else
+    {
+    camera = this->CurrentRenderer->GetActiveCamera();
+    }
+
   camera->Azimuth(rxf);
   camera->Elevation(ryf);
   camera->OrthogonalizeViewUp();
@@ -276,7 +285,16 @@ void vtkSlicerViewerInteractorStyle::Spin()
   newAngle *= vtkMath::RadiansToDegrees();
   oldAngle *= vtkMath::RadiansToDegrees();
 
-  vtkCamera *camera = this->CurrentRenderer->GetActiveCamera();
+  vtkCamera *camera = NULL;
+  if (this->CameraNode)
+    {
+    camera = this->CameraNode->GetCamera();
+    }
+  else
+    {
+    camera = this->CurrentRenderer->GetActiveCamera();
+    }
+
   camera->Roll(newAngle - oldAngle);
   camera->OrthogonalizeViewUp();
       
@@ -297,8 +315,16 @@ void vtkSlicerViewerInteractorStyle::Pan()
   double newPickPoint[4], oldPickPoint[4], motionVector[3];
   
   // Calculate the focal depth since we'll be using it a lot
+  vtkCamera *camera = NULL;
+  if (this->CameraNode)
+    {
+    camera = this->CameraNode->GetCamera();
+    }
+  else
+    {
+    camera = this->CurrentRenderer->GetActiveCamera();
+    }
 
-  vtkCamera *camera = this->CurrentRenderer->GetActiveCamera();
   camera->GetFocalPoint(viewFocus);
   this->ComputeWorldToDisplay(viewFocus[0], viewFocus[1], viewFocus[2], 
                               viewFocus);
@@ -365,7 +391,16 @@ void vtkSlicerViewerInteractorStyle::Dolly(double factor)
     return;
     }
   
-  vtkCamera *camera = this->CurrentRenderer->GetActiveCamera();
+  vtkCamera *camera = NULL;
+  if (this->CameraNode)
+    {
+    camera = this->CameraNode->GetCamera();
+    }
+  else
+    {
+    camera = this->CurrentRenderer->GetActiveCamera();
+    }
+
   if (camera->GetParallelProjection())
     {
     camera->SetParallelScale(camera->GetParallelScale() / factor);

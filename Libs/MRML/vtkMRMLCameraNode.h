@@ -60,9 +60,50 @@ public:
 
   // Description:
   // Indicates if the camera is active
-  vtkBooleanMacro(Active, int);
   vtkGetMacro(Active, int);
-  vtkSetMacro(Active, int);
+
+  // Description:
+  // Make this camera node active/inactive 
+  // NOTE it makes sure that only one node is active in the scene
+  void SetActive(int active) 
+  {
+    if (active == this->Active)
+      {
+      return;
+      }
+    if (active == 1) 
+      {
+      this->MakeOthersInActive();
+      }
+    this->Active = active;
+    this->Modified();
+  };
+
+  // Description:
+  // vtkCamera
+  vtkGetObjectMacro(Camera, vtkCamera); 
+
+  // Description:
+  // camera ParallelProjection flag 
+  void SetParallelProjection(int parallelProjection) 
+    {
+    this->Camera->SetParallelProjection(parallelProjection);
+    };
+  int GetParallelProjection()
+    {
+      return this->Camera->GetParallelProjection();
+    };
+
+  // Description:
+  // camera Parallel Scale 
+  void SetParallelScale(int scale) 
+    {
+    this->Camera->SetParallelScale(scale);
+    };
+  int GetParallelScale()
+    {
+      return this->Camera->GetParallelScale();
+    };
 
   // Description:
   // camera Position 
@@ -108,13 +149,12 @@ protected:
   vtkMRMLCameraNode(const vtkMRMLCameraNode&);
   void operator=(const vtkMRMLCameraNode&);
 
-  // Description:
-  // vtkCamera
-  vtkGetObjectMacro(Camera, vtkCamera); 
+
   vtkSetObjectMacro(Camera, vtkCamera); 
   void SetAndObserveCamera(vtkCamera *camera);
   vtkCamera *Camera;
 
+  void MakeOthersInActive();
   int Active;
 };
 
