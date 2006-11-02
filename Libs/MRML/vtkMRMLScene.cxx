@@ -744,24 +744,21 @@ int vtkMRMLScene::GetUniqueIDIndexByClass(const char* className)
 //------------------------------------------------------------------------------
 int vtkMRMLScene::GetUniqueIDIndexByClassFromIndex(const char* className, int hint)
 {
-  this->InitTraversal();
-  
+  // keep looping until you find an id that isn't yet in the scene
+  // TODO: this could be speeded up if it becomes a bottleneck
+  int index;
   std::string candidateName;
-  int index = hint;
-  vtkMRMLNode * node = this->GetNextNodeByClass(className);
-  while (node != NULL)
-    {    
-    candidateName = node->ConstructID(className, index);
-    if (strcmp(node->GetID(), candidateName.c_str()) == 0)
+  for (index = hint; ; index++)
+    {
+    std::stringstream ss;
+    ss << className;
+    ss << index;
+    ss >> candidateName;
+    if ( this->GetNodeByID( candidateName.c_str() ) == NULL )
       {
-      // a node has this id already
-      index++;
-      // start over
-      this->InitTraversal();
+      break;
       }
-    node = this->GetNextNodeByClass(className);
     }
-  vtkDebugMacro("GetUniqueIDIndexByClassFromIndex: returning index " << index);
   return index;
 }
 
