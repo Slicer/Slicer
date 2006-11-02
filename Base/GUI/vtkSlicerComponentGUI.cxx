@@ -2,7 +2,6 @@
 #include "vtkCallbackCommand.h"
 
 #include "vtkSlicerComponentGUI.h"
-#include "vtkSlicerApplicationGUI.h"
 #include "vtkSlicerApplicationLogic.h"
 #include "vtkMRMLScene.h"
 

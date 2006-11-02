@@ -562,7 +562,7 @@ void vtkSlicerViewerWidget::UpdateModelsFromMRML()
     }
 
   // render slices first
-  for (int i=0; i<slices.size(); i++)
+  for (unsigned int i=0; i<slices.size(); i++)
     {
     vtkMRMLModelNode *model = slices[i];
     // add nodes that are not in the list yet

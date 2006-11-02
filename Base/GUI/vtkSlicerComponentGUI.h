@@ -81,7 +81,7 @@ public:
   static vtkSlicerComponentGUI* New ( );
   vtkTypeRevisionMacro ( vtkSlicerComponentGUI, vtkKWObject );
   void PrintSelf ( ostream& os, vtkIndent indent );
-  
+
   // Description:
   // Get Macro for ApplicationLogic: GUI class's interface to logic
   // To Set ApplicationLogic, use SetLogic method.

@@ -346,6 +346,7 @@ int Slicer3_main(int argc, char *argv[])
     volumesLogic->SetAndObserveMRMLScene ( scene );
     vtkSlicerVolumesGUI *volumesGUI = vtkSlicerVolumesGUI::New ( );
     volumesGUI->SetApplication ( slicerApp );
+    volumesGUI->SetApplicationGUI ( appGUI );
     volumesGUI->SetAndObserveApplicationLogic ( appLogic );
     volumesGUI->SetAndObserveMRMLScene ( scene );
     volumesGUI->SetModuleLogic ( volumesLogic );
@@ -365,6 +366,7 @@ int Slicer3_main(int argc, char *argv[])
     modelsLogic->SetAndObserveMRMLScene ( scene );
     vtkSlicerModelsGUI *modelsGUI = vtkSlicerModelsGUI::New ( );
     modelsGUI->SetApplication ( slicerApp );
+    modelsGUI->SetApplicationGUI ( appGUI );
     modelsGUI->SetAndObserveApplicationLogic ( appLogic );
     modelsGUI->SetAndObserveMRMLScene ( scene );
     modelsGUI->SetModuleLogic ( modelsLogic );
@@ -383,6 +385,7 @@ int Slicer3_main(int argc, char *argv[])
     fiducialsLogic->SetAndObserveMRMLScene ( scene );
     vtkSlicerFiducialsGUI *fiducialsGUI = vtkSlicerFiducialsGUI::New ( );
     fiducialsGUI->SetApplication ( slicerApp );
+    fiducialsGUI->SetApplicationGUI ( appGUI );
     fiducialsGUI->SetAndObserveApplicationLogic ( appLogic );
     fiducialsGUI->SetAndObserveMRMLScene ( scene );
     fiducialsGUI->SetModuleLogic ( fiducialsLogic );
@@ -408,6 +411,7 @@ int Slicer3_main(int argc, char *argv[])
      colorLogic->AddDefaultColorNodes();
     vtkSlicerColorGUI *colorGUI = vtkSlicerColorGUI::New ( );
     colorGUI->SetApplication ( slicerApp );
+    colorGUI->SetApplicationGUI ( appGUI );
     colorGUI->SetAndObserveApplicationLogic ( appLogic );
     colorGUI->SetAndObserveMRMLScene ( scene );
     colorGUI->SetModuleLogic ( colorLogic );
@@ -423,6 +427,7 @@ int Slicer3_main(int argc, char *argv[])
     // --- Transforms module
     vtkSlicerTransformsGUI *transformsGUI = vtkSlicerTransformsGUI::New ( );
     transformsGUI->SetApplication ( slicerApp );
+    transformsGUI->SetApplicationGUI ( appGUI );
     transformsGUI->SetAndObserveApplicationLogic ( appLogic );
     transformsGUI->SetAndObserveMRMLScene ( scene );
     transformsGUI->SetGUIName( "Transforms" );
@@ -439,6 +444,7 @@ int Slicer3_main(int argc, char *argv[])
     //dataLogic->SetApplicationLogic ( appLogic );
     vtkSlicerDataGUI *dataGUI = vtkSlicerDataGUI::New ( );
     dataGUI->SetApplication ( slicerApp );
+    dataGUI->SetApplicationGUI ( appGUI );
     dataGUI->SetAndObserveApplicationLogic ( appLogic );
     dataGUI->SetAndObserveMRMLScene ( scene );
     //dataGUI->SetModuleLogic ( dataLogic );
@@ -485,6 +491,7 @@ int Slicer3_main(int argc, char *argv[])
 #ifndef SLICES_DEBUG
     vtkSlicerSlicesGUI *slicesGUI = vtkSlicerSlicesGUI::New ();
     slicesGUI->SetApplication ( slicerApp );
+    slicesGUI->SetApplicationGUI ( appGUI );
     slicesGUI->SetAndObserveApplicationLogic ( appLogic );
     slicesGUI->SetAndObserveMRMLScene ( scene );
     slicesGUI->SetGUIName( "Slices" );
@@ -506,6 +513,7 @@ int Slicer3_main(int argc, char *argv[])
     gradientAnisotropicDiffusionFilterGUI->SetLogic ( gradientAnisotropicDiffusionFilterLogic );
     gradientAnisotropicDiffusionFilterGUI->SetApplication ( slicerApp );
     gradientAnisotropicDiffusionFilterGUI->SetApplicationLogic ( appLogic );
+    gradientAnisotropicDiffusionFilterGUI->SetApplicationGUI ( appGUI );
     gradientAnisotropicDiffusionFilterGUI->SetGUIName( "GradientAnisotropicDiffusionFilter" );
     gradientAnisotropicDiffusionFilterGUI->GetUIPanel()->SetName ( gradientAnisotropicDiffusionFilterGUI->GetGUIName ( ) );
     gradientAnisotropicDiffusionFilterGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
@@ -524,6 +532,7 @@ int Slicer3_main(int argc, char *argv[])
     queryAtlasLogic->SetMRMLScene(scene);
     queryAtlasGUI->SetApplication ( slicerApp );
     queryAtlasGUI->SetApplicationLogic ( appLogic );
+    queryAtlasGUI->SetApplicationGUI ( appGUI );
     queryAtlasGUI->SetGUIName( "QueryAtlas" );
     queryAtlasGUI->GetUIPanel()->SetName ( queryAtlasGUI->GetGUIName ( ) );
     queryAtlasGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
@@ -607,6 +616,7 @@ int Slicer3_main(int argc, char *argv[])
       commandLineModuleGUI->SetLogic ( commandLineModuleLogic );
       commandLineModuleGUI->SetApplication ( slicerApp );
       commandLineModuleGUI->SetApplicationLogic ( appLogic );
+      commandLineModuleGUI->SetApplicationGUI ( appGUI );
       commandLineModuleGUI->SetGUIName( moduleFactory.GetModuleDescription(*mit).GetTitle().c_str() );
       commandLineModuleGUI->GetUIPanel()->SetName ( commandLineModuleGUI->GetGUIName ( ) );
       commandLineModuleGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
@@ -715,6 +725,7 @@ int Slicer3_main(int argc, char *argv[])
     tclCommand += "  set gui $::SLICER_PACKAGES($package,gui);";
     tclCommand += "  $gui SetModuleName $package;";
     tclCommand += "  $gui SetLogic $logic;";
+    tclCommand += "  $gui SetApplicationGUI $::slicer3::ApplicationGUI;";
     tclCommand += "  $gui SetApplication $::slicer3::Application;";
     tclCommand += "  $gui SetGUIName $package;";
     tclCommand += "  [$gui GetUIPanel] SetName $package;";
