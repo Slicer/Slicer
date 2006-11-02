@@ -765,8 +765,9 @@ if { ![file exists $::SANDBOX_TEST_FILE] && ![file exists $::ALT_SANDBOX_TEST_FI
             cd $SLICER_LIB/NAMICSandBox-build/SpectralClustering
             runcmd $::MAKE SpectralClustering.SLN /build  $::VTK_BUILD_TYPE
             # this one is independent
-            cd $SLICER_LIB/NAMICSandBox-build/Distributions
-            runcmd $::MAKE Distributions.SLN /build  $::VTK_BUILD_TYPE
+            # TODO Distributions broken with ITK 3.0 f2c
+            #cd $SLICER_LIB/NAMICSandBox-build/Distributions
+            #runcmd $::MAKE Distributions.SLN /build  $::VTK_BUILD_TYPE
             # this one is independent
             cd $SLICER_LIB/NAMICSandBox-build/MGHImageIOConverter
             runcmd $::MAKE MGHImageIOConverter.SLN /build $::VTK_BUILD_TYPE
@@ -783,8 +784,9 @@ if { ![file exists $::SANDBOX_TEST_FILE] && ![file exists $::ALT_SANDBOX_TEST_FI
         # will become part of ITK and this will no longer be needed.
         cd $SLICER_LIB/NAMICSandBox-build/SlicerTractClusteringImplementation   
         eval runcmd $::MAKE 
-        cd $SLICER_LIB/NAMICSandBox-build/Distributions
-        eval runcmd $::MAKE
+        # TODO Distributions broken with ITK 3.0 f2c
+        #cd $SLICER_LIB/NAMICSandBox-build/Distributions
+        #eval runcmd $::MAKE
         cd $SLICER_LIB/NAMICSandBox-build/MGHImageIOConverter
         eval runcmd $::MAKE
         cd $SLICER_LIB/NAMICSandBox-build
