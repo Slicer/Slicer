@@ -401,7 +401,6 @@ void vtkSlicerViewerWidget::UpdateCameraNode()
       node = vtkMRMLCameraNode::New();
       node->SetActive(1);
       this->MRMLScene->AddNode(node);
-      node->SetName(node->GetID());
       node->Delete();
       }
     this->SetAndObserveCameraNode (node);
@@ -415,7 +414,6 @@ void vtkSlicerViewerWidget::UpdateCameraNode()
     node = vtkMRMLCameraNode::New();
     node->SetActive(1);
     this->MRMLScene->AddNode(node);
-    node->SetName(node->GetID());
     node->Delete();
 
     this->SetAndObserveCameraNode (node);

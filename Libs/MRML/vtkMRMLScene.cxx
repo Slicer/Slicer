@@ -484,7 +484,10 @@ void vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
     }
 
   n->SetSceneRootDir(this->RootDirectory.c_str());
-
+  if (n->GetName() == NULL|| n->GetName()[0] == '\0')
+    {
+    n->SetName(n->GetID());
+    }
   this->CurrentScene->vtkCollection::AddItem((vtkObject *)n);
   n->SetScene( this );
 }

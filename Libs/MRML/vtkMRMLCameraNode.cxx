@@ -52,6 +52,8 @@ vtkMRMLNode* vtkMRMLCameraNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLCameraNode::vtkMRMLCameraNode()
 {
+  this->HideFromEditors = 0;
+
   this->Active = 0;
   this->Camera = NULL;
   vtkCamera *camera = vtkCamera::New();
