@@ -2,7 +2,7 @@
 <Selection
  id="vtkMRMLSelectionNode1" name=""  hideFromEditors="true" activeVolumeID="NULL" activeLabelVolumeID="NULL" ></Selection>
 <Camera
- id="vtkMRMLCameraNode1" name=""  hideFromEditors="true"  position="1.26247 0.628757 -0.668912" focalPoint="0 0 0" viewUp="-0.566328 0.729902 -0.382773" parallelProjection="false" parallelScale="0" active="true"></Camera>
+ id="vtkMRMLCameraNode1" name="Camera1"  hideFromEditors="true"  position="1.26247 0.628757 -0.668912" focalPoint="0 0 0" viewUp="-0.566328 0.729902 -0.382773" parallelProjection="false" parallelScale="0" active="true"></Camera>
 <Slice
  id="vtkMRMLSliceNode1" name=""  hideFromEditors="true" fieldOfView="283.203 261.719 250" dimensions="290 268 1" sliceToRAS="-1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1" layoutName="Red" orientation="Axial" ></Slice>
 <SliceComposite

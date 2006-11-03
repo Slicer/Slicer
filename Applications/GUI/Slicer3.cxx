@@ -26,6 +26,7 @@
 #include "vtkSlicerColorGUI.h"
 #include "vtkSlicerDataGUI.h"
 #include "vtkSlicerTransformsGUI.h"
+#include "vtkSlicerCamerasGUI.h"
 #include "vtkSlicerTheme.h"
 #include "vtkSlicerWindow.h"
 #include "vtkSlicerApplicationSettingsInterface.h"
@@ -456,8 +457,21 @@ int Slicer3_main(int argc, char *argv[])
     dataGUI->BuildGUI ( );
     dataGUI->AddGUIObservers ( );
     dataGUI->AddObserver (vtkSlicerModuleGUI::ModuleSelectedEvent, (vtkCommand *)appGUI->GetGUICallbackCommand() );
-      
-
+  
+    // --- Camera module
+    vtkSlicerCamerasGUI *cameraGUI = vtkSlicerCamerasGUI::New ( );
+    cameraGUI->SetApplication ( slicerApp );
+    cameraGUI->SetApplicationGUI ( appGUI );
+    cameraGUI->SetAndObserveApplicationLogic ( appLogic );
+    cameraGUI->SetAndObserveMRMLScene ( scene );
+    cameraGUI->SetGUIName( "Cameras" );
+    cameraGUI->GetUIPanel()->SetName ( cameraGUI->GetGUIName ( ) );
+    cameraGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
+    cameraGUI->GetUIPanel()->Create ( );
+    slicerApp->AddModuleGUI ( cameraGUI );
+    cameraGUI->BuildGUI ( );
+    cameraGUI->AddGUIObservers ( );
+    cameraGUI->UpdateCameraSelector();
 
     // --- Slices module
     // - set up each of the slice logics (these initialize their
@@ -842,6 +856,7 @@ int Slicer3_main(int argc, char *argv[])
     fiducialsGUI->RemoveGUIObservers ( );
     colorGUI->RemoveGUIObservers ( );
     transformsGUI->RemoveGUIObservers ( );
+    cameraGUI->RemoveGUIObservers ( );
     dataGUI->RemoveGUIObservers ( );
 #ifndef SLICES_DEBUG
     slicesGUI->RemoveGUIObservers ( );
@@ -913,6 +928,7 @@ int Slicer3_main(int argc, char *argv[])
     fiducialsGUI->Delete ();
     colorGUI->Delete();
     transformsGUI->Delete ();
+    cameraGUI->Delete ();
     dataGUI->Delete ();
 #ifndef SLICES_DEBUG
     slicesGUI->Delete ();
