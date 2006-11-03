@@ -346,14 +346,6 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
       }
     else if (node != NULL && node->IsA("vtkMRMLCameraNode") )
       {
-      if (event == vtkMRMLScene::NodeAddedEvent )
-        {
-          vtkMRMLCameraNode *camera = vtkMRMLCameraNode::SafeDownCast(node);
-          if (camera->GetActive() && camera != this->CameraNode) 
-            {
-            this->CameraNode->SetActive(0);
-            }
-        }
       this->UpdateFromMRML();
       }
     }
@@ -380,8 +372,8 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
 //---------------------------------------------------------------------------
 void vtkSlicerViewerWidget::UpdateCameraNode()
 {
-  // find active camera
-  vtkMRMLCameraNode *activeCameraNode= NULL;
+  // find an active camera
+  // or any camera if none is active
   vtkMRMLCameraNode *node = NULL;
   int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLCameraNode");
   for (int n=0; n<nnodes; n++)
@@ -390,18 +382,9 @@ void vtkSlicerViewerWidget::UpdateCameraNode()
        this->MRMLScene->GetNthNodeByClass(n, "vtkMRMLCameraNode"));
     if (node->GetActive())
       {
-      activeCameraNode = node;
       break;
       }
     }
-
-  // if none is active make one active
-  if (activeCameraNode == NULL && node != NULL)
-    {
-    node->SetActive(1);
-    activeCameraNode = node;
-    }
-  // TODO if there are multiple Cameras in the scene use GetLayoutName
 
   if ( this->CameraNode != NULL && node != NULL && this->CameraNode != node)
     {
@@ -417,16 +400,12 @@ void vtkSlicerViewerWidget::UpdateCameraNode()
       // create an active camera
       node = vtkMRMLCameraNode::New();
       node->SetActive(1);
-      this->SetCameraNode (node);
+      this->MRMLScene->AddNodeNoNotify(node);
       node->Delete();
       }
-    else
-      {
-      this->SetCameraNode (node);
-      }
+    this->SetAndObserveCameraNode (node);
     }
-
-  if ( this->MRMLScene->GetNodeByID(this->CameraNode->GetID()) == NULL)
+  else if ( this->MRMLScene->GetNodeByID(this->CameraNode->GetID()) == NULL)
     {
     // local node not in the scene
     // delete it and create new one
@@ -434,11 +413,12 @@ void vtkSlicerViewerWidget::UpdateCameraNode()
 
     node = vtkMRMLCameraNode::New();
     node->SetActive(1);
-    this->SetCameraNode (node);
+    this->MRMLScene->AddNodeNoNotify(node);
     node->Delete();
 
-    this->MRMLScene->AddNodeNoNotify(node);
+    this->SetAndObserveCameraNode (node);
     }
+
   vtkRenderWindowInteractor *rwi = this->MainViewer->GetRenderWindowInteractor();
   if (rwi)
     {
