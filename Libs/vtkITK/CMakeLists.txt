@@ -37,8 +37,8 @@ SET(vtkITK_SRCS
 INCLUDE_DIRECTORIES(
   ${vtkITK_SOURCE_DIR}
   ${vtkITK_BINARY_DIR}
-  ${ITK_INCLUDE_DIR}
-  ${VTK_INCLUDE_DIR}
+  ${ITK_INCLUDE_DIRS}
+  ${VTK_INCLUDE_DIRS}
   )
 
 # --------------------------------------------------------------------------
