@@ -28,12 +28,13 @@ proc Usage { {msg ""} } {
     set msg "$msg\n  \[options\] is one of the following:"
     set msg "$msg\n   h --help : prints this message and exits"
     set msg "$msg\n   -f --clean : delete lib and build directories first"
-    set msg "$msg\n   -t --test-type : CTest test target"
+    set msg "$msg\n   -t --test-type : CTest test target (default: Experimental)"
     set msg "$msg\n   --release : compile with optimization flags"
     set msg "$msg\n   -u --update : does a cvs/svn update on each lib"
     set msg "$msg\n   --version-patch : set the patch string for the build (used by installer)"
-    set msg "$msg\n                   : default version-patch is the current date"
+    set msg "$msg\n                   : default: version-patch is the current date"
     set msg "$msg\n   --tag : same as version-patch"
+    set msg "$msg\n   --pack : run cpack after building (default: off)"
     puts stderr $msg
 }
 
@@ -42,6 +43,7 @@ set ::GETBUILDTEST(update) ""
 set ::GETBUILDTEST(release) ""
 set ::GETBUILDTEST(test-type) "Experimental"
 set ::GETBUILDTEST(version-patch) ""
+set ::GETBUILDTEST(pack) "false"
 set strippedargs ""
 set argc [llength $argv]
 for {set i 0} {$i < $argc} {incr i} {
@@ -60,21 +62,24 @@ for {set i 0} {$i < $argc} {incr i} {
         }
              "-t" -
         "--test-type" {
-                incr i
-                if { $i == $argc } {
-                    Usage "Missing test-type argument"
-                } else {
-                    set ::GETBUILDTEST(test-type) [lindex $argv $i]
-                }
+            incr i
+            if { $i == $argc } {
+                Usage "Missing test-type argument"
+            } else {
+                set ::GETBUILDTEST(test-type) [lindex $argv $i]
+            }
         }
         "--tag" -
         "--version-patch" {
-                incr i
-                if { $i == $argc } {
-                    Usage "Missing version-patch argument"
-                } else {
-                    set ::GETBUILDTEST(version-patch) [lindex $argv $i]
-                }
+            incr i
+            if { $i == $argc } {
+                Usage "Missing version-patch argument"
+            } else {
+                set ::GETBUILDTEST(version-patch) [lindex $argv $i]
+            }
+        }
+        "--pack" {
+                set ::GETBUILDTEST(pack) "true"
         }
         "--help" -
         "-h" {
@@ -222,7 +227,7 @@ runcmd svn checkout http://www.na-mic.org:8000/svn/Slicer3/trunk Slicer3
 
 # build the lib with options
 cd $::SLICER_HOME
-set cmd "sh $::SLICER_HOME/Scripts/genlib.tcl $SLICER_LIB"
+set cmd "sh ./Scripts/genlib.tcl $SLICER_LIB"
 if { $::GETBUILDTEST(release) != "" } {
    append cmd " $::GETBUILDTEST(release)"
 } 
@@ -249,23 +254,34 @@ runcmd $::CMAKE \
 if { $isWindows } {
     if { $MSVC6 } {
         eval runcmd $::MAKE Slicer3.dsw /MAKE $::GETBUILDTEST(test-type)
-        eval runcmd $::MAKE Slicer3.dsw /MAKE package
+        if { $::GETBUILDTEST(pack) == "true" } {
+          eval runcmd $::MAKE Slicer3.dsw /MAKE package
+        }
     } else {
         # tell cmake explicitly what command line to run when doing the ctest builds
         set makeCmd "$::MAKE Slicer3.sln /build $::VTK_BUILD_TYPE /project ALL_BUILD"
         runcmd $::CMAKE -DMAKECOMMAND:STRING=$makeCmd $SLICER_HOME
 
-        # running ctest through visual studio is broken in cmake2.4, so run ctest directly
-        # runcmd $::MAKE Slicer3.SLN /build $::VTK_BUILD_TYPE /project $::GETBUILDTEST(test-type)
-        runcmd $::CMAKE_PATH/bin/ctest -D $::GETBUILDTEST(test-type) -C $::VTK_BUILD_TYPE
+        if { $::GETBUILDTEST(test-type) == "" } {
+          runcmd $::MAKE Slicer3.SLN /build $::VTK_BUILD_TYPE
+        } else {
+          # running ctest through visual studio is broken in cmake2.4, so run ctest directly
+          runcmd $::CMAKE_PATH/bin/ctest -D $::GETBUILDTEST(test-type) -C $::VTK_BUILD_TYPE
+        }
 
-        runcmd $::MAKE Slicer3.SLN /build $::VTK_BUILD_TYPE /project PACKAGE
+        if { $::GETBUILDTEST(pack) == "true" } {
+          runcmd $::MAKE Slicer3.SLN /build $::VTK_BUILD_TYPE /project PACKAGE
+        }
     }
 } else {
     set buildReturn [catch "eval runcmd $::MAKE $::GETBUILDTEST(test-type)"]
-    set packageReturn [catch "eval runcmd $::MAKE package"]
+    if { $::GETBUILDTEST(pack) == "true" } {
+      set packageReturn [catch "eval runcmd $::MAKE package"]
+    }
 
     puts "\nResults: "
     puts "build of \"$::GETBUILDTEST(test-type)\" [if $buildReturn "concat failed" "concat succeeded"]"
-    puts "package [if $packageReturn "concat failed" "concat succeeded"]"
+    if { $::GETBUILDTEST(pack) == "true" } {
+      puts "package [if $packageReturn "concat failed" "concat succeeded"]"
+    }
 }
