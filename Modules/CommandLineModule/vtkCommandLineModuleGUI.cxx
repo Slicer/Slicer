@@ -761,7 +761,7 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
           tparameter->SetLabelText((*pit).GetLabel().c_str());
           tparameter->GetWidget()->SetValue(atof((*pit).GetDefault().c_str()));
           tparameter->GetWidget()->SetIncrement(1);
-          tparameter->GetWidget()->RestrictValuesToIntegersOn();
+          tparameter->GetWidget()->SetRestrictValueToInteger();
           tparameter->GetWidget()
             ->SetRange(itk::NumericTraits<int>::NonpositiveMin(),
                        itk::NumericTraits<int>::max());
