@@ -60,12 +60,13 @@ void vtkObserverManager::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 void vtkObserverManager::SetObject(vtkObject **nodePtr, vtkObject *node)
 {
-  this->RemoveObjectEvents(*nodePtr);
-
-  if (*nodePtr)
+  if (*nodePtr == node)
     {
-    (*nodePtr)->Delete();
+    return;
     }
+  vtkObject *nodePtrOld = *nodePtr;
+
+  this->RemoveObjectEvents(*nodePtr);
 
   *nodePtr  = node ;
 
@@ -73,17 +74,24 @@ void vtkObserverManager::SetObject(vtkObject **nodePtr, vtkObject *node)
     {
     (*nodePtr)->Register(this);
     }
+
+  if (nodePtrOld)
+    {
+    (nodePtrOld)->Delete();
+    }
+
 }
 
 //----------------------------------------------------------------------------
 void vtkObserverManager::SetAndObserveObject(vtkObject **nodePtr, vtkObject *node)
 {
-  this->RemoveObjectEvents(*nodePtr);
-
-  if (*nodePtr)
+  if (*nodePtr == node)
     {
-    (*nodePtr)->Delete();
+    return;
     }
+  vtkObject *nodePtrOld = *nodePtr;
+
+  this->RemoveObjectEvents(*nodePtr);
 
   *nodePtr  = node ;
 
@@ -95,27 +103,36 @@ void vtkObserverManager::SetAndObserveObject(vtkObject **nodePtr, vtkObject *nod
     events->InsertNextValue(vtkCommand::ModifiedEvent);
     this->AddObjectEvents(*nodePtr, events);
     events->Delete();   
-  }
-
+    }
+  if (nodePtrOld)
+    {
+    (nodePtrOld)->Delete();
+    }
 
 }
 
 //----------------------------------------------------------------------------
 void vtkObserverManager::SetAndObserveObjectEvents(vtkObject **nodePtr, vtkObject *node, vtkIntArray *events)
 {
-   this->RemoveObjectEvents(*nodePtr);
-
-   if (*nodePtr)
-     {
-     (*nodePtr)->Delete();
-     }
-   
+  if (*nodePtr == node && node == NULL)
+    {
+    return;
+    }
+  
+  this->RemoveObjectEvents(*nodePtr);
+  
+  vtkObject *nodePtrOld = *nodePtr;
+  
   *nodePtr  = node ;
-
+  
   if ( *nodePtr  )
     {
     (*nodePtr)->Register(this);
     this->AddObjectEvents(*nodePtr, events);
+    }
+  if (nodePtrOld)
+    {
+    (nodePtrOld)->Delete();
     }
 }
 

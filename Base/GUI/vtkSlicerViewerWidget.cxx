@@ -67,6 +67,13 @@ vtkSlicerViewerWidget::vtkSlicerViewerWidget ( )
 vtkSlicerViewerWidget::~vtkSlicerViewerWidget ( )
 {
   this->RemoveMRMLObservers();
+
+  vtkSetMRMLNodeMacro(this->ClipModelsNode, NULL);
+  vtkSetMRMLNodeMacro(this->CameraNode, NULL);
+
+  vtkSetMRMLNodeMacro(this->RedSliceNode, NULL);
+  vtkSetMRMLNodeMacro(this->GreenSliceNode, NULL);
+  vtkSetMRMLNodeMacro(this->YellowSliceNode, NULL);
   
   if (this->MainViewer)
     {
@@ -80,11 +87,6 @@ vtkSlicerViewerWidget::~vtkSlicerViewerWidget ( )
     this->ViewerFrame = NULL;
     }
 
-  vtkSetMRMLNodeMacro(this->ClipModelsNode, NULL);
-
-  vtkSetMRMLNodeMacro(this->RedSliceNode, NULL);
-  vtkSetMRMLNodeMacro(this->GreenSliceNode, NULL);
-  vtkSetMRMLNodeMacro(this->YellowSliceNode, NULL);
 
   this->SlicePlanes->Delete();
   this->RedSlicePlane->Delete();
@@ -391,7 +393,11 @@ void vtkSlicerViewerWidget::UpdateCameraNode()
     // local CameraNode is out of sync with the scene
     this->SetCameraNode (NULL);
     }
-
+  if ( this->CameraNode != NULL && this->MRMLScene->GetNodeByID(this->CameraNode->GetID()) == NULL)
+    {
+    // local node not in the scene
+    this->SetCameraNode (NULL);
+    }
   if ( this->CameraNode == NULL )
     {
     if ( node == NULL )
@@ -405,20 +411,7 @@ void vtkSlicerViewerWidget::UpdateCameraNode()
       }
     this->SetAndObserveCameraNode (node);
     }
-  else if ( this->MRMLScene->GetNodeByID(this->CameraNode->GetID()) == NULL)
-    {
-    // local node not in the scene
-    // delete it and create new one
-    this->SetCameraNode (NULL);
-
-    node = vtkMRMLCameraNode::New();
-    node->SetActive(1);
-    this->MRMLScene->AddNode(node);
-    node->Delete();
-
-    this->SetAndObserveCameraNode (node);
-    }
-
+ 
   vtkRenderWindowInteractor *rwi = this->MainViewer->GetRenderWindowInteractor();
   if (rwi)
     {
