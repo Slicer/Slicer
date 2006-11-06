@@ -59,6 +59,7 @@ vtkMRMLSliceNode::vtkMRMLSliceNode()
   this->SliceToRAS->Identity();
 
   this->OrientationString = NULL;
+  this->LayoutName = NULL;
 
     // calculated by UpdateMatrices()
   this->XYToSlice = vtkMatrix4x4::New();
@@ -67,13 +68,16 @@ vtkMRMLSliceNode::vtkMRMLSliceNode()
   // set the default field of view to a convenient size for looking 
   // at slices through human heads (a 1 pixel thick slab 25x25 cm)
   // TODO: how best to represent this as a slab rather than infinitessimal slice?
-  this->SetFieldOfView(250.0, 250.0, 250.0);
-  this->SetDimensions(256, 256, 1);
-  this->SetOrientationToAxial();
-  this->SetSliceVisible ( 0 );
-  this->LayoutName = NULL;
+  this->FieldOfView[0] = 250.0;
+  this->FieldOfView[1] = 250.0;
+  this->FieldOfView[2] = 250.0;
 
-  this->UpdateMatrices();
+  this->Dimensions[0] = 256;
+  this->Dimensions[1] = 256;
+  this->Dimensions[2] = 1;
+  this->SliceVisible = 0;
+
+  this->SetOrientationToAxial();
 }
 
 //----------------------------------------------------------------------------
