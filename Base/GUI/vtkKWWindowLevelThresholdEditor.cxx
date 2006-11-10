@@ -38,6 +38,9 @@ vtkKWWindowLevelThresholdEditor::vtkKWWindowLevelThresholdEditor()
 
   this->WindowLevelAutoManual = vtkKWMenuButtonWithLabel::New() ;
   this->TresholdAutoManual = vtkKWMenuButtonWithLabel::New();
+   
+  this->Accumulate = vtkImageAccumulateDiscrete::New();
+  this->Bimodal = vtkImageBimodalAnalysis::New();
 
   this->WindowLevelRange = vtkKWRange::New();
   this->LevelEntry = vtkKWEntry::New();
@@ -63,46 +66,61 @@ vtkKWWindowLevelThresholdEditor::~vtkKWWindowLevelThresholdEditor()
     this->SetImageData(NULL);
     }
 
-  if ( this->LevelEntry ) {
-      this->LevelEntry->SetParent(NULL);
-      this->LevelEntry->Delete();
-      this->LevelEntry = NULL;
-  }
-  if ( this->WindowEntry ) {
-      this->WindowEntry->SetParent(NULL);
-      this->WindowEntry->Delete();
-      this->WindowEntry = NULL;
-  }
-  if ( this->WindowLevelAutoManual ) {
-      this->WindowLevelAutoManual->SetParent(NULL);
-      this->WindowLevelAutoManual->Delete();
-      this->WindowLevelAutoManual = NULL ;
-  }
-  if ( this->TresholdAutoManual ) {
-      this->TresholdAutoManual->SetParent(NULL);
-      this->TresholdAutoManual->Delete();
-      this->TresholdAutoManual = NULL;
-  }
-  if ( this->WindowLevelRange ) {
-      this->WindowLevelRange->SetParent(NULL);
-      this->WindowLevelRange->Delete();
-      this->WindowLevelRange = NULL;
-  }
-  if ( this->ThresholdRange ) {
-      this->ThresholdRange->SetParent(NULL);
-      this->ThresholdRange->Delete();
-      this->ThresholdRange = NULL;
-  }
-  if ( this->Histogram ) {
-      this->Histogram->Delete();
-      this->Histogram = NULL;
-  }
-  if ( this->ColorTransferFunctionEditor) {
-      this->ColorTransferFunctionEditor->SetParent(NULL);
-      this->ColorTransferFunctionEditor->Delete();
-      this->ColorTransferFunctionEditor = NULL;
-  }
-
+  if ( this->LevelEntry ) 
+    {
+    this->LevelEntry->SetParent(NULL);
+    this->LevelEntry->Delete();
+    this->LevelEntry = NULL;
+    }
+  if ( this->WindowEntry ) 
+    {
+    this->WindowEntry->SetParent(NULL);
+    this->WindowEntry->Delete();
+    this->WindowEntry = NULL;
+    }
+  if ( this->WindowLevelAutoManual ) 
+    {
+    this->WindowLevelAutoManual->SetParent(NULL);
+    this->WindowLevelAutoManual->Delete();
+    this->WindowLevelAutoManual = NULL ;
+    }
+  if ( this->TresholdAutoManual ) 
+    {
+    this->TresholdAutoManual->SetParent(NULL);
+    this->TresholdAutoManual->Delete();
+    this->TresholdAutoManual = NULL;
+    }
+  if ( this->WindowLevelRange ) 
+    {
+    this->WindowLevelRange->SetParent(NULL);
+    this->WindowLevelRange->Delete();
+    this->WindowLevelRange = NULL;
+    }
+  if ( this->ThresholdRange ) 
+    {
+    this->ThresholdRange->SetParent(NULL);
+    this->ThresholdRange->Delete();
+    this->ThresholdRange = NULL;
+    }
+  if ( this->Histogram ) 
+    {
+    this->Histogram->Delete();
+    this->Histogram = NULL;
+    }
+  if ( this->ColorTransferFunctionEditor) 
+    {
+    this->ColorTransferFunctionEditor->SetParent(NULL);
+    this->ColorTransferFunctionEditor->Delete();
+    this->ColorTransferFunctionEditor = NULL;
+    }
+  if (this->Accumulate)
+    {
+    this->Accumulate->Delete();
+    }
+  if (this->Bimodal)
+    {
+    this->Bimodal->Delete();
+    }
 }
 
 void vtkKWWindowLevelThresholdEditor::SetImageData(vtkImageData* imageData)
@@ -124,10 +142,36 @@ void vtkKWWindowLevelThresholdEditor::SetImageData(vtkImageData* imageData)
 
     this->UpdateTransferFunction();
 
+    this->UpdateAutoLevels();
+
     this->Modified();   
     }
 }
 
+void vtkKWWindowLevelThresholdEditor::UpdateAutoLevels()
+{
+  if (this->ImageData == NULL ||
+    (this->GetAutoWindowLevel() == 0 && this->GetAutoThreshold() == 0)) 
+    {
+    return;
+    }
+  this->Accumulate->SetInput(this->ImageData);
+  this->Accumulate->Update();
+  this->Bimodal->SetInput(this->Accumulate->GetOutput());
+  this->Bimodal->Update();
+
+  if (this->GetAutoWindowLevel())
+  {
+    this->SetWindowLevel(this->Bimodal->GetWindow(), this->Bimodal->GetLevel());
+  }
+
+  // Auto Threshold
+  if (this->GetAutoThreshold())
+  {
+    this->SetThreshold(this->Bimodal->GetThreshold(), this->Bimodal->GetMax());
+  }
+
+}
 
 void vtkKWWindowLevelThresholdEditor::SetWindowLevel(double window, double level)
 {
@@ -332,6 +376,8 @@ void vtkKWWindowLevelThresholdEditor::CreateWidget()
   this->SetThreshold(0, 255);
 
   this->UpdateTransferFunction();
+  this->UpdateAutoLevels();
+
 
   // Override the column sorting behavior by always updating
 
@@ -556,13 +602,14 @@ int vtkKWWindowLevelThresholdEditor::GetAutoWindowLevel()
 void vtkKWWindowLevelThresholdEditor::SetAutoWindowLevel(int value)
 {
   if (value == 1)
-  {
-  this->WindowLevelAutoManual->GetWidget()->SetValue("Auto");
-  }
+    {
+    this->WindowLevelAutoManual->GetWidget()->SetValue("Auto");
+    this->UpdateAutoLevels();
+    }
   else if (value == 0)
-  {
-  this->WindowLevelAutoManual->GetWidget()->SetValue("Manual");
-  }
+    {
+    this->WindowLevelAutoManual->GetWidget()->SetValue("Manual");
+    }
 }
 
 int vtkKWWindowLevelThresholdEditor::GetAutoThreshold()
@@ -580,13 +627,14 @@ int vtkKWWindowLevelThresholdEditor::GetAutoThreshold()
 void vtkKWWindowLevelThresholdEditor::SetAutoThreshold(int value)
 {
   if (value == 1)
-  {
-  this->TresholdAutoManual->GetWidget()->SetValue("Auto");
-  }
+    {
+    this->TresholdAutoManual->GetWidget()->SetValue("Auto");
+    this->UpdateAutoLevels();
+    }
   else if (value == 0)
-  {
-  this->TresholdAutoManual->GetWidget()->SetValue("Manual");
-  }
+    {
+    this->TresholdAutoManual->GetWidget()->SetValue("Manual");
+    }
 }
 
 int vtkKWWindowLevelThresholdEditor::GetApplyThreshold()
@@ -615,6 +663,7 @@ void vtkKWWindowLevelThresholdEditor::SetApplyThreshold(int value)
 
 void vtkKWWindowLevelThresholdEditor::ProcessButtonsCommand()
 {
+  this->UpdateAutoLevels();
   this->InvokeEvent(vtkKWWindowLevelThresholdEditor::ValueChangedEvent, NULL);
 }
 

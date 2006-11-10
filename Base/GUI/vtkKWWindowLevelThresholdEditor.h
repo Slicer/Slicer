@@ -26,6 +26,8 @@
 #include "vtkColorTransferFunction.h"
 #include "vtkImageData.h"
 #include "vtkPointData.h"
+#include "vtkImageAccumulateDiscrete.h"
+#include "vtkImageBimodalAnalysis.h"
 
 #include "vtkKWCheckButtonWithLabel.h"
 #include "vtkKWMenuButtonWithLabel.h"
@@ -124,6 +126,9 @@ protected:
   // Update the widgets with the current ImageData
   void UpdateFromImage();
 
+  // update threshold and windo/level based on automatic method
+  void UpdateAutoLevels();
+
   char *Command;
   //char *StartCommand;
   //char *EndCommand;
@@ -139,6 +144,9 @@ private:
   vtkKWHistogram *Histogram;
   vtkColorTransferFunction *TransferFunction;
   vtkKWColorTransferFunctionEditor *ColorTransferFunctionEditor;
+
+  vtkImageAccumulateDiscrete *Accumulate;
+  vtkImageBimodalAnalysis *Bimodal;
 
   vtkKWRange *WindowLevelRange;
   vtkKWEntry *LevelEntry;

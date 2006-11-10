@@ -17,6 +17,8 @@ SET(SlicerBaseLogic_SRCS
 
   # slicer's vtk extensions
   vtkImageSlicePaint.cxx 
+  vtkImageAccumulateDiscrete.cxx
+  vtkImageBimodalAnalysis.cxx
 )
 
 # Abstract/pure virtual classes
