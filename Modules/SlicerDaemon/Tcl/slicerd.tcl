@@ -186,7 +186,7 @@ proc slicerd_sock_fileevent {sock} {
             puts $sock "space_directions $space_directions"
             flush $sock
 
-            ::tcl_$sock SetImageData $im
+            ::tcl_$sock SetAndObserveImageData $im
             fconfigure $sock -translation binary
             ::tcl_$sock SendImageDataScalars $sock
             fconfigure $sock -translation auto
@@ -249,7 +249,7 @@ proc slicerd_sock_fileevent {sock} {
             ::tcl_$sock ReceiveImageDataScalars $sock
             fconfigure $sock -translation auto
     
-            $node SetImageData $idata
+            $node SetAndObserveImageData $idata
             slicerd_parse_space_directions $node $space_origin $space_directions
             $idata Delete
 
