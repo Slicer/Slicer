@@ -22,8 +22,10 @@ class vtkSlicerColor : public vtkObject
     double LightGrey [3];
     double LightestGrey [3];
     double LightestGreyBlue [3];
+    double BurntOrange [3];
     
     double DarkStone [3];
+    double LightCoolStone[3];
     double MediumCoolStone[3];
     double LightStone[3];
     double LightestStone[3];
@@ -36,6 +38,7 @@ class vtkSlicerColor : public vtkObject
     double DisabledTextColor[3];
     double FocusTextColor[3];
     double ActiveMenuBackgroundColor[3];
+    double ActiveMenuForegroundColor[3];
     double HighlightColor[3];
     double HighlightBackground[3];
 
