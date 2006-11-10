@@ -98,7 +98,7 @@ void vtkSlicerTheme::Install ( )
     odb->AddEntryAsInt ( "vtkKWFrame", "SetHighlightThickness", 0 );
     odb->AddEntry ( "vtkKWFrame", "SetRelief", "flat" );
     
-
+    odb->AddEntryAsInt ( "vtkKWSeparator", "SetBorderWidth", 2 );
 
     
     // Slicer Frames inside Scrolled windows
@@ -193,6 +193,11 @@ void vtkSlicerTheme::Install ( )
     odb->AddEntry( "vtkKWCheckButton", "IndicatorVisibilityOn", NULL);
     odb->AddEntryAsDouble3( "vtkKWCheckButton", "SetSelectColor", this->SlicerColors->HighlightColor);
     
+    // Wizard
+
+    odb->AddEntryAsDouble3 ( "vtkKWWizardWidget", "SetTitleAreaBackgroundColor",
+                    this->SlicerColors->LightestGreyBlue);    
+
     // Slicer Menubar
     // Slicer Labels
     // Slicer Menus
