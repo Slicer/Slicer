@@ -391,12 +391,12 @@ void vtkSlicerViewerWidget::UpdateCameraNode()
   if ( this->CameraNode != NULL && node != NULL && this->CameraNode != node)
     {
     // local CameraNode is out of sync with the scene
-    this->SetCameraNode (NULL);
+    this->SetAndObserveCameraNode (NULL);
     }
   if ( this->CameraNode != NULL && this->MRMLScene->GetNodeByID(this->CameraNode->GetID()) == NULL)
     {
     // local node not in the scene
-    this->SetCameraNode (NULL);
+    this->SetAndObserveCameraNode (NULL);
     }
   if ( this->CameraNode == NULL )
     {

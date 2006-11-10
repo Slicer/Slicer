@@ -131,7 +131,6 @@ protected:
   // Create the widget.
   virtual void CreateWidget();
   
-  vtkSetObjectMacro(CameraNode, vtkMRMLCameraNode);
   void UpdateCameraNode();
 
   vtkKWRenderWidget *MainViewer;
