@@ -80,7 +80,7 @@ static void vtkImageAccumulateDiscreteExecute(vtkImageAccumulateDiscrete *self,
 {
   int min0, max0, min1, max1, min2, max2;
   int idx0, idx1, idx2;
-  int inInc0, inInc1, inInc2;
+  vtkIdType inInc0, inInc1, inInc2;
   T *inPtr0, *inPtr1, *inPtr2;
   vtkFloatingPointType *origin, *spacing;
   int numC, offset;
