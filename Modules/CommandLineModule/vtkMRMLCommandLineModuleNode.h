@@ -93,7 +93,7 @@ private:
   ModuleDescription ModuleDescriptionObject;
 
   //BTX
-  StatusType Status;
+  StatusType m_Status;
   //ETX
   
 };
