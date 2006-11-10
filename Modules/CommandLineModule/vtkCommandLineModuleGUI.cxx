@@ -593,9 +593,9 @@ void vtkCommandLineModuleGUI::UpdateGUI ()
     message = message + "(" + n->GetName() +")";
 
     std::ostrstream strvalue;
-    strvalue << setiosflags(ios::fixed) << setprecision(2)
+    strvalue << std::setiosflags(ios::fixed) << std::setprecision(2)
              << n->GetModuleDescription().GetProcessInformation()->ElapsedTime;
-    strvalue << ends;
+    strvalue << std::ends;
     
     message = message + ", " + strvalue.str() + "s";
     strvalue.rdbuf()->freeze(0);
