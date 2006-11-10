@@ -120,7 +120,9 @@ void vtkCommandLineModuleLogic::Apply()
   // the user to switch to another parameter set after the task is
   // scheduled but before it starts to run. And when the scheduled
   // task does run, it will operate on the correct node.
-  task->SetTaskFunction(this, (vtkSlicerTask::TaskFunctionPointer) vtkCommandLineModuleLogic::ApplyTask, this->CommandLineModuleNode);
+  task->SetTaskFunction(this, (vtkSlicerTask::TaskFunctionPointer)
+                        &vtkCommandLineModuleLogic::ApplyTask,
+                        this->CommandLineModuleNode);
   
   // Client data on the task is just a regular pointer, up the
   // reference count on the node, we'll decrease the reference count
