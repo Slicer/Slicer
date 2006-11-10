@@ -30,7 +30,7 @@
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 
-#include "itkXMLFilterWatcher.h"
+#include "itkPluginFilterWatcher.h"
 
 #include "OtsuThresholdSegmentationCLP.h"
 
@@ -67,9 +67,9 @@ int main( int argc, char * argv[] )
   WriterType::Pointer writer = WriterType::New();
 
 // Watchers
-  itk::XMLFilterWatcher OtsuWatcher(OtsuFilter, "Otsu Threshold Image Filter");
-  itk::XMLFilterWatcher CCWatcher(CCFilter, "Connected Component Threshold Image Filter");
-  itk::XMLFilterWatcher RelabelWatcher(RelabelFilter, "Relabel objects");
+  itk::PluginFilterWatcher OtsuWatcher(OtsuFilter, "Otsu Threshold Image Filter", CLPProcessInformation);
+  itk::PluginFilterWatcher CCWatcher(CCFilter, "Connected Component Threshold Image Filter", CLPProcessInformation);
+  itk::PluginFilterWatcher RelabelWatcher(RelabelFilter, "Relabel objects", CLPProcessInformation);
 
   reader->SetFileName (inputVolume.c_str());
 
