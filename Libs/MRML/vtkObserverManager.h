@@ -11,12 +11,11 @@
   Version:   $Revision: 1.45 $
 
 =========================================================================auto=*/
-// .NAME vtkObserverManager - superclass for slicer logic classes
+// .NAME vtkObserverManager - class that manages adding and deleting of obserevers with events
 // .SECTION Description
-// Superclass for all slicer logic classes (application, views, slices).
-// There must be a corresponding vtkSlicerGUI subclass corresponding 
-// to each logic class that handles all GUI interaction (no GUI code
-// goes in the logic class).
+// Class that manages adding and deleting of obserevers with events
+// This class keeps track of obserevers and events added to each vtk object 
+// it caches tags returned by AddObserver method so that obserevers can be removed properly
 
 #ifndef __vtkObserverManager_h
 #define __vtkObserverManager_h
@@ -46,13 +45,19 @@ class VTK_MRML_EXPORT vtkObserverManager : public vtkObject
   vtkTypeRevisionMacro(vtkObserverManager,vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  // functions that set vtkObjects
-  // either with or without adding/removirg observers on them.
+  // set vtkObject to a specified pointer and remove all observers for all events
   void SetObject(vtkObject **nodePtr, vtkObject *node);
+
+  // set vtkObject to a specified pointer, remove all observers for all events, add observer for Modify event
   void SetAndObserveObject(vtkObject **nodePtr, vtkObject *node);
+
+  // set vtkObject to a specified pointer, remove all observers for all events, add observers for specified events
   void SetAndObserveObjectEvents(vtkObject **nodePtr, vtkObject *node, vtkIntArray *events);
 
+  // remove all observers for all events
   void RemoveObjectEvents(vtkObject *nodePtr);
+
+  // add observers for specified events
   void AddObjectEvents(vtkObject *nodePtr, vtkIntArray *events);
   
   vtkGetObjectMacro (CallbackCommand, vtkCallbackCommand);
