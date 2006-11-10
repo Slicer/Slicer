@@ -651,13 +651,13 @@ int vtkKWWindowLevelThresholdEditor::GetApplyThreshold()
 
 void vtkKWWindowLevelThresholdEditor::SetApplyThreshold(int value)
 {
- if (value == 1)
-  {
-  this->TresholdAutoManual->GetWidget()->SetValue("Auto");
-  }
-  else if (value == 0)
+ if (value == 1 && this->GetApplyThreshold() != 1)
   {
   this->TresholdAutoManual->GetWidget()->SetValue("Manual");
+  }
+  else 
+  {
+  this->TresholdAutoManual->GetWidget()->SetValue("Off");
   }
 }
 
