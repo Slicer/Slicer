@@ -12,6 +12,7 @@ ENDIF (NOT Slicer3_SOURCE_DIR)
 INCLUDE(${Slicer3_SOURCE_DIR}/Libs/GenerateCLP/UseGenerateCLP.cmake)
 
 SET(LIBRARY_OUTPUT_PATH "${SLICER_LIBRARIES_DIR}/Plugins")
+SET(EXECUTABLE_OUTPUT_PATH "${SLICER_LIBRARIES_DIR}/Plugins")
 
 #####################
 SET (CLP LinearRegistration)
@@ -212,6 +213,8 @@ SET(TARGETS
         VotingBinaryHoleFillingImageFilter
         VotingBinaryHoleFillingImageFilterLib
         ModelMaker
+        CheckerBoardLib
+        LinearRegistration
         GrayscaleFillHoleImageFilter
         GrayscaleFillHoleImageFilterLib
         GrayscaleGrindPeakImageFilter
