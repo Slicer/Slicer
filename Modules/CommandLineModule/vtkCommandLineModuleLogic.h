@@ -37,7 +37,7 @@ public:
   vtkGetObjectMacro (CommandLineModuleNode, vtkMRMLCommandLineModuleNode);
   vtkSetObjectMacro (CommandLineModuleNode, vtkMRMLCommandLineModuleNode);
   
-  // The method that creates and runs the command line module
+  // The method that schedules the command line module to run
   void Apply();
 
   // Set/Get the directory to use for temporary files
@@ -50,6 +50,9 @@ protected:
   //BTX
   std::string ConstructTemporaryFileName(const std::string& name, bool isCommandLineModule) const;
   //ETX
+
+  // The method that runs the command line module
+  void ApplyTask(void *clientdata);
   
 private:
   vtkCommandLineModuleLogic();

@@ -149,6 +149,10 @@ void GenerateTCLAP(std::ofstream &, ModuleDescription &);
 /* Generate code to echo the command line arguments and their values. */
 void GenerateEchoArgs(std::ofstream &, ModuleDescription &);
 
+/** Generate code to decode the address of a process information
+ * structure */
+void GenerateProcessInformationAddressDecoding(std::ofstream &sout, ModuleDescription &);
+
 int
 main(int argc, char *argv[])
 {
@@ -199,6 +203,7 @@ main(int argc, char *argv[])
   GenerateXML(sout, module, InputXML);
   GenerateTCLAP(sout, module);
   GenerateEchoArgs(sout, module);
+  GenerateProcessInformationAddressDecoding(sout, module);
   GeneratePost(sout, module);
   sout.close();
 
@@ -221,6 +226,7 @@ void GeneratePre(std::ofstream &sout, ModuleDescription &module, int argc, char 
   sout << "" << std::endl;
   sout << "#include <iostream>" << std::endl;
   sout << "#include \"tclap/CmdLine.h\"" << std::endl;
+  sout << "#include \"ModuleProcessInformation.h\"" << std::endl;
   sout << "#include <itksys/ios/sstream>" << std::endl;
   sout << "" << std::endl;
   sout << "void" << std::endl;
@@ -432,6 +438,19 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
   xmlSwitch.SetDefault("false");
   autoParameters.AddParameter(xmlSwitch);
 
+  // Add an argument to accept an address for storing process
+  // information
+  ModuleParameter processInformationAddressArg;
+  processInformationAddressArg.SetTag("string");
+  processInformationAddressArg.SetType("std::string");
+  processInformationAddressArg.SetName("processInformationAddressString");
+  processInformationAddressArg.SetLongFlag("processinformationaddress");
+  processInformationAddressArg.SetDescription("Address of a structure to store process information (progress, abort, etc.).");
+  processInformationAddressArg.SetDefault("0");
+
+  autoParameters.AddParameter(processInformationAddressArg);
+
+  // Add the parameter group to the module
   module.AddParameterGroup(autoParameters);
   
   // First pass generates argument declarations
@@ -836,11 +855,23 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
   sout << "catch ( TCLAP::ArgException e )" << EOL << std::endl;
   sout << "  {" << EOL << std::endl;
   sout << "  std::cerr << \"error: \" << e.error() << \" for arg \" << e.argId() << std::endl;" << EOL << std::endl;
-  sout << "  exit ( EXIT_FAILURE );" << EOL << std::endl;
+  sout << "  return ( EXIT_FAILURE );" << EOL << std::endl;
   sout << "    }" << std::endl;
 }
 
 void GeneratePost(std::ofstream &sout, ModuleDescription &module)
 {
-  sout << "#define PARSE_ARGS GENERATE_XML;GENERATE_TCLAP;GENERATE_ECHOARGS" << std::endl;
+  sout << "#define PARSE_ARGS GENERATE_XML;GENERATE_TCLAP;GENERATE_ECHOARGS;GENERATE_ProcessInformationAddressDecoding;" << std::endl;
+}
+
+void GenerateProcessInformationAddressDecoding(std::ofstream &sout, ModuleDescription &module)
+{
+  std::string EOL(" \\");
+  sout << "#define GENERATE_ProcessInformationAddressDecoding \\" << std::endl;
+
+  sout << "ModuleProcessInformation *CLPProcessInformation = 0;" << EOL << std::endl;
+  sout << "if (processInformationAddressString != \"\")" << EOL << std::endl;
+  sout << "{" << EOL << std::endl;
+  sout << "sscanf(processInformationAddressString.c_str(), \"%p\", &CLPProcessInformation);" << EOL << std::endl;
+  sout << "}" << std::endl;
 }

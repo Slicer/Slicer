@@ -98,6 +98,9 @@ protected:
                               unsigned long eid, void *__clientData, void *callData );    
 
   vtkCallbackCommand *NewNodeCallbackCommand;
+
+
+  static void ProgressCallback(void *);
   
 private:
   vtkCommandLineModuleGUI();

@@ -39,6 +39,7 @@ Version:   $Revision$
 #include "vtkKWFrameWithLabel.h"
 #include "vtkKWPushButton.h"
 #include "vtkKWLabel.h"
+#include "vtkKWLabelWithLabel.h"
 #include "vtkKWSpinBox.h"
 #include "vtkKWSpinBoxWithLabel.h"
 #include "vtkKWCheckButton.h"
@@ -52,6 +53,7 @@ Version:   $Revision$
 #include "vtkKWText.h"
 #include "vtkKWTextWithScrollbars.h"
 #include "vtkKWMessage.h"
+#include "vtkKWProgressGauge.h"
 
 #include "itkNumericTraits.h"
 
@@ -165,6 +167,8 @@ void vtkCommandLineModuleGUI::AddGUIObservers ( )
 
   (*this->InternalWidgetMap)["ApplyButton"]->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
+  (*this->InternalWidgetMap)["CancelButton"]->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  
   (*this->InternalWidgetMap)["DefaultButton"]->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
   // add an observer for each widget created
@@ -246,6 +250,11 @@ void vtkCommandLineModuleGUI::RemoveGUIObservers ( )
     (*this->InternalWidgetMap)["ApplyButton"]->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
     }
 
+  if ( (*this->InternalWidgetMap)["CancelButton"] )
+    {
+    (*this->InternalWidgetMap)["CancelButton"]->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+    }
+  
   if ( (*this->InternalWidgetMap)["DefaultButton"] )
     {
     (*this->InternalWidgetMap)["DefaultButton"]->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
@@ -322,18 +331,14 @@ void vtkCommandLineModuleGUI::ProcessGUIEvents ( vtkObject *caller,
     {
     return;
     }
-  //std::cout << "ProcessGUIEvents()" << std::endl;
+  // std::cout << "ProcessGUIEvents()" << std::endl;
   vtkKWPushButton *b = vtkKWPushButton::SafeDownCast(caller);
   vtkSlicerNodeSelectorWidget *selector = vtkSlicerNodeSelectorWidget::SafeDownCast(caller);
-  if (selector != NULL && selector != this->CommandLineModuleNodeSelector)
-    {
-    return;
-    }
 
   if (selector == this->CommandLineModuleNodeSelector && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent ) 
     {
     // Selected a new parameter node
-    //std::cout << "  Selector" << std::endl;
+    // std::cout << "  Selector" << std::endl;
     vtkMRMLCommandLineModuleNode* n = vtkMRMLCommandLineModuleNode::SafeDownCast(this->CommandLineModuleNodeSelector->GetSelected());
     if (n == NULL) 
       {
@@ -342,6 +347,7 @@ void vtkCommandLineModuleGUI::ProcessGUIEvents ( vtkObject *caller,
     this->Logic->SetCommandLineModuleNode(n);
     this->SetCommandLineModuleNode(n);
     vtkSetAndObserveMRMLNodeMacro( this->CommandLineModuleNode, n);
+
     this->UpdateGUI();
     }
   else if (selector == this->CommandLineModuleNodeSelector && event == vtkSlicerNodeSelectorWidget::NewNodeEvent )
@@ -361,12 +367,27 @@ void vtkCommandLineModuleGUI::ProcessGUIEvents ( vtkObject *caller,
     //std::cout << "  Apply" << std::endl;
     this->UpdateMRML();
     this->Logic->SetTemporaryDirectory( ((vtkSlicerApplication*)this->GetApplication())->GetTemporaryDirectory() );
+
+    // Set the callback for progress
+    this->GetCommandLineModuleNode()->GetModuleDescription()
+      .GetProcessInformation()
+      ->SetProgressCallback( vtkCommandLineModuleGUI::ProgressCallback,
+                             this->GetCommandLineModuleNode() );
+
+    // apply
     this->Logic->Apply();
+    }
+  else if (b == (*this->InternalWidgetMap)["CancelButton"].GetPointer() && event == vtkKWPushButton::InvokedEvent ) 
+    {
+    // Abort button was pressed
+    //std::cout << "  Cancel" << std::endl;
+    this->GetCommandLineModuleNode()->GetModuleDescription().GetProcessInformation()->Abort = 1;
+    this->GetCommandLineModuleNode()->SetStatus(vtkMRMLCommandLineModuleNode::Cancelled);
     }
   else if (b == (*this->InternalWidgetMap)["DefaultButton"].GetPointer() && event == vtkKWPushButton::InvokedEvent ) 
     {
     // Defaults button was pressed
-    // (may need additional code to get any node delection widgets to
+    // (may need additional code to get any node selection widgets to
     // return to their default state)
     if (this->CommandLineModuleNode != NULL) 
       {
@@ -394,7 +415,7 @@ void vtkCommandLineModuleGUI::UpdateMRML ()
   }
 
   this->InUpdateMRML = true;
-  //std::cout << "UpdateMRML()" << std::endl;
+  // std::cout << "UpdateMRML()" << std::endl;
   vtkMRMLCommandLineModuleNode* n = this->GetCommandLineModuleNode();
   bool createdNode = false;
   if (n == NULL)
@@ -507,8 +528,81 @@ void vtkCommandLineModuleGUI::UpdateGUI ()
 
   // std::cout << "UpdateGUI()" << std::endl;
   vtkMRMLCommandLineModuleNode* n = this->GetCommandLineModuleNode();
+  std::string statusString;
   if (n != NULL)
     {
+    // Show the status of the node
+    switch (n->GetStatus())
+      {
+      case vtkMRMLCommandLineModuleNode::Idle: statusString = "Idle";
+        break;
+      case vtkMRMLCommandLineModuleNode::Scheduled: statusString = "Scheduled";
+        break;
+      case vtkMRMLCommandLineModuleNode::Running: statusString = "Running";
+        break;
+      case vtkMRMLCommandLineModuleNode::Completed: statusString = "Completed";
+        break;
+      case vtkMRMLCommandLineModuleNode::Cancelled: statusString = "Cancelled";
+        break;
+      default:
+        statusString = "Idle";
+        break;
+      }
+    vtkKWLabelWithLabel *statusWidget =
+      vtkKWLabelWithLabel::SafeDownCast((*this->InternalWidgetMap)["Status"]);
+    statusWidget->GetWidget()->SetText( statusString.c_str() );
+
+    // If node is not scheduled or running, the enable all widgets.
+    // Otherwise turn off all the widget except Cancel
+    if (n->GetStatus() == vtkMRMLCommandLineModuleNode::Running
+        || n->GetStatus() == vtkMRMLCommandLineModuleNode::Scheduled)
+      {
+      // running or scheduled, disable widgets
+      ModuleWidgetMap::const_iterator wit;
+      for (wit = this->InternalWidgetMap->begin();
+         wit != this->InternalWidgetMap->end(); ++wit)
+        {
+        vtkSmartPointer<vtkKWCoreWidget> w = (*wit).second;
+        w->EnabledOff();
+        w->UpdateEnableState();
+        }
+      (*this->InternalWidgetMap)["Status"]->EnabledOn();
+      (*this->InternalWidgetMap)["Status"]->UpdateEnableState();
+      (*this->InternalWidgetMap)["CancelButton"]->EnabledOn();
+      (*this->InternalWidgetMap)["CancelButton"]->UpdateEnableState();
+      }
+    else
+      {
+      // idle, completed, or cancelled, enable widgets
+      ModuleWidgetMap::const_iterator wit;
+      for (wit = this->InternalWidgetMap->begin();
+         wit != this->InternalWidgetMap->end(); ++wit)
+        {
+        vtkSmartPointer<vtkKWCoreWidget> w = (*wit).second;
+        w->EnabledOn();
+        w->UpdateEnableState();
+        }
+      }
+
+    // Set the progress value and balloon help
+    this->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetValue(n->GetModuleDescription().GetProcessInformation()->Progress);
+
+    std::string message = statusString + ": " +
+      n->GetModuleDescription().GetProcessInformation()->ProgressMessage;
+
+    message = message + "(" + n->GetName() +")";
+
+    std::ostrstream strvalue;
+    strvalue << setiosflags(ios::fixed) << setprecision(2)
+             << n->GetModuleDescription().GetProcessInformation()->ElapsedTime;
+    strvalue << ends;
+    
+    message = message + ", " + strvalue.str() + "s";
+    strvalue.rdbuf()->freeze(0);
+
+    this->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText( message.c_str() );
+    
+    
     // set GUI widgets from parameter node
     ModuleWidgetMap::iterator wit;
 
@@ -707,7 +801,19 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
   app->Script("pack %s -side top -anchor e -padx 20 -pady 4", 
                 this->CommandLineModuleNodeSelector->GetWidgetName());
 
+  // Add a block indicating the status of the module (on this
+  // parameter set)
+  vtkKWLabelWithLabel *statusText = vtkKWLabelWithLabel::New();
+  statusText->SetParent( moduleFrame->GetFrame() );
+  statusText->Create();
+  statusText->SetLabelText("Status");
+  statusText->GetWidget()->SetText("Idle");
+  app->Script ( "pack %s -side top -anchor ne -padx 2 -pady 2",
+                statusText->GetWidgetName() );
+  (*this->InternalWidgetMap)["Status"] = statusText;
+  statusText->Delete();
 
+  
   // iterate over each parameter group
   std::vector<ModuleParameterGroup>::const_iterator pgbeginit
     = this->ModuleDescriptionObject.GetParameterGroups().begin();
@@ -1099,9 +1205,24 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
   std::string applyBalloonHelp("Execute the module");
   apply->SetBalloonHelpString(applyBalloonHelp.c_str());
 
-
   (*this->InternalWidgetMap)["ApplyButton"] = apply;
   apply->Delete();
+
+  // Create a "Cancel" button
+  vtkKWPushButton *cancel = vtkKWPushButton::New();
+  cancel->SetParent( moduleFrame->GetFrame() );
+  cancel->Create();
+  cancel->SetText("Cancel");
+  cancel->SetWidth ( 8 );
+  app->Script("pack %s -side right -anchor e -padx 20 -pady 10", 
+              cancel->GetWidgetName());
+
+  std::string cancelBalloonHelp("Cancel the execution of the module");
+  cancel->SetBalloonHelpString(cancelBalloonHelp.c_str());
+
+  (*this->InternalWidgetMap)["CancelButton"] = cancel;
+  cancel->Delete();
+
 }
 
 
@@ -1131,4 +1252,15 @@ void vtkCommandLineModuleGUI::NewNodeCallback ( vtkObject *__caller,
     self->ProcessGUIEvents ( __caller, eid, callData );
     inCallback = 0;
 
+}
+
+
+void vtkCommandLineModuleGUI::ProgressCallback ( void *who )
+{
+  vtkMRMLCommandLineModuleNode *node
+    = reinterpret_cast<vtkMRMLCommandLineModuleNode*>(who);
+
+  // All we need to do is tell the node that it was Modified.  The
+  // shared object plugin modifies fields in the ProcessInformation directly.
+  node->Modified();
 }

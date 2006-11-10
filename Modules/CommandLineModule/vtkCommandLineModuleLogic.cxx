@@ -21,6 +21,8 @@ Version:   $Revision: 1.2 $
 #include "vtkCommandLineModuleLogic.h"
 #include "vtkCommandLineModule.h"
 
+#include "vtkSlicerTask.h"
+
 #include "vtkMRMLScene.h"
 #include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLVolumeArchetypeStorageNode.h"
@@ -108,21 +110,67 @@ vtkCommandLineModuleLogic
   return fname;
 }
 
+
 void vtkCommandLineModuleLogic::Apply()
 {
+  bool ret;
+  vtkSlicerTask* task = vtkSlicerTask::New();
+
+  // Pass the current node as client data to the task.  This allows
+  // the user to switch to another parameter set after the task is
+  // scheduled but before it starts to run. And when the scheduled
+  // task does run, it will operate on the correct node.
+  task->SetTaskFunction(this, (vtkSlicerTask::TaskFunctionPointer) vtkCommandLineModuleLogic::ApplyTask, this->CommandLineModuleNode);
+  
+  // Client data on the task is just a regular pointer, up the
+  // reference count on the node, we'll decrease the reference count
+  // once the task actually runs
+  this->CommandLineModuleNode->Register(this);
+  
+  // Schedule the task
+  ret = this->ApplicationLogic->ScheduleTask( task );
+
+  if (!ret)
+    {
+    std::cout << "Could not schedule task" << std::endl;
+    }
+  else
+    {
+    this->CommandLineModuleNode
+      ->SetStatus(vtkMRMLCommandLineModuleNode::Scheduled);
+    }
+  
+  task->Delete();
+}
+
+void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
+{
   // check if MRML node is present 
-  if (this->CommandLineModuleNode == NULL)
+  if (clientdata == NULL)
     {
     vtkErrorMacro("No input CommandLineModuleNode found");
     return;
     }
 
+  vtkMRMLCommandLineModuleNode *node = reinterpret_cast<vtkMRMLCommandLineModuleNode*>(clientdata);
+
+
+  // Check to see if this node/task has been cancelled
+  if (node->GetStatus() == vtkMRMLCommandLineModuleNode::Cancelled)
+    {
+    // node was registered when the task was scheduled so unregister now
+    node->UnRegister(this);
+
+    return;
+    }
+  
+  
   // Determine the type of the module: command line or shared object
   int (*entryPoint)(int argc, char* argv[]);
   bool isCommandLine = true;
-  
+
   std::string target
-    = this->CommandLineModuleNode->GetModuleDescription().GetTarget();
+    = node->GetModuleDescription().GetTarget();
   std::string::size_type pos
     = target.find("slicer:");
 
@@ -139,14 +187,12 @@ void vtkCommandLineModuleLogic::Apply()
 
   // vector of files to delete
   std::set<std::string> filesToDelete;
-  
+  std::cout << node->GetModuleDescription();  
   // iterators for parameter groups
   std::vector<ModuleParameterGroup>::const_iterator pgbeginit
-    = this->CommandLineModuleNode->GetModuleDescription()
-    .GetParameterGroups().begin();
+    = node->GetModuleDescription().GetParameterGroups().begin();
   std::vector<ModuleParameterGroup>::const_iterator pgendit
-    = this->CommandLineModuleNode->GetModuleDescription()
-    .GetParameterGroups().end();
+    = node->GetModuleDescription().GetParameterGroups().end();
   std::vector<ModuleParameterGroup>::const_iterator pgit;
 
   
@@ -198,10 +244,20 @@ void vtkCommandLineModuleLogic::Apply()
   std::vector<std::string> commandLineAsString;
 
   // Command to execute
-  commandLineAsString.push_back( this->CommandLineModuleNode
-                                 ->GetModuleDescription().GetTarget() );
+  commandLineAsString.push_back( node->GetModuleDescription().GetTarget() );
 
 
+  // Add a command line flag for the process information structure
+  if ( !isCommandLine )
+    {
+    commandLineAsString.push_back( "--processinformationaddress" );
+
+    char tname[256];
+    sprintf(tname, "%p", node->GetModuleDescription().GetProcessInformation());
+    
+    commandLineAsString.push_back( tname );
+    }
+  
   // Run over all the parameters with flags
   for (pgit = pgbeginit; pgit != pgendit; ++pgit)
     {
@@ -316,6 +372,8 @@ void vtkCommandLineModuleLogic::Apply()
           {
           vtkErrorMacro("No input volume assigned to \""
                         << (*iit).second.GetLabel().c_str() << "\"");
+
+          node->SetStatus(vtkMRMLCommandLineModuleNode::Idle);
           return;
           }
         }
@@ -331,6 +389,8 @@ void vtkCommandLineModuleLogic::Apply()
           {
           vtkErrorMacro("No output volume assigned to \""
                         << (*iit).second.GetLabel().c_str() << "\"");
+
+          node->SetStatus(vtkMRMLCommandLineModuleNode::Idle);
           return;
           }
         }
@@ -382,6 +442,8 @@ void vtkCommandLineModuleLogic::Apply()
   // run the filter
   //
   //
+  node->GetModuleDescription().GetProcessInformation()->Initialize();
+  node->SetStatus(vtkMRMLCommandLineModuleNode::Running);
   if (isCommandLine)
     {
     itksysProcess *process = itksysProcess_New();
@@ -401,17 +463,69 @@ void vtkCommandLineModuleLogic::Apply()
     char *tbuffer;
     int length;
     int pipe;
+    const double timeoutlimit = 0.1;    // tenth of a second
+    double timeout = timeoutlimit;
     std::string stdoutbuffer;
     std::string stderrbuffer;
+    std::string::size_type tagend;
+    std::string::size_type tagstart;
     while ((pipe = itksysProcess_WaitForData(process ,&tbuffer,
-                                             &length, 0)) != 0)
+                                             &length, &timeout)) != 0)
       {
+      // increment the elapsed time
+      node->GetModuleDescription().GetProcessInformation()->ElapsedTime
+        += (timeoutlimit - timeout);
+      node->Modified();
+      
+      // reset the timeout value 
+      timeout = timeoutlimit;
+
+      // Check to see if the plugin was cancelled
+      if (node->GetModuleDescription().GetProcessInformation()->Abort)
+        {
+        itksysProcess_Kill(process);
+        node->GetModuleDescription().GetProcessInformation()->Progress = 0;
+        node->Modified();
+        break;
+        }
+
+      // Capture the 
       if (length != 0 && tbuffer != 0)
         {
         if (pipe == itksysProcess_Pipe_STDOUT)
           {
           std::cout << "STDOUT: " << std::string(tbuffer, length) << std::endl;
           stdoutbuffer = stdoutbuffer.append(tbuffer, length);
+
+
+          // search for the last occurence of </filter-name>
+          tagend = stdoutbuffer.rfind("</filter-name>");
+          if (tagend != std::string::npos)
+            {
+            tagstart = stdoutbuffer.rfind("<filter-name>");
+            if (tagstart != std::string::npos)
+              {
+              std::string filterString(stdoutbuffer, tagstart+13,
+                                       tagend-tagstart-13);
+              strncpy(node->GetModuleDescription().GetProcessInformation()->ProgressMessage, filterString.c_str(), 1023);
+              node->Modified();
+              }
+            }
+          
+          
+          // search for the last occurence of </filter-progress>
+          tagend = stdoutbuffer.rfind("</filter-progress>");
+          if (tagend != std::string::npos)
+            {
+            tagstart = stdoutbuffer.rfind("<filter-progress>");
+            if (tagstart != std::string::npos)
+              {
+              std::string progressString(stdoutbuffer, tagstart+17,
+                                         tagend-tagstart-17);
+              node->GetModuleDescription().GetProcessInformation()->Progress = 100*atof(progressString.c_str());
+              node->Modified();
+              }
+            }
           }
         else if (pipe == itksysProcess_Pipe_STDERR)
           {
@@ -431,23 +545,23 @@ void vtkCommandLineModuleLogic::Apply()
       if (itksysProcess_GetExitValue(process) == 0)
         {
         // executable exited without errors,
-        std::cout << this->CommandLineModuleNode->GetModuleDescription().GetTitle()
+        std::cout << node->GetModuleDescription().GetTitle()
                   << " completed without errors" << std::endl;
         }
       else
         {
-        std::cout << this->CommandLineModuleNode->GetModuleDescription().GetTitle()
+        std::cout << node->GetModuleDescription().GetTitle()
                   << " completed with errors" << std::endl;
         }
       }
     else if (result == itksysProcess_State_Expired)
       {
-      std::cout << this->CommandLineModuleNode->GetModuleDescription().GetTitle()
+      std::cout << node->GetModuleDescription().GetTitle()
                 << " timed out" << std::endl;
       }
     else
       {
-      std::cout << this->CommandLineModuleNode->GetModuleDescription().GetTitle()
+      std::cout << node->GetModuleDescription().GetTitle()
                 << " unknown termination. " << result << std::endl;
       }
     
@@ -456,30 +570,55 @@ void vtkCommandLineModuleLogic::Apply()
     }
   else
     {
-    // share object module, run it by a direct call
-    (*entryPoint)(commandLineAsString.size(), command);
-    }
-  
-  // import the results
-  //
-  //
-  for (id2fn = nodesToReload.begin();
-       id2fn != nodesToReload.end();
-       ++id2fn)
-    {
-    if (isCommandLine)
+    try
       {
-      vtkMRMLVolumeArchetypeStorageNode *in
-        = vtkMRMLVolumeArchetypeStorageNode::New();
-      in->SetFileName( (*id2fn).second.c_str() );
-      
-      in->ReadData( this->MRMLScene->GetNodeByID( (*id2fn).first.c_str() ) );
-      
-      in->Delete();
+      (*entryPoint)(commandLineAsString.size(), command);
       }
+    catch (itk::ExceptionObject& exc)
+      {
+      std::cout << node->GetModuleDescription().GetTitle()
+                << " terminated with an exception: " << exc;
+      }
+    catch (...)
+      {
+      std::cout << node->GetModuleDescription().GetTitle()
+                << " terminated with an unknown exception." << std::endl;
+      }
+    }
+  if (node->GetStatus() != vtkMRMLCommandLineModuleNode::Cancelled)
+    {
+    node->SetStatus(vtkMRMLCommandLineModuleNode::Completed);
+    }
 
-    this->ApplicationLogic->GetSelectionNode()->SetActiveVolumeID( (*id2fn).first.c_str() );
-    this->ApplicationLogic->PropagateVolumeSelection();
+  
+  // import the results if the plugin was allowed to complete
+  //
+  //
+  if (node->GetModuleDescription().GetProcessInformation()->Abort == 0)
+    {
+    for (id2fn = nodesToReload.begin();
+         id2fn != nodesToReload.end();
+         ++id2fn)
+      {
+      if (isCommandLine)
+        {
+        vtkMRMLVolumeArchetypeStorageNode *in
+          = vtkMRMLVolumeArchetypeStorageNode::New();
+        in->SetFileName( (*id2fn).second.c_str() );
+        
+        in->ReadData( this->MRMLScene->GetNodeByID( (*id2fn).first.c_str() ) );
+        
+        in->Delete();
+        }
+
+      // only display the new data if the node is the same as one
+      // being displayed on the gui
+      if (node == this->GetCommandLineModuleNode())
+        {
+        this->ApplicationLogic->GetSelectionNode()->SetActiveVolumeID( (*id2fn).first.c_str() );
+        this->ApplicationLogic->PropagateVolumeSelection();
+        }
+      }
     }
 
   // clean up
@@ -500,4 +639,8 @@ void vtkCommandLineModuleLogic::Apply()
         }
       }
     }
+
+  // node was registered when the task was scheduled so unregister now
+  node->UnRegister(this);
+
 }

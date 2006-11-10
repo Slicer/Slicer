@@ -18,8 +18,16 @@
 #include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLModelNode.h"
 
+#include "itksys/SystemTools.hxx"
+
+#include <queue>
+
+#include "vtkSlicerTask.h"
+
 vtkCxxRevisionMacro(vtkSlicerApplicationLogic, "$Revision: 1.9.12.1 $");
 vtkStandardNewMacro(vtkSlicerApplicationLogic);
+
+class ProcessingTaskQueue : public std::queue<vtkSmartPointer<vtkSlicerTask> > {};
 
 
 //----------------------------------------------------------------------------
@@ -30,6 +38,13 @@ vtkSlicerApplicationLogic::vtkSlicerApplicationLogic()
     this->Modules = NULL;
     this->ActiveSlice = NULL;
     this->SelectionNode = NULL;
+    this->ProcessingThreader = itk::MultiThreader::New();
+    this->ProcessingThreadId = -1;
+    this->ProcessingThreadActive = false;
+    this->ProcessingThreadActiveLock = itk::MutexLock::New();
+    this->ProcessingTaskQueueLock = itk::MutexLock::New();
+
+    this->InternalTaskQueue = new ProcessingTaskQueue;
 }
 
 //----------------------------------------------------------------------------
@@ -52,6 +67,25 @@ vtkSlicerApplicationLogic::~vtkSlicerApplicationLogic()
     }
   this->SetSelectionNode ( NULL );
   this->SetActiveSlice ( NULL );
+
+  // Note that TerminateThread does not kill a thread, it only waits
+  // for the thread to finish.  We need to signal the thread that we
+  // want to terminate
+  if (this->ProcessingThreadId != -1 && this->ProcessingThreader)
+    {
+    // Signal the processingThread that we are terminating. 
+    this->ProcessingThreadActiveLock->Lock();
+    this->ProcessingThreadActive = false;
+    this->ProcessingThreadActiveLock->Unlock();
+
+    // Wait for the thread to finish and clean up the state of the threader
+    this->ProcessingThreader->TerminateThread( this->ProcessingThreadId );
+
+    this->ProcessingThreadId = -1;
+    }
+
+  delete this->InternalTaskQueue;
+  this->InternalTaskQueue = 0;
 
   // TODO - unregister/delete ivars
 }
@@ -164,6 +198,116 @@ vtkSlicerSliceLogic *vtkSlicerApplicationLogic::CreateSlice ()
 
     return (sliceLogic);
 }
+
+//----------------------------------------------------------------------------
+void vtkSlicerApplicationLogic::CreateProcessingThread()
+{
+  if (this->ProcessingThreadId == -1)
+    {
+    this->ProcessingThreadActiveLock->Lock();
+    this->ProcessingThreadActive = true;
+    this->ProcessingThreadActiveLock->Unlock();
+    
+    this->ProcessingThreadId
+      = this->ProcessingThreader
+      ->SpawnThread(vtkSlicerApplicationLogic::ProcessingThreaderCallback,
+                    this);
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerApplicationLogic::TerminateProcessingThread()
+{
+  if (this->ProcessingThreadId != -1)
+    {
+    this->ProcessingThreadActiveLock->Lock();
+    this->ProcessingThreadActive = false;
+    this->ProcessingThreadActiveLock->Unlock();
+
+    this->ProcessingThreader->TerminateThread( this->ProcessingThreadId );
+
+    this->ProcessingThreadId = -1;
+    }
+}
+
+
+ITK_THREAD_RETURN_TYPE
+vtkSlicerApplicationLogic
+::ProcessingThreaderCallback( void *arg )
+{
+  // pull out the reference to the appLogic
+  vtkSlicerApplicationLogic *appLogic
+    = (vtkSlicerApplicationLogic*)
+    (((itk::MultiThreader::ThreadInfoStruct *)(arg))->UserData);
+
+  // Tell the appLogic to start processing any tasks slated for the
+  // processing thread
+  appLogic->ProcessTasks();
+
+  return ITK_THREAD_RETURN_VALUE;
+}
+
+void vtkSlicerApplicationLogic::ProcessTasks()
+{
+  bool active = true;
+  vtkSmartPointer<vtkSlicerTask> task = 0;
+  
+  while (active)
+    {
+    // Check to see if we should be shutting down
+    this->ProcessingThreadActiveLock->Lock();
+    active = this->ProcessingThreadActive;
+    this->ProcessingThreadActiveLock->Unlock();
+
+    if (active)
+      {
+      // pull a task off the queue
+      this->ProcessingTaskQueueLock->Lock();
+      if ((*this->InternalTaskQueue).size() > 0)
+        {
+        std::cout << "Number of queued tasks: " << (*this->InternalTaskQueue).size() << std::endl;
+        task = (*this->InternalTaskQueue).front();
+        (*this->InternalTaskQueue).pop();
+        }
+      this->ProcessingTaskQueueLock->Unlock();
+      
+      // process the task (should this be in a separate thread?)
+      if (task)
+        {
+        task->Execute();
+        task = 0;
+        }
+      }
+
+    // busy wait
+    itksys::SystemTools::Delay(100);
+    }
+}
+
+bool vtkSlicerApplicationLogic::ScheduleTask( vtkSlicerTask *task )
+{
+  bool active;
+
+  std::cout << "Scheduling a task ";
+  // only schedule a task if the processing task is up
+  this->ProcessingThreadActiveLock->Lock();
+  active = this->ProcessingThreadActive;
+  this->ProcessingThreadActiveLock->Unlock();
+
+  if (active)
+    {
+    this->ProcessingTaskQueueLock->Lock();
+    (*this->InternalTaskQueue).push( task );
+    std::cout << (*this->InternalTaskQueue).size() << std::endl;
+    this->ProcessingTaskQueueLock->Unlock();
+    
+    return true;
+    }
+
+  // could not schedule the task
+  return false;
+}
+
 
 //----------------------------------------------------------------------------
 void vtkSlicerApplicationLogic::PrintSelf(ostream& os, vtkIndent indent)

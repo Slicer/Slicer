@@ -74,6 +74,12 @@
 class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerLogic : public vtkObject 
 {
   public:
+
+  // Typedef for member functions of SlicerLogic that can be used as
+  // scheduled tasks.
+  //BTX
+  typedef void (vtkSlicerLogic::*TaskFunctionPointer)(void *clientdata);
+  //ETX
   
   // The Usual vtk class functions
   static vtkSlicerLogic *New();

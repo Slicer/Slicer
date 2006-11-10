@@ -56,8 +56,22 @@ class VTK_COMMANDLINEMODULE_EXPORT vtkMRMLCommandLineModuleNode : public vtkMRML
   // object is used to cache the current settings for the module.
   const ModuleDescription& GetModuleDescription() const
     { return ModuleDescriptionObject; }
+  ModuleDescription& GetModuleDescription()
+    { return ModuleDescriptionObject; }
   void SetModuleDescription(const ModuleDescription& description);
 
+
+  //BTX
+  typedef enum { Idle=0, Scheduled, Running, Completed, Cancelled } StatusType;
+  //ETX
+
+  // Description:
+  // Set the status of the node (Idle, Scheduled, Running, Completed)
+  //BTX
+  void SetStatus(StatusType status);
+  StatusType GetStatus();
+  //ETX
+  
   // Description:
   // Get/Set a parameter for the module.
 //BTX
@@ -77,6 +91,10 @@ private:
   void operator=(const vtkMRMLCommandLineModuleNode&);
 
   ModuleDescription ModuleDescriptionObject;
+
+  //BTX
+  StatusType Status;
+  //ETX
   
 };
 

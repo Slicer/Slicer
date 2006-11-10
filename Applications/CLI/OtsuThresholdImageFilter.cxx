@@ -35,12 +35,13 @@
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 
-#include "itkXMLFilterWatcher.h"
+#include "itkPluginFilterWatcher.h"
 
 #include "OtsuThresholdImageFilterCLP.h"
 
 int main( int argc, char * argv[] )
 {
+
   PARSE_ARGS;
 
   //  Software Guide : BeginLatex
@@ -119,7 +120,8 @@ int main( int argc, char * argv[] )
   // Software Guide : BeginCodeSnippet
   ReaderType::Pointer reader = ReaderType::New();
   FilterType::Pointer filter = FilterType::New();
-  itk::XMLFilterWatcher watcher(filter, "Otsu Threshold Image Filter");
+  itk::PluginFilterWatcher watcher(filter, "Otsu Threshold Image Filter",
+                                   CLPProcessInformation);
 
   // Software Guide : EndCodeSnippet
 

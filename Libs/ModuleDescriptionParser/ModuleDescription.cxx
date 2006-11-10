@@ -62,7 +62,8 @@ std::ostream & operator<<(std::ostream &os, const ModuleDescription &module)
   os << "Contributor: " << module.GetContributor() << std::endl;
   os << "Target: " << module.GetTarget() << std::endl;
 
-  os << "ProcessInformation: " << *(module.GetProcessInformation());
+  os << "ProcessInformation: " << std::endl
+     << *(module.GetProcessInformation());
   
   os << "ParameterGroups: " << std::endl;
   std::vector<ModuleParameterGroup>::const_iterator it = module.GetParameterGroups().begin();

@@ -33,6 +33,13 @@
 
 #include "vtkCollection.h"
 
+#include "itkMultiThreader.h"
+#include "itkMutexLock.h"
+
+//BTX
+class ProcessingTaskQueue;
+class vtkSlicerTask;
+//ETX
 
 class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic : public vtkSlicerLogic 
 {
@@ -160,6 +167,19 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic : public vtkSlicerL
 
   void ClearCollections ( );
 
+  // Description:
+  // Create a thread for processing
+  void CreateProcessingThread();
+
+  // Description:
+  // Shutdown the processing thread 
+  void TerminateProcessingThread();
+  
+  // Description:
+  // Schedule a task to run in the processing thread. Returns true if
+  // task was successfully scheduled.
+  bool ScheduleTask( vtkSlicerTask* );
+
 protected:
 
   vtkSlicerApplicationLogic();
@@ -167,6 +187,15 @@ protected:
   vtkSlicerApplicationLogic(const vtkSlicerApplicationLogic&);
   void operator=(const vtkSlicerApplicationLogic&);
 
+
+  // Description:
+  // Callback used by a MultiThreader to start a processing thread
+  static ITK_THREAD_RETURN_TYPE ProcessingThreaderCallback( void * );
+
+  // Description:
+  // Task processing loop that is run in the processing thread
+  void ProcessTasks();
+  
 private:
   
   // for now, make these generic collections
@@ -180,6 +209,15 @@ private:
   vtkMRMLSelectionNode *SelectionNode;
   //vtkSlicerModuleLogic *ActiveModule;
 
+  //BTX
+  itk::MultiThreader::Pointer ProcessingThreader;
+  itk::MutexLock::Pointer ProcessingThreadActiveLock;
+  itk::MutexLock::Pointer ProcessingTaskQueueLock;
+  //ETX
+  int ProcessingThreadId;
+  bool ProcessingThreadActive;
+
+  ProcessingTaskQueue* InternalTaskQueue;
 
   // Transient Application State
   

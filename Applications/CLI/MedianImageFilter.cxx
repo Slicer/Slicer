@@ -70,7 +70,7 @@
 #include "itkImage.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
-#include "itkXMLFilterWatcher.h"
+#include "itkPluginFilterWatcher.h"
 
 
 //  Software Guide : BeginLatex
@@ -132,7 +132,8 @@ int main( int argc, char * argv[] )
                InputImageType, OutputImageType >  FilterType;
 
   FilterType::Pointer filter = FilterType::New();
-  itk::XMLFilterWatcher watcher(filter, "Median Image Filter");
+  itk::PluginFilterWatcher watcher(filter, "Median Image Filter",
+    CLPProcessInformation);
   // Software Guide : EndCodeSnippet
 
 

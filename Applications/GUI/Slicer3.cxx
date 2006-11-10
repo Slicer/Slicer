@@ -314,6 +314,7 @@ int Slicer3_main(int argc, char *argv[])
     // -- allows any dependent nodes to be created
     appLogic->ProcessMRMLEvents (scene, vtkCommand::ModifiedEvent, NULL);  
     appLogic->SetAndObserveMRMLScene ( scene );
+    appLogic->CreateProcessingThread();
 
     // CREATE APPLICATION GUI, including the main window
     vtkSlicerApplicationGUI *appGUI = vtkSlicerApplicationGUI::New ( );
@@ -959,6 +960,7 @@ int Slicer3_main(int argc, char *argv[])
 #endif
     
     //--- delete logic next, removing Refs to MRML
+    appLogic->TerminateProcessingThread();
     appLogic->ClearCollections ( );
 
     gradientAnisotropicDiffusionFilterLogic->SetAndObserveMRMLScene ( NULL );

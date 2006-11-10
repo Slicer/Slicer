@@ -21,11 +21,13 @@ extern "C" {
   struct ModuleProcessInformation
   {
     /** Inputs from calling application to the module **/
-    char Abort;
+    unsigned char Abort;
     
-    /** Outputs from the moduleto the calling application **/
+    /** Outputs from the module to the calling application **/
     float Progress;
     char  ProgressMessage[1024];
+    void (*ProgressCallbackFunction)(void *);
+    void *ProgressCallbackClientData;
 
     double ElapsedTime;
 
@@ -35,6 +37,12 @@ extern "C" {
         Progress = 0;
         strcpy(ProgressMessage, "");
         ElapsedTime = 0.0;
+      };
+
+    void SetProgressCallback( void (*fun)(void *), void *who )
+      {
+        ProgressCallbackFunction = fun;
+        ProgressCallbackClientData = who;
       };
   };
 };

@@ -52,7 +52,8 @@ vtkMRMLNode* vtkMRMLCommandLineModuleNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLCommandLineModuleNode::vtkMRMLCommandLineModuleNode()
 {
-    this->HideFromEditors = false;
+  this->HideFromEditors = false;
+  this->Status = Idle;
 }
 
 //----------------------------------------------------------------------------
@@ -151,6 +152,7 @@ void vtkMRMLCommandLineModuleNode::Copy(vtkMRMLNode *anode)
   vtkMRMLCommandLineModuleNode *node = (vtkMRMLCommandLineModuleNode *) anode;
 
   this->SetModuleDescription(node->ModuleDescriptionObject);
+  this->SetStatus(node->Status);
 }
 
 //----------------------------------------------------------------------------
@@ -159,6 +161,7 @@ void vtkMRMLCommandLineModuleNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLNode::PrintSelf(os,indent);
 
   os << indent << "Module description:   " << this->ModuleDescriptionObject;
+  os << indent << "Status: " << this->Status;
 }
 
 //----------------------------------------------------------------------------
@@ -284,3 +287,20 @@ vtkMRMLCommandLineModuleNode
 
 
 
+void
+vtkMRMLCommandLineModuleNode
+::SetStatus(vtkMRMLCommandLineModuleNode::StatusType status)
+{
+  if (this->Status != status)
+    {
+    this->Status = status;
+    this->Modified();
+    }
+}
+
+vtkMRMLCommandLineModuleNode::StatusType
+vtkMRMLCommandLineModuleNode
+::GetStatus()
+{
+  return this->Status;
+}

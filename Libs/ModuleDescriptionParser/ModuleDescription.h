@@ -142,6 +142,9 @@ public:
   const ModuleProcessInformation* GetProcessInformation() const
     {return &ProcessInformation;}
   
+  ModuleProcessInformation* GetProcessInformation()
+    {return &ProcessInformation;}
+  
   
 private:
   std::string Category;
