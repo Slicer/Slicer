@@ -164,14 +164,6 @@ void vtkImageAccumulateDiscrete::ExecuteData(vtkDataObject *)
   
   int type = inData->GetScalarType();
 
-#ifdef SLICER_VTK5
-  //TODO type access is broken on vtk5?
-  if ( type != VTK_SHORT )
-  {
-      vtkErrorMacro( "setting input data type to VTK_SHORT (4), was " << type);
-      type = VTK_SHORT;
-  }
-#endif
   switch (type)
   {
     case VTK_CHAR:
