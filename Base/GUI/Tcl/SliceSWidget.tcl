@@ -33,6 +33,7 @@ if { [itcl::find class SliceSWidget] == "" } {
     variable _kwObserverTags ""
 
     # methods
+    method resizeSliceNode {} {}
     method processEvent {} {}
     method incrementSlice {} {}
     method decrementSlice {} {}
@@ -122,6 +123,35 @@ itcl::body SliceSWidget::destructor {} {
 #                             METHODS
 # ------------------------------------------------------------------
 
+#
+# make sure the size of the slice matches the window size of the widget
+#
+itcl::body SliceSWidget::resizeSliceNode {} {
+
+  set tkwindow [$_renderWidget  GetWidgetName]
+  set w [winfo width $tkwindow]
+  set h [winfo height $tkwindow]
+  foreach {nodeW nodeH nodeD} [$_sliceNode GetDimensions] {}
+  if { $w == $nodeW && $h == $nodeH } {
+    return
+  }
+
+  if { $w == "10" && $h == "10" } {
+    puts "ignoring bogus resize"
+  } else {
+    set oldFOV [$_sliceNode GetFieldOfView]
+    set oldDim [$_sliceNode GetDimensions]
+    set oldPixelSize0 [expr [lindex $oldFOV 0] / (1. * [lindex $oldDim 0])]
+    set oldPixelSize1 [expr [lindex $oldFOV 1] / (1. * [lindex $oldDim 1])]
+    $_sliceNode SetDimensions $w $h [lindex $oldDim 2]
+    $_sliceNode SetFieldOfView \
+        [expr $oldPixelSize0 * $w] [expr $oldPixelSize1 * $h] [lindex $oldFOV 2]
+  }
+}
+
+#
+# handle interactor events
+#
 itcl::body SliceSWidget::processEvent { } {
 
   if { [info command $sliceGUI] == "" } {
@@ -164,6 +194,10 @@ itcl::body SliceSWidget::processEvent { } {
   set ras [$xyToRAS MultiplyPoint $x $y 0 1]
   foreach {r a s t} $ras {}
 
+  #
+  # check that the window size is correct for the node and resize if needed
+  #
+  $this resizeSliceNode
 
   switch $event {
 
@@ -274,21 +308,7 @@ itcl::body SliceSWidget::processEvent { } {
     }
     "ExposeEvent" { }
     "ConfigureEvent" {
-      set tkwindow [$_renderWidget  GetWidgetName]
-      set w [winfo width $tkwindow]
-      set h [winfo height $tkwindow]
-
-      if { $w == "10" && $h == "10" } {
-        puts "ignoring bogus resize"
-      } else {
-        set oldFOV [$_sliceNode GetFieldOfView]
-        set oldDim [$_sliceNode GetDimensions]
-        set oldPixelSize0 [expr [lindex $oldFOV 0] / (1. * [lindex $oldDim 0])]
-        set oldPixelSize1 [expr [lindex $oldFOV 1] / (1. * [lindex $oldDim 1])]
-        $_sliceNode SetDimensions $w $h [lindex $oldDim 2]
-        $_sliceNode SetFieldOfView \
-            [expr $oldPixelSize0 * $w] [expr $oldPixelSize1 * $h] [lindex $oldFOV 2]
-      }
+      $this resizeSliceNode
     }
     "EnterEvent" { 
       $_renderWidget CornerAnnotationVisibilityOn
