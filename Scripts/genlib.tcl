@@ -472,6 +472,7 @@ if { ![file exists $::VTK_TEST_FILE] || $::GENLIB(update) } {
             -DVTK_WRAP_TCL:BOOL=ON \
             -DVTK_USE_HYBRID:BOOL=ON \
             -DVTK_USE_PATENTED:BOOL=ON \
+            -DVTK_DEBUG_LEAKS:BOOL=ON \
             -DTCL_INCLUDE_PATH:PATH=$TCL_INCLUDE_DIR \
             -DTK_INCLUDE_PATH:PATH=$TCL_INCLUDE_DIR \
             -DTCL_LIBRARY:FILEPATH=$::VTK_TCL_LIB \
@@ -485,7 +486,6 @@ if { ![file exists $::VTK_TEST_FILE] || $::GENLIB(update) } {
             -DX11_Xext_LIB:FILEPATH=/usr/X11R6/lib64/libXext.a \
             -DCMAKE_MODULE_LINKER_FLAGS:STRING=-L/usr/X11R6/lib64 \
             -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON \
-            -DVTK_DEBUG_LEAKS:BOOL=ON \
             -DVTK_USE_64BIT_IDS:BOOL=ON \
             ../VTK
     } elseif { $isDarwin } {
@@ -503,6 +503,7 @@ if { ![file exists $::VTK_TEST_FILE] || $::GENLIB(update) } {
             -DVTK_WRAP_TCL:BOOL=ON \
             -DVTK_USE_HYBRID:BOOL=ON \
             -DVTK_USE_PATENTED:BOOL=ON \
+            -DVTK_DEBUG_LEAKS:BOOL=ON \
             -DOPENGL_INCLUDE_DIR:PATH=/usr/X11R6/include \
             -DTCL_INCLUDE_PATH:PATH=$TCL_INCLUDE_DIR \
             -DTK_INCLUDE_PATH:PATH=$TCL_INCLUDE_DIR \
@@ -526,6 +527,7 @@ if { ![file exists $::VTK_TEST_FILE] || $::GENLIB(update) } {
             -DVTK_WRAP_TCL:BOOL=ON \
             -DVTK_USE_HYBRID:BOOL=ON \
             -DVTK_USE_PATENTED:BOOL=ON \
+            -DVTK_DEBUG_LEAKS:BOOL=ON \
             -DTCL_INCLUDE_PATH:PATH=$TCL_INCLUDE_DIR \
             -DTK_INCLUDE_PATH:PATH=$TCL_INCLUDE_DIR \
             -DTCL_LIBRARY:FILEPATH=$::VTK_TCL_LIB \
