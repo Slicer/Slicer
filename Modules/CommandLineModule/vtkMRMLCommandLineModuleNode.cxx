@@ -160,7 +160,9 @@ void vtkMRMLCommandLineModuleNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   vtkMRMLNode::PrintSelf(os,indent);
 
-  os << indent << "Module description:   " << this->ModuleDescriptionObject;
+  os << indent << "Module description:   "
+     << std::endl
+     << "   " << this->ModuleDescriptionObject;
   os << indent << "Status: " << this->m_Status;
 }
 
