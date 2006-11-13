@@ -345,7 +345,6 @@ void vtkCommandLineModuleGUI::ProcessGUIEvents ( vtkObject *caller,
       return;
       }
     this->Logic->SetCommandLineModuleNode(n);
-    this->SetCommandLineModuleNode(n);
     vtkSetAndObserveMRMLNodeMacro( this->CommandLineModuleNode, n);
 
     this->UpdateGUI();
