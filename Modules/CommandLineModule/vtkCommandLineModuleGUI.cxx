@@ -439,7 +439,6 @@ void vtkCommandLineModuleGUI::UpdateMRML ()
     
     // set an observe new node in Logic
     this->Logic->SetCommandLineModuleNode(n);
-    this->SetCommandLineModuleNode(n);
     vtkSetAndObserveMRMLNodeMacro(this->CommandLineModuleNode,n);
 
     createdNode = true;
