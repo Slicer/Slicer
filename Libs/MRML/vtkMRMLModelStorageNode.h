@@ -11,15 +11,9 @@
   Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-// .NAME vtkMRMLModelStorageNode - MRML node for representing a volume (image stack).
+// .NAME vtkMRMLModelStorageNode - MRML node for model storage on disk
 // .SECTION Description
-// Storage nodes describe data sets that can be thought of as stacks of 2D 
-// images that form a 3D volume.  Storage nodes describe where the images 
-// are stored on disk, how to render the data (window and level), and how 
-// to read the files.  This information is extracted from the image 
-// headers (if they exist) at the time the MRML file is generated.  
-// Consequently, MRML files isolate MRML browsers from understanding how 
-// to read the myriad of file formats for medical data. 
+// Storage nodes has methods to read/write vtkPolyData to/from disk
 
 #ifndef __vtkMRMLModelStorageNode_h
 #define __vtkMRMLModelStorageNode_h
@@ -40,7 +34,7 @@ class VTK_MRML_EXPORT vtkMRMLModelStorageNode : public vtkMRMLStorageNode
   virtual vtkMRMLNode* CreateNodeInstance();
 
   // Description:
-  // Set node attributes
+  // Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
 
    // Description:

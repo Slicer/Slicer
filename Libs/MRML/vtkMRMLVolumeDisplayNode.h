@@ -11,15 +11,9 @@
   Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-// .NAME vtkMRMLVolumeDisplayNode - MRML node for representing a volume (image stack).
+// .NAME vtkMRMLVolumeDisplayNode - MRML node for representing a volume display attributes
 // .SECTION Description
-// Volume nodes describe data sets that can be thought of as stacks of 2D 
-// images that form a 3D volume.  Volume nodes describe where the images 
-// are stored on disk, how to render the data (window and level), and how 
-// to read the files.  This information is extracted from the image 
-// headers (if they exist) at the time the MRML file is generated.  
-// Consequently, MRML files isolate MRML browsers from understanding how 
-// to read the myriad of file formats for medical data. 
+// vtkMRMLVolumeDisplayNode nodes describe how volume is displayed.
 
 #ifndef __vtkMRMLVolumeDisplayNode_h
 #define __vtkMRMLVolumeDisplayNode_h
@@ -45,7 +39,7 @@ class VTK_MRML_EXPORT vtkMRMLVolumeDisplayNode : public vtkMRMLNode
   virtual vtkMRMLNode* CreateNodeInstance();
 
   // Description:
-  // Set node attributes
+  // Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
 
   // Description:
@@ -64,11 +58,6 @@ class VTK_MRML_EXPORT vtkMRMLVolumeDisplayNode : public vtkMRMLNode
   // Display Information
   //--------------------------------------------------------------------------
   
-  // Description:
-  // Numerical ID of the color lookup table to use for rendering the volume
-  vtkSetStringMacro(LUTName);
-  vtkGetStringMacro(LUTName);
-
   // Description:
   // Specifies whether windowing and leveling are to be performed automatically
   vtkBooleanMacro(AutoWindowLevel, int);
@@ -148,9 +137,6 @@ protected:
   vtkSetStringMacro(ColorNodeID);
 
   vtkMRMLColorNode *ColorNode;
-
-  // Strings
-  char *LUTName;
 
   double Window;
   double Level;

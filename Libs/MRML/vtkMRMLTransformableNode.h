@@ -12,6 +12,9 @@
 
 =========================================================================auto=*/
 // .NAME vtkMRMLTransformableNode - MRML node for representing a node with a tranform
+// .SECTION Description
+// A supercalss for other nodes that can have a transform to parent node 
+// like volume, model and transformation nodes
 
 #ifndef __vtkMRMLTransformableNode_h
 #define __vtkMRMLTransformableNode_h
@@ -33,7 +36,7 @@ class VTK_MRML_EXPORT vtkMRMLTransformableNode : public vtkMRMLNode
   virtual vtkMRMLNode* CreateNodeInstance() = 0;
 
   // Description:
-  // Set node attributes
+  // Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
 
   // Description:

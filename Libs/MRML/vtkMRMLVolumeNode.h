@@ -45,7 +45,7 @@ class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLTransformableNode
   virtual vtkMRMLNode* CreateNodeInstance() = 0;
 
   // Description:
-  // Set node attributes
+  // Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
 
   // Description:

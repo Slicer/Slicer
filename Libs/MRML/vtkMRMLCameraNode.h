@@ -6,17 +6,14 @@
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Program:   3D Slicer
-  Module:    $RCSfile: vtkMRMLClipModelsNode.h,v $
+  Module:    $RCSfile: vtkMRMLCameraNode.h,v $
   Date:      $Date: 2006/03/19 17:12:28 $
   Version:   $Revision: 1.6 $
 
 =========================================================================auto=*/
-// .NAME vtkMRMLClipModelsNode - MRML node to represent a 3D surface model.
+// .NAME vtkMRMLClipModelsNode - MRML node to represent camera node
 // .SECTION Description
-// Model nodes describe polygonal data.  They indicate where the model is 
-// stored on disk, and how to render it (color, opacity, etc).  Models 
-// are assumed to have been constructed with the orientation and voxel 
-// dimensions of the original segmented volume.
+// Camera node uses vtkCamera to store the state of the camera
 
 #ifndef __vtkMRMLCameraNode_h
 #define __vtkMRMLCameraNode_h
@@ -42,7 +39,7 @@ public:
   virtual vtkMRMLNode* CreateNodeInstance();
 
   // Description:
-  // Set node attributes
+  // Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
 
   // Description:
@@ -84,55 +81,70 @@ public:
   vtkGetObjectMacro(Camera, vtkCamera); 
 
   // Description:
-  // camera ParallelProjection flag 
+  // Set camera ParallelProjection flag 
   void SetParallelProjection(int parallelProjection) 
     {
     this->Camera->SetParallelProjection(parallelProjection);
     };
+  
+  // Description:
+  // Set camera ParallelProjection flag   
   int GetParallelProjection()
     {
-      return this->Camera->GetParallelProjection();
+    return this->Camera->GetParallelProjection();
     };
 
   // Description:
-  // camera Parallel Scale 
+  // Set camera Parallel Scale 
   void SetParallelScale(int scale) 
     {
     this->Camera->SetParallelScale(scale);
     };
+  
+  // Description:
+  // Set camera Parallel Scale   
   int GetParallelScale()
     {
-      return this->Camera->GetParallelScale();
+    return this->Camera->GetParallelScale();
     };
 
   // Description:
-  // camera Position 
+  // Set camera Position 
   void SetPosition(double position[3]) 
     {
     this->Camera->SetPosition(position);
     };
+  
+  // Description:
+  // Get camera Position   
   double *GetPosition()
     {
-      return this->Camera->GetPosition();
+    return this->Camera->GetPosition();
     };
 
   // Description:
-  // camera Focal Point 
+  // Set camera Focal Point 
   void SetFocalPoint(double focalPoint[3]) 
     {
     this->Camera->SetFocalPoint(focalPoint);
     };
+  
+  // Description:
+  // Get camera Focal Point 
   double *GetFocalPoint()
     {
-      return this->Camera->GetFocalPoint();
+    return this->Camera->GetFocalPoint();
     };
 
   // Description:
-  // camera position 
+  // Set camera Up vector
   void SetViewUp(double viewUp[3]) 
     {
     this->Camera->SetViewUp(viewUp);
     };
+  
+  // Description:
+  // Get camera Up vector
   double *GetViewUp()
     {
       return this->Camera->GetViewUp();

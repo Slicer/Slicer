@@ -11,12 +11,11 @@
   Version:   $Revision: 1.6 $
 
 =========================================================================auto=*/
-// .NAME vtkMRMLClipModelsNode - MRML node to represent a 3D surface model.
+// .NAME vtkMRMLClipModelsNode - MRML node to represent three clipping planes.
 // .SECTION Description
-// Model nodes describe polygonal data.  They indicate where the model is 
-// stored on disk, and how to render it (color, opacity, etc).  Models 
-// are assumed to have been constructed with the orientation and voxel 
-// dimensions of the original segmented volume.
+// The vtkMRMLClipModelsNode MRML node stores 
+// the direction of clipping for each of the three clipping planes.
+// It also stored  the type of combined clipping operation as either intersection or union
 
 #ifndef __vtkMRMLClipModelsNode_h
 #define __vtkMRMLClipModelsNode_h
@@ -45,7 +44,7 @@ public:
   virtual vtkMRMLNode* CreateNodeInstance();
 
   // Description:
-  // Set node attributes
+  // Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
 
   // Description:

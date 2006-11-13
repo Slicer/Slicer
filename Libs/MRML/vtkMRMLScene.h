@@ -46,19 +46,25 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description:
-  // Filename should be flie://path/file.xml
+  // Set URL (file name) of the scene
   void SetURL(const char *url) {
     this->URL = vtksys_stl::string(url); 
   };
+  
+  // Description:
+  // Get URL (file name) of the scene  
   const char *GetURL() {
     return this->URL.c_str();
   };
   
   // Description:
-  // Root directory, where URL is pointing
+  // Set Root directory, where URL is pointing
   void SetRootDirectory(const char *dir) {
     this->RootDirectory = vtksys_stl::string(dir); 
   };
+  
+  // Description:
+  // Get Root directory, where URL is pointing  
   const char *GetRootDirectory() {
     return this->RootDirectory.c_str();
   };
@@ -133,32 +139,47 @@ public:
   };
   
   // Description:
-  // Get the next path in the list.
+  // Get next node in the scene.
   vtkMRMLNode *GetNextNode() {
     return (vtkMRMLNode *)(this->CurrentScene->GetNextItemAsObject());};
   
+  // Description:
+  // Get next node of the class in the scene.
   vtkMRMLNode *GetNextNodeByClass(const char* className);
-  
+
+  // Description:
+  // Get nodes having the specified name
   vtkCollection *GetNodesByName(const char* name);
 
+  // Description:
+  // Get node given a unique ID
   vtkMRMLNode *GetNodeByID(const char* name);
 
-  vtkMRMLNode* GetNodeByClassByID(const char* className, const char* id);
-  
+  // Description:
+  // Get nodes of a specified class having the specified name
   vtkCollection *GetNodesByClassByName(const char* className, const char* name);
   
+  // Description:
+  // Get number of nodes in the scene
   int GetNumberOfNodes () { return this->CurrentScene->GetNumberOfItems(); };
 
+  // Description:
+  // Get n-th node in the scene
   vtkMRMLNode* GetNthNode(int n);
   
+  // Description:
+  // Get n-th node of a specified class  in the scene 
   vtkMRMLNode* GetNthNodeByClass(int n, const char* className );
   
+  // Description:
+  // Get number of nodes of a specified class in the scene
   int GetNumberOfNodesByClass(const char* className);
   
   //BTX
   std::list<std::string> GetNodeClassesList();
   //ETX
   
+  // Description:
   // returns list of names
   const char* GetNodeClasses();
   
@@ -172,29 +193,57 @@ public:
   // starting from hint
   int GetUniqueIDIndexByClassFromIndex(const char* className, int hint);
   
+  // Description:
+  // insert a node in the scene after a specified node
   void InsertAfterNode( vtkMRMLNode *item, vtkMRMLNode *newItem);
+  // Description:
+  // insert a node in the scene before a specified node
   void InsertBeforeNode( vtkMRMLNode *item, vtkMRMLNode *newItem);
   
+  // Description:
+  // Ger transformation between two nodes
   int GetTransformBetweenNodes( vtkMRMLNode *node1, vtkMRMLNode *node2, 
                                 vtkGeneralTransform *xform );
 
-  // Undo API
+  // Description:
+  // Set undo on/off
   void SetUndoOn() {UndoFlag=true;};
   void SetUndoOff() {UndoFlag=false;};
   bool GetUndoFlag() {return UndoFlag;};
   void SetUndoFlag(bool flag) {UndoFlag = flag;};
 
+  // Description:
+  // undo, set the scene to previous state
   void Undo();
+  
+  // Description:
+  // redo, set the scene to previously undone
   void Redo();
 
+  // Description:
+  // clear Undo stack, delete undo history
   void ClearUndoStack();
+  
+  // Description:
+  // clear Redo stack, delete redo history
   void ClearRedoStack();
 
+  // Description: 
+  // returns number of undo steps in the history buffer
   int GetNumberOfUndoLevels() { return this->UndoStack.size();};
+  
+  // Description: 
+  // returns number of redo steps in the history buffer
   int GetNumberOfRedoLevels() { return this->RedoStack.size();};
 
+  // Description: 
+  // Save current state in the undo buffer
   void SaveStateForUndo();
+  // Description: 
+  // Save current state of the node in the undo buffer
   void SaveStateForUndo(vtkMRMLNode *node);
+  // Description: 
+  // Save current state of the nodes in the undo buffer
   void SaveStateForUndo(vtkCollection *nodes);
   //BTX
   void SaveStateForUndo(std::vector<vtkMRMLNode *> nodes);
@@ -202,7 +251,7 @@ public:
 
 //BTX
   // Description:
-  // Get/Set the active Scene - to be used by MRMLIDImageIO
+  // Get/Set the active Scene 
   static void SetActiveScene(vtkMRMLScene *);
   static vtkMRMLScene *GetActiveScene();
 //ETX

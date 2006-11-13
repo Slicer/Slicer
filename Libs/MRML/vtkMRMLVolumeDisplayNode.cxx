@@ -58,7 +58,6 @@ vtkMRMLNode* vtkMRMLVolumeDisplayNode::CreateNodeInstance()
 vtkMRMLVolumeDisplayNode::vtkMRMLVolumeDisplayNode()
 {
   // Strings
-  this->LUTName = NULL;
   this->Interpolate = 1;
   this->AutoWindowLevel = 1;
   this->Window = 256;
@@ -85,11 +84,6 @@ vtkMRMLVolumeDisplayNode::vtkMRMLVolumeDisplayNode()
 //----------------------------------------------------------------------------
 vtkMRMLVolumeDisplayNode::~vtkMRMLVolumeDisplayNode()
 {
-  if (this->LUTName)
-    {
-    delete [] this->LUTName;
-    this->LUTName = NULL;
-    }
   this->SetAndObserveColorNodeID( NULL);
 }
 
@@ -99,11 +93,6 @@ void vtkMRMLVolumeDisplayNode::WriteXML(ostream& of, int nIndent)
   Superclass::WriteXML(of, nIndent);
 
   vtkIndent indent(nIndent);
-
-  if (this->LUTName != NULL) 
-    {
-    of << indent << "LUTName=\"" << this->LUTName << "\" ";
-    }
 
   {
   std::stringstream ss;
@@ -228,7 +217,6 @@ void vtkMRMLVolumeDisplayNode::Copy(vtkMRMLNode *anode)
   Superclass::Copy(anode);
   vtkMRMLVolumeDisplayNode *node = (vtkMRMLVolumeDisplayNode *) anode;
 
-  this->SetLUTName(node->LUTName);
   this->SetAutoWindowLevel(node->AutoWindowLevel);
   this->SetWindow(node->Window);
   this->SetLevel(node->Level);
@@ -246,9 +234,6 @@ void vtkMRMLVolumeDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   
   Superclass::PrintSelf(os,indent);
-
-  os << indent << "LUTName: " <<
-    (this->LUTName ? this->LUTName : "(none)") << "\n";
 
   os << indent << "AutoWindowLevel:   " << this->AutoWindowLevel << "\n";
   os << indent << "Window:            " << this->Window << "\n";

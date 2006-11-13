@@ -13,8 +13,7 @@
 =========================================================================auto=*/
 // .NAME vtkMRMLModelNode - MRML node to represent a 3D surface model.
 // .SECTION Description
-// Model nodes describe polygonal data.  They indicate where the model is 
-// stored on disk, and how to render it (color, opacity, etc).  Models 
+// Model nodes describe polygonal data.  Models 
 // are assumed to have been constructed with the orientation and voxel 
 // dimensions of the original segmented volume.
 
@@ -49,7 +48,7 @@ public:
   virtual vtkMRMLNode* CreateNodeInstance();
 
   // Description:
-  // Set node attributes
+  // Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
 
   // Description:
@@ -94,6 +93,8 @@ public:
   // Get associated display MRML node
   vtkMRMLModelDisplayNode* GetDisplayNode();
     
+  // Description:
+  // Set and observe poly data for this model
   vtkGetObjectMacro(PolyData, vtkPolyData);
   void SetAndObservePolyData(vtkPolyData *PolyData);
 

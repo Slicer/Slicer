@@ -11,12 +11,10 @@
   Version:   $Revision: 1.6 $
 
 =========================================================================auto=*/
-// .NAME vtkMRMLModelDisplayNode - MRML node to represent a 3D surface model.
+// .NAME vtkMRMLModelDisplayNode - MRML node to represent a dispaly property of 3D surface model.
 // .SECTION Description
-// Model nodes describe polygonal data.  They indicate where the model is 
-// stored on disk, and how to render it (color, opacity, etc).  Models 
-// are assumed to have been constructed with the orientation and voxel 
-// dimensions of the original segmented volume.
+// vtkMRMLModelDisplayNode nodes stores display property of a 3D surface model
+// including reference to ColorNode, texture, opacity, etc.
 
 #ifndef __vtkMRMLModelDisplayNode_h
 #define __vtkMRMLModelDisplayNode_h
@@ -46,7 +44,7 @@ public:
   virtual vtkMRMLNode* CreateNodeInstance();
 
   // Description:
-  // Set node attributes
+  // Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
 
   // Description:
@@ -135,12 +133,6 @@ public:
 
 
   // Description:
-  // Numerical ID of the color lookup table to use for rendering the overlay
-  // for this model
-  vtkGetMacro(LUTName,int);
-  vtkSetMacro(LUTName,int);
-  
-  // Description:
   // Updates this node if it depends on other nodes 
   // when the node is deleted in the scene
   virtual void UpdateReferences();
@@ -186,9 +178,6 @@ protected:
 
   vtkMRMLColorNode *ColorNode;
 
-  // Strings
-  int LUTName;
-    
   // Numbers
   double Opacity;
   double Ambient;

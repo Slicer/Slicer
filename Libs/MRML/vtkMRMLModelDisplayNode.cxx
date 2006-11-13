@@ -76,9 +76,6 @@ vtkMRMLModelDisplayNode::vtkMRMLModelDisplayNode()
   this->ScalarRange[0] = 0;
   this->ScalarRange[1] = 100;
 
-  // Scalars
-  this->LUTName = -1;
-  
   this->TextureImageData = NULL;
   this->ColorNodeID = NULL;
   this->ColorNode = NULL;
@@ -109,12 +106,6 @@ void vtkMRMLModelDisplayNode::WriteXML(ostream& of, int nIndent)
       << this->Color[2] << "\"";
     }
 
-  //if (this->LUTName && strcmp(this->LUTName,""))
-  if (this->LUTName != -1)
-    {
-    of << indent << " lutName=\"" << this->LUTName << "\"";
-    }
-  
   of << indent << " ambient=\"" << this->Ambient << "\"";
 
   of << indent << " diffuse=\"" << this->Diffuse << "\"";
@@ -173,12 +164,6 @@ void vtkMRMLModelDisplayNode::ReadXMLAttributes(const char** atts)
       ss << attValue;
       ss >> ScalarRange[0];
       ss >> ScalarRange[1];
-      }
-    else if (!strcmp(attName, "LUTName")) 
-      {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> LUTName;
       }
     else if (!strcmp(attName, "ambient")) 
       {

@@ -11,15 +11,10 @@
   Version:   $Revision: 1.13 $
 
 =========================================================================auto=*/
-// .NAME vtkMRMLTransformNode - MRML node for representing a volume (image stack).
+// .NAME vtkMRMLTransformNode - MRML node for representing a transformation
+// between this node space and a parent node space
 // .SECTION Description
-// Volume nodes describe data sets that can be thought of as stacks of 2D 
-// images that form a 3D volume.  Volume nodes describe where the images 
-// are stored on disk, how to render the data (window and level), and how 
-// to read the files.  This information is extracted from the image 
-// headers (if they exist) at the time the MRML file is generated.  
-// Consequently, MRML files isolate MRML browsers from understanding how 
-// to read the myriad of file formats for medical data. 
+// General Transformation between this node space and a parent node space
 
 #ifndef __vtkMRMLTransformNode_h
 #define __vtkMRMLTransformNode_h
@@ -39,7 +34,7 @@ class VTK_MRML_EXPORT vtkMRMLTransformNode : public vtkMRMLTransformableNode
   virtual vtkMRMLNode* CreateNodeInstance() = 0;
 
   // Description:
-  // Set node attributes
+  // Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
 
   // Description:
@@ -58,7 +53,7 @@ class VTK_MRML_EXPORT vtkMRMLTransformNode : public vtkMRMLTransformableNode
   // Finds the storage node and read the data
   virtual void UpdateScene(vtkMRMLScene *scene){
      Superclass::UpdateScene(scene);
- };
+  };
 
   // Description:
   // 1 if transfrom is linear, 0 otherwise
@@ -86,10 +81,6 @@ class VTK_MRML_EXPORT vtkMRMLTransformNode : public vtkMRMLTransformableNode
   void GetTransformToNode(vtkMRMLTransformNode* node, 
                           vtkGeneralTransform* transformToNode);
 
-  int IsTransformNodeMyParent(vtkMRMLTransformNode* node);
-
-  int IsTransformNodeMyChild(vtkMRMLTransformNode* node);
-
   // Description:
   // Get concatinated transforms to the top
   virtual int GetMatrixTransformToWorld(vtkMatrix4x4* transformToWorld) = 0;
@@ -98,6 +89,14 @@ class VTK_MRML_EXPORT vtkMRMLTransformNode : public vtkMRMLTransformableNode
   // Get concatinated transforms  bwetween nodes  
   virtual int GetMatrixTransformToNode(vtkMRMLTransformNode* node, 
                                        vtkMatrix4x4* transformToNode) = 0;
+  // Description:
+  // Returns 1 if this node is one of the node's descendents
+  int IsTransformNodeMyParent(vtkMRMLTransformNode* node);
+
+  // Description:
+  // Returns 1 if the node is one of the this node's descendents
+  int IsTransformNodeMyChild(vtkMRMLTransformNode* node);
+
 
 protected:
   vtkMRMLTransformNode();

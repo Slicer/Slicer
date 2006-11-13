@@ -11,15 +11,10 @@
   Version:   $Revision: 1.8 $
 
 =========================================================================auto=*/
-// .NAME vtkMRMLVolumeArchetypeStorageNode - MRML node for representing a volume (image stack).
+// .NAME vtkMRMLVolumeArchetypeStorageNode - MRML node for representing a volume storage
 // .SECTION Description
-// Storage nodes describe data sets that can be thought of as stacks of 2D 
-// images that form a 3D volume.  Storage nodes describe where the images 
-// are stored on disk, how to render the data (window and level), and how 
-// to read the files.  This information is extracted from the image 
-// headers (if they exist) at the time the MRML file is generated.  
-// Consequently, MRML files isolate MRML browsers from understanding how 
-// to read the myriad of file formats for medical data. 
+// vtkMRMLVolumeArchetypeStorageNode nodes describe the archetybe based volume storage
+// node that allows to read/write volume data from/to file using generic ITK mechanism.
 
 #ifndef __vtkMRMLVolumeArchetypeStorageNode_h
 #define __vtkMRMLVolumeArchetypeStorageNode_h
@@ -41,7 +36,7 @@ class VTK_MRML_EXPORT vtkMRMLVolumeArchetypeStorageNode : public vtkMRMLStorageN
   virtual vtkMRMLNode* CreateNodeInstance();
 
   // Description:
-  // Set node attributes
+  // Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
 
    // Description:

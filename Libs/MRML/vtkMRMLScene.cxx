@@ -673,22 +673,6 @@ vtkMRMLNode* vtkMRMLScene::GetNodeByID(const char* id)
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLScene::GetNodeByClassByID(const char* className, const char* id)
-{  
-  vtkMRMLNode *node;
-  for (int n=0; n < this->CurrentScene->GetNumberOfItems(); n++) 
-    {
-    node = (vtkMRMLNode*)this->CurrentScene->GetItemAsObject(n);
-    if (node->GetID() && !strcmp(node->GetID(), id) && node->IsA(className)) 
-      {
-      return node;
-      }
-    }
-
-  return NULL;
-}
-
-//------------------------------------------------------------------------------
 vtkCollection* vtkMRMLScene::GetNodesByClassByName(const char* className, const char* name)
 {
   vtkCollection* nodes = vtkCollection::New();

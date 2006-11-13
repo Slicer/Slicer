@@ -11,15 +11,12 @@
   Version:   $Revision: 1.13 $
 
 =========================================================================auto=*/
-// .NAME vtkMRMLLinearTransformNode - MRML node for representing a volume (image stack).
+// .NAME vtkMRMLLinearTransformNode - MRML node for representing 
+// a linear transformation to the parent node
 // .SECTION Description
-// Volume nodes describe data sets that can be thought of as stacks of 2D 
-// images that form a 3D volume.  Volume nodes describe where the images 
-// are stored on disk, how to render the data (window and level), and how 
-// to read the files.  This information is extracted from the image 
-// headers (if they exist) at the time the MRML file is generated.  
-// Consequently, MRML files isolate MRML browsers from understanding how 
-// to read the myriad of file formats for medical data. 
+// MRML node for representing 
+// a linear transformation to the parent node in the form vtkMatrix4x4
+// MatrixTransformToParent
 
 #ifndef __vtkMRMLLinearTransformNode_h
 #define __vtkMRMLLinearTransformNode_h
@@ -36,7 +33,7 @@ class VTK_MRML_EXPORT vtkMRMLLinearTransformNode : public vtkMRMLTransformNode
   virtual vtkMRMLNode* CreateNodeInstance();
 
   // Description:
-  // Set node attributes
+  // Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
 
   // Description:
@@ -56,11 +53,11 @@ class VTK_MRML_EXPORT vtkMRMLLinearTransformNode : public vtkMRMLTransformNode
   virtual int IsLinear() {return 1;};
 
   // Description:
-  // vtkGeneral transform of this node
+  // vtkGeneral transform of this node to paren node
   virtual vtkGeneralTransform* GetTransformToParent();
 
   // Description:
-  // vtkMatrix4x4 transform of this node
+  // vtkMatrix4x4 transform of this node to paren node
   vtkGetObjectMacro(MatrixTransformToParent, vtkMatrix4x4); 
   void SetAndObserveMatrixTransformToParent(vtkMatrix4x4 *matrix);
 
