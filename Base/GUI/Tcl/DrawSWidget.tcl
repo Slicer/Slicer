@@ -37,6 +37,8 @@ if { [itcl::find class DrawSWidget] == "" } {
     public variable thresholdMax 1
     public variable drawOver 1
 
+    variable _lastEventPoint ""
+
     # methods
     method processEvent { {caller ""} } {}
     method positionActors {} {}
@@ -70,7 +72,7 @@ itcl::body DrawSWidget::constructor {sliceGUI} {
 
   set _guiObserverTags ""
   lappend _guiObserverTags [$sliceGUI AddObserver DeleteEvent "itcl::delete object $this"]
-  foreach event { LeftButtonPressEvent LeftButtonReleaseEvent MouseMoveEvent } {
+  foreach event { LeftButtonPressEvent LeftButtonReleaseEvent MouseMoveEvent RightButtonPressEvent RightButtonReleaseEvent} {
     lappend _guiObserverTags [$sliceGUI AddObserver $event "$this processEvent $sliceGUI"]
   }
 
@@ -104,30 +106,6 @@ itcl::body DrawSWidget::destructor {} {
 # ------------------------------------------------------------------
 #                             METHODS
 # ------------------------------------------------------------------
-
-if { 0 } {
-  itcl::delete class DrawSWidget; source c:/pieper/bwh/slicer3/latest/slicer3/Base/GUI/Tcl/DrawSWidget.tcl; ::DrawSWidget::AddDraw
-
-              itcl::body DrawSWidget::createPolyData {} {
-                # make a single-polyline polydata
-                set polyData [vtkNew vtkPolyData]
-                # set lines [vtkCellArray New]
-
-                $polyData SetPoints $o(xyPoints)
-                # $polyData SetLines $lines
-                #set polyLine [vtkPolyLine New]
-                #$lines InsertNextCell $polyLine
-
-                set lines [$polyData GetLines]
-                set idArray [$lines GetData]
-                $idArray InsertNextTuple1 0
-
-                #$lines Delete
-                #$polyLine Delete
-
-                return $polyData
-              }
-}
 
 itcl::body DrawSWidget::createPolyData {} {
   # make a single-polyline polydata
@@ -170,7 +148,6 @@ itcl::body DrawSWidget::apply {} {
 
   # first, close the polyline back to the first point
   set lines [$o(polyData) GetLines]
-puts "lines is $lines"
   set idArray [$lines GetData]
   set p [$idArray GetTuple1 1]
   $idArray InsertNextTuple1 $p
@@ -189,30 +166,24 @@ puts "lines is $lines"
   $extrude SetExtrusionTypeToVectorExtrusion
   $extrude SetVector 0 0 1
 
-puts "extrude output is [$extrude GetOutput]"
-
   set dataToStencil [vtkPolyDataToImageStencil New]
   $dataToStencil SetInputConnection [$extrude GetOutputPort]
 
   #
-  # get a good size for the draw buffer - needs to include the full region
+  # get a good size for the draw buffer 
+  # - needs to include the full region
   #
   [$o(polyData) GetPoints] Modified
   set bounds [$o(polyData) GetBounds]
   foreach {xlo xhi ylo yhi zlo zhi} $bounds {}
-  set w [expr int($xhi - $xlo) + 1]
-  set h [expr int($yhi - $ylo) + 1]
-if { 0 } {
-  foreach {xmin xmax ymin ymax} {$xlo $xhi $ylo $yhi} {}
-  if { $xmin > 0 } { set xmin 0 }
-  if { $ymin > 0 } { set ymin 0 }
-  set w [expr int($xmax - $xmin) + 1]
-  set h [expr int($ymax - $ymin) + 1]
-}
+  set factor 2
+  set w [expr $factor * (int($xhi - $xlo) + 2)]
+  set h [expr $factor * (int($yhi - $ylo) + 2)]
 
   set imageData [vtkImageData New]
+  $imageData SetSpacing [expr 1. / $factor] [expr 1. / $factor] 1
   $imageData SetDimensions $w $h 1
-  $imageData SetOrigin $xlo $ylo 0
+  $imageData SetOrigin [expr $xlo - 1.0001] [expr $ylo - 1.0001] 0
   $imageData SetScalarType [$_layers(label,image) GetScalarType]
   $imageData AllocateScalars
 
@@ -232,22 +203,43 @@ if { 0 } {
   $stencil ReverseStencilOff
   $stencil SetBackgroundValue 0
 
+  #
+  # reverse stencil meaning if needed
+  # - check if corners are 1, and if so re-execute the inverse
+  # - just a heuristic, but pretty reliable
+  #
+  [$stencil GetOutput] Update
+  set ll [[$stencil GetOutput] GetScalarComponentAsFloat 0 0 0 0]
+  set ur [[$stencil GetOutput] GetScalarComponentAsFloat [expr $w-1] [expr $h-1] 0 0]
+  if { $ll == 1 && $ur == 1 } {
+    $stencil ReverseStencilOn
+  }
+  [$stencil GetOutput] Update
+
+  #
+  # make a little preview window for debugging pleasure
+  #
   catch "viewer Delete"
   catch "viewerImage Delete"
   vtkImageViewer viewer
   vtkImageData viewerImage
-  [$stencil GetOutput] Update
   viewerImage DeepCopy [$stencil GetOutput]
   viewer SetInput viewerImage
   viewer SetColorWindow 2
   viewer SetColorLevel 1
   viewer Render
 
+  #
+  # remove the polygon from the draw buffer
+  #
   $idArray SetNumberOfTuples 1
   $idArray SetTuple1 0 0
   $o(xyPoints) Reset
   $o(rasPoints) Reset
 
+  #
+  # clean up our local class instances
+  #
   $imageData Delete
   $oneImageData Delete
   $threshold Delete
@@ -433,9 +425,9 @@ itcl::body DrawSWidget::processEvent { {caller ""} } {
 
     switch $event {
       "LeftButtonPressEvent" {
+        eval $this addPoint $ras
         if { ! [$_interactor GetShiftKey] } {
           set _actionState "drawing"
-          eval $this addPoint $ras
         } else {
           set _actionState ""
           $this apply
@@ -457,6 +449,19 @@ itcl::body DrawSWidget::processEvent { {caller ""} } {
         set _actionState ""
         $sliceGUI SetGrabID ""
         set _description ""
+      }
+      "RightButtonPressEvent" {
+        puts "got right down"
+        set _lastEventPoint [$_interactor GetEventPosition]
+      }
+      "RightButtonReleaseEvent" {
+        puts "got right up"
+        puts "$_lastEventPoint == [$_interactor GetEventPosition]"
+        if { $_lastEventPoint == [$_interactor GetEventPosition] } {
+          eval $this addPoint $ras
+          set _actionState ""
+          $this apply
+        }
       }
       default {
         # other events...
