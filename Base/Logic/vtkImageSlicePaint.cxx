@@ -23,33 +23,6 @@ vtkCxxRevisionMacro(vtkImageSlicePaint, "$Revision: 1.22 $");
 vtkStandardNewMacro(vtkImageSlicePaint);
 
 //----------------------------------------------------------------------------
-void vtkImageSlicePaint::PrintSelf(ostream& os, vtkIndent indent)
-{
-  this->Superclass::PrintSelf(os,indent);
-  
-  os << indent << "TopLeft : " << this->TopLeft[0] << " " << this->TopLeft[1] << " " << this->TopLeft[2] << "\n";
-  os << indent << "TopRight : " << this->TopRight[0] << " " << this->TopRight[1] << " " << this->TopRight[2] << "\n";
-  os << indent << "BottomLeft : " << this->BottomLeft[0] << " " << this->BottomLeft[1] << " " << this->BottomLeft[2] << "\n";
-  os << indent << "BottomRight : " << this->BottomRight[0] << " " << this->BottomRight[1] << " " << this->BottomRight[2] << "\n";
-
-  os << indent << "PaintLabel: " << this->GetPaintLabel() << "\n";
-  os << indent << "BrushCenter : " << this->BrushCenter[0] << " " << this->BrushCenter[1] << " " << this->BrushCenter[2] << "\n";
-  os << indent << "BrushRadius: " << this->GetBrushRadius() << "\n";
-
-  os << indent << "BackgroundImage: " << this->GetBackgroundImage() << "\n";
-  os << indent << "WorkingImage: " << this->GetWorkingImage() << "\n";
-  os << indent << "ExtractImage: " << this->GetExtractImage() << "\n";
-  os << indent << "ReplaceImage: " << this->GetReplaceImage() << "\n";
-
-  os << indent << "BackgroundIJKToWorld: " << this->GetBackgroundIJKToWorld() << "\n";
-  os << indent << "WorkingIJKToWorld: " << this->GetWorkingIJKToWorld() << "\n";
-
-  os << indent << "ThresholdPaint: " << this->GetThresholdPaint() << "\n";
-  os << indent << "ThresholdPaintRange: " << this->GetThresholdPaintRange()[0] << ", " <<  this->GetThresholdPaintRange()[1] << "\n";
-  os << indent << "PaintOver: " << this->GetPaintOver() << "\n";
-}
-
-//----------------------------------------------------------------------------
 vtkImageSlicePaint::vtkImageSlicePaint()
 {
   for (int i = 0; i < 3; i++)
@@ -73,6 +46,18 @@ vtkImageSlicePaint::vtkImageSlicePaint()
   this->ThresholdPaintRange[0] = 0;
   this->ThresholdPaintRange[1] = VTK_DOUBLE_MAX;
   this->PaintOver = 1;
+}
+
+//----------------------------------------------------------------------------
+vtkImageSlicePaint::~vtkImageSlicePaint()
+{
+  this->SetBackgroundImage (NULL);
+  this->SetWorkingImage (NULL);
+  this->SetExtractImage (NULL);
+  this->SetReplaceImage (NULL);
+
+  this->SetBackgroundIJKToWorld (NULL);
+  this->SetWorkingIJKToWorld  (NULL);
 }
 
 
@@ -341,5 +326,32 @@ void vtkImageSlicePaint::Extract()
 void vtkImageSlicePaint::Replace()
 {
   // TODO: this will put the image back into the volume
+}
+
+//----------------------------------------------------------------------------
+void vtkImageSlicePaint::PrintSelf(ostream& os, vtkIndent indent)
+{
+  this->Superclass::PrintSelf(os,indent);
+  
+  os << indent << "TopLeft : " << this->TopLeft[0] << " " << this->TopLeft[1] << " " << this->TopLeft[2] << "\n";
+  os << indent << "TopRight : " << this->TopRight[0] << " " << this->TopRight[1] << " " << this->TopRight[2] << "\n";
+  os << indent << "BottomLeft : " << this->BottomLeft[0] << " " << this->BottomLeft[1] << " " << this->BottomLeft[2] << "\n";
+  os << indent << "BottomRight : " << this->BottomRight[0] << " " << this->BottomRight[1] << " " << this->BottomRight[2] << "\n";
+
+  os << indent << "PaintLabel: " << this->GetPaintLabel() << "\n";
+  os << indent << "BrushCenter : " << this->BrushCenter[0] << " " << this->BrushCenter[1] << " " << this->BrushCenter[2] << "\n";
+  os << indent << "BrushRadius: " << this->GetBrushRadius() << "\n";
+
+  os << indent << "BackgroundImage: " << this->GetBackgroundImage() << "\n";
+  os << indent << "WorkingImage: " << this->GetWorkingImage() << "\n";
+  os << indent << "ExtractImage: " << this->GetExtractImage() << "\n";
+  os << indent << "ReplaceImage: " << this->GetReplaceImage() << "\n";
+
+  os << indent << "BackgroundIJKToWorld: " << this->GetBackgroundIJKToWorld() << "\n";
+  os << indent << "WorkingIJKToWorld: " << this->GetWorkingIJKToWorld() << "\n";
+
+  os << indent << "ThresholdPaint: " << this->GetThresholdPaint() << "\n";
+  os << indent << "ThresholdPaintRange: " << this->GetThresholdPaintRange()[0] << ", " <<  this->GetThresholdPaintRange()[1] << "\n";
+  os << indent << "PaintOver: " << this->GetPaintOver() << "\n";
 }
 

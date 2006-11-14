@@ -130,7 +130,7 @@ public:
 
 protected:
   vtkImageSlicePaint();
-  ~vtkImageSlicePaint() {};
+  ~vtkImageSlicePaint();
 
   int TopLeft[3];
   int TopRight[3];
