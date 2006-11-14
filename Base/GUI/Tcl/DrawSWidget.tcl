@@ -159,16 +159,90 @@ itcl::body DrawSWidget::addPoint {r a s} {
   set idArray [$lines GetData]
   $idArray InsertNextTuple1 $p
   $idArray SetTuple1 0 [expr [$idArray GetNumberOfTuples] - 1]
+  $lines SetNumberOfCells 1
 }
 
+    
 itcl::body DrawSWidget::apply {} {
+
+  foreach {x y} [$_interactor GetEventPosition] {}
+  $this queryLayers $x $y
 
   # first, close the polyline back to the first point
   set lines [$o(polyData) GetLines]
+puts "lines is $lines"
   set idArray [$lines GetData]
   set p [$idArray GetTuple1 1]
   $idArray InsertNextTuple1 $p
   $idArray SetTuple1 0 [expr [$idArray GetNumberOfTuples] - 1]
+
+  #
+  # use the extrusion/stencil approach from VTK/Examples/GUI/Tcl/ImageTracerWidget.tcl
+  # - extrude the polygon into a 'skirt' along the z axis
+  # - create a stencil from this polydata
+  # - make an image data with 1 inside the polygon, 0 elsewhere
+  #
+
+  set extrude [vtkLinearExtrusionFilter New]
+  $extrude SetInput $o(polyData)
+  $extrude SetScaleFactor 1
+  $extrude SetExtrusionTypeToVectorExtrusion
+  $extrude SetVector 1 0 0
+
+puts "extrude output is [$extrude GetOutput]"
+
+  set dataToStencil [vtkPolyDataToImageStencil New]
+  $dataToStencil SetInputConnection [$extrude GetOutputPort]
+
+  [$o(polyData) GetPoints] Modified
+  set bounds [$o(polyData) GetBounds]
+  foreach {xlo xhi ylo yhi zlo zhi} $bounds {}
+  set w [expr int($xhi - $xlo) + 1]
+  set h [expr int($yhi - $ylo) + 1]
+
+  set imageData [vtkImageData New]
+  $imageData SetDimensions $w $h 1
+  $imageData SetScalarType [$_layers(label,image) GetScalarType]
+  $imageData AllocateScalars
+
+  set oneImageData [vtkImageData New]
+  
+  set threshold [vtkImageThreshold New]
+  $threshold SetInput $imageData
+  $threshold SetOutValue 1
+  $threshold SetInValue 1
+  $threshold ThresholdBetween 1 -1
+  $threshold SetOutput $oneImageData
+  $oneImageData Update
+
+  set stencil [vtkImageStencil New]
+  $stencil SetInput $oneImageData
+  $stencil SetStencil [$dataToStencil GetOutput]
+puts "stencil is [$dataToStencil GetOutput]"
+  $stencil ReverseStencilOff
+  $stencil SetBackgroundValue 0
+
+  catch "viewer Delete"
+  vtkImageViewer viewer
+  viewer SetInput [$stencil GetOutput]
+  viewer SetColorWindow 2
+  viewer SetColorLevel 1
+  viewer Render
+
+
+  $imageData Delete
+  $oneImageData Delete
+  $threshold Delete
+  $extrude Delete
+  $dataToStencil Delete
+
+
+  return 
+
+  #
+  # test or triangulating:
+  #
+
 
   # now copy the ids over into the polygon list
   if { 0 } {
@@ -201,6 +275,11 @@ itcl::body DrawSWidget::apply {} {
   $this positionActors
 
   return
+
+  #
+  # code carried over from Paint:
+  #
+
 
   foreach {x y} [$_interactor GetEventPosition] {}
   $this queryLayers $x $y
