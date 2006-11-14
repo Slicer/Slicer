@@ -53,7 +53,7 @@ the input image and runs a connected component algortihm.
 
     <boolean>
       <name>faceConnected</name>
-      <longflag>--faceConnectede</longflag>
+      <longflag>--faceConnected</longflag>
       <description>Adjacent voxels are face connected.</description>
       <label>Face Connected</label>
       <default>true</default>
