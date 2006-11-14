@@ -300,6 +300,7 @@ int Slicer3_main(int argc, char *argv[])
     // Create SlicerGUI application, style, and main window 
     vtkSlicerApplication *slicerApp = vtkSlicerApplication::New ( );
     slicerApp->InstallTheme( slicerApp->GetSlicerTheme() );
+    slicerApp->CreateProcessingThread();
 
     // Create MRML scene
     vtkMRMLScene *scene = vtkMRMLScene::New();
@@ -314,7 +315,6 @@ int Slicer3_main(int argc, char *argv[])
     // -- allows any dependent nodes to be created
     appLogic->ProcessMRMLEvents (scene, vtkCommand::ModifiedEvent, NULL);  
     appLogic->SetAndObserveMRMLScene ( scene );
-    appLogic->CreateProcessingThread();
 
     // CREATE APPLICATION GUI, including the main window
     vtkSlicerApplicationGUI *appGUI = vtkSlicerApplicationGUI::New ( );
@@ -628,6 +628,7 @@ int Slicer3_main(int argc, char *argv[])
       // Configure the Logic, GUI, and add to app
       commandLineModuleLogic->SetAndObserveMRMLScene ( scene );
       commandLineModuleLogic->SetApplicationLogic (appLogic);
+      commandLineModuleLogic->SetApplication ( slicerApp );
       commandLineModuleGUI->SetLogic ( commandLineModuleLogic );
       commandLineModuleGUI->SetApplication ( slicerApp );
       commandLineModuleGUI->SetApplicationLogic ( appLogic );
@@ -908,6 +909,7 @@ int Slicer3_main(int argc, char *argv[])
 
     // ------------------------------
     // EXIT 
+    slicerApp->TerminateProcessingThread();
     slicerApp->Exit();
 
     // ------------------------------
@@ -960,7 +962,6 @@ int Slicer3_main(int argc, char *argv[])
 #endif
     
     //--- delete logic next, removing Refs to MRML
-    appLogic->TerminateProcessingThread();
     appLogic->ClearCollections ( );
 
     gradientAnisotropicDiffusionFilterLogic->SetAndObserveMRMLScene ( NULL );

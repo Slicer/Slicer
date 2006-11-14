@@ -61,7 +61,7 @@ void ModuleParameter::operator=(const ModuleParameter& parameter)
 
 std::ostream & operator<<(std::ostream &os, const ModuleParameter &parameter)
 { 
-  std::cout << "    Parameter" << std::endl;
+  os << "    Parameter" << std::endl;
   os << "      " << "Tag: " << parameter.GetTag() << std::endl;
   os << "      " << "Name: " << parameter.GetName() << std::endl;
   os << "      " << "Description: " << parameter.GetDescription() << std::endl;

@@ -16,7 +16,17 @@
 #include "vtkSlicerGUICollection.h"
 #include "vtkSlicerTheme.h"
 
+#include "itkMultiThreader.h"
+#include "itkMutexLock.h"
+
 class vtkSlicerModuleGUI;
+
+//BTX
+class ProcessingTaskQueue;
+class ModifiedQueue;
+class vtkSlicerTask;
+//ETX
+
 
 // Description:
 // Contains slicer's style, application and collection of associated guis.
@@ -51,7 +61,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
     // installs rules to specify look & feel.
     virtual void InstallTheme ( vtkKWTheme *theme );
 
-  // Descrition:
+  // Description:
   // Save/Retrieve the application settings to/from registry.
   // Do not call that method before the application name is known and the
   // proper registry level set (if any).
@@ -84,6 +94,34 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   // Description:
   // Evaluate a string as a tcl expression
   const char *Evaluate(const char *expression);
+
+  // Description:
+  // Create a thread for processing
+  void CreateProcessingThread();
+
+  // Description:
+  // Shutdown the processing thread 
+  void TerminateProcessingThread();
+  
+  // Description:
+  // Schedule a task to run in the processing thread. Returns true if
+  // task was successfully scheduled. ScheduleTask() is called from the
+  // main thread to run something in the processing thread.
+  bool ScheduleTask( vtkSlicerTask* );
+
+  // Description:
+  // Schedule a Modified call on an object.  This method allows a
+  // processing thread to schedule a Modified call on an object to be
+  // performed in the main thread.  This allows the call to Modified
+  // to trigger GUI changes. ScheduleModified() is called from the
+  // processing thread to modify an object in the main thread.
+  bool ScheduleModified( vtkObject * );
+
+  // Description:
+  // Process a request on the Modified queue.  This method is called
+  // in the main thread of the application because calls to Modified()
+  // can cause an update to the GUI.
+  void ProcessModified();
   
  protected:
     vtkSlicerApplication ( );
@@ -99,10 +137,36 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
     char ConfirmDelete[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
     char ModulePath[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
     char TemporaryDirectory[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
+
+    // Description:
+    // Callback used by a MultiThreader to start a processing thread
+    static ITK_THREAD_RETURN_TYPE ProcessingThreaderCallback( void * );
+  
+    // Description:
+    // Task processing loop that is run in the processing thread
+    void ProcessTasks();
+  
   
  private:
     vtkSlicerApplication ( const vtkSlicerApplication& ); // Not implemented.
     void operator = ( const vtkSlicerApplication& ); //Not implemented.
+
+
+  //BTX
+  itk::MultiThreader::Pointer ProcessingThreader;
+  itk::MutexLock::Pointer ProcessingThreadActiveLock;
+  itk::MutexLock::Pointer ProcessingTaskQueueLock;
+  itk::MutexLock::Pointer ModifiedQueueActiveLock;
+  itk::MutexLock::Pointer ModifiedQueueLock;
+  //ETX
+  int ProcessingThreadId;
+  bool ProcessingThreadActive;
+  bool ModifiedQueueActive;
+
+  ProcessingTaskQueue* InternalTaskQueue;
+  ModifiedQueue* InternalModifiedQueue;
+  
+
 }; 
 
 #endif

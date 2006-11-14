@@ -291,12 +291,15 @@ vtkMRMLCommandLineModuleNode
 
 void
 vtkMRMLCommandLineModuleNode
-::SetStatus(vtkMRMLCommandLineModuleNode::StatusType status)
+::SetStatus(vtkMRMLCommandLineModuleNode::StatusType status, bool modify)
 {
   if (this->m_Status != status)
     {
     this->m_Status = status;
-    this->Modified();
+    if (modify)
+      {
+      this->Modified();
+      }
     }
 }
 

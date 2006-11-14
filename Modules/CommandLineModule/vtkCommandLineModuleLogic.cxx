@@ -27,6 +27,8 @@ Version:   $Revision: 1.2 $
 #include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLVolumeArchetypeStorageNode.h"
 
+#include "vtkSlicerApplication.h"
+
 #include "itksys/Process.h"
 #include "itksys/SystemTools.hxx"
 
@@ -64,12 +66,14 @@ vtkCommandLineModuleLogic* vtkCommandLineModuleLogic::New()
 vtkCommandLineModuleLogic::vtkCommandLineModuleLogic()
 {
   this->CommandLineModuleNode = NULL;
+  this->Application = NULL;
 }
 
 //----------------------------------------------------------------------------
 vtkCommandLineModuleLogic::~vtkCommandLineModuleLogic()
 {
   this->SetCommandLineModuleNode(NULL);
+  this->SetApplication(NULL);
 }
 
 //----------------------------------------------------------------------------
@@ -130,7 +134,7 @@ void vtkCommandLineModuleLogic::Apply()
   this->CommandLineModuleNode->Register(this);
   
   // Schedule the task
-  ret = this->ApplicationLogic->ScheduleTask( task );
+  ret = this->GetApplication()->ScheduleTask( task );
 
   if (!ret)
     {
@@ -145,6 +149,15 @@ void vtkCommandLineModuleLogic::Apply()
   task->Delete();
 }
 
+
+//
+// This routine is called in a separate thread from the main thread.
+// As such, this routine cannot directly or indirectly update the user
+// interface.  In the Slicer architecture, the user interface can be
+// updated whenever a node receives a Modified.  Since calls to
+// Modified() can update the GUI, the ApplyTask must be careful not to
+// modify a MRML node.
+// 
 void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
 {
   // check if MRML node is present 
@@ -375,7 +388,8 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
           vtkErrorMacro("No input volume assigned to \""
                         << (*iit).second.GetLabel().c_str() << "\"");
 
-          node->SetStatus(vtkMRMLCommandLineModuleNode::Idle);
+          node->SetStatus(vtkMRMLCommandLineModuleNode::Idle, false);
+          this->Application->ScheduleModified( node );
           return;
           }
         }
@@ -392,7 +406,8 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
           vtkErrorMacro("No output volume assigned to \""
                         << (*iit).second.GetLabel().c_str() << "\"");
 
-          node->SetStatus(vtkMRMLCommandLineModuleNode::Idle);
+          node->SetStatus(vtkMRMLCommandLineModuleNode::Idle, false);
+          this->Application->ScheduleModified( node );
           return;
           }
         }
@@ -445,7 +460,8 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
   //
   //
   node->GetModuleDescription().GetProcessInformation()->Initialize();
-  node->SetStatus(vtkMRMLCommandLineModuleNode::Running);
+  node->SetStatus(vtkMRMLCommandLineModuleNode::Running, false);
+  this->Application->ScheduleModified( node );
   if (isCommandLine)
     {
     itksysProcess *process = itksysProcess_New();
@@ -477,7 +493,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
       // increment the elapsed time
       node->GetModuleDescription().GetProcessInformation()->ElapsedTime
         += (timeoutlimit - timeout);
-      node->Modified();
+      this->Application->ScheduleModified( node );
       
       // reset the timeout value 
       timeout = timeoutlimit;
@@ -487,7 +503,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
         {
         itksysProcess_Kill(process);
         node->GetModuleDescription().GetProcessInformation()->Progress = 0;
-        node->Modified();
+        this->Application->ScheduleModified( node ); 
         break;
         }
 
@@ -510,7 +526,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
               std::string filterString(stdoutbuffer, tagstart+13,
                                        tagend-tagstart-13);
               strncpy(node->GetModuleDescription().GetProcessInformation()->ProgressMessage, filterString.c_str(), 1023);
-              node->Modified();
+              this->Application->ScheduleModified( node );
               }
             }
           
@@ -525,7 +541,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
               std::string progressString(stdoutbuffer, tagstart+17,
                                          tagend-tagstart-17);
               node->GetModuleDescription().GetProcessInformation()->Progress = 100*atof(progressString.c_str());
-              node->Modified();
+              this->Application->ScheduleModified( node );
               }
             }
           }
@@ -589,7 +605,8 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
     }
   if (node->GetStatus() != vtkMRMLCommandLineModuleNode::Cancelled)
     {
-    node->SetStatus(vtkMRMLCommandLineModuleNode::Completed);
+    node->SetStatus(vtkMRMLCommandLineModuleNode::Completed, false);
+    this->Application->ScheduleModified( node );
     }
 
   

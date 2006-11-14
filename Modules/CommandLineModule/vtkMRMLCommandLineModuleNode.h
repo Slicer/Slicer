@@ -66,12 +66,15 @@ class VTK_COMMANDLINEMODULE_EXPORT vtkMRMLCommandLineModuleNode : public vtkMRML
   //ETX
 
   // Description:
-  // Set the status of the node (Idle, Scheduled, Running, Completed)
+  // Set the status of the node (Idle, Scheduled, Running,
+  // Completed).  The "modify" parameter indicates whether the object
+  // can be modified by the call.
   //BTX
-  void SetStatus(StatusType status);
+  void SetStatus(StatusType status, bool modify=true);
   StatusType GetStatus();
   //ETX
-  
+
+
   // Description:
   // Get/Set a parameter for the module.
 //BTX
