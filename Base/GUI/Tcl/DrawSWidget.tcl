@@ -194,14 +194,25 @@ puts "extrude output is [$extrude GetOutput]"
   set dataToStencil [vtkPolyDataToImageStencil New]
   $dataToStencil SetInputConnection [$extrude GetOutputPort]
 
+  #
+  # get a good size for the draw buffer - needs to include the full region
+  #
   [$o(polyData) GetPoints] Modified
   set bounds [$o(polyData) GetBounds]
   foreach {xlo xhi ylo yhi zlo zhi} $bounds {}
   set w [expr int($xhi - $xlo) + 1]
   set h [expr int($yhi - $ylo) + 1]
+if { 0 } {
+  foreach {xmin xmax ymin ymax} {$xlo $xhi $ylo $yhi} {}
+  if { $xmin > 0 } { set xmin 0 }
+  if { $ymin > 0 } { set ymin 0 }
+  set w [expr int($xmax - $xmin) + 1]
+  set h [expr int($ymax - $ymin) + 1]
+}
 
   set imageData [vtkImageData New]
   $imageData SetDimensions $w $h 1
+  $imageData SetOrigin $xlo $ylo 0
   $imageData SetScalarType [$_layers(label,image) GetScalarType]
   $imageData AllocateScalars
 
@@ -218,17 +229,24 @@ puts "extrude output is [$extrude GetOutput]"
   set stencil [vtkImageStencil New]
   $stencil SetInput $oneImageData
   $stencil SetStencil [$dataToStencil GetOutput]
-puts "stencil is [$dataToStencil GetOutput]"
   $stencil ReverseStencilOff
   $stencil SetBackgroundValue 0
 
   catch "viewer Delete"
+  catch "viewerImage Delete"
   vtkImageViewer viewer
-  viewer SetInput [$stencil GetOutput]
+  vtkImageData viewerImage
+  [$stencil GetOutput] Update
+  viewerImage DeepCopy [$stencil GetOutput]
+  viewer SetInput viewerImage
   viewer SetColorWindow 2
   viewer SetColorLevel 1
   viewer Render
 
+  $idArray SetNumberOfTuples 1
+  $idArray SetTuple1 0 0
+  $o(xyPoints) Reset
+  $o(rasPoints) Reset
 
   $imageData Delete
   $oneImageData Delete
