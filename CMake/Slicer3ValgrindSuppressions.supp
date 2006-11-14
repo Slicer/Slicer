@@ -1,0 +1,359 @@
+#
+# avoid false alarms from valgrind
+# 
+#  
+# use with:
+#
+# valgrind \
+#  -v \
+#  --gen-suppressions=all \
+#  --suppressions=./CMake/Slicer3ValgrindSuppressions.supp                            \
+#  --suppressions=../Slicer3-lib/VTK/CMake/VTKValgrindSuppressions.supp               \
+#  --suppressions=../Slicer3-lib/KWWidgets/CMake/KWWidgetsValgrindSuppressions.supp   \
+#  --suppressions=../Slicer3-lib/Insight/CMake/InsightValgrind.supp                   \
+#  --suppressions=../Slicer3-lib/Insight/Utilities/gdcm/CMake/gdcmValgrind.supp       \
+#  --suppressions=../Slicer3-lib/Insight/Utilities/vxl/config/valgrind.supp           \
+#  ../Slicer3-build/bin/Slicer3-real |& tee /tmp/slicerval
+#
+{
+   <insert a suppression name here>
+   Memcheck:Cond
+   fun:CreateFrame
+   fun:TkCreateFrame
+   fun:Initialize
+   fun:Tk_Init
+   fun:_ZN16vtkKWApplication13InitializeTclEP10Tcl_InterpPSo
+   fun:_ZN16vtkKWApplication13InitializeTclEiPPcPSo
+   fun:_Z12Slicer3_mainiPPc
+   fun:__libc_start_main
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Param
+   socketcall.sendto(msg)
+   fun:send
+   fun:get_mapping
+   fun:__nscd_get_map_ref
+   fun:__nscd_getai
+   fun:gaih_inet
+   fun:getaddrinfo
+   obj:/usr/lib64/libX11.so.6.2.0
+   fun:_X11TransConnect
+   fun:_X11TransConnectDisplay
+   fun:XOpenDisplay
+   fun:TkpOpenDisplay
+   fun:CreateTopLevelWindow
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Addr8
+   fun:__strcpy_chk
+   obj:/usr/lib64/libX11.so.6.2.0
+   obj:/usr/lib64/libX11.so.6.2.0
+   fun:_XlcCreateLocaleDataBase
+   obj:/usr/lib64/libX11.so.6.2.0
+   obj:/usr/lib64/libX11.so.6.2.0
+   fun:_XlcCreateLC
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:_XlcCurrentLC
+   fun:XSetLocaleModifiers
+   fun:TkpOpenDisplay
+}
+{
+   <insert a suppression name here>
+   Memcheck:Addr8
+   fun:__strcpy_chk
+   obj:/usr/lib64/libX11.so.6.2.0
+   obj:/usr/lib64/libX11.so.6.2.0
+   fun:_XlcCreateLocaleDataBase
+   obj:/usr/lib64/libX11.so.6.2.0
+   obj:/usr/lib64/libX11.so.6.2.0
+   fun:_XlcCreateLC
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:_XlcCurrentLC
+   fun:XSetLocaleModifiers
+   fun:TkpOpenDisplay
+}
+{
+   <insert a suppression name here>
+   Memcheck:Addr8
+   fun:__strcpy_chk
+   obj:/usr/lib64/libX11.so.6.2.0
+   obj:/usr/lib64/libX11.so.6.2.0
+   fun:_XlcCreateLocaleDataBase
+   obj:/usr/lib64/libX11.so.6.2.0
+   obj:/usr/lib64/libX11.so.6.2.0
+   fun:_XlcCreateLC
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:_XlcCurrentLC
+   fun:XSetLocaleModifiers
+   fun:TkpOpenDisplay
+}
+{
+   <insert a suppression name here>
+   Memcheck:Cond
+   fun:_ZN14vtkSlicerColor8SetColorEPdddd
+   fun:_ZN14vtkSlicerColor25DefineDefaultColorPaletteEv
+   fun:_ZN14vtkSlicerColorC1Ev
+   fun:_ZN14vtkSlicerColor3NewEv
+   fun:_ZN14vtkSlicerThemeC1Ev
+   fun:_ZN14vtkSlicerTheme3NewEv
+   fun:_ZN20vtkSlicerApplicationC1Ev
+   fun:_ZN20vtkSlicerApplication3NewEv
+   fun:_Z12Slicer3_mainiPPc
+   fun:__libc_start_main
+}
+{
+   <insert a suppression name here>
+   Memcheck:Cond
+   fun:_ZN14vtkSlicerColor8SetColorEPdddd
+   fun:_ZN14vtkSlicerColorC1Ev
+   fun:_ZN14vtkSlicerColor3NewEv
+   fun:_ZN14vtkSlicerThemeC1Ev
+   fun:_ZN14vtkSlicerTheme3NewEv
+   fun:_ZN20vtkSlicerApplicationC1Ev
+   fun:_ZN20vtkSlicerApplication3NewEv
+   fun:_Z12Slicer3_mainiPPc
+   fun:__libc_start_main
+}
+{
+   <insert a suppression name here>
+   Memcheck:Cond
+   fun:FrameWidgetObjCmd
+   fun:TclEvalObjvInternal
+   fun:TclExecuteByteCode
+   fun:TclCompEvalObj
+   fun:TclObjInterpProc
+   fun:TclEvalObjvInternal
+   fun:TclExecuteByteCode
+   fun:TclCompEvalObj
+   fun:TclObjInterpProc
+   fun:TclEvalObjvInternal
+   fun:Tcl_EvalEx
+   fun:Tcl_Eval
+}
+{
+   <insert a suppression name here>
+   Memcheck:Value8
+   fun:Tcl_ParseBraces
+   fun:Tcl_ParseCommand
+   fun:Tcl_EvalEx
+   fun:Tcl_Eval
+   fun:Tcl_GlobalEval
+   fun:_ZN16vtkKWTkUtilities28EvaluateSimpleStringInternalEP10Tcl_InterpP9vtkObjectPKc
+   fun:_ZN16vtkKWTkUtilities20EvaluateSimpleStringEP16vtkKWApplicationPKc
+   fun:_ZN28vtkKWOptionDataBaseInternals15ConfigureWidgetEP11vtkKWWidgetPNS_27ClassHierarchyContainerTypeEPKc
+   fun:_ZN19vtkKWOptionDataBase15ConfigureWidgetEP11vtkKWWidget
+   fun:_ZN11vtkKWWidget6CreateEv
+   fun:_ZN10vtkKWTkcon12CreateWidgetEv
+   fun:_ZN11vtkKWWidget6CreateEv
+}
+{
+   <insert a suppression name here>
+   Memcheck:Value8
+   fun:ParseTokens
+   fun:Tcl_ParseCommand
+   fun:TclCompileScript
+   fun:TclSetByteCodeFromAny
+   fun:SetByteCodeFromAny
+   fun:TclCompEvalObj
+   fun:Tcl_EvalObjEx
+   fun:Tcl_CatchObjCmd
+   fun:TclEvalObjvInternal
+   fun:Tcl_EvalEx
+   fun:Tcl_Eval
+   fun:Tcl_GlobalEval
+}
+{
+   <insert a suppression name here>
+   Memcheck:Value8
+   fun:TclRegisterLiteral
+   fun:TclCompileScript
+   fun:TclSetByteCodeFromAny
+   fun:SetByteCodeFromAny
+   fun:TclCompEvalObj
+   fun:Tcl_EvalObjEx
+   fun:Tcl_CatchObjCmd
+   fun:TclEvalObjvInternal
+   fun:Tcl_EvalEx
+   fun:Tcl_Eval
+   fun:Tcl_GlobalEval
+   fun:_ZN16vtkKWTkUtilities28EvaluateSimpleStringInternalEP10Tcl_InterpP9vtkObjectPKc
+}
+{
+   <insert a suppression name here>
+   Memcheck:Value8
+   fun:AddLocalLiteralEntry
+   fun:TclRegisterLiteral
+   fun:TclCompileScript
+   fun:TclSetByteCodeFromAny
+   fun:SetByteCodeFromAny
+   fun:TclCompEvalObj
+   fun:Tcl_EvalObjEx
+   fun:Tcl_CatchObjCmd
+   fun:TclEvalObjvInternal
+   fun:Tcl_EvalEx
+   fun:Tcl_Eval
+   fun:Tcl_GlobalEval
+}
+{
+   <insert a suppression name here>
+   Memcheck:Cond
+   fun:TclRegisterLiteral
+   fun:TclCompileScript
+   fun:TclSetByteCodeFromAny
+   fun:SetByteCodeFromAny
+   fun:TclCompEvalObj
+   fun:Tcl_EvalObjEx
+   fun:Tcl_CatchObjCmd
+   fun:TclEvalObjvInternal
+   fun:Tcl_EvalEx
+   fun:Tcl_Eval
+   fun:Tcl_GlobalEval
+   fun:_ZN16vtkKWTkUtilities28EvaluateSimpleStringInternalEP10Tcl_InterpP9vtkObjectPKc
+}
+{
+   <insert a suppression name here>
+   Memcheck:Cond
+   fun:strnlen
+   fun:vfprintf
+   fun:vsprintf
+   fun:sprintf
+   fun:Tcl_LogCommandInfo
+   fun:TclExecuteByteCode
+   fun:TclCompEvalObj
+   fun:Tcl_EvalObjEx
+   fun:Tcl_CatchObjCmd
+   fun:TclEvalObjvInternal
+   fun:Tcl_EvalEx
+   fun:Tcl_Eval
+}
+{
+   <insert a suppression name here>
+   Memcheck:Cond
+   fun:Tcl_NewStringObj
+   fun:Tcl_AddObjErrorInfo
+   fun:Tcl_LogCommandInfo
+   fun:TclExecuteByteCode
+   fun:TclCompEvalObj
+   fun:Tcl_EvalObjEx
+   fun:Tcl_CatchObjCmd
+   fun:TclEvalObjvInternal
+   fun:Tcl_EvalEx
+   fun:Tcl_Eval
+   fun:Tcl_GlobalEval
+   fun:_ZN16vtkKWTkUtilities28EvaluateSimpleStringInternalEP10Tcl_InterpP9vtkObjectPKc
+}
+{
+   <insert a suppression name here>
+   Memcheck:Value8
+   fun:TclReleaseLiteral
+   fun:TclCleanupByteCode
+   fun:FreeByteCodeInternalRep
+   fun:TclFreeObj
+   fun:Tcl_EvalEx
+   fun:Tcl_Eval
+   fun:Tcl_GlobalEval
+   fun:_ZN16vtkKWTkUtilities28EvaluateSimpleStringInternalEP10Tcl_InterpP9vtkObjectPKc
+   fun:_ZN16vtkKWTkUtilities20EvaluateSimpleStringEP16vtkKWApplicationPKc
+   fun:_ZN28vtkKWOptionDataBaseInternals15ConfigureWidgetEP11vtkKWWidgetPNS_27ClassHierarchyContainerTypeEPKc
+   fun:_ZN19vtkKWOptionDataBase15ConfigureWidgetEP11vtkKWWidget
+   fun:_ZN11vtkKWWidget6CreateEv
+}
+{
+   <insert a suppression name here>
+   Memcheck:Value8
+   fun:Tcl_CreateHashEntry
+   fun:Tk_GetColorByValue
+   fun:TkpGetShadows
+   fun:Tk_3DVerticalBevel
+   fun:Tk_Draw3DRectangle
+   fun:DisplayMenu
+   fun:TclServiceIdle
+   fun:Tcl_DoOneEvent
+   fun:MapFrame
+   fun:TclServiceIdle
+   fun:Tcl_DoOneEvent
+   fun:MapFrame
+}
+{
+   <insert a suppression name here>
+   Memcheck:Cond
+   fun:FrameWidgetObjCmd
+   fun:TclEvalObjvInternal
+   fun:Tcl_EvalEx
+   fun:Tcl_Eval
+   fun:Tcl_GlobalEval
+   fun:_ZN16vtkKWTkUtilities28EvaluateSimpleStringInternalEP10Tcl_InterpP9vtkObjectPKc
+   fun:_ZN16vtkKWTkUtilities30EvaluateStringFromArgsInternalEP10Tcl_InterpP9vtkObjectPKcP13__va_list_tagS7_
+   fun:_ZN16vtkKWTkUtilities22EvaluateStringFromArgsEP16vtkKWApplicationPKcP13__va_list_tagS5_
+   fun:_ZN11vtkKWObject6ScriptEPKcz
+   fun:_ZN15vtkKWCoreWidget22SetConfigurationOptionEPKcS1_
+   fun:_ZN15vtkKWSplitFrame24ConfigureSeparatorCursorEv
+   fun:_ZN15vtkKWSplitFrame12CreateWidgetEv
+}
+{
+   <insert a suppression name here>
+   Memcheck:Param
+   write(buf)
+   obj:/lib64/libpthread-2.4.so
+   obj:/usr/lib64/libX11.so.6.2.0
+   obj:/usr/lib64/libX11.so.6.2.0
+   fun:_XReply
+   fun:_XGetWindowAttributes
+   fun:XGetWindowAttributes
+   obj:/usr/lib64/libX11.so.6.2.0
+   fun:_XimSetICDefaults
+   fun:_XimSetICDefaults
+   fun:_XimLocalCreateIC
+   fun:XCreateIC
+   fun:Tk_HandleEvent
+}
+{
+   <insert a suppression name here>
+   Memcheck:Cond
+   fun:_ZN14vtkSlicerColor8SetColorEPdddd
+   fun:_ZN14vtkSlicerColor22DefineSlicerColorNamesEv
+   fun:_ZN14vtkSlicerColor3NewEv
+   fun:_ZN14vtkSlicerThemeC1Ev
+   fun:_ZN14vtkSlicerTheme3NewEv
+   fun:_ZN20vtkSlicerApplicationC1Ev
+   fun:_ZN20vtkSlicerApplication3NewEv
+   fun:_Z12Slicer3_mainiPPc
+   fun:__libc_start_main
+}
+{
+   <insert a suppression name here>
+   Memcheck:Cond
+   fun:__printf_fp
+   fun:vfprintf
+   fun:vsprintf
+   fun:sprintf
+   fun:_ZN19vtkKWOptionDataBase17AddEntryAsDouble3EPKcS1_ddd
+   fun:_ZN19vtkKWOptionDataBase17AddEntryAsDouble3EPKcS1_Pd
+   fun:_ZN14vtkSlicerTheme7InstallEv
+   fun:_ZN16vtkKWApplication8SetThemeEP10vtkKWTheme
+   fun:_Z12Slicer3_mainiPPc
+   fun:__libc_start_main
+}
+{
+   <insert a suppression name here>
+   Memcheck:Cond
+   fun:Tcl_EvalEx
+   fun:Tcl_Eval
+   fun:Tcl_GlobalEval
+   fun:_ZN16vtkKWTkUtilities28EvaluateSimpleStringInternalEP10Tcl_InterpP9vtkObjectPKc
+   fun:_ZN16vtkKWTkUtilities20EvaluateSimpleStringEP16vtkKWApplicationPKc
+   fun:_ZN28vtkKWOptionDataBaseInternals15ConfigureWidgetEP11vtkKWWidgetPNS_27ClassHierarchyContainerTypeEPKc
+   fun:_ZN19vtkKWOptionDataBase15ConfigureWidgetEP11vtkKWWidget
+   fun:_ZN11vtkKWWidget6CreateEv
+   fun:_ZN10vtkKWTkcon12CreateWidgetEv
+   fun:_ZN11vtkKWWidget6CreateEv
+   fun:_ZN23vtkSlicerApplicationGUI8BuildGUIEv
+   fun:_Z12Slicer3_mainiPPc
+}
