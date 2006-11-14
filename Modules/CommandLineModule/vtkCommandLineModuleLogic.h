@@ -39,10 +39,6 @@ public:
   vtkGetObjectMacro (CommandLineModuleNode, vtkMRMLCommandLineModuleNode);
   vtkSetObjectMacro (CommandLineModuleNode, vtkMRMLCommandLineModuleNode);
 
-  // Description: Get/Set the application
-  vtkGetObjectMacro (Application, vtkSlicerApplication);
-  vtkSetObjectMacro (Application, vtkSlicerApplication);
-  
   
   // The method that schedules the command line module to run
   void Apply();
@@ -68,7 +64,6 @@ private:
   void operator=(const vtkCommandLineModuleLogic&);
 
   vtkMRMLCommandLineModuleNode* CommandLineModuleNode;
-  vtkSlicerApplication* Application;
 //BTX
   std::string TemporaryDirectory;
 //ETX

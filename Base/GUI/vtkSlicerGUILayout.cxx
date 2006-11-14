@@ -17,6 +17,7 @@ vtkSlicerGUILayout::vtkSlicerGUILayout ( )
 {
 
   this->MainSlicerWindow = NULL;
+  this->CurrentViewArrangement = 0;
   this->SetCurrentViewArrangement ( this->SlicerLayoutInitialView);
 }
 

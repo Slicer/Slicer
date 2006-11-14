@@ -66,14 +66,12 @@ vtkCommandLineModuleLogic* vtkCommandLineModuleLogic::New()
 vtkCommandLineModuleLogic::vtkCommandLineModuleLogic()
 {
   this->CommandLineModuleNode = NULL;
-  this->Application = NULL;
 }
 
 //----------------------------------------------------------------------------
 vtkCommandLineModuleLogic::~vtkCommandLineModuleLogic()
 {
   this->SetCommandLineModuleNode(NULL);
-  this->SetApplication(NULL);
 }
 
 //----------------------------------------------------------------------------
@@ -134,7 +132,7 @@ void vtkCommandLineModuleLogic::Apply()
   this->CommandLineModuleNode->Register(this);
   
   // Schedule the task
-  ret = this->GetApplication()->ScheduleTask( task );
+  ret = vtkSlicerApplication::GetInstance()->ScheduleTask( task );
 
   if (!ret)
     {
@@ -389,7 +387,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
                         << (*iit).second.GetLabel().c_str() << "\"");
 
           node->SetStatus(vtkMRMLCommandLineModuleNode::Idle, false);
-          this->Application->ScheduleModified( node );
+          vtkSlicerApplication::GetInstance()->ScheduleModified( node );
           return;
           }
         }
@@ -407,7 +405,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
                         << (*iit).second.GetLabel().c_str() << "\"");
 
           node->SetStatus(vtkMRMLCommandLineModuleNode::Idle, false);
-          this->Application->ScheduleModified( node );
+          vtkSlicerApplication::GetInstance()->ScheduleModified( node );
           return;
           }
         }
@@ -461,7 +459,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
   //
   node->GetModuleDescription().GetProcessInformation()->Initialize();
   node->SetStatus(vtkMRMLCommandLineModuleNode::Running, false);
-  this->Application->ScheduleModified( node );
+  vtkSlicerApplication::GetInstance()->ScheduleModified( node );
   if (isCommandLine)
     {
     itksysProcess *process = itksysProcess_New();
@@ -493,7 +491,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
       // increment the elapsed time
       node->GetModuleDescription().GetProcessInformation()->ElapsedTime
         += (timeoutlimit - timeout);
-      this->Application->ScheduleModified( node );
+      vtkSlicerApplication::GetInstance()->ScheduleModified( node );
       
       // reset the timeout value 
       timeout = timeoutlimit;
@@ -503,7 +501,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
         {
         itksysProcess_Kill(process);
         node->GetModuleDescription().GetProcessInformation()->Progress = 0;
-        this->Application->ScheduleModified( node ); 
+        vtkSlicerApplication::GetInstance()->ScheduleModified( node ); 
         break;
         }
 
@@ -526,7 +524,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
               std::string filterString(stdoutbuffer, tagstart+13,
                                        tagend-tagstart-13);
               strncpy(node->GetModuleDescription().GetProcessInformation()->ProgressMessage, filterString.c_str(), 1023);
-              this->Application->ScheduleModified( node );
+              vtkSlicerApplication::GetInstance()->ScheduleModified( node );
               }
             }
           
@@ -541,7 +539,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
               std::string progressString(stdoutbuffer, tagstart+17,
                                          tagend-tagstart-17);
               node->GetModuleDescription().GetProcessInformation()->Progress = 100*atof(progressString.c_str());
-              this->Application->ScheduleModified( node );
+              vtkSlicerApplication::GetInstance()->ScheduleModified( node );
               }
             }
           }
@@ -606,7 +604,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
   if (node->GetStatus() != vtkMRMLCommandLineModuleNode::Cancelled)
     {
     node->SetStatus(vtkMRMLCommandLineModuleNode::Completed, false);
-    this->Application->ScheduleModified( node );
+    vtkSlicerApplication::GetInstance()->ScheduleModified( node );
     }
 
   

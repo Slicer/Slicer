@@ -34,8 +34,19 @@ class vtkSlicerTask;
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
 {
  public:
-    static vtkSlicerApplication* New ( );
     vtkTypeRevisionMacro ( vtkSlicerApplication, vtkKWApplication );
+
+    // Description:
+    // This is a singleton pattern New.  There will only be ONE
+    // reference to a vtkSlicerApplication object per process.  Clients that
+    // call this must call Delete on the object so that the reference
+    // counting will work.   The single instance will be unreferenced when
+    // the program exits.
+    static vtkSlicerApplication* New();
+
+    // Description:
+    // Get the singleton
+    static vtkSlicerApplication* GetInstance();
 
     vtkGetObjectMacro ( MainLayout, vtkSlicerGUILayout );
     vtkGetObjectMacro ( SlicerTheme, vtkSlicerTheme );
@@ -166,7 +177,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   ProcessingTaskQueue* InternalTaskQueue;
   ModifiedQueue* InternalModifiedQueue;
   
-
+  static vtkSlicerApplication* Instance;
 }; 
 
 #endif

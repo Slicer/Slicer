@@ -628,7 +628,6 @@ int Slicer3_main(int argc, char *argv[])
       // Configure the Logic, GUI, and add to app
       commandLineModuleLogic->SetAndObserveMRMLScene ( scene );
       commandLineModuleLogic->SetApplicationLogic (appLogic);
-      commandLineModuleLogic->SetApplication ( slicerApp );
       commandLineModuleGUI->SetLogic ( commandLineModuleLogic );
       commandLineModuleGUI->SetApplication ( slicerApp );
       commandLineModuleGUI->SetApplicationLogic ( appLogic );

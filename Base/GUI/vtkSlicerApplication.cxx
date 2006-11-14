@@ -24,8 +24,10 @@ const char *vtkSlicerApplication::ModulePathRegKey = "ModulePath";
 const char *vtkSlicerApplication::TemporaryDirectoryRegKey = "TemporaryDirectory";
 const char *vtkSlicerApplication::ConfirmDeleteRegKey = "ConfirmDelete";
 
+vtkSlicerApplication *vtkSlicerApplication::Instance = NULL;
+
+
 //---------------------------------------------------------------------------
-vtkStandardNewMacro (vtkSlicerApplication);
 vtkCxxRevisionMacro(vtkSlicerApplication, "$Revision: 1.0 $");
 
 class ProcessingTaskQueue : public std::queue<vtkSmartPointer<vtkSlicerTask> > {};
@@ -114,6 +116,35 @@ vtkSlicerApplication::~vtkSlicerApplication ( ) {
     delete this->InternalModifiedQueue;
     this->InternalModifiedQueue = 0;
 }
+
+
+// Up the reference count so it behaves like New
+vtkSlicerApplication* vtkSlicerApplication::New()
+{
+  vtkSlicerApplication* ret = vtkSlicerApplication::GetInstance();
+  ret->Register(NULL);
+  return ret;
+}
+
+
+// Return the single instance of the vtkSlicerApplication
+vtkSlicerApplication* vtkSlicerApplication::GetInstance()
+{
+  if(!vtkSlicerApplication::Instance)
+    {
+    // Try the factory first
+    vtkSlicerApplication::Instance = (vtkSlicerApplication*)
+      vtkObjectFactory::CreateInstance("vtkSlicerApplication");
+    // if the factory did not provide one, then create it here
+    if(!vtkSlicerApplication::Instance)
+      {
+      vtkSlicerApplication::Instance = new vtkSlicerApplication;
+      }
+    }
+  // return the instance
+  return vtkSlicerApplication::Instance;
+}
+
 
 
 //---------------------------------------------------------------------------
