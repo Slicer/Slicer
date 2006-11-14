@@ -8,7 +8,7 @@
 #include "vtkKWUserInterfacePanel.h"
 #include "vtkKWFrameWithLabel.h"
 #include "vtkKWWindowBase.h"
-#include "vtkKwTkUtilities.h"
+#include "vtkKWTkUtilities.h"
 
 #ifdef WIN32
 #include "vtkKWWin32RegistryHelper.h"
