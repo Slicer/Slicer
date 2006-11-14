@@ -96,14 +96,14 @@ public:
 
   // Description:
   // Set camera Parallel Scale 
-  void SetParallelScale(int scale) 
+  void SetParallelScale(double scale) 
     {
     this->Camera->SetParallelScale(scale);
     };
   
   // Description:
   // Set camera Parallel Scale   
-  int GetParallelScale()
+  double GetParallelScale()
     {
     return this->Camera->GetParallelScale();
     };
