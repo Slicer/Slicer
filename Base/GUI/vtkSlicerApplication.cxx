@@ -533,7 +533,8 @@ bool vtkSlicerApplication::ScheduleModified( vtkObject *obj )
     {
     this->ModifiedQueueLock->Lock();
     (*this->InternalModifiedQueue).push( obj );
-    std::cout << (*this->InternalModifiedQueue).size() << std::endl;
+    std::cout << " [" << (*this->InternalModifiedQueue).size()
+              << "] " << std::endl;
     this->ModifiedQueueLock->Unlock();
     
     return true;
