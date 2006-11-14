@@ -187,7 +187,7 @@ puts "lines is $lines"
   $extrude SetInput $o(polyData)
   $extrude SetScaleFactor 1
   $extrude SetExtrusionTypeToVectorExtrusion
-  $extrude SetVector 1 0 0
+  $extrude SetVector 0 0 1
 
 puts "extrude output is [$extrude GetOutput]"
 
