@@ -23,7 +23,7 @@
 #include "itkImage.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
-#include "itkXMLFilterWatcher.h"
+#include "itkPluginFilterWatcher.h"
 
 #include "itkHistogramMatchingImageFilter.h"
 
@@ -64,7 +64,8 @@ int main( int argc, char * argv[] )
   
   // Create the filter
   FilterType::Pointer  filter = FilterType::New();
-  itk::XMLFilterWatcher watcher(filter, "Match Histogram");
+  itk::PluginFilterWatcher watcher(filter, "Match Histogram",
+    CLPProcessInformation);
 
   // Setup the input and output files
   reader1->SetFileName( inputVolume.c_str() );

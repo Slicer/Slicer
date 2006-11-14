@@ -52,7 +52,7 @@
 #include "itkImage.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
-#include "itkXMLFilterWatcher.h"
+#include "itkPluginFilterWatcher.h"
 
 //  Software Guide : BeginLatex
 //
@@ -124,7 +124,8 @@ int main( int argc, char * argv[] )
   //  Software Guide : EndLatex 
 
   // Software Guide : BeginCodeSnippet
-  itk::XMLFilterWatcher watcher(filter, "Gradient Anisotropic Diffusion");
+  itk::PluginFilterWatcher watcher(filter, "Gradient Anisotropic Diffusion",
+    CLPProcessInformation);
   filter->SetInput( reader->GetOutput() );
   // Software Guide : EndCodeSnippet
 

@@ -68,7 +68,7 @@
 
 // Software Guide : BeginCodeSnippet
 #include "itkVotingBinaryHoleFillingImageFilter.h"
-#include "itkXMLFilterWatcher.h"
+#include "itkPluginFilterWatcher.h"
 
 // Software Guide : EndCodeSnippet
 #include "VotingBinaryHoleFillingImageFilterCLP.h"
@@ -117,7 +117,8 @@ int main( int argc, char * argv[] )
                InputImageType, OutputImageType >  FilterType;
 
   FilterType::Pointer filter = FilterType::New();
-  itk::XMLFilterWatcher watcher(filter, "Median Image Filter");
+  itk::PluginFilterWatcher watcher(filter, "Voting Binary Hole Filling",
+    CLPProcessInformation);
 
   // Software Guide : EndCodeSnippet
 

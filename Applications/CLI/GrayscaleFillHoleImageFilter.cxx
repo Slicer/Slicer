@@ -23,7 +23,7 @@
 #include "itkImage.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
-#include "itkXMLFilterWatcher.h"
+#include "itkPluginFilterWatcher.h"
 
 #include "itkGrayscaleFillholeImageFilter.h"
 
@@ -63,7 +63,8 @@ int main( int argc, char * argv[] )
   
   // Create the filter
   FillholeFilterType::Pointer  fillhole = FillholeFilterType::New();
-  itk::XMLFilterWatcher watcher(fillhole, "Fill Hole");
+  itk::PluginFilterWatcher watcher(fillhole, "Fill Hole",
+    CLPProcessInformation);
 
   // Setup the input and output files
   reader->SetFileName( inputVolume.c_str() );

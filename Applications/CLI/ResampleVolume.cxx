@@ -44,7 +44,7 @@
 
 #include "itkVersion.h"
 
-#include "itkXMLFilterWatcher.h"
+#include "itkPluginFilterWatcher.h"
 #include "itkOrientedImage.h"
 #include "itkMinimumMaximumImageFilter.h"
 
@@ -136,7 +136,8 @@ int main( int argc, char* argv[] )
   outputSize[2] = static_cast<SizeValueType>(inputSize[2] * inputSpacing[2] / outputSpacing[2] + .5);
 
   ResampleFilterType::Pointer resampler = ResampleFilterType::New();
-  itk::XMLFilterWatcher watcher(resampler, "Resample Volume");
+  itk::PluginFilterWatcher watcher(resampler, "Resample Volume",
+    CLPProcessInformation);
 
     resampler->SetInput( reader->GetOutput() );
     resampler->SetTransform( transform );

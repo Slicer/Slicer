@@ -132,7 +132,7 @@ int main( int argc, char* argv[] )
 
     itk::EncapsulateMetaData<std::string>(dictionary,"0008|0008",std::string("ORIGINAL\\PRIMARY\\AXIAL"));  // Image Type
     itk::EncapsulateMetaData<std::string>(dictionary,"0008|0016",std::string("1.2.840.10008.5.1.4.1.1.2")); // SOP Class UID
-    itk::EncapsulateMetaData<std::string>(dictionary,"0010|0030",std::string("20050101")); // Patient's Birthdate
+    itk::EncapsulateMetaData<std::string>(dictionary,"0010|0030",std::string("20060101")); // Patient's Birthdate
     itk::EncapsulateMetaData<std::string>(dictionary,"0010|0032",std::string("010100.000000") ); // Patient's Birth Time
     itk::EncapsulateMetaData<std::string>(dictionary,"0010|0040", std::string("M")); // Patient's Sex
     itk::EncapsulateMetaData<std::string>(dictionary,"0008|0020", std::string("20050101")); // Study Date

@@ -23,7 +23,7 @@
 #include "itkImage.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
-#include "itkXMLFilterWatcher.h"
+#include "itkPluginFilterWatcher.h"
 
 #include "itkGrayscaleGrindPeakImageFilter.h"
 
@@ -62,24 +62,25 @@ int main( int argc, char * argv[] )
   WriterType::Pointer writer  = WriterType::New();
   
   // Create the filter
-  GrindPeakFilterType::Pointer  fillhole = GrindPeakFilterType::New();
-  itk::XMLFilterWatcher watcher(fillhole, "Fill Hole");
+  GrindPeakFilterType::Pointer  grindpeak = GrindPeakFilterType::New();
+  itk::PluginFilterWatcher watcher(grindpeak, "Grid Peak",
+    CLPProcessInformation);
 
   // Setup the input and output files
   reader->SetFileName( inputVolume.c_str() );
   writer->SetFileName( outputVolume.c_str() );
   
-  // Setup the fillhole method
-  fillhole->SetInput(  reader->GetOutput() );
+  // Setup the grindpeak method
+  grindpeak->SetInput(  reader->GetOutput() );
   
   // Write the output
-  writer->SetInput( fillhole->GetOutput() );
+  writer->SetInput( grindpeak->GetOutput() );
   writer->Update();
 
   // Output the number of iterations used
-  std::cout << "GrindPeak took " << fillhole->GetNumberOfIterationsUsed() << " iterations." << std::endl;
+  std::cout << "GrindPeak took " << grindpeak->GetNumberOfIterationsUsed() << " iterations." << std::endl;
   reader->GetOutput()->Print(std::cout);
-  fillhole->GetOutput()->Print(std::cout);
+  grindpeak->GetOutput()->Print(std::cout);
   return 0;
 
 }

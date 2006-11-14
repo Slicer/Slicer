@@ -25,7 +25,7 @@
 #include "itkImage.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
-#include "itkXMLFilterWatcher.h"
+#include "itkPluginFilterWatcher.h"
 
 #include "itkCheckerBoardImageFilter.h"
 
@@ -56,7 +56,8 @@ int main( int argc, char * argv[] )
                InputImageType>  FilterType;
 
   FilterType::Pointer filter = FilterType::New();
-  itk::XMLFilterWatcher watcher(filter, "CheckerBoard Image Filter");
+  itk::PluginFilterWatcher watcher(filter, "CheckerBoard Image Filter",
+    CLPProcessInformation);
 
   FilterType::PatternArrayType pattern;
   
