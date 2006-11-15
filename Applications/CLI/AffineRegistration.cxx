@@ -30,6 +30,8 @@
 #include "itkAffineTransform.h"
 #include "itkResampleImageFilter.h"
 
+#include "itkPluginFilterWatcher.h"
+
 #include "itkTimeProbesCollectorBase.h"
 
 //  The following section of code implements a Command observer
@@ -43,8 +45,13 @@ public:
   typedef  itk::Command             Superclass;
   typedef itk::SmartPointer<Self>  Pointer;
   itkNewMacro( Self );
+  void SetProcessInformation (ModuleProcessInformation * info)
+    {
+    m_ProcessInformation = info; 
+    }
 protected:
   CommandIterationUpdate() {};
+  ModuleProcessInformation *m_ProcessInformation;
 public:
   typedef itk::RegularStepGradientDescentOptimizer  OptimizerType;
   typedef   const OptimizerType   *    OptimizerPointer;
@@ -62,9 +69,35 @@ public:
         {
         return;
         }
+      
       std::cout << optimizer->GetCurrentIteration() << "   ";
       std::cout << optimizer->GetCurrentStepLength() << "   ";
       std::cout << optimizer->GetValue() << std::endl;
+      if (m_ProcessInformation)
+        {
+        m_ProcessInformation->Progress = 
+          static_cast<double>(optimizer->GetCurrentIteration()) /
+           static_cast<double>(optimizer->GetNumberOfIterations());
+        }
+      else
+        {
+        std::cout << "<filter-comment>"
+                  << " \"" 
+                  << "Optimizer Iteration: "
+                  << optimizer->GetCurrentIteration()
+                  << " Metric: "
+                  << optimizer->GetValue()
+                  << "\" "
+                  << "</filter-comment>"
+                  << std::endl;
+        std::cout << "<filter-progress>"
+                  << (static_cast<double>(optimizer->GetCurrentIteration()) /
+                      static_cast<double>(optimizer->GetNumberOfIterations()))
+        
+                  << "</filter-progress>"
+                  << std::endl;
+        std::cout << std::flush;
+        }
     }
 };
 
@@ -138,6 +171,10 @@ int main ( int argc, char* argv[] )
   // Reorient the volumes to a consistent acquisition direction
   //
   OrientFilterType::Pointer orientFixed = OrientFilterType::New();
+  itk::PluginFilterWatcher watchOrientFixed(orientFixed,
+                                            "Orient Fixed Image",
+                                            CLPProcessInformation,
+                                            1.0/3.0, 0.0);
     orientFixed->UseImageDirectionOn();
     orientFixed->SetDesiredCoordinateOrientationToAxial();
     orientFixed->SetInput (fixedReader->GetOutput());
@@ -146,6 +183,10 @@ int main ( int argc, char* argv[] )
     collector.Stop( "Orient fixed volume" );
 
   OrientFilterType::Pointer orientMoving = OrientFilterType::New();
+  itk::PluginFilterWatcher watchOrientMoving(orientMoving,
+                                            "Orient Moving Image",
+                                             CLPProcessInformation,
+                                            1.0/3.0, 1.0/3.0);
     orientMoving->UseImageDirectionOn();
     orientMoving->SetDesiredCoordinateOrientationToAxial();
     orientMoving->SetInput (movingReader->GetOutput());
@@ -175,6 +216,8 @@ int main ( int argc, char* argv[] )
   // Create the Command observer and register it with the optimizer.
   //
   CommandIterationUpdate::Pointer observer = CommandIterationUpdate::New();
+    observer->SetProcessInformation (CLPProcessInformation);
+
     optimizer->AddObserver( itk::IterationEvent(), observer );
 
   /////////////////////////////////////////////////////////////////////////////
@@ -208,6 +251,7 @@ int main ( int argc, char* argv[] )
     metric->SetNumberOfSpatialSamples( SpatialSamples );
 
   InterpolatorType::Pointer interpolator = InterpolatorType::New();
+
   RegistrationType::Pointer registration = RegistrationType::New();
     registration->SetTransform ( transform );
     registration->SetInitialTransformParameters ( transform->GetParameters() );
@@ -238,6 +282,10 @@ int main ( int argc, char* argv[] )
   //
   ResampleType::Pointer resample = ResampleType::New();
   ResampleInterpolatorType::Pointer Interpolator = ResampleInterpolatorType::New();
+  itk::PluginFilterWatcher watchResample(resample,
+                                         "Resample",
+                                         CLPProcessInformation,
+                                         1.0/3.0, 2.0/3.0);
 
     transform->SetParameters ( registration->GetLastTransformParameters() );
 

@@ -56,7 +56,7 @@ virtual void ShowProgress()
       if (m_ProcessInformation)
         {
         m_ProcessInformation->Progress = 
-          100*(this->GetProcess()->GetProgress() * m_Fraction + m_Start);
+          (this->GetProcess()->GetProgress() * m_Fraction + m_Start);
 
         this->GetTimeProbe().Stop();
         m_ProcessInformation->ElapsedTime
@@ -150,11 +150,6 @@ virtual void EndFilter()
       }
     else
       {
-      std::cout << "<filter-progress>"
-                << 0
-                << "</filter-progress>"
-                << std::endl;
-      std::cout << std::flush;
       std::cout << "<filter-end>"
                 << std::endl;
       std::cout << "<filter-name>"
