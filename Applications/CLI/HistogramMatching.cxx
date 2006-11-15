@@ -76,7 +76,7 @@ int main( int argc, char * argv[] )
   filter->SetInput                    ( reader1->GetOutput() );
   filter->SetReferenceImage           ( reader2->GetOutput() );
   filter->SetNumberOfHistogramLevels  ( numberOfHistogramLevels );
-  filter->SetNumberOfMatchPoints      ( numberOfHistogramLevels );
+  filter->SetNumberOfMatchPoints      ( numberOfMatchPoints );
   filter->SetThresholdAtMeanIntensity ( thresholdAtMeanIntensity );
 
   // Write the output
