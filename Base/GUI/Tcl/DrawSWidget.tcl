@@ -168,42 +168,45 @@ itcl::body DrawSWidget::apply {} {
 
       #
       # get a good size for the draw buffer 
-      # - needs to include the full region
+      # - needs to include the full region of the polygon
+      # - plus a little extra 
       #
       [$o(polyData) GetPoints] Modified
       set bounds [$o(polyData) GetBounds]
       foreach {xlo xhi ylo yhi zlo zhi} $bounds {}
-      set factor 2
-      set w [expr $factor * (int($xhi - $xlo) + 2)]
-      set h [expr $factor * (int($yhi - $ylo) + 2)]
+      # round to int and add extra pixel for both sides
+      # -- TODO: figure out why we need to add two pixels on each 
+      #    side for the width in order to end up with a single extra
+      #    pixel in the rasterized image map.  Probably has to 
+      #    do with how boundary conditions are handled in the filler
+      set w [expr int($xhi - $xlo) + 4]
+      set h [expr int($yhi - $ylo) + 2]
 
       set imageData [vtkImageData New]
-      $imageData SetSpacing [expr 1. / $factor] [expr 1. / $factor] 1
       $imageData SetDimensions $w $h 1
-      $imageData SetOrigin [expr $xlo - 1.0001] [expr $ylo - 1.0001] 0
+
       if { $_layers(label,image) != "" } {
         $imageData SetScalarType [$_layers(label,image) GetScalarType]
       }
-      $imageData SetScalarTypeToShort
       $imageData AllocateScalars
 
-      set zeroImageData [vtkImageData New]
-      
-      set threshold [vtkImageThreshold New]
-      $threshold SetInput $imageData
-      $threshold SetOutValue 0
-      $threshold SetInValue 0
-      $threshold ThresholdBetween 1 -1
-      $threshold SetOutput $zeroImageData
+      #
+      # move the points so the lower left corner of the 
+      # bounding box is at 1, 1 (to avoid clipping)
+      #
+      set translate [vtkTransform New]
+      $translate Translate [expr 2 + -1. * $xlo] [expr 1 + -1. * $ylo] 0
+      set drawPoints [vtkPoints New]
+      $drawPoints Reset
+      $translate TransformPoints $o(xyPoints) $drawPoints
+      $translate Delete
+      $drawPoints Modified
 
       set fill [vtkImageFillROI New]
-      $fill SetInput $zeroImageData
+      $fill SetInput $imageData
       $fill SetValue 1
-      $fill SetPoints $o(xyPoints)
-      $fill UpdateInformation
-      $fill Update
+      $fill SetPoints $drawPoints
       [$fill GetOutput] Update
-      puts "[[$fill GetOutput] GetScalarRange]"
 
       #
       # make a little preview window for debugging pleasure
@@ -232,9 +235,7 @@ itcl::body DrawSWidget::apply {} {
       #
       $fill Delete
       $imageData Delete
-      $zeroImageData Delete
-      $threshold Delete
-
+      $drawPoints Delete
     }
 
     "stencil" {
@@ -337,48 +338,10 @@ itcl::body DrawSWidget::apply {} {
     }
   }
 
-
-  return 
-
-  #
-  # test for triangulating:
-  #
-
-
-  # now copy the ids over into the polygon list
-  if { 0 } {
-    set idList [vtkIdList New]
-    set size [$idArray GetNumberOfTuples]
-    for {set i 1} {$i < $size} {incr i} {
-      $idList InsertNextId [$idArray GetTuple1 $i]
-    }
-    [$o(polyData) GetPolys] InsertNextCell $idList
-    $idList Delete
-  }
-
-  # triangulate the polygon into a new idList
-  # and insert the result as a new set of lines
-  if { 1 } {
-    set idList [vtkIdList New]
-    set polygon [$o(polyData) GetCell 1]
-    $polygon Triangulate $idList
-    [$o(polyData) GetLines] InsertNextCell $idList
-    $idList Delete
-  }
-
-
-  # reset the polylines for next outline
-  $idArray Reset
-  $idArray InsertNextTuple1 0
-
-  puts $o(polyData)
-
-  $this positionActors
-
-  return
+  return;
 
   #
-  # code carried over from Paint:
+  # at this point 
   #
 
 
