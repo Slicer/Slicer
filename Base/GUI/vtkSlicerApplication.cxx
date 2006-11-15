@@ -518,13 +518,13 @@ bool vtkSlicerApplication::ScheduleTask( vtkSlicerTask *task )
 }
 
 
-bool vtkSlicerApplication::ScheduleModified( vtkObject *obj )
+bool vtkSlicerApplication::RequestModified( vtkObject *obj )
 {
   bool active;
 
-  std::cout << "Scheduling a modified on " << obj;
+  std::cout << "Requesting a modified on " << obj;
 
-  // only schedule a Modified if the Modified queue is up
+  // only request a Modified if the Modified queue is up
   this->ModifiedQueueActiveLock->Lock();
   active = this->ModifiedQueueActive;
   this->ModifiedQueueActiveLock->Unlock();
@@ -540,7 +540,7 @@ bool vtkSlicerApplication::ScheduleModified( vtkObject *obj )
     return true;
     }
 
-  // could not schedule the Modified
+  // could not request the Modified
   return false;
 }
 
@@ -563,6 +563,12 @@ void vtkSlicerApplication::ProcessModified()
       {
       obj = (*this->InternalModifiedQueue).front();
       (*this->InternalModifiedQueue).pop();
+
+      // pop off any extra copies of the same object to save some updates
+      while (obj == (*this->InternalModifiedQueue).front())
+        {
+        (*this->InternalModifiedQueue).pop();
+        }
       }
     this->ModifiedQueueLock->Unlock();
     

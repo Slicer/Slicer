@@ -1260,5 +1260,5 @@ void vtkCommandLineModuleGUI::ProgressCallback ( void *who )
 
   // All we need to do is tell the node that it was Modified.  The
   // shared object plugin modifies fields in the ProcessInformation directly.
-  vtkSlicerApplication::GetInstance()->ScheduleModified(node);
+  vtkSlicerApplication::GetInstance()->RequestModified(node);
 }

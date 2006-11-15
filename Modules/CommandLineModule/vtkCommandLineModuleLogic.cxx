@@ -387,7 +387,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
                         << (*iit).second.GetLabel().c_str() << "\"");
 
           node->SetStatus(vtkMRMLCommandLineModuleNode::Idle, false);
-          vtkSlicerApplication::GetInstance()->ScheduleModified( node );
+          vtkSlicerApplication::GetInstance()->RequestModified( node );
           return;
           }
         }
@@ -405,7 +405,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
                         << (*iit).second.GetLabel().c_str() << "\"");
 
           node->SetStatus(vtkMRMLCommandLineModuleNode::Idle, false);
-          vtkSlicerApplication::GetInstance()->ScheduleModified( node );
+          vtkSlicerApplication::GetInstance()->RequestModified( node );
           return;
           }
         }
@@ -459,7 +459,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
   //
   node->GetModuleDescription().GetProcessInformation()->Initialize();
   node->SetStatus(vtkMRMLCommandLineModuleNode::Running, false);
-  vtkSlicerApplication::GetInstance()->ScheduleModified( node );
+  vtkSlicerApplication::GetInstance()->RequestModified( node );
   if (isCommandLine)
     {
     itksysProcess *process = itksysProcess_New();
@@ -491,7 +491,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
       // increment the elapsed time
       node->GetModuleDescription().GetProcessInformation()->ElapsedTime
         += (timeoutlimit - timeout);
-      vtkSlicerApplication::GetInstance()->ScheduleModified( node );
+      vtkSlicerApplication::GetInstance()->RequestModified( node );
       
       // reset the timeout value 
       timeout = timeoutlimit;
@@ -501,7 +501,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
         {
         itksysProcess_Kill(process);
         node->GetModuleDescription().GetProcessInformation()->Progress = 0;
-        vtkSlicerApplication::GetInstance()->ScheduleModified( node ); 
+        vtkSlicerApplication::GetInstance()->RequestModified( node ); 
         break;
         }
 
@@ -524,7 +524,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
               std::string filterString(stdoutbuffer, tagstart+13,
                                        tagend-tagstart-13);
               strncpy(node->GetModuleDescription().GetProcessInformation()->ProgressMessage, filterString.c_str(), 1023);
-              vtkSlicerApplication::GetInstance()->ScheduleModified( node );
+              vtkSlicerApplication::GetInstance()->RequestModified( node );
               }
             }
           
@@ -539,7 +539,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
               std::string progressString(stdoutbuffer, tagstart+17,
                                          tagend-tagstart-17);
               node->GetModuleDescription().GetProcessInformation()->Progress = 100*atof(progressString.c_str());
-              vtkSlicerApplication::GetInstance()->ScheduleModified( node );
+              vtkSlicerApplication::GetInstance()->RequestModified( node );
               }
             }
           }
@@ -604,7 +604,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
   if (node->GetStatus() != vtkMRMLCommandLineModuleNode::Cancelled)
     {
     node->SetStatus(vtkMRMLCommandLineModuleNode::Completed, false);
-    vtkSlicerApplication::GetInstance()->ScheduleModified( node );
+    vtkSlicerApplication::GetInstance()->RequestModified( node );
     }
 
   

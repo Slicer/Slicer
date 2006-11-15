@@ -121,17 +121,18 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   bool ScheduleTask( vtkSlicerTask* );
 
   // Description:
-  // Schedule a Modified call on an object.  This method allows a
-  // processing thread to schedule a Modified call on an object to be
+  // Request a Modified call on an object.  This method allows a
+  // processing thread to request a Modified call on an object to be
   // performed in the main thread.  This allows the call to Modified
-  // to trigger GUI changes. ScheduleModified() is called from the
+  // to trigger GUI changes. RequestModified() is called from the
   // processing thread to modify an object in the main thread.
-  bool ScheduleModified( vtkObject * );
+  bool RequestModified( vtkObject * );
 
   // Description:
   // Process a request on the Modified queue.  This method is called
   // in the main thread of the application because calls to Modified()
-  // can cause an update to the GUI.
+  // can cause an update to the GUI. (Method needs to be public to fit
+  // in the event callback chain.)
   void ProcessModified();
   
  protected:
