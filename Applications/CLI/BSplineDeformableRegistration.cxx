@@ -39,6 +39,8 @@
 #include "itkMattesMutualInformationImageToImageMetric.h"
 #include "itkLinearInterpolateImageFunction.h"
 
+#include "itkPluginFilterWatcher.h"
+
 #include "itkTimeProbesCollectorBase.h"
 
 //  Software Guide : BeginLatex
@@ -431,6 +433,10 @@ int main( int argc, char *argv[] )
                             OutputImageType >    ResampleFilterType;
 
   ResampleFilterType::Pointer resample = ResampleFilterType::New();
+  itk::PluginFilterWatcher watcher(
+    resample,
+    "Voting Binary Hole Filling",
+    CLPProcessInformation);
 
   resample->SetTransform( transform );
   resample->SetInput( movingOrient->GetOutput() );

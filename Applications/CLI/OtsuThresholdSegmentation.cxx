@@ -67,9 +67,9 @@ int main( int argc, char * argv[] )
   WriterType::Pointer writer = WriterType::New();
 
 // Watchers
-  itk::PluginFilterWatcher OtsuWatcher(OtsuFilter, "Otsu Threshold Image Filter", CLPProcessInformation);
-  itk::PluginFilterWatcher CCWatcher(CCFilter, "Connected Component Threshold Image Filter", CLPProcessInformation);
-  itk::PluginFilterWatcher RelabelWatcher(RelabelFilter, "Relabel objects", CLPProcessInformation);
+  itk::PluginFilterWatcher OtsuWatcher(OtsuFilter, "Otsu Threshold Image Filter", CLPProcessInformation, 1.0/3.0, 0.0);
+  itk::PluginFilterWatcher CCWatcher(CCFilter, "Connected Component Threshold Image Filter", CLPProcessInformation, 1.0/3.0, 1.0/3.0);
+  itk::PluginFilterWatcher RelabelWatcher(RelabelFilter, "Relabel objects", CLPProcessInformation, 1.0/3.0, 2.0/3.0);
 
   reader->SetFileName (inputVolume.c_str());
 
