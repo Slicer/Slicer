@@ -180,7 +180,7 @@ void BuildEdgeList(int nPts, int *xPts, int *yPts, Edge *edges[])
 
 template <class T>
 static void vtkImageFillROIDrawPolygon(int nx, int ny, int nPts, int *xPts, int *yPts, 
-    short value, T *outPtr)
+    T value, T *outPtr)
 {
   int    i, scan, done;
   Edge *active, *p, *q, *del;
@@ -677,7 +677,7 @@ template <class T>
 static void vtkImageFillROIExecute(vtkImageFillROI* self,
                                    vtkImageData *outData, T* outPtr)
 {
-  short value = (short)(self->GetValue());
+  T value = (T)(self->GetValue());
   int r = self->GetRadius();
   int i, j, x, y, z, nPts, nx, ny, outExt[6];
   int *xPts, *yPts;
@@ -712,7 +712,7 @@ static void vtkImageFillROIExecute(vtkImageFillROI* self,
     }
   nPts = j;
 
-  outPtr = (short*)outData->GetScalarPointerForExtent(outExt);
+  outPtr = (T*)outData->GetScalarPointerForExtent(outExt);
 
   // zero out the background (added when filter switched from
   // in place to being image to image).
@@ -730,9 +730,9 @@ static void vtkImageFillROIExecute(vtkImageFillROI* self,
     if (nPts >= 3)
       {
       vtkImageFillROIDrawPolygon(nx, ny, nPts, xPts, yPts,
-        (short)value, (short*)outPtr);
+        (T)value, (T*)outPtr);
       // Draw lines too because polygons don't include top, right edges
-      DrawLinesFast(nx, ny, nPts, xPts, yPts, value, (short*)outPtr);
+      DrawLinesFast(nx, ny, nPts, xPts, yPts, value, (T*)outPtr);
       }
     break;
 
@@ -788,13 +788,14 @@ void vtkImageFillROI::ExecuteData(vtkDataObject *out)
     return;
     }
 
-  if(this->GetOutput()->GetScalarType() == VTK_SHORT)
+  switch (this->GetOutput()->GetScalarType())
     {
-    vtkImageFillROIExecute(this, this->GetOutput(), (short *)(ptr));
-    }
-  else
-    {
-    vtkErrorMacro(<< "Execute: Illegal ScalarType");
+    vtkTemplateMacro( vtkImageFillROIExecute ( this, this->GetOutput(), static_cast<VTK_TT*>(ptr) ) );
+    default: 
+      {
+      vtkErrorMacro(<< "Execute: Unknown ScalarType\n");
+      return;
+      }
     }
 }
 
