@@ -36,6 +36,7 @@ if { [itcl::find class DrawSWidget] == "" } {
     public variable thresholdMin 1
     public variable thresholdMax 1
     public variable drawOver 1
+    public variable drawMethod "fillROI"
 
     variable _lastEventPoint ""
 
@@ -153,104 +154,194 @@ itcl::body DrawSWidget::apply {} {
   $idArray InsertNextTuple1 $p
   $idArray SetTuple1 0 [expr [$idArray GetNumberOfTuples] - 1]
 
-  #
-  # use the extrusion/stencil approach from VTK/Examples/GUI/Tcl/ImageTracerWidget.tcl
-  # - extrude the polygon into a 'skirt' along the z axis
-  # - create a stencil from this polydata
-  # - make an image data with 1 inside the polygon, 0 elsewhere
-  #
+  # make sure the xyPoints are up to date
+  $this positionActors
 
-  set extrude [vtkLinearExtrusionFilter New]
-  $extrude SetInput $o(polyData)
-  $extrude SetScaleFactor 1
-  $extrude SetExtrusionTypeToVectorExtrusion
-  $extrude SetVector 0 0 1
 
-  set dataToStencil [vtkPolyDataToImageStencil New]
-  $dataToStencil SetInputConnection [$extrude GetOutputPort]
+  # switch on the public configuration variable
+  switch $drawMethod {
+    "fillROI" {
 
-  #
-  # get a good size for the draw buffer 
-  # - needs to include the full region
-  #
-  [$o(polyData) GetPoints] Modified
-  set bounds [$o(polyData) GetBounds]
-  foreach {xlo xhi ylo yhi zlo zhi} $bounds {}
-  set factor 2
-  set w [expr $factor * (int($xhi - $xlo) + 2)]
-  set h [expr $factor * (int($yhi - $ylo) + 2)]
+      #
+      # use the slicer2 vtkImageFillROI filter
+      #
 
-  set imageData [vtkImageData New]
-  $imageData SetSpacing [expr 1. / $factor] [expr 1. / $factor] 1
-  $imageData SetDimensions $w $h 1
-  $imageData SetOrigin [expr $xlo - 1.0001] [expr $ylo - 1.0001] 0
-  $imageData SetScalarType [$_layers(label,image) GetScalarType]
-  $imageData AllocateScalars
+      #
+      # get a good size for the draw buffer 
+      # - needs to include the full region
+      #
+      [$o(polyData) GetPoints] Modified
+      set bounds [$o(polyData) GetBounds]
+      foreach {xlo xhi ylo yhi zlo zhi} $bounds {}
+      set factor 2
+      set w [expr $factor * (int($xhi - $xlo) + 2)]
+      set h [expr $factor * (int($yhi - $ylo) + 2)]
 
-  set oneImageData [vtkImageData New]
-  
-  set threshold [vtkImageThreshold New]
-  $threshold SetInput $imageData
-  $threshold SetOutValue 1
-  $threshold SetInValue 1
-  $threshold ThresholdBetween 1 -1
-  $threshold SetOutput $oneImageData
-  $oneImageData Update
+      set imageData [vtkImageData New]
+      $imageData SetSpacing [expr 1. / $factor] [expr 1. / $factor] 1
+      $imageData SetDimensions $w $h 1
+      $imageData SetOrigin [expr $xlo - 1.0001] [expr $ylo - 1.0001] 0
+      if { $_layers(label,image) != "" } {
+        $imageData SetScalarType [$_layers(label,image) GetScalarType]
+      }
+      $imageData SetScalarTypeToShort
+      $imageData AllocateScalars
 
-  set stencil [vtkImageStencil New]
-  $stencil SetInput $oneImageData
-  $stencil SetStencil [$dataToStencil GetOutput]
-  $stencil ReverseStencilOff
-  $stencil SetBackgroundValue 0
+      set zeroImageData [vtkImageData New]
+      
+      set threshold [vtkImageThreshold New]
+      $threshold SetInput $imageData
+      $threshold SetOutValue 0
+      $threshold SetInValue 0
+      $threshold ThresholdBetween 1 -1
+      $threshold SetOutput $zeroImageData
 
-  #
-  # reverse stencil meaning if needed
-  # - check if corners are 1, and if so re-execute the inverse
-  # - just a heuristic, but pretty reliable
-  #
-  [$stencil GetOutput] Update
-  set ll [[$stencil GetOutput] GetScalarComponentAsFloat 0 0 0 0]
-  set ur [[$stencil GetOutput] GetScalarComponentAsFloat [expr $w-1] [expr $h-1] 0 0]
-  if { $ll == 1 && $ur == 1 } {
-    $stencil ReverseStencilOn
+      set fill [vtkImageFillROI New]
+      $fill SetInput $zeroImageData
+      $fill SetValue 1
+      $fill SetPoints $o(xyPoints)
+      $fill UpdateInformation
+      $fill Update
+      [$fill GetOutput] Update
+      puts "[[$fill GetOutput] GetScalarRange]"
+
+      #
+      # make a little preview window for debugging pleasure
+      #
+      catch "viewer Delete"
+      catch "viewerImage Delete"
+      vtkImageViewer viewer
+      vtkImageData viewerImage
+      viewerImage DeepCopy [$fill GetOutput]
+      viewer SetInput viewerImage
+      viewer SetColorWindow 2
+      viewer SetColorLevel 1
+      viewer Render
+
+      #
+      # remove the polygon from the draw buffer
+      #
+      $idArray Reset
+      $idArray InsertNextTuple1 0
+      $o(xyPoints) Reset
+      $o(rasPoints) Reset
+      $lines SetNumberOfCells 0
+
+      #
+      # clean up our local class instances
+      #
+      $fill Delete
+      $imageData Delete
+      $zeroImageData Delete
+      $threshold Delete
+
+    }
+
+    "stencil" {
+
+      #
+      # use the extrusion/stencil approach from VTK/Examples/GUI/Tcl/ImageTracerWidget.tcl
+      # - extrude the polygon into a 'skirt' along the z axis
+      # - create a stencil from this polydata
+      # - make an image data with 1 inside the polygon, 0 elsewhere
+      #
+
+      set extrude [vtkLinearExtrusionFilter New]
+      $extrude SetInput $o(polyData)
+      $extrude SetScaleFactor 1
+      $extrude SetExtrusionTypeToVectorExtrusion
+      $extrude SetVector 0 0 1
+
+      set dataToStencil [vtkPolyDataToImageStencil New]
+      $dataToStencil SetInputConnection [$extrude GetOutputPort]
+
+      #
+      # get a good size for the draw buffer 
+      # - needs to include the full region
+      #
+      [$o(polyData) GetPoints] Modified
+      set bounds [$o(polyData) GetBounds]
+      foreach {xlo xhi ylo yhi zlo zhi} $bounds {}
+      set factor 2
+      set w [expr $factor * (int($xhi - $xlo) + 2)]
+      set h [expr $factor * (int($yhi - $ylo) + 2)]
+
+      set imageData [vtkImageData New]
+      $imageData SetSpacing [expr 1. / $factor] [expr 1. / $factor] 1
+      $imageData SetDimensions $w $h 1
+      $imageData SetOrigin [expr $xlo - 1.0001] [expr $ylo - 1.0001] 0
+      if { $_layers(label,image) != "" } {
+        $imageData SetScalarType [$_layers(label,image) GetScalarType]
+      }
+      $imageData AllocateScalars
+
+      set oneImageData [vtkImageData New]
+      
+      set threshold [vtkImageThreshold New]
+      $threshold SetInput $imageData
+      $threshold SetOutValue 1
+      $threshold SetInValue 1
+      $threshold ThresholdBetween 1 -1
+      $threshold SetOutput $oneImageData
+      $oneImageData Update
+
+      set stencil [vtkImageStencil New]
+      $stencil SetInput $oneImageData
+      $stencil SetStencil [$dataToStencil GetOutput]
+      $stencil ReverseStencilOff
+      $stencil SetBackgroundValue 0
+
+      #
+      # reverse stencil meaning if needed
+      # - check if corners are 1, and if so re-execute the inverse
+      # - just a heuristic, but pretty reliable
+      #
+      [$stencil GetOutput] Update
+      set ll [[$stencil GetOutput] GetScalarComponentAsFloat 0 0 0 0]
+      set ur [[$stencil GetOutput] GetScalarComponentAsFloat [expr $w-1] [expr $h-1] 0 0]
+      if { $ll == 1 && $ur == 1 } {
+        $stencil ReverseStencilOn
+      }
+      [$stencil GetOutput] Update
+
+      #
+      # make a little preview window for debugging pleasure
+      #
+      catch "viewer Delete"
+      catch "viewerImage Delete"
+      vtkImageViewer viewer
+      vtkImageData viewerImage
+      viewerImage DeepCopy [$stencil GetOutput]
+      viewer SetInput viewerImage
+      viewer SetColorWindow 2
+      viewer SetColorLevel 1
+      viewer Render
+
+      #
+      # remove the polygon from the draw buffer
+      #
+      $idArray Reset
+      $idArray InsertNextTuple1 0
+      $o(xyPoints) Reset
+      $o(rasPoints) Reset
+      $lines SetNumberOfCells 0
+
+      #
+      # clean up our local class instances
+      #
+      $imageData Delete
+      $oneImageData Delete
+      $threshold Delete
+      $extrude Delete
+      $dataToStencil Delete
+    }
   }
-  [$stencil GetOutput] Update
-
-  #
-  # make a little preview window for debugging pleasure
-  #
-  catch "viewer Delete"
-  catch "viewerImage Delete"
-  vtkImageViewer viewer
-  vtkImageData viewerImage
-  viewerImage DeepCopy [$stencil GetOutput]
-  viewer SetInput viewerImage
-  viewer SetColorWindow 2
-  viewer SetColorLevel 1
-  viewer Render
-
-  #
-  # remove the polygon from the draw buffer
-  #
-  $idArray SetNumberOfTuples 1
-  $idArray SetTuple1 0 0
-  $o(xyPoints) Reset
-  $o(rasPoints) Reset
-
-  #
-  # clean up our local class instances
-  #
-  $imageData Delete
-  $oneImageData Delete
-  $threshold Delete
-  $extrude Delete
-  $dataToStencil Delete
 
 
   return 
 
   #
-  # test or triangulating:
+  # test for triangulating:
   #
 
 

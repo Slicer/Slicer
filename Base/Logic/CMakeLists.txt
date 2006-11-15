@@ -20,6 +20,7 @@ SET(SlicerBaseLogic_SRCS
   vtkImageSlicePaint.cxx 
   vtkImageAccumulateDiscrete.cxx
   vtkImageBimodalAnalysis.cxx
+  vtkImageFillROI.cxx
 )
 
 # Abstract/pure virtual classes
