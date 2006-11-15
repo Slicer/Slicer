@@ -31,9 +31,17 @@ namespace itk
 class PluginFilterWatcher: public SimpleFilterWatcher
 {
 public:
-  PluginFilterWatcher(itk::ProcessObject* o, const char *comment="",
-    ModuleProcessInformation *inf=0)
-    : SimpleFilterWatcher(o, comment) {m_ProcessInformation = inf;};
+  PluginFilterWatcher(itk::ProcessObject* o,
+                      const char *comment="",
+                      ModuleProcessInformation *inf=0,
+                      double fraction = 1.0,
+                      double start = 0.0)
+    : SimpleFilterWatcher(o, comment)
+  {
+    m_ProcessInformation = inf;
+    m_Fraction = fraction;
+    m_Start = start;
+  };
 
 protected:
 
@@ -48,7 +56,7 @@ virtual void ShowProgress()
       if (m_ProcessInformation)
         {
         m_ProcessInformation->Progress = 
-          100*this->GetProcess()->GetProgress();
+          100*(this->GetProcess()->GetProgress() * m_Fraction + m_Start);
 
         this->GetTimeProbe().Stop();
         m_ProcessInformation->ElapsedTime
@@ -71,7 +79,7 @@ virtual void ShowProgress()
       else
         {
         std::cout << "<filter-progress>"
-                  << this->GetProcess()->GetProgress()
+                  << (this->GetProcess()->GetProgress() * m_Fraction) + m_Start
                   << "</filter-progress>"
                   << std::endl;
         std::cout << std::flush;
@@ -165,8 +173,9 @@ virtual void EndFilter()
 }
 
 
-ModuleProcessInformation *m_ProcessInformation;
-  
+  ModuleProcessInformation *m_ProcessInformation;
+  double m_Fraction;
+  double m_Start;
 };
 
 } // end namespace itk
