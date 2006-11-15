@@ -863,9 +863,9 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
           tparameter->SetParent( parameterGroupFrame->GetFrame() );
           tparameter->Create();
           tparameter->SetLabelText((*pit).GetLabel().c_str());
-          tparameter->GetWidget()->SetValue(atof((*pit).GetDefault().c_str()));
-          tparameter->GetWidget()->SetIncrement(1);
           tparameter->GetWidget()->SetRestrictValueToInteger();
+          tparameter->GetWidget()->SetIncrement(1);
+          tparameter->GetWidget()->SetValue(atof((*pit).GetDefault().c_str()));
           tparameter->GetWidget()
             ->SetRange(itk::NumericTraits<int>::NonpositiveMin(),
                        itk::NumericTraits<int>::max());
@@ -904,9 +904,9 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
           tparameter->PopupModeOn();
           tparameter->Create();
           tparameter->SetLabelText((*pit).GetLabel().c_str());
-          tparameter->SetValue(atof((*pit).GetDefault().c_str()));
           tparameter->RangeVisibilityOn();
           tparameter->SetRange(min, max);
+          tparameter->SetValue(atof((*pit).GetDefault().c_str()));
           tparameter->SetResolution(step);
           parameter = tparameter;
           }
@@ -928,12 +928,12 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
           tparameter->SetParent( parameterGroupFrame->GetFrame() );
           tparameter->Create();
           tparameter->SetLabelText((*pit).GetLabel().c_str());
-          tparameter->GetWidget()->SetValue(atof((*pit).GetDefault().c_str()));
           tparameter->GetWidget()
             ->SetRange(itk::NumericTraits<float>::NonpositiveMin(),
                        itk::NumericTraits<float>::max());
           tparameter->GetWidget()->SetIncrement( 0.1 );
-          tparameter->GetWidget()->SetValueFormat("%f");
+          tparameter->GetWidget()->SetValueFormat("%1.1f");
+          tparameter->GetWidget()->SetValue(atof((*pit).GetDefault().c_str()));
           parameter = tparameter;
           }
         else
@@ -970,10 +970,10 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
           tparameter->PopupModeOn();
           tparameter->Create();
           tparameter->SetLabelText((*pit).GetLabel().c_str());
-          tparameter->SetValue(atof((*pit).GetDefault().c_str()));
           tparameter->RangeVisibilityOn();
           tparameter->SetRange(min, max);
           tparameter->SetResolution(step);
+          tparameter->SetValue(atof((*pit).GetDefault().c_str()));
           parameter = tparameter;
           }
         }
@@ -985,12 +985,12 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
           tparameter->SetParent( parameterGroupFrame->GetFrame() );
           tparameter->Create();
           tparameter->SetLabelText((*pit).GetLabel().c_str());
-          tparameter->GetWidget()->SetValue(atof((*pit).GetDefault().c_str()));
           tparameter->GetWidget()
             ->SetRange(itk::NumericTraits<double>::NonpositiveMin(),
                        itk::NumericTraits<double>::max());
           tparameter->GetWidget()->SetIncrement( 0.1 );
-          tparameter->GetWidget()->SetValueFormat("%f");
+          tparameter->GetWidget()->SetValueFormat("%1.1f");
+          tparameter->GetWidget()->SetValue(atof((*pit).GetDefault().c_str()));
           parameter = tparameter;
           }
         else
@@ -1027,10 +1027,10 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
           tparameter->PopupModeOn();
           tparameter->Create();
           tparameter->SetLabelText((*pit).GetLabel().c_str());
-          tparameter->SetValue(atof((*pit).GetDefault().c_str()));
           tparameter->RangeVisibilityOn();
           tparameter->SetRange(min, max);
           tparameter->SetResolution(step);
+          tparameter->SetValue(atof((*pit).GetDefault().c_str()));
           parameter = tparameter;
           }
         }
