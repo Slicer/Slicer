@@ -104,12 +104,16 @@ int Slicer3_Tcl_Eval ( Tcl_Interp *interp, const char *script )
   return 0;
 }
 
+// uncomment these lines to disable a particular module (handy for debugging)
 //#define CLIMODULES_DEBUG
 //#define TCLMODULES_DEBUG
 //#define SLICES_DEBUG
 //#define MODELS_DEBUG
 //#define VOLUMES_DEBUG
 //#define QUERYATLAS_DEBUG
+//#define COLORS_DEBUG
+//#define FIDUCIALS_DEBUG
+//#define CAMERA_DEBUG
 
 int Slicer3_main(int argc, char *argv[])
 {
@@ -298,7 +302,8 @@ int Slicer3_main(int argc, char *argv[])
       }
 
     // Create SlicerGUI application, style, and main window 
-    vtkSlicerApplication *slicerApp = vtkSlicerApplication::New ( );
+    //  - note: use the singleton application 
+    vtkSlicerApplication *slicerApp = vtkSlicerApplication::GetInstance ( );
     slicerApp->InstallTheme( slicerApp->GetSlicerTheme() );
     slicerApp->CreateProcessingThread();
 
@@ -382,6 +387,7 @@ int Slicer3_main(int argc, char *argv[])
 #endif
 
 
+#ifndef FIDUCIALS_DEBUG
     // --- Fiducials module    
     vtkSlicerFiducialsLogic *fiducialsLogic = vtkSlicerFiducialsLogic::New ( );
     fiducialsLogic->SetAndObserveMRMLScene ( scene );
@@ -398,8 +404,9 @@ int Slicer3_main(int argc, char *argv[])
     slicerApp->AddModuleGUI ( fiducialsGUI );
     fiducialsGUI->BuildGUI ( );
     fiducialsGUI->AddGUIObservers ( );
+#endif
 
-
+#ifndef COLORS_DEBUG
     // -- Color module
      vtkSlicerColorLogic *colorLogic = vtkSlicerColorLogic::New ( );
      // observe the scene's new scene event
@@ -424,7 +431,7 @@ int Slicer3_main(int argc, char *argv[])
     slicerApp->AddModuleGUI ( colorGUI );
     colorGUI->BuildGUI ( );
     colorGUI->AddGUIObservers ( );
-
+#endif
     
     // --- Transforms module
     vtkSlicerTransformsGUI *transformsGUI = vtkSlicerTransformsGUI::New ( );
@@ -459,6 +466,7 @@ int Slicer3_main(int argc, char *argv[])
     dataGUI->AddGUIObservers ( );
     dataGUI->AddObserver (vtkSlicerModuleGUI::ModuleSelectedEvent, (vtkCommand *)appGUI->GetGUICallbackCommand() );
   
+#ifndef CAMERA_DEBUG
     // --- Camera module
     vtkSlicerCamerasGUI *cameraGUI = vtkSlicerCamerasGUI::New ( );
     cameraGUI->SetApplication ( slicerApp );
@@ -473,6 +481,7 @@ int Slicer3_main(int argc, char *argv[])
     cameraGUI->BuildGUI ( );
     cameraGUI->AddGUIObservers ( );
     cameraGUI->UpdateCameraSelector();
+#endif
 
     // --- Slices module
     // - set up each of the slice logics (these initialize their
@@ -665,23 +674,33 @@ int Slicer3_main(int argc, char *argv[])
     slicerApp->Script ("namespace eval slicer3 set Application %s", name);
     name = appGUI->GetTclName();
     slicerApp->Script ("namespace eval slicer3 set ApplicationGUI %s", name);
+#ifndef SLICES_DEBUG
     name = slicesGUI->GetTclName();
     slicerApp->Script ("namespace eval slicer3 set SlicesGUI %s", name);
+#endif
 
 #ifndef VOLUMES_DEBUG
     name = volumesGUI->GetTclName();
     slicerApp->Script ("namespace eval slicer3 set VolumesGUI %s", name);
 #endif
+#ifndef MODELS_DEBUG
     name = modelsGUI->GetTclName();
     slicerApp->Script ("namespace eval slicer3 set ModelsGUI %s", name);
+#endif
+#ifndef FIDUCIALS_DEBUG
     name = fiducialsGUI->GetTclName();
     slicerApp->Script ("namespace eval slicer3 set FiducialsGUI %s", name);
+#endif
+#ifndef COLORS_DEBUG
     name = colorGUI->GetTclName();
     slicerApp->Script ("namespace eval slicer3 set ColorGUI %s", name);
+#endif
     name = transformsGUI->GetTclName();
     slicerApp->Script ("namespace eval slicer3 set TransformsGUI %s", name);
+#ifndef QUERYATLAS_DEBUG
     name = queryAtlasGUI->GetTclName();
     slicerApp->Script ("namespace eval slicer3 set QueryAtlasGUI %s", name);
+#endif
 
     name = appGUI->GetViewerWidget()->GetTclName();
     slicerApp->Script ("namespace eval slicer3 set ViewerWidget %s", name);
@@ -854,10 +873,16 @@ int Slicer3_main(int argc, char *argv[])
 #ifndef MODELS_DEBUG
     modelsGUI->RemoveGUIObservers ( );
 #endif
+#ifndef FIDUCIALS_DEBUG
     fiducialsGUI->RemoveGUIObservers ( );
+#endif
+#ifndef COLORS_DEBUG
     colorGUI->RemoveGUIObservers ( );
+#endif
     transformsGUI->RemoveGUIObservers ( );
+#ifndef CAMERA_DEBUG
     cameraGUI->RemoveGUIObservers ( );
+#endif
     dataGUI->RemoveGUIObservers ( );
 #ifndef SLICES_DEBUG
     slicesGUI->RemoveGUIObservers ( );
@@ -927,15 +952,20 @@ int Slicer3_main(int argc, char *argv[])
 #ifndef MODELS_DEBUG
     modelsGUI->Delete ();
 #endif
+#ifndef FIDUCIALS_DEBUG
     fiducialsGUI->Delete ();
+#endif
+#ifndef COLORS_DEBUG
     colorGUI->Delete();
+#endif
     transformsGUI->Delete ();
+#ifndef CAMERA_DEBUG
     cameraGUI->Delete ();
+#endif
     dataGUI->Delete ();
 #ifndef SLICES_DEBUG
     slicesGUI->Delete ();
 #endif
-    appGUI->Delete ();
 
 #ifndef TCLMODULES_DEBUG
     tclCommand = "";
@@ -944,6 +974,8 @@ int Slicer3_main(int argc, char *argv[])
     tclCommand += "}";
     Slicer3_Tcl_Eval( interp, tclCommand.c_str() );
 #endif
+
+    appGUI->Delete ();
 
 #ifndef CLIMODULES_DEBUG
     // delete the factory discovered module GUIs (as we delete the
@@ -979,10 +1011,14 @@ int Slicer3_main(int argc, char *argv[])
     modelsLogic->SetAndObserveMRMLScene ( NULL );
     modelsLogic->Delete();
 #endif
+#ifndef FIDUCIALS_DEBUG
     fiducialsLogic->SetAndObserveMRMLScene ( NULL );
     fiducialsLogic->Delete();
+#endif
+#ifndef COLORS_DEBUG
     colorLogic->SetAndObserveMRMLScene ( NULL );
     colorLogic->Delete();
+#endif
     sliceLogic2->SetAndObserveMRMLScene ( NULL );
     sliceLogic2->Delete ();
     sliceLogic1->SetAndObserveMRMLScene ( NULL );
