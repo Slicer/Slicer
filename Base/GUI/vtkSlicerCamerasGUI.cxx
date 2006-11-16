@@ -207,6 +207,7 @@ void vtkSlicerCamerasGUI::BuildGUI ( )
                "pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
                this->ActiveCheckButton->GetWidgetName());
 
+  cameraFrame->Delete();
   cameraHelpFrame->Delete();
 }
 
