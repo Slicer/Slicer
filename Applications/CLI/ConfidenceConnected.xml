@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>
+  Filtering.Segmentation
+  </category>
+  <title>
+  Confidence connected
+  </title>
+  <description>
+A simple region growing segmentation algorithm.
+  </description>
+  <version>0.1.0.$Revision: 916 $(alpha)</version>
+  <documentation-url></documentation-url>
+  <license></license>
+  <contributor>Jim Miller</contributor>
+  <parameters>
+    <label>Smoothing Parameters</label>
+    <description>Parameters to denoise the image prior to segmenting</description>
+    <integer>
+       <name>smoothingIterations</name>
+       <label>Smoothing iterations</label>
+       <longflag>--smoothingIterations</longflag>
+       <description>Number of smoothing iterations</description>
+       <default>5</default>
+    </integer>
+
+    <double>
+        <name>timestep</name>
+        <label>Timestep</label>
+        <longflag>--timestep</longflag>
+        <description>Timestep for curvature flow</description>
+        <default>0.0625</default>
+        <constraints>
+           <minimum>0.001</minimum>
+           <maximum>1</maximum>
+           <step>0.0001</step>
+        </constraints>
+    </double>
+  </parameters>
+
+  <parameters>
+    <label>Segmentation Parameters</label>
+    <description>Parameters to prescribe the region growing</description>
+
+    <integer>
+      <name>iterations</name>
+      <longflag>--iterations</longflag>
+      <description>Number of iterations of region growing</description>
+      <label>Number of iterations</label>
+      <default>5</default>
+      <constraints>
+        <minimum>0</minimum>
+        <maximum>100</maximum>
+      </constraints>
+    </integer>
+
+    <double>
+      <name>multiplier</name>
+      <longflag>--multiplier</longflag>
+      <description>Number of standard deviations to include in intensity model</description>
+      <label>Multiplier</label>
+      <default>2.5</default>
+      <constraints>
+        <minimum>0</minimum>
+        <maximum>10</maximum>
+      </constraints>
+    </double>
+
+    <point coordinateSystem="ijk" multiple="true">
+      <name>seed</name>
+      <longflag>--seed</longflag>
+      <description>Seed point(s) for region growing</description>
+      <default>0,0,0</default>
+    </point>
+
+  </parameters>
+
+  <parameters>
+    <label>IO</label>
+    <description>Input/output parameters</description>
+    <image>
+      <name>inputVolume</name>
+      <label>Input Volume</label>
+      <channel>input</channel>
+      <index>0</index>
+      <description>Input volume to be filtered</description>
+    </image>
+    <image>
+      <name>outputVolume</name>
+      <label>Output Volume</label>
+      <channel>output</channel>
+      <index>1</index>
+      <description>Output filtered</description>
+    </image>
+  </parameters>
+
+</executable>
