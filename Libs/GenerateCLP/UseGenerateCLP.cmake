@@ -1,3 +1,10 @@
+FIND_PACKAGE(ITK)
+IF(ITK_FOUND)
+  INCLUDE(${ITK_USE_FILE})
+ELSE(ITK_FOUND)
+  MESSAGE(ERROR "Cannot build without ITK. Please set ITK_DIR.")
+ENDIF(ITK_FOUND)
+
 #
 # If being build as part of Slicer3, we know where to find tclap include files
 
@@ -23,13 +30,11 @@ ELSE(ModuleDescriptionParser_SOURCE_DIR)
   )
 ENDIF(ModuleDescriptionParser_SOURCE_DIR)
 
-
 UTILITY_SOURCE(GENERATECLP_EXE GenerateCLP ./ GenerateCLP.cxx)
 IF (NOT GENERATECLP_EXE)
   FIND_PROGRAM(GENERATECLP_EXE GenerateCLP DOC "GenerateCLP executable")
   MESSAGE(ERROR " Requires GenerateCLP executable. Please specify its location.")
 ENDIF (NOT GENERATECLP_EXE)
-
 
 # create the .clp files
 # usage: GENERATE_CLP(foo_SRCS ${XML_FILES})
@@ -52,7 +57,7 @@ MACRO(GENERATECLP SOURCES XML)
     # add custom command to output
     ADD_CUSTOM_COMMAND(
       OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}CLP.h
-      DEPENDS GenerateCLP ${TMP_INPUT}
+      DEPENDS ${GENERATECLP_EXE} ${TMP_INPUT}
       COMMAND ${GENERATECLP_EXE}
         ${TMP_INPUT} ${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}CLP.h
       )
