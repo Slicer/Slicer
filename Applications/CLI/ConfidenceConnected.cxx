@@ -108,7 +108,7 @@
 
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
-#include "itkPluginFilterwatcher.h"
+#include "itkPluginFilterWatcher.h"
 
 #include "ConfidenceConnectedCLP.h"
 
