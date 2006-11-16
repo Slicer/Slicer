@@ -1047,6 +1047,28 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
         tparameter->GetWidget()->SetValue((*pit).GetDefault().c_str());
         parameter = tparameter;
         }
+      else if ((*pit).GetTag() == "point")
+        {
+        vtkSlicerNodeSelectorWidget *tparameter
+          = vtkSlicerNodeSelectorWidget::New();
+        
+        tparameter->SetNodeClass("vtkMRMLFiducialListNode",
+                                 NULL,
+                                 NULL,
+                                 (title + " FiducialList").c_str());
+        tparameter->SetNewNodeEnabled(1);
+        tparameter->SetNoneEnabled(1);
+        // tparameter->SetNewNodeName((title+" output").c_str());
+        tparameter->SetParent( parameterGroupFrame->GetFrame() );
+        tparameter->Create();
+        tparameter->SetMRMLScene(this->Logic->GetMRMLScene());
+        tparameter->UpdateMenu();
+        
+        tparameter->SetBorderWidth(2);
+        tparameter->SetReliefToFlat();
+        tparameter->SetLabelText( (*pit).GetLabel().c_str());
+        parameter = tparameter;
+        }
       else if ((*pit).GetTag() == "image" && (*pit).GetChannel() == "input")
         {
         vtkSlicerNodeSelectorWidget *tparameter
