@@ -444,6 +444,18 @@ ITK_THREAD_RETURN_TYPE
 vtkSlicerApplication
 ::ProcessingThreaderCallback( void *arg )
 {
+  
+#ifdef ITK_USE_WIN32_THREADS
+  // Adjust the priority of this thread
+  SetThreadPriority(GetCurrentThread(),
+                    THREAD_PRIORITY_BELOW_NORMAL);
+#endif
+
+#ifdef ITK_USE_PTHREADS
+  // Adjust the priority of all PROCESS level threads.  Not a perfect solution.
+  nice(20);
+#endif
+    
   // pull out the reference to the app
   vtkSlicerApplication *app
     = (vtkSlicerApplication*)
