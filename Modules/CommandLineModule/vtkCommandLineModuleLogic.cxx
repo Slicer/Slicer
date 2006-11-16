@@ -523,7 +523,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
               {
               std::string progressString(stdoutbuffer, tagstart+17,
                                          tagend-tagstart-17);
-              node->GetModuleDescription().GetProcessInformation()->Progress = 100*atof(progressString.c_str());
+              node->GetModuleDescription().GetProcessInformation()->Progress = atof(progressString.c_str());
               foundTag = true;
               }
             }
