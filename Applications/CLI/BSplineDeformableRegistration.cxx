@@ -94,12 +94,16 @@ public:
   typedef  itk::Command             Superclass;
   typedef itk::SmartPointer<Self>  Pointer;
   itkNewMacro( Self );
+  void SetProcessInformation (ModuleProcessInformation * info)
+    {
+    m_ProcessInformation = info; 
+    }
 protected:
   CommandIterationUpdate() {};
+  ModuleProcessInformation *m_ProcessInformation;
 public:
-  typedef itk::LBFGSBOptimizer     OptimizerType;
-//  typedef itk::OnePlusOneEvolutionaryOptimizer OptimizerType;
-  typedef   const OptimizerType   *    OptimizerPointer;
+  typedef itk::LBFGSBOptimizer  OptimizerType;
+  typedef OptimizerType   *OptimizerPointer;
 
   void Execute(itk::Object *caller, const itk::EventObject & event)
     {
@@ -109,17 +113,41 @@ public:
   void Execute(const itk::Object * object, const itk::EventObject & event)
     {
       OptimizerPointer optimizer = 
-        dynamic_cast< OptimizerPointer >( object );
+        dynamic_cast< OptimizerPointer >( const_cast<itk::Object *>(object) );
       if( !(itk::IterationEvent().CheckEvent( &event )) )
         {
         return;
         }
+      
       std::cout << optimizer->GetCurrentIteration() << "   ";
-      std::cout << optimizer->GetValue() << "   ";
-      std::cout << optimizer->GetInfinityNormOfProjectedGradient() << std::endl;
+      std::cout << optimizer->GetValue() << std::endl;
+      if (m_ProcessInformation)
+        {
+        m_ProcessInformation->Progress = 
+          static_cast<double>(optimizer->GetCurrentIteration()) /
+           static_cast<double>(optimizer->GetMaximumNumberOfIterations());
+        }
+      else
+        {
+        std::cout << "<filter-comment>"
+                  << " \"" 
+                  << "Optimizer Iteration: "
+                  << optimizer->GetCurrentIteration()
+                  << " Metric: "
+                  << optimizer->GetValue()
+                  << "\" "
+                  << "</filter-comment>"
+                  << std::endl;
+        std::cout << "<filter-progress>"
+                  << (static_cast<double>(optimizer->GetCurrentIteration()) /
+                      static_cast<double>(optimizer->GetMaximumNumberOfIterations()))
+        
+                  << "</filter-progress>"
+                  << std::endl;
+        std::cout << std::flush;
+        }
     }
 };
-
 
 int main( int argc, char *argv[] )
 {
@@ -166,9 +194,6 @@ int main( int argc, char *argv[] )
 
 
   typedef itk::LBFGSBOptimizer       OptimizerType;
-#if 0
-  typedef itk::OnePlusOneEvolutionaryOptimizer OptimizerType;
-#endif
 
   typedef itk::MattesMutualInformationImageToImageMetric< 
                                     InputImageType, 
@@ -237,11 +262,19 @@ int main( int argc, char *argv[] )
   itk::TimeProbesCollectorBase collector;
 
   collector.Start( "Read fixed volume" );
+  itk::PluginFilterWatcher watchOrientFixed(fixedOrient,
+                                            "Orient Fixed Image",
+                                            CLPProcessInformation,
+                                            1.0/3.0, 0.0);
   fixedOrient->Update();
   fixedOrient->GetOutput()->Print(std::cout);
   collector.Stop( "Read fixed volume" );
 
   collector.Start( "Read moving volume" );
+  itk::PluginFilterWatcher watchOrientMoving(movingOrient,
+                                            "Orient Moving Image",
+                                             CLPProcessInformation,
+                                            1.0/3.0, 1.0/3.0);
   movingOrient->Update();
   movingOrient->GetOutput()->Print(std::cout);
   collector.Stop( "Read moving volume" );
@@ -354,26 +387,12 @@ int main( int argc, char *argv[] )
   optimizer->SetMaximumNumberOfCorrections( 12 );
 
   // Software Guide : EndCodeSnippet
-#if 0
-  typedef itk::Statistics::NormalVariateGenerator  GeneratorType;
-
-  GeneratorType::Pointer generator = GeneratorType::New();
-  generator->Initialize(12345);
-
-  typedef OptimizerType::ScalesType       OptimizerScalesType;
-  OptimizerScalesType optimizerScales( transform->GetNumberOfParameters() );
-  optimizerScales.Fill(1.0);
-  optimizer->SetNormalVariateGenerator( generator );
-  optimizer->SetInitialRadius( 1.0 );
-  optimizer->SetMaximumIteration( 100 );
-  optimizer->MaximizeOn();
-
-#endif
-
 
   // Create the Command observer and register it with the optimizer.
   //
   CommandIterationUpdate::Pointer observer = CommandIterationUpdate::New();
+    observer->SetProcessInformation (CLPProcessInformation);
+
   optimizer->AddObserver( itk::IterationEvent(), observer );
 
 
@@ -435,7 +454,7 @@ int main( int argc, char *argv[] )
   ResampleFilterType::Pointer resample = ResampleFilterType::New();
   itk::PluginFilterWatcher watcher(
     resample,
-    "Voting Binary Hole Filling",
+    "Resample",
     CLPProcessInformation);
 
   resample->SetTransform( transform );
@@ -476,115 +495,6 @@ int main( int argc, char *argv[] )
     std::cerr << err << std::endl; 
     return -1;
     } 
- 
-
-
-#if 0
-  typedef itk::SquaredDifferenceImageFilter< 
-                                  FixedImageType, 
-                                  FixedImageType, 
-                                  OutputImageType > DifferenceFilterType;
-
-  DifferenceFilterType::Pointer difference = DifferenceFilterType::New();
-
-  WriterType::Pointer writer2 = WriterType::New();
-  writer2->SetInput( difference->GetOutput() );  
-  
-  // Compute the difference image between the 
-  // fixed and resampled moving image.
-  if( argc >= 5 )
-    {
-    difference->SetInput1( fixedImageReader->GetOutput() );
-    difference->SetInput2( resample->GetOutput() );
-    writer2->SetFileName( argv[4] );
-    try
-      {
-      writer2->Update();
-      }
-    catch( itk::ExceptionObject & err ) 
-      { 
-      std::cerr << "ExceptionObject caught !" << std::endl; 
-      std::cerr << err << std::endl; 
-      return -1;
-      } 
-    }
-
-
-  // Compute the difference image between the 
-  // fixed and moving image before registration.
-  if( argc >= 6 )
-    {
-    writer2->SetFileName( argv[5] );
-    difference->SetInput1( fixedImageReader->GetOutput() );
-    difference->SetInput2( movingImageReader->GetOutput() );
-    try
-      {
-      writer2->Update();
-      }
-    catch( itk::ExceptionObject & err ) 
-      { 
-      std::cerr << "ExceptionObject caught !" << std::endl; 
-      std::cerr << err << std::endl; 
-      return -1;
-      } 
-    }
-
-
-  // Generate the explicit deformation field resulting from 
-  // the registration.
-  if( 1 )
-    {
-
-    typedef itk::Vector< float, ImageDimension >  VectorType;
-    typedef itk::Image< VectorType, ImageDimension >  DeformationFieldType;
-
-    DeformationFieldType::Pointer field = DeformationFieldType::New();
-    field->SetRegions( fixedRegion );
-    field->SetOrigin( fixedImage->GetOrigin() );
-    field->SetSpacing( fixedImage->GetSpacing() );
-    field->Allocate();
-
-    typedef itk::ImageRegionIterator< DeformationFieldType > FieldIterator;
-    FieldIterator fi( field, fixedRegion );
-
-    fi.GoToBegin();
-
-    TransformType::InputPointType  fixedPoint;
-    TransformType::OutputPointType movingPoint;
-    DeformationFieldType::IndexType index;
-
-    VectorType displacement;
-
-    while( ! fi.IsAtEnd() )
-      {
-      index = fi.GetIndex();
-      field->TransformIndexToPhysicalPoint( index, fixedPoint );
-      movingPoint = transform->TransformPoint( fixedPoint );
-      displacement = movingPoint - fixedPoint;
-      fi.Set( displacement );
-      ++fi;
-      }
-
-
-
-    typedef itk::ImageFileWriter< DeformationFieldType >  FieldWriterType;
-    FieldWriterType::Pointer fieldWriter = FieldWriterType::New();
-
-    fieldWriter->SetInput( field );
-
-    fieldWriter->SetFileName( "d:/lorensen/Data/DeformableRegistration/Dartmouth/vector.mhd" );
-    try
-      {
-      fieldWriter->Update();
-      }
-    catch( itk::ExceptionObject & excp )
-      {
-      std::cerr << "Exception thrown " << std::endl;
-      std::cerr << excp << std::endl;
-      return EXIT_FAILURE;
-      }
-    }
-#endif
 
   // Report the time taken by the registration
   collector.Report();

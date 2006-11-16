@@ -55,6 +55,8 @@ virtual void ShowProgress()
       {
       if (m_ProcessInformation)
         {
+        strncpy(m_ProcessInformation->ProgressMessage,
+                this->GetComment().c_str(), 1023);
         m_ProcessInformation->Progress = 
           (this->GetProcess()->GetProgress() * m_Fraction + m_Start);
 

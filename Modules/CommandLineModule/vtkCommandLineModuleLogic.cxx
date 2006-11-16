@@ -505,7 +505,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
         break;
         }
 
-      // Capture the 
+      // Capture the output from the filter
       if (length != 0 && tbuffer != 0)
         {
         if (pipe == itksysProcess_Pipe_STDOUT)
@@ -513,6 +513,20 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
           std::cout << "STDOUT: " << std::string(tbuffer, length) << std::endl;
           stdoutbuffer = stdoutbuffer.append(tbuffer, length);
 
+          bool foundTag = false;
+          // search for the last occurence of </filter-progress>
+          tagend = stdoutbuffer.rfind("</filter-progress>");
+          if (tagend != std::string::npos)
+            {
+            tagstart = stdoutbuffer.rfind("<filter-progress>");
+            if (tagstart != std::string::npos)
+              {
+              std::string progressString(stdoutbuffer, tagstart+17,
+                                         tagend-tagstart-17);
+              node->GetModuleDescription().GetProcessInformation()->Progress = 100*atof(progressString.c_str());
+              foundTag = true;
+              }
+            }
 
           // search for the last occurence of </filter-name>
           tagend = stdoutbuffer.rfind("</filter-name>");
@@ -524,23 +538,26 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
               std::string filterString(stdoutbuffer, tagstart+13,
                                        tagend-tagstart-13);
               strncpy(node->GetModuleDescription().GetProcessInformation()->ProgressMessage, filterString.c_str(), 1023);
-              vtkSlicerApplication::GetInstance()->RequestModified( node );
+              foundTag = true;
               }
             }
           
-          
-          // search for the last occurence of </filter-progress>
-          tagend = stdoutbuffer.rfind("</filter-progress>");
+          // search for the last occurence of </filter-comment>
+          tagend = stdoutbuffer.rfind("</filter-comment>");
           if (tagend != std::string::npos)
             {
-            tagstart = stdoutbuffer.rfind("<filter-progress>");
+            tagstart = stdoutbuffer.rfind("<filter-comment>");
             if (tagstart != std::string::npos)
               {
-              std::string progressString(stdoutbuffer, tagstart+17,
+              std::string progressMessage(stdoutbuffer, tagstart+17,
                                          tagend-tagstart-17);
-              node->GetModuleDescription().GetProcessInformation()->Progress = 100*atof(progressString.c_str());
-              vtkSlicerApplication::GetInstance()->RequestModified( node );
+              strncpy (node->GetModuleDescription().GetProcessInformation()->ProgressMessage, progressMessage.c_str(), 1023);
+              foundTag = true;
               }
+            }
+          if (foundTag)
+            {
+            vtkSlicerApplication::GetInstance()->RequestModified( node );
             }
           }
         else if (pipe == itksysProcess_Pipe_STDERR)
