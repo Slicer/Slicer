@@ -32,11 +32,10 @@ if { [itcl::find class DrawSWidget] == "" } {
     destructor {}
 
     public variable drawColor 1
-    public variable thresholdDraw 0
+    public variable thresholdPaint 0
     public variable thresholdMin 1
     public variable thresholdMax 1
     public variable drawOver 1
-    public variable drawMethod "fillROI"
 
     variable _lastEventPoint ""
 
@@ -147,6 +146,11 @@ itcl::body DrawSWidget::apply {} {
   foreach {x y} [$_interactor GetEventPosition] {}
   $this queryLayers $x $y
 
+  if { $_layers(label,node) == "" } {
+    # if there's no label, we can't draw
+    return
+  }
+
   # first, close the polyline back to the first point
   set lines [$o(polyData) GetLines]
   set idArray [$lines GetData]
@@ -158,200 +162,112 @@ itcl::body DrawSWidget::apply {} {
   $this positionActors
 
 
-  # switch on the public configuration variable
-  switch $drawMethod {
-    "fillROI" {
-
-      #
-      # use the slicer2 vtkImageFillROI filter
-      #
-
-      #
-      # get a good size for the draw buffer 
-      # - needs to include the full region of the polygon
-      # - plus a little extra 
-      #
-      [$o(polyData) GetPoints] Modified
-      set bounds [$o(polyData) GetBounds]
-      foreach {xlo xhi ylo yhi zlo zhi} $bounds {}
-      # round to int and add extra pixel for both sides
-      # -- TODO: figure out why we need to add two pixels on each 
-      #    side for the width in order to end up with a single extra
-      #    pixel in the rasterized image map.  Probably has to 
-      #    do with how boundary conditions are handled in the filler
-      set w [expr int($xhi - $xlo) + 4]
-      set h [expr int($yhi - $ylo) + 2]
-
-      set imageData [vtkImageData New]
-      $imageData SetDimensions $w $h 1
-
-      if { $_layers(label,image) != "" } {
-        $imageData SetScalarType [$_layers(label,image) GetScalarType]
-      }
-      $imageData AllocateScalars
-
-      #
-      # move the points so the lower left corner of the 
-      # bounding box is at 1, 1 (to avoid clipping)
-      #
-      set translate [vtkTransform New]
-      $translate Translate [expr 2 + -1. * $xlo] [expr 1 + -1. * $ylo] 0
-      set drawPoints [vtkPoints New]
-      $drawPoints Reset
-      $translate TransformPoints $o(xyPoints) $drawPoints
-      $translate Delete
-      $drawPoints Modified
-
-      set fill [vtkImageFillROI New]
-      $fill SetInput $imageData
-      $fill SetValue 1
-      $fill SetPoints $drawPoints
-      [$fill GetOutput] Update
-
-      #
-      # make a little preview window for debugging pleasure
-      #
-      catch "viewer Delete"
-      catch "viewerImage Delete"
-      vtkImageViewer viewer
-      vtkImageData viewerImage
-      viewerImage DeepCopy [$fill GetOutput]
-      viewer SetInput viewerImage
-      viewer SetColorWindow 2
-      viewer SetColorLevel 1
-      viewer Render
-
-      #
-      # remove the polygon from the draw buffer
-      #
-      $idArray Reset
-      $idArray InsertNextTuple1 0
-      $o(xyPoints) Reset
-      $o(rasPoints) Reset
-      $lines SetNumberOfCells 0
-
-      #
-      # clean up our local class instances
-      #
-      $fill Delete
-      $imageData Delete
-      $drawPoints Delete
-    }
-
-    "stencil" {
-
-      #
-      # use the extrusion/stencil approach from VTK/Examples/GUI/Tcl/ImageTracerWidget.tcl
-      # - extrude the polygon into a 'skirt' along the z axis
-      # - create a stencil from this polydata
-      # - make an image data with 1 inside the polygon, 0 elsewhere
-      #
-
-      set extrude [vtkLinearExtrusionFilter New]
-      $extrude SetInput $o(polyData)
-      $extrude SetScaleFactor 1
-      $extrude SetExtrusionTypeToVectorExtrusion
-      $extrude SetVector 0 0 1
-
-      set dataToStencil [vtkPolyDataToImageStencil New]
-      $dataToStencil SetInputConnection [$extrude GetOutputPort]
-
-      #
-      # get a good size for the draw buffer 
-      # - needs to include the full region
-      #
-      [$o(polyData) GetPoints] Modified
-      set bounds [$o(polyData) GetBounds]
-      foreach {xlo xhi ylo yhi zlo zhi} $bounds {}
-      set factor 2
-      set w [expr $factor * (int($xhi - $xlo) + 2)]
-      set h [expr $factor * (int($yhi - $ylo) + 2)]
-
-      set imageData [vtkImageData New]
-      $imageData SetSpacing [expr 1. / $factor] [expr 1. / $factor] 1
-      $imageData SetDimensions $w $h 1
-      $imageData SetOrigin [expr $xlo - 1.0001] [expr $ylo - 1.0001] 0
-      if { $_layers(label,image) != "" } {
-        $imageData SetScalarType [$_layers(label,image) GetScalarType]
-      }
-      $imageData AllocateScalars
-
-      set oneImageData [vtkImageData New]
-      
-      set threshold [vtkImageThreshold New]
-      $threshold SetInput $imageData
-      $threshold SetOutValue 1
-      $threshold SetInValue 1
-      $threshold ThresholdBetween 1 -1
-      $threshold SetOutput $oneImageData
-      $oneImageData Update
-
-      set stencil [vtkImageStencil New]
-      $stencil SetInput $oneImageData
-      $stencil SetStencil [$dataToStencil GetOutput]
-      $stencil ReverseStencilOff
-      $stencil SetBackgroundValue 0
-
-      #
-      # reverse stencil meaning if needed
-      # - check if corners are 1, and if so re-execute the inverse
-      # - just a heuristic, but pretty reliable
-      #
-      [$stencil GetOutput] Update
-      set ll [[$stencil GetOutput] GetScalarComponentAsFloat 0 0 0 0]
-      set ur [[$stencil GetOutput] GetScalarComponentAsFloat [expr $w-1] [expr $h-1] 0 0]
-      if { $ll == 1 && $ur == 1 } {
-        $stencil ReverseStencilOn
-      }
-      [$stencil GetOutput] Update
-
-      #
-      # make a little preview window for debugging pleasure
-      #
-      catch "viewer Delete"
-      catch "viewerImage Delete"
-      vtkImageViewer viewer
-      vtkImageData viewerImage
-      viewerImage DeepCopy [$stencil GetOutput]
-      viewer SetInput viewerImage
-      viewer SetColorWindow 2
-      viewer SetColorLevel 1
-      viewer Render
-
-      #
-      # remove the polygon from the draw buffer
-      #
-      $idArray Reset
-      $idArray InsertNextTuple1 0
-      $o(xyPoints) Reset
-      $o(rasPoints) Reset
-      $lines SetNumberOfCells 0
-
-      #
-      # clean up our local class instances
-      #
-      $imageData Delete
-      $oneImageData Delete
-      $threshold Delete
-      $extrude Delete
-      $dataToStencil Delete
-    }
-  }
-
-  return;
-
   #
-  # at this point 
+  # use the slicer2 vtkImageFillROI filter
   #
 
+  #
+  # Need to know the mapping from RAS into polygon space
+  # so the painter can use this as a mask
+  # - need the bounds in RAS space
+  # - need to get an IJKToRAS for just the mask area
+  # - directions are the XYToRAS for this slice
+  # - origin is the lower left of the polygon bounds
+  # - TODO: need to account for the boundary pixels
+  #
+  set maskIJKToRAS [vtkMatrix4x4 New]
+  $maskIJKToRAS DeepCopy [$_sliceNode GetXYToRAS]
+  $o(rasPoints) Modified
+  set rasBounds [$o(rasPoints) GetBounds]
+  foreach {rlo rhi alo ahi slo shi} $rasBounds {}
+  $maskIJKToRAS SetElement 0 3  $rlo
+  $maskIJKToRAS SetElement 0 3  $alo
+  $maskIJKToRAS SetElement 0 3  $slo
 
-  foreach {x y} [$_interactor GetEventPosition] {}
-  $this queryLayers $x $y
 
-  if { $_layers(label,node) == "" } {
-    # if there's no label, we can't draw
-    return
+
+  #
+  # get a good size for the draw buffer 
+  # - needs to include the full region of the polygon
+  # - plus a little extra 
+  #
+  [$o(polyData) GetPoints] Modified
+  set bounds [$o(polyData) GetBounds]
+  foreach {xlo xhi ylo yhi zlo zhi} $bounds {}
+  # round to int and add extra pixel for both sides
+  # -- TODO: figure out why we need to add two pixels on each 
+  #    side for the width in order to end up with a single extra
+  #    pixel in the rasterized image map.  Probably has to 
+  #    do with how boundary conditions are handled in the filler
+  set w [expr int($xhi - $xlo) + 4]
+  set h [expr int($yhi - $ylo) + 2]
+
+  set imageData [vtkImageData New]
+  $imageData SetDimensions $w $h 1
+
+  if { $_layers(label,image) != "" } {
+    $imageData SetScalarType [$_layers(label,image) GetScalarType]
   }
+  $imageData AllocateScalars
+
+  #
+  # move the points so the lower left corner of the 
+  # bounding box is at 1, 1 (to avoid clipping)
+  #
+  set translate [vtkTransform New]
+  $translate Translate [expr 2 + -1. * $xlo] [expr 1 + -1. * $ylo] 0
+  set drawPoints [vtkPoints New]
+  $drawPoints Reset
+  $translate TransformPoints $o(xyPoints) $drawPoints
+  $translate Delete
+  $drawPoints Modified
+
+  set fill [vtkImageFillROI New]
+  $fill SetInput $imageData
+  $fill SetValue 1
+  $fill SetPoints $drawPoints
+  [$fill GetOutput] Update
+
+  set mask [vtkImageData New]
+  $mask DeepCopy [$fill GetOutput]
+
+  #
+  # make a little preview window for debugging pleasure
+  # TODO: this can go away
+  #
+  catch "viewer Delete"
+  catch "viewerImage Delete"
+  vtkImageViewer viewer
+  vtkImageData viewerImage
+  viewerImage DeepCopy [$fill GetOutput]
+  viewer SetInput viewerImage
+  viewer SetColorWindow 2
+  viewer SetColorLevel 1
+  viewer Render
+
+  #
+  # remove the polygon from the draw buffer
+  #
+  $idArray Reset
+  $idArray InsertNextTuple1 0
+  $o(xyPoints) Reset
+  $o(rasPoints) Reset
+  $lines SetNumberOfCells 0
+
+  #
+  # clean up our local class instances
+  #
+  $fill Delete
+  $imageData Delete
+  $drawPoints Delete
+
+
+  #
+  # at this point, the mask vtkImageData contains a rasterized
+  # version of the polygon and now needs to be added to the label
+  # image
+  #
+
 
   #
   # get the brush bounding box in ijk coordinates
@@ -359,17 +275,12 @@ itcl::body DrawSWidget::apply {} {
   # - transform to ijk
   # - clamp the bounds to the dimensions of the label image
   #
-  set bounds [[$o(brush) GetPoints] GetBounds]
-  set left [expr $x + [lindex $bounds 0]]
-  set right [expr $x + [lindex $bounds 1]]
-  set bottom [expr $y + [lindex $bounds 2]]
-  set top [expr $y + [lindex $bounds 3]]
 
   set xyToIJK [[$_layers(label,logic) GetXYToIJKTransform] GetMatrix]
-  set tlIJK [$xyToIJK MultiplyPoint $left $top 0 1]
-  set trIJK [$xyToIJK MultiplyPoint $right $top 0 1]
-  set blIJK [$xyToIJK MultiplyPoint $left $bottom 0 1]
-  set brIJK [$xyToIJK MultiplyPoint $right $bottom 0 1]
+  set tlIJK [$xyToIJK MultiplyPoint $xlo $yhi 0 1]
+  set trIJK [$xyToIJK MultiplyPoint $xhi $yhi 0 1]
+  set blIJK [$xyToIJK MultiplyPoint $xlo $ylo 0 1]
+  set brIJK [$xyToIJK MultiplyPoint $xhi $ylo 0 1]
 
   set dims [$_layers(label,image) GetDimensions]
   foreach v {i j k} c [lrange $tlIJK 0 2] d $dims {
@@ -396,6 +307,7 @@ itcl::body DrawSWidget::apply {} {
 
   #
   # get the ijk to ras matrices 
+  # (use the maskToRAS calculated above)
   #
   set backgroundIJKToRAS [vtkMatrix4x4 New]
   $_layers(background,node) GetIJKToRASMatrix $backgroundIJKToRAS
@@ -403,51 +315,39 @@ itcl::body DrawSWidget::apply {} {
   $_layers(label,node) GetIJKToRASMatrix $labelIJKToRAS
 
   #
-  # get the brush center and radius in World
-  # - assume uniform scaling between XY and RAS
-  set xyToRAS [$_sliceNode GetXYToRAS]
-  set brushCenter [lrange [$xyToRAS MultiplyPoint $x $y 0 1] 0 2]
-  set worldScale [lrange [$xyToRAS MultiplyPoint 1 1 1 0] 0 2]
-  set scale 1
-  foreach c $worldScale {
-    if { $c != 1 } { 
-      set scale $c
-      break
-    }
-  }
-  set brushRadius [expr $scale * $radius]
-
+  # set up the painter class and let 'r rip!
   #
-  # set up the drawer class and let 'r rip!
-  #
-  set extractImage [vtkImageData New]
-  set drawer [vtkImageSliceDraw New]
-  $drawer SetBackgroundImage $_layers(background,image)
-  $drawer SetBackgroundIJKToWorld $backgroundIJKToRAS
-  $drawer SetWorkingImage $_layers(label,image)
-  $drawer SetWorkingIJKToWorld $labelIJKToRAS
-  $drawer SetTopLeft $tl(i) $tl(j) $tl(k)
-  $drawer SetTopRight $tr(i) $tr(j) $tr(k)
-  $drawer SetBottomLeft $bl(i) $bl(j) $bl(k)
-  $drawer SetBottomRight $br(i) $br(j) $br(k)
-  eval $drawer SetBrushCenter $brushCenter
-  $drawer SetBrushRadius $brushRadius
-  $drawer SetDrawLabel $drawColor
-  $drawer SetDrawOver $drawOver
-  $drawer SetThresholdDraw $thresholdDraw
-  $drawer SetThresholdDrawRange $thresholdMin $thresholdMax
+  set painter [vtkImageSlicePaint New]
+  $painter SetBackgroundImage $_layers(background,image)
+  $painter SetBackgroundIJKToWorld $backgroundIJKToRAS
+  $painter SetWorkingImage $_layers(label,image)
+  $painter SetWorkingIJKToWorld $labelIJKToRAS
+  $painter SetMaskImage $mask
+  $painter SetMaskIJKToWorld $maskIJKToRAS
+  $painter SetTopLeft $tl(i) $tl(j) $tl(k)
+  $painter SetTopRight $tr(i) $tr(j) $tr(k)
+  $painter SetBottomLeft $bl(i) $bl(j) $bl(k)
+  $painter SetBottomRight $br(i) $br(j) $br(k)
+  $painter SetPaintLabel $drawColor
+  $painter SetPaintOver $drawOver
+  $painter SetThresholdPaint $thresholdPaint
+  $painter SetThresholdPaintRange $thresholdMin $thresholdMax
 
-  $drawer Draw
+  $painter Paint
 
-  $drawer Delete
+  $painter Delete
   $labelIJKToRAS Delete
   $backgroundIJKToRAS Delete
 
+  # TODO maybe just call $sliceGUI Render for faster update
+  # and call this on mouse up - more important for paint
   $_layers(label,node) Modified
 
 
   return
 }
+
+
 itcl::body DrawSWidget::positionActors { } {
   set rasToXY [vtkTransform New]
   $rasToXY SetMatrix [$_sliceNode GetXYToRAS]

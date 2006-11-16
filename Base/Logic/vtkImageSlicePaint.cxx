@@ -30,6 +30,7 @@ vtkImageSlicePaint::vtkImageSlicePaint()
     this->TopLeft[i] = this->TopLeft[i] = this->BottomLeft[i] = this->BottomRight[i] = 0;
     }
   
+  this->MaskImage = NULL;
   this->BackgroundImage = NULL;
   this->WorkingImage = NULL;
   this->ExtractImage = NULL;
@@ -41,6 +42,7 @@ vtkImageSlicePaint::vtkImageSlicePaint()
 
   this->BackgroundIJKToWorld = NULL;
   this->WorkingIJKToWorld = NULL;
+  this->MaskIJKToWorld = NULL;
 
   this->ThresholdPaint = 0;
   this->ThresholdPaintRange[0] = 0;
@@ -51,6 +53,7 @@ vtkImageSlicePaint::vtkImageSlicePaint()
 //----------------------------------------------------------------------------
 vtkImageSlicePaint::~vtkImageSlicePaint()
 {
+  this->SetMaskImage (NULL);
   this->SetBackgroundImage (NULL);
   this->SetWorkingImage (NULL);
   this->SetExtractImage (NULL);
@@ -58,6 +61,7 @@ vtkImageSlicePaint::~vtkImageSlicePaint()
 
   this->SetBackgroundIJKToWorld (NULL);
   this->SetWorkingIJKToWorld  (NULL);
+  this->SetMaskIJKToWorld  (NULL);
 }
 
 
@@ -161,6 +165,7 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *ptr)
     dIJKdREnd[i] = deltaRightColumn[i] / maxRowDelta;
     }
 
+  //
   // Now loop across the columns and across the rows
   // and fill in each pixel as we go
   // - get matrices to relate the label IJK to the background IJK
@@ -174,9 +179,12 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *ptr)
   vtkMatrix4x4 *backgroundWorldToIJK = vtkMatrix4x4::New();
   backgroundWorldToIJK->DeepCopy( backgroundIJKToWorld );
   backgroundWorldToIJK->Invert();
+  vtkMatrix4x4 *maskWorldToIJK = vtkMatrix4x4::New();
+  maskWorldToIJK->DeepCopy( self->GetMaskIJKToWorld() );
+  maskWorldToIJK->Invert();
   vtkImageData *background = self->GetBackgroundImage();
-  double ijk[3];
-  int intIJK[3];
+  double ijk[3], maskIJK[3];
+  int intIJK[3], intMaskIJK[3];
   T *workingPtr;
   T oldValue;
   int paintOver = self->GetPaintOver();
@@ -196,7 +204,7 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *ptr)
     // column loop
     for (int column = 0; column <= maxColumnDelta; column++)
       {
-
+      // get coordinates in Working IJK space (intIJK)
       for (int i = 0; i < 3; i++) { intIJK[i] = paintRound (ijk[i]); }
 
       workingPtr = (T *)(self->GetWorkingImage()->GetScalarPointer(intIJK));
@@ -204,16 +212,46 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *ptr)
         {
         oldValue = *workingPtr;
 
-        double workingWorld[3];
+        double workingWorld[3]; // world coordinates of current pixel
         transform3 (workingIJKToWorld, ijk, workingWorld);
-        double distSquared = 0.0;
-        for (int i = 0; i < 3; i++)
+
+        int pixelToPaint = 0;  // is this location something we should consider painting
+
+        if ( self->GetMaskImage() == NULL )
           {
-          distSquared += (workingWorld[i] - brushCenter[i]) * (workingWorld[i] - brushCenter[i]);
+          // no mask, so check brush radius
+          double distSquared = 0.0;
+          for (int i = 0; i < 3; i++)
+            {
+            distSquared += (workingWorld[i] - brushCenter[i]) * (workingWorld[i] - brushCenter[i]);
+            }
+          if ( distSquared < radiusSquared )
+            {
+            pixelToPaint = 1; // Now we're inside the brush
+            }
           }
-        if ( distSquared < radiusSquared )
+        else
           {
-          // Now we're inside the brush, so we need to decide how to paint
+          // check the mask image
+          transform3(maskWorldToIJK, workingWorld, maskIJK);
+          for (int i = 0; i < 3; i++) { intMaskIJK[i] = paintRound(maskIJK[i]); }
+          if ( intMaskIJK[2] != 0 )
+            {
+            pixelToPaint = 1; // for debugging - just draw mask when out of bounds
+            }
+          else
+            {
+            double maskValue = self->GetMaskImage()->GetScalarComponentAsDouble (
+                                        intMaskIJK[0], intMaskIJK[1], intMaskIJK[2], 0 );
+            if ( maskValue )
+              {
+              pixelToPaint = 1; // mask is non-zero, so paint
+              }
+            }
+          }
+
+        if ( pixelToPaint )
+          {
           // - apply paintOver rule to avoid overwriting existing data
           // - apply threshold rule to only paint where backround fits constraints
           if ( !paintOver && oldValue != 0 )
@@ -230,6 +268,7 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *ptr)
               // get the background pixel
               transform3(backgroundWorldToIJK, workingWorld, bgIJK);
               for (int i = 0; i < 3; i++) { intbgIJK[i] = paintRound(bgIJK[i]); }
+              // TODO: bg may not be of type T
               T *bgPtr = (T *) background->GetScalarPointer(intbgIJK);
 
               if ( *bgPtr > thresholdPaintRange[0] && *bgPtr < thresholdPaintRange[1] )
