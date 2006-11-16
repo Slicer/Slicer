@@ -364,7 +364,7 @@ if { ![file exists $::ITCL_TEST_FILE] || $::GENLIB(update) } {
             runcmd ranlib ../incrTcl/itcl/libitclstub3.2.a
         }
         eval runcmd $::MAKE all
-        eval runcmd $::MAKE install
+        eval runcmd $::SERIAL_MAKE install
     }
 }
 
