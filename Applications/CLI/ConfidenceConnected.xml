@@ -68,6 +68,7 @@ A simple region growing segmentation algorithm.
 
     <point coordinateSystem="ijk" multiple="true">
       <name>seed</name>
+      <label>Seeds</label>
       <longflag>--seed</longflag>
       <description>Seed point(s) for region growing</description>
       <default>0,0,0</default>
