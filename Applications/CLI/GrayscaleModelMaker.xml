@@ -21,7 +21,7 @@ Create 3D surface models from grayscale.
       </image>
     <geometry>
       <name>OutputGeometry</name>
-      <label>Output Geometry File</label>
+      <label>Output Geometry</label>
       <channel>output</channel>
       <index>1</index>
       <description>File that contains generated geometry)</description>
