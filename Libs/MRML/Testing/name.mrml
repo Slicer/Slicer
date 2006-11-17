@@ -1,0 +1,35 @@
+<MRML>
+<Selection id="vtkMRMLSelectionNode1" name=""  hideFromEditors="true" activeVolumeID="vtkMRMLScalarVolumeNode1" activeLabelVolumeID="vtkMRMLScalarVolumeNode2" ></Selection>
+
+<Slice id="vtkMRMLSliceNode1" name=""  hideFromEditors="true" fieldOfView="296.35 265.625 250" dimensions="299 268 1" sliceToRAS="-1 0 0 0 0 1 0 0 0 0 1 3 0 0 0 1" layoutName="Red" orientation="Axial" ></Slice>
+<SliceComposite id="vtkMRMLSliceCompositeNode1" name=""  hideFromEditors="true" backgroundVolumeID="vtkMRMLScalarVolumeNode1" foregroundVolumeID="" labelVolumeID="vtkMRMLScalarVolumeNode2" labelOpacity="0" layoutName="Red" ></SliceComposite>
+
+<Slice id="vtkMRMLSliceNode2" name=""  hideFromEditors="true" fieldOfView="291.992 261.719 250" dimensions="299 268 1" sliceToRAS="0 0 1 0 -1 0 0 0 0 1 0 0 0 0 0 1" layoutName="Yellow" orientation="Sagittal" ></Slice>
+<SliceComposite id="vtkMRMLSliceCompositeNode2" name=""  hideFromEditors="true" backgroundVolumeID="vtkMRMLScalarVolumeNode1" foregroundVolumeID="" labelVolumeID="vtkMRMLScalarVolumeNode2" labelOpacity="0" layoutName="Yellow" ></SliceComposite>
+
+<Slice id="vtkMRMLSliceNode3" name=""  hideFromEditors="true" fieldOfView="292.968 261.719 250" dimensions="300 268 1" sliceToRAS="-1 0 0 0 0 0 1 0 0 1 0 0 0 0 0 1" layoutName="Green" orientation="Coronal" ></Slice>
+<SliceComposite id="vtkMRMLSliceCompositeNode3" name=""  hideFromEditors="true" backgroundVolumeID="vtkMRMLScalarVolumeNode1" foregroundVolumeID="" labelVolumeID="vtkMRMLScalarVolumeNode2" labelOpacity="0" layoutName="Green" ></SliceComposite>
+
+<ModelStorage id="vtkMRMLModelStorageNode1" name="" hideFromEditors="true" fileName="TestData/cube.vtk" > </ModelStorage>
+<ModelDisplay  id="vtkMRMLModelDisplayNode1" name=""  hideFromEditors="true"  color="0.5 0.5 0.5" ambient="0" diffuse="1" specular="0" power="1" opacity="1" visibility="true" clipping="false" backfaceCulling="true" scalarVisibility="false" vectorVisibility="false" tensorVisibility="false" scalarRange="0 100"></ModelDisplay>
+<Model id="vtkMRMLModelNode1" name="lh.pial"  hideFromEditors="false" storageNodeRef="vtkMRMLModelStorageNode1" displayNodeRef="vtkMRMLModelDisplayNode1" ></Model>
+
+<VolumeArchetypeStorage id="vtkMRMLVolumeArchetypeStorageNode1" name=""  hideFromEditors="true" fileName="TestData/fixed.nrrd" centerImage="1" ></VolumeArchetypeStorage>
+<VolumeDisplay id="vtkMRMLVolumeDisplayNode1" name=""  hideFromEditors="true" interpolate="1" autoWindowLevel="1" applyThreshold="0" autoThreshold="0" ></VolumeDisplay>
+<Volume id="vtkMRMLScalarVolumeNode1" name="brain.mgz"  hideFromEditors="false" storageNodeRef="vtkMRMLVolumeArchetypeStorageNode1" displayNodeRef="vtkMRMLVolumeDisplayNode1" ijkToRASDirections="-1   2.07772e-009   -5.68018e-009 3.53245e-009   -2.55854e-009   1 -1.35817e-009 -1 8.70083e-009 " spacing="1 1 1" origin="127.5 -127.5 127.5" labelMap="0" ></Volume>
+
+<VolumeArchetypeStorage id="vtkMRMLVolumeArchetypeStorageNode2" name=""  hideFromEditors="true" fileName="TestData/moving.nrrd" centerImage="1" ></VolumeArchetypeStorage>
+<VolumeDisplay id="vtkMRMLVolumeDisplayNode2" name=""  hideFromEditors="true" interpolate="1" autoWindowLevel="1" applyThreshold="0" autoThreshold="0" ></VolumeDisplay>
+<Volume id="vtkMRMLScalarVolumeNode2" name="aparc+aseg.mgz"  hideFromEditors="false" storageNodeRef="vtkMRMLVolumeArchetypeStorageNode2" displayNodeRef="vtkMRMLVolumeDisplayNode2" ijkToRASDirections="-1   2.07772e-009   -5.68018e-009 3.53245e-009   -2.55854e-009   1 -1.35817e-009 -1 8.70083e-009 " spacing="1 1 1" origin="127.5 -127.5 127.5" labelMap="1" ></Volume>
+
+<LinearTransform id="vtkMRMLLinearTransformNode1" name="RLrotation1" hideFromEditors="false" matrixTransformToParent="1 0 0 0 0 0 -1 0 0 -1 0 0 0 0 0 1"></LinearTransform>
+<LinearTransform id="vtkMRMLLinearTransformNode2" name="exf2anat2" hideFromEditors="false" transformNodeRef="vtkMRMLLinearTransformNode1" matrixTransformToParent="-0.993289 -0.108163 0.00128407 0.0 -0.00341441 0.14896 -0.999836 0.0 0.110098 -0.98291 -0.0180558 0.0 0 0 0 1"></LinearTransform>
+<VolumeArchetypeStorage id="vtkMRMLVolumeArchetypeStorageNode3" name=""  hideFromEditors="true" fileName="TestData/fixed.nrrd" centerImage="1" ></VolumeArchetypeStorage>
+<VolumeDisplay id="vtkMRMLVolumeDisplayNode3" name=""  hideFromEditors="true" interpolate="1" autoWindowLevel="1" applyThreshold="0" autoThreshold="0" ></VolumeDisplay>
+<Volume id="vtkMRMLScalarVolumeNode3" name="example_functional"  hideFromEditors="false" storageNodeRef="vtkMRMLVolumeArchetypeStorageNode3" displayNodeRef="vtkMRMLVolumeDisplayNode3" transformNodeRef="vtkMRMLLinearTransformNode2" labelMap="0" ></Volume>
+
+<VolumeArchetypeStorage id="vtkMRMLVolumeArchetypeStorageNode4" name=""  hideFromEditors="true" fileName="TestData/moving.nrrd" centerImage="1" ></VolumeArchetypeStorage>
+<VolumeDisplay id="vtkMRMLVolumeDisplayNode4" name=""  hideFromEditors="true" interpolate="1" autoWindowLevel="1" applyThreshold="0" autoThreshold="0" ></VolumeDisplay>
+<Volume id="vtkMRMLScalarVolumeNode4" name="slicerZstatOne"  hideFromEditors="false" storageNodeRef="vtkMRMLVolumeArchetypeStorageNode4" displayNodeRef="vtkMRMLVolumeDisplayNode4" transformNodeRef="vtkMRMLLinearTransformNode2" labelMap="0" ></Volume>
+
+</MRML>
