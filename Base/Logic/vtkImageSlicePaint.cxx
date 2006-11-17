@@ -180,8 +180,11 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *ptr)
   backgroundWorldToIJK->DeepCopy( backgroundIJKToWorld );
   backgroundWorldToIJK->Invert();
   vtkMatrix4x4 *maskWorldToIJK = vtkMatrix4x4::New();
-  maskWorldToIJK->DeepCopy( self->GetMaskIJKToWorld() );
-  maskWorldToIJK->Invert();
+  if ( self->GetMaskIJKToWorld() )
+    {
+    maskWorldToIJK->DeepCopy( self->GetMaskIJKToWorld() );
+    maskWorldToIJK->Invert();
+    }
   vtkImageData *background = self->GetBackgroundImage();
   double ijk[3], maskIJK[3];
   int intIJK[3], intMaskIJK[3];
