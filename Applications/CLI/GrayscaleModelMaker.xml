@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Application</category>
+  <title>Grayscale Model Maker</title>
+  <description>
+Create 3D surface models from grayscale.
+</description>
+  <version>3.0</version>
+  <documentation-url>http://www.slicer.org</documentation-url>
+  <license>slicer3</license>
+  <contributor>Nicole Aucoin, Bill Lorensen</contributor>
+<parameters>
+    <label>IO</label>
+    <description>Input/output parameters</description>
+    <image>
+      <name>InputVolume</name>
+      <label>Input Volume</label>
+      <channel>input</channel>
+      <index>0</index>
+      <description>Input label map.</description>
+      </image>
+    <geometry>
+      <name>OutputGeometry</name>
+      <label>Output Geometry File</label>
+      <channel>output</channel>
+      <index>1</index>
+      <description>File that contains generated geometry)</description>
+    </geometry>
+  </parameters>
+  <parameters>
+  <label>Grayscale Model Maker Parameters</label>
+  <description>Parameters used for making models.</description>
+  <float>
+    <name>Threshold</name>
+    <flag>-t</flag>
+    <longflag>--threshold</longflag>
+    <description>Grayscale threshold of isosurface.</description>
+    <label>Threshold</label>
+    <default>100.0</default>
+  </float>
+   <string>
+     <name>Name</name>
+     <label>Model Name</label>
+     <flag>-n</flag>
+     <longflag>--name</longflag>
+     <description>Name to use for this model.</description>
+     <default>Model</default>
+   </string>
+   <integer>
+     <name>Smooth</name>
+     <label>Smooth</label>
+     <longflag>--smooth</longflag>
+     <description>Number of smoothing iterations</description>
+     <default>15</default>
+     <constraints>
+     <minimum>0</minimum>
+     </constraints>
+   </integer>
+   <float>
+     <name>Decimate</name>
+     <label>Decimate</label>
+     <longflag>--decimate</longflag>
+     <description>Target reduction during decimation, as a decimal percentage reduction in the number of polygons.</description>
+     <default>0.25</default>
+     <constraints>
+     <minimum>0.0</minimum>
+     <maximum>1.0</maximum>
+     </constraints>
+   </float>
+   <boolean>
+     <name>SplitNormals</name>
+     <label>Split Normals</label>
+     <longflag>--splitnormals</longflag>
+     <description>Splitting normals is useful for visualizing sharp features. However it creates holes in surfaces which affects measurements</description>
+     <default>true</default>
+   </boolean>
+   <boolean>
+     <name>PointNormals</name>
+     <label>Point Normals</label>
+     <longflag>--pointnormals</longflag>
+     <description>Calculate the Point Normals?</description>
+     <default>true</default>
+   </boolean>
+</parameters>
+</executable>

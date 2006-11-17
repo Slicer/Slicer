@@ -26,6 +26,9 @@ Version:   $Revision: 1.2 $
 #include "vtkMRMLScene.h"
 #include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLVolumeArchetypeStorageNode.h"
+#include "vtkMRMLFiducialListNode.h"
+#include "vtkMRMLModelNode.h"
+#include "vtkMRMLModelStorageNode.h"
 
 #include "vtkSlicerApplication.h"
 
@@ -83,32 +86,50 @@ void vtkCommandLineModuleLogic::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 std::string
 vtkCommandLineModuleLogic
-::ConstructTemporaryFileName(const std::string& name,
+::ConstructTemporaryFileName(const std::string& tag,
+                             const std::string& name,
                              bool isCommandLineModule) const
 {
   std::string fname = name;
 
-  if (isCommandLineModule)
+  if (tag == "image")
     {
+    if (isCommandLineModule)
+      {
+      // To avoid confusing the Archetype readers, convert any
+      // numbers in the filename to characters [0-9]->[A-J]
+      std::transform(fname.begin(), fname.end(),
+                     fname.begin(), DigitsToCharacters());
+      
+      fname = this->TemporaryDirectory + "/" + fname + ".nrrd";
+      }
+    else
+      {
+      // If not a command line module, then it is a shared object module
+      // Must be large enough to hold slicer:, / and two copies of the
+      // ascii representation of the pointer. 256 should be more than enough.
+      char tname[256];
+      
+      sprintf(tname, "slicer:%p/%p", this->MRMLScene,
+              this->MRMLScene->GetNodeByID(name.c_str()));
+      
+      fname = tname;
+      }
+    }
+
+  if (tag == "geometry")
+    {
+    // geometry is currently always passed via files
+
     // To avoid confusing the Archetype readers, convert any
     // numbers in the filename to characters [0-9]->[A-J]
     std::transform(fname.begin(), fname.end(),
                    fname.begin(), DigitsToCharacters());
     
-    fname = this->TemporaryDirectory + "/" + fname + ".nrrd";
+    fname = this->TemporaryDirectory + "/" + fname + ".vtk";
     }
-  else
-    {
-    // If not a command line module, then it is a shared object module
-    // Must be large enough to hold slicer:, / and two copies of the
-    // ascii representation of the pointer. 256 should be more than enough.
-    char tname[256];
 
-    sprintf(tname, "slicer:%p/%p", this->MRMLScene,
-            this->MRMLScene->GetNodeByID(name.c_str()));
-
-    fname = tname;
-    }
+    
   return fname;
 }
 
@@ -209,9 +230,9 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
   std::vector<ModuleParameterGroup>::const_iterator pgit;
 
   
-  // Make a pass over the parameters and estabilsh which parameters
-  // have images that need to be written before execution or loaded
-  // upon completion.
+  // Make a pass over the parameters and establish which parameters
+  // have images or geometry that need to be written before execution
+  // or loaded upon completion.
   for (pgit = pgbeginit; pgit != pgendit; ++pgit)
     {
     // iterate over each parameter in this group
@@ -223,7 +244,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
 
     for (pit = pbeginit; pit != pendit; ++pit)
       {
-      if ((*pit).GetTag() == "image")
+      if ((*pit).GetTag() == "image" || (*pit).GetTag() == "geometry")
         {
         // only keep track of images associated with real nodes
         if (!this->MRMLScene->GetNodeByID((*pit).GetDefault().c_str())
@@ -233,7 +254,8 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
           }
 
         std::string fname
-          = this->ConstructTemporaryFileName((*pit).GetDefault(),
+          = this->ConstructTemporaryFileName((*pit).GetTag(),
+                                             (*pit).GetDefault(),
                                              isCommandLine);
 
         filesToDelete.insert(fname);
@@ -302,7 +324,8 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
       
       if (hasFlag)
         {
-        if ((*pit).GetTag() != "boolean" && (*pit).GetTag() != "image")
+        if ((*pit).GetTag() != "boolean" && (*pit).GetTag() != "image"
+            && (*pit).GetTag() != "point" && (*pit).GetTag() != "geometry")
           {
           // simple parameter, write flag and value
           commandLineAsString.push_back(prefix + flag);
@@ -316,7 +339,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
             commandLineAsString.push_back(prefix + flag);
             }
           }
-        if ((*pit).GetTag() == "image")
+        if ((*pit).GetTag() == "image" || (*pit).GetTag() == "geometry")
           {
           MRMLIDToFileNameMap::const_iterator id2fn;
           
@@ -333,6 +356,55 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
             {
             commandLineAsString.push_back(prefix + flag);
             commandLineAsString.push_back( (*id2fn).second );
+            }
+          }
+        if ((*pit).GetTag() == "point")
+          {
+          // get the fiducial list node
+          vtkMRMLNode *node
+            = this->MRMLScene->GetNodeByID((*pit).GetDefault().c_str());
+          vtkMRMLFiducialListNode *fiducials
+            = vtkMRMLFiducialListNode::SafeDownCast(node);
+
+          if (fiducials)
+            {
+            // check to see if module can handle more than one point
+            long numberOfSelectedFiducials=0;
+            for (int i=0; i < fiducials->GetNumberOfFiducials(); ++i)
+              {
+              if (fiducials->GetNthFiducialSelected(i))
+                {
+                numberOfSelectedFiducials++;
+                }
+              }
+            
+            if (numberOfSelectedFiducials == 1
+                || (*pit).GetMultiple() == "true")
+              {
+              for (int i=0; i < fiducials->GetNumberOfFiducials(); ++i)
+                {
+                float *pt;
+                std::ostrstream ptAsString;
+
+                if (fiducials->GetNthFiducialSelected(i))
+                  {
+                  pt = fiducials->GetNthFiducialXYZ(i);
+                  ptAsString << pt[0] << "," << pt[1] << "," << pt[2]
+                             << std::ends;
+                  ptAsString.rdbuf()->freeze();
+                  
+                  commandLineAsString.push_back(prefix + flag);
+                  commandLineAsString.push_back(ptAsString.str());
+                  }
+                }
+              }
+            else
+              {
+              // Can't support this command line with this fiducial
+              // list
+              std::cerr << "Module does not support multiple fiducials."
+                        << std::endl;
+              }
             }
           }
         }
@@ -365,7 +437,8 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
   std::map<int, ModuleParameter>::const_iterator iit;
   for (iit = indexmap.begin(); iit != indexmap.end(); ++iit)
     {
-    if ((*iit).second.GetTag() != "image")
+    if ((*iit).second.GetTag() != "image"
+        && (*iit).second.GetTag() != "geometry")
       {
       commandLineAsString.push_back((*iit).second.GetDefault());
       }
@@ -383,7 +456,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
           }
         else
           {
-          vtkErrorMacro("No input volume assigned to \""
+          vtkErrorMacro("No input data assigned to \""
                         << (*iit).second.GetLabel().c_str() << "\"");
 
           node->SetStatus(vtkMRMLCommandLineModuleNode::Idle, false);
@@ -401,7 +474,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
           }
         else
           {
-          vtkErrorMacro("No output volume assigned to \""
+          vtkErrorMacro("No output data assigned to \""
                         << (*iit).second.GetLabel().c_str() << "\"");
 
           node->SetStatus(vtkMRMLCommandLineModuleNode::Idle, false);
@@ -431,23 +504,40 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
   std::cout << std::endl;
 
   
-  // write out the input volumes
+  // write out the input datasets
   //
   //
   MRMLIDToFileNameMap::const_iterator id2fn;
     
-  if (isCommandLine)
+  for (id2fn = nodesToWrite.begin();
+       id2fn != nodesToWrite.end();
+       ++id2fn)
     {
-    // only need to write out data if running a command line module
-    for (id2fn = nodesToWrite.begin();
-         id2fn != nodesToWrite.end();
-         ++id2fn)
+    vtkMRMLNode *nd
+      = this->MRMLScene->GetNodeByID( (*id2fn).first.c_str() );
+    
+    vtkMRMLScalarVolumeNode *svnd
+      = vtkMRMLScalarVolumeNode::SafeDownCast(nd);
+    vtkMRMLModelNode *mnd
+      = vtkMRMLModelNode::SafeDownCast(nd);
+    
+    // only write out image nodes if running an executable
+    if (isCommandLine && svnd)
       {
       vtkMRMLVolumeArchetypeStorageNode *out
         = vtkMRMLVolumeArchetypeStorageNode::New();
       out->SetFileName( (*id2fn).second.c_str() );
       
-      out->WriteData( this->MRMLScene->GetNodeByID( (*id2fn).first.c_str() ) );
+      out->WriteData( nd );
+      
+      out->Delete();
+      }
+    else if (mnd)
+      {
+      vtkMRMLModelStorageNode *out = vtkMRMLModelStorageNode::New();
+      out->SetFileName( (*id2fn).second.c_str() );
+      
+      out->WriteData( nd );
       
       out->Delete();
       }
@@ -646,7 +736,15 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
          id2fn != nodesToReload.end();
          ++id2fn)
       {
-      if (isCommandLine)
+      vtkMRMLNode *nd
+        = this->MRMLScene->GetNodeByID( (*id2fn).first.c_str() );
+      
+      vtkMRMLScalarVolumeNode *svnd
+        = vtkMRMLScalarVolumeNode::SafeDownCast(nd);
+      vtkMRMLModelNode *mnd
+        = vtkMRMLModelNode::SafeDownCast(nd);
+      
+      if (isCommandLine && svnd)
         {
         vtkMRMLVolumeArchetypeStorageNode *in
           = vtkMRMLVolumeArchetypeStorageNode::New();
@@ -654,7 +752,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
         
         try
           {
-          in->ReadData( this->MRMLScene->GetNodeByID( (*id2fn).first.c_str() ) );
+          in->ReadData( nd );
           }
         catch (itk::ExceptionObject& exc)
           {
@@ -669,9 +767,19 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
         
         in->Delete();
         }
+      else if (mnd)
+        {
+        vtkMRMLModelStorageNode *in = vtkMRMLModelStorageNode::New();
+        in->SetFileName( (*id2fn).second.c_str() );
+        
+        in->ReadData( nd );
+        
+        in->Delete();
+        }
+      
       // only display the new data if the node is the same as one
       // being displayed on the gui
-      if (node == this->GetCommandLineModuleNode())
+      if (svnd && node == this->GetCommandLineModuleNode())
         {
         this->ApplicationLogic->GetSelectionNode()->SetActiveVolumeID( (*id2fn).first.c_str() );
         this->ApplicationLogic->PropagateVolumeSelection();
