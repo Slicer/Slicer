@@ -534,7 +534,7 @@ bool vtkSlicerApplication::RequestModified( vtkObject *obj )
 {
   bool active;
 
-  std::cout << "Requesting a modified on " << obj;
+  //std::cout << "Requesting a modified on " << obj;
 
   // only request a Modified if the Modified queue is up
   this->ModifiedQueueActiveLock->Lock();
@@ -545,8 +545,8 @@ bool vtkSlicerApplication::RequestModified( vtkObject *obj )
     {
     this->ModifiedQueueLock->Lock();
     (*this->InternalModifiedQueue).push( obj );
-    std::cout << " [" << (*this->InternalModifiedQueue).size()
-              << "] " << std::endl;
+//     std::cout << " [" << (*this->InternalModifiedQueue).size()
+//               << "] " << std::endl;
     this->ModifiedQueueLock->Unlock();
     
     return true;
