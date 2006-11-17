@@ -115,7 +115,7 @@ int main(int argc, char * argv[])
     transformIJKtoRAS->Inverse();
     mcubes = vtkMarchingCubes::New();
 
-    mcubes->SetInput(reader->GetOutput());
+    mcubes->SetInput(ici->GetOutput());
     mcubes->SetValue(0,Threshold);
     mcubes->ComputeScalarsOff();
     mcubes->ComputeGradientsOff();
