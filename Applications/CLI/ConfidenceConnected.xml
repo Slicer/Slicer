@@ -4,16 +4,16 @@
   Filtering.Segmentation
   </category>
   <title>
-  Confidence connected
+  Simple region growing
   </title>
   <description>
-A simple region growing segmentation algorithm.
+  A simple region growing segmentation algorithm based on intensity statistics.
   </description>
   <version>0.1.0.$Revision: 916 $(alpha)</version>
   <documentation-url></documentation-url>
   <license></license>
   <contributor>Jim Miller</contributor>
-  <parameters>
+  <parameters advanced="true">
     <label>Smoothing Parameters</label>
     <description>Parameters to denoise the image prior to segmenting</description>
     <integer>
@@ -66,7 +66,15 @@ A simple region growing segmentation algorithm.
       </constraints>
     </double>
 
-    <point coordinateSystem="ijk" multiple="true">
+    <integer>
+      <name>neighborhood</name>
+      <longflag>--neighborhood</longflag>
+      <description>The radius of the neighborhood over which to calculate intensity model</description>
+      <label>Neighborhood Radius</label>
+      <default>1</default>
+    </integer>
+
+    <point coordinateSystem="ras" multiple="true">
       <name>seed</name>
       <label>Seeds</label>
       <longflag>--seed</longflag>
