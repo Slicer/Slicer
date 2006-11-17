@@ -325,7 +325,18 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
   this->ProcessingMRMLEvent = event;
 
   vtkDebugMacro("processing event " << event);
-  
+   /**  
+   if (event == vtkMRMLScene::SceneCloseEvent || event == vtkMRMLScene::NewSceneEvent )
+   {
+ 
+    this->DisplayedModels.clear();
+    this->DisplayedFiducials.clear();
+    this->DisplayedTextFiducials.clear();
+    this->DisplayedModelsClipState.clear();
+    this->ProcessingMRMLEvent = 0;
+    return;
+  }
+    **/
   if ( vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene 
     && (event == vtkMRMLScene::NodeAddedEvent || event == vtkMRMLScene::NodeRemovedEvent ) )
     {
@@ -477,6 +488,8 @@ void vtkSlicerViewerWidget::CreateWidget ( )
 
   // observe scene for add/remove nodes
   vtkIntArray *events = vtkIntArray::New();
+  //events->InsertNextValue(vtkMRMLScene::SceneCloseEvent);
+  //events->InsertNextValue(vtkMRMLScene::NewSceneEvent);
   events->InsertNextValue(vtkCommand::ModifiedEvent);
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
   events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);

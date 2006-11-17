@@ -943,7 +943,14 @@ void vtkSlicerApplicationGUI::CreateMain3DViewer ( int arrangementType )
             {
               this->ViewerWidget->SetParent(this->MainSlicerWindow->GetViewFrame());
             }
-          this->ViewerWidget->SetMRMLScene(this->MRMLScene);
+          vtkIntArray *events = vtkIntArray::New();
+          events->InsertNextValue(vtkMRMLScene::SceneCloseEvent);
+          events->InsertNextValue(vtkMRMLScene::NewSceneEvent);
+          events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
+          events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
+          events->InsertNextValue(vtkCommand::ModifiedEvent);
+          this->ViewerWidget->SetAndObserveMRMLSceneEvents (this->MRMLScene, events );
+          events->Delete();
           this->ViewerWidget->Create();
           this->ViewerWidget->GetMainViewer()->SetRendererBackgroundColor (app->GetSlicerTheme()->GetSlicerColors()->ViewerBlue );
           this->ViewerWidget->UpdateFromMRML();
