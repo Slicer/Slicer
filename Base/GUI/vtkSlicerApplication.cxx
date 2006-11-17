@@ -14,6 +14,10 @@
 #include "vtkKWWin32RegistryHelper.h"
 #endif
 
+#ifndef _WIN32
+#include <unistd.h>
+#endif
+
 #include "itksys/SystemTools.hxx"
 
 #include <queue>
