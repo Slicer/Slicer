@@ -49,8 +49,10 @@ proc EditorTearDownGUI {this} {
     $::Editor($this,$w) Delete
   }
 
-  set pageWidget [[$this GetUIPanel] GetPageWidget "Editor"]
-  [$this GetUIPanel] RemovePage "Editor"
+  if { [[$this GetUIPanel] GetUserInterfaceManager] != "" } {
+    set pageWidget [[$this GetUIPanel] GetPageWidget "Editor"]
+    [$this GetUIPanel] RemovePage "Editor"
+  }
 
 }
 
