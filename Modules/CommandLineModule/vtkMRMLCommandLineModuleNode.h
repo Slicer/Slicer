@@ -62,7 +62,7 @@ class VTK_COMMANDLINEMODULE_EXPORT vtkMRMLCommandLineModuleNode : public vtkMRML
 
 
   //BTX
-  typedef enum { Idle=0, Scheduled, Running, Completed, Cancelled } StatusType;
+  typedef enum { Idle=0, Scheduled, Running, Completed, CompletedWithErrors, Cancelled } StatusType;
   //ETX
 
   // Description:

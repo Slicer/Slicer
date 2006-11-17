@@ -540,6 +540,8 @@ void vtkCommandLineModuleGUI::UpdateGUI ()
         break;
       case vtkMRMLCommandLineModuleNode::Completed: statusString = "Completed";
         break;
+      case vtkMRMLCommandLineModuleNode::CompletedWithErrors: statusString = "Completed with errors";
+        break;
       case vtkMRMLCommandLineModuleNode::Cancelled: statusString = "Cancelled";
         break;
       default:

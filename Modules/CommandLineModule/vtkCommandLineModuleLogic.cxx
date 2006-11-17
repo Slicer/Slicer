@@ -570,36 +570,42 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
     itksysProcess_WaitForExit(process, 0);
     
     // check the exit state / error state of the process
-    int result = itksysProcess_GetState(process);
-    if (result == itksysProcess_State_Exited)
+    if (node->GetStatus() != vtkMRMLCommandLineModuleNode::Cancelled)
       {
-      // executable exited cleanly and must of done
-      // "something" 
-      if (itksysProcess_GetExitValue(process) == 0)
+      int result = itksysProcess_GetState(process);
+      if (result == itksysProcess_State_Exited)
         {
-        // executable exited without errors,
+        // executable exited cleanly and must of done
+        // "something" 
+        if (itksysProcess_GetExitValue(process) == 0)
+          {
+          // executable exited without errors,
+          std::cout << node->GetModuleDescription().GetTitle()
+                    << " completed without errors" << std::endl;
+          }
+        else
+          {
+          std::cout << node->GetModuleDescription().GetTitle()
+                    << " completed with errors" << std::endl;
+          node->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors);
+          }
+        }
+      else if (result == itksysProcess_State_Expired)
+        {
         std::cout << node->GetModuleDescription().GetTitle()
-                  << " completed without errors" << std::endl;
+                  << " timed out" << std::endl;
+        node->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors);
         }
       else
         {
         std::cout << node->GetModuleDescription().GetTitle()
-                  << " completed with errors" << std::endl;
+                  << " unknown termination. " << result << std::endl;
+        node->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors);
         }
-      }
-    else if (result == itksysProcess_State_Expired)
-      {
-      std::cout << node->GetModuleDescription().GetTitle()
-                << " timed out" << std::endl;
-      }
-    else
-      {
-      std::cout << node->GetModuleDescription().GetTitle()
-                << " unknown termination. " << result << std::endl;
-      }
     
-    // clean up
-    itksysProcess_Delete(process);
+      // clean up
+      itksysProcess_Delete(process);
+      }
     }
   else
     {
@@ -611,24 +617,30 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
       {
       std::cout << node->GetModuleDescription().GetTitle()
                 << " terminated with an exception: " << exc;
+      node->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors);
       }
     catch (...)
       {
       std::cout << node->GetModuleDescription().GetTitle()
                 << " terminated with an unknown exception." << std::endl;
+      node->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors);
       }
     }
-  if (node->GetStatus() != vtkMRMLCommandLineModuleNode::Cancelled)
+  if (node->GetStatus() != vtkMRMLCommandLineModuleNode::Cancelled 
+      && node->GetStatus() != vtkMRMLCommandLineModuleNode::CompletedWithErrors)
     {
     node->SetStatus(vtkMRMLCommandLineModuleNode::Completed, false);
     vtkSlicerApplication::GetInstance()->RequestModified( node );
     }
-
+  // reset the progress to zero
+  node->GetModuleDescription().GetProcessInformation()->Progress = 0;
+  vtkSlicerApplication::GetInstance()->RequestModified( node );
   
   // import the results if the plugin was allowed to complete
   //
   //
-  if (node->GetModuleDescription().GetProcessInformation()->Abort == 0)
+  if (node->GetStatus() != vtkMRMLCommandLineModuleNode::Cancelled
+      && node->GetStatus() != vtkMRMLCommandLineModuleNode::CompletedWithErrors)
     {
     for (id2fn = nodesToReload.begin();
          id2fn != nodesToReload.end();
@@ -640,11 +652,23 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
           = vtkMRMLVolumeArchetypeStorageNode::New();
         in->SetFileName( (*id2fn).second.c_str() );
         
-        in->ReadData( this->MRMLScene->GetNodeByID( (*id2fn).first.c_str() ) );
+        try
+          {
+          in->ReadData( this->MRMLScene->GetNodeByID( (*id2fn).first.c_str() ) );
+          }
+        catch (itk::ExceptionObject& exc)
+          {
+          std::cout << node->GetModuleDescription().GetTitle()
+                    << " terminated with an exception: " << exc;
+          }
+        catch (...)
+          {
+          std::cout << node->GetModuleDescription().GetTitle()
+                    << " terminated with an unknown exception." << std::endl;
+          }
         
         in->Delete();
         }
-
       // only display the new data if the node is the same as one
       // being displayed on the gui
       if (node == this->GetCommandLineModuleNode())
