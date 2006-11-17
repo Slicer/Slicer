@@ -57,7 +57,7 @@ vtkMRMLGradientAnisotropicDiffusionFilterNode::vtkMRMLGradientAnisotropicDiffusi
    this->TimeStep = 0.1;
    this->InputVolumeRef = NULL;
    this->OutputVolumeRef = NULL;
-   this->HideFromEditors = false;
+   this->HideFromEditors = true;
 }
 
 //----------------------------------------------------------------------------

@@ -195,6 +195,23 @@ void vtkMRMLVolumeNode::Copy(vtkMRMLNode *anode)
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLVolumeNode::CopyOrientation(vtkMRMLVolumeNode *node)
+{
+
+  // Matrices
+  for(int i=0; i<3; i++) 
+    {
+    for(int j=0; j<3; j++) 
+      {
+      this->IJKToRASDirections[i][j] = node->IJKToRASDirections[i][j];
+      }
+    }
+  this->SetOrigin(node->GetOrigin());
+  this->SetSpacing(node->GetSpacing());
+}
+
+
+//----------------------------------------------------------------------------
 void vtkMRMLVolumeNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os,indent);

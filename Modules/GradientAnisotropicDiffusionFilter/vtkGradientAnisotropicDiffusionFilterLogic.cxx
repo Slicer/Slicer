@@ -86,7 +86,8 @@ void vtkGradientAnisotropicDiffusionFilterLogic::Apply()
   std::string name (outVolume->GetName());
   std::string id (outVolume->GetID());
 
-  outVolume->Copy(inVolume);
+  outVolume->CopyOrientation(inVolume);
+  outVolume->SetAndObserveTransformNodeID(inVolume->GetTransformNodeID());
 
   outVolume->SetName(name.c_str());
   //outVolume->SetID(id.c_str());
@@ -111,6 +112,7 @@ void vtkGradientAnisotropicDiffusionFilterLogic::Apply()
   image->DeepCopy( this->GradientAnisotropicDiffusionImageFilter->GetOutput() );
   outVolume->SetAndObserveImageData(image);
   image->Delete();
+  outVolume->SetModifiedSinceRead(1);
 
   //outVolume->SetImageData(this->GradientAnisotropicDiffusionImageFilter->GetOutput());
 

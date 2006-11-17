@@ -107,10 +107,10 @@ vtkGradientAnisotropicDiffusionFilterGUI::~vtkGradientAnisotropicDiffusionFilter
     }
 
   this->SetLogic (NULL);
-  if ( this->GradientAnisotropicDiffusionFilterNode ) {
-      vtkSetAndObserveMRMLNodeMacro( this->GradientAnisotropicDiffusionFilterNode, NULL );
-  }
-  this->SetGradientAnisotropicDiffusionFilterNode (NULL); 
+  if ( this->GradientAnisotropicDiffusionFilterNode ) 
+    {
+    vtkSetMRMLNodeMacro( this->GradientAnisotropicDiffusionFilterNode, NULL );
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -203,7 +203,6 @@ void vtkGradientAnisotropicDiffusionFilterGUI::ProcessGUIEvents ( vtkObject *cal
     { 
     vtkMRMLGradientAnisotropicDiffusionFilterNode* n = vtkMRMLGradientAnisotropicDiffusionFilterNode::SafeDownCast(this->GADNodeSelector->GetSelected());
     this->Logic->SetGradientAnisotropicDiffusionFilterNode(n);
-    this->SetGradientAnisotropicDiffusionFilterNode(n);
     vtkSetAndObserveMRMLNodeMacro( this->GradientAnisotropicDiffusionFilterNode, n);
     this->UpdateGUI();
     }
@@ -228,7 +227,6 @@ void vtkGradientAnisotropicDiffusionFilterGUI::UpdateMRML ()
 
     // set an observe new node in Logic
     this->Logic->SetGradientAnisotropicDiffusionFilterNode(n);
-    this->SetGradientAnisotropicDiffusionFilterNode(n);
     vtkSetAndObserveMRMLNodeMacro(this->GradientAnisotropicDiffusionFilterNode, n);
    }
 
@@ -313,19 +311,19 @@ void vtkGradientAnisotropicDiffusionFilterGUI::BuildGUI ( )
                 helpFrame->GetWidgetName(), this->UIPanel->GetPageWidget("GradientAnisotropicDiffusionFilter")->GetWidgetName());
   helpFrame->Delete();
 
-    // configure the parent classes help text widget
-    this->HelpText->SetParent ( helpFrame->GetFrame() );
-    this->HelpText->Create ( );
-    this->HelpText->SetHorizontalScrollbarVisibility ( 0 );
-    this->HelpText->SetVerticalScrollbarVisibility ( 1 );
-    this->HelpText->GetWidget()->SetText ( help );
-    this->HelpText->GetWidget()->SetReliefToFlat ( );
-    this->HelpText->GetWidget()->SetWrapToWord ( );
-    this->HelpText->GetWidget()->ReadOnlyOn ( );
-    this->HelpText->GetWidget()->QuickFormattingOn ( );
-    this->HelpText->GetWidget()->SetBalloonHelpString ( "" );
-    app->Script ( "pack %s -side top -fill x -expand y -anchor w -padx 2 -pady 4",
-                  this->HelpText->GetWidgetName ( ) );
+  // configure the parent classes help text widget
+  this->HelpText->SetParent ( helpFrame->GetFrame() );
+  this->HelpText->Create ( );
+  this->HelpText->SetHorizontalScrollbarVisibility ( 0 );
+  this->HelpText->SetVerticalScrollbarVisibility ( 1 );
+  this->HelpText->GetWidget()->SetText ( help );
+  this->HelpText->GetWidget()->SetReliefToFlat ( );
+  this->HelpText->GetWidget()->SetWrapToWord ( );
+  this->HelpText->GetWidget()->ReadOnlyOn ( );
+  this->HelpText->GetWidget()->QuickFormattingOn ( );
+  this->HelpText->GetWidget()->SetBalloonHelpString ( "" );
+  app->Script ( "pack %s -side top -fill x -expand y -anchor w -padx 2 -pady 4",
+                this->HelpText->GetWidgetName ( ) );
 
   vtkSlicerModuleCollapsibleFrame *moduleFrame = vtkSlicerModuleCollapsibleFrame::New ( );
   moduleFrame->SetParent ( this->UIPanel->GetPageWidget ( "GradientAnisotropicDiffusionFilter" ) );
@@ -335,10 +333,10 @@ void vtkGradientAnisotropicDiffusionFilterGUI::BuildGUI ( )
   app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                 moduleFrame->GetWidgetName(), this->UIPanel->GetPageWidget("GradientAnisotropicDiffusionFilter")->GetWidgetName());
   
-  this->GADNodeSelector->SetNodeClass("vtkMRMLGradientAnisotropicDiffusionFilterNode", NULL, NULL, "GADParameter");
+  this->GADNodeSelector->SetNodeClass("vtkMRMLGradientAnisotropicDiffusionFilterNode", NULL, NULL, "GADParameters");
   this->GADNodeSelector->SetNewNodeEnabled(1);
   this->GADNodeSelector->NoneEnabledOn();
-  //this->GADNodeSelector->SetNewNodeName("GADParameters");
+  this->GADNodeSelector->SetShowHidden(1);
   this->GADNodeSelector->SetParent( moduleFrame->GetFrame() );
   this->GADNodeSelector->Create();
   this->GADNodeSelector->SetMRMLScene(this->Logic->GetMRMLScene());

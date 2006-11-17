@@ -57,6 +57,11 @@ class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLTransformableNode
   virtual void Copy(vtkMRMLNode *node);
 
   // Description:
+  // Copy the node's attributes to this object
+  void CopyOrientation(vtkMRMLVolumeNode *node);
+
+
+  // Description:
   // Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() = 0;
 
