@@ -36,6 +36,7 @@ if { [itcl::find class DrawSWidget] == "" } {
     public variable thresholdMin 1
     public variable thresholdMax 1
     public variable drawOver 1
+    public variable polygonDebugViewer 0
 
     variable _lastEventPoint ""
     variable _lastInsertSlice ""
@@ -74,7 +75,7 @@ itcl::body DrawSWidget::constructor {sliceGUI} {
 
   set _guiObserverTags ""
   lappend _guiObserverTags [$sliceGUI AddObserver DeleteEvent "itcl::delete object $this"]
-  foreach event { LeftButtonPressEvent LeftButtonReleaseEvent MouseMoveEvent RightButtonPressEvent RightButtonReleaseEvent } {
+  foreach event { LeftButtonPressEvent LeftButtonReleaseEvent MouseMoveEvent } {
     lappend _guiObserverTags [$sliceGUI AddObserver $event "$this processEvent $sliceGUI"]
   }
 
@@ -200,14 +201,12 @@ itcl::body DrawSWidget::apply {} {
   $o(xyPoints) Modified
   set xyBounds [$o(xyPoints) GetBounds]
   foreach {xlo xhi ylo yhi zlo zhi} $xyBounds {}
+  set xlo [expr $xlo - 1]
+  set ylo [expr $ylo - 1]
   set originRAS [$this xyToRAS "$xlo $ylo"]
   $maskIJKToRAS SetElement 0 3  [lindex $originRAS 0]
   $maskIJKToRAS SetElement 1 3  [lindex $originRAS 1]
   $maskIJKToRAS SetElement 2 3  [lindex $originRAS 2]
-
-  puts [$maskIJKToRAS Print]
-  puts " xyBounds $xyBounds"
-
 
   #
   # get a good size for the draw buffer 
@@ -254,24 +253,21 @@ itcl::body DrawSWidget::apply {} {
   set mask [vtkImageData New]
   $mask DeepCopy [$fill GetOutput]
 
-  #
-  # make a little preview window for debugging pleasure
-  # TODO: this can go away
-  #
-  catch "viewer Delete"
-  catch "viewerImage Delete"
-  vtkImageViewer viewer
-  vtkImageData viewerImage
-  viewerImage DeepCopy [$fill GetOutput]
-  viewer SetInput viewerImage
-  viewer SetColorWindow 2
-  viewer SetColorLevel 1
-  viewer Render
+  if { $polygonDebugViewer } {
+    #
+    # make a little preview window for debugging pleasure
+    #
+    catch "viewer Delete"
+    catch "viewerImage Delete"
+    vtkImageViewer viewer
+    vtkImageData viewerImage
+    viewerImage DeepCopy [$fill GetOutput]
+    viewer SetInput viewerImage
+    viewer SetColorWindow 2
+    viewer SetColorLevel 1
+    viewer Render
+  }
 
-  #
-  # remove the polygon from the draw buffer
-  #
-  $this resetPolyData
 
   #
   # clean up our local class instances
@@ -362,6 +358,10 @@ itcl::body DrawSWidget::apply {} {
   # and call this on mouse up - more important for paint
   $_layers(label,node) Modified
 
+  #
+  # remove the polygon from the draw buffer
+  #
+  after 100 "$this resetPolyData"
 
   return
 }
@@ -423,19 +423,6 @@ itcl::body DrawSWidget::processEvent { {caller ""} } {
         set _actionState ""
         $sliceGUI SetGrabID ""
         set _description ""
-      }
-      "RightButtonPressEvent" {
-        puts "got right down"
-        set _lastEventPoint [$_interactor GetEventPosition]
-      }
-      "RightButtonReleaseEvent" {
-        puts "got right up"
-        puts "$_lastEventPoint == [$_interactor GetEventPosition]"
-        if { $_lastEventPoint == [$_interactor GetEventPosition] } {
-          eval $this addPoint $ras
-          set _actionState ""
-          $this apply
-        }
       }
       default {
         # other events...

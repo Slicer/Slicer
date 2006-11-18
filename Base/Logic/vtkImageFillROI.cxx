@@ -758,8 +758,14 @@ static void vtkImageFillROIExecute(vtkImageFillROI* self,
 //----------------------------------------------------------------------------
 void vtkImageFillROI::ExecuteData(vtkDataObject *out)
 {
-  // let superclass allocate data
-  this->Superclass::ExecuteData(out);
+  // Make sure the Input has been set.
+  if ( this->GetInput() == NULL )
+    {
+    vtkErrorMacro(<< "ExecuteData: Input is not set.");
+    return;
+    }
+    
+  vtkImageData *outData = this->AllocateOutputData(out);
 
   if ( this->GetInput()->GetDataObjectType() != VTK_IMAGE_DATA )
     {
