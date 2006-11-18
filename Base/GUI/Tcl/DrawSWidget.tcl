@@ -74,7 +74,7 @@ itcl::body DrawSWidget::constructor {sliceGUI} {
 
   set _guiObserverTags ""
   lappend _guiObserverTags [$sliceGUI AddObserver DeleteEvent "itcl::delete object $this"]
-  foreach event { LeftButtonPressEvent LeftButtonReleaseEvent MouseMoveEvent RightButtonPressEvent RightButtonReleaseEvent} {
+  foreach event { LeftButtonPressEvent LeftButtonReleaseEvent MouseMoveEvent RightButtonPressEvent RightButtonReleaseEvent } {
     lappend _guiObserverTags [$sliceGUI AddObserver $event "$this processEvent $sliceGUI"]
   }
 
@@ -149,7 +149,8 @@ itcl::body DrawSWidget::addPoint {r a s} {
 
   # store modify time so these points can be cleared if 
   # slice plane is moved
-  set _lastInsertSlice [[$_sliceNode GetSliceToRAS] GetMTime]
+  set logic [$sliceGUI GetLogic]
+  set _lastInsertSlice [$logic GetSliceOffset]
 
   set p [$o(rasPoints) InsertNextPoint $r $a $s]
   set lines [$o(polyData) GetLines]
@@ -182,7 +183,7 @@ itcl::body DrawSWidget::apply {} {
 
 
   #
-  # use the slicer2 vtkImageFillROI filter
+  # use the slicer2-based vtkImageFillROI filter
   #
 
   #
@@ -196,13 +197,16 @@ itcl::body DrawSWidget::apply {} {
   #
   set maskIJKToRAS [vtkMatrix4x4 New]
   $maskIJKToRAS DeepCopy [$_sliceNode GetXYToRAS]
-  $o(rasPoints) Modified
-  set rasBounds [$o(rasPoints) GetBounds]
-  foreach {rlo rhi alo ahi slo shi} $rasBounds {}
-  $maskIJKToRAS SetElement 0 3  $rlo
-  $maskIJKToRAS SetElement 0 3  $alo
-  $maskIJKToRAS SetElement 0 3  $slo
+  $o(xyPoints) Modified
+  set xyBounds [$o(xyPoints) GetBounds]
+  foreach {xlo xhi ylo yhi zlo zhi} $xyBounds {}
+  set originRAS [$this xyToRAS "$xlo $ylo"]
+  $maskIJKToRAS SetElement 0 3  [lindex $originRAS 0]
+  $maskIJKToRAS SetElement 1 3  [lindex $originRAS 1]
+  $maskIJKToRAS SetElement 2 3  [lindex $originRAS 2]
 
+  puts [$maskIJKToRAS Print]
+  puts " xyBounds $xyBounds"
 
 
   #
@@ -415,6 +419,7 @@ itcl::body DrawSWidget::processEvent { {caller ""} } {
         }
       }
       "LeftButtonReleaseEvent" {
+  $this apply
         set _actionState ""
         $sliceGUI SetGrabID ""
         set _description ""
@@ -443,7 +448,8 @@ itcl::body DrawSWidget::processEvent { {caller ""} } {
     # make sure all points are on the current slice plane
     # - if the SliceToRAS has been modified, then we're on a different plane
     #
-    set currentSlice [[$_sliceNode GetSliceToRAS] GetMTime]
+    set logic [$sliceGUI GetLogic]
+    set currentSlice [$logic GetSliceOffset]
     if { $_lastInsertSlice != $currentSlice } {
       $this resetPolyData
     }

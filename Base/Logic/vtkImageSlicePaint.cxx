@@ -244,6 +244,14 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *ptr)
             }
           else
             {
+
+            // debug printing
+            if ( column == row )
+              {
+              vtkErrorWithObjectMacro (self, << "workingWorld = " << workingWorld[0] << " " <<  workingWorld[1] << " " << workingWorld[2] << "\n" );
+              vtkErrorWithObjectMacro (self, << "intMaskIJK = " << intMaskIJK[0] << " " <<  intMaskIJK[1] << " " << intMaskIJK[2] << "\n" );
+              }
+
             double maskValue = self->GetMaskImage()->GetScalarComponentAsDouble (
                                         intMaskIJK[0], intMaskIJK[1], intMaskIJK[2], 0 );
             if ( maskValue )
