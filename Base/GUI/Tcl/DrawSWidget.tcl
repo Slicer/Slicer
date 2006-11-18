@@ -38,12 +38,14 @@ if { [itcl::find class DrawSWidget] == "" } {
     public variable drawOver 1
 
     variable _lastEventPoint ""
+    variable _lastInsertSlice ""
 
     # methods
     method processEvent { {caller ""} } {}
     method positionActors {} {}
     method apply {} {}
     method createPolyData {} {}
+    method resetPolyData {} {}
     method addPoint {r a s} {}
   }
 }
@@ -130,7 +132,24 @@ itcl::body DrawSWidget::createPolyData {} {
   return $polyData
 }
 
+itcl::body DrawSWidget::resetPolyData {} {
+  # return the polyline to initial state with no points
+  set lines [$o(polyData) GetLines]
+  set idArray [$lines GetData]
+  $idArray Reset
+  $idArray InsertNextTuple1 0
+  $o(xyPoints) Reset
+  $o(rasPoints) Reset
+  $lines SetNumberOfCells 0
+
+  set _lastInsertSlice ""
+}
+
 itcl::body DrawSWidget::addPoint {r a s} {
+
+  # store modify time so these points can be cleared if 
+  # slice plane is moved
+  set _lastInsertSlice [[$_sliceNode GetSliceToRAS] GetMTime]
 
   set p [$o(rasPoints) InsertNextPoint $r $a $s]
   set lines [$o(polyData) GetLines]
@@ -248,11 +267,7 @@ itcl::body DrawSWidget::apply {} {
   #
   # remove the polygon from the draw buffer
   #
-  $idArray Reset
-  $idArray InsertNextTuple1 0
-  $o(xyPoints) Reset
-  $o(rasPoints) Reset
-  $lines SetNumberOfCells 0
+  $this resetPolyData
 
   #
   # clean up our local class instances
@@ -421,9 +436,17 @@ itcl::body DrawSWidget::processEvent { {caller ""} } {
         # other events...
       }
     }
-  } else { 
-    # events from the node... nothing particular to do
-    # except the default update of the actors
+  } 
+
+  if { $caller == $_sliceNode } {
+    # 
+    # make sure all points are on the current slice plane
+    # - if the SliceToRAS has been modified, then we're on a different plane
+    #
+    set currentSlice [[$_sliceNode GetSliceToRAS] GetMTime]
+    if { $_lastInsertSlice != $currentSlice } {
+      $this resetPolyData
+    }
   }
 
   $this positionActors
