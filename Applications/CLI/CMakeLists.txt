@@ -169,7 +169,7 @@ TARGET_LINK_LIBRARIES (${CLP}Lib ITKIO ITKBasicFilters)
 
 SET (CLP ModelMaker)
 
-SET ( ${CLP}_SOURCE ${CLP}.cxx)
+SET ( ${CLP}_SOURCE ${CLP}.cxx vtkPluginFilterWatcher.cxx)
 GENERATECLP(${CLP}_SOURCE ${CLP}.xml)
 ADD_EXECUTABLE(${CLP} ${${CLP}_SOURCE})
 TARGET_LINK_LIBRARIES (${CLP} vtkITK vtkGraphics vtkIO)
