@@ -1,0 +1,45 @@
+
+
+
+proc ImportSlicer2Scene {sceneFile} {
+
+  set parser [vtkXMLDataParser New]
+  $parser SetFileName $sceneFile
+  $parser Parse
+
+  puts [$parser Print]
+  puts $parser
+
+  set root [$parser GetRootElement]
+
+  PrintElement 0 $root
+}
+
+proc PrintIndent {indent} {
+  for {set i 0} {$i < $indent} {incr i} {
+    puts -nonewline " "
+  }
+}
+
+proc PrintElement {indent element} {
+  
+  PrintIndent $indent
+  incr indent
+  puts "$element [$element GetName]"
+
+  set nAtts [$element GetNumberOfAttributes]
+  for {set i 0} {$i < $nAtts} {incr i} {
+    PrintIndent $indent
+    set attName [$element GetAttributeName $i]
+    puts "$attName [$element GetAttributeValue $i]"
+  } 
+
+
+  set nNested [$element GetNumberOfNestedElements]
+  for {set i 0} {$i < $nNested} {incr i} {
+    set nestElement [$element GetNestedElement $i]
+    PrintElement $indent $nestElement
+  }
+}
+
+ImportSlicer2Scene c:/data/tutorial/tutorial.xml
