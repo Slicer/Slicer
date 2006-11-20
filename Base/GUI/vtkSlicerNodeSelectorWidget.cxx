@@ -32,30 +32,29 @@ vtkCxxRevisionMacro(vtkSlicerNodeSelectorWidget, "$Revision: 1.33 $");
 // observed mrml scene back into the logic layer for further processing
 // - this can also end up calling observers of the logic (i.e. in the GUI)
 //
-static void MRMLCallback(vtkObject *__mrmlscene, unsigned long eid, void *__clientData, void *callData)
+static void MRMLCallback(vtkObject *caller, unsigned long eid, void *__clientData, void *callData)
 {
-  static int inMRMLCallback = 0;
 
+  vtkSlicerNodeSelectorWidget *self = reinterpret_cast<vtkSlicerNodeSelectorWidget *>(__clientData);
 
-  if (inMRMLCallback)
+  if (self->GetInMRMLCallbackFlag())
     {
-    vtkErrorWithObjectMacro (__mrmlscene, << "*********MRMLCallback called recursively?" << endl);
+    vtkErrorWithObjectMacro(self, "In vtkSlicerNodeSelectorWidget *********MRMLCallback called recursively?");
     return;
     }
-  inMRMLCallback = 1;
 
-  vtkMRMLScene *mrmlscene = static_cast<vtkMRMLScene *>(__mrmlscene); // Not used, since it is ivar
+  vtkDebugWithObjectMacro(self, "In vtkSlicerWidget MRMLCallback");
 
   vtkMRMLNode *node = reinterpret_cast<vtkMRMLNode *>(callData);
 
-  vtkSlicerNodeSelectorWidget *self = reinterpret_cast<vtkSlicerNodeSelectorWidget *>(__clientData);
+  self->SetInMRMLCallbackFlag(1);
 
   if (node == NULL || self->CheckNodeClass(node))
     {
     self->UpdateMenu();
     }
 
-  inMRMLCallback = 0;
+  self->SetInMRMLCallbackFlag(0);
 }
 
 
@@ -70,6 +69,7 @@ vtkSlicerNodeSelectorWidget::vtkSlicerNodeSelectorWidget()
   this->MRMLCallbackCommand = vtkCallbackCommand::New();
   this->MRMLCallbackCommand->SetClientData( reinterpret_cast<void *> (this) );
   this->MRMLCallbackCommand->SetCallback(MRMLCallback);
+  this->InMRMLCallbackFlag = 0;
 }
 
 //----------------------------------------------------------------------------

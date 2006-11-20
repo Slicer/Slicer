@@ -137,6 +137,14 @@ public:
 
   bool CheckNodeClass(vtkMRMLNode *node);
 
+  // Description:
+  // Flags to avoid event loops
+  // NOTE: don't use the SetMacro or it call modified itself and generate even more events!
+  vtkGetMacro(InMRMLCallbackFlag, int);
+  void SetInMRMLCallbackFlag (int flag) {
+    this->InMRMLCallbackFlag = flag;
+  }
+
 protected:
   vtkSlicerNodeSelectorWidget();
   virtual ~vtkSlicerNodeSelectorWidget();
@@ -163,6 +171,10 @@ private:
   int NewNodeCount;
 
   vtkCallbackCommand *MRMLCallbackCommand;
+
+  // Description:
+  // Flag to avoid event loops
+  int InMRMLCallbackFlag;
 
   vtkSlicerNodeSelectorWidget(const vtkSlicerNodeSelectorWidget&); // Not implemented
   void operator=(const vtkSlicerNodeSelectorWidget&); // Not Implemented
