@@ -107,10 +107,8 @@ vtkGradientAnisotropicDiffusionFilterGUI::~vtkGradientAnisotropicDiffusionFilter
     }
 
   this->SetLogic (NULL);
-  if ( this->GradientAnisotropicDiffusionFilterNode ) 
-    {
-    vtkSetMRMLNodeMacro( this->GradientAnisotropicDiffusionFilterNode, NULL );
-    }
+  vtkSetMRMLNodeMacro(this->GradientAnisotropicDiffusionFilterNode, NULL);
+
 }
 
 //----------------------------------------------------------------------------
@@ -202,7 +200,7 @@ void vtkGradientAnisotropicDiffusionFilterGUI::ProcessGUIEvents ( vtkObject *cal
     this->GADNodeSelector->GetSelected() != NULL) 
     { 
     vtkMRMLGradientAnisotropicDiffusionFilterNode* n = vtkMRMLGradientAnisotropicDiffusionFilterNode::SafeDownCast(this->GADNodeSelector->GetSelected());
-    this->Logic->SetGradientAnisotropicDiffusionFilterNode(n);
+    this->Logic->SetAndObserveGradientAnisotropicDiffusionFilterNode(n);
     vtkSetAndObserveMRMLNodeMacro( this->GradientAnisotropicDiffusionFilterNode, n);
     this->UpdateGUI();
     }
@@ -226,7 +224,7 @@ void vtkGradientAnisotropicDiffusionFilterGUI::UpdateMRML ()
     n = vtkMRMLGradientAnisotropicDiffusionFilterNode::SafeDownCast(this->GADNodeSelector->GetSelected());
 
     // set an observe new node in Logic
-    this->Logic->SetGradientAnisotropicDiffusionFilterNode(n);
+    this->Logic->SetAndObserveGradientAnisotropicDiffusionFilterNode(n);
     vtkSetAndObserveMRMLNodeMacro(this->GradientAnisotropicDiffusionFilterNode, n);
    }
 

@@ -64,8 +64,11 @@ vtkSlicerSliceLogic::~vtkSlicerSliceLogic()
     {
     vtkSetAndObserveMRMLNodeMacro( this->SliceCompositeNode, NULL );
     }
+
   if (this->SliceModelNode != NULL)
     {
+    this->SliceModelNode->SetAndObservePolyData(NULL);
+    this->SliceModelNode->SetAndObserveDisplayNodeID(NULL);
     this->SliceModelNode->Delete();
     }
   if (this->PlaneSource != NULL)
@@ -74,6 +77,7 @@ vtkSlicerSliceLogic::~vtkSlicerSliceLogic()
     }
   if (this->SliceModelDisplayNode != NULL)
     {
+    this->SliceModelDisplayNode->SetAndObserveTextureImageData(NULL);
     this->SliceModelDisplayNode->Delete();
     }
 
@@ -557,8 +561,21 @@ void vtkSlicerSliceLogic::CreateSliceModel()
   if (this->SliceModelNode != NULL && this->MRMLScene->GetNodeByID( this->GetSliceModelNode()->GetID() ) == NULL )
     {
     this->SliceModelNode->SetAndObserveDisplayNodeID(NULL);
+    this->SliceModelNode->SetAndObservePolyData(NULL);
     this->SliceModelNode->Delete();
     this->SliceModelNode = NULL;
+
+    if (this->SliceModelDisplayNode != NULL)
+      {
+      this->SliceModelDisplayNode->SetAndObserveTextureImageData(NULL);
+      this->SliceModelDisplayNode->Delete();
+      this->SliceModelDisplayNode = NULL;
+      }
+    if (this->PlaneSource != NULL)
+      {
+      this->PlaneSource->Delete();
+      this->PlaneSource = NULL;
+      }
     }
 
   if ( this->SliceModelNode == NULL) 
@@ -605,6 +622,8 @@ void vtkSlicerSliceLogic::CreateSliceModel()
     this->SliceModelDisplayNode->SetAndObserveTextureImageData(this->GetImageData());
     //this->SetAndObserveMRMLSceneEvents(this->GetMRMLScene(), events);
     events->Delete();
+    //this->SliceModelNode->Delete();
+    //this->SliceModelDisplayNode->Delete();
     }
 
   // update the description to refer back to the slice and composite nodes

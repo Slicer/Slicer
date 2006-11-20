@@ -266,42 +266,93 @@ int vtkMRMLScene::Connect()
   this->CurrentScene->RemoveAllItems();
   
   this->InvokeEvent(this->SceneCloseEvent, NULL);
-  
+
+  // after SceneCloseEvent there may be nodes created such as Camera
+  // keep them so we don't call update on them
+  vtkMRMLNode *node = NULL;
+  int n;
+  vtkCollection *existingNodes = vtkCollection::New();
+  int nnodes = this->CurrentScene->GetNumberOfItems();
+  for (n=0; n<nnodes; n++)
+    {
+    node = (vtkMRMLNode *)this->CurrentScene->GetItemAsObject(n);
+    existingNodes->AddItem(node);
+    }
   int res = this->LoadIntoScene(this->CurrentScene);
   
   if (res)
-    {
-    
+    {  
     // create node references
-    int nnodes = this->CurrentScene->GetNumberOfItems();
-    vtkMRMLNode *node = NULL;
-    int n;
+    nnodes = this->CurrentScene->GetNumberOfItems();
+    int nold = existingNodes->GetNumberOfItems();
+    vtkMRMLNode *node1 = NULL;
+    
     for (n=0; n<nnodes; n++)
       {
+      bool update = true;
       node = (vtkMRMLNode *)this->CurrentScene->GetItemAsObject(n);
-      node->UpdateScene(this);
+      for (int no=0; no<nold; no++)
+        {
+        node1 = (vtkMRMLNode *)existingNodes->GetItemAsObject(n);
+        if (node == node1) 
+          {
+          update = false;
+          break;
+          }
+        }
+      if (update)
+        {
+        node->UpdateScene(this);
+        }
       }
     
     // send events
     this->InvokeEvent(this->NewSceneEvent, NULL);
     for (n=0; n<nnodes; n++) 
       {
+      bool update = true;
       node = (vtkMRMLNode *)this->CurrentScene->GetItemAsObject(n);
-      this->InvokeEvent(this->NodeAddedEvent, node);
-      }
+      for (int no=0; no<nold; no++)
+        {
+        node1 = (vtkMRMLNode *)existingNodes->GetItemAsObject(n);
+        if (node == node1) 
+          {
+          update = false;
+          break;
+          }
+        }
+      if (update)
+        {
+        this->InvokeEvent(this->NodeAddedEvent, node);        
+        }
+      }      
     this->Modified();
 
     // node are modified
-    for (n=0; n<nnodes; n++) 
       {
+      bool update = true;
       node = (vtkMRMLNode *)this->CurrentScene->GetItemAsObject(n);
-      node->Modified();
-      }
+      for (int no=0; no<nold; no++)
+        {
+        node1 = (vtkMRMLNode *)existingNodes->GetItemAsObject(n);
+        if (node == node1) 
+          {
+          update = false;
+          break;
+          }
+        }
+      if (update)
+        {
+        node->Modified();
+        }
+      }     
   }
   
   this->SetUndoFlag(undoFlag);
   
-    
+  existingNodes->RemoveAllItems();
+  existingNodes->Delete();
+
   return res;
 }
 

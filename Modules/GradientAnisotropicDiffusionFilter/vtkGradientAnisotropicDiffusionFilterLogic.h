@@ -36,8 +36,11 @@ class VTK_GRADIENTANISOTROPICDIFFUSIONFILTER_EXPORT vtkGradientAnisotropicDiffus
 
   // Description: Get/Set MRML node storing parameter values
   vtkGetObjectMacro (GradientAnisotropicDiffusionFilterNode, vtkMRMLGradientAnisotropicDiffusionFilterNode);
-  vtkSetObjectMacro (GradientAnisotropicDiffusionFilterNode, vtkMRMLGradientAnisotropicDiffusionFilterNode);
-  
+  void SetAndObserveGradientAnisotropicDiffusionFilterNode(vtkMRMLGradientAnisotropicDiffusionFilterNode *n) 
+    {
+    vtkSetAndObserveMRMLNodeMacro( this->GradientAnisotropicDiffusionFilterNode, n);
+    }
+
   // The method that creates and runs VTK or ITK pipeline
   void Apply();
   
@@ -49,7 +52,6 @@ protected:
 
   vtkMRMLGradientAnisotropicDiffusionFilterNode* GradientAnisotropicDiffusionFilterNode;
   vtkITKGradientAnisotropicDiffusionImageFilter* GradientAnisotropicDiffusionImageFilter;
-
 
 };
 

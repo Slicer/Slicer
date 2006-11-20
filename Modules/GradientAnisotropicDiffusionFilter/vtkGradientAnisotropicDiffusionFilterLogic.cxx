@@ -47,7 +47,7 @@ vtkGradientAnisotropicDiffusionFilterLogic::vtkGradientAnisotropicDiffusionFilte
 //----------------------------------------------------------------------------
 vtkGradientAnisotropicDiffusionFilterLogic::~vtkGradientAnisotropicDiffusionFilterLogic()
 {
-  this->SetGradientAnisotropicDiffusionFilterNode(NULL);
+  vtkSetMRMLNodeMacro(this->GradientAnisotropicDiffusionFilterNode, NULL);
 }
 
 //----------------------------------------------------------------------------

@@ -1,10 +1,5 @@
 <MRML>
 
-<Selection
-  id="vtkMRMLSelectionNode1" name=""  hideFromEditors="true" 
-  activeVolumeID="vtkMRMLScalarVolumeNode1" activeLabelVolumeID="NULL" >
-</Selection>
-
 <Slice
   id="filevtkMRMLSliceNode1" name="yellowAxial"  hideFromEditors="true" 
   fieldOfView="283.203 261.719 250" dimensions="290 268 1" 

@@ -157,6 +157,7 @@ int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
     reader->SetGeometryFileName(fullName.c_str());
     reader->Update();
     modelNode->SetAndObservePolyData(reader->GetOutput());
+    reader->Delete();
     }
   else if (extention == std::string(".vtk")) 
     {
@@ -164,6 +165,7 @@ int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
     reader->SetFileName(fullName.c_str());
     reader->Update();
     modelNode->SetAndObservePolyData(reader->GetOutput());
+    reader->Delete();
     }  
   else if ( extention == std::string(".orig") ||
             extention == std::string(".inflated") ||
@@ -195,6 +197,7 @@ int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
     reader->SetFileName(fullName.c_str());
     modelNode->SetAndObservePolyData(reader->GetOutput());
     reader->Update();
+    reader->Delete();
     }
   else 
     {
