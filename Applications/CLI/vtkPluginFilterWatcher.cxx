@@ -192,11 +192,11 @@ vtkPluginFilterWatcher
 
   // Add the commands as observers
   this->StartTag = this->Process->AddObserver(vtkCommand::StartEvent,
-                                      this->StartFilterCommand);
+                                              this->StartFilterCommand);
   this->EndTag = this->Process->AddObserver(vtkCommand::EndEvent,
-                                    this->EndFilterCommand);
+                                            this->EndFilterCommand);
   this->ProgressTag = this->Process->AddObserver(vtkCommand::ProgressEvent,
-                                         this->ProgressFilterCommand);
+                                                 this->ProgressFilterCommand);
 }
 
 vtkPluginFilterWatcher
