@@ -166,7 +166,6 @@ vtkPluginFilterWatcher
                          double fraction,
                          double start)
 {
-  vtkPluginWatcherStart *cb =vtkPluginWatcherStart::New();
   // Initialize state
   this->Process = o;
   this->Steps = 0;
