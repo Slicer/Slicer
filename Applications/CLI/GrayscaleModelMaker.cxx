@@ -29,6 +29,8 @@ Version:   $Revision: 1220 $
 #include "vtkPolyDataWriter.h"
 #include "vtkImageChangeInformation.h"
 
+#include "vtkPluginFilterWatcher.h"
+
 #include <string>
 
 int main(int argc, char * argv[])
@@ -114,6 +116,9 @@ int main(int argc, char * argv[])
       }
     transformIJKtoRAS->Inverse();
     mcubes = vtkMarchingCubes::New();
+    vtkPluginFilterWatcher watchMCubes(mcubes,
+                                       "Marching Cubes",
+                                       CLPProcessInformation);
 
     mcubes->SetInput(ici->GetOutput());
     mcubes->SetValue(0,Threshold);
@@ -131,6 +136,9 @@ int main(int argc, char * argv[])
 
     // TODO: look at vtkQuadraticDecimation
     decimator = vtkDecimatePro::New();
+    vtkPluginFilterWatcher watchDecimator(decimator,
+                                          "Decimator",
+                                          CLPProcessInformation);
     decimator->SetInput(mcubes->GetOutput());
     decimator->SetFeatureAngle(60);
     decimator->SplittingOff();
@@ -155,6 +163,9 @@ int main(int argc, char * argv[])
         std::cout << "Determinant " << (transformIJKtoRAS->GetMatrix())->Determinant() << " is less than zero, reversing...\n";
         }
       reverser = vtkReverseSense::New();
+      vtkPluginFilterWatcher watchReverser(reverser,
+                                           "Reversor",
+                                           CLPProcessInformation);
       reverser->SetInput(decimator->GetOutput());
       reverser->ReverseNormalsOn();
       (reverser->GetOutput())->ReleaseDataFlagOn();
@@ -162,6 +173,9 @@ int main(int argc, char * argv[])
       }
 
     smootherSinc = vtkWindowedSincPolyDataFilter::New();
+    vtkPluginFilterWatcher watchSmoother(smootherSinc,
+                                         "Smoother",
+                                         CLPProcessInformation);
     smootherSinc->SetPassBand(0.1);
     if (Smooth == 1)
       {
@@ -185,6 +199,9 @@ int main(int argc, char * argv[])
     std::cout << "Smoothing...\n";
     smootherSinc->Update();
     transformer = vtkTransformPolyDataFilter::New();
+    vtkPluginFilterWatcher watchTranformer(transformer,
+                                           "Transformer",
+                                           CLPProcessInformation);
     transformer->SetInput(smootherSinc->GetOutput());
     if ((transformIJKtoRAS->GetMatrix())->Determinant() < 0)
       { 
@@ -206,6 +223,9 @@ int main(int argc, char * argv[])
     (transformer->GetOutput())->ReleaseDataFlagOn();
     
     normals = vtkPolyDataNormals::New();
+    vtkPluginFilterWatcher watchNormals(normals,
+                                        "Normals",
+                                        CLPProcessInformation);
     if (PointNormals)
       {
       normals->ComputePointNormalsOn();
@@ -222,6 +242,9 @@ int main(int argc, char * argv[])
     (normals->GetOutput())->ReleaseDataFlagOn();
 
     stripper = vtkStripper::New();
+    vtkPluginFilterWatcher watchStripper(stripper,
+                                         "Stripper",
+                                         CLPProcessInformation);
     stripper->SetInput(normals->GetOutput());
     std::cout << "Stripping...\n";
     // TODO: add progress

@@ -178,7 +178,7 @@ INCLUDE_DIRECTORIES(${vtkITK_SOURCE_DIR} ${vtkITK_BINARY_DIR})
 #####################
 SET (CLP GrayscaleModelMaker)
 
-SET ( ${CLP}_SOURCE ${CLP}.cxx)
+SET ( ${CLP}_SOURCE ${CLP}.cxx vtkPluginFilterWatcher.cxx)
 GENERATECLP(${CLP}_SOURCE ${CLP}.xml)
 ADD_EXECUTABLE(${CLP} ${${CLP}_SOURCE})
 TARGET_LINK_LIBRARIES (${CLP} vtkITK vtkGraphics vtkIO)
