@@ -42,7 +42,7 @@ Version:   $Revision$
 #include <string>
 #include <map>
 
-typedef std::map<const int, std::string> LabelAnatomyContainer;
+typedef std::map<int, std::string> LabelAnatomyContainer;
 
 void ImportAnatomyLabelFile( std::string, LabelAnatomyContainer &);
 
