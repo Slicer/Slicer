@@ -43,6 +43,10 @@ public:
   vtkGetObjectMacro (CommandLineModuleNode, vtkMRMLCommandLineModuleNode);
   vtkSetObjectMacro (CommandLineModuleNode, vtkMRMLCommandLineModuleNode);
 
+  // Description: Get the categorization of the module.
+  const char *GetCategory() const
+    { return this->ModuleDescriptionObject.GetCategory().c_str(); }
+  
   // Description:
   // Create widgets
   virtual void BuildGUI ( );
