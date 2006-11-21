@@ -39,9 +39,16 @@ void vtkSlicerGUILayout::InitializeLayoutDimensions ( )
     
   // Default 3D over axi-sag-cor layout:
   // specify dims of GUI Panel components here for now.
-  this->SetDefaultLogoFrameHeight ( 60 );
+//  this->SetDefaultLogoFrameHeight ( 60 );
+  this->SetDefaultLogoFrameHeight ( 118 );
+//  this->SetDefaultLogoFrameHeight ( 88 );
+
   this->SetDefaultModuleChooseFrameHeight ( 40 );
-  this->SetDefaultModuleControlPanelHeight ( 450 );
+
+//  this->SetDefaultModuleControlPanelHeight ( 450 );
+  this->SetDefaultModuleControlPanelHeight ( 392 );
+//  this->SetDefaultModuleControlPanelHeight ( 422 );
+
   this->SetDefaultSlicesControlFrameHeight ( 60 );
   this->SetDefaultViewControlFrameHeight ( 240 );
   //

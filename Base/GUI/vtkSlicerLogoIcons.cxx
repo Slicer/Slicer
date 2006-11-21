@@ -28,11 +28,21 @@ vtkSlicerLogoIcons::~vtkSlicerLogoIcons ( )
 //---------------------------------------------------------------------------
 void vtkSlicerLogoIcons::AssignImageDataToIcons ( )
 {
-    // Slicer logo
-    this->SlicerLogo->SetImage( image_draftSlicerLogo,
-                                image_draftSlicerLogo_width,
-                                image_draftSlicerLogo_height,
-                                image_draftSlicerLogo_pixel_size, 0, 0);
+  // Slicer logo
+  // vertical format
+
+    this->SlicerLogo->SetImage( *image_Slicer3LogoVertical_sections,
+                                image_Slicer3LogoVertical_width,
+                                image_Slicer3LogoVertical_height,
+                                image_Slicer3LogoVertical_pixel_size, 0, 0);
+
+  // horizontal format
+  /*
+    this->SlicerLogo->SetImage( *image_Slicer3LogoHorizontal_sections,
+                                image_Slicer3LogoHorizontal_width,
+                                image_Slicer3LogoHorizontal_height,
+                                image_Slicer3LogoHorizontal_pixel_size, 0, 0);
+  */
 }
 
 
