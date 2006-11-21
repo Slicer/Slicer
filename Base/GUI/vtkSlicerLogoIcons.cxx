@@ -31,10 +31,11 @@ void vtkSlicerLogoIcons::AssignImageDataToIcons ( )
   // Slicer logo
   // vertical format
 
-    this->SlicerLogo->SetImage( *image_Slicer3LogoVertical_sections,
-                                image_Slicer3LogoVertical_width,
-                                image_Slicer3LogoVertical_height,
-                                image_Slicer3LogoVertical_pixel_size, 0, 0);
+    this->SlicerLogo->SetImage( image_Slicer3LogoVerticalBeta,
+                                image_Slicer3LogoVerticalBeta_width,
+                                image_Slicer3LogoVerticalBeta_height,
+                                image_Slicer3LogoVerticalBeta_pixel_size,
+                                image_Slicer3LogoVerticalBeta_length, 0);
 
   // horizontal format
   /*
