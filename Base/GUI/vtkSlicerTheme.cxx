@@ -211,35 +211,6 @@ void vtkSlicerTheme::Install ( )
     odb->AddEntryAsDouble3 ("vtkKWMenu", "SetActiveForegroundColor",
                             this->SlicerColors->ActiveMenuForegroundColor );
     odb->AddEntry ( "vtkKWMenuButton", "SetReliefToGroove", NULL );
-    odb->AddEntryAsDouble3 ("vtkKWMenuButton:Menu", "SetActiveBackgroundColor",
-                            this->SlicerColors->ActiveMenuBackgroundColor );
-    odb->AddEntryAsDouble3 ("vtkKWMenuButton:Menu", "SetActiveForegroundColor",
-                            this->SlicerColors->ActiveMenuForegroundColor );
-
-    odb->AddEntryAsDouble3 ("vtkKWWindow:FileMenu", "SetActiveForegroundColor",
-                            this->SlicerColors->ActiveMenuForegroundColor );
-    odb->AddEntryAsDouble3 ("vtkKWWindow:FileMenu", "SetActiveBackgroundColor",
-                            this->SlicerColors->ActiveMenuBackgroundColor );
-    odb->AddEntryAsDouble3 ("vtkKWWindow:EditMenu", "SetActiveForegroundColor",
-                            this->SlicerColors->ActiveMenuForegroundColor );
-    odb->AddEntryAsDouble3 ("vtkKWWindow:EditMenu", "SetActiveBackgroundColor",
-                            this->SlicerColors->ActiveMenuBackgroundColor );
-    odb->AddEntryAsDouble3 ("vtkKWWindow:ViewMenu", "SetActiveForegroundColor",
-                            this->SlicerColors->ActiveMenuForegroundColor );
-    odb->AddEntryAsDouble3 ("vtkKWWindow:ViewMenu", "SetActiveBackgroundColor",
-                            this->SlicerColors->ActiveMenuBackgroundColor );
-    odb->AddEntryAsDouble3 ("vtkKWWindow:WindowMenu", "SetActiveForegroundColor",
-                            this->SlicerColors->ActiveMenuForegroundColor );
-    odb->AddEntryAsDouble3 ("vtkKWWindow:WindowMenu", "SetActiveBackgroundColor",
-                            this->SlicerColors->ActiveMenuBackgroundColor );
-    odb->AddEntryAsDouble3 ("vtkKWWindow:HelpMenu", "SetActiveForegroundColor",
-                            this->SlicerColors->ActiveMenuForegroundColor );
-    odb->AddEntryAsDouble3 ("vtkKWWindow:HelpMenu", "SetActiveBackgroundColor",
-                            this->SlicerColors->ActiveMenuBackgroundColor );
-    odb->AddEntryAsDouble3 ("vtkKWWindow:ToolbarsVisibilityMenu", "SetActiveForegroundColor",
-                            this->SlicerColors->ActiveMenuForegroundColor );
-    odb->AddEntryAsDouble3 ("vtkKWWindow:ToolbarsVisibilityMenu", "SetActiveBackgroundColor",
-                            this->SlicerColors->ActiveMenuBackgroundColor );
 
     // Wizard
     odb->AddEntryAsDouble3 ( "vtkKWWizardWidget", "SetTitleAreaBackgroundColor",

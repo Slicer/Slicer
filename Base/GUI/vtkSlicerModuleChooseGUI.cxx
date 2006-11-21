@@ -335,10 +335,6 @@ void vtkSlicerModuleChooseGUI::Populate( )
       this->GetModulesMenuButton()->GetMenu()->AddSeparator();
       all->Delete();
 
-      // These calls should not be needed!!!! Some theme madness....
-      all->SetActiveForegroundColor( this->GetModulesMenuButton()->GetMenu()->GetActiveForegroundColor() );
-      all->SetActiveBackgroundColor( this->GetModulesMenuButton()->GetMenu()->GetActiveBackgroundColor() );
-      
       // first, put the uncategorized modules
       int index;
       ModuleSet::iterator mit;
@@ -392,10 +388,6 @@ void vtkSlicerModuleChooseGUI::Populate( )
           // keep a handle on the last menu in cascading sequence
           vtkKWMenu *menu = pos;
 
-          // These calls should not be needed!!!! Some theme madness....
-          menu->SetActiveForegroundColor( this->GetModulesMenuButton()->GetMenu()->GetActiveForegroundColor() );
-          menu->SetActiveBackgroundColor( this->GetModulesMenuButton()->GetMenu()->GetActiveBackgroundColor() );
-          
           // add the items to the submenu
           ModuleSet::iterator mit;
           mit = (*cit).second.begin();
