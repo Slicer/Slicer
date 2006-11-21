@@ -37,7 +37,14 @@ Version:   $Revision$
 #include "vtkImageChangeInformation.h"
 
 #include "vtkPluginFilterWatcher.h"
+
+#include <fstream>
 #include <string>
+#include <map>
+
+typedef std::map<const int, std::string> LabelAnatomyContainer;
+
+void ImportAnatomyLabelFile( std::string, LabelAnatomyContainer &);
 
 int main(int argc, char * argv[])
 {
@@ -65,6 +72,14 @@ int main(int argc, char * argv[])
       std::cout << "Calculate point normals? " << PointNormals << std::endl;
       std::cout << "Filter type: " << FilterType << std::endl;
       std::cout << "\nStarting..." << std::endl;
+      }
+
+    LabelAnatomyContainer labelToAnatomy;
+
+    // if a anatomy label file is psecified, populate a map with its contents
+    if (AnatomyLabelFile != "")
+      {
+      ImportAnatomyLabelFile( AnatomyLabelFile, labelToAnatomy );
       }
 
     // vtk and helper variables
@@ -233,7 +248,21 @@ int main(int argc, char * argv[])
         std::stringstream    stream;
         stream <<    i;
         std::string stringI =    stream.str();
-        labelName    = Name + "_" + stringI;
+        if (labelToAnatomy.find(i) != labelToAnatomy.end())
+          {
+          labelName = labelToAnatomy[i];
+          }
+        else
+          {
+          if (GenerateAll)
+            {
+            labelName    = Name + "_" + stringI;
+            }
+          else
+            {
+            continue;
+            }
+          }
         } 
       else 
         {
@@ -656,4 +685,31 @@ int main(int argc, char * argv[])
       }
     // return
     return EXIT_SUCCESS;
+}
+
+void ImportAnatomyLabelFile( std::string anatomyLabelFile,
+                             LabelAnatomyContainer &map)
+
+{
+  std::ifstream fin(anatomyLabelFile.c_str(),std::ios::in|std::ios::binary);
+  if (fin.fail())
+    {
+      std::cerr << "ImportAnatomyLabelFile: Cannot open " << anatomyLabelFile << " for input" << std::endl;
+    return;
+    }
+
+  char label[81];
+  char anatomy[81];
+  char aLine[81];
+  
+  fin.getline(aLine, 80);
+  while (!fin.eof())
+    {    
+    fin.getline(anatomy, 80, ',');
+    fin.getline(label, 80);
+    std::string anatomyStr(anatomy);
+    map[atoi(label)] = anatomyStr;
+    }
+
+  fin.close();
 }
