@@ -47,6 +47,21 @@ Imported from Slicer 2.
      <description>Name to use for this model. Ignored if making multiple models, which uses the label name</description>
      <default>Model</default>
    </string>
+   <boolean>
+     <name>GenerateAll</name>
+     <label>Generate All Models</label>
+     <longflag>--generateAll</longflag>
+     <description>Generate all models that exist within the range Start Label to End Label. If false and an Anatomy Label File is specified, only mnodels which have an entry in the Anatomy Label File will be generated.</description>
+     <default>false</default>
+   </boolean>
+   <file>
+     <name>AnatomyLabelFile</name>
+     <channel>input</channel>
+     <label>Anatomy Label File</label>
+     <longflag>--anatomyLabelFile</longflag>
+     <description>A file containing a comma separted list of anatomy names and label numbers.</description>
+     <default></default>
+   </file>
    <integer>
      <name>Smooth</name>
      <label>Smooth</label>
