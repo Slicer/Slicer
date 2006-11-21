@@ -142,7 +142,6 @@ void vtkSlicerLogoDisplayGUI::BuildGUI ( vtkKWFrame *appF )
         this->SlicerLogoLabel->SetParent ( appF );
         this->SlicerLogoLabel->Create();
         this->SlicerLogoLabel->SetImageToIcon ( this->SlicerLogoIcons->GetSlicerLogo() );
-        this->SlicerLogoLabel->SetBalloonHelpString ("placeholder logo");
         app->Script ( "place %s -anchor nw ", this->SlicerLogoLabel->GetWidgetName( ) );    
 
       }
