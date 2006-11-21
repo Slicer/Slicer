@@ -61,6 +61,7 @@ Imported from Slicer 2.
      <longflag>--anatomyLabelFile</longflag>
      <description>A file containing a comma separted list of anatomy names and label numbers.</description>
      <default></default>
+   <default>NoneSpecified</default>
    </file>
    <integer>
      <name>Smooth</name>
