@@ -362,18 +362,20 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
       this->UpdateFromMRML();
       }
     }
-  else if (event == vtkMRMLFiducialListNode::DisplayModifiedEvent)
+  else if ( vtkMRMLFiducialListNode::SafeDownCast(caller) != NULL
+     && event == vtkMRMLFiducialListNode::DisplayModifiedEvent )
     {
     // do a more lightweight update on the fiducial list nodes
     vtkDebugMacro("vtkSlicerViewerWidget::ProcessMRMLEvents got a vtkMRMLFiducialListNode::DisplayModifiedEvent, just calling update fids from mrml\n");
     this->UpdateFiducialsFromMRML();
     }
-  else if (event == vtkMRMLFiducialListNode::FiducialModifiedEvent)
-  {
-  vtkDebugMacro("vtkSlicerViewerWidget::ProcessMRMLEvents got a FiducialModifiedEvent, removing props and updating from mrml...\n");
-  this->RemoveFiducialProps ( );
-  this->UpdateFiducialsFromMRML();
-  }
+  else if ( vtkMRMLFiducialListNode::SafeDownCast(caller) != NULL
+    && event == vtkMRMLFiducialListNode::FiducialModifiedEvent )
+    {
+    vtkDebugMacro("vtkSlicerViewerWidget::ProcessMRMLEvents got a FiducialModifiedEvent, removing props and updating from mrml...\n");
+    this->RemoveFiducialProps ( );
+    this->UpdateFiducialsFromMRML();
+    }
   else if (vtkMRMLModelNode::SafeDownCast(caller) != NULL
            && event == vtkMRMLModelNode::PolyDataModifiedEvent)
     {
