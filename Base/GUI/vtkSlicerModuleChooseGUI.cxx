@@ -344,6 +344,9 @@ void vtkSlicerModuleChooseGUI::Populate( )
       ModuleSet::iterator mit;
       mit = categoryToModuleName["None"].begin();
 
+      typedef std::map<std::string, std::string > AllMap;
+      AllMap allMap;
+      
       while (mit != categoryToModuleName["None"].end())
         {
         std::stringstream methodString;
@@ -351,8 +354,7 @@ void vtkSlicerModuleChooseGUI::Populate( )
         this->GetModulesMenuButton()->GetMenu( )
           ->AddCommand( (*mit).c_str(), this,
                         methodString.str().c_str() );
-        all->AddCommand( (*mit).c_str(), this,
-                         methodString.str().c_str() );
+        allMap[(*mit).c_str()] = methodString.str();
         ++mit;
         }
       this->GetModulesMenuButton()->GetMenu()->AddSeparator();
@@ -403,13 +405,22 @@ void vtkSlicerModuleChooseGUI::Populate( )
             methodString << "SelectModule \"" << (*mit).c_str() << "\"";
             index = menu->AddCommand( (*mit).c_str(), this,
                                       methodString.str().c_str());
-            all->AddCommand( (*mit).c_str(), this,
-                                      methodString.str().c_str());
+
+            allMap[(*mit).c_str()] = methodString.str();
             ++mit;
             }
           }
         
         ++cit;
+        }
+
+      // build the all modules meny in sorted order
+      AllMap::iterator allIt = allMap.begin();
+      while ( allIt != allMap.end() )
+        {
+        all->AddCommand( (*allIt).first.c_str(), this,
+                         (*allIt).second.c_str());
+        ++allIt;
         }
       
       }
