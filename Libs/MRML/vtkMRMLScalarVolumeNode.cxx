@@ -55,7 +55,7 @@ vtkMRMLNode* vtkMRMLScalarVolumeNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLScalarVolumeNode::vtkMRMLScalarVolumeNode()
 {
-  this->SetLabelMap(0);
+  this->LabelMap = 0;
 }
 
 //----------------------------------------------------------------------------
