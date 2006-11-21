@@ -1,3 +1,6 @@
+#include <map>
+#include <set>
+
 #include "vtkObject.h"
 #include "vtkObjectFactory.h"
 #include "vtkCommand.h"
@@ -19,6 +22,24 @@
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerModuleChooseGUI );
 vtkCxxRevisionMacro ( vtkSlicerModuleChooseGUI, "$Revision: 1.0 $");
+
+
+void
+splitString (const std::string &text,
+             const std::string &separators,
+             std::vector<std::string> &words)
+{
+  int n = text.length();
+  int start, stop;
+  start = text.find_first_not_of(separators);
+  while ((start >= 0) && (start < n))
+    {
+    stop = text.find_first_of(separators, start);
+    if ((stop < 0) || (stop > n)) stop = n;
+    words.push_back(text.substr(start, stop - start));
+    start = text.find_first_not_of(separators, stop+1);
+    }
+}
 
 
 //---------------------------------------------------------------------------
@@ -99,16 +120,12 @@ void vtkSlicerModuleChooseGUI::PrintSelf ( ostream& os, vtkIndent indent )
 //---------------------------------------------------------------------------
 void vtkSlicerModuleChooseGUI::RemoveGUIObservers ( )
 {
-  // FILL IN
- this->ModulesMenuButton->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 }
 
 
 //---------------------------------------------------------------------------
 void vtkSlicerModuleChooseGUI::AddGUIObservers ( )
 {
-  // add observer onto the menubutton in the ModuleChoose GUI Panel
-  this->ModulesMenuButton->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 }
 
 
@@ -116,12 +133,6 @@ void vtkSlicerModuleChooseGUI::AddGUIObservers ( )
 void vtkSlicerModuleChooseGUI::ProcessGUIEvents ( vtkObject *caller,
                                           unsigned long event, void *callData )
 {
-  vtkKWMenu *menu = vtkKWMenu::SafeDownCast (caller );
-
-  if ( menu == this->ModulesMenuButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
-    {
-    this->SelectModule(this->ModulesMenuButton->GetValue());
-    }
 }
 
  
@@ -147,10 +158,11 @@ void vtkSlicerModuleChooseGUI::SelectModule ( const char *moduleName )
            {
             m->GetUIPanel()->Raise();
             p->GetMainSlicerWindow()->SetStatusText ( mName );
+            this->GetModulesMenuButton()->SetValue( mName );
             break;
            }
           m = vtkSlicerModuleGUI::SafeDownCast( app->GetModuleGUICollection( )->GetNextItemAsObject( ) );
-        } // end while
+        } // end while      
       } // end if ( app != NULL
     }
 }
@@ -264,6 +276,147 @@ void vtkSlicerModuleChooseGUI::BuildGUI ( vtkKWFrame *appF )
 }
 
 
+
+void vtkSlicerModuleChooseGUI::Populate( )
+{
+  //const char* mName;
+  vtkSlicerModuleGUI *m;
+
+  typedef std::set<std::string> ModuleSet;
+  typedef std::map<std::string, ModuleSet > CategoryToModuleVector;
+  typedef CategoryToModuleVector::iterator CategoryIterator;
+
+  CategoryToModuleVector categoryToModuleName;
+
+  
+  if ( (this->GetApplication( )  != NULL ) ) 
+    {
+    vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication() );
+    //
+    //--- ALL modules pull-down menu 
+    // - remove any existing items
+    // - add one menu button per module
+    // - set the Data Module as default
+    //
+    if ( (app->GetModuleGUICollection ( ) != NULL) ) 
+      {
+      this->GetModulesMenuButton()->GetMenu( )->DeleteAllItems();
+
+      // Loop over the module guis in the list and determine which
+      // guis are in which categories
+      app->GetModuleGUICollection()->InitTraversal();
+      m = vtkSlicerModuleGUI::SafeDownCast( app->GetModuleGUICollection( )->GetNextItemAsObject( ));
+      while (m != NULL)
+        {
+        if (!m->GetCategory() || strcmp(m->GetCategory(), "") == 0)
+          {
+          categoryToModuleName["None"]
+            .insert(m->GetUIPanel()->GetName());
+          }
+        else
+          {
+          categoryToModuleName[m->GetCategory()]
+            .insert(m->GetUIPanel()->GetName());
+          }
+
+        m = vtkSlicerModuleGUI::SafeDownCast( app->GetModuleGUICollection( )->GetNextItemAsObject( ));
+        }
+
+      // construct a cascading menu of module guis
+      //
+      //
+
+
+      // Have one menu that lists all the modules
+      vtkKWMenu* all = vtkKWMenu::New();
+      all->SetParent(this->GetModulesMenuButton()->GetMenu());
+      all->Create();
+      this->GetModulesMenuButton()->GetMenu()->AddCascade("All Modules", all);
+      this->GetModulesMenuButton()->GetMenu()->AddSeparator();
+      all->Delete();
+
+      // These calls should not be needed!!!! Some theme madness....
+      all->SetActiveForegroundColor( this->GetModulesMenuButton()->GetMenu()->GetActiveForegroundColor() );
+      all->SetActiveBackgroundColor( this->GetModulesMenuButton()->GetMenu()->GetActiveBackgroundColor() );
+      
+      // first, put the uncategorized modules
+      int index;
+      ModuleSet::iterator mit;
+      mit = categoryToModuleName["None"].begin();
+
+      while (mit != categoryToModuleName["None"].end())
+        {
+        std::stringstream methodString;
+        methodString << "SelectModule \"" << (*mit).c_str() << "\"";
+        this->GetModulesMenuButton()->GetMenu( )
+          ->AddCommand( (*mit).c_str(), this,
+                        methodString.str().c_str() );
+        all->AddCommand( (*mit).c_str(), this,
+                         methodString.str().c_str() );
+        ++mit;
+        }
+      this->GetModulesMenuButton()->GetMenu()->AddSeparator();
+
+      // add the rest of the menus
+      CategoryIterator cit;
+      cit = categoryToModuleName.begin();
+      while (cit != categoryToModuleName.end())
+        {
+        if ((*cit).first != "None")
+          {
+          // tease apart the category to find the path and final
+          // category
+          std::vector<std::string> path;
+          splitString((*cit).first, ".", path);
+
+          // need to create a set of cascading menus
+          vtkKWMenu *pos = this->GetModulesMenuButton()->GetMenu();
+          for (unsigned int i=0; i < path.size(); ++i)
+            {
+            if (!pos->HasItem(path[i].c_str()))
+              {
+              // Need to make the itermediate menu
+              vtkKWMenu* menu = vtkKWMenu::New();
+              menu->SetParent( pos );
+              menu->Create();
+              
+              pos->AddCascade( path[i].c_str(), menu );
+              menu->Delete();
+              }
+
+            index = pos->GetIndexOfItem( path[i].c_str() );
+            pos = pos->GetItemCascade(index);
+            }
+          // keep a handle on the last menu in cascading sequence
+          vtkKWMenu *menu = pos;
+
+          // These calls should not be needed!!!! Some theme madness....
+          menu->SetActiveForegroundColor( this->GetModulesMenuButton()->GetMenu()->GetActiveForegroundColor() );
+          menu->SetActiveBackgroundColor( this->GetModulesMenuButton()->GetMenu()->GetActiveBackgroundColor() );
+          
+          // add the items to the submenu
+          ModuleSet::iterator mit;
+          mit = (*cit).second.begin();
+          while (mit != (*cit).second.end())
+            {
+            std::stringstream methodString;
+            methodString << "SelectModule \"" << (*mit).c_str() << "\"";
+            index = menu->AddCommand( (*mit).c_str(), this,
+                                      methodString.str().c_str());
+            all->AddCommand( (*mit).c_str(), this,
+                                      methodString.str().c_str());
+            ++mit;
+            }
+          }
+        
+        ++cit;
+        }
+      
+      }
+    //--- TODO: make the initial value be module user sets as "home"
+    this->GetModulesMenuButton()->SetValue ("Data");
+    }
+}
 
 
 

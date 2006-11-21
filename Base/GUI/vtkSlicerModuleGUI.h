@@ -38,6 +38,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleGUI : public vtkSlicerComponentG
   // the overall application context
   vtkGetObjectMacro ( ApplicationGUI, vtkSlicerApplicationGUI );
   vtkSetObjectMacro ( ApplicationGUI, vtkSlicerApplicationGUI );
+
+  // Description:
+  // Get the categorization of the module.  THe category is used for
+  // grouping modules together into menus.
+  virtual const char *GetCategory() const {return "None";}
   
 
         // Description:
