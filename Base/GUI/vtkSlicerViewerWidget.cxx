@@ -374,6 +374,11 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
   this->RemoveFiducialProps ( );
   this->UpdateFiducialsFromMRML();
   }
+  else if (vtkMRMLModelNode::SafeDownCast(caller) != NULL
+           && event == vtkMRMLModelNode::PolyDataModifiedEvent)
+    {
+    this->UpdateModelPolyData(vtkMRMLModelNode::SafeDownCast(caller));
+    }
   else 
 //  if ((vtkPolyData::SafeDownCast(caller) && event == vtkCommand::ModifiedEvent) ||
 //      (vtkMRMLModelDisplayNode::SafeDownCast(caller) && event == vtkCommand::ModifiedEvent))
@@ -585,8 +590,9 @@ void vtkSlicerViewerWidget::UpdateModelsFromMRML()
 
 }
 
+
 //---------------------------------------------------------------------------
-void vtkSlicerViewerWidget::UpdateModel(vtkMRMLModelNode *model)
+void vtkSlicerViewerWidget::UpdateModelPolyData(vtkMRMLModelNode *model)
 {
   vtkMRMLModelDisplayNode *modelDisplayNode = model->GetDisplayNode();
 
@@ -609,6 +615,44 @@ void vtkSlicerViewerWidget::UpdateModel(vtkMRMLModelNode *model)
     {
     mapper->SetInput ( model->GetPolyData() );
     }
+
+  vtkActor* actor;
+  std::map<const char *, vtkActor *>::iterator ait;
+
+  ait = this->DisplayedModels.find(model->GetID());
+  if (ait == this->DisplayedModels.end() )
+    {
+    actor = vtkActor::New();
+    }
+  else
+    {
+    actor = (*ait).second;
+    }
+  actor->SetMapper( mapper );
+
+  if (ait == this->DisplayedModels.end())
+    {
+    this->MainViewer->AddViewProp( actor );
+    this->DisplayedModels[model->GetID()] = actor;
+    actor->Delete();
+    }
+
+  if (clipper)
+    {
+    this->DisplayedModelsClipState[model->GetID()] = 1;
+    }
+  else
+    {
+    this->DisplayedModelsClipState[model->GetID()] = 0;
+    }
+}
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewerWidget::UpdateModel(vtkMRMLModelNode *model)
+{
+  this->UpdateModelPolyData(model);
+
   // observe polydata
   model->AddObserver ( vtkMRMLModelNode::PolyDataModifiedEvent, this->MRMLCallbackCommand );
 
@@ -617,22 +661,6 @@ void vtkSlicerViewerWidget::UpdateModel(vtkMRMLModelNode *model)
 
   model->AddObserver ( vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand );
 
-  vtkActor *actor = vtkActor::New ( );
-  actor->SetMapper ( mapper );
-  this->MainViewer->AddViewProp ( actor );
-
-  this->DisplayedModels[model->GetID()] = actor;
-  if (clipper)
-    {
-    this->DisplayedModelsClipState[model->GetID()] = 1;
-    clipper->Delete();
-    }
-  else
-    {
-    this->DisplayedModelsClipState[model->GetID()] = 0;
-    }
-  actor->Delete();
-  mapper->Delete();
 }
 
 //---------------------------------------------------------------------------

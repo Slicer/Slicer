@@ -229,10 +229,19 @@ if (this->PolyData != NULL)
     this->PolyData->RemoveObservers ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
     }
 
+  unsigned long mtime1, mtime2;
+  mtime1 = this->GetMTime();
   this->SetPolyData(polyData);
+  mtime2 = this->GetMTime();
+
   if (this->PolyData != NULL)
     {
     this->PolyData->AddObserver ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+    }
+
+  if (mtime1 != mtime2)
+    {
+    this->InvokeEvent( vtkMRMLModelNode::PolyDataModifiedEvent , this);
     }
 }
 

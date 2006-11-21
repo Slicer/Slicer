@@ -29,6 +29,7 @@ Version:   $Revision: 1.2 $
 #include "vtkMRMLFiducialListNode.h"
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLModelStorageNode.h"
+#include "vtkMRMLModelDisplayNode.h"
 
 #include "vtkSlicerApplication.h"
 
@@ -770,11 +771,19 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
       else if (mnd)
         {
         vtkMRMLModelStorageNode *in = vtkMRMLModelStorageNode::New();
+        vtkMRMLModelDisplayNode *disp = vtkMRMLModelDisplayNode::New();
+
         in->SetFileName( (*id2fn).second.c_str() );
-        
-        in->ReadData( nd );
+        in->ReadData( mnd );
+
+        disp->SetScene( this->MRMLScene );
+
+        this->MRMLScene->AddNode( disp );
+
+        mnd->SetAndObserveDisplayNodeID( disp->GetID() );
         
         in->Delete();
+        disp->Delete();
         }
       
       // only display the new data if the node is the same as one
