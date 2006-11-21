@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>registration</category>
+  <category>Registration</category>
   <title>Deformable BSpline registration</title>
   <description>Registers two images together using a mutual information metric and BSpline transform</description>
   <version>0.1.0.$Revision: 916 $(alpha)</version>

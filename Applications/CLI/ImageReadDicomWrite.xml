@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>filtering</category>
+  <category>Converters</category>
   <title>Create a DICOM Series</title>
   <description>Create a DICOM Series</description>
   <version>0.1.0.$Revision$(alpha)</version>

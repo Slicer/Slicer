@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>filtering</category>
+  <category>Filtering</category>
   <title>Resample Volume</title>
   <description>
 Resampling an image is a very important task in image analysis.It is

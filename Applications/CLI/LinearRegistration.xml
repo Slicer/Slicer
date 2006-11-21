@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>registration</category>
+  <category>Registration</category>
   <title>Linear registration</title>
   <description>Registers two images together using a rigid transform and MI</description>
   <version>0.1.0.$Revision$(alpha)</version>

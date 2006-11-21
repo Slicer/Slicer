@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>Filtering.Image Enhancment</category>
+  <category>Filtering.Denoising</category>
   <title>Anisotropic Diffusion</title>
   <description>Runs gradient anisotropic diffusion on a volume</description>
   <version>0.1.0.$Revision$(alpha)</version>
