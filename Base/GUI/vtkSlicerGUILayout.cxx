@@ -17,8 +17,26 @@ vtkSlicerGUILayout::vtkSlicerGUILayout ( )
 {
 
   this->MainSlicerWindow = NULL;
-  this->CurrentViewArrangement = 0;
-  this->SetCurrentViewArrangement ( this->SlicerLayoutInitialView);
+  this->CurrentViewArrangement = this->SlicerLayoutInitialView;
+  this->DefaultLogoFrameHeight = 60;
+  this->DefaultModuleChooseFrameHeight = 40;
+  this->DefaultModuleControlPanelHeight = 450;
+  this->DefaultSlicesControlFrameHeight = 60;
+  this->DefaultViewControlFrameHeight = 240;
+
+  this->DefaultGUIPanelHeight = 0;
+  this->DefaultGUIPanelWidth = 0;
+  this->DefaultQuadrantHeight = 0;
+  this->DefaultQuadrantWidth = 0;
+    
+  this->DefaultSlicerWindowWidth = 0;
+  this->DefaultSlicerWindowHeight = 0;
+
+  this->DefaultLogoFrameHeight = 0;
+  this->DefaultModuleChooseFrameHeight = 0;
+  this->DefaultModuleControlPanelHeight = 0;
+  this->DefaultSlicesControlFrameHeight = 0;
+  this->DefaultViewControlFrameHeight = 0;
 }
 
 
