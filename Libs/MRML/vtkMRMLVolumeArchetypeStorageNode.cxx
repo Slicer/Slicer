@@ -131,7 +131,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
 {
 
   // test whether refNode is a valid node to hold a volume
-  if ( !(refNode->IsA("vtkMRMLScalarVolumeNode")) || refNode->IsA("vtkMRMLVolumeVolumeNode" ) )
+  if ( !(refNode->IsA("vtkMRMLScalarVolumeNode")) || refNode->IsA("vtkMRMLVectorVolumeNode" ) )
     {
     vtkErrorMacro("Reference node is not a vtkMRMLVolumeNode");
     return 0;         
