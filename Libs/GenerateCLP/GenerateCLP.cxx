@@ -494,6 +494,10 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
         else
           {
           std::string defaultString = pit->GetDefault();
+          if ((*pit).GetType() == "bool")
+            {
+            defaultString = "false";
+            }
           replaceSubWithSub(defaultString, "\"", "\\\"");
           sout << " = ";
           if (NeedsQuotes(*pit))
@@ -537,6 +541,10 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
             sout << "\"";
             }
           std::string defaultString = pit->GetDefault();
+          if ((*pit).GetType() == "bool")
+            {
+            defaultString = "false";
+            }
           replaceSubWithSub(defaultString, "\"", "\\\"");
           sout << defaultString;
           if (NeedsQuotes(*pit))
