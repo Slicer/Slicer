@@ -18,8 +18,7 @@ vtkSlicerGUILayout::vtkSlicerGUILayout ( )
 
   this->MainSlicerWindow = NULL;
   this->CurrentViewArrangement = this->SlicerLayoutInitialView;
-  this->DefaultLogoFrameHeight = 60;
-  this->DefaultModuleChooseFrameHeight = 40;
+  this->DefaultTopFrameHeight = 118;
   this->DefaultModuleControlPanelHeight = 450;
   this->DefaultSlicesControlFrameHeight = 60;
   this->DefaultViewControlFrameHeight = 240;
@@ -32,8 +31,7 @@ vtkSlicerGUILayout::vtkSlicerGUILayout ( )
   this->DefaultSlicerWindowWidth = 0;
   this->DefaultSlicerWindowHeight = 0;
 
-  this->DefaultLogoFrameHeight = 0;
-  this->DefaultModuleChooseFrameHeight = 0;
+  this->DefaultTopFrameHeight = 0;
   this->DefaultModuleControlPanelHeight = 0;
   this->DefaultSlicesControlFrameHeight = 0;
   this->DefaultViewControlFrameHeight = 0;
@@ -55,31 +53,30 @@ void vtkSlicerGUILayout::InitializeLayoutDimensions ( )
   // Dimensions for these are computed here.
   int h, w;
     
-  // Default 3D over axi-sag-cor layout:
+  // Layout for default 3D over axi-sag-cor layout:
   // specify dims of GUI Panel components here for now.
-//  this->SetDefaultLogoFrameHeight ( 60 );
-  this->SetDefaultLogoFrameHeight ( 118 );
-//  this->SetDefaultLogoFrameHeight ( 88 );
 
-  this->SetDefaultModuleChooseFrameHeight ( 40 );
+  // This frame contains the logo and module choose/navigation widgets
+  this->SetDefaultTopFrameHeight ( 118 );
 
 //  this->SetDefaultModuleControlPanelHeight ( 450 );
-  this->SetDefaultModuleControlPanelHeight ( 392 );
+//  this->SetDefaultModuleControlPanelHeight ( 392 );
 //  this->SetDefaultModuleControlPanelHeight ( 422 );
-
+  // This frame contains the Module GUI panel
+  this->SetDefaultModuleControlPanelHeight ( 442 );
+  // This frme contains the widgets to control the slice viewers
   this->SetDefaultSlicesControlFrameHeight ( 60 );
+  // This frame contains the widgets to control the 3D view
   this->SetDefaultViewControlFrameHeight ( 240 );
+
   //
   // entire GUI panel height and width
   //
-  h = this->GetDefaultLogoFrameHeight ( ) +
-    this->GetDefaultModuleChooseFrameHeight ( ) +
+  h = this->GetDefaultTopFrameHeight ( ) +
     this->GetDefaultModuleControlPanelHeight ( ) +
     this->GetDefaultSlicesControlFrameHeight ( ) +
     this->GetDefaultViewControlFrameHeight ( );
   this->SetDefaultGUIPanelHeight ( h );
-  // this is a good value which accommodates the
-  // horizontal extent of the ModuleChooseFrame widgets.
   this->SetDefaultGUIPanelWidth ( 400 );
 
   // set the slice windows to be a default size

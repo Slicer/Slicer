@@ -16,7 +16,8 @@
 #include "vtkKWLabel.h"
 #include "vtkKWMenu.h"
 #include "vtkKWMenuButton.h"
-
+#include "vtkKWEntry.h"
+#include "vtkKWFrame.h"
 
 
 //---------------------------------------------------------------------------
@@ -54,6 +55,8 @@ vtkSlicerModuleChooseGUI::vtkSlicerModuleChooseGUI ( )
     this->ModulesRefresh = vtkKWPushButton::New ( );
     this->ModulesSearch = vtkKWPushButton::New ( );
     this->SlicerModuleNavigationIcons = vtkSlicerModuleNavigationIcons::New ( );
+    this->ModuleSearchEntry = vtkKWEntry::New ( );
+    this->ModuleNavigationFrame = vtkKWFrame::New ( );
 }
 
 
@@ -61,46 +64,66 @@ vtkSlicerModuleChooseGUI::vtkSlicerModuleChooseGUI ( )
 vtkSlicerModuleChooseGUI::~vtkSlicerModuleChooseGUI ( )
 {
 
-      if ( this->SlicerModuleNavigationIcons ) {
-        this->SlicerModuleNavigationIcons->Delete ( );
-        this->SlicerModuleNavigationIcons = NULL;
+  if ( this->ModuleNavigationFrame )
+    {
+    this->ModuleNavigationFrame->SetParent ( NULL );
+    this->ModuleNavigationFrame->Delete ( );
+    this->ModuleNavigationFrame = NULL;
     }
-      if ( this->ModulesMenuButton ) {
-      this->ModulesMenuButton->SetParent ( NULL );
-        this->ModulesMenuButton->Delete();
-        this->ModulesMenuButton = NULL;
+  if ( this->ModuleSearchEntry )
+    {
+    this->ModuleSearchEntry->SetParent ( NULL );
+    this->ModuleSearchEntry->Delete( );
+    this->ModuleSearchEntry = NULL;
     }
-    if ( this->ModulesLabel ) {
-      this->ModulesLabel->SetParent ( NULL );
-        this->ModulesLabel->Delete ( );
-        this->ModulesLabel = NULL;
+  if ( this->SlicerModuleNavigationIcons )
+    {
+    this->SlicerModuleNavigationIcons->Delete ( );
+    this->SlicerModuleNavigationIcons = NULL;
     }
-    if ( this->ModulesPrev ) {
-      this->ModulesPrev->SetParent ( NULL );
-        this->ModulesPrev->Delete ( );
-        this->ModulesPrev = NULL;
+  if ( this->ModulesMenuButton )
+    {
+    this->ModulesMenuButton->SetParent ( NULL );
+    this->ModulesMenuButton->Delete();
+    this->ModulesMenuButton = NULL;
     }
-    if ( this->ModulesNext ) {
-      this->ModulesNext->SetParent ( NULL );
-        this->ModulesNext->Delete ( );
-        this->ModulesNext = NULL;
+  if ( this->ModulesLabel )
+    {
+    this->ModulesLabel->SetParent ( NULL );
+    this->ModulesLabel->Delete ( );
+    this->ModulesLabel = NULL;
     }
-    if ( this->ModulesHistory) {
-      this->ModulesHistory->SetParent ( NULL );
-        this->ModulesHistory->Delete ( );
-        this->ModulesHistory = NULL;
+  if ( this->ModulesPrev )
+    {
+    this->ModulesPrev->SetParent ( NULL );
+    this->ModulesPrev->Delete ( );
+    this->ModulesPrev = NULL;
     }
-    if ( this->ModulesRefresh) {
-      this->ModulesRefresh->SetParent ( NULL );
-        this->ModulesRefresh->Delete ( );
-        this->ModulesRefresh = NULL;
+  if ( this->ModulesNext )
+    {
+    this->ModulesNext->SetParent ( NULL );
+    this->ModulesNext->Delete ( );
+    this->ModulesNext = NULL;
     }
-    if ( this->ModulesSearch) {
-      this->ModulesSearch->SetParent ( NULL );
-        this->ModulesSearch->Delete ( );
-        this->ModulesSearch = NULL;
+  if ( this->ModulesHistory)
+    {
+    this->ModulesHistory->SetParent ( NULL );
+    this->ModulesHistory->Delete ( );
+    this->ModulesHistory = NULL;
     }
-    this->SetApplicationGUI ( NULL );
+  if ( this->ModulesRefresh)
+    {
+    this->ModulesRefresh->SetParent ( NULL );
+    this->ModulesRefresh->Delete ( );
+    this->ModulesRefresh = NULL;
+    }
+  if ( this->ModulesSearch)
+    {
+    this->ModulesSearch->SetParent ( NULL );
+    this->ModulesSearch->Delete ( );
+    this->ModulesSearch = NULL;
+    }
+  this->SetApplicationGUI ( NULL );
 }
 
 
@@ -219,7 +242,6 @@ void vtkSlicerModuleChooseGUI::BuildGUI ( vtkKWFrame *appF )
       //--- ALL modules menu button label
       this->ModulesLabel->SetParent ( appF );
       this->ModulesLabel->Create ( );
-
       this->ModulesLabel->SetText ( "Modules:");
       this->ModulesLabel->SetAnchorToWest ( );
       this->ModulesLabel->SetWidth ( 7 );
@@ -231,45 +253,67 @@ void vtkSlicerModuleChooseGUI::BuildGUI ( vtkKWFrame *appF )
       this->ModulesMenuButton->IndicatorVisibilityOn ( );
       this->ModulesMenuButton->SetBalloonHelpString ("Select a Slicer module.");
 
+      //--- Frame that contains module nav/search widgets
+      this->ModuleNavigationFrame->SetParent ( appF );
+      this->ModuleNavigationFrame->Create ( );
+
+      this->ModuleSearchEntry->SetParent ( this->ModuleNavigationFrame );
+      this->ModuleSearchEntry->Create ( );
+      this->ModuleSearchEntry->SetValue ( "search" );
+      this->ModuleSearchEntry->SetWidth ( 12 );
+      this->ModuleSearchEntry->SetBalloonHelpString ("Type the name of a module you want to select and click the 'search' button.");
+      
       //--- Next and previous module button
-      this->ModulesNext->SetParent ( appF );
+      this->ModulesNext->SetParent ( this->ModuleNavigationFrame );
       this->ModulesNext->Create ( );
       this->ModulesNext->SetBorderWidth ( 0 );
       this->ModulesNext->SetImageToIcon ( this->SlicerModuleNavigationIcons->GetModuleNextIcon() );
       this->ModulesNext->SetBalloonHelpString ("Go to next module.");
 
-      this->ModulesPrev->SetParent ( appF );
+      this->ModulesPrev->SetParent ( this->ModuleNavigationFrame );
       this->ModulesPrev->Create ( );
       this->ModulesPrev->SetBorderWidth ( 0 );
       this->ModulesPrev->SetImageToIcon ( this->SlicerModuleNavigationIcons->GetModulePrevIcon() );
       this->ModulesPrev->SetBalloonHelpString ("Go to previous module.");
         
-      this->ModulesHistory->SetParent ( appF );
+      this->ModulesHistory->SetParent ( this->ModuleNavigationFrame );
       this->ModulesHistory->Create ( );
       this->ModulesHistory->SetBorderWidth ( 0 );
       this->ModulesHistory->SetImageToIcon ( this->SlicerModuleNavigationIcons->GetModuleHistoryIcon() );
       this->ModulesHistory->SetBalloonHelpString ("List all visited modules.");
 
-      this->ModulesRefresh->SetParent ( appF );
+      this->ModulesRefresh->SetParent ( this->ModuleNavigationFrame );
       this->ModulesRefresh->Create ( );
       this->ModulesRefresh->SetBorderWidth ( 0 );
       this->ModulesRefresh->SetImageToIcon ( this->SlicerModuleNavigationIcons->GetModuleRefreshIcon() );
       this->ModulesRefresh->SetBalloonHelpString ("Refresh the list of available modules.");
 
-      this->ModulesSearch->SetParent ( appF );
+      this->ModulesSearch->SetParent ( this->ModuleNavigationFrame );
       this->ModulesSearch->Create ( );
       this->ModulesSearch->SetBorderWidth ( 0 );
       this->ModulesSearch->SetImageToIcon ( this->SlicerModuleNavigationIcons->GetModuleSearchIcon() );
-      this->ModulesSearch->SetBalloonHelpString ("Search for a module (or use keyboard Ctrl+F).");
+      this->ModulesSearch->SetBalloonHelpString ("Search for the module entered to the right (or use keyboard Ctrl+F).");
 
+      //--- create a small label to show search context
+      vtkKWLabel *colonLabel = vtkKWLabel::New ( );
+      colonLabel->SetParent ( this->ModuleNavigationFrame );
+      colonLabel->Create ( );
+      colonLabel->SetText (":");
+      
       //--- pack everything up.
-      app->Script ( "pack %s -side left -anchor n -padx 0 -ipadx 0 -pady 3", this->ModulesLabel->GetWidgetName( ) );
-      app->Script ( "pack %s -side left -anchor se -padx 0 -ipady 0 -pady 0", this->ModulesMenuButton->GetWidgetName( ) );
-      app->Script ( "pack %s -side left -anchor c -padx 1 -pady 2", this->ModulesHistory->GetWidgetName( ) );
+      app->Script ( "grid %s -row 1 -column 0 -ipadx 0 -padx 0 -pady 0", this->ModulesLabel->GetWidgetName ( ) );
+      app->Script ( "grid %s -row 1 -column 1 -ipady 0 -padx 0 -pady 0", this->ModulesMenuButton->GetWidgetName ( ) );
+      app->Script ( "grid %s -row 0 -column 1 -sticky nsew -padx 0 -pady 0", this->ModuleNavigationFrame->GetWidgetName ( ) );
+
+      app->Script ( "pack %s -side left -anchor c -padx 0 -pady 2", this->ModulesSearch->GetWidgetName( ) );
+      app->Script ( "pack %s -side left -anchor c -ipadx 0 -padx 1 -pady 2", colonLabel->GetWidgetName( ) );
+      app->Script ( "pack %s -side left -anchor c -padx 2 -pady 2", this->ModuleSearchEntry->GetWidgetName( ) );
       app->Script ( "pack %s -side left -anchor c -padx 1 -pady 2", this->ModulesPrev->GetWidgetName( ) );
       app->Script ( "pack %s -side left -anchor c -padx 1 -pady 2", this->ModulesNext->GetWidgetName( ) );
-      app->Script ( "pack %s -side left -anchor c -padx 1 -pady 2", this->ModulesSearch->GetWidgetName( ) );
+      app->Script ( "pack %s -side left -anchor c -padx 1 -pady 2", this->ModulesHistory->GetWidgetName( ) );      
       app->Script ( "pack %s -side left -anchor c -padx 1 -pady 2", this->ModulesRefresh->GetWidgetName( ) );
+
+      colonLabel->Delete ( );
     }
   }
 

@@ -14,6 +14,8 @@ class vtkSlicerModuleNavigationIcons;
 class vtkKWPushButton;
 class vtkKWLabel;
 class vtkKWMenuButton;
+class vtkKWFrame;
+class vtkKWEntry;
 
 // Description:
 // This class implements Slicer's Module Selection GUI panel
@@ -36,6 +38,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleChooseGUI : public vtkSlicerComp
     vtkGetObjectMacro (ModulesHistory, vtkKWPushButton );
     vtkGetObjectMacro (ModulesRefresh, vtkKWPushButton );
     vtkGetObjectMacro (ModulesSearch, vtkKWPushButton );
+    vtkGetObjectMacro (ModuleSearchEntry, vtkKWEntry );
+    vtkGetObjectMacro (ModuleNavigationFrame, vtkKWFrame );
     vtkGetObjectMacro ( SlicerModuleNavigationIcons, vtkSlicerModuleNavigationIcons );
 
     // Description:
@@ -89,6 +93,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleChooseGUI : public vtkSlicerComp
     vtkKWPushButton *ModulesRefresh;
     vtkKWPushButton *ModulesSearch;
     vtkSlicerModuleNavigationIcons *SlicerModuleNavigationIcons;
+    vtkKWFrame *ModuleNavigationFrame;
+    vtkKWEntry *ModuleSearchEntry;
     
  private:
     vtkSlicerModuleChooseGUI ( const vtkSlicerModuleChooseGUI& ); // Not implemented.

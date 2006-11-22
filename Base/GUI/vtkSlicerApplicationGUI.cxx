@@ -82,6 +82,7 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
 
     // Frames that comprise the Main Slicer GUI
 
+    this->TopFrame = vtkKWFrame::New();
     this->LogoFrame = vtkKWFrame::New();
     this->ModuleChooseFrame = vtkKWFrame::New();
     this->SlicesControlFrame = vtkSlicerModuleCollapsibleFrame::New();
@@ -186,43 +187,57 @@ vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
     this->DestroyMainSliceViewers ( );
 
     // Delete frames
-    if ( this->LogoFrame ) {
+    if ( this->TopFrame )
+      {
+      this->TopFrame->SetParent ( NULL );
+      this->TopFrame->Delete ( );
+      this->TopFrame = NULL;
+      }
+    if ( this->LogoFrame )
+      {
       this->LogoFrame->SetParent ( NULL );
-        this->LogoFrame->Delete ();
-        this->LogoFrame = NULL;
-    }
-    if ( this->ModuleChooseFrame ) {
+      this->LogoFrame->Delete ();
+      this->LogoFrame = NULL;
+      }
+    if ( this->ModuleChooseFrame )
+      {
       this->ModuleChooseFrame->SetParent ( NULL );
-        this->ModuleChooseFrame->Delete ();
-        this->ModuleChooseFrame = NULL;
-    }
-    if ( this->DropShadowFrame ) {
+      this->ModuleChooseFrame->Delete ();
+      this->ModuleChooseFrame = NULL;
+      }
+    if ( this->DropShadowFrame )
+      {
       this->DropShadowFrame->SetParent ( NULL );
-        this->DropShadowFrame->Delete ( );
-        this->DropShadowFrame = NULL;
-    }
-    if ( this->SlicesControlFrame ) {
+      this->DropShadowFrame->Delete ( );
+      this->DropShadowFrame = NULL;
+      }
+    if ( this->SlicesControlFrame )
+      {
       this->SlicesControlFrame->SetParent ( NULL );
       this->SlicesControlFrame->Delete ( );
       this->SlicesControlFrame = NULL;
-    }
-    if ( this->ViewControlFrame ) {
+      }
+    if ( this->ViewControlFrame )
+      {
       this->ViewControlFrame->SetParent ( NULL );
-        this->ViewControlFrame->Delete ( );
-        this->ViewControlFrame = NULL;
-    }
+      this->ViewControlFrame->Delete ( );
+      this->ViewControlFrame = NULL;
+      }
 
-    if ( this->LoadSceneDialog ) {
+    if ( this->LoadSceneDialog )
+      {
       this->LoadSceneDialog->SetParent ( NULL );
-        this->LoadSceneDialog->Delete();
-        this->LoadSceneDialog = NULL;
-    }
-    if ( this->SaveSceneDialog ) {
+      this->LoadSceneDialog->Delete();
+      this->LoadSceneDialog = NULL;
+      }
+    if ( this->SaveSceneDialog )
+      {
       this->SaveSceneDialog->SetParent ( NULL );
-        this->SaveSceneDialog->Delete();
-        this->SaveSceneDialog = NULL;
-    }
-    if ( this->MainSlicerWindow ) {
+      this->SaveSceneDialog->Delete();
+      this->SaveSceneDialog = NULL;
+      }
+    if ( this->MainSlicerWindow )
+      {
       if ( this->GetApplication() )
         {
         this->GetApplication()->RemoveWindow ( this->MainSlicerWindow );
@@ -235,7 +250,7 @@ vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
       this->MainSlicerWindow->SetParent ( NULL );
       this->MainSlicerWindow->Delete ( );
       this->MainSlicerWindow = NULL;
-    }
+      }
     this->MainSliceLogic0 = NULL;
     this->MainSliceLogic1 = NULL;
     this->MainSliceLogic2 = NULL;
@@ -1369,13 +1384,17 @@ void vtkSlicerApplicationGUI::BuildGUIFrames ( )
             this->MainSlicerWindow->GetMainPanelFrame()->SetHeight ( layout->GetDefaultGUIPanelHeight() );
             this->MainSlicerWindow->GetMainPanelFrame()->SetReliefToSunken();
 
-            this->LogoFrame->SetParent ( this->MainSlicerWindow->GetMainPanelFrame ( ) );
-            this->LogoFrame->Create( );
-            this->LogoFrame->SetHeight ( layout->GetDefaultLogoFrameHeight ( ) );
+            this->TopFrame->SetParent ( this->MainSlicerWindow->GetMainPanelFrame ( ) );
+            this->TopFrame->Create ( );
+            this->TopFrame->SetHeight ( layout->GetDefaultTopFrameHeight ( ) );
 
-            this->ModuleChooseFrame->SetParent ( this->MainSlicerWindow->GetMainPanelFrame ( ) );
+            this->LogoFrame->SetParent ( this->TopFrame );
+            this->LogoFrame->Create( );
+            this->LogoFrame->SetHeight ( layout->GetDefaultTopFrameHeight ( ) );            
+            
+            this->ModuleChooseFrame->SetParent ( this->TopFrame );
             this->ModuleChooseFrame->Create( );
-            this->ModuleChooseFrame->SetHeight ( layout->GetDefaultModuleChooseFrameHeight ( ) );
+//            this->ModuleChooseFrame->SetHeight ( layout->GetDefaultModuleChooseFrameHeight ( ) );
             
             this->DropShadowFrame->SetParent ( this->MainSlicerWindow->GetMainPanelFrame() );
             this->DropShadowFrame->Create ( );
@@ -1394,11 +1413,10 @@ void vtkSlicerApplicationGUI::BuildGUIFrames ( )
             this->ViewControlFrame->SetLabelText ( "Manipulate 3D View" );
             this->ViewControlFrame->GetFrame()->SetHeight (layout->GetDefaultViewControlFrameHeight ( ) );
             
-            // pack logo and slicer control frames
-            this->Script ( "pack %s -side top -fill x -padx 1 -pady 1", this->LogoFrame->GetWidgetName() );
-            app->Script ( "pack %s -side top -fill x -padx 1 -pady 10", this->ModuleChooseFrame->GetWidgetName() );
-            
-            // pack slice and view control frames
+
+            app->Script ( "pack %s -side top -fill x -padx 1 -pady 1", this->TopFrame->GetWidgetName() );
+            app->Script ( "pack %s -side left -padx 1 -pady 1", this->LogoFrame->GetWidgetName() );
+            app->Script ( "pack %s -side left -fill x -padx 1 -pady 1", this->ModuleChooseFrame->GetWidgetName() );
             app->Script ( "pack %s -side bottom -expand n -fill x -padx 1 -ipady 1 -pady 0", this->DropShadowFrame->GetWidgetName() );
             app->Script ( "pack %s -side bottom -expand n -fill x -padx 0 -ipady 5 -pady 2", this->ViewControlFrame->GetWidgetName() );
             app->Script ( "pack %s -side bottom -expand n -fill x -padx 0 -ipady 5 -pady 1", this->SlicesControlFrame->GetWidgetName() );

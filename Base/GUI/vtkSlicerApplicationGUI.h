@@ -206,6 +206,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     
     // Description:
     // Frames for the main Slicer UI panel    
+    vtkKWFrame *TopFrame;
     vtkKWFrame *LogoFrame;
     vtkKWFrame *ModuleChooseFrame;
     vtkKWFrame *DropShadowFrame;
