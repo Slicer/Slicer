@@ -39,6 +39,9 @@ Version:   $Revision: 1.2 $
 #include <algorithm>
 #include <set>
 
+#include "vtkKWLogDialog.h"
+#include "vtkKWLogWidget.h"
+
 struct DigitsToCharacters
 {
   char operator() (char in)
@@ -158,7 +161,7 @@ void vtkCommandLineModuleLogic::Apply()
 
   if (!ret)
     {
-    std::cout << "Could not schedule task" << std::endl;
+    vtkSlicerApplication::GetInstance()->GetLogDialog()->GetLogWidget()->AddWarningRecord( "Could not schedule task" );
     }
   else
     {
@@ -222,7 +225,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
 
   // vector of files to delete
   std::set<std::string> filesToDelete;
-  std::cout << node->GetModuleDescription();  
+  //std::cout << node->GetModuleDescription();  
   // iterators for parameter groups
   std::vector<ModuleParameterGroup>::const_iterator pgbeginit
     = node->GetModuleDescription().GetParameterGroups().begin();
@@ -498,12 +501,14 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
 
   // print the command line
   //
+  std::stringstream information;
   for (std::vector<std::string>::size_type i=0; i < commandLineAsString.size(); ++i)
     {
-    std::cout << command[i] << " ";
+    information << command[i] << " ";
     }
-  std::cout << std::endl;
-
+  information << std::endl;
+  vtkSlicerApplication::GetInstance()->GetLogDialog()->GetLogWidget()->AddInformationRecord( information.str().c_str() );
+  
   
   // write out the input datasets
   //
@@ -601,7 +606,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
         {
         if (pipe == itksysProcess_Pipe_STDOUT)
           {
-          std::cout << "STDOUT: " << std::string(tbuffer, length) << std::endl;
+          //std::cout << "STDOUT: " << std::string(tbuffer, length) << std::endl;
           stdoutbuffer = stdoutbuffer.append(tbuffer, length);
 
           bool foundTag = false;
@@ -654,11 +659,20 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
         else if (pipe == itksysProcess_Pipe_STDERR)
           {
           stderrbuffer = stderrbuffer.append(tbuffer, length);
-          std::cerr << "STDERR: " << std::string(tbuffer, length) << std::endl;
+          //std::cerr << "STDERR: " << std::string(tbuffer, length) << std::endl;
           }
         }
       }
     itksysProcess_WaitForExit(process, 0);
+
+    if (stdoutbuffer.size() > 0)
+      {
+      vtkSlicerApplication::GetInstance()->GetLogDialog()->GetLogWidget()->AddInformationRecord( stdoutbuffer.c_str() );
+      }
+    if (stderrbuffer.size() > 0)
+      {
+      vtkSlicerApplication::GetInstance()->GetLogDialog()->GetLogWidget()->AddErrorRecord( stderrbuffer.c_str() );
+      }
     
     // check the exit state / error state of the process
     if (node->GetStatus() != vtkMRMLCommandLineModuleNode::Cancelled)
@@ -671,26 +685,35 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
         if (itksysProcess_GetExitValue(process) == 0)
           {
           // executable exited without errors,
-          std::cout << node->GetModuleDescription().GetTitle()
-                    << " completed without errors" << std::endl;
+          std::stringstream information;
+          information << node->GetModuleDescription().GetTitle()
+                      << " completed without errors" << std::endl;
+          vtkSlicerApplication::GetInstance()->GetLogDialog()->GetLogWidget()->AddInformationRecord( information.str().c_str() );
+          
           }
         else
           {
-          std::cout << node->GetModuleDescription().GetTitle()
-                    << " completed with errors" << std::endl;
+          std::stringstream information;
+          information << node->GetModuleDescription().GetTitle()
+                      << " completed with errors" << std::endl;
+          vtkSlicerApplication::GetInstance()->GetLogDialog()->GetLogWidget()->AddErrorRecord( information.str().c_str() );
           node->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors);
           }
         }
       else if (result == itksysProcess_State_Expired)
         {
-        std::cout << node->GetModuleDescription().GetTitle()
-                  << " timed out" << std::endl;
+        std::stringstream information;
+        information << node->GetModuleDescription().GetTitle()
+                    << " timed out" << std::endl;
+        vtkSlicerApplication::GetInstance()->GetLogDialog()->GetLogWidget()->AddErrorRecord( information.str().c_str() );
         node->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors);
         }
       else
         {
-        std::cout << node->GetModuleDescription().GetTitle()
+        std::stringstream information;
+        information << node->GetModuleDescription().GetTitle()
                   << " unknown termination. " << result << std::endl;
+        vtkSlicerApplication::GetInstance()->GetLogDialog()->GetLogWidget()->AddErrorRecord( information.str().c_str() );
         node->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors);
         }
     
@@ -706,14 +729,18 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
       }
     catch (itk::ExceptionObject& exc)
       {
-      std::cout << node->GetModuleDescription().GetTitle()
+      std::stringstream information;
+      information << node->GetModuleDescription().GetTitle()
                 << " terminated with an exception: " << exc;
+      vtkSlicerApplication::GetInstance()->GetLogDialog()->GetLogWidget()->AddErrorRecord( information.str().c_str() );
       node->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors);
       }
     catch (...)
       {
-      std::cout << node->GetModuleDescription().GetTitle()
+      std::stringstream information;
+      information << node->GetModuleDescription().GetTitle()
                 << " terminated with an unknown exception." << std::endl;
+      vtkSlicerApplication::GetInstance()->GetLogDialog()->GetLogWidget()->AddErrorRecord( information.str().c_str() );
       node->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors);
       }
     }
@@ -757,13 +784,17 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
           }
         catch (itk::ExceptionObject& exc)
           {
-          std::cout << node->GetModuleDescription().GetTitle()
+          std::stringstream information;
+          information << node->GetModuleDescription().GetTitle()
                     << " terminated with an exception: " << exc;
+          vtkSlicerApplication::GetInstance()->GetLogDialog()->GetLogWidget()->AddErrorRecord( information.str().c_str() );
           }
         catch (...)
           {
-          std::cout << node->GetModuleDescription().GetTitle()
+          std::stringstream information;
+          information << node->GetModuleDescription().GetTitle()
                     << " terminated with an unknown exception." << std::endl;
+          vtkSlicerApplication::GetInstance()->GetLogDialog()->GetLogWidget()->AddErrorRecord( information.str().c_str() );
           }
         
         in->Delete();
@@ -810,7 +841,9 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
       removed = itksys::SystemTools::RemoveFile((*fit).c_str());
       if (!removed)
         {
-        std::cout << "Unable to delete temporary file " << *fit << std::endl;
+        std::stringstream information;
+        information << "Unable to delete temporary file " << *fit << std::endl;
+        vtkSlicerApplication::GetInstance()->GetLogDialog()->GetLogWidget()->AddWarningRecord( information.str().c_str() );
         }
       }
     }
