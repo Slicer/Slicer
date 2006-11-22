@@ -176,6 +176,7 @@ protected:
   vtkMRMLModelDisplayNode *SliceModelDisplayNode;
 
   void CreateSliceModel();
+  void DeleteSliceModel();
 };
 
 #endif

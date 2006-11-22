@@ -65,23 +65,9 @@ vtkSlicerSliceLogic::~vtkSlicerSliceLogic()
     vtkSetAndObserveMRMLNodeMacro( this->SliceCompositeNode, NULL );
     }
 
-  if (this->SliceModelNode != NULL)
-    {
-    this->SliceModelNode->SetAndObservePolyData(NULL);
-    this->SliceModelNode->SetAndObserveDisplayNodeID(NULL);
-    this->SliceModelNode->Delete();
-    }
-  if (this->PlaneSource != NULL)
-    {
-    this->PlaneSource->Delete();
-    }
-  if (this->SliceModelDisplayNode != NULL)
-    {
-    this->SliceModelDisplayNode->SetAndObserveTextureImageData(NULL);
-    this->SliceModelDisplayNode->Delete();
-    }
-
   this->SetName(NULL);
+
+  this->DeleteSliceModel();
 
 }
 
@@ -215,6 +201,9 @@ void vtkSlicerSliceLogic::ProcessMRMLEvents(vtkObject * caller,
     {
     this->SetSliceCompositeNode (NULL);
     this->SetSliceNode (NULL);
+
+    this->DeleteSliceModel();
+
     return;
     }
 
@@ -555,27 +544,36 @@ void vtkSlicerSliceLogic::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerSliceLogic::CreateSliceModel()
+void vtkSlicerSliceLogic::DeleteSliceModel()
 {
-
-  if (this->SliceModelNode != NULL && this->MRMLScene->GetNodeByID( this->GetSliceModelNode()->GetID() ) == NULL )
+  if (this->SliceModelNode != NULL)
     {
     this->SliceModelNode->SetAndObserveDisplayNodeID(NULL);
     this->SliceModelNode->SetAndObservePolyData(NULL);
     this->SliceModelNode->Delete();
     this->SliceModelNode = NULL;
+    }
+  if (this->SliceModelDisplayNode != NULL)
+    {
+    this->SliceModelDisplayNode->SetAndObserveTextureImageData(NULL);
+    this->SliceModelDisplayNode->Delete();
+    this->SliceModelDisplayNode = NULL;
+    }
+  if (this->PlaneSource != NULL)
+    {
+    this->PlaneSource->Delete();
+    this->PlaneSource = NULL;
+    }
+  
+}
 
-    if (this->SliceModelDisplayNode != NULL)
-      {
-      this->SliceModelDisplayNode->SetAndObserveTextureImageData(NULL);
-      this->SliceModelDisplayNode->Delete();
-      this->SliceModelDisplayNode = NULL;
-      }
-    if (this->PlaneSource != NULL)
-      {
-      this->PlaneSource->Delete();
-      this->PlaneSource = NULL;
-      }
+//----------------------------------------------------------------------------
+void vtkSlicerSliceLogic::CreateSliceModel()
+{
+
+  if (this->SliceModelNode != NULL && this->MRMLScene->GetNodeByID( this->GetSliceModelNode()->GetID() ) == NULL )
+    {
+    this->DeleteSliceModel();
     }
 
   if ( this->SliceModelNode == NULL) 
