@@ -19,7 +19,7 @@ vtkSlicerGUILayout::vtkSlicerGUILayout ( )
   this->MainSlicerWindow = NULL;
   this->CurrentViewArrangement = this->SlicerLayoutInitialView;
   this->DefaultTopFrameHeight = 118;
-  this->DefaultModuleControlPanelHeight = 450;
+  this->DefaultModuleControlPanelHeight = 442;
   this->DefaultSlicesControlFrameHeight = 60;
   this->DefaultViewControlFrameHeight = 240;
 
@@ -59,13 +59,12 @@ void vtkSlicerGUILayout::InitializeLayoutDimensions ( )
   // This frame contains the logo and module choose/navigation widgets
   this->SetDefaultTopFrameHeight ( 118 );
 
-//  this->SetDefaultModuleControlPanelHeight ( 450 );
-//  this->SetDefaultModuleControlPanelHeight ( 392 );
-//  this->SetDefaultModuleControlPanelHeight ( 422 );
   // This frame contains the Module GUI panel
   this->SetDefaultModuleControlPanelHeight ( 442 );
+
   // This frme contains the widgets to control the slice viewers
   this->SetDefaultSlicesControlFrameHeight ( 60 );
+
   // This frame contains the widgets to control the 3D view
   this->SetDefaultViewControlFrameHeight ( 240 );
 
