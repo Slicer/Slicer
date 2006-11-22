@@ -16,21 +16,10 @@
 
 #include "ModuleDescriptionParserWin32Header.h"
 
-//#include "itksys/hash_map.hxx"
 #include <map>
 #include <string>
 #include <vector>
 #include <iostream>
-
-// Need to define a hash function for strings
-// template<>
-// struct itksys::hash<std::string> {
-//   itksys::hash<char*> h;
-//   size_t operator()(const std::string &s) const {
-//     return h(s.c_str());
-//   };
-// };
-
 
 /** \class ModuleParameter
  *  \brief Class to describe a single parameter to a module.
