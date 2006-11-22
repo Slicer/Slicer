@@ -54,254 +54,226 @@ namespace TCLAP {
  */
 class CmdLine : public CmdLineInterface
 {
-  protected:
+protected:
 
-    /**
-     * The list of arguments that will be tested against the
-     * command line.
-     */
-    std::list<Arg*> _argList;
+  /**
+   * The list of arguments that will be tested against the
+   * command line.
+   */
+  std::list<Arg*> _argList;
 
-    /**
-     * The name of the program.  Set to argv[0].
-     */
-    std::string _progName;
+  /**
+   * The name of the program.  Set to argv[0].
+   */
+  std::string _progName;
 
-    /**
-     * A message used to describe the program.  Used in the usage output.
-     */
-    std::string _message;
+  /**
+   * A message used to describe the program.  Used in the usage output.
+   */
+  std::string _message;
 
-    /**
-     * The version to be displayed with the --version switch.
-     */
-    std::string _version;
+  /**
+   * The version to be displayed with the --version switch.
+   */
+  std::string _version;
 
-    /**
-     * The number of arguments that are required to be present on
-     * the command line. This is set dynamically, based on the
-     * Args added to the CmdLine object.
-     */
-    int _numRequired;
+  /**
+   * The number of arguments that are required to be present on
+   * the command line. This is set dynamically, based on the
+   * Args added to the CmdLine object.
+   */
+  int _numRequired;
 
-    /**
-     * The character that is used to separate the argument flag/name
-     * from the value.  Defaults to ' ' (space).
-     */
-    char _delimiter;
+  /**
+   * The character that is used to separate the argument flag/name
+   * from the value.  Defaults to ' ' (space).
+   */
+  char _delimiter;
 
-    /**
-     * The handler that manages xoring lists of args.
-     */
-    XorHandler _xorHandler;
+  /**
+   * The handler that manages xoring lists of args.
+   */
+  XorHandler _xorHandler;
 
-    /**
-     * A list of Args to be explicitly deleted when the destructor
-     * is called.  At the moment, this only includes the three default
-     * Args.
-     */
-    std::list<Arg*> _argDeleteOnExitList;
+  /**
+   * A list of Args to be explicitly deleted when the destructor
+   * is called.  At the moment, this only includes the three default
+   * Args.
+   */
+  std::list<Arg*> _argDeleteOnExitList;
 
-    /**
-     * A list of Visitors to be explicitly deleted when the destructor
-     * is called.  At the moment, these are the Vistors created for the
-     * default Args.
-     */
-    std::list<Visitor*> _visitorDeleteOnExitList;
+  /**
+   * A list of Visitors to be explicitly deleted when the destructor
+   * is called.  At the moment, these are the Vistors created for the
+   * default Args.
+   */
+  std::list<Visitor*> _visitorDeleteOnExitList;
 
-    /**
-     * Object that handles all output for the CmdLine.
-     */
-    CmdLineOutput* _output;
+  /**
+   * Object that handles all output for the CmdLine.
+   */
+  CmdLineOutput* _output;
 
-    /**
-     * Checks whether a name/flag string matches entirely matches
-     * the Arg::blankChar.  Used when multiple switches are combined
-     * into a single argument.
-     * \param s - The message to be used in the usage.
-     */
-    bool _emptyCombined(const std::string& s);
+  /**
+   * Checks whether a name/flag string matches entirely matches
+   * the Arg::blankChar.  Used when multiple switches are combined
+   * into a single argument.
+   * \param s - The message to be used in the usage.
+   */
+  bool _emptyCombined(const std::string& s);
 
-    /**
-     * Perform a delete ptr; operation on ptr when this object is deleted.
-     */
-    void deleteOnExit(Arg* ptr);
+  /**
+   * Perform a delete ptr; operation on ptr when this object is deleted.
+   */
+  void deleteOnExit(Arg* ptr);
 
-    /**
-     * Perform a delete ptr; operation on ptr when this object is deleted.
-     */
-    void deleteOnExit(Visitor* ptr);
+  /**
+   * Perform a delete ptr; operation on ptr when this object is deleted.
+   */
+  void deleteOnExit(Visitor* ptr);
 
-  private:
+private:
 
-    /**
-     * Encapsulates the code common to the constructors (which is all
-     * of it).
-     */
-    void _constructor();
+  /**
+   * Encapsulates the code common to the constructors (which is all
+   * of it).
+   */
+  void _constructor();
 
-    /**
-     * Is set to true when a user sets the output object. We use this so
-     * that we don't delete objects that are created outside of this lib.
-     */
-    bool _userSetOutput;
+  /**
+   * Is set to true when a user sets the output object. We use this so
+   * that we don't delete objects that are created outside of this lib.
+   */
+  bool _userSetOutput;
 
-    /**
-     * Whether or not to automatically create help and version switches.
-     */
-    bool _helpAndVersion;
+  /**
+   * Whether or not to automatically create help and version switches.
+   */
+  bool _helpAndVersion;
 
-  public:
+public:
 
-    /**
-     * Command line constructor. DEPRECATED!!!  This is here to maintain
-     * backwards compatibility with earlier releases.  Note that the
-     * program name will be overwritten with argv[0].  The delimiter
-     * used is ' ' (as before).
-     * \param name - The program name - will be overwritten with argv[0].
-     * \param message - The message to be used in the usage output.
-     * \param version - The version number to be used in the
-     * --version switch.
-     */
-    CmdLine(const std::string& name,
-        const std::string& message,
-        const std::string& version = "none" );
+  /**
+   * Command line constructor. Defines how the arguments will be
+   * parsed.
+   * \param message - The message to be used in the usage
+   * output.
+   * \param delimiter - The character that is used to separate
+   * the argument flag/name from the value.  Defaults to ' ' (space).
+   * \param version - The version number to be used in the
+   * --version switch.
+   * \param helpAndVersion - Whether or not to create the Help and
+   * Version switches. Defaults to true.
+   */
+  CmdLine(const std::string& message,
+          const char delimiter = ' ',
+          const std::string& version = "none",
+          bool helpAndVersion = true);
 
-    /**
-     * Command line constructor. Defines how the arguments will be
-     * parsed.
-     * \param message - The message to be used in the usage
-     * output.
-     * \param delimiter - The character that is used to separate
-     * the argument flag/name from the value.  Defaults to ' ' (space).
-     * \param version - The version number to be used in the
-     * --version switch.
-     * \param helpAndVersion - Whether or not to create the Help and
-     * Version switches. Defaults to true.
-     */
-    CmdLine(const std::string& message,
-        const char delimiter = ' ',
-        const std::string& version = "none",
-        bool helpAndVersion = true);
+  /**
+   * Deletes any resources allocated by a CmdLine object.
+   */
+  virtual ~CmdLine();
 
-    /**
-     * Deletes any resources allocated by a CmdLine object.
-     */
-    virtual ~CmdLine();
+  /**
+   * Adds an argument to the list of arguments to be parsed.
+   * \param a - Argument to be added.
+   */
+  void add( Arg& a );
 
-    /**
-     * Adds an argument to the list of arguments to be parsed.
-     * \param a - Argument to be added.
-     */
-    void add( Arg& a );
+  /**
+   * An alternative add.  Functionally identical.
+   * \param a - Argument to be added.
+   */
+  void add( Arg* a );
 
-    /**
-     * An alternative add.  Functionally identical.
-     * \param a - Argument to be added.
-     */
-    void add( Arg* a );
+  /**
+   * Add two Args that will be xor'd.  If this method is used, add does
+   * not need to be called.
+   * \param a - Argument to be added and xor'd.
+   * \param b - Argument to be added and xor'd.
+   */
+  void xorAdd( Arg& a, Arg& b );
 
-    /**
-     * Add two Args that will be xor'd.  If this method is used, add does
-     * not need to be called.
-     * \param a - Argument to be added and xor'd.
-     * \param b - Argument to be added and xor'd.
-     */
-    void xorAdd( Arg& a, Arg& b );
+  /**
+   * Add a list of Args that will be xor'd.  If this method is used,
+   * add does not need to be called.
+   * \param xors - List of Args to be added and xor'd.
+   */
+  void xorAdd( std::vector<Arg*>& xors );
 
-    /**
-     * Add a list of Args that will be xor'd.  If this method is used,
-     * add does not need to be called.
-     * \param xors - List of Args to be added and xor'd.
-     */
-    void xorAdd( std::vector<Arg*>& xors );
+  /**
+   * Parses the command line.
+   * \param argc - Number of arguments.
+   * \param argv - Array of arguments.
+   */
+  void parse(int argc, char** argv);
 
-    /**
-     * Parses the command line.
-     * \param argc - Number of arguments.
-     * \param argv - Array of arguments.
-     */
-    void parse(int argc, char** argv);
+  /**
+   *
+   */
+  CmdLineOutput* getOutput();
 
-    /**
-     *
-     */
-    CmdLineOutput* getOutput();
+  /**
+   *
+   */
+  void setOutput(CmdLineOutput* co);
 
-    /**
-     *
-     */
-    void setOutput(CmdLineOutput* co);
+  /**
+   *
+   */
+  std::string& getVersion();
 
-    /**
-     *
-     */
-    std::string& getVersion();
+  /**
+   *
+   */
+  std::string& getProgramName();
 
-    /**
-     *
-     */
-    std::string& getProgramName();
+  /**
+   *
+   */
+  std::list<Arg*>& getArgList();
 
-    /**
-     *
-     */
-    std::list<Arg*>& getArgList();
+  /**
+   *
+   */
+  XorHandler& getXorHandler();
 
-    /**
-     *
-     */
-    XorHandler& getXorHandler();
+  /**
+   *
+   */
+  char getDelimiter();
 
-    /**
-     *
-     */
-    char getDelimiter();
+  /**
+   *
+   */
+  std::string& getMessage();
 
-    /**
-     *
-     */
-    std::string& getMessage();
-
-    /**
-     *
-     */
-    bool hasHelpAndVersion();
+  /**
+   *
+   */
+  bool hasHelpAndVersion();
 };
 
 
 ///////////////////////////////////////////////////////////////////////////////
-//Begin CmdLine.cpp
-///////////////////////////////////////////////////////////////////////////////
+                //Begin CmdLine.cpp
+                ///////////////////////////////////////////////////////////////////////////////
 
-inline CmdLine::CmdLine(const std::string& n,
-                const std::string& m,
-            const std::string& v )
-: _progName(n),
-  _message(m),
-  _version(v),
-  _numRequired(0),
-  _delimiter(' '),
-  _userSetOutput(false),
-  _helpAndVersion(true)
-{
-  _constructor();
-}
-
-inline CmdLine::CmdLine(const std::string& m,
+                inline CmdLine::CmdLine(const std::string& m,
                 char delim,
-            const std::string& v,
-            bool help )
-: _progName("not_set_yet"),
-  _message(m),
-  _version(v),
-  _numRequired(0),
-  _delimiter(delim),
-  _userSetOutput(false),
-  _helpAndVersion(help)
-{
-  _constructor();
-}
+                                        const std::string& v,
+                                        bool help )
+                  : _progName("not_set_yet"),
+                    _message(m),
+                    _version(v),
+                    _numRequired(0),
+                    _delimiter(delim),
+                    _userSetOutput(false),
+                    _helpAndVersion(help)
+                {
+                  _constructor();
+                }
 
 inline CmdLine::~CmdLine()
 {
@@ -309,13 +281,13 @@ inline CmdLine::~CmdLine()
   VisitorListIterator visIter;
 
   for( argIter = _argDeleteOnExitList.begin();
-     argIter != _argDeleteOnExitList.end();
-     ++argIter)
+       argIter != _argDeleteOnExitList.end();
+       ++argIter)
     delete *argIter;
 
   for( visIter = _visitorDeleteOnExitList.begin();
-     visIter != _visitorDeleteOnExitList.end();
-     ++visIter)
+       visIter != _visitorDeleteOnExitList.end();
+       ++visIter)
     delete *visIter;
 
   if ( !_userSetOutput )
@@ -331,29 +303,29 @@ inline void CmdLine::_constructor()
   Visitor* v;
 
   if ( _helpAndVersion )
-  {
+    {
     v = new HelpVisitor( this, &_output );
     SwitchArg* help = new SwitchArg("h","help",
-            "Displays usage information and exits.",
-            false, v);
+                                    "Displays usage information and exits.",
+                                    false, v);
     add( help );
     deleteOnExit(help);
     deleteOnExit(v);
 
     v = new VersionVisitor( this, &_output );
     SwitchArg* vers = new SwitchArg("","version",
-          "Displays version information and exits.",
-          false, v);
+                                    "Displays version information and exits.",
+                                    false, v);
     add( vers );
     deleteOnExit(vers);
     deleteOnExit(v);
-  }
+    }
 
   v = new IgnoreRestVisitor();
   SwitchArg* ignore  = new SwitchArg(Arg::flagStartString(),
-             Arg::ignoreNameString(),
-         "Ignores the rest of the labeled arguments following this flag.",
-             false, v);
+                                     Arg::ignoreNameString(),
+                                     "Ignores the rest of the labeled arguments following this flag.",
+                                     false, v);
   add( ignore );
   deleteOnExit(ignore);
   deleteOnExit(v);
@@ -364,19 +336,19 @@ inline void CmdLine::xorAdd( std::vector<Arg*>& ors )
   _xorHandler.add( ors );
 
   for (ArgVectorIterator it = ors.begin(); it != ors.end(); it++)
-  {
+    {
     (*it)->forceRequired();
     (*it)->setRequireLabel( "OR required" );
 
     add( *it );
-  }
+    }
 }
 
 inline void CmdLine::xorAdd( Arg& a, Arg& b )
 {
-    std::vector<Arg*> ors;
-    ors.push_back( &a );
-    ors.push_back( &b );
+  std::vector<Arg*> ors;
+  ors.push_back( &a );
+  ors.push_back( &b );
   xorAdd( ors );
 }
 
@@ -391,7 +363,7 @@ inline void CmdLine::add( Arg* a )
     if ( *a == *(*it) )
       throw( SpecificationException(
                "Argument with same flag/name already exists!",
-          a->longID() ) );
+               a->longID() ) );
 
   a->addToList( _argList );
 
@@ -407,23 +379,23 @@ inline void CmdLine::parse(int argc, char** argv)
 
   // this step is necessary so that we have easy access to mutable strings.
   std::vector<std::string> args;
-    for (int i = 1; i < argc; i++)
+  for (int i = 1; i < argc; i++)
     args.push_back(argv[i]);
 
   int requiredCount = 0;
 
-    for (int i = 0; static_cast<unsigned int>(i) < args.size(); i++)
-  {
+  for (int i = 0; static_cast<unsigned int>(i) < args.size(); i++)
+    {
     bool matched = false;
     for (ArgListIterator it = _argList.begin(); it != _argList.end(); it++)
-        {
-      if ( (*it)->processArg( &i, args ) )
       {
+      if ( (*it)->processArg( &i, args ) )
+        {
         requiredCount += _xorHandler.check( *it );
         matched = true;
         break;
-      }
         }
+      }
 
     // checks to see if the argument is an empty combined switch ...
     // and if so, then we've actually matched it
@@ -432,7 +404,7 @@ inline void CmdLine::parse(int argc, char** argv)
 
     if ( !matched && !Arg::ignoreRest() )
       throw(CmdLineParseException("Couldn't find match for argument",
-                                   args[i]));
+                                  args[i]));
     }
 
   if ( requiredCount < _numRequired )

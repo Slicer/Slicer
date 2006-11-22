@@ -34,17 +34,17 @@ namespace TCLAP {
  */
 class IgnoreRestVisitor: public Visitor
 {
-  public:
+public:
 
-    /**
-     * Constructor.
-     */
-    IgnoreRestVisitor() : Visitor() {}
+  /**
+   * Constructor.
+   */
+  IgnoreRestVisitor() : Visitor() {}
 
-    /**
-     * Sets Arg::_ignoreRest.
-     */
-    void visit() { Arg::beginIgnoring();  }
+  /**
+   * Sets Arg::_ignoreRest.
+   */
+  void visit() { Arg::beginIgnoring();  }
 };
 
 }

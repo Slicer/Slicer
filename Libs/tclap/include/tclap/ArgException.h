@@ -78,7 +78,8 @@ class ArgException : public std::exception
      */
     const char* what() const throw() 
     {
-      std::string ex = _argId + " -- " + _errorText;
+      static std::string ex; 
+      ex = _argId + " -- " + _errorText;
       return ex.c_str();
     }
 

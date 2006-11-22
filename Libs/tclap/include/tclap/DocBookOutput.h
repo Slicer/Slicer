@@ -42,44 +42,44 @@ namespace TCLAP {
 class DocBookOutput : public CmdLineOutput
 {
 
-  public:
+public:
 
-    /**
-     * Prints the usage to stdout.  Can be overridden to 
-     * produce alternative behavior.
-     * \param c - The CmdLine object the output is generated for. 
-     */
-    virtual void usage(CmdLineInterface& c);
+  /**
+   * Prints the usage to stdout.  Can be overridden to 
+   * produce alternative behavior.
+   * \param c - The CmdLine object the output is generated for. 
+   */
+  virtual void usage(CmdLineInterface& c);
 
-    /**
-     * Prints the version to stdout. Can be overridden 
-     * to produce alternative behavior.
-     * \param c - The CmdLine object the output is generated for. 
-     */
-    virtual void version(CmdLineInterface& c);
+  /**
+   * Prints the version to stdout. Can be overridden 
+   * to produce alternative behavior.
+   * \param c - The CmdLine object the output is generated for. 
+   */
+  virtual void version(CmdLineInterface& c);
 
-    /**
-     * Prints (to stderr) an error message, short usage 
-     * Can be overridden to produce alternative behavior.
-     * \param c - The CmdLine object the output is generated for. 
-     * \param e - The ArgException that caused the failure. 
-     */
-    virtual void failure(CmdLineInterface& c, 
-                 ArgException& e );
+  /**
+   * Prints (to stderr) an error message, short usage 
+   * Can be overridden to produce alternative behavior.
+   * \param c - The CmdLine object the output is generated for. 
+   * \param e - The ArgException that caused the failure. 
+   */
+  virtual void failure(CmdLineInterface& c, 
+                       ArgException& e );
 
-  protected:
+protected:
 
-    /**
-     * Substitutes the char r for string x in string s.
-     * \param s - The string to operate on. 
-     * \param r - The char to replace. 
-     * \param x - What to replace r with. 
-     */
-    void substituteSpecialChars( std::string& s, char r, std::string& x );
-    void removeChar( std::string& s, char r);
+  /**
+   * Substitutes the char r for string x in string s.
+   * \param s - The string to operate on. 
+   * \param r - The char to replace. 
+   * \param x - What to replace r with. 
+   */
+  void substituteSpecialChars( std::string& s, char r, std::string& x );
+  void removeChar( std::string& s, char r);
 
-    void printShortArg(Arg* it);
-    void printLongArg(Arg* it);
+  void printShortArg(Arg* it);
+  void printLongArg(Arg* it);
 };
 
 
@@ -123,21 +123,21 @@ inline void DocBookOutput::usage(CmdLineInterface& _cmd )
 
   // xor
   for ( int i = 0; (unsigned int)i < xorList.size(); i++ )
-  {
+    {
     std::cout << "<group choice='req'>" << std::endl;
     for ( ArgVectorIterator it = xorList[i].begin(); 
-            it != xorList[i].end(); it++ )
+          it != xorList[i].end(); it++ )
       printShortArg((*it));
 
     std::cout << "</group>" << std::endl;
-  }
+    }
   
   // rest of args
   for (ArgListIterator it = argList.begin(); it != argList.end(); it++)
     if ( !xorHandler.contains( (*it) ) )
       printShortArg((*it));
 
-   std::cout << "</cmdsynopsis>" << std::endl;
+  std::cout << "</cmdsynopsis>" << std::endl;
 
   std::cout << "<refsect1>" << std::endl;
   std::cout << "<title>Description</title>" << std::endl;
@@ -152,20 +152,20 @@ inline void DocBookOutput::usage(CmdLineInterface& _cmd )
   std::cout << "<itemizedlist>" << std::endl;
   // xor
   for ( int i = 0; (unsigned int)i < xorList.size(); i++ )
-  {
+    {
     std::cout << "<itemizedlist>" << std::endl;
     size_t xlen = xorList.size() - 1;
     size_t xcount = 0; 
     for ( ArgVectorIterator it = xorList[i].begin(); 
-            it != xorList[i].end(); it++, xcount++ )
-    {
+          it != xorList[i].end(); it++, xcount++ )
+      {
       printLongArg((*it));
       if ( xcount < xlen )
         std::cout << "<listitem>OR</listitem>" << std::endl;
-    }
+      }
 
     std::cout << "</itemizedlist>" << std::endl;
-  }
+    }
   
   // rest of args
   for (ArgListIterator it = argList.begin(); it != argList.end(); it++)
@@ -184,35 +184,35 @@ inline void DocBookOutput::usage(CmdLineInterface& _cmd )
   std::cout << "</refsect1>" << std::endl;
   
   std::cout << "</refentry>" << std::endl;
-   std::cout << "</book>" << std::endl;
+  std::cout << "</book>" << std::endl;
 
 }
 
 inline void DocBookOutput::failure( CmdLineInterface& _cmd,
-                        ArgException& e ) 
+                                    ArgException& e ) 
 { 
-    std::cout << e.what() << std::endl;
+  std::cout << e.what() << std::endl;
 }
 
 inline void DocBookOutput::substituteSpecialChars( std::string& s,
-                                           char r,
-                           std::string& x )
+                                                   char r,
+                                                   std::string& x )
 {
   size_t p;
   while ( (p = s.find_first_of(r)) != std::string::npos )
-  {
+    {
     s.erase(p,1);
     s.insert(p,x);
-  }
+    }
 }
 
 inline void DocBookOutput::removeChar( std::string& s, char r)
 {
   size_t p;
   while ( (p = s.find_first_of(r)) != std::string::npos )
-  {
+    {
     s.erase(p,1);
-  }
+    }
 }
 
 inline void DocBookOutput::printShortArg(Arg* a)
@@ -237,8 +237,8 @@ inline void DocBookOutput::printShortArg(Arg* a)
     
         
   std::cout << "<arg choice='" << choice 
-        << "' repeat='" << repeat << "'>" 
-        << id << "</arg>" << std::endl; 
+            << "' repeat='" << repeat << "'>" 
+            << id << "</arg>" << std::endl; 
 
 }
 

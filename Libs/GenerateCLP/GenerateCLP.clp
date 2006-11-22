@@ -51,23 +51,23 @@ std::cout << "" << std::endl;
 try
   {
     TCLAP::CmdLine commandLine (
-      argv[0],
       "Generates C++ code that will parse command lines",
+      ' ',
       "$Revision: $" );
 
       itksys_ios::ostringstream msg;
     msg.str("");msg << "Generate TCLAP Code (default: " << UseTCLAP << ")";
-    TCLAP::SwitchArg UseTCLAPArg("", "TCLAP", msg.str(), 0, commandLine);
+    TCLAP::SwitchArg UseTCLAPArg("", "TCLAP", msg.str(), commandLine, 0);
 
     msg.str("");msg << "XML description of interface";    TCLAP::UnlabeledValueArg<std::string> InputXMLArg("InputXML", msg.str(), 1, InputXML, "std::string", commandLine);
 
     msg.str("");msg << "C++ Code to process command line arguments";    TCLAP::UnlabeledValueArg<std::string> OutputCxxArg("OutputCxx", msg.str(), 1, OutputCxx, "std::string", commandLine);
 
     msg.str("");msg << "Echo the command line arguments (default: " << echoSwitch << ")";
-    TCLAP::SwitchArg echoSwitchArg("", "echo", msg.str(), 0, commandLine);
+    TCLAP::SwitchArg echoSwitchArg("", "echo", msg.str(), commandLine, 0);
 
     msg.str("");msg << "Produce xml description of command line arguments (default: " << xmlSwitch << ")";
-    TCLAP::SwitchArg xmlSwitchArg("", "xml", msg.str(), 0, commandLine);
+    TCLAP::SwitchArg xmlSwitchArg("", "xml", msg.str(), commandLine, 0);
 
     commandLine.parse ( argc, (char**) argv );
     UseTCLAP = UseTCLAPArg.getValue();

@@ -30,18 +30,22 @@ namespace TCLAP {
  */
 class Visitor
 {
-  public:
+public:
 
-    /**
-     * Constructor. Does nothing.
-     */
-    Visitor() { }
-    virtual ~Visitor() { }
+  /**
+   * Constructor. Does nothing.
+   */
+  Visitor() { }
 
-    /**
-     * Does nothing. Should be overridden by child.
-     */
-    virtual void visit() { }
+  /**
+   * Destructor. Does nothing.
+   */
+  virtual ~Visitor() { }
+
+  /**
+   * Does nothing. Should be overridden by child.
+   */
+  virtual void visit() { }
 };
 
 }

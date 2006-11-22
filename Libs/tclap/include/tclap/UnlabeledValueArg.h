@@ -45,7 +45,6 @@ class UnlabeledValueArg : public ValueArg<T>
 
   // If compiler has two stage name lookup (as gcc >= 3.4 does)
   // this is requried to prevent undef. symbols
-#ifndef __BORLANDC__
   using ValueArg<T>::_ignoreable;
   using ValueArg<T>::_hasBlanks;
   using ValueArg<T>::_extractValue;
@@ -54,156 +53,156 @@ class UnlabeledValueArg : public ValueArg<T>
   using ValueArg<T>::_description;
   using ValueArg<T>::_alreadySet;
   using ValueArg<T>::toString;
-#endif
-  public:
 
-    /**
-     * UnlabeledValueArg constructor.
-     * \param name - A one word name for the argument.  Can be
-     * used as a long flag on the command line.
-     * \param desc - A description of what the argument is for or
-     * does.
-     * \param req - Whether the argument is required on the command
-     * line.
-     * \param value - The default value assigned to this argument if it
-     * is not present on the command line.
-     * \param typeDesc - A short, human readable description of the
-     * type that this object expects.  This is used in the generation
-     * of the USAGE statement.  The goal is to be helpful to the end user
-     * of the program.
-     * \param ignoreable - Allows you to specify that this argument can be
-     * ignored if the '--' flag is set.  This defaults to false (cannot
-     * be ignored) and should  generally stay that way unless you have 
-     * some special need for certain arguments to be ignored.
-     * \param v - Optional Vistor.  You should leave this blank unless
-     * you have a very good reason.
-     */
-    UnlabeledValueArg( const std::string& name, 
-                     const std::string& desc, 
-               bool req,
-                   T value,
-                   const std::string& typeDesc,
-               bool ignoreable = false,
-                   Visitor* v = NULL); 
+public:
 
-    /**
-     * UnlabeledValueArg constructor.
-     * \param name - A one word name for the argument.  Can be
-     * used as a long flag on the command line.
-     * \param desc - A description of what the argument is for or
-     * does.
-     * \param req - Whether the argument is required on the command
-     * line.
-     * \param value - The default value assigned to this argument if it
-     * is not present on the command line.
-     * \param typeDesc - A short, human readable description of the
-     * type that this object expects.  This is used in the generation
-     * of the USAGE statement.  The goal is to be helpful to the end user
-     * of the program.
-     * \param parser - A CmdLine parser object to add this Arg to
-     * \param ignoreable - Allows you to specify that this argument can be
-     * ignored if the '--' flag is set.  This defaults to false (cannot
-     * be ignored) and should  generally stay that way unless you have 
-     * some special need for certain arguments to be ignored.
-     * \param v - Optional Vistor.  You should leave this blank unless
-     * you have a very good reason.
-     */
-    UnlabeledValueArg( const std::string& name, 
+  /**
+   * UnlabeledValueArg constructor.
+   * \param name - A one word name for the argument.  Can be
+   * used as a long flag on the command line.
+   * \param desc - A description of what the argument is for or
+   * does.
+   * \param req - Whether the argument is required on the command
+   * line.
+   * \param value - The default value assigned to this argument if it
+   * is not present on the command line.
+   * \param typeDesc - A short, human readable description of the
+   * type that this object expects.  This is used in the generation
+   * of the USAGE statement.  The goal is to be helpful to the end user
+   * of the program.
+   * \param ignoreable - Allows you to specify that this argument can be
+   * ignored if the '--' flag is set.  This defaults to false (cannot
+   * be ignored) and should  generally stay that way unless you have 
+   * some special need for certain arguments to be ignored.
+   * \param v - Optional Vistor.  You should leave this blank unless
+   * you have a very good reason.
+   */
+  UnlabeledValueArg( const std::string& name, 
                      const std::string& desc, 
-               bool req,
-                   T value,
-                   const std::string& typeDesc,
-               CmdLineInterface& parser,
-               bool ignoreable = false,
-                   Visitor* v = NULL );           
+                     bool req,
+                     T value,
+                     const std::string& typeDesc,
+                     bool ignoreable = false,
+                     Visitor* v = NULL); 
+
+  /**
+   * UnlabeledValueArg constructor.
+   * \param name - A one word name for the argument.  Can be
+   * used as a long flag on the command line.
+   * \param desc - A description of what the argument is for or
+   * does.
+   * \param req - Whether the argument is required on the command
+   * line.
+   * \param value - The default value assigned to this argument if it
+   * is not present on the command line.
+   * \param typeDesc - A short, human readable description of the
+   * type that this object expects.  This is used in the generation
+   * of the USAGE statement.  The goal is to be helpful to the end user
+   * of the program.
+   * \param parser - A CmdLine parser object to add this Arg to
+   * \param ignoreable - Allows you to specify that this argument can be
+   * ignored if the '--' flag is set.  This defaults to false (cannot
+   * be ignored) and should  generally stay that way unless you have 
+   * some special need for certain arguments to be ignored.
+   * \param v - Optional Vistor.  You should leave this blank unless
+   * you have a very good reason.
+   */
+  UnlabeledValueArg( const std::string& name, 
+                     const std::string& desc, 
+                     bool req,
+                     T value,
+                     const std::string& typeDesc,
+                     CmdLineInterface& parser,
+                     bool ignoreable = false,
+                     Visitor* v = NULL );           
             
-    /**
-     * UnlabeledValueArg constructor.
-     * \param name - A one word name for the argument.  Can be
-     * used as a long flag on the command line.
-     * \param desc - A description of what the argument is for or
-     * does.
-     * \param req - Whether the argument is required on the command
-     * line.
-     * \param value - The default value assigned to this argument if it
-     * is not present on the command line.
-     * \param constraint - A pointer to a Constraint object used
-     * to constrain this Arg.
-     * \param ignoreable - Allows you to specify that this argument can be
-     * ignored if the '--' flag is set.  This defaults to false (cannot
-     * be ignored) and should  generally stay that way unless you have 
-     * some special need for certain arguments to be ignored.
-     * \param v - Optional Vistor.  You should leave this blank unless
-     * you have a very good reason.
-     */
-    UnlabeledValueArg( const std::string& name, 
+  /**
+   * UnlabeledValueArg constructor.
+   * \param name - A one word name for the argument.  Can be
+   * used as a long flag on the command line.
+   * \param desc - A description of what the argument is for or
+   * does.
+   * \param req - Whether the argument is required on the command
+   * line.
+   * \param value - The default value assigned to this argument if it
+   * is not present on the command line.
+   * \param constraint - A pointer to a Constraint object used
+   * to constrain this Arg.
+   * \param ignoreable - Allows you to specify that this argument can be
+   * ignored if the '--' flag is set.  This defaults to false (cannot
+   * be ignored) and should  generally stay that way unless you have 
+   * some special need for certain arguments to be ignored.
+   * \param v - Optional Vistor.  You should leave this blank unless
+   * you have a very good reason.
+   */
+  UnlabeledValueArg( const std::string& name, 
                      const std::string& desc, 
-               bool req,
-                   T value,
-                   Constraint<T>* constraint,
-               bool ignoreable = false,
-                   Visitor* v = NULL ); 
+                     bool req,
+                     T value,
+                     Constraint<T>* constraint,
+                     bool ignoreable = false,
+                     Visitor* v = NULL ); 
 
     
-    /**
-     * UnlabeledValueArg constructor.
-     * \param name - A one word name for the argument.  Can be
-     * used as a long flag on the command line.
-     * \param desc - A description of what the argument is for or
-     * does.
-     * \param req - Whether the argument is required on the command
-     * line.
-     * \param value - The default value assigned to this argument if it
-     * is not present on the command line.
-     * \param constraint - A pointer to a Constraint object used
-     * to constrain this Arg.
-     * \param parser - A CmdLine parser object to add this Arg to
-     * \param ignoreable - Allows you to specify that this argument can be
-     * ignored if the '--' flag is set.  This defaults to false (cannot
-     * be ignored) and should  generally stay that way unless you have 
-     * some special need for certain arguments to be ignored.
-     * \param v - Optional Vistor.  You should leave this blank unless
-     * you have a very good reason.
-     */
-    UnlabeledValueArg( const std::string& name, 
+  /**
+   * UnlabeledValueArg constructor.
+   * \param name - A one word name for the argument.  Can be
+   * used as a long flag on the command line.
+   * \param desc - A description of what the argument is for or
+   * does.
+   * \param req - Whether the argument is required on the command
+   * line.
+   * \param value - The default value assigned to this argument if it
+   * is not present on the command line.
+   * \param constraint - A pointer to a Constraint object used
+   * to constrain this Arg.
+   * \param parser - A CmdLine parser object to add this Arg to
+   * \param ignoreable - Allows you to specify that this argument can be
+   * ignored if the '--' flag is set.  This defaults to false (cannot
+   * be ignored) and should  generally stay that way unless you have 
+   * some special need for certain arguments to be ignored.
+   * \param v - Optional Vistor.  You should leave this blank unless
+   * you have a very good reason.
+   */
+  UnlabeledValueArg( const std::string& name, 
                      const std::string& desc, 
-               bool req,
-                   T value,
-                   Constraint<T>* constraint,
-               CmdLineInterface& parser,
-               bool ignoreable = false,
-                   Visitor* v = NULL);
+                     bool req,
+                     T value,
+                     Constraint<T>* constraint,
+                     CmdLineInterface& parser,
+                     bool ignoreable = false,
+                     Visitor* v = NULL);
             
-    /**
-     * Handles the processing of the argument.
-     * This re-implements the Arg version of this method to set the
-     * _value of the argument appropriately.  Handling specific to
-     * unlabled arguments.
-     * \param i - Pointer the the current argument in the list.
-     * \param args - Mutable list of strings. 
-     */
-    virtual bool processArg(int* i, std::vector<std::string>& args); 
+  /**
+   * Handles the processing of the argument.
+   * This re-implements the Arg version of this method to set the
+   * _value of the argument appropriately.  Handling specific to
+   * unlabled arguments.
+   * \param i - Pointer the the current argument in the list.
+   * \param args - Mutable list of strings. 
+   */
+  virtual bool processArg(int* i, std::vector<std::string>& args); 
 
-    /**
-     * Overrides shortID for specific behavior.
-     */
-    virtual std::string shortID(const std::string& val="val") const;
+  /**
+   * Overrides shortID for specific behavior.
+   */
+  virtual std::string shortID(const std::string& val="val") const;
 
-    /**
-     * Overrides longID for specific behavior.
-     */
-    virtual std::string longID(const std::string& val="val") const;
+  /**
+   * Overrides longID for specific behavior.
+   */
+  virtual std::string longID(const std::string& val="val") const;
 
-    /**
-     * Overrides operator== for specific behavior.
-     */
-    virtual bool operator==(const Arg& a ) const;
+  /**
+   * Overrides operator== for specific behavior.
+   */
+  virtual bool operator==(const Arg& a ) const;
 
-    /**
-     * Instead of pushing to the front of list, push to the back.
-     * \param argList - The list to add this to.
-     */
-    virtual void addToList( std::list<Arg*>& argList ) const;
+  /**
+   * Instead of pushing to the front of list, push to the back.
+   * \param argList - The list to add this to.
+   */
+  virtual void addToList( std::list<Arg*>& argList ) const;
 
 };
 
@@ -212,13 +211,13 @@ class UnlabeledValueArg : public ValueArg<T>
  */
 template<class T>
 UnlabeledValueArg<T>::UnlabeledValueArg(const std::string& name, 
-                              const std::string& desc, 
-                    bool req,
-                              T val,
-                              const std::string& typeDesc,
-                              bool ignoreable,
-                              Visitor* v)
-: ValueArg<T>("", name, desc, req, val, typeDesc, v)
+                                        const std::string& desc, 
+                                        bool req,
+                                        T val,
+                                        const std::string& typeDesc,
+                                        bool ignoreable,
+                                        Visitor* v)
+  : ValueArg<T>("", name, desc, req, val, typeDesc, v)
 { 
   _ignoreable = ignoreable;
 
@@ -228,14 +227,14 @@ UnlabeledValueArg<T>::UnlabeledValueArg(const std::string& name,
 
 template<class T>
 UnlabeledValueArg<T>::UnlabeledValueArg(const std::string& name, 
-                              const std::string& desc, 
-                    bool req,
-                              T val,
-                              const std::string& typeDesc,
-                              CmdLineInterface& parser,
-                              bool ignoreable,
-                              Visitor* v)
-: ValueArg<T>("", name, desc, req, val, typeDesc, v)
+                                        const std::string& desc, 
+                                        bool req,
+                                        T val,
+                                        const std::string& typeDesc,
+                                        CmdLineInterface& parser,
+                                        bool ignoreable,
+                                        Visitor* v)
+  : ValueArg<T>("", name, desc, req, val, typeDesc, v)
 { 
   _ignoreable = ignoreable;
   OptionalUnlabeledTracker::check(req, toString());
@@ -248,12 +247,12 @@ UnlabeledValueArg<T>::UnlabeledValueArg(const std::string& name,
 template<class T>
 UnlabeledValueArg<T>::UnlabeledValueArg(const std::string& name, 
                                         const std::string& desc, 
-                    bool req,
+                                        bool req,
                                         T val,
                                         Constraint<T>* constraint,
                                         bool ignoreable,
                                         Visitor* v)
-: ValueArg<T>("", name, desc, req, val, constraint, v)
+  : ValueArg<T>("", name, desc, req, val, constraint, v)
 { 
   _ignoreable = ignoreable;
   OptionalUnlabeledTracker::check(req, toString());
@@ -261,14 +260,14 @@ UnlabeledValueArg<T>::UnlabeledValueArg(const std::string& name,
 
 template<class T>
 UnlabeledValueArg<T>::UnlabeledValueArg(const std::string& name, 
-                              const std::string& desc, 
-                    bool req,
-                              T val,
-                              Constraint<T>* constraint,
-                              CmdLineInterface& parser,
-                              bool ignoreable,
-                              Visitor* v)
-: ValueArg<T>("", name, desc, req, val, constraint,  v)
+                                        const std::string& desc, 
+                                        bool req,
+                                        T val,
+                                        Constraint<T>* constraint,
+                                        CmdLineInterface& parser,
+                                        bool ignoreable,
+                                        Visitor* v)
+  : ValueArg<T>("", name, desc, req, val, constraint,  v)
 { 
   _ignoreable = ignoreable;
   OptionalUnlabeledTracker::check(req, toString());
@@ -288,7 +287,17 @@ bool UnlabeledValueArg<T>::processArg(int *i, std::vector<std::string>& args)
   if ( _hasBlanks( args[*i] ) )
     return false;
 
+  // WEL: Do no allow unlabeld args that start with "-". If they are
+  // allowed, then the parser cannot detect invalid options!
+
+  if ( _ignoreable && Arg::ignoreRest() )
+    return false;
+
+  if (args[*i].find_first_of( Arg::flagStartString() ) == 0)
+    return false;
+
   // never ignore an unlabeled arg
+  // WEL: except for those that start with a "-"
   
   _extractValue( args[*i] );
   _alreadySet = true;
@@ -299,7 +308,7 @@ bool UnlabeledValueArg<T>::processArg(int *i, std::vector<std::string>& args)
  * Overriding shortID for specific output.
  */
 template<class T>
-std::string UnlabeledValueArg<T>::shortID(const std::string&) const
+std::string UnlabeledValueArg<T>::shortID(const std::string& val) const
 {
   std::string id = "<" + _typeDesc + ">";
 
@@ -310,7 +319,7 @@ std::string UnlabeledValueArg<T>::shortID(const std::string&) const
  * Overriding longID for specific output.
  */
 template<class T>
-std::string UnlabeledValueArg<T>::longID(const std::string&) const
+std::string UnlabeledValueArg<T>::longID(const std::string& val) const
 {
   // Ideally we would like to be able to use RTTI to return the name
   // of the type required for this argument.  However, g++ at least, 

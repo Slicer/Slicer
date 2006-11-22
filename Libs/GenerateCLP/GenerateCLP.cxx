@@ -588,8 +588,8 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
   sout << "try" << EOL << std::endl;
   sout << "  {" << EOL << std::endl;
   sout << "    TCLAP::CmdLine commandLine (" << EOL << std::endl;
-  sout << "      argv[0]," << EOL << std::endl;
   sout << "      " << "\"" << module.GetDescription() << "\"," << EOL << std::endl;
+  sout << "       " << "' '," << EOL << std::endl;
   sout << "      " << "\"" << module.GetVersion() << "\"";
   sout << " );" << EOL << std::endl << EOL << std::endl;
   sout << "      itksys_ios::ostringstream msg;" << EOL << std::endl;
@@ -643,9 +643,10 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
              << "\", \"" 
              << pit->GetLongFlag()
              << "\", msg.str(), "
-             << pit->GetName()
+             << "commandLine"
              << ", "
-             << "commandLine);"
+             << pit->GetName()
+             << ");"
              << EOL << std::endl << EOL << std::endl;
         }
       else
