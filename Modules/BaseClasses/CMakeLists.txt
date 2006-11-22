@@ -34,6 +34,10 @@ INCLUDE_DIRECTORIES(
   ${MRML_BINARY_DIR}
   ${ModuleDescriptionParser_SOURCE_DIR}
   ${ModuleDescriptionParser_BINARY_DIR}
+  ${SlicerBaseGUI_SOURCE_DIR}
+  ${SlicerBaseGUI_BINARY_DIR}
+  ${SlicerBaseLogic_SOURCE_DIR}
+  ${SlicerBaseLogic_BINARY_DIR}
   ${VTK_INCLUDE_DIR}
   )
 
@@ -55,6 +59,8 @@ TARGET_LINK_LIBRARIES(ModulesBaseClasses
   MRML
   vtkCommonTCL
   ModuleDescriptionParser
+  SlicerBaseGUI
+  SlicerBaseLogic
   )
 
 

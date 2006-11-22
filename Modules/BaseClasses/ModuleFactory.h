@@ -33,12 +33,14 @@ public:
   ModuleDescription GetModuleDescription(const std::string&) const;
   
 protected:
-  // Scan for shared object modules (i.e. DLL) in the module search path.
-  virtual void ScanForSharedObjectModules();
+  // Scan for shared object modules (i.e. DLL) in the module search
+  // path. Returns the number of modules found.
+  virtual long ScanForSharedObjectModules();
 
   // Scan for command line modules in the module search path. Command
-  // line modules are executables that respond to a --xml argument.
-  virtual void ScanForCommandLineModules();
+  // line modules are executables that respond to a --xml
+  // argument. Returns the number of modules found.
+  virtual long ScanForCommandLineModules();
   
 private:
   ModuleDescriptionMap *InternalMap;

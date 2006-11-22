@@ -9,6 +9,10 @@
 #include "itksys/SystemTools.hxx"
 #include "itksys/Process.h"
 
+#include "vtkSlicerApplication.h"
+#include "vtkKWLogDialog.h"
+#include "vtkKWLogWidget.h"
+
 #include <map>
 
 void
@@ -110,11 +114,18 @@ ModuleFactory
 {
   // Scan for shared object modules first since they will be higher
   // performance faster than command line module
-  this->ScanForSharedObjectModules();
-  this->ScanForCommandLineModules();
+  int numberOfShared, numberOfExecutables;
+
+  numberOfShared = this->ScanForSharedObjectModules();
+  numberOfExecutables = this->ScanForCommandLineModules();
+
+  if (numberOfShared + numberOfExecutables == 0)
+    {
+    vtkSlicerApplication::GetInstance()->GetLogDialog()->GetLogWidget()->AddWarningRecord( "No plugin modules found. Check your module search path and your Slicer installation." );
+    }
 }
 
-void
+long
 ModuleFactory
 ::ScanForSharedObjectModules()
 {
@@ -124,8 +135,8 @@ ModuleFactory
   // and have a prescribed symbol.
   if (this->SearchPath == "")
     {
-    std::cout << "Empty module search path." << std::endl;
-    return;
+    vtkSlicerApplication::GetInstance()->GetLogDialog()->GetLogWidget()->AddWarningRecord( "Empty module search path." );
+    return 0;
     }
   
   std::vector<std::string> modulePaths;
@@ -138,10 +149,14 @@ ModuleFactory
 
   std::vector<std::string>::const_iterator pit;
   long numberTested = 0;
-  
+  long numberFound = 0;
+
   for (pit = modulePaths.begin(); pit != modulePaths.end(); ++pit)
     {
-    std::cout << "Searching " << *pit << std::endl;
+    std::stringstream information;
+  
+    information << "Searching " << *pit
+                << " for shared object plugins." << std::endl;
     
     itksys::Directory directory;
     directory.Load( (*pit).c_str() );
@@ -207,10 +222,14 @@ ModuleFactory
                   {
                   // Store the module in the list
                   (*this->InternalMap)[module.GetTitle()] =  module ;
+
+                  information << "A module named \"" << module.GetTitle()
+                              << "\" has been discovered at " << module.GetTarget() << std::endl;
+                  numberFound++;
                   }
                 else
                   {
-                  std::cout << "  A module named \"" << module.GetTitle()
+                  information << "A module named \"" << module.GetTitle()
                             << "\" has already been discovered." << std::endl
                             << "    First discovered at "
                             << (*mit).second.GetTarget() << std::endl
@@ -230,13 +249,20 @@ ModuleFactory
           }
         }
       }
+
+    vtkSlicerApplication::GetInstance()->GetLogDialog()->GetLogWidget()->AddInformationRecord( information.str().c_str() );
     }
 
-  std::cout << "Tested " << numberTested << " files as shared object plugins. Found "
-            << this->InternalMap->size() << " valid plugins." << std::endl;
+  std::stringstream information;
+  information << "Tested " << numberTested << " files as shared object plugins. Found "
+              << numberFound << " valid plugins." << std::endl;
+
+  vtkSlicerApplication::GetInstance()->GetLogDialog()->GetLogWidget()->AddInformationRecord( information.str().c_str() );
+
+  return numberFound;
 }
 
-void
+long
 ModuleFactory
 ::ScanForCommandLineModules()
 {
@@ -247,8 +273,8 @@ ModuleFactory
   //
   if (this->SearchPath == "")
     {
-    std::cout << "Empty module search path." << std::endl;
-    return;
+    vtkSlicerApplication::GetInstance()->GetLogDialog()->GetLogWidget()->AddWarningRecord( "Empty module search path." ); 
+    return 0;
     }
   
   std::vector<std::string> modulePaths;
@@ -261,10 +287,14 @@ ModuleFactory
 
   std::vector<std::string>::const_iterator pit;
   long numberTested = 0;
+  long numberFound = 0;
   
   for (pit = modulePaths.begin(); pit != modulePaths.end(); ++pit)
     {
-    std::cout << "Searching " << *pit << std::endl;
+    std::stringstream information;
+    
+    information << "Searching " << *pit
+                << " for command line executable plugins." << std::endl;
     
     itksys::Directory directory;
     directory.Load( (*pit).c_str() );
@@ -360,10 +390,14 @@ ModuleFactory
                 {
                 // Store the module in the list
                 (*this->InternalMap)[module.GetTitle()] =  module ;
+
+                information << "A module named \"" << module.GetTitle()
+                            << "\" has been discovered at " << module.GetTarget() << std::endl;
+                numberFound++;
                 }
               else
                 {
-                std::cout << "  A module named \"" << module.GetTitle()
+                information << "A module named \"" << module.GetTitle()
                           << "\" has already been discovered." << std::endl
                           << "    First discovered at "
                           << (*mit).second.GetTarget() << std::endl
@@ -399,8 +433,13 @@ ModuleFactory
         itksysProcess_Delete(process);
         }
       }
+    vtkSlicerApplication::GetInstance()->GetLogDialog()->GetLogWidget()->AddInformationRecord( information.str().c_str() );    
     }
 
-  std::cout << "Tested " << numberTested << " files as plugins. Found "
-            << this->InternalMap->size() << " valid plugins." << std::endl;
+  std::stringstream information;
+  information << "Tested " << numberTested << " files as command line executable plugins. Found "
+            << numberFound << " valid plugins." << std::endl;
+  vtkSlicerApplication::GetInstance()->GetLogDialog()->GetLogWidget()->AddInformationRecord( information.str().c_str() );
+
+  return numberFound;
 }
