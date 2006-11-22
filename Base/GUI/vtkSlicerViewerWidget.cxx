@@ -325,18 +325,17 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
   this->ProcessingMRMLEvent = event;
 
   vtkDebugMacro("processing event " << event);
-   /**  
-   if (event == vtkMRMLScene::SceneCloseEvent || event == vtkMRMLScene::NewSceneEvent )
-   {
- 
-    this->DisplayedModels.clear();
-    this->DisplayedFiducials.clear();
-    this->DisplayedTextFiducials.clear();
-    this->DisplayedModelsClipState.clear();
-    this->ProcessingMRMLEvent = 0;
-    return;
-  }
-    **/
+   
+  if (event == vtkMRMLScene::SceneCloseEvent )
+    {
+    this->SceneClosing = true;
+    }
+  else 
+    {
+    this->SceneClosing = false;
+    }
+
+
   if ( vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene 
     && (event == vtkMRMLScene::NodeAddedEvent || event == vtkMRMLScene::NodeRemovedEvent ) )
     {
@@ -392,6 +391,10 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
 //---------------------------------------------------------------------------
 void vtkSlicerViewerWidget::UpdateCameraNode()
 {
+  if (this->SceneClosing)
+    {
+    return;
+    }
   // find an active camera
   // or any camera if none is active
   vtkMRMLCameraNode *node = NULL;
@@ -495,7 +498,7 @@ void vtkSlicerViewerWidget::CreateWidget ( )
 
   // observe scene for add/remove nodes
   vtkIntArray *events = vtkIntArray::New();
-  //events->InsertNextValue(vtkMRMLScene::SceneCloseEvent);
+  events->InsertNextValue(vtkMRMLScene::SceneCloseEvent);
   //events->InsertNextValue(vtkMRMLScene::NewSceneEvent);
   events->InsertNextValue(vtkCommand::ModifiedEvent);
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
@@ -708,7 +711,7 @@ void vtkSlicerViewerWidget::UpdateFiducialsFromMRML()
         {
         actorExists = 1;
         }
-      vtkGlyphSource2D *glyph = vtkGlyphSource2D::New();;
+      vtkGlyphSource2D *glyph = vtkGlyphSource2D::New();
       vtkPolyDataMapper *mapper = NULL;
       vtkActor *actor = NULL;
       if (actorExists)

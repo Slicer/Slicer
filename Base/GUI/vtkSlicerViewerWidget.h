@@ -189,6 +189,8 @@ protected:
 
   vtkMRMLCameraNode *CameraNode;
 
+  bool SceneClosing;
+
 private:
   
   vtkSlicerViewerWidget(const vtkSlicerViewerWidget&); // Not implemented
