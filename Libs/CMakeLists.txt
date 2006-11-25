@@ -6,6 +6,7 @@ SUBDIRS(
     vtkITK
     FreeSurfer
     MRML
+    tclap
     ModuleDescriptionParser
     GenerateCLP
     SlicerIO
