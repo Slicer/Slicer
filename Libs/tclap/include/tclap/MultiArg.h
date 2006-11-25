@@ -454,7 +454,7 @@ bool MultiArg<T>::processArg(int *i, std::vector<std::string>& args)
  *
  */
 template<class T>
-std::string MultiArg<T>::shortID(const std::string& val) const
+std::string MultiArg<T>::shortID(const std::string&) const
 {
   std::string id = Arg::shortID(_typeDesc) + " ... ";
 
@@ -465,7 +465,7 @@ std::string MultiArg<T>::shortID(const std::string& val) const
  *
  */
 template<class T>
-std::string MultiArg<T>::longID(const std::string& val) const
+std::string MultiArg<T>::longID(const std::string&) const
 {
   std::string id = Arg::longID(_typeDesc) + "  (accepted multiple times)";
 

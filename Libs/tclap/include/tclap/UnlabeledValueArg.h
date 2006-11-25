@@ -45,6 +45,7 @@ class UnlabeledValueArg : public ValueArg<T>
 
   // If compiler has two stage name lookup (as gcc >= 3.4 does)
   // this is requried to prevent undef. symbols
+#ifndef __BORLANDC__
   using ValueArg<T>::_ignoreable;
   using ValueArg<T>::_hasBlanks;
   using ValueArg<T>::_extractValue;
@@ -53,7 +54,7 @@ class UnlabeledValueArg : public ValueArg<T>
   using ValueArg<T>::_description;
   using ValueArg<T>::_alreadySet;
   using ValueArg<T>::toString;
-
+#endif
 public:
 
   /**
@@ -308,7 +309,7 @@ bool UnlabeledValueArg<T>::processArg(int *i, std::vector<std::string>& args)
  * Overriding shortID for specific output.
  */
 template<class T>
-std::string UnlabeledValueArg<T>::shortID(const std::string& val) const
+std::string UnlabeledValueArg<T>::shortID(const std::string&) const
 {
   std::string id = "<" + _typeDesc + ">";
 
@@ -319,7 +320,7 @@ std::string UnlabeledValueArg<T>::shortID(const std::string& val) const
  * Overriding longID for specific output.
  */
 template<class T>
-std::string UnlabeledValueArg<T>::longID(const std::string& val) const
+std::string UnlabeledValueArg<T>::longID(const std::string&) const
 {
   // Ideally we would like to be able to use RTTI to return the name
   // of the type required for this argument.  However, g++ at least, 

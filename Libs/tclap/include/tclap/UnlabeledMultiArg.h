@@ -42,6 +42,7 @@ class UnlabeledMultiArg : public MultiArg<T>
 
   // If compiler has two stage name lookup (as gcc >= 3.4 does)
   // this is requried to prevent undef. symbols
+#ifndef __BORLANDC__
   using MultiArg<T>::_ignoreable;
   using MultiArg<T>::_hasBlanks;
   using MultiArg<T>::_extractValue;
@@ -50,6 +51,7 @@ class UnlabeledMultiArg : public MultiArg<T>
   using MultiArg<T>::_description;
   using MultiArg<T>::_alreadySet;
   using MultiArg<T>::toString;
+#endif
 
 public:
     
