@@ -52,7 +52,7 @@ vtkSlicerModuleChooseGUI::vtkSlicerModuleChooseGUI ( )
     this->ModulesLabel = vtkKWLabel::New();
     this->ModulesPrev = vtkKWPushButton::New ( );
     this->ModulesNext = vtkKWPushButton::New ( );
-    this->ModulesHistory = vtkKWPushButton::New ( );
+    this->ModulesHistory = vtkKWMenuButton::New ( );
     this->ModulesRefresh = vtkKWPushButton::New ( );
     this->ModulesSearch = vtkKWPushButton::New ( );
     this->SlicerModuleNavigationIcons = vtkSlicerModuleNavigationIcons::New ( );
@@ -152,6 +152,7 @@ void vtkSlicerModuleChooseGUI::RemoveGUIObservers ( )
 {
     this->ModulesPrev->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ModulesNext->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->ModulesHistory->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 }
 
 
@@ -160,6 +161,7 @@ void vtkSlicerModuleChooseGUI::AddGUIObservers ( )
 {
     this->ModulesPrev->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ModulesNext->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->ModulesHistory->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 }
 
 
@@ -176,6 +178,8 @@ void vtkSlicerModuleChooseGUI::ProcessGUIEvents ( vtkObject *caller,
   char *moduleName;
   
   vtkKWPushButton *pushb = vtkKWPushButton::SafeDownCast ( caller );
+  vtkKWMenu *menu = vtkKWMenu::SafeDownCast ( caller );
+  
   if ( pushb == this->ModulesPrev && event == vtkKWPushButton::InvokedEvent )
     {
     if ( (moduleName= this->GetModuleNavigator()->NavigateBack()) != NULL )
@@ -189,6 +193,17 @@ void vtkSlicerModuleChooseGUI::ProcessGUIEvents ( vtkObject *caller,
       {
       this->RaiseModule ( moduleName );
       }
+    }
+  if ( menu == this->ModulesHistory->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
+    {
+    // First, get the text (modulename) of the selected module.
+    const char *c = this->ModulesHistory->GetValue ( );
+    // Now, add it to the navigation list as though module were selected
+    // straight from the modules choose menubutton.
+    // the little checkbox in this pulldown menu should really track the current module.
+    // but don't want to trigger extra events by setting it. ignore for now.
+    this->GetModuleNavigator()->AddModuleNameToNavigationList ( c );
+    this->RaiseModule ( c );
     }
   
 }
@@ -229,6 +244,27 @@ void vtkSlicerModuleChooseGUI::RaiseModule ( const char *moduleName )
 
 
 
+
+//---------------------------------------------------------------------------
+void vtkSlicerModuleChooseGUI::PopulateHistoryListMenu  ( )
+{
+
+  if ( this->ModulesHistory != NULL )
+    {
+    // Delete the existing menu
+    this->ModulesHistory->GetMenu()->DeleteAllItems ( );
+    struct ModuleNameEntry *n = this->GetModuleNavigator()->GetModuleHistoryList();
+    // and reconstruct it with current module history.
+    while ( n != NULL )
+      {
+      this->ModulesHistory->GetMenu()->AddRadioButton ( n->ModuleName );
+      n = n->Next;
+      }
+    }
+}
+
+
+
 //---------------------------------------------------------------------------
 void vtkSlicerModuleChooseGUI::SelectModule ( const char *moduleName )
 {
@@ -236,6 +272,7 @@ void vtkSlicerModuleChooseGUI::SelectModule ( const char *moduleName )
     {
     this->RaiseModule ( moduleName );
     this->GetModuleNavigator()->AddModuleNameToHistoryList ( moduleName );
+    this->PopulateHistoryListMenu ( );
     this->GetModuleNavigator()->AddModuleNameToNavigationList ( moduleName );
     }
 }
@@ -332,6 +369,7 @@ void vtkSlicerModuleChooseGUI::BuildGUI ( vtkKWFrame *appF )
       this->ModulesHistory->Create ( );
       this->ModulesHistory->SetBorderWidth ( 0 );
       this->ModulesHistory->SetImageToIcon ( this->SlicerModuleNavigationIcons->GetModuleHistoryIcon() );
+      this->ModulesHistory->IndicatorVisibilityOff  ( );
       this->ModulesHistory->SetBalloonHelpString ("List all visited modules.");
 
       this->ModulesRefresh->SetParent ( this->ModuleNavigationFrame );

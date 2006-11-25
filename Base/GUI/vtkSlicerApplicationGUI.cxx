@@ -542,6 +542,7 @@ void vtkSlicerApplicationGUI::SelectModule ( const char *moduleName )
   this->GetModuleChooseGUI()->GetModuleNavigator()->SetHomeModule ( moduleName );
   this->GetModuleChooseGUI()->GetModuleNavigator()->AddModuleNameToNavigationList ( moduleName );
   this->GetModuleChooseGUI()->GetModuleNavigator()->AddModuleNameToHistoryList ( moduleName );
+  this->GetModuleChooseGUI()->PopulateHistoryListMenu ( );
 }
 
 //---------------------------------------------------------------------------

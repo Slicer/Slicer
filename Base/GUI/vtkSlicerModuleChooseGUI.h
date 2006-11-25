@@ -36,7 +36,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleChooseGUI : public vtkSlicerComp
     vtkGetObjectMacro ( ModulesLabel, vtkKWLabel );
     vtkGetObjectMacro ( ModulesPrev, vtkKWPushButton );
     vtkGetObjectMacro ( ModulesNext, vtkKWPushButton );    
-    vtkGetObjectMacro (ModulesHistory, vtkKWPushButton );
+    vtkGetObjectMacro (ModulesHistory, vtkKWMenuButton );
     vtkGetObjectMacro (ModulesRefresh, vtkKWPushButton );
     vtkGetObjectMacro (ModulesSearch, vtkKWPushButton );
     vtkGetObjectMacro (ModuleSearchEntry, vtkKWEntry );
@@ -70,6 +70,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleChooseGUI : public vtkSlicerComp
     virtual void RemoveGUIObservers ( );
 
     // Description:
+    // Add any newly visited modules to the ModulesHistory menu
+    virtual void PopulateHistoryListMenu ( );
+    
+    // Description:
     // Class's mediator methods for processing events invoked by
     // either the Logic, MRML or GUI.
     virtual void ProcessLogicEvents ( vtkObject *caller, unsigned long event, void *callData );
@@ -94,7 +98,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleChooseGUI : public vtkSlicerComp
     vtkKWLabel *ModulesLabel;
     vtkKWPushButton *ModulesPrev;
     vtkKWPushButton *ModulesNext;
-    vtkKWPushButton *ModulesHistory;
+    vtkKWMenuButton *ModulesHistory;
     vtkKWPushButton *ModulesRefresh;
     vtkKWPushButton *ModulesSearch;
     vtkSlicerModuleNavigationIcons *SlicerModuleNavigationIcons;
