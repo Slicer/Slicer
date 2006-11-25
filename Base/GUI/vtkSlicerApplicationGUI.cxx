@@ -49,6 +49,7 @@
 #include "vtkSlicerApplicationGUI.h"
 #include "vtkSlicerApplicationLogic.h"
 #include "vtkSlicerModuleGUI.h"
+#include "vtkSlicerModuleNavigator.h"
 #include "vtkSlicerGUILayout.h"
 #include "vtkSlicerTheme.h"
 #include "vtkSlicerColor.h"
@@ -538,6 +539,9 @@ void vtkSlicerApplicationGUI::SelectModule ( const char *moduleName )
   vtkSlicerModuleGUI *m = vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName(moduleName);
   if ( m != NULL ) { m->GetUIPanel()->Raise(); } else { std::cerr << "ERROR:  no slicer module gui found for " << moduleName<< "\n"; }
   this->GetModuleChooseGUI()->GetModulesMenuButton()->SetValue ( moduleName );
+  this->GetModuleChooseGUI()->GetModuleNavigator()->SetHomeModule ( moduleName );
+  this->GetModuleChooseGUI()->GetModuleNavigator()->AddModuleNameToNavigationList ( moduleName );
+  this->GetModuleChooseGUI()->GetModuleNavigator()->AddModuleNameToHistoryList ( moduleName );
 }
 
 //---------------------------------------------------------------------------

@@ -10,6 +10,7 @@
 #include "vtkSlicerModuleGUI.h"
 #include "vtkSlicerModuleChooseGUI.h"
 #include "vtkSlicerModuleNavigationIcons.h"
+#include "vtkSlicerModuleNavigator.h"
 
 #include "vtkKWWidget.h"
 #include "vtkKWPushButton.h"
@@ -57,6 +58,7 @@ vtkSlicerModuleChooseGUI::vtkSlicerModuleChooseGUI ( )
     this->SlicerModuleNavigationIcons = vtkSlicerModuleNavigationIcons::New ( );
     this->ModuleSearchEntry = vtkKWEntry::New ( );
     this->ModuleNavigationFrame = vtkKWFrame::New ( );
+    this->ModuleNavigator = vtkSlicerModuleNavigator::New ( );
 }
 
 
@@ -64,6 +66,11 @@ vtkSlicerModuleChooseGUI::vtkSlicerModuleChooseGUI ( )
 vtkSlicerModuleChooseGUI::~vtkSlicerModuleChooseGUI ( )
 {
 
+  if ( this->ModuleNavigator )
+    {
+    this->ModuleNavigator->Delete ( );
+    this->ModuleNavigator = NULL;
+    }
   if ( this->ModuleNavigationFrame )
     {
     this->ModuleNavigationFrame->SetParent ( NULL );
@@ -143,12 +150,16 @@ void vtkSlicerModuleChooseGUI::PrintSelf ( ostream& os, vtkIndent indent )
 //---------------------------------------------------------------------------
 void vtkSlicerModuleChooseGUI::RemoveGUIObservers ( )
 {
+    this->ModulesPrev->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->ModulesNext->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 }
 
 
 //---------------------------------------------------------------------------
 void vtkSlicerModuleChooseGUI::AddGUIObservers ( )
 {
+    this->ModulesPrev->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->ModulesNext->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 }
 
 
@@ -156,11 +167,36 @@ void vtkSlicerModuleChooseGUI::AddGUIObservers ( )
 void vtkSlicerModuleChooseGUI::ProcessGUIEvents ( vtkObject *caller,
                                           unsigned long event, void *callData )
 {
+
+/*
+    vtkKWPushButton *ModulesHistory;
+    vtkKWPushButton *ModulesRefresh;
+    vtkKWPushButton *ModulesSearch;
+*/
+  char *moduleName;
+  
+  vtkKWPushButton *pushb = vtkKWPushButton::SafeDownCast ( caller );
+  if ( pushb == this->ModulesPrev && event == vtkKWPushButton::InvokedEvent )
+    {
+    if ( (moduleName= this->GetModuleNavigator()->NavigateBack()) != NULL )
+      {
+      this->RaiseModule ( moduleName );
+      }
+    }
+  if ( pushb == this->ModulesNext && event == vtkKWPushButton::InvokedEvent )
+    {
+    if (  (moduleName = this->GetModuleNavigator()->NavigateForward() ) != NULL )
+      {
+      this->RaiseModule ( moduleName );
+      }
+    }
+  
 }
 
  
+
 //---------------------------------------------------------------------------
-void vtkSlicerModuleChooseGUI::SelectModule ( const char *moduleName )
+void vtkSlicerModuleChooseGUI::RaiseModule ( const char *moduleName )
 {
   if ( this->GetApplicationGUI() != NULL )
     {
@@ -189,6 +225,22 @@ void vtkSlicerModuleChooseGUI::SelectModule ( const char *moduleName )
       } // end if ( app != NULL
     }
 }
+
+
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerModuleChooseGUI::SelectModule ( const char *moduleName )
+{
+  if ( this->GetApplicationGUI() != NULL )
+    {
+    this->RaiseModule ( moduleName );
+    this->GetModuleNavigator()->AddModuleNameToHistoryList ( moduleName );
+    this->GetModuleNavigator()->AddModuleNameToNavigationList ( moduleName );
+    }
+}
+
+
 
 //---------------------------------------------------------------------------
 void vtkSlicerModuleChooseGUI::ProcessLogicEvents ( vtkObject *caller,
