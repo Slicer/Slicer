@@ -113,6 +113,13 @@ IF(VTKsource_revision LESS 1.2196)
   MESSAGE(FATAL_ERROR "Sorry, your VTK library was last updated on ${VTKsource_date}. Its source revision, according to vtkKWWidgetsVersion.h, is ${VTKsource_revision}. Please update to a newer revision.")
 ENDIF(VTKsource_revision LESS 1.2196) 
 
+#
+# These packages exist within the Slicer3 source tree
+#
+SET(GenerateCLP_DIR ${Slicer3_BINARY_DIR}/Libs/GenerateCLP)
+SET(ModuleDescriptionParser_DIR ${Slicer3_BINARY_DIR}/Libs/ModuleDescriptionParser)
+SET(vtkITK_DIR ${Slicer3_BINARY_DIR}/Libs/vtkITK)
+SET(tclap_DIR ${Slicer3_BINARY_DIR}/Libs/tclap)
 
 #
 # Subdirectories
