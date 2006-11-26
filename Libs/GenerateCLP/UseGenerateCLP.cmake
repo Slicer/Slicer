@@ -9,15 +9,13 @@ ENDIF(ITK_FOUND)
 # If being build as part of Slicer3, we know where to find tclap include files
 
 IF(Slicer3_SOURCE_DIR)
-  SET(TCLAP_DIR ${Slicer3_SOURCE_DIR}/Libs/tclap)
-ELSE(Slicer3_SOURCE_DIR)
-  GET_FILENAME_COMPONENT(TCLAP_LIB_DIR1_PATH ${CMAKE_SOURCE_DIR}/.. ABSOLUTE)
-  GET_FILENAME_COMPONENT(TCLAP_LIB_DIR2_PATH ${CMAKE_SOURCE_DIR}/../../Libs ABSOLUTE)
-  FIND_PATH(TCLAP_DIR_PATH tclap ${TCLAP_LIB_DIR1_PATH} ${TCLAP_LIB_DIR2_PATH} DOC "Directory containing tclap/")
-  SET(TCLAP_DIR ${TCLAP_DIR_PATH}/tclap)
+  SET(TCLAP_DIR ${Slicer3_BINARY_DIR}/Libs/tclap)
 ENDIF(Slicer3_SOURCE_DIR)
 
-INCLUDE_DIRECTORIES (${TCLAP_DIR}/include)
+FIND_PACKAGE(TCLAP REQUIRED)
+FIND_PACKAGE(ModuleDescriptionParser REQUIRED)
+
+INCLUDE_DIRECTORIES (${TCLAP_SOURCE_DIR}/include)
 
 IF(ModuleDescriptionParser_SOURCE_DIR)
   INCLUDE_DIRECTORIES(
@@ -32,7 +30,7 @@ ENDIF(ModuleDescriptionParser_SOURCE_DIR)
 
 UTILITY_SOURCE(GENERATECLP_EXE GenerateCLP ./ GenerateCLP.cxx)
 IF (NOT GENERATECLP_EXE)
-  FIND_PROGRAM(GENERATECLP_EXE GenerateCLP DOC "GenerateCLP executable")
+  FIND_PROGRAM(GENERATECLP_EXE GenerateCLP PATHS ${GenerateCLP_BINARY_DIR} DOC "GenerateCLP executable")
   MESSAGE(ERROR " Requires GenerateCLP executable. Please specify its location.")
 ENDIF (NOT GENERATECLP_EXE)
 

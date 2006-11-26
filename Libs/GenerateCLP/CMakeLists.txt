@@ -1,27 +1,29 @@
-PROJECT( GenerateCLP )
+PROJECT(GenerateCLP)
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4)
 
-FIND_PACKAGE ( ITK )
-IF ( ITK_FOUND )
-  INCLUDE(${ITK_USE_FILE})
-ELSE ( ITK_FOUND )
-  MESSAGE ( FATAL_ERROR "Cannot build without ITK" )
-ENDIF ( ITK_FOUND )
+IF(Slicer3_SOURCE_DIR)
+  SET(ModuleDescriptionParser_DIR ${Slicer3_BINARY_DIR}/Libs/ModuleDescriptionParser)
+ENDIF(Slicer3_SOURCE_DIR)
 
-IF (Slicer3_SOURCE_DIR)
-  SET(ModuleDescriptionParser_LIB_DIR)
-ELSE (Slicer3_SOURCE_DIR)
-  FIND_PACKAGE(ModuleDescriptionParser REQUIRED)
-  SET(ModuleDescriptionParser_LIB_DIR ${ModuleDescriptionParser_BINARY_DIR}/)
-ENDIF (Slicer3_SOURCE_DIR)
+FIND_PACKAGE(ModuleDescriptionParser REQUIRED)
+FIND_PACKAGE(ITK REQUIRED)
 
+LINK_DIRECTORIES(${ModuleDescriptionParser_BINARY_DIR})
+
+INCLUDE(${ITK_USE_FILE})
 INCLUDE(UseGenerateCLP.cmake)
 
+CONFIGURE_FILE(
+  ${GenerateCLP_SOURCE_DIR}/GenerateCLPConfig.cmake.in 
+  ${GenerateCLP_BINARY_DIR}/GenerateCLPConfig.cmake 
+)
+
 SET (GENERATECLP_SOURCE GenerateCLP.cxx)
+LINK_DIRECTORIES(${ModuleDescriptionParser_LIB_DIR})
 ADD_EXECUTABLE ( GenerateCLP ${GENERATECLP_SOURCE})
 TARGET_LINK_LIBRARIES ( GenerateCLP
-  ${ModuleDescriptionParser_LIB_DIR}ModuleDescriptionParser
+  ModuleDescriptionParser
   ITKEXPAT)
 
 SUBDIRS(Testing)
