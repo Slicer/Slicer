@@ -1,18 +1,22 @@
 PROJECT( CLI )
 
-IF (NOT Slicer3_SOURCE_DIR)
-  FIND_PACKAGE ( ITK )
-  IF ( ITK_FOUND )
-    INCLUDE(${ITK_USE_FILE})
-  ELSE ( ITK_FOUND )
-    MESSAGE ( FATAL_ERROR "Cannot build without ITK" )
-  ENDIF ( ITK_FOUND )
-ENDIF (NOT Slicer3_SOURCE_DIR)
+# 
 
-INCLUDE(${Slicer3_SOURCE_DIR}/Libs/GenerateCLP/UseGenerateCLP.cmake)
+FIND_PACKAGE(GenerateCLP REQUIRED)
+FIND_PACKAGE(vtkITK REQUIRED)
 
-SET(LIBRARY_OUTPUT_PATH "${SLICER_LIBRARIES_DIR}/Plugins")
-SET(EXECUTABLE_OUTPUT_PATH "${SLICER_LIBRARIES_DIR}/Plugins")
+FIND_PACKAGE(ITK REQUIRED)
+INCLUDE(${ITK_USE_FILE})
+
+FIND_PACKAGE(VTK REQUIRED)
+INCLUDE(${VTK_USE_FILE})
+
+INCLUDE(${GenerateCLP_SOURCE_DIR}/UseGenerateCLP.cmake)
+
+IF (Slicer3_SOURCE_DIR)
+  SET(LIBRARY_OUTPUT_PATH "${SLICER_LIBRARIES_DIR}/Plugins")
+  SET(EXECUTABLE_OUTPUT_PATH "${SLICER_LIBRARIES_DIR}/Plugins")
+ENDIF (Slicer3_SOURCE_DIR)
 
 #####################
 SET (CLP LinearRegistration)
@@ -171,8 +175,9 @@ SET (CLP ModelMaker)
 
 SET ( ${CLP}_SOURCE ${CLP}.cxx vtkPluginFilterWatcher.cxx)
 GENERATECLP(${CLP}_SOURCE ${CLP}.xml)
+LINK_DIRECTORIES(${vtkITK_LIB_DIR})
 ADD_EXECUTABLE(${CLP} ${${CLP}_SOURCE})
-TARGET_LINK_LIBRARIES (${CLP} vtkITK vtkGraphics vtkIO)
+TARGET_LINK_LIBRARIES (${CLP} vtkITK vtkImaging vtkGraphics vtkIO ITKIO)
 INCLUDE_DIRECTORIES(${vtkITK_SOURCE_DIR} ${vtkITK_BINARY_DIR})
 
 #####################
@@ -180,8 +185,9 @@ SET (CLP GrayscaleModelMaker)
 
 SET ( ${CLP}_SOURCE ${CLP}.cxx vtkPluginFilterWatcher.cxx)
 GENERATECLP(${CLP}_SOURCE ${CLP}.xml)
+LINK_DIRECTORIES(${vtkITK_LIB_DIR})
 ADD_EXECUTABLE(${CLP} ${${CLP}_SOURCE})
-TARGET_LINK_LIBRARIES (${CLP} vtkITK vtkGraphics vtkIO)
+TARGET_LINK_LIBRARIES (${CLP} vtkITK vtkImaging vtkGraphics vtkIO ITKIO)
 INCLUDE_DIRECTORIES(${vtkITK_SOURCE_DIR} ${vtkITK_BINARY_DIR})
 
 #####################
@@ -214,10 +220,11 @@ TARGET_LINK_LIBRARIES (${CLP}Lib ITKIO ITKBasicFilters)
 #ENDIF (Slicer3_BUILD_TESTING)
 
 
-# install each target in the production area (where it would appear in an 
-# installation) and install each target in the developer area (for running 
-# from a build)
-SET(TARGETS
+IF (Slicer3_SOURCE_DIR)
+  # install each target in the production area (where it would appear in an 
+  # installation) and install each target in the developer area (for running 
+  # from a build)
+  SET(TARGETS
         ResampleVolume
         ResampleVolumeLib
         ExecutionModelTour
@@ -234,6 +241,7 @@ SET(TARGETS
         VotingBinaryHoleFillingImageFilter
         VotingBinaryHoleFillingImageFilterLib
         ModelMaker
+        GrayscaleModelMaker
         CheckerBoardLib
         LinearRegistration
         GrayscaleFillHoleImageFilter
@@ -244,11 +252,12 @@ SET(TARGETS
         LinearRegistration
         AffineRegistration
         BSplineDeformableRegistration
-)
+  )
 
-FOREACH(target ${TARGETS})
-  INSTALL(TARGETS ${target}
-    RUNTIME DESTINATION ${SLICER_INSTALL_LIBRARIES_DIR}/Plugins
-    LIBRARY DESTINATION ${SLICER_INSTALL_LIBRARIES_DIR}/Plugins)
-ENDFOREACH(target)
+  FOREACH(target ${TARGETS})
+    INSTALL(TARGETS ${target}
+      RUNTIME DESTINATION ${SLICER_INSTALL_LIBRARIES_DIR}/Plugins
+      LIBRARY DESTINATION ${SLICER_INSTALL_LIBRARIES_DIR}/Plugins)
+  ENDFOREACH(target)
 
+ENDIF (Slicer3_SOURCE_DIR)
