@@ -2,12 +2,8 @@ PROJECT(ModuleDescriptionParser)
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4)
 
-## ITK is required
+## ITK is required for expat.h
 FIND_PACKAGE(ITK REQUIRED)
-IF (NOT ITK_FOUND)
-  MESSAGE (FATAL_ERROR "Need ITK to build")
-ENDIF (NOT ITK_FOUND)
-
 INCLUDE(${ITK_USE_FILE})
 
 SET(ModuleDescriptionParser_SRCS
