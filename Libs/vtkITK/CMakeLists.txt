@@ -1,7 +1,19 @@
 PROJECT(vtkITK)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.4)
 
 # --------------------------------------------------------------------------
 # Sources
+
+# include a test for endianness (used to be done by default)
+INCLUDE (${CMAKE_ROOT}/Modules/TestBigEndian.cmake)
+TEST_BIG_ENDIAN(CMAKE_WORDS_BIGENDIAN)
+
+FIND_PACKAGE(VTK REQUIRED)
+INCLUDE(${VTK_USE_FILE})
+
+FIND_PACKAGE(ITK REQUIRED)
+INCLUDE(${ITK_USE_FILE})
+
 
 SET(vtkITK_SRCS
     vtkITKArchetypeImageSeriesReader.cxx
@@ -85,4 +97,9 @@ ENDIF(BUILD_TESTING)
 CONFIGURE_FILE(
   ${vtkITK_SOURCE_DIR}/vtkITKConfigure.h.in 
   ${vtkITK_BINARY_DIR}/vtkITKConfigure.h
+)
+
+CONFIGURE_FILE(
+  ${vtkITK_SOURCE_DIR}/vtkITKConfig.cmake.in 
+  ${vtkITK_BINARY_DIR}/vtkITKConfig.cmake
 )
