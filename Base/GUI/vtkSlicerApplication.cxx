@@ -9,6 +9,9 @@
 #include "vtkKWFrameWithLabel.h"
 #include "vtkKWWindowBase.h"
 #include "vtkKWTkUtilities.h"
+#include "vtkKWInternationalization.h"
+#include "vtkKWTclInteractor.h"
+#include "vtkKWLogDialog.h"
 
 #ifdef WIN32
 #include "vtkKWWin32RegistryHelper.h"
@@ -600,3 +603,46 @@ void vtkSlicerApplication::ProcessModified()
   vtkKWTkUtilities::CreateTimerHandler(this, 100, this, "ProcessModified");
 }
 
+//----------------------------------------------------------------------------
+//  override default behavior of KWWidgets so that toplevel window 
+//  can be on top of the tcl interactor (i.e. so it's not 'transient')
+//
+void vtkSlicerApplication::DisplayTclInteractor(vtkKWTopLevel *master)
+{
+  vtkKWTclInteractor *tcl_interactor = this->GetTclInteractor();
+  if (tcl_interactor)
+    {
+    if (!master)
+      {
+      master = this->GetNthWindow(0);
+      }
+    if (master)
+      {
+      vtksys_stl::string title;
+      if (master->GetTitle())
+        {
+        title += master->GetTitle();
+        title += " : ";
+        }
+      title += ks_("Tcl Interactor Dialog|Title|Tcl Interactor");
+      tcl_interactor->SetTitle(title.c_str());
+      // The change:
+      // tcl_interactor->SetMasterWindow(master);
+      }
+    tcl_interactor->Display();
+    }
+}
+
+//----------------------------------------------------------------------------
+//  override default behavior of KWWidgets so that toplevel window 
+//  can be on top of the log dialog (i.e. so it's not 'transient')
+//
+void vtkSlicerApplication::DisplayLogDialog(vtkKWTopLevel* master)
+{
+  if (this->CreateLogDialog())
+    {
+    // The change:
+    //this->LogDialog->SetMasterWindow(master ? master : this->GetNthWindow(0));
+    this->LogDialog->Display();
+    }
+}

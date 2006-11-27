@@ -135,6 +135,13 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   // in the event callback chain.)
   void ProcessModified();
   
+  // Description:
+  // Override the KWWidgets default behavior of setting the 'transient'
+  // flag on the interactor, which prevents it from being hidden
+  // by the main application window
+  virtual void DisplayTclInteractor(vtkKWTopLevel *master);
+  virtual void DisplayLogDialog(vtkKWTopLevel *master);
+
  protected:
     vtkSlicerApplication ( );
     virtual ~vtkSlicerApplication ( );
