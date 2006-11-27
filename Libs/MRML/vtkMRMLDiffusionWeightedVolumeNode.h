@@ -101,7 +101,7 @@ protected:
   
   int NumberOfGradients;
   
-  vtkMRMLDiffusionWeightedVolulmeDisplayNode *DiffusionWeightedVolumeDisplayNode;
+  vtkMRMLDiffusionWeightedVolumeDisplayNode *DiffusionWeightedVolumeDisplayNode;
 
 };
 
