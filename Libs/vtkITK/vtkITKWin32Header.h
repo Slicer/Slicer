@@ -21,7 +21,7 @@
 
 #include <vtkITKConfigure.h>
 
-#if defined(WIN32) && !defined(VTKSLICER_STATIC)
+#if defined(WIN32) && !defined(VTKITK_STATIC)
 #if defined(vtkITK_EXPORTS)
 #define VTK_ITK_EXPORT __declspec( dllexport ) 
 #else
