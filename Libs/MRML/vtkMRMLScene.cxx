@@ -37,7 +37,12 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLVolumeDisplayNode.h"
 #include "vtkMRMLVolumeHeaderlessStorageNode.h"
 #include "vtkMRMLColorNode.h"
+#include "vtkMRMLDiffusionWeightedVolumeDisplayNode.h"
+#include "vtkMRMLDiffusionWeightedVolumeNode.h"
+#include "vtkMRMLDiffusionTensorVolumeNode.h"
+#include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
 #include "vtkMRMLCameraNode.h"
+
 
 //------------------------------------------------------------------------------
 vtkMRMLScene::vtkMRMLScene() 
@@ -116,10 +121,29 @@ vtkMRMLScene::vtkMRMLScene()
   vtkMRMLColorNode *vcn = vtkMRMLColorNode::New();
   this->RegisterNodeClass ( vcn );
   vcn->Delete();
+  
+  vtkMRMLDiffusionWeightedVolumeNode *dwvn = vtkMRMLDiffusionWeightedVolumeNode::New();
+  this->RegisterNodeClass (dwvn);
+  dwvn->Delete();
 
+  vtkMRMLDiffusionTensorVolumeNode *dtvn = vtkMRMLDiffusionTensorVolumeNode::New();
+  this->RegisterNodeClass (dtvn);
+  dtvn->Delete();
+  
+  vtkMRMLDiffusionWeightedVolumeDisplayNode *dwvdn =
+                         vtkMRMLDiffusionWeightedVolumeDisplayNode::New();
+  this->RegisterNodeClass (dwvdn);
+  dwvdn->Delete();
+  
+  vtkMRMLDiffusionTensorVolumeDisplayNode *dtvdn =
+                         vtkMRMLDiffusionTensorVolumeDisplayNode::New();
+  this->RegisterNodeClass (dtvdn);
+  dtvdn->Delete();
+  
   vtkMRMLCameraNode *camera = vtkMRMLCameraNode::New();
   this->RegisterNodeClass ( camera );
   camera->Delete();
+
 }
 
 //------------------------------------------------------------------------------
