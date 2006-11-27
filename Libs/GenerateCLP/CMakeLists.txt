@@ -2,10 +2,6 @@ PROJECT(GenerateCLP)
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4)
 
-IF(Slicer3_SOURCE_DIR)
-  SET(ModuleDescriptionParser_DIR ${Slicer3_BINARY_DIR}/Libs/ModuleDescriptionParser)
-ENDIF(Slicer3_SOURCE_DIR)
-
 FIND_PACKAGE(ModuleDescriptionParser REQUIRED)
 FIND_PACKAGE(ITK REQUIRED)
 
