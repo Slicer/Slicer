@@ -81,7 +81,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionWeightedVolumeNode : public vtkMRMLVolumeN
                            const double zr, const double za, const double zs);
 
   void GetMeasurementFrame(double mf[3][3]);
-  void GetMeasurementFrame(vtkMatrix4x4 *mat);
+  //void GetMeasurementFrame(vtkMatrix4x4 *mat);
 
   // Description:
   // String ID of the display MRML node

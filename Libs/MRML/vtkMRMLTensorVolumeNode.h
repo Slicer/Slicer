@@ -68,7 +68,7 @@ class VTK_MRML_EXPORT vtkMRMLTensorVolumeNode : public vtkMRMLVolumeNode
   void GetMeasurementFrame(double mf[3][3]);
   
   // Description
-  void GetMeasurementFrame(vtkMatrix4x4 *mat);
+  //void GetMeasurementFrame(vtkMatrix4x4 *mat);
 
 protected:
   vtkMRMLTensorVolumeNode();
