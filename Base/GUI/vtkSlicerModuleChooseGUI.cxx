@@ -1,5 +1,6 @@
 #include <map>
 #include <set>
+#include <vector>
 
 #include "vtkObject.h"
 #include "vtkObjectFactory.h"
@@ -54,9 +55,9 @@ vtkSlicerModuleChooseGUI::vtkSlicerModuleChooseGUI ( )
     this->ModulesNext = vtkKWPushButton::New ( );
     this->ModulesHistory = vtkKWMenuButton::New ( );
     this->ModulesRefresh = vtkKWPushButton::New ( );
-    this->ModulesSearch = vtkKWPushButton::New ( );
+    this->ModulesSearch = vtkKWMenuButton::New ( );
     this->SlicerModuleNavigationIcons = vtkSlicerModuleNavigationIcons::New ( );
-    this->ModuleSearchEntry = vtkKWEntry::New ( );
+    this->ModulesSearchEntry = vtkKWEntry::New ( );
     this->ModuleNavigationFrame = vtkKWFrame::New ( );
     this->ModuleNavigator = vtkSlicerModuleNavigator::New ( );
 }
@@ -77,11 +78,11 @@ vtkSlicerModuleChooseGUI::~vtkSlicerModuleChooseGUI ( )
     this->ModuleNavigationFrame->Delete ( );
     this->ModuleNavigationFrame = NULL;
     }
-  if ( this->ModuleSearchEntry )
+  if ( this->ModulesSearchEntry )
     {
-    this->ModuleSearchEntry->SetParent ( NULL );
-    this->ModuleSearchEntry->Delete( );
-    this->ModuleSearchEntry = NULL;
+    this->ModulesSearchEntry->SetParent ( NULL );
+    this->ModulesSearchEntry->Delete( );
+    this->ModulesSearchEntry = NULL;
     }
   if ( this->SlicerModuleNavigationIcons )
     {
@@ -153,6 +154,8 @@ void vtkSlicerModuleChooseGUI::RemoveGUIObservers ( )
     this->ModulesPrev->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ModulesNext->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ModulesHistory->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->ModulesSearch->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->ModulesSearchEntry->RemoveObservers (vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 }
 
 
@@ -162,6 +165,8 @@ void vtkSlicerModuleChooseGUI::AddGUIObservers ( )
     this->ModulesPrev->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ModulesNext->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ModulesHistory->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->ModulesSearch->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->ModulesSearchEntry->AddObserver ( vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 }
 
 
@@ -170,29 +175,21 @@ void vtkSlicerModuleChooseGUI::ProcessGUIEvents ( vtkObject *caller,
                                           unsigned long event, void *callData )
 {
 
-/*
-    vtkKWPushButton *ModulesHistory;
-    vtkKWPushButton *ModulesRefresh;
-    vtkKWPushButton *ModulesSearch;
-*/
   char *moduleName;
   
   vtkKWPushButton *pushb = vtkKWPushButton::SafeDownCast ( caller );
   vtkKWMenu *menu = vtkKWMenu::SafeDownCast ( caller );
+  vtkKWEntry *entry = vtkKWEntry::SafeDownCast ( caller );
   
   if ( pushb == this->ModulesPrev && event == vtkKWPushButton::InvokedEvent )
     {
-    if ( (moduleName= this->GetModuleNavigator()->NavigateBack()) != NULL )
-      {
-      this->RaiseModule ( moduleName );
-      }
+    moduleName = this->GetModuleNavigator()->NavigateBack();
+    this->RaiseModule ( moduleName );
     }
   if ( pushb == this->ModulesNext && event == vtkKWPushButton::InvokedEvent )
     {
-    if (  (moduleName = this->GetModuleNavigator()->NavigateForward() ) != NULL )
-      {
-      this->RaiseModule ( moduleName );
-      }
+    moduleName = this->GetModuleNavigator()->NavigateForward ();
+    this->RaiseModule ( moduleName );
     }
   if ( menu == this->ModulesHistory->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
     {
@@ -205,7 +202,30 @@ void vtkSlicerModuleChooseGUI::ProcessGUIEvents ( vtkObject *caller,
     this->GetModuleNavigator()->AddModuleNameToNavigationList ( c );
     this->RaiseModule ( c );
     }
-  
+  if ( entry == this->ModulesSearchEntry && event == vtkKWEntry::EntryValueChangedEvent )
+    {
+    // user types search term, when focus leaves entry widget,
+    // execute the search and populate the "search" menu button with results.
+    // user sees results when they click 'search'. A little weird. try for now and see
+    // whether it serves the purpose or needs to change.
+    // populate the module search menu with results from the search.
+    const char *c = this->ModulesSearchEntry->GetValue ( );
+    if ( c == "" )
+      {
+//      this->ModuleSearch->GetMenu()->DeleteAllItems ( );
+      }
+    else
+      {
+      this->PopulateModuleSearchMenu ( c );
+      }
+    }
+  if ( menu == this->ModulesSearch->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
+    {
+    // select module chosen from the search menu
+    const char *c = this->ModulesSearch->GetValue ( );
+    this->SelectModule ( c );
+//    this->ModuleSearchEntry->SetValue ( "" );
+    }
 }
 
  
@@ -213,7 +233,7 @@ void vtkSlicerModuleChooseGUI::ProcessGUIEvents ( vtkObject *caller,
 //---------------------------------------------------------------------------
 void vtkSlicerModuleChooseGUI::RaiseModule ( const char *moduleName )
 {
-  if ( this->GetApplicationGUI() != NULL )
+  if ( this->GetApplicationGUI() != NULL && moduleName != NULL )
     {
     vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));
     vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( p->GetApplication() );
@@ -270,10 +290,13 @@ void vtkSlicerModuleChooseGUI::SelectModule ( const char *moduleName )
 {
   if ( this->GetApplicationGUI() != NULL )
     {
-    this->RaiseModule ( moduleName );
-    this->GetModuleNavigator()->AddModuleNameToHistoryList ( moduleName );
-    this->PopulateHistoryListMenu ( );
-    this->GetModuleNavigator()->AddModuleNameToNavigationList ( moduleName );
+    if ( moduleName != NULL )
+      {
+      this->RaiseModule ( moduleName );
+      this->GetModuleNavigator()->AddModuleNameToHistoryList ( moduleName );
+      this->PopulateHistoryListMenu ( );
+      this->GetModuleNavigator()->AddModuleNameToNavigationList ( moduleName );
+      }
     }
 }
 
@@ -346,11 +369,13 @@ void vtkSlicerModuleChooseGUI::BuildGUI ( vtkKWFrame *appF )
       this->ModuleNavigationFrame->SetParent ( appF );
       this->ModuleNavigationFrame->Create ( );
 
-      this->ModuleSearchEntry->SetParent ( this->ModuleNavigationFrame );
-      this->ModuleSearchEntry->Create ( );
-      this->ModuleSearchEntry->SetValue ( "search" );
-      this->ModuleSearchEntry->SetWidth ( 12 );
-      this->ModuleSearchEntry->SetBalloonHelpString ("Type the name of a module you want to select and click the 'search' button.");
+      this->ModulesSearchEntry->SetParent ( this->ModuleNavigationFrame );
+      this->ModulesSearchEntry->Create ( );
+      this->ModulesSearchEntry->SetValue ( "search" );
+      this->ModulesSearchEntry->SetWidth ( 12 );
+      this->ModulesSearchEntry->SetCommandTrigger ( vtkKWEntry::TriggerOnReturnKey ); 
+      this->ModulesSearchEntry->SetBalloonHelpString ("Type the name of a module you want to select and click the 'search' button.");
+      this->ModulesSearchEntry->SetForegroundColor ( 0.5, 0.5, 0.5);
       
       //--- Next and previous module button
       this->ModulesNext->SetParent ( this->ModuleNavigationFrame );
@@ -382,6 +407,7 @@ void vtkSlicerModuleChooseGUI::BuildGUI ( vtkKWFrame *appF )
       this->ModulesSearch->Create ( );
       this->ModulesSearch->SetBorderWidth ( 0 );
       this->ModulesSearch->SetImageToIcon ( this->SlicerModuleNavigationIcons->GetModuleSearchIcon() );
+      this->ModulesSearch->IndicatorVisibilityOff ( );
       this->ModulesSearch->SetBalloonHelpString ("Search for the module entered to the right (or use keyboard Ctrl+F).");
 
       //--- create a small label to show search context
@@ -397,7 +423,7 @@ void vtkSlicerModuleChooseGUI::BuildGUI ( vtkKWFrame *appF )
 
       app->Script ( "pack %s -side left -anchor c -padx 0 -pady 2", this->ModulesSearch->GetWidgetName( ) );
       app->Script ( "pack %s -side left -anchor c -ipadx 0 -padx 1 -pady 2", colonLabel->GetWidgetName( ) );
-      app->Script ( "pack %s -side left -anchor c -padx 2 -pady 2", this->ModuleSearchEntry->GetWidgetName( ) );
+      app->Script ( "pack %s -side left -anchor c -padx 2 -pady 2", this->ModulesSearchEntry->GetWidgetName( ) );
       app->Script ( "pack %s -side left -anchor c -padx 1 -pady 2", this->ModulesPrev->GetWidgetName( ) );
       app->Script ( "pack %s -side left -anchor c -padx 1 -pady 2", this->ModulesNext->GetWidgetName( ) );
       app->Script ( "pack %s -side left -anchor c -padx 1 -pady 2", this->ModulesHistory->GetWidgetName( ) );      
@@ -410,7 +436,104 @@ void vtkSlicerModuleChooseGUI::BuildGUI ( vtkKWFrame *appF )
 }
 
 
+//---------------------------------------------------------------------------
+void vtkSlicerModuleChooseGUI::PopulateModuleSearchMenu ( const char *searchString )
+{
+  vtkSlicerModuleGUI *m;
+  typedef std::vector<std::string> ModuleSet;
 
+  const char *mname, *cname;
+  char *uc_mname, *uc_cname;
+
+  ModuleSet matchingModuleNames;
+  
+  
+  if ( searchString != NULL )
+    {
+    // convert search string to upper case for search
+    int len = strlen ( searchString );
+    char * s = new char [len+1];
+    strcpy ( s, searchString );
+    s = strupr ( s );
+
+    // Delete and recreate moduleSearchMenu
+    // to include modules whose name contains the search term
+    // and modules whose category contains the search term.
+    // display these in new menu with separator between two types.
+
+    if ( (this->GetApplication( )  != NULL ) ) 
+      {
+      vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication() );
+      //
+      //--- moduleSearch menu button:
+      // - first, remove any existing items
+      // - add one menu button per category
+      //
+      if ( (app->GetModuleGUICollection ( ) != NULL) ) 
+        {
+        this->GetModulesSearch()->GetMenu( )->DeleteAllItems();
+
+        // Loop over the module guis in the list and 
+        // determine which guis match the search term
+        // in name or category.
+        app->GetModuleGUICollection()->InitTraversal();
+        m = vtkSlicerModuleGUI::SafeDownCast( app->GetModuleGUICollection( )->GetNextItemAsObject( ));
+        while (m != NULL)
+          {
+          mname = m->GetUIPanel()->GetName();
+          if ( mname != NULL)
+            {
+            // does the GUIname contain the search term?
+            len = strlen ( mname );
+            uc_mname = new char [ len +1 ];
+            strcpy (uc_mname, mname );
+            uc_mname = strupr ( uc_mname );
+
+            if ( strstr(uc_mname, s ) != NULL )
+              {
+              matchingModuleNames.push_back (mname);
+              }
+            }
+          cname = m->GetCategory();
+          if ( cname != NULL )
+            {
+            len = strlen (cname );
+            uc_cname = new char [len +1 ];
+            strcpy (uc_cname, cname );
+            uc_cname = strupr ( uc_cname);
+
+            // does the GUI category contain the search term?
+            if ( strstr(uc_cname, s ) != NULL )
+              {
+              matchingModuleNames.push_back (mname );
+              }
+            }
+          m = vtkSlicerModuleGUI::SafeDownCast( app->GetModuleGUICollection( )->GetNextItemAsObject( ));
+          delete [] uc_mname;
+          delete [] uc_cname;
+          }
+        }
+
+      
+      // construct a menu of matching module names
+      //
+      int index;
+      ModuleSet::iterator mit;
+      mit = matchingModuleNames.begin();
+      
+      while (mit != matchingModuleNames.end())
+        {
+        this->GetModulesSearch()->GetMenu()->AddRadioButton( (*mit).c_str() );
+        mit++;
+        }
+
+      }
+    }
+}
+
+
+
+//---------------------------------------------------------------------------
 void vtkSlicerModuleChooseGUI::Populate( )
 {
   //const char* mName;
@@ -422,7 +545,6 @@ void vtkSlicerModuleChooseGUI::Populate( )
 
   CategoryToModuleVector categoryToModuleName;
 
-  
   if ( (this->GetApplication( )  != NULL ) ) 
     {
     vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication() );
@@ -553,6 +675,7 @@ void vtkSlicerModuleChooseGUI::Populate( )
     //--- TODO: make the initial value be module user sets as "home"
     this->GetModulesMenuButton()->SetValue ("Data");
     }
+  
 }
 
 

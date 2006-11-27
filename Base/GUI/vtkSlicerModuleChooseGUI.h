@@ -38,8 +38,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleChooseGUI : public vtkSlicerComp
     vtkGetObjectMacro ( ModulesNext, vtkKWPushButton );    
     vtkGetObjectMacro (ModulesHistory, vtkKWMenuButton );
     vtkGetObjectMacro (ModulesRefresh, vtkKWPushButton );
-    vtkGetObjectMacro (ModulesSearch, vtkKWPushButton );
-    vtkGetObjectMacro (ModuleSearchEntry, vtkKWEntry );
+    vtkGetObjectMacro (ModulesSearch, vtkKWMenuButton );
+    vtkGetObjectMacro (ModulesSearchEntry, vtkKWEntry );
     vtkGetObjectMacro (ModuleNavigationFrame, vtkKWFrame );
     vtkGetObjectMacro ( SlicerModuleNavigationIcons, vtkSlicerModuleNavigationIcons );
     vtkGetObjectMacro (ModuleNavigator, vtkSlicerModuleNavigator );
@@ -53,6 +53,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleChooseGUI : public vtkSlicerComp
     // Populate the menu of modules
     void Populate();
   
+    
     // Description:
     // Raise module's panel.
     void RaiseModule ( const char *moduleName );
@@ -73,6 +74,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleChooseGUI : public vtkSlicerComp
     // Add any newly visited modules to the ModulesHistory menu
     virtual void PopulateHistoryListMenu ( );
     
+    // Descripton:
+    // Search available modules names and categories for those
+    // matching a searchString, case insensitive.
+    void PopulateModuleSearchMenu ( const char *searchString );
+
     // Description:
     // Class's mediator methods for processing events invoked by
     // either the Logic, MRML or GUI.
@@ -100,10 +106,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleChooseGUI : public vtkSlicerComp
     vtkKWPushButton *ModulesNext;
     vtkKWMenuButton *ModulesHistory;
     vtkKWPushButton *ModulesRefresh;
-    vtkKWPushButton *ModulesSearch;
+    vtkKWMenuButton *ModulesSearch;
     vtkSlicerModuleNavigationIcons *SlicerModuleNavigationIcons;
     vtkKWFrame *ModuleNavigationFrame;
-    vtkKWEntry *ModuleSearchEntry;
+    vtkKWEntry *ModulesSearchEntry;
     vtkSlicerModuleNavigator *ModuleNavigator;
     
  private:
