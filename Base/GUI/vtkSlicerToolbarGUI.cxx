@@ -672,7 +672,7 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   this->HomeIconButton->SetBorderWidth ( 0 );
   this->HomeIconButton->SetOverReliefToNone ( );
   this->HomeIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetHomeIcon( ) );
-  this->HomeIconButton->SetBalloonHelpString ( "Home" );
+  this->HomeIconButton->SetBalloonHelpString ( "Home (not yet settable)" );
   mtb->AddWidget ( this->HomeIconButton );
 
   // data module icon
@@ -732,7 +732,7 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   this->EditorToolboxIconButton->SetBorderWidth ( 0 );
   this->EditorToolboxIconButton->SetOverReliefToNone ( );
   this->EditorToolboxIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetEditorToolboxIcon ( ) );
-  this->EditorToolboxIconButton->SetBalloonHelpString ( "Editor Toolbox");        
+  this->EditorToolboxIconButton->SetBalloonHelpString ( "Editor Toolbox (not yet available)");        
   mtb->AddWidget ( this->EditorToolboxIconButton );
   // editor module icon
   this->EditorIconButton->SetParent ( mtb->GetFrame ( ) );
@@ -751,7 +751,7 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   this->MeasurementsIconButton->SetBorderWidth ( 0 );
   this->MeasurementsIconButton->SetOverReliefToNone ( );
   this->MeasurementsIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetMeasurementsIcon ( ) );
-  this->MeasurementsIconButton->SetBalloonHelpString ( "Measurements");        
+  this->MeasurementsIconButton->SetBalloonHelpString ( "Measurements (not yet available)");        
   mtb->AddWidget ( this->MeasurementsIconButton );
 
   // color utility icon
@@ -851,7 +851,7 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   this->LightBoxViewIconButton->SetBorderWidth ( 0 );
   this->LightBoxViewIconButton->SetOverReliefToNone ( );
   this->LightBoxViewIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetLightBoxViewIcon( ) );
-  this->LightBoxViewIconButton->SetBalloonHelpString ( "Display a slice-matrix and no 3D view" );
+  this->LightBoxViewIconButton->SetBalloonHelpString ( "Display a slice-matrix and no 3D view (not yet available)" );
   vtb->AddWidget ( this->LightBoxViewIconButton );
 
   // mouse mode icons; mouse pick icon
@@ -861,7 +861,7 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   this->MousePickIconButton->SetBorderWidth ( 0 );
   this->MousePickIconButton->SetOverReliefToNone ( );
   this->MousePickIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetMousePickIcon( ) );
-  this->MousePickIconButton->SetBalloonHelpString ( "Set the 3DViewer mouse mode to 'pick'" );
+  this->MousePickIconButton->SetBalloonHelpString ( "Set the 3DViewer mouse mode to 'pick' (not yet available)" );
   mmtb->AddWidget ( this->MousePickIconButton );
 
   // mouse mode icons; mouse rotate icon
@@ -871,7 +871,7 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   this->MouseTransformViewIconButton->SetBorderWidth ( 0 );
   this->MouseTransformViewIconButton->SetOverReliefToNone ( );
   this->MouseTransformViewIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetMouseTransformViewIcon( ) );
-  this->MouseTransformViewIconButton->SetBalloonHelpString ( "Set the 3DViewer mouse mode to 'transform view' " );
+  this->MouseTransformViewIconButton->SetBalloonHelpString ( "Set the 3DViewer mouse mode to 'transform view' (not yet available)" );
   mmtb->AddWidget ( this->MouseTransformViewIconButton );
 
   // mouse mode icons; mouse pick icon
@@ -881,7 +881,7 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   this->MousePlaceFiducialIconButton->SetBorderWidth ( 0 );
   this->MousePlaceFiducialIconButton->SetOverReliefToNone ( );
   this->MousePlaceFiducialIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetMousePlaceFiducialIcon( ) );
-  this->MousePlaceFiducialIconButton->SetBalloonHelpString ( "Set the 3DViewer mouse mode to 'place fiducials'" );
+  this->MousePlaceFiducialIconButton->SetBalloonHelpString ( "Set the 3DViewer mouse mode to 'place fiducials' (not yet available)" );
   mmtb->AddWidget ( this->MousePlaceFiducialIconButton );
 
   //

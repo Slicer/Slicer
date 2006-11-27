@@ -268,15 +268,18 @@ void vtkSlicerToolbarIcons::AssignImageDataToIcons ( )
     this->MousePickIcon->SetImage (image_ToolbarMousePick,
                                    image_ToolbarMousePick_width,
                                    image_ToolbarMousePick_height,
-                                   image_ToolbarMousePick_pixel_size, 0, 0);
+                                   image_ToolbarMousePick_pixel_size,
+                                   image_ToolbarMousePick_length, 0);
     this->MouseTransformViewIcon->SetImage (image_ToolbarMouseRotate,
                                    image_ToolbarMouseRotate_width,
                                    image_ToolbarMouseRotate_height,
-                                   image_ToolbarMouseRotate_pixel_size, 0, 0);
+                                   image_ToolbarMouseRotate_pixel_size,
+                                            image_ToolbarMouseRotate_length, 0);
     this->MousePlaceFiducialIcon->SetImage (image_ToolbarMousePlaceFiducial,
                                    image_ToolbarMousePlaceFiducial_width,
                                    image_ToolbarMousePlaceFiducial_height,
-                                   image_ToolbarMousePlaceFiducial_pixel_size, 0, 0);
+                                   image_ToolbarMousePlaceFiducial_pixel_size,
+                                            image_ToolbarMousePlaceFiducial_length, 0);
     this->UndoIcon->SetImage ( image_ToolbarUndo,
                                image_ToolbarUndo_width,
                                image_ToolbarUndo_height,
