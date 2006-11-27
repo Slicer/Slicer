@@ -2,6 +2,8 @@
 #include <set>
 #include <vector>
 
+#include <ctype.h>
+
 #include "vtkObject.h"
 #include "vtkObjectFactory.h"
 #include "vtkCommand.h"
@@ -21,6 +23,7 @@
 #include "vtkKWEntry.h"
 #include "vtkKWFrame.h"
 
+#define convertToUpper( s ) { while (*s) {*s = toupper(*s); s++; } }
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerModuleChooseGUI );
@@ -210,21 +213,13 @@ void vtkSlicerModuleChooseGUI::ProcessGUIEvents ( vtkObject *caller,
     // whether it serves the purpose or needs to change.
     // populate the module search menu with results from the search.
     const char *c = this->ModulesSearchEntry->GetValue ( );
-    if ( c == "" )
-      {
-//      this->ModuleSearch->GetMenu()->DeleteAllItems ( );
-      }
-    else
-      {
-      this->PopulateModuleSearchMenu ( c );
-      }
+    this->PopulateModuleSearchMenu ( c );
     }
   if ( menu == this->ModulesSearch->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
     {
     // select module chosen from the search menu
     const char *c = this->ModulesSearch->GetValue ( );
     this->SelectModule ( c );
-//    this->ModuleSearchEntry->SetValue ( "" );
     }
 }
 
@@ -373,7 +368,8 @@ void vtkSlicerModuleChooseGUI::BuildGUI ( vtkKWFrame *appF )
       this->ModulesSearchEntry->Create ( );
       this->ModulesSearchEntry->SetValue ( "search" );
       this->ModulesSearchEntry->SetWidth ( 12 );
-      this->ModulesSearchEntry->SetCommandTrigger ( vtkKWEntry::TriggerOnReturnKey ); 
+//      this->ModulesSearchEntry->SetCommandTrigger ( vtkKWEntry::TriggerOnReturnKey ); 
+      this->ModulesSearchEntry->SetCommandTriggerToAnyChange();
       this->ModulesSearchEntry->SetBalloonHelpString ("Type the name of a module you want to select and click the 'search' button.");
       this->ModulesSearchEntry->SetForegroundColor ( 0.5, 0.5, 0.5);
       
@@ -436,100 +432,96 @@ void vtkSlicerModuleChooseGUI::BuildGUI ( vtkKWFrame *appF )
 }
 
 
+
 //---------------------------------------------------------------------------
+
 void vtkSlicerModuleChooseGUI::PopulateModuleSearchMenu ( const char *searchString )
 {
   vtkSlicerModuleGUI *m;
   typedef std::vector<std::string> ModuleSet;
+  ModuleSet matchingModuleNames;
 
   const char *mname, *cname;
   char *uc_mname, *uc_cname;
 
-  ModuleSet matchingModuleNames;
-  
-/*  
   if ( searchString != NULL )
     {
-    // convert search string to upper case for search
     int len = strlen ( searchString );
-    char * s = new char [len+1];
-    strcpy ( s, searchString );
-    s = strupr ( s );
+    // don't search until string has a couple of charaters in it to prevent a total avalanche.
+    // play with this and see what seems good behavior.
+      // convert search string to upper case for search
+      char  *uc_searchString = new char [len+1];
+      strcpy ( uc_searchString, searchString );
+      char *s = uc_searchString;
+      convertToUpper( s );
 
-    // Delete and recreate moduleSearchMenu
-    // to include modules whose name contains the search term
-    // and modules whose category contains the search term.
-    // display these in new menu with separator between two types.
-
-    if ( (this->GetApplication( )  != NULL ) ) 
-      {
-      vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication() );
-      //
-      //--- moduleSearch menu button:
-      // - first, remove any existing items
-      // - add one menu button per category
-      //
-      if ( (app->GetModuleGUICollection ( ) != NULL) ) 
+      // Delete and recreate moduleSearchMenu
+      // Include modules whose name contains the search term
+      // and modules whose category contains the search term.
+      if ( (this->GetApplication( )  != NULL ) ) 
         {
-        this->GetModulesSearch()->GetMenu( )->DeleteAllItems();
-
-        // Loop over the module guis in the list and 
-        // determine which guis match the search term
-        // in name or category.
-        app->GetModuleGUICollection()->InitTraversal();
-        m = vtkSlicerModuleGUI::SafeDownCast( app->GetModuleGUICollection( )->GetNextItemAsObject( ));
-        while (m != NULL)
+        vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication() );
+        if ( (app->GetModuleGUICollection ( ) != NULL) ) 
           {
-          mname = m->GetUIPanel()->GetName();
-          if ( mname != NULL)
-            {
-            // does the GUIname contain the search term?
-            len = strlen ( mname );
-            uc_mname = new char [ len +1 ];
-            strcpy (uc_mname, mname );
-            uc_mname = strupr ( uc_mname );
+          // Delete all items from menu
+          this->GetModulesSearch()->GetMenu( )->DeleteAllItems();
 
-            if ( strstr(uc_mname, s ) != NULL )
-              {
-              matchingModuleNames.push_back (mname);
-              }
-            }
-          cname = m->GetCategory();
-          if ( cname != NULL )
-            {
-            len = strlen (cname );
-            uc_cname = new char [len +1 ];
-            strcpy (uc_cname, cname );
-            uc_cname = strupr ( uc_cname);
-
-            // does the GUI category contain the search term?
-            if ( strstr(uc_cname, s ) != NULL )
-              {
-              matchingModuleNames.push_back (mname );
-              }
-            }
+          // find module names or categories containing the search string
+          app->GetModuleGUICollection()->InitTraversal();
           m = vtkSlicerModuleGUI::SafeDownCast( app->GetModuleGUICollection( )->GetNextItemAsObject( ));
-          delete [] uc_mname;
-          delete [] uc_cname;
+          while (m != NULL)
+            {
+            mname = m->GetUIPanel()->GetName();
+            if ( mname != NULL)
+              {
+              len = strlen ( mname );
+              uc_mname = new char [ len +1 ];
+              strcpy (uc_mname, mname );
+              s = uc_mname;
+              convertToUpper( s );
+              // does the GUIname contain the search term?
+              if ( strstr(uc_mname, uc_searchString ) != NULL )
+                {
+                matchingModuleNames.push_back (mname);
+                }
+              }
+
+            cname = m->GetCategory();
+            if ( cname != NULL )
+              {
+              len = strlen (cname );
+              uc_cname = new char [len +1 ];
+              strcpy (uc_cname, cname );
+              s = uc_cname;
+              convertToUpper( s );
+
+              // does the GUI category contain the search term?
+              if ( strstr(uc_cname, uc_searchString ) != NULL )
+                {
+                matchingModuleNames.push_back (mname );
+                }
+              }
+            m = vtkSlicerModuleGUI::SafeDownCast( app->GetModuleGUICollection( )->GetNextItemAsObject( ));
+            delete [] uc_mname;
+            delete [] uc_cname;
+            }
+          }
+
+      
+        // construct a menu of matching module names
+        //
+        int index;
+        ModuleSet::iterator mit;
+        mit = matchingModuleNames.begin();
+      
+        while (mit != matchingModuleNames.end())
+          {
+          this->GetModulesSearch()->GetMenu()->AddRadioButton( (*mit).c_str() );
+          mit++;
           }
         }
-
-      
-      // construct a menu of matching module names
-      //
-      int index;
-      ModuleSet::iterator mit;
-      mit = matchingModuleNames.begin();
-      
-      while (mit != matchingModuleNames.end())
-        {
-        this->GetModulesSearch()->GetMenu()->AddRadioButton( (*mit).c_str() );
-        mit++;
-        }
-
+      delete [] uc_searchString;
       }
-    }
-*/
 }
 
 
