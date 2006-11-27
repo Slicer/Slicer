@@ -447,7 +447,7 @@ void vtkSlicerModuleChooseGUI::PopulateModuleSearchMenu ( const char *searchStri
 
   ModuleSet matchingModuleNames;
   
-  
+/*  
   if ( searchString != NULL )
     {
     // convert search string to upper case for search
@@ -529,6 +529,7 @@ void vtkSlicerModuleChooseGUI::PopulateModuleSearchMenu ( const char *searchStri
 
       }
     }
+*/
 }
 
 
