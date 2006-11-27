@@ -413,7 +413,7 @@ void vtkKWWindowLevelThresholdEditor::UpdateTransferFunction()
   this->TransferFunction->RemoveAllPoints();
 
   double range[2] = {0,255};
-  if ( this->ImageData && this->TransferFunction->GetSize() != 0 )
+  if ( this->ImageData)
   {
     this->ImageData->GetScalarRange(range);
     this->TransferFunction->AdjustRange(range);
@@ -470,8 +470,11 @@ void vtkKWWindowLevelThresholdEditor::UpdateTransferFunction()
     this->TransferFunction->AddRGBPoint(min, minVal, minVal, minVal);
     this->TransferFunction->AddRGBPoint(max, maxVal, maxVal, maxVal);
     this->TransferFunction->AddRGBPoint(upper, maxVal, maxVal, maxVal);
-    this->TransferFunction->AddRGBPoint(upper+0.001, 0, 0, 0);
-    this->TransferFunction->AddRGBPoint(range[1], 0, 0, 0);
+    if (upper+0.001 < range[1])
+      {
+      this->TransferFunction->AddRGBPoint(upper+0.001, 0, 0, 0);
+      this->TransferFunction->AddRGBPoint(range[1], 0, 0, 0);
+      }
     }
 
   this->TransferFunction->SetAlpha(1.0);
