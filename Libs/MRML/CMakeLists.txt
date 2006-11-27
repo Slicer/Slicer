@@ -37,6 +37,11 @@ SET(MRML_SRCS
         vtkObserverManager.cxx
         vtkMRMLColorNode.cxx
         vtkMRMLCameraNode.cxx
+        vtkMRMLTensorVolumeNode.cxx
+        vtkMRMLDiffusionWeightedVolumeDisplayNode.cxx
+        vtkMRMLDiffusionWeightedVolumeNode.cxx
+        vtkMRMLDiffusionTensorVolumeNode.cxx
+        vtkMRMLDiffusionTensorVolumeDisplayNode.cxx  
         # Note: when you add new node types, add
         # register code to the vtkMRMLScene constructor
 )
