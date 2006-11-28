@@ -10,6 +10,7 @@
 #
 after idle {
   ImportSlicer2Scene c:/data/tutorial/tutorial.xml
+  set viewer [$::slicer3::ApplicationGUI GetViewerWidget] 
   [$viewer GetMainViewer] Reset
 }
 
