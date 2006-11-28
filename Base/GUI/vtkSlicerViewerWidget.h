@@ -31,6 +31,7 @@
 #include "vtkMRMLClipModelsNode.h"
 #include "vtkMRMLSliceNode.h"
 #include "vtkMRMLCameraNode.h"
+#include "vtkMRMLViewNode.h"
 
 class vtkMRMLModelNode;
 class vtkMRMLModelDisplayNode;
@@ -39,6 +40,7 @@ class vtkMRMLFiducialListDisplayNode;
 class vtkMRMLFiducial;
 class vtkPolyData;
 class vtkActor;
+class vtkActorText;
 class vtkFollower;
 class vtkImplicitBoolean;
 class vtkPlane;
@@ -86,6 +88,15 @@ public:
     {
     vtkSetAndObserveMRMLNodeMacro( this->CameraNode, snode );
     };
+
+ // Description:
+  // Get/Set the CamerNode
+  vtkGetObjectMacro(ViewNode, vtkMRMLViewNode);
+  void SetAndObserveViewNode (vtkMRMLViewNode *snode)
+    {
+    vtkSetAndObserveMRMLNodeMacro( this->ViewNode, snode );
+    };
+
   // Description:
   // return the current model actor corresponding to a give MRML ID
   vtkActor *GetActorByID (const char *id);
@@ -132,6 +143,7 @@ protected:
   virtual void CreateWidget();
   
   void UpdateCameraNode();
+  void UpdateViewNode();
 
   vtkKWRenderWidget *MainViewer;
   vtkKWFrame *ViewerFrame;
@@ -147,8 +159,12 @@ protected:
   void UpdateModelsFromMRML();
   void UpdateModel(vtkMRMLModelNode *model);
   void UpdateModelPolyData(vtkMRMLModelNode *model);
+  void UpdateAxis();
 
   void CreateClipSlices();
+
+  void CreateAxis();
+
   int UpdateClipSlicesFormMRML();
 
   void SetModelDisplayProperty(vtkMRMLModelNode *model,  vtkActor *actor);
@@ -165,7 +181,9 @@ protected:
   std::string GetFiducialActorID (const char *id, int index);
   std::string GetFiducialNodeID (const char *actorid, int &index);
 
+  std::vector<vtkActorText *> AxisLabelActors;
   //ETX
+  vtkActor *BoxAxisActor;
 
   int ProcessingMRMLEvent;
 
@@ -188,6 +206,10 @@ protected:
   bool ClippingOn;
 
   vtkMRMLCameraNode *CameraNode;
+  vtkMRMLViewNode *ViewNode;
+
+
+
 
   bool SceneClosing;
 

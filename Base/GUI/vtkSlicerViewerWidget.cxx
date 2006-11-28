@@ -19,6 +19,7 @@
 #include "vtkRenderer.h"
 #include "vtkCamera.h"
 #include "vtkPolyDataMapper.h"
+#include "vtkOutlineSource.h"
 #include "vtkGlyphSource2D.h"
 #include "vtkVectorText.h"
 #include "vtkRenderWindow.h"
@@ -60,6 +61,9 @@ vtkSlicerViewerWidget::vtkSlicerViewerWidget ( )
   this->RedSlicePlane = NULL;
   this->GreenSlicePlane = NULL;
   this->YellowSlicePlane = NULL;
+
+  this->ViewNode = NULL;
+  this->BoxAxisActor = NULL;
 }
 
 
@@ -70,6 +74,7 @@ vtkSlicerViewerWidget::~vtkSlicerViewerWidget ( )
 
   vtkSetMRMLNodeMacro(this->ClipModelsNode, NULL);
   vtkSetMRMLNodeMacro(this->CameraNode, NULL);
+  vtkSetMRMLNodeMacro(this->ViewNode, NULL);
 
   vtkSetMRMLNodeMacro(this->RedSliceNode, NULL);
   vtkSetMRMLNodeMacro(this->GreenSliceNode, NULL);
@@ -92,6 +97,11 @@ vtkSlicerViewerWidget::~vtkSlicerViewerWidget ( )
   this->RedSlicePlane->Delete();
   this->GreenSlicePlane->Delete();
   this->YellowSlicePlane->Delete();
+
+  if (this->BoxAxisActor)
+    {
+    this->BoxAxisActor->Delete();
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -124,6 +134,28 @@ void vtkSlicerViewerWidget::CreateClipSlices()
   this->YellowSliceClipState = vtkMRMLClipModelsNode::ClipOff;
   this->GreenSliceClipState = vtkMRMLClipModelsNode::ClipOff;
   this->ClippingOn = false;
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewerWidget::CreateAxis()
+{
+  vtkOutlineSource *boxSource = vtkOutlineSource::New();
+  vtkPolyDataMapper *boxMapper = vtkPolyDataMapper::New();
+  boxMapper->SetInput( boxSource->GetOutput() );
+
+  boxMapper->Update();
+   
+  this->BoxAxisActor = vtkActor::New();
+  this->BoxAxisActor->SetMapper( boxMapper );
+  this->BoxAxisActor->SetPickable(0);
+  this->BoxAxisActor->SetScale(200, 200, 200);
+  this->BoxAxisActor->GetProperty()->SetColor( 1.0, 0.0, 1.0 );
+  if (this->MainViewer)
+    {
+    this->MainViewer->AddViewProp( this->BoxAxisActor);
+    }
+  boxSource->Delete();
+  boxMapper->Delete();
 }
 
 //---------------------------------------------------------------------------
@@ -446,6 +478,56 @@ void vtkSlicerViewerWidget::UpdateCameraNode()
   this->MainViewer->GetRenderer()->SetActiveCamera(this->CameraNode->GetCamera());
 }
 
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewerWidget::UpdateViewNode()
+{
+  if (this->SceneClosing)
+    {
+    return;
+    }
+
+  vtkMRMLViewNode *node =  vtkMRMLViewNode::SafeDownCast (
+       this->MRMLScene->GetNthNodeByClass(0, "vtkMRMLViewNode"));
+
+  if ( this->ViewNode != NULL && node != NULL && this->ViewNode != node)
+    {
+    // local ViewNode is out of sync with the scene
+    this->SetAndObserveViewNode (NULL);
+    }
+  if ( this->ViewNode != NULL && this->MRMLScene->GetNodeByID(this->ViewNode->GetID()) == NULL)
+    {
+    // local node not in the scene
+    this->SetAndObserveViewNode (NULL);
+    }
+  if ( this->ViewNode == NULL )
+    {
+    if ( node == NULL )
+      {
+      // no view in the scene and local
+      // create an active camera
+      node = vtkMRMLViewNode::New();
+      this->MRMLScene->AddNode(node);
+      node->Delete();
+      }
+    this->SetAndObserveViewNode (node);
+    }
+ 
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewerWidget::UpdateAxis()
+{
+  this->UpdateViewNode();
+  if (this->ViewNode == NULL) 
+    {
+    return;
+    }
+  double fov = this->ViewNode->GetFieldOfView();
+  this->BoxAxisActor->SetScale(fov, fov, fov);
+  this->BoxAxisActor->SetVisibility(this->ViewNode->GetBoxVisible());
+
+}
 //---------------------------------------------------------------------------
 void vtkSlicerViewerWidget::RemoveWidgetObservers ( ) 
 {
@@ -507,11 +589,15 @@ void vtkSlicerViewerWidget::CreateWidget ( )
   events->Delete();
 
   this->CreateClipSlices();
+
+  this->CreateAxis();
 }
 
 //---------------------------------------------------------------------------
 void vtkSlicerViewerWidget::UpdateFromMRML()
 {
+  this->UpdateAxis();
+
   this->UpdateCameraNode();
 
   this->UpdateClipSlicesFormMRML();

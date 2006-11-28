@@ -37,6 +37,7 @@ SET(MRML_SRCS
         vtkObserverManager.cxx
         vtkMRMLColorNode.cxx
         vtkMRMLCameraNode.cxx
+        vtkMRMLViewNode.cxx
         vtkMRMLTensorVolumeNode.cxx
         vtkMRMLDiffusionWeightedVolumeDisplayNode.cxx
         vtkMRMLDiffusionWeightedVolumeNode.cxx
