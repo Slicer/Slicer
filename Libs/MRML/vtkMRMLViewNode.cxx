@@ -55,6 +55,7 @@ vtkMRMLViewNode::vtkMRMLViewNode()
   this->BoxVisible = 1;
   this->AxisLabelsVisible = 1;
   this->FieldOfView = 200;
+  this->LetterSize = 0.05;
  }
 
 //----------------------------------------------------------------------------
@@ -72,6 +73,7 @@ void vtkMRMLViewNode::WriteXML(ostream& of, int nIndent)
   vtkIndent indent(nIndent);
 
   of << indent << " fieldOfView=\"" << this->GetFieldOfView() << "\"";
+  of << indent << " letterSize=\"" << this->GetLetterSize() << "\"";
   of << indent << " boxVisible=\"" << (this->BoxVisible ? "true" : "false") << "\"";
   of << indent << " axisLabelsVisible=\"" << (this->AxisLabelsVisible ? "true" : "false") << "\"";
 
@@ -96,6 +98,14 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
       double fov;
       ss >> fov;
       this->FieldOfView = fov;
+      }
+    else if (!strcmp(attName, "letterSize")) 
+      {
+      std::stringstream ss;
+      ss << attValue;
+      double fov;
+      ss >> fov;
+      this->LetterSize = fov;
       }
 
     else if (!strcmp(attName, "boxVisible")) 
@@ -136,6 +146,7 @@ void vtkMRMLViewNode::Copy(vtkMRMLNode *anode)
   this->SetBoxVisible(node->GetBoxVisible());
   this->SetAxisLabelsVisible(node->GetAxisLabelsVisible());
   this->SetFieldOfView(node->GetFieldOfView());
+  this->SetLetterSize(node->GetLetterSize());
 
 }
 
@@ -149,6 +160,7 @@ void vtkMRMLViewNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "BoxVisible:        " << this->BoxVisible << "\n";
   os << indent << "AxisLabelsVisible: " << this->AxisLabelsVisible << "\n";
   os << indent << "FieldOfView:       " << this->FieldOfView << "\n";
+  os << indent << "LetterSize:       " << this->LetterSize << "\n";
 
 }
 

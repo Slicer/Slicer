@@ -159,11 +159,12 @@ protected:
   void UpdateModelsFromMRML();
   void UpdateModel(vtkMRMLModelNode *model);
   void UpdateModelPolyData(vtkMRMLModelNode *model);
-  void UpdateAxis();
 
   void CreateClipSlices();
 
   void CreateAxis();
+  void AddAxisActors();
+  void UpdateAxis();
 
   int UpdateClipSlicesFormMRML();
 
@@ -181,7 +182,7 @@ protected:
   std::string GetFiducialActorID (const char *id, int index);
   std::string GetFiducialNodeID (const char *actorid, int &index);
 
-  std::vector<vtkActorText *> AxisLabelActors;
+  std::vector<vtkFollower *> AxisLabelActors;
   //ETX
   vtkActor *BoxAxisActor;
 
@@ -207,9 +208,6 @@ protected:
 
   vtkMRMLCameraNode *CameraNode;
   vtkMRMLViewNode *ViewNode;
-
-
-
 
   bool SceneClosing;
 

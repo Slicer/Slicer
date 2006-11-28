@@ -68,6 +68,12 @@ public:
   vtkGetMacro(FieldOfView, double);
   vtkSetMacro(FieldOfView, double);
 
+  // Description:
+  // Axis label size
+  vtkGetMacro(LetterSize, double);
+  vtkSetMacro(LetterSize, double);
+
+
 protected:
   vtkMRMLViewNode();
   ~vtkMRMLViewNode();
@@ -78,6 +84,7 @@ protected:
   int BoxVisible;
   int AxisLabelsVisible;
   double FieldOfView;
+  double LetterSize;
   
   
 };

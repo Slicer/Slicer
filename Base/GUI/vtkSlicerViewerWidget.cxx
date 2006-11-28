@@ -102,6 +102,10 @@ vtkSlicerViewerWidget::~vtkSlicerViewerWidget ( )
     {
     this->BoxAxisActor->Delete();
     }
+  for (int i=0; i<this->AxisLabelActors.size(); i++)
+    {
+    this->AxisLabelActors[i]->Delete();
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -150,12 +154,98 @@ void vtkSlicerViewerWidget::CreateAxis()
   this->BoxAxisActor->SetPickable(0);
   this->BoxAxisActor->SetScale(200, 200, 200);
   this->BoxAxisActor->GetProperty()->SetColor( 1.0, 0.0, 1.0 );
-  if (this->MainViewer)
+
+  this->AxisLabelActors.clear();
+  std::vector<std::string> labels;
+  labels.push_back("R");
+  labels.push_back("A");
+  labels.push_back("S");
+  labels.push_back("L");
+  labels.push_back("P");
+  labels.push_back("I");
+  
+  for (int i=0; i<labels.size(); i++)
     {
-    this->MainViewer->AddViewProp( this->BoxAxisActor);
-    }
+    vtkVectorText *axisText = vtkVectorText::New();
+    axisText->SetText(labels[i].c_str());
+    vtkPolyDataMapper *axisMapper = vtkPolyDataMapper::New();
+    axisMapper->SetInput(axisText->GetOutput());
+    vtkFollower *axisActor = vtkFollower::New();
+
+    axisActor->SetMapper(axisMapper);
+    axisActor->SetScale(1,1,1); 
+    axisActor->SetPickable (0);
+
+    this->AxisLabelActors.push_back(axisActor);
+    
+    axisActor->GetProperty()->SetColor(1, 1, 1);
+    axisActor->GetProperty()->SetDiffuse (0.0);
+    axisActor->GetProperty()->SetAmbient (1.0);
+    axisActor->GetProperty()->SetSpecular (0.0);
+  }
+  double fov = 200;
+  double pos = fov * 0.6;
+
+  this->AxisLabelActors[0]->SetPosition(pos,0,0);
+  this->AxisLabelActors[1]->SetPosition(0,pos,0);
+  this->AxisLabelActors[2]->SetPosition(0,0,pos);
+  this->AxisLabelActors[3]->SetPosition(-pos,0,0);
+  this->AxisLabelActors[4]->SetPosition(0,-pos,0);
+  this->AxisLabelActors[5]->SetPosition(0,0,-pos);
+
+  this->AddAxisActors();
+
   boxSource->Delete();
   boxMapper->Delete();
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewerWidget::AddAxisActors()
+{
+  if (this->MainViewer)
+    {
+    if (this->BoxAxisActor)
+      {
+      this->MainViewer->AddViewProp( this->BoxAxisActor);
+      }
+    for (int i=0; i<this->AxisLabelActors.size(); i++)
+      {
+      this->AxisLabelActors[i]->SetCamera(this->MainViewer->GetRenderer()->GetActiveCamera());
+      this->MainViewer->AddViewProp( this->AxisLabelActors[i]);
+      }
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewerWidget::UpdateAxis()
+{
+  this->UpdateViewNode();
+  if (this->ViewNode == NULL) 
+    {
+    return;
+    }
+  double fov = this->ViewNode->GetFieldOfView();
+  this->BoxAxisActor->SetScale(fov, fov, fov);
+  this->BoxAxisActor->SetVisibility(this->ViewNode->GetBoxVisible());
+
+  double pos = fov * 0.6;
+  double letterSize = this->ViewNode->GetLetterSize();
+  double scale = fov * letterSize;
+
+  for (int i=0; i<AxisLabelActors.size(); i++)
+    {
+    this->AxisLabelActors[i]->SetScale(scale,scale,scale);
+    this->AxisLabelActors[i]->SetVisibility(this->ViewNode->GetAxisLabelsVisible());
+    this->AxisLabelActors[i]->SetCamera(this->MainViewer->GetRenderer()->GetActiveCamera());
+    }
+
+  this->AxisLabelActors[0]->SetPosition(pos,0,0);
+  this->AxisLabelActors[1]->SetPosition(0,pos,0);
+  this->AxisLabelActors[2]->SetPosition(0,0,pos);
+  this->AxisLabelActors[3]->SetPosition(-pos,0,0);
+  this->AxisLabelActors[4]->SetPosition(0,-pos,0);
+  this->AxisLabelActors[5]->SetPosition(0,0,-pos);
+
 }
 
 //---------------------------------------------------------------------------
@@ -515,19 +605,7 @@ void vtkSlicerViewerWidget::UpdateViewNode()
  
 }
 
-//---------------------------------------------------------------------------
-void vtkSlicerViewerWidget::UpdateAxis()
-{
-  this->UpdateViewNode();
-  if (this->ViewNode == NULL) 
-    {
-    return;
-    }
-  double fov = this->ViewNode->GetFieldOfView();
-  this->BoxAxisActor->SetScale(fov, fov, fov);
-  this->BoxAxisActor->SetVisibility(this->ViewNode->GetBoxVisible());
 
-}
 //---------------------------------------------------------------------------
 void vtkSlicerViewerWidget::RemoveWidgetObservers ( ) 
 {
@@ -641,6 +719,7 @@ void vtkSlicerViewerWidget::UpdateModelsFromMRML()
     {
     this->MainViewer->RemoveAllViewProps();
     this->DisplayedModels.clear();
+    this->AddAxisActors();
     }
 
   // render slices first
