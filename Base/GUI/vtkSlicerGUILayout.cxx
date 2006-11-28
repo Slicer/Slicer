@@ -18,18 +18,29 @@ vtkSlicerGUILayout::vtkSlicerGUILayout ( )
 
   this->MainSlicerWindow = NULL;
   this->CurrentViewArrangement = this->SlicerLayoutInitialView;
-  this->DefaultTopFrameHeight = 118;
-  this->DefaultModuleControlPanelHeight = 442;
+  // DefaultGUIPanelHeight defaults to 860 pixels
+  // and DefaultGUIPanelWidth is fixed at 400 pixels.
+  // DefaultGUIPanelHeight should be a function of the
+  // window size saved in the registry, if a user has
+  // resized the slicer window. How to do this?
+  // ModuleControlPanelHeight is derived from 
+  // total panel height and the other fixed panel heights.
+  this->DefaultModuleControlPanelHeight = 0;
+  this->DefaultTopFrameHeight = 115;
   this->DefaultSlicesControlFrameHeight = 60;
   this->DefaultViewControlFrameHeight = 240;
 
-  this->DefaultGUIPanelHeight = 0;
-  this->DefaultGUIPanelWidth = 0;
+  this->DefaultGUIPanelWidth = 400;
+  this->DefaultGUIPanelHeight = 860;
   this->DefaultQuadrantHeight = 0;
   this->DefaultQuadrantWidth = 0;
     
   this->DefaultSlicerWindowWidth = 0;
   this->DefaultSlicerWindowHeight = 0;
+
+  // set the slice windows to be a default size
+  this->SetDefaultSliceGUIFrameHeight ( 350 );
+  this->SetDefaultSliceGUIFrameWidth ( 300);
 
   this->DefaultTopFrameHeight = 0;
   this->DefaultModuleControlPanelHeight = 0;
@@ -53,35 +64,14 @@ void vtkSlicerGUILayout::InitializeLayoutDimensions ( )
   // Dimensions for these are computed here.
   int h, w;
     
-  // Layout for default 3D over axi-sag-cor layout:
-  // specify dims of GUI Panel components here for now.
+  // Size of the shared Module GUI Control frame
+  h = this->DefaultGUIPanelHeight -
+    ( this->GetDefaultTopFrameHeight() +
+      this->GetDefaultSlicesControlFrameHeight() +
+      this->GetDefaultViewControlFrameHeight() );
+  this->SetDefaultModuleControlPanelHeight ( h );
 
-  // This frame contains the logo and module choose/navigation widgets
-  this->SetDefaultTopFrameHeight ( 118 );
-
-  // This frame contains the Module GUI panel
-  this->SetDefaultModuleControlPanelHeight ( 442 );
-
-  // This frme contains the widgets to control the slice viewers
-  this->SetDefaultSlicesControlFrameHeight ( 60 );
-
-  // This frame contains the widgets to control the 3D view
-  this->SetDefaultViewControlFrameHeight ( 240 );
-
-  //
-  // entire GUI panel height and width
-  //
-  h = this->GetDefaultTopFrameHeight ( ) +
-    this->GetDefaultModuleControlPanelHeight ( ) +
-    this->GetDefaultSlicesControlFrameHeight ( ) +
-    this->GetDefaultViewControlFrameHeight ( );
-  this->SetDefaultGUIPanelHeight ( h );
-  this->SetDefaultGUIPanelWidth ( 400 );
-
-  // set the slice windows to be a default size
-  this->SetDefaultSliceGUIFrameHeight ( 350 );
-  this->SetDefaultSliceGUIFrameWidth ( 300);
-
+  // Size of the main viewer.
   h = this->GetDefaultGUIPanelHeight ( );
   this->SetDefault3DViewerHeight ( h - this->GetDefaultSliceGUIFrameHeight () );
   w = 3 * this->GetDefaultSliceGUIFrameWidth ( );
@@ -94,7 +84,7 @@ void vtkSlicerGUILayout::InitializeLayoutDimensions ( )
   // have to play with these buffers.
   int hbuf = 10;
   int vbuf = 60;
-
+  
   h = this->GetDefaultGUIPanelHeight ( ) + vbuf;
   w = (3 * this->GetDefaultSliceGUIFrameWidth() ) + this->GetDefaultGUIPanelWidth() + hbuf;
   this->SetDefaultSlicerWindowWidth ( w );
@@ -102,7 +92,6 @@ void vtkSlicerGUILayout::InitializeLayoutDimensions ( )
 
   // make a minimum size for slice viewers (RenderWidget Size)
   this->SetSliceViewerMinDim ( 10 );
-
 }
 
 
