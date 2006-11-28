@@ -24,6 +24,7 @@ class vtkSlicerModuleGUI;
 //BTX
 class ProcessingTaskQueue;
 class ModifiedQueue;
+class DisplayMessageQueue;
 class vtkSlicerTask;
 //ETX
 
@@ -129,11 +130,36 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   bool RequestModified( vtkObject * );
 
   // Description:
+  // Request that a message be placed in the logger
+  // widget. RequestDisplayMessage() allows records to be added to the
+  // logger widget from a separate thread. First argument is the type
+  // of message ("Error", "Warning", "Information", "Debug").  Second
+  // argument is the message to display.
+  bool RequestDisplayMessage( const char *type, const char* message );
+  
+  // Description:
   // Process a request on the Modified queue.  This method is called
   // in the main thread of the application because calls to Modified()
   // can cause an update to the GUI. (Method needs to be public to fit
   // in the event callback chain.)
   void ProcessModified();
+
+  // Description:
+  // Process a request to place a message on the log widget. This
+  // method is called in the main thread of the application because
+  // calls to the log widget can cause an update to the GUI. (Method
+  // needs to be public to fit in the event callback chain.)
+  void ProcessDisplayMessage();
+
+  // Description:
+  // Put a message in the logger widget.  These methods actually
+  // schedule the message display so that only the application
+  // associated with the user interface attempts to display the
+  // message. THese methods delegate to RequestDisplayMessage().
+  virtual void WarningMessage(const char* message);
+  virtual void ErrorMessage(const char* message);
+  virtual void DebugMessage(const char* message);
+  virtual void InformationMessage(const char* message);
   
   // Description:
   // Override the KWWidgets default behavior of setting the 'transient'
@@ -177,13 +203,17 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   itk::MutexLock::Pointer ProcessingTaskQueueLock;
   itk::MutexLock::Pointer ModifiedQueueActiveLock;
   itk::MutexLock::Pointer ModifiedQueueLock;
+  itk::MutexLock::Pointer DisplayMessageQueueActiveLock;
+  itk::MutexLock::Pointer DisplayMessageQueueLock;
   //ETX
   int ProcessingThreadId;
   bool ProcessingThreadActive;
   bool ModifiedQueueActive;
+  bool DisplayMessageQueueActive;
 
   ProcessingTaskQueue* InternalTaskQueue;
   ModifiedQueue* InternalModifiedQueue;
+  DisplayMessageQueue* InternalDisplayMessageQueue;
   
   static vtkSlicerApplication* Instance;
 }; 

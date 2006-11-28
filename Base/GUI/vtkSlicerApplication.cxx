@@ -9,9 +9,13 @@
 #include "vtkKWFrameWithLabel.h"
 #include "vtkKWWindowBase.h"
 #include "vtkKWTkUtilities.h"
+#include "vtkKWLogDialog.h"
+#include "vtkKWLogWidget.h"
 #include "vtkKWInternationalization.h"
 #include "vtkKWTclInteractor.h"
-#include "vtkKWLogDialog.h"
+
+#include "vtkOutputWindow.h"
+#include "itkOutputWindow.h"
 
 #ifdef WIN32
 #include "vtkKWWin32RegistryHelper.h"
@@ -39,6 +43,127 @@ vtkCxxRevisionMacro(vtkSlicerApplication, "$Revision: 1.0 $");
 
 class ProcessingTaskQueue : public std::queue<vtkSmartPointer<vtkSlicerTask> > {};
 class ModifiedQueue : public std::queue<vtkSmartPointer<vtkObject> > {};
+typedef std::pair<std::string, std::string> AddRecordType;
+class DisplayMessageQueue : public std::queue<AddRecordType> {};
+
+
+//----------------------------------------------------------------------------
+
+
+// Slicer needs its own version of itk::OutputWindow to ensure that
+// only the application thread controlling the gui tries to display a
+// message. 
+namespace itk {
+
+class SlicerOutputWindow : public OutputWindow
+{
+public:
+  /** Standard class typedefs. */
+  typedef SlicerOutputWindow        Self;
+  typedef OutputWindow  Superclass;
+  typedef SmartPointer<Self>  Pointer;
+  typedef SmartPointer<const Self>  ConstPointer;
+
+  /** Run-time type information (and related methods). */
+  itkTypeMacro(SlicerOutputWindow,OutputWindow);
+
+  /** Method for creation through the object factory. */
+  itkNewMacro(Self);
+
+  void DisplayDebugText(const char* t)
+    { 
+      vtkSlicerApplication::GetInstance()->DebugMessage(t); 
+    }
+  void DisplayWarningText(const char* t)
+    { 
+      vtkSlicerApplication::GetInstance()->WarningMessage(t); 
+    }
+  void DisplayErrorText(const char* t)
+    { 
+      vtkSlicerApplication::GetInstance()->ErrorMessage(t); 
+    }
+  void DisplayText(const char* t)
+    { 
+      vtkSlicerApplication::GetInstance()->InformationMessage(t); 
+    }
+  void DisplayGenericWarningText(const char* t)
+    { 
+      this->DisplayWarningText(t); 
+    }
+  
+protected:
+  SlicerOutputWindow()
+    { 
+    }
+
+private:
+  SlicerOutputWindow(const SlicerOutputWindow&);
+  void operator=(const SlicerOutputWindow&);
+};
+
+}; // end namespace itk
+
+
+
+// Slicer needs its own version of vtkKWOutputWindow to ensure that
+// only the application thread controlling the gui tries to display a
+// message.
+//
+// NOTE: it looks as though as long as Slicer constructs the dialog
+// window early enough, then we do not need our own version of the
+// output window for VTK.  The virtual overrides of
+// InformationMessage(), WarningMessage(), etc. in
+// vtkSlicerApplication are enough to ensure that we display messages
+// in a thread safe manner.
+//
+// 
+// class vtkSlicerOutputWindow : public vtkOutputWindow
+// {
+// public:
+//   vtkTypeMacro(vtkSlicerOutputWindow,vtkOutputWindow);
+//   static vtkSlicerOutputWindow* New();
+//
+//   void DisplayDebugText(const char* t)
+//     { 
+//       this->Application->DebugMessage(t); 
+//     }
+//   void DisplayWarningText(const char* t)
+//     { 
+//       this->Application->WarningMessage(t); 
+//     }
+//   void DisplayErrorText(const char* t)
+//     { 
+//       this->Application->ErrorMessage(t); 
+//     }
+//   void DisplayText(const char* t)
+//     { 
+//       this->Application->InformationMessage(t); 
+//     }
+//   void DisplayGenericWarningText(const char* t)
+//     { 
+//       this->DisplayWarningText(t); 
+//     }
+//  
+//   void SetApplication(vtkSlicerApplication *app)
+//     { 
+//       this->Application = app; 
+//     }
+//
+// protected:
+//   vtkSlicerOutputWindow()
+//     { 
+//       this->Application = NULL; 
+//     }
+//   vtkSlicerApplication *Application;
+//
+// private:
+//   vtkSlicerOutputWindow(const vtkSlicerOutputWindow&);
+//   void operator=(const vtkSlicerOutputWindow&);
+// };
+//
+//
+// vtkStandardNewMacro(vtkSlicerOutputWindow);
+
 
 //---------------------------------------------------------------------------
 vtkSlicerApplication::vtkSlicerApplication ( ) {
@@ -73,10 +198,37 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
     this->ModifiedQueueActive = false;
     this->ModifiedQueueActiveLock = itk::MutexLock::New();
     this->ModifiedQueueLock = itk::MutexLock::New();
+
+    this->DisplayMessageQueueActive = false;
+    this->DisplayMessageQueueActiveLock = itk::MutexLock::New();
+    this->DisplayMessageQueueLock = itk::MutexLock::New();
     
     this->InternalTaskQueue = new ProcessingTaskQueue;
     this->InternalModifiedQueue = new ModifiedQueue;
+    this->InternalDisplayMessageQueue = new DisplayMessageQueue;
+
+    // Override the type of output windows used for VTK and ITK.  Note
+    // that in the VTK case, we are currently bypassing the output
+    // window mechanism provided by KWWidgets.  In KWWidgets, there
+    // are calls to InstallOutputWindow()/RestoreOutputWindow() to
+    // manage a KWWidget specific output window.  In the Slicer case,
+    // we need a different type of output window to ensure that only
+    // the main thread updates the gui.
+    //
+    //
+    // NOTE: it looks as though as long as Slicer constructs the dialog
+    // window early enough, then we do not need our own version of the
+    // output window for VTK.  The virtual overrides of
+    // InformationMessage(), WarningMessage(), etc. in
+    // vtkSlicerApplication are enough to ensure that we display messages
+    // in a thread safe manner.
     
+    //vtkSlicerOutputWindow *vtkoutput = vtkSlicerOutputWindow::New();
+    //vtkoutput->SetApplication(this);
+    //vtkOutputWindow::SetInstance( vtkoutput );
+    
+    itk::SlicerOutputWindow::SetInstance( itk::SlicerOutputWindow::New() );
+
 }
 
 
@@ -122,6 +274,9 @@ vtkSlicerApplication::~vtkSlicerApplication ( ) {
     
     delete this->InternalModifiedQueue;
     this->InternalModifiedQueue = 0;
+
+    delete this->InternalDisplayMessageQueue;
+    this->InternalDisplayMessageQueue = 0;
 }
 
 
@@ -422,7 +577,12 @@ void vtkSlicerApplication::CreateProcessingThread()
     this->ModifiedQueueActive = true;
     this->ModifiedQueueActiveLock->Unlock();
 
+    this->DisplayMessageQueueActiveLock->Lock();
+    this->DisplayMessageQueueActive = true;
+    this->DisplayMessageQueueActiveLock->Unlock();
+
     vtkKWTkUtilities::CreateTimerHandler(this, 100, this, "ProcessModified");
+    vtkKWTkUtilities::CreateTimerHandler(this, 100, this, "ProcessDisplayMessage");
     }
 
 }
@@ -436,6 +596,10 @@ void vtkSlicerApplication::TerminateProcessingThread()
     this->ModifiedQueueActive = false;
     this->ModifiedQueueActiveLock->Unlock();
 
+    this->DisplayMessageQueueActiveLock->Lock();
+    this->DisplayMessageQueueActive = false;
+    this->DisplayMessageQueueActiveLock->Unlock();
+    
     this->ProcessingThreadActiveLock->Lock();
     this->ProcessingThreadActive = false;
     this->ProcessingThreadActiveLock->Unlock();
@@ -563,6 +727,32 @@ bool vtkSlicerApplication::RequestModified( vtkObject *obj )
   return false;
 }
 
+bool vtkSlicerApplication::RequestDisplayMessage( const char *type, const char *message )
+{
+  bool active;
+
+  //std::cout << "Requesting a message be put on the logger " << type << ": " << message << std::endl;
+
+  // only request to add a record to the log if the log queue is up
+  this->DisplayMessageQueueActiveLock->Lock();
+  active = this->DisplayMessageQueueActive;
+  this->DisplayMessageQueueActiveLock->Unlock();
+
+  if (active)
+    {
+    this->DisplayMessageQueueLock->Lock();
+    (*this->InternalDisplayMessageQueue).push( AddRecordType(type, message) );
+//     std::cout << " [" << (*this->InternalDisplayMessageQueue).size()
+//               << "] " << std::endl;
+    this->DisplayMessageQueueLock->Unlock();
+    
+    return true;
+    }
+
+  // could not request the record be added to the queue
+  return false;
+}
+
 
 void vtkSlicerApplication::ProcessModified()
 {
@@ -602,6 +792,83 @@ void vtkSlicerApplication::ProcessModified()
   // schedule the next timer
   vtkKWTkUtilities::CreateTimerHandler(this, 100, this, "ProcessModified");
 }
+
+
+void vtkSlicerApplication::ProcessDisplayMessage()
+{
+  bool active = true;
+  AddRecordType record;
+  
+  // Check to see if we should be shutting down
+  this->DisplayMessageQueueActiveLock->Lock();
+  active = this->DisplayMessageQueueActive;
+  this->DisplayMessageQueueActiveLock->Unlock();
+  
+  if (active)
+    {
+    // pull an object off the queue 
+    this->DisplayMessageQueueLock->Lock();
+    if ((*this->InternalDisplayMessageQueue).size() > 0)
+      {
+      record = (*this->InternalDisplayMessageQueue).front();
+      (*this->InternalDisplayMessageQueue).pop();
+      }
+    this->DisplayMessageQueueLock->Unlock();
+
+    // force the log display
+    if (!vtkSlicerApplication::GetInstance()->GetNumberOfWindowsMapped())
+      {
+      vtkSlicerApplication::GetInstance()->DisplayLogDialog(NULL);
+      }
+    
+    // post the message
+    if (record.first == "Error")
+      {
+      vtkSlicerApplication::GetInstance()->GetLogDialog()->GetLogWidget()->AddErrorRecord( record.second.c_str() );
+      }
+    else if (record.first == "Warning")
+      {
+      vtkSlicerApplication::GetInstance()->GetLogDialog()->GetLogWidget()->AddWarningRecord( record.second.c_str() );
+      }
+    else if (record.first == "Information")
+      {
+      vtkSlicerApplication::GetInstance()->GetLogDialog()->GetLogWidget()->AddInformationRecord( record.second.c_str() );
+      }
+    else if (record.first == "Debug")
+      {
+      vtkSlicerApplication::GetInstance()->GetLogDialog()->GetLogWidget()->AddDebugRecord( record.second.c_str() );
+      }
+    }
+  
+  // schedule the next timer
+  vtkKWTkUtilities::CreateTimerHandler(this, 100, this, "ProcessDisplayMessage");
+}
+
+
+void
+vtkSlicerApplication::WarningMessage(const char* message)
+{
+  this->RequestDisplayMessage("Warning", message);
+}
+
+void
+vtkSlicerApplication::ErrorMessage(const char* message)
+{
+  this->RequestDisplayMessage("Error", message);
+}
+
+void
+vtkSlicerApplication::DebugMessage(const char* message)
+{
+  this->RequestDisplayMessage("Debug", message);
+}
+
+void
+vtkSlicerApplication::InformationMessage(const char* message)
+{
+  this->RequestDisplayMessage("Information", message);
+}
+
 
 //----------------------------------------------------------------------------
 //  override default behavior of KWWidgets so that toplevel window 
@@ -646,3 +913,4 @@ void vtkSlicerApplication::DisplayLogDialog(vtkKWTopLevel* master)
     this->LogDialog->Display();
     }
 }
+
