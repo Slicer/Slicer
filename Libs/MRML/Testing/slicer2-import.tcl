@@ -35,13 +35,26 @@ proc ImportSlicer2Scene {sceneFile} {
 #
 proc ImportElement {element} {
   
+  # import this element
   ImportNode $element
 
+  # leave a place holder in case we are a group (transform) node
+  lappend ::S2(transformIDStack) "NestingMarker"
+
+  # process all the sub nodes, which may include a sequence of matrices
+  # and/or nested transforms
   set nNested [$element GetNumberOfNestedElements]
   for {set i 0} {$i < $nNested} {incr i} {
     set nestElement [$element GetNestedElement $i]
     ImportElement $nestElement
   }
+
+  # strip away any accumulated transform ids
+  while { $::S2(transformIDStack) != "" && [lindex $::S2(transformIDStack) end] != "NestingMarker" } {
+    set ::S2(transformIDStack) [lrange $::S2(transformIDStack) 0 end-1]
+  }
+  # strip away the nesting marker
+  set ::S2(transformIDStack) [lrange $::S2(transformIDStack) 0 end-1]
 }
 
 #
@@ -78,25 +91,40 @@ proc ImportNodeMRML {node} {
 
 proc ImportNodeTransform {node} {
 
-  set transformNode [vtkMRMLLinearTransformNode New]
-  set matrix [$transformNode GetMatrixTransformToParent]
-  $::slicer3::MRMLScene AddNode $transformNode
-  
-  lappend ::S2(transformIDStack) [$transformNode GetID]
+  # no op - handled by ImportElement
+  puts Transform
 }
 
+#
+# a slicer2 matrix corresponds to a slicer3 Transform
+#
 proc ImportNodeMatrix {node} {
   upvar $node n
 
-  if 0 {
-  $matrix Identity
-  $matrix SetElement 0 3  6
-  $matrix SetElement 1 3  13
-  $matrix SetElement 2 3  13
-  }
+  set transformNode [vtkMRMLLinearTransformNode New]
 
-  #parray n
+  set matrix [$transformNode GetMatrixTransformToParent]
+  $transformNode SetName $n(name)
+  eval $matrix DeepCopy $n(matrix)
+
+  $::slicer3::MRMLScene AddNode $transformNode
+
+  set parentTransform ""
+  set index [expr [llength $::S2(transformIDStack)] - 1]
+  for {} { $index > 0 } { incr index -1 } {
+    set element [lindex $::S2(transformIDStack) $index]
+    if { $element != "NestingMarker" } {
+      set parentTransform $element
+      break
+    }
+  }
+  $transformNode SetAndObserveTransformNodeID $parentTransform
+
+  lappend ::S2(transformIDStack) [$transformNode GetID]
+
+  $transformNode Delete
 }
+
 
 proc ImportNodeVolume {node} {
   upvar $node n
@@ -105,17 +133,40 @@ proc ImportNodeVolume {node} {
     puts stderr "Archetype nodes not yet supported!"
   } else {
 
-    parray n
-
+    #
+    # first, parse the slicer2 node
+    #
     if { ![info exists n(Dimensions)] } {
       set n(Dimensions) "256 256"
     }
+
     if { ![info exists n(scalarType)] } {
       set n(scalarType) "Short"
     }
 
+    if { ![info exists n(littleEndian)] } {
+      set n(littleEndian) "false"
+    }
+    if { $n(littleEndian) } {
+      set fileLittleEndian 1
+    } else {
+      set fileLittleEndian 0
+    }
+    if { $::tcl_platform(byteOrder) == "littleEndian" } {
+      set platformLittleEndian 1
+    } else {
+      set platformLittleEndian 0
+    }
+    if { $fileLittleEndian != $platformLittleEndian } {
+      set swap 1
+    } else {
+      set swap 0
+    }
+
+    #
+    # next, read the image data
+    #
     set imageReader [vtkImageReader New]
-    $imageReader SetFileDimensions 
 
     if { [file pathtype $n(filePrefix)] == "relative" } {
       $imageReader SetFilePrefix  $::S2(dir)/$n(filePrefix)
@@ -127,51 +178,77 @@ proc ImportNodeVolume {node} {
     foreach {w h} $n(Dimensions) {}
     foreach {zlo zhi} $n(imageRange) {}
     set d [expr $zhi - $zlo]
-    $imageReader SetDataExtent $w $h $d
+    $imageReader SetDataExtent 0 [expr $w -1] 0 [expr $h - 1] 0 [expr $d -1]
     $imageReader SetFileNameSliceOffset $zlo
     $imageReader SetDataScalarTypeTo$n(scalarType)
+    $imageReader SetSwapBytes $swap
+    $imageReader Update
 
+
+    #
+    # now, construct the slicer3 node
+    # - volume
+    # - transform
+    # - display
+    #
     
+    set volumeNode [vtkMRMLScalarVolumeNode New]
+    $volumeNode SetAndObserveImageData [$imageReader GetOutput]
+    $volumeNode SetName $n(name)
+    $volumeNode SetDescription $n(description)
 
-    
+    set rasToVTK [vtkMatrix4x4 New]
+    eval $rasToVTK DeepCopy $n(rasToVtkMatrix)
+    $volumeNode SetRASToIJKMatrix $rasToVTK
+    $rasToVTK Delete
+
+    # use the current top of stack (might be "" if empty, but that's okay)
+    set transformID [lindex $::S2(transformIDStack) end]
+    $volumeNode SetAndObserveTransformNodeID $transformID
+
+    if { [info exists n(labelMap)] && $n(labelMap) == "yes" } {
+        $volumeNode SetLabelMap 1
+    }
+
+    set volumeDisplayNode [vtkMRMLVolumeDisplayNode New]
+    switch { $n(colorLUT) } {
+      "0" {
+        $volumeDisplayNode SetAndObserveColorNodeID "vtkMRMLColorNodeGrey"
+      }
+      default {
+        $volumeDisplayNode SetAndObserveColorNodeID "vtkMRMLColorNodeGrey"
+      }
+    }
+    if { [info exists n(labelMap)] && $n(labelMap) == "yes" } {
+        $volumeDisplayNode SetAndObserveColorNodeID "vtkMRMLColorNodeLabels"
+    }
+
+    if { [info exists n(applyThreshold)] && $n(applyThreshold) == "yes" } {
+        $volumeDisplayNode SetApplyThreshold 1
+    }
+    $volumeDisplayNode SetWindow $n(window)
+    $volumeDisplayNode SetLevel $n(level)
+    $volumeDisplayNode SetLowerThreshold $n(lowerThreshold)
+    $volumeDisplayNode SetUpperThreshold $n(upperThreshold)
 
 
-n(applyThreshold) = yes
-n(colorLUT)       = 0
-n(description)    = LR
-n(filePattern)    = %s.%03d
-n(filePrefix)     = spgr/I
-n(imageRange)     = 1 124
-n(level)          = 76
-n(lowerThreshold) = 17
-n(name)           = SPGR
-n(positionMatrix) = 0 0 1 -89.95 -1 0 0 133.3 0 1 0 -148 0 0 0 1
-n(rasToIjkMatrix) = 0 -1.06667 0 142.187 0 0 -1.06667 98.1333 0.666667 0 0 59.9667 0 0 0 1
-n(rasToVtkMatrix) = 0 -1.06667 0 142.187 0 0 1.06667 157.867 0.666667 0 0 59.9667 0 0 0 1
-n(upperThreshold) = 355
-n(window)         = 146
+    #
+    # add nodes to the scene
+    #
 
+    $::slicer3::MRMLScene AddNode $volumeDisplayNode
+    $volumeNode SetAndObserveDisplayNodeID [$volumeDisplayNode GetID]
+    $::slicer3::MRMLScene AddNode $volumeNode
+
+
+    #
+    # clean up
+    #
     $imageReader Delete
-
+    $volumeNode Delete
+    $volumeDisplayNode Delete
 
   }
-
-
-  if { 0 } {
-    set fileName [file dirname $::QA(directory)]/sirp-hp65-stc-to7-gam.feat/stats/zstat8.nii
-
-    set volumeNode [$volumesLogic AddArchetypeVolume $fileName $centered 0 zstat8]
-    $volumeNode SetAndObserveTransformNodeID [$transformNode GetID]
-    set ::QA(functional,volumeNodeID) [$volumeNode GetID]
-    set volumeDisplayNode [$volumeNode GetDisplayNode]
-    $volumeDisplayNode SetAndObserveColorNodeID "vtkMRMLColorNodeIron"
-    $volumeDisplayNode SetWindow 3.3
-    $volumeDisplayNode SetLevel 3
-    $volumeDisplayNode SetUpperThreshold 6.8
-    $volumeDisplayNode SetLowerThreshold 1.34
-    $volumeDisplayNode SetApplyThreshold 1
-  }
-
 }
 
 proc ImportNodeModel {node} {
