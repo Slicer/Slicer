@@ -9,9 +9,11 @@
 # for debugging - run the command when the script is read...
 #
 after idle {
+  puts -nonewline "importing..."
   ImportSlicer2Scene c:/data/tutorial/tutorial.xml
   set viewer [$::slicer3::ApplicationGUI GetViewerWidget] 
   [$viewer GetMainViewer] Reset
+  puts "done"
 }
 
 # main entry point...
@@ -86,14 +88,12 @@ proc ImportNode {element} {
 #
 
 proc ImportNodeMRML {node} {
-  # no op
-  puts MRML
+  # no op, just a marker
 }
 
 proc ImportNodeTransform {node} {
 
   # no op - handled by ImportElement
-  puts Transform
 }
 
 #
@@ -130,159 +130,171 @@ proc ImportNodeMatrix {node} {
 proc ImportNodeVolume {node} {
   upvar $node n
 
-  if { [info exists n(fileType)] && $n(fileType) == "Archetype" } {
-    puts stderr "Archetype nodes not yet supported!"
-  } else {
-
-    #
-    # first, parse the slicer2 node
-    #
-    if { ![info exists n(Dimensions)] } {
-      set n(Dimensions) "256 256"
-    }
-
-    if { ![info exists n(scalarType)] } {
-      set n(scalarType) "Short"
-    }
-
-    if { ![info exists n(littleEndian)] } {
-      set n(littleEndian) "false"
-    }
-    if { $n(littleEndian) } {
-      set fileLittleEndian 1
-    } else {
-      set fileLittleEndian 0
-    }
-    if { $::tcl_platform(byteOrder) == "littleEndian" } {
-      set platformLittleEndian 1
-    } else {
-      set platformLittleEndian 0
-    }
-    if { $fileLittleEndian != $platformLittleEndian } {
-      set swap 1
-    } else {
-      set swap 0
-    }
-
-    #
-    # next, read the image data
-    #
-    set imageReader [vtkImageReader New]
-
-    if { [file pathtype $n(filePrefix)] == "relative" } {
-      $imageReader SetFilePrefix  $::S2(dir)/$n(filePrefix)
-    } else {
-      $imageReader SetFilePrefix  $n(filePrefix)
-    }
-    $imageReader SetFilePattern  $n(filePattern)
-
-    foreach {w h} $n(Dimensions) {}
-    foreach {zlo zhi} $n(imageRange) {}
-    set d [expr $zhi - $zlo]
-    $imageReader SetDataExtent 0 [expr $w -1] 0 [expr $h - 1] 0 [expr $d -1]
-    $imageReader SetFileNameSliceOffset $zlo
-    $imageReader SetDataScalarTypeTo$n(scalarType)
-    $imageReader SetSwapBytes $swap
-    $imageReader Update
-
-
-    #
-    # now, construct the slicer3 node
-    # - volume
-    # - transform
-    # - display
-    #
-    
-    set volumeNode [vtkMRMLScalarVolumeNode New]
-    $volumeNode SetAndObserveImageData [$imageReader GetOutput]
-    $volumeNode SetName $n(name)
-    $volumeNode SetDescription $n(description)
-
-    set rasToVTK [vtkMatrix4x4 New]
-    eval $rasToVTK DeepCopy $n(rasToVtkMatrix)
-    $volumeNode SetRASToIJKMatrix $rasToVTK
-    $rasToVTK Delete
-
-    # use the current top of stack (might be "" if empty, but that's okay)
-    set transformID [lindex $::S2(transformIDStack) end]
-    $volumeNode SetAndObserveTransformNodeID $transformID
-
-    if { [info exists n(labelMap)] && $n(labelMap) == "yes" } {
-        $volumeNode SetLabelMap 1
-    }
-
-    set volumeDisplayNode [vtkMRMLVolumeDisplayNode New]
-    switch { $n(colorLUT) } {
-      "0" {
-        $volumeDisplayNode SetAndObserveColorNodeID "vtkMRMLColorNodeGrey"
-      }
-      default {
-        $volumeDisplayNode SetAndObserveColorNodeID "vtkMRMLColorNodeGrey"
-      }
-    }
-    if { [info exists n(labelMap)] && $n(labelMap) == "yes" } {
-        $volumeDisplayNode SetAndObserveColorNodeID "vtkMRMLColorNodeLabels"
-    }
-
-    if { [info exists n(applyThreshold)] && $n(applyThreshold) == "yes" } {
-        $volumeDisplayNode SetApplyThreshold 1
-    }
-    $volumeDisplayNode SetWindow $n(window)
-    $volumeDisplayNode SetLevel $n(level)
-    $volumeDisplayNode SetLowerThreshold $n(lowerThreshold)
-    $volumeDisplayNode SetUpperThreshold $n(upperThreshold)
-
-
-    #
-    # add nodes to the scene
-    #
-
-    $::slicer3::MRMLScene AddNode $volumeDisplayNode
-    $volumeNode SetAndObserveDisplayNodeID [$volumeDisplayNode GetID]
-    $::slicer3::MRMLScene AddNode $volumeNode
-
-
-    #
-    # clean up
-    #
-    $imageReader Delete
-    $volumeNode Delete
-    $volumeDisplayNode Delete
-
+  if { ![info exists n(fileType)] } {
+    set n(fileType) "Basic"
   }
+
+  switch $n(fileType) {
+
+    "NRRD" -
+    "Generic" {
+      puts stderr "Archetype nodes not yet supported!"
+
+      if { [file pathtype $n(fileName)] == "relative" } {
+        set fileName $::S2(dir)/$n(fileName)
+      } else {
+        set fileName $n(fileName)
+      }
+
+      set labelMap 0
+      if { [info exists n(labelMap)] && $n(labelMap) == "yes" } {
+          set labelMap 1
+      }
+
+      set logic [$::slicer3::VolumesGUI GetLogic]
+      set volumeNode [$logic AddArchetypeVolume $fileName 1 $labelMap $n(name)]
+      set volumeNodeID [$volumeNode GetID]
+
+    }
+
+    "Basic" {
+
+      #
+      # first, parse the slicer2 node
+      #
+      if { ![info exists n(Dimensions)] } {
+        set n(Dimensions) "256 256"
+      }
+
+      if { ![info exists n(scalarType)] } {
+        set n(scalarType) "Short"
+      }
+
+      if { ![info exists n(littleEndian)] } {
+        set n(littleEndian) "false"
+      }
+      if { $n(littleEndian) } {
+        set fileLittleEndian 1
+      } else {
+        set fileLittleEndian 0
+      }
+      if { $::tcl_platform(byteOrder) == "littleEndian" } {
+        set platformLittleEndian 1
+      } else {
+        set platformLittleEndian 0
+      }
+      if { $fileLittleEndian != $platformLittleEndian } {
+        set swap 1
+      } else {
+        set swap 0
+      }
+
+      #
+      # next, read the image data
+      #
+      set imageReader [vtkImageReader New]
+
+      if { [file pathtype $n(filePrefix)] == "relative" } {
+        $imageReader SetFilePrefix  $::S2(dir)/$n(filePrefix)
+      } else {
+        $imageReader SetFilePrefix  $n(filePrefix)
+      }
+      $imageReader SetFilePattern  $n(filePattern)
+
+      foreach {w h} $n(Dimensions) {}
+      foreach {zlo zhi} $n(imageRange) {}
+      set d [expr $zhi - $zlo]
+      $imageReader SetDataExtent 0 [expr $w -1] 0 [expr $h - 1] 0 [expr $d -1]
+      $imageReader SetFileNameSliceOffset $zlo
+      $imageReader SetDataScalarTypeTo$n(scalarType)
+      $imageReader SetSwapBytes $swap
+      $imageReader Update
+
+
+      #
+      # now, construct the slicer3 node
+      # - volume
+      # - transform
+      # - display
+      #
+      
+      set volumeNode [vtkMRMLScalarVolumeNode New]
+      $volumeNode SetAndObserveImageData [$imageReader GetOutput]
+      $volumeNode SetName $n(name)
+      $volumeNode SetDescription $n(description)
+      $imageReader Delete
+
+      if { [info exists n(labelMap)] && $n(labelMap) == "yes" } {
+          $volumeNode SetLabelMap 1
+      }
+
+      set volumeDisplayNode [vtkMRMLVolumeDisplayNode New]
+
+      #
+      # add nodes to the scene
+      #
+
+      $::slicer3::MRMLScene AddNode $volumeDisplayNode
+      $volumeNode SetAndObserveDisplayNodeID [$volumeDisplayNode GetID]
+      $::slicer3::MRMLScene AddNode $volumeNode
+
+      #
+      # clean up
+      #
+      set volumeNodeID [$volumeNode GetID]
+      $volumeNode Delete
+      $volumeDisplayNode Delete
+    }
+  }
+
+  set volumeNode [$::slicer3::MRMLScene GetNodeByID $volumeNodeID]
+
+  # use the RASToIJK information from the file, to override what the 
+  # archetype reader might have set
+  set rasToVTK [vtkMatrix4x4 New]
+  eval $rasToVTK DeepCopy $n(rasToVtkMatrix)
+  $volumeNode SetRASToIJKMatrix $rasToVTK
+  $rasToVTK Delete
+
+  # use the current top of stack (might be "" if empty, but that's okay)
+  set transformID [lindex $::S2(transformIDStack) end]
+  $volumeNode SetAndObserveTransformNodeID $transformID
+
+  set volumeDisplayNode [$volumeNode GetDisplayNode]
+
+  switch { $n(colorLUT) } {
+    "0" {
+      $volumeDisplayNode SetAndObserveColorNodeID "vtkMRMLColorNodeGrey"
+    }
+    default {
+      $volumeDisplayNode SetAndObserveColorNodeID "vtkMRMLColorNodeGrey"
+    }
+  }
+  if { [info exists n(labelMap)] && $n(labelMap) == "yes" } {
+    $volumeDisplayNode SetAndObserveColorNodeID "vtkMRMLColorNodeLabels"
+  }
+
+  if { [info exists n(applyThreshold)] && $n(applyThreshold) == "yes" } {
+    $volumeDisplayNode SetApplyThreshold 1
+  }
+  $volumeDisplayNode SetWindow $n(window)
+  $volumeDisplayNode SetLevel $n(level)
+  $volumeDisplayNode SetLowerThreshold $n(lowerThreshold)
+  $volumeDisplayNode SetUpperThreshold $n(upperThreshold)
+
 }
 
 proc ImportNodeModel {node} {
   upvar $node n
 
-  set modelNode [vtkMRMLModelNode New]
-  set modelStorageNode [vtkMRMLModelStorageNode New]
-  set modelDisplayNode [vtkMRMLModelDisplayNode New]
-
-  $modelNode SetName $n(name)
   if { [file pathtype $n(fileName)] == "relative" } {
-    $modelStorageNode SetFileName $::S2(dir)/$n(fileName)
+    set fileName $::S2(dir)/$n(fileName)
   } else {
-    $modelStorageNode SetFileName $n(fileName)
+    set fileName $n(fileName)
   }
 
-  if { [$modelStorageNode ReadData $modelNode] != 0 } {
-
-    $::slicer3::MRMLScene AddNode $modelStorageNode
-    $::slicer3::MRMLScene AddNode $modelDisplayNode
-
-    $modelNode SetStorageNodeID [$modelStorageNode GetID]
-    $modelNode SetAndObserveDisplayNodeID [$modelDisplayNode GetID]
-
-    $::slicer3::MRMLScene AddNode $modelNode
-
-  } else {
-    puts stderr "warning: could not read data for model node from $n(fileName)"
-  }
-
-  $modelNode Delete
-  $modelStorageNode Delete
-  $modelDisplayNode Delete
+  set logic [$::slicer3::ModelsGUI GetLogic]
+  $logic AddModel $fileName
 }
 
 proc ImportNodeOptions {node} {
