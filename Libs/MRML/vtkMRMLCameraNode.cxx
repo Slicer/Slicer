@@ -57,6 +57,11 @@ vtkMRMLCameraNode::vtkMRMLCameraNode()
   this->Active = 0;
   this->Camera = NULL;
   vtkCamera *camera = vtkCamera::New();
+
+  camera->SetPosition(0, 500, 0);
+  camera->SetFocalPoint(0, 0, 0);
+  camera->SetViewUp(0, 0, 1);
+
   this->SetAndObserveCamera(camera); 
   camera->Delete();
  }

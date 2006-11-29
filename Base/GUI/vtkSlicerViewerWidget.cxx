@@ -152,7 +152,7 @@ void vtkSlicerViewerWidget::CreateAxis()
   this->BoxAxisActor = vtkActor::New();
   this->BoxAxisActor->SetMapper( boxMapper );
   this->BoxAxisActor->SetPickable(0);
-  this->BoxAxisActor->SetScale(200, 200, 200);
+  this->BoxAxisActor->SetScale(100, 100, 100);
   this->BoxAxisActor->GetProperty()->SetColor( 1.0, 0.0, 1.0 );
 
   this->AxisLabelActors.clear();
@@ -225,7 +225,7 @@ void vtkSlicerViewerWidget::UpdateAxis()
     return;
     }
   double fov = this->ViewNode->GetFieldOfView();
-  this->BoxAxisActor->SetScale(fov, fov, fov);
+  this->BoxAxisActor->SetScale(fov/2, fov/2, fov/2);
   this->BoxAxisActor->SetVisibility(this->ViewNode->GetBoxVisible());
 
   double pos = fov * 0.6;
@@ -653,8 +653,6 @@ void vtkSlicerViewerWidget::CreateWidget ( )
     this->MainViewer->SetHeight ( app->GetMainLayout()->GetSliceViewerMinDim() );
     }
     
-  //this->PackWidget ( );
-  this->MainViewer->ResetCamera ( );
 
   // observe scene for add/remove nodes
   vtkIntArray *events = vtkIntArray::New();
@@ -669,6 +667,9 @@ void vtkSlicerViewerWidget::CreateWidget ( )
   this->CreateClipSlices();
 
   this->CreateAxis();
+
+  //this->PackWidget ( );
+  this->MainViewer->ResetCamera ( );
 }
 
 //---------------------------------------------------------------------------
