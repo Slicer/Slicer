@@ -35,6 +35,7 @@ Version:   $Revision: 1.2 $
 
 #include "itksys/Process.h"
 #include "itksys/SystemTools.hxx"
+#include "itksys/RegularExpression.hxx"
 
 #include <algorithm>
 #include <set>
@@ -499,6 +500,8 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
   // print the command line
   //
   std::stringstream information;
+  information << node->GetModuleDescription().GetTitle()
+              << " command line: " << std::endl << std::endl;
   for (std::vector<std::string>::size_type i=0; i < commandLineAsString.size(); ++i)
     {
     information << command[i] << " ";
@@ -662,12 +665,60 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
       }
     itksysProcess_WaitForExit(process, 0);
 
+
+    // remove the embedded XML from the stdout stream
+    //
+    // Note that itksys::RegularExpression gives begin()/end() as
+    // size_types not iterators. So we need to use the version of
+    // erase that takes a position and length to erase.
+    //
+    itksys::RegularExpression filterProgressRegExp("<filter-progress>[^<]*</filter-progress>[ \t\n\r]*");
+    while (filterProgressRegExp.find(stdoutbuffer))
+      {
+      stdoutbuffer.erase(filterProgressRegExp.start(),
+                         filterProgressRegExp.end()
+                         - filterProgressRegExp.start());
+      }
+    itksys::RegularExpression filterNameRegExp("<filter-name>[^<]*</filter-name>[ \t\n\r]*");
+    while (filterNameRegExp.find(stdoutbuffer))
+      {
+      stdoutbuffer.erase(filterNameRegExp.start(),
+                         filterNameRegExp.end()
+                         - filterNameRegExp.start());
+      }
+    itksys::RegularExpression filterCommentRegExp("<filter-comment>[^<]*</filter-comment>[ \t\n\r]*");
+    while (filterCommentRegExp.find(stdoutbuffer))
+      {
+      stdoutbuffer.erase(filterCommentRegExp.start(),
+                         filterCommentRegExp.end()
+                         - filterCommentRegExp.start());
+      }
+    itksys::RegularExpression filterStartRegExp("<filter-start>[^<]*</filter-start>[ \t\n\r]*");
+    while (filterStartRegExp.find(stdoutbuffer))
+      {
+      stdoutbuffer.erase(filterStartRegExp.start(),
+                         filterStartRegExp.end()
+                         - filterStartRegExp.start());
+      }
+    itksys::RegularExpression filterEndRegExp("<filter-end>[^<]*</filter-end>[ \t\n\r]*");
+    while (filterEndRegExp.find(stdoutbuffer))
+      {
+      stdoutbuffer.erase(filterEndRegExp.start(),
+                         filterEndRegExp.end()
+                         - filterEndRegExp.start());
+      }
+    
+    
     if (stdoutbuffer.size() > 0)
       {
+      std::string tmp(" standard output:\n\n");
+      stdoutbuffer.insert(0, node->GetModuleDescription().GetTitle()+tmp);
       vtkSlicerApplication::GetInstance()->InformationMessage( stdoutbuffer.c_str() );
       }
     if (stderrbuffer.size() > 0)
       {
+      std::string tmp(" standard error:\n\n");
+      stderrbuffer.insert(0, node->GetModuleDescription().GetTitle()+tmp);
       vtkSlicerApplication::GetInstance()->ErrorMessage( stderrbuffer.c_str() );
       }
     
@@ -736,11 +787,17 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
       // report the output
       if (coutstringstream.str().size() > 0)
         {
-        vtkSlicerApplication::GetInstance()->InformationMessage( coutstringstream.str().c_str() );
+        std::string tmp(" standard output:\n\n");
+        tmp = node->GetModuleDescription().GetTitle()+tmp;
+        
+        vtkSlicerApplication::GetInstance()->InformationMessage( (tmp + coutstringstream.str()).c_str() );
         }
       if (cerrstringstream.str().size() > 0)
         {
-        vtkSlicerApplication::GetInstance()->ErrorMessage( cerrstringstream.str().c_str() );
+        std::string tmp(" standard error:\n\n");
+        tmp = node->GetModuleDescription().GetTitle()+tmp;
+
+        vtkSlicerApplication::GetInstance()->ErrorMessage( (tmp + cerrstringstream.str()).c_str() );
         }
 
       // reset the streams
