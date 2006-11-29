@@ -15,7 +15,6 @@
 #include "vtkKWObject.h"
 #include "vtkSlicerBaseGUIWin32Header.h"
 #include "vtkSlicerApplicationLogic.h"
-#include "vtkSlicerLogic.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
 #include "vtkSlicerLogic.h"
