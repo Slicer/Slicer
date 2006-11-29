@@ -132,7 +132,7 @@
       <flag>-a</flag>
       <description>Print out all of the version info and continue</description>
       <label>Print all info</label>
-      <default>10</default>
+      <default>false</default>
       </boolean>
 
       <boolean>
