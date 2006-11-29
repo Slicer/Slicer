@@ -49,6 +49,10 @@
 
 #include <vtksys/SystemTools.hxx>
 
+// for data prov
+#include <time.h>
+#include <stdlib.h>
+
 #ifdef _WIN32
 #  define slicerCerr(x) \
   do { \
@@ -114,6 +118,94 @@ int Slicer3_Tcl_Eval ( Tcl_Interp *interp, const char *script )
 //#define COLORS_DEBUG
 //#define FIDUCIALS_DEBUG
 //#define CAMERA_DEBUG
+
+void printAllInfo(int argc, char **argv)
+{
+  int i;
+  struct tm * timeInfo;
+  time_t rawtime;
+  // mm/dd/yy-hh-mm-ss-TZ
+  // plus one for 3 char time zone
+  char timeStr[22];
+  
+  fprintf(stdout, "ProgramName: %s", argv[0]);
+  fprintf(stdout, " ProgramArguments:");
+  for (i = 1; i < argc; i++)
+    {
+    fprintf(stdout, " %s", argv[i]);
+    }
+  fprintf(stdout, " ProgramVersion: $Revision$ CVS: $Id$ TimeStamp: ");
+  time ( &rawtime );
+  timeInfo = localtime (&rawtime);
+  strftime (timeStr, 22, "%D-%k-%M-%S-%Z", timeInfo);
+  fprintf(stdout, "%s", timeStr);
+  fprintf(stdout, " User: %s", getenv("USER"));
+  
+  fprintf(stdout, " Machine: %s", getenv("HOSTNAME"));
+  fprintf(stdout, " Platform: ");
+#if defined(linux) || defined(__linux)
+  fprintf(stdout, "Linux");
+#endif 
+#if defined(macintosh) || defined(Macintosh)
+  fprintf(stdout, "MAC OS 9");
+#endif
+#ifdef __MACOSX__
+  fprintf(stdout, "MAC OS X");
+#endif
+#if defined(sun) || defined(__sun)
+# if defined(__SVR4) || defined(__svr4__)
+  fprintf(stdout, "Solaris");
+# else
+  fprintf(stdout, "SunOS");
+# endif
+#endif
+#if defined(_WIN32) || defined(__WIN32__)
+  fprintf(stdout, "Windows");
+#endif
+  fprintf(stdout, " PlatformVersion: ");
+  
+#if defined(sun) || defined(__sun)
+#if defined(__SunOS_5_7)
+  fprintf(stdout, "2.7");
+#endif
+#if defined(__SunOS_5_8)
+  fprintf(stdout, "8");
+#endif
+#endif
+#if defined(linux) || defined(__linux)
+  fprintf(stdout, "unknown");
+#endif
+  fprintf(stdout, " CompilerName: ");
+#if defined(__GNUC__)
+  fprintf(stdout, "GCC");
+#else
+#if defined(_MSC_VER)
+  fprintf(stdout, "MSC");
+#else
+  fprintf(stdout, "UKNOWN");
+#endif
+#endif
+  fprintf(stdout, " CompilerVersion: ");
+#if defined(__GNUC__)
+#if defined(__GNU_PATCHLEVEL__)
+  fprintf(stdout, "%d", (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__));
+#else
+  fprintf(stdout, "%d", (__GNUC__ * 10000 + __GNUC_MINOR__ * 100));
+#endif
+#endif
+#if defined(_MSC_VER)
+  fprintf(stdout, "%d", (_MSC_VER));
+#endif
+  
+  fprintf(stdout, " LibName: VTK LibVersion: %s LibName: ITK LibVersion: unknown", VTK_VERSION);
+  int major, minor, patchLevel;
+  Tcl_GetVersion(&major, &minor, &patchLevel, NULL);
+  fprintf(stdout, " LibName: TCL LibVersion: %d.%d.%d", major, minor, patchLevel);
+  //fprintf(stdout, " LibName: TK LibVersion: %d.%d.%d", major, minor, patchLevel);
+  fprintf(stdout, "\n");
+  
+}
+
 
 int Slicer3_main(int argc, char *argv[])
 {
@@ -289,6 +381,14 @@ int Slicer3_main(int argc, char *argv[])
       return ( Slicer3_Tcl_Eval( interp, cmd.c_str() ) );
       }
 
+    //
+    // print out data provenance information if requested
+    //
+    if (AllInfo != 0)
+      {
+      printAllInfo(argc, argv);
+      }
+    
     //
     // use the startup code passed on command line if it exists
     //
