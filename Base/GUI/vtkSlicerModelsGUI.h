@@ -60,6 +60,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModelsGUI : public vtkSlicerModuleGUI
         { this->SetLogic ( vtkObjectPointer (&this->Logic), logic ); }
     void SetAndObserveModuleLogic ( vtkSlicerModelsLogic *logic )
         { this->SetLogic ( vtkObjectPointer (&this->Logic), logic ); }
+    vtkGetObjectMacro( Logic, vtkSlicerModelsLogic );
 
     // Description:
     // This method builds the Models module GUI
