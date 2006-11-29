@@ -774,7 +774,8 @@ void vtkSlicerApplication::ProcessModified()
       (*this->InternalModifiedQueue).pop();
 
       // pop off any extra copies of the same object to save some updates
-      while (obj == (*this->InternalModifiedQueue).front())
+      while (!(*this->InternalModifiedQueue).empty() 
+                    && (obj == (*this->InternalModifiedQueue).front()))
         {
         (*this->InternalModifiedQueue).pop();
         }
