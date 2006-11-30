@@ -799,6 +799,7 @@ void vtkSlicerApplication::ProcessDisplayMessage()
 {
   bool active = true;
   AddRecordType record;
+  record.first = "";
   
   // Check to see if we should be shutting down
   this->DisplayMessageQueueActiveLock->Lock();
@@ -816,12 +817,6 @@ void vtkSlicerApplication::ProcessDisplayMessage()
       }
     this->DisplayMessageQueueLock->Unlock();
 
-    // force the log display
-    if (!vtkSlicerApplication::GetInstance()->GetNumberOfWindowsMapped())
-      {
-      vtkSlicerApplication::GetInstance()->DisplayLogDialog(NULL);
-      }
-    
     // post the message
     if (record.first == "Error")
       {
