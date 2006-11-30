@@ -1,3 +1,13 @@
+
+For more information, please see:
+  http://www.slicer.org
+and
+  http://wiki.na-mic.org/Wiki/index.php/Slicer3
+
+The 3D Slicer license below is a BSD style license, with extensions
+to cover contributions and other issues specific to 3D Slicer.
+
+
 3D Slicer Contribution and Software License Agreement ("Agreement")
 Version 1.0 (December 20, 2005)
 
