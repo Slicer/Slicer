@@ -212,7 +212,8 @@ int Slicer3_main(int argc, char *argv[])
   // Append the path to the slicer executable to the ITK_AUTOLOAD_PATH
   // so that Slicer specific ITK factories will be available by
   // default. We assume any factories to be loaded will be in the same
-  // directory as the slicer executable
+  // directory as the slicer executable. Also, set up the TCL_LIBRARY
+  // environment variable.
   std::string itkAutoLoadPath;
   vtksys::SystemTools::GetEnv("ITK_AUTOLOAD_PATH", itkAutoLoadPath);
 
@@ -224,21 +225,33 @@ int Slicer3_main(int argc, char *argv[])
     slicerCerr("Error: Cannot find Slicer3 executable" << endl);
     return 1;
     }
-
-  std::string ptemp;
   cerr << "Using slicer executable: " << programPath.c_str() << endl;
+  
   std::string slicerBinDir
     = vtksys::SystemTools::GetFilenamePath(programPath.c_str());
+  std::string ptemp;
+  bool hasIntDir = false;
+  std::string intDir = "";
+  
   std::string tmpName = slicerBinDir + "/../lib/Slicer3/slicerd.tcl";
   if ( !vtksys::SystemTools::FileExists(tmpName.c_str()) )
     {
     // Handle Visual Studio IntDir
+    std::vector<std::string> pathComponents;
+    vtksys::SystemTools::SplitPath(slicerBinDir.c_str(), pathComponents);
+
     slicerBinDir = slicerBinDir + "/..";
     tmpName = slicerBinDir + "/../lib/Slicer3/slicerd.tcl";
     if ( !vtksys::SystemTools::FileExists(tmpName.c_str()) )
       {
       slicerCerr("Error: Cannot find Slicer3 libraries" << endl);
       return 1;
+      }
+
+    if (pathComponents.size() > 0)
+      {
+      hasIntDir = true;
+      intDir = pathComponents[pathComponents.size()-1];
       }
     }
   std::string tclEnv = "TCL_LIBRARY=";
@@ -256,7 +269,6 @@ int Slicer3_main(int argc, char *argv[])
 #endif
   itkAutoLoadPath = "ITK_AUTOLOAD_PATH=" + itkAutoLoadPath;
   putenv(const_cast <char *> (itkAutoLoadPath.c_str()));
-  
   
   
     // Initialize Tcl
@@ -694,25 +706,36 @@ int Slicer3_main(int argc, char *argv[])
     //
     //
 #ifdef _WIN32
-  std::string delim(";");
+    std::string delim(";");
 #else
-  std::string delim(":");
+    std::string delim(":");
 #endif
-    std::string packageDir = slicerBinDir + "/lib/Slicer3/Plugins";
+    std::string packagePath;
+    std::string defaultPackageDir;
+    std::string userPackagePath;
 
-    // TODO: want to add the bin directory as a default location so fresh
-    // builds include the module, but don't do this for now, since 
-    // many executables will be here for in release packages
-    //
-    //packageDir += delim + slicerBinDir;
-
-    if ( strlen(slicerApp->GetModulePath()) == 0 )
+    // define a default plugin path based on the slicer installation
+    // or build tree
+    defaultPackageDir = slicerBinDir + "/../lib/Slicer3/Plugins";
+    if (hasIntDir)
       {
-      slicerApp->SetModulePath( packageDir.c_str() );
-      appGUI->GetMainSlicerWindow()->GetApplicationSettingsInterface()->Update();
+      defaultPackageDir += "/" + intDir;
       }
+    
+    // get the path of that the user has configured
+    if (slicerApp->GetModulePath())
+      {
+      userPackagePath = slicerApp->GetModulePath();
+      }
+
+    // add the default plugin directory (based on the slicer
+    // installation or build tree) to the user path
+    packagePath = userPackagePath + delim + defaultPackageDir;
+    
+
+    // Search for modules
     ModuleFactory moduleFactory;
-    moduleFactory.SetSearchPath( slicerApp->GetModulePath() );
+    moduleFactory.SetSearchPath( packagePath );
     moduleFactory.Scan();
 
     // add the modules to the available modules
