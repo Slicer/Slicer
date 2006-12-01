@@ -42,7 +42,7 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLDiffusionTensorVolumeNode.h"
 #include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
 #include "vtkMRMLCameraNode.h"
-
+#include "vtkMRMLViewNode.h"
 
 //------------------------------------------------------------------------------
 vtkMRMLScene::vtkMRMLScene() 
@@ -143,6 +143,11 @@ vtkMRMLScene::vtkMRMLScene()
   vtkMRMLCameraNode *camera = vtkMRMLCameraNode::New();
   this->RegisterNodeClass ( camera );
   camera->Delete();
+
+  vtkMRMLViewNode *view = vtkMRMLViewNode::New();
+  this->RegisterNodeClass ( view );
+  view->Delete();
+
 
 }
 

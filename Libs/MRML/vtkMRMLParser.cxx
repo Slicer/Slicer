@@ -84,5 +84,12 @@ void vtkMRMLParser::EndElement (const char *name)
     {
     return;
     }
+
+  const char* className = this->MRMLScene->GetClassNameByTag(name);
+  if (className == NULL) 
+    {
+    return;
+    }
+
   this->NodeStack.pop();
 }
