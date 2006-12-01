@@ -902,7 +902,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
         in->Delete();
         disp->Delete();
         }
-      
+#if 0     
       // only display the new data if the node is the same as one
       // being displayed on the gui
       if (svnd && node == this->GetCommandLineModuleNode())
@@ -910,6 +910,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
         this->ApplicationLogic->GetSelectionNode()->SetActiveVolumeID( (*id2fn).first.c_str() );
         this->ApplicationLogic->PropagateVolumeSelection();
         }
+#endif
       }
     }
 
