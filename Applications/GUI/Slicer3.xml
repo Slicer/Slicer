@@ -22,6 +22,14 @@
       </boolean>
 
       <boolean>
+      <name>Daemon</name>
+      <longflag>--daemon</longflag>
+      <description>Turns on the Slicer Daemon (open listening socket port)</description>
+      <default>false</default>
+      <label>Slicer Daemon On/Off</label>
+      </boolean>
+
+      <boolean>
       <name>Tkcon</name>
       <longflag>--tkcon</longflag>
       <flag>-k</flag>

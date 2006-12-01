@@ -5,6 +5,9 @@
 #include "vtkKWWindow.h"
 #include "vtkKWNotebook.h"
 #include "vtkKWRegistryHelper.h"
+#include "vtkKWTkUtilities.h"
+#include "vtkKWSplashScreen.h"
+#include "vtkSlicerLogoIcons.h"
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerApplicationLogic.h"
 #include "vtkSlicerSliceLogic.h"
@@ -284,7 +287,6 @@ int Slicer3_main(int argc, char *argv[])
             return 1;
         }
 
-
     // Tell KWWidgets to make names like .vtkKWPushButton10 instead of .10 
     vtkKWWidget::UseClassNameInWidgetNameOn();
 
@@ -318,7 +320,7 @@ int Slicer3_main(int argc, char *argv[])
       }
 
     //
-    // load the gui tcl package (for the interactive widgets)
+    // load itcl package (needed for interactive widgets)
     //
     {    
       std::string cmd;
@@ -418,6 +420,30 @@ int Slicer3_main(int argc, char *argv[])
     vtkSlicerApplication *slicerApp = vtkSlicerApplication::GetInstance ( );
     slicerApp->InstallTheme( slicerApp->GetSlicerTheme() );
     slicerApp->CreateProcessingThread();
+
+
+    vtksys_stl::string myTkName = slicerApp->GetSplashScreen()->GetWidgetName();
+    myTkName.append("_0");
+    vtkKWIcon *tmpIcon = vtkKWIcon::New();
+    tmpIcon->SetImage(vtkKWIcon::IconWarningMini);
+    tmpIcon->SetImage( image_Slicer3LogoVerticalAlpha,
+                                image_Slicer3LogoVerticalAlpha_width,
+                                image_Slicer3LogoVerticalAlpha_height,
+                                image_Slicer3LogoVerticalAlpha_pixel_size,
+                                image_Slicer3LogoVerticalAlpha_length, 0);
+    if (!vtkKWTkUtilities::UpdatePhoto(slicerApp,myTkName.c_str(),
+          tmpIcon->GetData(), tmpIcon->GetWidth(), tmpIcon->GetHeight(),
+          tmpIcon->GetPixelSize()))
+      {
+      vtkWarningWithObjectMacro(slicerApp, << "Error updating Tk photo " << myTkName.c_str());
+      } 
+
+    slicerApp->GetSplashScreen()->SetImageName(myTkName.c_str());
+
+    slicerApp->SupportSplashScreenOn();
+    slicerApp->SplashScreenVisibilityOn();
+    slicerApp->GetSplashScreen()->SetProgressMessage("");
+    tmpIcon->Delete();
 
     // Create MRML scene
     vtkMRMLScene *scene = vtkMRMLScene::New();
@@ -680,19 +706,17 @@ int Slicer3_main(int argc, char *argv[])
 
     // --- SlicerDaemon Module
     // need to source the slicerd.tcl script here
+    // - only start if selected on command line, since 
+    //   windows firewall will complain. 
+    //   TODO: this could be changed to registry option in the future
 
-    {
+    if ( Daemon )
+      {
       std::string cmd;
       cmd =  "source \"" + slicerBinDir + "/../"
         SLICER_INSTALL_LIBRARIES_DIR "/slicerd.tcl\"; slicerd_start; ";
-      /*
-    Slicer3_Tcl_Eval( interp, "                                              \
-      source $::SLICER_BUILD/"                                               \
-      SLICER_INSTALL_LIBRARIES_DIR "/slicerd.tcl; slicerd_start              \
-    ");
-    */
       Slicer3_Tcl_Eval(interp, cmd.c_str());
-    }
+      }
 
 
 #ifndef CLIMODULES_DEBUG
