@@ -5,8 +5,6 @@
 #include "vtkKWResourceUtilities.h"
 #include "vtkKWIcon.h"
 #include "vtkSlicerIcons.h"
-#include "./Resources/vtkSlicerRotateAround_ImageData.h"
-#include "./Resources/vtkSlicerLookFrom_ImageData.h"
 #include "./Resources/vtkSlicerNavZoom_ImageData.h"
 #include "./Resources/vtkSlicerViewControl_ImageData.h"
 
@@ -53,40 +51,6 @@ class vtkSlicerViewControlIcons : public vtkSlicerIcons
     vtkGetObjectMacro (LookFromButtonIcon, vtkKWIcon );
     vtkGetObjectMacro (RotateAroundButtonIcon, vtkKWIcon );
 
-    // Description:
-    // Get on Auto camera movement icons
-    vtkGetObjectMacro (RotateAroundAIconLO, vtkKWIcon );
-    vtkGetObjectMacro (RotateAroundAIconHI, vtkKWIcon );
-    vtkGetObjectMacro (RotateAroundPIconLO, vtkKWIcon );
-    vtkGetObjectMacro (RotateAroundPIconHI, vtkKWIcon );
-    vtkGetObjectMacro (RotateAroundRIconLO, vtkKWIcon );
-    vtkGetObjectMacro (RotateAroundRIconHI, vtkKWIcon );
-    vtkGetObjectMacro (RotateAroundLIconLO, vtkKWIcon );
-    vtkGetObjectMacro (RotateAroundLIconHI, vtkKWIcon );
-    vtkGetObjectMacro (RotateAroundSIconLO, vtkKWIcon );
-    vtkGetObjectMacro (RotateAroundSIconHI, vtkKWIcon );
-    vtkGetObjectMacro (RotateAroundIIconLO, vtkKWIcon );
-    vtkGetObjectMacro (RotateAroundIIconHI, vtkKWIcon );
-    vtkGetObjectMacro (RotateAroundBottomCornerIcon, vtkKWIcon );
-    vtkGetObjectMacro (RotateAroundTopCornerIcon, vtkKWIcon );
-    vtkGetObjectMacro (RotateAroundMiddleIcon, vtkKWIcon );    
-
-    vtkGetObjectMacro (LookFromAIconLO, vtkKWIcon );
-    vtkGetObjectMacro (LookFromAIconHI, vtkKWIcon );
-    vtkGetObjectMacro (LookFromPIconLO, vtkKWIcon );
-    vtkGetObjectMacro (LookFromPIconHI, vtkKWIcon );
-    vtkGetObjectMacro (LookFromRIconLO, vtkKWIcon );
-    vtkGetObjectMacro (LookFromRIconHI, vtkKWIcon );
-    vtkGetObjectMacro (LookFromLIconLO, vtkKWIcon );
-    vtkGetObjectMacro (LookFromLIconHI, vtkKWIcon );
-    vtkGetObjectMacro (LookFromSIconLO, vtkKWIcon );
-    vtkGetObjectMacro (LookFromSIconHI, vtkKWIcon );
-    vtkGetObjectMacro (LookFromIIconLO, vtkKWIcon );
-    vtkGetObjectMacro (LookFromIIconHI, vtkKWIcon );
-    vtkGetObjectMacro (LookFromBottomCornerIcon, vtkKWIcon );
-    vtkGetObjectMacro (LookFromTopCornerIcon, vtkKWIcon );
-    vtkGetObjectMacro (LookFromMiddleIcon, vtkKWIcon );    
-
     vtkGetObjectMacro (NavZoomInIcon, vtkKWIcon);
     vtkGetObjectMacro (NavZoomOutIcon, vtkKWIcon);    
 
@@ -123,38 +87,6 @@ class vtkSlicerViewControlIcons : public vtkSlicerIcons
     vtkKWIcon *StereoButtonIcon;
     vtkKWIcon *LookFromButtonIcon;
     vtkKWIcon *RotateAroundButtonIcon;    
-
-    vtkKWIcon *RotateAroundAIconLO;
-    vtkKWIcon *RotateAroundAIconHI;
-    vtkKWIcon *RotateAroundPIconLO;
-    vtkKWIcon *RotateAroundPIconHI;
-    vtkKWIcon *RotateAroundRIconLO;
-    vtkKWIcon *RotateAroundRIconHI;
-    vtkKWIcon *RotateAroundLIconLO;
-    vtkKWIcon *RotateAroundLIconHI;
-    vtkKWIcon *RotateAroundSIconLO;
-    vtkKWIcon *RotateAroundSIconHI;
-    vtkKWIcon *RotateAroundIIconLO;
-    vtkKWIcon *RotateAroundIIconHI;
-    vtkKWIcon *RotateAroundBottomCornerIcon;
-    vtkKWIcon *RotateAroundTopCornerIcon;
-    vtkKWIcon *RotateAroundMiddleIcon;
-
-    vtkKWIcon *LookFromAIconLO;
-    vtkKWIcon *LookFromAIconHI;
-    vtkKWIcon *LookFromPIconLO;
-    vtkKWIcon *LookFromPIconHI;
-    vtkKWIcon *LookFromRIconLO;
-    vtkKWIcon *LookFromRIconHI;
-    vtkKWIcon *LookFromLIconLO;
-    vtkKWIcon *LookFromLIconHI;
-    vtkKWIcon *LookFromSIconLO;
-    vtkKWIcon *LookFromSIconHI;
-    vtkKWIcon *LookFromIIconLO;
-    vtkKWIcon *LookFromIIconHI;
-    vtkKWIcon *LookFromBottomCornerIcon;
-    vtkKWIcon *LookFromTopCornerIcon;
-    vtkKWIcon *LookFromMiddleIcon;
 
     vtkKWIcon *NavZoomInIcon;
     vtkKWIcon *NavZoomOutIcon;
