@@ -8,15 +8,21 @@
 #include "vtkSlicerViewControlGUI.h"
 #include "vtkSlicerWindow.h"
 
+#include "vtkKWFrame.h"
 #include "vtkKWWidget.h"
 #include "vtkKWScale.h"
 #include "vtkKWPushButton.h"
 #include "vtkKWCheckButton.h"
+#include "vtkKWRadioButton.h"
 #include "vtkKWLabel.h"
 #include "vtkKWMenuButton.h"
+#include "vtkKWMenu.h"
 #include "vtkKWEntry.h"
 #include "vtkKWEntryWithLabel.h"
 #include "vtkSlicerViewControlIcons.h"
+
+#include "vtkMRMLCameraNode.h"
+#include "vtkMRMLViewNode.h"
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerViewControlGUI );
@@ -27,41 +33,56 @@ vtkCxxRevisionMacro ( vtkSlicerViewControlGUI, "$Revision: 1.0 $");
 vtkSlicerViewControlGUI::vtkSlicerViewControlGUI ( )
 {
   
+  // Description:
+  // parameters of automatic spin
+  this->Spin = 0;
+  this->Rock = 0;
+  this->SpinDegrees = 2.0;
+  this->SpinDirection = 3;
+  this->SpinMs = 5;
+
+  // Description:
+  // parameters of automatic rock
+  this->RockLength = 200;
+  this->RockCount = 0;
+
+  // Description:
+  // stereo viewing mode and type
+  this->Stereo = 0;
+  this->StereoType = 0;
+  this->ViewAxisMode = 0;
+  this->RenderMode = 0;
+
   this->SlicerViewControlIcons = vtkSlicerViewControlIcons::New ( );
   this->SpinButton = vtkKWCheckButton::New ( );
   this->RockButton = vtkKWCheckButton::New ( );
-  this->OrthoButton = vtkKWCheckButton::New ( );
+  this->OrthoButton = vtkKWPushButton::New ( );
+
   this->CenterButton = vtkKWPushButton::New ( );
+  this->StereoButton = vtkKWMenuButton::New ( );
   this->SelectButton = vtkKWMenuButton::New ( );
+  this->LookFromButton = vtkKWRadioButton::New ( );
+  this->RotateAroundButton = vtkKWRadioButton::New ( );
   this->FOVEntry = vtkKWEntryWithLabel::New ( );
+  this->ZoomEntry = vtkKWEntryWithLabel::New ( );
 
   //--- ui for the ViewControlFrame
-  this->RotateAroundAIconButton = vtkKWLabel::New ( );
-  this->RotateAroundPIconButton = vtkKWLabel::New ( );
-  this->RotateAroundRIconButton = vtkKWLabel::New ( );
-  this->RotateAroundLIconButton = vtkKWLabel::New ( );
-  this->RotateAroundSIconButton = vtkKWLabel::New ( );
-  this->RotateAroundIIconButton = vtkKWLabel::New ( );
-  this->RotateAroundMiddleIconButton = vtkKWLabel::New ( );
-  this->RotateAroundTopCornerIconButton = vtkKWLabel::New ( );
-  this->RotateAroundBottomCornerIconButton = vtkKWLabel::New ( );
-
-  this->LookFromAIconButton = vtkKWLabel::New ( );
-  this->LookFromPIconButton = vtkKWLabel::New ( );
-  this->LookFromRIconButton = vtkKWLabel::New ( );
-  this->LookFromLIconButton = vtkKWLabel::New ( );
-  this->LookFromSIconButton = vtkKWLabel::New ( );
-  this->LookFromIIconButton = vtkKWLabel::New ( );
-  this->LookFromMiddleIconButton = vtkKWLabel::New ( );
-  this->LookFromTopCornerIconButton = vtkKWLabel::New ( );
-  this->LookFromBottomCornerIconButton = vtkKWLabel::New ( );
+  this->ViewAxisAIconButton = vtkKWLabel::New ( );
+  this->ViewAxisPIconButton = vtkKWLabel::New ( );
+  this->ViewAxisRIconButton = vtkKWLabel::New ( );
+  this->ViewAxisLIconButton = vtkKWLabel::New ( );
+  this->ViewAxisSIconButton = vtkKWLabel::New ( );
+  this->ViewAxisIIconButton = vtkKWLabel::New ( );
+  this->ViewAxisCenterIconButton = vtkKWLabel::New ( );
+  this->ViewAxisTopCornerIconButton = vtkKWLabel::New ( );
+  this->ViewAxisBottomCornerIconButton = vtkKWLabel::New ( );
 
   this->NavZoomInIconButton = vtkKWPushButton::New ( );
   this->NavZoomOutIconButton = vtkKWPushButton::New ( );
   this->NavZoomScale = vtkKWScale::New ( );
 
   // temporary thing until navzoom window is built.
-  this->NavZoom = vtkKWLabel::New ( );
+  this->NavZoomLabel = vtkKWLabel::New ( );
 }
 
 
@@ -69,10 +90,28 @@ vtkSlicerViewControlGUI::vtkSlicerViewControlGUI ( )
 vtkSlicerViewControlGUI::~vtkSlicerViewControlGUI ( )
 {
 
-  if ( this->NavZoom )
+  // parameters of automatic spin
+  this->Spin = 0;
+  this->Rock = 0;
+  this->SpinDegrees = 0.0;
+  this->SpinDirection = 0;
+  this->SpinMs = 0;
+
+  // parameters of automatic rock
+  this->RockLength = 0;
+  this->RockCount = 0;
+
+  // stereo off
+  this->Stereo = 0;
+  this->StereoType = 0;
+
+  this->ViewAxisMode = 0;
+  this->RenderMode = 0;
+
+  if ( this->NavZoomLabel )
     {
-    this->NavZoom->Delete ( );
-    this->NavZoom = NULL;
+    this->NavZoomLabel->Delete ( );
+    this->NavZoomLabel = NULL;
     }
   if ( this->SlicerViewControlIcons )
     {
@@ -111,119 +150,90 @@ vtkSlicerViewControlGUI::~vtkSlicerViewControlGUI ( )
     this->SelectButton->Delete();
     this->SelectButton = NULL;
     }
+  if ( this->StereoButton ) 
+    {
+    this->StereoButton->SetParent ( NULL );
+    this->StereoButton->Delete();
+    this->StereoButton = NULL;
+    }
+
+  if ( this->LookFromButton )
+    {
+    this->LookFromButton->SetParent (NULL );
+    this->LookFromButton->Delete ();
+    this->LookFromButton = NULL;
+    }
+  if ( this->RotateAroundButton )
+    {
+    this->RotateAroundButton->SetParent ( NULL );
+    this->RotateAroundButton->Delete ( );
+    this->RotateAroundButton = NULL;
+    }
+  if ( this->ZoomEntry )
+    {
+    this->ZoomEntry->SetParent ( NULL );
+    this->ZoomEntry->Delete ( );
+    this->ZoomEntry = NULL;
+    }
   if ( this->FOVEntry ) 
     {
     this->FOVEntry->SetParent ( NULL );
     this->FOVEntry->Delete();
     this->FOVEntry= NULL;
     }
-  if ( this->RotateAroundAIconButton ) 
+  if ( this->ViewAxisAIconButton ) 
     {
-    this->RotateAroundAIconButton->SetParent ( NULL );      
-    this->RotateAroundAIconButton->Delete ( );
-    this->RotateAroundAIconButton = NULL;
+    this->ViewAxisAIconButton->SetParent ( NULL );      
+    this->ViewAxisAIconButton->Delete ( );
+    this->ViewAxisAIconButton = NULL;
     }
-  if ( this->RotateAroundPIconButton ) 
+  if ( this->ViewAxisPIconButton ) 
     {
-    this->RotateAroundPIconButton->SetParent ( NULL );
-    this->RotateAroundPIconButton->Delete ( );
-    this->RotateAroundPIconButton = NULL;
+    this->ViewAxisPIconButton->SetParent ( NULL );
+    this->ViewAxisPIconButton->Delete ( );
+    this->ViewAxisPIconButton = NULL;
    }
-  if ( this->RotateAroundRIconButton ) 
+  if ( this->ViewAxisRIconButton ) 
     {
-    this->RotateAroundRIconButton->SetParent ( NULL );
-    this->RotateAroundRIconButton->Delete ( );
-    this->RotateAroundRIconButton = NULL;
+    this->ViewAxisRIconButton->SetParent ( NULL );
+    this->ViewAxisRIconButton->Delete ( );
+    this->ViewAxisRIconButton = NULL;
     }
-  if ( this->RotateAroundLIconButton ) 
+  if ( this->ViewAxisLIconButton ) 
     {
-    this->RotateAroundLIconButton->SetParent ( NULL );
-    this->RotateAroundLIconButton->Delete ( );
-    this->RotateAroundLIconButton = NULL;
+    this->ViewAxisLIconButton->SetParent ( NULL );
+    this->ViewAxisLIconButton->Delete ( );
+    this->ViewAxisLIconButton = NULL;
     }
-  if ( this->RotateAroundSIconButton ) 
+  if ( this->ViewAxisSIconButton ) 
     {
-    this->RotateAroundSIconButton->SetParent ( NULL );
-    this->RotateAroundSIconButton->Delete ( );
-    this->RotateAroundSIconButton = NULL;
+    this->ViewAxisSIconButton->SetParent ( NULL );
+    this->ViewAxisSIconButton->Delete ( );
+    this->ViewAxisSIconButton = NULL;
     }
-  if ( this->RotateAroundIIconButton ) 
+  if ( this->ViewAxisIIconButton ) 
     {
-    this->RotateAroundIIconButton->SetParent ( NULL );
-    this->RotateAroundIIconButton->Delete ( );
-    this->RotateAroundIIconButton = NULL;
+    this->ViewAxisIIconButton->SetParent ( NULL );
+    this->ViewAxisIIconButton->Delete ( );
+    this->ViewAxisIIconButton = NULL;
     }
-  if ( this->RotateAroundMiddleIconButton ) 
+  if ( this->ViewAxisCenterIconButton ) 
     {
-    this->RotateAroundMiddleIconButton->SetParent ( NULL );
-    this->RotateAroundMiddleIconButton->Delete ( );
-    this->RotateAroundMiddleIconButton = NULL;
+    this->ViewAxisCenterIconButton->SetParent ( NULL );
+    this->ViewAxisCenterIconButton->Delete ( );
+    this->ViewAxisCenterIconButton = NULL;
     }
-  if ( this->RotateAroundTopCornerIconButton ) 
+  if ( this->ViewAxisTopCornerIconButton ) 
     {
-    this->RotateAroundTopCornerIconButton->SetParent ( NULL );
-    this->RotateAroundTopCornerIconButton->Delete ( );
-    this->RotateAroundTopCornerIconButton = NULL;
+    this->ViewAxisTopCornerIconButton->SetParent ( NULL );
+    this->ViewAxisTopCornerIconButton->Delete ( );
+    this->ViewAxisTopCornerIconButton = NULL;
     }
-  if ( this->RotateAroundBottomCornerIconButton ) 
+  if ( this->ViewAxisBottomCornerIconButton ) 
     {
-    this->RotateAroundBottomCornerIconButton->SetParent ( NULL );
-    this->RotateAroundBottomCornerIconButton->Delete ( );
-    this->RotateAroundBottomCornerIconButton = NULL;
-    }
-  if ( this->LookFromAIconButton ) 
-    {
-    this->LookFromAIconButton->SetParent ( NULL );
-    this->LookFromAIconButton->Delete ( );
-    this->LookFromAIconButton = NULL;
-    }
-  if ( this->LookFromPIconButton ) 
-    {
-    this->LookFromPIconButton->SetParent ( NULL );
-    this->LookFromPIconButton->Delete ( );
-    this->LookFromPIconButton = NULL;
-    }
-  if ( this->LookFromRIconButton ) 
-    {
-    this->LookFromRIconButton->SetParent ( NULL );
-    this->LookFromRIconButton->Delete ( );
-    this->LookFromRIconButton = NULL;
-    }
-  if ( this->LookFromLIconButton ) 
-    {
-    this->LookFromLIconButton->SetParent ( NULL );
-    this->LookFromLIconButton->Delete ( );
-    this->LookFromLIconButton = NULL;
-    }
-  if ( this->LookFromSIconButton ) 
-    {
-    this->LookFromSIconButton->SetParent ( NULL );
-    this->LookFromSIconButton->Delete ( );
-    this->LookFromSIconButton = NULL;
-    }
-  if ( this->LookFromIIconButton ) 
-    {
-    this->LookFromIIconButton->SetParent ( NULL );
-    this->LookFromIIconButton->Delete ( );
-    this->LookFromIIconButton = NULL;
-    }
-  if ( this->LookFromMiddleIconButton ) 
-    {
-    this->LookFromMiddleIconButton->SetParent ( NULL );
-    this->LookFromMiddleIconButton->Delete ( );
-    this->LookFromMiddleIconButton = NULL;
-    }
-  if ( this->LookFromTopCornerIconButton ) 
-    {
-    this->LookFromTopCornerIconButton->SetParent ( NULL );
-    this->LookFromTopCornerIconButton->Delete ( );
-    this->LookFromTopCornerIconButton = NULL;
-    }
-  if ( this->LookFromBottomCornerIconButton ) 
-    {
-    this->LookFromBottomCornerIconButton->SetParent ( NULL );
-    this->LookFromBottomCornerIconButton->Delete ( );
-    this->LookFromBottomCornerIconButton = NULL;
+    this->ViewAxisBottomCornerIconButton->SetParent ( NULL );
+    this->ViewAxisBottomCornerIconButton->Delete ( );
+    this->ViewAxisBottomCornerIconButton = NULL;
     }
   if ( this->NavZoomInIconButton ) 
     {
@@ -255,63 +265,37 @@ void vtkSlicerViewControlGUI::MakeViewControlRolloverBehavior ( )
 {
 
   //--- configure and bind for rollover interaction
-  this->RotateAroundAIconButton->SetBorderWidth (0);
-  this->RotateAroundAIconButton->SetBinding ( "<Enter>",  this, "EnterRotateAroundACallback");
-  this->RotateAroundAIconButton->SetBinding ( "<Leave>",  this, "LeaveRotateAroundACallback");
+  this->ViewAxisAIconButton->SetBorderWidth (0);
+  this->ViewAxisAIconButton->SetBinding ( "<Enter>",  this, "EnterViewAxisACallback");
+  this->ViewAxisAIconButton->SetBinding ( "<Leave>",  this, "LeaveViewAxisACallback");
   this->Script ( "%s ListMethods", this->GetTclName() );
 
-  this->RotateAroundPIconButton->SetBorderWidth (0);
-  this->RotateAroundPIconButton->SetBinding ( "<Enter>", this, "EnterRotateAroundPCallback");
-  this->RotateAroundPIconButton->SetBinding ( "<Leave>", this, "LeaveRotateAroundPCallback");
+  this->ViewAxisPIconButton->SetBorderWidth (0);
+  this->ViewAxisPIconButton->SetBinding ( "<Enter>", this, "EnterViewAxisPCallback");
+  this->ViewAxisPIconButton->SetBinding ( "<Leave>", this, "LeaveViewAxisPCallback");
 
-  this->RotateAroundRIconButton->SetBorderWidth (0);
-  this->RotateAroundRIconButton->SetBinding ( "<Enter>", this, "EnterRotateAroundRCallback");
-  this->RotateAroundRIconButton->SetBinding ( "<Leave>", this, "LeaveRotateAroundRCallback");
+  this->ViewAxisRIconButton->SetBorderWidth (0);
+  this->ViewAxisRIconButton->SetBinding ( "<Enter>", this, "EnterViewAxisRCallback");
+  this->ViewAxisRIconButton->SetBinding ( "<Leave>", this, "LeaveViewAxisRCallback");
 
-  this->RotateAroundLIconButton->SetBorderWidth (0);
-  this->RotateAroundLIconButton->SetBinding ( "<Enter>", this, "EnterRotateAroundLCallback");
-  this->RotateAroundLIconButton->SetBinding ( "<Leave>", this, "LeaveRotateAroundLCallback");
+  this->ViewAxisLIconButton->SetBorderWidth (0);
+  this->ViewAxisLIconButton->SetBinding ( "<Enter>", this, "EnterViewAxisLCallback");
+  this->ViewAxisLIconButton->SetBinding ( "<Leave>", this, "LeaveViewAxisLCallback");
 
-  this->RotateAroundSIconButton->SetBorderWidth (0);
-  this->RotateAroundSIconButton->SetBinding ( "<Enter>", this, "EnterRotateAroundSCallback");
-  this->RotateAroundSIconButton->SetBinding ( "<Leave>", this, "LeaveRotateAroundSCallback");
+  this->ViewAxisSIconButton->SetBorderWidth (0);
+  this->ViewAxisSIconButton->SetBinding ( "<Enter>", this, "EnterViewAxisSCallback");
+  this->ViewAxisSIconButton->SetBinding ( "<Leave>", this, "LeaveViewAxisSCallback");
   
-  this->RotateAroundIIconButton->SetBorderWidth (0);
-  this->RotateAroundIIconButton->SetBinding ( "<Enter>", this, "EnterRotateAroundICallback");
-  this->RotateAroundIIconButton->SetBinding ( "<Leave>", this, "LeaveRotateAroundICallback");
+  this->ViewAxisIIconButton->SetBorderWidth (0);
+  this->ViewAxisIIconButton->SetBinding ( "<Enter>", this, "EnterViewAxisICallback");
+  this->ViewAxisIIconButton->SetBinding ( "<Leave>", this, "LeaveViewAxisICallback");
   
-  this->RotateAroundMiddleIconButton->SetBorderWidth (0);
-  this->RotateAroundTopCornerIconButton->SetBorderWidth (0);
-  this->RotateAroundBottomCornerIconButton->SetBorderWidth (0);
-
-  this->LookFromAIconButton->SetBorderWidth (0);
-  this->LookFromAIconButton->SetBinding ( "<Enter>", this, "EnterLookFromACallback");
-  this->LookFromAIconButton->SetBinding ( "<Leave>", this, "LeaveLookFromACallback");
-  
-  this->LookFromPIconButton->SetBorderWidth (0);
-  this->LookFromPIconButton->SetBinding ( "<Enter>", this, "EnterLookFromPCallback");
-  this->LookFromPIconButton->SetBinding ( "<Leave>", this, "LeaveLookFromPCallback");
-  
-  this->LookFromRIconButton->SetBorderWidth (0);
-  this->LookFromRIconButton->SetBinding ( "<Enter>", this, "EnterLookFromRCallback");
-  this->LookFromRIconButton->SetBinding ( "<Leave>", this, "LeaveLookFromRCallback");
-  
-  this->LookFromLIconButton->SetBorderWidth (0);
-  this->LookFromLIconButton->SetBinding ( "<Enter>", this, "EnterLookFromLCallback");
-  this->LookFromLIconButton->SetBinding ( "<Leave>", this, "LeaveLookFromLCallback");
-  
-  this->LookFromSIconButton->SetBorderWidth (0);
-  this->LookFromSIconButton->SetBinding ( "<Enter>", this, "EnterLookFromSCallback");
-  this->LookFromSIconButton->SetBinding ( "<Leave>", this, "LeaveLookFromSCallback");
-  
-  this->LookFromIIconButton->SetBorderWidth (0);
-  this->LookFromIIconButton->SetBinding ( "<Enter>", this, "EnterLookFromICallback");
-  this->LookFromIIconButton->SetBinding ( "<Leave>", this, "LeaveLookFromICallback");
-  
-  this->LookFromMiddleIconButton->SetBorderWidth (0);
-  this->LookFromTopCornerIconButton->SetBorderWidth (0);
-  this->LookFromBottomCornerIconButton->SetBorderWidth (0);
+  this->ViewAxisCenterIconButton->SetBorderWidth (0);
+  this->ViewAxisTopCornerIconButton->SetBorderWidth (0);
+  this->ViewAxisBottomCornerIconButton->SetBorderWidth (0);
 }
+
+
 
 //---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::PrintSelf ( ostream& os, vtkIndent indent )
@@ -328,12 +312,30 @@ void vtkSlicerViewControlGUI::PrintSelf ( ostream& os, vtkIndent indent )
 void vtkSlicerViewControlGUI::RemoveGUIObservers ( )
 {
   // FILL IN
+    this->LookFromButton->RemoveObservers (vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->RotateAroundButton->RemoveObservers (vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->SpinButton->RemoveObservers (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->RockButton->RemoveObservers (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->OrthoButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->StereoButton->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->SelectButton->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->FOVEntry->GetWidget()->RemoveObservers (vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->ZoomEntry->GetWidget()->RemoveObservers (vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 }
 
 //---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::AddGUIObservers ( )
 {
   // FILL IN
+    this->LookFromButton->AddObserver (vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->RotateAroundButton->AddObserver (vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->SpinButton->AddObserver (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->RockButton->AddObserver (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->OrthoButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->StereoButton->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->SelectButton->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->FOVEntry->GetWidget()->AddObserver ( vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->ZoomEntry->GetWidget()->AddObserver ( vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 }
 
 
@@ -342,16 +344,254 @@ void vtkSlicerViewControlGUI::ProcessGUIEvents ( vtkObject *caller,
                                           unsigned long event, void *callData )
 {
 
+  // Right now this class contains state variables that will be moved
+  // to a vtkMRMLViewNode in the next iteration.
+
   if ( this->GetApplicationGUI() != NULL )
     {
     vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));
     vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( p->GetApplication() );
     if ( app != NULL )
       {
-        // Fill in.
+      vtkKWCheckButton *b = vtkKWCheckButton::SafeDownCast ( caller );
+      vtkKWPushButton *p = vtkKWPushButton::SafeDownCast ( caller );
+      vtkKWMenu *m = vtkKWMenu::SafeDownCast ( caller );
+      vtkKWEntry *e = vtkKWEntry::SafeDownCast ( caller );
+      // toggle the Ortho/Perspective rendering state
+      if ( e == this->FOVEntry->GetWidget() && event == vtkKWEntry::EntryValueChangedEvent )
+        {
+        }
+      if ( e == this->ZoomEntry->GetWidget() && event == vtkKWEntry::EntryValueChangedEvent )
+        {
+        }
+      if ( m == this->StereoButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
+        {
+        }
+      if ( m == this->SelectButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
+        {
+        }
+      if ( (p == this->CenterButton) && (event == vtkKWPushButton::InvokedEvent ) )
+        {
+        }
+      if ( (p == this->OrthoButton) && (event == vtkKWPushButton::InvokedEvent ) )
+        {
+        if ( this->RenderMode == vtkSlicerViewControlGUI::Orthographic )
+          {
+          this->RenderMode = vtkSlicerViewControlGUI::Perspective;
+          }
+        else if ( this->RenderMode == vtkSlicerViewControlGUI::Perspective )
+          {
+          this->RenderMode = vtkSlicerViewControlGUI::Orthographic;
+          }
+        // then toggle the button's icon appropriately (handle this in process logic events later
+        if ( this->RenderMode == vtkSlicerViewControlGUI::Perspective )
+          {
+          this->OrthoButton->SetImageToIcon ( this->SlicerViewControlIcons->GetOrthoButtonIcon() );
+          }
+        else if ( this->RenderMode == vtkSlicerViewControlGUI::Orthographic )
+          {
+          this->OrthoButton->SetImageToIcon ( this->SlicerViewControlIcons->GetPerspectiveButtonIcon() );
+          }
+        }
+
+      //--- turn View Spin and Rocking on and off
+      if ( (b == this->SpinButton) && (event == vtkKWCheckButton::SelectedStateChangedEvent) )
+        {
+        // toggle the Spin (and turn off Rock if necessary)
+        if ( this->Spin == 1 )
+          {
+          this->Spin = 0;
+          }
+        else if ( this->Spin == 0 )
+          {
+          this->Spin = 1;
+          }
+        // handle the interaction 
+        if ( this->Spin == 1 )
+          {
+          this->RockButton->Deselect();
+          this->MainViewSpin ( );
+          }
+        }
+      if ( (b == this->RockButton) && (event == vtkKWCheckButton::SelectedStateChangedEvent) )
+        {
+        // toggle the Rock (and turn off Spin if necessary)
+        if (this->Rock == 1 )
+          {
+          this->Rock = 0;
+          }
+        else if ( this->Rock == 0 )
+          {
+          this->Rock = 1;
+          }
+        // handle the interaction
+        if ( this->Rock == 1 )
+          {
+          this->SpinButton->Deselect();
+          this->MainViewRock ( );
+          }
+        }
+
+      //--- automatic camera control mode: switch 'rotate around axis' or 'look from direction'
+      if (( b == this->RotateAroundButton ) && ( event == vtkKWCheckButton::SelectedStateChangedEvent)  &&
+          ( this->ViewAxisMode == vtkSlicerViewControlGUI::LookFrom) )
+        {
+        this->ViewAxisMode = vtkSlicerViewControlGUI::RotateAround;
+        }
+      if (( b == this->LookFromButton ) && ( event == vtkKWCheckButton::SelectedStateChangedEvent ) &&
+          (this->ViewAxisMode == vtkSlicerViewControlGUI::RotateAround) )
+        {
+        this->ViewAxisMode = vtkSlicerViewControlGUI::LookFrom;
+        }
+
       }
     }
 }
+
+
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::BuildStereoSelectMenu ( )
+{
+  this->StereoButton->GetMenu()->DeleteAllItems ( );
+  this->StereoButton->GetMenu()->AddRadioButton ( "No stereo" );
+  this->StereoButton->GetMenu()->AddRadioButton ( "Red/Blue" );
+  this->StereoButton->GetMenu()->AddRadioButton ( "Full/Color" );
+}
+
+
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::BuildViewSelectMenu ( )
+{
+  
+  this->SelectButton->GetMenu( )->DeleteAllItems();
+  this->SelectButton->GetMenu()->AddRadioButton ("Save current" );
+  // save current option will save current view under a
+  // standard name like "View0...ViewN"; user can rename
+  // this view elsewhere, in the ViewModule.
+  // TODO: get existing MRMLViewNodes and add to menu
+
+}
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::MainViewRock ( )
+{
+  if ( this->Rock )
+    {
+/*
+  if ( this->GetApplicationGUI() != NULL )
+      {
+      vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));    
+      vtkMRMLCameraNode *cam = p->GetViewerWidget()->GetCameraNode();
+      vtkMRMLViewNode *v = p->GetViewerWidget()->GetViewNode();
+    
+      // change icon to stop rock icon.
+      double frac = this->RockCount / this->RockLength;
+      double az = 1.5 * cos ( 2.0 * 3.1415926 * (frac- floor(frac)));
+      this->SetRockCount ( this->GetRockCount() + 1 );
+      // Move the camera
+      cam->GetCamera()->Azimuth ( az );
+      //Make the lighting follow the camera to avoid illumination changes
+      //  appGUI->GetViewerWidget()->GetMainViewer()->GetRenderer()->UpdateLightsGeometryToFollowCamera();
+      // Render
+      // Render3D
+      this->Script ( "update idletasks" );
+      const char *name = this->GetTclName();
+      this->Script ( "after %s %s MainViewRock", this->SpinMs, name );
+      }
+*/
+      }
+}
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::StopViewRock ( )
+{
+  this->Rock = 0;
+  this->RockButton->Deselect();
+
+}
+
+
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::MainViewSpin ( )
+{
+
+  if ( this->Spin )
+    {
+    // change icon to stop spin icon
+    /*
+    this->MainViewRotate (this->SpinDirection, this->SpinDegrees );
+    this->Script ( "update idletasks" );
+    const char *name = this->GetTclName();
+    this->Script ( "after %s %s MainViewSpin", this->SpinMs, name );
+    */
+    }
+}
+
+
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::StopViewSpin ( )
+{
+  this->Spin = 0;
+  this->SpinButton->Deselect();
+
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::MainViewRotate ( int dir )
+{
+
+  this->MainViewRotate( dir, this->SpinDegrees );
+
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::MainViewRotate ( int dir, double degrees )
+{
+  
+  if ( this->GetApplicationGUI() != NULL )
+    {
+    vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));    
+    vtkMRMLCameraNode *c = p->GetViewerWidget()->GetCameraNode();
+    double ndegrees = -degrees;
+
+    switch ( dir ) {
+    case Up:
+      c->GetCamera()->Elevation ( degrees );
+      break;
+    case Down:
+      c->GetCamera()->Elevation ( ndegrees );
+      break;
+    case Left:
+      c->GetCamera()->Azimuth ( degrees );
+      break;
+    case Right:
+      c->GetCamera()->Azimuth ( ndegrees );
+      break;
+    default:
+      break;
+    }
+    c->GetCamera()->OrthogonalizeViewUp ( );
+
+    //Make the lighting follow the camera to avoid illumination changes
+    //  appGUI->GetViewerWidget()->GetMainViewer()->GetRenderer()->UpdateLightsGeometryToFollowCamera();
+
+    //Render
+    //p->Render3D;
+    }
+  
+}
+
+
 
 
 //---------------------------------------------------------------------------
@@ -388,166 +628,125 @@ void vtkSlicerViewControlGUI::SetApplicationGUI ( vtkSlicerApplicationGUI *appGU
 }
 
 
-//---------------------------------------------------------------------------
-void vtkSlicerViewControlGUI::AssignIcons ( )
-{
- //--- assign image data to each label
-  this->RotateAroundAIconButton->SetImageToIcon ( this->SlicerViewControlIcons->GetRotateAroundAIconLO() );
-  this->RotateAroundPIconButton->SetImageToIcon ( this->SlicerViewControlIcons->GetRotateAroundPIconLO( ) );
-  this->RotateAroundRIconButton->SetImageToIcon ( this->SlicerViewControlIcons->GetRotateAroundRIconLO ( ));
-  this->RotateAroundLIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetRotateAroundLIconLO ( ));        
-  this->RotateAroundSIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetRotateAroundSIconLO ( ));
-  this->RotateAroundIIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetRotateAroundIIconLO ( ) );
-  this->RotateAroundMiddleIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetRotateAroundMiddleIcon ( ) );
-  this->RotateAroundTopCornerIconButton->SetImageToIcon ( this->SlicerViewControlIcons->GetRotateAroundTopCornerIcon ( ));
-  this->RotateAroundBottomCornerIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetRotateAroundBottomCornerIcon ( ));
-  this->LookFromAIconButton->SetImageToIcon ( this->SlicerViewControlIcons->GetLookFromAIconLO() );
-  this->LookFromPIconButton->SetImageToIcon ( this->SlicerViewControlIcons->GetLookFromPIconLO( ) );
-  this->LookFromRIconButton->SetImageToIcon ( this->SlicerViewControlIcons->GetLookFromRIconLO ( ));
-  this->LookFromLIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetLookFromLIconLO ( ));        
-  this->LookFromSIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetLookFromSIconLO ( ));
-  this->LookFromIIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetLookFromIIconLO ( ) );
-  this->LookFromMiddleIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetLookFromMiddleIcon ( ) );
-  this->LookFromTopCornerIconButton->SetImageToIcon ( this->SlicerViewControlIcons->GetLookFromTopCornerIcon ( ));
-  this->LookFromBottomCornerIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetLookFromBottomCornerIcon ( ));
-}
-
-
 
 //---------------------------------------------------------------------------
-void vtkSlicerViewControlGUI::EnterRotateAroundACallback ( ) {
-  this->RotateAroundPIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetRotateAroundPIconHI() );
-  this->RotateAroundAIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetRotateAroundAIconHI() );
+void vtkSlicerViewControlGUI::EnterViewAxisACallback ( ) {
+  if ( this->ViewAxisMode == RotateAround )
+    {
+    this->ViewAxisPIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetViewAxisPIconHI() );
+    this->ViewAxisAIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetViewAxisAIconHI() );
+    }
+  else
+    {
+    this->ViewAxisAIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetViewAxisAIconHI() );
+    }
+
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerViewControlGUI::LeaveRotateAroundACallback ( ) {
-  this->RotateAroundPIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetRotateAroundPIconLO() );
-  this->RotateAroundAIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetRotateAroundAIconLO() );
+void vtkSlicerViewControlGUI::LeaveViewAxisACallback ( ) {
+  this->ViewAxisPIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetViewAxisPIconLO() );
+  this->ViewAxisAIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetViewAxisAIconLO() );
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerViewControlGUI::EnterRotateAroundPCallback ( ) {
-  this->RotateAroundPIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetRotateAroundPIconHI() );
-  this->RotateAroundAIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetRotateAroundAIconHI() );
+void vtkSlicerViewControlGUI::EnterViewAxisPCallback ( ) {
+  if ( this->ViewAxisMode == RotateAround )
+    {
+    this->ViewAxisPIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetViewAxisPIconHI() );
+    this->ViewAxisAIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetViewAxisAIconHI() );
+    }
+  else
+    {
+    this->ViewAxisPIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetViewAxisPIconHI() );
+    }
+
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerViewControlGUI::LeaveRotateAroundPCallback ( ) {
-  this->RotateAroundPIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetRotateAroundPIconLO() );
-  this->RotateAroundAIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetRotateAroundAIconLO() );
+void vtkSlicerViewControlGUI::LeaveViewAxisPCallback ( ) {
+  this->ViewAxisPIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetViewAxisPIconLO() );
+  this->ViewAxisAIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetViewAxisAIconLO() );
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerViewControlGUI::EnterRotateAroundRCallback ( ) {
-  this->RotateAroundRIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetRotateAroundRIconHI() );
-  this->RotateAroundLIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetRotateAroundLIconHI() );
+void vtkSlicerViewControlGUI::EnterViewAxisRCallback ( ) {
+  if ( this->ViewAxisMode == RotateAround )
+    {
+    this->ViewAxisRIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetViewAxisRIconHI() );
+    this->ViewAxisLIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetViewAxisLIconHI() );
+    }
+  else
+    {
+    this->ViewAxisRIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetViewAxisRIconHI() );
+    }
+
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerViewControlGUI::LeaveRotateAroundRCallback ( ) {
-  this->RotateAroundRIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetRotateAroundRIconLO() );
-  this->RotateAroundLIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetRotateAroundLIconLO() );
+void vtkSlicerViewControlGUI::LeaveViewAxisRCallback ( ) {
+  this->ViewAxisRIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetViewAxisRIconLO() );
+  this->ViewAxisLIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetViewAxisLIconLO() );
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerViewControlGUI::EnterRotateAroundLCallback ( ) {
-  this->RotateAroundRIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetRotateAroundRIconHI() );
-  this->RotateAroundLIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetRotateAroundLIconHI() );
+void vtkSlicerViewControlGUI::EnterViewAxisLCallback ( ) {
+  if ( this->ViewAxisMode == RotateAround )
+    {
+    this->ViewAxisRIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetViewAxisRIconHI() );
+    this->ViewAxisLIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetViewAxisLIconHI() );
+    }
+  else
+    {
+    this->ViewAxisLIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetViewAxisLIconHI() );
+    }
+
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerViewControlGUI::LeaveRotateAroundLCallback ( ) {
-  this->RotateAroundRIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetRotateAroundRIconLO() );
-  this->RotateAroundLIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetRotateAroundLIconLO() );
+void vtkSlicerViewControlGUI::LeaveViewAxisLCallback ( ) {
+  this->ViewAxisRIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetViewAxisRIconLO() );
+  this->ViewAxisLIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetViewAxisLIconLO() );
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerViewControlGUI::EnterRotateAroundSCallback ( ) {
-  this->RotateAroundSIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetRotateAroundSIconHI() );
-  this->RotateAroundIIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetRotateAroundIIconHI() );
+void vtkSlicerViewControlGUI::EnterViewAxisSCallback ( ) {
+  if ( this->ViewAxisMode == RotateAround )
+    {
+    this->ViewAxisSIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetViewAxisSIconHI() );
+    this->ViewAxisIIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetViewAxisIIconHI() );
+    }
+  else
+    {
+    this->ViewAxisSIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetViewAxisSIconHI() );
+    }
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerViewControlGUI::LeaveRotateAroundSCallback ( ) {
-    this->RotateAroundSIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetRotateAroundSIconLO() );
-    this->RotateAroundIIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetRotateAroundIIconLO() );
+void vtkSlicerViewControlGUI::LeaveViewAxisSCallback ( ) {
+    this->ViewAxisSIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetViewAxisSIconLO() );
+    this->ViewAxisIIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetViewAxisIIconLO() );
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerViewControlGUI::EnterRotateAroundICallback ( ) {
-  this->RotateAroundIIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetRotateAroundIIconHI() );
-  this->RotateAroundSIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetRotateAroundSIconHI() );
+void vtkSlicerViewControlGUI::EnterViewAxisICallback ( ) {
+  if ( this->ViewAxisMode == RotateAround )
+    {
+    this->ViewAxisIIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetViewAxisIIconHI() );
+    this->ViewAxisSIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetViewAxisSIconHI() );
+    }
+  else
+    {
+    this->ViewAxisIIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetViewAxisIIconHI() );
+    }
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerViewControlGUI::LeaveRotateAroundICallback ( ) {
-  this->RotateAroundIIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetRotateAroundIIconLO() );
-  this->RotateAroundSIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetRotateAroundSIconLO() );
-
+void vtkSlicerViewControlGUI::LeaveViewAxisICallback ( ) {
+  this->ViewAxisIIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetViewAxisIIconLO() );
+  this->ViewAxisSIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetViewAxisSIconLO() );
 }
 
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerViewControlGUI::EnterLookFromACallback ( ) {
-  this->LookFromAIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetLookFromAIconHI() );
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerViewControlGUI::LeaveLookFromACallback ( ) {
-  this->LookFromAIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetLookFromAIconLO() );
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerViewControlGUI::EnterLookFromPCallback ( ) {
-  this->LookFromPIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetLookFromPIconHI() );
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerViewControlGUI::LeaveLookFromPCallback ( ) {
-  this->LookFromPIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetLookFromPIconLO() );
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerViewControlGUI::EnterLookFromRCallback ( ) {
-  this->LookFromRIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetLookFromRIconHI() );
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerViewControlGUI::LeaveLookFromRCallback ( ) {
-  this->LookFromRIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetLookFromRIconLO() );
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerViewControlGUI::EnterLookFromLCallback ( ) {
-  this->LookFromLIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetLookFromLIconHI() );
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerViewControlGUI::LeaveLookFromLCallback ( ) {
-  this->LookFromLIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetLookFromLIconLO() );
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerViewControlGUI::EnterLookFromSCallback ( ) {
-  this->LookFromSIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetLookFromSIconHI() );
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerViewControlGUI::LeaveLookFromSCallback ( ) {
-  this->LookFromSIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetLookFromSIconLO() );
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerViewControlGUI::EnterLookFromICallback ( ) {
-  this->LookFromIIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetLookFromIIconHI() );
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerViewControlGUI::LeaveLookFromICallback ( ) {
-  this->LookFromIIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetLookFromIIconLO() );
-}
 
 
 //---------------------------------------------------------------------------
@@ -564,101 +763,203 @@ void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
       vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( p->GetApplication() );
       vtkSlicerGUILayout *layout = app->GetMainLayout ( );
 
+      // create and pack sub-frames for the ViewControl GUI
+      vtkKWFrame *f0 = vtkKWFrame::New ( );
       vtkKWFrame *f1 = vtkKWFrame::New ( );
-      vtkKWFrame *f1a = vtkKWFrame::New ( );    
-      vtkKWFrame *f1b = vtkKWFrame::New ( );    
       vtkKWFrame *f2 = vtkKWFrame::New ( );
+      vtkKWFrame *f3 = vtkKWFrame::New ( );
+      vtkKWFrame *f4 = vtkKWFrame::New ( );
+      vtkKWFrame *f5 = vtkKWFrame::New ( );
+      vtkKWFrame *f6 = vtkKWFrame::New ( );
+      f0->SetParent ( appF);
+      f0->Create ( );
+      f1->SetParent (f0);
+      f1->Create();
+      f2->SetParent ( f0);
+      f2->Create();
+      f3->SetParent ( f0);
+      f3->Create();
+      f4->SetParent ( f0);
+      f4->Create();
+      f5->SetParent ( f0);
+      f5->Create();
+      f6->SetParent ( f0);
+      f6->Create();
+      this->Script ( "pack %s -side left -anchor nw -padx 2 -pady 2 -expand n", f0->GetWidgetName ( ) );      
+      this->Script ( "grid %s -row 0 -column 0 -sticky w -padx 0 -pady 0", f1->GetWidgetName ( ) );
+      this->Script ( "grid %s -row 1 -column 0 -sticky w -padx 0 -pady 0", f2->GetWidgetName ( ) );
+      this->Script ( "grid %s -row 0 -column 1 -sticky w -padx 0 -pady 0", f3->GetWidgetName ( ) );
+      this->Script ( "grid %s -row 1 -column 1  -sticky w -padx 0 -pady 0", f4->GetWidgetName ( ) );
+      this->Script ( "grid %s -row 0 -column 2  -sticky news -padx 0 -pady 0", f5->GetWidgetName ( ) );
+      this->Script ( "grid %s -row 1 -column 2  -sticky w -padx 0 -pady 0", f6->GetWidgetName ( ) );
 
-      // divide the GUI panel into two frames of identical wid.
-      int wid = layout->GetDefaultGUIPanelWidth() ;
-      int buf = 4;
-      int thirdwid = wid/3 - buf;
-      
-      // create frames and set their widths.
-      f1->SetParent ( appF );
-      f1->Create ( );
-      f1->SetWidth ( thirdwid );
-      f1->SetHeight (layout->GetDefaultViewControlFrameHeight ( ) );
-      f1->SetReliefToGroove();
+      // create and pack the look from and rotate around checkbuttons
 
-      f2->SetParent ( appF );
-      f2->Create ( );
-      f2->SetWidth ( 2 * thirdwid );
-      f2->SetHeight (layout->GetDefaultViewControlFrameHeight ( ) );
-
-      f1a->SetParent ( f1 );
-      f1a->Create ( );
-      f1a->SetWidth (thirdwid );
-
-      f1b->SetParent ( f1 );
-      f1b->Create ( );
-      f1b->SetWidth ( thirdwid );
-      //--- create rotate-around and look-from image mosaics from vtkKWLabels
-      this->RotateAroundAIconButton->SetParent ( f1b );
-      this->RotateAroundAIconButton->Create ( );
-      this->RotateAroundAIconButton->SetBalloonHelpString ("Rotate camera in 3D view around A-P axis.");
-      this->RotateAroundPIconButton->SetParent ( f1b );
-      this->RotateAroundPIconButton->Create ( );
-      this->RotateAroundPIconButton->SetBalloonHelpString ("Rotate camera in 3D view around A-P axis.");
-      this->RotateAroundRIconButton->SetParent ( f1b );
-      this->RotateAroundRIconButton->Create ( );
-      this->RotateAroundRIconButton->SetBalloonHelpString ("Rotate camera in 3D view around R-L axis.");
-      this->RotateAroundLIconButton->SetParent ( f1b );
-      this->RotateAroundLIconButton->Create ( );
-      this->RotateAroundLIconButton->SetBalloonHelpString ("Rotate camera in 3D view around R-L axis.");
-      this->RotateAroundSIconButton->SetParent ( f1b );
-      this->RotateAroundSIconButton->Create ( );
-      this->RotateAroundSIconButton->SetBalloonHelpString ("Rotate camera in 3D view around S-I axis.");
-      this->RotateAroundIIconButton->SetParent ( f1b );
-      this->RotateAroundIIconButton->Create ( );
-      this->RotateAroundIIconButton->SetBalloonHelpString ("Rotate camera in 3D view around S-I axis.");
-      this->RotateAroundMiddleIconButton->SetParent ( f1b );
-      this->RotateAroundMiddleIconButton->Create ( );
-      this->RotateAroundTopCornerIconButton->SetParent ( f1b );
-      this->RotateAroundTopCornerIconButton->Create ( );
-      this->RotateAroundBottomCornerIconButton->SetParent ( f1b );
-      this->RotateAroundBottomCornerIconButton->Create ( );
-      this->LookFromAIconButton->SetParent ( f1b );
-      this->LookFromAIconButton->Create ( );
-      this->LookFromAIconButton->SetBalloonHelpString ("Position 3D view camera down the A-axis looking toward center.");
-      this->LookFromPIconButton->SetParent ( f1b );
-      this->LookFromPIconButton->Create ( );
-      this->LookFromPIconButton->SetBalloonHelpString ("Position 3D view camera down the P-axis looking toward center.");
-      this->LookFromRIconButton->SetParent ( f1b );
-      this->LookFromRIconButton->Create ( );
-      this->LookFromRIconButton->SetBalloonHelpString ("Position 3D view camera down the R-axis looking toward center.");
-      this->LookFromLIconButton->SetParent ( f1b );
-      this->LookFromLIconButton->Create ( );
-      this->LookFromLIconButton->SetBalloonHelpString ("Position 3D view camera down the L-axis looking toward center.");
-      this->LookFromSIconButton->SetParent ( f1b );
-      this->LookFromSIconButton->Create ( );
-      this->LookFromSIconButton->SetBalloonHelpString ("Position 3D view camera down the S-axis looking toward center.");
-      this->LookFromIIconButton->SetParent ( f1b );
-      this->LookFromIIconButton->Create ( );
-      this->LookFromIIconButton->SetBalloonHelpString ("Position 3D view camera down the I-axis looking toward center.");
-      this->LookFromMiddleIconButton->SetParent ( f1b );
-      this->LookFromMiddleIconButton->Create ( );
-      this->LookFromTopCornerIconButton->SetParent ( f1b );
-      this->LookFromTopCornerIconButton->Create ( );
-      this->LookFromBottomCornerIconButton->SetParent ( f1b );
-      this->LookFromBottomCornerIconButton->Create ( );
-
-      this->AssignIcons ( );
+      // create and pack rollover labels for rotate around and look from camera control
+      this->ViewAxisAIconButton->SetParent ( f1);
+      this->ViewAxisAIconButton->Create ( );
+      this->ViewAxisAIconButton->SetBorderWidth ( 0 );
+      this->ViewAxisAIconButton->SetImageToIcon ( this->SlicerViewControlIcons->GetViewAxisAIconLO() );
+      this->ViewAxisAIconButton->SetBalloonHelpString ("Rotate camera in 3D view around A-P axis or Look from A toward center.");
+      this->ViewAxisPIconButton->SetParent ( f1 );
+      this->ViewAxisPIconButton->Create ( );
+      this->ViewAxisPIconButton->SetBorderWidth ( 0 );
+      this->ViewAxisPIconButton->SetImageToIcon ( this->SlicerViewControlIcons->GetViewAxisPIconLO() );
+      this->ViewAxisPIconButton->SetBalloonHelpString ("Rotate camera in 3D view around A-P axis or Look from P toward center.");
+      this->ViewAxisRIconButton->SetParent ( f1 );
+      this->ViewAxisRIconButton->Create ( );
+      this->ViewAxisRIconButton->SetBorderWidth ( 0 );
+      this->ViewAxisRIconButton->SetImageToIcon ( this->SlicerViewControlIcons->GetViewAxisRIconLO() );
+      this->ViewAxisRIconButton->SetBalloonHelpString ("Rotate camera in 3D view around R-L axis or Loook from R toward center.");
+      this->ViewAxisLIconButton->SetParent ( f1 );
+      this->ViewAxisLIconButton->Create ( );
+      this->ViewAxisLIconButton->SetBorderWidth ( 0 );
+      this->ViewAxisLIconButton->SetImageToIcon ( this->SlicerViewControlIcons->GetViewAxisLIconLO() );
+      this->ViewAxisLIconButton->SetBalloonHelpString ("Rotate camera in 3D view around R-L axis or Look from L toward center.");
+      this->ViewAxisSIconButton->SetParent ( f1 );
+      this->ViewAxisSIconButton->Create ( );
+      this->ViewAxisSIconButton->SetBorderWidth ( 0 );
+      this->ViewAxisSIconButton->SetImageToIcon ( this->SlicerViewControlIcons->GetViewAxisSIconLO() );
+      this->ViewAxisSIconButton->SetBalloonHelpString ("Rotate camera in 3D view around S-I axis or Look from S toward center.");
+      this->ViewAxisIIconButton->SetParent ( f1 );
+      this->ViewAxisIIconButton->Create ( );
+      this->ViewAxisIIconButton->SetBorderWidth ( 0 );
+      this->ViewAxisIIconButton->SetImageToIcon ( this->SlicerViewControlIcons->GetViewAxisIIconLO() );
+      this->ViewAxisIIconButton->SetBalloonHelpString ("Rotate camera in 3D view around S-I axis or Look from I toward center.");
+      this->ViewAxisCenterIconButton->SetParent ( f1 );
+      this->ViewAxisCenterIconButton->Create ( );
+      this->ViewAxisCenterIconButton->SetBorderWidth ( 0 );
+      this->ViewAxisCenterIconButton->SetImageToIcon ( this->SlicerViewControlIcons->GetViewAxisCenterIcon() );
+      this->ViewAxisTopCornerIconButton->SetParent ( f1 );
+      this->ViewAxisTopCornerIconButton->Create ( );
+      this->ViewAxisTopCornerIconButton->SetBorderWidth ( 0 );
+      this->ViewAxisTopCornerIconButton->SetImageToIcon ( this->SlicerViewControlIcons->GetViewAxisTopCornerIcon() );
+      this->ViewAxisBottomCornerIconButton->SetParent ( f1 );
+      this->ViewAxisBottomCornerIconButton->Create ( );
+      this->ViewAxisBottomCornerIconButton->SetBorderWidth ( 0 );
+      this->ViewAxisBottomCornerIconButton->SetImageToIcon ( this->SlicerViewControlIcons->GetViewAxisBottomCornerIcon() );
+      this->Script ("grid %s -row 1 -column 0 -sticky w -padx 0 -pady 0 -ipadx 0 -ipady 0", this->ViewAxisRIconButton->GetWidgetName ( ) );
+      this->Script ("grid %s -row 1 -column 1  -sticky w -padx 0 -pady 0 -ipadx 0 -ipady 0", this->ViewAxisCenterIconButton->GetWidgetName ( ));
+      this->Script ("grid %s -row 1 -column 2  -sticky w -padx 0 -pady 0 -ipadx 0 -ipady 0", this->ViewAxisLIconButton->GetWidgetName ( ) );
+      this->Script ("grid %s -row 0 -column 0 -sticky sw -padx 0 -pady 0 -ipadx 0 -ipady 0", this->ViewAxisPIconButton->GetWidgetName ( ));
+      this->Script ("grid %s -row 0 -column 1  -sticky sw -padx 0 -pady 0 -ipadx 0 -ipady 0", this->ViewAxisSIconButton->GetWidgetName ( ));
+      this->Script ("grid %s -row 0 -column 2 -sticky sw -padx 0 -pady 0 -ipadx 0 -ipady 0",this->ViewAxisTopCornerIconButton->GetWidgetName ( ) );
+      this->Script ("grid %s -row 2 -column 0  -sticky nw -padx 0 -pady 0 -ipadx 0 -ipady 0", this->ViewAxisBottomCornerIconButton->GetWidgetName ( ));
+      this->Script ("grid %s -row 2 -column 1 -sticky nw -padx 0 -pady 0 -ipadx 0 -ipady 0", this->ViewAxisIIconButton->GetWidgetName ( ) );
+      this->Script ("grid %s -row 2 -column 2  -sticky nw -padx 0 -pady 0 -ipadx 0 -ipady 0", this->ViewAxisAIconButton->GetWidgetName ( ) );
       this->MakeViewControlRolloverBehavior ( );
+
+      // create and pack other view control icons
+      this->RotateAroundButton->SetParent ( f3 );
+      this->RotateAroundButton->Create ( );
+      this->RotateAroundButton->SetReliefToFlat ( );
+      this->RotateAroundButton->SetBorderWidth ( 0 );
+      this->RotateAroundButton->SetOverReliefToNone ( );
+      this->RotateAroundButton->SetImageToIcon ( this->SlicerViewControlIcons->GetRotateAroundButtonIcon() );
+      this->RotateAroundButton->SetBalloonHelpString ( "Set the 3D view control mode to 'rotate around' selected axis ");
+      this->RotateAroundButton->SetValueAsInt ( 101 );
+      this->LookFromButton->SetParent ( f3 );
+      this->LookFromButton->SetReliefToFlat ( );
+      this->LookFromButton->SetBorderWidth ( 0 );
+      this->LookFromButton->SetOverReliefToNone ( );
+      this->LookFromButton->Create ( );
+      this->LookFromButton->SetImageToIcon ( this->SlicerViewControlIcons->GetLookFromButtonIcon() );
+      this->LookFromButton->SetBalloonHelpString ( "Set the 3D view control mode to 'look from' selected direction");
+      this->LookFromButton->SetValueAsInt ( 202 );
+      this->LookFromButton->SetVariableName ( this->RotateAroundButton->GetVariableName( ) );
+      this->LookFromButton->SetSelectedState(1);
+      this->ViewAxisMode = vtkSlicerViewControlGUI::LookFrom;
+
+      this->OrthoButton->SetParent ( f3);
+      this->OrthoButton->Create ( );
+      this->OrthoButton->SetReliefToFlat ( );
+      this->OrthoButton->SetBorderWidth ( 0 );
+      this->OrthoButton->SetOverReliefToNone ( );
+      this->OrthoButton->SetImageToIcon ( this->SlicerViewControlIcons->GetOrthoButtonIcon() );      
+      this->OrthoButton->SetBalloonHelpString ( "Toggle between orthographic and perspective rendering in the 3D view.");
+      this->CenterButton->SetParent ( f3);
+      this->CenterButton->Create ( );
+      this->CenterButton->SetReliefToFlat ( );
+      this->CenterButton->SetBorderWidth ( 0 );
+      this->CenterButton->SetOverReliefToNone ( );
+      this->CenterButton->SetImageToIcon ( this->SlicerViewControlIcons->GetCenterButtonIcon() );      
+      this->CenterButton->SetBalloonHelpString ( "Center the 3D view on the scene.");
+      this->StereoButton->SetParent ( f3);
+      this->StereoButton->Create ( );
+      this->StereoButton->SetReliefToFlat ( );
+      this->StereoButton->SetBorderWidth ( 0 );
+      this->StereoButton->SetImageToIcon ( this->SlicerViewControlIcons->GetStereoButtonIcon() );      
+      this->StereoButton->IndicatorVisibilityOff ( );
+      this->StereoButton->SetBalloonHelpString ( "Select among stereo viewing options.");
+      this->SelectButton->SetParent ( f3);
+      this->SelectButton->Create ( );
+      this->SelectButton->SetReliefToFlat ( );
+      this->SelectButton->SetBorderWidth ( 0 );
+      this->SelectButton->SetImageToIcon ( this->SlicerViewControlIcons->GetSelectButtonIcon() );
+      this->SelectButton->IndicatorVisibilityOff ( );
+      this->SelectButton->SetBalloonHelpString ( "Select among saved 3D views.");
+      this->SpinButton->SetParent ( f3 );
+      this->SpinButton->Create ( );
+      this->SpinButton->SetImageToIcon ( this->SlicerViewControlIcons->GetSpinButtonIcon() );      
+      this->SpinButton->Deselect();
+      this->SpinButton->SetBalloonHelpString ( "Spin the 3D view.");
+      this->RockButton->SetParent ( f3 );
+      this->RockButton->Create ( );
+      this->RockButton->SetImageToIcon ( this->SlicerViewControlIcons->GetRockButtonIcon() );      
+      this->RockButton->SetBalloonHelpString ( "Rock the 3D view.");
+      this->RockButton->Deselect();
+      // TODO: why did i have to padx by 4 to get the grid to line up?
+      // this works on  win32; will it break on other platforms?
+      this->Script ("grid %s -row 0 -column 0 -sticky w -padx 4 -pady 0 -ipadx 0 -ipady 0", this->RotateAroundButton->GetWidgetName ( ));
+      this->Script ("grid %s -row 1 -column 0 -sticky w -padx 2 -pady 0 -ipadx 0 -ipady 0", this->LookFromButton->GetWidgetName ( ));
+      this->Script ("grid %s -row 0 -column 1 -sticky w -padx 1 -pady 0 -ipadx 0 -ipady 0", this->OrthoButton->GetWidgetName ( ));
+      this->Script ("grid %s -row 1 -column 1 -sticky w -padx 1 -pady 0 -ipadx 0 -ipady 0", this->StereoButton->GetWidgetName ( ));      
+      this->Script ("grid %s -row 0 -column 2 -sticky w -padx 1 -pady 0 -ipadx 0 -ipady 0", this->CenterButton->GetWidgetName ( ));
+      this->Script ("grid %s -row 1 -column 2 -sticky w -padx 1 -pady 0 -ipadx 0 -ipady 0", this->SelectButton->GetWidgetName ( ));      
+      this->Script ("grid %s -row 0 -column 3 -sticky e -padx 2 -pady 0 -ipadx 0 -ipady 0", this->SpinButton->GetWidgetName ( ));
+      this->Script ("grid %s -row 1 -column 3 -sticky e -padx 2 -pady 0 -ipadx 0 -ipady 0", this->RockButton->GetWidgetName ( ));
+
+      // create and pack entry widgets
+      this->FOVEntry->SetParent ( f4 );
+      this->FOVEntry->Create ( );
+      this->FOVEntry->GetLabel()->SetFont ( "-Adobe-Helvetica-Bold-R-Normal-*-8-*-*-*-*-*-*-*" );
+      this->FOVEntry->GetWidget()->SetFont ( "-Adobe-Helvetica-Bold-R-Normal-*-10-*-*-*-*-*-*-*" );
+      this->FOVEntry->SetLabelText ( "FOV: ");
+      this->FOVEntry->GetWidget()->SetWidth (7);
+      this->ZoomEntry->SetParent ( f4 );
+      this->ZoomEntry->Create ( );
+      this->ZoomEntry->GetLabel()->SetFont ( "-Adobe-Helvetica-Bold-R-Normal-*-8-*-*-*-*-*-*-*" );
+      this->ZoomEntry->GetWidget()->SetFont ( "-Adobe-Helvetica-Bold-R-Normal-*-10-*-*-*-*-*-*-*" );
+      this->ZoomEntry->SetLabelText ( "%: ");
+      this->ZoomEntry->GetWidget()->SetWidth (7);
+      this->Script ( "pack %s -side left -anchor w -padx 1 -pady 2 -expand n", this->FOVEntry->GetWidgetName ( ) );
+      this->Script ( "pack %s -side left -anchor e -padx 2 -pady 2 -expand n", this->ZoomEntry->GetWidgetName ( ) );
       
+      // TODO: replace with real nav zoom controls
+      f5->SetBackgroundColor ( app->GetSlicerTheme()->GetSlicerColors()->ViewerBlue );
+      this->NavZoomLabel->SetParent (f5);
+      this->NavZoomLabel->Create();        
+      this->NavZoomLabel->SetWidth ( 20);
+      this->NavZoomLabel->SetHeight ( 5 );
+      this->NavZoomLabel->SetFont ( "-Adobe-Helvetica-Bold-R-Normal-*-10-*-*-*-*-*-*-*" );
+      this->NavZoomLabel->SetText ( "3DNav / SliceZoom" );
+      this->NavZoomLabel->SetBackgroundColor ( app->GetSlicerTheme()->GetSlicerColors()->ViewerBlue );
+      this->Script ( "pack %s -side top -anchor c -padx 0 -pady 0 -fill x -fill y -expand n", this->NavZoomLabel->GetWidgetName ( ) );
+
       //--- create the nav/zoom widgets
-      this->NavZoomInIconButton->SetParent ( f2 );
+      this->NavZoomInIconButton->SetParent ( f6 );
       this->NavZoomInIconButton->Create ( );
       this->NavZoomInIconButton->SetReliefToFlat ( );        
-      this->NavZoomOutIconButton->SetParent ( f2 );        
+      this->NavZoomOutIconButton->SetParent ( f6 );        
       this->NavZoomOutIconButton->Create ( );
       this->NavZoomOutIconButton->SetReliefToFlat ( );
-      this->NavZoomScale->SetParent ( f2 );
+      this->NavZoomScale->SetParent ( f6 );
       this->NavZoomScale->Create ( );
       this->NavZoomScale->SetRange (0.0, 1.0);
       this->NavZoomScale->SetResolution ( 0.01 );
       this->NavZoomScale->SetBorderWidth ( 1 );
       this->NavZoomScale->SetValue ( 0.0 );
+
       // make scale long enough to fill the frame,
       // leaving room for the zoomin, zoomout buttons.
       this->NavZoomScale->SetLength ( 120 );
@@ -668,90 +969,26 @@ void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
       //--- assign image data to the zoom buttons
       this->NavZoomInIconButton->SetImageToIcon ( this->SlicerViewControlIcons->GetNavZoomInIcon() );
       this->NavZoomOutIconButton->SetImageToIcon ( this->SlicerViewControlIcons->GetNavZoomOutIcon() );
-
-      // TODO: replace with real nav zoom controls
-      this->NavZoom->SetParent (f2);
-      this->NavZoom->Create();        
-      this->NavZoom->SetWidth ( 20);
-      this->NavZoom->SetHeight (10 );
-
-      this->NavZoom->SetText ( "3DNav / SliceZoom" );
-      this->NavZoom->SetBackgroundColor ( app->GetSlicerTheme()->GetSlicerColors()->ViewerBlue );
-
-      //--- other camera control widgets
-      this->SpinButton->SetParent ( f1a);
-      this->SpinButton->Create ( );
-      this->SpinButton->SetText ( "Spin" );
-
-      this->RockButton->SetParent ( f1a );
-      this->RockButton->Create ( );
-      this->RockButton->SetText ( "Rock" );
-
-      this->OrthoButton->SetParent ( f1a );
-      this->OrthoButton->Create ( );
-      this->OrthoButton->SetText ( "Ortho" );
-
-      this->CenterButton->SetParent ( f1a );
-      this->CenterButton->Create ( );
-      this->CenterButton->SetText ( "Center");
-
-      this->SelectButton->SetParent ( f1a );
-      this->SelectButton->Create ( );
-      this->SelectButton->SetValue ( "Select");
-
-      this->FOVEntry->SetParent ( f1a );
-      this->FOVEntry->Create ( );
-      this->FOVEntry->SetLabelText ( "FOV: ");
-      this->FOVEntry->GetWidget()->SetWidth (4);
       
-      this->Script ( "pack %s -side left -anchor n -padx 2 -pady 2 -expand n", f1->GetWidgetName ( ) );
-      this->Script ( "pack %s -side left -anchor n -fill x -padx 5 -pady 2 -expand n", f2->GetWidgetName( ) );    
+      this->Script ( "pack %s -side left -anchor n -padx 2 -pady 2 -expand n", this->NavZoomOutIconButton->GetWidgetName ( ) );
+      this->Script ( "pack %s -side left -anchor n -padx 0 -pady 2 -fill x -expand n", this->NavZoomScale->GetWidgetName ( ) );
+      this->Script ( "pack %s -side left -anchor n -padx 2 -pady 2 -expand n", this->NavZoomInIconButton->GetWidgetName ( ) );
 
-      this->Script ( "pack %s -side top -padx 0 -pady 0 -anchor n -expand n ", f1a->GetWidgetName( ) );
-      this->Script ( "pack %s -side top -padx 0 -pady 0 -anchor n -expand n ", f1b->GetWidgetName() );
+      // populate menus
+      this->BuildViewSelectMenu();
+      this->BuildStereoSelectMenu ( );
       
-      this->Script ("grid %s -row 0 -column 0 -sticky w -padx 3 -pady 2", this->SpinButton->GetWidgetName ( ) );
-      this->Script ("grid %s -row 1 -column 0 -sticky w -padx 3 -pady 2", this->RockButton->GetWidgetName ( ) );
-      this->Script ("grid %s -row 2 -column 0 -sticky w -padx 3 -pady 2", this->OrthoButton->GetWidgetName ( ) );
-      this->Script ("grid %s -row 0 -column 1 -sticky ew -padx 0 -pady 2", this->CenterButton->GetWidgetName ( ) );
-      this->Script ("grid %s -row 1 -column 1 -sticky ew -padx 0 -pady 2", this->SelectButton->GetWidgetName ( ) );
-      this->Script ("grid %s -row 2 -column 1 -sticky ew -padx 0 -pady 2", this->FOVEntry->GetWidgetName ( ) );
-
-      this->Script ("grid %s -row 0 -column 0 -sticky w -padx 0 -pady 0 -ipadx 0 -ipady 0", this->RotateAroundPIconButton->GetWidgetName ( ));
-      this->Script ("grid %s -row 0 -column 1 -sticky w -padx 0 -pady 0 -ipadx 0 -ipady 0", this->RotateAroundSIconButton->GetWidgetName ( ));
-      this->Script ("grid %s -row 0 -column 2 -sticky w -padx 0 -pady 0 -ipadx 0 -ipady 0",this->RotateAroundTopCornerIconButton->GetWidgetName ( ) );
-      this->Script ("grid %s -row 0 -column 3 -sticky w -padx 0 -pady 0 -ipadx 0 -ipady 0", this->LookFromPIconButton->GetWidgetName ( ));
-      this->Script ("grid %s -row 0 -column 4 -sticky w -padx 0 -pady 0 -ipadx 0 -ipady 0",  this->LookFromSIconButton->GetWidgetName ( ));
-      this->Script ("grid %s -row 0 -column 5 -sticky w -padx 0 -pady 0 -ipadx 0 -ipady 0", this->LookFromTopCornerIconButton->GetWidgetName ( ));        
-                    
-      this->Script ("grid %s -row 1 -column 0 -sticky w -padx 0 -pady 0 -ipadx 0 -ipady 0", this->RotateAroundRIconButton->GetWidgetName ( ) );
-      this->Script ("grid %s -row 1 -column 1 -sticky w -padx 0 -pady 0 -ipadx 0 -ipady 0", this->RotateAroundMiddleIconButton->GetWidgetName ( ));
-      this->Script ("grid %s -row 1 -column 2 -sticky w -padx 0 -pady 0 -ipadx 0 -ipady 0", this->RotateAroundLIconButton->GetWidgetName ( ) );
-      this->Script ("grid %s -row 1 -column 3 -sticky w -padx 0 -pady 0 -ipadx 0 -ipady 0", this->LookFromRIconButton->GetWidgetName ( ) );
-      this->Script ("grid %s -row 1 -column 4 -sticky w -padx 0 -pady 0 -ipadx 0 -ipady 0", this->LookFromMiddleIconButton->GetWidgetName ( ) );
-      this->Script ("grid %s -row 1 -column 5 -sticky w -padx 0 -pady 0 -ipadx 0 -ipady 0", this->LookFromLIconButton->GetWidgetName ( ));        
-
-      this->Script ("grid %s -row 2 -column 0 -sticky w -padx 0 -pady 0 -ipadx 0 -ipady 0", this->RotateAroundBottomCornerIconButton->GetWidgetName ( ));
-      this->Script ("grid %s -row 2 -column 1 -sticky w -padx 0 -pady 0 -ipadx 0 -ipady 0", this->RotateAroundIIconButton->GetWidgetName ( ) );
-      this->Script ("grid %s -row 2 -column 2 -sticky w -padx 0 -pady 0 -ipadx 0 -ipady 0", this->RotateAroundAIconButton->GetWidgetName ( ) );
-      this->Script ("grid %s -row 2 -column 3 -sticky w -padx 0 -pady 0 -ipadx 0 -ipady 0", this->LookFromBottomCornerIconButton->GetWidgetName ( ) );
-      this->Script ("grid %s -row 2 -column 4 -sticky w -padx 0 -pady 0 -ipadx 0 -ipady 0", this->LookFromIIconButton->GetWidgetName ( ) );
-      this->Script ("grid %s -row 2 -column 5 -sticky w -padx 0 -pady 0 -ipadx 0 -ipady 0", this->LookFromAIconButton->GetWidgetName ( ));        
-
-      this->Script ( "grid %s -row 1 -column 0 -padx 0 -pady 0 -sticky ew", this->NavZoomOutIconButton->GetWidgetName() );
-      this->Script ( "grid %s -row 1 -column 1 -padx 0 -pady 0 -sticky ew", this->NavZoomScale->GetWidgetName() );
-      this->Script ( "grid %s -row 1 -column 2 -padx 0 -pady 0 -sticky ew", this->NavZoomInIconButton->GetWidgetName() );
-      this->Script ("grid %s -row 0 -columnspan 3 -ipadx 40 -ipady 0 -padx 0 -pady 0 -sticky nsew", this->NavZoom->GetWidgetName ( ) );
-
-      f1a->Delete();
-      f1b->Delete();
-      f1->Delete();
-      f2->Delete();
+      // clean up
+      f0->Delete ( );
+      f1->Delete ( );
+      f2->Delete ( );
+      f3->Delete ( );
+      f4->Delete ( );
+      f5->Delete ( );
+      f6->Delete ( );
       }
     }
 }
-
-
 
 
 

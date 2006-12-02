@@ -150,8 +150,10 @@ void vtkSlicerTheme::Install ( )
     // Slicer Checkbuttons
     odb->AddEntryAsDouble3 ("vtkKWCheckButton", "SetSelectColor",
                    this->SlicerColors->LightGrey );
+//    odb->AddEntryAsDouble3 ("vtkKWCheckButton", "SetActiveBackgroundColor",
+//                            this->SlicerColors->ActiveMenuBackgroundColor );
     odb->AddEntryAsDouble3 ("vtkKWCheckButton", "SetActiveBackgroundColor",
-                            this->SlicerColors->ActiveMenuBackgroundColor );
+                            this->SlicerColors->GUIBgColor );
     odb->AddEntry( "vtkKWCheckButton", "IndicatorVisibilityOn", NULL);
     odb->AddEntryAsDouble3( "vtkKWCheckButton", "SetSelectColor", this->SlicerColors->HighlightColor);
 
@@ -160,9 +162,10 @@ void vtkSlicerTheme::Install ( )
     // Slicer Radiobuttons
     odb->AddEntryAsDouble3 ("vtkKWRadioButton", "SetSelectColor",
                    this->SlicerColors->LightGrey );
+//    odb->AddEntryAsDouble3 ("vtkKWRadioButton", "SetActiveBackgroundColor",
+//                            this->SlicerColors->ActiveMenuBackgroundColor );
     odb->AddEntryAsDouble3 ("vtkKWRadioButton", "SetActiveBackgroundColor",
-                            this->SlicerColors->ActiveMenuBackgroundColor );
-
+                            this->SlicerColors->GUIBgColor );
 
     
     // Slicer WidgetWithLabel (scrap the groove around all)

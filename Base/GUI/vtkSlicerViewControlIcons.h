@@ -8,6 +8,7 @@
 #include "./Resources/vtkSlicerRotateAround_ImageData.h"
 #include "./Resources/vtkSlicerLookFrom_ImageData.h"
 #include "./Resources/vtkSlicerNavZoom_ImageData.h"
+#include "./Resources/vtkSlicerViewControl_ImageData.h"
 
 // Description:
 // This class reads in the png format image data for logos and
@@ -25,6 +26,32 @@ class vtkSlicerViewControlIcons : public vtkSlicerIcons
     static vtkSlicerViewControlIcons* New ();
     vtkTypeRevisionMacro ( vtkSlicerViewControlIcons, vtkSlicerIcons );
     void PrintSelf ( ostream& os, vtkIndent indent );
+
+    vtkGetObjectMacro (ViewAxisAIconLO, vtkKWIcon );
+    vtkGetObjectMacro (ViewAxisAIconHI, vtkKWIcon );
+    vtkGetObjectMacro (ViewAxisPIconLO, vtkKWIcon );
+    vtkGetObjectMacro (ViewAxisPIconHI, vtkKWIcon );
+    vtkGetObjectMacro (ViewAxisRIconLO, vtkKWIcon );
+    vtkGetObjectMacro (ViewAxisRIconHI, vtkKWIcon );
+    vtkGetObjectMacro (ViewAxisLIconLO, vtkKWIcon );
+    vtkGetObjectMacro (ViewAxisLIconHI, vtkKWIcon );
+    vtkGetObjectMacro (ViewAxisSIconLO, vtkKWIcon );
+    vtkGetObjectMacro (ViewAxisSIconHI, vtkKWIcon );
+    vtkGetObjectMacro (ViewAxisIIconLO, vtkKWIcon );
+    vtkGetObjectMacro (ViewAxisIIconHI, vtkKWIcon );
+    vtkGetObjectMacro (ViewAxisBottomCornerIcon, vtkKWIcon );
+    vtkGetObjectMacro (ViewAxisTopCornerIcon, vtkKWIcon );
+    vtkGetObjectMacro (ViewAxisCenterIcon, vtkKWIcon );    
+
+    vtkGetObjectMacro (SpinButtonIcon, vtkKWIcon );
+    vtkGetObjectMacro (RockButtonIcon, vtkKWIcon );
+    vtkGetObjectMacro (OrthoButtonIcon, vtkKWIcon );    
+    vtkGetObjectMacro (PerspectiveButtonIcon, vtkKWIcon );
+    vtkGetObjectMacro (CenterButtonIcon, vtkKWIcon );
+    vtkGetObjectMacro (SelectButtonIcon, vtkKWIcon );
+    vtkGetObjectMacro (StereoButtonIcon, vtkKWIcon );
+    vtkGetObjectMacro (LookFromButtonIcon, vtkKWIcon );
+    vtkGetObjectMacro (RotateAroundButtonIcon, vtkKWIcon );
 
     // Description:
     // Get on Auto camera movement icons
@@ -70,6 +97,32 @@ class vtkSlicerViewControlIcons : public vtkSlicerIcons
  protected:
     vtkSlicerViewControlIcons ( );
     virtual ~vtkSlicerViewControlIcons ( );
+
+    vtkKWIcon *ViewAxisAIconLO;
+    vtkKWIcon *ViewAxisAIconHI;
+    vtkKWIcon *ViewAxisPIconLO;
+    vtkKWIcon *ViewAxisPIconHI;
+    vtkKWIcon *ViewAxisRIconLO;
+    vtkKWIcon *ViewAxisRIconHI;
+    vtkKWIcon *ViewAxisLIconLO;
+    vtkKWIcon *ViewAxisLIconHI;
+    vtkKWIcon *ViewAxisSIconLO;
+    vtkKWIcon *ViewAxisSIconHI;
+    vtkKWIcon *ViewAxisIIconLO;
+    vtkKWIcon *ViewAxisIIconHI;
+    vtkKWIcon *ViewAxisBottomCornerIcon;
+    vtkKWIcon *ViewAxisTopCornerIcon;
+    vtkKWIcon *ViewAxisCenterIcon;
+
+    vtkKWIcon *SpinButtonIcon;
+    vtkKWIcon *RockButtonIcon;
+    vtkKWIcon *OrthoButtonIcon;
+    vtkKWIcon *PerspectiveButtonIcon;
+    vtkKWIcon *CenterButtonIcon;
+    vtkKWIcon *SelectButtonIcon;
+    vtkKWIcon *StereoButtonIcon;
+    vtkKWIcon *LookFromButtonIcon;
+    vtkKWIcon *RotateAroundButtonIcon;    
 
     vtkKWIcon *RotateAroundAIconLO;
     vtkKWIcon *RotateAroundAIconHI;
