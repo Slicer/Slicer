@@ -220,7 +220,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // Description:
     // Widgets for the File menu
     vtkKWLoadSaveDialog *LoadSceneDialog;
-    vtkKWLoadSaveDialog *SaveSceneDialog;
 
     // Description:
     // Main Slicer toolbar and components
@@ -258,7 +257,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     int ViewerPageTag;
 
     vtkSlicerMRMLSaveDataWidget *SaveDataWidget;
-    vtkKWDialog                 *SaveDataDialog;
     
  private:
     vtkSlicerApplicationGUI ( const vtkSlicerApplicationGUI& ); // Not implemented.

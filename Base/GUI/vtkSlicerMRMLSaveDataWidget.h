@@ -29,6 +29,11 @@
 #include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
 
+class vtkKWDialog;
+class vtkKWLoadSaveDialog;
+class vtkKWEntryWithLabel;
+class vtkKWLoadSaveButtonWithLabel;
+class vtkKWCheckButton;
 class vtkKWMultiColumnListWithScrollbars;
 class vtkKWPushButton;
 class vtkMRMLStorageNode;
@@ -55,8 +60,8 @@ public:
 
   // Description:
   // Directory to save files into
-  vtkGetStringMacro(FileDirectoryName);
-  vtkSetStringMacro(FileDirectoryName);
+  vtkGetStringMacro(DataDirectoryName);
+  vtkSetStringMacro(DataDirectoryName);
   
   // Description:
   // update list from MRML, return number of nodes need to save
@@ -79,20 +84,34 @@ protected:
   // Create the widget.
   virtual void CreateWidget();
   
-
+  void SaveScene();
 
 private:
   
-  char *FileDirectoryName;
+  char *DataDirectoryName;
   
   //BTX
   std::vector<std::string> Nodes;
   std::vector<std::string> StorageNodes;
   //ETX
   
+  vtkKWDialog *SaveDialog;
+
+  vtkKWLoadSaveButtonWithLabel *SaveSceneButton;
+
+  vtkKWEntryWithLabel *SceneName;
+
+  vtkKWCheckButton *SaveSceneCheckBox;
+
+  vtkKWLoadSaveButtonWithLabel *SaveDataButton;
+
   vtkKWPushButton *OkButton;
 
   vtkKWMultiColumnListWithScrollbars *MultiColumnList;
+
+  bool DataDirectoryExists;
+
+  bool IsProcessing;
   
   vtkSlicerMRMLSaveDataWidget(const vtkSlicerMRMLSaveDataWidget&); // Not implemented
   void operator=(const vtkSlicerMRMLSaveDataWidget&); // Not Implemented

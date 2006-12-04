@@ -209,8 +209,8 @@ int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
     {
     modelNode->GetPolyData()->Modified();
     }
-
-    return 1;
+  modelNode->SetModifiedSinceRead(0);
+  return 1;
 }
 
 //----------------------------------------------------------------------------

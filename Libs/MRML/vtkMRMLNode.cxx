@@ -126,6 +126,8 @@ void vtkMRMLNode::PrintSelf(ostream& os, vtkIndent indent)
 
   os << indent << "HideFromEditors: " << this->HideFromEditors << "\n";
 
+  os << indent << "ModifiedSinceRead: " << this->ModifiedSinceRead << "\n";
+
 }
 
 //----------------------------------------------------------------------------
