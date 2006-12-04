@@ -50,6 +50,8 @@ class vtkSlicerViewControlIcons : public vtkSlicerIcons
     vtkGetObjectMacro (StereoButtonIcon, vtkKWIcon );
     vtkGetObjectMacro (LookFromButtonIcon, vtkKWIcon );
     vtkGetObjectMacro (RotateAroundButtonIcon, vtkKWIcon );
+    vtkGetObjectMacro (VisibilityButtonIcon, vtkKWIcon );
+    vtkGetObjectMacro (SliceOpacityButtonIcon, vtkKWIcon );
 
     vtkGetObjectMacro (NavZoomInIcon, vtkKWIcon);
     vtkGetObjectMacro (NavZoomOutIcon, vtkKWIcon);    
@@ -87,6 +89,8 @@ class vtkSlicerViewControlIcons : public vtkSlicerIcons
     vtkKWIcon *StereoButtonIcon;
     vtkKWIcon *LookFromButtonIcon;
     vtkKWIcon *RotateAroundButtonIcon;    
+    vtkKWIcon *VisibilityButtonIcon;
+    vtkKWIcon *SliceOpacityButtonIcon;
 
     vtkKWIcon *NavZoomInIcon;
     vtkKWIcon *NavZoomOutIcon;

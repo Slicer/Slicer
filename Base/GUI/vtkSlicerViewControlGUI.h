@@ -11,13 +11,16 @@
 
 class vtkKWFrame;
 class vtkKWPushButton;
+class vtkKWTopLevel;
 class vtkSlicerApplicationGUI;
 class vtkKWScale;
+class vtkKWScaleWithEntry;
 class vtkKWPushButton;
 class vtkKWCheckButton;
 class vtkKWRadioButton;
 class vtkKWLabel;
 class vtkKWMenuButton;
+class vtkKWEntry;
 class vtkKWEntryWithLabel;
 class vtkSlicerViewControlIcons;
 
@@ -41,7 +44,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   vtkGetObjectMacro (CenterButton, vtkKWPushButton);
   vtkGetObjectMacro (SelectButton, vtkKWMenuButton);
   vtkGetObjectMacro (StereoButton, vtkKWMenuButton);
-
+  vtkGetObjectMacro (VisibilityButton, vtkKWMenuButton );
+  vtkGetObjectMacro (SliceOpacityButton, vtkKWPushButton );
+  vtkGetObjectMacro (SliceOpacityScale, vtkKWScaleWithEntry );
+  vtkGetObjectMacro (SliceOpacityTopLevel, vtkKWTopLevel );
   vtkGetObjectMacro (FOVEntry, vtkKWEntryWithLabel);
   vtkGetObjectMacro (ZoomEntry, vtkKWEntryWithLabel);
   vtkGetObjectMacro (LookFromButton, vtkKWRadioButton);
@@ -169,7 +175,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   void MakeViewControlRolloverBehavior ( );
   void BuildViewSelectMenu ( );
   void BuildStereoSelectMenu ( );
-  
+  void BuildVisibilityMenu ( );
+  void PopUpSliceOpacityScaleAndEntry ( );
+  void HideSliceOpacityScaleAndEntry ( );
+
   //BTX
   // Modes for controlling camera by clicking axes
   enum
@@ -191,8 +200,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   enum
     {
       NoStereo = 0,
-      FullColor,
-      RedBlue
+      RedBlue,
+      CrystalEyes,
+      Interlaced
     };
 
   // render modes
@@ -217,6 +227,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   vtkKWPushButton *CenterButton;
   vtkKWMenuButton *StereoButton;
   vtkKWMenuButton *SelectButton;
+  vtkKWMenuButton *VisibilityButton;
+  vtkKWPushButton *SliceOpacityButton;
+  vtkKWScaleWithEntry *SliceOpacityScale;
+  vtkKWTopLevel *SliceOpacityTopLevel;
   vtkKWEntryWithLabel *FOVEntry;
   vtkKWEntryWithLabel *ZoomEntry;
     

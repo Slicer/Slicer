@@ -8,9 +8,11 @@
 #include "vtkSlicerViewControlGUI.h"
 #include "vtkSlicerWindow.h"
 
+#include "vtkKWTopLevel.h"
 #include "vtkKWFrame.h"
 #include "vtkKWWidget.h"
 #include "vtkKWScale.h"
+#include "vtkKWScaleWithEntry.h"
 #include "vtkKWPushButton.h"
 #include "vtkKWCheckButton.h"
 #include "vtkKWRadioButton.h"
@@ -19,6 +21,7 @@
 #include "vtkKWMenu.h"
 #include "vtkKWEntry.h"
 #include "vtkKWEntryWithLabel.h"
+#include "vtkKWTkUtilities.h"
 #include "vtkSlicerViewControlIcons.h"
 
 #include "vtkMRMLCameraNode.h"
@@ -65,6 +68,10 @@ vtkSlicerViewControlGUI::vtkSlicerViewControlGUI ( )
   this->RotateAroundButton = vtkKWRadioButton::New ( );
   this->FOVEntry = vtkKWEntryWithLabel::New ( );
   this->ZoomEntry = vtkKWEntryWithLabel::New ( );
+  this->VisibilityButton = vtkKWMenuButton::New ( );
+  this->SliceOpacityButton = vtkKWPushButton::New ( );
+  this->SliceOpacityScale = vtkKWScaleWithEntry::New ( );
+  this->SliceOpacityTopLevel = vtkKWTopLevel::New ( );
 
   //--- ui for the ViewControlFrame
   this->ViewAxisAIconButton = vtkKWLabel::New ( );
@@ -156,7 +163,30 @@ vtkSlicerViewControlGUI::~vtkSlicerViewControlGUI ( )
     this->StereoButton->Delete();
     this->StereoButton = NULL;
     }
-
+  if ( this->VisibilityButton ) 
+    {
+    this->VisibilityButton->SetParent ( NULL );
+    this->VisibilityButton->Delete();
+    this->VisibilityButton = NULL;
+    }
+  if ( this->SliceOpacityButton ) 
+    {
+    this->SliceOpacityButton->SetParent ( NULL );
+    this->SliceOpacityButton->Delete();
+    this->SliceOpacityButton = NULL;
+    }
+  if ( this->SliceOpacityScale )
+    {
+    this->SliceOpacityScale->SetParent ( NULL );
+    this->SliceOpacityScale->Delete ( );
+    this->SliceOpacityScale = NULL;
+    }
+  if ( this->SliceOpacityTopLevel )
+    {
+    this->SliceOpacityTopLevel->SetParent ( NULL );
+    this->SliceOpacityTopLevel->Delete ( );
+    this->SliceOpacityTopLevel = NULL;
+    }
   if ( this->LookFromButton )
     {
     this->LookFromButton->SetParent (NULL );
@@ -317,10 +347,13 @@ void vtkSlicerViewControlGUI::RemoveGUIObservers ( )
     this->SpinButton->RemoveObservers (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->RockButton->RemoveObservers (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->OrthoButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->SliceOpacityButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->StereoButton->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->SelectButton->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->VisibilityButton->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->FOVEntry->GetWidget()->RemoveObservers (vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ZoomEntry->GetWidget()->RemoveObservers (vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+
 }
 
 //---------------------------------------------------------------------------
@@ -332,8 +365,10 @@ void vtkSlicerViewControlGUI::AddGUIObservers ( )
     this->SpinButton->AddObserver (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->RockButton->AddObserver (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->OrthoButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->SliceOpacityButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->StereoButton->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->SelectButton->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->VisibilityButton->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->FOVEntry->GetWidget()->AddObserver ( vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ZoomEntry->GetWidget()->AddObserver ( vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 }
@@ -393,6 +428,10 @@ void vtkSlicerViewControlGUI::ProcessGUIEvents ( vtkObject *caller,
           this->OrthoButton->SetImageToIcon ( this->SlicerViewControlIcons->GetPerspectiveButtonIcon() );
           }
         }
+      if ( (p == this->SliceOpacityButton ) && (event == vtkKWPushButton::InvokedEvent ) )
+        {
+        this->PopUpSliceOpacityScaleAndEntry( );
+        }
 
       //--- turn View Spin and Rocking on and off
       if ( (b == this->SpinButton) && (event == vtkKWCheckButton::SelectedStateChangedEvent) )
@@ -448,7 +487,72 @@ void vtkSlicerViewControlGUI::ProcessGUIEvents ( vtkObject *caller,
     }
 }
 
+//---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::HideSliceOpacityScaleAndEntry ( )
+{
 
+  if ( !this->SliceOpacityTopLevel )
+    {
+    return;
+    }
+  this->SliceOpacityTopLevel->Withdraw();
+}
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::PopUpSliceOpacityScaleAndEntry ( )
+{
+  if ( !this->SliceOpacityButton || !this->SliceOpacityButton->IsCreated())
+    {
+    return;
+    }
+
+  // Get the position of the mouse, the position and size of the push button,
+  // the size of the scale.
+
+  int x, y, py, ph, scx, scy, sx, sy;
+  vtkSlicerApplicationGUI *appGUI = this->GetApplicationGUI ( );
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(appGUI->GetApplication() );
+  
+  vtkKWTkUtilities::GetMousePointerCoordinates(this->SliceOpacityButton, &x, &y);
+  vtkKWTkUtilities::GetWidgetCoordinates(this->SliceOpacityButton, NULL, &py);
+  vtkKWTkUtilities::GetWidgetSize(this->SliceOpacityButton, NULL, &ph);
+  vtkKWTkUtilities::GetWidgetRelativeCoordinates(this->SliceOpacityScale->GetScale(), &sx, &sy);
+  sscanf(this->Script("%s coords %g", this->SliceOpacityScale->GetScale()->GetWidgetName(),
+                      this->SliceOpacityScale->GetScale()->GetValue()), "%d %d", &scx, &scy);
+ 
+  // Place the scale so that the slider is coincident with the x mouse position
+  // and just below the push button
+  x -= sx + scx;
+  if (py <= y && y <= (py + ph -1))
+    {
+    y = py + ph - 3;
+    }
+  else
+    {
+    y -= sy + scy;
+    }
+
+  this->SliceOpacityTopLevel->SetPosition(x, y);
+  app->ProcessPendingEvents();
+  this->SliceOpacityTopLevel->DeIconify();
+  this->SliceOpacityTopLevel->Raise();
+}
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::BuildVisibilityMenu ( )
+{
+  this->VisibilityButton->GetMenu()->DeleteAllItems ( );
+  this->VisibilityButton->GetMenu()->AddCheckButton ("3D cube" );
+  this->VisibilityButton->GetMenu()->AddCheckButton ("3D axes" );
+  this->VisibilityButton->GetMenu()->AddCheckButton ("3D axis labels" );
+  this->VisibilityButton->GetMenu()->AddCheckButton ("3D outlines around slices" );
+  this->VisibilityButton->GetMenu()->SelectItem ("3D cube" );
+  this->VisibilityButton->GetMenu()->SelectItem ("3D axes" );
+  this->VisibilityButton->GetMenu()->SelectItem ("3D axis labels" );
+  this->VisibilityButton->GetMenu()->SelectItem ("3D outlines around slices" );
+}
 
 
 //---------------------------------------------------------------------------
@@ -457,7 +561,8 @@ void vtkSlicerViewControlGUI::BuildStereoSelectMenu ( )
   this->StereoButton->GetMenu()->DeleteAllItems ( );
   this->StereoButton->GetMenu()->AddRadioButton ( "No stereo" );
   this->StereoButton->GetMenu()->AddRadioButton ( "Red/Blue" );
-  this->StereoButton->GetMenu()->AddRadioButton ( "Full/Color" );
+  this->StereoButton->GetMenu()->AddRadioButton ( "CrystalEyes" );
+  this->StereoButton->GetMenu()->AddRadioButton ( "Interlaced" );
 }
 
 
@@ -771,6 +876,7 @@ void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
       vtkKWFrame *f4 = vtkKWFrame::New ( );
       vtkKWFrame *f5 = vtkKWFrame::New ( );
       vtkKWFrame *f6 = vtkKWFrame::New ( );
+      vtkKWFrame *f7 = vtkKWFrame::New ( );
       f0->SetParent ( appF);
       f0->Create ( );
       f1->SetParent (f0);
@@ -850,6 +956,7 @@ void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
       this->MakeViewControlRolloverBehavior ( );
 
       // create and pack other view control icons
+      //--- Radiobutton to select rotate view around axis
       this->RotateAroundButton->SetParent ( f3 );
       this->RotateAroundButton->Create ( );
       this->RotateAroundButton->SetReliefToFlat ( );
@@ -858,6 +965,7 @@ void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
       this->RotateAroundButton->SetImageToIcon ( this->SlicerViewControlIcons->GetRotateAroundButtonIcon() );
       this->RotateAroundButton->SetBalloonHelpString ( "Set the 3D view control mode to 'rotate around' selected axis ");
       this->RotateAroundButton->SetValueAsInt ( 101 );
+      //--- Radiobutton to select view look from direction
       this->LookFromButton->SetParent ( f3 );
       this->LookFromButton->SetReliefToFlat ( );
       this->LookFromButton->SetBorderWidth ( 0 );
@@ -869,7 +977,7 @@ void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
       this->LookFromButton->SetVariableName ( this->RotateAroundButton->GetVariableName( ) );
       this->LookFromButton->SetSelectedState(1);
       this->ViewAxisMode = vtkSlicerViewControlGUI::LookFrom;
-
+      //--- Push button to toggle between perspective and ortho rendering
       this->OrthoButton->SetParent ( f3);
       this->OrthoButton->Create ( );
       this->OrthoButton->SetReliefToFlat ( );
@@ -877,6 +985,7 @@ void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
       this->OrthoButton->SetOverReliefToNone ( );
       this->OrthoButton->SetImageToIcon ( this->SlicerViewControlIcons->GetOrthoButtonIcon() );      
       this->OrthoButton->SetBalloonHelpString ( "Toggle between orthographic and perspective rendering in the 3D view.");
+      //--- Pusbbutton to center the rendered vie on the scene center
       this->CenterButton->SetParent ( f3);
       this->CenterButton->Create ( );
       this->CenterButton->SetReliefToFlat ( );
@@ -884,6 +993,7 @@ void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
       this->CenterButton->SetOverReliefToNone ( );
       this->CenterButton->SetImageToIcon ( this->SlicerViewControlIcons->GetCenterButtonIcon() );      
       this->CenterButton->SetBalloonHelpString ( "Center the 3D view on the scene.");
+      //--- Menubutton to show stereo options
       this->StereoButton->SetParent ( f3);
       this->StereoButton->Create ( );
       this->StereoButton->SetReliefToFlat ( );
@@ -891,33 +1001,78 @@ void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
       this->StereoButton->SetImageToIcon ( this->SlicerViewControlIcons->GetStereoButtonIcon() );      
       this->StereoButton->IndicatorVisibilityOff ( );
       this->StereoButton->SetBalloonHelpString ( "Select among stereo viewing options.");
+      //--- Menubutton to capture or select among saved 3D views.
       this->SelectButton->SetParent ( f3);
       this->SelectButton->Create ( );
       this->SelectButton->SetReliefToFlat ( );
       this->SelectButton->SetBorderWidth ( 0 );
       this->SelectButton->SetImageToIcon ( this->SlicerViewControlIcons->GetSelectButtonIcon() );
       this->SelectButton->IndicatorVisibilityOff ( );
-      this->SelectButton->SetBalloonHelpString ( "Select among saved 3D views.");
+      this->SelectButton->SetBalloonHelpString ( "Save or select among already saved 3D views.");
+      //--- Checkbutton to spin the view
       this->SpinButton->SetParent ( f3 );
       this->SpinButton->Create ( );
       this->SpinButton->SetImageToIcon ( this->SlicerViewControlIcons->GetSpinButtonIcon() );      
       this->SpinButton->Deselect();
       this->SpinButton->SetBalloonHelpString ( "Spin the 3D view.");
+      //--- CheckButton to rotate the view
       this->RockButton->SetParent ( f3 );
       this->RockButton->Create ( );
       this->RockButton->SetImageToIcon ( this->SlicerViewControlIcons->GetRockButtonIcon() );      
       this->RockButton->SetBalloonHelpString ( "Rock the 3D view.");
       this->RockButton->Deselect();
+      //--- Menubutton to turn on/off axes, cube, outlines, annotations in 3D view.
+      this->VisibilityButton->SetParent (f3);
+      this->VisibilityButton->Create ( );
+      this->VisibilityButton->IndicatorVisibilityOff ( );
+      this->VisibilityButton->SetBorderWidth ( 0 );
+      this->VisibilityButton->SetImageToIcon ( this->SlicerViewControlIcons->GetVisibilityButtonIcon ( ) );
+      this->VisibilityButton->SetBalloonHelpString ("Toggle visibility of elements in the 3D view." );
+
+      //--- Popup scale and entry for SliceOpacityButton: keeps GUI more compact, saves space
+      //--- SliceOpacityButton, SliceOpacityScale and Entry will be observed
+      //--- and their events handled in ProcessGUIEvents;
+      //--- The popup and hide behavior of the latter two will be managed locally in the GUI.
+      //--- TODO: make a SlicerWidget that handles this behavior.
+      this->SliceOpacityTopLevel->SetApplication ( this->GetApplication( ) );
+      this->SliceOpacityTopLevel->SetMasterWindow ( this->SliceOpacityButton );
+      this->SliceOpacityTopLevel->Create ( );
+      this->SliceOpacityTopLevel->HideDecorationOn();      
+      this->SliceOpacityTopLevel->Withdraw();
+      this->SliceOpacityTopLevel->SetBorderWidth ( 2 );
+      this->SliceOpacityTopLevel->SetReliefToGroove();
+      f7->SetParent ( this->SliceOpacityTopLevel );
+      f7->Create ( );
+      f7->SetBinding ( "<Leave>", this, "HideSliceOpacityScaleAndEntry" );
+      this->Script ( "pack %s -side left -anchor w -padx 2 -pady 2 -fill x -fill y -expand n", f7->GetWidgetName ( ) );      
+      //--- Scale packed in the pop-up toplevel's frame
+      this->SliceOpacityScale->SetParent ( f7 );
+      this->SliceOpacityScale->Create ( );
+      this->SliceOpacityScale->SetRange ( 0.0, 1.0 );
+      this->SliceOpacityScale->SetResolution ( 0.01 );
+      this->SliceOpacityScale->GetScale()->SetLabelText ( "" );
+      this->SliceOpacityScale->GetScale()->ValueVisibilityOff ( );
+      this->SliceOpacityScale->SetValue ( 1.0 );
+      this->Script ( "pack %s -side left -anchor w -padx 1 -pady 3 -expand n", this->SliceOpacityScale->GetWidgetName ( ) );      
+      //--- Pushbutton pops up scale and entry to set slice opacity in the 3D view
+      this->SliceOpacityButton->SetParent (f3);
+      this->SliceOpacityButton->Create ( );
+      this->SliceOpacityButton->SetBorderWidth ( 0 );
+      this->SliceOpacityButton->SetImageToIcon ( this->SlicerViewControlIcons->GetSliceOpacityButtonIcon ( ) );
+      this->SliceOpacityButton->SetBalloonHelpString ( "Adjust the opacity of slices in the 3D view." );
+
       // TODO: why did i have to padx by 4 to get the grid to line up?
       // this works on  win32; will it break on other platforms?
       this->Script ("grid %s -row 0 -column 0 -sticky w -padx 4 -pady 0 -ipadx 0 -ipady 0", this->RotateAroundButton->GetWidgetName ( ));
       this->Script ("grid %s -row 1 -column 0 -sticky w -padx 2 -pady 0 -ipadx 0 -ipady 0", this->LookFromButton->GetWidgetName ( ));
       this->Script ("grid %s -row 0 -column 1 -sticky w -padx 1 -pady 0 -ipadx 0 -ipady 0", this->OrthoButton->GetWidgetName ( ));
-      this->Script ("grid %s -row 1 -column 1 -sticky w -padx 1 -pady 0 -ipadx 0 -ipady 0", this->StereoButton->GetWidgetName ( ));      
-      this->Script ("grid %s -row 0 -column 2 -sticky w -padx 1 -pady 0 -ipadx 0 -ipady 0", this->CenterButton->GetWidgetName ( ));
-      this->Script ("grid %s -row 1 -column 2 -sticky w -padx 1 -pady 0 -ipadx 0 -ipady 0", this->SelectButton->GetWidgetName ( ));      
-      this->Script ("grid %s -row 0 -column 3 -sticky e -padx 2 -pady 0 -ipadx 0 -ipady 0", this->SpinButton->GetWidgetName ( ));
-      this->Script ("grid %s -row 1 -column 3 -sticky e -padx 2 -pady 0 -ipadx 0 -ipady 0", this->RockButton->GetWidgetName ( ));
+      this->Script ("grid %s -row 1 -column 1 -sticky w -padx 1 -pady 0 -ipadx 0 -ipady 0", this->StereoButton->GetWidgetName ( ));
+      this->Script ("grid %s -row 0 -column 2 -sticky w -padx 1 -pady 0 -ipadx 0 -ipady 0", this->SliceOpacityButton->GetWidgetName ( ));      
+      this->Script ("grid %s -row 1 -column 2 -sticky w -padx 1 -pady 0 -ipadx 0 -ipady 0", this->VisibilityButton->GetWidgetName ( ));
+      this->Script ("grid %s -row 0 -column 3 -sticky w -padx 1 -pady 0 -ipadx 0 -ipady 0", this->CenterButton->GetWidgetName ( ));
+      this->Script ("grid %s -row 1 -column 3 -sticky w -padx 1 -pady 0 -ipadx 0 -ipady 0", this->SelectButton->GetWidgetName ( ));      
+      this->Script ("grid %s -row 0 -column 4 -sticky e -padx 2 -pady 0 -ipadx 0 -ipady 0", this->SpinButton->GetWidgetName ( ));
+      this->Script ("grid %s -row 1 -column 4 -sticky e -padx 2 -pady 0 -ipadx 0 -ipady 0", this->RockButton->GetWidgetName ( ));
 
       // create and pack entry widgets
       this->FOVEntry->SetParent ( f4 );
@@ -939,8 +1094,8 @@ void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
       f5->SetBackgroundColor ( app->GetSlicerTheme()->GetSlicerColors()->ViewerBlue );
       this->NavZoomLabel->SetParent (f5);
       this->NavZoomLabel->Create();        
-      this->NavZoomLabel->SetWidth ( 20);
-      this->NavZoomLabel->SetHeight ( 5 );
+      this->NavZoomLabel->SetWidth ( 15 );
+      this->NavZoomLabel->SetHeight ( 6 );
       this->NavZoomLabel->SetFont ( "-Adobe-Helvetica-Bold-R-Normal-*-10-*-*-*-*-*-*-*" );
       this->NavZoomLabel->SetText ( "3DNav / SliceZoom" );
       this->NavZoomLabel->SetBackgroundColor ( app->GetSlicerTheme()->GetSlicerColors()->ViewerBlue );
@@ -962,7 +1117,7 @@ void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
 
       // make scale long enough to fill the frame,
       // leaving room for the zoomin, zoomout buttons.
-      this->NavZoomScale->SetLength ( 120 );
+      this->NavZoomScale->SetLength ( 110 );
       this->NavZoomScale->SetOrientationToHorizontal ( );
       this->NavZoomScale->ValueVisibilityOff ( );
       this->NavZoomScale->SetBalloonHelpString ( "Use scale to zoom the navigation window in/out" );
@@ -970,13 +1125,14 @@ void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
       this->NavZoomInIconButton->SetImageToIcon ( this->SlicerViewControlIcons->GetNavZoomInIcon() );
       this->NavZoomOutIconButton->SetImageToIcon ( this->SlicerViewControlIcons->GetNavZoomOutIcon() );
       
-      this->Script ( "pack %s -side left -anchor n -padx 2 -pady 2 -expand n", this->NavZoomOutIconButton->GetWidgetName ( ) );
-      this->Script ( "pack %s -side left -anchor n -padx 0 -pady 2 -fill x -expand n", this->NavZoomScale->GetWidgetName ( ) );
-      this->Script ( "pack %s -side left -anchor n -padx 2 -pady 2 -expand n", this->NavZoomInIconButton->GetWidgetName ( ) );
+      this->Script ( "pack %s -side left -anchor n -padx 0 -pady 2 -expand n", this->NavZoomOutIconButton->GetWidgetName ( ) );
+      this->Script ( "pack %s -side left -anchor c -padx 0 -pady 2 -expand n", this->NavZoomScale->GetWidgetName ( ) );
+      this->Script ( "pack %s -side left -anchor n -padx 0 -pady 2 -expand n", this->NavZoomInIconButton->GetWidgetName ( ) );
 
       // populate menus
       this->BuildViewSelectMenu();
       this->BuildStereoSelectMenu ( );
+      this->BuildVisibilityMenu ( );
       
       // clean up
       f0->Delete ( );
@@ -986,6 +1142,7 @@ void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
       f4->Delete ( );
       f5->Delete ( );
       f6->Delete ( );
+      f7->Delete ( );
       }
     }
 }

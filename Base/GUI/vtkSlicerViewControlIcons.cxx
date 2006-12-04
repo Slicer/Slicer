@@ -39,6 +39,8 @@ vtkSlicerViewControlIcons::vtkSlicerViewControlIcons ( )
     this->StereoButtonIcon = vtkKWIcon::New ( );
     this->LookFromButtonIcon = vtkKWIcon::New ( );
     this->RotateAroundButtonIcon = vtkKWIcon::New ( );
+    this->VisibilityButtonIcon = vtkKWIcon::New ( );
+    this->SliceOpacityButtonIcon = vtkKWIcon::New ( );
     
     //--- "Zoom in and out icons
     this->NavZoomInIcon = vtkKWIcon::New();
@@ -161,7 +163,16 @@ vtkSlicerViewControlIcons::~vtkSlicerViewControlIcons ( )
       this->RotateAroundButtonIcon->Delete ( );
       this->RotateAroundButtonIcon = NULL;
       }
-
+    if ( this->VisibilityButtonIcon )
+      {
+      this->VisibilityButtonIcon->Delete ( );
+      this->VisibilityButtonIcon = NULL;
+      }
+    if ( this->SliceOpacityButtonIcon )
+      {
+      this->SliceOpacityButtonIcon->Delete ( );
+      this->SliceOpacityButtonIcon = NULL;
+      }
 
     // zoom images
     if ( this->NavZoomInIcon ) {
@@ -305,6 +316,16 @@ void vtkSlicerViewControlIcons::AssignImageDataToIcons ( ) {
                                    image_ViewAxisRotateAround_height,
                                    image_ViewAxisRotateAround_pixel_size,
                                    image_ViewAxisRotateAround_length, 0 );                                   
+  this->VisibilityButtonIcon->SetImage ( image_ViewFeaturesVisible,
+                                         image_ViewFeaturesVisible_width,
+                                         image_ViewFeaturesVisible_height,
+                                         image_ViewFeaturesVisible_pixel_size,
+                                         image_ViewFeaturesVisible_length, 0 );
+  this->SliceOpacityButtonIcon->SetImage ( image_ViewSliceOpacity,
+                                           image_ViewSliceOpacity_width,
+                                           image_ViewSliceOpacity_height,
+                                           image_ViewSliceOpacity_pixel_size,
+                                           image_ViewSliceOpacity_length, 0 );                                           
 
     this->NavZoomInIcon->SetImage( image_NavZoomIn,
                                    image_NavZoomIn_width,
@@ -341,6 +362,15 @@ void vtkSlicerViewControlIcons::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "ViewAxisTopCornerIcon" << this->GetViewAxisTopCornerIcon () << "\n";
     os << indent << "ViewAxisBottomCornerIcon" << this->GetViewAxisBottomCornerIcon () << "\n";
     os << indent << "ViewAxisCenterIcon" << this->GetViewAxisCenterIcon () << "\n";
-
-
+    os << indent << "SpinButtonIcon" << this->GetSpinButtonIcon () << "\n";
+    os << indent << "RockButtonIcon" << this->GetRockButtonIcon () << "\n";
+    os << indent << "OrthoButtonIcon" << this->GetOrthoButtonIcon () << "\n";
+    os << indent << "PerspectiveButtonIcon" << this->GetPerspectiveButtonIcon () << "\n";
+    os << indent << "CenterButtonIcon" << this->GetCenterButtonIcon () << "\n";
+    os << indent << "SelectButtonIcon" << this->GetSelectButtonIcon () << "\n";
+    os << indent << "StereoButtonIcon" << this->GetStereoButtonIcon () << "\n";
+    os << indent << "LookFromButtonIcon" << this->GetLookFromButtonIcon () << "\n";
+    os << indent << "RotateAroundButtonIcon" << this->GetRotateAroundButtonIcon () << "\n";
+    os << indent << "VisibilityButtonIcon" << this->GetVisibilityButtonIcon () << "\n";
+    os << indent << "SliceOpacityButtonIcon" << this->GetSliceOpacityButtonIcon () << "\n";
 }
