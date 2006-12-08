@@ -80,7 +80,7 @@ void vtkMRMLParser::StartElement(const char* tagName, const char** atts)
 
 void vtkMRMLParser::EndElement (const char *name)
 {
-  if (!strcmp(name, "MRML")) 
+  if ( !strcmp(name, "MRML") || this->NodeStack.empty() ) 
     {
     return;
     }
