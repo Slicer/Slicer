@@ -144,9 +144,10 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic : public vtkSlicerL
 
   // Description:
   // Creates a selection node if needed
-   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
+  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
                                   unsigned long /*event*/, 
                                   void * /*callData*/ );
+   virtual void ProcessMRMLEvents () { this->ProcessMRMLEvents( NULL, vtkCommand::NoEvent, NULL ); };
   //
   // Transient Application State
   // -- these are elements that are inherently part of the
