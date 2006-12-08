@@ -22,8 +22,6 @@ proc vtkDelete {} {
 
 ##
 
-source $::SLICER_BUILD/SliceViewerInteractor.tcl
-
 set slicerApp [vtkNew vtkSlicerApplication]
 $slicerApp StartApplication
 
@@ -33,6 +31,12 @@ namespace eval slicer3 set MRMLScene $scene
 $appLogic SetAndObserveMRMLScene $scene
 $appLogic ProcessMRMLEvents
 
+set colorLogic [vtkSlicerColorLogic New]
+set colorEvents [vtkIntArray New]
+$colorLogic SetAndObserveMRMLSceneEvents $scene  $colorEvents
+$colorEvents Delete
+$colorLogic AddDefaultColorNodes
+     
 if { 1 } {
 
   set topLevel [vtkNew vtkKWTopLevel]
@@ -61,12 +65,12 @@ if { 1 } {
   if { 1 } {
 
     set volumeNode [vtkNew vtkMRMLScalarVolumeNode]
-    $volumeNode CreateNoneNode $scene
     set displayNode [vtkNew vtkMRMLVolumeDisplayNode]
     set storageNode [vtkNew vtkMRMLVolumeArchetypeStorageNode]
 
     $volumeNode SetScene $scene
     $displayNode SetScene $scene
+    $displayNode SetAndObserveColorNodeID "vtkMRMLColorNodeGrey"
     $storageNode SetScene $scene
 
     $scene AddNode $volumeNode
@@ -78,10 +82,10 @@ if { 1 } {
     $volumeNode SetAndObserveDisplayNodeID [$displayNode GetID]
 
 
-    if { [file exists c:/tmp/S2.001] } {
+    if { 0 && [file exists c:/tmp/S2.001] } {
       set dicomArchetype c:/tmp/S2.001
     }
-    if { [file exists /tmp/1.IMA] } {
+    if { 0 && [file exists /tmp/1.IMA] } {
       set dicomArchetype /tmp/1.IMA
     }
     if { ![info exists dicomArchetype] } {
@@ -96,6 +100,7 @@ if { 1 } {
 
       catch "sliceLogic Delete"
       set sliceLogic [vtkNew vtkSlicerSliceLogic]
+      $sliceLogic SetName "DICOMViewer"
       $sliceLogic SetMRMLScene $scene
       $sliceLogic ProcessMRMLEvents
       $sliceLogic ProcessLogicEvents
