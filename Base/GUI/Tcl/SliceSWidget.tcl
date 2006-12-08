@@ -280,7 +280,7 @@ itcl::body SliceSWidget::processEvent { } {
     }
     "LeftButtonPressEvent" {
       if { [info command SeedSWidget] != "" } {
-        if { [$_interactor GetControlKey] } {
+        if { [$_interactor GetControlKey] && [$_interactor GetShiftKey] } {
           set seedSWidget [SeedSWidget #auto $sliceGUI]
           $seedSWidget place $r $a $s
         }
