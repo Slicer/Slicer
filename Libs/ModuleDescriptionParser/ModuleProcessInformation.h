@@ -24,7 +24,8 @@ extern "C" {
     unsigned char Abort;
     
     /** Outputs from the module to the calling application **/
-    float Progress;
+    float Progress;      // Overall progress
+    float StageProgress; // Progress of a single stage in an algorithm
     char  ProgressMessage[1024];
     void (*ProgressCallbackFunction)(void *);
     void *ProgressCallbackClientData;

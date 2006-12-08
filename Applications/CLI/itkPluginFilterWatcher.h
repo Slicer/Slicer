@@ -59,6 +59,10 @@ virtual void ShowProgress()
                 this->GetComment().c_str(), 1023);
         m_ProcessInformation->Progress = 
           (this->GetProcess()->GetProgress() * m_Fraction + m_Start);
+        if (m_Fraction != 1.0)
+          {
+          m_ProcessInformation->StageProgress = this->GetProcess()->GetProgress();
+          }
 
         this->GetTimeProbe().Stop();
         m_ProcessInformation->ElapsedTime
@@ -70,6 +74,7 @@ virtual void ShowProgress()
           {
           this->GetProcess()->AbortGenerateDataOn();
           m_ProcessInformation->Progress = 0;
+          m_ProcessInformation->StageProgress = 0;
           }
 
         if (m_ProcessInformation->ProgressCallbackFunction
@@ -84,6 +89,13 @@ virtual void ShowProgress()
                   << (this->GetProcess()->GetProgress() * m_Fraction) + m_Start
                   << "</filter-progress>"
                   << std::endl;
+        if (m_Fraction != 1.0)
+          {
+          std::cout << "<filter-stage-progress>"
+                    << this->GetProcess()->GetProgress() 
+                    << "</filter-stage-progress>"
+                    << std::endl;
+          }
         std::cout << std::flush;
         }
       }
@@ -101,6 +113,7 @@ virtual void StartFilter()
     if (m_ProcessInformation)
       {
       m_ProcessInformation->Progress = 0;
+      m_ProcessInformation->StageProgress = 0;
       strncpy(m_ProcessInformation->ProgressMessage,
               this->GetComment().c_str(), 1023);
       
@@ -139,6 +152,7 @@ virtual void EndFilter()
     if (m_ProcessInformation)
       {
       m_ProcessInformation->Progress = 0;
+      m_ProcessInformation->StageProgress = 0;
 
       m_ProcessInformation->ElapsedTime
         = this->GetTimeProbe().GetMeanTime()

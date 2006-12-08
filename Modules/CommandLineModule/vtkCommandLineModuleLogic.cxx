@@ -597,6 +597,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
         {
         itksysProcess_Kill(process);
         node->GetModuleDescription().GetProcessInformation()->Progress = 0;
+        node->GetModuleDescription().GetProcessInformation()->StageProgress =0;
         vtkSlicerApplication::GetInstance()->RequestModified( node ); 
         break;
         }
@@ -620,6 +621,19 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
               std::string progressString(stdoutbuffer, tagstart+17,
                                          tagend-tagstart-17);
               node->GetModuleDescription().GetProcessInformation()->Progress = atof(progressString.c_str());
+              foundTag = true;
+              }
+            }
+          // search for the last occurence of </filter-stage-progress>
+          tagend = stdoutbuffer.rfind("</filter-stage-progress>");
+          if (tagend != std::string::npos)
+            {
+            tagstart = stdoutbuffer.rfind("<filter-stage-progress>");
+            if (tagstart != std::string::npos)
+              {
+              std::string progressString(stdoutbuffer, tagstart+23,
+                                         tagend-tagstart-23);
+              node->GetModuleDescription().GetProcessInformation()->StageProgress = atof(progressString.c_str());
               foundTag = true;
               }
             }
@@ -678,6 +692,13 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
       stdoutbuffer.erase(filterProgressRegExp.start(),
                          filterProgressRegExp.end()
                          - filterProgressRegExp.start());
+      }
+    itksys::RegularExpression filterStageProgressRegExp("<filter-stage-progress>[^<]*</filter-stage-progress>[ \t\n\r]*");
+    while (filterStageProgressRegExp.find(stdoutbuffer))
+      {
+      stdoutbuffer.erase(filterStageProgressRegExp.start(),
+                         filterStageProgressRegExp.end()
+                         - filterStageProgressRegExp.start());
       }
     itksys::RegularExpression filterNameRegExp("<filter-name>[^<]*</filter-name>[ \t\n\r]*");
     while (filterNameRegExp.find(stdoutbuffer))
@@ -759,8 +780,37 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
       else
         {
         std::stringstream information;
+        if (result == itksysProcess_State_Exception)
+          {
+          information << node->GetModuleDescription().GetTitle();
+          int excResult = itksysProcess_GetExitException(process);
+          switch (excResult)
+            {
+            case itksysProcess_Exception_None:
+              information << " terminated with no exceptions." << std::endl;
+              break;
+            case itksysProcess_Exception_Fault:
+              information << " terminated with a fault." << std::endl;
+              break;
+            case itksysProcess_Exception_Illegal:
+              information << " terminated with an illegal instruction." << std::endl;
+              break;
+            case itksysProcess_Exception_Interrupt:
+              information << " terminated with an interrupt." << std::endl;
+              break;
+            case itksysProcess_Exception_Numerical:
+              information << " terminated with a numerical fault." << std::endl;
+              break;
+            case itksysProcess_Exception_Other:
+              information << " terminated with an unknown exception." << std::endl;
+              break;
+            }
+          }
+        else
+          {
         information << node->GetModuleDescription().GetTitle()
                   << " unknown termination. " << result << std::endl;
+          }
         vtkSlicerApplication::GetInstance()->ErrorMessage( information.str().c_str() );
         node->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors);
         }
@@ -838,6 +888,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
     }
   // reset the progress to zero
   node->GetModuleDescription().GetProcessInformation()->Progress = 0;
+  node->GetModuleDescription().GetProcessInformation()->StageProgress = 0;
   vtkSlicerApplication::GetInstance()->RequestModified( node );
   
   // import the results if the plugin was allowed to complete

@@ -586,6 +586,7 @@ void vtkCommandLineModuleGUI::UpdateGUI ()
 
     // Set the progress value and balloon help
     this->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetValue(n->GetModuleDescription().GetProcessInformation()->Progress * 100);
+    this->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(1, n->GetModuleDescription().GetProcessInformation()->StageProgress * 100);
 
     std::string message = statusString + ": " +
       n->GetModuleDescription().GetProcessInformation()->ProgressMessage;

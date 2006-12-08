@@ -18,6 +18,7 @@ public:
       if (this->Watcher->GetProcessInformation())
         {
         this->Watcher->GetProcessInformation()->Progress = 0;
+        this->Watcher->GetProcessInformation()->StageProgress = 0;
         strncpy(this->Watcher->GetProcessInformation()->ProgressMessage,
                 this->Watcher->GetComment().c_str(), 1023);
         
@@ -74,6 +75,7 @@ public:
       if (this->Watcher->GetProcessInformation())
         {
         this->Watcher->GetProcessInformation()->Progress = 0;
+        this->Watcher->GetProcessInformation()->StageProgress = 0;
         if (this->Watcher->GetProcessInformation()->ProgressCallbackFunction
             && this->Watcher->GetProcessInformation()->ProgressCallbackClientData)
           {
@@ -126,10 +128,16 @@ public:
         this->Watcher->GetProcessInformation()->Progress = 
           (this->Watcher->GetProcess()->GetProgress() *
            this->Watcher->GetFraction() + this->Watcher->GetStart());
+        if (this->Watcher->GetFraction() != 1.0)
+          {
+          this->Watcher->GetProcessInformation()->StageProgress = 
+            this->Watcher->GetProcess()->GetProgress();
+          }
 
         if (this->Watcher->GetProcessInformation()->Abort)
           {
           this->Watcher->GetProcessInformation()->Progress = 0;
+          this->Watcher->GetProcessInformation()->StageProgress = 0;
           }
           
         if (this->Watcher->GetProcessInformation()->ProgressCallbackFunction
@@ -145,6 +153,13 @@ public:
                       this->Watcher->GetFraction()) + this->Watcher->GetStart()
                   << "</filter-progress>"
                   << std::endl;
+        if (this->Watcher->GetFraction() != 1.0)
+          {
+          std::cout << "<filter-stage-progress>"
+                    << this->Watcher->GetProcess()->GetProgress()
+                    << "</filter-stage-progress>"
+                    << std::endl;
+          }
         std::cout << std::flush;
         }
       }
