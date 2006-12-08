@@ -80,7 +80,6 @@ proc EditorBuildGUI {this} {
   #
   # help frame
   #
-  #set ::Editor($this,helpFrame) [vtkKWFrameWithLabel New]
   set ::Editor($this,helpFrame) [vtkSlicerModuleCollapsibleFrame New]
   $::Editor($this,helpFrame) SetParent $pageWidget
   $::Editor($this,helpFrame) Create
@@ -106,7 +105,6 @@ proc EditorBuildGUI {this} {
   #
   # Editor Volumes
   #
-  #set ::Editor($this,volumesFrame) [vtkKWFrameWithLabel New]
   set ::Editor($this,volumesFrame) [vtkSlicerModuleCollapsibleFrame New]
   $::Editor($this,volumesFrame) SetParent $pageWidget
   $::Editor($this,volumesFrame) Create
@@ -143,20 +141,42 @@ proc EditorBuildGUI {this} {
   #
   # Editor Paint
   #
-  #set ::Editor($this,paintFrame) [vtkKWFrameWithLabel New]
   set ::Editor($this,paintFrame) [vtkSlicerModuleCollapsibleFrame New]
   $::Editor($this,paintFrame) SetParent $pageWidget
   $::Editor($this,paintFrame) Create
-  $::Editor($this,paintFrame) SetLabelText "Paint"
+  $::Editor($this,paintFrame) SetLabelText "Tool"
   pack [$::Editor($this,paintFrame) GetWidgetName] \
     -side top -anchor nw -fill x -padx 2 -pady 2 -in [$pageWidget GetWidgetName]
+
 
   set ::Editor($this,paintEnable) [vtkKWCheckButtonWithLabel New]
   $::Editor($this,paintEnable) SetParent [$::Editor($this,paintFrame) GetFrame]
   $::Editor($this,paintEnable) Create
-  $::Editor($this,paintEnable) SetLabelText "Enable Painting: "
+  $::Editor($this,paintEnable) SetLabelText "Enable: "
   pack [$::Editor($this,paintEnable) GetWidgetName] \
     -side top -anchor e -fill x -padx 2 -pady 2 
+
+  set ::Editor($this,paintPaint) [vtkKWRadioButton New]
+  $::Editor($this,paintPaint) SetParent [$::Editor($this,paintFrame) GetFrame]
+  $::Editor($this,paintPaint) Create
+  $::Editor($this,paintPaint) SetText "Paint: "
+  $::Editor($this,paintPaint) SetValue "Paint"
+  pack [$::Editor($this,paintPaint) GetWidgetName] \
+    -side top -anchor e -fill x -padx 2 -pady 2 
+
+  set ::Editor($this,paintDraw) [vtkKWRadioButton New]
+  $::Editor($this,paintDraw) SetParent [$::Editor($this,paintFrame) GetFrame]
+  $::Editor($this,paintDraw) Create
+  $::Editor($this,paintDraw) SetText "Draw: "
+  $::Editor($this,paintDraw) SetValue "Draw"
+  pack [$::Editor($this,paintDraw) GetWidgetName] \
+    -side top -anchor e -fill x -padx 2 -pady 2 
+
+  $::Editor($this,paintPaint) SetSelectedState 1
+  set ::Editor($this,paintMode) "Paint"
+  $::Editor($this,paintPaint) SetVariableName ::Editor($this,paintMode)
+  $::Editor($this,paintDraw) SetVariableName ::Editor($this,paintMode)
+
 
   set ::Editor($this,paintRadius) [vtkKWThumbWheel New]
   $::Editor($this,paintRadius) SetParent [$::Editor($this,paintFrame) GetFrame]
@@ -267,7 +287,22 @@ proc EditorProcessGUIEvents {this caller event} {
   } elseif { $caller == [$::Editor($this,paintEnable) GetWidget] } {
     switch $event {
       "10000" {
-        ::PaintSWidget::TogglePaint
+        ::PaintSWidget::RemovePaint
+        ::DrawSWidget::RemoveDraw
+        set enableVar [[$::Editor($this,paintEnable) GetWidget] GetVariableName]
+        tk_messageBox -message "enableVar is $enableVar"
+        tk_messageBox -message "$enableVar is [set $enableVar]"
+        if { [set $enableVar] } {
+          set modeVar [$::Editor($this,paintPaint) GetVariableName]
+          switch [set $modeVar] {
+            "Paint" {
+              ::PaintSWidget::AddPaint
+            }
+            "Draw" {
+              ::DrawSWidget::AddDraw
+            }
+          }
+        }
       }
     }
   } elseif { $caller == $::Editor($this,paintLabel) } {
@@ -298,19 +333,24 @@ proc EditorProcessGUIEvents {this caller event} {
     switch $event {
       "10000" {
         ::PaintSWidget::ConfigureAll -thresholdPaint [[$::Editor($this,paintThreshold) GetWidget] GetSelectedState]
+        EditorUpdatePaintThreshold $this
       }
     }
   } elseif { $caller == $::Editor($this,paintRange) } {
     switch $event {
       "10001" {
-        foreach {lo hi} [$::Editor($this,paintRange) GetRange] {}
-        ::PaintSWidget::ConfigureAll -thresholdMin $lo -thresholdMax $hi
-        puts "::PaintSWidget::ConfigureAll -thresholdMin $lo -thresholdMax $hi"
+        EditorUpdatePaintThreshold $this
       }
     }
   }
 
   EditorUpdateMRML $this
+}
+
+proc EditorUpdatePaintThreshold {this} {
+  foreach {lo hi} [$::Editor($this,paintRange) GetRange] {}
+  ::PaintSWidget::ConfigureAll -thresholdMin $lo -thresholdMax $hi
+  puts "::PaintSWidget::ConfigureAll -thresholdMin $lo -thresholdMax $hi"
 }
 
 proc EditorUpdateMRML {this} {
