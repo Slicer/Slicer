@@ -25,23 +25,6 @@ vtkSlicerModuleNavigator::~vtkSlicerModuleNavigator ( )
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerModuleNavigator::SetHomeModule ( const char * name )
-{
-  delete [] this->HomeModule;
-  this->HomeModule = new char [ strlen (name) + 1 ];
-  strcpy ( this->HomeModule, name );
-}
-
-
-//---------------------------------------------------------------------------
-char* vtkSlicerModuleNavigator::GetHomeModule ( )
-{
-  return ( this->HomeModule );
-}
-
-
-
-//---------------------------------------------------------------------------
 void vtkSlicerModuleNavigator::InitializeLists ( )
 {
   this->ModuleNavigationList = NULL;

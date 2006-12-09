@@ -183,9 +183,22 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     virtual void CreateMain3DViewer ( int arrangementType );
     virtual void CreateMainSliceViewers ( int arrangementType );
     virtual void PopulateModuleChooseList ( );
+    virtual void SetCurrentModuleToHome();
 
     virtual void Save3DViewConfig ( );
     virtual void Restore3DViewConfig ( );
+
+    // Description:
+    // Methods invoked by making selections from Help menu
+    // on the menu bar; give access to Slicer tutorials,
+    // and web pages for reporting bugs, usability problems,
+    // making feature requests, and a script to upload
+    // screenshots and a caption to slicer's visual blog.
+    virtual void OpenTutorialsLink ();
+    virtual void OpenBugLink ();
+    virtual void OpenUsabilityLink ();
+    virtual void OpenFeatureLink ();
+    virtual void PostToVisualBlog ();
 
     // Description:
     // Display Slicer's main window

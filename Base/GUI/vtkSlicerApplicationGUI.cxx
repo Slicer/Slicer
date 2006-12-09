@@ -54,7 +54,7 @@
 #include "vtkSlicerTheme.h"
 #include "vtkSlicerColor.h"
 #include "vtkSlicerMRMLSaveDataWidget.h"
-
+#include "vtkSlicerApplicationSettingsInterface.h"
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerApplicationGUI);
@@ -146,6 +146,7 @@ vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
 {
 #ifndef VIEWCONTROL_DEBUG
     if ( this->ViewControlGUI ) {
+      this->ViewControlGUI->SetAndObserveMRMLScene ( NULL );
       this->ViewControlGUI->SetApplicationGUI(NULL);
       this->ViewControlGUI->SetApplication(NULL);
       this->ViewControlGUI->Delete ( );
@@ -166,6 +167,7 @@ vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
 #endif
 #ifndef SLICESCONTROL_DEBUG
     if ( this->SlicesControlGUI ) {
+      this->SlicesControlGUI->SetAndObserveMRMLScene ( NULL );
       this->SlicesControlGUI->Delete ( );
       this->SlicesControlGUI = NULL;
     }
@@ -349,7 +351,8 @@ void vtkSlicerApplicationGUI::AddGUIObservers ( )
 {
 
   this->GetMainSlicerWindow()->GetFileMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    
+  // keep track of changes to Home Module set from Application Settings interface;
+  // try trapping the View menu events, and just updating the home module from registry...
   this->LoadSceneDialog->AddObserver ( vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
 #ifndef TOOLBAR_DEBUG
   this->GetApplicationToolbar()->AddGUIObservers ( );
@@ -366,6 +369,7 @@ void vtkSlicerApplicationGUI::AddGUIObservers ( )
 #ifndef LOGODISPLAY_DEBUG
   this->GetLogoDisplayGUI ( )->AddGUIObservers ( );
 #endif
+
 }
 
 
@@ -373,7 +377,6 @@ void vtkSlicerApplicationGUI::AddGUIObservers ( )
 void vtkSlicerApplicationGUI::RemoveGUIObservers ( )
 {
     this->GetMainSlicerWindow()->GetFileMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    
     this->LoadSceneDialog->RemoveObservers ( vtkCommand::ModifiedEvent, (vtkCommand *) this->GUICallbackCommand );
 
 #ifndef TOOLBAR_DEBUG
@@ -425,6 +428,16 @@ void vtkSlicerApplicationGUI::ProcessGUIEvents ( vtkObject *caller,
   if (saveDataWidget == this->SaveDataWidget && event == vtkSlicerMRMLSaveDataWidget::DataSavedEvent)
     {
     }
+
+  // check to see if any caller belongs to SliceControllerGUI
+  // and if so, call this->SliceControllerGUI->ProcessGUIEvents ( )
+  // with same params. hand it off.
+
+  // check to see if any caller belongs to ViewControlGUI
+  // and if so, call this->ViewControlGUI->ProcessGUIEvents ( )
+  // with same params. hand it off.
+
+
 }
 
 
@@ -456,14 +469,7 @@ void vtkSlicerApplicationGUI::Exit ( )
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::SelectModule ( const char *moduleName )
 {
-  //this->ModuleChooseGUI->SelectModule(moduleName);
-  vtkSlicerModuleGUI *m = vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName(moduleName);
-  if ( m != NULL ) { m->GetUIPanel()->Raise(); } else { std::cerr << "ERROR:  no slicer module gui found for " << moduleName<< "\n"; }
-  this->GetModuleChooseGUI()->GetModulesMenuButton()->SetValue ( moduleName );
-  this->GetModuleChooseGUI()->GetModuleNavigator()->SetHomeModule ( moduleName );
-  this->GetModuleChooseGUI()->GetModuleNavigator()->AddModuleNameToNavigationList ( moduleName );
-  this->GetModuleChooseGUI()->GetModuleNavigator()->AddModuleNameToHistoryList ( moduleName );
-  this->GetModuleChooseGUI()->PopulateHistoryListMenu ( );
+  this->ModuleChooseGUI->SelectModule(moduleName);
 }
 
 //---------------------------------------------------------------------------
@@ -581,7 +587,7 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
             //
             // Edit Menu
             //
-            i = this->MainSlicerWindow->GetEditMenu()->AddCommand ("Set Home", NULL, NULL);
+            i = this->MainSlicerWindow->GetEditMenu()->AddCommand ("Set Home", NULL, "$::slicer3::ApplicationGUI SetCurrentModuleToHome");
             this->MainSlicerWindow->GetEditMenu()->SetItemAccelerator ( i, "Ctrl+H");
             i = this->MainSlicerWindow->GetEditMenu()->AddCommand ( "Undo", NULL, "$::slicer3::MRMLScene Undo" );
             this->MainSlicerWindow->GetEditMenu()->SetItemAccelerator ( i, "Ctrl+Z");
@@ -601,6 +607,24 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
 
             //i = this->MainSlicerWindow->GetWindowMenu()->AddCommand ( ? );
             //i = this->MainSlicerWindow->GetHelpMenu()->AddCommand ( ? );
+            //
+            // Help Menu
+            //
+            this->GetMainSlicerWindow()->GetHelpMenu()->InsertCommand (
+                                                                       this->GetMainSlicerWindow()->GetHelpMenuInsertPosition(),
+                                                                       "Browse tutorials (not yet available)", NULL, "$::slicer3::ApplicationGUI OpenTutorialsLink");
+            this->GetMainSlicerWindow()->GetHelpMenu()->InsertCommand (
+                                                                       this->GetMainSlicerWindow()->GetHelpMenuInsertPosition(),
+                                                                       "Feedback: report a bug (www)", NULL, "$::slicer3::ApplicationGUI OpenBugLink");
+            this->GetMainSlicerWindow()->GetHelpMenu()->InsertCommand (
+                                                                       this->GetMainSlicerWindow()->GetHelpMenuInsertPosition(),
+                                                                       "Feedback: report usability issue (www)", NULL, "$::slicer3::ApplicationGUI OpenUsabilityLink");
+            this->GetMainSlicerWindow()->GetHelpMenu()->InsertCommand (
+                                                                       this->GetMainSlicerWindow()->GetHelpMenuInsertPosition(),
+                                                                       "Feedback: make a feature request (www)", NULL, "$::slicer3::ApplicationGUI OpenFeatureLink");
+            this->GetMainSlicerWindow()->GetHelpMenu()->InsertCommand (
+                                                                       this->GetMainSlicerWindow()->GetHelpMenuInsertPosition(),
+                                                                       "Community: Slicer Visual Blog (www)", NULL, "$::slicer3::ApplicationGUI PostToVisualBlog");            
 
             this->LoadSceneDialog->SetParent ( this->MainSlicerWindow );
             this->LoadSceneDialog->Create ( );
@@ -615,6 +639,73 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
 
 
 
+//---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::SetCurrentModuleToHome (  )
+{
+  if ( this->GetApplication() != NULL )
+      {
+      if ( this->GetModuleChooseGUI() )
+        {
+        if ( this->GetModuleChooseGUI()->GetModuleNavigator() )
+          {
+          vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
+//          const char *name = this->GetModuleChooseGUI()->GetModuleNavigator()->SetHomeModule ( );
+          const char *name = this->GetModuleChooseGUI()->GetModuleNavigator()->GetCurrentModuleName ( );
+          //--- save to registry.
+          app->SetHomeModule ( name );
+          this->GetMainSlicerWindow()->GetApplicationSettingsInterface()->Update();
+          }
+        }
+      }
+}
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::OpenTutorialsLink ()
+{
+  if ( this->GetApplication() != NULL )
+    {
+    vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
+    //app->OpenLink ("" );
+    }
+}
+//---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::OpenBugLink ()
+{
+  if ( this->GetApplication() != NULL )
+    {
+    vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
+    app->OpenLink ("http://www.na-mic.org/Bug/index.php" );
+    }
+}
+//---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::OpenUsabilityLink ()
+{
+  if ( this->GetApplication() != NULL )
+    {
+    vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
+    app->OpenLink ("http://www.na-mic.org/Bug/index.php" );
+    }
+
+}
+//---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::OpenFeatureLink ()
+{
+  if ( this->GetApplication() != NULL )
+    {
+    vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
+    app->OpenLink ("http://www.na-mic.org/Bug/index.php" );
+    }
+}
+//---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::PostToVisualBlog ()
+{
+  if ( this->GetApplication() != NULL )
+    {
+    vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
+    app->OpenLink ("http://www.na-mic.org/Wiki/index.php/Slicer3:VisualBlog" );
+    }
+}
 
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::DestroyMainSliceViewers ( )

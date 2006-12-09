@@ -34,6 +34,7 @@ public:
   // Description:
   // Callbacks for the Module application settings. Internal, do not use.
   virtual void ModulePathCallback(char *);
+  virtual void HomeModuleCallback(char *name);
   virtual void TemporaryDirectoryCallback();
 
   // Description:
@@ -53,6 +54,7 @@ private:
   vtkKWCheckButton  *ConfirmDeleteCheckButton;
   
   vtkKWFrameWithLabel *ModuleSettingsFrame;
+  vtkKWEntryWithLabel *HomeModuleEntry;
   vtkKWEntryWithLabel *ModulePathEntry;
   vtkKWLoadSaveButtonWithLabel *TemporaryDirectoryButton;
 };

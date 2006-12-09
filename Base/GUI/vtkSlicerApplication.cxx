@@ -34,6 +34,7 @@
 const char *vtkSlicerApplication::ModulePathRegKey = "ModulePath";
 const char *vtkSlicerApplication::TemporaryDirectoryRegKey = "TemporaryDirectory";
 const char *vtkSlicerApplication::ConfirmDeleteRegKey = "ConfirmDelete";
+const char *vtkSlicerApplication::HomeModuleRegKey = "HomeModule";
 
 vtkSlicerApplication *vtkSlicerApplication::Instance = NULL;
 
@@ -171,6 +172,8 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
     strcpy(this->ModulePath, "");
 
     strcpy(this->ConfirmDelete, "");
+    
+    strcpy ( this->HomeModule, "");
     
     // configure the application before creating
     this->SetName ( "3D Slicer Version 3.0 Alpha" );
@@ -467,6 +470,14 @@ void vtkSlicerApplication::RestoreApplicationSettingsFromRegistry()
     }
   
   if (this->HasRegistryValue(
+    2, "RunTime", vtkSlicerApplication::HomeModuleRegKey))
+    {
+    this->GetRegistryValue(
+      2, "RunTime", vtkSlicerApplication::HomeModuleRegKey,
+      this->HomeModule);
+    }
+
+  if (this->HasRegistryValue(
     2, "RunTime", vtkSlicerApplication::ModulePathRegKey))
     {
     this->GetRegistryValue(
@@ -494,6 +505,10 @@ void vtkSlicerApplication::SaveApplicationSettingsToRegistry()
     this->ConfirmDelete);
   
   this->SetRegistryValue(
+    2, "RunTime", vtkSlicerApplication::HomeModuleRegKey, "%s", 
+    this->HomeModule);
+
+  this->SetRegistryValue(
     2, "RunTime", vtkSlicerApplication::ModulePathRegKey, "%s", 
     this->ModulePath);
 
@@ -502,6 +517,7 @@ void vtkSlicerApplication::SaveApplicationSettingsToRegistry()
     this->TemporaryDirectory);
 }
 
+//----------------------------------------------------------------------------
 void vtkSlicerApplication::SetConfirmDelete(const char* state)
 {
     if (state)
@@ -515,11 +531,38 @@ void vtkSlicerApplication::SetConfirmDelete(const char* state)
     }
 }
 
+//----------------------------------------------------------------------------
 const char *vtkSlicerApplication::GetConfirmDelete() const
 {
     return this->ConfirmDelete;
 }
 
+
+//----------------------------------------------------------------------------
+void vtkSlicerApplication::SetHomeModule ( const char *name )
+{
+  if (name)
+    {
+    if (strcmp(this->HomeModule, name) != 0
+        && strlen(name) < vtkKWRegistryHelper::RegistryKeyValueSizeMax)
+      {
+      strcpy(this->HomeModule, name);
+      this->Modified();
+
+      }
+    }
+}
+
+
+//----------------------------------------------------------------------------
+const char *vtkSlicerApplication::GetHomeModule () const
+{
+  return this->HomeModule;
+}
+
+
+
+//----------------------------------------------------------------------------
 void vtkSlicerApplication::SetModulePath(const char* path)
 {
   if (path)
@@ -533,12 +576,14 @@ void vtkSlicerApplication::SetModulePath(const char* path)
     }
 }
 
+//----------------------------------------------------------------------------
 const char* vtkSlicerApplication::GetModulePath() const
 {
   return this->ModulePath;
 }
 
 
+//----------------------------------------------------------------------------
 void vtkSlicerApplication::SetTemporaryDirectory(const char* path)
 {
   if (path)
@@ -552,6 +597,7 @@ void vtkSlicerApplication::SetTemporaryDirectory(const char* path)
     }
 }
 
+//----------------------------------------------------------------------------
 const char* vtkSlicerApplication::GetTemporaryDirectory() const
 {
   return this->TemporaryDirectory;

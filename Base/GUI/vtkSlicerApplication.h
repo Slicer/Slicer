@@ -51,7 +51,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
 
     vtkGetObjectMacro ( MainLayout, vtkSlicerGUILayout );
     vtkGetObjectMacro ( SlicerTheme, vtkSlicerTheme );
-    
     vtkGetObjectMacro ( ModuleGUICollection, vtkSlicerGUICollection );
 
     // Description:
@@ -86,6 +85,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   static const char *ConfirmDeleteRegKey;
   static const char *ModulePathRegKey;
   static const char *TemporaryDirectoryRegKey;
+  static const char *HomeModuleRegKey;
   //ETX
 
   // Descrition:
@@ -98,6 +98,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   void SetModulePath(const char *path);
   const char* GetModulePath() const;
 
+  // Description:
+  // Set/Get a user's home module.
+  void SetHomeModule (const char *name);
+  const char *GetHomeModule() const;
+  
   // Description:
   // Set/Get a directory for temporary file storage
   void SetTemporaryDirectory(const char *path);
@@ -176,12 +181,16 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
     vtkSlicerTheme *SlicerTheme;
     
     // Description:
+    // The main application GUI.
+    // Description:
     // Collections of GUIs
     vtkSlicerGUICollection *ModuleGUICollection;
+
 
     char ConfirmDelete[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
     char ModulePath[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
     char TemporaryDirectory[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
+    char HomeModule [ vtkKWRegistryHelper::RegistryKeyValueSizeMax];
 
     // Description:
     // Callback used by a MultiThreader to start a processing thread

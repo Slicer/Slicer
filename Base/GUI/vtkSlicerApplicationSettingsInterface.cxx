@@ -23,6 +23,7 @@ vtkSlicerApplicationSettingsInterface::vtkSlicerApplicationSettingsInterface()
     
   this->ModuleSettingsFrame = 0;
   this->ModulePathEntry = 0;
+  this->HomeModuleEntry = 0;
   this->TemporaryDirectoryButton = 0;
   
 }
@@ -52,6 +53,12 @@ vtkSlicerApplicationSettingsInterface::~vtkSlicerApplicationSettingsInterface()
     {
     this->ModulePathEntry->Delete();
     this->ModulePathEntry = 0;
+    }
+
+  if (this->HomeModuleEntry)
+    {
+    this->HomeModuleEntry->Delete();
+    this->HomeModuleEntry = 0;
     }
 
   if (this->TemporaryDirectoryButton)
@@ -141,6 +148,21 @@ void vtkSlicerApplicationSettingsInterface::Create()
   frame = this->ModuleSettingsFrame->GetFrame();
 
   // --------------------------------------------------------------
+  // Module settings : Home Module
+  if ( !this->HomeModuleEntry )
+    {
+    this->HomeModuleEntry = vtkKWEntryWithLabel::New ( );
+    }
+  this->HomeModuleEntry->SetParent ( frame );
+  this->HomeModuleEntry->Create ( );  
+  this->HomeModuleEntry->SetLabelText ( "Home Module" );
+  this->HomeModuleEntry->GetWidget()->SetCommand ( this, "SetHomeModuleCallback" );
+  this->HomeModuleEntry->SetBalloonHelpString ( "Module displayed at startup and when 'home' icon is clicked." );
+  tk_cmd << "pack " << this->HomeModuleEntry->GetWidgetName()
+         << "  -side top -anchor w -expand no -fill x" << endl;
+
+
+  // --------------------------------------------------------------
   // Module settings : Module Path
 
   if (!this->ModulePathEntry)
@@ -210,6 +232,17 @@ void vtkSlicerApplicationSettingsInterface::ConfirmDeleteCallback(int state)
     }
 }
 
+
+//----------------------------------------------------------------------------
+void vtkSlicerApplicationSettingsInterface::HomeModuleCallback(char *name)
+{
+  vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
+  if ( app && name )
+      {
+      app->SetHomeModule ( name );
+      }
+}
+
 //----------------------------------------------------------------------------
 void vtkSlicerApplicationSettingsInterface::ModulePathCallback(char *path)
 {
@@ -252,11 +285,16 @@ void vtkSlicerApplicationSettingsInterface::Update()
             this->ConfirmDeleteCheckButton->SetSelectedState(
                 (strncmp(app->GetConfirmDelete(), "1", 1) == 0) ? 1 : 0);
         }
-        
+    if (this->HomeModuleEntry)
+      {
+      this->HomeModuleEntry->GetWidget()->SetValue(app->GetHomeModule());
+      }
+
     if (this->ModulePathEntry)
       {
       this->ModulePathEntry->GetWidget()->SetValue(app->GetModulePath());
       }
+
     if (this->TemporaryDirectoryButton)
       {
       this->TemporaryDirectoryButton->GetWidget()

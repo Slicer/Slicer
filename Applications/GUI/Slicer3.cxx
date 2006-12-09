@@ -6,6 +6,7 @@
 #include "vtkKWNotebook.h"
 #include "vtkKWRegistryHelper.h"
 #include "vtkKWTkUtilities.h"
+#include "vtkKWResourceUtilities.h"
 #include "vtkKWSplashScreen.h"
 #include "vtkSlicerLogoIcons.h"
 #include "vtkSlicerApplication.h"
@@ -55,6 +56,10 @@
 // for data prov
 #include <time.h>
 #include <stdlib.h>
+
+
+// splash screen to use
+#define SPLASH_FILENAME "./Resources/S3SplashScreen.png"
 
 #ifdef _WIN32
 #  define slicerCerr(x) \
@@ -421,11 +426,9 @@ int Slicer3_main(int argc, char *argv[])
     slicerApp->InstallTheme( slicerApp->GetSlicerTheme() );
     slicerApp->CreateProcessingThread();
 
-
     vtksys_stl::string myTkName = slicerApp->GetSplashScreen()->GetWidgetName();
     myTkName.append("_0");
     vtkKWIcon *tmpIcon = vtkKWIcon::New();
-    tmpIcon->SetImage(vtkKWIcon::IconWarningMini);
     tmpIcon->SetImage( image_Slicer3LogoVerticalAlpha,
                                 image_Slicer3LogoVerticalAlpha_width,
                                 image_Slicer3LogoVerticalAlpha_height,
@@ -437,13 +440,26 @@ int Slicer3_main(int argc, char *argv[])
       {
       vtkWarningWithObjectMacro(slicerApp, << "Error updating Tk photo " << myTkName.c_str());
       } 
-
     slicerApp->GetSplashScreen()->SetImageName(myTkName.c_str());
-
     slicerApp->SupportSplashScreenOn();
     slicerApp->SplashScreenVisibilityOn();
     slicerApp->GetSplashScreen()->SetProgressMessage("");
     tmpIcon->Delete();
+
+/*
+    unsigned char *splash;
+    int wid, hit, sz;
+    if ( vtkKWResourceUtilities::ReadPNGImage ( SPLASH_FILENAME,
+                                                &wid, &hit, &sz, &splash ) )
+      {
+      slicerApp->GetSplashScreen()->SetImageToPixels ( splash, wid, hit, sz, (wid*hit*sz) );
+      slicerApp->SupportSplashScreenOn();
+      slicerApp->SplashScreenVisibilityOn();
+      slicerApp->GetSplashScreen()->SetProgressMessage("");
+      }
+    delete [] splash;
+*/
+
 
     // Create MRML scene
     vtkMRMLScene *scene = vtkMRMLScene::New();
@@ -996,7 +1012,15 @@ int Slicer3_main(int argc, char *argv[])
         }
     }
 
-    appGUI->SelectModule("Volumes");
+    //--- set home module based on registry settings
+    if ( slicerApp->GetHomeModule() )
+      {
+      appGUI->SelectModule ( slicerApp->GetHomeModule() );
+      }
+    else
+      {
+      appGUI->SelectModule("Volumes");
+      }
 
     //
     // Run!  - this will return when the user exits
@@ -1204,7 +1228,6 @@ int Slicer3_main(int argc, char *argv[])
 
     //--- application last
     slicerApp->Delete ();
-
     return res;
 }
 

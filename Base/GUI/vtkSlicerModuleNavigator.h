@@ -40,9 +40,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleNavigator : public vtkObject
     vtkTypeRevisionMacro ( vtkSlicerModuleNavigator, vtkObject);
     void PrintSelf ( ostream& os, vtkIndent indent );
 
-    virtual void SetHomeModule ( const char *name);
-    char* GetHomeModule ( );
-
     // Description:
     // Returns name of first module in the module navigation list
     virtual char *GetFirstModuleName ( );
