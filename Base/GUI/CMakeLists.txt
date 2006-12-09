@@ -29,6 +29,7 @@ SET(LIB_SRCS
   vtkSlicerModuleNavigationIcons.cxx
   vtkSlicerToolbarIcons.cxx
   vtkSlicerViewControlIcons.cxx
+  vtkSlicerSlicesControlIcons.cxx
   vtkSlicerApplication.cxx
   vtkSlicerComponentGUI.cxx
   vtkSlicerModuleGUI.cxx

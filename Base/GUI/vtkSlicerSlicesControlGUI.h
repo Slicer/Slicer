@@ -9,12 +9,14 @@
 #include "vtkSlicerBaseGUIWin32Header.h"
 #include "vtkSlicerComponentGUI.h"
 
-#include "vtkKWFrame.h"
-#include "vtkKWPushButton.h"
-
 class vtkSlicerApplicationGUI;
+class vtkSlicerSlicesControlIcons;
 class vtkKWScale;
 class vtkKWPushButton;
+class vtkKWMenuButton;
+class vtkKWScaleWithEntry;
+class vtkKWTopLevel;
+class vtkKWFrame;
 
 // Description:
 // This class implements Slicer's SlicesControl Panel on Main GUI panel
@@ -30,11 +32,20 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesControlGUI : public vtkSlicerCom
 
     // Description:
     // Get the widgets in the SlicesControlFrame
-    vtkGetObjectMacro (ToggleAnnotationButton, vtkKWPushButton );
-    vtkGetObjectMacro (ToggleFgBgButton, vtkKWPushButton );
-    vtkGetObjectMacro (SliceFadeScale, vtkKWScale );
-    vtkGetObjectMacro (SliceOpacityScale, vtkKWScale );
-
+    vtkGetObjectMacro ( SliceFadeScale, vtkKWScale );
+    vtkGetObjectMacro ( ShowFgButton, vtkKWPushButton );
+    vtkGetObjectMacro ( ShowBgButton, vtkKWPushButton );
+    vtkGetObjectMacro ( ToggleFgBgButton, vtkKWPushButton );
+    vtkGetObjectMacro ( LabelOpacityButton, vtkKWPushButton );
+    vtkGetObjectMacro ( LabelOpacityScale, vtkKWScaleWithEntry );
+    vtkGetObjectMacro ( LabelOpacityTopLevel, vtkKWTopLevel );
+    vtkGetObjectMacro ( LinkControlsButton, vtkKWPushButton );
+    vtkGetObjectMacro ( GridButton, vtkKWMenuButton );
+    vtkGetObjectMacro ( AnnotationButton, vtkKWMenuButton );
+    vtkGetObjectMacro ( SpatialUnitsButton, vtkKWMenuButton );
+    vtkGetObjectMacro ( CrossHairButton, vtkKWMenuButton );
+    vtkGetObjectMacro ( SlicesControlIcons, vtkSlicerSlicesControlIcons );
+    
     // Description:
     // Get the main slicer toolbars.
     vtkGetObjectMacro (ApplicationGUI, vtkSlicerApplicationGUI );
@@ -61,18 +72,34 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesControlGUI : public vtkSlicerCom
     virtual void Enter ( );
     virtual void Exit ( );
 
+    virtual void HideLabelOpacityScaleAndEntry ( );
+    virtual void PopUpLabelOpacityScaleAndEntry ( );
+    virtual void BuildAnnotationMenu ( );
+    virtual void BuildCrossHairMenu ( );
+    virtual void BuildSpacesMenu ( );
+    virtual void BuildGridMenu ( );
     
  protected:
     vtkSlicerSlicesControlGUI ( );
     virtual ~vtkSlicerSlicesControlGUI ( );
 
     vtkSlicerApplicationGUI *ApplicationGUI;
-        //Description:
+    vtkSlicerSlicesControlIcons *SlicesControlIcons;
+    //Description:
     // Widgets for the SlicesControlFrame in the GUI
-    vtkKWPushButton *ToggleAnnotationButton;
-    vtkKWPushButton *ToggleFgBgButton;
     vtkKWScale *SliceFadeScale;
-    vtkKWScale *SliceOpacityScale;
+    vtkKWPushButton *ShowFgButton;
+    vtkKWPushButton *ShowBgButton;
+    vtkKWPushButton *ToggleFgBgButton;
+    vtkKWPushButton *LabelOpacityButton;
+    vtkKWScaleWithEntry *LabelOpacityScale;
+    vtkKWTopLevel *LabelOpacityTopLevel;
+    vtkKWPushButton *LinkControlsButton;
+    vtkKWMenuButton *GridButton;
+    vtkKWMenuButton *AnnotationButton;
+    vtkKWMenuButton *SpatialUnitsButton;
+    vtkKWMenuButton *CrossHairButton;
+    
     
  private:
     vtkSlicerSlicesControlGUI ( const vtkSlicerSlicesControlGUI& ); // Not implemented.
