@@ -8,6 +8,7 @@
 #include "vtkSlicerToolbarGUI.h"
 #include "vtkSlicerWindow.h"
 #include "vtkSlicerModuleChooseGUI.h"
+#include "vtkSlicerModuleNavigator.h"
 
 #include "vtkKWWidget.h"
 #include "vtkKWToolbarSet.h"
@@ -363,174 +364,175 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
 
   if ( this->GetApplicationGUI() != NULL )
     {
-      // Toolbar's parent is the main vtkSlicerApplicationGUI;
-      // Toolbar events will trigger vtkSlicerAppliationGUI methods
-      vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));
-      vtkSlicerModuleChooseGUI *mcGUI = p->GetModuleChooseGUI ( );
-      vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( p->GetApplication() );
-      if ( app != NULL )
-        {
-          vtkKWPushButton *pushb = vtkKWPushButton::SafeDownCast ( caller );
+    // Toolbar's parent is the main vtkSlicerApplicationGUI;
+    // Toolbar events will trigger vtkSlicerAppliationGUI methods
+    vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));
+    vtkSlicerModuleChooseGUI *mcGUI = p->GetModuleChooseGUI ( );
+    vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( p->GetApplication() );
+    if ( app != NULL )
+      {
+      vtkKWPushButton *pushb = vtkKWPushButton::SafeDownCast ( caller );
   
-          if ( mcGUI != NULL )
-            {            
-              // Process events from top row of buttons
-              // For now, Home button takes us to the Volumes module.
-              if ( pushb == this->HomeIconButton && event == vtkKWPushButton::InvokedEvent )
-                {
-                  vtkSlicerModuleGUI *m = vtkSlicerApplication::SafeDownCast(p->GetApplication())->GetModuleGUIByName("Volumes");
-                  if ( m != NULL )
-                    {
-                    p->GetModuleChooseGUI()->SelectModule ( "Volumes" );
-                    }
-                  else
-                    {
-                    std::cerr << "ERROR:  no slicer module gui found for Volumes\n"; 
-                    }
-                }
-              else if (pushb == this->DataIconButton && event == vtkKWPushButton::InvokedEvent )
-                {
-                  vtkSlicerModuleGUI *m = vtkSlicerApplication::SafeDownCast(p->GetApplication())->GetModuleGUIByName("Data");
-                  if ( m != NULL )
-                    {
-                    p->GetModuleChooseGUI()->SelectModule ( "Data" );
-                    }
-                  else
-                    {
-                    std::cerr << "ERROR:  no slicer module gui found for Data\n"; 
-                    }
-                }
-              else if (pushb == this->VolumeIconButton && event == vtkKWPushButton::InvokedEvent )
-                {
-                  vtkSlicerModuleGUI *m = vtkSlicerApplication::SafeDownCast(p->GetApplication())->GetModuleGUIByName("Volumes");
-                  if ( m != NULL )
-                    {
-                    p->GetModuleChooseGUI()->SelectModule ( "Volumes" );
-                    }
-                  else
-                    {
-                    std::cerr << "ERROR:  no slicer module gui found for Volumes\n"; 
-                    }
-                }
-              else if (pushb == this->ModelIconButton && event == vtkKWPushButton::InvokedEvent )
-                {
-                  vtkSlicerModuleGUI *m = vtkSlicerApplication::SafeDownCast(p->GetApplication())->GetModuleGUIByName("Models");
-                  if ( m != NULL )
-                    {
-                    p->GetModuleChooseGUI()->SelectModule ( "Models" );
-                    }
-                  else
-                    {
-                    std::cerr << "ERROR:  no slicer module gui found for Models\n"; 
-                    }
-                }
-              else if (pushb == this->FiducialsIconButton && event == vtkKWPushButton::InvokedEvent )
-                {
-                  vtkSlicerModuleGUI *m = vtkSlicerApplication::SafeDownCast(p->GetApplication())->GetModuleGUIByName("Fiducials");
-                  if ( m != NULL )
-                    {
-                    p->GetModuleChooseGUI()->SelectModule ( "Fiducials" );
-                    }
-                  else
-                    {
-                    std::cerr << "ERROR:  no slicer module gui found for Fiducials\n"; 
-                    }
-                }
-              else if (pushb == this->ColorIconButton && event == vtkKWPushButton::InvokedEvent )
-                {
-                  vtkSlicerModuleGUI *m = vtkSlicerApplication::SafeDownCast(p->GetApplication())->GetModuleGUIByName("Color");
-                  if ( m != NULL )
-                    {
-                    p->GetModuleChooseGUI()->SelectModule ( "Color" );
-                    }
-                  else
-                    {
-                    std::cerr << "ERROR:  no slicer module gui found for Color\n"; 
-                    }
-                }
-              else if (pushb == this->TransformIconButton && event == vtkKWPushButton::InvokedEvent )
-                {
-                  vtkSlicerModuleGUI *m = vtkSlicerApplication::SafeDownCast(p->GetApplication())->GetModuleGUIByName("Transforms");
-                  if ( m != NULL )
-                    {
-                    p->GetModuleChooseGUI()->SelectModule ( "Transforms" );
-                    }
-                  else
-                    {
-                    std::cerr << "ERROR:  no slicer module gui found for Transforms\n"; 
-                    }
-                }
-              else if (pushb == this->EditorIconButton && event == vtkKWPushButton::InvokedEvent )
-                {
-                  vtkSlicerModuleGUI *m = vtkSlicerApplication::SafeDownCast(p->GetApplication())->GetModuleGUIByName("Editor");
-                  if ( m != NULL )
-                    {
-                    p->GetModuleChooseGUI()->SelectModule ( "Editor" );
-                    }
-                  else
-                    {
-                    std::cerr << "ERROR:  no slicer module gui found for Editor\n"; 
-                    }
-                }
-            }
-          
-          if ( pushb == this->ConventionalViewIconButton && event == vtkKWPushButton::InvokedEvent )
+      if ( mcGUI != NULL )
+        {            
+        // Process events from top row of buttons
+        // For now, Home button takes us to the Volumes module.
+        if ( pushb == this->HomeIconButton && event == vtkKWPushButton::InvokedEvent )
+          {
+          const char *homename = app->GetHomeModule();
+          vtkSlicerModuleGUI *m = app->GetModuleGUIByName(homename);
+          if ( m != NULL )
             {
-
-              p->RemoveMainSliceViewersFromCollection ( );            
-              p->BuildMainViewer ( vtkSlicerGUILayout::SlicerLayoutDefaultView );
-              p->AddMainSliceViewersToCollection ( );
+            p->GetModuleChooseGUI()->SelectModule ( homename );
             }
-          else if ( pushb == this->OneUp3DViewIconButton && event == vtkKWPushButton::InvokedEvent )
+          else
             {
-              p->RemoveMainSliceViewersFromCollection ( );            
-              p->BuildMainViewer ( vtkSlicerGUILayout::SlicerLayoutOneUp3DView );
-              p->AddMainSliceViewersToCollection ( );
+            std::cerr << "ERROR:  no slicer module gui found for Volumes\n"; 
             }
-          else if ( pushb == this->OneUpSliceViewIconButton && event == vtkKWPushButton::InvokedEvent )
+          }
+        else if (pushb == this->DataIconButton && event == vtkKWPushButton::InvokedEvent )
+          {
+          vtkSlicerModuleGUI *m = app->GetModuleGUIByName("Data");
+          if ( m != NULL )
             {
-              p->RemoveMainSliceViewersFromCollection ( );            
-              p->BuildMainViewer ( vtkSlicerGUILayout::SlicerLayoutOneUpSliceView );
-              p->AddMainSliceViewersToCollection ( );
+            p->GetModuleChooseGUI()->SelectModule ( "Data" );
             }
-          else if ( pushb == this->FourUpViewIconButton && event == vtkKWPushButton::InvokedEvent )
+          else
             {
-              p->RemoveMainSliceViewersFromCollection ( );            
-              p->BuildMainViewer ( vtkSlicerGUILayout::SlicerLayoutFourUpView );
-              p->AddMainSliceViewersToCollection ( );
+            std::cerr << "ERROR:  no slicer module gui found for Data\n"; 
             }
-          else if ( pushb == this->Tabbed3DViewIconButton && event == vtkKWPushButton::InvokedEvent )
+          }
+        else if (pushb == this->VolumeIconButton && event == vtkKWPushButton::InvokedEvent )
+          {
+          vtkSlicerModuleGUI *m = app->GetModuleGUIByName("Volumes");
+          if ( m != NULL )
             {
-              p->RemoveMainSliceViewersFromCollection ( );            
-              p->BuildMainViewer ( vtkSlicerGUILayout::SlicerLayoutTabbed3DView );
-              p->AddMainSliceViewersToCollection ( );
+            p->GetModuleChooseGUI()->SelectModule ( "Volumes" );
             }
-          else if ( pushb == this->TabbedSliceViewIconButton && event == vtkKWPushButton::InvokedEvent )
+          else
             {
-              // TODO: fix this. 
-              //        p->RemoveMainSliceViewersFromCollection ( );            
-              //        p->BuildMainViewer ( vtkSlicerGUILayout::SlicerLayoutTabbedSliceView );
-              //        p->AddMainSliceViewersToCollection ( );
+            std::cerr << "ERROR:  no slicer module gui found for Volumes\n"; 
             }
-
-          else if ( pushb == this->LightBoxViewIconButton && event == vtkKWPushButton::InvokedEvent )
+          }
+        else if (pushb == this->ModelIconButton && event == vtkKWPushButton::InvokedEvent )
+          {
+          vtkSlicerModuleGUI *m = app->GetModuleGUIByName("Models");
+          if ( m != NULL )
             {
-              // TODO: implement this
-              /*
-                p->RemoveMainSliceViewersFromCollection ( );            
-                p->BuildMainViewer ( vtkSlicerGUILayout::SlicerLayoutLightboxView );
-                p->AddMainSliceViewersToCollection ( );
-              */
+            p->GetModuleChooseGUI()->SelectModule ( "Models" );
             }
-          else if ( pushb == this->UndoIconButton && event == vtkKWPushButton::InvokedEvent )
+          else
             {
-            // FILL IN
+            std::cerr << "ERROR:  no slicer module gui found for Models\n"; 
             }
-          else if ( pushb == this->RedoIconButton && event == vtkKWPushButton::InvokedEvent )
+          }
+        else if (pushb == this->FiducialsIconButton && event == vtkKWPushButton::InvokedEvent )
+          {
+          vtkSlicerModuleGUI *m = app->GetModuleGUIByName("Fiducials");
+          if ( m != NULL )
             {
-            // FILL IN
+            p->GetModuleChooseGUI()->SelectModule ( "Fiducials" );
             }
+          else
+            {
+            std::cerr << "ERROR:  no slicer module gui found for Fiducials\n"; 
+            }
+          }
+        else if (pushb == this->ColorIconButton && event == vtkKWPushButton::InvokedEvent )
+          {
+          vtkSlicerModuleGUI *m = app->GetModuleGUIByName("Color");
+          if ( m != NULL )
+            {
+            p->GetModuleChooseGUI()->SelectModule ( "Color" );
+            }
+          else
+            {
+            std::cerr << "ERROR:  no slicer module gui found for Color\n"; 
+            }
+          }
+        else if (pushb == this->TransformIconButton && event == vtkKWPushButton::InvokedEvent )
+          {
+          vtkSlicerModuleGUI *m = app->GetModuleGUIByName("Transforms");
+          if ( m != NULL )
+            {
+            p->GetModuleChooseGUI()->SelectModule ( "Transforms" );
+            }
+          else
+            {
+            std::cerr << "ERROR:  no slicer module gui found for Transforms\n"; 
+            }
+          }
+        else if (pushb == this->EditorIconButton && event == vtkKWPushButton::InvokedEvent )
+          {
+          vtkSlicerModuleGUI *m = app->GetModuleGUIByName("Editor");
+          if ( m != NULL )
+            {
+            p->GetModuleChooseGUI()->SelectModule ( "Editor" );
+            }
+          else
+            {
+            std::cerr << "ERROR:  no slicer module gui found for Editor\n"; 
+            }
+          }
         }
+          
+      if ( pushb == this->ConventionalViewIconButton && event == vtkKWPushButton::InvokedEvent )
+        {
+
+        p->RemoveMainSliceViewersFromCollection ( );            
+        p->BuildMainViewer ( vtkSlicerGUILayout::SlicerLayoutDefaultView );
+        p->AddMainSliceViewersToCollection ( );
+        }
+      else if ( pushb == this->OneUp3DViewIconButton && event == vtkKWPushButton::InvokedEvent )
+        {
+        p->RemoveMainSliceViewersFromCollection ( );            
+        p->BuildMainViewer ( vtkSlicerGUILayout::SlicerLayoutOneUp3DView );
+        p->AddMainSliceViewersToCollection ( );
+        }
+      else if ( pushb == this->OneUpSliceViewIconButton && event == vtkKWPushButton::InvokedEvent )
+        {
+        p->RemoveMainSliceViewersFromCollection ( );            
+        p->BuildMainViewer ( vtkSlicerGUILayout::SlicerLayoutOneUpSliceView );
+        p->AddMainSliceViewersToCollection ( );
+        }
+      else if ( pushb == this->FourUpViewIconButton && event == vtkKWPushButton::InvokedEvent )
+        {
+        p->RemoveMainSliceViewersFromCollection ( );            
+        p->BuildMainViewer ( vtkSlicerGUILayout::SlicerLayoutFourUpView );
+        p->AddMainSliceViewersToCollection ( );
+        }
+      else if ( pushb == this->Tabbed3DViewIconButton && event == vtkKWPushButton::InvokedEvent )
+        {
+        p->RemoveMainSliceViewersFromCollection ( );            
+        p->BuildMainViewer ( vtkSlicerGUILayout::SlicerLayoutTabbed3DView );
+        p->AddMainSliceViewersToCollection ( );
+        }
+      else if ( pushb == this->TabbedSliceViewIconButton && event == vtkKWPushButton::InvokedEvent )
+        {
+        // TODO: fix this. 
+        //        p->RemoveMainSliceViewersFromCollection ( );            
+        //        p->BuildMainViewer ( vtkSlicerGUILayout::SlicerLayoutTabbedSliceView );
+        //        p->AddMainSliceViewersToCollection ( );
+        }
+
+      else if ( pushb == this->LightBoxViewIconButton && event == vtkKWPushButton::InvokedEvent )
+        {
+        // TODO: implement this
+        /*
+          p->RemoveMainSliceViewersFromCollection ( );            
+          p->BuildMainViewer ( vtkSlicerGUILayout::SlicerLayoutLightboxView );
+          p->AddMainSliceViewersToCollection ( );
+        */
+        }
+      else if ( pushb == this->UndoIconButton && event == vtkKWPushButton::InvokedEvent )
+        {
+        // FILL IN
+        }
+      else if ( pushb == this->RedoIconButton && event == vtkKWPushButton::InvokedEvent )
+        {
+        // FILL IN
+        }
+      }
     }
 }
 
