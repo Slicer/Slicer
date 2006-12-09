@@ -8,9 +8,12 @@
 #include "vtkKWMenuButtonWithSpinButtonsWithLabel.h"
 #include "vtkKWPushButton.h"
 #include "vtkKWFrame.h"
+#include "vtkKWTopLevel.h"
 
+#include "vtkSlicerModuleCollapsibleFrame.h"
 #include "vtkSlicerWidget.h"
 #include "vtkSlicerNodeSelectorWidget.h"
+#include "vtkSlicerSlicesControlIcons.h"
 #include "vtkSlicerVisibilityIcons.h"
 
 #include "vtkMRMLSliceNode.h"
@@ -34,9 +37,14 @@ public:
   vtkGetObjectMacro ( BackgroundSelector, vtkSlicerNodeSelectorWidget );
   vtkGetObjectMacro ( LabelSelector, vtkSlicerNodeSelectorWidget );
   vtkGetObjectMacro ( VisibilityToggle, vtkKWPushButton );
+  vtkGetObjectMacro ( LinkButton, vtkKWPushButton );
   vtkGetObjectMacro ( VisibilityIcons, vtkSlicerVisibilityIcons );
+  vtkGetObjectMacro ( SliceControlIcons, vtkSlicerSlicesControlIcons);
   vtkGetObjectMacro ( ScaleFrame, vtkKWFrame );
-  
+  vtkGetObjectMacro ( LabelOpacityButton, vtkKWPushButton );
+  vtkGetObjectMacro ( LabelOpacityScale, vtkKWScaleWithEntry );
+  vtkGetObjectMacro ( LabelOpacityTopLevel, vtkKWTopLevel );  
+
   void RemoveWidgetObservers ( );
   void AddWidgetObservers ( );
   
@@ -79,7 +87,12 @@ public:
   // Description:
   // applies a background color to the controller
   virtual void ApplyColorCode ( double *c );
-
+  virtual void ToggleSlicesLink  ( );
+  virtual void LinkAllSlices();
+  virtual void UnlinkAllSlices();
+  virtual int AllSlicesLinked ( );
+  virtual void HideLabelOpacityScaleAndEntry ( );
+  virtual void PopUpLabelOpacityScaleAndEntry ( );
 
 protected:
   vtkSlicerSliceControllerWidget ( );
@@ -101,8 +114,15 @@ protected:
   vtkSlicerNodeSelectorWidget *BackgroundSelector;
   vtkSlicerNodeSelectorWidget *LabelSelector;
   vtkKWPushButton *VisibilityToggle;
+  vtkKWPushButton *LinkButton;
+  vtkKWPushButton *LabelOpacityButton;
+  vtkKWScaleWithEntry *LabelOpacityScale;
+  vtkKWTopLevel *LabelOpacityTopLevel;
+
   vtkSlicerVisibilityIcons *VisibilityIcons;
+  vtkSlicerSlicesControlIcons *SliceControlIcons;
   vtkKWFrame *ScaleFrame;
+//  vtkSlicerModuleCollapsibleFrame *ColorCodeFrame;
   vtkKWFrame *ColorCodeFrame;
 
   //
