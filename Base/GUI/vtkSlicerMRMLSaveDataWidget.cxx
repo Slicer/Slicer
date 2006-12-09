@@ -42,7 +42,6 @@ vtkSlicerMRMLSaveDataWidget::vtkSlicerMRMLSaveDataWidget ( )
   this->OkButton = NULL;
   this->MultiColumnList = NULL;
 
-  this->DataDirectoryExists = false;
   this->IsProcessing = false;
 }
 
@@ -108,21 +107,19 @@ void vtkSlicerMRMLSaveDataWidget::ProcessWidgetEvents ( vtkObject *caller,
   if (this->SaveSceneButton->GetWidget() == vtkKWPushButton::SafeDownCast(caller) && event == vtkKWPushButton::InvokedEvent) 
     {
     char *fileName = this->SaveSceneButton->GetWidget()->GetFileName();
-    if (fileName && !this->DataDirectoryExists) 
+    if (fileName)
       {
-      vtksys_stl::string dir =  vtksys::SystemTools::GetParentDirectory(fileName);   
-      dir = dir + vtksys_stl::string("/");
-      this->SetDataDirectoryName(dir.c_str());
-      if (this->UpdateFromMRML() == 0)
+      this->SaveSceneCheckBox->SetEnabled(1);
+      this->SaveSceneCheckBox->Select();
+      if (this->DataDirectoryName == NULL) 
         {
-        /**
-        if (this->SaveSceneCheckBox->GetSelectedState())
+        vtksys_stl::string dir =  vtksys::SystemTools::GetParentDirectory(fileName);   
+        if (dir[dir.size()-1] != '/')
           {
-          this->SaveScene();
+          dir = dir + vtksys_stl::string("/");
           }
-        this->SaveDialog->OK();
-        this->InvokeEvent(vtkSlicerMRMLSaveDataWidget::DataSavedEvent);
-        **/
+        this->SetDataDirectoryName(dir.c_str());
+        this->UpdateDataDirectory();
         }
       }
     }
@@ -132,11 +129,13 @@ void vtkSlicerMRMLSaveDataWidget::ProcessWidgetEvents ( vtkObject *caller,
     char *fileName = this->SaveDataButton->GetWidget()->GetFileName();
     if (fileName) 
       {
-      this->DataDirectoryExists = true;
       std::string name(fileName);
-      name += "/";
+      if (name[name.size()-1] != '/')
+        {
+        name = name + std::string("/");
+        }
       this->SetDataDirectoryName(name.c_str());
-      this->UpdateFromMRML();
+      this->UpdateDataDirectory();
       }
     }
   else if (this->OkButton ==  vtkKWPushButton::SafeDownCast(caller) && event ==  vtkKWPushButton::InvokedEvent)
@@ -144,17 +143,52 @@ void vtkSlicerMRMLSaveDataWidget::ProcessWidgetEvents ( vtkObject *caller,
     int nrows = this->MultiColumnList->GetWidget()->GetNumberOfRows();
     for (int row=0; row<nrows; row++)
       {
-      if (this->MultiColumnList->GetWidget()->GetCellTextAsInt(row, 1))
+      if (this->MultiColumnList->GetWidget()->GetCellTextAsInt(row, 2))
         {
         vtkMRMLNode *node = this->MRMLScene->GetNodeByID(this->Nodes[row].c_str());
         vtkMRMLStorageNode* snode = vtkMRMLStorageNode::SafeDownCast(this->MRMLScene->GetNodeByID(this->StorageNodes[row].c_str()));
-        std::string fileName (this->MultiColumnList->GetWidget()->GetCellText(row, 3));
+        std::string fileName (this->MultiColumnList->GetWidget()->GetCellText(row, 4));
         const char *filePath = fileName.c_str();
-        snode->SetFileName(filePath);
-        int res = snode->WriteData(node);
-        if (res)
+        snode->SetFileName(filePath); 
+
+        //: ask override
+        int  writeFile = 1;
+        fstream fin;
+        fin.open(filePath,ios::in);
+        if( fin.is_open() )
           {
-          node->SetModifiedSinceRead(0);
+          vtkKWMessageDialog *message = vtkKWMessageDialog::New();
+          message->SetParent ( this->GetParent() );
+          message->SetStyleToYesNo();
+          std::string msg = "File " + fileName + " exists. Do you want to override it?";
+          message->SetText(msg.c_str());
+          message->Create();
+          writeFile = message->Invoke();
+          message->Delete();
+          }          
+        fin.close();
+        if (writeFile)
+          {
+          int res = snode->WriteData(node);
+          if (res)
+            {
+            node->SetModifiedSinceRead(0);
+            } 
+          else
+            {
+            vtkKWMessageDialog *message = vtkKWMessageDialog::New();
+            message->SetParent ( this->GetParent() );      
+            message->SetStyleToOkCancel();
+            std::string msg = "Cannot write data file " + fileName + ". Do you want to continue saving?";
+            message->SetText(msg.c_str());
+            message->Create();
+            int ok = message->Invoke();
+            message->Delete(); 
+            if (!ok)
+              {
+              return;
+              }
+            }
           }
         }
       }
@@ -180,6 +214,7 @@ void vtkSlicerMRMLSaveDataWidget::ProcessWidgetEvents ( vtkObject *caller,
   
 } 
 
+
 //---------------------------------------------------------------------------
 void vtkSlicerMRMLSaveDataWidget::SaveScene()
 {
@@ -187,6 +222,11 @@ void vtkSlicerMRMLSaveDataWidget::SaveScene()
 
   if (fileName && this->GetMRMLScene()) 
     {
+
+    vtksys_stl::string directory = vtksys::SystemTools::GetParentDirectory(fileName);
+
+    this->MRMLScene->SetRootDirectory(directory.c_str());
+
     // convert absolute paths to relative
     this->MRMLScene->InitTraversal();
     
@@ -196,7 +236,6 @@ void vtkSlicerMRMLSaveDataWidget::SaveScene()
       vtkMRMLStorageNode *snode = vtkMRMLStorageNode::SafeDownCast(node);
       if (!this->MRMLScene->IsFilePathRelative(snode->GetFileName()))
         {
-        vtksys_stl::string directory = vtksys::SystemTools::GetParentDirectory(fileName);   
         directory = directory + vtksys_stl::string("/");
         
         itksys_stl::string relPath = itksys::SystemTools::RelativePath((const char*)directory.c_str(), snode->GetFileName());
@@ -222,106 +261,181 @@ int vtkSlicerMRMLSaveDataWidget::UpdateFromMRML()
 
   this->Nodes.clear();
   this->StorageNodes.clear();
-  
-  if (this->DataDirectoryName == NULL)
-  {
-    this->MultiColumnList->SetEnabled(0);
-    this->IsProcessing = false;
-    return 0;
-  }
-  if (this->SaveSceneButton->GetWidget()->GetFileName())
-    {
-    this->SaveSceneCheckBox->SetEnabled(1);
-    }
-  this->MultiColumnList->SetEnabled(1);
-  this->OkButton->SetEnabled(1);
 
   this->MRMLScene->InitTraversal();
   vtkMRMLNode *node;
-  int row = 0;
-
-  std::string filename (this->DataDirectoryName);
+  int nModified = 0;
   this->MultiColumnList->GetWidget()->DeleteAllRows ();
 
   int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLVolumeNode");
   int n;
+  int row = 0;
   for (n=0; n<nnodes; n++)
     {
     node = this->MRMLScene->GetNthNodeByClass(n, "vtkMRMLVolumeNode");
-    if (node->GetModifiedSinceRead()) 
+    if (node->GetHideFromEditors()) 
       {
-      vtkMRMLVolumeNode *vnode = vtkMRMLVolumeNode::SafeDownCast(node);
-      vtkMRMLStorageNode* snode = vnode->GetStorageNode();
-      std::string name (filename);
-      if (snode == NULL) \
-        {
-        vtkMRMLVolumeArchetypeStorageNode *storageNode = vtkMRMLVolumeArchetypeStorageNode::New();
-        storageNode->SetScene(this->GetMRMLScene());
-        this->SetMRMLScene(this->GetMRMLScene());
-        this->GetMRMLScene()->AddNode(storageNode);  
-        this->SetAndObserveMRMLScene(this->GetMRMLScene());
-        vnode->SetStorageNodeID(storageNode->GetID());
-        storageNode->Delete();
-        snode = storageNode;
-        }
+      continue;
+      }
+    vtkMRMLVolumeNode *vnode = vtkMRMLVolumeNode::SafeDownCast(node);
+    vtkMRMLStorageNode* snode = vnode->GetStorageNode();
+    if (snode == NULL && node->GetModifiedSinceRead()) 
+      {
+      vtkMRMLVolumeArchetypeStorageNode *storageNode = vtkMRMLVolumeArchetypeStorageNode::New();
+      storageNode->SetScene(this->GetMRMLScene());
+      this->SetMRMLScene(this->GetMRMLScene());
+      this->GetMRMLScene()->AddNode(storageNode);  
+      this->SetAndObserveMRMLScene(this->GetMRMLScene());
+      vnode->SetStorageNodeID(storageNode->GetID());
+      storageNode->Delete();
+      snode = storageNode;
+      }
+    if (snode->GetFileName() == NULL && this->DataDirectoryName != NULL) {
+      std::string name (this->DataDirectoryName);
       name += std::string(node->GetName());
       name += std::string(".nrrd");
       snode->SetFileName(name.c_str());
+    }
 
-      this->Nodes.push_back(node->GetID());
-      this->StorageNodes.push_back(snode->GetID());
-      
-      this->MultiColumnList->GetWidget()->AddRow();
-      this->MultiColumnList->GetWidget()->SetCellText(row,0,node->GetName());
-      this->MultiColumnList->GetWidget()->SetCellTextAsInt(row,1,1);
-      this->MultiColumnList->GetWidget()->SetCellText(row,2,"Volume");
-      this->MultiColumnList->GetWidget()->SetCellText(row,3,snode->GetFileName());
-      
-      row++;
+    // get absolute filename
+    std::string name;
+    if (this->MRMLScene->IsFilePathRelative(snode->GetFileName()))
+      {
+      name = this->MRMLScene->GetRootDirectory();
+      if (name[name.size()-1] != '/')
+        {
+        name = name + std::string("/");
+        }
       }
+    name += snode->GetFileName();
+
+    this->Nodes.push_back(node->GetID());
+    this->StorageNodes.push_back(snode->GetID());
+    
+    this->MultiColumnList->GetWidget()->AddRow();
+    this->MultiColumnList->GetWidget()->SetCellText(row,0,node->GetName());
+    if (node->GetModifiedSinceRead()) 
+      {
+      this->MultiColumnList->GetWidget()->SetCellText(row,1,"Modified");
+      this->MultiColumnList->GetWidget()->SetCellTextAsInt(row,2,1);
+      nModified++;
+      }
+    else
+      {
+      this->MultiColumnList->GetWidget()->SetCellText(row,1,"NotModified");
+      this->MultiColumnList->GetWidget()->SetCellTextAsInt(row,2,0);
+      }
+    this->MultiColumnList->GetWidget()->SetCellText(row,3,"Volume");
+    this->MultiColumnList->GetWidget()->SetCellText(row,4,name.c_str());
+    row++;
     }
 
   nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLModelNode");
   for (n=0; n<nnodes; n++)
     {
     node = this->MRMLScene->GetNthNodeByClass(n, "vtkMRMLModelNode");
-    if (node->GetModifiedSinceRead() && !node->GetHideFromEditors()) 
+    if (node->GetHideFromEditors()) 
       {
-      vtkMRMLModelNode *vnode = vtkMRMLModelNode::SafeDownCast(node);
-      vtkMRMLStorageNode* snode = vnode->GetStorageNode();
-      std::string name (filename);
-      if (snode == NULL) \
-        {
-        vtkMRMLModelStorageNode *storageNode = vtkMRMLModelStorageNode::New();
-        storageNode->SetScene(this->GetMRMLScene());
-        this->SetMRMLScene(this->GetMRMLScene());
-        this->GetMRMLScene()->AddNode(storageNode);  
-        this->SetAndObserveMRMLScene(this->GetMRMLScene());
-        vnode->SetStorageNodeID(storageNode->GetID());
-        storageNode->Delete();
-        snode = storageNode;
-        }
+      continue;
+      }
+    vtkMRMLModelNode *vnode = vtkMRMLModelNode::SafeDownCast(node);
+    vtkMRMLStorageNode* snode = vnode->GetStorageNode();
+    if (snode == NULL && node->GetModifiedSinceRead()) 
+      {
+      vtkMRMLModelStorageNode *storageNode = vtkMRMLModelStorageNode::New();
+      storageNode->SetScene(this->GetMRMLScene());
+      this->SetMRMLScene(this->GetMRMLScene());
+      this->GetMRMLScene()->AddNode(storageNode);  
+      this->SetAndObserveMRMLScene(this->GetMRMLScene());
+      vnode->SetStorageNodeID(storageNode->GetID());
+      storageNode->Delete();
+      snode = storageNode;
+      }
+    if (snode->GetFileName() == NULL && this->DataDirectoryName != NULL) {
+      std::string name (this->DataDirectoryName);
       name += std::string(node->GetName());
       name += std::string(".vtk");
       snode->SetFileName(name.c_str());
+    }
 
-      this->Nodes.push_back(node->GetID());
-      this->StorageNodes.push_back(snode->GetID());
-
-      this->MultiColumnList->GetWidget()->AddRow();
-      this->MultiColumnList->GetWidget()->SetCellText(row,0,node->GetName());
-      this->MultiColumnList->GetWidget()->SetCellTextAsInt(row,1,1);
-      this->MultiColumnList->GetWidget()->SetCellText(row,2,"Model");
-      this->MultiColumnList->GetWidget()->SetCellText(row,3,snode->GetFileName());
-      
-      row++;
+    // get absolute filename
+    std::string name;
+    if (this->MRMLScene->IsFilePathRelative(snode->GetFileName()))
+      {
+      name = this->MRMLScene->GetRootDirectory();
+      if (name[name.size()-1] != '/')
+        {
+        name = name + std::string("/");
+        }
       }
+    name += snode->GetFileName();
+
+    this->Nodes.push_back(node->GetID());
+    this->StorageNodes.push_back(snode->GetID());
+    
+    this->MultiColumnList->GetWidget()->AddRow();
+    this->MultiColumnList->GetWidget()->SetCellText(row,0,node->GetName());
+    if (node->GetModifiedSinceRead()) 
+      {
+      this->MultiColumnList->GetWidget()->SetCellText(row,1,"Modified");
+      this->MultiColumnList->GetWidget()->SetCellTextAsInt(row,2,1);
+      nModified++;
+      }
+    else
+      {
+      this->MultiColumnList->GetWidget()->SetCellText(row,1,"NotModified");
+      this->MultiColumnList->GetWidget()->SetCellTextAsInt(row,2,0);
+      }
+    this->MultiColumnList->GetWidget()->SetCellText(row,3,"Model");
+    this->MultiColumnList->GetWidget()->SetCellText(row,4,name.c_str());
+    row++;
     }
   
   this->IsProcessing = false;
 
-  return row;
+  return nModified;
   
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerMRMLSaveDataWidget::UpdateDataDirectory()
+{
+  if (this->DataDirectoryName == NULL)
+    {
+    return;
+    }
+  
+  int nrows = this->MultiColumnList->GetWidget()->GetNumberOfRows();
+  for (int row=0; row<nrows; row++)
+    {
+    if (this->MultiColumnList->GetWidget()->GetCellTextAsInt(row, 2))
+      {
+      vtkMRMLNode *node = this->MRMLScene->GetNodeByID(this->Nodes[row].c_str());
+      vtkMRMLStorageNode* snode = vtkMRMLStorageNode::SafeDownCast(this->MRMLScene->GetNodeByID(this->StorageNodes[row].c_str()));
+      itksys_stl::string name;
+      if (snode->GetFileName() != NULL)
+        {
+        name = itksys::SystemTools::GetFilenameName(snode->GetFileName());
+        }
+      if (name.empty()) 
+        {
+        std::string sname (node->GetName());
+        if (node->IsA("vtkMRMLVolumeNode")) 
+          {
+          sname += std::string(".nrrd");
+          }
+        else 
+          {
+          sname += std::string(".vtk");
+          }
+        snode->SetFileName(sname.c_str());
+        name = itksys::SystemTools::GetFilenameName(snode->GetFileName());
+        }
+      itksys_stl::string sname (this->DataDirectoryName);
+      sname += name;
+      this->MultiColumnList->GetWidget()->SetCellText(row,4,sname.c_str());
+      }
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -445,22 +559,27 @@ void vtkSlicerMRMLSaveDataWidget::CreateWidget ( )
   this->MultiColumnList->GetWidget()->ColumnEditableOff(0);
   this->MultiColumnList->GetWidget()->SetColumnWidth(0, 12);
 
+  this->MultiColumnList->GetWidget()->AddColumn("Status");
+  this->MultiColumnList->GetWidget()->ColumnEditableOff(1);
+  this->MultiColumnList->GetWidget()->SetColumnWidth(1, 12);
+
   this->MultiColumnList->GetWidget()->AddColumn("Save");
-  this->MultiColumnList->GetWidget()->SetColumnWidth(1, 8);
-  this->MultiColumnList->GetWidget()->SetColumnEditWindowToCheckButton(1);
-  this->MultiColumnList->GetWidget()->ColumnEditableOn(1);
+  this->MultiColumnList->GetWidget()->SetColumnWidth(2, 8);
+  this->MultiColumnList->GetWidget()->SetColumnEditWindowToCheckButton(2);
+  this->MultiColumnList->GetWidget()->ColumnEditableOn(2);
+
 
   this->MultiColumnList->GetWidget()->AddColumn("Type");
-  this->MultiColumnList->GetWidget()->ColumnEditableOff(2);
-  this->MultiColumnList->GetWidget()->SetColumnWidth(2, 10);
+  this->MultiColumnList->GetWidget()->ColumnEditableOff(3);
+  this->MultiColumnList->GetWidget()->SetColumnWidth(3, 10);
 
   this->MultiColumnList->GetWidget()->AddColumn("File");
-  this->MultiColumnList->GetWidget()->ColumnEditableOn(3);
-  this->MultiColumnList->GetWidget()->SetColumnWidth(3, 64);
+  this->MultiColumnList->GetWidget()->ColumnEditableOn(4);
+  this->MultiColumnList->GetWidget()->SetColumnWidth(4, 64);
   // make the save column editable by checkbox
   // now set the attributes that are equal across the columns
   int col;
-  for (col = 0; col < 4; col++)
+  for (col = 0; col <= 4; col++)
     {        
     this->MultiColumnList->GetWidget()->SetColumnAlignmentToLeft(col);
     }
@@ -496,17 +615,25 @@ void vtkSlicerMRMLSaveDataWidget::CreateWidget ( )
   if (this->MRMLScene != NULL)
     {
     this->SetAndObserveMRMLScene(this->MRMLScene);
+    std::string dir = this->MRMLScene->GetRootDirectory();
+    if (dir[dir.size()-1] != '/')
+      {
+      dir += std::string("/");
+      }
+    this->SetDataDirectoryName(dir.c_str());
     }
-  
-   
-  this->MultiColumnList->SetEnabled(0);
-  this->OkButton->SetEnabled(0);
-  this->SaveSceneCheckBox->SetEnabled(0);
     
   frame->Delete();
   dataFrame->Delete();
   saveFrame->Delete();
-  
+
+  this->UpdateFromMRML();
+
+  this->MultiColumnList->SetEnabled(1);
+  this->OkButton->SetEnabled(1);
+  this->SaveSceneCheckBox->SetEnabled(0);
+  this->SaveSceneCheckBox->SetSelectedState(0);
+
   this->SaveDialog->Invoke ( );
   
 }

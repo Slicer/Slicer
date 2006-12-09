@@ -150,67 +150,75 @@ int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
     vtkErrorMacro("vtkMRMLModelNode: no file extention specified");
     }
   std::string extention = name.substr(loc);
-  
-  if ( extention == std::string(".g")) 
-    {
-    vtkBYUReader *reader = vtkBYUReader::New();
-    reader->SetGeometryFileName(fullName.c_str());
-    reader->Update();
-    modelNode->SetAndObservePolyData(reader->GetOutput());
-    reader->Delete();
-    }
-  else if (extention == std::string(".vtk")) 
-    {
-    vtkPolyDataReader *reader = vtkPolyDataReader::New();
-    reader->SetFileName(fullName.c_str());
-    reader->Update();
-    modelNode->SetAndObservePolyData(reader->GetOutput());
-    reader->Delete();
-    }  
-  else if ( extention == std::string(".orig") ||
-            extention == std::string(".inflated") ||
-            extention == std::string(".sphere") ||
-            extention == std::string(".white") ||
-            extention == std::string(".smoothwm") ||
-            extention == std::string(".pial") ) 
-    {
-    //read in a free surfer file
-    // -- create normals and triangle strips also
-    vtkFSSurfaceReader *reader = vtkFSSurfaceReader::New();
-    vtkPolyDataNormals *normals = vtkPolyDataNormals::New();
-    vtkStripper *stripper = vtkStripper::New();
 
-    reader->SetFileName(fullName.c_str());
-    normals->SetSplitting(0);
-    normals->SetInput( reader->GetOutput() );
-    stripper->SetInput( normals->GetOutput() );
-    stripper->Update();
-    modelNode->SetAndObservePolyData(stripper->GetOutput());
+  int result = 1;
+  try
+    {
+    if ( extention == std::string(".g")) 
+      {
+      vtkBYUReader *reader = vtkBYUReader::New();
+      reader->SetGeometryFileName(fullName.c_str());
+      reader->Update();
+      modelNode->SetAndObservePolyData(reader->GetOutput());
+      reader->Delete();
+      }
+    else if (extention == std::string(".vtk")) 
+      {
+      vtkPolyDataReader *reader = vtkPolyDataReader::New();
+      reader->SetFileName(fullName.c_str());
+      reader->Update();
+      modelNode->SetAndObservePolyData(reader->GetOutput());
+      reader->Delete();
+      }  
+    else if ( extention == std::string(".orig") ||
+              extention == std::string(".inflated") ||
+              extention == std::string(".sphere") ||
+              extention == std::string(".white") ||
+              extention == std::string(".smoothwm") ||
+              extention == std::string(".pial") ) 
+      {
+      //read in a free surfer file
+      // -- create normals and triangle strips also
+      vtkFSSurfaceReader *reader = vtkFSSurfaceReader::New();
+      vtkPolyDataNormals *normals = vtkPolyDataNormals::New();
+      vtkStripper *stripper = vtkStripper::New();
 
-    reader->Delete();
-    normals->Delete();
-    stripper->Delete();
-    }  
-  else if (extention == std::string(".stl")) 
-    {
-    vtkSTLReader *reader = vtkSTLReader::New();
-    reader->SetFileName(fullName.c_str());
-    modelNode->SetAndObservePolyData(reader->GetOutput());
-    reader->Update();
-    reader->Delete();
+      reader->SetFileName(fullName.c_str());
+      normals->SetSplitting(0);
+      normals->SetInput( reader->GetOutput() );
+      stripper->SetInput( normals->GetOutput() );
+      stripper->Update();
+      modelNode->SetAndObservePolyData(stripper->GetOutput());
+
+      reader->Delete();
+      normals->Delete();
+      stripper->Delete();
+      }  
+    else if (extention == std::string(".stl")) 
+      {
+      vtkSTLReader *reader = vtkSTLReader::New();
+      reader->SetFileName(fullName.c_str());
+      modelNode->SetAndObservePolyData(reader->GetOutput());
+      reader->Update();
+      reader->Delete();
+      }
+    else 
+      {
+      vtkErrorMacro("Cannot read model file '" << name.c_str() << "'");
+      return 0;
+      }
     }
-  else 
+  catch (vtkstd::exception &e)
     {
-    vtkErrorMacro("Cannot read model file '" << name.c_str() << "'");
-    return 0;
+    result = 0;
     }
-    
+
   if (modelNode->GetPolyData() != NULL) 
     {
     modelNode->GetPolyData()->Modified();
     }
   modelNode->SetModifiedSinceRead(0);
-  return 1;
+  return result;
 }
 
 //----------------------------------------------------------------------------
@@ -244,8 +252,15 @@ int vtkMRMLModelStorageNode::WriteData(vtkMRMLNode *refNode)
   writer->SetFileName(fullName.c_str());
   writer->SetInput( modelNode->GetPolyData() );
 
-  writer->Write();
-
+  int result = 1;
+  try
+    {
+    writer->Write();
+    }
+  catch (vtkstd::exception &e)
+    {
+    result = 0;
+    }
   writer->Delete();    
   
   return 1;

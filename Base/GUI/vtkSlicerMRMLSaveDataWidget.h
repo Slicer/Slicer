@@ -86,6 +86,8 @@ protected:
   
   void SaveScene();
 
+  void UpdateDataDirectory();
+
 private:
   
   char *DataDirectoryName;
@@ -109,7 +111,6 @@ private:
 
   vtkKWMultiColumnListWithScrollbars *MultiColumnList;
 
-  bool DataDirectoryExists;
 
   bool IsProcessing;
   

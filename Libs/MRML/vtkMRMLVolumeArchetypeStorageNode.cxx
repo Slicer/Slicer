@@ -187,7 +187,16 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
     {
     reader->SetUseNativeOriginOn();
     }
-  reader->Update();
+
+  int result = 1;
+  try
+    {
+    reader->Update();
+    }
+    catch (vtkstd::exception &e)
+    {
+    result = 0;
+    }
 
   // set volume attributes
   vtkMatrix4x4* mat = reader->GetRasToIjkMatrix();
@@ -207,7 +216,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
   reader->Delete();
   ici->Delete();
 
-  return 1;
+  return result;
 }
 
 //----------------------------------------------------------------------------
@@ -230,6 +239,7 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteData(vtkMRMLNode *refNode)
   if (volNode->GetImageData() == NULL) 
     {
     vtkErrorMacro("cannot write ImageData, it's NULL");
+    return 0;
     }
   
   std::string fullName;
@@ -257,10 +267,17 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteData(vtkMRMLNode *refNode)
   volNode->GetRASToIJKMatrix(mat);
   writer->SetRasToIJKMatrix(mat);
 
-  writer->Write();
-
+  int result = 1;
+  try
+    {
+    writer->Write();
+    }
+    catch (vtkstd::exception &e)
+    {
+    result = 0;
+    }
   writer->Delete();    
   
-  return 1;
+  return result;
 
 }

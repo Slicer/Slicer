@@ -52,6 +52,7 @@
 #include "ModuleFactory.h"
 
 #include <vtksys/SystemTools.hxx>
+#include <vtksys/stl/string>
 
 // for data prov
 #include <time.h>
@@ -463,6 +464,8 @@ int Slicer3_main(int argc, char *argv[])
 
     // Create MRML scene
     vtkMRMLScene *scene = vtkMRMLScene::New();
+    vtksys_stl::string root = vtksys::SystemTools::GetCurrentWorkingDirectory();
+    scene->SetRootDirectory(root.c_str());
     vtkMRMLScene::SetActiveScene( scene );
     
     // Create the application Logic object, 
