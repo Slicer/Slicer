@@ -115,17 +115,16 @@ vtkSlicerViewControlGUI::~vtkSlicerViewControlGUI ( )
   this->ViewAxisMode = 0;
   this->RenderMode = 0;
 
-  if ( this->NavZoomLabel )
-    {
-    this->NavZoomLabel->Delete ( );
-    this->NavZoomLabel = NULL;
-    }
   if ( this->SlicerViewControlIcons )
     {
     this->SlicerViewControlIcons->Delete ( );
     this->SlicerViewControlIcons = NULL;
     }
-
+  if ( this->NavZoomLabel )
+    {
+    this->NavZoomLabel->Delete ( );
+    this->NavZoomLabel = NULL;
+    }
    //--- widgets from ViewControlFrame
   if ( this->SpinButton ) 
     {
@@ -332,9 +331,52 @@ void vtkSlicerViewControlGUI::PrintSelf ( ostream& os, vtkIndent indent )
 {
   //TODO: need to print everything
   this->vtkObject::PrintSelf ( os, indent );
-  os << indent << "SlicerViewControlGUI: " << this->GetClassName ( ) << "\n";
 
+  // eventuall these get moved into the view node...
+  os << indent << "SlicerViewControlGUI: " << this->GetClassName ( ) << "\n";
+  os << indent << "Spin: " << this->GetSpin(  ) << "\n";
+  os << indent << "SpinDirection: " << this->GetSpinDirection(  ) << "\n";
+  os << indent << "SpinDegrees: " << this->GetSpinDegrees (  ) << "\n";
+  os << indent << "SpinMs: " << this->GetSpinMs (  ) << "\n";
+  os << indent << "Rock: " << this->GetRock (  ) << "\n";
+  os << indent << "RockLength: " << this->GetRockLength (  ) << "\n";
+  os << indent << "RockCount: " << this->GetRockCount (  ) << "\n";
+  os << indent << "Stereo: " << this->GetStereo (  ) << "\n";
+  os << indent << "StereoType: " << this->GetStereoType (  ) << "\n";
+  os << indent << "ViewAxisMode: " << this->GetViewAxisMode (  ) << "\n";
+  os << indent << "RenderMode: " << this->GetRenderMode (  ) << "\n";
+  // class widgets
+  os << indent << "ViewAxisAIconButton: " << this->GetViewAxisAIconButton (  ) << "\n";
+  os << indent << "ViewAxisPIconButton: " << this->GetViewAxisPIconButton (  ) << "\n";
+  os << indent << "ViewAxisRIconButton: " << this->GetViewAxisRIconButton (  ) << "\n";
+  os << indent << "ViewAxisLIconButton: " << this->GetViewAxisLIconButton (  ) << "\n";
+  os << indent << "ViewAxisSIconButton: " << this->GetViewAxisSIconButton (  ) << "\n";
+  os << indent << "ViewAxisIIconButton: " << this->GetViewAxisIIconButton (  ) << "\n";
+  os << indent << "ViewAxisCenterIconButton: " << this->GetViewAxisCenterIconButton (  ) << "\n";
+  os << indent << "ViewAxisTopCornerIconButton: " << this->GetViewAxisTopCornerIconButton (  ) << "\n";
+  os << indent << "ViewAxisBottomCornerIconButton: " << this->GetViewAxisBottomCornerIconButton (  ) << "\n";
+  os << indent << "NavZoomInIconButton: " << this->GetNavZoomInIconButton (  ) << "\n";
+  os << indent << "NavZoomOutIconButton: " << this->GetNavZoomOutIconButton (  ) << "\n";
+  os << indent << "NavZoomScale: " << this->GetNavZoomScale (  ) << "\n";
+  os << indent << "NavZoomLabel: " << this->GetNavZoomLabel (  ) << "\n";
+  os << indent << "SpinButton: " << this->GetSpinButton(  ) << "\n";
+  os << indent << "RockButton: " << this->GetRockButton(  ) << "\n";
+  os << indent << "OrthoButton: " << this->GetOrthoButton(  ) << "\n";
+  os << indent << "LookFromButton: " << this->GetLookFromButton(  ) << "\n";  
+  os << indent << "RotateAroundButton: " << this->GetRotateAroundButton(  ) << "\n";
+  os << indent << "CenterButton: " << this->GetCenterButton(  ) << "\n";
+  os << indent << "StereoButton: " << this->GetStereoButton(  ) << "\n";
+  os << indent << "SelectButton: " << this->GetSelectButton(  ) << "\n";
+  os << indent << "VisibilityButton: " << this->GetVisibilityButton(  ) << "\n";
+  os << indent << "SliceOpacityButton: " << this->GetSliceOpacityButton(  ) << "\n";  
+  os << indent << "SliceOpacityScale: " << this->GetSliceOpacityScale(  ) << "\n";
+  os << indent << "SliceOpacityTopLevel: " << this->GetSliceOpacityTopLevel(  ) << "\n";
+  os << indent << "FOVEntry: " << this->GetFOVEntry(  ) << "\n";
+  os << indent << "ZoomEntry: " << this->GetZoomEntry(  ) << "\n";
+  os << indent << "SlicerViewControlIcons: " << this->GetSlicerViewControlIcons(  ) << "\n";
+  os << indent << "ApplicationGUI: " << this->GetApplicationGUI(  ) << "\n";
 }
+
 
 
 
@@ -587,13 +629,14 @@ void vtkSlicerViewControlGUI::MainViewRock ( )
 {
   if ( this->Rock )
     {
-/*
+
   if ( this->GetApplicationGUI() != NULL )
       {
       vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));    
       vtkMRMLCameraNode *cam = p->GetViewerWidget()->GetCameraNode();
       vtkMRMLViewNode *v = p->GetViewerWidget()->GetViewNode();
     
+/*
       // change icon to stop rock icon.
       double frac = this->RockCount / this->RockLength;
       double az = 1.5 * cos ( 2.0 * 3.1415926 * (frac- floor(frac)));
@@ -607,9 +650,9 @@ void vtkSlicerViewControlGUI::MainViewRock ( )
       this->Script ( "update idletasks" );
       const char *name = this->GetTclName();
       this->Script ( "after %s %s MainViewRock", this->SpinMs, name );
-      }
 */
       }
+    }
 }
 
 
