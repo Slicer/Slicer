@@ -88,6 +88,20 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
   vtkSetMacro (LabelOpacity, double);
 
   // Description:
+  // toggle that gangs control of slice viewers
+  vtkGetMacro (LinkedControl, int );
+  vtkSetMacro (LinkedControl, int );
+
+  // Description:
+  // toggles for grid in different slice layers.
+  vtkGetMacro (ForegroundGrid, int );
+  vtkSetMacro (ForegroundGrid, int );
+  vtkGetMacro (BackgroundGrid, int );
+  vtkSetMacro (BackgroundGrid, int );
+  vtkGetMacro (LabelGrid, int );
+  vtkSetMacro (LabelGrid, int );
+
+  // Description:
   // Name of the layout
   vtkGetStringMacro (LayoutName);
   vtkSetStringMacro (LayoutName);
@@ -103,7 +117,10 @@ protected:
   char *LabelVolumeID;
   double ForegroundOpacity;
   double LabelOpacity;
-
+  int LinkedControl;
+  int ForegroundGrid;
+  int BackgroundGrid;
+  int LabelGrid;
   char* LayoutName;
 
 };

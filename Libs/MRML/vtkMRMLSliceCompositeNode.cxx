@@ -58,6 +58,11 @@ vtkMRMLSliceCompositeNode::vtkMRMLSliceCompositeNode()
   this->ForegroundOpacity = 0.0; // start by showing only the background volume
   this->LabelOpacity = 1.0; // Show the label if there is one
   this->LayoutName = NULL;
+  this->LinkedControl = 0;
+  this->ForegroundGrid = 0;
+  this->BackgroundGrid = 0;
+  this->LabelGrid = 0;
+
 }
 
 //----------------------------------------------------------------------------
@@ -80,6 +85,10 @@ void vtkMRMLSliceCompositeNode::WriteXML(ostream& of, int nIndent)
    (this->LabelVolumeID ? this->LabelVolumeID : "") << "\" ";
 
   of << indent << "labelOpacity=\"" << this->LabelOpacity << "\" ";
+  of << indent << "linkedControl=\"" << this->LinkedControl << "\" ";
+  of << indent << "foregroundGrid=\"" << this->ForegroundGrid << "\" ";
+  of << indent << "backgroundGrid=\"" << this->BackgroundGrid << "\" ";
+  of << indent << "labelGrid=\"" << this->LabelGrid << "\" ";
   of << indent << "layoutName=\"" << this->LayoutName << "\" ";
 }
 
@@ -136,6 +145,22 @@ void vtkMRMLSliceCompositeNode::ReadXMLAttributes(const char** atts)
       {
       this->SetLabelOpacity( atof(attValue) );
       }
+    else if (!strcmp(attName, "linkedControl")) 
+      {
+      this->SetLinkedControl( atof(attValue) );
+      }    
+    else if (!strcmp(attName, "foregroundGrid")) 
+      {
+      this->SetForegroundGrid( atof(attValue) );
+      }
+    else if (!strcmp(attName, "backGrid")) 
+      {
+      this->SetBackgroundGrid( atof(attValue) );
+      }
+    else if (!strcmp(attName, "labelGrid")) 
+      {
+      this->SetLabelGrid( atof(attValue) );
+      }    
    else if (!strcmp(attName, "layoutName")) 
       {
       this->SetLayoutName( attValue );
@@ -155,6 +180,10 @@ void vtkMRMLSliceCompositeNode::Copy(vtkMRMLNode *anode)
   this->SetForegroundVolumeID(node->GetForegroundVolumeID());
   this->SetForegroundOpacity(node->GetForegroundOpacity());
   this->SetLabelOpacity(node->GetLabelOpacity());
+  this->SetLinkedControl (node->GetLinkedControl());
+  this->SetForegroundGrid ( node->GetForegroundGrid());
+  this->SetBackgroundGrid ( node->GetBackgroundGrid());
+  this->SetLabelGrid ( node->GetLabelGrid());
 }
 
 //----------------------------------------------------------------------------
@@ -170,6 +199,10 @@ void vtkMRMLSliceCompositeNode::PrintSelf(ostream& os, vtkIndent indent)
    (this->LabelVolumeID ? this->LabelVolumeID : "(none)") << "\n";
   os << indent << "ForegroundOpacity: " << this->ForegroundOpacity << "\n";
   os << indent << "LabelOpacity: " << this->LabelOpacity << "\n";
+  os << indent << "LinkedControl: " << this->LinkedControl << "\n";
+  os << indent << "ForegroundGrid: " << this->ForegroundGrid << "\n";
+  os << indent << "BackgroundGrid: " << this->BackgroundGrid << "\n";
+  os << indent << "LabelGrid: " << this->LabelGrid << "\n";
 }
 
 //----------------------------------------------------------------------------
