@@ -292,6 +292,10 @@ void vtkSlicerModuleChooseGUI::SelectModule ( const char *moduleName )
       this->PopulateHistoryListMenu ( );
       this->GetModuleNavigator()->AddModuleNameToNavigationList ( moduleName );
       }
+    else
+      {
+      std::cerr << "ERROR no slicer module GUI found for " << moduleName<< "\n";
+      }
     }
 }
 
