@@ -20,6 +20,7 @@ Version:   $Revision: 1.3 $
 
 #include "vtkMRMLFiducialListNode.h"
 #include "vtkMRMLScene.h"
+#include "vtkGlyphSource2D.h"
 
 //------------------------------------------------------------------------------
 vtkMRMLFiducialListNode* vtkMRMLFiducialListNode::New()
@@ -55,7 +56,7 @@ vtkMRMLFiducialListNode::vtkMRMLFiducialListNode()
 
   this->FiducialList = vtkCollection::New();
   this->Indent = 1;
-  this->SymbolScale = 6.0;
+  this->SymbolScale = 1.0;
   this->TextScale = 4.5;
   this->Visibility = 1;
   this->Color[0]=0.4; this->Color[1]=1.0; this->Color[2]=1.0;
@@ -70,6 +71,8 @@ vtkMRMLFiducialListNode::vtkMRMLFiducialListNode()
   this->Specular = 0;
   this->Power = 1;
 
+  this->GlyphType = this->Diamond3D;
+  
 //  this->DebugOn();
 }
 
@@ -98,6 +101,7 @@ void vtkMRMLFiducialListNode::WriteXML(ostream& of, int nIndent)
   vtkIndent indent(nIndent);
   
   of << " symbolScale=\"" << this->SymbolScale << "\"";
+  of << " symbolType=\"" << this->GlyphType << "\"";
   of << " textScale=\"" << this->TextScale << "\"";
   of << " visibility=\"" << this->Visibility << "\"";
   
@@ -177,6 +181,12 @@ void vtkMRMLFiducialListNode::ReadXMLAttributes(const char** atts)
           ss << attValue;
           ss >> this->SymbolScale;
       }
+      else if (!strcmp(attName, "symbolType"))
+        {
+        std::stringstream ss;
+        ss << attValue;
+        ss >> this->GlyphType;
+        }
       else if (!strcmp(attName, "textScale")) 
       {
           std::stringstream ss;
@@ -193,31 +203,31 @@ void vtkMRMLFiducialListNode::ReadXMLAttributes(const char** atts)
       {
           std::stringstream ss;
           ss << attValue;
-          ss >> Ambient;
+          ss >> this->Ambient;
       }
       else if (!strcmp(attName, "diffuse")) 
       {
           std::stringstream ss;
           ss << attValue;
-          ss >> Diffuse;
+          ss >> this->Diffuse;
       }
       else if (!strcmp(attName, "specular")) 
       {
           std::stringstream ss;
           ss << attValue;
-          ss >> Specular;
+          ss >> this->Specular;
       }
       else if (!strcmp(attName, "power")) 
       {
           std::stringstream ss;
           ss << attValue;
-          ss >> Power;
+          ss >> this->Power;
       }
       else if (!strcmp(attName, "opacity")) 
       {
           std::stringstream ss;
           ss << attValue;
-          ss >> Opacity;
+          ss >> this->Opacity;
       }
       else if (!strcmp(attName, "fiducials"))
       {
@@ -294,6 +304,160 @@ void vtkMRMLFiducialListNode::Copy(vtkMRMLNode *anode)
 }
 
 //----------------------------------------------------------------------------
+int vtkMRMLFiducialListNode::GetGlyphTypeAsVTKEnum()
+{
+  if (!GlyphTypeIs3D())
+    {
+    vtkDebugMacro("GetGlyphTypeAsVTKEnum: glyph type = " << this->GlyphType << ", vertex 2d = " << this->Vertex2D << ", vtk vertex glyph = " << VTK_VERTEX_GLYPH );
+    return this->GlyphType - this->Vertex2D + VTK_VERTEX_GLYPH;
+    if (this->GlyphType == this->Dash2D) return VTK_DASH_GLYPH;
+    if (this->GlyphType == this->Cross2D) return VTK_CROSS_GLYPH;
+    if (this->GlyphType == this->ThickCross2D) return VTK_THICKCROSS_GLYPH;
+    if (this->GlyphType == this->Triangle2D) return VTK_TRIANGLE_GLYPH;
+    if (this->GlyphType == this->Square2D) return VTK_SQUARE_GLYPH;
+    if (this->GlyphType == this->Circle2D) return VTK_CIRCLE_GLYPH;
+    if (this->GlyphType == this->Diamond2D) return VTK_DIAMOND_GLYPH;
+    if (this->GlyphType == this->Arrow2D) return VTK_ARROW_GLYPH;
+    if (this->GlyphType == this->ThickArrow2D) return VTK_THICKARROW_GLYPH;
+    if (this->GlyphType == this->HookedArrow2D) return VTK_HOOKEDARROW_GLYPH;
+    return VTK_NO_GLYPH;
+    }
+  else
+    {
+    std::cerr << "vtkMRMLFiducialListNode::GetGlyphTypeAsVTKEnum: current type " << this->GlyphType << " is not a 2D Glyph type, returning 0\n";
+    return VTK_NO_GLYPH;
+    }
+}
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLFiducialListNode::GetGlyphTypeAsString()
+{
+  return this->GetGlyphTypeAsString(this->GlyphType);
+}
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLFiducialListNode::GetGlyphTypeAsString(int glyphType)
+{
+  if (glyphType == this->Vertex2D)
+    {
+    return "Vertex2D";
+    }
+  if (glyphType == this->Dash2D)
+    {
+    return "Dash2D";
+    }
+   if (glyphType == this->Cross2D)
+    {
+    return "Cross2D";
+    }
+  if (glyphType == this->ThickCross2D)
+    {
+    return "ThickCross2D";
+    }
+  if (glyphType == this->Triangle2D)
+    {
+    return "Triangle2D";
+    }
+  if (glyphType == this->Square2D)
+    {
+    return "Square2D";
+    }
+  if (glyphType == this->Circle2D)
+    {
+    return "Circle2D";
+    }
+  if (glyphType == this->Diamond2D)
+    {
+    return "Diamond2D";
+    }
+  if (glyphType == this->Arrow2D)
+    {
+    return "Arrow2D";
+    }
+  if (glyphType == this->ThickArrow2D)
+    {
+    return "ThickArrow2D";
+    }
+  if (glyphType == this->HookedArrow2D)
+    {
+    return "HookedArrow2D";
+    }
+  if (glyphType == this->Sphere3D)
+    {
+    return "Sphere3D";
+    }
+  if (glyphType == this->Diamond3D)
+    {
+    return "Diamond3D";
+    }
+
+  return "UNKNOWN";
+  
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLFiducialListNode::SetGlyphTypeFromString(const char *glyphString)
+{
+  if (!strcmp(glyphString, "Vertex2D"))
+    {
+    this->SetGlyphType(this->Vertex2D);
+    }
+  else if (!strcmp(glyphString, "Dash2D"))
+    {
+    this->SetGlyphType(this->Dash2D);
+    }
+  else if (!strcmp(glyphString, "Cross2D"))
+    {
+    this->SetGlyphType(this->Cross2D);
+    }
+else if (!strcmp(glyphString, "ThickCross2D"))
+    {
+    this->SetGlyphType(this->ThickCross2D);
+    }
+  else if (!strcmp(glyphString, "Triangle2D"))
+    {
+    this->SetGlyphType(this->Triangle2D);
+    }
+  else if (!strcmp(glyphString, "Square2D"))
+    {
+    this->SetGlyphType(this->Square2D);
+    }
+  else if (!strcmp(glyphString, "Circle2D"))
+    {
+    this->SetGlyphType(this->Circle2D);
+    }
+  else if (!strcmp(glyphString, "Diamond2D"))
+    {
+    this->SetGlyphType(this->Diamond2D);
+    }
+  else if (!strcmp(glyphString, "Arrow2D"))
+    {
+    this->SetGlyphType(this->Arrow2D);
+    }
+  else if (!strcmp(glyphString, "ThickArrow2D"))
+    {
+    this->SetGlyphType(this->ThickArrow2D);
+    }
+  else if (!strcmp(glyphString, "HookedArrow2D"))
+    {
+    this->SetGlyphType(this->HookedArrow2D);
+    }
+  else if (!strcmp(glyphString, "Sphere3D"))
+    {
+    this->SetGlyphType(this->Sphere3D);;
+    }
+  else if (!strcmp(glyphString, "Diamond3D"))
+    {
+    this->SetGlyphType(this->Diamond3D);
+    }
+  else
+    {
+    vtkErrorMacro("Invalid glyph type string: " << glyphString);
+    }
+  
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLFiducialListNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   int idx;
@@ -306,6 +470,9 @@ void vtkMRMLFiducialListNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "Symbol scale: (";
   os << indent << this->SymbolScale << ")\n";
 
+  os << indent << "Symbol type: ";
+  os << indent << this->GetGlyphTypeAsString() << "\n";
+  
   os << indent << "Text scale: (";
   os << indent << this->TextScale << ")\n";
 
@@ -792,6 +959,36 @@ void vtkMRMLFiducialListNode::SetSymbolScale(double scale)
     
     // invoke a display modified event
     this->InvokeEvent(vtkMRMLFiducialListNode::DisplayModifiedEvent);
+}
+
+//---------------------------------------------------------------------------
+int vtkMRMLFiducialListNode::GlyphTypeIs3D(int glyphType)
+{
+  if (glyphType >= vtkMRMLFiducialListNode::Sphere3D)
+    {
+    return 1;
+    }
+  else
+    {
+    return 0;
+    }
+}
+                              
+//---------------------------------------------------------------------------
+void vtkMRMLFiducialListNode::SetGlyphType(int type)
+{
+  if (this->GlyphType == type)
+    {
+    return;
+    }
+  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting GlyphType to " << type);
+  this->GlyphType = type;
+  
+  // invoke a modified event
+  this->Modified();
+  
+  // invoke a display modified event
+  this->InvokeEvent(vtkMRMLFiducialListNode::DisplayModifiedEvent);
 }
 
 //---------------------------------------------------------------------------

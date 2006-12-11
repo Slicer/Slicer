@@ -177,12 +177,52 @@ public:
   vtkSetMacro(Power, double);
   vtkGetMacro(Power, double);
 
+  //BTX
+  // Description:
+  // Which kind of glyph should be used to display this fiducial?
+  enum GlyphShapes
+  {
+    GlyphMin,
+    Vertex2D = GlyphMin,
+    Dash2D,
+    Cross2D,
+    ThickCross2D,
+    Triangle2D,
+    Square2D,
+    Circle2D,
+    Diamond2D,
+    Arrow2D,
+    ThickArrow2D,
+    HookedArrow2D,
+    Sphere3D,
+    Diamond3D,
+    GlyphMax = Diamond3D,
+  };
+  //ETX
+  // Description:
+  // The glyph type used to display this fiducial
+  void SetGlyphType(int type);
+  vtkGetMacro(GlyphType, int);
+  // Description:
+  // Returns 1 if the type is a 3d one, 0 else
+  int GlyphTypeIs3D(int glyphType);
+  int GlyphTypeIs3D() { return this->GlyphTypeIs3D(this->GlyphType); };
+
+  // Description:
+  // Return a string representing the glyph type
+  const char* GetGlyphTypeAsString();
+  const char* GetGlyphTypeAsString(int g);
+  void SetGlyphTypeFromString(const char *glyphString);
+  // Description:
+  // if it's a 2d glyph, return the vtk type
+  int GetGlyphTypeAsVTKEnum();
 protected:
   vtkMRMLFiducialListNode();
   ~vtkMRMLFiducialListNode();
   vtkMRMLFiducialListNode(const vtkMRMLFiducialListNode&);
   void operator=(const vtkMRMLFiducialListNode&);
 
+  // Description:
   // disallow access to the fiducial points by outside classes, have them use
   // SetNthFiducial
   vtkMRMLFiducial* GetNthFiducial(int n);
@@ -192,15 +232,19 @@ protected:
   int Visibility;
   double Color[3];
   double SelectedColor[3];
-  
+
+  // Description:
+  // The collection of fiducial points that make up this list
   vtkCollection *FiducialList;
-  
+
+  // Description:
   // Numbers relating to the display of the fiducials
   double Opacity;
   double Ambient;
   double Diffuse;
   double Specular;
   double Power;
+  int GlyphType;
 };
 
 #endif
