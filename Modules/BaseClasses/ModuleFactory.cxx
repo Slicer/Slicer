@@ -15,7 +15,7 @@
 
 #include <map>
 
-void
+static void
 splitString (std::string &text,
              std::string &separators,
              std::vector<std::string> &words)
