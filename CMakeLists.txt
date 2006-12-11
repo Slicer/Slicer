@@ -122,6 +122,20 @@ SET(vtkITK_DIR ${Slicer3_BINARY_DIR}/Libs/vtkITK)
 SET(tclap_DIR ${Slicer3_BINARY_DIR}/Libs/tclap)
 
 #
+# Teem
+#
+
+SET(TEEM_BUILD_DIR ${VTK_DIR}/../teem-build)
+SET(TEEM_INCLUDE_DIRS ${TEEM_BUILD_DIR}/include)
+SET(TEEM_BUILD_LIB air hest biff nrrd ell unrrdu dye moss gage bane
+        limn hoover alan echo ten
+        mite coil )
+
+LINK_DIRECTORIES(
+${TEEM_BUILD_DIR}/bin
+)
+
+#
 # Subdirectories
 #
 
