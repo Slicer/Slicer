@@ -29,6 +29,7 @@
 
 class vtkImageData;
 class vtkDoubleArray;
+class vtkMatrix4x4;
 
 class VTK_MRML_EXPORT vtkMRMLTensorVolumeNode : public vtkMRMLVolumeNode
 {
@@ -60,15 +61,16 @@ class VTK_MRML_EXPORT vtkMRMLTensorVolumeNode : public vtkMRMLVolumeNode
   vtkSetMacro(Order,int);
   
   // Description:
-  void SetMeasurementFrame(const double mf[3][3]);
-  void SetMeasurementFrame(const double xr, const double xa, const double xs,
+  void SetMeasurementFrameMatrix(const double mf[3][3]);
+  void SetMeasurementFrameMatrix(const double xr, const double xa, const double xs,
                            const double yr, const double ya, const double ys,
                            const double zr, const double za, const double zs);
 
-  void GetMeasurementFrame(double mf[3][3]);
+  void GetMeasurementFrameMatrix(double mf[3][3]);
   
   // Description
-  //void GetMeasurementFrame(vtkMatrix4x4 *mat);
+  void SetMeasurementFrameMatrix(vtkMatrix4x4 *mat);
+  void GetMeasurementFrameMatrix(vtkMatrix4x4 *mat);
 
 protected:
   vtkMRMLTensorVolumeNode();
@@ -76,7 +78,7 @@ protected:
   vtkMRMLTensorVolumeNode(const vtkMRMLTensorVolumeNode&);
   void operator=(const vtkMRMLTensorVolumeNode&);
   
-  double MeasurementFrame[3][3];
+  double MeasurementFrameMatrix[3][3];
   int Order;
   
 };
