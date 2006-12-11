@@ -838,7 +838,7 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     this->ListSymbolTypeMenu->SetParent( glyphFrame );
     this->ListSymbolTypeMenu->Create();
     this->ListSymbolTypeMenu->SetBorderWidth(0);
-    this->ListSymbolTypeMenu->SetBalloonHelpString("Change the type of glyph used to mark the fiducial list points");
+    this->ListSymbolTypeMenu->SetBalloonHelpString("UNDER CONSTRUCTION: Change the type of glyph used to mark the fiducial list points");
     this->ListSymbolTypeMenu->SetLabelText("Set Glyph Type");
     // add the valid glyph types
     vtkMRMLFiducialListNode * fidlist = vtkMRMLFiducialListNode::New();
