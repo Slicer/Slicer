@@ -30,7 +30,6 @@
 
 #include "vtkITKImageToImageFilterFF.h"
 #include "itkGradientAnisotropicDiffusionImageFilter.h"
-#include "vtkObjectFactory.h"
 
 class VTK_ITK_EXPORT vtkITKGradientAnisotropicDiffusionImageFilter : public vtkITKImageToImageFilterFF
 {
@@ -89,9 +88,6 @@ private:
   vtkITKGradientAnisotropicDiffusionImageFilter(const vtkITKGradientAnisotropicDiffusionImageFilter&);  // Not implemented.
   void operator=(const vtkITKGradientAnisotropicDiffusionImageFilter&);  // Not implemented.
 };
-
-vtkCxxRevisionMacro(vtkITKGradientAnisotropicDiffusionImageFilter, "$Revision: 1.5 $");
-vtkStandardNewMacro(vtkITKGradientAnisotropicDiffusionImageFilter);
 
 #endif
 
