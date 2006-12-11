@@ -73,6 +73,89 @@ public:
   vtkGetMacro(LetterSize, double);
   vtkSetMacro(LetterSize, double);
 
+  // Description:
+  // Background color
+  vtkGetVector3Macro (BackgroundColor, double);
+  vtkSetVector3Macro (BackgroundColor, double);
+
+  // Description:
+  // Turn on and off animated spinning
+  vtkGetMacro (Spin, int );
+  vtkSetMacro (Spin, int );
+
+  // Description:
+  // Direction of animated spinning
+  vtkGetMacro ( SpinDirection, int );
+  vtkSetMacro ( SpinDirection, int );
+
+  // Description:
+  // Number of degrees in spin increment.
+  vtkGetMacro ( SpinDegrees, double );
+  vtkSetMacro ( SpinDegrees, double );
+
+  // Description:
+  // Amount of wait time between spin increments
+  vtkGetMacro ( SpinMs, int );
+  vtkSetMacro ( SpinMs, int );
+    
+  // Description:
+  // Turn on and off animated rocking
+  vtkGetMacro ( Rock, int );
+  vtkSetMacro ( Rock, int );
+
+  // Description:
+  // Length of animated rocking
+  vtkGetMacro ( RockLength, int );
+  vtkSetMacro ( RockLength, int );
+
+  // Description:
+  // Increment of animated rock
+  vtkGetMacro ( RockCount, int );
+  vtkSetMacro ( RockCount, int );
+
+  // Description:
+  // stereo mode (including nostereo)
+  vtkGetMacro ( StereoType, int );
+  vtkSetMacro ( StereoType, int );
+
+  // Description:
+  // specifies orthographic or perspective rendering
+  vtkGetMacro (RenderMode, int );
+  vtkSetMacro (RenderMode, int );
+  
+  //BTX
+  // Modes for controlling camera by clicking axes
+  enum
+    {
+      RotateAround = 0,
+      LookFrom
+    };
+    
+  // Rotate camera directions
+  enum
+    {
+      Up = 0,
+      Down,
+      Left,
+      Right
+    };
+    
+  // Stereo modes
+  enum
+    {
+      NoStereo = 0,
+      RedBlue,
+      CrystalEyes,
+      Interlaced
+    };
+
+  // render modes
+  enum
+    {
+      Perspective = 0,
+      Orthographic
+    };
+  //ETX 
 
 protected:
   vtkMRMLViewNode();
@@ -85,7 +168,28 @@ protected:
   int AxisLabelsVisible;
   double FieldOfView;
   double LetterSize;
+  double BackgroundColor[3];
   
+  // Description:
+  // parameters of automatic spin
+  int Spin;
+  int SpinDirection;
+  double SpinDegrees;
+  int SpinMs;
+
+  // Description:
+  // parameters of automatic rock
+  int Rock;
+  int RockLength;
+  int RockCount;
+
+  // Description:
+  // parameters for stereo viewing
+  int StereoType;
+
+  // Description:
+  // Specifies orthographic or perspective rendering
+  int RenderMode;
   
 };
 
