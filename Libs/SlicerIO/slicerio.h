@@ -18,7 +18,7 @@
 
 
 #include <stdio.h>
-#include "tcl.h"
+#include "vtkTcl.h"
 
 
 #ifdef __cplusplus
