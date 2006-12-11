@@ -62,6 +62,10 @@ vtkMRMLSliceCompositeNode::vtkMRMLSliceCompositeNode()
   this->ForegroundGrid = 0;
   this->BackgroundGrid = 0;
   this->LabelGrid = 0;
+  this->AnnotationSpace = vtkMRMLSliceCompositeNode::RAS;
+  this->AnnotationMode = vtkMRMLSliceCompositeNode::All;
+  this->CrosshairMode = vtkMRMLSliceCompositeNode::NoCrosshair;
+  this->CrosshairBehavior = vtkMRMLSliceCompositeNode::FollowMouse;
 
 }
 
@@ -90,6 +94,63 @@ void vtkMRMLSliceCompositeNode::WriteXML(ostream& of, int nIndent)
   of << indent << "backgroundGrid=\"" << this->BackgroundGrid << "\" ";
   of << indent << "labelGrid=\"" << this->LabelGrid << "\" ";
   of << indent << "layoutName=\"" << this->LayoutName << "\" ";
+
+  if ( this->AnnotationSpace == vtkMRMLSliceCompositeNode::XYZ)
+    {
+    of << indent << "annotationSpace=\"" << "xyz" << "\" ";
+    }
+  else if ( this->AnnotationSpace == vtkMRMLSliceCompositeNode::IJK)
+    {
+    of << indent << "annotationSpace=\"" << "ijk" << "\" ";
+    }
+  else if ( this->AnnotationSpace == vtkMRMLSliceCompositeNode::RAS)
+    {
+    of << indent << "annotationSpace=\"" << "RAS" << "\" ";
+    }
+
+  if ( this->AnnotationMode == vtkMRMLSliceCompositeNode::NoAnnotation )
+    {
+    of << indent << "annotationMode=\"" << "NoAnnotation" << "\" ";
+    }
+  else if ( this->AnnotationMode == vtkMRMLSliceCompositeNode::All )
+    {
+    of << indent << "annotationMode=\"" << "All" << "\" ";
+    }
+  if ( this->AnnotationMode == vtkMRMLSliceCompositeNode::LabelValuesOnly )
+    {
+    of << indent << "annotationMode=\"" << "LabelValuesOnly" << "\" ";
+    }
+  if ( this->AnnotationMode == vtkMRMLSliceCompositeNode::LabelAndVoxelValuesOnly )
+    {
+    of << indent << "annotationMode=\"" << "LabelAndVoxelValuesOnly" << "\" ";
+    }
+
+  if ( this->CrosshairMode == vtkMRMLSliceCompositeNode::NoCrosshair )
+    {
+    of << indent << "crosshairMode=\"" << "NoCrosshair" << "\" ";
+    }
+  else if ( this->CrosshairMode == vtkMRMLSliceCompositeNode::ShowBasic )
+    {
+    of << indent << "crosshairMode=\"" << "ShowBasic" << "\" ";
+    }
+  else if ( this->CrosshairMode == vtkMRMLSliceCompositeNode::ShowIntersection )
+    {
+    of << indent << "crosshairMode=\"" << "ShowIntersection" << "\" ";
+    }
+  else if ( this->CrosshairMode == vtkMRMLSliceCompositeNode::ShowHashmarks )
+    {
+    of << indent << "crosshairMode=\"" << "ShowHashmarks" << "\" ";
+    }
+  else if ( this->CrosshairMode == vtkMRMLSliceCompositeNode::ShowAll )
+    {
+    of << indent << "crosshairMode=\"" << "ShowAll" << "\" ";
+    }
+  
+  if ( this->CrosshairBehavior == vtkMRMLSliceCompositeNode::FollowMouse )
+    {
+    of << indent << "crosshairBehavior=\"" << "FollowMouse" << "\" ";
+    }
+
 }
 
 //----------------------------------------------------------------------------
@@ -147,23 +208,88 @@ void vtkMRMLSliceCompositeNode::ReadXMLAttributes(const char** atts)
       }
     else if (!strcmp(attName, "linkedControl")) 
       {
-      this->SetLinkedControl( atof(attValue) );
+      this->SetLinkedControl( atoi(attValue) );
       }    
     else if (!strcmp(attName, "foregroundGrid")) 
       {
-      this->SetForegroundGrid( atof(attValue) );
+      this->SetForegroundGrid( atoi(attValue) );
       }
     else if (!strcmp(attName, "backGrid")) 
       {
-      this->SetBackgroundGrid( atof(attValue) );
+      this->SetBackgroundGrid( atoi(attValue) );
       }
     else if (!strcmp(attName, "labelGrid")) 
       {
-      this->SetLabelGrid( atof(attValue) );
+      this->SetLabelGrid( atoi(attValue) );
       }    
    else if (!strcmp(attName, "layoutName")) 
       {
       this->SetLayoutName( attValue );
+      }
+
+    else if(!strcmp (attName, "annotationSpace" ))
+      {
+      if (!strcmp (attValue, "xyz"))
+        {
+        this->SetAnnotationSpace (vtkMRMLSliceCompositeNode::XYZ);
+        }
+      else if (!strcmp (attValue, "ijk"))
+        {
+        this->SetAnnotationSpace (vtkMRMLSliceCompositeNode::IJK);
+        }
+      else if (!strcmp (attValue, "RAS"))
+        {
+        this->SetAnnotationSpace  (vtkMRMLSliceCompositeNode::RAS);
+        }
+      }
+    else if(!strcmp (attName, "annotationMode" ))
+      {
+      if (!strcmp (attValue, "NoAnnotation"))
+        {
+        this->SetAnnotationMode (vtkMRMLSliceCompositeNode::NoAnnotation);
+        }
+      else if (!strcmp (attValue, "All"))
+        {
+        this->SetAnnotationMode (vtkMRMLSliceCompositeNode::All);
+        }
+      else if (!strcmp (attValue, "LabelValuesOnly"))
+        {
+        this->SetAnnotationMode (vtkMRMLSliceCompositeNode::LabelValuesOnly);
+        }
+      else if (!strcmp (attValue, "LabelAndVoxelValuesOnly"))
+        {
+        this->SetAnnotationMode (vtkMRMLSliceCompositeNode::LabelAndVoxelValuesOnly);
+        }
+      }
+    else if(!strcmp (attName, "crosshairMode" ))
+      {
+      if (!strcmp (attName, "NoCrosshair"))
+        {
+        this->SetCrosshairMode (vtkMRMLSliceCompositeNode::NoCrosshair);
+        }
+      else if (!strcmp (attName, "ShowBasic"))
+        {
+        this->SetCrosshairMode (vtkMRMLSliceCompositeNode::ShowBasic);
+        }
+      else if (!strcmp (attName, "ShowIntersection"))
+        {
+        this->SetCrosshairMode (vtkMRMLSliceCompositeNode::ShowIntersection);
+        }      
+      else if (!strcmp (attName, "ShowHashmarks"))
+        {
+        this->SetCrosshairMode ( vtkMRMLSliceCompositeNode::ShowHashmarks);
+        }
+      else if (!strcmp (attName, "ShowAll"))
+        {
+        this->SetCrosshairMode (vtkMRMLSliceCompositeNode::ShowAll);
+        }
+      }
+    else if (!strcmp (attName, "crosshairBehavior" ))
+      {
+      if ( !strcmp (attName, "FollowMouse"))
+        {
+        this->SetCrosshairBehavior ( vtkMRMLSliceCompositeNode::FollowMouse);
+        }
       }
     }
 }
@@ -184,6 +310,10 @@ void vtkMRMLSliceCompositeNode::Copy(vtkMRMLNode *anode)
   this->SetForegroundGrid ( node->GetForegroundGrid());
   this->SetBackgroundGrid ( node->GetBackgroundGrid());
   this->SetLabelGrid ( node->GetLabelGrid());
+  this->SetAnnotationSpace ( node->GetAnnotationSpace() );
+  this->SetAnnotationMode ( node->GetAnnotationMode() );
+  this->SetCrosshairMode ( node->GetCrosshairMode() );
+  this->SetCrosshairBehavior (node->GetCrosshairBehavior());
 }
 
 //----------------------------------------------------------------------------
@@ -203,6 +333,10 @@ void vtkMRMLSliceCompositeNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "ForegroundGrid: " << this->ForegroundGrid << "\n";
   os << indent << "BackgroundGrid: " << this->BackgroundGrid << "\n";
   os << indent << "LabelGrid: " << this->LabelGrid << "\n";
+  os << indent << "AnnotationSpace: " << this->AnnotationSpace << "\n";
+  os << indent << "AnnotationMode: " << this->AnnotationMode << "\n";
+  os << indent << "CrosshairMode: " << this->CrosshairMode << "\n";
+  os << indent << "CrosshairBehavior: " << this->CrosshairBehavior << "\n";
 }
 
 //----------------------------------------------------------------------------

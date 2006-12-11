@@ -102,9 +102,53 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
   vtkSetMacro (LabelGrid, int );
 
   // Description:
+  // configures the annotations
+  vtkGetMacro ( AnnotationSpace, int );
+  vtkSetMacro ( AnnotationSpace, int );
+  vtkGetMacro ( AnnotationMode, int );
+  vtkSetMacro ( AnnotationMode, int );
+  
+  // Description:
+  // configures the crosshair appearance and behavior
+  vtkGetMacro (CrosshairMode, int );
+  vtkSetMacro (CrosshairMode, int );  
+  vtkGetMacro (CrosshairBehavior, int );
+  vtkSetMacro (CrosshairBehavior, int );  
+
+  // Description:
   // Name of the layout
   vtkGetStringMacro (LayoutName);
   vtkSetStringMacro (LayoutName);
+
+  //BTX
+  // Modes for annotation space and mode
+  enum
+    {
+      XYZ = 0,
+      IJK,
+      RAS
+    };
+  enum
+    {
+      NoAnnotation = 0,
+      All,
+      LabelValuesOnly,
+      LabelAndVoxelValuesOnly
+    };
+  // Modes for crosshair display and behavior
+  enum
+    {
+      NoCrosshair = 0,
+      ShowBasic,
+      ShowIntersection,
+      ShowHashmarks,
+      ShowAll
+    };
+  enum
+    {
+      FollowMouse = 0
+    };
+  //ETX
 
 protected:
   vtkMRMLSliceCompositeNode();
@@ -116,11 +160,20 @@ protected:
   char *ForegroundVolumeID;
   char *LabelVolumeID;
   double ForegroundOpacity;
+
   double LabelOpacity;
   int LinkedControl;
+
   int ForegroundGrid;
   int BackgroundGrid;
   int LabelGrid;
+  
+  int AnnotationSpace;
+  int AnnotationMode;
+  
+  int CrosshairMode;
+  int CrosshairBehavior;
+  
   char* LayoutName;
 
 };
