@@ -35,10 +35,8 @@
 
 class vtkMRMLModelNode;
 class vtkMRMLModelDisplayNode;
-class vtkMRMLFiducialListNode;
-class vtkMRMLFiducialListDisplayNode;
-class vtkMRMLFiducial;
 class vtkPolyData;
+class vtkCellArray;
 class vtkActor;
 class vtkActorText;
 class vtkFollower;
@@ -105,10 +103,6 @@ public:
   // return the current node ID corresponding to a given vtkActor
   const char *GetIDByActor (vtkActor *actor);
   
-  // Description:
-  // return the current actor corresponding to a give MRML ID and fiducial index
-  vtkActor *GetFiducialActorByID(const char *id, int index);
-
   // Description: 
   // Post a request for a render -- won't be done until the system is
   // idle, and then only once....
@@ -134,6 +128,7 @@ public:
   // Updates Actors based on models in the scene
   void UpdateFromMRML();
 
+  
 protected:
   vtkSlicerViewerWidget();
   virtual ~vtkSlicerViewerWidget();
@@ -150,12 +145,9 @@ protected:
   int RenderPending;
 
   void RemoveModelProps();
-  void RemoveFiducialProps();
 
   void RemoveModelObservers();
-  void RemoveFiducialObservers();
 
-  void UpdateFiducialsFromMRML();
   void UpdateModelsFromMRML();
   void UpdateModel(vtkMRMLModelNode *model);
   void UpdateModelPolyData(vtkMRMLModelNode *model);
@@ -169,18 +161,11 @@ protected:
   int UpdateClipSlicesFormMRML();
 
   void SetModelDisplayProperty(vtkMRMLModelNode *model,  vtkActor *actor);
-  void SetFiducialDisplayProperty(vtkMRMLFiducialListNode *flist, int n,
-                                  vtkActor *actor, vtkFollower *textActor);
 
   //BTX
   std::map<const char *, vtkActor *> DisplayedModels;
-  std::map<const char *, vtkActor *> DisplayedFiducials;
-  std::map<const char *, vtkFollower *> DisplayedTextFiducials;
 
   std::map<const char *, int> DisplayedModelsClipState;
-
-  std::string GetFiducialActorID (const char *id, int index);
-  std::string GetFiducialNodeID (const char *actorid, int &index);
 
   std::vector<vtkFollower *> AxisLabelActors;
   //ETX
@@ -205,7 +190,7 @@ protected:
   int GreenSliceClipState;
 
   bool ClippingOn;
-
+  
   vtkMRMLCameraNode *CameraNode;
   vtkMRMLViewNode *ViewNode;
 

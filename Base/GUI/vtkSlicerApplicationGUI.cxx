@@ -117,6 +117,7 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
     
     //--- Main viewer, 3 main slice viewers and collection.
     this->ViewerWidget = NULL;
+    this->FiducialListWidget = NULL;
     this->MainSliceGUI0 = NULL;
     this->MainSliceGUI1 = NULL;
     this->MainSliceGUI2 = NULL;
@@ -790,7 +791,16 @@ void vtkSlicerApplicationGUI::DestroyMain3DViewer ( )
     {
       vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
       vtkSlicerGUILayout *layout = app->GetMainLayout ( );
-    
+
+      // Destroy fiducial list
+      if ( this->FiducialListWidget )
+      {
+          this->FiducialListWidget->RemoveMRMLObservers ();
+          this->FiducialListWidget->SetParent(NULL);
+          this->FiducialListWidget->Delete();
+          this->FiducialListWidget = NULL;
+      }
+      
       // Destroy main 3D viewer
       //
       if ( this->ViewerWidget )
@@ -978,7 +988,8 @@ void vtkSlicerApplicationGUI::CreateMain3DViewer ( int arrangementType )
           events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
           events->InsertNextValue(vtkCommand::ModifiedEvent);
           this->ViewerWidget->SetAndObserveMRMLSceneEvents (this->MRMLScene, events );
-          events->Delete();
+          // use the events for the fiducial list widget as well
+          //events->Delete();
           this->ViewerWidget->Create();
           this->ViewerWidget->GetMainViewer()->SetRendererBackgroundColor (app->GetSlicerTheme()->GetSlicerColors()->ViewerBlue );
           this->ViewerWidget->UpdateFromMRML();
@@ -990,6 +1001,15 @@ void vtkSlicerApplicationGUI::CreateMain3DViewer ( int arrangementType )
             {
               this->ViewerWidget->PackWidget();
             }
+
+          // add the fiducial list widget
+          this->FiducialListWidget = vtkSlicerFiducialListWidget::New();
+          this->FiducialListWidget->SetApplication( app );
+          this->FiducialListWidget->SetMainViewer(this->ViewerWidget->GetMainViewer());
+          this->FiducialListWidget->Create();
+          this->FiducialListWidget->SetAndObserveMRMLSceneEvents (this->MRMLScene, events );
+          events->Delete();
+          this->FiducialListWidget->UpdateFromMRML();
         }
     }
 }

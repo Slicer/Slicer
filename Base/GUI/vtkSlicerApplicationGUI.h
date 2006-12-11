@@ -37,6 +37,7 @@
 #include "vtkRenderWindow.h"
 #include "vtkRenderWindowInteractor.h"
 #include "vtkSlicerViewerWidget.h"
+#include "vtkSlicerFiducialListWidget.h"
 #include "vtkSlicerSliceGUI.h"
 #include "vtkSlicerSliceGUICollection.h"
 
@@ -66,6 +67,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // The main 3D Viewer Widget
     vtkGetObjectMacro (ViewerWidget, vtkSlicerViewerWidget);
 
+    // Description:
+    // The Fiducial List Widget
+    vtkGetObjectMacro (FiducialListWidget, vtkSlicerFiducialListWidget);
+    
     // Description:
     // A pointer to the SliceGUI's SliceGUICollection so
     // the three main Slice Viewers can be added and
@@ -247,6 +252,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkSlicerViewerWidget *ViewerWidget;
     double MainRendererBBox[6];
 
+    // Description:
+    // Fiducial List Widget
+    vtkSlicerFiducialListWidget *FiducialListWidget;
+    
     // Description:
     // Main 3 Slice Viewers
     vtkSlicerSliceGUI *MainSliceGUI0;

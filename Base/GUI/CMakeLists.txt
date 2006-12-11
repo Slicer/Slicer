@@ -67,6 +67,7 @@ SET(LIB_SRCS
   vtkSlicerTransformEditorWidget.cxx
   vtkSlicerMRMLTreeWidget.cxx
   vtkSlicerViewerWidget.cxx
+  vtkSlicerFiducialListWidget.cxx
   vtkSlicerModelDisplayWidget.cxx
   vtkSlicerMRMLSaveDataWidget.cxx
   vtkSlicerClipModelsWidget.cxx
