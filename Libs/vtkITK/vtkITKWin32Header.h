@@ -22,7 +22,7 @@
 #include <vtkITKConfigure.h>
 
 #if defined(WIN32) && !defined(VTKITK_STATIC)
-#if defined(VTKITK_EXPORTS)
+#if defined(vtkITK_EXPORTS)
 #define VTK_ITK_EXPORT __declspec( dllexport ) 
 #else
 #define VTK_ITK_EXPORT __declspec( dllimport ) 
