@@ -21,7 +21,7 @@
 
 #include <itkMGHImageIOConfigure.h>
 
-#if defined(WIN32) && !defined(MGHImageIO_STATIC)
+#if defined(WIN32) && !defined(MGHIO_STATIC)
 #if defined(MGHIO_EXPORTS)
 #define MGHImageIO_EXPORT __declspec( dllexport ) 
 #else

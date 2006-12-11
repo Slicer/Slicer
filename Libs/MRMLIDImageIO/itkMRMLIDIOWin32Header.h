@@ -21,7 +21,7 @@
 
 #include <itkMRMLIDImageIOConfigure.h>
 
-#if defined(WIN32) && !defined(MRMLIDImageIO_STATIC)
+#if defined(WIN32) && !defined(MRMLIDIO_STATIC)
 #if defined(MRMLIDIO_EXPORTS)
 #define MRMLIDImageIO_EXPORT __declspec( dllexport ) 
 #else
