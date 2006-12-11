@@ -42,7 +42,8 @@ SET(MRML_SRCS
         vtkMRMLDiffusionWeightedVolumeDisplayNode.cxx
         vtkMRMLDiffusionWeightedVolumeNode.cxx
         vtkMRMLDiffusionTensorVolumeNode.cxx
-        vtkMRMLDiffusionTensorVolumeDisplayNode.cxx  
+        vtkMRMLDiffusionTensorVolumeDisplayNode.cxx
+        vtkMRMLNRRDStorageNode.cxx
         # Note: when you add new node types, add
         # register code to the vtkMRMLScene constructor
 )
@@ -63,8 +64,11 @@ INCLUDE_DIRECTORIES(
   ${MRML_BINARY_DIR}
   ${vtkITK_SOURCE_DIR}
   ${vtkITK_BINARY_DIR}
+  ${vtkTeem_SOURCE_DIR}
+  ${vtkTeem_BINARY_DIR}
   ${ITK_INCLUDE_DIRS}
   ${VTK_INCLUDE_DIRS}
+  ${TEEM_INCLUDE_DIRS}
   ${FreeSurfer_SOURCE_DIR}
   ${FreeSurfer_BINARY_DIR}
   )
@@ -105,6 +109,7 @@ TARGET_LINK_LIBRARIES(MRML
   ITKIO
   ITKDICOMParser
   FreeSurfer
+  vtkTeem
   )
 
 
