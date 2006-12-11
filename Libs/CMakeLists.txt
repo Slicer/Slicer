@@ -13,5 +13,6 @@ SUBDIRS(
     ITKCommandIO
     MRMLIDImageIO
     MGHImageIO
+    vtkTeem
 )
 
