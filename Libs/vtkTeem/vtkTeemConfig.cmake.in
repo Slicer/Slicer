@@ -1,0 +1,5 @@
+# The vtkITK source and binary trees.
+SET(vtkTeem_SOURCE_DIR "@vtkTeem_SOURCE_DIR@")
+SET(vtkTeem_BINARY_DIR "@vtkTeem_BINARY_DIR@")
+SET(vtkTeem_LIB_DIR "@CMAKE_BINARY_DIR@/bin" "@CMAKE_BINARY_DIR@")
+SET(VTK_DIR "@VTK_DIR@")
