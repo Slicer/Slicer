@@ -16,6 +16,7 @@
 
 #include "vtkKWMenu.h"
 #include "vtkKWMenuButton.h"
+#include "vtkKWMenuButtonWithLabel.h"
 
 #include "vtkSlicerFiducialsGUI.h"
 
@@ -42,6 +43,7 @@ vtkSlicerFiducialsGUI::vtkSlicerFiducialsGUI ( )
     this->ListColorButton = NULL;
     this->ListSelectedColorButton = NULL;
     this->ListSymbolScale = NULL;
+    this->ListSymbolTypeMenu = NULL;
     this->ListTextScale = NULL;
     this->ListOpacity = NULL;
     
@@ -112,6 +114,12 @@ vtkSlicerFiducialsGUI::~vtkSlicerFiducialsGUI ( )
         this->ListSymbolScale = NULL;
     }
 
+    if (this->ListSymbolTypeMenu) {
+        this->ListSymbolTypeMenu->SetParent(NULL);
+        this->ListSymbolTypeMenu->Delete();
+        this->ListSymbolTypeMenu = NULL;
+    }
+    
     if (this->ListTextScale) {
         this->ListTextScale->SetParent(NULL);
         this->ListTextScale->Delete();
@@ -161,6 +169,7 @@ void vtkSlicerFiducialsGUI::RemoveGUIObservers ( )
     this->ListColorButton->RemoveObservers (vtkKWChangeColorButton::ColorChangedEvent, (vtkCommand *)this->GUICallbackCommand);
     this->ListSelectedColorButton->RemoveObservers (vtkKWChangeColorButton::ColorChangedEvent, (vtkCommand *)this->GUICallbackCommand);
     this->ListSymbolScale->RemoveObservers (vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+    this->ListSymbolTypeMenu->GetWidget()->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand);
     this->ListTextScale->RemoveObservers (vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
     this->ListOpacity->RemoveObservers (vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
     
@@ -181,6 +190,7 @@ void vtkSlicerFiducialsGUI::AddGUIObservers ( )
     this->ListColorButton->AddObserver (vtkKWChangeColorButton::ColorChangedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ListSelectedColorButton->AddObserver (vtkKWChangeColorButton::ColorChangedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ListSymbolScale->AddObserver (vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+    this->ListSymbolTypeMenu->GetWidget()->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand);
     this->ListTextScale->AddObserver (vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
     this->ListOpacity->AddObserver (vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
     
@@ -193,6 +203,8 @@ void vtkSlicerFiducialsGUI::AddGUIObservers ( )
 void vtkSlicerFiducialsGUI::ProcessGUIEvents ( vtkObject *caller,
                                             unsigned long event, void *callData )
 {
+  vtkDebugMacro("vtkSlicerFiducialsGUI::ProcessGUIEvents: event = " << event);
+  
     // process fiducial list node selector events
     vtkSlicerNodeSelectorWidget *fidListSelector = 
         vtkSlicerNodeSelectorWidget::SafeDownCast(caller);
@@ -344,6 +356,14 @@ void vtkSlicerFiducialsGUI::ProcessGUIEvents ( vtkObject *caller,
   {
       activeFiducialListNode->SetOpacity(this->ListOpacity->GetValue());
   }
+
+  // list symbol type
+  if (this->ListSymbolTypeMenu->GetWidget()->GetMenu() ==  vtkKWMenu::SafeDownCast(caller) &&
+      event == vtkKWMenu::MenuItemInvokedEvent)
+    {
+    vtkDebugMacro("Changing list glyph type to " << this->ListSymbolTypeMenu->GetWidget()->GetValue() << endl);
+    activeFiducialListNode->SetGlyphTypeFromString(this->ListSymbolTypeMenu->GetWidget()->GetValue());
+    }
   return;
 }
 
@@ -592,6 +612,16 @@ void vtkSlicerFiducialsGUI::SetGUIFromList(vtkMRMLFiducialListNode * activeFiduc
     }
     
 
+    // symbol glyph type
+    vtkDebugMacro("\tupdating the symbol glyph type to " << activeFiducialListNode->GetGlyphType() << endl);
+    const char * glyphType = activeFiducialListNode->GetGlyphTypeAsString();
+    if (this->ListSymbolTypeMenu != NULL &&
+        glyphType != this->ListSymbolTypeMenu->GetWidget()->GetValue())
+      {
+      vtkDebugMacro("\t\tmenu value was " << this->ListSymbolTypeMenu->GetWidget()->GetValue() << endl);
+      this->ListSymbolTypeMenu->GetWidget()->SetValue(glyphType);
+      }
+    
     // text scale
     vtkDebugMacro(<< "\tupdating the text scale.");
     scale = activeFiducialListNode->GetTextScale();
@@ -677,7 +707,7 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
                   this->UIPanel->GetPageWidget("Fiducials")->GetWidgetName());
   
     // node selector
-    this->FiducialListSelectorWidget = vtkSlicerNodeSelectorWidget::New() ;
+    this->FiducialListSelectorWidget = vtkSlicerNodeSelectorWidget::New();
     this->FiducialListSelectorWidget->SetParent(displayFrame->GetFrame());
     this->FiducialListSelectorWidget->Create();
     this->FiducialListSelectorWidget->SetNodeClass("vtkMRMLFiducialListNode", NULL, NULL, NULL);
@@ -729,7 +759,7 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
                 this->ListTextScale->GetWidgetName(), this->ListSymbolScale->GetWidgetName(),
                 scaleFrame->GetWidgetName());
 
-        // visibility and opacity frame
+        // visibility and opacity frame 
     vtkKWFrame *visibilityOpacityFrame = vtkKWFrame::New();
     visibilityOpacityFrame->SetParent ( displayFrame->GetFrame() );
     visibilityOpacityFrame->Create ( );
@@ -794,6 +824,40 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     app->Script("pack %s %s -side left -anchor w -padx 4 -pady 2 -in %s",
                 this->ListColorButton->GetWidgetName(), this->ListSelectedColorButton->GetWidgetName(),
                 colourFrame->GetWidgetName());
+
+    // glyph type frame
+    vtkKWFrame *glyphFrame = vtkKWFrame::New();
+    glyphFrame->SetParent ( displayFrame->GetFrame() );
+    glyphFrame->Create();
+    app->Script("pack %s -side top -anchor nw -fill x -pady 0 -in %s",
+                glyphFrame->GetWidgetName(),
+                displayFrame->GetFrame()->GetWidgetName());
+
+    // glyph type
+    this->ListSymbolTypeMenu = vtkKWMenuButtonWithLabel::New();
+    this->ListSymbolTypeMenu->SetParent( glyphFrame );
+    this->ListSymbolTypeMenu->Create();
+    this->ListSymbolTypeMenu->SetBorderWidth(0);
+    this->ListSymbolTypeMenu->SetBalloonHelpString("Change the type of glyph used to mark the fiducial list points");
+    this->ListSymbolTypeMenu->SetLabelText("Set Glyph Type");
+    // add the valid glyph types
+    vtkMRMLFiducialListNode * fidlist = vtkMRMLFiducialListNode::New();
+    int glyphIndex = 0;
+    for (int g = vtkMRMLFiducialListNode::GlyphMin;
+         g <= vtkMRMLFiducialListNode::GlyphMax;
+         g++)
+      {
+      this->ListSymbolTypeMenu->GetWidget()->GetMenu()->AddRadioButton(fidlist->GetGlyphTypeAsString(g));
+//      this->ListSymbolTypeMenu->GetWidget()->GetMenu()->SetItemSelectedValueAsInt(glyphIndex, g);      
+      glyphIndex++;
+      }
+    this->ListSymbolTypeMenu->GetWidget()->SetValue(fidlist->GetGlyphTypeAsString(vtkMRMLFiducialListNode::Diamond3D));
+    fidlist->Delete();
+    
+    // pack the glyph type
+    app->Script("pack %s -side left -anchor w -pady 0 -in %s",
+                this->ListSymbolTypeMenu->GetWidgetName(),
+                glyphFrame->GetWidgetName());
     
     // ---
     // LIST FRAME
@@ -894,6 +958,7 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     visibilityOpacityFrame->Delete ();
     scaleFrame->Delete();    
     displayFrame->Delete ( );
+    glyphFrame->Delete ( );
     listFrame->Delete();
     modHelpFrame->Delete ( );
 }

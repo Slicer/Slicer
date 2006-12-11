@@ -32,6 +32,7 @@ class vtkKWMessage;
 class vtkSlicerVisibilityIcons;
 class vtkKWChangeColorButton;
 class vtkKWScaleWithEntry;
+class vtkKWMenuButtonWithLabel;
 
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleGUI
 {
@@ -52,6 +53,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     vtkGetObjectMacro ( ListColorButton, vtkKWChangeColorButton);
     vtkGetObjectMacro ( ListSelectedColorButton, vtkKWChangeColorButton);
     vtkGetObjectMacro ( ListSymbolScale, vtkKWScaleWithEntry);
+    vtkGetObjectMacro ( ListSymbolTypeMenu, vtkKWMenuButtonWithLabel);
     vtkGetObjectMacro ( ListTextScale, vtkKWScaleWithEntry);
     vtkGetObjectMacro ( ListOpacity, vtkKWScaleWithEntry);
     vtkGetObjectMacro ( Logic, vtkSlicerFiducialsLogic);
@@ -161,6 +163,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     
     // symbol scale
     vtkKWScaleWithEntry *ListSymbolScale;
+    // symbol type
+    vtkKWMenuButtonWithLabel *ListSymbolTypeMenu;
     // text scale
     vtkKWScaleWithEntry *ListTextScale;
 
