@@ -173,9 +173,14 @@ void vtkMRMLNode::ReadXMLAttributes(const char** atts)
       }
     else if (!strcmp(attName, "hideFromEditors")) 
       {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> HideFromEditors;
+      if (!strcmp(attValue,"true")) 
+        {
+        this->HideFromEditors = 1;
+        }
+      else
+        {
+        this->HideFromEditors = 0;
+        }
       }
     } 
 
