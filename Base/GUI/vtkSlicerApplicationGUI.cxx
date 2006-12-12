@@ -588,9 +588,10 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
 
             // TODO: it would be nice to make this a menu option on the tkcon itself,
             // but for now just up the font size
-            this->MainSlicerWindow->Script(".vtkKWTkcon2.tab1 configure -font {Courier 12}");
 
             this->MainSlicerWindow->Create ( );        
+
+            app->GetTclInteractor()->SetFont("Courier 12");
 
             // configure initial GUI layout
             layout->InitializeMainSlicerWindowSize ( );
