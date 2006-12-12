@@ -191,7 +191,7 @@ void vtkSlicerMRMLTreeWidget::DeleteNodeCallback(const char *id)
 {
   // cout << "I want to delete MRML node " << id << endl;
   // delete node, then repopulate tree
-  for (int i=0; i<this->SelectedLeaves.size(); i++)
+  for (unsigned int i=0; i<this->SelectedLeaves.size(); i++)
     {
     vtkMRMLNode *node = this->GetMRMLScene()->GetNodeByID(this->SelectedLeaves[i].c_str());
     if (node != NULL)
@@ -206,7 +206,7 @@ void vtkSlicerMRMLTreeWidget::DeleteNodeCallback(const char *id)
 void vtkSlicerMRMLTreeWidget::PasteNodeCallback(const char *id)
 {
   vtkMRMLTransformNode *tnode = vtkMRMLTransformNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(id));
-  for (int i=0; i< this->CutNodes.size(); i++)
+  for (unsigned int i=0; i< this->CutNodes.size(); i++)
     {
     vtkMRMLTransformableNode *node = this->CutNodes[i];
     if (node != NULL)
@@ -243,7 +243,7 @@ void vtkSlicerMRMLTreeWidget::CutNodeCallback(const char *id)
   //cout << "I want to delete MRML node " << id << endl;
   this->ClearCutNodes();
 
-  for (int i=0; i<this->SelectedLeaves.size(); i++)
+  for (unsigned int i=0; i<this->SelectedLeaves.size(); i++)
     {
     vtkMRMLNode *node = this->GetMRMLScene()->GetNodeByID((const char *)this->SelectedLeaves[i].c_str());
     vtkMRMLTransformableNode *tnode = vtkMRMLTransformableNode::SafeDownCast(node);
@@ -550,7 +550,7 @@ int vtkSlicerMRMLTreeWidget::IsLeafSelected(const char *leaf)
 {
   vtksys_stl::string sleaf(leaf);
 
-  for (int i=0; i<this->SelectedLeaves.size(); i++)
+  for (unsigned int i=0; i<this->SelectedLeaves.size(); i++)
     {
     if (this->SelectedLeaves[i].compare(sleaf) == 0)
       {
@@ -562,7 +562,7 @@ int vtkSlicerMRMLTreeWidget::IsLeafSelected(const char *leaf)
 
 void vtkSlicerMRMLTreeWidget::ClearCutNodes()
 {
-  for (int i=0; i<this->CutNodes.size(); i++)
+  for (unsigned int i=0; i<this->CutNodes.size(); i++)
     {
     this->CutNodes[i]->UnRegister(this);
     }
