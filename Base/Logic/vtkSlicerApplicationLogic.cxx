@@ -405,7 +405,7 @@ bool vtkSlicerApplicationLogic::ScheduleTask( vtkSlicerTask *task )
     {
     this->ProcessingTaskQueueLock->Lock();
     (*this->InternalTaskQueue).push( task );
-    std::cout << (*this->InternalTaskQueue).size() << std::endl;
+    //std::cout << (*this->InternalTaskQueue).size() << std::endl;
     this->ProcessingTaskQueueLock->Unlock();
     
     return true;
