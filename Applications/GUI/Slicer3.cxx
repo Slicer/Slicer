@@ -40,6 +40,12 @@
 #include "vtkGradientAnisotropicDiffusionFilterLogic.h"
 #include "vtkGradientAnisotropicDiffusionFilterGUI.h"
 
+#define EMSEG_MODULE 0
+#if EMSEG_MODULE
+#include "vtkEMSegmentLogic.h"
+#include "vtkEMSegmentGUI.h"
+#endif
+
 #include "vtkQueryAtlasLogic.h"
 #include "vtkQueryAtlasGUI.h"
 
@@ -58,9 +64,7 @@
 #include <time.h>
 #include <stdlib.h>
 
-
-// splash screen to use
-#define SPLASH_FILENAME "./Resources/S3SplashScreen.png"
+#include "Resources/vtkSlicerSplashScreen_ImageData.h"
 
 #ifdef _WIN32
 #  define slicerCerr(x) \
@@ -85,6 +89,9 @@ extern "C" int Vtkitk_Init(Tcl_Interp *interp);
 extern "C" int Freesurfer_Init(Tcl_Interp *interp);
 
 //TODO added temporary
+#if EMSEG_MODULE
+extern "C" int Emsegment_Init(Tcl_Interp *interp);
+#endif
 extern "C" int Gradientanisotropicdiffusionfilter_Init(Tcl_Interp *interp);
 extern "C" int Queryatlas_Init(Tcl_Interp *interp);
 extern "C" int Slicerdaemon_Init(Tcl_Interp *interp);
@@ -373,6 +380,9 @@ int Slicer3_main(int argc, char *argv[])
     Vtkitk_Init(interp);
     Freesurfer_Init(interp);
     //TODO added temporary
+#if EMSEG_MODULE
+    Emsegment_Init(interp);
+#endif
     Gradientanisotropicdiffusionfilter_Init(interp);
     Queryatlas_Init(interp);
     Slicerdaemon_Init(interp);
@@ -426,40 +436,36 @@ int Slicer3_main(int argc, char *argv[])
     vtkSlicerApplication *slicerApp = vtkSlicerApplication::GetInstance ( );
     slicerApp->InstallTheme( slicerApp->GetSlicerTheme() );
 
-    vtksys_stl::string myTkName = slicerApp->GetSplashScreen()->GetWidgetName();
-    myTkName.append("_0");
-    vtkKWIcon *tmpIcon = vtkKWIcon::New();
-    tmpIcon->SetImage( image_Slicer3LogoVerticalAlpha,
-                                image_Slicer3LogoVerticalAlpha_width,
-                                image_Slicer3LogoVerticalAlpha_height,
-                                image_Slicer3LogoVerticalAlpha_pixel_size,
-                                image_Slicer3LogoVerticalAlpha_length, 0);
-    if (!vtkKWTkUtilities::UpdatePhoto(slicerApp,myTkName.c_str(),
-          tmpIcon->GetData(), tmpIcon->GetWidth(), tmpIcon->GetHeight(),
-          tmpIcon->GetPixelSize()))
+    // copy the image from the header file into memory
+
+    unsigned char *buffer = 
+      new unsigned char [image_S3SplashScreen_length];
+
+    unsigned int i;
+    unsigned char *curPos = buffer;
+    for (i = 0; i < image_S3SplashScreen_nb_sections; i++)
       {
-      vtkWarningWithObjectMacro(slicerApp, << "Error updating Tk photo " << myTkName.c_str());
-      } 
-    slicerApp->GetSplashScreen()->SetImageName(myTkName.c_str());
+      size_t len = strlen((const char*)image_S3SplashScreen_sections[i]);
+      memcpy(curPos, image_S3SplashScreen_sections[i], len);
+      curPos += len;
+      }
+
+    vtkKWTkUtilities::UpdatePhoto(
+      slicerApp->GetMainInterp(),
+      "S3SplashScreen", 
+      buffer, 
+      image_S3SplashScreen_width, 
+      image_S3SplashScreen_height,
+      image_S3SplashScreen_pixel_size,
+      image_S3SplashScreen_length);
+    delete [] buffer; 
+
+    slicerApp->GetSplashScreen()->SetImageName("S3SplashScreen");
     slicerApp->SupportSplashScreenOn();
     slicerApp->SplashScreenVisibilityOn();
-    slicerApp->GetSplashScreen()->SetProgressMessage("");
-    tmpIcon->Delete();
-
-/*
-    unsigned char *splash;
-    int wid, hit, sz;
-    if ( vtkKWResourceUtilities::ReadPNGImage ( SPLASH_FILENAME,
-                                                &wid, &hit, &sz, &splash ) )
-      {
-      slicerApp->GetSplashScreen()->SetImageToPixels ( splash, wid, hit, sz, (wid*hit*sz) );
-      slicerApp->SupportSplashScreenOn();
-      slicerApp->SplashScreenVisibilityOn();
-      slicerApp->GetSplashScreen()->SetProgressMessage("");
-      }
-    delete [] splash;
-*/
-
+    slicerApp->GetSplashScreen()->SetProgressMessageVerticalOffset(-25);
+    slicerApp->GetSplashScreen()->SetProgressMessage(
+      "Initializing Window...");
 
     // Create MRML scene
     vtkMRMLScene *scene = vtkMRMLScene::New();
@@ -477,6 +483,9 @@ int Slicer3_main(int argc, char *argv[])
     appLogic->ProcessMRMLEvents (scene, vtkCommand::ModifiedEvent, NULL);  
     appLogic->SetAndObserveMRMLScene ( scene );
     appLogic->CreateProcessingThread();
+
+    slicerApp->GetSplashScreen()->SetProgressMessage(
+      "Creating Application GUI...");
 
     // CREATE APPLICATION GUI, including the main window
     vtkSlicerApplicationGUI *appGUI = vtkSlicerApplicationGUI::New ( );
@@ -506,6 +515,9 @@ int Slicer3_main(int argc, char *argv[])
     // --- Volumes module
 
 #ifndef VOLUMES_DEBUG
+    slicerApp->GetSplashScreen()->SetProgressMessage(
+      "Initializing Volumes Module...");
+
     vtkSlicerVolumesLogic *volumesLogic = vtkSlicerVolumesLogic::New ( );
     volumesLogic->SetAndObserveMRMLScene ( scene );
     vtkSlicerVolumesGUI *volumesGUI = vtkSlicerVolumesGUI::New ( );
@@ -524,6 +536,8 @@ int Slicer3_main(int argc, char *argv[])
 #endif
 
 #ifndef MODELS_DEBUG
+    slicerApp->GetSplashScreen()->SetProgressMessage(
+      "Initializing Models Module...");
 
     // --- Models module    
     vtkSlicerModelsLogic *modelsLogic = vtkSlicerModelsLogic::New ( );
@@ -545,6 +559,9 @@ int Slicer3_main(int argc, char *argv[])
 
 
 #ifndef FIDUCIALS_DEBUG
+    slicerApp->GetSplashScreen()->SetProgressMessage(
+      "Initializing Fiducials Module...");
+
     // --- Fiducials module    
     vtkSlicerFiducialsLogic *fiducialsLogic = vtkSlicerFiducialsLogic::New ( );
     fiducialsLogic->SetAndObserveMRMLScene ( scene );
@@ -564,6 +581,9 @@ int Slicer3_main(int argc, char *argv[])
 #endif
 
 #ifndef COLORS_DEBUG
+    slicerApp->GetSplashScreen()->SetProgressMessage(
+      "Initializing Colors Module...");
+
     // -- Color module
      vtkSlicerColorLogic *colorLogic = vtkSlicerColorLogic::New ( );
      // observe the scene's new scene event
@@ -591,6 +611,9 @@ int Slicer3_main(int argc, char *argv[])
 #endif
     
     // --- Transforms module
+    slicerApp->GetSplashScreen()->SetProgressMessage(
+      "Initializing Transforms Module...");
+
     vtkSlicerTransformsGUI *transformsGUI = vtkSlicerTransformsGUI::New ( );
     transformsGUI->SetApplication ( slicerApp );
     transformsGUI->SetApplicationGUI ( appGUI );
@@ -605,6 +628,9 @@ int Slicer3_main(int argc, char *argv[])
     transformsGUI->AddGUIObservers ( );
 
     //--- Data module
+    slicerApp->GetSplashScreen()->SetProgressMessage(
+      "Initializing Data Module...");
+
     //vtkSlicerDataLogic *dataLogic = vtkSlicerDataLogic::New ( );
     //dataLogic->SetAndObserveMRMLScene ( scene );
     //dataLogic->SetApplicationLogic ( appLogic );
@@ -624,6 +650,9 @@ int Slicer3_main(int argc, char *argv[])
     dataGUI->AddObserver (vtkSlicerModuleGUI::ModuleSelectedEvent, (vtkCommand *)appGUI->GetGUICallbackCommand() );
   
 #ifndef CAMERA_DEBUG
+    slicerApp->GetSplashScreen()->SetProgressMessage(
+      "Initializing Camera Module...");
+
     // --- Camera module
     vtkSlicerCamerasGUI *cameraGUI = vtkSlicerCamerasGUI::New ( );
     cameraGUI->SetApplication ( slicerApp );
@@ -641,6 +670,8 @@ int Slicer3_main(int argc, char *argv[])
 #endif
 
     // --- Slices module
+    slicerApp->GetSplashScreen()->SetProgressMessage(
+      "Initializing Slices Module...");
     // - set up each of the slice logics (these initialize their
     //   helper classes and nodes the first time the process MRML and
     //   Logic events)
@@ -686,6 +717,8 @@ int Slicer3_main(int argc, char *argv[])
 
 
     // --- Gradient anisotropic diffusion filter module
+    slicerApp->GetSplashScreen()->SetProgressMessage(
+      "Initializing Gradient Anisotropic Module...");
     vtkGradientAnisotropicDiffusionFilterGUI *gradientAnisotropicDiffusionFilterGUI = vtkGradientAnisotropicDiffusionFilterGUI::New ( );
     vtkGradientAnisotropicDiffusionFilterLogic *gradientAnisotropicDiffusionFilterLogic  = vtkGradientAnisotropicDiffusionFilterLogic::New ( );
     gradientAnisotropicDiffusionFilterLogic->SetAndObserveMRMLScene ( scene );
@@ -703,8 +736,42 @@ int Slicer3_main(int argc, char *argv[])
     gradientAnisotropicDiffusionFilterGUI->BuildGUI ( );
     gradientAnisotropicDiffusionFilterGUI->AddGUIObservers ( );
 
+#if EMSEG_MODULE
+    //
+    // --- EMSegment Template builder module
+    //
+    vtkEMSegmentGUI *emSegmentGUI = 
+      vtkEMSegmentGUI::New ( );
+    vtkEMSegmentLogic *emSegmentLogic = 
+      vtkEMSegmentLogic::New ( );
+
+    emSegmentLogic->SetAndObserveMRMLScene(scene);
+    emSegmentLogic->SetApplicationLogic(appLogic);
+    // for now only have one node
+    emSegmentLogic->CreateAndObserveNewNodeSet();
+
+    emSegmentGUI->SetLogic(emSegmentLogic);
+    emSegmentGUI->SetApplication(slicerApp);
+    emSegmentGUI->SetApplicationLogic(appLogic);
+    emSegmentGUI->SetApplicationGUI(appGUI);
+    emSegmentGUI->SetGUIName("EMSegment");
+    emSegmentGUI->GetUIPanel()->
+      SetName(emSegmentGUI->GetGUIName());
+    emSegmentGUI->GetUIPanel()->
+      SetUserInterfaceManager(appGUI->GetMainSlicerWindow()->
+                              GetMainUserInterfaceManager());
+    emSegmentGUI->GetUIPanel()->Create();
+    slicerApp->AddModuleGUI(emSegmentGUI);
+    emSegmentGUI->BuildGUI();
+    emSegmentGUI->AddGUIObservers();
+    //
+    // --- END EMSegment Template builder module
+    //
+#endif
 
 #ifndef QUERYATLAS_DEBUG
+    slicerApp->GetSplashScreen()->SetProgressMessage(
+      "Initializing Query Atlas Module...");
     //--- Query Atlas Module
     vtkQueryAtlasGUI *queryAtlasGUI = vtkQueryAtlasGUI::New ( );
     vtkQueryAtlasLogic *queryAtlasLogic  = vtkQueryAtlasLogic::New ( );
@@ -812,6 +879,11 @@ int Slicer3_main(int argc, char *argv[])
       commandLineModuleGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
       commandLineModuleGUI->GetUIPanel()->Create ( );
       slicerApp->AddModuleGUI ( commandLineModuleGUI );
+
+      std::string progress_msg("Initializing ");
+      progress_msg +=  commandLineModuleGUI->GetGUIName ( );
+      progress_msg += " Module...";
+      slicerApp->GetSplashScreen()->SetProgressMessage(progress_msg.c_str());
 
       ++mit;
       }
@@ -1036,6 +1108,9 @@ int Slicer3_main(int argc, char *argv[])
     // ------------------------------
     // REMOVE OBSERVERS and references to MRML and Logic
     gradientAnisotropicDiffusionFilterGUI->RemoveGUIObservers ( );
+#if EMSEG_MODULE
+    emSegmentGUI->RemoveGUIObservers();
+#endif
 
 #ifndef QUERYATLAS_DEBUG
     queryAtlasGUI->RemoveGUIObservers ( );
@@ -1115,6 +1190,10 @@ int Slicer3_main(int argc, char *argv[])
     //--- delete gui first, removing Refs to Logic and MRML
 
     gradientAnisotropicDiffusionFilterGUI->Delete ();
+#if EMSEG_MODULE
+    emSegmentGUI->Delete();
+#endif
+
 #ifndef QUERYATLAS_DEBUG
     queryAtlasGUI->Delete ( );
 #endif
