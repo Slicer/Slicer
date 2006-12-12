@@ -125,7 +125,7 @@ SET(tclap_DIR ${Slicer3_BINARY_DIR}/Libs/tclap)
 #
 # Teem
 #
-OPTION(USE_TEEM "Build Slicer3 with teem support." ON)
+OPTION(USE_TEEM "Build Slicer3 with teem support." OFF)
 IF(USE_TEEM)
   SET(TEEM_DIR ${VTK_DIR}/../teem-build)
   FIND_PACKAGE(TEEM REQUIRED)
