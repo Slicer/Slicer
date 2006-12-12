@@ -121,7 +121,7 @@ ModuleFactory
 
   if (numberOfShared + numberOfExecutables == 0)
     {
-    vtkSlicerApplication::GetInstance()->GetLogDialog()->GetLogWidget()->AddWarningRecord( "No plugin modules found. Check your module search path and your Slicer installation." );
+    vtkSlicerApplication::GetInstance()->WarningMessage( "No plugin modules found. Check your module search path and your Slicer installation." );
     }
 }
 
@@ -135,7 +135,7 @@ ModuleFactory
   // and have a prescribed symbol.
   if (this->SearchPath == "")
     {
-    vtkSlicerApplication::GetInstance()->GetLogDialog()->GetLogWidget()->AddWarningRecord( "Empty module search path." );
+    vtkSlicerApplication::GetInstance()->WarningMessage( "Empty module search path." );
     return 0;
     }
   
@@ -250,14 +250,14 @@ ModuleFactory
         }
       }
 
-    vtkSlicerApplication::GetInstance()->GetLogDialog()->GetLogWidget()->AddInformationRecord( information.str().c_str() );
+    vtkSlicerApplication::GetInstance()->InformationMessage( information.str().c_str() );
     }
 
   std::stringstream information;
   information << "Tested " << numberTested << " files as shared object plugins. Found "
               << numberFound << " valid plugins." << std::endl;
 
-  vtkSlicerApplication::GetInstance()->GetLogDialog()->GetLogWidget()->AddInformationRecord( information.str().c_str() );
+  vtkSlicerApplication::GetInstance()->InformationMessage( information.str().c_str() );
 
   return numberFound;
 }
@@ -273,7 +273,7 @@ ModuleFactory
   //
   if (this->SearchPath == "")
     {
-    vtkSlicerApplication::GetInstance()->GetLogDialog()->GetLogWidget()->AddWarningRecord( "Empty module search path." ); 
+    vtkSlicerApplication::GetInstance()->WarningMessage( "Empty module search path." ); 
     return 0;
     }
   
@@ -433,13 +433,13 @@ ModuleFactory
         itksysProcess_Delete(process);
         }
       }
-    vtkSlicerApplication::GetInstance()->GetLogDialog()->GetLogWidget()->AddInformationRecord( information.str().c_str() );    
+    vtkSlicerApplication::GetInstance()->InformationMessage( information.str().c_str() );    
     }
 
   std::stringstream information;
   information << "Tested " << numberTested << " files as command line executable plugins. Found "
             << numberFound << " valid plugins." << std::endl;
-  vtkSlicerApplication::GetInstance()->GetLogDialog()->GetLogWidget()->AddInformationRecord( information.str().c_str() );
+  vtkSlicerApplication::GetInstance()->InformationMessage( information.str().c_str() );
 
   return numberFound;
 }
