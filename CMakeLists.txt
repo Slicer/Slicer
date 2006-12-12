@@ -125,17 +125,21 @@ SET(tclap_DIR ${Slicer3_BINARY_DIR}/Libs/tclap)
 #
 # Teem
 #
+OPTION(USE_TEEM "Build Slicer3 with teem support." ON)
+IF(USE_TEEM)
+  SET(TEEM_DIR ${VTK_DIR}/../teem-build)
+  FIND_PACKAGE(TEEM REQUIRED)
+  #SET(TEEM_INCLUDE_DIRS ${TEEM_BUILD_DIR}/include)
+  #SET(TEEM_BUILD_LIB air hest biff nrrd ell unrrdu dye moss gage bane
+  #        limn hoover alan echo ten
+  #        mite coil )
 
-SET(TEEM_BUILD_DIR ${VTK_DIR}/../teem-build)
-FIND_PACKAGE(TEEM REQUIRED)
-#SET(TEEM_INCLUDE_DIRS ${TEEM_BUILD_DIR}/include)
-#SET(TEEM_BUILD_LIB air hest biff nrrd ell unrrdu dye moss gage bane
-#        limn hoover alan echo ten
-#        mite coil )
-
-LINK_DIRECTORIES(
-${TEEM_LIBRARY_DIRS}
-)
+  IF( TEEM_FOUND )
+    LINK_DIRECTORIES(
+    ${TEEM_LIBRARY_DIRS}
+    )
+  ENDIF( TEEM_FOUND )
+ENDIF(USE_TEEM)
 
 #
 # Subdirectories

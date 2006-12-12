@@ -13,6 +13,10 @@ SUBDIRS(
     ITKCommandIO
     MRMLIDImageIO
     MGHImageIO
-    vtkTeem
 )
 
+IF( TEEM_FOUND )
+  SUBDIRS(
+      vtkTeem
+  )
+ENDIF( TEEM_FOUND )

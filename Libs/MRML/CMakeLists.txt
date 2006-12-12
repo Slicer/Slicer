@@ -109,9 +109,13 @@ TARGET_LINK_LIBRARIES(MRML
   ITKIO
   ITKDICOMParser
   FreeSurfer
-  vtkTeem
   )
 
+IF( TEEM_FOUND )
+  TARGET_LINK_LIBRARIES(MRML
+    vtkTeem
+  )
+ENDIF( TEEM_FOUND )
 
 # --------------------------------------------------------------------------
 # Testing (requires some of the examples)
