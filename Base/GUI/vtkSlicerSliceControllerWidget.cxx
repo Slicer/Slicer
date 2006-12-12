@@ -240,7 +240,7 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     this->OrientationMenu->GetLabel()->SetImageToIcon ( this->SliceControlIcons->GetSetOrIcon() );
     this->OrientationMenu->GetLabel()->SetBalloonHelpString ("Select orientation" );
     vtkKWMenuButton *mb = this->OrientationMenu->GetWidget()->GetWidget();
-    mb->SetWidth ( 8 );
+    mb->SetWidth ( 12 );
     mb->GetMenu()->AddRadioButton ( "Axial" );
     mb->GetMenu()->AddRadioButton ( "Sagittal" );
     mb->GetMenu()->AddRadioButton ( "Coronal" );
@@ -260,6 +260,7 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     this->ForegroundSelector->SetNodeClass ("vtkMRMLVolumeNode", NULL, NULL, NULL);
     this->ForegroundSelector->SetMRMLScene( this->MRMLScene );
     this->ForegroundSelector->GetWidget()->GetWidget()->SetMaximumLabelWidth(10);
+    this->ForegroundSelector->GetWidget()->GetWidget()->SetWidth(12);
 
     this->BackgroundSelector = vtkSlicerNodeSelectorWidget::New();
 //    this->BackgroundSelector->SetParent ( this->ColorCodeFrame->GetFrame() );
@@ -272,6 +273,7 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     this->BackgroundSelector->SetNodeClass ("vtkMRMLVolumeNode", NULL, NULL, NULL);
     this->BackgroundSelector->SetMRMLScene( this->MRMLScene );
     this->BackgroundSelector->GetWidget()->GetWidget()->SetMaximumLabelWidth(10);
+    this->BackgroundSelector->GetWidget()->GetWidget()->SetWidth(12);
 
     this->LabelSelector = vtkSlicerNodeSelectorWidget::New();
 //    this->LabelSelector->SetParent ( this->ColorCodeFrame->GetFrame() );
@@ -284,6 +286,7 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     this->LabelSelector->SetNodeClass ("vtkMRMLVolumeNode", NULL, NULL, NULL);
     this->LabelSelector->SetMRMLScene( this->MRMLScene );
     this->LabelSelector->GetWidget()->GetWidget()->SetMaximumLabelWidth(10);
+    this->LabelSelector->GetWidget()->GetWidget()->SetWidth(12);
 
     //
     // Create the frame to contain scale and visibility toggle
