@@ -43,10 +43,16 @@ SET(MRML_SRCS
         vtkMRMLDiffusionWeightedVolumeNode.cxx
         vtkMRMLDiffusionTensorVolumeNode.cxx
         vtkMRMLDiffusionTensorVolumeDisplayNode.cxx
-        vtkMRMLNRRDStorageNode.cxx
         # Note: when you add new node types, add
         # register code to the vtkMRMLScene constructor
 )
+
+IF( TEEM_FOUND )
+  SET(MRML_SRCS
+    ${MRML_SRCS}
+    vtkMRMLNRRDStorageNode.cxx
+  )
+ENDIF( TEEM_FOUND )
 
 # Abstract/pure virtual classes
 
