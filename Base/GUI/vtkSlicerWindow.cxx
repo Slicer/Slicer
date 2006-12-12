@@ -8,6 +8,7 @@ vtkCxxRevisionMacro(vtkSlicerWindow, "$Revision: 1.0 $");
 
 vtkSlicerWindow::vtkSlicerWindow()
 {
+  this->FeedbackMenu = NULL;
 }
 
 
@@ -18,7 +19,13 @@ vtkSlicerWindow::~vtkSlicerWindow()
     this->ApplicationSettingsInterface->Delete(); 
     this->ApplicationSettingsInterface = NULL;
     }
+  if (this->FeedbackMenu)
+    {
+    this->FeedbackMenu->Delete();
+    this->FeedbackMenu = NULL;
+    }
 }
+
 
 //----------------------------------------------------------------------------
 vtkKWApplicationSettingsInterface* 
@@ -37,4 +44,44 @@ vtkSlicerWindow::GetApplicationSettingsInterface()
     }
   return this->ApplicationSettingsInterface;
 }
+
+//----------------------------------------------------------------------------
+void vtkSlicerWindow::CreateWidget()
+{
+  // Check if already created
+
+  if (this->IsCreated())
+    {
+    vtkErrorMacro("class already created");
+    return;
+    }
+
+  // Call the superclass to create the whole widget
+
+  this->Superclass::CreateWidget();
+
+  vtkKWApplication *app = this->GetApplication();
+  if (!this->FeedbackMenu)
+    {
+    this->FeedbackMenu = vtkKWMenu::New();
+    }
+
+  if (!this->FeedbackMenu->IsCreated() && this->GetMenu() && this->IsCreated())
+    {
+    this->FeedbackMenu->SetParent(this->GetMenu());
+    this->FeedbackMenu->SetTearOff(0);
+    this->FeedbackMenu->Create();
+    // Usually at the end
+    this->GetMenu()->AddCascade("Feedback", this->FeedbackMenu);
+    }
+}
+
+
+//----------------------------------------------------------------------------
+void vtkSlicerWindow::UpdateMenuState()
+{
+  this->Superclass::UpdateMenuState();
+  this->PropagateEnableState(this->FeedbackMenu);
+}
+
 

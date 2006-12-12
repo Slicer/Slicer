@@ -43,6 +43,7 @@
 #include "vtkKWSplitFrame.h"
 #include "vtkKWUserInterfaceManagerNotebook.h"
 #include "vtkKWMessageDialog.h"
+#include "vtkKWToolbarSet.h"
 
 #include "vtkSlicerWindow.h"
 #include "vtkSlicerApplication.h"
@@ -590,7 +591,7 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
             // but for now just up the font size
 
             this->MainSlicerWindow->Create ( );        
-
+            
             app->GetTclInteractor()->SetFont("Courier 12");
 
             // configure initial GUI layout
@@ -627,6 +628,7 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
             vtkSlicerSlicesControlGUI *scGUI = this->GetSlicesControlGUI ( );
             scGUI->SetApplicationGUI ( this );
             scGUI->SetApplication ( app );
+            scGUI->SetAndObserveMRMLScene ( this->MRMLScene );
             scGUI->BuildGUI ( this->SlicesControlFrame->GetFrame() );
 #endif
 
@@ -635,6 +637,7 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
             vtkSlicerViewControlGUI *vcGUI = this->GetViewControlGUI ( );
             vcGUI->SetApplicationGUI ( this );
             vcGUI->SetApplication ( app );
+            vcGUI->SetAndObserveMRMLScene ( this->MRMLScene );
             vcGUI->BuildGUI ( this->ViewControlFrame->GetFrame() );
 #endif
 
@@ -691,28 +694,22 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
                       this->GetMainSlicerWindow()->GetViewMenuInsertPosition(),
                                       "Three Slices", NULL, "$::slicer3::ApplicationGUI UnpackMainSliceViewerFrames ; $::slicer3::ApplicationGUI PackFirstSliceViewerFrame ");
 
-
-            //i = this->MainSlicerWindow->GetWindowMenu()->AddCommand ( ? );
-            //i = this->MainSlicerWindow->GetHelpMenu()->AddCommand ( ? );
             //
             // Help Menu
             //
             this->GetMainSlicerWindow()->GetHelpMenu()->InsertCommand (
                                                                        this->GetMainSlicerWindow()->GetHelpMenuInsertPosition(),
                                                                        "Browse tutorials (not yet available)", NULL, "$::slicer3::ApplicationGUI OpenTutorialsLink");
-            this->GetMainSlicerWindow()->GetHelpMenu()->InsertCommand (
-                                                                       this->GetMainSlicerWindow()->GetHelpMenuInsertPosition(),
-                                                                       "Feedback: report a bug (www)", NULL, "$::slicer3::ApplicationGUI OpenBugLink");
-            this->GetMainSlicerWindow()->GetHelpMenu()->InsertCommand (
-                                                                       this->GetMainSlicerWindow()->GetHelpMenuInsertPosition(),
-                                                                       "Feedback: report usability issue (www)", NULL, "$::slicer3::ApplicationGUI OpenUsabilityLink");
-            this->GetMainSlicerWindow()->GetHelpMenu()->InsertCommand (
-                                                                       this->GetMainSlicerWindow()->GetHelpMenuInsertPosition(),
-                                                                       "Feedback: make a feature request (www)", NULL, "$::slicer3::ApplicationGUI OpenFeatureLink");
-            this->GetMainSlicerWindow()->GetHelpMenu()->InsertCommand (
-                                                                       this->GetMainSlicerWindow()->GetHelpMenuInsertPosition(),
-                                                                       "Community: Slicer Visual Blog (www)", NULL, "$::slicer3::ApplicationGUI PostToVisualBlog");            
 
+            //
+            // Feedback Menu
+            //
+            this->GetMainSlicerWindow()->GetFeedbackMenu()->AddCommand ("Feedback: report a bug (www)", NULL, "$::slicer3::ApplicationGUI OpenBugLink");
+            this->GetMainSlicerWindow()->GetFeedbackMenu()->AddCommand ("Feedback: report usability issue (www)", NULL, "$::slicer3::ApplicationGUI OpenUsabilityLink");
+            this->GetMainSlicerWindow()->GetFeedbackMenu()->AddCommand ("Feedback: make a feature request (www)", NULL, "$::slicer3::ApplicationGUI OpenFeatureLink");
+            this->GetMainSlicerWindow()->GetFeedbackMenu()->AddCommand ("Community: Slicer Visual Blog (www)", NULL, "$::slicer3::ApplicationGUI PostToVisualBlog");            
+
+            
             this->LoadSceneDialog->SetParent ( this->MainSlicerWindow );
             this->LoadSceneDialog->Create ( );
             this->LoadSceneDialog->SetFileTypes("{ {MRML Scene} {*.mrml} }");
@@ -933,7 +930,7 @@ void vtkSlicerApplicationGUI::BuildMainViewer ( int arrangementType)
 
   if ( this->GetApplication() != NULL )
     {
-      vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
+      vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());
       vtkSlicerColor *color = app->GetSlicerTheme()->GetSlicerColors ( );
       vtkSlicerGUILayout *layout = app->GetMainLayout ( );
       vtkSlicerWindow *win = this->MainSlicerWindow;

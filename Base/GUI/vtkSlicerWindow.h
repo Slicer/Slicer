@@ -11,6 +11,7 @@
 #include "vtkSlicerBaseGUIWin32Header.h"
 
 #include "vtkKWWindow.h"
+#include "vtkKWMenu.h"
 
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerWindow : public vtkKWWindow
 {
@@ -18,6 +19,7 @@ public:
   static vtkSlicerWindow* New();
   vtkTypeRevisionMacro(vtkSlicerWindow,vtkKWWindow);
 
+  vtkGetObjectMacro ( FeedbackMenu, vtkKWMenu );
   // Description:
   // Get the Application Settings Interface as well as the Application
   // Settings User Interface Manager.
@@ -27,8 +29,16 @@ protected:
   vtkSlicerWindow();
   virtual ~vtkSlicerWindow();
 
+  vtkKWMenu *FeedbackMenu;
+
+  // Description:
+  // Create the widget.
+  virtual void CreateWidget();
+  virtual void UpdateMenuState();
+
   vtkSlicerWindow(const vtkSlicerWindow&); // Not implemented
   void operator=(const vtkSlicerWindow&); // Not implemented
+
   
 };
 
