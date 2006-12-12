@@ -43,8 +43,6 @@ SET(SlicerBaseLogic_SRCS
 # Include dirs
 
 INCLUDE_DIRECTORIES(
-  ${SlicerBaseGUI_SOURCE_DIR}
-  ${SlicerBaseGUI_BINARY_DIR}
   ${SlicerBaseLogic_SOURCE_DIR}
   ${SlicerBaseLogic_BINARY_DIR}
   ${MRML_SOURCE_DIR}
@@ -75,7 +73,7 @@ ENDIF(BUILD_SHARED_LIBS)
 
 TARGET_LINK_LIBRARIES(SlicerBaseLogic 
   MRML
-  SlicerBaseGUI
+  ${KWWidgets_LIBRARIES}
   vtkITK
   vtkCommonTCL
   vtkFilteringTCL

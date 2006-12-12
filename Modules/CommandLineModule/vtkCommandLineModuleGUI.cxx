@@ -22,9 +22,7 @@ Version:   $Revision$
 
 #include "vtkCommand.h"
 #include "vtkSmartPointer.h"
-#include "vtkKWApplication.h"
 #include "vtkKWWidget.h"
-#include "vtkSlicerApplication.h"
 #include "vtkSlicerApplicationLogic.h"
 #include "vtkSlicerNodeSelectorWidget.h"
 #include "vtkKWScaleWithEntry.h"
@@ -35,7 +33,6 @@ Version:   $Revision$
 #include "vtkKWMenu.h"
 #include "vtkKWEntry.h"
 #include "vtkKWFrame.h"
-#include "vtkSlicerApplication.h"
 #include "vtkKWFrameWithLabel.h"
 #include "vtkKWPushButton.h"
 #include "vtkKWLabel.h"

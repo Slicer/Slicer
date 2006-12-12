@@ -31,8 +31,6 @@ Version:   $Revision: 1.2 $
 #include "vtkMRMLModelStorageNode.h"
 #include "vtkMRMLModelDisplayNode.h"
 
-#include "vtkSlicerApplication.h"
-
 #include "itksys/Process.h"
 #include "itksys/SystemTools.hxx"
 #include "itksys/RegularExpression.hxx"
@@ -161,7 +159,7 @@ void vtkCommandLineModuleLogic::Apply()
 
   if (!ret)
     {
-    vtkSlicerApplication::GetInstance()->WarningMessage( "Could not schedule task" );
+    vtkWarningMacro( << "Could not schedule task" );
     }
   else
     {
@@ -750,7 +748,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
       {
       std::string tmp(" standard error:\n\n");
       stderrbuffer.insert(0, node->GetModuleDescription().GetTitle()+tmp);
-      vtkSlicerApplication::GetInstance()->ErrorMessage( stderrbuffer.c_str() );
+      vtkErrorMacro( << stderrbuffer.c_str() );
       }
     
     // check the exit state / error state of the process
@@ -775,7 +773,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
           std::stringstream information;
           information << node->GetModuleDescription().GetTitle()
                       << " completed with errors" << std::endl;
-          vtkSlicerApplication::GetInstance()->ErrorMessage( information.str().c_str() );
+          vtkErrorMacro( << information.str().c_str() );
           node->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors, false);
           this->GetApplicationLogic()->RequestModified( node );
           }
@@ -785,7 +783,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
         std::stringstream information;
         information << node->GetModuleDescription().GetTitle()
                     << " timed out" << std::endl;
-        vtkSlicerApplication::GetInstance()->ErrorMessage( information.str().c_str() );
+        vtkErrorMacro( << information.str().c_str() );
         node->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors, false);
         this->GetApplicationLogic()->RequestModified( node );
         }
@@ -823,7 +821,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
         information << node->GetModuleDescription().GetTitle()
                   << " unknown termination. " << result << std::endl;
           }
-        vtkSlicerApplication::GetInstance()->ErrorMessage( information.str().c_str() );
+        vtkErrorMacro( << information.str().c_str() );
         node->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors, false);
         this->GetApplicationLogic()->RequestModified( node );
         }
@@ -860,7 +858,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
         std::string tmp(" standard error:\n\n");
         tmp = node->GetModuleDescription().GetTitle()+tmp;
 
-        vtkSlicerApplication::GetInstance()->ErrorMessage( (tmp + cerrstringstream.str()).c_str() );
+        vtkErrorMacro( << (tmp + cerrstringstream.str()).c_str() );
         }
 
       // reset the streams
@@ -883,7 +881,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
         {
         information << node->GetModuleDescription().GetTitle()
                     << " terminated with an exception: " << exc;
-        vtkSlicerApplication::GetInstance()->ErrorMessage( information.str().c_str() );
+        vtkErrorMacro( << information.str().c_str() );
         node->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors, false);
         this->GetApplicationLogic()->RequestModified( node );
         }
@@ -896,7 +894,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
       std::stringstream information;
       information << node->GetModuleDescription().GetTitle()
                 << " terminated with an unknown exception." << std::endl;
-      vtkSlicerApplication::GetInstance()->ErrorMessage( information.str().c_str() );
+      vtkErrorMacro( << information.str().c_str() );
       node->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors, false);
       this->GetApplicationLogic()->RequestModified( node );
 
@@ -964,8 +962,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
         {
         std::stringstream information;
         information << "Unable to delete temporary file " << *fit << std::endl;
-        vtkSlicerApplication::GetInstance()
-          ->WarningMessage( information.str().c_str() );
+        vtkWarningMacro( << information.str().c_str() );
         }
       }
     }

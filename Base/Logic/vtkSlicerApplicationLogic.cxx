@@ -16,6 +16,7 @@
 #include "vtkSlicerApplicationLogic.h"
 
 #include "vtkKWTkUtilities.h"
+#include "vtkKWApplication.h"
 
 #include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLModelNode.h"
@@ -24,7 +25,6 @@
 #include "vtkMRMLModelStorageNode.h"
 
 #include "vtkSlicerTask.h"
-#include "vtkSlicerApplication.h"
 
 #include "itksys/SystemTools.hxx"
 
@@ -294,9 +294,9 @@ void vtkSlicerApplicationLogic::CreateProcessingThread()
     this->ReadDataQueueActive = true;
     this->ReadDataQueueActiveLock->Unlock();
 
-    vtkKWTkUtilities::CreateTimerHandler(vtkSlicerApplication::GetInstance(),
+    vtkKWTkUtilities::CreateTimerHandler(vtkKWApplication::GetMainInterp(),
                                          100, this, "ProcessModified");
-    vtkKWTkUtilities::CreateTimerHandler(vtkSlicerApplication::GetInstance(),
+    vtkKWTkUtilities::CreateTimerHandler(vtkKWApplication::GetMainInterp(),
                                          100, this, "ProcessReadData");
     }
 }
@@ -509,7 +509,7 @@ void vtkSlicerApplicationLogic::ProcessModified()
     }
   
   // schedule the next timer
-  vtkKWTkUtilities::CreateTimerHandler(vtkSlicerApplication::GetInstance(),
+  vtkKWTkUtilities::CreateTimerHandler(vtkKWApplication::GetMainInterp(),
                                        100, this, "ProcessModified");
 }
 
@@ -559,14 +559,14 @@ void vtkSlicerApplicationLogic::ProcessReadData()
           std::stringstream information;
           information << "Exception while reading " << req.GetFilename()
                       << ", " << exc;
-          vtkSlicerApplication::GetInstance()->ErrorMessage( information.str().c_str() );
+          vtkErrorMacro( << information.str().c_str() );
           }
         catch (...)
           {
           std::stringstream information;
           information << "Unknown exception while reading "
                       << req.GetFilename();
-          vtkSlicerApplication::GetInstance()->ErrorMessage( information.str().c_str() );
+          vtkErrorMacro( << information.str().c_str() );
           }
         
         in->Delete();
@@ -601,8 +601,7 @@ void vtkSlicerApplicationLogic::ProcessReadData()
           std::stringstream information;
           information << "Unable to delete temporary file "
                       << req.GetFilename() << std::endl;
-          vtkSlicerApplication::GetInstance()
-            ->WarningMessage( information.str().c_str() );
+          vtkWarningMacro( << information.str().c_str() );
           }
         }
       }
@@ -630,7 +629,7 @@ void vtkSlicerApplicationLogic::ProcessReadData()
     }
   
   // schedule the next timer
-  vtkKWTkUtilities::CreateTimerHandler(vtkSlicerApplication::GetInstance(),
+  vtkKWTkUtilities::CreateTimerHandler(vtkKWApplication::GetMainInterp(),
                                        100, this, "ProcessReadData");
 }
 
