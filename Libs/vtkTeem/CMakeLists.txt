@@ -28,8 +28,6 @@ SET(vtkTeem_SRCS
 #  WRAP_EXCLUDE
 #  )
 
-MESSAGE("Teem build: ${TEEM_BUILD_DIR}")
-MESSAGE("VTK INCLUDE: ${VTK_INCLUDE_DIRS}")
 # --------------------------------------------------------------------------
 # Include dirs
 
@@ -66,7 +64,8 @@ TARGET_LINK_LIBRARIES(vtkTeem
   vtkCommon
   vtkFiltering
   vtkImaging
-  ${TEEM_BUILD_LIB}
+  vtkIOTCL
+  ${TEEM_LIBRARIES}
   )
 
 
