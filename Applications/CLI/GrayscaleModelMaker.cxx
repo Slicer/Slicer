@@ -268,5 +268,50 @@ int main(int argc, char * argv[])
     // TODO: add progress
     writer->Write();
 
+// Cleanup
+    if (reader)
+      {
+      reader->Delete();
+      }
+    if (ici)
+      {
+      ici->Delete();
+      }
+    if (transformIJKtoRAS)
+      {
+      transformIJKtoRAS->Delete();
+      }
+    if (mcubes)
+      {
+      mcubes->Delete();
+      }
+    if (decimator)
+      {
+      decimator->Delete();
+      }
+    if (reverser)
+      {
+      reverser->Delete();
+      }
+    if (smootherSinc)
+      {
+      smootherSinc->Delete();
+      }
+    if (transformer)
+      {
+      transformer->Delete();
+      }
+    if (normals)
+      {
+      normals->Delete();
+      }
+    if (stripper)
+      {
+      stripper->Delete();
+      }
+    if (writer)
+      {
+      writer->Delete();
+      }
     return EXIT_SUCCESS;
 }
