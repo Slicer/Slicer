@@ -1010,10 +1010,10 @@ void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
       this->RotateAroundButton->SetValueAsInt ( 101 );
       //--- Radiobutton to select view look from direction
       this->LookFromButton->SetParent ( f3 );
+      this->LookFromButton->Create ( );
       this->LookFromButton->SetReliefToFlat ( );
       this->LookFromButton->SetBorderWidth ( 0 );
       this->LookFromButton->SetOverReliefToNone ( );
-      this->LookFromButton->Create ( );
       this->LookFromButton->SetImageToIcon ( this->SlicerViewControlIcons->GetLookFromButtonIcon() );
       this->LookFromButton->SetBalloonHelpString ( "Set the 3D view control mode to 'look from' selected direction");
       this->LookFromButton->SetValueAsInt ( 202 );
