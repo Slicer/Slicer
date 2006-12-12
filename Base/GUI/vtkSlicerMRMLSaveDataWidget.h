@@ -109,6 +109,8 @@ private:
 
   vtkKWPushButton *OkButton;
 
+  vtkKWPushButton *CancelButton;
+
   vtkKWMultiColumnListWithScrollbars *MultiColumnList;
 
 
