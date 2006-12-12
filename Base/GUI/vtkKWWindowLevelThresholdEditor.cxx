@@ -63,7 +63,8 @@ vtkKWWindowLevelThresholdEditor::~vtkKWWindowLevelThresholdEditor()
     }
   if (this->ImageData)
     {
-    this->SetImageData(NULL);
+    this->ImageData->Delete();
+    this->ImageData = NULL;
     }
 
   if ( this->LevelEntry ) 
