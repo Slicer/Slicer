@@ -82,7 +82,8 @@ INCLUDE(${KWWidgets_USE_FILE})
 
 INCLUDE("${KWWidgets_CMAKE_DIR}/KWWidgetsPathsMacros.cmake")
 KWWidgets_GENERATE_SETUP_PATHS_SCRIPTS(
-  "${EXECUTABLE_OUTPUT_PATH}" "Slicer3SetupPaths")
+  "${EXECUTABLE_OUTPUT_PATH}" "Slicer3SetupPaths" "${TEEM_DIR}/bin")
+  
 
 # VTK 5.0 does not have VTK_CMAKE_DIR
 # Alternatively you could use KWWidget's wrapping, which encapsulate

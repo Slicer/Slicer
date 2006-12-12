@@ -119,7 +119,7 @@ INSTALL_TARGETS(/bin Slicer3${SLICER_EXE_SUFFIX})
 
 INCLUDE("${KWWidgets_CMAKE_DIR}/KWWidgetsPathsMacros.cmake")
 KWWidgets_GENERATE_SETUP_PATHS_LAUNCHER(
-  "${CMAKE_CURRENT_BINARY_DIR}" "Slicer3Launcher" "" "Slicer3-real")
+  "${CMAKE_CURRENT_BINARY_DIR}" "Slicer3Launcher" "" "Slicer3-real" "${TEEM_DIR}/bin")
 
 
 #
