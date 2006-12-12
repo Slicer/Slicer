@@ -514,7 +514,6 @@ void vtkSlicerModuleChooseGUI::PopulateModuleSearchMenu ( const char *searchStri
       
         // construct a menu of matching module names
         //
-        int index;
         ModuleSet::iterator mit;
         mit = matchingModuleNames.begin();
       
