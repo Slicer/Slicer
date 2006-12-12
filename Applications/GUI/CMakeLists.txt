@@ -59,6 +59,10 @@ INCLUDE_DIRECTORIES(
   ${GradientAnisotropicDiffusionFilter_BINARY_DIR}
   ${GradientAnisotropicDiffusionFilter_Init_SOURCE_DIR}
   ${GradientAnisotropicDiffusionFilter_Init_BINARY_DIR}
+#  ${EMSegment_SOURCE_DIR}
+#  ${EMSegment_BINARY_DIR}
+#  ${EMSegment_Init_SOURCE_DIR}
+#  ${EMSegment_Init_BINARY_DIR}
   ${QueryAtlas_SOURCE_DIR}
   ${QueryAtlas_BINARY_DIR}
   ${QueryAtlas_Init_SOURCE_DIR}
@@ -95,6 +99,7 @@ TARGET_LINK_LIBRARIES( Slicer3${SLICER_EXE_SUFFIX}
     SlicerBaseGUI
     MRML
     GradientAnisotropicDiffusionFilter
+#    EMSegment
     QueryAtlas
     CommandLineModule
     ScriptedModule
@@ -121,6 +126,21 @@ INCLUDE("${KWWidgets_CMAKE_DIR}/KWWidgetsPathsMacros.cmake")
 KWWidgets_GENERATE_SETUP_PATHS_LAUNCHER(
   "${CMAKE_CURRENT_BINARY_DIR}" "Slicer3Launcher" "" "Slicer3-real" "${TEEM_DIR}/bin")
 
+# If needed, copy the Tcl/Tk support files required at run-time 
+# to initialize Tcl/Tk. This is only triggered if VTK was built
+# against a Tcl/Tk static library.
+
+IF(VTK_TCL_TK_COPY_SUPPORT_LIBRARY)
+  IF(VTK_TCL_SUPPORT_LIBRARY_PATH AND VTK_TK_SUPPORT_LIBRARY_PATH)
+    INCLUDE(${VTK_TCL_TK_MACROS_MODULE})
+    VTK_COPY_TCL_TK_SUPPORT_FILES_TO_DIR(
+      ${VTK_TCL_SUPPORT_LIBRARY_PATH} ${VTK_TK_SUPPORT_LIBRARY_PATH}
+      "${Slicer3_BINARY_DIR}/lib")
+    VTK_COPY_TCL_TK_SUPPORT_FILES_TO_DIR(
+      ${VTK_TCL_SUPPORT_LIBRARY_PATH} ${VTK_TK_SUPPORT_LIBRARY_PATH}
+      "/lib" INSTALL)
+  ENDIF(VTK_TCL_SUPPORT_LIBRARY_PATH AND VTK_TK_SUPPORT_LIBRARY_PATH)
+ENDIF(VTK_TCL_TK_COPY_SUPPORT_LIBRARY)
 
 #
 # use the command line utilities
