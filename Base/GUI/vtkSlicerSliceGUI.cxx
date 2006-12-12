@@ -382,3 +382,26 @@ void vtkSlicerSliceGUI::UngridGUI ()
     this->Script("pack forget %s", SliceViewer->GetRenderWidget()->GetWidgetName());
 }
 
+//---------------------------------------------------------------------------
+void vtkSlicerSliceGUI::SetupViewerAndController()
+{
+  vtkImageData *idata = NULL;
+  if ( this->GetLogic() )
+    {
+    idata = this->GetLogic()->GetImageData();
+    
+    vtkMRMLSliceNode *snode = this->GetLogic()->GetSliceNode();
+    this->GetSliceController()->SetSliceNode (snode);
+    
+    vtkMRMLSliceCompositeNode *scnode = this->GetLogic()->GetSliceCompositeNode();
+    this->GetSliceController()->SetSliceCompositeNode (scnode);
+    
+    this->GetSliceController()->SetSliceLogic( this->GetLogic() );
+    }
+
+  if ( this->GetSliceViewer() && this->GetSliceViewer()->GetImageMapper() )
+    {
+    this->GetSliceViewer()->GetImageMapper()->SetInput( idata );
+    }
+}
+

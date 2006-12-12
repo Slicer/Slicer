@@ -19,6 +19,7 @@
 #include "vtkKWMenuButton.h"
 #include "vtkKWPushButton.h"
 #include "vtkKWTkUtilities.h"
+#include "vtkKWIcon.h"
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro ( vtkSlicerSliceControllerWidget );
@@ -45,8 +46,9 @@ vtkSlicerSliceControllerWidget::vtkSlicerSliceControllerWidget ( ) {
   this->SliceCompositeNode = NULL;
   this->SliceLogic = NULL;
   this->ScaleFrame = NULL;
-  this->ColorCodeFrame = NULL;
+  this->ColorCodeButton = NULL;
   this->SliceControlIcons = NULL;
+  this->ContainerFrame = NULL;
 }
 
 
@@ -98,7 +100,6 @@ vtkSlicerSliceControllerWidget::~vtkSlicerSliceControllerWidget ( ){
         this->LabelOpacityTopLevel->Delete  ( );
         this->LabelOpacityTopLevel = NULL;
     }
-
     if ( this->LinkButton ) {
         this->LinkButton->SetParent(NULL);
         this->LinkButton->Delete  ( );
@@ -112,19 +113,23 @@ vtkSlicerSliceControllerWidget::~vtkSlicerSliceControllerWidget ( ){
         this->SliceControlIcons->Delete  ( );
         this->SliceControlIcons = NULL;
     }
-
     if ( this->ScaleFrame )
       {
         this->ScaleFrame->SetParent(NULL);
         this->ScaleFrame->Delete ( );
         this->ScaleFrame = NULL;
       }
-    if ( this->ColorCodeFrame )
+    if ( this->ColorCodeButton )
       {
-        this->ColorCodeFrame->SetParent(NULL);
-        this->ColorCodeFrame->Delete ( );
-        this->ColorCodeFrame = NULL;
+        this->ColorCodeButton->SetParent(NULL);
+        this->ColorCodeButton->Delete ( );
+        this->ColorCodeButton = NULL;
       }
+    if ( this->ContainerFrame ) {
+        this->ContainerFrame->SetParent(NULL);
+        this->ContainerFrame->Delete ( );
+        this->ContainerFrame = NULL;
+    }
 
     this->SetSliceNode ( NULL );
     this->SetSliceCompositeNode ( NULL );
@@ -190,7 +195,7 @@ void vtkSlicerSliceControllerWidget::RemoveWidgetObservers ( ) {
 //---------------------------------------------------------------------------
 void vtkSlicerSliceControllerWidget::ApplyColorCode ( double *c )
 {
-  this->ColorCodeFrame->SetBackgroundColor (c[0], c[1], c[2] );
+  this->ColorCodeButton->SetBackgroundColor (c[0], c[1], c[2] );
 }
 
 
@@ -217,24 +222,24 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     // A stripe that color codes the SliceGUI this controller belongs to.
     //
 
-    this->ColorCodeFrame = vtkKWFrame::New ( );
-    this->ColorCodeFrame->SetParent ( this );
-    this->ColorCodeFrame->Create ( );
-    this->ColorCodeFrame->SetHeight ( 7 );
+    this->ColorCodeButton = vtkKWPushButton::New ( );
+    this->ColorCodeButton->SetParent ( this );
+    this->ColorCodeButton->Create ( );
+    this->ColorCodeButton->SetBorderWidth (0 );
+    this->ColorCodeButton->SetImageToPredefinedIcon (vtkKWIcon::IconSpinDown );
+    this->ColorCodeButton->SetHeight (7 );
+    this->ColorCodeButton->SetCommand (this, "Shrink");
+    this->ColorCodeButton->SetBalloonHelpString ("Click to shrink/expand" );
 
-/*
-    this->ColorCodeFrame = vtkSlicerModuleCollapsibleFrame::New ( );
-    this->ColorCodeFrame->SetParent ( this );
-    this->ColorCodeFrame->Create ( );
-    this->ColorCodeFrame->SetAllowFrameToCollapse(1);
-    this->ColorCodeFrame->ExpandFrame();
-*/
+    this->ContainerFrame = vtkKWFrame::New ( );
+    this->ContainerFrame->SetParent ( this );
+    this->ContainerFrame->Create ( );
+
     //
     // Orientation  (TODO: make this into a vtkSlicerOrientationWidget)
     //
     this->OrientationMenu = vtkKWMenuButtonWithSpinButtonsWithLabel::New ();
-//    this->OrientationMenu->SetParent ( this->ColorCodeFrame->GetFrame() );
-    this->OrientationMenu->SetParent ( this );
+    this->OrientationMenu->SetParent ( this->ContainerFrame );
     this->OrientationMenu->Create ( );    
     this->OrientationMenu->GetWidget()->GetWidget()->SetFont ( "-Adobe-Helvetica-Bold-R-Normal-*-9-*-*-*-*-*-*-*" );
     this->OrientationMenu->GetLabel()->SetImageToIcon ( this->SliceControlIcons->GetSetOrIcon() );
@@ -250,8 +255,7 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     // Foreground, Background, and Label selections
     //
     this->ForegroundSelector = vtkSlicerNodeSelectorWidget::New();
-//    this->ForegroundSelector->SetParent ( this->ColorCodeFrame->GetFrame() );
-   this->ForegroundSelector->SetParent ( this );
+   this->ForegroundSelector->SetParent ( this->ContainerFrame );
     this->ForegroundSelector->Create ( );
     this->ForegroundSelector->NoneEnabledOn();
     this->ForegroundSelector->GetWidget()->GetWidget()->SetFont ( "-Adobe-Helvetica-Bold-R-Normal-*-9-*-*-*-*-*-*-*" );
@@ -263,8 +267,7 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     this->ForegroundSelector->GetWidget()->GetWidget()->SetWidth(12);
 
     this->BackgroundSelector = vtkSlicerNodeSelectorWidget::New();
-//    this->BackgroundSelector->SetParent ( this->ColorCodeFrame->GetFrame() );
-    this->BackgroundSelector->SetParent ( this );
+    this->BackgroundSelector->SetParent ( this->ContainerFrame );
     this->BackgroundSelector->Create ( );
     this->BackgroundSelector->NoneEnabledOn();
     this->BackgroundSelector->GetWidget()->GetWidget()->SetFont ( "-Adobe-Helvetica-Bold-R-Normal-*-9-*-*-*-*-*-*-*" );
@@ -276,8 +279,7 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     this->BackgroundSelector->GetWidget()->GetWidget()->SetWidth(12);
 
     this->LabelSelector = vtkSlicerNodeSelectorWidget::New();
-//    this->LabelSelector->SetParent ( this->ColorCodeFrame->GetFrame() );
-    this->LabelSelector->SetParent ( this );
+    this->LabelSelector->SetParent ( this->ContainerFrame );
     this->LabelSelector->Create ( );
     this->LabelSelector->NoneEnabledOn();
     this->LabelSelector->GetWidget()->GetWidget()->SetFont ( "-Adobe-Helvetica-Bold-R-Normal-*-9-*-*-*-*-*-*-*" );
@@ -292,8 +294,7 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     // Create the frame to contain scale and visibility toggle
     //
     this->ScaleFrame = vtkKWFrame::New ();
-//    this->ScaleFrame->SetParent ( this->ColorCodeFrame->GetFrame() );
-    this->ScaleFrame->SetParent ( this );
+    this->ScaleFrame->SetParent ( this->ContainerFrame );
     this->ScaleFrame->Create ( );
 
     //
@@ -371,19 +372,35 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     this->OffsetScale->SetEntryWidth(8);
     this->OffsetScale->SetLabelPositionToLeft();
             
-    this->Script ( "grid %s -sticky ew -columnspan 2", this->ColorCodeFrame->GetWidgetName ( ) );
-    this->Script("grid %s %s -sticky ew", 
-                 this->OrientationMenu->GetWidgetName(), this->ForegroundSelector->GetWidgetName());
-    this->Script("grid %s %s -sticky ew", 
-            this->LabelSelector->GetWidgetName(), this->BackgroundSelector->GetWidgetName());
-    this->Script ( "grid %s -sticky ew -columnspan 2", this->ScaleFrame->GetWidgetName ( ) );
-    this->Script ("pack %s -side left -expand n -padx 1", this->LinkButton->GetWidgetName ( ) );
-    this->Script ("pack %s -side left -expand n -padx 1", this->VisibilityToggle->GetWidgetName ( ) );
-    this->Script ("pack %s -side left -expand n -padx 1", this->LabelOpacityButton->GetWidgetName ( ) );
-    this->Script("pack %s -side left -fill x -expand y", this->OffsetScale->GetWidgetName());
-    this->Script("grid columnconfigure %s 0 -weight 1", this->GetWidgetName());
-    this->Script("grid columnconfigure %s 1 -weight 1", this->GetWidgetName());
+    this->Script ( "pack %s -side top -expand 1 -fill x", 
+                   this->ColorCodeButton->GetWidgetName ( ));
+    this->Script ("pack %s -side bottom -expand 1 -fill x", 
+                  this->ContainerFrame->GetWidgetName());
+
+    this->Script("grid columnconfigure %s 0 -weight 1", 
+                 this->ContainerFrame->GetWidgetName());
+    this->Script("grid columnconfigure %s 1 -weight 1", 
+                 this->ContainerFrame->GetWidgetName());
     
+
+    this->Script("grid %s %s -sticky ew", 
+                 this->OrientationMenu->GetWidgetName(), 
+                 this->ForegroundSelector->GetWidgetName());
+    this->Script("grid %s %s -sticky ew", 
+                 this->LabelSelector->GetWidgetName(), 
+                 this->BackgroundSelector->GetWidgetName());
+    this->Script ( "grid %s -sticky ew -columnspan 2", 
+                   this->ScaleFrame->GetWidgetName ( ) );
+
+    this->Script ("pack %s -side left -expand n -padx 1", 
+                  this->LinkButton->GetWidgetName ( ) );
+    this->Script ("pack %s -side left -expand n -padx 1", 
+                  this->VisibilityToggle->GetWidgetName ( ) );
+    this->Script ("pack %s -side left -expand n -padx 1", 
+                  this->LabelOpacityButton->GetWidgetName ( ) );
+    this->Script("pack %s -side left -fill x -expand y", 
+                 this->OffsetScale->GetWidgetName());
+
     // put observers on widgets
     this->AddWidgetObservers();
 }
@@ -739,8 +756,6 @@ void vtkSlicerSliceControllerWidget::PopUpLabelOpacityScaleAndEntry ( )
   this->LabelOpacityTopLevel->Raise();
 }
 
-
-
 //----------------------------------------------------------------------------
 void vtkSlicerSliceControllerWidget::LinkAllSlices  ( )
 {
@@ -942,6 +957,38 @@ void vtkSlicerSliceControllerWidget::ProcessMRMLEvents ( vtkObject *caller, unsi
   if ( modified )
     {
     this->Modified();
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerSliceControllerWidget::Shrink() 
+{ 
+  if (this->ContainerFrame && this->ContainerFrame->IsPacked())
+    {
+    if (this->ColorCodeButton)
+      {
+      this->ColorCodeButton->SetImageToPredefinedIcon (vtkKWIcon::IconSpinUp );
+      this->ColorCodeButton->SetCommand (this, "Expand");
+      }
+    this->Script ("pack forget %s", 
+                  this->ContainerFrame->GetWidgetName());
+    this->InvokeEvent(vtkSlicerSliceControllerWidget::ShrinkEvent, NULL);
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerSliceControllerWidget::Expand() 
+{ 
+  if (this->ContainerFrame && !this->ContainerFrame->IsPacked())
+    {
+    if (this->ColorCodeButton)
+      {
+      this->ColorCodeButton->SetImageToPredefinedIcon (vtkKWIcon::IconSpinDown );
+      this->ColorCodeButton->SetCommand (this, "Shrink");
+      }
+    this->Script ("pack %s -side bottom -expand 1 -fill x", 
+                  this->ContainerFrame->GetWidgetName());
+    this->InvokeEvent(vtkSlicerSliceControllerWidget::ExpandEvent, NULL);
     }
 }
 

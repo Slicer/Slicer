@@ -55,6 +55,7 @@
 #include "vtkSlicerColor.h"
 #include "vtkSlicerMRMLSaveDataWidget.h"
 #include "vtkSlicerApplicationSettingsInterface.h"
+#include "vtkSlicerSliceControllerWidget.h"
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerApplicationGUI);
@@ -370,7 +371,33 @@ void vtkSlicerApplicationGUI::AddGUIObservers ( )
 #ifndef LOGODISPLAY_DEBUG
   this->GetLogoDisplayGUI ( )->AddGUIObservers ( );
 #endif
-
+  if (this->MainSliceGUI0)
+    {
+    this->MainSliceGUI0->GetSliceController()->AddObserver(
+      vtkSlicerSliceControllerWidget::ExpandEvent, 
+      (vtkCommand *)this->GUICallbackCommand);
+    this->MainSliceGUI0->GetSliceController()->AddObserver(
+      vtkSlicerSliceControllerWidget::ShrinkEvent, 
+      (vtkCommand *)this->GUICallbackCommand);
+    }
+  if (this->MainSliceGUI1)
+    {
+    this->MainSliceGUI1->GetSliceController()->AddObserver(
+      vtkSlicerSliceControllerWidget::ExpandEvent, 
+      (vtkCommand *)this->GUICallbackCommand);
+    this->MainSliceGUI1->GetSliceController()->AddObserver(
+      vtkSlicerSliceControllerWidget::ShrinkEvent, 
+      (vtkCommand *)this->GUICallbackCommand);
+    }
+  if (this->MainSliceGUI2)
+    {
+    this->MainSliceGUI2->GetSliceController()->AddObserver(
+      vtkSlicerSliceControllerWidget::ExpandEvent, 
+      (vtkCommand *)this->GUICallbackCommand);
+    this->MainSliceGUI2->GetSliceController()->AddObserver(
+      vtkSlicerSliceControllerWidget::ShrinkEvent, 
+      (vtkCommand *)this->GUICallbackCommand);
+    }
 }
 
 
@@ -396,12 +423,34 @@ void vtkSlicerApplicationGUI::RemoveGUIObservers ( )
     this->GetLogoDisplayGUI ( )->RemoveGUIObservers ( );
 #endif    
     this->RemoveMainSliceViewerObservers ( );
-
+  if (this->MainSliceGUI0)
+    {
+    this->MainSliceGUI0->GetSliceController()->RemoveObservers(
+      vtkSlicerSliceControllerWidget::ExpandEvent, 
+      (vtkCommand *)this->GUICallbackCommand);
+    this->MainSliceGUI0->GetSliceController()->RemoveObservers(
+      vtkSlicerSliceControllerWidget::ShrinkEvent, 
+      (vtkCommand *)this->GUICallbackCommand);
+    }
+  if (this->MainSliceGUI1)
+    {
+    this->MainSliceGUI1->GetSliceController()->RemoveObservers(
+      vtkSlicerSliceControllerWidget::ExpandEvent, 
+      (vtkCommand *)this->GUICallbackCommand);
+    this->MainSliceGUI1->GetSliceController()->RemoveObservers(
+      vtkSlicerSliceControllerWidget::ShrinkEvent, 
+      (vtkCommand *)this->GUICallbackCommand);
+    }
+  if (this->MainSliceGUI2)
+    {
+    this->MainSliceGUI2->GetSliceController()->RemoveObservers(
+      vtkSlicerSliceControllerWidget::ExpandEvent, 
+      (vtkCommand *)this->GUICallbackCommand);
+    this->MainSliceGUI2->GetSliceController()->RemoveObservers(
+      vtkSlicerSliceControllerWidget::ShrinkEvent, 
+      (vtkCommand *)this->GUICallbackCommand);
+    }
 }
-
-
-
-
 
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::ProcessGUIEvents ( vtkObject *caller,
@@ -428,6 +477,42 @@ void vtkSlicerApplicationGUI::ProcessGUIEvents ( vtkObject *caller,
   vtkSlicerMRMLSaveDataWidget *saveDataWidget = vtkSlicerMRMLSaveDataWidget::SafeDownCast(caller);
   if (saveDataWidget == this->SaveDataWidget && event == vtkSlicerMRMLSaveDataWidget::DataSavedEvent)
     {
+    }
+
+  vtkSlicerSliceControllerWidget *controller_caller = 
+    vtkSlicerSliceControllerWidget::SafeDownCast(caller);
+  if (caller)
+    {
+    if (event == vtkSlicerSliceControllerWidget::ExpandEvent) 
+      {
+      if (this->MainSliceGUI0)
+        {
+        this->MainSliceGUI0->GetSliceController()->Expand();
+        }
+      if (this->MainSliceGUI1)
+        {
+        this->MainSliceGUI1->GetSliceController()->Expand();
+        }
+      if (this->MainSliceGUI2)
+        {
+        this->MainSliceGUI2->GetSliceController()->Expand();
+        }
+      }
+    else if (event == vtkSlicerSliceControllerWidget::ShrinkEvent) 
+      {
+      if (this->MainSliceGUI0)
+        {
+        this->MainSliceGUI0->GetSliceController()->Shrink();
+        }
+      if (this->MainSliceGUI1)
+        {
+        this->MainSliceGUI1->GetSliceController()->Shrink();
+        }
+      if (this->MainSliceGUI2)
+        {
+        this->MainSliceGUI2->GetSliceController()->Shrink();
+        }
+      }
     }
 
   // check to see if any caller belongs to SliceControllerGUI

@@ -94,6 +94,19 @@ public:
   virtual void HideLabelOpacityScaleAndEntry ( );
   virtual void PopUpLabelOpacityScaleAndEntry ( );
 
+  // Description:
+  // Shrink/Expand the widget
+  virtual void Shrink();
+  virtual void Expand();
+
+  //BTX
+  enum 
+  {
+    ExpandEvent = 15000,
+    ShrinkEvent
+  };
+  //ETX
+
 protected:
   vtkSlicerSliceControllerWidget ( );
   virtual ~vtkSlicerSliceControllerWidget ( );
@@ -104,6 +117,8 @@ protected:
 
   // TODO: hook this up
   int ControllerStyle;
+
+  vtkKWFrame *ContainerFrame;
 
   //
   // Slice controller subwidgets
@@ -122,8 +137,7 @@ protected:
   vtkSlicerVisibilityIcons *VisibilityIcons;
   vtkSlicerSlicesControlIcons *SliceControlIcons;
   vtkKWFrame *ScaleFrame;
-//  vtkSlicerModuleCollapsibleFrame *ColorCodeFrame;
-  vtkKWFrame *ColorCodeFrame;
+  vtkKWPushButton *ColorCodeButton;
 
   //
   // Nodes

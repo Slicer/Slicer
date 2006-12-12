@@ -11,7 +11,6 @@
 #include "vtkSlicerBaseGUIWin32Header.h"
 #include "vtkSlicerComponentGUI.h"
 #include "vtkSlicerSliceViewer.h"
-#include "vtkSlicerSliceControllerWidget.h"
 #include "vtkSlicerSliceLogic.h"
 
 #include "vtkMRMLSliceNode.h"
@@ -22,6 +21,7 @@
 
 class vtkObject;
 class vtkKWFrame;
+class vtkSlicerSliceControllerWidget;
 
 // Description:
 // This class implements Slicer's Slice GUI.
@@ -66,27 +66,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceGUI : public vtkSlicerComponentGU
         this->SetupViewerAndController();
         }
 
-    void SetupViewerAndController()
-      {
-        vtkImageData *idata = NULL;
-        if ( this->GetLogic() )
-          {
-          idata = this->GetLogic()->GetImageData();
-
-          vtkMRMLSliceNode *snode = this->GetLogic()->GetSliceNode();
-          this->GetSliceController()->SetSliceNode (snode);
-
-          vtkMRMLSliceCompositeNode *scnode = this->GetLogic()->GetSliceCompositeNode();
-          this->GetSliceController()->SetSliceCompositeNode (scnode);
-
-          this->GetSliceController()->SetSliceLogic( this->GetLogic() );
-          }
-
-        if ( this->GetSliceViewer() && this->GetSliceViewer()->GetImageMapper() )
-          {
-          this->GetSliceViewer()->GetImageMapper()->SetInput( idata );
-          }
-      }
+  void SetupViewerAndController();
 
     // Description:
     // Build the SlicesGUI's UIPanel and three main SliceGUIs 
