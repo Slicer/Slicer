@@ -25,6 +25,7 @@ Version:   $Revision$
 #include "vtkKWWidget.h"
 #include "vtkSlicerApplicationLogic.h"
 #include "vtkSlicerNodeSelectorWidget.h"
+#include "vtkSlicerModuleCollapsibleFrame.h"
 #include "vtkKWScaleWithEntry.h"
 #include "vtkKWEntryWithLabel.h"
 #include "vtkKWMenuButtonWithLabel.h"
@@ -737,7 +738,7 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
   this->UIPanel->AddPage ( title.c_str(), title.c_str(), NULL );
 
   // HELP FRAME
-  vtkKWFrameWithLabel *helpFrame = vtkKWFrameWithLabel::New ( );
+  vtkSlicerModuleCollapsibleFrame *helpFrame = vtkSlicerModuleCollapsibleFrame::New ( );
   helpFrame->SetParent ( this->UIPanel->GetPageWidget ( title.c_str() ) );
   helpFrame->Create ( );
   // helpFrame->CollapseFrame ( );
@@ -764,7 +765,7 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
   helpMessage->Delete();
   helpFrame->Delete();
   
-  vtkKWFrameWithLabel *moduleFrame = vtkKWFrameWithLabel::New ( );
+  vtkSlicerModuleCollapsibleFrame *moduleFrame = vtkSlicerModuleCollapsibleFrame::New ( );
   moduleFrame->SetParent ( this->UIPanel->GetPageWidget ( title.c_str() ) );
   moduleFrame->Create ( );
   moduleFrame->SetLabelText (title.c_str());
@@ -816,7 +817,7 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
   for (pgit = pgbeginit; pgit != pgendit; ++pgit)
     {
     // each parameter group is its own labeled frame
-    vtkKWFrameWithLabel *parameterGroupFrame = vtkKWFrameWithLabel::New ( );
+    vtkSlicerModuleCollapsibleFrame *parameterGroupFrame = vtkSlicerModuleCollapsibleFrame::New ( );
     parameterGroupFrame->SetParent ( moduleFrame->GetFrame() );
     parameterGroupFrame->Create ( );
     parameterGroupFrame->SetLabelText ((*pgit).GetLabel().c_str());
