@@ -880,17 +880,17 @@ int Slicer3_main(int argc, char *argv[])
       commandLineModuleGUI->GetUIPanel()->Create ( );
       slicerApp->AddModuleGUI ( commandLineModuleGUI );
 
-      std::string progress_msg("Initializing ");
-      progress_msg +=  commandLineModuleGUI->GetGUIName ( );
-      progress_msg += " Module...";
-      slicerApp->GetSplashScreen()->SetProgressMessage(progress_msg.c_str());
-
       ++mit;
       }
     // -- Build the factory discovered modules gui and observers
     mit = moduleNames.begin();
     while ( mit != moduleNames.end() )
       {
+      std::string progress_msg("Initializing ");
+      progress_msg +=  (*mit) ;
+      progress_msg += " Module...";
+      slicerApp->GetSplashScreen()->SetProgressMessage(progress_msg.c_str());
+
       vtkSlicerModuleGUI *module;
       module = slicerApp->GetModuleGUIByName( (*mit).c_str() );
 

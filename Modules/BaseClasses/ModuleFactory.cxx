@@ -10,8 +10,8 @@
 #include "itksys/Process.h"
 
 #include "vtkSlicerApplication.h"
-#include "vtkKWLogDialog.h"
-#include "vtkKWLogWidget.h"
+#include "vtkKWApplication.h"
+#include "vtkKWSplashScreen.h"
 
 #include <map>
 
@@ -217,6 +217,11 @@ ModuleFactory
                 // list
                 ModuleDescriptionMap::iterator mit
                   = this->InternalMap->find(module.GetTitle());
+
+                std::string splash_msg("Discovered ");
+                splash_msg +=  module.GetTitle();
+                splash_msg += " Module...";
+                vtkSlicerApplication::GetInstance()->GetSplashScreen()->SetProgressMessage(splash_msg.c_str());
                 
                 if (mit == this->InternalMap->end())
                   {
@@ -386,6 +391,11 @@ ModuleFactory
               ModuleDescriptionMap::iterator mit
                 = this->InternalMap->find(module.GetTitle());
 
+              std::string splash_msg("Discovered ");
+              splash_msg +=  module.GetTitle();
+              splash_msg += " Module...";
+              vtkSlicerApplication::GetInstance()->GetSplashScreen()->SetProgressMessage(splash_msg.c_str());
+              
               if (mit == this->InternalMap->end())
                 {
                 // Store the module in the list
