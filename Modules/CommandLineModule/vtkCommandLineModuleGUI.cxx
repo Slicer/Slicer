@@ -367,12 +367,6 @@ void vtkCommandLineModuleGUI::ProcessGUIEvents ( vtkObject *caller,
     this->UpdateMRML();
     this->Logic->SetTemporaryDirectory( ((vtkSlicerApplication*)this->GetApplication())->GetTemporaryDirectory() );
 
-    // Set the callback for progress
-    this->GetCommandLineModuleNode()->GetModuleDescription()
-      .GetProcessInformation()
-      ->SetProgressCallback( vtkCommandLineModuleGUI::ProgressCallback,
-                             this->GetCommandLineModuleNode() );
-
     // apply
     this->Logic->Apply();
     }
@@ -1318,12 +1312,3 @@ void vtkCommandLineModuleGUI::NewNodeCallback ( vtkObject *__caller,
 }
 
 
-void vtkCommandLineModuleGUI::ProgressCallback ( void *who )
-{
-  vtkMRMLCommandLineModuleNode *node
-    = reinterpret_cast<vtkMRMLCommandLineModuleNode*>(who);
-
-  // All we need to do is tell the node that it was Modified.  The
-  // shared object plugin modifies fields in the ProcessInformation directly.
-  vtkSlicerApplication::GetInstance()->RequestModified(node);
-}

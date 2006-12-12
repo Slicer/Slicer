@@ -53,6 +53,8 @@ struct DigitsToCharacters
     }
 };
 
+typedef std::pair<vtkCommandLineModuleLogic *, vtkMRMLCommandLineModuleNode *> LogicNodePair;
+
 
 vtkCommandLineModuleLogic* vtkCommandLineModuleLogic::New()
 {
@@ -155,7 +157,7 @@ void vtkCommandLineModuleLogic::Apply()
   this->CommandLineModuleNode->Register(this);
   
   // Schedule the task
-  ret = vtkSlicerApplication::GetInstance()->ScheduleTask( task );
+  ret = this->GetApplicationLogic()->ScheduleTask( task );
 
   if (!ret)
     {
@@ -199,6 +201,14 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
 
     return;
     }
+
+
+  // Set the callback for progress.  This will only be used for the
+  // scope of this function.
+  LogicNodePair lnp( this, node );
+  node->GetModuleDescription().GetProcessInformation()
+    ->SetProgressCallback( vtkCommandLineModuleLogic::ProgressCallback,
+                           &lnp );
   
   
   // Determine the type of the module: command line or shared object
@@ -462,7 +472,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
                         << (*iit).second.GetLabel().c_str() << "\"");
 
           node->SetStatus(vtkMRMLCommandLineModuleNode::Idle, false);
-          vtkSlicerApplication::GetInstance()->RequestModified( node );
+          this->GetApplicationLogic()->RequestModified( node );
           return;
           }
         }
@@ -480,7 +490,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
                         << (*iit).second.GetLabel().c_str() << "\"");
 
           node->SetStatus(vtkMRMLCommandLineModuleNode::Idle, false);
-          vtkSlicerApplication::GetInstance()->RequestModified( node );
+          this->GetApplicationLogic()->RequestModified( node );
           return;
           }
         }
@@ -555,7 +565,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
   //
   node->GetModuleDescription().GetProcessInformation()->Initialize();
   node->SetStatus(vtkMRMLCommandLineModuleNode::Running, false);
-  vtkSlicerApplication::GetInstance()->RequestModified( node );
+  this->GetApplicationLogic()->RequestModified( node );
   if (isCommandLine)
     {
     itksysProcess *process = itksysProcess_New();
@@ -587,7 +597,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
       // increment the elapsed time
       node->GetModuleDescription().GetProcessInformation()->ElapsedTime
         += (timeoutlimit - timeout);
-      vtkSlicerApplication::GetInstance()->RequestModified( node );
+      this->GetApplicationLogic()->RequestModified( node );
       
       // reset the timeout value 
       timeout = timeoutlimit;
@@ -598,7 +608,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
         itksysProcess_Kill(process);
         node->GetModuleDescription().GetProcessInformation()->Progress = 0;
         node->GetModuleDescription().GetProcessInformation()->StageProgress =0;
-        vtkSlicerApplication::GetInstance()->RequestModified( node ); 
+        this->GetApplicationLogic()->RequestModified( node ); 
         break;
         }
 
@@ -667,7 +677,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
             }
           if (foundTag)
             {
-            vtkSlicerApplication::GetInstance()->RequestModified( node );
+            this->GetApplicationLogic()->RequestModified( node );
             }
           }
         else if (pipe == itksysProcess_Pipe_STDERR)
@@ -766,7 +776,8 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
           information << node->GetModuleDescription().GetTitle()
                       << " completed with errors" << std::endl;
           vtkSlicerApplication::GetInstance()->ErrorMessage( information.str().c_str() );
-          node->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors);
+          node->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors, false);
+          this->GetApplicationLogic()->RequestModified( node );
           }
         }
       else if (result == itksysProcess_State_Expired)
@@ -775,7 +786,8 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
         information << node->GetModuleDescription().GetTitle()
                     << " timed out" << std::endl;
         vtkSlicerApplication::GetInstance()->ErrorMessage( information.str().c_str() );
-        node->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors);
+        node->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors, false);
+        this->GetApplicationLogic()->RequestModified( node );
         }
       else
         {
@@ -812,7 +824,8 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
                   << " unknown termination. " << result << std::endl;
           }
         vtkSlicerApplication::GetInstance()->ErrorMessage( information.str().c_str() );
-        node->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors);
+        node->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors, false);
+        this->GetApplicationLogic()->RequestModified( node );
         }
     
       // clean up
@@ -860,10 +873,20 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
     catch (itk::ExceptionObject& exc)
       {
       std::stringstream information;
-      information << node->GetModuleDescription().GetTitle()
-                << " terminated with an exception: " << exc;
-      vtkSlicerApplication::GetInstance()->ErrorMessage( information.str().c_str() );
-      node->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors);
+      if (node->GetStatus() == vtkMRMLCommandLineModuleNode::Cancelled)
+        {
+        information << node->GetModuleDescription().GetTitle()
+                    << " cancelled.";
+        vtkSlicerApplication::GetInstance()->InformationMessage( information.str().c_str() );
+        }
+      else
+        {
+        information << node->GetModuleDescription().GetTitle()
+                    << " terminated with an exception: " << exc;
+        vtkSlicerApplication::GetInstance()->ErrorMessage( information.str().c_str() );
+        node->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors, false);
+        this->GetApplicationLogic()->RequestModified( node );
+        }
 
       std::cout.rdbuf( origcoutrdbuf );
       std::cerr.rdbuf( origcerrrdbuf );
@@ -874,7 +897,8 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
       information << node->GetModuleDescription().GetTitle()
                 << " terminated with an unknown exception." << std::endl;
       vtkSlicerApplication::GetInstance()->ErrorMessage( information.str().c_str() );
-      node->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors);
+      node->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors, false);
+      this->GetApplicationLogic()->RequestModified( node );
 
       std::cout.rdbuf( origcoutrdbuf );
       std::cerr.rdbuf( origcerrrdbuf );
@@ -884,12 +908,12 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
       && node->GetStatus() != vtkMRMLCommandLineModuleNode::CompletedWithErrors)
     {
     node->SetStatus(vtkMRMLCommandLineModuleNode::Completed, false);
-    vtkSlicerApplication::GetInstance()->RequestModified( node );
+    this->GetApplicationLogic()->RequestModified( node );
     }
   // reset the progress to zero
   node->GetModuleDescription().GetProcessInformation()->Progress = 0;
   node->GetModuleDescription().GetProcessInformation()->StageProgress = 0;
-  vtkSlicerApplication::GetInstance()->RequestModified( node );
+  this->GetApplicationLogic()->RequestModified( node );
   
   // import the results if the plugin was allowed to complete
   //
@@ -901,67 +925,24 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
          id2fn != nodesToReload.end();
          ++id2fn)
       {
-      vtkMRMLNode *nd
-        = this->MRMLScene->GetNodeByID( (*id2fn).first.c_str() );
-      
-      vtkMRMLScalarVolumeNode *svnd
-        = vtkMRMLScalarVolumeNode::SafeDownCast(nd);
-      vtkMRMLModelNode *mnd
-        = vtkMRMLModelNode::SafeDownCast(nd);
-      
-      if (isCommandLine && svnd)
-        {
-        vtkMRMLVolumeArchetypeStorageNode *in
-          = vtkMRMLVolumeArchetypeStorageNode::New();
-        in->SetFileName( (*id2fn).second.c_str() );
-        
-        try
-          {
-          in->ReadData( nd );
-          }
-        catch (itk::ExceptionObject& exc)
-          {
-          std::stringstream information;
-          information << node->GetModuleDescription().GetTitle()
-                    << " terminated with an exception: " << exc;
-          vtkSlicerApplication::GetInstance()->ErrorMessage( information.str().c_str() );
-          }
-        catch (...)
-          {
-          std::stringstream information;
-          information << node->GetModuleDescription().GetTitle()
-                    << " terminated with an unknown exception." << std::endl;
-          vtkSlicerApplication::GetInstance()->ErrorMessage( information.str().c_str() );
-          }
-        
-        in->Delete();
-        }
-      else if (mnd)
-        {
-        vtkMRMLModelStorageNode *in = vtkMRMLModelStorageNode::New();
-        vtkMRMLModelDisplayNode *disp = vtkMRMLModelDisplayNode::New();
+      // Make request that data be reloaded. The data will loaded and
+      // rendered in the main gui thread.  Data to be reloaded can be
+      // safely deleted after the load. (It would not make sense for
+      // two outputs of a module to produce the same file to be
+      // reloaded.) We assume that if the user is looking at the node
+      // now, he/she will still be looking at the node by the time the
+      // data is reloaded by the main thread.
+      bool displayData = false;
+      bool deleteFile = true;
+      displayData = (node == this->GetCommandLineModuleNode());
+      this->GetApplicationLogic()
+        ->RequestReadData((*id2fn).first.c_str(), (*id2fn).second.c_str(),
+                          displayData, deleteFile);
 
-        in->SetFileName( (*id2fn).second.c_str() );
-        in->ReadData( mnd );
-
-        disp->SetScene( this->MRMLScene );
-
-        this->MRMLScene->AddNode( disp );
-
-        mnd->SetAndObserveDisplayNodeID( disp->GetID() );
-        
-        in->Delete();
-        disp->Delete();
-        }
-#if 0     
-      // only display the new data if the node is the same as one
-      // being displayed on the gui
-      if (svnd && node == this->GetCommandLineModuleNode())
-        {
-        this->ApplicationLogic->GetSelectionNode()->SetActiveVolumeID( (*id2fn).first.c_str() );
-        this->ApplicationLogic->PropagateVolumeSelection();
-        }
-#endif
+      // If we are reloading a file, then we know that it is a file
+      // that needs to be removed.  It wouldn't make sense for two
+      // outputs of a module to produce the same file to be reloaded.
+      filesToDelete.erase( (*id2fn).second );
       }
     }
 
@@ -970,18 +951,21 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
   //
   delete [] command;
 
-  if (isCommandLine)
+  // Remove any remaining temporary files.  At this point, these files
+  // should be the files written as inputs to the module
+  bool removed;
+  std::set<std::string>::iterator fit;
+  for (fit = filesToDelete.begin(); fit != filesToDelete.end(); ++fit)
     {
-    bool removed;
-    std::set<std::string>::iterator fit;
-    for (fit = filesToDelete.begin(); fit != filesToDelete.end(); ++fit)
+    if (itksys::SystemTools::FileExists((*fit).c_str()))
       {
       removed = itksys::SystemTools::RemoveFile((*fit).c_str());
       if (!removed)
         {
         std::stringstream information;
         information << "Unable to delete temporary file " << *fit << std::endl;
-        vtkSlicerApplication::GetInstance()->WarningMessage( information.str().c_str() );
+        vtkSlicerApplication::GetInstance()
+          ->WarningMessage( information.str().c_str() );
         }
       }
     }
@@ -989,4 +973,14 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
   // node was registered when the task was scheduled so unregister now
   node->UnRegister(this);
 
+}
+
+
+void vtkCommandLineModuleLogic::ProgressCallback ( void *who )
+{
+  LogicNodePair *lnp = reinterpret_cast<LogicNodePair*>(who);
+
+  // All we need to do is tell the node that it was Modified.  The
+  // shared object plugin modifies fields in the ProcessInformation directly.
+  lnp->first->GetApplicationLogic()->RequestModified(lnp->second);
 }

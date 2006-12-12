@@ -104,8 +104,6 @@ protected:
   vtkCallbackCommand *NewNodeCallbackCommand;
 
 
-  static void ProgressCallback(void *);
-  
 private:
   vtkCommandLineModuleGUI();
   virtual ~vtkCommandLineModuleGUI();

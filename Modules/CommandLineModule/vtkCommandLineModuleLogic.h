@@ -58,6 +58,9 @@ protected:
 
   // The method that runs the command line module
   void ApplyTask(void *clientdata);
+
+  // Communicate progress back to the node
+  static void ProgressCallback(void *);
   
 private:
   vtkCommandLineModuleLogic();

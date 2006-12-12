@@ -29,7 +29,6 @@
 
 #include <queue>
 
-#include "vtkSlicerTask.h"
 
 const char *vtkSlicerApplication::ModulePathRegKey = "ModulePath";
 const char *vtkSlicerApplication::TemporaryDirectoryRegKey = "TemporaryDirectory";
@@ -42,11 +41,8 @@ vtkSlicerApplication *vtkSlicerApplication::Instance = NULL;
 //---------------------------------------------------------------------------
 vtkCxxRevisionMacro(vtkSlicerApplication, "$Revision: 1.0 $");
 
-class ProcessingTaskQueue : public std::queue<vtkSmartPointer<vtkSlicerTask> > {};
-class ModifiedQueue : public std::queue<vtkSmartPointer<vtkObject> > {};
 typedef std::pair<std::string, std::string> AddRecordType;
 class DisplayMessageQueue : public std::queue<AddRecordType> {};
-
 
 //----------------------------------------------------------------------------
 
@@ -192,24 +188,18 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
     this->MainLayout = vtkSlicerGUILayout::New ( );
     this->SlicerTheme = vtkSlicerTheme::New ( );
 
-    this->ProcessingThreader = itk::MultiThreader::New();
-    this->ProcessingThreadId = -1;
-    this->ProcessingThreadActive = false;
-    this->ProcessingThreadActiveLock = itk::MutexLock::New();
-    this->ProcessingTaskQueueLock = itk::MutexLock::New();
-
-    this->ModifiedQueueActive = false;
-    this->ModifiedQueueActiveLock = itk::MutexLock::New();
-    this->ModifiedQueueLock = itk::MutexLock::New();
-
     this->DisplayMessageQueueActive = false;
     this->DisplayMessageQueueActiveLock = itk::MutexLock::New();
     this->DisplayMessageQueueLock = itk::MutexLock::New();
     
-    this->InternalTaskQueue = new ProcessingTaskQueue;
-    this->InternalModifiedQueue = new ModifiedQueue;
     this->InternalDisplayMessageQueue = new DisplayMessageQueue;
 
+    this->DisplayMessageQueueActiveLock->Lock();
+    this->DisplayMessageQueueActive = true;
+    this->DisplayMessageQueueActiveLock->Unlock();
+
+    vtkKWTkUtilities::CreateTimerHandler(this, 100, this, "ProcessDisplayMessage");
+    
     // Override the type of output windows used for VTK and ITK.  Note
     // that in the VTK case, we are currently bypassing the output
     // window mechanism provided by KWWidgets.  In KWWidgets, there
@@ -256,30 +246,12 @@ vtkSlicerApplication::~vtkSlicerApplication ( ) {
       this->ModuleGUICollection = NULL;
       }
 
-    // Note that TerminateThread does not kill a thread, it only waits
-    // for the thread to finish.  We need to signal the thread that we
-    // want to terminate
-    if (this->ProcessingThreadId != -1 && this->ProcessingThreader)
-      {
-      // Signal the processingThread that we are terminating. 
-      this->ProcessingThreadActiveLock->Lock();
-      this->ProcessingThreadActive = false;
-      this->ProcessingThreadActiveLock->Unlock();
-      
-      // Wait for the thread to finish and clean up the state of the threader
-      this->ProcessingThreader->TerminateThread( this->ProcessingThreadId );
-      
-      this->ProcessingThreadId = -1;
-      }
-    
-    delete this->InternalTaskQueue;
-    this->InternalTaskQueue = 0;
-    
-    delete this->InternalModifiedQueue;
-    this->InternalModifiedQueue = 0;
-
     delete this->InternalDisplayMessageQueue;
     this->InternalDisplayMessageQueue = 0;
+
+    this->DisplayMessageQueueActiveLock->Lock();
+    this->DisplayMessageQueueActive = false;
+    this->DisplayMessageQueueActiveLock->Unlock();
 }
 
 
@@ -604,174 +576,6 @@ const char* vtkSlicerApplication::GetTemporaryDirectory() const
 }
 
 
-//----------------------------------------------------------------------------
-void vtkSlicerApplication::CreateProcessingThread()
-{
-  if (this->ProcessingThreadId == -1)
-    {
-    this->ProcessingThreadActiveLock->Lock();
-    this->ProcessingThreadActive = true;
-    this->ProcessingThreadActiveLock->Unlock();
-    
-    this->ProcessingThreadId
-      = this->ProcessingThreader
-      ->SpawnThread(vtkSlicerApplication::ProcessingThreaderCallback,
-                    this);
-
-    // Setup the communication channel back to the main thread
-    this->ModifiedQueueActiveLock->Lock();
-    this->ModifiedQueueActive = true;
-    this->ModifiedQueueActiveLock->Unlock();
-
-    this->DisplayMessageQueueActiveLock->Lock();
-    this->DisplayMessageQueueActive = true;
-    this->DisplayMessageQueueActiveLock->Unlock();
-
-    vtkKWTkUtilities::CreateTimerHandler(this, 100, this, "ProcessModified");
-    vtkKWTkUtilities::CreateTimerHandler(this, 100, this, "ProcessDisplayMessage");
-    }
-
-}
-
-//----------------------------------------------------------------------------
-void vtkSlicerApplication::TerminateProcessingThread()
-{
-  if (this->ProcessingThreadId != -1)
-    {
-    this->ModifiedQueueActiveLock->Lock();
-    this->ModifiedQueueActive = false;
-    this->ModifiedQueueActiveLock->Unlock();
-
-    this->DisplayMessageQueueActiveLock->Lock();
-    this->DisplayMessageQueueActive = false;
-    this->DisplayMessageQueueActiveLock->Unlock();
-    
-    this->ProcessingThreadActiveLock->Lock();
-    this->ProcessingThreadActive = false;
-    this->ProcessingThreadActiveLock->Unlock();
-
-    this->ProcessingThreader->TerminateThread( this->ProcessingThreadId );
-
-    this->ProcessingThreadId = -1;
-    }
-}
-
-
-ITK_THREAD_RETURN_TYPE
-vtkSlicerApplication
-::ProcessingThreaderCallback( void *arg )
-{
-  
-#ifdef ITK_USE_WIN32_THREADS
-  // Adjust the priority of this thread
-  SetThreadPriority(GetCurrentThread(),
-                    THREAD_PRIORITY_BELOW_NORMAL);
-#endif
-
-#ifdef ITK_USE_PTHREADS
-  // Adjust the priority of all PROCESS level threads.  Not a perfect solution.
-  nice(20);
-#endif
-    
-  // pull out the reference to the app
-  vtkSlicerApplication *app
-    = (vtkSlicerApplication*)
-    (((itk::MultiThreader::ThreadInfoStruct *)(arg))->UserData);
-
-  // Tell the app to start processing any tasks slated for the
-  // processing thread
-  app->ProcessTasks();
-
-  return ITK_THREAD_RETURN_VALUE;
-}
-
-void vtkSlicerApplication::ProcessTasks()
-{
-  bool active = true;
-  vtkSmartPointer<vtkSlicerTask> task = 0;
-  
-  while (active)
-    {
-    // Check to see if we should be shutting down
-    this->ProcessingThreadActiveLock->Lock();
-    active = this->ProcessingThreadActive;
-    this->ProcessingThreadActiveLock->Unlock();
-
-    if (active)
-      {
-      // pull a task off the queue
-      this->ProcessingTaskQueueLock->Lock();
-      if ((*this->InternalTaskQueue).size() > 0)
-        {
-        std::cout << "Number of queued tasks: " << (*this->InternalTaskQueue).size() << std::endl;
-        task = (*this->InternalTaskQueue).front();
-        (*this->InternalTaskQueue).pop();
-        }
-      this->ProcessingTaskQueueLock->Unlock();
-      
-      // process the task (should this be in a separate thread?)
-      if (task)
-        {
-        task->Execute();
-        task = 0;
-        }
-      }
-
-    // busy wait
-    itksys::SystemTools::Delay(100);
-    }
-}
-
-bool vtkSlicerApplication::ScheduleTask( vtkSlicerTask *task )
-{
-  bool active;
-
-  std::cout << "Scheduling a task ";
-  // only schedule a task if the processing task is up
-  this->ProcessingThreadActiveLock->Lock();
-  active = this->ProcessingThreadActive;
-  this->ProcessingThreadActiveLock->Unlock();
-
-  if (active)
-    {
-    this->ProcessingTaskQueueLock->Lock();
-    (*this->InternalTaskQueue).push( task );
-    std::cout << (*this->InternalTaskQueue).size() << std::endl;
-    this->ProcessingTaskQueueLock->Unlock();
-    
-    return true;
-    }
-
-  // could not schedule the task
-  return false;
-}
-
-
-bool vtkSlicerApplication::RequestModified( vtkObject *obj )
-{
-  bool active;
-
-  //std::cout << "Requesting a modified on " << obj;
-
-  // only request a Modified if the Modified queue is up
-  this->ModifiedQueueActiveLock->Lock();
-  active = this->ModifiedQueueActive;
-  this->ModifiedQueueActiveLock->Unlock();
-
-  if (active)
-    {
-    this->ModifiedQueueLock->Lock();
-    (*this->InternalModifiedQueue).push( obj );
-//     std::cout << " [" << (*this->InternalModifiedQueue).size()
-//               << "] " << std::endl;
-    this->ModifiedQueueLock->Unlock();
-    
-    return true;
-    }
-
-  // could not request the Modified
-  return false;
-}
 
 bool vtkSlicerApplication::RequestDisplayMessage( const char *type, const char *message )
 {
@@ -797,47 +601,6 @@ bool vtkSlicerApplication::RequestDisplayMessage( const char *type, const char *
 
   // could not request the record be added to the queue
   return false;
-}
-
-
-void vtkSlicerApplication::ProcessModified()
-{
-  bool active = true;
-  vtkSmartPointer<vtkObject> obj = 0;
-  
-  // Check to see if we should be shutting down
-  this->ModifiedQueueActiveLock->Lock();
-  active = this->ModifiedQueueActive;
-  this->ModifiedQueueActiveLock->Unlock();
-  
-  if (active)
-    {
-    // pull an object off the queue to modify
-    this->ModifiedQueueLock->Lock();
-    if ((*this->InternalModifiedQueue).size() > 0)
-      {
-      obj = (*this->InternalModifiedQueue).front();
-      (*this->InternalModifiedQueue).pop();
-
-      // pop off any extra copies of the same object to save some updates
-      while (!(*this->InternalModifiedQueue).empty() 
-                    && (obj == (*this->InternalModifiedQueue).front()))
-        {
-        (*this->InternalModifiedQueue).pop();
-        }
-      }
-    this->ModifiedQueueLock->Unlock();
-    
-    // Modify the object
-    if (obj)
-      {
-      obj->Modified();
-      obj = 0;
-      }
-    }
-  
-  // schedule the next timer
-  vtkKWTkUtilities::CreateTimerHandler(this, 100, this, "ProcessModified");
 }
 
 
@@ -885,6 +648,7 @@ void vtkSlicerApplication::ProcessDisplayMessage()
   // schedule the next timer
   vtkKWTkUtilities::CreateTimerHandler(this, 100, this, "ProcessDisplayMessage");
 }
+
 
 
 void

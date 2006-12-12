@@ -425,7 +425,6 @@ int Slicer3_main(int argc, char *argv[])
     //  - note: use the singleton application 
     vtkSlicerApplication *slicerApp = vtkSlicerApplication::GetInstance ( );
     slicerApp->InstallTheme( slicerApp->GetSlicerTheme() );
-    slicerApp->CreateProcessingThread();
 
     vtksys_stl::string myTkName = slicerApp->GetSplashScreen()->GetWidgetName();
     myTkName.append("_0");
@@ -477,6 +476,7 @@ int Slicer3_main(int argc, char *argv[])
     // -- allows any dependent nodes to be created
     appLogic->ProcessMRMLEvents (scene, vtkCommand::ModifiedEvent, NULL);  
     appLogic->SetAndObserveMRMLScene ( scene );
+    appLogic->CreateProcessingThread();
 
     // CREATE APPLICATION GUI, including the main window
     vtkSlicerApplicationGUI *appGUI = vtkSlicerApplicationGUI::New ( );
@@ -1107,7 +1107,6 @@ int Slicer3_main(int argc, char *argv[])
 
     // ------------------------------
     // EXIT 
-    slicerApp->TerminateProcessingThread();
     slicerApp->Exit();
 
     // ------------------------------
@@ -1202,6 +1201,7 @@ int Slicer3_main(int argc, char *argv[])
 #ifndef SLICES_DEBUG
 #endif
     appLogic->SetAndObserveMRMLScene ( NULL );
+    appLogic->TerminateProcessingThread();
     appLogic->Delete ();
 
 #ifndef CLIMODULES_DEBUG

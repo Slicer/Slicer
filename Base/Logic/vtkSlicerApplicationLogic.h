@@ -30,8 +30,18 @@
 #include "vtkSlicerLogic.h"
 #include "vtkSlicerSliceLogic.h"
 
-
 #include "vtkCollection.h"
+
+#include "itkMultiThreader.h"
+#include "itkMutexLock.h"
+
+//BTX
+class ProcessingTaskQueue;
+class ModifiedQueue;
+class ReadDataQueue;
+class vtkSlicerTask;
+//ETX
+
 
 class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic : public vtkSlicerLogic 
 {
@@ -51,7 +61,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic : public vtkSlicerL
   // Return code tells if connection was completed successfully.
   void Connect (const char *URL) {
     if (this->MRMLScene)
-      {
+     {
       this->MRMLScene->SetURL(URL);
       this->MRMLScene->Connect();
       }
@@ -148,6 +158,53 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic : public vtkSlicerL
                                   unsigned long /*event*/, 
                                   void * /*callData*/ );
    virtual void ProcessMRMLEvents () { this->ProcessMRMLEvents( NULL, vtkCommand::NoEvent, NULL ); };
+
+  // Description:
+  // Create a thread for processing
+  void CreateProcessingThread();
+
+  // Description:
+  // Shutdown the processing thread 
+  void TerminateProcessingThread();
+  
+  // Description:
+  // Schedule a task to run in the processing thread. Returns true if
+  // task was successfully scheduled. ScheduleTask() is called from the
+  // main thread to run something in the processing thread.
+  bool ScheduleTask( vtkSlicerTask* );
+
+  // Description:
+  // Request a Modified call on an object.  This method allows a
+  // processing thread to request a Modified call on an object to be
+  // performed in the main thread.  This allows the call to Modified
+  // to trigger GUI changes. RequestModified() is called from the
+  // processing thread to modify an object in the main thread.
+  bool RequestModified( vtkObject * );
+
+  // Description:
+  // Request that data be read from a file and set it on the referenced
+  // node.  The request will be sent to the main thread which will be
+  // responsible for reading the data, setting it on the referenced
+  // node, and updating the display.
+  bool RequestReadData(const char *refNode, const char *filename,
+                       bool displayData = false,
+                       bool deleteFile=false);
+  
+  // Description:
+  // Process a request on the Modified queue.  This method is called
+  // in the main thread of the application because calls to Modified()
+  // can cause an update to the GUI. (Method needs to be public to fit
+  // in the event callback chain.)
+  void ProcessModified();
+
+  // Description:
+  // Process a request to read data and set it on a referenced node.
+  // This method is called in the main thread of the application
+  // because calls to load data will cause a Modified() on a node
+  // which can force a render.
+  void ProcessReadData();
+
+
   //
   // Transient Application State
   // -- these are elements that are inherently part of the
@@ -167,6 +224,15 @@ protected:
   vtkSlicerApplicationLogic(const vtkSlicerApplicationLogic&);
   void operator=(const vtkSlicerApplicationLogic&);
 
+  // Description:
+  // Callback used by a MultiThreader to start a processing thread
+  static ITK_THREAD_RETURN_TYPE ProcessingThreaderCallback( void * );
+  
+  // Description:
+  // Task processing loop that is run in the processing thread
+  void ProcessTasks();
+  
+  
 private:
   
   // for now, make these generic collections
@@ -180,6 +246,24 @@ private:
   vtkMRMLSelectionNode *SelectionNode;
   //vtkSlicerModuleLogic *ActiveModule;
 
+  //BTX
+  itk::MultiThreader::Pointer ProcessingThreader;
+  itk::MutexLock::Pointer ProcessingThreadActiveLock;
+  itk::MutexLock::Pointer ProcessingTaskQueueLock;
+  itk::MutexLock::Pointer ModifiedQueueActiveLock;
+  itk::MutexLock::Pointer ModifiedQueueLock;
+  itk::MutexLock::Pointer ReadDataQueueActiveLock;
+  itk::MutexLock::Pointer ReadDataQueueLock;
+  //ETX
+  int ProcessingThreadId;
+  bool ProcessingThreadActive;
+  bool ModifiedQueueActive;
+  bool ReadDataQueueActive;
+
+  ProcessingTaskQueue* InternalTaskQueue;
+  ModifiedQueue* InternalModifiedQueue;
+  ReadDataQueue* InternalReadDataQueue;
+  
   // Transient Application State
   
 
