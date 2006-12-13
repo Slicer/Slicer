@@ -1068,10 +1068,20 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
         {
         vtkSlicerNodeSelectorWidget *tparameter
           = vtkSlicerNodeSelectorWidget::New();
-        tparameter->SetNodeClass("vtkMRMLScalarVolumeNode",
-                                 NULL,
-                                 NULL,
-                                 (title + " Volume").c_str());
+        if ((*pit).GetType() == "label")
+          {
+          tparameter->SetNodeClass("vtkMRMLScalarVolumeNode",
+                                   "LabelMap",
+                                   "1",
+                                   (title + " Volume").c_str());
+          }
+        else
+          {
+          tparameter->SetNodeClass("vtkMRMLScalarVolumeNode",
+                                   NULL,
+                                   NULL,
+                                   (title + " Volume").c_str());
+          }
         tparameter->SetParent( parameterGroupFrame->GetFrame() );
         tparameter->Create();
         tparameter->SetMRMLScene(this->Logic->GetMRMLScene());
@@ -1086,11 +1096,21 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
         {
         vtkSlicerNodeSelectorWidget *tparameter
           = vtkSlicerNodeSelectorWidget::New();
-        
-        tparameter->SetNodeClass("vtkMRMLScalarVolumeNode",
-                                 NULL,
-                                 NULL,
-                                 (title + " Volume").c_str());
+
+        if ((*pit).GetType() == "label")
+          {
+          tparameter->SetNodeClass("vtkMRMLScalarVolumeNode",
+                                   "LabelMap",
+                                   "1",
+                                   (title + " Volume").c_str());
+          }
+        else
+          {
+          tparameter->SetNodeClass("vtkMRMLScalarVolumeNode",
+                                   NULL,
+                                   NULL,
+                                   (title + " Volume").c_str());
+          }
         tparameter->SetNewNodeEnabled(1);
         tparameter->SetNoneEnabled(1);
         // tparameter->SetNewNodeName((title+" output").c_str());

@@ -329,6 +329,22 @@ void vtkSlicerNodeSelectorWidget::ProcessNewNodeCommand(const char *className, c
     ss << this->MRMLScene->GetUniqueNameByString(name);
     node->SetName(ss.str().c_str());
     vtkDebugMacro("\tset the name to " << node->GetName() << endl);
+
+    // If there is a Attribute Name-Value specified, then set that
+    // attribute on the node
+    for (int c=0; c < this->GetNumberOfNodeClasses(); c++)
+      {
+      if (!strcmp(this->GetNodeClass(c), className))
+        {
+        if (this->GetNodeAttributeName(c) != NULL)
+          {
+          node->SetAttribute(this->GetNodeAttributeName(c),
+                             this->GetNodeAttributeValue(c));
+          }
+        break;
+        }
+      }
+    
     // the ID is set in the call to AddNode
     //node->SetID(this->MRMLScene->GetUniqueIDByClass(className));
     this->MRMLScene->AddNode(node);

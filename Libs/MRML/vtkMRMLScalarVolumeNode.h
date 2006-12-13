@@ -58,9 +58,10 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeNode : public vtkMRMLVolumeNode
   // Indicates if this volume is a label map, which is the output of 
   // segmentation that labels each voxel according to its tissue type.  
   // The alternative is a gray-level or color image.
-  vtkGetMacro(LabelMap, int);
-  void SetLabelMap(int flag);
-  vtkBooleanMacro(LabelMap, int);
+  int GetLabelMap();
+  void SetLabelMap(int);
+  void LabelMapOn();
+  void LabelMapOff();
 
   // Description:
   // Make a 'None' volume node with blank image data
@@ -72,8 +73,6 @@ protected:
   ~vtkMRMLScalarVolumeNode();
   vtkMRMLScalarVolumeNode(const vtkMRMLScalarVolumeNode&);
   void operator=(const vtkMRMLScalarVolumeNode&);
-
-  int LabelMap;
 
 };
 

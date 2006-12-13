@@ -55,7 +55,6 @@ vtkMRMLNode* vtkMRMLScalarVolumeNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLScalarVolumeNode::vtkMRMLScalarVolumeNode()
 {
-  this->LabelMap = 0;
 }
 
 //----------------------------------------------------------------------------
@@ -69,8 +68,6 @@ void vtkMRMLScalarVolumeNode::WriteXML(ostream& of, int nIndent)
   Superclass::WriteXML(of, nIndent);
   
   vtkIndent indent(nIndent);
-  
-  of << indent << "labelMap=\"" << this->LabelMap << "\" ";
 }
 
 //----------------------------------------------------------------------------
@@ -104,7 +101,7 @@ void vtkMRMLScalarVolumeNode::Copy(vtkMRMLNode *anode)
   Superclass::Copy(anode);
   vtkMRMLScalarVolumeNode *node = (vtkMRMLScalarVolumeNode *) anode;
 
-  this->SetLabelMap(node->LabelMap);
+  this->SetLabelMap(node->GetLabelMap());
 }
 
 //-----------------------------------------------------------
@@ -140,19 +137,60 @@ void vtkMRMLScalarVolumeNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   
   Superclass::PrintSelf(os,indent);
-  os << indent << "LabelMap:          " << this->LabelMap << "\n";
+}
+
+int vtkMRMLScalarVolumeNode::GetLabelMap()
+{
+  if (!this->GetAttribute("LabelMap"))
+    {
+    return 0;
+    }
+  
+  std::string value = this->GetAttribute("LabelMap");
+  if (value == "0")
+    {
+    return 0;
+    }
+  else
+    {
+    return 1;
+    }
+}
+
+void vtkMRMLScalarVolumeNode::LabelMapOn()
+{
+  this->SetLabelMap(1);
+}
+
+void vtkMRMLScalarVolumeNode::LabelMapOff()
+{
+  this->SetLabelMap(0);
 }
 
 
 //----------------------------------------------------------------------------
 void vtkMRMLScalarVolumeNode::SetLabelMap(int flag)
 {
-    if (this->LabelMap == flag)
-      {
-      return;
-      }
-    vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting LabelMap to " << flag);
-    this->LabelMap = flag;
+  std::string value;
+  if (flag)
+    {
+    value = "1";
+    }
+  else
+    {
+    value = "0";
+    }
+
+  const char *attr = this->GetAttribute("LabelMap");
+  if (attr && (value == attr))
+    {
+    return;
+    }
+  
+  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting LabelMap to " << flag);
+
+  this->SetAttribute("LabelMap", value.c_str());
+
 /*
     if (this->GetDisplayNode() != NULL)
       {
