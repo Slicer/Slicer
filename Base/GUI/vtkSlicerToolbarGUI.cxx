@@ -4,6 +4,7 @@
 
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerApplicationGUI.h"
+#include "vtkSlicerGUILayout.h"
 #include "vtkSlicerModuleGUI.h"
 #include "vtkSlicerToolbarGUI.h"
 #include "vtkSlicerWindow.h"
@@ -369,6 +370,7 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
     vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));
     vtkSlicerModuleChooseGUI *mcGUI = p->GetModuleChooseGUI ( );
     vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( p->GetApplication() );
+    vtkSlicerGUILayout *layout = app->GetMainLayout();
     if ( app != NULL )
       {
       vtkKWPushButton *pushb = vtkKWPushButton::SafeDownCast ( caller );
@@ -478,51 +480,32 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
           
       if ( pushb == this->ConventionalViewIconButton && event == vtkKWPushButton::InvokedEvent )
         {
-
-        p->RemoveMainSliceViewersFromCollection ( );            
-        p->BuildMainViewer ( vtkSlicerGUILayout::SlicerLayoutDefaultView );
-        p->AddMainSliceViewersToCollection ( );
+        p->RepackMainViewer (vtkSlicerGUILayout::SlicerLayoutDefaultView );
         }
       else if ( pushb == this->OneUp3DViewIconButton && event == vtkKWPushButton::InvokedEvent )
         {
-        p->RemoveMainSliceViewersFromCollection ( );            
-        p->BuildMainViewer ( vtkSlicerGUILayout::SlicerLayoutOneUp3DView );
-        p->AddMainSliceViewersToCollection ( );
+        p->RepackMainViewer ( vtkSlicerGUILayout::SlicerLayoutOneUp3DView);
         }
       else if ( pushb == this->OneUpSliceViewIconButton && event == vtkKWPushButton::InvokedEvent )
         {
-        p->RemoveMainSliceViewersFromCollection ( );            
-        p->BuildMainViewer ( vtkSlicerGUILayout::SlicerLayoutOneUpSliceView );
-        p->AddMainSliceViewersToCollection ( );
+        p->RepackMainViewer ( vtkSlicerGUILayout::SlicerLayoutOneUpSliceView );
         }
       else if ( pushb == this->FourUpViewIconButton && event == vtkKWPushButton::InvokedEvent )
         {
-        p->RemoveMainSliceViewersFromCollection ( );            
-        p->BuildMainViewer ( vtkSlicerGUILayout::SlicerLayoutFourUpView );
-        p->AddMainSliceViewersToCollection ( );
+        p->RepackMainViewer ( vtkSlicerGUILayout::SlicerLayoutFourUpView );
         }
       else if ( pushb == this->Tabbed3DViewIconButton && event == vtkKWPushButton::InvokedEvent )
         {
-        p->RemoveMainSliceViewersFromCollection ( );            
-        p->BuildMainViewer ( vtkSlicerGUILayout::SlicerLayoutTabbed3DView );
-        p->AddMainSliceViewersToCollection ( );
+        p->RepackMainViewer ( vtkSlicerGUILayout::SlicerLayoutTabbed3DView );
         }
       else if ( pushb == this->TabbedSliceViewIconButton && event == vtkKWPushButton::InvokedEvent )
         {
-        // TODO: fix this. 
-        //        p->RemoveMainSliceViewersFromCollection ( );            
-        //        p->BuildMainViewer ( vtkSlicerGUILayout::SlicerLayoutTabbedSliceView );
-        //        p->AddMainSliceViewersToCollection ( );
+//        TODO: finish implementing this
+//        p->RepackMainViewer ( vtkSlicerGUILayout::SlicerLayoutTabbedSliceView );
         }
-
       else if ( pushb == this->LightBoxViewIconButton && event == vtkKWPushButton::InvokedEvent )
         {
         // TODO: implement this
-        /*
-          p->RemoveMainSliceViewersFromCollection ( );            
-          p->BuildMainViewer ( vtkSlicerGUILayout::SlicerLayoutLightboxView );
-          p->AddMainSliceViewersToCollection ( );
-        */
         }
       else if ( pushb == this->UndoIconButton && event == vtkKWPushButton::InvokedEvent )
         {
@@ -584,7 +567,7 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   vtkKWToolbarSet *tbs = win->GetMainToolbarSet();
   tbs->SetToolbarsWidgetsAspect ( vtkKWToolbar::WidgetsAspectUnChanged );
   tbs->SetTopSeparatorVisibility ( 0 );
-  tbs->SetBottomSeparatorVisibility ( 1 );
+  tbs->SetBottomSeparatorVisibility ( 0 );
 
   //--- configure toolbars
   vtkKWToolbar *mtb = this->GetModulesToolbar ( );

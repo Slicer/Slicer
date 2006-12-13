@@ -1026,20 +1026,22 @@ vtkSlicerViewerWidget::GetIDByActor (vtkActor *actor)
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerViewerWidget::PackWidget ( )
+void vtkSlicerViewerWidget::PackWidget ( vtkKWFrame *f )
 {
-  this->Script  ("pack %s -side left -fill both -expand y -padx 0 -pady 0",
-                 this->ViewerFrame->GetWidgetName ( ) );
+  this->Script  ("pack %s -side left -fill both -expand y -padx 0 -pady 0 -in %s",
+                 this->ViewerFrame->GetWidgetName ( ), f->GetWidgetName() );
   this->Script  ("pack %s -side top -anchor c  -fill both -expand y -padx 0 -pady 0",
                  this->MainViewer->GetWidgetName ( ) );
 }
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerViewerWidget::GridWidget ( int row, int col )
+void vtkSlicerViewerWidget::GridWidget ( vtkKWFrame *f, int row, int col )
 {
-  this->Script  ("grid %s -row %d -column %d -sticky news -padx 0 -pady 0",
-                 this->ViewerFrame->GetWidgetName ( ), row, col );
+  this->Script ( "grid configure %s -in %s -row %d -column %d -stick news -padx 0 -pady 0",
+                 this->ViewerFrame->GetWidgetName(), f->GetWidgetName(), row, col );
+//  this->Script  ("grid %s -row %d -column %d -sticky news -padx 0 -pady 0 -in %s",
+//                 this->ViewerFrame->GetWidgetName ( ), row, col, f->GetWidgetName()  );
   this->Script  ("pack %s -side top -anchor c  -fill both -expand y -padx 0 -pady 0",
                  this->MainViewer->GetWidgetName ( ) );
 }

@@ -119,9 +119,9 @@ public:
 
   // Description:
   // Show and hide widget
-  virtual void PackWidget ( );
+  virtual void PackWidget ( vtkKWFrame *f );
   virtual void UnpackWidget ( );
-  virtual void GridWidget ( int row, int col );
+  virtual void GridWidget ( vtkKWFrame *f, int row, int col );
   virtual void UngridWidget ( );
   
   // Description:

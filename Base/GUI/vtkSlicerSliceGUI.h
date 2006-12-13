@@ -74,10 +74,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceGUI : public vtkSlicerComponentGU
     virtual void BuildGUI ( vtkKWFrame *f, double *bgColor );
 
     // Description:
-    // Show and hide the GUI
-    virtual void PackGUI ( );
+    // Show and hide the GUI, pack in frame given by f
+    virtual void PackGUI ( vtkKWFrame *f );
     virtual void UnpackGUI ( );
-    virtual void GridGUI ( int row, int col);
+    virtual void GridGUI ( vtkKWFrame *f, int row, int col);
     virtual void UngridGUI ( );
 
     // Description:

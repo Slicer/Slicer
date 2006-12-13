@@ -158,13 +158,13 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
 
     // Description:
     // These methods configure the Main Viewer's layout
-    virtual void DisplayConventionalView ( );
-    virtual void DisplayOneUp3DView ( );
-    virtual void DisplayOneUpSliceView ( );
-    virtual void DisplayFourUpView ( );
-    virtual void DisplayTabbed3DViewSliceViewers ( );
-    virtual void DisplayTabbedSliceView ( );
-    virtual void DisplayLightboxView ( );
+    virtual void PackConventionalView ( );
+    virtual void PackOneUp3DView ( );
+    virtual void PackOneUpSliceView ( );
+    virtual void PackFourUpView ( );
+    virtual void PackTabbed3DView ( );
+    virtual void PackTabbedSliceView ( );
+    virtual void PackLightboxView ( );
 
     // Description:
     // Methods to manage Slice viewers
@@ -183,10 +183,17 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // These methods populate the various GUI Panel frames
     virtual void BuildGUIFrames ( );
     virtual void BuildMainViewer ( int arrangementType);
-    virtual void DestroyMain3DViewer ( );
-    virtual void DestroyMainSliceViewers ( );
+    virtual void PackMainViewer (  int arrangementType);
     virtual void CreateMain3DViewer ( int arrangementType );
     virtual void CreateMainSliceViewers ( int arrangementType );
+
+    virtual void DestroyMain3DViewer ( );
+    virtual void DestroyMainSliceViewers ( );
+
+    virtual void RepackMainViewer ( int arrangementType );
+    virtual void UnpackMain3DViewer (  );
+    virtual void UnpackMainSliceViewers ( );
+
     virtual void PopulateModuleChooseList ( );
     virtual void SetCurrentModuleToHome();
 
