@@ -49,6 +49,16 @@ public:
     return this->Tag;
   }
   
+  virtual void SetCPPType(const std::string &type)
+  {
+    this->CPPType = type;
+  }
+
+  virtual std::string GetCPPType() const 
+  {
+    return this->CPPType;
+  }
+  
   virtual void SetType(const std::string &type)
   {
     this->Type = type;
@@ -238,6 +248,7 @@ private:
   std::string Name;
   std::string Description;
   std::string Label;
+  std::string CPPType;
   std::string Type;
   std::string ArgType;
   std::string StringToType;

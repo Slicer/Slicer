@@ -19,6 +19,7 @@ ModuleParameter::ModuleParameter(const ModuleParameter& parameter)
   this->Name = parameter.Name;
   this->Description = parameter.Description;
   this->Label = parameter.Label;
+  this->CPPType = parameter.CPPType;
   this->Type = parameter.Type;
   this->ArgType = parameter.ArgType;
   this->StringToType = parameter.StringToType;
@@ -42,6 +43,7 @@ void ModuleParameter::operator=(const ModuleParameter& parameter)
   this->Name = parameter.Name;
   this->Description = parameter.Description;
   this->Label = parameter.Label;
+  this->CPPType = parameter.CPPType;
   this->Type = parameter.Type;
   this->ArgType = parameter.ArgType;
   this->StringToType = parameter.StringToType;
@@ -67,6 +69,7 @@ std::ostream & operator<<(std::ostream &os, const ModuleParameter &parameter)
   os << "      " << "Description: " << parameter.GetDescription() << std::endl;
   os << "      " << "Label: " << parameter.GetLabel() << std::endl;
   os << "      " << "Type: " << parameter.GetType() << std::endl;
+  os << "      " << "CPPType: " << parameter.GetCPPType() << std::endl;
   os << "      " << "ArgType: " << parameter.GetArgType() << std::endl;
   os << "      " << "StringToType: " << parameter.GetStringToType() << std::endl;
   os << "      " << "Default: " << parameter.GetDefault() << std::endl;

@@ -84,7 +84,7 @@ the input image and runs a connected component algortihm.
       <description>Input volume to be segmented</description>
     </image>
 
-    <image>
+    <image type="label">
       <name>outputVolume</name>
       <label>Output Volume</label>
       <channel>output</channel>

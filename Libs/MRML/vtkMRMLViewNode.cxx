@@ -364,7 +364,6 @@ void vtkMRMLViewNode::Copy(vtkMRMLNode *anode)
 //----------------------------------------------------------------------------
 void vtkMRMLViewNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  int idx;
   
   Superclass::PrintSelf(os,indent);
 

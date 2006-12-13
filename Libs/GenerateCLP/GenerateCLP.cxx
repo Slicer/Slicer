@@ -84,7 +84,7 @@ replaceSubWithSub(std::string& s, const char *o, const char  *n)
  */
 bool NeedsTemp(const ModuleParameter &parameter)
 {
-  std::string type = parameter.GetType();
+  std::string type = parameter.GetCPPType();
   std::string multi = parameter.GetMultiple();
   return (((type == "std::vector<int>" ||
            type == "std::vector<float>" ||
@@ -95,7 +95,7 @@ bool NeedsTemp(const ModuleParameter &parameter)
 /* Some types need quotes in the initialization. */
 bool NeedsQuotes(const ModuleParameter &parameter)
 {
-  std::string type = parameter.GetType();
+  std::string type = parameter.GetCPPType();
   std::string multi = parameter.GetMultiple();
   return (((type == "std::vector<int>" ||
            type == "std::vector<float>" ||
@@ -117,7 +117,7 @@ bool IsEnumeration(const ModuleParameter &parameter)
 
 bool IsVectorOfVectors(const ModuleParameter &parameter)
 {
-  std::string type = parameter.GetType();
+  std::string type = parameter.GetCPPType();
   return (type == "std::vector<std::vector<float> >");
 }
 
@@ -421,7 +421,7 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
   // Add a switch argument to echo command line arguments
   ModuleParameter echoSwitch;
   echoSwitch.SetTag("boolean");
-  echoSwitch.SetType("bool");
+  echoSwitch.SetCPPType("bool");
   echoSwitch.SetName("echoSwitch");
   echoSwitch.SetLongFlag("echo");
   echoSwitch.SetDescription("Echo the command line arguments");
@@ -431,7 +431,7 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
   // Add a switch argument to produce xml output
   ModuleParameter xmlSwitch;
   xmlSwitch.SetTag("boolean");
-  xmlSwitch.SetType("bool");
+  xmlSwitch.SetCPPType("bool");
   xmlSwitch.SetName("xmlSwitch");
   xmlSwitch.SetLongFlag("xml");
   xmlSwitch.SetDescription("Produce xml description of command line arguments");
@@ -442,7 +442,7 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
   // information
   ModuleParameter processInformationAddressArg;
   processInformationAddressArg.SetTag("string");
-  processInformationAddressArg.SetType("std::string");
+  processInformationAddressArg.SetCPPType("std::string");
   processInformationAddressArg.SetName("processInformationAddressString");
   processInformationAddressArg.SetLongFlag("processinformationaddress");
   processInformationAddressArg.SetDescription("Address of a structure to store process information (progress, abort, etc.).");
@@ -477,7 +477,7 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
           }
         else
           {
-          sout << pit->GetType();
+          sout << pit->GetCPPType();
           }
         sout << " ";
         sout << pit->GetName();
@@ -494,7 +494,7 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
         else
           {
           std::string defaultString = pit->GetDefault();
-          if ((*pit).GetType() == "bool")
+          if ((*pit).GetCPPType() == "bool")
             {
             defaultString = "false";
             }
@@ -515,7 +515,7 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
         if (NeedsTemp(*pit))
           {
           sout << "    "
-               << pit->GetType()
+               << pit->GetCPPType()
                << " "
                << pit->GetName()
                << ";"
@@ -525,7 +525,7 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
       else // IsEnumeration(*pit)
         {
         sout << "    "
-             << pit->GetType()
+             << pit->GetCPPType()
              << " ";
         sout << pit->GetName();
         if (!HasDefault(*pit))
@@ -541,7 +541,7 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
             sout << "\"";
             }
           std::string defaultString = pit->GetDefault();
-          if ((*pit).GetType() == "bool")
+          if ((*pit).GetCPPType() == "bool")
             {
             defaultString = "false";
             }
@@ -555,7 +555,7 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
                << EOL << std::endl;
           }
         sout << "    "
-             << "std::vector<" << pit->GetType() << "> "
+             << "std::vector<" << pit->GetCPPType() << "> "
              <<  pit->GetName() << "Allowed;"
              << EOL << std::endl;
         for (unsigned int e = 0; e < (pit->GetElements()).size(); e++)
@@ -578,7 +578,7 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
                << EOL << std::endl;
           }
           sout << "    "
-            "TCLAP::ValuesConstraint<" << pit->GetType() << "> "
+            "TCLAP::ValuesConstraint<" << pit->GetCPPType() << "> "
                << pit->GetName() << "AllowedVals ("
                << pit->GetName() << "Allowed); "
                << EOL << std::endl;
@@ -634,7 +634,7 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
              << EOL << std::endl;
         }
 
-      if (pit->GetType() == "bool")
+      if (pit->GetCPPType() == "bool")
         {
         sout << "    TCLAP::SwitchArg "
              << pit->GetName()
@@ -660,7 +660,7 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
           else
             {
             sout << "    TCLAP::UnlabeledValueArg<";
-            sout << pit->GetType();
+            sout << pit->GetCPPType();
             }
           sout << "> "
                << pit->GetName()
@@ -679,7 +679,7 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
             }
           sout << ", "
                << "\""
-               << pit->GetType()
+               << pit->GetCPPType()
                << "\""
                << ", "
                << "commandLine);"
@@ -688,7 +688,7 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
         else if (IsEnumeration(*pit))
           {
           sout << "    TCLAP::ValueArg<";
-          sout << pit->GetType();
+          sout << pit->GetCPPType();
           sout << "> "
                << pit->GetName()
                << "Arg" << "(\""
@@ -716,7 +716,7 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
               }
             else
               {
-              sout << pit->GetType();
+              sout << pit->GetCPPType();
               }
             }
           else
@@ -728,7 +728,7 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
               }
             else
               {
-              sout << pit->GetType();
+              sout << pit->GetCPPType();
               }
             }
           sout << " > "
@@ -750,7 +750,7 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
             }
           sout << ", "
                << "\""
-               << pit->GetType()
+               << pit->GetCPPType()
                << "\""
                << ", "
                << "commandLine);"

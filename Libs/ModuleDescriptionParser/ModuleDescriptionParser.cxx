@@ -189,12 +189,12 @@ startElement(void *userData, const char *element, const char **attrs)
         (strcmp(attrs[1], "true") == 0))
       {
       parameter->SetMultiple(attrs[1]);
-      parameter->SetType("std::vector<int>");
+      parameter->SetCPPType("std::vector<int>");
       parameter->SetArgType("int");
       parameter->SetStringToType("atoi");      }
     else
       {
-      parameter->SetType("int");
+      parameter->SetCPPType("int");
       }
     }
   else if (name == "float")
@@ -215,13 +215,13 @@ startElement(void *userData, const char *element, const char **attrs)
         (strcmp(attrs[1], "true") == 0))
       {
       parameter->SetMultiple(attrs[1]);
-      parameter->SetType("std::vector<float>");
+      parameter->SetCPPType("std::vector<float>");
       parameter->SetArgType("float");
       parameter->SetStringToType("atof");
       }
     else
       {
-      parameter->SetType("float");
+      parameter->SetCPPType("float");
       }
     parameter->SetTag(name);
     }
@@ -243,13 +243,13 @@ startElement(void *userData, const char *element, const char **attrs)
         (strcmp(attrs[1], "true") == 0))
       {
       parameter->SetMultiple(attrs[1]);
-      parameter->SetType("std::vector<double>");
+      parameter->SetCPPType("std::vector<double>");
       parameter->SetArgType("double");
       parameter->SetStringToType("atof");
       }
     else
       {
-      parameter->SetType("double");
+      parameter->SetCPPType("double");
       }
     parameter->SetTag(name);
     }
@@ -271,12 +271,12 @@ startElement(void *userData, const char *element, const char **attrs)
         (strcmp(attrs[1], "true") == 0))
       {
       parameter->SetMultiple(attrs[1]);
-      parameter->SetType("std::vector<std::string>");
+      parameter->SetCPPType("std::vector<std::string>");
       parameter->SetArgType("std::string");
       parameter->SetStringToType("");      }
     else
       {
-      parameter->SetType("std::string");
+      parameter->SetCPPType("std::string");
       }
     parameter->SetTag(name);
     }
@@ -293,7 +293,7 @@ startElement(void *userData, const char *element, const char **attrs)
       }
     parameter = new ModuleParameter;
     parameter->SetTag(name);
-    parameter->SetType("bool");
+    parameter->SetCPPType("bool");
     }
   else if (name == "integer-vector")
     {
@@ -308,7 +308,7 @@ startElement(void *userData, const char *element, const char **attrs)
       }
     parameter = new ModuleParameter;
     parameter->SetTag(name);
-    parameter->SetType("std::vector<int>");
+    parameter->SetCPPType("std::vector<int>");
     parameter->SetArgType("int");
     parameter->SetStringToType("atoi");
     }
@@ -325,7 +325,7 @@ startElement(void *userData, const char *element, const char **attrs)
       }
     parameter = new ModuleParameter;
     parameter->SetTag(name);
-    parameter->SetType("std::vector<float>");
+    parameter->SetCPPType("std::vector<float>");
     parameter->SetArgType("float");
     parameter->SetStringToType("atof");
     }
@@ -342,7 +342,7 @@ startElement(void *userData, const char *element, const char **attrs)
       }
     parameter = new ModuleParameter;
     parameter->SetTag(name);
-    parameter->SetType("std::vector<std::string>");
+    parameter->SetCPPType("std::vector<std::string>");
     parameter->SetArgType("std::string");
     parameter->SetStringToType("");
     }
@@ -359,7 +359,7 @@ startElement(void *userData, const char *element, const char **attrs)
       }
     parameter = new ModuleParameter;
     parameter->SetTag(name);
-    parameter->SetType("std::vector<double>");
+    parameter->SetCPPType("std::vector<double>");
     parameter->SetArgType("double");
     parameter->SetStringToType("atof");
     }
@@ -385,7 +385,7 @@ startElement(void *userData, const char *element, const char **attrs)
             (strcmp(attrs[2*attr+1], "false") == 0))
           {
           parameter->SetMultiple(attrs[2*attr+1]);
-          parameter->SetType("std::vector<std::vector<float> >");
+          parameter->SetCPPType("std::vector<std::vector<float> >");
           parameter->SetArgType("float");
           parameter->SetStringToType("atof");
           }
@@ -429,7 +429,7 @@ startElement(void *userData, const char *element, const char **attrs)
       }
     if (parameter->GetMultiple() != "true")
       {
-      parameter->SetType("std::vector<float>");
+      parameter->SetCPPType("std::vector<float>");
       parameter->SetArgType("float");
       parameter->SetStringToType("atof");
       }
@@ -448,7 +448,7 @@ startElement(void *userData, const char *element, const char **attrs)
       }
     parameter = new ModuleParameter;
     parameter->SetTag(name);
-    parameter->SetType("std::string");
+    parameter->SetCPPType("std::string");
     }
   else if (name == "integer-enumeration")
     {
@@ -463,7 +463,7 @@ startElement(void *userData, const char *element, const char **attrs)
       }
     parameter = new ModuleParameter;
     parameter->SetTag(name);
-    parameter->SetType("int");
+    parameter->SetCPPType("int");
     }
   else if (name == "float-enumeration")
     {
@@ -478,7 +478,7 @@ startElement(void *userData, const char *element, const char **attrs)
       }
     parameter = new ModuleParameter;
     parameter->SetTag(name);
-    parameter->SetType("float");
+    parameter->SetCPPType("float");
     }
   else if (name == "double-enumeration")
     {
@@ -493,7 +493,7 @@ startElement(void *userData, const char *element, const char **attrs)
       }
     parameter = new ModuleParameter;
     parameter->SetTag(name);
-    parameter->SetType("double");
+    parameter->SetCPPType("double");
     }
   else if (name == "file")
     {
@@ -513,12 +513,12 @@ startElement(void *userData, const char *element, const char **attrs)
         (strcmp(attrs[1], "true") == 0))
       {
       parameter->SetMultiple(attrs[1]);
-      parameter->SetType("std::vector<std::string>");
+      parameter->SetCPPType("std::vector<std::string>");
       parameter->SetArgType("std::string");
       }
     else
       {
-      parameter->SetType("std::string");
+      parameter->SetCPPType("std::string");
       }
     parameter->SetTag(name);
     }
@@ -540,12 +540,12 @@ startElement(void *userData, const char *element, const char **attrs)
         (strcmp(attrs[1], "true") == 0))
       {
       parameter->SetMultiple(attrs[1]);
-      parameter->SetType("std::vector<std::string>");
+      parameter->SetCPPType("std::vector<std::string>");
       parameter->SetArgType("std::string");
       }
     else
       {
-      parameter->SetType("std::string");
+      parameter->SetCPPType("std::string");
       }
     parameter->SetTag(name);
     }
@@ -562,17 +562,48 @@ startElement(void *userData, const char *element, const char **attrs)
       }
     parameter = new ModuleParameter;
     int attrCount = XML_GetSpecifiedAttributeCount(ps->Parser);
-    if (attrCount == 2 && 
-        (strcmp(attrs[0], "multiple") == 0) &&
-        (strcmp(attrs[1], "true") == 0))
+
+    // Parse attribute pairs
+    parameter->SetCPPType("std::string");
+    parameter->SetType("scalar");
+    for (int attr=0; attr < (attrCount / 2); attr++)
       {
-      parameter->SetMultiple(attrs[1]);
-      parameter->SetType("std::vector<std::string>");
-      parameter->SetArgType("std::string");
-      }
-    else
-      {
-      parameter->SetType("std::string");
+      if ((strcmp(attrs[2*attr], "multiple") == 0))
+        {
+        if ((strcmp(attrs[2*attr+1], "true") == 0) ||
+            (strcmp(attrs[2*attr+1], "false") == 0))
+          {
+          parameter->SetMultiple(attrs[2*attr+1]);
+          }
+        else
+          {
+          std::string error("ModuleDescriptionParser Error: \"" + std::string(attrs[2*attr+1]) + "\" is not a valid argument for the attribute \"multiple\". Only \"true\" and \"false\" are accepted.");
+          ps->ErrorDescription = error;
+          ps->ErrorLine = XML_GetCurrentLineNumber(ps->Parser);
+          ps->Error = true;
+          ps->OpenTags.push(name);
+          return;
+          }
+        }
+      else if ((strcmp(attrs[2*attr], "type") == 0))
+        {
+        if ((strcmp(attrs[2*attr+1], "scalar") == 0) ||
+            (strcmp(attrs[2*attr+1], "label") == 0) ||
+            (strcmp(attrs[2*attr+1], "tensor") == 0) ||
+            (strcmp(attrs[2*attr+1], "vector") == 0))
+          {
+          parameter->SetType(attrs[2*attr+1]);
+          }
+        else
+          {
+          std::string error("ModuleDescriptionParser Error: \"" + std::string(attrs[2*attr+1]) + "\" is not a valid image type. Only \"scalar\", \"label\", \"vector\" and \"tensor\" are accepted.");
+          ps->ErrorDescription = error;
+          ps->ErrorLine = XML_GetCurrentLineNumber(ps->Parser);
+          ps->Error = true;
+          ps->OpenTags.push(name);
+          return;
+          }
+        }
       }
     parameter->SetTag(name);
     }
@@ -594,12 +625,12 @@ startElement(void *userData, const char *element, const char **attrs)
         (strcmp(attrs[1], "true") == 0))
       {
       parameter->SetMultiple(attrs[1]);
-      parameter->SetType("std::vector<std::string>");
+      parameter->SetCPPType("std::vector<std::string>");
       parameter->SetArgType("std::string");
       }
     else
       {
-      parameter->SetType("std::string");
+      parameter->SetCPPType("std::string");
       }
     parameter->SetTag(name);
     }
