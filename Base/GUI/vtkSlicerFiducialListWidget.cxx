@@ -134,6 +134,9 @@ vtkSlicerFiducialListWidget::~vtkSlicerFiducialListWidget ( )
 {
   vtkDebugMacro("vtkSlicerFiducialListWidget::Destructor\n");
 
+  // let go of the pointer to the main viewer
+  this->MainViewer = NULL;
+
   this->RemoveMRMLObservers();
 
   this->DiamondGlyphPolyData->Delete();
@@ -922,14 +925,17 @@ void vtkSlicerFiducialListWidget::UpdateFiducialsFromMRML()
         }
       else
         {
-//        std::cout << "\tNo actor exists (checked for id " << flist->GetNthFiducialID(f) << "), the displayed fiducials list has " << this->DisplayedFiducials.size() << " and these keys:\n";
-        std::map<const char *, vtkActor *>::iterator iter;
-        for(iter=this->DisplayedFiducials.begin(); iter != this->DisplayedFiducials.end(); iter++) 
+        if (0)
           {
-//          std::cout << "\t\t" << iter->first << endl;
+          std::cout << "\tNo actor exists (checked for id " << flist->GetNthFiducialID(f) << "), the displayed fiducials list has " << this->DisplayedFiducials.size() << " and these keys:\n";
+          std::map<const char *, vtkActor *>::iterator iter;
+          for(iter=this->DisplayedFiducials.begin(); iter != this->DisplayedFiducials.end(); iter++) 
+            {
+            std::cout << "\t\t" << iter->first << endl;
+            }
           }
         }
-//      std::cout << f << "Actor exists = " << actorExists << " (checked for id " << flist->GetNthFiducialID(f) << ")" << endl;
+      //std::cout << "fid = " << f << ": Actor for this point  exists = " << actorExists << " (checked for id " << flist->GetNthFiducialID(f) << ")" << endl;
       
       vtkPolyDataMapper *mapper = NULL;
 //      vtkActor *actor = NULL;
@@ -1164,7 +1170,7 @@ void vtkSlicerFiducialListWidget::RemoveFiducialProps()
 {
   vtkDebugMacro("vtkSlicerFiducialListWidget::RemoveFiducialProps\n");
   // glyph actors
-//  std::cout << "*****vtkSlicerFiducialListWidget::RemoveFiducialProps: clearing out the DisplayedFiducials list!\n";
+
   int idx = 0;
   std::map<const char *, vtkActor *>::iterator iter;
   for(iter=this->DisplayedFiducials.begin(); iter != this->DisplayedFiducials.end(); iter++) 
@@ -1304,6 +1310,7 @@ vtkSlicerFiducialListWidget::GetFiducialActorByID (const char *id)
   // matching pointer not matching content)
   for(iter=this->DisplayedFiducials.begin(); iter != this->DisplayedFiducials.end(); iter++) 
     {
+//std::cout << "GetFiducialActorBy ID " << id << " (as string = " << sid.c_str() <<  "), now checking " << iter->first << endl;
     if ( iter->first && !strcmp( iter->first, sid.c_str() ) )
       {
       return (iter->second);
