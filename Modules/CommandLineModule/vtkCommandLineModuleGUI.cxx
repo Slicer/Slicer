@@ -76,7 +76,8 @@ vtkCommandLineModuleGUI* vtkCommandLineModuleGUI::New()
 vtkCommandLineModuleGUI::vtkCommandLineModuleGUI()
 {
   this->CommandLineModuleNodeSelector = vtkSlicerNodeSelectorWidget::New();
-
+  this->CommandLineModuleNodeSelector->ShowHiddenOn();
+  
   this->Logic = NULL;
   this->CommandLineModuleNode = NULL;
 
