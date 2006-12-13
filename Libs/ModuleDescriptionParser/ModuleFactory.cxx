@@ -36,12 +36,36 @@ splitString (std::string &text,
 inline bool 
 NameIsSharedLibrary(const char* name)
 {
+  std::string extension = itksys::DynamicLoader::LibExtension();
+  
   std::string sname = name;
-  if ( sname.find(itksys::DynamicLoader::LibExtension()) != std::string::npos )
+  if ( sname.rfind(extension) == sname.size() - extension.size() )
     {
     return true;
     }
   return false;
+}
+
+/**
+ * A file scoped function to determine if a file has
+ * the executable extension in its name
+ */
+inline bool 
+NameIsExecutable(const char* name)
+{
+  std::string extension = itksys::SystemTools::GetExecutableExtension();
+
+  if (extension != "")
+    {
+    std::string sname = name;
+    if ( sname.rfind(extension) == sname.size() - extension.size())
+      {
+      return true;
+      }
+    return false;
+    }
+
+  return !NameIsSharedLibrary(name);
 }
 
 /**
@@ -397,136 +421,140 @@ ModuleFactory
       // skip any directories
       if (!itksys::SystemTools::FileIsDirectory(filename))
         {
-        numberTested++;
-        //std::cout << "Testing " << filename << " as a plugin:" << std::endl;
-        
-        char *command[3];
-        itksysProcess *process = itksysProcess_New();
-
-        // fullcommand name and the argument to probe the executable
-        std::string commandName = std::string(directory.GetPath())
-          + "/" + filename;
-        std::string arg("--xml");
-
-        // build the command/parameter array.
-        command[0] = const_cast<char*>(commandName.c_str());
-        command[1] = const_cast<char*>(arg.c_str());
-        command[2] = 0;
-
-        // setup the command
-        itksysProcess_SetCommand(process, command);
-        itksysProcess_SetOption(process,
-                                itksysProcess_Option_Detach, 0);
-        itksysProcess_SetOption(process,
-                                itksysProcess_Option_HideWindow, 1);
-        itksysProcess_SetTimeout(process, 5.0); // 5 seconds
-
-        // execute the command
-        itksysProcess_Execute(process);
-
-        // Wait for the command to finish
-        char *tbuffer;
-        int length;
-        int pipe;
-        std::string stdoutbuffer;
-        std::string stderrbuffer;
-        while ((pipe = itksysProcess_WaitForData(process ,&tbuffer,
-                                                 &length, 0)) != 0)
+        // try to focus only on executables
+        if ( NameIsExecutable(filename) )
           {
-          if (length != 0 && tbuffer != 0)
+          numberTested++;
+          //std::cout << "Testing " << filename << " as a plugin:" << std::endl;
+        
+          char *command[3];
+          itksysProcess *process = itksysProcess_New();
+
+          // fullcommand name and the argument to probe the executable
+          std::string commandName = std::string(directory.GetPath())
+            + "/" + filename;
+          std::string arg("--xml");
+
+          // build the command/parameter array.
+          command[0] = const_cast<char*>(commandName.c_str());
+          command[1] = const_cast<char*>(arg.c_str());
+          command[2] = 0;
+
+          // setup the command
+          itksysProcess_SetCommand(process, command);
+          itksysProcess_SetOption(process,
+                                  itksysProcess_Option_Detach, 0);
+          itksysProcess_SetOption(process,
+                                  itksysProcess_Option_HideWindow, 1);
+          itksysProcess_SetTimeout(process, 5.0); // 5 seconds
+
+          // execute the command
+          itksysProcess_Execute(process);
+
+          // Wait for the command to finish
+          char *tbuffer;
+          int length;
+          int pipe;
+          std::string stdoutbuffer;
+          std::string stderrbuffer;
+          while ((pipe = itksysProcess_WaitForData(process ,&tbuffer,
+                                                   &length, 0)) != 0)
             {
-            if (pipe == itksysProcess_Pipe_STDOUT)
+            if (length != 0 && tbuffer != 0)
               {
-              stdoutbuffer = stdoutbuffer.append(tbuffer, length);
-              }
-            else if (pipe == itksysProcess_Pipe_STDERR)
-              {
-              stderrbuffer = stderrbuffer.append(tbuffer, length);
+              if (pipe == itksysProcess_Pipe_STDOUT)
+                {
+                stdoutbuffer = stdoutbuffer.append(tbuffer, length);
+                }
+              else if (pipe == itksysProcess_Pipe_STDERR)
+                {
+                stderrbuffer = stderrbuffer.append(tbuffer, length);
+                }
               }
             }
-          }
-        itksysProcess_WaitForExit(process, 0);
+          itksysProcess_WaitForExit(process, 0);
 
-        // check the exit state / error state of the process
-        int result = itksysProcess_GetState(process);
-        if (result == itksysProcess_State_Exited)
-          {
-          // executable exited cleanly and must of done
-          // "something" when presented with a "--xml" argument
-          // (note that it may have just printed out that it did
-          // not understand --xml)
-          if (itksysProcess_GetExitValue(process) == 0)
+          // check the exit state / error state of the process
+          int result = itksysProcess_GetState(process);
+          if (result == itksysProcess_State_Exited)
             {
-            // executable exited without errors, check if it
-            // generated a valid xml description
-            if (stdoutbuffer.compare(0, 5, "<?xml") == 0)
+            // executable exited cleanly and must of done
+            // "something" when presented with a "--xml" argument
+            // (note that it may have just printed out that it did
+            // not understand --xml)
+            if (itksysProcess_GetExitValue(process) == 0)
               {
-              //std::cout << "\t" << filename << " is a plugin." << std::endl;
-              
-              // Construct and configure the module object
-              ModuleDescription module;
-              module.SetTarget( commandName );
-
-              // Parse the xml to build the description of the module
-              // and the parameters
-              ModuleDescriptionParser parser;
-              parser.Parse(stdoutbuffer, module);
-
-              // Check to make sure the module is not already in the
-              // list
-              ModuleDescriptionMap::iterator mit
-                = this->InternalMap->find(module.GetTitle());
-
-              std::string splash_msg("Discovered ");
-              splash_msg +=  module.GetTitle();
-              splash_msg += " Module...";
-              this->ModuleDiscoveryMessage(splash_msg.c_str());
-              
-              if (mit == this->InternalMap->end())
+              // executable exited without errors, check if it
+              // generated a valid xml description
+              if (stdoutbuffer.compare(0, 5, "<?xml") == 0)
                 {
-                // Store the module in the list
-                (*this->InternalMap)[module.GetTitle()] =  module ;
+                //std::cout << "\t" << filename << " is a plugin." << std::endl;
+              
+                // Construct and configure the module object
+                ModuleDescription module;
+                module.SetTarget( commandName );
 
-                information << "A module named \"" << module.GetTitle()
-                            << "\" has been discovered at " << module.GetTarget() << std::endl;
-                numberFound++;
+                // Parse the xml to build the description of the module
+                // and the parameters
+                ModuleDescriptionParser parser;
+                parser.Parse(stdoutbuffer, module);
+
+                // Check to make sure the module is not already in the
+                // list
+                ModuleDescriptionMap::iterator mit
+                  = this->InternalMap->find(module.GetTitle());
+
+                std::string splash_msg("Discovered ");
+                splash_msg +=  module.GetTitle();
+                splash_msg += " Module...";
+                this->ModuleDiscoveryMessage(splash_msg.c_str());
+              
+                if (mit == this->InternalMap->end())
+                  {
+                  // Store the module in the list
+                  (*this->InternalMap)[module.GetTitle()] =  module ;
+
+                  information << "A module named \"" << module.GetTitle()
+                              << "\" has been discovered at " << module.GetTarget() << std::endl;
+                  numberFound++;
+                  }
+                else
+                  {
+                  information << "A module named \"" << module.GetTitle()
+                              << "\" has already been discovered." << std::endl
+                              << "    First discovered at "
+                              << (*mit).second.GetTarget() << std::endl
+                              << "    Then discovered at "
+                              << module.GetTarget() << std::endl
+                              << "    Keeping first module." << std::endl;
+                  }
                 }
               else
                 {
-                information << "A module named \"" << module.GetTitle()
-                          << "\" has already been discovered." << std::endl
-                          << "    First discovered at "
-                          << (*mit).second.GetTarget() << std::endl
-                          << "    Then discovered at "
-                          << module.GetTarget() << std::endl
-                          << "    Keeping first module." << std::endl;
+//               std::cout << "\t" << filename << " is not a plugin." << std::endl
+//                         << "\t" << filename << " did not generate an xml description." << std::endl;
                 }
               }
             else
               {
-//               std::cout << "\t" << filename << " is not a plugin." << std::endl
-//                         << "\t" << filename << " did not generate an xml description." << std::endl;
+//             std::cout << "\t" << filename << " is not a plugin." << std::endl
+//                       << "\t" << filename << " exited with errors." << std::endl;
               }
+            }
+          else if (result == itksysProcess_State_Expired)
+            {
+//           std::cout << "\t" << filename << " is not a plugin." << std::endl
+//                     << "\t" << filename << " timeout exceeded." << std::endl;
             }
           else
             {
-//             std::cout << "\t" << filename << " is not a plugin." << std::endl
-//                       << "\t" << filename << " exited with errors." << std::endl;
-            }
-          }
-        else if (result == itksysProcess_State_Expired)
-          {
-//           std::cout << "\t" << filename << " is not a plugin." << std::endl
-//                     << "\t" << filename << " timeout exceeded." << std::endl;
-          }
-        else
-          {
 //           std::cout << "\t" << filename << " is not a plugin." << std::endl
 //                     << "\t" << filename << " did not exit cleanly." << std::endl;
-          }
+            }
 
-        // clean up
-        itksysProcess_Delete(process);
+          // clean up
+          itksysProcess_Delete(process);
+          }
         }
       }
     this->InformationMessage( information.str().c_str() );    
@@ -534,7 +562,7 @@ ModuleFactory
 
   std::stringstream information;
   information << "Tested " << numberTested << " files as command line executable plugins. Found "
-            << numberFound << " valid plugins." << std::endl;
+              << numberFound << " valid plugins." << std::endl;
   this->InformationMessage( information.str().c_str() );
 
   return numberFound;
