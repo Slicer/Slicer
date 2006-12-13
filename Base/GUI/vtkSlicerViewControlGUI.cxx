@@ -22,6 +22,7 @@
 #include "vtkKWEntry.h"
 #include "vtkKWEntryWithLabel.h"
 #include "vtkKWTkUtilities.h"
+#include "vtkKWRenderWidget.h"
 #include "vtkSlicerViewControlIcons.h"
 
 #include "vtkMRMLCameraNode.h"
@@ -90,6 +91,9 @@ vtkSlicerViewControlGUI::vtkSlicerViewControlGUI ( )
 
   // temporary thing until navzoom window is built.
   this->NavZoomLabel = vtkKWLabel::New ( );
+  this->NavWidget = vtkKWRenderWidget::New( );
+  this->ZoomWidget = vtkKWRenderWidget::New ( );
+  this->NavZoomFrame = vtkKWFrame::New ( );
 }
 
 
@@ -282,6 +286,25 @@ vtkSlicerViewControlGUI::~vtkSlicerViewControlGUI ( )
     this->NavZoomScale->Delete ( );
     this->NavZoomScale = NULL;
     }
+  if ( this->NavWidget )
+    {
+    this->NavWidget->SetParent ( NULL );
+    this->NavWidget->Delete ();
+    this->NavWidget = NULL;
+    }
+  if ( this->ZoomWidget )
+    {
+    this->ZoomWidget->SetParent ( NULL );
+    this->ZoomWidget->Delete ();
+    this->ZoomWidget = NULL;
+    }
+  if ( this->NavZoomFrame )
+    {
+    this->NavZoomFrame->SetParent ( NULL );
+    this->NavZoomFrame->Delete ();
+    this->NavZoomFrame = NULL;
+    }
+  
 
   this->SetApplicationGUI ( NULL );
 }
@@ -391,6 +414,7 @@ void vtkSlicerViewControlGUI::RemoveGUIObservers ( )
     this->OrthoButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->SliceOpacityButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->StereoButton->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->CenterButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->SelectButton->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->VisibilityButton->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->FOVEntry->GetWidget()->RemoveObservers (vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -409,6 +433,7 @@ void vtkSlicerViewControlGUI::AddGUIObservers ( )
     this->OrthoButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->SliceOpacityButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->StereoButton->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->CenterButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->SelectButton->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->VisibilityButton->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->FOVEntry->GetWidget()->AddObserver ( vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -896,6 +921,23 @@ void vtkSlicerViewControlGUI::LeaveViewAxisICallback ( ) {
 }
 
 
+//---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::PackNavWidget ( )
+{
+  this->Script ("pack forget %s ", this->ZoomWidget->GetWidgetName() );
+  this->Script ( "pack %s -side top -anchor c -padx 0 -pady 0 -fill x -fill y -expand n", this->NavWidget->GetWidgetName ( ) );      
+}
+
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::PackZoomWidget ( )
+{
+  this->Script ("pack forget %s ", this->NavWidget->GetWidgetName() );
+  this->Script ( "pack %s -side top -anchor c -padx 0 -pady 0 -fill x -fill y -expand n", this->ZoomWidget->GetWidgetName ( ) );      
+}
+
+
 
 //---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
@@ -917,7 +959,6 @@ void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
       vtkKWFrame *f2 = vtkKWFrame::New ( );
       vtkKWFrame *f3 = vtkKWFrame::New ( );
       vtkKWFrame *f4 = vtkKWFrame::New ( );
-      vtkKWFrame *f5 = vtkKWFrame::New ( );
       vtkKWFrame *f6 = vtkKWFrame::New ( );
       vtkKWFrame *f7 = vtkKWFrame::New ( );
       f0->SetParent ( appF);
@@ -930,8 +971,8 @@ void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
       f3->Create();
       f4->SetParent ( f0);
       f4->Create();
-      f5->SetParent ( f0);
-      f5->Create();
+      this->NavZoomFrame->SetParent ( f0);
+      this->NavZoomFrame->Create();
       f6->SetParent ( f0);
       f6->Create();
       this->Script ( "pack %s -side left -anchor nw -padx 2 -pady 2 -expand n", f0->GetWidgetName ( ) );      
@@ -939,7 +980,7 @@ void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
       this->Script ( "grid %s -row 1 -column 0 -sticky w -padx 0 -pady 0", f2->GetWidgetName ( ) );
       this->Script ( "grid %s -row 0 -column 1 -sticky w -padx 0 -pady 0", f3->GetWidgetName ( ) );
       this->Script ( "grid %s -row 1 -column 1  -sticky w -padx 0 -pady 0", f4->GetWidgetName ( ) );
-      this->Script ( "grid %s -row 0 -column 2  -sticky news -padx 0 -pady 0", f5->GetWidgetName ( ) );
+      this->Script ( "grid %s -row 0 -column 2  -sticky news -padx 0 -pady 0", this->NavZoomFrame->GetWidgetName ( ) );
       this->Script ( "grid %s -row 1 -column 2  -sticky w -padx 0 -pady 0", f6->GetWidgetName ( ) );
 
       // create and pack the look from and rotate around checkbuttons
@@ -1134,6 +1175,8 @@ void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
       this->Script ( "pack %s -side left -anchor e -padx 2 -pady 2 -expand n", this->ZoomEntry->GetWidgetName ( ) );
       
       // TODO: replace with real nav zoom controls
+
+/*      
       f5->SetBackgroundColor ( app->GetSlicerTheme()->GetSlicerColors()->ViewerBlue );
       this->NavZoomLabel->SetParent (f5);
       this->NavZoomLabel->Create();        
@@ -1143,7 +1186,25 @@ void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
       this->NavZoomLabel->SetText ( "3DNav / SliceZoom" );
       this->NavZoomLabel->SetBackgroundColor ( app->GetSlicerTheme()->GetSlicerColors()->ViewerBlue );
       this->Script ( "pack %s -side top -anchor c -padx 0 -pady 0 -fill x -fill y -expand n", this->NavZoomLabel->GetWidgetName ( ) );
+*/
+      // wjp test.
+      // create but don't pack yet.
+      this->ZoomWidget->SetParent ( this->NavZoomFrame );
+      this->ZoomWidget->Create ( );
+      // guess a width
+      this->ZoomWidget->SetWidth ( 140 );
+      this->ZoomWidget->SetHeight ( 50 );
+      this->ZoomWidget->SetRendererBackgroundColor ( app->GetSlicerTheme()->GetSlicerColors()->Black );
+      this->Script ( "pack %s -side top -anchor c -padx 0 -pady 0 -fill x -fill y -expand n", this->ZoomWidget->GetWidgetName ( ) );      
 
+      this->NavWidget->SetParent (this->NavZoomFrame);
+      this->NavWidget->Create();
+      // guess a width
+      this->NavWidget->SetWidth ( 140 );
+      this->NavWidget->SetHeight ( 50 );
+      this->NavWidget->SetRendererBackgroundColor ( app->GetSlicerTheme()->GetSlicerColors()->ViewerBlue );
+      this->PackNavWidget ( );
+      
       //--- create the nav/zoom widgets
       this->NavZoomInIconButton->SetParent ( f6 );
       this->NavZoomInIconButton->Create ( );
@@ -1183,7 +1244,6 @@ void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
       f2->Delete ( );
       f3->Delete ( );
       f4->Delete ( );
-      f5->Delete ( );
       f6->Delete ( );
       f7->Delete ( );
       }

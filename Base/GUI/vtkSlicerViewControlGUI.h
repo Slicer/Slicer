@@ -12,6 +12,8 @@
 class vtkKWFrame;
 class vtkKWPushButton;
 class vtkKWTopLevel;
+class vtkKWRenderWidget;
+
 class vtkSlicerApplicationGUI;
 class vtkKWScale;
 class vtkKWScaleWithEntry;
@@ -23,6 +25,7 @@ class vtkKWMenuButton;
 class vtkKWEntry;
 class vtkKWEntryWithLabel;
 class vtkSlicerViewControlIcons;
+
 
 // Description:
 // This class implements Slicer's 3DView Control Panel on Slicer's main GUI Panel.
@@ -52,7 +55,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   vtkGetObjectMacro (ZoomEntry, vtkKWEntryWithLabel);
   vtkGetObjectMacro (LookFromButton, vtkKWRadioButton);
   vtkGetObjectMacro (RotateAroundButton, vtkKWRadioButton );
-
+  vtkGetObjectMacro (NavZoomFrame, vtkKWFrame );
+  
   // Description:
   // Flags to indicate active view spinning and rocking
 
@@ -101,6 +105,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   vtkGetObjectMacro (ViewAxisCenterIconButton, vtkKWLabel );
   vtkGetObjectMacro (ViewAxisTopCornerIconButton, vtkKWLabel );
   vtkGetObjectMacro (ViewAxisBottomCornerIconButton, vtkKWLabel);
+  vtkGetObjectMacro (NavWidget, vtkKWRenderWidget );
+  vtkGetObjectMacro (ZoomWidget, vtkKWRenderWidget );
     
   vtkGetObjectMacro ( SlicerViewControlIcons, vtkSlicerViewControlIcons );
 
@@ -179,6 +185,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   void PopUpSliceOpacityScaleAndEntry ( );
   void HideSliceOpacityScaleAndEntry ( );
 
+  virtual void PackNavWidget ( );
+  virtual void PackZoomWidget ( ) ;
+
   //BTX
   // Modes for controlling camera by clicking axes
   enum
@@ -243,6 +252,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   vtkKWPushButton *NavZoomOutIconButton;
   vtkKWScale *NavZoomScale;
   vtkKWLabel *NavZoomLabel;
+  vtkKWRenderWidget *NavWidget;
+  vtkKWRenderWidget *ZoomWidget;
+  vtkKWFrame *NavZoomFrame;
 
   // Description:
   // These widgets tile a composite image
