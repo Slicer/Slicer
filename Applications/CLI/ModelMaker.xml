@@ -13,7 +13,7 @@ Imported from Slicer 2.
 <parameters>
     <label>IO</label>
     <description>Input/output parameters</description>
-    <image>
+    <image label="label">
       <name>InputVolume</name>
       <label>Input Volume</label>
       <channel>input</channel>

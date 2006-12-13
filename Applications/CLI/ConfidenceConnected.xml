@@ -94,7 +94,7 @@
       <index>0</index>
       <description>Input volume to be filtered</description>
     </image>
-    <image>
+    <image type="label">
       <name>outputVolume</name>
       <label>Output Volume</label>
       <channel>output</channel>

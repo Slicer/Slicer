@@ -123,9 +123,10 @@ int main(int argc, char * argv[])
 
     // Read the file
     reader = vtkITKArchetypeImageSeriesScalarReader::New();
-    vtkPluginFilterWatcher watchWriter(reader,
+    vtkPluginFilterWatcher watchReader(reader,
                                        "Read Volume",
-                                       CLPProcessInformation);
+                                       CLPProcessInformation,
+                                       1.0/15.0, 0.0/15.0);
     reader->SetArchetype(InputVolume.c_str());
     reader->SetOutputScalarTypeToNative();
     reader->SetDesiredCoordinateOrientationToNative();
@@ -147,7 +148,8 @@ int main(int argc, char * argv[])
       hist = vtkImageAccumulate::New();
       vtkPluginFilterWatcher watchImageAccumlate(hist,
                                                  "Histogram",
-                                                 CLPProcessInformation);
+                                                 CLPProcessInformation,
+                                                 1.0/15.0, 1.0/15.0);
       hist->SetInput(image); 
       hist->SetComponentExtent(0, 1023, 0, 0, 0, 0);
       hist->SetComponentOrigin(0, 0, 0);
@@ -157,7 +159,8 @@ int main(int argc, char * argv[])
       std::string comment = "Generate All Models";
       vtkPluginFilterWatcher watchDMCubes(cubes,
                                           comment.c_str(),
-                                          CLPProcessInformation);
+                                          CLPProcessInformation,
+                                          1.0/15.0, 2.0/15.0);
       
       cubes->SetInput(image);
       cubes->GenerateValues((EndLabel-StartLabel +1), StartLabel, EndLabel);
@@ -170,7 +173,8 @@ int main(int argc, char * argv[])
         std::string comment = "Joint Smooth All Models";
         vtkPluginFilterWatcher watchSmoother(smoother,
                                              comment.c_str(),
-                                             CLPProcessInformation);
+                                             CLPProcessInformation,
+                                             1.0/15.0, 3.0/15.0);
         cubes->ReleaseDataFlagOn();
         smoother->SetInput(cubes->GetOutput());
         smoother->SetNumberOfIterations(Smooth);
@@ -279,7 +283,8 @@ int main(int argc, char * argv[])
         std::string comment = "Threshold " + labelName;
         vtkPluginFilterWatcher watchImageThreshold(imageThreshold,
                                                    comment.c_str(),
-                                                   CLPProcessInformation);
+                                                   CLPProcessInformation,
+                                                   1.0/15.0, 4.0/15.0);
         imageThreshold->SetInput(image);
         imageThreshold->SetReplaceIn(1);
         imageThreshold->SetReplaceOut(1);
@@ -303,7 +308,8 @@ int main(int argc, char * argv[])
         std::string comment = "Threshold " + labelName;
         vtkPluginFilterWatcher watchThreshold(threshold,
                                               comment.c_str(),
-                                              CLPProcessInformation);
+                                              CLPProcessInformation,
+                                              1.0/15.0, 5.0/15.0);
         threshold->SetInput(smoother->GetOutput());
         // In VTK 5.0, this is deprecated - the default behaviour seems to
         // be okay
@@ -324,7 +330,8 @@ int main(int argc, char * argv[])
         std::string comment = "Marching Cubes " + labelName;
         vtkPluginFilterWatcher watchThreshold(mcubes,
                                               comment.c_str(),
-                                              CLPProcessInformation);
+                                              CLPProcessInformation,
+                                              1.0/15.0, 6.0/15.0);
           
         mcubes->SetInput(imageToStructuredPoints->GetOutput());
         mcubes->SetValue(0,100.5);
@@ -363,7 +370,8 @@ int main(int argc, char * argv[])
       std::string comment = "Decimate " + labelName;
       vtkPluginFilterWatcher watchImageThreshold(decimator,
                                                  comment.c_str(),
-                                                 CLPProcessInformation);
+                                                 CLPProcessInformation,
+                                                 1.0/15.0, 7.0/15.0);
       if (JointSmoothing == 0)
         {
         decimator->SetInput(mcubes->GetOutput());
@@ -402,7 +410,8 @@ int main(int argc, char * argv[])
         std::string comment = "Reverse " + labelName;
         vtkPluginFilterWatcher watchReverser(reverser,
                                              comment.c_str(),
-                                             CLPProcessInformation);
+                                             CLPProcessInformation,
+                                             1.0/15.0, 8.0/15.0);
         reverser->SetInput(decimator->GetOutput());
         reverser->ReverseNormalsOn();
         (reverser->GetOutput())->ReleaseDataFlagOn();
@@ -417,7 +426,8 @@ int main(int argc, char * argv[])
           std::string comment = "Smooth " + labelName;
           vtkPluginFilterWatcher watchSmoother(smootherSinc,
                                                comment.c_str(),
-                                               CLPProcessInformation);
+                                               CLPProcessInformation,
+                                               1.0/15.0, 9.0/15.0);
           smootherSinc->SetPassBand(0.1);
           if (Smooth == 1)
             {
@@ -446,7 +456,8 @@ int main(int argc, char * argv[])
           std::string comment = "Smooth " + labelName;
           vtkPluginFilterWatcher watchSmoother(smootherPoly,
                                                comment.c_str(),
-                                               CLPProcessInformation);
+                                               CLPProcessInformation,
+                                               1.0/15.0, 10.0/15.0);
           // this next line massively rounds corners
           smootherPoly->SetRelaxationFactor(0.33);
           smootherPoly->SetFeatureAngle(60);
@@ -474,7 +485,8 @@ int main(int argc, char * argv[])
       std::string comment1 = "Transform " + labelName;
       vtkPluginFilterWatcher watchTransformer(transformer,
                                               comment1.c_str(),
-                                              CLPProcessInformation);
+                                              CLPProcessInformation,
+                                              1.0/15.0, 11.0/15.0);
       if (JointSmoothing == 0)
         {
         if (strcmp(FilterType.c_str(),"Sinc") == 0)
@@ -510,7 +522,8 @@ int main(int argc, char * argv[])
       std::string comment2 = "Normals " + labelName;
       vtkPluginFilterWatcher watchNormals(normals,
                                           comment2.c_str(),
-                                          CLPProcessInformation);
+                                          CLPProcessInformation,
+                                          1.0/15.0, 12.0/15.0);
       if (PointNormals)
         {
         normals->ComputePointNormalsOn();
@@ -529,7 +542,8 @@ int main(int argc, char * argv[])
       std::string comment3 = "Strip " + labelName;
       vtkPluginFilterWatcher watchStripper(stripper,
                                            comment3.c_str(),
-                                           CLPProcessInformation);
+                                           CLPProcessInformation,
+                                           1.0/15.0, 13.0/15.0);
       stripper->SetInput(normals->GetOutput());
       
       (stripper->GetOutput())->ReleaseDataFlagOff();
@@ -543,7 +557,8 @@ int main(int argc, char * argv[])
       std::string comment4 = "Write " + labelName;
       vtkPluginFilterWatcher watchWriter(writer,
                                          comment4.c_str(),
-                                         CLPProcessInformation);
+                                         CLPProcessInformation,
+                                         1.0/15.0, 14.0/15.0);
       writer->SetInput(stripper->GetOutput());
       writer->SetFileType(2);
       std::string fileName;
