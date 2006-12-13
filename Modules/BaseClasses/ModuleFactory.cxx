@@ -9,10 +9,6 @@
 #include "itksys/SystemTools.hxx"
 #include "itksys/Process.h"
 
-#include "vtkSlicerApplication.h"
-#include "vtkKWApplication.h"
-#include "vtkKWSplashScreen.h"
-
 #include <map>
 
 static void
@@ -67,12 +63,103 @@ class ModuleDescriptionMap : public std::map<std::string, ModuleDescription> {};
 ModuleFactory::ModuleFactory()
 {
   this->InternalMap = new ModuleDescriptionMap;
+  this->WarningMessageCallback = 0;
+  this->ErrorMessageCallback = 0;
+  this->InformationMessageCallback = 0;
+  this->ModuleDiscoveryMessageCallback = 0;
 }
 
 ModuleFactory::~ModuleFactory()
 {
   delete this->InternalMap;
 }
+
+
+void
+ModuleFactory::WarningMessage(const char *msg)
+{
+  if (this->WarningMessageCallback && msg)
+    {
+    (*this->WarningMessageCallback)(msg);
+    }
+}
+
+void
+ModuleFactory::ErrorMessage(const char *msg)
+{
+  if (this->ErrorMessageCallback && msg)
+    {
+    (*this->ErrorMessageCallback)(msg);
+    }
+}
+
+void
+ModuleFactory::InformationMessage(const char *msg)
+{
+  if (this->InformationMessageCallback && msg)
+    {
+    (*this->InformationMessageCallback)(msg);
+    }
+}
+
+void
+ModuleFactory::ModuleDiscoveryMessage(const char *msg)
+{
+  if (this->ModuleDiscoveryMessageCallback && msg)
+    {
+    (*this->ModuleDiscoveryMessageCallback)(msg);
+    }
+}
+
+
+void
+ModuleFactory::SetWarningMessageCallback( CallbackFunctionType f )
+{
+  this->WarningMessageCallback = f;
+}
+
+ModuleFactory::CallbackFunctionType
+ModuleFactory::GetWarningMessageCallback()
+{
+  return this->WarningMessageCallback;
+}
+
+void
+ModuleFactory::SetErrorMessageCallback( CallbackFunctionType f )
+{
+  this->ErrorMessageCallback = f;
+}
+
+ModuleFactory::CallbackFunctionType
+ModuleFactory::GetErrorMessageCallback()
+{
+  return this->ErrorMessageCallback;
+}
+
+void
+ModuleFactory::SetInformationMessageCallback( CallbackFunctionType f )
+{
+  this->InformationMessageCallback = f;
+}
+
+ModuleFactory::CallbackFunctionType
+ModuleFactory::GetInformationMessageCallback()
+{
+  return this->InformationMessageCallback;
+}
+
+void
+ModuleFactory::SetModuleDiscoveryMessageCallback( CallbackFunctionType f )
+{
+  this->ModuleDiscoveryMessageCallback = f;
+}
+
+ModuleFactory::CallbackFunctionType
+ModuleFactory::GetModuleDiscoveryMessageCallback()
+{
+  return this->ModuleDiscoveryMessageCallback;
+}
+
 
 std::vector<std::string>
 ModuleFactory
@@ -121,7 +208,7 @@ ModuleFactory
 
   if (numberOfShared + numberOfExecutables == 0)
     {
-    vtkSlicerApplication::GetInstance()->WarningMessage( "No plugin modules found. Check your module search path and your Slicer installation." );
+    this->WarningMessage( "No plugin modules found. Check your module search path and your Slicer installation." );
     }
 }
 
@@ -135,7 +222,7 @@ ModuleFactory
   // and have a prescribed symbol.
   if (this->SearchPath == "")
     {
-    vtkSlicerApplication::GetInstance()->WarningMessage( "Empty module search path." );
+    this->WarningMessage( "Empty module search path." );
     return 0;
     }
   
@@ -221,7 +308,7 @@ ModuleFactory
                 std::string splash_msg("Discovered ");
                 splash_msg +=  module.GetTitle();
                 splash_msg += " Module...";
-                vtkSlicerApplication::GetInstance()->GetSplashScreen()->SetProgressMessage(splash_msg.c_str());
+                this->ModuleDiscoveryMessage(splash_msg.c_str());
                 
                 if (mit == this->InternalMap->end())
                   {
@@ -255,14 +342,14 @@ ModuleFactory
         }
       }
 
-    vtkSlicerApplication::GetInstance()->InformationMessage( information.str().c_str() );
+    this->InformationMessage( information.str().c_str() );
     }
 
   std::stringstream information;
   information << "Tested " << numberTested << " files as shared object plugins. Found "
               << numberFound << " valid plugins." << std::endl;
 
-  vtkSlicerApplication::GetInstance()->InformationMessage( information.str().c_str() );
+  this->InformationMessage( information.str().c_str() );
 
   return numberFound;
 }
@@ -278,7 +365,7 @@ ModuleFactory
   //
   if (this->SearchPath == "")
     {
-    vtkSlicerApplication::GetInstance()->WarningMessage( "Empty module search path." ); 
+    this->WarningMessage( "Empty module search path." ); 
     return 0;
     }
   
@@ -394,7 +481,7 @@ ModuleFactory
               std::string splash_msg("Discovered ");
               splash_msg +=  module.GetTitle();
               splash_msg += " Module...";
-              vtkSlicerApplication::GetInstance()->GetSplashScreen()->SetProgressMessage(splash_msg.c_str());
+              this->ModuleDiscoveryMessage(splash_msg.c_str());
               
               if (mit == this->InternalMap->end())
                 {
@@ -443,13 +530,13 @@ ModuleFactory
         itksysProcess_Delete(process);
         }
       }
-    vtkSlicerApplication::GetInstance()->InformationMessage( information.str().c_str() );    
+    this->InformationMessage( information.str().c_str() );    
     }
 
   std::stringstream information;
   information << "Tested " << numberTested << " files as command line executable plugins. Found "
             << numberFound << " valid plugins." << std::endl;
-  vtkSlicerApplication::GetInstance()->InformationMessage( information.str().c_str() );
+  this->InformationMessage( information.str().c_str() );
 
   return numberFound;
 }

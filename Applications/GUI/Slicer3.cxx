@@ -223,6 +223,32 @@ void printAllInfo(int argc, char **argv)
 }
 
 
+static void WarningMessage(const char *msg)
+{
+  vtkSlicerApplication::GetInstance()->WarningMessage(msg);
+}
+
+static void ErrorMessage(const char *msg)
+{
+  vtkSlicerApplication::GetInstance()->ErrorMessage(msg);
+}
+
+static void InformationMessage(const char *msg)
+{
+  vtkSlicerApplication::GetInstance()->InformationMessage(msg);
+}
+
+static void DebugMessage(const char *msg)
+{
+  vtkSlicerApplication::GetInstance()->DebugMessage(msg);
+}
+
+static void SplashMessage(const char *msg)
+{
+  vtkSlicerApplication::GetInstance()->GetSplashScreen()->SetProgressMessage(msg);
+}
+
+
 int Slicer3_main(int argc, char *argv[])
 {
   // Append the path to the slicer executable to the ITK_AUTOLOAD_PATH
@@ -846,6 +872,10 @@ int Slicer3_main(int argc, char *argv[])
     // Search for modules
     ModuleFactory moduleFactory;
     moduleFactory.SetSearchPath( packagePath );
+    moduleFactory.SetWarningMessageCallback( WarningMessage );
+    moduleFactory.SetErrorMessageCallback( ErrorMessage );
+    moduleFactory.SetInformationMessageCallback( InformationMessage );
+    moduleFactory.SetModuleDiscoveryMessageCallback( SplashMessage );
     moduleFactory.Scan();
 
     // add the modules to the available modules
