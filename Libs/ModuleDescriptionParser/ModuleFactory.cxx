@@ -1,15 +1,14 @@
-#include "itkDynamicLoader.h"  // include itk files first 
-
-#include "ModuleFactory.h"
-
-#include "ModuleDescriptionParser.h"
-#include "ModuleDescription.h"
-
+#include "itksys/DynamicLoader.hxx" 
 #include "itksys/Directory.hxx"
 #include "itksys/SystemTools.hxx"
 #include "itksys/Process.h"
 
+#include "ModuleFactory.h"
+#include "ModuleDescriptionParser.h"
+#include "ModuleDescription.h"
+
 #include <map>
+#include <sstream>
 
 static void
 splitString (std::string &text,
@@ -38,7 +37,7 @@ inline bool
 NameIsSharedLibrary(const char* name)
 {
   std::string sname = name;
-  if ( sname.find(itk::DynamicLoader::LibExtension()) != std::string::npos )
+  if ( sname.find(itksys::DynamicLoader::LibExtension()) != std::string::npos )
     {
     return true;
     }
@@ -265,17 +264,17 @@ ModuleFactory
             + "/" + filename;
           //std::cout << "Checking " << fullLibraryPath << std::endl;
           
-          itk::LibHandle lib
-            = itk::DynamicLoader::OpenLibrary(fullLibraryPath.c_str());
+          itksys::DynamicLoader::LibraryHandle lib
+            = itksys::DynamicLoader::OpenLibrary(fullLibraryPath.c_str());
           if ( lib )
             {
             // Look for the symbol to get an XML description of the
             // module and a symbol to execute the module
             XMLModuleDescriptionFunction xmlFunction
-              = (XMLModuleDescriptionFunction)itk::DynamicLoader::GetSymbolAddress(lib, "GetXMLModuleDescription");
+              = (XMLModuleDescriptionFunction)itksys::DynamicLoader::GetSymbolAddress(lib, "GetXMLModuleDescription");
 
             ModuleEntryPoint entryPoint
-              = (ModuleEntryPoint)itk::DynamicLoader::GetSymbolAddress(lib, "SlicerModuleEntryPoint");
+              = (ModuleEntryPoint)itksys::DynamicLoader::GetSymbolAddress(lib, "SlicerModuleEntryPoint");
 
 
             // if the symbols are found, then get the XML descriptions

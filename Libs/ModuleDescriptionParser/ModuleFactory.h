@@ -1,7 +1,7 @@
 #ifndef __ModuleFactory_h
 #define __ModuleFactory_h
 
-#include "vtkModulesBaseClasses.h"
+#include "ModuleDescriptionParserWin32Header.h"
 
 #include "ModuleDescription.h"
 
@@ -9,7 +9,7 @@
 
 class ModuleDescriptionMap;
 
-class VTK_MODULES_BASE_CLASSES_EXPORT ModuleFactory
+class ModuleDescriptionParser_EXPORT ModuleFactory
 {
 public:
   ModuleFactory();

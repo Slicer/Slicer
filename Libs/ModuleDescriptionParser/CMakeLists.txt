@@ -12,6 +12,7 @@ SET(ModuleDescriptionParser_SRCS
   ModuleDescription.cxx
   ModuleDescriptionParser.cxx
   ModuleProcessInformation.cxx
+  ModuleFactory.cxx
 )
 
 INCLUDE_DIRECTORIES(
@@ -21,7 +22,7 @@ INCLUDE_DIRECTORIES(
 
 ADD_LIBRARY(ModuleDescriptionParser ${ModuleDescriptionParser_SRCS})
 
-TARGET_LINK_LIBRARIES(ModuleDescriptionParser ITKEXPAT)
+TARGET_LINK_LIBRARIES(ModuleDescriptionParser ITKEXPAT itksys)
 
 CONFIGURE_FILE(
   ${ModuleDescriptionParser_SOURCE_DIR}/ModuleDescriptionParserConfigure.h.in 
