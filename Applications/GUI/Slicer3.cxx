@@ -773,9 +773,8 @@ int Slicer3_main(int argc, char *argv[])
 
     emSegmentLogic->SetAndObserveMRMLScene(scene);
     emSegmentLogic->SetApplicationLogic(appLogic);
-    // for now only have one node
-    emSegmentLogic->CreateAndObserveNewNodeSet();
 
+    emSegmentGUI->SetAndObserveMRMLScene (scene);
     emSegmentGUI->SetLogic(emSegmentLogic);
     emSegmentGUI->SetApplication(slicerApp);
     emSegmentGUI->SetApplicationLogic(appLogic);
