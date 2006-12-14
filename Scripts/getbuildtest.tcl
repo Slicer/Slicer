@@ -247,8 +247,10 @@ runcmd $::CMAKE \
         -G$::GENERATOR \
         -DITK_DIR:FILEPATH=$ITK_BINARY_PATH \
         -DKWWidgets_DIR:FILEPATH=$SLICER_LIB/KWWidgets-build \
+        -DTEEM_DIR:FILEPATH=$SLICER_LIB/teem-build \
         -DCMAKE_BUILD_TYPE=$::VTK_BUILD_TYPE \
         -DSlicer3_VERSION_PATCH:STRING=$::GETBUILDTEST(version-patch) \
+        -DUSE_TEEM=OFF \
         $SLICER_HOME
 
 if { $isWindows } {
