@@ -15,7 +15,7 @@ SET(SlicerBaseLogic_SRCS
   vtkSlicerModelsLogic.cxx 
   vtkSlicerFiducialsLogic.cxx
   vtkSlicerColorLogic.cxx
-
+  vtkSlicerIGTDemoLogic.cxx
   # slicer's vtk extensions
   vtkImageSlicePaint.cxx 
   vtkImageAccumulateDiscrete.cxx
@@ -48,6 +48,8 @@ INCLUDE_DIRECTORIES(
   ${MRML_SOURCE_DIR}
   ${MRML_BINARY_DIR}
   ${VTK_INCLUDE_DIR}
+  ${SlicerBase_BINARY_DIR}
+  ${OPENTRACKER_INC_DIR}
   )
 
 
@@ -79,6 +81,8 @@ TARGET_LINK_LIBRARIES(SlicerBaseLogic
   vtkFilteringTCL
   vtkGraphicsTCL
   vtkIOTCL
+  vtkHybridTCL
+  ${OPENTRACKER_LIB}
   )
 
 
