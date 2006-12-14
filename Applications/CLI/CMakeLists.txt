@@ -19,6 +19,15 @@ IF (Slicer3_SOURCE_DIR)
 ENDIF (Slicer3_SOURCE_DIR)
 
 #####################
+SET (CLP DiffusionTensorTest)
+
+SET ( ${CLP}_SOURCE ${CLP}.cxx)
+GENERATECLP(${CLP}_SOURCE ${CLP}.xml)
+ADD_EXECUTABLE(${CLP} ${${CLP}_SOURCE})
+TARGET_LINK_LIBRARIES (${CLP} ITKIO ITKBasicFilters)
+
+
+#####################
 SET (CLP LinearRegistration)
 
 SET ( ${CLP}_SOURCE ${CLP}.cxx)
