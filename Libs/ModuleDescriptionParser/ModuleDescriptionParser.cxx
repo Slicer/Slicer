@@ -590,13 +590,14 @@ startElement(void *userData, const char *element, const char **attrs)
         if ((strcmp(attrs[2*attr+1], "scalar") == 0) ||
             (strcmp(attrs[2*attr+1], "label") == 0) ||
             (strcmp(attrs[2*attr+1], "tensor") == 0) ||
+            (strcmp(attrs[2*attr+1], "diffusion-weighted") == 0) ||
             (strcmp(attrs[2*attr+1], "vector") == 0))
           {
           parameter->SetType(attrs[2*attr+1]);
           }
         else
           {
-          std::string error("ModuleDescriptionParser Error: \"" + std::string(attrs[2*attr+1]) + "\" is not a valid image type. Only \"scalar\", \"label\", \"vector\" and \"tensor\" are accepted.");
+          std::string error("ModuleDescriptionParser Error: \"" + std::string(attrs[2*attr+1]) + "\" is not a valid image type. Only \"scalar\", \"label\", \"vector\", \"diffusion-weighted\" and \"tensor\" are accepted.");
           ps->ErrorDescription = error;
           ps->ErrorLine = XML_GetCurrentLineNumber(ps->Parser);
           ps->Error = true;

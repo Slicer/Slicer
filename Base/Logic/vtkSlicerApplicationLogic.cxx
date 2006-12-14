@@ -19,12 +19,20 @@
 #include "vtkKWApplication.h"
 
 #include "vtkMRMLScalarVolumeNode.h"
+#include "vtkMRMLVectorVolumeNode.h"
+#include "vtkMRMLDiffusionTensorVolumeNode.h"
+#include "vtkMRMLDiffusionWeightedVolumeNode.h"
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLVolumeArchetypeStorageNode.h"
 #include "vtkMRMLModelStorageNode.h"
-
+//#include "vtkMRMLNRRDStorageNode.h"
+#include "vtkMRMLVolumeDisplayNode.h"
+#include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
+#include "vtkMRMLDiffusionWeightedVolumeDisplayNode.h"
+#include "vtkMRMLModelDisplayNode.h"
 #include "vtkSlicerTask.h"
+
 
 #include "itksys/SystemTools.hxx"
 
@@ -534,24 +542,60 @@ void vtkSlicerApplicationLogic::ProcessReadData()
 
       }
     this->ReadDataQueueLock->Unlock();
-    
+
+    // What type of node is the data really?
+    vtkMRMLNode *nd = 0;
+    vtkMRMLNode *disp = 0;
+    vtkMRMLStorageNode *in = 0;
+    vtkMRMLScalarVolumeNode *svnd = 0;
+    vtkMRMLVectorVolumeNode *vvnd = 0;
+    vtkMRMLDiffusionTensorVolumeNode *dtvnd = 0;
+    vtkMRMLDiffusionWeightedVolumeNode *dwvnd = 0;
+    vtkMRMLModelNode *mnd = 0;
+
+    nd = this->MRMLScene->GetNodeByID( req.GetNode().c_str() );
+
+    svnd  = vtkMRMLScalarVolumeNode::SafeDownCast(nd);
+    vvnd  = vtkMRMLVectorVolumeNode::SafeDownCast(nd);
+    dtvnd = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(nd);
+    dwvnd = vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(nd);
+    mnd   = vtkMRMLModelNode::SafeDownCast(nd);
+
     // Read the data into the referenced node
     if (itksys::SystemTools::FileExists( req.GetFilename().c_str() ))
       {
-      vtkMRMLNode *nd = this->MRMLScene->GetNodeByID( req.GetNode().c_str() );
-
-      vtkMRMLScalarVolumeNode *svnd = vtkMRMLScalarVolumeNode::SafeDownCast(nd);
-      vtkMRMLModelNode *mnd = vtkMRMLModelNode::SafeDownCast(nd);
-
-      if (svnd)
+      if (svnd || vvnd)
         {
-        // Load a scalar volume node
-        vtkMRMLVolumeArchetypeStorageNode *in
-          = vtkMRMLVolumeArchetypeStorageNode::New();
-        in->SetFileName( req.GetFilename().c_str() );
-        
+        // Load a scalar or vector volume node
+        in = vtkMRMLVolumeArchetypeStorageNode::New();
+        disp = vtkMRMLVolumeDisplayNode::New();
+        }
+      else if (dtvnd || dwvnd)
+        {
+        // Load a diffusion tensor or a diffusion weighted node
+//        in = vtkMRMLNRRDStorageNode::New();
+        if (dtvnd)
+          {
+          disp = vtkMRMLDiffusionTensorVolumeDisplayNode::New();
+          }
+        else
+          {
+          disp = vtkMRMLDiffusionWeightedVolumeDisplayNode::New();
+          }
+        }
+      else if (mnd)
+        {
+        // Load a model node
+        in = vtkMRMLModelStorageNode::New();
+        disp = vtkMRMLModelDisplayNode::New();
+        }
+
+      // Have the storage node read the data into the current node
+      if (in)
+        {
         try
           {
+          in->SetFileName( req.GetFilename().c_str() );
           in->ReadData( nd );
           }
         catch (itk::ExceptionObject& exc)
@@ -568,27 +612,7 @@ void vtkSlicerApplicationLogic::ProcessReadData()
                       << req.GetFilename();
           vtkErrorMacro( << information.str().c_str() );
           }
-        
         in->Delete();
-
-        }
-      else if (mnd)
-        {
-        // Load a model node
-        vtkMRMLModelStorageNode *in = vtkMRMLModelStorageNode::New();
-        vtkMRMLModelDisplayNode *disp = vtkMRMLModelDisplayNode::New();
-
-        in->SetFileName( req.GetFilename().c_str() );
-        in->ReadData( mnd );
-
-        disp->SetScene( this->MRMLScene );
-
-        this->MRMLScene->AddNode( disp );
-
-        mnd->SetAndObserveDisplayNodeID( disp->GetID() );
-        
-        in->Delete();
-        disp->Delete();
         }
 
       // Delete the file if requested
@@ -610,18 +634,40 @@ void vtkSlicerApplicationLogic::ProcessReadData()
     //
     if (req.GetDisplayData())
       {
-      vtkMRMLNode *nd = this->MRMLScene->GetNodeByID( req.GetNode().c_str() );
-      vtkMRMLScalarVolumeNode *svnd = vtkMRMLScalarVolumeNode::SafeDownCast(nd);
+      // Set up the display node.  What if the node already had a
+      // display node?
+      if (disp)
+        {
+        disp->SetScene( this->MRMLScene );
+        this->MRMLScene->AddNode( disp );
+
+        if (svnd) svnd->SetAndObserveDisplayNodeID( disp->GetID() );
+        else if (vvnd) vvnd->SetAndObserveDisplayNodeID( disp->GetID() );
+        else if (dtvnd) dtvnd->SetAndObserveDisplayNodeID( disp->GetID() );
+        else if (dwvnd) dwvnd->SetAndObserveDisplayNodeID( disp->GetID() );
+        else if (mnd) mnd->SetAndObserveDisplayNodeID( disp->GetID() );
+        
+        disp->Delete();
+        }
 
       // If scalar volume, set the volume as the active volume and
       // propagate selection.
       //
       // Models are always displayed when loaded above.
       // 
-      // Tensors?
+      // Tensors? Vectors?
       if (svnd)
         {
-        this->GetSelectionNode()->SetActiveVolumeID( req.GetNode().c_str() );
+        if (svnd->GetLabelMap())
+          {
+          this->GetSelectionNode()
+            ->SetActiveLabelVolumeID( req.GetNode().c_str() );
+          }
+        else
+          {
+          this->GetSelectionNode()
+            ->SetActiveVolumeID( req.GetNode().c_str() );
+          }
         this->PropagateVolumeSelection();
         }
       }

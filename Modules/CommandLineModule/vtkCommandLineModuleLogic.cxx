@@ -25,7 +25,11 @@ Version:   $Revision: 1.2 $
 
 #include "vtkMRMLScene.h"
 #include "vtkMRMLScalarVolumeNode.h"
+#include "vtkMRMLVectorVolumeNode.h"
 #include "vtkMRMLVolumeArchetypeStorageNode.h"
+#include "vtkMRMLDiffusionTensorVolumeNode.h"
+#include "vtkMRMLDiffusionWeightedVolumeNode.h"
+//#include "vtkMRMLNRRDStorageNode.h"
 #include "vtkMRMLFiducialListNode.h"
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLModelStorageNode.h"
@@ -89,6 +93,7 @@ void vtkCommandLineModuleLogic::PrintSelf(ostream& os, vtkIndent indent)
 std::string
 vtkCommandLineModuleLogic
 ::ConstructTemporaryFileName(const std::string& tag,
+                             const std::string& type,
                              const std::string& name,
                              bool isCommandLineModule) const
 {
@@ -96,8 +101,11 @@ vtkCommandLineModuleLogic
 
   if (tag == "image")
     {
-    if (isCommandLineModule)
+    if (isCommandLineModule || type != "scalar")
       {
+      // If running an executable or running a shared memory module
+      // but the image type is non-scalar...
+      
       // To avoid confusing the Archetype readers, convert any
       // numbers in the filename to characters [0-9]->[A-J]
       std::transform(fname.begin(), fname.end(),
@@ -107,9 +115,14 @@ vtkCommandLineModuleLogic
       }
     else
       {
-      // If not a command line module, then it is a shared object module
+      // If not a command line module and the image type is scalar,
+      // then it is a shared object module for which we can
+      // communicated directly with the MRML tree.
+
+      
       // Must be large enough to hold slicer:, / and two copies of the
-      // ascii representation of the pointer. 256 should be more than enough.
+      // ascii representation of the pointer. 256 should be more than
+      // enough.
       char tname[256];
       
       sprintf(tname, "slicer:%p/%p", this->MRMLScene,
@@ -265,6 +278,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
 
         std::string fname
           = this->ConstructTemporaryFileName((*pit).GetTag(),
+                                             (*pit).GetType(),
                                              (*pit).GetDefault(),
                                              isCommandLine);
 
@@ -532,27 +546,43 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
     
     vtkMRMLScalarVolumeNode *svnd
       = vtkMRMLScalarVolumeNode::SafeDownCast(nd);
+    vtkMRMLVectorVolumeNode *vvnd
+      = vtkMRMLVectorVolumeNode::SafeDownCast(nd);
+    vtkMRMLDiffusionTensorVolumeNode *dtvnd
+      = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(nd);
+    vtkMRMLDiffusionWeightedVolumeNode *dwvnd
+      = vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(nd);
     vtkMRMLModelNode *mnd
       = vtkMRMLModelNode::SafeDownCast(nd);
-    
-    // only write out image nodes if running an executable
-    if (isCommandLine && svnd)
+
+    vtkMRMLStorageNode *out = 0;
+
+    // Determine if and how a node is to be written.  If we update the
+    // MRMLIDImageIO, then we can change these conditions for the
+    // other image types so that we only write nodes to disk if we are
+    // running as a command line executable (and all image types will
+    // go through memory in shared object modules).
+    if ((isCommandLine && svnd) || vvnd)
       {
-      vtkMRMLVolumeArchetypeStorageNode *out
-        = vtkMRMLVolumeArchetypeStorageNode::New();
-      out->SetFileName( (*id2fn).second.c_str() );
-      
-      out->WriteData( nd );
-      
-      out->Delete();
+      // only write out scalar image nodes if running an executable
+      out = vtkMRMLVolumeArchetypeStorageNode::New();
+      }
+    else if (dtvnd || dwvnd)
+      {
+      // for now, always write out the diffusion tensor nodes
+//      out = vtkMRMLNRRDStorageNode::New();
       }
     else if (mnd)
       {
-      vtkMRMLModelStorageNode *out = vtkMRMLModelStorageNode::New();
+      // always write out model nodes
+      out = vtkMRMLModelStorageNode::New();
+      }
+
+    // if the file is to be written, then write it
+    if (out)
+      {
       out->SetFileName( (*id2fn).second.c_str() );
-      
       out->WriteData( nd );
-      
       out->Delete();
       }
     }

@@ -1069,20 +1069,36 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
         {
         vtkSlicerNodeSelectorWidget *tparameter
           = vtkSlicerNodeSelectorWidget::New();
+        std::string labelAttrName("LabelMap");
+        std::string labelAttrValue("1");
+        std::string nodeClass;
+        const char *attrName = 0;
+        const char *attrValue = 0;
         if ((*pit).GetType() == "label")
           {
-          tparameter->SetNodeClass("vtkMRMLScalarVolumeNode",
-                                   "LabelMap",
-                                   "1",
-                                   (title + " Volume").c_str());
+          nodeClass = "vtkMRMLScalarVolumeNode";
+          attrName = labelAttrName.c_str();
+          attrValue = labelAttrValue.c_str();
+          }
+        else if ((*pit).GetType() == "vector")
+          {
+          nodeClass = "vtkMRMLVectorVolumeNode";
+          }
+        else if ((*pit).GetType() == "tensor")
+          {
+          nodeClass = "vtkMRMLDiffusionTensorVolumeNode";
+          }
+        else if ((*pit).GetType() == "diffusion-weighted")
+          {
+          nodeClass = "vtkMRMLDiffusionWeightedVolumeNode";
           }
         else
           {
-          tparameter->SetNodeClass("vtkMRMLScalarVolumeNode",
-                                   NULL,
-                                   NULL,
-                                   (title + " Volume").c_str());
+          nodeClass = "vtkMRMLScalarVolumeNode";
           }
+
+        tparameter->SetNodeClass(nodeClass.c_str(), attrName, attrValue, 
+                                 (title + " Volume").c_str());
         tparameter->SetParent( parameterGroupFrame->GetFrame() );
         tparameter->Create();
         tparameter->SetMRMLScene(this->Logic->GetMRMLScene());
@@ -1097,21 +1113,36 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
         {
         vtkSlicerNodeSelectorWidget *tparameter
           = vtkSlicerNodeSelectorWidget::New();
-
+        std::string labelAttrName("LabelMap");
+        std::string labelAttrValue("1");
+        std::string nodeClass;
+        const char *attrName = 0;
+        const char *attrValue = 0;
         if ((*pit).GetType() == "label")
           {
-          tparameter->SetNodeClass("vtkMRMLScalarVolumeNode",
-                                   "LabelMap",
-                                   "1",
-                                   (title + " Volume").c_str());
+          nodeClass = "vtkMRMLScalarVolumeNode";
+          attrName = labelAttrName.c_str();
+          attrValue = labelAttrValue.c_str();
+          }
+        else if ((*pit).GetType() == "vector")
+          {
+          nodeClass = "vtkMRMLVectorVolumeNode";
+          }
+        else if ((*pit).GetType() == "tensor")
+          {
+          nodeClass = "vtkMRMLDiffusionTensorVolumeNode";
+          }
+        else if ((*pit).GetType() == "diffusion-weighted")
+          {
+          nodeClass = "vtkMRMLDiffusionWeightedVolumeNode";
           }
         else
           {
-          tparameter->SetNodeClass("vtkMRMLScalarVolumeNode",
-                                   NULL,
-                                   NULL,
-                                   (title + " Volume").c_str());
+          nodeClass = "vtkMRMLScalarVolumeNode";
           }
+
+        tparameter->SetNodeClass(nodeClass.c_str(), attrName, attrValue, 
+                                 (title + " Volume").c_str());
         tparameter->SetNewNodeEnabled(1);
         tparameter->SetNoneEnabled(1);
         // tparameter->SetNewNodeName((title+" output").c_str());
