@@ -886,7 +886,7 @@ void vtkSlicerSliceControllerWidget::ProcessMRMLEvents ( vtkObject *caller, unsi
   //
   // Update the Linked Controls Icon in the SliceController to match logic state.
   //
-  if ( this->SliceCompositeNode->GetLinkedControl() > 0 )
+  if ( this->SliceCompositeNode != NULL && this->SliceCompositeNode->GetLinkedControl() > 0 )
     {
     this->GetLinkButton()->SetImageToIcon (
             this->GetSliceControlIcons()->GetLinkControlsIcon() );
@@ -900,7 +900,7 @@ void vtkSlicerSliceControllerWidget::ProcessMRMLEvents ( vtkObject *caller, unsi
   //
   // Set the opacity value to match the value
   //
-  if ( (double) this->LabelOpacityScale->GetValue() != this->SliceCompositeNode->GetLabelOpacity() )
+  if ( this->SliceCompositeNode != NULL && (double) this->LabelOpacityScale->GetValue() != this->SliceCompositeNode->GetLabelOpacity() )
     {
     this->LabelOpacityScale->SetValue ( this->SliceCompositeNode->GetLabelOpacity() );
     }
