@@ -68,13 +68,24 @@ ENDIF (NOT ITK_FOUND)
 INCLUDE(${ITK_USE_FILE})
 
 
+#
 ## KWWidgets
+#
 FIND_PACKAGE(KWWidgets REQUIRED)
 IF (NOT KWWidgets_FOUND)
   MESSAGE (FATAL_ERROR "Need KWWidgets to build")
 ENDIF (NOT KWWidgets_FOUND)
 
 INCLUDE(${KWWidgets_USE_FILE})
+
+#
+# Teem
+#
+OPTION(USE_TEEM "Build Slicer3 with teem support." OFF)
+IF(USE_TEEM)
+  FIND_PACKAGE(TEEM REQUIRED)
+  INCLUDE(${TEEM_USE_FILE})
+ENDIF(USE_TEEM)
 
 # Generate the default setup paths scripts.
 # Generate some useful scripts that can be used to setup various environment 
@@ -122,14 +133,6 @@ SET(ModuleDescriptionParser_DIR ${Slicer3_BINARY_DIR}/Libs/ModuleDescriptionPars
 SET(vtkITK_DIR ${Slicer3_BINARY_DIR}/Libs/vtkITK)
 SET(tclap_DIR ${Slicer3_BINARY_DIR}/Libs/tclap)
 
-#
-# Teem
-#
-OPTION(USE_TEEM "Build Slicer3 with teem support." OFF)
-IF(USE_TEEM)
-  FIND_PACKAGE(TEEM REQUIRED)
-  INCLUDE(${TEEM_USE_FILE})
-ENDIF(USE_TEEM)
 
 #
 # Subdirectories
