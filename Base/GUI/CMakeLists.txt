@@ -55,6 +55,7 @@ SET(LIB_SRCS
   vtkSlicerModuleChooseGUI.cxx
   vtkSlicerLogoDisplayGUI.cxx
   vtkSlicerApplicationGUI.cxx
+  vtkSlicerIGTDemoGUI.cxx
   # KW Widgets
   vtkSlicerModuleCollapsibleFrame.cxx
   vtkSlicerNodeSelectorWidget.cxx
@@ -163,7 +164,10 @@ ENDIF(NOT KWWidgets_SOURCE_DIR AND VTK_TCL_TK_COPY_SUPPORT_LIBRARY)
 # based on KWWidgets, you can most likely omit this section too, unless
 # your application supports that feature too.
 
-INCLUDE_DIRECTORIES(${SlicerBaseGUI_BINARY_DIR})
+INCLUDE_DIRECTORIES(
+  ${SlicerBaseGUI_BINARY_DIR}
+  ${OPENTRACKER_INC_DIR}
+)
 CONFIGURE_FILE(
   ${SlicerBaseGUI_SOURCE_DIR}/vtkSlicerBaseGUIConfigure.h.in 
   ${SlicerBaseGUI_BINARY_DIR}/vtkSlicerBaseGUIConfigure.h
