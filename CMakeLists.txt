@@ -87,6 +87,31 @@ IF(USE_TEEM)
   INCLUDE(${TEEM_USE_FILE})
 ENDIF(USE_TEEM)
 
+#
+# OpenTracker 
+#
+OPTION(USE_OPENTRACKER "Need OpenTracker lib to build IGT Demo module." OFF)
+IF(USE_OPENTRACKER)
+  FIND_LIBRARY(OPENTRACKER_LIB 
+               NAMES opentrackerd libopentracker
+               PATHS ""
+               )
+  IF(OPENTRACKER_LIB-NOTFOUND)
+    MESSAGE (FATAL_ERROR "Need OpenTracker to build")
+  ENDIF(OPENTRACKER_LIB-NOTFOUND)
+
+  FIND_PATH(OPENTRACKER_INC_DIR OpenTracker.h 
+           "" 
+           )
+  IF(OPENTRACKER_INC_DIR-NOTFOUND)
+    MESSAGE (FATAL_ERROR "Need OpenTracker.h to build")
+  ENDIF(OPENTRACKER_INC_DIR-NOTFOUND)
+ELSE(USE_OPENTRACKER)
+  SET(OPENTRACKER_LIB "")
+  SET(OPENTRACKER_INC_DIR "")
+ENDIF(USE_OPENTRACKER)
+
+
 # Generate the default setup paths scripts.
 # Generate some useful scripts that can be used to setup various environment 
 # variables and launch the executable properly against external packages.
