@@ -65,7 +65,7 @@ TARGET_LINK_LIBRARIES(vtkTeem
   vtkFiltering
   vtkImaging
   vtkIOTCL
-  ${TEEM_LIBRARIES}
+  teem
   )
 
 
