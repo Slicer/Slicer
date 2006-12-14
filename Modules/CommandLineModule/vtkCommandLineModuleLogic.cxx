@@ -101,7 +101,7 @@ vtkCommandLineModuleLogic
 
   if (tag == "image")
     {
-    if (isCommandLineModule || type != "scalar")
+    if (isCommandLineModule || (type != "scalar" && type != "label"))
       {
       // If running an executable or running a shared memory module
       // but the image type is non-scalar...
