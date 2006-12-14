@@ -183,6 +183,8 @@ vtkPluginFilterWatcher
 {
   // Initialize state
   this->Process = o;
+  this->Process->Register(0);
+  
   this->Steps = 0;
   this->Comment = comment;
 #if defined(_COMPILER_VERSION) && (_COMPILER_VERSION == 730)
@@ -232,5 +234,7 @@ vtkPluginFilterWatcher
       {
       this->Process->RemoveObserver(this->ProgressTag);
       }
+
+    this->Process->UnRegister(0);
     }
 }
