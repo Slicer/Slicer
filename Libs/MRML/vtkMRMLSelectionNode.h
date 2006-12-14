@@ -51,6 +51,10 @@ class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
   virtual const char* GetNodeTagName() {return "Selection";};
 
   // Description:
+  // Update the stored reference to another node in the scene
+  virtual void UpdateReferenceID(const char *oldID, const char *newID);
+
+  // Description:
   // the ID of a MRMLVolumeNode
   vtkGetStringMacro (ActiveVolumeID);
   vtkSetStringMacro (ActiveVolumeID);

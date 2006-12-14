@@ -154,6 +154,23 @@ void vtkMRMLSliceCompositeNode::WriteXML(ostream& of, int nIndent)
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLSliceCompositeNode::UpdateReferenceID(const char *oldID, const char *newID)
+{
+  if (!strcmp(oldID, this->BackgroundVolumeID))
+    {
+    this->SetBackgroundVolumeID(newID);
+    }
+  if (!strcmp(oldID, this->ForegroundVolumeID))
+    {
+    this->SetForegroundVolumeID(newID);
+    }
+  if (!strcmp(oldID, this->LabelVolumeID))
+    {
+    this->SetLabelVolumeID(newID);
+    }
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLSliceCompositeNode::ReadXMLAttributes(const char** atts)
 {
 
@@ -174,6 +191,7 @@ void vtkMRMLSliceCompositeNode::ReadXMLAttributes(const char** atts)
       else
         {
         this->SetBackgroundVolumeID(attValue);
+        this->Scene->AddReferencedNodeID(this->BackgroundVolumeID, this);
         }
       }
     else if (!strcmp(attName, "foregroundVolumeID")) 
@@ -185,6 +203,7 @@ void vtkMRMLSliceCompositeNode::ReadXMLAttributes(const char** atts)
       else
         {
         this->SetForegroundVolumeID(attValue);
+        this->Scene->AddReferencedNodeID(this->ForegroundVolumeID, this);
         }
       }
     else if (!strcmp(attName, "labelVolumeID")) 
@@ -196,6 +215,7 @@ void vtkMRMLSliceCompositeNode::ReadXMLAttributes(const char** atts)
       else
         {
         this->SetLabelVolumeID(attValue);
+        this->Scene->AddReferencedNodeID(this->LabelVolumeID, this);
         }
       }
     else if (!strcmp(attName, "foregroundOpacity")) 

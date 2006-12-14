@@ -17,6 +17,7 @@ Version:   $Revision: 1.2 $
 #include <sstream>
 
 #include "vtkObjectFactory.h"
+#include "vtkMRMLScene.h"
 #include "vtkMRMLSelectionNode.h"
 
 #include "vtkMatrix4x4.h"
@@ -83,6 +84,19 @@ void vtkMRMLSelectionNode::WriteXML(ostream& of, int nIndent)
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLSelectionNode::UpdateReferenceID(const char *oldID, const char *newID)
+{
+  if (!strcmp(oldID, this->ActiveVolumeID))
+    {
+    this->SetActiveVolumeID(newID);
+    }
+  if (!strcmp(oldID, this->ActiveLabelVolumeID))
+    {
+    this->SetActiveLabelVolumeID(newID);
+    }
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLSelectionNode::ReadXMLAttributes(const char** atts)
 {
 
@@ -97,10 +111,12 @@ void vtkMRMLSelectionNode::ReadXMLAttributes(const char** atts)
     if (!strcmp(attName, "activeVolumeID")) 
       {
       this->SetActiveVolumeID(attValue);
+      this->Scene->AddReferencedNodeID(this->ActiveVolumeID, this);
       }
     if (!strcmp(attName, "activeLabelVolumeID")) 
       {
       this->SetActiveLabelVolumeID(attValue);
+      this->Scene->AddReferencedNodeID(this->ActiveLabelVolumeID, this);
       }
     }
 }

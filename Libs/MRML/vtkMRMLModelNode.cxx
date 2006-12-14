@@ -92,6 +92,19 @@ void vtkMRMLModelNode::WriteXML(ostream& of, int nIndent)
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLModelNode::UpdateReferenceID(const char *oldID, const char *newID)
+{
+  if (!strcmp(oldID, this->StorageNodeID))
+    {
+    this->SetStorageNodeID(newID);
+    }
+  if (!strcmp(oldID, this->DisplayNodeID))
+    {
+    this->SetDisplayNodeID(newID);
+    }
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLModelNode::ReadXMLAttributes(const char** atts)
 {
 
@@ -106,10 +119,12 @@ void vtkMRMLModelNode::ReadXMLAttributes(const char** atts)
     if (!strcmp(attName, "storageNodeRef")) 
       {
       this->SetStorageNodeID(attValue);
+      this->Scene->AddReferencedNodeID(this->StorageNodeID, this);
       }
     else if (!strcmp(attName, "displayNodeRef")) 
       {
       this->SetDisplayNodeID(attValue);
+      this->Scene->AddReferencedNodeID(this->DisplayNodeID, this);
       }
     }  
 }

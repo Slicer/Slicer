@@ -249,6 +249,20 @@ public:
   void SaveStateForUndo(std::vector<vtkMRMLNode *> nodes);
   //ETX
 
+  void AddReferencedNodeID(const char *id, vtkMRMLNode *refrencingNode)
+  {
+    if (id && refrencingNode) 
+      {
+      this->ReferencedIDs[std::string(id)] = refrencingNode;
+      }
+  };
+
+  void ClearReferencedNodeID()
+  {
+    this->ReferencedIDs.clear();
+    this->ReferencedIDChanges.clear();
+  };
+
 //BTX
   // Description:
   // Get/Set the active Scene 
@@ -300,6 +314,9 @@ protected:
   std::vector< vtkMRMLNode* > RegisteredNodeClasses;
   std::vector< std::string >  RegisteredNodeTags;
   vtksys_stl::string          RootDirectory;
+
+  std::map< std::string, vtkMRMLNode*> ReferencedIDs;
+  std::map< std::string, std::string> ReferencedIDChanges;
   //ETX
   
   vtkSetMacro(ErrorCode,unsigned long);

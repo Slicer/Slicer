@@ -180,7 +180,8 @@ void vtkMRMLScene::Clear()
   this->SetUndoOff();
   
   this->CurrentScene->RemoveAllItems();
-  
+  this->ClearReferencedNodeID();
+
   vtkMRMLNode *node;
   for (int n=0; n < this->CurrentScene->GetNumberOfItems(); n++) 
     {
@@ -293,7 +294,8 @@ int vtkMRMLScene::Connect()
   this->SetUndoOff();
   
   this->CurrentScene->RemoveAllItems();
-  
+  this->ClearReferencedNodeID();
+
   this->InvokeEvent(this->SceneCloseEvent, NULL);
 
   // after SceneCloseEvent there may be nodes created such as Camera
@@ -381,6 +383,7 @@ int vtkMRMLScene::Connect()
   
   existingNodes->RemoveAllItems();
   existingNodes->Delete();
+  this->ClearReferencedNodeID();
 
   return res;
 }
@@ -392,7 +395,8 @@ int vtkMRMLScene::Import()
   int n;
 
   this->SetUndoOff();
-  
+  this->ClearReferencedNodeID();
+
   // read nodes into a temp scene  
   vtkCollection* scene = vtkCollection::New();
   
@@ -429,6 +433,7 @@ int vtkMRMLScene::Import()
   scene->Delete();
 
   this->SetUndoFlag(undoFlag);
+  this->ClearReferencedNodeID();
 
   return res;
 }
@@ -558,9 +563,19 @@ void vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
   //n->SetSceneRootDir("");
   if (n->GetID() == NULL || n->GetID()[0] == '\0' || this->GetNodeByID(n->GetID()) != NULL) 
     {
+    std::string oldID;
+    if (n->GetID())
+      {
+      oldID = n->GetID();
+      }
     //n->SetID(this->GetUniqueIDByClass(n->GetClassName()));
     n->ConstructAndSetID(n->GetClassName(), this->GetUniqueIDIndexByClass(n->GetClassName()));
     vtkDebugMacro("AddNodeNoNotify: got unique id for new " << n->GetClassName() << " node: " << n->GetID() << endl);
+    std::string newID(n->GetID());
+    if (oldID != newID)
+      {
+      this->ReferencedIDChanges[oldID] = newID;
+      }
     }
 
   n->SetSceneRootDir(this->RootDirectory.c_str());

@@ -73,6 +73,9 @@ public:
   // Finds the storage node and read the data
   virtual void UpdateScene(vtkMRMLScene *scene);
 
+  // Description:
+  // Update the stored reference to another node in the scene
+  virtual void UpdateReferenceID(const char *oldID, const char *newID);
 
   // Description:
   // String ID of the storage MRML node

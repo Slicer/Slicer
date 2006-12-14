@@ -139,6 +139,15 @@ void vtkMRMLModelDisplayNode::WriteXML(ostream& of, int nIndent)
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLModelDisplayNode::UpdateReferenceID(const char *oldID, const char *newID)
+{
+  if (!strcmp(oldID, this->ColorNodeID))
+    {
+    this->SetColorNodeID(newID);
+    }
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLModelDisplayNode::ReadXMLAttributes(const char** atts)
 {
 
@@ -264,6 +273,7 @@ void vtkMRMLModelDisplayNode::ReadXMLAttributes(const char** atts)
     else if (!strcmp(attName, "colorNodeRef")) 
       {
       this->SetColorNodeID(attValue);
+      this->Scene->AddReferencedNodeID(this->ColorNodeID, this);
       }
 
     }  

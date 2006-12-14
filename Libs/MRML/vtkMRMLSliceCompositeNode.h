@@ -57,6 +57,10 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
   virtual void UpdateScene(vtkMRMLScene *);
 
   // Description:
+  // Update the stored reference to another node in the scene
+  virtual void UpdateReferenceID(const char *oldID, const char *newID);
+
+  // Description:
   // the ID of a MRMLVolumeNode
   vtkGetStringMacro (BackgroundVolumeID);
   vtkSetStringMacro (BackgroundVolumeID);

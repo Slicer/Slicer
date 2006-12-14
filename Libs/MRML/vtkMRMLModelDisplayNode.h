@@ -61,6 +61,10 @@ public:
   virtual const char* GetNodeTagName() {return "ModelDisplay";};
 
   // Description:
+  // Update the stored reference to another node in the scene
+  virtual void UpdateReferenceID(const char *oldID, const char *newID);
+
+  // Description:
   // Model's color (r,g,b)
   vtkSetVector3Macro(Color, double);
   vtkGetVector3Macro(Color, double);

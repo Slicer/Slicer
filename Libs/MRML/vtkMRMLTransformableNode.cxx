@@ -59,6 +59,14 @@ void vtkMRMLTransformableNode::WriteXML(ostream& of, int nIndent)
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLTransformableNode::UpdateReferenceID(const char *oldID, const char *newID)
+{
+  if (!strcmp(oldID, this->TransformNodeID))
+    {
+    this->SetAndObserveTransformNodeID(TransformNodeID);
+    }
+}
+//----------------------------------------------------------------------------
 void vtkMRMLTransformableNode::ReadXMLAttributes(const char** atts)
 {
 
@@ -73,6 +81,7 @@ void vtkMRMLTransformableNode::ReadXMLAttributes(const char** atts)
     if (!strcmp(attName, "transformNodeRef")) 
       {
       this->SetAndObserveTransformNodeID(attValue);
+      this->Scene->AddReferencedNodeID(this->TransformNodeID, this);
       }
     }
 }

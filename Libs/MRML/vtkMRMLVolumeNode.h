@@ -74,6 +74,10 @@ class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLTransformableNode
   // when the node is deleted in the scene
   virtual void UpdateReferences();
 
+  // Description:
+  // Update the stored reference to another node in the scene
+  virtual void UpdateReferenceID(const char *oldID, const char *newID);
+
   //--------------------------------------------------------------------------
   // RAS->IJK Matrix Calculation
   //--------------------------------------------------------------------------

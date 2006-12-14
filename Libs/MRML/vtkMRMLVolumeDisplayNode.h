@@ -54,6 +54,10 @@ class VTK_MRML_EXPORT vtkMRMLVolumeDisplayNode : public vtkMRMLNode
   // Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "VolumeDisplay";};
 
+  // Description:
+  // Update the stored reference to another node in the scene
+  virtual void UpdateReferenceID(const char *oldID, const char *newID);
+
   //--------------------------------------------------------------------------
   // Display Information
   //--------------------------------------------------------------------------
