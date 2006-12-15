@@ -283,6 +283,7 @@ double *vtkMRMLDiffusionWeightedVolumeNode::GetGradients(int num)
   else
     {
     vtkErrorMacro("Gradient number is out of range");
+    return NULL;
     }
 }
 
@@ -317,6 +318,7 @@ double vtkMRMLDiffusionWeightedVolumeNode::GetBValues(int num)
   else
     {
     vtkErrorMacro("B value number is out of range");
+    return 0;
     }
 }
 

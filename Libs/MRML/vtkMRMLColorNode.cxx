@@ -237,7 +237,7 @@ void vtkMRMLColorNode::ReadFile ()
     this->LookupTable->SetNumberOfColors(maxID + 1);
     this->LookupTable->SetTableRange(0, maxID);
     // init the table to black/opactity 0, just in case we're missing values
-    for (unsigned int i = 0; i < maxID+1; i++)
+    for (int i = 0; i < maxID+1; i++)
       {
       this->LookupTable->SetTableValue(i, 0.0, 0.0, 0.0, 0.0);
       } 
@@ -306,7 +306,7 @@ void vtkMRMLColorNode::PrintSelf(ostream& os, vtkIndent indent)
   if (this->Names.size() > 0)
     {
     os << indent << "Color Names:\n";
-    for (int i = 0; (int)i < this->Names.size(); i++)
+    for (unsigned int i = 0; (int)i < this->Names.size(); i++)
       {
       os << indent << indent << i << " " << this->GetColorName(i) << endl;
       }
@@ -779,7 +779,7 @@ void vtkMRMLColorNode::SetNamesFromColors()
 //---------------------------------------------------------------------------
 const char *vtkMRMLColorNode::GetColorName(int ind)
 {
-    if (ind < this->Names.size() && ind >= 0)
+    if (ind < (int)this->Names.size() && ind >= 0)
     {
     if (strcmp(this->Names[ind].c_str(), "") == 0)
       {
@@ -820,7 +820,7 @@ const char *vtkMRMLColorNode::GetColorNameWithoutSpaces(int ind, const char *sub
 //---------------------------------------------------------------------------
 void vtkMRMLColorNode::SetColorName(int ind, const char *name)
 {
-    if (ind < this->Names.size() && ind >= 0)
+    if (ind < (int)this->Names.size() && ind >= 0)
     {
     this->Names[ind] = std::string(name);
     }
