@@ -31,17 +31,15 @@
 #endif
 
 #include "itksys/SystemTools.hxx"
-
 #include <queue>
-
 
 const char *vtkSlicerApplication::ModulePathRegKey = "ModulePath";
 const char *vtkSlicerApplication::TemporaryDirectoryRegKey = "TemporaryDirectory";
 const char *vtkSlicerApplication::ConfirmDeleteRegKey = "ConfirmDelete";
 const char *vtkSlicerApplication::HomeModuleRegKey = "HomeModule";
+const char *vtkSlicerApplication::LoadCommandLineModulesRegKey = "LoadCommandLineModules";
 
 vtkSlicerApplication *vtkSlicerApplication::Instance = NULL;
-
 
 //---------------------------------------------------------------------------
 vtkCxxRevisionMacro(vtkSlicerApplication, "$Revision: 1.0 $");
@@ -50,8 +48,6 @@ typedef std::pair<std::string, std::string> AddRecordType;
 class DisplayMessageQueue : public std::queue<AddRecordType> {};
 
 //----------------------------------------------------------------------------
-
-
 // Slicer needs its own version of itk::OutputWindow to ensure that
 // only the application thread controlling the gui tries to display a
 // message. 
@@ -105,8 +101,7 @@ private:
 
 }; // end namespace itk
 
-
-
+//----------------------------------------------------------------------------
 // Slicer needs its own version of vtkKWOutputWindow to ensure that
 // only the application thread controlling the gui tries to display a
 // message.
@@ -166,16 +161,15 @@ private:
 //
 // vtkStandardNewMacro(vtkSlicerOutputWindow);
 
-
 //---------------------------------------------------------------------------
 vtkSlicerApplication::vtkSlicerApplication ( ) {
 
-    strcpy(this->ModulePath, "");
-
     strcpy(this->ConfirmDelete, "");
     
+    strcpy(this->ModulePath, "");
     strcpy ( this->HomeModule, "");
-    
+    this->LoadCommandLineModules = 1;
+   
     // configure the application before creating
     this->SetName ( "3D Slicer Version 3.0 Alpha" );
 
@@ -203,8 +197,9 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
     this->DisplayMessageQueueActive = true;
     this->DisplayMessageQueueActiveLock->Unlock();
 
-    vtkKWTkUtilities::CreateTimerHandler(this, 100, this, "ProcessDisplayMessage");
-    
+    vtkKWTkUtilities::CreateTimerHandler(
+      this, 100, this, "ProcessDisplayMessage");
+
     // Override the type of output windows used for VTK and ITK.  Note
     // that in the VTK case, we are currently bypassing the output
     // window mechanism provided by KWWidgets.  In KWWidgets, there
@@ -226,10 +221,7 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
     //vtkOutputWindow::SetInstance( vtkoutput );
     
     itk::SlicerOutputWindow::SetInstance( itk::SlicerOutputWindow::New() );
-
 }
-
-
 
 //---------------------------------------------------------------------------
 vtkSlicerApplication::~vtkSlicerApplication ( ) {
@@ -259,7 +251,7 @@ vtkSlicerApplication::~vtkSlicerApplication ( ) {
     this->DisplayMessageQueueActiveLock->Unlock();
 }
 
-
+//----------------------------------------------------------------------------
 // Up the reference count so it behaves like New
 vtkSlicerApplication* vtkSlicerApplication::New()
 {
@@ -268,7 +260,7 @@ vtkSlicerApplication* vtkSlicerApplication::New()
   return ret;
 }
 
-
+//----------------------------------------------------------------------------
 // Return the single instance of the vtkSlicerApplication
 vtkSlicerApplication* vtkSlicerApplication::GetInstance()
 {
@@ -287,13 +279,10 @@ vtkSlicerApplication* vtkSlicerApplication::GetInstance()
   return vtkSlicerApplication::Instance;
 }
 
-
-
 //---------------------------------------------------------------------------
 const char *vtkSlicerApplication::Evaluate(const char *expression) {
     return (this->Script(expression));
 }
-
 
 //---------------------------------------------------------------------------
 void vtkSlicerApplication::AddModuleGUI ( vtkSlicerModuleGUI *gui ) {
@@ -334,7 +323,6 @@ vtkSlicerModuleGUI* vtkSlicerApplication::GetModuleGUIByName ( const char *name 
     return ( NULL );
 }
 
-
 //---------------------------------------------------------------------------
 void vtkSlicerApplication::ConfigureApplication ( ) {
 
@@ -343,8 +331,6 @@ void vtkSlicerApplication::ConfigureApplication ( ) {
     this->SplashScreenVisibilityOn ( );
     this->SaveUserInterfaceGeometryOn ( );
 }
-
-
 
 //---------------------------------------------------------------------------
 void vtkSlicerApplication::InstallTheme ( vtkKWTheme *theme )
@@ -358,9 +344,6 @@ void vtkSlicerApplication::InstallTheme ( vtkKWTheme *theme )
     }
 }
 
-
-
-
 //---------------------------------------------------------------------------
 void vtkSlicerApplication::CloseAllWindows ( ) {
     int n, i;
@@ -372,7 +355,6 @@ void vtkSlicerApplication::CloseAllWindows ( ) {
         win->Close ( );
     }
 }
-
 
 //---------------------------------------------------------------------------
 int vtkSlicerApplication::StartApplication ( ) {
@@ -387,7 +369,6 @@ int vtkSlicerApplication::StartApplication ( ) {
     ret = this->GetExitStatus ( );
     return ret;
 }
-
 
 //----------------------------------------------------------------------------
 void vtkSlicerApplication::RestoreApplicationSettingsFromRegistry()
@@ -470,6 +451,12 @@ void vtkSlicerApplication::RestoreApplicationSettingsFromRegistry()
       this->TemporaryDirectory);
     }
 
+  if (this->HasRegistryValue(
+    2, "RunTime", vtkSlicerApplication::LoadCommandLineModulesRegKey))
+    {
+    this->LoadCommandLineModules = this->GetIntRegistryValue(
+      2, "RunTime", vtkSlicerApplication::LoadCommandLineModulesRegKey);
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -492,6 +479,10 @@ void vtkSlicerApplication::SaveApplicationSettingsToRegistry()
   this->SetRegistryValue(
     2, "RunTime", vtkSlicerApplication::TemporaryDirectoryRegKey, "%s", 
     this->TemporaryDirectory);
+
+  this->SetRegistryValue(
+    2, "RunTime", vtkSlicerApplication::LoadCommandLineModulesRegKey, "%d", 
+    this->LoadCommandLineModules);
 }
 
 //----------------------------------------------------------------------------
@@ -514,7 +505,6 @@ const char *vtkSlicerApplication::GetConfirmDelete() const
     return this->ConfirmDelete;
 }
 
-
 //----------------------------------------------------------------------------
 void vtkSlicerApplication::SetHomeModule ( const char *name )
 {
@@ -530,14 +520,11 @@ void vtkSlicerApplication::SetHomeModule ( const char *name )
     }
 }
 
-
 //----------------------------------------------------------------------------
 const char *vtkSlicerApplication::GetHomeModule () const
 {
   return this->HomeModule;
 }
-
-
 
 //----------------------------------------------------------------------------
 void vtkSlicerApplication::SetModulePath(const char* path)
@@ -559,7 +546,6 @@ const char* vtkSlicerApplication::GetModulePath() const
   return this->ModulePath;
 }
 
-
 //----------------------------------------------------------------------------
 void vtkSlicerApplication::SetTemporaryDirectory(const char* path)
 {
@@ -580,8 +566,7 @@ const char* vtkSlicerApplication::GetTemporaryDirectory() const
   return this->TemporaryDirectory;
 }
 
-
-
+//----------------------------------------------------------------------------
 bool vtkSlicerApplication::RequestDisplayMessage( const char *type, const char *message )
 {
   bool active;
@@ -608,7 +593,7 @@ bool vtkSlicerApplication::RequestDisplayMessage( const char *type, const char *
   return false;
 }
 
-
+//----------------------------------------------------------------------------
 void vtkSlicerApplication::ProcessDisplayMessage()
 {
   bool active = true;
@@ -654,32 +639,33 @@ void vtkSlicerApplication::ProcessDisplayMessage()
   vtkKWTkUtilities::CreateTimerHandler(this, 100, this, "ProcessDisplayMessage");
 }
 
-
-
+//----------------------------------------------------------------------------
 void
 vtkSlicerApplication::WarningMessage(const char* message)
 {
   this->RequestDisplayMessage("Warning", message);
 }
 
+//----------------------------------------------------------------------------
 void
 vtkSlicerApplication::ErrorMessage(const char* message)
 {
   this->RequestDisplayMessage("Error", message);
 }
 
+//----------------------------------------------------------------------------
 void
 vtkSlicerApplication::DebugMessage(const char* message)
 {
   this->RequestDisplayMessage("Debug", message);
 }
 
+//----------------------------------------------------------------------------
 void
 vtkSlicerApplication::InformationMessage(const char* message)
 {
   this->RequestDisplayMessage("Information", message);
 }
-
 
 //----------------------------------------------------------------------------
 //  override default behavior of KWWidgets so that toplevel window 

@@ -38,6 +38,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
     // Get the singleton
     static vtkSlicerApplication* GetInstance();
 
+    // Description:
+    // Get the layout, theme, GUI collection objects.
     vtkGetObjectMacro ( MainLayout, vtkSlicerGUILayout );
     vtkGetObjectMacro ( SlicerTheme, vtkSlicerTheme );
     vtkGetObjectMacro ( ModuleGUICollection, vtkSlicerGUICollection );
@@ -75,6 +77,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   static const char *ModulePathRegKey;
   static const char *TemporaryDirectoryRegKey;
   static const char *HomeModuleRegKey;
+  static const char *LoadCommandLineModulesRegKey;
   //ETX
 
   // Descrition:
@@ -96,6 +99,12 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   // Set/Get a directory for temporary file storage
   void SetTemporaryDirectory(const char *path);
   const char* GetTemporaryDirectory() const;
+
+  // Description:
+  // Set/Get if command line modules should be loaded
+  vtkSetMacro(LoadCommandLineModules, int);
+  vtkGetMacro(LoadCommandLineModules, int);
+  vtkBooleanMacro(LoadCommandLineModules, int);
 
   // Description:
   // Evaluate a string as a tcl expression
@@ -150,7 +159,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   char ModulePath[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
   char TemporaryDirectory[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
   char HomeModule [ vtkKWRegistryHelper::RegistryKeyValueSizeMax];
-  
+
+  int LoadCommandLineModules;
+
 private:
   vtkSlicerApplication ( const vtkSlicerApplication& ); // Not implemented.
   void operator = ( const vtkSlicerApplication& ); //Not implemented.

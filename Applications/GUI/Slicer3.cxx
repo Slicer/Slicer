@@ -42,12 +42,6 @@
 #include "vtkGradientAnisotropicDiffusionFilterLogic.h"
 #include "vtkGradientAnisotropicDiffusionFilterGUI.h"
 
-#define EMSEG_MODULE 0
-#if EMSEG_MODULE
-#include "vtkEMSegmentLogic.h"
-#include "vtkEMSegmentGUI.h"
-#endif
-
 #include "vtkQueryAtlasLogic.h"
 #include "vtkQueryAtlasGUI.h"
 
@@ -67,6 +61,24 @@
 #include <stdlib.h>
 
 #include "Resources/vtkSlicerSplashScreen_ImageData.h"
+
+// uncomment these lines to disable a particular module (handy for debugging)
+//#define CLIMODULES_DEBUG
+//#define TCLMODULES_DEBUG
+//#define SLICES_DEBUG
+//#define MODELS_DEBUG
+//#define VOLUMES_DEBUG
+//#define QUERYATLAS_DEBUG
+//#define COLORS_DEBUG
+//#define IGTDEMO_DEBUG
+//#define FIDUCIALS_DEBUG
+//#define CAMERA_DEBUG
+#define EMSEG_MODULE
+
+#ifndef EMSEG_DEBUG
+#include "vtkEMSegmentLogic.h"
+#include "vtkEMSegmentGUI.h"
+#endif
 
 #ifdef _WIN32
 #  define slicerCerr(x) \
@@ -91,7 +103,7 @@ extern "C" int Vtkitk_Init(Tcl_Interp *interp);
 extern "C" int Freesurfer_Init(Tcl_Interp *interp);
 
 //TODO added temporary
-#if EMSEG_MODULE
+#ifndef EMSEG_DEBUG
 extern "C" int Emsegment_Init(Tcl_Interp *interp);
 #endif
 extern "C" int Gradientanisotropicdiffusionfilter_Init(Tcl_Interp *interp);
@@ -125,18 +137,6 @@ int Slicer3_Tcl_Eval ( Tcl_Interp *interp, const char *script )
     }
   return 0;
 }
-
-// uncomment these lines to disable a particular module (handy for debugging)
-//#define CLIMODULES_DEBUG
-//#define TCLMODULES_DEBUG
-//#define SLICES_DEBUG
-//#define MODELS_DEBUG
-//#define VOLUMES_DEBUG
-//#define QUERYATLAS_DEBUG
-//#define COLORS_DEBUG
-//#define IGTDEMO_DEBUG
-//#define FIDUCIALS_DEBUG
-//#define CAMERA_DEBUG
 
 void printAllInfo(int argc, char **argv)
 {
@@ -409,7 +409,7 @@ int Slicer3_main(int argc, char *argv[])
     Vtkitk_Init(interp);
     Freesurfer_Init(interp);
     //TODO added temporary
-#if EMSEG_MODULE
+#ifndef EMSEG_DEBUG
     Emsegment_Init(interp);
 #endif
     Gradientanisotropicdiffusionfilter_Init(interp);
@@ -785,7 +785,7 @@ int Slicer3_main(int argc, char *argv[])
     gradientAnisotropicDiffusionFilterGUI->BuildGUI ( );
     gradientAnisotropicDiffusionFilterGUI->AddGUIObservers ( );
 
-#if EMSEG_MODULE
+#ifndef EMSEG_DEBUG
     //
     // --- EMSegment Template builder module
     //
@@ -854,109 +854,115 @@ int Slicer3_main(int argc, char *argv[])
 
 
 #ifndef CLIMODULES_DEBUG
-    // --- Scan for command line and shared object modules
-    //
-    // - set the module path the the default if there isn't something set already
-    //
-    // NB: don't want to use the registry value of the module path, because 
-    // there is only one value even if you have multiple versions of 
-    // slicer installed, you may get conflicts.
-    //
-    //
+    std::vector<std::string> moduleNames;
+    std::vector<std::string>::const_iterator mit;
+    if (slicerApp->GetLoadCommandLineModules())
+      {
+      // --- Scan for command line and shared object modules
+      //
+      // - set the module path the the default if there isn't something set
+      // already
+      //
+      // NB: don't want to use the registry value of the module path, because 
+      // there is only one value even if you have multiple versions of 
+      // slicer installed, you may get conflicts.
+      //
+      //
 #ifdef _WIN32
-    std::string delim(";");
+      std::string delim(";");
 #else
-    std::string delim(":");
+      std::string delim(":");
 #endif
-    std::string packagePath;
-    std::string defaultPackageDir;
-    std::string userPackagePath;
+      std::string packagePath;
+      std::string defaultPackageDir;
+      std::string userPackagePath;
 
-    // define a default plugin path based on the slicer installation
-    // or build tree
-    defaultPackageDir = slicerBinDir + "/../lib/Slicer3/Plugins";
-    if (hasIntDir)
-      {
-      defaultPackageDir += "/" + intDir;
-      }
+      // define a default plugin path based on the slicer installation
+      // or build tree
+      defaultPackageDir = slicerBinDir + "/../lib/Slicer3/Plugins";
+      if (hasIntDir)
+        {
+        defaultPackageDir += "/" + intDir;
+        }
     
-    // get the path of that the user has configured
-    if (slicerApp->GetModulePath())
-      {
-      userPackagePath = slicerApp->GetModulePath();
-      }
+      // get the path of that the user has configured
+      if (slicerApp->GetModulePath())
+        {
+        userPackagePath = slicerApp->GetModulePath();
+        }
 
-    // add the default plugin directory (based on the slicer
-    // installation or build tree) to the user path
-    packagePath = userPackagePath + delim + defaultPackageDir;
-    
+      // add the default plugin directory (based on the slicer
+      // installation or build tree) to the user path
+      packagePath = userPackagePath + delim + defaultPackageDir;
 
-    // Search for modules
-    ModuleFactory moduleFactory;
-    moduleFactory.SetSearchPath( packagePath );
-    moduleFactory.SetWarningMessageCallback( WarningMessage );
-    moduleFactory.SetErrorMessageCallback( ErrorMessage );
-    moduleFactory.SetInformationMessageCallback( InformationMessage );
-    moduleFactory.SetModuleDiscoveryMessageCallback( SplashMessage );
-    moduleFactory.Scan();
+      // Search for modules
+      ModuleFactory moduleFactory;
+      moduleFactory.SetSearchPath( packagePath );
+      moduleFactory.SetWarningMessageCallback( WarningMessage );
+      moduleFactory.SetErrorMessageCallback( ErrorMessage );
+      moduleFactory.SetInformationMessageCallback( InformationMessage );
+      moduleFactory.SetModuleDiscoveryMessageCallback( SplashMessage );
+      moduleFactory.Scan();
 
-    // add the modules to the available modules
-    std::vector<std::string> moduleNames = moduleFactory.GetModuleNames();
-    std::vector<std::string>::const_iterator mit = moduleNames.begin();
-    while (mit != moduleNames.end())
-      {
-      // slicerCerr(moduleFactory.GetModuleDescription(*mit) << endl);
+      // add the modules to the available modules
+      moduleNames = moduleFactory.GetModuleNames();
+      mit = moduleNames.begin();
+      while (mit != moduleNames.end())
+        {
+        // slicerCerr(moduleFactory.GetModuleDescription(*mit) << endl);
 
-      // For now, create vtkCommandLineModule* items. When the
-      // ModuleFactory can discover shared object modules, then we'll
-      // come back and generalize this.
-      vtkCommandLineModuleGUI *commandLineModuleGUI
-        = vtkCommandLineModuleGUI::New();
-      vtkCommandLineModuleLogic *commandLineModuleLogic
-        = vtkCommandLineModuleLogic::New ( );
+        // For now, create vtkCommandLineModule* items. When the
+        // ModuleFactory can discover shared object modules, then we'll
+        // come back and generalize this.
+        vtkCommandLineModuleGUI *commandLineModuleGUI
+          = vtkCommandLineModuleGUI::New();
+        vtkCommandLineModuleLogic *commandLineModuleLogic
+          = vtkCommandLineModuleLogic::New ( );
       
-      // Set the ModuleDescripton on the gui
-      commandLineModuleGUI
-        ->SetModuleDescription( moduleFactory.GetModuleDescription(*mit) );
+        // Set the ModuleDescripton on the gui
+        commandLineModuleGUI
+          ->SetModuleDescription( moduleFactory.GetModuleDescription(*mit) );
 
-      // Configure the Logic, GUI, and add to app
-      commandLineModuleLogic->SetAndObserveMRMLScene ( scene );
-      commandLineModuleLogic->SetApplicationLogic (appLogic);
-      commandLineModuleGUI->SetLogic ( commandLineModuleLogic );
-      commandLineModuleGUI->SetApplication ( slicerApp );
-      commandLineModuleGUI->SetApplicationLogic ( appLogic );
-      commandLineModuleGUI->SetApplicationGUI ( appGUI );
-      commandLineModuleGUI->SetGUIName( moduleFactory.GetModuleDescription(*mit).GetTitle().c_str() );
-      commandLineModuleGUI->GetUIPanel()->SetName ( commandLineModuleGUI->GetGUIName ( ) );
-      commandLineModuleGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
-      commandLineModuleGUI->GetUIPanel()->Create ( );
-      slicerApp->AddModuleGUI ( commandLineModuleGUI );
+        // Configure the Logic, GUI, and add to app
+        commandLineModuleLogic->SetAndObserveMRMLScene ( scene );
+        commandLineModuleLogic->SetApplicationLogic (appLogic);
+        commandLineModuleGUI->SetLogic ( commandLineModuleLogic );
+        commandLineModuleGUI->SetApplication ( slicerApp );
+        commandLineModuleGUI->SetApplicationLogic ( appLogic );
+        commandLineModuleGUI->SetApplicationGUI ( appGUI );
+        commandLineModuleGUI->SetGUIName( moduleFactory.GetModuleDescription(*mit).GetTitle().c_str() );
+        commandLineModuleGUI->GetUIPanel()->SetName ( commandLineModuleGUI->GetGUIName ( ) );
+        commandLineModuleGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
+        commandLineModuleGUI->GetUIPanel()->Create ( );
+        slicerApp->AddModuleGUI ( commandLineModuleGUI );
 
-      ++mit;
-      }
-    // -- Build the factory discovered modules gui and observers
-    mit = moduleNames.begin();
-    while ( mit != moduleNames.end() )
-      {
-      std::string progress_msg("Initializing ");
-      progress_msg +=  (*mit) ;
-      progress_msg += " Module...";
-      slicerApp->GetSplashScreen()->SetProgressMessage(progress_msg.c_str());
+        ++mit;
+        }
+      // -- Build the factory discovered modules gui and observers
+      mit = moduleNames.begin();
+      while ( mit != moduleNames.end() )
+        {
+        std::string progress_msg("Initializing ");
+        progress_msg +=  (*mit) ;
+        progress_msg += " Module...";
+        slicerApp->GetSplashScreen()->SetProgressMessage(progress_msg.c_str());
 
-      vtkSlicerModuleGUI *module;
-      module = slicerApp->GetModuleGUIByName( (*mit).c_str() );
+        vtkSlicerModuleGUI *module;
+        module = slicerApp->GetModuleGUIByName( (*mit).c_str() );
 
-      module->BuildGUI();
-      module->AddGUIObservers();
+        module->BuildGUI();
+        module->AddGUIObservers();
       
-      ++mit;
+        ++mit;
+        }
       }
 #endif
 
     //
-    // get the Tcl name so the vtk class will be registered in the interpreter as a byproduct
-    // - set some handy variables so it will be easy to access these classes from
-    //   the tkcon
+    // get the Tcl name so the vtk class will be registered in the interpreter
+    // as a byproduct
+    // - set some handy variables so it will be easy to access these classes
+    ///  from   the tkcon
     // - all the variables are put in the slicer3 tcl namespace for easy access
     //
     const char *name;
@@ -1013,7 +1019,8 @@ int Slicer3_main(int argc, char *argv[])
       name = module->GetTclName();
 
       std::string title = *mit;
-      std::transform(title.begin(), title.end(), title.begin(), SpacesToUnderscores());
+      std::transform(
+        title.begin(), title.end(), title.begin(), SpacesToUnderscores());
 
       slicerApp->Script ("namespace eval slicer3 set CommandLineModuleGUI_%s %s", title.c_str(), name);
       
@@ -1085,8 +1092,6 @@ int Slicer3_main(int argc, char *argv[])
     mnb->GetNotebook()->AlwaysShowTabsOff();
     mnb->GetNotebook()->ShowOnlyPagesWithSameTagOn();    
 
-
-    
     // ------------------------------
     // DISPLAY WINDOW AND RUN
     appGUI->DisplayMainSlicerWindow ( );
@@ -1164,7 +1169,7 @@ int Slicer3_main(int argc, char *argv[])
     // ------------------------------
     // REMOVE OBSERVERS and references to MRML and Logic
     gradientAnisotropicDiffusionFilterGUI->RemoveGUIObservers ( );
-#if EMSEG_MODULE
+#ifndef EMSEG_DEBUG
     emSegmentGUI->RemoveGUIObservers();
 #endif
 
@@ -1249,7 +1254,7 @@ int Slicer3_main(int argc, char *argv[])
     //--- delete gui first, removing Refs to Logic and MRML
 
     gradientAnisotropicDiffusionFilterGUI->Delete ();
-#if EMSEG_MODULE
+#ifndef EMSEG_DEBUG
     emSegmentGUI->Delete();
 #endif
 
@@ -1299,7 +1304,8 @@ int Slicer3_main(int argc, char *argv[])
     std::vector<vtkSlicerModuleLogic*> moduleLogics;
     for (git = moduleGUIs.begin(); git != moduleGUIs.end(); ++git)
       {
-      moduleLogics.push_back(dynamic_cast<vtkCommandLineModuleGUI*>((*git))->GetLogic());
+      moduleLogics.push_back(
+        dynamic_cast<vtkCommandLineModuleGUI*>((*git))->GetLogic());
 
       (*git)->Delete();
       }
