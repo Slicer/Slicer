@@ -6,6 +6,8 @@
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerModuleCollapsibleFrame.h"
 #include "vtkSlicerSliceControllerWidget.h"
+#include "vtkSlicerColor.h"
+#include "vtkSlicerTheme.h"
 
 #include "vtkKWWidget.h"
 #include "vtkKWMenuButton.h"

@@ -14,6 +14,7 @@
 #include "vtkSlicerModuleChooseGUI.h"
 #include "vtkSlicerModuleNavigationIcons.h"
 #include "vtkSlicerModuleNavigator.h"
+#include "vtkSlicerGUICollection.h"
 
 #include "vtkKWWidget.h"
 #include "vtkKWPushButton.h"

@@ -1,29 +1,22 @@
 // .NAME vtkSlicerApplication
 // .SECTION Description
 // Contains slicer's style, application and collection of associated guis.
-//
-
 
 #ifndef __vtkSlicerApplication_h
 #define __vtkSlicerApplication_h
 
-#include <string>
-
 #include "vtkSlicerBaseGUIWin32Header.h"
-#include "vtkKWRegistryHelper.h"
 #include "vtkKWApplication.h"
-#include "vtkSlicerGUILayout.h"
-#include "vtkSlicerGUICollection.h"
-#include "vtkSlicerTheme.h"
-
+#include "vtkKWRegistryHelper.h" // really could have been avoided :(
 #include "itkMutexLock.h"
 
 class vtkSlicerModuleGUI;
-
+class vtkSlicerGUILayout;
+class vtkSlicerTheme;
+class vtkSlicerGUICollection;
 //BTX
 class DisplayMessageQueue;
 //ETX
-
 
 // Description:
 // Contains slicer's style, application and collection of associated guis.
@@ -141,29 +134,27 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   virtual void DisplayLogDialog(vtkKWTopLevel *master);
 
  protected:
-    vtkSlicerApplication ( );
-    virtual ~vtkSlicerApplication ( );
-
-    vtkSlicerGUILayout *MainLayout;
-    vtkSlicerTheme *SlicerTheme;
+  vtkSlicerApplication ( );
+  virtual ~vtkSlicerApplication ( );
+  
+  vtkSlicerGUILayout *MainLayout;
+  vtkSlicerTheme *SlicerTheme;
+  
+  // Description:
+  // The main application GUI.
+  // Description:
+  // Collections of GUIs
+  vtkSlicerGUICollection *ModuleGUICollection;
+  
+  char ConfirmDelete[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
+  char ModulePath[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
+  char TemporaryDirectory[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
+  char HomeModule [ vtkKWRegistryHelper::RegistryKeyValueSizeMax];
+  
+private:
+  vtkSlicerApplication ( const vtkSlicerApplication& ); // Not implemented.
+  void operator = ( const vtkSlicerApplication& ); //Not implemented.
     
-    // Description:
-    // The main application GUI.
-    // Description:
-    // Collections of GUIs
-    vtkSlicerGUICollection *ModuleGUICollection;
-
-
-    char ConfirmDelete[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
-    char ModulePath[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
-    char TemporaryDirectory[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
-    char HomeModule [ vtkKWRegistryHelper::RegistryKeyValueSizeMax];
-
- private:
-    vtkSlicerApplication ( const vtkSlicerApplication& ); // Not implemented.
-    void operator = ( const vtkSlicerApplication& ); //Not implemented.
-
-
   //BTX
   itk::MutexLock::Pointer DisplayMessageQueueActiveLock;
   itk::MutexLock::Pointer DisplayMessageQueueLock;

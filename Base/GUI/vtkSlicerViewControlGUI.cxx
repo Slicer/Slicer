@@ -7,6 +7,7 @@
 #include "vtkSlicerModuleGUI.h"
 #include "vtkSlicerViewControlGUI.h"
 #include "vtkSlicerWindow.h"
+#include "vtkSlicerTheme.h"
 
 #include "vtkKWTopLevel.h"
 #include "vtkKWFrame.h"

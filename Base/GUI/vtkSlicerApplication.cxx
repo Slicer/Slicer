@@ -13,6 +13,11 @@
 #include "vtkKWLogWidget.h"
 #include "vtkKWInternationalization.h"
 #include "vtkKWTclInteractor.h"
+#include "vtkSlicerBaseGUIWin32Header.h"
+#include "vtkKWRegistryHelper.h"
+#include "vtkSlicerGUILayout.h"
+#include "vtkSlicerGUICollection.h"
+#include "vtkSlicerTheme.h"
 
 #include "vtkOutputWindow.h"
 #include "itkOutputWindow.h"

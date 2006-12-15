@@ -10,6 +10,7 @@
 
 #include "vtkSlicerSliceViewer.h"
 #include "vtkSlicerApplication.h"
+#include "vtkSlicerGUILayout.h"
 
 #include "vtkKWWidget.h"
 #include "vtkKWRenderWidget.h"
