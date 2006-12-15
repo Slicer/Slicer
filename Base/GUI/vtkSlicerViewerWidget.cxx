@@ -104,7 +104,7 @@ vtkSlicerViewerWidget::~vtkSlicerViewerWidget ( )
     {
     this->BoxAxisActor->Delete();
     }
-  for (int i=0; i<this->AxisLabelActors.size(); i++)
+  for (unsigned int i=0; i<this->AxisLabelActors.size(); i++)
     {
     this->AxisLabelActors[i]->Delete();
     }
@@ -167,7 +167,7 @@ void vtkSlicerViewerWidget::CreateAxis()
   labels.push_back("P");
   labels.push_back("I");
   
-  for (int i=0; i<labels.size(); i++)
+  for (unsigned int i=0; i<labels.size(); i++)
     {
     vtkVectorText *axisText = vtkVectorText::New();
     axisText->SetText(labels[i].c_str());
@@ -211,7 +211,7 @@ void vtkSlicerViewerWidget::AddAxisActors()
       {
       this->MainViewer->AddViewProp( this->BoxAxisActor);
       }
-    for (int i=0; i<this->AxisLabelActors.size(); i++)
+    for (unsigned int i=0; i<this->AxisLabelActors.size(); i++)
       {
       this->AxisLabelActors[i]->SetCamera(this->MainViewer->GetRenderer()->GetActiveCamera());
       this->MainViewer->AddViewProp( this->AxisLabelActors[i]);
@@ -235,7 +235,7 @@ void vtkSlicerViewerWidget::UpdateAxis()
   double letterSize = this->ViewNode->GetLetterSize();
   double scale = fov * letterSize;
 
-  for (int i=0; i<AxisLabelActors.size(); i++)
+  for (unsigned int i=0; i<AxisLabelActors.size(); i++)
     {
     this->AxisLabelActors[i]->SetScale(scale,scale,scale);
     this->AxisLabelActors[i]->SetVisibility(this->ViewNode->GetAxisLabelsVisible());
