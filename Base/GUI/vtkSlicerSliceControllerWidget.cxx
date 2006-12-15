@@ -846,6 +846,10 @@ void vtkSlicerSliceControllerWidget::ProcessMRMLEvents ( vtkObject *caller, unsi
     {
     return;
     }
+   if ( !this->SliceCompositeNode)
+     {
+     return;
+     }
   
   int modified = 0;
 

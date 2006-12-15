@@ -156,15 +156,15 @@ void vtkMRMLSliceCompositeNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLSliceCompositeNode::UpdateReferenceID(const char *oldID, const char *newID)
 {
-  if (!strcmp(oldID, this->BackgroundVolumeID))
+  if (this->BackgroundVolumeID && !strcmp(oldID, this->BackgroundVolumeID))
     {
     this->SetBackgroundVolumeID(newID);
     }
-  if (!strcmp(oldID, this->ForegroundVolumeID))
+  if (this->ForegroundVolumeID && !strcmp(oldID, this->ForegroundVolumeID))
     {
     this->SetForegroundVolumeID(newID);
     }
-  if (!strcmp(oldID, this->LabelVolumeID))
+  if (this->LabelVolumeID && !strcmp(oldID, this->LabelVolumeID))
     {
     this->SetLabelVolumeID(newID);
     }

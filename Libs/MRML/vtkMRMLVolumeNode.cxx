@@ -109,11 +109,11 @@ void vtkMRMLVolumeNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeNode::UpdateReferenceID(const char *oldID, const char *newID)
 {
-  if (!strcmp(oldID, this->StorageNodeID))
+  if (this->StorageNodeID && !strcmp(oldID, this->StorageNodeID))
     {
     this->SetStorageNodeID(newID);
     }
-  if (!strcmp(oldID, this->DisplayNodeID))
+  if (this->DisplayNodeID && !strcmp(oldID, this->DisplayNodeID))
     {
     this->SetDisplayNodeID(newID);
     }

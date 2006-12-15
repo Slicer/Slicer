@@ -319,6 +319,8 @@ protected:
   std::map< std::string, std::string> ReferencedIDChanges;
   //ETX
   
+  void UpdateNodeReferences();
+
   vtkSetMacro(ErrorCode,unsigned long);
   vtkGetMacro(ErrorCode,unsigned long);
 

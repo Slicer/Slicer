@@ -86,11 +86,11 @@ void vtkMRMLSelectionNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLSelectionNode::UpdateReferenceID(const char *oldID, const char *newID)
 {
-  if (!strcmp(oldID, this->ActiveVolumeID))
+  if (this->ActiveVolumeID && !strcmp(oldID, this->ActiveVolumeID))
     {
     this->SetActiveVolumeID(newID);
     }
-  if (!strcmp(oldID, this->ActiveLabelVolumeID))
+  if (this->ActiveLabelVolumeID && !strcmp(oldID, this->ActiveLabelVolumeID))
     {
     this->SetActiveLabelVolumeID(newID);
     }

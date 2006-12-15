@@ -411,6 +411,10 @@ int vtkMRMLScene::Import()
       node = (vtkMRMLNode *)scene->GetItemAsObject(n);
       this->AddNodeNoNotify(node);
       }
+
+    // fix node refrences that may be not unique in the imported scene.
+    this->UpdateNodeReferences();
+
     for (n=0; n<nnodes; n++) 
       {
       node = (vtkMRMLNode *)scene->GetItemAsObject(n);
@@ -1325,6 +1329,25 @@ int vtkMRMLScene::IsFilePathRelative(const char * filepath)
   else
     {
     return 0;
+    }
+
+}
+
+//------------------------------------------------------------------------------
+void vtkMRMLScene::UpdateNodeReferences()
+{
+  std::map< std::string, std::string>::const_iterator iterChanged;
+  std::map< std::string, vtkMRMLNode*>::const_iterator iterNodes;
+  vtkMRMLNode *node;
+
+  for (iterChanged = this->ReferencedIDChanges.begin(); iterChanged != this->ReferencedIDChanges.end(); iterChanged++) 
+    {
+    iterNodes = this->ReferencedIDs.find(iterChanged->first);
+    if (iterNodes != ReferencedIDs.end()) 
+      {
+      node = iterNodes->second;
+      node->UpdateReferenceID(iterChanged->first.c_str(), iterChanged->second.c_str());
+      }
     }
 
 }

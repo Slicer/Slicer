@@ -141,7 +141,7 @@ void vtkMRMLModelDisplayNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLModelDisplayNode::UpdateReferenceID(const char *oldID, const char *newID)
 {
-  if (!strcmp(oldID, this->ColorNodeID))
+  if (this->ColorNodeID && !strcmp(oldID, this->ColorNodeID))
     {
     this->SetColorNodeID(newID);
     }
