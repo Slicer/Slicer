@@ -140,6 +140,9 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
     //--- viewer is reformatted.
     this->ViewerPageTag = 1999;
 
+    //--- by default, the application begins with the mouse
+    //--- mode set to twiddle the 3D view.
+    this->SetMouseInteractionMode ( vtkSlicerApplicationGUI::MouseTransform );
 }
 
 

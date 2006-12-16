@@ -14,6 +14,7 @@
 #include "vtkKWFrame.h"
 #include "vtkKWToolbar.h"
 #include "vtkKWPushButton.h"
+#include "vtkKWRadioButtonSet.h"
 
 class vtkSlicerApplicationGUI;
 
@@ -44,7 +45,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
     vtkGetObjectMacro (MouseModeToolbar, vtkKWToolbar);
     vtkGetObjectMacro (UndoRedoToolbar, vtkKWToolbar);
 
-
     // Description:
     // Get the widgets that display the toolbar icons
     vtkGetObjectMacro (HomeIconButton, vtkKWPushButton); 
@@ -66,11 +66,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
     vtkGetObjectMacro (Tabbed3DViewIconButton, vtkKWPushButton );
     vtkGetObjectMacro (TabbedSliceViewIconButton, vtkKWPushButton );
     vtkGetObjectMacro (LightBoxViewIconButton, vtkKWPushButton );
-    vtkGetObjectMacro (MousePickIconButton, vtkKWPushButton );
-    vtkGetObjectMacro (MouseTransformViewIconButton, vtkKWPushButton );
-    vtkGetObjectMacro (MousePlaceFiducialIconButton, vtkKWPushButton );
     vtkGetObjectMacro (UndoIconButton, vtkKWPushButton );
     vtkGetObjectMacro (RedoIconButton, vtkKWPushButton );
+    vtkGetObjectMacro (MouseModeRadioButtons, vtkKWRadioButtonSet );
+
 
     // Description:
     // This method builds the Data module's GUI
@@ -132,10 +131,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
     vtkKWPushButton *Tabbed3DViewIconButton;
     vtkKWPushButton *TabbedSliceViewIconButton;
     vtkKWPushButton *LightBoxViewIconButton;
-    vtkKWPushButton *MousePickIconButton;
-    vtkKWPushButton *MousePlaceFiducialIconButton;
-    vtkKWPushButton *MouseTransformViewIconButton;
-    
+    vtkKWRadioButtonSet *MouseModeRadioButtons;
+
     vtkSlicerApplicationGUI *ApplicationGUI;
     
  private:

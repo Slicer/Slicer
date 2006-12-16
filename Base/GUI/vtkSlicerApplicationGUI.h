@@ -100,6 +100,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkGetObjectMacro ( ViewControlFrame, vtkSlicerModuleCollapsibleFrame );
 
     // Description:
+    // Allows the mouse mode to be set and queried.
+    vtkGetMacro (MouseInteractionMode, int );
+    vtkSetMacro (MouseInteractionMode, int );
+    
+    // Description:
     // A frame used in the MainViewFrame of SlicerMainWin
     // when lightbox view is being displayed.
     vtkGetObjectMacro ( LightboxFrame, vtkKWFrame );
@@ -220,6 +225,16 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // Raise module's panel.
     void SelectModule ( const char *moduleName );
 
+    //BTX
+    // Modes for mouse control in the Main Viewer (and Slice Viewers?)
+    enum
+      {
+        MouseSelect = 0,
+        MouseTransform,
+        MousePut
+      };
+    //ETX
+
     
  protected:
     vtkSlicerApplicationGUI ( );
@@ -229,6 +244,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // Main Slicer window
     vtkSlicerWindow *MainSlicerWindow;
     
+    // Description:
+    // Allows the mouse to select and to deposit
+    // things in the 3D viewer. 
+    int MouseInteractionMode;
+
     // Description:
     // Frames for the main Slicer UI panel    
     vtkKWFrame *TopFrame;

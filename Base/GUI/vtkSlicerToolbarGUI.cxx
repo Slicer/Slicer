@@ -15,6 +15,7 @@
 #include "vtkKWToolbarSet.h"
 #include "vtkKWFrameWithLabel.h"
 #include "vtkKWMenuButton.h"
+#include "vtkKWRadioButton.h"
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerToolbarGUI );
@@ -54,9 +55,7 @@ vtkSlicerToolbarGUI::vtkSlicerToolbarGUI ( )
   this->Tabbed3DViewIconButton = vtkKWPushButton::New ( );
   this->TabbedSliceViewIconButton = vtkKWPushButton::New ( );
   this->LightBoxViewIconButton = vtkKWPushButton::New ( );
-  this->MousePickIconButton = vtkKWPushButton::New ( );
-  this->MousePlaceFiducialIconButton = vtkKWPushButton::New ( );
-  this->MouseTransformViewIconButton = vtkKWPushButton::New ( );
+  this->MouseModeRadioButtons = vtkKWRadioButtonSet::New ( );
   this->UndoIconButton = vtkKWPushButton::New ( );
   this->RedoIconButton = vtkKWPushButton::New ( );
 
@@ -214,24 +213,6 @@ vtkSlicerToolbarGUI::~vtkSlicerToolbarGUI ( )
     this->LightBoxViewIconButton->Delete ( );
     this->LightBoxViewIconButton = NULL;
     }
-  if ( this->MousePickIconButton )
-    {
-    this->MousePickIconButton->SetParent ( NULL );
-    this->MousePickIconButton->Delete ( );
-    this->MousePickIconButton = NULL;
-    }
-  if ( this->MousePlaceFiducialIconButton )
-    {
-    this->MousePlaceFiducialIconButton->SetParent ( NULL );
-    this->MousePlaceFiducialIconButton->Delete ( );
-    this->MousePlaceFiducialIconButton = NULL;
-    }
-  if ( this->MouseTransformViewIconButton )
-    {
-    this->MouseTransformViewIconButton->SetParent ( NULL );      
-    this->MouseTransformViewIconButton->Delete ( );
-    this->MouseTransformViewIconButton = NULL;
-    }
   if ( this->UndoIconButton )
     {
     this->UndoIconButton->SetParent ( NULL );
@@ -293,6 +274,12 @@ vtkSlicerToolbarGUI::~vtkSlicerToolbarGUI ( )
       this->MouseModeToolbar->Delete ( );
       this->MouseModeToolbar = NULL;
       }
+    if ( this->MouseModeRadioButtons )
+      {
+      this->MouseModeRadioButtons->SetParent ( NULL );
+      this->MouseModeRadioButtons->Delete ( );
+      this->MouseModeRadioButtons = NULL;      
+      }
 
     this->SetApplicationGUI ( NULL );
 }
@@ -330,6 +317,11 @@ void vtkSlicerToolbarGUI::RemoveGUIObservers ( )
     this->UndoIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->RedoIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
+    this->MouseModeRadioButtons->GetWidget( vtkSlicerApplicationGUI::MouseSelect )->RemoveObservers( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+    this->MouseModeRadioButtons->GetWidget( vtkSlicerApplicationGUI::MouseTransform )->RemoveObservers( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+    this->MouseModeRadioButtons->GetWidget( vtkSlicerApplicationGUI::MousePut )->RemoveObservers( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+
+
 }
 
 //---------------------------------------------------------------------------
@@ -355,6 +347,10 @@ void vtkSlicerToolbarGUI::AddGUIObservers ( )
     this->LightBoxViewIconButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->UndoIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->RedoIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+
+    this->MouseModeRadioButtons->GetWidget( vtkSlicerApplicationGUI::MouseSelect )->AddObserver ( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+    this->MouseModeRadioButtons->GetWidget( vtkSlicerApplicationGUI::MouseTransform )->AddObserver ( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+    this->MouseModeRadioButtons->GetWidget( vtkSlicerApplicationGUI::MousePut )->AddObserver ( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
 }
 
 
@@ -362,7 +358,7 @@ void vtkSlicerToolbarGUI::AddGUIObservers ( )
 void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
                                           unsigned long event, void *callData )
 {
-
+  int val;
   if ( this->GetApplicationGUI() != NULL )
     {
     // Toolbar's parent is the main vtkSlicerApplicationGUI;
@@ -373,12 +369,41 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
     vtkSlicerGUILayout *layout = app->GetMainLayout();
     if ( app != NULL )
       {
+      vtkKWRadioButton *radiob = vtkKWRadioButton::SafeDownCast ( caller );
       vtkKWPushButton *pushb = vtkKWPushButton::SafeDownCast ( caller );
   
       if ( mcGUI != NULL )
         {            
         // Process events from top row of buttons
-        // For now, Home button takes us to the Volumes module.
+        // Mouse mode buttons:
+        if ( radiob == this->MouseModeRadioButtons->GetWidget ( vtkSlicerApplicationGUI::MouseSelect )
+             && event == vtkKWRadioButton::SelectedStateChangedEvent )
+          {
+          val = radiob->GetSelectedState();
+          if ( val )
+            {
+            p->SetMouseInteractionMode ( vtkSlicerApplicationGUI::MouseSelect );
+            }
+          }
+        else if ( radiob == this->MouseModeRadioButtons->GetWidget ( vtkSlicerApplicationGUI::MouseTransform )
+                  && event == vtkKWRadioButton::SelectedStateChangedEvent)
+          {
+          val = radiob->GetSelectedState();
+          if ( val )
+            {
+            p->SetMouseInteractionMode ( vtkSlicerApplicationGUI::MouseTransform );
+            }
+          }
+        else if ( radiob == this->MouseModeRadioButtons->GetWidget ( vtkSlicerApplicationGUI::MousePut )
+                  && event == vtkKWRadioButton::SelectedStateChangedEvent)
+          {
+          val = radiob->GetSelectedState();
+          if ( val )
+            {
+            p->SetMouseInteractionMode ( vtkSlicerApplicationGUI::MousePut );
+            }
+          }
+
         if ( pushb == this->HomeIconButton && event == vtkKWPushButton::InvokedEvent )
           {
           const char *homename = app->GetHomeModule();
@@ -839,47 +864,32 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   this->LightBoxViewIconButton->SetBalloonHelpString ( "Display a slice-matrix and no 3D view (not yet available)" );
   vtb->AddWidget ( this->LightBoxViewIconButton );
 
-  // mouse mode icons; mouse pick icon
-  this->MousePickIconButton->SetParent (mmtb->GetFrame ( ));
-  this->MousePickIconButton->Create ( );
-  this->MousePickIconButton->SetReliefToFlat ( );
-  this->MousePickIconButton->SetBorderWidth ( 0 );
-  this->MousePickIconButton->SetOverReliefToNone ( );
-  this->MousePickIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetMousePickIcon( ) );
-  this->MousePickIconButton->SetBalloonHelpString ( "Set the 3DViewer mouse mode to 'pick' (not yet available)" );
-  mmtb->AddWidget ( this->MousePickIconButton );
+  this->MouseModeRadioButtons->SetParent (mmtb->GetFrame ( ) );
+  this->MouseModeRadioButtons->Create ( );
+  this->MouseModeRadioButtons->PackHorizontallyOn();
 
-  // mouse mode icons; mouse rotate icon
-  this->MouseTransformViewIconButton->SetParent (mmtb->GetFrame ( ));
-  this->MouseTransformViewIconButton->Create ( );
-  this->MouseTransformViewIconButton->SetReliefToFlat ( );
-  this->MouseTransformViewIconButton->SetBorderWidth ( 0 );
-  this->MouseTransformViewIconButton->SetOverReliefToNone ( );
-  this->MouseTransformViewIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetMouseTransformViewIcon( ) );
-  this->MouseTransformViewIconButton->SetBalloonHelpString ( "Set the 3DViewer mouse mode to 'transform view' (not yet available)" );
-  mmtb->AddWidget ( this->MouseTransformViewIconButton );
+  vtkKWRadioButton *radiob = this->MouseModeRadioButtons->AddWidget ( vtkSlicerApplicationGUI::MouseSelect );
+  radiob->SetReliefToFlat ( );
+  radiob->SetOverReliefToNone ( );
+  radiob->SetImageToIcon ( this->SlicerToolbarIcons->GetMousePickIcon ( ) );
+  radiob->SetBalloonHelpString ( "Set the 3DViewer mouse mode to 'pick' (not yet available)" );
+  radiob->SelectedStateOff ( );
 
-  // mouse mode icons; mouse pick icon
-  this->MousePlaceFiducialIconButton->SetParent (mmtb->GetFrame ( ));
-  this->MousePlaceFiducialIconButton->Create ( );
-  this->MousePlaceFiducialIconButton->SetReliefToFlat ( );
-  this->MousePlaceFiducialIconButton->SetBorderWidth ( 0 );
-  this->MousePlaceFiducialIconButton->SetOverReliefToNone ( );
-  this->MousePlaceFiducialIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetMousePlaceFiducialIcon( ) );
-  this->MousePlaceFiducialIconButton->SetBalloonHelpString ( "Set the 3DViewer mouse mode to 'place fiducials' (not yet available)" );
-  mmtb->AddWidget ( this->MousePlaceFiducialIconButton );
+  radiob = this->MouseModeRadioButtons->AddWidget ( vtkSlicerApplicationGUI::MousePut );
+  radiob->SetReliefToFlat ( );
+  radiob->SetOverReliefToNone ( );
+  radiob->SetImageToIcon ( this->SlicerToolbarIcons->GetMousePlaceFiducialIcon ( ) );
+  radiob->SetBalloonHelpString ( "Set the 3DViewer mouse mode to 'place fiducials' (not yet available)" );
+  radiob->SelectedStateOn( );
+  mmtb->AddWidget ( this->MouseModeRadioButtons );
 
-  //
-  // apply default style
-  //
-  // pale goldenrod
-  /*
-    tbs->GetToolbarsFrame()->SetBackgroundColor (0.9333, 0.90980, 0.6666);
-    this->GetModulesToolbar()->GetFrame()->SetBackgroundColor ( 0.9333, 0.90980, 0.6666);
-    this->GetLoadSaveToolbar()->GetFrame()->SetBackgroundColor ( 0.9333, 0.90980, 0.6666);
-    this->GetViewToolbar()->GetFrame()->SetBackgroundColor ( 0.9333, 0.90980, 0.6666);
-    this->GetMouseModeToolbar()->GetFrame()->SetBackgroundColor ( 0.9333, 0.90980, 0.6666);
-  */
+  radiob = this->MouseModeRadioButtons->AddWidget ( vtkSlicerApplicationGUI::MouseTransform );
+  radiob->SetReliefToFlat ( );
+  radiob->SetOverReliefToNone ( );
+  radiob->SetImageToIcon ( this->SlicerToolbarIcons->GetMouseTransformViewIcon ( ) );
+  radiob->SetBalloonHelpString ( "Set the 3DViewer mouse mode to 'transform view' (not yet available)" );
+  radiob->SelectedStateOff ( );
+  
   tbs->ShowToolbar ( this->GetModulesToolbar ( ));
   tbs->ShowToolbar ( this->GetLoadSaveToolbar ( ));
   tbs->ShowToolbar ( this->GetViewToolbar ( ));
