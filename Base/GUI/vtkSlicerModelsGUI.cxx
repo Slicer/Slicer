@@ -30,6 +30,8 @@ vtkSlicerModelsGUI::vtkSlicerModelsGUI ( )
     this->ModelSelectorWidget = NULL;
     this->ModelDisplayWidget = NULL;
     this->ClipModelsWidget = NULL;
+    this->LoadScalarsButton = NULL;
+
 }
 
 
@@ -70,6 +72,11 @@ vtkSlicerModelsGUI::~vtkSlicerModelsGUI ( )
     this->ClipModelsWidget->SetParent(NULL);
     this->ClipModelsWidget->Delete ( );
     }
+  if (this->LoadScalarsButton )
+    {
+    this->LoadScalarsButton->SetParent(NULL);
+    this->LoadScalarsButton->Delete ( );
+    }
 }
 
 
@@ -101,6 +108,10 @@ void vtkSlicerModelsGUI::RemoveGUIObservers ( )
     {
     this->SaveModelButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
     }
+  if (this->LoadScalarsButton)
+    {
+    this->LoadScalarsButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+    }
 }
 
 
@@ -110,6 +121,7 @@ void vtkSlicerModelsGUI::AddGUIObservers ( )
   this->LoadModelButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
   this->LoadModelDirectoryButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
   this->SaveModelButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+  this->LoadScalarsButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
 }
 
 
@@ -182,6 +194,29 @@ void vtkSlicerModelsGUI::ProcessGUIEvents ( vtkObject *caller,
        }
        return;
     } 
+  else if (filebrowse == this->LoadScalarsButton  && event == vtkKWPushButton::InvokedEvent )
+    {
+    // If a scalar file has been selected for loading...
+    char *fileName = filebrowse->GetFileName();
+    if ( fileName ) 
+      {
+      // get the model
+      vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(this->ModelSelectorWidget->GetSelected());
+
+      // load the scalars
+      vtkSlicerModelsLogic* modelLogic = this->Logic;
+      if (!modelLogic->AddScalar(fileName, modelNode))
+        {
+        vtkErrorMacro("Error loading scalar overlay file " << fileName);
+        this->LoadScalarsButton->SetText ("Load FreeSurfer Overlay");
+        }
+      else
+        {
+        filebrowse->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
+        }
+      }
+    return;
+    }
 }    
 
 //---------------------------------------------------------------------------
@@ -292,6 +327,15 @@ void vtkSlicerModelsGUI::BuildGUI ( )
     modDisplayFrame->CollapseFrame ( );
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   modDisplayFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Models")->GetWidgetName());
+
+    this->LoadScalarsButton = vtkKWLoadSaveButton::New();
+    this->LoadScalarsButton->SetParent ( modDisplayFrame->GetFrame() );
+    this->LoadScalarsButton->Create ( );
+    this->LoadScalarsButton->SetText ("Load FreeSurfer Overlay");
+    this->LoadScalarsButton->GetLoadSaveDialog()->RetrieveLastPathFromRegistry("OpenPath");
+    this->LoadScalarsButton->GetLoadSaveDialog()->SetFileTypes("{ {W} {*.w} }");
+    app->Script("pack %s -side top -anchor nw -padx 2 -pady 4", 
+                this->LoadScalarsButton->GetWidgetName());
 
     this->ModelDisplayWidget = vtkSlicerModelDisplayWidget::New ( );
     this->ModelDisplayWidget->SetMRMLScene(this->GetMRMLScene() );

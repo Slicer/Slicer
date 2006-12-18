@@ -37,6 +37,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModelsGUI : public vtkSlicerModuleGUI
     // Description:
     // Get methods on class members ( no Set methods required. )
     vtkGetObjectMacro ( LoadModelButton, vtkKWLoadSaveButton );
+    vtkGetObjectMacro ( LoadScalarsButton, vtkKWLoadSaveButton);
     //vtkGetObjectMacro ( Logic, vtkSlicerModelsLogic);
     //vtkGetObjectMacro ( ModelNode, vtkMRMLModelNode );
     
@@ -93,6 +94,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModelsGUI : public vtkSlicerModuleGUI
     
     // Widgets for the Models module
     vtkKWLoadSaveButton *LoadModelButton;
+    vtkKWLoadSaveButton *LoadScalarsButton;
     vtkKWLoadSaveButton *LoadModelDirectoryButton;
     vtkKWLoadSaveButton *SaveModelButton;
     vtkSlicerNodeSelectorWidget* ModelSelectorWidget;
