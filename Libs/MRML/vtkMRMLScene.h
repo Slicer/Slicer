@@ -253,13 +253,15 @@ public:
   {
     if (id && refrencingNode) 
       {
-      this->ReferencedIDs[std::string(id)] = refrencingNode;
+      this->ReferencedIDs.push_back(id);
+      this->ReferencingNodes.push_back(refrencingNode);
       }
   };
 
   void ClearReferencedNodeID()
   {
     this->ReferencedIDs.clear();
+    this->ReferencingNodes.clear();
     this->ReferencedIDChanges.clear();
   };
 
@@ -315,7 +317,8 @@ protected:
   std::vector< std::string >  RegisteredNodeTags;
   vtksys_stl::string          RootDirectory;
 
-  std::map< std::string, vtkMRMLNode*> ReferencedIDs;
+  std::vector< std::string > ReferencedIDs;
+  std::vector< vtkMRMLNode* > ReferencingNodes;
   std::map< std::string, std::string> ReferencedIDChanges;
   //ETX
   

@@ -1339,15 +1339,19 @@ void vtkMRMLScene::UpdateNodeReferences()
   std::map< std::string, std::string>::const_iterator iterChanged;
   std::map< std::string, vtkMRMLNode*>::const_iterator iterNodes;
   vtkMRMLNode *node;
+  int nupdates = ReferencedIDs.size();
+  int i;
 
   for (iterChanged = this->ReferencedIDChanges.begin(); iterChanged != this->ReferencedIDChanges.end(); iterChanged++) 
     {
-    iterNodes = this->ReferencedIDs.find(iterChanged->first);
-    if (iterNodes != ReferencedIDs.end()) 
+    for (i=0; i<nupdates; i++)
       {
-      node = iterNodes->second;
-      node->UpdateReferenceID(iterChanged->first.c_str(), iterChanged->second.c_str());
-      }
+      if (iterChanged->first == ReferencedIDs[i])
+        {
+        node = ReferencingNodes[i];
+        node->UpdateReferenceID(iterChanged->first.c_str(), iterChanged->second.c_str());
+        }
     }
+  }
 
 }
