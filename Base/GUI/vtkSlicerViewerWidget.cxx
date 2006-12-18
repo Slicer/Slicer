@@ -953,6 +953,7 @@ void vtkSlicerViewerWidget::SetModelDisplayProperty(vtkMRMLModelNode *model,  vt
   if (dnode != NULL)
     {
     actor->SetVisibility(dnode->GetVisibility());
+    actor->GetMapper()->SetScalarVisibility(dnode->GetScalarVisibility());
     actor->GetProperty()->SetColor(dnode->GetColor());
     actor->GetProperty()->SetOpacity(dnode->GetOpacity());
     actor->GetProperty()->SetAmbient(dnode->GetAmbient());
