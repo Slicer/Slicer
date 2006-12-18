@@ -28,9 +28,6 @@
 #include "vtkPolyData.h"
 #include "vtkFloatArray.h"
 
-// file type magic numbers
-const int FS_NEW_SCALAR_MAGIC_NUMBER = 16777215;
-
 class vtkFloatArray;
 class VTK_FreeSurfer_EXPORT vtkFSSurfaceScalarReader : public vtkDataReader
 {
@@ -46,6 +43,14 @@ public:
 
   void ReadFSScalars();
 
+  // file type magic numbers
+  // const int FS_NEW_SCALAR_MAGIC_NUMBER = 16777215;
+  //BTX
+  enum 
+    {
+      FS_NEW_SCALAR_MAGIC_NUMBER = 16777215,
+    };
+  //ETX
 protected:
   vtkFSSurfaceScalarReader();
   ~vtkFSSurfaceScalarReader();

@@ -34,6 +34,7 @@ vtkFSSurfaceScalarReader* vtkFSSurfaceScalarReader::New()
 vtkFSSurfaceScalarReader::vtkFSSurfaceScalarReader()
 {
     this->scalars = NULL;
+
 }
 
 vtkFSSurfaceScalarReader::~vtkFSSurfaceScalarReader()
@@ -83,7 +84,7 @@ void vtkFSSurfaceScalarReader::ReadFSScalars()
   // of values if not. New style files also have a number of faces and
   // values per point, which aren't really used.
   vtkFSIO::ReadInt3 (scalarFile, magicNumber);
-  if (FS_NEW_SCALAR_MAGIC_NUMBER == magicNumber) {
+  if (this->FS_NEW_SCALAR_MAGIC_NUMBER == magicNumber) {
     fread (&numValues, sizeof(int), 1, scalarFile);
     fread (&numFaces, sizeof(int), 1, scalarFile);
     fread (&numValuesPerPoint, sizeof(int), 1, scalarFile);
@@ -118,7 +119,7 @@ void vtkFSSurfaceScalarReader::ReadFSScalars()
       return;
     }
 
-    if (FS_NEW_SCALAR_MAGIC_NUMBER == magicNumber) {
+    if (this->FS_NEW_SCALAR_MAGIC_NUMBER == magicNumber) {
       fread (&fvalue, sizeof(float), 1, scalarFile);
       vtkByteSwap::Swap4BE (&fvalue);
 
