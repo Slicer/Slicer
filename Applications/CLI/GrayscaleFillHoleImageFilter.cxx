@@ -77,11 +77,7 @@ int main( int argc, char * argv[] )
   writer->SetInput( fillhole->GetOutput() );
   writer->Update();
 
-  // Output the number of iterations used
-  std::cout << "Fillhole took " << fillhole->GetNumberOfIterationsUsed() << " iterations." << std::endl;
-  reader->GetOutput()->Print(std::cout);
-  fillhole->GetOutput()->Print(std::cout);
-  return 0;
+  return EXIT_SUCCESS;
 
 }
 

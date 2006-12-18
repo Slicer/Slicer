@@ -77,10 +77,6 @@ int main( int argc, char * argv[] )
   writer->SetInput( grindpeak->GetOutput() );
   writer->Update();
 
-  // Output the number of iterations used
-  std::cout << "GrindPeak took " << grindpeak->GetNumberOfIterationsUsed() << " iterations." << std::endl;
-  reader->GetOutput()->Print(std::cout);
-  grindpeak->GetOutput()->Print(std::cout);
   return 0;
 
 }
