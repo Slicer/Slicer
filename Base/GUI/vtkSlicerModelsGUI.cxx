@@ -333,7 +333,7 @@ void vtkSlicerModelsGUI::BuildGUI ( )
     this->LoadScalarsButton->Create ( );
     this->LoadScalarsButton->SetText ("Load FreeSurfer Overlay");
     this->LoadScalarsButton->GetLoadSaveDialog()->RetrieveLastPathFromRegistry("OpenPath");
-    this->LoadScalarsButton->GetLoadSaveDialog()->SetFileTypes("{ {W} {*.w} }");
+    this->LoadScalarsButton->GetLoadSaveDialog()->SetFileTypes("{ {Thickness} {*.thickness} } { {Curve} {*.curv} } { {Average Curve} {*.avg_curv} } { {Sulc} {*.sulc} } { {Area} {*.area} } { {W} {*.w} }");
     app->Script("pack %s -side top -anchor nw -padx 2 -pady 4", 
                 this->LoadScalarsButton->GetWidgetName());
 
