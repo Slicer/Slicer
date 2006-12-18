@@ -59,6 +59,10 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerModelsLogic : public vtkSlicerLogic
   int SaveModel (char* filename, vtkMRMLModelNode *modelNode);
 
   // Description:
+  // Read in a scalar overlay and add it to the model node
+  int AddScalar(char* filename, vtkMRMLModelNode *modelNode);
+
+  // Description:
   // Update logic state when MRML scene chenges
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
                                   unsigned long /*event*/, 

@@ -172,3 +172,31 @@ void vtkSlicerModelsLogic::PrintSelf(ostream& os, vtkIndent indent)
     (this->ActiveModelNode ? this->ActiveModelNode->GetName() : "(none)") << "\n";
 }
 
+//----------------------------------------------------------------------------
+int vtkSlicerModelsLogic::AddScalar(char* filename, vtkMRMLModelNode *modelNode)
+{
+  if (modelNode == NULL ||
+      filename == NULL)
+    {
+    return 0;
+    }  
+
+   // get the display node
+  vtkMRMLModelStorageNode *storageNode = NULL;
+  vtkMRMLStorageNode *snode = modelNode->GetStorageNode();
+  if (snode != NULL)
+    {
+    storageNode = vtkMRMLModelStorageNode::SafeDownCast(snode);
+    }
+  if (storageNode == NULL)
+    {
+    storageNode = vtkMRMLModelStorageNode::New();
+    storageNode->SetScene(this->GetMRMLScene());
+    this->GetMRMLScene()->AddNode(storageNode);  
+    modelNode->SetStorageNodeID(storageNode->GetID());
+    storageNode->Delete();
+    }
+  storageNode->SetFileName(filename);
+  storageNode->ReadData(modelNode);
+  return 1;
+}
