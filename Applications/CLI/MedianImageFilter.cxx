@@ -114,6 +114,7 @@ int main( int argc, char * argv[] )
         return DoIt( argc, argv, static_cast<double>(0));
         break;
       case itk::ImageIOBase::UNKNOWNCOMPONENTTYPE:
+      default:
         std::cout << "unknown component type" << std::endl;
         break;
       }
@@ -126,4 +127,3 @@ int main( int argc, char * argv[] )
     }
   return EXIT_SUCCESS;
 }
-
