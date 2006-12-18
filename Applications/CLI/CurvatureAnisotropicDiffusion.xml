@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
   <category>Filtering.Denoising</category>
-  <title>Gradient Anisotropic Diffusion</title>
+  <title>Curvature Anisotropic Diffusion</title>
   <description>
-Runs gradient anisotropic diffusion on a volume.
+Performs anisotropic diffusion on an image using a modified curvature
+diffusion equation (MCDE).
 
-Anisotropic diffusion methods reduce noise (or unwanted detail) in
-images while preserving specific image features.  For many
-applications, there is an assumption that light-dark transitions
-(edges) are interesting.  Standard isotropic diffusion methods move
-and blur light-dark boundaries.  Anisotropic diffusion methods are
-formulated to specifically preserve edges.
-The conductance term for this implementation is chosen as a function
-of the gradient magnitude of the image at each point, reducing the
-strength of diffusion at edge pixels.
-The numerical implementation of this equation is similar to that
-described in the Perona-Malik paper, but uses a more robust technique
-for gradient magnitude estimation and has been generalized to
-N-dimensions.
+MCDE does not exhibit the edge enhancing properties of classic
+anisotropic diffusion, which can under certain conditions undergo a
+'negative' diffusion, which enhances the contrast of edges.  Equations
+of the form of MCDE always undergo positive diffusion, with the
+conductance term only varying the strength of that diffusion.
 
+Qualitatively, MCDE compares well with other non-linear diffusion
+techniques.  It is less sensitive to contrast than classic
+Perona-Malik style diffusion, and preserves finer detailed structures
+in images.  There is a potential speed trade-off for using this
+function in place of Gradient Anisotropic Diffusion.  Each iteration
+of the solution takes roughly twice as long.  Fewer iterations,
+however, may be required to reach an acceptable solution.
 </description>
-  <version>0.1.0.$Revision$(alpha)</version>
+  <version>0.1.0.$Revision: 1650 $(alpha)</version>
   <documentation-url></documentation-url>
   <license></license>
   <contributor>Bill Lorensen</contributor>

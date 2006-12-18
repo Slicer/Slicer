@@ -1,10 +1,10 @@
 /*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit
-  Module:    $HeadURL$
+  Module:    $HeadURL: http://www.na-mic.org/svn/Slicer3/trunk/Applications/CLI/GradientAnisotropicDiffusion.cxx $
   Language:  C++
-  Date:      $Date$
-  Version:   $Revision$
+  Date:      $Date: 2006-11-14 15:03:40 -0500 (Tue, 14 Nov 2006) $
+  Version:   $Revision: 1582 $
 
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
@@ -25,19 +25,18 @@
 #include "itkImage.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
-#include "itkCastImageFilter.h"
 
-#include "itkGradientAnisotropicDiffusionImageFilter.h"
+#include "itkSubtractImageFilter.h"
 
 #include "itkPluginUtilities.h"
-#include "GradientAnisotropicDiffusionCLP.h"
+#include "SubtractCLP.h"
 
 template<class T> int DoIt( int argc, char * argv[], T )
 {
 
   PARSE_ARGS;
 
-  typedef    float   InputPixelType;
+  typedef    T       InputPixelType;
   typedef    T       OutputPixelType;
 
   typedef itk::Image< InputPixelType,  3 >   InputImageType;
@@ -46,33 +45,34 @@ template<class T> int DoIt( int argc, char * argv[], T )
   typedef itk::ImageFileReader< InputImageType >  ReaderType;
   typedef itk::ImageFileWriter< OutputImageType > WriterType;
 
-  typedef itk::GradientAnisotropicDiffusionImageFilter<
-               InputImageType, InputImageType >  FilterType;
-  typedef itk::CastImageFilter<InputImageType, OutputImageType> CastType;
+  typedef itk::SubtractImageFilter<
+    InputImageType, InputImageType, OutputImageType >  FilterType;
 
-  typename ReaderType::Pointer reader = ReaderType::New();
-  itk::PluginFilterWatcher watchReader(reader, "Read Volume",
-                                       CLPProcessInformation);
-
-  reader->SetFileName( inputVolume.c_str() );
+  typename ReaderType::Pointer reader1 = ReaderType::New();
+  itk::PluginFilterWatcher watchReader1(reader1, "Read Volume 2",
+                                        CLPProcessInformation);
+  
+  typename ReaderType::Pointer reader2 = ReaderType::New();
+  itk::PluginFilterWatcher watchReader2(reader2,
+                                        "Read Volume 2",
+                                        CLPProcessInformation);
+  reader1->SetFileName( inputVolume1.c_str() );
+  reader2->SetFileName( inputVolume2.c_str() );
 
   typename FilterType::Pointer filter = FilterType::New();
-  itk::PluginFilterWatcher watchFilter(filter, "Gradient Anisotropic Diffusion",
-    CLPProcessInformation);
+  itk::PluginFilterWatcher watchFilter(filter,
+                                       "Subtract images",
+                                       CLPProcessInformation);
 
-  filter->SetInput( reader->GetOutput() );
-  filter->SetNumberOfIterations( numberOfIterations );
-  filter->SetTimeStep( timeStep );
-  filter->SetConductanceParameter( conductance );
-
-  typename CastType::Pointer cast = CastType::New();
-  cast->SetInput( filter->GetOutput());
+  filter->SetInput( 0, reader1->GetOutput() );
+  filter->SetInput( 1, reader2->GetOutput() );
 
   typename WriterType::Pointer writer = WriterType::New();
-  itk::PluginFilterWatcher watchWriter(writer, "Write Volume",
-                                   CLPProcessInformation);
+  itk::PluginFilterWatcher watchWriter(writer,
+                                       "Write Volume",
+                                       CLPProcessInformation);
   writer->SetFileName( outputVolume.c_str() );
-  writer->SetInput( cast->GetOutput() );
+  writer->SetInput( filter->GetOutput() );
   writer->Update();
 
   return EXIT_SUCCESS;
@@ -88,33 +88,26 @@ int main( int argc, char * argv[] )
 
   try
     {
-    itk::GetImageType (inputVolume, pixelType, componentType);
+    itk::GetImageType (inputVolume1, pixelType, componentType);
 
-    // This filter handles all types
+    // This filter handles all types on input, but only produces
+    // signed types
     
     switch (componentType)
       {
       case itk::ImageIOBase::UCHAR:
-        return DoIt( argc, argv, static_cast<unsigned char>(0));
-        break;
       case itk::ImageIOBase::CHAR:
         return DoIt( argc, argv, static_cast<char>(0));
         break;
       case itk::ImageIOBase::USHORT:
-        return DoIt( argc, argv, static_cast<unsigned short>(0));
-        break;
       case itk::ImageIOBase::SHORT:
         return DoIt( argc, argv, static_cast<short>(0));
         break;
       case itk::ImageIOBase::UINT:
-        return DoIt( argc, argv, static_cast<unsigned int>(0));
-        break;
       case itk::ImageIOBase::INT:
         return DoIt( argc, argv, static_cast<int>(0));
         break;
       case itk::ImageIOBase::ULONG:
-        return DoIt( argc, argv, static_cast<unsigned long>(0));
-        break;
       case itk::ImageIOBase::LONG:
         return DoIt( argc, argv, static_cast<long>(0));
         break;

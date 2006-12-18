@@ -1,10 +1,10 @@
 /*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit
-  Module:    $HeadURL$
+  Module:    $HeadURL: http://www.na-mic.org/svn/Slicer3/trunk/Applications/CLI/GradientAnisotropicDiffusion.cxx $
   Language:  C++
-  Date:      $Date$
-  Version:   $Revision$
+  Date:      $Date: 2006-11-14 15:03:40 -0500 (Tue, 14 Nov 2006) $
+  Version:   $Revision: 1582 $
 
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
@@ -27,10 +27,10 @@
 #include "itkImageFileWriter.h"
 #include "itkCastImageFilter.h"
 
-#include "itkGradientAnisotropicDiffusionImageFilter.h"
+#include "itkCurvatureAnisotropicDiffusionImageFilter.h"
 
 #include "itkPluginUtilities.h"
-#include "GradientAnisotropicDiffusionCLP.h"
+#include "CurvatureAnisotropicDiffusionCLP.h"
 
 template<class T> int DoIt( int argc, char * argv[], T )
 {
@@ -46,7 +46,7 @@ template<class T> int DoIt( int argc, char * argv[], T )
   typedef itk::ImageFileReader< InputImageType >  ReaderType;
   typedef itk::ImageFileWriter< OutputImageType > WriterType;
 
-  typedef itk::GradientAnisotropicDiffusionImageFilter<
+  typedef itk::CurvatureAnisotropicDiffusionImageFilter<
                InputImageType, InputImageType >  FilterType;
   typedef itk::CastImageFilter<InputImageType, OutputImageType> CastType;
 
@@ -57,10 +57,12 @@ template<class T> int DoIt( int argc, char * argv[], T )
   reader->SetFileName( inputVolume.c_str() );
 
   typename FilterType::Pointer filter = FilterType::New();
-  itk::PluginFilterWatcher watchFilter(filter, "Gradient Anisotropic Diffusion",
-    CLPProcessInformation);
-
+  itk::PluginFilterWatcher watchFilter(filter,
+                                       "Curvature Anisotropic Diffusion",
+                                       CLPProcessInformation);
+  
   filter->SetInput( reader->GetOutput() );
+  filter->UseImageSpacingOn();
   filter->SetNumberOfIterations( numberOfIterations );
   filter->SetTimeStep( timeStep );
   filter->SetConductanceParameter( conductance );
