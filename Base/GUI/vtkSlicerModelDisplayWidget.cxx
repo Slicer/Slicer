@@ -28,6 +28,7 @@ vtkSlicerModelDisplayWidget::vtkSlicerModelDisplayWidget ( )
 
     this->ModelSelectorWidget = NULL;
     this->VisibilityButton = NULL;
+    this->ScalarVisibilityButton = NULL;
     this->ClippingButton = NULL;
     this->OpacityScale = NULL;
     this->SurfaceMaterialPropertyWidget = NULL;
@@ -52,6 +53,12 @@ vtkSlicerModelDisplayWidget::~vtkSlicerModelDisplayWidget ( )
     this->VisibilityButton->SetParent(NULL);
     this->VisibilityButton->Delete();
     this->VisibilityButton = NULL;
+    }
+  if (this->ScalarVisibilityButton)
+    {
+    this->ScalarVisibilityButton->SetParent(NULL);
+    this->ScalarVisibilityButton->Delete();
+    this->ScalarVisibilityButton = NULL;
     }
   if (this->ClippingButton)
     {
@@ -254,6 +261,7 @@ void vtkSlicerModelDisplayWidget::UpdateWidget()
     if (displayNode != NULL) 
       {
       this->VisibilityButton->GetWidget()->SetSelectedState(displayNode->GetVisibility());
+      this->ScalarVisibilityButton->GetWidget()->SetSelectedState(displayNode->GetScalarVisibility());
       this->ClippingButton->GetWidget()->SetSelectedState(displayNode->GetClipping());
       this->OpacityScale->GetWidget()->SetValue(displayNode->GetOpacity());
       if (this->SurfaceMaterialPropertyWidget->GetProperty() == NULL)
@@ -287,6 +295,7 @@ void vtkSlicerModelDisplayWidget::UpdateMRML()
     if (displayNode != NULL) 
       {
       displayNode->SetVisibility(this->VisibilityButton->GetWidget()->GetSelectedState());
+      displayNode->SetScalarVisibility(this->ScalarVisibilityButton->GetWidget()->GetSelectedState());
       displayNode->SetClipping(this->ClippingButton->GetWidget()->GetSelectedState());
       displayNode->SetOpacity(this->OpacityScale->GetWidget()->GetValue());
       displayNode->SetAmbient(this->SurfaceMaterialPropertyWidget->GetProperty()->GetAmbient());
@@ -307,6 +316,7 @@ void vtkSlicerModelDisplayWidget::RemoveWidgetObservers ( ) {
   this->ModelSelectorWidget->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
   
   this->VisibilityButton->GetWidget()->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->ScalarVisibilityButton->GetWidget()->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 
   this->ClippingButton->GetWidget()->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   
@@ -372,6 +382,14 @@ void vtkSlicerModelDisplayWidget::CreateWidget ( )
   this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
                  this->VisibilityButton->GetWidgetName() );
 
+  this->ScalarVisibilityButton = vtkKWCheckButtonWithLabel::New();
+  this->ScalarVisibilityButton->SetParent ( modelDisplayFrame );
+  this->ScalarVisibilityButton->Create ( );
+  this->ScalarVisibilityButton->SetLabelText("Scalar Visibility");
+  this->ScalarVisibilityButton->SetBalloonHelpString("set model scalar visibility.");
+  this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
+                 this->ScalarVisibilityButton->GetWidgetName() );
+
   this->ClippingButton = vtkKWCheckButtonWithLabel::New();
   this->ClippingButton->SetParent ( modelDisplayFrame );
   this->ClippingButton->Create ( );
@@ -415,6 +433,7 @@ void vtkSlicerModelDisplayWidget::CreateWidget ( )
   this->OpacityScale->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   
   this->VisibilityButton->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->ScalarVisibilityButton->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 
   this->ClippingButton->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   
