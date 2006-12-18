@@ -116,7 +116,7 @@ vtkITKArchetypeImageSeriesReader::~vtkITKArchetypeImageSeriesReader()
 
 vtkMatrix4x4* vtkITKArchetypeImageSeriesReader::GetRasToIjkMatrix()
 {
-  this->ExecuteInformation();
+  this->UpdateInformation();
   return RasToIjkMatrix;
 }
 
@@ -516,6 +516,7 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
 
   output->SetScalarType(this->OutputScalarType);
   output->SetNumberOfScalarComponents(this->GetNumberOfComponents());
+
 }
 
 //----------------------------------------------------------------------------
