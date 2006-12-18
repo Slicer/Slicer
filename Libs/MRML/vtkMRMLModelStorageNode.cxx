@@ -30,6 +30,7 @@ Version:   $Revision: 1.2 $
 //TODO: read in a free surfer file
 #include "vtkFSSurfaceReader.h"
 #include "vtkFSSurfaceWFileReader.h"
+#include "vtkFSSurfaceScalarReader.h"
 #include "vtkPolyDataWriter.h"
 
 #include "vtkPointData.h"
@@ -148,7 +149,12 @@ int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
   std::string extention = name.substr(loc);
 
   // don't delete the polydata if reading in a scalar overlay
-  if ( extention != std::string(".w") )
+  if ( extention != std::string(".w") &&
+       extention != std::string(".thickness") &&
+       extention != std::string(".curv") &&
+       extention != std::string(".avg_curv") &&
+       extention != std::string(".sulc") &&
+       extention != std::string(".area"))
     {
     if (modelNode->GetPolyData()) 
       {
@@ -200,8 +206,65 @@ int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
       normals->Delete();
       stripper->Delete();
       }
+    else if (extention == std::string(".thickness") ||
+             extention == std::string(".curv") ||
+             extention == std::string(".avg_curv") ||
+             extention == std::string(".sulc") ||
+             extention == std::string(".area"))
+      {
+      // read in a freesurfer scalar overlay
+      // does the model node have point data?
+      if (modelNode->GetPolyData() != NULL &&
+          modelNode->GetPolyData()->GetPointData() != NULL)
+        {
+        int numVertices = modelNode->GetPolyData()->GetPointData()->GetNumberOfTuples();
+
+        vtkFSSurfaceScalarReader *reader = vtkFSSurfaceScalarReader::New();
+        reader->SetFileName(fullName.c_str());
+        // the array to read into
+        vtkFloatArray *floatArray = vtkFloatArray::New();
+        std::string::size_type ptr = name.find_last_of(std::string("/"));
+        std::string scalarName;
+        if (ptr != std::string::npos)
+          {
+          scalarName = name.substr(++ptr);
+          }
+        else
+          {
+          scalarName = name;
+          }
+        floatArray->SetName(scalarName.c_str());
+        reader->SetOutput(floatArray);
+
+        reader->ReadFSScalars();
+
+        int numScalars = modelNode->GetPolyData()->GetPointData()->GetNumberOfArrays();
+        vtkDebugMacro("Finished reading model overlay file " << fullName.c_str() << ", scalars called " << scalarName.c_str() << ", model node has " << numScalars << " scalars now, adding one\n");
+        // how many scalars does the model have?
+        if (numScalars > 0)
+          {
+          // add array
+          modelNode->GetPolyData()->GetPointData()->AddArray(floatArray);
+          } 
+        else
+          {
+          // set the scalars
+          modelNode->GetPolyData()->GetPointData()->SetScalars(floatArray);
+          }
+        // set the active array
+        modelNode->GetPolyData()->GetPointData()->SetActiveScalars(scalarName.c_str());
+        // make sure scalars are visible
+        modelNode->GetDisplayNode()->SetScalarVisibility(1);
+        // set the colour look up table, TODO: use FreeSurfer color node when integrated
+        //modelNode->GetDisplayNode()->SetAndObserveColorNodeID("vtkMRMLColorNodeGreenRed");
+
+        reader->Delete();
+        floatArray->Delete();
+        }
+      }
     else if (extention == std::string(".w"))
       {
+      // read in freesurfer .W file scalar overlay
       // does the model node have point data?
       if (modelNode->GetPolyData() != NULL &&
           modelNode->GetPolyData()->GetPointData() != NULL)
