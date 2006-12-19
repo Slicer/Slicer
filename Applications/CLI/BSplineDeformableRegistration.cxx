@@ -1,10 +1,10 @@
 /*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit
-  Module:    $RCSfile: DeformableRegistration8.cxx,v $
+  Module:    $HeadURL: http://www.na-mic.org/svn/Slicer3/trunk/Applications/CLI/MedianImageFilter.cxx $
   Language:  C++
-  Date:      $Date: 2005/11/19 16:31:50 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2006-12-18 09:32:36 -0500 (Mon, 18 Dec 2006) $
+  Version:   $Revision: 1857 $
 
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
@@ -18,41 +18,14 @@
 #pragma warning ( disable : 4786 )
 #endif
 
-
-
-
-// Software Guide : BeginLatex
-//
-// This example illustrates the use of the \doxygen{BSplineDeformableTransform}
-// class for performing registration of two $3D$ images and for the case of
-// multi-modality images. The image metric of choice in this case is the
-// \doxygen{MattesMutualInformationImageToImageMetric}.
-//
-// \index{itk::BSplineDeformableTransform}
-// \index{itk::BSplineDeformableTransform!DeformableRegistration}
-// \index{itk::LBFGSBOptimizer}
-//
-//
-// Software Guide : EndLatex 
-
 #include "itkImageRegistrationMethod.h"
 #include "itkMattesMutualInformationImageToImageMetric.h"
 #include "itkLinearInterpolateImageFunction.h"
 
-#include "itkPluginFilterWatcher.h"
+#include "itkPluginUtilities.h"
 
 #include "itkTimeProbesCollectorBase.h"
 
-//  Software Guide : BeginLatex
-//  
-//  The following are the most relevant headers to this example.
-//
-//  \index{itk::BSplineDeformableTransform!header}
-//  \index{itk::LBFGSBOptimizer!header}
-// 
-//  Software Guide : EndLatex 
-
-// Software Guide : BeginCodeSnippet
 #include "itkBSplineDeformableTransform.h"
 #include "itkLBFGSBOptimizer.h"
 #include "itkOnePlusOneEvolutionaryOptimizer.h"
@@ -60,32 +33,14 @@
 #include "itkOrientedImage.h"
 #include "itkOrientImageFilter.h"
 
-// Software Guide : EndCodeSnippet
-
-//  Software Guide : BeginLatex
-//  
-//  The parameter space of the \code{BSplineDeformableTransform} is composed by
-//  the set of all the deformations associated with the nodes of the B-spline
-//  grid.  This large number of parameters makes possible to represent a wide
-//  variety of deformations, but it also has the price of requiring a
-//  significant amount of computation time.
-//
-//  \index{itk::BSplineDeformableTransform!header}
-// 
-//  Software Guide : EndLatex 
-
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 
 #include "itkResampleImageFilter.h"
-#include "itkCastImageFilter.h"
 #include "itkSquaredDifferenceImageFilter.h"
 
 #include "BSplineDeformableRegistrationCLP.h"
 
-//  The following section of code implements a Command observer
-//  used to monitor the evolution of the registration process.
-//
 #include "itkCommand.h"
 class CommandIterationUpdate : public itk::Command 
 {
@@ -149,39 +104,26 @@ public:
     }
 };
 
-int main( int argc, char *argv[] )
+template<class T> int DoIt( int argc, char * argv[], T )
 {
-  const    unsigned int  ImageDimension = 3;
-  typedef  signed short  PixelType;
-  typedef  signed short  OutputPixelType;
+  PARSE_ARGS;
 
+  // typedefs
+  const    unsigned int  ImageDimension = 3;
+  typedef  T  PixelType;
+  typedef  T  OutputPixelType;
   typedef itk::OrientedImage< PixelType, ImageDimension >       InputImageType;
   typedef itk::OrientedImage< OutputPixelType, ImageDimension > OutputImageType;
 
-  PARSE_ARGS;
-  std::cout << "Command Line Arguments" << std::endl;
-  std::cout << "    Iterations: " << Iterations << std::endl;
-  std::cout << "    gridSize: " << gridSize << std::endl;
-  std::cout << "    HistogramBins: " << HistogramBins << std::endl;
-  std::cout << "    SpatialSamples: " << SpatialSamples << std::endl;
-  std::cout << "    ConstrainDeformation: " << ConstrainDeformation << std::endl;
-  std::cout << "    MaximumDeformation: " << MaximumDeformation << std::endl;
-  std::cout << "    fixedImageFileName: " << fixedImageFileName << std::endl;
-  std::cout << "    movingImageFileName: " << movingImageFileName << std::endl;
-  std::cout << "    resampledImageFileName: " << resampledImageFileName << std::endl;
+  typedef itk::ImageFileReader< InputImageType > FixedImageReaderType;
+  typedef itk::ImageFileReader< InputImageType > MovingImageReaderType;
+  typedef itk::ImageFileWriter< OutputImageType >  WriterType;
 
-  //  Software Guide : BeginLatex
-  //
-  //  We instantiate now the type of the \code{BSplineDeformableTransform} using
-  //  as template parameters the type for coordinates representation, the
-  //  dimension of the space, and the order of the B-spline. 
-  // 
-  //  \index{BSplineDeformableTransform!New}
-  //  \index{BSplineDeformableTransform!Instantiation}
-  //
-  //  Software Guide : EndLatex 
+  typedef itk::OrientImageFilter<InputImageType,InputImageType> OrientFilterType;
+  typedef itk::ResampleImageFilter< 
+                            InputImageType, 
+                            OutputImageType >    ResampleFilterType;
 
-  // Software Guide : BeginCodeSnippet
   const unsigned int SpaceDimension = ImageDimension;
   const unsigned int SplineOrder = 3;
   typedef double CoordinateRepType;
@@ -190,59 +132,44 @@ int main( int argc, char *argv[] )
                             CoordinateRepType,
                             SpaceDimension,
                             SplineOrder >     TransformType;
-  // Software Guide : EndCodeSnippet
-
-
   typedef itk::LBFGSBOptimizer       OptimizerType;
-
   typedef itk::MattesMutualInformationImageToImageMetric< 
                                     InputImageType, 
                                     InputImageType >    MetricType;
-
   typedef itk:: LinearInterpolateImageFunction< 
                                     InputImageType,
                                     double          >    InterpolatorType;
-
   typedef itk::ImageRegistrationMethod< 
                                     InputImageType, 
                                     OutputImageType >    RegistrationType;
 
-  MetricType::Pointer         metric        = MetricType::New();
-  OptimizerType::Pointer      optimizer     = OptimizerType::New();
-  InterpolatorType::Pointer   interpolator  = InterpolatorType::New();
-  RegistrationType::Pointer   registration  = RegistrationType::New();
-  
+  typename MetricType::Pointer         metric        = MetricType::New();
+  typename OptimizerType::Pointer      optimizer     = OptimizerType::New();
+  typename InterpolatorType::Pointer   interpolator  = InterpolatorType::New();
+  typename TransformType::Pointer      transform     = TransformType::New();
+  typename RegistrationType::Pointer   registration  = RegistrationType::New();
 
-  registration->SetMetric(        metric        );
-  registration->SetOptimizer(     optimizer     );
-  registration->SetInterpolator(  interpolator  );
+  typename typedef TransformType::RegionType RegionType;
+  typename typedef TransformType::SpacingType SpacingType;
+  typename typedef TransformType::OriginType OriginType;
+  typename typedef TransformType::ParametersType     ParametersType;  
 
+  //////////////////////////////////////////////////////////////////
 
-  //  Software Guide : BeginLatex
   //
-  //  The transform object is constructed below and passed to the registration
-  //  method.
-  //  \index{itk::RegistrationMethod!SetTransform()}
+  // 1) Read fixed and moving images
   //
-  //  Software Guide : EndLatex 
-
-  // Software Guide : BeginCodeSnippet
-  TransformType::Pointer  transform = TransformType::New();
-  registration->SetTransform( transform );
-  // Software Guide : EndCodeSnippet
-
-  typedef itk::ImageFileReader< InputImageType > FixedImageReaderType;
-  typedef itk::ImageFileReader< InputImageType > MovingImageReaderType;
-  typedef itk::OrientImageFilter<InputImageType,InputImageType> OrientFilterType;
-
-  FixedImageReaderType::Pointer  fixedImageReader  = FixedImageReaderType::New();
-  MovingImageReaderType::Pointer movingImageReader = MovingImageReaderType::New();
+  typename FixedImageReaderType::Pointer  fixedImageReader  = FixedImageReaderType::New();
+  typename MovingImageReaderType::Pointer movingImageReader = MovingImageReaderType::New();
 
   fixedImageReader->SetFileName(  fixedImageFileName.c_str() );
   movingImageReader->SetFileName( movingImageFileName.c_str() );
 
-  OrientFilterType::Pointer fixedOrient = OrientFilterType::New();
-  OrientFilterType::Pointer movingOrient = OrientFilterType::New();
+  //
+  // 2) Orient the images to a common orientation (axial)
+  //
+  typename OrientFilterType::Pointer fixedOrient = OrientFilterType::New();
+  typename OrientFilterType::Pointer movingOrient = OrientFilterType::New();
 
   fixedOrient->UseImageDirectionOn();
   fixedOrient->SetDesiredCoordinateOrientationToAxial();
@@ -251,12 +178,6 @@ int main( int argc, char *argv[] )
   movingOrient->UseImageDirectionOn();
   movingOrient->SetDesiredCoordinateOrientationToAxial();
   movingOrient->SetInput (movingImageReader->GetOutput());
-
-  InputImageType::ConstPointer fixedImage = fixedImageReader->GetOutput();
-
-  registration->SetFixedImage(  fixedOrient->GetOutput()   );
-  registration->SetMovingImage(   movingOrient->GetOutput()   );
-
 
   // Add a time probe
   itk::TimeProbesCollectorBase collector;
@@ -267,7 +188,6 @@ int main( int argc, char *argv[] )
                                             CLPProcessInformation,
                                             1.0/3.0, 0.0);
   fixedOrient->Update();
-  fixedOrient->GetOutput()->Print(std::cout);
   collector.Stop( "Read fixed volume" );
 
   collector.Start( "Read moving volume" );
@@ -276,28 +196,20 @@ int main( int argc, char *argv[] )
                                              CLPProcessInformation,
                                             1.0/3.0, 1.0/3.0);
   movingOrient->Update();
-  movingOrient->GetOutput()->Print(std::cout);
   collector.Stop( "Read moving volume" );
 
-
-  //  Software Guide : BeginLatex
+  //
+  // 3) Setup BSpline deformation
   //
   //  Here we define the parameters of the BSplineDeformableTransform grid.
   //  The reader should note that the B-spline computation requires a
   //  finite support region ( 1 grid node at the lower borders and 2
   //  grid nodes at upper borders).
-  // 
-  //  \index{BSplineDeformableTransform}
-  //
-  //  Software Guide : EndLatex 
 
-
-  // Software Guide : BeginCodeSnippet
-  typedef TransformType::RegionType RegionType;
   RegionType bsplineRegion;
-  RegionType::SizeType   gridSizeOnImage;
-  RegionType::SizeType   gridBorderSize;
-  RegionType::SizeType   totalGridSize;
+  typename RegionType::SizeType   gridSizeOnImage;
+  typename RegionType::SizeType   gridBorderSize;
+  typename RegionType::SizeType   totalGridSize;
 
   gridSizeOnImage.Fill( gridSize );
   gridBorderSize.Fill( 3 );    // Border for spline order = 3 ( 1 lower, 2 upper )
@@ -305,14 +217,13 @@ int main( int argc, char *argv[] )
 
   bsplineRegion.SetSize( totalGridSize );
 
-  typedef TransformType::SpacingType SpacingType;
   SpacingType spacing = fixedOrient->GetOutput()->GetSpacing();
-
-  typedef TransformType::OriginType OriginType;
   OriginType origin = fixedOrient->GetOutput()->GetOrigin();;
 
-  InputImageType::RegionType fixedRegion = fixedOrient->GetOutput()->GetLargestPossibleRegion();
-  InputImageType::SizeType fixedImageSize = fixedRegion.GetSize();
+  typename InputImageType::RegionType fixedRegion =
+    fixedOrient->GetOutput()->GetLargestPossibleRegion();
+  typename InputImageType::SizeType fixedImageSize =
+    fixedRegion.GetSize();
 
   for(unsigned int r=0; r<ImageDimension; r++)
     {
@@ -321,48 +232,24 @@ int main( int argc, char *argv[] )
     origin[r]  -=  spacing[r]; 
     }
 
-  transform->SetGridSpacing( spacing );
-  transform->SetGridOrigin( origin );
-  transform->SetGridRegion( bsplineRegion );
-  
-
-  typedef TransformType::ParametersType     ParametersType;
+  transform->SetGridSpacing ( spacing );
+  transform->SetGridOrigin  ( origin );
+  transform->SetGridRegion  ( bsplineRegion );
 
   const unsigned int numberOfParameters =
                transform->GetNumberOfParameters();
   
   ParametersType parameters( numberOfParameters );
-
   parameters.Fill( 0.0 );
 
-  transform->SetParameters( parameters );
-  //  Software Guide : EndCodeSnippet
+  transform->SetParameters  ( parameters );
 
-  //  Software Guide : BeginLatex
-  //  
-  //  We now pass the parameters of the current transform as the initial
-  //  parameters to be used when the registration process starts. 
   //
-  //  Software Guide : EndLatex 
-
-  // Software Guide : BeginCodeSnippet
-  registration->SetInitialTransformParameters( transform->GetParameters() );
-  // Software Guide : EndCodeSnippet
-
- // std::cout << "Intial Parameters = " << std::endl;
-  //  std::cout << transform->GetParameters() << std::endl;
-
-  //  Software Guide : BeginLatex
-  //  
-  //  Next we set the parameters of the LBFGSB Optimizer. 
+  // 4) Setup optimizer
   //
-  //  Software Guide : EndLatex 
-
-
-  // Software Guide : BeginCodeSnippet
-  OptimizerType::BoundSelectionType boundSelect( transform->GetNumberOfParameters() );
-  OptimizerType::BoundValueType upperBound( transform->GetNumberOfParameters() );
-  OptimizerType::BoundValueType lowerBound( transform->GetNumberOfParameters() );
+  typename OptimizerType::BoundSelectionType boundSelect( transform->GetNumberOfParameters() );
+  typename OptimizerType::BoundValueType upperBound( transform->GetNumberOfParameters() );
+  typename OptimizerType::BoundValueType lowerBound( transform->GetNumberOfParameters() );
   if (ConstrainDeformation)
     {
     boundSelect.Fill( 2 );
@@ -377,53 +264,45 @@ int main( int argc, char *argv[] )
     }
 
   optimizer->SetBoundSelection( boundSelect );
-  optimizer->SetUpperBound( upperBound );
-  optimizer->SetLowerBound( lowerBound );
+  optimizer->SetUpperBound    ( upperBound );
+  optimizer->SetLowerBound    ( lowerBound );
 
-  optimizer->SetCostFunctionConvergenceFactor( 1e+1 );
-  optimizer->SetProjectedGradientTolerance( 1e-7 );
-  optimizer->SetMaximumNumberOfIterations( Iterations );
-  optimizer->SetMaximumNumberOfEvaluations( 500 );
-  optimizer->SetMaximumNumberOfCorrections( 12 );
-
-  // Software Guide : EndCodeSnippet
+  optimizer->SetCostFunctionConvergenceFactor ( 1e+1 );
+  optimizer->SetProjectedGradientTolerance    ( 1e-7 );
+  optimizer->SetMaximumNumberOfIterations     ( Iterations );
+  optimizer->SetMaximumNumberOfEvaluations    ( 500 );
+  optimizer->SetMaximumNumberOfCorrections    ( 12 );
 
   // Create the Command observer and register it with the optimizer.
   //
-  CommandIterationUpdate::Pointer observer = CommandIterationUpdate::New();
+  typename CommandIterationUpdate::Pointer observer = CommandIterationUpdate::New();
     observer->SetProcessInformation (CLPProcessInformation);
 
   optimizer->AddObserver( itk::IterationEvent(), observer );
 
-
-  //  Software Guide : BeginLatex
-  //  
-  //  Next we set the parameters of the Mattes Mutual Information Metric. 
   //
-  //  Software Guide : EndLatex 
-
-  // Software Guide : BeginCodeSnippet
-  metric->SetNumberOfHistogramBins( HistogramBins );
-  metric->SetNumberOfSpatialSamples( SpatialSamples );
-  // Software Guide : EndCodeSnippet
- 
-
-  //  Software Guide : BeginLatex
-  //  
+  // 5) Setup metric
+  //
   //  Given that the Mattes Mutual Information metric uses a random iterator in
   //  order to collect the samples from the images, it is usually convenient to
   //  initialize the seed of the random number generator.
   //
-  //  \index{itk::Mattes\-Mutual\-Information\-Image\-To\-Image\-Metric!ReinitializeSeed()}
-  //
-  //  Software Guide : EndLatex 
-
-  // Software Guide : BeginCodeSnippet
   metric->ReinitializeSeed( 76926294 );
-  // Software Guide : EndCodeSnippet
-
+  metric->SetNumberOfHistogramBins( HistogramBins );
+  metric->SetNumberOfSpatialSamples( SpatialSamples );
 
   std::cout << std::endl << "Starting Registration" << std::endl;
+
+  //
+  // 6) Setup registration
+  //
+  registration->SetFixedImage  ( fixedOrient->GetOutput()  );
+  registration->SetMovingImage ( movingOrient->GetOutput() );
+  registration->SetMetric      ( metric       );
+  registration->SetOptimizer   ( optimizer    );
+  registration->SetInterpolator( interpolator );
+  registration->SetTransform   ( transform    );
+  registration->SetInitialTransformParameters( transform->GetParameters() );
 
   try 
     { 
@@ -435,53 +314,38 @@ int main( int argc, char *argv[] )
     { 
     std::cerr << "ExceptionObject caught !" << std::endl; 
     std::cerr << err << std::endl; 
-    return -1;
+    return EXIT_FAILURE;
     } 
   
-  OptimizerType::ParametersType finalParameters = 
+  //
+  // 7) Resample
+  //
+  typename ResampleFilterType::Pointer resample = ResampleFilterType::New();
+  typename OptimizerType::ParametersType finalParameters = 
                     registration->GetLastTransformParameters();
 
-
-  // Software Guide : BeginCodeSnippet
-  transform->SetParameters( finalParameters );
-  // Software Guide : EndCodeSnippet
-
-
-  typedef itk::ResampleImageFilter< 
-                            InputImageType, 
-                            OutputImageType >    ResampleFilterType;
-
-  ResampleFilterType::Pointer resample = ResampleFilterType::New();
   itk::PluginFilterWatcher watcher(
     resample,
     "Resample",
-    CLPProcessInformation);
+    CLPProcessInformation,
+    1.0/3.0, 2.0/3.0);
 
-  resample->SetTransform( transform );
-  resample->SetInput( movingOrient->GetOutput() );
-  resample->SetOutputParametersFromImage ( fixedOrient->GetOutput() );
+  transform->SetParameters      ( finalParameters );
+  resample->SetTransform        ( transform );
+  resample->SetInput            ( movingOrient->GetOutput() );
   resample->SetDefaultPixelValue( DefaultPixelValue );
+  resample->SetOutputParametersFromImage ( fixedOrient->GetOutput() );
+
   collector.Start( "Resample" );
   resample->Update();
   collector.Stop( "Resample" );
-  
-  typedef itk::CastImageFilter< 
-                        InputImageType,
-                        OutputImageType > CastFilterType;
-                    
-  typedef itk::ImageFileWriter< OutputImageType >  WriterType;
 
-
-  WriterType::Pointer      writer =  WriterType::New();
-  CastFilterType::Pointer  caster =  CastFilterType::New();
-
-
+  //
+  // 7) Write the resampled image
+  //
+  typename WriterType::Pointer      writer =  WriterType::New();
   writer->SetFileName( resampledImageFileName.c_str() );
-
-
-  caster->SetInput( resample->GetOutput() );
-  writer->SetInput( caster->GetOutput()   );
-
+  writer->SetInput( resample->GetOutput()   );
 
   try
     {
@@ -493,12 +357,58 @@ int main( int argc, char *argv[] )
     { 
     std::cerr << "ExceptionObject caught !" << std::endl; 
     std::cerr << err << std::endl; 
-    return -1;
+    return EXIT_FAILURE;
     } 
 
   // Report the time taken by the registration
   collector.Report();
 
-  return 0;
+  return EXIT_SUCCESS;
 }
 
+int main( int argc, char * argv[] )
+{
+  
+  PARSE_ARGS;
+
+  itk::ImageIOBase::IOPixelType pixelType;
+  itk::ImageIOBase::IOComponentType componentType;
+
+  try
+    {
+    itk::GetImageType (fixedImageFileName, pixelType, componentType);
+
+    // This filter handles all types
+    
+    switch (componentType)
+      {
+      case itk::ImageIOBase::CHAR:
+      case itk::ImageIOBase::UCHAR:
+      case itk::ImageIOBase::USHORT:
+      case itk::ImageIOBase::SHORT:
+        return DoIt( argc, argv, static_cast<short>(0));
+        break;
+      case itk::ImageIOBase::ULONG:
+      case itk::ImageIOBase::LONG:
+      case itk::ImageIOBase::UINT:
+      case itk::ImageIOBase::INT:
+        return DoIt( argc, argv, static_cast<int>(0));
+        break;
+      case itk::ImageIOBase::DOUBLE:
+      case itk::ImageIOBase::FLOAT:
+        return DoIt( argc, argv, static_cast<float>(0));
+        break;
+      case itk::ImageIOBase::UNKNOWNCOMPONENTTYPE:
+      default:
+        std::cout << "unknown component type" << std::endl;
+        break;
+      }
+    }
+  catch( itk::ExceptionObject &excep)
+    {
+    std::cerr << argv[0] << ": exception caught !" << std::endl;
+    std::cerr << excep << std::endl;
+    return EXIT_FAILURE;
+    }
+  return EXIT_SUCCESS;
+}

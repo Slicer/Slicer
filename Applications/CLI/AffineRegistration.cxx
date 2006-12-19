@@ -30,7 +30,7 @@
 #include "itkAffineTransform.h"
 #include "itkResampleImageFilter.h"
 
-#include "itkPluginFilterWatcher.h"
+#include "itkPluginUtilities.h"
 
 #include "itkTimeProbesCollectorBase.h"
 
@@ -101,16 +101,16 @@ public:
     }
 };
 
-const    unsigned int  ImageDimension = 3;
-typedef  signed short  PixelType;
-typedef itk::OrientedImage<PixelType, ImageDimension> ImageType;
-
-int main ( int argc, char* argv[] ) 
+template<class T> int DoIt( int argc, char * argv[], T )
 {  
   //
   // Command line processing
   //
   PARSE_ARGS;
+
+  const    unsigned int  ImageDimension = 3;
+  typedef  T  PixelType;
+  typedef itk::OrientedImage<PixelType, ImageDimension> ImageType;
 
   typedef itk::ImageFileReader<ImageType> FileReaderType;
   typedef itk::OrientImageFilter<ImageType,ImageType> OrientFilterType;
@@ -123,7 +123,7 @@ int main ( int argc, char* argv[] )
   typedef itk::ImageRegistrationMethod<ImageType,ImageType>
     RegistrationType;
   typedef itk::AffineTransform<double> TransformType;
-  typedef OptimizerType::ScalesType OptimizerScalesType;
+  typename typedef OptimizerType::ScalesType OptimizerScalesType;
   typedef itk::ResampleImageFilter<ImageType,ImageType> ResampleType;
   typedef itk::LinearInterpolateImageFunction<ImageType, double> ResampleInterpolatorType;
   typedef itk::ImageFileWriter<ImageType> WriterType;
@@ -137,7 +137,7 @@ int main ( int argc, char* argv[] )
   /////////////////////////////////////////////////////////////////////////////
   // Read the fixed and moving volumes
   //
-  FileReaderType::Pointer fixedReader = FileReaderType::New();
+  typename FileReaderType::Pointer fixedReader = FileReaderType::New();
     fixedReader->SetFileName ( fixedImageFileName.c_str() );
 
   try
@@ -149,10 +149,11 @@ int main ( int argc, char* argv[] )
   catch( itk::ExceptionObject & err )
     {
     std::cerr << "Error Reading Fixed image: " << std::endl;
+    std::cerr << err << std::endl;
     return EXIT_FAILURE;
     }
 
-  FileReaderType::Pointer movingReader = FileReaderType::New();
+  typename FileReaderType::Pointer movingReader = FileReaderType::New();
     movingReader->SetFileName ( movingImageFileName.c_str() );
 
   try
@@ -164,13 +165,14 @@ int main ( int argc, char* argv[] )
   catch( itk::ExceptionObject & err )
     {
     std::cerr << "Error Reading Moving image: " << std::endl;
+    std::cerr << err << std::endl;
     return EXIT_FAILURE;
     }
 
   /////////////////////////////////////////////////////////////////////////////
   // Reorient the volumes to a consistent acquisition direction
   //
-  OrientFilterType::Pointer orientFixed = OrientFilterType::New();
+  typename OrientFilterType::Pointer orientFixed = OrientFilterType::New();
   itk::PluginFilterWatcher watchOrientFixed(orientFixed,
                                             "Orient Fixed Image",
                                             CLPProcessInformation,
@@ -182,7 +184,7 @@ int main ( int argc, char* argv[] )
     orientFixed->Update();
     collector.Stop( "Orient fixed volume" );
 
-  OrientFilterType::Pointer orientMoving = OrientFilterType::New();
+  typename OrientFilterType::Pointer orientMoving = OrientFilterType::New();
   itk::PluginFilterWatcher watchOrientMoving(orientMoving,
                                             "Orient Moving Image",
                                              CLPProcessInformation,
@@ -198,13 +200,13 @@ int main ( int argc, char* argv[] )
   // Register the volumes
   //
 
-  OptimizerType::Pointer      optimizer     = OptimizerType::New();
+  typename OptimizerType::Pointer      optimizer     = OptimizerType::New();
     optimizer->SetNumberOfIterations ( Iterations );
     optimizer->SetMinimumStepLength ( .0005 );
     optimizer->SetMaximumStepLength ( 10.0 );
     optimizer->SetMinimize(true);   
 
-  TransformType::Pointer transform = TransformType::New();
+  typename TransformType::Pointer transform = TransformType::New();
   OptimizerScalesType scales( transform->GetNumberOfParameters() );
     scales.Fill ( 1.0 );
   for( unsigned j = 9; j < 12; j++ )
@@ -215,7 +217,7 @@ int main ( int argc, char* argv[] )
 
   // Create the Command observer and register it with the optimizer.
   //
-  CommandIterationUpdate::Pointer observer = CommandIterationUpdate::New();
+  typename CommandIterationUpdate::Pointer observer = CommandIterationUpdate::New();
     observer->SetProcessInformation (CLPProcessInformation);
 
     optimizer->AddObserver( itk::IterationEvent(), observer );
@@ -223,20 +225,20 @@ int main ( int argc, char* argv[] )
   /////////////////////////////////////////////////////////////////////////////
   // Initialize the transform
   //
-  TransformType::InputPointType centerFixed;
-  ImageType::RegionType::SizeType sizeFixed = orientFixed->GetOutput()->GetLargestPossibleRegion().GetSize();
+  typename TransformType::InputPointType centerFixed;
+  typename ImageType::RegionType::SizeType sizeFixed = orientFixed->GetOutput()->GetLargestPossibleRegion().GetSize();
   // Find the center
-  ImageType::IndexType indexFixed;
+  typename ImageType::IndexType indexFixed;
   for ( unsigned j = 0; j < 3; j++ )
     {
     indexFixed[j] = (long) ( (sizeFixed[j]-1) / 2.0 );
     }
   orientFixed->GetOutput()->TransformIndexToPhysicalPoint ( indexFixed, centerFixed );
 
-  TransformType::InputPointType centerMoving;
-  ImageType::RegionType::SizeType sizeMoving = orientMoving->GetOutput()->GetLargestPossibleRegion().GetSize();
+  typename TransformType::InputPointType centerMoving;
+  typename ImageType::RegionType::SizeType sizeMoving = orientMoving->GetOutput()->GetLargestPossibleRegion().GetSize();
   // Find the center
-  ImageType::IndexType indexMoving;
+  typename ImageType::IndexType indexMoving;
   for ( unsigned j = 0; j < 3; j++ )
     {
     indexMoving[j] = (long) ( (sizeMoving[j]-1) / 2.0 );
@@ -246,13 +248,13 @@ int main ( int argc, char* argv[] )
   transform->Translate(centerMoving-centerFixed);
   std::cout << "---------------" << centerMoving-centerFixed << std::endl;
   
-  MetricType::Pointer         metric        = MetricType::New();
+  typename MetricType::Pointer  metric        = MetricType::New();
     metric->SetNumberOfHistogramBins ( HistogramBins );
     metric->SetNumberOfSpatialSamples( SpatialSamples );
 
-  InterpolatorType::Pointer interpolator = InterpolatorType::New();
+  typename InterpolatorType::Pointer interpolator = InterpolatorType::New();
 
-  RegistrationType::Pointer registration = RegistrationType::New();
+  typename RegistrationType::Pointer registration = RegistrationType::New();
     registration->SetTransform ( transform );
     registration->SetInitialTransformParameters ( transform->GetParameters() );
     registration->SetMetric ( metric );
@@ -270,6 +272,7 @@ int main ( int argc, char* argv[] )
   catch( itk::ExceptionObject & err )
     {
     std::cout << err << std::endl;
+    std::cerr << err << std::endl;
     exit ( EXIT_FAILURE );
     } 
   catch ( ... )
@@ -280,8 +283,8 @@ int main ( int argc, char* argv[] )
   /////////////////////////////////////////////////////////////////////////////
   // Resample using the registration results
   //
-  ResampleType::Pointer resample = ResampleType::New();
-  ResampleInterpolatorType::Pointer Interpolator = ResampleInterpolatorType::New();
+  typename ResampleType::Pointer resample = ResampleType::New();
+  typename ResampleInterpolatorType::Pointer Interpolator = ResampleInterpolatorType::New();
   itk::PluginFilterWatcher watchResample(resample,
                                          "Resample",
                                          CLPProcessInformation,
@@ -303,7 +306,7 @@ int main ( int argc, char* argv[] )
   /////////////////////////////////////////////////////////////////////////////
   // Write the registerded volume
   //
-  WriterType::Pointer resampledWriter = WriterType::New();
+  typename WriterType::Pointer resampledWriter = WriterType::New();
     resampledWriter->SetFileName ( resampledImageFileName.c_str() );
     resampledWriter->SetInput ( resample->GetOutput() );
   try
@@ -315,12 +318,60 @@ int main ( int argc, char* argv[] )
   catch( itk::ExceptionObject & err )
     { 
     std::cerr << err << std::endl;
-    exit ( EXIT_FAILURE );
+    std::cerr << err << std::endl;
+    return EXIT_FAILURE;
     }
   
   // Report the time taken by the registration
   collector.Report();
 
-  exit ( EXIT_SUCCESS );
+  return EXIT_SUCCESS;
+}
+
+int main( int argc, char * argv[] )
+{
+  
+  PARSE_ARGS;
+
+  itk::ImageIOBase::IOPixelType pixelType;
+  itk::ImageIOBase::IOComponentType componentType;
+
+  try
+    {
+    itk::GetImageType (fixedImageFileName, pixelType, componentType);
+
+    // This filter handles all types
+    
+    switch (componentType)
+      {
+      case itk::ImageIOBase::CHAR:
+      case itk::ImageIOBase::UCHAR:
+      case itk::ImageIOBase::USHORT:
+      case itk::ImageIOBase::SHORT:
+        return DoIt( argc, argv, static_cast<short>(0));
+        break;
+      case itk::ImageIOBase::ULONG:
+      case itk::ImageIOBase::LONG:
+      case itk::ImageIOBase::UINT:
+      case itk::ImageIOBase::INT:
+        return DoIt( argc, argv, static_cast<int>(0));
+        break;
+      case itk::ImageIOBase::DOUBLE:
+      case itk::ImageIOBase::FLOAT:
+        return DoIt( argc, argv, static_cast<float>(0));
+        break;
+      case itk::ImageIOBase::UNKNOWNCOMPONENTTYPE:
+      default:
+        std::cout << "unknown component type" << std::endl;
+        break;
+      }
+    }
+  catch( itk::ExceptionObject &excep)
+    {
+    std::cerr << argv[0] << ": exception caught !" << std::endl;
+    std::cerr << excep << std::endl;
+    return EXIT_FAILURE;
+    }
+  return EXIT_SUCCESS;
 }
   
