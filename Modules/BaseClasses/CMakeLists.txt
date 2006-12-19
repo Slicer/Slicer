@@ -31,8 +31,6 @@ INCLUDE_DIRECTORIES(
   ${ModulesBaseClasses_BINARY_DIR}
   ${MRML_SOURCE_DIR}
   ${MRML_BINARY_DIR}
-  ${ModuleDescriptionParser_SOURCE_DIR}
-  ${ModuleDescriptionParser_BINARY_DIR}
   ${SlicerBaseGUI_SOURCE_DIR}
   ${SlicerBaseGUI_BINARY_DIR}
   ${SlicerBaseLogic_SOURCE_DIR}
@@ -57,7 +55,6 @@ ENDIF(BUILD_SHARED_LIBS)
 TARGET_LINK_LIBRARIES(ModulesBaseClasses 
   MRML
   vtkCommonTCL
-  ModuleDescriptionParser
   SlicerBaseGUI
   SlicerBaseLogic
   )
