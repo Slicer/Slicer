@@ -149,10 +149,10 @@ template<class T> int DoIt( int argc, char * argv[], T )
   typename TransformType::Pointer      transform     = TransformType::New();
   typename RegistrationType::Pointer   registration  = RegistrationType::New();
 
-  typename typedef TransformType::RegionType RegionType;
-  typename typedef TransformType::SpacingType SpacingType;
-  typename typedef TransformType::OriginType OriginType;
-  typename typedef TransformType::ParametersType     ParametersType;  
+  typedef TransformType::RegionType RegionType;
+  typedef TransformType::SpacingType SpacingType;
+  typedef TransformType::OriginType OriginType;
+  typedef TransformType::ParametersType     ParametersType;  
 
   //////////////////////////////////////////////////////////////////
 

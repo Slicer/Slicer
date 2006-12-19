@@ -123,7 +123,7 @@ template<class T> int DoIt( int argc, char * argv[], T )
   typedef itk::ImageRegistrationMethod<ImageType,ImageType>
     RegistrationType;
   typedef itk::AffineTransform<double> TransformType;
-  typename typedef OptimizerType::ScalesType OptimizerScalesType;
+  typedef OptimizerType::ScalesType OptimizerScalesType;
   typedef itk::ResampleImageFilter<ImageType,ImageType> ResampleType;
   typedef itk::LinearInterpolateImageFunction<ImageType, double> ResampleInterpolatorType;
   typedef itk::ImageFileWriter<ImageType> WriterType;
