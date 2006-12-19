@@ -21,6 +21,7 @@
 
 
 #include "vtkMRML.h"
+#include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
 
 class vtkMRMLTransformNode;
@@ -95,7 +96,7 @@ protected:
   vtkMRMLTransformableNode(const vtkMRMLTransformableNode&);
   void operator=(const vtkMRMLTransformableNode&);
 
-  vtkSetStringMacro(TransformNodeID);
+  vtkSetReferenceStringMacro(TransformNodeID);
   char *TransformNodeID;
 
   vtkMRMLTransformNode* TransformNode;

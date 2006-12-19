@@ -19,6 +19,7 @@
 #define __vtkMRMLVolumeDisplayNode_h
 
 #include "vtkMRML.h"
+#include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
 #include "vtkMRMLStorageNode.h"
 #include "vtkMRMLColorNode.h"
@@ -129,6 +130,9 @@ class VTK_MRML_EXPORT vtkMRMLVolumeDisplayNode : public vtkMRMLNode
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
                                    unsigned long /*event*/, 
                                    void * /*callData*/ );
+  // Description:
+  // set gray colormap
+  void SetDefaultColorMap();
  
 protected:
   vtkMRMLVolumeDisplayNode();
@@ -138,7 +142,7 @@ protected:
 
   char *ColorNodeID;
 
-  vtkSetStringMacro(ColorNodeID);
+  vtkSetReferenceStringMacro(ColorNodeID);
 
   vtkMRMLColorNode *ColorNode;
 

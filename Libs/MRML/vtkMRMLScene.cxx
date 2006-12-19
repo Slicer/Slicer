@@ -55,6 +55,11 @@ vtkMRMLScene::vtkMRMLScene()
   this->UndoStackSize = 100;
   this->UndoFlag = true;
   this->InUndo = false;
+
+  this->ReferencedIDs.clear() ;
+  this->ReferencingNodes.clear();
+  this->ReferencedIDChanges.clear();
+
   //
   // Register all the 'built-in' nodes for the library
   // - note: the scene will maintain a registered pointer to the nodes,

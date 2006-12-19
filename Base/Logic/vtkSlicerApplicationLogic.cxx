@@ -569,6 +569,8 @@ void vtkSlicerApplicationLogic::ProcessReadData()
         // Load a scalar or vector volume node
         in = vtkMRMLVolumeArchetypeStorageNode::New();
         disp = vtkMRMLVolumeDisplayNode::New();
+        vtkMRMLVolumeDisplayNode *displayNode = vtkMRMLVolumeDisplayNode::SafeDownCast(disp);
+        displayNode->SetDefaultColorMap();
         }
       else if (dtvnd || dwvnd)
         {

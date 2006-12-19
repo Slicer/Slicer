@@ -21,6 +21,7 @@
 #define __vtkMRMLSliceCompositeNode_h
 
 #include "vtkMRML.h"
+#include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
 
 #include "vtkMatrix4x4.h"
@@ -63,19 +64,19 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
   // Description:
   // the ID of a MRMLVolumeNode
   vtkGetStringMacro (BackgroundVolumeID);
-  vtkSetStringMacro (BackgroundVolumeID);
+  vtkSetReferenceStringMacro (BackgroundVolumeID);
 
   // Description:
   // the ID of a MRMLVolumeNode
   // TODO: make this an arbitrary list of layers
   vtkGetStringMacro (ForegroundVolumeID);
-  vtkSetStringMacro (ForegroundVolumeID);
+  vtkSetReferenceStringMacro (ForegroundVolumeID);
 
   // Description:
   // the ID of a MRMLVolumeNode
   // TODO: make this an arbitrary list of layers
   vtkGetStringMacro (LabelVolumeID);
-  vtkSetStringMacro (LabelVolumeID);
+  vtkSetReferenceStringMacro (LabelVolumeID);
 
   // Description:
   // opacity of the Foreground for rendering over background

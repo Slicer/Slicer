@@ -22,6 +22,7 @@
 #include <string>
 
 #include "vtkMRML.h"
+#include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
 #include "vtkMRMLStorageNode.h"
 #include "vtkMRMLColorNode.h"
@@ -178,7 +179,7 @@ protected:
   
   char *ColorNodeID;
 
-  vtkSetStringMacro(ColorNodeID);
+  vtkSetReferenceStringMacro(ColorNodeID);
 
   vtkMRMLColorNode *ColorNode;
 

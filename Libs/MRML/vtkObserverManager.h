@@ -36,6 +36,7 @@ class vtkCallbackCommand;
 #define vtkObjectPointer(xx) (reinterpret_cast <vtkObject **>( (xx) ))
 #endif
 
+
 class VTK_MRML_EXPORT vtkObserverManager : public vtkObject 
 {
   public:

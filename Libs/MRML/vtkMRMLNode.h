@@ -40,6 +40,35 @@
 #define vtkSetAndObserveMRMLObjectEventsMacro(node,value,events)  {this->MRMLObserverManager->SetAndObserveObjectEvents ( vtkObjectPointer( &(node)), (value), (events));};
 #endif
 
+//BTX
+#ifndef vtkSetReferenceStringMacro
+#define vtkSetReferenceStringMacro(name) \
+virtual void Set##name (const char* _arg) \
+  { \
+  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting " << #name " to " << (_arg?_arg:"(null)") ); \
+  if ( this->name == NULL && _arg == NULL) { return;} \
+  if ( this->name && _arg && (!strcmp(this->name,_arg))) { return;} \
+  if (this->name) { delete [] this->name; } \
+  if (_arg) \
+    { \
+    size_t n = strlen(_arg) + 1; \
+    char *cp1 =  new char[n]; \
+    const char *cp2 = (_arg); \
+    this->name = cp1; \
+    do { *cp1++ = *cp2++; } while ( --n ); \
+    } \
+   else \
+    { \
+    this->name = NULL; \
+    } \
+  this->Modified(); \
+  if (this->name) \
+    { \
+    this->Scene->AddReferencedNodeID(this->name, this); \
+    } \
+  } 
+#endif
+//ETX
 
 class vtkMRMLScene;
 class vtkCallbackCommand;

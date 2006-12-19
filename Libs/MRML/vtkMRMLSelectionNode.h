@@ -21,6 +21,7 @@
 #define __vtkMRMLSelectionNode_h
 
 #include "vtkMRML.h"
+#include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
 
 #include "vtkMatrix4x4.h"
@@ -57,12 +58,12 @@ class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
   // Description:
   // the ID of a MRMLVolumeNode
   vtkGetStringMacro (ActiveVolumeID);
-  vtkSetStringMacro (ActiveVolumeID);
+  vtkSetReferenceStringMacro (ActiveVolumeID);
 
   // Description:
   // the ID of a MRMLVolumeNode
   vtkGetStringMacro (ActiveLabelVolumeID);
-  vtkSetStringMacro (ActiveLabelVolumeID);
+  vtkSetReferenceStringMacro (ActiveLabelVolumeID);
 
 
 protected:

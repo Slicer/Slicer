@@ -174,6 +174,7 @@ void vtkSlicerVolumeDisplayWidget::ProcessWidgetEvents ( vtkObject *caller,
           {
           displayNode = vtkMRMLVolumeDisplayNode::New ();
           displayNode->SetScene(this->MRMLScene);
+          displayNode->SetDefaultColorMap();
           this->MRMLScene->AddNode (displayNode);
           displayNode->Delete();
           }

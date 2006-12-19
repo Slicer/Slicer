@@ -26,6 +26,7 @@
 #include "vtkMatrix4x4.h"
 
 #include "vtkMRML.h"
+#include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
 #include "vtkMRMLTransformableNode.h"
 #include "vtkMRMLStorageNode.h"
@@ -79,7 +80,7 @@ public:
 
   // Description:
   // String ID of the storage MRML node
-  vtkSetStringMacro(StorageNodeID);
+  vtkSetReferenceStringMacro(StorageNodeID);
   vtkGetStringMacro(StorageNodeID);
 
   // Description:
@@ -124,7 +125,7 @@ protected:
   vtkMRMLModelNode(const vtkMRMLModelNode&);
   void operator=(const vtkMRMLModelNode&);
 
-  vtkSetStringMacro(DisplayNodeID);
+  vtkSetReferenceStringMacro(DisplayNodeID);
 
   vtkSetObjectMacro(PolyData, vtkPolyData);
 

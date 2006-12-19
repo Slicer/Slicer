@@ -66,6 +66,7 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (char* filename, in
   vtkMRMLVectorVolumeNode *vectorNode = vtkMRMLVectorVolumeNode::New();
   
   vtkMRMLVolumeDisplayNode *displayNode = vtkMRMLVolumeDisplayNode::New();
+  displayNode->SetDefaultColorMap();
   vtkMRMLVolumeArchetypeStorageNode *storageNode = vtkMRMLVolumeArchetypeStorageNode::New();
 
   storageNode->SetFileName(filename);

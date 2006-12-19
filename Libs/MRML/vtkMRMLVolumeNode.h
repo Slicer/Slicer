@@ -28,6 +28,7 @@
 #include "vtkImageData.h"
 
 #include "vtkMRML.h"
+#include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
 #include "vtkMRMLStorageNode.h"
 #include "vtkMRMLVolumeDisplayNode.h"
@@ -126,7 +127,7 @@ class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLTransformableNode
 
   // Description:
   // String ID of the storage MRML node
-  vtkSetStringMacro(StorageNodeID);
+  vtkSetReferenceStringMacro(StorageNodeID);
   vtkGetStringMacro(StorageNodeID);
 
   // Description:
@@ -171,7 +172,7 @@ protected:
   vtkMRMLVolumeNode(const vtkMRMLVolumeNode&);
   void operator=(const vtkMRMLVolumeNode&);
 
-  vtkSetStringMacro(DisplayNodeID);
+  vtkSetReferenceStringMacro(DisplayNodeID);
 
   vtkSetObjectMacro(ImageData, vtkImageData);
 
