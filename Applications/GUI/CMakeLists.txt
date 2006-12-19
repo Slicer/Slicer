@@ -81,6 +81,7 @@ INCLUDE_DIRECTORIES(
   ${ModulesBaseClasses_SOURCE_DIR}
   ${ModulesBaseClasses_BINARY_DIR}
   ${VTK_INCLUDE_DIR}
+  ${OPENTRACKER_INC_DIR}
   )
 
 #
