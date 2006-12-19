@@ -93,11 +93,12 @@ public:
   vtkSlicerNodeSelectorWidget* ModelSelectorWidget;
   vtkKWCheckButtonWithLabel *VisibilityButton;
   vtkKWCheckButtonWithLabel *ScalarVisibilityButton;
+  vtkSlicerNodeSelectorWidget* ColorSelectorWidget;
   vtkKWCheckButtonWithLabel *ClippingButton;
   vtkKWScaleWithLabel  *OpacityScale;
   vtkKWSurfaceMaterialPropertyWidget *SurfaceMaterialPropertyWidget;
   vtkKWChangeColorButton *ChangeColorButton;
-  
+
 private:
 
 

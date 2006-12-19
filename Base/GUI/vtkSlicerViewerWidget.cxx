@@ -954,6 +954,15 @@ void vtkSlicerViewerWidget::SetModelDisplayProperty(vtkMRMLModelNode *model,  vt
     {
     actor->SetVisibility(dnode->GetVisibility());
     actor->GetMapper()->SetScalarVisibility(dnode->GetScalarVisibility());
+    // if the scalars are visible, try to get the lookup table
+    if (actor->GetMapper()->GetScalarVisibility())
+      {
+      if (dnode->GetColorNode() != NULL &&
+          dnode->GetColorNode()->GetLookupTable() != NULL)
+        {
+        actor->GetMapper()->SetLookupTable(dnode->GetColorNode()->GetLookupTable());
+        }
+      }
     actor->GetProperty()->SetColor(dnode->GetColor());
     actor->GetProperty()->SetOpacity(dnode->GetOpacity());
     actor->GetProperty()->SetAmbient(dnode->GetAmbient());
