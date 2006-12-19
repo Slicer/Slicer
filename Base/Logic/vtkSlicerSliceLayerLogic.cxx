@@ -256,8 +256,10 @@ void vtkSlicerSliceLayerLogic::UpdateTransforms()
     // - add an alpha channel to the input data
     this->ResliceThreshold->SetInput( this->VolumeNode->GetImageData() ); 
     this->ResliceAppendComponents->RemoveAllInputs();
-    this->ResliceAppendComponents->SetInput(0, this->VolumeNode->GetImageData() ); 
-    this->ResliceAppendComponents->SetInput(1, this->ResliceThreshold->GetOutput() );
+    
+    this->ResliceAppendComponents->SetInputConnection(0, this->VolumeNode->GetImageData()->GetProducerPort());
+    this->ResliceAppendComponents->AddInputConnection(0, this->ResliceThreshold->GetOutput()->GetProducerPort());
+
     this->Reslice->SetInput( this->ResliceAppendComponents->GetOutput() ); 
 
     }
@@ -265,7 +267,7 @@ void vtkSlicerSliceLayerLogic::UpdateTransforms()
     {
 
     this->ResliceAppendComponents->RemoveAllInputs();
-    this->ResliceAppendComponents->SetInput( 0, NULL ); 
+    //this->ResliceAppendComponents->SetInput( 0, NULL ); 
     this->ResliceThreshold->SetInput( NULL ); 
     this->Reslice->SetInput( NULL ); 
 
@@ -332,9 +334,6 @@ void vtkSlicerSliceLayerLogic::UpdateTransforms()
       this->MapToColors->SetInput( this->MapToWindowLevelColors->GetOutput() );
       }
 
-    this->AppendComponents->RemoveAllInputs();
-    this->AppendComponents->SetInput(0, this->MapToColors->GetOutput() );
-
     this->Threshold->SetInput( this->ResliceExtractLuminance->GetOutput() );
     this->Threshold->SetOutputScalarTypeToUnsignedChar();
 
@@ -370,8 +369,9 @@ void vtkSlicerSliceLayerLogic::UpdateTransforms()
     this->AlphaLogic->SetInput1( this->ResliceAlphaCast->GetOutput() );
     this->AlphaLogic->SetInput2( this->Threshold->GetOutput() );
 
-    this->AppendComponents->SetInput(1, this->AlphaLogic->GetOutput() );
-
+    this->AppendComponents->RemoveAllInputs();
+    this->AppendComponents->SetInputConnection(0, this->MapToColors->GetOutput()->GetProducerPort() );
+    this->AppendComponents->AddInputConnection(0, this->AlphaLogic->GetOutput()->GetProducerPort() );
     }
 
   this->XYToIJKTransform->SetMatrix( xyToIJK );
