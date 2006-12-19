@@ -93,14 +93,14 @@ ENDIF(USE_TEEM)
 OPTION(USE_OPENTRACKER "Need OpenTracker lib to build IGT Demo module." OFF)
 IF(USE_OPENTRACKER)
   FIND_LIBRARY(OPENTRACKER_LIB 
-               NAMES opentrackerd libopentracker
-               PATHS ""
+               NAMES opentrackerd opentracker
+               PATHS "" 
                )
   IF(OPENTRACKER_LIB-NOTFOUND)
     MESSAGE (FATAL_ERROR "Need OpenTracker to build")
   ENDIF(OPENTRACKER_LIB-NOTFOUND)
 
-  FIND_PATH(OPENTRACKER_INC_DIR OpenTracker.h 
+  FIND_PATH(OPENTRACKER_INC_DIR "OpenTracker/OpenTracker.h" 
            "" 
            )
   IF(OPENTRACKER_INC_DIR-NOTFOUND)
