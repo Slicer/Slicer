@@ -59,10 +59,12 @@ NameIsExecutable(const char* name)
   static const char* standardExtensions[] = {".bat", ".com", ".sh", ".csh", ".tcsh", ".pl", ".tcl", ".py", ".m"};
   std::deque<std::string> extensions(standardExtensions, standardExtensions+9);
 
-  
+
+  bool hasDefaultExtension = false;
   std::string extension = itksys::SystemTools::GetExecutableExtension();
   if (extension != "")
     {
+    hasDefaultExtension = true;
     extensions.push_front( extension );
     }
 
@@ -79,13 +81,29 @@ NameIsExecutable(const char* name)
       foundIt = true;
       }
     }
-    
-  if (foundIt)
+
+  if (hasDefaultExtension)
     {
+    // if we have a default extension return whether we found any
+    // of the extensions
+    return foundIt;
+    }
+  else if (!foundIt)
+    {
+    // if there is not default extension and we have not found any of
+    // the other possible extensions for an executable, then check
+    // whether we can exclude the file because it has a shared object
+    // extension. 
+    return !NameIsSharedLibrary(name);
+    }
+  else
+    {
+    // no default extension but we found another extension that can be
+    // an executable
     return true;
     }
- 
-  return !NameIsSharedLibrary(name);
+
+  return true;
 }
 
 /**
@@ -248,7 +266,7 @@ ModuleFactory
 
   numberOfShared = this->ScanForSharedObjectModules();
   numberOfExecutables = this->ScanForCommandLineModules();
-
+  
   if (numberOfShared + numberOfExecutables == 0)
     {
     this->WarningMessage( "No plugin modules found. Check your module search path and your Slicer installation." );
@@ -280,7 +298,9 @@ ModuleFactory
   std::vector<std::string>::const_iterator pit;
   long numberTested = 0;
   long numberFound = 0;
-
+  double t0, t1;
+  
+  t0 = itksys::SystemTools::GetTime();  
   for (pit = modulePaths.begin(); pit != modulePaths.end(); ++pit)
     {
     std::stringstream information;
@@ -387,11 +407,13 @@ ModuleFactory
 
     this->InformationMessage( information.str().c_str() );
     }
-
+  t1 = itksys::SystemTools::GetTime();
+  
   std::stringstream information;
   information << "Tested " << numberTested << " files as shared object plugins. Found "
-              << numberFound << " valid plugins." << std::endl;
-
+              << numberFound << " valid plugins in " << t1 - t0
+              << " seconds." << std::endl;
+  
   this->InformationMessage( information.str().c_str() );
 
   return numberFound;
@@ -423,7 +445,9 @@ ModuleFactory
   std::vector<std::string>::const_iterator pit;
   long numberTested = 0;
   long numberFound = 0;
-  
+  double t0, t1;
+
+  t0 = itksys::SystemTools::GetTime();
   for (pit = modulePaths.begin(); pit != modulePaths.end(); ++pit)
     {
     std::stringstream information;
@@ -579,10 +603,12 @@ ModuleFactory
       }
     this->InformationMessage( information.str().c_str() );    
     }
+  t1 = itksys::SystemTools::GetTime();
 
   std::stringstream information;
   information << "Tested " << numberTested << " files as command line executable plugins. Found "
-              << numberFound << " valid plugins." << std::endl;
+              << numberFound << " valid plugins in " << t1 - t0
+              << " seconds." << std::endl;
   this->InformationMessage( information.str().c_str() );
 
   return numberFound;
