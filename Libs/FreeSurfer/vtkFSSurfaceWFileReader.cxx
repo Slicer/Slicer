@@ -60,14 +60,14 @@ int vtkFSSurfaceWFileReader::ReadWFile()
   if (output == NULL)
     {
     cerr << "ERROR vtkFSSurfaceWFileReader ReadWFile() : output is null" << endl;
-    return FS_ERROR_W_OUTPUT_NULL;
+    return this->FS_ERROR_W_OUTPUT_NULL;
     }
   vtkDebugMacro( << "vtkFSSurfaceWFileReader Execute() " << endl);
   
   if (!this->FileName) 
     {
     vtkErrorMacro(<<"vtkFSSurfaceWFileReader Execute: FileName not specified.");
-    return FS_ERROR_W_NO_FILENAME;
+    return this->FS_ERROR_W_NO_FILENAME;
     }
   
   vtkDebugMacro(<<"Reading surface WFile data...");
@@ -77,7 +77,7 @@ int vtkFSSurfaceWFileReader::ReadWFile()
   if (!wFile) 
     {
     vtkErrorMacro (<< "Could not open file " << this->FileName);
-    return FS_ERROR_W_OPEN;
+    return this->FS_ERROR_W_OPEN;
     }  
 
   // I'm not sure what this is. In the original FreeSurfer code, there
@@ -95,7 +95,7 @@ int vtkFSSurfaceWFileReader::ReadWFile()
   if (numValues < 0) 
     {
     vtkErrorMacro (<< "vtkFSSurfaceWFileReader.cxx Execute: Number of vertices is 0 or negative, can't process file.");
-    return FS_ERROR_W_NUM_VALUES;
+    return this->FS_ERROR_W_NUM_VALUES;
     }
 
   // Check to see that NumberOfVertices was set and is larger than number of values
@@ -116,7 +116,7 @@ int vtkFSSurfaceWFileReader::ReadWFile()
   if (scalars == NULL)
     {
     vtkErrorMacro(<<"vtkFSSurfaceWFileReader: error allocating " << this->NumberOfVertices << " floats!");
-    return FS_ERROR_W_ALLOC;
+    return this->FS_ERROR_W_ALLOC;
     }
   
   // For each value in the wfile...
@@ -127,7 +127,7 @@ int vtkFSSurfaceWFileReader::ReadWFile()
     if (feof(wFile)) 
       {
       vtkErrorMacro (<< "vtkFSSurfaceWFileReader.cxx Execute: Unexpected EOF after " << vIndex << " values read. Tried to read " << numValues);
-      return FS_ERROR_W_EOF;
+      return this->FS_ERROR_W_EOF;
       }
     
     // Read the 3 byte int index and float value. The wfile is weird
@@ -173,7 +173,7 @@ int vtkFSSurfaceWFileReader::ReadWFile()
   //output->SetArray (scalars, numValues, 0);
   output->SetArray(scalars, this->NumberOfVertices, 0);
 
-  return FS_ERROR_W_NONE;
+  return this->FS_ERROR_W_NONE;
 }
 
 //-------------------------------------------------------------------------

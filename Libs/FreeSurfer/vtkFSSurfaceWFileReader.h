@@ -28,18 +28,6 @@
 #include "vtkPolyData.h"
 #include "vtkFloatArray.h"
 
-// file type magic numbers
-const int FS_NEW_SCALAR_MAGIC_NUMBER = 16777215;
-
-// error codes
-const int FS_ERROR_W_NONE = 0;
-const int FS_ERROR_W_OUTPUT_NULL = 1;
-const int FS_ERROR_W_NO_FILENAME = 2;
-const int FS_ERROR_W_OPEN = 3;
-const int FS_ERROR_W_NUM_VALUES = 4;
-const int FS_ERROR_W_ALLOC = 5;
-const int FS_ERROR_W_EOF = 6;
-
 class vtkFloatArray;
 
 class VTK_FreeSurfer_EXPORT vtkFSSurfaceWFileReader : public vtkDataReader
@@ -59,6 +47,22 @@ public:
   vtkGetMacro(NumberOfVertices,int);
   vtkSetMacro(NumberOfVertices,int);
 
+  //BTX
+  enum
+  {
+    // error codes
+    FS_ERROR_W_NONE = 0,
+    FS_ERROR_W_OUTPUT_NULL = 1,
+    FS_ERROR_W_NO_FILENAME = 2,
+    FS_ERROR_W_OPEN = 3,
+    FS_ERROR_W_NUM_VALUES = 4,
+    FS_ERROR_W_ALLOC = 5,
+    FS_ERROR_W_EOF = 6,
+    // file type magic numbers
+    FS_NEW_SCALAR_MAGIC_NUMBER = 16777215,
+  };
+  //ETX
+  
 protected:
   vtkFSSurfaceWFileReader();
   ~vtkFSSurfaceWFileReader();
