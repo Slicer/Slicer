@@ -107,6 +107,18 @@ SET_TARGET_PROPERTIES (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=SlicerModuleEn
 TARGET_LINK_LIBRARIES (${CLP}Lib ITKIO ITKBasicFilters)
 
 #####################
+SET (CLP CurvatureAnisotropicDiffusion)
+
+SET ( ${CLP}_SOURCE ${CLP}.cxx)
+GENERATECLP(${CLP}_SOURCE ${CLP}.xml)
+ADD_EXECUTABLE(${CLP} ${${CLP}_SOURCE})
+TARGET_LINK_LIBRARIES (${CLP} ITKIO ITKBasicFilters)
+
+ADD_LIBRARY(${CLP}Lib SHARED ${${CLP}_SOURCE})
+SET_TARGET_PROPERTIES (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=SlicerModuleEntryPoint")
+TARGET_LINK_LIBRARIES (${CLP}Lib ITKIO ITKBasicFilters)
+
+#####################
 SET (CLP GradientAnisotropicDiffusion)
 
 SET ( ${CLP}_SOURCE ${CLP}.cxx)
@@ -156,6 +168,30 @@ TARGET_LINK_LIBRARIES (${CLP}Lib ITKIO ITKBasicFilters)
 
 #####################
 SET (CLP OtsuThresholdSegmentation)
+
+SET ( ${CLP}_SOURCE ${CLP}.cxx)
+GENERATECLP(${CLP}_SOURCE ${CLP}.xml)
+ADD_EXECUTABLE(${CLP} ${${CLP}_SOURCE})
+TARGET_LINK_LIBRARIES (${CLP} ITKIO ITKBasicFilters)
+
+ADD_LIBRARY(${CLP}Lib SHARED ${${CLP}_SOURCE})
+SET_TARGET_PROPERTIES (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=SlicerModuleEntryPoint")
+TARGET_LINK_LIBRARIES (${CLP}Lib ITKIO ITKBasicFilters)
+
+#####################
+SET (CLP Subtract)
+
+SET ( ${CLP}_SOURCE ${CLP}.cxx)
+GENERATECLP(${CLP}_SOURCE ${CLP}.xml)
+ADD_EXECUTABLE(${CLP} ${${CLP}_SOURCE})
+TARGET_LINK_LIBRARIES (${CLP} ITKIO ITKBasicFilters)
+
+ADD_LIBRARY(${CLP}Lib SHARED ${${CLP}_SOURCE})
+SET_TARGET_PROPERTIES (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=SlicerModuleEntryPoint")
+TARGET_LINK_LIBRARIES (${CLP}Lib ITKIO ITKBasicFilters)
+
+#####################
+SET (CLP Add)
 
 SET ( ${CLP}_SOURCE ${CLP}.cxx)
 GENERATECLP(${CLP}_SOURCE ${CLP}.xml)
@@ -239,6 +275,12 @@ IF (Slicer3_SOURCE_DIR)
         ExecutionModelTour
         ImageReadDicomWrite
         ImageReadDicomWriteLib
+        Add
+        AddLib
+        ConfidenceConnected
+        ConfidenceConnectedLib
+        CurvatureAnisotropicDiffusion
+        CurvatureAnisotropicDiffusionLib
         GradientAnisotropicDiffusion
         GradientAnisotropicDiffusionLib
         MedianImageFilter 
@@ -247,6 +289,8 @@ IF (Slicer3_SOURCE_DIR)
         OtsuThresholdImageFilterLib
         OtsuThresholdSegmentation
         OtsuThresholdSegmentationLib
+        Subtract
+        SubtractLib
         VotingBinaryHoleFillingImageFilter
         VotingBinaryHoleFillingImageFilterLib
         ModelMaker
@@ -258,6 +302,7 @@ IF (Slicer3_SOURCE_DIR)
         GrayscaleGrindPeakImageFilter
         GrayscaleGrindPeakImageFilterLib
         HistogramMatching
+        HistogramMatchingLib
         LinearRegistration
         AffineRegistration
         BSplineDeformableRegistration

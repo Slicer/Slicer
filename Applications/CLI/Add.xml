@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Filtering.Arithmetic</category>
+  <title>Add Images</title>
+  <description>
+Adds two images. Although all image types are supported on input, only sugned types are produced.
+</description>
+  <version>0.1.0.$Revision: 1650 $(alpha)</version>
+  <documentation-url></documentation-url>
+  <license></license>
+  <contributor>Bill Lorensen</contributor>
+
+  <parameters>
+    <label>IO</label>
+    <description>Input/output parameters</description>
+    <image>
+      <name>inputVolume1</name>
+      <label>Input Volume 1</label>
+      <channel>input</channel>
+      <index>0</index>
+      <description>Input volume 1</description>
+    </image>
+    <image>
+      <name>inputVolume2</name>
+      <label>Input Volume 2</label>
+      <channel>input</channel>
+      <index>1</index>
+      <description>Input volume 2</description>
+    </image>
+    <image>
+      <name>outputVolume</name>
+      <label>Output Volume</label>
+      <channel>output</channel>
+      <index>2</index>
+      <description>Volume1 + Volume2</description>
+    </image>
+  </parameters>
+
+</executable>
