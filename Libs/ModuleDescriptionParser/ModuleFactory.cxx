@@ -9,6 +9,9 @@
 
 #include <map>
 #include <sstream>
+#include <cctype>
+#include <algorithm>
+#include <deque>
 
 static void
 splitString (std::string &text,
@@ -53,18 +56,35 @@ NameIsSharedLibrary(const char* name)
 inline bool 
 NameIsExecutable(const char* name)
 {
-  std::string extension = itksys::SystemTools::GetExecutableExtension();
+  static const char* standardExtensions[] = {".bat", ".com", ".sh", ".csh", ".tcsh", ".pl", ".tcl", ".py", ".m"};
+  std::deque<std::string> extensions(standardExtensions, standardExtensions+9);
 
+  
+  std::string extension = itksys::SystemTools::GetExecutableExtension();
   if (extension != "")
     {
-    std::string sname = name;
-    if ( sname.rfind(extension) == sname.size() - extension.size())
-      {
-      return true;
-      }
-    return false;
+    extensions.push_front( extension );
     }
 
+  bool foundIt = false;
+  std::string sname = name;
+  std::transform(sname.begin(), sname.end(), sname.begin(),
+                 (int (*)(int))std::tolower);
+  
+  for (std::deque<std::string>::iterator it=extensions.begin();
+       !foundIt && it != extensions.end(); ++it)
+    {
+    if ( sname.rfind(*it) == sname.size() - (*it).size())
+      {
+      foundIt = true;
+      }
+    }
+    
+  if (foundIt)
+    {
+    return true;
+    }
+ 
   return !NameIsSharedLibrary(name);
 }
 
