@@ -30,8 +30,8 @@
 #include "vtkMatrix4x4.h"
 
 #ifdef USE_OPENTRACKER
-#include "OpenTracker.h"
-#include "common/CallbackModule.h"
+#include "OpenTracker/OpenTracker.h"
+#include "OpenTracker/common/CallbackModule.h"
 using namespace ot;
 #endif
 
