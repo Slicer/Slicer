@@ -75,7 +75,9 @@ vtkSlicerWidget::MRMLCallback(vtkObject *caller,
 
   if (self->GetInMRMLCallbackFlag())
     {
+#ifdef _DEBUG
     vtkErrorWithObjectMacro(self, "In vtkSlicerWidget *********MRMLCallback called recursively?");
+#endif
     return;
     }
 
@@ -100,7 +102,9 @@ vtkSlicerWidget::WidgetCallback(vtkObject *caller,
 
   if (self->GetInWidgetCallbackFlag())
     {
+#ifdef _DEBUG
     vtkErrorWithObjectMacro(self, "In vtkSlicerWidget *********WidgetCallback called recursively?");
+#endif
     return;
     }
 

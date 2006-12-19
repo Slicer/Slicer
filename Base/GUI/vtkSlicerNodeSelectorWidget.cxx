@@ -39,7 +39,9 @@ static void MRMLCallback(vtkObject *caller, unsigned long eid, void *__clientDat
 
   if (self->GetInMRMLCallbackFlag())
     {
+#ifdef _DEBUG
     vtkErrorWithObjectMacro(self, "In vtkSlicerNodeSelectorWidget *********MRMLCallback called recursively?");
+#endif
     return;
     }
 
