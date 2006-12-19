@@ -1348,10 +1348,12 @@ void vtkCommandLineModuleGUI::NewNodeCallback ( vtkObject *__caller,
     vtkCommandLineModuleGUI *self = reinterpret_cast<vtkCommandLineModuleGUI *>(__clientData);
 
     if ( inCallback )
-        {
-            vtkErrorWithObjectMacro ( self, "In vtkCommandLineModuleGUI *!* NewNodeCallback called recursively?");
-            return;
-        }
+      {
+#ifdef _DEBUG
+      vtkErrorWithObjectMacro ( self, "In vtkCommandLineModuleGUI *!* NewNodeCallback called recursively?");
+#endif
+      return;
+      }
 
     vtkDebugWithObjectMacro ( self, "In vtkCommandLineModuleGUI NewNodeCallback");
 

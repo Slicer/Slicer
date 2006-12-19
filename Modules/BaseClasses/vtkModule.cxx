@@ -25,7 +25,9 @@ static void MRMLCallback(vtkObject *__mrmlscene, unsigned long eid, void *__clie
 
   if (inMRMLCallback)
     {
+#ifdef _DEBUG
     cout << "*********MRMLCallback called recursively?" << endl;
+#endif
     return;
     }
   inMRMLCallback = 1;
