@@ -7,8 +7,8 @@ or http://www.slicer.org/copyright/copyright.txt for details.
 
 Program:   3D Slicer
 Module:    $RCSfile$
-Date:      $Date: 2006-09-08 12:57:38 -0400 (Fri, 08 Sep 2006) $
-Version:   $Revision: 1220 $
+Date:      $Date$
+Version:   $Revision$
 
 =========================================================================auto=*/
 

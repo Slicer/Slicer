@@ -9,7 +9,7 @@
   <description>
   Simple test of tensor IO
   </description>
-  <version>0.1.0.$Revision: 916 $(alpha)</version>
+  <version>0.1.0.$Revision$(alpha)</version>
   <documentation-url></documentation-url>
   <license></license>
   <contributor>Bill Lorensen</contributor>

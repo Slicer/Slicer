@@ -1,10 +1,10 @@
 /*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit
-  Module:    $HeadURL: http://www.na-mic.org/svn/Slicer3/trunk/Applications/CLI/GradientAnisotropicDiffusion.cxx $
+  Module:    $HeadURL$
   Language:  C++
-  Date:      $Date: 2006-11-14 15:03:40 -0500 (Tue, 14 Nov 2006) $
-  Version:   $Revision: 1582 $
+  Date:      $Date$
+  Version:   $Revision$
 
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.

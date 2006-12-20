@@ -5,7 +5,7 @@
   <description>
 Adds two images. Although all image types are supported on input, only sugned types are produced.
 </description>
-  <version>0.1.0.$Revision: 1650 $(alpha)</version>
+  <version>0.1.0.$Revision$(alpha)</version>
   <documentation-url></documentation-url>
   <license></license>
   <contributor>Bill Lorensen</contributor>
