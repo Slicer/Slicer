@@ -1,3 +1,16 @@
+/*=========================================================================
+
+  Copyright Brigham and Women's Hospital (BWH) All Rights Reserved.
+
+  See Doc/copyright/copyright.txt
+  or http://www.slicer.org/copyright/copyright.txt for details.
+
+  Program:   Module Description Parser
+  Module:    $HeadURL$
+  Date:      $Date$
+  Version:   $Revision$
+
+==========================================================================*/
 #include "itksys/DynamicLoader.hxx" 
 #include "itksys/Directory.hxx"
 #include "itksys/SystemTools.hxx"

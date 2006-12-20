@@ -6,9 +6,9 @@
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Program:   Module Description Parser
-  Module:    $HeadURL: http://svn.na-mic.org:8000/svn/Slicer3/trunk/Libs/ModuleDescriptionParser/ModuleParameter.cxx $
-  Date:      $Date: 2006-10-26 13:41:16 -0400 (Thu, 26 Oct 2006) $
-  Version:   $Revision: 1526 $
+  Module:    $HeadURL$
+  Date:      $Date$
+  Version:   $Revision$
 
 ==========================================================================*/
 #include "ModuleProcessInformation.h"
