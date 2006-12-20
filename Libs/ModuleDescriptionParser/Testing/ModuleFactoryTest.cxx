@@ -14,6 +14,7 @@
 #include <string>
 #include "ModuleFactory.h"
 #include "itksys/Directory.hxx"
+#include "itksys/SystemTools.hxx"
 
 void WarningMessage(const char *msg);
 void ErrorMessage(const char *msg);
@@ -38,9 +39,12 @@ int main (int argc, char *argv[])
   myDir.Load(argv[1]);
   for ( unsigned long i = 0; i < myDir.GetNumberOfFiles(); i++)
     {
+    if (strcmp (myDir.GetFile(i), "..") == 0) continue;
+
     ModuleFactory moduleFactory;
     std::string searchPath(argv[1]);
     searchPath += myDir.GetFile(i);
+    if (!itksys::SystemTools::FileIsDirectory(searchPath.c_str())) continue;
     moduleFactory.SetSearchPath( searchPath );
     moduleFactory.SetWarningMessageCallback( WarningMessage );
     moduleFactory.SetErrorMessageCallback( ErrorMessage );
