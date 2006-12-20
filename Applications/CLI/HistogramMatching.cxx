@@ -23,25 +23,21 @@
 #include "itkImage.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
-#include "itkPluginFilterWatcher.h"
+#include "itkPluginUtilities.h"
 
 #include "itkHistogramMatchingImageFilter.h"
 
 #include "HistogramMatchingCLP.h"
 
-int main( int argc, char * argv[] )
+template<class T> int DoIt( int argc, char * argv[], T )
 {
   PARSE_ARGS;
 
-  //
-  //  The following code defines the input and output pixel types and their
-  //  associated image types.
-  //
   const unsigned int Dimension = 3;
   
-  typedef short           InputPixelType;
-  typedef short           OutputPixelType;
-  typedef short           WritePixelType;
+  typedef T InputPixelType;
+  typedef T OutputPixelType;
+  typedef T WritePixelType;
 
   typedef itk::Image< InputPixelType,  Dimension >   InputImageType;
   typedef itk::Image< OutputPixelType, Dimension >   OutputImageType;
@@ -58,12 +54,12 @@ int main( int argc, char * argv[] )
 
 
   // Creation of Reader and Writer filters
-  ReaderType::Pointer reader1 = ReaderType::New();
-  ReaderType::Pointer reader2 = ReaderType::New();
-  WriterType::Pointer writer  = WriterType::New();
+  typename ReaderType::Pointer reader1 = ReaderType::New();
+  typename ReaderType::Pointer reader2 = ReaderType::New();
+  typename WriterType::Pointer writer  = WriterType::New();
   
   // Create the filter
-  FilterType::Pointer  filter = FilterType::New();
+  typename FilterType::Pointer  filter = FilterType::New();
   itk::PluginFilterWatcher watcher(filter, "Match Histogram",
     CLPProcessInformation);
 
@@ -83,7 +79,67 @@ int main( int argc, char * argv[] )
   writer->SetInput( filter->GetOutput() );
   writer->Update();
 
-  return 0;
+  return EXIT_SUCCESS;
 
 }
 
+int main( int argc, char * argv[] )
+{
+  
+  PARSE_ARGS;
+
+  itk::ImageIOBase::IOPixelType pixelType;
+  itk::ImageIOBase::IOComponentType componentType;
+
+  try
+    {
+    itk::GetImageType (inputVolume, pixelType, componentType);
+
+    // This filter handles all types
+    
+    switch (componentType)
+      {
+      case itk::ImageIOBase::UCHAR:
+        return DoIt( argc, argv, static_cast<unsigned char>(0));
+        break;
+      case itk::ImageIOBase::CHAR:
+        return DoIt( argc, argv, static_cast<char>(0));
+        break;
+      case itk::ImageIOBase::USHORT:
+        return DoIt( argc, argv, static_cast<unsigned short>(0));
+        break;
+      case itk::ImageIOBase::SHORT:
+        return DoIt( argc, argv, static_cast<short>(0));
+        break;
+      case itk::ImageIOBase::UINT:
+        return DoIt( argc, argv, static_cast<unsigned int>(0));
+        break;
+      case itk::ImageIOBase::INT:
+        return DoIt( argc, argv, static_cast<int>(0));
+        break;
+      case itk::ImageIOBase::ULONG:
+        return DoIt( argc, argv, static_cast<unsigned long>(0));
+        break;
+      case itk::ImageIOBase::LONG:
+        return DoIt( argc, argv, static_cast<long>(0));
+        break;
+      case itk::ImageIOBase::FLOAT:
+        return DoIt( argc, argv, static_cast<float>(0));
+        break;
+      case itk::ImageIOBase::DOUBLE:
+        return DoIt( argc, argv, static_cast<double>(0));
+        break;
+      case itk::ImageIOBase::UNKNOWNCOMPONENTTYPE:
+      default:
+        std::cout << "unknown component type" << std::endl;
+        break;
+      }
+    }
+  catch( itk::ExceptionObject &excep)
+    {
+    std::cerr << argv[0] << ": exception caught !" << std::endl;
+    std::cerr << excep << std::endl;
+    return EXIT_FAILURE;
+    }
+  return EXIT_SUCCESS;
+}
