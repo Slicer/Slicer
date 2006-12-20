@@ -5,7 +5,8 @@
 #include "vtkKWResourceUtilities.h"
 #include "vtkKWIcon.h"
 #include "vtkSlicerIcons.h"
-#include "./Resources/vtkSlicerLogo_ImageData.h"
+//#include "./Resources/vtkSlicerLogo_ImageData.h"
+#include "./Resources/vtkSlicerLogoHorizontal_ImageData.h"
 
 class vtkSlicerLogoIcons : public vtkSlicerIcons
 {
