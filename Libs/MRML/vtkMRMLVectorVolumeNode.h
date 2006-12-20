@@ -6,12 +6,12 @@
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Program:   3D Slicer
-  Module:    $RCSfile: vtkMRMLVolumeNode.h,v $
+  Module:    $RCSfile: vtkMRMLVectorVolumeNode.h,v $
   Date:      $Date: 2006/03/19 17:12:29 $
   Version:   $Revision: 1.13 $
 
 =========================================================================auto=*/
-// .NAME vtkMRMLVolumeNode - MRML node for representing a vector volume (image stack).
+// .NAME vtkMRMLVectorVolumeNode - MRML node for representing a vector volume (image stack).
 // .SECTION Description
 // Volume with vector pixel type.
 
@@ -19,15 +19,15 @@
 #define __vtkMRMLVectorVolumeNode_h
 
 
-#include "vtkMRMLVolumeNode.h"
+#include "vtkMRMLTensorVolumeNode.h"
 
 class vtkImageData;
 
-class VTK_MRML_EXPORT vtkMRMLVectorVolumeNode : public vtkMRMLVolumeNode
+class VTK_MRML_EXPORT vtkMRMLVectorVolumeNode : public vtkMRMLTensorVolumeNode
 {
   public:
   static vtkMRMLVectorVolumeNode *New();
-  vtkTypeMacro(vtkMRMLVectorVolumeNode,vtkMRMLVolumeNode);
+  vtkTypeMacro(vtkMRMLVectorVolumeNode,vtkMRMLTensorVolumeNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual vtkMRMLNode* CreateNodeInstance();
