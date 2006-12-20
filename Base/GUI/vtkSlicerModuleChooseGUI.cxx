@@ -23,6 +23,7 @@
 #include "vtkKWMenuButton.h"
 #include "vtkKWEntry.h"
 #include "vtkKWFrame.h"
+#include "vtkKWToolbar.h"
 
 #define convertToUpper( s ) { while (*s) {*s = toupper(*s); s++; } }
 
@@ -373,7 +374,6 @@ void vtkSlicerModuleChooseGUI::BuildGUI ( vtkKWFrame *appF )
       this->ModulesSearchEntry->Create ( );
       this->ModulesSearchEntry->SetValue ( "search" );
       this->ModulesSearchEntry->SetWidth ( 12 );
-//      this->ModulesSearchEntry->SetCommandTrigger ( vtkKWEntry::TriggerOnReturnKey ); 
       this->ModulesSearchEntry->SetCommandTriggerToAnyChange();
       this->ModulesSearchEntry->SetBalloonHelpString ("Type the name of a module you want to select and click the 'search' button.");
       this->ModulesSearchEntry->SetForegroundColor ( 0.5, 0.5, 0.5);
@@ -435,6 +435,105 @@ void vtkSlicerModuleChooseGUI::BuildGUI ( vtkKWFrame *appF )
   }
 
 }
+
+//---------------------------------------------------------------------------
+void vtkSlicerModuleChooseGUI::BuildGUI ( vtkKWToolbar *tb )
+{
+  
+  //--- Populate the Slice Control Frame
+  if ( tb != NULL )
+    {
+      this->ModulesPrev->SetParent ( tb->GetFrame() );
+      this->ModulesPrev->Create ( );
+      this->ModulesPrev->SetReliefToFlat();
+      this->ModulesPrev->SetOverReliefToNone ( );
+      this->ModulesPrev->SetBorderWidth ( 0 );
+      this->ModulesPrev->SetImageToIcon ( this->SlicerModuleNavigationIcons->GetModulePrevIcon() );
+      this->ModulesPrev->SetBalloonHelpString ("Go to previous module.");
+      tb->AddWidget ( this->ModulesPrev );
+
+      //--- Next and previous module button
+      this->ModulesNext->SetParent ( tb->GetFrame());
+      this->ModulesNext->Create ( );
+      this->ModulesNext->SetReliefToFlat();
+      this->ModulesNext->SetOverReliefToNone ( );
+      this->ModulesNext->SetBorderWidth ( 0 );
+      this->ModulesNext->SetImageToIcon ( this->SlicerModuleNavigationIcons->GetModuleNextIcon() );
+      this->ModulesNext->SetBalloonHelpString ("Go to next module.");
+      tb->AddWidget ( this->ModulesNext );
+
+      //--- ALL modules menu button label
+      this->ModulesLabel->SetParent ( tb->GetFrame() );
+      this->ModulesLabel->Create ( );
+      this->ModulesLabel->SetText ( "Modules:");
+      this->ModulesLabel->SetAnchorToWest ( );
+      this->ModulesLabel->SetWidth ( 7 );
+      this->ModulesLabel->SetFont ( "-Adobe-Helvetica-Bold-R-Normal-*-10-*-*-*-*-*-*-*" );
+      tb->AddWidget ( this->ModulesLabel );
+
+      //--- All modules menu button
+      this->ModulesMenuButton->SetParent ( tb->GetFrame() );
+      this->ModulesMenuButton->Create ( );
+      this->ModulesMenuButton->SetWidth ( 24 );
+      this->ModulesMenuButton->IndicatorVisibilityOn ( );
+      this->ModulesMenuButton->SetBalloonHelpString ("Select a Slicer module.");
+      this->ModulesMenuButton->SetFont ( "-Adobe-Helvetica-Bold-R-Normal-*-10-*-*-*-*-*-*-*" );
+      tb->AddWidget ( this->ModulesMenuButton );
+      
+      this->ModulesHistory->SetParent ( tb->GetFrame() );
+      this->ModulesHistory->Create ( );
+      this->ModulesHistory->SetReliefToFlat();
+      this->ModulesHistory->SetBorderWidth ( 0 );
+      this->ModulesHistory->SetImageToIcon ( this->SlicerModuleNavigationIcons->GetModuleHistoryIcon() );
+      this->ModulesHistory->IndicatorVisibilityOff  ( );
+      this->ModulesHistory->SetBalloonHelpString ("List all visited modules.");
+      tb->AddWidget ( this->ModulesHistory);
+
+      this->ModulesRefresh->SetParent ( tb->GetFrame() );
+      this->ModulesRefresh->Create ( );
+      this->ModulesRefresh->SetReliefToFlat();
+      this->ModulesRefresh->SetOverReliefToNone ( );
+      this->ModulesRefresh->SetBorderWidth ( 0 );
+      this->ModulesRefresh->SetImageToIcon ( this->SlicerModuleNavigationIcons->GetModuleRefreshIcon() );
+      this->ModulesRefresh->SetBalloonHelpString ("Refresh the list of available modules.");
+      tb->AddWidget ( this->ModulesRefresh);
+
+      this->ModulesSearchEntry->SetParent ( tb->GetFrame() );
+      this->ModulesSearchEntry->Create ( );
+      this->ModulesSearchEntry->SetValue ( "search modules" );
+      this->ModulesSearchEntry->SetWidth ( 15 );
+      this->ModulesSearchEntry->SetCommandTriggerToAnyChange();
+      this->ModulesSearchEntry->SetBalloonHelpString ("Type the name of a module you want to select and click the 'search' button.");
+      this->ModulesSearchEntry->SetForegroundColor ( 0.5, 0.5, 0.5);
+      this->ModulesSearchEntry->SetFont ( "-Adobe-Helvetica-Bold-R-Normal-*-10-*-*-*-*-*-*-*" );
+      tb->AddWidget ( this->ModulesSearchEntry );
+
+      //--- create a small label to show search context
+//      vtkKWLabel *dotdotLabel = vtkKWLabel::New ( );
+//      dotdotLabel->SetParent ( tb->GetFrame() );
+//      dotdotLabel->Create ( );
+//      dotdotLabel->SetText (":");
+//      tb->AddWidget ( dotdotLabel );
+//      dotdotLabel->Delete ( );
+
+      this->ModulesSearch->SetParent ( tb->GetFrame() );
+      this->ModulesSearch->Create ( );
+      this->ModulesSearch->SetReliefToFlat();
+      this->ModulesSearch->SetBorderWidth ( 0 );
+      this->ModulesSearch->SetImageToIcon ( this->SlicerModuleNavigationIcons->GetModuleSearchIcon() );
+      this->ModulesSearch->IndicatorVisibilityOff ( );
+      this->ModulesSearch->SetBalloonHelpString ("Search for the module entered to the right (or use keyboard Ctrl+F).");
+      tb->AddWidget ( this->ModulesSearch);
+
+
+
+
+  }
+
+
+}
+  
+
 
 
 

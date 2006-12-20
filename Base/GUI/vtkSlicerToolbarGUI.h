@@ -10,6 +10,7 @@
 
 #include "vtkSlicerComponentGUI.h"
 #include "vtkSlicerToolbarIcons.h"
+#include "vtkSlicerModuleChooseGUI.h"
 
 #include "vtkKWFrame.h"
 #include "vtkKWToolbar.h"
@@ -44,6 +45,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
     vtkGetObjectMacro (ViewToolbar, vtkKWToolbar);
     vtkGetObjectMacro (MouseModeToolbar, vtkKWToolbar);
     vtkGetObjectMacro (UndoRedoToolbar, vtkKWToolbar);
+    vtkGetObjectMacro (ModuleChooseGUI, vtkSlicerModuleChooseGUI );
 
     // Description:
     // Get the widgets that display the toolbar icons
@@ -69,7 +71,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
     vtkGetObjectMacro (UndoIconButton, vtkKWPushButton );
     vtkGetObjectMacro (RedoIconButton, vtkKWPushButton );
     vtkGetObjectMacro (MouseModeRadioButtons, vtkKWRadioButtonSet );
-
 
     // Description:
     // This method builds the Data module's GUI
@@ -133,6 +134,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
     vtkKWPushButton *LightBoxViewIconButton;
     vtkKWRadioButtonSet *MouseModeRadioButtons;
 
+    vtkSlicerModuleChooseGUI *ModuleChooseGUI;
     vtkSlicerApplicationGUI *ApplicationGUI;
     
  private:

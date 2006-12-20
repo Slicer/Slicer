@@ -94,7 +94,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // Description:
     // Get the frames that populate the Slicer GUI
     vtkGetObjectMacro ( LogoFrame, vtkKWFrame);
-    vtkGetObjectMacro ( ModuleChooseFrame, vtkKWFrame );
     vtkGetObjectMacro ( DropShadowFrame, vtkKWFrame );
     vtkGetObjectMacro ( SlicesControlFrame, vtkSlicerModuleCollapsibleFrame );
     vtkGetObjectMacro ( ViewControlFrame, vtkSlicerModuleCollapsibleFrame );
@@ -122,7 +121,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // Get the GUI containing widgets for controlling the Slice Views
     vtkGetObjectMacro ( SlicesControlGUI, vtkSlicerSlicesControlGUI );
     // Get the GUI containing the widgets to select modules.
-    vtkGetObjectMacro ( ModuleChooseGUI, vtkSlicerModuleChooseGUI );
+//    vtkGetObjectMacro ( ModuleChooseGUI, vtkSlicerModuleChooseGUI );
     // Get the GUI containing the widgets to display logos
     vtkGetObjectMacro ( LogoDisplayGUI, vtkSlicerLogoDisplayGUI );
     
@@ -253,7 +252,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // Frames for the main Slicer UI panel    
     vtkKWFrame *TopFrame;
     vtkKWFrame *LogoFrame;
-    vtkKWFrame *ModuleChooseFrame;
     vtkKWFrame *DropShadowFrame;
     vtkSlicerModuleCollapsibleFrame *SlicesControlFrame;
     vtkSlicerModuleCollapsibleFrame *ViewControlFrame;
@@ -271,7 +269,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkSlicerToolbarGUI *ApplicationToolbar;
     vtkSlicerViewControlGUI *ViewControlGUI;
     vtkSlicerSlicesControlGUI *SlicesControlGUI;
-    vtkSlicerModuleChooseGUI *ModuleChooseGUI;
+//    vtkSlicerModuleChooseGUI *ModuleChooseGUI;
     vtkSlicerLogoDisplayGUI *LogoDisplayGUI;
     
     // Description:

@@ -58,9 +58,10 @@ vtkSlicerToolbarGUI::vtkSlicerToolbarGUI ( )
   this->MouseModeRadioButtons = vtkKWRadioButtonSet::New ( );
   this->UndoIconButton = vtkKWPushButton::New ( );
   this->RedoIconButton = vtkKWPushButton::New ( );
-
-  this->ApplicationGUI = NULL;
+  this->ModuleChooseGUI = vtkSlicerModuleChooseGUI::New ( );
   
+  this->ApplicationGUI = NULL;
+
   
 }
 
@@ -98,6 +99,13 @@ vtkSlicerToolbarGUI::~vtkSlicerToolbarGUI ( )
     this->MouseModeToolbar->RemoveAllWidgets ( );
     }
 
+  // Delete module choose gui
+  if ( this->ModuleChooseGUI )
+    {
+    this->ModuleChooseGUI->Delete ( );
+    this->ModuleChooseGUI = NULL;
+    }
+    
   // Delete the widgets
   if ( this->HomeIconButton )
     {
@@ -321,7 +329,7 @@ void vtkSlicerToolbarGUI::RemoveGUIObservers ( )
     this->MouseModeRadioButtons->GetWidget( vtkSlicerApplicationGUI::MouseTransform )->RemoveObservers( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
     this->MouseModeRadioButtons->GetWidget( vtkSlicerApplicationGUI::MousePut )->RemoveObservers( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
 
-
+    this->ModuleChooseGUI->RemoveGUIObservers();
 }
 
 //---------------------------------------------------------------------------
@@ -351,6 +359,8 @@ void vtkSlicerToolbarGUI::AddGUIObservers ( )
     this->MouseModeRadioButtons->GetWidget( vtkSlicerApplicationGUI::MouseSelect )->AddObserver ( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
     this->MouseModeRadioButtons->GetWidget( vtkSlicerApplicationGUI::MouseTransform )->AddObserver ( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
     this->MouseModeRadioButtons->GetWidget( vtkSlicerApplicationGUI::MousePut )->AddObserver ( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+
+    this->ModuleChooseGUI->AddGUIObservers();
 }
 
 
@@ -364,7 +374,7 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
     // Toolbar's parent is the main vtkSlicerApplicationGUI;
     // Toolbar events will trigger vtkSlicerAppliationGUI methods
     vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));
-    vtkSlicerModuleChooseGUI *mcGUI = p->GetModuleChooseGUI ( );
+    vtkSlicerModuleChooseGUI *mcGUI = this->ModuleChooseGUI;
     vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( p->GetApplication() );
     vtkSlicerGUILayout *layout = app->GetMainLayout();
     if ( app != NULL )
@@ -410,7 +420,7 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
           vtkSlicerModuleGUI *m = app->GetModuleGUIByName(homename);
           if ( m != NULL )
             {
-            p->GetModuleChooseGUI()->SelectModule ( homename );
+            this->GetModuleChooseGUI()->SelectModule ( homename );
             }
           else
             {
@@ -422,7 +432,7 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
           vtkSlicerModuleGUI *m = app->GetModuleGUIByName("Data");
           if ( m != NULL )
             {
-            p->GetModuleChooseGUI()->SelectModule ( "Data" );
+            this->GetModuleChooseGUI()->SelectModule ( "Data" );
             }
           else
             {
@@ -434,7 +444,7 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
           vtkSlicerModuleGUI *m = app->GetModuleGUIByName("Volumes");
           if ( m != NULL )
             {
-            p->GetModuleChooseGUI()->SelectModule ( "Volumes" );
+            this->GetModuleChooseGUI()->SelectModule ( "Volumes" );
             }
           else
             {
@@ -446,7 +456,7 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
           vtkSlicerModuleGUI *m = app->GetModuleGUIByName("Models");
           if ( m != NULL )
             {
-            p->GetModuleChooseGUI()->SelectModule ( "Models" );
+            this->GetModuleChooseGUI()->SelectModule ( "Models" );
             }
           else
             {
@@ -458,7 +468,7 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
           vtkSlicerModuleGUI *m = app->GetModuleGUIByName("Fiducials");
           if ( m != NULL )
             {
-            p->GetModuleChooseGUI()->SelectModule ( "Fiducials" );
+            this->GetModuleChooseGUI()->SelectModule ( "Fiducials" );
             }
           else
             {
@@ -470,7 +480,7 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
           vtkSlicerModuleGUI *m = app->GetModuleGUIByName("Color");
           if ( m != NULL )
             {
-            p->GetModuleChooseGUI()->SelectModule ( "Color" );
+            this->GetModuleChooseGUI()->SelectModule ( "Color" );
             }
           else
             {
@@ -482,7 +492,7 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
           vtkSlicerModuleGUI *m = app->GetModuleGUIByName("Transforms");
           if ( m != NULL )
             {
-            p->GetModuleChooseGUI()->SelectModule ( "Transforms" );
+            this->GetModuleChooseGUI()->SelectModule ( "Transforms" );
             }
           else
             {
@@ -494,7 +504,7 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
           vtkSlicerModuleGUI *m = app->GetModuleGUIByName("Editor");
           if ( m != NULL )
             {
-            p->GetModuleChooseGUI()->SelectModule ( "Editor" );
+            this->GetModuleChooseGUI()->SelectModule ( "Editor" );
             }
           else
             {
@@ -587,6 +597,7 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   //
   //--- configure the window's main toolbarset.
   vtkSlicerApplicationGUI *p = this->GetApplicationGUI ( );
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( p->GetApplication() );
   vtkSlicerWindow *win = p->GetMainSlicerWindow();
 
   vtkKWToolbarSet *tbs = win->GetMainToolbarSet();
@@ -675,6 +686,12 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   this->SaveSceneIconButton->SetBalloonHelpString ( "Save a MRML scene or data to a file.");
   ltb->AddWidget ( this->SaveSceneIconButton );
 
+  // build module choose gui here.
+    // Build the Module Choose GUI in the Modules toolbar.
+  this->ModuleChooseGUI->SetApplicationGUI ( p );
+  this->ModuleChooseGUI->SetApplication ( app );
+  this->ModuleChooseGUI->BuildGUI( mtb );
+
   // home icon
   this->HomeIconButton->SetParent ( mtb->GetFrame ( ));
   this->HomeIconButton->Create ( );
@@ -682,7 +699,7 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   this->HomeIconButton->SetBorderWidth ( 0 );
   this->HomeIconButton->SetOverReliefToNone ( );
   this->HomeIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetHomeIcon( ) );
-  this->HomeIconButton->SetBalloonHelpString ( "Home (not yet settable)" );
+  this->HomeIconButton->SetBalloonHelpString ( "Home module" );
   mtb->AddWidget ( this->HomeIconButton );
 
   // data module icon
@@ -890,6 +907,7 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   radiob->SetBalloonHelpString ( "Set the 3DViewer mouse mode to 'transform view' (not yet available)" );
   radiob->SelectedStateOff ( );
   
+
   tbs->ShowToolbar ( this->GetModulesToolbar ( ));
   tbs->ShowToolbar ( this->GetLoadSaveToolbar ( ));
   tbs->ShowToolbar ( this->GetViewToolbar ( ));

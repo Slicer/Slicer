@@ -26,7 +26,7 @@ vtkSlicerGUILayout::vtkSlicerGUILayout ( )
   // ModuleControlPanelHeight is derived from 
   // total panel height and the other fixed panel heights.
   this->DefaultModuleControlPanelHeight = 0;
-  this->DefaultTopFrameHeight = 115;
+  this->DefaultTopFrameHeight = 70;
   this->DefaultSlicesControlFrameHeight = 60;
   this->DefaultViewControlFrameHeight = 240;
 
@@ -64,6 +64,8 @@ void vtkSlicerGUILayout::InitializeLayoutDimensions ( )
   // Dimensions for these are computed here.
   int h, w;
     
+  // Look for registry values here.
+  
   // Size of the shared Module GUI Control frame
   h = this->DefaultGUIPanelHeight -
     ( this->GetDefaultTopFrameHeight() +

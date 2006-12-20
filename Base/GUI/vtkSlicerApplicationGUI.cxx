@@ -87,7 +87,6 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
 
     this->TopFrame = vtkKWFrame::New();
     this->LogoFrame = vtkKWFrame::New();
-    this->ModuleChooseFrame = vtkKWFrame::New();
     this->SlicesControlFrame = vtkSlicerModuleCollapsibleFrame::New();
     this->ViewControlFrame = vtkSlicerModuleCollapsibleFrame::New();
     this->DropShadowFrame = vtkKWFrame::New();
@@ -97,7 +96,6 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
     this->ApplicationToolbar = NULL;
     this->ViewControlGUI = NULL;
     this->SlicesControlGUI = NULL;
-    this->ModuleChooseGUI = NULL;
     this->LogoDisplayGUI = NULL;
     
     //--- GUIs containing components packed inside the Frames
@@ -109,9 +107,6 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
 #endif
 #ifndef SLICESCONTROL_DEBUG
     this->SlicesControlGUI = vtkSlicerSlicesControlGUI::New ( );
-#endif
-#ifndef MODULECHOOSE_DEBUG    
-    this->ModuleChooseGUI = vtkSlicerModuleChooseGUI::New ( );
 #endif
 #ifndef LOGODISPLAY_DEBUG    
     this->LogoDisplayGUI = vtkSlicerLogoDisplayGUI::New ( );
@@ -159,12 +154,6 @@ vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
       this->ViewControlGUI = NULL;
     }
 #endif
-#ifndef MODULECHOOSE_DEBUG
-    if ( this->ModuleChooseGUI ) {
-      this->ModuleChooseGUI->Delete ();
-      this->ModuleChooseGUI = NULL;
-    }
-#endif
 #ifndef LOGODISPLAY_DEBUG
     if ( this->LogoDisplayGUI ) {
       this->LogoDisplayGUI->Delete ( );
@@ -207,12 +196,6 @@ vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
       this->LogoFrame->SetParent ( NULL );
       this->LogoFrame->Delete ();
       this->LogoFrame = NULL;
-      }
-    if ( this->ModuleChooseFrame )
-      {
-      this->ModuleChooseFrame->SetParent ( NULL );
-      this->ModuleChooseFrame->Delete ();
-      this->ModuleChooseFrame = NULL;
       }
     if ( this->DropShadowFrame )
       {
@@ -371,9 +354,6 @@ void vtkSlicerApplicationGUI::AddGUIObservers ( )
 #ifndef SLICESCONTROL_DEBUG
   this->GetSlicesControlGUI ( )->AddGUIObservers ( );
 #endif
-#ifndef MODULECHOOSE_DEBUG
-  this->GetModuleChooseGUI ( )->AddGUIObservers ( );
-#endif
 #ifndef LOGODISPLAY_DEBUG
   this->GetLogoDisplayGUI ( )->AddGUIObservers ( );
 #endif
@@ -421,9 +401,6 @@ void vtkSlicerApplicationGUI::RemoveGUIObservers ( )
 #endif
 #ifndef SLICESCONTROL_DEBUG
     this->GetSlicesControlGUI ( )->RemoveGUIObservers ( );
-#endif
-#ifndef MODULECHOOSE_DEBUG    
-    this->GetModuleChooseGUI ( )->RemoveGUIObservers ( );
 #endif
 #ifndef LOGODISPLAY_DEBUG
     this->GetLogoDisplayGUI ( )->RemoveGUIObservers ( );
@@ -561,7 +538,7 @@ void vtkSlicerApplicationGUI::Exit ( )
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::SelectModule ( const char *moduleName )
 {
-  this->ModuleChooseGUI->SelectModule(moduleName);
+  this->GetApplicationToolbar()->GetModuleChooseGUI()->SelectModule(moduleName);
 }
 
 //---------------------------------------------------------------------------
@@ -621,13 +598,6 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
             appTB->BuildGUI ( );
 #endif
 
-            // Build Module Selection GUI Panel
-#ifndef MODULECHOOSE_DEBUG
-            vtkSlicerModuleChooseGUI * mcGUI = this->GetModuleChooseGUI ( );
-            mcGUI->SetApplicationGUI ( this );
-            mcGUI->SetApplication ( app );
-            mcGUI->BuildGUI ( this->ModuleChooseFrame );
-#endif
             // Build SlicesControl panel
 #ifndef SLICESCONTROL_DEBUG            
             vtkSlicerSlicesControlGUI *scGUI = this->GetSlicesControlGUI ( );
@@ -732,13 +702,12 @@ void vtkSlicerApplicationGUI::SetCurrentModuleToHome (  )
 {
   if ( this->GetApplication() != NULL )
       {
-      if ( this->GetModuleChooseGUI() )
+      if ( this->GetApplicationToolbar()->GetModuleChooseGUI() )
         {
-        if ( this->GetModuleChooseGUI()->GetModuleNavigator() )
+        if ( this->GetApplicationToolbar()->GetModuleChooseGUI()->GetModuleNavigator() )
           {
           vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-//          const char *name = this->GetModuleChooseGUI()->GetModuleNavigator()->SetHomeModule ( );
-          const char *name = this->GetModuleChooseGUI()->GetModuleNavigator()->GetCurrentModuleName ( );
+          const char *name = this->GetApplicationToolbar()->GetModuleChooseGUI()->GetModuleNavigator()->GetCurrentModuleName ( );
           //--- save to registry.
           app->SetHomeModule ( name );
           this->GetMainSlicerWindow()->GetApplicationSettingsInterface()->Update();
@@ -1523,7 +1492,7 @@ void vtkSlicerApplicationGUI::SetAndObserveMainSliceLogic ( vtkSlicerSliceLogic 
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::PopulateModuleChooseList ( )
 {
-  this->ModuleChooseGUI->Populate();
+  this->GetApplicationToolbar()->GetModuleChooseGUI()->Populate();
 }
 
 
@@ -1562,10 +1531,6 @@ void vtkSlicerApplicationGUI::BuildGUIFrames ( )
             this->LogoFrame->Create( );
             this->LogoFrame->SetHeight ( layout->GetDefaultTopFrameHeight ( ) );            
             
-            this->ModuleChooseFrame->SetParent ( this->TopFrame );
-            this->ModuleChooseFrame->Create( );
-//            this->ModuleChooseFrame->SetHeight ( layout->GetDefaultModuleChooseFrameHeight ( ) );
-            
             this->DropShadowFrame->SetParent ( this->MainSlicerWindow->GetMainPanelFrame() );
             this->DropShadowFrame->Create ( );
             // why is the theme not setting this???
@@ -1586,7 +1551,6 @@ void vtkSlicerApplicationGUI::BuildGUIFrames ( )
 
             app->Script ( "pack %s -side top -fill x -padx 1 -pady 1", this->TopFrame->GetWidgetName() );
             app->Script ( "pack %s -side left -padx 1 -pady 1", this->LogoFrame->GetWidgetName() );
-            app->Script ( "pack %s -side left -fill x -padx 1 -pady 1", this->ModuleChooseFrame->GetWidgetName() );
             app->Script ( "pack %s -side bottom -expand n -fill x -padx 1 -ipady 1 -pady 0", this->DropShadowFrame->GetWidgetName() );
             app->Script ( "pack %s -side bottom -expand n -fill x -padx 0 -ipady 5 -pady 2", this->ViewControlFrame->GetWidgetName() );
             app->Script ( "pack %s -side bottom -expand n -fill x -padx 0 -ipady 5 -pady 1", this->SlicesControlFrame->GetWidgetName() );

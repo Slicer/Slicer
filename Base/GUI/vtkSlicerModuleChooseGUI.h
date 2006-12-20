@@ -17,6 +17,7 @@ class vtkKWLabel;
 class vtkKWMenuButton;
 class vtkKWFrame;
 class vtkKWEntry;
+class vtkKWToolbar;
 
 // Description:
 // This class implements Slicer's Module Selection GUI panel
@@ -61,6 +62,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleChooseGUI : public vtkSlicerComp
     // Raise module's panel and add to navigation history.
     void SelectModule ( const char *moduleName );
 
+    // Description:
+    // This method builds the Data module's GUI
+    virtual void BuildGUI ( vtkKWToolbar *tb ) ;
+    
     // Description:
     // This method builds the Data module's GUI
     virtual void BuildGUI ( vtkKWFrame *appF ) ;
