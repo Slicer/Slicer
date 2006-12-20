@@ -54,27 +54,32 @@ void vtkSlicerModuleNavigationIcons::AssignImageDataToIcons ( )
     this->ModuleRefreshIcon->SetImage( image_ModuleRefresh,
                                     image_ModuleRefresh_width,
                                     image_ModuleRefresh_height,
-                                    image_ModuleRefresh_pixel_size, 0, 0);
+                                    image_ModuleRefresh_pixel_size,
+                                       image_ModuleRefresh_length, 0);
 
     this->ModuleHistoryIcon->SetImage( image_ModuleHistory,
                                     image_ModuleHistory_width,
                                     image_ModuleHistory_height,
-                                    image_ModuleHistory_pixel_size, 0, 0);
+                                    image_ModuleHistory_pixel_size,
+                                       image_ModuleHistory_length, 0);
     
     this->ModulePrevIcon->SetImage( image_ModulePrev,
                                     image_ModulePrev_width,
                                     image_ModulePrev_height,
-                                    image_ModulePrev_pixel_size, 0 , 0);
+                                    image_ModulePrev_pixel_size,
+                                    image_ModulePrev_length, 0);
     
     this->ModuleNextIcon->SetImage( image_ModuleNext,
                                        image_ModuleNext_width,
                                        image_ModuleNext_height,
-                                       image_ModuleNext_pixel_size, 0, 0);
+                                       image_ModuleNext_pixel_size,
+                                    image_ModuleNext_length, 0);
 
     this->ModuleSearchIcon->SetImage( image_ModuleSearch,
                                        image_ModuleSearch_width,
                                        image_ModuleSearch_height,
-                                       image_ModuleSearch_pixel_size, 0, 0);
+                                       image_ModuleSearch_pixel_size,
+                                      image_ModuleSearch_length, 0);
 }
 
 
