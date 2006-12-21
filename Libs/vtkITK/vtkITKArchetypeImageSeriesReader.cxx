@@ -1,33 +1,16 @@
-/*=auto=========================================================================
+/*=========================================================================
 
-  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
+  Copyright Brigham and Women's Hospital (BWH) All Rights Reserved.
 
   See Doc/copyright/copyright.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
 
-  Program:   3D Slicer
-  Module:    $RCSfile: vtkITKArchetypeImageSeriesReader.cxx,v $
-  Date:      $Date: 2006/02/08 17:40:22 $
-  Version:   $Revision: 1.13 $
+  Program:   vtkITK
+  Module:    $HeadURL$
+  Date:      $Date$
+  Version:   $Revision$
 
-=========================================================================auto=*/
-/*=========================================================================
-
-  Program:   Visualization Toolkit
-  Module:    $RCSfile: vtkITKArchetypeImageSeriesReader.cxx,v $
-  Language:  C++
-  Date:      $Date: 2006/02/08 17:40:22 $
-  Version:   $Revision: 1.13 $
-
-  Copyright (c) 1993-2002 Ken Martin, Will Schroeder, Bill Lorensen
-  All rights reserved.
-  See Copyright.txt or http://www.kitware.com/Copyright.htm for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
+==========================================================================*/
 #include "vtkITKArchetypeImageSeriesReader.h"
 
 #include "vtkImageData.h"
@@ -76,7 +59,7 @@
 #include "itkAnalyzeImageIO.h"
 #include <itksys/SystemTools.hxx>
 
-vtkCxxRevisionMacro(vtkITKArchetypeImageSeriesReader, "$Revision: 1.13 $");
+vtkCxxRevisionMacro(vtkITKArchetypeImageSeriesReader, "$Revision$");
 vtkStandardNewMacro(vtkITKArchetypeImageSeriesReader);
 
 //----------------------------------------------------------------------------

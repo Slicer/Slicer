@@ -1,16 +1,17 @@
-/*=auto=========================================================================
+/*=========================================================================
 
-  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
+  Copyright Brigham and Women's Hospital (BWH) All Rights Reserved.
 
   See Doc/copyright/copyright.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
 
-  Program:   3D Slicer
-  Module:    $RCSfile: vtkITKImageWriter.h,v $
-  Date:      $Date: 2006/03/03 15:12:41 $
-  Version:   $Revision: 1.4 $
+  Program:   vtkITK
+  Module:    $HeadURL$
+  Date:      $Date$
+  Version:   $Revision$
 
-=========================================================================auto=*/
+==========================================================================*/
+
 // .NAME vtkITKImageToImageFilter - Abstract base class for connecting ITK and VTK
 // .SECTION Description
 // vtkITKImageToImageFilter provides a 

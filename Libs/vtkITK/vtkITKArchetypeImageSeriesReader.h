@@ -1,29 +1,17 @@
-/*=auto=========================================================================
+/*=========================================================================
 
-  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
+  Copyright Brigham and Women's Hospital (BWH) All Rights Reserved.
 
   See Doc/copyright/copyright.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
 
-  Program:   3D Slicer
-  Module:    $RCSfile: vtkITKArchetypeImageSeriesReader.h,v $
-  Date:      $Date: 2006/02/08 17:40:22 $
-  Version:   $Revision: 1.10 $
+  Program:   vtkITK
+  Module:    $HeadURL$
+  Date:      $Date$
+  Version:   $Revision$
 
-=========================================================================auto=*/
-/*=========================================================================
+==========================================================================*/
 
-  Program:   Visualization Toolkit
-  Module:    $RCSfile: vtkITKArchetypeImageSeriesReader.h,v $
-
-  Copyright (c) 2002 Insight Consortium. All rights reserved.
-  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
-     PURPOSE.  See the above copyright notices for more information.
-
-=========================================================================*/
 // .NAME vtkITKArchetypeImageSeriesReader - Read a series of files
 // that have a common naming convention
 // .SECTION Description
