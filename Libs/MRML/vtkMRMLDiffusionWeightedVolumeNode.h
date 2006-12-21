@@ -26,7 +26,6 @@
 
 
 #include "vtkMRMLVolumeNode.h"
-#include "vtkMRMLDiffusionWeightedVolumeDisplayNode.h"
 
 class vtkImageData;
 class vtkDoubleArray;
@@ -66,13 +65,13 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionWeightedVolumeNode : public vtkMRMLVolumeN
   double *GetGradients(int val);
   void GetGradients(int val, double g[3]);  
   vtkGetObjectMacro(Gradients,vtkDoubleArray);
-  
+
   // Description:
   void SetBValues (int val, const double b);
   void SetBValues (vtkDoubleArray *bValue);
   double GetBValues(int val);
   vtkGetObjectMacro(BValues,vtkDoubleArray);
-  
+
   // Description: Set/Get measurement frame that relates the coordinate system where the
   // tensor measurements are given with the RAS coordinate system
   void SetMeasurementFrame(const double mf[3][3]);
@@ -83,10 +82,6 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionWeightedVolumeNode : public vtkMRMLVolumeN
   void GetMeasurementFrame(double mf[3][3]);
   //void GetMeasurementFrame(vtkMatrix4x4 *mat);
 
-  // Description:
-  // String ID of the display MRML node
-  void SetAndObserveDisplayNodeID(const char *DisplayNodeID);
-  vtkGetStringMacro(DisplayNodeID); 
 
 protected:
   vtkMRMLDiffusionWeightedVolumeNode();
@@ -100,8 +95,6 @@ protected:
   vtkDoubleArray *BValues;
   
   int NumberOfGradients;
-  
-  vtkMRMLDiffusionWeightedVolumeDisplayNode *DiffusionWeightedVolumeDisplayNode;
 
 };
 

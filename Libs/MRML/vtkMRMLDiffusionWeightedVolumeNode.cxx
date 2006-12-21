@@ -322,17 +322,6 @@ double vtkMRMLDiffusionWeightedVolumeNode::GetBValues(int num)
     }
 }
 
-//----------------------------------------------------------------------------
-void vtkMRMLDiffusionWeightedVolumeNode::SetAndObserveDisplayNodeID(const char *displayNodeID)
-{
-  vtkSetAndObserveMRMLObjectMacro(this->DiffusionWeightedVolumeDisplayNode, NULL);
-
-  this->SetDisplayNodeID(displayNodeID);
-
-  vtkMRMLDiffusionWeightedVolumeDisplayNode *dnode = vtkMRMLDiffusionWeightedVolumeDisplayNode::SafeDownCast( this->GetDisplayNode());
-
-  vtkSetAndObserveMRMLObjectMacro(this->DiffusionWeightedVolumeDisplayNode, dnode);
-}
 
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
