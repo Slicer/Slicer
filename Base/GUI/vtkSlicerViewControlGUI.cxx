@@ -612,10 +612,14 @@ void vtkSlicerViewControlGUI::PopUpSliceOpacityScaleAndEntry ( )
 void vtkSlicerViewControlGUI::BuildVisibilityMenu ( )
 {
   this->VisibilityButton->GetMenu()->DeleteAllItems ( );
+  this->VisibilityButton->GetMenu()->AddCheckButton ("Fiducial points" );
   this->VisibilityButton->GetMenu()->AddCheckButton ("3D cube" );
   this->VisibilityButton->GetMenu()->AddCheckButton ("3D axes" );
   this->VisibilityButton->GetMenu()->AddCheckButton ("3D axis labels" );
   this->VisibilityButton->GetMenu()->AddCheckButton ("3D outlines around slices" );
+  this->VisibilityButton->GetMenu()->AddSeparator();
+  this->VisibilityButton->GetMenu()->AddCommand ( "close");
+  this->VisibilityButton->GetMenu()->SelectItem ("Fiducial points" );
   this->VisibilityButton->GetMenu()->SelectItem ("3D cube" );
   this->VisibilityButton->GetMenu()->SelectItem ("3D axes" );
   this->VisibilityButton->GetMenu()->SelectItem ("3D axis labels" );
@@ -631,6 +635,9 @@ void vtkSlicerViewControlGUI::BuildStereoSelectMenu ( )
   this->StereoButton->GetMenu()->AddRadioButton ( "Red/Blue" );
   this->StereoButton->GetMenu()->AddRadioButton ( "CrystalEyes" );
   this->StereoButton->GetMenu()->AddRadioButton ( "Interlaced" );
+  this->StereoButton->GetMenu()->AddSeparator();
+  this->StereoButton->GetMenu()->AddCommand ( "close");
+  this->StereoButton->GetMenu()->SelectItem ( "No stereo");
 }
 
 
@@ -642,6 +649,9 @@ void vtkSlicerViewControlGUI::BuildViewSelectMenu ( )
   
   this->SelectButton->GetMenu( )->DeleteAllItems();
   this->SelectButton->GetMenu()->AddRadioButton ("Save current" );
+  this->SelectButton->GetMenu()->AddSeparator();
+  this->SelectButton->GetMenu()->AddSeparator();
+  this->SelectButton->GetMenu()->AddCommand ( "close" );
   // save current option will save current view under a
   // standard name like "View0...ViewN"; user can rename
   // this view elsewhere, in the ViewModule.
@@ -1149,7 +1159,7 @@ void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
       // TODO: why did i have to padx by 4 to get the grid to line up?
       // this works on  win32; will it break on other platforms?
       this->Script ("grid %s -row 0 -column 0 -sticky w -padx 4 -pady 0 -ipadx 0 -ipady 0", this->RotateAroundButton->GetWidgetName ( ));
-      this->Script ("grid %s -row 1 -column 0 -sticky w -padx 2 -pady 0 -ipadx 0 -ipady 0", this->LookFromButton->GetWidgetName ( ));
+      this->Script ("grid %s -row 1 -column 0 -sticky w -padx 4 -pady 0 -ipadx 0 -ipady 0", this->LookFromButton->GetWidgetName ( ));
       this->Script ("grid %s -row 0 -column 1 -sticky w -padx 1 -pady 0 -ipadx 0 -ipady 0", this->OrthoButton->GetWidgetName ( ));
       this->Script ("grid %s -row 1 -column 1 -sticky w -padx 1 -pady 0 -ipadx 0 -ipady 0", this->StereoButton->GetWidgetName ( ));
       this->Script ("grid %s -row 0 -column 2 -sticky w -padx 1 -pady 0 -ipadx 0 -ipady 0", this->SliceOpacityButton->GetWidgetName ( ));      
