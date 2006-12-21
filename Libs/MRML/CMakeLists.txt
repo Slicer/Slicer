@@ -43,6 +43,7 @@ SET(MRML_SRCS
         vtkMRMLDiffusionWeightedVolumeNode.cxx
         vtkMRMLDiffusionTensorVolumeNode.cxx
         vtkMRMLDiffusionTensorVolumeDisplayNode.cxx
+        vtkMRMLVectorVolumeDisplayNode.cxx
         # Note: when you add new node types, add
         # register code to the vtkMRMLScene constructor
 )
