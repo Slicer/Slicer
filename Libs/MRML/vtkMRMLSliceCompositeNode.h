@@ -107,6 +107,11 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
   vtkSetMacro (LabelGrid, int );
 
   // Description:
+  // toggles fiducial visibility in the slice viewer
+  vtkGetMacro (FiducialVisibility, int );
+  vtkSetMacro (FiducialVisibility, int );
+
+  // Description:
   // configures the annotations
   vtkGetMacro ( AnnotationSpace, int );
   vtkSetMacro ( AnnotationSpace, int );
@@ -172,6 +177,8 @@ protected:
   int ForegroundGrid;
   int BackgroundGrid;
   int LabelGrid;
+  
+  int FiducialVisibility;
   
   int AnnotationSpace;
   int AnnotationMode;
