@@ -5,13 +5,12 @@
 static const unsigned int  image_ModuleHistory_width          = 21;
 static const unsigned int  image_ModuleHistory_height         = 21;
 static const unsigned int  image_ModuleHistory_pixel_size     = 3;
-static const unsigned long image_ModuleHistory_length         = 168;
+static const unsigned long image_ModuleHistory_length         = 128;
 static const unsigned long image_ModuleHistory_decoded_length = 1323;
 
 static const unsigned char image_ModuleHistory[] = 
-  "eNpjYKAU/CcXUFF7GiFA0HZjY+Md27ZhoqCgICIdb2RkFBsbO3f2bAgCst3d3UnyO9ANEB"
-  "OApIO9PRlBB3GDq6sr2SEPNIGeEQcE8kQABQUFSrQDAS7tGRkZaUQAXNrTiAO4tM8kAsya"
-  "NYtG2s8QB2ikfUCKC0oAACQwWR8=";
+  "eNpjYKAU/CcXDCrt8kQABQUFSrQDAS7tGRkZaUQAXNrTiAO4tM8kAsyaNYtG2s8QB2ik/T"
+  "lxgEbaB22WMTKyBCJgmoEwyLDdyMgIGO+urq5kOx5oAtX9TgkAAGdVer0=";
 
 /* 
  * Resource generated for file:
