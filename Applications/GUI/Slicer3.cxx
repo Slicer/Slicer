@@ -795,6 +795,10 @@ int Slicer3_main(int argc, char *argv[])
       vtkEMSegmentLogic::New ( );
 
     emSegmentLogic->SetAndObserveMRMLScene(scene);
+    vtkIntArray *emsEvents = vtkIntArray::New();
+    emsEvents->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
+    emsEvents->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
+    emSegmentLogic->SetAndObserveMRMLSceneEvents(scene, emsEvents);
     emSegmentLogic->SetApplicationLogic(appLogic);
 
     emSegmentGUI->SetAndObserveMRMLScene (scene);
