@@ -443,6 +443,24 @@ void vtkSlicerModuleChooseGUI::BuildGUI ( vtkKWToolbar *tb )
   //--- Populate the Slice Control Frame
   if ( tb != NULL )
     {
+      //--- ALL modules menu button label
+      this->ModulesLabel->SetParent ( tb->GetFrame() );
+      this->ModulesLabel->Create ( );
+      this->ModulesLabel->SetText ( "   Modules:");
+      this->ModulesLabel->SetAnchorToWest ( );
+      this->ModulesLabel->SetWidth ( 9 );
+      this->ModulesLabel->SetFont ( "-Adobe-Helvetica-Bold-R-Normal-*-10-*-*-*-*-*-*-*" );
+      tb->AddWidget ( this->ModulesLabel );
+
+      //--- All modules menu button
+      this->ModulesMenuButton->SetParent ( tb->GetFrame() );
+      this->ModulesMenuButton->Create ( );
+      this->ModulesMenuButton->SetWidth ( 24 );
+      this->ModulesMenuButton->IndicatorVisibilityOn ( );
+      this->ModulesMenuButton->SetBalloonHelpString ("Select a Slicer module.");
+      this->ModulesMenuButton->SetFont ( "-Adobe-Helvetica-Bold-R-Normal-*-10-*-*-*-*-*-*-*" );
+      tb->AddWidget ( this->ModulesMenuButton );
+      
       this->ModulesPrev->SetParent ( tb->GetFrame() );
       this->ModulesPrev->Create ( );
       this->ModulesPrev->SetReliefToFlat();
@@ -462,24 +480,6 @@ void vtkSlicerModuleChooseGUI::BuildGUI ( vtkKWToolbar *tb )
       this->ModulesNext->SetBalloonHelpString ("Go to next module.");
       tb->AddWidget ( this->ModulesNext );
 
-      //--- ALL modules menu button label
-      this->ModulesLabel->SetParent ( tb->GetFrame() );
-      this->ModulesLabel->Create ( );
-      this->ModulesLabel->SetText ( "Modules:");
-      this->ModulesLabel->SetAnchorToWest ( );
-      this->ModulesLabel->SetWidth ( 7 );
-      this->ModulesLabel->SetFont ( "-Adobe-Helvetica-Bold-R-Normal-*-10-*-*-*-*-*-*-*" );
-      tb->AddWidget ( this->ModulesLabel );
-
-      //--- All modules menu button
-      this->ModulesMenuButton->SetParent ( tb->GetFrame() );
-      this->ModulesMenuButton->Create ( );
-      this->ModulesMenuButton->SetWidth ( 24 );
-      this->ModulesMenuButton->IndicatorVisibilityOn ( );
-      this->ModulesMenuButton->SetBalloonHelpString ("Select a Slicer module.");
-      this->ModulesMenuButton->SetFont ( "-Adobe-Helvetica-Bold-R-Normal-*-10-*-*-*-*-*-*-*" );
-      tb->AddWidget ( this->ModulesMenuButton );
-      
       this->ModulesHistory->SetParent ( tb->GetFrame() );
       this->ModulesHistory->Create ( );
       this->ModulesHistory->SetReliefToFlat();
