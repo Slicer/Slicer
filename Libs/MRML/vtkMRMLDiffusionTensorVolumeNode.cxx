@@ -57,7 +57,6 @@ vtkMRMLDiffusionTensorVolumeNode::vtkMRMLDiffusionTensorVolumeNode()
   this->DiffusionWeightedNodeID = NULL;
   //Pair of ID-pointer for observing the corresponding Display node.
   this->DisplayNodeID = NULL;
-  this->DiffusionTensorVolumeDisplayNode = NULL;
   this->Order = 2; //Second order Tensor
 }
 
@@ -173,17 +172,6 @@ vtkMRMLDiffusionWeightedVolumeNode* vtkMRMLDiffusionTensorVolumeNode::GetDiffusi
 //  return node;
 //}
 
-//----------------------------------------------------------------------------
-void vtkMRMLDiffusionTensorVolumeNode::SetAndObserveDisplayNodeID(const char *displayNodeID)
-{
-  vtkSetAndObserveMRMLObjectMacro(this->DiffusionTensorVolumeDisplayNode, NULL);
-
-  this->SetDisplayNodeID(displayNodeID);
-
-  vtkMRMLDiffusionTensorVolumeDisplayNode *dnode = vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast( this->GetDisplayNode());
-
-  vtkSetAndObserveMRMLObjectMacro(this->DiffusionTensorVolumeDisplayNode, dnode);
-}
 
 //-----------------------------------------------------------
 //void vtkMRMLDiffusionTensorVolumeNode::UpdateScene(vtkMRMLScene *scene)
@@ -196,15 +184,29 @@ void vtkMRMLDiffusionTensorVolumeNode::SetAndObserveDisplayNodeID(const char *di
 //    }
 //}
 
+//----------------------------------------------------------------------------
+void vtkMRMLDiffusionTensorVolumeNode::UpdateReferenceID(const char *oldID, const char *newID)
+{
+  if (this->BaselineNodeID && !strcmp(oldID, this->BaselineNodeID))
+    {
+    this->SetBaselineNodeID(newID);
+    }
+  if (this->MaskNodeID && !strcmp(oldID, this->MaskNodeID))
+    {
+    this->SetMaskNodeID(newID);
+    }
+  if (this->DiffusionWeightedNodeID && !strcmp(oldID, this->DiffusionWeightedNodeID))
+    {
+    this->SetDiffusionWeightedNodeID(newID);
+    }
+  Superclass::UpdateReferenceID(oldID,newID);
+}
+
 //-----------------------------------------------------------
 void vtkMRMLDiffusionTensorVolumeNode::UpdateReferences()
 {
   Superclass::UpdateReferences();
 
-  if (this->DisplayNodeID != NULL && this->Scene->GetNodeByID(this->DisplayNodeID) == NULL)
-    {
-    this->SetAndObserveDisplayNodeID(NULL);
-    }
 if (this->BaselineNodeID != NULL && this->Scene->GetNodeByID(this->BaselineNodeID) == NULL)
     {
     this->SetBaselineNodeID(NULL);
@@ -225,17 +227,6 @@ void vtkMRMLDiffusionTensorVolumeNode::ProcessMRMLEvents ( vtkObject *caller,
                                            void *callData )
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
-
-// I don't know how to deal with this.
-// Should we create a new event when DWI are modified, so the tensor can be updated?.
-
-  vtkMRMLDiffusionTensorVolumeDisplayNode *dnode = vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(this->GetDisplayNode());
-  if (dnode != NULL && dnode == vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(caller) &&
-      event ==  vtkCommand::ModifiedEvent)
-    {
-    this->InvokeEvent(vtkCommand::ModifiedEvent, NULL);
-    }
-  return;
 }
 
 //----------------------------------------------------------------------------
