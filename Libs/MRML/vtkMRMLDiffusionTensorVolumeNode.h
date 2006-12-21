@@ -27,7 +27,6 @@
 
 #include "vtkMRMLTensorVolumeNode.h"
 #include "vtkMRMLDiffusionWeightedVolumeNode.h"
-#include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
 
 class vtkDoubleArray;
 
@@ -70,11 +69,6 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeNode : public vtkMRMLTensorVol
   // String ID of the display MRML node
   vtkSetReferenceStringMacro(DiffusionWeightedNodeID);
   vtkGetStringMacro(DiffusionWeightedNodeID);
-  
-  // Description:
-  // String ID of the display MRML node
-  void SetAndObserveDisplayNodeID(const char *DisplayNodeID);
-  vtkGetStringMacro(DisplayNodeID); 
 
   // Description:
   // Associated volume MRML node
@@ -91,6 +85,10 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeNode : public vtkMRMLTensorVol
   // Description:
   // Associated volume MRML node
   //vtkMRMLDiffusionTensorVolumeDisplayNode* GetDisplayNode();
+
+  // Description:
+  // Update the stored reference to another node in the scene
+  virtual void UpdateReferenceID(const char *oldID, const char *newID);
 
    // Description:
   // Finds the storage node and read the data
@@ -128,9 +126,7 @@ protected:
   char *BaselineNodeID;
   char *MaskNodeID;
   char *DiffusionWeightedNodeID;
-  char *DisplayNodeID;
-  
-  vtkMRMLDiffusionTensorVolumeDisplayNode *DiffusionTensorVolumeDisplayNode;
+
 };
 
 #endif
