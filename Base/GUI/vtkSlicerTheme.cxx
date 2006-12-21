@@ -87,8 +87,6 @@ void vtkSlicerTheme::Install ( )
                     this->SlicerColors->LightGrey );
     odb->AddEntryAsDouble3 ( "vtkKWScrollbar", "SetTroughColor", this->SlicerColors->LightGrey );
 
-    
-
     // Slicer Frames
     odb->AddEntryAsDouble3 ( "vtkKWFrame", "SetBackgroundColor",
                     this->SlicerColors->GUIBgColor );
@@ -102,24 +100,17 @@ void vtkSlicerTheme::Install ( )
     odb->AddEntryAsInt ( "vtkKWFrame", "SetHighlightThickness", 0 );
     odb->AddEntry ( "vtkKWFrame", "SetRelief", "flat" );
     
-    odb->AddEntryAsInt ( "vtkKWSeparator", "SetBorderWidth", 2 );
-    
-
-    
     // Slicer Frames inside Scrolled windows
     odb->AddEntryAsDouble3 ( "vtkKWFrameWithScrollbar:Frame", "SetBackgroundColor",
                     this->SlicerColors->GUIBgColor );
     odb->AddEntryAsInt ( "vtkKWFrameWithScrollbar:Frame", "SetBorderWidth", 0 );
     odb->AddEntryAsInt ( "vtkKWFrameWithScrollbar:Frame", "SetHighlightThickness", 0 );
     odb->AddEntry ( "vtkKWFrameWithScrollbar:Frame", "SetRelief", "sunken" );
-
     
-
-    // Slicer Frames inside ApplicationGUI
+    // Slicer subtle decoration Frames inside ApplicationGUI
     odb->AddEntryAsDouble3 ( "vtkSlicerApplicationGUI:DropShadowFrame", "SetBackgroundColor",
                     this->SlicerColors->LightestGreyBlue );
 
-    
     // Module stacked, collapsing frames 
     odb->AddEntryAsDouble3 ( "vtkSlicerModuleCollapsibleFrame:LabelFrame", "SetBackgroundColor",
                              this->SlicerColors->MediumCoolStone );    
@@ -129,7 +120,11 @@ void vtkSlicerTheme::Install ( )
                              this->SlicerColors->MediumCoolStone );
     odb->AddEntryAsDouble3 ( "vtkSlicerModuleCollapsibleFrame:Icon", "SetBackgroundColor",
                              this->SlicerColors->MediumCoolStone );
-    
+
+    // Slicer vtkKWSeparators
+    odb->AddEntryAsDouble3 ( "vtkKWSeparator", "SetBackgroundColor",
+                             this->SlicerColors->GUIBgColor );
+    odb->AddEntryAsInt ( "vtkKWSeparator", "SetBorderWidth", 2 );
 
     // Slicer Notebooks
     odb->AddEntryAsDouble3 ( "vtkKWNotebook", "SetBackgroundColor", this->SlicerColors->GUIBgColor );
@@ -173,9 +168,6 @@ void vtkSlicerTheme::Install ( )
 
 
     
-    // Slicer vtkKWSeparators
-    odb->AddEntryAsDouble3 ( "vtkKWSeparator", "SetBackgroundColor",
-                             this->SlicerColors->GUIBgColor );
 
 
     // Slicer MultiColumnLists

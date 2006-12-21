@@ -16,6 +16,7 @@
 #include "vtkKWFrameWithLabel.h"
 #include "vtkKWMenuButton.h"
 #include "vtkKWRadioButton.h"
+#include "vtkKWSeparator.h"
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerToolbarGUI );
