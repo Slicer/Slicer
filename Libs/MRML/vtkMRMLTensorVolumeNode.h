@@ -57,6 +57,17 @@ class VTK_MRML_EXPORT vtkMRMLTensorVolumeNode : public vtkMRMLVolumeNode
   virtual const char* GetNodeTagName() {return "TensorVolume";};
 
   // Description:
+  // Updates this node if it depends on other nodes 
+  // when the node is deleted in the scene
+  virtual void UpdateReferences()
+    { Superclass::UpdateReferences(); };
+
+ // Description:
+ // Update the stored reference to another node in the scene
+  virtual void UpdateReferenceID(const char *oldID, const char *newID) 
+    { Superclass::UpdateReferenceID(oldID, newID); };
+
+  // Description:
   vtkGetMacro(Order,int);
   vtkSetMacro(Order,int);
   
