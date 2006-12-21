@@ -30,7 +30,7 @@ int main( int argc, char *argv[] )
   const     unsigned int    Dimension = 3;
   typedef itk::OrientedImage< InternalPixelType, Dimension >  InternalImageType;
 
-  typedef unsigned char OutputPixelType;
+  typedef unsigned short OutputPixelType;
   typedef itk::OrientedImage< OutputPixelType, Dimension > OutputImageType;
 
   typedef itk::CastImageFilter< InternalImageType, OutputImageType >

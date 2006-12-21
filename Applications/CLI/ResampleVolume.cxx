@@ -44,7 +44,7 @@
 
 #include "itkVersion.h"
 
-#include "itkPluginFilterWatcher.h"
+#include "itkPluginUtilities.h"
 #include "itkOrientedImage.h"
 #include "itkMinimumMaximumImageFilter.h"
 
@@ -59,13 +59,13 @@
 #include <string>
 #include "ResampleVolumeCLP.h"
 
-int main( int argc, char* argv[] )
+template<class T> int DoIt( int argc, char * argv[], T )
 {
   PARSE_ARGS;
   const unsigned int InputDimension = 3;
   const unsigned int OutputDimension = 3;
 
-  typedef signed short PixelType;
+  typedef T PixelType;
 
   typedef itk::OrientedImage< PixelType, InputDimension >
     InputImageType;
@@ -85,7 +85,7 @@ int main( int argc, char* argv[] )
 ////////////////////////////////////////////////  
 // 1) Read the input series
 
-  ReaderType::Pointer reader = ReaderType::New();
+  typename ReaderType::Pointer reader = ReaderType::New();
   reader->SetFileName( InputVolume.c_str() );
 
   try
@@ -101,9 +101,9 @@ int main( int argc, char* argv[] )
 
 ////////////////////////////////////////////////  
 // 2) Resample the series
-  InterpolatorType::Pointer interpolator = InterpolatorType::New();
+  typename InterpolatorType::Pointer interpolator = InterpolatorType::New();
 
-  TransformType::Pointer transform = TransformType::New();
+  typename TransformType::Pointer transform = TransformType::New();
   transform->SetIdentity();
 
   const InputImageType::SpacingType& inputSpacing =
@@ -135,7 +135,7 @@ int main( int argc, char* argv[] )
   outputSize[1] = static_cast<SizeValueType>(inputSize[1] * inputSpacing[1] / outputSpacing[1] + .5);
   outputSize[2] = static_cast<SizeValueType>(inputSize[2] * inputSpacing[2] / outputSpacing[2] + .5);
 
-  ResampleFilterType::Pointer resampler = ResampleFilterType::New();
+  typename ResampleFilterType::Pointer resampler = ResampleFilterType::New();
   itk::PluginFilterWatcher watcher(resampler, "Resample Volume",
     CLPProcessInformation);
 
@@ -151,7 +151,7 @@ int main( int argc, char* argv[] )
 ////////////////////////////////////////////////  
 // 5) Write the new DICOM series
 
-  FileWriterType::Pointer seriesWriter = FileWriterType::New();
+  typename FileWriterType::Pointer seriesWriter = FileWriterType::New();
     seriesWriter->SetInput( resampler->GetOutput() );
     seriesWriter->SetFileName( OutputVolume.c_str() );
   try
@@ -167,3 +167,63 @@ int main( int argc, char* argv[] )
   return EXIT_SUCCESS;
 }
 
+int main( int argc, char * argv[] )
+{
+  
+  PARSE_ARGS;
+
+  itk::ImageIOBase::IOPixelType pixelType;
+  itk::ImageIOBase::IOComponentType componentType;
+
+  try
+    {
+    itk::GetImageType (InputVolume, pixelType, componentType);
+
+    // This filter handles all types
+    
+    switch (componentType)
+      {
+      case itk::ImageIOBase::UCHAR:
+        return DoIt( argc, argv, static_cast<unsigned char>(0));
+        break;
+      case itk::ImageIOBase::CHAR:
+        return DoIt( argc, argv, static_cast<char>(0));
+        break;
+      case itk::ImageIOBase::USHORT:
+        return DoIt( argc, argv, static_cast<unsigned short>(0));
+        break;
+      case itk::ImageIOBase::SHORT:
+        return DoIt( argc, argv, static_cast<short>(0));
+        break;
+      case itk::ImageIOBase::UINT:
+        return DoIt( argc, argv, static_cast<unsigned int>(0));
+        break;
+      case itk::ImageIOBase::INT:
+        return DoIt( argc, argv, static_cast<int>(0));
+        break;
+      case itk::ImageIOBase::ULONG:
+        return DoIt( argc, argv, static_cast<unsigned long>(0));
+        break;
+      case itk::ImageIOBase::LONG:
+        return DoIt( argc, argv, static_cast<long>(0));
+        break;
+      case itk::ImageIOBase::FLOAT:
+        return DoIt( argc, argv, static_cast<float>(0));
+        break;
+      case itk::ImageIOBase::DOUBLE:
+        return DoIt( argc, argv, static_cast<double>(0));
+        break;
+      case itk::ImageIOBase::UNKNOWNCOMPONENTTYPE:
+      default:
+        std::cout << "unknown component type" << std::endl;
+        break;
+      }
+    }
+  catch( itk::ExceptionObject &excep)
+    {
+    std::cerr << argv[0] << ": exception caught !" << std::endl;
+    std::cerr << excep << std::endl;
+    return EXIT_FAILURE;
+    }
+  return EXIT_SUCCESS;
+}
