@@ -64,6 +64,11 @@ public:
   vtkSetMacro(AxisLabelsVisible, int);
 
   // Description:
+  // Toggles visibility of fiducial points in 3D viewer
+  vtkGetMacro (FiducialsVisible, int );
+  vtkSetMacro (FiducialsVisible, int);
+
+  // Description:
   // Field of view size
   vtkGetMacro(FieldOfView, double);
   vtkSetMacro(FieldOfView, double);
@@ -164,6 +169,7 @@ protected:
   void operator=(const vtkMRMLViewNode&);
 
 
+  int FiducialsVisible;
   int BoxVisible;
   int AxisLabelsVisible;
   double FieldOfView;
