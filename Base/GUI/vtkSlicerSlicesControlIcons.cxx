@@ -29,6 +29,9 @@ vtkSlicerSlicesControlIcons::vtkSlicerSlicesControlIcons ( )
   this->SetBgIcon = vtkKWIcon::New ( );
   this->SetLbIcon = vtkKWIcon::New ( );
   this->SetOrIcon = vtkKWIcon::New ( );
+  this->FitToWindowIcon = vtkKWIcon::New ( );
+  this->FeaturesVisibleIcon = vtkKWIcon::New ( );
+  this->WinLevThreshColIcon = vtkKWIcon::New ( );
 
     //--- read in image data and assign to Icons.
     this->AssignImageDataToIcons ( );
@@ -120,7 +123,22 @@ vtkSlicerSlicesControlIcons::~vtkSlicerSlicesControlIcons ( )
     {
     this->SetOrIcon->Delete ( );
     this->SetOrIcon = NULL;
-    }  
+    }
+  if (this->FitToWindowIcon )
+    {
+    this->FitToWindowIcon->Delete ( );
+    this->FitToWindowIcon = NULL;
+    }
+  if ( this->WinLevThreshColIcon )
+    {
+    this->WinLevThreshColIcon->Delete ( );
+    this->WinLevThreshColIcon = NULL;
+    }
+  if ( this->FeaturesVisibleIcon )
+    {
+    this->FeaturesVisibleIcon->Delete ( );
+    this->FeaturesVisibleIcon = NULL;
+    }
 
 }
 
@@ -209,7 +227,23 @@ void vtkSlicerSlicesControlIcons::AssignImageDataToIcons ( ) {
                              image_SliceOR_width,
                              image_SliceOR_height,
                              image_SliceOR_pixel_size,
-                             image_SliceOR_length, 0 );    
+                             image_SliceOR_length, 0 );
+    this->FitToWindowIcon->SetImage ( image_SlicesFitToWindow,
+                                      image_SlicesFitToWindow_width,
+                                      image_SlicesFitToWindow_height,
+                                      image_SlicesFitToWindow_pixel_size,
+                                      image_SlicesFitToWindow_length, 0 );
+    this->FeaturesVisibleIcon->SetImage ( image_SlicesFeaturesVisible,
+                                      image_SlicesFeaturesVisible_width,
+                                      image_SlicesFeaturesVisible_height,
+                                      image_SlicesFeaturesVisible_pixel_size,
+                                      image_SlicesFeaturesVisible_length, 0 );
+    this->WinLevThreshColIcon->SetImage ( image_SlicesWinLevThreshCol,
+                                      image_SlicesWinLevThreshCol_width,
+                                      image_SlicesWinLevThreshCol_height,
+                                      image_SlicesWinLevThreshCol_pixel_size,
+                                      image_SlicesWinLevThreshCol_length, 0 );
+
 }
 
 
@@ -232,8 +266,11 @@ void vtkSlicerSlicesControlIcons::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "SpatialUnitsIcon: " << this->GetSpatialUnitsIcon() << "\n";
     os << indent << "CrossHairIcon: " << this->GetCrossHairIcon() << "\n";
     os << indent << "GridHairIcon: " << this->GetGridIcon() << "\n";
-     os << indent << "SetFgIcon: " << this->GetSetFgIcon() << "\n";
+    os << indent << "SetFgIcon: " << this->GetSetFgIcon() << "\n";
     os << indent << "SetBgIcon: " << this->GetSetBgIcon() << "\n";
     os << indent << "SetLbIcon: " << this->GetSetLbIcon() << "\n";
     os << indent << "SetOrIcon: " << this->GetSetOrIcon() << "\n";
+    os << indent << "FitToWindowIcon: " << this->GetFitToWindowIcon() << "\n";
+    os << indent << "FeaturesVisibleIcon: " << this->GetFeaturesVisibleIcon() << "\n";
+    os << indent << "WinLevThreshColIcon: " << this->GetWinLevThreshColIcon() << "\n";
 }

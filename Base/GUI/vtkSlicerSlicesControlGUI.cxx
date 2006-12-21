@@ -34,8 +34,9 @@ vtkSlicerSlicesControlGUI::vtkSlicerSlicesControlGUI ( )
   this->ShowBgButton = vtkKWPushButton::New ( );
   this->ToggleFgBgButton = vtkKWPushButton::New ( );
   this->LabelOpacityButton = vtkKWPushButton::New ( );
-  this->LinkControlsButton = vtkKWPushButton::New ( );
-  this->GridButton = vtkKWMenuButton::New  ( );
+//  this->GridButton = vtkKWMenuButton::New  ( );
+  this->FeaturesVisibleButton = vtkKWMenuButton::New ( );
+  this->FitToWindowButton = vtkKWPushButton::New ( );
   this->CrossHairButton = vtkKWMenuButton::New ( );
   this->SpatialUnitsButton = vtkKWMenuButton::New ( );
   this->AnnotationButton = vtkKWMenuButton::New ( );
@@ -83,18 +84,27 @@ vtkSlicerSlicesControlGUI::~vtkSlicerSlicesControlGUI ( )
     this->LabelOpacityButton->Delete ( );
     this->LabelOpacityButton = NULL;    
     }
-  if ( this->LinkControlsButton )
-    {
-    this->LinkControlsButton->SetParent ( NULL );
-    this->LinkControlsButton->Delete ( );
-    this->LinkControlsButton = NULL;
-    }
+/*
   if ( this->GridButton )
     {
     this->GridButton->SetParent ( NULL );
     this->GridButton->Delete ( );
     this->GridButton = NULL;    
     }
+*/
+  if ( this->FitToWindowButton )
+    {
+    this->FitToWindowButton->SetParent ( NULL);
+    this->FitToWindowButton->Delete ( );
+    this->FitToWindowButton = NULL;
+    }
+  if ( this->FeaturesVisibleButton )
+    {
+    this->FeaturesVisibleButton->SetParent ( NULL );
+    this->FeaturesVisibleButton->Delete ( );
+    this->FeaturesVisibleButton = NULL;
+    }
+  
   if ( this->CrossHairButton )
     {
     this->CrossHairButton->SetParent ( NULL );
@@ -145,13 +155,15 @@ void vtkSlicerSlicesControlGUI::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "LabelOpacityButton: " << this->GetLabelOpacityButton ( ) << "\n";
     os << indent << "LabelOpacityScale: " << this->GetLabelOpacityScale ( ) << "\n";
     os << indent << "LabelOpacityTopLevel: " << this->GetLabelOpacityTopLevel ( ) << "\n";
-    os << indent << "LinkControlsButton: " << this->GetLinkControlsButton ( ) << "\n";
-    os << indent << "GridButton: " << this->GetGridButton ( ) << "\n";
+//    os << indent << "GridButton: " << this->GetGridButton ( ) << "\n";
     os << indent << "AnnotationButton: " << this->GetAnnotationButton ( ) << "\n";
     os << indent << "SpatialUnitsButton: " << this->GetSpatialUnitsButton ( ) << "\n";
     os << indent << "CrossHairButton: " << this->GetCrossHairButton ( ) << "\n";
+    os << indent << "FitToWindowButton: " << this->GetFitToWindowButton ( ) << "\n";
+    os << indent << "FeaturesVisibleButton: " << this->GetFeaturesVisibleButton ( ) << "\n";
     os << indent << "SlicesControlIcons: " << this->GetSlicesControlIcons ( ) << "\n";
     os << indent << "ApplicationGUI: " << this->GetApplicationGUI ( ) << "\n";
+
 }
 
 
@@ -167,12 +179,12 @@ void vtkSlicerSlicesControlGUI::RemoveGUIObservers ( )
   this->ShowFgButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->ShowBgButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->LabelOpacityButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->LinkControlsButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->GridButton->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+//  this->GridButton->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->AnnotationButton->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->SpatialUnitsButton->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->CrossHairButton->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    
+  this->FeaturesVisibleButton->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
+  this->FitToWindowButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );    
 }
 
 
@@ -189,11 +201,12 @@ void vtkSlicerSlicesControlGUI::AddGUIObservers ( )
   this->ShowFgButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->ShowBgButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->LabelOpacityButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->LinkControlsButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->GridButton->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+//  this->GridButton->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->AnnotationButton->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->SpatialUnitsButton->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->CrossHairButton->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->FeaturesVisibleButton->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
+  this->FitToWindowButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );    
 
 }
 
@@ -222,7 +235,6 @@ void vtkSlicerSlicesControlGUI::ProcessGUIEvents ( vtkObject *caller,
           // -- adjust the Opacity of every composite node on every event
           if ( scale == this->SliceFadeScale && event == vtkKWScale::ScaleValueStartChangingEvent ||
                pushb == this->ToggleFgBgButton && event == vtkKWPushButton::InvokedEvent ||
-               pushb == this->LinkControlsButton && event == vtkKWPushButton::InvokedEvent ||
                pushb == this->ShowFgButton && event == vtkKWPushButton::InvokedEvent ||
                pushb == this->ShowBgButton && event == vtkKWPushButton::InvokedEvent )
             {
@@ -267,9 +279,19 @@ void vtkSlicerSlicesControlGUI::ProcessGUIEvents ( vtkObject *caller,
           // -- adjust the Opacity of every composite node on every event
           if ( scale == this->LabelOpacityScale->GetScale() && event == vtkKWScale::ScaleValueStartChangingEvent )
             {
+              int i, nnodes = p->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
+              vtkMRMLSliceCompositeNode *cnode;
               if (p->GetMRMLScene()) 
                 {
-                  p->GetMRMLScene()->SaveStateForUndo();
+                for (i = 0; i < nnodes; i++)
+                  {
+                  cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
+                                                                   p->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
+                  if ( cnode )
+                    {
+                    p->GetMRMLScene()->SaveStateForUndo( cnode );
+                    }
+                  }
                 }
             }
 
@@ -290,56 +312,49 @@ void vtkSlicerSlicesControlGUI::ProcessGUIEvents ( vtkObject *caller,
             {
             this->PopUpLabelOpacityScaleAndEntry();
             }
+
           //
           // PushButtons:
           //
-          // link control
 /*
-          if ( pushb == this->LinkControlsButton && event == vtkKWPushButton::InvokedEvent )
-            {
-            // Toggle the control link on all slices
-              int i, nnodes = p->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
-              int link = 1;
-              vtkMRMLSliceCompositeNode *cnode;
-              for (i = 0; i < nnodes; i++)
-                {
-                // find out whether any of the slice nodes is unlinked.
-                  cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
-                                                                   p->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
-                  if ( cnode->GetLinkedControl() == 0 )
-                    {
-                    // means that at least one slice viewer is unlinked ffrom the others.
-                    link = 0;
-                    }
-                }
-              for (i = 0; i < nnodes; i++)
-                {
-                // find out whether any of the slice nodes is unlinked.
-                cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
-                                                                 p->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
-                if ( link )
-                  {
-                  // unlink all and update the icon here.
-                  cnode->SetLinkedControl ( 0 );
-                  this->LinkControlsButton->SetImageToIcon (
-                                                                 this->GetSlicesControlIcons()->GetLinkControlsIcon() );
-                  }
-                else
-                  {
-                  // link all and update the icon here.
-                  this->LinkControlsButton->SetImageToIcon (
-                                                                 this->GetSlicesControlIcons()->GetUnlinkControlsIcon() );
-                  cnode->SetLinkedControl ( 1 );
-                  }
-                }
-            }
-*/
           // MenuButtons:
           if ( menu == this->GridButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
             {
-            // save state for undo and then modify MRML
+            int i, nnodes = p->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
+            vtkMRMLSliceCompositeNode *cnode;
+            if (p->GetMRMLScene()) 
+              {
+              int state;
+              const char *item;
+              for (i = 0; i < nnodes; i++)
+                {
+                cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
+                                                                 p->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
+                if ( cnode )
+                  {
+                  // save MRML state
+                  p->GetMRMLScene()->SaveStateForUndo( cnode );
+                  // find out what menu item was selected and its state
+                  item = this->GridButton->GetValue();
+                  state = this->GridButton->GetMenu()->GetItemSelectedState ( item );
+                  // update node based on menu selection
+                  if ( !strcmp (item, "Foreground grid" ))
+                    {
+                    cnode->SetForegroundGrid ( state );
+                    }
+                  else if ( !strcmp (item, "Background grid" ))
+                    {
+                    cnode->SetBackgroundGrid (state);
+                    }
+                  else if ( !strcmp (item, "Label grid" ))
+                    {
+                    cnode->SetLabelGrid (state);
+                    }
+                  }
+                }
+              }
             }
-
+*/
           if ( menu == this->AnnotationButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
             {
             // save state for undo and then modify MRML
@@ -372,7 +387,7 @@ void vtkSlicerSlicesControlGUI::ProcessMRMLEvents ( vtkObject *caller,
                                            unsigned long event, void *callData )
 {
 
-/*
+
   vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));
   if ( p )
     {
@@ -381,35 +396,23 @@ void vtkSlicerSlicesControlGUI::ProcessMRMLEvents ( vtkObject *caller,
       {
       vtkMRMLSliceCompositeNode *cnode;
       int i, nnodes = p->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
-      int link = 1;
+      int state;
+      const char *label;
       for (i = 0; i < nnodes; i++)
         {
-        // find out whether any of the slice nodes is unlinked.
+        // update gui to match mrml state
         cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
                                                          p->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
-        // if any are unlinked, then update the icon to show that
-        // there's no link among all.
-        if ( cnode->GetLinkedControl() == 0 )
-          {
-          link = 0;
-          }
+        // grid button
+//        this->GridButton->GetMenu()->SetItemSelectedState ("Foreground grid", cnode->GetForegroundGrid() );
+//        this->GridButton->GetMenu()->SetItemSelectedState ("Background grid", cnode->GetBackgroundGrid() );
+//        this->GridButton->GetMenu()->SetItemSelectedState ("Label grid", cnode->GetLabelGrid() );
+        // annotation button
+        // crosshair button
+        // units button
         }
-      if ( link == 0 )
-        {
-        this->GetLinkControlsButton()->SetImageToIcon (
-                                                         this->GetSlicesControlIcons()->GetUnlinkControlsIcon() );
-        }
-        else
-          {
-          // if all are linked, then update the icon to
-          // show that there's a link among all slice controllers.
-          this->GetLinkControlsButton()->SetImageToIcon (
-                                                         this->GetSlicesControlIcons()->GetUnlinkControlsIcon() );
-          }
       }
     }
-*/
-
 }
 
   
@@ -443,6 +446,8 @@ void vtkSlicerSlicesControlGUI::BuildAnnotationMenu ( )
   this->AnnotationButton->GetMenu()->AddRadioButton ( "Show label values only" );
   this->AnnotationButton->GetMenu()->AddRadioButton ( "Show voxel and label values only" );
   this->AnnotationButton->GetMenu()->SelectItem ( "Show all" );
+  this->AnnotationButton->GetMenu()->AddSeparator ( );
+  this->AnnotationButton->GetMenu()->AddCommand ("close");
 }
 
 //---------------------------------------------------------------------------
@@ -457,9 +462,12 @@ void vtkSlicerSlicesControlGUI::BuildCrossHairMenu ( )
   this->CrossHairButton->GetMenu()->AddCheckButton ("Follow mouse" );
   this->CrossHairButton->GetMenu()->DeselectItem ( "Follow mouse" );
   this->CrossHairButton->GetMenu()->SelectItem ("No crosshair");
+  this->CrossHairButton->GetMenu()->AddSeparator ( );
+  this->CrossHairButton->GetMenu()->AddCommand ("close");
 }
 
 
+/*
 //---------------------------------------------------------------------------
 void vtkSlicerSlicesControlGUI::BuildGridMenu ( )
 {
@@ -468,6 +476,26 @@ void vtkSlicerSlicesControlGUI::BuildGridMenu ( )
   this->GridButton->GetMenu()->AddCheckButton ( "Background grid");
   this->GridButton->GetMenu()->AddCheckButton ( "Label grid");
 }
+*/
+
+//---------------------------------------------------------------------------
+void vtkSlicerSlicesControlGUI::BuildVisibilityMenu ( )
+{
+  this->FeaturesVisibleButton->GetMenu()->DeleteAllItems ( );
+  this->FeaturesVisibleButton->GetMenu()->AddCheckButton ( "Fiducial points");
+  this->FeaturesVisibleButton->GetMenu()->AddCheckButton ( "Foreground grid");
+  this->FeaturesVisibleButton->GetMenu()->AddCheckButton ( "Background grid");
+  this->FeaturesVisibleButton->GetMenu()->AddCheckButton ( "Label grid");
+  this->FeaturesVisibleButton->GetMenu()->AddSeparator ( );
+  this->FeaturesVisibleButton->GetMenu()->AddCommand ("close");
+
+  this->FeaturesVisibleButton->GetMenu()->SelectItem ("Fiducial points");
+  this->FeaturesVisibleButton->GetMenu()->SelectItem ("Foreground grid");
+  this->FeaturesVisibleButton->GetMenu()->DeselectItem ("Background grid");
+  this->FeaturesVisibleButton->GetMenu()->DeselectItem ("Label grid");
+
+}
+
 
 //---------------------------------------------------------------------------
 void vtkSlicerSlicesControlGUI::BuildSpacesMenu ( )
@@ -479,6 +507,8 @@ void vtkSlicerSlicesControlGUI::BuildSpacesMenu ( )
   this->SpatialUnitsButton->GetMenu()->AddRadioButton ( "ijk");  
   this->SpatialUnitsButton->GetMenu()->AddRadioButton ( "RAS");
   this->SpatialUnitsButton->GetMenu()->SelectItem ( "RAS" );
+  this->SpatialUnitsButton->GetMenu()->AddSeparator();
+  this->SpatialUnitsButton->GetMenu()->AddCommand ( "close");
 }
 
 
@@ -579,19 +609,20 @@ void vtkSlicerSlicesControlGUI::BuildGUI ( vtkKWFrame *appF )
       this->SliceFadeScale->ValueVisibilityOff ( );
       this->SliceFadeScale->SetBalloonHelpString ( "Scale fades between Foreground and Background Layers." );
 
-      this->LinkControlsButton->SetParent (appF);
-      this->LinkControlsButton->Create ( );
-      this->LinkControlsButton->SetBorderWidth ( 0 );
-      this->LinkControlsButton->SetImageToIcon ( this->SlicesControlIcons->GetLinkControlsIcon() );
-      this->LinkControlsButton->SetBalloonHelpString ( "Links/Unlinks the FG/BG/LB/OR controls across all Slice Viewers." );
+      this->FitToWindowButton->SetParent (appF);
+      this->FitToWindowButton->Create ( );
+      this->FitToWindowButton->SetBorderWidth ( 0 );
+      this->FitToWindowButton->SetImageToIcon ( this->SlicesControlIcons->GetFitToWindowIcon() );
+      this->FitToWindowButton->SetBalloonHelpString ( "Fits image data to the window in all Slice Viewers." );
 
+/*
       this->GridButton->SetParent (appF);
       this->GridButton->Create ( );
       this->GridButton->SetBorderWidth ( 0 );
       this->GridButton->SetImageToIcon ( this->SlicesControlIcons->GetGridIcon() );
       this->GridButton->IndicatorVisibilityOff ( );
       this->GridButton->SetBalloonHelpString ( "Toggle grid visiblity in each Slice Layer for all Slice Viewers." );
-
+*/
       this->AnnotationButton->SetParent (appF);
       this->AnnotationButton->Create ( );
       this->AnnotationButton->SetBorderWidth ( 0 );
@@ -612,6 +643,13 @@ void vtkSlicerSlicesControlGUI::BuildGUI ( vtkKWFrame *appF )
       this->CrossHairButton->SetImageToIcon ( this->SlicesControlIcons->GetCrossHairIcon() );
       this->CrossHairButton->IndicatorVisibilityOff ( );
       this->CrossHairButton->SetBalloonHelpString ( "Choose among crosshair options for all Slice Viewers." );
+
+      this->FeaturesVisibleButton->SetParent (appF);
+      this->FeaturesVisibleButton->Create ( );
+      this->FeaturesVisibleButton->SetBorderWidth ( 0 );
+      this->FeaturesVisibleButton->SetImageToIcon ( this->SlicesControlIcons->GetFeaturesVisibleIcon() );
+      this->FeaturesVisibleButton->IndicatorVisibilityOff ( );
+      this->FeaturesVisibleButton->SetBalloonHelpString ( "Toggle visibility of various Slice Viewer features." );
 
       //--- Popup Scale with Entry (displayed when user clicks LabelOpacityButton
       //--- LabelOpacityButton, LabelOpacityScale and its entry will be observed
@@ -648,12 +686,14 @@ void vtkSlicerSlicesControlGUI::BuildGUI ( vtkKWFrame *appF )
       this->LabelOpacityButton->SetBalloonHelpString ( "Popup scale to adjust opacity of Label Layer in all Slice Viewers." );
 
       //--- pack everything up from left to right.
+      this->Script ( "pack %s -side left -anchor w -padx 2 -pady 3 -expand n", this->FeaturesVisibleButton->GetWidgetName ( ) );
+//      this->Script ( "pack %s -side left -anchor w -padx 2 -pady 3 -expand n", this->GridButton->GetWidgetName ( ) );
+      this->Script ( "pack %s -side left -anchor w -padx 2 -pady 3 -expand n", this->FitToWindowButton->GetWidgetName ( ) );
       this->Script ( "pack %s -side left -anchor w -padx 2 -pady 3 -expand n", this->LabelOpacityButton->GetWidgetName ( ) );
-      this->Script ( "pack %s -side left -anchor w -padx 2 -pady 3 -expand n", this->GridButton->GetWidgetName ( ) );
       this->Script ( "pack %s -side left -anchor w -padx 2 -pady 3 -expand n", this->AnnotationButton->GetWidgetName ( ) );
-      this->Script ( "pack %s -side left -anchor w -padx 2 -pady 3 -expand n", this->SpatialUnitsButton->GetWidgetName ( ) );
       this->Script ( "pack %s -side left -anchor w -padx 2 -pady 3 -expand n", this->CrossHairButton->GetWidgetName ( ) );
-//      this->Script ( "pack %s -side left -anchor w -padx 2 -pady 3 -expand n", this->LinkControlsButton->GetWidgetName ( ) );
+      this->Script ( "pack %s -side left -anchor w -padx 2 -pady 3 -expand n", this->SpatialUnitsButton->GetWidgetName ( ) );
+
       this->Script ( "pack %s -side left -ipadx 35 -pady 1 -fill x -expand n", FgBgFrame->GetWidgetName ( ) );
       this->Script ( "pack %s -side right -anchor e -padx 0 -pady 3 -expand n", this->ShowFgButton->GetWidgetName ( ) );
       this->Script ( "pack %s -side right -anchor e -padx 0 -pady 3 -expand n", this->SliceFadeScale->GetWidgetName ( ) );
@@ -664,7 +704,8 @@ void vtkSlicerSlicesControlGUI::BuildGUI ( vtkKWFrame *appF )
       this->BuildAnnotationMenu ( );
       this->BuildCrossHairMenu ( );
       this->BuildSpacesMenu ( );
-      this->BuildGridMenu ();
+//      this->BuildGridMenu ();
+      this->BuildVisibilityMenu ();
       PopUpFrame->Delete ( );
       FgBgFrame->Delete ( );
       }

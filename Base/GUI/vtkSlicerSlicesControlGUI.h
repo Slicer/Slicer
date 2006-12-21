@@ -39,11 +39,12 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesControlGUI : public vtkSlicerCom
     vtkGetObjectMacro ( LabelOpacityButton, vtkKWPushButton );
     vtkGetObjectMacro ( LabelOpacityScale, vtkKWScaleWithEntry );
     vtkGetObjectMacro ( LabelOpacityTopLevel, vtkKWTopLevel );
-    vtkGetObjectMacro ( LinkControlsButton, vtkKWPushButton );
-    vtkGetObjectMacro ( GridButton, vtkKWMenuButton );
+//    vtkGetObjectMacro ( GridButton, vtkKWMenuButton );
     vtkGetObjectMacro ( AnnotationButton, vtkKWMenuButton );
     vtkGetObjectMacro ( SpatialUnitsButton, vtkKWMenuButton );
     vtkGetObjectMacro ( CrossHairButton, vtkKWMenuButton );
+    vtkGetObjectMacro (FeaturesVisibleButton, vtkKWMenuButton );
+    vtkGetObjectMacro (FitToWindowButton, vtkKWPushButton );
     vtkGetObjectMacro ( SlicesControlIcons, vtkSlicerSlicesControlIcons );
     
     // Description:
@@ -77,7 +78,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesControlGUI : public vtkSlicerCom
     virtual void BuildAnnotationMenu ( );
     virtual void BuildCrossHairMenu ( );
     virtual void BuildSpacesMenu ( );
-    virtual void BuildGridMenu ( );
+//    virtual void BuildGridMenu ( );
+    virtual void BuildVisibilityMenu ( );
     
  protected:
     vtkSlicerSlicesControlGUI ( );
@@ -94,12 +96,12 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesControlGUI : public vtkSlicerCom
     vtkKWPushButton *LabelOpacityButton;
     vtkKWScaleWithEntry *LabelOpacityScale;
     vtkKWTopLevel *LabelOpacityTopLevel;
-    vtkKWPushButton *LinkControlsButton;
-    vtkKWMenuButton *GridButton;
+//    vtkKWMenuButton *GridButton;
     vtkKWMenuButton *AnnotationButton;
     vtkKWMenuButton *SpatialUnitsButton;
     vtkKWMenuButton *CrossHairButton;
-    
+    vtkKWMenuButton *FeaturesVisibleButton;
+    vtkKWPushButton *FitToWindowButton;
     
  private:
     vtkSlicerSlicesControlGUI ( const vtkSlicerSlicesControlGUI& ); // Not implemented.

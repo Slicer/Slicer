@@ -6,6 +6,7 @@
 #include "vtkKWScaleWithEntry.h"
 #include "vtkKWEntryWithLabel.h"
 #include "vtkKWMenuButtonWithSpinButtonsWithLabel.h"
+#include "vtkKWMenuButton.h"
 #include "vtkKWPushButton.h"
 #include "vtkKWFrame.h"
 #include "vtkKWTopLevel.h"
@@ -43,7 +44,10 @@ public:
   vtkGetObjectMacro ( ScaleFrame, vtkKWFrame );
   vtkGetObjectMacro ( LabelOpacityButton, vtkKWPushButton );
   vtkGetObjectMacro ( LabelOpacityScale, vtkKWScaleWithEntry );
-  vtkGetObjectMacro ( LabelOpacityTopLevel, vtkKWTopLevel );  
+  vtkGetObjectMacro ( LabelOpacityTopLevel, vtkKWTopLevel );
+  vtkGetObjectMacro ( FitToWindowButton, vtkKWPushButton );
+  vtkGetObjectMacro ( VolumeDisplayMenuButton, vtkKWMenuButton );
+
 
   void RemoveWidgetObservers ( );
   void AddWidgetObservers ( );
@@ -138,6 +142,8 @@ protected:
   vtkSlicerSlicesControlIcons *SliceControlIcons;
   vtkKWFrame *ScaleFrame;
   vtkKWPushButton *ColorCodeButton;
+  vtkKWPushButton *FitToWindowButton;
+  vtkKWMenuButton *VolumeDisplayMenuButton;
 
   //
   // Nodes
