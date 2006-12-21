@@ -106,18 +106,18 @@ template<class T> int DoIt( int argc, char * argv[], T )
   typename TransformType::Pointer transform = TransformType::New();
   transform->SetIdentity();
 
-  const InputImageType::SpacingType& inputSpacing =
+  const typename InputImageType::SpacingType& inputSpacing =
     reader->GetOutput()->GetSpacing();
-  const InputImageType::RegionType& inputRegion =
+  const typename InputImageType::RegionType& inputRegion =
     reader->GetOutput()->GetLargestPossibleRegion();
-  const InputImageType::SizeType& inputSize =
+  const typename InputImageType::SizeType& inputSize =
     inputRegion.GetSize();
 
   // Compute the size of the output. The user specifies a spacing on
   // the command line. If the spacing is 0, the input spacing will be
   // used. The size (# of pixels) in the output is recomputed using
   // the ratio of the input and output sizes.
-  InputImageType::SpacingType outputSpacing;
+  typename InputImageType::SpacingType outputSpacing;
   outputSpacing[0] = outputPixelSpacing[0];
   outputSpacing[1] = outputPixelSpacing[1];
   outputSpacing[2] = outputPixelSpacing[2];
@@ -129,8 +129,8 @@ template<class T> int DoIt( int argc, char * argv[], T )
       outputSpacing[i] = inputSpacing[i];
       }
     }
-  InputImageType::SizeType   outputSize;
-  typedef InputImageType::SizeType::SizeValueType SizeValueType;
+  typename InputImageType::SizeType   outputSize;
+  typedef typename InputImageType::SizeType::SizeValueType SizeValueType;
   outputSize[0] = static_cast<SizeValueType>(inputSize[0] * inputSpacing[0] / outputSpacing[0] + .5);
   outputSize[1] = static_cast<SizeValueType>(inputSize[1] * inputSpacing[1] / outputSpacing[1] + .5);
   outputSize[2] = static_cast<SizeValueType>(inputSize[2] * inputSpacing[2] / outputSpacing[2] + .5);
