@@ -1,19 +1,16 @@
 /*=========================================================================
 
-  Program:   Insight Segmentation & Registration Toolkit
-  Module:    $RCSfile: itkCommandIOFactory.cxx,v $
-  Language:  C++
-  Date:      $Date: 2004/07/15 16:26:40 $
-  Version:   $Revision: 1.1 $
+  Copyright Brigham and Women's Hospital (BWH) All Rights Reserved.
 
-  Copyright (c) Insight Software Consortium. All rights reserved.
-  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
+  See Doc/copyright/copyright.txt
+  or http://www.slicer.org/copyright/copyright.txt for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
-     PURPOSE.  See the above copyright notices for more information.
+  Program:   ITKCommandIO
+  Module:    $HeadURL$
+  Date:      $Date$
+  Version:   $Revision$
 
-=========================================================================*/
+==========================================================================*/
 #include "itkCommandIOFactory.h"
 #include "itkCreateObjectFunction.h"
 #include "itkCommandIO.h"
