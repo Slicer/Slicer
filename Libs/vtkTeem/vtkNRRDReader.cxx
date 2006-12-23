@@ -866,8 +866,6 @@ tenSpaceDirectionReduce(Nrrd *nout, const Nrrd *nin, double SD[9]) {
   double SDT[9], tenMeasr[9], tenSlice[9];
   float *tdata;
   size_t ii, nn;
-  unsigned int si, sj;
-  double det;
   
   if (!(nout && nin)) {
     sprintf(err, "%s: got NULL pointer", me);
