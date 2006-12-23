@@ -6,8 +6,9 @@ IF( TEEM_FOUND )
   SUBDIRS(
       vtkTeem
   )
-ELSE( TEEM_FOUND )
-  SUBDIRS(
+ENDIF( TEEM_FOUND )
+
+SUBDIRS(
       vtkITK
       FreeSurfer
       MRML
@@ -18,6 +19,6 @@ ELSE( TEEM_FOUND )
       ITKCommandIO
       MRMLIDImageIO
       MGHImageIO
-  )
+)
 
-ENDIF( TEEM_FOUND )
+
