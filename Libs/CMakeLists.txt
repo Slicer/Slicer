@@ -6,17 +6,18 @@ IF( TEEM_FOUND )
   SUBDIRS(
       vtkTeem
   )
-SUBDIRS(
-    vtkITK
-    FreeSurfer
-    MRML
-    tclap
-    ModuleDescriptionParser
-    GenerateCLP
-    SlicerIO
-    ITKCommandIO
-    MRMLIDImageIO
-    MGHImageIO
-)
+ELSE( TEEM_FOUND )
+  SUBDIRS(
+      vtkITK
+      FreeSurfer
+      MRML
+      tclap
+      ModuleDescriptionParser
+      GenerateCLP
+      SlicerIO
+      ITKCommandIO
+      MRMLIDImageIO
+      MGHImageIO
+  )
 
 ENDIF( TEEM_FOUND )
