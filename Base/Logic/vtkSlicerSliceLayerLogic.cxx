@@ -214,7 +214,7 @@ void vtkSlicerSliceLayerLogic::UpdateTransforms()
     this->SliceNode->GetDimensions(dimensions);
     }
 
-  if (this->VolumeNode)
+  if (this->VolumeNode && this->VolumeNode->GetImageData())
     {
 
     // Apply the transform, if it exists
