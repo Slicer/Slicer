@@ -65,6 +65,10 @@ class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
   vtkGetStringMacro (ActiveLabelVolumeID);
   vtkSetReferenceStringMacro (ActiveLabelVolumeID);
 
+  // Description:
+  // the ID of a MRMLFiducialList
+  vtkGetStringMacro (ActiveFiducialListID);
+  vtkSetReferenceStringMacro (ActiveFiducialListID);
 
 protected:
   vtkMRMLSelectionNode();
@@ -74,6 +78,7 @@ protected:
 
   char *ActiveVolumeID;
   char *ActiveLabelVolumeID;
+  char *ActiveFiducialListID;
 
 };
 

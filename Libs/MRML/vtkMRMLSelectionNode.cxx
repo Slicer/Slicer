@@ -54,6 +54,7 @@ vtkMRMLSelectionNode::vtkMRMLSelectionNode()
 {
   this->ActiveVolumeID = NULL;
   this->ActiveLabelVolumeID = NULL;
+  this->ActiveFiducialListID = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -69,6 +70,11 @@ vtkMRMLSelectionNode::~vtkMRMLSelectionNode()
     delete [] this->ActiveLabelVolumeID;
     this->ActiveLabelVolumeID = NULL;
     }
+  if (this->ActiveFiducialListID)
+    {
+    delete [] this->ActiveFiducialListID;
+    this->ActiveFiducialListID = NULL;
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -80,7 +86,7 @@ void vtkMRMLSelectionNode::WriteXML(ostream& of, int nIndent)
 
   of << indent << "activeVolumeID=\"" << (this->ActiveVolumeID ? this->ActiveVolumeID : "NULL") << "\" ";
   of << indent << "activeLabelVolumeID=\"" << (this->ActiveLabelVolumeID ? this->ActiveLabelVolumeID : "NULL") << "\" ";
-
+  of << indent << "activeFiducialListID=\"" << (this->ActiveFiducialListID ? this->ActiveFiducialListID : "NULL") << "\" ";
 }
 
 //----------------------------------------------------------------------------
@@ -93,6 +99,10 @@ void vtkMRMLSelectionNode::UpdateReferenceID(const char *oldID, const char *newI
   if (this->ActiveLabelVolumeID && !strcmp(oldID, this->ActiveLabelVolumeID))
     {
     this->SetActiveLabelVolumeID(newID);
+    }
+  if (this->ActiveFiducialListID && !strcmp(oldID, this->ActiveFiducialListID))
+    {
+    this->SetActiveFiducialListID(newID);
     }
 }
 
@@ -118,6 +128,11 @@ void vtkMRMLSelectionNode::ReadXMLAttributes(const char** atts)
       this->SetActiveLabelVolumeID(attValue);
       this->Scene->AddReferencedNodeID(this->ActiveLabelVolumeID, this);
       }
+    if (!strcmp(attName, "activeFiducialListID")) 
+      {
+      this->SetActiveFiducialListID(attValue);
+      this->Scene->AddReferencedNodeID(this->ActiveFiducialListID, this);
+      }
     }
 }
 
@@ -131,6 +146,7 @@ void vtkMRMLSelectionNode::Copy(vtkMRMLNode *anode)
 
   this->SetActiveVolumeID(node->GetActiveVolumeID());
   this->SetActiveLabelVolumeID(node->GetActiveLabelVolumeID());
+  this->SetActiveFiducialListID(node->GetActiveFiducialListID());
 }
 
 //----------------------------------------------------------------------------
@@ -140,6 +156,8 @@ void vtkMRMLSelectionNode::PrintSelf(ostream& os, vtkIndent indent)
 
   os << "ActiveVolumeID: " << ( (this->ActiveVolumeID) ? this->ActiveVolumeID : "None" ) << "\n";
   os << "ActiveLabelVolumeID: " << ( (this->ActiveLabelVolumeID) ? this->ActiveLabelVolumeID : "None" ) << "\n";
+  os << "ActiveFiducialListID: " << ( (this->ActiveFiducialListID) ? this->ActiveFiducialListID : "None" ) << "\n";
+
 }
 
 
