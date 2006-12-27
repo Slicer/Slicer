@@ -42,6 +42,9 @@
 #include "vtkGradientAnisotropicDiffusionFilterLogic.h"
 #include "vtkGradientAnisotropicDiffusionFilterGUI.h"
 
+//#include "vtkSlicerTractographyDisplayLogic.h"
+#include "vtkSlicerTractographyDisplayGUI.h"
+
 #include "vtkQueryAtlasLogic.h"
 #include "vtkQueryAtlasGUI.h"
 
@@ -107,6 +110,7 @@ extern "C" int Freesurfer_Init(Tcl_Interp *interp);
 extern "C" int Emsegment_Init(Tcl_Interp *interp);
 #endif
 extern "C" int Gradientanisotropicdiffusionfilter_Init(Tcl_Interp *interp);
+extern "C" int Slicertractographydisplay_Init(Tcl_Interp *interp);
 extern "C" int Queryatlas_Init(Tcl_Interp *interp);
 extern "C" int Slicerdaemon_Init(Tcl_Interp *interp);
 extern "C" int Commandlinemodule_Init(Tcl_Interp *interp);
@@ -413,6 +417,7 @@ int Slicer3_main(int argc, char *argv[])
     Emsegment_Init(interp);
 #endif
     Gradientanisotropicdiffusionfilter_Init(interp);
+    Slicertractographydisplay_Init(interp);
     Queryatlas_Init(interp);
     Slicerdaemon_Init(interp);
     Commandlinemodule_Init(interp);
@@ -784,6 +789,27 @@ int Slicer3_main(int argc, char *argv[])
     slicerApp->AddModuleGUI ( gradientAnisotropicDiffusionFilterGUI );
     gradientAnisotropicDiffusionFilterGUI->BuildGUI ( );
     gradientAnisotropicDiffusionFilterGUI->AddGUIObservers ( );
+
+
+    // --- Tractography Display module
+    slicerApp->GetSplashScreen()->SetProgressMessage(
+      "Initializing Tractography Display Module...");
+    vtkSlicerTractographyDisplayGUI *slicerTractographyDisplayGUI = vtkSlicerTractographyDisplayGUI::New ( );
+    //vtkSlicerTractographyDisplayLogic *slicerTractographyDisplayLogic  = vtkSlicerTractographyDisplayLogic::New ( );
+    //slicerTractographyDisplayLogic->SetAndObserveMRMLScene ( scene );
+    //slicerTractographyDisplayLogic->SetApplicationLogic ( appLogic );
+    ////    slicerTractographyDisplayLogic->SetMRMLScene(scene);
+    //slicerTractographyDisplayGUI->SetLogic ( slicerTractographyDisplayLogic );
+    slicerTractographyDisplayGUI->SetApplication ( slicerApp );
+    //slicerTractographyDisplayGUI->SetApplicationLogic ( appLogic );
+    slicerTractographyDisplayGUI->SetApplicationGUI ( appGUI );
+    slicerTractographyDisplayGUI->SetGUIName( "Tractography" );
+    slicerTractographyDisplayGUI->GetUIPanel()->SetName ( slicerTractographyDisplayGUI->GetGUIName ( ) );
+    slicerTractographyDisplayGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
+    slicerTractographyDisplayGUI->GetUIPanel()->Create ( );
+    slicerApp->AddModuleGUI ( slicerTractographyDisplayGUI );
+    slicerTractographyDisplayGUI->BuildGUI ( );
+    slicerTractographyDisplayGUI->AddGUIObservers ( );
 
 #ifndef EMSEG_DEBUG
     //
@@ -1173,6 +1199,9 @@ int Slicer3_main(int argc, char *argv[])
     // ------------------------------
     // REMOVE OBSERVERS and references to MRML and Logic
     gradientAnisotropicDiffusionFilterGUI->RemoveGUIObservers ( );
+
+    slicerTractographyDisplayGUI->RemoveGUIObservers ( );
+
 #ifndef EMSEG_DEBUG
     emSegmentGUI->RemoveGUIObservers();
 #endif
@@ -1258,6 +1287,9 @@ int Slicer3_main(int argc, char *argv[])
     //--- delete gui first, removing Refs to Logic and MRML
 
     gradientAnisotropicDiffusionFilterGUI->Delete ();
+
+    slicerTractographyDisplayGUI->Delete ();
+
 #ifndef EMSEG_DEBUG
     emSegmentGUI->Delete();
 #endif
@@ -1321,7 +1353,10 @@ int Slicer3_main(int argc, char *argv[])
 
     gradientAnisotropicDiffusionFilterLogic->SetAndObserveMRMLScene ( NULL );
     gradientAnisotropicDiffusionFilterLogic->Delete ();
-    
+
+    //slicerTractographyDisplayLogic->SetAndObserveMRMLScene ( NULL );
+    //slicerTractographyDisplayLogic->Delete ();
+        
 #ifndef QUERYATLAS_DEBUG
     queryAtlasLogic->SetAndObserveMRMLScene ( NULL );
     queryAtlasLogic->Delete ( );

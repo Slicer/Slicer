@@ -59,6 +59,10 @@ INCLUDE_DIRECTORIES(
   ${GradientAnisotropicDiffusionFilter_BINARY_DIR}
   ${GradientAnisotropicDiffusionFilter_Init_SOURCE_DIR}
   ${GradientAnisotropicDiffusionFilter_Init_BINARY_DIR}
+  ${SlicerTractographyDisplay_SOURCE_DIR}
+  ${SlicerTractographyDisplay_BINARY_DIR}
+  ${SlicerTractographyDisplay_Init_SOURCE_DIR}
+  ${SlicerTractographyDisplay_Init_BINARY_DIR}
 #  ${EMSegment_SOURCE_DIR}
 #  ${EMSegment_BINARY_DIR}
 #  ${EMSegment_Init_SOURCE_DIR}
@@ -100,6 +104,7 @@ TARGET_LINK_LIBRARIES( Slicer3${SLICER_EXE_SUFFIX}
     SlicerBaseGUI
     MRML
     GradientAnisotropicDiffusionFilter
+    SlicerTractographyDisplay
 #    EMSegment
     QueryAtlas
     CommandLineModule

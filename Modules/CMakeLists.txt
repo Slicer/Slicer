@@ -8,6 +8,7 @@ SUBDIRS(
   SlicerDaemon
   Editor
   QueryAtlas
+  Tractography
 )
 
 
