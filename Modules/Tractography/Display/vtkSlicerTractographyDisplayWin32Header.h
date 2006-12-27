@@ -23,12 +23,12 @@
 
 #if defined(WIN32) && !defined(VTKSLICER_STATIC)
 #if defined(SlicerTractographyDisplay_EXPORTS)
-#define VTK_GRADIENTANISOTROPICDIFFUSIONFILTER_EXPORT __declspec( dllexport ) 
+#define VTK_SLICERTRACTOGRAPHYDISPLAY_EXPORT __declspec( dllexport ) 
 #else
-#define VTK_GRADIENTANISOTROPICDIFFUSIONFILTER_EXPORT __declspec( dllimport ) 
+#define VTK_SLICERTRACTOGRAPHYDISPLAY_EXPORT __declspec( dllimport ) 
 #endif
 #else
-#define VTK_GRADIENTANISOTROPICDIFFUSIONFILTER_EXPORT 
+#define VTK_SLICERTRACTOGRAPHYDISPLAY_EXPORT 
 #endif
 
 #endif

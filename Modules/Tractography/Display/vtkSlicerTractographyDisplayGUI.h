@@ -6,7 +6,7 @@
 #ifndef __vtkSlicerTractographyDisplayGUI_h
 #define __vtkSlicerTractographyDisplayGUI_h
 
-#include "vtkSlicerBaseGUIWin32Header.h"
+#include "vtkSlicerTractographyDisplayWin32Header.h"
 #include "vtkSlicerModuleGUI.h"
 #include "vtkSlicerModuleLogic.h"
 //#include "vtkSlicerTractographyLogic.h"
@@ -22,7 +22,7 @@
 // This class implements Slicer's Tractography GUI
 //
 
-class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerTractographyDisplayGUI : public vtkSlicerModuleGUI
+class VTK_SLICERTRACTOGRAPHYDISPLAY_EXPORT vtkSlicerTractographyDisplayGUI : public vtkSlicerModuleGUI
 {
  public:
     // Description:
