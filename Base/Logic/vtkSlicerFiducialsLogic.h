@@ -42,12 +42,15 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerFiducialsLogic : public vtkSlicerLog
   // Description:
   // Create new mrml node and associated display node for a full list
 //  vtkMRMLFiducialListNode* AddFiducials();
-  // Create a new mrml node and associated display node for a new point on
-  // a list
-//  vtkMRMLFiducial *AddFiducial();
 
   // Description:
-  // Update logic state when MRML scene chenges
+  // Add a fiducial to the currently selected list, as kept in the
+  // vtkMRMLSelectionNode
+  // Returns the index of the new fiducial in the list, -1 on failure
+  int AddFiducial(float x, float y, float z);
+
+  // Description:
+  // Update logic state when MRML scene changes
   void ProcessMRMLEvents(); 
     
 protected:
