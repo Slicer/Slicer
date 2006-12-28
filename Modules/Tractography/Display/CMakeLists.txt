@@ -92,10 +92,6 @@ TARGET_LINK_LIBRARIES(SlicerTractographyDisplay
 # --------------------------------------------------------------------------
 # Testing (requires some of the examples)
 
-IF(BUILD_TESTING)
-  SUBDIRS(Testing)
-ENDIF(BUILD_TESTING)
-
 CONFIGURE_FILE(
   ${SlicerTractographyDisplay_SOURCE_DIR}/vtkSlicerTractographyDisplayConfigure.h.in 
   ${SlicerTractographyDisplay_BINARY_DIR}/vtkSlicerTractographyDisplayConfigure.h
