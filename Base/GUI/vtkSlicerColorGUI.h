@@ -23,12 +23,9 @@
 // Description:
 // This class implements Slicer's Color GUI
 //
-//class vtkSlicerColorDisplayWidget;
+class vtkSlicerColorDisplayWidget;
 class vtkKWPushButton;
 class vtkKWMessage;
-class vtkKWChangeColorButton;
-class vtkKWScaleWithEntry;
-
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerColorGUI : public vtkSlicerModuleGUI
 {
  public:
@@ -40,10 +37,14 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerColorGUI : public vtkSlicerModuleGUI
     
     // Description:
     // Get methods on class members ( no Set methods required. )
-//    vtkGetObjectMacro ( AddFiducialButton, vtkKWPushButton);
     vtkGetObjectMacro ( Logic, vtkSlicerColorLogic);
-    vtkGetObjectMacro ( ColorNodeTypeScale, vtkKWScale);
-    
+    vtkGetObjectMacro ( AddColorButton, vtkKWPushButton);
+
+    // Description:
+    // add a colour to a user defined table
+    vtkKWPushButton *AddColorButton;
+
+
     // Description:
     // API for setting ColorNode, Logic and
     // for both setting and observing them.
@@ -91,13 +92,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerColorGUI : public vtkSlicerModuleGUI
     vtkGetStringMacro(ColorNodeID);
     //vtkSetStringMacro(ColorlListNodeID);
     void SetColorNodeID(char *id);
-    
-    // Description:
-    // Which color node are we displaying in this gui?
-    vtkSlicerNodeSelectorWidget* ColorSelectorWidget;
-
-    // type of the colour node
-    vtkKWScale *ColorNodeTypeScale;
+   
     
     // Description:
     // Set the selected node, the color id, and update the widgets
@@ -112,6 +107,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerColorGUI : public vtkSlicerModuleGUI
         ColorIDModifiedEvent = 30000,
     };
     //ETX
+
+
  protected:
     vtkSlicerColorGUI ( );
     virtual ~vtkSlicerColorGUI ( );
@@ -129,7 +126,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerColorGUI : public vtkSlicerModuleGUI
     // The the color node that is currently displayed in the GUI
     vtkMRMLColorNode *ColorNode;
     
-    
+    // Description:
+    // the widget that displays the colour node
+    vtkSlicerColorDisplayWidget *ColorDisplayWidget;
+
 private:
     vtkSlicerColorGUI ( const vtkSlicerColorGUI& ); // Not implemented.
     void operator = ( const vtkSlicerColorGUI& ); //Not implemented.

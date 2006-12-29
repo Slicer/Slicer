@@ -70,6 +70,7 @@ SET(LIB_SRCS
   vtkSlicerViewerWidget.cxx
   vtkSlicerFiducialListWidget.cxx
   vtkSlicerModelDisplayWidget.cxx
+  vtkSlicerColorDisplayWidget.cxx
   vtkSlicerMRMLSaveDataWidget.cxx
   vtkSlicerClipModelsWidget.cxx
   # VTK Replacement classes
