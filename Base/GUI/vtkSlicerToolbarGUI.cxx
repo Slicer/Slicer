@@ -14,9 +14,9 @@
 #include "vtkKWWidget.h"
 #include "vtkKWToolbarSet.h"
 #include "vtkKWFrameWithLabel.h"
-#include "vtkKWMenuButton.h"
 #include "vtkKWRadioButton.h"
 #include "vtkKWSeparator.h"
+#include "vtkKWMenu.h"
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerToolbarGUI );
@@ -51,7 +51,7 @@ vtkSlicerToolbarGUI::vtkSlicerToolbarGUI ( )
   this->LoadSceneIconButton = vtkKWPushButton::New ( );
   this->ConventionalViewIconButton = vtkKWPushButton::New ( );
   this->OneUp3DViewIconButton = vtkKWPushButton::New ( );
-  this->OneUpSliceViewIconButton = vtkKWPushButton::New ( );
+  this->OneUpSliceViewIconButton = vtkKWMenuButton::New ( );
   this->FourUpViewIconButton = vtkKWPushButton::New ( );
   this->Tabbed3DViewIconButton = vtkKWPushButton::New ( );
   this->TabbedSliceViewIconButton = vtkKWPushButton::New ( );
@@ -318,7 +318,7 @@ void vtkSlicerToolbarGUI::RemoveGUIObservers ( )
     this->ColorIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ConventionalViewIconButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->OneUp3DViewIconButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->OneUpSliceViewIconButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->OneUpSliceViewIconButton->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->FourUpViewIconButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->Tabbed3DViewIconButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->TabbedSliceViewIconButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -349,7 +349,7 @@ void vtkSlicerToolbarGUI::AddGUIObservers ( )
     // view configuration icon button observers...
     this->ConventionalViewIconButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->OneUp3DViewIconButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->OneUpSliceViewIconButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->OneUpSliceViewIconButton->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->FourUpViewIconButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->Tabbed3DViewIconButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->TabbedSliceViewIconButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -382,6 +382,7 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
       {
       vtkKWRadioButton *radiob = vtkKWRadioButton::SafeDownCast ( caller );
       vtkKWPushButton *pushb = vtkKWPushButton::SafeDownCast ( caller );
+      vtkKWMenu *menu = vtkKWMenu::SafeDownCast ( caller );
   
       if ( mcGUI != NULL )
         {            
@@ -514,30 +515,44 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
           }
         }
           
+      if ( menu == this->OneUpSliceViewIconButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
+        {
+        const char *whichSlice = this->OneUpSliceViewIconButton->GetValue ( );
+        if ( !strcmp ( whichSlice, "Red slice" ))
+          {
+          p->RepackMainViewer ( vtkSlicerGUILayout::SlicerLayoutOneUpSliceView, "Red");
+          }
+        else if (!strcmp ( whichSlice, "Yellow slice" ))
+          {
+          p->RepackMainViewer ( vtkSlicerGUILayout::SlicerLayoutOneUpSliceView, "Yellow");
+          }
+        else if (!strcmp ( whichSlice, "Green slice" ))
+          {
+          p->RepackMainViewer ( vtkSlicerGUILayout::SlicerLayoutOneUpSliceView, "Green");
+          }
+        }
+
+
       if ( pushb == this->ConventionalViewIconButton && event == vtkKWPushButton::InvokedEvent )
         {
-        p->RepackMainViewer (vtkSlicerGUILayout::SlicerLayoutDefaultView );
+        p->RepackMainViewer (vtkSlicerGUILayout::SlicerLayoutDefaultView, NULL );
         }
       else if ( pushb == this->OneUp3DViewIconButton && event == vtkKWPushButton::InvokedEvent )
         {
-        p->RepackMainViewer ( vtkSlicerGUILayout::SlicerLayoutOneUp3DView);
-        }
-      else if ( pushb == this->OneUpSliceViewIconButton && event == vtkKWPushButton::InvokedEvent )
-        {
-        p->RepackMainViewer ( vtkSlicerGUILayout::SlicerLayoutOneUpSliceView );
+        p->RepackMainViewer ( vtkSlicerGUILayout::SlicerLayoutOneUp3DView, NULL);
         }
       else if ( pushb == this->FourUpViewIconButton && event == vtkKWPushButton::InvokedEvent )
         {
-        p->RepackMainViewer ( vtkSlicerGUILayout::SlicerLayoutFourUpView );
+        p->RepackMainViewer ( vtkSlicerGUILayout::SlicerLayoutFourUpView, NULL );
         }
       else if ( pushb == this->Tabbed3DViewIconButton && event == vtkKWPushButton::InvokedEvent )
         {
-        p->RepackMainViewer ( vtkSlicerGUILayout::SlicerLayoutTabbed3DView );
+        p->RepackMainViewer ( vtkSlicerGUILayout::SlicerLayoutTabbed3DView, NULL );
         }
       else if ( pushb == this->TabbedSliceViewIconButton && event == vtkKWPushButton::InvokedEvent )
         {
 //        TODO: finish implementing this
-//        p->RepackMainViewer ( vtkSlicerGUILayout::SlicerLayoutTabbedSliceView );
+//        p->RepackMainViewer ( vtkSlicerGUILayout::SlicerLayoutTabbedSliceView, NULL );
         }
       else if ( pushb == this->LightBoxViewIconButton && event == vtkKWPushButton::InvokedEvent )
         {
@@ -837,9 +852,15 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   this->OneUpSliceViewIconButton->Create ( );
   this->OneUpSliceViewIconButton->SetReliefToFlat ( );
   this->OneUpSliceViewIconButton->SetBorderWidth ( 0 );
-  this->OneUpSliceViewIconButton->SetOverReliefToNone ( );
+  this->OneUpSliceViewIconButton->IndicatorVisibilityOff ( );
   this->OneUpSliceViewIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetOneUpSliceViewIcon ( ) );
   this->OneUpSliceViewIconButton->SetBalloonHelpString ( "Display one slice window with no 3D viewer" );
+  this->OneUpSliceViewIconButton->GetMenu()->DeleteAllItems ( );
+  this->OneUpSliceViewIconButton->GetMenu()->AddRadioButton ( "Red slice" );
+  this->OneUpSliceViewIconButton->GetMenu()->AddRadioButton ( "Yellow slice" );
+  this->OneUpSliceViewIconButton->GetMenu()->AddRadioButton ( "Green slice" );
+  this->OneUpSliceViewIconButton->GetMenu()->AddSeparator ( );
+  this->OneUpSliceViewIconButton->GetMenu()->AddCommand ("close");  
   vtb->AddWidget (this->OneUpSliceViewIconButton );
 
   // 4 equal windows icon

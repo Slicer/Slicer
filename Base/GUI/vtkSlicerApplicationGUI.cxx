@@ -912,7 +912,7 @@ void vtkSlicerApplicationGUI::BuildMainViewer ( int arrangementType)
       this->LightboxFrame->Create ( );            
       this->CreateMainSliceViewers ( arrangementType );
       this->CreateMain3DViewer (arrangementType );
-      this->PackMainViewer ( arrangementType );
+      this->PackMainViewer ( arrangementType , NULL );
     }
 }
 
@@ -1027,7 +1027,7 @@ void vtkSlicerApplicationGUI::CreateMain3DViewer ( int arrangementType )
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::PackMainViewer ( int arrangmentType )
+void vtkSlicerApplicationGUI::PackMainViewer ( int arrangmentType, const char *whichSlice)
 {
   if ( this->GetApplication() != NULL )
     {
@@ -1049,7 +1049,7 @@ void vtkSlicerApplicationGUI::PackMainViewer ( int arrangmentType )
           this->PackOneUp3DView ( );
           break;
         case vtkSlicerGUILayout::SlicerLayoutOneUpSliceView:
-          this->PackOneUpSliceView ( );
+          this->PackOneUpSliceView ( whichSlice );
           break;
         case vtkSlicerGUILayout::SlicerLayoutTabbed3DView:
           this->PackTabbed3DView ( );
@@ -1066,13 +1066,16 @@ void vtkSlicerApplicationGUI::PackMainViewer ( int arrangmentType )
     }
 }
 
+
 //---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::RepackMainViewer ( int arrangementType)
+void vtkSlicerApplicationGUI::RepackMainViewer ( int arrangementType, const char *whichSlice )
 {
   this->UnpackMainSliceViewers ( );
   this->UnpackMain3DViewer ( );
-  this->PackMainViewer ( arrangementType );
+  this->PackMainViewer ( arrangementType, whichSlice );
 }
+
+
 
 
 //---------------------------------------------------------------------------
@@ -1202,7 +1205,7 @@ void vtkSlicerApplicationGUI::PackOneUp3DView ( )
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::PackOneUpSliceView ( )
+void vtkSlicerApplicationGUI::PackOneUpSliceView ( const char * whichSlice )
 {
   if ( this->GetApplication() != NULL )
     {
@@ -1214,11 +1217,26 @@ void vtkSlicerApplicationGUI::PackOneUpSliceView ( )
       this->MainSlicerWindow->SetMainPanelVisibility ( 1 );
       this->MainSlicerWindow->SetSecondaryPanelVisibility ( 0 );
       
-      this->MainSliceGUI0->PackGUI ( this->MainSlicerWindow->GetViewFrame ( ));
-      this->MainSliceGUI1->PackGUI ( NULL );
-      this->MainSliceGUI2->PackGUI ( NULL );
-//      this->ViewerWidget->PackWidget(this->MainSlicerWindow->GetViewFrame() );
+      if ( !strcmp (whichSlice, "Red" ) )
+        {
+        this->MainSliceGUI0->PackGUI ( this->MainSlicerWindow->GetViewFrame ( ));
+        this->MainSliceGUI1->PackGUI ( NULL );
+        this->MainSliceGUI2->PackGUI ( NULL );
+        }
+      else if ( !strcmp ( whichSlice, "Yellow" ) )
+        {
+        this->MainSliceGUI0->PackGUI ( NULL);
+        this->MainSliceGUI1->PackGUI ( this->MainSlicerWindow->GetViewFrame ( ));
+        this->MainSliceGUI2->PackGUI ( NULL );
+        }
+      else if ( !strcmp ( whichSlice, "Green" ) )
+        {
+        this->MainSliceGUI0->PackGUI ( NULL );
+        this->MainSliceGUI1->PackGUI ( NULL );
+        this->MainSliceGUI2->PackGUI ( this->MainSlicerWindow->GetViewFrame ( ));
+        }
 
+//      this->ViewerWidget->PackWidget(this->MainSlicerWindow->GetViewFrame() );
       this->MainSlicerWindow->GetViewNotebook()->SetAlwaysShowTabs ( 0 );
       layout->SetCurrentViewArrangement ( vtkSlicerGUILayout::SlicerLayoutOneUpSliceView );
     }

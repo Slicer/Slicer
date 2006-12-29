@@ -16,6 +16,7 @@
 #include "vtkKWToolbar.h"
 #include "vtkKWPushButton.h"
 #include "vtkKWRadioButtonSet.h"
+#include "vtkKWMenuButton.h"
 
 class vtkSlicerApplicationGUI;
 
@@ -63,7 +64,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
     vtkGetObjectMacro (LoadSceneIconButton, vtkKWPushButton );
     vtkGetObjectMacro (ConventionalViewIconButton, vtkKWPushButton );    
     vtkGetObjectMacro (OneUp3DViewIconButton, vtkKWPushButton );
-    vtkGetObjectMacro (OneUpSliceViewIconButton, vtkKWPushButton );
+    vtkGetObjectMacro (OneUpSliceViewIconButton, vtkKWMenuButton );
     vtkGetObjectMacro (FourUpViewIconButton, vtkKWPushButton );
     vtkGetObjectMacro (Tabbed3DViewIconButton, vtkKWPushButton );
     vtkGetObjectMacro (TabbedSliceViewIconButton, vtkKWPushButton );
@@ -127,7 +128,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
     vtkKWPushButton *LoadSceneIconButton;
     vtkKWPushButton *ConventionalViewIconButton;
     vtkKWPushButton *OneUp3DViewIconButton;
-    vtkKWPushButton *OneUpSliceViewIconButton;
+    vtkKWMenuButton *OneUpSliceViewIconButton;
     vtkKWPushButton *FourUpViewIconButton;
     vtkKWPushButton *Tabbed3DViewIconButton;
     vtkKWPushButton *TabbedSliceViewIconButton;
