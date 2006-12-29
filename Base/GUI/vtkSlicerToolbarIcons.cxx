@@ -234,37 +234,45 @@ void vtkSlicerToolbarIcons::AssignImageDataToIcons ( )
     this->ConventionalViewIcon->SetImage( image_ToolbarConventionalView,
                                           image_ToolbarConventionalView_width,
                                           image_ToolbarConventionalView_height,
-                                          image_ToolbarConventionalView_pixel_size, 0, 0);
+                                          image_ToolbarConventionalView_pixel_size,
+                                          image_ToolbarConventionalView_length, 0);
 
     this->OneUp3DViewIcon->SetImage( image_ToolbarOneUp3DView,
                                      image_ToolbarOneUp3DView_width,
                                      image_ToolbarOneUp3DView_height,
-                                     image_ToolbarOneUp3DView_pixel_size, 0, 0 );                                     
+                                     image_ToolbarOneUp3DView_pixel_size,
+                                     image_ToolbarOneUp3DView_length, 0 );                                     
                                      
     this->OneUpSliceViewIcon->SetImage( image_ToolbarOneUpSliceView,
                                         image_ToolbarOneUpSliceView_width,
                                         image_ToolbarOneUpSliceView_height,
-                                        image_ToolbarOneUpSliceView_pixel_size, 0, 0 );
+                                        image_ToolbarOneUpSliceView_pixel_size,
+                                        image_ToolbarOneUpSliceView_length, 0 );
     
     this->FourUpViewIcon->SetImage( image_ToolbarFourUpView,
                                     image_ToolbarFourUpView_width,
                                     image_ToolbarFourUpView_height,
-                                    image_ToolbarFourUpView_pixel_size, 0, 0 );
+                                    image_ToolbarFourUpView_pixel_size,
+                                    image_ToolbarFourUpView_length, 0 );
     
     this->Tabbed3DViewIcon->SetImage( image_ToolbarTabbed3DView,
                                     image_ToolbarTabbed3DView_width,
                                     image_ToolbarTabbed3DView_height,
-                                    image_ToolbarTabbed3DView_pixel_size, 0 , 0 );
+                                    image_ToolbarTabbed3DView_pixel_size,
+                                      image_ToolbarTabbed3DView_length, 0 );
     
     this->TabbedSliceViewIcon->SetImage( image_ToolbarTabbedSliceView,
                                     image_ToolbarTabbedSliceView_width,
                                     image_ToolbarTabbedSliceView_height,
-                                    image_ToolbarTabbedSliceView_pixel_size, 0 , 0 );
+                                    image_ToolbarTabbedSliceView_pixel_size,
+                                         image_ToolbarTabbedSliceView_length, 0 );
 
     this->LightBoxViewIcon->SetImage( image_ToolbarLightBoxView,
                                       image_ToolbarLightBoxView_width,
                                       image_ToolbarLightBoxView_height,
-                                      image_ToolbarLightBoxView_pixel_size, 0, 0);
+                                      image_ToolbarLightBoxView_pixel_size,
+                                      image_ToolbarLightBoxView_length, 0);
+    
     this->MousePickIcon->SetImage (image_ToolbarMousePick,
                                    image_ToolbarMousePick_width,
                                    image_ToolbarMousePick_height,
