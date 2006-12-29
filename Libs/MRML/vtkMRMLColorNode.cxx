@@ -57,7 +57,7 @@ vtkMRMLColorNode::vtkMRMLColorNode()
   this->SetName("");
   this->LookupTable = NULL;
   this->FileName = NULL;
-  
+  this->LastAddedColor = -1;
 }
 
 //----------------------------------------------------------------------------
@@ -268,7 +268,7 @@ void vtkMRMLColorNode::ReadFile ()
     }
   else
     {
-    std::cerr << "ERROR opening colour file " << this->FileName << endl;
+    vtkErrorMacro("ERROR opening colour file " << this->FileName << endl);
     }
 }
 //----------------------------------------------------------------------------
@@ -403,6 +403,12 @@ void vtkMRMLColorNode::SetTypeToRandom()
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLColorNode::SetTypeToUser()
+{
+  this->SetType(this->User);
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLColorNode::SetTypeToFile()
 {
     this->SetType(this->File);
@@ -454,6 +460,10 @@ const char* vtkMRMLColorNode::GetTypeAsString()
   if (this->Type == this->Random)
     {
     return "Random";
+    }
+  if (this->Type == this->User)
+    {
+      return "User";
     }
   if (this->Type == this->File)
     {
@@ -620,6 +630,7 @@ void vtkMRMLColorNode::SetType(int type)
       
       pos->Delete();
       neg->Delete();
+      this->SetNamesFromColors();
       }
     
     else if (this->Type == this->FMRIPA)
@@ -733,15 +744,22 @@ void vtkMRMLColorNode::SetType(int type)
         }
       this->SetNamesFromColors();      
       }
-    
+
+    else if (this->Type == this->User)
+      {
+      this->LookupTable->SetNumberOfTableValues(0);
+      this->LastAddedColor = -1;
+      std::cout << "Set type to user, call SetNumberOfColors, then AddColor...\n";
+      }
+
     else if (this->Type == this->File)
       {
       std::cout << "Set type to file, call SetFileName and ReadFile next...\n";
       }
-
+    
     else
       {
-      std::cerr << "vtkMRMLColorNode: SetType ERROR, unknown type " << type << endl;
+      vtkErrorMacro("vtkMRMLColorNode: SetType ERROR, unknown type " << type << endl);
       return;
       }
     // invoke a modified event
@@ -792,6 +810,7 @@ const char *vtkMRMLColorNode::GetColorName(int ind)
     }
   else
     {
+    vtkDebugMacro("vtkMRMLColorNode::GetColorName: index " << ind << " is out of range 0 - " << this->Names.size());
     return "invalid";
     }
 }
@@ -826,7 +845,7 @@ void vtkMRMLColorNode::SetColorName(int ind, const char *name)
     }
   else
     {
-    std::cerr << "ERROR: SetColorName, index was out of bounds: " << ind << ", current size is " << this->Names.size() << endl;
+    vtkErrorMacro("ERROR: SetColorName, index was out of bounds: " << ind << ", current size is " << this->Names.size() << endl);
     }
 }
 
@@ -853,3 +872,65 @@ void vtkMRMLColorNode::AddColorName(const char *name)
 {
   this->Names.push_back(std::string(name));
 }
+
+//---------------------------------------------------------------------------
+void vtkMRMLColorNode::SetNumberOfColors(int n)
+{
+  if (this->GetType() != this->User)
+    {
+      vtkErrorMacro("vtkMRMLColorNode::SetNumberOfColors: ERROR: can't set number of colours if not a user defined colour table, reset the type first to User\n");
+      return;
+    }
+
+  this->GetLookupTable()->SetNumberOfTableValues(n);
+}
+
+//---------------------------------------------------------------------------
+int vtkMRMLColorNode::GetNumberOfColors()
+{
+  if (this->GetLookupTable() != NULL)
+    {
+      return this->GetLookupTable()->GetNumberOfTableValues();
+    }
+  else
+    {
+      return 0;
+    }
+}
+//---------------------------------------------------------------------------
+void vtkMRMLColorNode::AddColor(const char *name, double r, double g, double b)
+{
+ if (this->GetType() != this->User)
+    {
+      vtkErrorMacro("vtkMRMLColorNode::AddColor: ERROR: can't add a colour if not a user defined colour table, reset the type first to User\n");
+      return;
+    }
+ this->LastAddedColor++;
+ this->SetColor(this->LastAddedColor, name, r, g, b);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLColorNode::SetColor(int entry, const char *name, double r, double g, double b)
+{
+  if (this->GetType() != this->User)
+    {
+      vtkErrorMacro( "vtkMRMLColorNode::SetColor: ERROR: can't set a colour if not a user defined colour table, reset the type first to User\n");
+      return;
+    }
+  if (entry < 0 ||
+      entry >= this->GetLookupTable()->GetNumberOfTableValues())
+    {
+      vtkErrorMacro( "vtkMRMLColorNode::SetColor: requested entry " << entry << " is out of table range: 0 - " << this->GetLookupTable()->GetNumberOfTableValues() << endl);
+      return;
+    }
+
+  this->GetLookupTable()->SetTableValue(entry, r, g, b, 1.0);
+  if (strcmp(this->GetColorName(entry), name) != 0)
+    {
+      this->SetColorName(entry, name);
+    }
+
+  // trigger a modified event
+  this->InvokeEvent (vtkCommand::ModifiedEvent);
+}
+

@@ -86,6 +86,7 @@ public:
   void SetTypeToFMRIPA();
   void SetTypeToLabels();
   void SetTypeToRandom();
+  void SetTypeToUser();
   void SetTypeToFile();
 
   void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
@@ -105,6 +106,7 @@ public:
   // FMRIPA - fMRI Positive Activation map
   // Labels - the Slicer default editor labels
   // Random - 255 random colors
+  // User - user defined in the GUI
   // File - read in from file
   enum
     {
@@ -119,7 +121,8 @@ public:
       FMRIPA = 9,
       Labels = 10,
       Random = 11,
-      File = 12,
+      User = 12,
+      File = 13,
     };
   //ETX
 
@@ -153,6 +156,24 @@ public:
   // subst
   const char *GetColorNameWithoutSpaces(int ind, const char *subst);
   
+  // Description:
+  // Set the size of the colour table if it's a User table
+  void SetNumberOfColors(int n);
+  // Description:
+  // Get the number of colours in the table
+  int GetNumberOfColors();
+
+  // Description:
+  // keep track of where we last added a colour 
+  int LastAddedColor;
+
+  // Description:
+  // Add a colour to the User colour table, at the end
+  void AddColor(const char* name, double r, double g, double b);
+  // Description:
+  // Set a colour into the User colour table
+  void SetColor(int entry, const char* name, double r, double g, double b);
+
   // Description:
   // Add a color name to the vector
   void AddColorName(const char *name);
