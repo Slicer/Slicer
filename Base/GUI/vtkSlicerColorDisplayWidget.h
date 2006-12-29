@@ -73,6 +73,13 @@ public:
   // update a table entry
   void UpdateElement(int row, int col, char * str);  
 
+  // Description:
+  // Return the index of the currently selected colour in the multi column 
+  // list box, for use by other classes when they wish to call GetColor 
+  // on the vtkMRMLColorNode. Returns -1 if no list box or no selection,
+  // or if more than one row is selected.
+  int GetSelectedColorIndex();
+
  protected:
   vtkSlicerColorDisplayWidget();
   virtual ~vtkSlicerColorDisplayWidget();

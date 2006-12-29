@@ -37,7 +37,8 @@ vtkSlicerColorDisplayWidget::vtkSlicerColorDisplayWidget ( )
     this->NumberOfColumns = 3;
 
     this->NumberOfColorsLabel = NULL;
-    
+
+    this->DebugOn();
 }
 
 
@@ -454,3 +455,25 @@ void vtkSlicerColorDisplayWidget::UpdateElement(int row, int col, char * str)
     std::cerr << "Invalid row " << row << " or column " << col <<  ", valid columns are 0-" << this->NumberOfColumns << "\n";
     }
 }
+
+//---------------------------------------------------------------------------
+int vtkSlicerColorDisplayWidget::GetSelectedColorIndex()
+{
+  if (this->MultiColumnList == NULL)
+    {
+    return -1;
+    }
+  int numRows = this->MultiColumnList->GetWidget()->GetNumberOfSelectedRows();
+  int row[1];
+  if (numRows == 1)
+    {
+    this->MultiColumnList->GetWidget()->GetSelectedRows(row);
+    return row[0];
+    }
+  else 
+    {
+    vtkErrorMacro("Error in selection: " << numRows << " selected, select just one and try again.");
+    return -1;
+    }
+}
+
