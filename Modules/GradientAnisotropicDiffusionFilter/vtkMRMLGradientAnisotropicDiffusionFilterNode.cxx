@@ -96,24 +96,16 @@ void vtkMRMLGradientAnisotropicDiffusionFilterNode::WriteXML(ostream& of, int nI
     if ( this->InputVolumeRef )
       {
       ss << this->InputVolumeRef;
-      }
-    else
-      {
-      ss << "NULL";
-      }
-    of << indent << "InputVolumeRef='" << ss.str() << "' ";
+      of << indent << "InputVolumeRef='" << ss.str() << "' ";
+     }
   }
   {
     std::stringstream ss;
     if ( this->OutputVolumeRef )
       {
       ss << this->OutputVolumeRef;
+      of << indent << "OutputVolumeRef='" << ss.str() << "' ";
       }
-    else
-      {
-      ss << "NULL";
-      }
-    of << indent << "OutputVolumeRef='" << ss.str() << "' ";
   }
 }
 
@@ -150,10 +142,12 @@ void vtkMRMLGradientAnisotropicDiffusionFilterNode::ReadXMLAttributes(const char
     else if (!strcmp(attName, "InputVolumeRef"))
       {
       this->SetInputVolumeRef(attValue);
+      this->Scene->AddReferencedNodeID(this->InputVolumeRef, this);
       }
     else if (!strcmp(attName, "OutputVolumeRef"))
       {
       this->SetOutputVolumeRef(attValue);
+      this->Scene->AddReferencedNodeID(this->OutputVolumeRef, this);
       }
     }
 }
@@ -188,3 +182,15 @@ void vtkMRMLGradientAnisotropicDiffusionFilterNode::PrintSelf(ostream& os, vtkIn
    (this->OutputVolumeRef ? this->OutputVolumeRef : "(none)") << "\n";
 }
 
+//----------------------------------------------------------------------------
+void vtkMRMLGradientAnisotropicDiffusionFilterNode::UpdateReferenceID(const char *oldID, const char *newID)
+{
+  if (!strcmp(oldID, this->InputVolumeRef))
+    {
+    this->SetInputVolumeRef(newID);
+    }
+  if (!strcmp(oldID, this->OutputVolumeRef))
+    {
+    this->SetOutputVolumeRef(newID);
+    }
+}

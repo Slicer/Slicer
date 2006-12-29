@@ -33,10 +33,12 @@ class VTK_GRADIENTANISOTROPICDIFFUSIONFILTER_EXPORT vtkMRMLGradientAnisotropicDi
   vtkTypeMacro(vtkMRMLGradientAnisotropicDiffusionFilterNode,vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
+  // Description:
+  // Create instance of a GAD node.
   virtual vtkMRMLNode* CreateNodeInstance();
 
   // Description:
-  // Set node attributes
+  // Set node attributes from name/value pairs
   virtual void ReadXMLAttributes( const char** atts);
 
   // Description:
@@ -48,7 +50,7 @@ class VTK_GRADIENTANISOTROPICDIFFUSIONFILTER_EXPORT vtkMRMLGradientAnisotropicDi
   virtual void Copy(vtkMRMLNode *node);
 
   // Description:
-  // Get node XML tag name (like Volume, Model)
+  // Get unique node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "GADParameters";};
 
   // Description:
@@ -75,6 +77,10 @@ class VTK_GRADIENTANISOTROPICDIFFUSIONFILTER_EXPORT vtkMRMLGradientAnisotropicDi
   // Get/Set output volume MRML Id
   vtkGetStringMacro(OutputVolumeRef);
   vtkSetStringMacro(OutputVolumeRef);
+
+  // Description:
+  // Update the stored reference to another node in the scene
+  virtual void UpdateReferenceID(const char *oldID, const char *newID);
 
  
 protected:
