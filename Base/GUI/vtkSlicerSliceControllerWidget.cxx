@@ -363,7 +363,8 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     this->FitToWindowButton->SetOverReliefToNone ( );
     this->FitToWindowButton->SetBorderWidth ( 0 );
     this->FitToWindowButton->SetImageToIcon ( this->SliceControlIcons->GetFitToWindowIcon ( ));    
-    this->FitToWindowButton->SetBalloonHelpString ( "Fits the image data to the Slice Viewer's window.");
+    this->FitToWindowButton->SetBalloonHelpString ( "Adjusts the Slice Viewer's field of view to match the extent of current background volume.");
+// adjust the node's field of view to match the extent of current background volume
 
     //
     // Create a menubutton that navigates to Volumes->Display
@@ -673,6 +674,79 @@ void vtkSlicerSliceControllerWidget::RaiseVolumeDisplayPanel ( char *id )
 
 
 
+
+//----------------------------------------------------------------------------
+void vtkSlicerSliceControllerWidget::FitSliceToBackground ( int link )
+{
+
+  vtkSlicerSlicesGUI *ssgui;
+  vtkSlicerSliceGUI *sgui;
+  vtkSlicerApplication *app;
+  int found = 0;
+    
+  // find the sliceGUI for this controller
+  app = vtkSlicerApplication::SafeDownCast (this->GetApplication());
+  ssgui = vtkSlicerSlicesGUI::SafeDownCast ( app->GetModuleGUIByName ("Slices") );
+  if ( ssgui->GetSliceGUICollection() )
+    {
+    ssgui->GetSliceGUICollection()->InitTraversal();
+    sgui = vtkSlicerSliceGUI::SafeDownCast ( ssgui->GetSliceGUICollection()->GetNextItemAsObject() );
+    while ( sgui != NULL )
+      {
+      if (sgui->GetSliceController() == this )
+        {
+        found = 1;
+        break;
+        }
+      sgui = vtkSlicerSliceGUI::SafeDownCast ( ssgui->GetSliceGUICollection()->GetNextItemAsObject() );
+      }
+    }
+  else
+    {
+    return;
+    }
+
+  if ( found )
+    {
+    if ( link )
+      {
+      // First save all SliceNodes for undo:
+      ssgui->GetSliceGUICollection()->InitTraversal();
+      sgui = vtkSlicerSliceGUI::SafeDownCast ( ssgui->GetSliceGUICollection()->GetNextItemAsObject() );
+      vtkCollection *nodes = vtkCollection::New();
+      while ( sgui != NULL )
+        {
+        nodes->AddItem ( sgui->GetSliceNode ( ) );
+        sgui = vtkSlicerSliceGUI::SafeDownCast ( ssgui->GetSliceGUICollection()->GetNextItemAsObject() );
+        }
+      this->MRMLScene->SaveStateForUndo ( nodes );
+      nodes->Delete ( );
+
+      // Now fit all Slices to background
+      ssgui->GetSliceGUICollection()->InitTraversal();
+      sgui = vtkSlicerSliceGUI::SafeDownCast ( ssgui->GetSliceGUICollection()->GetNextItemAsObject() );
+      while ( sgui != NULL )
+        {
+        int w = sgui->GetSliceViewer()->GetRenderWidget ( )->GetWidth();
+        int h = sgui->GetSliceViewer()->GetRenderWidget ( )->GetHeight();
+        sgui->GetLogic()->FitSliceToBackground ( w, h );
+        sgui->GetSliceNode()->UpdateMatrices( );
+        sgui = vtkSlicerSliceGUI::SafeDownCast ( ssgui->GetSliceGUICollection()->GetNextItemAsObject() );
+        }
+      }
+    else
+      {
+      this->MRMLScene->SaveStateForUndo ( this->SliceNode );
+      int w = sgui->GetSliceViewer()->GetRenderWidget ( )->GetWidth();
+      int h = sgui->GetSliceViewer()->GetRenderWidget ( )->GetHeight();
+      sgui->GetLogic()->FitSliceToBackground ( w, h );
+      this->SliceNode->UpdateMatrices( );
+      }
+    }
+}
+
+
+
 //----------------------------------------------------------------------------
 void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, unsigned long event, void *callData ) 
 { 
@@ -819,8 +893,7 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
     }
   else if ( toggle == this->FitToWindowButton && event == vtkKWPushButton::InvokedEvent )
     {
-    // this->MRMLScene->SaveStateForUndo ( this->SliceNode );
-    // TODO: find out what the F-key is implementing and do that.
+     this->FitSliceToBackground ( link );
     }
   
   //

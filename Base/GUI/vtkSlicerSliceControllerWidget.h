@@ -48,7 +48,6 @@ public:
   vtkGetObjectMacro ( FitToWindowButton, vtkKWPushButton );
   vtkGetObjectMacro ( VolumeDisplayMenuButton, vtkKWMenuButton );
 
-
   void RemoveWidgetObservers ( );
   void AddWidgetObservers ( );
   
@@ -108,6 +107,7 @@ public:
   virtual void UpdateBackgroundLayer ( int link );
   virtual void UpdateLabelLayer ( int link );
   virtual void RaiseVolumeDisplayPanel ( char *id );
+  virtual void FitSliceToBackground ( int link );
   
   //BTX
   enum 
@@ -161,6 +161,7 @@ protected:
   // Logic
   //
   vtkSlicerSliceLogic *SliceLogic;
+
 
 private:
   vtkSlicerSliceControllerWidget (const vtkSlicerSliceControllerWidget &); //Not implemented
