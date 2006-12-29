@@ -103,6 +103,12 @@ public:
   virtual void Shrink();
   virtual void Expand();
 
+  virtual void UpdateOrientation ( int link );
+  virtual void UpdateForegroundLayer ( int link );
+  virtual void UpdateBackgroundLayer ( int link );
+  virtual void UpdateLabelLayer ( int link );
+  virtual void RaiseVolumeDisplayPanel ( char *id );
+  
   //BTX
   enum 
   {

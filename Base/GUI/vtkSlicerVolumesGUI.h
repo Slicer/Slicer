@@ -19,6 +19,7 @@ class vtkKWPushButton;
 class vtkKWLoadSaveButtonWithLabel;
 class vtkKWLoadSaveButton;
 class vtkKWEntryWithLabel;
+class vtkSlicerModuleCollapsibleFrame;
 
 // Description:
 // This class implements Slicer's Volumes GUI
@@ -41,6 +42,13 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerVolumesGUI : public vtkSlicerModuleGUI
 
     vtkGetStringMacro ( SelectedVolumeID);
     vtkSetStringMacro ( SelectedVolumeID );
+
+    vtkGetObjectMacro (HelpFrame, vtkSlicerModuleCollapsibleFrame );
+    vtkGetObjectMacro (LoadFrame, vtkSlicerModuleCollapsibleFrame );
+    vtkGetObjectMacro (DisplayFrame, vtkSlicerModuleCollapsibleFrame );
+    vtkGetObjectMacro (SaveFrame, vtkSlicerModuleCollapsibleFrame );
+
+    vtkGetObjectMacro ( VolumeDisplayWidget, vtkSlicerVolumeDisplayWidget );
 
     // Description:
     // API for setting VolumeNode, VolumeLogic and
@@ -89,10 +97,13 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerVolumesGUI : public vtkSlicerModuleGUI
     vtkKWCheckButton *LabelMapCheckButton;
     vtkKWPushButton *ApplyButton;
 
+    vtkSlicerModuleCollapsibleFrame *HelpFrame;
+    vtkSlicerModuleCollapsibleFrame *LoadFrame;
+    vtkSlicerModuleCollapsibleFrame *DisplayFrame;
+    vtkSlicerModuleCollapsibleFrame *SaveFrame;
+
     vtkSlicerNodeSelectorWidget* VolumeSelectorWidget;
-
     vtkKWLoadSaveButton *SaveVolumeButton;
-
     vtkSlicerVolumeDisplayWidget *VolumeDisplayWidget;
 
  private:

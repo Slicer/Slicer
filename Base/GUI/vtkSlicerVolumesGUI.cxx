@@ -39,6 +39,11 @@ vtkSlicerVolumesGUI::vtkSlicerVolumesGUI ( )
     this->SaveVolumeButton = NULL;
     this->VolumeDisplayWidget = NULL;
 
+    this->HelpFrame = NULL;
+    this->LoadFrame = NULL;
+    this->DisplayFrame = NULL;
+    this->SaveFrame = NULL;
+
     this->NameEntry = NULL;
     this->CenterImageMenu = NULL;
     this->LabelMapCheckButton = NULL;
@@ -97,6 +102,30 @@ vtkSlicerVolumesGUI::~vtkSlicerVolumesGUI ( )
     this->NameEntry->SetParent(NULL );
     this->NameEntry->Delete ( );
     }
+  if ( this->HelpFrame )
+    {
+    this->HelpFrame->SetParent (NULL);
+    this->HelpFrame->Delete ( );
+    this->HelpFrame = NULL;
+    }
+  if ( this->LoadFrame )
+    {
+    this->LoadFrame->SetParent ( NULL );
+    this->LoadFrame->Delete ( );
+    this->LoadFrame = NULL;
+    }
+  if ( this->SaveFrame )
+    {
+    this->SaveFrame->SetParent ( NULL );
+    this->SaveFrame->Delete ( );
+    this->SaveFrame = NULL;
+    }
+  if ( this->DisplayFrame )
+    {
+    this->DisplayFrame->SetParent ( NULL );
+    this->DisplayFrame->Delete ( );
+    this->DisplayFrame = NULL;
+    }
 
   this->SetModuleLogic ( NULL );
    vtkSetMRMLNodeMacro (this->VolumeNode, NULL );
@@ -111,6 +140,10 @@ void vtkSlicerVolumesGUI::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "SlicerVolumesGUI: " << this->GetClassName ( ) << "\n";
     os << indent << "VolumeNode: " << this->GetVolumeNode ( ) << "\n";
     os << indent << "Logic: " << this->GetLogic ( ) << "\n";
+    os << indent << "HelpFrame: " << this->GetHelpFrame ( ) << "\n";
+    os << indent << "LoadFrame: " << this->GetLoadFrame ( ) << "\n";
+    os << indent << "DisplayFrame: " << this->GetDisplayFrame ( ) << "\n";
+    os << indent << "SaveFrame: " << this->GetSaveFrame ( ) << "\n";
     // print widgets?
 }
 
@@ -281,16 +314,16 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
     vtkKWWidget *page = this->UIPanel->GetPageWidget ( "Volumes" );
 
     // HELP FRAME
-    vtkSlicerModuleCollapsibleFrame *volHelpFrame = vtkSlicerModuleCollapsibleFrame::New ( );
-    volHelpFrame->SetParent ( page );
-    volHelpFrame->Create ( );
-    volHelpFrame->CollapseFrame ( );
-    volHelpFrame->SetLabelText ("Help");
+    this->HelpFrame = vtkSlicerModuleCollapsibleFrame::New ( );
+    this->HelpFrame->SetParent ( page );
+    this->HelpFrame->Create ( );
+    this->HelpFrame->CollapseFrame ( );
+    this->HelpFrame->SetLabelText ("Help");
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                  volHelpFrame->GetWidgetName(), page->GetWidgetName());
+                  this->HelpFrame->GetWidgetName(), page->GetWidgetName());
 
     // configure the parent classes help text widget
-    this->HelpText->SetParent ( volHelpFrame->GetFrame() );
+    this->HelpText->SetParent ( this->HelpFrame->GetFrame() );
     this->HelpText->Create ( );
     this->HelpText->SetHorizontalScrollbarVisibility ( 0 );
     this->HelpText->SetVerticalScrollbarVisibility ( 1 );
@@ -305,16 +338,16 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
 
     // ---
     // LOAD FRAME            
-    vtkSlicerModuleCollapsibleFrame *volLoadFrame = vtkSlicerModuleCollapsibleFrame::New ( );
-    volLoadFrame->SetParent ( page );
-    volLoadFrame->Create ( );
-    volLoadFrame->SetLabelText ("Load");
-    volLoadFrame->ExpandFrame ( );
+    LoadFrame = vtkSlicerModuleCollapsibleFrame::New ( );
+    this->LoadFrame->SetParent ( page );
+    this->LoadFrame->Create ( );
+    this->LoadFrame->SetLabelText ("Load");
+    this->LoadFrame->ExpandFrame ( );
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                  volLoadFrame->GetWidgetName(), page->GetWidgetName());
+                  this->LoadFrame->GetWidgetName(), page->GetWidgetName());
     // add a file browser 
     this->LoadVolumeButton = vtkKWLoadSaveButtonWithLabel::New ( );
-    this->LoadVolumeButton->SetParent ( volLoadFrame->GetFrame() );
+    this->LoadVolumeButton->SetParent ( this->LoadFrame->GetFrame() );
     this->LoadVolumeButton->Create ( );
     this->LoadVolumeButton->SetWidth(20);
     this->LoadVolumeButton->GetWidget()->SetText ("Select Volume File");
@@ -326,7 +359,7 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
                 this->LoadVolumeButton->GetWidgetName());
     // volume name
     this->NameEntry = vtkKWEntryWithLabel::New();
-    this->NameEntry->SetParent(volLoadFrame->GetFrame());
+    this->NameEntry->SetParent(this->LoadFrame->GetFrame());
     this->NameEntry->Create();
     this->NameEntry->SetWidth(20);
     this->NameEntry->SetLabelWidth(12);
@@ -338,7 +371,7 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
 
     // center image
     this->CenterImageMenu = vtkKWMenuButtonWithLabel::New();
-    this->CenterImageMenu->SetParent(volLoadFrame->GetFrame());
+    this->CenterImageMenu->SetParent(this->LoadFrame->GetFrame());
     this->CenterImageMenu->Create();
     this->CenterImageMenu->SetWidth(20);
     this->CenterImageMenu->SetLabelWidth(12);
@@ -352,7 +385,7 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
 
     // is this a lable map?
     this->LabelMapCheckButton = vtkKWCheckButton::New();
-    this->LabelMapCheckButton->SetParent(volLoadFrame->GetFrame());
+    this->LabelMapCheckButton->SetParent(this->LoadFrame->GetFrame());
     this->LabelMapCheckButton->Create();
     this->LabelMapCheckButton->SelectedStateOff();
     this->LabelMapCheckButton->SetText("Label Map");
@@ -362,7 +395,7 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
 
     // Apply button
     this->ApplyButton = vtkKWPushButton::New();
-    this->ApplyButton->SetParent(volLoadFrame->GetFrame());
+    this->ApplyButton->SetParent(this->LoadFrame->GetFrame());
     this->ApplyButton->Create();
     this->ApplyButton->SetText("Apply");
     this->ApplyButton->SetWidth ( 20);
@@ -373,34 +406,34 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
 
     // ---
     // DISPLAY FRAME            
-    vtkSlicerModuleCollapsibleFrame *volDisplayFrame = vtkSlicerModuleCollapsibleFrame::New ( );    
-    volDisplayFrame->SetParent ( page );
-    volDisplayFrame->Create ( );
-    volDisplayFrame->SetLabelText ("Display");
-    volDisplayFrame->CollapseFrame ( );
+    DisplayFrame = vtkSlicerModuleCollapsibleFrame::New ( );    
+    this->DisplayFrame->SetParent ( page );
+    this->DisplayFrame->Create ( );
+    this->DisplayFrame->SetLabelText ("Display");
+    this->DisplayFrame->CollapseFrame ( );
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                  volDisplayFrame->GetWidgetName(), page->GetWidgetName());
+                  this->DisplayFrame->GetWidgetName(), page->GetWidgetName());
 
     this->VolumeDisplayWidget = vtkSlicerVolumeDisplayWidget::New ( );
     this->VolumeDisplayWidget->SetMRMLScene(this->GetMRMLScene() );
-    this->VolumeDisplayWidget->SetParent ( volDisplayFrame->GetFrame() );
+    this->VolumeDisplayWidget->SetParent ( this->DisplayFrame->GetFrame() );
     this->VolumeDisplayWidget->Create ( );
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                  this->VolumeDisplayWidget->GetWidgetName(), volDisplayFrame->GetFrame()->GetWidgetName());
+                  this->VolumeDisplayWidget->GetWidgetName(), this->DisplayFrame->GetFrame()->GetWidgetName());
 
     // ---
     // Save FRAME            
-    vtkSlicerModuleCollapsibleFrame *volSaveFrame = vtkSlicerModuleCollapsibleFrame::New ( );
-    volSaveFrame->SetParent ( page );
-    volSaveFrame->Create ( );
-    volSaveFrame->SetLabelText ("Save");
-    volSaveFrame->CollapseFrame ( );
+    SaveFrame = vtkSlicerModuleCollapsibleFrame::New ( );
+    this->SaveFrame->SetParent ( page );
+    this->SaveFrame->Create ( );
+    this->SaveFrame->SetLabelText ("Save");
+    this->SaveFrame->CollapseFrame ( );
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                  volSaveFrame->GetWidgetName(), page->GetWidgetName());
+                  this->SaveFrame->GetWidgetName(), page->GetWidgetName());
 
     // selector for save
     this->VolumeSelectorWidget = vtkSlicerNodeSelectorWidget::New() ;
-    this->VolumeSelectorWidget->SetParent ( volSaveFrame->GetFrame() );
+    this->VolumeSelectorWidget->SetParent ( this->SaveFrame->GetFrame() );
     this->VolumeSelectorWidget->Create ( );
     this->VolumeSelectorWidget->SetNodeClass("vtkMRMLVolumeNode", NULL, NULL, NULL);
     this->VolumeSelectorWidget->SetMRMLScene(this->GetMRMLScene());
@@ -415,7 +448,7 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
                   this->VolumeSelectorWidget->GetWidgetName());
 
     this->SaveVolumeButton = vtkKWLoadSaveButton::New ( );
-    this->SaveVolumeButton->SetParent ( volSaveFrame->GetFrame() );
+    this->SaveVolumeButton->SetParent ( this->SaveFrame->GetFrame() );
     this->SaveVolumeButton->Create ( );
     this->SaveVolumeButton->SetText ("Save Volume");
     this->SaveVolumeButton->GetLoadSaveDialog()->SaveDialogOn();
@@ -426,10 +459,6 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
      app->Script("pack %s -side top -anchor w -padx 2 -pady 4", 
                 this->SaveVolumeButton->GetWidgetName());
     
-    volLoadFrame->Delete();
-    volSaveFrame->Delete();
-    volDisplayFrame->Delete ();
-    volHelpFrame->Delete();
 }
 
 
