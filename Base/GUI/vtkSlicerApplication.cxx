@@ -186,6 +186,7 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
     vtkKWFrameWithLabel::SetDefaultLabelFontWeightToNormal( );
     this->MainLayout = vtkSlicerGUILayout::New ( );
     this->SlicerTheme = vtkSlicerTheme::New ( );
+    this->ApplicationGUI = NULL;
 
     this->DisplayMessageQueueActive = false;
     this->DisplayMessageQueueActiveLock = itk::MutexLock::New();
@@ -242,13 +243,15 @@ vtkSlicerApplication::~vtkSlicerApplication ( ) {
       this->ModuleGUICollection->Delete ( );
       this->ModuleGUICollection = NULL;
       }
-
+    this->ApplicationGUI = NULL;
+    
     delete this->InternalDisplayMessageQueue;
     this->InternalDisplayMessageQueue = 0;
 
     this->DisplayMessageQueueActiveLock->Lock();
     this->DisplayMessageQueueActive = false;
     this->DisplayMessageQueueActiveLock->Unlock();
+    
 }
 
 //----------------------------------------------------------------------------

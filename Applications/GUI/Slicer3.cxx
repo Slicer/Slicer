@@ -528,6 +528,7 @@ int Slicer3_main(int argc, char *argv[])
     appGUI->SetAndObserveMRMLScene ( scene );
     appGUI->BuildGUI ( );
     appGUI->AddGUIObservers ( );
+    slicerApp->SetApplicationGUI ( appGUI );
 
     // ------------------------------
     // CREATE MODULE LOGICS & GUIS; add to GUI collection
@@ -1330,6 +1331,9 @@ int Slicer3_main(int argc, char *argv[])
     Slicer3_Tcl_Eval( interp, tclCommand.c_str() );
 #endif
 
+    // Release reference to applicaiton GUI
+    // and delete it.
+   slicerApp->SetApplicationGUI ( NULL );
     appGUI->Delete ();
 
 #ifndef CLIMODULES_DEBUG

@@ -10,6 +10,8 @@
 #include "vtkKWRegistryHelper.h" // really could have been avoided :(
 #include "itkMutexLock.h"
 
+#include "vtkSlicerApplicationGUI.h"
+
 class vtkSlicerModuleGUI;
 class vtkSlicerGUILayout;
 class vtkSlicerTheme;
@@ -39,10 +41,12 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
     static vtkSlicerApplication* GetInstance();
 
     // Description:
-    // Get the layout, theme, GUI collection objects.
+    // Get the layout, theme, GUI collection and main application GUI 
     vtkGetObjectMacro ( MainLayout, vtkSlicerGUILayout );
     vtkGetObjectMacro ( SlicerTheme, vtkSlicerTheme );
     vtkGetObjectMacro ( ModuleGUICollection, vtkSlicerGUICollection );
+    vtkGetObjectMacro ( ApplicationGUI, vtkSlicerApplicationGUI );
+    vtkSetObjectMacro ( ApplicationGUI, vtkSlicerApplicationGUI );
 
     // Description:
     // This method collects GUIs added to Slicer.
@@ -151,9 +155,12 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   
   // Description:
   // The main application GUI.
+  vtkSlicerApplicationGUI *ApplicationGUI;
+  
   // Description:
   // Collections of GUIs
   vtkSlicerGUICollection *ModuleGUICollection;
+
   
   char ConfirmDelete[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
   char ModulePath[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
