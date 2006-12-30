@@ -562,8 +562,7 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
         }
       else if ( pushb == this->TabbedSliceViewIconButton && event == vtkKWPushButton::InvokedEvent )
         {
-//        TODO: finish implementing this
-//        p->RepackMainViewer ( vtkSlicerGUILayout::SlicerLayoutTabbedSliceView, NULL );
+        p->RepackMainViewer ( vtkSlicerGUILayout::SlicerLayoutTabbedSliceView, NULL );
         }
       else if ( pushb == this->LightBoxViewIconButton && event == vtkKWPushButton::InvokedEvent )
         {

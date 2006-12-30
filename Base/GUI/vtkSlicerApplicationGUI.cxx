@@ -992,7 +992,7 @@ void vtkSlicerApplicationGUI::CreateMain3DViewer ( int arrangementType )
         }
       else
         {
-        this->ViewerWidget->SetParent(this->MainSlicerWindow->GetViewFrame());
+        this->ViewerWidget->SetParent(this->MainSlicerWindow->GetViewPanelFrame());
         }
 
       // add events
@@ -1068,6 +1068,10 @@ void vtkSlicerApplicationGUI::RepackMainViewer ( int arrangementType, const char
 {
   this->UnpackMainSliceViewers ( );
   this->UnpackMain3DViewer ( );
+  // Since I can't find a way to re-title this main page titled "View",
+  // we make sure it's visible, and then 'hide' it only when we want to
+  // show tabs that say things other than "View".
+  this->MainSlicerWindow->GetViewNotebook()->ShowPage ( "View");
   this->PackMainViewer ( arrangementType, whichSlice );
 }
 
@@ -1292,8 +1296,16 @@ void vtkSlicerApplicationGUI::PackTabbed3DView ( )
       this->MainSliceGUI0->PackGUI ( this->MainSlicerWindow->GetSecondaryPanelFrame ( ));
       this->MainSliceGUI1->PackGUI ( this->MainSlicerWindow->GetSecondaryPanelFrame ( ));
       this->MainSliceGUI2->PackGUI ( this->MainSlicerWindow->GetSecondaryPanelFrame ( ));
-      this->ViewerWidget->PackWidget(this->MainSlicerWindow->GetViewFrame() );
 
+      // Add a page for the current view, and each saved view.
+      this->MainSlicerWindow->GetViewNotebook()->AddPage("Current view", NULL, NULL, this->ViewerPageTag );
+      this->ViewerWidget->PackWidget(this->MainSlicerWindow->GetViewNotebook()->GetFrame ("Current view" ));
+
+      // don't know how to change the title of this one,
+      // so just hide it in this configuration, and expose
+      // it again when the view configuration changes.
+      this->MainSlicerWindow->GetViewNotebook()->HidePage ( "View");
+      
       // Tab the 3D view
       this->MainSlicerWindow->GetViewNotebook()->SetAlwaysShowTabs ( 1 );
       layout->SetCurrentViewArrangement ( vtkSlicerGUILayout::SlicerLayoutTabbed3DView );
@@ -1313,11 +1325,20 @@ void vtkSlicerApplicationGUI::PackTabbedSliceView ( )
       this->MainSlicerWindow->SetMainPanelVisibility ( 1 );
       this->MainSlicerWindow->SetSecondaryPanelVisibility ( 0 );
 
-      this->MainSliceGUI0->PackGUI ( this->MainSlicerWindow->GetViewFrame ( ));
-      this->MainSlicerWindow->GetViewNotebook()->AddPage("yellow slice", NULL, NULL, this->ViewerPageTag );
-      this->MainSliceGUI1->PackGUI ( this->MainSlicerWindow->GetViewFrame ( ));
-      this->MainSlicerWindow->GetViewNotebook()->AddPage("green slice", NULL, NULL, this->ViewerPageTag );
-      this->MainSliceGUI2->PackGUI ( this->MainSlicerWindow->GetViewFrame ( ));      
+      this->MainSlicerWindow->GetViewNotebook()->AddPage("Red slice", NULL, NULL, this->ViewerPageTag );
+//      this->MainSliceGUI0->PackGUI ( this->MainSlicerWindow->GetViewFrame ( ));
+      this->MainSliceGUI0->PackGUI ( this->MainSlicerWindow->GetViewNotebook( )->GetFrame ("Red slice") );
+      this->MainSlicerWindow->GetViewNotebook()->AddPage("Yellow slice", NULL, NULL, this->ViewerPageTag );
+//      this->MainSliceGUI1->PackGUI ( this->MainSlicerWindow->GetViewFrame ( ));
+      this->MainSliceGUI1->PackGUI ( this->MainSlicerWindow->GetViewNotebook( )->GetFrame ("Yellow slice") );
+      this->MainSlicerWindow->GetViewNotebook()->AddPage("Green slice", NULL, NULL, this->ViewerPageTag );
+//      this->MainSliceGUI2->PackGUI ( this->MainSlicerWindow->GetViewFrame ( ));      
+      this->MainSliceGUI2->PackGUI ( this->MainSlicerWindow->GetViewNotebook( )->GetFrame ("Green slice") );
+
+      // don't know how to change the title of this one,
+      // so just hide it in this configuration, and expose
+      // it again when the view configuration changes.
+      this->MainSlicerWindow->GetViewNotebook()->HidePage ( "View");
 //      this->ViewerWidget->PackWidget(this->MainSlicerWindow->GetViewFrame() );
       
       // Tab the slices
