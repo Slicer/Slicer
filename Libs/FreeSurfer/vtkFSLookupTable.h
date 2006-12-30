@@ -23,12 +23,14 @@
 #include "vtkFreeSurferWin32Header.h"
 #include "vtkScalarsToColors.h"
 
+/*
 /// Type constant, can have different types of colour scales
 const int FSLUTHEAT = 1;
 const int FSLUTBLUERED = 2;
 const int FSLUTREDBLUE = 3;
 const int FSLUTREDGREEN = 4;
 const int FSLUTGREENRED = 5;
+*/
 
 class VTK_FreeSurfer_EXPORT vtkFSLookupTable : public vtkScalarsToColors
 {
@@ -85,6 +87,17 @@ public:
     vtkGetMacro(NumberOfColors,int);
     vtkSetMacro(NumberOfColors,int);
 
+    //BTX
+    /// Type constant, can have different types of colour scales
+    enum
+    {
+      FSLUTHEAT = 1,
+      FSLUTBLUERED = 2,
+      FSLUTREDBLUE = 3,
+      FSLUTREDGREEN = 4,
+      FSLUTGREENRED = 5,
+    };
+    //ETX
 protected:
     vtkFSLookupTable();
     ~vtkFSLookupTable();

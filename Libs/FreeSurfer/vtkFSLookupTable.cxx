@@ -32,7 +32,7 @@ vtkFSLookupTable::vtkFSLookupTable()
 {
     this->LowThresh = -10000.0;
     this->HiThresh =   10000.0;
-    this->LutType = FSLUTHEAT;
+    this->LutType = this->FSLUTHEAT;
     this->Reverse = 0;
     this->Truncate = 0;
     this->Offset = 0.25;
@@ -92,7 +92,7 @@ const char *vtkFSLookupTable::GetLutTypeString ()
 // reset all the values in case one was changed
 void vtkFSLookupTable::SetLutTypeToHeat()
 {
-    this->LutType = FSLUTHEAT;   
+    this->LutType = this->FSLUTHEAT;   
     this->FMid = 2.0;
     this->LowThresh = -100.0;
     this->Reverse = 0;
@@ -105,7 +105,7 @@ void vtkFSLookupTable::SetLutTypeToHeat()
 //------------------------------------------------------------------------------
 void vtkFSLookupTable::SetLutTypeToBlueRed()
 {
-    this->LutType = FSLUTBLUERED;
+    this->LutType = this->FSLUTBLUERED;
     this->LowThresh = -10000.0;
     this->HiThresh =   10000.0;
     this->Reverse = 0;
@@ -120,7 +120,7 @@ void vtkFSLookupTable::SetLutTypeToBlueRed()
 //------------------------------------------------------------------------------
 void vtkFSLookupTable::SetLutTypeToRedBlue()
 {
-    this->LutType = FSLUTREDBLUE;
+    this->LutType = this->FSLUTREDBLUE;
     this->LowThresh = -10000.0;
     this->HiThresh =   10000.0;
     this->Reverse = 1;
@@ -135,7 +135,7 @@ void vtkFSLookupTable::SetLutTypeToRedBlue()
 //------------------------------------------------------------------------------
 void vtkFSLookupTable::SetLutTypeToRedGreen()
 {
-    this->LutType = FSLUTREDGREEN;
+    this->LutType = this->FSLUTREDGREEN;
     this->LowThresh = -10000.0;
     this->HiThresh =   10000.0;
     this->Reverse = 0;
@@ -150,7 +150,7 @@ void vtkFSLookupTable::SetLutTypeToRedGreen()
 //------------------------------------------------------------------------------
 void vtkFSLookupTable::SetLutTypeToGreenRed()
 {
-    this->LutType = FSLUTGREENRED;
+    this->LutType = this->FSLUTGREENRED;
     this->LowThresh = -10000.0;
     this->HiThresh =   10000.0;
     this->Reverse = 0;
