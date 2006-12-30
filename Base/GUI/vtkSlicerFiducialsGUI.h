@@ -45,6 +45,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     
     // Description:
     // Get methods on class members ( no Set methods required. )
+    vtkGetObjectMacro ( FiducialListSelectorWidget, vtkSlicerNodeSelectorWidget);
     vtkGetObjectMacro ( AddFiducialButton, vtkKWPushButton);
     vtkGetObjectMacro ( RemoveFiducialButton, vtkKWPushButton);
     vtkGetObjectMacro ( RemoveFiducialsButton, vtkKWPushButton);
