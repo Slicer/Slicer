@@ -55,6 +55,10 @@ vtkMRMLSelectionNode::vtkMRMLSelectionNode()
   this->ActiveVolumeID = NULL;
   this->ActiveLabelVolumeID = NULL;
   this->ActiveFiducialListID = NULL;
+
+  //--- by default, the application begins with the mouse
+  //--- mode set to twiddle the 3D view.
+  this->SetMouseInteractionMode ( this->MouseTransform );
 }
 
 //----------------------------------------------------------------------------
@@ -87,6 +91,7 @@ void vtkMRMLSelectionNode::WriteXML(ostream& of, int nIndent)
   of << indent << "activeVolumeID=\"" << (this->ActiveVolumeID ? this->ActiveVolumeID : "NULL") << "\" ";
   of << indent << "activeLabelVolumeID=\"" << (this->ActiveLabelVolumeID ? this->ActiveLabelVolumeID : "NULL") << "\" ";
   of << indent << "activeFiducialListID=\"" << (this->ActiveFiducialListID ? this->ActiveFiducialListID : "NULL") << "\" ";
+  of << indent << "mouseInteractionMode=\"" << this->GetMouseInteractionModeAsString() <<  "\" ";
 }
 
 //----------------------------------------------------------------------------
@@ -133,6 +138,14 @@ void vtkMRMLSelectionNode::ReadXMLAttributes(const char** atts)
       this->SetActiveFiducialListID(attValue);
       this->Scene->AddReferencedNodeID(this->ActiveFiducialListID, this);
       }
+    if (!strcmp(attName, "mouseInteractionMode"))
+      {
+      std::stringstream ss;
+      int mode;
+      ss << attValue;
+      ss >> mode;
+      this->SetMouseInteractionMode(mode);
+      }
     }
 }
 
@@ -147,6 +160,7 @@ void vtkMRMLSelectionNode::Copy(vtkMRMLNode *anode)
   this->SetActiveVolumeID(node->GetActiveVolumeID());
   this->SetActiveLabelVolumeID(node->GetActiveLabelVolumeID());
   this->SetActiveFiducialListID(node->GetActiveFiducialListID());
+  this->SetMouseInteractionMode(node->GetMouseInteractionMode());
 }
 
 //----------------------------------------------------------------------------
@@ -157,8 +171,54 @@ void vtkMRMLSelectionNode::PrintSelf(ostream& os, vtkIndent indent)
   os << "ActiveVolumeID: " << ( (this->ActiveVolumeID) ? this->ActiveVolumeID : "None" ) << "\n";
   os << "ActiveLabelVolumeID: " << ( (this->ActiveLabelVolumeID) ? this->ActiveLabelVolumeID : "None" ) << "\n";
   os << "ActiveFiducialListID: " << ( (this->ActiveFiducialListID) ? this->ActiveFiducialListID : "None" ) << "\n";
+  os << "MouseInteractionMode: " << this->GetMouseInteractionModeAsString() << "\n";
 
 }
 
+//---------------------------------------------------------------------------
+char * vtkMRMLSelectionNode::GetMouseInteractionModeAsString()
+{
+  return GetMouseInteractionModeAsString(this->GetMouseInteractionMode());
+}
 
+//---------------------------------------------------------------------------
+char * vtkMRMLSelectionNode::GetMouseInteractionModeAsString(int mode)
+{
+  if (mode == this->MouseSelect)
+    {
+    return "Select";
+    }
+  if (mode == this->MouseTransform)
+    {
+    return "Transform";
+    }
+  if (mode == this->MousePut)
+    {
+    return "Put";
+    }
+  return "(unknown)";
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLSelectionNode::SetMouseInteractionMode(int mode)
+{
+  if (mode < this->MouseSelect ||
+      mode > this->MousePut)
+    {
+    vtkErrorMacro("Mode " << mode << " is out of valid range " << this->MouseSelect << " - " << this->MousePut);
+    return;
+    }
+  if (mode == this->MouseInteractionMode)
+    {
+    // no change
+    //std::cout << "No change in mouse interaction mode\n";
+    return;
+    }
+  
+  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting MouseInteractionMode to " << mode);
+  this->MouseInteractionMode = mode;
+
+  // invoke a modified event
+  this->Modified();
+}
 // End
