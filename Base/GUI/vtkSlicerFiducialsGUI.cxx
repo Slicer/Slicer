@@ -173,7 +173,7 @@ void vtkSlicerFiducialsGUI::RemoveGUIObservers ( )
     this->ListTextScale->RemoveObservers (vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
     this->ListOpacity->RemoveObservers (vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
     
-    this->RemoveObservers (vtkSlicerFiducialsGUI::FiducialListIDModifiedEvent, (vtkCommand *)this->GUICallbackCommand);
+    this->RemoveObservers (vtkSlicerFiducialsGUI::FiducialListIDModifiedEvent, (vtkCommand *)this->GUICallbackCommand);    
 }
 
 
@@ -181,7 +181,7 @@ void vtkSlicerFiducialsGUI::RemoveGUIObservers ( )
 void vtkSlicerFiducialsGUI::AddGUIObservers ( )
 {
     vtkDebugMacro("vtkSlicerFiducialsGUI: AddGUIObservers\n");
-    this->FiducialListSelectorWidget->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
+    this->FiducialListSelectorWidget->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->AddFiducialButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
     this->RemoveFiducialButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
     this->RemoveFiducialsButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
@@ -385,6 +385,29 @@ void vtkSlicerFiducialsGUI::ProcessMRMLEvents ( vtkObject *caller,
         vtkDebugMacro("got a widget value changed event... the list node was changed.\n");
     }
 
+    // did the selected node get modified?
+    if (this->ApplicationLogic)
+      {
+      vtkMRMLSelectionNode *selnode = this->ApplicationLogic->GetSelectionNode();
+      if (selnode != NULL
+          && vtkMRMLSelectionNode::SafeDownCast(caller) == selnode
+          && event == vtkCommand::ModifiedEvent)
+        {
+        std::cout << "The selection node changed\n";
+        // is the active fid list id out of synch with our selection?
+        if (selnode->GetActiveFiducialListID() != NULL &&
+            this->GetFiducialListNodeID() != NULL)
+          {
+          if (strcmp(selnode->GetActiveFiducialListID(), this->GetFiducialListNodeID()) != 0)
+            {
+            std::cout << "\tupdating the fid gui's fid list node id\n";
+            this->SetFiducialListNodeID(selnode->GetActiveFiducialListID());
+            }
+          }
+        }
+      }
+
+    
     vtkMRMLFiducialListNode *node = vtkMRMLFiducialListNode::SafeDownCast(caller);
     vtkMRMLFiducialListNode *activeFiducialListNode = (vtkMRMLFiducialListNode *)this->MRMLScene->GetNodeByID(this->GetFiducialListNodeID());
     
@@ -1081,5 +1104,14 @@ void vtkSlicerFiducialsGUI::SetFiducialListNodeID (char * id)
     else
       {
         std::cerr << "ERROR: unable to get the mrml fiducial node to observe!\n";
+      }
+
+    // update the selected fid list id
+    if (this->ApplicationLogic != NULL &&
+        this->ApplicationLogic->GetSelectionNode() != NULL &&
+        this->FiducialListNodeID != NULL)
+      {
+      vtkDebugMacro("Fid GUI: setting the active fid list id to " << this->FiducialListNodeID);
+      this->ApplicationLogic->GetSelectionNode()->SetActiveFiducialListID( this->FiducialListNodeID );
       }
 }
