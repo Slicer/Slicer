@@ -93,6 +93,18 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
     // Describe the behavior at module enter and exit.
     virtual void Enter ( );
     virtual void Exit ( );
+
+    // Description:
+    // Getting and setting the mrml selection node id
+    vtkGetStringMacro(SelectionNodeID);
+    vtkSetStringMacro(SelectionNodeID);
+    // Description:
+    // Get/Set the selection node
+    vtkGetObjectMacro(SelectionNode, vtkMRMLSelectionNode);
+    void SetAndObserveSelectionNode (vtkMRMLSelectionNode *node)
+    {
+    vtkSetAndObserveMRMLNodeMacro(this->SelectionNode, node);
+    }
     
  protected:
     vtkSlicerToolbarGUI ( );
@@ -137,6 +149,12 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
 
     vtkSlicerModuleChooseGUI *ModuleChooseGUI;
     vtkSlicerApplicationGUI *ApplicationGUI;
+
+    // Description:
+    // the id of the selection node, for tracking changes to the mouse
+    // interation mode
+    char *SelectionNodeID;
+    vtkMRMLSelectionNode *SelectionNode;
     
  private:
     vtkSlicerToolbarGUI ( const vtkSlicerToolbarGUI& ); // Not implemented.
