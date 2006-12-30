@@ -21,6 +21,9 @@
 #include "vtkRenderWindow.h"
 #include "vtkRenderWindowInteractor.h"
 #include "vtkRenderer.h"
+#include "vtkSlicerApplication.h"
+#include "vtkSlicerFiducialsGUI.h"
+#include "vtkMRMLSelectionNode.h"
 
 vtkCxxRevisionMacro(vtkSlicerViewerInteractorStyle, "$Revision: 1.32 $");
 vtkStandardNewMacro(vtkSlicerViewerInteractorStyle);
@@ -30,12 +33,14 @@ vtkSlicerViewerInteractorStyle::vtkSlicerViewerInteractorStyle()
 {
   this->MotionFactor   = 10.0;
   this->CameraNode = NULL;
+  this->Application = NULL;
 }
 
 //----------------------------------------------------------------------------
 vtkSlicerViewerInteractorStyle::~vtkSlicerViewerInteractorStyle() 
 {
   this->SetCameraNode(NULL);
+  this->SetApplication ( NULL );
 }
 
 //----------------------------------------------------------------------------
@@ -85,6 +90,22 @@ void vtkSlicerViewerInteractorStyle::OnLeftButtonDown()
     return;
     }
   
+  // get the scene's mouse interaction mode
+  int mouseInteractionMode = -1;
+  
+  if ( this->GetCameraNode() != NULL )
+    {
+    vtkMRMLSelectionNode *selnode;
+    selnode = vtkMRMLSelectionNode::SafeDownCast (this->GetCameraNode()->GetScene()->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
+    if (selnode != NULL)
+      {
+      mouseInteractionMode = selnode->GetMouseInteractionMode();
+      // release the pointer
+      selnode = NULL;
+      }
+    }
+  
+  
   if (this->Interactor->GetShiftKey()) 
     {
     if (this->Interactor->GetControlKey()) 
@@ -104,7 +125,19 @@ void vtkSlicerViewerInteractorStyle::OnLeftButtonDown()
       }
     else 
       {
-      this->StartRotate();
+      if (mouseInteractionMode == vtkMRMLSelectionNode::MouseTransform)
+        {
+        this->StartRotate();
+        }
+      else if (mouseInteractionMode == vtkMRMLSelectionNode::MousePut)
+        {
+        this->AddFiducial();
+        }
+      else if (mouseInteractionMode == vtkMRMLSelectionNode::MouseSelect)
+        {
+        // deal with select mode
+        std::cout << "Mouse Selection mode not implemented, try something else...\n";
+        }
       }
     }
 }
@@ -259,6 +292,8 @@ void vtkSlicerViewerInteractorStyle::Rotate()
     this->CurrentRenderer->UpdateLightsGeometryToFollowCamera();
     }
 
+  // release the camera
+  camera = NULL;
   rwi->Render();
 }
 
@@ -297,7 +332,10 @@ void vtkSlicerViewerInteractorStyle::Spin()
 
   camera->Roll(newAngle - oldAngle);
   camera->OrthogonalizeViewUp();
-      
+
+  // release the camera
+  camera = NULL;
+  
   rwi->Render();
 }
 
@@ -363,7 +401,10 @@ void vtkSlicerViewerInteractorStyle::Pan()
     {
     this->CurrentRenderer->UpdateLightsGeometryToFollowCamera();
     }
-    
+
+  // release the camera
+  camera = NULL;
+  
   rwi->Render();
 }
 
@@ -420,6 +461,8 @@ void vtkSlicerViewerInteractorStyle::Dolly(double factor)
     }
   
   this->Interactor->Render();
+
+  camera = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -429,3 +472,54 @@ void vtkSlicerViewerInteractorStyle::PrintSelf(ostream& os, vtkIndent indent)
 
 }
 
+//----------------------------------------------------------------------------
+void vtkSlicerViewerInteractorStyle::SetApplication ( vtkSlicerApplication *app )
+{
+  this->Application = app;
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerViewerInteractorStyle::AddFiducial()
+{
+  vtkDebugMacro( "Putting down a fiducial at the origin\n");
+  if (this->CurrentRenderer == NULL)
+    {
+    return;
+    }
+  
+  double ras[3] = {0.0, 0.0, 0.0};
+  
+  vtkDebugMacro("\tnew pick point = " << ras[0] << ", " << ras[1] << ", " << ras[2]);
+  if (this->GetApplication())
+    {
+    vtkSlicerFiducialsGUI *fidGUI = vtkSlicerFiducialsGUI::SafeDownCast(this->GetApplication()->GetModuleGUIByName("Fiducials"));
+    if (fidGUI != NULL)
+      {
+      if (fidGUI->GetLogic() != NULL)
+        {
+        int pt = fidGUI->GetLogic()->AddFiducial(ras[0], ras[1], ras[2]);
+        if (pt != -1)
+          {
+          vtkDebugMacro("Added a fiducial at pt = " << pt << endl);
+          }
+        else
+          {
+          vtkErrorMacro("Wasn't able to add a fiducial");
+          }
+        }
+      else
+        {
+        vtkErrorMacro("Cant't get the fiducials logic");
+        }
+      }
+    else
+      {
+      vtkErrorMacro("Can't get the fiducials gui");
+      }
+    fidGUI = NULL;
+    }
+  else
+    {
+    vtkErrorMacro("Can't get the application");
+    }
+}
