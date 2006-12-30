@@ -644,6 +644,7 @@ void vtkSlicerViewerWidget::CreateWidget ( )
   if (rwi)
     {
     vtkSlicerViewerInteractorStyle *iStyle = vtkSlicerViewerInteractorStyle::New();
+    iStyle->SetApplication ( (vtkSlicerApplication *)this->GetApplication() );
     rwi->SetInteractorStyle (iStyle);
     iStyle->Delete();
     }
@@ -957,10 +958,17 @@ void vtkSlicerViewerWidget::SetModelDisplayProperty(vtkMRMLModelNode *model,  vt
     // if the scalars are visible, try to get the lookup table
     if (actor->GetMapper()->GetScalarVisibility())
       {
+      /*
       if (dnode->GetColorNode() != NULL &&
-          dnode->GetColorNode()->GetLookupTable() != NULL)
+          vtkMRMLFreeSurferColorNode::SafeDownCast(dnode->GetColorNode())->GetLookupTable() != NULL)
         {
-        actor->GetMapper()->SetLookupTable(dnode->GetColorNode()->GetLookupTable());
+        actor->GetMapper()->SetLookupTable(vtkMRMLFreeSurferColorNode::SafeDownCast(dnode->GetColorNode())->GetLookupTable());
+        } else { std::cout << "vtkSlicerViewerWidget: updating model props for " << model->GetName() << ", the display node color node " << (dnode->GetColorNode() == NULL ? "is null" : "isn't null") << ", and can't get a lookup table.\n"; }
+      */
+      if (dnode->GetColorNode() != NULL &&
+          vtkMRMLColorNode::SafeDownCast(dnode->GetColorNode())->GetLookupTable() != NULL)
+        {
+        actor->GetMapper()->SetLookupTable(vtkMRMLColorNode::SafeDownCast(dnode->GetColorNode())->GetLookupTable());
         }
       }
     actor->GetProperty()->SetColor(dnode->GetColor());
