@@ -42,8 +42,6 @@ vtkSlicerViewControlGUI::vtkSlicerViewControlGUI ( )
   this->SceneClosing = false;
   this->ProcessingMRMLEvent = 0;
   this->RockCount = 0;
-  
-  this->ViewAxisMode = 0;
 
   this->SlicerViewControlIcons = vtkSlicerViewControlIcons::New ( );
   this->SpinButton = vtkKWCheckButton::New ( );
@@ -94,7 +92,6 @@ vtkSlicerViewControlGUI::~vtkSlicerViewControlGUI ( )
 
   this->RenderPending = 0;
   this->SceneClosing = false;
-  this->ViewAxisMode = 0;
   this->RockCount = 0;  
 
   if ( this->SlicerViewControlIcons )
@@ -345,7 +342,6 @@ void vtkSlicerViewControlGUI::PrintSelf ( ostream& os, vtkIndent indent )
 
   // eventuall these get moved into the view node...
   os << indent << "SlicerViewControlGUI: " << this->GetClassName ( ) << "\n";
-  os << indent << "ViewAxisMode: " << this->GetViewAxisMode (  ) << "\n";
   // class widgets
   os << indent << "ViewAxisAIconButton: " << this->GetViewAxisAIconButton (  ) << "\n";
   os << indent << "ViewAxisPIconButton: " << this->GetViewAxisPIconButton (  ) << "\n";
@@ -512,14 +508,14 @@ void vtkSlicerViewControlGUI::ProcessGUIEvents ( vtkObject *caller,
 
       //--- automatic camera control mode: switch 'rotate around axis' or 'look from direction'
       if (( b == this->RotateAroundButton ) && ( event == vtkKWCheckButton::SelectedStateChangedEvent)  &&
-          ( this->ViewAxisMode == vtkSlicerViewControlGUI::LookFrom) )
+          ( this->ViewNode->GetViewAxisMode() == vtkMRMLViewNode::LookFrom) )
         {
-        this->ViewAxisMode = vtkSlicerViewControlGUI::RotateAround;
+        this->ViewNode->SetViewAxisMode ( vtkMRMLViewNode::RotateAround );
         }
       if (( b == this->LookFromButton ) && ( event == vtkKWCheckButton::SelectedStateChangedEvent ) &&
-          (this->ViewAxisMode == vtkSlicerViewControlGUI::RotateAround) )
+          (this->ViewNode->GetViewAxisMode() == vtkMRMLViewNode::RotateAround) )
         {
-        this->ViewAxisMode = vtkSlicerViewControlGUI::LookFrom;
+        this->ViewNode->SetViewAxisMode( vtkMRMLViewNode::LookFrom );
         }
 
       }
@@ -865,7 +861,7 @@ void vtkSlicerViewControlGUI::MainViewSetStereo ( )
 //---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::MainViewRotateAround ( int axis )
 {
-  double deg, negdeg, n;
+  double deg, negdeg;
   if ( this->ApplicationGUI && this->ViewNode )
     {
     vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));    
@@ -969,7 +965,7 @@ void vtkSlicerViewControlGUI::MainViewLookFrom ( const char *dir )
 //---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::ViewControlACallback ( )
 {
-    if ( this->ViewAxisMode == RotateAround )
+    if ( this->ViewNode->GetViewAxisMode() == vtkMRMLViewNode::RotateAround )
       {
       this->MainViewRotateAround ( vtkMRMLViewNode::RollLeft );
       }
@@ -983,7 +979,7 @@ void vtkSlicerViewControlGUI::ViewControlACallback ( )
 //---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::ViewControlPCallback ( )
 {
-  if ( this->ViewAxisMode == RotateAround )
+  if ( this->ViewNode->GetViewAxisMode() == vtkMRMLViewNode::RotateAround )
     {
     this->MainViewRotateAround ( vtkMRMLViewNode::RollRight );
     }
@@ -998,7 +994,7 @@ void vtkSlicerViewControlGUI::ViewControlPCallback ( )
 //---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::ViewControlSCallback ( )
 {
-  if ( this->ViewAxisMode == RotateAround )
+  if ( this->ViewNode->GetViewAxisMode() == vtkMRMLViewNode::RotateAround )
     {
     this->MainViewRotateAround ( vtkMRMLViewNode::YawLeft );
     }
@@ -1013,7 +1009,7 @@ void vtkSlicerViewControlGUI::ViewControlSCallback ( )
 //---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::ViewControlICallback ( )
 {
-  if ( this->ViewAxisMode == RotateAround )
+  if ( this->ViewNode->GetViewAxisMode() == vtkMRMLViewNode::RotateAround )
     {
     this->MainViewRotateAround ( vtkMRMLViewNode::YawRight );
     }
@@ -1028,7 +1024,7 @@ void vtkSlicerViewControlGUI::ViewControlICallback ( )
 //---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::ViewControlRCallback ( )
 {
-  if ( this->ViewAxisMode == RotateAround )
+  if ( this->ViewNode->GetViewAxisMode() == vtkMRMLViewNode::RotateAround )
     {
     this->MainViewRotateAround ( vtkMRMLViewNode::PitchUp );
     }
@@ -1043,7 +1039,7 @@ void vtkSlicerViewControlGUI::ViewControlRCallback ( )
 //---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::ViewControlLCallback ( )
 {
-  if ( this->ViewAxisMode == RotateAround )
+  if ( this->ViewNode->GetViewAxisMode() == vtkMRMLViewNode::RotateAround )
     {
     this->MainViewRotateAround (vtkMRMLViewNode::PitchDown);
     }
@@ -1057,7 +1053,7 @@ void vtkSlicerViewControlGUI::ViewControlLCallback ( )
 
 //---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::EnterViewAxisACallback ( ) {
-  if ( this->ViewAxisMode == RotateAround )
+  if ( this->ViewNode->GetViewAxisMode() == vtkMRMLViewNode::RotateAround )
     {
     this->ViewAxisPIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetViewAxisPIconHI() );
     this->ViewAxisAIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetViewAxisAIconHI() );
@@ -1077,7 +1073,7 @@ void vtkSlicerViewControlGUI::LeaveViewAxisACallback ( ) {
 
 //---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::EnterViewAxisPCallback ( ) {
-  if ( this->ViewAxisMode == RotateAround )
+  if ( this->ViewNode->GetViewAxisMode() == vtkMRMLViewNode::RotateAround )
     {
     this->ViewAxisPIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetViewAxisPIconHI() );
     this->ViewAxisAIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetViewAxisAIconHI() );
@@ -1097,7 +1093,7 @@ void vtkSlicerViewControlGUI::LeaveViewAxisPCallback ( ) {
 
 //---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::EnterViewAxisRCallback ( ) {
-  if ( this->ViewAxisMode == RotateAround )
+  if ( this->ViewNode->GetViewAxisMode() == vtkMRMLViewNode::RotateAround )
     {
     this->ViewAxisRIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetViewAxisRIconHI() );
     this->ViewAxisLIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetViewAxisLIconHI() );
@@ -1117,7 +1113,7 @@ void vtkSlicerViewControlGUI::LeaveViewAxisRCallback ( ) {
 
 //---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::EnterViewAxisLCallback ( ) {
-  if ( this->ViewAxisMode == RotateAround )
+  if ( this->ViewNode->GetViewAxisMode() == vtkMRMLViewNode::RotateAround )
     {
     this->ViewAxisRIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetViewAxisRIconHI() );
     this->ViewAxisLIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetViewAxisLIconHI() );
@@ -1137,7 +1133,7 @@ void vtkSlicerViewControlGUI::LeaveViewAxisLCallback ( ) {
 
 //---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::EnterViewAxisSCallback ( ) {
-  if ( this->ViewAxisMode == RotateAround )
+  if ( this->ViewNode->GetViewAxisMode() == vtkMRMLViewNode::RotateAround )
     {
     this->ViewAxisSIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetViewAxisSIconHI() );
     this->ViewAxisIIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetViewAxisIIconHI() );
@@ -1156,7 +1152,7 @@ void vtkSlicerViewControlGUI::LeaveViewAxisSCallback ( ) {
 
 //---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::EnterViewAxisICallback ( ) {
-  if ( this->ViewAxisMode == RotateAround )
+  if ( this->ViewNode->GetViewAxisMode() == vtkMRMLViewNode::RotateAround )
     {
     this->ViewAxisIIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetViewAxisIIconHI() );
     this->ViewAxisSIconButton->SetImageToIcon (this->SlicerViewControlIcons->GetViewAxisSIconHI() );
@@ -1313,7 +1309,6 @@ void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
       this->LookFromButton->SetValueAsInt ( 202 );
       this->LookFromButton->SetVariableName ( this->RotateAroundButton->GetVariableName( ) );
       this->LookFromButton->SetSelectedState(1);
-      this->ViewAxisMode = vtkSlicerViewControlGUI::LookFrom;
       //--- Push button to toggle between perspective and ortho rendering
       this->OrthoButton->SetParent ( f3);
       this->OrthoButton->Create ( );

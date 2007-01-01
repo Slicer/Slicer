@@ -59,6 +59,7 @@ vtkMRMLViewNode::vtkMRMLViewNode()
   this->FieldOfView = 200;
   this->LetterSize = 0.05;
   this->AnimationMode = vtkMRMLViewNode::Off;
+  this->ViewAxisMode = vtkMRMLViewNode::LookFrom;
   this->SpinDegrees = 2.0;
   this->RotateDegrees = 5.0;
   this->SpinDirection = vtkMRMLViewNode::YawLeft;
@@ -241,6 +242,15 @@ void vtkMRMLViewNode::WriteXML(ostream& of, int nIndent)
   else if ( this->GetAnimationMode() == vtkMRMLViewNode::Rock )
     {
     of << indent << " animationMode=\"" << "Rock" << "\"";
+    }
+  
+  if ( this->GetViewAxisMode() == vtkMRMLViewNode::LookFrom )
+    {
+    of << indent << " viewAxisMode=\"" << "LookFrom" << "\"";
+    }
+  else if ( this->GetViewAxisMode() == vtkMRMLViewNode::RotateAround )
+    {
+    of << indent << " viewAxisMode=\"" << "RotateAround" << "\"";
     }
   
   // configure spin
@@ -442,6 +452,18 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
         }
       }
     
+    else if (!strcmp (attName, "viewAxisMode"))
+      {
+      if (!strcmp (attValue, "RotateAround"))
+        {
+        this->ViewAxisMode = vtkMRMLViewNode::RotateAround;
+        }
+      else if (!strcmp (attValue, "LookFrom"))
+        {
+        this->ViewAxisMode = vtkMRMLViewNode::LookFrom;
+        }
+      }
+    
     else if (!strcmp(attName, "spinDegrees" ))
       {
       std::stringstream ss;
@@ -538,6 +560,7 @@ void vtkMRMLViewNode::Copy(vtkMRMLNode *anode)
   this->SetFieldOfView(node->GetFieldOfView());
   this->SetLetterSize(node->GetLetterSize());
   this->SetAnimationMode ( node->GetAnimationMode ( ) );
+  this->SetViewAxisMode ( node->GetViewAxisMode ( ) );
   this->SetSpinDirection ( node->GetSpinDirection ( ) );
   this->SetAnimationMs ( node->GetAnimationMs() );
   this->SetSpinDegrees (node->GetSpinDegrees ( ));
@@ -567,6 +590,7 @@ void vtkMRMLViewNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "SpinDegrees:       " << this->SpinDegrees << "\n";
   os << indent << "RotateDegrees:       " << this->RotateDegrees << "\n";
   os << indent << "AnimationMode:       " << this->AnimationMode << "\n";
+  os << indent << "ViewAxisMode:       " << this->ViewAxisMode << "\n";
   os << indent << "RockLength:       " << this->RockLength << "\n";
   os << indent << "RockCount:       " << this->RockCount << "\n";
   os << indent << "StereoType:       " << this->StereoType << "\n";

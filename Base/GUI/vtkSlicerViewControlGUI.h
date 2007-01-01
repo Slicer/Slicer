@@ -98,11 +98,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   vtkGetObjectMacro (RotateAroundButton, vtkKWRadioButton );
   vtkGetObjectMacro (NavZoomFrame, vtkKWFrame );
   
-
-  // Description:
-  // Flag to indicate camera control mode ( look from direction, or rotate around axis )
-  vtkGetMacro ( ViewAxisMode, int );
-  vtkSetMacro ( ViewAxisMode, int );
   // Description:
   // Get the Widgets that display the RotateAround image
   // in the ViewControlFrame.
@@ -256,15 +251,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   virtual void PackNavWidget ( );
   virtual void PackZoomWidget ( ) ;
 
-  //BTX
-  // Modes for controlling camera by clicking axes
-  enum
-    {
-      RotateAround = 0,
-      LookFrom
-    };
-  //ETX
-
  protected:
   vtkSlicerViewControlGUI ( );
   virtual ~vtkSlicerViewControlGUI ( );
@@ -321,11 +307,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   vtkMRMLViewNode *ViewNode;
   vtkMRMLCameraNode *CameraNode;
   
-  // Description:
-  // mode that switches camera increments
-  // between 'rotate around' and 'look from'
-  // when user clicks on the little axis control
-  int ViewAxisMode;
   int RockCount;
 
  private:

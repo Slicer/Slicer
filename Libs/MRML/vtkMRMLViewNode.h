@@ -102,6 +102,10 @@ public:
 //  vtkSetMacro (AnimationMode, int );
 
   // Description:
+  vtkGetMacro (ViewAxisMode, int );
+  vtkSetMacro (ViewAxisMode, int );
+  
+  // Description:
   // Direction of animated spinning
   vtkGetMacro ( SpinDirection, int );
   vtkSetMacro ( SpinDirection, int );
@@ -142,7 +146,7 @@ public:
 //  vtkSetMacro (RenderMode, int );
   
   //BTX
-  // Modes for controlling camera by clicking axes
+  // Modes for automatically controlling camera 
   enum
     {
       RotateAround = 0,
@@ -237,6 +241,11 @@ protected:
   // Description:
   // Specifies orthographic or perspective rendering
   int RenderMode;
+
+  // Description:
+  // Parameters for look-from or rotate-around
+  // automatic view control
+  int ViewAxisMode;
 
   // Description:
   // Indicates whether or not the View is active
