@@ -55,6 +55,8 @@ vtkMRMLSelectionNode::vtkMRMLSelectionNode()
   this->ActiveVolumeID = NULL;
   this->ActiveLabelVolumeID = NULL;
   this->ActiveFiducialListID = NULL;
+  this->ActiveCameraID = NULL;
+  this->ActiveViewID = NULL;
 
   //--- by default, the application begins with the mouse
   //--- mode set to twiddle the 3D view.
@@ -79,6 +81,16 @@ vtkMRMLSelectionNode::~vtkMRMLSelectionNode()
     delete [] this->ActiveFiducialListID;
     this->ActiveFiducialListID = NULL;
     }
+  if ( this->ActiveCameraID )
+    {
+    delete [] this->ActiveCameraID;
+    this->ActiveCameraID = NULL;
+    }
+  if ( this->ActiveViewID)
+    {
+    delete []  this->ActiveViewID;
+    this->ActiveViewID = NULL;
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -91,6 +103,8 @@ void vtkMRMLSelectionNode::WriteXML(ostream& of, int nIndent)
   of << indent << "activeVolumeID=\"" << (this->ActiveVolumeID ? this->ActiveVolumeID : "NULL") << "\" ";
   of << indent << "activeLabelVolumeID=\"" << (this->ActiveLabelVolumeID ? this->ActiveLabelVolumeID : "NULL") << "\" ";
   of << indent << "activeFiducialListID=\"" << (this->ActiveFiducialListID ? this->ActiveFiducialListID : "NULL") << "\" ";
+  of << indent << "activeCameraID=\"" << (this->ActiveCameraID ? this->ActiveCameraID : "NULL") << "\" ";
+  of << indent << "activeViewID=\"" << (this->ActiveViewID ? this->ActiveViewID : "NULL") << "\" ";
   of << indent << "mouseInteractionMode=\"" << this->GetMouseInteractionModeAsString() <<  "\" ";
 }
 
@@ -108,6 +122,14 @@ void vtkMRMLSelectionNode::UpdateReferenceID(const char *oldID, const char *newI
   if (this->ActiveFiducialListID && !strcmp(oldID, this->ActiveFiducialListID))
     {
     this->SetActiveFiducialListID(newID);
+    }
+  if ( this->ActiveCameraID && !strcmp (oldID, this->ActiveCameraID ))
+    {
+    this->SetActiveCameraID (newID);
+    }
+  if ( this->ActiveViewID && !strcmp ( oldID, this->ActiveViewID ))
+    {
+    this->SetActiveViewID (newID );
     }
 }
 
@@ -138,6 +160,17 @@ void vtkMRMLSelectionNode::ReadXMLAttributes(const char** atts)
       this->SetActiveFiducialListID(attValue);
       this->Scene->AddReferencedNodeID(this->ActiveFiducialListID, this);
       }
+    if (!strcmp (attName, "activeCameraID"))
+      {
+      this->SetActiveCameraID (attValue );
+      this->Scene->AddReferencedNodeID (this->ActiveCameraID, this);
+      }
+    if (!strcmp (attName, "activeViewID"))
+      {
+      this->SetActiveViewID (attValue);
+      this->Scene->AddReferencedNodeID ( this->ActiveViewID, this);
+      }
+    
     if (!strcmp(attName, "mouseInteractionMode"))
       {
       std::stringstream ss;
@@ -160,6 +193,8 @@ void vtkMRMLSelectionNode::Copy(vtkMRMLNode *anode)
   this->SetActiveVolumeID(node->GetActiveVolumeID());
   this->SetActiveLabelVolumeID(node->GetActiveLabelVolumeID());
   this->SetActiveFiducialListID(node->GetActiveFiducialListID());
+  this->SetActiveCameraID (node->GetActiveCameraID());
+  this->SetActiveViewID (node->GetActiveViewID() );
   this->SetMouseInteractionMode(node->GetMouseInteractionMode());
 }
 
@@ -171,6 +206,8 @@ void vtkMRMLSelectionNode::PrintSelf(ostream& os, vtkIndent indent)
   os << "ActiveVolumeID: " << ( (this->ActiveVolumeID) ? this->ActiveVolumeID : "None" ) << "\n";
   os << "ActiveLabelVolumeID: " << ( (this->ActiveLabelVolumeID) ? this->ActiveLabelVolumeID : "None" ) << "\n";
   os << "ActiveFiducialListID: " << ( (this->ActiveFiducialListID) ? this->ActiveFiducialListID : "None" ) << "\n";
+  os << "ActiveCameraID: " << ( (this->ActiveCameraID) ? this->ActiveCameraID : "None" ) << "\n";
+  os << "ActiveViewID: " << ( (this->ActiveViewID) ? this->ActiveViewID : "None" ) << "\n";
   os << "MouseInteractionMode: " << this->GetMouseInteractionModeAsString() << "\n";
 
 }

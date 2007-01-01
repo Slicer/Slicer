@@ -71,6 +71,16 @@ class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
   vtkSetReferenceStringMacro (ActiveFiducialListID);
 
   // Description:
+  // the ID of a MRMLCameraNode
+  vtkGetStringMacro (ActiveCameraID );
+  vtkSetReferenceStringMacro ( ActiveCameraID );
+  
+  // Description
+  // the ID of a MRMLViewNode
+  vtkGetStringMacro (ActiveViewID );
+  vtkSetReferenceStringMacro ( ActiveViewID );
+  
+  // Description:
   // Allows the mouse mode to be set and queried.
   vtkGetMacro (MouseInteractionMode, int );
   char *GetMouseInteractionModeAsString();
@@ -101,6 +111,8 @@ protected:
   char *ActiveVolumeID;
   char *ActiveLabelVolumeID;
   char *ActiveFiducialListID;
+  char *ActiveCameraID;
+  char *ActiveViewID;
 
   // Description:
   // Allows the mouse to select and to deposit
