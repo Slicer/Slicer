@@ -31,6 +31,8 @@ if { [itcl::find class SeedSWidget] == "" } {
     constructor {args} {}
     destructor {}
 
+    public variable movedCommand ""
+
     variable _startPosition "0 0 0"
     variable _currentPosition "0 0 0"
 
@@ -228,6 +230,7 @@ itcl::body SeedSWidget::processEvent { } {
           set _actionState ""
           $sliceGUI SetGrabID ""
           set _description ""
+          eval $movedCommand
         }
       }
     }

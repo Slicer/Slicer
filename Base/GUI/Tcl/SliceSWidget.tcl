@@ -31,6 +31,7 @@ if { [itcl::find class SliceSWidget] == "" } {
     variable _actionStartXY "0 0"
     variable _actionStartFOV "250 250 250"
     variable _kwObserverTags ""
+    variable _fiducialsSWidget ""
 
     # methods
     method resizeSliceNode {} {}
@@ -47,6 +48,8 @@ if { [itcl::find class SliceSWidget] == "" } {
 itcl::body SliceSWidget::constructor {sliceGUI} {
 
   $this configure -sliceGUI $sliceGUI
+
+  set _fiducialsSWidget [FiducialsSWidget #auto $sliceGUI]
  
   # create matrices to store transform state
   set o(storeXYToRAS) [$this vtkNew vtkMatrix4x4]
@@ -101,6 +104,8 @@ itcl::body SliceSWidget::constructor {sliceGUI} {
 
 
 itcl::body SliceSWidget::destructor {} {
+
+  itcl::delete object $_fiducialsSWidget
 
   if { [info command $sliceGUI] != "" } {
     foreach tag $_guiObserverTags {
@@ -281,8 +286,7 @@ itcl::body SliceSWidget::processEvent { } {
     "LeftButtonPressEvent" {
       if { [info command SeedSWidget] != "" } {
         if { [$_interactor GetControlKey] && [$_interactor GetShiftKey] } {
-          set seedSWidget [SeedSWidget #auto $sliceGUI]
-          $seedSWidget place $r $a $s
+          FiducialsSWidget::AddFiducial $r $a $s
         }
       }
     }
