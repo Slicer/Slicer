@@ -12,6 +12,7 @@
 #include "vtkSlicerModuleNavigator.h"
 
 #include "vtkMRMLSelectionNode.h"
+#include "vtkMRMLViewNode.h"
 
 #include "vtkKWWidget.h"
 #include "vtkKWToolbarSet.h"
@@ -528,6 +529,19 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
           
       if ( menu == this->OneUpSliceViewIconButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
         {
+        // First, check to see if view is spinning or rocking.
+        // If so, pause view Spin or Rock.
+        // First, check to see if view is spinning or rocking.
+        // If so, stop view Spin or Rock.
+        if ( p->GetViewControlGUI()->GetViewNode() != NULL )
+          {
+          if ( p->GetViewControlGUI()->GetViewSpinning() ||
+               p->GetViewControlGUI()->GetViewRocking() )
+            {
+            p->GetViewControlGUI()->GetViewNode()->SetAnimationMode ( vtkMRMLViewNode::Off );
+            }
+          }
+
         const char *whichSlice = this->OneUpSliceViewIconButton->GetValue ( );
         if ( !strcmp ( whichSlice, "Red slice" ))
           {
@@ -541,32 +555,93 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
           {
           p->RepackMainViewer ( vtkSlicerGUILayout::SlicerLayoutOneUpSliceView, "Green");
           }
+        // Resume view Spin or Rock.
         }
 
 
       if ( pushb == this->ConventionalViewIconButton && event == vtkKWPushButton::InvokedEvent )
         {
+        // First, check to see if view is spinning or rocking.
+        // If so, stop view Spin or Rock.
+        if ( p->GetViewControlGUI()->GetViewNode() != NULL )
+          {
+          if ( p->GetViewControlGUI()->GetViewSpinning() ||
+               p->GetViewControlGUI()->GetViewRocking() )
+            {
+            p->GetViewControlGUI()->GetViewNode()->SetAnimationMode ( vtkMRMLViewNode::Off );
+            }
+          }
         p->RepackMainViewer (vtkSlicerGUILayout::SlicerLayoutDefaultView, NULL );
         }
       else if ( pushb == this->OneUp3DViewIconButton && event == vtkKWPushButton::InvokedEvent )
         {
+        // First, check to see if view is spinning or rocking.
+        // If so, stop view Spin or Rock.
+        if ( p->GetViewControlGUI()->GetViewNode() != NULL )
+          {
+          if ( p->GetViewControlGUI()->GetViewSpinning() ||
+               p->GetViewControlGUI()->GetViewRocking() )
+            {
+            p->GetViewControlGUI()->GetViewNode()->SetAnimationMode ( vtkMRMLViewNode::Off );
+            }
+          }
         p->RepackMainViewer ( vtkSlicerGUILayout::SlicerLayoutOneUp3DView, NULL);
         }
       else if ( pushb == this->FourUpViewIconButton && event == vtkKWPushButton::InvokedEvent )
         {
+        // First, check to see if view is spinning or rocking.
+        // If so, stop view Spin or Rock.
+        if ( p->GetViewControlGUI()->GetViewNode() != NULL )
+          {
+          if ( p->GetViewControlGUI()->GetViewSpinning() ||
+               p->GetViewControlGUI()->GetViewRocking() )
+            {
+            p->GetViewControlGUI()->GetViewNode()->SetAnimationMode ( vtkMRMLViewNode::Off );
+            }
+          }
         p->RepackMainViewer ( vtkSlicerGUILayout::SlicerLayoutFourUpView, NULL );
         }
       else if ( pushb == this->Tabbed3DViewIconButton && event == vtkKWPushButton::InvokedEvent )
         {
+        // First, check to see if view is spinning or rocking.
+        // If so, stop view Spin or Rock.
+        if ( p->GetViewControlGUI()->GetViewNode() != NULL )
+          {
+          if ( p->GetViewControlGUI()->GetViewSpinning() ||
+               p->GetViewControlGUI()->GetViewRocking() )
+            {
+            p->GetViewControlGUI()->GetViewNode()->SetAnimationMode ( vtkMRMLViewNode::Off );
+            }
+          }
         p->RepackMainViewer ( vtkSlicerGUILayout::SlicerLayoutTabbed3DView, NULL );
         }
       else if ( pushb == this->TabbedSliceViewIconButton && event == vtkKWPushButton::InvokedEvent )
         {
+        // First, check to see if view is spinning or rocking.
+        // If so, stop view Spin or Rock.
+        if ( p->GetViewControlGUI()->GetViewNode() != NULL )
+          {
+          if ( p->GetViewControlGUI()->GetViewSpinning() ||
+               p->GetViewControlGUI()->GetViewRocking() )
+            {
+            p->GetViewControlGUI()->GetViewNode()->SetAnimationMode ( vtkMRMLViewNode::Off );
+            }
+          }
         p->RepackMainViewer ( vtkSlicerGUILayout::SlicerLayoutTabbedSliceView, NULL );
         }
       else if ( pushb == this->LightBoxViewIconButton && event == vtkKWPushButton::InvokedEvent )
         {
         // TODO: implement this
+        // First, check to see if view is spinning or rocking.
+        // If so, stop view Spin or Rock.
+        if ( p->GetViewControlGUI()->GetViewNode() != NULL )
+          {
+          if ( p->GetViewControlGUI()->GetViewSpinning() ||
+               p->GetViewControlGUI()->GetViewRocking() )
+            {
+            p->GetViewControlGUI()->GetViewNode()->SetAnimationMode ( vtkMRMLViewNode::Off );
+            }
+          }
         }
       else if ( pushb == this->UndoIconButton && event == vtkKWPushButton::InvokedEvent )
         {
