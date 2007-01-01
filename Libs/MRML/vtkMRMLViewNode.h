@@ -54,19 +54,31 @@ public:
   virtual const char* GetNodeTagName() {return "View";};
 
   // Description:
+  // When a view is set Active, make other views inactive.
+  virtual void MakeOthersInActive();
+
+  // Description:
+  // Indicates whether or not the view is active
+  vtkGetMacro (Active, int );
+  vtkSetMacro (Active, int );
+  
+  // Description:
   // Indicates if the box is visible
   vtkGetMacro(BoxVisible, int);
-  vtkSetMacro(BoxVisible, int); 
+  virtual void SetBoxVisible ( int );
+  //vtkSetMacro (BoxVisible, int );
   
   // Description:
   // Indicates if the axis labels are visible
   vtkGetMacro(AxisLabelsVisible, int);
-  vtkSetMacro(AxisLabelsVisible, int);
+  virtual void SetAxisLabelsVisible ( int );
+//  vtkSetMacro(AxisLabelsVisible, int);
 
   // Description:
   // Toggles visibility of fiducial points in 3D viewer
   vtkGetMacro (FiducialsVisible, int );
-  vtkSetMacro (FiducialsVisible, int);
+  virtual void SetFiducialsVisible ( int );
+//  vtkSetMacro (FiducialsVisible, int);
 
   // Description:
   // Field of view size
@@ -84,9 +96,10 @@ public:
   vtkSetVector3Macro (BackgroundColor, double);
 
   // Description:
-  // Turn on and off animated spinning
-  vtkGetMacro (Spin, int );
-  vtkSetMacro (Spin, int );
+  // Turn on and off animated spinning or rocking.
+  vtkGetMacro (AnimationMode, int );
+  virtual void SetAnimationMode ( int );
+//  vtkSetMacro (AnimationMode, int );
 
   // Description:
   // Direction of animated spinning
@@ -100,14 +113,9 @@ public:
 
   // Description:
   // Amount of wait time between spin increments
-  vtkGetMacro ( SpinMs, int );
-  vtkSetMacro ( SpinMs, int );
+  vtkGetMacro ( AnimationMs, int );
+  vtkSetMacro ( AnimationMs, int );
     
-  // Description:
-  // Turn on and off animated rocking
-  vtkGetMacro ( Rock, int );
-  vtkSetMacro ( Rock, int );
-
   // Description:
   // Length of animated rocking
   vtkGetMacro ( RockLength, int );
@@ -121,12 +129,14 @@ public:
   // Description:
   // stereo mode (including nostereo)
   vtkGetMacro ( StereoType, int );
-  vtkSetMacro ( StereoType, int );
+  virtual void SetStereoType ( int );
+//  vtkSetMacro ( StereoType, int );
 
   // Description:
   // specifies orthographic or perspective rendering
   vtkGetMacro (RenderMode, int );
-  vtkSetMacro (RenderMode, int );
+  virtual void SetRenderMode ( int );
+//  vtkSetMacro (RenderMode, int );
   
   //BTX
   // Modes for controlling camera by clicking axes
@@ -160,7 +170,29 @@ public:
       Perspective = 0,
       Orthographic
     };
+
+  // animation mode
+  enum
+    {
+      Off = 0,
+      Spin,
+      Rock
+    };
+
+  // events
+  enum
+    {
+      AnimationModeEvent = 19001,
+      RenderModeEvent,
+      StereoModeEvent,
+      VisibilityEvent,
+      MoveCameraEvent,
+      SliceOpacityEvent,
+      ViewModifiedEvent,
+      CameraModifiedEvent
+    };
   //ETX 
+
 
 protected:
   vtkMRMLViewNode();
@@ -178,14 +210,13 @@ protected:
   
   // Description:
   // parameters of automatic spin
-  int Spin;
+  int AnimationMode;
   int SpinDirection;
   double SpinDegrees;
-  int SpinMs;
+  int AnimationMs;
 
   // Description:
   // parameters of automatic rock
-  int Rock;
   int RockLength;
   int RockCount;
 
@@ -196,6 +227,10 @@ protected:
   // Description:
   // Specifies orthographic or perspective rendering
   int RenderMode;
+
+  // Description:
+  // Indicates whether or not the View is active
+  int Active;
   
 };
 

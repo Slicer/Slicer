@@ -52,16 +52,16 @@ vtkMRMLNode* vtkMRMLViewNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLViewNode::vtkMRMLViewNode()
 {
+  this->Active = 0;
   this->BoxVisible = 1;
   this->AxisLabelsVisible = 1;
   this->FiducialsVisible = 1;
   this->FieldOfView = 200;
   this->LetterSize = 0.05;
-  this->Spin = 0;
-  this->Rock = 0;
+  this->AnimationMode = vtkMRMLViewNode::Off;
   this->SpinDegrees = 2.0;
   this->SpinDirection = vtkMRMLViewNode::Left;
-  this->SpinMs = 5;
+  this->AnimationMs = 5;
   this->RockLength = 200;
   this->RockCount = 0;
   this->StereoType = vtkMRMLViewNode::NoStereo;
@@ -77,6 +77,136 @@ vtkMRMLViewNode::~vtkMRMLViewNode()
 {
 }
 
+
+
+//----------------------------------------------------------------------------
+void vtkMRMLViewNode::SetRenderMode ( int m )
+{
+  switch (m)
+    {
+    case vtkMRMLViewNode::Perspective:
+      this->RenderMode = m;
+      this->InvokeEvent ( vtkMRMLViewNode::RenderModeEvent );
+      break;
+    case vtkMRMLViewNode::Orthographic:
+      this->RenderMode = m;
+      this->InvokeEvent ( vtkMRMLViewNode::RenderModeEvent );
+      break;
+    default:
+      break;
+    }
+}
+
+
+//----------------------------------------------------------------------------
+void vtkMRMLViewNode::SetStereoType ( int m )
+{
+  switch ( m )
+    {
+    case vtkMRMLViewNode::NoStereo:
+      this->StereoType = m;
+      this->InvokeEvent ( vtkMRMLViewNode::StereoModeEvent );
+      break;
+    case vtkMRMLViewNode::RedBlue:
+      this->StereoType = m;
+      this->InvokeEvent ( vtkMRMLViewNode::StereoModeEvent );
+      break;
+    case vtkMRMLViewNode::CrystalEyes:
+      this->StereoType = m;
+      this->InvokeEvent ( vtkMRMLViewNode::StereoModeEvent );
+      break;
+    case vtkMRMLViewNode::Interlaced:
+      this->StereoType = m;
+      this->InvokeEvent ( vtkMRMLViewNode::StereoModeEvent );
+      break;
+    default:
+      break;
+    }
+}
+
+
+
+//----------------------------------------------------------------------------
+void vtkMRMLViewNode::SetAnimationMode ( int m )
+{
+  switch ( m )
+    {
+    case vtkMRMLViewNode::Off:
+      this->AnimationMode = m;
+      this->InvokeEvent ( vtkMRMLViewNode::AnimationModeEvent );
+      break;
+    case vtkMRMLViewNode::Spin:
+      this->AnimationMode = m;
+      this->InvokeEvent ( vtkMRMLViewNode::AnimationModeEvent );
+      break;
+    case vtkMRMLViewNode::Rock:
+      this->AnimationMode = m;
+      this->InvokeEvent ( vtkMRMLViewNode::AnimationModeEvent );
+      break;
+    default:
+      break;
+    }
+}
+
+
+//----------------------------------------------------------------------------
+void vtkMRMLViewNode::SetBoxVisible ( int m )
+{
+  switch ( m )
+    {
+    case 0:
+      this->BoxVisible = 0;
+      this->InvokeEvent ( vtkMRMLViewNode::VisibilityEvent );
+      break;
+    case 1:
+      this->BoxVisible = 1;
+      this->InvokeEvent ( vtkMRMLViewNode::VisibilityEvent );
+      break;
+    default:
+      break;
+    }
+}
+
+
+//----------------------------------------------------------------------------
+void vtkMRMLViewNode::SetFiducialsVisible ( int m )
+{
+  switch ( m )
+    {
+    case 0:
+      this->FiducialsVisible = 0;
+      this->InvokeEvent ( vtkMRMLViewNode::VisibilityEvent );
+      break;
+    case 1:
+      this->FiducialsVisible = 1;
+      this->InvokeEvent ( vtkMRMLViewNode::VisibilityEvent );
+      break;
+    default:
+      break;
+    }
+}
+
+
+//----------------------------------------------------------------------------
+void vtkMRMLViewNode::SetAxisLabelsVisible ( int m )
+{
+  switch ( m )
+    {
+    case 0:
+      this->AxisLabelsVisible = 0;
+      this->InvokeEvent ( vtkMRMLViewNode::VisibilityEvent );
+      break;
+    case 1:
+      this->AxisLabelsVisible = 1;
+      this->InvokeEvent ( vtkMRMLViewNode::VisibilityEvent );
+      break;
+    default:
+      break;
+    }
+}
+
+
+
 //----------------------------------------------------------------------------
 void vtkMRMLViewNode::WriteXML(ostream& of, int nIndent)
 {
@@ -86,6 +216,7 @@ void vtkMRMLViewNode::WriteXML(ostream& of, int nIndent)
 
   vtkIndent indent(nIndent);
 
+  of << indent << " active=\"" << (this->Active ? "true" : "false") << "\"";
   of << indent << " fieldOfView=\"" << this->GetFieldOfView() << "\"";
   of << indent << " letterSize=\"" << this->GetLetterSize() << "\"";
   of << indent << " boxVisible=\"" << (this->BoxVisible ? "true" : "false") << "\"";
@@ -98,12 +229,22 @@ void vtkMRMLViewNode::WriteXML(ostream& of, int nIndent)
 
   
   // spin or rock?
-  of << indent << " spin=\"" << (this->Spin ? "true" : "false") << "\"";
-  of << indent << " rock=\"" << (this->Rock ? "true" : "false") << "\"";
-
+  if ( this->GetAnimationMode() == vtkMRMLViewNode::Off )
+    {
+    of << indent << " animationMode=\"" << "Off" << "\"";
+    }
+  else if ( this->GetAnimationMode() == vtkMRMLViewNode::Spin )
+    {
+    of << indent << " animationMode=\"" << "Spin" << "\"";
+    }
+  else if ( this->GetAnimationMode() == vtkMRMLViewNode::Rock )
+    {
+    of << indent << " animationMode=\"" << "Rock" << "\"";
+    }
+  
   // configure spin
   of << indent << " spinDegrees=\"" << this->GetSpinDegrees() << "\"";
-  of << indent << " spinMs=\"" << this->GetSpinMs() << "\"";
+  of << indent << " spinMs=\"" << this->GetAnimationMs() << "\"";
   if ( this->GetSpinDirection() == vtkMRMLViewNode::Up )
     {
     of << indent << " spinDirection=\"" << "Up" << "\"";
@@ -257,17 +398,6 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
       
       }
 
-    else if (!strcmp(attName, "rock")) 
-      {
-      if (!strcmp(attValue,"true")) 
-        {
-        this->Rock = 1;
-        }
-      else
-        {
-        this->Rock = 0;
-        }
-      }
     else if (!strcmp(attName, "rockLength" ))
       {
       std::stringstream ss;
@@ -285,17 +415,22 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
       this->RockCount = count;
       }    
 
-    else if (!strcmp(attName, "spin")) 
+    else if (!strcmp(attName, "animationMode")) 
       {
-      if (!strcmp(attValue,"true")) 
+      if (!strcmp(attValue,"Off")) 
         {
-        this->Spin = 1;
+        this->AnimationMode = vtkMRMLViewNode::Off;
         }
-      else
+      else if (!strcmp(attValue,"Spin")) 
         {
-        this->Spin = 0;
+        this->AnimationMode = vtkMRMLViewNode::Spin;
+        }
+      else if (!strcmp(attValue,"Rock")) 
+        {
+        this->AnimationMode = vtkMRMLViewNode::Rock;
         }
       }
+    
     else if (!strcmp(attName, "spinDegrees" ))
       {
       std::stringstream ss;
@@ -310,7 +445,7 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
       ss << attValue;
       int ms;
       ss >> ms;
-      this->SpinMs = ms;
+      this->AnimationMs = ms;
       }    
 
     else if (!strcmp(attName, "spinDirection")) 
@@ -344,7 +479,18 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
         this->RenderMode = vtkMRMLViewNode::Orthographic;
         }
       }
-                
+
+    else if (!strcmp(attName, "active")) 
+      {
+      if (!strcmp(attValue,"true")) 
+        {
+        this->Active = 1;
+        }
+      else
+        {
+        this->Active = 0;
+        }
+      }
 
     }
 }
@@ -364,16 +510,16 @@ void vtkMRMLViewNode::Copy(vtkMRMLNode *anode)
   this->SetAxisLabelsVisible(node->GetAxisLabelsVisible());
   this->SetFieldOfView(node->GetFieldOfView());
   this->SetLetterSize(node->GetLetterSize());
-  this->SetSpin ( node->GetSpin ( ) );
+  this->SetAnimationMode ( node->GetAnimationMode ( ) );
   this->SetSpinDirection ( node->GetSpinDirection ( ) );
-  this->SetSpinMs ( node->GetSpinMs() );
+  this->SetAnimationMs ( node->GetAnimationMs() );
   this->SetSpinDegrees (node->GetSpinDegrees ( ));
-  this->SetRock ( node->GetRock ( ) );
   this->SetRockLength ( node->GetRockLength () );
   this->SetRockCount ( node->GetRockCount ( ) );
   this->SetStereoType ( node->GetStereoType ( ) );
   this->SetRenderMode ( node->GetRenderMode() );
   this->SetBackgroundColor ( node->GetBackgroundColor ( ) );
+  this->SetActive(node->GetActive());
 }
 
 //----------------------------------------------------------------------------
@@ -382,17 +528,16 @@ void vtkMRMLViewNode::PrintSelf(ostream& os, vtkIndent indent)
   
   Superclass::PrintSelf(os,indent);
 
+  os << indent << "Active:        " << this->Active << "\n";
   os << indent << "BoxVisible:        " << this->BoxVisible << "\n";
   os << indent << "FiducialsVisible:        " << this->FiducialsVisible << "\n";
   os << indent << "AxisLabelsVisible: " << this->AxisLabelsVisible << "\n";
   os << indent << "FieldOfView:       " << this->FieldOfView << "\n";
   os << indent << "LetterSize:       " << this->LetterSize << "\n";
-
-  os << indent << "Spin:       " << this->Spin << "\n";
   os << indent << "SpinDirection:       " << this->SpinDirection << "\n";
-  os << indent << "SpinMs:       " << this->SpinMs << "\n";  
+  os << indent << "AnimationMs:       " << this->AnimationMs << "\n";  
   os << indent << "SpinDegrees:       " << this->SpinDegrees << "\n";
-  os << indent << "Rock:       " << this->Rock << "\n";
+  os << indent << "AnimationMode:       " << this->AnimationMode << "\n";
   os << indent << "RockLength:       " << this->RockLength << "\n";
   os << indent << "RockCount:       " << this->RockCount << "\n";
   os << indent << "StereoType:       " << this->StereoType << "\n";
@@ -402,3 +547,23 @@ void vtkMRMLViewNode::PrintSelf(ostream& os, vtkIndent indent)
      << this->BackgroundColor[2] <<"\n";
 }
 
+
+//----------------------------------------------------------------------------
+void vtkMRMLViewNode::MakeOthersInActive()
+{
+  if (this->Scene == NULL)
+    {
+    return;
+    }
+  vtkMRMLViewNode *node = NULL;
+  int nnodes = this->Scene->GetNumberOfNodesByClass("vtkMRMLViewNode");
+  for (int n=0; n<nnodes; n++)
+    {
+    node = vtkMRMLViewNode::SafeDownCast (
+       this->Scene->GetNthNodeByClass(n, "vtkMRMLViewNode"));
+    if (node != this)
+      {
+      node->SetActive(0);
+      }
+    }
+}
