@@ -216,14 +216,23 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   virtual void RockView ( );
 
 
-  virtual void MainViewLookFrom ( );
-  virtual void MainViewRotateAround ( );
-  
+  virtual void MainViewLookFrom ( const char *dir );
+  virtual void MainViewRotateAround ( int axis );
+
+  virtual void MainViewSetProjection ( );
+  virtual void MainViewSetStereo ( );
+
   // Description:
   // Groups of callbacks that handle the state change of
   // rollover images in the ViewControlFrame. These
   // callbacks only update the visual behavior of the GUI,
   // but don't impact the application state at all.
+  void ViewControlACallback ( );
+  void ViewControlPCallback ( );
+  void ViewControlSCallback ( );
+  void ViewControlICallback ( );
+  void ViewControlLCallback ( );
+  void ViewControlRCallback ( );
   void EnterViewAxisACallback ( );
   void LeaveViewAxisACallback ( );
   void EnterViewAxisPCallback ( );

@@ -297,30 +297,38 @@ void vtkSlicerViewControlGUI::MakeViewControlRolloverBehavior ( )
 {
 
   //--- configure and bind for rollover interaction
+  //--- as there are no events on labels, we'll do this the old fashioned way.
+  
   this->ViewAxisAIconButton->SetBorderWidth (0);
   this->ViewAxisAIconButton->SetBinding ( "<Enter>",  this, "EnterViewAxisACallback");
   this->ViewAxisAIconButton->SetBinding ( "<Leave>",  this, "LeaveViewAxisACallback");
+  this->ViewAxisAIconButton->SetBinding ( "<Button-1>", this, "ViewControlACallback");
   this->Script ( "%s ListMethods", this->GetTclName() );
 
   this->ViewAxisPIconButton->SetBorderWidth (0);
   this->ViewAxisPIconButton->SetBinding ( "<Enter>", this, "EnterViewAxisPCallback");
   this->ViewAxisPIconButton->SetBinding ( "<Leave>", this, "LeaveViewAxisPCallback");
+  this->ViewAxisPIconButton->SetBinding ( "<Button-1>", this, "ViewControlPCallback");
 
   this->ViewAxisRIconButton->SetBorderWidth (0);
   this->ViewAxisRIconButton->SetBinding ( "<Enter>", this, "EnterViewAxisRCallback");
   this->ViewAxisRIconButton->SetBinding ( "<Leave>", this, "LeaveViewAxisRCallback");
-
+  this->ViewAxisRIconButton->SetBinding ( "<Button-1>", this, "ViewControlRCallback");
+  
   this->ViewAxisLIconButton->SetBorderWidth (0);
   this->ViewAxisLIconButton->SetBinding ( "<Enter>", this, "EnterViewAxisLCallback");
   this->ViewAxisLIconButton->SetBinding ( "<Leave>", this, "LeaveViewAxisLCallback");
+  this->ViewAxisLIconButton->SetBinding ( "<Button-1>", this, "ViewControlLCallback");
 
   this->ViewAxisSIconButton->SetBorderWidth (0);
   this->ViewAxisSIconButton->SetBinding ( "<Enter>", this, "EnterViewAxisSCallback");
   this->ViewAxisSIconButton->SetBinding ( "<Leave>", this, "LeaveViewAxisSCallback");
+  this->ViewAxisSIconButton->SetBinding ( "<Button-1>", this, "ViewControlSCallback");
   
   this->ViewAxisIIconButton->SetBorderWidth (0);
   this->ViewAxisIIconButton->SetBinding ( "<Enter>", this, "EnterViewAxisICallback");
   this->ViewAxisIIconButton->SetBinding ( "<Leave>", this, "LeaveViewAxisICallback");
+  this->ViewAxisIIconButton->SetBinding ( "<Button-1>", this, "ViewControlICallback");
   
   this->ViewAxisCenterIconButton->SetBorderWidth (0);
   this->ViewAxisTopCornerIconButton->SetBorderWidth (0);
@@ -409,6 +417,7 @@ void vtkSlicerViewControlGUI::AddGUIObservers ( )
     this->VisibilityButton->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->FOVEntry->GetWidget()->AddObserver ( vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ZoomEntry->GetWidget()->AddObserver ( vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    
 }
 
 
@@ -506,30 +515,17 @@ void vtkSlicerViewControlGUI::ProcessGUIEvents ( vtkObject *caller,
           ( this->ViewAxisMode == vtkSlicerViewControlGUI::LookFrom) )
         {
         this->ViewAxisMode = vtkSlicerViewControlGUI::RotateAround;
-        this->MainViewRotateAround ( );
         }
       if (( b == this->LookFromButton ) && ( event == vtkKWCheckButton::SelectedStateChangedEvent ) &&
           (this->ViewAxisMode == vtkSlicerViewControlGUI::RotateAround) )
         {
         this->ViewAxisMode = vtkSlicerViewControlGUI::LookFrom;
-        this->MainViewLookFrom ( );
         }
 
       }
     }
 }
 
-
-//---------------------------------------------------------------------------
-void vtkSlicerViewControlGUI::MainViewLookFrom ( )
-{
-}
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerViewControlGUI::MainViewRotateAround ( )
-{
-}
 
 
 //---------------------------------------------------------------------------
@@ -625,7 +621,7 @@ void vtkSlicerViewControlGUI::BuildViewSelectMenu ( )
 {
   
   this->SelectButton->GetMenu( )->DeleteAllItems();
-  this->SelectButton->GetMenu()->AddRadioButton ("Save current" );
+  this->SelectButton->GetMenu()->AddRadioButton ("Save current (not yet available)" );
   this->SelectButton->GetMenu()->AddSeparator();
   this->SelectButton->GetMenu()->AddSeparator();
   this->SelectButton->GetMenu()->AddCommand ( "close" );
@@ -711,16 +707,16 @@ void vtkSlicerViewControlGUI::SpinView ( int dir, double degrees )
       double ndegrees = -degrees;
 
       switch ( dir ) {
-      case vtkMRMLViewNode::Up:
+      case vtkMRMLViewNode::PitchUp:
         cam->Elevation ( degrees );
         break;
-      case vtkMRMLViewNode::Down:
+      case vtkMRMLViewNode::PitchDown:
         cam->Elevation ( ndegrees );
         break;
-      case vtkMRMLViewNode::Left:
+      case vtkMRMLViewNode::YawLeft:
         cam->Azimuth ( degrees );
         break;
-      case vtkMRMLViewNode::Right:
+      case vtkMRMLViewNode::YawRight:
         cam->Azimuth ( ndegrees );
         break;
       default:
@@ -847,6 +843,214 @@ void vtkSlicerViewControlGUI::Exit ( )
 void vtkSlicerViewControlGUI::SetApplicationGUI ( vtkSlicerApplicationGUI *appGUI )
 {
   this->ApplicationGUI = appGUI;
+}
+
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::MainViewSetProjection ( )
+{
+}
+
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::MainViewSetStereo ( )
+{
+}
+
+
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::MainViewRotateAround ( int axis )
+{
+  double deg, negdeg, n;
+  if ( this->ApplicationGUI && this->ViewNode )
+    {
+    vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));    
+    deg = this->ViewNode->GetRotateDegrees ( );
+    negdeg = -deg;
+  
+    if ( this->CameraNode != NULL )
+      {
+      vtkCamera *cam = this->GetCameraNode()->GetCamera();
+      switch ( axis )
+        {
+        case vtkMRMLViewNode::PitchDown:
+          cam->Elevation ( deg );
+          break;
+        case vtkMRMLViewNode::PitchUp:
+          cam->Elevation ( negdeg );
+          break;
+        case vtkMRMLViewNode::RollLeft:
+          cam->Roll ( deg );
+          break;
+        case vtkMRMLViewNode::RollRight:
+          cam->Roll ( negdeg );
+          break;
+        case vtkMRMLViewNode::YawLeft:
+          cam->Azimuth ( deg );
+          break;
+        case vtkMRMLViewNode::YawRight:
+          cam->Azimuth ( negdeg );
+          break;
+        default:
+          break;
+        }
+      cam->OrthogonalizeViewUp();
+      p->GetViewerWidget()->GetMainViewer()->GetRenderer()->UpdateLightsGeometryToFollowCamera();
+      p->GetViewerWidget()->GetMainViewer()->GetRenderer()->Render();
+      // this->NavZoomRender();        
+      }
+    }
+}
+
+
+  
+//---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::MainViewLookFrom ( const char *dir )
+{
+
+ double fov, *fp, widefov;
+
+   if ( this->ApplicationGUI && this->ViewNode )
+    {
+    vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));    
+    fov = this->ViewNode->GetFieldOfView ( );
+    widefov = fov*3;
+    
+    if ( this->CameraNode != NULL )
+      {
+      vtkCamera *cam = this->GetCameraNode()->GetCamera();
+      fp = this->GetCameraNode()->GetFocalPoint();
+
+      if ( !strcmp (dir, "R"))
+        {
+        cam->SetPosition ( fp[0]+widefov, fp[1], fp[2] );
+        cam->SetViewUp ( 0, 0, 1);
+        }
+      else if ( !strcmp (dir, "L"))
+        {
+        cam->SetPosition ( fp[0]-widefov, fp[1], fp[2]);
+        cam->SetViewUp ( 0, 0, 1);        
+        }
+      else if ( !strcmp (dir, "S"))
+        {
+        cam->SetPosition ( fp[0], fp[1], fp[2]+widefov );
+        cam->SetViewUp ( 0, 1, 0);
+        }
+      else if ( !strcmp (dir, "I"))
+        {
+        cam->SetPosition ( fp[0], fp[1], fp[2]-widefov );
+        cam->SetViewUp ( 0, 1, 0);
+        }
+      else if ( !strcmp (dir, "A"))
+        {
+        cam->SetPosition (fp[0], fp[1]+widefov, fp[2] );
+        cam->SetViewUp ( 0, 0, 1 );
+        }
+      else if ( !strcmp (dir, "P"))
+        {
+        cam->SetPosition (fp[0], fp[1]-widefov, fp[2] );
+        cam->SetViewUp ( 0, 0, 1 );
+        }
+      p->GetViewerWidget()->GetMainViewer()->GetRenderer()->ResetCameraClippingRange ( );
+      cam->ComputeViewPlaneNormal();
+      cam->OrthogonalizeViewUp();
+      p->GetViewerWidget()->GetMainViewer()->GetRenderer()->UpdateLightsGeometryToFollowCamera();
+      p->GetViewerWidget()->GetMainViewer()->GetRenderer()->Render();      
+      // this->NavZoomRender();
+      }
+    }
+}
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::ViewControlACallback ( )
+{
+    if ( this->ViewAxisMode == RotateAround )
+      {
+      this->MainViewRotateAround ( vtkMRMLViewNode::RollLeft );
+      }
+    else
+      {
+      this->MainViewLookFrom ( "A" );
+      }
+}
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::ViewControlPCallback ( )
+{
+  if ( this->ViewAxisMode == RotateAround )
+    {
+    this->MainViewRotateAround ( vtkMRMLViewNode::RollRight );
+    }
+  else
+    {
+    this->MainViewLookFrom ("P");
+    }
+
+}
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::ViewControlSCallback ( )
+{
+  if ( this->ViewAxisMode == RotateAround )
+    {
+    this->MainViewRotateAround ( vtkMRMLViewNode::YawLeft );
+    }
+  else
+    {
+    this->MainViewLookFrom ("S");
+    }
+
+}
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::ViewControlICallback ( )
+{
+  if ( this->ViewAxisMode == RotateAround )
+    {
+    this->MainViewRotateAround ( vtkMRMLViewNode::YawRight );
+    }
+  else
+    {
+    this->MainViewLookFrom ("I");
+    }
+
+}
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::ViewControlRCallback ( )
+{
+  if ( this->ViewAxisMode == RotateAround )
+    {
+    this->MainViewRotateAround ( vtkMRMLViewNode::PitchUp );
+    }
+  else
+    {
+    this->MainViewLookFrom ("R");
+    }
+}
+
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::ViewControlLCallback ( )
+{
+  if ( this->ViewAxisMode == RotateAround )
+    {
+    this->MainViewRotateAround (vtkMRMLViewNode::PitchDown);
+    }
+  else
+    {
+    this->MainViewLookFrom ("L");
+    }
 }
 
 
@@ -1365,10 +1569,7 @@ void vtkSlicerViewControlGUI::UpdateCamerasFromMRML ( )
     }
     this->MainViewer->GetRenderer()->SetActiveCamera(this->CameraNode->GetCamera());
 */
-
-
 }
-
 
 
 
