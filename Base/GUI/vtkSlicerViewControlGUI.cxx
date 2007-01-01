@@ -1,6 +1,8 @@
 #include "vtkObject.h"
 #include "vtkObjectFactory.h"
 #include "vtkCommand.h"
+#include "vtkCamera.h"
+#include "vtkRenderer.h"
 
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerApplicationGUI.h"
@@ -26,8 +28,6 @@
 #include "vtkKWRenderWidget.h"
 #include "vtkSlicerViewControlIcons.h"
 
-#include "vtkMRMLCameraNode.h"
-#include "vtkMRMLViewNode.h"
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerViewControlGUI );
@@ -38,25 +38,12 @@ vtkCxxRevisionMacro ( vtkSlicerViewControlGUI, "$Revision: 1.0 $");
 vtkSlicerViewControlGUI::vtkSlicerViewControlGUI ( )
 {
   
-  // Description:
-  // parameters of automatic spin
-  this->Spin = 0;
-  this->Rock = 0;
-  this->SpinDegrees = 2.0;
-  this->SpinDirection = 3;
-  this->SpinMs = 5;
-
-  // Description:
-  // parameters of automatic rock
-  this->RockLength = 200;
+  this->RenderPending = 0;
+  this->SceneClosing = false;
+  this->ProcessingMRMLEvent = 0;
   this->RockCount = 0;
-
-  // Description:
-  // stereo viewing mode and type
-  this->Stereo = 0;
-  this->StereoType = 0;
+  
   this->ViewAxisMode = 0;
-  this->RenderMode = 0;
 
   this->SlicerViewControlIcons = vtkSlicerViewControlIcons::New ( );
   this->SpinButton = vtkKWCheckButton::New ( );
@@ -95,6 +82,9 @@ vtkSlicerViewControlGUI::vtkSlicerViewControlGUI ( )
   this->NavWidget = vtkKWRenderWidget::New( );
   this->ZoomWidget = vtkKWRenderWidget::New ( );
   this->NavZoomFrame = vtkKWFrame::New ( );
+
+  this->ViewNode = NULL;
+  this->CameraNode = NULL;
 }
 
 
@@ -102,23 +92,10 @@ vtkSlicerViewControlGUI::vtkSlicerViewControlGUI ( )
 vtkSlicerViewControlGUI::~vtkSlicerViewControlGUI ( )
 {
 
-  // parameters of automatic spin
-  this->Spin = 0;
-  this->Rock = 0;
-  this->SpinDegrees = 0.0;
-  this->SpinDirection = 0;
-  this->SpinMs = 0;
-
-  // parameters of automatic rock
-  this->RockLength = 0;
-  this->RockCount = 0;
-
-  // stereo off
-  this->Stereo = 0;
-  this->StereoType = 0;
-
+  this->RenderPending = 0;
+  this->SceneClosing = false;
   this->ViewAxisMode = 0;
-  this->RenderMode = 0;
+  this->RockCount = 0;  
 
   if ( this->SlicerViewControlIcons )
     {
@@ -306,7 +283,9 @@ vtkSlicerViewControlGUI::~vtkSlicerViewControlGUI ( )
     this->NavZoomFrame = NULL;
     }
   
-
+  this->RemoveViewObservers ( );
+  this->SetMRMLViewNode ( NULL );
+  this->SetAndObserveMRMLCameraNode (NULL);
   this->SetApplicationGUI ( NULL );
 }
 
@@ -358,17 +337,7 @@ void vtkSlicerViewControlGUI::PrintSelf ( ostream& os, vtkIndent indent )
 
   // eventuall these get moved into the view node...
   os << indent << "SlicerViewControlGUI: " << this->GetClassName ( ) << "\n";
-  os << indent << "Spin: " << this->GetSpin(  ) << "\n";
-  os << indent << "SpinDirection: " << this->GetSpinDirection(  ) << "\n";
-  os << indent << "SpinDegrees: " << this->GetSpinDegrees (  ) << "\n";
-  os << indent << "SpinMs: " << this->GetSpinMs (  ) << "\n";
-  os << indent << "Rock: " << this->GetRock (  ) << "\n";
-  os << indent << "RockLength: " << this->GetRockLength (  ) << "\n";
-  os << indent << "RockCount: " << this->GetRockCount (  ) << "\n";
-  os << indent << "Stereo: " << this->GetStereo (  ) << "\n";
-  os << indent << "StereoType: " << this->GetStereoType (  ) << "\n";
   os << indent << "ViewAxisMode: " << this->GetViewAxisMode (  ) << "\n";
-  os << indent << "RenderMode: " << this->GetRenderMode (  ) << "\n";
   // class widgets
   os << indent << "ViewAxisAIconButton: " << this->GetViewAxisAIconButton (  ) << "\n";
   os << indent << "ViewAxisPIconButton: " << this->GetViewAxisPIconButton (  ) << "\n";
@@ -420,8 +389,9 @@ void vtkSlicerViewControlGUI::RemoveGUIObservers ( )
     this->VisibilityButton->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->FOVEntry->GetWidget()->RemoveObservers (vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ZoomEntry->GetWidget()->RemoveObservers (vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-
 }
+
+
 
 //---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::AddGUIObservers ( )
@@ -476,67 +446,59 @@ void vtkSlicerViewControlGUI::ProcessGUIEvents ( vtkObject *caller,
       if ( (p == this->CenterButton) && (event == vtkKWPushButton::InvokedEvent ) )
         {
         }
-      if ( (p == this->OrthoButton) && (event == vtkKWPushButton::InvokedEvent ) )
+
+      if ( (p == this->OrthoButton) && (event == vtkKWPushButton::InvokedEvent ) && this->ViewNode )
         {
-        if ( this->RenderMode == vtkSlicerViewControlGUI::Orthographic )
+        if ( this->ViewNode->GetRenderMode() == vtkMRMLViewNode::Orthographic )
           {
-          this->RenderMode = vtkSlicerViewControlGUI::Perspective;
+          this->ViewNode->SetRenderMode (vtkMRMLViewNode::Perspective);
           }
-        else if ( this->RenderMode == vtkSlicerViewControlGUI::Perspective )
+        else if ( this->ViewNode->GetRenderMode() == vtkMRMLViewNode::Perspective )
           {
-          this->RenderMode = vtkSlicerViewControlGUI::Orthographic;
+          this->ViewNode->SetRenderMode(vtkMRMLViewNode::Orthographic );
           }
         // then toggle the button's icon appropriately (handle this in process logic events later
-        if ( this->RenderMode == vtkSlicerViewControlGUI::Perspective )
+        if ( this->ViewNode->GetRenderMode() == vtkMRMLViewNode::Perspective )
           {
           this->OrthoButton->SetImageToIcon ( this->SlicerViewControlIcons->GetOrthoButtonIcon() );
           }
-        else if ( this->RenderMode == vtkSlicerViewControlGUI::Orthographic )
+        else if ( this->ViewNode->GetRenderMode() == vtkMRMLViewNode::Orthographic )
           {
           this->OrthoButton->SetImageToIcon ( this->SlicerViewControlIcons->GetPerspectiveButtonIcon() );
           }
         }
+
       if ( (p == this->SliceOpacityButton ) && (event == vtkKWPushButton::InvokedEvent ) )
         {
         this->PopUpSliceOpacityScaleAndEntry( );
         }
 
       //--- turn View Spin and Rocking on and off
-      if ( (b == this->SpinButton) && (event == vtkKWCheckButton::SelectedStateChangedEvent) )
+      if ( (b == this->SpinButton) && (event == vtkKWCheckButton::SelectedStateChangedEvent) && this->ViewNode )
         {
-        // toggle the Spin (and turn off Rock if necessary)
-        if ( this->Spin == 1 )
-          {
-          this->Spin = 0;
-          }
-        else if ( this->Spin == 0 )
-          {
-          this->Spin = 1;
-          }
-        // handle the interaction 
-        if ( this->Spin == 1 )
-          {
-          this->RockButton->Deselect();
-          this->MainViewSpin ( );
-          }
+        // toggle the Spin 
+          if ( this->ViewNode->GetAnimationMode() != vtkMRMLViewNode::Spin  && this->SpinButton->GetSelectedState() == 1 )
+            {
+            this->ViewNode->SetAnimationMode ( vtkMRMLViewNode::Spin );
+            }
+          else if ( this->ViewNode->GetAnimationMode() == vtkMRMLViewNode::Spin && this->SpinButton->GetSelectedState() == 0 )
+            {
+            this->ViewNode->SetAnimationMode( vtkMRMLViewNode::Off );
+            }
+
         }
-      if ( (b == this->RockButton) && (event == vtkKWCheckButton::SelectedStateChangedEvent) )
+      if ( (b == this->RockButton) && (event == vtkKWCheckButton::SelectedStateChangedEvent) && this->ViewNode )
         {
-        // toggle the Rock (and turn off Spin if necessary)
-        if (this->Rock == 1 )
-          {
-          this->Rock = 0;
-          }
-        else if ( this->Rock == 0 )
-          {
-          this->Rock = 1;
-          }
-        // handle the interaction
-        if ( this->Rock == 1 )
-          {
-          this->SpinButton->Deselect();
-          this->MainViewRock ( );
-          }
+        // toggle the Rock 
+          if ( this->ViewNode->GetAnimationMode() != vtkMRMLViewNode::Rock && this->RockButton->GetSelectedState() == 1 )
+            {
+            this->ViewNode->SetAnimationMode( vtkMRMLViewNode::Rock );
+            }
+          else if (this->ViewNode->GetAnimationMode() == vtkMRMLViewNode::Rock && this->RockButton->GetSelectedState() == 0 )
+            {
+            this->ViewNode->SetAnimationMode ( vtkMRMLViewNode::Off );
+            }
+
         }
 
       //--- automatic camera control mode: switch 'rotate around axis' or 'look from direction'
@@ -544,16 +506,31 @@ void vtkSlicerViewControlGUI::ProcessGUIEvents ( vtkObject *caller,
           ( this->ViewAxisMode == vtkSlicerViewControlGUI::LookFrom) )
         {
         this->ViewAxisMode = vtkSlicerViewControlGUI::RotateAround;
+        this->MainViewRotateAround ( );
         }
       if (( b == this->LookFromButton ) && ( event == vtkKWCheckButton::SelectedStateChangedEvent ) &&
           (this->ViewAxisMode == vtkSlicerViewControlGUI::RotateAround) )
         {
         this->ViewAxisMode = vtkSlicerViewControlGUI::LookFrom;
+        this->MainViewLookFrom ( );
         }
 
       }
     }
 }
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::MainViewLookFrom ( )
+{
+}
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::MainViewRotateAround ( )
+{
+}
+
 
 //---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::HideSliceOpacityScaleAndEntry ( )
@@ -663,41 +640,43 @@ void vtkSlicerViewControlGUI::BuildViewSelectMenu ( )
 //---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::MainViewRock ( )
 {
-  if ( this->Rock )
+  if ( this->ViewNode )
     {
-
-  if ( this->GetApplicationGUI() != NULL )
+    if ( this->ViewNode->GetAnimationMode() == vtkMRMLViewNode::Rock )
       {
-      vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));    
-      vtkMRMLCameraNode *cam = p->GetViewerWidget()->GetCameraNode();
-      vtkMRMLViewNode *v = p->GetViewerWidget()->GetViewNode();
-    
-/*
-      // change icon to stop rock icon.
-      double frac = this->RockCount / this->RockLength;
-      double az = 1.5 * cos ( 2.0 * 3.1415926 * (frac- floor(frac)));
-      this->SetRockCount ( this->GetRockCount() + 1 );
-      // Move the camera
-      cam->GetCamera()->Azimuth ( az );
-      //Make the lighting follow the camera to avoid illumination changes
-      //  appGUI->GetViewerWidget()->GetMainViewer()->GetRenderer()->UpdateLightsGeometryToFollowCamera();
-      // Render
-      // Render3D
+      this->RockView ( );
       this->Script ( "update idletasks" );
-      const char *name = this->GetTclName();
-      this->Script ( "after %s %s MainViewRock", this->SpinMs, name );
-*/
+      this->Script ( "after idle \"%s MainViewRock \"",  this->GetTclName() );
       }
     }
 }
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerViewControlGUI::StopViewRock ( )
+void vtkSlicerViewControlGUI::RockView ( )
 {
-  this->Rock = 0;
-  this->RockButton->Deselect();
 
+  if ( this->ViewNode)
+    {
+      if ( this->GetApplicationGUI() != NULL )
+        {
+        vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));    
+        vtkCamera *cam = this->GetCameraNode()->GetCamera();
+
+        double frac = (double) this->RockCount / (double) this->ViewNode->GetRockLength();
+        double az = 1.5 * cos ( 2.0 * 3.1415926 * (frac- floor(frac)));
+        this->SetRockCount ( this->GetRockCount() + 1 );
+
+        // Move the camera
+        cam->Azimuth ( az );
+        cam->OrthogonalizeViewUp ( );
+        
+        //Make the lighting follow the camera to avoid illumination changes
+        p->GetViewerWidget()->GetMainViewer()->GetRenderer()->UpdateLightsGeometryToFollowCamera();
+        p->GetViewerWidget()->GetMainViewer()->GetRenderer()->Render();
+        // this->NavZoomRender();        
+        }
+    }
 }
 
 
@@ -707,72 +686,54 @@ void vtkSlicerViewControlGUI::StopViewRock ( )
 void vtkSlicerViewControlGUI::MainViewSpin ( )
 {
 
-  if ( this->Spin )
+  if ( this->ViewNode )
     {
-    // change icon to stop spin icon
-    /*
-    this->MainViewRotate (this->SpinDirection, this->SpinDegrees );
-    this->Script ( "update idletasks" );
-    const char *name = this->GetTclName();
-    this->Script ( "after %s %s MainViewSpin", this->SpinMs, name );
-    */
+    if ( this->ViewNode->GetAnimationMode() == vtkMRMLViewNode::Spin )
+      {
+      this->SpinView (this->ViewNode->GetSpinDirection(), this->ViewNode->GetSpinDegrees() );
+      this->Script ( "update idletasks" );
+      this->Script ( "after idle \"%s MainViewSpin \"",  this->GetTclName() );
+      }
     }
 }
 
 
-
-
 //---------------------------------------------------------------------------
-void vtkSlicerViewControlGUI::StopViewSpin ( )
-{
-  this->Spin = 0;
-  this->SpinButton->Deselect();
-
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerViewControlGUI::MainViewRotate ( int dir )
-{
-
-  this->MainViewRotate( dir, this->SpinDegrees );
-
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerViewControlGUI::MainViewRotate ( int dir, double degrees )
+void vtkSlicerViewControlGUI::SpinView ( int dir, double degrees )
 {
   
-  if ( this->GetApplicationGUI() != NULL )
+  if ( this->ViewNode )
     {
-    vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));    
-    vtkMRMLCameraNode *c = p->GetViewerWidget()->GetCameraNode();
-    double ndegrees = -degrees;
+    if ( this->GetApplicationGUI() != NULL )
+      {
+      vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));    
+      vtkCamera *cam = this->GetCameraNode()->GetCamera();
+      double ndegrees = -degrees;
 
-    switch ( dir ) {
-    case Up:
-      c->GetCamera()->Elevation ( degrees );
-      break;
-    case Down:
-      c->GetCamera()->Elevation ( ndegrees );
-      break;
-    case Left:
-      c->GetCamera()->Azimuth ( degrees );
-      break;
-    case Right:
-      c->GetCamera()->Azimuth ( ndegrees );
-      break;
-    default:
-      break;
-    }
-    c->GetCamera()->OrthogonalizeViewUp ( );
+      switch ( dir ) {
+      case vtkMRMLViewNode::Up:
+        cam->Elevation ( degrees );
+        break;
+      case vtkMRMLViewNode::Down:
+        cam->Elevation ( ndegrees );
+        break;
+      case vtkMRMLViewNode::Left:
+        cam->Azimuth ( degrees );
+        break;
+      case vtkMRMLViewNode::Right:
+        cam->Azimuth ( ndegrees );
+        break;
+      default:
+        break;
+      }
+      cam->OrthogonalizeViewUp ( );
 
-    //Make the lighting follow the camera to avoid illumination changes
-    //  appGUI->GetViewerWidget()->GetMainViewer()->GetRenderer()->UpdateLightsGeometryToFollowCamera();
-
-    //Render
-    //p->Render3D;
-    }
-  
+      //Make the lighting follow the camera to avoid illumination changes
+      p->GetViewerWidget()->GetMainViewer()->GetRenderer()->UpdateLightsGeometryToFollowCamera();
+      p->GetViewerWidget()->GetMainViewer()->GetRenderer()->Render();
+      // this->NavZoomRender();
+      }
+    }  
 }
 
 
@@ -789,8 +750,85 @@ void vtkSlicerViewControlGUI::ProcessLogicEvents ( vtkObject *caller,
 void vtkSlicerViewControlGUI::ProcessMRMLEvents ( vtkObject *caller,
                                            unsigned long event, void *callData )
 {
-    // Fill in
+  if (this->ProcessingMRMLEvent != 0 )
+    {
+    return;
+    }
+
+  this->ProcessingMRMLEvent = event;
+
+  vtkDebugMacro("processing event " << event);
+   
+  if (event == vtkMRMLScene::SceneCloseEvent )
+    {
+    this->SceneClosing = true;
+    }
+  else 
+    {
+    this->SceneClosing = false;
+    }
+
+
+
+  // has a node been added or deleted?
+  if ( vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene 
+       && (event == vtkMRMLScene::NodeAddedEvent || event == vtkMRMLScene::NodeRemovedEvent ) )
+    {
+    this->UpdateFromMRML();
+    }
+  
+  vtkMRMLCameraNode *cnode = vtkMRMLCameraNode::SafeDownCast ( caller );
+  vtkMRMLViewNode *vnode = vtkMRMLViewNode::SafeDownCast ( caller );
+  vtkMRMLSelectionNode *snode = vtkMRMLSelectionNode::SafeDownCast ( caller );
+
+  // has a new camera or view has been selected?
+  if ( snode != NULL )
+    {
+    this->UpdateFromMRML();
+    }    
+
+  // has camera been manipulated (aside from auto spin or rock?)
+  else if (cnode != NULL && cnode==this->CameraNode )
+    {
+    this->UpdateCamerasFromMRML();
+    }
+  
+  // has view been manipulated?
+  else if ( vnode != NULL && vnode == this->ViewNode &&
+            event == vtkMRMLViewNode::AnimationModeEvent )
+    {
+    // handle the mode change 
+    if ( this->ViewNode->GetAnimationMode() == vtkMRMLViewNode::Spin )
+      {
+      if ( this->RockButton->GetSelectedState() == 1 )
+        {
+        this->RockButton->Deselect();
+        }
+      this->MainViewSpin (  );
+      }
+    // handle the mode change
+    else if ( this->ViewNode->GetAnimationMode() == vtkMRMLViewNode::Rock )
+      {
+      if ( this->SpinButton->GetSelectedState() == 1 )
+        {
+        this->SpinButton->Deselect();
+        }
+      this->SetRockCount ( this->ViewNode->GetRockCount ( ) );
+      this->MainViewRock ( );
+      }
+
+    // handle whatever other change is made to the view.
+    else
+      {
+      this->UpdateViewsFromMRML( );
+      }
+    }
+
+
+  this->ProcessingMRMLEvent = 0;
+
 }
+
 
 //---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::Enter ( )
@@ -1263,3 +1301,227 @@ void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
 
 
 
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::UpdateCamerasFromMRML ( )
+{
+  // get all cameras from the scene and observe
+  // the active camera.
+  if (this->SceneClosing)
+    {
+    return;
+    }
+
+  // find an active camera
+  // or any camera if none is active
+  vtkMRMLCameraNode *node = NULL;
+  int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLCameraNode");
+  for (int n=0; n<nnodes; n++)
+    {
+    node = vtkMRMLCameraNode::SafeDownCast (
+       this->MRMLScene->GetNthNodeByClass(n, "vtkMRMLCameraNode"));
+    if (node->GetActive())
+      {
+      break;
+      }
+    }
+
+  if ( this->CameraNode != NULL && node != NULL && this->CameraNode != node)
+    {
+    // local CameraNode is out of sync with the scene
+    this->SetAndObserveMRMLCameraNode (NULL);
+    }
+  if ( this->CameraNode != NULL && this->MRMLScene->GetNodeByID(this->CameraNode->GetID()) == NULL)
+    {
+    // local node not in the scene
+    this->SetAndObserveMRMLCameraNode (NULL);
+    }
+  if ( this->CameraNode == NULL )
+    {
+    if ( node == NULL )
+      {
+      // no camera in the scene and local
+      // create an active camera
+      node = vtkMRMLCameraNode::New();
+      node->SetActive(1);
+      this->MRMLScene->AddNode(node);
+      node->Delete();
+      }
+    this->SetAndObserveMRMLCameraNode (node);
+    }
+ 
+  /*
+    // TO DO: adapt this chunk of code from SlicerViewerWidget
+    // to fit ViewControlGUI's needs.
+  vtkRenderWindowInteractor *rwi = this->MainViewer->GetRenderWindowInteractor();
+  if (rwi)
+    {
+    vtkInteractorObserver *iobs = rwi->GetInteractorStyle();
+    vtkSlicerViewerInteractorStyle *istyle = vtkSlicerViewerInteractorStyle::SafeDownCast(iobs);
+    if (istyle)
+      {
+      istyle->SetCameraNode(this->CameraNode);
+      }
+    }
+    this->MainViewer->GetRenderer()->SetActiveCamera(this->CameraNode->GetCamera());
+*/
+
+
+}
+
+
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::AddViewObservers ()
+{
+  if ( this->ViewNode != NULL )
+    {
+    this->ViewNode->AddObserver ( vtkMRMLViewNode::AnimationModeEvent, this->MRMLCallbackCommand );
+    this->ViewNode->AddObserver ( vtkMRMLViewNode::RenderModeEvent, this->MRMLCallbackCommand );
+    this->ViewNode->AddObserver ( vtkMRMLViewNode::StereoModeEvent, this->MRMLCallbackCommand );
+    this->ViewNode->AddObserver ( vtkMRMLViewNode::VisibilityEvent, this->MRMLCallbackCommand );
+    this->ViewNode->AddObserver ( vtkMRMLViewNode::MoveCameraEvent, this->MRMLCallbackCommand );
+    this->ViewNode->AddObserver ( vtkMRMLViewNode::SliceOpacityEvent, this->MRMLCallbackCommand );
+    this->ViewNode->AddObserver ( vtkMRMLViewNode::ViewModifiedEvent, this->MRMLCallbackCommand );        
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::RemoveViewObservers ()
+{
+  if ( this->ViewNode != NULL )
+    {
+    this->ViewNode->RemoveObservers ( vtkMRMLViewNode::AnimationModeEvent, this->MRMLCallbackCommand );
+    this->ViewNode->RemoveObservers ( vtkMRMLViewNode::RenderModeEvent, this->MRMLCallbackCommand );
+    this->ViewNode->RemoveObservers ( vtkMRMLViewNode::StereoModeEvent, this->MRMLCallbackCommand );
+    this->ViewNode->RemoveObservers ( vtkMRMLViewNode::VisibilityEvent, this->MRMLCallbackCommand );
+    this->ViewNode->RemoveObservers ( vtkMRMLViewNode::MoveCameraEvent, this->MRMLCallbackCommand );
+    this->ViewNode->RemoveObservers ( vtkMRMLViewNode::SliceOpacityEvent, this->MRMLCallbackCommand );
+    this->ViewNode->RemoveObservers ( vtkMRMLViewNode::ViewModifiedEvent, this->MRMLCallbackCommand );        
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::UpdateView ( vtkMRMLViewNode *node )
+{
+  if ( this->ViewNode != NULL && node != NULL && this->ViewNode != node)
+    {
+    // local ViewNode is out of sync with the scene
+    // RemoveExisting Observers
+    this->RemoveViewObservers ( );
+    this->SetMRMLViewNode  ( NULL );
+    }
+  if ( this->ViewNode != NULL && this->MRMLScene->GetNodeByID(this->ViewNode->GetID()) == NULL)
+    {
+    // local node not in the scene
+    this->RemoveViewObservers();
+    this->SetMRMLViewNode ( NULL );
+    }
+  if ( this->ViewNode == NULL )
+    {
+    this->SetMRMLViewNode ( node );
+    this->AddViewObservers ( );
+    }
+}
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::UpdateViewsFromMRML ( )
+{
+  // get all views from the scene
+  // and observe active view.
+  if (this->SceneClosing)
+    {
+    return;
+    }
+
+  // Find active view.
+  vtkMRMLViewNode *vn = NULL;
+  
+  int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLViewNode");
+  for (int n=0; n<nnodes; n++)
+    {
+    vn = vtkMRMLViewNode::SafeDownCast (
+       this->MRMLScene->GetNthNodeByClass(n, "vtkMRMLViewNode"));
+    if (vn->GetActive())
+      {
+      break;
+      }
+    }
+
+  // TODO: remove this line when views are being marked as active.
+  vn = vtkMRMLViewNode::SafeDownCast (
+                                      this->GetMRMLScene()->GetNthNodeByClass (0, "vtkMRMLViewNode" ));
+  
+  if ( vn == NULL )
+    {
+    // no view in the scene and local
+    // create an active camera
+    vn = vtkMRMLViewNode::New();
+    this->MRMLScene->AddNode(vn );
+    vn->Delete();
+    vn = vtkMRMLViewNode::SafeDownCast(
+                                       this->GetMRMLScene()->GetNthNodeByClass (0, "vtkMRMLViewNode" ));
+    }
+
+  // If active view is changed,
+  if ( vn != this->ViewNode)
+    {
+    UpdateView ( vn );
+    }
+  
+}
+
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::UpdateFromMRML()
+{
+
+
+  // called:
+  // 1. whenever any new node is created or deleted
+  // 2. when a new view or camera has been selected
+  // Needs to remove old observers, put new
+  // observers on the current camera and view,
+  // repopulate the NavZoom widget's actors, etc.,
+  // and rerender the NavZoom widget's view.
+
+  this->UpdateViewsFromMRML ( );
+  this->UpdateCamerasFromMRML ( );
+  this->UpdateNavZoomCameraAndActors ( );
+  this->RequestRender ( );
+
+}
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::UpdateNavZoomCameraAndActors ( )
+{
+  // TODO: implement
+}
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::RequestRender()
+{
+  if (this->GetRenderPending())
+    {
+    return;
+    }
+
+  this->SetRenderPending(1);
+  this->Script("after idle \"%s Render\"", this->GetTclName());
+}
+
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::Render()
+{
+
+  // TODO: implement
+//  this->NavZoomViewer->Render();
+  this->SetRenderPending(0);
+}

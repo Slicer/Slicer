@@ -6,8 +6,14 @@
 #ifndef __vtkSlicerViewControlGUI_h
 #define __vtkSlicerViewControlGUI_h
 
+#include "vtkObserverManager.h"
+
+#include "vtkMRMLViewNode.h"
+#include "vtkMRMLCameraNode.h"
+
 #include "vtkSlicerBaseGUIWin32Header.h"
 #include "vtkSlicerComponentGUI.h"
+
 
 class vtkKWFrame;
 class vtkKWPushButton;
@@ -26,6 +32,31 @@ class vtkKWEntry;
 class vtkKWEntryWithLabel;
 class vtkSlicerViewControlIcons;
 
+class vtkCallbackCommand;
+
+//BTX
+#ifndef vtkSetAndObserveMRMLNodeMacro
+#define vtkSetAndObserveMRMLNodeMacro(node,value)  { \
+  vtkObject *oldNode = (node); \
+  this->MRMLObserverManager->SetAndObserveObject ( vtkObjectPointer( &(node) ), (value) ); \
+  if ( oldNode != (node) ) \
+    { \
+    this->InvokeEvent (vtkCommand::ModifiedEvent); \
+    } \
+};
+#endif
+
+#ifndef vtkSetAndObserveMRMLNodeEventsMacro
+#define vtkSetAndObserveMRMLNodeEventsMacro(node,value,events)  { \
+  vtkObject *oldNode = (node); \
+  this->MRMLObserverManager->SetAndObserveObjectEvents ( vtkObjectPointer( &(node)), (value), (events)); \
+  if ( oldNode != (node) ) \
+    { \
+    this->InvokeEvent (vtkCommand::ModifiedEvent); \
+    } \
+};
+#endif
+//ETX
 
 // Description:
 // This class implements Slicer's 3DView Control Panel on Slicer's main GUI Panel.
@@ -38,6 +69,16 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   static vtkSlicerViewControlGUI* New ( );
   vtkTypeRevisionMacro ( vtkSlicerViewControlGUI, vtkSlicerComponentGUI );
   void PrintSelf ( ostream& os, vtkIndent indent );
+
+  // Description:
+  // Set when a render is pending.
+  vtkGetMacro ( RenderPending, int );
+  vtkSetMacro ( RenderPending, int );
+
+  // Description:
+  // used for animated rock
+  vtkGetMacro ( RockCount, int );
+  vtkSetMacro ( RockCount, int );
 
   // Description:
   // Get the widgets in the ViewControlFrame
@@ -57,42 +98,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   vtkGetObjectMacro (RotateAroundButton, vtkKWRadioButton );
   vtkGetObjectMacro (NavZoomFrame, vtkKWFrame );
   
-  // Description:
-  // Flags to indicate active view spinning and rocking
-
-  vtkGetMacro ( Spin, int );
-  vtkSetMacro ( Spin, int );
-  vtkGetMacro ( SpinDirection, int );
-  vtkSetMacro ( SpinDirection, int );    
-  vtkGetMacro ( SpinDegrees, double );
-  vtkSetMacro ( SpinDegrees, double );
-  vtkGetMacro ( SpinMs, int );
-  vtkSetMacro ( SpinMs, int );
-    
-  vtkGetMacro ( Rock, int );
-  vtkSetMacro ( Rock, int );
-  vtkGetMacro ( RockLength, int );
-  vtkSetMacro ( RockLength, int );
-  vtkGetMacro ( RockCount, int );
-  vtkSetMacro ( RockCount, int );
-
-  // Description:
-  // flags to indicate stereo modes
-  vtkGetMacro ( Stereo, int );
-  vtkSetMacro ( Stereo, int );
-  vtkGetMacro ( StereoType, int );
-  vtkSetMacro ( StereoType, int );
 
   // Description:
   // Flag to indicate camera control mode ( look from direction, or rotate around axis )
   vtkGetMacro ( ViewAxisMode, int );
   vtkSetMacro ( ViewAxisMode, int );
-    
-  // Description:
-  // Flag to indicate render mode (orthographic or perspective )
-  vtkGetMacro ( RenderMode, int );
-  vtkSetMacro ( RenderMode, int );
-  
   // Description:
   // Get the Widgets that display the RotateAround image
   // in the ViewControlFrame.
@@ -118,6 +128,21 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   vtkGetObjectMacro (NavZoomScale, vtkKWScale );
   vtkGetObjectMacro (NavZoomLabel, vtkKWLabel );
 
+    // Description:
+    // API for setting SliceNode, SliceLogic and
+    // for both setting and observing them.
+    void SetMRMLViewNode ( vtkMRMLViewNode *node )
+        { vtkSetMRMLNodeMacro ( this->ViewNode, node ); }
+    void SetAndObserveMRMLViewNode ( vtkMRMLViewNode *node )
+        { vtkSetAndObserveMRMLNodeMacro (this->ViewNode, node ); }
+    vtkGetObjectMacro ( ViewNode, vtkMRMLViewNode );
+
+    void SetMRMLCameraNode ( vtkMRMLCameraNode *node )
+        { vtkSetMRMLNodeMacro ( this->CameraNode, node ); }
+    void SetAndObserveMRMLCameraNode ( vtkMRMLCameraNode *node )
+        { vtkSetAndObserveMRMLNodeMacro (this->CameraNode, node ); }
+    vtkGetObjectMacro ( CameraNode, vtkMRMLCameraNode );
+
   // Description:
   // Get the main slicer toolbars.
   vtkGetObjectMacro (ApplicationGUI, vtkSlicerApplicationGUI );
@@ -133,6 +158,42 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   virtual void RemoveGUIObservers ( );
 
   // Description:
+  // Make sure the view control GUI is observing
+  // the current (active) MRMLCameraNode.
+  // Removes existing observers,
+  // sets and observes active camera node
+  virtual void UpdateCamerasFromMRML ( );
+
+  virtual void RemoveViewObservers () ;
+  virtual void AddViewObservers ( );
+
+  // Description:
+  // Removes existing observers,
+  // using RemoveViewObservers()
+  // Updates all view nodes from MRML
+  // and puts observers on them using AddViewObservers().
+  virtual void UpdateView ( vtkMRMLViewNode *node );
+  // Description:
+  // Makes sure the view control GUI is
+  // observing the current (active) MRMLViewNode.
+  // Calls UpdateView() with the current active node.
+  virtual void UpdateViewsFromMRML ( );
+  // Description:
+  // Called whenever a node is created or
+  // deleted from the scene. It calls
+  // UpdateViewsFromMRML and UpdateCamarasFromMRML.
+  virtual void UpdateFromMRML ( );
+
+  virtual void UpdateNavZoomCameraAndActors ( );
+
+  // Description:
+  // Renders the Nav/Zoom widget fresh
+  // when scene has been modified, or
+  // when view is changed.
+  virtual void RequestRender ( );
+  virtual void Render ( );
+  
+  // Description:
   // Class's mediator methods for processing events invoked by
   // either the Logic, MRML or GUI.
   virtual void ProcessLogicEvents ( vtkObject *caller, unsigned long event, void *callData );
@@ -146,20 +207,18 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
 
   // Description:
   // Starts and stops automatic view spinning
-  virtual void StopViewSpin ( );
   virtual void MainViewSpin ( );
+  virtual void SpinView (int direction, double degrees );
 
   // Description:
   // Starts and stops automatic view rocking
-  virtual void StopViewRock ( );
   virtual void MainViewRock ( );
+  virtual void RockView ( );
 
-  // Description:
-  // Rotates the main view in direction: Up(0), Down(1), Left(2), Right(3)
-  // by degrees if specified, or by default number of degrees.
-  virtual void MainViewRotate ( int direction  );
-  virtual void MainViewRotate ( int direction, double degrees );
-    
+
+  virtual void MainViewLookFrom ( );
+  virtual void MainViewRotateAround ( );
+  
   // Description:
   // Groups of callbacks that handle the state change of
   // rollover images in the ViewControlFrame. These
@@ -195,37 +254,16 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
       RotateAround = 0,
       LookFrom
     };
-    
-  // Rotate camera directions
-  enum
-    {
-      Up = 0,
-      Down,
-      Left,
-      Right
-    };
-    
-  // Stereo modes
-  enum
-    {
-      NoStereo = 0,
-      RedBlue,
-      CrystalEyes,
-      Interlaced
-    };
-
-  // render modes
-  enum
-    {
-      Perspective = 0,
-      Orthographic
-    };
   //ETX
 
  protected:
   vtkSlicerViewControlGUI ( );
   virtual ~vtkSlicerViewControlGUI ( );
     
+  int RenderPending;
+  bool SceneClosing;
+  int ProcessingMRMLEvent;
+  
   vtkSlicerApplicationGUI *ApplicationGUI;
   vtkSlicerViewControlIcons *SlicerViewControlIcons;
   vtkKWCheckButton *SpinButton;
@@ -271,30 +309,15 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   vtkKWLabel *ViewAxisTopCornerIconButton;
   vtkKWLabel *ViewAxisBottomCornerIconButton;
 
-  // Description:
-  // parameters of automatic spin
-  int Spin;
-  int SpinDirection;
-  double SpinDegrees;
-  int SpinMs;
-
-  // Description:
-  // parameters of automatic rock
-  int Rock;
-  int RockLength;
-  int RockCount;
-
-  // Description:
-  // parameters for stereo viewing
-  int Stereo;
-  int StereoType;
-    
+  vtkMRMLViewNode *ViewNode;
+  vtkMRMLCameraNode *CameraNode;
+  
   // Description:
   // mode that switches camera increments
   // between 'rotate around' and 'look from'
   // when user clicks on the little axis control
   int ViewAxisMode;
-  int RenderMode;
+  int RockCount;
 
  private:
   vtkSlicerViewControlGUI ( const vtkSlicerViewControlGUI& ); // Not implemented.

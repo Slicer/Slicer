@@ -142,7 +142,11 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
 vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
 {
 #ifndef VIEWCONTROL_DEBUG
-    if ( this->ViewControlGUI ) {
+    if ( this->ViewControlGUI )
+      {
+      this->ViewControlGUI->RemoveViewObservers();
+      this->ViewControlGUI->SetMRMLViewNode(NULL);
+      this->ViewControlGUI->SetAndObserveMRMLCameraNode ( NULL );
       this->ViewControlGUI->SetAndObserveMRMLScene ( NULL );
       this->ViewControlGUI->SetApplicationGUI(NULL);
       this->ViewControlGUI->SetApplication(NULL);
@@ -621,6 +625,10 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
             this->BuildMainViewer ( vtkSlicerGUILayout::SlicerLayoutDefaultView );
 #endif
 
+            // Initialize view control GUI's camera and view nodes
+            // to match those in the main viewer.
+            vcGUI->UpdateFromMRML ( );
+            
 #ifndef MENU_DEBUG
             // Construct menu bar and set up global key bindings
             // 
