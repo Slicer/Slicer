@@ -1,0 +1,175 @@
+
+#########################################################
+#
+if {0} { ;# comment
+
+  FiducialsSWidget  - manages fiducial display for a slice view
+
+# TODO : 
+
+}
+#
+#########################################################
+# ------------------------------------------------------------------
+#                             FiducialsSWidget
+# ------------------------------------------------------------------
+#
+# The class definition - define if needed (not when re-sourcing)
+#
+if { [itcl::find class FiducialsSWidget] == "" } {
+
+  itcl::class FiducialsSWidget {
+
+    inherit SWidget
+
+    constructor {args} {}
+    destructor {}
+    
+    # a list of seeds - the callback info includes the mapping to list and index
+    variable _seedSWidgets ""
+    variable _sceneObserverTags ""
+
+    # methods
+    method processEvent {} {}
+    method seedMovedCallback {seed fidListNode fidIndex} {}
+
+  }
+}
+
+# ------------------------------------------------------------------
+#                        CONSTRUCTOR/DESTRUCTOR
+# ------------------------------------------------------------------
+itcl::body FiducialsSWidget::constructor {sliceGUI} {
+
+  $this configure -sliceGUI $sliceGUI
+
+
+  #
+  # set up observers on sliceNode
+  # - track them so they can be removed in the destructor
+  #
+  set node [[$sliceGUI GetLogic] GetSliceNode]
+  lappend _nodeObserverTags [$node AddObserver DeleteEvent "itcl::delete object $this"]
+  lappend _nodeObserverTags [$node AddObserver AnyEvent "$this processEvent"]
+
+  set scene [$sliceGUI GetMRMLScene]
+  lappend _sceneObserverTags [$scene AddObserver DeleteEvent "itcl::delete object $this"]
+  lappend _sceneObserverTags [$scene AddObserver AnyEvent "$this processEvent"]
+
+  $this processEvent
+}
+
+
+itcl::body FiducialsSWidget::destructor {} {
+
+  if { [info command $_sliceNode] != "" } {
+    foreach tag $_nodeObserverTags {
+      $_sliceNode RemoveObserver $tag
+    }
+  }
+
+  set scene [$sliceGUI GetMRMLScene]
+  if { [info command $scene] != "" } {
+    foreach tag $_sceneObserverTags {
+      $scene RemoveObserver $tag
+    }
+  }
+}
+
+
+
+# ------------------------------------------------------------------
+#                             METHODS
+# ------------------------------------------------------------------
+
+#
+# handle scene and slice node events
+# - for now, we need to always review fiducials lists in scene
+# - create SeedSWidgets for any Fiducials that are close enough to slice
+#
+
+itcl::body FiducialsSWidget::processEvent { } {
+
+  if { [info command $sliceGUI] == "" } {
+    # the sliceGUI was deleted behind our back, so we need to 
+    # self destruct
+    itcl::delete object $this
+    return
+  }
+
+  #
+  # first, remove the old seeds
+  # - for reasons unknown as yet, deleting the object from within the 
+  #   event handler causes a hang -- so set it up to be deleted later
+  #
+  foreach seed $_seedSWidgets {
+    $seed place -10000 -10000 -10000
+    after idle "itcl::delete object ::FiducialsSWidget::$seed"
+  }
+  set _seedSWidgets ""
+
+  #
+  # now, look through all the fiducial lists for fiducials that
+  # are close enough to the current slice node; create seed widgets
+  # for those and give them a move command that will set the position of the fiducial
+  #
+
+  # get the rasToSlice for the SliceNode - transforming the fiducial
+  # by this matrix will let us easily check the distance from the slice plane
+  set node [[$sliceGUI GetLogic] GetSliceNode]
+  set rasToSlice [vtkMatrix4x4 New]
+  $rasToSlice DeepCopy [$node GetSliceToRAS]
+  $rasToSlice Invert
+
+  set scene [$sliceGUI GetMRMLScene]
+  set nLists [$scene GetNumberOfNodesByClass "vtkMRMLFiducialListNode"]
+  for {set i 0} {$i < $nLists} {incr i} {
+    set fidList [$scene GetNthNodeByClass $i "vtkMRMLFiducialListNode"]
+    set nFids [$fidList GetNumberOfFiducials]
+    
+    #
+    # make the fiducial visible if within 1mm of the slice
+    # - place a seed widget and keep track for later deletion
+    #
+    for {set f 0} {$f < $nFids} {incr f} {
+      foreach {r a s} [$fidList GetNthFiducialXYZ $f] {}
+      set slice [eval $rasToSlice MultiplyPoint $r $a $s 1]
+      set z [lindex $slice 2]
+      if { [expr abs($z)] <= 1 } {
+        set seedSWidget [SeedSWidget #auto $sliceGUI]
+        $seedSWidget place $r $a $s
+        $seedSWidget configure -movedCommand "$this seedMovedCallback $seedSWidget $fidList $f"
+        lappend _seedSWidgets $seedSWidget
+      }
+    }
+  }
+
+  $rasToSlice Delete
+}
+
+itcl::body FiducialsSWidget::seedMovedCallback {seed fidListNode fidIndex} {
+
+  set ras [$seed getRASPosition]
+  eval $fidListNode SetNthFiducialXYZ $fidIndex $ras
+}
+
+# workaround - use GUI to create fiducial list until the Logic supports it
+proc FiducialsSWidget::AddFiducial { r a s } {
+
+  set id [$::slicer3::FiducialsGUI GetFiducialListNodeID]
+  set fidListNode [$::slicer3::MRMLScene GetNodeByID $id]
+
+  if { $fidListNode == "" } {
+    set selector [$::slicer3::FiducialsGUI GetFiducialListSelectorWidget] 
+    set tagClass [$::slicer3::MRMLScene GetTagByClassName "vtkMRMLFiducialListNode"]
+    $selector ProcessNewNodeCommand "vtkMRMLFiducialListNode" $tagClass
+
+    set id [$::slicer3::FiducialsGUI GetFiducialListNodeID]
+    set fidListNode [$::slicer3::MRMLScene GetNodeByID $id]
+  }
+
+  $::slicer3::MRMLScene SaveStateForUndo $fidListNode
+
+  set index [$fidListNode AddFiducial]
+  $fidListNode SetNthFiducialXYZ $index $r $a $s
+}

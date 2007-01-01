@@ -41,6 +41,8 @@ if { [itcl::find class SeedSWidget] == "" } {
     method positionActors {} {}
     method pick {} {}
     method place {x y z} {}
+    method setRASPosition {r a s} { $this place $x $y $z }
+    method getRASPosition {} { return $_currentPosition }
     method highlight {} {}
     method createGlyph {} {}
   }
