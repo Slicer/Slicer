@@ -462,15 +462,6 @@ void vtkSlicerViewControlGUI::ProcessGUIEvents ( vtkObject *caller,
           {
           this->ViewNode->SetRenderMode(vtkMRMLViewNode::Orthographic );
           }
-        // then toggle the button's icon appropriately (handle this in process logic events later
-        if ( this->ViewNode->GetRenderMode() == vtkMRMLViewNode::Perspective )
-          {
-          this->OrthoButton->SetImageToIcon ( this->SlicerViewControlIcons->GetOrthoButtonIcon() );
-          }
-        else if ( this->ViewNode->GetRenderMode() == vtkMRMLViewNode::Orthographic )
-          {
-          this->OrthoButton->SetImageToIcon ( this->SlicerViewControlIcons->GetPerspectiveButtonIcon() );
-          }
         }
 
       if ( (p == this->SliceOpacityButton ) && (event == vtkKWPushButton::InvokedEvent ) )
@@ -816,9 +807,12 @@ void vtkSlicerViewControlGUI::ProcessMRMLEvents ( vtkObject *caller,
       }
     }
 
-
+  else if ( vnode != NULL && vnode == this->ViewNode &&
+            event == vtkMRMLViewNode::RenderModeEvent )
+    {
+    this->MainViewSetProjection ( );
+    }
   this->ProcessingMRMLEvent = 0;
-
 }
 
 
@@ -846,7 +840,31 @@ void vtkSlicerViewControlGUI::SetApplicationGUI ( vtkSlicerApplicationGUI *appGU
 //---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::MainViewSetProjection ( )
 {
+
+  if ( this->ApplicationGUI && this->ViewNode )
+    {
+    vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));    
+    if ( this->CameraNode != NULL )
+      {
+      vtkCamera *cam = this->GetCameraNode()->GetCamera();
+      // update the Rendering mode, then toggle
+      // the button's icon appropriately 
+      if ( this->ViewNode->GetRenderMode() == vtkMRMLViewNode::Perspective )
+        {
+        cam->ParallelProjectionOff();
+        this->OrthoButton->SetImageToIcon ( this->SlicerViewControlIcons->GetOrthoButtonIcon() );
+        }
+      else if ( this->ViewNode->GetRenderMode() == vtkMRMLViewNode::Orthographic )
+        {
+        cam->ParallelProjectionOn();
+        cam->SetParallelScale ( this->ViewNode->GetFieldOfView() );
+        this->OrthoButton->SetImageToIcon ( this->SlicerViewControlIcons->GetPerspectiveButtonIcon() );
+        }
+      p->GetViewerWidget()->GetMainViewer()->GetRenderer()->Render(); 
+      }
+    }
 }
+
 
 
 
