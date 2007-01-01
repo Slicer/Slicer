@@ -609,7 +609,7 @@ void vtkSlicerToolbarGUI::ProcessMRMLEvents ( vtkObject *caller,
     
     vtkKWRadioButton *radiob = this->MouseModeRadioButtons->GetWidget ( mode );
     if (radiob != NULL &&
-        radiob->GetSelectedState() != true)
+        radiob->GetSelectedState() != 1)
       {
       // select this radio button
       radiob->SelectedStateOn();
