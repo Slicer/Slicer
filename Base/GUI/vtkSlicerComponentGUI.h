@@ -212,6 +212,7 @@ protected:
   // Holders for MRML, GUI and Logic callbacks
   vtkCallbackCommand *LogicCallbackCommand;
   vtkCallbackCommand *GUICallbackCommand;
+  vtkCallbackCommand *MRMLCallbackCommand;
   
   // constructor, destructor.
   vtkSlicerComponentGUI ( );

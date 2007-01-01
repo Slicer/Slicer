@@ -19,6 +19,7 @@ vtkSlicerComponentGUI::vtkSlicerComponentGUI ( )
   this->MRMLObserverManager = vtkObserverManager::New();
   this->MRMLObserverManager->GetCallbackCommand()->SetClientData( reinterpret_cast<void *> (this) );
   this->MRMLObserverManager->GetCallbackCommand()->SetCallback(vtkSlicerComponentGUI::MRMLCallback);
+  this->MRMLCallbackCommand = this->MRMLObserverManager->GetCallbackCommand();
   
   this->LogicCallbackCommand = vtkCallbackCommand::New ( );
   this->LogicCallbackCommand->SetClientData( reinterpret_cast<void *>(this) );
