@@ -111,6 +111,9 @@ public:
   vtkGetMacro ( SpinDegrees, double );
   vtkSetMacro ( SpinDegrees, double );
 
+  vtkGetMacro ( RotateDegrees, double );
+  vtkSetMacro ( RotateDegrees, double );
+  
   // Description:
   // Amount of wait time between spin increments
   vtkGetMacro ( AnimationMs, int );
@@ -149,10 +152,12 @@ public:
   // Rotate camera directions
   enum
     {
-      Up = 0,
-      Down,
-      Left,
-      Right
+      PitchUp = 0,
+      PitchDown,
+      RollLeft,
+      RollRight,
+      YawLeft,
+      YawRight
     };
     
   // Stereo modes
@@ -220,6 +225,11 @@ protected:
   int RockLength;
   int RockCount;
 
+  // Description:
+  // Increment used to rotate the view
+  // once about an axis.
+  double RotateDegrees;
+  
   // Description:
   // parameters for stereo viewing
   int StereoType;

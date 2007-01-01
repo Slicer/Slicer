@@ -60,7 +60,8 @@ vtkMRMLViewNode::vtkMRMLViewNode()
   this->LetterSize = 0.05;
   this->AnimationMode = vtkMRMLViewNode::Off;
   this->SpinDegrees = 2.0;
-  this->SpinDirection = vtkMRMLViewNode::Left;
+  this->RotateDegrees = 5.0;
+  this->SpinDirection = vtkMRMLViewNode::YawLeft;
   this->AnimationMs = 5;
   this->RockLength = 200;
   this->RockCount = 0;
@@ -245,23 +246,33 @@ void vtkMRMLViewNode::WriteXML(ostream& of, int nIndent)
   // configure spin
   of << indent << " spinDegrees=\"" << this->GetSpinDegrees() << "\"";
   of << indent << " spinMs=\"" << this->GetAnimationMs() << "\"";
-  if ( this->GetSpinDirection() == vtkMRMLViewNode::Up )
+  if ( this->GetSpinDirection() == vtkMRMLViewNode::PitchUp )
     {
-    of << indent << " spinDirection=\"" << "Up" << "\"";
+    of << indent << " spinDirection=\"" << "PitchUp" << "\"";
     }
-  else if ( this->GetSpinDirection() == vtkMRMLViewNode::Down )
+  else if ( this->GetSpinDirection() == vtkMRMLViewNode::PitchDown )
     {
-    of << indent << " spinDirection=\"" << "Down" << "\"";
+    of << indent << " spinDirection=\"" << "PitchDown" << "\"";
     }
-  else if ( this->GetSpinDirection() == vtkMRMLViewNode::Left )
+  else if ( this->GetSpinDirection() == vtkMRMLViewNode::RollLeft )
     {
-    of << indent << " spinDirection=\"" << "Left" << "\"";
+    of << indent << " spinDirection=\"" << "RollLeft" << "\"";
     }
-  else if ( this->GetSpinDirection() == vtkMRMLViewNode::Right )
+  else if ( this->GetSpinDirection() == vtkMRMLViewNode::RollRight )
     {
-    of << indent << " spinDirection=\"" << "Right" << "\"";
+    of << indent << " spinDirection=\"" << "RollRight" << "\"";
+    }
+  else if ( this->GetSpinDirection() == vtkMRMLViewNode::YawLeft )
+    {
+    of << indent << " spinDirection=\"" << "YawLeft" << "\"";
+    }
+  else if ( this->GetSpinDirection() == vtkMRMLViewNode::YawRight )
+    {
+    of << indent << " spinDirection=\"" << "YawRight" << "\"";
     }
 
+  of << indent << " rotateDegrees=\"" << this->GetRotateDegrees() << "\"";
+  
   // configure rock
   of << indent << " rockLength=\"" << this->GetRockLength() << "\"";
   of << indent << " rockCount=\"" << this->GetRockCount() << "\"";
@@ -435,9 +446,17 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
       {
       std::stringstream ss;
       ss << attValue;
-      int deg;
+      double deg;
       ss >> deg;
       this->SpinDegrees = deg;
+      }
+    else if ( !strcmp ( attName, "rotateDegrees"))
+      {
+      std::stringstream ss;
+      ss << attValue;
+      double deg;
+      ss >> deg;
+      this->RotateDegrees = deg;
       }
     else if (!strcmp(attName, "spinMs" ))
       {
@@ -450,21 +469,29 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
 
     else if (!strcmp(attName, "spinDirection")) 
       {
-      if (!strcmp(attValue,"Left")) 
+      if (!strcmp(attValue,"RollLeft")) 
         {
-        this->SpinDirection = vtkMRMLViewNode::Left;
+        this->SpinDirection = vtkMRMLViewNode::RollLeft;
         }
-      else if ( !strcmp (attValue, "Right" ))
+      else if ( !strcmp (attValue, "RollRight" ))
         {
-        this->SpinDirection = vtkMRMLViewNode::Right;
+        this->SpinDirection = vtkMRMLViewNode::RollRight;
         }
-      else if ( !strcmp (attValue, "Up" ))
+      else if (!strcmp(attValue,"YawLeft")) 
         {
-        this->SpinDirection = vtkMRMLViewNode::Up;
+        this->SpinDirection = vtkMRMLViewNode::YawLeft;
         }
-      else if ( !strcmp (attValue, "Down" ))
+      else if ( !strcmp (attValue, "YawRight" ))
         {
-        this->SpinDirection = vtkMRMLViewNode::Down;
+        this->SpinDirection = vtkMRMLViewNode::YawRight;
+        }
+      else if ( !strcmp (attValue, "PitchUp" ))
+        {
+        this->SpinDirection = vtkMRMLViewNode::PitchUp;
+        }
+      else if ( !strcmp (attValue, "PitchDown" ))
+        {
+        this->SpinDirection = vtkMRMLViewNode::PitchDown;
         }
       }
 
@@ -514,6 +541,7 @@ void vtkMRMLViewNode::Copy(vtkMRMLNode *anode)
   this->SetSpinDirection ( node->GetSpinDirection ( ) );
   this->SetAnimationMs ( node->GetAnimationMs() );
   this->SetSpinDegrees (node->GetSpinDegrees ( ));
+  this->SetRotateDegrees (node->GetRotateDegrees ( ));
   this->SetRockLength ( node->GetRockLength () );
   this->SetRockCount ( node->GetRockCount ( ) );
   this->SetStereoType ( node->GetStereoType ( ) );
@@ -537,6 +565,7 @@ void vtkMRMLViewNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "SpinDirection:       " << this->SpinDirection << "\n";
   os << indent << "AnimationMs:       " << this->AnimationMs << "\n";  
   os << indent << "SpinDegrees:       " << this->SpinDegrees << "\n";
+  os << indent << "RotateDegrees:       " << this->RotateDegrees << "\n";
   os << indent << "AnimationMode:       " << this->AnimationMode << "\n";
   os << indent << "RockLength:       " << this->RockLength << "\n";
   os << indent << "RockCount:       " << this->RockCount << "\n";
