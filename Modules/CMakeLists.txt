@@ -5,6 +5,7 @@ SUBDIRS(
   CommandLineModule
   ScriptedModule
   GradientAnisotropicDiffusionFilter
+  #EMSegment
   SlicerDaemon
   Editor
   QueryAtlas
