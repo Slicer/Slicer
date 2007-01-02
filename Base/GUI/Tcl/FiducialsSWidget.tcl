@@ -65,7 +65,7 @@ itcl::body FiducialsSWidget::destructor {} {
 
   foreach pair $_fiducialListObserverTagPairs {
     foreach {fidListNode tag} $pair {}
-    fidListNode RemoveObserver $tag
+    $fidListNode RemoveObserver $tag
   }
 
   if { [info command $_sliceNode] != "" } {
