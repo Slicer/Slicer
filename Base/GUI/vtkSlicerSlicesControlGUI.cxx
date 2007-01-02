@@ -483,6 +483,7 @@ void vtkSlicerSlicesControlGUI::BuildVisibilityMenu ( )
 {
   this->FeaturesVisibleButton->GetMenu()->DeleteAllItems ( );
   this->FeaturesVisibleButton->GetMenu()->AddCheckButton ( "Fiducial points");
+  this->FeaturesVisibleButton->GetMenu()->AddCheckButton ( "Fiducial text");
   this->FeaturesVisibleButton->GetMenu()->AddCheckButton ( "Foreground grid");
   this->FeaturesVisibleButton->GetMenu()->AddCheckButton ( "Background grid");
   this->FeaturesVisibleButton->GetMenu()->AddCheckButton ( "Label grid");
@@ -490,9 +491,10 @@ void vtkSlicerSlicesControlGUI::BuildVisibilityMenu ( )
   this->FeaturesVisibleButton->GetMenu()->AddCommand ("close");
 
   this->FeaturesVisibleButton->GetMenu()->SelectItem ("Fiducial points");
-  this->FeaturesVisibleButton->GetMenu()->SelectItem ("Foreground grid");
+  this->FeaturesVisibleButton->GetMenu()->SelectItem ("Fiducial text");
+  this->FeaturesVisibleButton->GetMenu()->DeselectItem ("Foreground grid");
   this->FeaturesVisibleButton->GetMenu()->DeselectItem ("Background grid");
-  this->FeaturesVisibleButton->GetMenu()->DeselectItem ("Label grid");
+  this->FeaturesVisibleButton->GetMenu()->SelectItem ("Label grid");
 
 }
 

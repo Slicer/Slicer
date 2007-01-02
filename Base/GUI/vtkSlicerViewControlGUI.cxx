@@ -42,8 +42,6 @@ vtkSlicerViewControlGUI::vtkSlicerViewControlGUI ( )
   this->SceneClosing = false;
   this->ProcessingMRMLEvent = 0;
   this->RockCount = 0;
-  this->ViewSpinning = 0;
-  this->ViewRocking = 0;
 
   this->SlicerViewControlIcons = vtkSlicerViewControlIcons::New ( );
   this->SpinButton = vtkKWCheckButton::New ( );
@@ -95,8 +93,6 @@ vtkSlicerViewControlGUI::~vtkSlicerViewControlGUI ( )
   this->RenderPending = 0;
   this->SceneClosing = false;
   this->RockCount = 0;  
-  this->ViewSpinning = 0;
-  this->ViewRocking = 0;
 
   if ( this->SlicerViewControlIcons )
     {
@@ -348,8 +344,6 @@ void vtkSlicerViewControlGUI::PrintSelf ( ostream& os, vtkIndent indent )
   os << indent << "SlicerViewControlGUI: " << this->GetClassName ( ) << "\n";
 
   // class widgets
-  os << indent << "ViewSpinning: " << this->GetViewSpinning ( ) << "\n";
-  os << indent << "ViewRocking: " << this->GetViewRocking ( ) << "\n";
   os << indent << "ViewAxisAIconButton: " << this->GetViewAxisAIconButton (  ) << "\n";
   os << indent << "ViewAxisPIconButton: " << this->GetViewAxisPIconButton (  ) << "\n";
   os << indent << "ViewAxisRIconButton: " << this->GetViewAxisRIconButton (  ) << "\n";
@@ -580,17 +574,15 @@ void vtkSlicerViewControlGUI::BuildVisibilityMenu ( )
 {
   this->VisibilityButton->GetMenu()->DeleteAllItems ( );
   this->VisibilityButton->GetMenu()->AddCheckButton ("Fiducial points" );
+  this->VisibilityButton->GetMenu()->AddCheckButton ("Fiducial text" );
   this->VisibilityButton->GetMenu()->AddCheckButton ("3D cube" );
-  this->VisibilityButton->GetMenu()->AddCheckButton ("3D axes" );
   this->VisibilityButton->GetMenu()->AddCheckButton ("3D axis labels" );
-  this->VisibilityButton->GetMenu()->AddCheckButton ("3D outlines around slices" );
   this->VisibilityButton->GetMenu()->AddSeparator();
   this->VisibilityButton->GetMenu()->AddCommand ( "close");
   this->VisibilityButton->GetMenu()->SelectItem ("Fiducial points" );
+  this->VisibilityButton->GetMenu()->SelectItem ("Fiducial text" );
   this->VisibilityButton->GetMenu()->SelectItem ("3D cube" );
-  this->VisibilityButton->GetMenu()->SelectItem ("3D axes" );
   this->VisibilityButton->GetMenu()->SelectItem ("3D axis labels" );
-  this->VisibilityButton->GetMenu()->SelectItem ("3D outlines around slices" );
 }
 
 
@@ -793,10 +785,8 @@ void vtkSlicerViewControlGUI::ProcessMRMLEvents ( vtkObject *caller,
       if ( this->RockButton->GetSelectedState() == 1 )
         {
         this->RockButton->Deselect();
-        this->ViewRocking = 0;
         }
       this->MainViewSpin (  );
-      this->ViewSpinning = 1;
       }
     // handle the mode change
     else if ( this->ViewNode->GetAnimationMode() == vtkMRMLViewNode::Rock )
@@ -804,23 +794,19 @@ void vtkSlicerViewControlGUI::ProcessMRMLEvents ( vtkObject *caller,
       if ( this->SpinButton->GetSelectedState() == 1 )
         {
         this->SpinButton->Deselect();
-        this->ViewSpinning = 0;
         }
       this->SetRockCount ( this->ViewNode->GetRockCount ( ) );
       this->MainViewRock ( );
-      this->ViewRocking = 1;
       }
     else if ( this->ViewNode->GetAnimationMode() == vtkMRMLViewNode::Off )
       {
       if ( this->RockButton->GetSelectedState() == 1 )
         {
         this->RockButton->Deselect();
-        this->ViewRocking = 0;
         }
       if ( this->SpinButton->GetSelectedState() == 1 )
         {
         this->SpinButton->Deselect();
-        this->ViewSpinning = 0;
         }
       }
     
@@ -1374,7 +1360,7 @@ void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
       this->StereoButton->SetBorderWidth ( 0 );
       this->StereoButton->SetImageToIcon ( this->SlicerViewControlIcons->GetStereoButtonIcon() );      
       this->StereoButton->IndicatorVisibilityOff ( );
-      this->StereoButton->SetBalloonHelpString ( "Select among stereo viewing options.");
+      this->StereoButton->SetBalloonHelpString ( "Select among stereo viewing options (3DSlicer must be started with stereo enabled to use these features).");
       //--- Menubutton to capture or select among saved 3D views.
       this->SelectButton->SetParent ( f3);
       this->SelectButton->Create ( );

@@ -80,10 +80,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   vtkGetMacro ( RockCount, int );
   vtkSetMacro ( RockCount, int );
 
-  vtkGetMacro ( ViewSpinning, int );
-  vtkSetMacro ( ViewSpinning, int );
-  vtkGetMacro ( ViewRocking, int );
-  vtkSetMacro ( ViewRocking, int );  
   // Description:
   // Get the widgets in the ViewControlFrame
   vtkGetObjectMacro (SpinButton, vtkKWCheckButton);
@@ -312,8 +308,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   vtkMRMLCameraNode *CameraNode;
   
   int RockCount;
-  int ViewSpinning;
-  int ViewRocking;
 
  private:
   vtkSlicerViewControlGUI ( const vtkSlicerViewControlGUI& ); // Not implemented.

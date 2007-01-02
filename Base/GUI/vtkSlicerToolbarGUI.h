@@ -98,8 +98,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
     // from the toolbar; before Slice and 3D viewers are
     // unpacked and repacked in a new configuration,
     // render requests from automatic rock or spin are
-    // stopped.
-    virtual void StopViewRockOrSpin ( );
+    // stopped. Resumes when finished packing.
+    virtual int StopViewRockOrSpin ( );
+    virtual void ResumeViewRockOrSpin ( int mode );
 
     // Description:
     // Getting and setting the mrml selection node id
