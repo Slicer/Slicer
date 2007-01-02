@@ -138,7 +138,6 @@ int vtkMRMLNRRDStorageNode::ReadData(vtkMRMLNode *refNode)
      )
     {
     vtkErrorMacro("Reference node is not a vtkMRMLVolumeNode");
-    cout<<"Ref node is not a good type: "<<refNode->GetClassName()<<endl;
     return 0;         
     }
   if (this->GetFileName() == NULL) 
@@ -159,7 +158,6 @@ int vtkMRMLNRRDStorageNode::ReadData(vtkMRMLNode *refNode)
     }
   else if ( refNode->IsA("vtkMRMLDiffusionWeightedVolumeNode") )
     {
-    cout<<"We have a DWI node"<<endl;
     volNode = dynamic_cast <vtkMRMLDiffusionWeightedVolumeNode *> (refNode);
     }
   else if ( refNode->IsA("vtkMRMLDiffusionTensorVolumeNode") )
@@ -191,7 +189,6 @@ int vtkMRMLNRRDStorageNode::ReadData(vtkMRMLNode *refNode)
     return 0;
     }
 
-  cout<<"NRRD reader reading file: "<<fullName.c_str()<<endl;
   reader->SetFileName(fullName.c_str());
 
   // Check if this is a NRRD file that we can read
@@ -204,9 +201,7 @@ int vtkMRMLNRRDStorageNode::ReadData(vtkMRMLNode *refNode)
 
   // Read the header to see if the NRRD file corresponds to the
   // MRML Node
-  cout<<"Before update info"<<endl;
   reader->UpdateInformation();
-  cout<<"After update info"<<endl;
   // Check type
   if ( refNode->IsA("vtkMRMLScalarVolumeNode") )
     {
@@ -257,9 +252,7 @@ int vtkMRMLNRRDStorageNode::ReadData(vtkMRMLNode *refNode)
     {
     reader->SetUseNativeOriginOn();
     }
-  cout<<"Doing update"<<endl;
   reader->Update();
-  cout<<"After update"<<endl;
   // set volume attributes
   vtkMatrix4x4* mat = reader->GetRasToIjkMatrix();
   volNode->SetRASToIJKMatrix(mat);
@@ -268,7 +261,6 @@ int vtkMRMLNRRDStorageNode::ReadData(vtkMRMLNode *refNode)
     {
     vtkMatrix4x4 *mat2;
     mat2 = reader->GetMeasurementFrameMatrix();
-    cout<<"Setting MF"<<endl;
     if (mat2 == NULL) 
       {
       vtkWarningMacro("Measurement frame is not provided");
@@ -276,9 +268,7 @@ int vtkMRMLNRRDStorageNode::ReadData(vtkMRMLNode *refNode)
     else 
      {
       //dynamic_cast <vtkMRMLTensorVolumeNode *> (volNode)->SetMeasurementFrameMatrix(mat2);
-      cout<<"Before downcast"<<endl;
       (vtkMRMLTensorVolumeNode::SafeDownCast(volNode))->SetMeasurementFrameMatrix(mat2);
-      cout<<"Set done"<<endl;
       }
     }
 
@@ -287,8 +277,7 @@ int vtkMRMLNRRDStorageNode::ReadData(vtkMRMLNode *refNode)
     {
     vtkDoubleArray *grad = vtkDoubleArray::New();
     vtkDoubleArray *bvalue = vtkDoubleArray::New();
-    cout<<"Parsing DWI info"<<endl;
-    if (this->ParseDiffusionInformation(reader,grad,bvalue))
+    if (!this->ParseDiffusionInformation(reader,grad,bvalue))
       {
       vtkErrorMacro("vtkMRMLDiffusionWeightedVolumeNode: Cannot parse Diffusion Information");
       grad->Delete();
@@ -390,16 +379,13 @@ int vtkMRMLNRRDStorageNode::ParseDiffusionInformation(vtkNRRDReader *reader,vtkD
   int rep;
 
   // search for modality tag
-  tag = "modality";
-  value = std::string(reader->GetHeaderValue((char *) tag.c_str()));
-  if (value.size() == 0)
-  {
-  return 0;
-  }
-  if (strcmp(value.c_str(),"DWMRI"))
-  {
-  return 0;
-  }
+  key = "modality";
+  value = std::string(reader->GetHeaderValue((char *) key.c_str()));
+  if (strcmp(value.c_str(),"DWMRI") != 0)
+    {
+    factor->Delete();
+    return 0;
+    }
   // search for tag DWMRI_gradient_
   tag = "DWMRI_gradient_";
   tagnex = "DWMRI_NEX_";
@@ -461,7 +447,13 @@ int vtkMRMLNRRDStorageNode::ParseDiffusionInformation(vtkNRRDReader *reader,vtkD
   double range[2];
   // search for tag DWMRI_b-value
   key = "DWMRI_b-value";
-  double bval = atof(reader->GetHeaderValue((char *) key.c_str()));
+  value = std::string(reader->GetHeaderValue((char *) key.c_str()));
+  if (value.size() == 0)
+    {
+    factor->Delete();
+    return 0;
+    }
+  double bval = atof(value.c_str());
   factor->GetRange(range);
   bvalues->SetNumberOfTuples(grad->GetNumberOfTuples());
   for (int i=0; i<grad->GetNumberOfTuples();i++)
@@ -469,5 +461,6 @@ int vtkMRMLNRRDStorageNode::ParseDiffusionInformation(vtkNRRDReader *reader,vtkD
     bvalues->SetValue(i,bval*factor->GetValue(i)/range[1]);
     }
   factor->Delete();
+  return 1;
 }
 
