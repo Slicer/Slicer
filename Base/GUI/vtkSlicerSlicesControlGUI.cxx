@@ -396,8 +396,6 @@ void vtkSlicerSlicesControlGUI::ProcessMRMLEvents ( vtkObject *caller,
       {
       vtkMRMLSliceCompositeNode *cnode;
       int i, nnodes = p->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
-      int state;
-      const char *label;
       for (i = 0; i < nnodes; i++)
         {
         // update gui to match mrml state
