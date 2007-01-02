@@ -234,8 +234,14 @@ int vtkMRMLNRRDStorageNode::ReadData(vtkMRMLNode *refNode)
   else if ( refNode->IsA("vtkMRMLDiffusionWeightedVolumeNode"))
     {
     cout<<"Checking we have right info in file"<<endl;
+    char *value = reader->GetHeaderValue("modality");
+    if (value == NULL)
+      {
+      reader->Delete();
+      return 0;
+      }
     if ( ! (reader->GetPointDataType() == SCALARS &&
-            !strcmp(reader->GetHeaderValue("modality"),"DWMRI") ) )
+            !strcmp(value,"DWMRI") ) )
       {
       vtkErrorMacro("MRMLVolumeNode does not match file kind");
       reader->Delete();
@@ -380,8 +386,13 @@ int vtkMRMLNRRDStorageNode::ParseDiffusionInformation(vtkNRRDReader *reader,vtkD
 
   // search for modality tag
   key = "modality";
-  value = std::string(reader->GetHeaderValue((char *) key.c_str()));
-  if (strcmp(value.c_str(),"DWMRI") != 0)
+  tmp = reader->GetHeaderValue((char *) key.c_str());
+  if (tmp == NULL)
+    {
+    factor->Delete();
+    return 0;
+    }
+  if (strcmp(tmp,"DWMRI") != 0)
     {
     factor->Delete();
     return 0;
@@ -447,13 +458,13 @@ int vtkMRMLNRRDStorageNode::ParseDiffusionInformation(vtkNRRDReader *reader,vtkD
   double range[2];
   // search for tag DWMRI_b-value
   key = "DWMRI_b-value";
-  value = std::string(reader->GetHeaderValue((char *) key.c_str()));
-  if (value.size() == 0)
+  tmp = reader->GetHeaderValue((char *) key.c_str());
+  if (tmp == NULL)
     {
     factor->Delete();
     return 0;
     }
-  double bval = atof(value.c_str());
+  double bval = atof(tmp);
   factor->GetRange(range);
   bvalues->SetNumberOfTuples(grad->GetNumberOfTuples());
   for (int i=0; i<grad->GetNumberOfTuples();i++)
