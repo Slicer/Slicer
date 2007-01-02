@@ -56,6 +56,7 @@ vtkMRMLViewNode::vtkMRMLViewNode()
   this->BoxVisible = 1;
   this->AxisLabelsVisible = 1;
   this->FiducialsVisible = 1;
+  this->FiducialLabelsVisible = 1;
   this->FieldOfView = 200;
   this->LetterSize = 0.05;
   this->AnimationMode = vtkMRMLViewNode::Off;
@@ -189,6 +190,26 @@ void vtkMRMLViewNode::SetFiducialsVisible ( int m )
 }
 
 
+
+//----------------------------------------------------------------------------
+void vtkMRMLViewNode::SetFiducialLabelsVisible ( int m )
+{
+  switch ( m )
+    {
+    case 0:
+      this->FiducialLabelsVisible = 0;
+      this->InvokeEvent ( vtkMRMLViewNode::VisibilityEvent );
+      break;
+    case 1:
+      this->FiducialLabelsVisible = 1;
+      this->InvokeEvent ( vtkMRMLViewNode::VisibilityEvent );
+      break;
+    default:
+      break;
+    }
+}
+
+
 //----------------------------------------------------------------------------
 void vtkMRMLViewNode::SetAxisLabelsVisible ( int m )
 {
@@ -223,6 +244,7 @@ void vtkMRMLViewNode::WriteXML(ostream& of, int nIndent)
   of << indent << " letterSize=\"" << this->GetLetterSize() << "\"";
   of << indent << " boxVisible=\"" << (this->BoxVisible ? "true" : "false") << "\"";
   of << indent << " fiducialsVisible=\"" << (this->FiducialsVisible ? "true" : "false") << "\"";
+  of << indent << " fiducialLabelsVisible=\"" << (this->FiducialLabelsVisible ? "true" : "false") << "\"";
   of << indent << " axisLabelsVisible=\"" << (this->AxisLabelsVisible ? "true" : "false") << "\"";
 
   // background color
@@ -385,6 +407,19 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
         this->FiducialsVisible = 0;
         }
       }
+    
+    else if (!strcmp(attName, "fiducialLabelsVisible")) 
+      {
+      if (!strcmp(attValue,"true")) 
+        {
+        this->FiducialLabelsVisible = 1;
+        }
+      else
+        {
+        this->FiducialLabelsVisible = 0;
+        }
+      }
+
 
     else if (!strcmp(attName, "axisLabelsVisible")) 
       {
@@ -556,6 +591,7 @@ void vtkMRMLViewNode::Copy(vtkMRMLNode *anode)
 
   this->SetBoxVisible(node->GetBoxVisible());
   this->SetFiducialsVisible(node->GetFiducialsVisible());
+  this->SetFiducialLabelsVisible(node->GetFiducialLabelsVisible());
   this->SetAxisLabelsVisible(node->GetAxisLabelsVisible());
   this->SetFieldOfView(node->GetFieldOfView());
   this->SetLetterSize(node->GetLetterSize());
@@ -582,6 +618,7 @@ void vtkMRMLViewNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "Active:        " << this->Active << "\n";
   os << indent << "BoxVisible:        " << this->BoxVisible << "\n";
   os << indent << "FiducialsVisible:        " << this->FiducialsVisible << "\n";
+  os << indent << "FiducialLabelsVisible:        " << this->FiducialLabelsVisible << "\n";
   os << indent << "AxisLabelsVisible: " << this->AxisLabelsVisible << "\n";
   os << indent << "FieldOfView:       " << this->FieldOfView << "\n";
   os << indent << "LetterSize:       " << this->LetterSize << "\n";

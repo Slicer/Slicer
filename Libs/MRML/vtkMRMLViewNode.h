@@ -80,6 +80,9 @@ public:
   virtual void SetFiducialsVisible ( int );
 //  vtkSetMacro (FiducialsVisible, int);
 
+  vtkGetMacro (FiducialLabelsVisible, int );
+  virtual void SetFiducialLabelsVisible ( int );
+
   // Description:
   // Field of view size
   vtkGetMacro(FieldOfView, double);
@@ -211,6 +214,7 @@ protected:
 
 
   int FiducialsVisible;
+  int FiducialLabelsVisible;
   int BoxVisible;
   int AxisLabelsVisible;
   double FieldOfView;

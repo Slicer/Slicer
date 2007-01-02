@@ -63,6 +63,7 @@ vtkMRMLSliceCompositeNode::vtkMRMLSliceCompositeNode()
   this->BackgroundGrid = 0;
   this->LabelGrid = 0;
   this->FiducialVisibility = 1;
+  this->FiducialLabelVisibility = 1;
   this->AnnotationSpace = vtkMRMLSliceCompositeNode::RAS;
   this->AnnotationMode = vtkMRMLSliceCompositeNode::All;
   this->CrosshairMode = vtkMRMLSliceCompositeNode::NoCrosshair;
@@ -95,6 +96,7 @@ void vtkMRMLSliceCompositeNode::WriteXML(ostream& of, int nIndent)
   of << indent << "backgroundGrid=\"" << this->BackgroundGrid << "\" ";
   of << indent << "labelGrid=\"" << this->LabelGrid << "\" ";
   of << indent << "fiducialVisibility=\"" << this->FiducialVisibility << "\" ";
+  of << indent << "fiducialLabelVisibility=\"" << this->FiducialLabelVisibility << "\" ";
   of << indent << "layoutName=\"" << this->LayoutName << "\" ";
 
   if ( this->AnnotationSpace == vtkMRMLSliceCompositeNode::XYZ)
@@ -248,6 +250,10 @@ void vtkMRMLSliceCompositeNode::ReadXMLAttributes(const char** atts)
       {
       this->SetFiducialVisibility( atoi(attValue) );
       }    
+    else if (!strcmp(attName, "fiducialLabelVisibility")) 
+      {
+      this->SetFiducialLabelVisibility( atoi(attValue) );
+      }    
    else if (!strcmp(attName, "layoutName")) 
       {
       this->SetLayoutName( attValue );
@@ -337,6 +343,7 @@ void vtkMRMLSliceCompositeNode::Copy(vtkMRMLNode *anode)
   this->SetBackgroundGrid ( node->GetBackgroundGrid());
   this->SetLabelGrid ( node->GetLabelGrid());
   this->SetFiducialVisibility ( node->GetFiducialVisibility ( ) );
+  this->SetFiducialLabelVisibility ( node->GetFiducialLabelVisibility ( ) );
   this->SetAnnotationSpace ( node->GetAnnotationSpace() );
   this->SetAnnotationMode ( node->GetAnnotationMode() );
   this->SetCrosshairMode ( node->GetCrosshairMode() );
@@ -361,6 +368,7 @@ void vtkMRMLSliceCompositeNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "BackgroundGrid: " << this->BackgroundGrid << "\n";
   os << indent << "LabelGrid: " << this->LabelGrid << "\n";
   os << indent << "FiducialVisibility: " << this->FiducialVisibility << "\n";
+  os << indent << "FiducialLabelVisibility: " << this->FiducialLabelVisibility << "\n";
   os << indent << "AnnotationSpace: " << this->AnnotationSpace << "\n";
   os << indent << "AnnotationMode: " << this->AnnotationMode << "\n";
   os << indent << "CrosshairMode: " << this->CrosshairMode << "\n";
