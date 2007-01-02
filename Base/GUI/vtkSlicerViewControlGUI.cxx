@@ -597,6 +597,16 @@ void vtkSlicerViewControlGUI::BuildStereoSelectMenu ( )
   this->StereoButton->GetMenu()->AddSeparator();
   this->StereoButton->GetMenu()->AddCommand ( "close");
   this->StereoButton->GetMenu()->SelectItem ( "No stereo");
+  // TODO: check whether stereo is enabled.
+  int stereoEnabled = 0;
+  if ( !stereoEnabled )
+    {
+    this->StereoButton->GetMenu()->SetItemStateToDisabled ( "No stereo" );
+    this->StereoButton->GetMenu()->SetItemStateToDisabled ( "Red/Blue" );
+    this->StereoButton->GetMenu()->SetItemStateToDisabled ( "CrystalEyes" );
+    this->StereoButton->GetMenu()->SetItemStateToDisabled ( "Interlaced" );
+    }
+  
 }
 
 
