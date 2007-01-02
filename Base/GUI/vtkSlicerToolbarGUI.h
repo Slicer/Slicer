@@ -93,6 +93,13 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
     // Describe the behavior at module enter and exit.
     virtual void Enter ( );
     virtual void Exit ( );
+    // Description:
+    // Method called when a view reconfiguration is chosen
+    // from the toolbar; before Slice and 3D viewers are
+    // unpacked and repacked in a new configuration,
+    // render requests from automatic rock or spin are
+    // stopped.
+    virtual void StopViewRockOrSpin ( );
 
     // Description:
     // Getting and setting the mrml selection node id
