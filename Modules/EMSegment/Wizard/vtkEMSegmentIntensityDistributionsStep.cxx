@@ -275,7 +275,7 @@ vtkEMSegmentIntensityDistributionsStep::DisplaySelectedNodeIntensityDistribution
     this->GetGUI()->GetAnatomicalStructureStep();
   vtkKWTree *tree = anat_step->GetAnatomicalStructureTree()->GetWidget();
   vtksys_stl::string sel_node;
-  vtkIdType sel_vol_id;
+  vtkIdType sel_vol_id = 0;
   int manually_sample_mode = 0;
   int has_valid_selection = tree->HasSelection();
   if (has_valid_selection)

@@ -529,7 +529,7 @@ void EMLocalAlgorithm<T>::PrintRegistrationData(int SimularityFlag, double **Sim
   //-----------------------------------------------
   // Run cost function
   float cost;
-  float costClassSpecific;
+  float costClassSpecific = 0;
 
   // if (RegistrationParameters->MAPAlgorithm == EMSEGMENT_REGISTRATION_SIMPLEX) FinalParameters --;
   if (this->RegistrationType < EMSEGMENT_REGISTRATION_SEQUENTIAL) {

@@ -722,7 +722,7 @@ template <class T> inline void EMLocalAlgorithm<T>::E_Step_IncompleteModel(int i
   // 
   // This can mess up the Bias Claculations - that's why we put it second 
   double SumOfAlignedTissueDistribution = 0.0;
-  double AlignedTissueDistribution;
+  double AlignedTissueDistribution = 0;
 
   // See normal E-STep for explanation
   for (int i = NumClasses -1 ; i > -1 ; i--) {
@@ -793,7 +793,7 @@ template <class T> void EMLocalAlgorithm<T>::E_Step_Weight_Calculation_Threaded(
   float *cY_M = this->cY_MPtr + NumInputImages*Thread_DataJump;
   
   double ConditionalTissueProbability;
-  double SpatialTissueDistribution;
+  double SpatialTissueDistribution = 0;
   double AlignedTissueDistribution;
   double MeanFieldPotential = 1.0;
   
@@ -1497,7 +1497,7 @@ template  <class T> void EMLocalAlgorithm<T>::RunAlgorithm(EMTriVolume& iv_m, EM
   for (int i=0; i < this->SmoothingWidth; i++) skern[i] = float(vtkImageEMGeneral::FastGauss(1.0 / SmoothingSigma,i + lbound));
 
   // Later define a Print function for E and M step sperately so that we can more easily seperate E and M-Step variables 
-  float PCACost;
+  float PCACost = 0;
   float RegistrationCost   = 0.0;
   float RegistrationClassSpecificCost   = 0.0;
 

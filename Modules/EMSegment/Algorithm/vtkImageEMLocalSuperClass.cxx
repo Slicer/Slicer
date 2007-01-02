@@ -96,8 +96,8 @@ void vtkImageEMLocalSuperClass::AddSubClass(void* ClassData, classType initType,
 
   if (this->NumClasses <= index) {
     vtkImageEMLocalSuperClass *parent = this->ParentClass;
-    classType*  oldClassListType;
-    void**      oldClassList;
+    classType*  oldClassListType = NULL;
+    void**      oldClassList = NULL;
     int         oldNumClasses = this->NumClasses;
     // Delete and remeber old class list
     if (oldNumClasses) {
