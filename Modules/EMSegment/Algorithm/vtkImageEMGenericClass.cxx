@@ -157,7 +157,7 @@ void  vtkImageEMGenericClass::ExecuteData(vtkDataObject*) {
     { 
         int outExt[6];
         // The next Function sets the  outData->WholeExtent properly - why do not ask me 
-    vtkImageData **inData  = (vtkImageData **) this->GetInputs();
+        vtkNotUsed(vtkImageData **inData  = (vtkImageData **) this->GetInputs(););
     vtkImageData *outData = this->GetOutput();
     outData->GetWholeExtent(outExt);
         // Now set the extent like the whole extent 

@@ -204,7 +204,7 @@ int vtkImageEMLocalSuperClass::GetAllLabels(short *LabelList, int result, int Ma
 //------------------------------------------------------------------------------
 int vtkImageEMLocalSuperClass::LabelAllSuperClasses(short *TakenLabelList, int Result, int Max) {
   int i,j,k;
-  short label=0;
+  vtkNotUsed(short label=0;);
   // You have to have atleast one label defined
   assert(Result && Result <= Max);
 

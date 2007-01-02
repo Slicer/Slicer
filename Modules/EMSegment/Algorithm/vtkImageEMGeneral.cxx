@@ -280,7 +280,7 @@ float vtkImageEMGeneral_qgauss_sqrt(float inverse_sigma, float x)
 
 // Description:
 // Calculates : 
-//     /offY->  / *\T /* * * \  /*\  <- offX \               
+//     /offY->  / *\T /* * * \  /*\  <- offX \.               
 // dimY\        |V1|*| * M * | *|V2|         / dimX    where  vec = [* V1 *] = [* V2 *] 
 //              \*/  \ * * */   \*/ 
  
@@ -550,7 +550,7 @@ FILE* vtkImageEMGeneral::OpenTextFile(const char* FileDir, const char FileName[]
                       const char *LevelName, int LevelNameFlag, int iter, int IterFlag, 
                       const char FileSucessMessage[], char OpenFileName[]) {
   FILE* OpenFile;
-  sprintf(OpenFileName,"%s/%s",FileDir,FileName,LevelName);
+  sprintf(OpenFileName,"%s/%s",FileDir,FileName);
   if (LabelFlag)     sprintf(OpenFileName,"%s_C%02d",OpenFileName,Label);
   if (LevelNameFlag) sprintf(OpenFileName,"%s_L%s",OpenFileName,LevelName);
   if (IterFlag)      sprintf(OpenFileName,"%s_I%02d",OpenFileName,iter);

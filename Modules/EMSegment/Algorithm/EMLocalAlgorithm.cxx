@@ -303,7 +303,7 @@ inline void EMLocalAlgorithm<T>::DefineForRegistrationRotTranSca(int NumParaSets
   classType* ClassListType          = this->actSupCl->GetClassListType();  
   int NumClasses                    = this->actSupCl->GetNumClasses();
   int RegistrationType              = this->RegistrationParameters->GetRegistrationType();
-  int RigidFlag                     = this->RegistrationParameters->GetRigidFlag();
+  vtkNotUsed(int RigidFlag                     = this->RegistrationParameters->GetRigidFlag(););
   int *ClassSpecificRegistrationFlag = this->RegistrationParameters->GetClassSpecificRegistrationFlag();
 
 
@@ -818,8 +818,8 @@ template <class T> void EMLocalAlgorithm<T>::E_Step_Weight_Calculation_Threaded(
   Thread_Registration_ROI_Weight->MaxCoord[0] = Thread_Registration_ROI_Weight->MaxCoord[1] = Thread_Registration_ROI_Weight->MaxCoord[2] = 0;
   
   char* Reg_ROI_MAP          = Thread_Registration_ROI_Weight->MAP;
-  int*  Reg_ROI_MinCoord     = Thread_Registration_ROI_Weight->MinCoord;
-  int*  Reg_ROI_MaxCoord     = Thread_Registration_ROI_Weight->MaxCoord;
+  vtkNotUsed(int*  Reg_ROI_MinCoord     = Thread_Registration_ROI_Weight->MinCoord;);
+  vtkNotUsed(int*  Reg_ROI_MaxCoord     = Thread_Registration_ROI_Weight->MaxCoord;);
   int   Reg_ROI_ClassOutside = Thread_Registration_ROI_Weight->ClassOutside =  this->Registration_ROI_ProbData.ClassOutside;
   
   int Reg_ROI_FlagX=0, Reg_ROI_FlagY=0, Reg_ROI_FlagZ=0;

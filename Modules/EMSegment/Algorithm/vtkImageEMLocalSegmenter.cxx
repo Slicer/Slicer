@@ -203,7 +203,7 @@ static void vtkImageEMLocalSegmenterReadInputChannel(vtkImageEMLocalSegmenter *s
   int idxR, idxY, idxZ;
   vtkIdType inIncX, inIncY, inIncZ;
   int *SegmentationBoundaryMin = self->GetSegmentationBoundaryMin();
-  int *SegmentationBoundaryMax = self->GetSegmentationBoundaryMax();
+  vtkNotUsed(int *SegmentationBoundaryMax = self->GetSegmentationBoundaryMax(););
   int ImageMaxZ = self->GetDimensionZ();
   int ImageMaxY = self->GetDimensionY();
   int ImageMaxX = self->GetDimensionX();
@@ -641,8 +641,8 @@ void vtkImageEMLocalSegmenter::ExecuteData(vtkDataObject *)
   cout << "Local Version" << endl;
   void *outPtr;
   int idx1, i;
-  int NumProbMap = 0;
-  int FirstProbMapDef = -1;
+  vtkNotUsed(int NumProbMap = 0;);
+  vtkNotUsed(int FirstProbMapDef = -1;);
   // vtk4 - to find out more about the next couple of lines look at vtkImageEMGenericClass.cxx   
   vtkImageData **inData  = (vtkImageData **) this->GetInputs();
   vtkImageData *outData = this->GetOutput();

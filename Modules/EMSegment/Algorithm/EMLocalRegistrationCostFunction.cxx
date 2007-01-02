@@ -245,7 +245,7 @@ void EMLocalRegistrationCostFunction::DefineRegistrationParametersForThreadedCos
 
   // Job size with respect to ROI of registration 
   int ROI_JobSize           = ROI_LengthXYZ/this->NumberOfThreads;
-  int ROI_JobSizeXY         = ROI_JobSize % ROI_LengthXY;   
+  vtkNotUsed(int ROI_JobSizeXY         = ROI_JobSize % ROI_LengthXY;);
 
   // cout << " nlun " <<  " " << ROI_MinX << " " << ROI_MinY << " " << ROI_MinZ << " " << ROI_MaxX << " " << ROI_MaxY << " " << ROI_MaxZ  << endl;
 
@@ -396,8 +396,8 @@ inline void EMLocalRegistrationCostFunction::CostFunction_Sum_WeightxProbability
   int    NumTotalTypeCLASS     = this->GetNumTotalTypeCLASS();
   int*   ProbDataIncY          = this->GetProbDataIncY();
   int*   ProbDataIncZ          = this->GetProbDataIncZ();
-  float* ProbDataMinusWeight   = this->GetProbDataMinusWeight(); 
-  float* ProbDataWeight        = this->GetProbDataWeight(); 
+  vtkNotUsed(float* ProbDataMinusWeight   = this->GetProbDataMinusWeight(); );
+  vtkNotUsed(float* ProbDataWeight        = this->GetProbDataWeight(); );
 
   // Pointer variables 
   unsigned char *Boundary_ROIVectorPtr   = this->Boundary_ROIVector;

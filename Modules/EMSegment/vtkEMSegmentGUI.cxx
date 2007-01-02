@@ -329,7 +329,7 @@ void vtkEMSegmentGUI::BuildGUI()
 
   vtkKWWizardWorkflow *wizard_workflow = 
     this->WizardWidget->GetWizardWorkflow();
-  vtkKWWizardWidget *wizard_widget = this->WizardWidget;
+  vtkNotUsed(vtkKWWizardWidget *wizard_widget = this->WizardWidget;);
 
   // -----------------------------------------------------------------
   // Parameter Set step
@@ -490,7 +490,7 @@ void vtkEMSegmentGUI::PopulateTestingData()
       if (vtksys::SystemTools::FileExists(fullName.c_str()) &&
           !vtksys::SystemTools::FileIsDirectory(fullName.c_str()))
         {
-        vtkMRMLVolumeNode *volNode = volume_logic->AddArchetypeVolume( 
+          volume_logic->AddArchetypeVolume( 
           (char*)(fullName.c_str()), 1, 0, filename.c_str()); 
         }
       }

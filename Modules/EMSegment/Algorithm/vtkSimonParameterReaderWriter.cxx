@@ -100,7 +100,7 @@ int readRegTransformFile(char *fname, double *tran)
   if (fp == (FILE *)NULL) {
     return 1;
   }
-  if (fscanf(fp,"%f %f %f %f %f %f %f %f %f %f %f %f",
+  if (fscanf(fp,"%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf",
     tran, tran+1, tran+2, tran+3, tran+4, tran+5, tran+6,
     tran+7,tran+8,tran+9,tran+10,tran+11) != 12) {
     fclose(fp);

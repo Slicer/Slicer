@@ -3568,8 +3568,8 @@ CheckMRMLNodeStructure()
     return 0;
   } 
   // keep track of number of target input images
-  int numGlobalParametersTargetInputImages = 
-    globalParametersTargetNode->GetNumberOfVolumes();
+  vtkNotUsed(int numGlobalParametersTargetInputImages = 
+             globalParametersTargetNode->GetNumberOfVolumes(););
 
   // check that global parametrs has an associated atlas node
   vtkMRMLEMSAtlasNode* globalParametersAtlasNode = 

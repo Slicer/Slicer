@@ -155,7 +155,7 @@ int vtkFileOps::fileIsCompressed(const char *fname, char **newFileName)
 {
 #ifndef _WIN32
   struct stat statBuf;
-  int long fileSize = 0;
+  vtkNotUsed(int long fileSize = 0;);
 
   char *p = (char *)NULL;
   char *lastSlash = (char *)NULL;
@@ -355,7 +355,8 @@ int vtkFileOps::WriteMRIfile(char *fname, unsigned char *header, int headersize,
   }
 
   if (header != NULL) {
-    if (fwrite(header,sizeof(unsigned char), headersize,fp) < headersize) {
+    if (fwrite(header,sizeof(unsigned char), headersize,fp) < 
+        static_cast<unsigned int>(headersize)) {
       fprintf(stderr,"Failed writing the output header to %s\n",fname);
       fclose(fp);
       exit(1);
@@ -365,7 +366,8 @@ int vtkFileOps::WriteMRIfile(char *fname, unsigned char *header, int headersize,
   this->ensureGEByteOrderForShort(data,npixels);
   
   // Original: if (fwrite(data,sizeof(unsigned short), npixels,fp) < npixels) {
-  if (fwrite(data,sizeof(short), npixels,fp) < npixels) {
+  if (fwrite(data,sizeof(short), npixels,fp) < 
+      static_cast<unsigned int>(npixels)) {
     fprintf(stderr,"Failed writing the output data\n");
     fclose(fp);
     assert(0);

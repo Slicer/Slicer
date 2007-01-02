@@ -740,8 +740,6 @@ void vtkEMSegmentRunSegmentationStep::RunSegmentationROIMaxChangedCallback(
     int row, int col, const char *value)
 {
   int ijk[3] = {0, 0, 0};
-  vtkKWMatrixWidget *maxMatrix = 
-    this->RunSegmentationROIMaxMatrix->GetWidget();
   vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
   logic->GetSegmentationBoundaryMax(ijk);
   ijk[col] = atoi(value);
@@ -753,8 +751,6 @@ void vtkEMSegmentRunSegmentationStep::RunSegmentationROIMinChangedCallback(
     int row, int col, const char *value)
 {
   int ijk[3] = {0, 0, 0};
-  vtkKWMatrixWidget *minMatrix = 
-    this->RunSegmentationROIMinMatrix->GetWidget();
   vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
   logic->GetSegmentationBoundaryMin(ijk);
   ijk[col] = atoi(value);
