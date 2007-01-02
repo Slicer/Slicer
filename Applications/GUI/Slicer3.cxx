@@ -76,7 +76,7 @@
 //#define IGTDEMO_DEBUG
 //#define FIDUCIALS_DEBUG
 //#define CAMERA_DEBUG
-#define EMSEG_DEBUG
+//#define EMSEG_DEBUG
 
 #ifndef EMSEG_DEBUG
 #include "vtkEMSegmentLogic.h"
