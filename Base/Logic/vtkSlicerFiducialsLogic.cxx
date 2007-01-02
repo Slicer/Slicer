@@ -63,7 +63,8 @@ vtkMRMLFiducialListNode *vtkSlicerFiducialsLogic::AddFiducialList()
     }
   const char *name;
   name = this->MRMLScene->GetTagByClassName("vtkMRMLFiducialListNode");
-  node->SetName(this->MRMLScene->GetUniqueNameByString(name));
+//  node->SetName(this->MRMLScene->GetUniqueNameByString(name));
+  node->SetName(this->MRMLScene->GetUniqueNameByString("L"));
   this->GetMRMLScene()->AddNode(node);
   return vtkMRMLFiducialListNode::SafeDownCast(node);
 }
