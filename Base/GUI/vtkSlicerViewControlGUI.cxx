@@ -574,13 +574,13 @@ void vtkSlicerViewControlGUI::BuildVisibilityMenu ( )
 {
   this->VisibilityButton->GetMenu()->DeleteAllItems ( );
   this->VisibilityButton->GetMenu()->AddCheckButton ("Fiducial points" );
-  this->VisibilityButton->GetMenu()->AddCheckButton ("Fiducial text" );
+  this->VisibilityButton->GetMenu()->AddCheckButton ("Fiducial labels" );
   this->VisibilityButton->GetMenu()->AddCheckButton ("3D cube" );
   this->VisibilityButton->GetMenu()->AddCheckButton ("3D axis labels" );
   this->VisibilityButton->GetMenu()->AddSeparator();
   this->VisibilityButton->GetMenu()->AddCommand ( "close");
   this->VisibilityButton->GetMenu()->SelectItem ("Fiducial points" );
-  this->VisibilityButton->GetMenu()->SelectItem ("Fiducial text" );
+  this->VisibilityButton->GetMenu()->SelectItem ("Fiducial labels" );
   this->VisibilityButton->GetMenu()->SelectItem ("3D cube" );
   this->VisibilityButton->GetMenu()->SelectItem ("3D axis labels" );
 }
