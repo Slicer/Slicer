@@ -38,7 +38,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeDisplayNode : public vtkMRMLVo
 {
   public:
   static vtkMRMLDiffusionTensorVolumeDisplayNode *New();
-  vtkTypeMacro(vtkMRMLDiffusionTensorVolumeDisplayNode,vtkMRMLNode);
+  vtkTypeMacro(vtkMRMLDiffusionTensorVolumeDisplayNode,vtkMRMLVolumeDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual vtkMRMLNode* CreateNodeInstance();
