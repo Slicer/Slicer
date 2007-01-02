@@ -53,8 +53,11 @@ set ::scene [[$::appGUI GetApplicationLogic] GetMRMLScene]
 ## set up global key bindings
 set index [[$::win GetEditMenu] AddCommand "&Undo" "" "$::scene Undo; mrmlUpdateUndoRedoButtons"]
 [$::win GetEditMenu] SetItemAccelerator $index "Ctrl+Z"
+[$::win GetEditMenu] SetBindingForItemAccelerator $index $::win
+
 set index [[$::win GetEditMenu] AddCommand "&Redo" "" "$::scene Redo; mrmlUpdateUndoRedoButtons"]
 [$::win GetEditMenu] SetItemAccelerator $index "Ctrl+Y"
+[$::win GetEditMenu] SetBindingForItemAccelerator $index $::win
 
 update
 
