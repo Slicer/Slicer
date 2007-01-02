@@ -235,9 +235,14 @@ void vtkSlicerFiducialsGUI::ProcessGUIEvents ( vtkObject *caller,
   if (activeFiducialListNode == NULL)
   {
       std::cerr << "ERROR: No Fiducial List, adding one first!\n";
-      this->FiducialListSelectorWidget->ProcessNewNodeCommand("vtkMRMLFiducialListNode",
-                                                              this->MRMLScene->GetTagByClassName("vtkMRMLFiducialListNode"));
-
+      vtkMRMLFiducialListNode *newList = this->GetLogic()->AddFiducialList();
+//      this->FiducialListSelectorWidget->ProcessNewNodeCommand("vtkMRMLFiducialListNode",
+//this->MRMLScene->GetTagByClassName("vtkMRMLFiducialListNode"));
+      if (newList != NULL)
+        {
+        this->SetFiducialListNodeID(newList->GetID());
+        }
+      newList->Delete();
       // now get the newly active node 
       activeFiducialListNode = (vtkMRMLFiducialListNode *)this->MRMLScene->GetNodeByID(this->GetFiducialListNodeID());
       if (activeFiducialListNode == NULL)
