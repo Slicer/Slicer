@@ -736,6 +736,7 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   mtb->SetWidgetsPadY ( 2 );
 
   vtkKWToolbar *ltb = this->GetLoadSaveToolbar ( );
+  ltb->SetName("Load/Save");
   ltb->SetParent ( tbs->GetToolbarsFrame ( ) );
   ltb->Create();
   ltb->SetWidgetsFlatAdditionalPadX ( 0 );
@@ -746,6 +747,7 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   ltb->SetWidgetsPadY ( 2 );
 
   vtkKWToolbar *vtb = this->GetViewToolbar ( );
+  vtb->SetName("View");
   vtb->SetParent ( tbs->GetToolbarsFrame ( ) );
   vtb->Create();
   vtb->SetWidgetsFlatAdditionalPadX ( 0 );
@@ -756,6 +758,7 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   vtb->SetWidgetsPadY ( 2 );
 
   vtkKWToolbar *urtb = this->GetUndoRedoToolbar ( );
+  urtb->SetName("Undo/Redo");
   urtb->SetParent ( tbs->GetToolbarsFrame ( ) );
   urtb->Create();
   urtb->SetWidgetsFlatAdditionalPadX ( 0 );
@@ -766,6 +769,7 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   urtb->SetWidgetsPadY ( 2 );
   
   vtkKWToolbar *mmtb = this->GetMouseModeToolbar ( );
+  mmtb->SetName("Mouse Mode");
   mmtb->SetParent ( tbs->GetToolbarsFrame ( ) );
   mmtb->Create();
   mmtb->SetWidgetsFlatAdditionalPadX ( 0 );
@@ -1066,13 +1070,13 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
     radiob->SelectedStateOff ( );
     }
   
-
+  /*
   tbs->ShowToolbar ( this->GetModulesToolbar ( ));
   tbs->ShowToolbar ( this->GetLoadSaveToolbar ( ));
   tbs->ShowToolbar ( this->GetViewToolbar ( ));
   tbs->ShowToolbar ( this->GetUndoRedoToolbar ( ));
   tbs->ShowToolbar ( this->GetMouseModeToolbar ( ));
-
+  */
 }
 
 
