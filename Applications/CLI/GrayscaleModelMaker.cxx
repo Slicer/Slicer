@@ -43,7 +43,7 @@ int main(int argc, char * argv[])
     ModuleDescriptionParser parser;
     if (parser.Parse(GetXMLModuleDescription(), module))
       {
-      std::cerr << "GenerateCLP: One or more errors detected. Code generation aborted." << std::endl;
+      std::cerr << argv[0] << ": One or more XML errors detected." << std::endl;
       return EXIT_FAILURE;
       }
     std::cout << "Module Description Information" << std::endl;
