@@ -194,4 +194,6 @@ proc FiducialsSWidget::AddFiducial { r a s } {
   set fidLogic [$::slicer3::FiducialsGUI GetLogic]
   # the logic handles saving the state for undo
   set fidIndex [$fidLogic AddFiducial $r $a $s]
+  $::slicer3::MRMLScene Modified
 }
+
