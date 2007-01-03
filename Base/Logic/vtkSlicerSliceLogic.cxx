@@ -446,10 +446,10 @@ void vtkSlicerSliceLogic::UpdatePipeline()
     
     // Background
     id = this->SliceCompositeNode->GetBackgroundVolumeID();
-    vtkMRMLScalarVolumeNode *bgnode = NULL;
+    vtkMRMLVolumeNode *bgnode = NULL;
     if (id)
       {
-      bgnode = vtkMRMLScalarVolumeNode::SafeDownCast (this->MRMLScene->GetNodeByID(id));
+      bgnode = vtkMRMLVolumeNode::SafeDownCast (this->MRMLScene->GetNodeByID(id));
       }
     
     if (this->BackgroundLayer)
@@ -459,10 +459,10 @@ void vtkSlicerSliceLogic::UpdatePipeline()
 
     // Foreground
     id = this->SliceCompositeNode->GetForegroundVolumeID();
-    vtkMRMLScalarVolumeNode *fgnode = NULL;
+    vtkMRMLVolumeNode *fgnode = NULL;
     if (id)
       {
-      fgnode = vtkMRMLScalarVolumeNode::SafeDownCast (this->MRMLScene->GetNodeByID(id));
+      fgnode = vtkMRMLVolumeNode::SafeDownCast (this->MRMLScene->GetNodeByID(id));
       }
     
     if (this->ForegroundLayer)
