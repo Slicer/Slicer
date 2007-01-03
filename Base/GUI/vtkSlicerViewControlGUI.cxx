@@ -473,37 +473,22 @@ void vtkSlicerViewControlGUI::ProcessGUIEvents ( vtkObject *caller,
         // Get all menu items
         if ( this->ViewNode != NULL )
           {
-          const char *item = this->VisibilityButton->GetValue();
-          int state = m->GetItemSelectedState(item);
-          if ( !strcmp (item, "Fiducial points" ))
-            {
-            this->ViewNode->SetFiducialsVisible (state);
-            }
-          else if ( !strcmp (item, "Fiducial labels" ))
-            {
-            this->ViewNode->SetFiducialLabelsVisible ( state );
-            }
-          else if ( !strcmp (item, "3D cube" ))
-            {
-            this->ViewNode->SetBoxVisible ( state);
-            }        
-          else if ( !strcmp (item, "3D axis labels" ))
-            {
-            this->ViewNode->SetAxisLabelsVisible ( state );
-            }
-          else if ( !strcmp (item, "Light blue background" ))
-            {
-            this->ViewNode->SetBackgroundColor ( app->GetSlicerTheme()->GetSlicerColors()->ViewerBlue );
-            
-            }        
-          else if ( !strcmp (item, "Black background" ))
-            {
-            this->ViewNode->SetBackgroundColor ( app->GetSlicerTheme()->GetSlicerColors()->Black );
-            }        
-          else if ( !strcmp (item, "White background" ))
-            {
-            this->ViewNode->SetBackgroundColor (app->GetSlicerTheme()->GetSlicerColors()->White );
-            }        
+            this->ViewNode->SetFiducialsVisible (m->GetItemSelectedState("Fiducial points"));
+            this->ViewNode->SetFiducialLabelsVisible (m->GetItemSelectedState("Fiducial labels"));
+            this->ViewNode->SetBoxVisible ( m->GetItemSelectedState ("3D cube"));
+            this->ViewNode->SetAxisLabelsVisible (m->GetItemSelectedState ("3D axis labels"));
+            if ( m->GetItemSelectedState ("Light blue background" ) == 1 )
+              {
+              this->ViewNode->SetBackgroundColor ( app->GetSlicerTheme()->GetSlicerColors()->ViewerBlue );
+              }
+            else if ( m->GetItemSelectedState ("Black background" ) == 1 )
+              {
+              this->ViewNode->SetBackgroundColor ( app->GetSlicerTheme()->GetSlicerColors()->Black );
+              }
+            else if ( m->GetItemSelectedState ("White background" ) == 1 )
+              {
+              this->ViewNode->SetBackgroundColor (app->GetSlicerTheme()->GetSlicerColors()->White );
+              }            
           }
         }
       else if ( m == this->SelectButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
@@ -1046,7 +1031,6 @@ void vtkSlicerViewControlGUI::MainViewBackgroundColor ( double *color )
       p->GetViewerWidget()->ColorAxisLabelActors (1.0, 1.0, 1.0 );
       }
     p->GetViewerWidget()->UpdateFromMRML();
-//    p->GetViewerWidget()->GetMainViewer()->GetRenderer()->Render(); 
     }
 }
 
@@ -1054,7 +1038,13 @@ void vtkSlicerViewControlGUI::MainViewBackgroundColor ( double *color )
 //---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::MainViewVisibility ( )
 {
+  if ( this->ApplicationGUI && this->ViewNode )
+    {
+    vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));    
+    p->GetViewerWidget()->UpdateFromMRML();
+    }
 }
+  
 
 //---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::MainViewSetProjection ( )
