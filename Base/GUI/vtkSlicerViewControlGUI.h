@@ -206,17 +206,42 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   virtual void SpinView (int direction, double degrees );
 
   // Description:
+  // Resets focal point to origin
+  virtual void MainViewResetFocalPoint ( );
+  // Description:
+  // Sets cameras focal point.
+  virtual void MainViewSetFocalPoint ( double x, double y, double z);
+    
+  // Description:
   // Starts and stops automatic view rocking
   virtual void MainViewRock ( );
   virtual void RockView ( );
 
-
+  // Description:
+  // Moves camera down selected axis and looks at
+  // focal point from there
   virtual void MainViewLookFrom ( const char *dir );
+  // Description:
+  // Rotates camera about selected axis by an increment.
   virtual void MainViewRotateAround ( int axis );
 
+  // Description:
+  // Sets either Parallel or Perspective Projection
   virtual void MainViewSetProjection ( );
+
+  // Description:
+  // Sets stereo options or turns off stereo, if
+  // stereo is enabled.
   virtual void MainViewSetStereo ( );
 
+  // Description:
+  // Sets background color in the Main View
+  virtual void MainViewBackgroundColor ( );
+
+  // Description:
+  // Toggles visibility of actors in the Main View
+  virtual void MainViewVisibility( );
+  
   // Description:
   // Groups of callbacks that handle the state change of
   // rollover images in the ViewControlFrame. These

@@ -283,6 +283,7 @@ vtkSlicerViewControlGUI::~vtkSlicerViewControlGUI ( )
   this->RemoveViewObservers ( );
   this->SetMRMLViewNode ( NULL );
   this->SetAndObserveMRMLCameraNode (NULL);
+  this->SetAndObserveMRMLScene ( NULL );
   this->SetApplicationGUI ( NULL );
 }
 
@@ -445,23 +446,46 @@ void vtkSlicerViewControlGUI::ProcessGUIEvents ( vtkObject *caller,
         }
       if ( m == this->StereoButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
         {
+        if ( this->ViewNode != NULL )
+          {
+          if ( !strcmp (this->StereoButton->GetValue(), "NoStereo"))
+            {
+            this->ViewNode->SetStereoType( vtkMRMLViewNode::NoStereo);
+            }
+          else if (!strcmp (this->StereoButton->GetValue(), "Red/Blue"))
+            {
+            this->ViewNode->SetStereoType( vtkMRMLViewNode::RedBlue);
+            }
+          else if (!strcmp (this->StereoButton->GetValue(), "CrystalEyes"))
+            {
+            this->ViewNode->SetStereoType( vtkMRMLViewNode::CrystalEyes);
+            }
+          else if (!strcmp (this->StereoButton->GetValue(), "Interlaced"))
+            {
+            this->ViewNode->SetStereoType( vtkMRMLViewNode::Interlaced);            
+            }
+          }
         }
       if ( m == this->SelectButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
         {
         }
       if ( (p == this->CenterButton) && (event == vtkKWPushButton::InvokedEvent ) )
         {
+        this->MainViewResetFocalPoint ( );
         }
 
       if ( (p == this->OrthoButton) && (event == vtkKWPushButton::InvokedEvent ) && this->ViewNode )
         {
-        if ( this->ViewNode->GetRenderMode() == vtkMRMLViewNode::Orthographic )
+        if ( this->ViewNode != NULL )
           {
-          this->ViewNode->SetRenderMode (vtkMRMLViewNode::Perspective);
-          }
-        else if ( this->ViewNode->GetRenderMode() == vtkMRMLViewNode::Perspective )
-          {
-          this->ViewNode->SetRenderMode(vtkMRMLViewNode::Orthographic );
+          if ( this->ViewNode->GetRenderMode() == vtkMRMLViewNode::Orthographic )
+            {
+            this->ViewNode->SetRenderMode (vtkMRMLViewNode::Perspective);
+            }
+          else if ( this->ViewNode->GetRenderMode() == vtkMRMLViewNode::Perspective )
+            {
+            this->ViewNode->SetRenderMode(vtkMRMLViewNode::Orthographic );
+            }
           }
         }
 
@@ -610,6 +634,46 @@ void vtkSlicerViewControlGUI::BuildStereoSelectMenu ( )
 }
 
 
+//---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::MainViewSetStereo ( )
+{
+  // TODO: check whether stereo is enabled.
+  int stereoEnabled = 0;
+  if ( stereoEnabled )
+    {
+      if ( this->GetApplicationGUI() != NULL )
+        {
+        vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));    
+        if ( this->ViewNode!= NULL )
+          {
+          int s = this->ViewNode->GetStereoType();
+          switch ( s )
+            {
+            case vtkMRMLViewNode::NoStereo:
+              p->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->StereoRenderOff ( );
+              break;
+            case vtkMRMLViewNode::RedBlue:
+              p->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->SetStereoTypeToRedBlue();
+              p->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->StereoRenderOn ( );
+              break;
+            case vtkMRMLViewNode::CrystalEyes:
+              p->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->SetStereoTypeToCrystalEyes();
+              p->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->StereoRenderOn ( );
+              break;
+            case vtkMRMLViewNode::Interlaced:
+              p->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->SetStereoTypeToInterlaced();
+              p->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->StereoRenderOn ( );
+              break;
+            default:
+              p->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->StereoRenderOff ( );
+              break;
+            }
+          }
+        }  
+    }
+}
+
+
 
 
 //---------------------------------------------------------------------------
@@ -630,6 +694,41 @@ void vtkSlicerViewControlGUI::BuildViewSelectMenu ( )
 
 
 //---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::MainViewResetFocalPoint ( )
+{
+  this->MainViewSetFocalPoint ( 0.0, 0.0, 0.0);
+}
+
+
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::MainViewSetFocalPoint ( double x, double y, double z)
+{
+   if ( this->ApplicationGUI && this->ViewNode )
+    {
+    vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));    
+    double fov = this->ViewNode->GetFieldOfView ( );
+    double widefov = fov*3;
+    
+    if ( this->CameraNode != NULL )
+      {
+      vtkCamera *cam = this->GetCameraNode()->GetCamera();
+      cam->SetFocalPoint( x, y, z );
+      cam->ComputeViewPlaneNormal ( );
+      cam->OrthogonalizeViewUp();
+      p->GetViewerWidget()->GetMainViewer()->GetRenderer()->UpdateLightsGeometryToFollowCamera();
+      p->GetViewerWidget()->GetMainViewer()->GetRenderer()->Render();
+      // this->NavZoomRender();
+
+      // in slicer2: Slicer ComputeNTPFromCamera camera
+      // in slicer2: MainAnnoUpdateFocalPoint x y z
+      }
+    }
+}
+
+
+//---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::MainViewRock ( )
 {
   if ( this->ViewNode )
@@ -642,6 +741,8 @@ void vtkSlicerViewControlGUI::MainViewRock ( )
       }
     }
 }
+
+
 
 
 //---------------------------------------------------------------------------
@@ -786,8 +887,10 @@ void vtkSlicerViewControlGUI::ProcessMRMLEvents ( vtkObject *caller,
     }
   
   // has view been manipulated?
-  else if ( vnode != NULL && vnode == this->ViewNode &&
-            event == vtkMRMLViewNode::AnimationModeEvent )
+  else if ( vnode != NULL && vnode == this->ViewNode )
+    {
+    
+    if (event == vtkMRMLViewNode::AnimationModeEvent )
     {
     // handle the mode change 
     if ( this->ViewNode->GetAnimationMode() == vtkMRMLViewNode::Spin )
@@ -819,21 +922,45 @@ void vtkSlicerViewControlGUI::ProcessMRMLEvents ( vtkObject *caller,
         this->SpinButton->Deselect();
         }
       }
-    
-    // handle whatever other change is made to the view.
-    else
+    }
+    // a stereo event?
+    else if ( event == vtkMRMLViewNode::StereoModeEvent )
       {
-      this->UpdateViewsFromMRML( );
+      this->MainViewSetStereo ( );
       }
+    // background color change?
+    else if ( event == vtkMRMLViewNode::BackgroundColorEvent )
+      {
+      }
+    // visibility of something changed
+    else if ( event == vtkMRMLViewNode::VisibilityEvent )
+      {
+      if ( this->ViewNode != NULL )
+        {
+        // background color?
+        this->MainViewBackgroundColor ( );
+        // axis labels, fiducial points, fiducial labels or 3Dcube?
+        this->MainViewVisibility ( );
+        }
+      }
+    // render mode changed
+    else if ( event == vtkMRMLViewNode::RenderModeEvent )
+      {
+      this->MainViewSetProjection();
+      }
+    // whatever else...
     }
 
-  else if ( vnode != NULL && vnode == this->ViewNode &&
-            event == vtkMRMLViewNode::RenderModeEvent )
+
+  // handle whatever other change is made to the view.
+  else
     {
-    this->MainViewSetProjection ( );
+    this->UpdateViewsFromMRML( );
     }
   this->ProcessingMRMLEvent = 0;
 }
+
+
 
 
 //---------------------------------------------------------------------------
@@ -856,6 +983,15 @@ void vtkSlicerViewControlGUI::SetApplicationGUI ( vtkSlicerApplicationGUI *appGU
 }
 
 
+//---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::MainViewBackgroundColor ( )
+{
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::MainViewVisibility ( )
+{
+}
 
 //---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::MainViewSetProjection ( )
@@ -887,11 +1023,6 @@ void vtkSlicerViewControlGUI::MainViewSetProjection ( )
 
 
 
-
-//---------------------------------------------------------------------------
-void vtkSlicerViewControlGUI::MainViewSetStereo ( )
-{
-}
 
 
 
@@ -1411,6 +1542,7 @@ void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
       this->SliceOpacityTopLevel->Withdraw();
       this->SliceOpacityTopLevel->SetBorderWidth ( 2 );
       this->SliceOpacityTopLevel->SetReliefToGroove();
+      
       f7->SetParent ( this->SliceOpacityTopLevel );
       f7->Create ( );
       f7->SetBinding ( "<Leave>", this, "HideSliceOpacityScaleAndEntry" );
@@ -1477,7 +1609,6 @@ void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
       // create but don't pack yet.
       this->ZoomWidget->SetParent ( this->NavZoomFrame );
       this->ZoomWidget->Create ( );
-      // guess a width
       this->ZoomWidget->SetWidth ( 140 );
       this->ZoomWidget->SetHeight ( 50 );
       this->ZoomWidget->SetRendererBackgroundColor ( app->GetSlicerTheme()->GetSlicerColors()->Black );
@@ -1485,7 +1616,6 @@ void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
 
       this->NavWidget->SetParent (this->NavZoomFrame);
       this->NavWidget->Create();
-      // guess a width
       this->NavWidget->SetWidth ( 140 );
       this->NavWidget->SetHeight ( 50 );
       this->NavWidget->SetRendererBackgroundColor ( app->GetSlicerTheme()->GetSlicerColors()->ViewerBlue );
@@ -1615,9 +1745,6 @@ void vtkSlicerViewControlGUI::AddViewObservers ()
     this->ViewNode->AddObserver ( vtkMRMLViewNode::RenderModeEvent, this->MRMLCallbackCommand );
     this->ViewNode->AddObserver ( vtkMRMLViewNode::StereoModeEvent, this->MRMLCallbackCommand );
     this->ViewNode->AddObserver ( vtkMRMLViewNode::VisibilityEvent, this->MRMLCallbackCommand );
-    this->ViewNode->AddObserver ( vtkMRMLViewNode::MoveCameraEvent, this->MRMLCallbackCommand );
-    this->ViewNode->AddObserver ( vtkMRMLViewNode::SliceOpacityEvent, this->MRMLCallbackCommand );
-    this->ViewNode->AddObserver ( vtkMRMLViewNode::ViewModifiedEvent, this->MRMLCallbackCommand );        
     }
 }
 
@@ -1630,9 +1757,6 @@ void vtkSlicerViewControlGUI::RemoveViewObservers ()
     this->ViewNode->RemoveObservers ( vtkMRMLViewNode::RenderModeEvent, this->MRMLCallbackCommand );
     this->ViewNode->RemoveObservers ( vtkMRMLViewNode::StereoModeEvent, this->MRMLCallbackCommand );
     this->ViewNode->RemoveObservers ( vtkMRMLViewNode::VisibilityEvent, this->MRMLCallbackCommand );
-    this->ViewNode->RemoveObservers ( vtkMRMLViewNode::MoveCameraEvent, this->MRMLCallbackCommand );
-    this->ViewNode->RemoveObservers ( vtkMRMLViewNode::SliceOpacityEvent, this->MRMLCallbackCommand );
-    this->ViewNode->RemoveObservers ( vtkMRMLViewNode::ViewModifiedEvent, this->MRMLCallbackCommand );        
     }
 }
 
