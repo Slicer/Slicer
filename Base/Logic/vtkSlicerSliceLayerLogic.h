@@ -39,11 +39,15 @@
 
 #include "vtkMRML.h"
 #include "vtkMRMLVolumeNode.h"
-#include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLSliceNode.h"
 
 #include "vtkImageReslice.h"
 #include "vtkImageMapToColors.h"
+
+#include "vtkMRMLScalarVolumeNode.h"
+#include "vtkMRMLVectorVolumeNode.h"
+#include "vtkMRMLDiffusionWeightedVolumeNode.h"
+#include "vtkMRMLDiffusionTensorVolumeNode.h"
 
 #include "vtkImageMapToWindowLevelColors.h"
 #include "vtkImageThreshold.h"
@@ -51,6 +55,8 @@
 #include "vtkImageLogic.h"
 #include "vtkImageExtractComponents.h"
 #include "vtkImageCast.h"
+#include "vtkLookupTable.h"
+
 
 class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLayerLogic : public vtkSlicerLogic 
 {
@@ -147,6 +153,17 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLayerLogic : public vtkSlicerLo
   // of the VolumeNode and the SliceNode
   void UpdateTransforms(); 
 
+  void UpdateTransformsOLD();
+
+  void ScalarVolumeNodeUpdateTransforms();
+
+  void VectorVolumeNodeUpdateTransforms();
+
+  void DiffusionWeightedVolumeNodeUpdateTransforms();
+
+  void DiffusionTensorVolumeNodeUpdateTransforms();
+
+
   // Description:
   // Check that we are observing the correct display node
   // (correct means the same one that the volume node is referencing)
@@ -182,8 +199,16 @@ protected:
   vtkImageAppendComponents *AppendComponents;
   vtkImageMapToWindowLevelColors *MapToWindowLevelColors;
 
+  // Description:
+  // VTK class instances that implement the DWI logic operations
+  vtkImageExtractComponents *DWIExtractComponent;
+
   // TODO: make this a vtkAbstractTransform for non-linear
   vtkTransform *XYToIJKTransform;
+
+  // Description:
+  // Generic pipeline for scalar slice logic
+  void ScalarSlicePipeline(vtkImageData *imageData, int labelMap, double window, double level, int interpolate, vtkLookupTable *lookupTable, int applyThreshold, double lowerThreshold, double upperThreshold);
 
 };
 
