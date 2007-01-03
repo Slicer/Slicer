@@ -187,27 +187,11 @@ itcl::body FiducialsSWidget::seedMovedCallback {seed fidListNode fidIndex} {
 }
 
 #
-# TODO: 
-# workaround - use GUI to create fiducial list until the Logic supports it
+# Use the Fiducials Logic to add a point to the active list
 #
 proc FiducialsSWidget::AddFiducial { r a s } {
 
-  set id [$::slicer3::FiducialsGUI GetFiducialListNodeID]
-  set fidListNode [$::slicer3::MRMLScene GetNodeByID $id]
-
-  if { $fidListNode == "" } {
-    set selector [$::slicer3::FiducialsGUI GetFiducialListSelectorWidget] 
-    set tagClass [$::slicer3::MRMLScene GetTagByClassName "vtkMRMLFiducialListNode"]
-    $selector ProcessNewNodeCommand "vtkMRMLFiducialListNode" $tagClass
-
-    set id [$::slicer3::FiducialsGUI GetFiducialListNodeID]
-    set fidListNode [$::slicer3::MRMLScene GetNodeByID $id]
-  }
-
-  $::slicer3::MRMLScene SaveStateForUndo $fidListNode
-
-  set index [$fidListNode AddFiducial]
-  $fidListNode SetNthFiducialXYZ $index $r $a $s
-
-  $::slicer3::MRMLScene Modified
+  set fidLogic [$::slicer3::FiducialsGUI GetLogic]
+  # the logic handles saving the state for undo
+  set fidIndex [$fidLogic AddFiducial $r $a $s]
 }
