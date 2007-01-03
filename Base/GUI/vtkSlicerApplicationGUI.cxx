@@ -271,12 +271,19 @@ void vtkSlicerApplicationGUI::ProcessLoadSceneCommand()
     char *fileName = this->LoadSceneDialog->GetFileName();
     if ( fileName ) 
       {
-        if (this->GetMRMLScene()) 
+        std::string fl(fileName);
+        if (this->GetMRMLScene() && fl.find(".mrml") != std::string::npos ) 
           {
           this->GetMRMLScene()->SetURL(fileName);
           this->GetMRMLScene()->Connect();
           this->LoadSceneDialog->SaveLastPathToRegistry("OpenPath");
           }
+        else if (this->GetMRMLScene() && fl.find(".xml") != std::string::npos ) 
+          {
+          this->Script ( "ImportSlicer2Scene %s", fileName);
+          this->LoadSceneDialog->SaveLastPathToRegistry("OpenPath");
+          }
+
       }
     return;
 }
@@ -292,12 +299,19 @@ void vtkSlicerApplicationGUI::ProcessImportSceneCommand()
     char *fileName = this->LoadSceneDialog->GetFileName();
     if ( fileName ) 
       {
-        if (this->GetMRMLScene()) 
+        std::string fl(fileName);
+        if (this->GetMRMLScene() && fl.find(".mrml") != std::string::npos ) 
           {
           this->GetMRMLScene()->SetURL(fileName);
           this->GetMRMLScene()->Import();
           this->LoadSceneDialog->SaveLastPathToRegistry("OpenPath");
           }
+        else if (this->GetMRMLScene() && fl.find(".xml") != std::string::npos ) 
+          {
+          this->Script ( "ImportSlicer2Scene %s", fileName);
+          this->LoadSceneDialog->SaveLastPathToRegistry("OpenPath");
+          }
+
       }
     return;
 }
@@ -693,7 +707,7 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
             
             this->LoadSceneDialog->SetParent ( this->MainSlicerWindow );
             this->LoadSceneDialog->Create ( );
-            this->LoadSceneDialog->SetFileTypes("{ {MRML Scene} {*.mrml} }");
+            this->LoadSceneDialog->SetFileTypes("{ {MRML Scene} {*.mrml} } { {Slicer2 Scene} {*.xml} }");
             this->LoadSceneDialog->RetrieveLastPathFromRegistry("OpenPath");
 
 #endif

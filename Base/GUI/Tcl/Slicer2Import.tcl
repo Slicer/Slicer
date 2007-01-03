@@ -329,7 +329,6 @@ proc ImportNodePoint {node} {
 
   if { [info exists n(xyz)] } {
     foreach {x y z} $n(xyz) {}
-    $fiducialNode SetColor $x $y $z
     $::S2(fiducialListNode) SetNthFiducialXYZ $f $x $y $z
   }
 }

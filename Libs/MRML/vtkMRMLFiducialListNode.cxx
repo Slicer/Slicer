@@ -746,7 +746,8 @@ int vtkMRMLFiducialListNode::AddFiducial()
   fiducial->Delete();
 
   // let observers know that the node was added
-  this->InvokeEvent(vtkMRMLScene::NodeAddedEvent, NULL);
+  //this->InvokeEvent(vtkMRMLScene::NodeAddedEvent, NULL);
+
   // this list is now modified...
   this->Modified();
 

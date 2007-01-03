@@ -225,6 +225,11 @@ CONFIGURE_FILE(
   ${SlicerBaseGUITcl_DIR}/FiducialsSWidget.tcl
   COPYONLY
 )
+CONFIGURE_FILE(
+  ${Slicer3_SOURCE_DIR}/Base/GUI/Tcl/Slicer2Import.tcl
+  ${SlicerBaseGUITcl_DIR}/Slicer2Import.tcl
+  COPYONLY
+)
 
 # CMAke 2.4 does not have INSTALL(DIRECTORY ...) do it manually
 #INSTALL(DIRECTORY "${Slicer3_BINARY_DIR}/SlicerBaseGUITcl"
