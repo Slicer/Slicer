@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>
+  Converters
+  </category>
+  <title>
+  GE Dicom to NRRD Converter
+  </title>
+  <description>
+  Converts diffusion weighted MR images in dicom series into NRRD format.
+  </description>
+  <version>0.1.0.$Revision: 916 $(alpha)</version>
+  <documentation-url></documentation-url>
+  <license></license>
+  <contributor>Xiaodong Tao</contributor>
+
+  <parameters>
+    <label>IO</label>
+    <description>Input/output parameters</description>
+
+    <directory>
+      <name>inputDicom</name>
+      <label>Dicom Directory</label>
+      <channel>input</channel>
+      <index>0</index>
+      <description>Directory holding GE Dicom series</description>
+    </directory>
+
+    <directory>
+      <name>outputDir</name>
+      <label>Output Directory</label>
+      <channel>output</channel>
+      <index>1</index>
+      <description>Directory holding output nrrd files</description>
+    </directory>
+
+    <string>
+      <name>outputFileName</name>
+      <label>NRRD header (.nhdr)</label>
+      <channel>output</channel>
+      <index>2</index>
+      <description>NRRD header file name</description>
+    </string>
+  </parameters>
+
+</executable>
