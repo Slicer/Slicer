@@ -1334,12 +1334,12 @@ int Slicer3_main(int argc, char *argv[])
     // Release reference to applicaiton GUI
     // and delete it.
    slicerApp->SetApplicationGUI ( NULL );
-    appGUI->Delete ();
+   appGUI->DeleteComponentGUIs();
+   appGUI->Delete ();
 
 #ifndef CLIMODULES_DEBUG
     // delete the factory discovered module GUIs (as we delete the
     // GUIs, cache the associated logic instances so we can delete
-    // them later).
     std::vector<vtkSlicerModuleGUI*>::iterator git;
     std::vector<vtkSlicerModuleLogic*> moduleLogics;
     for (git = moduleGUIs.begin(); git != moduleGUIs.end(); ++git)
