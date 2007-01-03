@@ -250,6 +250,24 @@ vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
     this->SetApplication(NULL);
 }
 
+//---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI:: DeleteComponentGUIs()
+{
+#ifndef TOOLBAR_DEBUG
+   this->ApplicationToolbar->Delete();
+#endif
+#ifndef VIEWCONTROL_DEBUG
+   this->ViewControlGUI->Delete();
+#endif
+#ifndef SLICESCONTROL_DEBUG
+   this->SlicesControlGUI->Delete();
+#endif
+#ifndef LOGODISPLAY_DEBUG
+   this->LogoDisplayGUI->Delete();
+#endif
+}
+
+
 
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::PrintSelf ( ostream& os, vtkIndent indent )

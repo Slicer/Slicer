@@ -159,6 +159,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // Methods describe behavior on startup and exit.
     virtual void Enter ( );
     virtual void Exit ( );
+    virtual void DeleteComponentGUIs();
     
     // Description:
     // These methods configure and pack the Slicer Window
