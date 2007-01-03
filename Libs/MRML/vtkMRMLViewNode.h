@@ -96,7 +96,8 @@ public:
   // Description:
   // Background color
   vtkGetVector3Macro (BackgroundColor, double);
-  vtkSetVector3Macro (BackgroundColor, double);
+  virtual void SetBackgroundColor ( double *color );
+//  vtkSetVector3Macro (BackgroundColor, double);
 
   // Description:
   // Turn on and off animated spinning or rocking.
@@ -198,10 +199,7 @@ public:
       RenderModeEvent,
       StereoModeEvent,
       VisibilityEvent,
-      MoveCameraEvent,
-      SliceOpacityEvent,
-      ViewModifiedEvent,
-      CameraModifiedEvent
+      BackgroundColorEvent,
     };
   //ETX 
 

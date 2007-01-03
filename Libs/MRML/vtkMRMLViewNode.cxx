@@ -228,6 +228,15 @@ void vtkMRMLViewNode::SetAxisLabelsVisible ( int m )
     }
 }
 
+//----------------------------------------------------------------------------
+void vtkMRMLViewNode::SetBackgroundColor ( double *color )
+{
+  this->BackgroundColor[0] = color[0];
+  this->BackgroundColor[1] = color[1];
+  this->BackgroundColor[2] = color[2];
+  this->InvokeEvent ( vtkMRMLViewNode::VisibilityEvent );
+}
+
 
 
 //----------------------------------------------------------------------------
@@ -578,6 +587,8 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
 
     }
 }
+
+
 
 
 //----------------------------------------------------------------------------
