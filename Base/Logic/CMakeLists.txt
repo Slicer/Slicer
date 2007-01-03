@@ -47,7 +47,9 @@ INCLUDE_DIRECTORIES(
   ${SlicerBaseLogic_BINARY_DIR}
   ${MRML_SOURCE_DIR}
   ${MRML_BINARY_DIR}
-  ${VTK_INCLUDE_DIR}
+  ${VTK_INCLUDE_DIR}  
+  ${vtkTeem_SOURCE_DIR}
+  ${vtkTeem_BINARY_DIR}
   ${SlicerBase_BINARY_DIR}
   ${OPENTRACKER_INC_DIR}
   )
@@ -84,6 +86,12 @@ TARGET_LINK_LIBRARIES(SlicerBaseLogic
   vtkHybridTCL
   ${OPENTRACKER_LIB}
   )
+
+IF( TEEM_FOUND )
+  TARGET_LINK_LIBRARIES(SlicerBaseLogic
+    vtkTeem
+  )
+ENDIF( TEEM_FOUND )
 
 
 # --------------------------------------------------------------------------
