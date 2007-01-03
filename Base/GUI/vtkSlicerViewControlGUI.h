@@ -236,7 +236,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
 
   // Description:
   // Sets background color in the Main View
-  virtual void MainViewBackgroundColor ( );
+  virtual void MainViewBackgroundColor ( double *color );
 
   // Description:
   // Toggles visibility of actors in the Main View

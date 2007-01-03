@@ -203,6 +203,19 @@ void vtkSlicerViewerWidget::CreateAxis()
   boxMapper->Delete();
 }
 
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewerWidget::ColorAxisLabelActors ( double r, double g, double b)
+{
+  for (unsigned int i=0; i<this->AxisLabelActors.size(); i++)
+    {
+    this->AxisLabelActors[i]->GetProperty()->SetColor ( r, g, b );
+    }
+
+}
+
+
+
 //---------------------------------------------------------------------------
 void vtkSlicerViewerWidget::AddAxisActors()
 {

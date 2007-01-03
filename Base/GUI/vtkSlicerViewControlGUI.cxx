@@ -3,6 +3,8 @@
 #include "vtkCommand.h"
 #include "vtkCamera.h"
 #include "vtkRenderer.h"
+#include "vtkFollower.h"
+#include "vtkProperty.h"
 
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerApplicationGUI.h"
@@ -441,7 +443,7 @@ void vtkSlicerViewControlGUI::ProcessGUIEvents ( vtkObject *caller,
       if ( e == this->FOVEntry->GetWidget() && event == vtkKWEntry::EntryValueChangedEvent )
         {
         }
-      if ( e == this->ZoomEntry->GetWidget() && event == vtkKWEntry::EntryValueChangedEvent )
+      else if ( e == this->ZoomEntry->GetWidget() && event == vtkKWEntry::EntryValueChangedEvent )
         {
         }
       if ( m == this->StereoButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
@@ -466,9 +468,48 @@ void vtkSlicerViewControlGUI::ProcessGUIEvents ( vtkObject *caller,
             }
           }
         }
-      if ( m == this->SelectButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
+      else if ( m == this->VisibilityButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
+        {
+        // Get all menu items
+        if ( this->ViewNode != NULL )
+          {
+          const char *item = this->VisibilityButton->GetValue();
+          int state = m->GetItemSelectedState(item);
+          if ( !strcmp (item, "Fiducial points" ))
+            {
+            this->ViewNode->SetFiducialsVisible (state);
+            }
+          else if ( !strcmp (item, "Fiducial labels" ))
+            {
+            this->ViewNode->SetFiducialLabelsVisible ( state );
+            }
+          else if ( !strcmp (item, "3D cube" ))
+            {
+            this->ViewNode->SetBoxVisible ( state);
+            }        
+          else if ( !strcmp (item, "3D axis labels" ))
+            {
+            this->ViewNode->SetAxisLabelsVisible ( state );
+            }
+          else if ( !strcmp (item, "Light blue background" ))
+            {
+            this->ViewNode->SetBackgroundColor ( app->GetSlicerTheme()->GetSlicerColors()->ViewerBlue );
+            
+            }        
+          else if ( !strcmp (item, "Black background" ))
+            {
+            this->ViewNode->SetBackgroundColor ( app->GetSlicerTheme()->GetSlicerColors()->Black );
+            }        
+          else if ( !strcmp (item, "White background" ))
+            {
+            this->ViewNode->SetBackgroundColor (app->GetSlicerTheme()->GetSlicerColors()->White );
+            }        
+          }
+        }
+      else if ( m == this->SelectButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
         {
         }
+      
       if ( (p == this->CenterButton) && (event == vtkKWPushButton::InvokedEvent ) )
         {
         this->MainViewResetFocalPoint ( );
@@ -601,12 +642,16 @@ void vtkSlicerViewControlGUI::BuildVisibilityMenu ( )
   this->VisibilityButton->GetMenu()->AddCheckButton ("Fiducial labels" );
   this->VisibilityButton->GetMenu()->AddCheckButton ("3D cube" );
   this->VisibilityButton->GetMenu()->AddCheckButton ("3D axis labels" );
+  this->VisibilityButton->GetMenu()->AddRadioButton ("Light blue background" );  
+  this->VisibilityButton->GetMenu()->AddRadioButton ("Black background" );  
+  this->VisibilityButton->GetMenu()->AddRadioButton ("White background" );  
   this->VisibilityButton->GetMenu()->AddSeparator();
   this->VisibilityButton->GetMenu()->AddCommand ( "close");
   this->VisibilityButton->GetMenu()->SelectItem ("Fiducial points" );
   this->VisibilityButton->GetMenu()->SelectItem ("Fiducial labels" );
   this->VisibilityButton->GetMenu()->SelectItem ("3D cube" );
   this->VisibilityButton->GetMenu()->SelectItem ("3D axis labels" );
+  this->VisibilityButton->GetMenu()->SelectItem ("Light blue background" );
 }
 
 
@@ -931,14 +976,13 @@ void vtkSlicerViewControlGUI::ProcessMRMLEvents ( vtkObject *caller,
     // background color change?
     else if ( event == vtkMRMLViewNode::BackgroundColorEvent )
       {
+      this->MainViewBackgroundColor ( this->ViewNode->GetBackgroundColor() );
       }
     // visibility of something changed
     else if ( event == vtkMRMLViewNode::VisibilityEvent )
       {
       if ( this->ViewNode != NULL )
         {
-        // background color?
-        this->MainViewBackgroundColor ( );
         // axis labels, fiducial points, fiducial labels or 3Dcube?
         this->MainViewVisibility ( );
         }
@@ -984,9 +1028,28 @@ void vtkSlicerViewControlGUI::SetApplicationGUI ( vtkSlicerApplicationGUI *appGU
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerViewControlGUI::MainViewBackgroundColor ( )
+void vtkSlicerViewControlGUI::MainViewBackgroundColor ( double *color )
 {
+  if ( this->ApplicationGUI )
+    {
+    vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));    
+    // set background color
+    p->GetViewerWidget()->GetMainViewer()->SetRendererBackgroundColor ( color );
+    // set axis label colors (prevent white on white)
+
+    if ( color[0] == 1.0 && color[1] == 1.0 && color[2] == 1.0 )
+      {
+      p->GetViewerWidget()->ColorAxisLabelActors (0.0, 0.0, 0.0 );
+      }
+    else
+      {
+      p->GetViewerWidget()->ColorAxisLabelActors (1.0, 1.0, 1.0 );
+      }
+    p->GetViewerWidget()->UpdateFromMRML();
+//    p->GetViewerWidget()->GetMainViewer()->GetRenderer()->Render(); 
+    }
 }
+
 
 //---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::MainViewVisibility ( )
@@ -1745,6 +1808,7 @@ void vtkSlicerViewControlGUI::AddViewObservers ()
     this->ViewNode->AddObserver ( vtkMRMLViewNode::RenderModeEvent, this->MRMLCallbackCommand );
     this->ViewNode->AddObserver ( vtkMRMLViewNode::StereoModeEvent, this->MRMLCallbackCommand );
     this->ViewNode->AddObserver ( vtkMRMLViewNode::VisibilityEvent, this->MRMLCallbackCommand );
+    this->ViewNode->AddObserver ( vtkMRMLViewNode::BackgroundColorEvent, this->MRMLCallbackCommand );
     }
 }
 
@@ -1757,6 +1821,7 @@ void vtkSlicerViewControlGUI::RemoveViewObservers ()
     this->ViewNode->RemoveObservers ( vtkMRMLViewNode::RenderModeEvent, this->MRMLCallbackCommand );
     this->ViewNode->RemoveObservers ( vtkMRMLViewNode::StereoModeEvent, this->MRMLCallbackCommand );
     this->ViewNode->RemoveObservers ( vtkMRMLViewNode::VisibilityEvent, this->MRMLCallbackCommand );
+    this->ViewNode->RemoveObservers ( vtkMRMLViewNode::BackgroundColorEvent, this->MRMLCallbackCommand );
     }
 }
 

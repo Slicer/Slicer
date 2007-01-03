@@ -123,6 +123,7 @@ public:
   virtual void UnpackWidget ( );
   virtual void GridWidget ( vtkKWFrame *f, int row, int col );
   virtual void UngridWidget ( );
+  void ColorAxisLabelActors ( double r, double g, double b);
   
   // Description:
   // Updates Actors based on models in the scene
