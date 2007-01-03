@@ -126,7 +126,7 @@ void vtkMRMLTensorVolumeNode::SetMeasurementFrameMatrix(const double mf[3][3])
     {
     for (int j=0; j<3; j++) 
       {
-      this->MeasurementFrameMatrix[i][j] = mf[i][j];
+      //this->MeasurementFrameMatrix[i][j] = mf[i][j];
       }
     }
 }
@@ -145,12 +145,11 @@ void vtkMRMLTensorVolumeNode::GetMeasurementFrameMatrix(double mf[3][3])
 
 void vtkMRMLTensorVolumeNode::SetMeasurementFrameMatrix(vtkMatrix4x4 *mf)
 {
-
   for (int i=0; i<3; i++)
     {
     for (int j=0; j<3; j++)
       {
-      this->MeasurementFrameMatrix[i][j]=mf->GetElement(i,j);
+      //this->MeasurementFrameMatrix[i][j]=mf->GetElement(i,j);
       }
     }
 }
