@@ -222,7 +222,11 @@ SET ( ${CLP}_SOURCE ${CLP}.cxx vtkPluginFilterWatcher.cxx)
 GENERATECLP(${CLP}_SOURCE ${CLP}.xml)
 LINK_DIRECTORIES(${vtkITK_LIB_DIR})
 ADD_EXECUTABLE(${CLP} ${${CLP}_SOURCE})
-TARGET_LINK_LIBRARIES (${CLP} vtkITK vtkImaging vtkGraphics vtkIO ITKIO)
+TARGET_LINK_LIBRARIES (${CLP}
+    vtkITK vtkImaging vtkGraphics vtkIO
+    ITKIO
+    ModuleDescriptionParser
+)
 INCLUDE_DIRECTORIES(${vtkITK_SOURCE_DIR} ${vtkITK_BINARY_DIR})
 
 #####################
@@ -232,7 +236,11 @@ SET ( ${CLP}_SOURCE ${CLP}.cxx vtkPluginFilterWatcher.cxx)
 GENERATECLP(${CLP}_SOURCE ${CLP}.xml)
 LINK_DIRECTORIES(${vtkITK_LIB_DIR})
 ADD_EXECUTABLE(${CLP} ${${CLP}_SOURCE})
-TARGET_LINK_LIBRARIES (${CLP} vtkITK vtkImaging vtkGraphics vtkIO ITKIO)
+TARGET_LINK_LIBRARIES (${CLP}
+    vtkITK vtkImaging vtkGraphics vtkIO
+    ITKIO
+    ModuleDescriptionParser
+)
 INCLUDE_DIRECTORIES(${vtkITK_SOURCE_DIR} ${vtkITK_BINARY_DIR})
 
 #####################

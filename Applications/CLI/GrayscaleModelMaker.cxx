@@ -30,13 +30,33 @@ Version:   $Revision$
 #include "vtkImageChangeInformation.h"
 
 #include "vtkPluginFilterWatcher.h"
+#include "ModuleDescriptionParser.h"
+#include "ModuleDescription.h"
+#include "ModuleParameterGroup.h"
+#include "ModuleParameter.h"
 
 #include <string>
 
 int main(int argc, char * argv[])
 {
-    PARSE_ARGS;
+    ModuleDescription module;
+    ModuleDescriptionParser parser;
+    if (parser.Parse(GetXMLModuleDescription(), module))
+      {
+      std::cerr << "GenerateCLP: One or more errors detected. Code generation aborted." << std::endl;
+      return EXIT_FAILURE;
+      }
+    std::cout << "Module Description Information" << std::endl;
+    std::cout << "\tCategory is: " << module.GetCategory() << std::endl;
+    std::cout << "\tTitle is: " << module.GetTitle() << std::endl;
+    std::cout << "\tDescription is: " << module.GetDescription() << std::endl;
+    std::cout << "\tVersion is: " << module.GetVersion() << std::endl;
+    std::cout << "\tDocumentationURL is: " << module.GetDocumentationURL() << std::endl;
+    std::cout << "\tLicense is: " << module.GetLicense() << std::endl;
+    std::cout << "\tContributor is: " << module.GetContributor() << std::endl;
 
+    PARSE_ARGS;
+    
     bool debug = false;
 
     if (debug) 
