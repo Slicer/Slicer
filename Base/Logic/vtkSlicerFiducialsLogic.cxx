@@ -55,6 +55,8 @@ void vtkSlicerFiducialsLogic::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 vtkMRMLFiducialListNode *vtkSlicerFiducialsLogic::AddFiducialList()
 {
+  this->GetMRMLScene()->SaveStateForUndo();
+  
   vtkMRMLNode *node = 
     this->GetMRMLScene()->CreateNodeByClass("vtkMRMLFiducialListNode");
   if (node == NULL)
@@ -99,6 +101,8 @@ int vtkSlicerFiducialsLogic::AddFiducial(float x, float y, float z)
       }
 
     // add a fiducial
+    this->MRMLScene->SaveStateForUndo(flist);
+    
     int index = flist->AddFiducial();
     flist->SetNthFiducialXYZ(index, x, y, z);
     
