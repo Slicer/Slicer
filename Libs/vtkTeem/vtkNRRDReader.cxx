@@ -1001,12 +1001,12 @@ void vtkNRRDReader::ExecuteData(vtkDataObject *output)
     }
 
      // "the famous y-flip": we always flip along the second domain axis
-     Nrrd *nflip = nrrdNew(); 
-     nrrdCopy(nflip, this->nrrd);
-     unsigned int domainAxisNum, domainAxisIdx[NRRD_DIM_MAX];
-     domainAxisNum = nrrdDomainAxesGet(this->nrrd, domainAxisIdx);
-     nrrdFlip(this->nrrd, nflip, domainAxisIdx[1]);
-     nrrdNuke(nflip);
+     //Nrrd *nflip = nrrdNew(); 
+     //nrrdCopy(nflip, this->nrrd);
+     //unsigned int domainAxisNum, domainAxisIdx[NRRD_DIM_MAX];
+     //domainAxisNum = nrrdDomainAxesGet(this->nrrd, domainAxisIdx);
+     //nrrdFlip(this->nrrd, nflip, domainAxisIdx[1]);
+     //nrrdNuke(nflip);
 
     // Now we have to get the data back into the given VTK data pointer
     // In any case, the logic here has the luxury of assuming that the
