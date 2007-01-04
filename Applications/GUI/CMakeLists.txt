@@ -46,7 +46,7 @@ SET (SRC
 # --------------------------------------------------------------------------
 # Include dirs
 
-INCLUDE_DIRECTORIES(
+SET(dir_list
   ${SlicerBase_SOURCE_DIR}
   ${SlicerBase_BINARY_DIR}
   ${SlicerBaseLogic_SOURCE_DIR}
@@ -87,6 +87,24 @@ INCLUDE_DIRECTORIES(
   ${VTK_INCLUDE_DIR}
   ${OPENTRACKER_INC_DIR}
   )
+INCLUDE_DIRECTORIES(${dir_list})
+
+# On Win32 platforms, let's configure the KWWidgets sample resource file
+# to get a nice application icon and some additional information.
+# This is *mandatory* for a static build otherwise the static Tk resources
+# won't be included and images like checkboxes will not appear.
+
+# NOTE: this is commented for now until we get rid of extra include directives.
+# We have 90 (!) at this point and rc.exe can *not* handle such number.
+
+#IF(WIN32 AND NOT BORLAND AND NOT CYGWIN)
+#  INCLUDE("${KWWidgets_CMAKE_DIR}/KWWidgetsResourceMacros.cmake")
+#  SET(RC_FILENAME "${CMAKE_CURRENT_BINARY_DIR}/Slicer3.rc")
+#  KWWidgets_CREATE_RC_FILE(
+#    RC_FILENAME "${RC_FILENAME}"
+#    RC_APPLICATION_NAME "Slicer3"
+#    RC_COMPANY_NAME "NA-MIC")
+#ENDIF(WIN32 AND NOT BORLAND AND NOT CYGWIN)
 
 #
 # with the WIN32_CONSOLE you can see diagnostic output on in a DOS-style
@@ -94,9 +112,9 @@ INCLUDE_DIRECTORIES(
 #
 OPTION(Slicer3_BUILD_WIN32_CONSOLE "Build Slicer3 executable as a console app on windows (allows debug output)" OFF)
 IF ( Slicer3_BUILD_WIN32_CONSOLE )
-  ADD_EXECUTABLE (Slicer3${SLICER_EXE_SUFFIX} ${SRC})
+  ADD_EXECUTABLE (Slicer3${SLICER_EXE_SUFFIX} ${SRC} ${RC_FILENAME})
 ELSE ( Slicer3_BUILD_WIN32_CONSOLE )
-  ADD_EXECUTABLE (Slicer3${SLICER_EXE_SUFFIX} WIN32 ${SRC})
+  ADD_EXECUTABLE (Slicer3${SLICER_EXE_SUFFIX} WIN32 ${SRC} ${RC_FILENAME})
 ENDIF ( Slicer3_BUILD_WIN32_CONSOLE )
 
 TARGET_LINK_LIBRARIES( Slicer3${SLICER_EXE_SUFFIX}
@@ -136,17 +154,9 @@ KWWidgets_GENERATE_SETUP_PATHS_LAUNCHER(
 # to initialize Tcl/Tk. This is only triggered if VTK was built
 # against a Tcl/Tk static library.
 
-IF(VTK_TCL_TK_COPY_SUPPORT_LIBRARY)
-  IF(VTK_TCL_SUPPORT_LIBRARY_PATH AND VTK_TK_SUPPORT_LIBRARY_PATH)
-    INCLUDE(${VTK_TCL_TK_MACROS_MODULE})
-    VTK_COPY_TCL_TK_SUPPORT_FILES_TO_DIR(
-      ${VTK_TCL_SUPPORT_LIBRARY_PATH} ${VTK_TK_SUPPORT_LIBRARY_PATH}
-      "${Slicer3_BINARY_DIR}/lib")
-    VTK_COPY_TCL_TK_SUPPORT_FILES_TO_DIR(
-      ${VTK_TCL_SUPPORT_LIBRARY_PATH} ${VTK_TK_SUPPORT_LIBRARY_PATH}
-      "/lib" INSTALL)
-  ENDIF(VTK_TCL_SUPPORT_LIBRARY_PATH AND VTK_TK_SUPPORT_LIBRARY_PATH)
-ENDIF(VTK_TCL_TK_COPY_SUPPORT_LIBRARY)
+INCLUDE("${KWWidgets_CMAKE_DIR}/KWWidgetsTclTkMacros.cmake")
+KWWidgets_COPY_TCL_TK_SUPPORT_FILES("${Slicer3_BINARY_DIR}/lib")
+KWWidgets_INSTALL_TCL_TK_SUPPORT_FILES("/lib")
 
 #
 # use the command line utilities

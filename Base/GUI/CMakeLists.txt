@@ -143,14 +143,8 @@ ENDIF(WIN32 AND NOT BORLAND AND NOT CYGWIN)
 # to initialize Tcl/Tk. This is only triggered if VTK was built
 # against a Tcl/Tk static library.
 
-IF(NOT KWWidgets_SOURCE_DIR AND VTK_TCL_TK_COPY_SUPPORT_LIBRARY)
-  IF(VTK_TCL_SUPPORT_LIBRARY_PATH AND VTK_TK_SUPPORT_LIBRARY_PATH)
-    INCLUDE(${VTK_TCL_TK_MACROS_MODULE})
-    VTK_COPY_TCL_TK_SUPPORT_FILES_TO_DIR(
-      ${VTK_TCL_SUPPORT_LIBRARY_PATH} ${VTK_TK_SUPPORT_LIBRARY_PATH}
-      "${PROJECT_BINARY_DIR}/lib")
-  ENDIF(VTK_TCL_SUPPORT_LIBRARY_PATH AND VTK_TK_SUPPORT_LIBRARY_PATH)
-ENDIF(NOT KWWidgets_SOURCE_DIR AND VTK_TCL_TK_COPY_SUPPORT_LIBRARY)
+#INCLUDE("${KWWidgets_CMAKE_DIR}/KWWidgetsTclTkMacros.cmake")
+#KWWidgets_COPY_TCL_TK_SUPPORT_FILES("${PROJECT_BINARY_DIR}/lib")
 
 # Install the example target. If you are using this CMakeLists.txt file
 # to create your own application based on KWWidgets, you can most likely 
