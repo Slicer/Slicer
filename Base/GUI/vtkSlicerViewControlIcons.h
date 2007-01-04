@@ -46,12 +46,12 @@ class vtkSlicerViewControlIcons : public vtkSlicerIcons
     vtkGetObjectMacro (OrthoButtonIcon, vtkKWIcon );    
     vtkGetObjectMacro (PerspectiveButtonIcon, vtkKWIcon );
     vtkGetObjectMacro (CenterButtonIcon, vtkKWIcon );
-    vtkGetObjectMacro (SelectButtonIcon, vtkKWIcon );
+    vtkGetObjectMacro (SelectViewButtonIcon, vtkKWIcon );
     vtkGetObjectMacro (StereoButtonIcon, vtkKWIcon );
     vtkGetObjectMacro (LookFromButtonIcon, vtkKWIcon );
     vtkGetObjectMacro (RotateAroundButtonIcon, vtkKWIcon );
     vtkGetObjectMacro (VisibilityButtonIcon, vtkKWIcon );
-    vtkGetObjectMacro (SliceOpacityButtonIcon, vtkKWIcon );
+    vtkGetObjectMacro (SelectCameraButtonIcon, vtkKWIcon );
 
     vtkGetObjectMacro (NavZoomInIcon, vtkKWIcon);
     vtkGetObjectMacro (NavZoomOutIcon, vtkKWIcon);    
@@ -85,12 +85,12 @@ class vtkSlicerViewControlIcons : public vtkSlicerIcons
     vtkKWIcon *OrthoButtonIcon;
     vtkKWIcon *PerspectiveButtonIcon;
     vtkKWIcon *CenterButtonIcon;
-    vtkKWIcon *SelectButtonIcon;
+    vtkKWIcon *SelectViewButtonIcon;
     vtkKWIcon *StereoButtonIcon;
     vtkKWIcon *LookFromButtonIcon;
     vtkKWIcon *RotateAroundButtonIcon;    
     vtkKWIcon *VisibilityButtonIcon;
-    vtkKWIcon *SliceOpacityButtonIcon;
+    vtkKWIcon *SelectCameraButtonIcon;
 
     vtkKWIcon *NavZoomInIcon;
     vtkKWIcon *NavZoomOutIcon;

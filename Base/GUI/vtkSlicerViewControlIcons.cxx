@@ -35,12 +35,12 @@ vtkSlicerViewControlIcons::vtkSlicerViewControlIcons ( )
     this->OrthoButtonIcon = vtkKWIcon::New ( );
     this->PerspectiveButtonIcon = vtkKWIcon::New ( );
     this->CenterButtonIcon = vtkKWIcon::New ( );
-    this->SelectButtonIcon = vtkKWIcon::New ( );
+    this->SelectViewButtonIcon = vtkKWIcon::New ( );
     this->StereoButtonIcon = vtkKWIcon::New ( );
     this->LookFromButtonIcon = vtkKWIcon::New ( );
     this->RotateAroundButtonIcon = vtkKWIcon::New ( );
     this->VisibilityButtonIcon = vtkKWIcon::New ( );
-    this->SliceOpacityButtonIcon = vtkKWIcon::New ( );
+    this->SelectCameraButtonIcon = vtkKWIcon::New ( );
     
     //--- "Zoom in and out icons
     this->NavZoomInIcon = vtkKWIcon::New();
@@ -143,10 +143,10 @@ vtkSlicerViewControlIcons::~vtkSlicerViewControlIcons ( )
       this->CenterButtonIcon->Delete ( );
       this->CenterButtonIcon = NULL;
       }
-    if ( this->SelectButtonIcon )
+    if ( this->SelectViewButtonIcon )
       {
-      this->SelectButtonIcon->Delete ( );
-      this->SelectButtonIcon = NULL;
+      this->SelectViewButtonIcon->Delete ( );
+      this->SelectViewButtonIcon = NULL;
       }
     if ( this->StereoButtonIcon )
       {
@@ -168,10 +168,10 @@ vtkSlicerViewControlIcons::~vtkSlicerViewControlIcons ( )
       this->VisibilityButtonIcon->Delete ( );
       this->VisibilityButtonIcon = NULL;
       }
-    if ( this->SliceOpacityButtonIcon )
+    if ( this->SelectCameraButtonIcon )
       {
-      this->SliceOpacityButtonIcon->Delete ( );
-      this->SliceOpacityButtonIcon = NULL;
+      this->SelectCameraButtonIcon->Delete ( );
+      this->SelectCameraButtonIcon = NULL;
       }
 
     // zoom images
@@ -296,7 +296,7 @@ void vtkSlicerViewControlIcons::AssignImageDataToIcons ( ) {
                                    image_ViewCenter_height,
                                    image_ViewCenter_pixel_size,
                                    image_ViewCenter_length, 0 );                                   
-  this->SelectButtonIcon->SetImage ( image_ViewSelect,
+  this->SelectViewButtonIcon->SetImage ( image_ViewSelect,
                                    image_ViewSelect_width,
                                    image_ViewSelect_height,
                                    image_ViewSelect_pixel_size,
@@ -321,11 +321,11 @@ void vtkSlicerViewControlIcons::AssignImageDataToIcons ( ) {
                                          image_ViewFeaturesVisible_height,
                                          image_ViewFeaturesVisible_pixel_size,
                                          image_ViewFeaturesVisible_length, 0 );
-  this->SliceOpacityButtonIcon->SetImage ( image_ViewSliceOpacity,
-                                           image_ViewSliceOpacity_width,
-                                           image_ViewSliceOpacity_height,
-                                           image_ViewSliceOpacity_pixel_size,
-                                           image_ViewSliceOpacity_length, 0 );                                           
+  this->SelectCameraButtonIcon->SetImage ( image_ViewCameraSelect,
+                                           image_ViewCameraSelect_width,
+                                           image_ViewCameraSelect_height,
+                                           image_ViewCameraSelect_pixel_size,
+                                           image_ViewCameraSelect_length, 0 );                                           
 
     this->NavZoomInIcon->SetImage( image_NavZoomIn,
                                    image_NavZoomIn_width,
@@ -367,10 +367,10 @@ void vtkSlicerViewControlIcons::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "OrthoButtonIcon" << this->GetOrthoButtonIcon () << "\n";
     os << indent << "PerspectiveButtonIcon" << this->GetPerspectiveButtonIcon () << "\n";
     os << indent << "CenterButtonIcon" << this->GetCenterButtonIcon () << "\n";
-    os << indent << "SelectButtonIcon" << this->GetSelectButtonIcon () << "\n";
+    os << indent << "SelectViewButtonIcon" << this->GetSelectViewButtonIcon () << "\n";
     os << indent << "StereoButtonIcon" << this->GetStereoButtonIcon () << "\n";
     os << indent << "LookFromButtonIcon" << this->GetLookFromButtonIcon () << "\n";
     os << indent << "RotateAroundButtonIcon" << this->GetRotateAroundButtonIcon () << "\n";
     os << indent << "VisibilityButtonIcon" << this->GetVisibilityButtonIcon () << "\n";
-    os << indent << "SliceOpacityButtonIcon" << this->GetSliceOpacityButtonIcon () << "\n";
+    os << indent << "SelectCameraButtonIcon" << this->GetSelectCameraButtonIcon () << "\n";
 }

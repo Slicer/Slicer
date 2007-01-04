@@ -86,12 +86,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   vtkGetObjectMacro (RockButton, vtkKWCheckButton);
   vtkGetObjectMacro (OrthoButton, vtkKWPushButton);
   vtkGetObjectMacro (CenterButton, vtkKWPushButton);
-  vtkGetObjectMacro (SelectButton, vtkKWMenuButton);
+  vtkGetObjectMacro (SelectViewButton, vtkKWMenuButton);
+  vtkGetObjectMacro (SelectCameraButton, vtkKWMenuButton);
   vtkGetObjectMacro (StereoButton, vtkKWMenuButton);
   vtkGetObjectMacro (VisibilityButton, vtkKWMenuButton );
-  vtkGetObjectMacro (SliceOpacityButton, vtkKWPushButton );
-  vtkGetObjectMacro (SliceOpacityScale, vtkKWScaleWithEntry );
-  vtkGetObjectMacro (SliceOpacityTopLevel, vtkKWTopLevel );
   vtkGetObjectMacro (FOVEntry, vtkKWEntryWithLabel);
   vtkGetObjectMacro (ZoomEntry, vtkKWEntryWithLabel);
   vtkGetObjectMacro (LookFromButton, vtkKWRadioButton);
@@ -267,11 +265,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   void LeaveViewAxisICallback ( );
 
   void MakeViewControlRolloverBehavior ( );
+  void BuildCameraSelectMenu ( );
   void BuildViewSelectMenu ( );
   void BuildStereoSelectMenu ( );
   void BuildVisibilityMenu ( );
-  void PopUpSliceOpacityScaleAndEntry ( );
-  void HideSliceOpacityScaleAndEntry ( );
 
   virtual void PackNavWidget ( );
   virtual void PackZoomWidget ( ) ;
@@ -293,11 +290,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   vtkKWRadioButton *RotateAroundButton;
   vtkKWPushButton *CenterButton;
   vtkKWMenuButton *StereoButton;
-  vtkKWMenuButton *SelectButton;
+  vtkKWMenuButton *SelectViewButton;
+  vtkKWMenuButton *SelectCameraButton;
   vtkKWMenuButton *VisibilityButton;
-  vtkKWPushButton *SliceOpacityButton;
-  vtkKWScaleWithEntry *SliceOpacityScale;
-  vtkKWTopLevel *SliceOpacityTopLevel;
   vtkKWEntryWithLabel *FOVEntry;
   vtkKWEntryWithLabel *ZoomEntry;
     

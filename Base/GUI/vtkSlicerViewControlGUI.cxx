@@ -52,15 +52,13 @@ vtkSlicerViewControlGUI::vtkSlicerViewControlGUI ( )
 
   this->CenterButton = vtkKWPushButton::New ( );
   this->StereoButton = vtkKWMenuButton::New ( );
-  this->SelectButton = vtkKWMenuButton::New ( );
+  this->SelectViewButton = vtkKWMenuButton::New ( );
+  this->SelectCameraButton = vtkKWMenuButton::New ( );
   this->LookFromButton = vtkKWRadioButton::New ( );
   this->RotateAroundButton = vtkKWRadioButton::New ( );
   this->FOVEntry = vtkKWEntryWithLabel::New ( );
   this->ZoomEntry = vtkKWEntryWithLabel::New ( );
   this->VisibilityButton = vtkKWMenuButton::New ( );
-  this->SliceOpacityButton = vtkKWPushButton::New ( );
-  this->SliceOpacityScale = vtkKWScaleWithEntry::New ( );
-  this->SliceOpacityTopLevel = vtkKWTopLevel::New ( );
 
   //--- ui for the ViewControlFrame
   this->ViewAxisAIconButton = vtkKWLabel::New ( );
@@ -131,12 +129,19 @@ vtkSlicerViewControlGUI::~vtkSlicerViewControlGUI ( )
     this->CenterButton->Delete();
     this->CenterButton = NULL;
     }
-  if ( this->SelectButton ) 
+  if ( this->SelectViewButton ) 
     {
-    this->SelectButton->SetParent ( NULL );
-    this->SelectButton->Delete();
-    this->SelectButton = NULL;
+    this->SelectViewButton->SetParent ( NULL );
+    this->SelectViewButton->Delete();
+    this->SelectViewButton = NULL;
     }
+  if ( this->SelectCameraButton ) 
+    {
+    this->SelectCameraButton->SetParent ( NULL );
+    this->SelectCameraButton->Delete();
+    this->SelectCameraButton = NULL;
+    }
+
   if ( this->StereoButton ) 
     {
     this->StereoButton->SetParent ( NULL );
@@ -148,24 +153,6 @@ vtkSlicerViewControlGUI::~vtkSlicerViewControlGUI ( )
     this->VisibilityButton->SetParent ( NULL );
     this->VisibilityButton->Delete();
     this->VisibilityButton = NULL;
-    }
-  if ( this->SliceOpacityButton ) 
-    {
-    this->SliceOpacityButton->SetParent ( NULL );
-    this->SliceOpacityButton->Delete();
-    this->SliceOpacityButton = NULL;
-    }
-  if ( this->SliceOpacityScale )
-    {
-    this->SliceOpacityScale->SetParent ( NULL );
-    this->SliceOpacityScale->Delete ( );
-    this->SliceOpacityScale = NULL;
-    }
-  if ( this->SliceOpacityTopLevel )
-    {
-    this->SliceOpacityTopLevel->SetParent ( NULL );
-    this->SliceOpacityTopLevel->Delete ( );
-    this->SliceOpacityTopLevel = NULL;
     }
   if ( this->LookFromButton )
     {
@@ -367,11 +354,9 @@ void vtkSlicerViewControlGUI::PrintSelf ( ostream& os, vtkIndent indent )
   os << indent << "RotateAroundButton: " << this->GetRotateAroundButton(  ) << "\n";
   os << indent << "CenterButton: " << this->GetCenterButton(  ) << "\n";
   os << indent << "StereoButton: " << this->GetStereoButton(  ) << "\n";
-  os << indent << "SelectButton: " << this->GetSelectButton(  ) << "\n";
+  os << indent << "SelectViewButton: " << this->GetSelectViewButton(  ) << "\n";
+  os << indent << "SelectCameraButton: " << this->GetSelectCameraButton(  ) << "\n";
   os << indent << "VisibilityButton: " << this->GetVisibilityButton(  ) << "\n";
-  os << indent << "SliceOpacityButton: " << this->GetSliceOpacityButton(  ) << "\n";  
-  os << indent << "SliceOpacityScale: " << this->GetSliceOpacityScale(  ) << "\n";
-  os << indent << "SliceOpacityTopLevel: " << this->GetSliceOpacityTopLevel(  ) << "\n";
   os << indent << "FOVEntry: " << this->GetFOVEntry(  ) << "\n";
   os << indent << "ZoomEntry: " << this->GetZoomEntry(  ) << "\n";
   os << indent << "SlicerViewControlIcons: " << this->GetSlicerViewControlIcons(  ) << "\n";
@@ -390,10 +375,10 @@ void vtkSlicerViewControlGUI::RemoveGUIObservers ( )
     this->SpinButton->RemoveObservers (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->RockButton->RemoveObservers (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->OrthoButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->SliceOpacityButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->StereoButton->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->CenterButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->SelectButton->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->SelectViewButton->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->SelectCameraButton->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->VisibilityButton->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->FOVEntry->GetWidget()->RemoveObservers (vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ZoomEntry->GetWidget()->RemoveObservers (vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -410,10 +395,10 @@ void vtkSlicerViewControlGUI::AddGUIObservers ( )
     this->SpinButton->AddObserver (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->RockButton->AddObserver (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->OrthoButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->SliceOpacityButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->StereoButton->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->CenterButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->SelectButton->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->SelectViewButton->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->SelectCameraButton->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->VisibilityButton->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->FOVEntry->GetWidget()->AddObserver ( vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ZoomEntry->GetWidget()->AddObserver ( vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -491,7 +476,10 @@ void vtkSlicerViewControlGUI::ProcessGUIEvents ( vtkObject *caller,
               }            
           }
         }
-      else if ( m == this->SelectButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
+      else if ( m == this->SelectViewButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
+        {
+        }
+      else if ( m == this->SelectCameraButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
         {
         }
       
@@ -513,11 +501,6 @@ void vtkSlicerViewControlGUI::ProcessGUIEvents ( vtkObject *caller,
             this->ViewNode->SetRenderMode(vtkMRMLViewNode::Orthographic );
             }
           }
-        }
-
-      if ( (p == this->SliceOpacityButton ) && (event == vtkKWPushButton::InvokedEvent ) )
-        {
-        this->PopUpSliceOpacityScaleAndEntry( );
         }
 
       //--- turn View Spin and Rocking on and off
@@ -565,58 +548,6 @@ void vtkSlicerViewControlGUI::ProcessGUIEvents ( vtkObject *caller,
 }
 
 
-
-//---------------------------------------------------------------------------
-void vtkSlicerViewControlGUI::HideSliceOpacityScaleAndEntry ( )
-{
-
-  if ( !this->SliceOpacityTopLevel )
-    {
-    return;
-    }
-  this->SliceOpacityTopLevel->Withdraw();
-}
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerViewControlGUI::PopUpSliceOpacityScaleAndEntry ( )
-{
-  if ( !this->SliceOpacityButton || !this->SliceOpacityButton->IsCreated())
-    {
-    return;
-    }
-
-  // Get the position of the mouse, the position and size of the push button,
-  // the size of the scale.
-
-  int x, y, py, ph, scx, scy, sx, sy;
-  vtkSlicerApplicationGUI *appGUI = this->GetApplicationGUI ( );
-  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(appGUI->GetApplication() );
-  
-  vtkKWTkUtilities::GetMousePointerCoordinates(this->SliceOpacityButton, &x, &y);
-  vtkKWTkUtilities::GetWidgetCoordinates(this->SliceOpacityButton, NULL, &py);
-  vtkKWTkUtilities::GetWidgetSize(this->SliceOpacityButton, NULL, &ph);
-  vtkKWTkUtilities::GetWidgetRelativeCoordinates(this->SliceOpacityScale->GetScale(), &sx, &sy);
-  sscanf(this->Script("%s coords %g", this->SliceOpacityScale->GetScale()->GetWidgetName(),
-                      this->SliceOpacityScale->GetScale()->GetValue()), "%d %d", &scx, &scy);
- 
-  // Place the scale so that the slider is coincident with the x mouse position
-  // and just below the push button
-  x -= sx + scx;
-  if (py <= y && y <= (py + ph -1))
-    {
-    y = py + ph - 3;
-    }
-  else
-    {
-    y -= sy + scy;
-    }
-
-  this->SliceOpacityTopLevel->SetPosition(x, y);
-  app->ProcessPendingEvents();
-  this->SliceOpacityTopLevel->DeIconify();
-  this->SliceOpacityTopLevel->Raise();
-}
 
 
 //---------------------------------------------------------------------------
@@ -707,14 +638,30 @@ void vtkSlicerViewControlGUI::MainViewSetStereo ( )
 
 
 //---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::BuildCameraSelectMenu()
+{
+  
+  this->SelectCameraButton->GetMenu( )->DeleteAllItems();
+  this->SelectCameraButton->GetMenu()->AddRadioButton ("Save current camera (not yet available)" );
+  this->SelectCameraButton->GetMenu()->AddSeparator();
+  this->SelectCameraButton->GetMenu()->AddSeparator();
+  this->SelectCameraButton->GetMenu()->AddCommand ( "close" );
+  // save current option will save current view under a
+  // standard name like "View0...ViewN"; user can rename
+  // this view elsewhere, in the ViewModule.
+  // TODO: get existing MRMLViewNodes and add to menu
+
+}
+  
+//---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::BuildViewSelectMenu ( )
 {
   
-  this->SelectButton->GetMenu( )->DeleteAllItems();
-  this->SelectButton->GetMenu()->AddRadioButton ("Save current (not yet available)" );
-  this->SelectButton->GetMenu()->AddSeparator();
-  this->SelectButton->GetMenu()->AddSeparator();
-  this->SelectButton->GetMenu()->AddCommand ( "close" );
+  this->SelectViewButton->GetMenu( )->DeleteAllItems();
+  this->SelectViewButton->GetMenu()->AddRadioButton ("Save current view (not yet available)" );
+  this->SelectViewButton->GetMenu()->AddSeparator();
+  this->SelectViewButton->GetMenu()->AddSeparator();
+  this->SelectViewButton->GetMenu()->AddCommand ( "close" );
   // save current option will save current view under a
   // standard name like "View0...ViewN"; user can rename
   // this view elsewhere, in the ViewModule.
@@ -1431,7 +1378,6 @@ void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
       vtkKWFrame *f3 = vtkKWFrame::New ( );
       vtkKWFrame *f4 = vtkKWFrame::New ( );
       vtkKWFrame *f6 = vtkKWFrame::New ( );
-      vtkKWFrame *f7 = vtkKWFrame::New ( );
       f0->SetParent ( appF);
       f0->Create ( );
       f1->SetParent (f0);
@@ -1556,13 +1502,22 @@ void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
       this->StereoButton->IndicatorVisibilityOff ( );
       this->StereoButton->SetBalloonHelpString ( "Select among stereo viewing options (3DSlicer must be started with stereo enabled to use these features).");
       //--- Menubutton to capture or select among saved 3D views.
-      this->SelectButton->SetParent ( f3);
-      this->SelectButton->Create ( );
-      this->SelectButton->SetReliefToFlat ( );
-      this->SelectButton->SetBorderWidth ( 0 );
-      this->SelectButton->SetImageToIcon ( this->SlicerViewControlIcons->GetSelectButtonIcon() );
-      this->SelectButton->IndicatorVisibilityOff ( );
-      this->SelectButton->SetBalloonHelpString ( "Save or select among already saved 3D views.");
+      this->SelectViewButton->SetParent ( f3);
+      this->SelectViewButton->Create ( );
+      this->SelectViewButton->SetReliefToFlat ( );
+      this->SelectViewButton->SetBorderWidth ( 0 );
+      this->SelectViewButton->SetImageToIcon ( this->SlicerViewControlIcons->GetSelectViewButtonIcon() );
+      this->SelectViewButton->IndicatorVisibilityOff ( );
+      this->SelectViewButton->SetBalloonHelpString ( "Save curren or select among already saved 3D views.");
+      //--- Menubutton to capture or select among saved 3D views.
+      this->SelectCameraButton->SetParent ( f3);
+      this->SelectCameraButton->Create ( );
+      this->SelectCameraButton->SetReliefToFlat ( );
+      this->SelectCameraButton->SetBorderWidth ( 0 );
+      this->SelectCameraButton->SetImageToIcon ( this->SlicerViewControlIcons->GetSelectCameraButtonIcon() );
+      this->SelectCameraButton->IndicatorVisibilityOff ( );
+      this->SelectCameraButton->SetBalloonHelpString ( "Save current or select among already saved cameras.");
+
       //--- Checkbutton to spin the view
       this->SpinButton->SetParent ( f3 );
       this->SpinButton->Create ( );
@@ -1583,49 +1538,16 @@ void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
       this->VisibilityButton->SetImageToIcon ( this->SlicerViewControlIcons->GetVisibilityButtonIcon ( ) );
       this->VisibilityButton->SetBalloonHelpString ("Toggle visibility of elements in the 3D view." );
 
-      //--- Popup scale and entry for SliceOpacityButton: keeps GUI more compact, saves space
-      //--- SliceOpacityButton, SliceOpacityScale and Entry will be observed
-      //--- and their events handled in ProcessGUIEvents;
-      //--- The popup and hide behavior of the latter two will be managed locally in the GUI.
-      //--- TODO: make a SlicerWidget that handles this behavior.
-      this->SliceOpacityTopLevel->SetApplication ( this->GetApplication( ) );
-      this->SliceOpacityTopLevel->SetMasterWindow ( this->SliceOpacityButton );
-      this->SliceOpacityTopLevel->Create ( );
-      this->SliceOpacityTopLevel->HideDecorationOn();      
-      this->SliceOpacityTopLevel->Withdraw();
-      this->SliceOpacityTopLevel->SetBorderWidth ( 2 );
-      this->SliceOpacityTopLevel->SetReliefToGroove();
-      
-      f7->SetParent ( this->SliceOpacityTopLevel );
-      f7->Create ( );
-      f7->SetBinding ( "<Leave>", this, "HideSliceOpacityScaleAndEntry" );
-      this->Script ( "pack %s -side left -anchor w -padx 2 -pady 2 -fill x -fill y -expand n", f7->GetWidgetName ( ) );      
-      //--- Scale packed in the pop-up toplevel's frame
-      this->SliceOpacityScale->SetParent ( f7 );
-      this->SliceOpacityScale->Create ( );
-      this->SliceOpacityScale->SetRange ( 0.0, 1.0 );
-      this->SliceOpacityScale->SetResolution ( 0.01 );
-      this->SliceOpacityScale->GetScale()->SetLabelText ( "" );
-      this->SliceOpacityScale->GetScale()->ValueVisibilityOff ( );
-      this->SliceOpacityScale->SetValue ( 1.0 );
-      this->Script ( "pack %s -side left -anchor w -padx 1 -pady 3 -expand n", this->SliceOpacityScale->GetWidgetName ( ) );      
-      //--- Pushbutton pops up scale and entry to set slice opacity in the 3D view
-      this->SliceOpacityButton->SetParent (f3);
-      this->SliceOpacityButton->Create ( );
-      this->SliceOpacityButton->SetBorderWidth ( 0 );
-      this->SliceOpacityButton->SetImageToIcon ( this->SlicerViewControlIcons->GetSliceOpacityButtonIcon ( ) );
-      this->SliceOpacityButton->SetBalloonHelpString ( "Adjust the opacity of slices in the 3D view." );
-
       // TODO: why did i have to padx by 4 to get the grid to line up?
       // this works on  win32; will it break on other platforms?
       this->Script ("grid %s -row 0 -column 0 -sticky w -padx 4 -pady 0 -ipadx 0 -ipady 0", this->RotateAroundButton->GetWidgetName ( ));
       this->Script ("grid %s -row 1 -column 0 -sticky w -padx 4 -pady 0 -ipadx 0 -ipady 0", this->LookFromButton->GetWidgetName ( ));
       this->Script ("grid %s -row 0 -column 1 -sticky w -padx 1 -pady 0 -ipadx 0 -ipady 0", this->OrthoButton->GetWidgetName ( ));
       this->Script ("grid %s -row 1 -column 1 -sticky w -padx 1 -pady 0 -ipadx 0 -ipady 0", this->StereoButton->GetWidgetName ( ));
-      this->Script ("grid %s -row 0 -column 2 -sticky w -padx 1 -pady 0 -ipadx 0 -ipady 0", this->SliceOpacityButton->GetWidgetName ( ));      
-      this->Script ("grid %s -row 1 -column 2 -sticky w -padx 1 -pady 0 -ipadx 0 -ipady 0", this->VisibilityButton->GetWidgetName ( ));
+      this->Script ("grid %s -row 0 -column 2 -sticky w -padx 1 -pady 0 -ipadx 0 -ipady 0", this->VisibilityButton->GetWidgetName ( ));      
+      this->Script ("grid %s -row 1 -column 2 -sticky w -padx 1 -pady 0 -ipadx 0 -ipady 0", this->SelectCameraButton->GetWidgetName ( ));
       this->Script ("grid %s -row 0 -column 3 -sticky w -padx 1 -pady 0 -ipadx 0 -ipady 0", this->CenterButton->GetWidgetName ( ));
-      this->Script ("grid %s -row 1 -column 3 -sticky w -padx 1 -pady 0 -ipadx 0 -ipady 0", this->SelectButton->GetWidgetName ( ));      
+      this->Script ("grid %s -row 1 -column 3 -sticky w -padx 1 -pady 0 -ipadx 0 -ipady 0", this->SelectViewButton->GetWidgetName ( ));      
       this->Script ("grid %s -row 0 -column 4 -sticky e -padx 2 -pady 0 -ipadx 0 -ipady 0", this->SpinButton->GetWidgetName ( ));
       this->Script ("grid %s -row 1 -column 4 -sticky e -padx 2 -pady 0 -ipadx 0 -ipady 0", this->RockButton->GetWidgetName ( ));
 
@@ -1704,6 +1626,7 @@ void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
 
       // populate menus
       this->BuildViewSelectMenu();
+      this->BuildCameraSelectMenu();
       this->BuildStereoSelectMenu ( );
       this->BuildVisibilityMenu ( );
       
@@ -1714,7 +1637,6 @@ void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
       f3->Delete ( );
       f4->Delete ( );
       f6->Delete ( );
-      f7->Delete ( );
       }
     }
 }
