@@ -1,20 +1,5 @@
 /* 
  * Resource generated for file:
- *    ToolbarMousePan.png (zlib, base64) (image file)
- */
-static const unsigned int  image_ToolbarMousePan_width          = 21;
-static const unsigned int  image_ToolbarMousePan_height         = 21;
-static const unsigned int  image_ToolbarMousePan_pixel_size     = 3;
-static const unsigned long image_ToolbarMousePan_length         = 160;
-static const unsigned long image_ToolbarMousePan_decoded_length = 1323;
-
-static const unsigned char image_ToolbarMousePan[] = 
-  "eNpjYGBkoAz9JxcQ1O4SXk+29oDMWRBEhna4Xjwm4NIOdDMmIsPvDAwMJPkdzRY07RiyKN"
-  "qBfiSoHTkckLVDgogY7XAT4Nrh4kAGA26ArIyKtlPud2JC3j2ykabxTq1UR0mapzzHUZ7f"
-  "geDz528EtVOCAL2Dkrw=";
-
-/* 
- * Resource generated for file:
  *    ToolbarMousePick.png (zlib, base64) (image file)
  */
 static const unsigned int  image_ToolbarMousePick_width          = 21;
@@ -30,19 +15,50 @@ static const unsigned char image_ToolbarMousePick[] =
 
 /* 
  * Resource generated for file:
+ *    ToolbarMousePickLow.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_ToolbarMousePickLow_width          = 21;
+static const unsigned int  image_ToolbarMousePickLow_height         = 21;
+static const unsigned int  image_ToolbarMousePickLow_pixel_size     = 3;
+static const unsigned long image_ToolbarMousePickLow_length         = 208;
+static const unsigned long image_ToolbarMousePickLow_decoded_length = 1323;
+
+static const unsigned char image_ToolbarMousePickLow[] = 
+  "eNpLS0tPowz9JxcQ1E5QFqsCuCAmg0jbkcXxqKGF4ym0HSL448evybO2/vz1mwy/A8GRE9"
+  "fa+tYASTIcD7S6Z8rGaUsPAUkgm1TtQEuBeiEIlwNwaYdbDUG4HIBLO7LVeByAVTua1Xgc"
+  "gFX7k2dvtu0+C0QLlu8DhvycxbshXKA4SRF34vRNoPa9hy6Rl+OGtHYiSxtKEABXJVQE";
+
+/* 
+ * Resource generated for file:
  *    ToolbarMousePlaceFiducial.png (zlib, base64) (image file)
  */
 static const unsigned int  image_ToolbarMousePlaceFiducial_width          = 21;
 static const unsigned int  image_ToolbarMousePlaceFiducial_height         = 21;
 static const unsigned int  image_ToolbarMousePlaceFiducial_pixel_size     = 3;
-static const unsigned long image_ToolbarMousePlaceFiducial_length         = 220;
+static const unsigned long image_ToolbarMousePlaceFiducial_length         = 228;
 static const unsigned long image_ToolbarMousePlaceFiducial_decoded_length = 1323;
 
 static const unsigned char image_ToolbarMousePlaceFiducial[] = 
-  "eNpjYGBkoAz9JxdQV/tjXQb86q3SN9JCO1AjMkLT9f3Xd6BGZESk7X/+/CHb8Z8/f/MOb/"
-  "n67SeR2tHAnMW7TZ1LgSQZEQe02sG3NiBzFpAEsknVDrQUqBeCcDkAl3a41RCEywG4tCNb"
-  "jccBWLWjWY3HAVi1X7r6oK1vDRAl5kwGhnxUah+ECxQnKcssXnkAqH3izC3k5bghrZ3I4o"
-  "ISBABXL8gb";
+  "eNpjYGBkoAz9JxdQV/tjXQaCWpDVIGuHiOM3AU0NXDuyLkwTvv/6jlUNQdv//PlDjO1Y7f"
+  "38+Zt3eMvXbz+J8TsmmLN4t6lzKZAkI+KAVjv41gZkzgKSQDap2oGWAvVCEC4H4NIOtxqC"
+  "cDkAl3Zkq/E4AKt2NKvxOACr9ktXH7T1rQGixJzJwJCPSu2DcIHiJGWZxSsPALVPnLmFvB"
+  "w3pLUTWVxQggCQwsmj";
+
+/* 
+ * Resource generated for file:
+ *    ToolbarMousePlaceFiducialLow.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_ToolbarMousePlaceFiducialLow_width          = 21;
+static const unsigned int  image_ToolbarMousePlaceFiducialLow_height         = 21;
+static const unsigned int  image_ToolbarMousePlaceFiducialLow_pixel_size     = 3;
+static const unsigned long image_ToolbarMousePlaceFiducialLow_length         = 232;
+static const unsigned long image_ToolbarMousePlaceFiducialLow_decoded_length = 1323;
+
+static const unsigned char image_ToolbarMousePlaceFiducialLow[] = 
+  "eNpLS0tPowz9JxdQV/u7xjSCWpDVIGuHiOM3AU0NXDuyLkwTfv35hVUNQdv//v1LjO1Y7f"
+  "3x49fkWVt//vpNjN8xwZET19r61gBJMiIOaHXPlI3Tlh4CkkA2qdqBlgL1QhAuB+DSDrca"
+  "gnA5AJd2ZKvxOACrdjSr8TgAq/Ynz95s230WiBYs3wcM+TmLd0O4QHGSssyJ0zeB2vceuk"
+  "RejhvS2oksLihBAM1rVR8=";
 
 /* 
  * Resource generated for file:
@@ -64,15 +80,19 @@ static const unsigned char image_ToolbarMouseRotate[] =
 
 /* 
  * Resource generated for file:
- *    ToolbarMouseZoom.png (zlib, base64) (image file)
+ *    ToolbarMouseRotateLow.png (zlib, base64) (image file)
  */
-static const unsigned int  image_ToolbarMouseZoom_width          = 21;
-static const unsigned int  image_ToolbarMouseZoom_height         = 21;
-static const unsigned int  image_ToolbarMouseZoom_pixel_size     = 3;
-static const unsigned long image_ToolbarMouseZoom_length         = 136;
-static const unsigned long image_ToolbarMouseZoom_decoded_length = 1323;
+static const unsigned int  image_ToolbarMouseRotateLow_width          = 21;
+static const unsigned int  image_ToolbarMouseRotateLow_height         = 21;
+static const unsigned int  image_ToolbarMouseRotateLow_pixel_size     = 3;
+static const unsigned long image_ToolbarMouseRotateLow_length         = 360;
+static const unsigned long image_ToolbarMouseRotateLow_decoded_length = 1323;
 
-static const unsigned char image_ToolbarMouseZoom[] = 
-  "eNpjYGBkoAz9JxcQ1B6QOYts7UC9EESGdpfwemREnuPJ8LsxbkCkdqx24dGO7DtitEPUI2"
-  "uHhzBB7UCVWLVDTMCvHaKM6rZT4ncKQ56K8U6VHEd5mqckx1Ge34n0OyUIALkrqmc=";
+static const unsigned char image_ToolbarMouseRotateLow[] = 
+  "eNrdk0sLgkAUhf+t/ZaWLapFIBFFSFCS2IMs6YULCYpKewlhEkUPom1GHRgYpFGJ2ikHGW"
+  "b8zty5c+S4GPefXr8+kcQ3lt1s9fi8Ek+U8Vb70/3hSlcxni/sIHw8MaWa0lY1fPZwn0Jl"
+  "AJNUoafpS8Ji3B3OfPGdc5BkxTAtOuO6z2pDBwL1NYMMaq2RL45NUTZ7HOpAVBKHvrhYrU"
+  "/nKxY/nm5ePFvsfODkgFTmyvH2yrsEpflGCB7OQjlBDcFt50RxzLMCjpayeDIjsQ7kQUvR"
+  "2KDYAEfN58sd52IdcJW4UFxrEE5ztbb2cCDFbO0jEohNESTE6cvQwgpBJaGtiDLKhkkkf9"
+  "h/9AZ1DjQn";
 
