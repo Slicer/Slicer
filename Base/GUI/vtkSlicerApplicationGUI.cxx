@@ -683,6 +683,10 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
             this->GetMainSlicerWindow()->GetFileMenu()->InsertSeparator (
                 this->GetMainSlicerWindow()->GetFileMenuInsertPosition());
 
+            // don't need the 'close command'
+            this->GetMainSlicerWindow()->GetFileMenu()->DeleteItem (
+                                                                    this->GetMainSlicerWindow()->GetFileMenu()->GetIndexOfItem(
+                                                                                                                               this->GetMainSlicerWindow()->GetFileCloseMenuLabel()));
             //
             // Edit Menu
             //
