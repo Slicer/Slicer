@@ -15,11 +15,11 @@ vtkSlicerToolbarIcons::vtkSlicerToolbarIcons ( )
     this->VolumeIcon = vtkKWIcon::New();
     this->ModelIcon = vtkKWIcon::New();
     this->EditorIcon = vtkKWIcon::New();
-    this->EditorToolboxIcon = vtkKWIcon::New();
+    //    this->EditorToolboxIcon = vtkKWIcon::New();
     this->TransformIcon = vtkKWIcon::New();
     this->ColorIcon = vtkKWIcon::New();
     this->FiducialsIcon = vtkKWIcon::New();
-    this->MeasurementsIcon = vtkKWIcon::New();
+    //   this->MeasurementsIcon = vtkKWIcon::New();
     this->SaveSceneIcon = vtkKWIcon::New();
     this->LoadSceneIcon = vtkKWIcon::New();
     this->ConventionalViewIcon = vtkKWIcon::New();
@@ -30,8 +30,11 @@ vtkSlicerToolbarIcons::vtkSlicerToolbarIcons ( )
     this->Tabbed3DViewIcon = vtkKWIcon::New();
     this->LightBoxViewIcon = vtkKWIcon::New();
     this->MousePickIcon = vtkKWIcon::New();
+    this->MousePickIconLow = vtkKWIcon::New();
     this->MouseTransformViewIcon = vtkKWIcon::New();
+    this->MouseTransformViewIconLow = vtkKWIcon::New();
     this->MousePlaceFiducialIcon = vtkKWIcon::New ( );
+    this->MousePlaceFiducialIconLow = vtkKWIcon::New ( );
     this->UndoIcon = vtkKWIcon::New ( );
     this->RedoIcon = vtkKWIcon::New ( );
     this->AssignImageDataToIcons ( );
@@ -68,11 +71,13 @@ vtkSlicerToolbarIcons::~vtkSlicerToolbarIcons ( )
     this->EditorIcon->Delete ( );
     this->EditorIcon = NULL;
     }
+/*
   if ( this->EditorToolboxIcon )
     {
     this->EditorToolboxIcon->Delete ( );
     this->EditorToolboxIcon = NULL;
     }
+*/
   if ( this->TransformIcon )
     {
     this->TransformIcon->Delete ( );
@@ -88,11 +93,13 @@ vtkSlicerToolbarIcons::~vtkSlicerToolbarIcons ( )
     this->FiducialsIcon->Delete ( );
     this->FiducialsIcon = NULL;
     }
+/*
   if ( this->MeasurementsIcon )
     {
     this->MeasurementsIcon->Delete ( );
     this->MeasurementsIcon = NULL;
     }
+*/
   if ( this->SaveSceneIcon )
     {
     this->SaveSceneIcon->Delete ( );
@@ -153,6 +160,22 @@ vtkSlicerToolbarIcons::~vtkSlicerToolbarIcons ( )
     this->MouseTransformViewIcon->Delete ( );
     this->MouseTransformViewIcon = NULL;
     }
+  if ( this->MousePickIconLow )
+    {
+    this->MousePickIconLow->Delete ( );
+    this->MousePickIconLow = NULL;
+    }
+  if ( this->MousePlaceFiducialIconLow )
+    {
+    this->MousePlaceFiducialIconLow->Delete ( );
+    this->MousePlaceFiducialIconLow = NULL;
+    }
+  if ( this->MouseTransformViewIconLow )
+    {
+    this->MouseTransformViewIconLow->Delete ( );
+    this->MouseTransformViewIconLow = NULL;
+    }
+
   if ( this->UndoIcon )
     {
     this->UndoIcon->Delete ( );
@@ -173,63 +196,78 @@ void vtkSlicerToolbarIcons::AssignImageDataToIcons ( )
     this->HomeIcon->SetImage ( image_ToolbarHome,
                                image_ToolbarHome_width,
                                image_ToolbarHome_height,
-                               image_ToolbarHome_pixel_size, 0, 0 );
+                               image_ToolbarHome_pixel_size,
+                               image_ToolbarHome_length, 0 );
 
     this->DataIcon->SetImage( image_ToolbarData,
                               image_ToolbarData_width,
                               image_ToolbarData_height,
-                              image_ToolbarData_pixel_size, 0, 0 );                              
+                              image_ToolbarData_pixel_size,
+                              image_ToolbarData_length, 0 );                              
 
     this->VolumeIcon->SetImage( image_ToolbarVolume,
                                 image_ToolbarVolume_width,
                                 image_ToolbarVolume_height,
-                                image_ToolbarVolume_pixel_size, 0, 0 );                                
+                                image_ToolbarVolume_pixel_size,
+                                image_ToolbarVolume_length, 0 );                                
 
     this->ModelIcon->SetImage( image_ToolbarModel,
                                image_ToolbarModel_width,
                                image_ToolbarModel_height,
-                               image_ToolbarModel_pixel_size, 0, 0 );
+                               image_ToolbarModel_pixel_size,
+                               image_ToolbarModel_length, 0 );
     
-    this->EditorIcon->SetImage( image_ToolbarEditor,
-                                image_ToolbarEditor_width,
-                                image_ToolbarEditor_height,
-                                image_ToolbarEditor_pixel_size, 0, 0 );
+    // use the toolbox image data resource for the editor.
+    this->EditorIcon->SetImage( image_ToolbarEditorToolbox,
+                                image_ToolbarEditorToolbox_width,
+                                image_ToolbarEditorToolbox_height,
+                                image_ToolbarEditorToolbox_pixel_size,
+                                image_ToolbarEditorToolbox_length, 0 );
     
+/*
+  // if we make an editor toolbox later, change its icon.
     this->EditorToolboxIcon->SetImage( image_ToolbarEditorToolbox,
                                        image_ToolbarEditorToolbox_width,
                                        image_ToolbarEditorToolbox_height,
-                                       image_ToolbarEditorToolbox_pixel_size, 0, 0 );
-    
+                                       image_ToolbarEditorToolbox_pixel_size,
+                                       image_ToolbarEditorToolbox_length, 0 );
+*/    
     this->TransformIcon->SetImage( image_ToolbarTransform,
                                image_ToolbarTransform_width,
                                image_ToolbarTransform_height,
-                               image_ToolbarTransform_pixel_size, 0, 0 );
+                               image_ToolbarTransform_pixel_size,
+                                   image_ToolbarTransform_length, 0 );
     
     this->ColorIcon->SetImage( image_ToolbarColor,
                                image_ToolbarColor_width,
                                image_ToolbarColor_height,
-                               image_ToolbarColor_pixel_size, 0, 0);
+                               image_ToolbarColor_pixel_size,
+                               image_ToolbarColor_length, 0);
     
     this->FiducialsIcon->SetImage( image_ToolbarFiducials,
                                    image_ToolbarFiducials_width,
                                    image_ToolbarFiducials_height,
-                                   image_ToolbarFiducials_pixel_size, 0, 0 );
-    
+                                   image_ToolbarFiducials_pixel_size,
+                                   image_ToolbarFiducials_length, 0 );
+/*    
     this->MeasurementsIcon->SetImage( image_ToolbarMeasurements,
                                    image_ToolbarMeasurements_width,
                                    image_ToolbarMeasurements_height,
-                                   image_ToolbarMeasurements_pixel_size, 0, 0 );
-    
+                                   image_ToolbarMeasurements_pixel_size,
+                                   image_ToolbarMeasurements_length, 0 );
+*/                                     
 
     this->SaveSceneIcon->SetImage( image_ToolbarSaveScene,
                                    image_ToolbarSaveScene_width,
                                    image_ToolbarSaveScene_height,
-                                   image_ToolbarSaveScene_pixel_size, 0, 0 );
+                                   image_ToolbarSaveScene_pixel_size,
+                                   image_ToolbarSaveScene_length, 0 );
     
     this->LoadSceneIcon->SetImage( image_ToolbarLoadScene,
                                    image_ToolbarLoadScene_width,
                                    image_ToolbarLoadScene_height,
-                                   image_ToolbarLoadScene_pixel_size, 0, 0 );
+                                   image_ToolbarLoadScene_pixel_size,
+                                   image_ToolbarLoadScene_length, 0 );
     
     this->ConventionalViewIcon->SetImage( image_ToolbarConventionalView,
                                           image_ToolbarConventionalView_width,
@@ -288,14 +326,33 @@ void vtkSlicerToolbarIcons::AssignImageDataToIcons ( )
                                    image_ToolbarMousePlaceFiducial_height,
                                    image_ToolbarMousePlaceFiducial_pixel_size,
                                             image_ToolbarMousePlaceFiducial_length, 0);
+
+    this->MousePickIconLow->SetImage (image_ToolbarMousePickLow,
+                                   image_ToolbarMousePickLow_width,
+                                   image_ToolbarMousePickLow_height,
+                                   image_ToolbarMousePickLow_pixel_size,
+                                   image_ToolbarMousePickLow_length, 0);
+    this->MouseTransformViewIconLow->SetImage (image_ToolbarMouseRotateLow,
+                                   image_ToolbarMouseRotateLow_width,
+                                   image_ToolbarMouseRotateLow_height,
+                                   image_ToolbarMouseRotateLow_pixel_size,
+                                            image_ToolbarMouseRotate_length, 0);
+    this->MousePlaceFiducialIconLow->SetImage (image_ToolbarMousePlaceFiducialLow,
+                                   image_ToolbarMousePlaceFiducialLow_width,
+                                   image_ToolbarMousePlaceFiducialLow_height,
+                                   image_ToolbarMousePlaceFiducialLow_pixel_size,
+                                            image_ToolbarMousePlaceFiducialLow_length, 0);
+
     this->UndoIcon->SetImage ( image_ToolbarUndo,
                                image_ToolbarUndo_width,
                                image_ToolbarUndo_height,
-                               image_ToolbarUndo_pixel_size, 0, 0);
+                               image_ToolbarUndo_pixel_size,
+                               image_ToolbarUndo_length, 0);
     this->RedoIcon->SetImage ( image_ToolbarRedo,
                                image_ToolbarRedo_width,
                                image_ToolbarRedo_height,
-                               image_ToolbarRedo_pixel_size, 0, 0);
+                               image_ToolbarRedo_pixel_size,
+                               image_ToolbarUndo_length, 0);
 
 }
 
@@ -312,11 +369,11 @@ void vtkSlicerToolbarIcons::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "VolumeIcon" << this->GetVolumeIcon ( ) << "\n";
     os << indent << "ModelIcon" << this->GetModelIcon ( ) << "\n";
     os << indent << "EditorIcon" << this->GetEditorIcon ( ) << "\n";
-    os << indent << "EditorToolboxIcon" << this->GetEditorToolboxIcon ( ) << "\n";
+//    os << indent << "EditorToolboxIcon" << this->GetEditorToolboxIcon ( ) << "\n";
     os << indent << "TransformIcon" << this->GetTransformIcon ( ) << "\n";    
     os << indent << "ColorIcon" << this->GetColorIcon ( ) << "\n";
     os << indent << "FiducialsIcon" << this->GetFiducialsIcon ( ) << "\n";
-    os << indent << "MeasurementsIcon" << this->GetMeasurementsIcon ( ) << "\n";
+//    os << indent << "MeasurementsIcon" << this->GetMeasurementsIcon ( ) << "\n";
     os << indent << "SaveSceneIcon" << this->GetSaveSceneIcon ( ) << "\n";
     os << indent << "LoadSceneIcon" << this->GetLoadSceneIcon ( ) << "\n";
     os << indent << "ConventionalViewIcon" << this->GetConventionalViewIcon ( ) << "\n";
@@ -329,6 +386,9 @@ void vtkSlicerToolbarIcons::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "MousePickIcon" << this->GetMousePickIcon ( ) << "\n";
     os << indent << "MouseTransformViewIcon" << this->GetMouseTransformViewIcon ( ) << "\n";
     os << indent << "MousePlaceFiducialIcon" << this->GetMousePlaceFiducialIcon ( ) << "\n";
+    os << indent << "MousePickIconLow" << this->GetMousePickIconLow ( ) << "\n";
+    os << indent << "MouseTransformViewIconLow" << this->GetMouseTransformViewIconLow ( ) << "\n";
+    os << indent << "MousePlaceFiducialIconLow" << this->GetMousePlaceFiducialIconLow ( ) << "\n";
     os << indent << "UndoIcon" << this->GetUndoIcon ( ) << "\n";
     os << indent << "RedoIcon" << this->GetRedoIcon ( ) << "\n";
 }

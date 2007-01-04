@@ -26,11 +26,11 @@ class vtkSlicerToolbarIcons : public vtkSlicerIcons
     vtkGetObjectMacro (VolumeIcon, vtkKWIcon);
     vtkGetObjectMacro (ModelIcon, vtkKWIcon);
     vtkGetObjectMacro (EditorIcon, vtkKWIcon);
-    vtkGetObjectMacro (EditorToolboxIcon, vtkKWIcon);
+//    vtkGetObjectMacro (EditorToolboxIcon, vtkKWIcon);
     vtkGetObjectMacro (TransformIcon, vtkKWIcon);
     vtkGetObjectMacro (ColorIcon, vtkKWIcon);
     vtkGetObjectMacro (FiducialsIcon, vtkKWIcon);
-    vtkGetObjectMacro (MeasurementsIcon, vtkKWIcon );
+//    vtkGetObjectMacro (MeasurementsIcon, vtkKWIcon );
     vtkGetObjectMacro (SaveSceneIcon, vtkKWIcon);
     vtkGetObjectMacro (LoadSceneIcon, vtkKWIcon);
     vtkGetObjectMacro (ConventionalViewIcon, vtkKWIcon);
@@ -41,8 +41,11 @@ class vtkSlicerToolbarIcons : public vtkSlicerIcons
     vtkGetObjectMacro (Tabbed3DViewIcon, vtkKWIcon);
     vtkGetObjectMacro (LightBoxViewIcon, vtkKWIcon);
     vtkGetObjectMacro (MousePickIcon, vtkKWIcon );
+    vtkGetObjectMacro (MousePickIconLow, vtkKWIcon );
     vtkGetObjectMacro (MouseTransformViewIcon, vtkKWIcon );    
+    vtkGetObjectMacro (MouseTransformViewIconLow, vtkKWIcon );    
     vtkGetObjectMacro (MousePlaceFiducialIcon, vtkKWIcon );
+    vtkGetObjectMacro (MousePlaceFiducialIconLow, vtkKWIcon );
     vtkGetObjectMacro (UndoIcon, vtkKWIcon );
     vtkGetObjectMacro (RedoIcon, vtkKWIcon );
 
@@ -57,11 +60,11 @@ class vtkSlicerToolbarIcons : public vtkSlicerIcons
     vtkKWIcon *VolumeIcon;
     vtkKWIcon *ModelIcon;
     vtkKWIcon *EditorIcon;
-    vtkKWIcon *EditorToolboxIcon;
+//    vtkKWIcon *EditorToolboxIcon;
     vtkKWIcon *TransformIcon;
     vtkKWIcon *ColorIcon;
     vtkKWIcon *FiducialsIcon;
-    vtkKWIcon *MeasurementsIcon;
+//    vtkKWIcon *MeasurementsIcon;
     vtkKWIcon *SaveSceneIcon;
     vtkKWIcon *LoadSceneIcon;
     vtkKWIcon *ConventionalViewIcon;
@@ -72,8 +75,11 @@ class vtkSlicerToolbarIcons : public vtkSlicerIcons
     vtkKWIcon *Tabbed3DViewIcon;
     vtkKWIcon *LightBoxViewIcon;
     vtkKWIcon *MousePickIcon;
+    vtkKWIcon *MousePickIconLow;
     vtkKWIcon *MouseTransformViewIcon;
+    vtkKWIcon *MouseTransformViewIconLow;
     vtkKWIcon *MousePlaceFiducialIcon;
+    vtkKWIcon *MousePlaceFiducialIconLow;
     vtkKWIcon *UndoIcon;
     vtkKWIcon *RedoIcon;    
 

@@ -10,6 +10,8 @@
 #include "vtkSlicerWindow.h"
 #include "vtkSlicerModuleChooseGUI.h"
 #include "vtkSlicerModuleNavigator.h"
+#include "vtkSlicerTheme.h"
+#include "vtkSlicerColor.h"
 
 #include "vtkMRMLSelectionNode.h"
 #include "vtkMRMLViewNode.h"
@@ -45,10 +47,10 @@ vtkSlicerToolbarGUI::vtkSlicerToolbarGUI ( )
   this->VolumeIconButton = vtkKWPushButton::New ( );
   this->ModelIconButton = vtkKWPushButton::New ( );
   this->EditorIconButton = vtkKWPushButton::New ( );
-  this->EditorToolboxIconButton = vtkKWPushButton::New ( );
+//  this->EditorToolboxIconButton = vtkKWPushButton::New ( );
   this->ColorIconButton = vtkKWPushButton::New ( );
   this->FiducialsIconButton = vtkKWPushButton::New ( );
-  this->MeasurementsIconButton = vtkKWPushButton::New ( );
+//  this->MeasurementsIconButton = vtkKWPushButton::New ( );
   this->TransformIconButton = vtkKWPushButton::New ( );
   this->SaveSceneIconButton = vtkKWPushButton::New ( );
   this->LoadSceneIconButton = vtkKWPushButton::New ( );
@@ -143,12 +145,14 @@ vtkSlicerToolbarGUI::~vtkSlicerToolbarGUI ( )
     this->EditorIconButton->Delete ( );
     this->EditorIconButton = NULL;
     }
+/*
   if ( this->EditorToolboxIconButton )
     {
     this->EditorToolboxIconButton->SetParent ( NULL );
     this->EditorToolboxIconButton->Delete ( );
     this->EditorToolboxIconButton = NULL;
     }
+*/
   if ( this->TransformIconButton )
     {
     this->TransformIconButton->SetParent ( NULL );
@@ -167,12 +171,14 @@ vtkSlicerToolbarGUI::~vtkSlicerToolbarGUI ( )
     this->FiducialsIconButton->Delete ( );
     this->FiducialsIconButton = NULL;
     }
+/*
   if ( this->MeasurementsIconButton )
     {
     this->MeasurementsIconButton->SetParent ( NULL );
     this->MeasurementsIconButton->Delete ( );
     this->MeasurementsIconButton = NULL;
     }
+*/
   if ( this->SaveSceneIconButton )
     {
     this->SaveSceneIconButton->SetParent ( NULL );
@@ -876,6 +882,7 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   mtb->AddWidget ( this->FiducialsIconButton );
 
   // editor module icon
+/*
   this->EditorToolboxIconButton->SetParent ( mtb->GetFrame ( ) );
   this->EditorToolboxIconButton->Create ( );
   this->EditorToolboxIconButton->SetReliefToFlat ( );
@@ -884,6 +891,7 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   this->EditorToolboxIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetEditorToolboxIcon ( ) );
   this->EditorToolboxIconButton->SetBalloonHelpString ( "Editor Toolbox (not yet available)");        
   mtb->AddWidget ( this->EditorToolboxIconButton );
+*/
   // editor module icon
   this->EditorIconButton->SetParent ( mtb->GetFrame ( ) );
   this->EditorIconButton->Create ( );
@@ -895,6 +903,7 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   mtb->AddWidget ( this->EditorIconButton );
 
   // measurements module icon
+/*
   this->MeasurementsIconButton->SetParent ( mtb->GetFrame ( ) );
   this->MeasurementsIconButton->Create ( );
   this->MeasurementsIconButton->SetReliefToFlat ( );
@@ -903,7 +912,8 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   this->MeasurementsIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetMeasurementsIcon ( ) );
   this->MeasurementsIconButton->SetBalloonHelpString ( "Measurements (not yet available)");        
   mtb->AddWidget ( this->MeasurementsIconButton );
-
+*/
+  
   // color utility icon
   this->ColorIconButton->SetParent ( mtb->GetFrame ( ) );
   this->ColorIconButton->Create ( );
@@ -1029,9 +1039,15 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   
   vtkKWRadioButton *radiob = this->MouseModeRadioButtons->AddWidget ( vtkMRMLSelectionNode::MouseSelect );
   radiob->SetReliefToFlat ( );
+  radiob->SetOffReliefToFlat ( );
   radiob->SetOverReliefToNone ( );
-  radiob->SetImageToIcon ( this->SlicerToolbarIcons->GetMousePickIcon ( ) );
-  radiob->SetBalloonHelpString ( "Set the 3DViewer mouse mode to 'pick' (not yet available)" );
+  radiob->SetImageToIcon ( this->SlicerToolbarIcons->GetMousePickIconLow ( ) );
+  radiob->SetSelectImageToIcon ( this->SlicerToolbarIcons->GetMousePickIcon ( ) );
+  radiob->IndicatorVisibilityOn();
+  radiob->SetHighlightThickness ( 0 );
+  radiob->SetBorderWidth ( 0 );
+  radiob->SetSelectColor ( app->GetSlicerTheme()->GetSlicerColors()->White );
+  radiob->SetBalloonHelpString ( "Set the 3DViewer mouse mode to 'pick'" );
   if ( mouseMode == vtkMRMLSelectionNode::MouseSelect )
     {
     radiob->SelectedStateOn ( );
@@ -1043,9 +1059,15 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
 
   radiob = this->MouseModeRadioButtons->AddWidget ( vtkMRMLSelectionNode::MousePut );
   radiob->SetReliefToFlat ( );
+  radiob->SetOffReliefToFlat ( );
   radiob->SetOverReliefToNone ( );
-  radiob->SetImageToIcon ( this->SlicerToolbarIcons->GetMousePlaceFiducialIcon ( ) );
-  radiob->SetBalloonHelpString ( "Set the 3DViewer mouse mode to 'place fiducials' (not yet available)" );
+  radiob->SetImageToIcon ( this->SlicerToolbarIcons->GetMousePlaceFiducialIconLow ( ) );
+  radiob->SetSelectImageToIcon ( this->SlicerToolbarIcons->GetMousePlaceFiducialIcon ( ) );
+  radiob->IndicatorVisibilityOn();
+  radiob->SetHighlightThickness ( 0 );  
+  radiob->SetBorderWidth ( 0 );
+  radiob->SetSelectColor ( app->GetSlicerTheme()->GetSlicerColors()->White );
+  radiob->SetBalloonHelpString ( "Set the 3DViewer mouse mode to 'place fiducials'" );
   if ( mouseMode == vtkMRMLSelectionNode::MousePut )
     {
     radiob->SelectedStateOn ( );
@@ -1058,9 +1080,15 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
 
   radiob = this->MouseModeRadioButtons->AddWidget ( vtkMRMLSelectionNode::MouseTransform );
   radiob->SetReliefToFlat ( );
+  radiob->SetOffReliefToFlat ( );
   radiob->SetOverReliefToNone ( );
-  radiob->SetImageToIcon ( this->SlicerToolbarIcons->GetMouseTransformViewIcon ( ) );
-  radiob->SetBalloonHelpString ( "Set the 3DViewer mouse mode to 'transform view' (not yet available)" );
+  radiob->SetImageToIcon ( this->SlicerToolbarIcons->GetMouseTransformViewIconLow ( ) );
+  radiob->SetSelectImageToIcon ( this->SlicerToolbarIcons->GetMouseTransformViewIcon ( ) );
+  radiob->IndicatorVisibilityOn();
+  radiob->SetHighlightThickness ( 0 );  
+  radiob->SetBorderWidth ( 0 );
+  radiob->SetSelectColor ( app->GetSlicerTheme()->GetSlicerColors()->White );
+  radiob->SetBalloonHelpString ( "Set the 3DViewer mouse mode to 'transform view'" );
   if ( mouseMode == vtkMRMLSelectionNode::MouseTransform )
     {
     radiob->SelectedStateOn ( );
