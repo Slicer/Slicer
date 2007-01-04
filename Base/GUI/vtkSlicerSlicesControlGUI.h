@@ -81,6 +81,12 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesControlGUI : public vtkSlicerCom
 //    virtual void BuildGridMenu ( );
     virtual void BuildVisibilityMenu ( );
     
+    virtual void FitSlicesToBackground ( );
+    virtual void ModifyAnnotationMode ( );
+    virtual void ModifySpatialUnitsMode ( );
+    virtual void ModifyCrossHairMode ( );
+    virtual void ModifyVisibility ();
+    
  protected:
     vtkSlicerSlicesControlGUI ( );
     virtual ~vtkSlicerSlicesControlGUI ( );

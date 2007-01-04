@@ -6,6 +6,8 @@
 #include "vtkSlicerApplicationGUI.h"
 #include "vtkSlicerSlicesControlGUI.h"
 #include "vtkSlicerSlicesControlIcons.h"
+#include "vtkSlicerSlicesGUI.h"
+#include "vtkSlicerSliceGUI.h"
 
 #include "vtkKWWidget.h"
 #include "vtkKWScale.h"
@@ -34,7 +36,6 @@ vtkSlicerSlicesControlGUI::vtkSlicerSlicesControlGUI ( )
   this->ShowBgButton = vtkKWPushButton::New ( );
   this->ToggleFgBgButton = vtkKWPushButton::New ( );
   this->LabelOpacityButton = vtkKWPushButton::New ( );
-//  this->GridButton = vtkKWMenuButton::New  ( );
   this->FeaturesVisibleButton = vtkKWMenuButton::New ( );
   this->FitToWindowButton = vtkKWPushButton::New ( );
   this->CrossHairButton = vtkKWMenuButton::New ( );
@@ -84,14 +85,6 @@ vtkSlicerSlicesControlGUI::~vtkSlicerSlicesControlGUI ( )
     this->LabelOpacityButton->Delete ( );
     this->LabelOpacityButton = NULL;    
     }
-/*
-  if ( this->GridButton )
-    {
-    this->GridButton->SetParent ( NULL );
-    this->GridButton->Delete ( );
-    this->GridButton = NULL;    
-    }
-*/
   if ( this->FitToWindowButton )
     {
     this->FitToWindowButton->SetParent ( NULL);
@@ -211,6 +204,7 @@ void vtkSlicerSlicesControlGUI::AddGUIObservers ( )
 }
 
 
+
 //---------------------------------------------------------------------------
 void vtkSlicerSlicesControlGUI::ProcessGUIEvents ( vtkObject *caller,
                                           unsigned long event, void *callData )
@@ -316,60 +310,343 @@ void vtkSlicerSlicesControlGUI::ProcessGUIEvents ( vtkObject *caller,
           //
           // PushButtons:
           //
-/*
-          // MenuButtons:
-          if ( menu == this->GridButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
+
+          if ( pushb == this->FitToWindowButton && event == vtkKWPushButton::InvokedEvent )
             {
-            int i, nnodes = p->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
-            vtkMRMLSliceCompositeNode *cnode;
-            if (p->GetMRMLScene()) 
-              {
-              int state;
-              const char *item;
-              for (i = 0; i < nnodes; i++)
-                {
-                cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
-                                                                 p->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
-                if ( cnode )
-                  {
-                  // save MRML state
-                  p->GetMRMLScene()->SaveStateForUndo( cnode );
-                  // find out what menu item was selected and its state
-                  item = this->GridButton->GetValue();
-                  state = this->GridButton->GetMenu()->GetItemSelectedState ( item );
-                  // update node based on menu selection
-                  if ( !strcmp (item, "Foreground grid" ))
-                    {
-                    cnode->SetForegroundGrid ( state );
-                    }
-                  else if ( !strcmp (item, "Background grid" ))
-                    {
-                    cnode->SetBackgroundGrid (state);
-                    }
-                  else if ( !strcmp (item, "Label grid" ))
-                    {
-                    cnode->SetLabelGrid (state);
-                    }
-                  }
-                }
-              }
+            this->FitSlicesToBackground();
             }
-*/
+
+          //
+          // MenuButtons:
+          //
           if ( menu == this->AnnotationButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
             {
-            // save state for undo and then modify MRML
+            this->ModifyAnnotationMode ( );
             }
-          if ( menu == this->SpatialUnitsButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
+          else if ( menu == this->SpatialUnitsButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
             {
-            // save state for undo and then modify MRML
+            this->ModifySpatialUnitsMode ( );
             }
-          if ( menu == this->CrossHairButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
+          else if ( menu == this->CrossHairButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
             {
-            // save state for undo and then modify MRML
+            this->ModifyCrossHairMode ( );
+            }
+          else if ( menu == this->FeaturesVisibleButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
+            {
+            this->ModifyVisibility( );
             }
         }
     }
 }
+
+
+//----------------------------------------------------------------------------
+void vtkSlicerSlicesControlGUI::ModifySpatialUnitsMode ( )
+{
+  vtkSlicerApplicationGUI *appGUI;
+  vtkMRMLSliceCompositeNode *cnode;
+  
+  if ( this->GetApplicationGUI() )
+    {
+    appGUI = vtkSlicerApplicationGUI::SafeDownCast (this->GetApplicationGUI());
+    
+    // first save the state of all slice composite nodes for undo
+    int nnodes = appGUI->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
+    vtkCollection *nodes = vtkCollection::New();
+    for (int i = 0; i < nnodes; i++)
+      {
+      cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
+             appGUI->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
+      if ( cnode )
+        {
+        nodes->AddItem (cnode );
+        }
+    }
+    this->MRMLScene->SaveStateForUndo ( nodes );
+    nodes->Delete ( );
+
+    // then change the annotation mode for all slice composite nodes
+    for (int i = 0; i < nnodes; i++)
+      {
+      cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
+             appGUI->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
+      if ( this->GetSpatialUnitsButton()->GetMenu()->GetItemSelectedState("xyz") == 1 )
+        {
+        if ( cnode->GetAnnotationSpace() != vtkMRMLSliceCompositeNode::XYZ)
+          {
+          cnode->SetAnnotationSpace ( vtkMRMLSliceCompositeNode::XYZ );
+          }
+        }
+      else if (this->GetSpatialUnitsButton()->GetMenu()->GetItemSelectedState("ijk") == 1 )
+        {
+        if ( cnode->GetAnnotationSpace() != vtkMRMLSliceCompositeNode::IJK)
+          {
+          cnode->SetAnnotationSpace( vtkMRMLSliceCompositeNode::IJK );
+          }
+        }
+      else if ( this->GetSpatialUnitsButton()->GetMenu()->GetItemSelectedState( "RAS" ) == 1)
+        {
+        if ( cnode->GetAnnotationSpace() != vtkMRMLSliceCompositeNode::RAS)
+          {
+          cnode->SetAnnotationSpace( vtkMRMLSliceCompositeNode::RAS );
+          }
+        }
+      }
+    }
+}
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerSlicesControlGUI::ModifyVisibility ( )
+{
+  vtkSlicerApplicationGUI *appGUI;
+//  vtkMRMLFiducialsListNode *flnode;
+  vtkMRMLSliceCompositeNode *cnode;
+
+  if ( this->GetApplicationGUI() )
+    {
+    appGUI = vtkSlicerApplicationGUI::SafeDownCast (this->GetApplicationGUI());
+    
+    // first save the state of all slice composite nodes for undo
+    int nnodes = appGUI->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
+    vtkCollection *nodes = vtkCollection::New();
+    for (int i = 0; i < nnodes; i++)
+      {
+      cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
+             appGUI->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
+      if ( cnode )
+        {
+        nodes->AddItem (cnode );
+        }
+    }
+    this->MRMLScene->SaveStateForUndo ( nodes );
+    nodes->Delete ( );
+
+    int state;
+    // then change the annotation mode for all slice composite nodes
+    for (int i = 0; i < nnodes; i++)
+      {
+      cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
+                                                       appGUI->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
+      
+      // implement fiducial points show or hide
+      state =  this->GetFeaturesVisibleButton()->GetMenu()->GetItemSelectedState("Fiducial points");
+      // implement fiducial labels show or hide
+      state =  this->GetFeaturesVisibleButton()->GetMenu()->GetItemSelectedState("Fiducial labels");
+
+      state =  this->GetFeaturesVisibleButton()->GetMenu()->GetItemSelectedState("Foreground grid");
+      if ( cnode->GetForegroundGrid ( ) != state )
+        {
+        cnode->SetForegroundGrid (  state );
+        }
+      state = this->GetFeaturesVisibleButton()->GetMenu()->GetItemSelectedState("Background grid");
+      if ( cnode->GetBackgroundGrid () != state )
+        {
+        cnode->SetBackgroundGrid ( state);
+        }
+      state = this->GetFeaturesVisibleButton()->GetMenu()->GetItemSelectedState( "Label grid" );
+      if ( cnode->GetLabelGrid ( ) != state )
+        {
+        cnode->SetLabelGrid ( state );
+         }
+      }
+    }
+
+}
+
+
+
+//----------------------------------------------------------------------------
+void vtkSlicerSlicesControlGUI::ModifyCrossHairMode ( )
+{
+  vtkSlicerApplicationGUI *appGUI;
+  vtkMRMLSliceCompositeNode *cnode;
+  
+  if ( this->GetApplicationGUI() )
+    {
+    appGUI = vtkSlicerApplicationGUI::SafeDownCast (this->GetApplicationGUI());
+    
+    // first save the state of all slice composite nodes for undo
+    int nnodes = appGUI->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
+    vtkCollection *nodes = vtkCollection::New();
+    for (int i = 0; i < nnodes; i++)
+      {
+      cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
+             appGUI->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
+      if ( cnode )
+        {
+        nodes->AddItem (cnode );
+        }
+    }
+    this->MRMLScene->SaveStateForUndo ( nodes );
+    nodes->Delete ( );
+
+    // then change the annotation mode for all slice composite nodes
+    for (int i = 0; i < nnodes; i++)
+      {
+      cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
+                                                       appGUI->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
+      if ( this->GetCrossHairButton()->GetMenu()->GetItemSelectedState("No crosshair") == 1 )
+        {
+        if ( cnode->GetCrosshairMode() != vtkMRMLSliceCompositeNode::NoCrosshair )
+          {
+          cnode->SetCrosshairMode ( vtkMRMLSliceCompositeNode::NoCrosshair );
+          }
+        }
+      else if (this->GetCrossHairButton()->GetMenu()->GetItemSelectedState ("Basic crosshair") == 1)
+        {
+        if ( cnode->GetCrosshairMode() != vtkMRMLSliceCompositeNode::ShowBasic )
+          {
+          cnode->SetCrosshairMode ( vtkMRMLSliceCompositeNode::ShowBasic );
+          }
+        }
+      else if (this->GetCrossHairButton()->GetMenu()->GetItemSelectedState ("Basic + intersection") == 1)
+        {
+        if ( cnode->GetCrosshairMode() != vtkMRMLSliceCompositeNode::ShowIntersection )
+          {
+          cnode->SetCrosshairMode ( vtkMRMLSliceCompositeNode::ShowIntersection );
+          }
+        }
+      else if (this->GetCrossHairButton()->GetMenu()->GetItemSelectedState("Basic + hashmarks") ==1 )
+        {
+        if ( cnode->GetCrosshairMode() != vtkMRMLSliceCompositeNode::ShowHashmarks )
+          {
+          cnode->SetCrosshairMode ( vtkMRMLSliceCompositeNode::ShowHashmarks );
+          }
+        }
+      else if (this->GetCrossHairButton()->GetMenu()->GetItemSelectedState( "Basic + hashmarks + intersection") ==1 )
+        {
+        if ( cnode->GetCrosshairMode() != vtkMRMLSliceCompositeNode::ShowAll )
+          {
+          cnode->SetCrosshairMode ( vtkMRMLSliceCompositeNode::ShowAll );
+          }
+        }      
+      else if ( this->GetCrossHairButton()->GetMenu()->GetItemSelectedState("Jump slice") == 1)
+        {
+        if ( cnode->GetCrosshairMode() != vtkMRMLSliceCompositeNode::JumpSlice )
+          {
+          cnode->SetCrosshairBehavior ( vtkMRMLSliceCompositeNode::JumpSlice );
+          }
+        }      
+      else if ( this->GetCrossHairButton()->GetMenu()->GetItemSelectedState("Jump slice") == 0)
+        {
+        if ( cnode->GetCrosshairMode() != vtkMRMLSliceCompositeNode::Normal )
+          {
+          cnode->SetCrosshairBehavior ( vtkMRMLSliceCompositeNode::Normal );
+          }
+        }      
+      }
+    }
+}
+
+
+
+//----------------------------------------------------------------------------
+void vtkSlicerSlicesControlGUI::ModifyAnnotationMode ( )
+{
+  vtkSlicerApplicationGUI *appGUI;
+  vtkMRMLSliceCompositeNode *cnode;
+  
+  if ( this->GetApplication() )
+    {
+    appGUI = vtkSlicerApplicationGUI::SafeDownCast (this->GetApplicationGUI());
+    
+    // first save the state of all slice composite nodes for undo
+    int nnodes = appGUI->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
+    vtkCollection *nodes = vtkCollection::New();
+    for (int i = 0; i < nnodes; i++)
+      {
+      cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
+             appGUI->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
+      if ( cnode )
+        {
+        nodes->AddItem (cnode );
+        }
+    }
+    this->MRMLScene->SaveStateForUndo ( nodes );
+    nodes->Delete ( );
+
+    // then change the annotation mode for all slice composite nodes
+    for (int i = 0; i < nnodes; i++)
+      {
+      cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
+             appGUI->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
+      if ( this->GetAnnotationButton()->GetMenu()->GetItemSelectedState("None") == 1)
+        {
+        if ( cnode->GetAnnotationMode() != vtkMRMLSliceCompositeNode::NoAnnotation )
+          {
+        cnode->SetAnnotationMode ( vtkMRMLSliceCompositeNode::NoAnnotation );
+          }
+        }
+      else if (this->GetAnnotationButton()->GetMenu()->GetItemSelectedState( "Show all") == 1)
+        {
+        if ( cnode->GetAnnotationMode() != vtkMRMLSliceCompositeNode::All )
+          {
+        cnode->SetAnnotationMode ( vtkMRMLSliceCompositeNode::All );
+          }
+        }
+      else if (this->GetAnnotationButton()->GetMenu()->GetItemSelectedState( "Show label values only") == 1)
+        {
+        if ( cnode->GetAnnotationMode() != vtkMRMLSliceCompositeNode::LabelValuesOnly )
+          {
+          cnode->SetAnnotationMode ( vtkMRMLSliceCompositeNode::LabelValuesOnly );
+          }
+        }
+      else if ( this->GetAnnotationButton()->GetMenu()->GetItemSelectedState ("Show voxel and label values only") == 1)
+        {
+        if ( cnode->GetAnnotationMode() != vtkMRMLSliceCompositeNode::LabelAndVoxelValuesOnly )
+          {
+          cnode->SetAnnotationMode ( vtkMRMLSliceCompositeNode::LabelAndVoxelValuesOnly );
+          }
+        }
+      }
+    }
+}
+
+
+
+//----------------------------------------------------------------------------
+void vtkSlicerSlicesControlGUI::FitSlicesToBackground ( )
+{
+
+  vtkSlicerApplication *app;
+  vtkSlicerSliceGUI *sgui;
+  vtkSlicerSlicesGUI *ssgui;
+    
+  // find the sliceGUI for this controller
+  if ( this->GetApplication() )
+    {
+    app = vtkSlicerApplication::SafeDownCast (this->GetApplication());
+    ssgui = vtkSlicerSlicesGUI::SafeDownCast ( app->GetModuleGUIByName ("Slices") );
+    if ( ssgui != NULL )
+      {
+      // First save all SliceNodes for undo:
+      ssgui->GetSliceGUICollection()->InitTraversal();
+      sgui = vtkSlicerSliceGUI::SafeDownCast ( ssgui->GetSliceGUICollection()->GetNextItemAsObject() );
+      vtkCollection *nodes = vtkCollection::New();
+      while ( sgui != NULL )
+        {
+        nodes->AddItem ( sgui->GetSliceNode ( ) );
+        sgui = vtkSlicerSliceGUI::SafeDownCast ( ssgui->GetSliceGUICollection()->GetNextItemAsObject() );
+        }
+      this->MRMLScene->SaveStateForUndo ( nodes );
+      nodes->Delete ( );
+
+      // Now fit all Slices to background
+      ssgui->GetSliceGUICollection()->InitTraversal();
+      sgui = vtkSlicerSliceGUI::SafeDownCast ( ssgui->GetSliceGUICollection()->GetNextItemAsObject() );
+      while ( sgui != NULL )
+        {
+        int w = sgui->GetSliceViewer()->GetRenderWidget ( )->GetWidth();
+        int h = sgui->GetSliceViewer()->GetRenderWidget ( )->GetHeight();
+        sgui->GetLogic()->FitSliceToBackground ( w, h );
+        sgui->GetSliceNode()->UpdateMatrices( );
+        sgui = vtkSlicerSliceGUI::SafeDownCast ( ssgui->GetSliceGUICollection()->GetNextItemAsObject() );
+        }
+      }
+    }
+}
+
 
 
 //---------------------------------------------------------------------------
@@ -401,10 +678,6 @@ void vtkSlicerSlicesControlGUI::ProcessMRMLEvents ( vtkObject *caller,
         // update gui to match mrml state
         cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
                                                          p->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
-        // grid button
-//        this->GridButton->GetMenu()->SetItemSelectedState ("Foreground grid", cnode->GetForegroundGrid() );
-//        this->GridButton->GetMenu()->SetItemSelectedState ("Background grid", cnode->GetBackgroundGrid() );
-//        this->GridButton->GetMenu()->SetItemSelectedState ("Label grid", cnode->GetLabelGrid() );
         // annotation button
         // crosshair button
         // units button
@@ -457,24 +730,14 @@ void vtkSlicerSlicesControlGUI::BuildCrossHairMenu ( )
   this->CrossHairButton->GetMenu()->AddRadioButton ("Basic + intersection" );
   this->CrossHairButton->GetMenu()->AddRadioButton ("Basic + hashmarks" );
   this->CrossHairButton->GetMenu()->AddRadioButton ("Basic + hashmarks + intersection" );
-  this->CrossHairButton->GetMenu()->AddCheckButton ("Follow mouse" );
-  this->CrossHairButton->GetMenu()->DeselectItem ( "Follow mouse" );
+  this->CrossHairButton->GetMenu()->AddCheckButton ("Jump slice" );
+  this->CrossHairButton->GetMenu()->DeselectItem ( "Jump slice" );
   this->CrossHairButton->GetMenu()->SelectItem ("No crosshair");
   this->CrossHairButton->GetMenu()->AddSeparator ( );
   this->CrossHairButton->GetMenu()->AddCommand ("close");
 }
 
 
-/*
-//---------------------------------------------------------------------------
-void vtkSlicerSlicesControlGUI::BuildGridMenu ( )
-{
-  this->GridButton->GetMenu()->DeleteAllItems ( );
-  this->GridButton->GetMenu()->AddCheckButton ( "Foreground grid");
-  this->GridButton->GetMenu()->AddCheckButton ( "Background grid");
-  this->GridButton->GetMenu()->AddCheckButton ( "Label grid");
-}
-*/
 
 //---------------------------------------------------------------------------
 void vtkSlicerSlicesControlGUI::BuildVisibilityMenu ( )
@@ -615,14 +878,6 @@ void vtkSlicerSlicesControlGUI::BuildGUI ( vtkKWFrame *appF )
       this->FitToWindowButton->SetImageToIcon ( this->SlicesControlIcons->GetFitToWindowIcon() );
       this->FitToWindowButton->SetBalloonHelpString ( "Fits image data to the window in all Slice Viewers." );
 
-/*
-      this->GridButton->SetParent (appF);
-      this->GridButton->Create ( );
-      this->GridButton->SetBorderWidth ( 0 );
-      this->GridButton->SetImageToIcon ( this->SlicesControlIcons->GetGridIcon() );
-      this->GridButton->IndicatorVisibilityOff ( );
-      this->GridButton->SetBalloonHelpString ( "Toggle grid visiblity in each Slice Layer for all Slice Viewers." );
-*/
       this->AnnotationButton->SetParent (appF);
       this->AnnotationButton->Create ( );
       this->AnnotationButton->SetBorderWidth ( 0 );
@@ -687,7 +942,6 @@ void vtkSlicerSlicesControlGUI::BuildGUI ( vtkKWFrame *appF )
 
       //--- pack everything up from left to right.
       this->Script ( "pack %s -side left -anchor w -padx 2 -pady 3 -expand n", this->FeaturesVisibleButton->GetWidgetName ( ) );
-//      this->Script ( "pack %s -side left -anchor w -padx 2 -pady 3 -expand n", this->GridButton->GetWidgetName ( ) );
       this->Script ( "pack %s -side left -anchor w -padx 2 -pady 3 -expand n", this->FitToWindowButton->GetWidgetName ( ) );
       this->Script ( "pack %s -side left -anchor w -padx 2 -pady 3 -expand n", this->LabelOpacityButton->GetWidgetName ( ) );
       this->Script ( "pack %s -side left -anchor w -padx 2 -pady 3 -expand n", this->AnnotationButton->GetWidgetName ( ) );
@@ -704,7 +958,6 @@ void vtkSlicerSlicesControlGUI::BuildGUI ( vtkKWFrame *appF )
       this->BuildAnnotationMenu ( );
       this->BuildCrossHairMenu ( );
       this->BuildSpacesMenu ( );
-//      this->BuildGridMenu ();
       this->BuildVisibilityMenu ();
       PopUpFrame->Delete ( );
       FgBgFrame->Delete ( );
