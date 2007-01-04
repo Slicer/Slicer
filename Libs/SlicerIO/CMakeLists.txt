@@ -22,8 +22,8 @@ TARGET_LINK_LIBRARIES(scat slicerio ${TCL_LIBRARY})
 
 # This seems to be required for a static build against a static Tcl/Tk
 
-IF(VTK_TCL_TK_STATIC)
+IF(NOT WIN32 AND VTK_TCL_TK_STATIC)
   TARGET_LINK_LIBRARIES(scat m dl)
   TARGET_LINK_LIBRARIES(testSlicerIO m dl)
-ENDIF(VTK_TCL_TK_STATIC)
+ENDIF(NOT WIN32 AND VTK_TCL_TK_STATIC)
 
