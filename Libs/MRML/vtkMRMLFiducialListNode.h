@@ -197,6 +197,7 @@ public:
     Sphere3D,
     Diamond3D,
     GlyphMax = Diamond3D,
+    StarBurst2D,
   };
   //ETX
   // Description:
