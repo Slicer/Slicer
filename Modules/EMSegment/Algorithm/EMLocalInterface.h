@@ -27,7 +27,6 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #define _EMLOCALINTERFACE_H_INCLUDED 1
 
 #include "vtkEMSegment.h"
-#include "EMLocalInterface.h"
 #include "vtkMultiThreader.h"
 
 // Defines the maximum number of threads used throughout this program.

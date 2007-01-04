@@ -17,7 +17,6 @@
   
 #include "vtkEMSegment.h"
 
-// #include "vtkSlicer.h"
 #include "vtkImageEMLocalClass.h"
 #include "EMLocalInterface.h" 
 

@@ -426,8 +426,7 @@ private:
   int E_Step_Threader_Number;
 };
 
-// I have to do this ugly way bc otherwise I get a link error later when I try to load the package 
-#include "EMLocalAlgorithm.cxx"
+#include "EMLocalAlgorithm.txx"
 
 #endif
  

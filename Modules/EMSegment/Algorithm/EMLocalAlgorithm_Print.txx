@@ -22,15 +22,6 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 =========================================================================auto=*/
 
-#ifndef _WIN32
-// ------------------------------------------------------------------
-// This has always to be defined when using vtkLocalDataTimeDef . Do not ask me why
-extern "C" {
-  struct timeval preciseTimeEnd;
-  struct timeval preciseTimeStart;
-}
-#endif
-
 #include "vtkImageWriter.h"
 
 // --------------------------------------------------------------------------------------------------------------------------

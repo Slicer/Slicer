@@ -25,7 +25,6 @@
 #include "vtkImageMultipleInputFilter.h"
 #include "vtkImageData.h"
 #include "vtkOStreamWrapper.h"
-//!!!bcd!!!#include "vtkSlicer.h"
 
 // #ifndef EM_VTK_OLD_SETTINGS
 // #if (VTK_MAJOR_VERSION == 4 && (VTK_MINOR_VERSION >= 3 || (VTK_MINOR_VERSION == 2 && VTK_BUILD_VERSION > 5)))

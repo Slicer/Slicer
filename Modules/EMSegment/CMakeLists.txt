@@ -33,24 +33,21 @@ SET(EMSegment_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/EMLocalInterface.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/EMLocalRegistrationCostFunction.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/EMLocalShapeCostFunction.cxx
-#  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkEMLocalAlgorithm.cxx
-#  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkEMLocalAlgorithm_Initializations.cxx
-#  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkEMLocalAlgorithm_MeanField.cxx
-#  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkEMLocalAlgorithm_Miscellaneous.cxx
-#  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkEMLocalAlgorithm_Print.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkDataDef.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkFileOps.cxx
-#  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkImageEMAtlasClass.cxx
-#  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkImageEMAtlasSegmenter.cxx
-#  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkImageEMAtlasSuperClass.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkImageEMGeneral.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkImageEMGenericClass.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkImageEMLocalClass.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkImageEMLocalGenericClass.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkImageEMLocalSegmenter.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkImageEMLocalSuperClass.cxx
-#  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkImageEMMarkov.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkSimonParameterReaderWriter.cxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkTimeDef.cxx
+# not used in current implementation---used in slicer2 modules
+#  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkImageEMAtlasClass.cxx
+#  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkImageEMAtlasSegmenter.cxx
+#  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkImageEMAtlasSuperClass.cxx
+#  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkImageEMMarkov.cxx
   )
 
 SET_SOURCE_FILES_PROPERTIES(
