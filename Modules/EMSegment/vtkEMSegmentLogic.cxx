@@ -25,6 +25,7 @@
 #include "vtkMatrix4x4.h"
 #include "vtkMath.h"
 
+// needed to translate between enums
 #include "EMLocalInterface.h"
 
 #include <math.h>
