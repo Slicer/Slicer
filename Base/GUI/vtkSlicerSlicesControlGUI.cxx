@@ -694,7 +694,7 @@ void vtkSlicerSlicesControlGUI::BuildGUI ( vtkKWFrame *appF )
       this->Script ( "pack %s -side left -anchor w -padx 2 -pady 3 -expand n", this->CrossHairButton->GetWidgetName ( ) );
       this->Script ( "pack %s -side left -anchor w -padx 2 -pady 3 -expand n", this->SpatialUnitsButton->GetWidgetName ( ) );
 
-      this->Script ( "pack %s -side left -ipadx 35 -pady 1 -fill x -expand n", FgBgFrame->GetWidgetName ( ) );
+      this->Script ( "pack %s -side left -ipadx 22 -pady 1 -fill x -expand n", FgBgFrame->GetWidgetName ( ) );
       this->Script ( "pack %s -side right -anchor e -padx 0 -pady 3 -expand n", this->ShowFgButton->GetWidgetName ( ) );
       this->Script ( "pack %s -side right -anchor e -padx 0 -pady 3 -expand n", this->SliceFadeScale->GetWidgetName ( ) );
       this->Script ( "pack %s -side right -anchor e -padx 0 -pady 3 -expand n", this->ShowBgButton->GetWidgetName ( ) );
