@@ -20,6 +20,7 @@ LINK_DIRECTORIES(${ModuleDescriptionParser_LIB_DIR})
 ADD_EXECUTABLE ( GenerateCLP ${GENERATECLP_SOURCE})
 TARGET_LINK_LIBRARIES ( GenerateCLP
   ModuleDescriptionParser
+  itksys
   ITKEXPAT)
 
 SUBDIRS(Testing)

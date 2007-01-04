@@ -392,8 +392,6 @@ int main( int argc, char * argv[] )
       case itk::ImageIOBase::LONG:
       case itk::ImageIOBase::UINT:
       case itk::ImageIOBase::INT:
-        return DoIt( argc, argv, static_cast<int>(0));
-        break;
       case itk::ImageIOBase::DOUBLE:
       case itk::ImageIOBase::FLOAT:
         return DoIt( argc, argv, static_cast<float>(0));

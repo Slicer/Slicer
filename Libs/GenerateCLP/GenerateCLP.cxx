@@ -56,6 +56,7 @@
 #include "expat.h"
 #include <string>
 #include <vector>
+#include <itksys/SystemTools.hxx>
 
 #include "GenerateCLP.h"
 #include "ModuleDescriptionParser.h"
@@ -138,7 +139,9 @@ void GeneratePost(std::ofstream &, ModuleDescription &);
 /* Generate the code that echos the XML file that describes the
  * command line arguments.
  */
-void GenerateGetXML(std::ofstream &, ModuleDescription &, std::string);
+void GeneratePluginEntryPoints(std::ofstream &, ModuleDescription &, std::vector<std::string> &, std::string);
+void GeneratePluginProcedures(std::ofstream &, ModuleDescription &, std::vector<std::string> &, std::string);
+void GenerateLOGO(std::ofstream &, ModuleDescription &, std::vector<std::string> &, std::string);
 void GenerateXML(std::ofstream &, ModuleDescription &, std::string);
 
 /* Generate the code that uses TCLAP to parse the command line
@@ -156,8 +159,7 @@ void GenerateProcessInformationAddressDecoding(std::ofstream &sout, ModuleDescri
 int
 main(int argc, char *argv[])
 {
-#include "GenerateCLP.clp"
-
+  PARSE_ARGS;
   ModuleDescription module;
   ModuleDescriptionParser parser;
 
@@ -179,7 +181,13 @@ main(int argc, char *argv[])
   XML[len] = '\0';
 
   // Parse the module description
-  std::cerr << "GenerateCLP " << argv[1] << " " << argv[2] << std::endl;
+  std::cerr << "GenerateCLP";
+  for (int i = 1; i < argc; i++)
+    {
+    std::cerr << " " << argv[i];
+    }
+  std::cerr << std::endl;
+
   if (parser.Parse(XML, module))
     {
     std::cerr << "GenerateCLP: One or more errors detected. Code generation aborted." << std::endl;
@@ -199,7 +207,14 @@ main(int argc, char *argv[])
   // Do the hard stuff
   std::ofstream sout(OutputCxx.c_str(),std::ios::out);
   GeneratePre(sout, module, argc, argv);
-  GenerateGetXML(sout, module, InputXML);
+  if (logoFiles.size() > 0 && !itksys::SystemTools::FileExists(logoFiles[0].c_str()))
+    {
+    std::cerr << argv[0] << ": Cannot open " << logoFiles[0] << " as a logo file" << std::endl;
+    return EXIT_FAILURE;
+    }
+  GeneratePluginEntryPoints(sout, module, logoFiles, InputXML);
+  GeneratePluginProcedures(sout, module, logoFiles, InputXML);
+  GenerateLOGO(sout, module, logoFiles, InputXML);
   GenerateXML(sout, module, InputXML);
   GenerateTCLAP(sout, module);
   GenerateEchoArgs(sout, module);
@@ -248,12 +263,13 @@ void GeneratePre(std::ofstream &sout, ModuleDescription &module, int argc, char 
 
 }
 
-void GenerateGetXML(std::ofstream &sout, ModuleDescription &module, std::string XMLFile)
+void GeneratePluginEntryPoints(std::ofstream &sout, ModuleDescription &module, std::vector<std::string> &logos, std::string XMLFile)
 {
-  char linec[2048];
-  std::ifstream fin(XMLFile.c_str(),std::ios::in);
-
   sout << std::endl;
+  if (logos.size() == 1)
+    {
+    sout << "#include \"" << logos[0] << "\"" << std::endl;
+    }
   sout << "#ifdef main" << std::endl;
   sout << "#ifdef WIN32" << std::endl;
   sout << "#define Slicer_EXPORT __declspec(dllexport)" << std::endl;
@@ -265,9 +281,39 @@ void GenerateGetXML(std::ofstream &sout, ModuleDescription &module, std::string 
   sout << "extern \"C\" {" << std::endl;
   sout << "  Slicer_EXPORT char *GetXMLModuleDescription();" << std::endl;
   sout << "  Slicer_EXPORT int SlicerModuleEntryPoint(int, char*[]);" << std::endl;
+  if (logos.size() == 1)
+    {
+    sout << "  Slicer_EXPORT unsigned char *GetModuleLogo(int *width, int *height, int *pixel_size, unsigned long *bufferLength, int *options);" << std::endl;
+    }
   sout << "}" << std::endl;
   sout << "#endif" << std::endl;
   sout << std::endl;
+}
+
+void GeneratePluginProcedures(std::ofstream &sout, ModuleDescription &module, std::vector<std::string> &logos, std::string XMLFile)
+{
+  if (logos.size() == 1)
+    {
+    std::string logo = logos[0];
+    std::string fileName = itksys::SystemTools::GetFilenameWithoutExtension (logo);
+    sout << "unsigned char *GetModuleLogo(int *width," << std::endl;
+    sout << "                             int *height," << std::endl;
+    sout << "                             int *pixel_size," << std::endl;
+    sout << "                             unsigned long *length," << std::endl;
+    sout << "                             int *options)" << std::endl;
+    sout << "{" << std::endl;
+
+    sout << "  *width = image_" << fileName << "_width;" << std::endl;
+    sout << "  *height = image_" << fileName << "_height;" << std::endl;
+    sout << "  *pixel_size = image_" << fileName << "_pixel_size;" << std::endl;
+    sout << "  *length = image_" << fileName << "_length;" << std::endl;
+    sout << "  *options = 0;" << std::endl;
+    sout << "  return const_cast<unsigned char *>(image_" << fileName << ");" << std::endl;
+    sout << "}" << std::endl;
+    }
+
+  char linec[2048];
+  std::ifstream fin(XMLFile.c_str(),std::ios::in);
 
   sout << "char *GetXMLModuleDescription()" << std::endl;
   sout << "  {" << std::endl;
@@ -299,6 +345,35 @@ void GenerateGetXML(std::ofstream &sout, ModuleDescription &module, std::string 
   sout << "  }" << std::endl;
 
   fin.close();
+}
+
+void GenerateLOGO(std::ofstream &sout, ModuleDescription &module, std::vector<std::string> &logos, std::string XMLFile)
+{
+  if (logos.size() > 0)
+    {
+    std::string EOL(" \\");
+
+    sout << "#define GENERATE_LOGO \\" << std::endl;
+    // Generate special section to produce logo description
+    sout << "  if (argc >= 2 && (strcmp(argv[1],\"--logo\") == 0))" << EOL << std::endl;
+    sout << "    {" << EOL << std::endl;
+    sout << "    int width, height, pixel_size, options;    " << EOL << std::endl;
+    sout << "    unsigned long length; " << EOL << std::endl;
+    sout << "    unsigned char *logo = GetModuleLogo(&width, &height, &pixel_size, &length, &options); " << EOL << std::endl;
+    sout << "    std::cout << \"LOGO\" << std::endl; " << EOL << std::endl;
+    sout << "    std::cout << width << std::endl; " << EOL << std::endl;
+    sout << "    std::cout << height << std::endl; " << EOL << std::endl;
+    sout << "    std::cout << pixel_size << std::endl; " << EOL << std::endl;
+    sout << "    std::cout << length << std::endl; " << EOL << std::endl;
+    sout << "    std::cout << options << std::endl; " << EOL << std::endl;
+    sout << "    std::cout << logo << std::endl; " << EOL << std::endl;
+    sout << "    return EXIT_SUCCESS; " << EOL << std::endl;
+    sout << "    }" << std::endl;
+    }
+  else
+    {
+    sout << "#define GENERATE_LOGO" << std::endl;
+    }
 }
 
 void GenerateXML(std::ofstream &sout, ModuleDescription &module, std::string XMLFile)
@@ -870,7 +945,7 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
 
 void GeneratePost(std::ofstream &sout, ModuleDescription &module)
 {
-  sout << "#define PARSE_ARGS GENERATE_XML;GENERATE_TCLAP;GENERATE_ECHOARGS;GENERATE_ProcessInformationAddressDecoding;" << std::endl;
+  sout << "#define PARSE_ARGS GENERATE_LOGO;GENERATE_XML;GENERATE_TCLAP;GENERATE_ECHOARGS;GENERATE_ProcessInformationAddressDecoding;" << std::endl;
 }
 
 void GenerateProcessInformationAddressDecoding(std::ofstream &sout, ModuleDescription &module)

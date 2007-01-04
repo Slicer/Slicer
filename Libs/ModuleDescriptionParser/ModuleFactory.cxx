@@ -125,7 +125,7 @@ NameIsExecutable(const char* name)
  */
 typedef char * (*XMLModuleDescriptionFunction)();
 typedef int (*ModuleEntryPoint)(int argc, char* argv[]);
-
+typedef unsigned char * (*ModuleLogoFunction)(int &width, int &height, int &pixel_size, unsigned long &bufferLength, int &options);
 
 
 // Private implementaton of an std::map
