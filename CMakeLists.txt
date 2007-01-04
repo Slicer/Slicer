@@ -5,7 +5,7 @@ MARK_AS_ADVANCED(CMAKE_BACKWARDS_COMPATIBILITY)
 #-----------------------------------------------------------------------------
 # Slicer version number.
 SET(Slicer3_VERSION_MAJOR "3")
-SET(Slicer3_VERSION_MINOR "0.alpha")
+SET(Slicer3_VERSION_MINOR "0")
 IF(NOT Slicer3_VERSION_PATCH)
   SET(Slicer3_VERSION_PATCH "0")
 ENDIF(NOT Slicer3_VERSION_PATCH)
