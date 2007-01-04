@@ -21,6 +21,7 @@ SET(SlicerBaseLogic_SRCS
   vtkImageAccumulateDiscrete.cxx
   vtkImageBimodalAnalysis.cxx
   vtkImageFillROI.cxx
+  vtkSlicerGlyphSource2D.cxx
 )
 
 # Abstract/pure virtual classes
