@@ -158,7 +158,8 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
     };
   enum
     {
-      FollowMouse = 0
+      Normal = 0,
+      JumpSlice
     };
   //ETX
 

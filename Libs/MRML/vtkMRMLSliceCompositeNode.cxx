@@ -67,7 +67,7 @@ vtkMRMLSliceCompositeNode::vtkMRMLSliceCompositeNode()
   this->AnnotationSpace = vtkMRMLSliceCompositeNode::RAS;
   this->AnnotationMode = vtkMRMLSliceCompositeNode::All;
   this->CrosshairMode = vtkMRMLSliceCompositeNode::NoCrosshair;
-  this->CrosshairBehavior = vtkMRMLSliceCompositeNode::FollowMouse;
+  this->CrosshairBehavior = vtkMRMLSliceCompositeNode::Normal;
 
 }
 
@@ -150,11 +150,14 @@ void vtkMRMLSliceCompositeNode::WriteXML(ostream& of, int nIndent)
     of << indent << "crosshairMode=\"" << "ShowAll" << "\" ";
     }
   
-  if ( this->CrosshairBehavior == vtkMRMLSliceCompositeNode::FollowMouse )
+  if ( this->CrosshairBehavior == vtkMRMLSliceCompositeNode::JumpSlice )
     {
-    of << indent << "crosshairBehavior=\"" << "FollowMouse" << "\" ";
+    of << indent << "crosshairBehavior=\"" << "JumpSlice" << "\" ";
     }
-
+  else if ( this->CrosshairBehavior == vtkMRMLSliceCompositeNode::Normal )
+    {
+    of << indent << "crosshairBehavior=\"" << "Normal" << "\" ";
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -318,9 +321,16 @@ void vtkMRMLSliceCompositeNode::ReadXMLAttributes(const char** atts)
       }
     else if (!strcmp (attName, "crosshairBehavior" ))
       {
-      if ( !strcmp (attName, "FollowMouse"))
+      if ( !strcmp (attName, "JumpSlice"))
         {
-        this->SetCrosshairBehavior ( vtkMRMLSliceCompositeNode::FollowMouse);
+        this->SetCrosshairBehavior ( vtkMRMLSliceCompositeNode::JumpSlice);
+        }
+      }
+    else if (!strcmp (attName, "crosshairBehavior" ))
+      {
+      if ( !strcmp (attName, "Normal"))
+        {
+        this->SetCrosshairBehavior ( vtkMRMLSliceCompositeNode::Normal);
         }
       }
     }
