@@ -223,7 +223,7 @@ void vtkQueryAtlasGUI::BuildGUI ( )
 {
     vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
   // Define your help text here.
-  const char *help = "**Query Atlas:** allows interactive Google, Wikipedia, queries from within the 3D anatomical display.";
+
 
     // ---
     // MODULE GUI FRAME 
@@ -233,31 +233,11 @@ void vtkQueryAtlasGUI::BuildGUI ( )
     // create a page
     this->UIPanel->AddPage ( "QueryAtlas", "QueryAtlas", NULL );
 
+    const char *help = "The Query Atlas module allows interactive Google, Wikipedia, queries from within the 3D anatomical display.";
+    const char *about = "This work was supported by BIRN, NA-MIC, NAC, NCIGT, and the Slicer Community. See http://www.slicer.org for details. ";
     vtkKWWidget *page = this->UIPanel->GetPageWidget ( "QueryAtlas" );
+    this->BuildHelpAndAboutFrame ( page, help, about );
     
-    // HELP FRAME
-    vtkSlicerModuleCollapsibleFrame *modHelpFrame = vtkSlicerModuleCollapsibleFrame::New ( );
-    modHelpFrame->SetParent (page );
-    modHelpFrame->Create ( );
-    modHelpFrame->CollapseFrame ( );
-    modHelpFrame->SetLabelText ("Help");
-    app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                  modHelpFrame->GetWidgetName(), this->UIPanel->GetPageWidget("QueryAtlas")->GetWidgetName());
-
-    // configure the parent classes help text widget
-    this->HelpText->SetParent ( modHelpFrame->GetFrame() );
-    this->HelpText->Create ( );
-    this->HelpText->SetHorizontalScrollbarVisibility ( 0 );
-    this->HelpText->SetVerticalScrollbarVisibility ( 1 );
-    this->HelpText->GetWidget()->SetText ( help );
-    this->HelpText->GetWidget()->SetReliefToFlat ( );
-    this->HelpText->GetWidget()->SetWrapToWord ( );
-    this->HelpText->GetWidget()->ReadOnlyOn ( );
-    this->HelpText->GetWidget()->QuickFormattingOn ( );
-    this->HelpText->GetWidget()->SetBalloonHelpString ( "" );
-    app->Script ( "pack %s -side top -fill x -expand y -anchor w -padx 2 -pady 4",
-                  this->HelpText->GetWidgetName ( ) );
-
     // ---
     // LOAD FRAME            
     vtkSlicerModuleCollapsibleFrame *loadFrame = vtkSlicerModuleCollapsibleFrame::New ( );
@@ -414,7 +394,6 @@ void vtkQueryAtlasGUI::BuildGUI ( )
     displayFrame->Delete ( );
     queryFrame->Delete ( );
     loadFrame->Delete ( );
-    modHelpFrame->Delete ( );
 }
 
 
