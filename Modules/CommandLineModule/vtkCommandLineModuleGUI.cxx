@@ -763,34 +763,12 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
 
   this->UIPanel->AddPage ( title.c_str(), title.c_str(), NULL );
 
-  // HELP FRAME
-  vtkSlicerModuleCollapsibleFrame *helpFrame = vtkSlicerModuleCollapsibleFrame::New ( );
-  helpFrame->SetParent ( this->UIPanel->GetPageWidget ( title.c_str() ) );
-  helpFrame->Create ( );
-  // helpFrame->CollapseFrame ( );
-  helpFrame->SetLabelText ("Help");
-  helpFrame->CollapseFrame ( );
+  // Build the Help and About frame
+  this->BuildHelpAndAboutFrame(this->UIPanel->GetPageWidget ( title.c_str() ),
+                       this->ModuleDescriptionObject.GetDescription().c_str(),
+                       this->ModuleDescriptionObject.GetContributor().c_str());
 
-  vtkKWTextWithScrollbars *helpMessage = vtkKWTextWithScrollbars::New();
-  helpMessage->SetParent( helpFrame->GetFrame() );
-  helpMessage->Create();
-  helpMessage->HorizontalScrollbarVisibilityOff();
-  helpMessage->GetWidget()->ReadOnlyOn();
-  helpMessage->GetWidget()->SetReliefToFlat();
-  helpMessage->GetWidget()->SetText(this->ModuleDescriptionObject.GetDescription().c_str());
-
-  app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
-                helpMessage->GetWidgetName());
-  app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                helpFrame->GetWidgetName(), this->UIPanel->GetPageWidget(title.c_str())->GetWidgetName());
-
-  // Store the pointers to the widget in a map of SmartPointers so
-  // they can be deleted then the GUI is deleted
-  (*this->InternalWidgetMap)["HelpFrame"] = helpFrame;
-  (*this->InternalWidgetMap)["HelpText"] = helpMessage;
-  helpMessage->Delete();
-  helpFrame->Delete();
-  
+  // Make a frame for the module parameters
   vtkSlicerModuleCollapsibleFrame *moduleFrame = vtkSlicerModuleCollapsibleFrame::New ( );
   moduleFrame->SetParent ( this->UIPanel->GetPageWidget ( title.c_str() ) );
   moduleFrame->Create ( );
