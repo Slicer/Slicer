@@ -194,10 +194,10 @@ public:
     Arrow2D,
     ThickArrow2D,
     HookedArrow2D,
+    StarBurst2D,
     Sphere3D,
     Diamond3D,
     GlyphMax = Diamond3D,
-    StarBurst2D,
   };
   //ETX
   // Description:
@@ -214,9 +214,7 @@ public:
   const char* GetGlyphTypeAsString();
   const char* GetGlyphTypeAsString(int g);
   void SetGlyphTypeFromString(const char *glyphString);
-  // Description:
-  // if it's a 2d glyph, return the vtk type
-  int GetGlyphTypeAsVTKEnum();
+
 protected:
   vtkMRMLFiducialListNode();
   ~vtkMRMLFiducialListNode();

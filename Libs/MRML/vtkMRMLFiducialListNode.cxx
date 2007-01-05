@@ -20,7 +20,6 @@ Version:   $Revision: 1.3 $
 
 #include "vtkMRMLFiducialListNode.h"
 #include "vtkMRMLScene.h"
-#include "vtkGlyphSource2D.h"
 
 //------------------------------------------------------------------------------
 vtkMRMLFiducialListNode* vtkMRMLFiducialListNode::New()
@@ -71,7 +70,8 @@ vtkMRMLFiducialListNode::vtkMRMLFiducialListNode()
   this->Specular = 0;
   this->Power = 1;
 
-  this->GlyphType = this->Diamond3D;
+  //this->GlyphType = this->Diamond3D;
+  this->GlyphType = this->StarBurst2D;
   
 //  this->DebugOn();
 }
@@ -304,32 +304,6 @@ void vtkMRMLFiducialListNode::Copy(vtkMRMLNode *anode)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLFiducialListNode::GetGlyphTypeAsVTKEnum()
-{
-  if (!GlyphTypeIs3D())
-    {
-    vtkDebugMacro("GetGlyphTypeAsVTKEnum: glyph type = " << this->GlyphType << ", vertex 2d = " << this->Vertex2D << ", vtk vertex glyph = " << VTK_VERTEX_GLYPH );
-    return this->GlyphType - this->Vertex2D + VTK_VERTEX_GLYPH;
-    if (this->GlyphType == this->Dash2D) return VTK_DASH_GLYPH;
-    if (this->GlyphType == this->Cross2D) return VTK_CROSS_GLYPH;
-    if (this->GlyphType == this->ThickCross2D) return VTK_THICKCROSS_GLYPH;
-    if (this->GlyphType == this->Triangle2D) return VTK_TRIANGLE_GLYPH;
-    if (this->GlyphType == this->Square2D) return VTK_SQUARE_GLYPH;
-    if (this->GlyphType == this->Circle2D) return VTK_CIRCLE_GLYPH;
-    if (this->GlyphType == this->Diamond2D) return VTK_DIAMOND_GLYPH;
-    if (this->GlyphType == this->Arrow2D) return VTK_ARROW_GLYPH;
-    if (this->GlyphType == this->ThickArrow2D) return VTK_THICKARROW_GLYPH;
-    if (this->GlyphType == this->HookedArrow2D) return VTK_HOOKEDARROW_GLYPH;
-    return VTK_NO_GLYPH;
-    }
-  else
-    {
-    std::cerr << "vtkMRMLFiducialListNode::GetGlyphTypeAsVTKEnum: current type " << this->GlyphType << " is not a 2D Glyph type, returning 0\n";
-    return VTK_NO_GLYPH;
-    }
-}
-
-//----------------------------------------------------------------------------
 const char* vtkMRMLFiducialListNode::GetGlyphTypeAsString()
 {
   return this->GetGlyphTypeAsString(this->GlyphType);
@@ -381,6 +355,10 @@ const char* vtkMRMLFiducialListNode::GetGlyphTypeAsString(int glyphType)
   if (glyphType == this->HookedArrow2D)
     {
     return "HookedArrow2D";
+    }
+  if (glyphType == this->StarBurst2D)
+    {
+    return "StarBurst2D";
     }
   if (glyphType == this->Sphere3D)
     {
@@ -441,6 +419,10 @@ else if (!strcmp(glyphString, "ThickCross2D"))
   else if (!strcmp(glyphString, "HookedArrow2D"))
     {
     this->SetGlyphType(this->HookedArrow2D);
+    }
+  else if (!strcmp(glyphString, "StarBurst2D"))
+    {
+    this->SetGlyphType(this->StarBurst2D);
     }
   else if (!strcmp(glyphString, "Sphere3D"))
     {
