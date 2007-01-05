@@ -3,12 +3,15 @@
 
 #include "vtkObject.h"
 #include "vtkKWObject.h"
-#include "vtkSlicerBaseGUIWin32Header.h"
 #include "vtkKWUserInterfacePanel.h"
-#include "vtkSlicerApplicationGUI.h"
-#include "vtkSlicerComponentGUI.h"
+#include "vtkKWWidget.h"
 #include "vtkKWText.h"
 #include "vtkKWTextWithScrollbars.h"
+
+#include "vtkSlicerBaseGUIWin32Header.h"
+#include "vtkSlicerModuleCollapsibleFrame.h"
+#include "vtkSlicerApplicationGUI.h"
+#include "vtkSlicerComponentGUI.h"
 
 
 // Description:
@@ -32,6 +35,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleGUI : public vtkSlicerComponentG
     // Description:
     // Get the help text widget.
     vtkGetObjectMacro (HelpText, vtkKWTextWithScrollbars );
+    vtkGetObjectMacro (HelpFrame, vtkSlicerModuleCollapsibleFrame );
 
   // Description:
   // Get/Set Macro for ApplicationGUI: allow Modules to access
@@ -44,9 +48,15 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleGUI : public vtkSlicerComponentG
   // grouping modules together into menus.
   virtual const char *GetCategory() const {return "None";}
   
-
-        // Description:
-    // propagate events generated in logic layer to GUI
+  // Description:
+  // Configures a module's help frame, with acknowledgment
+  // in a consistent manner
+  virtual void BuildHelpAndAboutFrame ( vtkKWWidget *parent,
+                                        const char *help,
+                                        const char *about);
+  
+  // Description:
+  // propagate events generated in logic layer to GUI
     virtual void ProcessLogicEvents ( vtkObject * /*caller*/,
       unsigned long /*event*/, void * /*callData*/ ) { };
     // Description:
@@ -72,9 +82,12 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleGUI : public vtkSlicerComponentG
     // is selected for use.
     vtkKWUserInterfacePanel *UIPanel;
     // Description:
-    // Every module gui has a text widget that contains basic
+    // Every module gui has a text widget packed inside it's
+    // GUI panel in a collapsible frame that contains basic
     // information about the module's contents and how to use it.
+    // The collapsible frame also contains acknowledgement.
     vtkKWTextWithScrollbars *HelpText;
+    vtkSlicerModuleCollapsibleFrame *HelpFrame;
     
     // constructor, destructor.
     vtkSlicerModuleGUI ( );
