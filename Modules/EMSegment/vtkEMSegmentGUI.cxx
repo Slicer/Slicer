@@ -26,6 +26,9 @@
 #include "vtkEMSegmentRegistrationParametersStep.h"
 #include "vtkEMSegmentRunSegmentationStep.h"
 
+#include "CSAILLogo.h"
+#include "vtkKWIcon.h"
+
 vtkCxxSetObjectMacro(vtkEMSegmentGUI,Node,vtkMRMLEMSNode);
 vtkCxxSetObjectMacro(vtkEMSegmentGUI,Logic,vtkEMSegmentLogic);
 
@@ -60,6 +63,14 @@ vtkEMSegmentGUI::vtkEMSegmentGUI()
   this->NodeParametersStep         = NULL;
   this->RegistrationParametersStep = NULL;
   this->RunSegmentationStep        = NULL;
+
+  vtkKWIcon* logo = vtkKWIcon::New();
+  logo->SetImage(image_CSAILLogo,
+                 image_CSAILLogo_width, image_CSAILLogo_height,
+                 image_CSAILLogo_pixel_size, image_CSAILLogo_length,
+                 0);
+  this->Logo = logo;
+  logo->Delete();
 }
 
 //----------------------------------------------------------------------------
