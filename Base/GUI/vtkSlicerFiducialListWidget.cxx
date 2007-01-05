@@ -148,6 +148,10 @@ vtkSlicerFiducialListWidget::~vtkSlicerFiducialListWidget ( )
     {
     if (actorIter->second != NULL)
       {
+      if (vtkFollower::SafeDownCast(actorIter->second))
+        {
+        vtkFollower::SafeDownCast(actorIter->second)->SetCamera(NULL);
+        }
       actorIter->second->Delete();
       }
     }
@@ -160,6 +164,7 @@ vtkSlicerFiducialListWidget::~vtkSlicerFiducialListWidget ( )
     {
     if (fIter->second != NULL)
       {
+      fIter->second->SetCamera(NULL);
       fIter->second->Delete();
       }
     }
@@ -284,7 +289,7 @@ void vtkSlicerFiducialListWidget::PrintSelf ( ostream& os, vtkIndent indent )
     this->vtkObject::PrintSelf ( os, indent );
 
     os << indent << "vtkSlicerFiducialListWidget: " << this->GetClassName ( ) << "\n";
-
+    
     vtkIndent nextIndent;
     nextIndent = indent.GetNextIndent();
     if (this->GetMainViewer() != NULL)
@@ -303,7 +308,7 @@ void vtkSlicerFiducialListWidget::PrintSelf ( ostream& os, vtkIndent indent )
         }
       else
         {
-        os << indent << "vtkActor is null\n";
+        os << indent << "Symbol vtkActor is null\n";
         }
       }
 
@@ -311,13 +316,13 @@ void vtkSlicerFiducialListWidget::PrintSelf ( ostream& os, vtkIndent indent )
     for(titer=this->DisplayedTextFiducials.begin(); titer != this->DisplayedTextFiducials.end(); titer++) 
       {
       os << indent << "Text Actor " << titer->first << "\n";
-      if (iter->second != NULL)
+      if (titer->second != NULL)
         {
         titer->second->PrintSelf(os, nextIndent);
-           }
+        }
       else
         {
-        os << indent << "vtkActor is null\n";
+        os << indent << "Text vtkActor is null\n";
         }
       }
 
@@ -512,6 +517,7 @@ void vtkSlicerFiducialListWidget::ProcessMRMLEvents ( vtkObject *caller,
 
   // if it's a general fid display or point modified event, or it's a modified
   // event on a fid list, update
+  
   if (event == vtkMRMLFiducialListNode::DisplayModifiedEvent ||
       event == vtkMRMLFiducialListNode::FiducialModifiedEvent ||
       (vtkMRMLScene::SafeDownCast(caller) != NULL && event == vtkCommand::ModifiedEvent) ||
@@ -913,8 +919,8 @@ void vtkSlicerFiducialListWidget::UpdateFiducialsFromMRML()
 
       this->GlyphScalarsMap[flist->GetID()]->SetNumberOfTuples(flist->GetNumberOfFiducials());
 
-      vtkActor * actor = NULL;
-      actor = GetFiducialActorByID(flist->GetID());
+      vtkFollower * actor = NULL;
+      actor = vtkFollower::SafeDownCast(GetFiducialActorByID(flist->GetID()));
       if (actor != NULL)
         {
         actorExists = 1;
@@ -935,7 +941,14 @@ void vtkSlicerFiducialListWidget::UpdateFiducialsFromMRML()
         else
           {
           // no actor, allocate vars and set up the pipeline
-          actor = vtkActor::New ( );
+          actor = vtkFollower::New();
+          if (!flist->GlyphTypeIs3D())
+            {
+            // if 2d glyphs, always set the camera so it's a follower
+            // if it's a 3d glyph, it's not a follower, and not setting the
+            // camera will be enough to make it act like a regular actor
+            actor->SetCamera(this->MainViewer->GetRenderer()->GetActiveCamera());
+            }          
           actor->SetMapper ( this->GlyphMapperMap[flist->GetID()] );
           this->MainViewer->AddViewProp ( actor );
           }                        
@@ -999,15 +1012,14 @@ void vtkSlicerFiducialListWidget::UpdateFiducialsFromMRML()
       // have 2d glyphs, use one actor for each point in the list
       for (int f=0; f<flist->GetNumberOfFiducials(); f++)
         {
-        
-        vtkActor * actor = NULL;
-        // for the 2d case, there's an actor for each fiducial point
-        actor = GetFiducialActorByID(flist->GetNthFiducialID(f));
+        vtkFollower * actor = NULL;
+        actor = vtkFollower::SafeDownCast(GetFiducialActorByID(flist->GetNthFiducialID(f)));
+
         if (actor != NULL)
           {
           actorExists = 1;
           }
-
+        
         vtkPolyDataMapper *mapper = NULL;
         vtkSlicerGlyphSource2D *glyph2d = vtkSlicerGlyphSource2D::New();
         if (actorExists)
@@ -1020,7 +1032,13 @@ void vtkSlicerFiducialListWidget::UpdateFiducialsFromMRML()
           // no actor, allocate vars and set up the pipeline
           mapper = vtkPolyDataMapper::New ();
           mapper->SetInput ( glyph2d->GetOutput() );
-          actor = vtkActor::New ( );
+          actor = vtkFollower::New ( );
+          if (!flist->GlyphTypeIs3D())
+            {
+            // if it's not supposed to be a follower, not setting the camera
+            // will make it a regular actor
+            actor->SetCamera(this->MainViewer->GetRenderer()->GetActiveCamera());
+            }
           actor->SetMapper ( mapper );
           this->MainViewer->AddViewProp ( actor );
           }
@@ -1054,6 +1072,8 @@ void vtkSlicerFiducialListWidget::UpdateFiducialsFromMRML()
           }
         } // end of for each fid point on list
       } // end of 2d symbols
+    // let go of the pointer
+    flist = NULL;
     } // end of while loop for each vtkMRMLFiducialListNode
     
   // Render
@@ -1139,11 +1159,10 @@ void vtkSlicerFiducialListWidget::RemoveFiducialProps()
     if (iter->second != NULL)
       {
       this->MainViewer->RemoveViewProp(iter->second);
-      // iter->second is an actor that has a mapper 
-      if (iter->second->GetMapper() != NULL)
+      // if the camera is set, let go of it
+      if (vtkFollower::SafeDownCast(iter->second))
         {
-        // don't delete the mapper, it's saved in the map
-        //iter->second->GetMapper()->Delete();
+        vtkFollower::SafeDownCast(iter->second)->SetCamera(NULL);
         }
       iter->second->Delete();
       }
@@ -1157,6 +1176,7 @@ void vtkSlicerFiducialListWidget::RemoveFiducialProps()
     if (titer->second != NULL)
       {
       this->MainViewer->RemoveViewProp(titer->second);
+      titer->second->SetCamera(NULL);
       titer->second->Delete();
       }
     }
@@ -1196,6 +1216,7 @@ void vtkSlicerFiducialListWidget::RemoveFiducialObservers()
           flist->RemoveObservers ( vtkMRMLFiducialListNode::FiducialModifiedEvent, this->MRMLCallbackCommand );
           }
     }
+    flist = NULL;
 }
 
 //---------------------------------------------------------------------------
@@ -1308,9 +1329,9 @@ vtkSlicerFiducialListWidget::GetFiducialNodeID (const char *actorid, int &index)
 //---------------------------------------------------------------------------
 vtkActor *
 vtkSlicerFiducialListWidget::GetFiducialActorByID (const char *id)
-{
+{  
   vtkDebugMacro("vtkSlicerFiducialListWidget::GetFiducialActorByID: id = " << id);
-  if ( !id )
+  if ( !id )      
     {
     return (NULL);
     }
