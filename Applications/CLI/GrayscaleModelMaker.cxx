@@ -39,6 +39,8 @@ Version:   $Revision$
 
 int main(int argc, char * argv[])
 {
+    PARSE_ARGS;
+    
     ModuleDescription module;
     ModuleDescriptionParser parser;
     if (parser.Parse(GetXMLModuleDescription(), module))
@@ -55,8 +57,6 @@ int main(int argc, char * argv[])
     std::cout << "\tLicense is: " << module.GetLicense() << std::endl;
     std::cout << "\tContributor is: " << module.GetContributor() << std::endl;
 
-    PARSE_ARGS;
-    
     bool debug = false;
 
     if (debug) 
