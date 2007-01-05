@@ -105,6 +105,10 @@ protected:
   virtual void CreateWidget();
 
   // Description:
+  // Update the properties of the text actor
+  void UpdateTextActor(vtkMRMLFiducialListNode *flist, int f);
+  
+  // Description:
   // Remove fiducial properties from the main viewer
   void RemoveFiducialProps();
 
@@ -130,7 +134,7 @@ protected:
   // Description:
   // clear up all the data structures used to display glyphs for this list
   void RemoveList(vtkMRMLFiducialListNode * flist);
-  void RemoveList(const char *id);
+  void RemoveFiducial(const char *id);
 
   // Description:
   // Keep track of the actors that represent each fiducial point

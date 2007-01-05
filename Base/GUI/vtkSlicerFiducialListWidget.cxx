@@ -27,7 +27,7 @@
 #include "vtkMRMLTransformNode.h"
 #include "vtkMRMLLinearTransformNode.h"
 
-#include "vtkGlyphSource2D.h"
+#include "vtkSlicerGlyphSource2D.h"
 
 #include "vtkMRMLFiducialListNode.h"
 
@@ -114,10 +114,7 @@ vtkSlicerFiducialListWidget::vtkSlicerFiducialListWidget ( )
   this->SphereSource->SetRadius(0.3);
   this->SphereSource->SetPhiResolution(10);
   this->SphereSource->SetThetaResolution(10);
-/*
-  this->DiamondTransform = vtkTransform::New();
-  this->DiamondTransform->PostMultiply();
-*/
+
 //  this->DebugOn();
 
 }
@@ -141,8 +138,9 @@ vtkSlicerFiducialListWidget::~vtkSlicerFiducialListWidget ( )
 
   this->DiamondGlyphPolyData->Delete();
   this->SphereSource->Delete();
+  this->SphereSource = NULL;
 
-  vtkDebugMacro("\tDeleting actors...");
+  vtkDebugMacro("\tDeleting " << this->DisplayedFiducials.size() << " fiducial actors...");
   std::map<const char *, vtkActor *>::iterator actorIter;
   for(actorIter = this->DisplayedFiducials.begin();
       actorIter != this->DisplayedFiducials.end();
@@ -512,36 +510,15 @@ void vtkSlicerFiducialListWidget::ProcessMRMLEvents ( vtkObject *caller,
 
   this->ProcessingMRMLEvent = event;
 
-  vtkDebugMacro("processing event " << event);
-//std::cout <<"ProcessMRML Events: just updating mrml...\n";
-
-  this->UpdateFromMRML();
-  this->ProcessingMRMLEvent = 0;
-  return;
-
-
-
-
-
-  if (event == vtkMRMLScene::NodeAddedEvent ||
-      event == vtkMRMLScene::NodeRemovedEvent)
+  // if it's a general fid display or point modified event, or it's a modified
+  // event on a fid list, update
+  if (event == vtkMRMLFiducialListNode::DisplayModifiedEvent ||
+      event == vtkMRMLFiducialListNode::FiducialModifiedEvent ||
+      (vtkMRMLScene::SafeDownCast(caller) != NULL && event == vtkCommand::ModifiedEvent) ||
+      (vtkMRMLFiducialListNode::SafeDownCast(caller) != NULL && event == vtkCommand::ModifiedEvent))
     {
-    vtkDebugMacro("ProcessMRMLEvents: got a node added or removed event\n");
-    }
-  else if (event == vtkMRMLFiducialListNode::DisplayModifiedEvent)
-    {
-    // do a more lightweight update on the fiducial list nodes
-    vtkDebugMacro("vtkSlicerFiducialListWidget::ProcessMRMLEvents got a vtkMRMLFiducialListNode::DisplayModifiedEvent, just calling update fids from mrml\n");
-    this->UpdateFiducialsFromMRML();
-    }
-  else if (event == vtkMRMLFiducialListNode::FiducialModifiedEvent)
-    {
-    vtkDebugMacro("vtkSlicerFiducialListWidget::ProcessMRMLEvents got a FiducialModifiedEvent, removing props and updating from mrml...\n");
-    this->RemoveFiducialProps ( );
-    this->UpdateFiducialsFromMRML();
-    }
-  else 
-    {
+    // could have finer grain control by calling remove fid props and then
+    // update fids from mrml if necessary
     this->UpdateFromMRML();
     }
   this->ProcessingMRMLEvent = 0;
@@ -565,10 +542,8 @@ void vtkSlicerFiducialListWidget::CreateWidget ( )
 //---------------------------------------------------------------------------
 void vtkSlicerFiducialListWidget::UpdateFromMRML()
 {
-  vtkDebugMacro("vtkSlicerFiducialListWidget::UpdateFromMRML");
- 
+  vtkDebugMacro("vtkSlicerFiducialListWidget::UpdateFromMRML: calling RemoveFiducialProps and then UpdateFiducialsFromMRML");
   this->RemoveFiducialProps ( );
-
   this->UpdateFiducialsFromMRML();
 }
 
@@ -580,28 +555,22 @@ void vtkSlicerFiducialListWidget::AddList(vtkMRMLFiducialListNode *flist)
     return;
     }
   
-  vtkDebugMacro("\n\n***\nvtkSlicerFiducialListWidget::AddList: starting...\n");
+  vtkDebugMacro("AddList: starting...");
 
   const char* fid = flist->GetID();
-//  std::cout << "\n\n***\nvtkSlicerFiducialListWidget::AddList: fid = " << fid << endl;
   
   float textScale = flist->GetTextScale();
   float symbolScale = flist->GetSymbolScale();
   int glyphType = flist->GetGlyphType();
 
   // are all the current vectors the same size?
-
-//  std::cout << "vtkSlicerFiducialListWidget::AddList: have glyph type of " << glyphType << endl;
-  //this->GlyphSymbolMap.push_back(glyphType);
     
   // where in RAS space will the fiducials be displayed?
   vtkPoints * glyphPoints = vtkPoints::New();
   glyphPoints->Initialize();
   this->GlyphPointsMap[fid] = glyphPoints;
-  // let the vector remember it
+  // the map doesn't remember the pointer
   //glyphPoints->Delete();
-
-  vtkDebugMacro("...added the new glyph points..., vector size = " << this->GlyphPointsMap.size());
   
   // the scalar array is used to determine the colour of the fiducial,
   // selected or not
@@ -618,14 +587,8 @@ void vtkSlicerFiducialListWidget::AddList(vtkMRMLFiducialListNode *flist)
 
   vtkDebugMacro("...added the new glyph poly data...");
   
-  // short cut for vector access of the new list's structures
-  //int n = this->GlyphPolyDataMap.size() - 1;
-
   vtkDebugMacro("...using n = " << fid << ", poly data size = " << this->GlyphPolyDataMap.size() << ", glyph points vector size = " <<  this->GlyphPointsMap.size() << ", glyph scalars vector size = " << this->GlyphScalarsMap.size() );
-
-  if (this->GlyphPolyDataMap[fid] == NULL) std::cerr << "poly data is null\n"; else std::cerr << "poly data is not null\n";
-  if (this->GlyphPointsMap[fid] == NULL) std::cerr << "points is null\n"; else std::cerr << "points is not null\n";
-
+  
   this->GlyphPolyDataMap[fid]->SetPoints(this->GlyphPointsMap[fid]);
   this->GlyphPolyDataMap[fid]->GetPointData()->SetScalars(this->GlyphScalarsMap[fid]);
 
@@ -668,7 +631,7 @@ void vtkSlicerFiducialListWidget::AddList(vtkMRMLFiducialListNode *flist)
   this->TransformFilterMap[fid] = transformFilter;
 //  transformFilter->Delete();
 
-  vtkDebugMacro("...added the new transofrm filter...");
+  vtkDebugMacro("...added the new transform filter...");
   
   // now set up the glyph
   vtkGlyph3D *glyph3D = vtkGlyph3D::New();
@@ -693,11 +656,12 @@ void vtkSlicerFiducialListWidget::AddList(vtkMRMLFiducialListNode *flist)
   // set the selected/unselected colours
   lut->SetTableValue(0, 1, 0, 0, 1.0);
   lut->SetTableValue(1, 0, 0, 1, 1.0);
+  
   this->GlyphMapperMap[fid] = mapper;
 //  lut->Delete();
 //  mapper->Delete();
 
-  vtkDebugMacro("...added the new mapper...");
+  vtkDebugMacro("...added the new mapper at fid " << fid);
   
   // set up the list's transform?
   
@@ -715,46 +679,90 @@ void vtkSlicerFiducialListWidget::AddList(vtkMRMLFiducialListNode *flist)
 //---------------------------------------------------------------------------
 void vtkSlicerFiducialListWidget::RemoveList(vtkMRMLFiducialListNode * flist)
 {
-  std::cout << "WARNING: RemoveList not fully implemented yet!\n";
   if (flist != NULL)
     {
-    this->RemoveList(flist->GetID());
+    // iterate through the list, removing it's fiducials from the display
+    for (int f = 0; f < flist->GetNumberOfFiducials(); f++)
+      {
+      vtkDebugMacro("RemoveList: " << flist->GetID() << " removing fiducial point #" << f);
+      this->RemoveFiducial(flist->GetNthFiducialID(f));
+      }
+    const char *id = flist->GetID();
+
+    // The rest of these are only valid for the 3d glyphs
+    if (this->DiamondTransformMap[id] != NULL)
+      {
+      this->DiamondTransformMap[id]->Delete();
+      this->DiamondTransformMap.erase(id);
+      }
+
+    if (this->GlyphPointsMap[id] != NULL)
+      {
+      this->GlyphPointsMap[id]->Delete();
+      this->GlyphPointsMap.erase(id);
+      }
+
+    if (this->GlyphScalarsMap[id] != NULL)
+      {
+      this->GlyphScalarsMap[id]->Delete();
+      this->GlyphScalarsMap.erase(id);
+      }
+    if (this->GlyphPolyDataMap[id] != NULL)
+      {
+      this->GlyphPolyDataMap[id]->Delete();
+      this->GlyphPolyDataMap.erase(id);
+      }
+    if (this->TextTransformMap[id] != NULL)
+      {
+      this->TextTransformMap[id]->Delete();
+      this->TextTransformMap.erase(id);
+      }
+    if (this->SymbolTransformMap[id] != NULL)
+      {
+      this->SymbolTransformMap[id]->Delete();
+      this->SymbolTransformMap.erase(id);
+      }
+    if (this->TransformFilterMap[id] != NULL)
+      {
+      this->TransformFilterMap[id]->Delete();
+      this->TransformFilterMap.erase(id);
+      }
+    if (this->Glyph3DMap[id] != NULL)
+      {
+      this->Glyph3DMap[id]->Delete();
+      this->Glyph3DMap.erase(id);
+      }
+    if (this->GlyphMapperMap [id] != NULL)
+      {
+      this->GlyphMapperMap[id]->Delete();
+      this->GlyphMapperMap.erase(id);
+      }
     }
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerFiducialListWidget::RemoveList(const char *id)
+void vtkSlicerFiducialListWidget::RemoveFiducial(const char *id)
 {
   if (id == NULL)
     {
     return;
     }
-  /*
+  
   std::map<const char *, vtkActor *>::iterator iter;
   iter = this->DisplayedFiducials.find(id);
   if (iter != this->DisplayedFiducials.end())
     {
+    this->DisplayedFiducials[id]->Delete();
     this->DisplayedFiducials.erase(iter);
     }
-  */
-//  std::cout << "Deleting disp fid at " << id << endl;
-  this->DisplayedFiducials[id]->Delete();
-//  std::cout << "erasing from map...\n";
-  this->DisplayedFiducials.erase(id);
   
-  this->DisplayedTextFiducials[id]->Delete();
-  this->DisplayedTextFiducials.erase(id);
-
-  this->DiamondTransformMap[id]->Delete();
-  this->DiamondTransformMap.erase(id);
-
-  this->GlyphPointsMap[id]->Delete();
-  this->GlyphPointsMap.erase(id);
-
-  this->GlyphScalarsMap[id]->Delete();
-  this->GlyphScalarsMap.erase(id);
-
-  
+   std::map<const char *, vtkFollower *>::iterator titer;
+   titer = this->DisplayedTextFiducials.find(id);
+   if (titer != this->DisplayedTextFiducials.end())
+     {
+     this->DisplayedTextFiducials[id]->Delete();
+     this->DisplayedTextFiducials.erase(id);
+     }
 }
 
 //---------------------------------------------------------------------------
@@ -783,19 +791,19 @@ void vtkSlicerFiducialListWidget::UpdateFiducialsFromMRML()
   vtkMRMLScene *scene = this->GetMRMLScene();
   if (scene == NULL)
     {
-    vtkDebugMacro("... but the scene is null...");
+    vtkErrorMacro("...the scene is null... returning");
+    return;
     }
   vtkMRMLNode *node = NULL;
 
   vtkDebugMacro("UpdateFiducialsFromMRML: Starting to update the viewer's actors, glyphs for the fid lists.");
   
   scene->InitTraversal();
-//  std::cout << "\n\nvtkSlicerFiducialListWidget::UpdateFiducialsFromMRML: Start\n";
-  //int listNumber = 0;
+
   while (node=scene->GetNextNodeByClass("vtkMRMLFiducialListNode"))
     {
     vtkMRMLFiducialListNode *flist = vtkMRMLFiducialListNode::SafeDownCast(node);
-//    std::cout << "vtkSlicerFiducialListWidget::UpdateFiducialsFromMRML: got a list " << flist->GetID() << ", have " << this->GlyphPointsMap.size() << " glyph points in the vector\n";
+
     if (flist->HasObserver ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand ) == 0)
       {
       flist->AddObserver ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
@@ -833,42 +841,33 @@ void vtkSlicerFiducialListWidget::UpdateFiducialsFromMRML()
     
     if (flist->GlyphTypeIs3D())
       {
-//      std::cout << "\tusing 3d glyphs\n";
       use3DSymbols = true;
       }
     else
       {
-//      std::cout << "\tusing 2d glyphs\n";
       use3DSymbols = false;
       }
 
-    // do we already have the structurse for this list?
-    std::map< const char *, vtkPoints * >::iterator gpIter;
-    gpIter = this->GlyphPointsMap.find(flist->GetID());
-    if (gpIter == this->GlyphPointsMap.end())
-      {
-      // this id isn't used as a key yet, so add the data structures need for
-      // a new list
-//      std::cout << "\tAding a new list, list = " << flist->GetID() << endl;
-      AddList(flist);      
-      vtkDebugMacro("Added the list");
-      }
-    else
-      {
-//      std::cout << "\tClearning out the points and scalars for this list " << flist->GetID() << endl;
-      // clear out the points list
-      this->GlyphPointsMap[flist->GetID()]->SetNumberOfPoints(0);
-      this->GlyphScalarsMap[flist->GetID()]->SetNumberOfTuples(0);
-      // is this list 2d or 3d?
-      if (use3DSymbols)
-        {
-//        std::cout << "\tDidn't add a new list, but do have 3d symbols, glyph points map now has " <<
-//          this->GlyphPointsMap[flist->GetID()]->GetNumberOfPoints() << " points\n";
-        }
-      }
-
+    // a flag set when an actor is found in the DisplayFiducials map
+    int actorExists = 0;
+    
     if (use3DSymbols)
       {
+      // do we already have the structures for this list?
+      std::map< const char *, vtkPoints * >::iterator gpIter;
+      gpIter = this->GlyphPointsMap.find(flist->GetID());
+      if (gpIter == this->GlyphPointsMap.end())
+        {
+        // this id isn't used as a key yet, so add the data structures need for
+        // a new list
+        AddList(flist);
+        }
+      else
+        {
+        // clear out the points list
+        this->GlyphPointsMap[flist->GetID()]->SetNumberOfPoints(0);
+        this->GlyphScalarsMap[flist->GetID()]->SetNumberOfTuples(0);
+        }    
       
       // make sure that we've got the right glyph for the 3d case
       if (flist->GetGlyphType() == vtkMRMLFiducialListNode::Diamond3D)
@@ -886,134 +885,134 @@ void vtkSlicerFiducialListWidget::UpdateFiducialsFromMRML()
           }
         }
     
-      // set up the selected/unselected colours
-//      std::cout << "Setting the 3D glyph mapper's lookup table...table value 0 for unselected, 1 for selected\n";
-      if (unselectedColor != NULL)
+      // set up the selected/unselected colours for the list
+      if (this->GlyphMapperMap[flist->GetID()] != NULL &&
+            this->GlyphMapperMap[flist->GetID()]->GetLookupTable() != NULL)
         {
-        vtkLookupTable::SafeDownCast(this->GlyphMapperMap[flist->GetID()]->GetLookupTable())->SetTableValue(0,
-                                                                                                            unselectedColor[0],
-                                                                                                            unselectedColor[1],
-                                                                                                            unselectedColor[2],
-                                                                                                            1.0);        
+        if (unselectedColor != NULL)
+          {
+          vtkLookupTable::SafeDownCast(this->GlyphMapperMap[flist->GetID()]->GetLookupTable())->SetTableValue(0,
+                                                                                                              unselectedColor[0],
+                                                                                                              unselectedColor[1],
+                                                                                                              unselectedColor[2],
+                                                                                                              1.0);
+          } 
+        if (selectedColor != NULL)
+          {
+          vtkLookupTable::SafeDownCast(this->GlyphMapperMap[flist->GetID()]->GetLookupTable())->SetTableValue(1,
+                                                                                                              selectedColor[0],
+                                                                                                              selectedColor[1],
+                                                                                                              selectedColor[2],
+                                                                                                              1.0);
+          }
         }
-      if (selectedColor != NULL)
+      else
         {
-        vtkLookupTable::SafeDownCast(this->GlyphMapperMap[flist->GetID()]->GetLookupTable())->SetTableValue(1,
-                                                                                                            selectedColor[0],
-                                                                                                            selectedColor[1],
-                                                                                                            selectedColor[2],
-                                                                                                            1.0);
-        }
-      } // end of 3d symbols
+        vtkErrorMacro("ERROR: unable to get a lookup table for the glyph mapper at fid list id " << flist->GetID());
+        } 
 
-    
-    this->GlyphScalarsMap[flist->GetID()]->SetNumberOfTuples(flist->GetNumberOfFiducials());
-//    std::cout << "\tAbout to loop through the fid list, for " << flist->GetNumberOfFiducials() << ", set the glyph scalars map to have " << this->GlyphScalarsMap[flist->GetID()]->GetNumberOfTuples() << " tuples\n";
-    
-    // set up each fiducial on this list 
-    for (int f=0; f<flist->GetNumberOfFiducials(); f++)
-      {
+      this->GlyphScalarsMap[flist->GetID()]->SetNumberOfTuples(flist->GetNumberOfFiducials());
 
-      // check to see if this fiducial has actors in the DisplayFiducials
-      // map
-      int actorExists = 0;
-
-      vtkActor * actor = GetFiducialActorByID(flist->GetNthFiducialID(f));
+      vtkActor * actor = NULL;
+      actor = GetFiducialActorByID(flist->GetID());
       if (actor != NULL)
         {
         actorExists = 1;
         }
-      else
-        {
-        if (0)
-          {
-          std::cout << "\tNo actor exists (checked for id " << flist->GetNthFiducialID(f) << "), the displayed fiducials list has " << this->DisplayedFiducials.size() << " and these keys:\n";
-          std::map<const char *, vtkActor *>::iterator iter;
-          for(iter=this->DisplayedFiducials.begin(); iter != this->DisplayedFiducials.end(); iter++) 
-            {
-            std::cout << "\t\t" << iter->first << endl;
-            }
-          }
-        }
-      //std::cout << "fid = " << f << ": Actor for this point  exists = " << actorExists << " (checked for id " << flist->GetNthFiducialID(f) << ")" << endl;
-      
+
       vtkPolyDataMapper *mapper = NULL;
-//      vtkActor *actor = NULL;
       vtkGlyph3D * glyph3d = NULL;
-      vtkGlyphSource2D *glyph2d = vtkGlyphSource2D::New();
-
-      // if this list is using 3d symbols
-      if (use3DSymbols)
-        {
-
-        // add this point to the list of points
-        this->GlyphPointsMap[flist->GetID()]->InsertNextPoint(flist->GetNthFiducialXYZ(f));
-//        std::cout << "\tadded the next point to the glyph points map, " << f << " = " << flist->GetNthFiducialXYZ(f) << ", glyph points map now has " << this->GlyphPointsMap[flist->GetID()]->GetNumberOfPoints() << " points." << endl;
         
-//        glyph3d = this->Glyph3DMap[flist->GetID()];
-        glyph3d = (vtkGlyph3D*)this->Glyph3DMap[flist->GetID()]; // ->GetItemAsObject(listNumber);
+      glyph3d = (vtkGlyph3D*)this->Glyph3DMap[flist->GetID()]; // ->GetItemAsObject(listNumber);
         
-        if (glyph3d != NULL)
-          {
-          if (actorExists)
-            {
-            // actor is in the list, get it and the mapper
-            //actor = iter->second;
-            glyph3d->SetOutput(actor->GetMapper()->GetInput());
-//            std::cout << "\tthe glyph actor exists, set the glyphoutput to the actors mapper input\n";
-            }
-          else
-            {
-            // no actor, allocate vars and set up the pipeline
-            actor = vtkActor::New ( );
-//            std::cout << "\tthe glyph actor didn't exist, setting it's mapper to the glyph mapper vector element at " << flist->GetID() << endl;
-            actor->SetMapper ( this->GlyphMapperMap[flist->GetID()] );
-            this->MainViewer->AddViewProp ( actor );
-            }
-          
-//          std::cout << "\tSetting scalars vector tuples at fid # " << f << " ...number of tuples = " << this->GlyphScalarsMap[flist->GetID()]->GetNumberOfTuples() << "\n";
-
-          
-          // reset the glyph actor's colours
-          vtkLookupTable::SafeDownCast(actor->GetMapper()->GetLookupTable())->SetTableValue(0, unselectedColor[0],
-                                                                                            unselectedColor[1],
-                                                                                            unselectedColor[2],
-                                                                                            1.0);
-          vtkLookupTable::SafeDownCast(actor->GetMapper()->GetLookupTable())->SetTableValue(1,
-                                                                                            selectedColor[0],
-                                                                                            selectedColor[1],
-                                                                                            selectedColor[2],
-                                                                                            1.0);
-          if (0)
-          {
-            std::cout << "\tactor's mapper lut values:\n";
-            double rgba[4];
-            vtkLookupTable::SafeDownCast(actor->GetMapper()->GetLookupTable())->GetTableValue(0, rgba);
-            std::cout << "\t0 unselected: r = " << rgba[0] << ", g = " << rgba[1] << ", b = " << rgba[2] << endl;
-          vtkLookupTable::SafeDownCast(actor->GetMapper()->GetLookupTable())->GetTableValue(1, rgba);
-            std::cout << "\t1 selected:  r = " << rgba[0] << ", g = " << rgba[1] << ", b = " << rgba[2] << endl;
-          }
-          if (flist->GetNthFiducialSelected(f))
-            {
-          //  std::cout << "\tfid " << f << " is Selected, setting scalar tuple " << f << " to 1\n";
-            this->GlyphScalarsMap[flist->GetID()]->SetTuple1(f, 1.0);
-            }
-          else
-            {
-//            std::cout << "\tfid " << f << " is unselected, setting tuple " << f << " to 0\n";
-            this->GlyphScalarsMap[flist->GetID()]->SetTuple1(f, 0.0);
-            }
-//          std::cout << "\tafter setting the tuple it's = " << this->GlyphScalarsMap[flist->GetID()]->GetTuple1(f) << endl;
-          }
-        }
-
-      //if (this->GetSymbolDimension() == this->Use2DSymbols)
-      if (!use3DSymbols)
+      if (glyph3d != NULL)
         {
         if (actorExists)
           {
           // actor is in the list, get it and the mapper
-          //actor = iter->second;
+          glyph3d->SetOutput(actor->GetMapper()->GetInput());
+          }
+        else
+          {
+          // no actor, allocate vars and set up the pipeline
+          actor = vtkActor::New ( );
+          actor->SetMapper ( this->GlyphMapperMap[flist->GetID()] );
+          this->MainViewer->AddViewProp ( actor );
+          }                        
+        // reset the fid list glyph actor's colours
+        vtkLookupTable::SafeDownCast(actor->GetMapper()->GetLookupTable())->SetTableValue(0, unselectedColor[0],
+                                                                                          unselectedColor[1],
+                                                                                          unselectedColor[2],
+                                                                                          1.0);
+        vtkLookupTable::SafeDownCast(actor->GetMapper()->GetLookupTable())->SetTableValue(1,
+                                                                                          selectedColor[0],
+                                                                                          selectedColor[1],
+                                                                                          selectedColor[2],
+                                                                                          1.0);
+       
+        } // end of glyph3d != NULL
+
+      // do the updates for each point, point position, scalar map, text actor text
+      for (int f=0; f<flist->GetNumberOfFiducials(); f++)
+        {
+        // add this point to the list of points
+        this->GlyphPointsMap[flist->GetID()]->InsertNextPoint(flist->GetNthFiducialXYZ(f));
+        //std::cout << "3D: added the next point to the glyph points map, " << f << " = " << flist->GetNthFiducialXYZ(f) << ", glyph points map now has " << this->GlyphPointsMap[flist->GetID()]->GetNumberOfPoints() << " points." << endl;
+
+        // update the scalar map for the point selected state
+        if (flist->GetNthFiducialSelected(f))
+          {
+          //std::cout << "\tfid " << f << " is Selected, setting scalar tuple " << f << " to 1\n";
+          this->GlyphScalarsMap[flist->GetID()]->SetTuple1(f, 1.0);
+          }
+        else
+          {
+          //std::cout << "\tfid " << f << " is unselected, setting tuple " << f << " to 0\n";
+          this->GlyphScalarsMap[flist->GetID()]->SetTuple1(f, 0.0);
+          }
+        //std::cout << "\tafter setting the tuple it's = " << this->GlyphScalarsMap[flist->GetID()]->GetTuple1(f) << endl;
+        
+        this->UpdateTextActor(flist, f);
+        }
+      // now update the actor that controls the full list
+      this->SetFiducialDisplayProperty(flist, 0, actor, NULL);
+      
+      // set the symbol scale      
+      if (this->SymbolTransformMap[flist->GetID()] != NULL)        
+        {
+        this->SymbolTransformMap[flist->GetID()]->Identity();
+        float symbolScale = flist->GetSymbolScale();
+        this->SymbolTransformMap[flist->GetID()]->Scale(symbolScale, symbolScale, symbolScale);
+        } else { vtkErrorMacro("ERROR: unable to get the transform for the list " << flist->GetID() << "  symbol\n"); }
+      
+      if (!actorExists)
+        {
+        vtkDebugMacro("Adding an actor for the fiducial list into the disp fids list at id " << flist->GetID());
+        this->DisplayedFiducials[flist->GetID()] = actor;
+        }
+      // reset the poly data
+      this->GlyphPolyDataMap[flist->GetID()]->SetPoints(this->GlyphPointsMap[flist->GetID()]);
+      this->GlyphPolyDataMap[flist->GetID()]->GetPointData()->SetScalars(this->GlyphScalarsMap[flist->GetID()]);
+      } // end of 3d symbols
+    else
+      {
+      // have 2d glyphs, use one actor for each point in the list
+      for (int f=0; f<flist->GetNumberOfFiducials(); f++)
+        {
+        
+        vtkActor * actor = NULL;
+        // for the 2d case, there's an actor for each fiducial point
+        actor = GetFiducialActorByID(flist->GetNthFiducialID(f));
+        if (actor != NULL)
+          {
+          actorExists = 1;
+          }
+
+        vtkPolyDataMapper *mapper = NULL;
+        vtkSlicerGlyphSource2D *glyph2d = vtkSlicerGlyphSource2D::New();
+        if (actorExists)
+          {
+          // actor is in the list, get it and the mapper
           glyph2d->SetOutput(actor->GetMapper()->GetInput());              
           }
         else
@@ -1028,8 +1027,7 @@ void vtkSlicerFiducialListWidget::UpdateFiducialsFromMRML()
         
         if (glyph2d != NULL)
           {
-//          glyph2d->SetGlyphTypeToDiamond();
-          glyph2d->SetGlyphType(flist->GetGlyphTypeAsVTKEnum());
+          glyph2d->SetGlyphTypeAsString(flist->GetGlyphTypeAsString());
           if (flist->GetNthFiducialSelected(f))
             {
             glyph2d->SetColor(flist->GetSelectedColor());
@@ -1038,145 +1036,117 @@ void vtkSlicerFiducialListWidget::UpdateFiducialsFromMRML()
             {
             glyph2d->SetColor(flist->GetColor());
             }
-          }         
-        } // end of 2d
-      
-      // handle text
-      // check to see if this fiducial follower has actors in the
-      // DisplayedTextFiducials map
-      int textActorExists = 0;
-      std::map<const char *, vtkFollower *>::iterator titer;
-
-      titer = this->DisplayedTextFiducials.find(flist->GetNthFiducialID(f));
-      if (titer != this->DisplayedTextFiducials.end())
-        {
-        textActorExists = 1;
-        }
-//      std::cout << "\tText actor exists = " << textActorExists << endl;
-      
-      vtkVectorText *vtext = vtkVectorText::New();
-      vtkPolyDataMapper *textMapper;
-      vtkFollower *textActor;
-      if (textActorExists)
-        {
-        // get it out of the map
-        textActor = titer->second;
-        vtext->SetOutput(titer->second->GetMapper()->GetInput());
-        }
-      else
-        {
-        textMapper = vtkPolyDataMapper::New ();
-        textMapper->SetInput ( vtext->GetOutput() );
-        
-        textActor = vtkFollower::New();
-        textActor->SetCamera(this->MainViewer->GetRenderer()->GetActiveCamera());
-        textActor->SetMapper(textMapper);
-        
-        this->MainViewer->AddViewProp ( textActor );
-        }
-      vtext->SetText(flist->GetNthFiducialLabelText(f));
-
-      // set the display properties on the actor and the text actor
-      this->SetFiducialDisplayProperty(flist, f, actor, textActor);
-
-      // save the actors and clean up, if necessary
-      if (!actorExists)
-        {
-        vtkDebugMacro("After setting disp props, actor vis = " << actor->GetVisibility() << ", adding actor to displayed fid list with first string " << flist->GetNthFiducialID(f) << ", current size = " << this->DisplayedFiducials.size());
-
-        
-        // need to use a constant string as the key to the map, use the
-        // fiducial point's id
-//        std::cout << "\tadding an actor to the displayed fiducials list at id " << flist->GetNthFiducialID(f) << ", the list is now keyed with these strings" << endl;
-        this->DisplayedFiducials[flist->GetNthFiducialID(f)] = actor;
-        std::map<const char *, vtkActor *>::iterator iter;
-        for(iter=this->DisplayedFiducials.begin(); iter != this->DisplayedFiducials.end(); iter++) 
-          {
-//          std::cout << "\t\t" << iter->first << endl;
           }
-//        std::cout << "\tnew size of displayed fids = " << this->DisplayedFiducials.size() << endl;
-
-        //if (this->GetSymbolDimension() == this->Use2DSymbols)
-       
+        this->UpdateTextActor(flist, f);
+        // now update the actor
+        this->SetFiducialDisplayProperty(flist, f, actor, NULL);
+        
+        // save the actor and clean up, if necessary
+        if (!actorExists)
+          {
+          vtkDebugMacro("Adding an actor to the displayed fiducials list at id " << flist->GetNthFiducialID(f));
+          this->DisplayedFiducials[flist->GetNthFiducialID(f)] = actor;   
+          }
         // only call delete if made them new, they didn't exist before
         if (glyph2d != NULL)
           {
           glyph2d->Delete();
           }
-        if (!use3DSymbols)
-          {
-          if (actor != NULL)
-            {
-            actor->Delete();
-            }
-          if (mapper != NULL)
-            {
-            mapper->Delete();
-            }
-          } // end of 2d
-        }
-
-      if (!textActorExists)
-        {
-        this->DisplayedTextFiducials[flist->GetNthFiducialID(f)] = textActor;
-        if (1)
-          //if (!use3DSymbols)
-          {
-          // only delete them if made them new
-          if (vtext != NULL)
-            {
-            vtext->Delete();
-            }
-          if (textMapper != NULL)
-            {
-            textMapper->Delete();
-            }
-          if (0) {
-          if (textActor != NULL)
-            {
-            textActor->Delete();
-            }
-          }
-          } // end of 2d
-        }
-      } // end for
-
-    // go to the next fiducial list 
-    //listNumber++;
-
-    // reset the poly data
-    if (0)
-      {
-      std::cout << "Done looping over fids, for list " << flist->GetID() << ", now resetting points and scalars on the poly data map\n";
-      for (int s = 0; s < this->GlyphScalarsMap[flist->GetID()]->GetNumberOfTuples(); s++)
-        {
-        std::cout << "scalar " << s << " = " << this->GlyphScalarsMap[flist->GetID()]->GetTuple1(s) << endl;
-        }
-    }
-    this->GlyphPolyDataMap[flist->GetID()]->SetPoints(this->GlyphPointsMap[flist->GetID()]);
-    this->GlyphPolyDataMap[flist->GetID()]->GetPointData()->SetScalars(this->GlyphScalarsMap[flist->GetID()]);
-
-    } // end while
-  
+        } // end of for each fid point on list
+      } // end of 2d symbols
+    } // end of while loop for each vtkMRMLFiducialListNode
+    
+  // Render
   if (this->MainViewer != NULL)
     {
-    // render
     this->RequestRender();
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerFiducialListWidget::UpdateTextActor(vtkMRMLFiducialListNode *flist, int f)
+{
+  if (flist == NULL || f < 0)
+    {
+    return;
+    }
+  // handle text
+  // check to see if this fiducial follower has actors in the
+  // DisplayedTextFiducials map
+  int textActorExists = 0;
+  std::map<const char *, vtkFollower *>::iterator titer;
+
+  titer = this->DisplayedTextFiducials.find(flist->GetNthFiducialID(f));
+  if (titer != this->DisplayedTextFiducials.end())
+    {
+    textActorExists = 1;
+    }
+      
+  vtkVectorText *vtext = vtkVectorText::New();
+  vtkPolyDataMapper *textMapper;
+  vtkFollower *textActor;
+  if (textActorExists)
+    {
+    // get it out of the map
+    textActor = titer->second;
+    vtext->SetOutput(titer->second->GetMapper()->GetInput());
+    }
+  else
+    {
+    textMapper = vtkPolyDataMapper::New ();
+    textMapper->SetInput ( vtext->GetOutput() );
+    
+    textActor = vtkFollower::New();
+    textActor->SetCamera(this->MainViewer->GetRenderer()->GetActiveCamera());
+    textActor->SetMapper(textMapper);
+    
+    this->MainViewer->AddViewProp ( textActor );
+    }
+  vtext->SetText(flist->GetNthFiducialLabelText(f));
+
+  // set the display properties on just the text actor
+  this->SetFiducialDisplayProperty(flist, f, NULL, textActor);
+
+  if (!textActorExists)
+    {
+    this->DisplayedTextFiducials[flist->GetNthFiducialID(f)] = textActor;
+    // only delete them if made them new
+    if (vtext != NULL)
+      {
+      vtext->Delete();
+      }
+    if (textMapper != NULL)
+      {
+      textMapper->Delete();
+      }
     }
 }
 
 //---------------------------------------------------------------------------
 void vtkSlicerFiducialListWidget::RemoveFiducialProps()
 {
-  vtkDebugMacro("vtkSlicerFiducialListWidget::RemoveFiducialProps\n");
-  // glyph actors
+  // clear out any glyph actors
+  if (this->DisplayedFiducials.size() == 0 &&
+      this->DisplayedTextFiducials.size() == 0)
+    {
+    return;
+    }
 
-  int idx = 0;
+  vtkDebugMacro("vtkSlicerFiducialListWidget::RemoveFiducialProps: number of displayed fiducials = " << this->DisplayedFiducials.size());
   std::map<const char *, vtkActor *>::iterator iter;
   for(iter=this->DisplayedFiducials.begin(); iter != this->DisplayedFiducials.end(); iter++) 
     {
-    this->MainViewer->RemoveViewProp(iter->second);
-    iter->second->Delete();
+    if (iter->second != NULL)
+      {
+      this->MainViewer->RemoveViewProp(iter->second);
+      // iter->second is an actor that has a mapper 
+      if (iter->second->GetMapper() != NULL)
+        {
+        // don't delete the mapper, it's saved in the map
+        //iter->second->GetMapper()->Delete();
+        }
+      iter->second->Delete();
+      }
     }
   this->DisplayedFiducials.clear();
 
@@ -1184,8 +1154,11 @@ void vtkSlicerFiducialListWidget::RemoveFiducialProps()
   std::map<const char *, vtkFollower *>::iterator titer;
   for(titer=this->DisplayedTextFiducials.begin(); titer != this->DisplayedTextFiducials.end(); titer++) 
     {
-    this->MainViewer->RemoveViewProp(titer->second);
-    titer->second->Delete();
+    if (titer->second != NULL)
+      {
+      this->MainViewer->RemoveViewProp(titer->second);
+      titer->second->Delete();
+      }
     }
   this->DisplayedTextFiducials.clear();
 
@@ -1234,12 +1207,25 @@ void vtkSlicerFiducialListWidget::SetFiducialDisplayProperty(vtkMRMLFiducialList
   float *xyz = flist->GetNthFiducialXYZ(n);
   int selected = flist->GetNthFiducialSelected(n);
 
-  actor->SetPosition(xyz[0], xyz[1], xyz[2]);
-  actor->SetScale(flist->GetSymbolScale());
+  if (actor != NULL)
+    {
+    if (!flist->GlyphTypeIs3D())
+      {
+      // dont' set the position if it's a 3d list
+      actor->SetPosition(xyz[0], xyz[1], xyz[2]);
+      actor->SetScale(flist->GetSymbolScale());
+      }
+    actor->SetVisibility(flist->GetVisibility());
+    }
 
-  textActor->SetPosition(xyz[0], xyz[1], xyz[2]);
-  textActor->SetScale(flist->GetTextScale());
-
+  if (textActor != NULL)
+    {
+    textActor->SetPosition(xyz[0], xyz[1], xyz[2]);
+    textActor->SetScale(flist->GetTextScale());
+    // visib from after tnode code
+    textActor->SetVisibility(flist->GetVisibility());
+    }
+  
   vtkMRMLTransformNode* tnode = flist->GetParentTransformNode();
   if (tnode != NULL && tnode->IsLinear())
     {
@@ -1247,34 +1233,59 @@ void vtkSlicerFiducialListWidget::SetFiducialDisplayProperty(vtkMRMLFiducialList
     vtkMatrix4x4* transformToWorld = vtkMatrix4x4::New();
     transformToWorld->Identity();
     lnode->GetMatrixTransformToWorld(transformToWorld);
-    actor->SetUserMatrix(transformToWorld);
-    textActor->SetUserMatrix(transformToWorld);
+    if (actor)
+      {
+      actor->SetUserMatrix(transformToWorld);
+      }
+    if (textActor)
+      {
+      textActor->SetUserMatrix(transformToWorld);
+      }
     transformToWorld->Delete();
     }
 
-  actor->SetVisibility(flist->GetVisibility());
-  textActor->SetVisibility(flist->GetVisibility());
+  
+  // don't update the actor's selected if it's 3d
   if (selected)
     {
-    actor->GetProperty()->SetColor(flist->GetSelectedColor());
-    textActor->GetProperty()->SetColor(flist->GetSelectedColor());
+    if (actor && !flist->GlyphTypeIs3D())
+      {
+      actor->GetProperty()->SetColor(flist->GetSelectedColor());
+      }
+    if (textActor)
+      {
+      textActor->GetProperty()->SetColor(flist->GetSelectedColor());
+      }
     }
   else
     {
-    actor->GetProperty()->SetColor(flist->GetColor());
-    textActor->GetProperty()->SetColor(flist->GetColor());
+    if (actor && !flist->GlyphTypeIs3D())
+      {
+      actor->GetProperty()->SetColor(flist->GetColor());
+      }
+    if (textActor)
+      {
+      textActor->GetProperty()->SetColor(flist->GetColor());
+      }
     }
-  actor->GetProperty()->SetOpacity(flist->GetOpacity());
-  textActor->GetProperty()->SetOpacity(flist->GetOpacity());
-  actor->GetProperty()->SetAmbient(flist->GetAmbient());
-  textActor->GetProperty()->SetAmbient(flist->GetAmbient());
-  actor->GetProperty()->SetDiffuse(flist->GetDiffuse());
-  textActor->GetProperty()->SetDiffuse(flist->GetDiffuse());
-  actor->GetProperty()->SetSpecular(flist->GetSpecular());
-  textActor->GetProperty()->SetSpecular(flist->GetSpecular());
-  actor->GetProperty()->SetSpecularPower(flist->GetPower());
-  textActor->GetProperty()->SetSpecularPower(flist->GetPower());
-  actor->SetTexture(NULL);
+
+  if (actor)
+    {
+    actor->GetProperty()->SetOpacity(flist->GetOpacity());
+    actor->GetProperty()->SetAmbient(flist->GetAmbient());
+    actor->GetProperty()->SetDiffuse(flist->GetDiffuse());
+    actor->GetProperty()->SetSpecular(flist->GetSpecular());
+    actor->GetProperty()->SetSpecularPower(flist->GetPower());
+    actor->SetTexture(NULL);
+    }
+  if (textActor)
+    {
+    textActor->GetProperty()->SetOpacity(flist->GetOpacity());
+    textActor->GetProperty()->SetAmbient(flist->GetAmbient());
+    textActor->GetProperty()->SetDiffuse(flist->GetDiffuse());
+    textActor->GetProperty()->SetSpecular(flist->GetSpecular());
+    textActor->GetProperty()->SetSpecularPower(flist->GetPower());
+    }
 
   vtkDebugMacro("vtkSlicerFiducialListWidget::SetFiducialDisplayProperty: done setting for " << n << "\n");
 
@@ -1310,7 +1321,6 @@ vtkSlicerFiducialListWidget::GetFiducialActorByID (const char *id)
   // matching pointer not matching content)
   for(iter=this->DisplayedFiducials.begin(); iter != this->DisplayedFiducials.end(); iter++) 
     {
-//std::cout << "GetFiducialActorBy ID " << id << " (as string = " << sid.c_str() <<  "), now checking " << iter->first << endl;
     if ( iter->first && !strcmp( iter->first, sid.c_str() ) )
       {
       return (iter->second);
