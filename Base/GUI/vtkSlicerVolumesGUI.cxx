@@ -300,8 +300,6 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
 {
 
   vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-  // Define your help text here.
-  const char *help = "**Volumes Module:** Load, save and adjust display parameters of volume data. ";
 
     // ---
     // MODULE GUI FRAME 
@@ -311,31 +309,12 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
     // create a page
     this->UIPanel->AddPage ( "Volumes", "Volumes", NULL );
     
+    // Define your help text and build the help frame here.
+    const char *help = "The Volumes Module loads, saves and adjusts display parameters of volume data.";
+    const char *about = "This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See http://www.slicer.org for details. ";
     vtkKWWidget *page = this->UIPanel->GetPageWidget ( "Volumes" );
-
-    // HELP FRAME
-    this->HelpFrame = vtkSlicerModuleCollapsibleFrame::New ( );
-    this->HelpFrame->SetParent ( page );
-    this->HelpFrame->Create ( );
-    this->HelpFrame->CollapseFrame ( );
-    this->HelpFrame->SetLabelText ("Help");
-    app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                  this->HelpFrame->GetWidgetName(), page->GetWidgetName());
-
-    // configure the parent classes help text widget
-    this->HelpText->SetParent ( this->HelpFrame->GetFrame() );
-    this->HelpText->Create ( );
-    this->HelpText->SetHorizontalScrollbarVisibility ( 0 );
-    this->HelpText->SetVerticalScrollbarVisibility ( 1 );
-    this->HelpText->GetWidget()->SetText ( help );
-    this->HelpText->GetWidget()->SetReliefToFlat ( );
-    this->HelpText->GetWidget()->SetWrapToWord ( );
-    this->HelpText->GetWidget()->ReadOnlyOn ( );
-    this->HelpText->GetWidget()->QuickFormattingOn ( );
-    this->HelpText->GetWidget()->SetBalloonHelpString ( "" );
-    app->Script ( "pack %s -side top -fill x -expand y -anchor w -padx 2 -pady 4",
-                  this->HelpText->GetWidgetName ( ) );
-
+    this->BuildHelpAndAboutFrame ( page, help, about );
+    
     // ---
     // LOAD FRAME            
     LoadFrame = vtkSlicerModuleCollapsibleFrame::New ( );

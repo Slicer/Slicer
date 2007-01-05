@@ -200,8 +200,6 @@ void vtkSlicerSlicesGUI::BuildGUI (  )
 {
 
     vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-    // Define your help text here.
-    const char *help = "**Slices Module:** Manages the display of the Slice Viewers.";
     
     // ---
     // MODULE GUI FRAME 
@@ -211,28 +209,11 @@ void vtkSlicerSlicesGUI::BuildGUI (  )
     // create a page
     this->UIPanel->AddPage ( "Slices", "Slices", NULL );
     
-    // HELP FRAME
-    vtkSlicerModuleCollapsibleFrame *sliceHelpFrame = vtkSlicerModuleCollapsibleFrame::New ( );
-    sliceHelpFrame->SetParent ( this->UIPanel->GetPageWidget ( "Slices" ) );
-    sliceHelpFrame->Create ( );
-    sliceHelpFrame->CollapseFrame ( );
-    sliceHelpFrame->SetLabelText ("Help");
-    app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                  sliceHelpFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Slices")->GetWidgetName());
-
-    // configure the parent classes help text widget
-    this->HelpText->SetParent ( sliceHelpFrame->GetFrame() );
-    this->HelpText->Create ( );
-    this->HelpText->SetHorizontalScrollbarVisibility ( 0 );
-    this->HelpText->SetVerticalScrollbarVisibility ( 1 );
-    this->HelpText->GetWidget()->SetText ( help );
-    this->HelpText->GetWidget()->SetReliefToFlat ( );
-    this->HelpText->GetWidget()->SetWrapToWord ( );
-    this->HelpText->GetWidget()->ReadOnlyOn ( );
-    this->HelpText->GetWidget()->QuickFormattingOn ( );
-    this->HelpText->GetWidget()->SetBalloonHelpString ( "" );
-    app->Script ( "pack %s -side top -fill x -expand y -anchor w -padx 2 -pady 4",
-                  this->HelpText->GetWidgetName ( ) );
+    // Define your help text and build the help frame here.
+    const char *help = "The Slices Module manages the display of the Slice Viewers.";
+    const char *about = "This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See http://www.slicer.org for details. ";
+    vtkKWWidget *page = this->UIPanel->GetPageWidget ( "Slices" );
+    this->BuildHelpAndAboutFrame ( page, help, about );
 
     // ---
     // DISPLAY FRAME            
@@ -244,7 +225,6 @@ void vtkSlicerSlicesGUI::BuildGUI (  )
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   sliceDisplayFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Slices")->GetWidgetName());
 
-    sliceHelpFrame->Delete();
     sliceDisplayFrame->Delete();
 
 }

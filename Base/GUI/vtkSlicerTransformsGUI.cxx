@@ -91,9 +91,6 @@ void vtkSlicerTransformsGUI::Exit ( )
 void vtkSlicerTransformsGUI::BuildGUI ( )
 {
   // Fill in *placeholder GUI*
-  // Define your help text here.
-  const char *help = "**Transforms Module:** Create and edit transforms. ";
-  
   vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
   
   // ---
@@ -103,30 +100,13 @@ void vtkSlicerTransformsGUI::BuildGUI ( )
   // ---
   // create a page
   this->UIPanel->AddPage ( "Transforms", "Transforms", NULL );
-  
-  // HELP FRAME
-  vtkSlicerModuleCollapsibleFrame *helpFrame = vtkSlicerModuleCollapsibleFrame::New ( );
-  helpFrame->SetParent ( this->UIPanel->GetPageWidget ( "Transforms" ) );
-  helpFrame->Create ( );
-  helpFrame->CollapseFrame ( );
-  helpFrame->SetLabelText ("Help");
-  app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                helpFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Transforms")->GetWidgetName());
-  
-    // configure the parent classes help text widget
-    this->HelpText->SetParent ( helpFrame->GetFrame() );
-    this->HelpText->Create ( );
-    this->HelpText->SetHorizontalScrollbarVisibility ( 0 );
-    this->HelpText->SetVerticalScrollbarVisibility ( 1 );
-    this->HelpText->GetWidget()->SetText ( help );
-    this->HelpText->GetWidget()->SetReliefToFlat ( );
-    this->HelpText->GetWidget()->SetWrapToWord ( );
-    this->HelpText->GetWidget()->ReadOnlyOn ( );
-    this->HelpText->GetWidget()->QuickFormattingOn ( );
-    this->HelpText->GetWidget()->SetBalloonHelpString ( "" );
-    app->Script ( "pack %s -side top -fill x -expand y -anchor w -padx 2 -pady 4",
-                  this->HelpText->GetWidgetName ( ) );
     
+  // Define your help text and build the help frame here.
+  const char *help = "The Transforms Module creates and edits transforms. ";
+  const char *about = "This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See http://www.slicer.org for details. ";
+  vtkKWWidget *page = this->UIPanel->GetPageWidget ( "Transforms" );
+  this->BuildHelpAndAboutFrame ( page, help, about );
+
   // DISPLAY & EDIT FRAME
   vtkSlicerModuleCollapsibleFrame *displayAndEditFrame = vtkSlicerModuleCollapsibleFrame::New ( );
   displayAndEditFrame->SetParent ( this->UIPanel->GetPageWidget ( "Transforms" ) );
@@ -145,7 +125,6 @@ void vtkSlicerTransformsGUI::BuildGUI ( )
                 this->TransformEditorWidget->GetWidgetName(), displayAndEditFrame->GetFrame()->GetWidgetName());
 
   displayAndEditFrame->Delete ();
-  helpFrame->Delete();
 }
 
 

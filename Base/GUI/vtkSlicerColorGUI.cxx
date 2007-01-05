@@ -250,8 +250,7 @@ void vtkSlicerColorGUI::Exit ( )
 void vtkSlicerColorGUI::BuildGUI ( )
 {
     vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-  // Define your help text here.
-  const char *help = "**Color Module:** Manages color look up tables.\nTables are used by mappers to translate between an integer and a colour value for display of models and volumes.\nSlicer supports three kinds of tables:\n1. Continuous scales, like the greyscale table.\n2. Parametric tables, defined by an equation, such as the FMRIPA table.\n3. Discreet tables, such as those read in from a file.\nUsers are only allowed to edit User type tables. TODO: allow copy from a standard one.";
+
 
     // ---
     // MODULE GUI FRAME 
@@ -260,31 +259,12 @@ void vtkSlicerColorGUI::BuildGUI ( )
     // ---
     // create a page
     this->UIPanel->AddPage ( "Color", "Color", NULL );
-
-    vtkKWWidget *page = this->UIPanel->GetPageWidget ( "Color" );
     
-    // HELP FRAME
-    vtkSlicerModuleCollapsibleFrame *modHelpFrame = vtkSlicerModuleCollapsibleFrame::New ( );
-    modHelpFrame->SetParent (page );
-    modHelpFrame->Create ( );
-    modHelpFrame->CollapseFrame ( );
-    modHelpFrame->SetLabelText ("Help");
-    app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                  modHelpFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Color")->GetWidgetName());
-
-    // configure the parent classes help text widget
-    this->HelpText->SetParent ( modHelpFrame->GetFrame() );
-    this->HelpText->Create ( );
-    this->HelpText->SetHorizontalScrollbarVisibility ( 0 );
-    this->HelpText->SetVerticalScrollbarVisibility ( 1 );
-    this->HelpText->GetWidget()->SetText ( help );
-    this->HelpText->GetWidget()->SetReliefToFlat ( );
-    this->HelpText->GetWidget()->SetWrapToWord ( );
-    this->HelpText->GetWidget()->ReadOnlyOn ( );
-    this->HelpText->GetWidget()->QuickFormattingOn ( );
-    this->HelpText->GetWidget()->SetBalloonHelpString ( "" );
-    app->Script ( "pack %s -side top -fill x -expand y -anchor w -padx 2 -pady 4",
-                  this->HelpText->GetWidgetName ( ) );
+    // Define your help text and build the help frame here.
+    const char *help = "The Color Module manages color look up tables.\nTables are used by mappers to translate between an integer and a colour value for display of models and volumes.\nSlicer supports three kinds of tables:\n1. Continuous scales, like the greyscale table.\n2. Parametric tables, defined by an equation, such as the FMRIPA table.\n3. Discreet tables, such as those read in from a file.\nUsers are only allowed to edit User type tables. TODO: allow copy from a standard one.";
+    const char *about = "This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See http://www.slicer.org for details. ";
+    vtkKWWidget *page = this->UIPanel->GetPageWidget ( "Color" );
+    this->BuildHelpAndAboutFrame ( page, help, about );
 
     // ---
     // DISPLAY FRAME            
@@ -330,7 +310,6 @@ void vtkSlicerColorGUI::BuildGUI ( )
     // deleting frame widgets
     buttonFrame->Delete();
     displayFrame->Delete ( );
-    modHelpFrame->Delete ( );
 }
 
 

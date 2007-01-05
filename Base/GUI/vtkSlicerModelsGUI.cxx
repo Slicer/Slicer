@@ -254,8 +254,6 @@ void vtkSlicerModelsGUI::BuildGUI ( )
 {
 
     vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-  // Define your help text here.
-  const char *help = "**Models Module:** Load, save and adjust display parameters of models. ";
   
     // ---
     // MODULE GUI FRAME 
@@ -265,28 +263,11 @@ void vtkSlicerModelsGUI::BuildGUI ( )
     // create a page
     this->UIPanel->AddPage ( "Models", "Models", NULL );
     
-    // HELP FRAME
-    vtkSlicerModuleCollapsibleFrame *modHelpFrame = vtkSlicerModuleCollapsibleFrame::New ( );
-    modHelpFrame->SetParent ( this->UIPanel->GetPageWidget ( "Models" ) );
-    modHelpFrame->Create ( );
-    modHelpFrame->CollapseFrame ( );
-    modHelpFrame->SetLabelText ("Help");
-    app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                  modHelpFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Models")->GetWidgetName());
-
-    // configure the parent classes help text widget
-    this->HelpText->SetParent ( modHelpFrame->GetFrame() );
-    this->HelpText->Create ( );
-    this->HelpText->SetHorizontalScrollbarVisibility ( 0 );
-    this->HelpText->SetVerticalScrollbarVisibility ( 1 );
-    this->HelpText->GetWidget()->SetText ( help );
-    this->HelpText->GetWidget()->SetReliefToFlat ( );
-    this->HelpText->GetWidget()->SetWrapToWord ( );
-    this->HelpText->GetWidget()->ReadOnlyOn ( );
-    this->HelpText->GetWidget()->QuickFormattingOn ( );
-    this->HelpText->GetWidget()->SetBalloonHelpString ( "" );
-    app->Script ( "pack %s -side top -fill x -expand y -anchor w -padx 2 -pady 4",
-                  this->HelpText->GetWidgetName ( ) );
+    // Define your help text and build the help frame here.
+    const char *help = "The Models Module loads, saves and adjusts display parameters of models. ";
+    const char *about = "This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See http://www.slicer.org for details. ";
+    vtkKWWidget *page = this->UIPanel->GetPageWidget ( "Models" );
+    this->BuildHelpAndAboutFrame ( page, help, about );
 
     // ---
     // LOAD FRAME            
@@ -402,7 +383,6 @@ void vtkSlicerModelsGUI::BuildGUI ( )
                 this->SaveModelButton->GetWidgetName());
     
     modLoadFrame->Delete ( );
-    modHelpFrame->Delete ( );
     modDisplayFrame->Delete ( );
     clipFrame->Delete ( );
     modelSaveFrame->Delete();
