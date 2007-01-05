@@ -42,8 +42,8 @@ extern time_t timeCount; /* In seconds */
 extern time_t timer_Start;
 extern time_t timer_Stop;
 
-extern struct timeval preciseTimeStart;
-extern struct timeval preciseTimeEnd;
+extern "C" struct timeval preciseTimeStart;
+extern "C" struct timeval preciseTimeEnd;
 extern long milliSecondDifferences;
 
 #define START_PRECISE_TIMING \
