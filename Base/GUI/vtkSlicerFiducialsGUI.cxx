@@ -235,14 +235,16 @@ void vtkSlicerFiducialsGUI::ProcessGUIEvents ( vtkObject *caller,
   if (activeFiducialListNode == NULL)
   {
       std::cerr << "ERROR: No Fiducial List, adding one first!\n";
-      vtkMRMLFiducialListNode *newList = this->GetLogic()->AddFiducialList();
-//      this->FiducialListSelectorWidget->ProcessNewNodeCommand("vtkMRMLFiducialListNode",
-//this->MRMLScene->GetTagByClassName("vtkMRMLFiducialListNode"));
+      vtkMRMLFiducialListNode *newList = this->GetLogic()->AddFiducialList();      
       if (newList != NULL)
         {
         this->SetFiducialListNodeID(newList->GetID());
+        newList->Delete();
         }
-      newList->Delete();
+      else
+        {
+        vtkErrorMacro("Unable to add a new fid list via the logic\n");
+        }
       // now get the newly active node 
       activeFiducialListNode = (vtkMRMLFiducialListNode *)this->MRMLScene->GetNodeByID(this->GetFiducialListNodeID());
       if (activeFiducialListNode == NULL)
@@ -398,14 +400,14 @@ void vtkSlicerFiducialsGUI::ProcessMRMLEvents ( vtkObject *caller,
           && vtkMRMLSelectionNode::SafeDownCast(caller) == selnode
           && event == vtkCommand::ModifiedEvent)
         {
-        std::cout << "The selection node changed\n";
+        vtkDebugMacro("The selection node changed\n");
         // is the active fid list id out of synch with our selection?
         if (selnode->GetActiveFiducialListID() != NULL &&
             this->GetFiducialListNodeID() != NULL)
           {
           if (strcmp(selnode->GetActiveFiducialListID(), this->GetFiducialListNodeID()) != 0)
             {
-            std::cout << "\tupdating the fid gui's fid list node id\n";
+            vtkDebugMacro("Updating the fid gui's fid list node id\n");
             this->SetFiducialListNodeID(selnode->GetActiveFiducialListID());
             }
           }
