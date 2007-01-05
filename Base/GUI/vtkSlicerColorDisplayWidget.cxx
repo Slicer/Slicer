@@ -38,7 +38,7 @@ vtkSlicerColorDisplayWidget::vtkSlicerColorDisplayWidget ( )
 
     this->NumberOfColorsLabel = NULL;
 
-    this->DebugOn();
+    //this->DebugOn();
 }
 
 
