@@ -41,9 +41,10 @@ proc EditorTearDownGUI {this} {
     nodeSelector volumesCreate volumeName volumesSelect
     volumesFrame paintThreshold paintOver paintDropper
     paintRadius paintRange paintEnable paintLabel
-#    paintFrame helpFrame rebuildButton
       paintFrame rebuildButton
   }
+
+#    paintFrame helpFrame rebuildButton
 
   foreach w $widgets {
     $::Editor($this,$w) SetParent ""
