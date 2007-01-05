@@ -221,7 +221,7 @@ void vtkMRMLNode::MRMLCallback(vtkObject *caller,
 
   if (self->GetInMRMLCallbackFlag())
     {
-    vtkErrorWithObjectMacro(self, "In vtkMRMLNode *********MRMLCallback called recursively?");
+    vtkDebugWithObjectMacro(self, "In vtkMRMLNode *********MRMLCallback called recursively?");
     return;
     }
 

@@ -44,8 +44,6 @@ proc EditorTearDownGUI {this} {
       paintFrame rebuildButton
   }
 
-#    paintFrame helpFrame rebuildButton
-
   foreach w $widgets {
     $::Editor($this,$w) SetParent ""
     $::Editor($this,$w) Delete
@@ -85,14 +83,6 @@ proc EditorBuildGUI {this} {
   set helptext "The Editor allows label maps to be created and edited. This module is currently a prototype and will be under active development throughout 3DSlicer's Beta release."
   set abouttext "This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See http://www.slicer.org for details."
   $this BuildHelpAndAboutFrame $pageWidget $helptext $abouttext
-
-#  set ::Editor($this,helpFrame) [vtkSlicerModuleCollapsibleFrame New]
-#  $::Editor($this,helpFrame) SetParent $pageWidget
-#  $::Editor($this,helpFrame) Create
-#  $::Editor($this,helpFrame) CollapseFrame
-#  $::Editor($this,helpFrame) SetLabelText "Help"
-#  pack [$::Editor($this,helpFrame) GetWidgetName] \
-#    -side top -anchor nw -fill x -padx 2 -pady 2 -in [$pageWidget GetWidgetName]
 
   set ::Editor($this,nodeSelector) [vtkSlicerNodeSelectorWidget New]
   $::Editor($this,nodeSelector) SetNodeClass "vtkMRMLScriptedModuleNode" "ModuleName" "Editor" "EditorParameter"

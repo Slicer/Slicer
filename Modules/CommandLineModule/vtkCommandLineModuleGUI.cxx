@@ -90,6 +90,7 @@ vtkCommandLineModuleGUI::vtkCommandLineModuleGUI()
   this->CreatingNewNode = false;
   this->InUpdateMRML = false;
   this->InUpdateGUI = false;
+  this->InMRMLCallbackFlag = 0;
 //  this->DebugOn();
 }
 
@@ -1367,23 +1368,21 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
 void vtkCommandLineModuleGUI::NewNodeCallback ( vtkObject *__caller,
                                            unsigned long eid, void *__clientData, void *callData)
 {
-    static int inCallback = 0;
-
     vtkCommandLineModuleGUI *self = reinterpret_cast<vtkCommandLineModuleGUI *>(__clientData);
 
-    if ( inCallback )
+    if ( self->GetInMRMLCallbackFlag() )
       {
 #ifdef _DEBUG
-      vtkErrorWithObjectMacro ( self, "In vtkCommandLineModuleGUI *!* NewNodeCallback called recursively?");
+      vtkDebugWithObjectMacro ( self, "In vtkCommandLineModuleGUI *!* NewNodeCallback called recursively?");
 #endif
       return;
       }
 
     vtkDebugWithObjectMacro ( self, "In vtkCommandLineModuleGUI NewNodeCallback");
 
-    inCallback = 1;
+    self->SetInMRMLCallbackFlag(1);
     self->ProcessGUIEvents ( __caller, eid, callData );
-    inCallback = 0;
+    self->SetInMRMLCallbackFlag(0);
 
 }
 
