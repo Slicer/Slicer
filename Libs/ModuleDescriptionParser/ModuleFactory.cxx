@@ -125,7 +125,7 @@ NameIsExecutable(const char* name)
  */
 typedef char * (*XMLModuleDescriptionFunction)();
 typedef int (*ModuleEntryPoint)(int argc, char* argv[]);
-typedef unsigned char * (*GetModuleLogo)(int &width, int &height, int &pixel_size, unsigned long &bufferLength, int &options);
+typedef unsigned char * (*ModuleLogoFunction)(int *width, int *height, int *pixel_size, unsigned long *bufferLength, int *options);
 
 
 // Private implementaton of an std::map
@@ -353,6 +353,9 @@ ModuleFactory
             ModuleEntryPoint entryPoint
               = (ModuleEntryPoint)itksys::DynamicLoader::GetSymbolAddress(lib, "SlicerModuleEntryPoint");
 
+            ModuleLogoFunction logoFunction
+              = (ModuleLogoFunction)itksys::DynamicLoader::GetSymbolAddress(lib, "GetModuleLogo");
+
 
             // if the symbols are found, then get the XML descriptions
             // and cache the entry point to run the module
@@ -404,6 +407,24 @@ ModuleFactory
                             << "    Then discovered at "
                             << module.GetTarget() << std::endl
                             << "    Keeping first module." << std::endl;
+                  }
+
+                if (logoFunction)
+                  {
+                  int width, height, pixelSize, options;
+                  unsigned long bufferLength;
+                  
+                  // call the logo function to get the pixels and information
+                  unsigned char *logo = (*logoFunction)(&width, &height,
+                                                        &pixelSize,
+                                                        &bufferLength,
+                                                        &options);
+                  
+                  // construct a module logo and set it on the module
+                  ModuleLogo mLogo;
+                  mLogo.SetLogo( logo, width, height, pixelSize,
+                                 bufferLength, options);
+                  (*this->InternalMap)[module.GetTitle()].SetLogo(mLogo);
                   }
                 }
               }
@@ -568,6 +589,10 @@ ModuleFactory
               
                 if (mit == this->InternalMap->end())
                   {
+                  // See if the module has a logo, if so, store it in
+                  // the module description
+                  this->GetLogoForCommandLineModule(module);
+
                   // Store the module in the list
                   (*this->InternalMap)[module.GetTitle()] =  module ;
 
@@ -625,4 +650,125 @@ ModuleFactory
   this->InformationMessage( information.str().c_str() );
 
   return numberFound;
+}
+
+
+void
+ModuleFactory
+::GetLogoForCommandLineModule(ModuleDescription& module)
+{
+  itksysProcess *process = itksysProcess_New();
+  char *command[3];
+  std::string arg("--logo");
+
+  command[0] = const_cast<char*>(module.GetTarget().c_str());
+  command[1] = const_cast<char*>(arg.c_str());
+  command[2] = 0;
+
+  // setup the command
+  itksysProcess_SetCommand(process, command);
+  itksysProcess_SetOption(process,
+                          itksysProcess_Option_Detach, 0);
+  itksysProcess_SetOption(process,
+                          itksysProcess_Option_HideWindow, 1);
+  itksysProcess_SetTimeout(process, 5.0); // 5 seconds
+  
+  // execute the command
+  itksysProcess_Execute(process);
+
+  // Wait for the command to finish
+  char *tbuffer;
+  int length;
+  int pipe;
+  std::string stdoutbuffer;
+  std::string stderrbuffer;
+  while ((pipe = itksysProcess_WaitForData(process ,&tbuffer,
+                                           &length, 0)) != 0)
+    {
+    if (length != 0 && tbuffer != 0)
+      {
+      if (pipe == itksysProcess_Pipe_STDOUT)
+        {
+        stdoutbuffer = stdoutbuffer.append(tbuffer, length);
+        }
+      else if (pipe == itksysProcess_Pipe_STDERR)
+        {
+        stderrbuffer = stderrbuffer.append(tbuffer, length);
+        }
+      }
+    }
+  itksysProcess_WaitForExit(process, 0);
+  
+  // check the exit state / error state of the process
+  int result = itksysProcess_GetState(process);
+  if (result == itksysProcess_State_Exited)
+    {
+    // executable exited cleanly and must of done
+    // "something" when presented with a "--xml" argument
+    // (note that it may have just printed out that it did
+    // not understand --xml)
+    if (itksysProcess_GetExitValue(process) == 0)
+      {
+      // executable exited without errors, check if it
+      // generated a valid xml description
+      if (stdoutbuffer.compare(0, 4, "LOGO") == 0)
+        {
+        std::string prefix;
+        int width;
+        int height;
+        int pixelSize;
+        unsigned long bufferLength;
+        int options;
+
+        // make a string stream of the buffer
+        std::stringstream buffer;
+        buffer << stdoutbuffer << std::ends;
+
+        // read the header
+        buffer >> prefix;
+        buffer >> width;
+        buffer >> height;
+        buffer >> pixelSize;
+        buffer >> bufferLength;
+        buffer >> options;
+
+        // read the newline after the options
+        char whitespace[10];
+        buffer.getline(whitespace, 10);
+
+        // now read the data for the icon
+        //
+        // read twice what we think we need because KWWidgets has a
+        // bug in the buffer length
+        std::string logo(bufferLength + 1, 0);
+        buffer.read(const_cast<char*>(logo.c_str()), bufferLength);
+
+        // make a ModuleLogo and configure it
+        ModuleLogo mLogo;
+        mLogo.SetLogo( (unsigned char *)logo.c_str(), width, height, pixelSize, bufferLength, options);
+
+        // set the log on the module
+        module.SetLogo(mLogo);
+        }
+      else
+        {
+        // no logo response
+        }
+      }
+    else
+      {
+      // exited with errors
+      }
+    }
+  else if (result == itksysProcess_State_Expired)
+    {
+    // timeout
+    }
+  else
+    {
+    // did not exit cleanly
+    }
+  
+  // clean up
+  itksysProcess_Delete(process);
 }

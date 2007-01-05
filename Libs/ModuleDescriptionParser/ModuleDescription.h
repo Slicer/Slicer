@@ -20,6 +20,7 @@
 #include "ModuleParameterGroup.h"
 
 #include "ModuleProcessInformation.h"
+#include "ModuleLogo.h"
 
 #include <string>
 #include <vector>
@@ -112,6 +113,9 @@ public:
     return this->Target;
   }
 
+  void SetLogo(const ModuleLogo& logo);
+  const ModuleLogo& GetLogo() const;
+  
   void AddParameterGroup(const ModuleParameterGroup &group)
   {
     this->ParameterGroups.push_back(group);
@@ -158,6 +162,7 @@ private:
   std::vector<ModuleParameterGroup> ParameterGroups;  
 
   ModuleProcessInformation ProcessInformation;
+  ModuleLogo Logo;
 };
 
 ModuleDescriptionParser_EXPORT std::ostream & operator<<(std::ostream &os, const ModuleDescription &module);

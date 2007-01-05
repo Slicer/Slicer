@@ -7,6 +7,8 @@
 #include "vtkKWWidget.h"
 #include "vtkKWText.h"
 #include "vtkKWTextWithScrollbars.h"
+#include "vtkKWIcon.h"
+#include "vtkSmartPointer.h"
 
 #include "vtkSlicerBaseGUIWin32Header.h"
 #include "vtkSlicerModuleCollapsibleFrame.h"
@@ -47,6 +49,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleGUI : public vtkSlicerComponentG
   // Get the categorization of the module.  THe category is used for
   // grouping modules together into menus.
   virtual const char *GetCategory() const {return "None";}
+  
+  // Description:
+  // Get a logo for the module
+  virtual vtkKWIcon* GetLogo() const;
   
   // Description:
   // Configures a module's help frame, with acknowledgment
@@ -94,7 +100,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleGUI : public vtkSlicerComponentG
     virtual ~vtkSlicerModuleGUI ( );
 
     vtkSlicerApplicationGUI *ApplicationGUI;
-    
+//BTX
+    vtkSmartPointer<vtkKWIcon> Logo;
+//ETX
  private:
     vtkSlicerModuleGUI ( const vtkSlicerModuleGUI& ); // Not implemented.
     void operator = ( const vtkSlicerModuleGUI& ); // Not implemented.

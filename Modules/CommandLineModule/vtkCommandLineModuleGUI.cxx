@@ -131,9 +131,33 @@ void
 vtkCommandLineModuleGUI::SetModuleDescription(const ModuleDescription& description)
 {
   ModuleDescriptionObject = description;
+
+  if (ModuleDescriptionObject.GetLogo().GetBufferLength() != 0)
+    {
+    vtkKWIcon* logo = vtkKWIcon::New();
+    logo->SetImage(ModuleDescriptionObject.GetLogo().GetLogo(),
+                   ModuleDescriptionObject.GetLogo().GetWidth(),
+                   ModuleDescriptionObject.GetLogo().GetHeight(),
+                   ModuleDescriptionObject.GetLogo().GetPixelSize(),
+                   ModuleDescriptionObject.GetLogo().GetBufferLength(),
+                   ModuleDescriptionObject.GetLogo().GetOptions());
+    this->Logo = logo;
+    logo->Delete();
+    }
+  else
+    {
+    this->Logo = 0;
+    }
+
   this->Modified();
 }
 
+
+void
+vtkCommandLineModuleGUI::SetCommandLineModuleNode(vtkMRMLCommandLineModuleNode *node)
+{
+  vtkSetObjectBodyMacro(CommandLineModuleNode, vtkMRMLCommandLineModuleNode, node);
+}
 
 void vtkCommandLineModuleGUI::RemoveMRMLNodeObservers()
 {

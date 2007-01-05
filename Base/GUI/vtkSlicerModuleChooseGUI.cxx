@@ -249,6 +249,7 @@ void vtkSlicerModuleChooseGUI::RaiseModule ( const char *moduleName )
            {
             m->GetUIPanel()->Raise();
             p->GetMainSlicerWindow()->SetStatusText ( mName );
+            p->GetLogoDisplayGUI()->GetModuleLogoLabel()->SetImageToIcon( m->GetLogo() );
             this->GetModulesMenuButton()->SetValue( mName );
             break;
            }

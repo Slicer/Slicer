@@ -12,6 +12,7 @@ SET(ModuleDescriptionParser_SRCS
   ModuleDescription.cxx
   ModuleDescriptionParser.cxx
   ModuleProcessInformation.cxx
+  ModuleLogo.cxx
   ModuleFactory.cxx
 )
 

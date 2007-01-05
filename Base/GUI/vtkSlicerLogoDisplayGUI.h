@@ -33,6 +33,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerLogoDisplayGUI : public vtkSlicerCompo
     // Description:
     // Get widgets in the logo frame
     vtkGetObjectMacro (SlicerLogoLabel, vtkKWLabel );
+    vtkGetObjectMacro (ModuleLogoLabel, vtkKWLabel );
     vtkGetObjectMacro (SlicerLogoIcons, vtkSlicerLogoIcons );
     vtkGetObjectMacro ( LogoWidget, vtkLogoWidget);
 
@@ -73,6 +74,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerLogoDisplayGUI : public vtkSlicerCompo
     vtkLogoWidget *LogoWidget;
     vtkSlicerLogoIcons *SlicerLogoIcons;
     vtkKWLabel *SlicerLogoLabel;
+    vtkKWLabel *ModuleLogoLabel;
     
  private:
     vtkSlicerLogoDisplayGUI ( const vtkSlicerLogoDisplayGUI& ); // Not implemented.

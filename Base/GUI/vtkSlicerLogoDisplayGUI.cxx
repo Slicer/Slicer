@@ -25,6 +25,7 @@ vtkSlicerLogoDisplayGUI::vtkSlicerLogoDisplayGUI ( )
     this->SlicerLogoIcons = vtkSlicerLogoIcons::New ();
     //--- logo widgets to which icons are assigned.
     this->SlicerLogoLabel = vtkKWLabel::New();
+    this->ModuleLogoLabel = vtkKWLabel::New();
 }
 
 
@@ -42,6 +43,12 @@ vtkSlicerLogoDisplayGUI::~vtkSlicerLogoDisplayGUI ( )
       this->SlicerLogoLabel->SetParent ( NULL );
       this->SlicerLogoLabel->Delete ( );
       this->SlicerLogoLabel = NULL;
+      }
+    if ( this->ModuleLogoLabel )
+      {
+      this->ModuleLogoLabel->SetParent ( NULL );
+      this->ModuleLogoLabel->Delete ( );
+      this->ModuleLogoLabel = NULL;
       }
     this->SetApplicationGUI ( NULL );
 }
@@ -84,7 +91,7 @@ void vtkSlicerLogoDisplayGUI::ProcessGUIEvents ( vtkObject *caller,
       vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( p->GetApplication() );
       if ( app != NULL )
         {
-          // Fill in.
+        // Fill in.
         }
     }
 }
@@ -142,7 +149,12 @@ void vtkSlicerLogoDisplayGUI::BuildGUI ( vtkKWFrame *appF )
         this->SlicerLogoLabel->SetParent ( appF );
         this->SlicerLogoLabel->Create();
         this->SlicerLogoLabel->SetImageToIcon ( this->SlicerLogoIcons->GetSlicerLogo() );
-        app->Script ( "pack %s -anchor nw -padx 0 -pady 0", this->SlicerLogoLabel->GetWidgetName() );
+
+        this->ModuleLogoLabel->SetParent( appF );
+        this->ModuleLogoLabel->Create();
+
+        app->Script ( "pack %s -side left -anchor nw -padx 0 -pady 0", this->SlicerLogoLabel->GetWidgetName() );
+        app->Script ( "pack %s -side right -anchor e -padx 0 -pady 0", this->ModuleLogoLabel->GetWidgetName() );
       }
     }
 

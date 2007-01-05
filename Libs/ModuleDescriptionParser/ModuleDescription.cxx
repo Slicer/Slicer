@@ -32,7 +32,8 @@ ModuleDescription::ModuleDescription(const ModuleDescription &md)
   this->Contributor = md.Contributor;
   this->Target = md.Target;
   this->ParameterGroups = md.ParameterGroups;
-
+  this->Logo = md.Logo;
+  
   this->ProcessInformation.Initialize();
 }
 
@@ -49,6 +50,7 @@ ModuleDescription::operator=(const ModuleDescription &md)
   this->Target = md.Target;
   this->ParameterGroups = md.ParameterGroups;
   this->ProcessInformation = md.ProcessInformation;
+  this->Logo = md.Logo;
 }
 
 std::ostream & operator<<(std::ostream &os, const ModuleDescription &module)
@@ -61,6 +63,7 @@ std::ostream & operator<<(std::ostream &os, const ModuleDescription &module)
   os << "License: " << module.GetLicense() << std::endl;
   os << "Contributor: " << module.GetContributor() << std::endl;
   os << "Target: " << module.GetTarget() << std::endl;
+  //os << "Logo: " << module.GetLogo() << std::endl;
 
   os << "ProcessInformation: " << std::endl
      << *(module.GetProcessInformation());
@@ -172,4 +175,18 @@ ModuleDescription
     }
 
   return "";
+}
+
+void
+ModuleDescription
+::SetLogo(const ModuleLogo& logo)
+{
+  this->Logo = logo;
+}
+
+const ModuleLogo&
+ModuleDescription
+::GetLogo() const
+{
+  return this->Logo;
 }

@@ -75,6 +75,9 @@ protected:
   // argument. Returns the number of modules found.
   virtual long ScanForCommandLineModules();
 
+  // Get the logo for a command line module
+  virtual void GetLogoForCommandLineModule(ModuleDescription&);
+  
   void WarningMessage( const char *);
   void ErrorMessage( const char *);
   void InformationMessage( const char *);

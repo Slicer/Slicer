@@ -41,12 +41,12 @@ public:
   
   // Description: Get/Set MRML node
   vtkGetObjectMacro (CommandLineModuleNode, vtkMRMLCommandLineModuleNode);
-  vtkSetObjectMacro (CommandLineModuleNode, vtkMRMLCommandLineModuleNode);
-
+  virtual void SetCommandLineModuleNode(vtkMRMLCommandLineModuleNode*);
+  
   // Description: Get the categorization of the module.
   const char *GetCategory() const
     { return this->ModuleDescriptionObject.GetCategory().c_str(); }
-  
+
   // Description:
   // Create widgets
   virtual void BuildGUI ( );

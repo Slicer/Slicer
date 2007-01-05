@@ -16,6 +16,8 @@ vtkSlicerModuleGUI::vtkSlicerModuleGUI ( ) {
     this->HelpText = vtkKWTextWithScrollbars::New ( );
     this->HelpFrame = vtkSlicerModuleCollapsibleFrame::New ();
     this->ApplicationGUI = NULL;
+
+    this->Logo = 0;
 }
 
 
@@ -102,7 +104,13 @@ void vtkSlicerModuleGUI::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "HelpText: " << this->GetHelpText ( ) << "\n";
     os << indent << "HelpFrame: " << this->GetHelpFrame ( ) << "\n";
     os << indent << "ApplicationGUI: " << this->GetApplicationGUI() << "\n";
+    os << indent << "Logo: " << this->GetLogo() << "\n";
+}
 
+vtkKWIcon *
+vtkSlicerModuleGUI::GetLogo() const
+{
+  return this->Logo.GetPointer();
 }
 
 
