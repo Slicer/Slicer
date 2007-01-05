@@ -316,6 +316,11 @@ vtkEMSegmentIntensityDistributionsStep::DisplaySelectedNodeIntensityDistribution
         buffer, "IntensityDistributionSpecificationCallback %d %d", 
         sel_vol_id, vtkEMSegmentLogic::DistributionSpecificationAutoSample);
       menu->AddRadioButton("Auto Sampling", this, buffer);
+
+      // temporarily disable auto sampling because it is not currently
+      // implemented
+      menu->SetItemStateToDisabled("Auto Sampling");
+
       switch (logic->GetTreeNodeDistributionSpecificationMethod(sel_vol_id))
         {
         case vtkEMSegmentLogic::DistributionSpecificationManual:
