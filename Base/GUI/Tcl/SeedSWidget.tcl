@@ -32,6 +32,12 @@ if { [itcl::find class SeedSWidget] == "" } {
     destructor {}
 
     public variable movedCommand ""
+    public variable glyph "StarBurst"
+    public variable scale "1"
+    public variable color "1 0 0"
+    public variable selectedColor "1 1 0"
+    public variable opacity "1"
+    public variable selected "0"
 
     variable _startPosition "0 0 0"
     variable _currentPosition "0 0 0"
@@ -44,7 +50,7 @@ if { [itcl::find class SeedSWidget] == "" } {
     method setRASPosition {r a s} { $this place $x $y $z }
     method getRASPosition {} { return $_currentPosition }
     method highlight {} {}
-    method createGlyph {} {}
+    method createGlyph { {type "StarBurst"} } {}
   }
 }
 
@@ -56,10 +62,14 @@ itcl::body SeedSWidget::constructor {sliceGUI} {
   $this configure -sliceGUI $sliceGUI
   set renderWidget [[$sliceGUI GetSliceViewer] GetRenderWidget]
  
-  set o(cross) [$this createGlyph]
+  set o(glyph) [$this createGlyph]
+  set o(glyphTransform) [vtkTransform New]
+  set o(glyphTransformFilter) [vtkTransformPolyDataFilter New]
+  $o(glyphTransformFilter) SetInput $o(glyph)
+  $o(glyphTransformFilter) SetTransform $o(glyphTransform)
   set o(mapper) [vtkNew vtkPolyDataMapper2D]
   set o(actor) [vtkNew vtkActor2D]
-  $o(mapper) SetInput $o(cross)
+  $o(mapper) SetInput [$o(glyphTransformFilter) GetOutput]
   $o(actor) SetMapper $o(mapper)
   [$renderWidget GetRenderer] AddActor2D $o(actor)
   lappend _actors $o(actor)
@@ -99,35 +109,61 @@ itcl::body SeedSWidget::destructor {} {
   }
 }
 
+
+itcl::configbody SeedSWidget::glyph {
+
+  set validGlyphTypes {None Vertex Dash Cross ThickCross Triangle
+    Square Circle Diamond Arrow ThickArrow HookedArrow StarBurst}
+
+  if { [lsearch $validGlyphTypes $glyph] == -1 } {
+    set glyph "StarBurst"
+  }
+
+  $o(glyph) Delete
+  set o(glyph) [$this createGlyph $glyph]
+  $o(glyphTransformFilter) SetInput $o(glyph)
+
+}
+
+itcl::configbody SeedSWidget::scale {
+  $o(glyphTransform) Identity
+  $o(glyphTransform) Scale $scale $scale $scale 
+  [$sliceGUI GetSliceViewer] RequestRender
+}
+
+itcl::configbody SeedSWidget::color {
+  $this highlight
+  [$sliceGUI GetSliceViewer] RequestRender
+}
+
+itcl::configbody SeedSWidget::selectedColor {
+  $this highlight
+  [$sliceGUI GetSliceViewer] RequestRender
+}
+
+itcl::configbody SeedSWidget::opacity {
+  $this highlight
+  [$sliceGUI GetSliceViewer] RequestRender
+}
+
+itcl::configbody SeedSWidget::selected {
+  $this highlight
+  [$sliceGUI GetSliceViewer] RequestRender
+}
+
 # ------------------------------------------------------------------
 #                             METHODS
 # ------------------------------------------------------------------
 
-itcl::body SeedSWidget::createGlyph {} {
-  # make a star shaped array of lines around the center
-  set polyData [vtkNew vtkPolyData]
-  set points [vtkPoints New]
-  set lines [vtkCellArray New]
-  $polyData SetPoints $points
-  $polyData SetLines $lines
-  set PI 3.1415926
-  set TWOPI [expr $PI * 2]
-  set PIoverFOUR [expr $PI / 4]
-  for { set angle 0 } { $angle <= $TWOPI } { set angle [expr $angle + $PIoverFOUR] } {
-    set x [expr $_glyphScale * 0.3 * cos($angle)]
-    set y [expr $_glyphScale * 0.3 * sin($angle)]
-    set p0 [$points InsertNextPoint $x $y 0]
-    set x [expr $_glyphScale * cos($angle)]
-    set y [expr $_glyphScale * sin($angle)]
-    set p1 [$points InsertNextPoint $x $y 0]
-    set idList [vtkIdList New]
-    $idList InsertNextId $p0
-    $idList InsertNextId $p1
-    $polyData InsertNextCell 3 $idList
-    $idList Delete
-  }
-  $points Delete
-  $lines Delete
+itcl::body SeedSWidget::createGlyph { {type "StarBurst"} } {
+  
+  set glyphSource [vtkSlicerGlyphSource2D New]
+  $glyphSource SetGlyphTypeTo$type
+  set polyData [$glyphSource GetOutput]
+  $polyData Register ""
+  $polyData Update
+  [$polyData GetCellData] SetScalars ""
+  $glyphSource Delete
   return $polyData
 }
 
@@ -159,8 +195,14 @@ itcl::body SeedSWidget::positionActors { } {
 itcl::body SeedSWidget::highlight { } {
 
   set property [$o(actor) GetProperty]
-  $property SetColor 1 0 0
+  if { $selected } {
+    eval $property SetColor $selectedColor
+  } else {
+    eval $property SetColor $color
+  }
   $property SetLineWidth 1
+  $property SetOpacity $opacity
+
   set _description ""
   switch $_actionState {
     "dragging" {
@@ -172,6 +214,7 @@ itcl::body SeedSWidget::highlight { } {
         "over" {
           $property SetColor 1 1 0
           $property SetLineWidth 2
+          set _description "Move mouse with left button down to drag"
         }
       }
     }

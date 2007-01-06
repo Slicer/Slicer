@@ -110,7 +110,8 @@ itcl::body FiducialsSWidget::processEvent { caller } {
   #
   foreach seed $_seedSWidgets {
     $seed place -10000 -10000 -10000
-    after idle "itcl::delete object ::FiducialsSWidget::$seed"
+    after idle "itcl::delete object ::FiducialsSWidget::$seed;"
+    [$sliceGUI GetSliceViewer] RequestRender
   }
   set _seedSWidgets ""
 
@@ -152,7 +153,17 @@ itcl::body FiducialsSWidget::processEvent { caller } {
     if { [$caller IsA "vtkMRMLScene"] } {
       after idle "$this addFiducialListObserver $fidListNode"
     }
+
+    if { ![$fidListNode GetVisibility] } {
+      continue
+    }
     
+    set glyphType [$fidListNode GetGlyphTypeAsString]
+    set indexOf2D [string last "2D" $glyphType]
+    if { $indexOf2D != -1 } {
+      set glyphType [string range $glyphType 0 [incr indexOf2D -1]]
+    }
+
     #
     # make the fiducial visible if within 1mm of the slice
     # - place a seed widget and keep track for later deletion
@@ -166,6 +177,15 @@ itcl::body FiducialsSWidget::processEvent { caller } {
         set seedSWidget [SeedSWidget #auto $sliceGUI]
         $seedSWidget place $r $a $s
         $seedSWidget configure -movedCommand "$this seedMovedCallback $seedSWidget $fidListNode $f"
+        $seedSWidget configure -glyph $glyphType
+        $seedSWidget configure -scale [$fidListNode GetSymbolScale]
+        $seedSWidget configure -color [$fidListNode GetColor]
+        $seedSWidget configure -selectedColor [$fidListNode GetSelectedColor]
+        $seedSWidget configure -opacity [$fidListNode GetOpacity]
+        if { [$fidListNode GetNthFiducialSelected $f] } {
+          $seedSWidget configure -selected 1
+        }
+        puts [$seedSWidget configure]
         lappend _seedSWidgets $seedSWidget
       }
     }

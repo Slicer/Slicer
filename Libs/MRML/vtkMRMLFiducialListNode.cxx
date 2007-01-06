@@ -55,7 +55,7 @@ vtkMRMLFiducialListNode::vtkMRMLFiducialListNode()
 
   this->FiducialList = vtkCollection::New();
   this->Indent = 1;
-  this->SymbolScale = 1.0;
+  this->SymbolScale = 10.0;
   this->TextScale = 4.5;
   this->Visibility = 1;
   this->Color[0]=0.4; this->Color[1]=1.0; this->Color[2]=1.0;
