@@ -10,6 +10,14 @@
 #include "vtkMRMLVolumeNode.h"
 #include "vtkMRMLVolumeDisplayNode.h"
 
+// to get at the colour logic to set a default color node
+#include "vtkKWApplication.h"
+#include "vtkSlicerApplication.h"
+#include "vtkSlicerModuleGUI.h"
+#include "vtkSlicerColorGUI.h"
+#include "vtkSlicerColorLogic.h"
+#include "vtkMRMLScalarVolumeNode.h"
+
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerVolumeDisplayWidget );
 vtkCxxRevisionMacro ( vtkSlicerVolumeDisplayWidget, "$Revision: 1.0 $");
@@ -175,7 +183,39 @@ void vtkSlicerVolumeDisplayWidget::ProcessWidgetEvents ( vtkObject *caller,
           displayNode = vtkMRMLVolumeDisplayNode::New ();
           displayNode->SetScene(this->MRMLScene);
           this->MRMLScene->AddNode (displayNode);
-          displayNode->SetDefaultColorMap();
+          //displayNode->SetDefaultColorMap();
+          if (this->GetApplication() &&
+              vtkSlicerApplication::SafeDownCast(this->GetApplication()) &&
+              vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Color") &&
+              vtkSlicerColorGUI::SafeDownCast(vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Color")))
+            {
+            vtkSlicerColorLogic *colorLogic = vtkSlicerColorGUI::SafeDownCast(vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Color"))->GetLogic();
+            
+            if (colorLogic)
+              {
+              int isLabelMap = 0;
+              if (vtkMRMLScalarVolumeNode::SafeDownCast(volumeNode))
+                {
+                isLabelMap = vtkMRMLScalarVolumeNode::SafeDownCast(volumeNode)->GetLabelMap();
+                }
+              if (isLabelMap)
+                {
+                displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultLabelMapColorNodeID());
+                }
+              else
+                {
+                displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultVolumeColorNodeID());
+                }
+              }
+            else
+              {
+              vtkDebugMacro("Unable to get color logic\n");
+              }
+            }
+          else
+            {
+            vtkDebugMacro("Unable to get application or color gui");
+            }
           displayNode->Delete();
           }
         

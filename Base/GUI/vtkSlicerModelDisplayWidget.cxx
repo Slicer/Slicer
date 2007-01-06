@@ -14,6 +14,15 @@
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLModelDisplayNode.h"
 
+// to get at the colour logic to set a default color node
+#include "vtkKWApplication.h"
+#include "vtkSlicerApplication.h"
+#include "vtkSlicerModuleGUI.h"
+#include "vtkSlicerColorGUI.h"
+#include "vtkSlicerColorLogic.h"
+
+//#include "vtkMRMLColorProceduralFreeSurferNode.h"
+
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerModelDisplayWidget );
 vtkCxxRevisionMacro ( vtkSlicerModelDisplayWidget, "$Revision: 1.0 $");
@@ -200,6 +209,16 @@ void vtkSlicerModelDisplayWidget::ProcessWidgetEvents ( vtkObject *caller,
           vtkMRMLModelDisplayNode::SafeDownCast (this->MRMLScene->GetNodeByID(this->ModelDisplayNodeID) );
         if (displayNode != NULL)
           {
+          if (displayNode->GetColorNodeID() == NULL)
+            {
+            vtkWarningMacro("Model display node doesn't have a color node, setting a default.\n");
+            //displayNode->SetDefaultColorMap();
+            vtkSlicerColorLogic *colorLogic = vtkSlicerColorGUI::SafeDownCast(vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Color"))->GetLogic();
+            if (colorLogic)
+              {
+              displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultModelColorNodeID());
+              }
+            }
           // set and observe it's colour node id
           if (displayNode->GetColorNodeID() == NULL ||
               strcmp(displayNode->GetColorNodeID(), color->GetID()) != 0)
@@ -207,8 +226,20 @@ void vtkSlicerModelDisplayWidget::ProcessWidgetEvents ( vtkObject *caller,
             // there's a change, set it
             displayNode->SetAndObserveColorNodeID(color->GetID());
             }
+          else
+            {
+            //std::cout << "Display node's color node is not null and it's the same, so not setting it\n";
+            }      
           }        
         }
+      else
+        {
+        //std::cout << "Display node is null, can't set it's color id\n";
+        }  
+      }
+    else
+      {
+      //std::cout << "Color node from the widget is null, can't set the display node's color id\n";
       }
     }
 }
