@@ -62,8 +62,6 @@ SET_SOURCE_FILES_PROPERTIES(
 # Include dirs
 #
 INCLUDE_DIRECTORIES(
-  ${ModulesBaseClasses_SOURCE_DIR}
-  ${ModulesBaseClasses_BINARY_DIR}
   ${EMSegment_SOURCE_DIR}
   ${EMSegment_BINARY_DIR}
   ${EMSegment_SOURCE_DIR}/Wizard
@@ -103,7 +101,6 @@ IF(BUILD_SHARED_LIBS)
 ENDIF(BUILD_SHARED_LIBS)
 
 TARGET_LINK_LIBRARIES(EMSegment
-  ModulesBaseClasses
   SlicerBaseLogic 
   SlicerBaseGUI 
   MRML

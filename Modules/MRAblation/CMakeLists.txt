@@ -30,8 +30,6 @@ SET(MRAblation_SRCS
 # Include dirs
 
 INCLUDE_DIRECTORIES(
-  ${ModulesBaseClasses_SOURCE_DIR}
-  ${ModulesBaseClasses_BINARY_DIR}
   ${MRAblation_SOURCE_DIR}
   ${MRAblation_BINARY_DIR}
   ${SlicerBase_SOURCE_DIR}
@@ -70,7 +68,6 @@ IF(BUILD_SHARED_LIBS)
 ENDIF(BUILD_SHARED_LIBS)
 
 TARGET_LINK_LIBRARIES(MRAblation
-  ModulesBaseClasses
   SlicerBaseLogic 
   SlicerBaseGUI 
   MRML

@@ -29,8 +29,6 @@ SET(QueryAtlas_SRCS
 # Include dirs
 
 INCLUDE_DIRECTORIES(
-  ${ModulesBaseClasses_SOURCE_DIR}
-  ${ModulesBaseClasses_BINARY_DIR}
   ${QueryAtlas_SOURCE_DIR}
   ${QueryAtlas_BINARY_DIR}
   ${SlicerBase_SOURCE_DIR}
@@ -69,7 +67,6 @@ IF(BUILD_SHARED_LIBS)
 ENDIF(BUILD_SHARED_LIBS)
 
 TARGET_LINK_LIBRARIES(QueryAtlas
-  ModulesBaseClasses
   SlicerBaseLogic 
   SlicerBaseGUI 
   MRML
