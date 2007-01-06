@@ -69,22 +69,30 @@ vtkMRMLVolumeDisplayNode::vtkMRMLVolumeDisplayNode()
   this->ColorNodeID = NULL;
   this->ColorNode = NULL;
 }
-
+/*
 //----------------------------------------------------------------------------
-void vtkMRMLVolumeDisplayNode::SetDefaultColorMap()
+void vtkMRMLVolumeDisplayNode::SetDefaultColorMap(int isLabelMap)
  {
   // set up a default color node
-  this->SetAndObserveColorNodeID("vtkMRMLColorNodeGrey");
+   // TODO: figure out if can use vtkSlicerColorLogic's helper methods
+   if (isLabelMap)
+     {
+     this->SetAndObserveColorNodeID("vtkMRMLColorTableNodeLabels");
+     }
+   else
+     {
+     this->SetAndObserveColorNodeID("vtkMRMLColorTableNodeGrey");
+     }
   if (this->ColorNode == NULL)
     {
-    vtkDebugMacro("vtkMRMLVolumeDisplayNode: FAILED setting default greyscale color node, it's still null\n")
+    vtkDebugMacro("vtkMRMLVolumeDisplayNode: FAILED setting default  color node, it's still null\n")
     }
   else
     {
-    vtkDebugMacro("vtkMRMLVolumeDisplayNode: set up the default color node as grey\n");
+    vtkDebugMacro("vtkMRMLVolumeDisplayNode: set up the default color node\n");
     }
 }
-
+*/
 //----------------------------------------------------------------------------
 vtkMRMLVolumeDisplayNode::~vtkMRMLVolumeDisplayNode()
 {

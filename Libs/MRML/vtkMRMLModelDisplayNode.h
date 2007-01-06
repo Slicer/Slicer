@@ -152,6 +152,10 @@ public:
   void SetAndObserveTextureImageData(vtkImageData *ImageData);
 
   // Description:
+  // Set a default color node
+//  void SetDefaultColorMap();
+  
+  // Description:
   // String ID of the color MRML node
   void SetAndObserveColorNodeID(const char *ColorNodeID);
   vtkGetStringMacro(ColorNodeID);

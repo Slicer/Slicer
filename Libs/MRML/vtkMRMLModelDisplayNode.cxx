@@ -373,6 +373,19 @@ void vtkMRMLModelDisplayNode::UpdateReferences()
     }
 }
 
+/*
+//-----------------------------------------------------------
+void vtkMRMLModelDisplayNode::SetDefaultColorMap()
+{
+  // set up a default color node
+  //this->SetAndObserveColorNodeID("vtkMRMLFreeSurferColorNodeHeat");
+  this->SetAndObserveColorNodeID("vtkMRMLColorTableNodeOcean");
+  if (this->ColorNode == NULL)
+    {
+    vtkDebugMacro("vtkMRMLModelDisplayNode: FAILED setting default Heat color node, it's still null\n")
+    }
+}
+*/
 //----------------------------------------------------------------------------
 vtkMRMLColorNode* vtkMRMLModelDisplayNode::GetColorNode()
 {
@@ -392,7 +405,7 @@ void vtkMRMLModelDisplayNode::SetAndObserveColorNodeID(const char *colorNodeID)
 
   this->SetColorNodeID(colorNodeID);
 
-  vtkMRMLColorNode *cnode = this->GetColorNode();
+  vtkMRMLNode *cnode = this->GetColorNode();
 
   vtkSetAndObserveMRMLObjectMacro(this->ColorNode, cnode);
 
@@ -413,7 +426,8 @@ void vtkMRMLModelDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
     }
 
   vtkMRMLColorNode *cnode = this->GetColorNode();
-  if (cnode != NULL && cnode == vtkMRMLColorNode::SafeDownCast(caller) &&
+  if (cnode != NULL &&
+      cnode == vtkMRMLColorNode::SafeDownCast(caller) &&
       event ==  vtkCommand::ModifiedEvent)
     {
     this->InvokeEvent(vtkCommand::ModifiedEvent, NULL);

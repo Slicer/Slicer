@@ -132,7 +132,7 @@ class VTK_MRML_EXPORT vtkMRMLVolumeDisplayNode : public vtkMRMLNode
                                    void * /*callData*/ );
   // Description:
   // set gray colormap
-  void SetDefaultColorMap();
+//  void SetDefaultColorMap(int isLabelMap);
  
 protected:
   vtkMRMLVolumeDisplayNode();
