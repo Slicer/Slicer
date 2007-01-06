@@ -620,16 +620,15 @@ int Slicer3_main(int argc, char *argv[])
       "Initializing Colors Module...");
 
     // -- Color module
-     vtkSlicerColorLogic *colorLogic = vtkSlicerColorLogic::New ( );
-     // observe the scene's new scene event
-     vtkIntArray *colorEvents = vtkIntArray::New();
-     colorEvents->InsertNextValue( vtkMRMLScene::NewSceneEvent );
-     colorLogic->SetAndObserveMRMLSceneEvents ( scene,  colorEvents);
-     colorEvents->Delete();
-     // this should be triggered somehow by a new scene event, but for now,
-     // call it explicitly
-     std::cout << "Slicer3: adding default color nodes\n";
-     colorLogic->AddDefaultColorNodes();
+    vtkSlicerColorLogic *colorLogic = vtkSlicerColorLogic::New ( );
+    // observe the scene's new scene event
+    vtkIntArray *colorEvents = vtkIntArray::New();
+    colorEvents->InsertNextValue( vtkMRMLScene::NewSceneEvent );
+    colorLogic->SetAndObserveMRMLSceneEvents ( scene,  colorEvents);
+    colorEvents->Delete();
+    // this should be triggered somehow by a new scene event, but for now,
+    // call it explicitly
+    colorLogic->AddDefaultColorNodes();
     vtkSlicerColorGUI *colorGUI = vtkSlicerColorGUI::New ( );
     colorGUI->SetApplication ( slicerApp );
     colorGUI->SetApplicationGUI ( appGUI );
