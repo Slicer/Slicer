@@ -36,6 +36,7 @@ SET(MRML_SRCS
         vtkMRMLSelectionNode.cxx
         vtkObserverManager.cxx
         vtkMRMLColorNode.cxx
+        vtkMRMLColorTableNode.cxx
         vtkMRMLCameraNode.cxx
         vtkMRMLViewNode.cxx
         vtkMRMLTensorVolumeNode.cxx
