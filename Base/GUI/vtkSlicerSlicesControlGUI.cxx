@@ -8,6 +8,7 @@
 #include "vtkSlicerSlicesControlIcons.h"
 #include "vtkSlicerSlicesGUI.h"
 #include "vtkSlicerSliceGUI.h"
+#include "vtkMRMLFiducialListNode.h"
 
 #include "vtkKWWidget.h"
 #include "vtkKWScale.h"
@@ -135,7 +136,6 @@ vtkSlicerSlicesControlGUI::~vtkSlicerSlicesControlGUI ( )
 
 
 
-
 //---------------------------------------------------------------------------
 void vtkSlicerSlicesControlGUI::PrintSelf ( ostream& os, vtkIndent indent )
 {
@@ -172,11 +172,10 @@ void vtkSlicerSlicesControlGUI::RemoveGUIObservers ( )
   this->ShowFgButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->ShowBgButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->LabelOpacityButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-//  this->GridButton->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->AnnotationButton->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->SpatialUnitsButton->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->CrossHairButton->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->FeaturesVisibleButton->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
+this->FeaturesVisibleButton->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->FitToWindowButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );    
 }
 
@@ -194,7 +193,6 @@ void vtkSlicerSlicesControlGUI::AddGUIObservers ( )
   this->ShowFgButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->ShowBgButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->LabelOpacityButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-//  this->GridButton->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->AnnotationButton->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->SpatialUnitsButton->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->CrossHairButton->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -209,9 +207,6 @@ void vtkSlicerSlicesControlGUI::AddGUIObservers ( )
 void vtkSlicerSlicesControlGUI::ProcessGUIEvents ( vtkObject *caller,
                                           unsigned long event, void *callData )
 {
-
-
-
 
   vtkKWPushButton *pushb = vtkKWPushButton::SafeDownCast (caller );
   vtkKWScale *scale = vtkKWScale::SafeDownCast (caller);
@@ -400,16 +395,71 @@ void vtkSlicerSlicesControlGUI::ModifySpatialUnitsMode ( )
 void vtkSlicerSlicesControlGUI::ModifyVisibility ( )
 {
   vtkSlicerApplicationGUI *appGUI;
-//  vtkMRMLFiducialsListNode *flnode;
   vtkMRMLSliceCompositeNode *cnode;
-
+//  vtkMRMLViewNode *vnode;
+//  vtkMRMLSelectionNode *snode;
+//  vtkMRMLFiducialListNode *fnode;
+  
   if ( this->GetApplicationGUI() )
     {
     appGUI = vtkSlicerApplicationGUI::SafeDownCast (this->GetApplicationGUI());
-    
-    // first save the state of all slice composite nodes for undo
-    int nnodes = appGUI->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
+    int state;
+    int nnodes;
     vtkCollection *nodes = vtkCollection::New();
+    
+/*
+    // first save the state of whichever view node is current and make change to node.
+    nnodes = appGUI->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLViewNode");
+    for (int i = 0; i < nnodes; i++)
+      {
+      vnode = vtkMRMLViewNode::SafeDownCast (
+                                                       appGUI->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLViewNode" ) );
+      if (vnode->GetActive())
+        {
+        break;
+        }
+      }
+
+    // Make ViewNode and FiducialListNodes match.
+    //TODO: remove this and use above when there are multiple views and one is marked as active.
+    vnode = vtkMRMLViewNode::SafeDownCast (
+                                           appGUI->GetMRMLScene()->GetNthNodeByClass( 0, "vtkMRMLViewNode" ) );
+    if (vnode != NULL )
+      {
+      // fiducial points show or hide
+      state =  this->GetFeaturesVisibleButton()->GetMenu()->GetItemSelectedState("Fiducial points");
+      if ( state != vnode->GetFiducialsVisible () )
+        {
+        nodes->AddItem (vnode);
+        vnode->SetFiducialsVisible (state);
+        nnodes = appGUI->GetMRMLScene()->GetNumberOfNodesByClass ("vtkMRMLFiducialListNode");
+        for ( i = 0; i<nnodes; i++)
+          {
+          fnode = vtkMRMLFiducialListNode::SafeDownCast (appGUI->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLFiducialListNode"));
+          nodes->AddItem (fnode);
+          fnode->SetVisibility ( state );
+          }
+        }
+      // fiducial labels show or hide
+      state =  this->GetFeaturesVisibleButton()->GetMenu()->GetItemSelectedState("Fiducial labels");
+      if ( state != vnode->GetFiducialLabelsVisible() )
+        {
+        nodes->AddItem (vnode);
+        vnode->SetFiducialLabelsVisible (state);
+        nnodes = appGUI->GetMRMLScene()->GetNumberOfNodesByClass ("vtkMRMLFiducialListNode");
+        for ( i = 0; i<nnodes; i++)
+          {
+          fnode = vtkMRMLFiducialListNode::SafeDownCast (appGUI->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLFiducialListNode"));
+          nodes->AddItem (fnode);
+          fnode->SetVisibility ( state );
+          }
+        }
+      }
+*/
+      
+    // SliceCompositeNodes
+    // add the state of all slice composite nodes for undo
+    nnodes = appGUI->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
     for (int i = 0; i < nnodes; i++)
       {
       cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
@@ -420,20 +470,26 @@ void vtkSlicerSlicesControlGUI::ModifyVisibility ( )
         }
     }
     this->MRMLScene->SaveStateForUndo ( nodes );
+
+
     nodes->Delete ( );
 
-    int state;
     // then change the annotation mode for all slice composite nodes
     for (int i = 0; i < nnodes; i++)
       {
       cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
                                                        appGUI->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
       
-      // implement fiducial points show or hide
       state =  this->GetFeaturesVisibleButton()->GetMenu()->GetItemSelectedState("Fiducial points");
-      // implement fiducial labels show or hide
+      if ( cnode->GetFiducialVisibility () != state )
+        {
+        cnode->SetFiducialVisibility( state);
+        }
       state =  this->GetFeaturesVisibleButton()->GetMenu()->GetItemSelectedState("Fiducial labels");
-
+      if ( cnode->GetFiducialLabelVisibility() != state )
+        {
+        cnode->SetFiducialLabelVisibility ( state );
+        }
       state =  this->GetFeaturesVisibleButton()->GetMenu()->GetItemSelectedState("Foreground grid");
       if ( cnode->GetForegroundGrid ( ) != state )
         {
@@ -635,10 +691,19 @@ void vtkSlicerSlicesControlGUI::FitSlicesToBackground ( )
       // Now fit all Slices to background
       ssgui->GetSliceGUICollection()->InitTraversal();
       sgui = vtkSlicerSliceGUI::SafeDownCast ( ssgui->GetSliceGUICollection()->GetNextItemAsObject() );
+      int w, h;
       while ( sgui != NULL )
         {
-        int w = sgui->GetSliceViewer()->GetRenderWidget ( )->GetWidth();
-        int h = sgui->GetSliceViewer()->GetRenderWidget ( )->GetHeight();
+        //w = sgui->GetSliceViewer()->GetRenderWidget ( )->GetWidth();
+        //h = sgui->GetSliceViewer()->GetRenderWidget ( )->GetHeight();
+        sscanf(
+          this->Script("winfo width %s", 
+              sgui->GetSliceViewer()->GetRenderWidget ( )->GetWidgetName()), 
+          "%d", &w);
+        sscanf(
+          this->Script("winfo height %s", 
+              sgui->GetSliceViewer()->GetRenderWidget ( )->GetWidgetName()), 
+          "%d", &h);
         sgui->GetLogic()->FitSliceToBackground ( w, h );
         sgui->GetSliceNode()->UpdateMatrices( );
         sgui = vtkSlicerSliceGUI::SafeDownCast ( ssgui->GetSliceGUICollection()->GetNextItemAsObject() );
@@ -646,6 +711,8 @@ void vtkSlicerSlicesControlGUI::FitSlicesToBackground ( )
       }
     }
 }
+
+
 
 
 
@@ -750,9 +817,10 @@ void vtkSlicerSlicesControlGUI::BuildVisibilityMenu ( )
   this->FeaturesVisibleButton->GetMenu()->AddCheckButton ( "Label grid");
   this->FeaturesVisibleButton->GetMenu()->AddSeparator ( );
   this->FeaturesVisibleButton->GetMenu()->AddCommand ("close");
-
-  this->FeaturesVisibleButton->GetMenu()->SelectItem ("Fiducial points");
-  this->FeaturesVisibleButton->GetMenu()->SelectItem ("Fiducial labels");
+  this->FeaturesVisibleButton->GetMenu()->SetItemStateToDisabled ("Fiducial points");
+  this->FeaturesVisibleButton->GetMenu()->SetItemStateToDisabled ("Fiducial labels");
+//  this->FeaturesVisibleButton->GetMenu()->SelectItem ("Fiducial points");
+//  this->FeaturesVisibleButton->GetMenu()->SelectItem ("Fiducial labels");
   this->FeaturesVisibleButton->GetMenu()->DeselectItem ("Foreground grid");
   this->FeaturesVisibleButton->GetMenu()->DeselectItem ("Background grid");
   this->FeaturesVisibleButton->GetMenu()->SelectItem ("Label grid");
