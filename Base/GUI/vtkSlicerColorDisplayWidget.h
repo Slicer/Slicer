@@ -27,6 +27,7 @@
 
 #include "vtkMRMLColorNode.h"
 
+class vtkKWPushButton;
 class vtkKWChangeColorButton;
 class vtkKWScaleWithEntry;
 class vtkKWEntryWithLabel;
@@ -40,15 +41,30 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description:
-  // Getting setting  MRML ColorNodeID.
-  vtkGetStringMacro ( ColorNodeID );
-  vtkSetStringMacro ( ColorNodeID );
-  
+  // Get methods on class members ( no Set methods required. )
   vtkGetObjectMacro ( ColorNodeTypeLabel, vtkKWLabel);
   vtkGetObjectMacro ( NumberOfColorsLabel, vtkKWLabel);
+  vtkGetObjectMacro ( AddColorButton, vtkKWPushButton);
 
+  // Description:
+  // Set the selected node, the color id, and update the widgets
   void SetColorNode ( vtkMRMLColorNode *node );
-  
+  // Description:
+  // Getting and setting the mrml color node id
+  vtkGetStringMacro(ColorNodeID);
+  //vtkSetStringMacro(ColorlListNodeID);
+  void SetColorNodeID(char *id);
+
+  //BTX
+  // Description:
+  // ColorIDModifiedEvent is generated when the ColorNodeID is
+  // changed
+  enum
+  {
+      ColorIDModifiedEvent = 30000,
+  };
+  //ETX
+
   // Description:
   // alternative method to propagate events generated in GUI to logic / mrml
   virtual void ProcessWidgetEvents ( vtkObject *caller, unsigned long event, void *callData );
@@ -80,6 +96,20 @@ public:
   // or if more than one row is selected.
   int GetSelectedColorIndex();
 
+  // Description:
+  // API for setting ColorNode, and observing it
+  /*
+  void SetMRMLNode ( vtkMRMLColorNode *node )
+  { this->SetMRML ( vtkObjectPointer( &this->ColorNode), node ); }
+    void SetAndObserveMRMLNode ( vtkMRMLColorNode *node )
+    { this->SetAndObserveMRML ( vtkObjectPointer( &this->ColorNode), node ); }
+  */
+  
+  // Description:
+  // Once know that the GUI has to be cleared and updated to show elements
+  // from a new list, use this call
+  //  virtual void SetGUIFromNode(vtkMRMLColorNode * activeColorNode);
+  
  protected:
   vtkSlicerColorDisplayWidget();
   virtual ~vtkSlicerColorDisplayWidget();
@@ -88,13 +118,29 @@ public:
   // Create the widget.
   virtual void CreateWidget();
 
+  // Description:
+  // Update the widget, used when the color node id changes
   void UpdateWidget();
-  void UpdateMRML();
   
+  void UpdateMRML();
+
+  // Description:
+  // id of the color node displayed in the widget
   char* ColorNodeID;
   
+  // Description:
+  // The the color node that is currently displayed in the widget
+  vtkMRMLColorNode *ColorNode;
+  
+  // Description:
+  // button to add a colour to a user defined table
+  vtkKWPushButton *AddColorButton;
+
+  // Description:
+  // select a colour node to display
   vtkSlicerNodeSelectorWidget* ColorSelectorWidget;
 
+  // Description:
   // type of the colour node
   vtkKWLabel *ColorNodeTypeLabel;
 

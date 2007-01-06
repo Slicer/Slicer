@@ -15,8 +15,10 @@
 #include "vtkKWLabel.h"
 #include "vtkKWMultiColumnList.h"
 #include "vtkKWMultiColumnListWithScrollbars.h"
+#include "vtkKWPushButton.h"
 
 #include "vtkMRMLColorNode.h"
+#include "vtkMRMLColorTableNode.h"
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerColorDisplayWidget );
@@ -28,6 +30,7 @@ vtkSlicerColorDisplayWidget::vtkSlicerColorDisplayWidget ( )
 {
 
     this->ColorNodeID = NULL;
+    this->ColorNode = NULL; 
 
     this->ColorSelectorWidget = NULL;
 
@@ -38,6 +41,8 @@ vtkSlicerColorDisplayWidget::vtkSlicerColorDisplayWidget ( )
 
     this->NumberOfColorsLabel = NULL;
 
+     this->AddColorButton = NULL;
+     
     //this->DebugOn();
 }
 
@@ -73,10 +78,18 @@ vtkSlicerColorDisplayWidget::~vtkSlicerColorDisplayWidget ( )
     this->NumberOfColorsLabel->Delete();
     this->NumberOfColorsLabel = NULL;
     }
-  
+
+  if (this->AddColorButton)
+    {
+    this->AddColorButton->SetParent(NULL);
+    this->AddColorButton->Delete();
+    this->AddColorButton = NULL;
+    }
+   
   this->SetMRMLScene ( NULL );
   this->SetColorNodeID (NULL);
-  
+  vtkSetMRMLNodeMacro(this->ColorNode, NULL);
+
 }
 
 
@@ -92,10 +105,12 @@ void vtkSlicerColorDisplayWidget::PrintSelf ( ostream& os, vtkIndent indent )
 
 //---------------------------------------------------------------------------
 void vtkSlicerColorDisplayWidget::SetColorNode ( vtkMRMLColorNode *colorNode )
-{ 
+{
   // Select this color node
-  this->ColorSelectorWidget->SetSelected(colorNode); 
-
+  if (vtkMRMLColorNode::SafeDownCast(this->ColorSelectorWidget->GetSelected()) != colorNode)
+    {
+    this->ColorSelectorWidget->SetSelected(colorNode); 
+    }
 
   // 
   // Set the member variables and do a first process
@@ -108,15 +123,77 @@ void vtkSlicerColorDisplayWidget::SetColorNode ( vtkMRMLColorNode *colorNode )
 
   if ( colorNode )
     {
-    this->ProcessMRMLEvents(colorNode, vtkCommand::ModifiedEvent, NULL);
+//    this->ProcessMRMLEvents(colorNode, vtkCommand::ModifiedEvent, NULL);
     }
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerColorDisplayWidget::SetColorNodeID (char * id)
+{
+    if (this->GetColorNodeID() != NULL &&
+        id != NULL &&
+        strcmp(id,this->GetColorNodeID()) == 0)
+    {
+        vtkDebugMacro("no change in id, not doing anything for now: " << id << endl);
+        return;
+    }
+
+    // get the old node
+    vtkMRMLColorNode *colorNode = vtkMRMLColorNode::SafeDownCast(this->MRMLScene->GetNodeByID(this->GetColorNodeID()));
+       
+    // set the id properly - see the vtkSetStringMacro
+    this->ColorNodeID = id;
+
+    if (id == NULL)
+      {
+      vtkDebugMacro("SetColorNodeID: NULL input id, removed observers and returning.\n");
+      return;
+      }
+    
+    // get the new node
+    colorNode = vtkMRMLColorNode::SafeDownCast(this->MRMLScene->GetNodeByID(this->GetColorNodeID()));
+    // set up observers on the new node
+    if (colorNode != NULL)
+      {
+      vtkIntArray *events = vtkIntArray::New();
+      events->InsertNextValue(vtkCommand::ModifiedEvent);
+      events->InsertNextValue(vtkMRMLColorNode::TypeModifiedEvent);
+      vtkSetAndObserveMRMLNodeEventsMacro(this->ColorNode, colorNode, events);
+      events->Delete();
+
+      // throw the event
+      this->InvokeEvent(vtkSlicerColorDisplayWidget::ColorIDModifiedEvent);
+      // set up the GUI
+      this->UpdateWidget();
+      }
+    else
+      {
+        std::cerr << "ERROR: unable to get the mrml color node to observe!\n";
+      }
 }
 
 //---------------------------------------------------------------------------
 void vtkSlicerColorDisplayWidget::ProcessWidgetEvents ( vtkObject *caller,
                                                          unsigned long event, void *callData )
 {
+  // process id changed events
+  if (vtkSlicerColorDisplayWidget::SafeDownCast(caller) != NULL &&
+      event == vtkSlicerColorDisplayWidget::ColorIDModifiedEvent)
+    {
+    vtkDebugMacro("vtkSlicerColorDisplayWidget::ProcessGUIEvents : got a colour id modified event.\n");
+    this->UpdateWidget();
+    return;
+    }
 
+  // did the color node that we're watching get modified?
+  vtkMRMLColorNode *colorNode = vtkMRMLColorNode::SafeDownCast(caller);
+  if (colorNode == this->MRMLScene->GetNodeByID(this->GetColorNodeID()) &&
+      event == vtkCommand::ModifiedEvent)
+    {
+    this->UpdateWidget();
+    return;
+    }
+  
   //
   // process color selector events
   //
@@ -128,15 +205,39 @@ void vtkSlicerColorDisplayWidget::ProcessWidgetEvents ( vtkObject *caller,
     {
     vtkMRMLColorNode *color = 
         vtkMRMLColorNode::SafeDownCast(this->ColorSelectorWidget->GetSelected());
-
     if (color != NULL)
       {
       this->SetColorNode(color);
-      }
+      } else { vtkDebugMacro("Got a node selector event, but the color is null"); }
 
     return;
     }
-  
+
+  // get the currently displayed list 
+  vtkMRMLColorNode *activeColorNode = (vtkMRMLColorNode *)this->MRMLScene->GetNodeByID(this->GetColorNodeID());
+
+  if (activeColorNode == NULL)
+    {
+    std::cerr << "ERROR: No Color!\n";
+    return;
+    }
+
+  // save state for undo?
+//  this->MRMLScene->SaveStateForUndo();
+
+  vtkKWPushButton *button = vtkKWPushButton::SafeDownCast(caller);
+  if (button == this->AddColorButton  && event ==  vtkKWPushButton::InvokedEvent)
+    {
+    vtkDebugMacro("vtkSlicerColorDisplayWidget: ProcessGUIEvent: Add Color Button event: " << event << ".\n");
+    // if it's a colour table type node
+    if (vtkMRMLColorTableNode::SafeDownCast(activeColorNode) != NULL)
+      {
+      // save state for undo
+      this->MRMLScene->SaveStateForUndo(activeColorNode);
+    
+      vtkMRMLColorTableNode::SafeDownCast(activeColorNode)->AddColor("new", 0.0, 0.0, 0.0);
+      }
+    }
   this->UpdateMRML();
 } 
 
@@ -169,7 +270,7 @@ void vtkSlicerColorDisplayWidget::ProcessMRMLEvents ( vtkObject *caller,
     if (activeColorNode !=  vtkMRMLColorNode::SafeDownCast(this->ColorSelectorWidget->GetSelected()))
       {
       // select it  and update the gui
-      vtkDebugMacro("vtkSlicerColorGUI::ProcessMRMLEvents: modified event on the color selected node, setting the color node\n");
+      vtkDebugMacro("vtkSlicerColorDisplayWidget::ProcessMRMLEvents: modified event on the color selected node, setting the color node\n");
       this->SetColorNode(vtkMRMLColorNode::SafeDownCast(this->ColorSelectorWidget->GetSelected()));
       }
     return;        
@@ -179,21 +280,28 @@ void vtkSlicerColorDisplayWidget::ProcessMRMLEvents ( vtkObject *caller,
 //---------------------------------------------------------------------------
 void vtkSlicerColorDisplayWidget::AddMRMLObservers ( )
 {
-  if ( !this->ColorNodeID )
+  /*
+    if ( !this->ColorNodeID )
     {
     return;
     }
 
-  vtkMRMLColorNode *colorNode = vtkMRMLColorNode::SafeDownCast(this->MRMLScene->GetNodeByID(this->ColorNodeID));
-  
+  vtkMRMLColorNode *colorNode =
+  vtkMRMLColorNode::SafeDownCast(this->MRMLScene->GetNodeByID(this->ColorNodeID));
   if (colorNode != NULL)
-    {
-    }
+  {
+  }
+  */
+  
+//  this->AddObserver(vtkSlicerColorDisplayWidget::ColorIDModifiedEvent, (vtkCommand *)this->GUICallbackCommand );  
+
 }
 
 //---------------------------------------------------------------------------
 void vtkSlicerColorDisplayWidget::RemoveMRMLObservers ( )
 {
+  //this->RemoveObservers(vtkSlicerColorDisplayWidget::ColorIDModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
+  /*
   if ( !this->ColorNodeID )
     {
     return;
@@ -204,6 +312,7 @@ void vtkSlicerColorDisplayWidget::RemoveMRMLObservers ( )
   if (colorNode != NULL)
     {
     }
+  */
 }
 
 //---------------------------------------------------------------------------
@@ -224,7 +333,15 @@ void vtkSlicerColorDisplayWidget::UpdateWidget()
       this->ColorNodeTypeLabel->SetText(newLabel.c_str());
       }
     
-    int numColours = colorNode->GetNumberOfColors();    
+    int numColours;
+    if (vtkMRMLColorTableNode::SafeDownCast(colorNode) != NULL)
+      {
+      numColours = vtkMRMLColorTableNode::SafeDownCast(colorNode)->GetNumberOfColors();
+      }
+    else
+      {
+      numColours = 0;
+      }
     // set the number of colours
     std::stringstream ss;
     ss << "Number of Colors: ";
@@ -235,7 +352,20 @@ void vtkSlicerColorDisplayWidget::UpdateWidget()
     
     
     bool deleteFlag = true;
-    
+    if (numColours > this->MultiColumnList->GetWidget()->GetNumberOfRows())
+      {
+      // add rows to the table
+      int numToAdd = numColours - this->MultiColumnList->GetWidget()->GetNumberOfRows();
+      this->MultiColumnList->GetWidget()->AddRows(numToAdd);
+      }
+    if (numColours < this->MultiColumnList->GetWidget()->GetNumberOfRows())
+      {
+      // delete some rows
+      for (int r = this->MultiColumnList->GetWidget()->GetNumberOfRows(); r >= numColours; r--)
+        {
+        this->MultiColumnList->GetWidget()->DeleteRow(r);
+        }
+      }
     if (numColours != this->MultiColumnList->GetWidget()->GetNumberOfRows())
       {
       // clear out the multi column list box and fill it in with the new list
@@ -247,7 +377,7 @@ void vtkSlicerColorDisplayWidget::UpdateWidget()
       }
     
     // a row for each colour
-    double *colour;
+    double *colour = NULL;
     const char *name;
     for (int row = 0; row < numColours; row++)
       {
@@ -256,7 +386,10 @@ void vtkSlicerColorDisplayWidget::UpdateWidget()
         this->MultiColumnList->GetWidget()->AddRow();
         }
       // get the colour
-      colour = colorNode->GetLookupTable()->GetTableValue(row);
+      if (colorNode->GetLookupTable() != NULL)
+        {
+        colour = colorNode->GetLookupTable()->GetTableValue(row);
+        }
       if (colour == NULL)
         {
         std::cerr << "SetGUIFromNode: at " << row << "th colour, got a null pointer" << endl;
@@ -279,14 +412,25 @@ void vtkSlicerColorDisplayWidget::UpdateWidget()
       
       // what's the colour?
       std::stringstream ss;
-      ss << colour[0];
-      ss << " ";
-      ss << colour[1];
-      ss << " ";
-      ss << colour[2];
-      this->MultiColumnList->GetWidget()->SetCellWindowCommandToColorButton(row, this->ColourColumn);
-      this->MultiColumnList->GetWidget()->InsertCellText(row, this->ColourColumn, ss.str().c_str());
+      if (colour != NULL)
+        {
+        ss << colour[0];
+        ss << " ";
+        ss << colour[1];
+        ss << " ";
+        ss << colour[2];
+        }
+      else
+        {
+        ss << "0.0 0.0 0.0";
+        }
+      this->MultiColumnList->GetWidget()->SetCellText(row, this->ColourColumn, ss.str().c_str());
+      this->MultiColumnList->GetWidget()->SetCellWindowCommandToColorButton(row, this->ColourColumn);      
       }
+    }
+  else
+    {
+    vtkDebugMacro("UpdateWidget: No colour node id \n");
     }
 }
 
@@ -300,6 +444,9 @@ void vtkSlicerColorDisplayWidget::UpdateMRML()
 //---------------------------------------------------------------------------
 void vtkSlicerColorDisplayWidget::RemoveWidgetObservers ( ) {
   this->ColorSelectorWidget->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->AddColorButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
+  
+  this->RemoveObservers (vtkSlicerColorDisplayWidget::ColorIDModifiedEvent, (vtkCommand *)this->GUICallbackCommand);
 }
 
 
@@ -396,7 +543,7 @@ void vtkSlicerColorDisplayWidget::CreateWidget ( )
     {
     this->MultiColumnList->GetWidget()->SetColumnWidth(col, 6);
     this->MultiColumnList->GetWidget()->SetColumnAlignmentToLeft(col);
-    this->MultiColumnList->GetWidget()->ColumnEditableOn(col);
+    this->MultiColumnList->GetWidget()->ColumnEditableOff(col);
     }
   // set the name and colour column widths to be higher
   this->MultiColumnList->GetWidget()->SetColumnWidth(this->NameColumn, 25);
@@ -406,10 +553,38 @@ void vtkSlicerColorDisplayWidget::CreateWidget ( )
                 displayFrame->GetWidgetName());
   this->MultiColumnList->GetWidget()->SetCellUpdatedCommand(this, "UpdateElement");
   
+  // button frame
+  vtkKWFrame *buttonFrame = vtkKWFrame::New();
+  buttonFrame->SetParent ( displayFrame );
+  buttonFrame->Create ( );
+  app->Script ("pack %s -side top -anchor nw -fill x -pady 0 -in %s",
+               buttonFrame->GetWidgetName(),
+               displayFrame->GetWidgetName());
   
+  // a button to add a new colour
+  this->AddColorButton = vtkKWPushButton::New();
+  this->AddColorButton->SetParent( buttonFrame);
+  this->AddColorButton->Create();
+  this->AddColorButton->SetText("Add a Color");
+  this->AddColorButton->SetBalloonHelpString("Add a colour to a user defined list");
+  
+  // pack the buttons
+/* leave the add color button out for now, TODO: add in editing of the tables
+   app->Script("pack %s -side top -anchor w -padx 4 -pady 2 -in %s", 
+   this->AddColorButton->GetWidgetName(),
+   buttonFrame->GetWidgetName());
+*/
+  // deleting frame widgets
+  buttonFrame->Delete();
+    
   // add observers
   this->ColorSelectorWidget->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
+  this->AddColorButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->AddObserver(vtkSlicerColorDisplayWidget::ColorIDModifiedEvent, (vtkCommand *)this->GUICallbackCommand);
   
+  // trigger the filling in of the table?
+
+  // clean up
   displayFrame->Delete();
     
 }
@@ -431,23 +606,27 @@ void vtkSlicerColorDisplayWidget::UpdateElement(int row, int col, char * str)
       std::cerr << "UpdateElement: ERROR: No colournode, add one first!\n";
       return;
       }
+    // the entry in the colour table
+    int entry = this->MultiColumnList->GetWidget()->GetCellTextAsInt(row, this->EntryColumn);
     
     // now update the requested value
     if (col == this->NameColumn)
       {
-      activeColorNode->SetColorName(row,str);
+      activeColorNode->SetColorName(entry,str);
       }
     else if (col == this->ColourColumn)
       {
-      std::cout << "Update the colour....\n";
       double r, g, b;
       std::stringstream ss;
       ss << str;
       ss >> r;
       ss >> g;
       ss >> b;
-      const char *name = activeColorNode->GetColorName(row);
-      activeColorNode->SetColor(row, name, r, g, b);
+      const char *name = activeColorNode->GetColorName(entry);
+      if (vtkMRMLColorTableNode::SafeDownCast(activeColorNode) != NULL)
+        {
+        vtkMRMLColorTableNode::SafeDownCast(activeColorNode)->SetColor(entry, name, r, g, b);
+        }
       }
     }
   else
