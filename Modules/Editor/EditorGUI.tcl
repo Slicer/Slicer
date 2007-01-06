@@ -28,7 +28,7 @@ proc EditorReload { {this ""} } {
   }
   # TODO: figure this out from the CMakeCache and only offer the 
   # reload button if the source files exist
-  source c:/pieper/bwh/slicer3/latest/Slicer3/Modules/Editor/EditorGUI.tcl
+  source c:/pieper/bwh/slicer3/debug/Slicer3/Modules/Editor/EditorGUI.tcl
   EditorBuildGUI $this
   EditorAddGUIObservers $this
 
@@ -181,6 +181,7 @@ proc EditorBuildGUI {this} {
   $::Editor($this,paintRadius) DisplayEntryAndLabelOnTopOn
   $::Editor($this,paintRadius) DisplayEntryOn
   $::Editor($this,paintRadius) DisplayLabelOn
+  $::Editor($this,paintRadius) SetValue 10
   [$::Editor($this,paintRadius) GetLabel] SetText "Radius: "
   $::Editor($this,paintRadius) SetBalloonHelpString "Set the radius of the paint brush in screen space pixels"
   pack [$::Editor($this,paintRadius) GetWidgetName] \
@@ -193,6 +194,7 @@ proc EditorBuildGUI {this} {
   $::Editor($this,paintLabel) DisplayEntryAndLabelOnTopOn
   $::Editor($this,paintLabel) DisplayEntryOn
   $::Editor($this,paintLabel) DisplayLabelOn
+  $::Editor($this,paintLabel) SetValue 1
   [$::Editor($this,paintLabel) GetLabel] SetText "Label: "
   pack [$::Editor($this,paintLabel) GetWidgetName] \
     -side top -anchor e -fill x -padx 2 -pady 2 
@@ -246,6 +248,8 @@ proc EditorAddGUIObservers {this} {
   $this AddObserverByNumber $::Editor($this,rebuildButton) 10000 
   $this AddObserverByNumber $::Editor($this,volumesCreate) 10000 
   $this AddObserverByNumber [$::Editor($this,paintEnable) GetWidget] 10000 
+  $this AddObserverByNumber $::Editor($this,paintDraw) 10000 
+  $this AddObserverByNumber $::Editor($this,paintPaint) 10000 
   $this AddObserverByNumber $::Editor($this,paintLabel) 10001 
   $this AddObserverByNumber $::Editor($this,paintRange) 10001 
   $this AddObserverByNumber [$::Editor($this,paintThreshold) GetWidget] 10000 
@@ -267,7 +271,7 @@ proc EditorProcessLogicEvents {this caller event} {
 }
 
 proc EditorProcessGUIEvents {this caller event} {
-
+  
   if { $caller == $::Editor($this,rebuildButton) } {
     switch $event {
       "10000" {
@@ -280,17 +284,16 @@ proc EditorProcessGUIEvents {this caller event} {
         EditorCreateLabelVolume $this
       }
     }
-  } elseif { $caller == [$::Editor($this,paintEnable) GetWidget] } {
+  } elseif { $caller == [$::Editor($this,paintEnable) GetWidget] ||
+             $caller == $::Editor($this,paintPaint) ||
+             $caller == $::Editor($this,paintDraw) } {
     switch $event {
       "10000" {
         ::PaintSWidget::RemovePaint
         ::DrawSWidget::RemoveDraw
-        set enableVar [[$::Editor($this,paintEnable) GetWidget] GetVariableName]
-        tk_messageBox -message "enableVar is $enableVar"
-        tk_messageBox -message "$enableVar is [set $enableVar]"
-        if { [set $enableVar] } {
-          set modeVar [$::Editor($this,paintPaint) GetVariableName]
-          switch [set $modeVar] {
+        set checkButton [$::Editor($this,paintEnable) GetWidget]
+        if { [$checkButton GetEnabled] } {
+          switch $::Editor($this,paintMode) {
             "Paint" {
               ::PaintSWidget::AddPaint
             }
@@ -304,38 +307,37 @@ proc EditorProcessGUIEvents {this caller event} {
   } elseif { $caller == $::Editor($this,paintLabel) } {
     switch $event {
       "10001" {
-        ::PaintSWidget::ConfigureAll -paintColor [$::Editor($this,paintLabel) GetValue]
+        EditorUpdateSWidgets $this
       }
     }
   } elseif { $caller == $::Editor($this,paintRadius) } {
     switch $event {
       "10001" {
-        ::PaintSWidget::ConfigureAll -radius [$::Editor($this,paintRadius) GetValue]
+        EditorUpdateSWidgets $this
       }
     }
   } elseif { $caller == [$::Editor($this,paintOver) GetWidget] } {
     switch $event {
       "10000" {
-        ::PaintSWidget::ConfigureAll -paintOver [[$::Editor($this,paintOver) GetWidget] GetSelectedState]
+        EditorUpdateSWidgets $this
       }
     }
   } elseif { $caller == [$::Editor($this,paintDropper) GetWidget] } {
     switch $event {
       "10000" {
-        ::PaintSWidget::ConfigureAll -paintDropper [[$::Editor($this,paintDropper) GetWidget] GetSelectedState]
+        EditorUpdateSWidgets $this
       }
     }
   } elseif { $caller == [$::Editor($this,paintThreshold) GetWidget] } {
     switch $event {
       "10000" {
-        ::PaintSWidget::ConfigureAll -thresholdPaint [[$::Editor($this,paintThreshold) GetWidget] GetSelectedState]
-        EditorUpdatePaintThreshold $this
+        EditorUpdateSWidgets $this
       }
     }
   } elseif { $caller == $::Editor($this,paintRange) } {
     switch $event {
       "10001" {
-        EditorUpdatePaintThreshold $this
+        EditorUpdateSWidgets $this
       }
     }
   }
@@ -343,10 +345,24 @@ proc EditorProcessGUIEvents {this caller event} {
   EditorUpdateMRML $this
 }
 
+proc EditorUpdateSWidgets {this} {
+
+  ::PaintSWidget::ConfigureAll -paintColor [$::Editor($this,paintLabel) GetValue]
+  ::DrawSWidget::ConfigureAll -paintColor [$::Editor($this,paintLabel) GetValue]
+  ::PaintSWidget::ConfigureAll -radius [$::Editor($this,paintRadius) GetValue]
+  ::PaintSWidget::ConfigureAll -paintOver [[$::Editor($this,paintOver) GetWidget] GetSelectedState]
+  ::DrawSWidget::ConfigureAll -paintOver [[$::Editor($this,paintOver) GetWidget] GetSelectedState]
+  ::PaintSWidget::ConfigureAll -paintDropper [[$::Editor($this,paintDropper) GetWidget] GetSelectedState]
+  ::DrawSWidget::ConfigureAll -paintDropper [[$::Editor($this,paintDropper) GetWidget] GetSelectedState]
+  ::PaintSWidget::ConfigureAll -thresholdPaint [[$::Editor($this,paintThreshold) GetWidget] GetSelectedState]
+  ::DrawSWidget::ConfigureAll -thresholdPaint [[$::Editor($this,paintThreshold) GetWidget] GetSelectedState]
+  EditorUpdatePaintThreshold $this
+}
+
 proc EditorUpdatePaintThreshold {this} {
   foreach {lo hi} [$::Editor($this,paintRange) GetRange] {}
   ::PaintSWidget::ConfigureAll -thresholdMin $lo -thresholdMax $hi
-  puts "::PaintSWidget::ConfigureAll -thresholdMin $lo -thresholdMax $hi"
+  ::DrawSWidget::ConfigureAll -thresholdMin $lo -thresholdMax $hi
 }
 
 proc EditorUpdateMRML {this} {
@@ -424,10 +440,9 @@ proc EditorCreateLabelVolume {this} {
   # create a volume node as copy of source volume
   set labelNode [vtkMRMLScalarVolumeNode New]
   $labelNode Copy $volumeNode
-  $labelNode SetStorageNodeID ""
   $labelNode SetLabelMap 1
   # set the display node to have a label map lookup table
-  $labelDisplayNode SetAndObserveColorNodeID "vtkMRMLColorNodeLabels"
+  $labelDisplayNode SetAndObserveColorNodeID "vtkMRMLColorTableNodeLabels"
   set name [[$::Editor($this,volumeName) GetWidget] GetValue]
   if { $name != "" } {
     $labelNode SetName $name
@@ -488,5 +503,23 @@ proc EditorSetLabelColormap {} {
         puts "EditorGUI: Setting logic $g label map to label colors..."
         [[[[$::slicer3::ApplicationGUI GetMainSliceLogic$g] GetLabelLayer] GetVolumeDisplayNode] GetColorNode] SetTypeToLabels
     }
+}
+
+proc EditorLabelSelectDialog {this} {
+  set pageWidget [[$this GetUIPanel] GetPageWidget "Editor"]
+
+  set dialog [vtkKWDialog New]
+  $dialog SetParent $pageWidget
+  $dialog Create
+  set frame [$dialog GetFrame]
+  set color [vtkSlicerColorDisplayWidget New]
+  $color SetMRMLScene $::slicer3::MRMLScene
+  $color SetParent $frame
+  $color Create
+
+  pack [$color GetWidgetName] -side top -anchor nw -fill x -padx 2 -pady 2 
+
+  $dialog Display
+  $dialog Invoke
 }
 
