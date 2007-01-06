@@ -727,8 +727,17 @@ void vtkSlicerSliceControllerWidget::FitSliceToBackground ( int link )
       sgui = vtkSlicerSliceGUI::SafeDownCast ( ssgui->GetSliceGUICollection()->GetNextItemAsObject() );
       while ( sgui != NULL )
         {
-        int w = sgui->GetSliceViewer()->GetRenderWidget ( )->GetWidth();
-        int h = sgui->GetSliceViewer()->GetRenderWidget ( )->GetHeight();
+        int w, h;
+        //w = sgui->GetSliceViewer()->GetRenderWidget ( )->GetWidth();
+        //h = sgui->GetSliceViewer()->GetRenderWidget ( )->GetHeight();
+        sscanf(
+          this->Script("winfo width %s", 
+              sgui->GetSliceViewer()->GetRenderWidget ( )->GetWidgetName()), 
+          "%d", &w);
+        sscanf(
+          this->Script("winfo height %s", 
+              sgui->GetSliceViewer()->GetRenderWidget ( )->GetWidgetName()), 
+          "%d", &h);
         sgui->GetLogic()->FitSliceToBackground ( w, h );
         sgui->GetSliceNode()->UpdateMatrices( );
         sgui = vtkSlicerSliceGUI::SafeDownCast ( ssgui->GetSliceGUICollection()->GetNextItemAsObject() );
@@ -737,8 +746,21 @@ void vtkSlicerSliceControllerWidget::FitSliceToBackground ( int link )
     else
       {
       this->MRMLScene->SaveStateForUndo ( this->SliceNode );
-      int w = sgui->GetSliceViewer()->GetRenderWidget ( )->GetWidth();
-      int h = sgui->GetSliceViewer()->GetRenderWidget ( )->GetHeight();
+
+      int w, h;
+      // gives bogus values:
+      //w = sgui->GetSliceViewer()->GetRenderWidget ( )->GetWidth();
+      //h = sgui->GetSliceViewer()->GetRenderWidget ( )->GetHeight();
+
+      sscanf(
+        this->Script("winfo width %s", 
+            sgui->GetSliceViewer()->GetRenderWidget ( )->GetWidgetName()), 
+        "%d", &w);
+      sscanf(
+        this->Script("winfo height %s", 
+            sgui->GetSliceViewer()->GetRenderWidget ( )->GetWidgetName()), 
+        "%d", &h);
+
       sgui->GetLogic()->FitSliceToBackground ( w, h );
       this->SliceNode->UpdateMatrices( );
       }
