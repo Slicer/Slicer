@@ -17,6 +17,7 @@
 #include <vtksys/SystemTools.hxx> 
 
 #include "vtkSlicerVolumesLogic.h"
+#include "vtkSlicerColorLogic.h"
 
 #include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLVectorVolumeNode.h"
@@ -72,7 +73,6 @@ void vtkSlicerVolumesLogic::SetActiveVolumeNode(vtkMRMLVolumeNode *activeNode)
 //----------------------------------------------------------------------------
 vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (char* filename, int centerImage, int labelMap, const char* volname)
 {
-  cout<<"AddAchretypeVolume Intro"<<endl;
   vtkMRMLVolumeNode *volumeNode = NULL;
   vtkMRMLVolumeDisplayNode *displayNode = NULL;
 
@@ -164,7 +164,12 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (char* filename, in
     cout<<"Adding node.."<<endl;
     this->GetMRMLScene()->AddNode(storageNode);  
     this->GetMRMLScene()->AddNode(displayNode);  
-    displayNode->SetDefaultColorMap();
+
+    //displayNode->SetDefaultColorMap();
+    vtkSlicerColorLogic *colorLogic = vtkSlicerColorLogic::New();
+    displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultVolumeColorNodeID());
+    colorLogic->Delete();
+    
     volumeNode->SetStorageNodeID(storageNode->GetID());
     volumeNode->SetAndObserveDisplayNodeID(displayNode->GetID());
 
@@ -196,7 +201,6 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (char* filename, in
 //----------------------------------------------------------------------------
 vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (char* filename, int centerImage, int labelMap, const char* volname)
 {
-  cout<<"NO NRRD AddArchetypeVolume"<<endl;
   vtkMRMLVolumeNode *volumeNode = NULL;
   
   vtkMRMLScalarVolumeNode *scalarNode = vtkMRMLScalarVolumeNode::New();
@@ -245,8 +249,28 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (char* filename, in
     displayNode->SetLevel(0.5 * (range[1] + range[0]) );
 
     this->GetMRMLScene()->AddNode(storageNode);  
-    this->GetMRMLScene()->AddNode(displayNode);  
-    displayNode->SetDefaultColorMap();
+    this->GetMRMLScene()->AddNode(displayNode);
+    int isLabelMap = 0;
+    if (vtkMRMLScalarVolumeNode::SafeDownCast(volumeNode))
+      {
+      isLabelMap = vtkMRMLScalarVolumeNode::SafeDownCast(volumeNode)->GetLabelMap();
+      }
+    //displayNode->SetDefaultColorMap(isLabelMap);
+    vtkSlicerColorLogic *colorLogic = vtkSlicerColorLogic::New();
+      //vtkSlicerColorGUI::SafeDownCast(vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Color"))->GetLogic();
+    if (colorLogic)
+      {
+      if (isLabelMap)
+        {
+        displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultLabelMapColorNodeID());
+        }
+      else
+        {
+        displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultVolumeColorNodeID());
+        }
+      colorLogic->Delete();
+      }
+   
     volumeNode->SetStorageNodeID(storageNode->GetID());
     volumeNode->SetAndObserveDisplayNodeID(displayNode->GetID());    
 

@@ -22,6 +22,7 @@
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLModelStorageNode.h"
 #include "vtkMRMLModelDisplayNode.h"
+#include "vtkSlicerColorLogic.h"
 
 vtkCxxRevisionMacro(vtkSlicerModelsLogic, "$Revision: 1.9.12.1 $");
 vtkStandardNewMacro(vtkSlicerModelsLogic);
@@ -178,10 +179,11 @@ int vtkSlicerModelsLogic::AddScalar(char* filename, vtkMRMLModelNode *modelNode)
   if (modelNode == NULL ||
       filename == NULL)
     {
+    vtkErrorMacro("Model node or file name are null.");
     return 0;
     }  
 
-   // get the display node
+   // get the storage node and use it to read the scalar file
   vtkMRMLModelStorageNode *storageNode = NULL;
   vtkMRMLStorageNode *snode = modelNode->GetStorageNode();
   if (snode != NULL)
@@ -198,5 +200,26 @@ int vtkSlicerModelsLogic::AddScalar(char* filename, vtkMRMLModelNode *modelNode)
     }
   storageNode->SetFileName(filename);
   storageNode->ReadData(modelNode);
+
+  // check to see if the model display node has a colour node already
+  vtkMRMLModelDisplayNode *displayNode = modelNode->GetDisplayNode();
+  if (displayNode == NULL)
+    {
+    vtkWarningMacro("Model " << modelNode->GetName() << "'s display node is null\n");
+    }
+  else
+    {
+    vtkMRMLColorNode *colorNode = vtkMRMLColorNode::SafeDownCast(displayNode->GetColorNode());
+    if (colorNode == NULL)
+      {
+      // TODO: try to figure out the best color node to use from the scalar's extension
+      // std::cout << "Model " << modelNode->GetName() << "'s display node's color node is null, using default\n";
+      //displayNode->SetDefaultColorMap();
+      vtkSlicerColorLogic *colorLogic = vtkSlicerColorLogic::New();
+      displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultModelColorNodeID());
+      colorLogic->Delete();
+      }
+    
+    }
   return 1;
 }
