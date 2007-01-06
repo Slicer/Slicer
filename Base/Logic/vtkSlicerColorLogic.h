@@ -27,7 +27,6 @@
 #include "vtkSlicerLogic.h"
 
 #include "vtkMRML.h"
-#include "vtkMRMLColorNode.h"
 
 class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerColorLogic : public vtkSlicerLogic 
 {
@@ -48,7 +47,27 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerColorLogic : public vtkSlicerLogic
   // Add a series of color nodes, setting the types to the defaults, so that
   // they're accessible to the rest of Slicer
   void AddDefaultColorNodes();
-    
+
+  // Description:
+  // Remove the colour nodes that were added
+  void RemoveDefaultColorNodes();
+
+  // Description:
+  // Return the default color table node id for a given type
+  const char * GetDefaultColorTableNodeID(int type);
+  
+  // Description:
+  // Return a default color node id for a volume
+  const char * GetDefaultVolumeColorNodeID();
+
+  // Description:
+  // Return a default color node id for a label map
+  const char * GetDefaultLabelMapColorNodeID();
+
+  // Description:
+  // Return a default color node id for a model
+  const char * GetDefaultModelColorNodeID();
+  
 protected:
   vtkSlicerColorLogic();
   ~vtkSlicerColorLogic();
