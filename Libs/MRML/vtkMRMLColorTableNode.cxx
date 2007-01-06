@@ -427,6 +427,68 @@ void vtkMRMLColorTableNode::SetTypeToFile()
 }
 
 //----------------------------------------------------------------------------
+const char* vtkMRMLColorTableNode::GetTypeAsIDString()
+{
+  if (this->Type == this->Grey)
+    {
+    return "vtkMRMLColorTableNodeGrey";
+    }
+  if (this->Type == this->Iron)
+    {
+    return "vtkMRMLColorTableNodeIron";
+    }
+  if (this->Type == this->Rainbow)
+    {
+    return "vtkMRMLColorTableNodeRainbow";
+    }
+  if (this->Type == this->Ocean)
+    {
+    return "vtkMRMLColorTableNodeOcean";
+    }
+  if (this->Type == this->Desert)
+    {
+    return "vtkMRMLColorTableNodeDesert";
+    }
+  if (this->Type == this->InvGrey)
+    {
+    return "vtkMRMLColorTableNodeInvertedGrey";
+    }
+  if (this->Type == this->ReverseRainbow)
+    {
+    return "vtkMRMLColorTableNodeReverseRainbow";
+    }
+  if (this->Type == this->FMRI)
+    {
+    return "vtkMRMLColorTableNodefMRI";
+    }
+  if (this->Type == this->FMRIPA)
+    {
+    return "vtkMRMLColorTableNodefMRIPA";
+    }
+  if (this->Type == this->Labels)
+    {
+    return "vtkMRMLColorTableNodeLabels";
+    }
+  if (this->Type == this->SPLBrainAtlas)
+    {
+    return "vtkMRMLColorTableNodeSPLBrainAtlas";
+    }
+  if (this->Type == this->Random)
+    {
+    return "vtkMRMLColorTableNodeRandom";
+    }
+  if (this->Type == this->User)
+    {
+      return "vtkMRMLColorTableNodeUser";
+    }
+  if (this->Type == this->File)
+    {
+    return "vtkMRMLColorTableNodeFile";
+    }
+  return "(unknown)";
+}
+
+//----------------------------------------------------------------------------
 const char* vtkMRMLColorTableNode::GetTypeAsString()
 {
   if (this->Type == this->Grey)

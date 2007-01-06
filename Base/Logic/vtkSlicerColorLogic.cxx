@@ -186,12 +186,17 @@ void vtkSlicerColorLogic::RemoveDefaultColorNodes()
 //----------------------------------------------------------------------------
 const char *vtkSlicerColorLogic::GetDefaultColorTableNodeID(int type)
 {
+  const char *id;
   vtkMRMLColorTableNode *basicNode = vtkMRMLColorTableNode::New();
   basicNode->SetType(type);
-  std::string id = std::string(basicNode->GetClassName()) + std::string(basicNode->GetTypeAsString());
+
+  //std::string id = std::string(basicNode->GetClassName()) + std::string(basicNode->GetTypeAsString());
+  id = basicNode->GetTypeAsIDString();
   basicNode->Delete();
-  basicNode = NULL;
-  return id.c_str();
+  //basicNode = NULL;
+  //return id.c_str();
+
+  return (id);
 }
 //----------------------------------------------------------------------------
 const char *vtkSlicerColorLogic::GetDefaultVolumeColorNodeID()

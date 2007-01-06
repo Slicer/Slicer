@@ -143,6 +143,10 @@ public:
   virtual const char * GetTypeAsString();
 
   // Description:
+  // return a text string describing the class name and type name
+  virtual const char * GetTypeAsIDString();
+
+  // Description:
   // Set the size of the colour table if it's a User table
   void SetNumberOfColors(int n);
   // Description:
