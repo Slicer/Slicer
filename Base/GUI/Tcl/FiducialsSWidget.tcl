@@ -182,10 +182,11 @@ itcl::body FiducialsSWidget::processEvent { caller } {
         $seedSWidget configure -color [$fidListNode GetColor]
         $seedSWidget configure -selectedColor [$fidListNode GetSelectedColor]
         $seedSWidget configure -opacity [$fidListNode GetOpacity]
+        $seedSWidget configure -text [$fidListNode GetNthFiducialLabelText $f]
+        $seedSWidget configure -textScale [$fidListNode GetTextScale]
         if { [$fidListNode GetNthFiducialSelected $f] } {
           $seedSWidget configure -selected 1
         }
-        puts [$seedSWidget configure]
         lappend _seedSWidgets $seedSWidget
       }
     }

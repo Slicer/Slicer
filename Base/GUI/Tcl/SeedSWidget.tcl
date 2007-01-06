@@ -38,6 +38,8 @@ if { [itcl::find class SeedSWidget] == "" } {
     public variable selectedColor "1 1 0"
     public variable opacity "1"
     public variable selected "0"
+    public variable text ""
+    public variable textScale "1"
 
     variable _startPosition "0 0 0"
     variable _currentPosition "0 0 0"
@@ -72,6 +74,12 @@ itcl::body SeedSWidget::constructor {sliceGUI} {
   $o(mapper) SetInput [$o(glyphTransformFilter) GetOutput]
   $o(actor) SetMapper $o(mapper)
   [$renderWidget GetRenderer] AddActor2D $o(actor)
+  lappend _actors $o(actor)
+
+  set o(textActor) [vtkTextActor New]
+  [$renderWidget GetRenderer] AddActor2D $o(textActor)
+  set textProperty [$o(textActor) GetTextProperty]
+  $textProperty ShadowOn
   lappend _actors $o(actor)
 
   set _startPosition "0 0 0"
@@ -128,6 +136,7 @@ itcl::configbody SeedSWidget::glyph {
 itcl::configbody SeedSWidget::scale {
   $o(glyphTransform) Identity
   $o(glyphTransform) Scale $scale $scale $scale 
+  $this positionActors
   [$sliceGUI GetSliceViewer] RequestRender
 }
 
@@ -148,6 +157,19 @@ itcl::configbody SeedSWidget::opacity {
 
 itcl::configbody SeedSWidget::selected {
   $this highlight
+  [$sliceGUI GetSliceViewer] RequestRender
+}
+
+itcl::configbody SeedSWidget::text {
+  $o(textActor) SetInput $text
+  [$sliceGUI GetSliceViewer] RequestRender
+}
+
+itcl::configbody SeedSWidget::textScale {
+  set textProperty [$o(textActor) GetTextProperty]
+  set fontSize [expr round(2.5 * $textScale)]
+  $textProperty SetFontSize $fontSize
+  $this positionActors
   [$sliceGUI GetSliceViewer] RequestRender
 }
 
@@ -189,19 +211,27 @@ itcl::body SeedSWidget::place {x y z} {
 itcl::body SeedSWidget::positionActors { } {
 
   set xyzw [$this rasToXY $_currentPosition]
-  eval $o(actor) SetPosition [lrange $xyzw 0 1]
+  foreach {x y z w} $xyzw {}
+  $o(actor) SetPosition $x $y
+  set x [expr $x + $scale]
+  set y [expr $y + $scale]
+  $o(textActor) SetPosition $x $y
 }
 
 itcl::body SeedSWidget::highlight { } {
 
   set property [$o(actor) GetProperty]
+  set textProperty [$o(textActor) GetTextProperty]
   if { $selected } {
     eval $property SetColor $selectedColor
+    eval $textProperty SetColor $selectedColor
   } else {
     eval $property SetColor $color
+    eval $textProperty SetColor $color
   }
   $property SetLineWidth 1
   $property SetOpacity $opacity
+  $textProperty SetOpacity $opacity
 
   set _description ""
   switch $_actionState {
