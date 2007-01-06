@@ -93,6 +93,16 @@ public:
     return this->License;
   }
 
+  void SetAcknowledgements(const std::string &acknowledgements)
+  {
+    this->Acknowledgements = acknowledgements;
+  }
+
+  const std::string& GetAcknowledgements() const
+  {
+    return this->Acknowledgements;
+  }
+
   void SetContributor(const std::string &contributor)
   {
     this->Contributor = contributor;
@@ -157,6 +167,7 @@ private:
   std::string Version;
   std::string DocumentationURL;
   std::string License;
+  std::string Acknowledgements;
   std::string Contributor;
   std::string Target;
   std::vector<ModuleParameterGroup> ParameterGroups;  

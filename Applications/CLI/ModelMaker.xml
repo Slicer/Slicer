@@ -10,6 +10,9 @@ Imported from Slicer 2.
   <documentation-url>http://www.slicer.org</documentation-url>
   <license>slicer3</license>
   <contributor>Nicole Aucoin</contributor>
+<acknowledgements>
+This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.
+</acknowledgements>
 <parameters>
     <label>IO</label>
     <description>Input/output parameters</description>

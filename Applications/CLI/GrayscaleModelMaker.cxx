@@ -56,6 +56,7 @@ int main(int argc, char * argv[])
     std::cout << "\tDocumentationURL is: " << module.GetDocumentationURL() << std::endl;
     std::cout << "\tLicense is: " << module.GetLicense() << std::endl;
     std::cout << "\tContributor is: " << module.GetContributor() << std::endl;
+    std::cout << "\tAcknowledgements: " << module.GetAcknowledgements() << std::endl;
 
     bool debug = false;
 

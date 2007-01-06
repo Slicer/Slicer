@@ -82,8 +82,6 @@ SET(dir_list
   ${SlicerDaemon_Init_SOURCE_DIR}
   ${SlicerDaemon_Init_BINARY_DIR}
   ${ModuleDescriptionParser_SOURCE_DIR}
-  ${ModulesBaseClasses_SOURCE_DIR}
-  ${ModulesBaseClasses_BINARY_DIR}
   ${VTK_INCLUDE_DIR}
   ${OPENTRACKER_INC_DIR}
   )
@@ -129,7 +127,6 @@ TARGET_LINK_LIBRARIES( Slicer3${SLICER_EXE_SUFFIX}
     ScriptedModule
     SlicerDaemon
     ModuleDescriptionParser
-    ModulesBaseClasses
     vtkITK
     ITKCommon 
     ITKIO

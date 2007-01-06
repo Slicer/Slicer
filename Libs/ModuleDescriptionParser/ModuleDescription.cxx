@@ -29,6 +29,7 @@ ModuleDescription::ModuleDescription(const ModuleDescription &md)
   this->Version = md.Version;
   this->DocumentationURL = md.DocumentationURL;
   this->License = md.License;
+  this->Acknowledgements = md.Acknowledgements;
   this->Contributor = md.Contributor;
   this->Target = md.Target;
   this->ParameterGroups = md.ParameterGroups;

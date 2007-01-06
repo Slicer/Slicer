@@ -895,6 +895,12 @@ endElement(void *userData, const char *element)
     trimLeadingAndTrailing(temp);
     ps->CurrentDescription.SetLicense(temp);
     }
+  else if (name == "acknowledgements")
+    {
+    std::string temp = ps->LastData[ps->Depth];
+    trimLeadingAndTrailing(temp);
+    ps->CurrentDescription.SetAcknowledgements(temp);
+    }
   else if (name == "contributor")
     {
     std::string temp = ps->LastData[ps->Depth];
