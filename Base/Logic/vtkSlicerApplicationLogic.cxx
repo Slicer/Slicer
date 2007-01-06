@@ -15,6 +15,8 @@
 #include "vtkObjectFactory.h"
 #include "vtkSlicerApplicationLogic.h"
 
+#include "vtkSlicerColorLogic.h"
+
 #include "vtkKWTkUtilities.h"
 #include "vtkKWApplication.h"
 
@@ -32,7 +34,6 @@
 #include "vtkMRMLDiffusionWeightedVolumeDisplayNode.h"
 #include "vtkMRMLModelDisplayNode.h"
 #include "vtkSlicerTask.h"
-
 
 #include "itksys/SystemTools.hxx"
 
@@ -236,6 +237,19 @@ void vtkSlicerApplicationLogic::PropagateVolumeSelection()
     cnode->SetBackgroundVolumeID( ID );
     cnode->SetLabelVolumeID( labelID );
     }
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerApplicationLogic::PropagateFiducialListSelection()
+{
+  if ( !this->SelectionNode || !this->MRMLScene )
+    {
+    return;
+    }
+  char *ID = this->SelectionNode->GetActiveFiducialListID();
+
+  // set the Fiducials GUI to show the active list? it's watching the node for
+  // now
 }
 
 //----------------------------------------------------------------------------
@@ -640,13 +654,34 @@ void vtkSlicerApplicationLogic::ProcessReadData()
         {
         disp->SetScene( this->MRMLScene );
         this->MRMLScene->AddNode( disp );
-
-        vtkMRMLVolumeDisplayNode *displayNode = vtkMRMLVolumeDisplayNode::SafeDownCast(disp);
-        if (displayNode)
+        if (svnd)
           {
-          displayNode->SetDefaultColorMap();
+          vtkMRMLVolumeDisplayNode *displayNode = vtkMRMLVolumeDisplayNode::SafeDownCast(disp);
+          if (displayNode)
+            {
+            int isLabelMap = svnd->GetLabelMap();            
+            //std::cout << "vtkSlicerApplicationLogic: setting the volume display node default color, islabelmap = " << isLabelMap << "\n";
+            //displayNode->SetDefaultColorMap(isLabelMap);
+            //std::cout << "\tdisp color node id = " <<
+            //(displayNode->GetColorNodeID() == NULL ? "NULL" :
+            //displayNode->GetColorNodeID()) << endl;
+            vtkSlicerColorLogic *colorLogic = vtkSlicerColorLogic::New();
+            //vtkSlicerColorGUI::SafeDownCast(vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Color"))->GetLogic();
+            if (colorLogic)
+              {
+              if (isLabelMap)
+                {
+                displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultLabelMapColorNodeID());
+                }
+              else
+                {
+                displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultVolumeColorNodeID());
+                }
+              colorLogic->Delete();
+              }
+            }
+          svnd->SetAndObserveDisplayNodeID( disp->GetID() );
           }
-        if (svnd) svnd->SetAndObserveDisplayNodeID( disp->GetID() );
         else if (vvnd) vvnd->SetAndObserveDisplayNodeID( disp->GetID() );
         else if (dtvnd) dtvnd->SetAndObserveDisplayNodeID( disp->GetID() );
         else if (dwvnd) dwvnd->SetAndObserveDisplayNodeID( disp->GetID() );

@@ -137,6 +137,11 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic : public vtkSlicerL
   void PropagateVolumeSelection();
 
   // Description:
+  // Perform the default behaviour related to selecting a fiducial list
+  // (display it in the Fiducials GUI)
+  void PropagateFiducialListSelection();
+  
+  // Description:
   // Create a new Slice with it's associated class instances
   vtkSlicerSliceLogic *CreateSlice ();
 
