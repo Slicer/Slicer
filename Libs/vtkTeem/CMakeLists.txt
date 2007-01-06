@@ -14,6 +14,7 @@ INCLUDE(${VTK_USE_FILE})
 
 SET(vtkTeem_SRCS
   vtkNRRDReader.cxx
+  vtkTensorMathematics.cxx
 )
 
 # Abstract/pure virtual classes
@@ -65,7 +66,7 @@ TARGET_LINK_LIBRARIES(vtkTeem
   vtkFiltering
   vtkImaging
   vtkIOTCL
-  teem
+  ${TEEM_LIBRARIES}
   )
 
 
