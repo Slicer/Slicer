@@ -84,7 +84,7 @@ int vtkSlicerFiducialsLogic::AddFiducial(float x, float y, float z)
     
     if (selnode->GetActiveFiducialListID() == NULL)
       {
-      vtkWarningMacro("FiducialsLogic: selection node doesn't have an active fiducial list right now, making one first before adding a fiducial");
+      vtkDebugMacro("FiducialsLogic: selection node doesn't have an active fiducial list right now, making one first before adding a fiducial");
       vtkMRMLFiducialListNode *node = this->AddFiducialList();
       if (node != NULL)
         {
