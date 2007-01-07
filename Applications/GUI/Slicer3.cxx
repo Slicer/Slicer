@@ -624,6 +624,7 @@ int Slicer3_main(int argc, char *argv[])
     // observe the scene's new scene event
     vtkIntArray *colorEvents = vtkIntArray::New();
     colorEvents->InsertNextValue( vtkMRMLScene::NewSceneEvent );
+    colorEvents->InsertNextValue( vtkMRMLScene::SceneCloseEvent );
     colorLogic->SetAndObserveMRMLSceneEvents ( scene,  colorEvents);
     colorEvents->Delete();
     // this should be triggered somehow by a new scene event, but for now,
