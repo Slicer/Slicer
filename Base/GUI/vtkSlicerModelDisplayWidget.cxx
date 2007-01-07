@@ -255,9 +255,10 @@ void vtkSlicerModelDisplayWidget::ProcessMRMLEvents ( vtkObject *caller,
     }
 
   vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(caller);
-  
-  if (modelNode == this->MRMLScene->GetNodeByID(this->ModelNodeID) && 
-      modelNode != NULL && event == vtkCommand::ModifiedEvent)
+
+  if (modelNode != NULL &&
+      modelNode == this->MRMLScene->GetNodeByID(this->ModelNodeID) && 
+      event == vtkCommand::ModifiedEvent)
     {
     vtkMRMLModelDisplayNode *displayNode = modelNode->GetDisplayNode();
     
@@ -278,7 +279,17 @@ void vtkSlicerModelDisplayWidget::ProcessMRMLEvents ( vtkObject *caller,
       this->AddMRMLObservers();
       }
     }
-  
+
+  vtkMRMLModelDisplayNode *modelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(caller);
+  // did the display node change for the model currently in the widget?
+  if (modelDisplayNode != NULL &&
+      this->MRMLScene->GetNodeByID(this->ModelNodeID) != NULL &&
+      vtkMRMLModelNode::SafeDownCast(this->MRMLScene->GetNodeByID(this->ModelNodeID))->GetDisplayNode() == modelDisplayNode &&
+      event == vtkCommand::ModifiedEvent)
+    {
+    // update the color node selector
+    this->ColorSelectorWidget->SetSelected(modelDisplayNode->GetColorNode());
+    }
   this->UpdateWidget();
   
 }
