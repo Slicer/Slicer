@@ -170,6 +170,11 @@ itcl::body SliceSWidget::processEvent { } {
     return
   }
 
+  if { [info command $_sliceNode] == "" } {
+    # somehow our slice node is corrupted - we need to bail out
+    return
+  }
+
   #
   # get the current event info
   # - the event type
