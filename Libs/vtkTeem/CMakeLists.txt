@@ -15,6 +15,7 @@ INCLUDE(${VTK_USE_FILE})
 SET(vtkTeem_SRCS
   vtkNRRDReader.cxx
   vtkTensorMathematics.cxx
+  vtkTeemEstimateDiffusionTensor.cxx
 )
 
 # Abstract/pure virtual classes
