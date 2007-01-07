@@ -63,6 +63,14 @@ class VTK_TEEM_EXPORT vtkTeemEstimateDiffusionTensor : public vtkImageToImageFil
      this->Modified();
    } 
   
+//BTX
+  enum
+    {
+      tenEstimateMethodLLS = 0,
+      tenEstimateMethodNLS,
+      tenEstimateMethodWLS
+    };
+//ETX
    //Description
   vtkGetMacro(EstimationMethod,int);
   vtkSetMacro(EstimationMethod,int);
