@@ -470,8 +470,8 @@ proc EditorCreateLabelVolume {this} {
 
   # make the source node the active background, and the label node the active label
   set selectionNode [[[$this GetLogic] GetApplicationLogic]  GetSelectionNode]
-  $selectionNode SetActiveVolumeID [$volumeNode GetID]
-  $selectionNode SetActiveLabelVolumeID [$labelNode GetID]
+  $selectionNode SetReferenceActiveVolumeID [$volumeNode GetID]
+  $selectionNode SetReferenceActiveLabelVolumeID [$labelNode GetID]
   [[$this GetLogic] GetApplicationLogic]  PropagateVolumeSelection
 
   $labelNode Delete
@@ -483,7 +483,7 @@ proc EditorCreateLabelVolume {this} {
 
   # TODO: this is just so I can see the results for now
   #puts "Setting the label map to colour for the slices"
-  EditorSetLabelColormap 
+  #EditorSetLabelColormap 
 }
 
 proc EditorSetRandomLabelColormap { {size 255} } {
