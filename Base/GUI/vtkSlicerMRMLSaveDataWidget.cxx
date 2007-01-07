@@ -235,8 +235,8 @@ void vtkSlicerMRMLSaveDataWidget::SaveScene()
     {
 
     vtksys_stl::string directory = vtksys::SystemTools::GetParentDirectory(fileName);
-
     this->MRMLScene->SetRootDirectory(directory.c_str());
+    directory = directory + vtksys_stl::string("/");
 
     // convert absolute paths to relative
     this->MRMLScene->InitTraversal();
@@ -246,9 +246,7 @@ void vtkSlicerMRMLSaveDataWidget::SaveScene()
       {
       vtkMRMLStorageNode *snode = vtkMRMLStorageNode::SafeDownCast(node);
       if (!this->MRMLScene->IsFilePathRelative(snode->GetFileName()))
-        {
-        directory = directory + vtksys_stl::string("/");
-        
+        {        
         itksys_stl::string relPath = itksys::SystemTools::RelativePath((const char*)directory.c_str(), snode->GetFileName());
         snode->SetFileName(relPath.c_str());
         }

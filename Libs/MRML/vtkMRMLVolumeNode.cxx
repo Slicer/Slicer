@@ -386,6 +386,10 @@ void vtkMRMLVolumeNode::GetKToRASDirection(double dirs[3])
 
 void vtkMRMLVolumeNode::SetIJKToRASMatrix(vtkMatrix4x4* mat)
 {
+  if (mat == NULL) 
+    {
+    return;
+    }
   // normalize direction vectors
   double spacing[3];
   int row;
@@ -422,7 +426,11 @@ void vtkMRMLVolumeNode::SetIJKToRASMatrix(vtkMatrix4x4* mat)
 void vtkMRMLVolumeNode::SetRASToIJKMatrix(vtkMatrix4x4* mat)
 {
   vtkMatrix4x4 *m = vtkMatrix4x4::New();
-  m->DeepCopy(mat);
+  m->Identity();
+  if (mat) 
+  {
+    m->DeepCopy(mat);
+  }
   m->Invert();
   this->SetIJKToRASMatrix(m);
   m->Delete();

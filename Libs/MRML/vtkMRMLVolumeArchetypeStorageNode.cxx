@@ -173,6 +173,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
   if (fullName == std::string("")) 
     {
     vtkErrorMacro("vtkMRMLVolumeNode: File name not specified");
+    reader->Delete();
     return 0;
     }
 
@@ -195,20 +196,17 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
     }
     catch (vtkstd::exception &e)
     {
-    result = 0;
+    vtkErrorMacro("vtkMRMLVolumeArchetypeStorageNode: Cannot read file");
+    reader->Delete();
+    return 0;
     }
-
+  if (reader->GetOutput() == NULL) 
+    {
+    vtkErrorMacro("vtkMRMLVolumeArchetypeStorageNode: Cannot read file");
+    reader->Delete();
+    return 0;
+    }
   // set volume attributes
-  vtkMatrix4x4* mat = reader->GetRasToIjkMatrix();
-  if ( mat == NULL )
-    {
-    vtkErrorMacro ("Reader returned NULL RasToIjkMatrix");
-    }
-  else
-    {
-    volNode->SetRASToIJKMatrix(mat);
-    }
-
   volNode->SetStorageNodeID(this->GetID());
   //TODO update scene to send Modified event
  
@@ -218,7 +216,24 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
   ici->SetOutputOrigin( 0, 0, 0 );
   ici->Update();
 
-  volNode->SetAndObserveImageData (ici->GetOutput());
+  if (ici->GetOutput() == NULL)
+    {
+    vtkErrorMacro("vtkMRMLVolumeArchetypeStorageNode: Cannot read file");
+    reader->Delete();
+    ici->Delete();
+    return 0;
+    }
+  else
+    {
+    volNode->SetAndObserveImageData (ici->GetOutput());
+    }
+
+  vtkMatrix4x4* mat = reader->GetRasToIjkMatrix();
+  if ( mat == NULL )
+    {
+    vtkErrorMacro ("Reader returned NULL RasToIjkMatrix");
+    }
+  volNode->SetRASToIJKMatrix(mat);
 
   reader->Delete();
   ici->Delete();
