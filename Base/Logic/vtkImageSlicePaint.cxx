@@ -239,18 +239,18 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *ptr)
           transform3(maskWorldToIJK, workingWorld, maskIJK);
           for (int i = 0; i < 3; i++) { intMaskIJK[i] = paintRound(maskIJK[i]); }
 
-#if 0
-          // debug printing
-          if ( column == row )
+          void *ptr = self->GetMaskImage()->GetScalarPointer (
+                                  intMaskIJK[0], intMaskIJK[1], intMaskIJK[2] );
+
+          if ( ptr == NULL ) 
             {
-            vtkErrorWithObjectMacro (self, << "workingWorld = " << 
-              workingWorld[0] << " " <<  workingWorld[1] << " " << 
-              workingWorld[2] << "\n" );
-            vtkErrorWithObjectMacro (self, << "intMaskIJK = " << 
-              intMaskIJK[0] << " " <<  intMaskIJK[1] << " " << 
-              intMaskIJK[2] << "\n" );
+            vtkErrorWithObjectMacro (self, << "Cannot get mask pointer for pixel\n"
+              << "workingWorld = " << 
+              workingWorld[0] << " " <<  workingWorld[1] << " " << workingWorld[2] << "\n"
+              << "intMaskIJK = " << 
+              intMaskIJK[0] << " " <<  intMaskIJK[1] << " " << intMaskIJK[2] << "\n" );
+            return;
             }
-#endif
 
           double maskValue = self->GetMaskImage()->GetScalarComponentAsDouble (
                                   intMaskIJK[0], intMaskIJK[1], intMaskIJK[2], 0 );
