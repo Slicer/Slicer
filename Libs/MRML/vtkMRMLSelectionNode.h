@@ -55,30 +55,39 @@ class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
   // Update the stored reference to another node in the scene
   virtual void UpdateReferenceID(const char *oldID, const char *newID);
 
+  // Note: the SetReferenceActive* routines are added because
+  // the vtkSetReferenceStringMacro is not wrapped (vtkSetStringMacro
+  // on which it is based is a special case in vtk's parser).
+
   // Description:
   // the ID of a MRMLVolumeNode
   vtkGetStringMacro (ActiveVolumeID);
   vtkSetReferenceStringMacro (ActiveVolumeID);
+  void SetReferenceActiveVolumeID (char *id) { this->SetActiveVolumeID(id); };
 
   // Description:
   // the ID of a MRMLVolumeNode
   vtkGetStringMacro (ActiveLabelVolumeID);
   vtkSetReferenceStringMacro (ActiveLabelVolumeID);
+  void SetReferenceActiveLabelVolumeID (char *id) { this->SetActiveLabelVolumeID(id); };
 
   // Description:
   // the ID of a MRMLFiducialList
   vtkGetStringMacro (ActiveFiducialListID);
   vtkSetReferenceStringMacro (ActiveFiducialListID);
+  void SetReferenceActiveFiducialListID (char *id) { this->SetActiveFiducialListID(id); };
 
   // Description:
   // the ID of a MRMLCameraNode
   vtkGetStringMacro (ActiveCameraID );
   vtkSetReferenceStringMacro ( ActiveCameraID );
+  void SetReferenceActiveCameraID (char *id) { this->SetActiveCameraID(id); };
   
   // Description
   // the ID of a MRMLViewNode
   vtkGetStringMacro (ActiveViewID );
   vtkSetReferenceStringMacro ( ActiveViewID );
+  void SetReferenceActiveViewID (char *id) { this->SetActiveViewID(id); };
   
   // Description:
   // Allows the mouse mode to be set and queried.
