@@ -53,6 +53,10 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerColorLogic : public vtkSlicerLogic
   void RemoveDefaultColorNodes();
 
   // Description:
+  // Remove the colour nodes that were added
+  void RemoveDefaultColorNodesFromScene();
+
+  // Description:
   // Return the default color table node id for a given type
   const char * GetDefaultColorTableNodeID(int type);
   
