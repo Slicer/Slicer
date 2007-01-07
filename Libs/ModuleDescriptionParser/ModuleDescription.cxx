@@ -47,6 +47,7 @@ ModuleDescription::operator=(const ModuleDescription &md)
   this->Version = md.Version;
   this->DocumentationURL = md.DocumentationURL;
   this->License = md.License;
+  this->Acknowledgements = md.Acknowledgements;
   this->Contributor = md.Contributor;
   this->Target = md.Target;
   this->ParameterGroups = md.ParameterGroups;
@@ -63,6 +64,7 @@ std::ostream & operator<<(std::ostream &os, const ModuleDescription &module)
   os << "DocumentationURL: " << module.GetDocumentationURL() << std::endl;
   os << "License: " << module.GetLicense() << std::endl;
   os << "Contributor: " << module.GetContributor() << std::endl;
+  os << "Acknowledgements: " << module.GetAcknowledgements() << std::endl;
   os << "Target: " << module.GetTarget() << std::endl;
   //os << "Logo: " << module.GetLogo() << std::endl;
 

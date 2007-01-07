@@ -18,6 +18,7 @@ corresponding input pixel.
   <documentation-url></documentation-url>
   <license></license>
   <contributor>Bill Lorensen</contributor>
+  <acknowledgements>This command module was derived from Insight/Examples/Filtering/MedianImageFilter (copyright) Insight Software Consortium</acknowledgements>
   <parameters>
     <label>Median Filter Parameters</label>
     <description>Parameters for the median filter</description>

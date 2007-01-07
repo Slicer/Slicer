@@ -662,8 +662,17 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
     }
   sout << "try" << EOL << std::endl;
   sout << "  {" << EOL << std::endl;
-  sout << "    TCLAP::CmdLine commandLine (" << EOL << std::endl;
-  sout << "      " << "\"" << module.GetDescription() << "\"," << EOL << std::endl;
+  sout << "    std::string fullDescription;" << EOL << std::endl;
+  sout << "    fullDescription = \"" << module.GetDescription() << "\";" << EOL << std::endl;
+  sout << "    if (\"" << module.GetContributor() << "\" != \"\")" << EOL << std::endl;
+  sout << "      {" << EOL << std::endl;
+  sout << "      fullDescription += \"\\nAuthor(s): " << module.GetContributor() << "\";" << EOL << std::endl;
+  sout << "      }" << EOL << std::endl;
+  sout << "    if (\"" << module.GetAcknowledgements() << "\" != \"\")" << EOL << std::endl;
+  sout << "      {" << EOL << std::endl;
+  sout << "      fullDescription += \"\\nAcknowledgements: " << module.GetAcknowledgements() << "\";" << EOL << std::endl;
+  sout << "      }" << EOL << std::endl;
+  sout << "    TCLAP::CmdLine commandLine (fullDescription," << EOL << std::endl;
   sout << "       " << "' '," << EOL << std::endl;
   sout << "      " << "\"" << module.GetVersion() << "\"";
   sout << " );" << EOL << std::endl << EOL << std::endl;
