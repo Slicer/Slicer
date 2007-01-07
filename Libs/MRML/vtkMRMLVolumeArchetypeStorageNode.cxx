@@ -200,7 +200,14 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
 
   // set volume attributes
   vtkMatrix4x4* mat = reader->GetRasToIjkMatrix();
-  volNode->SetRASToIJKMatrix(mat);
+  if ( mat == NULL )
+    {
+    vtkErrorMacro ("Reader returned NULL RasToIjkMatrix");
+    }
+  else
+    {
+    volNode->SetRASToIJKMatrix(mat);
+    }
 
   volNode->SetStorageNodeID(this->GetID());
   //TODO update scene to send Modified event
