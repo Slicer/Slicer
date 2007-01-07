@@ -29,8 +29,6 @@ vtkStandardNewMacro(vtkSlicerColorLogic);
 //----------------------------------------------------------------------------
 vtkSlicerColorLogic::vtkSlicerColorLogic()
 {
-  vtkDebugMacro("vtkSlicerColorLogic: constructor trying to add default colour nodes\n");
-  this->AddDefaultColorNodes();
 }
 
 //----------------------------------------------------------------------------
