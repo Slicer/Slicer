@@ -35,5 +35,8 @@ CONFIGURE_FILE(
   ${ModuleDescriptionParser_BINARY_DIR}/ModuleDescriptionParserConfig.cmake 
 )
 
-SUBDIRS(Testing)
+IF(BUILD_TESTING)
+  SUBDIRS(Testing)
+ENDIF(BUILD_TESTING)
+
 INSTALL_TARGETS(/lib ModuleDescriptionParser)
