@@ -19,3 +19,4 @@ class vtkIGTTracker : public vtkMatrix4x4
 
 #endif
 
+
