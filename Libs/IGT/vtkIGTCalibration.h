@@ -5,6 +5,7 @@
 
 class vtkIGTCalibration : public vtkMatrix4x4 
 {
+
  public:
       static vtkIGTCalibration *New();
       vtkTypeMacro(vtkIGTCalibration,vtkMatrix4x4);
