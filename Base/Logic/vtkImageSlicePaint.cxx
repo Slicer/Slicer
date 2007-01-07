@@ -90,6 +90,12 @@ int paintRound (double in)
   return (static_cast<int> (floor(in)));
 }
 
+static
+int paintFloor (double in)
+{
+  return (static_cast<int> (floor(in)));
+}
+
 
 template <class T>
 void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *ptr)
@@ -223,11 +229,12 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *ptr)
         if ( self->GetMaskImage() == NULL )
           {
           // no mask, so check brush radius
-          double distSquared = 0.0;
-          for (int i = 0; i < 3; i++)
-            {
-            distSquared += (workingWorld[i] - brushCenter[i]) * (workingWorld[i] - brushCenter[i]);
-            }
+          double distSquared = ((workingWorld[0] - brushCenter[0]) * 
+                                (workingWorld[0] - brushCenter[0])) +
+                               ((workingWorld[1] - brushCenter[1]) * 
+                                (workingWorld[1] - brushCenter[1])) +
+                               ((workingWorld[2] - brushCenter[2]) * 
+                                (workingWorld[2] - brushCenter[2]));
           if ( distSquared < radiusSquared )
             {
             pixelToPaint = 1; // Now we're inside the brush
@@ -236,15 +243,17 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *ptr)
         else
           {
           // check the mask image
+          // note: k will always be zero for the mask since it is 2D...
           transform3(maskWorldToIJK, workingWorld, maskIJK);
-          for (int i = 0; i < 3; i++) { intMaskIJK[i] = paintRound(maskIJK[i]); }
+          for (int i = 0; i < 2; i++) { intMaskIJK[i] = paintRound(maskIJK[i]); }
+          intMaskIJK[2] = 0.0;
 
-          void *ptr = self->GetMaskImage()->GetScalarPointer (
-                                  intMaskIJK[0], intMaskIJK[1], intMaskIJK[2] );
+          void *ptr = self->GetMaskImage()->GetScalarPointer ( 
+                          intMaskIJK[0], intMaskIJK[1], intMaskIJK[2] );
 
           if ( ptr == NULL ) 
             {
-            vtkErrorWithObjectMacro (self, << "Cannot get mask pointer for pixel\n"
+            vtkErrorWithObjectMacro ( self, << "Cannot get mask pointer for pixel\n"
               << "workingWorld = " << 
               workingWorld[0] << " " <<  workingWorld[1] << " " << workingWorld[2] << "\n"
               << "intMaskIJK = " << 

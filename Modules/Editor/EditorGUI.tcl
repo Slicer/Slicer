@@ -231,8 +231,8 @@ proc EditorBuildGUI {this} {
   $::Editor($this,paintRange) SetRange 50 2000
   $::Editor($this,paintRange) SetReliefToGroove
   $::Editor($this,paintRange) SetBalloonHelpString "In threshold mode, the label will only be set if the background value is within this range."
-  pack [$::Editor($this,paintRange) GetWidgetName] \
-    -side top -anchor e -fill x -padx 2 -pady 2 
+  # don't pack this, it gets conditionally packed below
+
   #
   # Rebuild Button
   #
@@ -240,8 +240,7 @@ proc EditorBuildGUI {this} {
   $::Editor($this,rebuildButton) SetParent $pageWidget
   $::Editor($this,rebuildButton) Create
   $::Editor($this,rebuildButton) SetText "Reload"
-  pack [$::Editor($this,rebuildButton) GetWidgetName] \
-    -side top -anchor nw -fill x -padx 2 -pady 2 -in [$pageWidget GetWidgetName]
+  #pack [$::Editor($this,rebuildButton) GetWidgetName] -side top -anchor nw -fill x -padx 2 -pady 2 -in [$pageWidget GetWidgetName]
 }
 
 proc EditorAddGUIObservers {this} {
@@ -296,9 +295,13 @@ proc EditorProcessGUIEvents {this caller event} {
           switch $::Editor($this,paintMode) {
             "Paint" {
               ::PaintSWidget::AddPaint
+              $::Editor($this,paintDropper) SetEnabled 1
+              $::Editor($this,paintRadius) SetEnabled 1
             }
             "Draw" {
               ::DrawSWidget::AddDraw
+              $::Editor($this,paintDropper) SetEnabled 0
+              $::Editor($this,paintRadius) SetEnabled 0
             }
           }
         }
@@ -332,6 +335,11 @@ proc EditorProcessGUIEvents {this caller event} {
     switch $event {
       "10000" {
         EditorUpdateSWidgets $this
+        if { [[$::Editor($this,paintThreshold) GetWidget] GetSelectedState] } {
+          pack [$::Editor($this,paintRange) GetWidgetName] -side top -anchor e -fill x -padx 2 -pady 2 
+        } else {
+          pack forget [$::Editor($this,paintRange) GetWidgetName]
+        }
       }
     }
   } elseif { $caller == $::Editor($this,paintRange) } {
@@ -347,76 +355,27 @@ proc EditorProcessGUIEvents {this caller event} {
 
 proc EditorUpdateSWidgets {this} {
 
-  ::PaintSWidget::ConfigureAll -paintColor [$::Editor($this,paintLabel) GetValue]
-  ::DrawSWidget::ConfigureAll -paintColor [$::Editor($this,paintLabel) GetValue]
   ::PaintSWidget::ConfigureAll -radius [$::Editor($this,paintRadius) GetValue]
-  ::PaintSWidget::ConfigureAll -paintOver [[$::Editor($this,paintOver) GetWidget] GetSelectedState]
-  ::DrawSWidget::ConfigureAll -paintOver [[$::Editor($this,paintOver) GetWidget] GetSelectedState]
-  ::PaintSWidget::ConfigureAll -paintDropper [[$::Editor($this,paintDropper) GetWidget] GetSelectedState]
-  ::DrawSWidget::ConfigureAll -paintDropper [[$::Editor($this,paintDropper) GetWidget] GetSelectedState]
-  ::PaintSWidget::ConfigureAll -thresholdPaint [[$::Editor($this,paintThreshold) GetWidget] GetSelectedState]
-  ::DrawSWidget::ConfigureAll -thresholdPaint [[$::Editor($this,paintThreshold) GetWidget] GetSelectedState]
-  EditorUpdatePaintThreshold $this
-}
-
-proc EditorUpdatePaintThreshold {this} {
   foreach {lo hi} [$::Editor($this,paintRange) GetRange] {}
-  ::PaintSWidget::ConfigureAll -thresholdMin $lo -thresholdMax $hi
-  ::DrawSWidget::ConfigureAll -thresholdMin $lo -thresholdMax $hi
+
+  set cmd ::PaintSWidget::ConfigureAll
+    $cmd -paintColor [$::Editor($this,paintLabel) GetValue]
+    $cmd -paintOver [[$::Editor($this,paintOver) GetWidget] GetSelectedState]
+    $cmd -paintDropper [[$::Editor($this,paintDropper) GetWidget] GetSelectedState]
+    $cmd -thresholdPaint [[$::Editor($this,paintThreshold) GetWidget] GetSelectedState]
+    $cmd -thresholdMin $lo -thresholdMax $hi
+
+  set cmd ::DrawSWidget::ConfigureAll
+    $cmd -drawColor [$::Editor($this,paintLabel) GetValue]
+    $cmd -drawOver [[$::Editor($this,paintOver) GetWidget] GetSelectedState]
+    $cmd -thresholdPaint [[$::Editor($this,paintThreshold) GetWidget] GetSelectedState]
+    $cmd -thresholdMin $lo -thresholdMax $hi
 }
 
 proc EditorUpdateMRML {this} {
 }
 
 proc EditorProcessMRMLEvents {this caller event} {
-
-if {0} {
-   elseif { $caller == [$::Editor($this,paintEnable) GetWidget] } {
-    switch $event {
-      "10000" {
-        ::PaintSWidget::TogglePaint
-      }
-    }
-  } elseif { $caller == $::Editor($this,paintLabel) } {
-    switch $event {
-      "10001" {
-        ::PaintSWidget::ConfigureAll -paintColor [$::Editor($this,paintLabel) GetValue]
-      }
-    }
-  } elseif { $caller == $::Editor($this,paintRadius) } {
-    switch $event {
-      "10001" {
-        ::PaintSWidget::ConfigureAll -radius [$::Editor($this,paintRadius) GetValue]
-      }
-    }
-  } elseif { $caller == [$::Editor($this,paintOver) GetWidget] } {
-    switch $event {
-      "10000" {
-        ::PaintSWidget::ConfigureAll -paintOver [[$::Editor($this,paintOver) GetWidget] GetSelectedState]
-      }
-    }
-  } elseif { $caller == [$::Editor($this,paintDropper) GetWidget] } {
-    switch $event {
-      "10000" {
-        ::PaintSWidget::ConfigureAll -paintDropper [[$::Editor($this,paintDropper) GetWidget] GetSelectedState]
-      }
-    }
-  } elseif { $caller == [$::Editor($this,paintThreshold) GetWidget] } {
-    switch $event {
-      "10000" {
-        ::PaintSWidget::ConfigureAll -thresholdPaint [[$::Editor($this,paintThreshold) GetWidget] GetSelectedState]
-      }
-    }
-  } elseif { $caller == $::Editor($this,paintRange) } {
-    switch $event {
-      "10001" {
-        foreach {lo hi} [$::Editor($this,paintRange) GetRange] {}
-        ::PaintSWidget::ConfigureAll -thresholdMin $lo -thresholdMax $hi
-        puts "::PaintSWidget::ConfigureAll -thresholdMin $lo -thresholdMax $hi"
-      }
-    }
-  }
-}
 }
 
 proc EditorEnter {this} {

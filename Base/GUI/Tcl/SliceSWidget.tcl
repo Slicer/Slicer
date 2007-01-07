@@ -32,6 +32,7 @@ if { [itcl::find class SliceSWidget] == "" } {
     variable _actionStartFOV "250 250 250"
     variable _kwObserverTags ""
     variable _fiducialsSWidget ""
+    variable _gridSWidget ""
 
     # methods
     method resizeSliceNode {} {}
@@ -50,6 +51,8 @@ itcl::body SliceSWidget::constructor {sliceGUI} {
   $this configure -sliceGUI $sliceGUI
 
   set _fiducialsSWidget [FiducialsSWidget #auto $sliceGUI]
+  set _gridSWidget [GridSWidget #auto $sliceGUI]
+  $_gridSWidget configure -layer "label"
  
   # create matrices to store transform state
   set o(storeXYToRAS) [$this vtkNew vtkMatrix4x4]
@@ -106,6 +109,7 @@ itcl::body SliceSWidget::constructor {sliceGUI} {
 itcl::body SliceSWidget::destructor {} {
 
   itcl::delete object $_fiducialsSWidget
+  itcl::delete object $_gridSWidget
 
   if { [info command $sliceGUI] != "" } {
     foreach tag $_guiObserverTags {

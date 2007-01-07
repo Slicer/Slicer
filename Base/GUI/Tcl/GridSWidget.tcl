@@ -183,8 +183,6 @@ itcl::body GridSWidget::updateGrid { } {
 
   $this resetGrid
 
-  set layer "background"
-
   #
   # check the size cutoff
   # - map a single pixel from IJK to XY and check the size
