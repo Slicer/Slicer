@@ -7,13 +7,19 @@
 #define __vtkSlicerViewControlGUI_h
 
 #include "vtkObserverManager.h"
-
-#include "vtkMRMLViewNode.h"
-#include "vtkMRMLCameraNode.h"
+#include "vtkImageData.h"
+#include "vtkTransform.h"
+#include "vtkImageMagnify.h"
+#include "vtkExtractVOI.h"
+#include "vtkImageChangeInformation.h"
+#include "vtkGlyphSource2D.h"
 
 #include "vtkSlicerBaseGUIWin32Header.h"
 #include "vtkSlicerComponentGUI.h"
+#include "vtkSlicerInteractorStyle.h"
 
+#include "vtkMRMLViewNode.h"
+#include "vtkMRMLCameraNode.h"
 
 class vtkKWFrame;
 class vtkKWPushButton;
@@ -122,20 +128,18 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   vtkGetObjectMacro (NavZoomLabel, vtkKWLabel );
 
     // Description:
-    // API for setting SliceNode, SliceLogic and
-    // for both setting and observing them.
-    void SetMRMLViewNode ( vtkMRMLViewNode *node )
-        { vtkSetMRMLNodeMacro ( this->ViewNode, node ); }
-    void SetAndObserveMRMLViewNode ( vtkMRMLViewNode *node )
-        { vtkSetAndObserveMRMLNodeMacro (this->ViewNode, node ); }
+    // API for getting & setting SliceGUI interactor styles
+    vtkSetObjectMacro ( Slice0Events, vtkSlicerInteractorStyle );
+    vtkSetObjectMacro ( Slice1Events, vtkSlicerInteractorStyle );
+    vtkSetObjectMacro ( Slice2Events, vtkSlicerInteractorStyle );
+
+    vtkGetObjectMacro ( Slice0Events, vtkSlicerInteractorStyle );
+    vtkGetObjectMacro ( Slice1Events, vtkSlicerInteractorStyle );
+    vtkGetObjectMacro ( Slice2Events, vtkSlicerInteractorStyle );
+
     vtkGetObjectMacro ( ViewNode, vtkMRMLViewNode );
-
-    void SetMRMLCameraNode ( vtkMRMLCameraNode *node )
-        { vtkSetMRMLNodeMacro ( this->CameraNode, node ); }
-    void SetAndObserveMRMLCameraNode ( vtkMRMLCameraNode *node )
-        { vtkSetAndObserveMRMLNodeMacro (this->CameraNode, node ); }
-    vtkGetObjectMacro ( CameraNode, vtkMRMLCameraNode );
-
+    vtkSetObjectMacro ( ViewNode, vtkMRMLViewNode );
+    
   // Description:
   // Get the main slicer toolbars.
   vtkGetObjectMacro (ApplicationGUI, vtkSlicerApplicationGUI );
@@ -151,33 +155,23 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   virtual void RemoveGUIObservers ( );
 
   // Description:
-  // Make sure the view control GUI is observing
-  // the current (active) MRMLCameraNode.
-  // Removes existing observers,
-  // sets and observes active camera node
-  virtual void UpdateCamerasFromMRML ( );
+  // Add and remove observers on the
+  // slice GUIs so that we can manage
+  // functionality of the Nav/Zoom widget
+  virtual void AddSliceGUIObservers();
+  virtual void RemoveSliceGUIObservers();
+  virtual void AddViewObservers();
+  virtual void RemoveViewObservers();
 
-  virtual void RemoveViewObservers () ;
-  virtual void AddViewObservers ( );
-
-  // Description:
-  // Removes existing observers,
-  // using RemoveViewObservers()
-  // Updates all view nodes from MRML
-  // and puts observers on them using AddViewObservers().
-  virtual void UpdateView ( vtkMRMLViewNode *node );
-  // Description:
-  // Makes sure the view control GUI is
-  // observing the current (active) MRMLViewNode.
-  // Calls UpdateView() with the current active node.
-  virtual void UpdateViewsFromMRML ( );
-  // Description:
-  // Called whenever a node is created or
-  // deleted from the scene. It calls
-  // UpdateViewsFromMRML and UpdateCamarasFromMRML.
+  virtual void UpdateCurrentCameraAndActors();
+  virtual void UpdateSliceGUIInteractorStyles();
+  virtual void UpdateGUI ( );
+  virtual void UpdateView();
   virtual void UpdateFromMRML ( );
-
-  virtual void UpdateNavZoomCameraAndActors ( );
+  
+  virtual void MagnifyActiveSlice();
+  vtkMRMLViewNode *GetActiveView();
+  vtkMRMLCameraNode *GetActiveCamera();
 
   // Description:
   // Renders the Nav/Zoom widget fresh
@@ -197,6 +191,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   // Describe the behavior at module enter and exit.
   virtual void Enter ( );
   virtual void Exit ( );
+
+  // Description:
+  // manages the fiducial visibility across ViewControlGUI, SliceControlGUI and FiducialsGUI
+  virtual void SetMRMLFiducialPointVisibility ( int state);
+  virtual void SetMRMLFiducialLabelVisibility ( int state);
 
   // Description:
   // Starts and stops automatic view spinning
@@ -324,10 +323,22 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   vtkKWLabel *ViewAxisTopCornerIconButton;
   vtkKWLabel *ViewAxisBottomCornerIconButton;
 
+  double ZoomCenter[2];
+//  vtkSlicerImageZoom2D *Zoomer;
+  vtkImageMagnify *Zoomer;
+  vtkGlyphSource2D *ZoomCursor;
+  vtkImageChangeInformation *ZoomChanger;
+  vtkExtractVOI *ZoomExtractor;
+
   vtkMRMLViewNode *ViewNode;
-  vtkMRMLCameraNode *CameraNode;
-  
+  vtkSlicerInteractorStyle *Slice0Events;
+  vtkSlicerInteractorStyle *Slice1Events;
+  vtkSlicerInteractorStyle *Slice2Events;
+
   int RockCount;
+  int NavZoomWidgetWid;
+  int NavZoomWidgetHit;
+  int Magnification;
 
  private:
   vtkSlicerViewControlGUI ( const vtkSlicerViewControlGUI& ); // Not implemented.

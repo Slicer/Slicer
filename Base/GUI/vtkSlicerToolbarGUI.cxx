@@ -627,9 +627,9 @@ void vtkSlicerToolbarGUI::ResumeViewRockOrSpin ( int mode )
   if ( this->ApplicationGUI != NULL )
     {
     vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));
-    if ( p->GetViewControlGUI()->GetViewNode() != NULL )
+    if ( p->GetViewControlGUI()->GetActiveView() != NULL )
       {
-      p->GetViewControlGUI()->GetViewNode()->SetAnimationMode( mode );
+      p->GetViewControlGUI()->GetActiveView()->SetAnimationMode( mode );
       }
     }
 }
@@ -642,12 +642,12 @@ int vtkSlicerToolbarGUI::StopViewRockOrSpin ( )
   if ( this->ApplicationGUI != NULL )
     {
     vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));
-    if ( p->GetViewControlGUI()->GetViewNode() != NULL )
+    if ( p->GetViewControlGUI()->GetActiveView() != NULL )
       {
-      int mode = p->GetViewControlGUI()->GetViewNode()->GetAnimationMode();
+      int mode = p->GetViewControlGUI()->GetActiveView()->GetAnimationMode();
       if ( mode == vtkMRMLViewNode::Rock || mode == vtkMRMLViewNode::Spin )
         {
-        p->GetViewControlGUI()->GetViewNode()->SetAnimationMode ( vtkMRMLViewNode::Off );
+        p->GetViewControlGUI()->GetActiveView()->SetAnimationMode ( vtkMRMLViewNode::Off );
         }
         return ( mode );
       }

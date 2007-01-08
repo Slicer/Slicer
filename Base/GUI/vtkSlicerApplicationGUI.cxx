@@ -144,9 +144,7 @@ vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
 #ifndef VIEWCONTROL_DEBUG
     if ( this->ViewControlGUI )
       {
-      this->ViewControlGUI->RemoveViewObservers();
-      this->ViewControlGUI->SetMRMLViewNode(NULL);
-      this->ViewControlGUI->SetAndObserveMRMLCameraNode ( NULL );
+      this->ViewControlGUI->RemoveSliceGUIObservers();
       this->ViewControlGUI->SetAndObserveMRMLScene ( NULL );
       this->ViewControlGUI->SetApplicationGUI(NULL);
       this->ViewControlGUI->SetApplication(NULL);
@@ -637,6 +635,7 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
             scGUI->SetApplication ( app );
             scGUI->SetAndObserveMRMLScene ( this->MRMLScene );
             scGUI->BuildGUI ( this->SlicesControlFrame->GetFrame() );
+
 #endif
 
             // Build 3DView Control panel
@@ -657,9 +656,11 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
             this->BuildMainViewer ( vtkSlicerGUILayout::SlicerLayoutDefaultView );
 #endif
 
-            // Initialize view control GUI's camera and view nodes
-            // to match those in the main viewer.
-            vcGUI->UpdateFromMRML ( );
+            // after SliceGUIs are created, the ViewControlGUI
+            // needs to observe them to feed its magnifier
+            // Zoom Widget.
+            vcGUI->UpdateFromMRML();
+            vcGUI->UpdateSliceGUIInteractorStyles();
             
 #ifndef MENU_DEBUG
             // Construct menu bar and set up global key bindings
