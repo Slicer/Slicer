@@ -379,9 +379,9 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     this->VolumeDisplayMenuButton->GetMenu()->AddRadioButton ( "Foreground volume" );
     this->VolumeDisplayMenuButton->GetMenu()->AddRadioButton ( "Background volume" );
     this->VolumeDisplayMenuButton->GetMenu()->AddRadioButton ( "Label map" );
-    this->VolumeDisplayMenuButton->GetMenu()->SetItemStateToDisabled ("Foreground volume");
-    this->VolumeDisplayMenuButton->GetMenu()->SetItemStateToDisabled ("Background volume");
-    this->VolumeDisplayMenuButton->GetMenu()->SetItemStateToDisabled ("Label map");
+//    this->VolumeDisplayMenuButton->GetMenu()->SetItemStateToDisabled ("Foreground volume");
+//    this->VolumeDisplayMenuButton->GetMenu()->SetItemStateToDisabled ("Background volume");
+//    this->VolumeDisplayMenuButton->GetMenu()->SetItemStateToDisabled ("Label map");
     this->VolumeDisplayMenuButton->GetMenu()->AddSeparator();
     this->VolumeDisplayMenuButton->GetMenu()->AddCommand ( "close" );    
 
