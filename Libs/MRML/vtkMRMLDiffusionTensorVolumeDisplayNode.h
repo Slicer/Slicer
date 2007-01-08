@@ -129,8 +129,14 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeDisplayNode : public vtkMRMLVo
     scalarModeMaxEigenvalueProjX = 16,
     scalarModeMaxEigenvalueProjY = 17,
     scalarModeMaxEigenvalueProjZ = 18,
+    scalarModeMaxEigenvec_ProjX =  19,
+    scalarModeMaxEigenvec_ProjY =  20,
+    scalarModeMaxEigenvec_ProjZ =  21,
+    scalarModeParallelDiffusivity =  22,
+    scalarModePerpendicularDiffusivity =  23
     };
   //ETX
+
   vtkGetMacro(ScalarMode, int);
   vtkSetMacro(ScalarMode, int);
  
