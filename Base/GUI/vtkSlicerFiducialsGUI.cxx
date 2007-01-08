@@ -328,6 +328,7 @@ void vtkSlicerFiducialsGUI::ProcessGUIEvents ( vtkObject *caller,
         activeFiducialListNode->SetVisibility( ! activeFiducialListNode->GetVisibility());
         // update the icon via  process mrml event that should get pushed
         //this->ProcessMRMLEvents(caller, event, callData); 
+/*
         // update the fiducial visibility parameter in the view node too.
         // TODO: when there are multiple views, use active view instead of 0th.
         vtkMRMLViewNode *vn = vtkMRMLViewNode::SafeDownCast(
@@ -336,6 +337,7 @@ void vtkSlicerFiducialsGUI::ProcessGUIEvents ( vtkObject *caller,
           {
           vn->SetFiducialsVisible ( activeFiducialListNode->GetVisibility());
           }
+*/
     }
 
   // list colour

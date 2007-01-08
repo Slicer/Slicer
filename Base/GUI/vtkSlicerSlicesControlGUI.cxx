@@ -483,12 +483,12 @@ void vtkSlicerSlicesControlGUI::ModifyVisibility ( )
       state =  this->GetFeaturesVisibleButton()->GetMenu()->GetItemSelectedState("Fiducial points");
       if ( cnode->GetFiducialVisibility () != state )
         {
-        cnode->SetFiducialVisibility( state);
+//        cnode->SetFiducialVisibility( state);
         }
       state =  this->GetFeaturesVisibleButton()->GetMenu()->GetItemSelectedState("Fiducial labels");
       if ( cnode->GetFiducialLabelVisibility() != state )
         {
-        cnode->SetFiducialLabelVisibility ( state );
+//        cnode->SetFiducialLabelVisibility ( state );
         }
       state =  this->GetFeaturesVisibleButton()->GetMenu()->GetItemSelectedState("Foreground grid");
       if ( cnode->GetForegroundGrid ( ) != state )

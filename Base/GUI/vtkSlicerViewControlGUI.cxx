@@ -570,11 +570,11 @@ void vtkSlicerViewControlGUI::ProcessGUIEvents ( vtkObject *caller,
               {
               if ( vn->GetFiducialsVisible() != m->GetItemSelectedState("Fiducial points"))
                 {
-                this->SetMRMLFiducialPointVisibility (m->GetItemSelectedState("Fiducial points"));
+//                this->SetMRMLFiducialPointVisibility (m->GetItemSelectedState("Fiducial points"));
                 }
               if ( vn->GetFiducialLabelsVisible() !=m->GetItemSelectedState("Fiducial labels"))
                 {
-                this->SetMRMLFiducialLabelVisibility (m->GetItemSelectedState("Fiducial labels"));
+//                this->SetMRMLFiducialLabelVisibility (m->GetItemSelectedState("Fiducial labels"));
                 }
               if ( vn->GetBoxVisible() !=m->GetItemSelectedState ("3D cube"))
                 {
@@ -679,6 +679,7 @@ void vtkSlicerViewControlGUI::SetMRMLFiducialPointVisibility ( int state)
   
   // Right now, fiducial visibility is stored in three places.
   // TODO: agree on where to keep it, and whether to override it.
+/*
   if ( this->ApplicationGUI  )
     {
     vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));
@@ -690,6 +691,7 @@ void vtkSlicerViewControlGUI::SetMRMLFiducialPointVisibility ( int state)
       vn->SetFiducialsVisible (state );
       }
     }
+*/
 }
 
 
@@ -699,6 +701,7 @@ void vtkSlicerViewControlGUI::SetMRMLFiducialLabelVisibility ( int state)
 
   // Right now, fiducial visibility is stored in three places.
   // TODO: agree on where to keep it, and whether to override it.
+/*
   if ( this->ApplicationGUI  )
     {
     vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));
@@ -709,6 +712,7 @@ void vtkSlicerViewControlGUI::SetMRMLFiducialLabelVisibility ( int state)
       vn->SetFiducialLabelsVisible (state);
       }
     }
+*/
 }
 
 
@@ -2283,19 +2287,19 @@ void vtkSlicerViewControlGUI::UpdateGUI ( )
       }
     if ( vn->GetFiducialsVisible() == 1 )
       {
-      this->VisibilityButton->GetMenu()->SelectItem ("Fiducial points" );
+//      this->VisibilityButton->GetMenu()->SelectItem ("Fiducial points" );
       }
     else
       {
-      this->VisibilityButton->GetMenu()->DeselectItem ("Fiducial points" );
+//      this->VisibilityButton->GetMenu()->DeselectItem ("Fiducial points" );
       }
     if ( vn->GetFiducialLabelsVisible() == 1 )
       {
-      this->VisibilityButton->GetMenu()->SelectItem ("Fiducial labels" );
+//      this->VisibilityButton->GetMenu()->SelectItem ("Fiducial labels" );
       }
     else
       {
-      this->VisibilityButton->GetMenu()->DeselectItem ("Fiducial labels" );
+//      this->VisibilityButton->GetMenu()->DeselectItem ("Fiducial labels" );
       }
     if ( vn->GetBoxVisible() == 1 )
       {
