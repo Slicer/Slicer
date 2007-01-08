@@ -668,8 +668,8 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
     }
   sout << "try" << EOL << std::endl;
   sout << "  {" << EOL << std::endl;
-  sout << "    std::string fullDescription;" << EOL << std::endl;
-  sout << "    fullDescription = \"" << module.GetDescription() << "\";" << EOL << std::endl;
+  sout << "    std::string fullDescription(\"Description: \");" << EOL << std::endl;
+  sout << "    fullDescription += \"" << module.GetDescription() << "\";" << EOL << std::endl;
   sout << "    if (\"" << module.GetContributor() << "\" != \"\")" << EOL << std::endl;
   sout << "      {" << EOL << std::endl;
   sout << "      fullDescription += \"\\nAuthor(s): " << module.GetContributor() << "\";" << EOL << std::endl;
