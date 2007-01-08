@@ -197,8 +197,6 @@ void vtkSlicerViewerWidget::CreateAxis()
   this->AxisLabelActors[4]->SetPosition(0,-pos,0);
   this->AxisLabelActors[5]->SetPosition(0,0,-pos);
 
-  this->AddAxisActors();
-
   boxSource->Delete();
   boxMapper->Delete();
 }
