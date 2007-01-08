@@ -88,6 +88,7 @@ vtkSlicerViewControlGUI::vtkSlicerViewControlGUI ( )
   this->ZoomWidget = vtkKWRenderWidget::New ( );
   this->NavZoomFrame = vtkKWFrame::New ( );
 
+/*
   this->Zoomer = vtkImageMagnify::New();
   this->Zoomer->SetMagnificationFactors (this->Magnification, this->Magnification, this->Magnification);
   this->Zoomer->SetInterpolate(0);
@@ -101,7 +102,13 @@ vtkSlicerViewControlGUI::vtkSlicerViewControlGUI ( )
   this->ZoomCursor->SetFilled(0);
   this->ZoomCursor->SetColor ( 1.0, 1.0, 0.0);
   this->ZoomCursor->SetCenter( this->NavZoomWidgetWid/2.0, this->NavZoomWidgetHit/2.0, 0.0);
-
+*/
+  
+  this->Zoomer = NULL;
+  this->ZoomExtractor = NULL;
+  this->ZoomChanger = NULL;
+  this->ZoomCursor = NULL;
+  
   this->ViewNode = NULL;
   this->Slice0Events = NULL;
   this->Slice1Events = NULL;
