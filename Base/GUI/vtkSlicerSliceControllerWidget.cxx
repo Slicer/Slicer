@@ -666,7 +666,7 @@ void vtkSlicerSliceControllerWidget::RaiseVolumeDisplayPanel ( char *id )
   vgui->GetVolumeDisplayWidget()->SetVolumeNode (vtkMRMLVolumeNode::SafeDownCast (this->GetMRMLScene()->GetNodeByID ( id )) );
   appgui = vgui->GetApplicationGUI ( );
   appgui->SelectModule ( "Volumes" );
-  vgui->GetHelpFrame()->CollapseFrame();
+  //vgui->GetHelpFrame()->CollapseFrame();
   vgui->GetLoadFrame()->ExpandFrame();
   vgui->GetDisplayFrame()->ExpandFrame();
   vgui->GetSaveFrame()->CollapseFrame();
