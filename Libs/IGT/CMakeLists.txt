@@ -13,6 +13,7 @@ INCLUDE(${VTK_USE_FILE})
 SET(IGT_SRCS
   vtkIGTTracker.cxx
   vtkIGTCalibration.cxx
+  vtkIGTPatientToImageRegistration.cxx
 )
 
 # Abstract/pure virtual classes
