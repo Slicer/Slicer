@@ -446,7 +446,7 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
             }
           else
             {
-            std::cerr << "ERROR:  no slicer module gui found for Volumes\n"; 
+            vtkDebugMacro ("ERROR:  no slicer module gui found for Volumes\n"); 
             }
           }
         else if (pushb == this->DataIconButton && event == vtkKWPushButton::InvokedEvent )
@@ -458,7 +458,7 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
             }
           else
             {
-            std::cerr << "ERROR:  no slicer module gui found for Data\n"; 
+            vtkDebugMacro ("ERROR:  no slicer module gui found for Data\n");
             }
           }
         else if (pushb == this->VolumeIconButton && event == vtkKWPushButton::InvokedEvent )
@@ -470,7 +470,7 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
             }
           else
             {
-            std::cerr << "ERROR:  no slicer module gui found for Volumes\n"; 
+            vtkDebugMacro ("ERROR:  no slicer module gui found for Volumes\n");
             }
           }
         else if (pushb == this->ModelIconButton && event == vtkKWPushButton::InvokedEvent )
@@ -482,7 +482,7 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
             }
           else
             {
-            std::cerr << "ERROR:  no slicer module gui found for Models\n"; 
+            vtkDebugMacro ("ERROR:  no slicer module gui found for Models\n");
             }
           }
         else if (pushb == this->FiducialsIconButton && event == vtkKWPushButton::InvokedEvent )
@@ -494,7 +494,7 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
             }
           else
             {
-            std::cerr << "ERROR:  no slicer module gui found for Fiducials\n"; 
+            vtkDebugMacro ("ERROR:  no slicer module gui found for Fiducials\n");
             }
           }
         else if (pushb == this->ColorIconButton && event == vtkKWPushButton::InvokedEvent )
@@ -506,7 +506,7 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
             }
           else
             {
-            std::cerr << "ERROR:  no slicer module gui found for Color\n"; 
+            vtkDebugMacro ("ERROR:  no slicer module gui found for Color\n");
             }
           }
         else if (pushb == this->TransformIconButton && event == vtkKWPushButton::InvokedEvent )
@@ -518,7 +518,7 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
             }
           else
             {
-            std::cerr << "ERROR:  no slicer module gui found for Transforms\n"; 
+            vtkDebugMacro ("ERROR:  no slicer module gui found for Transforms\n");
             }
           }
         else if (pushb == this->EditorIconButton && event == vtkKWPushButton::InvokedEvent )
@@ -530,7 +530,7 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
             }
           else
             {
-            std::cerr << "ERROR:  no slicer module gui found for Editor\n"; 
+            vtkDebugMacro ("ERROR:  no slicer module gui found for Editor\n");
             }
           }
         }
@@ -1037,7 +1037,11 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
       {
       mouseMode = selnode->GetMouseInteractionMode();
       }
-    } else { std::cout << "MRML Scene not set yet, not getting mouse interaction mode, using default of transform\n"; }
+    }
+  else 
+    { 
+    vtkDebugMacro ("MRML Scene not set yet, not getting mouse interaction mode, using default of transform\n"); 
+    }
   
   vtkKWRadioButton *radiob = this->MouseModeRadioButtons->AddWidget ( vtkMRMLSelectionNode::MouseSelect );
   radiob->SetReliefToFlat ( );
