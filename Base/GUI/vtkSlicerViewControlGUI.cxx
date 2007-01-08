@@ -2070,7 +2070,7 @@ void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
       vtkImageMapper *zoomMapper = vtkImageMapper::New ( );
       zoomMapper->SetColorWindow(255);
       zoomMapper->SetColorLevel (127.5);
-      zoomMapper->SetInput ( this->Zoomer->GetOutput() );
+//      zoomMapper->SetInput ( this->Zoomer->GetOutput() );
       vtkActor2D *zoomActor = vtkActor2D::New();
       zoomActor->SetMapper( zoomMapper);
       this->ZoomWidget->GetRenderer()->AddActor2D ( zoomActor );
