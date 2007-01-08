@@ -171,10 +171,13 @@ if { [file exists $localvarsfile] } {
     exit 1
 }
 
+set ::VTK_DEBUG_LEAKS "ON"
 if ($isRelease) {
     set ::VTK_BUILD_TYPE "Release"
     set ::env(VTK_BUILD_TYPE) $::VTK_BUILD_TYPE
     puts "Overriding slicer_variables.tcl; VTK_BUILD_TYPE is $::env(VTK_BUILD_TYPE)"
+    set ::VTK_DEBUG_LEAKS "OFF"
+
 }
 
 #initialize platform variables
@@ -473,7 +476,7 @@ if { ![file exists $::VTK_TEST_FILE] || $::GENLIB(update) } {
             -DVTK_WRAP_TCL:BOOL=ON \
             -DVTK_USE_HYBRID:BOOL=ON \
             -DVTK_USE_PATENTED:BOOL=ON \
-            -DVTK_DEBUG_LEAKS:BOOL=ON \
+            -DVTK_DEBUG_LEAKS:BOOL=$::VTK_DEBUG_LEAKS \
             -DTCL_INCLUDE_PATH:PATH=$TCL_INCLUDE_DIR \
             -DTK_INCLUDE_PATH:PATH=$TCL_INCLUDE_DIR \
             -DTCL_LIBRARY:FILEPATH=$::VTK_TCL_LIB \
@@ -504,7 +507,7 @@ if { ![file exists $::VTK_TEST_FILE] || $::GENLIB(update) } {
             -DVTK_WRAP_TCL:BOOL=ON \
             -DVTK_USE_HYBRID:BOOL=ON \
             -DVTK_USE_PATENTED:BOOL=ON \
-            -DVTK_DEBUG_LEAKS:BOOL=ON \
+            -DVTK_DEBUG_LEAKS:BOOL=$::VTK_DEBUG_LEAKS \
             -DOPENGL_INCLUDE_DIR:PATH=/usr/X11R6/include \
             -DTCL_INCLUDE_PATH:PATH=$TCL_INCLUDE_DIR \
             -DTK_INCLUDE_PATH:PATH=$TCL_INCLUDE_DIR \
@@ -528,7 +531,7 @@ if { ![file exists $::VTK_TEST_FILE] || $::GENLIB(update) } {
             -DVTK_WRAP_TCL:BOOL=ON \
             -DVTK_USE_HYBRID:BOOL=ON \
             -DVTK_USE_PATENTED:BOOL=ON \
-            -DVTK_DEBUG_LEAKS:BOOL=ON \
+            -DVTK_DEBUG_LEAKS:BOOL=$::VTK_DEBUG_LEAKS \
             -DTCL_INCLUDE_PATH:PATH=$TCL_INCLUDE_DIR \
             -DTK_INCLUDE_PATH:PATH=$TCL_INCLUDE_DIR \
             -DTCL_LIBRARY:FILEPATH=$::VTK_TCL_LIB \
