@@ -33,7 +33,7 @@
 #include "vtkKWRenderWidget.h"
 #include "vtkSlicerViewControlIcons.h"
 
-//#define NAVZOOMWIDGET_DEBUG
+#define NAVZOOMWIDGET_DEBUG
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerViewControlGUI );
@@ -479,131 +479,11 @@ void vtkSlicerViewControlGUI::ProcessGUIEvents ( vtkObject *caller,
       vtkKWScale *s = vtkKWScale::SafeDownCast ( caller );
 
       vtkSlicerInteractorStyle *istyle = vtkSlicerInteractorStyle::SafeDownCast ( caller );
+
 #ifndef NAVZOOMWIDGET_DEBUG
-      int x, y;
-      int magx, magy, magz;
-      vtkImageData *data = NULL;
-      this->Zoomer->GetMagnificationFactors ( magx, magy, magz );
-      int xwid = int ( (this->NavZoomWidgetWid / 2.0) / (float)magx);
-      int yhit = int ( (this->NavZoomWidgetHit / 2.0) / (float)magx);
-      if ( istyle == this->Slice0Events )
+      if ( istyle == this->Slice0Events || istyle == this->Slice1Events || istyle == this->Slice2Events)
         {
-        this->ZoomExtractor->SetInput ( NULL );
-        this->ZoomChanger->SetInput ( NULL );
-        this->Zoomer->SetInput ( NULL );
-        if ( event == vtkCommand::EnterEvent )
-          {
-          // configure zoom
-          x = this->Slice0Events->GetLastPos ()[0];
-          y = this->Slice0Events->GetLastPos ()[1];
-          this->ZoomExtractor->SetInput (appGUI->GetMainSliceGUI0()->GetLogic()->GetImageData());
-          this->ZoomExtractor->SetVOI ( x-xwid, x+xwid, y-yhit, y+yhit, 0, 0 );
-          this->ZoomChanger->SetInput ( this->ZoomExtractor->GetOutput ());
-          this->ZoomChanger->SetOutputExtentStart ( x-xwid, y-yhit, 0);
-          this->ZoomChanger->SetExtentTranslation ( -(x-xwid), -(y-yhit), 0);
-          this->ZoomChanger->SetOutputOrigin ( 0, 0, 0 );
-          this->Zoomer->SetInput ( this->ZoomChanger->GetOutput () );
-          // update zoom and render
-          this->MagnifyActiveSlice();
-          this->PackZoomWidget();
-          }
-        else if (event == vtkCommand::LeaveEvent )
-          {
-          this->PackNavWidget();
-          }
-        else if ( event == vtkCommand::MouseMoveEvent )
-          {
-          // configure zoom
-          x = this->Slice0Events->GetLastPos ()[0];
-          y = this->Slice0Events->GetLastPos ()[1];
-          this->ZoomExtractor->SetInput (appGUI->GetMainSliceGUI0()->GetLogic()->GetImageData());
-          this->ZoomExtractor->SetVOI ( x-xwid, x+xwid, y-yhit, y+yhit, 0, 0 );
-          this->ZoomChanger->SetInput ( this->ZoomExtractor->GetOutput ());
-          this->ZoomChanger->SetOutputExtentStart ( x-xwid, y-yhit, 0);
-          this->ZoomChanger->SetExtentTranslation ( -(x-xwid), -(y-yhit), 0);
-          this->ZoomChanger->SetOutputOrigin ( 0, 0, 0 );
-          this->Zoomer->SetInput ( this->ZoomChanger->GetOutput () );
-          // update zoom and render
-          this->MagnifyActiveSlice();
-          }
-        }      
-      
-      else if ( istyle == this->Slice1Events)
-        {
-        this->ZoomExtractor->SetInput ( NULL );
-        this->ZoomChanger->SetInput ( NULL );
-        this->Zoomer->SetInput ( NULL );
-        if (event == vtkCommand::EnterEvent )
-          {
-          // configure zoom
-          x = this->Slice1Events->GetLastPos ()[0];
-          y = this->Slice1Events->GetLastPos ()[1];
-          this->ZoomExtractor->SetInput (appGUI->GetMainSliceGUI1()->GetLogic()->GetImageData());
-          this->ZoomExtractor->SetVOI ( x-xwid, x+xwid, y-yhit, y+yhit, 0, 0 );
-          this->ZoomChanger->SetInput ( this->ZoomExtractor->GetOutput ());
-          this->ZoomChanger->SetOutputExtentStart ( x-xwid, y-yhit, 0);
-          this->ZoomChanger->SetExtentTranslation ( -(x-xwid), -(y-yhit), 0);
-          this->ZoomChanger->SetOutputOrigin ( 0, 0, 0 );
-          this->Zoomer->SetInput ( this->ZoomChanger->GetOutput () );
-          this->MagnifyActiveSlice();
-          this->PackZoomWidget();
-          }
-        else if (event == vtkCommand::LeaveEvent )
-          {
-          this->PackNavWidget();
-          }      
-        else if ( event == vtkCommand::MouseMoveEvent )
-          {
-          x = this->Slice1Events->GetLastPos ()[0];
-          y = this->Slice1Events->GetLastPos ()[1];
-          this->ZoomExtractor->SetInput (appGUI->GetMainSliceGUI1()->GetLogic()->GetImageData());
-          this->ZoomExtractor->SetVOI ( x-xwid, x+xwid, y-yhit, y+yhit, 0, 0 );
-          this->ZoomChanger->SetInput ( this->ZoomExtractor->GetOutput ());
-          this->ZoomChanger->SetOutputExtentStart ( x-xwid, y-yhit, 0);
-          this->ZoomChanger->SetExtentTranslation ( -(x-xwid), -(y-yhit), 0);
-          this->ZoomChanger->SetOutputOrigin ( 0, 0, 0 );
-          this->Zoomer->SetInput ( this->ZoomChanger->GetOutput () );
-          this->MagnifyActiveSlice();
-          }
-        }
-      
-      else if ( istyle == this->Slice2Events )
-        {
-        this->ZoomExtractor->SetInput ( NULL );
-        this->ZoomChanger->SetInput ( NULL );
-        this->Zoomer->SetInput ( NULL );
-        if (event == vtkCommand::EnterEvent )
-          {
-          // configure zoom
-          x = this->Slice2Events->GetLastPos ()[0];
-          y = this->Slice2Events->GetLastPos ()[1];
-          this->ZoomExtractor->SetInput (appGUI->GetMainSliceGUI2()->GetLogic()->GetImageData());
-          this->ZoomExtractor->SetVOI ( x-xwid, x+xwid, y-yhit, y+yhit, 0, 0 );
-          this->ZoomChanger->SetInput ( this->ZoomExtractor->GetOutput ());
-          this->ZoomChanger->SetOutputExtentStart ( x-xwid, y-yhit, 0);
-          this->ZoomChanger->SetExtentTranslation ( -(x-xwid), -(y-yhit), 0);
-          this->ZoomChanger->SetOutputOrigin ( 0, 0, 0 );
-          this->Zoomer->SetInput ( this->ZoomChanger->GetOutput () );
-          this->MagnifyActiveSlice();
-          this->PackZoomWidget();
-          }
-        else if (event == vtkCommand::LeaveEvent )
-          {
-          this->PackNavWidget();
-          }      
-        else if ( event == vtkCommand::MouseMoveEvent )
-          {
-          x = this->Slice2Events->GetLastPos ()[0];
-          y = this->Slice2Events->GetLastPos ()[1];
-          this->ZoomExtractor->SetInput (appGUI->GetMainSliceGUI2()->GetLogic()->GetImageData());
-          this->ZoomExtractor->SetVOI ( x-xwid, x+xwid, y-yhit, y+yhit, 0, 0 );
-          this->ZoomChanger->SetInput ( this->ZoomExtractor->GetOutput ());
-          this->ZoomChanger->SetOutputExtentStart ( x-xwid, y-yhit, 0);
-          this->ZoomChanger->SetExtentTranslation ( -(x-xwid), -(y-yhit), 0);
-          this->ZoomChanger->SetOutputOrigin ( 0, 0, 0 );
-          this->Zoomer->SetInput ( this->ZoomChanger->GetOutput () );
-          this->MagnifyActiveSlice();
-          }
+        this->SliceViewMagnify( event, istyle );
         }
 #endif
       
@@ -872,6 +752,142 @@ void vtkSlicerViewControlGUI::MainViewSetStereo ( )
         }  
     }
 }
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::SliceViewMagnify(int event, vtkSlicerInteractorStyle *istyle )
+{
+  int x, y;
+  int magx, magy, magz;
+  this->Zoomer->GetMagnificationFactors ( magx, magy, magz );
+  int xwid = int ( (this->NavZoomWidgetWid / 2.0) / (float)magx);
+  int yhit = int ( (this->NavZoomWidgetHit / 2.0) / (float)magx);
+  if ( this->GetApplicationGUI() != NULL )
+    {
+    vtkSlicerApplicationGUI *appGUI = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));    
+    if ( istyle == this->Slice0Events )
+      {
+      this->ZoomExtractor->SetInput ( NULL );
+      this->ZoomChanger->SetInput ( NULL );
+      this->Zoomer->SetInput ( NULL );
+      if ( event == vtkCommand::EnterEvent )
+        {
+        // configure zoom
+        x = this->Slice0Events->GetLastPos ()[0];
+        y = this->Slice0Events->GetLastPos ()[1];
+        this->ZoomExtractor->SetInput (appGUI->GetMainSliceGUI0()->GetLogic()->GetImageData());
+        this->ZoomExtractor->SetVOI ( x-xwid, x+xwid, y-yhit, y+yhit, 0, 0 );
+        this->ZoomChanger->SetInput ( this->ZoomExtractor->GetOutput ());
+        this->ZoomChanger->SetOutputExtentStart ( x-xwid, y-yhit, 0);
+        this->ZoomChanger->SetExtentTranslation ( -(x-xwid), -(y-yhit), 0);
+        this->ZoomChanger->SetOutputOrigin ( 0, 0, 0 );
+        this->Zoomer->SetInput ( this->ZoomChanger->GetOutput () );
+        // update zoom and render
+        this->MagnifyActiveSlice();
+        this->PackZoomWidget();
+        }
+      else if (event == vtkCommand::LeaveEvent )
+        {
+        this->PackNavWidget();
+        }
+      else if ( event == vtkCommand::MouseMoveEvent )
+        {
+        // configure zoom
+        x = this->Slice0Events->GetLastPos ()[0];
+        y = this->Slice0Events->GetLastPos ()[1];
+        this->ZoomExtractor->SetInput (appGUI->GetMainSliceGUI0()->GetLogic()->GetImageData());
+        this->ZoomExtractor->SetVOI ( x-xwid, x+xwid, y-yhit, y+yhit, 0, 0 );
+        this->ZoomChanger->SetInput ( this->ZoomExtractor->GetOutput ());
+        this->ZoomChanger->SetOutputExtentStart ( x-xwid, y-yhit, 0);
+        this->ZoomChanger->SetExtentTranslation ( -(x-xwid), -(y-yhit), 0);
+        this->ZoomChanger->SetOutputOrigin ( 0, 0, 0 );
+        this->Zoomer->SetInput ( this->ZoomChanger->GetOutput () );
+        // update zoom and render
+        this->MagnifyActiveSlice();
+        }
+      }      
+      
+    else if ( istyle == this->Slice1Events)
+      {
+      this->ZoomExtractor->SetInput ( NULL );
+      this->ZoomChanger->SetInput ( NULL );
+      this->Zoomer->SetInput ( NULL );
+      if (event == vtkCommand::EnterEvent )
+        {
+        // configure zoom
+        x = this->Slice1Events->GetLastPos ()[0];
+        y = this->Slice1Events->GetLastPos ()[1];
+        this->ZoomExtractor->SetInput (appGUI->GetMainSliceGUI1()->GetLogic()->GetImageData());
+        this->ZoomExtractor->SetVOI ( x-xwid, x+xwid, y-yhit, y+yhit, 0, 0 );
+        this->ZoomChanger->SetInput ( this->ZoomExtractor->GetOutput ());
+        this->ZoomChanger->SetOutputExtentStart ( x-xwid, y-yhit, 0);
+        this->ZoomChanger->SetExtentTranslation ( -(x-xwid), -(y-yhit), 0);
+        this->ZoomChanger->SetOutputOrigin ( 0, 0, 0 );
+        this->Zoomer->SetInput ( this->ZoomChanger->GetOutput () );
+        this->MagnifyActiveSlice();
+        this->PackZoomWidget();
+        }
+      else if (event == vtkCommand::LeaveEvent )
+        {
+        this->PackNavWidget();
+        }      
+      else if ( event == vtkCommand::MouseMoveEvent )
+        {
+        x = this->Slice1Events->GetLastPos ()[0];
+        y = this->Slice1Events->GetLastPos ()[1];
+        this->ZoomExtractor->SetInput (appGUI->GetMainSliceGUI1()->GetLogic()->GetImageData());
+        this->ZoomExtractor->SetVOI ( x-xwid, x+xwid, y-yhit, y+yhit, 0, 0 );
+        this->ZoomChanger->SetInput ( this->ZoomExtractor->GetOutput ());
+        this->ZoomChanger->SetOutputExtentStart ( x-xwid, y-yhit, 0);
+        this->ZoomChanger->SetExtentTranslation ( -(x-xwid), -(y-yhit), 0);
+        this->ZoomChanger->SetOutputOrigin ( 0, 0, 0 );
+        this->Zoomer->SetInput ( this->ZoomChanger->GetOutput () );
+        this->MagnifyActiveSlice();
+        }
+      }
+      
+    else if ( istyle == this->Slice2Events )
+      {
+      this->ZoomExtractor->SetInput ( NULL );
+      this->ZoomChanger->SetInput ( NULL );
+      this->Zoomer->SetInput ( NULL );
+      if (event == vtkCommand::EnterEvent )
+        {
+        // configure zoom
+        x = this->Slice2Events->GetLastPos ()[0];
+        y = this->Slice2Events->GetLastPos ()[1];
+        this->ZoomExtractor->SetInput (appGUI->GetMainSliceGUI2()->GetLogic()->GetImageData());
+        this->ZoomExtractor->SetVOI ( x-xwid, x+xwid, y-yhit, y+yhit, 0, 0 );
+        this->ZoomChanger->SetInput ( this->ZoomExtractor->GetOutput ());
+        this->ZoomChanger->SetOutputExtentStart ( x-xwid, y-yhit, 0);
+        this->ZoomChanger->SetExtentTranslation ( -(x-xwid), -(y-yhit), 0);
+        this->ZoomChanger->SetOutputOrigin ( 0, 0, 0 );
+        this->Zoomer->SetInput ( this->ZoomChanger->GetOutput () );
+        this->MagnifyActiveSlice();
+        this->PackZoomWidget();
+        }
+      else if (event == vtkCommand::LeaveEvent )
+        {
+        this->PackNavWidget();
+        }      
+      else if ( event == vtkCommand::MouseMoveEvent )
+        {
+        x = this->Slice2Events->GetLastPos ()[0];
+        y = this->Slice2Events->GetLastPos ()[1];
+        this->ZoomExtractor->SetInput (appGUI->GetMainSliceGUI2()->GetLogic()->GetImageData());
+        this->ZoomExtractor->SetVOI ( x-xwid, x+xwid, y-yhit, y+yhit, 0, 0 );
+        this->ZoomChanger->SetInput ( this->ZoomExtractor->GetOutput ());
+        this->ZoomChanger->SetOutputExtentStart ( x-xwid, y-yhit, 0);
+        this->ZoomChanger->SetExtentTranslation ( -(x-xwid), -(y-yhit), 0);
+        this->ZoomChanger->SetOutputOrigin ( 0, 0, 0 );
+        this->Zoomer->SetInput ( this->ZoomChanger->GetOutput () );
+        this->MagnifyActiveSlice();
+        }
+      }
+    }
+}
+
+
 
 //---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::MainViewResetFocalPoint ( )

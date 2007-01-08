@@ -198,6 +198,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   virtual void SetMRMLFiducialLabelVisibility ( int state);
 
   // Description:
+  // Creates the magnified slice view when mouse
+  // is over a slice window.
+  virtual void SliceViewMagnify( int event, vtkSlicerInteractorStyle *istyle);
+
+  // Description:
   // Starts and stops automatic view spinning
   virtual void MainViewSpin ( );
   virtual void SpinView (int direction, double degrees );
