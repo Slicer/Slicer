@@ -7,6 +7,7 @@
 #include "vtkSlicerModuleLogic.h"
 #include "vtkSlicerVisibilityIcons.h"
 #include "vtkSlicerModuleCollapsibleFrame.h"
+#include "vtkMRMLViewNode.h"
 
 #include "vtkKWMessage.h"
 #include "vtkKWMultiColumnList.h"
@@ -327,7 +328,14 @@ void vtkSlicerFiducialsGUI::ProcessGUIEvents ( vtkObject *caller,
         activeFiducialListNode->SetVisibility( ! activeFiducialListNode->GetVisibility());
         // update the icon via  process mrml event that should get pushed
         //this->ProcessMRMLEvents(caller, event, callData); 
-
+        // update the fiducial visibility parameter in the view node too.
+        // TODO: when there are multiple views, use active view instead of 0th.
+        vtkMRMLViewNode *vn = vtkMRMLViewNode::SafeDownCast(
+                                                            this->GetMRMLScene()->GetNthNodeByClass ( 0, "vtkMRMLViewNode"));
+        if (vn != NULL )
+          {
+          vn->SetFiducialsVisible ( activeFiducialListNode->GetVisibility());
+          }
     }
 
   // list colour
