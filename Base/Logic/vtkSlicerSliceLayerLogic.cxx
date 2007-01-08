@@ -24,6 +24,12 @@
 #include "vtkMRMLTransformNode.h"
 #include "vtkMRMLColorNode.h"
 
+#include "vtkPointData.h"
+
+#ifdef USE_TEEM
+  #include "vtkTensorMathematics.h"
+#endif
+
 vtkCxxRevisionMacro(vtkSlicerSliceLayerLogic, "$Revision: 1.9.12.1 $");
 vtkStandardNewMacro(vtkSlicerSliceLayerLogic);
 
@@ -52,6 +58,22 @@ vtkSlicerSliceLayerLogic::vtkSlicerSliceLayerLogic()
 
   // Create the parts for the DWI layer pipeline
   this->DWIExtractComponent = vtkImageExtractComponents::New();
+
+  // Create the components for the DTI layer pipeline
+  this->DTIReslice = vtkImageReslice::New();
+  #ifdef USE_TEEM
+    this->DTIMathematics = vtkTensorMathematics::New();
+  #else
+    this->DTIMathematics = NULL;
+  #endif 
+  // Set parameters that won't change based on input
+  this->DTIReslice->SetBackgroundColor(128, 0, 0, 0); // only first two are used
+  this->DTIReslice->AutoCropOutputOff();
+  this->DTIReslice->SetOptimization(1);
+  this->DTIReslice->SetOutputOrigin( 0, 0, 0 );
+  this->DTIReslice->SetOutputSpacing( 1, 1, 1 );
+  this->DTIReslice->SetOutputDimensionality( 2 );
+
 
   // Set parameters that won't change based on input
   this->Reslice->SetBackgroundColor(128, 0, 0, 0); // only first two are used
@@ -267,12 +289,13 @@ void vtkSlicerSliceLayerLogic::UpdateTransforms()
 
   this->XYToIJKTransform->SetMatrix( xyToIJK );
   xyToIJK->Delete();
-  this->Reslice->SetResliceTransform( this->XYToIJKTransform );
 
   this->Reslice->SetOutputExtent( 0, dimensions[0]-1,
                                   0, dimensions[1]-1,
                                   0, dimensions[2]-1);
-
+  this->DTIReslice->SetOutputExtent( 0, dimensions[0]-1,
+                                  0, dimensions[1]-1,
+                                  0, dimensions[2]-1);
   this->Modified();
 
 
@@ -511,6 +534,7 @@ void vtkSlicerSliceLayerLogic::ScalarVolumeNodeUpdateTransforms()
 
   this->ScalarSlicePipeline(scalarVolumeNode->GetImageData(), labelMap, window, level, interpolate, lookupTable, applyThreshold, lowerThreshold, upperThreshold);
 
+  this->Reslice->SetResliceTransform( this->XYToIJKTransform ); 
 }
 
 //----------------------------------------------------------------------------
@@ -541,7 +565,6 @@ void vtkSlicerSliceLayerLogic::DiffusionWeightedVolumeNodeUpdateTransforms()
 
   vtkMRMLDiffusionWeightedVolumeDisplayNode *dwiVolumeDisplayNode = vtkMRMLDiffusionWeightedVolumeDisplayNode::SafeDownCast(this->VolumeDisplayNode);
 
-  //cout<<"display node: "<<dwiVolumeDisplayNode->GetClassName()<<endl;
   if (dwiVolumeDisplayNode)
     {
     this->DWIExtractComponent->SetComponents(dwiVolumeDisplayNode->GetDiffusionComponent());
@@ -557,15 +580,67 @@ void vtkSlicerSliceLayerLogic::DiffusionWeightedVolumeNodeUpdateTransforms()
     upperThreshold = dwiVolumeDisplayNode->GetUpperThreshold();
     }
 
- 
-
   this->ScalarSlicePipeline(this->DWIExtractComponent->GetOutput(),0,window,level,interpolate, lookupTable, applyThreshold,lowerThreshold,upperThreshold);
 
+  this->Reslice->SetResliceTransform( this->XYToIJKTransform ); 
 }
+
 
 //----------------------------------------------------------------------------
 void vtkSlicerSliceLayerLogic::DiffusionTensorVolumeNodeUpdateTransforms()
 {
+
+#ifdef USE_TEEM
+
+  double window = 0;
+  double level = 0;
+  int interpolate = 0;
+  int applyThreshold = 0;
+  double lowerThreshold = 0;
+  double upperThreshold = 0;
+  vtkLookupTable *lookupTable = NULL;
+  vtkImageData *inVol;
+
+  vtkMRMLDiffusionTensorVolumeNode *dtiVolumeNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast (this->VolumeNode);
+
+  if (dtiVolumeNode)
+    {
+     inVol = this->VolumeNode->GetImageData();
+     this->DTIMathematics->SetInput(0,inVol);
+     this->DTIMathematics->SetInput(1,inVol);
+    }
+  else
+    {
+    this->DTIMathematics->SetInput(0,NULL);
+    this->DTIMathematics->SetInput(1,NULL);
+    }
+
+  vtkMRMLDiffusionTensorVolumeDisplayNode *dtiVolumeDisplayNode = vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(this->VolumeDisplayNode);
+
+  if (dtiVolumeDisplayNode)
+    {
+    this->DTIMathematics->SetOperation(dtiVolumeDisplayNode->GetScalarMode());
+    interpolate = dtiVolumeDisplayNode->GetInterpolate();
+    if (dtiVolumeDisplayNode->GetColorNode())
+      {
+      lookupTable = dtiVolumeDisplayNode->GetColorNode()->GetLookupTable();
+      }
+    window = dtiVolumeDisplayNode->GetWindow();
+    level = dtiVolumeDisplayNode->GetLevel();
+    applyThreshold = dtiVolumeDisplayNode->GetApplyThreshold();
+    lowerThreshold = dtiVolumeDisplayNode->GetLowerThreshold();
+    upperThreshold = dtiVolumeDisplayNode->GetUpperThreshold();
+    }
+
+    this->DTIMathematics->Update();
+    //cout<<"Output range: "<<this->DTIMathematics->GetOutput()->GetScalarRange()[1]<<endl;
+  this->ScalarSlicePipeline(this->DTIMathematics->GetOutput(),0,window,level,interpolate, lookupTable, applyThreshold,lowerThreshold,upperThreshold);
+
+  //Set the right transformations
+  this->DTIReslice->SetResliceTransform(this->XYToIJKTransform );
+  this->Reslice->SetResliceTransform(this->XYToIJKTransform); 
+
+#endif
 
 }
 

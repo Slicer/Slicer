@@ -57,6 +57,7 @@
 #include "vtkImageCast.h"
 #include "vtkLookupTable.h"
 
+class vtkTensorMathematics;
 
 class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLayerLogic : public vtkSlicerLogic 
 {
@@ -202,6 +203,9 @@ protected:
   // Description:
   // VTK class instances that implement the DWI logic operations
   vtkImageExtractComponents *DWIExtractComponent;
+
+  vtkImageReslice *DTIReslice;
+  vtkTensorMathematics *DTIMathematics;
 
   // TODO: make this a vtkAbstractTransform for non-linear
   vtkTransform *XYToIJKTransform;
