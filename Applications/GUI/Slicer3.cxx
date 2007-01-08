@@ -1,3 +1,4 @@
+#define TRACTOGRAPHY_DEBUG
 
 #include "vtkRenderWindow.h"
 
@@ -796,6 +797,7 @@ int Slicer3_main(int argc, char *argv[])
     gradientAnisotropicDiffusionFilterGUI->AddGUIObservers ( );
 
 
+#ifndef TRACTOGRAPHY_DEBUG
     // --- Tractography Display module
     slicerApp->GetSplashScreen()->SetProgressMessage(
       "Initializing Tractography Display Module...");
@@ -815,6 +817,7 @@ int Slicer3_main(int argc, char *argv[])
     slicerApp->AddModuleGUI ( slicerTractographyDisplayGUI );
     slicerTractographyDisplayGUI->BuildGUI ( );
     slicerTractographyDisplayGUI->AddGUIObservers ( );
+#endif 
 
 #ifndef EMSEG_DEBUG
     //
@@ -1205,7 +1208,9 @@ int Slicer3_main(int argc, char *argv[])
     // REMOVE OBSERVERS and references to MRML and Logic
     gradientAnisotropicDiffusionFilterGUI->RemoveGUIObservers ( );
 
+#ifndef TRACTOGRAPHY_DEBUG
     slicerTractographyDisplayGUI->RemoveGUIObservers ( );
+#endif
 
 #ifndef EMSEG_DEBUG
     emSegmentGUI->RemoveGUIObservers();
@@ -1293,7 +1298,9 @@ int Slicer3_main(int argc, char *argv[])
 
     gradientAnisotropicDiffusionFilterGUI->Delete ();
 
+#ifndef TRACTOGRAPHY_DEBUG
     slicerTractographyDisplayGUI->Delete ();
+#endif
 
 #ifndef EMSEG_DEBUG
     emSegmentGUI->Delete();
