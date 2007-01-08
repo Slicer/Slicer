@@ -200,8 +200,8 @@ MRMLIDImageIO
       m_Spacing[row] = 0.0;
       for (col=0; col<3; col++) 
         {
-        m_Direction[row][col] = ijkToLps->GetElement(row, col);
-        m_Spacing[row] += ijkToLps->GetElement(row, col) * spacing[col];
+        m_Direction[row][col] = ijkToLps->GetElement(col, row);
+        m_Spacing[row] += ijkToLps->GetElement(col, row) * spacing[col];
         }
       m_Origin[row] = ijkToLps->GetElement(row,3);
       m_Spacing[row] = fabs(m_Spacing[row]);
@@ -252,7 +252,7 @@ MRMLIDImageIO
     ijkToLps->Delete();
     }    
 }
-
+// Read from the MRML scene
 void
 MRMLIDImageIO
 ::Read(void *buffer)
@@ -276,6 +276,8 @@ MRMLIDImageIO
   return this->IsAVolumeNode(filename);
 }
 
+// Write to the MRML scene
+
 void
 MRMLIDImageIO
 ::WriteImageInformation()
@@ -292,7 +294,7 @@ MRMLIDImageIO
       // Get IJK to RAS direction vector
       for ( unsigned int j=0; j < 3; j++ )
         {
-        ijkToLps->SetElement(j, i, m_Spacing[i]*m_Direction[j][i]);
+        ijkToLps->SetElement(j, i, m_Spacing[i]*m_Direction[i][j]);
         }
       if (i < 2)
         {
@@ -376,6 +378,8 @@ MRMLIDImageIO
     ijkToLps->Delete();
     }    
 }
+
+// Write to the MRML scene
 
 void
 MRMLIDImageIO
