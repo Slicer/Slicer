@@ -34,8 +34,17 @@ vtkCxxRevisionMacro(vtkSlicerNodeSelectorWidget, "$Revision: 1.33 $");
 //
 static void MRMLCallback(vtkObject *caller, unsigned long eid, void *__clientData, void *callData)
 {
-
   vtkSlicerNodeSelectorWidget *self = reinterpret_cast<vtkSlicerNodeSelectorWidget *>(__clientData);
+
+  if (vtkMRMLScene::SceneCloseEvent == eid)
+    {
+    self->SetSelected(NULL);
+    return;
+    }
+
+      if (!strcmp(self->GetWidgetName(), "DisplayVolumeSelector") ) {
+        std::cerr << "here\n";
+      }
 
   if (self->GetInMRMLCallbackFlag())
     {
@@ -103,6 +112,7 @@ void vtkSlicerNodeSelectorWidget::SetMRMLScene( vtkMRMLScene *MRMLScene)
     this->MRMLScene->Register(this);
     this->MRMLScene->AddObserver( vtkMRMLScene::NodeAddedEvent, this->MRMLCallbackCommand );
     this->MRMLScene->AddObserver( vtkMRMLScene::NodeRemovedEvent, this->MRMLCallbackCommand );
+    this->MRMLScene->AddObserver( vtkMRMLScene::SceneCloseEvent, this->MRMLCallbackCommand );
     }
 
   this->UpdateMenu();
@@ -240,6 +250,10 @@ void vtkSlicerNodeSelectorWidget::UpdateMenu()
           continue;
           }
 
+      if (!strcmp(this->GetWidgetName(), "DisplayVolumeSelector") ) {
+        std::cerr << "here\n";
+      }
+
         // If there is a Attribute Name-Value  specified, then only include nodes that
         // match both the NodeClass and Attribute
         if (this->GetNodeAttributeName(c)== NULL  ||
@@ -369,6 +383,10 @@ void vtkSlicerNodeSelectorWidget::ProcessCommand(char *slectedId)
 //----------------------------------------------------------------------------
 void vtkSlicerNodeSelectorWidget::SetSelected(vtkMRMLNode *node)
 {
+        if (!strcmp(this->GetWidgetName(), "DisplayVolumeSelector") ) {
+          std::cerr << "set select\n";
+        }
+
   if ( node != NULL) 
     {
     vtkKWMenuButton *m = this->GetWidget()->GetWidget();
@@ -382,6 +400,10 @@ void vtkSlicerNodeSelectorWidget::SetSelected(vtkMRMLNode *node)
     this->SetBalloonHelpString(node->GetName());
     this->SelectedID = std::string(node->GetID());
     this->InvokeEvent(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, NULL);
+    }
+  else 
+    {
+    this->SelectedID = std::string("");
     }
 }
 

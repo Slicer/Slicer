@@ -40,18 +40,8 @@ public:
   static vtkSlicerVolumeDisplayWidget* New();
   vtkTypeRevisionMacro(vtkSlicerVolumeDisplayWidget,vtkSlicerWidget);
   void PrintSelf(ostream& os, vtkIndent indent);
-
-  // Description:
-  // Getting setting  MRML VolumeNodeID.
-  vtkGetStringMacro ( VolumeNodeID );
-  vtkSetStringMacro ( VolumeNodeID );
   
   void SetVolumeNode ( vtkMRMLVolumeNode *node );
-
-  // Description:
-  // Getting setting and observing MRML VolumeDisplayNodeID.
-  vtkGetStringMacro ( VolumeDisplayNodeID );
-  vtkSetStringMacro ( VolumeDisplayNodeID );
   
   // Description:
   // alternative method to propagate events generated in GUI to logic / mrml
@@ -64,8 +54,16 @@ public:
   // Description:
   // removes observers on widgets in the class
   virtual void RemoveWidgetObservers ( );
+
+  // Description:
+  // get current volume node
+  vtkMRMLVolumeNode* GetVolumeNode ();
   
- protected:
+  // Description:
+  // get current volume display node
+  vtkMRMLVolumeDisplayNode* GetVolumeDisplayNode ();
+
+protected:
   vtkSlicerVolumeDisplayWidget();
   virtual ~vtkSlicerVolumeDisplayWidget();
 
@@ -73,8 +71,7 @@ public:
   // Create the widget.
   virtual void CreateWidget();
 
-  char* VolumeNodeID;
-  char* VolumeDisplayNodeID;
+  void UpdateWidgetFromMRML();
   
   vtkSlicerNodeSelectorWidget* VolumeSelectorWidget;
   vtkSlicerNodeSelectorWidget* ColorSelectorWidget;
