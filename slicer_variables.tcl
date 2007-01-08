@@ -65,6 +65,8 @@ puts stderr "SLICER_HOME is $::SLICER_HOME"
 # changes in the "Files to test if library has already been built"
 # section below, or genlib will happily build the library again.
 
+#set ::SLICER_TAG "http://www.na-mic.org/svn/Slicer3/branches/Slicer3.0-PreAHMBeta"
+set ::SLICER_TAG "http://www.na-mic.org/svn/Slicer3/trunk"
 set ::CMAKE_TAG "CMake-2-4-2"
 set ::TEEM_TAG "Teem-1-9-0-patches"
 set ::KWWidgets_TAG "HEAD"

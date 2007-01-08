@@ -223,7 +223,12 @@ if { ![file exists $SLICER_BUILD] } {
 
 # svn checkout (does an update if it already exists)
 cd $::SLICER_HOME/..
-runcmd svn checkout http://www.na-mic.org/svn/Slicer3/trunk Slicer3
+if { [file exists Slicer3] } {
+  cd Slicer3
+  runcmd svn switch $::SLICER_TAG
+} else {
+  runcmd svn checkout $::SLICER_TAG Slicer3
+}
 
 # build the lib with options
 cd $::SLICER_HOME
