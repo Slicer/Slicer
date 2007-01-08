@@ -294,35 +294,35 @@ IF (Slicer3_SOURCE_DIR)
         ResampleVolumeLib
         ExecutionModelTour
         ImageReadDicomWrite
-        ImageReadDicomWriteLib
+#        ImageReadDicomWriteLib
         Add
-        AddLib
+#        AddLib
         ConfidenceConnected
-        ConfidenceConnectedLib
+#        ConfidenceConnectedLib
         CurvatureAnisotropicDiffusion
-        CurvatureAnisotropicDiffusionLib
+#        CurvatureAnisotropicDiffusionLib
         GradientAnisotropicDiffusion
-        GradientAnisotropicDiffusionLib
+#        GradientAnisotropicDiffusionLib
         MedianImageFilter 
-        MedianImageFilterLib
+#        MedianImageFilterLib
         OtsuThresholdImageFilter
-        OtsuThresholdImageFilterLib
+#        OtsuThresholdImageFilterLib
         OtsuThresholdSegmentation
-        OtsuThresholdSegmentationLib
+#        OtsuThresholdSegmentationLib
         Subtract
-        SubtractLib
+#        SubtractLib
         VotingBinaryHoleFillingImageFilter
-        VotingBinaryHoleFillingImageFilterLib
+#        VotingBinaryHoleFillingImageFilterLib
         ModelMaker
         GrayscaleModelMaker
-        CheckerBoardLib
+#        CheckerBoardLib
         LinearRegistration
         GrayscaleFillHoleImageFilter
-        GrayscaleFillHoleImageFilterLib
+#        GrayscaleFillHoleImageFilterLib
         GrayscaleGrindPeakImageFilter
-        GrayscaleGrindPeakImageFilterLib
+#        GrayscaleGrindPeakImageFilterLib
         HistogramMatching
-        HistogramMatchingLib
+#        HistogramMatchingLib
         LinearRegistration
         AffineRegistration
         BSplineDeformableRegistration
