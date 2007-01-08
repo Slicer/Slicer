@@ -80,6 +80,27 @@ void vtkSlicerViewerInteractorStyle::OnMouseMove()
     }
 }
 
+
+//----------------------------------------------------------------------------
+void vtkSlicerViewerInteractorStyle::OnEnter()
+{
+  if (this->HasObserver(vtkCommand::EnterEvent)) 
+    {
+    this->InvokeEvent(vtkCommand::EnterEvent,NULL);
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerViewerInteractorStyle::OnLeave()
+{
+  if (this->HasObserver(vtkCommand::LeaveEvent)) 
+    {
+    this->InvokeEvent(vtkCommand::LeaveEvent,NULL);
+    }
+}
+
+
+
 //----------------------------------------------------------------------------
 void vtkSlicerViewerInteractorStyle::OnLeftButtonDown() 
 { 

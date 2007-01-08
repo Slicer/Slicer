@@ -75,6 +75,9 @@ public:
 
   virtual void AddFiducial();
   
+  virtual void OnEnter();
+  virtual void OnLeave();
+
 
   // Description:
   // Get/Set the CamerNode
