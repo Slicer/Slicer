@@ -485,7 +485,7 @@ void vtkSlicerModelDisplayWidget::CreateWidget ( )
   this->ColorSelectorWidget = vtkSlicerNodeSelectorWidget::New() ;
   this->ColorSelectorWidget->SetParent ( modelDisplayFrame );
   this->ColorSelectorWidget->Create ( );
-  this->ColorSelectorWidget->SetNodeClass("vtkMRMLColorNode", NULL, NULL, NULL);
+  this->ColorSelectorWidget->SetNodeClass("vtkMRMLColorProceduralFreeSurferNode", NULL, NULL, NULL);
   this->ColorSelectorWidget->ShowHiddenOn();
   this->ColorSelectorWidget->SetMRMLScene(this->GetMRMLScene());
   this->ColorSelectorWidget->SetBorderWidth(2);
@@ -498,6 +498,8 @@ void vtkSlicerModelDisplayWidget::CreateWidget ( )
   this->ColorSelectorWidget->SetBalloonHelpString("select a color node from the current mrml scene.");
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                  this->ColorSelectorWidget->GetWidgetName());
+  // disable this until FreeSurfer nodes are supported
+  this->ColorSelectorWidget->EnabledOff();
   
   this->ClippingButton = vtkKWCheckButtonWithLabel::New();
   this->ClippingButton->SetParent ( modelDisplayFrame );
