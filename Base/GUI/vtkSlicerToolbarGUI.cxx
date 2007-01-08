@@ -325,6 +325,7 @@ void vtkSlicerToolbarGUI::RemoveGUIObservers ( )
     // Fill in
     this->HomeIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->DataIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->EditorIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->VolumeIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ModelIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->FiducialsIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -353,6 +354,7 @@ void vtkSlicerToolbarGUI::AddGUIObservers ( )
     // add observers onto the module icon buttons 
     this->HomeIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->DataIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->EditorIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->VolumeIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ModelIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->FiducialsIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -609,11 +611,11 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
         }
       else if ( pushb == this->UndoIconButton && event == vtkKWPushButton::InvokedEvent )
         {
-        // FILL IN
+        p->GetMRMLScene()->Undo();
         }
       else if ( pushb == this->RedoIconButton && event == vtkKWPushButton::InvokedEvent )
         {
-        // FILL IN
+        p->GetMRMLScene()->Redo();
         }
       }
     }
