@@ -68,8 +68,10 @@ vtkMRMLVolumeDisplayNode::vtkMRMLVolumeDisplayNode()
   this->UpperThreshold = VTK_SHORT_MAX;
   this->ColorNodeID = NULL;
   this->ColorNode = NULL;
+  // try setting a default greyscale color map
+  //this->SetDefaultColorMap(0);
 }
-/*
+
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeDisplayNode::SetDefaultColorMap(int isLabelMap)
  {
@@ -92,7 +94,7 @@ void vtkMRMLVolumeDisplayNode::SetDefaultColorMap(int isLabelMap)
     vtkDebugMacro("vtkMRMLVolumeDisplayNode: set up the default color node\n");
     }
 }
-*/
+
 //----------------------------------------------------------------------------
 vtkMRMLVolumeDisplayNode::~vtkMRMLVolumeDisplayNode()
 {
@@ -309,9 +311,10 @@ void vtkMRMLVolumeDisplayNode::SetAndObserveColorNodeID(const char *colorNodeID)
   this->SetColorNodeID(colorNodeID);
 
   vtkMRMLColorNode *cnode = this->GetColorNode();
-
-  vtkSetAndObserveMRMLObjectMacro(this->ColorNode, cnode);
-
+  if (cnode != NULL)
+    {
+    vtkSetAndObserveMRMLObjectMacro(this->ColorNode, cnode);
+    }
 }
 
 //---------------------------------------------------------------------------
