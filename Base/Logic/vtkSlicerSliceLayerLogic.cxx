@@ -99,6 +99,7 @@ vtkSlicerSliceLayerLogic::vtkSlicerSliceLayerLogic()
     {
     // if there's a volume display node which has a valid color node, use it's
     // look up table
+    // std::cout << "slicer slice layer logic, getting the colour node to " << this->VolumeDisplayNode->GetColorNode()->GetID() << "\n";
     this->MapToColors->SetLookupTable( this->VolumeDisplayNode->GetColorNode()->GetLookupTable());
     }
 }
@@ -203,6 +204,22 @@ void vtkSlicerSliceLayerLogic::UpdateNodeReferences ()
     if (id)
       {
       displayNode = vtkMRMLVolumeDisplayNode::SafeDownCast (this->MRMLScene->GetNodeByID(id));
+      }
+    else
+      {
+      // TODO: this is a hack
+      vtkErrorMacro("UpdateNodeReferences: Volume Node " << this->VolumeNode->GetID() << " doesn't have a display node, adding one.");
+      displayNode = vtkMRMLVolumeDisplayNode::New();
+      displayNode->SetScene(this->MRMLScene);
+      this->MRMLScene->AddNode(displayNode);
+      int isLabelMap = 0;
+      if (vtkMRMLScalarVolumeNode::SafeDownCast(this->VolumeNode))
+        {
+        isLabelMap = vtkMRMLScalarVolumeNode::SafeDownCast(this->VolumeNode)->GetLabelMap();
+        }
+      displayNode->SetDefaultColorMap(isLabelMap);
+      this->VolumeNode->SetAndObserveDisplayNodeID(displayNode->GetID());
+      displayNode->Delete();
       }
     }
 
