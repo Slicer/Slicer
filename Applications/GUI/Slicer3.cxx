@@ -306,19 +306,23 @@ int Slicer3_main(int argc, char *argv[])
   std::string tclEnv = "TCL_LIBRARY=";
   tclEnv += slicerBinDir + "/../lib/Slicer3/tcl/lib/tcl8.4";
   cerr << "Set environment: " << tclEnv.c_str() << endl;
-  putenv(const_cast <char *> (tclEnv.c_str()));
+  vtkKWApplication::PutEnv(const_cast <char *> (tclEnv.c_str()));
 
   ptemp = vtksys::SystemTools::CollapseFullPath(argv[0]);
   ptemp = vtksys::SystemTools::GetFilenamePath(ptemp);
-  ptemp = vtksys::SystemTools::ConvertToOutputPath(ptemp.c_str());
 #if WIN32
   itkAutoLoadPath = ptemp + ";" + itkAutoLoadPath;
 #else
   itkAutoLoadPath = ptemp + ":" + itkAutoLoadPath;
 #endif
   itkAutoLoadPath = "ITK_AUTOLOAD_PATH=" + itkAutoLoadPath;
-  putenv(const_cast <char *> (itkAutoLoadPath.c_str()));
-  
+  int putSuccess
+    = vtkKWApplication::PutEnv(const_cast <char *> (itkAutoLoadPath.c_str()));
+  if (!putSuccess)
+    {
+    cerr << "Unable to set ITK_AUTOLOAD_PATH. " << itkAutoLoadPath << endl;
+    }
+
   
     // Initialize Tcl
     // -- create the interp
