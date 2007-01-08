@@ -146,6 +146,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   virtual void DisplayTclInteractor(vtkKWTopLevel *master);
   virtual void DisplayLogDialog(vtkKWTopLevel *master);
 
+  // Description:
+  // Add additional copyright messages
+  virtual void AddAboutCopyrights(ostream &);
+
  protected:
   vtkSlicerApplication ( );
   virtual ~vtkSlicerApplication ( );

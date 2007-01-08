@@ -671,6 +671,32 @@ vtkSlicerApplication::InformationMessage(const char* message)
 }
 
 //----------------------------------------------------------------------------
+void vtkSlicerApplication::AddAboutCopyrights(ostream &os)
+{
+  os << "See http://www.na-mic.org/Wiki/index.php/Slicer3:Acknowledgements" << endl << endl;
+
+  os << "VTK http://www.vtk.org/copyright.php" << endl;
+  os << "ITK http://www.itk.org/HTML/Copyright.htm" << endl;
+  os << "KWWidgets http://www.kitware.com/Copyright.htm" << endl;
+  os << "Tcl/Tk http://www.tcl.tk" << endl;
+  os << "Teem:  http://teem.sf.net" << endl;
+  os << "Supported by: NA-MIC, NAC, BIRN, NCIGT and the Slicer Community." << endl;
+  os << "Special thanks to the NIH and our other supporters." << endl;
+  os << "This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149. Information on the National Centers for Biomedical Computing can be obtained from http://nihroadmap.nih.gov/bioinformatics." << endl;
+
+#if 0
+  // example of the extra detail needed:
+  //
+     << tcl_major << "." << tcl_minor << "." << tcl_patch_level << endl
+     << "  - Copyright (c) 1989-1994 The Regents of the University of "
+     << "California." << endl
+     << "  - Copyright (c) 1994 The Australian National University." << endl
+     << "  - Copyright (c) 1994-1998 Sun Microsystems, Inc." << endl
+     << "  - Copyright (c) 1998-2000 Ajuba Solutions." << endl;
+#endif
+}
+
+//----------------------------------------------------------------------------
 //  override default behavior of KWWidgets so that toplevel window 
 //  can be on top of the tcl interactor (i.e. so it's not 'transient')
 //
