@@ -173,6 +173,7 @@ if { [file exists $localvarsfile] } {
 
 if ($isRelease) {
     set ::VTK_BUILD_TYPE "Release"
+    set ::env(VTK_BUILD_TYPE) $::VTK_BUILD_TYPE
     puts "Overriding slicer_variables.tcl; VTK_BUILD_TYPE is $::env(VTK_BUILD_TYPE)"
 }
 
