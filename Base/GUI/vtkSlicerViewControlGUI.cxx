@@ -50,7 +50,7 @@ vtkSlicerViewControlGUI::vtkSlicerViewControlGUI ( )
   this->RockCount = 0;
   this->NavZoomWidgetWid = 150;
   this->NavZoomWidgetHit = 80;
-  this->Magnification = 10.0;
+  this->Magnification = 10;
 
   this->SlicerViewControlIcons = vtkSlicerViewControlIcons::New ( );
   this->SpinButton = vtkKWCheckButton::New ( );
