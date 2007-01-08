@@ -805,7 +805,7 @@ void vtkMRMLFiducialListNode::RemoveAllFiducials()
       this->FiducialList->vtkCollection::RemoveItem(f);
       if (fid != NULL)
         {
-        fid->Delete();
+        //fid->Delete();
         fid = NULL;
         }
       this->InvokeEvent(vtkMRMLScene::NodeRemovedEvent, NULL);
