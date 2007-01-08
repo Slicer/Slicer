@@ -108,8 +108,13 @@ itcl::body SliceSWidget::constructor {sliceGUI} {
 
 itcl::body SliceSWidget::destructor {} {
 
-  itcl::delete object $_fiducialsSWidget
-  itcl::delete object $_gridSWidget
+  if { [info command $_fiducialsSWidget] != "" } {
+    itcl::delete object $_fiducialsSWidget
+  }
+
+  if { [info command $_gridSWidget] != "" } {
+    itcl::delete object $_gridSWidget
+  }
 
   if { [info command $sliceGUI] != "" } {
     foreach tag $_guiObserverTags {
