@@ -24,6 +24,7 @@ N-dimensions.
   <documentation-url></documentation-url>
   <license></license>
   <contributor>Bill Lorensen</contributor>
+  <acknowledgements>This command module was derived from Insight/Examples (copyright) Insight Software Consortium</acknowledgements>
 
   <parameters>
     <label>Anisotropic Diffusion Parameters</label>

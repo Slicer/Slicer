@@ -13,6 +13,7 @@
   <documentation-url></documentation-url>
   <license></license>
   <contributor>Jim Miller</contributor>
+  <acknowledgements>This command module was derived from Insight/Examples (copyright) Insight Software Consortium</acknowledgements>
   <parameters advanced="true">
     <label>Smoothing Parameters</label>
     <description>Parameters to denoise the image prior to segmenting</description>

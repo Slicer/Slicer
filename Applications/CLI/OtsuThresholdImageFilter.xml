@@ -17,6 +17,7 @@ for the BinaryThresholdImageFilter.
   </description>
   <version>0.1.0.$Revision$(alpha)</version>
   <documentation-url></documentation-url>
+  <acknowledgements>This command module was derived from Insight/Examples (copyright) Insight Software Consortium</acknowledgements>
   <license></license>
   <contributor>Bill Lorensen</contributor>
 
