@@ -206,6 +206,12 @@ main(int argc, char *argv[])
 
   // Do the hard stuff
   std::ofstream sout(OutputCxx.c_str(),std::ios::out);
+  if (sout.fail())
+    {
+    std::cerr << argv[0] << ": Cannot open " << OutputCxx << " for output" << std::endl;
+    perror(argv[0]);
+    return EXIT_FAILURE;
+    }
   GeneratePre(sout, module, argc, argv);
   if (logoFiles.size() > 0 && !itksys::SystemTools::FileExists(logoFiles[0].c_str()))
     {
