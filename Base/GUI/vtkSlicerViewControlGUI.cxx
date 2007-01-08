@@ -2044,6 +2044,7 @@ void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
       this->ZoomEntry->GetWidget()->SetFont ( "-Adobe-Helvetica-Bold-R-Normal-*-10-*-*-*-*-*-*-*" );
       this->ZoomEntry->SetLabelText ( "%: ");
       this->ZoomEntry->GetWidget()->SetWidth (7);
+      this->ZoomEntry->GetWidget()->SetStateToDisabled();
       this->Script ( "pack %s -side left -anchor w -padx 1 -pady 2 -expand n", this->FOVEntry->GetWidgetName ( ) );
       this->Script ( "pack %s -side left -anchor e -padx 2 -pady 2 -expand n", this->ZoomEntry->GetWidgetName ( ) );
       
