@@ -1266,7 +1266,8 @@ void vtkSlicerViewControlGUI::BuildCameraSelectMenu()
 {
   
   this->SelectCameraButton->GetMenu( )->DeleteAllItems();
-  this->SelectCameraButton->GetMenu()->AddRadioButton ("Save current camera (not yet available)" );
+  this->SelectCameraButton->GetMenu()->AddRadioButton ("Save current camera" );
+  this->SelectCameraButton->GetMenu()->SetItemStateToDisabled ( "Save current camera" );
   this->SelectCameraButton->GetMenu()->AddSeparator();
   this->SelectCameraButton->GetMenu()->AddSeparator();
   this->SelectCameraButton->GetMenu()->AddCommand ( "close" );
@@ -1329,7 +1330,8 @@ void vtkSlicerViewControlGUI::BuildViewSelectMenu ( )
 {
   
   this->SelectViewButton->GetMenu( )->DeleteAllItems();
-  this->SelectViewButton->GetMenu()->AddRadioButton ("Save current view (not yet available)" );
+  this->SelectViewButton->GetMenu()->AddRadioButton ("Save current view" );
+  this->SelectViewButton->GetMenu()->SetItemStateToDisabled ( "Save current view" );
   this->SelectViewButton->GetMenu()->AddSeparator();
   this->SelectViewButton->GetMenu()->AddSeparator();
   this->SelectViewButton->GetMenu()->AddCommand ( "close" );
