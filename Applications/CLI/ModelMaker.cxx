@@ -44,7 +44,7 @@ Version:   $Revision$
 
 typedef std::map<int, std::string> LabelAnatomyContainer;
 
-void ImportAnatomyLabelFile( std::string, LabelAnatomyContainer &);
+int ImportAnatomyLabelFile( std::string, LabelAnatomyContainer &);
 
 int main(int argc, char * argv[])
 {
@@ -76,10 +76,13 @@ int main(int argc, char * argv[])
 
     LabelAnatomyContainer labelToAnatomy;
 
-    // if a anatomy label file is psecified, populate a map with its contents
-    if (AnatomyLabelFile != "")
+    // if an anatomy label file is specified, populate a map with its contents
+    if (AnatomyLabelFile != "" && AnatomyLabelFile != "NoneSpecified")
       {
-      ImportAnatomyLabelFile( AnatomyLabelFile, labelToAnatomy );
+        if (ImportAnatomyLabelFile( AnatomyLabelFile, labelToAnatomy ))
+          {
+          return EXIT_FAILURE;
+          }
       }
 
     // vtk and helper variables
@@ -702,15 +705,15 @@ int main(int argc, char * argv[])
     return EXIT_SUCCESS;
 }
 
-void ImportAnatomyLabelFile( std::string anatomyLabelFile,
+int ImportAnatomyLabelFile( std::string anatomyLabelFile,
                              LabelAnatomyContainer &map)
 
 {
   std::ifstream fin(anatomyLabelFile.c_str(),std::ios::in|std::ios::binary);
   if (fin.fail())
     {
-      std::cerr << "ImportAnatomyLabelFile: Cannot open " << anatomyLabelFile << " for input" << std::endl;
-    return;
+    std::cerr << "ImportAnatomyLabelFile: Cannot open " << anatomyLabelFile << " for input" << std::endl;
+    return EXIT_FAILURE;
     }
 
   char label[81];
@@ -727,4 +730,5 @@ void ImportAnatomyLabelFile( std::string anatomyLabelFile,
     }
 
   fin.close();
+  return EXIT_SUCCESS;
 }
