@@ -411,14 +411,17 @@ void vtkKWWindowLevelThresholdEditor::UpdateFromImage()
 //----------------------------------------------------------------------------
 void vtkKWWindowLevelThresholdEditor::UpdateTransferFunction()
 {
-  this->TransferFunction->RemoveAllPoints();
-
   double range[2] = {0,255};
   if ( this->ImageData)
   {
     this->ImageData->GetScalarRange(range);
+    // AdjustRange call will take out points that are outside of the new
+    // range, but it needs the points to be there in order to work, so call
+    // RemoveAllPoints after it's done
     this->TransferFunction->AdjustRange(range);
   }
+  this->TransferFunction->RemoveAllPoints();
+  
   double low = this->GetLowerThreshold();
   double upper = this->GetUpperThreshold();
   double min = this->GetLevel() - 0.5 * this->GetWindow();
