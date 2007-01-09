@@ -249,13 +249,13 @@ proc slicerd_sock_fileevent {sock} {
             ::tcl_$sock ReceiveImageDataScalars $sock
             fconfigure $sock -translation auto
     
-            $node SetImageData $idata
+            $node SetAndObserveImageData $idata
             slicerd_parse_space_directions $node $space_origin $space_directions
             $idata Delete
 
             $::slicer3::MRMLScene AddNode $node
 
-            [$::slicer3::ApplicationLogic GetSelectionNode] SetActiveVolumeID [$node GetID]
+            [$::slicer3::ApplicationLogic GetSelectionNode] SetReferenceActiveVolumeID [$node GetID]
             $::slicer3::ApplicationLogic PropagateVolumeSelection
 
             $node Delete
