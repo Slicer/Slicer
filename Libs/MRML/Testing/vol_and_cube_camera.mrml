@@ -16,7 +16,7 @@
 <VolumeArchetypeStorage
  id="vtkMRMLVolumeArchetypeStorageNode1" name=""  hideFromEditors="true" fileName="TestData/fixed.nrrd" centerImage="1" ></VolumeArchetypeStorage>
 <VolumeDisplay
- id="vtkMRMLVolumeDisplayNode1" name=""  hideFromEditors="true" window="252" level="109" upperThreshold="235" lowerThreshold="-17" interpolate="1" autoWindowLevel="1" applyThreshold="0" autoThreshold="0" colorNodeRef="vtkMRMLColorNodeGrey" ></VolumeDisplay>
+ id="vtkMRMLVolumeDisplayNode1" name=""  hideFromEditors="true" window="252" level="109" upperThreshold="235" lowerThreshold="-17" interpolate="1" autoWindowLevel="1" applyThreshold="0" autoThreshold="0" colorNodeRef="vtkMRMLColorTableNodeGrey" ></VolumeDisplay>
 <Volume
  id="vtkMRMLScalarVolumeNode1" name="fixed.nrrd"  hideFromEditors="false" storageNodeRef="vtkMRMLVolumeArchetypeStorageNode1" displayNodeRef="vtkMRMLVolumeDisplayNode1" ijkToRASDirections="0   -0   1 -1   0   -0 0 -1 0 " spacing="5.2 3.75 3.75" origin="-80.6 120 120" labelMap="0" ></Volume>
 <ModelStorage
