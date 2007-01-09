@@ -24,13 +24,13 @@
 #include <string>
 
 #include "vtkMRML.h"
-#include "vtkMRMLModelNode.h"
+#include "vtkMRMLModelDisplayNode.h"
 
-class VTK_MRML_EXPORT vtkMRMLFiberBundleDisplayNode : public vtkMRMLModelNode
+class VTK_MRML_EXPORT vtkMRMLFiberBundleDisplayNode : public vtkMRMLModelDisplayNode
 {
 public:
   static vtkMRMLFiberBundleDisplayNode *New();
-  vtkTypeMacro(vtkMRMLFiberBundleDisplayNode,vtkMRMLModelNode);
+  vtkTypeMacro(vtkMRMLFiberBundleDisplayNode,vtkMRMLModelDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent);
   
   //--------------------------------------------------------------------------
