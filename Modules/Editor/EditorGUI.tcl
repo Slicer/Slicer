@@ -291,7 +291,7 @@ proc EditorProcessGUIEvents {this caller event} {
         ::PaintSWidget::RemovePaint
         ::DrawSWidget::RemoveDraw
         set checkButton [$::Editor($this,paintEnable) GetWidget]
-        if { [$checkButton GetEnabled] } {
+        if { [$checkButton GetSelectedState] } {
           switch $::Editor($this,paintMode) {
             "Paint" {
               ::PaintSWidget::AddPaint
@@ -304,7 +304,7 @@ proc EditorProcessGUIEvents {this caller event} {
               $::Editor($this,paintRadius) SetEnabled 0
             }
           }
-        }
+        } 
       }
     }
   } elseif { $caller == $::Editor($this,paintLabel) } {

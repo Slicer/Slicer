@@ -42,10 +42,6 @@ static void MRMLCallback(vtkObject *caller, unsigned long eid, void *__clientDat
     return;
     }
 
-      if (!strcmp(self->GetWidgetName(), "DisplayVolumeSelector") ) {
-        std::cerr << "here\n";
-      }
-
   if (self->GetInMRMLCallbackFlag())
     {
 #ifdef _DEBUG
@@ -383,9 +379,10 @@ void vtkSlicerNodeSelectorWidget::ProcessCommand(char *slectedId)
 //----------------------------------------------------------------------------
 void vtkSlicerNodeSelectorWidget::SetSelected(vtkMRMLNode *node)
 {
-        if (!strcmp(this->GetWidgetName(), "DisplayVolumeSelector") ) {
-          std::cerr << "set select\n";
-        }
+  if (!strcmp(this->GetWidgetName(), "DisplayVolumeSelector") ) 
+    {
+    vtkDebugMacro("set select");
+    }
 
   if ( node != NULL) 
     {
