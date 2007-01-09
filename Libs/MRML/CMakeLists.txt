@@ -45,7 +45,9 @@ SET(MRML_SRCS
         vtkMRMLDiffusionTensorVolumeNode.cxx
         vtkMRMLDiffusionTensorVolumeDisplayNode.cxx
         vtkMRMLVectorVolumeDisplayNode.cxx
+        vtkMRMLFiberBundleNode.cxx
         vtkMRMLFiberBundleDisplayNode.cxx
+        vtkMRMLFiberBundleStorageNode.cxx
         # Note: when you add new node types, add
         # register code to the vtkMRMLScene constructor
 )

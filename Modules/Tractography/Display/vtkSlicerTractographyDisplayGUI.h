@@ -8,18 +8,17 @@
 
 #include "vtkSlicerTractographyDisplayWin32Header.h"
 #include "vtkSlicerModuleGUI.h"
-#include "vtkSlicerModuleLogic.h"
-//#include "vtkSlicerTractographyLogic.h"
-#include "vtkSlicerNodeSelectorWidget.h"
 
-//#include "vtkMRMLModelNode.h"
+#include "vtkSlicerFiberBundleLogic.h"
+#include "vtkSlicerNodeSelectorWidget.h"
+#include "vtkSlicerFiberBundleDisplayWidget.h"
 
 #include "vtkKWLoadSaveButton.h"
 #include "vtkKWLoadSaveDialog.h"
 #include "vtkKWFrame.h"
 
 // Description:
-// This class implements Slicer's Tractography GUI
+// This class implements Slicer's Tractography display GUI
 //
 
 class VTK_SLICERTRACTOGRAPHYDISPLAY_EXPORT vtkSlicerTractographyDisplayGUI : public vtkSlicerModuleGUI
@@ -34,31 +33,14 @@ class VTK_SLICERTRACTOGRAPHYDISPLAY_EXPORT vtkSlicerTractographyDisplayGUI : pub
     // Description:
     // Get methods on class members ( no Set methods required. )
     vtkGetObjectMacro ( LoadTractographyButton, vtkKWLoadSaveButton );
-    //vtkGetObjectMacro ( Logic, vtkSlicerTractographyLogic);
-    //vtkGetObjectMacro ( FiberBundleNode, vtkMRMLFiberBundleNode );
-    
-    // Description:
-    // API for setting FiberBundleNode, Logic and
-    // for both setting and observing them.
-    /*
-      // classes not yet defined.
-    void SetMRMLNode ( vtkMRMLFiberBundleNode *node )
-        { this->SetMRML ( vtkObjectPointer( &this->MRMLFiberBundleNode), node ); }
-    void SetAndObserveMRMLNode ( vtkMRMLFiberBundleNode *node )
-        { this->SetAndObserveMRML ( vtkObjectPointer( &this->MRMLFiberBundleNode), node ); }
 
-    void SetModuleLogic ( vtkSlicerTractographyLogic *logic )
-        { this->SetLogic ( vtkObjectPointer (&this->Logic), logic ) }
-    void SetAndObserveModuleLogic ( vtkSlicerTractographyLogic *logic )
-        { this->SetAndObserveLogic ( vtkObjectPointer (&this->Logic), logic ) }
-    */
-    /*
-    void SetModuleLogic ( vtkSlicerTractographyLogic *logic )
-        { this->SetLogic ( vtkObjectPointer (&this->Logic), logic ); }
-    void SetAndObserveModuleLogic ( vtkSlicerTractographyLogic *logic )
-        { this->SetLogic ( vtkObjectPointer (&this->Logic), logic ); }
-    vtkGetObjectMacro( Logic, vtkSlicerTractographyLogic );
-    */
+    // Description:
+    // Get logic object for this GUI  (handles load/save of fiber bundles, manages bundles)
+    vtkGetObjectMacro ( Logic, vtkSlicerFiberBundleLogic);
+
+    // Description:
+    // Set logic object for this GUI (handles load/save of fiber bundles, manages bundles)
+    vtkSetObjectMacro ( Logic, vtkSlicerFiberBundleLogic);
 
     // Description:
     // This method builds the Tractography module GUI
@@ -85,9 +67,8 @@ class VTK_SLICERTRACTOGRAPHYDISPLAY_EXPORT vtkSlicerTractographyDisplayGUI : pub
     vtkSlicerTractographyDisplayGUI ( );
     virtual ~vtkSlicerTractographyDisplayGUI ( );
 
-    // Module logic and mrml pointers (classes not yet built!)
-    //vtkSlicerTractographyLogic *Logic;
-    //vtkMRMLFiberBundleNode *FiberBundleNode;
+    // Module logic and mrml pointers 
+    vtkSlicerFiberBundleLogic *Logic;
     
     // Widgets for the Tractography module
     vtkKWLoadSaveButton *LoadTractographyButton;
@@ -95,9 +76,7 @@ class VTK_SLICERTRACTOGRAPHYDISPLAY_EXPORT vtkSlicerTractographyDisplayGUI : pub
     vtkKWLoadSaveButton *SaveTractographyButton;
     vtkSlicerNodeSelectorWidget* FiberBundleSelectorWidget;
 
-    //vtkSlicerFiberBundleDisplayWidget *FiberBundleDisplayWidget;
-
-    //vtkSlicerClipTractographyWidget *ClipTractographyWidget;
+    vtkSlicerFiberBundleDisplayWidget *FiberBundleDisplayWidget;
 
  private:
     vtkSlicerTractographyDisplayGUI ( const vtkSlicerTractographyDisplayGUI& ); // Not implemented.

@@ -4,9 +4,8 @@
 #include "vtkKWWidget.h"
 #include "vtkSlicerTractographyDisplayGUI.h"
 #include "vtkSlicerApplication.h"
-#include "vtkSlicerModuleLogic.h"
-//#include "vtkSlicerTractographyLogic.h"
-//#include "vtkSlicerFiberBundleDisplayWidget.h"
+#include "vtkSlicerFiberBundleLogic.h"
+#include "vtkSlicerFiberBundleDisplayWidget.h"
 #include "vtkSlicerModuleCollapsibleFrame.h"
 
 #include "vtkKWFrameWithLabel.h"
@@ -21,15 +20,13 @@ vtkCxxRevisionMacro ( vtkSlicerTractographyDisplayGUI, "$Revision: 1.0 $");
 vtkSlicerTractographyDisplayGUI::vtkSlicerTractographyDisplayGUI ( )
 {
 
-    // classes not yet defined!
-    //this->Logic = NULL;
-    //this->FiberBundleNode = NULL;
-    this->LoadTractographyButton = NULL;
-    this->LoadTractographyDirectoryButton = NULL;
-    this->SaveTractographyButton = NULL;
-    this->FiberBundleSelectorWidget = NULL;
-    //this->FiberBundleDisplayWidget = NULL;
-    //this->ClipTractographyWidget = NULL;
+  this->Logic = NULL;
+  this->LoadTractographyButton = NULL;
+  this->LoadTractographyDirectoryButton = NULL;
+  this->SaveTractographyButton = NULL;
+  this->FiberBundleSelectorWidget = NULL;
+  this->FiberBundleDisplayWidget = NULL;
+
 }
 
 
@@ -38,7 +35,7 @@ vtkSlicerTractographyDisplayGUI::~vtkSlicerTractographyDisplayGUI ( )
 {
   this->RemoveGUIObservers();
 
-  //this->SetModuleLogic ( NULL );
+  this->SetLogic ( NULL );
 
   if (this->LoadTractographyButton ) 
     {
@@ -60,11 +57,11 @@ vtkSlicerTractographyDisplayGUI::~vtkSlicerTractographyDisplayGUI ( )
     this->FiberBundleSelectorWidget->SetParent(NULL);
     this->FiberBundleSelectorWidget->Delete ( );
     }
-  /*if (this->FiberBundleDisplayWidget ) 
+  if (this->FiberBundleDisplayWidget ) 
     {
     this->FiberBundleDisplayWidget->SetParent(NULL);
     this->FiberBundleDisplayWidget->Delete ( );
-    }*/
+    }
 }
 
 
@@ -74,8 +71,7 @@ void vtkSlicerTractographyDisplayGUI::PrintSelf ( ostream& os, vtkIndent indent 
     this->vtkObject::PrintSelf ( os, indent );
 
     os << indent << "SlicerTractographyDisplayGUI: " << this->GetClassName ( ) << "\n";
-    //os << indent << "FiberBundleNode: " << this->GetFiberBundleNode ( ) << "\n";
-    //os << indent << "Logic: " << this->GetLogic ( ) << "\n";
+    os << indent << "Logic: " << this->GetLogic ( ) << "\n";
     // print widgets?
 }
 
@@ -120,45 +116,53 @@ void vtkSlicerTractographyDisplayGUI::ProcessGUIEvents ( vtkObject *caller,
     char *fileName = filebrowse->GetFileName();
     if ( fileName ) 
       {
-      //vtkSlicerTractographyLogic* modelLogic = this->Logic;
+      vtkSlicerFiberBundleLogic* fiberBundleLogic = this->Logic;
       
-      //vtkMRMLFiberBundleNode *modelNode = modelLogic->AddFiberBundle( fileName );
+      vtkMRMLFiberBundleNode *fiberBundleNode = fiberBundleLogic->AddFiberBundle( fileName );
 
-  //     if ( modelNode == NULL ) 
-//         {
-//         // TODO: generate an error...
-//         vtkErrorMacro("Unable to read model file " << fileName);
-//         // reset the file browse button text
-//         this->LoadTractographyButton->SetText ("Load Tractography");
-//         }
-//       else
-//         {
-//         filebrowse->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
+      if ( fiberBundleNode == NULL ) 
+        {
+        // TODO: generate an error...
+        vtkErrorMacro("Unable to read model file " << fileName);
+        }
+      else
+        {
+        filebrowse->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
         
-//         }
+        }
 
       }
+    
+    // reset the file browse button text
+    this->LoadTractographyButton->SetText ("Load Tractography");
+
     return;
+
     }
     else if (filebrowse == this->LoadTractographyDirectoryButton  && event == vtkKWPushButton::InvokedEvent )
     {
-    // If a file has been selected for loading...
+
+    // If a directory has been selected for loading...
     char *fileName = filebrowse->GetFileName();
     if ( fileName ) 
       {
-      //vtkSlicerTractographyLogic* modelLogic = this->Logic;
+      vtkSlicerFiberBundleLogic* fiberBundleLogic = this->Logic;
 
-//       if (modelLogic->AddTractography( fileName, ".vtk") == 0)
-//         {
-//         // TODO: generate an error...
-//         }
-//       else
-//         {
-//         filebrowse->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
+      if (fiberBundleLogic->AddFiberBundles( fileName, ".vtk") == 0)
+        {
+        // TODO: generate an error...
+        }
+      else
+        {
+        filebrowse->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
         
-//         }
+        }
 
       }
+
+    // reset the file browse button text
+    this->LoadTractographyButton->SetText ("Load Tractography");
+
     return;
     }
   else if (filebrowse == this->SaveTractographyButton  && event == vtkKWPushButton::InvokedEvent )
@@ -168,17 +172,17 @@ void vtkSlicerTractographyDisplayGUI::ProcessGUIEvents ( vtkObject *caller,
       if ( fileName ) 
       {
  
-//       vtkSlicerTractographyLogic* TractographyLogic = this->Logic;
-//         vtkMRMLFiberBundleNode *volNode = vtkMRMLFiberBundleNode::SafeDownCast(this->FiberBundleSelectorWidget->GetSelected());
+      vtkSlicerFiberBundleLogic* fiberBundleLogic = this->Logic;
+        vtkMRMLFiberBundleNode *fiberBundleNode = vtkMRMLFiberBundleNode::SafeDownCast(this->FiberBundleSelectorWidget->GetSelected());
 
-//         if ( !TractographyLogic->SaveTractography( fileName, volNode ))
-//           {
-//          // TODO: generate an error...
-//           }
-//         else
-//           {
-//           filebrowse->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");           
-//           }
+        if ( !fiberBundleLogic->SaveFiberBundle( fileName, fiberBundleNode ))
+          {
+         // TODO: generate an error...
+          }
+        else
+          {
+          filebrowse->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");           
+          }
        }
 
  
@@ -221,8 +225,8 @@ void vtkSlicerTractographyDisplayGUI::BuildGUI ( )
 {
 
     vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-  // Define your help text here.
-  const char *help = "**Tractography Module:** Load, save and adjust display parameters of models. ";
+    // Define your help text here.
+    const char *help = "**Tractography Module:** Load, save and adjust display parameters of fiber bundles. ";
   
     // ---
     // MODULE GUI FRAME 
@@ -294,15 +298,15 @@ void vtkSlicerTractographyDisplayGUI::BuildGUI ( )
     modDisplayFrame->CollapseFrame ( );
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   modDisplayFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Tractography")->GetWidgetName());
-    /*
+    
     this->FiberBundleDisplayWidget = vtkSlicerFiberBundleDisplayWidget::New ( );
-    this->FiberBundleDisplayWidget->SetMRMLScene(this->GetMRMLScene() );
+    this->FiberBundleDisplayWidget->SetMRMLScene(this->Logic->GetMRMLScene() );
     this->FiberBundleDisplayWidget->SetParent ( modDisplayFrame->GetFrame() );
     this->FiberBundleDisplayWidget->Create ( );
+    //this->FiberBundleDisplayWidget->DebugOn ( );
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   this->FiberBundleDisplayWidget->GetWidgetName(), 
                   modDisplayFrame->GetFrame()->GetWidgetName());
-    */
 
     // ---
     // Save FRAME            
@@ -320,7 +324,9 @@ void vtkSlicerTractographyDisplayGUI::BuildGUI ( )
     this->FiberBundleSelectorWidget->SetParent ( modelSaveFrame->GetFrame() );
     this->FiberBundleSelectorWidget->Create ( );
     this->FiberBundleSelectorWidget->SetNodeClass("vtkMRMLFiberBundleNode", NULL, NULL, NULL);
-    this->FiberBundleSelectorWidget->SetMRMLScene(this->GetMRMLScene());
+    this->FiberBundleSelectorWidget->SetMRMLScene(this->Logic->GetMRMLScene());
+    this->FiberBundleSelectorWidget->UpdateMenu();
+    //this->FiberBundleSelectorWidget->SetMRMLScene(this->GetMRMLScene());
     this->FiberBundleSelectorWidget->SetBorderWidth(2);
     this->FiberBundleSelectorWidget->SetPadX(2);
     this->FiberBundleSelectorWidget->SetPadY(2);

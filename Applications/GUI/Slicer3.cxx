@@ -1,5 +1,3 @@
-#define TRACTOGRAPHY_DEBUG
-
 #include "vtkRenderWindow.h"
 
 #include "vtkKWApplication.h"
@@ -43,7 +41,7 @@
 #include "vtkGradientAnisotropicDiffusionFilterLogic.h"
 #include "vtkGradientAnisotropicDiffusionFilterGUI.h"
 
-//#include "vtkSlicerTractographyDisplayLogic.h"
+#include "vtkSlicerFiberBundleLogic.h"
 #include "vtkSlicerTractographyDisplayGUI.h"
 
 #include "vtkQueryAtlasLogic.h"
@@ -802,13 +800,13 @@ int Slicer3_main(int argc, char *argv[])
     slicerApp->GetSplashScreen()->SetProgressMessage(
       "Initializing Tractography Display Module...");
     vtkSlicerTractographyDisplayGUI *slicerTractographyDisplayGUI = vtkSlicerTractographyDisplayGUI::New ( );
-    //vtkSlicerTractographyDisplayLogic *slicerTractographyDisplayLogic  = vtkSlicerTractographyDisplayLogic::New ( );
-    //slicerTractographyDisplayLogic->SetAndObserveMRMLScene ( scene );
-    //slicerTractographyDisplayLogic->SetApplicationLogic ( appLogic );
-    ////    slicerTractographyDisplayLogic->SetMRMLScene(scene);
-    //slicerTractographyDisplayGUI->SetLogic ( slicerTractographyDisplayLogic );
+    vtkSlicerFiberBundleLogic *slicerFiberBundleLogic  = vtkSlicerFiberBundleLogic::New ( );
+    slicerFiberBundleLogic->DebugOn ( );
+    slicerFiberBundleLogic->SetAndObserveMRMLScene ( scene );
+    slicerFiberBundleLogic->SetApplicationLogic ( appLogic );
+    slicerTractographyDisplayGUI->SetLogic ( slicerFiberBundleLogic );
     slicerTractographyDisplayGUI->SetApplication ( slicerApp );
-    //slicerTractographyDisplayGUI->SetApplicationLogic ( appLogic );
+    slicerTractographyDisplayGUI->SetApplicationLogic ( appLogic );
     slicerTractographyDisplayGUI->SetApplicationGUI ( appGUI );
     slicerTractographyDisplayGUI->SetGUIName( "Tractography" );
     slicerTractographyDisplayGUI->GetUIPanel()->SetName ( slicerTractographyDisplayGUI->GetGUIName ( ) );
@@ -1369,8 +1367,10 @@ int Slicer3_main(int argc, char *argv[])
     gradientAnisotropicDiffusionFilterLogic->SetAndObserveMRMLScene ( NULL );
     gradientAnisotropicDiffusionFilterLogic->Delete ();
 
-    //slicerTractographyDisplayLogic->SetAndObserveMRMLScene ( NULL );
-    //slicerTractographyDisplayLogic->Delete ();
+#ifndef TRACTOGRAPHY_DEBUG
+    slicerFiberBundleLogic->SetAndObserveMRMLScene ( NULL );
+    slicerFiberBundleLogic->Delete ();
+#endif
         
 #ifndef QUERYATLAS_DEBUG
     queryAtlasLogic->SetAndObserveMRMLScene ( NULL );

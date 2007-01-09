@@ -5,6 +5,9 @@ PROJECT(SlicerTractographyDisplay)
 
 SET(SlicerTractographyDisplay_SRCS
   vtkSlicerTractographyDisplayGUI.cxx
+  vtkSlicerFiberBundleDisplayWidget.cxx
+  vtkSlicerFiberBundleDisplayLogic.cxx
+  vtkSlicerFiberBundleLogic.cxx
 )
 
 # Abstract/pure virtual classes
