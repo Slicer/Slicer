@@ -48,7 +48,9 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerFiducialsLogic : public vtkSlicerLog
   // Add a fiducial to the currently selected list, as kept in the
   // vtkMRMLSelectionNode
   // Returns the index of the new fiducial in the list, -1 on failure
+  // AddFiducialSelected includes a selected flag option
   int AddFiducial(float x, float y, float z);
+  int AddFiducialSelected (float x, float y, float z, int selected);
 
   // Description:
   // Update logic state when MRML scene changes
