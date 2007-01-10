@@ -213,12 +213,12 @@ if { $GENLIB(clean) } {
     puts "Deleting slicer lib files..."
     if { $isDarwin } {
         runcmd rm -rf $SLICER_LIB
-        if { [file exists $SLICER_HOME/isPatched] } {
-            runcmd rm $SLICER_HOME/isPatched
+        if { [file exists $SLICER_LIB/tcl/isPatched] } {
+            runcmd rm $SLICER_LIB/tcl/isPatched
         }
 
-        if { [file exists $SLICER_HOME/isPatchedBLT] } {
-            runcmd rm $SLICER_HOME/isPatchedBLT
+        if { [file exists $SLICER_LIB/tcl/isPatchedBLT] } {
+            runcmd rm $SLICER_LIB/tcl/isPatchedBLT
         }
     } else {
         file delete -force $SLICER_LIB
@@ -321,7 +321,7 @@ if { ![file exists $::TK_TEST_FILE] || $::GENLIB(update) } {
     eval "runcmd $::CVS $CVS_CO_FLAGS -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer checkout -r $::TK_TAG tk"
 
     if {$isDarwin} {
-        if { ![file exists $SLICER_HOME/isPatched] } {
+        if { ![file exists $SLICER_LIB/tcl/isPatched] } {
                 puts "Patching..."
                 runcmd curl -k -O https://share.spl.harvard.edu/share/birn/public/software/External/Patches/tkEventPatch.diff
                 runcmd cp tkEventPatch.diff $SLICER_LIB/tcl/tk/generic 
@@ -329,7 +329,7 @@ if { ![file exists $::TK_TEST_FILE] || $::GENLIB(update) } {
                 runcmd patch -i tkEventPatch.diff
 
                 # create a file to make sure tkEvent.c isn't patched twice
-                runcmd touch $SLICER_HOME/isPatched
+                runcmd touch $SLICER_LIB/tcl/isPatched
                 file delete $SLICER_LIB/tcl/tk/generic/tkEventPatch.diff
         } else {
             puts "tkEvent.c already patched."
@@ -405,14 +405,14 @@ if { ![file exists $::BLT_TEST_FILE] || $::GENLIB(update) } {
     if { $isWindows } {
         # can't do Windows
     } elseif { $isDarwin } {
-        if { ![file exists $SLICER_HOME/isPatchedBLT] } {
+        if { ![file exists $SLICER_LIB/tcl/isPatchedBLT] } {
             puts "Patching..."
             runcmd curl -k -O https://share.spl.harvard.edu/share/birn/public/software/External/Patches/bltpatch
             cd $SLICER_LIB/tcl/blt
             runcmd patch -p2 < ../bltpatch
             
             # create a file to make sure BLT isn't patched twice
-            runcmd touch $SLICER_HOME/isPatchedBLT
+            runcmd touch $SLICER_LIB/tcl/isPatchedBLT
             file delete $SLICER_LIB/tcl/bltpatch
         } else {
             puts "BLT already patched."

@@ -188,12 +188,12 @@ if { $::GETBUILDTEST(clean) } {
     if { $isDarwin } {
         runcmd rm -rf $SLICER_LIB
         runcmd rm -rf $SLICER_BUILD
-        if { [file exists $SLICER_HOME/isPatched] } {
-            runcmd rm $SLICER_HOME/isPatched
+        if { [file exists $SLICER_LIB/tcl/isPatched] } {
+            runcmd rm $SLICER_LIB/tcl/isPatched
         }
 
-        if { [file exists $SLICER_HOME/isPatchedBLT] } {
-            runcmd rm $SLICER_HOME/isPatchedBLT
+        if { [file exists $SLICER_LIB/tcl/isPatchedBLT] } {
+            runcmd rm $SLICER_LIB/tcl/isPatchedBLT
         }
     } else {
         file delete -force $SLICER_LIB

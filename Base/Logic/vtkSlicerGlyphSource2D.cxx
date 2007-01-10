@@ -619,6 +619,7 @@ void vtkSlicerGlyphSource2D::SetGlyphTypeAsString(const char *type)
   
   vtkMRMLFiducialListNode *listNode = vtkMRMLFiducialListNode::New();
 
+/*
   if ( !strcmp( type, listNode->GetGlyphTypeAsString(vtkMRMLFiducialListNode::StarBurst2D) ) )
     {
     this->SetGlyphTypeToStarBurst();
@@ -667,6 +668,7 @@ void vtkSlicerGlyphSource2D::SetGlyphTypeAsString(const char *type)
     {
     this->SetGlyphTypeToHookedArrow();
     }
+*/
   listNode->Delete();
   listNode = NULL;
 }
