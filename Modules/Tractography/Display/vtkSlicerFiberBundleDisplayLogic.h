@@ -63,9 +63,16 @@ protected:
   vtkSlicerFiberBundleDisplayLogic(const vtkSlicerFiberBundleDisplayLogic&);
   void operator=(const vtkSlicerFiberBundleDisplayLogic&);
 
-  vtkPolyData *LineModel;
-  vtkPolyData *TubeModel;
-  vtkPolyData *GlyphModel;
+  void CreateLineModelNode();
+  void DeleteLineModelNode();
+
+  vtkMRMLModelNode *LineModelNode;
+  vtkMRMLModelNode *TubeModelNode;
+  vtkMRMLModelNode *GlyphModelNode;
+
+  vtkMRMLModelDisplayNode *LineModelDisplayNode;
+  vtkMRMLModelDisplayNode *TubeModelDisplayNode;
+  vtkMRMLModelDisplayNode *GlyphModelDisplayNode;
 
   vtkMRMLFiberBundleNode *FiberBundleNode;
 
