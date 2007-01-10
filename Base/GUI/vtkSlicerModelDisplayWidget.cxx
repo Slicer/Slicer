@@ -274,7 +274,7 @@ void vtkSlicerModelDisplayWidget::ProcessMRMLEvents ( vtkObject *caller,
         }
       else
         {
-        vtkErrorMacro("Slicer Model Display Widget cannot set the color selector widget, as the model's display node has no color node set");
+        vtkWarningMacro("Slicer Model Display Widget cannot set the color selector widget, as the model's display node has no color node set");
         }
       this->AddMRMLObservers();
       }
