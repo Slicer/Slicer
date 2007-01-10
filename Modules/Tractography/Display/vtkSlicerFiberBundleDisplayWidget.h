@@ -21,6 +21,8 @@
 #ifndef __vtkSlicerFiberBundleDisplayWidget_h
 #define __vtkSlicerFiberBundleDisplayWidget_h
 
+#include "vtkSlicerTractographyDisplayWin32Header.h"
+
 #include "vtkSlicerWidget.h"
 
 #include "vtkSlicerNodeSelectorWidget.h"
@@ -33,7 +35,7 @@
 #include "vtkMRMLFiberBundleDisplayNode.h"
 
 
-class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiberBundleDisplayWidget : public vtkSlicerWidget
+class VTK_SLICERTRACTOGRAPHYDISPLAY_EXPORT vtkSlicerFiberBundleDisplayWidget : public vtkSlicerWidget
 {
   
 public:

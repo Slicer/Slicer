@@ -26,18 +26,20 @@
 
 #include "vtkSlicerLogic.h"
 
+#include "vtkSlicerTractographyDisplayWin32Header.h"
+
 #include "vtkMRML.h"
 #include "vtkMRMLFiberBundleNode.h"
 #include "vtkMRMLFiberBundleDisplayNode.h"
 
 
-class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerFiberBundleDisplayLogic : public vtkSlicerLogic 
+class VTK_SLICERTRACTOGRAPHYDISPLAY_EXPORT vtkSlicerFiberBundleDisplayLogic : public vtkSlicerLogic 
 {
   public:
   
   // The Usual vtk class functions
   static vtkSlicerFiberBundleDisplayLogic *New();
-  vtkTypeRevisionMacro(vtkSlicerFiberBundleDisplayLogic,vtkObject);
+  vtkTypeRevisionMacro(vtkSlicerFiberBundleDisplayLogic,vtkSlicerLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
 

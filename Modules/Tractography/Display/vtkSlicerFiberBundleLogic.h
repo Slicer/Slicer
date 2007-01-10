@@ -23,6 +23,8 @@
 
 #include <stdlib.h>
 
+#include "vtkSlicerTractographyDisplayWin32Header.h"
+
 #include "vtkSlicerBaseLogic.h"
 #include "vtkSlicerModuleLogic.h"
 
@@ -30,13 +32,13 @@
 #include "vtkMRMLFiberBundleNode.h"
 
 
-class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerFiberBundleLogic : public vtkSlicerModuleLogic 
+class VTK_SLICERTRACTOGRAPHYDISPLAY_EXPORT vtkSlicerFiberBundleLogic : public vtkSlicerModuleLogic 
 {
   public:
   
   // The Usual vtk class functions
   static vtkSlicerFiberBundleLogic *New();
-  vtkTypeRevisionMacro(vtkSlicerFiberBundleLogic,vtkObject);
+  vtkTypeRevisionMacro(vtkSlicerFiberBundleLogic,vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description:
