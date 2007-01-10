@@ -66,17 +66,18 @@ class VTK_SLICERTRACTOGRAPHYDISPLAY_EXPORT vtkSlicerFiberBundleLogic : public vt
 
   // Description:
   // Update logic state when MRML scene chenges
-  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
-                                  unsigned long /*event*/, 
-                                  void * /*callData*/ );    
+  virtual void ProcessMRMLEvents ( vtkObject * caller, 
+                                  unsigned long event, 
+                                  void * callData );    
 protected:
   vtkSlicerFiberBundleLogic();
   ~vtkSlicerFiberBundleLogic();
   vtkSlicerFiberBundleLogic(const vtkSlicerFiberBundleLogic&);
   void operator=(const vtkSlicerFiberBundleLogic&);
 
-  // Description:
-  //
+
+  void InitializeLogicForFiberBundleNode(vtkMRMLFiberBundleNode *node);
+
   vtkMRMLFiberBundleNode *ActiveFiberBundleNode;
 
   vtkCollection *DisplayLogicCollection;

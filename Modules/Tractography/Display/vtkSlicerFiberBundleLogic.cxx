@@ -44,11 +44,63 @@ vtkSlicerFiberBundleLogic::~vtkSlicerFiberBundleLogic()
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerFiberBundleLogic::ProcessMRMLEvents(vtkObject * /*caller*/, 
-                                            unsigned long /*event*/, 
-                                            void * /*callData*/)
+void vtkSlicerFiberBundleLogic::ProcessMRMLEvents(vtkObject * caller, 
+                                            unsigned long event, 
+                                            void * callData)
 {
-  // TODO: implement if needed
+
+  if (this->MRMLScene == NULL)
+    {
+    vtkErrorMacro("Can't process MRML events, no MRMLScene set.");
+    return;
+    }
+
+  // If new scene with fiber bundle nodes, set up display logic properly.
+  // Make sure to only handle new bundle nodes (not already displayed).
+  // GetNthNodeByClass is how to loop.
+  if (vtkMRMLScene::SafeDownCast(caller) != NULL
+      && (event == vtkMRMLScene::NewSceneEvent))
+    {
+
+    vtkErrorMacro("New scene event");
+
+    // Loop through all of the fiberBundleNodes.
+    // If the node does not have a display logic node yet, then make one for it.
+    vtkMRMLFiberBundleNode *node= NULL;
+    int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLFiberBundleNode");
+    for (int n=0; n<nnodes; n++)
+      {
+      node = 
+        vtkMRMLFiberBundleNode::
+        SafeDownCast (this->MRMLScene->GetNthNodeByClass(n, "vtkMRMLFiberBundleNode"));
+
+      if (node == NULL)
+        {
+        vtkErrorMacro("Got null node.");
+        }
+      else
+        {
+        // Set up display logic and any other logic classes in future
+        this->InitializeLogicForFiberBundleNode(node);
+        }
+      
+      }
+    }
+}
+
+void vtkSlicerFiberBundleLogic::InitializeLogicForFiberBundleNode(vtkMRMLFiberBundleNode *node)
+{
+  vtkErrorMacro("Adding display logic");
+  // Lauren here test if we already HAVE a display logic!
+  // Lauren put this logic element on a collection and DELETE it.
+  // If we have a new fiber bundle node set up its display logic
+  vtkSlicerFiberBundleDisplayLogic *displayLogic = vtkSlicerFiberBundleDisplayLogic::New();
+  //displayLogic->DebugOn();
+  // set the MRML scene so display logic can add its extra model nodes
+  displayLogic->SetMRMLScene(this->GetMRMLScene());
+  // Observe the bundle node which observes the display node, in order to update display
+  // when display or polydata change
+  displayLogic->SetAndObserveFiberBundleNode(node);
 }
 
 //----------------------------------------------------------------------------
@@ -89,7 +141,7 @@ int vtkSlicerFiberBundleLogic::AddFiberBundles (const char* dirname, const char*
 //----------------------------------------------------------------------------
 vtkMRMLFiberBundleNode* vtkSlicerFiberBundleLogic::AddFiberBundle (char* filename)
 {
-  vtkDebugWithObjectMacro(this,"Adding fiber bundle from filename " << filename);
+  vtkErrorMacro("Adding fiber bundle from filename " << filename);
 
   vtkMRMLFiberBundleNode *fiberBundleNode = vtkMRMLFiberBundleNode::New();
   vtkMRMLFiberBundleDisplayNode *displayNode = vtkMRMLFiberBundleDisplayNode::New();
@@ -115,15 +167,8 @@ vtkMRMLFiberBundleNode* vtkSlicerFiberBundleLogic::AddFiberBundle (char* filenam
 
     this->GetMRMLScene()->AddNode(fiberBundleNode);  
 
-    vtkSlicerFiberBundleDisplayLogic *displayLogic = vtkSlicerFiberBundleDisplayLogic::New();
-    displayLogic->DebugOn();
-    // observe the bundle node which observes the display node.
-    displayLogic->SetAndObserveFiberBundleNode(fiberBundleNode);
-    // TO DO: work in progress, need to observe the displayNode to insert
-    // "fake" models into MRML scene for tract display
-    displayLogic->SetAndObserveMRMLScene(this->GetMRMLScene());
-    //displayLogic->SetMRMLScene(this->GetMRMLScene());
-    // Lauren put this logic element on a collection and DELETE it.
+    // Set up display logic and any other logic classes in future
+    this->InitializeLogicForFiberBundleNode(fiberBundleNode);
 
     this->Modified();  
 
