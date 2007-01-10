@@ -802,7 +802,14 @@ int Slicer3_main(int argc, char *argv[])
     vtkSlicerTractographyDisplayGUI *slicerTractographyDisplayGUI = vtkSlicerTractographyDisplayGUI::New ( );
     vtkSlicerFiberBundleLogic *slicerFiberBundleLogic  = vtkSlicerFiberBundleLogic::New ( );
     slicerFiberBundleLogic->DebugOn ( );
-    slicerFiberBundleLogic->SetAndObserveMRMLScene ( scene );
+
+    // Observe scene events to handle display logic for new nodes or new scenes
+    events = vtkIntArray::New();
+    events->InsertNextValue(vtkMRMLScene::NewSceneEvent);
+    //events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
+    slicerFiberBundleLogic->SetAndObserveMRMLSceneEvents ( scene , events );
+    events->Delete();
+
     slicerFiberBundleLogic->SetApplicationLogic ( appLogic );
     slicerTractographyDisplayGUI->SetLogic ( slicerFiberBundleLogic );
     slicerTractographyDisplayGUI->SetApplication ( slicerApp );
