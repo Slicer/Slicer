@@ -20,7 +20,6 @@
 #include "vtkSlicerFiberBundleDisplayLogic.h"
 
 #include "vtkMRMLFiberBundleNode.h"
-#include "vtkMRMLFiberBundleStorageNode.h"
 #include "vtkMRMLFiberBundleDisplayNode.h"
 
 #include <sstream>
@@ -31,7 +30,6 @@ vtkStandardNewMacro(vtkSlicerFiberBundleDisplayLogic);
 //----------------------------------------------------------------------------
 vtkSlicerFiberBundleDisplayLogic::vtkSlicerFiberBundleDisplayLogic()
 {
-  vtkDebugWithObjectMacro(this,"Making it real");
   this->LineModelNode = NULL;
   this->TubeModelNode = NULL;
   this->GlyphModelNode = NULL;
@@ -68,10 +66,10 @@ void vtkSlicerFiberBundleDisplayLogic::SetAndObserveFiberBundleNode( vtkMRMLFibe
   events->Delete();
 
   // Now that we have a fiber bundle node, display it.
-  // Lauren TO DO: this caused a crash
   this->CreateLineModelNode();
 }
 
+//----------------------------------------------------------------------------
 void vtkSlicerFiberBundleDisplayLogic::CreateLineModelNode ( )
 {
 
@@ -143,6 +141,7 @@ void vtkSlicerFiberBundleDisplayLogic::CreateLineModelNode ( )
 
 } 
 
+//----------------------------------------------------------------------------
 void vtkSlicerFiberBundleDisplayLogic::DeleteLineModelNode ( )
 {
 

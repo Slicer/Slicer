@@ -28,7 +28,6 @@
 
 #include "vtkSlicerTractographyDisplayWin32Header.h"
 
-#include "vtkMRML.h"
 #include "vtkMRMLFiberBundleNode.h"
 #include "vtkMRMLFiberBundleDisplayNode.h"
 
@@ -42,18 +41,19 @@ class VTK_SLICERTRACTOGRAPHYDISPLAY_EXPORT vtkSlicerFiberBundleDisplayLogic : pu
   vtkTypeRevisionMacro(vtkSlicerFiberBundleDisplayLogic,vtkSlicerLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-
   // Description:
-  // The fiber bundle display node that is observed by this class. When the 
-  // state of this node changes, this logic class modifies the models
-  // that it has added to the slicer scene.
-  vtkSetObjectMacro ( FiberBundleNode , vtkMRMLFiberBundleNode );
+  // Get the fiber bundle display node that is observed by this class.
   vtkGetObjectMacro ( FiberBundleNode , vtkMRMLFiberBundleNode );
 
+  // Description:
+  // Set the fiber bundle display node that is observed by this class. When the 
+  // state of this node changes, this logic class modifies the models
+  // that it has added to the slicer scene.
   void SetAndObserveFiberBundleNode( vtkMRMLFiberBundleNode *fiberBundleNode );
 
   // Description:
-  // Update logic state when MRML scene chenges
+  // Update logic state when MRML scene changes. Observes the FiberBundleNode for PolyDataModified
+  // and DisplayModified events. Either causes a display update.
   virtual void ProcessMRMLEvents ( vtkObject * caller, 
                                   unsigned long event, 
                                   void * callData );    
@@ -63,7 +63,15 @@ protected:
   vtkSlicerFiberBundleDisplayLogic(const vtkSlicerFiberBundleDisplayLogic&);
   void operator=(const vtkSlicerFiberBundleDisplayLogic&);
 
+  // Description:
+  // Create polyline vtkMRMLModelNode and place in slicer scene.  The polydata is generated 
+  // from our vtkMRMLFiberBundleNode, according to its vtkMRMLFiberDisplayNode settings.
+  // The model node is temporary. It is not saved with the scene and can't be edited or 
+  // selected on menus.
   void CreateLineModelNode();
+
+  // Description:
+  // Delete and remove polyline model (vtkMRMLModelNode, vtkMRMLModelDisplayNode) from MRML scene.
   void DeleteLineModelNode();
 
   vtkMRMLModelNode *LineModelNode;
