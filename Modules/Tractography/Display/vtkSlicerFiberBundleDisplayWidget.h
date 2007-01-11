@@ -44,17 +44,19 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description:
-  // Getting setting  MRML FiberBundleNodeID.
-  vtkGetStringMacro ( FiberBundleNodeID );
-  vtkSetStringMacro ( FiberBundleNodeID );
-  
+  // Set FiberBundleDisplayNode currently active in this GUI.
+  // Internally this method sets the FiberBundleNodeID and FiberBundleDisplayNodeID,
+  // and sets up observers.
   void SetFiberBundleNode ( vtkMRMLFiberBundleNode *node );
 
   // Description:
-  // Getting setting and observing MRML FiberBundleDisplayNodeID.
-  vtkGetStringMacro ( FiberBundleDisplayNodeID );
-  vtkSetStringMacro ( FiberBundleDisplayNodeID );
+  // Get MRML FiberBundleNodeID.
+  vtkGetStringMacro ( FiberBundleNodeID );
   
+  // Description:
+  // Get MRML FiberBundleDisplayNodeID.
+  vtkGetStringMacro ( FiberBundleDisplayNodeID );
+
   // Description:
   // alternative method to propagate events generated in GUI to logic / mrml
   virtual void ProcessWidgetEvents ( vtkObject *caller, unsigned long event, void *callData );
@@ -63,9 +65,10 @@ public:
   // alternative method to propagate events generated in GUI to logic / mrml
   virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
   
-  // Description:
-  // removes observers on widgets in the class
-  virtual void RemoveWidgetObservers ( );
+
+ protected:
+  vtkSlicerFiberBundleDisplayWidget();
+  virtual ~vtkSlicerFiberBundleDisplayWidget();
 
   // Description:
   // add observers on display node
@@ -75,9 +78,17 @@ public:
   // remove observers on display node
   virtual void RemoveMRMLObservers ( );
   
- protected:
-  vtkSlicerFiberBundleDisplayWidget();
-  virtual ~vtkSlicerFiberBundleDisplayWidget();
+  // Description:
+  // removes observers on widgets in the class
+  virtual void RemoveWidgetObservers ( );
+
+  // Description:
+  // Set MRML FiberBundleDisplayNodeID.
+  vtkSetStringMacro ( FiberBundleDisplayNodeID );
+  
+  // Description:
+  // Set MRML FiberBundleNodeID.
+  vtkSetStringMacro ( FiberBundleNodeID );
 
   // Description:
   // Create the widget.
@@ -88,12 +99,19 @@ public:
   void UpdateWidget();
 
   // Description:
-  // Update the node's values to correspond to the widget
+  // Update the display node's values to correspond to the widget
   void UpdateMRML();
   
+  // Description:
+  // ID in the MRML scene of the current fiber bundle node
   char* FiberBundleNodeID;
+
+  // Description:
+  // ID in the MRML scene of the current fiber bundle node's display node
   char* FiberBundleDisplayNodeID;
   
+  // Description:
+  // All of the widgets used in this widget
   vtkSlicerNodeSelectorWidget* FiberBundleSelectorWidget;
   vtkKWCheckButtonWithLabel *VisibilityButton;
   vtkKWCheckButtonWithLabel *ScalarVisibilityButton;
