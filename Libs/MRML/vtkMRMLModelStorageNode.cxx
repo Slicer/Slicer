@@ -144,7 +144,7 @@ int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
   std::string::size_type loc = name.find(".");
   if( loc == std::string::npos ) 
     {
-    vtkErrorMacro("vtkMRMLModelNode: no file extention specified");
+    vtkErrorMacro("vtkMRMLModelNode: no file extension specified");
     }
   std::string extention = name.substr(loc);
 
