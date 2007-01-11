@@ -411,21 +411,14 @@ void vtkSlicerColorDisplayWidget::UpdateWidget()
         }
       
       // what's the colour?
-      std::stringstream ss;
       if (colour != NULL)
         {
-        ss << colour[0];
-        ss << " ";
-        ss << colour[1];
-        ss << " ";
-        ss << colour[2];
+        this->MultiColumnList->GetWidget()->SetCellBackgroundColor(row, this->ColourColumn, colour);
         }
       else
         {
-        ss << "0.0 0.0 0.0";
+        this->MultiColumnList->GetWidget()->ClearCellBackgroundColor(row, this->ColourColumn);
         }
-      this->MultiColumnList->GetWidget()->SetCellText(row, this->ColourColumn, ss.str().c_str());
-      this->MultiColumnList->GetWidget()->SetCellWindowCommandToColorButton(row, this->ColourColumn);      
       }
     }
   else
@@ -535,7 +528,7 @@ void vtkSlicerColorDisplayWidget::CreateWidget ( )
   // make the colour column editable by colour chooser
   //    this->MultiColumnList->GetWidget()->SetColumnEditWindowToColorButton(this->ColourColumn);
   // don't show the colour text
-  this->MultiColumnList->GetWidget()->SetColumnFormatCommandToEmptyOutput (this->ColourColumn);
+  //this->MultiColumnList->GetWidget()->SetColumnFormatCommandToEmptyOutput (this->ColourColumn);
   
   // now set attribs that are equal across the columns
   int col;
