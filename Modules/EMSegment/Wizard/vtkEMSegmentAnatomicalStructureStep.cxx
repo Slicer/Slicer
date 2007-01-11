@@ -593,11 +593,11 @@ void vtkEMSegmentAnatomicalStructureStep::PopupNodeContextMenuCallback(
 
   this->ContextMenu->DeleteAllItems();
   sprintf(buffer, "AddChildNodeCallback %d", vol_id);
-  this->ContextMenu->AddCommand("Add child node", this, buffer);
+  this->ContextMenu->AddCommand("Add sub-class", this, buffer);
   if (strcmp(node, "root_node"))
     {
     sprintf(buffer, "DeleteNodeCallback %d", vol_id);
-    this->ContextMenu->AddCommand("Delete node", this, buffer);
+    this->ContextMenu->AddCommand("Delete sub-class", this, buffer);
     }
 
   int px, py;
@@ -612,7 +612,7 @@ void vtkEMSegmentAnatomicalStructureStep::DeleteNodeCallback(vtkIdType sel_vol_i
         this->GetApplication(), 
         NULL, 
         "Delete node?",
-        "Are you sure you want to delete this node and its children?",
+        "Are you sure you want to delete this sub-class and its children?",
         vtkKWMessageDialog::WarningIcon | vtkKWMessageDialog::InvokeAtPointer))
     {
     vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
