@@ -230,6 +230,7 @@ void vtkSlicerFiberBundleDisplayWidget::ProcessMRMLEvents ( vtkObject *caller,
 
   vtkMRMLFiberBundleNode *fiberBundleNode = vtkMRMLFiberBundleNode::SafeDownCast(caller);
   
+  // if this event comes from our fiberBundleNode, it is not null, and has been modified
   if (fiberBundleNode == this->MRMLScene->GetNodeByID(this->FiberBundleNodeID) && 
       fiberBundleNode != NULL && event == vtkCommand::ModifiedEvent)
     {
@@ -238,8 +239,11 @@ void vtkSlicerFiberBundleDisplayWidget::ProcessMRMLEvents ( vtkObject *caller,
 
     if (displayNode != NULL && this->FiberBundleDisplayNodeID != NULL)
       {
+      // stop observing display node
       this->RemoveMRMLObservers();
+
       this->SetFiberBundleDisplayNodeID(displayNode->GetID());
+
       // set the color node selector to reflect the volume's color node
       if (displayNode->GetColorNode() != NULL)
         {
@@ -247,9 +251,12 @@ void vtkSlicerFiberBundleDisplayWidget::ProcessMRMLEvents ( vtkObject *caller,
         }
       else
         {
-        vtkErrorMacro("Slicer FiberBundle Display Widget cannot set the color selector widget, as the fiberBundle's display node has no color node set");
+        vtkWarningMacro("Slicer FiberBundle Display Widget cannot set the color selector widget, as the fiberBundle's display node has no color node set");
         }
+
+      // start observing display node again
       this->AddMRMLObservers();
+
       }
     }
   
