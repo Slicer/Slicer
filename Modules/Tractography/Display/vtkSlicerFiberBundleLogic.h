@@ -25,10 +25,8 @@
 
 #include "vtkSlicerTractographyDisplayWin32Header.h"
 
-#include "vtkSlicerBaseLogic.h"
 #include "vtkSlicerModuleLogic.h"
 
-#include "vtkMRML.h"
 #include "vtkMRMLFiberBundleNode.h"
 
 
@@ -42,8 +40,11 @@ class VTK_SLICERTRACTOGRAPHYDISPLAY_EXPORT vtkSlicerFiberBundleLogic : public vt
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description:
-  // The currently active mrml fiber bundle node 
+  // Get currently active mrml fiber bundle node 
   vtkGetObjectMacro (ActiveFiberBundleNode, vtkMRMLFiberBundleNode);
+
+  // Description:
+  // Set the currently active mrml fiber bundle node 
   void SetActiveFiberBundleNode (vtkMRMLFiberBundleNode *ActiveFiberBundleNode);
 
   // Description:
@@ -52,20 +53,16 @@ class VTK_SLICERTRACTOGRAPHYDISPLAY_EXPORT vtkSlicerFiberBundleLogic : public vt
   vtkMRMLFiberBundleNode* AddFiberBundle (char* filename);
 
   // Description:
-  // Create fiber bundle nodes and
-  // read their polydata from a specified directory
+  // Create fiber bundle nodes and read their polydata from a specified directory.
+  // Internally calls AddFiberBundle for each file.
   int AddFiberBundles (const char* dirname, const char* suffix );
 
   // Description:
-  // Write fiber bundle's polydata  to a specified file
+  // Write fiber bundle's polydata  to a specified file.
   int SaveFiberBundle (char* filename, vtkMRMLFiberBundleNode *fiberBundleNode);
 
   // Description:
-  // Read in a scalar overlay and add it to the fiber bundle node
-  //int AddScalar(char* filename, vtkMRMLFiberBundleNode *fiberBundleNode);
-
-  // Description:
-  // Update logic state when MRML scene chenges
+  // Update logic state when MRML scene changes.
   virtual void ProcessMRMLEvents ( vtkObject * caller, 
                                   unsigned long event, 
                                   void * callData );    
@@ -76,10 +73,16 @@ protected:
   void operator=(const vtkSlicerFiberBundleLogic&);
 
 
+  // Description:
+  // Create internal logic objects to manage fiber bundles (currently display).
   void InitializeLogicForFiberBundleNode(vtkMRMLFiberBundleNode *node);
 
+  // Description:
+  // Currently active/selected node.
   vtkMRMLFiberBundleNode *ActiveFiberBundleNode;
 
+  // Description:
+  // Collection of pointers to display logic objects for fiber bundle nodes in the scene.
   vtkCollection *DisplayLogicCollection;
 
 };
