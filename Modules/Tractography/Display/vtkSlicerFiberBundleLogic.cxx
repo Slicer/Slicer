@@ -30,17 +30,13 @@ vtkStandardNewMacro(vtkSlicerFiberBundleLogic);
 //----------------------------------------------------------------------------
 vtkSlicerFiberBundleLogic::vtkSlicerFiberBundleLogic()
 {
-  this->ActiveFiberBundleNode = NULL;
+
 }
 
 //----------------------------------------------------------------------------
 vtkSlicerFiberBundleLogic::~vtkSlicerFiberBundleLogic()
 {
-  if (this->ActiveFiberBundleNode != NULL)
-    {
-        this->ActiveFiberBundleNode->Delete();
-        this->ActiveFiberBundleNode = NULL;
-    }
+
 }
 
 //----------------------------------------------------------------------------
@@ -103,12 +99,6 @@ void vtkSlicerFiberBundleLogic::InitializeLogicForFiberBundleNode(vtkMRMLFiberBu
   displayLogic->SetAndObserveFiberBundleNode(node);
 }
 
-//----------------------------------------------------------------------------
-void vtkSlicerFiberBundleLogic::SetActiveFiberBundleNode(vtkMRMLFiberBundleNode *activeNode)
-{
-  vtkSetMRMLNodeMacro(this->ActiveFiberBundleNode, activeNode );
-  this->Modified();
-}
 
 //----------------------------------------------------------------------------
 int vtkSlicerFiberBundleLogic::AddFiberBundles (const char* dirname, const char* suffix )
@@ -227,8 +217,6 @@ void vtkSlicerFiberBundleLogic::PrintSelf(ostream& os, vtkIndent indent)
 
   os << indent << "vtkSlicerFiberBundleLogic:             " << this->GetClassName() << "\n";
 
-  os << indent << "ActiveFiberBundleNode: " <<
-    (this->ActiveFiberBundleNode ? this->ActiveFiberBundleNode->GetName() : "(none)") << "\n";
 }
 
 

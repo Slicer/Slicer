@@ -40,14 +40,6 @@ class VTK_SLICERTRACTOGRAPHYDISPLAY_EXPORT vtkSlicerFiberBundleLogic : public vt
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description:
-  // Get currently active mrml fiber bundle node 
-  vtkGetObjectMacro (ActiveFiberBundleNode, vtkMRMLFiberBundleNode);
-
-  // Description:
-  // Set the currently active mrml fiber bundle node 
-  void SetActiveFiberBundleNode (vtkMRMLFiberBundleNode *ActiveFiberBundleNode);
-
-  // Description:
   // Create new mrml fiber bundle node and read its polydata from a specified file.
   // Also create the logic object for its display.
   vtkMRMLFiberBundleNode* AddFiberBundle (char* filename);
@@ -76,10 +68,6 @@ protected:
   // Description:
   // Create internal logic objects to manage fiber bundles (currently display).
   void InitializeLogicForFiberBundleNode(vtkMRMLFiberBundleNode *node);
-
-  // Description:
-  // Currently active/selected node.
-  vtkMRMLFiberBundleNode *ActiveFiberBundleNode;
 
   // Description:
   // Collection of pointers to display logic objects for fiber bundle nodes in the scene.
