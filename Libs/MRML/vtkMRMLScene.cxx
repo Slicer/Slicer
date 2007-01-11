@@ -43,6 +43,7 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
 #include "vtkMRMLFiberBundleNode.h"
 #include "vtkMRMLFiberBundleDisplayNode.h"
+#include "vtkMRMLFiberBundleStorageNode.h"
 #include "vtkMRMLCameraNode.h"
 #include "vtkMRMLViewNode.h"
 
@@ -156,6 +157,11 @@ vtkMRMLScene::vtkMRMLScene()
                          vtkMRMLFiberBundleDisplayNode::New();
   this->RegisterNodeClass (fbdn);
   fbdn->Delete();
+
+  vtkMRMLFiberBundleStorageNode *fbsn =
+                         vtkMRMLFiberBundleStorageNode::New();
+  this->RegisterNodeClass (fbsn);
+  fbsn->Delete();
   
   vtkMRMLCameraNode *camera = vtkMRMLCameraNode::New();
   this->RegisterNodeClass ( camera );
