@@ -11,9 +11,9 @@
   Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-// .NAME vtkMRMLFiberBundleStorageNode - MRML node for fiberBundle storage on disk
+// .NAME vtkMRMLFiberBundleStorageNode - MRML node for fiberBundle storage on disk.
 // .SECTION Description
-// Storage nodes has methods to read/write vtkPolyData to/from disk
+// The storage node has methods to read/write vtkPolyData to/from disk.
 
 #ifndef __vtkMRMLFiberBundleStorageNode_h
 #define __vtkMRMLFiberBundleStorageNode_h
@@ -21,8 +21,6 @@
 #include "vtkMRML.h"
 #include "vtkMRMLStorageNode.h"
 #include "vtkMRMLFiberBundleNode.h" 
-
-class vtkImageData;
 
 class VTK_MRML_EXPORT vtkMRMLFiberBundleStorageNode : public vtkMRMLStorageNode
 {
@@ -34,22 +32,20 @@ class VTK_MRML_EXPORT vtkMRMLFiberBundleStorageNode : public vtkMRMLStorageNode
   virtual vtkMRMLNode* CreateNodeInstance();
 
   // Description:
-  // Read node attributes from XML file
+  // Read node attributes from XML (MRML) file.
   virtual void ReadXMLAttributes( const char** atts);
 
    // Description:
   // Set dependencies between this node and the parent node
-  // when parsing XML file
+  // when parsing XML file.
   virtual void ProcessParentNode(vtkMRMLNode *parentNode);
   
   // Description:
   // Read data and set it in the referenced node
-  // NOTE: Subclasses should implement this method
   virtual int ReadData(vtkMRMLNode *refNode);
 
   // Description:
-  // Write data from a  referenced node
-  // NOTE: Subclasses should implement this method
+  // Write data from a referenced node
   virtual int WriteData(vtkMRMLNode *refNode);
 
   // Description:

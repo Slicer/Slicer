@@ -35,7 +35,6 @@ vtkMRMLFiberBundleDisplayNode* vtkMRMLFiberBundleDisplayNode::New()
 }
 
 //-----------------------------------------------------------------------------
-
 vtkMRMLNode* vtkMRMLFiberBundleDisplayNode::CreateNodeInstance()
 {
   // First try to create the object from the vtkObjectFactory

@@ -38,7 +38,6 @@ vtkMRMLFiberBundleStorageNode* vtkMRMLFiberBundleStorageNode::New()
 }
 
 //----------------------------------------------------------------------------
-
 vtkMRMLNode* vtkMRMLFiberBundleStorageNode::CreateNodeInstance()
 {
   // First try to create the object from the vtkObjectFactory
@@ -61,6 +60,7 @@ vtkMRMLFiberBundleStorageNode::~vtkMRMLFiberBundleStorageNode()
 {
 }
 
+//----------------------------------------------------------------------------
 void vtkMRMLFiberBundleStorageNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
@@ -69,7 +69,6 @@ void vtkMRMLFiberBundleStorageNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLFiberBundleStorageNode::ReadXMLAttributes(const char** atts)
 {
-
   vtkMRMLStorageNode::ReadXMLAttributes(atts);
 }
 
@@ -128,7 +127,7 @@ int vtkMRMLFiberBundleStorageNode::ReadData(vtkMRMLNode *refNode)
   std::string::size_type loc = name.find(".");
   if( loc == std::string::npos ) 
     {
-    vtkErrorMacro("vtkMRMLFiberBundleNode: no file extention specified");
+    vtkErrorMacro("vtkMRMLFiberBundleNode: no file extension specified");
     }
   std::string extension = name.substr(loc);
 

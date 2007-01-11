@@ -19,7 +19,6 @@ Version:   $Revision: 1.3 $
 #include "vtkCallbackCommand.h"
 
 #include "vtkMRMLFiberBundleNode.h"
-#include "vtkMRMLScene.h"
 
 //------------------------------------------------------------------------------
 vtkMRMLFiberBundleNode* vtkMRMLFiberBundleNode::New()
@@ -35,7 +34,6 @@ vtkMRMLFiberBundleNode* vtkMRMLFiberBundleNode::New()
 }
 
 //-----------------------------------------------------------------------------
-
 vtkMRMLNode* vtkMRMLFiberBundleNode::CreateNodeInstance()
 {
   // First try to create the object from the vtkObjectFactory
@@ -55,7 +53,7 @@ vtkMRMLFiberBundleNode::vtkMRMLFiberBundleNode()
   this->StorageNodeID = NULL;
   this->DisplayNodeID = NULL;
   this->FiberBundleDisplayNode = NULL;
-  PolyData = NULL;
+  this->PolyData = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -200,6 +198,7 @@ void vtkMRMLFiberBundleNode::UpdateReferences()
     }
 }
 
+//-----------------------------------------------------------
 vtkMRMLStorageNode* vtkMRMLFiberBundleNode::GetStorageNode()
 {
   vtkMRMLStorageNode* node = NULL;
@@ -268,19 +267,18 @@ void vtkMRMLFiberBundleNode::ProcessMRMLEvents ( vtkObject *caller,
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
 
-  vtkErrorWithObjectMacro(this,"fiber bundle node processing events");
-
   vtkMRMLFiberBundleDisplayNode *dnode = this->GetDisplayNode();
   if (dnode != NULL && dnode == vtkMRMLFiberBundleDisplayNode::SafeDownCast(caller) &&
       event ==  vtkCommand::ModifiedEvent)
     {
+    vtkDebugMacro("Fiber bundle node invoking display modified event");
     this->InvokeEvent(vtkMRMLFiberBundleNode::DisplayModifiedEvent, NULL);
-    vtkErrorWithObjectMacro(this,"fiber bundle node invoking display modifies event");
     }
   else if (this->PolyData == vtkPolyData::SafeDownCast(caller) &&
     event ==  vtkCommand::ModifiedEvent)
     {
     this->ModifiedSinceRead = true;
+    vtkDebugMacro("Fiber bundle node invoking poly data modified event");
     this->InvokeEvent(vtkMRMLFiberBundleNode::PolyDataModifiedEvent, NULL);
     }
   return;

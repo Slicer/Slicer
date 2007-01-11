@@ -11,12 +11,13 @@
   Version:   $Revision: 1.6 $
 
 =========================================================================auto=*/
-// .NAME vtkMRMLFiberBundleDisplayNode - MRML node to represent display properties
-// of trajectories from tractography in diffusion MRI data.
+// .NAME vtkMRMLFiberBundleDisplayNode - MRML node to represent display properties for tractography.
 // .SECTION Description
-// vtkMRMLFiberBundleDisplayNode nodes stores display properties for tractography
-// including color (by bundle, by fiber, or by scalar invariants), display
-// on/off for tensor glyphs and display of trajectory as a line or tube.
+// vtkMRMLFiberBundleDisplayNode nodes store display properties of trajectories 
+// from tractography in diffusion MRI data, including color type (by bundle, by fiber, 
+// or by scalar invariants), display on/off for tensor glyphs and display of 
+// trajectory as a line or tube.
+//
 
 #ifndef __vtkMRMLFiberBundleDisplayNode_h
 #define __vtkMRMLFiberBundleDisplayNode_h
@@ -40,7 +41,7 @@ public:
   virtual vtkMRMLNode* CreateNodeInstance();
 
   // Description:
-  // Read node attributes from XML file
+  // Read node attributes from XML (MRML) file
   virtual void ReadXMLAttributes( const char** atts);
 
   // Description:
