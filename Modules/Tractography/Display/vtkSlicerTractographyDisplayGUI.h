@@ -30,7 +30,8 @@ class VTK_SLICERTRACTOGRAPHYDISPLAY_EXPORT vtkSlicerTractographyDisplayGUI : pub
     vtkTypeRevisionMacro ( vtkSlicerTractographyDisplayGUI, vtkSlicerModuleGUI );
     void PrintSelf ( ostream& os, vtkIndent indent );
     
-    // Description: Get the categorization of the module.
+    // Description: 
+    // Get the categorization of the module.
     const char *GetCategory() const
         { return "Tractography"; }
     
