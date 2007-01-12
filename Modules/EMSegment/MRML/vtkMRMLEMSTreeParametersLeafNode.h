@@ -63,7 +63,7 @@ public:
   //
   // related nodes
   //
-  vtkSetStringMacro(GlobalParametersNodeID);
+  vtkSetReferenceStringMacro(GlobalParametersNodeID);
   vtkGetStringMacro(GlobalParametersNodeID);
   virtual vtkMRMLEMSGlobalParametersNode* GetGlobalParametersNode();
 

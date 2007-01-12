@@ -120,7 +120,7 @@ public:
   // related MRML nodes
   //
   vtkGetStringMacro(GlobalParametersNodeID);
-  vtkSetStringMacro(GlobalParametersNodeID);
+  vtkSetReferenceStringMacro(GlobalParametersNodeID);
   virtual vtkMRMLEMSGlobalParametersNode* GetGlobalParametersNode();
 
 protected:

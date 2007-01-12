@@ -47,19 +47,19 @@ public:
 
   // associated nodes
   vtkGetStringMacro(TemplateNodeID);
-  vtkSetStringMacro(TemplateNodeID);
+  vtkSetReferenceStringMacro(TemplateNodeID);
   vtkMRMLEMSTemplateNode* GetTemplateNode();
 
   vtkGetStringMacro(AtlasNodeID);
-  vtkSetStringMacro(AtlasNodeID);
+  vtkSetReferenceStringMacro(AtlasNodeID);
   vtkMRMLEMSAtlasNode* GetAtlasNode();
 
   vtkGetStringMacro(TargetNodeID);
-  vtkSetStringMacro(TargetNodeID);
+  vtkSetReferenceStringMacro(TargetNodeID);
   vtkMRMLEMSTargetNode* GetTargetNode();
 
   vtkGetStringMacro(OutputVolumeNodeID);
-  vtkSetStringMacro(OutputVolumeNodeID);
+  vtkSetReferenceStringMacro(OutputVolumeNodeID);
   vtkMRMLScalarVolumeNode* GetOutputVolumeNode();
 
   vtkGetStringMacro(WorkingDirectory);

@@ -48,7 +48,7 @@ class VTK_EMSEGMENT_EXPORT vtkMRMLEMSNode :
   virtual void UpdateReferenceID(const char *oldID, const char *newID);
   
   vtkGetStringMacro (SegmenterNodeID);
-  vtkSetStringMacro (SegmenterNodeID);
+  vtkSetReferenceStringMacro (SegmenterNodeID);
   vtkMRMLEMSSegmenterNode* GetSegmenterNode();
 
   vtkGetStringMacro(TemplateFilename);

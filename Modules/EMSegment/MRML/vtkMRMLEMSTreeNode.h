@@ -45,11 +45,11 @@ public:
 
   // associated parameters nodes
   vtkGetStringMacro(ParentNodeID);
-  vtkSetStringMacro(ParentNodeID);
+  vtkSetReferenceStringMacro(ParentNodeID);
   virtual vtkMRMLEMSTreeNode* GetParentNode();
 
   vtkGetStringMacro(TreeParametersNodeID);
-  vtkSetStringMacro(TreeParametersNodeID);
+  vtkSetReferenceStringMacro(TreeParametersNodeID);
   virtual vtkMRMLEMSTreeParametersNode* GetParametersNode();
 
   // the label is from a controlled vocabulary

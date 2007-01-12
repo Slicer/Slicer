@@ -46,11 +46,11 @@ public:
 
   // associated parameters nodes
   vtkGetStringMacro(TreeNodeID);
-  vtkSetStringMacro(TreeNodeID);
+  vtkSetReferenceStringMacro(TreeNodeID);
   vtkMRMLEMSTreeNode* GetTreeNode();
 
   vtkGetStringMacro(GlobalParametersNodeID);
-  vtkSetStringMacro(GlobalParametersNodeID);
+  vtkSetReferenceStringMacro(GlobalParametersNodeID);
   vtkMRMLEMSGlobalParametersNode* GetGlobalParametersNode();
 
 protected:

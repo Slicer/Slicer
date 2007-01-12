@@ -49,17 +49,17 @@ public:
   virtual void SynchronizeNumberOfTargetInputChannels();
 
   // reference to algorithm global parameters
-  vtkSetStringMacro(GlobalParametersNodeID);
+  vtkSetReferenceStringMacro(GlobalParametersNodeID);
   vtkGetStringMacro(GlobalParametersNodeID);
   virtual vtkMRMLEMSGlobalParametersNode* GetGlobalParametersNode();
 
   // additional parameters valid for leaf nodes
-  vtkSetStringMacro(LeafParametersNodeID);
+  vtkSetReferenceStringMacro(LeafParametersNodeID);
   vtkGetStringMacro(LeafParametersNodeID);
   virtual vtkMRMLEMSTreeParametersLeafNode* GetLeafParametersNode();
   
   // additional parameters valid for parent nodes
-  vtkSetStringMacro(ParentParametersNodeID);
+  vtkSetReferenceStringMacro(ParentParametersNodeID);
   vtkGetStringMacro(ParentParametersNodeID);
   virtual vtkMRMLEMSTreeParametersParentNode* GetParentParametersNode();
 

@@ -117,12 +117,10 @@ void vtkMRMLEMSTreeNode::ReadXMLAttributes(const char** attrs)
     if (!strcmp(key, "ParentNodeID"))
     {
       this->SetParentNodeID(val);
-      this->Scene->AddReferencedNodeID(this->ParentNodeID, this);
     }
     else if (!strcmp(key, "TreeParametersNodeID"))
     {
       this->SetTreeParametersNodeID(val);
-      this->Scene->AddReferencedNodeID(this->TreeParametersNodeID, this);
     }
     else if (!strcmp(key, "Label"))
     {

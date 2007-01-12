@@ -46,11 +46,11 @@ public:
   // related mrml nodes
   //
   vtkGetStringMacro(AtlasNodeID);
-  vtkSetStringMacro(AtlasNodeID);
+  vtkSetReferenceStringMacro(AtlasNodeID);
   vtkMRMLEMSAtlasNode* GetAtlasNode();
 
   vtkGetStringMacro(TargetNodeID);
-  vtkSetStringMacro(TargetNodeID);
+  vtkSetReferenceStringMacro(TargetNodeID);
   vtkMRMLEMSTargetNode* GetTargetNode();
 
   //
