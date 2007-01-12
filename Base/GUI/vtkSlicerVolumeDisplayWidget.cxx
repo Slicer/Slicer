@@ -280,6 +280,12 @@ void vtkSlicerVolumeDisplayWidget::ProcessMRMLEvents ( vtkObject *caller,
 //---------------------------------------------------------------------------
 void vtkSlicerVolumeDisplayWidget::UpdateWidgetFromMRML ()
 {
+  vtkMRMLVolumeNode *volumeNode = this->GetVolumeNode();
+  if (volumeNode != NULL)
+    {
+    this->WindowLevelThresholdEditor->SetImageData(volumeNode->GetImageData());
+    }
+
   vtkMRMLVolumeDisplayNode *displayNode = this->GetVolumeDisplayNode();
   if (displayNode != NULL) 
     {
