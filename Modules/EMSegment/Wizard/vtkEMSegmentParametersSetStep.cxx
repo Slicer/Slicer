@@ -23,8 +23,8 @@ vtkCxxRevisionMacro(vtkEMSegmentParametersSetStep, "$Revision: 1.2 $");
 //----------------------------------------------------------------------------
 vtkEMSegmentParametersSetStep::vtkEMSegmentParametersSetStep()
 {
-  this->SetName("1/8. Define Parameters Set");
-  this->SetDescription("Select Parameters Set or create new parameters.");
+  this->SetName("1/8. Select Parameter Set");
+  this->SetDescription("Select existing or create new parameter set.");
 
   this->ParameterSetFrame      = NULL;
   this->ParameterSetMenuButton = NULL;
@@ -65,7 +65,7 @@ void vtkEMSegmentParametersSetStep::ShowUserInterface()
     {
     this->ParameterSetFrame->SetParent(wizard_widget->GetClientArea());
     this->ParameterSetFrame->Create();
-    this->ParameterSetFrame->SetLabelText("Select Parameters Set");
+    this->ParameterSetFrame->SetLabelText("Select Parameter Set");
     }
 
   this->Script("pack %s -side top -expand n -fill both -padx 0 -pady 2", 
@@ -84,11 +84,11 @@ void vtkEMSegmentParametersSetStep::ShowUserInterface()
     this->ParameterSetMenuButton->Create();
     this->ParameterSetMenuButton->GetLabel()->SetWidth(
       EMSEG_WIDGETS_LABEL_WIDTH - 10);
-    this->ParameterSetMenuButton->SetLabelText("Parameters Set:");
+    this->ParameterSetMenuButton->SetLabelText("Parameter Set:");
     this->ParameterSetMenuButton->GetWidget()->SetWidth(
       EMSEG_MENU_BUTTON_WIDTH + 10);
     this->ParameterSetMenuButton->SetBalloonHelpString(
-      "Select Parameters Set.");
+      "Select Parameter Set.");
     }
 
   this->Script("pack %s -side top -anchor nw -padx 2 -pady 2", 

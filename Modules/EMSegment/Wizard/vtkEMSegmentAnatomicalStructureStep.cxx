@@ -27,8 +27,8 @@ vtkCxxRevisionMacro(vtkEMSegmentAnatomicalStructureStep, "$Revision: 1.2 $");
 //----------------------------------------------------------------------------
 vtkEMSegmentAnatomicalStructureStep::vtkEMSegmentAnatomicalStructureStep()
 {
-  this->SetName("2/8. Define Hierarchy");
-  this->SetDescription("Define a hierarchy of anatomical structures.");
+  this->SetName("2/8. Define Anatomical Tree");
+  this->SetDescription("Define a hierarchy of structures.");
 
   this->ContextMenu  = NULL;
 
@@ -268,7 +268,7 @@ void vtkEMSegmentAnatomicalStructureStep::ShowUserInterface()
     this->AnatomicalNodeIntensityLabelEntry->SetParent(
       this->AnatomicalNodeAttributesFrame->GetFrame());
     this->AnatomicalNodeIntensityLabelEntry->Create();
-    this->AnatomicalNodeIntensityLabelEntry->SetLabelText("Intensity Label: ");
+    this->AnatomicalNodeIntensityLabelEntry->SetLabelText("Label: ");
     this->AnatomicalNodeIntensityLabelEntry->SetLabelWidth(
       EMSEG_WIDGETS_LABEL_WIDTH - 12);
     this->AnatomicalNodeIntensityLabelEntry->GetWidget()->SetWidth(6);
