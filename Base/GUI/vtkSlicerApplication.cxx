@@ -382,7 +382,7 @@ void vtkSlicerApplication::RestoreApplicationSettingsFromRegistry()
   GetTempPath(vtkKWRegistryHelper::RegistryKeyValueSizeMax,
               this->TemporaryDirectory);
 #else
-  strcpy(this->TemporaryDirectory, "/usr/tmp");
+  strcpy(this->TemporaryDirectory, "/tmp");
 #endif
 
   // Tk does not understand Windows short path names, so convert to
