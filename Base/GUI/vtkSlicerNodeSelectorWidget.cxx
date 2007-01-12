@@ -38,6 +38,7 @@ static void MRMLCallback(vtkObject *caller, unsigned long eid, void *__clientDat
 
   if (vtkMRMLScene::SceneCloseEvent == eid)
     {
+    self->ClearMenu();
     self->SetSelected(NULL);
     return;
     }
@@ -181,6 +182,13 @@ void vtkSlicerNodeSelectorWidget::AddNodeClass(const char *className,
     }
 
 }
+//----------------------------------------------------------------------------
+void vtkSlicerNodeSelectorWidget::ClearMenu()
+{
+    vtkKWMenuButton *mb = this->GetWidget()->GetWidget();
+    vtkKWMenu *m = mb->GetMenu();
+    m->DeleteAllItems();
+}
 
 //----------------------------------------------------------------------------
 void vtkSlicerNodeSelectorWidget::UpdateMenu()
@@ -194,11 +202,12 @@ void vtkSlicerNodeSelectorWidget::UpdateMenu()
       {
       return;
       }
+    vtkMRMLNode *oldSelectedNode = this->GetSelected();
+    this->ClearMenu();
+
     vtkKWMenuButton *mb = this->GetWidget()->GetWidget();
     vtkKWMenu *m = mb->GetMenu();
 
-    vtkMRMLNode *oldSelectedNode = this->GetSelected();
-    m->DeleteAllItems();
     int count = 0;
     int c=0;
 
@@ -379,21 +388,17 @@ void vtkSlicerNodeSelectorWidget::ProcessCommand(char *slectedId)
 //----------------------------------------------------------------------------
 void vtkSlicerNodeSelectorWidget::SetSelected(vtkMRMLNode *node)
 {
-  if (!strcmp(this->GetWidgetName(), "DisplayVolumeSelector") ) 
-    {
-    vtkDebugMacro("set select");
-    }
+ 
+  vtkKWMenuButton *m = this->GetWidget()->GetWidget();
 
   if ( node != NULL) 
     {
-    vtkKWMenuButton *m = this->GetWidget()->GetWidget();
     if ( !strcmp ( m->GetValue(), node->GetName() ) )
       {
       return; // no change, don't propogate events
       }
 
     // new value, set it and notify observers
-    m->SetValue(node->GetName());
     this->SetBalloonHelpString(node->GetName());
     this->SelectedID = std::string(node->GetID());
     this->InvokeEvent(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, NULL);
@@ -402,6 +407,8 @@ void vtkSlicerNodeSelectorWidget::SetSelected(vtkMRMLNode *node)
     {
     this->SelectedID = std::string("");
     }
+  m->SetValue(this->SelectedID.c_str());
+
 }
 
 //----------------------------------------------------------------------------

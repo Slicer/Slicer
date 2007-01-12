@@ -129,8 +129,12 @@ public:
 //ETX
 
   // Description:
-  // reflect the state of the mrml scene in the menu
+  // Reflect the state of the mrml scene in the menu
   void UpdateMenu();
+
+  // Description:
+  // Remove all menu entries
+  void ClearMenu();
 
   void ProcessNewNodeCommand(const char *className, const char *nodeName);
   void ProcessCommand(char *slectedId);
