@@ -178,8 +178,24 @@ int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
       {
       vtkPolyDataReader *reader = vtkPolyDataReader::New();
       reader->SetFileName(fullName.c_str());
-      reader->Update();
-      modelNode->SetAndObservePolyData(reader->GetOutput());
+      if (!reader->IsFilePolyData())
+        {
+        vtkErrorMacro("File " << fullName.c_str() << " is not polydata, cannot be read with this reader");
+        result = 0;
+        }
+      else
+        {
+        reader->Update();
+        if (reader->GetOutput() == NULL)
+          {
+          vtkErrorMacro("Unable to read file " << fullName.c_str());
+          result = 0;
+          }
+        else
+          {
+          modelNode->SetAndObservePolyData(reader->GetOutput());
+          }
+        }
       reader->Delete();
       }  
     else if ( extention == std::string(".orig") ||
