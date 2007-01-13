@@ -53,6 +53,13 @@ inline bool
 NameIsSharedLibrary(const char* name)
 {
   std::string extension = itksys::DynamicLoader::LibExtension();
+
+#ifdef __APPLE__
+  // possible bug: CMake generated build file on the Mac makes
+  // libraries with a .dylib extension.  kwsys guesses the extension
+  // should be ".so"
+  extension = ".dylib";
+#endif
   
   std::string sname = name;
   if ( sname.rfind(extension) == sname.size() - extension.size() )
