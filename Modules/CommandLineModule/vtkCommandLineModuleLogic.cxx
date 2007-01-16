@@ -348,12 +348,15 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
       
       if (hasFlag)
         {
-        if ((*pit).GetTag() != "boolean" && (*pit).GetTag() != "image"
-            && (*pit).GetTag() != "point" && (*pit).GetTag() != "geometry")
+        if ((*pit).GetTag() != "boolean"
+            && (*pit).GetTag() != "file" && (*pit).GetTag() != "directory"
+            && (*pit).GetTag() != "image" && (*pit).GetTag() != "point"
+            && (*pit).GetTag() != "geometry")
           {
           // simple parameter, write flag and value
           commandLineAsString.push_back(prefix + flag);
           commandLineAsString.push_back((*pit).GetDefault());
+          continue;
           }
         if ((*pit).GetTag() == "boolean")
           {
@@ -362,6 +365,17 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
             {
             commandLineAsString.push_back(prefix + flag);
             }
+          continue;
+          }
+        if ((*pit).GetTag() == "file" || (*pit).GetTag() == "directory")
+          {
+          // Only write out the flag if a filename/directory was specified
+          if ((*pit).GetDefault() != "")
+            {
+            commandLineAsString.push_back(prefix + flag);
+            commandLineAsString.push_back((*pit).GetDefault());
+            }
+          continue;
           }
         if ((*pit).GetTag() == "image" || (*pit).GetTag() == "geometry")
           {
@@ -381,6 +395,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
             commandLineAsString.push_back(prefix + flag);
             commandLineAsString.push_back( (*id2fn).second );
             }
+          continue;
           }
         if ((*pit).GetTag() == "point")
           {
@@ -430,6 +445,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
                         << std::endl;
               }
             }
+          continue;
           }
         }
       }
