@@ -73,7 +73,7 @@ vtkSlicerNodeSelectorWidget::vtkSlicerNodeSelectorWidget()
   this->NewNodeEnabled = 0;
   this->NoneEnabled = 0;
   this->ShowHidden = 0;
-  this->ParentClassesEnabled = 1;
+  this->ChildClassesEnabled = 1;
   this->MRMLScene      = NULL;
   this->MRMLCallbackCommand = vtkCallbackCommand::New();
   this->MRMLCallbackCommand->SetClientData( reinterpret_cast<void *> (this) );
@@ -122,12 +122,12 @@ bool vtkSlicerNodeSelectorWidget::CheckNodeClass(vtkMRMLNode *node)
   for (int c=0; c < this->GetNumberOfNodeClasses(); c++)
     {
     const char *className = this->GetNodeClass(c);
-    if (this->GetParentClassesEnabled() && node->IsA(className))
+    if (this->GetChildClassesEnabled() && node->IsA(className))
       {
       return true;
       }
 
-    if (!this->GetParentClassesEnabled() && !strcmp(node->GetClassName(), className))
+    if (!this->GetChildClassesEnabled() && !strcmp(node->GetClassName(), className))
       {
       return true;
       }
@@ -261,7 +261,7 @@ void vtkSlicerNodeSelectorWidget::UpdateMenu()
           continue;
           }
 
-        if (!this->GetParentClassesEnabled() && strcmp(node->GetClassName(), className) != 0)
+        if (!this->GetChildClassesEnabled() && strcmp(node->GetClassName(), className) != 0)
           {
           continue;
           }
