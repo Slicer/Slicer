@@ -73,6 +73,7 @@ vtkSlicerNodeSelectorWidget::vtkSlicerNodeSelectorWidget()
   this->NewNodeEnabled = 0;
   this->NoneEnabled = 0;
   this->ShowHidden = 0;
+  this->SubClassesEnabled = 1;
   this->MRMLScene      = NULL;
   this->MRMLCallbackCommand = vtkCallbackCommand::New();
   this->MRMLCallbackCommand->SetClientData( reinterpret_cast<void *> (this) );
@@ -121,7 +122,12 @@ bool vtkSlicerNodeSelectorWidget::CheckNodeClass(vtkMRMLNode *node)
   for (int c=0; c < this->GetNumberOfNodeClasses(); c++)
     {
     const char *className = this->GetNodeClass(c);
-    if (node->IsA(className))
+    if (this->GetSubClassesEnabled() && node->IsA(className))
+      {
+      return true;
+      }
+
+    if (!this->GetSubClassesEnabled() && !strcmp(node->GetClassName(), className))
       {
       return true;
       }
@@ -255,9 +261,10 @@ void vtkSlicerNodeSelectorWidget::UpdateMenu()
           continue;
           }
 
-      if (!strcmp(this->GetWidgetName(), "DisplayVolumeSelector") ) {
-        std::cerr << "here\n";
-      }
+        if (!this->GetSubClassesEnabled() && strcmp(node->GetClassName(), className) != 0)
+          {
+          continue;
+          }
 
         // If there is a Attribute Name-Value  specified, then only include nodes that
         // match both the NodeClass and Attribute
@@ -401,14 +408,14 @@ void vtkSlicerNodeSelectorWidget::SetSelected(vtkMRMLNode *node)
     // new value, set it and notify observers
     this->SetBalloonHelpString(node->GetName());
     this->SelectedID = std::string(node->GetID());
+    m->SetValue(node->GetName());
     this->InvokeEvent(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, NULL);
     }
   else 
     {
     this->SelectedID = std::string("");
+    m->SetValue("");
     }
-  m->SetValue(this->SelectedID.c_str());
-
 }
 
 //----------------------------------------------------------------------------
