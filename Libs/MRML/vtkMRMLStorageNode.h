@@ -20,8 +20,8 @@
 
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
+#include "vtkMRMLScene.h"
 
-class vtkImageData;
 
 class VTK_MRML_EXPORT vtkMRMLStorageNode : public vtkMRMLNode
 {
@@ -62,6 +62,10 @@ class VTK_MRML_EXPORT vtkMRMLStorageNode : public vtkMRMLNode
   // A file name or one name in a series
   vtkSetStringMacro(FileName);
   vtkGetStringMacro(FileName);
+
+  // Description:
+  // Propagate Progress Event generated in ReadData
+  virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
 
 protected:
   vtkMRMLStorageNode();

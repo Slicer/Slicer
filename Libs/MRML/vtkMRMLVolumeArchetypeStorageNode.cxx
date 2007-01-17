@@ -17,6 +17,7 @@ Version:   $Revision: 1.6 $
 #include <sstream>
 
 #include "vtkObjectFactory.h"
+#include "vtkCallbackCommand.h"
 #include "vtkImageChangeInformation.h"
 #include "vtkMRMLVolumeArchetypeStorageNode.h"
 #include "vtkMRMLVolumeNode.h"
@@ -155,6 +156,8 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
     reader = vtkITKArchetypeImageSeriesVectorReader::New();
     }
 
+  reader->AddObserver( vtkCommand::ProgressEvent,  this->MRMLCallbackCommand);
+
   if (volNode->GetImageData()) 
     {
     volNode->SetAndObserveImageData (NULL);
@@ -197,6 +200,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
     catch (vtkstd::exception &e)
     {
     vtkErrorMacro("vtkMRMLVolumeArchetypeStorageNode: Cannot read file");
+    reader->RemoveObservers( vtkCommand::ProgressEvent,  this->MRMLCallbackCommand);
     reader->Delete();
     return 0;
     }
@@ -219,6 +223,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
   if (ici->GetOutput() == NULL)
     {
     vtkErrorMacro("vtkMRMLVolumeArchetypeStorageNode: Cannot read file");
+    reader->RemoveObservers( vtkCommand::ProgressEvent,  this->MRMLCallbackCommand);
     reader->Delete();
     ici->Delete();
     return 0;
@@ -235,6 +240,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
     }
   volNode->SetRASToIJKMatrix(mat);
 
+  reader->RemoveObservers( vtkCommand::ProgressEvent,  this->MRMLCallbackCommand);
   reader->Delete();
   ici->Delete();
 

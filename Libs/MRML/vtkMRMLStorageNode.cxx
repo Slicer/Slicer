@@ -17,6 +17,7 @@ Version:   $Revision: 1.2 $
 #include <sstream>
 
 #include "vtkObjectFactory.h"
+#include "vtkCommand.h"
 #include "vtkMRMLStorageNode.h"
 #include "vtkMRMLScene.h"
 
@@ -88,3 +89,10 @@ void vtkMRMLStorageNode::PrintSelf(ostream& os, vtkIndent indent)
     (this->FileName ? this->FileName : "(none)") << "\n";
 }
 
+void vtkMRMLStorageNode::ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData )
+{
+  if (event ==  vtkCommand::ProgressEvent) 
+    {
+    this->InvokeEvent ( vtkCommand::ProgressEvent );
+    }
+}
