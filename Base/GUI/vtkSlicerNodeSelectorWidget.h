@@ -109,11 +109,11 @@ public:
   vtkSetMacro(ShowHidden, int);
 
   // Description:
-  // Specifies whether or not display sub-classes of a specified class
+  // Specifies whether or not display super-classes of a specified class
   // Default: true
-  vtkBooleanMacro(SubClassesEnabled, int);
-  vtkGetMacro(SubClassesEnabled, int);
-  vtkSetMacro(SubClassesEnabled, int);
+  vtkBooleanMacro(ParentClassesEnabled, int);
+  vtkGetMacro(ParentClassesEnabled, int);
+  vtkSetMacro(ParentClassesEnabled, int);
 
 
   // Description
@@ -176,7 +176,7 @@ protected:
 
   int ShowHidden;
 
-  int SubClassesEnabled;
+  int ParentClassesEnabled;
 
   vtkMRMLScene       *MRMLScene;
 
