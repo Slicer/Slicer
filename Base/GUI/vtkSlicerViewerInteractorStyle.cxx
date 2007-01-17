@@ -112,7 +112,7 @@ void vtkSlicerViewerInteractorStyle::OnLeftButtonDown()
     }
   
   // get the scene's mouse interaction mode
-  int mouseInteractionMode = -1;
+  int mouseInteractionMode = vtkMRMLSelectionNode::MouseTransform;
   
   if ( this->GetCameraNode() != NULL )
     {
@@ -125,6 +125,7 @@ void vtkSlicerViewerInteractorStyle::OnLeftButtonDown()
       selnode = NULL;
       }
     }
+  
   
   
   if (this->Interactor->GetShiftKey()) 
