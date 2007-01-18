@@ -42,6 +42,12 @@ Version:   $Revision: 1.2 $
 #include <algorithm>
 #include <set>
 
+#ifdef _WIN32
+#else
+#include <sys/types.h>
+#include <unistd.h>
+#endif
+
 struct DigitsToCharacters
 {
   char operator() (char in)
@@ -98,7 +104,43 @@ vtkCommandLineModuleLogic
                              bool isCommandLineModule) const
 {
   std::string fname = name;
+  std::string pid;
+  std::ostringstream pidString;
 
+  // Constructing a temporary filename from a node involves:
+  //
+  // 1. If the consumer of the file can communicate directly with the
+  // MRML scene, then the node is encoded as slicer:%p/%p where the
+  // first pointer is the address of the scene which contains the node
+  // and the second pointer is the pointer to the node.
+  //
+  // 2. If the consumer of the file cannot communicate directly with
+  // the MRML scene, then a real temporary filename is constructed.
+  // The filename will point to the Temporary directory defined for
+  // Slicer. THe filename will be unique to the process (multiple
+  // running instances of slicer will not collide).  The filename
+  // will be unique to the node in the process (the same node will be
+  // encoded to the same filename every time within that running
+  // instance of Slicer).  This last point is an optimization to
+  // minimize the number of times a file is written when running a
+  // module.  However, if we change the execution model such that more
+  // than one module can run at the same time within the same Slicer
+  // process, then this encoding will need to be changed to be unique
+  // per module execution.
+  //
+
+  
+  // Encode process id into a string.  To avoid confusing the
+  // Archetype reader, convert the numbers in pid to characters [0-9]->[A-J]
+#ifdef _WIN32
+  pidString << GetCurrentProcessId();
+#else
+  pidString << getpid();
+#endif
+  pid = pidString.str();
+  std::transform(pid.begin(), pid.end(), pid.begin(), DigitsToCharacters());
+
+  
   if (tag == "image")
     {
     if (isCommandLineModule || (type != "scalar" && type != "label"))
@@ -111,7 +153,8 @@ vtkCommandLineModuleLogic
       std::transform(fname.begin(), fname.end(),
                      fname.begin(), DigitsToCharacters());
       
-      fname = this->TemporaryDirectory + "/" + fname + ".nrrd";
+      fname = this->TemporaryDirectory + "/" + fname
+        + "_" + pid + ".nrrd";
       }
     else
       {
@@ -141,7 +184,8 @@ vtkCommandLineModuleLogic
     std::transform(fname.begin(), fname.end(),
                    fname.begin(), DigitsToCharacters());
     
-    fname = this->TemporaryDirectory + "/" + fname + ".vtk";
+    fname = this->TemporaryDirectory + "/" + fname
+      + "_" + pid + ".vtk";
     }
 
     
