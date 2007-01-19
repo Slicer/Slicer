@@ -20,6 +20,8 @@
 #include "vtkKWLoadSaveDialog.h"
 #include "vtkKWEntry.h"
 #include "vtkKWEntryWithLabel.h"
+#include "vtkKWMessageDialog.h"
+#include "vtkKWProgressGauge.h"
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerVolumesGUI );
@@ -228,10 +230,19 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents ( vtkObject *caller,
          }
 
       vtkSlicerVolumesLogic* volumeLogic = this->Logic;
+      volumeLogic->AddObserver(vtkCommand::ProgressEvent,  this->LogicCallbackCommand);
+
       vtkMRMLVolumeNode *volumeNode = volumeLogic->AddArchetypeVolume( fileName, centered, labelMap, this->NameEntry->GetWidget()->GetValue() );
       if ( volumeNode == NULL ) 
         {
-        //TODO: generate an error...
+        vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+        dialog->SetParent ( this->LoadFrame->GetFrame() );
+        dialog->SetStyleToMessage();
+        std::string msg = std::string("Unable to read volume file ") + std::string(fileName);
+        dialog->SetText(msg.c_str());
+        dialog->Create ( );
+        dialog->Invoke();
+        dialog->Delete();
         }
       else
         {
@@ -241,7 +252,9 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents ( vtkObject *caller,
         this->ApplicationLogic->PropagateVolumeSelection();
         this->VolumeDisplayWidget->SetVolumeNode(volumeNode);               
         }
+      volumeLogic->RemoveObservers(vtkCommand::ProgressEvent,  this->GUICallbackCommand);
       }
+
       return;
     }
     else if (this->SaveVolumeButton == vtkKWLoadSaveButton::SafeDownCast(caller) && event == vtkKWPushButton::InvokedEvent )
@@ -271,7 +284,11 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents ( vtkObject *caller,
 void vtkSlicerVolumesGUI::ProcessLogicEvents ( vtkObject *caller,
                                                unsigned long event, void *callData )
 {
-    // Fill in
+  if (event ==  vtkCommand::ProgressEvent) 
+    {
+    double progress = *((double *)callData);
+    this->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetValue(100*progress);
+    }
 }
 
 //---------------------------------------------------------------------------

@@ -125,6 +125,9 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerLogic : public vtkObject
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
       unsigned long /*event*/, void * /*callData*/ ) { };
 
+  virtual void ProcessLogicEvents( vtkObject * /*caller*/, 
+      unsigned long /*event*/, void * /*callData*/ ) { };
+
   virtual void ProcessLogicEvents() {};
 
   // Description:

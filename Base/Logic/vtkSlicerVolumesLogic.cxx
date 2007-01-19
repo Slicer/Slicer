@@ -56,11 +56,21 @@ vtkSlicerVolumesLogic::~vtkSlicerVolumesLogic()
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerVolumesLogic::ProcessMRMLEvents(vtkObject * /*caller*/, 
-                                            unsigned long /*event*/, 
-                                            void * /*callData*/)
+void vtkSlicerVolumesLogic::ProcessMRMLEvents(vtkObject *caller, 
+                                            unsigned long event, 
+                                            void *callData)
 {
-  // TODO: implement if needed
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerVolumesLogic::ProcessLogicEvents(vtkObject *caller, 
+                                            unsigned long event, 
+                                            void *callData)
+{
+  if (event ==  vtkCommand::ProgressEvent) 
+    {
+    this->InvokeEvent ( vtkCommand::ProgressEvent,callData );
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -88,9 +98,12 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (char* filename, in
   
   storageNode1->SetFileName(filename);
   storageNode1->SetCenterImage(centerImage);
+  storageNode1->AddObserver(vtkCommand::ProgressEvent,  this->LogicCallbackCommand);
+
   storageNode2->SetFileName(filename);
   storageNode2->SetCenterImage(centerImage);
-  
+  storageNode2->AddObserver(vtkCommand::ProgressEvent,  this->LogicCallbackCommand);
+
   // Try to read first with NRRD reader (look if file is a dwi or a tensor)
   cout<<"TEST DWI: "<< storageNode1->ReadData(dwiNode)<<endl;
 
@@ -132,7 +145,10 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (char* filename, in
     volumeNode = vectorNode;
     storageNode = storageNode2;
     }
-  
+
+  storageNode1->RemoveObservers(vtkCommand::ProgressEvent,  this->LogicCallbackCommand);
+  storageNode2->RemoveObservers(vtkCommand::ProgressEvent,  this->LogicCallbackCommand);
+
   if (volumeNode != NULL)
     {
     if (volname == NULL)
@@ -211,6 +227,8 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (char* filename, in
 
   storageNode->SetFileName(filename);
   storageNode->SetCenterImage(centerImage);
+  storageNode->AddObserver(vtkCommand::ProgressEvent,  this->LogicCallbackCommand);
+
   if (storageNode->ReadData(scalarNode))
     {
     scalarNode->SetLabelMap(labelMap);
@@ -221,7 +239,9 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (char* filename, in
     // cannot read scalar data, try vector
     volumeNode = vectorNode;
     }
-  
+
+  storageNode->RemoveObservers(vtkCommand::ProgressEvent,  this->LogicCallbackCommand);
+
   if (volumeNode != NULL)
     {
     if (volname == NULL)

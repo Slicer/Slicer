@@ -54,10 +54,16 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerVolumesLogic : public vtkSlicerLogic
   int SaveArchetypeVolume (char* filename, vtkMRMLVolumeNode *volumeNode);
 
   // Description:
-  // Update logic state when MRML scene chenges
+  // Update MRML events
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
                                   unsigned long /*event*/, 
                                   void * /*callData*/ );    
+  // Description:
+  // Update logic events
+  virtual void ProcessLogicEvents ( vtkObject * /*caller*/, 
+                                  unsigned long /*event*/, 
+                                  void * /*callData*/ );  
+
 protected:
   vtkSlicerVolumesLogic();
   virtual ~vtkSlicerVolumesLogic();

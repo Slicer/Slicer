@@ -112,7 +112,7 @@ vtkSlicerLogic::LogicCallback(vtkObject *caller,
   vtkDebugWithObjectMacro(self, "In vtkSlicerLogic LogicCallback");
 
   self->SetInLogicCallbackFlag(1);
-  self->ProcessLogicEvents();
+  self->ProcessLogicEvents(caller, eid, callData);
   self->SetInLogicCallbackFlag(0);
 }
 

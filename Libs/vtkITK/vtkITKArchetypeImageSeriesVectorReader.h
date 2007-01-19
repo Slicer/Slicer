@@ -17,6 +17,8 @@
 
 #include "vtkITKArchetypeImageSeriesReader.h"
 
+#include "itkImageFileReader.h"
+
 class VTK_ITK_EXPORT vtkITKArchetypeImageSeriesVectorReader : public vtkITKArchetypeImageSeriesReader
 {
  public:
@@ -29,7 +31,9 @@ class VTK_ITK_EXPORT vtkITKArchetypeImageSeriesVectorReader : public vtkITKArche
   ~vtkITKArchetypeImageSeriesVectorReader();
 
   void ExecuteData(vtkDataObject *data);
-
+//BTX
+  static void ReadProgressCallback(itk::ProcessObject* obj,const itk::ProgressEvent&, void* data);
+//ETX
   // private:
 };
 

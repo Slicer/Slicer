@@ -7,8 +7,8 @@ or http://www.slicer.org/copyright/copyright.txt for details.
 
 Program:   3D Slicer
 Module:    $RCSfile: vtkMRMLStorageNode.cxx,v $
-Date:      $Date: 2006/03/17 15:10:10 $
-Version:   $Revision: 1.2 $
+Date:      $Date: 2007/01/17 20:09:05 $
+Version:   $Revision: 1.1.1.1 $
 
 =========================================================================auto=*/
 
@@ -93,6 +93,6 @@ void vtkMRMLStorageNode::ProcessMRMLEvents ( vtkObject *caller, unsigned long ev
 {
   if (event ==  vtkCommand::ProgressEvent) 
     {
-    this->InvokeEvent ( vtkCommand::ProgressEvent );
+    this->InvokeEvent ( vtkCommand::ProgressEvent,callData );
     }
 }

@@ -18,6 +18,7 @@
 #include "vtkObjectFactory.h"
 #include "vtkPointData.h"
 #include "vtkDataArray.h"
+#include <vtkCommand.h>
 
 #include "itkArchetypeSeriesFileNames.h"
 #include "itkImage.h"
@@ -77,7 +78,10 @@ void vtkITKArchetypeImageSeriesVectorReader::ExecuteData(vtkDataObject *output)
       typedef itk::ImageSource<image##typeN> FilterType; \
       FilterType::Pointer filter; \
       itk::ImageSeriesReader<image##typeN>::Pointer reader##typeN = \
-            itk::ImageSeriesReader<image##typeN>::New(); \
+        itk::ImageSeriesReader<image##typeN>::New(); \
+        itk::CStyleCommand::Pointer pcl=itk::CStyleCommand::New(); \
+        pcl->SetCallback((itk::CStyleCommand::FunctionPointer)&ReadProgressCallback); \
+      pcl->SetClientData(this); \
       reader##typeN->SetFileNames(this->FileNames); \
       reader##typeN->ReleaseDataFlagOn(); \
       if (this->UseNativeCoordinateOrientation) \
@@ -188,4 +192,12 @@ void vtkITKArchetypeImageSeriesVectorReader::ExecuteData(vtkDataObject *output)
           vtkErrorMacro(<< "UpdateFromFile: Unsupported Number Of Components: 3 != " << this->GetNumberOfComponents());
     }
     }
+}
+
+
+void vtkITKArchetypeImageSeriesVectorReader::ReadProgressCallback(itk::ProcessObject* obj,const itk::ProgressEvent&,void* data)
+{
+  vtkITKArchetypeImageSeriesVectorReader* me=reinterpret_cast<vtkITKArchetypeImageSeriesVectorReader*>(data);
+  me->Progress=obj->GetProgress();
+  me->InvokeEvent(vtkCommand::ProgressEvent,&me->Progress);
 }

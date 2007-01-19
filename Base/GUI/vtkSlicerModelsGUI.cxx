@@ -11,6 +11,7 @@
 
 #include "vtkKWFrameWithLabel.h"
 #include "vtkKWMenuButton.h"
+#include "vtkKWMessageDialog.h"
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerModelsGUI );
@@ -142,10 +143,17 @@ void vtkSlicerModelsGUI::ProcessGUIEvents ( vtkObject *caller,
       vtkMRMLModelNode *modelNode = modelLogic->AddModel( fileName );
       if ( modelNode == NULL ) 
         {
-        // TODO: generate an error...
+        vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+        dialog->SetParent ( this->UIPanel->GetPageWidget ( "Models" ) );
+        dialog->SetStyleToMessage();
+        std::string msg = std::string("Unable to read model file ") + std::string(fileName);
+        dialog->SetText(msg.c_str());
+        dialog->Create ( );
+        dialog->Invoke();
+        dialog->Delete();
+
         vtkErrorMacro("Unable to read model file " << fileName);
         // reset the file browse button text
-        this->LoadModelButton->SetText ("Load Model");
         }
       else
         {
@@ -153,6 +161,7 @@ void vtkSlicerModelsGUI::ProcessGUIEvents ( vtkObject *caller,
         
         }
       }
+      this->LoadModelButton->SetText ("Load Model");
     return;
     }
     else if (filebrowse == this->LoadModelDirectoryButton  && event == vtkKWPushButton::InvokedEvent )
@@ -165,7 +174,14 @@ void vtkSlicerModelsGUI::ProcessGUIEvents ( vtkObject *caller,
       
       if (modelLogic->AddModels( fileName, ".vtk") == 0)
         {
-        // TODO: generate an error...
+        vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+        dialog->SetParent ( this->UIPanel->GetPageWidget ( "Models" ) );
+        dialog->SetStyleToMessage();
+        std::string msg = std::string("Unable to read models directory ") + std::string(fileName);
+        dialog->SetText(msg.c_str());
+        dialog->Create ( );
+        dialog->Invoke();
+        dialog->Delete();
         }
       else
         {
@@ -173,6 +189,7 @@ void vtkSlicerModelsGUI::ProcessGUIEvents ( vtkObject *caller,
         
         }
       }
+    this->LoadModelDirectoryButton->SetText ("Load Model Directory");
     return;
     }
   else if (filebrowse == this->SaveModelButton  && event == vtkKWPushButton::InvokedEvent )
@@ -207,6 +224,15 @@ void vtkSlicerModelsGUI::ProcessGUIEvents ( vtkObject *caller,
       vtkSlicerModelsLogic* modelLogic = this->Logic;
       if (!modelLogic->AddScalar(fileName, modelNode))
         {
+        vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+        dialog->SetParent ( this->UIPanel->GetPageWidget ( "Models" ) );
+        dialog->SetStyleToMessage();
+        std::string msg = std::string("Unable to read scalars file ") + std::string(fileName);
+        dialog->SetText(msg.c_str());
+        dialog->Create ( );
+        dialog->Invoke();
+        dialog->Delete();
+
         vtkErrorMacro("Error loading scalar overlay file " << fileName);
         this->LoadScalarsButton->SetText ("Load FreeSurfer Overlay");
         }
