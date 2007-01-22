@@ -60,7 +60,7 @@ vtkMRMLSelectionNode::vtkMRMLSelectionNode()
 
   //--- by default, the application begins with the mouse
   //--- mode set to twiddle the 3D view.
-  this->SetMouseInteractionMode ( this->MouseTransform );
+  this->MouseInteractionMode = this->MouseTransform;
 }
 
 //----------------------------------------------------------------------------
