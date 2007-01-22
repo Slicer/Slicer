@@ -39,13 +39,16 @@ vtkSlicerGUILayout::vtkSlicerGUILayout ( )
   this->DefaultSlicerWindowHeight = 0;
 
   // set the slice windows to be a default size
-  this->SetDefaultSliceGUIFrameHeight ( 350 );
-  this->SetDefaultSliceGUIFrameWidth ( 300);
+  this->DefaultSliceGUIFrameHeight = 350;
+  this->DefaultSliceGUIFrameWidth = 300;
 
   this->DefaultTopFrameHeight = 0;
   this->DefaultModuleControlPanelHeight = 0;
   this->DefaultSlicesControlFrameHeight = 0;
   this->DefaultViewControlFrameHeight = 0;
+  this->Default3DViewerHeight = 0;
+  this->DefaultMainViewerWidth = 0;
+  this->SliceViewerMinDim = 10;
 }
 
 
