@@ -1045,8 +1045,12 @@ int Slicer3_main(int argc, char *argv[])
     slicerApp->Script ("namespace eval slicer3 set QueryAtlasGUI %s", name);
 #endif
 
-    name = appGUI->GetViewerWidget()->GetTclName();
-    slicerApp->Script ("namespace eval slicer3 set ViewerWidget %s", name);
+    
+    if ( appGUI->GetViewerWidget() )
+      {
+      name = appGUI->GetViewerWidget()->GetTclName();
+      slicerApp->Script ("namespace eval slicer3 set ViewerWidget %s", name);
+      }
 
     slicerApp->Script ("namespace eval slicer3 set ApplicationLogic [$::slicer3::ApplicationGUI GetApplicationLogic]");
     slicerApp->Script ("namespace eval slicer3 set MRMLScene [$::slicer3::ApplicationLogic GetMRMLScene]");
