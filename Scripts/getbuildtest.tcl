@@ -250,6 +250,7 @@ if { $::GETBUILDTEST(version-patch) == "" } {
 cd $::SLICER_BUILD
 runcmd $::CMAKE \
         -G$::GENERATOR \
+        -DMAKECOMMAND:STRING=$::MAKE \
         -DITK_DIR:FILEPATH=$ITK_BINARY_PATH \
         -DKWWidgets_DIR:FILEPATH=$SLICER_LIB/KWWidgets-build \
         -DTEEM_DIR:FILEPATH=$SLICER_LIB/teem-build \
