@@ -68,6 +68,8 @@ vtkSlicerViewerWidget::vtkSlicerViewerWidget ( )
 
   this->ViewNode = NULL;
   this->BoxAxisActor = NULL;
+
+  this->SceneClosing = false;
 }
 
 
