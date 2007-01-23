@@ -585,7 +585,9 @@ void vtkMRMLColorTableNode::SetType(int type)
     if (this->GetLookupTable() == NULL)
       {
       vtkDebugMacro("vtkMRMLColorTableNode::SetType Creating a new lookup table (was null) of type " << this->GetTypeAsString() << "\n");
-      this->SetLookupTable(vtkLookupTable::New());
+      vtkLookupTable *table = vtkLookupTable::New();
+      this->SetLookupTable(table);
+      table->Delete();
       // as a default, set the table range to 255
       this->GetLookupTable()->SetTableRange(0, 255);
       }

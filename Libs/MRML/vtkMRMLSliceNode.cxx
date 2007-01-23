@@ -95,6 +95,7 @@ vtkMRMLSliceNode::~vtkMRMLSliceNode()
     {
     this->XYToRAS->Delete();
     }
+  this->SetLayoutName(NULL);
 }
 
 

@@ -52,6 +52,7 @@ vtkScriptedModuleGUI::~vtkScriptedModuleGUI()
 
   this->SetLogic (NULL);
   this->SetScriptedModuleNode (NULL);
+  this->SetModuleName (NULL);
 }
 
 

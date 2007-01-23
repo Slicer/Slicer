@@ -62,6 +62,10 @@ vtkSlicerIGTDemoLogic::~vtkSlicerIGTDemoLogic()
     {
         this->LocatorMatrix->Delete();
     }
+    if (this->LandmarkTransformMatrix)
+    {
+        this->LandmarkTransformMatrix->Delete();
+    }
     if (this->SourceLandmarks)
     {
         this->SourceLandmarks->Delete();

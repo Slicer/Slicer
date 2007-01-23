@@ -65,7 +65,7 @@ vtkSlicerComponentGUI::~vtkSlicerComponentGUI ( )
     }
   
   // and set null pointers.
-  this->GUIName = NULL;
+  this->SetGUIName (NULL);
   this->SetApplication ( NULL );
 }
 
