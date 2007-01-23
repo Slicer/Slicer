@@ -171,7 +171,7 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
     this->LoadCommandLineModules = 1;
    
     // configure the application before creating
-    this->SetName ( "3D Slicer Version 3.0 Alpha" );
+    this->SetName ( "3D Slicer Version 3.0 Beta" );
 
 #ifdef _WIN32
     vtkKWWin32RegistryHelper *regHelper = 
