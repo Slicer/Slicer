@@ -20,81 +20,202 @@
 #   valgrind -v --gen-suppressions=all --suppressions=./CMake/Slicer3ValgrindSuppressions.supp --suppressions=../Slicer3-lib/VTK/CMake/VTKValgrindSuppressions.supp --suppressions=../Slicer3-lib/KWWidgets/CMake/KWWidgetsValgrindSuppressions.supp --suppressions=../Slicer3-lib/Insight/CMake/InsightValgrind.supp --suppressions=../Slicer3-lib/Insight/Utilities/gdcm/CMake/gdcmValgrind.supp --suppressions=../Slicer3-lib/Insight/Utilities/vxl/config/valgrind.supp ../Slicer3-build/bin/Slicer3-real | & tee /tmp/slicerval
 #
 #
+# Memory leak suppressions
+#
 {
-   <insert a suppression name here>
+   <XimOpen>
+   Memcheck:Leak
+   fun:malloc
+   fun:_XimOpenIM
+   fun:TkpOpenDisplay
+}
+{
+   <X locale modifiers>
+   Memcheck:Leak
+   fun:malloc
+   fun:_XlcDefaultMapModifiers
+   fun:XSetLocaleModifiers
+}
+{
+   <X11 open>
+   Memcheck:Leak
+   fun:malloc
+   obj:/usr/lib64/libX11.so.6.2.0
+   obj:/usr/lib64/libX11.so.6.2.0
+   fun:_X11TransConnectDisplay
+   fun:XOpenDisplay
+}
+{
+   <kw registry>
+   Memcheck:Leak
+   fun:_Znam
+   fun:_ZN27vtkKWMostRecentFilesManager14SetRegistryKeyEPKc
+   fun:_ZN27vtkKWMostRecentFilesManagerC1Ev
+}
+{
+   <kw script ext>
+   Memcheck:Leak
+   fun:_Znam
+   fun:_ZN15vtkKWWindowBase18SetScriptExtensionEPKc
+   fun:_ZN15vtkKWWindowBaseC2Ev
+}
+{
+   <X local>
+   Memcheck:Leak
+   fun:malloc
+   obj:/usr/lib64/libX11.so.6.2.0
+   obj:/usr/lib64/libX11.so.6.2.0
+   fun:_XlcCreateLC
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:_XlcCurrentLC
+   fun:XSetLocaleModifiers
+}
+{
+   <kww allocate>
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZN9__gnu_cxx13new_allocatorIP15vtkKWWindowBaseE8allocateEmPKv
+   fun:_ZNSt12_Vector_baseIP15vtkKWWindowBaseSaIS1_EE11_M_allocateEm
+   fun:_ZNSt6vectorIP15vtkKWWindowBaseSaIS1_EE13_M_insert_auxEN9__gnu_cxx17__normal_iteratorIPS1_S3_EERKS1_
+   fun:_ZNSt6vectorIP15vtkKWWindowBaseSaIS1_EE9push_backERKS1_
+   fun:_ZN16vtkKWApplication9AddWindowEP15vtkKWWindowBase
+}
+{
+   <X Open>
+   Memcheck:Leak
+   fun:malloc
+   fun:_XimOpenIM
+   fun:TkpOpenDisplay
+   fun:CreateTopLevelWindow
+}
+{
+   <vtk vector text>
+   Memcheck:Leak
+   fun:_Znam
+   fun:_ZN13vtkVectorText7SetTextEPKc
+}
+{
+   <X locale>
+   Memcheck:Leak
+   fun:malloc
+   fun:_XlcCreateLC
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:_XlcCurrentLC
+   fun:XSetLocaleModifiers
+}
+{
+   <kww window class>
+   Memcheck:Leak
+   fun:_Znam
+   fun:_ZN13vtkKWTopLevel14SetWindowClassEPKc
+   fun:_ZN15vtkKWWindowBaseC2Ev
+   fun:_ZN11vtkKWWindowC2Ev
+}
+{
+   <X open display>
+   Memcheck:Leak
+   fun:malloc
+   fun:_X11TransConnectDisplay
+   fun:XOpenDisplay
+}
+{
+   <X intersect region>
+   Memcheck:Leak
+   fun:malloc
+   obj:/usr/lib64/libX11.so.6.2.0
+   fun:XIntersectRegion
+   fun:ImgPhotoSetSize
+   fun:Tk_PhotoSetSize
+   fun:_ZN16vtkKWTkUtilities11UpdatePhotoEP10Tcl_InterpPKcPKhiiimi
+}
+{
+   <kww text>
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZN9vtkKWTextC1Ev
+   fun:_ZN9vtkKWText3NewEv
+   fun:_ZN23vtkKWTextWithScrollbarsC1Ev
+}
+{
+   <vtk text mapper>
+   Memcheck:Leak
+   fun:_Znam
+   fun:_ZN13vtkTextMapper8SetInputEPKc
+   fun:_ZN19vtkCornerAnnotation11TextReplaceEP13vtkImageActorP30vtkImageMapToWindowLevelColors
+}
+{
+   <kww recent files>
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZN27vtkKWMostRecentFilesManagerC1Ev
+   fun:_ZN27vtkKWMostRecentFilesManager3NewEv
+   fun:_ZN15vtkKWWindowBaseC2Ev
+}
+#
+#
+# general access supressions
+#
+{
+   <tcl delete hash>
    Memcheck:Value8
    fun:Tcl_DeleteHashEntry
 }
 {
-   <insert a suppression name here>
+   <tcl compare keys>
    Memcheck:Cond
    fun:CompareArrayKeys
 }
 {
-   <insert a suppression name here>
+   <tcl create hash>
    Memcheck:Value8
    fun:Tcl_CreateHashEntry
 }
 {
-   <insert a suppression name here>
+   <kww background>
    Memcheck:Cond
    fun:_ZN17vtkKWRenderWidget26SetRendererBackgroundColorEddd
 }
 {
-   <insert a suppression name here>
+   <tk frame>
    Memcheck:Cond
    fun:FrameWidgetObjCmd
 }
 {
-   <insert a suppression name here>
+   <X11 write>
    Memcheck:Param
    writev(vector[...])
    fun:writev
    obj:/usr/lib64/libX11.so.6.2.0
 }
 {
-   <insert a suppression name here>
+   <X11 pthread>
    Memcheck:Param
    write(buf)
    obj:/lib64/libpthread-2.4.so
    obj:/usr/lib64/libX11.so.6.2.0
 }
 {
-   <insert a suppression name here>
+   <tk create frame>
    Memcheck:Cond
    fun:CreateFrame
 }
 {
-   <insert a suppression name here>
-   Memcheck:Cond
-   fun:Tcl_CreateHashEntry
-}
-{
-   <insert a suppression name here>
-   Memcheck:Cond
-   fun:CreateFrame
-   fun:Tk_FrameObjCmd
-   fun:TclEvalObjvInternal
-   fun:Tcl_EvalEx
-   fun:Tcl_Eval
-   fun:Tcl_GlobalEval
-   fun:_ZN16vtkKWTkUtilities28EvaluateSimpleStringInternalEP10Tcl_InterpP9vtkObjectPKc
-}
-{
-   <insert a suppression name here>
+   <strtod >
    Memcheck:Cond
    fun:____strtod_l_internal
    fun:Tcl_GetDouble
 }
 {
-   <insert a suppression name here>
+   <strlen>
    Memcheck:Cond
    fun:strlen
    fun:_ZNSsaSEPKc
    fun:_ZN19vtkKWOptionDataBase8AddEntryEPKcS1_S1_
 }
 {
-   <insert a suppression name here>
+   <tcl evalex>
    Memcheck:Cond
    fun:Tcl_EvalEx
    fun:Tcl_Eval
@@ -102,7 +223,7 @@
    fun:_ZN16vtkKWTkUtilities28EvaluateSimpleStringInternalEP10Tcl_InterpP9vtkObjectPKc
 }
 {
-   <insert a suppression name here>
+   <printf>
    Memcheck:Cond
    fun:__mpn_extract_double
    fun:__printf_fp
@@ -112,18 +233,7 @@
    fun:_ZN19vtkKWOptionDataBase17AddEntryAsDouble3EPKcS1_ddd
 }
 {
-   <insert a suppression name here>
-   Memcheck:Cond
-   fun:CreateFrame
-   fun:Tk_ToplevelObjCmd
-   fun:TclEvalObjvInternal
-   fun:Tcl_EvalEx
-   fun:Tcl_Eval
-   fun:Tcl_GlobalEval
-   fun:_ZN16vtkKWTkUtilities28EvaluateSimpleStringInternalEP10Tcl_InterpP9vtkObjectPKc
-}
-{
-   <insert a suppression name here>
+   <printf>
    Memcheck:Cond
    fun:__printf_fp
    fun:vfprintf
@@ -132,7 +242,7 @@
    fun:_ZN19vtkKWOptionDataBase17AddEntryAsDouble3EPKcS1_ddd
 }
 {
-   <insert a suppression name here>
+   <printf>
    Memcheck:Cond
    fun:strnlen
    fun:mbsnrtowcs
@@ -148,7 +258,7 @@
    fun:Tcl_EvalEx
 }
 {
-   <insert a suppression name here>
+   <printf>
    Memcheck:Cond
    fun:__gconv_transform_utf8_internal
    fun:mbsnrtowcs
@@ -164,7 +274,7 @@
    fun:Tcl_EvalEx
 }
 {
-   <insert a suppression name here>
+   <printf>
    Memcheck:Cond
    fun:mbsnrtowcs
    fun:vfprintf
@@ -180,65 +290,19 @@
    fun:Tcl_Eval
 }
 {
-   <insert a suppression name here>
-   Memcheck:Cond
-   fun:FrameWidgetObjCmd
-   fun:TclEvalObjvInternal
-   fun:Tcl_EvalEx
-   fun:Tcl_Eval
-   fun:Tcl_GlobalEval
-   fun:_ZN16vtkKWTkUtilities14SetOptionColorEP10Tcl_InterpPKcS3_ddd
-}
-{
-   <insert a suppression name here>
-   Memcheck:Param
-   writev(vector[...])
-   fun:writev
-   obj:/usr/lib64/libX11.so.6.2.0
-   fun:_XSend
-   obj:/usr/lib64/libX11.so.6.2.0
-   fun:XPutImage
-   fun:DitherInstance
-   fun:ImgPhotoConfigureInstance
-   fun:ImgPhotoGet
-   fun:Tk_GetImage
-   fun:ConfigureImage
-   fun:CanvasWidgetCmd
-   fun:TclEvalObjvInternal
-}
-{
-   <insert a suppression name here>
+   <slicer set color>
    Memcheck:Cond
    fun:_ZN14vtkSlicerColor8SetColorEPdddd
    fun:_ZN14vtkSlicerColor8SetColorEPdS0_
 }
 {
-   <insert a suppression name here>
+   <slicer set color palette>
    Memcheck:Cond
    fun:_ZN14vtkSlicerColor8SetColorEPdddd
    fun:_ZN14vtkSlicerColor25DefineDefaultColorPaletteEv
 }
 {
-   <insert a suppression name here>
-   Memcheck:Cond
-   fun:CreateFrame
-   fun:TkCreateFrame
-   fun:Initialize
-   fun:Tk_Init
-   fun:_ZN16vtkKWApplication13InitializeTclEP10Tcl_InterpPSo
-}
-{
-   <insert a suppression name here>
-   Memcheck:Cond
-   fun:CreateFrame
-   fun:TkCreateFrame
-   fun:Initialize
-   fun:Tk_Init
-   fun:_ZN16vtkKWApplication13InitializeTclEP10Tcl_InterpPSo
-}
-
-{
-   <insert a suppression name here>
+   <socket sendto>
    Memcheck:Param
    socketcall.sendto(msg)
    fun:send
@@ -256,98 +320,14 @@
 }
 
 {
-   <insert a suppression name here>
+   <X11 strcpy>
    Memcheck:Addr8
    fun:__strcpy_chk
    obj:/usr/lib64/libX11.so.6.2.0
    obj:/usr/lib64/libX11.so.6.2.0
-   fun:_XlcCreateLocaleDataBase
-   obj:/usr/lib64/libX11.so.6.2.0
-   obj:/usr/lib64/libX11.so.6.2.0
-   fun:_XlcCreateLC
-   fun:_XlcUtf8Loader
-   fun:_XOpenLC
-   fun:_XlcCurrentLC
-   fun:XSetLocaleModifiers
-   fun:TkpOpenDisplay
 }
 {
-   <insert a suppression name here>
-   Memcheck:Addr8
-   fun:__strcpy_chk
-   obj:/usr/lib64/libX11.so.6.2.0
-   obj:/usr/lib64/libX11.so.6.2.0
-   fun:_XlcCreateLocaleDataBase
-   obj:/usr/lib64/libX11.so.6.2.0
-   obj:/usr/lib64/libX11.so.6.2.0
-   fun:_XlcCreateLC
-   fun:_XlcUtf8Loader
-   fun:_XOpenLC
-   fun:_XlcCurrentLC
-   fun:XSetLocaleModifiers
-   fun:TkpOpenDisplay
-}
-{
-   <insert a suppression name here>
-   Memcheck:Addr8
-   fun:__strcpy_chk
-   obj:/usr/lib64/libX11.so.6.2.0
-   obj:/usr/lib64/libX11.so.6.2.0
-   fun:_XlcCreateLocaleDataBase
-   obj:/usr/lib64/libX11.so.6.2.0
-   obj:/usr/lib64/libX11.so.6.2.0
-   fun:_XlcCreateLC
-   fun:_XlcUtf8Loader
-   fun:_XOpenLC
-   fun:_XlcCurrentLC
-   fun:XSetLocaleModifiers
-   fun:TkpOpenDisplay
-}
-{
-   <insert a suppression name here>
-   Memcheck:Cond
-   fun:_ZN14vtkSlicerColor8SetColorEPdddd
-   fun:_ZN14vtkSlicerColor25DefineDefaultColorPaletteEv
-   fun:_ZN14vtkSlicerColorC1Ev
-   fun:_ZN14vtkSlicerColor3NewEv
-   fun:_ZN14vtkSlicerThemeC1Ev
-   fun:_ZN14vtkSlicerTheme3NewEv
-   fun:_ZN20vtkSlicerApplicationC1Ev
-   fun:_ZN20vtkSlicerApplication3NewEv
-   fun:_Z12Slicer3_mainiPPc
-   fun:__libc_start_main
-}
-{
-   <insert a suppression name here>
-   Memcheck:Cond
-   fun:_ZN14vtkSlicerColor8SetColorEPdddd
-   fun:_ZN14vtkSlicerColorC1Ev
-   fun:_ZN14vtkSlicerColor3NewEv
-   fun:_ZN14vtkSlicerThemeC1Ev
-   fun:_ZN14vtkSlicerTheme3NewEv
-   fun:_ZN20vtkSlicerApplicationC1Ev
-   fun:_ZN20vtkSlicerApplication3NewEv
-   fun:_Z12Slicer3_mainiPPc
-   fun:__libc_start_main
-}
-{
-   <insert a suppression name here>
-   Memcheck:Cond
-   fun:FrameWidgetObjCmd
-   fun:TclEvalObjvInternal
-   fun:TclExecuteByteCode
-   fun:TclCompEvalObj
-   fun:TclObjInterpProc
-   fun:TclEvalObjvInternal
-   fun:TclExecuteByteCode
-   fun:TclCompEvalObj
-   fun:TclObjInterpProc
-   fun:TclEvalObjvInternal
-   fun:Tcl_EvalEx
-   fun:Tcl_Eval
-}
-{
-   <insert a suppression name here>
+   <tcl parse braces>
    Memcheck:Value8
    fun:Tcl_ParseBraces
    fun:Tcl_ParseCommand
@@ -357,7 +337,7 @@
    fun:_ZN16vtkKWTkUtilities28EvaluateSimpleStringInternalEP10Tcl_InterpP9vtkObjectPKc
 }
 {
-   <insert a suppression name here>
+   <tcl parse tokens>
    Memcheck:Value8
    fun:ParseTokens
    fun:Tcl_ParseCommand
@@ -373,55 +353,27 @@
    fun:Tcl_GlobalEval
 }
 {
-   <insert a suppression name here>
+   <tcl register literal>
    Memcheck:Value8
    fun:TclRegisterLiteral
    fun:TclCompileScript
-   fun:TclSetByteCodeFromAny
-   fun:SetByteCodeFromAny
-   fun:TclCompEvalObj
-   fun:Tcl_EvalObjEx
-   fun:Tcl_CatchObjCmd
-   fun:TclEvalObjvInternal
-   fun:Tcl_EvalEx
-   fun:Tcl_Eval
-   fun:Tcl_GlobalEval
-   fun:_ZN16vtkKWTkUtilities28EvaluateSimpleStringInternalEP10Tcl_InterpP9vtkObjectPKc
 }
 {
-   <insert a suppression name here>
+   <tcl add literal>
    Memcheck:Value8
    fun:AddLocalLiteralEntry
    fun:TclRegisterLiteral
    fun:TclCompileScript
    fun:TclSetByteCodeFromAny
-   fun:SetByteCodeFromAny
-   fun:TclCompEvalObj
-   fun:Tcl_EvalObjEx
-   fun:Tcl_CatchObjCmd
-   fun:TclEvalObjvInternal
-   fun:Tcl_EvalEx
-   fun:Tcl_Eval
-   fun:Tcl_GlobalEval
 }
 {
-   <insert a suppression name here>
+   <tcl register literal>
    Memcheck:Cond
    fun:TclRegisterLiteral
    fun:TclCompileScript
-   fun:TclSetByteCodeFromAny
-   fun:SetByteCodeFromAny
-   fun:TclCompEvalObj
-   fun:Tcl_EvalObjEx
-   fun:Tcl_CatchObjCmd
-   fun:TclEvalObjvInternal
-   fun:Tcl_EvalEx
-   fun:Tcl_Eval
-   fun:Tcl_GlobalEval
-   fun:_ZN16vtkKWTkUtilities28EvaluateSimpleStringInternalEP10Tcl_InterpP9vtkObjectPKc
 }
 {
-   <insert a suppression name here>
+   <printf>
    Memcheck:Cond
    fun:strnlen
    fun:vfprintf
@@ -437,7 +389,7 @@
    fun:Tcl_Eval
 }
 {
-   <insert a suppression name here>
+   <tcl new string>
    Memcheck:Cond
    fun:Tcl_NewStringObj
    fun:Tcl_AddObjErrorInfo
@@ -453,7 +405,7 @@
    fun:_ZN16vtkKWTkUtilities28EvaluateSimpleStringInternalEP10Tcl_InterpP9vtkObjectPKc
 }
 {
-   <insert a suppression name here>
+   <tcl release literal>
    Memcheck:Value8
    fun:TclReleaseLiteral
    fun:TclCleanupByteCode
@@ -465,33 +417,7 @@
    fun:_ZN16vtkKWTkUtilities28EvaluateSimpleStringInternalEP10Tcl_InterpP9vtkObjectPKc
 }
 {
-   <insert a suppression name here>
-   Memcheck:Value8
-   fun:Tcl_CreateHashEntry
-   fun:Tk_GetColorByValue
-   fun:TkpGetShadows
-   fun:Tk_3DVerticalBevel
-   fun:Tk_Draw3DRectangle
-   fun:DisplayMenu
-   fun:TclServiceIdle
-   fun:Tcl_DoOneEvent
-   fun:MapFrame
-   fun:TclServiceIdle
-   fun:Tcl_DoOneEvent
-   fun:MapFrame
-}
-{
-   <insert a suppression name here>
-   Memcheck:Cond
-   fun:FrameWidgetObjCmd
-   fun:TclEvalObjvInternal
-   fun:Tcl_EvalEx
-   fun:Tcl_Eval
-   fun:Tcl_GlobalEval
-   fun:_ZN16vtkKWTkUtilities28EvaluateSimpleStringInternalEP10Tcl_InterpP9vtkObjectPKc
-}
-{
-   <insert a suppression name here>
+   <X11 pthread write>
    Memcheck:Param
    write(buf)
    obj:/lib64/libpthread-2.4.so
@@ -508,20 +434,7 @@
    fun:Tk_HandleEvent
 }
 {
-   <insert a suppression name here>
-   Memcheck:Cond
-   fun:_ZN14vtkSlicerColor8SetColorEPdddd
-   fun:_ZN14vtkSlicerColor22DefineSlicerColorNamesEv
-   fun:_ZN14vtkSlicerColor3NewEv
-   fun:_ZN14vtkSlicerThemeC1Ev
-   fun:_ZN14vtkSlicerTheme3NewEv
-   fun:_ZN20vtkSlicerApplicationC1Ev
-   fun:_ZN20vtkSlicerApplication3NewEv
-   fun:_Z12Slicer3_mainiPPc
-   fun:__libc_start_main
-}
-{
-   <insert a suppression name here>
+   <printf_fp>
    Memcheck:Cond
    fun:__printf_fp
    fun:vfprintf
@@ -533,12 +446,4 @@
    fun:_ZN16vtkKWApplication8SetThemeEP10vtkKWTheme
    fun:_Z12Slicer3_mainiPPc
    fun:__libc_start_main
-}
-{
-   <insert a suppression name here>
-   Memcheck:Cond
-   fun:Tcl_EvalEx
-   fun:Tcl_Eval
-   fun:Tcl_GlobalEval
-   fun:_ZN16vtkKWTkUtilities28EvaluateSimpleStringInternalEP10Tcl_InterpP9vtkObjectPKc
 }
