@@ -179,7 +179,12 @@ void vtkMRMLModelNode::UpdateScene(vtkMRMLScene *scene)
   if (mnode) 
     {
     vtkMRMLStorageNode *node  = dynamic_cast < vtkMRMLStorageNode *>(mnode);
-    node->ReadData(this);
+    if (node->ReadData(this) == 0)
+      {
+      scene->SetErrorCode(1);
+      std::string msg = std::string("Error reading model file ") + std::string(node->GetFileName());
+      scene->SetErrorMessage(msg);
+      }
     this->SetAndObservePolyData(this->GetPolyData());
     this->SetAndObserveDisplayNodeID(this->GetDisplayNodeID());
     }

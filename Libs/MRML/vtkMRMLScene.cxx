@@ -312,6 +312,9 @@ const char* vtkMRMLScene::GetTagByClassName(const char *className)
 //------------------------------------------------------------------------------
 int vtkMRMLScene::Connect()
 {
+  this->SetErrorCode(0);
+  this->SetErrorMessage(std::string(""));
+
   bool undoFlag = this->GetUndoFlag();
   
   this->SetUndoOff();
@@ -414,6 +417,9 @@ int vtkMRMLScene::Connect()
 //------------------------------------------------------------------------------
 int vtkMRMLScene::Import()
 {
+  this->SetErrorCode(0);
+  this->SetErrorMessage(std::string(""));
+
   bool undoFlag = this->GetUndoFlag();
   int n;
 

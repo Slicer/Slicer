@@ -300,6 +300,17 @@ void vtkSlicerApplicationGUI::ProcessLoadSceneCommand()
           this->LoadSceneDialog->SaveLastPathToRegistry("OpenPath");
           }
 
+        if (  this->GetMRMLScene()->GetErrorCode() != 0 ) 
+          {
+          vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+          dialog->SetParent (  this->MainSlicerWindow );
+          dialog->SetStyleToMessage();
+          std::string msg = this->GetMRMLScene()->GetErrorMessage();
+          dialog->SetText(msg.c_str());
+          dialog->Create ( );
+          dialog->Invoke();
+          dialog->Delete();
+          }
       }
     return;
 }
@@ -328,6 +339,17 @@ void vtkSlicerApplicationGUI::ProcessImportSceneCommand()
           this->LoadSceneDialog->SaveLastPathToRegistry("OpenPath");
           }
 
+        if (  this->GetMRMLScene()->GetErrorCode() != 0 ) 
+          {
+          vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+          dialog->SetParent (  this->MainSlicerWindow );
+          dialog->SetStyleToMessage();
+          std::string msg = this->GetMRMLScene()->GetErrorMessage();
+          dialog->SetText(msg.c_str());
+          dialog->Create ( );
+          dialog->Invoke();
+          dialog->Delete();
+          }
       }
     return;
 }
