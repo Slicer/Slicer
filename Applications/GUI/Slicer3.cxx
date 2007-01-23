@@ -838,6 +838,7 @@ int Slicer3_main(int argc, char *argv[])
     emsEvents->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
     emsEvents->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
     emSegmentLogic->SetAndObserveMRMLSceneEvents(scene, emsEvents);
+    emsEvents->Delete();
     emSegmentLogic->SetApplicationLogic(appLogic);
 
     emSegmentGUI->SetAndObserveMRMLScene (scene);
