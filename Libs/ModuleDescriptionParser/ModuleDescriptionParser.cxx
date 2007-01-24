@@ -508,17 +508,47 @@ startElement(void *userData, const char *element, const char **attrs)
       }
     parameter = new ModuleParameter;
     int attrCount = XML_GetSpecifiedAttributeCount(ps->Parser);
-    if (attrCount == 2 && 
-        (strcmp(attrs[0], "multiple") == 0) &&
-        (strcmp(attrs[1], "true") == 0))
+
+    // Parse attribute pairs
+    parameter->SetCPPType("std::string");
+    parameter->SetType("scalar");
+    for (int attr=0; attr < (attrCount / 2); attr++)
       {
-      parameter->SetMultiple(attrs[1]);
-      parameter->SetCPPType("std::vector<std::string>");
-      parameter->SetArgType("std::string");
-      }
-    else
-      {
-      parameter->SetCPPType("std::string");
+      if ((strcmp(attrs[2*attr], "multiple") == 0))
+        {
+        if ((strcmp(attrs[2*attr+1], "true") == 0) ||
+            (strcmp(attrs[2*attr+1], "false") == 0))
+          {
+          parameter->SetMultiple(attrs[2*attr+1]);
+          if (strcmp(attrs[2*attr+1], "true") == 0)
+            {
+            parameter->SetCPPType("std::vector<std::string>");
+            parameter->SetArgType("std::string");
+            }
+          }
+        else
+          {
+          std::string error("ModuleDescriptionParser Error: \"" + std::string(attrs[2*attr+1]) + "\" is not a valid argument for the attribute \"multiple\". Only \"true\" and \"false\" are accepted.");
+          ps->ErrorDescription = error;
+          ps->ErrorLine = XML_GetCurrentLineNumber(ps->Parser);
+          ps->Error = true;
+          ps->OpenTags.push(name);
+          return;
+          }
+        }
+      else if ((strcmp(attrs[2*attr], "fileExtensions") == 0))
+        {
+        parameter->SetFileExtensionsAsString(attrs[2*attr+1]);
+        }
+      else
+        {
+        std::string error("ModuleDescriptionParser Error: \"" + std::string(attrs[2*attr]) + "\" is not a valid attribute for \"" + name + "\". Only \"multiple\" and \"fileExtensions\" are accepted.");
+          ps->ErrorDescription = error;
+          ps->ErrorLine = XML_GetCurrentLineNumber(ps->Parser);
+          ps->Error = true;
+          ps->OpenTags.push(name);
+          return;
+          }
       }
     parameter->SetTag(name);
     }
@@ -574,6 +604,11 @@ startElement(void *userData, const char *element, const char **attrs)
             (strcmp(attrs[2*attr+1], "false") == 0))
           {
           parameter->SetMultiple(attrs[2*attr+1]);
+          if (strcmp(attrs[2*attr+1], "true") == 0)
+            {
+            parameter->SetCPPType("std::vector<std::string>");
+            parameter->SetArgType("std::string");
+            }
           }
         else
           {
@@ -597,13 +632,26 @@ startElement(void *userData, const char *element, const char **attrs)
           }
         else
           {
-          std::string error("ModuleDescriptionParser Error: \"" + std::string(attrs[2*attr+1]) + "\" is not a valid image type. Only \"scalar\", \"label\", \"vector\", \"diffusion-weighted\" and \"tensor\" are accepted.");
+          std::string error("ModuleDescriptionParser Error: \"" + std::string(attrs[2*attr+1]) + "\" is not a valid value for the attribute \"" + "type" + "\". Only \"scalar\", \"label\" , \"tensor\", \"diffusion-weighted\"  and \"vector\" are accepted.");
           ps->ErrorDescription = error;
           ps->ErrorLine = XML_GetCurrentLineNumber(ps->Parser);
           ps->Error = true;
           ps->OpenTags.push(name);
           return;
           }
+        }
+      else if ((strcmp(attrs[2*attr], "fileExtensions") == 0))
+        {
+        parameter->SetFileExtensionsAsString(attrs[2*attr+1]);
+        }
+      else
+        {
+        std::string error("ModuleDescriptionParser Error: \"" + std::string(attrs[2*attr]) + "\" is not a valid attribute for \"" + name + "\". Only \"multiple\", \"fileExtensions\" and \"type\" are accepted.");
+          ps->ErrorDescription = error;
+          ps->ErrorLine = XML_GetCurrentLineNumber(ps->Parser);
+          ps->Error = true;
+          ps->OpenTags.push(name);
+          return;
         }
       }
     parameter->SetTag(name);
@@ -621,31 +669,49 @@ startElement(void *userData, const char *element, const char **attrs)
       }
     parameter = new ModuleParameter;
     int attrCount = XML_GetSpecifiedAttributeCount(ps->Parser);
-    if (attrCount == 2 && 
-        (strcmp(attrs[0], "multiple") == 0) &&
-        (strcmp(attrs[1], "true") == 0))
+
+    // Parse attribute pairs
+    parameter->SetCPPType("std::string");
+    parameter->SetType("scalar");
+    for (int attr=0; attr < (attrCount / 2); attr++)
       {
-      parameter->SetMultiple(attrs[1]);
-      parameter->SetCPPType("std::vector<std::string>");
-      parameter->SetArgType("std::string");
-      }
-    else
-      {
-      parameter->SetCPPType("std::string");
+      if ((strcmp(attrs[2*attr], "multiple") == 0))
+        {
+        if ((strcmp(attrs[2*attr+1], "true") == 0) ||
+            (strcmp(attrs[2*attr+1], "false") == 0))
+          {
+          parameter->SetMultiple(attrs[2*attr+1]);
+          if (strcmp(attrs[2*attr+1], "true") == 0)
+            {
+            parameter->SetCPPType("std::vector<std::string>");
+            parameter->SetArgType("std::string");
+            }
+          }
+        else
+          {
+          std::string error("ModuleDescriptionParser Error: \"" + std::string(attrs[2*attr+1]) + "\" is not a valid argument for the attribute \"multiple\". Only \"true\" and \"false\" are accepted.");
+          ps->ErrorDescription = error;
+          ps->ErrorLine = XML_GetCurrentLineNumber(ps->Parser);
+          ps->Error = true;
+          ps->OpenTags.push(name);
+          return;
+          }
+        }
+      else if ((strcmp(attrs[2*attr], "fileExtensions") == 0))
+        {
+        parameter->SetFileExtensionsAsString(attrs[2*attr+1]);
+        }
+      else
+        {
+        std::string error("ModuleDescriptionParser Error: \"" + std::string(attrs[2*attr]) + "\" is not a valid attribute for \"" + name + "\". Only \"multiple\" and \"fileExtensions\" are accepted.");
+          ps->ErrorDescription = error;
+          ps->ErrorLine = XML_GetCurrentLineNumber(ps->Parser);
+          ps->Error = true;
+          ps->OpenTags.push(name);
+          return;
+          }
       }
     parameter->SetTag(name);
-    }
-  else
-    {
-    // Warn if an unknown parameter type is found
-    if (ps->Depth == 2 && name != "label" && name != "description")
-      {
-      std::string warning("ModuleDescriptionParser Warning: <" + name + "> is an unknown parameter tag");
-      std::cout << warning << " at line " << XML_GetCurrentLineNumber(ps->Parser) << std::endl;
-      std::cout << "ModuleDescriptionParser Warning: <title> " << ps->CurrentDescription.GetTitle() << std::endl;
-      ps->OpenTags.push(name);
-      return;
-      }
     }
   ps->CurrentParameter = parameter;
   ps->CurrentGroup = group;

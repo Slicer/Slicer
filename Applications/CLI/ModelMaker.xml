@@ -16,7 +16,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
 <parameters>
     <label>IO</label>
     <description>Input/output parameters</description>
-    <image label="label">
+    <image type="label">
       <name>InputVolume</name>
       <label>Input Volume</label>
       <channel>input</channel>

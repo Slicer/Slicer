@@ -13,6 +13,23 @@
 ==========================================================================*/
 #include "ModuleParameter.h"
 
+void
+splitString (const std::string &text,
+             const std::string &separators,
+             std::vector<std::string> &words)
+{
+  int n = text.length();
+  int start, stop;
+  start = text.find_first_not_of(separators);
+  while ((start >= 0) && (start < n))
+    {
+    stop = text.find_first_of(separators, start);
+    if ((stop < 0) || (stop > n)) stop = n;
+    words.push_back(text.substr(start, stop - start));
+    start = text.find_first_not_of(separators, stop+1);
+    }
+}
+
 ModuleParameter::ModuleParameter(const ModuleParameter& parameter)
 {
   this->Tag = parameter.Tag;
@@ -33,6 +50,8 @@ ModuleParameter::ModuleParameter(const ModuleParameter& parameter)
   this->Channel = parameter.Channel;
   this->Index = parameter.Index;
   this->Multiple = parameter.Multiple;
+  this->FileExtensionsAsString = parameter.FileExtensionsAsString;
+  this->FileExtensions = parameter.FileExtensions;
   this->Elements = parameter.Elements;
   this->CoordinateSystem = parameter.CoordinateSystem;
 }
@@ -57,8 +76,19 @@ void ModuleParameter::operator=(const ModuleParameter& parameter)
   this->Channel = parameter.Channel;
   this->Index = parameter.Index;
   this->Multiple = parameter.Multiple;
+  this->FileExtensionsAsString = parameter.FileExtensionsAsString;
+  this->FileExtensions = parameter.FileExtensions;
   this->Elements = parameter.Elements;
   this->CoordinateSystem = parameter.CoordinateSystem;
+}
+
+const std::vector<std::string> &
+ModuleParameter::GetFileExtensions() const
+{
+  std::vector<std::string> extensions;
+  splitString(this->FileExtensionsAsString, std::string(","), extensions);
+  this->FileExtensions = extensions;
+  return this->FileExtensions;
 }
 
 std::ostream & operator<<(std::ostream &os, const ModuleParameter &parameter)
@@ -94,6 +124,19 @@ std::ostream & operator<<(std::ostream &os, const ModuleParameter &parameter)
   os << "      " << "Channel: " << parameter.GetChannel() << std::endl;
   os << "      " << "Index: " << parameter.GetIndex() << std::endl;
   os << "      " << "Multiple: " << parameter.GetMultiple() << std::endl;
+  os << "      " << "FileExtensionsAsString: " << parameter.GetFileExtensionsAsString() << std::endl;
+  os << "      " << "FileExtensions: ";
+  std::vector<std::string>::const_iterator fit;  
+  for (fit = parameter.GetFileExtensions().begin();
+       fit != parameter.GetFileExtensions().end(); ++fit)
+    {
+    if (fit != parameter.GetFileExtensions().begin())
+      {
+      os << ", ";
+      }
+    os << *fit;
+    }
+  os << std::endl;
   os << "      " << "CoordinateSystem: " << parameter.GetCoordinateSystem() << std::endl;
   return os;
 }
