@@ -101,6 +101,7 @@ vtkCommandLineModuleLogic
 ::ConstructTemporaryFileName(const std::string& tag,
                              const std::string& type,
                              const std::string& name,
+                             const std::vector<std::string>& extensions,
                              bool isCommandLineModule) const
 {
   std::string fname = name;
@@ -154,7 +155,14 @@ vtkCommandLineModuleLogic
                      fname.begin(), DigitsToCharacters());
       
       fname = this->TemporaryDirectory + "/" + fname
-        + "_" + pid + ".nrrd";
+        + "_" + pid;
+
+      std::string ext = ".nrrd";
+      if (extensions.size() != 0)
+        {
+        ext = extensions[0];
+        }
+      fname = fname + ext;
       }
     else
       {
@@ -185,7 +193,14 @@ vtkCommandLineModuleLogic
                    fname.begin(), DigitsToCharacters());
     
     fname = this->TemporaryDirectory + "/" + fname
-      + "_" + pid + ".vtk";
+      + "_" + pid;
+
+    std::string ext = ".vtkp";
+    if (extensions.size() != 0)
+      {
+      ext = extensions[0];
+      }
+    fname = fname + ext;
     }
 
     
@@ -324,6 +339,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
           = this->ConstructTemporaryFileName((*pit).GetTag(),
                                              (*pit).GetType(),
                                              (*pit).GetDefault(),
+                                             (*pit).GetFileExtensions(),
                                              isCommandLine);
 
         filesToDelete.insert(fname);

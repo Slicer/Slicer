@@ -52,9 +52,10 @@ public:
 protected:
   //BTX
   std::string ConstructTemporaryFileName(const std::string& tag,
-                                         const std::string& type,
-                                         const std::string& name,
-                                         bool isCommandLineModule) const;
+                                     const std::string& type,
+                                     const std::string& name,
+                                     const std::vector<std::string>& extensions,
+                                     bool isCommandLineModule) const;
   //ETX
 
   // The method that runs the command line module

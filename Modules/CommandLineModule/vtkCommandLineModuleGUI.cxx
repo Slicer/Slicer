@@ -754,6 +754,42 @@ void vtkCommandLineModuleGUI::ProcessMRMLEvents ( vtkObject *caller,
 //---------------------------------------------------------------------------
 void vtkCommandLineModuleGUI::BuildGUI ( ) 
 {
+  std::map<std::string, std::string> defaultExtensionMap;
+  defaultExtensionMap[".png"] = "Portable Network Graphics";
+  defaultExtensionMap[".jpg"] = "JPEG";
+  defaultExtensionMap[".jpeg"] = "JPEG";
+  defaultExtensionMap[".bmp"] = "BMP";
+  defaultExtensionMap[".tiff"] = "TIFF";
+  defaultExtensionMap[".tif"] = "TIFF";
+  defaultExtensionMap[".gipl"] = "GIPL";
+
+  defaultExtensionMap[".dcm"] = "DICOM";
+  defaultExtensionMap[".dicom"] = "DICOM";
+  defaultExtensionMap[".nhdr"] = "NRRD";
+  defaultExtensionMap[".nrrd"] = "NRRD";
+  defaultExtensionMap[".mhd"] = "META";
+  defaultExtensionMap[".mha"] = "META";
+  defaultExtensionMap[".mask"] = "Brains2 Mask";
+  defaultExtensionMap[".hdr"] = "Analyze or NIFTI";
+  defaultExtensionMap[".hdr.gz"] = "Analyze or NIFTI";
+  defaultExtensionMap[".nii"] = "NIFTI";
+  defaultExtensionMap[".nii.gz"] = "NIFTI";
+
+  defaultExtensionMap[".pic"] = "Bio-Rad";
+  defaultExtensionMap[".lsm"] = "LSM (Zeiss)";
+  defaultExtensionMap[".spr"] = "STD/SPR (Stimulate)";
+
+  defaultExtensionMap[".vtk"] = "VTK (Legacy)";
+  defaultExtensionMap[".vtkp"] = "VTK PolyData";
+  defaultExtensionMap[".vtki"] = "VTK ImageData";
+  defaultExtensionMap[".stl"] = "Stereolithography";
+
+  defaultExtensionMap[".csv"] = "Comma Separated Value";
+  defaultExtensionMap[".txt"] = "Text Document";
+  defaultExtensionMap[".xml"] = "XML Document";
+  defaultExtensionMap[".html"] = "HTML Document";
+
+  
   std::string title = this->ModuleDescriptionObject.GetTitle();
   
   vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
@@ -1226,6 +1262,37 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
         tparameter->Create();
         tparameter->SetLabelText( (*pit).GetLabel().c_str() );
         tparameter->GetWidget()->GetLoadSaveDialog()->SetInitialFileName( (*pit).GetDefault().c_str() );
+        if ((*pit).GetFileExtensions().size() != 0)
+          {
+          std::string extensionVector;
+          std::string fileTypeString;
+          std::vector<std::string>::const_iterator begIt
+            = (*pit).GetFileExtensions().begin();
+          std::vector<std::string>::const_iterator endIt
+            = (*pit).GetFileExtensions().end();
+          std::vector<std::string>::const_iterator it;
+          std::map<std::string, std::string>::iterator mit;
+
+          for (it = begIt; it != endIt; ++it)
+            {
+            mit = defaultExtensionMap.find( *it );
+            if (mit != defaultExtensionMap.end())
+              {
+              fileTypeString = (*mit).second;
+              }
+            else
+              {
+              fileTypeString = "";
+              }
+            extensionVector.append("{");
+            extensionVector.append( "{" + fileTypeString + "} {" + *it + "}" );
+            extensionVector.append("} "); // note the space!
+            }
+          extensionVector.append("{{All files} {*}} ");
+          
+          tparameter->GetWidget()->GetLoadSaveDialog()
+            ->SetFileTypes( extensionVector.c_str() );
+          }
         parameter = tparameter;
         }
       else if ((*pit).GetTag() == "string-enumeration"
