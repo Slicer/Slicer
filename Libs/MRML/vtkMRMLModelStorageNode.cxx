@@ -26,14 +26,19 @@ Version:   $Revision: 1.2 $
 
 #include "vtkBYUReader.h" 
 #include "vtkPolyDataReader.h"
+#include "vtkXMLPolyDataReader.h"
 #include "vtkSTLReader.h"
 //TODO: read in a free surfer file
 #include "vtkFSSurfaceReader.h"
 #include "vtkFSSurfaceWFileReader.h"
 #include "vtkFSSurfaceScalarReader.h"
 #include "vtkPolyDataWriter.h"
+#include "vtkXMLPolyDataWriter.h"
+#include "vtkSTLWriter.h"
 
 #include "vtkPointData.h"
+
+#include "itksys/SystemTools.hxx"
 
 // Initialize static member that controls resampling -- 
 // old comment: "This offset will be changed to 0.5 from 0.0 per 2/8/2002 Slicer 
@@ -146,15 +151,15 @@ int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
     {
     vtkErrorMacro("vtkMRMLModelNode: no file extension specified");
     }
-  std::string extention = name.substr(loc);
+  std::string extension = name.substr(loc);
 
   // don't delete the polydata if reading in a scalar overlay
-  if ( extention != std::string(".w") &&
-       extention != std::string(".thickness") &&
-       extention != std::string(".curv") &&
-       extention != std::string(".avg_curv") &&
-       extention != std::string(".sulc") &&
-       extention != std::string(".area"))
+  if ( extension != std::string(".w") &&
+       extension != std::string(".thickness") &&
+       extension != std::string(".curv") &&
+       extension != std::string(".avg_curv") &&
+       extension != std::string(".sulc") &&
+       extension != std::string(".area"))
     {
     if (modelNode->GetPolyData()) 
       {
@@ -166,7 +171,7 @@ int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
   int result = 1;
   try
     {
-    if ( extention == std::string(".g")) 
+    if ( extension == std::string(".g")) 
       {
       vtkBYUReader *reader = vtkBYUReader::New();
       reader->SetGeometryFileName(fullName.c_str());
@@ -174,7 +179,7 @@ int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
       modelNode->SetAndObservePolyData(reader->GetOutput());
       reader->Delete();
       }
-    else if (extention == std::string(".vtk")) 
+    else if (extension == std::string(".vtk")) 
       {
       vtkPolyDataReader *reader = vtkPolyDataReader::New();
       reader->SetFileName(fullName.c_str());
@@ -198,12 +203,20 @@ int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
         }
       reader->Delete();
       }  
-    else if ( extention == std::string(".orig") ||
-              extention == std::string(".inflated") ||
-              extention == std::string(".sphere") ||
-              extention == std::string(".white") ||
-              extention == std::string(".smoothwm") ||
-              extention == std::string(".pial") ) 
+    else if (extension == std::string(".vtkp")) 
+      {
+      vtkXMLPolyDataReader *reader = vtkXMLPolyDataReader::New();
+      reader->SetFileName(fullName.c_str());
+      reader->Update();
+      modelNode->SetAndObservePolyData(reader->GetOutput());
+      reader->Delete();
+      }  
+    else if ( extension == std::string(".orig") ||
+              extension == std::string(".inflated") ||
+              extension == std::string(".sphere") ||
+              extension == std::string(".white") ||
+              extension == std::string(".smoothwm") ||
+              extension == std::string(".pial") ) 
       {
       //read in a free surfer file
       // -- create normals and triangle strips also
@@ -222,11 +235,11 @@ int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
       normals->Delete();
       stripper->Delete();
       }
-    else if (extention == std::string(".thickness") ||
-             extention == std::string(".curv") ||
-             extention == std::string(".avg_curv") ||
-             extention == std::string(".sulc") ||
-             extention == std::string(".area"))
+    else if (extension == std::string(".thickness") ||
+             extension == std::string(".curv") ||
+             extension == std::string(".avg_curv") ||
+             extension == std::string(".sulc") ||
+             extension == std::string(".area"))
       {
       // read in a freesurfer scalar overlay
       // does the model node have point data?
@@ -278,7 +291,7 @@ int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
         floatArray->Delete();
         }
       }
-    else if (extention == std::string(".w"))
+    else if (extension == std::string(".w"))
       {
       // read in freesurfer .W file scalar overlay
       // does the model node have point data?
@@ -366,7 +379,7 @@ int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
         vtkErrorMacro("Cannot read scalar overlay file '" << name.c_str() << "', as there are no points in the model " << modelNode->GetID() << " to associate it with.");
         }
       }
-    else if (extention == std::string(".stl")) 
+    else if (extension == std::string(".stl")) 
       {
       vtkSTLReader *reader = vtkSTLReader::New();
       reader->SetFileName(fullName.c_str());
@@ -420,20 +433,60 @@ int vtkMRMLModelStorageNode::WriteData(vtkMRMLNode *refNode)
     return 0;
     }
 
-  vtkPolyDataWriter *writer = vtkPolyDataWriter::New();
-  writer->SetFileName(fullName.c_str());
-  writer->SetInput( modelNode->GetPolyData() );
+  std::string extension = itksys::SystemTools::GetFilenameLastExtension(fullName);
 
   int result = 1;
-  try
+  if (extension == ".vtk")
     {
-    writer->Write();
+    vtkPolyDataWriter *writer = vtkPolyDataWriter::New();
+    writer->SetFileName(fullName.c_str());
+    writer->SetInput( modelNode->GetPolyData() );
+    try
+      {
+      writer->Write();
+      }
+    catch (vtkstd::exception &e)
+      {
+      result = 0;
+      }
+    writer->Delete();    
     }
-  catch (vtkstd::exception &e)
+  else if (extension == ".vtkp")
+    {
+    vtkXMLPolyDataWriter *writer = vtkXMLPolyDataWriter::New();
+    writer->SetFileName(fullName.c_str());
+    writer->SetInput( modelNode->GetPolyData() );
+    try
+      {
+      writer->Write();
+      }
+    catch (vtkstd::exception &e)
+      {
+      result = 0;
+      }
+    writer->Delete();    
+    }
+  else if (extension == ".stl")
+    {
+    vtkSTLWriter *writer = vtkSTLWriter::New();
+    writer->SetFileName(fullName.c_str());
+    writer->SetInput( modelNode->GetPolyData() );
+    try
+      {
+      writer->Write();
+      }
+    catch (vtkstd::exception &e)
+      {
+      result = 0;
+      }
+    writer->Delete();    
+    }
+  else
     {
     result = 0;
+    vtkErrorMacro( << "No file extension recognized: " << fullName.c_str() );
     }
-  writer->Delete();    
+
   
-  return 1;
+  return result;
 }
