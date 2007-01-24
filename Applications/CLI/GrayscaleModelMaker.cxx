@@ -26,7 +26,7 @@ Version:   $Revision$
 #include "vtkReverseSense.h"
 #include "vtkPolyDataNormals.h"
 #include "vtkStripper.h"
-#include "vtkPolyDataWriter.h"
+#include "vtkXMLPolyDataWriter.h"
 #include "vtkImageChangeInformation.h"
 
 #include "vtkPluginFilterWatcher.h"
@@ -79,7 +79,7 @@ int main(int argc, char * argv[])
     vtkTransformPolyDataFilter * transformer = NULL;
     vtkPolyDataNormals *normals = NULL;
     vtkStripper * stripper = NULL;
-    vtkPolyDataWriter * writer = NULL;
+    vtkXMLPolyDataWriter * writer = NULL;
 
     // check for the input file
     FILE * infile;
@@ -283,7 +283,7 @@ int main(int argc, char * argv[])
     
     // but for now we're just going to write it out
     
-    writer = vtkPolyDataWriter::New();
+    writer = vtkXMLPolyDataWriter::New();
     writer->SetInput(stripper->GetOutput());
     writer->SetFileName(OutputGeometry.c_str());
     // TODO: add progress

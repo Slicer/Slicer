@@ -97,7 +97,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
   <parameters>
     <label>File, Directory and Image Parameters</label>
     <description>Parameters that describe files and direcories.</description>
-    <file>
+    <file fileExtensions=".png,.jpg,.jpeg,.bmp,.tif,.tiff,.gipl,.dcm,.dicom,.nhdr,.nrrd,.mhd,.mha,.mask,.hdr,.nii,.nii.gz,.hdr.gz,.pic,.lsm,.spr,.vtk,.vtkp,.vtki,.stl,.csv,.txt,.xml,.html">
       <longflag>file1</longflag>
       <description>An input file</description>
       <label>Input file</label>

@@ -57,14 +57,14 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
      <description>Generate all models that exist within the range Start Label to End Label. If false and an Anatomy Label File is specified, only mnodels which have an entry in the Anatomy Label File will be generated.</description>
      <default>false</default>
    </boolean>
-   <file>
+   <file fileExtensions=".csv">
      <name>AnatomyLabelFile</name>
      <channel>input</channel>
      <label>Anatomy Label File</label>
      <longflag>--anatomyLabelFile</longflag>
      <description>A file containing a comma separted list of anatomy names and label numbers.</description>
      <default></default>
-   <default>NoneSpecified</default>
+   <default></default>
    </file>
    <integer>
      <name>Smooth</name>
