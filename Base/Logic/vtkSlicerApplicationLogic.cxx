@@ -531,8 +531,18 @@ void vtkSlicerApplicationLogic::ProcessModified()
     }
   
   // schedule the next timer
-  vtkKWTkUtilities::CreateTimerHandler(vtkKWApplication::GetMainInterp(),
-                                       100, this, "ProcessModified");
+  if ((*this->InternalModifiedQueue).size() > 0)
+    {
+    // schedule the next timer sooner in case there is stuff in the queue
+    vtkKWTkUtilities::CreateTimerHandler(vtkKWApplication::GetMainInterp(),
+                                         5, this, "ProcessModified");
+    }
+  else
+    {
+    // schedule the next timer for a while later
+    vtkKWTkUtilities::CreateTimerHandler(vtkKWApplication::GetMainInterp(),
+                                         100, this, "ProcessModified");
+    }
 }
 
 void vtkSlicerApplicationLogic::ProcessReadData()
@@ -715,7 +725,17 @@ void vtkSlicerApplicationLogic::ProcessReadData()
     }
   
   // schedule the next timer
-  vtkKWTkUtilities::CreateTimerHandler(vtkKWApplication::GetMainInterp(),
-                                       100, this, "ProcessReadData");
+  if ((*this->InternalReadDataQueue).size() > 0)
+    {
+    // schedule the next timer sooner in case there is stuff in the queue
+    vtkKWTkUtilities::CreateTimerHandler(vtkKWApplication::GetMainInterp(),
+                                         5, this, "ProcessReadData");
+    }
+  else
+    {
+    // schedule the next timer for a while later
+    vtkKWTkUtilities::CreateTimerHandler(vtkKWApplication::GetMainInterp(),
+                                         100, this, "ProcessReadData");
+    }
 }
 
