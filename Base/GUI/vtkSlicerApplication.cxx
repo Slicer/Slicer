@@ -636,14 +636,6 @@ void vtkSlicerApplication::ProcessDisplayMessage()
       {
       vtkSlicerApplication::GetInstance()->GetLogDialog()->GetLogWidget()->AddDebugRecord( record.second.c_str() );
       }
-
-    if (record.first != "")
-      {
-#ifdef _WIN32
-      ::OutputDebugString(record.second.c_str());
-#endif
-      cerr << "[" << record.first.c_str() << "] " << record.second.c_str() << "\n";
-      }
     }
 
   if ((*this->InternalDisplayMessageQueue).size() > 0)
@@ -662,6 +654,11 @@ void vtkSlicerApplication::ProcessDisplayMessage()
 void
 vtkSlicerApplication::WarningMessage(const char* message)
 {
+#ifdef _WIN32
+  ::OutputDebugString(message);
+#endif
+  cerr << message;
+
   this->RequestDisplayMessage("Warning", message);
 }
 
@@ -669,6 +666,11 @@ vtkSlicerApplication::WarningMessage(const char* message)
 void
 vtkSlicerApplication::ErrorMessage(const char* message)
 {
+#ifdef _WIN32
+  ::OutputDebugString(message);
+#endif
+  cerr << message;
+
   this->RequestDisplayMessage("Error", message);
 }
 
@@ -676,6 +678,11 @@ vtkSlicerApplication::ErrorMessage(const char* message)
 void
 vtkSlicerApplication::DebugMessage(const char* message)
 {
+#ifdef _WIN32
+  ::OutputDebugString(message);
+#endif
+  cerr << message;
+
   this->RequestDisplayMessage("Debug", message);
 }
 
@@ -683,6 +690,11 @@ vtkSlicerApplication::DebugMessage(const char* message)
 void
 vtkSlicerApplication::InformationMessage(const char* message)
 {
+#ifdef _WIN32
+  ::OutputDebugString(message);
+#endif
+  cerr << message;
+
   this->RequestDisplayMessage("Information", message);
 }
 
