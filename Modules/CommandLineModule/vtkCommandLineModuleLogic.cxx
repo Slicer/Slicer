@@ -394,6 +394,11 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
         {
         if ((*pit).GetTag() != "boolean"
             && (*pit).GetTag() != "file" && (*pit).GetTag() != "directory"
+            && (*pit).GetTag() != "string"
+            && (*pit).GetTag() != "integer-vector"
+            && (*pit).GetTag() != "float-vector"
+            && (*pit).GetTag() != "double-vector"
+            && (*pit).GetTag() != "string-vector"
             && (*pit).GetTag() != "image" && (*pit).GetTag() != "point"
             && (*pit).GetTag() != "geometry")
           {
@@ -411,9 +416,14 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
             }
           continue;
           }
-        if ((*pit).GetTag() == "file" || (*pit).GetTag() == "directory")
+        if ((*pit).GetTag() == "file" || (*pit).GetTag() == "directory"
+            || (*pit).GetTag() == "string"
+            || (*pit).GetTag() == "integer-vector"
+            || (*pit).GetTag() == "float-vector"
+            || (*pit).GetTag() == "double-vector"
+            || (*pit).GetTag() == "string-vector")
           {
-          // Only write out the flag if a filename/directory was specified
+          // Only write out the flag if value is not empty
           if ((*pit).GetDefault() != "")
             {
             commandLineAsString.push_back(prefix + flag);
@@ -528,11 +538,21 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
         && (*iit).second.GetTag() != "geometry"
         && (*iit).second.GetTag() != "file"
         && (*iit).second.GetTag() != "directory"
-        && (*iit).second.GetTag() != "string")
+        && (*iit).second.GetTag() != "string"
+        && (*iit).second.GetTag() != "integer-vector"
+        && (*iit).second.GetTag() != "float-vector"
+        && (*iit).second.GetTag() != "double-vector"
+        && (*iit).second.GetTag() != "string-vector")
       {
       commandLineAsString.push_back((*iit).second.GetDefault());
       }
-    else if ((*iit).second.GetTag() == "file" || (*iit).second.GetTag() == "directory" || (*iit).second.GetTag() == "string")
+    else if ((*iit).second.GetTag() == "file"
+             || (*iit).second.GetTag() == "directory"
+             || (*iit).second.GetTag() == "string"
+             || (*iit).second.GetTag() == "integer-vector"
+             || (*iit).second.GetTag() == "float-vector"
+             || (*iit).second.GetTag() == "double-vector"
+             || (*iit).second.GetTag() == "string-vector")
       {
       if ((*iit).second.GetDefault() != "")
         {
