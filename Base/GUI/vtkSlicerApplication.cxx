@@ -639,6 +639,9 @@ void vtkSlicerApplication::ProcessDisplayMessage()
 
     if (record.first != "")
       {
+#ifdef _WIN32
+      ::OutputDebugString(record.second.c_str());
+#endif
       cerr << "[" << record.first.c_str() << "] " << record.second.c_str() << "\n";
       }
     }
