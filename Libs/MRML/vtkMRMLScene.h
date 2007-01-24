@@ -288,7 +288,7 @@ public:
   vtkGetMacro(ErrorCode,unsigned long);
 
 //BTX
-  void SetErrorMessage(std::string &error) {
+  void SetErrorMessage(const std::string &error) {
     this->ErrorMessage = error;
   };
 
