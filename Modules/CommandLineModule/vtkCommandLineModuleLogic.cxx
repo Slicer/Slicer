@@ -521,10 +521,32 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
   std::map<int, ModuleParameter>::const_iterator iit;
   for (iit = indexmap.begin(); iit != indexmap.end(); ++iit)
     {
+    // Most parameter types have a reasonable default. However,
+    // parameters like image, geometry, file, and directory have no
+    // defaults that are reasonable for index parameters
     if ((*iit).second.GetTag() != "image"
-        && (*iit).second.GetTag() != "geometry")
+        && (*iit).second.GetTag() != "geometry"
+        && (*iit).second.GetTag() != "file"
+        && (*iit).second.GetTag() != "directory"
+        && (*iit).second.GetTag() != "string")
       {
       commandLineAsString.push_back((*iit).second.GetDefault());
+      }
+    else if ((*iit).second.GetTag() == "file" || (*iit).second.GetTag() == "directory" || (*iit).second.GetTag() == "string")
+      {
+      if ((*iit).second.GetDefault() != "")
+        {
+        commandLineAsString.push_back((*iit).second.GetDefault());
+        }
+      else
+        {
+        vtkErrorMacro("No value assigned to \""
+                      << (*iit).second.GetLabel().c_str() << "\"");
+
+        node->SetStatus(vtkMRMLCommandLineModuleNode::Idle, false);
+        this->GetApplicationLogic()->RequestModified( node );
+        return;
+        }
       }
     else
       {
