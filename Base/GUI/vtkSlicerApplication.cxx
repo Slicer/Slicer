@@ -636,10 +636,16 @@ void vtkSlicerApplication::ProcessDisplayMessage()
       {
       vtkSlicerApplication::GetInstance()->GetLogDialog()->GetLogWidget()->AddDebugRecord( record.second.c_str() );
       }
+
+    cerr << "[" << record.first.c_str() << "] " << record.second.c_str() << "\n";
+    // schedule the next timer sooner in case there's stuff in the queue
+    vtkKWTkUtilities::CreateTimerHandler(this, 1, this, "ProcessDisplayMessage");
     }
-  
-  // schedule the next timer
-  vtkKWTkUtilities::CreateTimerHandler(this, 100, this, "ProcessDisplayMessage");
+  else
+    {
+    // schedule the next timer for a while later
+    vtkKWTkUtilities::CreateTimerHandler(this, 100, this, "ProcessDisplayMessage");
+    }
 }
 
 //----------------------------------------------------------------------------
