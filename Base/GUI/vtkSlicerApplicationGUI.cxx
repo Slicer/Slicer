@@ -67,8 +67,9 @@ vtkCxxRevisionMacro(vtkSlicerApplicationGUI, "$Revision: 1.0 $");
 
 //#define LOGODISPLAY_DEBUG
 //#define TOOLBAR_DEBUG
-#define VIEWCONTROL_DEBUG
+//#define VIEWCONTROL_DEBUG
 //#define SLICEVIEWER_DEBUG
+
 //#define MENU_DEBUG
 //#define SLICESCONTROL_DEBUG
 //#define MODULECHOOSE_DEBUG
@@ -581,7 +582,9 @@ void vtkSlicerApplicationGUI::Exit ( )
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::SelectModule ( const char *moduleName )
 {
+#ifndef TOOLBAR_DEBUG
   this->GetApplicationToolbar()->GetModuleChooseGUI()->SelectModule(moduleName);
+#endif
 }
 
 //---------------------------------------------------------------------------
@@ -1590,7 +1593,9 @@ void vtkSlicerApplicationGUI::SetAndObserveMainSliceLogic ( vtkSlicerSliceLogic 
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::PopulateModuleChooseList ( )
 {
+#ifndef TOOLBAR_DEBUG
   this->GetApplicationToolbar()->GetModuleChooseGUI()->Populate();
+#endif
 }
 
 
