@@ -54,8 +54,10 @@
 #include "vtkScriptedModuleGUI.h"
 
 #include "ModuleFactory.h"
-
+ 
+#ifdef USE_PYTHON
 #include <Python.h>
+#endif
 
 #include <vtksys/SystemTools.hxx>
 #include <vtksys/stl/string>
@@ -338,6 +340,7 @@ int Slicer3_main(int argc, char *argv[])
             return 1;
         }
 
+#ifdef USE_PYTHON
     // Initialize Python
     Py_Initialize();
     PySys_SetArgv(argc, argv);
@@ -372,7 +375,7 @@ int Slicer3_main(int argc, char *argv[])
 // "#savefig('histogram_demo',dpi=72)\n"
 // "show()\n"
 // );      
-
+#endif
     
     // Tell KWWidgets to make names like .vtkKWPushButton10 instead of .10 
     vtkKWWidget::UseClassNameInWidgetNameOn();
@@ -1489,8 +1492,10 @@ int Slicer3_main(int argc, char *argv[])
     //--- application last
     slicerApp->Delete ();
 
+#ifdef USE_PYTHON
     // Shutdown python interpreter
     Py_Finalize();
+#endif
 
     return res;
 }
