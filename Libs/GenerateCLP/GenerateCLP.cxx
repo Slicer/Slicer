@@ -277,19 +277,22 @@ void GeneratePluginEntryPoints(std::ofstream &sout, ModuleDescription &module, s
     sout << "#include \"" << logos[0] << "\"" << std::endl;
     }
   sout << "#ifdef main" << std::endl;
+  sout << "// If main defined as a preprocessor symbol, redefine it to the expected entry point." << std::endl;
+  sout << "#undef main" << std::endl;
+  sout << "#define main ModuleEntryPoint" << std::endl;
   sout << "#ifdef WIN32" << std::endl;
-  sout << "#define Slicer_EXPORT __declspec(dllexport)" << std::endl;
+  sout << "#define Module_EXPORT __declspec(dllexport)" << std::endl;
   sout << "#else" << std::endl;
-  sout << "#define Slicer_EXPORT " << std::endl;
+  sout << "#define Module_EXPORT " << std::endl;
   sout << "#endif" << std::endl;
   sout << std::endl;
 
   sout << "extern \"C\" {" << std::endl;
-  sout << "  Slicer_EXPORT char *GetXMLModuleDescription();" << std::endl;
-  sout << "  Slicer_EXPORT int SlicerModuleEntryPoint(int, char*[]);" << std::endl;
+  sout << "  Module_EXPORT char *GetXMLModuleDescription();" << std::endl;
+  sout << "  Module_EXPORT int ModuleEntryPoint(int, char*[]);" << std::endl;
   if (logos.size() == 1)
     {
-    sout << "  Slicer_EXPORT unsigned char *GetModuleLogo(int *width, int *height, int *pixel_size, unsigned long *bufferLength, int *options);" << std::endl;
+    sout << "  Module_EXPORT unsigned char *GetModuleLogo(int *width, int *height, int *pixel_size, unsigned long *bufferLength, int *options);" << std::endl;
     }
   sout << "}" << std::endl;
   sout << "#endif" << std::endl;

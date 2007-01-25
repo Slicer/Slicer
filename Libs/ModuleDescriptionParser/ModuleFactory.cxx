@@ -358,7 +358,7 @@ ModuleFactory
               = (XMLModuleDescriptionFunction)itksys::DynamicLoader::GetSymbolAddress(lib, "GetXMLModuleDescription");
 
             ModuleEntryPoint entryPoint
-              = (ModuleEntryPoint)itksys::DynamicLoader::GetSymbolAddress(lib, "SlicerModuleEntryPoint");
+              = (ModuleEntryPoint)itksys::DynamicLoader::GetSymbolAddress(lib, "ModuleEntryPoint");
 
             ModuleLogoFunction logoFunction
               = (ModuleLogoFunction)itksys::DynamicLoader::GetSymbolAddress(lib, "GetModuleLogo");
