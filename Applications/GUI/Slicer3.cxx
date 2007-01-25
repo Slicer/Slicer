@@ -1353,11 +1353,6 @@ int Slicer3_main(int argc, char *argv[])
     Slicer3_Tcl_Eval( interp, tclCommand.c_str() );
 #endif
 
-    // Release reference to applicaiton GUI
-    // and delete it.
-   slicerApp->SetApplicationGUI ( NULL );
-   appGUI->DeleteComponentGUIs();
-   appGUI->Delete ();
 
 #ifndef CLIMODULES_DEBUG
     // delete the factory discovered module GUIs (as we delete the
@@ -1374,6 +1369,12 @@ int Slicer3_main(int argc, char *argv[])
     moduleGUIs.clear();
 #endif
     
+    // Release reference to applicaiton GUI
+    // and delete it.
+   slicerApp->SetApplicationGUI ( NULL );
+   appGUI->DeleteComponentGUIs();
+   appGUI->Delete ();
+
     //--- delete logic next, removing Refs to MRML
     appLogic->ClearCollections ( );
 
