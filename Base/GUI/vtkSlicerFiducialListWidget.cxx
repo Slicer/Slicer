@@ -132,7 +132,7 @@ vtkSlicerFiducialListWidget::~vtkSlicerFiducialListWidget ( )
   vtkDebugMacro("vtkSlicerFiducialListWidget::Destructor\n");
 
   // let go of the pointer to the main viewer
-  this->MainViewer = NULL;
+  this->SetMainViewer(NULL);
 
   this->RemoveMRMLObservers();
 

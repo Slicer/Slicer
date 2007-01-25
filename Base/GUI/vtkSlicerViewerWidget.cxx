@@ -92,11 +92,6 @@ vtkSlicerViewerWidget::~vtkSlicerViewerWidget ( )
     {
     this->SetMRMLScene ( NULL );
     this->MainViewer->RemoveAllViewProps ( );
-    this->MainViewer->RemoveAllRenderers();
-    this->MainViewer->RemoveAllOverlayRenderers();
-    this->MainViewer->SetParent ( NULL );
-    this->MainViewer->Delete();
-    this->MainViewer = NULL;
     }
 
 //  this->SlicePlanes->RemoveFunction (this->RedSlicePlane);
@@ -118,13 +113,22 @@ vtkSlicerViewerWidget::~vtkSlicerViewerWidget ( )
     }
   for (unsigned int i=0; i<this->AxisLabelActors.size(); i++)
     {
+    this->AxisLabelActors[i]->SetCamera ( NULL );
     this->AxisLabelActors[i]->Delete();
     }
   this->AxisLabelActors.clear();
-  
+
+  if (this->MainViewer)
+    {
+    this->MainViewer->SetParent ( NULL );
+    this->MainViewer->Delete();
+    this->MainViewer = NULL;
+    }
+
   this->ViewerFrame->SetParent ( NULL );
   this->ViewerFrame->Delete ( );
   this->ViewerFrame = NULL;
+
 
 }
 
