@@ -78,13 +78,6 @@ vtkSlicerToolbarGUI::vtkSlicerToolbarGUI ( )
 vtkSlicerToolbarGUI::~vtkSlicerToolbarGUI ( )
 {
 
-  // Delete Toolbar Icons
-  if ( this->SlicerToolbarIcons )
-    {
-    this->SlicerToolbarIcons->Delete ( );
-    this->SlicerToolbarIcons = NULL;
-    }
-
   // Remove widgets from Toolbars
   if ( this->ModulesToolbar )
     {
@@ -252,8 +245,8 @@ vtkSlicerToolbarGUI::~vtkSlicerToolbarGUI ( )
     vtkSlicerApplicationGUI *p = this->GetApplicationGUI ( );
     if ( p ) 
       {
-      vtkSlicerWindow *win = p->GetMainSlicerWindow();
-      if ( win ) 
+      vtkSlicerWindow *win = this->ApplicationGUI->GetMainSlicerWindow();
+      if ( win)
         {
         vtkKWToolbarSet *tbs = win->GetMainToolbarSet ( );
         if (tbs) 
@@ -300,6 +293,13 @@ vtkSlicerToolbarGUI::~vtkSlicerToolbarGUI ( )
       this->MouseModeRadioButtons->Delete ( );
       this->MouseModeRadioButtons = NULL;      
       }
+
+  // Delete Toolbar Icons
+  if ( this->SlicerToolbarIcons )
+    {
+    this->SlicerToolbarIcons->Delete ( );
+    this->SlicerToolbarIcons = NULL;
+    }
 
     this->SetApplicationGUI ( NULL );
     this->SetSelectionNodeID ( NULL );

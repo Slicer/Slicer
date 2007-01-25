@@ -143,8 +143,6 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
 //---------------------------------------------------------------------------
 vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
 {
-    this->DeleteComponentGUIs();
-
     if ( this->SliceGUICollection )
       {
         this->SliceGUICollection->RemoveAllItems();
@@ -762,6 +760,7 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::SetCurrentModuleToHome (  )
 {
+#ifndef TOOLBAR_DEBUG
   if ( this->GetApplication() != NULL )
       {
       if ( this->GetApplicationToolbar()->GetModuleChooseGUI() )
@@ -776,6 +775,7 @@ void vtkSlicerApplicationGUI::SetCurrentModuleToHome (  )
           }
         }
       }
+#endif
 }
 
 

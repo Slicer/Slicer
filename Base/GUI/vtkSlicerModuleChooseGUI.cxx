@@ -89,11 +89,6 @@ vtkSlicerModuleChooseGUI::~vtkSlicerModuleChooseGUI ( )
     this->ModulesSearchEntry->Delete( );
     this->ModulesSearchEntry = NULL;
     }
-  if ( this->SlicerModuleNavigationIcons )
-    {
-    this->SlicerModuleNavigationIcons->Delete ( );
-    this->SlicerModuleNavigationIcons = NULL;
-    }
   if ( this->ModulesMenuButton )
     {
     this->ModulesMenuButton->SetParent ( NULL );
@@ -135,6 +130,11 @@ vtkSlicerModuleChooseGUI::~vtkSlicerModuleChooseGUI ( )
     this->ModulesSearch->SetParent ( NULL );
     this->ModulesSearch->Delete ( );
     this->ModulesSearch = NULL;
+    }
+  if ( this->SlicerModuleNavigationIcons )
+    {
+    this->SlicerModuleNavigationIcons->Delete ( );
+    this->SlicerModuleNavigationIcons = NULL;
     }
   this->SetApplicationGUI ( NULL );
 }
