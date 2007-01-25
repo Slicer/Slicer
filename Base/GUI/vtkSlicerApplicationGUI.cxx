@@ -67,7 +67,7 @@ vtkCxxRevisionMacro(vtkSlicerApplicationGUI, "$Revision: 1.0 $");
 
 //#define LOGODISPLAY_DEBUG
 //#define TOOLBAR_DEBUG
-//#define VIEWCONTROL_DEBUG
+#define VIEWCONTROL_DEBUG
 //#define SLICEVIEWER_DEBUG
 //#define MENU_DEBUG
 //#define SLICESCONTROL_DEBUG
@@ -115,6 +115,7 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
     //--- Main viewer, 3 main slice viewers and collection.
     this->ViewerWidget = NULL;
     this->FiducialListWidget = NULL;
+
     this->MainSliceGUI0 = NULL;
     this->MainSliceGUI1 = NULL;
     this->MainSliceGUI2 = NULL;
@@ -141,36 +142,8 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
 //---------------------------------------------------------------------------
 vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
 {
-#ifndef VIEWCONTROL_DEBUG
-    if ( this->ViewControlGUI )
-      {
-      this->ViewControlGUI->RemoveSliceGUIObservers();
-      this->ViewControlGUI->SetAndObserveMRMLScene ( NULL );
-      this->ViewControlGUI->SetApplicationGUI(NULL);
-      this->ViewControlGUI->SetApplication(NULL);
-      this->ViewControlGUI->Delete ( );
-      this->ViewControlGUI = NULL;
-    }
-#endif
-#ifndef LOGODISPLAY_DEBUG
-    if ( this->LogoDisplayGUI ) {
-      this->LogoDisplayGUI->Delete ( );
-      this->LogoDisplayGUI = NULL;
-    }
-#endif
-#ifndef SLICESCONTROL_DEBUG
-    if ( this->SlicesControlGUI ) {
-      this->SlicesControlGUI->SetAndObserveMRMLScene ( NULL );
-      this->SlicesControlGUI->Delete ( );
-      this->SlicesControlGUI = NULL;
-    }
-#endif
-#ifndef TOOLBAR_DEBUG
-    if ( this->ApplicationToolbar ) {
-      this->ApplicationToolbar->Delete ( );
-      this->ApplicationToolbar = NULL;
-    }
-#endif
+    this->DeleteComponentGUIs();
+
     if ( this->SliceGUICollection )
       {
         this->SliceGUICollection->RemoveAllItems();
@@ -251,17 +224,35 @@ vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI:: DeleteComponentGUIs()
 {
-#ifndef TOOLBAR_DEBUG
-   this->ApplicationToolbar->Delete();
-#endif
 #ifndef VIEWCONTROL_DEBUG
-   this->ViewControlGUI->Delete();
-#endif
-#ifndef SLICESCONTROL_DEBUG
-   this->SlicesControlGUI->Delete();
+    if ( this->ViewControlGUI )
+      {
+      this->ViewControlGUI->RemoveSliceGUIObservers();
+      this->ViewControlGUI->SetAndObserveMRMLScene ( NULL );
+      this->ViewControlGUI->SetApplicationGUI(NULL);
+      this->ViewControlGUI->SetApplication(NULL);
+      this->ViewControlGUI->Delete ( );
+      this->ViewControlGUI = NULL;
+    }
 #endif
 #ifndef LOGODISPLAY_DEBUG
-   this->LogoDisplayGUI->Delete();
+    if ( this->LogoDisplayGUI ) {
+      this->LogoDisplayGUI->Delete ( );
+      this->LogoDisplayGUI = NULL;
+    }
+#endif
+#ifndef SLICESCONTROL_DEBUG
+    if ( this->SlicesControlGUI ) {
+      this->SlicesControlGUI->SetAndObserveMRMLScene ( NULL );
+      this->SlicesControlGUI->Delete ( );
+      this->SlicesControlGUI = NULL;
+    }
+#endif
+#ifndef TOOLBAR_DEBUG
+    if ( this->ApplicationToolbar ) {
+      this->ApplicationToolbar->Delete ( );
+      this->ApplicationToolbar = NULL;
+    }
 #endif
 }
 
@@ -681,9 +672,11 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
             // after SliceGUIs are created, the ViewControlGUI
             // needs to observe them to feed its magnifier
             // Zoom Widget.
+#ifndef VIEWCONTROL_DEBUG
             vcGUI->UpdateFromMRML();
             vcGUI->UpdateSliceGUIInteractorStyles();
-            
+#endif
+
 #ifndef MENU_DEBUG
             // Construct menu bar and set up global key bindings
             // 
