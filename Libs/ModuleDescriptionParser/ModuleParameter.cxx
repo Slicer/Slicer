@@ -85,10 +85,16 @@ void ModuleParameter::operator=(const ModuleParameter& parameter)
 const std::vector<std::string> &
 ModuleParameter::GetFileExtensions() const
 {
-  std::vector<std::string> extensions;
-  splitString(this->FileExtensionsAsString, std::string(","), extensions);
-  this->FileExtensions = extensions;
   return this->FileExtensions;
+}
+
+void
+ModuleParameter::SetFileExtensionsAsString(const std::string& ext)
+{
+  this->FileExtensionsAsString = ext;
+
+  this->FileExtensions.clear();
+  splitString(this->FileExtensionsAsString, std::string(","), this->FileExtensions);
 }
 
 std::ostream & operator<<(std::ostream &os, const ModuleParameter &parameter)

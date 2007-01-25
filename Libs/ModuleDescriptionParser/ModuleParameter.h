@@ -219,17 +219,14 @@ public:
     return this->Multiple;
   }
 
-  virtual void SetFileExtensionsAsString(const std::string &extensions)
-  {
-    this->FileExtensionsAsString = extensions;
-  }
+  virtual void SetFileExtensionsAsString(const std::string &extensions);
 
   virtual std::string GetFileExtensionsAsString() const
   {
     return this->FileExtensionsAsString;
   }
 
-  const virtual std::vector<std::string> &GetFileExtensions() const;
+  virtual const std::vector<std::string> &GetFileExtensions() const;
 
   virtual void SetCoordinateSystem(const std::string &coordinateSystem)
   {
@@ -241,7 +238,7 @@ public:
     return this->CoordinateSystem;
   }
 
-  const virtual std::vector<std::string> &GetElements() const
+  virtual const std::vector<std::string> &GetElements() const
   {
     return this->Elements;
   }
