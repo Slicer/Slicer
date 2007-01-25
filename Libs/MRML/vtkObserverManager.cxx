@@ -60,6 +60,7 @@ void vtkObserverManager::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 void vtkObserverManager::SetObject(vtkObject **nodePtr, vtkObject *node)
 {
+  vtkDebugMacro (<< "SetObject of " << node);
   if (*nodePtr == node)
     {
     return;
@@ -70,14 +71,15 @@ void vtkObserverManager::SetObject(vtkObject **nodePtr, vtkObject *node)
 
   *nodePtr  = node ;
 
-  if ( *nodePtr  )
+  if ( node  )
     {
-    (*nodePtr)->Register(this);
+    vtkDebugMacro (<< "registering " << node << " with " << this << "\n");
+    node->Register(this);
     }
 
   if (nodePtrOld)
     {
-    (nodePtrOld)->Delete();
+    (nodePtrOld)->UnRegister(this);
     }
 
 }
@@ -85,6 +87,7 @@ void vtkObserverManager::SetObject(vtkObject **nodePtr, vtkObject *node)
 //----------------------------------------------------------------------------
 void vtkObserverManager::SetAndObserveObject(vtkObject **nodePtr, vtkObject *node)
 {
+  vtkDebugMacro (<< "SetAndObserveObject of " << node);
   if (*nodePtr == node)
     {
     return;
@@ -95,18 +98,18 @@ void vtkObserverManager::SetAndObserveObject(vtkObject **nodePtr, vtkObject *nod
 
   *nodePtr  = node ;
 
-  if ( *nodePtr  )
+  if ( node )
     {
-    (*nodePtr)->Register(this);
+    node->Register(this);
 
     vtkIntArray *events = vtkIntArray::New();
     events->InsertNextValue(vtkCommand::ModifiedEvent);
-    this->AddObjectEvents(*nodePtr, events);
+    this->AddObjectEvents(node, events);
     events->Delete();   
     }
   if (nodePtrOld)
     {
-    (nodePtrOld)->Delete();
+    (nodePtrOld)->UnRegister(this);
     }
 
 }
@@ -114,6 +117,7 @@ void vtkObserverManager::SetAndObserveObject(vtkObject **nodePtr, vtkObject *nod
 //----------------------------------------------------------------------------
 void vtkObserverManager::SetAndObserveObjectEvents(vtkObject **nodePtr, vtkObject *node, vtkIntArray *events)
 {
+  vtkDebugMacro (<< "SetAndObserveObjectEvents of " << node);
   if (*nodePtr == node && node == NULL)
     {
     return;
@@ -125,14 +129,15 @@ void vtkObserverManager::SetAndObserveObjectEvents(vtkObject **nodePtr, vtkObjec
   
   *nodePtr  = node ;
   
-  if ( *nodePtr  )
+  if ( node  )
     {
-    (*nodePtr)->Register(this);
-    this->AddObjectEvents(*nodePtr, events);
+    vtkDebugMacro (<< "registering " << node << " with " << this << "\n");
+    node->Register(this);
+    this->AddObjectEvents(node, events);
     }
   if (nodePtrOld)
     {
-    (nodePtrOld)->Delete();
+    (nodePtrOld)->UnRegister(this);
     }
 }
 
