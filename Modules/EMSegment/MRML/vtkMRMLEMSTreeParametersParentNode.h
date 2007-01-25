@@ -1,5 +1,5 @@
-#ifndef __vtkMRMLEMSTreeParametersParent_h
-#define __vtkMRMLEMSTreeParametersParent_h
+#ifndef __vtkMRMLEMSTreeParametersParentNode_h
+#define __vtkMRMLEMSTreeParametersParentNode_h
 
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
@@ -30,7 +30,7 @@ public:
 
   // Description:
   // Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() {return "EMSTreeParametersParent";};
+  virtual const char* GetNodeTagName() {return "EMSTreeParametersParent";}
 
   // Description:
   // Updates this node if it depends on other nodes
@@ -164,4 +164,3 @@ protected:
 };
 
 #endif
-

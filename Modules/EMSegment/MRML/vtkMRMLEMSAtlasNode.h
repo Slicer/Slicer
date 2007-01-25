@@ -1,5 +1,5 @@
-#ifndef __vtkMRMLEMSAtlas_h
-#define __vtkMRMLEMSAtlas_h
+#ifndef __vtkMRMLEMSAtlasNode_h
+#define __vtkMRMLEMSAtlasNode_h
 
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
@@ -30,7 +30,7 @@ public:
 
   // Description:
   // Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() {return "EMSAtlas";};
+  virtual const char* GetNodeTagName() {return "EMSAtlas";}
 
   vtkGetMacro(NumberOfTrainingSamples, int);
   vtkSetMacro(NumberOfTrainingSamples, int);
@@ -46,4 +46,3 @@ private:
 };
 
 #endif
-

@@ -16,7 +16,7 @@ vtkMRMLEMSegmentNode* vtkMRMLEMSegmentNode::New()
     vtkObjectFactory::CreateInstance("vtkMRMLEMSegmentNode");
   if(ret)
     {
-      return (vtkMRMLEMSegmentNode*)ret;
+    return (vtkMRMLEMSegmentNode*)ret;
     }
   // If the factory was unable to create the object, then create it here.
   return new vtkMRMLEMSegmentNode;
@@ -31,7 +31,7 @@ vtkMRMLNode* vtkMRMLEMSegmentNode::CreateNodeInstance()
     vtkObjectFactory::CreateInstance("vtkMRMLEMSegmentNode");
   if(ret)
     {
-      return (vtkMRMLEMSegmentNode*)ret;
+    return (vtkMRMLEMSegmentNode*)ret;
     }
   // If the factory was unable to create the object, then create it here.
   return new vtkMRMLEMSegmentNode;
@@ -195,5 +195,3 @@ vtkMRMLEMSegmentNode
   const vtksys_stl::string *svaluep = this->GetParameter(sname);
   this->SetValue (svaluep->c_str());
 }
-
-

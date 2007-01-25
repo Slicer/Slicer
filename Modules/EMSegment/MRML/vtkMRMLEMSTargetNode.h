@@ -1,5 +1,5 @@
-#ifndef __vtkMRMLEMSTarget_h
-#define __vtkMRMLEMSTarget_h
+#ifndef __vtkMRMLEMSTargetNode_h
+#define __vtkMRMLEMSTargetNode_h
 
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
@@ -30,7 +30,7 @@ public:
 
   // Description:
   // Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() {return "EMSTarget";};
+  virtual const char* GetNodeTagName() {return "EMSTarget";}
 
 protected:
   vtkMRMLEMSTargetNode();
@@ -40,4 +40,3 @@ protected:
 };
 
 #endif
-

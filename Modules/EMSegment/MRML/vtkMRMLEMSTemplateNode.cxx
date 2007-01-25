@@ -10,9 +10,9 @@ New()
   vtkObject* ret = 
     vtkObjectFactory::CreateInstance("vtkMRMLEMSTemplateNode");
   if(ret)
-  {
+    {
     return (vtkMRMLEMSTemplateNode*)ret;
-  }
+    }
   // If the factory was unable to create the object, then create it here.
   return new vtkMRMLEMSTemplateNode;
 }
@@ -26,9 +26,9 @@ CreateNodeInstance()
   vtkObject* ret = 
     vtkObjectFactory::CreateInstance("vtkMRMLEMSTemplateNode");
   if(ret)
-  {
+    {
     return (vtkMRMLEMSTemplateNode*)ret;
-  }
+    }
   // If the factory was unable to create the object, then create it here.
   return new vtkMRMLEMSTemplateNode;
 }
@@ -66,14 +66,14 @@ vtkMRMLEMSTemplateNode::
 UpdateReferenceID(const char* oldID, const char* newID)
 {
   if (this->TreeNodeID && !strcmp(oldID, this->TreeNodeID))
-  {
+    {
     this->SetTreeNodeID(newID);
-  }
+    }
   if (this->GlobalParametersNodeID && 
       !strcmp(oldID, this->GlobalParametersNodeID))
-  {
+    {
     this->SetGlobalParametersNodeID(newID);
-  }
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -85,9 +85,9 @@ UpdateReferences()
 
   if (this->GlobalParametersNodeID != NULL && 
       this->Scene->GetNodeByID(this->GlobalParametersNodeID) == NULL)
-  {
+    {
     this->SetGlobalParametersNodeID(NULL);
-  }
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -101,21 +101,21 @@ void vtkMRMLEMSTemplateNode::ReadXMLAttributes(const char** attrs)
   const char* key;
   const char* val;
   while (*attrs != NULL)
-  {
+    {
     key = *attrs++;
     val = *attrs++;
     
     if (!strcmp(key, "TreeNodeID"))
-    {
+      {
       this->SetTreeNodeID(val);
       this->Scene->AddReferencedNodeID(this->TreeNodeID, this);
-    }
+      }
     else if (!strcmp(key, "GlobalParametersNodeID"))
-    {
+      {
       this->SetGlobalParametersNodeID(val);
       this->Scene->AddReferencedNodeID(this->GlobalParametersNodeID, this);
+      }
     }
-  }
 }
 
 //-----------------------------------------------------------------------------
@@ -148,10 +148,10 @@ GetTreeNode()
 {
   vtkMRMLEMSTreeNode* node = NULL;
   if (this->GetScene() && this->GetTreeNodeID() )
-  {
+    {
     vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->TreeNodeID);
     node = vtkMRMLEMSTreeNode::SafeDownCast(snode);
-  }
+    }
   return node;
 }
 
@@ -162,10 +162,10 @@ GetGlobalParametersNode()
 {
   vtkMRMLEMSGlobalParametersNode* node = NULL;
   if (this->GetScene() && this->GetGlobalParametersNodeID() )
-  {
+    {
     vtkMRMLNode* snode = 
       this->GetScene()->GetNodeByID(this->GlobalParametersNodeID);
     node = vtkMRMLEMSGlobalParametersNode::SafeDownCast(snode);
-  }
+    }
   return node;
 }

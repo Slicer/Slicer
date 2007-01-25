@@ -13,7 +13,7 @@
 class VTK_EMSEGMENT_EXPORT vtkMRMLEMSegmentNode : 
   public vtkMRMLNode
 {
-  public:
+public:
   static vtkMRMLEMSegmentNode *New();
   vtkTypeMacro(vtkMRMLEMSegmentNode,vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent);
@@ -34,8 +34,7 @@ class VTK_EMSEGMENT_EXPORT vtkMRMLEMSegmentNode :
 
   // Description:
   // Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName()
-    {return "EMSegment";};
+  virtual const char* GetNodeTagName() {return "EMSegment";}
 
   // Description: The name of the Module - this is used to 
   // customize the node selectors and other things
@@ -45,7 +44,8 @@ class VTK_EMSEGMENT_EXPORT vtkMRMLEMSegmentNode :
   // Description:
   // Get/Set a parameter for the module.
 //BTX
-  void SetParameter(const vtksys_stl::string& name, const vtksys_stl::string& value);
+  void SetParameter(const vtksys_stl::string& name, 
+                    const vtksys_stl::string& value);
   const vtksys_stl::string* GetParameter(const vtksys_stl::string &name) const;
 //ETX  
 
@@ -73,4 +73,3 @@ private:
 };
 
 #endif
-

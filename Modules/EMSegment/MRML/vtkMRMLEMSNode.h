@@ -1,5 +1,5 @@
-#ifndef __vtkMRMLEMSegmentNode_h
-#define __vtkMRMLEMSegmentNode_h
+#ifndef __vtkMRMLEMSNode_h
+#define __vtkMRMLEMSNode_h
 
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
@@ -14,7 +14,7 @@
 class VTK_EMSEGMENT_EXPORT vtkMRMLEMSNode : 
   public vtkMRMLNode
 {
-  public:
+public:
   static vtkMRMLEMSNode *New();
   vtkTypeMacro(vtkMRMLEMSNode,vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent);
@@ -36,7 +36,7 @@ class VTK_EMSEGMENT_EXPORT vtkMRMLEMSNode :
   // Description:
   // Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName()
-    {return "EMS";};
+    {return "EMS";}
 
   // Description:
   // Updates this node if it depends on other nodes
@@ -73,4 +73,3 @@ private:
 };
 
 #endif
-

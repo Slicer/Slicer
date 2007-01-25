@@ -11,9 +11,9 @@ New()
   vtkObject* ret = 
     vtkObjectFactory::CreateInstance("vtkMRMLEMSAtlasNode");
   if(ret)
-  {
+    {
     return (vtkMRMLEMSAtlasNode*)ret;
-  }
+    }
   // If the factory was unable to create the object, then create it here.
   return new vtkMRMLEMSAtlasNode;
 }
@@ -26,9 +26,9 @@ CreateNodeInstance()
   vtkObject* ret = 
     vtkObjectFactory::CreateInstance("vtkMRMLEMSAtlasNode");
   if(ret)
-  {
+    {
     return (vtkMRMLEMSAtlasNode*)ret;
-  }
+    }
   // If the factory was unable to create the object, then create it here.
   return new vtkMRMLEMSAtlasNode;
 }
@@ -60,17 +60,17 @@ void vtkMRMLEMSAtlasNode::ReadXMLAttributes(const char** attrs)
   const char* key;
   const char* val;
   while (*attrs != NULL)
-  {
+    {
     key = *attrs++;
     val = *attrs++;
     
     if (!strcmp(key, "NumberOfTrainingSamples"))
-    {
+      {
       vtksys_stl::stringstream ss;
       ss << val;
       ss >> this->NumberOfTrainingSamples;
+      }
     }
-  }
 }
 
 void vtkMRMLEMSAtlasNode::Copy(vtkMRMLNode *rhs)
@@ -82,11 +82,9 @@ void vtkMRMLEMSAtlasNode::Copy(vtkMRMLNode *rhs)
 }
 
 void vtkMRMLEMSAtlasNode::PrintSelf(ostream& os, 
-                                       vtkIndent indent)
+                                    vtkIndent indent)
 {
   Superclass::PrintSelf(os, indent);
   os << indent << "NumberOfTrainingSamples: " 
      << this->NumberOfTrainingSamples << "\n";  
 }
-
-

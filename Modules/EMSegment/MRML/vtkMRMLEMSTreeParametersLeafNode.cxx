@@ -13,9 +13,9 @@ New()
   vtkObject* ret = 
     vtkObjectFactory::CreateInstance("vtkMRMLEMSTreeParametersLeafNode");
   if(ret)
-  {
+    {
     return (vtkMRMLEMSTreeParametersLeafNode*)ret;
-  }
+    }
   // If the factory was unable to create the object, then create it here.
   return new vtkMRMLEMSTreeParametersLeafNode;
 }
@@ -29,9 +29,9 @@ CreateNodeInstance()
   vtkObject* ret = 
     vtkObjectFactory::CreateInstance("vtkMRMLEMSTreeParametersLeafNode");
   if(ret)
-  {
+    {
     return (vtkMRMLEMSTreeParametersLeafNode*)ret;
-  }
+    }
   // If the factory was unable to create the object, then create it here.
   return new vtkMRMLEMSTreeParametersLeafNode;
 }
@@ -69,19 +69,19 @@ void vtkMRMLEMSTreeParametersLeafNode::WriteXML(ostream& of, int nIndent)
 
   of << indent << "LogMean=\"";
   for (unsigned int i = 0; i < this->GetNumberOfTargetInputChannels(); ++i)
-  {
+    {
     of << this->LogMean[i] << " ";
-  }
+    }
   of << "\" ";
 
   of << indent << "LogCovariance=\"";
   for (unsigned int r = 0; r < this->GetNumberOfTargetInputChannels(); ++r)
-  {
-    for (unsigned int c = 0; c < this->GetNumberOfTargetInputChannels(); ++c)  
     {
+    for (unsigned int c = 0; c < this->GetNumberOfTargetInputChannels(); ++c)  
+      {
       of << this->LogCovariance[r][c] << " ";
+      }
     }
-  }
   of << "\" ";
 }
 
@@ -92,9 +92,9 @@ UpdateReferenceID(const char* oldID, const char* newID)
 {
   if (this->GlobalParametersNodeID && 
       !strcmp(oldID, this->GlobalParametersNodeID))
-  {
+    {
     this->SetGlobalParametersNodeID(newID);
-  }
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -106,9 +106,9 @@ UpdateReferences()
 
   if (this->GlobalParametersNodeID != NULL && 
       this->Scene->GetNodeByID(this->GlobalParametersNodeID) == NULL)
-  {
+    {
     this->SetGlobalParametersNodeID(NULL);
-  }
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -122,79 +122,79 @@ void vtkMRMLEMSTreeParametersLeafNode::ReadXMLAttributes(const char** attrs)
   const char* key;
   const char* val;
   while (*attrs != NULL)
-  {
+    {
     key = *attrs++;
     val = *attrs++;
     
     if (!strcmp(key, "GlobalParametersNodeID"))
-    {
+      {
       this->SetGlobalParametersNodeID(val);
       this->Scene->AddReferencedNodeID(this->GlobalParametersNodeID, this);   
-    }
+      }
     else if (!strcmp(key, "PrintQuality"))
-    {
+      {
       vtksys_stl::stringstream ss;
       ss << val;
       ss >> this->PrintQuality;
-    }
+      }
     else if (!strcmp(key, "IntensityLabel"))
-    {
+      {
       vtksys_stl::stringstream ss;
       ss << val;
       ss >> this->IntensityLabel;
-    }
+      }
     else if (!strcmp(key, "LogMean"))
-    {
+      {
       // read data into a temporary vector
       vtksys_stl::stringstream ss;
       ss << val;
       double d;
       vtksys_stl::vector<double> tmpVec;
       while (ss >> d)
-      {
+        {
         tmpVec.push_back(d);
-      }      
+        }
 
       // update number of input channels
       if (this->GetNumberOfTargetInputChannels() != tmpVec.size())
-      {
+        {
         this->SetNumberOfTargetInputChannels(tmpVec.size());
-      }
+        }
       
       // copy data
       vtksys_stl::copy(tmpVec.begin(), tmpVec.end(), this->LogMean.begin());
-    }
+      }
     else if (!strcmp(key, "LogCovariance"))
-    {
+      {
       // read data into a temporary vector
       vtksys_stl::stringstream ss;
       ss << val;
       double d;
       vtksys_stl::vector<double> tmpVec;
       while (ss >> d)
-      {
+        {
         tmpVec.push_back(d);
-      }
+        }
 
       // update number of input channels
       // assume square matrix
       unsigned int side = (unsigned int) sqrt((double)tmpVec.size());
       if (this->GetNumberOfTargetInputChannels() != side)
-      {
+        {
         this->SetNumberOfTargetInputChannels(side);
-      }
+        }
 
       // copy data
       unsigned int i = 0;
       for (unsigned int r = 0; r < this->GetNumberOfTargetInputChannels(); ++r)
-      {
-        for (unsigned int c = 0; c<this->GetNumberOfTargetInputChannels(); ++c)
         {
+        for (unsigned int c = 0; c<this->GetNumberOfTargetInputChannels(); ++c)
+          {
           this->LogCovariance[r][c] = tmpVec[i++];
-        }   
+          }   
+        }
       }
     }
-  }
 }
 
 //-----------------------------------------------------------------------------
@@ -218,33 +218,33 @@ void vtkMRMLEMSTreeParametersLeafNode::PrintSelf(ostream& os,
 {
   Superclass::PrintSelf(os, indent);
 
-  os << indent << "GlobalParametersNodeID: "         
-     << (this->GlobalParametersNodeID ? this->GlobalParametersNodeID : "(none)" )
+  os << indent << "GlobalParametersNodeID: " 
+     << (this->GlobalParametersNodeID ? this->GlobalParametersNodeID :"(none)")
      << "\n";
 
-  os << indent << "PrintQuality: "         
+  os << indent << "PrintQuality: "
      << this->PrintQuality
      << "\n";
 
-  os << indent << "IntensityLabel: "         
+  os << indent << "IntensityLabel: "
      << this->IntensityLabel
      << "\n";
 
   os << indent << "LogMean: ";
   for (unsigned int i = 0; i < this->GetNumberOfTargetInputChannels(); ++i)
-  {
+    {
     os << this->LogMean[i] << " ";
-  }
+    }
   os << "\n";
 
   os << indent << "LogCovariance: ";
   for (unsigned int r = 0; r < this->GetNumberOfTargetInputChannels(); ++r)
-  {
-    for (unsigned int c = 0; c < this->GetNumberOfTargetInputChannels(); ++c)
     {
+    for (unsigned int c = 0; c < this->GetNumberOfTargetInputChannels(); ++c)
+      {
       os << this->LogCovariance[r][c] << " ";
+      }
     }
-  }
   os << "\n";
 }
 
@@ -254,7 +254,7 @@ vtkMRMLEMSTreeParametersLeafNode::
 SetNumberOfTargetInputChannels(unsigned int n)
 {
   if (n != this->GetNumberOfTargetInputChannels())
-  {
+    {
     this->NumberOfTargetInputChannels = n;
       
     // resize LogMean, don\"t preserve data!
@@ -265,10 +265,10 @@ SetNumberOfTargetInputChannels(unsigned int n)
     this->LogCovariance.clear();
     this->LogCovariance.resize(n);
     for (unsigned int i = 0; i < n; ++i)
-    {
+      {
       this->LogCovariance[i].resize(n, 0.0);
+      }
     }
-  }
 }
 
 //-----------------------------------------------------------------------------
@@ -325,10 +325,10 @@ GetGlobalParametersNode()
 {
   vtkMRMLEMSGlobalParametersNode* node = NULL;
   if (this->GetScene() && this->GetGlobalParametersNodeID() )
-  {
+    {
     vtkMRMLNode* snode = this->GetScene()->
       GetNodeByID(this->GlobalParametersNodeID);
     node = vtkMRMLEMSGlobalParametersNode::SafeDownCast(snode);
-  }
+    }
   return node;
 }

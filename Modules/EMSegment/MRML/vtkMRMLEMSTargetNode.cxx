@@ -11,9 +11,9 @@ New()
   vtkObject* ret = 
     vtkObjectFactory::CreateInstance("vtkMRMLEMSTargetNode");
   if(ret)
-  {
+    {
     return (vtkMRMLEMSTargetNode*)ret;
-  }
+    }
   // If the factory was unable to create the object, then create it here.
   return new vtkMRMLEMSTargetNode;
 }
@@ -26,9 +26,9 @@ CreateNodeInstance()
   vtkObject* ret = 
     vtkObjectFactory::CreateInstance("vtkMRMLEMSTargetNode");
   if(ret)
-  {
+    {
     return (vtkMRMLEMSTargetNode*)ret;
-  }
+    }
   // If the factory was unable to create the object, then create it here.
   return new vtkMRMLEMSTargetNode;
 }
@@ -59,9 +59,7 @@ void vtkMRMLEMSTargetNode::Copy(vtkMRMLNode *rhs)
 }
 
 void vtkMRMLEMSTargetNode::PrintSelf(ostream& os, 
-                                       vtkIndent indent)
+                                     vtkIndent indent)
 {
   Superclass::PrintSelf(os, indent);
 }
-
-

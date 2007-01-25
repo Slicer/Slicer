@@ -64,7 +64,7 @@ public:
                                            int childIndex);
   virtual vtkIdType GetTreeNodeParentNodeID(vtkIdType childNodeID);
   virtual void      SetTreeNodeParentNodeID(vtkIdType childNodeID, 
-                                    vtkIdType newParentNodeID);
+                                            vtkIdType newParentNodeID);
   virtual vtkIdType AddTreeNode(vtkIdType parentNodeID);
   virtual void      RemoveTreeNode(vtkIdType removedNodeID);
 
@@ -90,11 +90,11 @@ public:
   
   //BTX
   enum
-  {
+    {
     DistributionSpecificationManual = 0,
     DistributionSpecificationManuallySample,
     DistributionSpecificationAutoSample
-  };
+    };
   //ETX
   virtual int   GetTreeNodeDistributionSpecificationMethod(vtkIdType nodeID);
   virtual void  SetTreeNodeDistributionSpecificationMethod(vtkIdType nodeID, 
@@ -217,11 +217,11 @@ public:
 
   //BTX
   enum
-  {
+    {
     StoppingConditionIterations,
     StoppingConditionLabelMapMeasure,
     StoppingConditionWeightsMeasure
-  };
+    };
   //ETX
   virtual int      GetTreeNodeStoppingConditionMFAType(vtkIdType nodeID);
   virtual void     SetTreeNodeStoppingConditionMFAType(vtkIdType nodeID, 
@@ -269,12 +269,12 @@ public:
 
   //BTX
   enum
-  {
+    {
     InterpolationLinear,
     InterpolationNearestNeighbor,
     // !!!todo!!! there is no corresponding definition in the algorithm!
     InterpolationCubic
-  };
+    };
   //ETX
   virtual int       GetRegistrationInterpolationType();
   virtual void      SetRegistrationInterpolationType(int interpolationType);
@@ -475,19 +475,20 @@ private:
   //
   //BTX
   typedef vtksys_stl::vector<vtksys_stl::vector<double> > SamplePointsList;
-  struct TreeInfo {
+  struct TreeInfo 
+    {
     int                DistributionSpecificationMethod;
     SamplePointsList   SamplePoints;
-
-    TreeInfo() {
+    
+    TreeInfo() 
+      {
       DistributionSpecificationMethod = 
         vtkEMSegmentLogic::DistributionSpecificationManual;
-    }
-  };
+      }
+    };
   typedef vtksys_stl::map<vtkIdType, TreeInfo>        TreeInfoMapType;
   TreeInfoMapType                                     TreeInfoMap;  
   //ETX
 };
 
 #endif
-

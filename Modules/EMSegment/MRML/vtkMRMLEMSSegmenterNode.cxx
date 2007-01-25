@@ -12,9 +12,9 @@ New()
   vtkObject* ret = 
     vtkObjectFactory::CreateInstance("vtkMRMLEMSSegmenterNode");
   if(ret)
-  {
+    {
     return (vtkMRMLEMSSegmenterNode*)ret;
-  }
+    }
   // If the factory was unable to create the object, then create it here.
   return new vtkMRMLEMSSegmenterNode;
 }
@@ -28,9 +28,9 @@ CreateNodeInstance()
   vtkObject* ret = 
     vtkObjectFactory::CreateInstance("vtkMRMLEMSSegmenterNode");
   if(ret)
-  {
+    {
     return (vtkMRMLEMSSegmenterNode*)ret;
-  }
+    }
   // If the factory was unable to create the object, then create it here.
   return new vtkMRMLEMSSegmenterNode;
 }
@@ -82,21 +82,21 @@ vtkMRMLEMSSegmenterNode::
 UpdateReferenceID(const char* oldID, const char* newID)
 {
   if (this->TemplateNodeID && !strcmp(oldID, this->TemplateNodeID))
-  {
+    {
     this->SetTemplateNodeID(newID);
-  }
+    }
   if (this->AtlasNodeID && !strcmp(oldID, this->AtlasNodeID))
-  {
+    {
     this->SetAtlasNodeID(newID);
-  }
+    }
   if (this->TargetNodeID && !strcmp(oldID, this->TargetNodeID))
-  {
+    {
     this->SetTargetNodeID(newID);
-  }
+    }
   if (this->OutputVolumeNodeID && !strcmp(oldID, this->OutputVolumeNodeID))
-  {
+    {
     this->SetOutputVolumeNodeID(newID);
-  }
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -108,24 +108,24 @@ UpdateReferences()
 
   if (this->TemplateNodeID != NULL && 
       this->Scene->GetNodeByID(this->TemplateNodeID) == NULL)
-  {
+    {
     this->SetTemplateNodeID(NULL);
-  }
+    }
   if (this->AtlasNodeID != NULL && 
       this->Scene->GetNodeByID(this->AtlasNodeID) == NULL)
-  {
+    {
     this->SetAtlasNodeID(NULL);
-  }
+    }
   if (this->TargetNodeID != NULL && 
       this->Scene->GetNodeByID(this->TargetNodeID) == NULL)
-  {
+    {
     this->SetTargetNodeID(NULL);
-  }
+    }
   if (this->OutputVolumeNodeID != NULL && 
       this->Scene->GetNodeByID(this->OutputVolumeNodeID) == NULL)
-  {
+    {
     this->SetOutputVolumeNodeID(NULL);
-  }
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -139,35 +139,35 @@ void vtkMRMLEMSSegmenterNode::ReadXMLAttributes(const char** attrs)
   const char* key;
   const char* val;
   while (*attrs != NULL)
-  {
+    {
     key = *attrs++;
     val = *attrs++;
     
     if (!strcmp(key, "TemplateNodeID"))
-    {
+      {
       this->SetTemplateNodeID(val);
       this->Scene->AddReferencedNodeID(this->TemplateNodeID, this);
-    }
+      }
     else if (!strcmp(key, "AtlasNodeID"))
-    {
+      {
       this->SetAtlasNodeID(val);
       this->Scene->AddReferencedNodeID(this->AtlasNodeID, this);
-    }
+      }
     else if (!strcmp(key, "TargetNodeID"))
-    {
+      {
       this->SetTargetNodeID(val);
       this->Scene->AddReferencedNodeID(this->TargetNodeID, this);
-    }
+      }
     else if (!strcmp(key, "OutputVolumeNodeID"))
-    {
+      {
       this->SetOutputVolumeNodeID(val);
       this->Scene->AddReferencedNodeID(this->OutputVolumeNodeID, this);
-    }
+      }
     else if (!strcmp(key, "WorkingDirectory"))
-    {
+      {
       this->SetWorkingDirectory(val);
+      }
     }
-  }
 }
 
 //-----------------------------------------------------------------------------
@@ -188,23 +188,23 @@ void vtkMRMLEMSSegmenterNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os, indent);
   
-  os << indent << "TemplateNodeID: " <<
-    (this->TemplateNodeID ? this->TemplateNodeID : "(none)") << "\n";
+  os << indent << "TemplateNodeID: " 
+     << (this->TemplateNodeID ? this->TemplateNodeID : "(none)") << "\n";
   
-  os << indent << "AtlasNodeID: " <<
-    (this->AtlasNodeID ? this->AtlasNodeID : "(none)")
+  os << indent << "AtlasNodeID: " 
+     << (this->AtlasNodeID ? this->AtlasNodeID : "(none)") 
      << "\n";
 
-  os << indent << "TargetNodeID: " <<
-    (this->TargetNodeID ? this->TargetNodeID : "(none)" )
+  os << indent << "TargetNodeID: " 
+     << (this->TargetNodeID ? this->TargetNodeID : "(none)" ) 
      << "\n";
 
-  os << indent << "OutputVolumeNodeID: " <<
-    (this->OutputVolumeNodeID ? this->OutputVolumeNodeID : "(none)" )
+  os << indent << "OutputVolumeNodeID: " 
+     << (this->OutputVolumeNodeID ? this->OutputVolumeNodeID : "(none)" )
      << "\n";
 
-  os << indent << "WorkingDirectory: " <<
-    (this->WorkingDirectory ? this->WorkingDirectory : "(none)" )
+  os << indent << "WorkingDirectory: " 
+     << (this->WorkingDirectory ? this->WorkingDirectory : "(none)" )
      << "\n";
 }
 
@@ -215,11 +215,11 @@ GetAtlasNode()
 {
   vtkMRMLEMSAtlasNode* node = NULL;
   if (this->GetScene() && this->GetAtlasNodeID() )
-  {
+    {
     vtkMRMLNode* snode = 
       this->GetScene()->GetNodeByID(this->AtlasNodeID);
     node = vtkMRMLEMSAtlasNode::SafeDownCast(snode);
-  }
+    }
   return node;
 }
 
@@ -230,11 +230,11 @@ GetTemplateNode()
 {
   vtkMRMLEMSTemplateNode* node = NULL;
   if (this->GetScene() && this->GetTemplateNodeID() )
-  {
+    {
     vtkMRMLNode* snode = 
       this->GetScene()->GetNodeByID(this->TemplateNodeID);
     node = vtkMRMLEMSTemplateNode::SafeDownCast(snode);
-  }
+    }
   return node;
 }
 
@@ -245,11 +245,11 @@ GetTargetNode()
 {
   vtkMRMLEMSTargetNode* node = NULL;
   if (this->GetScene() && this->GetTargetNodeID() )
-  {
+    {
     vtkMRMLNode* snode = 
       this->GetScene()->GetNodeByID(this->TargetNodeID);
     node = vtkMRMLEMSTargetNode::SafeDownCast(snode);
-  }
+    }
   return node;
 }
 
@@ -260,10 +260,10 @@ GetOutputVolumeNode()
 {
   vtkMRMLScalarVolumeNode* node = NULL;
   if (this->GetScene() && this->GetOutputVolumeNodeID() )
-  {
+    {
     vtkMRMLNode* snode = 
       this->GetScene()->GetNodeByID(this->TargetNodeID);
     node = vtkMRMLScalarVolumeNode::SafeDownCast(snode);
-  }
+    }
   return node;
 }

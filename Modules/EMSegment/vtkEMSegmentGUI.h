@@ -25,8 +25,8 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description: Get the categorization of the module.
-//   const char *GetCategory() const
-//     { return "Segmentation"; }
+  //   const char *GetCategory() const
+  //     { return "Segmentation"; }
 
   // Description: 
   // Get/Set logic node
@@ -41,7 +41,8 @@ public:
   // Description: 
   // Get wizard widget
   vtkGetObjectMacro(WizardWidget, vtkKWWizardWidget);
-  vtkGetObjectMacro(AnatomicalStructureStep, vtkEMSegmentAnatomicalStructureStep);
+  vtkGetObjectMacro(AnatomicalStructureStep, 
+                    vtkEMSegmentAnatomicalStructureStep);
 
   // Description:
   // Create widgets
@@ -116,7 +117,7 @@ private:
   virtual void UpdateRegistrationProgress();
 
   vtkEMSegmentLogic *Logic;
-  vtkMRMLEMSNode* Node;
+  vtkMRMLEMSNode    *Node;
   
   char *ModuleName;
 
@@ -138,5 +139,3 @@ private:
 };
 
 #endif
-
-

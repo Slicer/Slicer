@@ -10,9 +10,9 @@ New()
   vtkObject* ret = 
     vtkObjectFactory::CreateInstance("vtkMRMLEMSTreeNode");
   if(ret)
-  {
+    {
     return (vtkMRMLEMSTreeNode*)ret;
-  }
+    }
   // If the factory was unable to create the object, then create it here.
   return new vtkMRMLEMSTreeNode;
 }
@@ -26,9 +26,9 @@ CreateNodeInstance()
   vtkObject* ret = 
     vtkObjectFactory::CreateInstance("vtkMRMLEMSTreeNode");
   if(ret)
-  {
+    {
     return (vtkMRMLEMSTreeNode*)ret;
-  }
+    }
   // If the factory was unable to create the object, then create it here.
   return new vtkMRMLEMSTreeNode;
 }
@@ -71,13 +71,13 @@ vtkMRMLEMSTreeNode::
 UpdateReferenceID(const char* oldID, const char* newID)
 {
   if (this->ParentNodeID && !strcmp(oldID, this->ParentNodeID))
-  {
+    {
     this->SetParentNodeID(newID);
-  }
+    }
   if (this->TreeParametersNodeID && !strcmp(oldID, this->TreeParametersNodeID))
-  {
+    {
     this->SetTreeParametersNodeID(newID);
-  }
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -89,14 +89,14 @@ UpdateReferences()
 
   if (this->ParentNodeID != NULL && 
       this->Scene->GetNodeByID(this->ParentNodeID) == NULL)
-  {
+    {
     this->SetParentNodeID(NULL);
-  }
+    }
   if (this->TreeParametersNodeID != NULL && 
       this->Scene->GetNodeByID(this->TreeParametersNodeID) == NULL)
-  {
+    {
     this->SetTreeParametersNodeID(NULL);
-  }
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -110,23 +110,23 @@ void vtkMRMLEMSTreeNode::ReadXMLAttributes(const char** attrs)
   const char* key;
   const char* val;
   while (*attrs != NULL)
-  {
+    {
     key = *attrs++;
     val = *attrs++;
     
     if (!strcmp(key, "ParentNodeID"))
-    {
+      {
       this->SetParentNodeID(val);
-    }
+      }
     else if (!strcmp(key, "TreeParametersNodeID"))
-    {
+      {
       this->SetTreeParametersNodeID(val);
-    }
+      }
     else if (!strcmp(key, "Label"))
-    {
+      {
       this->SetLabel(val);
+      }
     }
-  }
 }
 
 //-----------------------------------------------------------------------------
@@ -167,7 +167,7 @@ GetNumberOfChildNodes()
     GetNumberOfNodesByClass("vtkMRMLEMSTreeNode");
 
   for (int i = 0; i < numTreeNodes; ++i)
-  {
+    {
     vtkMRMLNode* node = this->GetScene()->
       GetNthNodeByClass(i, "vtkMRMLEMSTreeNode");
 
@@ -176,10 +176,10 @@ GetNumberOfChildNodes()
     if (treeNode->GetParentNodeID() != NULL &&
         vtksys_stl::string(this->GetID()) == 
         vtksys_stl::string(treeNode->GetParentNodeID()))
-    {
+      {
       ++numChildren;
+      }
     }
-  }
 
   return numChildren;
 }
@@ -193,7 +193,7 @@ GetNthChildNodeID(int n)
   int numTreeNodes = this->GetScene()->
     GetNumberOfNodesByClass("vtkMRMLEMSTreeNode");
   for (int i = 0; i < numTreeNodes; ++i)
-  {
+    {
     vtkMRMLNode* node = this->GetScene()->
       GetNthNodeByClass(i,"vtkMRMLEMSTreeNode");
     vtkMRMLEMSTreeNode* treeNode = vtkMRMLEMSTreeNode::SafeDownCast(node);
@@ -201,13 +201,13 @@ GetNthChildNodeID(int n)
     if (treeNode->GetParentNodeID() != NULL &&
         vtksys_stl::string(this->GetID()) == 
         vtksys_stl::string(treeNode->GetParentNodeID()))
-    {
-      if (numChildren++ == n)
       {
+      if (numChildren++ == n)
+        {
         return treeNode->GetID();
+        }
       }
     }
-  }
 
   // didn't find it
   return NULL;
@@ -220,10 +220,10 @@ GetParentNode()
 {
   vtkMRMLEMSTreeNode* node = NULL;
   if (this->GetScene() && this->GetParentNodeID())
-  {
+    {
     vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->ParentNodeID);
     node = vtkMRMLEMSTreeNode::SafeDownCast(snode);
-  }
+    }
   return node;
 }
 
@@ -234,11 +234,11 @@ GetParametersNode()
 {
   vtkMRMLEMSTreeParametersNode* node = NULL;
   if (this->GetScene() && this->GetTreeParametersNodeID())
-  {
+    {
     vtkMRMLNode* snode = this->GetScene()->
       GetNodeByID(this->TreeParametersNodeID);
     node = vtkMRMLEMSTreeParametersNode::SafeDownCast(snode);
-  }
+    }
   return node;
 }
 
@@ -249,10 +249,10 @@ GetNthChildNode(int n)
 {
   vtkMRMLEMSTreeNode* node = NULL;
   if (this->GetScene() && this->GetNthChildNodeID(n))
-  {
+    {
     vtkMRMLNode* snode = this->GetScene()->
       GetNodeByID(this->GetNthChildNodeID(n));
     node = vtkMRMLEMSTreeNode::SafeDownCast(snode);
-  }
+    }
   return node;
 }

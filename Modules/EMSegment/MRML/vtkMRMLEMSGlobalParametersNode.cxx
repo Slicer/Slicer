@@ -12,9 +12,9 @@ New()
   vtkObject* ret = 
     vtkObjectFactory::CreateInstance("vtkMRMLEMSGlobalParametersNode");
   if(ret)
-  {
+    {
     return (vtkMRMLEMSGlobalParametersNode*)ret;
-  }
+    }
   // If the factory was unable to create the object, then create it here.
   return new vtkMRMLEMSGlobalParametersNode;
 }
@@ -28,9 +28,9 @@ CreateNodeInstance()
   vtkObject* ret = 
     vtkObjectFactory::CreateInstance("vtkMRMLEMSGlobalParametersNode");
   if(ret)
-  {
+    {
     return (vtkMRMLEMSGlobalParametersNode*)ret;
-  }
+    }
   // If the factory was unable to create the object, then create it here.
   return new vtkMRMLEMSGlobalParametersNode;
 }
@@ -85,44 +85,45 @@ void vtkMRMLEMSGlobalParametersNode::WriteXML(ostream& of, int nIndent)
 
   of << indent << "WorkingDirectory=\"" 
      << (this->WorkingDirectory ? this->WorkingDirectory : "NULL") << "\" ";
-
-  {
+  
+    {
     vtksys_stl::stringstream ss;
     ss << this->SegmentationBoundaryMin[0] << " " 
        << this->SegmentationBoundaryMin[1] << " " 
        << this->SegmentationBoundaryMin[2];
     of << indent << "SegmentationBoundaryMin=\"" << ss.str() << "\" ";
-  }
-
-  {
+    }
+  
+    {
     vtksys_stl::stringstream ss;
     ss << this->SegmentationBoundaryMax[0] << " " 
        << this->SegmentationBoundaryMax[1] << " " 
        << this->SegmentationBoundaryMax[2];
     of << indent << "SegmentationBoundaryMax=\"" << ss.str() << "\" ";
-  }
+    }
 
-  of << indent << "RegistrationAffineType=\"" 
-     << this->RegistrationAffineType << "\" ";
-  of << indent << "RegistrationDeformableType=\"" 
-     << this->RegistrationDeformableType << "\" ";
-  of << indent << "RegistrationInterpolationType=\"" 
-     << this->RegistrationInterpolationType << "\" ";
+    of << indent << "RegistrationAffineType=\"" 
+       << this->RegistrationAffineType << "\" ";
+    of << indent << "RegistrationDeformableType=\"" 
+       << this->RegistrationDeformableType << "\" ";
+    of << indent << "RegistrationInterpolationType=\"" 
+       << this->RegistrationInterpolationType << "\" ";
 
-  of << indent << "RegistrationAtlasVolumeKey=\"" 
-     << (this->RegistrationAtlasVolumeKey ? this->RegistrationAtlasVolumeKey 
-         : "") << "\" ";
+    of << indent << "RegistrationAtlasVolumeKey=\"" 
+       << (this->RegistrationAtlasVolumeKey ? this->RegistrationAtlasVolumeKey 
+           : "") << "\" ";
 
-  of << indent << "RegistrationTargetVolumeKey=\"" 
-     << (this->RegistrationTargetVolumeKey ? this->RegistrationTargetVolumeKey 
-         : "") << "\" ";
+    of << indent << "RegistrationTargetVolumeKey=\"" 
+       << (this->RegistrationTargetVolumeKey
+           ? this->RegistrationTargetVolumeKey 
+           : "") << "\" ";
 
-  of << indent << "SaveIntermediateResults=\"" 
-     << this->SaveIntermediateResults << "\" ";
-  of << indent << "SaveSurfaceModels=\"" 
-     << this->SaveSurfaceModels << "\" ";
-  of << indent << "MultithreadingEnabled=\"" 
-     << this->MultithreadingEnabled << "\" ";
+    of << indent << "SaveIntermediateResults=\"" 
+       << this->SaveIntermediateResults << "\" ";
+    of << indent << "SaveSurfaceModels=\"" 
+       << this->SaveSurfaceModels << "\" ";
+    of << indent << "MultithreadingEnabled=\"" 
+       << this->MultithreadingEnabled << "\" ";
 }
 
 //-----------------------------------------------------------------------------
@@ -131,13 +132,13 @@ vtkMRMLEMSGlobalParametersNode::
 UpdateReferenceID(const char* oldID, const char* newID)
 {
   if (this->AtlasNodeID && !strcmp(oldID, this->AtlasNodeID))
-  {
+    {
     this->SetAtlasNodeID(newID);
-  }
+    }
   if (this->TargetNodeID && !strcmp(oldID, this->TargetNodeID))
-  {
+    {
     this->SetTargetNodeID(newID);
-  }
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -149,14 +150,14 @@ UpdateReferences()
 
   if (this->AtlasNodeID != NULL && 
       this->Scene->GetNodeByID(this->AtlasNodeID) == NULL)
-  {
+    {
     this->SetAtlasNodeID(NULL);
-  }
+    }
   if (this->TargetNodeID != NULL && 
       this->Scene->GetNodeByID(this->TargetNodeID) == NULL)
-  {
+    {
     this->SetTargetNodeID(NULL);
-  }
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -167,95 +168,95 @@ void vtkMRMLEMSGlobalParametersNode::ReadXMLAttributes(const char** attrs)
   const char* key;
   const char* val;
   while (*attrs != NULL)
-  {
+    {
     key = *attrs++;
     val = *attrs++;
     
     if (!strcmp(key, "AtlasNodeID"))
-    {
+      {
       this->SetAtlasNodeID(val);
       this->Scene->AddReferencedNodeID(this->AtlasNodeID, this); 
-    }
+      }
     else if (!strcmp(key, "TargetNodeID"))
-    {
+      {
       this->SetTargetNodeID(val);
       this->Scene->AddReferencedNodeID(this->TargetNodeID, this); 
-    }
+      }
     else if (!strcmp(key, "WorkingDirectory"))
-    {
+      {
       this->SetWorkingDirectory(val);
-    }
+      }
     else if (!strcmp(key, "SegmentationBoundaryMin"))
-    {
+      {
       vtksys_stl::stringstream ss;
       ss << val;
       for (unsigned int i = 0; i < 3; ++i)
-      {
+        {
         int m;
         if (ss >> m)
-        { 
+          { 
           this->SegmentationBoundaryMin[i] = m;
+          }
         }
       }
-    }
     else if (!strcmp(key, "SegmentationBoundaryMax"))
-    {
+      {
       vtksys_stl::stringstream ss;
       ss << val;
       for (unsigned int i = 0; i < 3; ++i)
-      {
+        {
         int m;
         if (ss >> m)
-        { 
+          { 
           this->SegmentationBoundaryMax[i] = m;
+          }
         }
       }
-    }
     else if (!strcmp(key, "RegistrationAffineType"))
-    {
+      {
       vtksys_stl::stringstream ss;
       ss << val;
       ss >> this->RegistrationAffineType;
-    }
+      }
     else if (!strcmp(key, "RegistrationDeformableType"))
-    {
+      {
       vtksys_stl::stringstream ss;
       ss << val;
       ss >> this->RegistrationDeformableType;
-    }
+      }
     else if (!strcmp(key, "RegistrationInterpolationType"))
-    {
+      {
       vtksys_stl::stringstream ss;
       ss << val;
       ss >> this->RegistrationInterpolationType;
-    }
+      }
     else if (!strcmp(key, "RegistrationAtlasVolumeKey"))
-    {
+      {
       this->SetRegistrationAtlasVolumeKey(val);
-    }
+      }
     else if (!strcmp(key, "RegistrationTargetVolumeKey"))
-    {
+      {
       this->SetRegistrationTargetVolumeKey(val);
-    }
+      }
     else if (!strcmp(key, "SaveIntermediateResults"))
-    {
+      {
       vtksys_stl::stringstream ss;
       ss << val;
       ss >> this->SaveIntermediateResults;
-    }
+      }
     else if (!strcmp(key, "SaveSurfaceModels"))
-    {
+      {
       vtksys_stl::stringstream ss;
       ss << val;
       ss >> this->SaveSurfaceModels;
-    }
+      }
     else if (!strcmp(key, "MultithreadingEnabled"))
-    {
+      {
       vtksys_stl::stringstream ss;
       ss << val;
       ss >> this->MultithreadingEnabled;
+      }
     }
-  }
 }
 
 //-----------------------------------------------------------------------------
@@ -285,14 +286,14 @@ void vtkMRMLEMSGlobalParametersNode::Copy(vtkMRMLNode *rhs)
 
 //-----------------------------------------------------------------------------
 void vtkMRMLEMSGlobalParametersNode::PrintSelf(ostream& os, 
-                                                 vtkIndent indent)
+                                               vtkIndent indent)
 {
   Superclass::PrintSelf(os, indent);
 
-  os << indent << "AtlasNodeID: "         
+  os << indent << "AtlasNodeID: "
      << (this->AtlasNodeID ? this->AtlasNodeID : "(none)") << "\n";
 
-  os << indent << "TargetNodeID: "        
+  os << indent << "TargetNodeID: "
      << (this->TargetNodeID ? this->TargetNodeID : "(none)") << "\n";
 
   os << indent << "WorkingDirectory: " 
@@ -338,10 +339,10 @@ GetAtlasNode()
 {
   vtkMRMLEMSAtlasNode* node = NULL;
   if (this->GetScene() && this->GetAtlasNodeID() )
-  {
+    {
     vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->AtlasNodeID);
     node = vtkMRMLEMSAtlasNode::SafeDownCast(snode);
-  }
+    }
   return node;
 }
 
@@ -352,10 +353,10 @@ GetTargetNode()
 {
   vtkMRMLEMSTargetNode* node = NULL;
   if (this->GetScene() && this->GetTargetNodeID() )
-  {
+    {
     vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->TargetNodeID);
     node = vtkMRMLEMSTargetNode::SafeDownCast(snode);
-  }
+    }
   return node;
 }
 
@@ -369,11 +370,11 @@ GetNumberOfTargetInputChannels()
   //
   vtkMRMLEMSTargetNode* target = this->GetTargetNode();
   if (target == NULL)
-  {
+    {
     return 0;
-  }
+    }
   else
-  {
+    {
     return target->GetNumberOfVolumes();
-  }
+    }
 }

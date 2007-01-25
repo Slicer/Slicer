@@ -26,4 +26,3 @@ static const unsigned char image_CSAILLogo[] =
   "bZIYc+Mvr/niIPmF+oOGX2O1vnKP5Xep9T69zeHH/sRrPFPH3vtNx6P32b2+P6dnafYb9e"
   "XLI60/zizUYuq6xBvihzlO9jXZ3+z8s8UmZyNpjF9K331zZo4exmZg8PbpU5fP0ey/1nKe"
   "a+t7MekE575z6b9m/zs/LU6pS+xTxxI/n/43ZzChRdA1arDvTHco+wN5TbDY";
-

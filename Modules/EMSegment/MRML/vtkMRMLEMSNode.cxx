@@ -11,9 +11,9 @@ New()
   vtkObject* ret = 
     vtkObjectFactory::CreateInstance("vtkMRMLEMSNode");
   if(ret)
-  {
+    {
     return (vtkMRMLEMSNode*)ret;
-  }
+    }
   // If the factory was unable to create the object, then create it here.
   return new vtkMRMLEMSNode;
 }
@@ -27,9 +27,9 @@ CreateNodeInstance()
   vtkObject* ret = 
     vtkObjectFactory::CreateInstance("vtkMRMLEMSNode");
   if(ret)
-  {
+    {
     return (vtkMRMLEMSNode*)ret;
-  }
+    }
   // If the factory was unable to create the object, then create it here.
   return new vtkMRMLEMSNode;
 }
@@ -68,9 +68,9 @@ vtkMRMLEMSNode::
 UpdateReferenceID(const char* oldID, const char* newID)
 {
   if (this->SegmenterNodeID && !strcmp(oldID, this->SegmenterNodeID))
-  {
+    {
     this->SetSegmenterNodeID(newID);
-  }
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -82,9 +82,9 @@ UpdateReferences()
 
   if (this->SegmenterNodeID != NULL && 
       this->Scene->GetNodeByID(this->SegmenterNodeID) == NULL)
-  {
+    {
     this->SetSegmenterNodeID(NULL);
-  }
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -98,26 +98,26 @@ void vtkMRMLEMSNode::ReadXMLAttributes(const char** attrs)
   const char* key;
   const char* val;
   while (*attrs != NULL)
-  {
+    {
     key = *attrs++;
     val = *attrs++;
     
     if (!strcmp(key, "SegmenterNodeID"))
-    {
+      {
       this->SetSegmenterNodeID(val);
       this->Scene->AddReferencedNodeID(this->SegmenterNodeID, this);
-    }
+      }
     else if (!strcmp(key, "TemplateFilename"))
-    {
+      {
       this->SetTemplateFilename(val);
-    }
+      }
     else if (!strcmp(key, "SaveTemplateAfterSegmentation"))
-    {
+      {
       vtksys_stl::stringstream ss;
       ss << val;
       ss >> this->SaveTemplateAfterSegmentation;
+      }
     }
-  }
 }
 
 //-----------------------------------------------------------------------------
@@ -136,12 +136,12 @@ void vtkMRMLEMSNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os, indent);
   
-   os << indent << "SegmenterNodeID: " <<
+  os << indent << "SegmenterNodeID: " <<
     (this->SegmenterNodeID ? this->SegmenterNodeID : "(none)") << "\n";
-   os << indent << "TemplateFilename: " <<
+  os << indent << "TemplateFilename: " <<
     (this->TemplateFilename ? this->TemplateFilename : "(none)") << "\n";
-   os << indent << "SaveTemplateAfterSegmentation: " 
-      << this->SaveTemplateAfterSegmentation << "\n";
+  os << indent << "SaveTemplateAfterSegmentation: " 
+     << this->SaveTemplateAfterSegmentation << "\n";
 }
 
 //-----------------------------------------------------------------------------
@@ -151,10 +151,10 @@ GetSegmenterNode()
 {
   vtkMRMLEMSSegmenterNode* node = NULL;
   if (this->GetScene() && this->GetSegmenterNodeID() )
-  {
+    {
     vtkMRMLNode* snode = 
       this->GetScene()->GetNodeByID(this->SegmenterNodeID);
     node = vtkMRMLEMSSegmenterNode::SafeDownCast(snode);
-  }
+    }
   return node;
 }

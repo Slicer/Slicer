@@ -34,7 +34,7 @@ public:
 
   // Description:
   // Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() {return "EMSSegmenter";};
+  virtual const char* GetNodeTagName() {return "EMSSegmenter";}
 
   // Description:
   // Updates this node if it depends on other nodes
@@ -80,4 +80,3 @@ protected:
 };
 
 #endif
-

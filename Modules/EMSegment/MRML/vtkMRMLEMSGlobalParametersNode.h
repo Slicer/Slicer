@@ -1,5 +1,5 @@
-#ifndef __vtkMRMLEMSGlobalParameters_h
-#define __vtkMRMLEMSGlobalParameters_h
+#ifndef __vtkMRMLEMSGlobalParametersNode_h
+#define __vtkMRMLEMSGlobalParametersNode_h
 
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
@@ -31,7 +31,7 @@ public:
 
   // Description:
   // Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() {return "EMSGlobalParameters";};
+  virtual const char* GetNodeTagName() {return "EMSGlobalParameters";}
 
   // Description:
   // Updates this node if it depends on other nodes
@@ -132,4 +132,3 @@ protected:
 };
 
 #endif
-
