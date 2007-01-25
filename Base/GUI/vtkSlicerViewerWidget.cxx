@@ -73,6 +73,8 @@ vtkSlicerViewerWidget::vtkSlicerViewerWidget ( )
 }
 
 
+
+
 //---------------------------------------------------------------------------
 vtkSlicerViewerWidget::~vtkSlicerViewerWidget ( )
 {
@@ -90,27 +92,40 @@ vtkSlicerViewerWidget::~vtkSlicerViewerWidget ( )
     {
     this->SetMRMLScene ( NULL );
     this->MainViewer->RemoveAllViewProps ( );
+    this->MainViewer->RemoveAllRenderers();
+    this->MainViewer->RemoveAllOverlayRenderers();
     this->MainViewer->SetParent ( NULL );
     this->MainViewer->Delete();
     this->MainViewer = NULL;
-    this->ViewerFrame->SetParent ( NULL );
-    this->ViewerFrame->Delete ( );
-    this->ViewerFrame = NULL;
     }
 
+//  this->SlicePlanes->RemoveFunction (this->RedSlicePlane);
+//  this->SlicePlanes->RemoveFunction (this->GreenSlicePlane);
+//  this->SlicePlanes->RemoveFunction (this->YellowSlicePlane);
   this->SlicePlanes->Delete();
+  this->SlicePlanes = NULL;
   this->RedSlicePlane->Delete();
+  this->RedSlicePlane = NULL;
   this->GreenSlicePlane->Delete();
+  this->GreenSlicePlane = NULL;
   this->YellowSlicePlane->Delete();
+  this->YellowSlicePlane = NULL;
 
   if (this->BoxAxisActor)
     {
     this->BoxAxisActor->Delete();
+    this->BoxAxisActor = NULL;
     }
   for (unsigned int i=0; i<this->AxisLabelActors.size(); i++)
     {
     this->AxisLabelActors[i]->Delete();
     }
+  this->AxisLabelActors.clear();
+  
+  this->ViewerFrame->SetParent ( NULL );
+  this->ViewerFrame->Delete ( );
+  this->ViewerFrame = NULL;
+
 }
 
 //---------------------------------------------------------------------------
