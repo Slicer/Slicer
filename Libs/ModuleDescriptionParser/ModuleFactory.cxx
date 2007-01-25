@@ -434,12 +434,21 @@ ModuleFactory
                   (*this->InternalMap)[module.GetTitle()].SetLogo(mLogo);
                   }
                 }
+              else
+                {
+                // not a plugin, no xml description, close the library
+                itksys::DynamicLoader::CloseLibrary(lib);
+                }
               }
             else
               {
 //               std::cout << "Symbols not found." << std::endl;
 //               std::cout << "xmlFunction: " << (void*)xmlFunction << std::endl;
-//               std::cout << "entryPoint: " << (void*)entryPoint << std::endl;
+//               std::cout << "entryPoint: " << (void*)entryPoint <<
+//               std::endl;
+
+              // not a plugin, doesn't have the symbols, close the library
+              itksys::DynamicLoader::CloseLibrary(lib);
               }
             }
           }
