@@ -436,6 +436,45 @@ void vtkEMSegmentGUI::BuildGUI()
 //---------------------------------------------------------------------------
 void vtkEMSegmentGUI::TearDownGUI() 
 {
+  if (this->ParametersSetStep)
+    {
+    this->ParametersSetStep->SetGUI(NULL);
+    }
+
+  if (this->AnatomicalStructureStep)
+    {
+    this->AnatomicalStructureStep->SetGUI(NULL);
+    }
+
+  if (this->SpatialPriorsStep)
+    {
+    this->SpatialPriorsStep->SetGUI(NULL);
+    }
+
+  if (this->IntensityImagesStep)
+    {
+    this->IntensityImagesStep->SetGUI(NULL);
+    }
+
+  if (this->IntensityDistributionsStep)
+    {
+    this->IntensityDistributionsStep->SetGUI(NULL);
+    }
+
+  if (this->NodeParametersStep)
+    {
+    this->NodeParametersStep->SetGUI(NULL);
+    }
+
+  if (this->RegistrationParametersStep)
+    {
+    this->RegistrationParametersStep->SetGUI(NULL);
+    }
+
+  if (this->RunSegmentationStep)
+    {
+    this->RunSegmentationStep->SetGUI(NULL);
+    }
 }
 
 //---------------------------------------------------------------------------

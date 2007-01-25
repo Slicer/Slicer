@@ -1223,6 +1223,7 @@ int Slicer3_main(int argc, char *argv[])
 #endif
 
 #ifndef EMSEG_DEBUG
+    emSegmentGUI->TearDownGUI();
     emSegmentGUI->RemoveGUIObservers();
 #endif
 
