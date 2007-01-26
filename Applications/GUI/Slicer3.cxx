@@ -1427,6 +1427,11 @@ int Slicer3_main(int argc, char *argv[])
     slicerFiberBundleLogic->Delete ();
 #endif
         
+#ifndef EMSEG_DEBUG
+    emSegmentLogic->SetAndObserveMRMLScene ( NULL );
+    emSegmentLogic->Delete();
+#endif
+
 #ifndef QUERYATLAS_DEBUG
     queryAtlasLogic->SetAndObserveMRMLScene ( NULL );
     queryAtlasLogic->Delete ( );

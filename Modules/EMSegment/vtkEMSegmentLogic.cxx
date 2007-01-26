@@ -31,6 +31,7 @@
 #include <math.h>
 #include <exception>
 
+
 //----------------------------------------------------------------------------
 vtkEMSegmentLogic* vtkEMSegmentLogic::New()
 {
@@ -315,9 +316,6 @@ RemoveTreeNode(vtkIdType removedNodeID)
 
   // remove node from scene  
   this->GetMRMLScene()->RemoveNode(node);
-
-  // delete node
-  node->Delete();
 }
 
 //----------------------------------------------------------------------------
@@ -2560,18 +2558,18 @@ CreateAndObserveNewParameterSet()
   this->SetTreeNodeName(rootID, "Root");
   this->SetTreeNodeIntensityLabel(rootID, rootID);
 
-  // is this right?
-  //atlasNode->Delete();
-  //targetNode->Delete();
-  //globalParametersNode->Delete();
-  //leafParametersNode->Delete();
-  //parentParametersNode->Delete();
-  //treeParametersNode->Delete();
-  //treeNode->Delete();
-  //templateNode->Delete();
-  //segmenterNode->Delete();
-  // this crashes the system
-  //templateBuilderNode->Delete();
+  // delete nodes
+  atlasNode->Delete();
+  targetNode->Delete();
+  globalParametersNode->Delete();
+  leafParametersNode->Delete();
+  parentParametersNode->Delete();
+  treeParametersNode->Delete();
+  treeNode->Delete();
+  templateNode->Delete();
+  segmenterNode->Delete();
+  // this crashed the system during initial development
+  templateBuilderNode->Delete();
 }
 
 //----------------------------------------------------------------------------
@@ -2623,11 +2621,12 @@ AddNewTreeNode()
   vtkIdType treeNodeID = this->MapMRMLNodeIDToVTKNodeID(treeNode->GetID());
   this->SetTreeNodeIntensityLabel(treeNodeID, treeNodeID);
   
-  // is this right???
-  //leafParametersNode->Delete();
-  //parentParametersNode->Delete();
-  //treeParametersNode->Delete();
-  //treeNode->Delete();
+  // delete nodes
+  leafParametersNode->Delete();
+  parentParametersNode->Delete();
+  treeParametersNode->Delete();
+  treeNode->Delete();
+
   return treeNodeID;
 }
 
@@ -2641,7 +2640,6 @@ RemoveTreeNodeParametersNodes(vtkIdType nodeID)
     {
     vtkErrorMacro("Tree node is null for nodeID: " << nodeID);
     }
-
   vtkMRMLEMSTreeParametersNode* parametersNode = n->GetParametersNode();
   if (parametersNode != NULL)
     {
@@ -2650,7 +2648,6 @@ RemoveTreeNodeParametersNodes(vtkIdType nodeID)
     if (leafParametersNode != NULL)
       {
       this->GetMRMLScene()->RemoveNode(leafParametersNode);
-      leafParametersNode->Delete();
       }
 
     // remove parent node parameters
@@ -2659,12 +2656,10 @@ RemoveTreeNodeParametersNodes(vtkIdType nodeID)
     if (parentParametersNode != NULL)
       {
       this->GetMRMLScene()->RemoveNode(parentParametersNode);
-      parentParametersNode->Delete();
       }
 
     // remove parameters node
     this->GetMRMLScene()->RemoveNode(parametersNode);
-    parametersNode->Delete();
     }
 }
 
@@ -3061,6 +3056,7 @@ CopyDataToSegmenter(vtkImageEMLocalSegmenter* segmenter)
   vtkImageEMLocalSuperClass* rootNode = vtkImageEMLocalSuperClass::New();
   this->CopyTreeDataToSegmenter(rootNode, this->GetTreeRootNodeID());
   segmenter->SetHeadClass(rootNode);
+  rootNode->Delete();
 }
 
 //-----------------------------------------------------------------------------
@@ -3166,12 +3162,14 @@ CopyTreeDataToSegmenter(vtkImageEMLocalSuperClass* node, vtkIdType nodeID)
       this->CopyTreeGenericDataToSegmenter(childNode, childID);
       this->CopyTreeLeafDataToSegmenter(childNode, childID);
       node->AddSubClass(childNode, i);
+      childNode->Delete();
       }
     else
       {
       vtkImageEMLocalSuperClass* childNode = vtkImageEMLocalSuperClass::New();
       this->CopyTreeDataToSegmenter(childNode, childID);
       node->AddSubClass(childNode, i);
+      childNode->Delete();
       }
     }
 
