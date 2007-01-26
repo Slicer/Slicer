@@ -53,7 +53,7 @@ vtkEMSegmentLogic::vtkEMSegmentLogic()
   this->Node = NULL;
   this->ModuleName = NULL;
 
-  this->ProgressCurrentAction = "Constructor";
+  this->ProgressCurrentAction = NULL;
   this->ProgressGlobalFractionCompleted = 0.0;
   this->ProgressCurrentFractionCompleted = 0.0;
   this->NextVTKNodeID = 1000;
@@ -66,8 +66,8 @@ vtkEMSegmentLogic::vtkEMSegmentLogic()
 vtkEMSegmentLogic::~vtkEMSegmentLogic()
 {
   vtkSetMRMLNodeMacro(this->Node, NULL);
-  this->SetModuleName(NULL);
   this->SetProgressCurrentAction(NULL);
+  this->SetModuleName(NULL);
 }
 
 //----------------------------------------------------------------------------
