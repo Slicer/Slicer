@@ -69,7 +69,7 @@
 #include "Resources/vtkSlicerSplashScreen_ImageData.h"
 
 // uncomment these lines to disable a particular module (handy for debugging)
-//#define CLIMODULES_DEBUG
+#define CLIMODULES_DEBUG
 //#define TCLMODULES_DEBUG
 //#define SLICES_DEBUG
 //#define MODELS_DEBUG
@@ -842,7 +842,7 @@ int Slicer3_main(int argc, char *argv[])
       "Initializing Tractography Display Module...");
     vtkSlicerTractographyDisplayGUI *slicerTractographyDisplayGUI = vtkSlicerTractographyDisplayGUI::New ( );
     vtkSlicerFiberBundleLogic *slicerFiberBundleLogic  = vtkSlicerFiberBundleLogic::New ( );
-    slicerFiberBundleLogic->DebugOn ( );
+    //slicerFiberBundleLogic->DebugOn ( );
 
     // Observe scene events to handle display logic for new nodes or new scenes
     events = vtkIntArray::New();
@@ -1394,6 +1394,12 @@ int Slicer3_main(int argc, char *argv[])
     Slicer3_Tcl_Eval( interp, tclCommand.c_str() );
 #endif
 
+    // Release reference to applicaiton GUI
+    // and delete it.
+   slicerApp->SetApplicationGUI ( NULL );
+   appGUI->DeleteComponentGUIs();
+//cerr << "vtkSlicerApplicationGUI deleting app GUI\n";
+//   appGUI->Delete ();
 
 #ifndef CLIMODULES_DEBUG
     // delete the factory discovered module GUIs (as we delete the
