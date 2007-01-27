@@ -104,11 +104,11 @@ vtkSlicerFiducialListWidget::vtkSlicerFiducialListWidget ( )
 
   this->DiamondGlyphPolyData = vtkPolyData::New();
   this->DiamondGlyphPolyData->SetPoints(diamondGlyphPoints);
-  //diamondGlyphPoints->Delete();
+  diamondGlyphPoints->Delete();
   this->DiamondGlyphPolyData->SetPolys(diamondGlyphPolys);
   this->DiamondGlyphPolyData->SetLines(diamondGlyphLines);
-  //diamondGlyphPolys->Delete();
-  //diamondGlyphLines->Delete();
+  diamondGlyphPolys->Delete();
+  diamondGlyphLines->Delete();
 
   this->SphereSource = vtkSphereSource::New();
   this->SphereSource->SetRadius(0.3);
