@@ -392,24 +392,24 @@ void vtkMRMLVolumeNode::SetIJKToRASMatrix(vtkMatrix4x4* mat)
     }
   // normalize direction vectors
   double spacing[3];
-  int row;
-  for (row=0; row<3; row++) 
+  int col;
+  for (col=0; col<3; col++) 
     {
     double len =0;
-    int col;
-    for (col=0; col<3; col++) 
+    int row;
+    for (row=0; row<3; row++) 
       {
       len += mat->GetElement(row, col) * mat->GetElement(row, col);
       }
     len = sqrt(len);
-    spacing[row] = len;
-    for (col=0; col<3; col++) 
+    spacing[col] = len;
+    for (row=0; row<3; row++) 
       {
       mat->SetElement(row, col,  mat->GetElement(row, col)/len);
       }
     }
 
-  int col, i=0;
+  int row, i=0;
   for (row=0; row<3; row++) 
     {
     for (col=0; col<3; col++) 
@@ -446,7 +446,7 @@ void vtkMRMLVolumeNode::GetIJKToRASMatrix(vtkMatrix4x4* mat)
     {
     for (col=0; col<3; col++) 
       {
-      mat->SetElement(row, col, this->Spacing[row] * IJKToRASDirections[row][col]);
+      mat->SetElement(row, col, this->Spacing[col] * IJKToRASDirections[row][col]);
       }
     mat->SetElement(row, 3, this->Origin[row]);
     }
