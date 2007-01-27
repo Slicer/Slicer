@@ -72,6 +72,7 @@
 //#define CLIMODULES_DEBUG
 //#define TCLMODULES_DEBUG
 //#define SLICES_DEBUG
+//#define GAD_DEBUG
 //#define MODELS_DEBUG
 //#define VOLUMES_DEBUG
 //#define QUERYATLAS_DEBUG
@@ -815,6 +816,7 @@ int Slicer3_main(int argc, char *argv[])
 #endif
 
 
+#ifndef GAD_DEBUG
     // --- Gradient anisotropic diffusion filter module
     slicerApp->GetSplashScreen()->SetProgressMessage(
       "Initializing Gradient Anisotropic Module...");
@@ -834,7 +836,7 @@ int Slicer3_main(int argc, char *argv[])
     slicerApp->AddModuleGUI ( gradientAnisotropicDiffusionFilterGUI );
     gradientAnisotropicDiffusionFilterGUI->BuildGUI ( );
     gradientAnisotropicDiffusionFilterGUI->AddGUIObservers ( );
-
+#endif
 
 #ifndef TRACTOGRAPHY_DEBUG
     // --- Tractography Display module
@@ -1257,7 +1259,9 @@ int Slicer3_main(int argc, char *argv[])
 
     // ------------------------------
     // REMOVE OBSERVERS and references to MRML and Logic
+#ifndef GAD_DEBUG
     gradientAnisotropicDiffusionFilterGUI->RemoveGUIObservers ( );
+#endif
 
 #ifndef TRACTOGRAPHY_DEBUG
     slicerTractographyDisplayGUI->RemoveGUIObservers ( );
@@ -1348,7 +1352,9 @@ int Slicer3_main(int argc, char *argv[])
     
     //--- delete gui first, removing Refs to Logic and MRML
 
+#ifndef GAD_DEBUG
     gradientAnisotropicDiffusionFilterGUI->Delete ();
+#endif
 
 #ifndef TRACTOGRAPHY_DEBUG
     slicerTractographyDisplayGUI->Delete ();
@@ -1425,8 +1431,10 @@ int Slicer3_main(int argc, char *argv[])
     //--- delete logic next, removing Refs to MRML
     appLogic->ClearCollections ( );
 
+#ifndef GAD_DEBUG
     gradientAnisotropicDiffusionFilterLogic->SetAndObserveMRMLScene ( NULL );
     gradientAnisotropicDiffusionFilterLogic->Delete ();
+#endif
 
 #ifndef TRACTOGRAPHY_DEBUG
     slicerFiberBundleLogic->SetAndObserveMRMLScene ( NULL );
