@@ -843,6 +843,7 @@ void vtkSlicerViewerWidget::UpdateModelPolyData(vtkMRMLModelNode *model)
     actor = (*ait).second;
     }
   actor->SetMapper( mapper );
+  mapper->Delete();
 
   if (ait == this->DisplayedModels.end())
     {
