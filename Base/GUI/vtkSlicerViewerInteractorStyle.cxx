@@ -34,6 +34,7 @@ vtkSlicerViewerInteractorStyle::vtkSlicerViewerInteractorStyle()
   this->MotionFactor   = 10.0;
   this->CameraNode = NULL;
   this->Application = NULL;
+  this->State = VTKIS_ROTATE;
 }
 
 //----------------------------------------------------------------------------
