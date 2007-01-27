@@ -41,7 +41,6 @@ vtkSlicerSliceLogic::vtkSlicerSliceLogic()
   this->SetLabelOpacity(this->LabelOpacity);
   this->SliceModelNode = NULL;
   this->Name = NULL;
-  this->PlaneSource = NULL;
   this->SliceModelDisplayNode = NULL;
 }
 
@@ -559,12 +558,6 @@ void vtkSlicerSliceLogic::DeleteSliceModel()
     this->SliceModelDisplayNode->Delete();
     this->SliceModelDisplayNode = NULL;
     }
-  if (this->PlaneSource != NULL)
-    {
-    this->PlaneSource->Delete();
-    this->PlaneSource = NULL;
-    }
-  
 }
 
 //----------------------------------------------------------------------------
@@ -584,9 +577,11 @@ void vtkSlicerSliceLogic::CreateSliceModel()
     this->SliceModelNode->SetSaveWithScene(0);
 
     // create plane slice
-    this->PlaneSource = vtkPlaneSource::New();
-    this->PlaneSource->GetOutput()->Update();
-    this->SliceModelNode->SetAndObservePolyData(this->PlaneSource->GetOutput());
+    vtkPlaneSource *planeSource;
+    planeSource = vtkPlaneSource::New();
+    planeSource->GetOutput()->Update();
+    this->SliceModelNode->SetAndObservePolyData(planeSource->GetOutput());
+    planeSource->Delete();
 
     // create display node and set texture
     this->SliceModelDisplayNode = vtkMRMLModelDisplayNode::New();
