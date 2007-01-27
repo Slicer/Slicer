@@ -195,9 +195,11 @@ void vtkSlicerViewerWidget::CreateAxis()
     axisText->SetText(labels[i].c_str());
     vtkPolyDataMapper *axisMapper = vtkPolyDataMapper::New();
     axisMapper->SetInput(axisText->GetOutput());
+    axisText->Delete();
     vtkFollower *axisActor = vtkFollower::New();
 
     axisActor->SetMapper(axisMapper);
+    axisMapper->Delete();
     axisActor->SetScale(1,1,1); 
     axisActor->SetPickable (0);
 
