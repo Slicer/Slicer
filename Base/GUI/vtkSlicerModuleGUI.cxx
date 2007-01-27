@@ -59,37 +59,36 @@ void vtkSlicerModuleGUI::BuildHelpAndAboutFrame ( vtkKWWidget *parent,
   char txt[help_and_about_str_len];
   char *text = txt;
   
-    // HELP FRAME
-    this->HelpFrame = vtkSlicerModuleCollapsibleFrame::New ( );
-    this->HelpFrame->SetParent ( parent );
-    this->HelpFrame->Create ( );
-    this->HelpFrame->CollapseFrame ( );
-    this->HelpFrame->SetLabelText ("Help & About");
-    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                  this->HelpFrame->GetWidgetName(), parent->GetWidgetName());
+  // HELP FRAME
+  this->HelpFrame->SetParent ( parent );
+  this->HelpFrame->Create ( );
+  this->HelpFrame->CollapseFrame ( );
+  this->HelpFrame->SetLabelText ("Help & About");
+  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
+                this->HelpFrame->GetWidgetName(), parent->GetWidgetName());
 
-    if ( about != NULL )
-      {
-      sprintf ( text, "**Help:** %s\n\n**Acknowledgement:** %s", help, about );
-      }
-    else if ( about == NULL )
-      {
-      sprintf ( text, "**Help: %s", help);
-      }
-    
-    // configure the parent classes help text widget
-    this->HelpText->SetParent ( this->HelpFrame->GetFrame() );
-    this->HelpText->Create ( );
-    this->HelpText->SetHorizontalScrollbarVisibility ( 0 );
-    this->HelpText->SetVerticalScrollbarVisibility ( 1 );
-    this->HelpText->GetWidget()->SetText ( text );
-    this->HelpText->GetWidget()->SetReliefToFlat ( );
-    this->HelpText->GetWidget()->SetWrapToWord ( );
-    this->HelpText->GetWidget()->ReadOnlyOn ( );
-    this->HelpText->GetWidget()->QuickFormattingOn ( );
-    this->HelpText->GetWidget()->SetBalloonHelpString ( "" );
-    this->Script ( "pack %s -side top -fill x -expand y -anchor w -padx 2 -pady 4",
-                  this->HelpText->GetWidgetName ( ) );
+  if ( about != NULL )
+    {
+    sprintf ( text, "**Help:** %s\n\n**Acknowledgement:** %s", help, about );
+    }
+  else if ( about == NULL )
+    {
+    sprintf ( text, "**Help: %s", help);
+    }
+  
+  // configure the parent classes help text widget
+  this->HelpText->SetParent ( this->HelpFrame->GetFrame() );
+  this->HelpText->Create ( );
+  this->HelpText->SetHorizontalScrollbarVisibility ( 0 );
+  this->HelpText->SetVerticalScrollbarVisibility ( 1 );
+  this->HelpText->GetWidget()->SetText ( text );
+  this->HelpText->GetWidget()->SetReliefToFlat ( );
+  this->HelpText->GetWidget()->SetWrapToWord ( );
+  this->HelpText->GetWidget()->ReadOnlyOn ( );
+  this->HelpText->GetWidget()->QuickFormattingOn ( );
+  this->HelpText->GetWidget()->SetBalloonHelpString ( "" );
+  this->Script ( "pack %s -side top -fill x -expand y -anchor w -padx 2 -pady 4",
+                this->HelpText->GetWidgetName ( ) );
   
 }
 
