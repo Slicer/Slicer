@@ -73,15 +73,15 @@ itcl::body CsysSWidget::constructor {sliceGUI} {
   
   $this processEvent
 
-  lappend _guiObserverTags [$sliceGUI AddObserver DeleteEvent "itcl::delete object $this"]
+  lappend _guiObserverTags [$sliceGUI AddObserver DeleteEvent "::SWidget::ProtectedDelete $this"]
   set events {LeftButtonPressEvent LeftButtonReleaseEvent MouseMoveEvent EnterEvent LeaveEvent} 
   foreach event $events { 
-    lappend _guiObserverTags [$sliceGUI AddObserver $event "$this processEvent"]
+    lappend _guiObserverTags [$sliceGUI AddObserver $event "::SWidget::ProtectedCallback $this processEvent"]
   }
 
   set node [[$sliceGUI GetLogic] GetSliceNode]
-  lappend _nodeObserverTags [$node AddObserver DeleteEvent "itcl::delete object $this"]
-  lappend _nodeObserverTags [$node AddObserver AnyEvent "$this processEvent"]
+  lappend _nodeObserverTags [$node AddObserver DeleteEvent "::SWidget::ProtectedDelete $this"]
+  lappend _nodeObserverTags [$node AddObserver AnyEvent "::SWidget::ProtectedCallback $this processEvent"]
 }
 
 itcl::body CsysSWidget::destructor {} {

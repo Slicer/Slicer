@@ -50,12 +50,12 @@ itcl::body FiducialsSWidget::constructor {sliceGUI} {
   # - track them so they can be removed in the destructor
   #
   set node [[$sliceGUI GetLogic] GetSliceNode]
-  lappend _nodeObserverTags [$node AddObserver DeleteEvent "itcl::delete object $this"]
-  lappend _nodeObserverTags [$node AddObserver AnyEvent "$this processEvent $node"]
+  lappend _nodeObserverTags [$node AddObserver DeleteEvent "::SWidget::ProtectedDelete $this"]
+  lappend _nodeObserverTags [$node AddObserver AnyEvent "::SWidget::ProtectedCallback $this processEvent $node"]
 
   set scene [$sliceGUI GetMRMLScene]
-  lappend _sceneObserverTags [$scene AddObserver DeleteEvent "itcl::delete object $this"]
-  lappend _sceneObserverTags [$scene AddObserver AnyEvent "$this processEvent $scene"]
+  lappend _sceneObserverTags [$scene AddObserver DeleteEvent "::SWidget::ProtectedDelete $this"]
+  lappend _sceneObserverTags [$scene AddObserver AnyEvent "::SWidget::ProtectedCallback $this processEvent $scene"]
 
   $this processEvent $scene
 }
@@ -74,10 +74,12 @@ itcl::body FiducialsSWidget::destructor {} {
     }
   }
 
-  set scene [$sliceGUI GetMRMLScene]
-  if { [info command $scene] != "" } {
-    foreach tag $_sceneObserverTags {
-      $scene RemoveObserver $tag
+  if { [info command $sliceGUI] != "" } {
+    set scene [$sliceGUI GetMRMLScene]
+    if { [info command $scene] != "" } {
+      foreach tag $_sceneObserverTags {
+        $scene RemoveObserver $tag
+      }
     }
   }
 }
@@ -99,7 +101,7 @@ itcl::body FiducialsSWidget::processEvent { caller } {
   if { [info command $sliceGUI] == "" } {
     # the sliceGUI was deleted behind our back, so we need to 
     # self destruct
-    itcl::delete object $this
+    ::SWidget::ProtectedDelete $this
     return
   }
 
@@ -110,7 +112,7 @@ itcl::body FiducialsSWidget::processEvent { caller } {
   #
   foreach seed $_seedSWidgets {
     $seed place -10000 -10000 -10000
-    after idle "itcl::delete object ::FiducialsSWidget::$seed;"
+    after idle "::SWidget::ProtectedDelete ::FiducialsSWidget::$seed;"
     [$sliceGUI GetSliceViewer] RequestRender
   }
   set _seedSWidgets ""
@@ -196,7 +198,7 @@ itcl::body FiducialsSWidget::processEvent { caller } {
 }
 
 itcl::body FiducialsSWidget::addFiducialListObserver {fidListNode} {
-  set tag [$fidListNode AddObserver AnyEvent "$this processEvent $fidListNode"]
+  set tag [$fidListNode AddObserver AnyEvent "::SWidget::ProtectedCallback $this processEvent $fidListNode"]
   lappend _fiducialListObserverTagPairs "$fidListNode $tag"
 }
 

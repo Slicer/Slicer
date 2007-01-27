@@ -66,16 +66,16 @@ itcl::body GridSWidget::constructor {sliceGUI} {
   #
   set _guiObserverTags ""
 
-  lappend _guiObserverTags [$sliceGUI AddObserver DeleteEvent "itcl::delete object $this"]
+  lappend _guiObserverTags [$sliceGUI AddObserver DeleteEvent "::SWidget::ProtectedDelete $this"]
 
   set events {  "MouseMoveEvent" "UserEvent" }
   foreach event $events {
-    lappend _guiObserverTags [$sliceGUI AddObserver $event "$this processEvent $sliceGUI"]    
+    lappend _guiObserverTags [$sliceGUI AddObserver $event "::SWidget::ProtectedCallback $this processEvent $sliceGUI"]    
   }
 
   set node [[$sliceGUI GetLogic] GetSliceNode]
-  lappend _nodeObserverTags [$node AddObserver DeleteEvent "itcl::delete object $this"]
-  lappend _nodeObserverTags [$node AddObserver AnyEvent "$this processEvent $node"]
+  lappend _nodeObserverTags [$node AddObserver DeleteEvent "::SWidget::ProtectedDelete $this"]
+  lappend _nodeObserverTags [$node AddObserver AnyEvent "::SWidget::ProtectedCallback $this processEvent $node"]
 }
 
 
@@ -114,7 +114,7 @@ itcl::body GridSWidget::processEvent { {caller ""} } {
   if { [info command $sliceGUI] == "" } {
     # the sliceGUI was deleted behind our back, so we need to 
     # self destruct
-    itcl::delete object $this
+    ::SWidget::ProtectedDelete $this
     return
   }
 
@@ -196,6 +196,7 @@ itcl::body GridSWidget::updateGrid { } {
   foreach {x y z w} [$ijkToXY MultiplyPoint 1 1 1 0] {}
   if { $x < $cutoff && $y < $cutoff } {
     $o(gridActor) SetVisibility 0
+    $ijkToXY Delete
     return
   } else {
     $o(gridActor) SetVisibility 1

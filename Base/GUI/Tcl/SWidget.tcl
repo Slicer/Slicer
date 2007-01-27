@@ -3,6 +3,30 @@ package require Itcl
 
 package provide SlicerBaseGUITcl 3.0
 
+# 
+# utility to only delete an instance if it hasn't already been deleted
+# (this is useful in event handling)
+#
+namespace eval SWidget {
+  proc ProtectedDelete {instance} {
+    if { [info command $instance] != "" } {
+      itcl::delete object $instance
+    }
+  }
+}
+
+# 
+# utility to run method only if instance hasn't already been deleted
+# (this is useful in event handling)
+#
+namespace eval SWidget {
+  proc ProtectedCallback {instance args} {
+    if { [info command $instance] != "" } {
+      eval $instance $args
+    }
+  }
+}
+
 #########################################################
 #
 if {0} { ;# comment

@@ -21,7 +21,6 @@ proc SliceViewerInitialize { sliceGUI } {
 
 
 proc SliceViewerShutdown { sliceGUI } {
-  
   # find the SliceSWidget that owns the sliceGUI and delete it
   foreach ssw [SliceViewerFindWidgets $sliceGUI] {
     itcl::delete object $ssw
@@ -29,7 +28,6 @@ proc SliceViewerShutdown { sliceGUI } {
 }
 
 proc SliceViewerHandleEvent {sliceGUI event} {
-
   # initialize on first call 
   # -- allows clean shutdown because each vtkSlicerSliceGUI can shutdown in destructor
   # -- this is very light weight, so no problem calling every time
