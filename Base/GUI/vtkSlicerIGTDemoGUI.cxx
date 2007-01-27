@@ -1557,6 +1557,11 @@ void vtkSlicerIGTDemoGUI::BuildGUIForHandPieceFrame ()
                 aLabel->GetWidgetName(),
                 sLabel->GetWidgetName());
 
+    emptyLabel->Delete();
+    rLabel->Delete();
+    aLabel->Delete();
+    sLabel->Delete();
+
     // Contents in N frame 
     vtkKWLabel *nLabel = vtkKWLabel::New();
     nLabel->SetParent(nFrame);
@@ -1587,6 +1592,8 @@ void vtkSlicerIGTDemoGUI::BuildGUIForHandPieceFrame ()
                 this->NREntry->GetWidgetName(),
                 this->NAEntry->GetWidgetName(),
                 this->NSEntry->GetWidgetName());
+
+    nLabel->Delete();
 
     // Contents in T frame
     vtkKWLabel *tLabel = vtkKWLabel::New();
@@ -1619,6 +1626,8 @@ void vtkSlicerIGTDemoGUI::BuildGUIForHandPieceFrame ()
                 this->TAEntry->GetWidgetName(),
                 this->TSEntry->GetWidgetName());
 
+    tLabel->Delete();
+
     // Contents in P frame
     vtkKWLabel *pLabel = vtkKWLabel::New();
     pLabel->SetParent(pFrame);
@@ -1650,6 +1659,7 @@ void vtkSlicerIGTDemoGUI::BuildGUIForHandPieceFrame ()
                 this->PAEntry->GetWidgetName(),
                 this->PSEntry->GetWidgetName());
 
+    pLabel->Delete();
 /*
 
     // Color frame: Locator color 
