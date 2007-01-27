@@ -918,7 +918,10 @@ const char* vtkMRMLScene::GetUniqueNameByString(const char* className)
     else 
       {
       // double check that no node has this name
-      if (this->GetNodesByName(name.c_str())->GetNumberOfItems() == 0)
+      vtkCollection *nodesByName = this->GetNodesByName(name.c_str());
+      int numberOfItems = nodesByName->GetNumberOfItems();
+      nodesByName->Delete();
+      if ( numberOfItems == 0 )
         {
         break;
         }
