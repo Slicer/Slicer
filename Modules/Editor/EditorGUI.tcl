@@ -41,6 +41,7 @@ proc EditorTearDownGUI {this} {
     nodeSelector volumesCreate volumeName volumesSelect
     volumesFrame paintThreshold paintOver paintDropper
     paintRadius paintRange paintEnable paintLabel
+    paintPaint paintDraw
       paintFrame rebuildButton
   }
 
