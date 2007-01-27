@@ -164,6 +164,7 @@ void vtkEMSegmentGUI::AddGUIObservers()
     {
     this->SetAndObserveMRMLSceneEvents(this->GetMRMLScene(), events);
     }
+  events->Delete();
 }
 
 //---------------------------------------------------------------------------
