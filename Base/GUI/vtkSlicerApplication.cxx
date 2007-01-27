@@ -657,7 +657,9 @@ vtkSlicerApplication::WarningMessage(const char* message)
 #ifdef _WIN32
   ::OutputDebugString(message);
 #endif
+#ifndef NDEBUG
   cerr << message;
+#endif
 
   this->RequestDisplayMessage("Warning", message);
 }
@@ -669,7 +671,9 @@ vtkSlicerApplication::ErrorMessage(const char* message)
 #ifdef _WIN32
   ::OutputDebugString(message);
 #endif
+#ifndef NDEBUG
   cerr << message;
+#endif
 
   this->RequestDisplayMessage("Error", message);
 }
@@ -681,7 +685,9 @@ vtkSlicerApplication::DebugMessage(const char* message)
 #ifdef _WIN32
   ::OutputDebugString(message);
 #endif
+#ifndef NDEBUG
   cerr << message;
+#endif
 
   this->RequestDisplayMessage("Debug", message);
 }
@@ -693,7 +699,9 @@ vtkSlicerApplication::InformationMessage(const char* message)
 #ifdef _WIN32
   ::OutputDebugString(message);
 #endif
+#ifndef NDEBUG
   cerr << message;
+#endif
 
   this->RequestDisplayMessage("Information", message);
 }
