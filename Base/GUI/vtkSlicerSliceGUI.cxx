@@ -206,6 +206,7 @@ void vtkSlicerSliceGUI::ProcessGUIEvents ( vtkObject *caller,
       }
     }
 
+  // handle events from the Render Widget
   if (rw == this->GetSliceViewer()->GetRenderWidget() &&
       this->GetLogic() != NULL)
     {
