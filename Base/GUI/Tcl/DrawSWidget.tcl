@@ -353,6 +353,7 @@ itcl::body DrawSWidget::apply {} {
   $painter Delete
   $labelIJKToRAS Delete
   $backgroundIJKToRAS Delete
+  $maskIJKToRAS Delete
 
   # TODO maybe just call $sliceGUI Render for faster update
   # and call this on mouse up - more important for paint
