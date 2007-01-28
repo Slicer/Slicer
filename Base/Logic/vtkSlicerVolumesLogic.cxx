@@ -16,6 +16,8 @@
 #include "vtkCallbackCommand.h"
 #include <vtksys/SystemTools.hxx> 
 
+#include "vtkImageThreshold.h"
+
 #include "vtkSlicerVolumesLogic.h"
 #include "vtkSlicerColorLogic.h"
 
@@ -341,6 +343,50 @@ int vtkSlicerVolumesLogic::SaveArchetypeVolume (char* filename, vtkMRMLVolumeNod
 
   
   return res;
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLScalarVolumeNode *vtkSlicerVolumesLogic::CreateLabelVolume (vtkMRMLScene *scene, vtkMRMLVolumeNode *volumeNode, char *name)
+{
+  if ( volumeNode == NULL ) 
+    {
+    return NULL;
+    }
+
+  // create a display node
+  vtkMRMLVolumeDisplayNode *labelDisplayNode  = vtkMRMLVolumeDisplayNode::New();
+
+  scene->AddNode(labelDisplayNode);
+
+  // create a volume node as copy of source volume
+  vtkMRMLScalarVolumeNode *labelNode = vtkMRMLScalarVolumeNode::New();
+  labelNode->Copy(volumeNode);
+  labelNode->SetStorageNodeID(NULL);
+  labelNode->SetLabelMap(1);
+
+  // set the display node to have a label map lookup table
+  labelDisplayNode->SetAndObserveColorNodeID ("vtkMRMLColorTableNodeLabels");
+  labelNode->SetName(name);
+  labelNode->SetAndObserveDisplayNodeID( labelDisplayNode->GetID() );
+
+  // make an image data of the same size and shape as the input volume,
+  // but filled with zeros
+  vtkImageThreshold *thresh = vtkImageThreshold::New();
+  thresh->ReplaceInOn();
+  thresh->ReplaceOutOn();
+  thresh->SetInValue(0);
+  thresh->SetOutValue(0);
+  thresh->SetInput( volumeNode->GetImageData() );
+  thresh->GetOutput()->Update();
+  labelNode->SetAndObserveImageData( thresh->GetOutput() );
+  thresh->Delete();
+
+  // add the label volume to the scene
+  scene->AddNode(labelNode);
+
+  labelDisplayNode->Delete();
+
+  return (labelNode);
 }
 
 //----------------------------------------------------------------------------

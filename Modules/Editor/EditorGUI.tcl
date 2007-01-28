@@ -393,40 +393,17 @@ proc EditorCreateLabelVolume {this} {
     return;
   }
 
-  # create a display node
-  set labelDisplayNode [vtkMRMLVolumeDisplayNode New]
-  [[$this GetLogic] GetMRMLScene] AddNode $labelDisplayNode
-
-  # create a volume node as copy of source volume
-  set labelNode [vtkMRMLScalarVolumeNode New]
-  $labelNode Copy $volumeNode
-  $labelNode SetLabelMap 1
-  # set the display node to have a label map lookup table
-  $labelDisplayNode SetAndObserveColorNodeID "vtkMRMLColorTableNodeLabels"
   set name [[$::Editor($this,volumeName) GetWidget] GetValue]
-  if { $name != "" } {
-    $labelNode SetName $name
-  } else {
-    $labelNode SetName "[$volumeNode GetName]-label"
+  if { $name == "" } {
+    set name "[$volumeNode GetName]-label"
   }
-  # Copy won't copy the ID 
-  # $labelNode SetID ""  ;# clear ID so a new one is generated
-  $labelNode SetAndObserveDisplayNodeID [$labelDisplayNode GetID]
 
-  # make an image data of the same size and shape as the input volume,
-  # but filled with zeros
-  set thresh [vtkImageThreshold New]
-  $thresh ReplaceInOn
-  $thresh ReplaceOutOn
-  $thresh SetInValue 0
-  $thresh SetOutValue 0
-  $thresh SetInput [$volumeNode GetImageData]
-  [$thresh GetOutput] Update
-  $labelNode SetAndObserveImageData [$thresh GetOutput]
-  $thresh Delete
+  set scene [[$this GetLogic] GetMRMLScene]
 
-  # add the label volume to the scene
-  [[$this GetLogic] GetMRMLScene] AddNode $labelNode
+  set volumesLogic [$::slicer3::VolumesGUI GetLogic]
+  set labelNode [$volumesLogic CreateLabelVolume $scene $volumeNode $name]
+
+  tk_messageBox -message "labelNode ref count [$labelNode GetReferenceCount]"
 
   # make the source node the active background, and the label node the active label
   set selectionNode [[[$this GetLogic] GetApplicationLogic]  GetSelectionNode]
@@ -434,17 +411,14 @@ proc EditorCreateLabelVolume {this} {
   $selectionNode SetReferenceActiveLabelVolumeID [$labelNode GetID]
   [[$this GetLogic] GetApplicationLogic]  PropagateVolumeSelection
 
+  tk_messageBox -message "labelNode ref count [$labelNode GetReferenceCount]"
   $labelNode Delete
-  $labelDisplayNode Delete
 
   # update the editor range to be the full range of the background image
   set range [[$volumeNode GetImageData] GetScalarRange]
   eval $::Editor($this,paintRange) SetWholeRange $range
   eval $::Editor($this,paintRange) SetRange $range
 
-  # TODO: this is just so I can see the results for now
-  #puts "Setting the label map to colour for the slices"
-  #EditorSetLabelColormap 
 }
 
 proc EditorSetRandomLabelColormap { {size 255} } {
