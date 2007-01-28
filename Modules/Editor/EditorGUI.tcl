@@ -435,6 +435,7 @@ proc EditorCreateLabelVolume {this} {
   [[$this GetLogic] GetApplicationLogic]  PropagateVolumeSelection
 
   $labelNode Delete
+  $labelDisplayNode Delete
 
   # update the editor range to be the full range of the background image
   set range [[$volumeNode GetImageData] GetScalarRange]
