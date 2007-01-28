@@ -362,6 +362,7 @@ vtkMRMLScalarVolumeNode *vtkSlicerVolumesLogic::CreateLabelVolume (vtkMRMLScene 
   vtkMRMLScalarVolumeNode *labelNode = vtkMRMLScalarVolumeNode::New();
   labelNode->Copy(volumeNode);
   labelNode->SetStorageNodeID(NULL);
+  labelNode->SetModifiedSinceRead(1);
   labelNode->SetLabelMap(1);
 
   // set the display node to have a label map lookup table
@@ -384,6 +385,7 @@ vtkMRMLScalarVolumeNode *vtkSlicerVolumesLogic::CreateLabelVolume (vtkMRMLScene 
   // add the label volume to the scene
   scene->AddNode(labelNode);
 
+  labelNode->Delete();
   labelDisplayNode->Delete();
 
   return (labelNode);

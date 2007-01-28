@@ -403,15 +403,12 @@ proc EditorCreateLabelVolume {this} {
   set volumesLogic [$::slicer3::VolumesGUI GetLogic]
   set labelNode [$volumesLogic CreateLabelVolume $scene $volumeNode $name]
 
-  tk_messageBox -message "labelNode ref count [$labelNode GetReferenceCount]"
-
   # make the source node the active background, and the label node the active label
   set selectionNode [[[$this GetLogic] GetApplicationLogic]  GetSelectionNode]
   $selectionNode SetReferenceActiveVolumeID [$volumeNode GetID]
   $selectionNode SetReferenceActiveLabelVolumeID [$labelNode GetID]
   [[$this GetLogic] GetApplicationLogic]  PropagateVolumeSelection
 
-  tk_messageBox -message "labelNode ref count [$labelNode GetReferenceCount]"
   $labelNode Delete
 
   # update the editor range to be the full range of the background image
