@@ -407,6 +407,7 @@ itcl::body PaintSWidget::paintBrush {x y} {
   $painter SetThresholdPaintRange $thresholdMin $thresholdMax
   $painter Paint
 
+  $extractImage Delete
   $painter Delete
   $labelIJKToRAS Delete
   $backgroundIJKToRAS Delete
