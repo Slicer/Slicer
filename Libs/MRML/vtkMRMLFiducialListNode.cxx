@@ -79,25 +79,17 @@ vtkMRMLFiducialListNode::vtkMRMLFiducialListNode()
 //----------------------------------------------------------------------------
 vtkMRMLFiducialListNode::~vtkMRMLFiducialListNode()
 {
-    if (this->FiducialList)
-      {
-      for (int idx = 0; idx < this->GetNumberOfFiducials(); idx++)
-        {
-        vtkMRMLFiducial *fid = this->GetNthFiducial(idx);
-        if (fid != NULL)
-          {
-          fid->Delete();
-          fid = NULL;
-          }
-        }
-        this->FiducialList->RemoveAllItems();
-        this->FiducialList->Delete();
+  if (this->FiducialList)
+    {    
+    this->FiducialList->RemoveAllItems();        
+    this->FiducialList->Delete();
+    this->FiducialList = NULL;
     }
-  if (this->Name) {
-
-      delete [] this->Name;
-      this->Name = NULL;
-  }
+  if (this->Name)
+    {
+    delete [] this->Name;
+    this->Name = NULL;
+    }
 }
 
 //----------------------------------------------------------------------------
