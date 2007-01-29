@@ -34,6 +34,7 @@ SET(MRML_SRCS
         vtkMRMLSliceNode.cxx
         vtkMRMLSliceCompositeNode.cxx
         vtkMRMLSelectionNode.cxx
+        vtkMRMLInteractionNode.cxx
         vtkObserverManager.cxx
         vtkMRMLColorNode.cxx
         vtkMRMLColorTableNode.cxx

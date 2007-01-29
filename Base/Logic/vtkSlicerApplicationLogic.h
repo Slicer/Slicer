@@ -25,6 +25,7 @@
 #define __vtkSlicerApplicationLogic_h
 
 #include "vtkMRMLSelectionNode.h"
+#include "vtkMRMLInteractionNode.h"
 
 #include "vtkSlicerBaseLogic.h"
 #include "vtkSlicerLogic.h"
@@ -130,6 +131,11 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic : public vtkSlicerL
   // the SelectionNode 
   vtkSetObjectMacro (SelectionNode,vtkMRMLSelectionNode);
   vtkGetObjectMacro (SelectionNode,vtkMRMLSelectionNode);
+
+  // Description:
+  // the InteractionNode 
+  vtkSetObjectMacro (InteractionNode,vtkMRMLInteractionNode);
+  vtkGetObjectMacro (InteractionNode,vtkMRMLInteractionNode);
 
   // Description:
   // Perform the default behavior related to selecting a volume
@@ -249,6 +255,7 @@ private:
   //vtkSlicerViewLogic *ActiveView;
   vtkSlicerSliceLogic *ActiveSlice;
   vtkMRMLSelectionNode *SelectionNode;
+  vtkMRMLInteractionNode *InteractionNode;
   //vtkSlicerModuleLogic *ActiveModule;
 
   //BTX
