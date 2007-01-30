@@ -70,12 +70,12 @@ static const unsigned char image_ToolbarEditorToolbox[] =
 static const unsigned int  image_ToolbarFiducials_width          = 21;
 static const unsigned int  image_ToolbarFiducials_height         = 21;
 static const unsigned int  image_ToolbarFiducials_pixel_size     = 3;
-static const unsigned long image_ToolbarFiducials_length         = 104;
+static const unsigned long image_ToolbarFiducials_length         = 116;
 static const unsigned long image_ToolbarFiducials_decoded_length = 1323;
 
 static const unsigned char image_ToolbarFiducials[] = 
-  "eNpjYmJgogz9JxcMcu2PdRnI1g7Ri8cEPNqRdeEygXa2U+73AYk4XA7GFMfUjiu4sIqjac"
-  "cVWbjY1LWdcr8PeMT9+/ePnrZTggCjegoH";
+  "eNpjYmJgogz9JxcQ1P5Yl4EM7XBdmAwibUdWj8sNNHI8hbZT7ncKHU+VeCdVO37XosnCte"
+  "MPK1yyyLbjjymsstRyPIW2U+53Ch0/UMmGEgQA4njtGA==";
 
 /* 
  * Resource generated for file:
