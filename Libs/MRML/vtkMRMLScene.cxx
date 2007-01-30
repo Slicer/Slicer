@@ -198,19 +198,19 @@ vtkMRMLScene::~vtkMRMLScene()
 }
 
 //------------------------------------------------------------------------------
-void vtkMRMLScene::Clear() 
+void vtkMRMLScene::Clear(int removeSingletons) 
 {
   this->SetUndoOff();
-  
-  this->CurrentScene->RemoveAllItems();
-  this->ClearReferencedNodeID();
-
-  vtkMRMLNode *node;
-  for (int n=0; n < this->CurrentScene->GetNumberOfItems(); n++) 
+  if (!removeSingletons)
     {
-    node = (vtkMRMLNode*)this->CurrentScene->GetItemAsObject(n);
-    this->RemoveNode(node);
+    this->RemoveAllNodesExceptSingletons();
     }
+  else
+    {
+    this->CurrentScene->RemoveAllItems();
+    }
+  
+  this->ClearReferencedNodeID();
 
   this->InvokeEvent(this->SceneCloseEvent, NULL);
 
@@ -220,6 +220,25 @@ void vtkMRMLScene::Clear()
   this->SetUndoOn();
 
   this->Modified();
+}
+
+//------------------------------------------------------------------------------
+void vtkMRMLScene::RemoveAllNodesExceptSingletons()
+{
+  vtkMRMLNode *node;
+  this->InitTraversal();
+  std::vector<vtkMRMLNode *> removeNodes;
+  while (node = this->GetNextNode()) 
+    {
+    if (node->GetSingletonTag() == NULL)
+      {
+      removeNodes.push_back(node);
+      }
+    }
+    for(int i=0; i<removeNodes.size(); i++)
+      {
+      this->CurrentScene->vtkCollection::RemoveItem(removeNodes[i]);
+      }
 }
 
 vtkMRMLScene *vtkMRMLScene::ActiveScene = NULL;
@@ -319,7 +338,7 @@ int vtkMRMLScene::Connect()
   
   this->SetUndoOff();
   
-  this->CurrentScene->RemoveAllItems();
+  this->RemoveAllNodesExceptSingletons();
   this->ClearReferencedNodeID();
 
   this->InvokeEvent(this->SceneCloseEvent, NULL);
@@ -386,7 +405,7 @@ int vtkMRMLScene::Connect()
     this->Modified();
 
     // node are modified
-      {
+    for (n=0; n<nnodes; n++)       {
       bool update = true;
       node = (vtkMRMLNode *)this->CurrentScene->GetItemAsObject(n);
       for (int no=0; no<nold; no++)
@@ -594,6 +613,24 @@ void vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
 {
   //TODO convert URL to Root directory
   //n->SetSceneRootDir("");
+  
+  // check if node is a singletone 
+  if (n->GetSingletonTag() != NULL)
+    {
+    // check if there is a singletone of this class in the scene 
+    // and if found copy this node into it
+    int numNodes = GetNumberOfNodesByClass(n->GetClassName());
+    for (int i=0; i<numNodes; i++)
+      {
+      vtkMRMLNode *sn = this->GetNthNodeByClass(i, n->GetClassName());
+      if (sn->GetSingletonTag() != NULL && strcmp(sn->GetSingletonTag(),
+                                                  n->GetSingletonTag()) == 0)
+        {
+        sn->Copy(n);
+        return;
+        }
+      }
+    }
   if (n->GetID() == NULL || n->GetID()[0] == '\0' || this->GetNodeByID(n->GetID()) != NULL) 
     {
     std::string oldID;

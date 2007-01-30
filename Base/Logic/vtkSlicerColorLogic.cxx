@@ -50,7 +50,7 @@ void vtkSlicerColorLogic::ProcessMRMLEvents(vtkObject * caller,
   if (event == vtkMRMLScene::NewSceneEvent)
     {
     vtkDebugMacro("vtkSlicerColorLogic::ProcessMRMLEvents: got a NewScene event " << event);
-    this->RemoveDefaultColorNodesFromScene();
+    //this->RemoveDefaultColorNodesFromScene();
     this->AddDefaultColorNodes();
     }
 }
@@ -81,15 +81,16 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
     // don't add a File node
     if (i != basicNode->File)
       {
-      vtkMRMLColorNode *node = vtkMRMLColorTableNode::New();
+      vtkMRMLColorTableNode *node = vtkMRMLColorTableNode::New();
       node->SetType(i);
       node->SaveWithSceneOff();
       node->SetName(node->GetTypeAsString());      
       std::string id = std::string(this->GetDefaultColorTableNodeID(i));
-      vtkDebugMacro("vtkSlicerColorLogic::AddDefaultColorNodes: requesting id " << id.c_str() << endl);
-      this->GetMRMLScene()->RequestNodeID(node, id.c_str());
-      if (this->GetMRMLScene()->GetNodeByID(node->GetID()) == NULL)
+      node->SetSingletonTag(id.c_str());
+      if (this->GetMRMLScene()->GetNodeByID(id.c_str()) == NULL)
         {
+        vtkDebugMacro("vtkSlicerColorLogic::AddDefaultColorNodes: requesting id " << id.c_str() << endl);
+        this->GetMRMLScene()->RequestNodeID(node, id.c_str());
         this->GetMRMLScene()->AddNode(node);
         vtkDebugMacro("vtkSlicerColorLogic::AddDefaultColorNodes: added node " << node->GetID() << ", requested id was " << id.c_str() << ", type = " << node->GetTypeAsString() << endl);
         }

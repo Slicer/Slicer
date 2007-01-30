@@ -73,3 +73,5 @@ mm0 Delete
 mm1 Delete
 sc Delete
 
+exit 0
+

@@ -1,4 +1,4 @@
 <MRML>
 <VolumeArchetypeStorage
-FileArchetype='TestData/fixed.nrrd' ID='storage1'></VolumeArchetypeStorage>
+ fileName="TestData/fixed.nrrd" id="vtkMRMLVolumeArchetypeStorageNode1"></VolumeArchetypeStorage>
 </MRML>

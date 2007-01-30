@@ -83,7 +83,7 @@ public:
 
   // Description:
   // Remove nodes and clear undo/redo stacks
-  void Clear();
+  void Clear(int removeSingletons);
 
   // Description:
   // Create node with a given class
@@ -338,6 +338,8 @@ protected:
   //ETX
   
   void UpdateNodeReferences();
+
+  void RemoveAllNodesExceptSingletons();
 
   vtkSetStringMacro(ClassNameList);
   vtkGetStringMacro(ClassNameList);

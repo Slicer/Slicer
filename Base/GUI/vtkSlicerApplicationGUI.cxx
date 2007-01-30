@@ -360,7 +360,8 @@ void vtkSlicerApplicationGUI::ProcessCloseSceneCommand()
   {
     if (this->GetMRMLScene()) 
       {
-      this->MRMLScene->Clear();
+      //this->MRMLScene->Clear();
+      this->MRMLScene->Clear(false);
       }
   }
   dialog->Delete();

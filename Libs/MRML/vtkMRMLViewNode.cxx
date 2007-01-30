@@ -52,6 +52,8 @@ vtkMRMLNode* vtkMRMLViewNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLViewNode::vtkMRMLViewNode()
 {
+  this->SingletonTag = "vtkMRMLViewNode";
+
   this->Active = 0;
   this->BoxVisible = 1;
   this->AxisLabelsVisible = 1;

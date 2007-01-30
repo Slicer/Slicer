@@ -190,6 +190,13 @@ public:
   vtkGetStringMacro(ID);
 
   // Description:
+  // Tag that make this node a singleton in the scene
+  // if NULL multiple instances of this node class allowed,
+  // otherwise scene can only replace this node not add new instances.
+  vtkSetStringMacro(SingletonTag);
+  vtkGetStringMacro(SingletonTag);
+
+  // Description:
   // Describes if the data has been modified
   vtkGetMacro(ModifiedSinceRead, int);
   vtkSetMacro(ModifiedSinceRead, int);
@@ -237,6 +244,7 @@ protected:
   char *SceneRootDir;
   char *Name;
   char *ID;
+  char *SingletonTag;
   int Indent;
   int HideFromEditors;
 

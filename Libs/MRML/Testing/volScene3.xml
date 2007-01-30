@@ -8,10 +8,10 @@ name="head2" description="somebodys2" id="vol2" storageNodeRef="storage2"
 displayNodeRef="display1" transformNodeRef="xform2"></Volume>
 
 <VolumeArchetypeStorage
-fileArchetype="TestData/fixed.nrrd" id="storage1"></VolumeArchetypeStorage>
+fileName="TestData/fixed.nrrd" id="storage1"></VolumeArchetypeStorage>
 
 <VolumeArchetypeStorage
-fileArchetype="TestData/moving.nrrd" id="storage2"></VolumeArchetypeStorage>
+fileName="TestData/moving.nrrd" id="storage2"></VolumeArchetypeStorage>
 
 <VolumeDisplay
 name="disp1" id="display1" level="128" window="100"></VolumeDisplay>

@@ -36,13 +36,14 @@ static void MRMLCallback(vtkObject *caller, unsigned long eid, void *__clientDat
 {
   vtkSlicerNodeSelectorWidget *self = reinterpret_cast<vtkSlicerNodeSelectorWidget *>(__clientData);
 
+  /* don't clear menu on scene close since the singleton nodes are not recreated anymore
   if (vtkMRMLScene::SceneCloseEvent == eid)
     {
     self->ClearMenu();
     self->SetSelected(NULL);
     return;
     }
-
+  */
   if (self->GetInMRMLCallbackFlag())
     {
 #ifdef _DEBUG
@@ -110,6 +111,7 @@ void vtkSlicerNodeSelectorWidget::SetMRMLScene( vtkMRMLScene *MRMLScene)
     this->MRMLScene->Register(this);
     this->MRMLScene->AddObserver( vtkMRMLScene::NodeAddedEvent, this->MRMLCallbackCommand );
     this->MRMLScene->AddObserver( vtkMRMLScene::NodeRemovedEvent, this->MRMLCallbackCommand );
+    this->MRMLScene->AddObserver( vtkMRMLScene::NewSceneEvent, this->MRMLCallbackCommand );
     this->MRMLScene->AddObserver( vtkMRMLScene::SceneCloseEvent, this->MRMLCallbackCommand );
     }
 

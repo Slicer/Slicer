@@ -48,6 +48,8 @@ vtkMRMLNode::vtkMRMLNode()
   this->Name = NULL;
   this->SetName("");
 
+  this->SingletonTag = NULL;
+
   this->SceneRootDir = NULL;
   this->Scene = NULL;
 

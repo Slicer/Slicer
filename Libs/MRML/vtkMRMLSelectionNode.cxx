@@ -52,6 +52,8 @@ vtkMRMLNode* vtkMRMLSelectionNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLSelectionNode::vtkMRMLSelectionNode()
 {
+  this->SingletonTag = "vtkMRMLSelectionNode";
+
   this->ActiveVolumeID = NULL;
   this->ActiveLabelVolumeID = NULL;
   this->ActiveFiducialListID = NULL;

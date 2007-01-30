@@ -39,6 +39,8 @@ vtkMRMLNode* vtkMRMLInteractionNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLInteractionNode::vtkMRMLInteractionNode()
 {
+  this->SingletonTag = "vtkMRMLInteractionNode";
+
   this->CurrentMouseMode = vtkMRMLInteractionNode::MouseTransform;
   this->LastMouseMode = vtkMRMLInteractionNode::MouseTransform;
  }

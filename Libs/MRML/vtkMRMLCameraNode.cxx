@@ -52,6 +52,8 @@ vtkMRMLNode* vtkMRMLCameraNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLCameraNode::vtkMRMLCameraNode()
 {
+  this->SingletonTag = "vtkMRMLCameraNode";
+
   this->HideFromEditors = 0;
 
   this->Active = 0;
