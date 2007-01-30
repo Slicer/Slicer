@@ -141,6 +141,17 @@ proc slicerd_sock_fileevent {sock} {
             } else {
                 set node [$::slicer3::MRMLScene GetNodeByID $volid]
             }
+
+            if { $node == "" } {
+              # try to get volume by name
+              set numNodes [$::slicer3::MRMLScene GetNumberOfNodesByClass vtkMRMLVolumeNode]
+              for {set n 0} {$n < $numNodes} {incr n} {
+                set node [$::slicer3::MRMLScene GetNthNodeByClass $n vtkMRMLVolumeNode]
+                if { [$node GetName] == $volid } {
+                  break;
+                }
+              }
+            }
             
             if { $node == "" } {
                 puts $sock "get error: bad id"
