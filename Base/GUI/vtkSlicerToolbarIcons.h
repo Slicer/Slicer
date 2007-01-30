@@ -44,8 +44,10 @@ class vtkSlicerToolbarIcons : public vtkSlicerIcons
     vtkGetObjectMacro (MousePickIconLow, vtkKWIcon );
     vtkGetObjectMacro (MouseTransformViewIcon, vtkKWIcon );    
     vtkGetObjectMacro (MouseTransformViewIconLow, vtkKWIcon );    
-    vtkGetObjectMacro (MousePlaceFiducialIcon, vtkKWIcon );
-    vtkGetObjectMacro (MousePlaceFiducialIconLow, vtkKWIcon );
+    vtkGetObjectMacro (MousePlaceIcon, vtkKWIcon );
+    vtkGetObjectMacro (MouseManipulateIconLow, vtkKWIcon );
+    vtkGetObjectMacro (MouseManipulateIcon, vtkKWIcon );
+    vtkGetObjectMacro (MousePlaceIconLow, vtkKWIcon );
     vtkGetObjectMacro (UndoIcon, vtkKWIcon );
     vtkGetObjectMacro (RedoIcon, vtkKWIcon );
 
@@ -76,10 +78,12 @@ class vtkSlicerToolbarIcons : public vtkSlicerIcons
     vtkKWIcon *LightBoxViewIcon;
     vtkKWIcon *MousePickIcon;
     vtkKWIcon *MousePickIconLow;
+    vtkKWIcon *MouseManipulateIcon;
+    vtkKWIcon *MouseManipulateIconLow;
     vtkKWIcon *MouseTransformViewIcon;
     vtkKWIcon *MouseTransformViewIconLow;
-    vtkKWIcon *MousePlaceFiducialIcon;
-    vtkKWIcon *MousePlaceFiducialIconLow;
+    vtkKWIcon *MousePlaceIcon;
+    vtkKWIcon *MousePlaceIconLow;
     vtkKWIcon *UndoIcon;
     vtkKWIcon *RedoIcon;    
 

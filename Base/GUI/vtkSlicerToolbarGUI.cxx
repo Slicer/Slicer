@@ -1049,7 +1049,7 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   radiob->SetOverReliefToNone ( );
   radiob->SetImageToIcon ( this->SlicerToolbarIcons->GetMousePickIconLow ( ) );
   radiob->SetSelectImageToIcon ( this->SlicerToolbarIcons->GetMousePickIcon ( ) );
-  radiob->IndicatorVisibilityOn();
+  radiob->IndicatorVisibilityOff();
   radiob->SetHighlightThickness ( 0 );
   radiob->SetBorderWidth ( 0 );
   radiob->SetSelectColor ( app->GetSlicerTheme()->GetSlicerColors()->White );
@@ -1067,9 +1067,9 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   radiob->SetReliefToFlat ( );
   radiob->SetOffReliefToFlat ( );
   radiob->SetOverReliefToNone ( );
-  radiob->SetImageToIcon ( this->SlicerToolbarIcons->GetMousePlaceFiducialIconLow ( ) );
-  radiob->SetSelectImageToIcon ( this->SlicerToolbarIcons->GetMousePlaceFiducialIcon ( ) );
-  radiob->IndicatorVisibilityOn();
+  radiob->SetImageToIcon ( this->SlicerToolbarIcons->GetMousePlaceIconLow ( ) );
+  radiob->SetSelectImageToIcon ( this->SlicerToolbarIcons->GetMousePlaceIcon ( ) );
+  radiob->IndicatorVisibilityOff();
   radiob->SetHighlightThickness ( 0 );  
   radiob->SetBorderWidth ( 0 );
   radiob->SetSelectColor ( app->GetSlicerTheme()->GetSlicerColors()->White );
@@ -1090,7 +1090,7 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   radiob->SetOverReliefToNone ( );
   radiob->SetImageToIcon ( this->SlicerToolbarIcons->GetMouseTransformViewIconLow ( ) );
   radiob->SetSelectImageToIcon ( this->SlicerToolbarIcons->GetMouseTransformViewIcon ( ) );
-  radiob->IndicatorVisibilityOn();
+  radiob->IndicatorVisibilityOff();
   radiob->SetHighlightThickness ( 0 );  
   radiob->SetBorderWidth ( 0 );
   radiob->SetSelectColor ( app->GetSlicerTheme()->GetSlicerColors()->White );

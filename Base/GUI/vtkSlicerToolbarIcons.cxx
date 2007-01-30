@@ -33,8 +33,10 @@ vtkSlicerToolbarIcons::vtkSlicerToolbarIcons ( )
     this->MousePickIconLow = vtkKWIcon::New();
     this->MouseTransformViewIcon = vtkKWIcon::New();
     this->MouseTransformViewIconLow = vtkKWIcon::New();
-    this->MousePlaceFiducialIcon = vtkKWIcon::New ( );
-    this->MousePlaceFiducialIconLow = vtkKWIcon::New ( );
+    this->MousePlaceIcon = vtkKWIcon::New ( );
+    this->MousePlaceIconLow = vtkKWIcon::New ( );
+    this->MouseManipulateIcon = vtkKWIcon::New ( );
+    this->MouseManipulateIconLow = vtkKWIcon::New ( );
     this->UndoIcon = vtkKWIcon::New ( );
     this->RedoIcon = vtkKWIcon::New ( );
     this->AssignImageDataToIcons ( );
@@ -150,10 +152,15 @@ vtkSlicerToolbarIcons::~vtkSlicerToolbarIcons ( )
     this->MousePickIcon->Delete ( );
     this->MousePickIcon = NULL;
     }
-  if ( this->MousePlaceFiducialIcon )
+  if ( this->MousePlaceIcon )
     {
-    this->MousePlaceFiducialIcon->Delete ( );
-    this->MousePlaceFiducialIcon = NULL;
+    this->MousePlaceIcon->Delete ( );
+    this->MousePlaceIcon = NULL;
+    }
+  if ( this->MouseManipulateIcon )
+    {
+    this->MouseManipulateIcon->Delete ( );
+    this->MouseManipulateIcon = NULL;
     }
   if ( this->MouseTransformViewIcon )
     {
@@ -165,10 +172,15 @@ vtkSlicerToolbarIcons::~vtkSlicerToolbarIcons ( )
     this->MousePickIconLow->Delete ( );
     this->MousePickIconLow = NULL;
     }
-  if ( this->MousePlaceFiducialIconLow )
+  if ( this->MousePlaceIconLow )
     {
-    this->MousePlaceFiducialIconLow->Delete ( );
-    this->MousePlaceFiducialIconLow = NULL;
+    this->MousePlaceIconLow->Delete ( );
+    this->MousePlaceIconLow = NULL;
+    }
+  if ( this->MouseManipulateIconLow )
+    {
+    this->MouseManipulateIconLow->Delete ( );
+    this->MouseManipulateIconLow = NULL;
     }
   if ( this->MouseTransformViewIconLow )
     {
@@ -321,11 +333,17 @@ void vtkSlicerToolbarIcons::AssignImageDataToIcons ( )
                                    image_ToolbarMouseRotate_height,
                                    image_ToolbarMouseRotate_pixel_size,
                                             image_ToolbarMouseRotate_length, 0);
-    this->MousePlaceFiducialIcon->SetImage (image_ToolbarMousePlaceFiducial,
-                                   image_ToolbarMousePlaceFiducial_width,
-                                   image_ToolbarMousePlaceFiducial_height,
-                                   image_ToolbarMousePlaceFiducial_pixel_size,
-                                            image_ToolbarMousePlaceFiducial_length, 0);
+    this->MousePlaceIcon->SetImage (image_ToolbarMousePlace,
+                                   image_ToolbarMousePlace_width,
+                                   image_ToolbarMousePlace_height,
+                                   image_ToolbarMousePlace_pixel_size,
+                                            image_ToolbarMousePlace_length, 0);
+
+    this->MouseManipulateIcon->SetImage (image_ToolbarMouseManipulate,
+                                   image_ToolbarMouseManipulate_width,
+                                   image_ToolbarMouseManipulate_height,
+                                   image_ToolbarMouseManipulate_pixel_size,
+                                            image_ToolbarMouseManipulate_length, 0);
 
     this->MousePickIconLow->SetImage (image_ToolbarMousePickLow,
                                    image_ToolbarMousePickLow_width,
@@ -337,11 +355,17 @@ void vtkSlicerToolbarIcons::AssignImageDataToIcons ( )
                                    image_ToolbarMouseRotateLow_height,
                                    image_ToolbarMouseRotateLow_pixel_size,
                                             image_ToolbarMouseRotate_length, 0);
-    this->MousePlaceFiducialIconLow->SetImage (image_ToolbarMousePlaceFiducialLow,
-                                   image_ToolbarMousePlaceFiducialLow_width,
-                                   image_ToolbarMousePlaceFiducialLow_height,
-                                   image_ToolbarMousePlaceFiducialLow_pixel_size,
-                                            image_ToolbarMousePlaceFiducialLow_length, 0);
+    this->MousePlaceIconLow->SetImage (image_ToolbarMousePlaceLow,
+                                   image_ToolbarMousePlaceLow_width,
+                                   image_ToolbarMousePlaceLow_height,
+                                   image_ToolbarMousePlaceLow_pixel_size,
+                                            image_ToolbarMousePlaceLow_length, 0);
+
+    this->MouseManipulateIconLow->SetImage (image_ToolbarMouseManipulateLow,
+                                   image_ToolbarMouseManipulateLow_width,
+                                   image_ToolbarMouseManipulateLow_height,
+                                   image_ToolbarMouseManipulateLow_pixel_size,
+                                            image_ToolbarMouseManipulateLow_length, 0);
 
     this->UndoIcon->SetImage ( image_ToolbarUndo,
                                image_ToolbarUndo_width,
@@ -385,10 +409,12 @@ void vtkSlicerToolbarIcons::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "LightBoxViewIcon" << this->GetLightBoxViewIcon ( ) << "\n";
     os << indent << "MousePickIcon" << this->GetMousePickIcon ( ) << "\n";
     os << indent << "MouseTransformViewIcon" << this->GetMouseTransformViewIcon ( ) << "\n";
-    os << indent << "MousePlaceFiducialIcon" << this->GetMousePlaceFiducialIcon ( ) << "\n";
+    os << indent << "MousePlaceIcon" << this->GetMousePlaceIcon ( ) << "\n";
+    os << indent << "MouseManipulateIcon" << this->GetMouseManipulateIcon ( ) << "\n";
     os << indent << "MousePickIconLow" << this->GetMousePickIconLow ( ) << "\n";
     os << indent << "MouseTransformViewIconLow" << this->GetMouseTransformViewIconLow ( ) << "\n";
-    os << indent << "MousePlaceFiducialIconLow" << this->GetMousePlaceFiducialIconLow ( ) << "\n";
+    os << indent << "MousePlaceIconLow" << this->GetMousePlaceIconLow ( ) << "\n";
+    os << indent << "MouseManipulateIconLow" << this->GetMouseManipulateIconLow ( ) << "\n";
     os << indent << "UndoIcon" << this->GetUndoIcon ( ) << "\n";
     os << indent << "RedoIcon" << this->GetRedoIcon ( ) << "\n";
 }
