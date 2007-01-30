@@ -20,6 +20,7 @@
 #include "ModuleDescriptionParser.h"
 #include "ModuleDescription.h"
 
+#include <set>
 #include <map>
 #include <sstream>
 #include <cctype>
@@ -132,18 +133,20 @@ NameIsExecutable(const char* name)
  */
 typedef char * (*XMLModuleDescriptionFunction)();
 typedef int (*ModuleEntryPoint)(int argc, char* argv[]);
-typedef unsigned char * (*ModuleLogoFunction)(int *width, int *height, int *pixel_size, unsigned long *bufferLength, int *options);
+typedef unsigned char * (*ModuleLogoFunction)(int *width, int *height, int *pixel_size, unsigned long *bufferLength);
 
 
 // Private implementaton of an std::map
 class ModuleDescriptionMap : public std::map<std::string, ModuleDescription> {};
-
+class ModuleFileMap : public std::set<std::string> {};
 
 // ---
 
 ModuleFactory::ModuleFactory()
 {
+  this->Name = "Application";
   this->InternalMap = new ModuleDescriptionMap;
+  this->InternalFileMap = new ModuleFileMap;
   this->WarningMessageCallback = 0;
   this->ErrorMessageCallback = 0;
   this->InformationMessageCallback = 0;
@@ -153,6 +156,7 @@ ModuleFactory::ModuleFactory()
 ModuleFactory::~ModuleFactory()
 {
   delete this->InternalMap;
+  delete this->InternalFileMap;
 }
 
 
@@ -281,15 +285,16 @@ ModuleFactory
 ::Scan()
 {
   // Scan for shared object modules first since they will be higher
-  // performance faster than command line module
-  int numberOfShared, numberOfExecutables;
+  // performance than command line module
+  int numberOfShared, numberOfExecutables, numberOfPeekedExecutables;
 
   numberOfShared = this->ScanForSharedObjectModules();
-  numberOfExecutables = this->ScanForCommandLineModules();
-  
-  if (numberOfShared + numberOfExecutables == 0)
+  numberOfPeekedExecutables = this->ScanForCommandLineModulesByPeeking();
+  numberOfExecutables = this->ScanForCommandLineModulesByExecuting();
+
+  if (numberOfShared + numberOfExecutables + numberOfPeekedExecutables == 0)
     {
-    this->WarningMessage( "No plugin modules found. Check your module search path and your Slicer installation." );
+    this->WarningMessage( ("No plugin modules found. Check your module search path and your " + this->Name + " installation.").c_str() );
     }
 }
 
@@ -347,39 +352,102 @@ ModuleFactory
           std::string fullLibraryPath = std::string(directory.GetPath())
             + "/" + filename;
           //std::cout << "Checking " << fullLibraryPath << std::endl;
-          
+
+          // early exit if we have already tested this file and succeeded
+          ModuleFileMap::iterator fit
+            = this->InternalFileMap->find(fullLibraryPath);
+          if (fit != this->InternalFileMap->end())
+            {
+            // file was already discovered as a module
+            information << "Module already discovered at " << fullLibraryPath
+                        << std::endl;
+            continue;
+            }
+
+
           itksys::DynamicLoader::LibraryHandle lib
             = itksys::DynamicLoader::OpenLibrary(fullLibraryPath.c_str());
           if ( lib )
             {
-            // Look for the symbol to get an XML description of the
-            // module and a symbol to execute the module
-            XMLModuleDescriptionFunction xmlFunction
-              = (XMLModuleDescriptionFunction)itksys::DynamicLoader::GetSymbolAddress(lib, "GetXMLModuleDescription");
+            // Look for the entry points and symbols to get an XML
+            // description of the module, execute the module, and
+            // define a logo.  Symbols (constants) are used if they
+            // exist, otherwise entry points are used.
+            char *xmlSymbol = 0;
+            XMLModuleDescriptionFunction xmlFunction = 0;
+            ModuleEntryPoint entryPoint = 0;
 
-            ModuleEntryPoint entryPoint
-              = (ModuleEntryPoint)itksys::DynamicLoader::GetSymbolAddress(lib, "ModuleEntryPoint");
+            ModuleLogoFunction logoFunction = 0;
+            unsigned char *logoImage = 0;
+            int *logoWidth=0, *logoHeight=0, *logoPixelSize=0;
+            unsigned long *logoLength=0;
+            
+            xmlSymbol = (char*)itksys::DynamicLoader::GetSymbolAddress(lib, "XMLModuleDescription");
 
-            ModuleLogoFunction logoFunction
-              = (ModuleLogoFunction)itksys::DynamicLoader::GetSymbolAddress(lib, "GetModuleLogo");
+            if (!xmlSymbol)
+              {
+              xmlFunction = (XMLModuleDescriptionFunction)itksys::DynamicLoader::GetSymbolAddress(lib, "GetXMLModuleDescription");
+              }
+            
+            if (xmlSymbol || xmlFunction)
+              {
+              entryPoint = (ModuleEntryPoint)itksys::DynamicLoader::GetSymbolAddress(lib, "ModuleEntryPoint");
 
+              if (entryPoint)
+                {
+                // look for logo variables
+                logoImage = (unsigned char *)itksys::DynamicLoader::GetSymbolAddress(lib, "ModuleLogoImage");
+                
+                if (logoImage)
+                  {
+                  logoWidth = (int *)itksys::DynamicLoader::GetSymbolAddress(lib, "ModuleLogoWidth");
+                  logoHeight = (int *)itksys::DynamicLoader::GetSymbolAddress(lib, "ModuleLogoHeight");
+                  logoPixelSize = (int *)itksys::DynamicLoader::GetSymbolAddress(lib, "ModuleLogoPixelSize");
+                  logoLength = (unsigned long *)itksys::DynamicLoader::GetSymbolAddress(lib, "ModuleLogoLength");                  
+                  }
+                else
+                  {
+                  // look for logo function
+                  logoFunction
+                    = (ModuleLogoFunction)itksys::DynamicLoader::GetSymbolAddress(lib, "GetModuleLogo");
+                  }
+                }
+              }
 
             // if the symbols are found, then get the XML descriptions
             // and cache the entry point to run the module
-            if ( xmlFunction && entryPoint )
+            if ( (xmlSymbol || xmlFunction) && entryPoint )
               {
-              std::string xml = (*xmlFunction)();
+              std::string xml;
+              if (xmlSymbol)
+                {
+                xml = xmlSymbol; // make a string out of the symbol
+                }
+              else
+                {
+                xml = (*xmlFunction)(); // call the function
+                }
 
               // check if the module generated a valid xml description
               if (xml.compare(0, 5, "<?xml") == 0)
                 {
+                this->InternalFileMap->insert(fullLibraryPath);
+                
                 // Construct and configure the module object
                 ModuleDescription module;
 
                 // Set the target as the entry point to call
                 char entryPointAsText[256];
-                sprintf(entryPointAsText, "slicer:%p", entryPoint);
-                module.SetTarget( entryPointAsText );
+                std::string entryPointAsString;
+                std::string lowerName = this->Name;
+                std::transform(lowerName.begin(), lowerName.end(),
+                               lowerName.begin(),
+                               (int (*)(int))std::tolower);
+                
+                sprintf(entryPointAsText, "%p", entryPoint);
+                entryPointAsString = lowerName + ":" + entryPointAsText;
+                module.SetTarget( entryPointAsString );
+                module.SetLocation( fullLibraryPath );
 
                 // Parse the xml to build the description of the module
                 // and the parameters
@@ -402,7 +470,9 @@ ModuleFactory
                   (*this->InternalMap)[module.GetTitle()] =  module ;
 
                   information << "A module named \"" << module.GetTitle()
-                              << "\" has been discovered at " << module.GetTarget() << std::endl;
+                              << "\" has been discovered at "
+                              << module.GetLocation() << "("
+                              << module.GetTarget() << ")" << std::endl;
                   numberFound++;
                   }
                 else
@@ -410,27 +480,38 @@ ModuleFactory
                   information << "A module named \"" << module.GetTitle()
                             << "\" has already been discovered." << std::endl
                             << "    First discovered at "
-                            << (*mit).second.GetTarget() << std::endl
+                            << (*mit).second.GetLocation()
+                            << "(" << (*mit).second.GetTarget() << ")"
+                            << std::endl
                             << "    Then discovered at "
-                            << module.GetTarget() << std::endl
+                            << module.GetLocation()
+                            << "(" << module.GetTarget() << ")"
+                            << std::endl
                             << "    Keeping first module." << std::endl;
                   }
 
-                if (logoFunction)
+                if (logoImage)
                   {
-                  int width, height, pixelSize, options;
+                  // construct a module logo and set it on the module
+                  ModuleLogo mLogo;
+                  mLogo.SetLogo( logoImage, *logoWidth, *logoHeight,
+                                 *logoPixelSize, *logoLength, 0);
+                  (*this->InternalMap)[module.GetTitle()].SetLogo(mLogo);
+                  }
+                else if (logoFunction)
+                  {                  
+                  int width, height, pixelSize;
                   unsigned long bufferLength;
                   
                   // call the logo function to get the pixels and information
                   unsigned char *logo = (*logoFunction)(&width, &height,
                                                         &pixelSize,
-                                                        &bufferLength,
-                                                        &options);
+                                                        &bufferLength);
                   
                   // construct a module logo and set it on the module
                   ModuleLogo mLogo;
                   mLogo.SetLogo( logo, width, height, pixelSize,
-                                 bufferLength, options);
+                                 bufferLength, 0);
                   (*this->InternalMap)[module.GetTitle()].SetLogo(mLogo);
                   }
                 }
@@ -461,7 +542,7 @@ ModuleFactory
   
   std::stringstream information;
   information << "Tested " << numberTested << " files as shared object plugins. Found "
-              << numberFound << " valid plugins in " << t1 - t0
+              << numberFound << " new plugins in " << t1 - t0
               << " seconds." << std::endl;
   
   this->InformationMessage( information.str().c_str() );
@@ -471,7 +552,7 @@ ModuleFactory
 
 long
 ModuleFactory
-::ScanForCommandLineModules()
+::ScanForCommandLineModulesByExecuting()
 {
   // add any of the self-describing command-line modules available
   //
@@ -503,7 +584,7 @@ ModuleFactory
     std::stringstream information;
     
     information << "Searching " << *pit
-                << " for command line executable plugins." << std::endl;
+                << " for command line executable plugins by executing." << std::endl;
     
     itksys::Directory directory;
     directory.Load( (*pit).c_str() );
@@ -520,13 +601,23 @@ ModuleFactory
           {
           numberTested++;
           //std::cout << "Testing " << filename << " as a plugin:" << std::endl;
-        
-          char *command[3];
-          itksysProcess *process = itksysProcess_New();
-
-          // fullcommand name and the argument to probe the executable
           std::string commandName = std::string(directory.GetPath())
             + "/" + filename;
+
+          // early exit if we have already tested this file and succeeded
+          ModuleFileMap::iterator fit
+            = this->InternalFileMap->find(commandName);
+          if (fit != this->InternalFileMap->end())
+            {
+            // file was already discovered as a module
+            information << "Module already discovered at " << commandName
+                        << std::endl;
+            continue;
+            }
+
+          // command, process and argument to probe the executable
+          char *command[3];
+          itksysProcess *process = itksysProcess_New();
           std::string arg("--xml");
 
           // build the command/parameter array.
@@ -583,10 +674,12 @@ ModuleFactory
               if (stdoutbuffer.compare(0, 5, "<?xml") == 0)
                 {
                 //std::cout << "\t" << filename << " is a plugin." << std::endl;
+                this->InternalFileMap->insert( commandName );
               
                 // Construct and configure the module object
                 ModuleDescription module;
                 module.SetTarget( commandName );
+                module.SetLocation( commandName );
 
                 // Parse the xml to build the description of the module
                 // and the parameters
@@ -607,13 +700,17 @@ ModuleFactory
                   {
                   // See if the module has a logo, if so, store it in
                   // the module description
-                  this->GetLogoForCommandLineModule(module);
+                  this->GetLogoForCommandLineModuleByExecuting(module);
 
                   // Store the module in the list
                   (*this->InternalMap)[module.GetTitle()] =  module ;
 
                   information << "A module named \"" << module.GetTitle()
-                              << "\" has been discovered at " << module.GetTarget() << std::endl;
+                              << "\" has been discovered at "
+                              << module.GetLocation() 
+                              << "(" << module.GetTarget() << ")"
+                              << std::endl;
+                    
                   numberFound++;
                   }
                 else
@@ -621,9 +718,13 @@ ModuleFactory
                   information << "A module named \"" << module.GetTitle()
                               << "\" has already been discovered." << std::endl
                               << "    First discovered at "
-                              << (*mit).second.GetTarget() << std::endl
+                              << (*mit).second.GetLocation()
+                              << "(" << (*mit).second.GetTarget() << ")"
+                              << std::endl
                               << "    Then discovered at "
-                              << module.GetTarget() << std::endl
+                              << module.GetLocation()
+                              << "(" << module.GetTarget() << ")"
+                              << std::endl
                               << "    Keeping first module." << std::endl;
                   }
                 }
@@ -660,18 +761,196 @@ ModuleFactory
   t1 = itksys::SystemTools::GetTime();
 
   std::stringstream information;
-  information << "Tested " << numberTested << " files as command line executable plugins. Found "
-              << numberFound << " valid plugins in " << t1 - t0
+  information << "Tested " << numberTested << " files as command line executable plugins by executing. Found "
+              << numberFound << " new plugins in " << t1 - t0
               << " seconds." << std::endl;
   this->InformationMessage( information.str().c_str() );
 
   return numberFound;
 }
 
+long
+ModuleFactory
+::ScanForCommandLineModulesByPeeking()
+{
+  // add any of the self-describing command-line modules available
+  //
+  // self-describing command-line modules live in a prescribed
+  // path and respond to a command line argument "--xml"
+  //
+  if (this->SearchPath == "")
+    {
+    this->WarningMessage( "Empty module search path." ); 
+    return 0;
+    }
+  
+  std::vector<std::string> modulePaths;
+#ifdef _WIN32
+  std::string delim(";");
+#else
+  std::string delim(":");
+#endif
+  splitString(this->SearchPath, delim, modulePaths);
 
+  std::vector<std::string>::const_iterator pit;
+  long numberTested = 0;
+  long numberFound = 0;
+  double t0, t1;
+
+  t0 = itksys::SystemTools::GetTime();
+  for (pit = modulePaths.begin(); pit != modulePaths.end(); ++pit)
+    {
+    std::stringstream information;
+    
+    information << "Searching " << *pit
+                << " for command line executable plugins by peeking." << std::endl;
+    
+    itksys::Directory directory;
+    directory.Load( (*pit).c_str() );
+
+    for ( unsigned int ii=0; ii < directory.GetNumberOfFiles(); ++ii)
+      {
+      const char *filename = directory.GetFile(ii);
+      
+      // skip any directories
+      if (!itksys::SystemTools::FileIsDirectory(filename))
+        {
+        // try to focus only on executables
+        if ( NameIsExecutable(filename) )
+          {
+          numberTested++;
+          //std::cout << "Testing " << filename << " as a plugin:" << std::endl;
+          // executable path
+          std::string fullExecutablePath = std::string(directory.GetPath())
+            + "/" + filename;
+
+          // early exit if we have already tested this file and succeeded
+          ModuleFileMap::iterator fit
+            = this->InternalFileMap->find(fullExecutablePath);
+          if (fit != this->InternalFileMap->end())
+            {
+            // file was already discovered as a module
+            information << "Module already discovered at "
+                        << fullExecutablePath << std::endl;
+            continue;
+            }
+
+          itksys::DynamicLoader::LibraryHandle lib
+            = itksys::DynamicLoader::OpenLibrary(fullExecutablePath.c_str());
+          if ( lib )
+            {
+            char *xmlSymbol = 0;
+            unsigned char *logoImage = 0;
+            int *logoWidth=0, *logoHeight=0, *logoPixelSize=0;
+            unsigned long *logoLength=0;
+            
+            xmlSymbol
+              = (char*)itksys::DynamicLoader::GetSymbolAddress(lib, "XMLModuleDescription");
+
+            if (xmlSymbol)
+              {
+              // look for logo variables
+              logoImage = (unsigned char *)itksys::DynamicLoader::GetSymbolAddress(lib, "ModuleLogoImage");
+                
+              if (logoImage)
+                {
+                logoWidth = (int *)itksys::DynamicLoader::GetSymbolAddress(lib, "ModuleLogoWidth");
+                logoHeight = (int *)itksys::DynamicLoader::GetSymbolAddress(lib, "ModuleLogoHeight");
+                logoPixelSize = (int *)itksys::DynamicLoader::GetSymbolAddress(lib, "ModuleLogoPixelSize");
+                logoLength = (unsigned long *)itksys::DynamicLoader::GetSymbolAddress(lib, "ModuleLogoLength");                  
+                }
+              }
+
+            // Build a module description
+            if (xmlSymbol)
+              {
+              std::string xml(xmlSymbol);
+
+              // check if the module description is valid
+              if (xml.compare(0, 5, "<?xml") == 0)
+                {
+                this->InternalFileMap->insert(fullExecutablePath);
+
+                // Construct and configure the module object
+                ModuleDescription module;
+                module.SetTarget( fullExecutablePath );
+                module.SetLocation( fullExecutablePath );
+                
+                // Parse the xml to build the description of the module
+                // and the parameters
+                ModuleDescriptionParser parser;
+                parser.Parse(xml, module);
+
+                // Check to make sure the module is not already in the
+                // list
+                ModuleDescriptionMap::iterator mit
+                  = this->InternalMap->find(module.GetTitle());
+
+                std::string splash_msg("Discovered ");
+                splash_msg +=  module.GetTitle();
+                splash_msg += " Module...";
+                this->ModuleDiscoveryMessage(splash_msg.c_str());
+                
+                if (mit == this->InternalMap->end())
+                  {
+                  // Store the module in the list
+                  (*this->InternalMap)[module.GetTitle()] =  module ;
+                  
+                  information << "A module named \"" << module.GetTitle()
+                              << "\" has been discovered at "
+                              << module.GetLocation()
+                              << "(" << module.GetTarget() << ")"
+                              << std::endl;
+                  numberFound++;
+                  }
+                else
+                  {
+                  information << "A module named \"" << module.GetTitle()
+                            << "\" has already been discovered." << std::endl
+                            << "    First discovered at "
+                            << (*mit).second.GetLocation()
+                            << "(" << (*mit).second.GetTarget() << ")"
+                            << std::endl
+                            << "    Then discovered at "
+                            << module.GetLocation()
+                            << "(" << module.GetTarget() << ")"
+                            << std::endl
+                            << "    Keeping first module." << std::endl;
+                  }
+
+                if (logoImage)
+                  {
+                  // construct a module logo and set it on the module
+                  ModuleLogo mLogo;
+                  mLogo.SetLogo( logoImage, *logoWidth, *logoHeight,
+                                 *logoPixelSize, *logoLength, 0);
+                  (*this->InternalMap)[module.GetTitle()].SetLogo(mLogo);
+                  }
+                }
+              }
+            itksys::DynamicLoader::CloseLibrary(lib);
+            }
+          }
+        }
+      }
+    this->InformationMessage( information.str().c_str() );
+    }
+  t1 = itksys::SystemTools::GetTime();
+  
+  std::stringstream information;
+  information << "Tested " << numberTested << " files as command line executable plugins by peeking. Found "
+              << numberFound << " new plugins in " << t1 - t0
+              << " seconds." << std::endl;
+  
+  this->InformationMessage( information.str().c_str() );
+
+  return numberFound;
+}
+
+          
 void
 ModuleFactory
-::GetLogoForCommandLineModule(ModuleDescription& module)
+::GetLogoForCommandLineModuleByExecuting(ModuleDescription& module)
 {
   itksysProcess *process = itksysProcess_New();
   char *command[3];
@@ -734,7 +1013,6 @@ ModuleFactory
         int height;
         int pixelSize;
         unsigned long bufferLength;
-        int options;
 
         // make a string stream of the buffer
         std::stringstream buffer;
@@ -746,7 +1024,6 @@ ModuleFactory
         buffer >> height;
         buffer >> pixelSize;
         buffer >> bufferLength;
-        buffer >> options;
 
         // read the newline after the options
         char whitespace[10];
@@ -761,7 +1038,7 @@ ModuleFactory
 
         // make a ModuleLogo and configure it
         ModuleLogo mLogo;
-        mLogo.SetLogo( (unsigned char *)logo.c_str(), width, height, pixelSize, bufferLength, options);
+        mLogo.SetLogo( (unsigned char *)logo.c_str(), width, height, pixelSize, bufferLength, 0);
 
         // set the log on the module
         module.SetLogo(mLogo);

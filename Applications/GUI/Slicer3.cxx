@@ -984,6 +984,7 @@ int Slicer3_main(int argc, char *argv[])
 
       // Search for modules
       ModuleFactory moduleFactory;
+      moduleFactory.SetName("Slicer");
       moduleFactory.SetSearchPath( packagePath );
       moduleFactory.SetWarningMessageCallback( WarningMessage );
       moduleFactory.SetErrorMessageCallback( ErrorMessage );

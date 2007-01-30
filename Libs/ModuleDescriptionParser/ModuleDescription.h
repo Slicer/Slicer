@@ -113,16 +113,34 @@ public:
     return this->Contributor;
   }
 
+  // Set the target for the module.  This is the entry point for a
+  // shared object module and the full command (with path) for an executable.
   void SetTarget(const std::string &target)
   {
     this->Target = target;
   }
 
+  // Get the target for the module.  This is the entry point for a
+  // shared object module and the full command (with path) for an executable.
   const std::string& GetTarget() const
   {
     return this->Target;
   }
 
+  // Set the location for the module.  This is path to the file (shared
+  // object or executable) for the module.
+  void SetLocation(const std::string &target)
+  {
+    this->Location = target;
+  }
+
+  // Get the location for the module.  This is path to the file (shared
+  // object or executable) for the module.
+  const std::string& GetLocation() const
+  {
+    return this->Location;
+  }
+  
   void SetLogo(const ModuleLogo& logo);
   const ModuleLogo& GetLogo() const;
   
@@ -163,6 +181,7 @@ public:
 private:
   std::string Category;
   std::string Title;
+  std::string Location;
   std::string Description;
   std::string Version;
   std::string DocumentationURL;

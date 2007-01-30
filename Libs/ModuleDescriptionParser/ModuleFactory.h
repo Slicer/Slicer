@@ -21,6 +21,7 @@
 #include <vector>
 
 class ModuleDescriptionMap;
+class ModuleFileMap;
 
 class ModuleDescriptionParser_EXPORT ModuleFactory
 {
@@ -28,6 +29,16 @@ public:
   ModuleFactory();
   virtual ~ModuleFactory();
 
+  // Set the name of the module factory.  The name is used in error
+  // messages (to refer to the application using the module factory)
+  // and in encoding entry points.
+  void SetName( const std::string& name) { Name = name; }
+
+  // Get the name of the module factory.  The name is used in error
+  // messages (to refer to the application using the module factory)
+  // and in encoding entry points.
+  const std::string& GetName() const { return Name; }
+  
   // Set the search path for modules (both command line modules and
   // shared object modules).
   void SetSearchPath(const std::string& path) { SearchPath = path; }
@@ -67,16 +78,26 @@ public:
   
 protected:
   // Scan for shared object modules (i.e. DLL) in the module search
-  // path. Returns the number of modules found.
+  // path. Modules can either have global symbols or entry points to
+  // describe the module and logos. Returns the number of modules
+  // found (that have not already been discovered by another method).
   virtual long ScanForSharedObjectModules();
 
   // Scan for command line modules in the module search path. Command
   // line modules are executables that respond to a --xml
-  // argument. Returns the number of modules found.
-  virtual long ScanForCommandLineModules();
+  // argument. Returns the number of modules found (that have not
+  // already been discovered by another method).
+  virtual long ScanForCommandLineModulesByExecuting();
+
+  // Scan for command line module in the module search path. Command
+  // line modules are executables with global symbols that can be
+  // queried without executing the program. Returns the number of
+  // modules found (that have not already been discovered by another
+  // method). 
+  virtual long ScanForCommandLineModulesByPeeking();
 
   // Get the logo for a command line module
-  virtual void GetLogoForCommandLineModule(ModuleDescription&);
+  virtual void GetLogoForCommandLineModuleByExecuting(ModuleDescription&);
   
   void WarningMessage( const char *);
   void ErrorMessage( const char *);
@@ -86,7 +107,9 @@ protected:
   
 private:
   ModuleDescriptionMap *InternalMap;
+  ModuleFileMap *InternalFileMap;
 
+  std::string Name;
   std::string SearchPath;
 
   CallbackFunctionType WarningMessageCallback;

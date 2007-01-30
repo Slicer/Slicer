@@ -32,6 +32,7 @@ ModuleDescription::ModuleDescription(const ModuleDescription &md)
   this->Acknowledgements = md.Acknowledgements;
   this->Contributor = md.Contributor;
   this->Target = md.Target;
+  this->Location = md.Location;
   this->ParameterGroups = md.ParameterGroups;
   this->Logo = md.Logo;
   
@@ -50,6 +51,7 @@ ModuleDescription::operator=(const ModuleDescription &md)
   this->Acknowledgements = md.Acknowledgements;
   this->Contributor = md.Contributor;
   this->Target = md.Target;
+  this->Location = md.Location;
   this->ParameterGroups = md.ParameterGroups;
   this->ProcessInformation = md.ProcessInformation;
   this->Logo = md.Logo;
@@ -66,6 +68,7 @@ std::ostream & operator<<(std::ostream &os, const ModuleDescription &module)
   os << "Contributor: " << module.GetContributor() << std::endl;
   os << "Acknowledgements: " << module.GetAcknowledgements() << std::endl;
   os << "Target: " << module.GetTarget() << std::endl;
+  os << "Location: " << module.GetLocation() << std::endl;
   //os << "Logo: " << module.GetLogo() << std::endl;
 
   os << "ProcessInformation: " << std::endl
