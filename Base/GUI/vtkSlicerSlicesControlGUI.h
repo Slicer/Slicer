@@ -55,6 +55,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesControlGUI : public vtkSlicerCom
     // Description:
     // This method builds the Data module's GUI
     virtual void BuildGUI ( vtkKWFrame *appF ) ;
+    virtual void UnbuildGUI ( );
     
     // Description:
     // Add/Remove observers on widgets in the GUI

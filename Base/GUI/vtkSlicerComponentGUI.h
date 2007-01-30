@@ -167,6 +167,11 @@ public:
   // Specifies all widgets for this GUI
   // Define function in subclasses.
   virtual void BuildGUI ( ) { };
+
+  // Description:
+  // Method in which references are released,
+  // called before Delete().
+  virtual void UnbuildGUI ( ) { };
   
   // Description:
   // propagate events generated in logic layer to GUI

@@ -228,30 +228,33 @@ void vtkSlicerApplicationGUI:: DeleteComponentGUIs()
       {
       this->ViewControlGUI->RemoveSliceGUIObservers();
       this->ViewControlGUI->SetAndObserveMRMLScene ( NULL );
-      this->ViewControlGUI->SetApplicationGUI(NULL);
-      this->ViewControlGUI->SetApplication(NULL);
+      this->ViewControlGUI->SetApplicationGUI ( NULL);
+      this->ViewControlGUI->SetApplication ( NULL );
       this->ViewControlGUI->Delete ( );
       this->ViewControlGUI = NULL;
-    }
+      }
 #endif
 #ifndef LOGODISPLAY_DEBUG
-    if ( this->LogoDisplayGUI ) {
+    if ( this->LogoDisplayGUI )
+      {
       this->LogoDisplayGUI->Delete ( );
       this->LogoDisplayGUI = NULL;
-    }
+      }
 #endif
 #ifndef SLICESCONTROL_DEBUG
-    if ( this->SlicesControlGUI ) {
-      this->SlicesControlGUI->SetAndObserveMRMLScene ( NULL );
+    if ( this->SlicesControlGUI )
+      {
+      this->SlicesControlGUI->UnbuildGUI ( );
       this->SlicesControlGUI->Delete ( );
       this->SlicesControlGUI = NULL;
-    }
+      }
 #endif
 #ifndef TOOLBAR_DEBUG
-    if ( this->ApplicationToolbar ) {
+    if ( this->ApplicationToolbar )
+      {
       this->ApplicationToolbar->Delete ( );
       this->ApplicationToolbar = NULL;
-    }
+      }
 #endif
 }
 
