@@ -1073,7 +1073,7 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   radiob->SetHighlightThickness ( 0 );  
   radiob->SetBorderWidth ( 0 );
   radiob->SetSelectColor ( app->GetSlicerTheme()->GetSlicerColors()->White );
-  radiob->SetBalloonHelpString ( "Set the 3DViewer mouse mode to 'place fiducials'" );
+  radiob->SetBalloonHelpString ( "Set the 3DViewer mouse mode to 'place a new object (like a fiducial point)'" );
   if ( mouseMode == vtkMRMLSelectionNode::MousePut )
     {
     radiob->SelectedStateOn ( );
