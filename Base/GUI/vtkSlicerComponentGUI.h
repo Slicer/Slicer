@@ -171,7 +171,7 @@ public:
   // Description:
   // Method in which references are released,
   // called before Delete().
-  virtual void UnbuildGUI ( ) { };
+  virtual void TearDownGUI ( ) { };
   
   // Description:
   // propagate events generated in logic layer to GUI
