@@ -26,7 +26,6 @@
 #include <cctype>
 #include <algorithm>
 #include <deque>
-#include <dlfcn.h>
 
 #if !defined(WIN32)
 #include "BinaryFileDescriptor.h"
