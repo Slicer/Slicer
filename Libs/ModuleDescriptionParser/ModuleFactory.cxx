@@ -26,6 +26,11 @@
 #include <cctype>
 #include <algorithm>
 #include <deque>
+#include <dlfcn.h>
+
+#if !defined(WIN32)
+#include "BinaryFileDescriptor.h"
+#endif
 
 static void
 splitString (std::string &text,
@@ -126,6 +131,8 @@ NameIsExecutable(const char* name)
 
   return true;
 }
+
+
 
 /**
  * A file scope typedef to make the cast code to the load
@@ -769,6 +776,11 @@ ModuleFactory
   return numberFound;
 }
 
+#if WIN32
+// Implementation of ScanForCommandLineModulesByPeeking() for Windows.
+// On Windows, executables can be opened and queried like libraries
+// for global symbols.
+//
 long
 ModuleFactory
 ::ScanForCommandLineModulesByPeeking()
@@ -837,6 +849,7 @@ ModuleFactory
 
           itksys::DynamicLoader::LibraryHandle lib
             = itksys::DynamicLoader::OpenLibrary(fullExecutablePath.c_str());
+
           if ( lib )
             {
             char *xmlSymbol = 0;
@@ -846,6 +859,11 @@ ModuleFactory
             
             xmlSymbol
               = (char*)itksys::DynamicLoader::GetSymbolAddress(lib, "XMLModuleDescription");
+            if (!xmlSymbol)
+              {
+               information << "Did not find xml in " + fullExecutablePath
+                           << std::endl;
+              }
 
             if (xmlSymbol)
               {
@@ -946,7 +964,199 @@ ModuleFactory
 
   return numberFound;
 }
+#else
+// Implementation of ScanForCommandLineModulesByPeeking() for variants
+// of unix.  On Linux, executables cannot be opened and queried like
+// libraries because the loader tries to load "main" at a fixed
+// address which is already occupied by the current program. This
+// implementation, therefore, operates on the object file format
+// directly, using the Binary File Descriptor (BFD) library to find
+// global symbols.
+//
+long
+ModuleFactory
+::ScanForCommandLineModulesByPeeking()
+{
+  // add any of the self-describing command-line modules available
+  //
+  // self-describing command-line modules live in a prescribed
+  // path and respond to a command line argument "--xml"
+  //
+  if (this->SearchPath == "")
+    {
+    this->WarningMessage( "Empty module search path." ); 
+    return 0;
+    }
+  
+  std::vector<std::string> modulePaths;
+#ifdef _WIN32
+  std::string delim(";");
+#else
+  std::string delim(":");
+#endif
+  splitString(this->SearchPath, delim, modulePaths);
 
+  std::vector<std::string>::const_iterator pit;
+  long numberTested = 0;
+  long numberFound = 0;
+  double t0, t1;
+
+  t0 = itksys::SystemTools::GetTime();
+  for (pit = modulePaths.begin(); pit != modulePaths.end(); ++pit)
+    {
+    std::stringstream information;
+    
+    information << "Searching " << *pit
+                << " for command line executable plugins by peeking." << std::endl;
+    
+    itksys::Directory directory;
+    directory.Load( (*pit).c_str() );
+
+    for ( unsigned int ii=0; ii < directory.GetNumberOfFiles(); ++ii)
+      {
+      const char *filename = directory.GetFile(ii);
+      
+      // skip any directories
+      if (!itksys::SystemTools::FileIsDirectory(filename))
+        {
+        // try to focus only on executables
+        if ( NameIsExecutable(filename) )
+          {
+          numberTested++;
+          //std::cout << "Testing " << filename << " as a plugin:" << std::endl;
+          // executable path
+          std::string fullExecutablePath = std::string(directory.GetPath())
+            + "/" + filename;
+
+          // early exit if we have already tested this file and succeeded
+          ModuleFileMap::iterator fit
+            = this->InternalFileMap->find(fullExecutablePath);
+          if (fit != this->InternalFileMap->end())
+            {
+            // file was already discovered as a module
+            information << "Module already discovered at "
+                        << fullExecutablePath << std::endl;
+            continue;
+            }
+
+          BinaryFileDescriptor myBFD;
+          bool opened = myBFD.Open(fullExecutablePath.c_str());
+
+          if ( opened )
+            {
+            char *xmlSymbol = 0;
+            unsigned char *logoImage = 0;
+            int *logoWidth=0, *logoHeight=0, *logoPixelSize=0;
+            unsigned long *logoLength=0;
+            
+            xmlSymbol
+              = (char*) myBFD.GetSymbolAddress("XMLModuleDescription");
+            if (!xmlSymbol)
+              {
+               information << "Did not find xml in " + fullExecutablePath
+                           << std::endl;
+              }
+
+            if (xmlSymbol)
+              {
+              // look for logo variables
+              logoImage = (unsigned char *) myBFD.GetSymbolAddress("ModuleLogoImage");
+                
+              if (logoImage)
+                {
+                logoWidth = (int *) myBFD.GetSymbolAddress("ModuleLogoWidth");
+                logoHeight = (int *) myBFD.GetSymbolAddress("ModuleLogoHeight");
+                logoPixelSize = (int *) myBFD.GetSymbolAddress("ModuleLogoPixelSize");
+                logoLength = (unsigned long *) myBFD.GetSymbolAddress("ModuleLogoLength");                  
+                }
+              }
+
+            // Build a module description
+            if (xmlSymbol)
+              {
+              std::string xml(xmlSymbol);
+
+              // check if the module description is valid
+              if (xml.compare(0, 5, "<?xml") == 0)
+                {
+                this->InternalFileMap->insert(fullExecutablePath);
+
+                // Construct and configure the module object
+                ModuleDescription module;
+                module.SetTarget( fullExecutablePath );
+                module.SetLocation( fullExecutablePath );
+                
+                // Parse the xml to build the description of the module
+                // and the parameters
+                ModuleDescriptionParser parser;
+                parser.Parse(xml, module);
+
+                // Check to make sure the module is not already in the
+                // list
+                ModuleDescriptionMap::iterator mit
+                  = this->InternalMap->find(module.GetTitle());
+
+                std::string splash_msg("Discovered ");
+                splash_msg +=  module.GetTitle();
+                splash_msg += " Module...";
+                this->ModuleDiscoveryMessage(splash_msg.c_str());
+                
+                if (mit == this->InternalMap->end())
+                  {
+                  // Store the module in the list
+                  (*this->InternalMap)[module.GetTitle()] =  module ;
+                  
+                  information << "A module named \"" << module.GetTitle()
+                              << "\" has been discovered at "
+                              << module.GetLocation()
+                              << "(" << module.GetTarget() << ")"
+                              << std::endl;
+                  numberFound++;
+                  }
+                else
+                  {
+                  information << "A module named \"" << module.GetTitle()
+                            << "\" has already been discovered." << std::endl
+                            << "    First discovered at "
+                            << (*mit).second.GetLocation()
+                            << "(" << (*mit).second.GetTarget() << ")"
+                            << std::endl
+                            << "    Then discovered at "
+                            << module.GetLocation()
+                            << "(" << module.GetTarget() << ")"
+                            << std::endl
+                            << "    Keeping first module." << std::endl;
+                  }
+
+                if (logoImage)
+                  {
+                  // construct a module logo and set it on the module
+                  ModuleLogo mLogo;
+                  mLogo.SetLogo( logoImage, *logoWidth, *logoHeight,
+                                 *logoPixelSize, *logoLength, 0);
+                  (*this->InternalMap)[module.GetTitle()].SetLogo(mLogo);
+                  }
+                }
+              }
+            myBFD.Close();
+            }
+          }
+        }
+      }
+    this->InformationMessage( information.str().c_str() );
+    }
+  t1 = itksys::SystemTools::GetTime();
+  
+  std::stringstream information;
+  information << "Tested " << numberTested << " files as command line executable plugins by peeking. Found "
+              << numberFound << " new plugins in " << t1 - t0
+              << " seconds." << std::endl;
+  
+  this->InformationMessage( information.str().c_str() );
+
+  return numberFound;
+}
+#endif
           
 void
 ModuleFactory

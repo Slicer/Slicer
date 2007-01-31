@@ -15,6 +15,12 @@ SET(ModuleDescriptionParser_SRCS
   ModuleLogo.cxx
   ModuleFactory.cxx
 )
+IF (NOT WIN32)
+  SET(ModuleDescriptionParser_SRCS 
+        ${ModuleDescriptionParser_SRCS} 
+        BinaryFileDescriptor.cxx
+  )
+ENDIF (NOT WIN32)
 
 INCLUDE_DIRECTORIES(
   ${ModuleDescriptionParser_SOURCE_DIR} 
@@ -24,6 +30,9 @@ INCLUDE_DIRECTORIES(
 ADD_LIBRARY(ModuleDescriptionParser ${ModuleDescriptionParser_SRCS})
 
 TARGET_LINK_LIBRARIES(ModuleDescriptionParser ITKEXPAT itksys)
+IF (NOT WIN32)
+TARGET_LINK_LIBRARIES(ModuleDescriptionParser bfd iberty)
+ENDIF (NOT WIN32)
 
 CONFIGURE_FILE(
   ${ModuleDescriptionParser_SOURCE_DIR}/ModuleDescriptionParserConfigure.h.in 
