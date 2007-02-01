@@ -89,28 +89,6 @@ class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
   vtkSetReferenceStringMacro ( ActiveViewID );
   void SetReferenceActiveViewID (char *id) { this->SetActiveViewID(id); };
   
-  // Description:
-  // Allows the mouse mode to be set and queried.
-  vtkGetMacro (MouseInteractionMode, int );
-  char *GetMouseInteractionModeAsString();
-  char *GetMouseInteractionModeAsString(int mode);
-  
-  //vtkSetMacro (MouseInteractionMode, int );
-  // Description:
-  // Set the mouse mode and update the interactor
-  void SetMouseInteractionMode(int mode);
-
-  
-  //BTX
-  // Modes for mouse control in the Main Viewer (and Slice Viewers?)
-  enum
-  {
-    MouseSelect = 0,
-    MouseTransform,
-    MousePut
-  };
-  //ETX
-  
 protected:
   vtkMRMLSelectionNode();
   ~vtkMRMLSelectionNode();
@@ -122,11 +100,6 @@ protected:
   char *ActiveFiducialListID;
   char *ActiveCameraID;
   char *ActiveViewID;
-
-  // Description:
-  // Allows the mouse to select and to deposit
-  // things in the 3D viewer. 
-  int MouseInteractionMode;
 };
 
 #endif

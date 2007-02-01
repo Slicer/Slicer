@@ -60,6 +60,9 @@ public:
     };
   //ETX 
 
+  // Description:
+  // Return a text string describing the mode
+  const char *GetMouseModeAsString(int mode);
 
 protected:
   vtkMRMLInteractionNode();

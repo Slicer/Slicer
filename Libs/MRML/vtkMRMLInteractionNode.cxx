@@ -261,7 +261,42 @@ void vtkMRMLInteractionNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   
   Superclass::PrintSelf(os,indent);
-  os << indent << "CurrentMouseMode:        " << this->CurrentMouseMode << "\n";
-  os << indent << "LastMouseMode:        " << this->LastMouseMode << "\n";
+  os << indent << "CurrentMouseMode:        " << this->GetMouseModeAsString(this->CurrentMouseMode) << "\n";
+  os << indent << "LastMouseMode:        " <<  this->GetMouseModeAsString(this->LastMouseMode) << "\n";
 }
 
+
+//---------------------------------------------------------------------------
+const char * vtkMRMLInteractionNode::GetMouseModeAsString(int mode)
+{
+  if (mode == this->MouseSelect)
+    {
+    return "Select";
+    }
+  if (mode == this->MouseSelectRegion)
+    {
+    return "SelectRegion";
+    }
+  if (mode == this->MousePut)
+    {
+    return "Put";
+    }
+  if (mode == this->MousePan)
+    {
+    return "Pan";
+    }
+  if (mode == this->MouseZoom)
+    {
+    return "Zoom";
+    }
+  if (mode == this->MouseRotate)
+    {
+    return "Rotate";
+    }
+  if (mode == this->MouseTransform)
+    {
+    return "Transform";
+    }
+  
+  return "(unknown)";
+}

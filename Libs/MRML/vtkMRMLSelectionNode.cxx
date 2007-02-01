@@ -59,10 +59,6 @@ vtkMRMLSelectionNode::vtkMRMLSelectionNode()
   this->ActiveFiducialListID = NULL;
   this->ActiveCameraID = NULL;
   this->ActiveViewID = NULL;
-
-  //--- by default, the application begins with the mouse
-  //--- mode set to twiddle the 3D view.
-  this->MouseInteractionMode = this->MouseTransform;
 }
 
 //----------------------------------------------------------------------------
@@ -107,7 +103,6 @@ void vtkMRMLSelectionNode::WriteXML(ostream& of, int nIndent)
   of << indent << "activeFiducialListID=\"" << (this->ActiveFiducialListID ? this->ActiveFiducialListID : "NULL") << "\" ";
   of << indent << "activeCameraID=\"" << (this->ActiveCameraID ? this->ActiveCameraID : "NULL") << "\" ";
   of << indent << "activeViewID=\"" << (this->ActiveViewID ? this->ActiveViewID : "NULL") << "\" ";
-  of << indent << "mouseInteractionMode=\"" << this->GetMouseInteractionModeAsString() <<  "\" ";
 }
 
 //----------------------------------------------------------------------------
@@ -172,15 +167,6 @@ void vtkMRMLSelectionNode::ReadXMLAttributes(const char** atts)
       this->SetActiveViewID (attValue);
       this->Scene->AddReferencedNodeID ( this->ActiveViewID, this);
       }
-    
-    if (!strcmp(attName, "mouseInteractionMode"))
-      {
-      std::stringstream ss;
-      int mode;
-      ss << attValue;
-      ss >> mode;
-      this->SetMouseInteractionMode(mode);
-      }
     }
 }
 
@@ -197,7 +183,6 @@ void vtkMRMLSelectionNode::Copy(vtkMRMLNode *anode)
   this->SetActiveFiducialListID(node->GetActiveFiducialListID());
   this->SetActiveCameraID (node->GetActiveCameraID());
   this->SetActiveViewID (node->GetActiveViewID() );
-  this->SetMouseInteractionMode(node->GetMouseInteractionMode());
 }
 
 //----------------------------------------------------------------------------
@@ -210,54 +195,8 @@ void vtkMRMLSelectionNode::PrintSelf(ostream& os, vtkIndent indent)
   os << "ActiveFiducialListID: " << ( (this->ActiveFiducialListID) ? this->ActiveFiducialListID : "None" ) << "\n";
   os << "ActiveCameraID: " << ( (this->ActiveCameraID) ? this->ActiveCameraID : "None" ) << "\n";
   os << "ActiveViewID: " << ( (this->ActiveViewID) ? this->ActiveViewID : "None" ) << "\n";
-  os << "MouseInteractionMode: " << this->GetMouseInteractionModeAsString() << "\n";
 
 }
 
-//---------------------------------------------------------------------------
-char * vtkMRMLSelectionNode::GetMouseInteractionModeAsString()
-{
-  return GetMouseInteractionModeAsString(this->GetMouseInteractionMode());
-}
 
-//---------------------------------------------------------------------------
-char * vtkMRMLSelectionNode::GetMouseInteractionModeAsString(int mode)
-{
-  if (mode == this->MouseSelect)
-    {
-    return "Select";
-    }
-  if (mode == this->MouseTransform)
-    {
-    return "Transform";
-    }
-  if (mode == this->MousePut)
-    {
-    return "Put";
-    }
-  return "(unknown)";
-}
-
-//---------------------------------------------------------------------------
-void vtkMRMLSelectionNode::SetMouseInteractionMode(int mode)
-{
-  if (mode < this->MouseSelect ||
-      mode > this->MousePut)
-    {
-    vtkErrorMacro("Mode " << mode << " is out of valid range " << this->MouseSelect << " - " << this->MousePut);
-    return;
-    }
-  if (mode == this->MouseInteractionMode)
-    {
-    // no change
-    //std::cout << "No change in mouse interaction mode\n";
-    return;
-    }
-  
-  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting MouseInteractionMode to " << mode);
-  this->MouseInteractionMode = mode;
-
-  // invoke a modified event
-  this->Modified();
-}
 // End
