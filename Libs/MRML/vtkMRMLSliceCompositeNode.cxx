@@ -57,7 +57,6 @@ vtkMRMLSliceCompositeNode::vtkMRMLSliceCompositeNode()
   this->LabelVolumeID = NULL;
   this->ForegroundOpacity = 0.0; // start by showing only the background volume
   this->LabelOpacity = 1.0; // Show the label if there is one
-  this->LayoutName = NULL;
   this->LinkedControl = 0;
   this->ForegroundGrid = 1;
   this->BackgroundGrid = 0;
@@ -97,7 +96,7 @@ void vtkMRMLSliceCompositeNode::WriteXML(ostream& of, int nIndent)
   of << indent << "labelGrid=\"" << this->LabelGrid << "\" ";
   of << indent << "fiducialVisibility=\"" << this->FiducialVisibility << "\" ";
   of << indent << "fiducialLabelVisibility=\"" << this->FiducialLabelVisibility << "\" ";
-  of << indent << "layoutName=\"" << this->LayoutName << "\" ";
+  of << indent << "layoutName=\"" << this->GetLayoutName() << "\" ";
 
   if ( this->AnnotationSpace == vtkMRMLSliceCompositeNode::XYZ)
     {

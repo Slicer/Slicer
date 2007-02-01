@@ -100,6 +100,7 @@ void vtkSlicerSliceLogic::UpdateSliceNode()
       {
       node = vtkMRMLSliceNode::New();
       node->SetLayoutName(this->GetName());
+      //node->SetSingletonTag(this->GetName());
 
       if ( !strcmp( this->GetName(), "Red" ) )
         {
@@ -166,6 +167,7 @@ void vtkSlicerSliceLogic::UpdateSliceCompositeNode()
       {
       node = vtkMRMLSliceCompositeNode::New();
       node->SetLayoutName(this->GetName());
+      //node->SetSingletonTag(this->GetName());
       this->SetSliceCompositeNode (node);
       node->Delete();
       }
@@ -609,7 +611,7 @@ void vtkSlicerSliceLogic::CreateSliceModel()
     vtkIntArray *events = vtkIntArray::New();
     //this->GetMRMLEvents(this->GetMRMLScene(), events);
     //this->SetMRMLScene(this->GetMRMLScene());
-    this->MRMLScene->AddNode(this->SliceModelDisplayNode);
+    this->MRMLScene->AddNodeNoNotify(this->SliceModelDisplayNode);
     this->MRMLScene->AddNode(this->SliceModelNode);
     this->SliceModelNode->SetAndObserveDisplayNodeID(this->SliceModelDisplayNode->GetID());
     this->SliceModelDisplayNode->SetAndObserveTextureImageData(this->GetImageData());

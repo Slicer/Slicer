@@ -134,8 +134,12 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
 
   // Description:
   // Name of the layout
-  vtkGetStringMacro (LayoutName);
-  vtkSetStringMacro (LayoutName);
+  void SetLayoutName(const char *layoutName) {
+    this->SetSingletonTag(layoutName);
+  }
+  char *GetLayoutName() {
+    return this->GetSingletonTag();
+  }
 
 protected:
 
@@ -154,8 +158,6 @@ protected:
   double FieldOfView[3];
   unsigned int Dimensions[3];
   char *OrientationString;
-
-  char* LayoutName;
 
 };
 

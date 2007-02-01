@@ -59,7 +59,6 @@ vtkMRMLSliceNode::vtkMRMLSliceNode()
   this->SliceToRAS->Identity();
 
   this->OrientationString = NULL;
-  this->LayoutName = NULL;
 
     // calculated by UpdateMatrices()
   this->XYToSlice = vtkMatrix4x4::New();
@@ -262,7 +261,7 @@ void vtkMRMLSliceNode::WriteXML(ostream& of, int nIndent)
       }
     }
   of << indent << "sliceToRAS=\"" << ss.str().c_str() << "\" ";
-  of << indent << "layoutName=\"" << this->LayoutName << "\" ";
+  of << indent << "layoutName=\"" << this->GetLayoutName() << "\" ";
   of << indent << "orientation=\"" << this->OrientationString << "\" ";
 
 }
