@@ -203,7 +203,7 @@ int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
         }
       reader->Delete();
       }  
-    else if (extension == std::string(".vtkp")) 
+    else if (extension == std::string(".vtp")) 
       {
       vtkXMLPolyDataReader *reader = vtkXMLPolyDataReader::New();
       reader->SetFileName(fullName.c_str());
@@ -451,7 +451,7 @@ int vtkMRMLModelStorageNode::WriteData(vtkMRMLNode *refNode)
       }
     writer->Delete();    
     }
-  else if (extension == ".vtkp")
+  else if (extension == ".vtp")
     {
     vtkXMLPolyDataWriter *writer = vtkXMLPolyDataWriter::New();
     writer->SetFileName(fullName.c_str());

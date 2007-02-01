@@ -780,8 +780,8 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
   defaultExtensionMap[".spr"] = "STD/SPR (Stimulate)";
 
   defaultExtensionMap[".vtk"] = "VTK (Legacy)";
-  defaultExtensionMap[".vtkp"] = "VTK PolyData";
-  defaultExtensionMap[".vtki"] = "VTK ImageData";
+  defaultExtensionMap[".vtp"] = "VTK PolyData";
+  defaultExtensionMap[".vti"] = "VTK ImageData";
   defaultExtensionMap[".stl"] = "Stereolithography";
 
   defaultExtensionMap[".csv"] = "Comma Separated Value";

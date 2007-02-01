@@ -195,7 +195,7 @@ vtkCommandLineModuleLogic
     fname = this->TemporaryDirectory + "/" + fname
       + "_" + pid;
 
-    std::string ext = ".vtkp";
+    std::string ext = ".vtp";
     if (extensions.size() != 0)
       {
       ext = extensions[0];
