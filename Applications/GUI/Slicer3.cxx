@@ -328,18 +328,18 @@ int Slicer3_main(int argc, char *argv[])
     }
 
   
-    // Initialize Tcl
-    // -- create the interp
-    // -- set up initial global variables
-    // -- later in this function tcl scripts are executed 
-    //    and some additional global variables are defined
+  // Initialize Tcl
+  // -- create the interp
+  // -- set up initial global variables
+  // -- later in this function tcl scripts are executed 
+  //    and some additional global variables are defined
 
-    Tcl_Interp *interp = vtkKWApplication::InitializeTcl(argc, argv, &cerr);
-    if (!interp)
-        {
-            slicerCerr("Error: InitializeTcl failed" << endl );
-            return 1;
-        }
+  Tcl_Interp *interp = vtkKWApplication::InitializeTcl(argc, argv, &cerr);
+  if (!interp)
+    {
+    slicerCerr("Error: InitializeTcl failed" << endl );
+    return 1;
+    }
 
 #ifdef USE_PYTHON
     // Initialize Python
@@ -468,6 +468,19 @@ int Slicer3_main(int argc, char *argv[])
     Commandlinemodule_Init(interp);
     Scriptedmodule_Init(interp);
 
+  vtkSlicerApplication *slicerApp = vtkSlicerApplication::GetInstance ( );
+  slicerApp->Script ( "rename exit tcl_exit" );
+  slicerApp->Script ( 
+    "proc exit {args} { \
+      if { $args != {} && [string is integer $args] == \"1\" } { \
+        %s SetExitStatus $args \
+      } else { \
+        %s SetExitStatus -1 \
+      } ;\
+      after idle \"%s Exit\"; \
+    }", 
+    slicerApp->GetTclName(), slicerApp->GetTclName(), slicerApp->GetTclName() );
+
     //
     // use the startup script passed on command line if it exists
     //
@@ -512,7 +525,6 @@ int Slicer3_main(int argc, char *argv[])
 
     // Create SlicerGUI application, style, and main window 
     //  - note: use the singleton application 
-    vtkSlicerApplication *slicerApp = vtkSlicerApplication::GetInstance ( );
     slicerApp->InstallTheme( slicerApp->GetSlicerTheme() );
 
     // copy the image from the header file into memory
