@@ -701,7 +701,8 @@ GetTreeNodeDistributionSampleIntensityValue(vtkIdType nodeID,
   vtkMatrix4x4* rasToijk = vtkMatrix4x4::New();
   volumeNode->GetRASToIJKMatrix(rasToijk);
   rasToijk->MultiplyPoint(rasPoint, ijkPoint);
-  
+  rasToijk->Delete();
+
   vtkImageData* imageData = volumeNode->GetImageData();
   double intensityValue = imageData->
     GetScalarComponentAsDouble(static_cast<int>(vtkMath::Round(ijkPoint[0])), 
@@ -2041,6 +2042,23 @@ SetOutputVolumeMRMLID(const char* mrmlID)
   else
     {
     this->GetSegmenterNode()->SetOutputVolumeNodeID(mrmlID);
+
+    //
+    // the output volume is a segmentation: make sure it is a labelmap
+    //
+    vtkMRMLScalarVolumeNode *outVolume = vtkMRMLScalarVolumeNode::
+      SafeDownCast(this->GetMRMLScene()->GetNodeByID(mrmlID));
+    if (outVolume == NULL)
+      {
+      vtkErrorMacro("Output volume is null");
+      }
+
+    bool isLabelMap = outVolume->GetLabelMap();
+    if (!isLabelMap)
+      {
+      vtkWarningMacro("Changing output image to labelmap");
+      outVolume->LabelMapOn();
+      }
     }
 }
 
