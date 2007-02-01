@@ -38,8 +38,15 @@
 #include "vtkMRMLScene.h"
 #include "vtkMRMLClipModelsNode.h"
 
+#include "vtkMRMLColorNode.h"
+
 #include "vtkKWWidget.h"
 
+// for picking
+#include "vtkWorldPointPicker.h"
+#include "vtkPropPicker.h"
+#include "vtkCellPicker.h"
+#include "vtkPointPicker.h"
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerViewerWidget );
@@ -70,6 +77,12 @@ vtkSlicerViewerWidget::vtkSlicerViewerWidget ( )
   this->BoxAxisActor = NULL;
 
   this->SceneClosing = false;
+
+  this->WorldPointPicker = vtkWorldPointPicker::New();
+  this->PropPicker = vtkPropPicker::New();
+  this->CellPicker = vtkCellPicker::New();
+  this->PointPicker = vtkPointPicker::New();
+  this->ResetPick();
 }
 
 
@@ -125,11 +138,48 @@ vtkSlicerViewerWidget::~vtkSlicerViewerWidget ( )
     this->MainViewer = NULL;
     }
 
+  // release the DisplayedModels
+  /*
+    std::map< const char *, vtkActor * >::iterator dmIter;
+  for (dmIter = this->DisplayedModels.begin();
+       dmIter != this->DisplayedModels.end();
+       dmIter++)
+    {
+    if (dmIter->second != NULL)
+      {
+      std::cout << "Deleting " << dmIter->first << endl;
+      dmIter->second->Delete();
+      }
+    }
+  */
+  this->DisplayedModels.clear();
+  
   this->ViewerFrame->SetParent ( NULL );
   this->ViewerFrame->Delete ( );
   this->ViewerFrame = NULL;
 
 
+  if (this->WorldPointPicker)
+    {
+    this->WorldPointPicker->Delete();
+    this->WorldPointPicker = NULL;
+    }
+  if (this->PropPicker)
+    {
+    this->PropPicker->Delete();
+    this->PropPicker = NULL;
+    }
+  if (this->CellPicker)
+    {
+    this->CellPicker->Delete();
+    this->CellPicker = NULL;
+    }
+  if (this->PointPicker)
+    {
+    this->PointPicker->Delete();
+    this->PointPicker = NULL;
+    }
+  
 }
 
 //---------------------------------------------------------------------------
@@ -678,7 +728,7 @@ void vtkSlicerViewerWidget::CreateWidget ( )
   if (rwi)
     {
     vtkSlicerViewerInteractorStyle *iStyle = vtkSlicerViewerInteractorStyle::New();
-    iStyle->SetApplication ( (vtkSlicerApplication *)this->GetApplication() );
+    iStyle->SetViewerWidget( this );
     rwi->SetInteractorStyle (iStyle);
     iStyle->Delete();
     }
@@ -1001,9 +1051,9 @@ void vtkSlicerViewerWidget::SetModelDisplayProperty(vtkMRMLModelNode *model,  vt
         } else { std::cout << "vtkSlicerViewerWidget: updating model props for " << model->GetName() << ", the display node color node " << (dnode->GetColorNode() == NULL ? "is null" : "isn't null") << ", and can't get a lookup table.\n"; }
       */
       if (dnode->GetColorNode() != NULL &&
-          vtkMRMLColorNode::SafeDownCast(dnode->GetColorNode())->GetLookupTable() != NULL)
+          dnode->GetColorNode()->GetLookupTable() != NULL)
         {
-        actor->GetMapper()->SetLookupTable(vtkMRMLColorNode::SafeDownCast(dnode->GetColorNode())->GetLookupTable());
+        actor->GetMapper()->SetLookupTable(dnode->GetColorNode()->GetLookupTable());
         }
       }
     actor->GetProperty()->SetColor(dnode->GetColor());
@@ -1114,3 +1164,62 @@ void vtkSlicerViewerWidget::UngridWidget ( )
   this->Script ( "grid forget %s ", this->MainViewer->GetWidgetName ( ) );
   this->Script ( "pack forget %s ", this->ViewerFrame->GetWidgetName ( ) );
 }
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewerWidget::ResetPick()
+{
+  double zero[3] = {0.0, 0.0, 0.0};
+  this->PickedNodeName = std::string("");
+  this->SetPickedRAS(zero);
+  this->SetPickedCellID(-1);
+  this->SetPickedPointID(-1);
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewerWidget::Pick(int x, int y)
+{
+  double RASPoint[3] = {0.0, 0.0, 0.0};
+  double pickPoint[3] = {0.0, 0.0, 0.0};
+
+  // reset the pick vars
+  this->ResetPick();
+  
+  vtkRenderer *ren;
+  if (this->GetMainViewer() != NULL)
+    {
+    ren = this->GetMainViewer()->GetRenderer();
+    }
+  else
+    {
+    vtkErrorMacro("Pick: unable to get renderer\n");
+    return;
+    }
+   // get the current renderer's size
+  //int *renSize = ren->GetSize();
+  // resize the interactor?
+  
+  // pass the event's display point to the world point picker
+  double displayPoint[3];
+  displayPoint[0] = x;
+  displayPoint[1] = y;
+  displayPoint[2] = 0.0;
+  
+  // world point picker's Pick always returns 0
+  this->WorldPointPicker->Pick(displayPoint, ren);
+  this->WorldPointPicker->GetPickPosition(pickPoint);
+  vtkDebugMacro("Pick: got pick point " <<  pickPoint[0] << ", " << pickPoint[1] << ", " << pickPoint[2]);
+  ren = NULL;
+
+  // translate world to RAS
+  for (int p = 0; p < 3; p++)
+    {
+    RASPoint[p] = pickPoint[p];
+    }
+  
+  // now set up the class vars
+  this->SetPickedRAS( RASPoint );
+        
+  // and throw the event so others can pick up on it
+  this->InvokeEvent(vtkSlicerViewerWidget::PickEvent);
+}     
+

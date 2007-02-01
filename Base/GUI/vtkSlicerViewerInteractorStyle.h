@@ -43,7 +43,7 @@
 #include "vtkMRML.h"
 #include "vtkMRMLCameraNode.h"
 
-class vtkSlicerApplication;
+class vtkSlicerViewerWidget;
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewerInteractorStyle : public vtkInteractorStyle
 {
 public:
@@ -73,8 +73,6 @@ public:
   virtual void Pan();
   virtual void Dolly();
 
-  virtual void AddFiducial();
-  
   virtual void OnEnter();
   virtual void OnLeave();
 
@@ -85,9 +83,9 @@ public:
   vtkSetObjectMacro ( CameraNode, vtkMRMLCameraNode );
 
   // Description:
-  // Get/Set the main slicer application, so can access the fiducials module
-  vtkGetObjectMacro (Application, vtkSlicerApplication );
-  virtual void SetApplication ( vtkSlicerApplication *app );
+  // Get/Set the main slicer viewer widget, for picking
+  vtkGetObjectMacro(ViewerWidget, vtkSlicerViewerWidget);
+  virtual void SetViewerWidget(vtkSlicerViewerWidget *viewerWidget);
   
 protected:
   vtkSlicerViewerInteractorStyle();
@@ -99,11 +97,10 @@ protected:
 
   virtual void Dolly(double factor);
 
-
   // Description:
-  // A pointer to the application so can get the fiducial module
-  vtkSlicerApplication *Application;
-
+  // A pointer back to the viewer widget, useful for picking
+  vtkSlicerViewerWidget *ViewerWidget;
+  
 private:
   vtkSlicerViewerInteractorStyle(const vtkSlicerViewerInteractorStyle&);  // Not implemented.
   void operator=(const vtkSlicerViewerInteractorStyle&);  // Not implemented.

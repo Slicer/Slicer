@@ -42,7 +42,10 @@ class vtkActorText;
 class vtkFollower;
 class vtkImplicitBoolean;
 class vtkPlane;
-
+class vtkWorldPointPicker;
+class vtkPropPicker;
+class vtkCellPicker;
+class vtkPointPicker;
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewerWidget : public vtkSlicerWidget
 {
   
@@ -129,7 +132,52 @@ public:
   // Updates Actors based on models in the scene
   void UpdateFromMRML();
 
+  // Description:
+  // Pick event
+  //BTX
+  enum
+  {
+    PickEvent,
+  };
+  //ETX
+
+  // Description:
+  // picks a world point
+  vtkGetObjectMacro(WorldPointPicker, vtkWorldPointPicker);
   
+  // Description:
+  // picks a property in the scene
+  vtkGetObjectMacro(PropPicker, vtkPropPicker);
+  // Description:
+  // picks a cell
+  vtkGetObjectMacro(CellPicker, vtkCellPicker);
+  // Description:
+  // picks a point
+  vtkGetObjectMacro(PointPicker, vtkPointPicker);
+  
+  // Description:
+  // Convert an x/y location to a Pick event, called by the
+  // vtkSlicerViewerInteractorStyle. 
+  void Pick(int x, int y);
+
+  // Description:
+  // Get the name of the picked node, returns empty string if no pick
+  const char *GetPickedNodeName()
+  {    
+    return this->PickedNodeName.c_str();
+  }
+  // Description:
+  // Get/Set the picked RAS point, returns 0,0,0 if no pick
+  vtkGetVectorMacro( PickedRAS, double, 3);
+  vtkSetVectorMacro( PickedRAS, double, 3);
+  // Description:
+  // Get/Set the picked cell id, returns -1 if no pick
+  vtkGetMacro( PickedCellID, vtkIdType);
+  vtkSetMacro( PickedCellID, vtkIdType);
+  // Description:
+  // Get/Set the picked point id, returns -1 if no pick
+  vtkGetMacro( PickedPointID, vtkIdType);
+  vtkSetMacro( PickedPointID, vtkIdType);
 protected:
   vtkSlicerViewerWidget();
   virtual ~vtkSlicerViewerWidget();
@@ -197,6 +245,24 @@ protected:
 
   bool SceneClosing;
 
+  vtkWorldPointPicker *WorldPointPicker;
+  vtkPropPicker *PropPicker;
+  vtkCellPicker *CellPicker;
+  vtkPointPicker *PointPicker;
+  
+  // Description:
+  // information about a pick event
+  //BTX
+  std::string PickedNodeName;
+  //ETX
+  double PickedRAS[3];
+  vtkIdType PickedCellID;
+  vtkIdType PickedPointID;
+
+  // Description:
+  // Reset all the pick vars
+  void ResetPick();
+  
 private:
   
   vtkSlicerViewerWidget(const vtkSlicerViewerWidget&); // Not implemented
