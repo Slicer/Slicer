@@ -17,7 +17,22 @@ SET(ModuleDescriptionParser_SRCS
 )
 IF (NOT WIN32)
   INCLUDE(CheckIncludeFile)
-  CHECK_INCLUDE_FILE(bfd.h HAVE_BFD)
+  CHECK_INCLUDE_FILE(bfd.h HAVE_BFD_HEADER)
+
+  IF (HAVE_BFD_HEADER)
+     # make sure we can build with libbfd
+     MESSAGE(STATUS "Testing libbfd")
+     TRY_COMPILE(HAVE_BFD
+                 ${ModuleDescriptionParser_BINARY_DIR}/CMake
+                 ${ModuleDescriptionParser_SOURCE_DIR}/CMake/TestBFD.cxx
+                 CMAKE_FLAGS -DLINK_LIBRARIES:STATIC=bfd\;iberty 
+                 OUTPUT_VARIABLE OUTPUT) 
+     IF (HAVE_BFD)
+       MESSAGE(STATUS "Testing libbfd - ok. ModuleFactory will look for global symbols in plugin executables.")
+     ELSE (HAVE_BFD)
+       MESSAGE(STATUS "Testing libbfd - error.  ModuleFactory will not look for global symbols in plugin executables.")
+     ENDIF (HAVE_BFD)
+  ENDIF (HAVE_BFD_HEADER)
 
   IF (HAVE_BFD)
     SET(ModuleDescriptionParser_SRCS 
