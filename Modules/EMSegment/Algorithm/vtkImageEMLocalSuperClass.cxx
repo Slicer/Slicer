@@ -75,6 +75,28 @@ void vtkImageEMLocalSuperClass::DeleteSuperClassVariables() {
     }
     delete[] this->MrfParams;
   }
+
+  //
+  // delete elements of class list
+  //
+  if (this->ClassList)
+    {
+    for (int i = 0; i < this->NumClasses; ++i)
+      {
+      if (this->ClassList[i])
+        {
+        // we must do this since the data are referenced by void*
+        // pointers and we must decrease the reference count
+        vtkObjectBase* objectPointer = 
+          static_cast<vtkObjectBase*>(this->ClassList[i]);
+        if (objectPointer != 0)
+          {
+          objectPointer->Delete();
+          }
+        }
+      }
+    }
+
   if (this->ClassList)     delete[] this->ClassList; 
   if (this->ClassListType) delete[] this->ClassListType;  
 
@@ -100,13 +122,25 @@ void vtkImageEMLocalSuperClass::AddSubClass(void* ClassData, classType initType,
     void**      oldClassList = NULL;
     int         oldNumClasses = this->NumClasses;
     // Delete and remeber old class list
-    if (oldNumClasses) {
+    if (oldNumClasses) 
+      {
       oldClassListType = new classType[oldNumClasses];
       oldClassList     = new void*[oldNumClasses];
-      for (int i = 0; i <oldNumClasses; i++) {
-    oldClassList[i] = this->ClassList[i];
-    oldClassListType[i] = this->ClassListType[i];
-      }
+      for (int i = 0; i <oldNumClasses; i++) 
+        {
+        // legacy code issue: we have to manually register a new
+        // reference to each object---otherwise the objects will be
+        // deleted in the DeleteSuperClassVariables function
+        vtkObjectBase* oldDataAsVTKObject = 
+          static_cast<vtkObjectBase*>(this->ClassList[i]);    
+        if (oldDataAsVTKObject != 0)
+          {
+          oldDataAsVTKObject->Register(this);
+          }
+
+        oldClassList[i] = this->ClassList[i];
+        oldClassListType[i] = this->ClassListType[i];
+        }
       this->DeleteSuperClassVariables();
     }
     // Create  New Classes 
@@ -142,8 +176,38 @@ void vtkImageEMLocalSuperClass::AddSubClass(void* ClassData, classType initType,
     }
     this->NumClasses = index + 1;
   }
-  this->ClassList[index] = ClassData;
+
+  //
+  // legacy code issue: we need to do some fancy footwork because we
+  // need to update the reference count but we only have a void*
+  // pointer.
+  //
+  vtkObjectBase* dataAsVTKObject = static_cast<vtkObjectBase*>(ClassData);
+  if (dataAsVTKObject == 0)
+    {
+    vtkErrorMacro("AddSubClass: could not cast to vtk object from void*.");
+    return;    
+    }
+
   this->ClassListType[index] = initType;
+
+  if (this->ClassList[index] == ClassData)
+    {
+    return;
+    }
+
+  if (this->ClassList[index])
+    {
+    vtkObjectBase* oldDataAsVTKObject = 
+      static_cast<vtkObjectBase*>(this->ClassList[index]);    
+    if (oldDataAsVTKObject != 0)
+      {
+      oldDataAsVTKObject->Delete();
+      }
+    }
+
+  dataAsVTKObject->Register(this);
+  this->ClassList[index] = ClassData;
 }
 
 //------------------------------------------------------------------------------

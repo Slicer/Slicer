@@ -77,6 +77,11 @@ void vtkImageEMLocalSegmenter::DeleteVariables() {
 
   if (this->DebugImage) delete[] this->DebugImage;
   this->DebugImage = NULL;
+
+  if (this->HeadClass)
+    {
+    this->HeadClass->Delete();
+    }
 }
 
 void vtkImageEMLocalSegmenter::PrintSelf(ostream& os,vtkIndent indent) {
@@ -182,12 +187,24 @@ void vtkImageEMLocalSegmenter::SetNumInputImages(int number) {
 // SuperClass Function
 //----------------------------------------------------------------------------
 void vtkImageEMLocalSegmenter::SetHeadClass(vtkImageEMLocalSuperClass *InitHead) {
+  if (this->HeadClass == InitHead)
+    {
+    return;
+    }
+
   InitHead->Update(); 
   if (InitHead->GetErrorFlag()) {
     // This is done before this->Update() so we cannot use Error Message Report;
     vtkErrorMacro(<<"Cannot set HeadClass because the class given has its ErrorFlag activated !");
     return;
   }
+
+  if (this->HeadClass)
+    {
+    this->HeadClass->Delete();
+    }
+
+  InitHead->Register(this);
   this->HeadClass   = InitHead;
   this->activeClass = (void*) InitHead;
   this->activeClassType  = SUPERCLASS;
