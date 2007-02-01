@@ -17,6 +17,7 @@
 #include <itkCommand.h>
 #include <itkImage.h>
 #include <itkOrientedImage.h>
+#include <itkOrientImageFilter.h>
 #include <itkImageFileReader.h>
 #include <itkImageFileWriter.h>
 
@@ -77,7 +78,7 @@ class ScheduleCommand : public itk::Command
         m_Schedule++;
         optimizer->SetLearningRate ( this->m_LearningRates[m_Schedule] );
         this->m_NextChange = this->m_NumberOfIterations[m_Schedule];
-        // std::cout << "Iteration: " << optimizer->GetCurrentIteration() << " LearningRate: " << optimizer->GetLearningRate() << std::endl;
+        std::cout << "Iteration: " << optimizer->GetCurrentIteration() << " LearningRate: " << optimizer->GetLearningRate() << std::endl;
       }
     }
   }
@@ -161,10 +162,18 @@ PARSE_ARGS;
   std::cout << "Parsed arguments" << std::endl
             << "HistogramBins: " << HistogramBins << std::endl
             << "RandomSeed: " << RandomSeed << std::endl
-            << "GradientMagnitudeTolerance: " << GradientMagnitudeTolerance << std::endl
-//            << "Iterations: " << Iterations << std::endl;
-//            << "LearningRate: " << LearningRate << std::endl
-            << "SpatialSamples: " << SpatialSamples << std::endl
+            << "GradientMagnitudeTolerance: " << GradientMagnitudeTolerance << std::endl;
+  std::cout << "Iterations: ";
+  for ( int i = 0; i < Iterations.size(); i++ )
+    {
+    std::cout << Iterations[i] << ", ";
+    }
+  std:: cout << "\nLearningRate: ";
+  for ( int i = 0; i < LearningRate.size(); i++ )
+    {
+    std::cout << LearningRate[i] << ", ";
+    }
+  std::cout << "\nSpatialSamples: " << SpatialSamples << std::endl
             << "TranslationScale: " << TranslationScale << std::endl
             << "DoInitializeTransform: " << DoInitializeTransform << std::endl
             << "fixedImageFileName: " << fixedImageFileName << std::endl
@@ -172,7 +181,9 @@ PARSE_ARGS;
             << "resampledImageFileName: " << resampledImageFileName << std::endl
             << std::endl;
 
-  Volume::Pointer fixed, moving;
+  Volume::Pointer fixed, moving, rfixed, rmoving;
+  typedef itk::OrientImageFilter<Volume,Volume> OrientFilterType;
+  
   typedef itk::ImageFileReader<Volume> FileReaderType;
   FileReaderType::Pointer FixedReader = FileReaderType::New();
   FileReaderType::Pointer MovingReader = FileReaderType::New();
@@ -194,7 +205,6 @@ PARSE_ARGS;
   try
     {
     MovingReader->Update();
-    moving = MovingReader->GetOutput();
     }
   catch( itk::ExceptionObject & err )
     {
@@ -203,9 +213,21 @@ PARSE_ARGS;
     return EXIT_FAILURE;
     }
 
-  fixed = FixedReader->GetOutput();
-  moving = MovingReader->GetOutput();
+  
+  OrientFilterType::Pointer orientFixed = OrientFilterType::New();
+  orientFixed->UseImageDirectionOn();
+  orientFixed->SetDesiredCoordinateOrientationToAxial();
+  orientFixed->SetInput (FixedReader->GetOutput());
+  orientFixed->Update();
 
+  OrientFilterType::Pointer orientMoving = OrientFilterType::New();
+  orientMoving->UseImageDirectionOn();
+  orientMoving->SetDesiredCoordinateOrientationToAxial();
+  orientMoving->SetInput (MovingReader->GetOutput());
+  orientMoving->Update();
+  
+  fixed = orientFixed->GetOutput();
+  moving = orientMoving->GetOutput();
 
   Volume::DirectionType dir;
   dir.SetIdentity();
