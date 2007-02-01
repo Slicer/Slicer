@@ -11,3 +11,5 @@
 #ifndef BUILD_SHARED_LIBS
 #define ModuleDescriptionParser_STATIC
 #endif
+
+#cmakedefine HAVE_BFD

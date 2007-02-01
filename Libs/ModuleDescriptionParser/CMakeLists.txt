@@ -16,10 +16,14 @@ SET(ModuleDescriptionParser_SRCS
   ModuleFactory.cxx
 )
 IF (NOT WIN32)
-  SET(ModuleDescriptionParser_SRCS 
-        ${ModuleDescriptionParser_SRCS} 
-        BinaryFileDescriptor.cxx
-  )
+  INCLUDE(CheckIncludeFile)
+  CHECK_INCLUDE_FILE(bfd.h HAVE_BFD)
+
+  IF (HAVE_BFD)
+    SET(ModuleDescriptionParser_SRCS 
+          ${ModuleDescriptionParser_SRCS} 
+          BinaryFileDescriptor.cxx)
+  ENDIF (HAVE_BFD)
 ENDIF (NOT WIN32)
 
 INCLUDE_DIRECTORIES(
@@ -31,7 +35,9 @@ ADD_LIBRARY(ModuleDescriptionParser ${ModuleDescriptionParser_SRCS})
 
 TARGET_LINK_LIBRARIES(ModuleDescriptionParser ITKEXPAT itksys)
 IF (NOT WIN32)
-TARGET_LINK_LIBRARIES(ModuleDescriptionParser bfd iberty)
+  IF (HAVE_BFD)
+    TARGET_LINK_LIBRARIES(ModuleDescriptionParser bfd iberty)
+  ENDIF(HAVE_BFD)
 ENDIF (NOT WIN32)
 
 CONFIGURE_FILE(

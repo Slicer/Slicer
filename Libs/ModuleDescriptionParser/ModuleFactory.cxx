@@ -27,7 +27,7 @@
 #include <algorithm>
 #include <deque>
 
-#if !defined(WIN32)
+#if !defined(WIN32) && defined(HAVE_BFD)
 #include "BinaryFileDescriptor.h"
 #endif
 
@@ -976,6 +976,9 @@ long
 ModuleFactory
 ::ScanForCommandLineModulesByPeeking()
 {
+  // only use this implementation if the system we are on has the BFD library
+
+#ifdef HAVE_BFD
   // add any of the self-describing command-line modules available
   //
   // self-describing command-line modules live in a prescribed
@@ -1154,6 +1157,13 @@ ModuleFactory
   this->InformationMessage( information.str().c_str() );
 
   return numberFound;
+#else
+  std::stringstream information;
+  information << "Application does not include the Binary File Descriptor library (BFD). Cannot peek into executables for global symbols." << std::endl;
+  this->InformationMessage( information.str().c_str() );
+
+  return 0;
+#endif
 }
 #endif
           
