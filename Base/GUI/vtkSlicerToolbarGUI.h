@@ -104,14 +104,14 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
 
     // Description:
     // Getting and setting the mrml selection node id
-    vtkGetStringMacro(SelectionNodeID);
-    vtkSetStringMacro(SelectionNodeID);
+    vtkGetStringMacro(InteractionNodeID);
+    vtkSetStringMacro(InteractionNodeID);
     // Description:
     // Get/Set the selection node
-    vtkGetObjectMacro(SelectionNode, vtkMRMLSelectionNode);
-    void SetAndObserveSelectionNode (vtkMRMLSelectionNode *node)
+    vtkGetObjectMacro(InteractionNode, vtkMRMLInteractionNode);
+    void SetAndObserveInteractionNode (vtkMRMLInteractionNode *node)
     {
-    vtkSetAndObserveMRMLNodeMacro(this->SelectionNode, node);
+    vtkSetAndObserveMRMLNodeMacro(this->InteractionNode, node);
     }
     
  protected:
@@ -161,8 +161,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
     // Description:
     // the id of the selection node, for tracking changes to the mouse
     // interation mode
-    char *SelectionNodeID;
-    vtkMRMLSelectionNode *SelectionNode;
+    char *InteractionNodeID;
+    vtkMRMLInteractionNode *InteractionNode;
     
  private:
     vtkSlicerToolbarGUI ( const vtkSlicerToolbarGUI& ); // Not implemented.
