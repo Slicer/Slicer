@@ -218,6 +218,7 @@ vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
       }
 
     this->SetApplication(NULL);
+    this->SetApplicationLogic ( NULL );
 }
 
 //---------------------------------------------------------------------------
@@ -226,10 +227,7 @@ void vtkSlicerApplicationGUI:: DeleteComponentGUIs()
 #ifndef VIEWCONTROL_DEBUG
     if ( this->ViewControlGUI )
       {
-      this->ViewControlGUI->RemoveSliceGUIObservers();
-      this->ViewControlGUI->SetAndObserveMRMLScene ( NULL );
-      this->ViewControlGUI->SetApplicationGUI ( NULL);
-      this->ViewControlGUI->SetApplication ( NULL );
+      this->ViewControlGUI->UnbuildGUI ( );
       this->ViewControlGUI->Delete ( );
       this->ViewControlGUI = NULL;
       }
@@ -643,6 +641,7 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
             vtkSlicerToolbarGUI *appTB = this->GetApplicationToolbar ( );
             appTB->SetApplicationGUI ( this );
             appTB->SetApplication ( app );
+            appTB->SetApplicationLogic ( this->GetApplicationLogic());
             appTB->BuildGUI ( );
 #endif
 

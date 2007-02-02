@@ -82,10 +82,13 @@ public:
   void PrintSelf ( ostream& os, vtkIndent indent );
 
   // Description:
-  // Get Macro for ApplicationLogic: GUI class's interface to logic
-  // To Set ApplicationLogic, use SetLogic method.
+  // Get Macro and Set Methods for ApplicationLogic: GUI class's interface to logic
   vtkGetObjectMacro ( ApplicationLogic, vtkSlicerApplicationLogic );
-  
+  virtual void SetApplicationLogic ( vtkSlicerApplicationLogic *logic )
+    { this->SetLogic ( vtkObjectPointer (&this->ApplicationLogic), logic );};
+  void SetAndObserveApplicationLogic ( vtkSlicerApplicationLogic *logic )
+    { this->SetAndObserveLogic ( vtkObjectPointer (&this->ApplicationLogic) , logic ); };
+
   // Description:
   // GetMacro for MRML scene: GUI class's interface to mrml.
   // To Set MRMLScene, use SetMRML method.
@@ -122,11 +125,6 @@ public:
       this->InvokeEvent (vtkCommand::ModifiedEvent);
       }
     }
-  virtual void SetApplicationLogic ( vtkSlicerApplicationLogic *logic )
-    { this->SetLogic ( vtkObjectPointer (&this->ApplicationLogic), logic );};
-  
-  void SetAndObserveApplicationLogic ( vtkSlicerApplicationLogic *logic )
-    { this->SetAndObserveLogic ( vtkObjectPointer (&this->ApplicationLogic) , logic ); };
   
   void SetLogic ( vtkObject **logicPtr, vtkObject *logic );
   void SetAndObserveLogic ( vtkObject **logicPtr, vtkObject *logic );
