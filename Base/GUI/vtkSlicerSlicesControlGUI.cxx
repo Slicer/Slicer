@@ -135,7 +135,7 @@ vtkSlicerSlicesControlGUI::~vtkSlicerSlicesControlGUI ( )
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerSlicesControlGUI::UnbuildGUI ( )
+void vtkSlicerSlicesControlGUI::TearDownGUI ( )
 {
   this->SetAndObserveMRMLScene ( NULL );
 }

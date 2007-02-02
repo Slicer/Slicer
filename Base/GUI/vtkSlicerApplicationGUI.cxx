@@ -227,7 +227,11 @@ void vtkSlicerApplicationGUI:: DeleteComponentGUIs()
 #ifndef VIEWCONTROL_DEBUG
     if ( this->ViewControlGUI )
       {
-      this->ViewControlGUI->TearDownGUI ( );
+//      this->ViewControlGUI->TearDownGUI ( );
+      this->ViewControlGUI->RemoveSliceGUIObservers();
+      this->ViewControlGUI->SetAndObserveMRMLScene ( NULL );
+      this->ViewControlGUI->SetApplicationGUI ( NULL);
+      this->ViewControlGUI->SetApplication ( NULL );
       this->ViewControlGUI->Delete ( );
       this->ViewControlGUI = NULL;
       }
