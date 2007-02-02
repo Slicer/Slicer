@@ -19,6 +19,9 @@
 #include "vtkKWMenuButton.h"
 #include "vtkKWMenuButtonWithLabel.h"
 
+// for pick events
+#include "vtkSlicerViewerWidget.h"
+
 #include "vtkSlicerFiducialsGUI.h"
 
 //---------------------------------------------------------------------------
@@ -51,6 +54,8 @@ vtkSlicerFiducialsGUI::vtkSlicerFiducialsGUI ( )
     this->MultiColumnList = NULL;
     this->NumberOfColumns = 9;
 
+    // for picking
+    this->ViewerWidget = NULL;
 //    this->DebugOn();
 }
 
@@ -142,6 +147,8 @@ vtkSlicerFiducialsGUI::~vtkSlicerFiducialsGUI ( )
     //this->SetFiducialListNodeID("(none)");
     this->SetFiducialListNodeID(NULL);
     vtkSetMRMLNodeMacro(this->FiducialListNode, NULL);
+
+    this->SetViewerWidget(NULL);
 }
 
 
@@ -175,6 +182,8 @@ void vtkSlicerFiducialsGUI::RemoveGUIObservers ( )
     this->ListOpacity->RemoveObservers (vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
     
     this->RemoveObservers (vtkSlicerFiducialsGUI::FiducialListIDModifiedEvent, (vtkCommand *)this->GUICallbackCommand);    
+
+    this->ViewerWidget->RemoveObservers(vtkSlicerViewerWidget::PickEvent, (vtkCommand *)this->GUICallbackCommand);
 }
 
 
@@ -196,6 +205,8 @@ void vtkSlicerFiducialsGUI::AddGUIObservers ( )
     this->ListOpacity->AddObserver (vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
     
     this->AddObserver(vtkSlicerFiducialsGUI::FiducialListIDModifiedEvent, (vtkCommand *)this->GUICallbackCommand);
+
+    this->ViewerWidget->AddObserver(vtkSlicerViewerWidget::PickEvent, (vtkCommand *)this->GUICallbackCommand);
 }
 
 
@@ -380,6 +391,18 @@ void vtkSlicerFiducialsGUI::ProcessGUIEvents ( vtkObject *caller,
     {
     vtkDebugMacro("Changing list glyph type to " << this->ListSymbolTypeMenu->GetWidget()->GetValue() << endl);
     activeFiducialListNode->SetGlyphTypeFromString(this->ListSymbolTypeMenu->GetWidget()->GetValue());
+    }
+
+  if (event == vtkSlicerViewerWidget::PickEvent)
+    {
+    vtkDebugMacro("FiducialsGUI: Pick event!\n");
+    // get the viewer widget and check for a valid RAS point
+    
+    double *rasPoint = this->GetApplicationGUI()->GetViewerWidget()->GetPickedRAS();
+    if (rasPoint != NULL)
+      {
+      int modelIndex = this->GetLogic()->AddFiducial(rasPoint[0], rasPoint[1], rasPoint[2]);
+      }
     }
   return;
 }
@@ -1109,4 +1132,10 @@ void vtkSlicerFiducialsGUI::SetFiducialListNodeID (char * id)
       vtkDebugMacro("Fid GUI: setting the active fid list id to " << this->FiducialListNodeID);
       this->ApplicationLogic->GetSelectionNode()->SetActiveFiducialListID( this->FiducialListNodeID );
       }
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerFiducialsGUI::SetViewerWidget ( vtkSlicerViewerWidget *viewerWidget )
+{
+  this->ViewerWidget = viewerWidget;
 }
