@@ -25,8 +25,10 @@ IF (NOT WIN32)
      TRY_COMPILE(HAVE_BFD
                  ${ModuleDescriptionParser_BINARY_DIR}/CMake
                  ${ModuleDescriptionParser_SOURCE_DIR}/CMake/TestBFD.cxx
-                 CMAKE_FLAGS -DLINK_LIBRARIES:STATIC=bfd\;iberty 
-                 OUTPUT_VARIABLE OUTPUT) 
+                 CMAKE_FLAGS 
+                    -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+                    -DLINK_LIBRARIES=bfd\;iberty 
+                 OUTPUT_VARIABLE OUTPUT)
      IF (HAVE_BFD)
        MESSAGE(STATUS "Testing libbfd - ok. ModuleFactory will look for global symbols in plugin executables.")
      ELSE (HAVE_BFD)
