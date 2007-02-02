@@ -235,7 +235,7 @@ void vtkMRMLScene::RemoveAllNodesExceptSingletons()
       removeNodes.push_back(node);
       }
     }
-    for(int i=0; i<removeNodes.size(); i++)
+    for(unsigned int i=0; i<removeNodes.size(); i++)
       {
       this->CurrentScene->vtkCollection::RemoveItem(removeNodes[i]);
       }
