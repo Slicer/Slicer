@@ -29,6 +29,7 @@ IF (NOT WIN32)
                     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
                     -DLINK_LIBRARIES=bfd\;iberty 
                  OUTPUT_VARIABLE OUTPUT)
+     MESSAGE(${OUTPUT})
      IF (HAVE_BFD)
        MESSAGE(STATUS "Testing libbfd - ok. ModuleFactory will look for global symbols in plugin executables.")
      ELSE (HAVE_BFD)
