@@ -227,7 +227,7 @@ void vtkSlicerApplicationGUI:: DeleteComponentGUIs()
 #ifndef VIEWCONTROL_DEBUG
     if ( this->ViewControlGUI )
       {
-      this->ViewControlGUI->UnbuildGUI ( );
+      this->ViewControlGUI->TearDownGUI ( );
       this->ViewControlGUI->Delete ( );
       this->ViewControlGUI = NULL;
       }
@@ -242,7 +242,7 @@ void vtkSlicerApplicationGUI:: DeleteComponentGUIs()
 #ifndef SLICESCONTROL_DEBUG
     if ( this->SlicesControlGUI )
       {
-      this->SlicesControlGUI->UnbuildGUI ( );
+      this->SlicesControlGUI->TearDownGUI ( );
       this->SlicesControlGUI->Delete ( );
       this->SlicesControlGUI = NULL;
       }
@@ -935,6 +935,7 @@ void vtkSlicerApplicationGUI::DestroyMain3DViewer ( )
           {
             this->ViewerWidget->UnpackWidget ( );
           }
+        this->ViewerWidget->SetApplicationLogic ( NULL );
         this->ViewerWidget->SetParent ( NULL );
         this->ViewerWidget->Delete ( );
         this->ViewerWidget = NULL;
@@ -1078,6 +1079,7 @@ void vtkSlicerApplicationGUI::CreateMain3DViewer ( int arrangementType )
       this->ViewerWidget->Create();
       this->ViewerWidget->GetMainViewer()->SetRendererBackgroundColor (app->GetSlicerTheme()->GetSlicerColors()->ViewerBlue );
       this->ViewerWidget->UpdateFromMRML();
+      this->ViewerWidget->SetApplicationLogic ( this->GetApplicationLogic () );
       // add the fiducial list widget
       this->FiducialListWidget = vtkSlicerFiducialListWidget::New();
       this->FiducialListWidget->SetApplication( app );

@@ -42,6 +42,7 @@
 
 #include "vtkMRML.h"
 #include "vtkMRMLCameraNode.h"
+#include "vtkSlicerApplicationLogic.h"
 
 class vtkSlicerViewerWidget;
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewerInteractorStyle : public vtkInteractorStyle
@@ -50,6 +51,9 @@ public:
   static vtkSlicerViewerInteractorStyle *New();
   vtkTypeRevisionMacro(vtkSlicerViewerInteractorStyle,vtkInteractorStyle);
   void PrintSelf(ostream& os, vtkIndent indent);
+
+  vtkGetObjectMacro (ApplicationLogic, vtkSlicerApplicationLogic );
+  vtkSetObjectMacro (ApplicationLogic, vtkSlicerApplicationLogic );
 
   // Description:
   // Event bindings controlling the effects of pressing mouse buttons
@@ -92,6 +96,7 @@ protected:
   ~vtkSlicerViewerInteractorStyle();
 
   vtkMRMLCameraNode *CameraNode;
+  vtkSlicerApplicationLogic *ApplicationLogic;
 
   double MotionFactor;
 

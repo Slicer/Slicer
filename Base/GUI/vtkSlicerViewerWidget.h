@@ -25,6 +25,7 @@
 #define __vtkSlicerViewerWidget_h
 
 #include "vtkSlicerWidget.h"
+#include "vtkSlicerApplicationLogic.h"
 
 #include "vtkKWRenderWidget.h"
 #include "vtkKWFrame.h"
@@ -77,6 +78,9 @@ public:
   // Description:
   // removes observers on widgets in the class
   virtual void RemoveMRMLObservers ( );
+
+  vtkGetObjectMacro (ApplicationLogic, vtkSlicerApplicationLogic );
+  vtkSetObjectMacro (ApplicationLogic, vtkSlicerApplicationLogic );
 
   vtkGetObjectMacro(MainViewer, vtkKWRenderWidget);
   vtkSetObjectMacro(MainViewer, vtkKWRenderWidget);
@@ -189,6 +193,7 @@ protected:
   void UpdateCameraNode();
   void UpdateViewNode();
 
+  vtkSlicerApplicationLogic *ApplicationLogic;
   vtkKWRenderWidget *MainViewer;
   vtkKWFrame *ViewerFrame;
   int RenderPending;

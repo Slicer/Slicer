@@ -36,12 +36,14 @@ vtkSlicerViewerInteractorStyle::vtkSlicerViewerInteractorStyle()
 {
   this->MotionFactor   = 10.0;
   this->CameraNode = NULL;
+  this->ApplicationLogic = NULL;
 }
 
 //----------------------------------------------------------------------------
 vtkSlicerViewerInteractorStyle::~vtkSlicerViewerInteractorStyle() 
 {
   this->SetCameraNode(NULL);
+  this->ApplicationLogic = NULL;
 }
 
 //----------------------------------------------------------------------------

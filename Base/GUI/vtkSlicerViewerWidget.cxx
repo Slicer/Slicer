@@ -78,6 +78,7 @@ vtkSlicerViewerWidget::vtkSlicerViewerWidget ( )
 
   this->SceneClosing = false;
 
+  this->ApplicationLogic = NULL;
   this->WorldPointPicker = vtkWorldPointPicker::New();
   this->PropPicker = vtkPropPicker::New();
   this->CellPicker = vtkCellPicker::New();
@@ -103,6 +104,9 @@ vtkSlicerViewerWidget::~vtkSlicerViewerWidget ( )
   
   if (this->MainViewer)
     {
+    vtkSlicerViewerInteractorStyle *iStyle;
+    iStyle = vtkSlicerViewerInteractorStyle::SafeDownCast (this->MainViewer->GetRenderWindowInteractor()->GetInteractorStyle());
+    iStyle->SetApplicationLogic ( NULL);
     this->SetMRMLScene ( NULL );
     this->MainViewer->RemoveAllViewProps ( );
     }
@@ -133,6 +137,7 @@ vtkSlicerViewerWidget::~vtkSlicerViewerWidget ( )
 
   if (this->MainViewer)
     {
+
     this->MainViewer->SetParent ( NULL );
     this->MainViewer->Delete();
     this->MainViewer = NULL;
@@ -179,7 +184,7 @@ vtkSlicerViewerWidget::~vtkSlicerViewerWidget ( )
     this->PointPicker->Delete();
     this->PointPicker = NULL;
     }
-  
+  this->ApplicationLogic = NULL;  
 }
 
 //---------------------------------------------------------------------------
@@ -729,6 +734,7 @@ void vtkSlicerViewerWidget::CreateWidget ( )
     {
     vtkSlicerViewerInteractorStyle *iStyle = vtkSlicerViewerInteractorStyle::New();
     iStyle->SetViewerWidget( this );
+    iStyle->SetApplicationLogic ( this->ApplicationLogic );
     rwi->SetInteractorStyle (iStyle);
     iStyle->Delete();
     }
