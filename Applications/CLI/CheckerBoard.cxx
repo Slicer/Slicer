@@ -22,8 +22,9 @@
 #define ITK_LEAN_AND_MEAN
 #endif
 
-#include "itkImage.h"
+#include "itkOrientedImage.h"
 #include "itkImageFileReader.h"
+#include "itkResampleImageFilter.h"
 #include "itkImageFileWriter.h"
 #include "itkPluginUtilities.h"
 
@@ -36,20 +37,23 @@ template<class T> int DoIt( int argc, char * argv[], T )
   typedef T InputPixelType;
   typedef T OutputPixelType;
 
-  typedef itk::Image< InputPixelType,  3 >   InputImageType;
-  typedef itk::Image< OutputPixelType, 3 >   OutputImageType;
+  typedef itk::OrientedImage< InputPixelType,  3 >   InputImageType;
+  typedef itk::OrientedImage< OutputPixelType, 3 >   OutputImageType;
 
   typedef itk::ImageFileReader< InputImageType  >  ReaderType;
+  typedef itk::ResampleImageFilter< InputImageType, InputImageType  > ResampleType;
   typedef itk::ImageFileWriter< OutputImageType >  WriterType;
 
   PARSE_ARGS;
 
   typename ReaderType::Pointer reader1 = ReaderType::New();
   typename ReaderType::Pointer reader2 = ReaderType::New();
+  typename ResampleType::Pointer resample = ResampleType::New();
   typename WriterType::Pointer writer = WriterType::New();
 
   reader1->SetFileName( inputVolume1.c_str() );
   reader2->SetFileName( inputVolume2.c_str() );
+
   writer->SetFileName( outputVolume.c_str() );
 
   typedef itk::CheckerBoardImageFilter<
@@ -65,9 +69,13 @@ template<class T> int DoIt( int argc, char * argv[], T )
   pattern[1] = checkerPattern[1];
   pattern[2] = checkerPattern[2];
 
+  resample->SetInput( reader2->GetOutput() );
+  resample->SetReferenceImage( reader1->GetOutput() );
+  resample->UseReferenceImageOn( );
+  
   filter->SetCheckerPattern(pattern);
   filter->SetInput1( reader1->GetOutput() );
-  filter->SetInput2( reader2->GetOutput() );
+  filter->SetInput2( resample->GetOutput() );
 
   writer->SetInput( filter->GetOutput() );
   writer->Update();
