@@ -394,11 +394,13 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
     vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( p->GetApplication() );
     vtkSlicerGUILayout *layout = app->GetMainLayout();
     vtkMRMLInteractionNode *interactionNode = NULL;
+    
     if (p != NULL)
       {
-      interactionNode = vtkMRMLInteractionNode::SafeDownCast (p->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLInteractionNode"));
-      // p->GetLogic()->GetInteractionNode()
+      //interactionNode = vtkMRMLInteractionNode::SafeDownCast (p->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLInteractionNode"));
       }
+    interactionNode = this->GetApplicationLogic()->GetInteractionNode();
+
     if ( app != NULL )
       {
       vtkKWRadioButton *radiob = vtkKWRadioButton::SafeDownCast ( caller );
