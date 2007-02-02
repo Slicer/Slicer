@@ -141,8 +141,10 @@ void vtkMRMLColorNode::Copy(vtkMRMLNode *anode)
   Superclass::Copy(anode);
   vtkMRMLColorNode *node = (vtkMRMLColorNode *) anode;
 
-  this->SetName(node->Name);
-  this->SetType(node->Type);
+  if (node->Type != -1)
+    {
+    this->SetType(node->Type);
+    }
   this->SetFileName(node->FileName);
 }
 

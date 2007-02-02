@@ -204,6 +204,7 @@ void vtkMRMLScene::Clear(int removeSingletons)
   if (!removeSingletons)
     {
     this->RemoveAllNodesExceptSingletons();
+    this->ResetNodes();
     }
   else
     {
@@ -239,6 +240,26 @@ void vtkMRMLScene::RemoveAllNodesExceptSingletons()
       {
       this->CurrentScene->vtkCollection::RemoveItem(removeNodes[i]);
       }
+}
+
+//------------------------------------------------------------------------------
+void vtkMRMLScene::ResetNodes()
+{
+  vtkMRMLNode *node;
+  std::vector <vtkMRMLNode *> nodes;
+  vtkMRMLNode *newNode;
+  this->InitTraversal();
+  while (node = this->GetNextNode()) 
+    {
+    nodes.push_back(node);
+    }
+  for(int i=0; i<nodes.size(); i++) 
+    {
+    newNode = nodes[i]->CreateNodeInstance();
+    nodes[i]->Copy(newNode);
+    newNode->Delete();
+    }
+
 }
 
 vtkMRMLScene *vtkMRMLScene::ActiveScene = NULL;

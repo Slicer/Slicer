@@ -86,6 +86,10 @@ public:
   void Clear(int removeSingletons);
 
   // Description:
+  // Reset all nodes to their constructor's state
+  void ResetNodes();
+  
+  // Description:
   // Create node with a given class
   vtkMRMLNode* CreateNodeByClass(const char* className);
 

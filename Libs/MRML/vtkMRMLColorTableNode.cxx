@@ -282,8 +282,10 @@ void vtkMRMLColorTableNode::Copy(vtkMRMLNode *anode)
 {
   Superclass::Copy(anode);
   vtkMRMLColorTableNode *node = (vtkMRMLColorTableNode *) anode;
-
-  this->SetLookupTable(node->LookupTable);
+  if (node->LookupTable)
+    {
+    this->SetLookupTable(node->LookupTable);
+    }
 }
 
 //----------------------------------------------------------------------------

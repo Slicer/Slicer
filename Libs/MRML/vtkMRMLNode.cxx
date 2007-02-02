@@ -101,13 +101,26 @@ vtkMRMLNode::~vtkMRMLNode()
 //----------------------------------------------------------------------------
 void vtkMRMLNode::Copy(vtkMRMLNode *node)
 {
+  if (node->GetScene())
+    {
+    this->SetScene(node->GetScene());
+    }
+  if (node->GetID()) 
+    {
+    this->SetID( node->GetID() );
+    } 
+  if (node->GetName() && strcmp(node->GetName(),""))
+    {
+    this->SetName(node->GetName());
+    }
+  this->HideFromEditors = node->HideFromEditors;
+  this->SaveWithScene = node->SaveWithScene ;
+ 
+  if (node->GetSingletonTag())
+    {
+    this->SetSingletonTag( node->GetSingletonTag() );
+    }
   this->SetDescription(node->GetDescription());
-  this->SetName(node->GetName());
-  // don't copy the ID, let it be set when the copied node is added to the scene?
-  this->SetID( node->GetID() );
-  this->SetHideFromEditors(node->HideFromEditors);
-
-  this->SetScene(node->GetScene());
 }
 
 //----------------------------------------------------------------------------

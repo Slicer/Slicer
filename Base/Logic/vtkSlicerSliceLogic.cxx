@@ -80,7 +80,7 @@ void vtkSlicerSliceLogic::UpdateSliceNode()
     {
     node = vtkMRMLSliceNode::SafeDownCast (
           this->MRMLScene->GetNthNodeByClass(n, "vtkMRMLSliceNode"));
-    if (!strcmp(node->GetLayoutName(), this->GetName()))
+    if (node->GetLayoutName() && !strcmp(node->GetLayoutName(), this->GetName()))
       {
       break;
       }
@@ -147,7 +147,7 @@ void vtkSlicerSliceLogic::UpdateSliceCompositeNode()
     {
     node = vtkMRMLSliceCompositeNode::SafeDownCast (
           this->MRMLScene->GetNthNodeByClass(n, "vtkMRMLSliceCompositeNode"));
-    if (!strcmp(node->GetLayoutName(), this->GetName()))
+    if (node->GetLayoutName() && !strcmp(node->GetLayoutName(), this->GetName()))
       {
       break;
       }
