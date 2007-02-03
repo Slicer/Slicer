@@ -183,7 +183,11 @@ void vtkSlicerFiducialsGUI::RemoveGUIObservers ( )
     
     this->RemoveObservers (vtkSlicerFiducialsGUI::FiducialListIDModifiedEvent, (vtkCommand *)this->GUICallbackCommand);    
 
-    this->ViewerWidget->RemoveObservers(vtkSlicerViewerWidget::PickEvent, (vtkCommand *)this->GUICallbackCommand);
+    if (this->ViewerWidget)
+      {
+      this->ViewerWidget->RemoveObservers(vtkSlicerViewerWidget::PickEvent, (vtkCommand *)this->GUICallbackCommand);
+      }
+
 }
 
 
@@ -206,7 +210,10 @@ void vtkSlicerFiducialsGUI::AddGUIObservers ( )
     
     this->AddObserver(vtkSlicerFiducialsGUI::FiducialListIDModifiedEvent, (vtkCommand *)this->GUICallbackCommand);
 
-    this->ViewerWidget->AddObserver(vtkSlicerViewerWidget::PickEvent, (vtkCommand *)this->GUICallbackCommand);
+    if (this->ViewerWidget)
+      {
+      this->ViewerWidget->AddObserver(vtkSlicerViewerWidget::PickEvent, (vtkCommand *)this->GUICallbackCommand);
+      }
 }
 
 
