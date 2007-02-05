@@ -24,10 +24,11 @@ IF (NOT WIN32)
      MESSAGE(STATUS "Testing libbfd")
      TRY_COMPILE(HAVE_BFD
                  ${ModuleDescriptionParser_BINARY_DIR}/CMake
-                 ${ModuleDescriptionParser_SOURCE_DIR}/CMake/TestBFD.cxx
+                 ${ModuleDescriptionParser_SOURCE_DIR}/CMake
+                 TestBFD
                  CMAKE_FLAGS 
+                    -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
                     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-                    -DLINK_LIBRARIES=bfd\;iberty 
                  OUTPUT_VARIABLE OUTPUT)
      MESSAGE(${OUTPUT})
      IF (HAVE_BFD)

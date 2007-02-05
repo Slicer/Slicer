@@ -1,6 +1,6 @@
 #include <bfd.h>
 
-int main(int argc, char *argv[])
+void TestBFD()
 {
   bfd *abfd = 0;
   asymbol *symbol = 0;
