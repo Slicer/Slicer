@@ -662,6 +662,10 @@ int Slicer3_main(int argc, char *argv[])
     fiducialsGUI->SetApplicationGUI ( appGUI );
     fiducialsGUI->SetAndObserveApplicationLogic ( appLogic );
     fiducialsGUI->SetAndObserveMRMLScene ( scene );
+    if ( appGUI->GetViewerWidget() )
+      {
+      fiducialsGUI->SetViewerWidget( appGUI->GetViewerWidget() );
+      }
     fiducialsGUI->SetModuleLogic ( fiducialsLogic );
     fiducialsGUI->SetGUIName( "Fiducials" );
     fiducialsGUI->GetUIPanel()->SetName ( fiducialsGUI->GetGUIName ( ) );
