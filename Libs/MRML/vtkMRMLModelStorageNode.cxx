@@ -163,7 +163,6 @@ int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
     {
     if (modelNode->GetPolyData()) 
       {
-      modelNode->GetPolyData()->Delete();
       modelNode->SetAndObservePolyData (NULL);
       }
     }
