@@ -28,6 +28,7 @@
 
 #include "vtkSlicerNodeSelectorWidget.h"
 #include "vtkKWWindowLevelThresholdEditor.h"
+#include "vtkKWCheckButton.h"
 
 #include "vtkMRMLVolumeNode.h"
 #include "vtkMRMLVolumeDisplayNode.h"
@@ -76,6 +77,7 @@ protected:
   vtkSlicerNodeSelectorWidget* VolumeSelectorWidget;
   vtkSlicerNodeSelectorWidget* ColorSelectorWidget;
   vtkKWWindowLevelThresholdEditor* WindowLevelThresholdEditor;
+  vtkKWCheckButton* InterpolateButton;
   
 private:
 
