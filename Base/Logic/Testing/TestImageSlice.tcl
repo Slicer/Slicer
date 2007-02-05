@@ -17,3 +17,16 @@ $viewer SetInput [$slice GetOutput]
 
 $viewer Render
 
+
+proc toggleSlice {} {
+  set logic [lindex [vtkSlicerSliceLayerLogic ListInstances] 0]
+  if { [$logic GetUseReslice] } {
+    $logic UseResliceOff
+  } else {
+    $logic UseResliceOn
+  }
+  [$logic GetSliceNode] Modified
+  update
+}
+
+

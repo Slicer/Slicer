@@ -242,29 +242,53 @@ void vtkImageSliceExecute(vtkImageSlice *self,
           }
         count++;
         }
+
+      // 
+      // calculate the delta IJK with per step of X
+      //
+
+      double ijk[3], ijkStart[3], ijkEnd[3];
+      double dIJKdX[3];
+
+      ijkStart[0] = outExt[0];
+      ijkEnd[0] = outExt[1];
+      ijkStart[1] = ijkStart[1] = idY;
+      ijkStart[2] = ijkStart[2] = idZ;
+
+      // apply SliceTransform
+      if (transform)
+        {
+        transform->InternalTransformPoint(ijkStart, ijkStart);
+        transform->InternalTransformPoint(ijkEnd, ijkEnd);
+        }
+      
+      double steps = (outExt[1] - outExt[2]);
+      if ( steps != 0.0 )
+        {
+        dIJKdX[0] = (ijkEnd[0] - ijkStart[0]) / steps;
+        dIJKdX[1] = (ijkEnd[1] - ijkStart[1]) / steps;
+        dIJKdX[2] = (ijkEnd[2] - ijkStart[2]) / steps;
+        }
+
+      ijk[0] = ijkStart[0];
+      ijk[1] = ijkStart[1];
+      ijk[2] = ijkStart[2];
       
       for (idX = outExt[0]; idX <= outExt[1]; idX++)
         {
-        // convert to data coordinates 
-        point[0] = idX;
-        point[1] = idY;
-        point[2] = idZ;
 
-        // apply SliceTransform
-        if (transform)
-          {
-          transform->InternalTransformPoint(point, point);
-          }
-
-        intPoint[0] = (int) point[0];
-        intPoint[1] = (int) point[1];
-        intPoint[2] = (int) point[2];
+        intPoint[0] = (int) (ijk[0] += dIJKdX[0]);
+        intPoint[1] = (int) (ijk[1] += dIJKdX[1]);
+        intPoint[2] = (int) (ijk[2] += dIJKdX[2]);
 
         if ( intPoint[0] < inExt[0] || intPoint[0] > inExt[1] ||
              intPoint[1] < inExt[2] || intPoint[1] > inExt[3] ||
              intPoint[2] < inExt[4] || intPoint[2] > inExt[5] )
           {
-          *outPtr = (T)100;
+          for (int i = 0; i < numscalars; i++)
+            {
+            *outPtr++ = (T)100;
+            }
           }
         else
           {
@@ -273,8 +297,8 @@ void vtkImageSliceExecute(vtkImageSlice *self,
 
           // compute the index of the vector.
           vtkIdType idx = ((intPoint[0] - inExt[0]) * scalarIncs[0]
-                 + (intPoint[1] - inExt[2]) * scalarIncs[1]
-                 + (intPoint[2] - inExt[4]) * scalarIncs[2]);
+                         + (intPoint[1] - inExt[2]) * scalarIncs[1]
+                         + (intPoint[2] - inExt[4]) * scalarIncs[2]);
 
           if (idx < 0 || idx > inScalars->GetMaxId())
             {
@@ -282,9 +306,11 @@ void vtkImageSliceExecute(vtkImageSlice *self,
             }
 
           T *inPtr = (T *) inScalars->GetVoidPointer(idx);
-          *outPtr = *inPtr;
+          for (int i = 0; i < numscalars; i++)
+            {
+            *outPtr++ = *inPtr++;
+            }
           }
-        outPtr++;
         }
       outPtr = (T *)((char *)outPtr + outIncY*scalarSize);
       }
