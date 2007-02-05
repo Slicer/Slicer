@@ -19,6 +19,7 @@
 #include "vtkKWLoadSaveButton.h"
 #include "vtkKWLoadSaveDialog.h"
 #include "vtkKWFrame.h"
+#include "vtkKWLabel.h"
 
 // Description:
 // This class implements Slicer's Models GUI
@@ -98,6 +99,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModelsGUI : public vtkSlicerModuleGUI
     vtkKWLoadSaveButton *LoadModelDirectoryButton;
     vtkKWLoadSaveButton *SaveModelButton;
     vtkSlicerNodeSelectorWidget* ModelSelectorWidget;
+    vtkKWLabel *NACLabel;
+    vtkKWLabel *NAMICLabel;
+    vtkKWLabel *NCIGTLabel;
+    vtkKWLabel *BIRNLabel;
 
     vtkSlicerModelDisplayWidget *ModelDisplayWidget;
 

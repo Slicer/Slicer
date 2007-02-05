@@ -20,10 +20,10 @@ vtkCxxRevisionMacro ( vtkSlicerDataGUI, "$Revision: 1.0 $");
 vtkSlicerDataGUI::vtkSlicerDataGUI ( )
 {
   MRMLTreeWidget = vtkSlicerMRMLTreeWidget::New();
-  NACLabel = vtkKWLabel::New();
-  NAMICLabel = vtkKWLabel::New();
-  NCIGTLabel = vtkKWLabel::New();
-  BIRNLabel = vtkKWLabel::New();
+  NACLabel = NULL;
+  NAMICLabel = NULL;
+  NCIGTLabel = NULL;
+  BIRNLabel = NULL;
 
     //this->Logic = NULL;
 
@@ -171,18 +171,22 @@ void vtkSlicerDataGUI::BuildGUI ( )
     vtkKWWidget *page = this->UIPanel->GetPageWidget ( "Data" );
     this->BuildHelpAndAboutFrame ( page, help, about );
 
+    this->NACLabel = vtkKWLabel::New();
     this->NACLabel->SetParent ( this->GetLogoFrame() );
     this->NACLabel->Create();
     this->NACLabel->SetImageToIcon ( vtkSlicerModuleGUI::AcknowledgementIcons->GetNACLogo() );
 
+    this->NAMICLabel = vtkKWLabel::New();
     this->NAMICLabel->SetParent ( this->GetLogoFrame() );
     this->NAMICLabel->Create();
     this->NAMICLabel->SetImageToIcon ( vtkSlicerModuleGUI::AcknowledgementIcons->GetNAMICLogo() );    
 
+    this->NCIGTLabel = vtkKWLabel::New();
     this->NCIGTLabel->SetParent ( this->GetLogoFrame() );
     this->NCIGTLabel->Create();
     this->NCIGTLabel->SetImageToIcon ( vtkSlicerModuleGUI::AcknowledgementIcons->GetNCIGTLogo() );
     
+    this->BIRNLabel = vtkKWLabel::New();
     this->BIRNLabel->SetParent ( this->GetLogoFrame() );
     this->BIRNLabel->Create();
     this->BIRNLabel->SetImageToIcon ( vtkSlicerModuleGUI::AcknowledgementIcons->GetBIRNLogo() );

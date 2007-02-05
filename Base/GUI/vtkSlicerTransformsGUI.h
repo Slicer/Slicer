@@ -13,6 +13,7 @@
 #include "vtkSlicerTransformEditorWidget.h"
 
 #include "vtkKWFrame.h"
+#include "vtkKWLabel.h"
 
 // Description:
 // This class implements Slicer's Volumes GUI
@@ -51,6 +52,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerTransformsGUI : public vtkSlicerModule
     
     // Widgets for the Volumes module
     vtkSlicerTransformEditorWidget *TransformEditorWidget;
+    vtkKWLabel *NACLabel;
+    vtkKWLabel *NAMICLabel;
+    vtkKWLabel *NCIGTLabel;
+    vtkKWLabel *BIRNLabel;
 
  private:
     vtkSlicerTransformsGUI ( const vtkSlicerTransformsGUI& ); // Not implemented.

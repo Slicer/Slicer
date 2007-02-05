@@ -12,6 +12,7 @@
 #include "vtkSlicerColorLogic.h"
 
 #include "vtkKWFrame.h"
+#include "vtkKWLabel.h"
 
 // Description:
 // This class implements Slicer's Color GUI
@@ -70,6 +71,10 @@ protected:
     // Description:
     // the widget that displays the colour node
     vtkSlicerColorDisplayWidget *ColorDisplayWidget;
+    vtkKWLabel *NACLabel;
+    vtkKWLabel *NAMICLabel;
+    vtkKWLabel *NCIGTLabel;
+    vtkKWLabel *BIRNLabel;
 
 private:
     vtkSlicerColorGUI ( const vtkSlicerColorGUI& ); // Not implemented.

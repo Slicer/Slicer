@@ -21,6 +21,7 @@
 
 #include "vtkKWScaleWithEntry.h"
 #include "vtkKWScale.h"
+#include "vtkKWLabel.h"
 
 // Description:
 // This class implements Slicer's Fiducials GUI
@@ -183,6 +184,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     // the columns that hold the
     // name, x, y, z, orientation x y z w, selected
     int NumberOfColumns;
+    vtkKWLabel *NACLabel;
+    vtkKWLabel *NAMICLabel;
+    vtkKWLabel *NCIGTLabel;
+    vtkKWLabel *BIRNLabel;
 
     //BTX
     // Description:
