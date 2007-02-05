@@ -25,6 +25,7 @@ SET(LIB_SRCS
   vtkSlicerFont.cxx
   vtkSlicerIcons.cxx
   vtkSlicerLogoIcons.cxx
+  vtkSlicerBaseAcknowledgementLogoIcons.cxx
   vtkSlicerVisibilityIcons.cxx
   vtkSlicerModuleNavigationIcons.cxx
   vtkSlicerToolbarIcons.cxx

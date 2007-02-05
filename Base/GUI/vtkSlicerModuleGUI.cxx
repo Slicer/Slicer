@@ -9,14 +9,19 @@
 vtkCxxRevisionMacro(vtkSlicerModuleGUI, "$Revision: 1.0 $");
 vtkStandardNewMacro ( vtkSlicerModuleGUI );
 
+vtkSlicerBaseAcknowledgementLogoIcons* vtkSlicerModuleGUI::AcknowledgementIcons = vtkSlicerBaseAcknowledgementLogoIcons::New(); 
+
 //---------------------------------------------------------------------------
 vtkSlicerModuleGUI::vtkSlicerModuleGUI ( ) {
 
     this->UIPanel = vtkKWUserInterfacePanel::New ( );
+    this->HelpAndAboutNotebook = vtkKWNotebook::New ();
+    this->HelpAndAboutFrame = vtkSlicerModuleCollapsibleFrame::New ();
     this->HelpText = vtkKWTextWithScrollbars::New ( );
-    this->HelpFrame = vtkSlicerModuleCollapsibleFrame::New ();
-    this->ApplicationGUI = NULL;
+    this->AboutText = vtkKWTextWithScrollbars::New ( );
+    this->LogoFrame = vtkKWFrame::New ( );
 
+    this->ApplicationGUI = NULL;
     this->Logo = 0;
 }
 
@@ -26,6 +31,12 @@ vtkSlicerModuleGUI::vtkSlicerModuleGUI ( ) {
 //---------------------------------------------------------------------------
 vtkSlicerModuleGUI::~vtkSlicerModuleGUI ( ) {
 
+  if  ( vtkSlicerModuleGUI::AcknowledgementIcons != NULL )
+    {
+    vtkSlicerModuleGUI::AcknowledgementIcons->Delete();
+    vtkSlicerModuleGUI::AcknowledgementIcons = NULL;
+    }
+  
     if ( this->UIPanel != NULL ) 
       {
       this->UIPanel->Delete ( );
@@ -37,14 +48,32 @@ vtkSlicerModuleGUI::~vtkSlicerModuleGUI ( ) {
       this->HelpText->Delete ( );
       this->HelpText = NULL;
       }
-    if ( this->HelpFrame != NULL )
+    if ( this->AboutText != NULL )
       {
-      this->HelpFrame->SetParent ( NULL );
-      this->HelpFrame->Delete ( );
-      this->HelpFrame = NULL;
+      this->AboutText->SetParent ( NULL );
+      this->AboutText->Delete();
+      this->AboutText = NULL;
       }
-
+    if ( this->LogoFrame != NULL )
+      {
+      this->LogoFrame->SetParent ( NULL);
+      this->LogoFrame->Delete ( );
+      this->LogoFrame = NULL;
+      }
+    if ( this->HelpAndAboutNotebook != NULL )
+      {
+      this->HelpAndAboutNotebook->SetParent ( NULL );
+      this->HelpAndAboutNotebook->Delete();
+      this->HelpAndAboutNotebook = NULL;
+      }
+    if ( this->HelpAndAboutFrame != NULL )
+      {
+      this->HelpAndAboutFrame->SetParent ( NULL );
+      this->HelpAndAboutFrame->Delete ( );
+      this->HelpAndAboutFrame = NULL;
+      }
     this->SetApplicationGUI( NULL );
+    this->Logo = 0;
 }
 
 
@@ -55,33 +84,42 @@ void vtkSlicerModuleGUI::BuildHelpAndAboutFrame ( vtkKWWidget *parent,
                                                   const char *about)
 {
 
-  const int help_and_about_str_len = 2048;
-  char txt[help_and_about_str_len];
-  char *text = txt;
+  const char *helptext = help;
+  const char *abouttext = about;
   
   // HELP FRAME
-  this->HelpFrame->SetParent ( parent );
-  this->HelpFrame->Create ( );
-  this->HelpFrame->CollapseFrame ( );
-  this->HelpFrame->SetLabelText ("Help & About");
+  this->HelpAndAboutFrame->SetParent ( parent );
+  this->HelpAndAboutFrame->Create ( );
+  this->HelpAndAboutFrame->CollapseFrame ( );
+  this->HelpAndAboutFrame->SetLabelText ("Help & Acknowledgement");
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                this->HelpFrame->GetWidgetName(), parent->GetWidgetName());
+                this->HelpAndAboutFrame->GetWidgetName(), parent->GetWidgetName());
 
+
+  // create the notebook to display help and about.
+  this->HelpAndAboutNotebook->SetParent ( this->HelpAndAboutFrame->GetFrame() );
+  this->HelpAndAboutNotebook->Create();
+  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+                 this->HelpAndAboutNotebook->GetWidgetName());
+
+  // create a tab for help and also for acknowledgement, if they exist.
   if ( about != NULL )
     {
-    sprintf ( text, "**Help:** %s\n\n**Acknowledgement:** %s", help, about );
+    this->HelpAndAboutNotebook->AddPage ( "Help", "Information about using this module", NULL );
+    this->HelpAndAboutNotebook->AddPage ( "Acknowledgement", "Information about sponsors and contributors", NULL );
     }
   else if ( about == NULL )
     {
-    sprintf ( text, "**Help: %s", help);
+    this->HelpAndAboutNotebook->AddPage ( "Help", "Information about using this module", NULL );
     }
+
   
-  // configure the parent classes help text widget
-  this->HelpText->SetParent ( this->HelpFrame->GetFrame() );
+  // configure the parent class's help text widget
+  this->HelpText->SetParent ( this->HelpAndAboutNotebook->GetFrame("Help") );
   this->HelpText->Create ( );
   this->HelpText->SetHorizontalScrollbarVisibility ( 0 );
   this->HelpText->SetVerticalScrollbarVisibility ( 1 );
-  this->HelpText->GetWidget()->SetText ( text );
+  this->HelpText->GetWidget()->SetText ( helptext );
   this->HelpText->GetWidget()->SetReliefToFlat ( );
   this->HelpText->GetWidget()->SetWrapToWord ( );
   this->HelpText->GetWidget()->ReadOnlyOn ( );
@@ -90,6 +128,26 @@ void vtkSlicerModuleGUI::BuildHelpAndAboutFrame ( vtkKWWidget *parent,
   this->Script ( "pack %s -side top -fill x -expand y -anchor w -padx 2 -pady 4",
                 this->HelpText->GetWidgetName ( ) );
   
+  // configure the parent class's acknowledgement text widget
+  this->AboutText->SetParent ( this->HelpAndAboutNotebook->GetFrame("Acknowledgement") );
+  this->AboutText->Create ( );
+  this->AboutText->SetHorizontalScrollbarVisibility ( 0 );
+  this->AboutText->SetVerticalScrollbarVisibility ( 1 );
+  this->AboutText->GetWidget()->SetText ( abouttext );
+  this->AboutText->GetWidget()->SetReliefToFlat ( );
+  this->AboutText->GetWidget()->SetWrapToWord ( );
+  this->AboutText->GetWidget()->ReadOnlyOn ( );
+  this->AboutText->GetWidget()->QuickFormattingOn ( );
+  this->AboutText->GetWidget()->SetBalloonHelpString ( "" );
+
+  // configure the parent class's logo frame
+  this->LogoFrame->SetParent ( this->HelpAndAboutNotebook->GetFrame("Acknowledgement") );
+  this->LogoFrame->Create();
+
+  this->Script ( "pack %s -side top -fill x -expand y -anchor w -padx 2 -pady 4",
+                this->LogoFrame->GetWidgetName ( ) );
+  this->Script ( "pack %s -side top -fill x -expand y -anchor w -padx 2 -pady 4",
+                this->AboutText->GetWidgetName ( ) );
 }
 
 
@@ -100,12 +158,18 @@ void vtkSlicerModuleGUI::PrintSelf ( ostream& os, vtkIndent indent )
     this->vtkObject::PrintSelf ( os, indent );
     os << indent << "SlicerModuleGUI: " << this->GetClassName ( ) << "\n";
     os << indent << "UIPanel: " << this->GetUIPanel ( ) << "\n";
+    os << indent << "HelpAndAboutFrame: " << this->GetHelpAndAboutFrame ( ) << "\n";
+    os << indent << "HelpAndAboutNotebook: " << this->GetHelpAndAboutNotebook ( ) << "\n";
     os << indent << "HelpText: " << this->GetHelpText ( ) << "\n";
-    os << indent << "HelpFrame: " << this->GetHelpFrame ( ) << "\n";
+    os << indent << "AboutText: " << this->GetAboutText ( ) << "\n";
+    os << indent << "LogoFrame: " << this->GetLogoFrame ( ) << "\n";
     os << indent << "ApplicationGUI: " << this->GetApplicationGUI() << "\n";
     os << indent << "Logo: " << this->GetLogo() << "\n";
 }
 
+
+
+//---------------------------------------------------------------------------
 vtkKWIcon *
 vtkSlicerModuleGUI::GetLogo() const
 {

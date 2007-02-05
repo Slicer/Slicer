@@ -8,13 +8,15 @@
 #include "vtkKWText.h"
 #include "vtkKWTextWithScrollbars.h"
 #include "vtkKWIcon.h"
+#include "vtkKWNotebook.h"
+#include "vtkKWFrame.h"
 #include "vtkSmartPointer.h"
 
 #include "vtkSlicerBaseGUIWin32Header.h"
 #include "vtkSlicerModuleCollapsibleFrame.h"
 #include "vtkSlicerApplicationGUI.h"
 #include "vtkSlicerComponentGUI.h"
-
+#include "vtkSlicerBaseAcknowledgementLogoIcons.h"
 
 // Description:
 // This is a base class from which all SlicerModuleGUIs that include
@@ -35,9 +37,24 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleGUI : public vtkSlicerComponentG
     vtkGetObjectMacro ( UIPanel, vtkKWUserInterfacePanel );
     vtkSetObjectMacro ( UIPanel, vtkKWUserInterfacePanel );
     // Description:
+    // Get the Collapsing frame that contains the notebook.
+    vtkGetObjectMacro (HelpAndAboutFrame, vtkSlicerModuleCollapsibleFrame );
+    // Description:
+    // Get the Notebook that contains help and acknowledgements for module.
+    vtkGetObjectMacro (HelpAndAboutNotebook, vtkKWNotebook);
+    // Description:
     // Get the help text widget.
     vtkGetObjectMacro (HelpText, vtkKWTextWithScrollbars );
-    vtkGetObjectMacro (HelpFrame, vtkSlicerModuleCollapsibleFrame );
+    // Description:
+    // Get the about text widget.
+    vtkGetObjectMacro (AboutText, vtkKWTextWithScrollbars );
+    // Description:
+    // Get the Frame into which contributor and sponsor logos are packed.
+    vtkGetObjectMacro (LogoFrame, vtkKWFrame );
+
+    // Description:
+    // Get the Icons for Acknowledging Sponsorship of Slicer's base.
+    vtkGetObjectMacro (AcknowledgementIcons, vtkSlicerBaseAcknowledgementLogoIcons );
 
   // Description:
   // Get/Set Macro for ApplicationGUI: allow Modules to access
@@ -87,18 +104,32 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleGUI : public vtkSlicerComponentG
     // and is raised in Slicer's shared GUI panel when the module
     // is selected for use.
     vtkKWUserInterfacePanel *UIPanel;
+    
     // Description:
-    // Every module gui has a text widget packed inside it's
-    // GUI panel in a collapsible frame that contains basic
-    // information about the module's contents and how to use it.
-    // The collapsible frame also contains acknowledgement.
+    // A module's UIPanel's HelpAndAboutFrame contains a notebook
+    // with a tab for module help, and a tab for acknowledgments
+    // and logos.
+    vtkSlicerModuleCollapsibleFrame *HelpAndAboutFrame;
+    vtkKWNotebook *HelpAndAboutNotebook;
+
+    // Description:
+    // HelpText contains the text describing the
+    // module's functionality and how to use it.
     vtkKWTextWithScrollbars *HelpText;
-    vtkSlicerModuleCollapsibleFrame *HelpFrame;
+
+    // Description:
+    // AboutText contains text describing
+    // the module's authors and sponsors.
+    vtkKWTextWithScrollbars *AboutText;
+    // The LogoFrame is where a contributor's logos may
+    // be packed.
+    vtkKWFrame *LogoFrame;
     
     // constructor, destructor.
     vtkSlicerModuleGUI ( );
     virtual ~vtkSlicerModuleGUI ( );
 
+    static vtkSlicerBaseAcknowledgementLogoIcons *AcknowledgementIcons;
     vtkSlicerApplicationGUI *ApplicationGUI;
 //BTX
     vtkSmartPointer<vtkKWIcon> Logo;
