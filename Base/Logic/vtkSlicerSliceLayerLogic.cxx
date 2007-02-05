@@ -43,7 +43,10 @@ vtkSlicerSliceLayerLogic::vtkSlicerSliceLayerLogic()
 
   this->XYToIJKTransform = vtkTransform::New();
 
+  this->UseReslice = 1;
+
   // Create the parts for the scalar layer pipeline
+  this->Slice = vtkImageSlice::New();
   this->Reslice = vtkImageReslice::New();
   this->ResliceThreshold = vtkImageThreshold::New();
   this->ResliceAppendComponents = vtkImageAppendComponents::New();
@@ -75,13 +78,19 @@ vtkSlicerSliceLayerLogic::vtkSlicerSliceLayerLogic()
   this->DTIReslice->SetOutputDimensionality( 2 );
 
 
+  //
   // Set parameters that won't change based on input
+  //
+  this->Slice->SetOutputOrigin( 0, 0, 0 );
+  this->Slice->SetOutputSpacing( 1, 1, 1 );
+
   this->Reslice->SetBackgroundColor(128, 0, 0, 0); // only first two are used
   this->Reslice->AutoCropOutputOff();
   this->Reslice->SetOptimization(1);
   this->Reslice->SetOutputOrigin( 0, 0, 0 );
   this->Reslice->SetOutputSpacing( 1, 1, 1 );
   this->Reslice->SetOutputDimensionality( 2 );
+  
 
   this->ResliceThreshold->ThresholdBetween(1, 0); // i.e. everything is Out
   this->ResliceThreshold->ReplaceOutOn();
@@ -124,12 +133,14 @@ vtkSlicerSliceLayerLogic::~vtkSlicerSliceLayerLogic()
   this->SetVolumeNode(NULL);
   this->XYToIJKTransform->Delete();
 
+  this->Slice->SetInput( NULL );
   this->Reslice->SetInput( NULL );
   this->Threshold->SetInput( NULL );
   this->AppendComponents->SetInput( NULL );
   this->MapToWindowLevelColors->SetInput( NULL );
   this->MapToColors->SetInput( NULL );
 
+  this->Slice->Delete();
   this->Reslice->Delete();
   this->DTIReslice->Delete();
   this->DWIExtractComponent->Delete();
@@ -309,6 +320,7 @@ void vtkSlicerSliceLayerLogic::UpdateTransforms()
   this->XYToIJKTransform->SetMatrix( xyToIJK );
   xyToIJK->Delete();
 
+  this->Slice->SetOutputDimensions( dimensions[0], dimensions[1], dimensions[2]);
   this->Reslice->SetOutputExtent( 0, dimensions[0]-1,
                                   0, dimensions[1]-1,
                                   0, dimensions[2]-1);
@@ -316,8 +328,6 @@ void vtkSlicerSliceLayerLogic::UpdateTransforms()
                                   0, dimensions[1]-1,
                                   0, dimensions[2]-1);
   this->Modified();
-
-
 }
 
 
@@ -374,11 +384,12 @@ void vtkSlicerSliceLayerLogic::UpdateTransformsOLD()
     if ( scalarVolumeNode && scalarVolumeNode->GetLabelMap() )
       {
       labelMap = 1;
+      this->Slice->SetInterpolationModeToNearestNeighbor();
       this->Reslice->SetInterpolationModeToNearestNeighbor();
       }
     else
       {
-      this->Reslice->SetInterpolationModeToLinear();
+      this->Slice->SetInterpolationModeToLinear();
       }
 
     // Prime the imaging pipeline
@@ -389,6 +400,7 @@ void vtkSlicerSliceLayerLogic::UpdateTransformsOLD()
     this->ResliceAppendComponents->SetInputConnection(0, this->VolumeNode->GetImageData()->GetProducerPort());
     this->ResliceAppendComponents->AddInputConnection(0, this->ResliceThreshold->GetOutput()->GetProducerPort());
 
+    this->Slice->SetInput( this->ResliceAppendComponents->GetOutput() ); 
     this->Reslice->SetInput( this->ResliceAppendComponents->GetOutput() ); 
 
     }
@@ -398,6 +410,7 @@ void vtkSlicerSliceLayerLogic::UpdateTransformsOLD()
     this->ResliceAppendComponents->RemoveAllInputs();
     //this->ResliceAppendComponents->SetInput( 0, NULL ); 
     this->ResliceThreshold->SetInput( NULL ); 
+    this->Slice->SetInput( NULL ); 
     this->Reslice->SetInput( NULL ); 
 
     }
@@ -417,19 +430,36 @@ void vtkSlicerSliceLayerLogic::UpdateTransformsOLD()
     // - append the alpha channel to the final RGB image
     //
 
-    this->ResliceExtractLuminance->SetInput(this->Reslice->GetOutput() );
+    if ( this->GetUseReslice() )
+      {
+      this->ResliceExtractLuminance->SetInput(this->Reslice->GetOutput() );
+      }
+    else
+      {
+      this->ResliceExtractLuminance->SetInput(this->Slice->GetOutput() );
+      }
     this->ResliceExtractLuminance->SetComponents(0);
 
-    this->ResliceExtractAlpha->SetInput(this->Reslice->GetOutput() );
+    if ( this->GetUseReslice() )
+      {
+      this->ResliceExtractAlpha->SetInput(this->Reslice->GetOutput() );
+      }
+    else
+      {
+      this->ResliceExtractAlpha->SetInput(this->Slice->GetOutput() );
+      }
+
     this->ResliceExtractAlpha->SetComponents(1);
     this->ResliceAlphaCast->SetInput( this->ResliceExtractAlpha->GetOutput() );
         
     if ( this->VolumeDisplayNode->GetInterpolate() && !labelMap )
       {
+      this->Slice->SetInterpolationModeToLinear();
       this->Reslice->SetInterpolationModeToLinear();
       }
     else
       {
+      this->Slice->SetInterpolationModeToNearestNeighbor();
       this->Reslice->SetInterpolationModeToNearestNeighbor();
       }
 
@@ -505,8 +535,10 @@ void vtkSlicerSliceLayerLogic::UpdateTransformsOLD()
 
   this->XYToIJKTransform->SetMatrix( xyToIJK );
   xyToIJK->Delete();
+  this->Slice->SetSliceTransform( this->XYToIJKTransform );
   this->Reslice->SetResliceTransform( this->XYToIJKTransform );
 
+  this->Slice->SetOutputDimensions( dimensions[0], dimensions[1], dimensions[2]);
   this->Reslice->SetOutputExtent( 0, dimensions[0]-1,
                                   0, dimensions[1]-1,
                                   0, dimensions[2]-1);
@@ -553,6 +585,7 @@ void vtkSlicerSliceLayerLogic::ScalarVolumeNodeUpdateTransforms()
 
   this->ScalarSlicePipeline(scalarVolumeNode->GetImageData(), labelMap, window, level, interpolate, lookupTable, applyThreshold, lowerThreshold, upperThreshold);
 
+  this->Slice->SetSliceTransform( this->XYToIJKTransform ); 
   this->Reslice->SetResliceTransform( this->XYToIJKTransform ); 
 }
 
@@ -601,6 +634,7 @@ void vtkSlicerSliceLayerLogic::DiffusionWeightedVolumeNodeUpdateTransforms()
 
   this->ScalarSlicePipeline(this->DWIExtractComponent->GetOutput(),0,window,level,interpolate, lookupTable, applyThreshold,lowerThreshold,upperThreshold);
 
+  this->Slice->SetSliceTransform( this->XYToIJKTransform ); 
   this->Reslice->SetResliceTransform( this->XYToIJKTransform ); 
 }
 
@@ -657,6 +691,7 @@ void vtkSlicerSliceLayerLogic::DiffusionTensorVolumeNodeUpdateTransforms()
 
   //Set the right transformations
   this->DTIReslice->SetResliceTransform(this->XYToIJKTransform );
+  this->Slice->SetSliceTransform(this->XYToIJKTransform); 
   this->Reslice->SetResliceTransform(this->XYToIJKTransform); 
 
 #endif
@@ -670,10 +705,12 @@ void vtkSlicerSliceLayerLogic::ScalarSlicePipeline(vtkImageData *imageData, int 
 
   if ( imageData && labelMap )
     {
+    this->Slice->SetInterpolationModeToNearestNeighbor();
     this->Reslice->SetInterpolationModeToNearestNeighbor();
     }
   else
     {
+    this->Slice->SetInterpolationModeToLinear();
     this->Reslice->SetInterpolationModeToLinear();
     }
 
@@ -685,6 +722,7 @@ void vtkSlicerSliceLayerLogic::ScalarSlicePipeline(vtkImageData *imageData, int 
   this->ResliceAppendComponents->SetInputConnection(0, imageData->GetProducerPort());
   this->ResliceAppendComponents->AddInputConnection(0, this->ResliceThreshold->GetOutput()->GetProducerPort());
 
+  this->Slice->SetInput( this->ResliceAppendComponents->GetOutput() ); 
   this->Reslice->SetInput( this->ResliceAppendComponents->GetOutput() ); 
 
     //
@@ -699,19 +737,35 @@ void vtkSlicerSliceLayerLogic::ScalarSlicePipeline(vtkImageData *imageData, int 
     // - append the alpha channel to the final RGB image
     //
 
-  this->ResliceExtractLuminance->SetInput(this->Reslice->GetOutput() );
+  if ( this->GetUseReslice() )
+    {
+    this->ResliceExtractLuminance->SetInput(this->Reslice->GetOutput() );
+    }
+  else 
+    {
+    this->ResliceExtractLuminance->SetInput(this->Slice->GetOutput() );
+    }
   this->ResliceExtractLuminance->SetComponents(0);
 
-  this->ResliceExtractAlpha->SetInput(this->Reslice->GetOutput() );
+  if ( this->GetUseReslice() )
+    {
+    this->ResliceExtractAlpha->SetInput(this->Reslice->GetOutput() );
+    }
+  else
+    {
+    this->ResliceExtractAlpha->SetInput(this->Slice->GetOutput() );
+    }
   this->ResliceExtractAlpha->SetComponents(1);
   this->ResliceAlphaCast->SetInput( this->ResliceExtractAlpha->GetOutput() );
 
   if ( interpolate && !labelMap )
     {
+    this->Slice->SetInterpolationModeToLinear();
     this->Reslice->SetInterpolationModeToLinear();
     }
   else
     {
+    this->Slice->SetInterpolationModeToNearestNeighbor();
     this->Reslice->SetInterpolationModeToNearestNeighbor();
     }
 
@@ -805,6 +859,15 @@ void vtkSlicerSliceLayerLogic::PrintSelf(ostream& os, vtkIndent indent)
   if (this->VolumeDisplayNode)
     {
     this->VolumeDisplayNode->PrintSelf(os, nextIndent);
+    }
+  os << indent << "Slice:\n";
+  if (this->Slice)
+    {
+    this->Slice->PrintSelf(os, nextIndent);
+    }
+  else
+    {
+    os << indent << " (NULL)\n";
     }
   os << indent << "Reslice:\n";
   if (this->Reslice)

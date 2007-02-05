@@ -17,6 +17,7 @@ SET(SlicerBaseLogic_SRCS
   vtkSlicerIGTDemoLogic.cxx
   # slicer's vtk extensions
   vtkImageSlicePaint.cxx 
+  vtkImageSlice.cxx 
   vtkImageAccumulateDiscrete.cxx
   vtkImageBimodalAnalysis.cxx
   vtkImageFillROI.cxx
