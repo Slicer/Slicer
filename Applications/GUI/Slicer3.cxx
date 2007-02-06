@@ -351,31 +351,21 @@ int Slicer3_main(int argc, char *argv[])
                        "a = Tkinter.Tk()\n"
                        "b = Tkinter.Message(a, text=\"Hello from python\")\n"
                        "b.pack()\n");
-//     PyRun_SimpleString(
-// "#!/usr/bin/env python\n"
-// "from pylab import *\n"
-// "\n"
-// "mu, sigma = 100, 15\n"
-// "x = mu + sigma*randn(10000)\n"
-// "\n"
-// "# the histogram of the data\n"
-// "n, bins, patches = hist(x, 50, normed=1)\n"
-// "setp(patches, 'facecolor', 'g', 'alpha', 0.75)\n"
-// "\n"
-// "# add a 'best fit' line\n"
-// "y = normpdf( bins, mu, sigma)\n"
-// "l = plot(bins, y, 'r--')\n"
-// "setp(l, 'linewidth', 1)\n"
-// "\n"
-// "xlabel('Smarts')\n"
-// "ylabel('Probability')\n"
-// "title(r'$\rm{Histogram\ of\ IQ:}\ \mu=100,\ \sigma=15$')\n"
-// "axis([40, 160, 0, 0.03])\n"
-// "grid(True)\n"
-// "\n"
-// "#savefig('histogram_demo',dpi=72)\n"
-// "show()\n"
-// );      
+    PyRun_SimpleString(
+            "from pylab import *\n"
+            "mu, sigma = 100, 15\n"
+            "x = mu + sigma*randn(10000)\n"
+            "n, bins, patches = hist(x, 50, normed=1)\n"
+            "setp(patches, 'facecolor', 'g', 'alpha', 0.75)\n"
+            "y = normpdf( bins, mu, sigma)\n"
+            "l = plot(bins, y, 'r--')\n"
+            "setp(l, 'linewidth', 1)\n"
+            "xlabel('Smarts')\n"
+            "ylabel('Probability')\n"
+            "title(r'$\\rm{Histogram\\ of\\ IQ:}\\ \\mu=100,\\ \\sigma=15$')\n"
+            "axis([40, 160, 0, 0.03])\n"
+            "grid(True)\n"
+            "show()\n");      
 #endif
     
     // Tell KWWidgets to make names like .vtkKWPushButton10 instead of .10 
