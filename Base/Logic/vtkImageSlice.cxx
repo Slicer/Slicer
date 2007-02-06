@@ -276,6 +276,7 @@ void vtkImageSliceExecute(vtkImageSlice *self,
       ijk[0] = ijkStart[0];
       ijk[1] = ijkStart[1];
       ijk[2] = ijkStart[2];
+      T *baseInPtr = (T *) inScalars->GetVoidPointer(0);
       
       for (idX = outExt[0]; idX <= outExt[1]; idX++)
         {
@@ -308,7 +309,7 @@ void vtkImageSliceExecute(vtkImageSlice *self,
             vtkErrorWithObjectMacro(self, "Bad index calculation!");
             }
 
-          T *inPtr = (T *) inScalars->GetVoidPointer(idx);
+          inPtr = baseInPtr + idx;
           for (int i = 0; i < numscalars; i++)
             {
             *outPtr++ = *inPtr++;
