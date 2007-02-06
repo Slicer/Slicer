@@ -29,4 +29,27 @@ proc toggleSlice {} {
   update
 }
 
+proc toggleSlices {} {
+  foreach logic [vtkSlicerSliceLayerLogic ListInstances] {
+    if { [$logic GetUseReslice] } {
+      $logic UseResliceOff
+    } else {
+      $logic UseResliceOn
+    }
+    [$logic GetSliceNode] Modified
+  }
+  update
+}
+
+proc slices { {onoff "on"} } {
+  foreach logic [vtkSlicerSliceLayerLogic ListInstances] {
+    if { $onoff == "off" } {
+      $logic UseResliceOff
+    } else {
+      $logic UseResliceOn
+    }
+    [$logic GetSliceNode] Modified
+  }
+  update
+}
 
