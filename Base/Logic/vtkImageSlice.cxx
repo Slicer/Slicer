@@ -252,8 +252,8 @@ void vtkImageSliceExecute(vtkImageSlice *self,
 
       ijkStart[0] = outExt[0];
       ijkEnd[0] = outExt[1];
-      ijkStart[1] = ijkStart[1] = idY;
-      ijkStart[2] = ijkStart[2] = idZ;
+      ijkStart[1] = ijkEnd[1] = idY;
+      ijkStart[2] = ijkEnd[2] = idZ;
 
       // apply SliceTransform
       if (transform)
@@ -262,7 +262,7 @@ void vtkImageSliceExecute(vtkImageSlice *self,
         transform->InternalTransformPoint(ijkEnd, ijkEnd);
         }
       
-      double steps = (outExt[1] - outExt[2]);
+      double steps = (outExt[1] - outExt[0]);
       if ( steps != 0.0 )
         {
         dIJKdX[0] = (ijkEnd[0] - ijkStart[0]) / steps;
