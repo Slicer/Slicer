@@ -210,10 +210,11 @@ void vtkImageSliceExecute(vtkImageSlice *self,
   unsigned long target;
   double point[3];
   int intPoint[3];
-  vtkIdType scalarIncs[3];
+  vtkIdType scalarIncs[3], scalarsMaxId;
 
   vtkDataArray *inScalars = inData->GetPointData()->GetScalars();
   inData->GetArrayIncrements(inScalars, scalarIncs);
+  scalarsMaxId = inScalars->GetMaxId();
 
   // the transformation to apply to the data
   vtkAbstractTransform *transform = self->GetSliceTransform();
@@ -228,6 +229,8 @@ void vtkImageSliceExecute(vtkImageSlice *self,
   outData->GetContinuousIncrements(outExt, outIncX, outIncY, outIncZ);
   scalarSize = outData->GetScalarSize();
   numscalars = inData->GetNumberOfScalarComponents();
+
+//cerr << "id " << id << " ext " << outExt[0] << " " << outExt[1] << " " << outExt[2] << " " << outExt[3] << " " << outExt[4] << " " << outExt[5] << "\n"; 
 
   // Loop through output voxels
   for (idZ = outExt[4]; idZ <= outExt[5]; idZ++)
@@ -300,7 +303,7 @@ void vtkImageSliceExecute(vtkImageSlice *self,
                          + (intPoint[1] - inExt[2]) * scalarIncs[1]
                          + (intPoint[2] - inExt[4]) * scalarIncs[2]);
 
-          if (idx < 0 || idx > inScalars->GetMaxId())
+          if ( idx < 0 || idx > scalarsMaxId )
             {
             vtkErrorWithObjectMacro(self, "Bad index calculation!");
             }
