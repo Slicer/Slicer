@@ -50,6 +50,17 @@ proc slices { {onoff "on"} } {
     }
     [$logic GetSliceNode] Modified
   }
-  update
 }
 
+proc timeSlices { {onoff "on"} {iter 10} } {
+  puts "vtkImageReslice $onoff: "
+  puts [time {
+    slices $onoff
+    update
+  } $iter]
+}
+
+proc timeTest { {iter 10} } {
+  timeSlices on $iter
+  timeSlices off $iter
+}
