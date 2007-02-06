@@ -7,15 +7,16 @@
 
 // ITK includes
 #include "itkImageIOBase.h"
+#include "itkMatrix.h"
 
-#include <zlib/zlib.h>
+#include <itkzlib/zlib.h>
 
-#include "itkMGHIOWin32Header.h"
+//#include "itkMGHIOWin32Header.h"
 
 namespace itk
 {
 
-  class MGHImageIO_EXPORT MGHImageIO : public ImageIOBase
+  class  MGHImageIO : public ImageIOBase
   {
   public:
     typedef MGHImageIO              Self;
@@ -67,12 +68,15 @@ namespace itk
 
     unsigned int GetComponentSize() const;
 
+    std::string GetOrientation( itk::Matrix< double > directions );    
+
   };
 
 }
 
 
 #endif // H_ITK_IMAGE_IO_H
+
 
 
 

@@ -7,8 +7,6 @@
 #include "itkByteSwapper.h"
 #include "itkMetaDataObject.h"
 
-#include "itkMatrix.h"
-
 #include <vnl/vnl_matrix.h>
 #include <vnl/vnl_vector.h>
 #include <vnl/vnl_cross.h>
@@ -289,6 +287,7 @@ namespace itk
     TReadZ(fp, c[ui]);
   }
 
+  std::string orientation = GetOrientation( matrix );
  
   // now take x_r, x_a, x_s out of the matrix and set it to the direction
   // vector 0, same for y_* and direction vector 1, z_* and vector 2
@@ -297,8 +296,10 @@ namespace itk
       std::vector<double> vDir;
       // convert the coordinates from RAS to LPS, as the ITK archetype assumes
       // LPS volumes
-      matrix[0][ui] *= -1.0; // R -> L
-      matrix[1][ui] *= -1.0; // A -> P
+      if( orientation == "RAS" ) {
+        matrix[0][ui] *= -1.0; // R -> L
+        matrix[1][ui] *= -1.0; // A -> P
+      }
       for(unsigned int uj=0; uj<3; ++uj)
       {
         vDir.push_back( matrix[uj][ui] );
@@ -856,6 +857,39 @@ namespace itk
       }
     return returnValue;
   }
+  
+  /**
+   * Examines the direction cosines and creates an Orientation String. 
+   * The Orientation String is a three character string indicating the primary 
+   * direction of each axis in the 3d matrix. The characters can be L,R,A,P,I,S.
+   **/
+  std::string 
+  MGHImageIO::GetOrientation( itk::Matrix< double > directions )
+  {
+    
+    std::string orientation = "";
+  
+    for(int cAxes=0; cAxes<3; cAxes++){
+      const double sag = directions( 0, cAxes ); // LR axis
+      const double cor = directions( 1, cAxes ); // PA axis
+      const double ax  = directions( 2, cAxes ); // IS axis
+      if(fabs(sag) > fabs(cor) && fabs(sag) > fabs(ax)){
+        if(sag > 0) orientation += "R";
+        else        orientation += "L";
+        continue;
+      }
+      if(fabs(cor) > fabs(ax)){
+        if(cor > 0) orientation += "A";
+        else        orientation += "P";
+        continue;
+      }
+      if(ax > 0) orientation += "S";
+      else       orientation += "I";
+    }
+
+    return orientation;
+  }    
 
 } // end NAMESPACE ITK
+
 
