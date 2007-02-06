@@ -231,6 +231,10 @@ void vtkImageSliceExecute(vtkImageSlice *self,
 
 //cerr << "id " << id << " ext " << outExt[0] << " " << outExt[1] << " " << outExt[2] << " " << outExt[3] << " " << outExt[4] << " " << outExt[5] << "\n"; 
 
+  double steps = (outExt[1] - outExt[0]);
+  double invSteps = ( ( steps == 0.0 ) ? 1.0 : 1.0 / steps );
+
+
   // Loop through output voxels
   for (idZ = outExt[4]; idZ <= outExt[5]; idZ++)
     {
@@ -264,13 +268,9 @@ void vtkImageSliceExecute(vtkImageSlice *self,
         transform->InternalTransformPoint(ijkEnd, ijkEnd);
         }
       
-      double steps = (outExt[1] - outExt[0]);
-      if ( steps != 0.0 )
-        {
-        dIJKdX[0] = (ijkEnd[0] - ijkStart[0]) / steps;
-        dIJKdX[1] = (ijkEnd[1] - ijkStart[1]) / steps;
-        dIJKdX[2] = (ijkEnd[2] - ijkStart[2]) / steps;
-        }
+      dIJKdX[0] = (ijkEnd[0] - ijkStart[0]) * invSteps;
+      dIJKdX[1] = (ijkEnd[1] - ijkStart[1]) * invSteps;
+      dIJKdX[2] = (ijkEnd[2] - ijkStart[2]) * invSteps;
 
       ijk[0] = ijkStart[0];
       ijk[1] = ijkStart[1];
