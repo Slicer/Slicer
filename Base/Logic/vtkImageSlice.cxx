@@ -208,7 +208,6 @@ void vtkImageSliceExecute(vtkImageSlice *self,
   int inExt[6];
   unsigned long count = 0;
   unsigned long target;
-  double point[3];
   int intPoint[3];
   vtkIdType scalarIncs[3], scalarsMaxId;
 
@@ -276,6 +275,7 @@ void vtkImageSliceExecute(vtkImageSlice *self,
       ijk[0] = ijkStart[0];
       ijk[1] = ijkStart[1];
       ijk[2] = ijkStart[2];
+      T *inPtr;
       T *baseInPtr = (T *) inScalars->GetVoidPointer(0);
       
       for (idX = outExt[0]; idX <= outExt[1]; idX++)
