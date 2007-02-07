@@ -345,6 +345,7 @@ int Slicer3_main(int argc, char *argv[])
     // Initialize Python
     Py_Initialize();
     PySys_SetArgv(argc, argv);
+#if 0
     PyRun_SimpleString("from time import time,ctime\n"
                        "print 'Hello from python. Today is',ctime(time())\n");
     PyRun_SimpleString("import Tkinter\n"
@@ -353,6 +354,7 @@ int Slicer3_main(int argc, char *argv[])
                        "b.pack()\n");
     PyRun_SimpleString(
             "from pylab import *\n"
+            "ion()\n"
             "mu, sigma = 100, 15\n"
             "x = mu + sigma*randn(10000)\n"
             "n, bins, patches = hist(x, 50, normed=1)\n"
@@ -365,7 +367,9 @@ int Slicer3_main(int argc, char *argv[])
             "title(r'$\\rm{Histogram\\ of\\ IQ:}\\ \\mu=100,\\ \\sigma=15$')\n"
             "axis([40, 160, 0, 0.03])\n"
             "grid(True)\n"
-            "show()\n");      
+            );      
+            //"show()\n");      
+#endif
 #endif
     
     // Tell KWWidgets to make names like .vtkKWPushButton10 instead of .10 
@@ -1234,9 +1238,10 @@ int Slicer3_main(int argc, char *argv[])
     }
 
     //--- set home module based on registry settings
-    if ( slicerApp->GetHomeModule() )
+    const char *homeModule = slicerApp->GetHomeModule();
+    if ( homeModule && *homeModule )
       {
-      appGUI->SelectModule ( slicerApp->GetHomeModule() );
+        appGUI->SelectModule ( homeModule );
       }
     else
       {
