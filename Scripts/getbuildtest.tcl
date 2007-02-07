@@ -365,6 +365,9 @@ if {$::GETBUILDTEST(pack) == "true" &&
     switch $::GETBUILDTEST(uploadFlag) {
         "nightly" {
             set curldest "${namic_url}/Nightly/"
+            # reset the file name - take out the date
+            set ex ".${::GETBUILDTEST(version-patch)}"
+            regsub $ex $curlfile "" curlfile
             }
             "snapshot" {
                 set curldest "${namic_url}/Snapshots/$::env(BUILD)/"
