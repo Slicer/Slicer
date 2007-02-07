@@ -115,7 +115,7 @@ void vtkSlicerViewerInteractorStyle::OnLeftButtonDown()
     }
   
   // get the scene's mouse interaction mode
-  int mouseInteractionMode = vtkMRMLInteractionNode::MouseTransform;
+  int mouseInteractionMode = vtkMRMLInteractionNode::ViewTransform;
   
   if ( this->GetCameraNode() != NULL )
     {
@@ -124,7 +124,7 @@ void vtkSlicerViewerInteractorStyle::OnLeftButtonDown()
     //this->GetApplicationLogic()->GetInteractionNode());
     if (interactionNode != NULL)
       {
-      mouseInteractionMode = interactionNode->GetCurrentMouseMode();
+      mouseInteractionMode = interactionNode->GetCurrentInteractionMode();
       // release the pointer
       interactionNode = NULL;
       }
@@ -151,11 +151,11 @@ void vtkSlicerViewerInteractorStyle::OnLeftButtonDown()
       }
     else 
       {
-      if (mouseInteractionMode == vtkMRMLInteractionNode::MouseTransform)
+      if (mouseInteractionMode == vtkMRMLInteractionNode::ViewTransform)
         {
         this->StartRotate();
         }
-      else if (mouseInteractionMode == vtkMRMLInteractionNode::MousePut)
+      else if (mouseInteractionMode == vtkMRMLInteractionNode::Place)
         {
         /*
         // get the current renderer's size, and possibly update the interactor
@@ -178,7 +178,7 @@ void vtkSlicerViewerInteractorStyle::OnLeftButtonDown()
           this->GetViewerWidget()->Pick(x, y);
           }
         }
-      else if (mouseInteractionMode == vtkMRMLInteractionNode::MouseSelect)
+      else if (mouseInteractionMode == vtkMRMLInteractionNode::PickManipulate)
         {
         // deal with select mode
         std::cout << "Mouse Select mode not implemented, try something else...\n";
