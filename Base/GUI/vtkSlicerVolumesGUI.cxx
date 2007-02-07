@@ -160,6 +160,7 @@ vtkSlicerVolumesGUI::~vtkSlicerVolumesGUI ( )
     this->BIRNLabel = NULL;
     }
 
+  this->Built = false;
   this->SetModuleLogic ( NULL );
    vtkSetMRMLNodeMacro (this->VolumeNode, NULL );
 }
@@ -369,7 +370,10 @@ void vtkSlicerVolumesGUI::Exit ( )
 void vtkSlicerVolumesGUI::TearDownGUI ( )
 {
   this->Exit();
-  this->RemoveGUIObservers();
+  if ( this->Built )
+    {
+    this->RemoveGUIObservers();
+    }
 }
 
 

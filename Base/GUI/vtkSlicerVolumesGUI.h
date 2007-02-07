@@ -62,7 +62,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerVolumesGUI : public vtkSlicerModuleGUI
     // This method builds the Volumes module GUI
     virtual void BuildGUI ( );
 
-       // Descripgion:
+       // Description:
     // This method releases references and key-bindings,
     // and optionally removes observers.
     virtual void TearDownGUI ( );
