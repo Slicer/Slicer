@@ -175,7 +175,10 @@ void vtkSlicerDataGUI::Exit ( )
 void vtkSlicerDataGUI::TearDownGUI ( )
 {
   this->Exit();
-  this->RemoveGUIObservers();
+  if ( this->Built )
+    {
+    this->RemoveGUIObservers();
+    }
 }
 
 //---------------------------------------------------------------------------

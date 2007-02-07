@@ -122,17 +122,50 @@ void vtkSlicerColorGUI::ProcessMRMLEvents ( vtkObject *caller,
   vtkDebugMacro("vtkSlicerColorGUI::ProcessMRMLEvents: event = " << event << ".\n");
 }
 
+
+//---------------------------------------------------------------------------
+void vtkSlicerColorGUI::CreateModuleEventBindings ( )
+{
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerColorGUI::ReleaseModuleEventBindings ( )
+{
+  
+}
+
+
 //---------------------------------------------------------------------------
 void vtkSlicerColorGUI::Enter ( )
 {
-  vtkDebugMacro("vtkSlicerColorGUI: Enter\n");
+  if ( this->Built == false )
+    {
+    this->BuildGUI();
+    this->Built = true;
+    this->AddGUIObservers();
+    }
+    this->CreateModuleEventBindings();
 }
+
+
 
 //---------------------------------------------------------------------------
 void vtkSlicerColorGUI::Exit ( )
 {
-  vtkDebugMacro("vtkSlicerColorGUI: Exit\n");
+  this->ReleaseModuleEventBindings();
 }
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerColorGUI::TearDownGUI ( )
+{
+  this->Exit();
+  if ( this->Built )
+    {
+    this->RemoveGUIObservers();
+    }
+}
+
 
 //---------------------------------------------------------------------------
 void vtkSlicerColorGUI::BuildGUI ( )

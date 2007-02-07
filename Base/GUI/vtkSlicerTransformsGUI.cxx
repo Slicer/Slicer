@@ -103,16 +103,45 @@ void vtkSlicerTransformsGUI::ProcessGUIEvents ( vtkObject *caller,
 } 
 
 //---------------------------------------------------------------------------
+void vtkSlicerTransformsGUI::CreateModuleEventBindings ( )
+{
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerTransformsGUI::ReleaseModuleEventBindings ( )
+{
+  
+}
+
+
+//---------------------------------------------------------------------------
 void vtkSlicerTransformsGUI::Enter ( )
 {
-    // Fill in
+  if ( this->Built == false )
+    {
+    this->BuildGUI();
+    this->Built = true;
+    this->AddGUIObservers();
+    }
+    this->CreateModuleEventBindings();
 }
+
+
 
 //---------------------------------------------------------------------------
 void vtkSlicerTransformsGUI::Exit ( )
 {
-    // Fill in
+  this->ReleaseModuleEventBindings();
 }
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerTransformsGUI::TearDownGUI ( )
+{
+  this->Exit();
+  this->RemoveGUIObservers();
+}
+
 
 
 //---------------------------------------------------------------------------

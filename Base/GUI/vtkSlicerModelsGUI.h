@@ -68,6 +68,17 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModelsGUI : public vtkSlicerModuleGUI
     // This method builds the Models module GUI
     virtual void BuildGUI ( ) ;
 
+       // Descripgion:
+    // This method releases references and key-bindings,
+    // and optionally removes observers.
+    virtual void TearDownGUI ( );
+
+        // Description:
+    // Methods for adding module-specific key bindings and
+    // removing them.
+    virtual void CreateModuleEventBindings ( );
+    virtual void ReleaseModuleEventBindings ( );
+
     // Description:
     // Add/Remove observers on widgets in the GUI
     virtual void AddGUIObservers ( );

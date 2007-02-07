@@ -105,6 +105,7 @@ vtkSlicerModelsGUI::~vtkSlicerModelsGUI ( )
     this->BIRNLabel->Delete();
     this->BIRNLabel = NULL;
     }
+  this->Built = false;
 }
 
 
@@ -288,18 +289,47 @@ void vtkSlicerModelsGUI::ProcessMRMLEvents ( vtkObject *caller,
 
 
 //---------------------------------------------------------------------------
+void vtkSlicerModelsGUI::CreateModuleEventBindings ( )
+{
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerModelsGUI::ReleaseModuleEventBindings ( )
+{
+  
+}
+
+
+//---------------------------------------------------------------------------
 void vtkSlicerModelsGUI::Enter ( )
 {
-    // Fill in
+  if ( this->Built == false )
+    {
+    this->BuildGUI();
+    this->Built = true;
+    this->AddGUIObservers();
+    }
+    this->CreateModuleEventBindings();
 }
+
+
 
 //---------------------------------------------------------------------------
 void vtkSlicerModelsGUI::Exit ( )
 {
-    // Fill in
+  this->ReleaseModuleEventBindings();
 }
 
 
+//---------------------------------------------------------------------------
+void vtkSlicerModelsGUI::TearDownGUI ( )
+{
+  this->Exit();
+  if ( this->Built )
+    {
+    this->RemoveGUIObservers();
+    }
+}
 
 
 //---------------------------------------------------------------------------

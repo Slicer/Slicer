@@ -739,18 +739,51 @@ void vtkSlicerFiducialsGUI::SetGUIFromList(vtkMRMLFiducialListNode * activeFiduc
         this->ListOpacity->SetValue(scale);
     }
 }
+
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerFiducialsGUI::CreateModuleEventBindings ( )
+{
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerFiducialsGUI::ReleaseModuleEventBindings ( )
+{
+  
+}
+
+
 //---------------------------------------------------------------------------
 void vtkSlicerFiducialsGUI::Enter ( )
 {
-    std::cout << "vtkSlicerFiducialsGUI: Enter\n";
+  if ( this->Built == false )
+    {
+    this->BuildGUI();
+    this->Built = true;
+    this->AddGUIObservers();
+    }
+    this->CreateModuleEventBindings();
 }
+
+
 
 //---------------------------------------------------------------------------
 void vtkSlicerFiducialsGUI::Exit ( )
 {
-    std::cout <<  "vtkSlicerFiducialsGUI: Exit\n";
+  this->ReleaseModuleEventBindings();
 }
 
+
+//---------------------------------------------------------------------------
+void vtkSlicerFiducialsGUI::TearDownGUI ( )
+{
+  this->Exit();
+  if ( this->Built )
+    {
+    this->RemoveGUIObservers();
+    }
+}
 
 
 

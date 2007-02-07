@@ -81,6 +81,17 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     virtual void BuildGUI ( ) ;
 
     // Description:
+    // This method releases references and key-bindings,
+    // and optionally removes observers.
+    virtual void TearDownGUI ( );
+
+    // Description:
+    // Methods for adding module-specific key bindings and
+    // removing them.
+    virtual void CreateModuleEventBindings ( );
+    virtual void ReleaseModuleEventBindings ( );
+
+    // Description:
     // Add/Remove observers on widgets in the GUI
     virtual void AddGUIObservers ( );
     virtual void RemoveGUIObservers ( );
