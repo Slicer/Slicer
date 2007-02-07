@@ -36,11 +36,13 @@ static const unsigned char image_ToolbarFourUpView[] =
 static const unsigned int  image_ToolbarLightBoxView_width          = 21;
 static const unsigned int  image_ToolbarLightBoxView_height         = 21;
 static const unsigned int  image_ToolbarLightBoxView_pixel_size     = 3;
-static const unsigned long image_ToolbarLightBoxView_length         = 44;
+static const unsigned long image_ToolbarLightBoxView_length         = 148;
 static const unsigned long image_ToolbarLightBoxView_decoded_length = 1323;
 
 static const unsigned char image_ToolbarLightBoxView[] = 
-  "eNpjYmJgogytQwKkcoe69tGgGw260aAbIUEHAKu4DQM=";
+  "eNpjYmJgogytQwKOjo54uLa2tshcuPYqMICrJ5JLLe1EOh6NC9HuSC6giu2jQUeMdZGRkZ"
+  "QEXUxMDCVBh0s7JY4nGET62ABJQcfIyPHy5ct3YABkkxF0jIyMQL0iIiJkBx3QBKoHHSUI"
+  "ADllMTg=";
 
 /* 
  * Resource generated for file:
@@ -102,4 +104,21 @@ static const unsigned long image_ToolbarTabbedSliceView_decoded_length = 1323;
 static const unsigned char image_ToolbarTabbedSliceView[] = 
   "eNpjYmJgogy9e3GHPES5dkYGBg52djgCchNiI4hEENv/IwFhISFk87PSE/FwIdrbkQBQO/"
   "EIon0dbvD86RU8sgS14wFr164dQNuJ0U4f2yG2kEoOD7+PWNspQQDgkdbm";
+
+/* 
+ * Resource generated for file:
+ *    ToolbarTabbedView.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_ToolbarTabbedView_width          = 21;
+static const unsigned int  image_ToolbarTabbedView_height         = 21;
+static const unsigned int  image_ToolbarTabbedView_pixel_size     = 3;
+static const unsigned long image_ToolbarTabbedView_length         = 312;
+static const unsigned long image_ToolbarTabbedView_decoded_length = 1323;
+
+static const unsigned char image_ToolbarTabbedView[] = 
+  "eNqlkkkKwjAUhmM3da0n6eDC4SBuBF0JHkmoiuhNtHbS5gCuxKEOOOzcKP4SCEWlpg18hL"
+  "6X971MVRSiyHGOltmQ13OE5FWVg7DZqAvCVn8875xioRDv32m3EkKmj0e9vtUFw4EFXZz3"
+  "5nMkpEdKb+KgngH3Qy+Vaqb5G0yBv7phVCeTlecfgvkJ4OMdentBHfXo4AdHrsNFhs2K6I"
+  "vwousVDnaOZFo9pFfgulE23Z5tgOPs0unefuZsoaAJwPHRKtXqU3uNu+JoWllcZyM7OCOe"
+  "/6uzmm8E3z2ZZF3yn8+gy/ACzqnbog==";
 
