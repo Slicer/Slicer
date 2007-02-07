@@ -44,7 +44,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
     vtkGetObjectMacro (ModulesToolbar, vtkKWToolbar);
     vtkGetObjectMacro (LoadSaveToolbar, vtkKWToolbar );
     vtkGetObjectMacro (ViewToolbar, vtkKWToolbar);
-    vtkGetObjectMacro (MouseModeToolbar, vtkKWToolbar);
+    vtkGetObjectMacro (InteractionModeToolbar, vtkKWToolbar);
     vtkGetObjectMacro (UndoRedoToolbar, vtkKWToolbar);
     vtkGetObjectMacro (ModuleChooseGUI, vtkSlicerModuleChooseGUI );
 
@@ -71,7 +71,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
     vtkGetObjectMacro (LightBoxViewIconButton, vtkKWPushButton );
     vtkGetObjectMacro (UndoIconButton, vtkKWPushButton );
     vtkGetObjectMacro (RedoIconButton, vtkKWPushButton );
-    vtkGetObjectMacro (MouseModeRadioButtons, vtkKWRadioButtonSet );
+    vtkGetObjectMacro (InteractionModeRadioButtons, vtkKWRadioButtonSet );
 
     // Description:
     // This method builds the Data module's GUI
@@ -123,7 +123,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
     vtkKWToolbar *ModulesToolbar;
     vtkKWToolbar *LoadSaveToolbar;
     vtkKWToolbar *ViewToolbar;
-    vtkKWToolbar *MouseModeToolbar;
+    vtkKWToolbar *InteractionModeToolbar;
     vtkKWToolbar *UndoRedoToolbar;
 
     // Description:
@@ -153,7 +153,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
     vtkKWPushButton *Tabbed3DViewIconButton;
     vtkKWPushButton *TabbedSliceViewIconButton;
     vtkKWPushButton *LightBoxViewIconButton;
-    vtkKWRadioButtonSet *MouseModeRadioButtons;
+    vtkKWRadioButtonSet *InteractionModeRadioButtons;
 
     vtkSlicerModuleChooseGUI *ModuleChooseGUI;
     vtkSlicerApplicationGUI *ApplicationGUI;

@@ -39,7 +39,7 @@ vtkSlicerToolbarGUI::vtkSlicerToolbarGUI ( )
   this->ModulesToolbar = vtkKWToolbar::New ( );
   this->LoadSaveToolbar = vtkKWToolbar::New ( );
   this->ViewToolbar = vtkKWToolbar::New ( );
-  this->MouseModeToolbar = vtkKWToolbar::New ( );
+  this->InteractionModeToolbar = vtkKWToolbar::New ( );
   this->UndoRedoToolbar = vtkKWToolbar::New ( );
 
   this->HomeIconButton = vtkKWPushButton::New ( );
@@ -61,7 +61,7 @@ vtkSlicerToolbarGUI::vtkSlicerToolbarGUI ( )
   this->Tabbed3DViewIconButton = vtkKWPushButton::New ( );
   this->TabbedSliceViewIconButton = vtkKWPushButton::New ( );
   this->LightBoxViewIconButton = vtkKWPushButton::New ( );
-  this->MouseModeRadioButtons = vtkKWRadioButtonSet::New ( );
+  this->InteractionModeRadioButtons = vtkKWRadioButtonSet::New ( );
   this->UndoIconButton = vtkKWPushButton::New ( );
   this->RedoIconButton = vtkKWPushButton::New ( );
   this->ModuleChooseGUI = vtkSlicerModuleChooseGUI::New ( );
@@ -95,9 +95,9 @@ vtkSlicerToolbarGUI::~vtkSlicerToolbarGUI ( )
     {
     this->UndoRedoToolbar->RemoveAllWidgets ( );
     }
-  if ( this->MouseModeToolbar )
+  if ( this->InteractionModeToolbar )
     {
-    this->MouseModeToolbar->RemoveAllWidgets ( );
+    this->InteractionModeToolbar->RemoveAllWidgets ( );
     }
 
   // Delete module choose gui
@@ -281,17 +281,17 @@ vtkSlicerToolbarGUI::~vtkSlicerToolbarGUI ( )
       this->ViewToolbar->Delete ( );
       this->ViewToolbar = NULL;
       }
-    if ( this->MouseModeToolbar )
+    if ( this->InteractionModeToolbar )
       {
-      this->MouseModeToolbar->SetParent ( NULL );
-      this->MouseModeToolbar->Delete ( );
-      this->MouseModeToolbar = NULL;
+      this->InteractionModeToolbar->SetParent ( NULL );
+      this->InteractionModeToolbar->Delete ( );
+      this->InteractionModeToolbar = NULL;
       }
-    if ( this->MouseModeRadioButtons )
+    if ( this->InteractionModeRadioButtons )
       {
-      this->MouseModeRadioButtons->SetParent ( NULL );
-      this->MouseModeRadioButtons->Delete ( );
-      this->MouseModeRadioButtons = NULL;      
+      this->InteractionModeRadioButtons->SetParent ( NULL );
+      this->InteractionModeRadioButtons->Delete ( );
+      this->InteractionModeRadioButtons = NULL;      
       }
 
   // Delete Toolbar Icons
@@ -340,9 +340,9 @@ void vtkSlicerToolbarGUI::RemoveGUIObservers ( )
     this->UndoIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->RedoIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
-    this->MouseModeRadioButtons->GetWidget( vtkMRMLInteractionNode::PickManipulate )->RemoveObservers( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
-    this->MouseModeRadioButtons->GetWidget( vtkMRMLInteractionNode::ViewTransform )->RemoveObservers( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
-    this->MouseModeRadioButtons->GetWidget( vtkMRMLInteractionNode::Place )->RemoveObservers( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+    this->InteractionModeRadioButtons->GetWidget( vtkMRMLInteractionNode::PickManipulate )->RemoveObservers( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+    this->InteractionModeRadioButtons->GetWidget( vtkMRMLInteractionNode::ViewTransform )->RemoveObservers( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+    this->InteractionModeRadioButtons->GetWidget( vtkMRMLInteractionNode::Place )->RemoveObservers( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
     
     this->ModuleChooseGUI->RemoveGUIObservers();
 }
@@ -372,9 +372,9 @@ void vtkSlicerToolbarGUI::AddGUIObservers ( )
     this->UndoIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->RedoIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
-    this->MouseModeRadioButtons->GetWidget( vtkMRMLInteractionNode::PickManipulate )->AddObserver ( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
-    this->MouseModeRadioButtons->GetWidget( vtkMRMLInteractionNode::ViewTransform )->AddObserver ( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
-    this->MouseModeRadioButtons->GetWidget( vtkMRMLInteractionNode::Place )->AddObserver ( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+    this->InteractionModeRadioButtons->GetWidget( vtkMRMLInteractionNode::PickManipulate )->AddObserver ( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+    this->InteractionModeRadioButtons->GetWidget( vtkMRMLInteractionNode::ViewTransform )->AddObserver ( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+    this->InteractionModeRadioButtons->GetWidget( vtkMRMLInteractionNode::Place )->AddObserver ( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
 
     this->ModuleChooseGUI->AddGUIObservers();
 }
@@ -411,7 +411,7 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
         {            
         // Process events from top row of buttons
         // Mouse mode buttons:
-        if ( radiob == this->MouseModeRadioButtons->GetWidget ( vtkMRMLInteractionNode::PickManipulate )
+        if ( radiob == this->InteractionModeRadioButtons->GetWidget ( vtkMRMLInteractionNode::PickManipulate )
              && event == vtkKWRadioButton::SelectedStateChangedEvent )
           {
           val = radiob->GetSelectedState();
@@ -421,7 +421,7 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
             interactionNode->SetCurrentInteractionMode ( vtkMRMLInteractionNode::PickManipulate );
             }
           }
-        else if ( radiob == this->MouseModeRadioButtons->GetWidget ( vtkMRMLInteractionNode::ViewTransform )
+        else if ( radiob == this->InteractionModeRadioButtons->GetWidget ( vtkMRMLInteractionNode::ViewTransform )
                   && event == vtkKWRadioButton::SelectedStateChangedEvent)
           {
           val = radiob->GetSelectedState();
@@ -431,7 +431,7 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
             interactionNode->SetCurrentInteractionMode ( vtkMRMLInteractionNode::ViewTransform );
             }
           }
-        else if ( radiob == this->MouseModeRadioButtons->GetWidget ( vtkMRMLInteractionNode::Place )
+        else if ( radiob == this->InteractionModeRadioButtons->GetWidget ( vtkMRMLInteractionNode::Place )
                   && event == vtkKWRadioButton::SelectedStateChangedEvent)
           {
           val = radiob->GetSelectedState();
@@ -691,7 +691,7 @@ void vtkSlicerToolbarGUI::ProcessMRMLEvents ( vtkObject *caller,
     std::cout << "The selection node changed\n";
     int mode = interactionNode->GetCurrentInteractionMode();
     
-    vtkKWRadioButton *radiob = this->MouseModeRadioButtons->GetWidget ( mode );
+    vtkKWRadioButton *radiob = this->InteractionModeRadioButtons->GetWidget ( mode );
     if (radiob != NULL &&
         radiob->GetSelectedState() != 1)
       {
@@ -782,7 +782,7 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   urtb->SetWidgetsPadX ( 3 );
   urtb->SetWidgetsPadY ( 2 );
   
-  vtkKWToolbar *mmtb = this->GetMouseModeToolbar ( );
+  vtkKWToolbar *mmtb = this->GetInteractionModeToolbar ( );
   mmtb->SetName("Mouse Mode");
   mmtb->SetParent ( tbs->GetToolbarsFrame ( ) );
   mmtb->Create();
@@ -798,7 +798,7 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   tbs->AddToolbar ( this->GetModulesToolbar() );
   tbs->AddToolbar ( this->GetUndoRedoToolbar () );
   tbs->AddToolbar ( this->GetViewToolbar() );
-  tbs->AddToolbar ( this->GetMouseModeToolbar() );
+  tbs->AddToolbar ( this->GetInteractionModeToolbar() );
         
   //
   //--- create icons and the labels that display them and add to toolbar
@@ -1029,9 +1029,9 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   this->LightBoxViewIconButton->SetBalloonHelpString ( "Display a slice-matrix and no 3D view (not yet available)" );
   vtb->AddWidget ( this->LightBoxViewIconButton );
 
-  this->MouseModeRadioButtons->SetParent (mmtb->GetFrame ( ) );
-  this->MouseModeRadioButtons->Create ( );
-  this->MouseModeRadioButtons->PackHorizontallyOn();
+  this->InteractionModeRadioButtons->SetParent (mmtb->GetFrame ( ) );
+  this->InteractionModeRadioButtons->Create ( );
+  this->InteractionModeRadioButtons->PackHorizontallyOn();
 
   int mouseMode = vtkMRMLInteractionNode::ViewTransform;
   // try to get the mouse interaction mode from the mrml scene
@@ -1050,7 +1050,7 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
     mouseMode = vtkMRMLInteractionNode::ViewTransform;
     }
   
-  vtkKWRadioButton *radiob = this->MouseModeRadioButtons->AddWidget ( vtkMRMLInteractionNode::PickManipulate );
+  vtkKWRadioButton *radiob = this->InteractionModeRadioButtons->AddWidget ( vtkMRMLInteractionNode::PickManipulate );
   radiob->SetReliefToFlat ( );
   radiob->SetOffReliefToFlat ( );
   radiob->SetOverReliefToNone ( );
@@ -1070,7 +1070,7 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
     radiob->SelectedStateOff ( );
     }
 
-  radiob = this->MouseModeRadioButtons->AddWidget ( vtkMRMLInteractionNode::Place );
+  radiob = this->InteractionModeRadioButtons->AddWidget ( vtkMRMLInteractionNode::Place );
   radiob->SetReliefToFlat ( );
   radiob->SetOffReliefToFlat ( );
   radiob->SetOverReliefToNone ( );
@@ -1089,9 +1089,9 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
     {
     radiob->SelectedStateOff ( );
     }
-  mmtb->AddWidget ( this->MouseModeRadioButtons );
+  mmtb->AddWidget ( this->InteractionModeRadioButtons );
 
-  radiob = this->MouseModeRadioButtons->AddWidget ( vtkMRMLInteractionNode::ViewTransform );
+  radiob = this->InteractionModeRadioButtons->AddWidget ( vtkMRMLInteractionNode::ViewTransform );
   radiob->SetReliefToFlat ( );
   radiob->SetOffReliefToFlat ( );
   radiob->SetOverReliefToNone ( );
@@ -1116,7 +1116,7 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   tbs->ShowToolbar ( this->GetLoadSaveToolbar ( ));
   tbs->ShowToolbar ( this->GetViewToolbar ( ));
   tbs->ShowToolbar ( this->GetUndoRedoToolbar ( ));
-  tbs->ShowToolbar ( this->GetMouseModeToolbar ( ));
+  tbs->ShowToolbar ( this->GetInteractionModeToolbar ( ));
   */
 }
 
