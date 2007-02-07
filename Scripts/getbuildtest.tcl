@@ -35,7 +35,10 @@ proc Usage { {msg ""} } {
     set msg "$msg\n                   : default: version-patch is the current date"
     set msg "$msg\n   --tag : same as version-patch"
     set msg "$msg\n   --pack : run cpack after building (default: off)"
+    set msg "$msg\n   --upload : set the upload string for the binary, used if pack is true"
+    set msg "$msg\n            : snapshot (default), nightly, release"
     set msg "$msg\n   --doxy : just do an svn update on Slicer3 and run doxygen"
+    set msg "$msg\n   --verbose : optional, print out lots of stuff, for debugging"
     puts stderr $msg
 }
 
@@ -45,7 +48,10 @@ set ::GETBUILDTEST(release) ""
 set ::GETBUILDTEST(test-type) "Experimental"
 set ::GETBUILDTEST(version-patch) ""
 set ::GETBUILDTEST(pack) "false"
+set ::GETBUILDTEST(upload) "false"
+set ::GETBUILDTEST(uploadFlag) "snapshot"
 set ::GETBUILDTEST(doxy) "false"
+set ::GETBUILDTEST(verbose) "false"
 set strippedargs ""
 set argc [llength $argv]
 for {set i 0} {$i < $argc} {incr i} {
@@ -81,10 +87,22 @@ for {set i 0} {$i < $argc} {incr i} {
             }
         }
         "--pack" {
-                set ::GETBUILDTEST(pack) "true"
+                set ::GETBUILDTEST(pack) "true"            
+        }
+        "--upload" {
+            set ::GETBUILDTEST(upload) "true"
+            incr i
+            if {$i == $argc} {
+                # uses default value                
+            } else {
+                set ::GETBUILDTEST(uploadFlag) [lindex $argv $i]
+            }
         }
         "--doxy" {
             set ::GETBUILDTEST(doxy) "true"
+        }
+        "--verbose" {
+            set ::GETBUILDTEST(verbose) "true"
         }
         "--help" -
         "-h" {
@@ -266,6 +284,27 @@ if { $::GETBUILDTEST(version-patch) == "" } {
   set ::GETBUILDTEST(version-patch) [clock format [clock seconds] -format %Y-%m-%d]
 }
 
+# set the binary filename root
+set ::GETBUILDTEST(binary-filename) "Slicer3-3.0.$::GETBUILDTEST(version-patch)-$::env(BUILD)"
+if {$::GETBUILDTEST(verbose)} {
+    puts "CPack will use $::::GETBUILDTEST(binary-filename)"
+}
+# set the cpack generator to determine the binary file extension
+if {$isLinux || $isDarwin} {
+    set ::GETBUILDTEST(cpack-generator) "STGZ"
+    set ::GETBUILDTEST(cpack-extension) ".sh"
+    # if wish to have .tar.gz, use generator = TGZ and extension = .tar.gz
+}
+if {$isWindows} {
+    set ::GETBUILDTEST(cpack-generator) "NSIS"
+    set ::GETBUILDTEST(cpack-extension) ".exe"
+}
+# once dmg packaging is done
+if {0 && $isDarwin} {
+   set ::GETBUILDTEST(cpack-generator) "OSXX11"
+   set ::GETBUILDTEST(cpack-extension) ".dmg"
+}
+
 # build the slicer
 cd $::SLICER_BUILD
 runcmd $::CMAKE \
@@ -276,9 +315,11 @@ runcmd $::CMAKE \
         -DTEEM_DIR:FILEPATH=$SLICER_LIB/teem-build \
         -DCMAKE_BUILD_TYPE=$::VTK_BUILD_TYPE \
         -DSlicer3_VERSION_PATCH:STRING=$::GETBUILDTEST(version-patch) \
+        -DCPACK_GENERATOR:STRING=$::GETBUILDTEST(cpack-generator) \
+        -DCPACK_PACKAGE_FILE_NAME:STRING=$::GETBUILDTEST(binary-filename) \
         -DUSE_TEEM=OFF \
         $SLICER_HOME
-
+if {0} {
 if { $isWindows } {
     if { $MSVC6 } {
         eval runcmd $::MAKE Slicer3.dsw /MAKE $::GETBUILDTEST(test-type)
@@ -311,5 +352,57 @@ if { $isWindows } {
     puts "build of \"$::GETBUILDTEST(test-type)\" [if $buildReturn "concat failed" "concat succeeded"]"
     if { $::GETBUILDTEST(pack) == "true" } {
       puts "package [if $packageReturn "concat failed" "concat succeeded"]"
+    }
+}
+}
+# upload
+set curlfile "${::GETBUILDTEST(binary-filename)}${::GETBUILDTEST(cpack-extension)}"
+if {$::GETBUILDTEST(pack) == "true" && 
+    [file exists $::SLICER_BUILD/$curlfile] &&
+    $::GETBUILDTEST(upload) == "true"} {
+    puts "About to do a curl $::GETBUILDTEST(uploadFlag) upload with $curlfile"
+    set namic_url "http://www.na-mic.org/Slicer/Upload.cgi"
+    switch $::GETBUILDTEST(uploadFlag) {
+        "nightly" {
+            set curldest "${namic_url}/Nightly/"
+            }
+            "snapshot" {
+                set curldest "${namic_url}/Snapshots/$::env(BUILD)/"
+            }
+            "release" {
+                set curldest "${namic_url}/Release/$::env(BUILD)/"
+            }
+            default {
+                puts "Invalid ::GETBUILDTEST(uploadFlag) \"$::GETBUILDTEST(uploadFlag)\", setting curldest to snapshot value"
+                set curldest "${namic_url}/Snapshots/$::env(BUILD)/"
+            }
+        }
+    # add the filename and extension
+    set curldest "${curldest}${curlfile}"
+
+    puts " -- upload $curlfile to $curldest"
+    set curlcmd ""
+    switch $::tcl_platform(os) {
+        "SunOS" -
+        "Linux" {
+            
+            set curlcmd "xterm -e curl --connect-timeout 120 --silent --show-error --upload-file $curlfile $curldest"
+        }
+        "Darwin" {            
+            set curlcmd "/usr/X11R6/bin/xterm -e curl --connect-timeout 120 --silent --show-error --upload-file $curlfile $curldest"
+        }
+        default {             
+            set curlcmd "curl --connect-timeout 120 --silent --show-error --upload-file $curlfile $curldest"
+        }
+    }
+    set curlReturn [catch "eval runcmd [split $curlcmd]"]
+    if {$curlReturn} {
+        puts "Upload failed..."
+    } else {
+        puts "See http://www.na-mic.org/Slicer/Download, in the $::GETBUILDTEST(uploadFlag) directory, for the uploaded file $curlfile."
+    }
+} else {
+    if {$::GETBUILDTEST(verbose)} {
+        puts "Not uploading $curlfile"
     }
 }
