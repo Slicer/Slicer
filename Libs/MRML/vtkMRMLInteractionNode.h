@@ -36,33 +36,34 @@ public:
   
   // Description:
   // Get/Set Current and Last mouse mode.
-  vtkGetMacro (CurrentMouseMode, int );
-  void SetCurrentMouseMode ( int mode );
-  vtkGetMacro (LastMouseMode, int );
-  vtkSetMacro (LastMouseMode, int );
+  vtkGetMacro (CurrentInteractionMode, int );
+  void SetCurrentInteractionMode ( int mode );
+  vtkGetMacro (LastInteractionMode, int );
+  vtkSetMacro (LastInteractionMode, int );
   
   //BTX
   // mouse modes
   enum
     {
-      MouseSelect = 0,
-      MouseSelectRegion,
-      MousePut,
-      MousePan,
-      MouseZoom,
-      MouseRotate,
-      MouseTransform
+      PickManipulate = 0,
+      SelectRegion,
+      LassoRegion,
+      Place,
+      ViewPan,
+      ViewZoom,
+      ViewRotate,
+      ViewTransform
     };
   // events
   enum
     {
-      MouseModeChangedEvent = 19001
+      InteractionModeChangedEvent = 19001
     };
   //ETX 
 
   // Description:
   // Return a text string describing the mode
-  const char *GetMouseModeAsString(int mode);
+  const char *GetInteractionModeAsString(int mode);
 
 protected:
   vtkMRMLInteractionNode();
@@ -71,9 +72,9 @@ protected:
   void operator=(const vtkMRMLInteractionNode&);
 
   // may be used if temporary overrides are possible.
-  int LastMouseMode;
+  int LastInteractionMode;
   // current mouse mode
-  int CurrentMouseMode;
+  int CurrentInteractionMode;
 };
 
 #endif

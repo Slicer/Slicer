@@ -41,8 +41,8 @@ vtkMRMLInteractionNode::vtkMRMLInteractionNode()
 {
   this->SingletonTag = "vtkMRMLInteractionNode";
 
-  this->CurrentMouseMode = vtkMRMLInteractionNode::MouseTransform;
-  this->LastMouseMode = vtkMRMLInteractionNode::MouseTransform;
+  this->CurrentInteractionMode = vtkMRMLInteractionNode::ViewTransform;
+  this->LastInteractionMode = vtkMRMLInteractionNode::ViewTransform;
  }
 
 //----------------------------------------------------------------------------
@@ -52,37 +52,41 @@ vtkMRMLInteractionNode::~vtkMRMLInteractionNode()
 
 
 //----------------------------------------------------------------------------
-void vtkMRMLInteractionNode::SetCurrentMouseMode ( int mode )
+void vtkMRMLInteractionNode::SetCurrentInteractionMode ( int mode )
 {
   switch (mode)
     {
-    case vtkMRMLInteractionNode::MouseSelect:
-      this->CurrentMouseMode = mode;
-      this->InvokeEvent(this->MouseModeChangedEvent, NULL);
+    case vtkMRMLInteractionNode::PickManipulate:
+      this->CurrentInteractionMode = mode;
+      this->InvokeEvent(this->InteractionModeChangedEvent, NULL);
       break;
-    case vtkMRMLInteractionNode::MouseSelectRegion:
-      this->CurrentMouseMode = mode;
-      this->InvokeEvent(this->MouseModeChangedEvent, NULL);
+    case vtkMRMLInteractionNode::SelectRegion:
+      this->CurrentInteractionMode = mode;
+      this->InvokeEvent(this->InteractionModeChangedEvent, NULL);
       break;
-    case vtkMRMLInteractionNode::MousePut:
-      this->CurrentMouseMode = mode;
-      this->InvokeEvent(this->MouseModeChangedEvent, NULL);
+    case vtkMRMLInteractionNode::LassoRegion:
+      this->CurrentInteractionMode = mode;
+      this->InvokeEvent(this->InteractionModeChangedEvent, NULL);
       break;
-    case vtkMRMLInteractionNode::MousePan:      
-      this->CurrentMouseMode = mode;
-      this->InvokeEvent(this->MouseModeChangedEvent, NULL);
+    case vtkMRMLInteractionNode::Place:
+      this->CurrentInteractionMode = mode;
+      this->InvokeEvent(this->InteractionModeChangedEvent, NULL);
       break;
-    case vtkMRMLInteractionNode::MouseZoom:
-      this->CurrentMouseMode = mode;
-      this->InvokeEvent(this->MouseModeChangedEvent, NULL);
+    case vtkMRMLInteractionNode::ViewPan:      
+      this->CurrentInteractionMode = mode;
+      this->InvokeEvent(this->InteractionModeChangedEvent, NULL);
       break;
-    case vtkMRMLInteractionNode::MouseRotate:      
-      this->CurrentMouseMode = mode;
-      this->InvokeEvent(this->MouseModeChangedEvent, NULL);
+    case vtkMRMLInteractionNode::ViewZoom:
+      this->CurrentInteractionMode = mode;
+      this->InvokeEvent(this->InteractionModeChangedEvent, NULL);
       break;
-    case vtkMRMLInteractionNode::MouseTransform:      
-      this->CurrentMouseMode = mode;
-      this->InvokeEvent(this->MouseModeChangedEvent, NULL);
+    case vtkMRMLInteractionNode::ViewRotate:      
+      this->CurrentInteractionMode = mode;
+      this->InvokeEvent(this->InteractionModeChangedEvent, NULL);
+      break;
+    case vtkMRMLInteractionNode::ViewTransform:      
+      this->CurrentInteractionMode = mode;
+      this->InvokeEvent(this->InteractionModeChangedEvent, NULL);
       break;
     default:
       break;
@@ -101,62 +105,70 @@ void vtkMRMLInteractionNode::WriteXML(ostream& of, int nIndent)
   vtkIndent indent(nIndent);
 
   // configure stereo
-  if ( this->GetCurrentMouseMode() == vtkMRMLInteractionNode::MouseSelect )
+  if ( this->GetCurrentInteractionMode() == vtkMRMLInteractionNode::PickManipulate )
     {
-    of << indent << " currentMouseMode=\"" << "MouseSelect" << "\"";    
+    of << indent << " currentInteractionMode=\"" << "PickManipulate" << "\"";    
     }
-  else if ( this->GetCurrentMouseMode() == vtkMRMLInteractionNode::MouseSelectRegion )
+  else if ( this->GetCurrentInteractionMode() == vtkMRMLInteractionNode::SelectRegion )
     {
-    of << indent << " currentMouseMode=\"" << "MouseSelectRegion" << "\"";    
+    of << indent << " currentInteractionMode=\"" << "SelectRegion" << "\"";    
     }
-  else if ( this->GetCurrentMouseMode() == vtkMRMLInteractionNode::MousePut )
+  else if ( this->GetCurrentInteractionMode() == vtkMRMLInteractionNode::LassoRegion )
     {
-    of << indent << " currentMouseMode=\"" << "MousePut" << "\"";    
+    of << indent << " currentInteractionMode=\"" << "LassoRegion" << "\"";    
     }
-  else if ( this->GetCurrentMouseMode() == vtkMRMLInteractionNode::MousePan )
+  else if ( this->GetCurrentInteractionMode() == vtkMRMLInteractionNode::Place )
     {
-    of << indent << " currentMouseMode=\"" << "MousePan" << "\"";    
+    of << indent << " currentInteractionMode=\"" << "Place" << "\"";    
     }
-  else if ( this->GetCurrentMouseMode() == vtkMRMLInteractionNode::MouseZoom )
+  else if ( this->GetCurrentInteractionMode() == vtkMRMLInteractionNode::ViewPan )
     {
-    of << indent << " currentMouseMode=\"" << "MouseZoom" << "\"";    
+    of << indent << " currentInteractionMode=\"" << "ViewPan" << "\"";    
     }
-  else if ( this->GetCurrentMouseMode() == vtkMRMLInteractionNode::MouseRotate )
+  else if ( this->GetCurrentInteractionMode() == vtkMRMLInteractionNode::ViewZoom )
     {
-    of << indent << " currentMouseMode=\"" << "MouseRotate" << "\"";    
+    of << indent << " currentInteractionMode=\"" << "ViewZoom" << "\"";    
+    }
+  else if ( this->GetCurrentInteractionMode() == vtkMRMLInteractionNode::ViewRotate )
+    {
+    of << indent << " currentInteractionMode=\"" << "ViewRotate" << "\"";    
     }  
-  else if ( this->GetCurrentMouseMode() == vtkMRMLInteractionNode::MouseTransform )
+  else if ( this->GetCurrentInteractionMode() == vtkMRMLInteractionNode::ViewTransform )
     {
-    of << indent << " currentMouseMode=\"" << "MouseTransform" << "\"";    
+    of << indent << " currentInteractionMode=\"" << "ViewTransform" << "\"";    
     }  
 
-  if ( this->GetLastMouseMode() == vtkMRMLInteractionNode::MouseSelect )
+  if ( this->GetLastInteractionMode() == vtkMRMLInteractionNode::PickManipulate )
     {
-    of << indent << " lastMouseMode=\"" << "MouseSelect" << "\"";    
+    of << indent << " lastInteractionMode=\"" << "PickManipulate" << "\"";    
     }
-  else if ( this->GetLastMouseMode() == vtkMRMLInteractionNode::MouseSelectRegion )
+  else if ( this->GetLastInteractionMode() == vtkMRMLInteractionNode::SelectRegion )
     {
-    of << indent << " lastMouseMode=\"" << "MouseSelectRegion" << "\"";    
+    of << indent << " lastInteractionMode=\"" << "SelectRegion" << "\"";    
     }
-  else if ( this->GetLastMouseMode() == vtkMRMLInteractionNode::MousePut )
+  else if ( this->GetLastInteractionMode() == vtkMRMLInteractionNode::LassoRegion )
     {
-    of << indent << " lastMouseMode=\"" << "MousePut" << "\"";    
+    of << indent << " lastInteractionMode=\"" << "LassoRegion" << "\"";    
     }
-  else if ( this->GetLastMouseMode() == vtkMRMLInteractionNode::MousePan )
+  else if ( this->GetLastInteractionMode() == vtkMRMLInteractionNode::Place )
     {
-    of << indent << " lastMouseMode=\"" << "MousePan" << "\"";    
+    of << indent << " lastInteractionMode=\"" << "Place" << "\"";    
     }
-  else if ( this->GetLastMouseMode() == vtkMRMLInteractionNode::MouseZoom )
+  else if ( this->GetLastInteractionMode() == vtkMRMLInteractionNode::ViewPan )
     {
-    of << indent << " lastMouseMode=\"" << "MouseZoom" << "\"";    
+    of << indent << " lastInteractionMode=\"" << "ViewPan" << "\"";    
     }
-  else if ( this->GetLastMouseMode() == vtkMRMLInteractionNode::MouseRotate )
+  else if ( this->GetLastInteractionMode() == vtkMRMLInteractionNode::ViewZoom )
     {
-    of << indent << " lastMouseMode=\"" << "MouseRotate" << "\"";    
+    of << indent << " lastInteractionMode=\"" << "ViewZoom" << "\"";    
+    }
+  else if ( this->GetLastInteractionMode() == vtkMRMLInteractionNode::ViewRotate )
+    {
+    of << indent << " lastInteractionMode=\"" << "ViewRotate" << "\"";    
     }  
-  else if ( this->GetLastMouseMode() == vtkMRMLInteractionNode::MouseTransform )
+  else if ( this->GetLastInteractionMode() == vtkMRMLInteractionNode::ViewTransform )
     {
-    of << indent << " lastMouseMode=\"" << "MouseTransform" << "\"";    
+    of << indent << " lastInteractionMode=\"" << "ViewTransform" << "\"";    
     }  
 
 }
@@ -175,66 +187,74 @@ void vtkMRMLInteractionNode::ReadXMLAttributes(const char** atts)
     attValue = *(atts++);
 
 
-    if (!strcmp(attName, "currentMouseMode")) 
+    if (!strcmp(attName, "currentInteractionMode")) 
       {
-      if (!strcmp(attValue,"MouseSelect")) 
+      if (!strcmp(attValue,"PickManipulate")) 
         {
-        this->CurrentMouseMode = vtkMRMLInteractionNode::MouseSelect;
+        this->CurrentInteractionMode = vtkMRMLInteractionNode::PickManipulate;
         }
-      else if ( !strcmp (attValue, "MouseSelectRegion" ))
+      else if ( !strcmp (attValue, "SelectRegion" ))
         {
-        this->CurrentMouseMode = vtkMRMLInteractionNode::MouseSelectRegion;
+        this->CurrentInteractionMode = vtkMRMLInteractionNode::SelectRegion;
         }
-      else if ( !strcmp (attValue, "MousePut" ))
+      else if ( !strcmp (attValue, "LassoRegion" ))
         {
-        this->CurrentMouseMode = vtkMRMLInteractionNode::MousePut;
+        this->CurrentInteractionMode = vtkMRMLInteractionNode::LassoRegion;
         }
-      else if ( !strcmp (attValue, "MousePan" ))
+      else if ( !strcmp (attValue, "Place" ))
         {
-        this->CurrentMouseMode = vtkMRMLInteractionNode::MousePan;
+        this->CurrentInteractionMode = vtkMRMLInteractionNode::Place;
         }
-      else if ( !strcmp (attValue, "MouseZoom" ))
+      else if ( !strcmp (attValue, "ViewPan" ))
         {
-        this->CurrentMouseMode = vtkMRMLInteractionNode::MouseZoom;
+        this->CurrentInteractionMode = vtkMRMLInteractionNode::ViewPan;
         }
-      else if ( !strcmp (attValue, "MouseRotate" ))
+      else if ( !strcmp (attValue, "ViewZoom" ))
         {
-        this->CurrentMouseMode = vtkMRMLInteractionNode::MouseRotate;
+        this->CurrentInteractionMode = vtkMRMLInteractionNode::ViewZoom;
         }
-      else if ( !strcmp (attValue, "MouseTransform" ))
+      else if ( !strcmp (attValue, "ViewRotate" ))
         {
-        this->CurrentMouseMode = vtkMRMLInteractionNode::MouseTransform;
+        this->CurrentInteractionMode = vtkMRMLInteractionNode::ViewRotate;
+        }
+      else if ( !strcmp (attValue, "ViewTransform" ))
+        {
+        this->CurrentInteractionMode = vtkMRMLInteractionNode::ViewTransform;
         }
       }
-    else if (!strcmp(attName, "lastMouseMode"))
+    else if (!strcmp(attName, "lastInteractionMode"))
       {
-      if (!strcmp(attValue,"MouseSelect")) 
+      if (!strcmp(attValue,"PickManipulate")) 
         {
-        this->LastMouseMode = vtkMRMLInteractionNode::MouseSelect;
+        this->LastInteractionMode = vtkMRMLInteractionNode::PickManipulate;
         }
-      else if ( !strcmp (attValue, "MouseSelectRegion" ))
+      else if ( !strcmp (attValue, "SelectRegion" ))
         {
-        this->LastMouseMode = vtkMRMLInteractionNode::MouseSelectRegion;
+        this->LastInteractionMode = vtkMRMLInteractionNode::SelectRegion;
         }
-      else if ( !strcmp (attValue, "MousePut" ))
+      else if ( !strcmp (attValue, "LassoRegion" ))
         {
-        this->LastMouseMode = vtkMRMLInteractionNode::MousePut;
+        this->LastInteractionMode = vtkMRMLInteractionNode::LassoRegion;
         }
-      else if ( !strcmp (attValue, "MousePan" ))
+      else if ( !strcmp (attValue, "Place" ))
         {
-        this->LastMouseMode = vtkMRMLInteractionNode::MousePan;
+        this->LastInteractionMode = vtkMRMLInteractionNode::Place;
         }
-      else if ( !strcmp (attValue, "MouseZoom" ))
+      else if ( !strcmp (attValue, "ViewPan" ))
         {
-        this->LastMouseMode = vtkMRMLInteractionNode::MouseZoom;
+        this->LastInteractionMode = vtkMRMLInteractionNode::ViewPan;
         }
-      else if ( !strcmp (attValue, "MouseRotate" ))
+      else if ( !strcmp (attValue, "ViewZoom" ))
         {
-        this->LastMouseMode = vtkMRMLInteractionNode::MouseRotate;
+        this->LastInteractionMode = vtkMRMLInteractionNode::ViewZoom;
         }
-      else if ( !strcmp (attValue, "MouseTransform" ))
+      else if ( !strcmp (attValue, "ViewRotate" ))
         {
-        this->LastMouseMode = vtkMRMLInteractionNode::MouseTransform;
+        this->LastInteractionMode = vtkMRMLInteractionNode::ViewRotate;
+        }
+      else if ( !strcmp (attValue, "ViewTransform" ))
+        {
+        this->LastInteractionMode = vtkMRMLInteractionNode::ViewTransform;
         }
       }
     
@@ -252,8 +272,8 @@ void vtkMRMLInteractionNode::Copy(vtkMRMLNode *anode)
   Superclass::Copy(anode);
   vtkMRMLInteractionNode *node = (vtkMRMLInteractionNode *) anode;
 
-  this->SetCurrentMouseMode (node->GetCurrentMouseMode());
-  this->SetLastMouseMode ( node->GetLastMouseMode());
+  this->SetCurrentInteractionMode (node->GetCurrentInteractionMode());
+  this->SetLastInteractionMode ( node->GetLastInteractionMode());
 }
 
 //----------------------------------------------------------------------------
@@ -261,41 +281,45 @@ void vtkMRMLInteractionNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   
   Superclass::PrintSelf(os,indent);
-  os << indent << "CurrentMouseMode:        " << this->GetMouseModeAsString(this->CurrentMouseMode) << "\n";
-  os << indent << "LastMouseMode:        " <<  this->GetMouseModeAsString(this->LastMouseMode) << "\n";
+  os << indent << "CurrentInteractionMode:        " << this->GetInteractionModeAsString(this->CurrentInteractionMode) << "\n";
+  os << indent << "LastInteractionMode:        " <<  this->GetInteractionModeAsString(this->LastInteractionMode) << "\n";
 }
 
 
 //---------------------------------------------------------------------------
-const char * vtkMRMLInteractionNode::GetMouseModeAsString(int mode)
+const char * vtkMRMLInteractionNode::GetInteractionModeAsString(int mode)
 {
-  if (mode == this->MouseSelect)
+  if (mode == this->PickManipulate)
     {
-    return "Select";
+    return "PickManipulate";
     }
-  if (mode == this->MouseSelectRegion)
+  if (mode == this->SelectRegion)
     {
     return "SelectRegion";
     }
-  if (mode == this->MousePut)
+  if (mode == this->LassoRegion)
     {
-    return "Put";
+    return "LassoRegion";
     }
-  if (mode == this->MousePan)
+  if (mode == this->Place)
     {
-    return "Pan";
+    return "Place";
     }
-  if (mode == this->MouseZoom)
+  if (mode == this->ViewPan)
     {
-    return "Zoom";
+    return "ViewPan";
     }
-  if (mode == this->MouseRotate)
+  if (mode == this->ViewZoom)
     {
-    return "Rotate";
+    return "ViewZoom";
     }
-  if (mode == this->MouseTransform)
+  if (mode == this->ViewRotate)
     {
-    return "Transform";
+    return "ViewRotate";
+    }
+  if (mode == this->ViewTransform)
+    {
+    return "ViewTransform";
     }
   
   return "(unknown)";
