@@ -288,18 +288,37 @@ void vtkSlicerModuleChooseGUI::PopulateHistoryListMenu  ( )
 //---------------------------------------------------------------------------
 void vtkSlicerModuleChooseGUI::SelectModule ( const char *moduleName )
 {
-  if ( this->GetApplicationGUI() != NULL )
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());
+  
+  if ( app )
     {
-    if ( moduleName != NULL )
+    if ( this->GetApplicationGUI() != NULL )
       {
-      this->RaiseModule ( moduleName );
-      this->GetModuleNavigator()->AddModuleNameToHistoryList ( moduleName );
-      this->PopulateHistoryListMenu ( );
-      this->GetModuleNavigator()->AddModuleNameToNavigationList ( moduleName );
-      }
-    else
-      {
-      std::cerr << "ERROR no slicer module GUI found for " << moduleName<< "\n";
+      if ( moduleName != NULL )
+        {
+        // Exit current module
+        char * currentModuleName = this->GetModuleNavigator()->GetCurrentModuleName();
+        if ( currentModuleName != NULL )
+          {
+          vtkSlicerModuleGUI *currentModule = app->GetModuleGUIByName( currentModuleName );
+          if (currentModule != NULL )
+            {
+            currentModule->Exit ( );
+            }
+          }
+        // Enter selected module.
+        vtkSlicerModuleGUI *currentModule = app->GetModuleGUIByName( moduleName );        
+        currentModule->Enter ( );
+        
+        this->RaiseModule ( moduleName );
+        this->GetModuleNavigator()->AddModuleNameToHistoryList ( moduleName );
+        this->PopulateHistoryListMenu ( );
+        this->GetModuleNavigator()->AddModuleNameToNavigationList ( moduleName );
+        }
+      else
+        {
+        std::cerr << "ERROR no slicer module GUI found for " << moduleName<< "\n";
+        }
       }
     }
 }

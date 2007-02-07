@@ -23,6 +23,7 @@ vtkSlicerModuleGUI::vtkSlicerModuleGUI ( ) {
 
     this->ApplicationGUI = NULL;
     this->Logo = 0;
+    this->Built = false;
 }
 
 
@@ -74,6 +75,7 @@ vtkSlicerModuleGUI::~vtkSlicerModuleGUI ( ) {
       }
     this->SetApplicationGUI( NULL );
     this->Logo = 0;
+    this->Built = false;
 }
 
 

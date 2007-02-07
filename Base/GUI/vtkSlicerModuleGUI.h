@@ -77,6 +77,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleGUI : public vtkSlicerComponentG
   virtual void BuildHelpAndAboutFrame ( vtkKWWidget *parent,
                                         const char *help,
                                         const char *about);
+
+  virtual void CreateModuleEventBindings ( ) { };
+  virtual void ReleaseModuleEventBindings ( ) { };
   
   // Description:
   // propagate events generated in logic layer to GUI
@@ -124,6 +127,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleGUI : public vtkSlicerComponentG
     // The LogoFrame is where a contributor's logos may
     // be packed.
     vtkKWFrame *LogoFrame;
+
+    // Description:
+    // Describes whether the GUI has been built or not.
+    bool Built;
     
     // constructor, destructor.
     vtkSlicerModuleGUI ( );

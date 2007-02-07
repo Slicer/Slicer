@@ -24,9 +24,6 @@ vtkSlicerDataGUI::vtkSlicerDataGUI ( )
   NAMICLabel = NULL;
   NCIGTLabel = NULL;
   BIRNLabel = NULL;
-
-    //this->Logic = NULL;
-
 }
 
 
@@ -64,8 +61,7 @@ vtkSlicerDataGUI::~vtkSlicerDataGUI ( )
     this->BIRNLabel = NULL;
     }
 
-    // class not yet defined!
-    //this->SetModuleLogic ( NULL );
+  this->Built = false;
 }
 
 
@@ -136,20 +132,51 @@ void vtkSlicerDataGUI::ProcessMRMLEvents ( vtkObject *caller,
     // Fill in
 }
 
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerDataGUI::CreateModuleEventBindings ( )
+{
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerDataGUI::ReleaseModuleEventBindings ( )
+{
+  
+}
+
+
+
+
 //---------------------------------------------------------------------------
 void vtkSlicerDataGUI::Enter ( )
 {
-    // Fill in
+  if ( this->Built == false )
+    {
+    this->BuildGUI();
+    this->Built = true;
+    this->AddGUIObservers();
+    this->AddObserver ( vtkSlicerModuleGUI::ModuleSelectedEvent, (vtkCommand *)this->ApplicationGUI->GetGUICallbackCommand() );
+    }
+    this->CreateModuleEventBindings();
 }
+
+
 
 //---------------------------------------------------------------------------
 void vtkSlicerDataGUI::Exit ( )
 {
-    // Fill in
+  this->ReleaseModuleEventBindings();
 }
 
 
 
+//---------------------------------------------------------------------------
+void vtkSlicerDataGUI::TearDownGUI ( )
+{
+  this->Exit();
+  this->RemoveGUIObservers();
+}
 
 //---------------------------------------------------------------------------
 void vtkSlicerDataGUI::BuildGUI ( )

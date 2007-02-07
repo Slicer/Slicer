@@ -330,16 +330,46 @@ void vtkSlicerVolumesGUI::ProcessMRMLEvents ( vtkObject *caller,
 }
 
 
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerVolumesGUI::CreateModuleEventBindings ( )
+{
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerVolumesGUI::ReleaseModuleEventBindings ( )
+{
+  
+}
+
+
 //---------------------------------------------------------------------------
 void vtkSlicerVolumesGUI::Enter ( )
 {
-    // Fill in
+  if ( this->Built == false )
+    {
+    this->BuildGUI();
+    this->Built = true;
+    this->AddGUIObservers();
+    }
+    this->CreateModuleEventBindings();
 }
+
+
 
 //---------------------------------------------------------------------------
 void vtkSlicerVolumesGUI::Exit ( )
 {
-    // Fill in
+  this->ReleaseModuleEventBindings();
+}
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerVolumesGUI::TearDownGUI ( )
+{
+  this->Exit();
+  this->RemoveGUIObservers();
 }
 
 
