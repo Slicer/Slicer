@@ -633,8 +633,6 @@ int Slicer3_main(int argc, char *argv[])
     modelsGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
     modelsGUI->GetUIPanel()->Create ( );
     slicerApp->AddModuleGUI ( modelsGUI );
-    modelsGUI->BuildGUI ( );
-    modelsGUI->AddGUIObservers ( );
 #endif
 
 
@@ -660,8 +658,6 @@ int Slicer3_main(int argc, char *argv[])
     fiducialsGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
     fiducialsGUI->GetUIPanel()->Create ( );
     slicerApp->AddModuleGUI ( fiducialsGUI );
-    fiducialsGUI->BuildGUI ( );
-    fiducialsGUI->AddGUIObservers ( );
 #endif
 
 #ifndef COLORS_DEBUG
@@ -690,8 +686,6 @@ int Slicer3_main(int argc, char *argv[])
     colorGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
     colorGUI->GetUIPanel()->Create ( );
     slicerApp->AddModuleGUI ( colorGUI );
-    colorGUI->BuildGUI ( );
-    colorGUI->AddGUIObservers ( );
 #endif
 
 #ifndef IGTDEMO_DEBUG
@@ -728,8 +722,6 @@ int Slicer3_main(int argc, char *argv[])
     transformsGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
     transformsGUI->GetUIPanel()->Create ( );
     slicerApp->AddModuleGUI ( transformsGUI );
-    transformsGUI->BuildGUI ( );
-    transformsGUI->AddGUIObservers ( );
 
     //--- Data module
     slicerApp->GetSplashScreen()->SetProgressMessage(
@@ -749,7 +741,6 @@ int Slicer3_main(int argc, char *argv[])
     dataGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
     dataGUI->GetUIPanel()->Create ( );    
     slicerApp->AddModuleGUI ( dataGUI );
-    // dataGUI's GUI is built when it is raised in the GUI panel.
     
 #ifndef CAMERA_DEBUG
     slicerApp->GetSplashScreen()->SetProgressMessage(
@@ -1039,10 +1030,10 @@ int Slicer3_main(int argc, char *argv[])
 
         vtkSlicerModuleGUI *module;
         module = slicerApp->GetModuleGUIByName( (*mit).c_str() );
-
+/*
         module->BuildGUI();
         module->AddGUIObservers();
-      
+*/
         ++mit;
         }
       }
@@ -1284,18 +1275,18 @@ int Slicer3_main(int argc, char *argv[])
     volumesGUI->TearDownGUI ( );
 #endif
 #ifndef MODELS_DEBUG
-    modelsGUI->RemoveGUIObservers ( );
+    modelsGUI->TearDownGUI ( );
 #endif
 #ifndef FIDUCIALS_DEBUG
-    fiducialsGUI->RemoveGUIObservers ( );
+    fiducialsGUI->TearDownGUI ( );
 #endif
 #ifndef COLORS_DEBUG
-    colorGUI->RemoveGUIObservers ( );
+    colorGUI->TearDownGUI ( );
 #endif
 #ifndef IGTDEMO_DEBUG
     IGTDemoGUI->RemoveGUIObservers ( );
 #endif
-    transformsGUI->RemoveGUIObservers ( );
+    transformsGUI->TearDownGUI ( );
 #ifndef CAMERA_DEBUG
     cameraGUI->RemoveGUIObservers ( );
 #endif
@@ -1325,7 +1316,8 @@ int Slicer3_main(int argc, char *argv[])
       vtkSlicerModuleGUI *module;
       module = slicerApp->GetModuleGUIByName( (*mit).c_str() );
 
-      module->RemoveGUIObservers();
+/*      module->RemoveGUIObservers();*/
+      module->TearDownGUI ( );
 
       moduleGUIs.push_back(module);
       

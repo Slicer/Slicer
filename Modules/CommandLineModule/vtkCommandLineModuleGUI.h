@@ -92,9 +92,13 @@ public:
   //
   // Description:
   // Describe behavior at module startup and exit.
-  virtual void Enter ( ){};
-  virtual void Exit ( ){};
+  virtual void Enter ( );
+  virtual void Exit ( );
 
+  virtual void TearDownGUI ( );
+  virtual void CreateModuleEventBindings ( );
+  virtual void ReleaseModuleEventBindings ( );
+  
   // Description:
   // Get/Set the ModuleDescription object
   const ModuleDescription& GetModuleDescription() const

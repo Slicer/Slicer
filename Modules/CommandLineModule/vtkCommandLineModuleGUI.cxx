@@ -750,6 +750,49 @@ void vtkCommandLineModuleGUI::ProcessMRMLEvents ( vtkObject *caller,
 
 
 
+//---------------------------------------------------------------------------
+void vtkCommandLineModuleGUI::CreateModuleEventBindings ( )
+{
+}
+
+//---------------------------------------------------------------------------
+void vtkCommandLineModuleGUI::ReleaseModuleEventBindings ( )
+{
+  
+}
+
+
+//---------------------------------------------------------------------------
+void vtkCommandLineModuleGUI::Enter ( )
+{
+  if ( this->Built == false )
+    {
+    this->BuildGUI();
+    this->Built = true;
+    this->AddGUIObservers();
+    }
+    this->CreateModuleEventBindings();
+}
+
+
+
+//---------------------------------------------------------------------------
+void vtkCommandLineModuleGUI::Exit ( )
+{
+  this->ReleaseModuleEventBindings();
+}
+
+
+//---------------------------------------------------------------------------
+void vtkCommandLineModuleGUI::TearDownGUI ( )
+{
+  this->Exit();
+  if ( this->Built )
+    {
+    this->RemoveGUIObservers();
+    }
+}
+
 
 //---------------------------------------------------------------------------
 void vtkCommandLineModuleGUI::BuildGUI ( ) 
