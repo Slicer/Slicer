@@ -319,7 +319,7 @@ runcmd $::CMAKE \
         -DCPACK_PACKAGE_FILE_NAME:STRING=$::GETBUILDTEST(binary-filename) \
         -DUSE_TEEM=OFF \
         $SLICER_HOME
-if {0} {
+
 if { $isWindows } {
     if { $MSVC6 } {
         eval runcmd $::MAKE Slicer3.dsw /MAKE $::GETBUILDTEST(test-type)
@@ -354,7 +354,6 @@ if { $isWindows } {
       puts "package [if $packageReturn "concat failed" "concat succeeded"]"
     }
 }
-}
 # upload
 set curlfile "${::GETBUILDTEST(binary-filename)}${::GETBUILDTEST(cpack-extension)}"
 if {$::GETBUILDTEST(pack) == "true" && 
@@ -363,25 +362,23 @@ if {$::GETBUILDTEST(pack) == "true" &&
     puts "About to do a curl $::GETBUILDTEST(uploadFlag) upload with $curlfile"
     set namic_url "http://www.na-mic.org/Slicer/Upload.cgi"
     switch $::GETBUILDTEST(uploadFlag) {
-        "nightly" {
-            set curldest "${namic_url}/Nightly/"
+        "nightly" {            
             # reset the file name - take out the date
             set ex ".${::GETBUILDTEST(version-patch)}"
-            regsub $ex $curlfile "" curlfile
+            regsub $ex $curlfile "" curlNightlyFile
+            set curldest "${namic_url}/Nightly/${curlNightlyFile}"
             }
             "snapshot" {
-                set curldest "${namic_url}/Snapshots/$::env(BUILD)/"
+                set curldest "${namic_url}/Snapshots/$::env(BUILD)/${curlfile}"
             }
             "release" {
-                set curldest "${namic_url}/Release/$::env(BUILD)/"
+                set curldest "${namic_url}/Release/$::env(BUILD)/${curlfile}"
             }
             default {
                 puts "Invalid ::GETBUILDTEST(uploadFlag) \"$::GETBUILDTEST(uploadFlag)\", setting curldest to snapshot value"
-                set curldest "${namic_url}/Snapshots/$::env(BUILD)/"
+                set curldest "${namic_url}/Snapshots/$::env(BUILD)/${curlfile}"
             }
         }
-    # add the filename and extension
-    set curldest "${curldest}${curlfile}"
 
     puts " -- upload $curlfile to $curldest"
     set curlcmd ""
@@ -402,7 +399,7 @@ if {$::GETBUILDTEST(pack) == "true" &&
     if {$curlReturn} {
         puts "Upload failed..."
     } else {
-        puts "See http://www.na-mic.org/Slicer/Download, in the $::GETBUILDTEST(uploadFlag) directory, for the uploaded file $curlfile."
+        puts "See http://www.na-mic.org/Slicer/Download, in the $::GETBUILDTEST(uploadFlag) directory, for the uploaded file."
     }
 } else {
     if {$::GETBUILDTEST(verbose)} {
