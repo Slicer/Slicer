@@ -613,8 +613,6 @@ int Slicer3_main(int argc, char *argv[])
     volumesGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
     volumesGUI->GetUIPanel()->Create ( );
     slicerApp->AddModuleGUI ( volumesGUI );
-    volumesGUI->BuildGUI ( );
-    volumesGUI->AddGUIObservers ( );
 #endif
 
 #ifndef MODELS_DEBUG
@@ -751,10 +749,8 @@ int Slicer3_main(int argc, char *argv[])
     dataGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
     dataGUI->GetUIPanel()->Create ( );    
     slicerApp->AddModuleGUI ( dataGUI );
-    dataGUI->BuildGUI ( );
-    dataGUI->AddGUIObservers ( );
-    dataGUI->AddObserver (vtkSlicerModuleGUI::ModuleSelectedEvent, (vtkCommand *)appGUI->GetGUICallbackCommand() );
-  
+    // dataGUI's GUI is built when it is raised in the GUI panel.
+    
 #ifndef CAMERA_DEBUG
     slicerApp->GetSplashScreen()->SetProgressMessage(
       "Initializing Camera Module...");
@@ -1284,7 +1280,8 @@ int Slicer3_main(int argc, char *argv[])
 #endif
 
 #ifndef VOLUMES_DEBUG
-    volumesGUI->RemoveGUIObservers ( );
+//    volumesGUI->RemoveGUIObservers ( );
+    volumesGUI->TearDownGUI ( );
 #endif
 #ifndef MODELS_DEBUG
     modelsGUI->RemoveGUIObservers ( );
@@ -1302,7 +1299,9 @@ int Slicer3_main(int argc, char *argv[])
 #ifndef CAMERA_DEBUG
     cameraGUI->RemoveGUIObservers ( );
 #endif
-    dataGUI->RemoveGUIObservers ( );
+
+    dataGUI->TearDownGUI ( );
+    
 #ifndef SLICES_DEBUG
     slicesGUI->RemoveGUIObservers ( );
 #endif
