@@ -236,8 +236,8 @@ proc ImportNodeVolume {node} {
       #
 
       $::slicer3::MRMLScene AddNode $volumeDisplayNode
-      $volumeNode SetAndObserveDisplayNodeID [$volumeDisplayNode GetID]
       $::slicer3::MRMLScene AddNode $volumeNode
+      $volumeNode SetAndObserveDisplayNodeID [$volumeDisplayNode GetID]
 
       #
       # clean up
@@ -265,14 +265,14 @@ proc ImportNodeVolume {node} {
 
   switch { $n(colorLUT) } {
     "0" {
-      $volumeDisplayNode SetAndObserveColorNodeID "vtkMRMLColorNodeGrey"
+      $volumeDisplayNode SetAndObserveColorNodeID "vtkMRMLColorTableNodeGrey"
     }
     default {
-      $volumeDisplayNode SetAndObserveColorNodeID "vtkMRMLColorNodeGrey"
+      $volumeDisplayNode SetAndObserveColorNodeID "vtkMRMLColorTableNodeGrey"
     }
   }
   if { [info exists n(labelMap)] && $n(labelMap) == "yes" } {
-    $volumeDisplayNode SetAndObserveColorNodeID "vtkMRMLColorNodeLabels"
+    $volumeDisplayNode SetAndObserveColorNodeID "vtkMRMLColorTableNodeLabels"
   }
 
   if { [info exists n(applyThreshold)] && $n(applyThreshold) == "yes" } {
@@ -283,6 +283,11 @@ proc ImportNodeVolume {node} {
   $volumeDisplayNode SetLowerThreshold $n(lowerThreshold)
   $volumeDisplayNode SetUpperThreshold $n(upperThreshold)
 
+  set logic [$::slicer3::VolumesGUI GetLogic]
+  $logic SetActiveVolumeNode $volumeNode
+
+  [[$::slicer3::VolumesGUI GetApplicationLogic] GetSelectionNode] SetReferenceActiveVolumeID [$volumeNode GetID]
+  [$::slicer3::VolumesGUI GetApplicationLogic] PropagateVolumeSelection
 }
 
 proc ImportNodeModel {node} {
@@ -295,7 +300,17 @@ proc ImportNodeModel {node} {
   }
 
   set logic [$::slicer3::ModelsGUI GetLogic]
-  $logic AddModel $fileName
+  set mnode [$logic AddModel $fileName]
+
+  if { [info exists n(color)] } {
+      set dnode [$mnode GetDisplayNode]
+      set cnode [$::slicer3::MRMLScene GetNodeByID vtkMRMLColorTableNodeLabels]
+      for {set i 0} {$i < [$cnode GetNumberOfColors]} {incr i} {
+          if {[$cnode GetColorName $i] == $n(color)} {
+              eval $dnode SetColor [lrange [[$cnode GetLookupTable] GetTableValue $i] 0 2]
+          }
+      } 
+  }
 }
 
 proc ImportNodeFiducials {node} {
