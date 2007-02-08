@@ -64,16 +64,45 @@ protected:
   void operator=(const vtkSlicerFiberBundleDisplayLogic&);
 
   // Description:
-  // Create polyline vtkMRMLModelNode and place in slicer scene.  The polydata is generated 
-  // from our vtkMRMLFiberBundleNode, according to its vtkMRMLFiberDisplayNode settings.
+  // Create a vtkMRMLModelNode and place in slicer scene.
   // The model node is temporary. It is not saved with the scene and can't be edited or 
   // selected on menus.
-  void CreateLineModelNode();
+  void CreateTemporaryModelNodeForDisplay ( vtkMRMLModelNode * & modelNode, vtkMRMLModelDisplayNode * & displayNode );
 
   // Description:
-  // Delete and remove polyline model (vtkMRMLModelNode, vtkMRMLModelDisplayNode) from MRML scene.
-  void DeleteLineModelNode();
+  // Delete a model from MRML scene.
+  void DeleteTemporaryModelNodeForDisplay ( vtkMRMLModelNode * & modelNode, vtkMRMLModelDisplayNode * & displayNode );
 
+
+  void CreateLineModelNodes ( );
+  void CreateTubeModelNodes ( );
+  //void CreateGlyphModelNodes ( );
+
+  void DeleteLineModelNodes ( );
+  void DeleteTubeModelNodes ( );
+  //void DeleteGlyphModelNodes ( );
+
+
+  // Description:
+  // Create a polyline model. The polydata is generated from our vtkMRMLFiberBundleNode, 
+  // according to its vtkMRMLFiberDisplayNode settings.
+  void CreateLineModel ( );
+
+  // Description:
+  // Create a tube model. The polydata is generated from our vtkMRMLFiberBundleNode, 
+  // according to its vtkMRMLFiberDisplayNode settings.
+  void CreateTubeModel ( );
+
+  // Description:
+  // Create a tensor glyph model. The polydata is generated from our vtkMRMLFiberBundleNode, 
+  // according to its vtkMRMLFiberDisplayNode settings.
+  //void CreateGlyphModel ( );
+
+  // Description:
+  // Handle the logic to display various types of models (line/tube/glyph) and 
+  // call the appropriate creation/deletion functions.
+  void UpdateModelDisplay ( );
+ 
   vtkMRMLModelNode *LineModelNode;
   vtkMRMLModelNode *TubeModelNode;
   vtkMRMLModelNode *GlyphModelNode;

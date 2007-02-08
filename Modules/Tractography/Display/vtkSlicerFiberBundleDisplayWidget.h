@@ -121,6 +121,10 @@ public:
   vtkKWSurfaceMaterialPropertyWidget *SurfaceMaterialPropertyWidget;
   vtkKWChangeColorButton *ChangeColorButton;
 
+  vtkKWCheckButtonWithLabel *LineVisibilityButton;
+  vtkKWCheckButtonWithLabel *TubeVisibilityButton;
+  vtkKWCheckButtonWithLabel *GlyphVisibilityButton;
+
 private:
 
 

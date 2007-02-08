@@ -82,9 +82,9 @@ class VTK_MRML_EXPORT vtkMRMLFiberBundleDisplayNode : public vtkMRMLModelDisplay
   
   // Description:
   // Turn on/off visibility of glyphs (tensors) along fibers.
-  vtkSetMacro ( TensorGlyphVisibility , int );
-  vtkGetMacro ( TensorGlyphVisibility , int );
-  vtkBooleanMacro ( TensorGlyphVisibility , int );
+  vtkSetMacro ( FiberGlyphVisibility , int );
+  vtkGetMacro ( FiberGlyphVisibility , int );
+  vtkBooleanMacro ( FiberGlyphVisibility , int );
 
   //--------------------------------------------------------------------------
   // Display Information: Color Mode
@@ -113,7 +113,6 @@ class VTK_MRML_EXPORT vtkMRMLFiberBundleDisplayNode : public vtkMRMLModelDisplay
  
   // Description:
   // Color by solid color (for example the whole fiber bundle red. blue, etc.)
-  // TO DO: The color is defined by a vtkMRMLColorNode.
   // TO DO: how to define specularity, etc. for fiber lines.
   void SetColorModeForFiberLinesToSolid ( ) {
     this->SetColorModeForFiberLines ( this->colorModeSolid );
@@ -144,6 +143,29 @@ class VTK_MRML_EXPORT vtkMRMLFiberBundleDisplayNode : public vtkMRMLModelDisplay
   };
 
   //--------------------------------------------------------------------------
+  // Display Information: ColorMode for tubes
+  //--------------------------------------------------------------------------
+
+  //--------------------------------------------------------------------------
+  // Display Information: Thickness for tubes
+  //--------------------------------------------------------------------------
+
+  // Description:
+  // Thickness (radius) of tubed trajectory ("thick fibers") geometry.
+  vtkSetMacro ( FiberTubeRadius , double );
+  vtkGetMacro ( FiberTubeRadius , double );
+
+  // Description:
+  // Resolution (number of sides) of tubed trajectory ("thick fibers") geometry.
+  vtkSetMacro ( FiberTubeNumberOfSides , int );
+  vtkGetMacro ( FiberTubeNumberOfSides , int );
+
+  //--------------------------------------------------------------------------
+  // Display Information: ColorMode for glyphs
+  //--------------------------------------------------------------------------
+  // TO DO: is this needed? or directly use per-glyph color from display props
+
+  //--------------------------------------------------------------------------
   // MRML nodes that are observed
   //--------------------------------------------------------------------------
   
@@ -159,6 +181,30 @@ class VTK_MRML_EXPORT vtkMRMLFiberBundleDisplayNode : public vtkMRMLModelDisplay
   // Get ID of diffusion tensor display MRML object for fiber line.
   vtkGetStringMacro(FiberLineDTDisplayPropertiesNodeID);
 
+  // Description:
+  // Get diffusion tensor display MRML object for fiber tube.
+  vtkMRMLDiffusionTensorDisplayPropertiesNode* GetFiberTubeDTDisplayPropertiesNode ( );
+
+  // Description:
+  // Set diffusion tensor display MRML object for fiber tube.
+  void SetAndObserveFiberTubeDTDisplayPropertiesNodeID ( const char *ID );
+
+  // Description:
+  // Get ID of diffusion tensor display MRML object for fiber tube.
+  vtkGetStringMacro(FiberTubeDTDisplayPropertiesNodeID);
+
+  // Description:
+  // Get diffusion tensor display MRML object for fiber glyph.
+  vtkMRMLDiffusionTensorDisplayPropertiesNode* GetFiberGlyphDTDisplayPropertiesNode ( );
+
+  // Description:
+  // Set diffusion tensor display MRML object for fiber glyph.
+  void SetAndObserveFiberGlyphDTDisplayPropertiesNodeID ( const char *ID );
+
+  // Description:
+  // Get ID of diffusion tensor display MRML object for fiber glyph.
+  vtkGetStringMacro(FiberGlyphDTDisplayPropertiesNodeID);
+
   // TO DO: Add updating of reference IDs
 
  protected:
@@ -170,28 +216,29 @@ class VTK_MRML_EXPORT vtkMRMLFiberBundleDisplayNode : public vtkMRMLModelDisplay
   // MRML nodes 
   vtkMRMLDiffusionTensorDisplayPropertiesNode *FiberLineDTDisplayPropertiesNode;
   vtkMRMLDiffusionTensorDisplayPropertiesNode *FiberTubeDTDisplayPropertiesNode;
-  vtkMRMLDiffusionTensorDisplayPropertiesNode *TensorGlyphDTDisplayPropertiesNode;
+  vtkMRMLDiffusionTensorDisplayPropertiesNode *FiberGlyphDTDisplayPropertiesNode;
 
   char *FiberLineDTDisplayPropertiesNodeID;
   char *FiberTubeDTDisplayPropertiesNodeID;
-  char *TensorGlyphDTDisplayPropertiesNodeID;
+  char *FiberGlyphDTDisplayPropertiesNodeID;
 
   vtkSetReferenceStringMacro(FiberLineDTDisplayPropertiesNodeID);
   vtkSetReferenceStringMacro(FiberTubeDTDisplayPropertiesNodeID);
-  vtkSetReferenceStringMacro(TensorGlyphDTDisplayPropertiesNodeID);
+  vtkSetReferenceStringMacro(FiberGlyphDTDisplayPropertiesNodeID);
 
   // Numbers
-  //double Opacity;
+  double FiberTubeRadius;
+  int FiberTubeNumberOfSides;
   
   // Enumerated
   int ColorModeForFiberLines;
   int ColorModeForFiberTubes;
-  int ColorModeForTensorGlyphs;
+  int ColorModeForFiberGlyphs;
 
   // Booleans
   int FiberLineVisibility;
   int FiberTubeVisibility;
-  int TensorGlyphVisibility;
+  int FiberGlyphVisibility;
 
   int TwoDimensionalVisibility;
 

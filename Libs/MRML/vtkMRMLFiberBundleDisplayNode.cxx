@@ -53,10 +53,22 @@ vtkMRMLFiberBundleDisplayNode::vtkMRMLFiberBundleDisplayNode()
 {
 
   // Strings
-  //this->Name = "FiberBundle";
+  this->Name = "FiberBundleDisplay";
 
   // Numbers
-  
+  this->FiberTubeRadius = 0.5;
+  this->FiberTubeNumberOfSides = 4;
+
+  // Enumerated
+  this->ColorModeForFiberLines = this->colorModeSolid;
+  this->ColorModeForFiberTubes = this->colorModeSolid;
+  this->ColorModeForFiberGlyphs = this->colorModeScalar;
+
+  // Booleans
+  this->FiberLineVisibility = 1;
+  this->FiberTubeVisibility = 0;
+  this->FiberGlyphVisibility = 0;
+
   // Arrays
 
 
@@ -65,12 +77,12 @@ vtkMRMLFiberBundleDisplayNode::vtkMRMLFiberBundleDisplayNode()
   // MRML nodes
   this->FiberLineDTDisplayPropertiesNode = NULL;
   this->FiberTubeDTDisplayPropertiesNode = NULL;
-  this->TensorGlyphDTDisplayPropertiesNode = NULL;
+  this->FiberGlyphDTDisplayPropertiesNode = NULL;
 
-  // MRML IDs
+  // MRML IDs (strings)
   this->FiberLineDTDisplayPropertiesNodeID = NULL;
   this->FiberTubeDTDisplayPropertiesNodeID = NULL;
-  this->TensorGlyphDTDisplayPropertiesNodeID = NULL;
+  this->FiberGlyphDTDisplayPropertiesNodeID = NULL;
 
 }
 
@@ -103,6 +115,71 @@ void vtkMRMLFiberBundleDisplayNode::SetAndObserveFiberLineDTDisplayPropertiesNod
 
   // Observe the node using the pointer.
   vtkSetAndObserveMRMLObjectMacro ( this->FiberLineDTDisplayPropertiesNode , cnode );
+
+}
+
+
+//----------------------------------------------------------------------------
+vtkMRMLDiffusionTensorDisplayPropertiesNode* vtkMRMLFiberBundleDisplayNode::GetFiberTubeDTDisplayPropertiesNode ( )
+{
+  vtkMRMLDiffusionTensorDisplayPropertiesNode* node = NULL;
+
+  // Find the node corresponding to the ID we have saved.
+  if  ( this->GetScene ( ) && this->GetFiberTubeDTDisplayPropertiesNodeID ( ) )
+    {
+    vtkMRMLNode* cnode = this->GetScene ( ) -> GetNodeByID ( this->FiberTubeDTDisplayPropertiesNodeID );
+    node = vtkMRMLDiffusionTensorDisplayPropertiesNode::SafeDownCast ( cnode );
+    }
+
+  return node;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLFiberBundleDisplayNode::SetAndObserveFiberTubeDTDisplayPropertiesNodeID ( const char *ID )
+{
+  // Stop observing any old node
+  vtkSetAndObserveMRMLObjectMacro ( this->FiberTubeDTDisplayPropertiesNode, NULL );
+
+  // Set the ID. This is the "ground truth" reference to the node.
+  this->SetFiberTubeDTDisplayPropertiesNodeID ( ID );
+
+  // Get the node corresponding to the ID. This pointer is only to observe the object.
+  vtkMRMLNode *cnode = this->GetFiberTubeDTDisplayPropertiesNode ( );
+
+  // Observe the node using the pointer.
+  vtkSetAndObserveMRMLObjectMacro ( this->FiberTubeDTDisplayPropertiesNode , cnode );
+
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLDiffusionTensorDisplayPropertiesNode* vtkMRMLFiberBundleDisplayNode::GetFiberGlyphDTDisplayPropertiesNode ( )
+{
+  vtkMRMLDiffusionTensorDisplayPropertiesNode* node = NULL;
+
+  // Find the node corresponding to the ID we have saved.
+  if  ( this->GetScene ( ) && this->GetFiberGlyphDTDisplayPropertiesNodeID ( ) )
+    {
+    vtkMRMLNode* cnode = this->GetScene ( ) -> GetNodeByID ( this->FiberGlyphDTDisplayPropertiesNodeID );
+    node = vtkMRMLDiffusionTensorDisplayPropertiesNode::SafeDownCast ( cnode );
+    }
+
+  return node;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLFiberBundleDisplayNode::SetAndObserveFiberGlyphDTDisplayPropertiesNodeID ( const char *ID )
+{
+  // Stop observing any old node
+  vtkSetAndObserveMRMLObjectMacro ( this->FiberGlyphDTDisplayPropertiesNode, NULL );
+
+  // Set the ID. This is the "ground truth" reference to the node.
+  this->SetFiberGlyphDTDisplayPropertiesNodeID ( ID );
+
+  // Get the node corresponding to the ID. This pointer is only to observe the object.
+  vtkMRMLNode *cnode = this->GetFiberGlyphDTDisplayPropertiesNode ( );
+
+  // Observe the node using the pointer.
+  vtkSetAndObserveMRMLObjectMacro ( this->FiberGlyphDTDisplayPropertiesNode , cnode );
 
 }
 
