@@ -296,10 +296,10 @@ itcl::body SliceSWidget::processEvent { } {
     "LeftButtonPressEvent" {
       if { [info command SeedSWidget] != "" } {
         set interactionNode [$::slicer3::MRMLScene GetNthNodeByClass 0 vtkMRMLInteractionNode]
-        set mode [$interactionNode GetCurrentMouseMode]
-        set modeString [$interactionNode GetMouseModeAsString $mode]
+        set mode [$interactionNode GetCurrentInteractionMode]
+        set modeString [$interactionNode GetInteractionModeAsString $mode]
         set modifier [expr [$_interactor GetControlKey] && [$_interactor GetShiftKey]]
-        if { $mode == "Put" || $modifier } {
+        if { $modeString == "Place" || $modifier } {
           FiducialsSWidget::AddFiducial $r $a $s
         }
       }
