@@ -41,6 +41,7 @@ SET(MRML_SRCS
         vtkMRMLCameraNode.cxx
         vtkMRMLViewNode.cxx
         vtkMRMLTensorVolumeNode.cxx
+        vtkMRMLDiffusionTensorDisplayPropertiesNode.cxx
         vtkMRMLDiffusionWeightedVolumeDisplayNode.cxx
         vtkMRMLDiffusionWeightedVolumeNode.cxx
         vtkMRMLDiffusionTensorVolumeNode.cxx
