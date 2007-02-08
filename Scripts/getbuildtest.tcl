@@ -95,7 +95,15 @@ for {set i 0} {$i < $argc} {incr i} {
             if {$i == $argc} {
                 # uses default value                
             } else {
-                set ::GETBUILDTEST(uploadFlag) [lindex $argv $i]
+                # peek at the next arg to see if we should use it...
+                set arg [lindex $argv $i]
+                if { [string match "--*" $arg] } {
+                  # next arg is another -- flag, so don't use it as the
+                  # upload flag...
+                  incr i -1
+                } else {
+                  set ::GETBUILDTEST(uploadFlag) [lindex $argv $i]
+                }
             }
         }
         "--doxy" {
