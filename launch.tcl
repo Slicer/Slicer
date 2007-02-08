@@ -16,10 +16,20 @@
 # This is a tcl script rather than a .bat or .sh file so it can handle all 
 # the details in one place for all platforms.
 #
+# This script is used for both the slicer build directory and for the slicer
+# install directory.
+ 
+
+# these are the directories needed for the cpacked install directory:
+#/tmp/Slicer3-3.0.2007-02-06-Linux/lib
+#/tmp/Slicer3-3.0.2007-02-06-Linux/lib/KWWidgets:
+#/tmp/Slicer3-3.0.2007-02-06-Linux/lib/InsightToolkit
+#/tmp/Slicer3-3.0.2007-02-06-Linux/lib/Slicer3/tcl/lib
 
 proc launch_InitEnvironment {} {
 
     # if SLICER_HOME not set, find it relative to the location of this script
+    # -- when run by the launcher, this variable will be set
     if { ![info exists ::SLICER_HOME] } {
         set wd [pwd]
         cd [file dirname [info script]]
@@ -45,7 +55,7 @@ proc launch_InitEnvironment {} {
 
     # The environment variables that we need to have set for slicer 
     # to start up properly
-    set envVars {VTK_DIR VTK_SRC_DIR KWWIDGETS_DIR ITK_BINARY_PATH SANDBOX_BIN_DIR TCL_BIN_DIR TCL_LIB_DIR SOV_BINARY_DIR TEEM_BIN_DIR}
+    set envVars {VTK_DIR VTK_SRC_DIR KWWIDGETS_DIR ITK_BINARY_PATH SANDBOX_BIN_DIR TCL_BIN_DIR TCL_LIB_DIR TEEM_BIN_DIR}
     # Make up a list of the environment variables that haven't been set already,
     # that we need to set
     set envVarsToSet {}
@@ -54,21 +64,6 @@ proc launch_InitEnvironment {} {
             lappend envVarsToSet $v
         }
     }
-
-    # Source the local variables file, if it exists, or set defaults here
-    #   - the local slicer_variables.tcl file is used in development
-    #   - the defaults are in place for a distribution copy 
-    #     (such as made by the tarup.tcl scrip)
-    #
-    set localvarsfile [file dirname [info script]]/slicer_variables.tcl
-    if { [file exists $localvarsfile] } {
-        puts stderr "Sourcing $localvarsfile"
-        source $localvarsfile
-    } else {
-        puts stderr "Cannot find $localvarsfile"
-        exit
-    }
-
 
     # if it is an empty string or doesn't exist, set the LD_LIBRARY_PATH 
     if { ![info exists ::env(LD_LIBRARY_PATH)] ||
@@ -136,7 +131,6 @@ proc launch_SetPaths {} {
             set ::env(LD_LIBRARY_PATH) $::env(ITK_BINARY_PATH)/bin:$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(SANDBOX_BIN_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(SANDBOX_BIN_DIR)/../Distributions/bin:$::env(LD_LIBRARY_PATH)
-            set ::env(LD_LIBRARY_PATH) $::env(SOV_BINARY_DIR)/bin:$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(SLICER_HOME)/Base/builds/$::env(BUILD)/bin:$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(TCL_LIB_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(TCL_BIN_DIR):$::env(LD_LIBRARY_PATH)
@@ -148,7 +142,6 @@ proc launch_SetPaths {} {
             set ::env(DYLD_LIBRARY_PATH) $::env(ITK_BINARY_PATH)/bin:$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(SANDBOX_BIN_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(SANDBOX_BIN_DIR)/../Distributions/bin:$::env(DYLD_LIBRARY_PATH)
-            set ::env(DYLD_LIBRARY_PATH) $::env(SOV_BINARY_DIR)/bin:$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(SLICER_HOME)/Base/builds/$::env(BUILD)/bin:$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(TCL_LIB_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(TCL_BIN_DIR):$::env(DYLD_LIBRARY_PATH)
@@ -160,7 +153,6 @@ proc launch_SetPaths {} {
             set ::env(Path) $::env(ITK_BINARY_PATH)/bin/$::env(VTK_BUILD_SUBDIR)\;$::env(Path)
             set ::env(Path) $::env(SANDBOX_BIN_DIR)/$::env(VTK_BUILD_SUBDIR)\;$::env(Path)
             set ::env(Path) $::env(SANDBOX_BIN_DIR)/../Distributions/bin/$::env(VTK_BUILD_SUBDIR)\;$::env(Path)
-            set ::env(Path) $::env(SOV_BINARY_DIR)/bin/$::env(VTK_BUILD_SUBDIR)\;$::env(Path)
             set ::env(Path) $::env(SLICER_HOME)/Base/builds/$::env(BUILD)/bin/$::env(VTK_BUILD_SUBDIR)\;$::env(Path)
             set ::env(Path) $::env(TCL_BIN_DIR)\;$::env(Path)
             set ::env(Path) $::env(TEEM_BIN_DIR)\;$::env(Path)
@@ -169,9 +161,6 @@ proc launch_SetPaths {} {
         }
 
     # set the base tcl/tk library paths, using the previously defined TCL_LIB_DIR
-    # TODO: try out the following so that we're not tied to a TCL version number:
-    # set env(TCL_LIBRARY) [glob $env(TCL_LIB_DIR)/tcl?.?]
-    # set env(TK_LIBRARY) [glob $env(TCL_LIB_DIR)/tk?.?]
     set ::env(TCL_LIBRARY) $::env(TCL_LIB_DIR)/tcl8.4
     set ::env(TK_LIBRARY) $::env(TCL_LIB_DIR)/tk8.4
 
@@ -198,73 +187,9 @@ proc launch_SetPaths {} {
 }
 
 
-proc launch_SetupModules {} {
-    #
-    # Add the module bin directories to the load library path 
-    # and the Wrapping/Tcl directories to the tcl library path
-    # check :
-    # - Bbase in slicer home 
-    # - the user's home dir Modules directory
-    # - dirs listed in the SLICER_MODULES env variable
-    #
-    regsub -all {\\} $::env(SLICER_HOME) / slicer_home
-    regsub -all {\\} $::env(HOME) / home
-
-    # check for trailing slashes - on Windows, an extra slash breaks the module finding
-    set slicer_home [string trimright $slicer_home "/"]
-    set home [string trimright $home "/"]
-
-    set modulePaths $slicer_home/Modules
-    lappend modulePaths $home/Modules
-    if { [info exists ::env(SLICER_MODULES)] } {
-        foreach mpath $::env(SLICER_MODULES) {
-            lappend modulePaths [string trimright $mpath "/"]
-        }
-    }
-
-    set ::env(SLICER_MODULES_TO_REQUIRE) " "
-    foreach modulePath $modulePaths {
-        set modulePath [string trimright $modulePath "/"] ;# remove trailing slash
-        set modules [glob -nocomplain $modulePath/*]
-        foreach dir $modules {
-            if { ![file exists $dir/Wrapping/Tcl] } {
-                continue ;# without this dir then it's not one we want
-            }        
-            # get the module name
-            regexp "$modulePath/(\.\*)" $dir match moduleName
-            # if it's not the custom one, append it to the path
-            if {[string first Custom $moduleName] == -1} {
-                lappend ::env(SLICER_MODULES_TO_REQUIRE) $moduleName
-                if {$::env(BUILD) == $::SOLARIS || 
-                    $::env(BUILD) == $::LINUX_64 || 
-                    $::env(BUILD) == $::LINUX} {
-                    set ::env(LD_LIBRARY_PATH) ${modulePath}/$moduleName/builds/$::env(BUILD)/bin:$::env(LD_LIBRARY_PATH)
-                    set ::env(TCLLIBPATH) "${modulePath}/$moduleName/Wrapping/Tcl $::env(TCLLIBPATH)"
-                } elseif {$::env(BUILD) == $::DARWIN} {
-                    set ::env(DYLD_LIBRARY_PATH) ${modulePath}/$moduleName/builds/$::env(BUILD)/bin:$::env(DYLD_LIBRARY_PATH)
-                    set ::env(TCLLIBPATH) "${modulePath}/$moduleName/Wrapping/Tcl $::env(TCLLIBPATH)"
-                } elseif {$::env(BUILD) == $::WINDOWS} {
-                    set ::env(Path) $modulePath/$moduleName/builds/$::env(BUILD)/bin/$::env(VTK_BUILD_SUBDIR)\;$::env(Path)
-                    set ::env(TCLLIBPATH) "$modulePath/$moduleName/Wrapping/Tcl $::env(TCLLIBPATH)"
-                } else {
-                        puts stderr "Modules: Invalid build $::env(BUILD)"
-                        exit
-                }
-            }
-        }
-    }
-}
-
-
-proc launch_PostProcessPath {} {
-    if { $::env(BUILD) == $::DARWIN } {
-        # vtk uses the LD_ version to do it's own search for what to load
-        # so need to set this even though MAC OSX uses the DYLD_ version
-        set ::env(LD_LIBRARY_PATH) $::env(DYLD_LIBRARY_PATH)
-    }
-} 
-
-
+#
+# optional - show dialog
+#
 proc launch_LicenseDialog {} {
 
 
@@ -422,12 +347,12 @@ launch_SetPaths
 
 launch_SetupModules 
 
-launch_PostProcessPath
+#launch_LicenseDialog
 
-launch_LicenseDialog
-
+#
+# run program until it exits and then exit this script with the ouput
+#
 launch_RunProgram
 
-exit
 
 
