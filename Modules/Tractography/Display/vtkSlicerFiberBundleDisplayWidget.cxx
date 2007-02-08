@@ -122,11 +122,13 @@ void vtkSlicerFiberBundleDisplayWidget::SetFiberBundleNode ( vtkMRMLFiberBundleN
   // 
   // Set the member variables and do a first process
   //
+  // Stop observing the old node
   this->RemoveMRMLObservers();
 
   this->SetFiberBundleNodeID( fiberBundleNode->GetID() );
   this->SetFiberBundleDisplayNodeID( fiberBundleNode->GetDisplayNodeID() );
 
+  // Start observing the new node
   this->AddMRMLObservers();
 
   if ( fiberBundleNode )

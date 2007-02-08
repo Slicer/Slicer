@@ -48,6 +48,7 @@ vtkSlicerFiberBundleDisplayLogic::~vtkSlicerFiberBundleDisplayLogic()
 
   if ( this->FiberBundleNode ) 
     {
+    // TO DO: Does this undo the observing of events?
     vtkSetAndObserveMRMLNodeMacro( this->FiberBundleNode, NULL );
     }
 
