@@ -49,7 +49,7 @@ switch $::tcl_platform(os) {
         }
     }       
     "Darwin" { 
-        if {$::tcl_plafrom(machine) == "i386"} {
+        if {$::tcl_platform(machine) == "i386"} {
             set ::env(BUILD) $::DARWIN_X86
         } else {
             set ::env(BUILD) $::DARWIN 
