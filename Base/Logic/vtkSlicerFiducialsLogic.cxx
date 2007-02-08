@@ -121,13 +121,29 @@ int vtkSlicerFiducialsLogic::AddFiducial(float x, float y, float z)
         selnode->SetActiveFiducialListID(node->GetID());
         node->Delete();
         }
+      else
+        {
+        vtkErrorMacro("Error adding a new default selected fiducial list");
+        return -1;
+        }
       }
     // get the selected fiducial list
     vtkMRMLFiducialListNode *flist = vtkMRMLFiducialListNode::SafeDownCast(this->MRMLScene->GetNodeByID(selnode->GetActiveFiducialListID()));
     if (flist == NULL)
       {
-      vtkErrorMacro("FiducialsLogic: selected fiducial list is null");
-      return -1;
+      vtkErrorMacro("FiducialsLogic: selected fiducial list " << selnode->GetActiveFiducialListID() << " is null, making a new one");
+      vtkMRMLFiducialListNode *node = this->AddFiducialList();
+      if (node != NULL)
+        {
+        selnode->SetActiveFiducialListID(node->GetID());
+        node->Delete();
+        flist = vtkMRMLFiducialListNode::SafeDownCast(this->MRMLScene->GetNodeByID(selnode->GetActiveFiducialListID()));
+        }
+      else
+        {
+        vtkErrorMacro("Error creating a new default selected fiducial list when the current selected list was null");
+        return -1;
+        }
       }
 
     // add a fiducial
