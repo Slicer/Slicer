@@ -781,6 +781,7 @@ void vtkSlicerApplication::DisplayLogDialog(vtkKWTopLevel* master)
 
 void vtkSlicerApplication::DoOneTclEvent()
 {
+  std::cout << "Starting Python mainloop" << std::endl;
   // Let's start the python mainloop, rather than the tcl version
   PyObject* v = PyRun_StringFlags (
                          "from __main__ import tk;"

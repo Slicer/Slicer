@@ -334,42 +334,68 @@ int Slicer3_main(int argc, char *argv[])
   // -- later in this function tcl scripts are executed 
   //    and some additional global variables are defined
 
-  Tcl_Interp *interp = vtkKWApplication::InitializeTcl(argc, argv, &cerr);
+  Tcl_Interp *interp = NULL;
+#ifdef USE_PYTHON
+  // Initialize Python
+  Py_Initialize();
+  PySys_SetArgv(argc, argv);
+  PyObject* PythonModule = PyImport_AddModule("__main__");
+  if (PythonModule == NULL)
+    {
+    std::cerr << "Warning: Failed to initialize python" << std::endl;
+    return 1;
+    }
+  PyObject* PythonDictionary = PyModule_GetDict(PythonModule);
+
+  // let Python start Tcl/Tk, then get the interperter
+  PyObject* v;
+  v = PyRun_String( "import Tkinter;"
+                         "global tk;"
+                         "tk = Tkinter.Tk();"
+                         "tk.loadtk();"
+                         "addr = tk.interpaddr();"
+                         "print 'Tk: ', tk;"
+                         "print 'Tk address: ', addr;",
+                         Py_file_input,
+                         PythonDictionary,
+                         PythonDictionary );
+  if (v == NULL)
+    {
+    PyErr_Print();
+    std::cerr << "Error: Failed to initialize Python" << std::endl;
+    return 1;
+    }
+  PyObject_Print(PythonDictionary,
+                 stdout, Py_PRINT_RAW);
+
+  interp = (Tcl_Interp*) PyLong_AsLong ( PyDict_GetItemString ( PythonDictionary, "addr" ) );
+  if ( (long)interp == -1 )
+    {
+    std::cerr << "Error: Failed to get Tcl interp address from Python" << std::endl;
+    return 1;
+    }
+  Py_DECREF(v);
+  if (Py_FlushLine())
+    {
+    PyErr_Clear();
+    }
+  if (!Tcl_PkgPresent(interp, "Tk", NULL, 0))
+    {
+    std::cerr << "Error: Python failed to initialize Tk" << std::endl;
+    return 1;
+    }
+
+  std::cout << "Initialized python: addr: " << (long)interp << std::endl;
+  vtkKWApplication::InitializeTcl(interp, &cerr);
+  std::cout << "Initialized python: Slicer Interp: " << (long)vtkSlicerApplication::GetInstance()->GetMainInterp() << std::endl;
+  vtkSlicerApplication::GetInstance()->InitializePython ( PythonModule, PythonDictionary );
+#else
+  interp = vtkKWApplication::InitializeTcl(argc, argv, &cerr);
   if (!interp)
     {
     slicerCerr("Error: InitializeTcl failed" << endl );
     return 1;
     }
-
-#ifdef USE_PYTHON
-    // Initialize Python
-    Py_Initialize();
-    PySys_SetArgv(argc, argv);
-#if 0
-    PyRun_SimpleString("from time import time,ctime\n"
-                       "print 'Hello from python. Today is',ctime(time())\n");
-    PyRun_SimpleString("import Tkinter\n"
-                       "a = Tkinter.Tk()\n"
-                       "b = Tkinter.Message(a, text=\"Hello from python\")\n"
-                       "b.pack()\n");
-    PyRun_SimpleString(
-            "from pylab import *\n"
-            "ion()\n"
-            "mu, sigma = 100, 15\n"
-            "x = mu + sigma*randn(10000)\n"
-            "n, bins, patches = hist(x, 50, normed=1)\n"
-            "setp(patches, 'facecolor', 'g', 'alpha', 0.75)\n"
-            "y = normpdf( bins, mu, sigma)\n"
-            "l = plot(bins, y, 'r--')\n"
-            "setp(l, 'linewidth', 1)\n"
-            "xlabel('Smarts')\n"
-            "ylabel('Probability')\n"
-            "title(r'$\\rm{Histogram\\ of\\ IQ:}\\ \\mu=100,\\ \\sigma=15$')\n"
-            "axis([40, 160, 0, 0.03])\n"
-            "grid(True)\n"
-            );      
-            //"show()\n");      
-#endif
 #endif
     
     // Tell KWWidgets to make names like .vtkKWPushButton10 instead of .10 
