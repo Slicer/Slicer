@@ -69,7 +69,7 @@ void vtkMRMLFiberBundleStorageNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLFiberBundleStorageNode::ReadXMLAttributes(const char** atts)
 {
-  vtkMRMLStorageNode::ReadXMLAttributes(atts);
+  Superclass::ReadXMLAttributes(atts);
 }
 
 //----------------------------------------------------------------------------

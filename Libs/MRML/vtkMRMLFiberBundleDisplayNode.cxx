@@ -61,8 +61,48 @@ vtkMRMLFiberBundleDisplayNode::vtkMRMLFiberBundleDisplayNode()
 
 
   // Objects
-  //this->TextureImageData = NULL;
 
+  // MRML nodes
+  this->FiberLineDTDisplayPropertiesNode = NULL;
+  this->FiberTubeDTDisplayPropertiesNode = NULL;
+  this->TensorGlyphDTDisplayPropertiesNode = NULL;
+
+  // MRML IDs
+  this->FiberLineDTDisplayPropertiesNodeID = NULL;
+  this->FiberTubeDTDisplayPropertiesNodeID = NULL;
+  this->TensorGlyphDTDisplayPropertiesNodeID = NULL;
+
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLDiffusionTensorDisplayPropertiesNode* vtkMRMLFiberBundleDisplayNode::GetFiberLineDTDisplayPropertiesNode ( )
+{
+  vtkMRMLDiffusionTensorDisplayPropertiesNode* node = NULL;
+
+  // Find the node corresponding to the ID we have saved.
+  if  ( this->GetScene ( ) && this->GetFiberLineDTDisplayPropertiesNodeID ( ) )
+    {
+    vtkMRMLNode* cnode = this->GetScene ( ) -> GetNodeByID ( this->FiberLineDTDisplayPropertiesNodeID );
+    node = vtkMRMLDiffusionTensorDisplayPropertiesNode::SafeDownCast ( cnode );
+    }
+
+  return node;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLFiberBundleDisplayNode::SetAndObserveFiberLineDTDisplayPropertiesNodeID ( const char *ID )
+{
+  // Stop observing any old node
+  vtkSetAndObserveMRMLObjectMacro ( this->FiberLineDTDisplayPropertiesNode, NULL );
+
+  // Set the ID. This is the "ground truth" reference to the node.
+  this->SetFiberLineDTDisplayPropertiesNodeID ( ID );
+
+  // Get the node corresponding to the ID. This pointer is only to observe the object.
+  vtkMRMLNode *cnode = this->GetFiberLineDTDisplayPropertiesNode ( );
+
+  // Observe the node using the pointer.
+  vtkSetAndObserveMRMLObjectMacro ( this->FiberLineDTDisplayPropertiesNode , cnode );
 
 }
 
@@ -126,7 +166,7 @@ void vtkMRMLFiberBundleDisplayNode::Copy(vtkMRMLNode *anode)
 //----------------------------------------------------------------------------
 void vtkMRMLFiberBundleDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  int idx;
+  //int idx;
   
   Superclass::PrintSelf(os,indent);
 
