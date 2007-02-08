@@ -179,6 +179,8 @@ set ::SLICER_BUILD $::SLICER_HOME/../Slicer3-build
 # use an environment variable so doxygen can use it
 set ::env(SLICER_DOC) $::SLICER_HOME/../Slicer3-doc
 
+
+
 #######
 #
 # Note: the local vars file, slicer2/slicer_variables.tcl, overrides the default values in this script
@@ -194,6 +196,8 @@ if { [file exists $localvarsfile] } {
     puts "stderr: $localvarsfile not found - use this file to set up your build"
     exit 1
 }
+
+puts "making with $::MAKE"
 
 #initialize platform variables
 foreach v { isSolaris isWindows isDarwin isLinux } { set $v 0 }
