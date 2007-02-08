@@ -16,6 +16,7 @@ SET(vtkTeem_SRCS
   vtkNRRDReader.cxx
   vtkTensorMathematics.cxx
   vtkTeemEstimateDiffusionTensor.cxx
+  vtkDiffusionTensorGlyph.cxx
 )
 
 # Abstract/pure virtual classes
