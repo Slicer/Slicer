@@ -34,7 +34,6 @@ class vtkSlicerVisibilityIcons;
 class vtkKWChangeColorButton;
 class vtkKWScaleWithEntry;
 class vtkKWMenuButtonWithLabel;
-class vtkSlicerViewerWidget;
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleGUI
 {
  public:
@@ -140,9 +139,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     //ETX
 
     // Description:
-    // Get/Set the main slicer viewer widget, for picking
-    vtkGetObjectMacro(ViewerWidget, vtkSlicerViewerWidget);
-    virtual void SetViewerWidget(vtkSlicerViewerWidget *viewerWidget);
+    // Update the gui from the currently selected list, called on Enter
+    void UpdateGUI();
     
  protected:
     vtkSlicerFiducialsGUI ( );
@@ -216,10 +214,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
         OrZColumn = 8,
     };
     //ETX
-    
-    // Description:
-    // A pointer back to the viewer widget, useful for picking
-    vtkSlicerViewerWidget *ViewerWidget;
 
 private:
     vtkSlicerFiducialsGUI ( const vtkSlicerFiducialsGUI& ); // Not implemented.

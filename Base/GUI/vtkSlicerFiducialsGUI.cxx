@@ -19,9 +19,6 @@
 #include "vtkKWMenuButton.h"
 #include "vtkKWMenuButtonWithLabel.h"
 
-// for pick events
-#include "vtkSlicerViewerWidget.h"
-
 #include "vtkSlicerFiducialsGUI.h"
 
 //---------------------------------------------------------------------------
@@ -59,8 +56,6 @@ vtkSlicerFiducialsGUI::vtkSlicerFiducialsGUI ( )
     this->NAMICLabel = NULL;
     this->NACLabel = NULL;
     
-    // for picking
-    this->ViewerWidget = NULL;
 //    this->DebugOn();
 }
 
@@ -177,7 +172,6 @@ vtkSlicerFiducialsGUI::~vtkSlicerFiducialsGUI ( )
     this->SetFiducialListNodeID(NULL);
     vtkSetMRMLNodeMacro(this->FiducialListNode, NULL);
 
-    this->SetViewerWidget(NULL);
 }
 
 
@@ -212,11 +206,6 @@ void vtkSlicerFiducialsGUI::RemoveGUIObservers ( )
     
     this->RemoveObservers (vtkSlicerFiducialsGUI::FiducialListIDModifiedEvent, (vtkCommand *)this->GUICallbackCommand);    
 
-    if (this->ViewerWidget)
-      {
-      this->ViewerWidget->RemoveObservers(vtkSlicerViewerWidget::PickEvent, (vtkCommand *)this->GUICallbackCommand);
-      }
-
 }
 
 
@@ -237,12 +226,7 @@ void vtkSlicerFiducialsGUI::AddGUIObservers ( )
     this->ListTextScale->AddObserver (vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
     this->ListOpacity->AddObserver (vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
     
-    this->AddObserver(vtkSlicerFiducialsGUI::FiducialListIDModifiedEvent, (vtkCommand *)this->GUICallbackCommand);
-
-    if (this->ViewerWidget)
-      {
-      this->ViewerWidget->AddObserver(vtkSlicerViewerWidget::PickEvent, (vtkCommand *)this->GUICallbackCommand);
-      }
+    this->AddObserver(vtkSlicerFiducialsGUI::FiducialListIDModifiedEvent, (vtkCommand *)this->GUICallbackCommand);    
 }
 
 
@@ -429,17 +413,7 @@ void vtkSlicerFiducialsGUI::ProcessGUIEvents ( vtkObject *caller,
     activeFiducialListNode->SetGlyphTypeFromString(this->ListSymbolTypeMenu->GetWidget()->GetValue());
     }
 
-  if (event == vtkSlicerViewerWidget::PickEvent)
-    {
-    vtkDebugMacro("FiducialsGUI: Pick event!\n");
-    // get the viewer widget and check for a valid RAS point
-    
-    double *rasPoint = this->GetApplicationGUI()->GetViewerWidget()->GetPickedRAS();
-    if (rasPoint != NULL)
-      {
-      int modelIndex = this->GetLogic()->AddFiducial(rasPoint[0], rasPoint[1], rasPoint[2]);
-      }
-    }
+  
   return;
 }
 
@@ -531,6 +505,39 @@ void vtkSlicerFiducialsGUI::ProcessMRMLEvents ( vtkObject *caller,
     vtkDebugMacro("vtkSlicerFiducialsGUI: Done processing mrml events...");
 //    std::cerr << "vtkSlicerFiducialsGUI::ProcessMRMLEvents  mismatched
 //    caller and event (" << event << ")\n";
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerFiducialsGUI::UpdateGUI()
+{
+    // is it built
+
+    // get the selected list
+    if (this->ApplicationLogic)
+      {
+      vtkMRMLSelectionNode *selnode = this->ApplicationLogic->GetSelectionNode();
+      if (selnode->GetActiveFiducialListID() != NULL)
+        {
+        if (this->GetFiducialListNodeID() != NULL)
+          {
+          if (strcmp(selnode->GetActiveFiducialListID(), this->GetFiducialListNodeID()) != 0)
+            {
+            this->SetFiducialListNodeID(selnode->GetActiveFiducialListID());
+            }
+          }
+        else
+          {
+          // it wasn't set yet
+          this->SetFiducialListNodeID(selnode->GetActiveFiducialListID());
+          }
+        }
+      }
+    
+    // update the gui
+    if (this->GetFiducialListNodeID() != NULL)
+      {
+      SetGUIFromList((vtkMRMLFiducialListNode *)this->MRMLScene->GetNodeByID(this->GetFiducialListNodeID()));
+      }
 }
 
 //---------------------------------------------------------------------------
@@ -764,6 +771,7 @@ void vtkSlicerFiducialsGUI::Enter ( )
     this->AddGUIObservers();
     }
     this->CreateModuleEventBindings();
+    this->UpdateGUI();
 }
 
 
@@ -1224,10 +1232,4 @@ void vtkSlicerFiducialsGUI::SetFiducialListNodeID (char * id)
       vtkDebugMacro("Fid GUI: setting the active fid list id to " << this->FiducialListNodeID);
       this->ApplicationLogic->GetSelectionNode()->SetActiveFiducialListID( this->FiducialListNodeID );
       }
-}
-
-//----------------------------------------------------------------------------
-void vtkSlicerFiducialsGUI::SetViewerWidget ( vtkSlicerViewerWidget *viewerWidget )
-{
-  this->ViewerWidget = viewerWidget;
 }
