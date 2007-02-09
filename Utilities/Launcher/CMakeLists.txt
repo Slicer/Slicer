@@ -1,6 +1,13 @@
 
+SET (launcher_machine ${CMAKE_SYSTEM_PROCESSOR}) 
+
+IF (${launcher_machine} MATCHES "i386")
+  SET (launcher_machine "x86") 
+ENDIF (${launcher_machine} MATCHES "i386")
+
+
 IF(NOT DEFINED launcher_platform )
-  SET(launcher_platform  ${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR})
+  SET(launcher_platform  ${CMAKE_SYSTEM_NAME}-${launcher_machine})
 ENDIF(NOT DEFINED launcher_platform )
 IF(${launcher_platform} MATCHES Windows)
   IF(CMAKE_CL_64)
