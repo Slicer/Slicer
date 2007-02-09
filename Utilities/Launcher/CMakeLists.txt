@@ -10,6 +10,10 @@ IF(${launcher_platform} MATCHES Windows)
   ENDIF(CMAKE_CL_64)
 ENDIF(${launcher_platform} MATCHES Windows)
 
+IF(${launcher_platform} MATCHES Linux)
+  SET(launcher_platform  linux-x86)
+ENDIF(${launcher_platform} MATCHES Linux)
+
 STRING ( TOLOWER "${launcher_platform}" launcher_platform )
 SET (launcher_name "Slicer3-${launcher_platform}${CMAKE_EXECUTABLE_SUFFIX}")
 

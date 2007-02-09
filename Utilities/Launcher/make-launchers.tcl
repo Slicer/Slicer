@@ -27,17 +27,17 @@ set __comment {
 cd [file dirname [info script]]
 
 puts "making linux..."
-exec tclkitsh tclkits/sdx.kit wrap slicer3 -runtime tclkits/tclkit-linux-x86
-file rename -force slicer3 slicer3launchers/slicer3-linux-x86
+exec tclkitsh tclkits/sdx.kit wrap Slicer3 -runtime tclkits/tclkit-linux-x86
+file rename -force Slicer3 Slicer3Launchers/Slicer3-linux-x86
 
 puts "making win32..."
-exec tclkitsh tclkits/sdx.kit wrap slicer3 -runtime tclkits/tclkit-win32.exe
-file rename -force slicer3 slicer3launchers/slicer3-win32.exe
+exec tclkitsh tclkits/sdx.kit wrap Slicer3 -runtime tclkits/tclkit-win32.exe
+file rename -force Slicer3 Slicer3Launchers/Slicer3-win32.exe
 
 puts "making darwin-ppc..."
-exec tclkitsh tclkits/sdx.kit wrap slicer3 -runtime tclkits/tclkit-darwin-ppc
-file rename -force slicer3 slicer3launchers/slicer3-darwin-ppc
+exec tclkitsh tclkits/sdx.kit wrap Slicer3 -runtime tclkits/tclkit-darwin-ppc
+file rename -force Slicer3 Slicer3Launchers/Slicer3-darwin-ppc
 
 puts "making darwin-x86..."
-exec tclkitsh tclkits/sdx.kit wrap slicer3 -runtime tclkits/tclkit-darwin-x86
-file rename -force slicer3 slicer3launchers/slicer3-darwin-x86
+exec tclkitsh tclkits/sdx.kit wrap Slicer3 -runtime tclkits/tclkit-darwin-x86
+file rename -force Slicer3 Slicer3Launchers/Slicer3-darwin-x86
