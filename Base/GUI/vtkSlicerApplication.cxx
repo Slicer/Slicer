@@ -778,9 +778,11 @@ void vtkSlicerApplication::DisplayLogDialog(vtkKWTopLevel* master)
 
 
 #ifdef USE_PYTHON
-
 void vtkSlicerApplication::DoOneTclEvent()
 {
+
+  Tcl_DoOneEvent(0);
+#if 0
   std::cout << "Starting Python mainloop" << std::endl;
   // Let's start the python mainloop, rather than the tcl version
   PyObject* v = PyRun_StringFlags (
@@ -800,5 +802,6 @@ void vtkSlicerApplication::DoOneTclEvent()
     {
     PyErr_Clear();
     }
+#endif
 }
 #endif

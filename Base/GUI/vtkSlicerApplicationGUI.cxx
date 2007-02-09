@@ -58,6 +58,10 @@
 #include "vtkSlicerApplicationSettingsInterface.h"
 #include "vtkSlicerSliceControllerWidget.h"
 
+#ifdef USE_PYTHON
+#include <Python.h>
+#endif
+
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerApplicationGUI);
 vtkCxxRevisionMacro(vtkSlicerApplicationGUI, "$Revision: 1.0 $");
@@ -723,6 +727,11 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
             i = this->MainSlicerWindow->GetEditMenu()->AddCommand ( "Redo", NULL, "$::slicer3::MRMLScene Redo" );
             this->MainSlicerWindow->GetEditMenu()->SetItemAccelerator ( i, "Ctrl+Y");
             this->MainSlicerWindow->GetEditMenu()->SetBindingForItemAccelerator ( i, this->MainSlicerWindow);
+#ifdef USE_PYTHON
+            i = this->MainSlicerWindow->GetEditMenu()->AddCommand ( "Python console", NULL, "$::slicer3::ApplicationGUI PythonConsole" );
+#endif
+            // this->MainSlicerWindow->GetEditMenu()->SetItemAccelerator ( i, "Ctrl+Y");
+            // this->MainSlicerWindow->GetEditMenu()->SetBindingForItemAccelerator ( i, this->MainSlicerWindow);
 
             //
             // View Menu
@@ -762,6 +771,47 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
     }
 }
 
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::PythonConsole (  )
+{
+  
+#ifdef USE_PYTHON
+  PyObject* d = vtkSlicerApplication::GetInstance()->GetPythonDictionary();
+  if ( d == NULL )
+    {
+    vtkSlicerApplication::GetInstance()->RequestDisplayMessage ( "Error", "Failed to startup python interpreter: dictionary null" );
+    return;
+    }
+    
+  PyObject* v = PyRun_StringFlags ( "import sys;\n"
+                                    "try:\n"
+                                    "  import Slicer;\n"
+                                    "  reload ( Slicer );\n"
+                                    "  Slicer.StartConsole();\n"
+                                    "except Exception, e:\n"
+                                    "  print 'Failed to import Slicer', e\n"
+                                    "sys.stdout.flush();\n"
+                                    "sys.stderr.flush();\n",
+                                    Py_file_input,
+                                    d,
+                                    d,
+                                    NULL);
+
+  if (v == NULL)
+    {
+    PyErr_Print();
+    vtkSlicerApplication::GetInstance()->RequestDisplayMessage ( "Error", "Failed to startup python interpreter" );
+    return;
+    }
+  Py_DECREF ( v );
+  if (Py_FlushLine())
+    {
+    PyErr_Clear();
+    }
+#endif
+}
 
 
 //---------------------------------------------------------------------------

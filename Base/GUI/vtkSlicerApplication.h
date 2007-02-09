@@ -154,7 +154,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
 #ifdef USE_PYTHON
 //BTX
   virtual void InitializePython( PyObject* mod, PyObject* dict )
-  { PythonModule = mod; PythonDictionary = dict; };
+  { PythonModule = mod; 
+    PythonDictionary = dict; };
   vtkGetMacro(PythonModule, PyObject*);
   vtkGetMacro(PythonDictionary, PyObject*);
 //ETX
