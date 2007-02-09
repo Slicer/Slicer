@@ -6,6 +6,18 @@ function headerInfo = preadNrrd( p )
 
 clear headerInfo;
 
+% headerInfo.content = '';
+% headerInfo.type = '';
+% headerInfo.dimension = 0;
+% headerInfo.space = '';
+% headerInfo.sizes = [0; 0; 0];
+% headerInfo.spaceorigin = [0; 0; 0];
+% headerInfo.spacedirections = [0; 0; 0; 0; 0; 0; 0; 0; 0];
+% headerInfo.encoding = '';
+% headerInfo.endian = '';
+% headerInfo.data = '';
+              
+headerInfo = '';
 
 cs = pgetl(p);
 
@@ -13,10 +25,15 @@ while( ~strcmp (cs, '') )
 
   csU = upper( cs );
   
-  if ( foundKeyword( 'CONTENT:', cs ) )
+  if (strncmp(cs, 'No volume', 9))
+      
+   fprintf('%s\n',cs);
+   return
+ 
+  elseif ( foundKeyword( 'CONTENT:', cs ) )
     
     headerInfo.content = removeExcessDelimiters( cs( length('CONTENT:')+1:end ), ' ');
-    
+        
   elseif ( foundKeyword('TYPE:', cs ) )
     
     headerInfo.type = removeExcessDelimiters( cs( length('TYPE:')+1:end ), ' ');
@@ -123,27 +140,60 @@ while( ~strcmp (cs, '') )
     end
     
   end
-
-
   cs = pgetl( p );
+end
+
+
+if (strcmp(headerInfo,'') == 1) 
+    fprintf('No data.\n');
+    return
 end
 
 % Now read the data...
 
-mType = nTTMT( headerInfo.type );
+popenType = nrrd2popenType( headerInfo.type );
 dataSize = prod(headerInfo.sizes); 
-headerInfo.data = popenr( p, dataSize, mType);
+
+% There is no need to take into account the endianess issue here since
+% slicer sends data in little endian always.
+
+headerInfo.data = popenr(p, dataSize, popenType);
 headerInfo.data = reshape(headerInfo.data, headerInfo.sizes');
+
+% correct data type according to nrrd data type
+switch headerInfo.type
+    case {'short'}
+        headerInfo.data = int16(headerInfo.data);
+    case {'double'}
+        headerInfo.data = double(headerInfo.data);
+    case {'float'}
+        headerInfo.data = single(headerInfo.data);
+    case {'ushort'}
+        headerInfo.data = uint16(headerInfo.data);
+    case {'char'}
+        headerInfo.data = int8(headerInfo.data);
+    case {'unsigned char'}
+        headerInfo.data = uint8(headerInfo.data);
+    case {'int'}
+        headerInfo.data = int32(headerInfo.data);
+    case {'uint'}
+        headerInfo.data = uint32(headerInfo.data);
+    case {'longlong'}
+        headerInfo.data = int64(headerInfo.data);
+    case {'ulonglong'}
+        headerInfo.data = uint64(headerInfo.data);
+    otherwise
+        fprintf('Unknown type: %s\n', headerInfo.type);
+        fprintf('Type has not been adapted, your data type is not unsupported.\n');
+end
 
 return
 
 
 %
 %
-%
 % helper functions from marc:
-
-
+  
 function [iGNr, dwiGradient] = extractGradient( st )
 
 % first get the gradient number
@@ -222,6 +272,7 @@ end
 
 iEnd = len;
 
+
 while ( iEnd>1 & strList(iEnd)==delim )
   iEnd = iEnd-1;
 end
@@ -285,20 +336,3 @@ else
 end
 
 return
-
-function mType = nTTMT( nrrdType )
-
-  switch nrrdType
-    case {'short'}
-      mType = 'int16';
-    case {'double'}
-      mType = 'double';
-    case {'float'}
-      mType = 'single';
-    case {'unsigned short'}
-      mType = 'uint16';
-    otherwise
-      mType = 'unknown type'
-  end
-return
-
