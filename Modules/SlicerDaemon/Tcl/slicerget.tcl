@@ -10,7 +10,7 @@ exec tclsh "$0" "$@"
 #
 
 array set vtk_to_nrrd_types { 2 char 3 "unsigned char" 4 short 5 ushort 6 int 7 uint 10 float 11 double }
-array set vtk_types_sizes { 2 1  3 1  4 2  5 2  6 3  7 4  10 4  11 8 }
+array set vtk_types_sizes { 2 1  3 1  4 2  5 2  6 4  7 4  10 4  11 8 }
 
 set id [lindex $argv 0]
 
