@@ -188,10 +188,10 @@ proc launch_SetPaths {} {
 proc launch_SplashScreen {} {
 
   toplevel .splash
-  label .splash.l -text starting...
+  label .splash.l -text "Placeholder Splash Screen.\n\nSlicer3 starting..."
   pack .splash.l
   update
-  after 1000 "destroy .splash.l"
+  after 1000 "destroy .splash"
 
 }
 
