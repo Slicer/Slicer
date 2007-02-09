@@ -23,6 +23,8 @@
 #include "vtkMRMLFiberBundleDisplayNode.h"
 
 #include "vtkTubeFilter.h"
+//#include "vtkDiffusionTensorGlyph.h"
+// Steve Pieper this above uses TEEM
 
 #include <sstream>
 
@@ -100,12 +102,30 @@ void vtkSlicerFiberBundleDisplayLogic::CreateTemporaryModelNodeForDisplay ( vtkM
   modelNode->SetName(name);
   
   
-  modelNode->SetAndObserveDisplayNodeID(displayNode->GetID());
+  //modelNode->SetAndObserveDisplayNodeID(displayNode->GetID());
 
   vtkDebugMacro("Done creating temporary display model");
 }
 
+//----------------------------------------------------------------------------
+void vtkSlicerFiberBundleDisplayLogic::AddTemporaryModelNodeToScene ( vtkMRMLModelNode * & modelNode, vtkMRMLModelDisplayNode * & displayNode)
+{
+  vtkDebugMacro("Adding temporary display model to scene");
 
+  // check that the model and display node exist, and that the model
+  // is not already in the scene.
+  if (modelNode != NULL && displayNode != NULL && this->MRMLScene->GetNodeByID( modelNode->GetID() ) == NULL )
+    {
+    this->MRMLScene->AddNode(displayNode);
+    this->MRMLScene->AddNode(modelNode);
+    modelNode->SetAndObserveDisplayNodeID(displayNode->GetID());
+    }
+
+  vtkDebugMacro("Done adding temporary display model to scene");
+}
+
+
+// TO DO: How to remove from the scene?
 //----------------------------------------------------------------------------
 void vtkSlicerFiberBundleDisplayLogic::DeleteTemporaryModelNodeForDisplay ( vtkMRMLModelNode * & modelNode, vtkMRMLModelDisplayNode * & displayNode)
 {
@@ -162,6 +182,16 @@ void vtkSlicerFiberBundleDisplayLogic::UpdateModelDisplay ( )
         this->DeleteTubeModelNodes();
         }
 
+      // see which kind of model we are displaying
+      if (fiberBundleDisplayNode->GetFiberGlyphVisibility() == 1)
+        {
+        this->CreateGlyphModel();
+        }
+      else
+        {
+        this->DeleteGlyphModelNodes();
+        }
+
 
       }
 
@@ -192,7 +222,7 @@ void vtkSlicerFiberBundleDisplayLogic::CreateLineModel ( )
     return;
     }
 
-  // if the modelNode exists and is not in the scene, delete it and then redo it
+  // if the modelNode exists and is not in the scene, delete it (and then redo it)
   if (this->LineModelNode != NULL && this->MRMLScene->GetNodeByID( this->LineModelNode->GetID() ) == NULL )
     {
     this->DeleteLineModelNodes();
@@ -226,7 +256,7 @@ void vtkSlicerFiberBundleDisplayLogic::CreateLineModel ( )
       vtkDebugMacro("Updating line model according to FB display node");
 
       this->LineModelDisplayNode->SetVisibility( fiberBundleDisplayNode->GetVisibility ( ) );
-      this->LineModelDisplayNode->SetOpacity( fiberBundleDisplayNode->GetOpacity ( ) );
+      this->LineModelDisplayNode->SetOpacity( fiberBundleDisplayNode->GetFiberLineOpacity ( ) );
       this->LineModelDisplayNode->SetColor( fiberBundleDisplayNode->GetColor ( ) );
       this->LineModelDisplayNode->SetAmbient( fiberBundleDisplayNode->GetAmbient ( ) );
       this->LineModelDisplayNode->SetDiffuse( fiberBundleDisplayNode->GetDiffuse ( ) );
@@ -246,13 +276,7 @@ void vtkSlicerFiberBundleDisplayLogic::CreateLineModel ( )
 
   vtkDebugMacro("Adding model to scene");
 
-  // if the modelNode exists but is not in the scene, put it there
-  if (this->LineModelNode != NULL && this->MRMLScene->GetNodeByID( this->LineModelNode->GetID() ) == NULL )
-    {
-    this->MRMLScene->AddNode(this->LineModelDisplayNode);
-    this->MRMLScene->AddNode(this->LineModelNode);
-    this->LineModelNode->SetAndObserveDisplayNodeID(this->LineModelDisplayNode->GetID());
-    }
+  this->AddTemporaryModelNodeToScene ( this->LineModelNode, this->LineModelDisplayNode );
 
   vtkDebugMacro("Done creating line model");
 
@@ -308,7 +332,7 @@ void vtkSlicerFiberBundleDisplayLogic::CreateTubeModel ( )
       vtkDebugMacro("Updating line model according to FB display node");
 
       this->TubeModelDisplayNode->SetVisibility( fiberBundleDisplayNode->GetVisibility ( ) );
-      this->TubeModelDisplayNode->SetOpacity( fiberBundleDisplayNode->GetOpacity ( ) );
+      this->TubeModelDisplayNode->SetOpacity( fiberBundleDisplayNode->GetFiberTubeOpacity ( ) );
       this->TubeModelDisplayNode->SetColor( fiberBundleDisplayNode->GetColor ( ) );
       this->TubeModelDisplayNode->SetAmbient( fiberBundleDisplayNode->GetAmbient ( ) );
       this->TubeModelDisplayNode->SetDiffuse( fiberBundleDisplayNode->GetDiffuse ( ) );
@@ -356,6 +380,105 @@ void vtkSlicerFiberBundleDisplayLogic::CreateTubeModel ( )
 
 } 
 
+
+
+void vtkSlicerFiberBundleDisplayLogic::DeleteGlyphModelNodes ( )
+{
+  this->DeleteTemporaryModelNodeForDisplay ( this->GlyphModelNode, this->GlyphModelDisplayNode );
+}
+
+void vtkSlicerFiberBundleDisplayLogic::CreateGlyphModelNodes ( )
+{
+    this->CreateTemporaryModelNodeForDisplay ( this->GlyphModelNode, this->GlyphModelDisplayNode );
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerFiberBundleDisplayLogic::CreateGlyphModel ( )
+{
+  vtkDebugMacro("Creating line model");
+
+  // if we have no MRML scene yet 
+  if (this->MRMLScene == NULL)
+    {
+    vtkErrorMacro("Cannot create line model, no MRMLScene set yet.");
+    return;
+    }
+
+  // if the modelNode exists and is not in the scene, delete it and then redo it
+  if (this->GlyphModelNode != NULL && this->MRMLScene->GetNodeByID( this->GlyphModelNode->GetID() ) == NULL )
+    {
+    this->DeleteGlyphModelNodes();
+    }
+
+  // if the modelNode does not exist set it up again totally
+  if ( this->GlyphModelNode == NULL) 
+    {
+    this->CreateGlyphModelNodes();
+    }
+
+  vtkDebugMacro("Updating line model according to fiber bundle nodes");
+
+  // update the polydata and display parameters:
+  if (this->FiberBundleNode != NULL) 
+    {
+
+    // update the polydata and display parameters:
+    // set properties according to the fiber bundle's display node
+    vtkMRMLFiberBundleDisplayNode * fiberBundleDisplayNode = this->FiberBundleNode->GetDisplayNode();
+    if (fiberBundleDisplayNode != NULL)
+      {
+
+      vtkDebugMacro("Updating line model according to FB display node");
+
+      this->GlyphModelDisplayNode->SetVisibility( fiberBundleDisplayNode->GetVisibility ( ) );
+      this->GlyphModelDisplayNode->SetOpacity( fiberBundleDisplayNode->GetFiberGlyphOpacity ( ) );
+      this->GlyphModelDisplayNode->SetColor( fiberBundleDisplayNode->GetColor ( ) );
+      this->GlyphModelDisplayNode->SetAmbient( fiberBundleDisplayNode->GetAmbient ( ) );
+      this->GlyphModelDisplayNode->SetDiffuse( fiberBundleDisplayNode->GetDiffuse ( ) );
+
+      vtkDebugMacro("Updating line model according to DT display node");
+
+      vtkDebugMacro("Getting poly data from FB node");
+      
+      // Steve Pieper the below uses TEEM
+      // get polylines from the fiber bundle node and glyph them
+      //vtkDiffusionTensorGlyph *glyphFilter = vtkDiffusionTensorGlyph::New();
+      //glyphFilter->SetInput(this->FiberBundleNode->GetPolyData () );
+
+      //glyphFilter->Update ( );
+      //this->GlyphModelNode->SetAndObservePolyData(glyphFilter->GetOutput( ) );
+      //glyphFilter->Delete ( );
+
+      vtkDebugMacro("Done getting poly data from FB node");
+
+
+      //this->GlyphModelDisplayNode->GetColorModeForFiberGlyphs();
+      // set display properties according to the tensor-specific display properties node
+      vtkMRMLDiffusionTensorDisplayPropertiesNode * DTDisplayNode = fiberBundleDisplayNode->GetFiberGlyphDTDisplayPropertiesNode( );
+
+      if (DTDisplayNode != NULL)
+        {
+        // TO DO: need filter to calculate FA, average FA, etc. as requested
+        }
+
+      }
+
+
+    }
+
+  vtkDebugMacro("Adding model to scene");
+
+  // if the modelNode exists but is not in the scene, put it there
+  if (this->GlyphModelNode != NULL && this->MRMLScene->GetNodeByID( this->GlyphModelNode->GetID() ) == NULL )
+    {
+    this->MRMLScene->AddNode(this->GlyphModelDisplayNode);
+    this->MRMLScene->AddNode(this->GlyphModelNode);
+    this->GlyphModelNode->SetAndObserveDisplayNodeID(this->GlyphModelDisplayNode->GetID());
+    }
+
+  vtkDebugMacro("Done creating line model");
+
+} 
 
 
 //----------------------------------------------------------------------------

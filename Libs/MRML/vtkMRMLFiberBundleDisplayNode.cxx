@@ -56,6 +56,10 @@ vtkMRMLFiberBundleDisplayNode::vtkMRMLFiberBundleDisplayNode()
   this->Name = "FiberBundleDisplay";
 
   // Numbers
+  this->FiberLineOpacity = 1;
+  this->FiberTubeOpacity = 1;
+  this->FiberGlyphOpacity = 1;
+
   this->FiberTubeRadius = 0.5;
   this->FiberTubeNumberOfSides = 4;
 

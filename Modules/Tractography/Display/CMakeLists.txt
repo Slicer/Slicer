@@ -30,6 +30,8 @@ SET(SlicerTractographyDisplay_SRCS
 # Include dirs
 
 INCLUDE_DIRECTORIES(
+  ${vtkTeem_SOURCE_DIR}
+  ${vtkTeem_BINARY_DIR}
   ${SlicerTractographyDisplay_SOURCE_DIR}
   ${SlicerTractographyDisplay_BINARY_DIR}
   ${SlicerBase_SOURCE_DIR}
@@ -85,8 +87,9 @@ TARGET_LINK_LIBRARIES(SlicerTractographyDisplay
   ITKBasicFilters
   ITKIO
   ITKDICOMParser
-  ${KWWidgets_LIBRARIES} )
-
+  ${KWWidgets_LIBRARIES}
+  #  vtkTeem
+   )
 
 
 # --------------------------------------------------------------------------

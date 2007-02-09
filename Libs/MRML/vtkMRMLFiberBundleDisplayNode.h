@@ -143,12 +143,27 @@ class VTK_MRML_EXPORT vtkMRMLFiberBundleDisplayNode : public vtkMRMLModelDisplay
   };
 
   //--------------------------------------------------------------------------
-  // Display Information: ColorMode for tubes
+  // Display Information: line properties
   //--------------------------------------------------------------------------
 
+  // Description:
+  // Opacity of line trajectory
+  vtkSetMacro ( FiberLineOpacity , double );
+  vtkGetMacro ( FiberLineOpacity , double );
+
   //--------------------------------------------------------------------------
-  // Display Information: Thickness for tubes
+  // Display Information: ColorMode for tubes
   //--------------------------------------------------------------------------
+  // TO DO: implement all color modes
+
+  //--------------------------------------------------------------------------
+  // Display Information: tube properties
+  //--------------------------------------------------------------------------
+
+  // Description:
+  // Opacity of tubed trajectory
+  vtkSetMacro ( FiberTubeOpacity , double );
+  vtkGetMacro ( FiberTubeOpacity , double );
 
   // Description:
   // Thickness (radius) of tubed trajectory ("thick fibers") geometry.
@@ -164,6 +179,17 @@ class VTK_MRML_EXPORT vtkMRMLFiberBundleDisplayNode : public vtkMRMLModelDisplay
   // Display Information: ColorMode for glyphs
   //--------------------------------------------------------------------------
   // TO DO: is this needed? or directly use per-glyph color from display props
+
+  //--------------------------------------------------------------------------
+  // Display Information: glyph properties
+  //--------------------------------------------------------------------------
+
+  // Description:
+  // Opacity of glyphs
+  // TO DO: Is this needed or always 1?
+  vtkSetMacro ( FiberGlyphOpacity , double );
+  vtkGetMacro ( FiberGlyphOpacity , double );
+
 
   //--------------------------------------------------------------------------
   // MRML nodes that are observed
@@ -227,6 +253,10 @@ class VTK_MRML_EXPORT vtkMRMLFiberBundleDisplayNode : public vtkMRMLModelDisplay
   vtkSetReferenceStringMacro(FiberGlyphDTDisplayPropertiesNodeID);
 
   // Numbers
+  double FiberLineOpacity;
+  double FiberTubeOpacity;
+  double FiberGlyphOpacity;
+
   double FiberTubeRadius;
   int FiberTubeNumberOfSides;
   

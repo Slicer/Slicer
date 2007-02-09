@@ -73,14 +73,17 @@ protected:
   // Delete a model from MRML scene.
   void DeleteTemporaryModelNodeForDisplay ( vtkMRMLModelNode * & modelNode, vtkMRMLModelDisplayNode * & displayNode );
 
+  // Description:
+  // Add a model to MRML scene.
+  void AddTemporaryModelNodeToScene ( vtkMRMLModelNode * & modelNode, vtkMRMLModelDisplayNode * & displayNode);
 
   void CreateLineModelNodes ( );
   void CreateTubeModelNodes ( );
-  //void CreateGlyphModelNodes ( );
+  void CreateGlyphModelNodes ( );
 
   void DeleteLineModelNodes ( );
   void DeleteTubeModelNodes ( );
-  //void DeleteGlyphModelNodes ( );
+  void DeleteGlyphModelNodes ( );
 
 
   // Description:
@@ -96,7 +99,7 @@ protected:
   // Description:
   // Create a tensor glyph model. The polydata is generated from our vtkMRMLFiberBundleNode, 
   // according to its vtkMRMLFiberDisplayNode settings.
-  //void CreateGlyphModel ( );
+  void CreateGlyphModel ( );
 
   // Description:
   // Handle the logic to display various types of models (line/tube/glyph) and 
