@@ -1,5 +1,5 @@
 
-function result = pwriteNrrd( p, header )
+function pwriteNrrd( p, header )
 
 % write a nrrd image to a pipe opened by popenw
 
@@ -10,6 +10,7 @@ popenw(p,double(['content: from pwriteNrrd', 10]),'char');
 popenw(p,double('type: '),'char');
 popenw(p,double([header.type, 10]),'char');
 
+header
 
 str = sprintf ('dimension: %d', header.dimension);
 popenw(p,double([str, 10]),'char');
@@ -56,11 +57,10 @@ popenw(p,double([header.endian, 10]),'char');
 
 
 popenw(p,10,'char');
+popenType = nrrd2popenType( header.type );
 
-
-% TODO: generalize to other data type
-popenw(p,double(header.data), 'int16');
-
+% popenw expects double data since the mex-way to access parameters only
+% works for double-pointers (see function mxGetPr)
+popenw(p,double(header.data), popenType);
 
 return
-
