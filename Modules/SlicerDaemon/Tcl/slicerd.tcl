@@ -143,14 +143,15 @@ proc slicerd_sock_fileevent {sock} {
             }
 
             if { $node == "" } {
-              # try to get volume by name
-              set numNodes [$::slicer3::MRMLScene GetNumberOfNodesByClass vtkMRMLVolumeNode]
-              for {set n 0} {$n < $numNodes} {incr n} {
-                set node [$::slicer3::MRMLScene GetNthNodeByClass $n vtkMRMLVolumeNode]
-                if { [$node GetName] == $volid } {
-                  break;
+                # try to get volume by name
+                set numNodes [$::slicer3::MRMLScene GetNumberOfNodesByClass vtkMRMLVolumeNode]
+                for {set n 0} {$n < $numNodes} {incr n} {
+                    set node [$::slicer3::MRMLScene GetNthNodeByClass $n vtkMRMLVolumeNode]
+                    if { [$node GetName] == $volid } {
+                        break;
+                    }
+                    set node ""
                 }
-              }
             }
             
             if { $node == "" } {
@@ -184,6 +185,7 @@ proc slicerd_sock_fileevent {sock} {
             set im [$node GetImageData]
 
             puts stderr "image $volid" 
+            puts stderr "name [$node GetName]"
             puts stderr "scalar_type [$im GetScalarType]" 
             puts stderr "dimensions [$im GetDimensions]" 
             puts stderr "space_origin $space_origin"
@@ -191,6 +193,7 @@ proc slicerd_sock_fileevent {sock} {
 
             fconfigure $sock -translation auto
             puts $sock "image $volid" 
+            puts $sock "name  [$node GetName]" 
             puts $sock "scalar_type [$im GetScalarType]" 
             puts $sock "dimensions [$im GetDimensions]" 
             puts $sock "space_origin $space_origin"
