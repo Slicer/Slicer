@@ -544,9 +544,18 @@ void vtkSlicerFiducialsGUI::UpdateGUI()
 void vtkSlicerFiducialsGUI::SetGUIFromList(vtkMRMLFiducialListNode * activeFiducialListNode)
 {
     if (activeFiducialListNode == NULL)
-    {
-        return;
-    }
+      {
+      //clear out the list box
+      if (this->MultiColumnList)
+        {
+        if (this->MultiColumnList->GetWidget()->GetNumberOfRows() != 0)
+          {
+          this->MultiColumnList->GetWidget()->DeleteAllRows();
+          }
+        }
+      return;
+      }
+    
     int numPoints = activeFiducialListNode->GetNumberOfFiducials();
     bool deleteFlag = true;
     
