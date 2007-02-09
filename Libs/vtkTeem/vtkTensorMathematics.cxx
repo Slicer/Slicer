@@ -134,8 +134,8 @@ static void vtkTensorMathematicsExecute1(vtkTensorMathematics *self,
   // image variables
   int idxR, idxY, idxZ;
   int maxY, maxZ;
-  int outIncX, outIncY, outIncZ;
-  int inIncX, inIncY, inIncZ;
+  vtkIdType outIncX, outIncY, outIncZ;
+  vtkIdType inIncX, inIncY, inIncZ;
   int rowLength;
   // progress
   unsigned long count = 0;
@@ -182,7 +182,8 @@ static void vtkTensorMathematicsExecute1(vtkTensorMathematics *self,
   in1Data->GetContinuousIncrements(outExt, inIncX, inIncY, inIncZ);
 
   //Initialize ptId to walk through tensor volume
-  int *inInc,*inFullUpdateExt;
+  vtkIdType *inInc;
+  int *inFullUpdateExt;
   inInc = in1Data->GetIncrements();
   inFullUpdateExt = in1Data->GetExtent(); //We are only working over the update extent
   inPtId = ((outExt[0] - inFullUpdateExt[0]) * inInc[0]
@@ -305,8 +306,8 @@ static void vtkTensorMathematicsExecute1Eigen(vtkTensorMathematics *self,
   // image variables
   int idxR, idxY, idxZ;
   int maxY, maxZ;
-  int outIncX, outIncY, outIncZ;
-  int inIncX, inIncY, inIncZ;
+  vtkIdType outIncX, outIncY, outIncZ;
+  vtkIdType inIncX, inIncY, inIncZ;
   int rowLength;
   // progress
   unsigned long count = 0;
@@ -365,7 +366,8 @@ static void vtkTensorMathematicsExecute1Eigen(vtkTensorMathematics *self,
   in1Data->GetContinuousIncrements(outExt, inIncX, inIncY, inIncZ);
 
   //Initialize ptId to walk through tensor volume
-  int *inInc,*inFullUpdateExt;
+  vtkIdType *inInc;
+  int *inFullUpdateExt;
   inInc = in1Data->GetIncrements();
   inFullUpdateExt = in1Data->GetExtent(); //We are only working over the update extent
   inPtId = ((outExt[0] - inFullUpdateExt[0]) * inInc[0]

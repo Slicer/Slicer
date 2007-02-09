@@ -243,8 +243,8 @@ static void vtkTeemEstimateDiffusionTensorExecute(vtkTeemEstimateDiffusionTensor
 {
   int idxX, idxY, idxZ;
   int maxX, maxY, maxZ;
-  int inIncX, inIncY, inIncZ;
-  int outIncX, outIncY, outIncZ;
+  vtkIdType inIncX, inIncY, inIncZ;
+  vtkIdType outIncX, outIncY, outIncZ;
   unsigned long count = 0;
   unsigned long target;
   int numInputs, k,i,j;
@@ -271,7 +271,8 @@ static void vtkTeemEstimateDiffusionTensorExecute(vtkTeemEstimateDiffusionTensor
   }
 
   // changed from arrays to pointers
-  int *outInc,*outFullUpdateExt;
+  vtkIdType *outInc;
+  int *outFullUpdateExt;
   outInc = self->GetOutput()->GetIncrements();
   outFullUpdateExt = self->GetOutput()->GetUpdateExtent(); //We are only working over the update extent
   ptId = ((outExt[0] - outFullUpdateExt[0]) * outInc[0]

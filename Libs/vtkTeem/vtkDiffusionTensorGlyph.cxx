@@ -378,7 +378,7 @@ void vtkDiffusionTensorGlyph::Execute()
       else 
         {
           //Correct for negative eigenvalues: used logic coded in vtkTensorMathematics
-        vtkTensorMathematics::FixNegativeEigenvalues(w);
+        vtkTensorMathematics::FixNegativeEigenvaluesMethod(w);
 
         switch (this->ScalarMeasure) 
         {
