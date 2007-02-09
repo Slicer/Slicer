@@ -193,6 +193,9 @@ ENDIF (Slicer3_BUILD_TESTING)
 INCLUDE (${CMAKE_ROOT}/Modules/TestBigEndian.cmake)
 TEST_BIG_ENDIAN(CMAKE_WORDS_BIGENDIAN)
 
+# Launcher for slicer
+SUBDIRS(Utilities/Launcher)
+
 # Package slicer
 SUBDIRS(Utilities/Package)
 
@@ -208,7 +211,6 @@ ENDIF(BUILD_DOCUMENTATION)
 INSTALL(CODE "EXECUTE_PROCESS\(COMMAND \"${CMAKE_COMMAND}\" -E copy_directory \"${SLICER_LIBRARIES_DIR}/Modules/Packages\" \"\${CMAKE_INSTALL_PREFIX}/${SLICER_INSTALL_LIBRARIES_DIR}/Modules/Packages\"\)")
 
 CONFIGURE_FILE(
-  ${Slicer3_SOURCE_DIR}/launch.tcl
-  ${Slicer3_BINARY_DIR}/launch.tcl
-  COPYONLY
+  ${Slicer3_SOURCE_DIR}/launch.tcl.in
+  ${Slicer3_BINARY_DIR}/lib/launch.tcl
 )

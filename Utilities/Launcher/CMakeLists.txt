@@ -11,14 +11,14 @@ IF(${launcher_platform} MATCHES Windows)
 ENDIF(${launcher_platform} MATCHES Windows)
 
 STRING ( TOLOWER "${launcher_platform}" launcher_platform )
-SET (launcher_name "Slicer3-${launcher_platform}")
+SET (launcher_name "Slicer3-${launcher_platform}${CMAKE_EXECUTABLE_SUFFIX}")
 
 MESSAGE ( "launcher name is ${launcher_name}" )
 
 SET ( launcher_binary
   "${Slicer3_BINARY_DIR}/Slicer3${CMAKE_EXECUTABLE_SUFFIX}" )
 
-CONFIGURE_FILE ( "${CMAKE_CURRENT_SOURCE_DIR}/${launcher_name}"
+CONFIGURE_FILE ( "${CMAKE_CURRENT_SOURCE_DIR}/Slicer3Launchers/${launcher_name}"
                  "${launcher_binary}"
                  COPYONLY )
 

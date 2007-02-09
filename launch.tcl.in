@@ -35,6 +35,7 @@ set ::env(SANDBOX_BIN_DIR)   ""
 set ::env(TCL_LIBRARY)       @TCL_LIBRARY@
 set ::env(TCL_LIB_DIR)       [file dirname $::env(TCL_LIBRARY)]
 set ::env(TEEM_DIR)          @TEEM_DIR@
+set ::env(VTK_BUILD_SUBDIR)  @CMAKE_BUILD_TYPE@
 
 set ::BATCH "false"
 
@@ -127,8 +128,8 @@ proc launch_SetPaths {} {
             set ::env(LD_LIBRARY_PATH) $::env(VTK_DIR)/bin:$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(KWWidgets_DIR)/bin:$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(ITK_DIR)/bin:$::env(LD_LIBRARY_PATH)
-            set ::env(LD_LIBRARY_PATH) $::env(SANDBOX_BIN_DIR):$::env(LD_LIBRARY_PATH)
-            set ::env(LD_LIBRARY_PATH) $::env(SANDBOX_BIN_DIR)/../Distributions/bin:$::env(LD_LIBRARY_PATH)
+            #set ::env(LD_LIBRARY_PATH) $::env(SANDBOX_BIN_DIR):$::env(LD_LIBRARY_PATH)
+            #set ::env(LD_LIBRARY_PATH) $::env(SANDBOX_BIN_DIR)/../Distributions/bin:$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(SLICER_HOME)/Base/builds/$::env(BUILD)/bin:$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(TCL_LIB_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(TEEM_DIR):$::env(LD_LIBRARY_PATH)
@@ -137,8 +138,8 @@ proc launch_SetPaths {} {
             set ::env(DYLD_LIBRARY_PATH) $::env(VTK_DIR)/bin:$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(KWWidgets_DIR)/bin:$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(ITK_DIR)/bin:$::env(DYLD_LIBRARY_PATH)
-            set ::env(DYLD_LIBRARY_PATH) $::env(SANDBOX_BIN_DIR):$::env(DYLD_LIBRARY_PATH)
-            set ::env(DYLD_LIBRARY_PATH) $::env(SANDBOX_BIN_DIR)/../Distributions/bin:$::env(DYLD_LIBRARY_PATH)
+            #set ::env(DYLD_LIBRARY_PATH) $::env(SANDBOX_BIN_DIR):$::env(DYLD_LIBRARY_PATH)
+            #set ::env(DYLD_LIBRARY_PATH) $::env(SANDBOX_BIN_DIR)/../Distributions/bin:$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(SLICER_HOME)/Base/builds/$::env(BUILD)/bin:$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(TCL_LIB_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(TEEM_DIR):$::env(DYLD_LIBRARY_PATH)
@@ -147,8 +148,8 @@ proc launch_SetPaths {} {
             set ::env(Path) $::env(VTK_DIR)/bin/$::env(VTK_BUILD_SUBDIR)\;$::env(Path)
             set ::env(Path) $::env(KWWidgets_DIR)/bin/$::env(VTK_BUILD_SUBDIR)\;$::env(Path)
             set ::env(Path) $::env(ITK_DIR)/bin/$::env(VTK_BUILD_SUBDIR)\;$::env(Path)
-            set ::env(Path) $::env(SANDBOX_BIN_DIR)/$::env(VTK_BUILD_SUBDIR)\;$::env(Path)
-            set ::env(Path) $::env(SANDBOX_BIN_DIR)/../Distributions/bin/$::env(VTK_BUILD_SUBDIR)\;$::env(Path)
+            #set ::env(Path) $::env(SANDBOX_BIN_DIR)/$::env(VTK_BUILD_SUBDIR)\;$::env(Path)
+            #set ::env(Path) $::env(SANDBOX_BIN_DIR)/../Distributions/bin/$::env(VTK_BUILD_SUBDIR)\;$::env(Path)
             set ::env(Path) $::env(SLICER_HOME)/Base/builds/$::env(BUILD)/bin/$::env(VTK_BUILD_SUBDIR)\;$::env(Path)
             set ::env(Path) $::env(TEEM_DIR)\;$::env(Path)
         } else {
@@ -181,6 +182,18 @@ proc launch_SetPaths {} {
     set ::env(TCLLIBPATH) "$::env(SLICER_HOME)/Base/Wrapping/Tcl/vtkSlicerBase $::env(TCLLIBPATH)"
 }
 
+#
+# optional - show splash screen
+#
+proc launch_SplashScreen {} {
+
+  toplevel .splash
+  label .splash.l -text starting...
+  pack .splash.l
+  update
+  after 1000 "destroy .splash.l"
+
+}
 
 #
 # optional - show dialog
@@ -339,6 +352,8 @@ proc launch_RunProgram {} {
 launch_InitEnvironment 
 
 launch_SetPaths 
+
+launch_SplashScreen
 
 #launch_LicenseDialog
 
