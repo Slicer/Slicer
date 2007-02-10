@@ -88,9 +88,12 @@ TARGET_LINK_LIBRARIES(SlicerTractographyDisplay
   ITKIO
   ITKDICOMParser
   ${KWWidgets_LIBRARIES}
-  vtkTeem
    )
 
+IF( TEEM_FOUND )
+  SET_TARGET_PROPERTIES(SlicerTractographyDisplay PROPERTIES DEFINE_SYMBOL USE_TEEM)
+  TARGET_LINK_LIBRARIES(SlicerTractographyDisplay vtkTeem)
+ENDIF( TEEM_FOUND )
 
 # --------------------------------------------------------------------------
 # Testing (requires some of the examples)
