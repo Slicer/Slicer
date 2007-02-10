@@ -129,7 +129,6 @@ void vtkMRMLNRRDStorageNode::ProcessParentNode(vtkMRMLNode *parentNode)
 
 int vtkMRMLNRRDStorageNode::ReadData(vtkMRMLNode *refNode)
 {
-
   cout<<"Reading NRRD data"<<endl;
   // test whether refNode is a valid node to hold a volume
   if ( !( refNode->IsA("vtkMRMLScalarVolumeNode") || refNode->IsA("vtkMRMLVectorVolumeNode" ) || 
@@ -310,7 +309,6 @@ int vtkMRMLNRRDStorageNode::ReadData(vtkMRMLNode *refNode)
 
   reader->Delete();
   ici->Delete();
-
   return 1;
 }
 
@@ -400,7 +398,7 @@ int vtkMRMLNRRDStorageNode::ParseDiffusionInformation(vtkNRRDReader *reader,vtkD
   // search for tag DWMRI_gradient_
   tag = "DWMRI_gradient_";
   tagnex = "DWMRI_NEX_";
-  int pos = 0;
+  unsigned int pos = 0;
   int gbeginpos =0;
   int gendpos = 0;
   pos = keys.find(tag,pos);
@@ -474,4 +472,3 @@ int vtkMRMLNRRDStorageNode::ParseDiffusionInformation(vtkNRRDReader *reader,vtkD
   factor->Delete();
   return 1;
 }
-

@@ -46,6 +46,9 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLFiberBundleStorageNode.h"
 #include "vtkMRMLCameraNode.h"
 #include "vtkMRMLViewNode.h"
+#ifdef USE_TEEM
+#include "vtkMRMLNRRDStorageNode.h"
+#endif
 
 //------------------------------------------------------------------------------
 vtkMRMLScene::vtkMRMLScene() 
@@ -171,6 +174,12 @@ vtkMRMLScene::vtkMRMLScene()
   this->RegisterNodeClass ( view );
   view->Delete();
 
+#ifdef USE_TEEM
+  vtkMRMLNRRDStorageNode *nrrd = vtkMRMLNRRDStorageNode::New();
+  this->RegisterNodeClass ( nrrd );
+  nrrd->Delete();
+#endif
+
 
 }
 
@@ -253,7 +262,7 @@ void vtkMRMLScene::ResetNodes()
     {
     nodes.push_back(node);
     }
-  for(int i=0; i<nodes.size(); i++) 
+  for(unsigned int i=0; i<nodes.size(); i++) 
     {
     newNode = nodes[i]->CreateNodeInstance();
     nodes[i]->Copy(newNode);
