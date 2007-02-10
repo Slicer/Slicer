@@ -68,6 +68,7 @@ TARGET_LINK_LIBRARIES(vtkTeem
   vtkFiltering
   vtkImaging
   vtkIOTCL
+  vtkGraphicsTCL
   air
   biff
   nrrd
