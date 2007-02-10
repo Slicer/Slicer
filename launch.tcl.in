@@ -104,7 +104,7 @@ proc launch_InitEnvironment {} {
     }
 
     # if it is an empty string or doesn't exist, set the DYLD_LIBRARY_PATH 
-    if { $::env(BUILD) == $::DARWIN && [catch {
+    if { ($::env(BUILD) == $::DARWIN || $::env(BUILD) == $::DARWIN_X86) && [catch {
         if {$::env(DYLD_LIBRARY_PATH) == ""} { 
             set ::env(DYLD_LIBRARY_PATH) " " 
         }} ex]} {
@@ -133,7 +133,7 @@ proc launch_SetPaths {} {
             set ::env(LD_LIBRARY_PATH) $::env(SLICER_HOME)/Base/builds/$::env(BUILD)/bin:$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(TCL_LIB_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(TEEM_DIR):$::env(LD_LIBRARY_PATH)
-        } elseif {$::env(BUILD) ==  $::DARWIN} { 
+        } elseif {$::env(BUILD) ==  $::DARWIN || $::env(BUILD) == $::DARWIN_X86} { 
             # add vtk, slicer, and tcl bins
             set ::env(DYLD_LIBRARY_PATH) $::env(VTK_DIR)/bin:$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(KWWidgets_DIR)/bin:$::env(DYLD_LIBRARY_PATH)
@@ -167,6 +167,7 @@ proc launch_SetPaths {} {
     if {$::env(BUILD) == $::SOLARIS || 
         $::env(BUILD) == $::LINUX ||
         $::env(BUILD) == $::LINUX_64 ||
+        $::env(BUILD) == $::DARWIN_X86 ||
         $::env(BUILD) == $::DARWIN} {
             set ::env(TCLLIBPATH) "$::env(VTK_DIR)/Wrapping/Tcl $::env(TCLLIBPATH)"
             set ::env(TCLLIBPATH) "$::env(KWWidgets_DIR)/Wrapping/Tcl $::env(TCLLIBPATH)"
