@@ -88,7 +88,7 @@ TARGET_LINK_LIBRARIES(SlicerTractographyDisplay
   ITKIO
   ITKDICOMParser
   ${KWWidgets_LIBRARIES}
-  #  vtkTeem
+  vtkTeem
    )
 
 

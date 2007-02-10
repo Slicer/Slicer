@@ -23,8 +23,7 @@
 #include "vtkMRMLFiberBundleDisplayNode.h"
 
 #include "vtkTubeFilter.h"
-//#include "vtkDiffusionTensorGlyph.h"
-// Steve Pieper this above uses TEEM
+#include "vtkDiffusionTensorGlyph.h"
 
 #include <sstream>
 
@@ -440,14 +439,13 @@ void vtkSlicerFiberBundleDisplayLogic::CreateGlyphModel ( )
 
       vtkDebugMacro("Getting poly data from FB node");
       
-      // Steve Pieper the below uses TEEM
       // get polylines from the fiber bundle node and glyph them
-      //vtkDiffusionTensorGlyph *glyphFilter = vtkDiffusionTensorGlyph::New();
-      //glyphFilter->SetInput(this->FiberBundleNode->GetPolyData () );
+      vtkDiffusionTensorGlyph *glyphFilter = vtkDiffusionTensorGlyph::New();
+      glyphFilter->SetInput(this->FiberBundleNode->GetPolyData () );
 
-      //glyphFilter->Update ( );
-      //this->GlyphModelNode->SetAndObservePolyData(glyphFilter->GetOutput( ) );
-      //glyphFilter->Delete ( );
+      glyphFilter->Update ( );
+      this->GlyphModelNode->SetAndObservePolyData(glyphFilter->GetOutput( ) );
+      glyphFilter->Delete ( );
 
       vtkDebugMacro("Done getting poly data from FB node");
 
