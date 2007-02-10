@@ -329,7 +329,7 @@ runcmd $::CMAKE \
         -DSlicer3_VERSION_PATCH:STRING=$::GETBUILDTEST(version-patch) \
         -DCPACK_GENERATOR:STRING=$::GETBUILDTEST(cpack-generator) \
         -DCPACK_PACKAGE_FILE_NAME:STRING=$::GETBUILDTEST(binary-filename) \
-        -DUSE_TEEM=OFF \
+        -DUSE_TEEM=ON \
         $SLICER_HOME
 
 if { $isWindows } {
