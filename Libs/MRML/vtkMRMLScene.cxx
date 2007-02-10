@@ -95,7 +95,6 @@ vtkMRMLScene::vtkMRMLScene()
   vtkMRMLClipModelsNode *modelclipnode = vtkMRMLClipModelsNode::New(); 
   this->RegisterNodeClass( modelclipnode );
   modelclipnode->Delete();
-
   
   vtkMRMLScalarVolumeNode *svoln = vtkMRMLScalarVolumeNode::New(); 
   this->RegisterNodeClass( svoln );

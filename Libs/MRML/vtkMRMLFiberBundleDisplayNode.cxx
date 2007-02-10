@@ -53,7 +53,6 @@ vtkMRMLFiberBundleDisplayNode::vtkMRMLFiberBundleDisplayNode()
 {
 
   // Strings
-  this->Name = "FiberBundleDisplay";
 
   // Numbers
   this->FiberLineOpacity = 1;
