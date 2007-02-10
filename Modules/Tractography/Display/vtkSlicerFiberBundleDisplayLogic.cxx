@@ -445,7 +445,6 @@ void vtkSlicerFiberBundleDisplayLogic::CreateGlyphModel ( )
 #ifdef USE_TEEM
       vtkDiffusionTensorGlyph *glyphFilter = vtkDiffusionTensorGlyph::New();
       glyphFilter->SetInput(this->FiberBundleNode->GetPolyData () );
-
       glyphFilter->Update ( );
       this->GlyphModelNode->SetAndObservePolyData(glyphFilter->GetOutput( ) );
       glyphFilter->Delete ( );
