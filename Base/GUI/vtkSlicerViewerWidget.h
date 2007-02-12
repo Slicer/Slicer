@@ -205,7 +205,6 @@ protected:
   void UpdateModelsFromMRML();
   void UpdateModel(vtkMRMLModelNode *model);
   void UpdateModelPolyData(vtkMRMLModelNode *model);
-
   void CreateClipSlices();
 
   void CreateAxis();
@@ -213,6 +212,12 @@ protected:
   void UpdateAxis();
 
   int UpdateClipSlicesFormMRML();
+
+  void CheckModelHierarchies();
+  void AddHierarchiyObservers();
+  void RemoveHierarchyObservers();
+
+  vtkMRMLModelDisplayNode* GetModelDisplayNode(vtkMRMLModelNode *model);
 
   void SetModelDisplayProperty(vtkMRMLModelNode *model,  vtkActor *actor);
 
@@ -222,7 +227,10 @@ protected:
   std::map<const char *, int> DisplayedModelsClipState;
 
   std::vector<vtkFollower *> AxisLabelActors;
+
+  std::map<const char *, int>  RegisteredModelHierarchies;
   //ETX
+
   vtkActor *BoxAxisActor;
 
   int ProcessingMRMLEvent;
@@ -245,6 +253,8 @@ protected:
 
   bool ClippingOn;
   
+  bool ModelHierarchiesPresent;
+
   vtkMRMLCameraNode *CameraNode;
   vtkMRMLViewNode *ViewNode;
 

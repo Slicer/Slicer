@@ -50,6 +50,8 @@ SET(MRML_SRCS
         vtkMRMLFiberBundleNode.cxx
         vtkMRMLFiberBundleDisplayNode.cxx
         vtkMRMLFiberBundleStorageNode.cxx
+        vtkMRMLHierarchyNode.cxx
+        vtkMRMLModelHierarchyNode.cxx
         # Note: when you add new node types, add
         # register code to the vtkMRMLScene constructor
 )
