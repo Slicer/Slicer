@@ -73,6 +73,18 @@ class Slicer:
 # .vtkSlicerWindow3.vtkKWFrame12.vtkKWSplitFrame49.vtkKWFrame325.vtkSlicerSliceViewer378
 # (RelWithDebInfo) 8 % 
 
+def ListVolumeNodes():
+    """Returns a dictionary containing the index and
+    vtkMRMLVolumeNodes currently loaded by Slicer"""
+    nodes = {}
+    slicer = Slicer()
+    scene = slicer.MRMLScene
+    count = scene.GetNumberOfNodesByClass ( 'vtkMRMLVolumeNode' )
+    for idx in range ( int ( count ) ):
+        nodes[idx] = scene.GetNthNodeByClass ( idx, 'vtkMRMLVolumeNode' )
+    return nodes
+    
+
 
 def test():
     slicer = Slicer()

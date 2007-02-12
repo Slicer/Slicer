@@ -30,8 +30,12 @@ static PyObject* SlicerPython_ToArray ( PyObject* self, PyObject* args )
     return PyErr_Format ( PyExc_TypeError, "vtkImageDataToArray: Could not find vtkImageData" );
     }
 
-  int dims[3];
+  maybelong dims[3], tempdim;
   id->GetDimensions ( dims );
+  // Note: NumPy uses a z,y,x ordering, so swap the 1st and 3rd dimensions!
+  tempdim = dims[0];
+  dims[0] = dims[2];
+  dims[2] = tempdim;
   NumarrayType t = tDefault;
   // Datatype
   switch ( id->GetScalarType() )
@@ -51,7 +55,8 @@ static PyObject* SlicerPython_ToArray ( PyObject* self, PyObject* args )
       return PyErr_Format ( PyExc_TypeError, "vtkImageDataToArray: Could not find unknown datatatype" );
     }
     
-  PyArrayObject* array = NA_NewArray ( (void*)id->GetScalarPointer(), t, 3, dims[2], dims[1], dims[0] );
+  // PyArrayObject* array = NA_NewArray ( (void*)id->GetScalarPointer(), t, 3, dims[2], dims[1], dims[0] );
+  PyArrayObject* array = NA_FromDimsTypeAndData ( 3, dims, t, (char*)id->GetScalarPointer() );
   return NA_ReturnOutput ( Py_None, array );
 }
 
