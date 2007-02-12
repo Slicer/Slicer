@@ -18,6 +18,7 @@
 
 #include "vtkKWLoadSaveButton.h"
 #include "vtkKWLoadSaveDialog.h"
+#include "vtkKWLoadSaveButtonWithLabel.h"
 #include "vtkKWFrame.h"
 #include "vtkKWLabel.h"
 
@@ -38,7 +39,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModelsGUI : public vtkSlicerModuleGUI
     // Description:
     // Get methods on class members ( no Set methods required. )
     vtkGetObjectMacro ( LoadModelButton, vtkKWLoadSaveButton );
-    vtkGetObjectMacro ( LoadScalarsButton, vtkKWLoadSaveButton);
+    vtkGetObjectMacro ( LoadScalarsButton, vtkKWLoadSaveButtonWithLabel);
     //vtkGetObjectMacro ( Logic, vtkSlicerModelsLogic);
     //vtkGetObjectMacro ( ModelNode, vtkMRMLModelNode );
     
@@ -106,7 +107,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModelsGUI : public vtkSlicerModuleGUI
     
     // Widgets for the Models module
     vtkKWLoadSaveButton *LoadModelButton;
-    vtkKWLoadSaveButton *LoadScalarsButton;
+    vtkKWLoadSaveButtonWithLabel *LoadScalarsButton;
     vtkKWLoadSaveButton *LoadModelDirectoryButton;
     vtkKWLoadSaveButton *SaveModelButton;
     vtkSlicerNodeSelectorWidget* ModelSelectorWidget;

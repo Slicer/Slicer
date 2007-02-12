@@ -139,7 +139,7 @@ void vtkSlicerModelsGUI::RemoveGUIObservers ( )
     }
   if (this->LoadScalarsButton)
     {
-    this->LoadScalarsButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+    this->LoadScalarsButton->GetWidget()->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
     }
 }
 
@@ -150,7 +150,7 @@ void vtkSlicerModelsGUI::AddGUIObservers ( )
   this->LoadModelButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
   this->LoadModelDirectoryButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
   this->SaveModelButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
-  this->LoadScalarsButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+  this->LoadScalarsButton->GetWidget()->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
 }
 
 
@@ -239,7 +239,7 @@ void vtkSlicerModelsGUI::ProcessGUIEvents ( vtkObject *caller,
        }
        return;
     } 
-  else if (filebrowse == this->LoadScalarsButton  && event == vtkKWPushButton::InvokedEvent )
+  else if (filebrowse == this->LoadScalarsButton->GetWidget()  && event == vtkKWPushButton::InvokedEvent )
     {
     // If a scalar file has been selected for loading...
     char *fileName = filebrowse->GetFileName();
@@ -262,7 +262,7 @@ void vtkSlicerModelsGUI::ProcessGUIEvents ( vtkObject *caller,
         dialog->Delete();
 
         vtkErrorMacro("Error loading scalar overlay file " << fileName);
-        this->LoadScalarsButton->SetText ("Load FreeSurfer Overlay");
+        this->LoadScalarsButton->GetWidget()->SetText ("None");
         }
       else
         {
@@ -416,12 +416,13 @@ void vtkSlicerModelsGUI::BuildGUI ( )
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   modDisplayFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Models")->GetWidgetName());
 
-    this->LoadScalarsButton = vtkKWLoadSaveButton::New();
+    this->LoadScalarsButton = vtkKWLoadSaveButtonWithLabel::New();
     this->LoadScalarsButton->SetParent ( modDisplayFrame->GetFrame() );
     this->LoadScalarsButton->Create ( );
-    this->LoadScalarsButton->SetText ("Load FreeSurfer Overlay");
-    this->LoadScalarsButton->GetLoadSaveDialog()->RetrieveLastPathFromRegistry("OpenPath");
-    this->LoadScalarsButton->GetLoadSaveDialog()->SetFileTypes("{ {Thickness} {*.thickness} } { {Curve} {*.curv} } { {Average Curve} {*.avg_curv} } { {Sulc} {*.sulc} } { {Area} {*.area} } { {W} {*.w} }");
+    this->LoadScalarsButton->SetLabelText ("Load FreeSurfer Overlay: ");
+    this->LoadScalarsButton->GetWidget()->SetText ("None");
+    this->LoadScalarsButton->GetWidget()->GetLoadSaveDialog()->RetrieveLastPathFromRegistry("OpenPath");
+    this->LoadScalarsButton->GetWidget()->GetLoadSaveDialog()->SetFileTypes("{ {Thickness} {*.thickness} } { {Curve} {*.curv} } { {Average Curve} {*.avg_curv} } { {Sulc} {*.sulc} } { {Area} {*.area} } { {W} {*.w} }");
     app->Script("pack %s -side top -anchor nw -padx 2 -pady 4", 
                 this->LoadScalarsButton->GetWidgetName());
 
