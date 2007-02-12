@@ -101,6 +101,8 @@ void vtkSlicerFiberBundleLogic::InitializeLogicForFiberBundleNode(vtkMRMLFiberBu
   displayLogic->SetAndObserveFiberBundleNode(node);
 
   vtkErrorMacro("Done adding display logic");
+
+  // TO DO: make a collection/array of the fiber bundle display logic objects.
 }
 
 
