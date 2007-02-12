@@ -443,28 +443,6 @@ void vtkSlicerFiberBundleDisplayLogic::CreateGlyphModel ( )
 
       vtkDebugMacro("Getting poly data from FB node");
       
-      // get polylines from the fiber bundle node and glyph them
-#ifdef USE_TEEM
-      vtkDiffusionTensorGlyph *glyphFilter = vtkDiffusionTensorGlyph::New();
-      glyphFilter->SetInput(this->FiberBundleNode->GetPolyData () );
-      glyphFilter->SetScaleFactor( 1000 );
-      // set up line glyph. for which evector see DTMRI and DTMRIGlyphs.tcl
-      // TO DO get all display params from those tcl files
-      vtkLineSource *lineSource = vtkLineSource::New();
-      lineSource->SetPoint1( -1,0,0 );
-      lineSource->SetPoint2( 1,0,0 );
-      lineSource->Update( );
-      glyphFilter->SetSource( lineSource->GetOutput() );
-      lineSource->Delete( );
-
-      glyphFilter->Update ( );
-      this->GlyphModelNode->SetAndObservePolyData(glyphFilter->GetOutput( ) );
-      glyphFilter->Delete ( );
-#endif
-
-      vtkDebugMacro("Done getting poly data from FB node");
-
-
       //this->GlyphModelDisplayNode->GetColorModeForFiberGlyphs();
       // set display properties according to the tensor-specific display properties node
       vtkMRMLDiffusionTensorDisplayPropertiesNode * DTDisplayNode = fiberBundleDisplayNode->GetFiberGlyphDTDisplayPropertiesNode( );
@@ -472,12 +450,41 @@ void vtkSlicerFiberBundleDisplayLogic::CreateGlyphModel ( )
       if (DTDisplayNode != NULL)
         {
         // TO DO: need filter to calculate FA, average FA, etc. as requested
-        }
-
-      }
 
 
-    }
+        // get polylines from the fiber bundle node and glyph them
+#ifdef USE_TEEM
+      
+        // if glyph type is other than superquadrics, get glyph source
+        if (DTDisplayNode->GetGlyphGeometry( ) != vtkMRMLDiffusionTensorDisplayPropertiesNode::Superquadrics)
+          {
+          vtkDiffusionTensorGlyph *glyphFilter = vtkDiffusionTensorGlyph::New();
+          glyphFilter->SetInput(this->FiberBundleNode->GetPolyData () );
+          glyphFilter->ClampScalingOff();
+        
+          glyphFilter->SetScaleFactor( 1000 );
+
+          glyphFilter->SetSource( DTDisplayNode->GetGlyphSource( ) );
+
+        
+          glyphFilter->Update ( );
+          this->GlyphModelNode->SetAndObservePolyData(glyphFilter->GetOutput( ) );
+          glyphFilter->Delete ( );
+          }
+        else
+          {
+          // Do superquadrics
+
+          }
+#endif
+
+        } // end if dt display props node not null
+
+      vtkDebugMacro("Done getting poly data from FB node");
+
+      } // end if fb display node not null
+
+    } // end if fb node not null
 
   vtkDebugMacro("Adding model to scene");
 

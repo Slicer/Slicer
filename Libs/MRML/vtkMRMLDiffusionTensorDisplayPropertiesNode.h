@@ -29,6 +29,7 @@
 
 #include "vtkMRML.h"
 #include "vtkMRMLColorTableNode.h"
+#include "vtkPolyData.h"
 
 
 class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMRMLColorTableNode
@@ -132,10 +133,10 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
   //BTX
   enum
   {
-    Lines = 1,
-    Tubes = 2,
-    Ellipsoids = 3,
-    Superquadrics = 4,
+    Lines = 0,
+    Tubes = 1,
+    Ellipsoids = 2,
+    Superquadrics = 3,
   };
   //ETX
 
@@ -176,9 +177,61 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
   // Set the scale factor applied to the glyphs.
   vtkSetMacro(GlyphScaleFactor, double);
 
+  // Description:
+  // Whether the input tensors need eigensystem computation
+  vtkGetMacro(GlyphExtractEigenvalues, int);
+  vtkSetMacro(GlyphExtractEigenvalues, int);
+  vtkBooleanMacro(GlyphExtractEigenvalues, int);
+
+  //--------------------------------------------------------------------------
+  // Display Information: Eigenvector to display for lines/tubes glyphs
+  //--------------------------------------------------------------------------
+
+  //BTX
+  enum
+  {
+    Major = 1,
+    Middle = 2,
+    Minor = 3,
+  };
+  //ETX
+
+  // Description
+  // Which eigenvector to display with lines or tubes glyphs
+  vtkGetMacro(GlyphEigenvector, int);
+
+  // Description
+  // Which eigenvector to display with lines or tubes glyphs
+  vtkSetMacro(GlyphEigenvector, int);
+  
+  // Description
+  // Display major eigenvector with lines or tubes glyphs
+  void SetGlyphEigenvectorToMajor() {
+    this->SetGlyphEigenvector(this->Major);
+  };
+
+  // Description
+  // Display "middle" (second) eigenvector with lines or tubes glyphs
+  void SetGlyphEigenvectorToMiddle() {
+    this->SetGlyphEigenvector(this->Middle);
+  };
+
+  // Description
+  // Display minor eigenvector with lines or tubes glyphs
+  void SetGlyphEigenvectorToMinor() {
+    this->SetGlyphEigenvector(this->Minor);
+  };
+
+  
   //--------------------------------------------------------------------------
   // Display Information: Parameters of Lines glyph geometry
   //--------------------------------------------------------------------------
+
+  // Description:
+  // Resolution of lines displayed as tensor glyphs
+  vtkGetMacro(LineGlyphResolution, int);
+  vtkSetMacro(LineGlyphResolution, int);
+
 
   //--------------------------------------------------------------------------
   // Display Information: Parameters of Tubes glyph geometry
@@ -192,16 +245,42 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
   // Set the radius of the tube glyph
   vtkSetMacro(TubeGlyphRadius, double);
 
+  // Description:
+  // Number of sides of tube glyph (3 gives a triangular tube, etc.)
+  vtkGetMacro(TubeGlyphNumberOfSides, int);
+  vtkSetMacro(TubeGlyphNumberOfSides, int);
 
   //--------------------------------------------------------------------------
   // Display Information: Parameters of Ellipsoids glyph geometry
   //--------------------------------------------------------------------------
 
+  // Description:
+  // Number of polygons used in longitude direction for sphere that will
+  // be scaled by tensor to form ellipsoid.
+  vtkGetMacro(EllipsoidGlyphThetaResolution, int);
+  vtkSetMacro(EllipsoidGlyphThetaResolution, int);
+
+  // Description:
+  // Number of polygons used in latitude direction for sphere that will
+  // be scaled by tensor to form ellipsoid.
+  vtkGetMacro(EllipsoidGlyphPhiResolution, int);
+  vtkSetMacro(EllipsoidGlyphPhiResolution, int);
+
   //--------------------------------------------------------------------------
   // Display Information: Parameters of Superquadrics glyph geometry
   //--------------------------------------------------------------------------
 
+  // Description:
+  vtkGetMacro(SuperquadricGlyphGamma, double);
+  vtkSetMacro(SuperquadricGlyphGamma, double);
 
+  // Description:
+  vtkGetMacro(SuperquadricGlyphThetaResolution, int);
+  vtkSetMacro(SuperquadricGlyphThetaResolution, int);
+
+  // Description:
+  vtkGetMacro(SuperquadricGlyphPhiResolution, int);
+  vtkSetMacro(SuperquadricGlyphPhiResolution, int);
 
   //--------------------------------------------------------------------------
   // Display Information: Functions to choose the type of glyph coloring
@@ -230,8 +309,15 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
   };  
 
   // TO DO: add the rest of the scalars
-  //and so on.
 
+  //--------------------------------------------------------------------------
+  // Convenience functions to get an appropriate glyph source
+  //--------------------------------------------------------------------------
+
+  // Description:
+  // Get a polydata object according to current glyph display settings
+  // (so a line, sphere, or tube) to use as a source for a glyphing filter.
+  vtkPolyData * GetGlyphSource ( );
 
  protected:
   vtkMRMLDiffusionTensorDisplayPropertiesNode();
@@ -239,25 +325,52 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
   vtkMRMLDiffusionTensorDisplayPropertiesNode(const vtkMRMLDiffusionTensorDisplayPropertiesNode&);
   void operator=(const vtkMRMLDiffusionTensorDisplayPropertiesNode&);
 
+  // ---- Parameters that should be written to MRML --- //
+
+  // Scalar display parameters
   int ScalarInvariant;
-  int GlyphGeometry;
-  int ColorGlyphBy;
 
   // Glyph general parameters
+  int GlyphGeometry;
+  int ColorGlyphBy;
   double GlyphScaleFactor;
+  int GlyphEigenvector;
+  int GlyphExtractEigenvalues;
 
   // Line Glyph parameters
+  int LineGlyphResolution;
 
   // Tube Glyph parameters
   double TubeGlyphRadius;
+  int TubeGlyphNumberOfSides;
 
   // Ellipsoid Glyph parameters
+  int EllipsoidGlyphThetaResolution;
+  int EllipsoidGlyphPhiResolution;
 
   // Superquadric Glyph parameters
+  double SuperquadricGlyphGamma;
+  int SuperquadricGlyphThetaResolution;
+  int SuperquadricGlyphPhiResolution;
 
+  // ---- End of parameters that should be written to MRML --- //
+
+ 
+  // ---- VTK objects for display --- //
+  vtkPolyData * GlyphSource;
+
+  // This is used internally to set a pointer to this polydata
+  // and reference count it.  
+  // TO DO: is this causing an extra modified event?
+  vtkSetObjectMacro( GlyphSource, vtkPolyData );
 
   // TO DO: add specific lookup tables ranging from 0..1 for or -1 1
   // for scalar invariants with those ranges
+
+  // TO DO: add glyph sources
+  // TO DO: add switch for eigenvector with line glyphs
+
+  // TO DO: read/write MRML for all parameters
 
 };
 
