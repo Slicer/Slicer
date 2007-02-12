@@ -170,6 +170,10 @@ public:
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
                                    unsigned long /*event*/, 
                                    void * /*callData*/ );
+  // Description:
+  // the name of the currently active scalar field for this model
+  vtkGetStringMacro(ActiveScalarName);
+  vtkSetStringMacro(ActiveScalarName);
   
 protected:
   vtkMRMLModelDisplayNode();
@@ -183,6 +187,8 @@ protected:
   
   char *ColorNodeID;
 
+  char *ActiveScalarName;
+  
   vtkSetReferenceStringMacro(ColorNodeID);
 
   vtkMRMLColorNode *ColorNode;

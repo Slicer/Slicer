@@ -80,6 +80,7 @@ vtkMRMLModelDisplayNode::vtkMRMLModelDisplayNode()
   this->ColorNodeID = NULL;
   this->ColorNode = NULL;
 
+  this->ActiveScalarName = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -134,6 +135,11 @@ void vtkMRMLModelDisplayNode::WriteXML(ostream& of, int nIndent)
   if (this->ColorNodeID != NULL) 
     {
     of << indent << "colorNodeRef=\"" << this->ColorNodeID << "\" ";
+    }
+
+  if (this->ActiveScalarName != NULL)
+    {
+    of << indent << "activeScalarName=\"" << this->ActiveScalarName << "\" ";
     }
 
 }
@@ -275,6 +281,10 @@ void vtkMRMLModelDisplayNode::ReadXMLAttributes(const char** atts)
       this->SetColorNodeID(attValue);
       this->Scene->AddReferencedNodeID(this->ColorNodeID, this);
       }
+    else if (!strcmp(attName, "activeScalarName"))
+      {
+      this->SetActiveScalarName(attValue);
+      }
 
     }  
 }
@@ -307,7 +317,7 @@ void vtkMRMLModelDisplayNode::Copy(vtkMRMLNode *anode)
   this->SetClipping(node->Clipping);
   this->SetAndObserveTextureImageData(node->TextureImageData);
   this->SetColorNodeID(node->ColorNodeID);
-
+  this->SetActiveScalarName(node->ActiveScalarName);
 }
 
 //----------------------------------------------------------------------------
@@ -336,6 +346,8 @@ void vtkMRMLModelDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "ColorNodeID: " <<
     (this->ColorNodeID ? this->ColorNodeID : "(none)") << "\n";
 
+  os << indent<< "ActiveScalarName: " <<
+    (this->ActiveScalarName ? this->ActiveScalarName : "(none)") << "\n";
 }
 
 //----------------------------------------------------------------------------
