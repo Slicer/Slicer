@@ -23,6 +23,8 @@
 #include "vtkMRMLFiberBundleDisplayNode.h"
 
 #include "vtkTubeFilter.h"
+#include "vtkLineSource.h"
+
 #ifdef USE_TEEM
 #include "vtkDiffusionTensorGlyph.h"
 #endif
@@ -445,6 +447,16 @@ void vtkSlicerFiberBundleDisplayLogic::CreateGlyphModel ( )
 #ifdef USE_TEEM
       vtkDiffusionTensorGlyph *glyphFilter = vtkDiffusionTensorGlyph::New();
       glyphFilter->SetInput(this->FiberBundleNode->GetPolyData () );
+      glyphFilter->SetScaleFactor( 1000 );
+      // set up line glyph. for which evector see DTMRI and DTMRIGlyphs.tcl
+      // TO DO get all display params from those tcl files
+      vtkLineSource *lineSource = vtkLineSource::New();
+      lineSource->SetPoint1( -1,0,0 );
+      lineSource->SetPoint2( 1,0,0 );
+      lineSource->Update( );
+      glyphFilter->SetSource( lineSource->GetOutput() );
+      lineSource->Delete( );
+
       glyphFilter->Update ( );
       this->GlyphModelNode->SetAndObservePolyData(glyphFilter->GetOutput( ) );
       glyphFilter->Delete ( );
