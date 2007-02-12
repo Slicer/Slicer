@@ -1,9 +1,7 @@
 #ifdef USE_PYTHON
 #include "Python.h"
-#include <numarray/libnumeric.h>
-#include <numarray/numarray.h>
-#include <numarray/libnumarray.h>
-#include <numarray/nummacro.h>
+// #include <../lib/site-packages/numpy/numarray/numpy/libnumarray.h>
+#include <libnumarray.h>
 
 #include "vtkSystemIncludes.h"
 #include "vtkTclUtil.h"

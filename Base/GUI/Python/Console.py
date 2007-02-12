@@ -18,7 +18,7 @@ use, modify, or distribute the software for any purpose is hereby granted."""
 from Tkinter import *
 import sys, string, traceback, types, __builtin__
 
-REVISION = "$Revision: 1.1 $"
+REVISION = "$Revision: 1.4 $"
 VERSION = string.split(REVISION)[1]
 
 class OutputPipe:
@@ -46,6 +46,7 @@ class Console(Frame):
         """Construct from a parent widget, an optional dictionary to use
         as the namespace for execution, and any configuration options."""
         Frame.__init__(self, parent)
+
         # Continuation state.
 
         self.continuation = 0
@@ -107,9 +108,9 @@ class Console(Frame):
         # The scroll bar.
 
         self.scroll = Scrollbar(self, command=self.text.yview)
+        self.text.config(yscrollcommand=self.scroll.set)
         self.scroll.pack(side=RIGHT, fill=Y)
         self.text.pack(fill=BOTH, expand=1)
-        self.text.config(yscrollcommand=self.scroll.set)
         self.text.focus()
 
         # Configurable options.

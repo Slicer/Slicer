@@ -5,6 +5,9 @@ IF(USE_PYTHON AND PYTHON_INCLUDE_PATH)
   SET(LIB_SRCS _mytkinter.c _slicerPython.cxx)
   INCLUDE_DIRECTORIES(
     ${PYTHON_INCLUDE_PATH}
+    ${PYTHON_INCLUDE_PATH}/../lib/site-packages/numpy/core/include
+    ${PYTHON_INCLUDE_PATH}/../lib/site-packages/numpy/core/include/numpy
+    ${PYTHON_INCLUDE_PATH}/../lib/site-packages/numpy/numarray/numpy
     ${VTK_INCLUDE_DIR}
     ${SlicerBase_SOURCE_DIR}
     ${SlicerBase_BINARY_DIR}
