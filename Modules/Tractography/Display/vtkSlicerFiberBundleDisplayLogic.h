@@ -46,7 +46,7 @@ class VTK_SLICERTRACTOGRAPHYDISPLAY_EXPORT vtkSlicerFiberBundleDisplayLogic : pu
   vtkGetObjectMacro ( FiberBundleNode , vtkMRMLFiberBundleNode );
 
   // Description:
-  // Set the fiber bundle display node that is observed by this class. When the 
+  // Set the fiber bundle node that is observed by this class. When the 
   // state of this node changes, this logic class modifies the models
   // that it has added to the slicer scene.
   void SetAndObserveFiberBundleNode( vtkMRMLFiberBundleNode *fiberBundleNode );
