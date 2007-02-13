@@ -90,7 +90,18 @@ public:
   // Get/Set the main slicer viewer widget, for picking
   vtkGetObjectMacro(ViewerWidget, vtkSlicerViewerWidget);
   virtual void SetViewerWidget(vtkSlicerViewerWidget *viewerWidget);
-  
+
+  // Description:
+  // Events
+  //BTX
+  enum
+  {
+      PickEvent,
+      PlaceEvent,
+      SelectRegionEvent,
+  };
+  //ETX
+    
 protected:
   vtkSlicerViewerInteractorStyle();
   ~vtkSlicerViewerInteractorStyle();

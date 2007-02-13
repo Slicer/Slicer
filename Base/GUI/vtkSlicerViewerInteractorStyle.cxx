@@ -173,15 +173,21 @@ void vtkSlicerViewerInteractorStyle::OnLeftButtonDown()
         this->Interactor->SetEventPositionFlipY(x, rawY);
         int y = this->Interactor->GetEventPosition()[1];
         vtkDebugMacro("MousePut: got x = " << x << ", y = " << y << " (raw y = " << rawY << ")\n");
-        if (this->GetViewerWidget() != NULL)
+        // throw a pick event, let observers deal with it        
+        this->InvokeEvent(vtkSlicerViewerInteractorStyle::PickEvent, this->Interactor->GetEventPosition());
+        if (0)
           {
-          this->GetViewerWidget()->Pick(x, y);
+          if (this->GetViewerWidget() != NULL)
+            {
+            this->GetViewerWidget()->Pick(x, y);
+            }
           }
         }
       else if (mouseInteractionMode == vtkMRMLInteractionNode::PickManipulate)
         {
         // deal with select mode
-        std::cout << "Mouse Select mode not implemented, try something else...\n";
+        // throw a select region event
+        this->InvokeEvent(vtkSlicerViewerInteractorStyle::SelectRegionEvent);
         }
       }
     }
