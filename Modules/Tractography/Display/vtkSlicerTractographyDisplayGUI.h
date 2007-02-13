@@ -12,6 +12,7 @@
 #include "vtkSlicerFiberBundleLogic.h"
 #include "vtkSlicerNodeSelectorWidget.h"
 #include "vtkSlicerFiberBundleDisplayWidget.h"
+#include "vtkSlicerAllFiberBundlesDisplayWidget.h"
 
 #include "vtkKWLoadSaveButton.h"
 #include "vtkKWLoadSaveDialog.h"
@@ -81,6 +82,8 @@ class VTK_SLICERTRACTOGRAPHYDISPLAY_EXPORT vtkSlicerTractographyDisplayGUI : pub
     vtkKWLoadSaveButton *SaveTractographyButton;
     vtkSlicerNodeSelectorWidget* FiberBundleSelectorWidget;
 
+    vtkSlicerAllFiberBundlesDisplayWidget *AllFiberBundlesDisplayWidget;
+  
     vtkSlicerFiberBundleDisplayWidget *FiberBundleDisplayWidget;
 
  private:

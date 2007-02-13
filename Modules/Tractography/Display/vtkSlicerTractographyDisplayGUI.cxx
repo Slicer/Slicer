@@ -26,6 +26,7 @@ vtkSlicerTractographyDisplayGUI::vtkSlicerTractographyDisplayGUI ( )
   this->SaveTractographyButton = NULL;
   this->FiberBundleSelectorWidget = NULL;
   this->FiberBundleDisplayWidget = NULL;
+  this->AllFiberBundlesDisplayWidget = NULL;
 
 }
 
@@ -57,10 +58,17 @@ vtkSlicerTractographyDisplayGUI::~vtkSlicerTractographyDisplayGUI ( )
     this->FiberBundleSelectorWidget->SetParent(NULL);
     this->FiberBundleSelectorWidget->Delete ( );
     }
+
   if (this->FiberBundleDisplayWidget ) 
     {
     this->FiberBundleDisplayWidget->SetParent(NULL);
     this->FiberBundleDisplayWidget->Delete ( );
+    }
+
+  if (this->AllFiberBundlesDisplayWidget ) 
+    {
+    this->AllFiberBundlesDisplayWidget->SetParent(NULL);
+    this->AllFiberBundlesDisplayWidget->Delete ( );
     }
 }
 
@@ -299,6 +307,16 @@ void vtkSlicerTractographyDisplayGUI::BuildGUI ( )
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   modDisplayFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Tractography")->GetWidgetName());
     
+    this->AllFiberBundlesDisplayWidget = vtkSlicerAllFiberBundlesDisplayWidget::New ( );
+    this->AllFiberBundlesDisplayWidget->SetMRMLScene(this->Logic->GetMRMLScene() );
+    this->AllFiberBundlesDisplayWidget->SetParent ( modDisplayFrame->GetFrame() );
+    this->AllFiberBundlesDisplayWidget->Create ( );
+    //this->AllFiberBundlesDisplayWidget->DebugOn ( );
+    app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
+                  this->AllFiberBundlesDisplayWidget->GetWidgetName(), 
+                  modDisplayFrame->GetFrame()->GetWidgetName());
+
+
     this->FiberBundleDisplayWidget = vtkSlicerFiberBundleDisplayWidget::New ( );
     this->FiberBundleDisplayWidget->SetMRMLScene(this->Logic->GetMRMLScene() );
     this->FiberBundleDisplayWidget->SetParent ( modDisplayFrame->GetFrame() );

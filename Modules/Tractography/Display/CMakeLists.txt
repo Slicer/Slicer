@@ -5,6 +5,7 @@ PROJECT(SlicerTractographyDisplay)
 
 SET(SlicerTractographyDisplay_SRCS
   vtkSlicerTractographyDisplayGUI.cxx
+  vtkSlicerAllFiberBundlesDisplayWidget.cxx
   vtkSlicerFiberBundleDisplayWidget.cxx
   vtkSlicerFiberBundleDisplayLogic.cxx
   vtkSlicerFiberBundleLogic.cxx
