@@ -109,7 +109,7 @@ public:
   vtkSetMacro(ShowHidden, int);
 
   // Description:
-  // Specifies whether or not display super-classes of a specified class
+  // Specifies whether or not display child classes of a specified class
   // Default: true
   vtkBooleanMacro(ChildClassesEnabled, int);
   vtkGetMacro(ChildClassesEnabled, int);
