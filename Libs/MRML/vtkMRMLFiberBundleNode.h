@@ -40,8 +40,8 @@ class VTK_MRML_EXPORT vtkMRMLFiberBundleNode : public vtkMRMLModelNode
 {
 public:
   static vtkMRMLFiberBundleNode *New();
-  //vtkTypeMacro(vtkMRMLFiberBundleNode,vtkMRMLModelNode);
-  vtkTypeMacro(vtkMRMLFiberBundleNode,vtkMRMLTransformableNode);
+  vtkTypeMacro(vtkMRMLFiberBundleNode,vtkMRMLModelNode);
+  //vtkTypeMacro(vtkMRMLFiberBundleNode,vtkMRMLTransformableNode);
   void PrintSelf(ostream& os, vtkIndent indent);
   
   //--------------------------------------------------------------------------
