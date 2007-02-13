@@ -13,6 +13,9 @@
 #include "vtkKWMenuButton.h"
 #include "vtkKWMessageDialog.h"
 
+// for scalars
+#include "vtkPointData.h"
+
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerModelsGUI );
 vtkCxxRevisionMacro ( vtkSlicerModelsGUI, "$Revision: 1.0 $");
@@ -267,6 +270,27 @@ void vtkSlicerModelsGUI::ProcessGUIEvents ( vtkObject *caller,
       else
         {
         filebrowse->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
+        // set the active scalar in the display node to this one
+        if (modelNode->GetPolyData()->GetPointData() != NULL)
+          {
+          int lastArray =  modelNode->GetPolyData()->GetPointData()->GetNumberOfArrays() - 1;
+         
+          if (lastArray >= 0 && modelNode->GetPolyData()->GetPointData()->GetArray(lastArray) != NULL)
+            {
+            
+            vtkDebugMacro("Setting active scalars to " <<  modelNode->GetPolyData()->GetPointData()->GetArray(lastArray)->GetName() << endl);
+            modelNode->GetDisplayNode()->SetActiveScalarName(modelNode->GetPolyData()->GetPointData()->GetArray(lastArray)->GetName());
+            }
+          else
+            {
+            vtkWarningMacro("Can't get the last array " << lastArray);
+            }
+          }
+        else
+          {
+          vtkWarningMacro("Can't set active point scalars in the display node from the model " << modelNode->GetName() <<
+                          ", point data " << (modelNode->GetPolyData()->GetPointData() != NULL ? "is not null" : "is null"));
+          }
         }
       }
     return;
