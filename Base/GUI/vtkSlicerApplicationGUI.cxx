@@ -57,6 +57,7 @@
 #include "vtkSlicerMRMLSaveDataWidget.h"
 #include "vtkSlicerApplicationSettingsInterface.h"
 #include "vtkSlicerSliceControllerWidget.h"
+#include "vtkSlicerViewerInteractorStyle.h"
 
 #ifdef USE_PYTHON
 #ifdef _DEBUG
@@ -1146,6 +1147,8 @@ void vtkSlicerApplicationGUI::CreateMain3DViewer ( int arrangementType )
       this->FiducialListWidget = vtkSlicerFiducialListWidget::New();
       this->FiducialListWidget->SetApplication( app );
       this->FiducialListWidget->SetMainViewer(this->ViewerWidget->GetMainViewer());
+      this->FiducialListWidget->SetViewerWidget(this->ViewerWidget);
+      this->FiducialListWidget->SetInteractorStyle(vtkSlicerViewerInteractorStyle::SafeDownCast(this->ViewerWidget->GetMainViewer()->GetRenderWindowInteractor()->GetInteractorStyle()));
       this->FiducialListWidget->Create();
       this->FiducialListWidget->SetAndObserveMRMLSceneEvents (this->MRMLScene, events );
       events->Delete();
