@@ -9,6 +9,7 @@ SET(SlicerTractographyDisplay_SRCS
   vtkSlicerFiberBundleDisplayWidget.cxx
   vtkSlicerFiberBundleDisplayLogic.cxx
   vtkSlicerFiberBundleLogic.cxx
+  vtkSlicerDiffusionTensorIcons.cxx
 )
 
 # Abstract/pure virtual classes

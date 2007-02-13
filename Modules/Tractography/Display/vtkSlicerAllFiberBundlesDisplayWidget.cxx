@@ -27,6 +27,8 @@ vtkSlicerAllFiberBundlesDisplayWidget::vtkSlicerAllFiberBundlesDisplayWidget ( )
     this->GlyphVisibilityButton = NULL;
 
     this->SurfaceMaterialPropertyWidget = NULL;
+
+    this->DiffusionTensorIcons = vtkSlicerDiffusionTensorIcons::New ( );
 }
 
 
@@ -35,6 +37,20 @@ vtkSlicerAllFiberBundlesDisplayWidget::~vtkSlicerAllFiberBundlesDisplayWidget ( 
 {
   this->RemoveWidgetObservers();
 
+
+  if ( this->ColorModeRadioButtons )
+    {
+    this->ColorModeRadioButtons->SetParent ( NULL );
+    this->ColorModeRadioButtons->Delete ( );
+    this->ColorModeRadioButtons = NULL;      
+    }
+
+  // Delete Icons
+  if ( this->DiffusionTensorIcons )
+    {
+    this->DiffusionTensorIcons->Delete ( );
+    this->DiffusionTensorIcons = NULL;
+    }
 
   if (this->SurfaceMaterialPropertyWidget)
     {
@@ -202,6 +218,101 @@ void vtkSlicerAllFiberBundlesDisplayWidget::CreateWidget ( )
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                  fiberBundleDisplayFrame->GetWidgetName() );
 
+  // ---- color select radio buttons -----
+  this->ColorModeRadioButtons = vtkKWRadioButtonSet::New ( );
+
+  this->ColorModeRadioButtons->SetParent ( fiberBundleDisplayFrame );
+  this->ColorModeRadioButtons->Create ( );
+  this->ColorModeRadioButtons->PackHorizontallyOn();
+
+  // solid color button
+  vtkKWRadioButton *radiob = this->ColorModeRadioButtons->AddWidget ( ColorModeSolid );
+  radiob->SetReliefToFlat ( );
+  radiob->SetOffReliefToFlat ( );
+  radiob->SetOverReliefToNone ( );
+  radiob->SetImageToIcon ( this->DiffusionTensorIcons->GetLineIcon ( ) );
+  radiob->SetSelectImageToIcon ( this->DiffusionTensorIcons->GetGlyphIcon ( ) );
+  radiob->IndicatorVisibilityOff();
+  radiob->SetHighlightThickness ( 0 );
+  radiob->SetBorderWidth ( 0 );
+  //radiob->SetSelectColor ( app->GetSlicerTheme()->GetSlicerColors()->White );
+  radiob->SetBalloonHelpString ( "Color fibers by solid color" );
+  if ( this->ColorMode == ColorModeSolid )
+    {
+    radiob->SelectedStateOn ( );
+    }
+  else
+    {
+    radiob->SelectedStateOff ( );
+    }
+
+
+  radiob = this->ColorModeRadioButtons->AddWidget ( ColorModeFA );
+  radiob->SetReliefToFlat ( );
+  radiob->SetOffReliefToFlat ( );
+  radiob->SetOverReliefToNone ( );
+  radiob->SetImageToIcon ( this->DiffusionTensorIcons->GetLineIcon ( ) );
+  radiob->SetSelectImageToIcon ( this->DiffusionTensorIcons->GetGlyphIcon ( ) );
+  radiob->IndicatorVisibilityOff();
+  radiob->SetHighlightThickness ( 0 );
+  radiob->SetBorderWidth ( 0 );
+  //radiob->SetSelectColor ( app->GetSlicerTheme()->GetSlicerColors()->White );
+  radiob->SetBalloonHelpString ( "Color fibers by FA" );
+  if ( this->ColorMode == ColorModeFA )
+    {
+    radiob->SelectedStateOn ( );
+    }
+  else
+    {
+    radiob->SelectedStateOff ( );
+    }
+
+
+  radiob = this->ColorModeRadioButtons->AddWidget ( ColorModeCL );
+  radiob->SetReliefToFlat ( );
+  radiob->SetOffReliefToFlat ( );
+  radiob->SetOverReliefToNone ( );
+  radiob->SetImageToIcon ( this->DiffusionTensorIcons->GetLineIcon ( ) );
+  radiob->SetSelectImageToIcon ( this->DiffusionTensorIcons->GetGlyphIcon ( ) );
+  radiob->IndicatorVisibilityOff();
+  radiob->SetHighlightThickness ( 0 );
+  radiob->SetBorderWidth ( 0 );
+  //radiob->SetSelectColor ( app->GetSlicerTheme()->GetSlicerColors()->White );
+  radiob->SetBalloonHelpString ( "Color fibers by CL (Westin's linear measure)" );
+  if ( this->ColorMode == ColorModeCL )
+    {
+    radiob->SelectedStateOn ( );
+    }
+  else
+    {
+    radiob->SelectedStateOff ( );
+    }
+
+
+  radiob = this->ColorModeRadioButtons->AddWidget ( ColorModeTrace );
+  radiob->SetReliefToFlat ( );
+  radiob->SetOffReliefToFlat ( );
+  radiob->SetOverReliefToNone ( );
+  radiob->SetImageToIcon ( this->DiffusionTensorIcons->GetLineIcon ( ) );
+  radiob->SetSelectImageToIcon ( this->DiffusionTensorIcons->GetGlyphIcon ( ) );
+  radiob->IndicatorVisibilityOff();
+  radiob->SetHighlightThickness ( 0 );
+  radiob->SetBorderWidth ( 0 );
+  //radiob->SetSelectColor ( app->GetSlicerTheme()->GetSlicerColors()->White );
+  radiob->SetBalloonHelpString ( "Color fibers by Trace" );
+  if ( this->ColorMode == ColorModeTrace )
+    {
+    radiob->SelectedStateOn ( );
+    }
+  else
+    {
+    radiob->SelectedStateOff ( );
+    }
+
+  this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
+                 this->ColorModeRadioButtons->GetWidgetName() );
+
+  // ---- END color select radio buttons -----
 
   this->LineVisibilityButton = vtkKWCheckButtonWithLabel::New();
   this->LineVisibilityButton->SetParent ( fiberBundleDisplayFrame );

@@ -28,9 +28,13 @@
 
 #include "vtkKWSurfaceMaterialPropertyWidget.h"
 #include "vtkKWCheckButtonWithLabel.h"
+#include "vtkKWRadioButtonSet.h"
+#include "vtkKWRadioButton.h"
+#include "vtkKWMenuButton.h"
 
 #include "vtkMRMLFiberBundleNode.h"
 #include "vtkMRMLFiberBundleDisplayNode.h"
+#include "vtkSlicerDiffusionTensorIcons.h"
 
 
 class VTK_SLICERTRACTOGRAPHYDISPLAY_EXPORT vtkSlicerAllFiberBundlesDisplayWidget : public vtkSlicerWidget
@@ -44,8 +48,18 @@ public:
   // Description:
   // alternative method to propagate events generated in GUI to logic / mrml
   virtual void ProcessWidgetEvents ( vtkObject *caller, unsigned long event, void *callData );
-  
 
+  // List of most common types of coloring to enable in shortcut buttons
+  //BTX
+  enum
+  {
+    ColorModeSolid = 0,
+    ColorModeFA = 1,
+    ColorModeCL = 2,
+    ColorModeTrace = 3
+  };
+  //ETX
+ 
  protected:
   vtkSlicerAllFiberBundlesDisplayWidget();
   virtual ~vtkSlicerAllFiberBundlesDisplayWidget();
@@ -74,8 +88,21 @@ public:
 
   vtkKWSurfaceMaterialPropertyWidget *SurfaceMaterialPropertyWidget;
 
+  vtkKWPushButton *ToggleLineVisibilityButton;
+  vtkKWPushButton *ToggleTubeVisibilityButton;
+  vtkKWPushButton *ToggleGlyphVisibilityButton;
+
+  vtkKWMenuButton *VisibilityButton;
+
+  vtkKWRadioButtonSet *ColorModeRadioButtons;
+
+   // Description:
+  // Contains icons
+  vtkSlicerDiffusionTensorIcons *DiffusionTensorIcons;
+  
 private:
 
+  int ColorMode;
 
   vtkSlicerAllFiberBundlesDisplayWidget(const vtkSlicerAllFiberBundlesDisplayWidget&); // Not implemented
   void operator=(const vtkSlicerAllFiberBundlesDisplayWidget&); // Not Implemented
