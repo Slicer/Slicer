@@ -1277,7 +1277,7 @@ void vtkSlicerViewerWidget::ResetPick()
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerViewerWidget::Pick(int x, int y)
+int vtkSlicerViewerWidget::Pick(int x, int y)
 {
   double RASPoint[3] = {0.0, 0.0, 0.0};
   double pickPoint[3] = {0.0, 0.0, 0.0};
@@ -1293,7 +1293,7 @@ void vtkSlicerViewerWidget::Pick(int x, int y)
   else
     {
     vtkErrorMacro("Pick: unable to get renderer\n");
-    return;
+    return 0;
     }
    // get the current renderer's size
   //int *renSize = ren->GetSize();
@@ -1319,8 +1319,7 @@ void vtkSlicerViewerWidget::Pick(int x, int y)
   
   // now set up the class vars
   this->SetPickedRAS( RASPoint );
-        
-  // and throw the event so others can pick up on it
-  this->InvokeEvent(vtkSlicerViewerWidget::PickEvent);
+
+  return 1;
 }     
 

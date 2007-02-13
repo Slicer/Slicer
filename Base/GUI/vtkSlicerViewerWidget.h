@@ -137,15 +137,6 @@ public:
   void UpdateFromMRML();
 
   // Description:
-  // Pick event
-  //BTX
-  enum
-  {
-    PickEvent,
-  };
-  //ETX
-
-  // Description:
   // picks a world point
   vtkGetObjectMacro(WorldPointPicker, vtkWorldPointPicker);
   
@@ -160,9 +151,11 @@ public:
   vtkGetObjectMacro(PointPicker, vtkPointPicker);
   
   // Description:
-  // Convert an x/y location to a Pick event, called by the
-  // vtkSlicerViewerInteractorStyle. 
-  void Pick(int x, int y);
+  // Convert an x/y location to a mrml node, 3d RAS point, point id, cell id,
+  // as appropriate depending what's found under the xy. Called by
+  // vtkSlicerViewerInteractorStyle PickEvent consumers. Returns 1 on
+  // successful pick.
+  int Pick(int x, int y);
 
   // Description:
   // Get the name of the picked node, returns empty string if no pick
