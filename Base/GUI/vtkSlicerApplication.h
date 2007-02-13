@@ -13,7 +13,13 @@
 #include "vtkSlicerApplicationGUI.h"
 
 #ifdef USE_PYTHON
+#ifdef _DEBUG
+#undef _DEBUG
 #include <Python.h>
+#define _DEBUG
+#else
+#include <Python.h>
+#endif
 #endif
 
 
@@ -168,9 +174,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   vtkSlicerApplication ( );
   virtual ~vtkSlicerApplication ( );
 
-#ifdef USE_PYTHON  
-  virtual void DoOneTclEvent();
-#endif 
   vtkSlicerGUILayout *MainLayout;
   vtkSlicerTheme *SlicerTheme;
   

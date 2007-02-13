@@ -56,7 +56,14 @@
 #include "ModuleFactory.h"
  
 #ifdef USE_PYTHON
+// If debug, Python wants pythonxx_d.lib, so fake it out
+#ifdef _DEBUG
+#undef _DEBUG
 #include <Python.h>
+#define _DEBUG
+#else
+#include <Python.h>
+#endif
 extern "C" {
   void init_mytkinter(void );
   void init_slicer(void );

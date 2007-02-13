@@ -776,32 +776,3 @@ void vtkSlicerApplication::DisplayLogDialog(vtkKWTopLevel* master)
     }
 }
 
-
-#ifdef USE_PYTHON
-void vtkSlicerApplication::DoOneTclEvent()
-{
-
-  Tcl_DoOneEvent(0);
-#if 0
-  std::cout << "Starting Python mainloop" << std::endl;
-  // Let's start the python mainloop, rather than the tcl version
-  PyObject* v = PyRun_StringFlags (
-                         "from __main__ import tk;"
-                         "tk.mainloop();",
-                         Py_file_input,
-                         PythonDictionary,
-                         PythonDictionary,
-                         NULL);
-  if (v == NULL)
-    {
-    PyErr_Print();
-    return;
-    }
-  Py_DECREF ( v );
-  if (Py_FlushLine())
-    {
-    PyErr_Clear();
-    }
-#endif
-}
-#endif

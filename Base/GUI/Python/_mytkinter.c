@@ -22,7 +22,13 @@ libraries.)
 */
 
 #ifdef USE_PYTHON
-#include "Python.h"
+#ifdef _DEBUG
+#undef _DEBUG
+#include <Python.h>
+#define _DEBUG
+#else
+#include <Python.h>
+#endif
 #include <ctype.h>
 
 #undef WITH_THREAD
