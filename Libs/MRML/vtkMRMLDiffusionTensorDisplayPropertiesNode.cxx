@@ -220,8 +220,9 @@ vtkPolyData * vtkMRMLDiffusionTensorDisplayPropertiesNode::GetGlyphSource ( )
     {
     case Lines:
     case Tubes:
+      {
       vtkLineSource *line = vtkLineSource::New();
-
+      
       // Scaling along x-axis corresponds to major eigenvector, etc.   
       // Create a line along the proper axis for scaling:
       switch ( this->GlyphEigenvector )
@@ -266,11 +267,13 @@ vtkPolyData * vtkMRMLDiffusionTensorDisplayPropertiesNode::GetGlyphSource ( )
         }
 
       line->Delete( );
+      }
 
       break;
 
     case Ellipsoids:
 
+      {
       vtkSphereSource *sphere = vtkSphereSource::New();
       sphere->SetThetaResolution( this->EllipsoidGlyphThetaResolution );
       sphere->SetPhiResolution( this->EllipsoidGlyphPhiResolution );
@@ -279,7 +282,10 @@ vtkPolyData * vtkMRMLDiffusionTensorDisplayPropertiesNode::GetGlyphSource ( )
       this->SetGlyphSource( sphere->GetOutput( ) );
       sphere->Delete( );
 
+      }
+
       break;
+
     case Superquadrics:
       // Here do nothing, the superquadric must be created specifically for each tensor
       break;
