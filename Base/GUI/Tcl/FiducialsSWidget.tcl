@@ -98,6 +98,10 @@ itcl::body FiducialsSWidget::destructor {} {
 
 itcl::body FiducialsSWidget::processEvent { caller } {
 
+    if { [info command $caller] == ""} {
+        return
+    }
+
   if { [info command $sliceGUI] == "" } {
     # the sliceGUI was deleted behind our back, so we need to 
     # self destruct
