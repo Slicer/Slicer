@@ -106,7 +106,7 @@ if { [itcl::find class SWidget] == "" } {
     # clean up the vtk classes instanced by this SWidget
     method vtkDelete {} {
       foreach object $_vtkObjects {
-        $object Delete
+        catch "$object Delete"
       }
       set _vtkObjects ""
     }
