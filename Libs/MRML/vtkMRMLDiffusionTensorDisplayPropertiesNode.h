@@ -6,7 +6,7 @@
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Program:   3D Slicer
-  Module:    $RCSfile: vtkMRMLDiffusionTensorVolumeColorNode.h,v $
+  Module:    $RCSfile: ,v $
   Date:      $Date: 2006/03/19 17:12:29 $
   Version:   $Revision: 1.3 $
 
@@ -124,7 +124,6 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
   };  
 
   // TO DO: add the rest of the scalars
-  //and so on.
 
   //--------------------------------------------------------------------------
   // Display Information: Types of glyph geometry that can be displayed
@@ -366,9 +365,6 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
 
   // TO DO: add specific lookup tables ranging from 0..1 for or -1 1
   // for scalar invariants with those ranges
-
-  // TO DO: add glyph sources
-  // TO DO: add switch for eigenvector with line glyphs
 
   // TO DO: read/write MRML for all parameters
 
