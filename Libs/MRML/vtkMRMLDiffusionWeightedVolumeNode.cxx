@@ -53,9 +53,9 @@ vtkMRMLNode* vtkMRMLDiffusionWeightedVolumeNode::CreateNodeInstance()
 vtkMRMLDiffusionWeightedVolumeNode::vtkMRMLDiffusionWeightedVolumeNode()
 {
   this->NumberOfGradients = 7; //6 gradients + 1 baseline
-  this->Gradients = vtkDoubleArray::New();
-  this->Gradients->SetNumberOfComponents(3);
-  this->Gradients->SetNumberOfTuples(this->NumberOfGradients);
+  this->DiffusionGradients = vtkDoubleArray::New();
+  this->DiffusionGradients->SetNumberOfComponents(3);
+  this->DiffusionGradients->SetNumberOfTuples(this->NumberOfGradients);
   
   this->BValues = vtkDoubleArray::New();
   this->BValues->SetNumberOfTuples(this->NumberOfGradients);
@@ -64,7 +64,7 @@ vtkMRMLDiffusionWeightedVolumeNode::vtkMRMLDiffusionWeightedVolumeNode()
     {
     for(int j=0; j<3; j++) 
       {
-      this->MeasurementFrame[i][j] = (i == j) ? 1.0 : 0.0;
+      this->MeasurementFrameMatrix[i][j] = (i == j) ? 1.0 : 0.0;
       }
     }
 }
@@ -72,7 +72,7 @@ vtkMRMLDiffusionWeightedVolumeNode::vtkMRMLDiffusionWeightedVolumeNode()
 //----------------------------------------------------------------------------
 vtkMRMLDiffusionWeightedVolumeNode::~vtkMRMLDiffusionWeightedVolumeNode()
 {
-  this->Gradients->Delete();
+  this->DiffusionGradients->Delete();
   this->BValues->Delete();
 }
 
@@ -87,22 +87,22 @@ void vtkMRMLDiffusionWeightedVolumeNode::WriteXML(ostream& of, int nIndent)
     {
     for(int j=0; j<3; j++)
       {
-      ss << this->MeasurementFrame[i][j] << " ";
+      ss << this->MeasurementFrameMatrix[i][j] << " ";
       if ( i != 2 && j != 2 )
         {
         ss << "  ";
         }
       }
     }
-    of << indent << "measurementFrame=\"" << ss.str() << "\" ";
+    of << indent << "MeasurementFrameMatrix=\"" << ss.str() << "\" ";
 
   ss.clear();
   
-  for(int g=0; g<this->Gradients->GetNumberOfTuples(); g++)
+  for(int g=0; g<this->DiffusionGradients->GetNumberOfTuples(); g++)
     {
     for (int k=0; k<3; k++)
       {
-      ss << this->Gradients->GetComponent(g,k) << " ";
+      ss << this->DiffusionGradients->GetComponent(g,k) << " ";
       }
     }
   
@@ -131,7 +131,7 @@ void vtkMRMLDiffusionWeightedVolumeNode::ReadXMLAttributes(const char** atts)
     attName = *(atts++);
     attValue = *(atts++);
 
-    if (!strcmp(attName, "measurementFrame"))
+    if (!strcmp(attName, "MeasurementFrameMatrix"))
       {
       std::stringstream ss;
       double val;
@@ -141,7 +141,7 @@ void vtkMRMLDiffusionWeightedVolumeNode::ReadXMLAttributes(const char** atts)
         for(int j=0; j<3; j++)
           {
           ss >> val;
-          this->MeasurementFrame[i][j] = val;
+          this->MeasurementFrameMatrix[i][j] = val;
           }
         }
       }
@@ -150,17 +150,17 @@ void vtkMRMLDiffusionWeightedVolumeNode::ReadXMLAttributes(const char** atts)
       std::stringstream ss;
       ss << attValue;
       double g[3];
-      this->Gradients->Reset();
-      this->Gradients->SetNumberOfComponents(3);
+      this->DiffusionGradients->Reset();
+      this->DiffusionGradients->SetNumberOfComponents(3);
       while (!ss.eof())
         {
         for (int i=0; i<3; i++)
           {
           ss >> g[i];
           }
-        this->Gradients->InsertNextTuple(g);
+        this->DiffusionGradients->InsertNextTuple(g);
         }
-      this->NumberOfGradients = this->Gradients->GetNumberOfTuples();  
+      this->NumberOfGradients = this->DiffusionGradients->GetNumberOfTuples();  
       }
     if (!strcmp(attName, "bValues"))
       {
@@ -177,56 +177,81 @@ void vtkMRMLDiffusionWeightedVolumeNode::ReadXMLAttributes(const char** atts)
 }  
 
 //----------------------------------------------------------------------------
-void vtkMRMLDiffusionWeightedVolumeNode::SetMeasurementFrame(const double mf[3][3])
+void vtkMRMLDiffusionWeightedVolumeNode::SetMeasurementFrameMatrix(const double mf[3][3])
 {
   for (int i=0; i<3; i++) 
     {
     for (int j=0; j<3; j++) 
       {
-      this->MeasurementFrame[i][j] = mf[i][j];
+      this->MeasurementFrameMatrix[i][j] = mf[i][j];
       }
     }
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLDiffusionWeightedVolumeNode::GetMeasurementFrame(double mf[3][3])
+void vtkMRMLDiffusionWeightedVolumeNode::GetMeasurementFrameMatrix(double mf[3][3])
 {
   for (int i=0; i<3; i++) 
     {
     for (int j=0; j<3; j++) 
       {
-      mf[i][j] = this->MeasurementFrame[i][j];
+      mf[i][j] = this->MeasurementFrameMatrix[i][j];
       }
     }
 }
 
 
 //----------------------------------------------------------------------------
-void vtkMRMLDiffusionWeightedVolumeNode::SetMeasurementFrame(const double xr, const double xa, const double xs,
+void vtkMRMLDiffusionWeightedVolumeNode::SetMeasurementFrameMatrix(const double xr, const double xa, const double xs,
                            const double yr, const double ya, const double ys,
                            const double zr, const double za, const double zs)
 {
-  MeasurementFrame[0][0] = xr;
-  MeasurementFrame[0][1] = xa;
-  MeasurementFrame[0][2] = xs;
-  MeasurementFrame[1][0] = yr;
-  MeasurementFrame[1][1] = ya;
-  MeasurementFrame[1][2] = ys;
-  MeasurementFrame[2][0] = zr;
-  MeasurementFrame[2][1] = za;
-  MeasurementFrame[2][2] = zs;
+  MeasurementFrameMatrix[0][0] = xr;
+  MeasurementFrameMatrix[0][1] = xa;
+  MeasurementFrameMatrix[0][2] = xs;
+  MeasurementFrameMatrix[1][0] = yr;
+  MeasurementFrameMatrix[1][1] = ya;
+  MeasurementFrameMatrix[1][2] = ys;
+  MeasurementFrameMatrix[2][0] = zr;
+  MeasurementFrameMatrix[2][1] = za;
+  MeasurementFrameMatrix[2][2] = zs;
 }
+
+void vtkMRMLDiffusionWeightedVolumeNode::SetMeasurementFrameMatrix(vtkMatrix4x4 *mf)
+{
+  for (int i=0; i<3; i++)
+    {
+    for (int j=0; j<3; j++)
+      {
+      //this->MeasurementFrameMatrix[i][j]=mf->GetElement(i,j);
+      }
+    }
+}
+
+void vtkMRMLDiffusionWeightedVolumeNode::GetMeasurementFrameMatrix(vtkMatrix4x4 *mf)
+{
+
+  mf->Identity();
+  for (int i=0; i<3; i++)
+    {
+    for (int j=0; j<3; j++)
+      {
+      mf->SetElement(i,j,this->MeasurementFrameMatrix[i][j]);
+      }
+    }
+}
+
 
 //----------------------------------------------------------------------------
 void vtkMRMLDiffusionWeightedVolumeNode::SetNumberOfGradients(int val)
 {
   if (this->NumberOfGradients != val)
     {
-      this->Gradients->Reset();
+      this->DiffusionGradients->Reset();
       this->BValues->Reset();
       vtkDebugMacro ("setting num gradients to " << val);
       // internal array for storage of gradient vectors
-      this->Gradients->SetNumberOfTuples(val);
+      this->DiffusionGradients->SetNumberOfTuples(val);
       this->BValues->SetNumberOfTuples(val);
       // this class's info
       this->NumberOfGradients = val;
@@ -235,13 +260,13 @@ void vtkMRMLDiffusionWeightedVolumeNode::SetNumberOfGradients(int val)
 }  
 
 //----------------------------------------------------------------------------
-void vtkMRMLDiffusionWeightedVolumeNode::SetGradients(int num,const double grad[3])
+void vtkMRMLDiffusionWeightedVolumeNode::SetDiffusionGradient(int num,const double grad[3])
 {
-  if (this->Gradients->GetNumberOfTuples()<num)
+  if (this->DiffusionGradients->GetNumberOfTuples()<num)
     {
-    this->Gradients->SetComponent(num,0,grad[0]);
-    this->Gradients->SetComponent(num,1,grad[1]);
-    this->Gradients->SetComponent(num,2,grad[2]);
+    this->DiffusionGradients->SetComponent(num,0,grad[0]);
+    this->DiffusionGradients->SetComponent(num,1,grad[1]);
+    this->DiffusionGradients->SetComponent(num,2,grad[2]);
     this->Modified();
     }
   else
@@ -251,21 +276,21 @@ void vtkMRMLDiffusionWeightedVolumeNode::SetGradients(int num,const double grad[
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLDiffusionWeightedVolumeNode::SetGradients(vtkDoubleArray *grad)
+void vtkMRMLDiffusionWeightedVolumeNode::SetDiffusionGradients(vtkDoubleArray *grad)
 {
-  this->Gradients->DeepCopy(grad);
-  this->NumberOfGradients = this->Gradients->GetNumberOfTuples();
+  this->DiffusionGradients->DeepCopy(grad);
+  this->NumberOfGradients = this->DiffusionGradients->GetNumberOfTuples();
   this->Modified();
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLDiffusionWeightedVolumeNode::GetGradients(int num,double grad[3])
+void vtkMRMLDiffusionWeightedVolumeNode::GetDiffusionGradient(int num,double grad[3])
 {  
-  if(this->Gradients->GetNumberOfTuples()<num) 
+  if(this->DiffusionGradients->GetNumberOfTuples()<num) 
     {
-    grad[0]=this->Gradients->GetComponent(num,0);
-    grad[1]=this->Gradients->GetComponent(num,1);
-    grad[2]=this->Gradients->GetComponent(num,2);
+    grad[0]=this->DiffusionGradients->GetComponent(num,0);
+    grad[1]=this->DiffusionGradients->GetComponent(num,1);
+    grad[2]=this->DiffusionGradients->GetComponent(num,2);
     } 
   else 
     {
@@ -274,11 +299,11 @@ void vtkMRMLDiffusionWeightedVolumeNode::GetGradients(int num,double grad[3])
 }
 
 //----------------------------------------------------------------------------
-double *vtkMRMLDiffusionWeightedVolumeNode::GetGradients(int num)
+double *vtkMRMLDiffusionWeightedVolumeNode::GetDiffusionGradient(int num)
 {
-  if(this->Gradients->GetNumberOfTuples()<num) 
+  if(this->DiffusionGradients->GetNumberOfTuples()<num) 
     {
-    return static_cast <double *> (this->Gradients->GetVoidPointer(num*3));
+    return static_cast <double *> (this->DiffusionGradients->GetVoidPointer(num*3));
     }
   else
     {
@@ -295,7 +320,7 @@ void vtkMRMLDiffusionWeightedVolumeNode::SetBValues(vtkDoubleArray *bValues)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLDiffusionWeightedVolumeNode::SetBValues(int num, const double b)
+void vtkMRMLDiffusionWeightedVolumeNode::SetBValue(int num, const double b)
 {
   if (this->BValues->GetNumberOfTuples()<num)
     {
@@ -309,7 +334,7 @@ void vtkMRMLDiffusionWeightedVolumeNode::SetBValues(int num, const double b)
 }
 
 //----------------------------------------------------------------------------
-double vtkMRMLDiffusionWeightedVolumeNode::GetBValues(int num)
+double vtkMRMLDiffusionWeightedVolumeNode::GetBValue(int num)
 {
   if (this->BValues->GetNumberOfTuples()<num)
     {
@@ -321,7 +346,6 @@ double vtkMRMLDiffusionWeightedVolumeNode::GetBValues(int num)
     return 0;
     }
 }
-
 
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
@@ -336,13 +360,13 @@ void vtkMRMLDiffusionWeightedVolumeNode::Copy(vtkMRMLNode *anode)
     {
     for(int j=0; j<3; j++) 
       {
-      this->MeasurementFrame[i][j] = node->MeasurementFrame[i][j];
+      this->MeasurementFrameMatrix[i][j] = node->MeasurementFrameMatrix[i][j];
       }
     }
     
-  if (this->Gradients)
+  if (this->DiffusionGradients)
     {
-    this->Gradients->DeepCopy(node->Gradients);
+    this->DiffusionGradients->DeepCopy(node->DiffusionGradients);
     }
   if (this->BValues)
     {
@@ -356,23 +380,23 @@ void vtkMRMLDiffusionWeightedVolumeNode::PrintSelf(ostream& os, vtkIndent indent
 {
   Superclass::PrintSelf(os,indent);
 
-  os << "MeasurementFrame:\n";
+  os << "MeasurementFrameMatrix:\n";
   for(int i=0; i<3; i++) 
     {
     for(int j=0; j<3; j++) 
       {
-      os << indent << " " << this->MeasurementFrame[i][j];
+      os << indent << " " << this->MeasurementFrameMatrix[i][j];
       }
       os << indent << "\n";
     }
   os << "\n";
 
   os << "Gradients:\n";
-  for (int g =0; g<this->Gradients->GetNumberOfTuples(); g++)
+  for (int g =0; g < this->DiffusionGradients->GetNumberOfTuples(); g++)
     {
     for(int j=0; j<3; j++) 
       {
-      os << indent << " " << this->Gradients->GetComponent(g,j);
+      os << indent << " " << this->DiffusionGradients->GetComponent(g,j);
       }
     os<< indent << "\n";
     }

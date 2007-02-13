@@ -60,27 +60,29 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionWeightedVolumeNode : public vtkMRMLVolumeN
   vtkGetMacro(NumberOfGradients,int);
 
   // Description:
-  void SetGradients(int val, const double g[3]);
-  void SetGradients(vtkDoubleArray *grad);
-  double *GetGradients(int val);
-  void GetGradients(int val, double g[3]);  
-  vtkGetObjectMacro(Gradients,vtkDoubleArray);
+  void SetDiffusionGradient(int val, const double g[3]);
+  void SetDiffusionGradients(vtkDoubleArray *grad);
+  double *GetDiffusionGradient(int val);
+  void GetDiffusionGradient(int val, double g[3]);  
+  vtkGetObjectMacro(DiffusionGradients,vtkDoubleArray);
 
   // Description:
-  void SetBValues (int val, const double b);
+  void SetBValue (int val, const double b);
   void SetBValues (vtkDoubleArray *bValue);
-  double GetBValues(int val);
+  double GetBValue(int val);
   vtkGetObjectMacro(BValues,vtkDoubleArray);
 
   // Description: Set/Get measurement frame that relates the coordinate system where the
   // tensor measurements are given with the RAS coordinate system
-  void SetMeasurementFrame(const double mf[3][3]);
-  void SetMeasurementFrame(const double xr, const double xa, const double xs,
+  void SetMeasurementFrameMatrix(const double mf[3][3]);
+  void GetMeasurementFrameMatrix(double mf[3][3]);
+  void SetMeasurementFrameMatrix(const double xr, const double xa, const double xs,
                            const double yr, const double ya, const double ys,
                            const double zr, const double za, const double zs);
 
-  void GetMeasurementFrame(double mf[3][3]);
-  //void GetMeasurementFrame(vtkMatrix4x4 *mat);
+  void SetMeasurementFrameMatrix(vtkMatrix4x4 *mat);
+  void GetMeasurementFrameMatrix(vtkMatrix4x4 *mat);
+ 
 
 
 protected:
@@ -89,9 +91,9 @@ protected:
   vtkMRMLDiffusionWeightedVolumeNode(const vtkMRMLDiffusionWeightedVolumeNode&);
   void operator=(const vtkMRMLDiffusionWeightedVolumeNode&);
   
-  double MeasurementFrame[3][3];
+  double MeasurementFrameMatrix[3][3];
   
-  vtkDoubleArray *Gradients;
+  vtkDoubleArray *DiffusionGradients;
   vtkDoubleArray *BValues;
   
   int NumberOfGradients;
