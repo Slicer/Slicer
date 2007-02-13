@@ -204,8 +204,8 @@ proc launch_LicenseDialog {} {
 
     set msg "Slicer is an experimental software package.\nAny clinical use requires proper research controls.\nSelecting \"Ok\" below binds you to the license agreement.\nSee www.slicer.org for details.\n"
 
-    set ::argv0 [lindex $::argv 0]
-    if { $::argv0 == "-y" || $::argv0 == "--agree_to_license" || $::argv0 == "--batch" } {
+    set argv0 [lindex $::argv 0]
+    if { $argv0 == "-y" || $argv0 == "--agree_to_license" || $argv0 == "--batch" } {
         set ::argv [lreplace $::argv 0 0]
     } else {
         if { ![file exists $::env(HOME)/.IAgreeToSlicersLicense] } {
@@ -232,7 +232,7 @@ proc launch_LicenseDialog {} {
         }
     }
 
-    if { $::argv0 == "--batch" } {
+    if { $argv0 == "--batch" } {
         set ::BATCH "true"
         puts "Note: By specifying --batch on the command line, you have agreed to slicer's license terms."
     } else {
@@ -255,6 +255,24 @@ proc launch_FileEvent {fp} {
 }
 
 proc launch_RunProgram {} {
+
+
+    # 
+    # look for launcher-specific arguments
+    #  --launch <program>
+    #
+    set launch_command ""
+    set argv0 [lindex $::argv 0]
+    set argv1 [lindex $::argv 1]
+    if { $argv0 == "--launch" } {
+        if { $argv1 == "" } {
+          error "--launch requires argument of program to run"
+        } else {
+            set launch_command $argv1
+            set ::argv [lreplace $::argv 0 1]
+        }
+    }
+
 
     #
     # change from tcl escape to shell escape for command line arguments 
@@ -292,12 +310,14 @@ proc launch_RunProgram {} {
     # 
     # determine the correct arguments and executable for the platform
     #
-    if {$::env(BUILD) == $::WINDOWS} {
-        set slicer3 $::SLICER_HOME/bin/$::env(VTK_BUILD_SUBDIR)/Slicer3-real.exe
-    } else {
-        # turn curly braces into quotes
-        regsub -all "{|}" $::argv "\\\"" ::argv
-        set slicer3 $::SLICER_HOME/bin/Slicer3-real
+    if { $launch_command == "" } {
+        if {$::env(BUILD) == $::WINDOWS} {
+            set launch_command $::SLICER_HOME/bin/$::env(VTK_BUILD_SUBDIR)/Slicer3-real.exe
+        } else {
+            # turn curly braces into quotes
+            regsub -all "{|}" $::argv "\\\"" ::argv
+            set launch_command $::SLICER_HOME/bin/Slicer3-real
+        }
     }
 
     #
@@ -307,9 +327,9 @@ proc launch_RunProgram {} {
     #
     if { $::BATCH == "true" } {
         if {$::env(BUILD) == $::WINDOWS} {
-            set ret [catch "exec \"$slicer3\" $::argv" res]
+            set ret [catch "exec \"$launch_command\" $::argv" res]
         } else {
-            set ret [catch "exec $slicer3 $::argv |& cat" res]
+            set ret [catch "exec $launch_command $::argv |& cat" res]
         }
         
         # get the actual exit code of the child process
@@ -332,9 +352,9 @@ proc launch_RunProgram {} {
         }
     } else {
         if {$::env(BUILD) == $::WINDOWS} {
-            set fp [open "| \"$slicer3\" $::argv" r]
+            set fp [open "| \"$launch_command\" $::argv" r]
         } else {
-            set fp [open "| csh -f -c \"$slicer3 $::argv \" |& cat" r]
+            set fp [open "| csh -f -c \"$launch_command $::argv \" |& cat" r]
         }
 
         if {[info exists fp]} {
