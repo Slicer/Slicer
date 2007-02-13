@@ -31,6 +31,8 @@
 #include "vtkKWScaleWithLabel.h"
 #include "vtkKWSurfaceMaterialPropertyWidget.h"
 #include "vtkKWChangeColorButton.h"
+#include "vtkKWMenuButton.h"
+#include "vtkKWMenuButtonWithLabel.h"
 
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLModelDisplayNode.h"
@@ -93,6 +95,7 @@ public:
   vtkSlicerNodeSelectorWidget* ModelSelectorWidget;
   vtkKWCheckButtonWithLabel *VisibilityButton;
   vtkKWCheckButtonWithLabel *ScalarVisibilityButton;
+  vtkKWMenuButtonWithLabel *ScalarMenu;
   vtkSlicerNodeSelectorWidget* ColorSelectorWidget;
   vtkKWCheckButtonWithLabel *ClippingButton;
   vtkKWScaleWithLabel  *OpacityScale;
