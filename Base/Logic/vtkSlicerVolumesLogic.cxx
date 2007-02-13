@@ -25,8 +25,6 @@
 #include "vtkMRMLVectorVolumeNode.h"
 #include "vtkMRMLVolumeArchetypeStorageNode.h"
 
-//#define USE_TEEM 1
-
 #ifdef USE_TEEM
   #include "vtkMRMLNRRDStorageNode.h"
 #endif
@@ -214,6 +212,65 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (char* filename, in
   return volumeNode;
 }
 
+//----------------------------------------------------------------------------
+int vtkSlicerVolumesLogic::SaveArchetypeVolume (char* filename, vtkMRMLVolumeNode *volumeNode)
+{
+  if (volumeNode == NULL || filename == NULL)
+    {
+    return 0;
+    }
+  
+  vtkMRMLNRRDStorageNode *storageNode1 = NULL;
+  vtkMRMLVolumeArchetypeStorageNode *storageNode2 = NULL;
+  vtkMRMLStorageNode *storageNode = NULL;
+  vtkMRMLStorageNode *snode = volumeNode->GetStorageNode();
+
+  if (snode != NULL)
+    {
+    storageNode2 = vtkMRMLVolumeArchetypeStorageNode::SafeDownCast(snode);
+    storageNode1 = vtkMRMLNRRDStorageNode::SafeDownCast(snode);
+    }
+
+  // Use NRRD writer if we are dealing with DWI, DTI or vector volumes
+
+  if (volumeNode->IsA("vtkMRMLDiffusionWeightedVolumeNode") ||
+      volumeNode->IsA("vtkMRMLDiffusionTensorVolumeNode") ||
+      volumeNode->IsA("vtkMRMLVectorVolumeNode"))
+    {
+
+    if (storageNode1 == NULL)
+      {
+      storageNode1 = vtkMRMLNRRDStorageNode::New();
+      storageNode1->SetScene(this->GetMRMLScene());
+      this->GetMRMLScene()->AddNode(storageNode1);
+      volumeNode->SetStorageNodeID(storageNode1->GetID());
+      storageNode1->Delete();
+      }
+
+    storageNode1->SetFileName(filename);
+    storageNode = storageNode1;
+    }
+  else
+    {
+    if (storageNode2 == NULL)
+      {
+      storageNode2 = vtkMRMLVolumeArchetypeStorageNode::New();
+      storageNode2->SetScene(this->GetMRMLScene());
+      this->GetMRMLScene()->AddNode(storageNode2);
+      volumeNode->SetStorageNodeID(storageNode2->GetID());
+      storageNode2->Delete();
+      }
+
+    storageNode2->SetFileName(filename);
+    storageNode = storageNode2;
+    }
+
+  int res = storageNode->WriteData(volumeNode);
+  return res;
+}
+
+
+
 #else
 
 //----------------------------------------------------------------------------
@@ -311,9 +368,6 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (char* filename, in
   return volumeNode;
 }
 
-
-#endif
-
 //----------------------------------------------------------------------------
 int vtkSlicerVolumesLogic::SaveArchetypeVolume (char* filename, vtkMRMLVolumeNode *volumeNode)
 {
@@ -390,6 +444,9 @@ vtkMRMLScalarVolumeNode *vtkSlicerVolumesLogic::CreateLabelVolume (vtkMRMLScene 
 
   return (labelNode);
 }
+
+
+#endif
 
 //----------------------------------------------------------------------------
 void vtkSlicerVolumesLogic::PrintSelf(ostream& os, vtkIndent indent)
