@@ -28,6 +28,7 @@
 #include "vtkTransformPolyDataFilter.h"
 #include "vtkMapper.h"
 #include "vtkGlyph3D.h"
+#include "vtkSphereSource.h"
 
 class vtkMRMLFiducialListNode;
 class vtkMRMLFiducial;
@@ -39,8 +40,8 @@ class vtkImplicitBoolean;
 class vtkKWRenderWidget;
 class vtkTransform;
 class vtkCollection;
-class vtkSphereSource;
-
+class vtkSlicerViewerWidget;
+class vtkSlicerViewerInteractorStyle;
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialListWidget : public vtkSlicerWidget
 {
 public:
@@ -67,7 +68,13 @@ public:
   // Description:
   // Get the poly data representing the 3d diamond glyph
   vtkGetObjectMacro(DiamondGlyphPolyData, vtkPolyData);
+  vtkSetObjectMacro(DiamondGlyphPolyData, vtkPolyData);
 
+  // Description:
+  // Get/Set the sphere source for the 3d sphere glyph
+  vtkGetObjectMacro(SphereSource, vtkSphereSource);
+  vtkSetObjectMacro(SphereSource, vtkSphereSource);
+  
   // Description:
   // Set/Get the main viewer, called by vtkSlicerApplicationGUI
   vtkSetObjectMacro(MainViewer, vtkKWRenderWidget);
@@ -95,6 +102,16 @@ public:
   // Description:
   // return the current actor corresponding to a given MRML ID
   vtkActor * GetFiducialActorByID (const char *id);
+
+  // Description:
+  // Get/Set the main slicer viewer widget, for picking
+  vtkGetObjectMacro(ViewerWidget, vtkSlicerViewerWidget);
+  virtual void SetViewerWidget(vtkSlicerViewerWidget *viewerWidget);
+
+  // Description:
+  // Get/Set the slicer interactorstyle, for picking
+  vtkGetObjectMacro(InteractorStyle, vtkSlicerViewerInteractorStyle);
+  virtual void SetInteractorStyle(vtkSlicerViewerInteractorStyle *interactorStyle);
   
 protected:
   vtkSlicerFiducialListWidget();
@@ -210,6 +227,14 @@ protected:
   // Description:
   // A flag to avoid thread collisions when rendering
   int RenderPending;
+
+  // Description:
+  // A pointer back to the viewer widget, useful for picking
+  vtkSlicerViewerWidget *ViewerWidget;
+
+  // Description:
+  // A poitner to the interactor style, useful for picking
+  vtkSlicerViewerInteractorStyle *InteractorStyle;
   
 private:
   

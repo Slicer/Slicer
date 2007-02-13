@@ -42,6 +42,12 @@
 #include "vtkTransformPolyDataFilter.h"
 #include "vtkGlyph3D.h"
 
+// for pick events
+#include "vtkSlicerViewerWidget.h"
+#include "vtkSlicerViewerInteractorStyle.h"
+#include "vtkSlicerFiducialsGUI.h"
+#include "vtkSlicerFiducialsLogic.h"
+
 //---------------------------------------------------------------------------
 vtkStandardNewMacro ( vtkSlicerFiducialListWidget );
 vtkCxxRevisionMacro ( vtkSlicerFiducialListWidget, "$Revision: $");
@@ -115,6 +121,10 @@ vtkSlicerFiducialListWidget::vtkSlicerFiducialListWidget ( )
   this->SphereSource->SetPhiResolution(10);
   this->SphereSource->SetThetaResolution(10);
 
+  // for picking
+  this->ViewerWidget = NULL;
+  this->InteractorStyle = NULL;
+  
 //  this->DebugOn();
 
 }
@@ -137,6 +147,7 @@ vtkSlicerFiducialListWidget::~vtkSlicerFiducialListWidget ( )
   this->RemoveMRMLObservers();
 
   this->DiamondGlyphPolyData->Delete();
+  this->DiamondGlyphPolyData = NULL;
   this->SphereSource->Delete();
   this->SphereSource = NULL;
 
@@ -239,7 +250,7 @@ vtkSlicerFiducialListWidget::~vtkSlicerFiducialListWidget ( )
       }
     }
   this->SymbolTransformMap.clear();
-  
+
   std::map< const char *, vtkTransformPolyDataFilter * >::iterator tfIter;
   for (tfIter = this->TransformFilterMap.begin();
        tfIter != this->TransformFilterMap.end();
@@ -282,6 +293,9 @@ vtkSlicerFiducialListWidget::~vtkSlicerFiducialListWidget ( )
       }
     }
   this->Glyph3DMap.clear();
+
+  this->SetViewerWidget(NULL);
+  this->SetInteractorStyle(NULL);
 }
 //---------------------------------------------------------------------------
 void vtkSlicerFiducialListWidget::PrintSelf ( ostream& os, vtkIndent indent )
@@ -498,6 +512,37 @@ void vtkSlicerFiducialListWidget::ProcessWidgetEvents ( vtkObject *caller,
                                                   void *callData )
 {
   vtkDebugMacro("vtkSlicerFiducialListWidget::ProcessWidgetEvents: event = " << event);
+  // check for pick events
+  if (event == vtkSlicerViewerInteractorStyle::PickEvent &&
+      vtkSlicerViewerInteractorStyle::SafeDownCast(caller) != NULL &&
+      callData != NULL)
+    {
+    vtkDebugMacro("FiducialListWidget: Pick event!\n");
+    // do the pick
+    int x = ((int *)callData)[0];
+    int y = ((int *)callData)[1];
+    if (this->GetViewerWidget()->Pick(x,y) != 0)
+      {
+      // check for a valid RAS point
+      double *rasPoint = this->GetViewerWidget()->GetPickedRAS();
+      if (rasPoint != NULL)
+        {
+        vtkSlicerFiducialsLogic *fidLogic  = vtkSlicerFiducialsGUI::SafeDownCast(vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Fiducials"))->GetLogic();
+        int modelIndex = fidLogic->AddFiducialSelected(rasPoint[0], rasPoint[1], rasPoint[2], 1);
+        // swallow the event
+        vtkDebugMacro("Fiducial List Widget dealt with the Pick, setting my gui call back command abort flag so that the interactor style will stop passing the event along, event = " << event);
+        if (this->GUICallbackCommand != NULL)
+          {
+            
+          this->GUICallbackCommand->SetAbortFlag(1);
+          }
+        else
+          {
+          vtkErrorMacro("Unable to get the gui call back command that calls process widget events, event = " << event << " is not swallowed here");
+          }
+        }
+      }
+    }
 } 
 
 //---------------------------------------------------------------------------
@@ -525,8 +570,10 @@ void vtkSlicerFiducialListWidget::ProcessMRMLEvents ( vtkObject *caller,
     {
     // could have finer grain control by calling remove fid props and then
     // update fids from mrml if necessary
+    vtkDebugMacro("ProcessMRMLEvents: got either a fid list display or fid modified evnent or scene modified or fid list modified, calling update from mrml");
     this->UpdateFromMRML();
     }
+      
   this->ProcessingMRMLEvent = 0;
 }
 
@@ -656,12 +703,11 @@ void vtkSlicerFiducialListWidget::AddList(vtkMRMLFiducialListNode *flist)
   // now set up the mapper
   vtkPolyDataMapper *mapper = vtkPolyDataMapper::New();
   mapper->SetInput(this->Glyph3DMap[fid]->GetOutput());
-  //mapper->SetInput(((vtkGlyph3D*)this->Glyph3DList->GetItemAsObject(n))->GetOutput());
-  vtkLookupTable *lut = vtkLookupTable::SafeDownCast(mapper->GetLookupTable());
-  lut->SetNumberOfTableValues(2);
+  //vtkLookupTable *lut = vtkLookupTable::SafeDownCast(mapper->GetLookupTable())%;
+  vtkLookupTable::SafeDownCast(mapper->GetLookupTable())->SetNumberOfTableValues(2);
   // set the selected/unselected colours
-  lut->SetTableValue(0, 1, 0, 0, 1.0);
-  lut->SetTableValue(1, 0, 0, 1, 1.0);
+  vtkLookupTable::SafeDownCast(mapper->GetLookupTable())->SetTableValue(0, 1, 0, 0, 1.0);
+  vtkLookupTable::SafeDownCast(mapper->GetLookupTable())->SetTableValue(1, 0, 0, 1, 1.0);
   
   this->GlyphMapperMap[fid] = mapper;
 //  lut->Delete();
@@ -1069,6 +1115,7 @@ void vtkSlicerFiducialListWidget::UpdateFiducialsFromMRML()
         if (glyph2d != NULL)
           {
           glyph2d->Delete();
+          glyph2d = NULL;
           }
         } // end of for each fid point on list
       } // end of 2d symbols
@@ -1348,4 +1395,31 @@ vtkSlicerFiducialListWidget::GetFiducialActorByID (const char *id)
       }
     }
   return (NULL);
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerFiducialListWidget::SetViewerWidget ( vtkSlicerViewerWidget *viewerWidget )
+{
+  this->ViewerWidget = viewerWidget;
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerFiducialListWidget::SetInteractorStyle( vtkSlicerViewerInteractorStyle *interactorStyle )
+{
+  // note: currently the GUICallbackCommand calls ProcessWidgetEvents
+  // remove observers
+  if (this->InteractorStyle != NULL &&
+      this->InteractorStyle->HasObserver(vtkSlicerViewerInteractorStyle::PickEvent, this->GUICallbackCommand) == 1)
+    {
+    this->InteractorStyle->RemoveObservers(vtkSlicerViewerInteractorStyle::PickEvent, (vtkCommand *)this->GUICallbackCommand);
+    }
+  
+  this->InteractorStyle = interactorStyle;
+
+  // add observers
+  if (this->InteractorStyle)
+    {
+    vtkDebugMacro("vtkSlicerFiducialWidget: Adding observer on interactor style");
+    this->InteractorStyle->AddObserver(vtkSlicerViewerInteractorStyle::PickEvent, (vtkCommand *)this->GUICallbackCommand);
+    }
 }
