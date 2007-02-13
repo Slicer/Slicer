@@ -6,6 +6,7 @@
 #include "vtkPointData.h"
 #include "vtkObjectFactory.h"
 #include "vtkDataArray.h"
+#include "vtkInformation.h"
 #include "teem/nrrd.h"
 
 
@@ -16,8 +17,8 @@ vtkStandardNewMacro(vtkNRRDWriter);
 vtkNRRDWriter::vtkNRRDWriter()
 {
   this->FileName = NULL;
-  this->B = vtkDoubleArray::New();
-  this->DiffusionGradient = vtkDoubleArray::New();
+  this->BValues = vtkDoubleArray::New();
+  this->DiffusionGradients = vtkDoubleArray::New();
   this->IJKToRASMatrix = vtkMatrix4x4::New();
   this->MeasurementFrameMatrix = vtkMatrix4x4::New();
   this->UseCompression = 1;
@@ -32,13 +33,13 @@ vtkNRRDWriter::~vtkNRRDWriter()
     delete [] this->FileName;
     }
 
-  if (this->DiffusionGradient)
+  if (this->DiffusionGradients)
     {
-    this->DiffusionGradient->Delete();
+    this->DiffusionGradients->Delete();
     }
-  if (this->B)
+  if (this->BValues)
     {
-    this->B->Delete();
+    this->BValues->Delete();
     }
   if (this->IJKToRASMatrix)
     {
@@ -50,16 +51,26 @@ vtkNRRDWriter::~vtkNRRDWriter()
     }      
 }
 
+//----------------------------------------------------------------------------
 vtkImageData* vtkNRRDWriter::GetInput()
 {
   return vtkImageData::SafeDownCast(this->Superclass::GetInput());
 }
 
+//----------------------------------------------------------------------------
 vtkImageData* vtkNRRDWriter::GetInput(int port)
 {
   return vtkImageData::SafeDownCast(this->Superclass::GetInput(port));
 }
 
+//----------------------------------------------------------------------------
+int vtkNRRDWriter::FillInputPortInformation(
+  int port, vtkInformation *info)
+{
+  info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkImageData");
+  return 1;
+
+}
 
 //----------------------------------------------------------------------------
 // Writes all the data from the input.
@@ -88,9 +99,9 @@ void vtkNRRDWriter::vtkImageDataInfoToNrrdInfo(vtkImageData *in, int &nrrdKind, 
         nrrdKind = nrrdKindRGBAColor;
         break;
       default:
-        int numGrad = this->DiffusionGradient->GetNumberOfTuples();
-        int numB = this->B->GetNumberOfTuples();
-        if (numGrad == numB && numGrad == numComp)
+        int numGrad = this->DiffusionGradients->GetNumberOfTuples();
+        int numBValues = this->BValues->GetNumberOfTuples();
+        if (numGrad == numBValues && numGrad == numComp)
           {
           nrrdKind = nrrdKindList;
           }
@@ -99,7 +110,7 @@ void vtkNRRDWriter::vtkImageDataInfoToNrrdInfo(vtkImageData *in, int &nrrdKind, 
           nrrdKind = nrrdKindList;
           }
        }
-     }        
+     }
    else if ((array = static_cast<vtkDataArray *> ( in->GetPointData()->GetVectors())))
      {
      buffer = array->GetVoidPointer(0);
@@ -186,12 +197,21 @@ void vtkNRRDWriter::WriteData()
   void *buffer;
   int vtkType;
   
+  cout<<"Updating Input Information"<<endl;
     // Fill in image information.
   this->GetInput()->UpdateInformation();
   
   // Find Pixel type from data and select a buffer.
+  cout<<"Getting ImageDataInfo to NrrdInfo"<<endl;
   this->vtkImageDataInfoToNrrdInfo(this->GetInput(),kind[0],size[0],vtkType, buffer); 
 
+  cout<<"Retreive info: "<<endl;
+  cout<<"Kind: "<<kind[0]<<endl;
+  cout<<"Size: "<<size[0]<<endl;
+  cout<<"vtkType: "<<vtkType<<endl;
+  cout<<"Buffer pointer: "<<buffer<<endl;
+
+  cout<<"Setting axis depedent info"<<endl;
   spaceDim = 3; // VTK is always 3D volumes.
   if (size[0] > 1)
     {
@@ -220,6 +240,7 @@ void vtkNRRDWriter::WriteData()
       spaceDir[axi+baseDim][saxi] = this->IJKToRASMatrix->GetElement(axi,saxi);
       }
     }
+  cout<<"Before wrapping buffer"<<endl;
   if (nrrdWrap_nva(nrrd, const_cast<void *>(buffer),
                    this->VTKToNrrdPixelType( vtkType ),
                    nrrdDim, size)
@@ -232,60 +253,67 @@ void vtkNRRDWriter::WriteData()
     // Free the nrrd struct but don't touch nrrd->data
     nrrd = nrrdNix(nrrd);
     nio = nrrdIoStateNix(nio);
-    return;              
+    return; 
     }
+  cout<<"Setting axis info"<<endl;
   nrrdAxisInfoSet_nva(nrrd, nrrdAxisInfoKind, kind);
   nrrdAxisInfoSet_nva(nrrd, nrrdAxisInfoSpaceDirection, spaceDir);
 
+  cout<<"Size: "<<size[0]<<" "<<size[1]<<" "<<size[2]<<" "<<size[3]<<endl;
+  cout<<"vtk Type: "<<vtkType<<" Nrrd Type: "<<this->VTKToNrrdPixelType( vtkType )<<endl;
 
- // Go through MetaDataDictionary and set either specific nrrd field
- // or a key/value pair
- // We basically care about finding if we have diffusion information
- // and measurement frame information
+  // Go through MetaDataDictionary and set either specific nrrd field
+  // or a key/value pair
+  // We basically care about finding if we have diffusion information
+  // and measurement frame information
 
   // 1. Measurement Frame
-  for (unsigned int saxi=0; saxi < nrrd->spaceDim; saxi++)
+  cout<<"Set Measurement Frame"<<endl;
+  if (this->MeasurementFrameMatrix)
     {
-    for (unsigned int saxj=0; saxj < nrrd->spaceDim; saxj++)
+    for (unsigned int saxi=0; saxi < nrrd->spaceDim; saxi++)
       {
-      nrrd->measurementFrame[saxi][saxj] = this->MeasurementFrameMatrix->GetElement(saxi,saxj);
+      for (unsigned int saxj=0; saxj < nrrd->spaceDim; saxj++)
+        {
+        nrrd->measurementFrame[saxi][saxj] = this->MeasurementFrameMatrix->GetElement(saxi,saxj);
+        }
       }
-    }  
+    }
 
+   cout<<"Set Diffusion Data"<<endl;
   // 2. Take care about diffusion data
-  int numGrad = this->DiffusionGradient->GetNumberOfTuples();
-  int numB = this->B->GetNumberOfTuples();
-  
-  if (kind[0] == nrrdKindList && numGrad == size[0] && numB == size[0])
+  if (this->DiffusionGradients && this->BValues)
     {
-    // This is diffusion Data
-    double *grad;
-    double bVal,factor;
-    double maxbVal = this->B->GetRange()[1];
+    int numGrad = this->DiffusionGradients->GetNumberOfTuples();
+    int numBValues = this->BValues->GetNumberOfTuples();
 
-    
-    char value[1024];
-    char key[1024];
-    
-    strcpy(key,"modality");
-    strcpy(value,"DWMRI");
-    nrrdKeyValueAdd(nrrd, key, value);
-    
-    strcpy(key,"DWMRI_b-value");
-    sprintf(value,"%f",maxbVal,1024);
-    nrrdKeyValueAdd(nrrd,key, value);
-    
-    for (unsigned int ig =0; ig< numGrad; ig++)
+    if (kind[0] == nrrdKindList && numGrad == size[0] && numBValues == size[0])
       {
-      grad=this->DiffusionGradient->GetTuple3(ig);
-      bVal = this->B->GetValue(ig);
-      factor = bVal/maxbVal;
-      sprintf(key,"%s%04d","DWMRI_gradient_",ig);
-      sprintf(value,"%f %f %f",grad[0]*factor, grad[1]*factor, grad[2]*factor);
-      nrrdKeyValueAdd(nrrd,key, value);
-      }
-   }
+      // This is diffusion Data
+      double *grad;
+      double bVal,factor;
+      double maxbVal = this->BValues->GetRange()[1];
+      char value[1024];
+      char key[1024];
+      strcpy(key,"modality");
+      strcpy(value,"DWMRI");
+      nrrdKeyValueAdd(nrrd, key, value);
 
+      strcpy(key,"DWMRI_b-value");
+      sprintf(value,"%f",maxbVal,1024);
+      nrrdKeyValueAdd(nrrd,key, value);
+      for (unsigned int ig =0; ig< numGrad; ig++)
+        {
+        grad=this->DiffusionGradients->GetTuple3(ig);
+        bVal = this->BValues->GetValue(ig);
+        factor = bVal/maxbVal;
+        sprintf(key,"%s%04d","DWMRI_gradient_",ig);
+        sprintf(value,"%f %f %f",grad[0]*factor, grad[1]*factor, grad[2]*factor);
+        cout<<" Key: "<<key<<" Value: "<<value<<endl;
+        nrrdKeyValueAdd(nrrd,key, value);
+        }
+     }
+  }
 
   // set encoding for data: compressed (raw), (uncompressed) raw, or ascii
   if (this->GetUseCompression() == true
@@ -311,8 +339,9 @@ void vtkNRRDWriter::WriteData()
 
   // set endianness as unknown of output
   nio->endian = airEndianUnknown;
+  nio->endian = airEndianBig;
 
-
+  cout<<"Write NRRD dataset"<<endl;
   // Write the nrrd to file.
   if (nrrdSave(this->GetFileName(), nrrd, nio))
     {
@@ -320,8 +349,8 @@ void vtkNRRDWriter::WriteData()
     vtkErrorMacro("Write: Error writing " 
                       << this->GetFileName() << ":\n" << err);                  
     }
-  
   // Free the nrrd struct but don't touch nrrd->data
+  cout<<"Freeing nrrd data"<<endl;
   nrrd = nrrdNix(nrrd);
   nio = nrrdIoStateNix(nio);
 

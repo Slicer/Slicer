@@ -38,11 +38,11 @@ public:
   vtkSetStringMacro(FileName);
   vtkGetStringMacro(FileName);
 
-  vtkSetObjectMacro(DiffusionGradient,vtkDoubleArray);
-  vtkGetObjectMacro(DiffusionGradient,vtkDoubleArray);
+  vtkSetObjectMacro(DiffusionGradients,vtkDoubleArray);
+  vtkGetObjectMacro(DiffusionGradients,vtkDoubleArray);
   
-  vtkSetObjectMacro(B,vtkDoubleArray);
-  vtkGetObjectMacro(B,vtkDoubleArray);
+  vtkSetObjectMacro(BValues,vtkDoubleArray);
+  vtkGetObjectMacro(BValues,vtkDoubleArray);
   
   vtkSetObjectMacro(IJKToRASMatrix,vtkMatrix4x4);
   vtkGetObjectMacro(IJKToRASMatrix,vtkMatrix4x4);
@@ -63,14 +63,16 @@ protected:
   vtkNRRDWriter();
   ~vtkNRRDWriter();
 
+  virtual int FillInputPortInformation(int port, vtkInformation *info);
+
   // Description:
   // Write method. It is called by vtkWriter::Write();
   void WriteData();
 
   char *FileName;
   
-  vtkDoubleArray *B;
-  vtkDoubleArray *DiffusionGradient;
+  vtkDoubleArray *BValues;
+  vtkDoubleArray *DiffusionGradients;
 
   vtkMatrix4x4 *IJKToRASMatrix;
   vtkMatrix4x4 *MeasurementFrameMatrix;
