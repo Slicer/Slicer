@@ -26,30 +26,16 @@
 
 #include <time.h>
 
-vtkCxxSetObjectMacro(vtkDiffusionTensorGlyph,ScalarMask,vtkImageData);
+vtkCxxSetObjectMacro(vtkDiffusionTensorGlyph,Mask,vtkImageData);
 vtkCxxSetObjectMacro(vtkDiffusionTensorGlyph,VolumePositionMatrix,vtkMatrix4x4);
 vtkCxxSetObjectMacro(vtkDiffusionTensorGlyph,TensorRotationMatrix,vtkMatrix4x4);
 
-//------------------------------------------------------------------------------
-vtkDiffusionTensorGlyph* vtkDiffusionTensorGlyph::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkDiffusionTensorGlyph");
-  if(ret)
-    {
-    return (vtkDiffusionTensorGlyph*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkDiffusionTensorGlyph;
-}
+
+vtkCxxRevisionMacro(vtkDiffusionTensorGlyph, "$Revision: 1.57.12.1 $");
+vtkStandardNewMacro(vtkDiffusionTensorGlyph);
 
 
-
-
-// Construct object with defaults from superclass: these are
-// scaling on and scale factor 1.0. Eigenvalues are 
-// extracted, glyphs are colored with input scalar data, and logarithmic
-// scaling is turned off.
+// Construct object with default values for diffusion tensor data.
 vtkDiffusionTensorGlyph::vtkDiffusionTensorGlyph()
 {
   // Color according to FA scalar invariant by default
@@ -61,8 +47,8 @@ vtkDiffusionTensorGlyph::vtkDiffusionTensorGlyph()
   this->VolumePositionMatrix = NULL;
   this->TensorRotationMatrix = NULL;
 
-  this->MaskGlyphsWithScalars = 0;
-  this->ScalarMask = NULL;
+  this->MaskGlyphs = 0;
+  this->Mask = NULL;
 
   // Default to highest rendering resolution
   this->Resolution = 1;
@@ -88,9 +74,9 @@ vtkDiffusionTensorGlyph::~vtkDiffusionTensorGlyph()
     this->TensorRotationMatrix->Delete( );
     }
 
-  if ( this->ScalarMask != NULL )
+  if ( this->Mask != NULL )
     {
-    this->ScalarMask->Delete( );
+    this->Mask->Delete( );
     }
 
 }
@@ -134,6 +120,7 @@ void vtkDiffusionTensorGlyph::ColorGlyphsBy(int invariant) {
     this->ColorGlyphs = 1;
 
     // superclass flag to calculate scalars from tensors
+    // (rather than passing through input scalars)
     this->SetColorModeToEigenvalues();
 
     // type of scalar we'll calculate
@@ -207,9 +194,9 @@ void vtkDiffusionTensorGlyph::Execute()
   inScalars = pd->GetScalars();
   numPts = input->GetNumberOfPoints();
   inMask = NULL;
-  if (this->ScalarMask)
+  if (this->Mask)
     {
-      inMask = this->ScalarMask->GetPointData()->GetScalars();
+      inMask = this->Mask->GetPointData()->GetScalars();
     }
 
   if ( !inTensors || numPts < 1 )
@@ -276,9 +263,9 @@ void vtkDiffusionTensorGlyph::Execute()
   // Figure out whether we are using a mask (if the user has
   // asked us to mask and also has set the mask input).
   doMasking = 0;
-  //if (inMask && this->MaskGlyphsWithScalars)
+  //if (inMask && this->MaskGlyphs)
   //doMasking = 1;
-  if (this->MaskGlyphsWithScalars)
+  if (this->MaskGlyphs)
     {
       if (inMask)
     {
@@ -286,7 +273,7 @@ void vtkDiffusionTensorGlyph::Execute()
     }
       else 
     {
-      vtkErrorMacro("User has not set input mask, but has requested MaskGlyphsWithScalars");
+      vtkErrorMacro("User has not set input mask, but has requested MaskGlyphs");
     }
     }
 
@@ -335,7 +322,7 @@ void vtkDiffusionTensorGlyph::Execute()
       // (If the trace is <= 0 we don't need to go through the code just to
       // display nothing at the end, since we expect that our data has
       // non-negative eigenvalues.)
-      if ((doMasking && inMask->GetTuple1(inPtId)) || (!this->MaskGlyphsWithScalars && trace > 0)) 
+      if ((doMasking && inMask->GetTuple1(inPtId)) || (!this->MaskGlyphs && trace > 0)) 
     {
       // copy topology
       for (cellId=0; cellId < numSourceCells; cellId++)
@@ -566,16 +553,48 @@ void vtkDiffusionTensorGlyph::Execute()
   trans->Delete();
   matrix->Delete();
 
-  cout << "glyph time: " << clock() - tStart << endl;
+  vtkDebugMacro("glyph time: " << clock() - tStart );
 }
 
 void vtkDiffusionTensorGlyph::PrintSelf(ostream& os, vtkIndent indent)
 {
-  vtkTensorGlyph::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os,indent);
 
-  // TO DO: implement this
+  os << indent << "Color Glyphs by Scalar Invariant: " << this->ScalarInvariant << "\n";
+  os << indent << "Mask Glyphs: " << (this->MaskGlyphs ? "On\n" : "Off\n");
+  os << indent << "Resolution: " << this->Resolution << endl;
 
-  //  os << indent << "ColorGlyphsByAnisotropy: " << this->ColorGlyphsByAnisotropy << "\n";
+  // print objects
+  if ( this->VolumePositionMatrix )
+    {
+    os << indent << "VolumePositionMatrix:\n";
+    this->VolumePositionMatrix->PrintSelf(os,indent.GetNextIndent());
+    }
+  else
+    {
+    os << indent << "VolumePositionMatrix: (none)\n";
+    }
+
+  if ( this->TensorRotationMatrix )
+    {
+    os << indent << "TensorRotationMatrix:\n";
+    this->TensorRotationMatrix->PrintSelf(os,indent.GetNextIndent());
+    }
+  else
+    {
+    os << indent << "TensorRotationMatrix: (none)\n";
+    }
+
+  if ( this->Mask )
+    {
+    os << indent << "Mask:\n";
+    this->Mask->PrintSelf(os,indent.GetNextIndent());
+    }
+  else
+    {
+    os << indent << "Mask: (none)\n";
+    }
+
 }
 
 //----------------------------------------------------------------------------
@@ -586,9 +605,9 @@ unsigned long int vtkDiffusionTensorGlyph::GetMTime()
   unsigned long mTime=this->vtkObject::GetMTime();
   unsigned long time;
 
-  if ( this->ScalarMask != NULL )
+  if ( this->Mask != NULL )
     {
-      time = this->ScalarMask->GetMTime();
+      time = this->Mask->GetMTime();
       mTime = ( time > mTime ? time : mTime );
     }
 

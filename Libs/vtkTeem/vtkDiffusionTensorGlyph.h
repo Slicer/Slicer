@@ -11,7 +11,7 @@
   Version:   $Revision: 1.8 $
 
 =========================================================================auto=*/
-// .NAME vtkDiffusionTensorGlyph - scale and orient glyph according to tensor eigenvalues and eigenvectors
+// .NAME vtkDiffusionTensorGlyph - scale and orient glyph(s) according to tensor eigenvalues and eigenvectors
 // .SECTION Description
 // vtkDiffusionTensorGlyph is a filter that copies a geometric representation (specified
 // as polygonal data) to every input point. The geometric representation, or 
@@ -71,7 +71,7 @@ class vtkMatrix4x4;
 class VTK_TEEM_EXPORT vtkDiffusionTensorGlyph : public vtkTensorGlyph
 {
 public:
-  vtkTypeMacro(vtkDiffusionTensorGlyph,vtkTensorGlyph);
+  vtkTypeRevisionMacro(vtkDiffusionTensorGlyph,vtkTensorGlyph);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description
@@ -81,15 +81,15 @@ public:
   static vtkDiffusionTensorGlyph *New();
 
   // Description:
-  // If MaskGlyphsWithScalars is 1 (On), ScalarMask is used to mask tensors. 
-  vtkBooleanMacro(MaskGlyphsWithScalars, int);
-  vtkSetMacro(MaskGlyphsWithScalars, int);
-  vtkGetMacro(MaskGlyphsWithScalars, int);
+  // If MaskGlyphs is 1 (On), Mask is used to mask tensors. 
+  vtkBooleanMacro(MaskGlyphs, int);
+  vtkSetMacro(MaskGlyphs, int);
+  vtkGetMacro(MaskGlyphs, int);
 
   // Description:
   // Input scalars are a binary mask: 0 prevents display
   // of polydata at that point
-  virtual void SetScalarMask(vtkImageData*);
+  virtual void SetMask(vtkImageData*);
 
 
   // TO DO: make more of these
@@ -169,17 +169,17 @@ protected:
   void ColorGlyphsBy(int measure);
 
   int ScalarInvariant;  // which function of eigenvalues to use for coloring
-  int MaskGlyphsWithScalars;  // mask glyphs outside of the brain for example
+  int MaskGlyphs;  // mask glyphs outside of the brain for example, using the Mask
   int Resolution; // allows skipping some tensors for lower resolution glyphing
 
   vtkMatrix4x4 *VolumePositionMatrix;
   vtkMatrix4x4 *TensorRotationMatrix;
 
-  vtkImageData *ScalarMask;
+  vtkImageData *Mask;  // display glyphs at points where mask is nonzero
 
 private:
-  vtkDiffusionTensorGlyph(const vtkDiffusionTensorGlyph&);
-  void operator=(const vtkDiffusionTensorGlyph&);
+  vtkDiffusionTensorGlyph(const vtkDiffusionTensorGlyph&);  // Not implemented.
+  void operator=(const vtkDiffusionTensorGlyph&);  // Not implemented.
 };
 
 #endif
