@@ -177,7 +177,7 @@ void vtkSlicerModelDisplayWidget::ProcessWidgetEvents ( vtkObject *caller,
 
     return;
     }
-  
+
   if (this->ModelDisplayNodeID != NULL && 
     !(vtkKWSurfaceMaterialPropertyWidget::SafeDownCast(caller) == this->SurfaceMaterialPropertyWidget && event == this->SurfaceMaterialPropertyWidget->GetPropertyChangedEvent()) &&
     !(vtkKWScale::SafeDownCast(caller) == this->OpacityScale->GetWidget() && event == vtkKWScale::ScaleValueChangingEvent) &&
@@ -436,17 +436,20 @@ void vtkSlicerModelDisplayWidget::UpdateMRML()
       displayNode->SetVisibility(this->VisibilityButton->GetWidget()->GetSelectedState());
       displayNode->SetScalarVisibility(this->ScalarVisibilityButton->GetWidget()->GetSelectedState());
       displayNode->SetActiveScalarName(this->ScalarMenu->GetWidget()->GetValue());
-      vtkDebugMacro("Set display node active scalar name to " << displayNode->GetActiveScalarName());
-      // this should happen in the display node
+      vtkWarningMacro("Set display node active scalar name to " << displayNode->GetActiveScalarName());
+      // done in the viewer widget
+      /*
       vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(this->MRMLScene->GetNodeByID(this->ModelNodeID));
       if (modelNode != NULL && displayNode->GetActiveScalarName() != NULL)
         {
-        modelNode->GetPolyData()->GetPointData()->SetActiveScalars(displayNode->GetActiveScalarName());
+        vtkWarningMacro("Setting active scalars on model to " << displayNode->GetActiveScalarName());
+        modelNode->SetActiveScalars(displayNode->GetActiveScalarName());
         }
       else
         {
         vtkWarningMacro("Can't set the active scalars, model node or display node's active scalar name is null");
         }
+      */
       displayNode->SetClipping(this->ClippingButton->GetWidget()->GetSelectedState());
       displayNode->SetOpacity(this->OpacityScale->GetWidget()->GetValue());
       displayNode->SetAmbient(this->SurfaceMaterialPropertyWidget->GetProperty()->GetAmbient());
