@@ -15,7 +15,7 @@ INCLUDE(${VTK_USE_FILE})
 SET(vtkTeem_SRCS
   vtkNRRDReader.cxx
   vtkNRRDWriter.cxx
-  vtkTensorMathematics.cxx
+  vtkDiffusionTensorMathematics.cxx
   vtkTeemEstimateDiffusionTensor.cxx
   vtkDiffusionTensorGlyph.cxx
 )
