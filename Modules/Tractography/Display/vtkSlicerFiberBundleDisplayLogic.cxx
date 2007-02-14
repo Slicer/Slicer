@@ -243,6 +243,8 @@ void vtkSlicerFiberBundleDisplayLogic::CreateLineModel ( )
 {
   vtkDebugMacro("Creating line model");
 
+  // TO DO: don't pass tensors through, just any requested scalars?
+
   // if we have no MRML scene yet 
   if (this->MRMLScene == NULL)
     {
@@ -537,25 +539,25 @@ void vtkSlicerFiberBundleDisplayLogic::CreateGlyphModel ( )
                 case vtkMRMLDiffusionTensorDisplayPropertiesNode::FractionalAnisotropy:
                   {
                   vtkErrorMacro("coloring with FA");
-                  glyphFilter->ColorGlyphsWithFractionalAnisotropy( );
+                  glyphFilter->ColorGlyphsByFractionalAnisotropy( );
                   }
                   break;
                 case vtkMRMLDiffusionTensorDisplayPropertiesNode::LinearMeasure:
                   {
                   vtkErrorMacro("coloring with Cl");
-                  glyphFilter->ColorGlyphsWithLinearMeasure( );
+                  glyphFilter->ColorGlyphsByLinearMeasure( );
                   }
                   break;
                 case vtkMRMLDiffusionTensorDisplayPropertiesNode::Trace:
                   {
                   vtkErrorMacro("coloring with trace when implemented");
                   // TO DO: implement trace color
-                  //glyphFilter->ColorGlyphsWithTrace( );
+                  //glyphFilter->ColorGlyphsByTrace( );
                   }
                 case vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientation:
                   {
                   vtkErrorMacro("coloring with direction (re-implement)");
-                  glyphFilter->ColorGlyphsWithDirection( );
+                  glyphFilter->ColorGlyphsByOrientation( );
                   }
                   break;
                   
