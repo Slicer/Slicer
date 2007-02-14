@@ -27,7 +27,7 @@
 #include "vtkPointData.h"
 
 #ifdef USE_TEEM
-  #include "vtkTensorMathematics.h"
+  #include "vtkDiffusionTensorMathematics.h"
 #endif
 
 vtkCxxRevisionMacro(vtkSlicerSliceLayerLogic, "$Revision: 1.9.12.1 $");
@@ -65,7 +65,7 @@ vtkSlicerSliceLayerLogic::vtkSlicerSliceLayerLogic()
   // Create the components for the DTI layer pipeline
   this->DTIReslice = vtkImageReslice::New();
   #ifdef USE_TEEM
-    this->DTIMathematics = vtkTensorMathematics::New();
+    this->DTIMathematics = vtkDiffusionTensorMathematics::New();
   #else
     this->DTIMathematics = NULL;
   #endif 
