@@ -69,6 +69,10 @@ public:
   virtual void RemoveWidgetObservers ( );
 
   // Description:
+  // adds observers on widgets in the class
+  virtual void AddWidgetObservers ( );
+
+  // Description:
   // Create the widget.
   virtual void CreateWidget();
 

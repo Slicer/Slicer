@@ -102,7 +102,21 @@ void vtkSlicerAllFiberBundlesDisplayWidget::ProcessWidgetEvents ( vtkObject *cal
   vtkDebugMacro("Process Widget Events");
   vtkErrorMacro("Process Widget Events");
 
+  // handle input from the radio buttons for colors 
+  vtkKWRadioButton *radiob = vtkKWRadioButton::SafeDownCast ( caller );
 
+  if ( ( radiob == this->ColorModeRadioButtons->GetWidget ( ColorModeSolid ) ||
+         radiob == this->ColorModeRadioButtons->GetWidget ( ColorModeFA ) ||
+         radiob == this->ColorModeRadioButtons->GetWidget ( ColorModeCL ) ||
+         radiob == this->ColorModeRadioButtons->GetWidget ( ColorModeTrace ) )
+       && event == vtkKWRadioButton::SelectedStateChangedEvent )
+    {
+
+    this->ColorMode = radiob->GetVariableValueAsInt();
+    vtkDebugMacro("Set ColorMode" << this->ColorMode);
+    }
+
+  // Update any changes into MRML display nodes
   this->UpdateMRML();
 
 
@@ -127,6 +141,9 @@ void vtkSlicerAllFiberBundlesDisplayWidget::UpdateMRML()
 
   vtkMRMLFiberBundleNode *node;
   vtkMRMLFiberBundleDisplayNode *displayNode;
+  vtkMRMLDiffusionTensorDisplayPropertiesNode *lineDisplay;
+  vtkMRMLDiffusionTensorDisplayPropertiesNode *tubeDisplay;
+  vtkMRMLDiffusionTensorDisplayPropertiesNode *glyphDisplay;
 
   int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLFiberBundleNode");
   for (int n=0; n<nnodes; n++)
@@ -167,13 +184,73 @@ void vtkSlicerAllFiberBundlesDisplayWidget::UpdateMRML()
         vtkErrorMacro("Update display node 7===============" );
         displayNode->SetPower(this->SurfaceMaterialPropertyWidget->GetProperty()->GetSpecularPower());
         
-        }
 
-      }
+        // get the diffusion tensor display props/colors nodes for each type of graphics
+        lineDisplay = vtkMRMLDiffusionTensorDisplayPropertiesNode::SafeDownCast(                                                                  displayNode->GetFiberLineDTDisplayPropertiesNode ( ) );
 
-    }
+        tubeDisplay = vtkMRMLDiffusionTensorDisplayPropertiesNode::SafeDownCast(                                                                  displayNode->GetFiberTubeDTDisplayPropertiesNode ( ) );
+
+        glyphDisplay = vtkMRMLDiffusionTensorDisplayPropertiesNode::SafeDownCast(                                                                  displayNode->GetFiberGlyphDTDisplayPropertiesNode ( ) );
+
+        if ( ( lineDisplay != NULL ) && ( tubeDisplay != NULL )  && ( glyphDisplay != NULL ) )
+          {
+          
+          switch ( this->ColorMode )
+            {
+            
+            case ColorModeSolid:
+              {
+              displayNode->SetColorModeForFiberLinesToSolid();
+              displayNode->SetColorModeForFiberTubesToSolid();
+              displayNode->SetColorModeForFiberGlyphsToSolid();
+              }
+              break;
+              
+            case ColorModeFA:
+              {
+              displayNode->SetColorModeForFiberLinesToScalar();
+              displayNode->SetColorModeForFiberTubesToScalar();
+              displayNode->SetColorModeForFiberGlyphsToScalar();
+              lineDisplay->SetScalarInvariantToFractionalAnisotropy( );
+              glyphDisplay->SetScalarInvariantToFractionalAnisotropy( );
+              tubeDisplay->SetScalarInvariantToFractionalAnisotropy( );
+              }
+              break;
+              
+            case ColorModeCL:
+              {
+              displayNode->SetColorModeForFiberLinesToScalar();
+              displayNode->SetColorModeForFiberTubesToScalar();
+              displayNode->SetColorModeForFiberGlyphsToScalar();
+              lineDisplay->SetScalarInvariantToLinearMeasure( );
+              glyphDisplay->SetScalarInvariantToLinearMeasure( );
+              tubeDisplay->SetScalarInvariantToLinearMeasure( );
+              }
+              break;
+              
+            case ColorModeTrace:
+              {
+              displayNode->SetColorModeForFiberLinesToScalar();
+              displayNode->SetColorModeForFiberTubesToScalar();
+              displayNode->SetColorModeForFiberGlyphsToScalar();
+              lineDisplay->SetScalarInvariantToTrace( );
+              glyphDisplay->SetScalarInvariantToTrace( );
+              tubeDisplay->SetScalarInvariantToTrace( );
+              }
+              break;
+              
+            } //end switch on color mode
+
+          } // end if diffusion display node
+
+        }  // end if display node
+
+      } // end if fiber bundle node not null
+
+    } // end loop over f b nodes
 
   vtkErrorMacro("Done UpdateMRML ====================================");
+
 }
 
 
@@ -188,8 +265,37 @@ void vtkSlicerAllFiberBundlesDisplayWidget::RemoveWidgetObservers ( ) {
   this->SurfaceMaterialPropertyWidget->RemoveObservers(this->SurfaceMaterialPropertyWidget->GetPropertyChangingEvent(), (vtkCommand *)this->GUICallbackCommand );
   
 
+
+  // color mode radio buttons
+  this->ColorModeRadioButtons->GetWidget( ColorModeSolid )->RemoveObservers ( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->ColorModeRadioButtons->GetWidget( ColorModeFA )->RemoveObservers ( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->ColorModeRadioButtons->GetWidget( ColorModeCL )->RemoveObservers ( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->ColorModeRadioButtons->GetWidget( ColorModeTrace )->RemoveObservers ( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
 }
 
+
+//---------------------------------------------------------------------------
+void vtkSlicerAllFiberBundlesDisplayWidget::AddWidgetObservers ( )
+{
+
+  this->LineVisibilityButton->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->TubeVisibilityButton->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->GlyphVisibilityButton->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+
+  this->SurfaceMaterialPropertyWidget->AddObserver(this->SurfaceMaterialPropertyWidget->GetPropertyChangedEvent(), (vtkCommand *)this->GUICallbackCommand );
+  this->SurfaceMaterialPropertyWidget->AddObserver(this->SurfaceMaterialPropertyWidget->GetPropertyChangingEvent(), (vtkCommand *)this->GUICallbackCommand );
+
+
+  // color mode radio buttons
+  this->ColorModeRadioButtons->GetWidget( ColorModeSolid )->AddObserver ( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->ColorModeRadioButtons->GetWidget( ColorModeFA )->AddObserver ( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->ColorModeRadioButtons->GetWidget( ColorModeCL )->AddObserver ( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->ColorModeRadioButtons->GetWidget( ColorModeTrace )->AddObserver ( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+
+  //this->LineVisibilityButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+
+  
+}
 
 //---------------------------------------------------------------------------
 void vtkSlicerAllFiberBundlesDisplayWidget::CreateWidget ( )
@@ -350,15 +456,9 @@ void vtkSlicerAllFiberBundlesDisplayWidget::CreateWidget ( )
     prop->Delete();
     }
   
+
   // add observers
-
-  this->LineVisibilityButton->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->TubeVisibilityButton->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->GlyphVisibilityButton->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-
-  this->SurfaceMaterialPropertyWidget->AddObserver(this->SurfaceMaterialPropertyWidget->GetPropertyChangedEvent(), (vtkCommand *)this->GUICallbackCommand );
-  this->SurfaceMaterialPropertyWidget->AddObserver(this->SurfaceMaterialPropertyWidget->GetPropertyChangingEvent(), (vtkCommand *)this->GUICallbackCommand );
-
+  this->AddWidgetObservers();
 
 
   fiberBundleDisplayFrame->Delete();
