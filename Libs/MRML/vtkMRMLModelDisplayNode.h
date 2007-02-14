@@ -173,7 +173,9 @@ public:
   // Description:
   // the name of the currently active scalar field for this model
   vtkGetStringMacro(ActiveScalarName);
-  vtkSetStringMacro(ActiveScalarName);
+  // Description:
+  // set the active scalar field name, and update the color table if necessary
+  void SetActiveScalarName(const char *scalarName);
   
 protected:
   vtkMRMLModelDisplayNode();

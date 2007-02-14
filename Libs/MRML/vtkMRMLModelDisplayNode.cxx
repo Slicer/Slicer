@@ -21,6 +21,8 @@ Version:   $Revision: 1.3 $
 #include "vtkMRMLModelDisplayNode.h"
 #include "vtkMRMLScene.h"
 
+#include "vtkMRMLColorTableNode.h"
+
 //------------------------------------------------------------------------------
 vtkMRMLModelDisplayNode* vtkMRMLModelDisplayNode::New()
 {
@@ -445,4 +447,78 @@ void vtkMRMLModelDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
     this->InvokeEvent(vtkCommand::ModifiedEvent, NULL);
     }
   return;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLModelDisplayNode::SetActiveScalarName(const char *scalarName)
+{
+  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting ActiveScalarName to " << (scalarName ? scalarName : "(null)"));
+  
+  if (this->ActiveScalarName == NULL && scalarName == NULL)
+    {
+    return;
+    }
+  if (this->ActiveScalarName && scalarName && (!strcmp(this->ActiveScalarName,scalarName)))
+    {
+    return;
+    }
+  if (this->ActiveScalarName)
+    {
+    delete [] this->ActiveScalarName;
+    }
+
+  if (scalarName)
+    {
+    size_t n = strlen(scalarName) + 1;
+    char *cp1 = new char[n];
+    const char *cp2 = (scalarName);
+    this->ActiveScalarName = cp1;
+    do { *cp1++ = *cp2++; } while ( --n );
+    }
+  else
+    {
+    this->ActiveScalarName = NULL;
+    this->Modified();
+    return;
+    }
+  
+  // check that we have the correct color table
+  // get the extension of the scalar name
+  std::string name(scalarName);
+  
+  std::string::size_type loc = name.find(".");
+  if (loc == std::string::npos )
+    {
+    vtkWarningMacro("Can't find an extension on the scalar name, not setting the color node");
+    }
+  else
+    {
+    std::string extension = name.substr(loc);
+    vtkWarningMacro("Setting the color node by the extension " << extension.c_str());
+    vtkMRMLColorTableNode *colorNode = vtkMRMLColorTableNode::New();
+    // use a generic for the w ones
+    if (extension == std::string(".w"))
+      {
+      colorNode->SetTypeToOcean();
+      }
+    else if (extension == std::string(".thickness"))
+      {
+      colorNode->SetTypeToDesert();
+      }
+    else if (extension == std::string(".curv") ||
+             extension == std::string(".sulc"))
+      {
+      colorNode->SetTypeToFMRI();
+      }
+    else if (extension == std::string(".area"))
+      {
+      colorNode->SetTypeToDesert();
+      }
+    vtkWarningMacro("Using color node " << colorNode->GetTypeAsIDString() << " for scalar " << scalarName);
+    this->SetAndObserveColorNodeID(colorNode->GetTypeAsIDString());
+    colorNode->Delete();
+    colorNode  = NULL;
+    }
+  
+  this->Modified();
 }
