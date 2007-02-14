@@ -26,7 +26,7 @@
 
 #include "vtkSlicerLogic.h"
 
-#include "vtkSlicerTractographyDisplayWin32Header.h"
+#include "vtkSlicerTractographyDisplay.h"
 
 #include "vtkMRMLFiberBundleNode.h"
 #include "vtkMRMLFiberBundleDisplayNode.h"

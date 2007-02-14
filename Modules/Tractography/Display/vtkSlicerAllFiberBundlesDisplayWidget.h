@@ -22,7 +22,7 @@
 #ifndef __vtkSlicerAllFiberBundlesDisplayWidget_h
 #define __vtkSlicerAllFiberBundlesDisplayWidget_h
 
-#include "vtkSlicerTractographyDisplayWin32Header.h"
+#include "vtkSlicerTractographyDisplay.h"
 
 #include "vtkSlicerWidget.h"
 

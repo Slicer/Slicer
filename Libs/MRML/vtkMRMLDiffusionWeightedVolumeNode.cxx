@@ -334,6 +334,7 @@ void vtkMRMLDiffusionWeightedVolumeNode::SetBValue(int num, const double b)
 }
 
 //----------------------------------------------------------------------------
+/**
 double vtkMRMLDiffusionWeightedVolumeNode::GetBValue(int num)
 {
   if (this->BValues->GetNumberOfTuples()<num)
@@ -346,6 +347,7 @@ double vtkMRMLDiffusionWeightedVolumeNode::GetBValue(int num)
     return 0;
     }
 }
+**/
 
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.

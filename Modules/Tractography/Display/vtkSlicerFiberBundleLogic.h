@@ -23,7 +23,7 @@
 
 #include <stdlib.h>
 
-#include "vtkSlicerTractographyDisplayWin32Header.h"
+#include "vtkSlicerTractographyDisplay.h"
 
 #include "vtkSlicerModuleLogic.h"
 

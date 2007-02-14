@@ -4,7 +4,6 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro ( vtkSlicerDiffusionTensorIcons );
-vtkCxxRevisionMacro ( vtkSlicerDiffusionTensorIcons, "$Revision: 1.0 $");
 
 //---------------------------------------------------------------------------
 vtkSlicerDiffusionTensorIcons::vtkSlicerDiffusionTensorIcons ( )

@@ -69,7 +69,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionWeightedVolumeNode : public vtkMRMLVolumeN
   // Description:
   void SetBValue (int val, const double b);
   void SetBValues (vtkDoubleArray *bValue);
-  double GetBValue(int val);
+  //double GetBValue(int val);
   vtkGetObjectMacro(BValues,vtkDoubleArray);
 
   // Description: Set/Get measurement frame that relates the coordinate system where the

@@ -6,7 +6,7 @@
 #ifndef __vtkSlicerTractographyDisplayGUI_h
 #define __vtkSlicerTractographyDisplayGUI_h
 
-#include "vtkSlicerTractographyDisplayWin32Header.h"
+#include "vtkSlicerTractographyDisplay.h"
 #include "vtkSlicerModuleGUI.h"
 
 #include "vtkSlicerFiberBundleLogic.h"

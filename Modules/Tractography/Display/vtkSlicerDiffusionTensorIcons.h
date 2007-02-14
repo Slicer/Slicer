@@ -5,14 +5,14 @@
 #include "vtkKWResourceUtilities.h"
 #include "vtkKWIcon.h"
 #include "vtkSlicerIcons.h"
-
+#include "vtkSlicerTractographyDisplay.h"
 #include "./Resources/vtkSlicerDiffusionTensor_ImageData.h"
 
-class vtkSlicerDiffusionTensorIcons : public vtkSlicerIcons
+class VTK_SLICERTRACTOGRAPHYDISPLAY_EXPORT vtkSlicerDiffusionTensorIcons : public vtkSlicerIcons
 {
  public:
     static vtkSlicerDiffusionTensorIcons* New ( );
-    vtkTypeRevisionMacro ( vtkSlicerDiffusionTensorIcons, vtkSlicerIcons );
+    vtkTypeMacro ( vtkSlicerDiffusionTensorIcons, vtkSlicerIcons );
     void PrintSelf ( ostream& os, vtkIndent indent );
 
     // Description:

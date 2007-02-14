@@ -5,24 +5,26 @@
 #include "vtkKWResourceUtilities.h"
 #include "vtkKWIcon.h"
 
+#include "vtkSlicerBaseGUI.h"
+
 // Description:
 // This class is defined in anticipation of superclass methods that
 // all Slicer Icons will use...
 
-class vtkSlicerIcons : public vtkKWObject
+class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerIcons : public vtkKWObject
 {
  public:
     static vtkSlicerIcons* New ( );
-    vtkTypeRevisionMacro ( vtkSlicerIcons, vtkKWObject);
+    vtkTypeMacro ( vtkSlicerIcons, vtkKWObject);
     void PrintSelf ( ostream& os, vtkIndent indent );
 
  protected:
     vtkSlicerIcons ( );
-    ~vtkSlicerIcons ( );
-    
- private:
+    virtual ~vtkSlicerIcons ( );
     vtkSlicerIcons (const vtkSlicerIcons& ); // Not implemented
     void operator = ( const vtkSlicerIcons& ); // Not implemented
+    
+ private:
     
 };
 
