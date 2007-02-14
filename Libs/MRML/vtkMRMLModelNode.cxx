@@ -21,6 +21,12 @@ Version:   $Revision: 1.3 $
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLScene.h"
 
+
+#include "vtkDataSetAttributes.h"
+#include "vtkPointData.h"
+#include "vtkCellData.h"
+#include "vtkFloatArray.h"
+
 //------------------------------------------------------------------------------
 vtkMRMLModelNode* vtkMRMLModelNode::New()
 {
@@ -88,7 +94,6 @@ void vtkMRMLModelNode::WriteXML(ostream& of, int nIndent)
     {
     of << indent << "displayNodeRef=\"" << this->DisplayNodeID << "\" ";
     }
-
 }
 
 //----------------------------------------------------------------------------
@@ -125,7 +130,7 @@ void vtkMRMLModelNode::ReadXMLAttributes(const char** atts)
       {
       this->SetDisplayNodeID(attValue);
       this->Scene->AddReferencedNodeID(this->DisplayNodeID, this);
-      }
+      }    
     }  
 }
 
@@ -141,7 +146,6 @@ void vtkMRMLModelNode::Copy(vtkMRMLNode *anode)
   this->SetStorageNodeID(node->StorageNodeID);
   this->SetDisplayNodeID(node->DisplayNodeID);
   this->SetPolyData(node->PolyData);
-
 }
 
 //----------------------------------------------------------------------------
@@ -161,7 +165,6 @@ void vtkMRMLModelNode::PrintSelf(ostream& os, vtkIndent indent)
     {
     this->PolyData->PrintSelf(os, indent.GetNextIndent());
     }
-
 }
 
 //-----------------------------------------------------------
@@ -288,3 +291,248 @@ void vtkMRMLModelNode::ProcessMRMLEvents ( vtkObject *caller,
   return;
 }
 
+//---------------------------------------------------------------------------
+void vtkMRMLModelNode::AddPointScalars(vtkFloatArray *array)
+{
+  if (array == NULL)
+    {
+    return;
+    }
+  if (this->PolyData == NULL)
+    {
+    vtkErrorMacro("No poly data on model " << this->GetName());
+    return;
+    }
+  
+  int numScalars = this->PolyData->GetPointData()->GetNumberOfArrays();
+  vtkDebugMacro("Model node has " << numScalars << " point scalars now, adding " << array->GetName());
+  if (numScalars > 0)
+    {
+    // add array
+    this->PolyData->GetPointData()->AddArray(array);
+    } 
+  else
+    {
+    // set the scalars
+    this->PolyData->GetPointData()->SetScalars(array);
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLModelNode::AddCellScalars(vtkFloatArray *array)
+{
+  if (array == NULL)
+    {
+    return;
+    }
+  if (this->PolyData == NULL)
+    {
+    vtkErrorMacro("No poly data on model " << this->GetName());
+    return;
+    }
+  
+  int numScalars = this->PolyData->GetCellData()->GetNumberOfArrays();
+  vtkDebugMacro("Model node has " << numScalars << " cell scalars now, adding " << array->GetName());
+  if (numScalars > 0)
+    {
+    // add array
+    this->PolyData->GetCellData()->AddArray(array);
+    } 
+  else
+    {
+    // set the scalars
+    this->PolyData->GetCellData()->SetScalars(array);
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLModelNode::RemoveScalars(const char *scalarName)
+{
+  if (scalarName == NULL)
+    {
+    vtkErrorMacro("Scalar name is null");
+    return;
+    }
+  if (this->PolyData == NULL)
+    {
+    vtkErrorMacro("No poly data on model " << this->GetName());
+    return;
+    }
+  // try removing the array from the points first
+  if (this->PolyData->GetPointData())
+    {
+    this->PolyData->GetPointData()->RemoveArray(scalarName);
+    // it's a void method, how to check if it succeeded?
+    }
+  // try the cells
+  if (this->PolyData->GetCellData())
+    {
+    this->PolyData->GetCellData()->RemoveArray(scalarName);
+    }
+}
+
+/*
+//---------------------------------------------------------------------------
+const char * vtkMRMLModelNode::GetActivePointScalarName(const char *type)
+{
+  if (this->PolyData == NULL)
+    {
+    return "";
+    }
+  if (this->PolyData->GetPointData() == NULL)
+    {
+    return "";
+    }
+  if (type != NULL)
+    {
+    if (strcmp(type, "scalars") == 0)
+      {
+      return this->PolyData->GetPointData()->GetActiveAttribute(vtkDataSetAttributes::SCALARS);
+      }
+    else if (strcmp(type, "vectors") == 0)
+      {
+      }
+    else if (strcmp(type, "normals") == 0)
+      {
+      }
+    else if (strcmp(type, "tcoords") == 0)
+      {
+      }
+    else if (strcmp(type, "tensors") == 0)
+      {
+      }
+    else
+      {
+      vtkErrorMacro("Unknown point scalar type " << type);
+      return "";
+      }
+    }
+  else
+    {
+    // returning empty string for now
+    vtkErrorMacro("Unspecified type not implemented.");
+    return "";
+    }
+}
+
+//---------------------------------------------------------------------------
+const char * vtkMRMLModelNode::GetActiveCellScalarName(const char *type)
+{
+  if (this->PolyData == NULL)
+    {
+    return "";
+    }
+  if (this->PolyData->GetCellData() == NULL)
+    {
+    return "";
+    }
+}
+*/
+
+//---------------------------------------------------------------------------
+int vtkMRMLModelNode::SetActiveScalars(const char *scalarName)
+{
+  int retval = -1;
+  if (this->PolyData == NULL || scalarName == NULL)
+    {
+    vtkErrorMacro("No poly data on model " << this->GetName() << " or the scalar name is null");
+    return retval;
+    }
+  
+  // is it a point scalar?
+  retval = this->SetActivePointScalars(scalarName);
+  if (retval != -1)
+    {
+    vtkDebugMacro("Set active point scalars to " << scalarName << " (" <<
+                  this->PolyData->GetPointData()->GetAttributeTypeAsString(retval) <<
+                  ") on model " << this->GetName());
+    vtkWarningMacro("Set the active point scalars to " << scalarName << ", the display node's active scalars = " << this->GetDisplayNode()->GetActiveScalarName());
+    return retval;
+    }
+  // is it a cell scalar?
+  retval =  this->SetActiveCellScalars(scalarName);
+  if (retval != -1)
+    {
+    vtkDebugMacro("Set active cell scalars to " << scalarName << " (" <<
+                  this->PolyData->GetCellData()->GetAttributeTypeAsString(retval) << ") on model " <<
+                  this->GetName());
+    return retval;
+    }
+  vtkWarningMacro("Unable to find scalar attribute " << scalarName << " on model " << this->GetName());
+  return retval;
+}
+
+//---------------------------------------------------------------------------
+int vtkMRMLModelNode::SetActivePointScalars(const char *scalarName)
+{
+  if (this->PolyData == NULL || scalarName == NULL)
+    {
+    vtkErrorMacro("No poly data on model " << this->GetName() << " or the scalar name is null");
+    return -1;
+    }
+  if (this->PolyData->GetPointData() == NULL)
+    {
+    vtkWarningMacro("No point data on this model " << this->GetName());
+    return -1;
+    }
+  // try the different attributes until find this array name
+  if (this->PolyData->GetPointData()->SetActiveAttribute(scalarName, vtkDataSetAttributes::SCALARS) != -1)
+    {
+    return vtkDataSetAttributes::SCALARS;
+    }
+  if (this->PolyData->GetPointData()->SetActiveAttribute(scalarName, vtkDataSetAttributes::VECTORS) != -1)
+    {
+    return vtkDataSetAttributes::VECTORS;
+    }
+  if (this->PolyData->GetPointData()->SetActiveAttribute(scalarName, vtkDataSetAttributes::NORMALS) != -1)
+    {
+    return vtkDataSetAttributes::NORMALS;
+    }
+  if (this->PolyData->GetPointData()->SetActiveAttribute(scalarName, vtkDataSetAttributes::TCOORDS) != -1)
+    {
+    return vtkDataSetAttributes::TCOORDS;
+    }
+  if (this->PolyData->GetPointData()->SetActiveAttribute(scalarName, vtkDataSetAttributes::TENSORS) != -1)
+    {
+    return vtkDataSetAttributes::TENSORS;
+    }
+  return -1;
+}
+
+//---------------------------------------------------------------------------
+int vtkMRMLModelNode::SetActiveCellScalars(const char *scalarName)
+{
+  if (this->PolyData == NULL || scalarName == NULL)
+    {
+    vtkErrorMacro("No poly data on model " << this->GetName() << " or the scalar name is null");
+    return -1;
+    }
+  if (this->PolyData->GetCellData() == NULL)
+    {
+    vtkWarningMacro("No cell data on this model " << this->GetName());
+    return -1;
+    }
+
+  // try the different attributes until find this array name
+  if (this->PolyData->GetCellData()->SetActiveAttribute(scalarName, vtkDataSetAttributes::SCALARS) != -1)
+    {
+    return vtkDataSetAttributes::SCALARS;
+    }
+  if (this->PolyData->GetCellData()->SetActiveAttribute(scalarName, vtkDataSetAttributes::VECTORS) != -1)
+    {
+    return vtkDataSetAttributes::VECTORS;
+    }
+  if (this->PolyData->GetCellData()->SetActiveAttribute(scalarName, vtkDataSetAttributes::NORMALS) != -1)
+    {
+    return vtkDataSetAttributes::NORMALS;
+    }
+  if (this->PolyData->GetCellData()->SetActiveAttribute(scalarName, vtkDataSetAttributes::TCOORDS) != -1)
+    {
+    return vtkDataSetAttributes::TCOORDS;
+    }
+  if (this->PolyData->GetCellData()->SetActiveAttribute(scalarName, vtkDataSetAttributes::TENSORS) != -1)
+    {
+    return vtkDataSetAttributes::TENSORS;
+    }
+  return -1;
+}

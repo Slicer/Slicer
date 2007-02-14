@@ -34,7 +34,7 @@
 
 
 class vtkCallbackCommand;
-
+class vtkFloatArray;
 class VTK_MRML_EXPORT vtkMRMLModelNode : public vtkMRMLTransformableNode
 {
 public:
@@ -102,6 +102,31 @@ public:
   vtkGetObjectMacro(PolyData, vtkPolyData);
   void SetAndObservePolyData(vtkPolyData *PolyData);
 
+
+  // Description:
+  // add an array to the polydata's point/cell data
+  void AddPointScalars(vtkFloatArray *array);
+  void AddCellScalars(vtkFloatArray *array);
+  // Description:
+  // remove an array from the polydata's point/cell data
+  void RemoveScalars(const char *scalarName);
+  
+  // Description:
+  // Get the currently active Point/Cell array name, type =
+  // scalars, vectors, normals, tcoords, tensors, null checks all in that
+  // order for an active array. Returns an empty string if it can't find one.
+  //const char *GetActivePointScalarName(const char *type);
+  //const char *GetActiveCellScalarName(const char *type);
+  
+  // Description:
+  // Set the active poly data Point/Cell scalar array, checks for the string
+  // as name of arrays, as scalars, vectors, normals, tcoords,
+  // tensors. Returns -1 if failed to find the scalar name as a valid
+  // attribute name. Also updates the display node's active scalars and color table
+  int SetActiveScalars(const char *scalarName);
+  int SetActivePointScalars(const char *scalarName);
+  int SetActiveCellScalars(const char *scalarName);
+  
   // Description:
   // alternative method to propagate events generated in Display nodes
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
@@ -132,7 +157,7 @@ protected:
 
   // Data
   vtkPolyData *PolyData;
-
+  
   char *StorageNodeID;
   char *DisplayNodeID;
 
