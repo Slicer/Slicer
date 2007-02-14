@@ -29,6 +29,9 @@
 #include "vtkDiffusionTensorGlyph.h"
 #endif
 
+#include "vtkPointData.h"
+
+
 #include <sstream>
 
 vtkCxxRevisionMacro(vtkSlicerFiberBundleDisplayLogic, "$Revision: 1.9.12.1 $");
@@ -97,14 +100,6 @@ void vtkSlicerFiberBundleDisplayLogic::CreateTemporaryModelNodeForDisplay ( vtkM
   displayNode->SetScene(this->GetMRMLScene());
   displayNode->SetSaveWithScene(0);
   
-  // give it a name
-  std::stringstream ss;
-  char name[256];
-  ss << this->FiberBundleNode->GetName() << " " << "Line Model Node";
-  ss.getline(name,256);
-  modelNode->SetName(name);
-  
-  
   //modelNode->SetAndObserveDisplayNodeID(displayNode->GetID());
 
   vtkDebugMacro("Done creating temporary display model");
@@ -152,6 +147,20 @@ void vtkSlicerFiberBundleDisplayLogic::DeleteTemporaryModelNodeForDisplay ( vtkM
 } 
 
 //----------------------------------------------------------------------------
+void vtkSlicerFiberBundleDisplayLogic::VisibilityOffForTemporaryModel ( vtkMRMLModelNode * modelNode,  vtkMRMLModelDisplayNode * displayNode)
+{
+  vtkDebugMacro("Turning off model visibility");
+
+  if ( displayNode != NULL )
+    {
+    displayNode->VisibilityOff();
+    }
+
+  vtkDebugMacro("Done hiding line model");
+}
+
+
+//----------------------------------------------------------------------------
 void vtkSlicerFiberBundleDisplayLogic::UpdateModelDisplay ( )
 {
 
@@ -172,7 +181,7 @@ void vtkSlicerFiberBundleDisplayLogic::UpdateModelDisplay ( )
         }
       else
         {
-        this->DeleteLineModelNodes();
+        this->VisibilityOffForTemporaryModel( this->LineModelNode, this->LineModelDisplayNode );
         }
 
       // see which kind of model we are displaying
@@ -182,7 +191,7 @@ void vtkSlicerFiberBundleDisplayLogic::UpdateModelDisplay ( )
         }
       else
         {
-        this->DeleteTubeModelNodes();
+        this->VisibilityOffForTemporaryModel( this->TubeModelNode, this->TubeModelDisplayNode );
         }
 
       // see which kind of model we are displaying
@@ -192,7 +201,7 @@ void vtkSlicerFiberBundleDisplayLogic::UpdateModelDisplay ( )
         }
       else
         {
-        this->DeleteGlyphModelNodes();
+        this->VisibilityOffForTemporaryModel( this->GlyphModelNode, this->GlyphModelDisplayNode );
         }
 
 
@@ -203,14 +212,30 @@ void vtkSlicerFiberBundleDisplayLogic::UpdateModelDisplay ( )
 }
 
 
+//----------------------------------------------------------------------------
 void vtkSlicerFiberBundleDisplayLogic::DeleteLineModelNodes ( )
 {
   this->DeleteTemporaryModelNodeForDisplay ( this->LineModelNode, this->LineModelDisplayNode );
 }
 
+//----------------------------------------------------------------------------
 void vtkSlicerFiberBundleDisplayLogic::CreateLineModelNodes ( )
 {
     this->CreateTemporaryModelNodeForDisplay ( this->LineModelNode, this->LineModelDisplayNode );
+  
+    // give the nodes names
+    std::stringstream ss;
+    char name[256];
+    ss << this->FiberBundleNode->GetName() << " Line Model Node";
+    ss.getline(name,256);
+    this->LineModelNode->SetName(name);
+
+    std::stringstream ss2;
+    char name2[256];
+    ss2 << this->FiberBundleNode->GetName() << " Line Model Display Node";
+    ss2.getline(name2,256);
+    this->LineModelDisplayNode->SetName(name);
+  
 }
 
 //----------------------------------------------------------------------------
@@ -294,6 +319,20 @@ void vtkSlicerFiberBundleDisplayLogic::DeleteTubeModelNodes ( )
 void vtkSlicerFiberBundleDisplayLogic::CreateTubeModelNodes ( )
 {
     this->CreateTemporaryModelNodeForDisplay ( this->TubeModelNode, this->TubeModelDisplayNode );
+  
+    // give the nodes names
+    std::stringstream ss;
+    char name[256];
+    ss << this->FiberBundleNode->GetName() << " Tube Model Node";
+    ss.getline(name,256);
+    this->TubeModelNode->SetName(name);
+
+    std::stringstream ss2;
+    char name2[256];
+    ss2 << this->FiberBundleNode->GetName() << " Tube Model Display Node";
+    ss2.getline(name2,256);
+    this->TubeModelDisplayNode->SetName(name);
+
 }
 
 //----------------------------------------------------------------------------
@@ -393,17 +432,31 @@ void vtkSlicerFiberBundleDisplayLogic::DeleteGlyphModelNodes ( )
 void vtkSlicerFiberBundleDisplayLogic::CreateGlyphModelNodes ( )
 {
     this->CreateTemporaryModelNodeForDisplay ( this->GlyphModelNode, this->GlyphModelDisplayNode );
+
+    // give the nodes names
+    std::stringstream ss;
+    char name[256];
+    ss << this->FiberBundleNode->GetName() << " Glyph Model Node";
+    ss.getline(name,256);
+    this->GlyphModelNode->SetName(name);
+
+    std::stringstream ss2;
+    char name2[256];
+    ss2 << this->FiberBundleNode->GetName() << " Glyph Model Display Node";
+    ss2.getline(name2,256);
+    this->GlyphModelDisplayNode->SetName(name);
+
 }
 
 //----------------------------------------------------------------------------
 void vtkSlicerFiberBundleDisplayLogic::CreateGlyphModel ( )
 {
-  vtkDebugMacro("Creating line model");
+  vtkDebugMacro("Creating glyph model");
 
   // if we have no MRML scene yet 
   if (this->MRMLScene == NULL)
     {
-    vtkErrorMacro("Cannot create line model, no MRMLScene set yet.");
+    vtkErrorMacro("Cannot create glyph model, no MRMLScene set yet.");
     return;
     }
 
@@ -419,7 +472,7 @@ void vtkSlicerFiberBundleDisplayLogic::CreateGlyphModel ( )
     this->CreateGlyphModelNodes();
     }
 
-  vtkDebugMacro("Updating line model according to fiber bundle nodes");
+  vtkDebugMacro("Updating glyph model according to fiber bundle nodes");
 
   // update the polydata and display parameters:
   if (this->FiberBundleNode != NULL) 
@@ -431,7 +484,7 @@ void vtkSlicerFiberBundleDisplayLogic::CreateGlyphModel ( )
     if (fiberBundleDisplayNode != NULL)
       {
 
-      vtkDebugMacro("Updating line model according to FB display node");
+      vtkDebugMacro("Updating glyph model according to FB display node");
 
       this->GlyphModelDisplayNode->SetVisibility( fiberBundleDisplayNode->GetVisibility ( ) );
       this->GlyphModelDisplayNode->SetOpacity( fiberBundleDisplayNode->GetFiberGlyphOpacity ( ) );
@@ -439,7 +492,7 @@ void vtkSlicerFiberBundleDisplayLogic::CreateGlyphModel ( )
       this->GlyphModelDisplayNode->SetAmbient( fiberBundleDisplayNode->GetAmbient ( ) );
       this->GlyphModelDisplayNode->SetDiffuse( fiberBundleDisplayNode->GetDiffuse ( ) );
 
-      vtkDebugMacro("Updating line model according to DT display node");
+      vtkDebugMacro("Updating glyph model according to DT display node");
 
       vtkDebugMacro("Getting poly data from FB node");
       
@@ -452,7 +505,7 @@ void vtkSlicerFiberBundleDisplayLogic::CreateGlyphModel ( )
         // TO DO: need filter to calculate FA, average FA, etc. as requested
 
 
-        // get polylines from the fiber bundle node and glyph them
+        // get tensors from the fiber bundle node and glyph them
 #ifdef USE_TEEM
       
         // if glyph type is other than superquadrics, get glyph source
@@ -462,14 +515,69 @@ void vtkSlicerFiberBundleDisplayLogic::CreateGlyphModel ( )
           glyphFilter->SetInput(this->FiberBundleNode->GetPolyData () );
           glyphFilter->ClampScalingOff();
         
-          glyphFilter->SetScaleFactor( 1000 );
+          glyphFilter->SetScaleFactor( DTDisplayNode->GetGlyphScaleFactor( ) );
 
           glyphFilter->SetSource( DTDisplayNode->GetGlyphSource( ) );
 
-        
+          // set glyph coloring
+          if (fiberBundleDisplayNode->GetColorModeForFiberGlyphs ( ) == vtkMRMLFiberBundleDisplayNode::colorModeSolid)
+            {
+            vtkErrorMacro("scalars off");
+            this->GlyphModelDisplayNode->ScalarVisibilityOff( );
+            }
+          else
+            if (fiberBundleDisplayNode->GetColorModeForFiberGlyphs ( ) == vtkMRMLFiberBundleDisplayNode::colorModeScalar)
+              {
+
+              this->GlyphModelDisplayNode->ScalarVisibilityOn( );
+              vtkErrorMacro("setting scalar type for glyphs");
+
+              switch ( DTDisplayNode->GetColorGlyphBy( ))
+                {
+                case vtkMRMLDiffusionTensorDisplayPropertiesNode::FractionalAnisotropy:
+                  {
+                  vtkErrorMacro("coloring with FA");
+                  glyphFilter->ColorGlyphsWithFractionalAnisotropy( );
+                  }
+                  break;
+                case vtkMRMLDiffusionTensorDisplayPropertiesNode::LinearMeasure:
+                  {
+                  vtkErrorMacro("coloring with Cl");
+                  glyphFilter->ColorGlyphsWithLinearMeasure( );
+                  }
+                  break;
+                case vtkMRMLDiffusionTensorDisplayPropertiesNode::Trace:
+                  {
+                  vtkErrorMacro("coloring with trace when implemented");
+                  // TO DO: implement trace color
+                  //glyphFilter->ColorGlyphsWithTrace( );
+                  }
+                case vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientation:
+                  {
+                  vtkErrorMacro("coloring with direction (re-implement)");
+                  glyphFilter->ColorGlyphsWithDirection( );
+                  }
+                  break;
+                  
+                }
+              }
+
           glyphFilter->Update ( );
           this->GlyphModelNode->SetAndObservePolyData(glyphFilter->GetOutput( ) );
+
+          //test
+          
+          if (glyphFilter->GetOutput()->GetPointData()->GetScalars() != NULL)
+            {
+            vtkErrorMacro("vtk scalars present ------------------");
+            }
+          else
+            {
+            vtkErrorMacro("vtk scalars NOT..............");
+            }
+
           glyphFilter->Delete ( );
+
           }
         else
           {
@@ -496,7 +604,7 @@ void vtkSlicerFiberBundleDisplayLogic::CreateGlyphModel ( )
     this->GlyphModelNode->SetAndObserveDisplayNodeID(this->GlyphModelDisplayNode->GetID());
     }
 
-  vtkDebugMacro("Done creating line model");
+  vtkDebugMacro("Done creating glyph model");
 
 } 
 
@@ -522,7 +630,7 @@ void vtkSlicerFiberBundleDisplayLogic::ProcessMRMLEvents( vtkObject * caller,
     vtkDebugWithObjectMacro(this,"Hooray caught a display modified event");
     vtkErrorWithObjectMacro(this,"Hooray caught a display modified event from fiber bundle node");
     this->UpdateModelDisplay();
-    vtkErrorWithObjectMacro(this,"Done creating line model!!!!");
+    vtkErrorWithObjectMacro(this,"Done creating models!!!!");
     }
 
   vtkDebugWithObjectMacro(this,"Process MRML Events " << event );

@@ -77,6 +77,11 @@ protected:
   // Add a model to MRML scene.
   void AddTemporaryModelNodeToScene ( vtkMRMLModelNode * & modelNode, vtkMRMLModelDisplayNode * & displayNode);
 
+  // Description:
+  // Make one of our temporary models invisible (to correspond to visibility settings in fiber bundle 
+  // display node).
+  void VisibilityOffForTemporaryModel ( vtkMRMLModelNode * modelNode,  vtkMRMLModelDisplayNode * displayNode);
+
   void CreateLineModelNodes ( );
   void CreateTubeModelNodes ( );
   void CreateGlyphModelNodes ( );
