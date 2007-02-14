@@ -22,7 +22,7 @@
 #include "vtkPointData.h"
 #include "vtkCellArray.h"
 #include "vtkImageData.h"
-#include "vtkTensorMathematics.h"
+#include "vtkDiffusionTensorMathematics.h"
 
 #include <time.h>
 
@@ -52,64 +52,95 @@ vtkDiffusionTensorGlyph* vtkDiffusionTensorGlyph::New()
 // scaling is turned off.
 vtkDiffusionTensorGlyph::vtkDiffusionTensorGlyph()
 {
-  // Instead of coloring glyphs by passing through input
-  // scalars, color according to features we are computing.
-  //this->ColorGlyphsWithLinearMeasure();
-  this->ScalarMeasure = 0; // Need to initialed var before callling ColorGlyphsWithDirection
-  this->ColorGlyphsWithDirection();
+  // Color according to FA scalar invariant by default
+  this->ColorGlyphs = 1;
+  this->ColorMode = vtkTensorGlyph::COLOR_BY_EIGENVALUES;
+  this->ScalarInvariant = vtkDiffusionTensorMathematics::FractionalAnisotropyScalar;
 
+  // These can be optionally set by the user
   this->VolumePositionMatrix = NULL;
   this->TensorRotationMatrix = NULL;
 
   this->MaskGlyphsWithScalars = 0;
   this->ScalarMask = NULL;
+
+  // Default to highest rendering resolution
   this->Resolution = 1;
+
+  // Default large scalar factor for diffusion data. 
+  // Display small magnitude eigenvalues in mm space.
+  this->ScaleFactor = 1000;
+
+  // TO DO: Use correct scaling by sqrt of eigenvalues for DTI!
 }
 
 vtkDiffusionTensorGlyph::~vtkDiffusionTensorGlyph()
 {
 
-}
-
-void vtkDiffusionTensorGlyph::ColorGlyphsWithLinearMeasure() {
-  this->ColorGlyphsWith(VTK_LINEAR_MEASURE);
-}
-void vtkDiffusionTensorGlyph::ColorGlyphsWithSphericalMeasure() {
-  this->ColorGlyphsWith(VTK_SPHERICAL_MEASURE);
-}
-void vtkDiffusionTensorGlyph::ColorGlyphsWithPlanarMeasure() {
-  this->ColorGlyphsWith(VTK_PLANAR_MEASURE);
-}
-void vtkDiffusionTensorGlyph::ColorGlyphsWithMaxEigenvalue() {
-  this->ColorGlyphsWith(VTK_MAX_EIGENVAL_MEASURE);
-}
-void vtkDiffusionTensorGlyph::ColorGlyphsWithMiddleEigenvalue() {
-  this->ColorGlyphsWith(VTK_MIDDLE_EIGENVAL_MEASURE);
-}
-void vtkDiffusionTensorGlyph::ColorGlyphsWithMinEigenvalue() {
-  this->ColorGlyphsWith(VTK_MIN_EIGENVAL_MEASURE);
-}
-void vtkDiffusionTensorGlyph::ColorGlyphsWithMaxMinusMidEigenvalue() {
-  this->ColorGlyphsWith(VTK_EIGENVAL_DIFFERENCE_MAX_MID_MEASURE);
-}
-
-void vtkDiffusionTensorGlyph::ColorGlyphsWithDirection() {
-  this->ColorGlyphsWith(VTK_DIRECTION_MEASURE);
-}
-void vtkDiffusionTensorGlyph::ColorGlyphsWithRelativeAnisotropy() {
-  this->ColorGlyphsWith(VTK_RELATIVE_ANISOTROPY_MEASURE);
-}
-void vtkDiffusionTensorGlyph::ColorGlyphsWithFractionalAnisotropy() {
-  this->ColorGlyphsWith(VTK_FRACTIONAL_ANISOTROPY_MEASURE);
-}
-
-void vtkDiffusionTensorGlyph::ColorGlyphsWith(int measure) {
-  if (this->ScalarMeasure != measure) 
+  // Delete all objects (reduce ref count by one)
+  if ( this->VolumePositionMatrix != NULL )
     {
-      this->ColorGlyphs = 0;
-      this->ColorGlyphsWithAnisotropy = 1;
-      this->ScalarMeasure = measure;
-      this->Modified();
+    this->VolumePositionMatrix->Delete( );
+    }
+
+  if ( this->TensorRotationMatrix != NULL )
+    {
+    this->TensorRotationMatrix->Delete( );
+    }
+
+  if ( this->ScalarMask != NULL )
+    {
+    this->ScalarMask->Delete( );
+    }
+
+}
+
+void vtkDiffusionTensorGlyph::ColorGlyphsByLinearMeasure() {
+  this->ColorGlyphsBy(vtkDiffusionTensorMathematics::LinearMeasureScalar);
+}
+void vtkDiffusionTensorGlyph::ColorGlyphsBySphericalMeasure() {
+  this->ColorGlyphsBy(vtkDiffusionTensorMathematics::SphericalMeasureScalar);
+}
+void vtkDiffusionTensorGlyph::ColorGlyphsByPlanarMeasure() {
+  this->ColorGlyphsBy(vtkDiffusionTensorMathematics::PlanarMeasureScalar);
+}
+void vtkDiffusionTensorGlyph::ColorGlyphsByMaxEigenvalue() {
+  this->ColorGlyphsBy(vtkDiffusionTensorMathematics::MaxEigenvalueScalar);
+}
+void vtkDiffusionTensorGlyph::ColorGlyphsByMidEigenvalue() {
+  this->ColorGlyphsBy(vtkDiffusionTensorMathematics::MidEigenvalueScalar);
+}
+void vtkDiffusionTensorGlyph::ColorGlyphsByMinEigenvalue() {
+  this->ColorGlyphsBy(vtkDiffusionTensorMathematics::MinEigenvalueScalar);
+}
+
+void vtkDiffusionTensorGlyph::ColorGlyphsByOrientation() {
+  this->ColorGlyphsBy(vtkDiffusionTensorMathematics::ColorOrientationScalar);
+}
+void vtkDiffusionTensorGlyph::ColorGlyphsByRelativeAnisotropy() {
+  this->ColorGlyphsBy(vtkDiffusionTensorMathematics::RelativeAnisotropyScalar);
+}
+void vtkDiffusionTensorGlyph::ColorGlyphsByFractionalAnisotropy() {
+  this->ColorGlyphsBy(vtkDiffusionTensorMathematics::FractionalAnisotropyScalar);
+}
+void vtkDiffusionTensorGlyph::ColorGlyphsByTrace() {
+  this->ColorGlyphsBy(vtkDiffusionTensorMathematics::TraceScalar);
+}
+
+void vtkDiffusionTensorGlyph::ColorGlyphsBy(int invariant) {
+  if (this->ScalarInvariant != invariant) 
+    {
+    // superclass flag to output scalars
+    this->ColorGlyphs = 1;
+
+    // superclass flag to calculate scalars from tensors
+    this->SetColorModeToEigenvalues();
+
+    // type of scalar we'll calculate
+    this->ScalarInvariant = invariant;
+
+    // we have been modified
+    this->Modified();
     }
 }
 
@@ -296,13 +327,12 @@ void vtkDiffusionTensorGlyph::Execute()
       // threshold: if trace is <= 0, don't do expensive computations
       // This used to be: tensor ->GetComponent(0,0) + 
       // tensor->GetComponent(1,1) + tensor->GetComponent(2,2);
-      vtkFloatingPointType trace = tensor[0][0] + tensor[1][1] + tensor[2][2];
-
+      double trace = vtkDiffusionTensorMathematics::Trace(tensor);
       
       // only display this glyph if either:
       // a) we are masking and the mask is 1 at this location.
       // b) the trace is positive and we are not masking (default).
-      // (If the trace is 0 we don't need to go through the code just to
+      // (If the trace is <= 0 we don't need to go through the code just to
       // display nothing at the end, since we expect that our data has
       // non-negative eigenvalues.)
       if ((doMasking && inMask->GetTuple1(inPtId)) || (!this->MaskGlyphsWithScalars && trace > 0)) 
@@ -346,7 +376,7 @@ void vtkDiffusionTensorGlyph::Execute()
             }
         }
          //vtkMath::Jacobi(m, w, v);
-         vtkTensorMathematics::TeemEigenSolver(m,w,v);
+         vtkDiffusionTensorMathematics::TeemEigenSolver(m,w,v);
           //copy eigenvectors
           xv[0] = v[0][0]; xv[1] = v[1][0]; xv[2] = v[2][0];
           yv[0] = v[0][1]; yv[1] = v[1][1]; yv[2] = v[2][1];
@@ -368,64 +398,53 @@ void vtkDiffusionTensorGlyph::Execute()
           w[2] = vtkMath::Normalize(zv);
         }
 
-      // output scalars before modifying the value of 
-      // the eigenvalues (scaling, etc)
-      if ( inScalars && this->ColorGlyphs ) 
+      // pass through input scalars if requested
+      if ( inScalars && this->ColorGlyphs && ( this->ColorMode == vtkTensorGlyph::COLOR_BY_SCALARS ) ) 
         {
           // Copy point data from source
           s = inScalars->GetTuple1(inPtId);
         }
-      else 
-        {
-          //Correct for negative eigenvalues: used logic coded in vtkTensorMathematics
-        vtkTensorMathematics::FixNegativeEigenvaluesMethod(w);
 
-        switch (this->ScalarMeasure) 
+      // output scalar invariants if requested 
+      // (before modifying the value of the eigenvalues for glyph scaling)      
+      if ( this->ColorGlyphs && ( this->ColorMode == vtkTensorGlyph::COLOR_BY_EIGENVALUES ) ) 
         {
-        case VTK_LINEAR_MEASURE:
-          s = vtkTensorMathematics::LinearMeasure(w);
+          //Correct for negative eigenvalues: used logic coded in vtkDiffusionTensorMathematics
+        vtkDiffusionTensorMathematics::FixNegativeEigenvaluesMethod(w);
+
+        switch (this->ScalarInvariant) 
+        {
+        case vtkDiffusionTensorMathematics::LinearMeasureScalar:
+          s = vtkDiffusionTensorMathematics::LinearMeasure(w);
           break;
-        case VTK_PLANAR_MEASURE:
-          s = vtkTensorMathematics::PlanarMeasure(w);
+        case vtkDiffusionTensorMathematics::PlanarMeasureScalar:
+          s = vtkDiffusionTensorMathematics::PlanarMeasure(w);
           break;
-        case VTK_SPHERICAL_MEASURE:
-          s = vtkTensorMathematics::SphericalMeasure(w);
+        case vtkDiffusionTensorMathematics::SphericalMeasureScalar:
+          s = vtkDiffusionTensorMathematics::SphericalMeasure(w);
           break;
-        case VTK_MAX_EIGENVAL_MEASURE:
+        case vtkDiffusionTensorMathematics::MaxEigenvalueScalar:
           s = w[0];
           break;
-        case VTK_MIDDLE_EIGENVAL_MEASURE:
+        case vtkDiffusionTensorMathematics::MidEigenvalueScalar:
           s = w[1];
           break;
-        case VTK_MIN_EIGENVAL_MEASURE:
+        case vtkDiffusionTensorMathematics::MinEigenvalueScalar:
           s = w[2]; 
           break;
-        case VTK_EIGENVAL_DIFFERENCE_MAX_MID_MEASURE:
-          s = w[0] - w[2]; 
-          break;
-        case VTK_DIRECTION_MEASURE:
-          // vary color only with x and y, since unit vector
-          // these two determine z component.
-          // use max evector for direction
-          //s = fabs(xv[0])/(fabs(yv[0]) + eps);
-          double v_maj[3];
-          v_maj[0]=v[0][0];
-          v_maj[1]=v[1][0];
-          v_maj[2]=v[2][0];
-          if (this->TensorRotationMatrix)
-            {
-              rotate->SetMatrix(this->TensorRotationMatrix);
-              rotate->TransformPoint(v_maj,v_maj);
-            }
-          
-          this->RGBToIndex(fabs(v_maj[0]),fabs(v_maj[1]),fabs(v_maj[2]),s);
+        case vtkDiffusionTensorMathematics::ColorOrientationScalar:
+
+          // TO DO: here output as RGB. Need to allocate scalars first.
           
           break;
-        case VTK_RELATIVE_ANISOTROPY_MEASURE:
-          s = vtkTensorMathematics::RelativeAnisotropy(w);
+        case vtkDiffusionTensorMathematics::RelativeAnisotropyScalar:
+          s = vtkDiffusionTensorMathematics::RelativeAnisotropy(w);
           break;
-        case VTK_FRACTIONAL_ANISOTROPY_MEASURE:
-          s = vtkTensorMathematics::FractionalAnisotropy(w);
+        case vtkDiffusionTensorMathematics::FractionalAnisotropyScalar:
+          s = vtkDiffusionTensorMathematics::FractionalAnisotropy(w);
+          break;
+        case vtkDiffusionTensorMathematics::TraceScalar:
+          s = vtkDiffusionTensorMathematics::Trace(w);
           break;
         default:
           s = 0;
@@ -554,7 +573,9 @@ void vtkDiffusionTensorGlyph::PrintSelf(ostream& os, vtkIndent indent)
 {
   vtkTensorGlyph::PrintSelf(os,indent);
 
-  //  os << indent << "ColorGlyphsWithAnisotropy: " << this->ColorGlyphsWithAnisotropy << "\n";
+  // TO DO: implement this
+
+  //  os << indent << "ColorGlyphsByAnisotropy: " << this->ColorGlyphsByAnisotropy << "\n";
 }
 
 //----------------------------------------------------------------------------
@@ -586,85 +607,4 @@ unsigned long int vtkDiffusionTensorGlyph::GetMTime()
   return mTime;
 }
 
-
-// This is sort of the inverse of code from Gordon Kindlmann for mapping
-// the mode (index value) to RGB. See vtkTensorMathematics for that code.
-// There may be a simpler way to do this but this works.
-// Note this expects a "0 1" Hue Range in the vtkLookupTable used to
-// display the glyphs.
-void vtkDiffusionTensorGlyph::RGBToIndex(double R, double G, 
-                                           double B, double &index) 
-{
-
-  // remove the gray part of the color.
-  // this is so we can use the model where either R,G, or B is 0.
-  // then we scale so that the max of the other two is one.
-  double min = R;
-  int minIdx = 0;
-  if (G < min)
-    {
-      min = G;
-      minIdx = 1;
-    }
-  if (B < min)
-    {
-      min = B;
-      minIdx = 2;
-    }
-
-  // make the smallest of R,G,B equal 0
-  R = R - min;
-  G = G - min;
-  B = B - min;
-
-  // now take the max, and scale it to be 1.
-  double max = R;
-  int maxIdx = 0;
-  if (G > max)
-    {
-      max = G;
-      maxIdx = 1;
-    }
-  if (B > max)
-    {
-      max = B;
-      maxIdx = 2;
-    }
-
-  R = R/max;
-  G = G/max;
-  B = B/max;
-
-
-  // now using the inverse sextants, map this into an index.
-  // switch (sextant) {
-  //   case 0: { R = 1;      G = frac;   B = 0;      break; }
-  //   case 1: { R = 1-frac; G = 1;      B = 0;      break; }
-  //   case 2: { R = 0;      G = 1;      B = frac;   break; }
-  //   case 3: { R = 0;      G = 1-frac; B = 1;      break; }
-  //   case 4: { R = frac;   G = 0;      B = 1;      break; }
-  //   case 5: { R = 1;      G = 0;      B = 1-frac; break; }
-  // }
-  int sextant;
-  if (maxIdx == 0 && minIdx == 2) sextant = 0;
-  if (maxIdx == 1 && minIdx == 2) sextant = 1;
-  if (maxIdx == 1 && minIdx == 0) sextant = 2;
-  if (maxIdx == 2 && minIdx == 0) sextant = 3;
-  if (maxIdx == 2 && minIdx == 1) sextant = 4;
-  if (maxIdx == 0 && minIdx == 1) sextant = 5;
-
-  double offset;
-  offset = 256/6;
-
-  switch (sextant) 
-    {
-    case 0: { index =  G*offset;     break; }
-    case 1: { index = offset + (1-R)*offset;      break; }
-    case 2: { index = offset*2 + B*offset;   break; }
-    case 3: { index = offset*3 + (1-G)*offset;      break; }
-    case 4: { index = offset*4 + R*offset;      break; }
-    case 5: { index = offset*5 + (1-B)*offset; break; }
-    }
-
-}
 

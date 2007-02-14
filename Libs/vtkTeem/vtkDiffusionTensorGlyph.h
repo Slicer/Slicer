@@ -46,9 +46,16 @@
 // (Scaling is already handled well in vtk ImageData.)
 // The TensorRotationMatrix rotates each tensor into the new
 // coordinate system.
-
+//
+// Types of scalars that may be generated from tensors for coloring are defined
+// in vtkDiffusionTensorMathematics.h.  If the ColorMode is set to Eigenvalues, then
+// glyphs are colored according to a function of the eigenvalues.  These
+// functions are scalar invariants of the diffusion tensor.  They are selected
+// by calling ColorGlyphsByFractionalAnisotropy, etc.
+//
 // .SECTION See Also
-// vtkTensorGlyph vtkGlyph3D vtkPointLoad vtkHyperStreamline vtkSuperquadricTensorGlyph
+// vtkTensorGlyph vtkDiffusionTensorMathematics vtkSuperquadricTensorGlyph
+//
 
 #ifndef __vtkDiffusionTensorGlyph_h
 #define __vtkDiffusionTensorGlyph_h
@@ -56,12 +63,11 @@
 #include "vtkTeemConfigure.h"
 
 #include "vtkTensorGlyph.h"
-//#include "vtkTransform.h"
-//#include "vtkMatrix4x4.h"
-//#include "vtkImageData.h"
 
 class vtkImageData;
 class vtkMatrix4x4;
+
+
 class VTK_TEEM_EXPORT vtkDiffusionTensorGlyph : public vtkTensorGlyph
 {
 public:
@@ -69,43 +75,41 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description
-  // Construct object with  defaults from superclass:
-  // scaling on and scale factor 1.0. Eigenvalues are 
-  // extracted, glyphs are colored with calculated features
-  // and logarithmic scaling is turned off.
+  // Construct object with defaults:
+  // Scaling is by eigenvalues on and scale factor is 1000.
+  // Glyphs are colored with FA scalar invariant.
   static vtkDiffusionTensorGlyph *New();
 
-  // Description
-  // Input scalars are a binary mask: 0 prevents display
-  // of polydata at that point
+  // Description:
+  // If MaskGlyphsWithScalars is 1 (On), ScalarMask is used to mask tensors. 
   vtkBooleanMacro(MaskGlyphsWithScalars, int);
   vtkSetMacro(MaskGlyphsWithScalars, int);
   vtkGetMacro(MaskGlyphsWithScalars, int);
 
-
+  // Description:
+  // Input scalars are a binary mask: 0 prevents display
+  // of polydata at that point
   virtual void SetScalarMask(vtkImageData*);
 
-#define VTK_LINEAR_MEASURE 1
-#define VTK_SPHERICAL_MEASURE 2
-#define VTK_PLANAR_MEASURE 3
-#define VTK_MAX_EIGENVAL_MEASURE 4
-#define VTK_MIDDLE_EIGENVAL_MEASURE 5
-#define VTK_MIN_EIGENVAL_MEASURE 6
-#define VTK_EIGENVAL_DIFFERENCE_MAX_MID_MEASURE 7
-#define VTK_DIRECTION_MEASURE 8
-#define VTK_RELATIVE_ANISOTROPY_MEASURE  9
-#define VTK_FRACTIONAL_ANISOTROPY_MEASURE  10
 
-  void ColorGlyphsWithLinearMeasure();
-  void ColorGlyphsWithSphericalMeasure();
-  void ColorGlyphsWithPlanarMeasure();
-  void ColorGlyphsWithMaxEigenvalue();
-  void ColorGlyphsWithMiddleEigenvalue();
-  void ColorGlyphsWithMinEigenvalue();
-  void ColorGlyphsWithMaxMinusMidEigenvalue();
-  void ColorGlyphsWithDirection();
-  void ColorGlyphsWithRelativeAnisotropy();
-  void ColorGlyphsWithFractionalAnisotropy();
+  // TO DO: make more of these
+
+  // Description:
+  // Output one component scalars according to scalar invariants
+  void ColorGlyphsByLinearMeasure();
+  void ColorGlyphsBySphericalMeasure();
+  void ColorGlyphsByPlanarMeasure();
+  void ColorGlyphsByMaxEigenvalue();
+  void ColorGlyphsByMidEigenvalue();
+  void ColorGlyphsByMinEigenvalue();
+  void ColorGlyphsByRelativeAnisotropy();
+  void ColorGlyphsByFractionalAnisotropy();
+  void ColorGlyphsByTrace();
+
+  // Description:
+  // Output R,G,B scalars according to orientation of max eigenvalue
+  void ColorGlyphsByOrientation();
+
 
   // Description
   // Transform output glyph locations (not orientations!) 
@@ -144,14 +148,11 @@ public:
 
   // Description:
   // Resolution of the output glyphs. This parameter is a integer value
-  // that set the number of points that are skipped before render one glyphs.
-  // 1 is the finer level meaning that every input point a glyph is rendered.
+  // that sets the number of tensors (points) that are skipped before a glyph is rendered.
+  // 1 is the finest level meaning that every input point a glyph is rendered.
   vtkSetClampMacro(Resolution,int,1,VTK_LARGE_INTEGER);
   vtkGetMacro(Resolution,int);
 
-
-   static void RGBToIndex(double R, double G, 
-                          double B, double &index);
 
   // Description:
   // When determining the modified time of the filter, 
@@ -165,11 +166,11 @@ protected:
 
   void Execute();
 
-  void ColorGlyphsWith(int measure);
-  int ColorGlyphsWithAnisotropy;
-  int ScalarMeasure;
-  int MaskGlyphsWithScalars;
-  int Resolution;
+  void ColorGlyphsBy(int measure);
+
+  int ScalarInvariant;  // which function of eigenvalues to use for coloring
+  int MaskGlyphsWithScalars;  // mask glyphs outside of the brain for example
+  int Resolution; // allows skipping some tensors for lower resolution glyphing
 
   vtkMatrix4x4 *VolumePositionMatrix;
   vtkMatrix4x4 *TensorRotationMatrix;
