@@ -1141,9 +1141,14 @@ void vtkSlicerViewerWidget::SetModelDisplayProperty(vtkMRMLModelNode *model,  vt
     {
     actor->SetVisibility(dnode->GetVisibility());
     actor->GetMapper()->SetScalarVisibility(dnode->GetScalarVisibility());
-    // if the scalars are visible, try to get the lookup table
+    // if the scalars are visible, set active scalars, try to get the lookup table
     if (actor->GetMapper()->GetScalarVisibility())
       {
+      if (dnode->GetActiveScalarName() != NULL)
+        {
+        //std::cout << "vtkSlicerViewerWidget: checking active scalars from displaynode: " << dnode->GetActiveScalarName() << endl;
+        model->SetActiveScalars(dnode->GetActiveScalarName());
+        }
       /*
       if (dnode->GetColorNode() != NULL &&
           vtkMRMLFreeSurferColorNode::SafeDownCast(dnode->GetColorNode())->GetLookupTable() != NULL)
