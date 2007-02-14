@@ -122,7 +122,7 @@ public:
   // Set the active poly data Point/Cell scalar array, checks for the string
   // as name of arrays, as scalars, vectors, normals, tcoords,
   // tensors. Returns -1 if failed to find the scalar name as a valid
-  // attribute name. Also updates the display node's active scalars and color table
+  // attribute name. Also updates the display node's active scalars
   int SetActiveScalars(const char *scalarName);
   int SetActivePointScalars(const char *scalarName);
   int SetActiveCellScalars(const char *scalarName);
