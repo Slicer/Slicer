@@ -113,7 +113,6 @@ class VTK_MRML_EXPORT vtkMRMLFiberBundleDisplayNode : public vtkMRMLModelDisplay
  
   // Description:
   // Color by solid color (for example the whole fiber bundle red. blue, etc.)
-  // TO DO: how to define specularity, etc. for fiber lines.
   void SetColorModeForFiberLinesToSolid ( ) {
     this->SetColorModeForFiberLines ( this->colorModeSolid );
   };
@@ -154,7 +153,42 @@ class VTK_MRML_EXPORT vtkMRMLFiberBundleDisplayNode : public vtkMRMLModelDisplay
   //--------------------------------------------------------------------------
   // Display Information: ColorMode for tubes
   //--------------------------------------------------------------------------
-  // TO DO: implement all color modes
+
+  // Description:
+  // Color mode for tubes. The color modes are mutually exclusive.
+  vtkGetMacro ( ColorModeForFiberTubes, int );
+  vtkSetMacro ( ColorModeForFiberTubes, int );
+ 
+  // Description:
+  // Color by solid color (for example the whole fiber bundle red. blue, etc.)
+  void SetColorModeForFiberTubesToSolid ( ) {
+    this->SetColorModeForFiberTubes ( this->colorModeSolid );
+  };
+
+  // Description:
+  // Color according to the tensors using various scalar invariants.
+  void SetColorModeForFiberTubesToScalar ( ) {
+    this->SetColorModeForFiberTubes ( this->colorModeScalar );
+  };
+
+  // Description:
+  // Color according to the tensors using a function of scalar invariants along the tract.
+  // This enables coloring by average FA, for example.
+  void SetColorModeForFiberTubesToFunctionOfScalar ( ) {
+    this->SetColorModeForFiberTubes ( this->colorModeFunctionOfScalar );
+  };
+
+  // Description:
+  // Use to color by the active cell scalars.  This is intended to support
+  // external processing of fibers, for example to label each with the distance
+  // of that fiber from an fMRI activation.  Then by making that information
+  // the active cell scalar field, this will allow coloring by that information.
+  // TO DO: make sure this information can be saved with the tract, save name of
+  // active scalar field if needed.
+  void SetColorModeForFiberTubesToUseCellScalars ( ) {
+    this->SetColorModeForFiberTubes ( this->colorModeUseCellScalars );
+  };
+
 
   //--------------------------------------------------------------------------
   // Display Information: tube properties
@@ -178,7 +212,42 @@ class VTK_MRML_EXPORT vtkMRMLFiberBundleDisplayNode : public vtkMRMLModelDisplay
   //--------------------------------------------------------------------------
   // Display Information: ColorMode for glyphs
   //--------------------------------------------------------------------------
-  // TO DO: is this needed? or directly use per-glyph color from display props
+  
+  // Description:
+  // Color mode for glyphs. The color modes are mutually exclusive.
+  vtkGetMacro ( ColorModeForFiberGlyphs, int );
+  vtkSetMacro ( ColorModeForFiberGlyphs, int );
+ 
+  // Description:
+  // Color by solid color (for example the whole fiber bundle red. blue, etc.)
+  void SetColorModeForFiberGlyphsToSolid ( ) {
+    this->SetColorModeForFiberGlyphs ( this->colorModeSolid );
+  };
+
+  // Description:
+  // Color according to the tensors using various scalar invariants.
+  void SetColorModeForFiberGlyphsToScalar ( ) {
+    this->SetColorModeForFiberGlyphs ( this->colorModeScalar );
+  };
+
+  // Description:
+  // Color according to the tensors using a function of scalar invariants along the tract.
+  // This enables coloring by average FA, for example.
+  void SetColorModeForFiberGlyphsToFunctionOfScalar ( ) {
+    this->SetColorModeForFiberGlyphs ( this->colorModeFunctionOfScalar );
+  };
+
+  // Description:
+  // Use to color by the active cell scalars.  This is intended to support
+  // external processing of fibers, for example to label each with the distance
+  // of that fiber from an fMRI activation.  Then by making that information
+  // the active cell scalar field, this will allow coloring by that information.
+  // TO DO: make sure this information can be saved with the tract, save name of
+  // active scalar field if needed.
+  void SetColorModeForFiberGlyphsToUseCellScalars ( ) {
+    this->SetColorModeForFiberGlyphs ( this->colorModeUseCellScalars );
+  };
+
 
   //--------------------------------------------------------------------------
   // Display Information: glyph properties
@@ -186,7 +255,6 @@ class VTK_MRML_EXPORT vtkMRMLFiberBundleDisplayNode : public vtkMRMLModelDisplay
 
   // Description:
   // Opacity of glyphs
-  // TO DO: Is this needed or always 1?
   vtkSetMacro ( FiberGlyphOpacity , double );
   vtkGetMacro ( FiberGlyphOpacity , double );
 

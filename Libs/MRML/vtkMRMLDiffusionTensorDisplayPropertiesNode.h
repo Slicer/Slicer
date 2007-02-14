@@ -123,6 +123,12 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
     this->SetScalarInvariant(this->FractionalAnisotropy);
   };  
 
+  // Description:
+  // Set scalar invariant to C_L (Westin's linear measure)
+  void SetScalarInvariantToLinearMeasure() {
+    this->SetScalarInvariant(this->LinearMeasure);
+  };  
+
   // TO DO: add the rest of the scalars
 
   //--------------------------------------------------------------------------
