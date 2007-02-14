@@ -266,21 +266,9 @@ int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
 
         reader->ReadFSScalars();
 
-        int numScalars = modelNode->GetPolyData()->GetPointData()->GetNumberOfArrays();
-        vtkDebugMacro("Finished reading model overlay file " << fullName.c_str() << ", scalars called " << scalarName.c_str() << ", model node has " << numScalars << " scalars now, adding one\n");
-        // how many scalars does the model have?
-        if (numScalars > 0)
-          {
-          // add array
-          modelNode->GetPolyData()->GetPointData()->AddArray(floatArray);
-          } 
-        else
-          {
-          // set the scalars
-          modelNode->GetPolyData()->GetPointData()->SetScalars(floatArray);
-          }
-        // set the active array
-        modelNode->GetPolyData()->GetPointData()->SetActiveScalars(scalarName.c_str());
+        vtkDebugMacro("Finished reading model overlay file " << fullName.c_str() << ", scalars called " << scalarName.c_str() << ", adding point scalars to model node");
+        modelNode->AddPointScalars(floatArray);
+        modelNode->GetDisplayNode()->SetActiveScalarName(scalarName.c_str());
         // make sure scalars are visible
         modelNode->GetDisplayNode()->SetScalarVisibility(1);
         // set the colour look up table, TODO: use FreeSurfer color node when integrated
@@ -350,21 +338,10 @@ int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
           }
         else
           {
-          int numScalars = modelNode->GetPolyData()->GetPointData()->GetNumberOfArrays();
-          vtkDebugMacro("Finished reading model overlay file " << fullName.c_str() << ", scalars called " << scalarName.c_str() << ", model node has " << numScalars << " scalars now, adding one\n");
-          // how many scalars does the model have?
-          if (numScalars > 0)
-            {
-            // add array
-            modelNode->GetPolyData()->GetPointData()->AddArray(floatArray);
-            } 
-          else
-            {
-            // set the scalars
-            modelNode->GetPolyData()->GetPointData()->SetScalars(floatArray);
-            }
+          vtkDebugMacro("Finished reading model overlay file " << fullName.c_str() << ", scalars called " << scalarName.c_str() << ", adding poitn scalars to model node");
+          modelNode->AddPointScalars(floatArray);
           // set the active array
-          modelNode->GetPolyData()->GetPointData()->SetActiveScalars(scalarName.c_str());
+          modelNode->GetDisplayNode()->SetActiveScalarName(scalarName.c_str());
           // make sure scalars are visible
           modelNode->GetDisplayNode()->SetScalarVisibility(1);
           // set the colour look up table, TODO: use FreeSurfer color node when integrated
