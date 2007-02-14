@@ -6,7 +6,7 @@
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Program:   3D Slicer
-  Module:    $RCSfile: vtkTensorMathematics.cxx,v $
+  Module:    $RCSfile: vtkDiffusionTensorMathematics.cxx,v $
   Date:      $Date: 2006/12/19 17:14:44 $
   Version:   $Revision: 1.43 $
 
@@ -23,7 +23,7 @@
 #endif
 
 #include "vtkImageData.h"
-#include "vtkTensorMathematics.h"
+#include "vtkDiffusionTensorMathematics.h"
 #include "vtkMath.h"
 #include "vtkObjectFactory.h"
 #include "vtkTransform.h"
@@ -38,25 +38,25 @@ extern "C" {
 
 #define VTK_EPS 10e-15
 
-vtkCxxSetObjectMacro(vtkTensorMathematics,TensorRotationMatrix,vtkMatrix4x4);
-vtkCxxSetObjectMacro(vtkTensorMathematics,ScalarMask,vtkImageData);
+vtkCxxSetObjectMacro(vtkDiffusionTensorMathematics,TensorRotationMatrix,vtkMatrix4x4);
+vtkCxxSetObjectMacro(vtkDiffusionTensorMathematics,ScalarMask,vtkImageData);
 
 //----------------------------------------------------------------------------
-vtkTensorMathematics* vtkTensorMathematics::New()
+vtkDiffusionTensorMathematics* vtkDiffusionTensorMathematics::New()
 {
   // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkTensorMathematics");
+  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkDiffusionTensorMathematics");
   if(ret)
     {
-    return (vtkTensorMathematics*)ret;
+    return (vtkDiffusionTensorMathematics*)ret;
     }
   // If the factory was unable to create the object, then create it here.
-  return new vtkTensorMathematics;
+  return new vtkDiffusionTensorMathematics;
 }
 
 
 //----------------------------------------------------------------------------
-vtkTensorMathematics::vtkTensorMathematics()
+vtkDiffusionTensorMathematics::vtkDiffusionTensorMathematics()
 {
   this->Operation = VTK_TENS_TRACE;
 
@@ -69,7 +69,7 @@ vtkTensorMathematics::vtkTensorMathematics()
 }
 
 //----------------------------------------------------------------------------     
- vtkTensorMathematics::~vtkTensorMathematics()     
+ vtkDiffusionTensorMathematics::~vtkDiffusionTensorMathematics()     
  {     
    if( this->TensorRotationMatrix )     
      {     
@@ -83,7 +83,7 @@ vtkTensorMathematics::vtkTensorMathematics()
 
 //----------------------------------------------------------------------------
 // 
-void vtkTensorMathematics::ExecuteInformation(vtkImageData **inDatas, 
+void vtkDiffusionTensorMathematics::ExecuteInformation(vtkImageData **inDatas, 
                          vtkImageData *outData)
 {
   int ext[6];
@@ -126,7 +126,7 @@ void vtkTensorMathematics::ExecuteInformation(vtkImageData **inDatas,
 // Handles the one input operations.
 // Handles the ops where eigensystems are not computed.
 template <class T>
-static void vtkTensorMathematicsExecute1(vtkTensorMathematics *self,
+static void vtkDiffusionTensorMathematicsExecute1(vtkDiffusionTensorMathematics *self,
                     vtkImageData *in1Data, 
                     vtkImageData *outData, T *outPtr,
                     int outExt[6], int id)
@@ -257,13 +257,13 @@ static void vtkTensorMathematicsExecute1(vtkTensorMathematics *self,
             /////////////////////*outPtr = (T)(scaleFactor*(tensor[0][0]
             //               +tensor[1][1]
             //               +tensor[2][2]));
-            *outPtr = static_cast<T> (scaleFactor*vtkTensorMathematics::Trace(tensor));
+            *outPtr = static_cast<T> (scaleFactor*vtkDiffusionTensorMathematics::Trace(tensor));
             break;
 
           case VTK_TENS_DETERMINANT:
             //*outPtr = 
             //  (T)(scaleFactor*(vtkMath::Determinant3x3(tensor)));
-            *outPtr = static_cast<T> (scaleFactor*vtkTensorMathematics::Determinant(tensor));
+            *outPtr = static_cast<T> (scaleFactor*vtkDiffusionTensorMathematics::Determinant(tensor));
             break;
             }
         }
@@ -297,7 +297,7 @@ inline Type tensor_math_clamp(const Type a,
 // Handles the one input operations.
 // Handles the ops where eigensystems are computed.
 template <class T>
-static void vtkTensorMathematicsExecute1Eigen(vtkTensorMathematics *self,
+static void vtkDiffusionTensorMathematicsExecute1Eigen(vtkDiffusionTensorMathematics *self,
                           vtkImageData *in1Data, 
                           vtkImageData *outData, 
                           T *outPtr,
@@ -457,7 +457,7 @@ static void vtkTensorMathematicsExecute1Eigen(vtkTensorMathematics *self,
               }
             // compute eigensystem
             //vtkMath::Jacobi(m, w, v);
-            vtkTensorMathematics::TeemEigenSolver(m,w,v);
+            vtkDiffusionTensorMathematics::TeemEigenSolver(m,w,v);
             }
           else
             {
@@ -479,7 +479,7 @@ static void vtkTensorMathematicsExecute1Eigen(vtkTensorMathematics *self,
           //  3. Increase eigenvalues by negative part
           // The two first options have been problematic. Try 3 
           if (self->GetFixNegativeEigenvalues()==1){
-            if (vtkTensorMathematics::FixNegativeEigenvaluesMethod(w)) {
+            if (vtkDiffusionTensorMathematics::FixNegativeEigenvaluesMethod(w)) {
               vtkGenericWarningMacro( "Warning: Eigenvalues are not properly sorted" );
             }   
           }
@@ -488,22 +488,22 @@ static void vtkTensorMathematicsExecute1Eigen(vtkTensorMathematics *self,
           switch (op)
             {
           case VTK_TENS_RELATIVE_ANISOTROPY:
-            *outPtr = static_cast<T> (vtkTensorMathematics::RelativeAnisotropy(w));
+            *outPtr = static_cast<T> (vtkDiffusionTensorMathematics::RelativeAnisotropy(w));
             break;
           case VTK_TENS_FRACTIONAL_ANISOTROPY:
-            *outPtr = static_cast<T> (vtkTensorMathematics::FractionalAnisotropy(w));
+            *outPtr = static_cast<T> (vtkDiffusionTensorMathematics::FractionalAnisotropy(w));
             break;
 
           case VTK_TENS_LINEAR_MEASURE:
-            *outPtr = static_cast<T> (vtkTensorMathematics::LinearMeasure(w));
+            *outPtr = static_cast<T> (vtkDiffusionTensorMathematics::LinearMeasure(w));
             break;
 
           case VTK_TENS_PLANAR_MEASURE:
-            *outPtr = static_cast<T> (vtkTensorMathematics::PlanarMeasure(w));
+            *outPtr = static_cast<T> (vtkDiffusionTensorMathematics::PlanarMeasure(w));
             break;
 
           case VTK_TENS_SPHERICAL_MEASURE:
-            *outPtr = static_cast<T> (vtkTensorMathematics::SphericalMeasure(w));
+            *outPtr = static_cast<T> (vtkDiffusionTensorMathematics::SphericalMeasure(w));
             break;
 
           case VTK_TENS_MAX_EIGENVALUE:
@@ -519,44 +519,44 @@ static void vtkTensorMathematicsExecute1Eigen(vtkTensorMathematics *self,
             break;
 
           case VTK_TENS_PARALLEL_DIFFUSIVITY:
-            *outPtr = static_cast<T> (vtkTensorMathematics::ParallelDiffusivity(w));
+            *outPtr = static_cast<T> (vtkDiffusionTensorMathematics::ParallelDiffusivity(w));
             break;
 
           case VTK_TENS_PERPENDICULAR_DIFFUSIVITY:
-            *outPtr = static_cast<T> (vtkTensorMathematics::PerpendicularDiffusivity(w));
+            *outPtr = static_cast<T> (vtkDiffusionTensorMathematics::PerpendicularDiffusivity(w));
             break;
 
           case VTK_TENS_MAX_EIGENVALUE_PROJX:
-            *outPtr = static_cast<T> (vtkTensorMathematics::MaxEigenvalueProjectionX(v,w));
+            *outPtr = static_cast<T> (vtkDiffusionTensorMathematics::MaxEigenvalueProjectionX(v,w));
             break;
 
           case VTK_TENS_MAX_EIGENVALUE_PROJY:
-            *outPtr = static_cast<T> (vtkTensorMathematics::MaxEigenvalueProjectionY(v,w));
+            *outPtr = static_cast<T> (vtkDiffusionTensorMathematics::MaxEigenvalueProjectionY(v,w));
             break;           
 
           case VTK_TENS_MAX_EIGENVALUE_PROJZ:
-            *outPtr = static_cast<T> (vtkTensorMathematics::MaxEigenvalueProjectionZ(v,w));
+            *outPtr = static_cast<T> (vtkDiffusionTensorMathematics::MaxEigenvalueProjectionZ(v,w));
             break;           
 
       case VTK_TENS_RAI_MAX_EIGENVEC_PROJX:
-        *outPtr = static_cast<T> (vtkTensorMathematics::RAIMaxEigenvecX(v,w));
+        *outPtr = static_cast<T> (vtkDiffusionTensorMathematics::RAIMaxEigenvecX(v,w));
         break;
 
       case VTK_TENS_RAI_MAX_EIGENVEC_PROJY:
-            *outPtr = static_cast<T> (vtkTensorMathematics::RAIMaxEigenvecY(v,w));
+            *outPtr = static_cast<T> (vtkDiffusionTensorMathematics::RAIMaxEigenvecY(v,w));
             break;
 
       case VTK_TENS_RAI_MAX_EIGENVEC_PROJZ:
-            *outPtr = static_cast<T> (vtkTensorMathematics::RAIMaxEigenvecZ(v,w));
+            *outPtr = static_cast<T> (vtkDiffusionTensorMathematics::RAIMaxEigenvecZ(v,w));
             break;
 
       case VTK_TENS_MODE:
-            *outPtr = static_cast<T> (vtkTensorMathematics::Mode(w));
+            *outPtr = static_cast<T> (vtkDiffusionTensorMathematics::Mode(w));
             break;
 
           case VTK_TENS_COLOR_MODE:
 
-            vtkTensorMathematics::ColorByMode(w,r,g,b);
+            vtkDiffusionTensorMathematics::ColorByMode(w,r,g,b);
             // scale maps 0..1 values into the range a char takes on
             rgb_temp = (rgb_scale*r);
             *outPtr = (T)tensor_math_clamp(rgb_temp, (double)VTK_UNSIGNED_CHAR_MIN, (double)VTK_UNSIGNED_CHAR_MAX);
@@ -586,7 +586,7 @@ static void vtkTensorMathematicsExecute1Eigen(vtkTensorMathematics *self,
               }
             // Color R, G, B depending on max eigenvector
             // scale maps 0..1 values into the range a char takes on
-            cl = vtkTensorMathematics::LinearMeasure(w);
+            cl = vtkDiffusionTensorMathematics::LinearMeasure(w);
             rgb_temp = (rgb_scale*fabs(v_maj[0])*cl);
             *outPtr = (T)tensor_math_clamp(rgb_temp, (double)VTK_UNSIGNED_CHAR_MIN, (double)VTK_UNSIGNED_CHAR_MAX);
             outPtr++;
@@ -630,7 +630,7 @@ static void vtkTensorMathematicsExecute1Eigen(vtkTensorMathematics *self,
 // algorithm to fill the output from the inputs.
 // It just executes a switch statement to call the correct function for
 // the datas data types.
-void vtkTensorMathematics::ThreadedExecute(vtkImageData **inData, 
+void vtkDiffusionTensorMathematics::ThreadedExecute(vtkImageData **inData, 
                       vtkImageData *outData,
                       int outExt[6], int id)
 {
@@ -667,7 +667,7 @@ void vtkTensorMathematics::ThreadedExecute(vtkImageData **inData,
       // already.  And we only access the input tensors
       // which are float.  So this switch statement on output
       // scalar type is sufficient.
-      vtkTemplateMacro6(vtkTensorMathematicsExecute1,
+      vtkTemplateMacro6(vtkDiffusionTensorMathematicsExecute1,
                 this,inData[0], outData, 
                 (VTK_TT *)(outPtr), outExt, id);
       default:
@@ -698,7 +698,7 @@ void vtkTensorMathematics::ThreadedExecute(vtkImageData **inData,
     case VTK_TENS_PERPENDICULAR_DIFFUSIVITY:
       switch (outData->GetScalarType())
       {
-        vtkTemplateMacro6(vtkTensorMathematicsExecute1Eigen,
+        vtkTemplateMacro6(vtkDiffusionTensorMathematicsExecute1Eigen,
                 this,inData[0], outData, 
                 (VTK_TT *)(outPtr), outExt, id);
         default:
@@ -713,7 +713,7 @@ void vtkTensorMathematics::ThreadedExecute(vtkImageData **inData,
 
 //Fix negative Eigen with a shift
 /*
-int  vtkTensorMathematics::FixNegativeEigenvaluesMethod(double w[3])
+int  vtkDiffusionTensorMathematics::FixNegativeEigenvaluesMethod(double w[3])
 {
 
   if(w[2]<0) {
@@ -730,7 +730,7 @@ int  vtkTensorMathematics::FixNegativeEigenvaluesMethod(double w[3])
 }
 */
 
-int  vtkTensorMathematics::FixNegativeEigenvaluesMethod(double w[3])
+int  vtkDiffusionTensorMathematics::FixNegativeEigenvaluesMethod(double w[3])
 {
  int cardinality;
  double wtmp[3];
@@ -786,18 +786,24 @@ int  vtkTensorMathematics::FixNegativeEigenvaluesMethod(double w[3])
   return 0;
 }
 
-double vtkTensorMathematics::Trace(double D[3][3])
+double vtkDiffusionTensorMathematics::Trace(double D[3][3])
 {
   return (D[0][0] + D[1][1] + D[2][2]);
 
 }
 
-double vtkTensorMathematics::Determinant(double D[3][3])
+double vtkDiffusionTensorMathematics::Trace(double w[3]) 
+{
+  return ( w[0] + w[1] + w[2] );
+ 
+}
+
+double vtkDiffusionTensorMathematics::Determinant(double D[3][3])
 {
   return vtkMath::Determinant3x3(D);
 }
 
-double vtkTensorMathematics::RelativeAnisotropy(double w[3]) 
+double vtkDiffusionTensorMathematics::RelativeAnisotropy(double w[3]) 
 {
   double trace = w[0]+w[1]+w[2];   
   
@@ -810,7 +816,7 @@ double vtkTensorMathematics::RelativeAnisotropy(double w[3])
                       (w[2]-w[0])*(w[2]-w[0])))/trace);
 }
 
-double vtkTensorMathematics::FractionalAnisotropy(double w[3])
+double vtkDiffusionTensorMathematics::FractionalAnisotropy(double w[3])
 {
   double norm = sqrt(w[0]*w[0]+ w[1]*w[1] +  w[2]*w[2]); 
    
@@ -823,7 +829,7 @@ double vtkTensorMathematics::FractionalAnisotropy(double w[3])
                       (w[2]-w[0])*(w[2]-w[0])))/norm);
 } 
 
-double vtkTensorMathematics::LinearMeasure(double w[3])
+double vtkDiffusionTensorMathematics::LinearMeasure(double w[3])
 {
   if (w[0] < VTK_EPS) 
      return (w[0] - w[1])/(w[0]+VTK_EPS);
@@ -832,7 +838,7 @@ double vtkTensorMathematics::LinearMeasure(double w[3])
 
 }
 
-double vtkTensorMathematics::PlanarMeasure(double w[3])
+double vtkDiffusionTensorMathematics::PlanarMeasure(double w[3])
 {
   if (w[0] < VTK_EPS)
      return (w[1] - w[2])/(w[0]+VTK_EPS);
@@ -840,7 +846,7 @@ double vtkTensorMathematics::PlanarMeasure(double w[3])
      return (w[1] - w[2])/(w[0]);
 }
 
-double vtkTensorMathematics::SphericalMeasure(double w[3])
+double vtkDiffusionTensorMathematics::SphericalMeasure(double w[3])
 {
   if (w[0] < VTK_EPS)
      return (w[2])/(w[0]+VTK_EPS);
@@ -849,63 +855,63 @@ double vtkTensorMathematics::SphericalMeasure(double w[3])
 }
 
 
-double vtkTensorMathematics::MaxEigenvalue(double w[3])
+double vtkDiffusionTensorMathematics::MaxEigenvalue(double w[3])
 {
   return w[0];
 }
 
-double vtkTensorMathematics::MiddleEigenvalue(double w[3])
+double vtkDiffusionTensorMathematics::MiddleEigenvalue(double w[3])
 {
   return w[1];
 }
 
-double vtkTensorMathematics::MinEigenvalue(double w[3])
+double vtkDiffusionTensorMathematics::MinEigenvalue(double w[3])
 {
   return w[2];
 }
 
-double vtkTensorMathematics::ParallelDiffusivity(double w[3])
+double vtkDiffusionTensorMathematics::ParallelDiffusivity(double w[3])
 {
   return w[0];
 }
 
-double vtkTensorMathematics::PerpendicularDiffusivity(double w[3])
+double vtkDiffusionTensorMathematics::PerpendicularDiffusivity(double w[3])
 {
   return ( ( w[1] + w[2] ) / 2 );
 }
 
 
-double vtkTensorMathematics::RAIMaxEigenvecX(double **v, double w[3]) 
+double vtkDiffusionTensorMathematics::RAIMaxEigenvecX(double **v, double w[3]) 
 {
-  return (fabs(v[0][0])*vtkTensorMathematics::RelativeAnisotropy(w));
+  return (fabs(v[0][0])*vtkDiffusionTensorMathematics::RelativeAnisotropy(w));
 }
 
-double vtkTensorMathematics::RAIMaxEigenvecY(double **v, double w[3])
+double vtkDiffusionTensorMathematics::RAIMaxEigenvecY(double **v, double w[3])
 {
-  return (fabs(v[1][0])*vtkTensorMathematics::RelativeAnisotropy(w));
+  return (fabs(v[1][0])*vtkDiffusionTensorMathematics::RelativeAnisotropy(w));
 }
 
-double vtkTensorMathematics::RAIMaxEigenvecZ(double **v, double w[3])
+double vtkDiffusionTensorMathematics::RAIMaxEigenvecZ(double **v, double w[3])
 {
-  return (fabs(v[2][0])*vtkTensorMathematics::RelativeAnisotropy(w));
+  return (fabs(v[2][0])*vtkDiffusionTensorMathematics::RelativeAnisotropy(w));
 }
 
-double vtkTensorMathematics::MaxEigenvalueProjectionX(double **v, double w[3]) 
+double vtkDiffusionTensorMathematics::MaxEigenvalueProjectionX(double **v, double w[3]) 
 {
   return (w[0]*fabs(v[0][0]));
 }
 
-double vtkTensorMathematics::MaxEigenvalueProjectionY(double **v, double w[3]) 
+double vtkDiffusionTensorMathematics::MaxEigenvalueProjectionY(double **v, double w[3]) 
 {
   return (w[0]*fabs(v[1][0]));
 }
 
-double vtkTensorMathematics::MaxEigenvalueProjectionZ(double **v, double w[3]) 
+double vtkDiffusionTensorMathematics::MaxEigenvalueProjectionZ(double **v, double w[3]) 
 {
   return (w[0]*fabs(v[2][0]));
 }
 
-double vtkTensorMathematics::Mode(double w[3])
+double vtkDiffusionTensorMathematics::Mode(double w[3])
 {
 
   // see PhD thesis, Gordon Kindlmann
@@ -923,20 +929,20 @@ double vtkTensorMathematics::Mode(double w[3])
                          (w[0] - 2*w[1] + w[2]))/(27*norm)); 
 }
 
-void vtkTensorMathematics::ColorByMode(double w[3], double &R, 
+void vtkDiffusionTensorMathematics::ColorByMode(double w[3], double &R, 
                                                        double &G, double &B)
 {
   // see PhD thesis, Gordon Kindlmann
   // Compute FA for amount of gray
-  double fa = vtkTensorMathematics::FractionalAnisotropy(w);
+  double fa = vtkDiffusionTensorMathematics::FractionalAnisotropy(w);
   // Compute mode
-  double mode = vtkTensorMathematics::Mode(w);
+  double mode = vtkDiffusionTensorMathematics::Mode(w);
   // Calculate RGB value for this mode and FA
-  vtkTensorMathematics::ModeToRGB(mode, fa, R, G, B);
+  vtkDiffusionTensorMathematics::ModeToRGB(mode, fa, R, G, B);
 }
 
 
-void vtkTensorMathematics::PrintSelf(ostream& os, vtkIndent indent)
+void vtkDiffusionTensorMathematics::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 
@@ -944,7 +950,7 @@ void vtkTensorMathematics::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 // Colormap: convert our mode value (-1..1) to RGB
-void vtkTensorMathematics::ModeToRGB(double Mode, double FA,
+void vtkDiffusionTensorMathematics::ModeToRGB(double Mode, double FA,
                                      double &R, double &G, double &B)
 {
 
@@ -983,7 +989,7 @@ void vtkTensorMathematics::ModeToRGB(double Mode, double FA,
    B = FA*B;
 }
 
-int vtkTensorMathematics::TeemEigenSolver(double **m, double *w, double **v) 
+int vtkDiffusionTensorMathematics::TeemEigenSolver(double **m, double *w, double **v) 
 {
     double t[7];
     double evec[9];

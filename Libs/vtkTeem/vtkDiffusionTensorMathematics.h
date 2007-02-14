@@ -6,12 +6,12 @@
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Program:   3D Slicer
-  Module:    $RCSfile: vtkTensorMathematics.h,v $
+  Module:    $RCSfile: vtkDiffusionTensorMathematics.h,v $
   Date:      $Date: 2006/12/19 17:14:44 $
   Version:   $Revision: 1.20 $
 
 =========================================================================auto=*/
-// .NAME vtkTensorMathematics - Trace, determinant, anisotropy measures
+// .NAME vtkDiffusionTensorMathematics - Trace, determinant, anisotropy measures
 // .SECTION Description
 // Operates on input tensors and outputs image data scalars 
 // that describe some feature of the input tensors.
@@ -23,9 +23,8 @@
 //
 
 
-#ifndef __vtkTensorMathematics_h
-#define __vtkTensorMathematics_h
-
+#ifndef __vtkDiffusionTensorMathematics_h
+#define __vtkDiffusionTensorMathematics_h
 
 // Operation options.
 #define VTK_TENS_TRACE                   0
@@ -59,17 +58,51 @@
 
 class vtkMatrix4x4;
 class vtkImageData;
-class VTK_TEEM_EXPORT vtkTensorMathematics : public vtkImageTwoInputFilter
+class VTK_TEEM_EXPORT vtkDiffusionTensorMathematics : public vtkImageTwoInputFilter
 {
 public:
-  static vtkTensorMathematics *New();
-  vtkTypeMacro(vtkTensorMathematics,vtkImageTwoInputFilter);
+  static vtkDiffusionTensorMathematics *New();
+  vtkTypeMacro(vtkDiffusionTensorMathematics,vtkImageTwoInputFilter);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description:
   // Get the Operation to perform.
   vtkGetMacro(Operation,int);
   vtkSetClampMacro(Operation,int, VTK_TENS_TRACE, VTK_TENS_PERPENDICULAR_DIFFUSIVITY);
+
+
+  //BTX
+  enum
+  {
+    TraceScalar,
+    DeterminantScalar,
+    RelativeAnisotropyScalar,
+    FractionalAnisotropyScalar,
+    MaxEigenvalueScalar,
+    MidEigenvalueScalar,
+    MinEigenvalueScalar,
+    LinearMeasureScalar,
+    PlanarMeasureScalar,
+    SphericalMeasureScalar,
+    ColorOrientationScalar,
+    D11Scalar,
+    D22Scalar,
+    D33Scalar,
+    ModeScalar,
+    ColorModeScalar,
+    MaxEigenvalueProjXScalar,
+    MaxEigenvalueProjYScalar,
+    MaxEigenvalueProjZScalar,
+    MaxEigenvec_ProjXScalar,
+    MaxEigenvec_ProjYScalar,
+    MaxEigenvec_ProjZScalar,
+    ParallelDiffusivityScalar,
+    PerpendicularDiffusivityScalar,
+    ColorOrientationMidEigenvectorScalar,
+    ColorOrientationMinEigenvectorScalar
+  };
+  //ETX
+
 
   // Description:
   // Output the trace (sum of eigenvalues = sum along diagonal)
@@ -214,6 +247,7 @@ public:
   static int FixNegativeEigenvaluesMethod(double w[3]);
   static double Determinant(double D[3][3]);
   static double Trace(double D[3][3]);
+  static double Trace(double w[3]);
   static double RelativeAnisotropy(double w[3]);
   static double FractionalAnisotropy(double w[3]);
   static double LinearMeasure(double w[3]);
@@ -238,8 +272,8 @@ public:
   static int TeemEigenSolver(double **m, double *w, double **v);
 
 protected:
-  vtkTensorMathematics();
-  ~vtkTensorMathematics();
+  vtkDiffusionTensorMathematics();
+  ~vtkDiffusionTensorMathematics();
 
   int Operation; // math operation to perform
   double ScaleFactor; // Scale factor for output scalars
@@ -256,8 +290,8 @@ protected:
   void ThreadedExecute(vtkImageData **inDatas, vtkImageData *outData,
         int extent[6], int id);
 private:
-  vtkTensorMathematics(const vtkTensorMathematics&);
-  void operator=(const vtkTensorMathematics&);
+  vtkDiffusionTensorMathematics(const vtkDiffusionTensorMathematics&);
+  void operator=(const vtkDiffusionTensorMathematics&);
 };
 
 #endif
