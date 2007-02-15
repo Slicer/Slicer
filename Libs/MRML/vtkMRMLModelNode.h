@@ -115,17 +115,20 @@ public:
   // Get the currently active Point/Cell array name, type =
   // scalars, vectors, normals, tcoords, tensors, null checks all in that
   // order for an active array. Returns an empty string if it can't find one.
-  //const char *GetActivePointScalarName(const char *type);
-  //const char *GetActiveCellScalarName(const char *type);
+  const char *GetActivePointScalarName(const char *type);
+  const char *GetActiveCellScalarName(const char *type);
   
   // Description:
-  // Set the active poly data Point/Cell scalar array, checks for the string
-  // as name of arrays, as scalars, vectors, normals, tcoords,
-  // tensors. Returns -1 if failed to find the scalar name as a valid
-  // attribute name. Also updates the display node's active scalars
-  int SetActiveScalars(const char *scalarName);
-  int SetActivePointScalars(const char *scalarName);
-  int SetActiveCellScalars(const char *scalarName);
+  // Set the active poly data Point/Cell scalar array, checks for the
+  // scalarName as being a valid Point/Cell array, and then will set it to be the active
+  // attribute type as designated by typeName (scalars if null or
+  // empty). typeName is one of the valid strings as returned from
+  // vtkDataSetAttributes::GetAttributeTypeAsString, SetActiveScalars converts
+  // it to an integer type to pass onto the Point/Cell methods
+  // Also updates the display node's active scalars
+  int SetActiveScalars(const char *scalarName, const char *typeName);
+  int SetActivePointScalars(const char *scalarName, int attributeType);
+  int SetActiveCellScalars(const char *scalarName, int attributeType);
   
   // Description:
   // alternative method to propagate events generated in Display nodes

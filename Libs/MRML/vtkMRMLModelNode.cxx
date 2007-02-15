@@ -371,7 +371,7 @@ void vtkMRMLModelNode::RemoveScalars(const char *scalarName)
     }
 }
 
-/*
+
 //---------------------------------------------------------------------------
 const char * vtkMRMLModelNode::GetActivePointScalarName(const char *type)
 {
@@ -383,36 +383,53 @@ const char * vtkMRMLModelNode::GetActivePointScalarName(const char *type)
     {
     return "";
     }
-  if (type != NULL)
+  if (type == NULL)
     {
-    if (strcmp(type, "scalars") == 0)
+    vtkErrorMacro("GetActivePointScalarName: type is null");
+    return "";
+    }
+  if (strcmp(type, "scalars") == 0)
+    {
+    if (this->PolyData->GetPointData()->GetScalars())
       {
-      return this->PolyData->GetPointData()->GetActiveAttribute(vtkDataSetAttributes::SCALARS);
+      return this->PolyData->GetPointData()->GetScalars()->GetName();
       }
-    else if (strcmp(type, "vectors") == 0)
+    }
+  else if (strcmp(type, "vectors") == 0)
+    {
+    if (this->PolyData->GetPointData()->GetVectors())
       {
+      return this->PolyData->GetPointData()->GetVectors()->GetName();
       }
-    else if (strcmp(type, "normals") == 0)
+    }
+  else if (strcmp(type, "normals") == 0)
+    {
+    if (this->PolyData->GetPointData()->GetNormals())
       {
+      return this->PolyData->GetPointData()->GetNormals()->GetName();
       }
-    else if (strcmp(type, "tcoords") == 0)
+    }
+  else if (strcmp(type, "tcoords") == 0)
+    {
+    if (this->PolyData->GetPointData()->GetTCoords())      
       {
+      return this->PolyData->GetPointData()->GetTCoords()->GetName();
       }
-    else if (strcmp(type, "tensors") == 0)
+    }
+  else if (strcmp(type, "tensors") == 0)
+    {
+    if (this->PolyData->GetPointData()->GetTensors())
       {
-      }
-    else
-      {
-      vtkErrorMacro("Unknown point scalar type " << type);
-      return "";
+      return this->PolyData->GetPointData()->GetTensors()->GetName();
       }
     }
   else
     {
-    // returning empty string for now
-    vtkErrorMacro("Unspecified type not implemented.");
+    vtkErrorMacro("Unknown point scalar type " << type);
     return "";
     }
+  vtkErrorMacro("GetActivePointScalarName: unable to get " << type << " data to get the name");
+  return "";
 }
 
 //---------------------------------------------------------------------------
@@ -426,11 +443,58 @@ const char * vtkMRMLModelNode::GetActiveCellScalarName(const char *type)
     {
     return "";
     }
+   if (type == NULL)
+    {
+    vtkErrorMacro("GetActiveCellScalarName: type is null");
+    return "";
+    }
+  if (strcmp(type, "scalars") == 0)
+    {
+    if (this->PolyData->GetCellData()->GetScalars())
+      {
+      return this->PolyData->GetCellData()->GetScalars()->GetName();
+      }
+    }
+  else if (strcmp(type, "vectors") == 0)
+    {
+    if (this->PolyData->GetCellData()->GetVectors())
+      {
+      return this->PolyData->GetCellData()->GetVectors()->GetName();
+      }
+    }
+  else if (strcmp(type, "normals") == 0)
+    {
+    if (this->PolyData->GetCellData()->GetNormals())
+      {
+      return this->PolyData->GetCellData()->GetNormals()->GetName();
+      }
+    }
+  else if (strcmp(type, "tcoords") == 0)
+    {
+    if (this->PolyData->GetCellData()->GetTCoords())      
+      {
+      return this->PolyData->GetCellData()->GetTCoords()->GetName();
+      }
+    }
+  else if (strcmp(type, "tensors") == 0)
+    {
+    if (this->PolyData->GetCellData()->GetTensors())
+      {
+      return this->PolyData->GetCellData()->GetTensors()->GetName();
+      }
+    }
+  else
+    {
+    vtkErrorMacro("Unknown point scalar type " << type);
+    return "";
+    }
+  vtkErrorMacro("GetActiveCellScalarName: unable to get " << type << " data to get the name");
+  return "";
 }
-*/
+
 
 //---------------------------------------------------------------------------
-int vtkMRMLModelNode::SetActiveScalars(const char *scalarName)
+int vtkMRMLModelNode::SetActiveScalars(const char *scalarName, const char *typeName)
 {
   int retval = -1;
   if (this->PolyData == NULL || scalarName == NULL)
@@ -438,101 +502,142 @@ int vtkMRMLModelNode::SetActiveScalars(const char *scalarName)
     vtkErrorMacro("No poly data on model " << this->GetName() << " or the scalar name is null");
     return retval;
     }
+
+  if (strcmp(scalarName, "") == 0)
+    {
+    return retval;
+    }
   
+  int attribute =  vtkDataSetAttributes::SCALARS;
+  if (typeName != NULL && (strcmp(typeName, "") != 0))
+    {
+    for (int a = 0; a < vtkDataSetAttributes::NUM_ATTRIBUTES; a++)
+      {
+      if (strcmp(typeName, vtkDataSetAttributes::GetAttributeTypeAsString(a)) == 0)
+        {
+        attribute =  a;
+        }
+      }
+    }
   // is it a point scalar?
-  retval = this->SetActivePointScalars(scalarName);
+  retval = this->SetActivePointScalars(scalarName, attribute);
   if (retval != -1)
     {
-    vtkDebugMacro("Set active point scalars to " << scalarName << " (" <<
+    vtkDebugMacro("Set active point " << typeName << " to " << scalarName << " (" <<
                   this->PolyData->GetPointData()->GetAttributeTypeAsString(retval) <<
                   ") on model " << this->GetName());
-    vtkWarningMacro("Set the active point scalars to " << scalarName << ", the display node's active scalars = " << this->GetDisplayNode()->GetActiveScalarName());
+    if (this->GetDisplayNode() != NULL)
+      {
+      this->GetDisplayNode()->SetActiveScalarName(scalarName);
+      }
     return retval;
     }
   // is it a cell scalar?
-  retval =  this->SetActiveCellScalars(scalarName);
+  retval =  this->SetActiveCellScalars(scalarName, attribute);
   if (retval != -1)
     {
-    vtkDebugMacro("Set active cell scalars to " << scalarName << " (" <<
+    if (this->GetDisplayNode() != NULL)
+      {
+      this->GetDisplayNode()->SetActiveScalarName(scalarName);
+      }
+    vtkDebugMacro("Set active cell " << typeName << " to " << scalarName << " (" <<
                   this->PolyData->GetCellData()->GetAttributeTypeAsString(retval) << ") on model " <<
                   this->GetName());
     return retval;
     }
-  vtkWarningMacro("Unable to find scalar attribute " << scalarName << " on model " << this->GetName());
+  vtkDebugMacro("Unable to find scalar attribute " << typeName << " " << scalarName << " on model " << this->GetName());
   return retval;
 }
 
 //---------------------------------------------------------------------------
-int vtkMRMLModelNode::SetActivePointScalars(const char *scalarName)
+int vtkMRMLModelNode::SetActivePointScalars(const char *scalarName, int attributeType)
 {
   if (this->PolyData == NULL || scalarName == NULL)
     {
-    vtkErrorMacro("No poly data on model " << this->GetName() << " or the scalar name is null");
+    vtkDebugMacro("No poly data on model " << this->GetName() << " or the scalar name is null");
     return -1;
     }
   if (this->PolyData->GetPointData() == NULL)
     {
-    vtkWarningMacro("No point data on this model " << this->GetName());
+    vtkDebugMacro("No point data on this model " << this->GetName());
     return -1;
     }
-  // try the different attributes until find this array name
-  if (this->PolyData->GetPointData()->SetActiveAttribute(scalarName, vtkDataSetAttributes::SCALARS) != -1)
+  // is this array present?
+  if (this->PolyData->GetPointData()->HasArray(scalarName) == 0)
     {
-    return vtkDataSetAttributes::SCALARS;
+    vtkDebugMacro("Model " << this->GetName() << " doesn't have an array named " << scalarName);
+    return -1;
     }
-  if (this->PolyData->GetPointData()->SetActiveAttribute(scalarName, vtkDataSetAttributes::VECTORS) != -1)
+
+  // is the array named scalarName already an active attribute? get it's index first
+  int arrayIndex;
+  this->PolyData->GetPointData()->GetArray(scalarName, arrayIndex);
+  vtkDebugMacro("SetActivePointScalars: got the array index of " << scalarName << ": " << arrayIndex);
+  // is it currently one of the attributes?
+  int thisAttributeType = this->PolyData->GetPointData()->IsArrayAnAttribute(arrayIndex);
+  vtkDebugMacro("\tarray index " << arrayIndex << " is an attribute type " << thisAttributeType);
+  if (thisAttributeType != -1 && thisAttributeType == attributeType)
     {
-    return vtkDataSetAttributes::VECTORS;
+    // it's already the active attribute
+    return attributeType;
     }
-  if (this->PolyData->GetPointData()->SetActiveAttribute(scalarName, vtkDataSetAttributes::NORMALS) != -1)
+  else
     {
-    return vtkDataSetAttributes::NORMALS;
+    // it's not currently the active attribute, so set it
+    if (this->PolyData->GetPointData()->SetActiveAttribute(arrayIndex, attributeType) != -1)
+      {
+      return attributeType;
+      }
+    else
+      {
+      return -1;
+      }
     }
-  if (this->PolyData->GetPointData()->SetActiveAttribute(scalarName, vtkDataSetAttributes::TCOORDS) != -1)
-    {
-    return vtkDataSetAttributes::TCOORDS;
-    }
-  if (this->PolyData->GetPointData()->SetActiveAttribute(scalarName, vtkDataSetAttributes::TENSORS) != -1)
-    {
-    return vtkDataSetAttributes::TENSORS;
-    }
-  return -1;
 }
 
 //---------------------------------------------------------------------------
-int vtkMRMLModelNode::SetActiveCellScalars(const char *scalarName)
+int vtkMRMLModelNode::SetActiveCellScalars(const char *scalarName, int attributeType)
 {
   if (this->PolyData == NULL || scalarName == NULL)
     {
-    vtkErrorMacro("No poly data on model " << this->GetName() << " or the scalar name is null");
+    vtkDebugMacro("No poly data on model " << this->GetName() << " or the scalar name is null");
     return -1;
     }
   if (this->PolyData->GetCellData() == NULL)
     {
-    vtkWarningMacro("No cell data on this model " << this->GetName());
+    vtkDebugMacro("No cell data on this model " << this->GetName());
     return -1;
     }
 
-  // try the different attributes until find this array name
-  if (this->PolyData->GetCellData()->SetActiveAttribute(scalarName, vtkDataSetAttributes::SCALARS) != -1)
+  // is this array present?
+  if (this->PolyData->GetCellData()->HasArray(scalarName) == 0)
     {
-    return vtkDataSetAttributes::SCALARS;
+    vtkDebugMacro("Model " << this->GetName() << " doesn't have an array named " << scalarName);
+    return -1;
     }
-  if (this->PolyData->GetCellData()->SetActiveAttribute(scalarName, vtkDataSetAttributes::VECTORS) != -1)
+
+  // is the array named scalarName already an active attribute? get it's index first
+  int arrayIndex;
+  this->PolyData->GetCellData()->GetArray(scalarName, arrayIndex);
+  vtkDebugMacro("SetActiveCellScalars: got the array index of " << scalarName << ": " << arrayIndex);
+  // is it currently one of the attributes?
+  int thisAttributeType = this->PolyData->GetCellData()->IsArrayAnAttribute(arrayIndex);
+  vtkDebugMacro("\tarray index " << arrayIndex << " is an attribute type " << thisAttributeType);
+  if (thisAttributeType != -1 && thisAttributeType == attributeType)
     {
-    return vtkDataSetAttributes::VECTORS;
+    // it's already the active attribute
+    return attributeType;
     }
-  if (this->PolyData->GetCellData()->SetActiveAttribute(scalarName, vtkDataSetAttributes::NORMALS) != -1)
+  else
     {
-    return vtkDataSetAttributes::NORMALS;
+    // it's not currently the active attribute, so set it
+    if (this->PolyData->GetCellData()->SetActiveAttribute(arrayIndex, attributeType) != -1)
+      {
+      return attributeType;
+      }
+    else
+      {
+      return -1;
+      }
     }
-  if (this->PolyData->GetCellData()->SetActiveAttribute(scalarName, vtkDataSetAttributes::TCOORDS) != -1)
-    {
-    return vtkDataSetAttributes::TCOORDS;
-    }
-  if (this->PolyData->GetCellData()->SetActiveAttribute(scalarName, vtkDataSetAttributes::TENSORS) != -1)
-    {
-    return vtkDataSetAttributes::TENSORS;
-    }
-  return -1;
 }
