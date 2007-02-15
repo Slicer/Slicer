@@ -22,13 +22,16 @@ vtkCxxRevisionMacro ( vtkSlicerAllFiberBundlesDisplayWidget, "$Revision: 1.0 $")
 //---------------------------------------------------------------------------
 vtkSlicerAllFiberBundlesDisplayWidget::vtkSlicerAllFiberBundlesDisplayWidget ( )
 {
-    this->LineVisibilityButton = NULL;
-    this->TubeVisibilityButton = NULL;
-    this->GlyphVisibilityButton = NULL;
 
-    this->SurfaceMaterialPropertyWidget = NULL;
+  this->ColorMode = ColorModeSolid;
 
-    this->DiffusionTensorIcons = vtkSlicerDiffusionTensorIcons::New ( );
+  this->LineVisibilityButton = NULL;
+  this->TubeVisibilityButton = NULL;
+  this->GlyphVisibilityButton = NULL;
+  
+  this->SurfaceMaterialPropertyWidget = NULL;
+  
+  this->DiffusionTensorIcons = vtkSlicerDiffusionTensorIcons::New ( );
 }
 
 
@@ -100,7 +103,6 @@ void vtkSlicerAllFiberBundlesDisplayWidget::ProcessWidgetEvents ( vtkObject *cal
                                                          unsigned long event, void *callData )
 {
   vtkDebugMacro("Process Widget Events");
-  vtkErrorMacro("Process Widget Events");
 
   // handle input from the radio buttons for colors 
   vtkKWRadioButton *radiob = vtkKWRadioButton::SafeDownCast ( caller );
@@ -120,7 +122,7 @@ void vtkSlicerAllFiberBundlesDisplayWidget::ProcessWidgetEvents ( vtkObject *cal
   this->UpdateMRML();
 
 
-  vtkErrorMacro("Done Process Widget Events");
+  vtkDebugMacro("Done Process Widget Events");
 }
 
 
@@ -128,7 +130,6 @@ void vtkSlicerAllFiberBundlesDisplayWidget::ProcessWidgetEvents ( vtkObject *cal
 void vtkSlicerAllFiberBundlesDisplayWidget::UpdateMRML()
 {
   vtkDebugMacro("UpdateMRML");
-  vtkErrorMacro("UpdateMRML ====================================");
 
   // Traverse all fiber bundle nodes and set properties according to the widget
   // event
@@ -159,38 +160,30 @@ void vtkSlicerAllFiberBundlesDisplayWidget::UpdateMRML()
       if (displayNode != NULL )
         {
 
-        vtkErrorMacro("Update display node 1===============" );
-
         displayNode->SetFiberLineVisibility(this->LineVisibilityButton->GetWidget()->GetSelectedState());
-
-        vtkErrorMacro("Update display node 2===============" );
 
         displayNode->SetFiberTubeVisibility(this->TubeVisibilityButton->GetWidget()->GetSelectedState());
 
-        vtkErrorMacro("Update display node 3===============" );
-
         displayNode->SetFiberGlyphVisibility(this->GlyphVisibilityButton->GetWidget()->GetSelectedState());
         
-        
-        vtkErrorMacro("Update display node 4===============" );
         displayNode->SetAmbient(this->SurfaceMaterialPropertyWidget->GetProperty()->GetAmbient());
 
-        vtkErrorMacro("Update display node 5===============" );
         displayNode->SetDiffuse(this->SurfaceMaterialPropertyWidget->GetProperty()->GetDiffuse());
 
-        vtkErrorMacro("Update display node 6===============" );
         displayNode->SetSpecular(this->SurfaceMaterialPropertyWidget->GetProperty()->GetSpecular());
 
-        vtkErrorMacro("Update display node 7===============" );
         displayNode->SetPower(this->SurfaceMaterialPropertyWidget->GetProperty()->GetSpecularPower());
         
 
         // get the diffusion tensor display props/colors nodes for each type of graphics
-        lineDisplay = vtkMRMLDiffusionTensorDisplayPropertiesNode::SafeDownCast(                                                                  displayNode->GetFiberLineDTDisplayPropertiesNode ( ) );
+        lineDisplay = vtkMRMLDiffusionTensorDisplayPropertiesNode::SafeDownCast(
+                      displayNode->GetFiberLineDTDisplayPropertiesNode ( ) );
 
-        tubeDisplay = vtkMRMLDiffusionTensorDisplayPropertiesNode::SafeDownCast(                                                                  displayNode->GetFiberTubeDTDisplayPropertiesNode ( ) );
+        tubeDisplay = vtkMRMLDiffusionTensorDisplayPropertiesNode::SafeDownCast(
+                      displayNode->GetFiberTubeDTDisplayPropertiesNode ( ) );
 
-        glyphDisplay = vtkMRMLDiffusionTensorDisplayPropertiesNode::SafeDownCast(                                                                  displayNode->GetFiberGlyphDTDisplayPropertiesNode ( ) );
+        glyphDisplay = vtkMRMLDiffusionTensorDisplayPropertiesNode::SafeDownCast(
+                      displayNode->GetFiberGlyphDTDisplayPropertiesNode ( ) );
 
         if ( ( lineDisplay != NULL ) && ( tubeDisplay != NULL )  && ( glyphDisplay != NULL ) )
           {
@@ -212,7 +205,7 @@ void vtkSlicerAllFiberBundlesDisplayWidget::UpdateMRML()
               displayNode->SetColorModeForFiberTubesToScalar();
               displayNode->SetColorModeForFiberGlyphsToScalar();
               lineDisplay->SetScalarInvariantToFractionalAnisotropy( );
-              glyphDisplay->SetScalarInvariantToFractionalAnisotropy( );
+              glyphDisplay->ColorGlyphByFractionalAnisotropy( );
               tubeDisplay->SetScalarInvariantToFractionalAnisotropy( );
               }
               break;
@@ -223,7 +216,7 @@ void vtkSlicerAllFiberBundlesDisplayWidget::UpdateMRML()
               displayNode->SetColorModeForFiberTubesToScalar();
               displayNode->SetColorModeForFiberGlyphsToScalar();
               lineDisplay->SetScalarInvariantToLinearMeasure( );
-              glyphDisplay->SetScalarInvariantToLinearMeasure( );
+              glyphDisplay->ColorGlyphByLinearMeasure( );
               tubeDisplay->SetScalarInvariantToLinearMeasure( );
               }
               break;
@@ -234,12 +227,14 @@ void vtkSlicerAllFiberBundlesDisplayWidget::UpdateMRML()
               displayNode->SetColorModeForFiberTubesToScalar();
               displayNode->SetColorModeForFiberGlyphsToScalar();
               lineDisplay->SetScalarInvariantToTrace( );
-              glyphDisplay->SetScalarInvariantToTrace( );
+              glyphDisplay->ColorGlyphByTrace( );
               tubeDisplay->SetScalarInvariantToTrace( );
               }
               break;
               
             } //end switch on color mode
+
+          vtkErrorMacro("glyph display scalar invariant " << glyphDisplay->GetScalarInvariant() << " colorMode GUI: " << this->ColorMode);
 
           } // end if diffusion display node
 
@@ -249,7 +244,7 @@ void vtkSlicerAllFiberBundlesDisplayWidget::UpdateMRML()
 
     } // end loop over f b nodes
 
-  vtkErrorMacro("Done UpdateMRML ====================================");
+  vtkDebugMacro("Done UpdateMRML");
 
 }
 
