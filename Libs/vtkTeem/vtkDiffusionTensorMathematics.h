@@ -26,33 +26,6 @@
 #ifndef __vtkDiffusionTensorMathematics_h
 #define __vtkDiffusionTensorMathematics_h
 
-// Operation options.
-#define VTK_TENS_TRACE                   0
-#define VTK_TENS_DETERMINANT             1
-#define VTK_TENS_RELATIVE_ANISOTROPY     2  
-#define VTK_TENS_FRACTIONAL_ANISOTROPY   3
-#define VTK_TENS_MAX_EIGENVALUE          4
-#define VTK_TENS_MID_EIGENVALUE          5
-#define VTK_TENS_MIN_EIGENVALUE          6
-#define VTK_TENS_LINEAR_MEASURE          7
-#define VTK_TENS_PLANAR_MEASURE          8
-#define VTK_TENS_SPHERICAL_MEASURE       9
-#define VTK_TENS_COLOR_ORIENTATION      10
-#define VTK_TENS_D11                    11
-#define VTK_TENS_D22                    12
-#define VTK_TENS_D33                    13
-#define VTK_TENS_MODE                   14
-#define VTK_TENS_COLOR_MODE             15
-#define VTK_TENS_MAX_EIGENVALUE_PROJX   16
-#define VTK_TENS_MAX_EIGENVALUE_PROJY   17
-#define VTK_TENS_MAX_EIGENVALUE_PROJZ   18
-#define VTK_TENS_RAI_MAX_EIGENVEC_PROJX 19
-#define VTK_TENS_RAI_MAX_EIGENVEC_PROJY 20
-#define VTK_TENS_RAI_MAX_EIGENVEC_PROJZ 21
-#define VTK_TENS_PARALLEL_DIFFUSIVITY   22
-#define VTK_TENS_PERPENDICULAR_DIFFUSIVITY   23
-
-
 #include "vtkTeemConfigure.h"
 #include "vtkImageTwoInputFilter.h"
 
@@ -71,35 +44,34 @@ public:
   vtkSetClampMacro(Operation,int, VTK_TENS_TRACE, VTK_TENS_PERPENDICULAR_DIFFUSIVITY);
 
 
+  // Operation options.
   //BTX
   enum
   {
-    TraceScalar,
-    DeterminantScalar,
-    RelativeAnisotropyScalar,
-    FractionalAnisotropyScalar,
-    MaxEigenvalueScalar,
-    MidEigenvalueScalar,
-    MinEigenvalueScalar,
-    LinearMeasureScalar,
-    PlanarMeasureScalar,
-    SphericalMeasureScalar,
-    ColorOrientationScalar,
-    D11Scalar,
-    D22Scalar,
-    D33Scalar,
-    ModeScalar,
-    ColorModeScalar,
-    MaxEigenvalueProjXScalar,
-    MaxEigenvalueProjYScalar,
-    MaxEigenvalueProjZScalar,
-    MaxEigenvec_ProjXScalar,
-    MaxEigenvec_ProjYScalar,
-    MaxEigenvec_ProjZScalar,
-    ParallelDiffusivityScalar,
-    PerpendicularDiffusivityScalar,
-    ColorOrientationMidEigenvectorScalar,
-    ColorOrientationMinEigenvectorScalar
+    VTK_TENS_TRACE,
+    VTK_TENS_DETERMINANT,
+    VTK_TENS_RELATIVE_ANISOTROPY,
+    VTK_TENS_FRACTIONAL_ANISOTROPY,
+    VTK_TENS_MAX_EIGENVALUE,
+    VTK_TENS_MID_EIGENVALUE,
+    VTK_TENS_MIN_EIGENVALUE,
+    VTK_TENS_LINEAR_MEASURE,
+    VTK_TENS_PLANAR_MEASURE,
+    VTK_TENS_SPHERICAL_MEASURE,
+    VTK_TENS_COLOR_ORIENTATION,
+    VTK_TENS_D11,
+    VTK_TENS_D22,
+    VTK_TENS_D33,
+    VTK_TENS_MODE,
+    VTK_TENS_COLOR_MODE,
+    VTK_TENS_MAX_EIGENVALUE_PROJX,
+    VTK_TENS_MAX_EIGENVALUE_PROJY,
+    VTK_TENS_MAX_EIGENVALUE_PROJZ,
+    VTK_TENS_RAI_MAX_EIGENVEC_PROJX,
+    VTK_TENS_RAI_MAX_EIGENVEC_PROJY,
+    VTK_TENS_RAI_MAX_EIGENVEC_PROJZ,
+    VTK_TENS_PARALLEL_DIFFUSIVITY,
+    VTK_TENS_PERPENDICULAR_DIFFUSIVITY,
   };
   //ETX
 

@@ -241,26 +241,26 @@ static void vtkDiffusionTensorMathematicsExecute1(vtkDiffusionTensorMathematics 
           // pixel operation
           switch (op)
             {
-          case VTK_TENS_D11:
+          case vtkDiffusionTensorMathematics::VTK_TENS_D11:
             *outPtr = (T)(scaleFactor*tensor[0][0]);
             break;
 
-          case VTK_TENS_D22:
+          case vtkDiffusionTensorMathematics::VTK_TENS_D22:
             *outPtr = (T)(scaleFactor*tensor[1][1]);
             break;
 
-          case VTK_TENS_D33:
+          case vtkDiffusionTensorMathematics::VTK_TENS_D33:
             *outPtr = (T)(scaleFactor*tensor[2][2]);
             break;
 
-          case VTK_TENS_TRACE:
+          case vtkDiffusionTensorMathematics::VTK_TENS_TRACE:
             /////////////////////*outPtr = (T)(scaleFactor*(tensor[0][0]
             //               +tensor[1][1]
             //               +tensor[2][2]));
             *outPtr = static_cast<T> (scaleFactor*vtkDiffusionTensorMathematics::Trace(tensor));
             break;
 
-          case VTK_TENS_DETERMINANT:
+          case vtkDiffusionTensorMathematics::VTK_TENS_DETERMINANT:
             //*outPtr = 
             //  (T)(scaleFactor*(vtkMath::Determinant3x3(tensor)));
             *outPtr = static_cast<T> (scaleFactor*vtkDiffusionTensorMathematics::Determinant(tensor));
@@ -429,8 +429,8 @@ static void vtkDiffusionTensorMathematicsExecute1Eigen(vtkDiffusionTensorMathema
         if (doMasking && inMask->GetTuple1(inPtId)==0) {
           *outPtr = 0;
 
-          if (op ==  VTK_TENS_COLOR_MODE || 
-            op == VTK_TENS_COLOR_ORIENTATION) {
+          if (op ==  vtkDiffusionTensorMathematics::VTK_TENS_COLOR_MODE || 
+            op ==  vtkDiffusionTensorMathematics::VTK_TENS_COLOR_ORIENTATION) {
             outPtr++;
             *outPtr = 0; // green
             outPtr++;
@@ -487,74 +487,74 @@ static void vtkDiffusionTensorMathematicsExecute1Eigen(vtkDiffusionTensorMathema
           // pixel operation
           switch (op)
             {
-          case VTK_TENS_RELATIVE_ANISOTROPY:
+          case vtkDiffusionTensorMathematics::VTK_TENS_RELATIVE_ANISOTROPY:
             *outPtr = static_cast<T> (vtkDiffusionTensorMathematics::RelativeAnisotropy(w));
             break;
-          case VTK_TENS_FRACTIONAL_ANISOTROPY:
+          case vtkDiffusionTensorMathematics::VTK_TENS_FRACTIONAL_ANISOTROPY:
             *outPtr = static_cast<T> (vtkDiffusionTensorMathematics::FractionalAnisotropy(w));
             break;
 
-          case VTK_TENS_LINEAR_MEASURE:
+          case vtkDiffusionTensorMathematics::VTK_TENS_LINEAR_MEASURE:
             *outPtr = static_cast<T> (vtkDiffusionTensorMathematics::LinearMeasure(w));
             break;
 
-          case VTK_TENS_PLANAR_MEASURE:
+          case vtkDiffusionTensorMathematics::VTK_TENS_PLANAR_MEASURE:
             *outPtr = static_cast<T> (vtkDiffusionTensorMathematics::PlanarMeasure(w));
             break;
 
-          case VTK_TENS_SPHERICAL_MEASURE:
+          case vtkDiffusionTensorMathematics::VTK_TENS_SPHERICAL_MEASURE:
             *outPtr = static_cast<T> (vtkDiffusionTensorMathematics::SphericalMeasure(w));
             break;
 
-          case VTK_TENS_MAX_EIGENVALUE:
+          case vtkDiffusionTensorMathematics::VTK_TENS_MAX_EIGENVALUE:
             *outPtr = (T)w[0];
             break;
 
-          case VTK_TENS_MID_EIGENVALUE:
+          case vtkDiffusionTensorMathematics::VTK_TENS_MID_EIGENVALUE:
             *outPtr = (T)w[1];
             break;
 
-          case VTK_TENS_MIN_EIGENVALUE:
+          case vtkDiffusionTensorMathematics::VTK_TENS_MIN_EIGENVALUE:
             *outPtr = (T)w[2];
             break;
 
-          case VTK_TENS_PARALLEL_DIFFUSIVITY:
+          case vtkDiffusionTensorMathematics::VTK_TENS_PARALLEL_DIFFUSIVITY:
             *outPtr = static_cast<T> (vtkDiffusionTensorMathematics::ParallelDiffusivity(w));
             break;
 
-          case VTK_TENS_PERPENDICULAR_DIFFUSIVITY:
+          case vtkDiffusionTensorMathematics::VTK_TENS_PERPENDICULAR_DIFFUSIVITY:
             *outPtr = static_cast<T> (vtkDiffusionTensorMathematics::PerpendicularDiffusivity(w));
             break;
 
-          case VTK_TENS_MAX_EIGENVALUE_PROJX:
+          case vtkDiffusionTensorMathematics::VTK_TENS_MAX_EIGENVALUE_PROJX:
             *outPtr = static_cast<T> (vtkDiffusionTensorMathematics::MaxEigenvalueProjectionX(v,w));
             break;
 
-          case VTK_TENS_MAX_EIGENVALUE_PROJY:
+          case vtkDiffusionTensorMathematics::VTK_TENS_MAX_EIGENVALUE_PROJY:
             *outPtr = static_cast<T> (vtkDiffusionTensorMathematics::MaxEigenvalueProjectionY(v,w));
             break;           
 
-          case VTK_TENS_MAX_EIGENVALUE_PROJZ:
+          case vtkDiffusionTensorMathematics::VTK_TENS_MAX_EIGENVALUE_PROJZ:
             *outPtr = static_cast<T> (vtkDiffusionTensorMathematics::MaxEigenvalueProjectionZ(v,w));
             break;           
 
-      case VTK_TENS_RAI_MAX_EIGENVEC_PROJX:
+      case vtkDiffusionTensorMathematics::VTK_TENS_RAI_MAX_EIGENVEC_PROJX:
         *outPtr = static_cast<T> (vtkDiffusionTensorMathematics::RAIMaxEigenvecX(v,w));
         break;
 
-      case VTK_TENS_RAI_MAX_EIGENVEC_PROJY:
+      case vtkDiffusionTensorMathematics::VTK_TENS_RAI_MAX_EIGENVEC_PROJY:
             *outPtr = static_cast<T> (vtkDiffusionTensorMathematics::RAIMaxEigenvecY(v,w));
             break;
 
-      case VTK_TENS_RAI_MAX_EIGENVEC_PROJZ:
+      case vtkDiffusionTensorMathematics::VTK_TENS_RAI_MAX_EIGENVEC_PROJZ:
             *outPtr = static_cast<T> (vtkDiffusionTensorMathematics::RAIMaxEigenvecZ(v,w));
             break;
 
-      case VTK_TENS_MODE:
+      case vtkDiffusionTensorMathematics::VTK_TENS_MODE:
             *outPtr = static_cast<T> (vtkDiffusionTensorMathematics::Mode(w));
             break;
 
-          case VTK_TENS_COLOR_MODE:
+          case vtkDiffusionTensorMathematics::VTK_TENS_COLOR_MODE:
 
             vtkDiffusionTensorMathematics::ColorByMode(w,r,g,b);
             // scale maps 0..1 values into the range a char takes on
@@ -571,7 +571,7 @@ static void vtkDiffusionTensorMathematicsExecute1Eigen(vtkDiffusionTensorMathema
 
             break;
 
-          case VTK_TENS_COLOR_ORIENTATION:
+          case vtkDiffusionTensorMathematics::VTK_TENS_COLOR_ORIENTATION:
             // If the user has set the rotation matrix
             // then transform the eigensystem first
             // This is used to rotate the vector into RAS space
@@ -603,8 +603,8 @@ static void vtkDiffusionTensorMathematicsExecute1Eigen(vtkDiffusionTensorMathema
             }
 
           // scale double if the user requested this
-          if (scaleFactor != 1 && op != VTK_TENS_COLOR_ORIENTATION 
-            && op != VTK_TENS_COLOR_MODE)
+          if (scaleFactor != 1 && op !=  vtkDiffusionTensorMathematics::VTK_TENS_COLOR_ORIENTATION 
+            && op !=  vtkDiffusionTensorMathematics::VTK_TENS_COLOR_MODE)
             {
             *outPtr = (T) ((*outPtr) * scaleFactor);
             }
