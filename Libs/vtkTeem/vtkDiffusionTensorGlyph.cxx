@@ -47,7 +47,7 @@ vtkDiffusionTensorGlyph::vtkDiffusionTensorGlyph()
   // Color according to FA scalar invariant by default
   this->ColorGlyphs = 1;
   this->ColorMode = vtkTensorGlyph::COLOR_BY_EIGENVALUES;
-  this->ScalarInvariant = vtkDiffusionTensorMathematics::FractionalAnisotropyScalar;
+  this->ScalarInvariant = vtkDiffusionTensorMathematics::VTK_TENS_FRACTIONAL_ANISOTROPY;
 
   // These can be optionally set by the user
   this->VolumePositionMatrix = NULL;
@@ -88,35 +88,35 @@ vtkDiffusionTensorGlyph::~vtkDiffusionTensorGlyph()
 }
 
 void vtkDiffusionTensorGlyph::ColorGlyphsByLinearMeasure() {
-  this->ColorGlyphsBy(vtkDiffusionTensorMathematics::LinearMeasureScalar);
+  this->ColorGlyphsBy(vtkDiffusionTensorMathematics::VTK_TENS_LINEAR_MEASURE);
 }
 void vtkDiffusionTensorGlyph::ColorGlyphsBySphericalMeasure() {
-  this->ColorGlyphsBy(vtkDiffusionTensorMathematics::SphericalMeasureScalar);
+  this->ColorGlyphsBy(vtkDiffusionTensorMathematics::VTK_TENS_SPHERICAL_MEASURE);
 }
 void vtkDiffusionTensorGlyph::ColorGlyphsByPlanarMeasure() {
-  this->ColorGlyphsBy(vtkDiffusionTensorMathematics::PlanarMeasureScalar);
+  this->ColorGlyphsBy(vtkDiffusionTensorMathematics::VTK_TENS_PLANAR_MEASURE);
 }
 void vtkDiffusionTensorGlyph::ColorGlyphsByMaxEigenvalue() {
-  this->ColorGlyphsBy(vtkDiffusionTensorMathematics::MaxEigenvalueScalar);
+  this->ColorGlyphsBy(vtkDiffusionTensorMathematics::VTK_TENS_MAX_EIGENVALUE);
 }
 void vtkDiffusionTensorGlyph::ColorGlyphsByMidEigenvalue() {
-  this->ColorGlyphsBy(vtkDiffusionTensorMathematics::MidEigenvalueScalar);
+  this->ColorGlyphsBy(vtkDiffusionTensorMathematics::VTK_TENS_MID_EIGENVALUE);
 }
 void vtkDiffusionTensorGlyph::ColorGlyphsByMinEigenvalue() {
-  this->ColorGlyphsBy(vtkDiffusionTensorMathematics::MinEigenvalueScalar);
+  this->ColorGlyphsBy(vtkDiffusionTensorMathematics::VTK_TENS_MIN_EIGENVALUE);
 }
 
 void vtkDiffusionTensorGlyph::ColorGlyphsByOrientation() {
-  this->ColorGlyphsBy(vtkDiffusionTensorMathematics::ColorOrientationScalar);
+  this->ColorGlyphsBy(vtkDiffusionTensorMathematics::VTK_TENS_COLOR_ORIENTATION);
 }
 void vtkDiffusionTensorGlyph::ColorGlyphsByRelativeAnisotropy() {
-  this->ColorGlyphsBy(vtkDiffusionTensorMathematics::RelativeAnisotropyScalar);
+  this->ColorGlyphsBy(vtkDiffusionTensorMathematics::VTK_TENS_RELATIVE_ANISOTROPY);
 }
 void vtkDiffusionTensorGlyph::ColorGlyphsByFractionalAnisotropy() {
-  this->ColorGlyphsBy(vtkDiffusionTensorMathematics::FractionalAnisotropyScalar);
+  this->ColorGlyphsBy(vtkDiffusionTensorMathematics::VTK_TENS_FRACTIONAL_ANISOTROPY);
 }
 void vtkDiffusionTensorGlyph::ColorGlyphsByTrace() {
-  this->ColorGlyphsBy(vtkDiffusionTensorMathematics::TraceScalar);
+  this->ColorGlyphsBy(vtkDiffusionTensorMathematics::VTK_TENS_TRACE);
 }
 
 void vtkDiffusionTensorGlyph::ColorGlyphsBy(int invariant) {
@@ -325,6 +325,8 @@ int vtkDiffusionTensorGlyph::RequestData(
 
   vtkDebugMacro(<<"Generating tensor glyphs: TRAVERSE POINTS");
 
+  vtkErrorMacro("Scalar coloring (" <<  this->ColorMode << ")  ["<< vtkTensorGlyph::COLOR_BY_EIGENVALUES << "] is evals. Scalar Invariant (" << this->ScalarInvariant << ")") ;
+
   //
   // Traverse all Input points, transforming glyph in this->Source by tensor, 
   // and outputting it at each point.  (Input points are not all used, only
@@ -440,25 +442,25 @@ int vtkDiffusionTensorGlyph::RequestData(
 
         switch (this->ScalarInvariant) 
           {
-          case vtkDiffusionTensorMathematics::LinearMeasureScalar:
+          case vtkDiffusionTensorMathematics::VTK_TENS_LINEAR_MEASURE:
             s = vtkDiffusionTensorMathematics::LinearMeasure(w);
             break;
-          case vtkDiffusionTensorMathematics::PlanarMeasureScalar:
+          case vtkDiffusionTensorMathematics::VTK_TENS_PLANAR_MEASURE:
             s = vtkDiffusionTensorMathematics::PlanarMeasure(w);
             break;
-          case vtkDiffusionTensorMathematics::SphericalMeasureScalar:
+          case vtkDiffusionTensorMathematics::VTK_TENS_SPHERICAL_MEASURE:
             s = vtkDiffusionTensorMathematics::SphericalMeasure(w);
             break;
-          case vtkDiffusionTensorMathematics::MaxEigenvalueScalar:
+          case vtkDiffusionTensorMathematics::VTK_TENS_MAX_EIGENVALUE:
             s = w[0];
             break;
-          case vtkDiffusionTensorMathematics::MidEigenvalueScalar:
+          case vtkDiffusionTensorMathematics::VTK_TENS_MID_EIGENVALUE:
             s = w[1];
             break;
-          case vtkDiffusionTensorMathematics::MinEigenvalueScalar:
+          case vtkDiffusionTensorMathematics::VTK_TENS_MIN_EIGENVALUE:
             s = w[2]; 
             break;
-          case vtkDiffusionTensorMathematics::ColorOrientationScalar:
+          case vtkDiffusionTensorMathematics::VTK_TENS_COLOR_ORIENTATION:
             double v_maj[3];
             v_maj[0]=v[0][0];
             v_maj[1]=v[1][0];
@@ -473,13 +475,13 @@ int vtkDiffusionTensorGlyph::RequestData(
             // TO DO: here output as RGB. Need to allocate 3-component scalars first.
             s = 0;
             break;
-          case vtkDiffusionTensorMathematics::RelativeAnisotropyScalar:
+          case vtkDiffusionTensorMathematics::VTK_TENS_RELATIVE_ANISOTROPY:
             s = vtkDiffusionTensorMathematics::RelativeAnisotropy(w);
             break;
-          case vtkDiffusionTensorMathematics::FractionalAnisotropyScalar:
+          case vtkDiffusionTensorMathematics::VTK_TENS_FRACTIONAL_ANISOTROPY:
             s = vtkDiffusionTensorMathematics::FractionalAnisotropy(w);
             break;
-          case vtkDiffusionTensorMathematics::TraceScalar:
+          case vtkDiffusionTensorMathematics::VTK_TENS_TRACE:
             s = vtkDiffusionTensorMathematics::Trace(w);
             break;
           default:
