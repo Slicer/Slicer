@@ -481,21 +481,29 @@ void vtkMRMLModelDisplayNode::SetActiveScalarName(const char *scalarName)
     this->Modified();
     return;
     }
+
+  // is it an empty string?
+  if (strcmp(scalarName,"") == 0)
+    {
+    vtkDebugMacro("SetActiveScalarName: scalar name is an emtpy string, not setting the color node on display node " << this->GetID());
+    return;
+    }
   
-  // check that we have the correct color table
+  // check that we have the correct color table for this 
   // get the extension of the scalar name
   std::string name(scalarName);
   
   std::string::size_type loc = name.find(".");
+  vtkMRMLColorTableNode *colorNode = vtkMRMLColorTableNode::New();
   if (loc == std::string::npos )
     {
-    vtkWarningMacro("Can't find an extension on the scalar name, not setting the color node");
+    vtkDebugMacro("Can't find an extension on the scalar name " << scalarName << ", using default color node");
+    colorNode->SetTypeToGrey();
     }
   else
     {
     std::string extension = name.substr(loc);
-    vtkWarningMacro("Setting the color node by the extension " << extension.c_str());
-    vtkMRMLColorTableNode *colorNode = vtkMRMLColorTableNode::New();
+    vtkDebugMacro("Setting the color node by the extension " << extension.c_str());
     // use a generic for the w ones
     if (extension == std::string(".w"))
       {
@@ -514,11 +522,11 @@ void vtkMRMLModelDisplayNode::SetActiveScalarName(const char *scalarName)
       {
       colorNode->SetTypeToDesert();
       }
-    vtkWarningMacro("Using color node " << colorNode->GetTypeAsIDString() << " for scalar " << scalarName);
-    this->SetAndObserveColorNodeID(colorNode->GetTypeAsIDString());
-    colorNode->Delete();
-    colorNode  = NULL;
     }
+  vtkDebugMacro("Using color node " << colorNode->GetTypeAsIDString() << " for scalar " << scalarName);
+  this->SetAndObserveColorNodeID(colorNode->GetTypeAsIDString());
+  colorNode->Delete();
+  colorNode  = NULL;
   
   this->Modified();
 }
