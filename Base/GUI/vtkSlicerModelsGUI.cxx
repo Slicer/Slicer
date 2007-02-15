@@ -415,6 +415,7 @@ void vtkSlicerModelsGUI::BuildGUI ( )
     this->LoadModelButton->SetParent ( modLoadFrame->GetFrame() );
     this->LoadModelButton->Create ( );
     this->LoadModelButton->SetText ("Load Model");
+    this->LoadModelButton->GetLoadSaveDialog()->SetTitle("Open Model");
     this->LoadModelButton->GetLoadSaveDialog()->RetrieveLastPathFromRegistry("OpenPath");
     this->LoadModelButton->GetLoadSaveDialog()->SetFileTypes(
                                                              "{ {model} {*.*} }");
@@ -445,6 +446,7 @@ void vtkSlicerModelsGUI::BuildGUI ( )
     this->LoadScalarsButton->Create ( );
     this->LoadScalarsButton->SetLabelText ("Load FreeSurfer Overlay: ");
     this->LoadScalarsButton->GetWidget()->SetText ("None");
+    this->LoadScalarsButton->GetWidget()->GetLoadSaveDialog()->SetTitle("Open FreeSurfer Overlay");
     this->LoadScalarsButton->GetWidget()->GetLoadSaveDialog()->RetrieveLastPathFromRegistry("OpenPath");
     this->LoadScalarsButton->GetWidget()->GetLoadSaveDialog()->SetFileTypes("{ {Thickness} {*.thickness} } { {Curve} {*.curv} } { {Average Curve} {*.avg_curv} } { {Sulc} {*.sulc} } { {Area} {*.area} } { {W} {*.w} }");
     app->Script("pack %s -side top -anchor nw -padx 2 -pady 4", 
