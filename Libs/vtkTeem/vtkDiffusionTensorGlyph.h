@@ -164,7 +164,7 @@ protected:
   vtkDiffusionTensorGlyph();
   ~vtkDiffusionTensorGlyph();
 
-  void Execute();
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
 
   void ColorGlyphsBy(int measure);
 
