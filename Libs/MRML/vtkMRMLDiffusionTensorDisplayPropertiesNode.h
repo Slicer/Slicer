@@ -313,6 +313,12 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
     this->SetColorGlyphBy(this->FractionalAnisotropy);
   };  
 
+  // Description:
+  // Set scalar invariant to FA (normalized variance of eigenvalues)
+  void ColorGlyphByLinearMeasure() {
+    this->SetColorGlyphBy(this->LinearMeasure);
+  };  
+
   // TO DO: add the rest of the scalars
 
   //--------------------------------------------------------------------------
