@@ -1147,7 +1147,7 @@ void vtkSlicerViewerWidget::SetModelDisplayProperty(vtkMRMLModelNode *model,  vt
       if (dnode->GetActiveScalarName() != NULL)
         {
         //std::cout << "vtkSlicerViewerWidget: checking active scalars from displaynode: " << dnode->GetActiveScalarName() << endl;
-        model->SetActiveScalars(dnode->GetActiveScalarName());
+        model->SetActiveScalars(dnode->GetActiveScalarName(), "Scalars");
         }
       /*
       if (dnode->GetColorNode() != NULL &&
