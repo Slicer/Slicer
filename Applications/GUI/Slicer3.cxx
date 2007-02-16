@@ -384,10 +384,19 @@ int Slicer3_main(int argc, char *argv[])
   init_slicer();
   // let Python start Tcl/Tk, then get the interperter
   PyObject* v;
-  v = PyRun_String( "import Tkinter;"
-                    "tk = Tkinter.Tk();"
-                    "tk.loadtk();"
-                    "addr = tk.interpaddr();",
+
+  std::string TkinitString = "import Tkinter, sys;"
+    "tk = Tkinter.Tk();"
+    "tk.loadtk();"
+    "addr = tk.interpaddr();\n"
+    "sys.path.append ( \""
+    + slicerBinDir + "/../../Slicer3/Base/GUI/Python"
+    + "\" );\n"
+    "sys.path.append ( \""
+    + slicerBinDir + "/../Base/GUI/Python"
+    + "\" );\n";
+  
+  v = PyRun_String( TkinitString.c_str(),
                     Py_file_input,
                     PythonDictionary,
                     PythonDictionary );
@@ -415,7 +424,8 @@ int Slicer3_main(int argc, char *argv[])
     }
 
   std::cout << "Initialized python: addr: " << (long)interp << std::endl;
-  vtkKWApplication::InitializeTcl(interp, &cerr);
+  // vtkKWApplication::InitializeTcl(interp, &cerr);
+  interp = vtkKWApplication::InitializeTcl(argc, argv, &cerr, interp);
   std::cout << "Initialized python: Slicer Interp: " << (long)vtkSlicerApplication::GetInstance()->GetMainInterp() << std::endl;
 #else
   interp = vtkKWApplication::InitializeTcl(argc, argv, &cerr);
