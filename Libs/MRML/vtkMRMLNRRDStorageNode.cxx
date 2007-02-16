@@ -485,6 +485,7 @@ int vtkMRMLNRRDStorageNode::ParseDiffusionInformation(vtkNRRDReader *reader,vtkD
       rep = atoi(value.c_str());
       for (int i=0;i<rep-1;i++) {
         grad->InsertNextTuple3(g[0],g[1],g[2]);
+        factor->InsertNextValue(sqrt(g[0]*g[0]+g[1]*g[1]+g[2]*g[2]));
       }
     }
    pos = keys.find(tag,pos+1);
