@@ -57,6 +57,11 @@ public:
   // Getting setting and observing MRML ModelDisplayNodeID.
   vtkGetStringMacro ( ModelDisplayNodeID );
   vtkSetStringMacro ( ModelDisplayNodeID );
+
+  // Description:
+  // Get the currently displayed model node (called from vtkSlicerModelsGUI
+  // for loading scalars)
+  vtkGetObjectMacro ( ModelSelectorWidget, vtkSlicerNodeSelectorWidget );
   
   // Description:
   // alternative method to propagate events generated in GUI to logic / mrml

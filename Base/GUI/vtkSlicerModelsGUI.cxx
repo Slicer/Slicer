@@ -248,48 +248,33 @@ void vtkSlicerModelsGUI::ProcessGUIEvents ( vtkObject *caller,
     char *fileName = filebrowse->GetFileName();
     if ( fileName ) 
       {
-      // get the model
-      vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(this->ModelSelectorWidget->GetSelected());
-
-      // load the scalars
-      vtkSlicerModelsLogic* modelLogic = this->Logic;
-      if (!modelLogic->AddScalar(fileName, modelNode))
+      // get the model from the display widget rather than this gui's save
+      // model selector
+      vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(this->ModelDisplayWidget->GetModelSelectorWidget()->GetSelected());
+      if (modelNode != NULL)
         {
-        vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
-        dialog->SetParent ( this->UIPanel->GetPageWidget ( "Models" ) );
-        dialog->SetStyleToMessage();
-        std::string msg = std::string("Unable to read scalars file ") + std::string(fileName);
-        dialog->SetText(msg.c_str());
-        dialog->Create ( );
-        dialog->Invoke();
-        dialog->Delete();
-
-        vtkErrorMacro("Error loading scalar overlay file " << fileName);
-        this->LoadScalarsButton->GetWidget()->SetText ("None");
-        }
-      else
-        {
-        filebrowse->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
-        // set the active scalar in the display node to this one
-        if (modelNode->GetPolyData()->GetPointData() != NULL)
+        vtkDebugMacro("vtkSlicerModelsGUI: loading scalar for model " << modelNode->GetName());
+        // load the scalars
+        vtkSlicerModelsLogic* modelLogic = this->Logic;
+        if (!modelLogic->AddScalar(fileName, modelNode))
           {
-          int lastArray =  modelNode->GetPolyData()->GetPointData()->GetNumberOfArrays() - 1;
-         
-          if (lastArray >= 0 && modelNode->GetPolyData()->GetPointData()->GetArray(lastArray) != NULL)
-            {
-            
-            vtkDebugMacro("Setting active scalars to " <<  modelNode->GetPolyData()->GetPointData()->GetArray(lastArray)->GetName() << endl);
-            modelNode->GetDisplayNode()->SetActiveScalarName(modelNode->GetPolyData()->GetPointData()->GetArray(lastArray)->GetName());
-            }
-          else
-            {
-            vtkWarningMacro("Can't get the last array " << lastArray);
-            }
+          vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+          dialog->SetParent ( this->UIPanel->GetPageWidget ( "Models" ) );
+          dialog->SetStyleToMessage();
+          std::string msg = std::string("Unable to read scalars file ") + std::string(fileName);
+          dialog->SetText(msg.c_str());
+          dialog->Create ( );
+          dialog->Invoke();
+          dialog->Delete();
+          
+          vtkErrorMacro("Error loading scalar overlay file " << fileName);
+          this->LoadScalarsButton->GetWidget()->SetText ("None");
           }
         else
           {
-          vtkWarningMacro("Can't set active point scalars in the display node from the model " << modelNode->GetName() <<
-                          ", point data " << (modelNode->GetPolyData()->GetPointData() != NULL ? "is not null" : "is null"));
+          filebrowse->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
+          // set the active scalar in the display node to this one
+          // - is done in the model storage node         
           }
         }
       }

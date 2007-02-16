@@ -1140,28 +1140,24 @@ void vtkSlicerViewerWidget::SetModelDisplayProperty(vtkMRMLModelNode *model,  vt
   if (dnode != NULL)
     {
     actor->SetVisibility(dnode->GetVisibility());
+    
     actor->GetMapper()->SetScalarVisibility(dnode->GetScalarVisibility());
-    // if the scalars are visible, set active scalars, try to get the lookup table
-    if (actor->GetMapper()->GetScalarVisibility())
+    // if the scalars are visible, set active scalars, try to get the lookup
+    // table
+    if (dnode->GetScalarVisibility())
       {
-      if (dnode->GetActiveScalarName() != NULL)
-        {
-        //std::cout << "vtkSlicerViewerWidget: checking active scalars from displaynode: " << dnode->GetActiveScalarName() << endl;
-        model->SetActiveScalars(dnode->GetActiveScalarName(), "Scalars");
-        }
-      /*
-      if (dnode->GetColorNode() != NULL &&
-          vtkMRMLFreeSurferColorNode::SafeDownCast(dnode->GetColorNode())->GetLookupTable() != NULL)
-        {
-        actor->GetMapper()->SetLookupTable(vtkMRMLFreeSurferColorNode::SafeDownCast(dnode->GetColorNode())->GetLookupTable());
-        } else { std::cout << "vtkSlicerViewerWidget: updating model props for " << model->GetName() << ", the display node color node " << (dnode->GetColorNode() == NULL ? "is null" : "isn't null") << ", and can't get a lookup table.\n"; }
-      */
       if (dnode->GetColorNode() != NULL &&
           dnode->GetColorNode()->GetLookupTable() != NULL)
         {
         actor->GetMapper()->SetLookupTable(dnode->GetColorNode()->GetLookupTable());
         }
+      
+      if (dnode->GetActiveScalarName() != NULL)
+        {
+        model->SetActiveScalars(dnode->GetActiveScalarName(), "Scalars");
+        }
       }
+    
     actor->GetProperty()->SetColor(dnode->GetColor());
     actor->GetProperty()->SetOpacity(dnode->GetOpacity());
     actor->GetProperty()->SetAmbient(dnode->GetAmbient());
