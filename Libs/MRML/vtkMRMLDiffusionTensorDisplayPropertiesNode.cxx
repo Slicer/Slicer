@@ -107,6 +107,19 @@ void vtkMRMLDiffusionTensorDisplayPropertiesNode::WriteXML(ostream& of, int nInd
   
   vtkIndent indent(nIndent);
   
+  of << indent << " glyphGeometry=\"" << this->GlyphGeometry << "\"";
+  of << indent << " colorGlyphBy=\"" << this->ColorGlyphBy << "\"";
+  of << indent << " glyphScaleFactor=\"" << this->GlyphScaleFactor << "\"";
+  of << indent << " glyphEigenvector=\"" << this->GlyphEigenvector << "\"";
+  of << indent << " glyphExtractEigenvalues=\"" << this->GlyphExtractEigenvalues << "\"";
+  of << indent << " lineGlyphResolution=\"" << this->LineGlyphResolution << "\"";
+  of << indent << " tubeGlyphRadius=\"" << this->TubeGlyphRadius << "\"";
+  of << indent << " tubeGlyphNumberOfSides=\"" << this->TubeGlyphNumberOfSides << "\"";
+  of << indent << " ellipsoidGlyphThetaResolution=\"" << this->EllipsoidGlyphThetaResolution << "\"";
+  of << indent << " ellipsoidGlyphPhiResolution=\"" << this->EllipsoidGlyphPhiResolution << "\"";
+  of << indent << " superquadricGlyphGamma=\"" << this->SuperquadricGlyphGamma << "\"";
+  of << indent << " superquadricGlyphThetaResolution=\"" << this->SuperquadricGlyphThetaResolution << "\"";
+  of << indent << " superquadricGlyphPhiResolution=\"" << this->SuperquadricGlyphPhiResolution << "\"";
 }
 
 //----------------------------------------------------------------------------
@@ -117,72 +130,90 @@ void vtkMRMLDiffusionTensorDisplayPropertiesNode::ReadXMLAttributes(const char**
 
   const char* attName;
   const char* attValue;
-  int numColours;
   while (*atts != NULL) 
   {
       attName = *(atts++);
       attValue = *(atts++);
-      if (!strcmp(attName, "name"))
+      if (!strcmp(attName, "glyphGeometry")) 
       {
-          this->SetName(attValue);
-      }
-      else if (!strcmp(attName, "id"))
-      {
-          // handled at the vtkMRMLNode level
-      }
-      else if (!strcmp(attName, "numcolors"))
-        {
-        std::stringstream ss;
-        ss << attValue;
-        ss >> numColours;
-        vtkDebugMacro("Setting the look up table size to " << numColours << "\n");
-        this->LookupTable->SetNumberOfTableValues(numColours);
-        this->Names.clear();
-        this->Names.resize(numColours);
-        }
-      else  if (!strcmp(attName, "colors")) 
-      {
-      std::stringstream ss;
-      for (int i = 0; i < this->LookupTable->GetNumberOfTableValues(); i++)
-        {
-        vtkDebugMacro("Reading colour " << i << " of " << this->LookupTable->GetNumberOfTableValues() << endl);
-        ss << attValue;
-        // index name r g b a
-        int index;
-        std::string name;
-        double r, g, b, a;
-        ss >> index;
-        ss >> name;          
-        ss >> r;
-        ss >> g;
-        ss >> b;
-        ss >> a;
-        vtkDebugMacro("Adding colour at index " << index << ", r = " << r << ", g = " << g << ", b = " << b << ", a = " << a << " and then setting name to " << name.c_str() << endl);
-        this->LookupTable->SetTableValue(index, r, g, b, a);
-        this->SetColorNameWithSpaces(index, name.c_str(), "_");
-        }
-      }
-      else if (!strcmp(attName, "type")) 
-      {
-      int type;
       std::stringstream ss;
       ss << attValue;
-      ss >> type;
-      this->SetType(type);
+      ss >> GlyphGeometry;
       }
-      else if (!strcmp(attName, "filename"))
-        {
-        this->SetFileName(attValue);
-        // read in the file with the colours
-        std::cout << "Reading file " << this->FileName << endl;
-        this->ReadFile();
-        }
-      else
+      else if (!strcmp(attName, "colorGlyphBy")) 
       {
-          std::cerr << "Unknown attribute name " << attName << endl;
+      std::stringstream ss;
+      ss << attValue;
+      ss >> ColorGlyphBy;
+      }
+      else if (!strcmp(attName, "glyphScaleFactor")) 
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> GlyphScaleFactor;
+      }
+      else if (!strcmp(attName, "glyphEigenvector")) 
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> GlyphEigenvector;
+      }
+      else if (!strcmp(attName, "glyphExtractEigenvalues")) 
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >>GlyphExtractEigenvalues ;
+      }
+      else if (!strcmp(attName, "lineGlyphResolution")) 
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> LineGlyphResolution;
+      }
+      else if (!strcmp(attName, "tubeGlyphRadius")) 
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> TubeGlyphRadius;
+      }
+      else if (!strcmp(attName, "tubeGlyphNumberOfSides")) 
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> TubeGlyphNumberOfSides;
+      }
+      else if (!strcmp(attName, "ellipsoidGlyphThetaResolution")) 
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> EllipsoidGlyphThetaResolution;
+      }      
+      else if (!strcmp(attName, "ellipsoidGlyphPhiResolution")) 
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> EllipsoidGlyphPhiResolution;
+      }      
+      else if (!strcmp(attName, "superquadricGlyphGamma")) 
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> SuperquadricGlyphGamma;
+      }
+      else if (!strcmp(attName, "superquadricGlyphThetaResolution")) 
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> SuperquadricGlyphThetaResolution;
+      }
+      else if (!strcmp(attName, "superquadricGlyphPhiResolution")) 
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> SuperquadricGlyphPhiResolution;
       }
   }
-  vtkDebugMacro("Finished reading in xml attributes, list id = " << this->GetID() << " and name = " << this->GetName() << endl);
+
 }
 
 //----------------------------------------------------------------------------
@@ -193,6 +224,20 @@ void vtkMRMLDiffusionTensorDisplayPropertiesNode::Copy(vtkMRMLNode *anode)
   Superclass::Copy(anode);
   vtkMRMLDiffusionTensorDisplayPropertiesNode *node = (vtkMRMLDiffusionTensorDisplayPropertiesNode *) anode;
 
+  this->SetScalarInvariant(node->ScalarInvariant);
+  this->SetGlyphGeometry(node->GlyphGeometry);
+  this->SetColorGlyphBy(node->ColorGlyphBy);
+  this->SetGlyphScaleFactor(node->GlyphScaleFactor);
+  this->SetGlyphEigenvector(node->GlyphEigenvector);
+  this->SetGlyphExtractEigenvalues(node->GlyphExtractEigenvalues);
+  this->SetLineGlyphResolution(node->LineGlyphResolution);
+  this->SetTubeGlyphRadius(node->TubeGlyphRadius);
+  this->SetTubeGlyphNumberOfSides(node->TubeGlyphNumberOfSides);
+  this->SetEllipsoidGlyphThetaResolution(node->EllipsoidGlyphThetaResolution);
+  this->SetEllipsoidGlyphPhiResolution(node->EllipsoidGlyphPhiResolution);
+  this->SetSuperquadricGlyphGamma(node->SuperquadricGlyphGamma);
+  this->SetSuperquadricGlyphThetaResolution(node->SuperquadricGlyphThetaResolution);
+  this->SetSuperquadricGlyphPhiResolution(node->SuperquadricGlyphPhiResolution);
 }
 
 //----------------------------------------------------------------------------
@@ -200,7 +245,20 @@ void vtkMRMLDiffusionTensorDisplayPropertiesNode::PrintSelf(ostream& os, vtkInde
 {
   
   Superclass::PrintSelf(os,indent);
-
+  os << indent << "ScalarInvariant:             " << this->ScalarInvariant << "\n";
+  os << indent << "GlyphGeometry:             " << this->GlyphGeometry << "\n";
+  os << indent << "ColorGlyphBy:             " << this->ColorGlyphBy << "\n";
+  os << indent << "GlyphScaleFactor:             " << this->GlyphScaleFactor << "\n";
+  os << indent << "GlyphEigenvector:             " << this->GlyphEigenvector << "\n";
+  os << indent << "GlyphExtractEigenvalues:             " << this->GlyphExtractEigenvalues << "\n";
+  os << indent << "LineGlyphResolution:             " << this->LineGlyphResolution << "\n";
+  os << indent << "TubeGlyphRadius:             " << this->TubeGlyphRadius << "\n";
+  os << indent << "TubeGlyphNumberOfSides:             " << this->TubeGlyphNumberOfSides << "\n";
+  os << indent << "EllipsoidGlyphThetaResolution:             " << this->EllipsoidGlyphThetaResolution << "\n";
+  os << indent << "EllipsoidGlyphPhiResolution:             " << this->EllipsoidGlyphPhiResolution << "\n";
+  os << indent << "SuperquadricGlyphGamma:             " << this->SuperquadricGlyphGamma << "\n";
+  os << indent << "SuperquadricGlyphThetaResolution:             " << this->SuperquadricGlyphThetaResolution << "\n";
+  os << indent << "SuperquadricGlyphPhiResolution:             " << this->SuperquadricGlyphPhiResolution << "\n";
 }
 
 
