@@ -21,8 +21,6 @@ Version:   $Revision: 1.3 $
 #include "vtkMRMLModelDisplayNode.h"
 #include "vtkMRMLScene.h"
 
-#include "vtkMRMLColorTableNode.h"
-
 //------------------------------------------------------------------------------
 vtkMRMLModelDisplayNode* vtkMRMLModelDisplayNode::New()
 {
@@ -345,6 +343,7 @@ void vtkMRMLModelDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
     {
     os << indent << ", " << this->ScalarRange[idx];
     }
+  os << endl;
   os << indent << "ColorNodeID: " <<
     (this->ColorNodeID ? this->ColorNodeID : "(none)") << "\n";
 
@@ -387,19 +386,6 @@ void vtkMRMLModelDisplayNode::UpdateReferences()
     }
 }
 
-/*
-//-----------------------------------------------------------
-void vtkMRMLModelDisplayNode::SetDefaultColorMap()
-{
-  // set up a default color node
-  //this->SetAndObserveColorNodeID("vtkMRMLFreeSurferColorNodeHeat");
-  this->SetAndObserveColorNodeID("vtkMRMLColorTableNodeOcean");
-  if (this->ColorNode == NULL)
-    {
-    vtkDebugMacro("vtkMRMLModelDisplayNode: FAILED setting default Heat color node, it's still null\n")
-    }
-}
-*/
 //----------------------------------------------------------------------------
 vtkMRMLColorNode* vtkMRMLModelDisplayNode::GetColorNode()
 {
@@ -488,45 +474,9 @@ void vtkMRMLModelDisplayNode::SetActiveScalarName(const char *scalarName)
     vtkDebugMacro("SetActiveScalarName: scalar name is an emtpy string, not setting the color node on display node " << this->GetID());
     return;
     }
-  
-  // check that we have the correct color table for this 
-  // get the extension of the scalar name
-  std::string name(scalarName);
-  
-  std::string::size_type loc = name.find(".");
-  vtkMRMLColorTableNode *colorNode = vtkMRMLColorTableNode::New();
-  if (loc == std::string::npos )
-    {
-    vtkDebugMacro("Can't find an extension on the scalar name " << scalarName << ", using default color node");
-    colorNode->SetTypeToGrey();
-    }
-  else
-    {
-    std::string extension = name.substr(loc);
-    vtkDebugMacro("Setting the color node by the extension " << extension.c_str());
-    // use a generic for the w ones
-    if (extension == std::string(".w"))
-      {
-      colorNode->SetTypeToOcean();
-      }
-    else if (extension == std::string(".thickness"))
-      {
-      colorNode->SetTypeToDesert();
-      }
-    else if (extension == std::string(".curv") ||
-             extension == std::string(".sulc"))
-      {
-      colorNode->SetTypeToFMRI();
-      }
-    else if (extension == std::string(".area"))
-      {
-      colorNode->SetTypeToDesert();
-      }
-    }
-  vtkDebugMacro("Using color node " << colorNode->GetTypeAsIDString() << " for scalar " << scalarName);
-  this->SetAndObserveColorNodeID(colorNode->GetTypeAsIDString());
-  colorNode->Delete();
-  colorNode  = NULL;
+
+  // calls to SetAndObserveColorNodeID will set up the color table for
+  // displaying these scalars
   
   this->Modified();
 }

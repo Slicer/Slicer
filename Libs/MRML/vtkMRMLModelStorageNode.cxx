@@ -28,14 +28,16 @@ Version:   $Revision: 1.2 $
 #include "vtkPolyDataReader.h"
 #include "vtkXMLPolyDataReader.h"
 #include "vtkSTLReader.h"
-//TODO: read in a free surfer file
+// to read in a free surfer file
 #include "vtkFSSurfaceReader.h"
 #include "vtkFSSurfaceWFileReader.h"
 #include "vtkFSSurfaceScalarReader.h"
+
 #include "vtkPolyDataWriter.h"
 #include "vtkXMLPolyDataWriter.h"
 #include "vtkSTLWriter.h"
 
+#include "vtkMRMLColorTableNode.h"
 #include "vtkPointData.h"
 
 #include "itksys/SystemTools.hxx"
@@ -266,13 +268,32 @@ int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
 
         reader->ReadFSScalars();
 
-        vtkDebugMacro("Finished reading model overlay file " << fullName.c_str() << ", scalars called " << scalarName.c_str() << ", adding point scalars to model node");
+        std::cout << "Finished reading model overlay file " << fullName.c_str() << ", scalars called " << scalarName.c_str() << ", adding point scalars to model node " << modelNode->GetName() << endl;
         modelNode->AddPointScalars(floatArray);
         modelNode->GetDisplayNode()->SetActiveScalarName(scalarName.c_str());
         // make sure scalars are visible
         modelNode->GetDisplayNode()->SetScalarVisibility(1);
-        // set the colour look up table, TODO: use FreeSurfer color node when integrated
-        //modelNode->GetDisplayNode()->SetAndObserveColorNodeID("vtkMRMLColorNodeGreenRed");
+        // set the colour look up table, TODO: use FreeSurfer color node when
+        // integrated
+        vtkMRMLColorTableNode *colorNode = vtkMRMLColorTableNode::New();
+        if (extension == std::string(".thickness"))
+          {
+          colorNode->SetTypeToDesert();
+          }
+        else if (extension == std::string(".curv") ||
+                 extension == std::string(".avg_curv") ||
+                 extension == std::string(".sulc"))
+          {
+          colorNode->SetTypeToFMRI();
+          }
+        else if (extension == std::string(".area"))
+          {
+          colorNode->SetTypeToDesert();
+          }
+        vtkDebugMacro("Using color node " << colorNode->GetTypeAsIDString() << " for scalar " << scalarName.c_str());
+        modelNode->GetDisplayNode()->SetAndObserveColorNodeID(colorNode->GetTypeAsIDString());
+        colorNode->Delete();
+        colorNode  = NULL;
 
         reader->Delete();
         floatArray->Delete();
@@ -344,8 +365,11 @@ int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
           modelNode->GetDisplayNode()->SetActiveScalarName(scalarName.c_str());
           // make sure scalars are visible
           modelNode->GetDisplayNode()->SetScalarVisibility(1);
-          // set the colour look up table, TODO: use FreeSurfer color node when integrated
-          //modelNode->GetDisplayNode()->SetAndObserveColorNodeID("vtkMRMLColorNodeHeat");
+          // set the colour look up table, TODO: use FreeSurfer color node
+          // when integrated
+          vtkMRMLColorTableNode *colorNode = vtkMRMLColorTableNode::New();
+          colorNode->SetTypeToOcean();
+          modelNode->GetDisplayNode()->SetAndObserveColorNodeID(colorNode->GetTypeAsIDString());
           }
         reader->Delete();
         floatArray->Delete();
