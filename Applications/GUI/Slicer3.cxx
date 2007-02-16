@@ -424,8 +424,8 @@ int Slicer3_main(int argc, char *argv[])
     }
 
   std::cout << "Initialized python: addr: " << (long)interp << std::endl;
-  // vtkKWApplication::InitializeTcl(interp, &cerr);
-  interp = vtkKWApplication::InitializeTcl(argc, argv, &cerr, interp);
+  vtkKWApplication::InitializeTcl(interp, &cerr);
+  // interp = vtkKWApplication::InitializeTcl(argc, argv, &cerr, interp);
   std::cout << "Initialized python: Slicer Interp: " << (long)vtkSlicerApplication::GetInstance()->GetMainInterp() << std::endl;
 #else
   interp = vtkKWApplication::InitializeTcl(argc, argv, &cerr);
