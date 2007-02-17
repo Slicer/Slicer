@@ -13,6 +13,8 @@
 
 #include "vtkMatrix4x4.h"
 #include "vtkDoubleArray.h"
+#include "teem/nrrd.h"
+
 #include "vtkTeemConfigure.h"
 
 class vtkImageData;
@@ -84,8 +86,9 @@ protected:
 private:
   vtkNRRDWriter(const vtkNRRDWriter&);  // Not implemented.
   void operator=(const vtkNRRDWriter&);  // Not implemented.
-  
-  void vtkImageDataInfoToNrrdInfo(vtkImageData *in, int &nrrdKind, size_t &numComp, int &vtkType, void *buffer);
+  //BTX
+  void vtkImageDataInfoToNrrdInfo(vtkImageData *in, int &nrrdKind, size_t &numComp, int &vtkType, void **buffer);
+  //ETX
   int VTKToNrrdPixelType( const int vtkPixelType );
 };
 

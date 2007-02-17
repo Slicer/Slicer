@@ -7,7 +7,6 @@
 #include "vtkObjectFactory.h"
 #include "vtkDataArray.h"
 #include "vtkInformation.h"
-#include "teem/nrrd.h"
 
 
 vtkCxxRevisionMacro(vtkNRRDWriter, "$Revision: 1.28 $");
@@ -74,7 +73,7 @@ int vtkNRRDWriter::FillInputPortInformation(
 
 //----------------------------------------------------------------------------
 // Writes all the data from the input.
-void vtkNRRDWriter::vtkImageDataInfoToNrrdInfo(vtkImageData *in, int &nrrdKind, size_t &numComp, int &vtkType, void *buffer)
+void vtkNRRDWriter::vtkImageDataInfoToNrrdInfo(vtkImageData *in, int &nrrdKind, size_t &numComp, int &vtkType, void **buffer)
 {
 
   vtkDataArray *array;
@@ -82,7 +81,7 @@ void vtkNRRDWriter::vtkImageDataInfoToNrrdInfo(vtkImageData *in, int &nrrdKind, 
     {
     numComp = array->GetNumberOfComponents();
     vtkType = array->GetDataType();
-    buffer = array->GetVoidPointer(0);
+    (*buffer) = array->GetVoidPointer(0);
     
     switch (numComp)
       {
@@ -113,20 +112,20 @@ void vtkNRRDWriter::vtkImageDataInfoToNrrdInfo(vtkImageData *in, int &nrrdKind, 
      }
    else if ((array = static_cast<vtkDataArray *> ( in->GetPointData()->GetVectors())))
      {
-     buffer = array->GetVoidPointer(0);
+     *buffer = array->GetVoidPointer(0);
      vtkType = array->GetDataType();
      nrrdKind = nrrdKindVector;
      }
    else if ((array = static_cast<vtkDataArray *> ( in->GetPointData()->GetNormals())))
      {
-     buffer = array->GetVoidPointer(0);
+     *buffer = array->GetVoidPointer(0);
      vtkType = array->GetDataType();
      nrrdKind = nrrdKindVector;
      numComp = array->GetNumberOfComponents();
      }
    else if ((array = static_cast<vtkDataArray *> ( in->GetPointData()->GetTensors())))
      {
-     buffer = array->GetVoidPointer(0);
+     *buffer = array->GetVoidPointer(0);
      vtkType = array->GetDataType();
      nrrdKind = nrrdKind3DMatrix;
      numComp = array->GetNumberOfComponents();
@@ -197,21 +196,14 @@ void vtkNRRDWriter::WriteData()
   void *buffer;
   int vtkType;
   
-  cout<<"Updating Input Information"<<endl;
     // Fill in image information.
   this->GetInput()->UpdateInformation();
   
+  vtkImageData *input = this->GetInput();
+
   // Find Pixel type from data and select a buffer.
-  cout<<"Getting ImageDataInfo to NrrdInfo"<<endl;
-  this->vtkImageDataInfoToNrrdInfo(this->GetInput(),kind[0],size[0],vtkType, buffer); 
+  this->vtkImageDataInfoToNrrdInfo(this->GetInput(),kind[0],size[0],vtkType, &buffer); 
 
-  cout<<"Retreive info: "<<endl;
-  cout<<"Kind: "<<kind[0]<<endl;
-  cout<<"Size: "<<size[0]<<endl;
-  cout<<"vtkType: "<<vtkType<<endl;
-  cout<<"Buffer pointer: "<<buffer<<endl;
-
-  cout<<"Setting axis depedent info"<<endl;
   spaceDim = 3; // VTK is always 3D volumes.
   if (size[0] > 1)
     {
@@ -237,11 +229,10 @@ void vtkNRRDWriter::WriteData()
     double spacing = this->GetInput()->GetSpacing()[axi];
     for (unsigned int saxi=0; saxi < spaceDim; saxi++)
       {
-      spaceDir[axi+baseDim][saxi] = this->IJKToRASMatrix->GetElement(axi,saxi);
+      spaceDir[axi+baseDim][saxi] = this->IJKToRASMatrix->GetElement(saxi,axi);
       }
     }
-  cout<<"Before wrapping buffer"<<endl;
-  if (nrrdWrap_nva(nrrd, const_cast<void *>(buffer),
+  if (nrrdWrap_nva(nrrd, const_cast<void *> (buffer),
                    this->VTKToNrrdPixelType( vtkType ),
                    nrrdDim, size)
       || nrrdSpaceDimensionSet(nrrd, spaceDim)
@@ -255,12 +246,8 @@ void vtkNRRDWriter::WriteData()
     nio = nrrdIoStateNix(nio);
     return; 
     }
-  cout<<"Setting axis info"<<endl;
   nrrdAxisInfoSet_nva(nrrd, nrrdAxisInfoKind, kind);
   nrrdAxisInfoSet_nva(nrrd, nrrdAxisInfoSpaceDirection, spaceDir);
-
-  cout<<"Size: "<<size[0]<<" "<<size[1]<<" "<<size[2]<<" "<<size[3]<<endl;
-  cout<<"vtk Type: "<<vtkType<<" Nrrd Type: "<<this->VTKToNrrdPixelType( vtkType )<<endl;
 
   // Go through MetaDataDictionary and set either specific nrrd field
   // or a key/value pair
@@ -268,7 +255,6 @@ void vtkNRRDWriter::WriteData()
   // and measurement frame information
 
   // 1. Measurement Frame
-  cout<<"Set Measurement Frame"<<endl;
   if (this->MeasurementFrameMatrix)
     {
     for (unsigned int saxi=0; saxi < nrrd->spaceDim; saxi++)
@@ -280,7 +266,6 @@ void vtkNRRDWriter::WriteData()
       }
     }
 
-   cout<<"Set Diffusion Data"<<endl;
   // 2. Take care about diffusion data
   if (this->DiffusionGradients && this->BValues)
     {
@@ -309,7 +294,6 @@ void vtkNRRDWriter::WriteData()
         factor = bVal/maxbVal;
         sprintf(key,"%s%04d","DWMRI_gradient_",ig);
         sprintf(value,"%f %f %f",grad[0]*factor, grad[1]*factor, grad[2]*factor);
-        cout<<" Key: "<<key<<" Value: "<<value<<endl;
         nrrdKeyValueAdd(nrrd,key, value);
         }
      }
@@ -339,9 +323,7 @@ void vtkNRRDWriter::WriteData()
 
   // set endianness as unknown of output
   nio->endian = airEndianUnknown;
-  nio->endian = airEndianBig;
 
-  cout<<"Write NRRD dataset"<<endl;
   // Write the nrrd to file.
   if (nrrdSave(this->GetFileName(), nrrd, nio))
     {
@@ -350,7 +332,6 @@ void vtkNRRDWriter::WriteData()
                       << this->GetFileName() << ":\n" << err);                  
     }
   // Free the nrrd struct but don't touch nrrd->data
-  cout<<"Freeing nrrd data"<<endl;
   nrrd = nrrdNix(nrrd);
   nio = nrrdIoStateNix(nio);
 
