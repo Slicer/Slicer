@@ -269,8 +269,12 @@ void vtkMRMLScene::ResetNodes()
     }
   for(unsigned int i=0; i<nodes.size(); i++) 
     {
+    int save = nodes[i]->GetSaveWithScene();
+    int hide = nodes[i]->GetHideFromEditors();
     newNode = nodes[i]->CreateNodeInstance();
     nodes[i]->Copy(newNode);
+    nodes[i]->SetSaveWithScene(save);
+    nodes[i]->SetHideFromEditors(hide);
     newNode->Delete();
     }
 

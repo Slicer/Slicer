@@ -1,0 +1,34 @@
+<MRML>
+<Selection
+ id="vtkMRMLSelectionNode1" name="vtkMRMLSelectionNode1"  hideFromEditors="true" activeVolumeID="NULL" activeLabelVolumeID="NULL" activeFiducialListID="NULL" activeCameraID="NULL" activeViewID="NULL" ></Selection>
+<Interaction
+ id="vtkMRMLInteractionNode1" name="vtkMRMLInteractionNode1"  hideFromEditors="true"  currentInteractionMode="ViewTransform" lastInteractionMode="ViewTransform"></Interaction>
+<View
+ id="vtkMRMLViewNode1" name="vtkMRMLViewNode1"  hideFromEditors="true"  active="false" fieldOfView="200" letterSize="0.05" boxVisible="true" fiducialsVisible="true" fiducialLabelsVisible="true" axisLabelsVisible="true" backgroundColor="0.70196 0.70196 0.90588" animationMode="Off" viewAxisMode="LookFrom" spinDegrees="2" spinMs="5" spinDirection="YawLeft" rotateDegrees="5" rockLength="200" rockCount="0" stereoType="NoStereo" renderMode="Perspective"></View>
+<Camera
+ id="vtkMRMLCameraNode1" name="vtkMRMLCameraNode1"  hideFromEditors="false"  position="-47.4803 495.826 -30.5108" focalPoint="-13.2768 0 24.1396" viewUp="-0.0472149 0.106217 0.993221" parallelProjection="false" parallelScale="1" active="true"></Camera>
+<Slice
+ id="vtkMRMLSliceNode1" name="vtkMRMLSliceNode1"  hideFromEditors="true" fieldOfView="291.992 263.672 250" dimensions="299 270 1" sliceToRAS="-1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1" layoutName="Red" orientation="Axial" ></Slice>
+<SliceComposite
+ id="vtkMRMLSliceCompositeNode1" name="vtkMRMLSliceCompositeNode1"  hideFromEditors="true" backgroundVolumeID="" foregroundVolumeID="" labelVolumeID="" labelOpacity="1" linkedControl="0" foregroundGrid="1" backgroundGrid="0" labelGrid="0" fiducialVisibility="1" fiducialLabelVisibility="1" layoutName="Red" annotationSpace="RAS" annotationMode="All" crosshairMode="NoCrosshair" crosshairBehavior="Normal" ></SliceComposite>
+<Slice
+ id="vtkMRMLSliceNode2" name="vtkMRMLSliceNode2"  hideFromEditors="true" fieldOfView="291.992 263.672 250" dimensions="299 270 1" sliceToRAS="0 0 1 0 -1 0 0 0 0 1 0 0 0 0 0 1" layoutName="Yellow" orientation="Sagittal" ></Slice>
+<SliceComposite
+ id="vtkMRMLSliceCompositeNode2" name="vtkMRMLSliceCompositeNode2"  hideFromEditors="true" backgroundVolumeID="" foregroundVolumeID="" labelVolumeID="" labelOpacity="1" linkedControl="0" foregroundGrid="1" backgroundGrid="0" labelGrid="0" fiducialVisibility="1" fiducialLabelVisibility="1" layoutName="Yellow" annotationSpace="RAS" annotationMode="All" crosshairMode="NoCrosshair" crosshairBehavior="Normal" ></SliceComposite>
+<Slice
+ id="vtkMRMLSliceNode3" name="vtkMRMLSliceNode3"  hideFromEditors="true" fieldOfView="292.969 263.672 250" dimensions="300 270 1" sliceToRAS="-1 0 0 0 0 0 1 0 0 1 0 0 0 0 0 1" layoutName="Green" orientation="Coronal" ></Slice>
+<SliceComposite
+ id="vtkMRMLSliceCompositeNode3" name="vtkMRMLSliceCompositeNode3"  hideFromEditors="true" backgroundVolumeID="" foregroundVolumeID="" labelVolumeID="" labelOpacity="1" linkedControl="0" foregroundGrid="1" backgroundGrid="0" labelGrid="0" fiducialVisibility="1" fiducialLabelVisibility="1" layoutName="Green" annotationSpace="RAS" annotationMode="All" crosshairMode="NoCrosshair" crosshairBehavior="Normal" ></SliceComposite>
+<FiberBundleStorage
+ id="vtkMRMLFiberBundleStorageNode1" name="vtkMRMLFiberBundleStorageNode1"  hideFromEditors="true" fileName="TestData/tract_00006_Tensors.vtk" ></FiberBundleStorage>
+<FiberBundleDisplay
+ id="vtkMRMLFiberBundleDisplayNode1" name="vtkMRMLFiberBundleDisplayNode1"  hideFromEditors="true"  color="0.5 0.5 0.5" ambient="0" diffuse="1" specular="0" power="1" opacity="1" visibility="true" clipping="false" backfaceCulling="true" scalarVisibility="false" vectorVisibility="false" tensorVisibility="false" scalarRange="0 100" fiberLineOpacity ="1" fiberTubeOpacity ="1" fiberGlyphOpacity ="1" fiberTubeRadius ="0.5" fiberTubeNumberOfSides ="4" colorModeForFiberLines ="0" colorModeForFiberTubes ="0" colorModeForFiberGlyphs ="0" fiberLineVisibility="true" fiberTubeVisibility="true" fiberGlyphVisibility="false" twoDimensionalVisibility="true" fiberLineDisplayNodeRef="vtkMRMLDiffusionTensorDisplayPropertiesNode1" fiberTubeDisplayNodeRef="vtkMRMLDiffusionTensorDisplayPropertiesNode2" fiberGlyphDisplayNodeRef="vtkMRMLDiffusionTensorDisplayPropertiesNode3" ></FiberBundleDisplay>
+<DiffusionTensorDisplayProperties
+ id="vtkMRMLDiffusionTensorDisplayPropertiesNode1" name="vtkMRMLDiffusionTensorDisplayPropertiesNode1"  hideFromEditors="true"  type="-1" glyphGeometry="0" colorGlyphBy="3" glyphScaleFactor="1000" glyphEigenvector="1" glyphExtractEigenvalues="1" lineGlyphResolution="5" tubeGlyphRadius="0.1" tubeGlyphNumberOfSides="4" ellipsoidGlyphThetaResolution="6" ellipsoidGlyphPhiResolution="6" superquadricGlyphGamma="1" superquadricGlyphThetaResolution="6" superquadricGlyphPhiResolution="6"></DiffusionTensorDisplayProperties>
+<DiffusionTensorDisplayProperties
+ id="vtkMRMLDiffusionTensorDisplayPropertiesNode2" name="vtkMRMLDiffusionTensorDisplayPropertiesNode2"  hideFromEditors="true"  type="-1" glyphGeometry="0" colorGlyphBy="3" glyphScaleFactor="1000" glyphEigenvector="1" glyphExtractEigenvalues="1" lineGlyphResolution="5" tubeGlyphRadius="0.1" tubeGlyphNumberOfSides="4" ellipsoidGlyphThetaResolution="6" ellipsoidGlyphPhiResolution="6" superquadricGlyphGamma="1" superquadricGlyphThetaResolution="6" superquadricGlyphPhiResolution="6"></DiffusionTensorDisplayProperties>
+<DiffusionTensorDisplayProperties
+ id="vtkMRMLDiffusionTensorDisplayPropertiesNode3" name="vtkMRMLDiffusionTensorDisplayPropertiesNode3"  hideFromEditors="true"  type="-1" glyphGeometry="0" colorGlyphBy="3" glyphScaleFactor="1000" glyphEigenvector="1" glyphExtractEigenvalues="1" lineGlyphResolution="5" tubeGlyphRadius="0.1" tubeGlyphNumberOfSides="4" ellipsoidGlyphThetaResolution="6" ellipsoidGlyphPhiResolution="6" superquadricGlyphGamma="1" superquadricGlyphThetaResolution="6" superquadricGlyphPhiResolution="6"></DiffusionTensorDisplayProperties>
+<FiberBundle
+ id="vtkMRMLFiberBundleNode1" name="tract_00006_Tensors.vtk"  hideFromEditors="false" storageNodeRef="vtkMRMLFiberBundleStorageNode1" displayNodeRef="vtkMRMLFiberBundleDisplayNode1" ></FiberBundle>
+</MRML>

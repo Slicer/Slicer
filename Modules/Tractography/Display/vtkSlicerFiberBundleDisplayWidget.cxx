@@ -263,7 +263,7 @@ void vtkSlicerFiberBundleDisplayWidget::ProcessMRMLEvents ( vtkObject *caller,
   if (fiberBundleNode == this->MRMLScene->GetNodeByID(this->FiberBundleNodeID) && 
       fiberBundleNode != NULL && event == vtkCommand::ModifiedEvent)
     {
-    vtkMRMLFiberBundleDisplayNode *displayNode = fiberBundleNode->GetDisplayNode();
+    vtkMRMLFiberBundleDisplayNode *displayNode = vtkMRMLFiberBundleDisplayNode::SafeDownCast(fiberBundleNode->GetDisplayNode());
     
 
     if (displayNode != NULL && this->FiberBundleDisplayNodeID != NULL)
@@ -305,7 +305,7 @@ void vtkSlicerFiberBundleDisplayWidget::AddMRMLObservers ( )
   
   if (fiberBundleNode != NULL)
     {
-    vtkMRMLFiberBundleDisplayNode *displayNode = fiberBundleNode->GetDisplayNode();
+    vtkMRMLFiberBundleDisplayNode *displayNode = vtkMRMLFiberBundleDisplayNode::SafeDownCast(fiberBundleNode->GetDisplayNode());
     
     if (displayNode != NULL)
       {
@@ -327,7 +327,7 @@ void vtkSlicerFiberBundleDisplayWidget::RemoveMRMLObservers ( )
   
   if (fiberBundleNode != NULL)
     {
-    vtkMRMLFiberBundleDisplayNode *displayNode = fiberBundleNode->GetDisplayNode();
+    vtkMRMLFiberBundleDisplayNode *displayNode = vtkMRMLFiberBundleDisplayNode::SafeDownCast(fiberBundleNode->GetDisplayNode());
     
     if (displayNode != NULL)
       {

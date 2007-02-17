@@ -167,7 +167,7 @@ void vtkSlicerFiberBundleDisplayLogic::UpdateModelDisplay ( )
     {
 
     // if we are supposed to be displaying something do it
-    vtkMRMLFiberBundleDisplayNode * fiberBundleDisplayNode = this->FiberBundleNode->GetDisplayNode();
+    vtkMRMLFiberBundleDisplayNode * fiberBundleDisplayNode = vtkMRMLFiberBundleDisplayNode::SafeDownCast(this->FiberBundleNode->GetDisplayNode());
     if ( fiberBundleDisplayNode != NULL )
       {
 
@@ -274,7 +274,7 @@ void vtkSlicerFiberBundleDisplayLogic::CreateLineModel ( )
 
     // update the polydata and display parameters:
     // set properties according to the fiber bundle's display node
-    vtkMRMLFiberBundleDisplayNode * fiberBundleDisplayNode = this->FiberBundleNode->GetDisplayNode();
+    vtkMRMLFiberBundleDisplayNode * fiberBundleDisplayNode = vtkMRMLFiberBundleDisplayNode::SafeDownCast(this->FiberBundleNode->GetDisplayNode());
     if (fiberBundleDisplayNode != NULL)
       {
 
@@ -356,7 +356,7 @@ void vtkSlicerFiberBundleDisplayLogic::CreateTubeModel ( )
 
     // update the polydata and display parameters:
     // set properties according to the fiber bundle's display node
-    vtkMRMLFiberBundleDisplayNode * fiberBundleDisplayNode = this->FiberBundleNode->GetDisplayNode();
+    vtkMRMLFiberBundleDisplayNode * fiberBundleDisplayNode = vtkMRMLFiberBundleDisplayNode::SafeDownCast(this->FiberBundleNode->GetDisplayNode());
     if (fiberBundleDisplayNode != NULL)
       {
 
@@ -459,7 +459,7 @@ void vtkSlicerFiberBundleDisplayLogic::CreateGlyphModel ( )
 
     // update the polydata and display parameters:
     // set properties according to the fiber bundle's display node
-    vtkMRMLFiberBundleDisplayNode * fiberBundleDisplayNode = this->FiberBundleNode->GetDisplayNode();
+    vtkMRMLFiberBundleDisplayNode * fiberBundleDisplayNode = vtkMRMLFiberBundleDisplayNode::SafeDownCast(this->FiberBundleNode->GetDisplayNode());
     if (fiberBundleDisplayNode != NULL)
       {
 

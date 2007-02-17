@@ -138,7 +138,7 @@ void vtkMRMLFiberBundleDisplayNode::WriteXML(ostream& of, int nIndent)
   of << indent << " twoDimensionalVisibility=\"" << (this->TwoDimensionalVisibility ? "true" : "false") << "\"";
   if (this->FiberLineDTDisplayPropertiesNodeID != NULL) 
     {
-    of << indent << "fiberLineDisplayNodeRef=\"" << this->FiberLineDTDisplayPropertiesNodeID << "\" ";
+    of << indent << " fiberLineDisplayNodeRef=\"" << this->FiberLineDTDisplayPropertiesNodeID << "\" ";
     }
   if (this->FiberTubeDTDisplayPropertiesNodeID != NULL) 
     {

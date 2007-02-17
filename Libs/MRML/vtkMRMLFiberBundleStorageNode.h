@@ -19,42 +19,17 @@
 #define __vtkMRMLFiberBundleStorageNode_h
 
 #include "vtkMRML.h"
-#include "vtkMRMLStorageNode.h"
+#include "vtkMRMLModelStorageNode.h"
 #include "vtkMRMLFiberBundleNode.h" 
 
-class VTK_MRML_EXPORT vtkMRMLFiberBundleStorageNode : public vtkMRMLStorageNode
+class VTK_MRML_EXPORT vtkMRMLFiberBundleStorageNode : public vtkMRMLModelStorageNode
 {
   public:
   static vtkMRMLFiberBundleStorageNode *New();
-  vtkTypeMacro(vtkMRMLFiberBundleStorageNode,vtkMRMLStorageNode);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  vtkTypeMacro(vtkMRMLFiberBundleStorageNode,vtkMRMLModelStorageNode);
+  //void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual vtkMRMLNode* CreateNodeInstance();
-
-  // Description:
-  // Read node attributes from XML (MRML) file.
-  virtual void ReadXMLAttributes( const char** atts);
-
-   // Description:
-  // Set dependencies between this node and the parent node
-  // when parsing XML file.
-  virtual void ProcessParentNode(vtkMRMLNode *parentNode);
-  
-  // Description:
-  // Read data and set it in the referenced node
-  virtual int ReadData(vtkMRMLNode *refNode);
-
-  // Description:
-  // Write data from a referenced node
-  virtual int WriteData(vtkMRMLNode *refNode);
-
-  // Description:
-  // Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent);
-
-  // Description:
-  // Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node);
 
   // Description:
   // Get node XML tag name (like Storage, Model)
@@ -62,8 +37,8 @@ class VTK_MRML_EXPORT vtkMRMLFiberBundleStorageNode : public vtkMRMLStorageNode
 
 
 protected:
-  vtkMRMLFiberBundleStorageNode();
-  ~vtkMRMLFiberBundleStorageNode();
+  vtkMRMLFiberBundleStorageNode(){};
+  ~vtkMRMLFiberBundleStorageNode(){};
   vtkMRMLFiberBundleStorageNode(const vtkMRMLFiberBundleStorageNode&);
   void operator=(const vtkMRMLFiberBundleStorageNode&);
 

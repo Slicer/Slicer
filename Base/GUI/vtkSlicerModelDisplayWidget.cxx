@@ -554,6 +554,7 @@ void vtkSlicerModelDisplayWidget::CreateWidget ( )
   this->ModelSelectorWidget->SetParent ( modelDisplayFrame );
   this->ModelSelectorWidget->Create ( );
   this->ModelSelectorWidget->SetNodeClass("vtkMRMLModelNode", NULL, NULL, NULL);
+  this->ModelSelectorWidget->SetChildClassesEnabled(0);
   this->ModelSelectorWidget->SetMRMLScene(this->GetMRMLScene());
   this->ModelSelectorWidget->SetBorderWidth(2);
   // this->ModelSelectorWidget->SetReliefToGroove();

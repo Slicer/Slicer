@@ -87,12 +87,6 @@ void vtkMRMLColorTableNode::WriteXML(ostream& of, int nIndent)
   
   vtkIndent indent(nIndent);
   
-  of << " type=\"" << this->GetType() << "\"";
-
-  if (this->Type == this->File && this->FileName != NULL)
-    {
-    of << " filename=\"" << this->FileName << "\"";
-    }
   // only print out the look up table if ?
   if (this->LookupTable != NULL) // && this->Type != this->File
     {
