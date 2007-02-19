@@ -263,18 +263,32 @@ int vtkMRMLNRRDStorageNode::ReadData(vtkMRMLNode *refNode)
   vtkMatrix4x4* mat = reader->GetRasToIjkMatrix();
   volNode->SetRASToIJKMatrix(mat);
 
-  if ( !refNode->IsA("vtkMRMLScalarVolumeNode") )
+  // set measurement frame
+  vtkMatrix4x4 *mat2;
+  if ( refNode->IsA("vtkMRMLTensorVolumeNode") )
     {
-    vtkMatrix4x4 *mat2;
     mat2 = reader->GetMeasurementFrameMatrix();
     if (mat2 == NULL) 
       {
       vtkWarningMacro("Measurement frame is not provided");
       } 
     else 
-     {
+      {
       //dynamic_cast <vtkMRMLTensorVolumeNode *> (volNode)->SetMeasurementFrameMatrix(mat2);
       (vtkMRMLTensorVolumeNode::SafeDownCast(volNode))->SetMeasurementFrameMatrix(mat2);
+      }
+    }
+  if ( refNode->IsA("vtkMRMLDiffusionWeightedVolumeNode") )
+    {
+    mat2 = reader->GetMeasurementFrameMatrix();
+    if (mat2 == NULL) 
+      {
+      vtkWarningMacro("Measurement frame is not provided");
+      } 
+    else 
+      {
+      //dynamic_cast <vtkMRMLTensorVolumeNode *> (volNode)->SetMeasurementFrameMatrix(mat2);
+      (vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(volNode))->SetMeasurementFrameMatrix(mat2);
       }
     }
 
