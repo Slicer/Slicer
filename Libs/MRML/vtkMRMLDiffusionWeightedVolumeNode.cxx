@@ -223,7 +223,7 @@ void vtkMRMLDiffusionWeightedVolumeNode::SetMeasurementFrameMatrix(vtkMatrix4x4 
     {
     for (int j=0; j<3; j++)
       {
-      //this->MeasurementFrameMatrix[i][j]=mf->GetElement(i,j);
+      this->MeasurementFrameMatrix[i][j]=mf->GetElement(i,j);
       }
     }
 }
