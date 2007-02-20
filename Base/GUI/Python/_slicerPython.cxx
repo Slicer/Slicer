@@ -61,11 +61,11 @@ static PyObject* SlicerPython_ToArray ( PyObject* self, PyObject* args )
     }
     
   // PyArrayObject* array = NA_NewArray ( (void*)id->GetScalarPointer(), t, 3, dims[2], dims[1], dims[0] );
-  PyArrayObject* array = NA_FromDimsTypeAndData ( 3, dims, t, (char*)id->GetScalarPointer() );
-  return NA_ReturnOutput ( Py_None, array );
+  // PyArrayObject* array = NA_FromDimsTypeAndData ( 3, dims, t, (char*)id->GetScalarPointer() );
+  // return NA_ReturnOutput ( Py_None, array );
   // return PyArray_FromDimsAndData ( 3, dims, t, (char*)id->GetScalarPointer() );
-  // PyObject* array = PyArray_SimpleNewFromData ( 3, dims, t, (char*)id->GetScalarPointer() );
-  // return array;
+  PyObject* array = PyArray_SimpleNewFromData ( 3, dims, t, (char*)id->GetScalarPointer() );
+  return array;
 }
 
   
@@ -78,7 +78,8 @@ static PyMethodDef moduleMethods[] =
 };
 
 PyMODINIT_FUNC init_slicer(void) {
-  import_libnumarray();
+  // import_libnumarray();
+  import_array();
   Py_InitModule ( "_slicer", moduleMethods );
 }
 
