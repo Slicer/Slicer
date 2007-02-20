@@ -86,11 +86,12 @@ def ListVolumeNodes():
     
 
 
+import scipy.ndimage
 def test():
-    slicer = Slicer()
-    gui = slicer.ApplicationGUI
-    wname = gui.GetMainSliceGUI0().GetSliceViewer().GetWidgetName()
-    scene = slicer.MRMLScene
-    volume = scene.GetNthNodeByClass ( 0, 'vtkMRMLVolumeNode' )
-    return volume.GetImageData().ToArray()
+    nodes = ListVolumeNodes()
+    t2 = nodes[0]
+    data = t2.GetImageData().ToArray()
+    temp = scipy.ndimage.gaussian_filter ( data, 2.0 )
+    data[:] = temp[:]
+
     

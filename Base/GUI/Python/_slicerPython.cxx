@@ -8,6 +8,7 @@
 #endif
 // #include <../lib/site-packages/numpy/numarray/numpy/libnumarray.h>
 #include <libnumarray.h>
+#include <arrayobject.h>
 
 #include "vtkSystemIncludes.h"
 #include "vtkTclUtil.h"
@@ -34,7 +35,7 @@ static PyObject* SlicerPython_ToArray ( PyObject* self, PyObject* args )
     return PyErr_Format ( PyExc_TypeError, "vtkImageDataToArray: Could not find vtkImageData" );
     }
 
-  maybelong dims[3], tempdim;
+  npy_intp dims[3], tempdim;
   id->GetDimensions ( dims );
   // Note: NumPy uses a z,y,x ordering, so swap the 1st and 3rd dimensions!
   tempdim = dims[0];
@@ -62,6 +63,9 @@ static PyObject* SlicerPython_ToArray ( PyObject* self, PyObject* args )
   // PyArrayObject* array = NA_NewArray ( (void*)id->GetScalarPointer(), t, 3, dims[2], dims[1], dims[0] );
   PyArrayObject* array = NA_FromDimsTypeAndData ( 3, dims, t, (char*)id->GetScalarPointer() );
   return NA_ReturnOutput ( Py_None, array );
+  // return PyArray_FromDimsAndData ( 3, dims, t, (char*)id->GetScalarPointer() );
+  // PyObject* array = PyArray_SimpleNewFromData ( 3, dims, t, (char*)id->GetScalarPointer() );
+  // return array;
 }
 
   
