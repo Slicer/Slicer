@@ -541,7 +541,7 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
 
   this->ProcessingMRMLEvent = event;
 
-  vtkDebugMacro("processing event " << event);
+  vtkDebugMacro("ProcessMRMLEvents: processing event " << event);
    
   if (event == vtkMRMLScene::SceneCloseEvent )
     {
@@ -551,7 +551,6 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
     {
     this->SceneClosing = false;
     }
-
 
   if ( vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene 
     && (event == vtkMRMLScene::NodeAddedEvent || event == vtkMRMLScene::NodeRemovedEvent ) )
@@ -565,46 +564,70 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
       {
       if (event == vtkMRMLScene::NodeAddedEvent)
         {
-          vtkSetAndObserveMRMLNodeMacro(this->ClipModelsNode, node);
+        vtkSetAndObserveMRMLNodeMacro(this->ClipModelsNode, node);
         }
       else if (event == vtkMRMLScene::NodeRemovedEvent)
         {
-          vtkSetMRMLNodeMacro(this->ClipModelsNode, NULL);
+        vtkSetMRMLNodeMacro(this->ClipModelsNode, NULL);
         }
       this->UpdateFromMRML();
       }
-    else if (node != NULL && node->IsA("vtkMRMLCameraNode") )
+    }
+  else if (vtkMRMLCameraNode::SafeDownCast(caller) != NULL &&
+           event == vtkCommand::ModifiedEvent)
+    {
+    vtkDebugMacro("ProcessingMRML: got a camera node modified event");
+    //this->UpdateFromMRML();
+    this->UpdateCameraNode();
+    this->RequestRender();
+    }
+  else if (vtkMRMLViewNode::SafeDownCast(caller) != NULL &&
+           event == vtkCommand::ModifiedEvent)
+    {
+    vtkDebugMacro("ProcessingMRML: got a view node modified event");
+    this->UpdateViewNode();
+    this->RequestRender();
+    }
+  else if (vtkMRMLModelNode::SafeDownCast(caller) != NULL)
+    {
+    // check for events on a model node
+    vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(caller);
+    if (event == vtkMRMLModelNode::PolyDataModifiedEvent)
       {
+      vtkDebugMacro("ProcessMRMLEvents: got a model poly data modified event");
+      this->UpdateModelPolyData(modelNode);
+      this->UpdateModelsFromMRML();
+      this->RequestRender();
+      }
+    else if (event == vtkMRMLModelNode::DisplayModifiedEvent)
+      {
+      vtkDebugMacro("ProcessMRMLEvents: got a model display modified event");
+      this->UpdateModelsFromMRML();     
+      this->RequestRender();
+      }
+    else if (event == vtkMRMLTransformableNode::TransformModifiedEvent)
+      {
+      // is this all that's needed?
+      vtkDebugMacro("ProcessMRMLEvents: got a model transform modified event");
       this->UpdateFromMRML();
       }
+    else
+      {
+      vtkDebugMacro("ProcessMRMLEvents: got an unhandled model event " << event);
+      }
     }
-  /*
-  else if ( vtkMRMLFiducialListNode::SafeDownCast(caller) != NULL
-     && event == vtkMRMLFiducialListNode::DisplayModifiedEvent )
+  else if (vtkMRMLModelHierarchyNode::SafeDownCast(caller) &&
+           event == vtkCommand::ModifiedEvent)
     {
-    // do a more lightweight update on the fiducial list nodes
-    vtkDebugMacro("vtkSlicerViewerWidget::ProcessMRMLEvents got a vtkMRMLFiducialListNode::DisplayModifiedEvent, just calling update fids from mrml\n");
-    this->UpdateFiducialsFromMRML();
+    vtkDebugMacro("ProcessMRMLEvents: got a model hierarchy node modified event");
     }
-  else if ( vtkMRMLFiducialListNode::SafeDownCast(caller) != NULL
-    && event == vtkMRMLFiducialListNode::FiducialModifiedEvent )
+  else
     {
-    vtkDebugMacro("vtkSlicerViewerWidget::ProcessMRMLEvents got a FiducialModifiedEvent, removing props and updating from mrml...\n");
-    this->RemoveFiducialProps ( );
-    this->UpdateFiducialsFromMRML();
+    vtkDebugMacro("ProcessMRMLEvents: unhandled event " << event << " " << ((event == 31) ? "ModifiedEvent" : "not ModifiedEvent"));
+    if (vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene) { vtkDebugMacro("\ton the mrml scene"); }
+    if (vtkMRMLNode::SafeDownCast(caller) != NULL) { vtkDebugMacro("\tmrml node id = " << vtkMRMLNode::SafeDownCast(caller)->GetID()); }
     }
-  */
-  else if (vtkMRMLModelNode::SafeDownCast(caller) != NULL
-           && event == vtkMRMLModelNode::PolyDataModifiedEvent)
-    {
-    this->UpdateModelPolyData(vtkMRMLModelNode::SafeDownCast(caller));
-    }
-  else 
-//  if ((vtkPolyData::SafeDownCast(caller) && event == vtkCommand::ModifiedEvent) ||
-//      (vtkMRMLModelDisplayNode::SafeDownCast(caller) && event == vtkCommand::ModifiedEvent))
-    {
-    this->UpdateFromMRML();
-    }
+  
   this->ProcessingMRMLEvent = 0;
 }
 //---------------------------------------------------------------------------
@@ -784,10 +807,6 @@ void vtkSlicerViewerWidget::UpdateFromMRML()
 
   this->RemoveModelProps ( );
   
-  /*this->RemoveFiducialProps ( );
-
-  this->UpdateFiducialsFromMRML();
-  */
   this->UpdateModelsFromMRML();
 
   this->AddHierarchiyObservers();
@@ -808,7 +827,7 @@ void vtkSlicerViewerWidget::UpdateModelsFromMRML()
   while (node=scene->GetNextNodeByClass("vtkMRMLModelNode"))
     {
     vtkMRMLModelNode *model = vtkMRMLModelNode::SafeDownCast(node);
-    // render slices last so that transparent objects are rendered in fron of them
+    // render slices last so that transparent objects are rendered in front of them
     if (!strcmp(model->GetName(), "Red Volume Slice") ||
         !strcmp(model->GetName(), "Green Volume Slice") ||
         !strcmp(model->GetName(), "Yellow Volume Slice"))
@@ -930,13 +949,20 @@ void vtkSlicerViewerWidget::UpdateModel(vtkMRMLModelNode *model)
   this->UpdateModelPolyData(model);
 
   // observe polydata
-  model->AddObserver ( vtkMRMLModelNode::PolyDataModifiedEvent, this->MRMLCallbackCommand );
+  if (!model->HasObserver( vtkMRMLModelNode::PolyDataModifiedEvent, this->MRMLCallbackCommand ))
+    {
+    model->AddObserver ( vtkMRMLModelNode::PolyDataModifiedEvent, this->MRMLCallbackCommand );
+    }
+  // observe display node
+  if (!model->HasObserver ( vtkMRMLModelNode::DisplayModifiedEvent, this->MRMLCallbackCommand ))
+    {
+    model->AddObserver ( vtkMRMLModelNode::DisplayModifiedEvent, this->MRMLCallbackCommand );
+    }
 
-  // observe display node  
-  model->AddObserver ( vtkMRMLModelNode::DisplayModifiedEvent, this->MRMLCallbackCommand );
-
-  model->AddObserver ( vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand );
-
+  if (!model->HasObserver ( vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand ) )
+    {
+    model->AddObserver ( vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand );
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -1030,6 +1056,7 @@ void vtkSlicerViewerWidget::RequestRender()
 void vtkSlicerViewerWidget::Render()
 {
   this->MainViewer->Render();
+  vtkDebugMacro("vtkSlicerViewerWidget::Render called render" << endl);
   this->SetRenderPending(0);
 }
 
