@@ -493,7 +493,7 @@ bool vtkSlicerApplicationLogic::RequestReadData( const char *refNode, const char
 {
   bool active;
 
-  std::cout << "Requesting " << filename << " be read into node " << refNode << ", display data = " << (displayData?"true":"false") <<  std::endl;
+//  std::cout << "Requesting " << filename << " be read into node " << refNode << ", display data = " << (displayData?"true":"false") <<  std::endl;
 
   // only request to read a file if the ReadData queue is up
   this->ReadDataQueueActiveLock->Lock();
@@ -686,7 +686,7 @@ void vtkSlicerApplicationLogic::ProcessReadData()
       // display node?
       if (disp)
         {
-        std::cout << " vtkSlicerApplicationLogic::ProcessReadData\n";
+//        std::cout << " vtkSlicerApplicationLogic::ProcessReadData\n";
         disp->SetScene( this->MRMLScene );
         this->MRMLScene->AddNode( disp );
         int isLabelMap = 0;
@@ -715,10 +715,9 @@ void vtkSlicerApplicationLogic::ProcessReadData()
               {
               displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultVolumeColorNodeID());
               }
-            std::cout << "set the diplay node to observe a color node " << displayNode->GetColorNodeID() << endl;
             colorLogic->Delete();
             }
-          } else { std::cout << "the display node isn't a vtkMRMLVolumeDisplayNode, didn't set a color node\n"; }
+          } 
         if (svnd)
           {
           svnd->SetAndObserveDisplayNodeID( disp->GetID() );

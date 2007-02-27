@@ -348,7 +348,7 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (char* filename, in
         displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultVolumeColorNodeID());
         }
       colorLogic->Delete();
-      } else { std::cout << "No color logic in vtk slicer volumes logic\n"; } 
+      }
    
     volumeNode->SetStorageNodeID(storageNode->GetID());
     volumeNode->SetAndObserveDisplayNodeID(displayNode->GetID());    
