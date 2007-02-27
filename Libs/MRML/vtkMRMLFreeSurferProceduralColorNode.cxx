@@ -55,7 +55,7 @@ vtkMRMLNode* vtkMRMLFreeSurferProceduralColorNode::CreateNodeInstance()
 vtkMRMLFreeSurferProceduralColorNode::vtkMRMLFreeSurferProceduralColorNode()
 {
   this->LookupTable = NULL;
-  this->HideFromEditors = 0;
+  this->HideFromEditors = 1;
   //this->DebugOn();
 }
 
@@ -354,11 +354,11 @@ const char* vtkMRMLFreeSurferProceduralColorNode::GetTypeAsString()
     }
   if (this->Type == this->Labels)
     {
-    return "Labels";
+    return "FreeSurferLabels";
     }
   if (this->Type == this->File)
     {
-    return "File";
+    return "FreeSurferFile";
     }
   return "(unknown)";
 }
@@ -476,21 +476,17 @@ void vtkMRMLFreeSurferProceduralColorNode::SetType(int type)
       }
     else if (this->Type == this->Labels)
       {
-      // from FreeSurfer's FreeSurferProceduralColorLUT.txt
-      this->GetFSLookupTable()->SetNumberOfColors(360);      
-      this->GetFSLookupTable()->SetRange(0,360);
-      this->Names.clear();
-      this->Names.resize(this->GetFSLookupTable()->GetNumberOfColors());
-      
-      this->SetColorName(0, "Black");
-//      this->GetFSLookupTable()->SetTableValue(0, 0, 0, 0, 1.0);
-
-     
-      
+      this->SetFileName("../Slicer3/Libs/FreeSurfer/Testing/FreeSurferColorLUT.txt");
+      vtkDebugMacro("SetType Labels: trying to read fs labels file " << this->GetFileName());
+      this->ReadFile();
+      // reset to labels, as read file sets the type to file
+      this->Type = this->Labels;
+      // the fs look up table shouldn't try to do anything special with labels
+      this->GetFSLookupTable()->SetLutTypeToLabels();
       }        
     else if (this->Type == this->File)
       {
-      std::cout << "Set type to file, call SetFileName and ReadFile next...\n";
+      std::cout << "Set type to file, call SetFileName and ReadFile next..." << endl;
       }
 
     else
