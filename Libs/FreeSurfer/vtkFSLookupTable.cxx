@@ -51,7 +51,7 @@ vtkFSLookupTable::~vtkFSLookupTable()
 //------------------------------------------------------------------------------
 void vtkFSLookupTable::PrintSelf(ostream& os, vtkIndent indent)
 {
-    vtkScalarsToColors::PrintSelf(os, indent);
+    Superclass::PrintSelf(os, indent);
 
     os << indent << "LowThres: " << this->LowThresh << endl;
     os << indent << "HiThresh: " << this->HiThresh << endl;
@@ -378,7 +378,7 @@ void vtkFSLookupTable::MapScalarsThroughTable2(void *input, unsigned char *outpu
     }
     if (outputIncrement != VTK_RGBA)
     {
-        vtkErrorMacro(<<"Output inrement " << outputIncrement << " doesn't match VTK_RGBA data type ("<< VTK_RGBA << "), returning");
+        vtkErrorMacro(<<"Output increment " << outputIncrement << " doesn't match VTK_RGBA data type ("<< VTK_RGBA << "), returning");
         return;
     }
     
