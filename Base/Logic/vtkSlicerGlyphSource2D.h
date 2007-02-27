@@ -140,7 +140,7 @@ public:
   
 protected:
   vtkSlicerGlyphSource2D();
-  ~vtkSlicerGlyphSource2D() {};
+  ~vtkSlicerGlyphSource2D() { vtkWarningMacro("~vtkSlicerGlyphSource2D\n"); };
 
   int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
 

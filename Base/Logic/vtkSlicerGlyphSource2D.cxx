@@ -140,19 +140,24 @@ int vtkSlicerGlyphSource2D::RequestData(
   //Clean up
   output->SetPoints(pts);
   pts->Delete();
+  pts = NULL;
 
   output->SetVerts(verts);
   verts->Delete();
+  verts = NULL;
   
   output->SetLines(lines);
   lines->Delete();
+  lines = NULL;
   
   output->SetPolys(polys);
   polys->Delete();
+  polys = NULL;
 
   output->GetCellData()->SetScalars(colors);
   colors->Delete();
-
+  colors = NULL;
+  
   return 1;
 }
 

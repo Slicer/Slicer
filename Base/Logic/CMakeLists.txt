@@ -53,6 +53,8 @@ INCLUDE_DIRECTORIES(
   ${vtkTeem_BINARY_DIR}
   ${SlicerBase_BINARY_DIR}
   ${OPENTRACKER_INC_DIR}
+  ${FreeSurfer_SOURCE_DIR}
+  ${FreeSurfer_BINARY_DIR}
   )
 
 
@@ -86,6 +88,7 @@ TARGET_LINK_LIBRARIES(SlicerBaseLogic
   vtkIOTCL
   vtkHybridTCL
   ${OPENTRACKER_LIB}
+  FreeSurfer
   )
 
 IF( TEEM_FOUND )
