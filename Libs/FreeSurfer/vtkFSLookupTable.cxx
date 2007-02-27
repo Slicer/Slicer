@@ -68,6 +68,9 @@ void vtkFSLookupTable::PrintSelf(ostream& os, vtkIndent indent)
 const char *vtkFSLookupTable::GetLutTypeString ()
 {
     switch (this->LutType) {
+    case FSLUTLABELS:
+      return "FreeSurferLabels";
+      break;
     case FSLUTHEAT:
       return "Heat"; 
       break;
@@ -86,6 +89,12 @@ const char *vtkFSLookupTable::GetLutTypeString ()
     default:
         return "Unknown";
     }
+}
+
+//------------------------------------------------------------------------------
+void vtkFSLookupTable::SetLutTypeToLabels()
+{
+  this->LutType = this->FSLUTLABELS;
 }
 
 //------------------------------------------------------------------------------
@@ -203,6 +212,13 @@ unsigned char *vtkFSLookupTable::MapValue(double val)
 
     switch (this->LutType) {
     case FSLUTHEAT:
+    case FSLUTBLUERED:
+    case FSLUTREDBLUE:
+      // temp solution for red/blue, blue/red
+      if (this->LutType == FSLUTREDBLUE)
+        {
+        this->ReverseOn();
+        }
         /// functional overlay heat scale
         f = val;
         fcurv = this->Slope;
@@ -326,12 +342,14 @@ unsigned char *vtkFSLookupTable::MapValue(double val)
         this->RGBA[3] = (unsigned char)(a);
 
         break;
+        /*
     case FSLUTBLUERED:
 //        vtkErrorMacro(<<"Not doing anything for Blue Red just yet\n");
         break;
     case FSLUTREDBLUE:
 //        vtkErrorMacro(<<"Not doing anything for  Red Blue just yet\n");
         break;
+        */
     default:
         vtkErrorMacro(<<"Unknown look up table type " << this->LutType);
     }
@@ -361,10 +379,12 @@ void vtkFSLookupTable::MapScalarsThroughTable2(void *input, unsigned char *outpu
     double rgb[3];
     double val;
     float *inPtr;
+    unsigned char *ucPtr;
+    unsigned char ucVal;
     
     
     vtkDebugMacro( << "MapScalarsThroughTable2:\n");
-    vtkDebugMacro( << "\tinputDataType = " << inputDataType << ", number of vals = " << numberOfValues << ", input incr = " << inputIncrement << ",\noutput incr = " << outputIncrement << ", VTK_RGBA data type = "<< VTK_RGBA << endl);
+    vtkDebugMacro( << "\tinputDataType = " << inputDataType << ", number of vals = " << numberOfValues << ", input incr = " << inputIncrement << ",\noutput incr = " << outputIncrement << ", VTK_RGBA data type = "<< VTK_RGBA << ", lut type = " << this->LutType << endl);
 
     if (input == NULL)
     {
@@ -376,9 +396,19 @@ void vtkFSLookupTable::MapScalarsThroughTable2(void *input, unsigned char *outpu
         vtkErrorMacro(<<"Output array is null!");
         return;
     }
-    if (outputIncrement != VTK_RGBA)
+    if (this->LutType == 0)
+      {
+      // labels, just call the superclass
+      vtkDebugMacro("Probably have labels, calling the superclass to map through the table.");
+      Superclass::MapScalarsThroughTable2(input, output, inputDataType, numberOfValues, inputIncrement, outputIncrement);
+      return;
+      }
+
+    
+    if (outputIncrement != VTK_RGBA &&
+        outputIncrement != VTK_RGB)
     {
-        vtkErrorMacro(<<"Output increment " << outputIncrement << " doesn't match VTK_RGBA data type ("<< VTK_RGBA << "), returning");
+        vtkErrorMacro(<<"Output increment " << outputIncrement << " doesn't match VTK_RGBA data type ("<< VTK_RGBA << ") nor VTK_RGB data type ("<< VTK_RGB << "), returning");
         return;
     }
     
@@ -413,17 +443,40 @@ void vtkFSLookupTable::MapScalarsThroughTable2(void *input, unsigned char *outpu
                 output[n*outputIncrement*sizeof(unsigned char)] = (unsigned char)(rgb[0]*255.0);
                 output[n*outputIncrement*sizeof(unsigned char) + 1] = (unsigned char)(rgb[1]*255.0);
                 output[n*outputIncrement*sizeof(unsigned char) + 2] = (unsigned char)(rgb[2]*255.0);
-                // opacity should always be 1
-                output[n*outputIncrement*sizeof(unsigned char) + 3] = (unsigned char)(255);
-    /*
-                output[n*outputIncrement*sizeof(unsigned char)] = (unsigned int)(rgb[0]*255.0);
-                output[n*outputIncrement*sizeof(unsigned char) + 1] = (unsigned int)(rgb[1]*255.0);
-                output[n*outputIncrement*sizeof(unsigned char) + 2] = (unsigned int)(rgb[2]*255.0);
-                // opacity should always be 1
-                output[n*outputIncrement*sizeof(unsigned char) + 3] = (unsigned int)(255);
-                */
+                if (outputIncrement == VTK_RGBA)
+                  {
+                  // opacity set to be always 1
+                  output[n*outputIncrement*sizeof(unsigned char) + 3] = (unsigned char)(255);
+                  }
             }
             break;
+    case VTK_UNSIGNED_CHAR:
+      vtkDebugMacro("Input data type is unsigned char.");
+      for (n = 0; n < numberOfValues; n++)
+        {
+        ucPtr = static_cast<unsigned char*>(input);
+        ucPtr += n*inputIncrement;
+        ucVal = *ucPtr;
+        unsigned char *rgb8 = this->MapValue((double)ucVal);
+        if (rgb[0] < 0.0 || rgb[0] > 1.0 ||
+            rgb[1] < 0.0 || rgb[1] > 1.0 ||
+            rgb[2] < 0.0 || rgb[2] > 1.0)
+          {
+          rgb[0] = 0.0;
+          rgb[1] = 0.0;
+          rgb[2] = 0.0;
+          }
+        // now save it to the output
+        output[n*outputIncrement*sizeof(unsigned char)] = (unsigned char)(rgb[0]*255.0);
+        output[n*outputIncrement*sizeof(unsigned char) + 1] = (unsigned char)(rgb[1]*255.0);
+        output[n*outputIncrement*sizeof(unsigned char) + 2] = (unsigned char)(rgb[2]*255.0);
+        if (outputIncrement == VTK_RGBA)
+          {
+          // opacity set to be always 1
+          output[n*outputIncrement*sizeof(unsigned char) + 3] = (unsigned char)(255);
+          }
+        }
+      break;
     default:
         vtkErrorMacro(<<"Have no idea how to deal with this input type " << inputDataType);
     }

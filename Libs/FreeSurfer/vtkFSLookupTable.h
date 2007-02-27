@@ -39,6 +39,7 @@ public:
 
     vtkGetMacro(LutType,int);
     const char *GetLutTypeString();
+    void SetLutTypeToLabels();
     void SetLutTypeToHeat();
     void SetLutTypeToBlueRed();
     void SetLutTypeToRedBlue();
@@ -78,6 +79,7 @@ public:
     /// Type constant, can have different types of colour scales
     enum
     {
+      FSLUTLABELS = 0,
       FSLUTHEAT = 1,
       FSLUTBLUERED = 2,
       FSLUTREDBLUE = 3,
