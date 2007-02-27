@@ -102,6 +102,7 @@ void vtkMRMLModelNode::UpdateReferenceID(const char *oldID, const char *newID)
   if (!strcmp(oldID, this->StorageNodeID))
     {
     this->SetStorageNodeID(newID);
+    return;
     }
   if (!strcmp(oldID, this->DisplayNodeID))
     {
@@ -292,7 +293,7 @@ void vtkMRMLModelNode::ProcessMRMLEvents ( vtkObject *caller,
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLModelNode::AddPointScalars(vtkFloatArray *array)
+void vtkMRMLModelNode::AddPointScalars(vtkDataArray *array)
 {
   if (array == NULL)
     {
@@ -319,7 +320,7 @@ void vtkMRMLModelNode::AddPointScalars(vtkFloatArray *array)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLModelNode::AddCellScalars(vtkFloatArray *array)
+void vtkMRMLModelNode::AddCellScalars(vtkDataArray *array)
 {
   if (array == NULL)
     {

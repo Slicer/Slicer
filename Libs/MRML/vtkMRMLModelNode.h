@@ -105,8 +105,8 @@ public:
 
   // Description:
   // add an array to the polydata's point/cell data
-  void AddPointScalars(vtkFloatArray *array);
-  void AddCellScalars(vtkFloatArray *array);
+  void AddPointScalars(vtkDataArray *array);
+  void AddCellScalars(vtkDataArray *array);
   // Description:
   // remove an array from the polydata's point/cell data
   void RemoveScalars(const char *scalarName);
