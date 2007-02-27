@@ -236,7 +236,7 @@ proc QueryAtlasAddVolumes {} {
 
   set volumeDisplayNode [$volumeNode GetDisplayNode]
 
-  set colorNode [vtkMRMLColorNode New]
+  set colorNode [vtkMRMLFreeSurferProceduralColorNode New]
   $colorNode SetFileName $::SLICER_BUILD/../Slicer3/Libs/FreeSurfer/Testing/FreeSurferColorLUT.txt
   $colorNode ReadFile
   $::slicer3::MRMLScene AddNode $colorNode
