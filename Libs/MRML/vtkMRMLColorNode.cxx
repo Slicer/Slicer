@@ -158,7 +158,7 @@ void vtkMRMLColorNode::PrintSelf(ostream& os, vtkIndent indent)
       (this->Name ? this->Name : "(none)") << "\n";
   
 
-  os << indent << "Type: (" << this->GetType() << ")\n";
+  os << indent << "Type: (" << this->GetTypeAsString() << ")\n";
 
   if (this->Names.size() > 0)
     {
