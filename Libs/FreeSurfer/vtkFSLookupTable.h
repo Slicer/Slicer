@@ -21,22 +21,12 @@
 
 #include <FreeSurferConfigure.h>
 #include "vtkFreeSurferWin32Header.h"
-#include "vtkScalarsToColors.h"
-
-/*
-/// Type constant, can have different types of colour scales
-const int FSLUTHEAT = 1;
-const int FSLUTBLUERED = 2;
-const int FSLUTREDBLUE = 3;
-const int FSLUTREDGREEN = 4;
-const int FSLUTGREENRED = 5;
-*/
-
-class VTK_FreeSurfer_EXPORT vtkFSLookupTable : public vtkScalarsToColors
+#include "vtkLookupTable.h"
+class VTK_FreeSurfer_EXPORT vtkFSLookupTable : public vtkLookupTable
 {
 public:
     static vtkFSLookupTable *New();
-    vtkTypeMacro(vtkFSLookupTable,vtkScalarsToColors);
+    vtkTypeMacro(vtkFSLookupTable,vtkLookupTable);
     void PrintSelf(ostream& os, vtkIndent indent);
 
     
@@ -83,9 +73,6 @@ public:
     void GetColor(double, double[3]);
     //ETX - end tcl exclude
     void MapScalarsThroughTable2(void*, unsigned char*, int, int, int, int);
-
-    vtkGetMacro(NumberOfColors,int);
-    vtkSetMacro(NumberOfColors,int);
 
     //BTX
     /// Type constant, can have different types of colour scales
@@ -136,9 +123,6 @@ protected:
     /// Midpoint of the function that maps from input values to colours
     /// FS fmid and cmid
     float FMid;
-
-    /// Number of colours, from standard lut, not used
-    int NumberOfColors;
 
     /// output of colour computation
     unsigned char RGBA[4];
