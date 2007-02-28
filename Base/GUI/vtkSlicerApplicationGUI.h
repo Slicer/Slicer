@@ -209,6 +209,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     virtual void SetCurrentModuleToHome();
     virtual void PythonConsole();
 
+    virtual void InitializeNavigationWidget ();
+
     virtual void Save3DViewConfig ( );
     virtual void Restore3DViewConfig ( );
 

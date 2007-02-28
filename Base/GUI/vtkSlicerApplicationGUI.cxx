@@ -691,10 +691,6 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
             // after SliceGUIs are created, the ViewControlGUI
             // needs to observe them to feed its magnifier
             // Zoom Widget.
-#ifndef VIEWCONTROL_DEBUG
-            vcGUI->UpdateFromMRML();
-            vcGUI->UpdateSliceGUIInteractorStyles();
-#endif
 
 #ifndef MENU_DEBUG
             // Construct menu bar and set up global key bindings
@@ -780,6 +776,19 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
     }
 }
 
+
+//---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::InitializeNavigationWidget (  )
+{
+
+  vtkSlicerViewControlGUI *vcGUI = this->GetViewControlGUI ( );
+  vcGUI->UpdateFromMRML();
+  vcGUI->UpdateSliceGUIInteractorStyles();
+  vcGUI->UpdateMainViewerInteractorStyles( );
+  vcGUI->InitializeNavigationWidgetCamera( );
+  vcGUI->UpdateNavigationWidgetViewActors ( );
+  vcGUI->ConfigureNavigationWidgetRender ( );
+}
 
 
 //---------------------------------------------------------------------------

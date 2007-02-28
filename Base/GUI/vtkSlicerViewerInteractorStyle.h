@@ -76,6 +76,7 @@ public:
   virtual void Spin();
   virtual void Pan();
   virtual void Dolly();
+  virtual void Dolly(double factor);
 
   virtual void OnEnter();
   virtual void OnLeave();
@@ -110,8 +111,6 @@ protected:
   vtkSlicerApplicationLogic *ApplicationLogic;
 
   double MotionFactor;
-
-  virtual void Dolly(double factor);
 
   // Description:
   // A pointer back to the viewer widget, useful for picking

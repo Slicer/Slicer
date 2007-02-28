@@ -9,16 +9,23 @@
 #include "vtkObserverManager.h"
 #include "vtkImageData.h"
 #include "vtkTransform.h"
-#include "vtkImageMagnify.h"
-#include "vtkExtractVOI.h"
-#include "vtkImageChangeInformation.h"
-#include "vtkGlyphSource2D.h"
+#include "vtkOutlineSource.h"
+#include "vtkPolyDataMapper.h"
+#include "vtkImageMapper.h"
+#include "vtkActor2D.h"
+#include "vtkActor.h"
+#include "vtkFollower.h"
 
+#include "vtkSlicerImageCloseUp2D.h"
+#include "vtkSlicerImageCrossHair2D.h"
 #include "vtkSlicerBaseGUIWin32Header.h"
 #include "vtkSlicerComponentGUI.h"
 #include "vtkSlicerInteractorStyle.h"
+#include "vtkSlicerViewerInteractorStyle.h"
 
 #include "vtkMRMLViewNode.h"
+#include "vtkMRMLSliceNode.h"
+#include "vtkMRMLSelectionNode.h"
 #include "vtkMRMLCameraNode.h"
 
 class vtkKWFrame;
@@ -37,8 +44,8 @@ class vtkKWMenuButton;
 class vtkKWEntry;
 class vtkKWEntryWithLabel;
 class vtkSlicerViewControlIcons;
-
 class vtkCallbackCommand;
+
 
 //BTX
 #ifndef vtkSetAndObserveMRMLNodeMacro
@@ -77,17 +84,26 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   void PrintSelf ( ostream& os, vtkIndent indent );
 
   // Description:
-  // Set when a render is pending.
-  vtkGetMacro ( RenderPending, int );
-  vtkSetMacro ( RenderPending, int );
+  // Get/Set when a render is pending.
+  vtkGetMacro ( NavigationRenderPending, int );
+  vtkSetMacro ( NavigationRenderPending, int );
+  // Description:
+  // Get/Set when a zoom is pending.
+  vtkGetMacro ( ZoomRenderPending, int );
+  vtkSetMacro ( ZoomRenderPending, int );
 
   // Description:
-  // used for animated rock
+  // parameters used for animated rock
   vtkGetMacro ( RockCount, int );
   vtkSetMacro ( RockCount, int );
+  vtkGetMacro ( SliceMagnification, double );  
 
   // Description:
-  // Get the widgets in the ViewControlFrame
+  // Icons that modify the widgets in ViewControlGUI
+  vtkGetObjectMacro ( SlicerViewControlIcons, vtkSlicerViewControlIcons );
+
+  // Description:
+  // Get the widgets in the ViewControlGUI
   vtkGetObjectMacro (SpinButton, vtkKWCheckButton);
   vtkGetObjectMacro (RockButton, vtkKWCheckButton);
   vtkGetObjectMacro (OrthoButton, vtkKWPushButton);
@@ -96,15 +112,17 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   vtkGetObjectMacro (SelectCameraButton, vtkKWMenuButton);
   vtkGetObjectMacro (StereoButton, vtkKWMenuButton);
   vtkGetObjectMacro (VisibilityButton, vtkKWMenuButton );
-  vtkGetObjectMacro (FOVEntry, vtkKWEntryWithLabel);
+  vtkGetObjectMacro (RedFOVEntry, vtkKWEntryWithLabel);
+  vtkGetObjectMacro (YellowFOVEntry, vtkKWEntry);
+  vtkGetObjectMacro (GreenFOVEntry, vtkKWEntry);
   vtkGetObjectMacro (ZoomEntry, vtkKWEntryWithLabel);
   vtkGetObjectMacro (LookFromButton, vtkKWRadioButton);
   vtkGetObjectMacro (RotateAroundButton, vtkKWRadioButton );
-  vtkGetObjectMacro (NavZoomFrame, vtkKWFrame );
+  vtkGetObjectMacro (NavigationZoomFrame, vtkKWFrame );
   
   // Description:
-  // Get the Widgets that display the RotateAround image
-  // in the ViewControlFrame.
+  // Get the Widgets that display the RotateAround rollover images
+  // and the LookFrom rollover images in the ViewControlGUI
   vtkGetObjectMacro (ViewAxisAIconButton, vtkKWLabel );
   vtkGetObjectMacro (ViewAxisPIconButton, vtkKWLabel );
   vtkGetObjectMacro (ViewAxisRIconButton, vtkKWLabel );
@@ -114,41 +132,53 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   vtkGetObjectMacro (ViewAxisCenterIconButton, vtkKWLabel );
   vtkGetObjectMacro (ViewAxisTopCornerIconButton, vtkKWLabel );
   vtkGetObjectMacro (ViewAxisBottomCornerIconButton, vtkKWLabel);
-  vtkGetObjectMacro (NavWidget, vtkKWRenderWidget );
+  vtkGetObjectMacro (NavigationWidget, vtkKWRenderWidget );
   vtkGetObjectMacro (ZoomWidget, vtkKWRenderWidget );
-    
-  vtkGetObjectMacro ( SlicerViewControlIcons, vtkSlicerViewControlIcons );
 
   // Description:
-  // Get the Widgets that display the Navigation Zoom images
-  // in the ViewControlFrame.
-  vtkGetObjectMacro (NavZoomInIconButton, vtkKWPushButton );
-  vtkGetObjectMacro (NavZoomOutIconButton, vtkKWPushButton );
-  vtkGetObjectMacro (NavZoomScale, vtkKWScale );
-  vtkGetObjectMacro (NavZoomLabel, vtkKWLabel );
+  // Box that represents the 3DViewer's window in the
+  // Navigation rendered view
+  vtkGetObjectMacro (FOVBox, vtkOutlineSource );
+  vtkSetObjectMacro (FOVBox, vtkOutlineSource );
 
-    // Description:
-    // API for getting & setting SliceGUI interactor styles
-    vtkSetObjectMacro ( Slice0Events, vtkSlicerInteractorStyle );
-    vtkSetObjectMacro ( Slice1Events, vtkSlicerInteractorStyle );
-    vtkSetObjectMacro ( Slice2Events, vtkSlicerInteractorStyle );
-
-    vtkGetObjectMacro ( Slice0Events, vtkSlicerInteractorStyle );
-    vtkGetObjectMacro ( Slice1Events, vtkSlicerInteractorStyle );
-    vtkGetObjectMacro ( Slice2Events, vtkSlicerInteractorStyle );
-
-    vtkGetObjectMacro ( ViewNode, vtkMRMLViewNode );
-    vtkSetObjectMacro ( ViewNode, vtkMRMLViewNode );
-    
   // Description:
-  // Get the main slicer toolbars.
+  // Get the Widgets that display the Zoom images
+  // and cursor in the ViewControlGUI
+  vtkGetObjectMacro (SliceMagnifier, vtkSlicerImageCloseUp2D);
+  vtkGetObjectMacro (SliceMagnifierCursor, vtkSlicerImageCrossHair2D);
+  vtkGetObjectMacro (SliceMagnifierMapper, vtkImageMapper);
+  vtkGetObjectMacro (SliceMagnifierActor, vtkActor2D);
+
+  // Description:
+  // Get the main slicer application
   vtkGetObjectMacro (ApplicationGUI, vtkSlicerApplicationGUI );
   virtual void SetApplicationGUI ( vtkSlicerApplicationGUI *appGUI );
+
+  // Description:
+  // API for getting & setting SliceGUI and MainViewer's interactor style
+  vtkSetObjectMacro ( Slice0Events, vtkSlicerInteractorStyle );
+  vtkSetObjectMacro ( Slice1Events, vtkSlicerInteractorStyle );
+  vtkSetObjectMacro ( Slice2Events, vtkSlicerInteractorStyle );
+  vtkSetObjectMacro ( MainViewerEvents, vtkSlicerViewerInteractorStyle );
+  vtkGetObjectMacro ( Slice0Events, vtkSlicerInteractorStyle );
+  vtkGetObjectMacro ( Slice1Events, vtkSlicerInteractorStyle );
+  vtkGetObjectMacro ( Slice2Events, vtkSlicerInteractorStyle );
+  vtkGetObjectMacro ( MainViewerEvents, vtkSlicerViewerInteractorStyle);
+
+  // Description:
+  // Methods for Get/Set the MRMLViewNode (probably
+  // will be modified or phased out), or refactored into
+  // an accompanying Logic class.
+  vtkGetObjectMacro ( ViewNode, vtkMRMLViewNode );
+  vtkSetObjectMacro ( ViewNode, vtkMRMLViewNode );
+  vtkMRMLViewNode *GetActiveView();
+  vtkMRMLCameraNode *GetActiveCamera();
     
   // Description:
   // This method builds the Data module's GUI
   virtual void BuildGUI ( vtkKWFrame *appF );
-    
+  virtual void TearDownGUI  ( );
+  
   // Description:
   // Add/Remove observers on widgets in the GUI
   virtual void AddGUIObservers ( );
@@ -156,29 +186,39 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
 
   // Description:
   // Add and remove observers on the
+  // MainViewer so that we can manage
+  // functionality of the Navigation widget
+  void UpdateMainViewerInteractorStyles ( );
+  void AddMainViewerObservers();
+  void RemoveMainViewerObservers();
+  
+  // Description:
+  // Add and remove observers on the
   // slice GUIs so that we can manage
-  // functionality of the Nav/Zoom widget
+  // functionality of the Zoom widget
+  virtual void UpdateSliceGUIInteractorStyles();
   virtual void AddSliceGUIObservers();
   virtual void RemoveSliceGUIObservers();
+  
+  // Description:
+  // Add and remove observers on the view node.
   virtual void AddViewObservers();
   virtual void RemoveViewObservers();
 
-  virtual void UpdateCurrentCameraAndActors();
-  virtual void UpdateSliceGUIInteractorStyles();
+  // Description:
+  // Methods to update GUI, View and MRML
   virtual void UpdateGUI ( );
   virtual void UpdateView();
   virtual void UpdateFromMRML ( );
   
-  virtual void MagnifyActiveSlice();
-  vtkMRMLViewNode *GetActiveView();
-  vtkMRMLCameraNode *GetActiveCamera();
-
   // Description:
-  // Renders the Nav/Zoom widget fresh
+  // Renders the Navigation/Zoom widget fresh
   // when scene has been modified, or
   // when view is changed.
-  virtual void RequestRender ( );
-  virtual void Render ( );
+  virtual void RequestNavigationRender ( );
+  virtual void NavigationRender ( );
+  virtual void RequestZoomRender ( );
+  virtual void ZoomRender ( );
   
   // Description:
   // Class's mediator methods for processing events invoked by
@@ -193,19 +233,16 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   virtual void Exit ( );
 
   // Description:
-  // manages the fiducial visibility across ViewControlGUI, SliceControlGUI and FiducialsGUI
+  // manages the fiducial visibility across ViewControlGUI,
+  // SliceControlGUI and FiducialsGUI
   virtual void SetMRMLFiducialPointVisibility ( int state);
   virtual void SetMRMLFiducialLabelVisibility ( int state);
-
-  // Description:
-  // Creates the magnified slice view when mouse
-  // is over a slice window.
-  virtual void SliceViewMagnify( int event, vtkSlicerInteractorStyle *istyle);
 
   // Description:
   // Starts and stops automatic view spinning
   virtual void MainViewSpin ( );
   virtual void SpinView (int direction, double degrees );
+  virtual void MainViewZoom ( double factor );
 
   // Description:
   // Resets focal point to origin
@@ -220,29 +257,56 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   virtual void RockView ( );
 
   // Description:
-  // Moves camera down selected axis and looks at
+  // Moves camera down selected axis in MainViewer and looks at
   // focal point from there
   virtual void MainViewLookFrom ( const char *dir );
   // Description:
-  // Rotates camera about selected axis by an increment.
+  // Rotates camera about selected axis by an increment in MainViewer
   virtual void MainViewRotateAround ( int axis );
-
   // Description:
-  // Sets either Parallel or Perspective Projection
+  // Sets either Parallel or Perspective Projection in MainViewer
   virtual void MainViewSetProjection ( );
-
   // Description:
   // Sets stereo options or turns off stereo, if
-  // stereo is enabled.
+  // stereo is enabled in MainViewer
   virtual void MainViewSetStereo ( );
-
   // Description:
-  // Sets background color in the Main View
+  // Sets background color in the MainViewer
   virtual void MainViewBackgroundColor ( double *color );
+  // Description:
+  // Toggles visibility of actors in the MainViewer
+  virtual void MainViewVisibility( );
 
   // Description:
-  // Toggles visibility of actors in the Main View
-  virtual void MainViewVisibility( );
+  // Creates the magnified slice view in ZoomWidget
+  // when mouse moves over a slice window.
+  virtual void SliceViewMagnify( int event, vtkSlicerInteractorStyle *istyle);
+
+  // Description:
+  // Keeps the actors added to the Navigation Widget's
+  // renderer the same as those in the 3DView's renderer.
+  virtual void UpdateNavigationWidgetViewActors ( );
+
+  // Description:
+  // Updates the Navigation widget's camera to track
+  // the 3DView camera
+  virtual void ConfigureNavigationWidgetRender ( );
+  // Description:
+  // Configures the Navigation widget's camera on
+  // startup.
+  virtual void InitializeNavigationWidgetCamera ( );
+  // Description: Similar to vtkRenderer's ResetCamera
+  // method, but tries to use a smaller ViewAngle to
+  // compute a nearer camera distance that still
+  // accommodates all visible actors in scene. Not
+  // working any differently than ResetCamera yet,
+  // for reasons unknown...
+  virtual void ResetNavigationCamera ( );
+
+  // Description:
+  // Create the rectangle on the NavigationWidget that
+  // indicates the 3DView's FOV.
+  virtual void CreateFieldOfViewBoxActor ( );
   
   // Description:
   // Groups of callbacks that handle the state change of
@@ -268,22 +332,31 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   void EnterViewAxisICallback ( );
   void LeaveViewAxisICallback ( );
 
+  // Description:
+  // Assigns <enter> and <leave> bindings for rollover images.
   void MakeViewControlRolloverBehavior ( );
+
+  // Description:
+  // Builds pulldown menus for GUI menubuttons
   void BuildCameraSelectMenu ( );
   void BuildViewSelectMenu ( );
   void BuildStereoSelectMenu ( );
   void BuildVisibilityMenu ( );
 
-  virtual void PackNavWidget ( );
+  // Description:
+  // Methods for unpacking and packing the
+  // Navigation and Zoom widgets into same parcel.
+  virtual void PackNavigationWidget ( );
   virtual void PackZoomWidget ( ) ;
 
  protected:
   vtkSlicerViewControlGUI ( );
   virtual ~vtkSlicerViewControlGUI ( );
     
-  int RenderPending;
-  bool SceneClosing;
+  int NavigationRenderPending;
+  int ZoomRenderPending;
   int ProcessingMRMLEvent;
+  bool SceneClosing;
   
   vtkSlicerApplicationGUI *ApplicationGUI;
   vtkSlicerViewControlIcons *SlicerViewControlIcons;
@@ -297,21 +370,19 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   vtkKWMenuButton *SelectViewButton;
   vtkKWMenuButton *SelectCameraButton;
   vtkKWMenuButton *VisibilityButton;
-  vtkKWEntryWithLabel *FOVEntry;
+  vtkKWEntryWithLabel *RedFOVEntry;
+  vtkKWEntry *YellowFOVEntry;
+  vtkKWEntry *GreenFOVEntry;
   vtkKWEntryWithLabel *ZoomEntry;
     
-  // navzoom scale, navzoomin/outiconbutton tmpNavZoom, all the icon buttons.    
+  // navzoom scale, navzoomin/outiconbutton tmpNavigationZoom, all the icon buttons.    
   // Description:
   // These widgets display icons that indicate
   // zoom-in and zoom-out functionality in the
   // ViewControlFrame's Navigation widget
-  vtkKWPushButton *NavZoomInIconButton;
-  vtkKWPushButton *NavZoomOutIconButton;
-  vtkKWScale *NavZoomScale;
-  vtkKWLabel *NavZoomLabel;
-  vtkKWRenderWidget *NavWidget;
+  vtkKWRenderWidget *NavigationWidget;
   vtkKWRenderWidget *ZoomWidget;
-  vtkKWFrame *NavZoomFrame;
+  vtkKWFrame *NavigationZoomFrame;
 
   // Description:
   // These widgets tile a composite image
@@ -328,22 +399,34 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   vtkKWLabel *ViewAxisTopCornerIconButton;
   vtkKWLabel *ViewAxisBottomCornerIconButton;
 
-  double ZoomCenter[2];
-//  vtkSlicerImageZoom2D *Zoomer;
-  vtkImageMagnify *Zoomer;
-  vtkGlyphSource2D *ZoomCursor;
-  vtkImageChangeInformation *ZoomChanger;
-  vtkExtractVOI *ZoomExtractor;
+  // Description:
+  // pipeline objects for accomplishing the slice zoom
+  // in the Zoom widget.
+  vtkSlicerImageCloseUp2D *SliceMagnifier;
+  vtkSlicerImageCrossHair2D *SliceMagnifierCursor;
+  vtkImageMapper *SliceMagnifierMapper;
+  vtkActor2D *SliceMagnifierActor;
+  
+  // Description:
+  // objects for building the FOV box in the
+  // Navigation widget
+  vtkOutlineSource *FOVBox;
+  vtkPolyDataMapper *FOVBoxMapper;
+  vtkFollower *FOVBoxActor;
 
+  // Description:
+  // MRML and GUI objects that this class will need
+  // to set and observe.
   vtkMRMLViewNode *ViewNode;
   vtkSlicerInteractorStyle *Slice0Events;
   vtkSlicerInteractorStyle *Slice1Events;
   vtkSlicerInteractorStyle *Slice2Events;
+  vtkSlicerViewerInteractorStyle *MainViewerEvents;
 
   int RockCount;
-  int NavZoomWidgetWid;
-  int NavZoomWidgetHit;
-  int Magnification;
+  int NavigationZoomWidgetWid;
+  int NavigationZoomWidgetHit;
+  double SliceMagnification;
 
  private:
   vtkSlicerViewControlGUI ( const vtkSlicerViewControlGUI& ); // Not implemented.

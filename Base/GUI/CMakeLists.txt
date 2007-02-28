@@ -24,6 +24,8 @@ SET(LIB_SRCS
   vtkSlicerColor.cxx
   vtkSlicerFont.cxx
   vtkSlicerIcons.cxx
+  vtkSlicerImageCloseUp2D.cxx
+  vtkSlicerImageCrossHair2D.cxx
   vtkSlicerLogoIcons.cxx
   vtkSlicerBaseAcknowledgementLogoIcons.cxx
   vtkSlicerVisibilityIcons.cxx

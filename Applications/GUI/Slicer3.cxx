@@ -92,6 +92,7 @@ extern "C" {
 //#define FIDUCIALS_DEBUG
 //#define CAMERA_DEBUG
 //#define EMSEG_DEBUG
+//#define VIEWCONTROL_DEBUG
 
 #ifndef EMSEG_DEBUG
 #include "vtkEMSegmentLogic.h"
@@ -878,6 +879,10 @@ int Slicer3_main(int argc, char *argv[])
     slicerApp->AddModuleGUI ( slicesGUI );
     slicesGUI->BuildGUI ();
     slicesGUI->AddGUIObservers ( );
+#endif
+
+#ifndef VIEWCONTROL_DEBUG
+    appGUI->InitializeNavigationWidget();
 #endif
 
 
