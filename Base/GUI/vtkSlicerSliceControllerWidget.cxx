@@ -257,7 +257,7 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     this->ColorCodeButton->SetParent ( this );
     this->ColorCodeButton->Create ( );
     this->ColorCodeButton->SetBorderWidth (0 );
-    this->ColorCodeButton->SetImageToPredefinedIcon (vtkKWIcon::IconSpinDown );
+    this->ColorCodeButton->SetImageToPredefinedIcon (vtkKWIcon::IconSpinUp );
     this->ColorCodeButton->SetHeight (7 );
     this->ColorCodeButton->SetCommand (this, "Shrink");
     this->ColorCodeButton->SetBalloonHelpString ("Click to shrink/expand" );
@@ -1300,7 +1300,7 @@ void vtkSlicerSliceControllerWidget::Shrink()
     {
     if (this->ColorCodeButton)
       {
-      this->ColorCodeButton->SetImageToPredefinedIcon (vtkKWIcon::IconSpinUp );
+      this->ColorCodeButton->SetImageToPredefinedIcon (vtkKWIcon::IconSpinDown );
       this->ColorCodeButton->SetCommand (this, "Expand");
       }
     this->Script ("pack forget %s", 
@@ -1316,7 +1316,7 @@ void vtkSlicerSliceControllerWidget::Expand()
     {
     if (this->ColorCodeButton)
       {
-      this->ColorCodeButton->SetImageToPredefinedIcon (vtkKWIcon::IconSpinDown );
+      this->ColorCodeButton->SetImageToPredefinedIcon (vtkKWIcon::IconSpinUp );
       this->ColorCodeButton->SetCommand (this, "Shrink");
       }
     this->Script ("pack %s -side bottom -expand 1 -fill x", 

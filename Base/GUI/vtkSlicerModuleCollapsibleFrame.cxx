@@ -158,7 +158,8 @@ void vtkSlicerModuleCollapsibleFrame::CreateWidget()
     vtkKWTkUtilities::ChangeFontWeightToBold(this->GetLabel());
     }
 
-  this->IconData->SetImage(vtkKWIcon::IconShrink);
+//  this->IconData->SetImage(vtkKWIcon::IconShrink);
+  this->IconData->SetImage(vtkKWIcon::IconSpinUp);
 
 //  this->Icon->SetParent(this);
   this->Icon->SetParent(this->LabelFrame);
@@ -439,7 +440,8 @@ void vtkSlicerModuleCollapsibleFrame::ExpandFrame()
     }
   if (this->IconData && this->Icon)
     {
-    this->IconData->SetImage(vtkKWIcon::IconShrink);
+    this->IconData->SetImage(vtkKWIcon::IconSpinUp);
+//    this->IconData->SetImage(vtkKWIcon::IconShrink);
     this->Icon->SetImageToIcon(this->IconData);
     }
 }
@@ -455,7 +457,8 @@ void vtkSlicerModuleCollapsibleFrame::CollapseFrame()
     }
   if (this->IconData && this->Icon)
     {
-    this->IconData->SetImage(vtkKWIcon::IconExpand);
+    this->IconData->SetImage(vtkKWIcon::IconSpinDown);
+//    this->IconData->SetImage(vtkKWIcon::IconExpand);
     this->Icon->SetImageToIcon(this->IconData);
     }
 }
