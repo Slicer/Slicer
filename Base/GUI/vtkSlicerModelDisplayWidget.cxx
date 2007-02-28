@@ -382,7 +382,8 @@ void vtkSlicerModelDisplayWidget::UpdateWidget()
 
       // get the model node so can get at it's scalars
       vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(this->MRMLScene->GetNodeByID(this->ModelNodeID));
-      if (modelNode != NULL)
+      if (modelNode != NULL &&
+          modelNode->GetPolyData() != NULL)
         {
         // populate the scalars menu from the model node
         int numPointScalars;
