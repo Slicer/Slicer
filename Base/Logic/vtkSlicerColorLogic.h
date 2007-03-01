@@ -63,7 +63,11 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerColorLogic : public vtkSlicerLogic
   // Description:
   // Return the default freesurfer color node id for a given type
   const char * GetDefaultFreeSurferColorNodeID(int type);
- 
+
+  // Description:
+  // Return a default color node id for a freesurfer label map volume
+  const char *GetDefaultFreeSurferLabelMapColorNodeID();
+  
   // Description:
   // Return a default color node id for a volume
   const char * GetDefaultVolumeColorNodeID();
