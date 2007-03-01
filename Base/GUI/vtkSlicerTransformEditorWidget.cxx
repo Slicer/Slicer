@@ -148,8 +148,9 @@ void vtkSlicerTransformEditorWidget::ProcessWidgetEvents ( vtkObject *caller,
 
   this->ProcessingCallback = true;
 
-  if (this->TransformEditSelectorWidget == vtkSlicerNodeSelectorWidget::SafeDownCast(caller)
-       && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent ) 
+  if ( ( this->TransformEditSelectorWidget == vtkSlicerNodeSelectorWidget::SafeDownCast(caller)
+         && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent )
+       || this->MatrixWidget->GetMatrix4x4() == NULL ) 
     {
     vtkMRMLLinearTransformNode *node = vtkMRMLLinearTransformNode::SafeDownCast(this->TransformEditSelectorWidget->GetSelected());
 
@@ -454,9 +455,12 @@ void vtkSlicerTransformEditorWidget::TransformChangedCallback(double)
   matrix = transform->GetMatrix();
 
   this->MatrixWidget->EnabledOn();
-  this->MatrixWidget->GetMatrix4x4()->DeepCopy(matrix);
+  if ( this->MatrixWidget->GetMatrix4x4() != NULL )
+    {
+    this->MatrixWidget->GetMatrix4x4()->DeepCopy(matrix);
 
-  this->MatrixWidget->UpdateWidget();
+    this->MatrixWidget->UpdateWidget();
+    }
 
   transform->Delete();
 
