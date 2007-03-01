@@ -211,7 +211,6 @@ proc QueryAtlasAddVolumes {} {
   $::slicer3::MRMLScene AddNode $transformNode
 
   set fileName [file dirname $::QA(directory)]/sirp-hp65-stc-to7-gam.feat/stats/zstat8.nii
-  puts stderr "Reading file $fileName\n"
 
   set volumeNode [$volumesLogic AddArchetypeVolume $fileName $centered 0 zstat8]
   $volumeNode SetAndObserveTransformNodeID [$transformNode GetID]
@@ -231,7 +230,6 @@ proc QueryAtlasAddVolumes {} {
 
 
   set fileName $::QA(directory)/mri/aparc+aseg.mgz
-  puts stderr "Reading file $fileName\n"
   set volumeNode [$volumesLogic AddArchetypeVolume $fileName $centered 1 aparc+aseg]
   set ::QA(label,volumeNodeID) [$volumeNode GetID]
 
@@ -278,6 +276,8 @@ proc QueryAtlasAddAnnotations {} {
 
     set polydata [$modelNode GetPolyData]
     set scalaridx [[$polydata GetPointData] SetActiveScalars "labels"]
+    [$modelNode GetDisplayNode] SetActiveScalarName "labels"
+    [$modelNode GetDisplayNode] SetScalarVisibility 1
 
     if { $scalaridx == "-1" } {
         set scalars [vtkIntArray New]
@@ -289,12 +289,16 @@ proc QueryAtlasAddAnnotations {} {
     set scalaridx [[$polydata GetPointData] SetActiveScalars "labels"]
     set scalars [[$polydata GetPointData] GetArray $scalaridx]
 
-    set lut [vtkLookupTable New]
+    set lutNode [vtkMRMLColorTableNode New]
+    $lutNode SetTypeToUser
+    $::slicer3::MRMLScene AddNode $lutNode
+    [$modelNode GetDisplayNode] SetAndObserveColorNodeID [$lutNode GetID]
+
     set fssar [vtkFSSurfaceAnnotationReader New]
 
     $fssar SetFileName $fileName
     $fssar SetOutput $scalars
-    $fssar SetColorTableOutput $lut
+    $fssar SetColorTableOutput [$lutNode GetLookupTable]
     # try reading an internal colour table first
     $fssar UseExternalColorTableFileOff
 
@@ -304,7 +308,7 @@ proc QueryAtlasAddAnnotations {} {
     }
 
     # set the look up table
-    $mapper SetLookupTable $lut
+    $mapper SetLookupTable [$lutNode GetLookupTable]
     
     array unset _labels
     array set _labels [$fssar GetColorTableNames]
@@ -319,7 +323,9 @@ proc QueryAtlasAddAnnotations {} {
     $mapper SetScalarRange  [lindex $entries 0] [lindex $entries end]
     $mapper SetScalarVisibility 1
 
-    $lut Delete
+    [$modelNode GetDisplayNode] SetScalarRange [lindex $entries 0] [lindex $entries end]
+
+    $lutNode Delete
     $fssar Delete
     [$viewer GetMainViewer] Reset
   }
