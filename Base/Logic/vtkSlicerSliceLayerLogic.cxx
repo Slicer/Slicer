@@ -144,6 +144,7 @@ vtkSlicerSliceLayerLogic::~vtkSlicerSliceLayerLogic()
   this->Reslice->Delete();
   this->DTIReslice->Delete();
   this->DWIExtractComponent->Delete();
+  this->DTIMathematics->Delete();
   this->MapToColors->Delete();
   this->Threshold->Delete();
   this->AppendComponents->Delete();
