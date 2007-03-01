@@ -19,6 +19,7 @@
 
 #include "vtkMRMLColorNode.h"
 #include "vtkMRMLColorTableNode.h"
+#include "vtkMRMLFreeSurferProceduralColorNode.h"
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerColorDisplayWidget );
@@ -333,15 +334,17 @@ void vtkSlicerColorDisplayWidget::UpdateWidget()
       this->ColorNodeTypeLabel->SetText(newLabel.c_str());
       }
     
-    int numColours;
+    int numColours = 0;
     if (vtkMRMLColorTableNode::SafeDownCast(colorNode) != NULL)
       {
       numColours = vtkMRMLColorTableNode::SafeDownCast(colorNode)->GetNumberOfColors();
       }
-    else
+    else if (vtkMRMLFreeSurferProceduralColorNode::SafeDownCast(colorNode) != NULL &&
+             vtkMRMLFreeSurferProceduralColorNode::SafeDownCast(colorNode)->GetLookupTable() != NULL)
       {
-      numColours = 0;
+      numColours = vtkMRMLFreeSurferProceduralColorNode::SafeDownCast(colorNode)->GetLookupTable()->GetNumberOfColors();
       }
+
     // set the number of colours
     std::stringstream ss;
     ss << "Number of Colors: ";
