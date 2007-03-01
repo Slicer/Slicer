@@ -1183,6 +1183,8 @@ void vtkSlicerViewerWidget::SetModelDisplayProperty(vtkMRMLModelNode *model,  vt
         {
         model->SetActiveScalars(dnode->GetActiveScalarName(), "Scalars");
         }
+      // set the scalar range
+      actor->GetMapper()->SetScalarRange(dnode->GetScalarRange());
       }
     
     actor->GetProperty()->SetColor(dnode->GetColor());
