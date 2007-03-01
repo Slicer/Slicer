@@ -64,7 +64,7 @@ static void vtkSlicerImageCloseUp2DExecute(vtkSlicerImageCloseUp2D *self,
                      int outExt[6], int id)
 {
     int idxX, maxX, inRowLength, idxY, maxY;
-    int outIncX, outIncY, outIncZ;
+    vtkIdType outIncX, outIncY, outIncZ;
     int scalarSize, numComps, inX, inY, inMaxX, inMaxY;
     T *ptr;
     int *inExt = inData->GetExtent();
