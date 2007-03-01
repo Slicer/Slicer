@@ -2484,6 +2484,7 @@ void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
       this->NavigationWidget->SetRendererBackgroundColor ( app->GetSlicerTheme()->GetSlicerColors()->ViewerBlue );
       this->NavigationWidget->GetRenderWindow()->AddRenderer(this->NavigationWidget->GetRenderer() );
       this->NavigationWidget->GetRenderWindow()->DoubleBufferOn();
+      this->NavigationWidget->GetRenderer()->GetRenderWindow()->GetInteractor()->Disable();
 
       // TODO: Why does the display flash the first time we 'pack forget' and then 'pack'?
       // pack zoom widget temporarily, then swap in navigation widget.
