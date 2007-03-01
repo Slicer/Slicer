@@ -160,7 +160,7 @@ proc QueryAtlasAddModel {} {
     $::slicer3::MRMLScene AddNode $modelStorageNode
     $::slicer3::MRMLScene AddNode $modelDisplayNode
 
-    $modelNode SetStorageNodeID [$modelStorageNode GetID]
+    $modelNode SetReferenceStorageNodeID [$modelStorageNode GetID]
     $modelNode SetAndObserveDisplayNodeID [$modelDisplayNode GetID]
 
     $::slicer3::MRMLScene AddNode $modelNode
@@ -211,6 +211,7 @@ proc QueryAtlasAddVolumes {} {
   $::slicer3::MRMLScene AddNode $transformNode
 
   set fileName [file dirname $::QA(directory)]/sirp-hp65-stc-to7-gam.feat/stats/zstat8.nii
+  puts stderr "Reading file $fileName\n"
 
   set volumeNode [$volumesLogic AddArchetypeVolume $fileName $centered 0 zstat8]
   $volumeNode SetAndObserveTransformNodeID [$transformNode GetID]
@@ -230,7 +231,7 @@ proc QueryAtlasAddVolumes {} {
 
 
   set fileName $::QA(directory)/mri/aparc+aseg.mgz
-
+  puts stderr "Reading file $fileName\n"
   set volumeNode [$volumesLogic AddArchetypeVolume $fileName $centered 1 aparc+aseg]
   set ::QA(label,volumeNodeID) [$volumeNode GetID]
 
@@ -248,9 +249,9 @@ proc QueryAtlasAddVolumes {} {
   set nNodes [$::slicer3::MRMLScene GetNumberOfNodesByClass "vtkMRMLSliceCompositeNode"]
   for { set i 0 } { $i < $nNodes } { incr i } {
     set cnode [$::slicer3::MRMLScene GetNthNodeByClass $i "vtkMRMLSliceCompositeNode"]
-    $cnode SetBackgroundVolumeID $::QA(brain,volumeNodeID)
-    $cnode SetForegroundVolumeID $::QA(functional,volumeNodeID)
-    $cnode SetLabelVolumeID $::QA(label,volumeNodeID)
+    $cnode SetReferenceBackgroundVolumeID $::QA(brain,volumeNodeID)
+    $cnode SetReferenceForegroundVolumeID $::QA(functional,volumeNodeID)
+    $cnode SetReferenceLabelVolumeID $::QA(label,volumeNodeID)
     $cnode SetForegroundOpacity 1
     $cnode SetLabelOpacity 0.5
   }
