@@ -52,32 +52,33 @@ public:
   char* GetColorTableNames();
 
   int ReadFSAnnotation();
-    int WriteFSAnnotation();
+  int WriteFSAnnotation();
+
+  vtkGetMacro(NumColorTableEntries, int);
+  void SetColorTableFileName (char*);
+  
+  vtkGetMacro(UseExternalColorTableFile,int);
+  vtkSetMacro(UseExternalColorTableFile,int);
+  vtkBooleanMacro(UseExternalColorTableFile,int);
+
+  //BTX
+  // Description:
+  // previously defined as constants
+  enum
+  {
+    // tag
+    FS_COLOR_TABLE_TAG = 1,
     
-    void SetColorTableFileName (char*);
-
-    vtkGetMacro(UseExternalColorTableFile,int);
-    vtkSetMacro(UseExternalColorTableFile,int);
-    vtkBooleanMacro(UseExternalColorTableFile,int);
-
-    //BTX
-    // Description:
-    // previously defined as constants
-    enum
-    {
-        // tag
-        FS_COLOR_TABLE_TAG = 1,
-
-        FS_COLOR_TABLE_NAME_LENGTH = 1024,
-        FS_COLOR_TABLE_ENTRY_NAME_LENGTH = 1024,
-        
-        FS_ERROR_LOADING_COLOR_TABLE = 1,
-        FS_ERROR_LOADING_ANNOTATION = 2,
-        FS_ERROR_PARSING_COLOR_TABLE = 3,
-        FS_ERROR_PARSING_ANNOTATION = 4,
-        FS_WARNING_UNASSIGNED_LABELS = 5,
-        FS_NO_COLOR_TABLE = 6,
-    };
+    FS_COLOR_TABLE_NAME_LENGTH = 1024,
+    FS_COLOR_TABLE_ENTRY_NAME_LENGTH = 1024,
+    
+    FS_ERROR_LOADING_COLOR_TABLE = 1,
+    FS_ERROR_LOADING_ANNOTATION = 2,
+    FS_ERROR_PARSING_COLOR_TABLE = 3,
+    FS_ERROR_PARSING_ANNOTATION = 4,
+    FS_WARNING_UNASSIGNED_LABELS = 5,
+    FS_NO_COLOR_TABLE = 6,
+  };
     //ETX
 protected:
   vtkFSSurfaceAnnotationReader();
