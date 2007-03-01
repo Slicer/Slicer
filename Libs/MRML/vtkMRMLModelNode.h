@@ -81,6 +81,7 @@ public:
   // Description:
   // String ID of the storage MRML node
   vtkSetReferenceStringMacro(StorageNodeID);
+  void SetReferenceStorageNodeID(const char *id) { this->SetStorageNodeID(id); }
   vtkGetStringMacro(StorageNodeID);
 
   // Description:
