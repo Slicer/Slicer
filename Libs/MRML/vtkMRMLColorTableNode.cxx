@@ -1059,13 +1059,27 @@ void vtkMRMLColorTableNode::SetNamesFromColors()
 //---------------------------------------------------------------------------
 void vtkMRMLColorTableNode::SetNumberOfColors(int n)
 {
+  if (this->GetLookupTable() == NULL)
+    {
+    vtkErrorMacro("SetNumberofColors: lookup table is null, set the type first.");
+    return;
+    }
   if (this->GetType() != this->User)
     {
       vtkErrorMacro("vtkMRMLColorTableNode::SetNumberOfColors: ERROR: can't set number of colours if not a user defined colour table, reset the type first to User\n");
       return;
     }
 
-  this->GetLookupTable()->SetNumberOfTableValues(n);
+  if (this->GetLookupTable()->GetNumberOfTableValues() != n)
+    {
+    this->GetLookupTable()->SetNumberOfTableValues(n);
+    }
+
+  if (this->Names.size() != n)
+    {
+    this->Names.resize(n);
+    }
+  
 }
 
 //---------------------------------------------------------------------------
