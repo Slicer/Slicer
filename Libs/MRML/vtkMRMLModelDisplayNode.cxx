@@ -134,12 +134,12 @@ void vtkMRMLModelDisplayNode::WriteXML(ostream& of, int nIndent)
 
   if (this->ColorNodeID != NULL) 
     {
-    of << indent << "colorNodeRef=\"" << this->ColorNodeID << "\" ";
+    of << indent << " colorNodeRef=\"" << this->ColorNodeID << "\"";
     }
 
   if (this->ActiveScalarName != NULL)
     {
-    of << indent << "activeScalarName=\"" << this->ActiveScalarName << "\" ";
+    of << indent << " activeScalarName=\"" << this->ActiveScalarName << "\"";
     }
 
 }
