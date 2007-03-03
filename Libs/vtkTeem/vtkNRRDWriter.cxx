@@ -287,7 +287,7 @@ void vtkNRRDWriter::WriteData()
       strcpy(key,"DWMRI_b-value");
       sprintf(value,"%f",maxbVal,1024);
       nrrdKeyValueAdd(nrrd,key, value);
-      for (unsigned int ig =0; ig< numGrad; ig++)
+      for (int ig =0; ig< numGrad; ig++)
         {
         grad=this->DiffusionGradients->GetTuple3(ig);
         bVal = this->BValues->GetValue(ig);
@@ -300,8 +300,7 @@ void vtkNRRDWriter::WriteData()
   }
 
   // set encoding for data: compressed (raw), (uncompressed) raw, or ascii
-  if (this->GetUseCompression() == true
-      && nrrdEncodingGzip->available())
+  if ( this->GetUseCompression() && nrrdEncodingGzip->available() )
     {
     // this is necessarily gzip-compressed *raw* data
     nio->encoding = nrrdEncodingGzip;
