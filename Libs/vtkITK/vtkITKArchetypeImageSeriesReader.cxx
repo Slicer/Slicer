@@ -41,6 +41,21 @@
   }
 #endif
 
+
+//
+// uncomment the define below to enable use of the GE5 (Signa) reader
+// this is not on by default because the reader does not support
+// reading directions from the file
+//
+//#define USE_ITKGE5READER
+
+#ifdef USE_ITKGE5READER
+#include "itkImageIOFactory.h"
+#include "itkMutexLock.h"
+#include "itkMutexLockHolder.h"
+#include "itkGE5ImageIOFactory.h"
+#endif
+
 #include "itkArchetypeSeriesFileNames.h"
 #include "itkImage.h"
 #include "itkVector.h"
@@ -80,6 +95,35 @@ vtkITKArchetypeImageSeriesReader::vtkITKArchetypeImageSeriesReader()
     this->DefaultDataSpacing[i] = 1.0;
     this->DefaultDataOrigin[i] = 0.0;
     }
+
+  this->RegisterExtraBuiltInFactories();
+}
+
+// 
+// ITK internally does not register all of the IO types that get built
+// (possibly due to lingering bugs?) but many slicer users have
+// GE5 (Signa - magic number: IMGF) files that they need to work
+// with so we register the factory explictly here
+//
+void
+vtkITKArchetypeImageSeriesReader::RegisterExtraBuiltInFactories()
+{
+#ifdef USE_ITKGE5READER
+  static bool firstTime = true;
+
+  static itk::SimpleMutexLock mutex;
+  {
+  // This helper class makes sure the Mutex is unlocked
+  // in the event an exception is thrown.
+  itk::MutexLockHolder<itk::SimpleMutexLock> mutexHolder( mutex );
+  if( firstTime )
+    {
+    itk::ObjectFactoryBase::RegisterFactory( itk::GE5ImageIOFactory::New() );
+    firstTime = false;
+    }
+  }
+#endif
+
 }
 
 //----------------------------------------------------------------------------
@@ -173,7 +217,9 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
   itk::GDCMImageIO::Pointer dicomIO = itk::GDCMImageIO::New();
   itk::MetaImageIO::Pointer metaIO = itk::MetaImageIO::New();
   itk::NrrdImageIO::Pointer nrrdIO = itk::NrrdImageIO::New();
+#ifdef USE_ITKGE5READER
   itk::GE5ImageIO::Pointer ge5IO = itk::GE5ImageIO::New();
+#endif
   itk::AnalyzeImageIO::Pointer analyzeIO = itk::AnalyzeImageIO::New();
   itk::NiftiImageIO::Pointer niftiIO = itk::NiftiImageIO::New();
   itk::VTKImageIO::Pointer vtkIO = itk::VTKImageIO::New();
@@ -221,7 +267,9 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
   // volume described in multiple files.
   else if ( metaIO->CanReadFile(this->Archetype) ||
             nrrdIO->CanReadFile(this->Archetype) ||
+#ifdef USE_ITKGE5READER
             ge5IO->CanReadFile(this->Archetype) ||
+#endif
             niftiIO->CanReadFile(this->Archetype) ||
             vtkIO->CanReadFile(this->Archetype) ||
             analyzeIO->CanReadFile(this->Archetype))
