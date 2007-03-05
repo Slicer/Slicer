@@ -80,6 +80,8 @@ public:
   void UpdateTranslationSliders();
   void ResetRotationSliders(int axis);
 
+  void UpdateMatrix();
+
   vtkTransform* GetCurrentTransformInCoordinateSystem();
 
   vtkSlicerNodeSelectorWidget* TransformEditSelectorWidget;

@@ -138,20 +138,8 @@ void vtkSlicerTransformEditorWidget::PrintSelf ( ostream& os, vtkIndent indent )
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerTransformEditorWidget::ProcessWidgetEvents ( vtkObject *caller,
-                                                         unsigned long event, void *callData )
+void vtkSlicerTransformEditorWidget::UpdateMatrix ()
 {
-  if (this->ProcessingCallback)
-    {
-    return;
-    }
-
-  this->ProcessingCallback = true;
-
-  if ( ( this->TransformEditSelectorWidget == vtkSlicerNodeSelectorWidget::SafeDownCast(caller)
-         && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent )
-       || this->MatrixWidget->GetMatrix4x4() == NULL ) 
-    {
     vtkMRMLLinearTransformNode *node = vtkMRMLLinearTransformNode::SafeDownCast(this->TransformEditSelectorWidget->GetSelected());
 
     if (node != NULL)
@@ -169,6 +157,24 @@ void vtkSlicerTransformEditorWidget::ProcessWidgetEvents ( vtkObject *caller,
       {
       this->MatrixWidget->EnabledOff();
       }
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerTransformEditorWidget::ProcessWidgetEvents ( vtkObject *caller,
+                                                         unsigned long event, void *callData )
+{
+  if (this->ProcessingCallback)
+    {
+    return;
+    }
+
+  this->ProcessingCallback = true;
+
+  if ( ( this->TransformEditSelectorWidget == vtkSlicerNodeSelectorWidget::SafeDownCast(caller)
+         && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent )
+       || this->MatrixWidget->GetMatrix4x4() == NULL ) 
+    {
+    this->UpdateMatrix();
     }
   else if ( this->IdentityButton == vtkKWPushButton::SafeDownCast(caller) && event == vtkKWPushButton::InvokedEvent )
     {
@@ -176,6 +182,10 @@ void vtkSlicerTransformEditorWidget::ProcessWidgetEvents ( vtkObject *caller,
     if (node != NULL)
       {
       this->MRMLScene->SaveStateForUndo(node);
+      }
+    if (this->MatrixWidget->GetMatrix4x4() == NULL)
+      {
+      this->UpdateMatrix();
       }
 
     this->MatrixWidget->GetMatrix4x4()->Identity();
@@ -189,6 +199,11 @@ void vtkSlicerTransformEditorWidget::ProcessWidgetEvents ( vtkObject *caller,
     if (node != NULL)
       {
       this->MRMLScene->SaveStateForUndo(node);
+      }
+
+    if (this->MatrixWidget->GetMatrix4x4() == NULL)
+      {
+      this->UpdateMatrix();
       }
 
     this->MatrixWidget->GetMatrix4x4()->Invert();
@@ -454,6 +469,11 @@ void vtkSlicerTransformEditorWidget::TransformChangedCallback(double)
 
   matrix = transform->GetMatrix();
 
+  if (this->MatrixWidget->GetMatrix4x4() == NULL)
+    {
+    this->UpdateMatrix();
+    }
+
   this->MatrixWidget->EnabledOn();
   if ( this->MatrixWidget->GetMatrix4x4() != NULL )
     {
@@ -551,6 +571,11 @@ void vtkSlicerTransformEditorWidget::RotationChangedCallback(int axis, double va
     }
 
   vtkMatrix4x4 *matrix = transform->GetMatrix();
+
+  if (this->MatrixWidget->GetMatrix4x4() == NULL)
+    {
+    this->UpdateMatrix();
+    }
 
   this->MatrixWidget->EnabledOn();
   if ( this->MatrixWidget->GetMatrix4x4() != NULL )
