@@ -648,7 +648,7 @@ void vtkMRMLScene::RequestNodeID(vtkMRMLNode *node, const char *ID)
 }
 
 //------------------------------------------------------------------------------
-void vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
+vtkMRMLNode*  vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
 {
   //TODO convert URL to Root directory
   //n->SetSceneRootDir("");
@@ -666,7 +666,7 @@ void vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
                                                   n->GetSingletonTag()) == 0)
         {
         sn->Copy(n);
-        return;
+        return sn;
         }
       }
     }
@@ -694,14 +694,17 @@ void vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
     }
   this->CurrentScene->vtkCollection::AddItem((vtkObject *)n);
   n->SetScene( this );
+
+  return n;
 }
 
 //------------------------------------------------------------------------------
-void vtkMRMLScene::AddNode(vtkMRMLNode *n)
+vtkMRMLNode*  vtkMRMLScene::AddNode(vtkMRMLNode *n)
 {
-  this->AddNodeNoNotify(n);
+  vtkMRMLNode* node = this->AddNodeNoNotify(n);
   this->InvokeEvent(this->NodeAddedEvent, n);
   this->Modified();
+  return node;
 }
 
 //------------------------------------------------------------------------------

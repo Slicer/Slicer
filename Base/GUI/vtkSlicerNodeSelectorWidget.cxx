@@ -327,6 +327,7 @@ vtkMRMLNode *vtkSlicerNodeSelectorWidget::GetSelected()
 void vtkSlicerNodeSelectorWidget::ProcessNewNodeCommand(const char *className, const char *nodeName)
 {
   vtkMRMLNode *node = NULL;
+  vtkMRMLNode *retNode = NULL;
   vtkKWMenuButton *mb = this->GetWidget()->GetWidget();
   vtkKWMenu *m = mb->GetMenu();
 
@@ -377,11 +378,11 @@ void vtkSlicerNodeSelectorWidget::ProcessNewNodeCommand(const char *className, c
     
     // the ID is set in the call to AddNode
     //node->SetID(this->MRMLScene->GetUniqueIDByClass(className));
-    this->MRMLScene->AddNode(node);
+    retNode = this->MRMLScene->AddNode(node);
     node->Delete();
     }
 
-  this->SetSelected(node);
+  this->SetSelected(retNode);
 }
 
 

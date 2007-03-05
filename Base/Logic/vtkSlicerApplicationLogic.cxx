@@ -213,7 +213,7 @@ void vtkSlicerApplicationLogic::ProcessMRMLEvents(vtkObject * /*caller*/,
   if (this->MRMLScene->GetNodeByID(this->SelectionNode->GetID()) == NULL)
     {
     this->SetMRMLScene(this->GetMRMLScene());
-    this->MRMLScene->AddNode(this->SelectionNode);
+    this->SetSelectionNode ( vtkMRMLSelectionNode::SafeDownCast(this->MRMLScene->AddNode(this->SelectionNode)) );
     this->SetAndObserveMRMLScene(this->GetMRMLScene());
     }
 
@@ -236,7 +236,7 @@ void vtkSlicerApplicationLogic::ProcessMRMLEvents(vtkObject * /*caller*/,
   if (this->MRMLScene->GetNodeByID(this->InteractionNode->GetID()) == NULL)
     {
     this->SetMRMLScene(this->GetMRMLScene());
-    this->MRMLScene->AddNode(this->InteractionNode);
+    this->SetInteractionNode ( vtkMRMLInteractionNode::SafeDownCast(this->MRMLScene->AddNode(this->InteractionNode)) );
     this->SetAndObserveMRMLScene(this->GetMRMLScene());
     }
   
@@ -288,12 +288,12 @@ vtkSlicerSliceLogic *vtkSlicerApplicationLogic::CreateSlice ()
 
     // Create the mrml nodes to store state
     vtkMRMLSliceNode *sliceNode = vtkMRMLSliceNode::New();
-    this->MRMLScene->AddNode(sliceNode);
+    vtkMRMLSliceNode *sliceNode1 = vtkMRMLSliceNode::SafeDownCast(this->MRMLScene->AddNode(sliceNode));
 
     // Configure the logic
     sliceLogic->SetBackgroundLayer(bg);
     sliceLogic->SetForegroundLayer(fg);
-    sliceLogic->SetSliceNode(sliceNode);
+    sliceLogic->SetSliceNode(sliceNode1);
 
     // Update internal state
     this->Slices->AddItem(sliceLogic);
@@ -688,7 +688,7 @@ void vtkSlicerApplicationLogic::ProcessReadData()
         {
 //        std::cout << " vtkSlicerApplicationLogic::ProcessReadData\n";
         disp->SetScene( this->MRMLScene );
-        this->MRMLScene->AddNode( disp );
+        disp = this->MRMLScene->AddNode( disp );
         int isLabelMap = 0;
         if (svnd)
           {
