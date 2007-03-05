@@ -246,7 +246,11 @@ proc launch_LicenseDialog {} {
 proc launch_FileEvent {fp} {
     global ::END
     if {[eof $fp]} {
-        catch "close $fp"
+        set ret [catch "close $fp" res]
+        set ::saved_errorCode $::errorCode
+        set ::saved_errorInfo $::errorInfo
+        set ::saved_result $res
+        set ::saved_return $ret
         set ::END 1
     } else {
         gets $fp line
@@ -331,25 +335,14 @@ proc launch_RunProgram {} {
         } else {
             set ret [catch "exec $launch_command $::argv |& cat" res]
         }
-        
-        # get the actual exit code of the child process
-        set code [lindex $::errorCode 2]
+        set ::saved_errorCode $::errorCode
+        set ::saved_errorInfo $::errorInfo
+        set ::saved_result $res
+        set ::saved_return $ret
 
-        # if the errorCode is not an integer value, set it to 1.
-        if { ![string is integer -strict $code] } {
-            puts "errorCode is: $code"
-            set code 1
-            puts "Non-integer error code returned, setting to 1"
-        }
-        
         # print the stdout/stderr of the child
         puts stdout $res
-        # exit with the status
-        if { $ret } {
-            exit $code
-        } else {
-            exit 0
-        }
+        
     } else {
         if {$::env(BUILD) == $::WINDOWS} {
             set fp [open "| \"$launch_command\" $::argv" r]
@@ -357,15 +350,48 @@ proc launch_RunProgram {} {
             set fp [open "| csh -f -c \"$launch_command $::argv \" |& cat" r]
         }
 
-        if {[info exists fp]} {
-            fileevent $fp readable "launch_FileEvent $fp"
-            
-            set ::END 0
-            while { ![catch "pid $fp"] && ![eof $fp] } {
-                vwait ::END
-            }
+        #
+        # now go into a loop waiting for the child process
+        # - the launch_FileEvent handles output from the child and
+        #   also detects when the child exits and sets global variables
+        #   to handle the return code
+        #
+        fileevent $fp readable "launch_FileEvent $fp"
+        set ::END 0
+        while { ![catch "pid $fp"] && ![eof $fp] } {
+            vwait ::END
         }
     }
+
+    # get the actual exit code of the child process
+    set result ""
+    set codeString [lindex $::saved_errorCode 0]
+    switch $codeString {
+      "NONE" { 
+        set code 0 
+      }
+      "CHILDKILLED" {
+        set code 1
+        # strip the tcl stack information from the end of the errorInfo string
+        set index [string last "    while executing" $::saved_errorInfo]
+        set result [string range $::saved_errorInfo 0 $index]
+      }
+      "CHILDSTATUS" {
+        set code [lindex $::saved_errorCode 2] 
+        # strip the tcl stack information from the end of the errorInfo string
+        set index [string last "    while executing" $::saved_errorInfo]
+        set result [string range $::saved_errorInfo 0 $index]
+      }
+      default {
+        set code -1
+        set result "Exceptional errorCode: $::saved_errorCode\n$::saved_errorInfo"
+      }
+    }
+
+    if { $result != "" } {
+      puts $result
+    }
+    exit $code
 }
 
 #######  The actual steps for launching:
