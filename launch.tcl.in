@@ -37,8 +37,6 @@ set ::env(TCL_LIB_DIR)       [file dirname $::env(TCL_LIBRARY)]
 set ::env(TEEM_DIR)          @TEEM_DIR@
 set ::env(VTK_BUILD_SUBDIR)  @CMAKE_BUILD_TYPE@
 
-set ::BATCH "false"
-
 #
 # set up variables for the OS Builds
 # 
@@ -231,13 +229,6 @@ proc launch_LicenseDialog {} {
             }
         }
     }
-
-    if { $argv0 == "--batch" } {
-        set ::BATCH "true"
-        puts "Note: By specifying --batch on the command line, you have agreed to slicer's license terms."
-    } else {
-        set ::BATCH "false"
-    }
 }
 
 #
@@ -296,10 +287,6 @@ proc launch_RunProgram {} {
 
 
     #
-    # if in batch mode, exec Slicer3-real and return the exit code of the child
-    # process as the exit code of this script.
-    #
-    # Otherwise,
     # launch the slicer main script as a sub-process and monitor the output
     # - process is started with the 'open' command through a pipe
     # - the file_event callback is triggered when subprocess has written to stdout
@@ -324,43 +311,22 @@ proc launch_RunProgram {} {
         }
     }
 
-    #
-    # run in batch mode to capture all output or
-    # run in non-batch mode emit output line by line for feedback
-    # - note: use batch mode to capture return code from the process
-    #
-    if { $::BATCH == "true" } {
-        if {$::env(BUILD) == $::WINDOWS} {
-            set ret [catch "exec \"$launch_command\" $::argv" res]
-        } else {
-            set ret [catch "exec $launch_command $::argv |& cat" res]
-        }
-        set ::saved_errorCode $::errorCode
-        set ::saved_errorInfo $::errorInfo
-        set ::saved_result $res
-        set ::saved_return $ret
-
-        # print the stdout/stderr of the child
-        puts stdout $res
-        
+    if {$::env(BUILD) == $::WINDOWS} {
+        set fp [open "| \"$launch_command\" $::argv" r]
     } else {
-        if {$::env(BUILD) == $::WINDOWS} {
-            set fp [open "| \"$launch_command\" $::argv" r]
-        } else {
-            set fp [open "| csh -f -c \"$launch_command $::argv \" |& cat" r]
-        }
+        set fp [open "| csh -f -c \"$launch_command $::argv \" |& cat" r]
+    }
 
-        #
-        # now go into a loop waiting for the child process
-        # - the launch_FileEvent handles output from the child and
-        #   also detects when the child exits and sets global variables
-        #   to handle the return code
-        #
-        fileevent $fp readable "launch_FileEvent $fp"
-        set ::END 0
-        while { ![catch "pid $fp"] && ![eof $fp] } {
-            vwait ::END
-        }
+    #
+    # now go into a loop waiting for the child process
+    # - the launch_FileEvent handles output from the child and
+    #   also detects when the child exits and sets global variables
+    #   to handle the return code
+    #
+    fileevent $fp readable "launch_FileEvent $fp"
+    set ::END 0
+    while { ![catch "pid $fp"] && ![eof $fp] } {
+        vwait ::END
     }
 
     #
