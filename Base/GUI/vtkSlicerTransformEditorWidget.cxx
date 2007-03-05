@@ -553,7 +553,12 @@ void vtkSlicerTransformEditorWidget::RotationChangedCallback(int axis, double va
   vtkMatrix4x4 *matrix = transform->GetMatrix();
 
   this->MatrixWidget->EnabledOn();
-  this->MatrixWidget->GetMatrix4x4()->DeepCopy(matrix);
+  if ( this->MatrixWidget->GetMatrix4x4() != NULL )
+    {
+    this->MatrixWidget->GetMatrix4x4()->DeepCopy(matrix);
+
+    this->MatrixWidget->UpdateWidget();
+    }
 
   this->MatrixWidget->UpdateWidget();
 
