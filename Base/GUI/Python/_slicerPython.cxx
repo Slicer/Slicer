@@ -35,7 +35,7 @@ static PyObject* SlicerPython_ToArray ( PyObject* self, PyObject* args )
     return PyErr_Format ( PyExc_TypeError, "vtkImageDataToArray: Could not find vtkImageData" );
     }
 
-  npy_intp dims[3], tempdim;
+  int dims[3], tempdim;
   id->GetDimensions ( dims );
   // Note: NumPy uses a z,y,x ordering, so swap the 1st and 3rd dimensions!
   tempdim = dims[0];
@@ -64,7 +64,11 @@ static PyObject* SlicerPython_ToArray ( PyObject* self, PyObject* args )
   // PyArrayObject* array = NA_FromDimsTypeAndData ( 3, dims, t, (char*)id->GetScalarPointer() );
   // return NA_ReturnOutput ( Py_None, array );
   // return PyArray_FromDimsAndData ( 3, dims, t, (char*)id->GetScalarPointer() );
-  PyObject* array = PyArray_SimpleNewFromData ( 3, dims, t, (char*)id->GetScalarPointer() );
+  npy_intp dim_ptrs[3];
+  dim_ptrs[0] = static_cast<npy_intp> (dims[0]);
+  dim_ptrs[1] = static_cast<npy_intp> (dims[1]);
+  dim_ptrs[2] = static_cast<npy_intp> (dims[2]);
+  PyObject* array = PyArray_SimpleNewFromData ( 3, dim_ptrs, t, (char*)id->GetScalarPointer() );
   return array;
 }
 
