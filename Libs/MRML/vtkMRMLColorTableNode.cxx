@@ -172,7 +172,7 @@ void vtkMRMLColorTableNode::ReadXMLAttributes(const char** atts)
         }
       else
       {
-          std::cerr << "Unknown attribute name " << attName << endl;
+          vtkErrorMacro ("Unknown attribute name " << attName << endl);
       }
   }
   vtkDebugMacro("Finished reading in xml attributes, list id = " << this->GetID() << " and name = " << this->GetName() << endl);

@@ -511,8 +511,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
               {
               // Can't support this command line with this fiducial
               // list
-              std::cerr << "Module does not support multiple fiducials."
-                        << std::endl;
+              vtkErrorMacro("Module does not support multiple fiducials.");
               }
             }
           continue;
@@ -829,7 +828,6 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
         else if (pipe == itksysProcess_Pipe_STDERR)
           {
           stderrbuffer = stderrbuffer.append(tbuffer, length);
-          //std::cerr << "STDERR: " << std::string(tbuffer, length) << std::endl;
           }
         }
       }
@@ -1013,8 +1011,6 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
       std::cout.rdbuf( origcoutrdbuf );
       std::cerr.rdbuf( origcerrrdbuf );
 
-      //std::cout << "STDOUT: " << coutstringstream.str().c_str() << std::endl;
-      //std::cout << "STDERR: " << cerrstringstream.str().c_str() << std::endl;
       }
     catch (itk::ExceptionObject& exc)
       {

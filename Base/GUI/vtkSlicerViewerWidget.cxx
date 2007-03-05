@@ -1086,7 +1086,7 @@ void vtkSlicerViewerWidget::RemoveModelProps()
       clipIter = DisplayedModelsClipState.find(iter->first);
       if (clipIter == DisplayedModelsClipState.end())
         {
-          std::cerr << "vtkSlicerViewerWidget::RemoveModelProps() Unknown clip state\n";
+        vtkErrorMacro ("vtkSlicerViewerWidget::RemoveModelProps() Unknown clip state\n");
         }
       else 
         {

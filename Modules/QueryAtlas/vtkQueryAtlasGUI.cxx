@@ -485,7 +485,7 @@ void vtkQueryAtlasGUI::DeleteSelectedSearchTerms ( )
     }
   else
     {
-    std::cerr << "Selected rows (" << numRows << ") not 1, just pick one to delete for now\n";
+    vtkErrorMacro (<< "Selected rows (" << numRows << ") not 1, just pick one to delete for now\n");
     return;
     }
 }

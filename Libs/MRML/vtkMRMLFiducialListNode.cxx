@@ -268,7 +268,7 @@ void vtkMRMLFiducialListNode::ReadXMLAttributes(const char** atts)
                   vtkDebugMacro( "ReadXMLAttributes: passing the text pointer for point index " << pointIndex <<  " to the new point: " << labelTextPtr << endl);
                   newPoint->ReadXMLString(labelTextPtr);
               } else {
-                  std::cerr << "ERROR making a new MRML fiducial!\n";
+                  vtkErrorMacro ("ERROR making a new MRML fiducial!\n");
               }
               newPoint = NULL;
               labelTextPtr = strtok(NULL, "\n");
@@ -530,12 +530,12 @@ vtkMRMLFiducial* vtkMRMLFiducialListNode::GetNthFiducial(int n)
     vtkDebugMacro("GetNthFiducial: getting item by index number: " << n);
     if (this->FiducialList == NULL)
     {
-        std::cerr << "GetNthFiducial: ERROR: fiducial list is null\n";
+        vtkErrorMacro ("GetNthFiducial: ERROR: fiducial list is null\n");
         return NULL;
     }
   if(n < 0 || n >= this->FiducialList->GetNumberOfItems()) 
     {
-        std::cerr << "vtkMRMLFiducialListNode::GetNthFiducial: index out of bounds, " << n << " is less than zero or more than the number of items: " << this->FiducialList->GetNumberOfItems() << endl;
+        vtkErrorMacro ("vtkMRMLFiducialListNode::GetNthFiducial: index out of bounds, " << n << " is less than zero or more than the number of items: " << this->FiducialList->GetNumberOfItems() << endl);
         return NULL;
     }
   else 

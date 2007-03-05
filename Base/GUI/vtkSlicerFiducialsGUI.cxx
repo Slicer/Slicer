@@ -266,7 +266,7 @@ void vtkSlicerFiducialsGUI::ProcessGUIEvents ( vtkObject *caller,
   vtkMRMLFiducialListNode *activeFiducialListNode = (vtkMRMLFiducialListNode *)this->MRMLScene->GetNodeByID(this->GetFiducialListNodeID());
   if (activeFiducialListNode == NULL)
   {
-      std::cerr << "ERROR: No Fiducial List, adding one first!\n";
+      vtkErrorMacro ("ERROR: No Fiducial List, adding one first!\n");
       vtkMRMLFiducialListNode *newList = this->GetLogic()->AddFiducialList();      
       if (newList != NULL)
         {
@@ -280,10 +280,10 @@ void vtkSlicerFiducialsGUI::ProcessGUIEvents ( vtkObject *caller,
       // now get the newly active node 
       activeFiducialListNode = (vtkMRMLFiducialListNode *)this->MRMLScene->GetNodeByID(this->GetFiducialListNodeID());
       if (activeFiducialListNode == NULL)
-      {
-          std::cerr << "ERROR adding a new fiducial list for the point...\n";
-          return;
-      }
+        {
+        vtkErrorMacro ("ERROR adding a new fiducial list for the point...\n");
+        return;
+        }
   }
   // save state for undo
   this->MRMLScene->SaveStateForUndo(activeFiducialListNode);
@@ -291,17 +291,17 @@ void vtkSlicerFiducialsGUI::ProcessGUIEvents ( vtkObject *caller,
   vtkKWPushButton *button = vtkKWPushButton::SafeDownCast(caller);
   if (button == this->AddFiducialButton  && event ==  vtkKWPushButton::InvokedEvent)
     {
-        vtkDebugMacro("vtkSlicerFiducialsGUI: ProcessGUIEvent: Add Fiducial Button event: " << event << ".\n");
-       // save state for undo
-       this->MRMLScene->SaveStateForUndo();
+     vtkDebugMacro("vtkSlicerFiducialsGUI: ProcessGUIEvent: Add Fiducial Button event: " << event << ".\n");
+     // save state for undo
+     this->MRMLScene->SaveStateForUndo();
 
-       // add a fiducial, get the index of the new fiducial
-       int modelIndex = activeFiducialListNode->AddFiducial();
-       if ( modelIndex < 0 ) 
+     // add a fiducial, get the index of the new fiducial
+     int modelIndex = activeFiducialListNode->AddFiducial();
+     if ( modelIndex < 0 ) 
        {
-           // TODO: generate an error...
-           std::cerr << "ERROR adding a new fiducial point\n";
-           return;
+       // TODO: generate an error...
+       vtkErrorMacro ("ERROR adding a new fiducial point\n");
+       return;
        }
     }
   if (button == this->RemoveFiducialButton && event == vtkKWPushButton::InvokedEvent)
@@ -341,7 +341,7 @@ void vtkSlicerFiducialsGUI::ProcessGUIEvents ( vtkObject *caller,
         }
         else
         {
-            std::cerr << "Selected rows (" << numRows << ") not 1, just pick one to delete for now\n";
+            vtkErrorMacro ("Selected rows (" << numRows << ") not 1, just pick one to delete for now\n");
             return;
         }
     }
@@ -587,9 +587,9 @@ void vtkSlicerFiducialsGUI::SetGUIFromList(vtkMRMLFiducialListNode * activeFiduc
             // now populate it
             xyz = activeFiducialListNode->GetNthFiducialXYZ(row);
             if (xyz == NULL)
-            {
-                std::cerr << "SetGUIFromList: ERROR: got null xyz for point " << row << endl;
-            }
+              {
+              vtkErrorMacro ("SetGUIFromList: ERROR: got null xyz for point " << row << endl);
+              }
             vtkDebugMacro("Getting nth fiducial orientation");            
             wxyz = activeFiducialListNode->GetNthFiducialOrientation(row);
             
@@ -654,9 +654,10 @@ void vtkSlicerFiducialsGUI::SetGUIFromList(vtkMRMLFiducialListNode * activeFiduc
         vtkDebugMacro("Now going to update GUI from the logic's active list");
     // update the visibility, color, scale buttons to match the displayed list's
     if (activeFiducialListNode == NULL)
-    {
-        std::cerr << "vtkSlicerFiducialsGUI::SetGUIFromList: ERROR: no active fiducial list node in the gui class!\n";                return;
-    }
+      {
+      vtkErrorMacro ("vtkSlicerFiducialsGUI::SetGUIFromList: ERROR: no active fiducial list node in the gui class!\n");                
+      return;
+      }
     vtkDebugMacro(<< "\tupdating the visibility button\n");
     if (this->GetVisibilityToggle() != NULL &&
         this->GetVisibilityIcons() != NULL)
@@ -674,7 +675,7 @@ void vtkSlicerFiducialsGUI::SetGUIFromList(vtkMRMLFiducialListNode * activeFiduc
     }
     else
     {
-        std::cerr << "ERROR; trying up update null visibility toggle!\n";
+      vtkErrorMacro ("ERROR; trying up update null visibility toggle!\n");
     }
     
     // color
@@ -694,7 +695,7 @@ void vtkSlicerFiducialsGUI::SetGUIFromList(vtkMRMLFiducialListNode * activeFiduc
     }
     else
     {
-        std::cerr << "No colour button!\n";
+        vtkErrorMacro("No colour button!\n");
     }
 
     // selected color
@@ -714,7 +715,7 @@ void vtkSlicerFiducialsGUI::SetGUIFromList(vtkMRMLFiducialListNode * activeFiduc
     }
     else
     {
-        std::cerr << "No selected colour button!\n";
+        vtkErrorMacro("No selected colour button!\n");
     }
     
     // symbol scale
@@ -1127,7 +1128,7 @@ void vtkSlicerFiducialsGUI::UpdateElement(int row, int col, char * str)
             if (activeFiducialListNode == NULL)
             {
                 // 
-                std::cerr << "UpdateElement: ERROR: No Fiducial List, add one first!\n";
+                vtkErrorMacro ("UpdateElement: ERROR: No Fiducial List, add one first!\n");
                 return;
             }
         
@@ -1163,13 +1164,13 @@ void vtkSlicerFiducialsGUI::UpdateElement(int row, int col, char * str)
             }
             else
             {
-                std::cerr << "UpdateElement: ERROR: invalid column number " << col << ", valid values are 0-" << this->NumberOfColumns << endl;
+                vtkErrorMacro ("UpdateElement: ERROR: invalid column number " << col << ", valid values are 0-" << this->NumberOfColumns << endl);
                 return;
             }
         }
     else
     {
-        std::cerr << "Invalid row " << row << " or column " << col <<  ", valid columns are 0-" << this->NumberOfColumns << "\n";
+        vtkErrorMacro ("Invalid row " << row << " or column " << col <<  ", valid columns are 0-" << this->NumberOfColumns << "\n");
     }
 }
 
@@ -1178,7 +1179,7 @@ void vtkSlicerFiducialsGUI::SetFiducialListNode (vtkMRMLFiducialListNode *fiduci
 {
     if (fiducialListNode == NULL)
     {
-        std::cerr << "ERROR: SetFiducialListNode - list node is null.\n";
+        vtkErrorMacro ("ERROR: SetFiducialListNode - list node is null.\n");
         return;
     }
     // save the ID
@@ -1230,7 +1231,7 @@ void vtkSlicerFiducialsGUI::SetFiducialListNodeID (char * id)
       }
     else
       {
-        std::cerr << "ERROR: unable to get the mrml fiducial node to observe!\n";
+        vtkErrorMacro ("ERROR: unable to get the mrml fiducial node to observe!\n");
       }
 
     // update the selected fid list id

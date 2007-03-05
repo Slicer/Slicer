@@ -317,7 +317,7 @@ void vtkSlicerModuleChooseGUI::SelectModule ( const char *moduleName )
         }
       else
         {
-        std::cerr << "ERROR no slicer module GUI found for " << moduleName<< "\n";
+        vtkErrorMacro ("ERROR no slicer module GUI found for " << moduleName<< "\n");
         }
       }
     }

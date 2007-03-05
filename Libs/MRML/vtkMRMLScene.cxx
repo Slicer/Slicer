@@ -570,7 +570,6 @@ int vtkMRMLScene::Commit(const char* url)
   if (file.fail()) 
     {
     vtkErrorMacro("Write: Could not open file " << url);
-    cerr << "Write: Could not open file " << url;
 #if (VTK_MAJOR_VERSION <= 5)      
     this->SetErrorCode(2);
 #else

@@ -141,7 +141,7 @@ void vtkMRMLFreeSurferProceduralColorNode::ReadXMLAttributes(const char** atts)
         }      
       else
         {
-        std::cerr << "Unknown attribute name " << attName << endl;
+        vtkErrorMacro ("Unknown attribute name " << attName << endl);
         }
   }
   vtkDebugMacro("Finished reading in xml attributes, list id = " << this->GetID() << " and name = " << this->GetName() << endl);
@@ -235,7 +235,7 @@ void vtkMRMLFreeSurferProceduralColorNode::ReadFile ()
     }
   else
     {
-    std::cerr << "ERROR opening colour file " << this->FileName << endl;
+    vtkErrorMacro ("ERROR opening colour file " << this->FileName << endl);
     }
 }
 //----------------------------------------------------------------------------
@@ -491,7 +491,7 @@ void vtkMRMLFreeSurferProceduralColorNode::SetType(int type)
 
     else
       {
-      std::cerr << "vtkMRMLFreeSurferProceduralColorNode: SetType ERROR, unknown type " << type << endl;
+      vtkErrorMacro ("vtkMRMLFreeSurferProceduralColorNode: SetType ERROR, unknown type " << type << endl);
       return;
       }
     // invoke a modified event

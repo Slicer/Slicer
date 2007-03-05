@@ -658,7 +658,8 @@ vtkSlicerApplication::WarningMessage(const char* message)
   ::OutputDebugString(message);
 #endif
 #ifndef NDEBUG
-  cerr << message;
+  cout << message;
+  cout.flush();
 #endif
 
   this->RequestDisplayMessage("Warning", message);
@@ -672,7 +673,8 @@ vtkSlicerApplication::ErrorMessage(const char* message)
   ::OutputDebugString(message);
 #endif
 #ifndef NDEBUG
-  cerr << message;
+  cout << message;
+  cout.flush();
 #endif
 
   this->RequestDisplayMessage("Error", message);
@@ -686,7 +688,8 @@ vtkSlicerApplication::DebugMessage(const char* message)
   ::OutputDebugString(message);
 #endif
 #ifndef NDEBUG
-  cerr << message;
+  cout << message;
+  cout.flush();
 #endif
 
   this->RequestDisplayMessage("Debug", message);
@@ -700,7 +703,8 @@ vtkSlicerApplication::InformationMessage(const char* message)
   ::OutputDebugString(message);
 #endif
 #ifndef NDEBUG
-  cerr << message;
+  cout << message;
+  cout.flush();
 #endif
 
   this->RequestDisplayMessage("Information", message);

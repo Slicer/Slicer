@@ -37,7 +37,7 @@
   ::itk::OStringStream message; \
   message << "itk::ERROR: " << this->GetNameOfClass() \
           << "(" << this << "): "; \
-  std::cerr << message.str().c_str() << std::endl; \
+  std::cout << message.str().c_str() << std::endl; \
   }
 
 #undef itkGenericExceptionMacro  
@@ -45,7 +45,7 @@
   { \
   ::itk::OStringStream message; \
   message << "itk::ERROR: " x; \
-  std::cerr << message.str() << std::endl; \
+  std::cout << message.str() << std::endl; \
   }
 
 class VTK_ITK_EXPORT vtkITKImageToImageFilter : public vtkImageToImageFilter
@@ -200,7 +200,7 @@ public:
   };
   ~vtkITKImageToImageFilter()
   {
-    std::cerr << "Destructing vtkITKImageToImageFilter" << std::endl;
+    vtkDebugMacro ("Destructing vtkITKImageToImageFilter");
     this->vtkExporter->Delete();
     this->vtkImporter->Delete();
     this->vtkCast->Delete();

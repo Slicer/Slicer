@@ -363,8 +363,16 @@ proc launch_RunProgram {} {
         }
     }
 
+    #
     # get the actual exit code of the child process
+    #
+    # strip the tcl stack information from the end of the errorInfo string
+    set index [string last "    while executing" $::saved_errorInfo]
     set result ""
+    if { $index != -1 } {
+      set result [string range $::saved_errorInfo 0 $index]
+    }
+
     set codeString [lindex $::saved_errorCode 0]
     switch $codeString {
       "NONE" { 
@@ -372,15 +380,10 @@ proc launch_RunProgram {} {
       }
       "CHILDKILLED" {
         set code 1
-        # strip the tcl stack information from the end of the errorInfo string
-        set index [string last "    while executing" $::saved_errorInfo]
-        set result [string range $::saved_errorInfo 0 $index]
+        set result "$result\n$::saved_errorCode"
       }
       "CHILDSTATUS" {
         set code [lindex $::saved_errorCode 2] 
-        # strip the tcl stack information from the end of the errorInfo string
-        set index [string last "    while executing" $::saved_errorInfo]
-        set result [string range $::saved_errorInfo 0 $index]
       }
       default {
         set code -1

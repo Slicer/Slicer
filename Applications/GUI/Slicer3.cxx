@@ -99,16 +99,25 @@ extern "C" {
 #include "vtkEMSegmentGUI.h"
 #endif
 
+//
+// note: always write to cout rather than cerr so log messages will
+// appear in the correct order when running tests.  Normally cerr preempts cout
+// when output is buffered going to a terminal, but in the case of the launcher
+// cerr is collected in a separate buffer and printed at the end.   Either
+// way, it's better for all logging to go the the same channel so it shows
+// up in the correct order.
+//
 #ifdef _WIN32
 #  define slicerCerr(x) \
   do { \
+    cout << x; \
     vtkstd::ostringstream str; \
     str << x; \
     MessageBox(NULL, str.str().c_str(), "Slicer Error", MB_OK);\
   } while (0)
 #else
 #  define slicerCerr(x) \
-  cerr << x
+  cout << x
 #endif
 
 
@@ -290,7 +299,7 @@ int Slicer3_main(int argc, char *argv[])
     slicerCerr("Error: Cannot find Slicer3 executable" << endl);
     return 1;
     }
-  cerr << "Using slicer executable: " << programPath.c_str() << endl;
+  cout << "Using slicer executable: " << programPath.c_str() << endl;
   
   std::string slicerBinDir
     = vtksys::SystemTools::GetFilenamePath(programPath.c_str());
@@ -321,7 +330,7 @@ int Slicer3_main(int argc, char *argv[])
     }
   std::string tclEnv = "TCL_LIBRARY=";
   tclEnv += slicerBinDir + "/../lib/Slicer3/tcl/lib/tcl8.4";
-  cerr << "Set environment: " << tclEnv.c_str() << endl;
+  cout << "Set environment: " << tclEnv.c_str() << endl;
   vtkKWApplication::PutEnv(const_cast <char *> (tclEnv.c_str()));
 
   ptemp = vtksys::SystemTools::CollapseFullPath(argv[0]);
@@ -336,7 +345,7 @@ int Slicer3_main(int argc, char *argv[])
     = vtkKWApplication::PutEnv(const_cast <char *> (itkAutoLoadPath.c_str()));
   if (!putSuccess)
     {
-    cerr << "Unable to set ITK_AUTOLOAD_PATH. " << itkAutoLoadPath << endl;
+    cout << "Unable to set ITK_AUTOLOAD_PATH. " << itkAutoLoadPath << endl;
     }
 
   
@@ -375,7 +384,7 @@ int Slicer3_main(int argc, char *argv[])
   PyObject* PythonModule = PyImport_AddModule("__main__");
   if (PythonModule == NULL)
     {
-    std::cerr << "Warning: Failed to initialize python" << std::endl;
+    std::cout << "Warning: Failed to initialize python" << std::endl;
     return 1;
     }
   PyObject* PythonDictionary = PyModule_GetDict(PythonModule);
@@ -404,13 +413,13 @@ int Slicer3_main(int argc, char *argv[])
   if (v == NULL)
     {
     PyErr_Print();
-    std::cerr << "Error: Failed to initialize Python" << std::endl;
+    std::cout << "Error: Failed to initialize Python" << std::endl;
     return 1;
     }
   interp = (Tcl_Interp*) PyLong_AsLong ( PyDict_GetItemString ( PythonDictionary, "addr" ) );
   if ( (long)interp == -1 )
     {
-    std::cerr << "Error: Failed to get Tcl interp address from Python" << std::endl;
+    std::cout << "Error: Failed to get Tcl interp address from Python" << std::endl;
     return 1;
     }
   Py_DECREF(v);
@@ -420,16 +429,16 @@ int Slicer3_main(int argc, char *argv[])
     }
   if (!Tcl_PkgPresent(interp, "Tk", NULL, 0))
     {
-    std::cerr << "Error: Python failed to initialize Tk" << std::endl;
+    std::cout << "Error: Python failed to initialize Tk" << std::endl;
     return 1;
     }
 
   std::cout << "Initialized python: addr: " << (long)interp << std::endl;
-  vtkKWApplication::InitializeTcl(interp, &cerr);
+  vtkKWApplication::InitializeTcl(interp, &cout);
   // interp = vtkKWApplication::InitializeTcl(argc, argv, &cerr, interp);
   std::cout << "Initialized python: Slicer Interp: " << (long)vtkSlicerApplication::GetInstance()->GetMainInterp() << std::endl;
 #else
-  interp = vtkKWApplication::InitializeTcl(argc, argv, &cerr);
+  interp = vtkKWApplication::InitializeTcl(argc, argv, &cout);
   if (!interp)
     {
     slicerCerr("Error: InitializeTcl failed" << endl );
@@ -1290,14 +1299,14 @@ int Slicer3_main(int argc, char *argv[])
         std::vector<std::string>::const_iterator argit = Args.begin();
         while (argit != Args.end())
         {
-            cerr << "Arg =  " << *argit << endl;
+            cout << "Arg =  " << *argit << endl;
             std::string fileName;
             fileName.append(*argit);
             // is it a MRML or XML file?
             if (fileName.find(".mrml",0) != std::string::npos ||
                 fileName.find(".xml",0) != std::string::npos)
             {
-                cerr << fileName << " is a MRML or XML file, setting MRML scene file name and connecting\n";
+                cout << fileName << " is a MRML or XML file, setting MRML scene file name and connecting\n";
                 appLogic->GetMRMLScene()->SetURL(fileName.c_str());
                 // and then load it
                 int errorCode = appLogic->GetMRMLScene()->Connect();
@@ -1482,7 +1491,7 @@ int Slicer3_main(int argc, char *argv[])
     // and delete it.
    slicerApp->SetApplicationGUI ( NULL );
    appGUI->DeleteComponentGUIs();
-//cerr << "vtkSlicerApplicationGUI deleting app GUI\n";
+//cout << "vtkSlicerApplicationGUI deleting app GUI\n";
 //   appGUI->Delete ();
 
 #ifndef CLIMODULES_DEBUG

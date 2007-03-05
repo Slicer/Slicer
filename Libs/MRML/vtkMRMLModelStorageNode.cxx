@@ -345,30 +345,30 @@ int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
         int retval = reader->ReadWFile();
         if (retval != 0)
           {
-          std::cerr << "Error reading FreeSurfer W overlay file " << fullName.c_str() << ": ";
+          vtkErrorMacro ("Error reading FreeSurfer W overlay file " << fullName.c_str() << ": ");
           if (retval == 1)
             {
-            std::cerr << "Output is null\n";
+            vtkErrorMacro ("Output is null\n");
             }
           if (retval == 2)
             {
-            std::cerr << "FileName not specified\n";
+            vtkErrorMacro ("FileName not specified\n");
             }
           if (retval == 3)
             {
-            std::cerr << "Could not open file\n";
+            vtkErrorMacro ("Could not open file\n");
             }
           if (retval == 4)
             {
-            std::cerr << "Number of values in the file is 0 or negative, or greater than number of vertices in the associated scalar file\n";
+            vtkErrorMacro ("Number of values in the file is 0 or negative, or greater than number of vertices in the associated scalar file\n");
             }
           if (retval == 5) 
             {
-            std::cerr << " Error allocating the array of floats\n";
+            vtkErrorMacro (" Error allocating the array of floats\n");
             }
           if (retval == 6)
             {
-            std::cerr << "Unexpected EOF\n";
+            vtkErrorMacro ("Unexpected EOF\n");
             }
           }
         else

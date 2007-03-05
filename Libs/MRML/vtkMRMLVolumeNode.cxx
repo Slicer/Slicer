@@ -514,7 +514,7 @@ const char* vtkMRMLVolumeNode::ComputeScanOrderFromIJKToRAS(vtkMatrix4x4 *ijkToR
           }
       break;
     default:
-      cerr << "vtkMRMLVolumeNode::ComputeScanOrderFromRASToIJK:\n\tMax components "<< max_comp << " not in valid range 0,1,2\n";
+      vtkErrorWithObjectMacro (ijkToRAS, "Max components "<< max_comp << " not in valid range 0,1,2\n");
       return "";
     }        
  

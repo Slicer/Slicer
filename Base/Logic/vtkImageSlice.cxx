@@ -229,7 +229,7 @@ void vtkImageSliceExecute(vtkImageSlice *self,
   scalarSize = outData->GetScalarSize();
   numscalars = inData->GetNumberOfScalarComponents();
 
-//cerr << "id " << id << " ext " << outExt[0] << " " << outExt[1] << " " << outExt[2] << " " << outExt[3] << " " << outExt[4] << " " << outExt[5] << "\n"; 
+//vtkDebugMacro( "id " << id << " ext " << outExt[0] << " " << outExt[1] << " " << outExt[2] << " " << outExt[3] << " " << outExt[4] << " " << outExt[5] << "\n"); 
 
   double steps = (outExt[1] - outExt[0]);
   double invSteps = ( ( steps == 0.0 ) ? 1.0 : 1.0 / steps );
