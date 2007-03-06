@@ -79,7 +79,7 @@ void vtkMRMLFreeSurferProceduralColorNode::WriteXML(ostream& of, int nIndent)
   vtkIndent indent(nIndent);
   
   // only print out the look up table if ?
-  if (this->LookupTable != NULL) // && this->Type != this->File
+  if (this->LookupTable != NULL)
     {
     of << " numcolors=\"" << this->LookupTable->GetNumberOfColors() << "\"";
     of << " colors=\"";
@@ -146,6 +146,8 @@ void vtkMRMLFreeSurferProceduralColorNode::ReadXMLAttributes(const char** atts)
   vtkDebugMacro("Finished reading in xml attributes, list id = " << this->GetID() << " and name = " << this->GetName() << endl);
 }
 
+/*
+  Done via the vtkMRMLColorTableNode::ReadFile method
 //----------------------------------------------------------------------------
 void vtkMRMLFreeSurferProceduralColorNode::ReadFile ()
 {
@@ -237,6 +239,8 @@ void vtkMRMLFreeSurferProceduralColorNode::ReadFile ()
     vtkErrorMacro ("ERROR opening colour file " << this->FileName << endl);
     }
 }
+*/
+
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, ID
@@ -317,18 +321,6 @@ void vtkMRMLFreeSurferProceduralColorNode::SetTypeToGreenRed()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLFreeSurferProceduralColorNode::SetTypeToLabels()
-{
-    this->SetType(this->Labels);
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLFreeSurferProceduralColorNode::SetTypeToFile()
-{
-    this->SetType(this->File);
-}
-
-//----------------------------------------------------------------------------
 const char* vtkMRMLFreeSurferProceduralColorNode::GetTypeAsString()
 {
   if (this->Type == this->Heat)
@@ -350,14 +342,6 @@ const char* vtkMRMLFreeSurferProceduralColorNode::GetTypeAsString()
   if (this->Type == this->GreenRed)
     {
     return "GreenRed";
-    }
-  if (this->Type == this->Labels)
-    {
-    return "FreeSurferLabels";
-    }
-  if (this->Type == this->File)
-    {
-    return "FreeSurferFile";
     }
   return "(unknown)";
 }
@@ -384,14 +368,6 @@ const char* vtkMRMLFreeSurferProceduralColorNode::GetTypeAsIDString()
   if (this->Type == this->GreenRed)
     {
     return "vtkMRMLFreeSurferProceduralColorNodeGreenRed";
-    }
-  if (this->Type == this->Labels)
-    {
-    return "vtkMRMLFreeSurferProceduralColorNodeLabels";
-    }
-  if (this->Type == this->File)
-    {
-    return "vtkMRMLFreeSurferProceduralColorNodeFile";
     }
   return "(unknown)";
 }
@@ -473,21 +449,6 @@ void vtkMRMLFreeSurferProceduralColorNode::SetType(int type)
       this->GetFSLookupTable()->SetLutTypeToGreenRed();
       this->SetNamesFromColors();
       }
-    else if (this->Type == this->Labels)
-      {
-      this->SetFileName("../Slicer3/Libs/FreeSurfer/Testing/FreeSurferColorLUT.txt");
-      vtkDebugMacro("SetType Labels: trying to read fs labels file " << this->GetFileName());
-      this->ReadFile();
-      // reset to labels, as read file sets the type to file
-      this->Type = this->Labels;
-      // the fs look up table shouldn't try to do anything special with labels
-      this->GetFSLookupTable()->SetLutTypeToLabels();
-      }        
-    else if (this->Type == this->File)
-      {
-      std::cout << "Set type to file, call SetFileName and ReadFile next..." << endl;
-      }
-
     else
       {
       vtkErrorMacro ("vtkMRMLFreeSurferProceduralColorNode: SetType ERROR, unknown type " << type << endl);

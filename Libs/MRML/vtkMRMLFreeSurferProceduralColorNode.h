@@ -54,10 +54,9 @@ public:
 
 
   // Description:
-  // Read in a text file from FreeSurfer holding colour table elements 
-  // id<white space>name<white-space>r<w-s>g<w-s>b<w-s>a\n
-  // comments start with a hash mark
-  virtual void ReadFile ();
+  // Read in a text file - not used, use a regular vtkMRMLColorTableNode to
+  // read in freesurfer colour text files.
+//  virtual void ReadFile ();
   
   // Description:
   // Copy the node's attributes to this object
@@ -86,8 +85,6 @@ public:
   void SetTypeToRedBlue();
   void SetTypeToRedGreen();
   void SetTypeToGreenRed();
-  void SetTypeToLabels();
-  void SetTypeToFile();
 
   void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
 
@@ -107,15 +104,13 @@ public:
     RedBlue = 3,
     RedGreen = 4,
     GreenRed = 5,
-    Labels = 6,
-    File = 7,
   };
   //ETX
 
   // Description:
   // Return the lowest and the highest integers, for use in looping
   int GetFirstType() { return this->Heat; };
-  int GetLastType () { return this->File; };
+  int GetLastType () { return this->GreenRed; };
   
   // Description:
   // return a text string describing the colour look up table type
