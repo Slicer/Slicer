@@ -167,7 +167,8 @@ int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
        extension != std::string(".sulc") &&
        extension != std::string(".area") &&
        extension != std::string(".aparc.annot") &&
-       extension != std::string(".cma_aparc.annot"))
+       extension != std::string(".cma_aparc.annot") &&
+       extension != std::string(".ad_aparc.annot"))
     {
     if (modelNode->GetPolyData()) 
       {
@@ -395,7 +396,8 @@ int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
         }
       }
     else if (extension == std::string(".aparc.annot") ||
-             extension == std::string(".cma_aparc.annot"))
+             extension == std::string(".cma_aparc.annot") ||
+             extension == std::string(".ad_aparc.annot"))
       {
       // read in a FreeSurfer annotation overlay
       
@@ -432,7 +434,26 @@ int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
         int retval = reader->ReadFSAnnotation();
         if (retval == 6)
           {
-          vtkErrorMacro("No Internal Color Table in " << fullName.c_str());
+          vtkDebugMacro("No Internal Color Table in " << fullName.c_str() << ", trying the default colours");
+          // use the default annotation colours
+          // colorLogic->GetDefaultFreeSurferSurfaceLabelsColorNodeID()
+          
+          vtkCollection *labelNodes = this->Scene->GetNodesByName("FSSurfaceLabels");
+          if (labelNodes->GetNumberOfItems() > 0)
+            {
+            labelNodes->InitTraversal();
+            vtkMRMLColorTableNode *cnode = vtkMRMLColorTableNode::SafeDownCast(labelNodes->GetNextItemAsObject());
+            if (cnode != NULL)
+              {
+              vtkWarningMacro("Could not find an internal colour table in " << fullName.c_str() << ", using default colour node " << cnode->GetName());
+              modelNode->GetDisplayNode()->SetAndObserveColorNodeID(cnode->GetID());
+              cnode = NULL;
+              }
+            }
+          else
+            {
+            vtkErrorMacro("Unable to find an internal nor an external colour look up table for " << fullName.c_str());
+            }
           }
         else
           {          
