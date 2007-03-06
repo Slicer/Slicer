@@ -28,14 +28,21 @@ wm withdraw .
 #/tmp/Slicer3-3.0.2007-02-06-Linux/lib/InsightToolkit
 #/tmp/Slicer3-3.0.2007-02-06-Linux/lib/Slicer3/tcl/lib
 
-set ::env(VTK_DIR)           @VTK_DIR@
-set ::env(KWWidgets_DIR)     @KWWidgets_DIR@
-set ::env(ITK_DIR)           @ITK_DIR@
+set ::BUILD_SUBDIR  ""
+if { [string match -nocase "windows*" $::tcl_platform(os)] } {
+  set ::BUILD_SUBDIR  @CMAKE_BUILD_TYPE@
+}
+
+set ::env(VTK_DIR)           [file normalize @VTK_DIR@]
+set ::env(VTK_BIN_DIR)       [file normalize @VTK_DIR@/bin/$::BUILD_SUBDIR]
+set ::env(KWWidgets_DIR)     [file normalize @KWWidgets_DIR@]
+set ::env(KWWidgets_BIN_DIR) [file normalize @KWWidgets_DIR@/bin/$::BUILD_SUBDIR]
+set ::env(ITK_BIN_DIR)       [file normalize @ITK_DIR@/bin/$::BUILD_SUBDIR]
 set ::env(SANDBOX_BIN_DIR)   ""
-set ::env(TCL_LIBRARY)       @TCL_LIBRARY@
-set ::env(TCL_LIB_DIR)       [file dirname $::env(TCL_LIBRARY)]
-set ::env(TEEM_DIR)          @TEEM_DIR@
-set ::env(VTK_BUILD_SUBDIR)  @CMAKE_BUILD_TYPE@
+set ::env(TCL_LIBRARY)       [file normalize @TCL_LIBRARY@]
+set ::env(TCL_DIR)           [file normalize [file dirname [file dirname $::env(TCL_LIBRARY)]]]
+set ::env(TEEM_DIR)          [file normalize @TEEM_DIR@/bin/$::BUILD_SUBDIR]
+set ::env(SLICER_BIN_DIR)    [file normalize @LIBRARY_OUTPUT_PATH@/$::BUILD_SUBDIR]
 
 #
 # set up variables for the OS Builds
@@ -123,40 +130,35 @@ proc launch_SetPaths {} {
         $::env(BUILD) == $::LINUX_64 || 
         $::env(BUILD) == $::LINUX} {
         # add vtk, slicer, and tcl bins
-            set ::env(LD_LIBRARY_PATH) $::env(VTK_DIR)/bin:$::env(LD_LIBRARY_PATH)
-            set ::env(LD_LIBRARY_PATH) $::env(KWWidgets_DIR)/bin:$::env(LD_LIBRARY_PATH)
-            set ::env(LD_LIBRARY_PATH) $::env(ITK_DIR)/bin:$::env(LD_LIBRARY_PATH)
-            #set ::env(LD_LIBRARY_PATH) $::env(SANDBOX_BIN_DIR):$::env(LD_LIBRARY_PATH)
-            #set ::env(LD_LIBRARY_PATH) $::env(SANDBOX_BIN_DIR)/../Distributions/bin:$::env(LD_LIBRARY_PATH)
-            set ::env(LD_LIBRARY_PATH) $::env(SLICER_HOME)/Base/builds/$::env(BUILD)/bin:$::env(LD_LIBRARY_PATH)
-            set ::env(LD_LIBRARY_PATH) $::env(TCL_LIB_DIR):$::env(LD_LIBRARY_PATH)
+            set ::env(LD_LIBRARY_PATH) $::env(VTK_BIN_DIR):$::env(LD_LIBRARY_PATH)
+            set ::env(LD_LIBRARY_PATH) $::env(KWWidgets_BIN_DIR):$::env(LD_LIBRARY_PATH)
+            set ::env(LD_LIBRARY_PATH) $::env(ITK_BIN_DIR):$::env(LD_LIBRARY_PATH)
+            set ::env(LD_LIBRARY_PATH) $::env(TCL_DIR)/lib:$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(TEEM_DIR):$::env(LD_LIBRARY_PATH)
+            set ::env(LD_LIBRARY_PATH) $::env(SLICER_BIN_DIR):$::env(LD_LIBRARY_PATH)
         } elseif {$::env(BUILD) ==  $::DARWIN || $::env(BUILD) == $::DARWIN_X86} { 
             # add vtk, slicer, and tcl bins
-            set ::env(DYLD_LIBRARY_PATH) $::env(VTK_DIR)/bin:$::env(DYLD_LIBRARY_PATH)
-            set ::env(DYLD_LIBRARY_PATH) $::env(KWWidgets_DIR)/bin:$::env(DYLD_LIBRARY_PATH)
-            set ::env(DYLD_LIBRARY_PATH) $::env(ITK_DIR)/bin:$::env(DYLD_LIBRARY_PATH)
-            #set ::env(DYLD_LIBRARY_PATH) $::env(SANDBOX_BIN_DIR):$::env(DYLD_LIBRARY_PATH)
-            #set ::env(DYLD_LIBRARY_PATH) $::env(SANDBOX_BIN_DIR)/../Distributions/bin:$::env(DYLD_LIBRARY_PATH)
-            set ::env(DYLD_LIBRARY_PATH) $::env(SLICER_HOME)/Base/builds/$::env(BUILD)/bin:$::env(DYLD_LIBRARY_PATH)
-            set ::env(DYLD_LIBRARY_PATH) $::env(TCL_LIB_DIR):$::env(DYLD_LIBRARY_PATH)
+            set ::env(DYLD_LIBRARY_PATH) $::env(VTK_BIN_DIR):$::env(DYLD_LIBRARY_PATH)
+            set ::env(DYLD_LIBRARY_PATH) $::env(KWWidgets_BIN_DIR):$::env(DYLD_LIBRARY_PATH)
+            set ::env(DYLD_LIBRARY_PATH) $::env(ITK_BIN_DIR):$::env(DYLD_LIBRARY_PATH)
+            set ::env(DYLD_LIBRARY_PATH) $::env(TCL_DIR)/lib:$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(TEEM_DIR):$::env(DYLD_LIBRARY_PATH)
+            set ::env(DYLD_LIBRARY_PATH) $::env(SLICER_BIN_DIR):$::env(DYLD_LIBRARY_PATH)
         } elseif {$::env(BUILD) == $::WINDOWS} {
             # add vtk, slicer, and tcl bins
-            set ::env(Path) $::env(VTK_DIR)/bin/$::env(VTK_BUILD_SUBDIR)\;$::env(Path)
-            set ::env(Path) $::env(KWWidgets_DIR)/bin/$::env(VTK_BUILD_SUBDIR)\;$::env(Path)
-            set ::env(Path) $::env(ITK_DIR)/bin/$::env(VTK_BUILD_SUBDIR)\;$::env(Path)
-            #set ::env(Path) $::env(SANDBOX_BIN_DIR)/$::env(VTK_BUILD_SUBDIR)\;$::env(Path)
-            #set ::env(Path) $::env(SANDBOX_BIN_DIR)/../Distributions/bin/$::env(VTK_BUILD_SUBDIR)\;$::env(Path)
-            set ::env(Path) $::env(SLICER_HOME)/Base/builds/$::env(BUILD)/bin/$::env(VTK_BUILD_SUBDIR)\;$::env(Path)
+            set ::env(Path) $::env(VTK_BIN_DIR)\;$::env(Path)
+            set ::env(Path) $::env(KWWidgets_BIN_DIR)\;$::env(Path)
+            set ::env(Path) $::env(ITK_BIN_DIR)\;$::env(Path)
+            set ::env(Path) $::env(TCL_DIR)/bin\;$::env(Path)
             set ::env(Path) $::env(TEEM_DIR)\;$::env(Path)
+            set ::env(Path) $::env(SLICER_BIN_DIR)\;$::env(Path)
         } else {
             puts stderr "Libraries: unknown build $::env(BUILD)"
         }
 
     # set the base tcl/tk library paths, using the previously defined TCL_LIB_DIR
-    set ::env(TCL_LIBRARY) $::env(TCL_LIB_DIR)/tcl8.4
-    set ::env(TK_LIBRARY) $::env(TCL_LIB_DIR)/tk8.4
+    set ::env(TCL_LIBRARY) $::env(TCL_DIR)/lib/tcl8.4
+    set ::env(TK_LIBRARY) $::env(TCL_DIR)/lib/tk8.4
 
     #
     # add the default search locations for tcl packages
@@ -170,8 +172,8 @@ proc launch_SetPaths {} {
             set ::env(TCLLIBPATH) "$::env(VTK_DIR)/Wrapping/Tcl $::env(TCLLIBPATH)"
             set ::env(TCLLIBPATH) "$::env(KWWidgets_DIR)/Wrapping/Tcl $::env(TCLLIBPATH)"
     } elseif {$::env(BUILD) == $::WINDOWS} {
-        set ::env(TCLLIBPATH) "$::env(VTK_DIR)/Wrapping/Tcl/$::env(VTK_BUILD_SUBDIR) $::env(TCLLIBPATH)"
-        set ::env(TCLLIBPATH) "$::env(KWWidgets_DIR)/Wrapping/Tcl/$::env(VTK_BUILD_SUBDIR) $::env(TCLLIBPATH)"
+        set ::env(TCLLIBPATH) "$::env(VTK_DIR)/Wrapping/Tcl/$::BUILD_SUBDIR $::env(TCLLIBPATH)"
+        set ::env(TCLLIBPATH) "$::env(KWWidgets_DIR)/Wrapping/Tcl/$::BUILD_SUBDIR $::env(TCLLIBPATH)"
     } else {
         puts stderr "TCLLIBPATH: Invalid build $::env(BUILD)"
         exit
@@ -223,7 +225,6 @@ proc launch_LicenseDialog {} {
                 set resp [tk_messageBox -message $msg -type okcancel -title "Slicer3"]
             }
 
-              wm withdraw .
             if {$resp == "cancel"} {
                 exit
             }
@@ -249,6 +250,12 @@ proc launch_FileEvent {fp} {
     }
 }
 
+#
+# run the actual program 
+# - check for a --launch argument for a replacement main app, otherwise run Slicer3-real
+# - process the arguments to adjust the escape characters
+# - launch the main app as a child process and monitor the stdout and return codes
+#
 proc launch_RunProgram {} {
 
 
@@ -303,13 +310,16 @@ proc launch_RunProgram {} {
     #
     if { $launch_command == "" } {
         if {$::env(BUILD) == $::WINDOWS} {
-            set launch_command $::SLICER_HOME/bin/$::env(VTK_BUILD_SUBDIR)/Slicer3-real.exe
+            set launch_command $::SLICER_HOME/bin/$::BUILD_SUBDIR/Slicer3-real.exe
         } else {
             # turn curly braces into quotes
             regsub -all "{|}" $::argv "\\\"" ::argv
             set launch_command $::SLICER_HOME/bin/Slicer3-real
         }
     }
+
+    set ::errorInfo ""  ;# reset error info so we are sure to get errors from the 
+                         # launch and not leftovers from previous 'catch' calls
 
     if {$::env(BUILD) == $::WINDOWS} {
         set fp [open "| \"$launch_command\" $::argv" r]
@@ -363,7 +373,9 @@ proc launch_RunProgram {} {
     exit $code
 }
 
+######
 #######  The actual steps for launching:
+######
 
 launch_InitEnvironment 
 
@@ -371,12 +383,10 @@ launch_SetPaths
 
 launch_SplashScreen
 
+# - no licenseDialog needed for Slicer3
 #launch_LicenseDialog
 
 #
 # run program until it exits and then exit this script with the ouput
 #
 launch_RunProgram
-
-exit
-
