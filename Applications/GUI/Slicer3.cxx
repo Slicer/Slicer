@@ -518,6 +518,22 @@ int Slicer3_main(int argc, char *argv[])
     }
 
     //
+    // load the custom icons
+    //
+    {    
+      std::string cmd;
+      int returnCode;
+
+      cmd =  "wm iconbitmap . -default $::SLICER_BUILD/lib/slicer3.ico";
+      returnCode = Slicer3_Tcl_Eval( interp, cmd.c_str() );
+      if ( returnCode )
+        {
+        slicerCerr("Load Custom Icons: " << cmd.c_str() << endl);
+        return ( returnCode );
+        }
+    }
+
+    //
     // Initialize our Tcl library (i.e. our classes wrapped in Tcl)
     //
     Slicerbasegui_Init(interp);

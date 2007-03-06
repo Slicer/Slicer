@@ -6,7 +6,7 @@ package require Img
 package require ico
 
 
-proc modifyLauncherIcons {logoDir exe} {
+proc modifyLauncherIcons { logoDir exe {ico ""} } {
   set iconSpecs {
     {0 32 4 16}
     {1 16 4 16}
@@ -25,6 +25,12 @@ proc modifyLauncherIcons {logoDir exe} {
     $im read $logoDir/3DSlicerLogo-DesktopIcon-${dim}x${dim}x${numColors}.png
     ::ico::writeIcon $exe $index $bpp $im
 
+  }
+
+  if { $ico != "" } {
+    set im [image create photo]
+    $im read $logoDir/3DSlicerLogo-DesktopIcon-32x32x256.png
+    ::ico::writeIcon $ico 0 $bpp $im -type ICO
   }
 }
 

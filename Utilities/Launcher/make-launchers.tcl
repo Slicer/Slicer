@@ -47,7 +47,11 @@ file rename -force Slicer3 Slicer3Launchers/Slicer3-win32.exe
 puts "setting win32 launcher icons..."
 set thisDir [file dirname [info script]]
 source $thisDir/win32-icons.tcl
-modifyLauncherIcons $thisDir/3DSlicerLogoICOimages Slicer3Launchers/Slicer3-win32.exe
+
+modifyLauncherIcons \
+  $thisDir/3DSlicerLogoICOimages \
+  Slicer3Launchers/Slicer3-win32.exe \
+  $thisDir/3DSlicerLogoICOimages/slicer3.ico
 
 exit
 
