@@ -56,6 +56,17 @@ TARGET_LINK_LIBRARIES(FreeSurfer
   vtkIOTCL
   )
 
+# Copy the colour files to the build directory
+CONFIGURE_FILE(
+  ${FreeSurfer_SOURCE_DIR}/FreeSurferColorLUT.txt
+  ${FreeSurfer_BINARY_DIR}/FreeSurferColorLUT.txt
+  COPYONLY
+)
+CONFIGURE_FILE(
+  ${FreeSurfer_SOURCE_DIR}/Simple_surface_labels2002.txt
+  ${FreeSurfer_BINARY_DIR}/Simple_surface_labels2002.txt
+  COPYONLY
+)
 
 # --------------------------------------------------------------------------
 # Testing (requires some of the examples)

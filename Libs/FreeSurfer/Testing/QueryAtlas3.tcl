@@ -175,6 +175,7 @@ proc QueryAtlasAddModel {} {
 proc QueryAtlasAddVolumes {} {
 
   set volumesLogic [$::slicer3::VolumesGUI GetLogic]
+  set colorLogic [$::slicer3::ColorGUI GetLogic]
   set centered 1
 
   #
@@ -188,7 +189,7 @@ proc QueryAtlasAddVolumes {} {
 
   set volumeDisplayNode [$volumeNode GetDisplayNode]
 
-  $volumeDisplayNode SetAndObserveColorNodeID "vtkMRMLColorNodeGrey"
+  $volumeDisplayNode SetAndObserveColorNodeID [$colorLogic GetDefaultVolumeColorNodeID]
 
   $volumeDisplayNode SetWindow 216
   $volumeDisplayNode SetLevel 108
@@ -209,6 +210,7 @@ proc QueryAtlasAddVolumes {} {
   $matrix SetElement 1 3  13
   $matrix SetElement 2 3  13
   $::slicer3::MRMLScene AddNode $transformNode
+
 
   set fileName [file dirname $::QA(directory)]/sirp-hp65-stc-to7-gam.feat/stats/zstat8.nii
 
@@ -235,11 +237,7 @@ proc QueryAtlasAddVolumes {} {
 
   set volumeDisplayNode [$volumeNode GetDisplayNode]
 
-  set colorNode [vtkMRMLFreeSurferProceduralColorNode New]
-  $colorNode SetFileName $::SLICER_BUILD/../Slicer3/Libs/FreeSurfer/Testing/FreeSurferColorLUT.txt
-  $colorNode ReadFile
-  $::slicer3::MRMLScene AddNode $colorNode
-  $volumeDisplayNode SetAndObserveColorNodeID [$colorNode GetID]
+  $volumeDisplayNode SetAndObserveColorNodeID [$colorLogic GetDefaultFreeSurferLabelMapColorNodeID]
 
   #
   # make brain be background, functional foreground, and segmentation be label map
@@ -303,21 +301,32 @@ proc QueryAtlasAddAnnotations {} {
     $fssar UseExternalColorTableFileOff
 
     set retval [$fssar ReadFSAnnotation]
+
+    array unset _labels
     if {$retval == 6} {
-        error "ERROR: no internal colour table"
+        error "ERROR: no internal colour table, using default"
+        # use the default colour node
+        [$modelNode GetDisplayNode] SetAndObserveColorNodeID [$colorLogic GetDefaultFreeSurferSurfaceLabelsColorNodeID]
+        set lutNode [[$modelNode GetDisplayNode] GetColorNode]
+        # get the names 
+        for {set i 0} {$i < [$lutNode GetNumberOfColors]} {incr i} {
+            set _labels($i) [$lutNode GetColorName $i]
+        }
+    } else {
+        # get the colour names from the reader       
+        array set _labels [$fssar GetColorTableNames]        
     }
+    array unset ::vtkFreeSurferReadersLabels_$::QA(modelNodeID)
+    array set ::vtkFreeSurferReadersLabels_$::QA(modelNodeID) [array get _labels]
+    # print them out
+    set ::QA(labelMap) [array get _labels]
+
+    set entries [lsort -integer [array names _labels]]
 
     # set the look up table
     $mapper SetLookupTable [$lutNode GetLookupTable]
     
-    array unset _labels
-    array set _labels [$fssar GetColorTableNames]
-    array unset ::vtkFreeSurferReadersLabels_$::QA(modelNodeID)
-    array set ::vtkFreeSurferReadersLabels_$::QA(modelNodeID) [array get _labels]
-    set entries [lsort -integer [array names _labels]]
-
-    # print them out
-    set ::QA(labelMap) [array get _labels]
+    
 
     # make the scalars visible
     $mapper SetScalarRange  [lindex $entries 0] [lindex $entries end]
@@ -333,7 +342,7 @@ proc QueryAtlasAddAnnotations {} {
   #
   # read the freesurfer labels for the aseg+aparc
   #
-  set lutFile $::SLICER_BUILD/../Slicer3/Libs/FreeSurfer/Testing/FreeSurferColorLUT.txt
+  set lutFile $::SLICER_BUILD/../Slicer3/Libs/FreeSurfer/FreeSurferColorLUT.txt
   if { [file exists $lutFile] } {
     set fp [open $lutFile "r"]
     while { ![eof $fp] } {
