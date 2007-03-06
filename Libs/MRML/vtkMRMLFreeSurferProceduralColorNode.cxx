@@ -85,7 +85,6 @@ void vtkMRMLFreeSurferProceduralColorNode::WriteXML(ostream& of, int nIndent)
     of << " colors=\"";
     for (int i = 0; i < this->LookupTable->GetNumberOfColors(); i++)
       {
-      double *rgba;
       double rgb[3];
       this->LookupTable->GetColor(i, rgb);
       of <<  i << " '" << this->GetColorNameWithoutSpaces(i, "_") << "' " << rgb[0] << " " << rgb[1] << " " << rgb[2] << " 1.0 ";
@@ -505,7 +504,6 @@ void vtkMRMLFreeSurferProceduralColorNode::SetType(int type)
 void vtkMRMLFreeSurferProceduralColorNode::SetNamesFromColors()
 {
   int size = this->GetFSLookupTable()->GetNumberOfColors();
-  double *rgba;
   double rgb[3];
   // reset the names
   this->Names.clear();

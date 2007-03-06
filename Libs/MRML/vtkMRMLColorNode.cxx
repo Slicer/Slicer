@@ -92,7 +92,6 @@ void vtkMRMLColorNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  int numColours;
   while (*atts != NULL) 
     {
     attName = *(atts++);
