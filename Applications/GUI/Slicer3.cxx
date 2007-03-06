@@ -520,6 +520,7 @@ int Slicer3_main(int argc, char *argv[])
     //
     // load the custom icons
     //
+#ifdef _WIN32
     {    
       std::string cmd;
       int returnCode;
@@ -532,6 +533,7 @@ int Slicer3_main(int argc, char *argv[])
         return ( returnCode );
         }
     }
+#endif
 
     //
     // Initialize our Tcl library (i.e. our classes wrapped in Tcl)
