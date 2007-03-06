@@ -296,10 +296,9 @@ namespace itk
       std::vector<double> vDir;
       // convert the coordinates from RAS to LPS, as the ITK archetype assumes
       // LPS volumes
-      if( orientation == "RAS" ) {
-        matrix[0][ui] *= -1.0; // R -> L
-        matrix[1][ui] *= -1.0; // A -> P
-      }
+      // volume orientation not related to scan order, always convert
+      matrix[0][ui] *= -1.0; // R -> L
+      matrix[1][ui] *= -1.0; // A -> P
       for(unsigned int uj=0; uj<3; ++uj)
       {
         vDir.push_back( matrix[uj][ui] );
@@ -869,24 +868,46 @@ namespace itk
     
     std::string orientation = "";
   
-    for(int cAxes=0; cAxes<3; cAxes++){
+    for(int cAxes=0; cAxes<3; cAxes++)
+      {
       const double sag = directions( 0, cAxes ); // LR axis
       const double cor = directions( 1, cAxes ); // PA axis
       const double ax  = directions( 2, cAxes ); // IS axis
-      if(fabs(sag) > fabs(cor) && fabs(sag) > fabs(ax)){
-        if(sag > 0) orientation += "R";
-        else        orientation += "L";
+      if(fabs(sag) > fabs(cor) &&
+         fabs(sag) > fabs(ax))
+        {
+        if(sag > 0)
+          {
+          orientation += "R";
+          }
+        else
+          {
+          orientation += "L";
+          }
         continue;
-      }
-      if(fabs(cor) > fabs(ax)){
-        if(cor > 0) orientation += "A";
-        else        orientation += "P";
+        }
+      if(fabs(cor) > fabs(ax))
+        {
+        if(cor > 0)
+          {
+          orientation += "A";
+          }
+        else
+          {
+          orientation += "P";
+          }
         continue;
-      }
-      if(ax > 0) orientation += "S";
-      else       orientation += "I";
+        }
+      if(ax > 0)
+        {
+        orientation += "S";
+        }
+      else
+        {
+        orientation += "I";
+        }
     }
-
+    //std::cout << "GetOrientation returning " << orientation.c_str() << std::endl;
     return orientation;
   }    
 
