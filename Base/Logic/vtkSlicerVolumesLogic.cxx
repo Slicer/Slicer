@@ -334,14 +334,32 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (char* filename, in
       {
       isLabelMap = vtkMRMLScalarVolumeNode::SafeDownCast(volumeNode)->GetLabelMap();
       }
-    //displayNode->SetDefaultColorMap(isLabelMap);
     vtkSlicerColorLogic *colorLogic = vtkSlicerColorLogic::New();
-      //vtkSlicerColorGUI::SafeDownCast(vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Color"))->GetLogic();
     if (colorLogic)
       {
       if (isLabelMap)
         {
-        displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultLabelMapColorNodeID());
+        // is it a free surfer label map?
+        std::string fname(filename);
+        std::string::size_type loc = fname.find(".");
+        if (loc != std::string::npos)
+          {
+          std::string extension = fname.substr(loc);
+          if (extension == std::string(".mgz") ||
+              extension == std::string(".mgh") ||
+              extension == std::string(".mgh.gz"))
+            {
+            displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultFreeSurferLabelMapColorNodeID());
+            }
+          else
+            {
+            displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultLabelMapColorNodeID());
+            }
+          }
+        else
+          {
+          displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultLabelMapColorNodeID());
+          }
         }
       else
         {
