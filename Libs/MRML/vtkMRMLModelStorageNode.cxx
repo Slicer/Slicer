@@ -506,7 +506,7 @@ int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
       return 0;
       }
     }
-  catch (vtkstd::exception &e)
+  catch (...)
     {
     result = 0;
     }
@@ -558,7 +558,7 @@ int vtkMRMLModelStorageNode::WriteData(vtkMRMLNode *refNode)
       {
       writer->Write();
       }
-    catch (vtkstd::exception &e)
+    catch (...)
       {
       result = 0;
       }
@@ -573,7 +573,7 @@ int vtkMRMLModelStorageNode::WriteData(vtkMRMLNode *refNode)
       {
       writer->Write();
       }
-    catch (vtkstd::exception &e)
+    catch (...)
       {
       result = 0;
       }
@@ -588,7 +588,7 @@ int vtkMRMLModelStorageNode::WriteData(vtkMRMLNode *refNode)
       {
       writer->Write();
       }
-    catch (vtkstd::exception &e)
+    catch (...)
       {
       result = 0;
       }

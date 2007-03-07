@@ -197,7 +197,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
     {
     reader->Update();
     }
-    catch (vtkstd::exception &e)
+    catch (...)
     {
     vtkErrorMacro("vtkMRMLVolumeArchetypeStorageNode: Cannot read file");
     reader->RemoveObservers( vtkCommand::ProgressEvent,  this->MRMLCallbackCommand);
@@ -300,7 +300,7 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteData(vtkMRMLNode *refNode)
     {
     writer->Write();
     }
-    catch (vtkstd::exception &e)
+    catch (...)
     {
     result = 0;
     }
