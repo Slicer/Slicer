@@ -264,13 +264,15 @@ itcl::body SliceSWidget::processEvent { } {
 
           # the factor operation is so 'z' isn't changed and the 
           # slider can still move through the full range
-          set newFOV ""
-          foreach f $_actionStartFOV factor "$percent $percent 1" {
-            lappend newFOV [expr $f * $factor]
-          }
-          eval $_sliceNode SetFieldOfView $newFOV
+          if { $percent > 0. } {
+            set newFOV ""
+            foreach f $_actionStartFOV factor "$percent $percent 1" {
+              lappend newFOV [expr $f * $factor]
+            }
+            eval $_sliceNode SetFieldOfView $newFOV
 
-          $_sliceNode UpdateMatrices
+            $_sliceNode UpdateMatrices
+          }
           $sliceGUI SetGUICommandAbortFlag 1
         }
         default {
