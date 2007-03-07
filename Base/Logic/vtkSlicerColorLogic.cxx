@@ -231,7 +231,8 @@ void vtkSlicerColorLogic::RemoveDefaultColorNodes()
       fsnode = NULL;
       }
     }
-
+  basicFSNode->Delete();
+  
   // remove the fs lookup table node
   node = vtkMRMLColorTableNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->GetDefaultFreeSurferLabelMapColorNodeID()));
   if (node != NULL)
