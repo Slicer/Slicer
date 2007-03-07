@@ -262,18 +262,27 @@ proc launch_RunProgram {} {
     # 
     # look for launcher-specific arguments
     #  --launch <program>
+    # or 
+    #  --launch-script <script.tcl>
     #
     set launch_command ""
     set argv0 [lindex $::argv 0]
     set argv1 [lindex $::argv 1]
-    if { $argv0 == "--launch" } {
+    switch -- $argv0 {
+      "--launch" {
         if { $argv1 == "" } {
           error "--launch requires argument of program to run"
         } else {
             set launch_command $argv1
             set ::argv [lreplace $::argv 0 1]
         }
+      }
+      "--launch-script" {
+        uplevel #0 source $argv1
+        exit
+      }
     }
+
 
 
     #
