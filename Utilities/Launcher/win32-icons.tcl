@@ -5,6 +5,7 @@ package require Tk
 package require Img
 package require ico
 
+source ico.debug.tcl
 
 proc modifyLauncherIcons { logoDir exe {ico ""} } {
   set iconSpecs {
@@ -21,9 +22,13 @@ proc modifyLauncherIcons { logoDir exe {ico ""} } {
     puts $spec
 
     foreach {index dim bpp numColors} $spec {}
+
     set im [image create photo]
+    puts "$im read $logoDir/3DSlicerLogo-DesktopIcon-${dim}x${dim}x${numColors}.png"
     $im read $logoDir/3DSlicerLogo-DesktopIcon-${dim}x${dim}x${numColors}.png
-    ::ico::writeIcon $exe $index $bpp $im
+    removeTransparency $im
+    puts "::ico::writeIcon $exe $index $bpp $im"
+    catch "::ico::writeIcon $exe $index $bpp $im"
 
   }
 
@@ -35,6 +40,16 @@ proc modifyLauncherIcons { logoDir exe {ico ""} } {
 }
 
 
+proc removeTransparency {img} {
+    set w [image width $img]
+    set h [image height $img]
+    for {set y [expr $h - 1]} {$y > -1} {incr y -1} {
+      for {set x 0} {$x < $w} {incr x} {
+        $img transparency set $x $y 0
+      }
+    }
+    $img transparency set 0 0 1
+}
 
 
 
