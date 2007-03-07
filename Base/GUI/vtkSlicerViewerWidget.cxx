@@ -1326,20 +1326,39 @@ int vtkSlicerViewerWidget::Pick(int x, int y)
     return 0;
     }
    // get the current renderer's size
-  //int *renSize = ren->GetSize();
+  int *renSize = ren->GetSize();
   // resize the interactor?
   
   // pass the event's display point to the world point picker
   double displayPoint[3];
   displayPoint[0] = x;
-  displayPoint[1] = y;
+  displayPoint[1] = renSize[1] - y;
   displayPoint[2] = 0.0;
-  
+
+  if (this->CellPicker->Pick(displayPoint, ren))
+    {
+    this->CellPicker->GetPickPosition(pickPoint);
+    }
+  else
+    {
+    return 0;
+    }
+  /**
+  if (this->PropPicker->PickProp(x, y, ren))
+    {
+    this->PropPicker->GetPickPosition(pickPoint);
+    }
+  else
+    {
+    return 0;
+    }
+    **/
+
   // world point picker's Pick always returns 0
+  /**
   this->WorldPointPicker->Pick(displayPoint, ren);
   this->WorldPointPicker->GetPickPosition(pickPoint);
-  vtkDebugMacro("Pick: got pick point " <<  pickPoint[0] << ", " << pickPoint[1] << ", " << pickPoint[2]);
-  ren = NULL;
+  **/
 
   // translate world to RAS
   for (int p = 0; p < 3; p++)
