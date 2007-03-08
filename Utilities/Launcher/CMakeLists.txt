@@ -21,6 +21,12 @@ IF(${launcher_platform} MATCHES Linux)
   SET(launcher_platform  linux-x86)
 ENDIF(${launcher_platform} MATCHES Linux)
 
+MESSAGE ( "launcher_platform is ${launcher_platform}" )
+
+IF(${launcher_platform} MATCHES Darwin-powerpc)
+  SET(launcher_platform darwin-ppc)
+ENDIF(${launcher_platform} MATCHES Darwin-powerpc)
+
 STRING ( TOLOWER "${launcher_platform}" launcher_platform )
 SET (launcher_name "Slicer3-${launcher_platform}${CMAKE_EXECUTABLE_SUFFIX}")
 
