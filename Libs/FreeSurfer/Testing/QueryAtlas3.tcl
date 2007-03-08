@@ -218,7 +218,7 @@ proc QueryAtlasAddVolumes {} {
   $volumeNode SetAndObserveTransformNodeID [$transformNode GetID]
   set ::QA(functional,volumeNodeID) [$volumeNode GetID]
   set volumeDisplayNode [$volumeNode GetDisplayNode]
-  $volumeDisplayNode SetAndObserveColorNodeID "vtkMRMLColorNodeIron"
+  $volumeDisplayNode SetAndObserveColorNodeID "vtkMRMLColorTableNodeIron"
   $volumeDisplayNode SetWindow 3.3
   $volumeDisplayNode SetLevel 3
   $volumeDisplayNode SetUpperThreshold 6.8
