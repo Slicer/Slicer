@@ -1237,12 +1237,12 @@ void vtkSlicerViewControlGUI::MainViewRock ( )
     if ( vn != NULL )
       {
       if ( vn->GetAnimationMode() == vtkMRMLViewNode::Rock )
-      {
-      this->RockView ( );
-      this->RequestNavigationRender();
-      this->Script ( "update idletasks" );
-      this->Script ( "after idle \"%s MainViewRock \"",  this->GetTclName() );
-      }
+        {
+        this->RockView ( );
+        //this->RequestNavigationRender();
+        this->Script ( "update idletasks" );
+        this->Script ( "after 5 \"%s MainViewRock \"",  this->GetTclName() );
+        }
       }
     }
 }
@@ -1296,9 +1296,9 @@ void vtkSlicerViewControlGUI::MainViewSpin ( )
       if ( vn->GetAnimationMode() == vtkMRMLViewNode::Spin )
         {
         this->SpinView (vn->GetSpinDirection(), vn->GetSpinDegrees() );
-        this->RequestNavigationRender();
+        //this->RequestNavigationRender();
         this->Script ( "update idletasks" );
-        this->Script ( "after idle \"%s MainViewSpin \"",  this->GetTclName() );
+        this->Script ( "after 5 \"%s MainViewSpin \"",  this->GetTclName() );
         }
       }
     }
