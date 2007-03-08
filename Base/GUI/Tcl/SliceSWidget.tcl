@@ -338,7 +338,7 @@ itcl::body SliceSWidget::processEvent { } {
       $this resizeSliceNode
     }
     "EnterEvent" { 
-      $this updateAnnotation
+      $this updateAnnotation $x $y $r $a $s
       $_renderWidget CornerAnnotationVisibilityOn
       [$::slicer3::ApplicationGUI GetMainSlicerWindow]  SetStatusText "Middle Button: Pan; Right Button: Zoom"
     }
