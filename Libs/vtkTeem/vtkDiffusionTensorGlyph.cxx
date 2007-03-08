@@ -192,7 +192,6 @@ int vtkDiffusionTensorGlyph::RequestData(
   vtkTransform *userVolumeTransform = NULL;
   // masking of glyphs
   vtkDataArray *inMask;
-  int doMasking;
   // glyph timing
   clock_t tStart=0;
   tStart = clock();

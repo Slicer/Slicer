@@ -247,16 +247,12 @@ static void vtkTeemEstimateDiffusionTensorExecute(vtkTeemEstimateDiffusionTensor
   vtkIdType outIncX, outIncY, outIncZ;
   unsigned long count = 0;
   unsigned long target;
-  int numInputs, k,i,j;
+  int numInputs;
   double *dwi;
   double B0;
   vtkDataArray *outTensors;
-  double D[3][3];
   float outT[3][3];
   int ptId;
-
-  // values that we have to set up later on.
-  double sigma, bValue;
 
   // Get information to march through output tensor data
   outTensors = self->GetOutput()->GetPointData()->GetTensors();
@@ -381,7 +377,7 @@ int vtkTeemEstimateDiffusionTensor::SetGradientsToContext(tenEstimateContext *te
   double maxB = this->B->GetRange()[1];
   data = (double *) (ngrad ->data);
   double factor;
-  for (int i=0; i< size[1]; i++) {
+  for (unsigned int i=0; i< size[1]; i++) {
    factor =  1/sqrt(maxB/this->B->GetValue(i));
    data[0] = data[0] * factor;
    data[1] = data[1] * factor;
@@ -470,7 +466,6 @@ void vtkTeemEstimateDiffusionTensor::ThreadedExecute(vtkImageData *inData,
                                               vtkImageData *outData,
                                               int outExt[6], int id)
 {
-  int idx;
   void *inPtrs;
   void *outPtr = outData->GetScalarPointerForExtent(outExt);
 
