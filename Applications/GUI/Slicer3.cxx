@@ -331,7 +331,7 @@ int Slicer3_main(int argc, char *argv[])
 
   // set the SLICER_HOME variable if it doesn't already exist from the launcher
   vtksys_stl::string slicerHome;
-  if ( !vtksys::SystemTools::GetEnv("slicerHome", slicerHome) )
+  if ( !vtksys::SystemTools::GetEnv("SLICER_HOME", slicerHome) )
     {
     std::string homeEnv = "SLICER_HOME=";
     homeEnv += slicerBinDir + "/../";
