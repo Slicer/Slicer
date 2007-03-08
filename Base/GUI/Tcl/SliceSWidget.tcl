@@ -37,6 +37,7 @@ if { [itcl::find class SliceSWidget] == "" } {
     # methods
     method resizeSliceNode {} {}
     method processEvent {} {}
+    method updateAnnotation {x y r a s} {}
     method incrementSlice {} {}
     method decrementSlice {} {}
     method moveSlice { delta } {}
@@ -229,13 +230,7 @@ itcl::body SliceSWidget::processEvent { } {
       # - then handle modifying the view
       #
 
-
-      $_annotation SetText 0 "Lb: $_layers(label,pixel)\nFg: $_layers(foreground,pixel)\nBg: $_layers(background,pixel)"
-      $_annotation SetText 1 [format "Bg I: %d\nBg J: %d\nBg K: %d" \
-                    $_layers(background,i) $_layers(background,j) $_layers(background,k)]
-      $_annotation SetText 2 "X: $x\nY:$y"
-      set rasText [format "R: %.1f\nA: %.1f\nS: %.1f" $r $a $s]
-      $_annotation SetText 3 $rasText
+      $this updateAnnotation $x $y $r $a $s
 
       if { [$_interactor GetShiftKey] } {
         $this jumpOtherSlices $r $a $s
@@ -405,6 +400,52 @@ itcl::body SliceSWidget::processEvent { } {
   }
 }
 
+
+itcl::body SliceSWidget::updateAnnotation {x y r a s} {
+
+  set logic [$sliceGUI GetLogic]
+  set sliceCompositeNode [$logic GetSliceCompositeNode]
+
+  set labelText "Lb: $_layers(label,pixel)"
+  set voxelText "Fg: $_layers(foreground,pixel)\nBg: $_layers(background,pixel)"
+  set ijkText [format "Bg I: %d\nBg J: %d\nBg K: %d" \
+                $_layers(background,i) $_layers(background,j) $_layers(background,k)]
+  set xyText "X: $x\nY:$y"
+  set rasText [format "R: %.1f\nA: %.1f\nS: %.1f" $r $a $s]
+
+  switch [$sliceCompositeNode GetAnnotationSpace] {
+    "0" {set spaceText $xyText}
+    "1" {set spaceText $ijkText}
+    "2" {set spaceText $rasText}
+  }
+
+  switch [$sliceCompositeNode GetAnnotationMode] {
+    "0" {
+      $_annotation SetText 0 ""
+      $_annotation SetText 1 ""
+      $_annotation SetText 2 ""
+      $_annotation SetText 3 ""
+    }
+    "1" {
+      $_annotation SetText 0 "${labelText}\n${voxelText}"
+      $_annotation SetText 1 $spaceText
+      $_annotation SetText 2 ""
+      $_annotation SetText 3 ""
+    }
+    "2" {
+      $_annotation SetText 0 "${labelText}"
+      $_annotation SetText 1 ""
+      $_annotation SetText 2 ""
+      $_annotation SetText 3 ""
+    }
+    "3" {
+      $_annotation SetText 0 "${labelText}\n${voxelText}"
+      $_annotation SetText 1 ""
+      $_annotation SetText 2 ""
+      $_annotation SetText 3 ""
+    }
+  }
+}
 
 
 itcl::body SliceSWidget::incrementSlice {} {
