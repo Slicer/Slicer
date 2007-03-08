@@ -328,6 +328,17 @@ int Slicer3_main(int argc, char *argv[])
       intDir = pathComponents[pathComponents.size()-1];
       }
     }
+
+  // set the SLICER_HOME variable if it doesn't already exist from the launcher
+  vtksys_stl::string slicerHome;
+  if ( !vtksys::SystemTools::GetEnv("slicerHome", slicerHome) )
+    {
+    std::string homeEnv = "SLICER_HOME=";
+    homeEnv += slicerBinDir + "/../";
+    cout << "Set environment: " << homeEnv.c_str() << endl;
+    vtkKWApplication::PutEnv(const_cast <char *> (homeEnv.c_str()));
+    }
+
   std::string tclEnv = "TCL_LIBRARY=";
   tclEnv += slicerBinDir + "/../lib/Slicer3/tcl/lib/tcl8.4";
   cout << "Set environment: " << tclEnv.c_str() << endl;
