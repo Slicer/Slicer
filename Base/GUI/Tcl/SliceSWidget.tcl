@@ -338,6 +338,7 @@ itcl::body SliceSWidget::processEvent { } {
       $this resizeSliceNode
     }
     "EnterEvent" { 
+      $this updateAnnotation
       $_renderWidget CornerAnnotationVisibilityOn
       [$::slicer3::ApplicationGUI GetMainSlicerWindow]  SetStatusText "Middle Button: Pan; Right Button: Zoom"
     }
@@ -413,10 +414,13 @@ itcl::body SliceSWidget::updateAnnotation {x y r a s} {
   set xyText "X: $x\nY:$y"
   set rasText [format "R: %.1f\nA: %.1f\nS: %.1f" $r $a $s]
 
+  set spaceText0 ""
+  set spaceText1 ""
   switch [$sliceCompositeNode GetAnnotationSpace] {
-    "0" {set spaceText $xyText}
-    "1" {set spaceText $ijkText}
-    "2" {set spaceText $rasText}
+    "0" {set spaceText0 $xyText}
+    "1" {set spaceText0 $ijkText}
+    "2" {set spaceText0 $rasText}
+    "3" {set spaceText0 $rasText; set spaceText1 $ijkText}
   }
 
   switch [$sliceCompositeNode GetAnnotationMode] {
@@ -428,8 +432,8 @@ itcl::body SliceSWidget::updateAnnotation {x y r a s} {
     }
     "1" {
       $_annotation SetText 0 "${labelText}\n${voxelText}"
-      $_annotation SetText 1 $spaceText
-      $_annotation SetText 2 ""
+      $_annotation SetText 1 $spaceText0
+      $_annotation SetText 2 $spaceText1
       $_annotation SetText 3 ""
     }
     "2" {

@@ -63,7 +63,7 @@ vtkMRMLSliceCompositeNode::vtkMRMLSliceCompositeNode()
   this->LabelGrid = 0;
   this->FiducialVisibility = 1;
   this->FiducialLabelVisibility = 1;
-  this->AnnotationSpace = vtkMRMLSliceCompositeNode::RAS;
+  this->AnnotationSpace = vtkMRMLSliceCompositeNode::IJKAndRAS;
   this->AnnotationMode = vtkMRMLSliceCompositeNode::All;
   this->CrosshairMode = vtkMRMLSliceCompositeNode::NoCrosshair;
   this->CrosshairBehavior = vtkMRMLSliceCompositeNode::Normal;

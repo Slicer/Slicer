@@ -145,7 +145,8 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
     {
       XYZ = 0,
       IJK,
-      RAS
+      RAS,
+      IJKAndRAS
     };
   enum
     {

@@ -371,14 +371,14 @@ void vtkSlicerSlicesControlGUI::ModifySpatialUnitsMode ( )
       {
       cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
              appGUI->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
-      if ( this->GetSpatialUnitsButton()->GetMenu()->GetItemSelectedState("xyz") == 1 )
+      if ( this->GetSpatialUnitsButton()->GetMenu()->GetItemSelectedState("XYZ") == 1 )
         {
         if ( cnode->GetAnnotationSpace() != vtkMRMLSliceCompositeNode::XYZ)
           {
           cnode->SetAnnotationSpace ( vtkMRMLSliceCompositeNode::XYZ );
           }
         }
-      else if (this->GetSpatialUnitsButton()->GetMenu()->GetItemSelectedState("ijk") == 1 )
+      else if (this->GetSpatialUnitsButton()->GetMenu()->GetItemSelectedState("IJK") == 1 )
         {
         if ( cnode->GetAnnotationSpace() != vtkMRMLSliceCompositeNode::IJK)
           {
@@ -390,6 +390,13 @@ void vtkSlicerSlicesControlGUI::ModifySpatialUnitsMode ( )
         if ( cnode->GetAnnotationSpace() != vtkMRMLSliceCompositeNode::RAS)
           {
           cnode->SetAnnotationSpace( vtkMRMLSliceCompositeNode::RAS );
+          }
+        }
+      else if ( this->GetSpatialUnitsButton()->GetMenu()->GetItemSelectedState( "IJK and RAS" ) == 1)
+        {
+        if ( cnode->GetAnnotationSpace() != vtkMRMLSliceCompositeNode::IJKAndRAS)
+          {
+          cnode->SetAnnotationSpace( vtkMRMLSliceCompositeNode::IJKAndRAS );
           }
         }
       }
@@ -840,10 +847,11 @@ void vtkSlicerSlicesControlGUI::BuildSpacesMenu ( )
   // what other spaces should we represent here?
   // TODO: this selection should get saved to the registry.
   this->SpatialUnitsButton->GetMenu()->DeleteAllItems ( );
-  this->SpatialUnitsButton->GetMenu()->AddRadioButton ( "xyz");
-  this->SpatialUnitsButton->GetMenu()->AddRadioButton ( "ijk");  
+  this->SpatialUnitsButton->GetMenu()->AddRadioButton ( "XYZ");
+  this->SpatialUnitsButton->GetMenu()->AddRadioButton ( "IJK");  
   this->SpatialUnitsButton->GetMenu()->AddRadioButton ( "RAS");
-  this->SpatialUnitsButton->GetMenu()->SelectItem ( "RAS" );
+  this->SpatialUnitsButton->GetMenu()->AddRadioButton ( "IJK and RAS");
+  this->SpatialUnitsButton->GetMenu()->SelectItem ( "IJK and RAS" );
   this->SpatialUnitsButton->GetMenu()->AddSeparator();
   this->SpatialUnitsButton->GetMenu()->AddCommand ( "close");
 }
