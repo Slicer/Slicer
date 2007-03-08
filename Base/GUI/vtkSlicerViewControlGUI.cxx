@@ -783,6 +783,7 @@ void vtkSlicerViewControlGUI::FitFOVToBackground( double fov, int viewer )
       double doubleDimensions[4];
       vtkMatrix4x4 *ijkToRAS = vtkMatrix4x4::New();
 
+      // what are the actual dimensions of the imagedata?
       backgroundImage->GetDimensions(dimensions);
       doubleDimensions[0] = dimensions[0];
       doubleDimensions[1] = dimensions[1];
@@ -793,8 +794,7 @@ void vtkSlicerViewControlGUI::FitFOVToBackground( double fov, int viewer )
       ijkToRAS->Delete();
       ijkToRAS = NULL;
 
-      // we want to compute the slice dimensions of the
-      // user-specified fov.
+      // and what are their slice dimensions?
       vtkMatrix4x4 *rasToSlice = vtkMatrix4x4::New();
       double sliceDimensions[4];
       rasToSlice->DeepCopy(sliceNode->GetSliceToRAS());
@@ -806,13 +806,10 @@ void vtkSlicerViewControlGUI::FitFOVToBackground( double fov, int viewer )
       rasToSlice->Delete();
       rasToSlice = NULL;
 
-      // find out how that compares to the width and height.
-      // we want to make the smallest dimension (width or
-      // height) match the fov in slice units.
-
       double fovh, fovv;
-      // which is bigger, wid or height?
-      // assign user-specified fov to smaller slice window dimension
+      // which is bigger, slice viewer width or height?
+      // assign user-specified fov to smaller slice window
+      // dimension
       if ( width < height )
         {
         fovh = fov;
@@ -824,17 +821,12 @@ void vtkSlicerViewControlGUI::FitFOVToBackground( double fov, int viewer )
         fovh = fov * width/height;
         }
       
-      double absSliceDimensions[4];
-      absSliceDimensions[0] = fabs(sliceDimensions[0]);
-      absSliceDimensions[1] = fabs(sliceDimensions[1]);
-      absSliceDimensions[2] = fabs(sliceDimensions[2]);
-
-
+      // we want to compute the slice dimensions of the
+      // user-specified fov.
+      double absSliceDimensions;
       // user specified FOV in mm units (RAS)
-      sliceDimensions[0] = fovh;
-      sliceDimensions[1] = fovv;
-
-      sliceNode->SetFieldOfView(fovh, fovv, absSliceDimensions[2] );
+      absSliceDimensions = fabs(sliceDimensions[2]);
+      sliceNode->SetFieldOfView(fovh, fovv, absSliceDimensions );
 
       vtkMatrix4x4 *sliceToRAS = vtkMatrix4x4::New();
       sliceToRAS->DeepCopy(sliceNode->GetSliceToRAS());
@@ -848,6 +840,8 @@ void vtkSlicerViewControlGUI::FitFOVToBackground( double fov, int viewer )
       }
     }
 }
+
+
 
 //---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::MainViewZoom(double factor )
