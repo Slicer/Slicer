@@ -25,7 +25,7 @@ if { [itcl::find class CrosshairSWidget] == "" } {
     constructor {args} {}
     destructor {}
 
-    public variable rgba ".1 .5 .3 .4"  ;# crosshair color
+    public variable rgba ".5 .9 .5 .6"  ;# crosshair color
 
     variable _compositeNodeObserverTags
     variable _compositeNode
@@ -113,6 +113,10 @@ itcl::body CrosshairSWidget::destructor {} {
   }
 }
 
+itcl::configbody CrosshairSWidget::rgba {
+  eval [$o(crosshairActor) GetProperty] SetColor [lrange $rgba 0 2]
+  eval [$o(crosshairActor) GetProperty] SetOpacity [lindex $rgba 3]
+}
 
 
 # ------------------------------------------------------------------
