@@ -202,13 +202,13 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   
   // Description:
   // Add and remove observers on the view node.
-  virtual void AddViewObservers();
-  virtual void RemoveViewObservers();
+  virtual void AddViewNodeObservers();
+  virtual void RemoveViewNodeObservers();
 
   // Description:
   // Methods to update GUI, View and MRML
   virtual void UpdateGUI ( );
-  virtual void UpdateView();
+  virtual void UpdateViewFromMRML();
   virtual void UpdateFromMRML ( );
   
   // Description:
@@ -281,6 +281,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   // Creates the magnified slice view in ZoomWidget
   // when mouse moves over a slice window.
   virtual void SliceViewMagnify( int event, vtkSlicerInteractorStyle *istyle);
+
+  virtual void FitFOVToBackground( double fov, int viewer );
 
   // Description:
   // Keeps the actors added to the Navigation Widget's

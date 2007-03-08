@@ -332,7 +332,7 @@ vtkSlicerViewControlGUI::~vtkSlicerViewControlGUI ( )
     }
 
 
-  this->RemoveViewObservers();
+  this->RemoveViewNodeObservers();
   this->SetViewNode ( NULL );
   this->RemoveSliceGUIObservers();
   this->RemoveMainViewerObservers();
@@ -527,7 +527,10 @@ void vtkSlicerViewControlGUI::ProcessGUIEvents ( vtkObject *caller,
         val = this->RedFOVEntry->GetWidget()->GetValueAsDouble();
         snode  = appGUI->GetMainSliceGUI0()->GetSliceNode();
         appGUI->GetMRMLScene()->SaveStateForUndo( snode );
-        snode->SetFieldOfView( val, val, val);
+        if ( val > 0 )
+          {
+          this->FitFOVToBackground( val, 0 );
+          }
         }
       // YellowFOVEntry
       if ( e == this->YellowFOVEntry && event == vtkKWEntry::EntryValueChangedEvent )
@@ -535,7 +538,10 @@ void vtkSlicerViewControlGUI::ProcessGUIEvents ( vtkObject *caller,
         val = this->YellowFOVEntry->GetValueAsDouble();
         snode  = appGUI->GetMainSliceGUI1()->GetSliceNode();
         appGUI->GetMRMLScene()->SaveStateForUndo( snode );
-        snode->SetFieldOfView( val, val, val);
+        if ( val > 0 )
+          {
+          this->FitFOVToBackground( val, 1 );
+          }
         }
       // GreenFOVEntry
       if ( e == this->GreenFOVEntry && event == vtkKWEntry::EntryValueChangedEvent )
@@ -543,7 +549,10 @@ void vtkSlicerViewControlGUI::ProcessGUIEvents ( vtkObject *caller,
         val = this->GreenFOVEntry->GetValueAsDouble();
         snode  = appGUI->GetMainSliceGUI2()->GetSliceNode();
         appGUI->GetMRMLScene()->SaveStateForUndo( snode );
-        snode->SetFieldOfView( val, val, val);
+        if ( val > 0 )
+          {
+          this->FitFOVToBackground( val, 2 );
+          }
         }
 
       // Make requested changes to the ViewNode
@@ -701,6 +710,144 @@ void vtkSlicerViewControlGUI::ProcessGUIEvents ( vtkObject *caller,
     }
 }
 
+
+// adjust the node's field of view to match the extent of current background volume
+//---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::FitFOVToBackground( double fov, int viewer )
+{
+
+  if ( viewer != 0 && viewer != 1 && viewer != 2 )
+    {
+    return;
+    }
+  
+  // reference the slice node and composite node and sliceGUI
+  if ( this->GetApplicationGUI() != NULL )
+    {
+    vtkSlicerApplicationGUI *appGUI = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));
+    vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( appGUI->GetApplication() );
+    if ( appGUI != NULL )
+      {
+
+      vtkMRMLSliceNode *sliceNode = NULL;
+      vtkMRMLSliceCompositeNode *compositeNode = NULL;
+      vtkMRMLScalarVolumeNode *backgroundNode = NULL;
+      vtkSlicerSliceGUI *sgui = NULL;
+      if ( viewer == 0 )
+        {
+        sliceNode = appGUI->GetMainSliceLogic0()->GetSliceNode();
+        compositeNode = appGUI->GetMainSliceLogic0()->GetSliceCompositeNode();
+        sgui = appGUI->GetMainSliceGUI0();
+        }
+      else if ( viewer == 1 )
+        {
+        sliceNode = appGUI->GetMainSliceLogic1()->GetSliceNode();
+        compositeNode = appGUI->GetMainSliceLogic1()->GetSliceCompositeNode();
+        sgui = appGUI->GetMainSliceGUI1();
+        }
+      else if ( viewer == 2 )
+        {
+        sliceNode = appGUI->GetMainSliceLogic2()->GetSliceNode();
+        compositeNode = appGUI->GetMainSliceLogic2()->GetSliceCompositeNode();
+        sgui = appGUI->GetMainSliceGUI2();
+        }
+      appGUI->GetMRMLScene()->SaveStateForUndo( sliceNode );
+
+      if ( !sgui )
+        {
+        return;
+        }
+
+      // get viewer's wid and height
+      int width, height;
+      sscanf(this->Script("winfo width %s", sgui->GetSliceViewer()->GetRenderWidget ( )->GetWidgetName()),"%d", &width);
+      sscanf(this->Script("winfo height %s",sgui->GetSliceViewer()->GetRenderWidget ( )->GetWidgetName()),"%d", &height);
+
+      if ( !sliceNode || !compositeNode )
+        {
+        return;
+        }
+  
+      // get backgroundNode  and imagedata
+      backgroundNode =
+        vtkMRMLScalarVolumeNode::SafeDownCast (
+                                               appGUI->GetMRMLScene()->GetNodeByID( compositeNode->GetBackgroundVolumeID() ));
+      vtkImageData *backgroundImage;
+      if ( !backgroundNode || ! (backgroundImage = backgroundNode->GetImageData()) )
+        {
+        return;
+        }
+
+      int dimensions[3];
+      double rasDimensions[4];
+      double doubleDimensions[4];
+      vtkMatrix4x4 *ijkToRAS = vtkMatrix4x4::New();
+
+      backgroundImage->GetDimensions(dimensions);
+      doubleDimensions[0] = dimensions[0];
+      doubleDimensions[1] = dimensions[1];
+      doubleDimensions[2] = dimensions[2];
+      doubleDimensions[3] = 0.0;
+      backgroundNode->GetIJKToRASMatrix (ijkToRAS);
+      ijkToRAS->MultiplyPoint (doubleDimensions, rasDimensions);
+      ijkToRAS->Delete();
+      ijkToRAS = NULL;
+
+      // we want to compute the slice dimensions of the
+      // user-specified fov.
+      vtkMatrix4x4 *rasToSlice = vtkMatrix4x4::New();
+      double sliceDimensions[4];
+      rasToSlice->DeepCopy(sliceNode->GetSliceToRAS());
+      rasToSlice->SetElement(0, 3, 0.0);
+      rasToSlice->SetElement(1, 3, 0.0);
+      rasToSlice->SetElement(2, 3, 0.0);
+      rasToSlice->Invert();
+      rasToSlice->MultiplyPoint( rasDimensions, sliceDimensions );
+      rasToSlice->Delete();
+      rasToSlice = NULL;
+
+      // find out how that compares to the width and height.
+      // we want to make the smallest dimension (width or
+      // height) match the fov in slice units.
+
+      double fovh, fovv;
+      // which is bigger, wid or height?
+      // assign user-specified fov to smaller slice window dimension
+      if ( width < height )
+        {
+        fovh = fov;
+        fovv = fov * height/width;
+        }
+      else
+        {
+        fovv = fov;
+        fovh = fov * width/height;
+        }
+      
+      double absSliceDimensions[4];
+      absSliceDimensions[0] = fabs(sliceDimensions[0]);
+      absSliceDimensions[1] = fabs(sliceDimensions[1]);
+      absSliceDimensions[2] = fabs(sliceDimensions[2]);
+
+
+      // user specified FOV in mm units (RAS)
+      sliceDimensions[0] = fovh;
+      sliceDimensions[1] = fovv;
+
+      sliceNode->SetFieldOfView(fovh, fovv, absSliceDimensions[2] );
+
+      vtkMatrix4x4 *sliceToRAS = vtkMatrix4x4::New();
+      sliceToRAS->DeepCopy(sliceNode->GetSliceToRAS());
+      sliceToRAS->SetElement(0, 3, 0.0);
+      sliceToRAS->SetElement(1, 3, 0.0);
+      sliceToRAS->SetElement(2, 3, 0.0);
+      sliceNode->GetSliceToRAS()->DeepCopy(sliceToRAS);
+      sliceToRAS->Delete();
+      sliceToRAS = NULL;
+      sliceNode->UpdateMatrices( );
+      }
+    }
+}
 
 //---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::MainViewZoom(double factor )
@@ -1775,6 +1922,11 @@ void vtkSlicerViewControlGUI::ProcessMRMLEvents ( vtkObject *caller,
           {
           this->SpinButton->Deselect();
           }
+        if ( this->SpinButton->GetSelectedState() == 0 &&
+             this->RockButton->GetSelectedState() == 0)
+          {
+          this->RequestNavigationRender();
+          }
         }
       }
 
@@ -2836,7 +2988,7 @@ void vtkSlicerViewControlGUI::UpdateFromMRML()
   // repopulate the NavigationZoom widget's actors, etc.,
   // and rerender the NavigationZoom widget's view.
 
-  this->UpdateView();
+  this->UpdateViewFromMRML();
   this->RequestNavigationRender ( );
 }
 
@@ -2844,7 +2996,7 @@ void vtkSlicerViewControlGUI::UpdateFromMRML()
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerViewControlGUI::UpdateView()
+void vtkSlicerViewControlGUI::UpdateViewFromMRML()
 {
     if (this->SceneClosing)
     {
@@ -2857,13 +3009,13 @@ void vtkSlicerViewControlGUI::UpdateView()
   if ( this->ViewNode != NULL && node != NULL && this->ViewNode != node)
     {
     // local ViewNode is out of sync with the scene
-    this->RemoveViewObservers();
+    this->RemoveViewNodeObservers();
     this->SetViewNode (NULL);
     }
   if ( this->ViewNode != NULL && this->MRMLScene->GetNodeByID(this->ViewNode->GetID()) == NULL)
     {
     // local node not in the scene
-    this->RemoveViewObservers();
+    this->RemoveViewNodeObservers();
     this->SetViewNode(NULL );
     }
   if ( this->ViewNode == NULL )
@@ -2877,7 +3029,7 @@ void vtkSlicerViewControlGUI::UpdateView()
       node->Delete();
       }
     this->SetViewNode ( node );
-    this->AddViewObservers();
+    this->AddViewNodeObservers();
     }
 }
 
@@ -2885,7 +3037,7 @@ void vtkSlicerViewControlGUI::UpdateView()
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerViewControlGUI::AddViewObservers()
+void vtkSlicerViewControlGUI::AddViewNodeObservers()
 {
   // observe scene for add/remove nodes
   if ( this->ViewNode )
@@ -2899,7 +3051,7 @@ void vtkSlicerViewControlGUI::AddViewObservers()
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerViewControlGUI::RemoveViewObservers()
+void vtkSlicerViewControlGUI::RemoveViewNodeObservers()
 {
   if ( this->ViewNode )
     {
