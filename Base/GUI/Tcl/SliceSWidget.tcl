@@ -40,6 +40,8 @@ if { [itcl::find class SliceSWidget] == "" } {
     method incrementSlice {} {}
     method decrementSlice {} {}
     method moveSlice { delta } {}
+    method jumpSlice { r a s } {}
+    method jumpOtherSlices { r a s } {}
   }
 }
 
@@ -235,49 +237,55 @@ itcl::body SliceSWidget::processEvent { } {
       set rasText [format "R: %.1f\nA: %.1f\nS: %.1f" $r $a $s]
       $_annotation SetText 3 $rasText
 
-      switch $_actionState {
-        "Translate" {
-          #
-          # Translate
-          # TODO: move calculation to vtkSlicerSliceLogic
-          set currentRAS [$o(storeXYToRAS) MultiplyPoint $x $y 0 1]
-          foreach d {dr da ds} start $_actionStartRAS current $currentRAS {
-            set $d [expr $current - $start]
-          }
-          $o(scratchMatrix) DeepCopy $o(storeSliceToRAS)
-          foreach d {dr da ds} i {0 1 2} {
-            set v [$o(scratchMatrix) GetElement $i 3]
-            $o(scratchMatrix) SetElement $i 3 [expr $v - [set $d]]
-          }
-          [$_sliceNode GetSliceToRAS] DeepCopy $o(scratchMatrix)
-          $_sliceNode UpdateMatrices
-          $sliceGUI SetGUICommandAbortFlag 1
-        }
-        "Zoom" {
-          #
-          # Zoom
-          # TODO: move calculation to vtkSlicerSliceLogic
-          set deltay [expr $y - [lindex $_actionStartXY 1]]
-          set tkwindow [$_renderWidget  GetWidgetName]
-          set h [winfo height $tkwindow]
-          set percent [expr ($h + $deltay) / (1.0 * $h)]
-
-          # the factor operation is so 'z' isn't changed and the 
-          # slider can still move through the full range
-          if { $percent > 0. } {
-            set newFOV ""
-            foreach f $_actionStartFOV factor "$percent $percent 1" {
-              lappend newFOV [expr $f * $factor]
+      if { [$_interactor GetShiftKey] } {
+        $this jumpOtherSlices $r $a $s
+        # need to render to show the annotation
+        [$sliceGUI GetSliceViewer] RequestRender
+      } else {
+        switch $_actionState {
+          "Translate" {
+            #
+            # Translate
+            # TODO: move calculation to vtkSlicerSliceLogic
+            set currentRAS [$o(storeXYToRAS) MultiplyPoint $x $y 0 1]
+            foreach d {dr da ds} start $_actionStartRAS current $currentRAS {
+              set $d [expr $current - $start]
             }
-            eval $_sliceNode SetFieldOfView $newFOV
-
+            $o(scratchMatrix) DeepCopy $o(storeSliceToRAS)
+            foreach d {dr da ds} i {0 1 2} {
+              set v [$o(scratchMatrix) GetElement $i 3]
+              $o(scratchMatrix) SetElement $i 3 [expr $v - [set $d]]
+            }
+            [$_sliceNode GetSliceToRAS] DeepCopy $o(scratchMatrix)
             $_sliceNode UpdateMatrices
+            $sliceGUI SetGUICommandAbortFlag 1
           }
-          $sliceGUI SetGUICommandAbortFlag 1
-        }
-        default {
-          # need to render to show the annotation
-          [$sliceGUI GetSliceViewer] RequestRender
+          "Zoom" {
+            #
+            # Zoom
+            # TODO: move calculation to vtkSlicerSliceLogic
+            set deltay [expr $y - [lindex $_actionStartXY 1]]
+            set tkwindow [$_renderWidget  GetWidgetName]
+            set h [winfo height $tkwindow]
+            set percent [expr ($h + $deltay) / (1.0 * $h)]
+
+            # the factor operation is so 'z' isn't changed and the 
+            # slider can still move through the full range
+            if { $percent > 0. } {
+              set newFOV ""
+              foreach f $_actionStartFOV factor "$percent $percent 1" {
+                lappend newFOV [expr $f * $factor]
+              }
+              eval $_sliceNode SetFieldOfView $newFOV
+
+              $_sliceNode UpdateMatrices
+            }
+            $sliceGUI SetGUICommandAbortFlag 1
+          }
+          default {
+            # need to render to show the annotation
+            [$sliceGUI GetSliceViewer] RequestRender
+          }
         }
       }
     }
@@ -411,4 +419,28 @@ itcl::body SliceSWidget::moveSlice { delta } {
   set logic [$sliceGUI GetLogic]
   set offset [$logic GetSliceOffset]
   $logic SetSliceOffset [expr $offset + $delta]
+}
+
+itcl::body SliceSWidget::jumpSlice { r a s } {
+  set logic [$sliceGUI GetLogic]
+  set sliceNode [$logic GetSliceNode]
+  set sliceToRAS [$sliceNode GetSliceToRAS]
+  set sr [$sliceToRAS GetElement 0 3]
+  set sa [$sliceToRAS GetElement 1 3]
+  set ss [$sliceToRAS GetElement 2 3]
+  if { $r != $sr || $a != $sa || $s != $ss } {
+    $sliceToRAS SetElement 0 3 $r
+    $sliceToRAS SetElement 1 3 $a
+    $sliceToRAS SetElement 2 3 $s
+    $sliceNode UpdateMatrices
+  }
+}
+
+itcl::body SliceSWidget::jumpOtherSlices { r a s } {
+  set sliceSWidgets [itcl::find objects -class SliceSWidget]
+  foreach sw $sliceSWidgets {
+    if { $sw != $this } {
+      $sw jumpSlice $r $a $s
+    }
+  }
 }
