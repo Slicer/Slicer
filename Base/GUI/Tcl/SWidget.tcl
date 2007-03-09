@@ -163,7 +163,11 @@ itcl::body SWidget::queryLayers { x y } {
       set _layers($layer,xyToIJK) [[$_layers($layer,logic) GetXYToIJKTransform] GetMatrix]
       foreach {i j k l} [$_layers($layer,xyToIJK) MultiplyPoint $x $y 0 1] {}
       foreach v {i j k} { ;# cast to integer
-        set _layers($layer,$v) [expr int(round([set $v]))]
+        if { ![string is double [set $v]] } {
+          set _layers($layer,$v) 0
+        } else {
+          set _layers($layer,$v) [expr int(round([set $v]))]
+        }
       }
       set _layers($layer,pixel) [$this getPixel $_layers($layer,image) \
                       $_layers($layer,i) $_layers($layer,j) $_layers($layer,k)]
