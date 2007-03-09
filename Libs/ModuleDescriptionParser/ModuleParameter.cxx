@@ -30,6 +30,30 @@ splitString (const std::string &text,
     }
 }
 
+ModuleParameter::ModuleParameter()
+{
+    this->Tag = "";
+    this->Name = "";
+    this->Description = "";
+    this->Label = "";
+    this->CPPType = "";
+    this->Type = "";
+    this->ArgType = "";
+    this->StringToType = "";
+    this->Default = "";
+    this->Flag = "";
+    this->LongFlag = "";
+    this->Constraints = "";
+    this->Minimum = "";
+    this->Maximum = "";
+    this->Step = "";
+    this->Channel = "";
+    this->Index = "";
+    this->Multiple = "";
+    this->FileExtensionsAsString = "";        
+    this->CoordinateSystem = "";
+}
+
 ModuleParameter::ModuleParameter(const ModuleParameter& parameter)
 {
   this->Tag = parameter.Tag;

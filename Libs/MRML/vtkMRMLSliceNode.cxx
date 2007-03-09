@@ -23,6 +23,8 @@ Version:   $Revision: 1.2 $
 #include "vtkTransform.h"
 #include "vtkMatrix4x4.h"
 
+#include "vnl/vnl_double_3.h"
+
 //------------------------------------------------------------------------------
 vtkMRMLSliceNode* vtkMRMLSliceNode::New()
 {
@@ -175,6 +177,103 @@ int vtkMRMLSliceNode::Matrix4x4AreEqual(vtkMatrix4x4 *m1, vtkMatrix4x4 *m2)
       }
     }
     return 1;
+}
+
+//----------------------------------------------------------------------------
+//  Set the SliceToRAS matrix by the postion and orientation of the locator
+//
+void vtkMRMLSliceNode::SetSliceToRASByNTP (double Nx, double Ny, double Nz,
+                         double Tx, double Ty, double Tz,
+                         double Px, double Py, double Pz,
+                         int Orientation)
+{
+    vnl_double_3 n, t, c;
+    vnl_double_3 negN, negT, negC;
+
+    n[0] = Nx; 
+    n[1] = Ny; 
+    n[2] = Nz; 
+    t[0] = Tx; 
+    t[1] = Ty; 
+    t[2] = Tz; 
+
+    // Ensure N, T orthogonal:
+    //    C = N x T
+    //    T = C x N
+    c = vnl_cross_3d(n, t);
+    t = vnl_cross_3d(c, n);
+
+    // Ensure vectors are normalized
+    n.normalize();
+    t.normalize();
+    c.normalize();
+
+    // Get negative vectors
+    negN = -n;
+    negT = -t;
+    negC = -c;
+
+    this->SliceToRAS->Identity();
+    // Tip location
+    this->SliceToRAS->SetElement(0, 3, Px);
+    this->SliceToRAS->SetElement(1, 3, Py);
+    this->SliceToRAS->SetElement(2, 3, Pz);
+
+    switch (Orientation)
+    {
+        // para-Axial 
+        case 0: 
+            // negN
+            this->SliceToRAS->SetElement(0, 2, negN[0]);
+            this->SliceToRAS->SetElement(1, 2, negN[1]);
+            this->SliceToRAS->SetElement(2, 2, negN[2]);
+            // C 
+            this->SliceToRAS->SetElement(0, 1, c[0]);
+            this->SliceToRAS->SetElement(1, 1, c[1]);
+            this->SliceToRAS->SetElement(2, 1, c[2]);
+            // T 
+            this->SliceToRAS->SetElement(0, 0, t[0]);
+            this->SliceToRAS->SetElement(1, 0, t[1]);
+            this->SliceToRAS->SetElement(2, 0, t[2]);
+
+            break;
+
+        // para-Sagittal 
+        case 1: 
+            // negT 
+            this->SliceToRAS->SetElement(0, 2, negT[0]);
+            this->SliceToRAS->SetElement(1, 2, negT[1]);
+            this->SliceToRAS->SetElement(2, 2, negT[2]);
+            // negN 
+            this->SliceToRAS->SetElement(0, 1, negN[0]);
+            this->SliceToRAS->SetElement(1, 1, negN[1]);
+            this->SliceToRAS->SetElement(2, 1, negN[2]);
+            // negC 
+            this->SliceToRAS->SetElement(0, 0, negC[0]);
+            this->SliceToRAS->SetElement(1, 0, negC[1]);
+            this->SliceToRAS->SetElement(2, 0, negC[2]);
+
+            break;
+
+        // para-Coronal 
+        case 2: 
+            // C 
+            this->SliceToRAS->SetElement(0, 2, c[0]);
+            this->SliceToRAS->SetElement(1, 2, c[1]);
+            this->SliceToRAS->SetElement(2, 2, c[2]);
+            // negN 
+            this->SliceToRAS->SetElement(0, 1, negN[0]);
+            this->SliceToRAS->SetElement(1, 1, negN[1]);
+            this->SliceToRAS->SetElement(2, 1, negN[2]);
+            // T 
+            this->SliceToRAS->SetElement(0, 0, t[0]);
+            this->SliceToRAS->SetElement(1, 0, t[1]);
+            this->SliceToRAS->SetElement(2, 0, t[2]);
+
+            break;
+    }
+
+    this->UpdateMatrices();  
 }
 
 //----------------------------------------------------------------------------

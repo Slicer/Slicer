@@ -141,6 +141,17 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
     return this->GetSingletonTag();
   }
 
+  // Description:
+  // Set the SliceToRAS matrix according to the position and orientation of the locator:
+  // N(x, y, z) - the direction vector of the locator
+  // T(x, y, z) - the transverse direction vector of the locator
+  // P(x, y, z) - the tip location of the locator
+  // All the above values are in RAS space. 
+  void SetSliceToRASByNTP (double Nx, double Ny, double Nz,
+                           double Tx, double Ty, double Tz,
+                           double Px, double Py, double Pz,
+                           int Orientation);
+
 protected:
 
 

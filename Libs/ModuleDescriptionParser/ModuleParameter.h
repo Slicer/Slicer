@@ -33,7 +33,7 @@
 class ModuleDescriptionParser_EXPORT ModuleParameter
 {
 public:
-  ModuleParameter() {}
+  ModuleParameter();
   virtual ~ModuleParameter() {}
   ModuleParameter(const ModuleParameter& parameter);
 

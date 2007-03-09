@@ -2,6 +2,16 @@ PROJECT(ModuleDescriptionParser)
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4)
 
+CONFIGURE_FILE(
+  ${ModuleDescriptionParser_SOURCE_DIR}/ModuleDescriptionParserConfigure.h.in 
+  ${ModuleDescriptionParser_BINARY_DIR}/ModuleDescriptionParserConfigure.h
+)
+
+CONFIGURE_FILE(
+  ${ModuleDescriptionParser_SOURCE_DIR}/ModuleDescriptionParserConfig.cmake.in 
+  ${ModuleDescriptionParser_BINARY_DIR}/ModuleDescriptionParserConfig.cmake 
+)
+
 ## ITK is required for expat.h
 FIND_PACKAGE(ITK REQUIRED)
 INCLUDE(${ITK_USE_FILE})
@@ -61,16 +71,6 @@ IF (NOT WIN32)
     TARGET_LINK_LIBRARIES(ModuleDescriptionParser bfd iberty)
   ENDIF(HAVE_BFD)
 ENDIF (NOT WIN32)
-
-CONFIGURE_FILE(
-  ${ModuleDescriptionParser_SOURCE_DIR}/ModuleDescriptionParserConfigure.h.in 
-  ${ModuleDescriptionParser_BINARY_DIR}/ModuleDescriptionParserConfigure.h
-)
-
-CONFIGURE_FILE(
-  ${ModuleDescriptionParser_SOURCE_DIR}/ModuleDescriptionParserConfig.cmake.in 
-  ${ModuleDescriptionParser_BINARY_DIR}/ModuleDescriptionParserConfig.cmake 
-)
 
 IF(BUILD_TESTING)
   SUBDIRS(Testing)
