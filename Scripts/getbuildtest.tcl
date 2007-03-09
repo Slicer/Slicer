@@ -280,6 +280,7 @@ if { $::GETBUILDTEST(doxy) } {
     return
 }
 
+
 # build the lib with options
 cd $::SLICER_HOME
 set cmd "sh ./Scripts/genlib.tcl $SLICER_LIB"
