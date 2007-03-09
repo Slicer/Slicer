@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE OpenTracker SYSTEM "/home/hliu/projects/splot-build/opentracker/data/opentracker.dtd">
+
+<OpenTracker>
+    <configuration>
+    </configuration>
+
+    <Callback name="cb1">
+        <NetworkSource mode="unicast" number="1" address="localhost" port="54321"/>
+    </Callback>
+</OpenTracker>
