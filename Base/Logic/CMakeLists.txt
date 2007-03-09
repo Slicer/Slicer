@@ -14,7 +14,6 @@ SET(SlicerBaseLogic_SRCS
   vtkSlicerModelsLogic.cxx 
   vtkSlicerFiducialsLogic.cxx
   vtkSlicerColorLogic.cxx
-  vtkSlicerIGTDemoLogic.cxx
   # slicer's vtk extensions
   vtkImageSlicePaint.cxx 
   vtkImageSlice.cxx 
