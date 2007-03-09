@@ -186,6 +186,8 @@ itcl::body GridSWidget::updateGrid { } {
   #
   # check the size cutoff
   # - map a single pixel from IJK to XY and check the size
+  # - if the grid won't be visible, don't show it.
+  # - also don't so if image data doesn't exist
   #
   set ijkToXY [vtkMatrix4x4 New]
   $ijkToXY DeepCopy [[$_layers($layer,logic) GetXYToIJKTransform] GetMatrix]
@@ -194,7 +196,7 @@ itcl::body GridSWidget::updateGrid { } {
   $ijkToXY SetElement 2 3  0
   $ijkToXY Invert
   foreach {x y z w} [$ijkToXY MultiplyPoint 1 1 1 0] {}
-  if { $x < $cutoff && $y < $cutoff } {
+  if { $x < $cutoff && $y < $cutoff || $_layers($layer,image) == "" } {
     $o(gridActor) SetVisibility 0
     $ijkToXY Delete
     return
