@@ -1,6 +1,9 @@
 PROJECT( Modules )
 
 SUBDIRS(
+  NeuroNav
+  RealTimeImaging
+  WFEngineModule
   CommandLineModule
   ScriptedModule
   GradientAnisotropicDiffusionFilter
