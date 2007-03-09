@@ -1,9 +1,6 @@
+# this message goes to the tcl console and isn't seen on the output
 puts "hoot!"
 
-if { [info exists ::slicer3::Application] } {
-  # the application exists, so exit with full shutdown
-  $::slicer3::Application Exit
-} else {
-  # no application, so just exit the program directly
-  exit 0
-}
+# just exit the program directly - this is the overridden version of
+# exit that waits for the application to shut down.
+exit 0
