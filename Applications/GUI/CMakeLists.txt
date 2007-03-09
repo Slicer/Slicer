@@ -55,6 +55,8 @@ SET(dir_list
   ${SlicerBaseGUI_BINARY_DIR}
   ${MRML_SOURCE_DIR}
   ${MRML_BINARY_DIR}
+  ${IGT_SOURCE_DIR}
+  ${IGT_BINARY_DIR}
   ${GradientAnisotropicDiffusionFilter_SOURCE_DIR}
   ${GradientAnisotropicDiffusionFilter_BINARY_DIR}
   ${GradientAnisotropicDiffusionFilter_Init_SOURCE_DIR}
@@ -67,10 +69,26 @@ SET(dir_list
   ${EMSegment_BINARY_DIR}
   ${EMSegment_Init_SOURCE_DIR}
   ${EMSegment_Init_BINARY_DIR}
+  ${RealTimeImaging_SOURCE_DIR}
+  ${RealTimeImaging_BINARY_DIR}
+  ${RealTimeImaging_Init_SOURCE_DIR}
+  ${RealTimeImaging_Init_BINARY_DIR}
+  ${MRAblation_SOURCE_DIR}
+  ${MRAblation_BINARY_DIR}
+  ${MRAblation_Init_SOURCE_DIR}
+  ${MRAblation_Init_BINARY_DIR}
+  ${NeuroNav_SOURCE_DIR}
+  ${NeuroNav_BINARY_DIR}
+  ${NeuroNav_Init_SOURCE_DIR}
+  ${NeuroNav_Init_BINARY_DIR}
   ${QueryAtlas_SOURCE_DIR}
   ${QueryAtlas_BINARY_DIR}
   ${QueryAtlas_Init_SOURCE_DIR}
   ${QueryAtlas_Init_BINARY_DIR}
+  ${WFEngineModule_SOURCE_DIR}
+  ${WFEngineModule_BINARY_DIR}
+  ${WFEngineModule_Init_SOURCE_DIR}
+  ${WFEngineModule_Init_BINARY_DIR}
   ${CommandLineModule_SOURCE_DIR}
   ${CommandLineModule_BINARY_DIR}
   ${CommandLineModule_Init_SOURCE_DIR}
@@ -84,6 +102,7 @@ SET(dir_list
   ${ModuleDescriptionParser_SOURCE_DIR}
   ${VTK_INCLUDE_DIR}
   ${OPENTRACKER_INC_DIR}
+  ${IGSTK_INCLUDE_DIRS}
   )
 
 IF(USE_PYTHON AND PYTHON_INCLUDE_PATH)
@@ -122,13 +141,18 @@ ELSE ( Slicer3_BUILD_WIN32_CONSOLE )
 ENDIF ( Slicer3_BUILD_WIN32_CONSOLE )
 
 
+
 TARGET_LINK_LIBRARIES( Slicer3${SLICER_EXE_SUFFIX}
     SlicerBaseLogic
     SlicerBaseGUI
     MRML
+    IGT
     GradientAnisotropicDiffusionFilter
     SlicerTractographyDisplay
     EMSegment
+ #   RealTimeImaging
+ #   MRAblation
+    NeuroNav
     QueryAtlas
     CommandLineModule
     ScriptedModule
@@ -137,6 +161,7 @@ TARGET_LINK_LIBRARIES( Slicer3${SLICER_EXE_SUFFIX}
     vtkITK
     ITKCommon 
     ITKIO
+    ${WFENGINE_LINK_LIB}
     ${KWWidgets_LIBRARIES})
 
 IF(USE_PYTHON AND PYTHON_LIBRARIES)
