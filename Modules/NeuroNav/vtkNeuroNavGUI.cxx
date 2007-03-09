@@ -496,26 +496,38 @@ void vtkNeuroNavGUI::HandleMouseEvent(vtkSlicerInteractorStyle *style)
 
     if (anno)
     {
-        const char *rasText = anno->GetText(3);
-        std::string ras = std::string(rasText);
+        const char *rasText = anno->GetText(1);
+        if ( rasText != NULL )
+          {
+          std::string ras = std::string(rasText);
 
-        // remove "R:," "A:," and "S:" from the string
-        int loc = ras.find("R:", 0);
-        ras = ras.replace(loc, 2, "");
-        loc = ras.find("A:", 0);
-        ras = ras.replace(loc, 2, "");
-        loc = ras.find("S:", 0);
-        ras = ras.replace(loc, 2, "");
+          // remove "R:," "A:," and "S:" from the string
+          int loc = ras.find("R:", 0);
+          if ( loc != std::string::npos ) 
+            {
+            ras = ras.replace(loc, 2, "");
+            }
+          loc = ras.find("A:", 0);
+          if ( loc != std::string::npos ) 
+            {
+            ras = ras.replace(loc, 2, "");
+            }
+          loc = ras.find("S:", 0);
+          if ( loc != std::string::npos ) 
+            {
+            ras = ras.replace(loc, 2, "");
+            }
 
-        // remove "\n" from the string
-        int found = ras.find("\n", 0);
-        while (found >0)
-        {
+          // remove "\n" from the string
+          int found = ras.find("\n", 0);
+          while ( found != std::string::npos )
+            {
             ras = ras.replace(found, 1, " ");
             found = ras.find("\n", 0);
-        }
+            }
 
-        this->SlicerCoordinatesEntry->GetWidget()->SetValue(ras.c_str());
+          this->SlicerCoordinatesEntry->GetWidget()->SetValue(ras.c_str());
+          }
     }
 }
 
