@@ -229,11 +229,11 @@ itcl::body GridSWidget::updateGrid { } {
   $ijkToXY DeepCopy [[$_layers($layer,logic) GetXYToIJKTransform] GetMatrix]
   $ijkToXY Invert
 
-  set startPoint "0 0 0 1"
-  set endPoint "0 0 0 1"
-  set endPoint [lreplace $endPoint $colAxis $colAxis $colDims]
+  set startPoint "-0.5 -0.5 -0.5 1"
+  set endPoint "-0.5 -0.5 -0.5 1"
+  set endPoint [lreplace $endPoint $colAxis $colAxis [expr $colDims - 0.5]]
 
-  for {set row 0} {$row <= $rowDims} {incr row} {
+  for {set row -0.5} {$row <= $rowDims} {set row [expr $row + 1.0]} {
     set startPoint [lreplace $startPoint $rowAxis $rowAxis $row]
     set endPoint [lreplace $endPoint $rowAxis $rowAxis $row]
     set xyStartPoint [eval $ijkToXY MultiplyPoint $startPoint]
@@ -241,10 +241,11 @@ itcl::body GridSWidget::updateGrid { } {
     $this addGridLine $xyStartPoint $xyEndPoint
   }
 
-  set startPoint "0 0 0 1"
-  set endPoint "0 0 0 1"
-  set endPoint [lreplace $endPoint $rowAxis $rowAxis $rowDims]
-  for {set col 0} {$col <= $colDims} {incr col} {
+  set startPoint "-0.5 -0.5 -0.5 1"
+  set endPoint "-0.5 -0.5 -0.5 1"
+  set endPoint [lreplace $endPoint $rowAxis $rowAxis [expr $rowDims - 0.5]]
+
+  for {set col -0.5} {$col <= $colDims} {set col [expr $col + 1.0]} {
     set startPoint [lreplace $startPoint $colAxis $colAxis $col]
     set endPoint [lreplace $endPoint $colAxis $colAxis $col]
     set xyStartPoint [eval $ijkToXY MultiplyPoint $startPoint]
