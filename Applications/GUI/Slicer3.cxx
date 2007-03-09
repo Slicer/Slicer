@@ -1,3 +1,4 @@
+
 #include "vtkRenderWindow.h"
 
 #include "vtkKWApplication.h"
@@ -15,7 +16,6 @@
 #include "vtkSlicerModelsLogic.h"
 #include "vtkSlicerFiducialsLogic.h"
 #include "vtkSlicerColorLogic.h"
-#include "vtkSlicerIGTDemoLogic.h"
 #include "vtkMRMLScene.h"
 #include "vtkSlicerComponentGUI.h"
 #include "vtkSlicerApplicationGUI.h"
@@ -28,7 +28,6 @@
 #include "vtkSlicerModelsGUI.h"
 #include "vtkSlicerFiducialsGUI.h"
 #include "vtkSlicerColorGUI.h"
-#include "vtkSlicerIGTDemoGUI.h"
 #include "vtkSlicerDataGUI.h"
 #include "vtkSlicerTransformsGUI.h"
 #include "vtkSlicerCamerasGUI.h"
@@ -64,6 +63,7 @@
 #else
 #include <Python.h>
 #endif
+
 extern "C" {
   void init_mytkinter(void );
   void init_slicer(void );
@@ -88,15 +88,39 @@ extern "C" {
 //#define VOLUMES_DEBUG
 //#define QUERYATLAS_DEBUG
 //#define COLORS_DEBUG
-//#define IGTDEMO_DEBUG
 //#define FIDUCIALS_DEBUG
 //#define CAMERA_DEBUG
 //#define EMSEG_DEBUG
+#define REALTIMEIMAGING_DEBUG
+#define MRABLATION_DEBUG
+#define WFENGINE_DEBUG
+//#define NEURONAV_DEBUG
+//#define TRACTOGRAPHY_DEBUG
 //#define VIEWCONTROL_DEBUG
 
 #ifndef EMSEG_DEBUG
 #include "vtkEMSegmentLogic.h"
 #include "vtkEMSegmentGUI.h"
+#endif
+
+#ifndef REALTIMEIMAGING_DEBUG
+#include "vtkRealTimeImagingLogic.h"
+#include "vtkRealTimeImagingGUI.h"
+#endif
+
+#ifndef MRABLATION_DEBUG
+#include "vtkMRAblationLogic.h"
+#include "vtkMRAblationGUI.h"
+#endif
+
+#ifndef NEURONAV_DEBUG
+#include "vtkNeuroNavLogic.h"
+#include "vtkNeuroNavGUI.h"
+#endif
+
+#ifndef WFENGINE_DEBUG
+#include "vtkWFEngineModuleLogic.h"
+#include "vtkWFEngineModuleGUI.h"
 #endif
 
 //
@@ -129,10 +153,21 @@ extern "C" int Slicerbaselogic_Init(Tcl_Interp *interp);
 extern "C" int Mrml_Init(Tcl_Interp *interp);
 extern "C" int Vtkitk_Init(Tcl_Interp *interp);
 extern "C" int Freesurfer_Init(Tcl_Interp *interp);
+extern "C" int Igt_Init(Tcl_Interp *interp);
+
 
 //TODO added temporary
 #ifndef EMSEG_DEBUG
 extern "C" int Emsegment_Init(Tcl_Interp *interp);
+#endif
+#ifndef NEURONAV_DEBUG
+extern "C" int Neuronav_Init(Tcl_Interp *interp);
+#endif
+#ifndef REALTIMEIMAGING_DEBUG
+extern "C" int Realtimeimaging_Init(Tcl_Interp *interp);
+#endif
+#ifndef WFENGINE_DEBUG
+extern "C" int Wfenginemodule_Init(Tcl_Interp *interp);
 #endif
 extern "C" int Gradientanisotropicdiffusionfilter_Init(Tcl_Interp *interp);
 extern "C" int Slicertractographydisplay_Init(Tcl_Interp *interp);
@@ -140,6 +175,7 @@ extern "C" int Queryatlas_Init(Tcl_Interp *interp);
 extern "C" int Slicerdaemon_Init(Tcl_Interp *interp);
 extern "C" int Commandlinemodule_Init(Tcl_Interp *interp);
 extern "C" int Scriptedmodule_Init(Tcl_Interp *interp);
+
 
 struct SpacesToUnderscores
 {
@@ -344,6 +380,7 @@ int Slicer3_main(int argc, char *argv[])
   cout << "Set environment: " << tclEnv.c_str() << endl;
   vtkKWApplication::PutEnv(const_cast <char *> (tclEnv.c_str()));
 
+
   ptemp = vtksys::SystemTools::CollapseFullPath(argv[0]);
   ptemp = vtksys::SystemTools::GetFilenamePath(ptemp);
 #if WIN32
@@ -365,7 +402,6 @@ int Slicer3_main(int argc, char *argv[])
   // -- set up initial global variables
   // -- later in this function tcl scripts are executed 
   //    and some additional global variables are defined
-
   Tcl_Interp *interp = NULL;
 #ifdef USE_PYTHON
 
@@ -528,6 +564,7 @@ int Slicer3_main(int argc, char *argv[])
         }
     }
 
+
     //
     // load the custom icons
     //
@@ -548,6 +585,7 @@ int Slicer3_main(int argc, char *argv[])
 #endif
 #endif
 
+
     //
     // Initialize our Tcl library (i.e. our classes wrapped in Tcl)
     //
@@ -556,16 +594,28 @@ int Slicer3_main(int argc, char *argv[])
     Mrml_Init(interp);
     Vtkitk_Init(interp);
     Freesurfer_Init(interp);
-    //TODO added temporary
+    Igt_Init(interp);
+
 #ifndef EMSEG_DEBUG
     Emsegment_Init(interp);
 #endif
+#ifndef NEURONAV_DEBUG
+    Neuronav_Init(interp);
+#endif
+#ifndef REALTIMEIMAGING_DEBUG
+    Realtimeimaging_Init(interp);
+#endif
+#ifndef WFENGINE_DEBUG
+    Wfenginemodule_Init(interp);
+#endif
+
     Gradientanisotropicdiffusionfilter_Init(interp);
     Slicertractographydisplay_Init(interp);
     Queryatlas_Init(interp);
     Slicerdaemon_Init(interp);
     Commandlinemodule_Init(interp);
     Scriptedmodule_Init(interp);
+
 
   vtkSlicerApplication *slicerApp = vtkSlicerApplication::GetInstance ( );
   slicerApp->Script ( "rename exit tcl_exit" );
@@ -801,26 +851,70 @@ int Slicer3_main(int argc, char *argv[])
     slicerApp->AddModuleGUI ( colorGUI );
 #endif
 
-#ifndef IGTDEMO_DEBUG
-    // -- IGTDemo module
-    vtkSlicerIGTDemoLogic *IGTDemoLogic = vtkSlicerIGTDemoLogic::New ( );
-    IGTDemoLogic->SetAndObserveMRMLScene ( scene );
-    vtkSlicerIGTDemoGUI *IGTDemoGUI = vtkSlicerIGTDemoGUI::New ( );
 
-    IGTDemoGUI->SetApplication ( slicerApp );
-    IGTDemoGUI->SetApplicationGUI ( appGUI );
-    IGTDemoGUI->SetAndObserveApplicationLogic ( appLogic );
-    IGTDemoGUI->SetAndObserveMRMLScene ( scene );
-    IGTDemoGUI->SetModuleLogic ( IGTDemoLogic );
-    IGTDemoGUI->SetGUIName( "IGT Demo" );
-    IGTDemoGUI->GetUIPanel()->SetName ( IGTDemoGUI->GetGUIName ( ) );
-    IGTDemoGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
-    IGTDemoGUI->GetUIPanel()->Create ( );
-    slicerApp->AddModuleGUI ( IGTDemoGUI );
-    IGTDemoGUI->BuildGUI ( );
-    IGTDemoGUI->AddGUIObservers ( );
+#ifndef REALTIMEIMAGING_DEBUG
+    // -- Real Time Imaging module
+    vtkRealTimeImagingLogic *realtimeimagingLogic = vtkRealTimeImagingLogic::New ( );
+    realtimeimagingLogic->SetAndObserveMRMLScene ( scene );
+    realtimeimagingLogic->AddRealTimeVolumeNode ("RealTime");
+    vtkRealTimeImagingGUI *realtimeimagingGUI = vtkRealTimeImagingGUI::New ( );
+
+    realtimeimagingGUI->SetApplication ( slicerApp );
+    realtimeimagingGUI->SetApplicationGUI ( appGUI );
+    realtimeimagingGUI->SetAndObserveApplicationLogic ( appLogic );
+    realtimeimagingGUI->SetAndObserveMRMLScene ( scene );
+    realtimeimagingGUI->SetModuleLogic ( realtimeimagingLogic );
+    realtimeimagingGUI->SetGUIName( "Real Time Imaging" );
+    realtimeimagingGUI->GetUIPanel()->SetName ( realtimeimagingGUI->GetGUIName ( ) );
+    realtimeimagingGUI->GetUIPanel()->SetUserInterfaceManager(appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
+    realtimeimagingGUI->GetUIPanel()->Create ( );
+    slicerApp->AddModuleGUI ( realtimeimagingGUI );
+    realtimeimagingGUI->BuildGUI ( );
+    realtimeimagingGUI->AddGUIObservers ( );
 #endif 
-    
+
+#ifndef MRABLATION_DEBUG
+    // -- MRAblation module
+    vtkMRAblationLogic *ablationLogic = vtkMRAblationLogic::New(); 
+    ablationLogic->SetAndObserveMRMLScene ( scene );
+    vtkMRAblationGUI *ablationGUI = vtkMRAblationGUI::New();
+
+    ablationGUI->SetApplication ( slicerApp );
+    ablationGUI->SetApplicationGUI ( appGUI );
+    ablationGUI->SetAndObserveApplicationLogic ( appLogic );
+    ablationGUI->SetAndObserveMRMLScene ( scene );
+    ablationGUI->SetModuleLogic ( ablationLogic );
+    ablationGUI->SetGUIName( "MRAblation" );
+    ablationGUI->GetUIPanel()->SetName ( ablationGUI->GetGUIName ( ) );
+    ablationGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
+    ablationGUI->GetUIPanel()->Create ( );
+    slicerApp->AddModuleGUI ( ablationGUI );
+    ablationGUI->BuildGUI ( );
+    ablationGUI->AddGUIObservers ( );
+#endif 
+
+
+#ifndef NEURONAV_DEBUG
+    // -- NeuroNav module
+    vtkNeuroNavLogic *neuronavLogic = vtkNeuroNavLogic::New(); 
+    neuronavLogic->SetAndObserveMRMLScene ( scene );
+    vtkNeuroNavGUI *neuronavGUI = vtkNeuroNavGUI::New();
+
+    neuronavGUI->SetApplication ( slicerApp );
+    neuronavGUI->SetApplicationGUI ( appGUI );
+    neuronavGUI->SetAndObserveApplicationLogic ( appLogic );
+    neuronavGUI->SetAndObserveMRMLScene ( scene );
+    neuronavGUI->SetModuleLogic ( neuronavLogic );
+    neuronavGUI->SetGUIName( "NeuroNav" );
+    neuronavGUI->GetUIPanel()->SetName ( neuronavGUI->GetGUIName ( ) );
+    neuronavGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
+    neuronavGUI->GetUIPanel()->Create ( );
+    slicerApp->AddModuleGUI ( neuronavGUI );
+    neuronavGUI->BuildGUI ( );
+    neuronavGUI->AddGUIObservers ( );
+    neuronavGUI->Init();
+#endif 
+
     // --- Transforms module
     slicerApp->GetSplashScreen()->SetProgressMessage(
       "Initializing Transforms Module...");
@@ -975,7 +1069,8 @@ int Slicer3_main(int argc, char *argv[])
     slicerApp->AddModuleGUI ( slicerTractographyDisplayGUI );
     slicerTractographyDisplayGUI->BuildGUI ( );
     slicerTractographyDisplayGUI->AddGUIObservers ( );
-#endif 
+#endif
+
 
 #ifndef EMSEG_DEBUG
     //
@@ -1033,6 +1128,28 @@ int Slicer3_main(int argc, char *argv[])
     slicerApp->AddModuleGUI ( queryAtlasGUI );
     queryAtlasGUI->BuildGUI ( );
     queryAtlasGUI->AddGUIObservers ( );
+#endif
+    
+#ifndef WFENGINE_DEBUG
+    slicerApp->GetSplashScreen()->SetProgressMessage(
+      "Initializing WFEngine Module...");
+    //--- WFEngine Module
+    vtkWFEngineModuleGUI *wfEngineModuleGUI = vtkWFEngineModuleGUI::New ( );
+    vtkWFEngineModuleLogic *wfEngineModuleLogic  = vtkWFEngineModuleLogic::New ( );
+    wfEngineModuleLogic->SetAndObserveMRMLScene ( scene );
+    wfEngineModuleLogic->SetApplicationLogic ( appLogic );
+    wfEngineModuleLogic->SetMRMLScene(scene);
+    wfEngineModuleGUI->SetAndObserveModuleLogic(wfEngineModuleLogic);
+    wfEngineModuleGUI->SetApplication ( slicerApp );
+    wfEngineModuleGUI->SetApplicationLogic ( appLogic );
+    wfEngineModuleGUI->SetApplicationGUI ( appGUI );
+    wfEngineModuleGUI->SetGUIName( "WFEngineModule" );
+    wfEngineModuleGUI->GetUIPanel()->SetName ( wfEngineModuleGUI->GetGUIName ( ) );
+    wfEngineModuleGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
+    wfEngineModuleGUI->GetUIPanel()->Create ( );
+    slicerApp->AddModuleGUI ( wfEngineModuleGUI );
+    wfEngineModuleGUI->BuildGUI ( );
+    wfEngineModuleGUI->AddGUIObservers ( );
 #endif
 
     // --- SlicerDaemon Module
@@ -1189,18 +1306,32 @@ int Slicer3_main(int argc, char *argv[])
     name = colorGUI->GetTclName();
     slicerApp->Script ("namespace eval slicer3 set ColorGUI %s", name);
 #endif
-#ifndef IGTDEMO_DEBUG
-    name = IGTDemoGUI->GetTclName();
-    slicerApp->Script ("namespace eval slicer3 set IGTDemoGUI %s", name);
+#ifndef REALTIMEIMAGING_DEBUG
+    name = realtimeimagingGUI->GetTclName();
+    slicerApp->Script ("namespace eval slicer3 set RealTimeImagingGUI %s", name);
 #endif
+#ifndef MRABLATION_DEBUG
+    name = ablationGUI->GetTclName();
+    slicerApp->Script ("namespace eval slicer3 set MRAblationGUI %s", name);
+#endif
+
+#ifndef NEURONAV_DEBUG
+    name = neuronavGUI->GetTclName();
+    slicerApp->Script ("namespace eval slicer3 set NeuroNavGUI %s", name);
+#endif
+
     name = transformsGUI->GetTclName();
     slicerApp->Script ("namespace eval slicer3 set TransformsGUI %s", name);
 #ifndef QUERYATLAS_DEBUG
     name = queryAtlasGUI->GetTclName();
     slicerApp->Script ("namespace eval slicer3 set QueryAtlasGUI %s", name);
 #endif
-
     
+#ifndef WFENGINE_DEBUG
+    name = wfEngineModuleGUI->GetTclName();
+    slicerApp->Script ("namespace eval slicer3 set WFEngineModuleGUI %s", name);
+#endif
+
     if ( appGUI->GetViewerWidget() )
       {
       name = appGUI->GetViewerWidget()->GetTclName();
@@ -1373,9 +1504,7 @@ int Slicer3_main(int argc, char *argv[])
 
     // ------------------------------
     // REMOVE OBSERVERS and references to MRML and Logic
-#ifndef GAD_DEBUG
     gradientAnisotropicDiffusionFilterGUI->RemoveGUIObservers ( );
-#endif
 
 #ifndef TRACTOGRAPHY_DEBUG
     slicerTractographyDisplayGUI->RemoveGUIObservers ( );
@@ -1403,9 +1532,20 @@ int Slicer3_main(int argc, char *argv[])
 #ifndef COLORS_DEBUG
     colorGUI->TearDownGUI ( );
 #endif
-#ifndef IGTDEMO_DEBUG
-    IGTDemoGUI->RemoveGUIObservers ( );
+#ifndef REALTIMEIMAGING_DEBUG
+    realtimeimagingGUI->TearDownGUI ( );
 #endif
+#ifndef MRABLATION_DEBUG
+    ablationGUI->TearDownGUI ( );
+#endif
+#ifndef NEURONAV_DEBUG
+    neuronavGUI->TearDownGUI ( );
+#endif
+    
+#ifndef WFENGINE_DEBUG
+    wfEngineModuleGUI->TearDownGUI ( );
+#endif
+
     transformsGUI->TearDownGUI ( );
 #ifndef CAMERA_DEBUG
     cameraGUI->RemoveGUIObservers ( );
@@ -1470,9 +1610,7 @@ int Slicer3_main(int argc, char *argv[])
     
     //--- delete gui first, removing Refs to Logic and MRML
 
-#ifndef GAD_DEBUG
     gradientAnisotropicDiffusionFilterGUI->Delete ();
-#endif
 
 #ifndef TRACTOGRAPHY_DEBUG
     slicerTractographyDisplayGUI->Delete ();
@@ -1498,9 +1636,20 @@ int Slicer3_main(int argc, char *argv[])
 #ifndef COLORS_DEBUG
     colorGUI->Delete();
 #endif
-#ifndef IGTDEMO_DEBUG
-    IGTDemoGUI->Delete();
+#ifndef REALTIMEIMAGING_DEBUG
+    realtimeimagingGUI->Delete();
 #endif    
+#ifndef MRABLATION_DEBUG
+    ablationGUI->Delete();
+#endif    
+#ifndef NEURONAV_DEBUG
+    neuronavGUI->Delete();
+#endif
+    
+#ifndef WFENGINE_DEBUG
+    wfEngineModuleGUI->Delete ( );
+#endif
+
     transformsGUI->Delete ();
 #ifndef CAMERA_DEBUG
     cameraGUI->Delete ();
@@ -1539,13 +1688,13 @@ int Slicer3_main(int argc, char *argv[])
       }
     moduleGUIs.clear();
 #endif
-    
+
     // Release reference to applicaiton GUI
     // and delete it.
    slicerApp->SetApplicationGUI ( NULL );
    appGUI->DeleteComponentGUIs();
    appGUI->Delete ();
-
+    
     //--- delete logic next, removing Refs to MRML
     appLogic->ClearCollections ( );
 
@@ -1563,7 +1712,7 @@ int Slicer3_main(int argc, char *argv[])
     emSegmentLogic->SetAndObserveMRMLScene ( NULL );
     emSegmentLogic->Delete();
 #endif
-
+        
 #ifndef QUERYATLAS_DEBUG
     queryAtlasLogic->SetAndObserveMRMLScene ( NULL );
     queryAtlasLogic->Delete ( );
@@ -1585,10 +1734,25 @@ int Slicer3_main(int argc, char *argv[])
     colorLogic->SetAndObserveMRMLScene ( NULL );
     colorLogic->Delete();
 #endif
-#ifndef IGTDEMO_DEBUG
-    IGTDemoLogic->SetAndObserveMRMLScene ( NULL );
-    IGTDemoLogic->Delete();
+
+#ifndef REALTIMEIMAGING_DEBUG
+    realtimeimagingLogic->SetAndObserveMRMLScene ( NULL );
+    realtimeimagingLogic->Delete();
+#endif
+
+#ifndef MRABLATION_DEBUG
+    ablationLogic->SetAndObserveMRMLScene ( NULL );
+    ablationLogic->Delete();
 #endif    
+#ifndef NEURONAV_DEBUG
+    neuronavLogic->SetAndObserveMRMLScene ( NULL );
+    neuronavLogic->Delete();
+#endif
+    
+#ifndef WFENGINE_DEBUG
+    wfEngineModuleLogic->SetAndObserveMRMLScene ( NULL );
+    wfEngineModuleLogic->Delete ( );
+#endif
     sliceLogic2->SetAndObserveMRMLScene ( NULL );
     sliceLogic2->Delete ();
     sliceLogic1->SetAndObserveMRMLScene ( NULL );
@@ -1633,6 +1797,7 @@ int Slicer3_main(int argc, char *argv[])
     // Shutdown python interpreter
     Py_Finalize();
 #endif
+
 
     return res;
 }
