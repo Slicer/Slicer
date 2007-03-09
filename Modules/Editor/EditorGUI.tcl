@@ -156,7 +156,7 @@ proc EditorBuildGUI {this} {
   set ::Editor($this,paintPaint) [vtkKWRadioButton New]
   $::Editor($this,paintPaint) SetParent [$::Editor($this,paintFrame) GetFrame]
   $::Editor($this,paintPaint) Create
-  $::Editor($this,paintPaint) SetText "Paint: "
+  $::Editor($this,paintPaint) SetText "Paint"
   $::Editor($this,paintPaint) SetValue "Paint"
   pack [$::Editor($this,paintPaint) GetWidgetName] \
     -side top -anchor e -fill x -padx 2 -pady 2 
@@ -164,7 +164,7 @@ proc EditorBuildGUI {this} {
   set ::Editor($this,paintDraw) [vtkKWRadioButton New]
   $::Editor($this,paintDraw) SetParent [$::Editor($this,paintFrame) GetFrame]
   $::Editor($this,paintDraw) Create
-  $::Editor($this,paintDraw) SetText "Draw: "
+  $::Editor($this,paintDraw) SetText "Draw"
   $::Editor($this,paintDraw) SetValue "Draw"
   pack [$::Editor($this,paintDraw) GetWidgetName] \
     -side top -anchor e -fill x -padx 2 -pady 2 
@@ -227,7 +227,7 @@ proc EditorBuildGUI {this} {
   set ::Editor($this,paintRange) [vtkKWRange New]
   $::Editor($this,paintRange) SetParent [$::Editor($this,paintFrame) GetFrame]
   $::Editor($this,paintRange) Create
-  $::Editor($this,paintRange) SetLabelText "Min/Max for Threshold Paint: "
+  $::Editor($this,paintRange) SetLabelText "Min/Max for Threshold Paint"
   $::Editor($this,paintRange) SetWholeRange 0 2000
   $::Editor($this,paintRange) SetRange 50 2000
   $::Editor($this,paintRange) SetReliefToGroove
@@ -308,6 +308,7 @@ proc EditorProcessGUIEvents {this caller event} {
         } 
       }
     }
+    EditorUpdateSWidgets $this
   } elseif { $caller == $::Editor($this,paintLabel) } {
     switch $event {
       "10001" {

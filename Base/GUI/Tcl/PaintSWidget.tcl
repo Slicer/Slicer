@@ -38,7 +38,7 @@ if { [itcl::find class PaintSWidget] == "" } {
     public variable radius 10
     public variable paintDropper 0
     public variable paintOver 1
-    public variable delayedPaint 0
+    public variable delayedPaint 1
 
     variable _startPosition "0 0 0"
     variable _currentPosition "0 0 0"
@@ -129,9 +129,11 @@ itcl::body PaintSWidget::createGlyph { {polyData ""} } {
   set PI 3.1415926
   set TWOPI [expr $PI * 2]
   set PIoverFOUR [expr $PI / 4]
+  set PIoverEIGHT [expr $PI / 8]
+  set PIoverSIXTEEN [expr $PI / 16]
   set prevPoint ""
   set firstPoint ""
-  for { set angle 0 } { $angle <= $TWOPI } { set angle [expr $angle + $PIoverFOUR] } {
+  for { set angle 0 } { $angle <= $TWOPI } { set angle [expr $angle + $PIoverSIXTEEN] } {
     set x [expr $radius * cos($angle)]
     set y [expr $radius * sin($angle)]
     set p [$points InsertNextPoint $x $y 0]
@@ -210,13 +212,14 @@ itcl::body PaintSWidget::processEvent { } {
   switch $event {
     "LeftButtonPressEvent" {
       set _actionState "painting"
+      foreach {x y} [$_interactor GetEventPosition] {}
       if { $paintDropper } {
         # in Dropper mode, set the paint color to be the first pixel you touch
-        foreach {x y} [$_interactor GetEventPosition] {}
         $this queryLayers $x $y
         set paintColor [$this getPixel $_layers(label,image) \
           $_layers(label,i) $_layers(label,j) $_layers(label,k)]
       }
+      $this paintAddPoint $x $y
       $sliceGUI SetGUICommandAbortFlag 1
       $sliceGUI SetGrabID $this
       [$_renderWidget GetRenderWindow] HideCursor
@@ -236,6 +239,7 @@ itcl::body PaintSWidget::processEvent { } {
     "LeftButtonReleaseEvent" {
       $this paintApply
       [$_renderWidget GetRenderWindow] ShowCursor
+      $_layers(label,node) Modified
       set _actionState ""
       $sliceGUI SetGrabID ""
       set _description ""
@@ -278,26 +282,16 @@ itcl::body PaintSWidget::paintFeedback {} {
 }
 
 itcl::body PaintSWidget::paintAddPoint {x y} {
+
   lappend _paintCoordinates "$x $y"
-  if { !$delayedPaint } {
-    $this paintApply
-  } else {
+  if { $delayedPaint } {
     paintFeedback 
+  } else {
+    $this paintApply
   }
 }
 
 itcl::body PaintSWidget::paintApply {} {
-
-  if { 0 } {
-    set renderer [$_renderWidget GetRenderer]
-    foreach a $_feedbackActors {
-      $renderer RemoveActor2D $a
-      set property [$a GetProperty]
-      $property SetColor 1 1 0
-      $property SetOpacity .9
-    }
-    [$sliceGUI GetSliceViewer] Render
-  }
 
   foreach xy $_paintCoordinates {
     eval $this paintBrush $xy
@@ -306,6 +300,10 @@ itcl::body PaintSWidget::paintApply {} {
   paintFeedback
 }
 
+
+## Note: there is a pure-tcl implementation of the painting
+##  in the subversion history - it is slower (of course) but
+##  useful for debugging (and was remarkably terse)
 itcl::body PaintSWidget::paintBrush {x y} {
 
   #
@@ -374,6 +372,7 @@ itcl::body PaintSWidget::paintBrush {x y} {
   #
   # get the brush center and radius in World
   # - assume uniform scaling between XY and RAS
+  #
   set xyToRAS [$_sliceNode GetXYToRAS]
   set brushCenter [lrange [$xyToRAS MultiplyPoint $x $y 0 1] 0 2]
   set worldScale [lrange [$xyToRAS MultiplyPoint 1 1 1 0] 0 2]
@@ -412,145 +411,8 @@ itcl::body PaintSWidget::paintBrush {x y} {
   $labelIJKToRAS Delete
   $backgroundIJKToRAS Delete
 
-  $_layers(label,node) Modified
 
   return
-
-
-
-## below is the pure-tcl implementation of the painting:
-
-
-  #
-  # calculate Row variables - from Top Left to Top Right
-  # - mainly need to know which index is max, so we take
-  #   enough steps to fully sample the pixels
-  # - also need the delta values for the non-max indices so
-  #   we can increment them as we step through pixels
-  #
-  set rowSpans ""
-  foreach index {i j k l} start $tlIJK end $trIJK {
-    set rowSpan($index) [expr $end - $start]
-    set absRowSpan [expr abs( $rowSpan($index) )]
-    lappend rowSpans [list $absRowSpan $index $rowSpan($index)]
-  }
-  set sortedRowSpans [lsort -decreasing $rowSpans]
-  set maxRowSpan [lindex [lindex $sortedRowSpans 0] 0]
-  set maxRowIndex [lindex [lindex $sortedRowSpans 0] 1]
-
-  foreach index {i j k l} {
-    set rowDelta($index) [expr $rowSpan($index) / $maxRowSpan]
-  }
-
-  #
-  # do the same calculation from columns, from Top Left to Bottom Left
-  #
-  set columnSpans ""
-  foreach index {i j k l} start $tlIJK end $blIJK {
-    set columnSpan($index) [expr $end - $start]
-    set absColumnSpan [expr abs( $columnSpan($index) )]
-    lappend columnSpans [list $absColumnSpan $index $columnSpan($index)]
-  }
-  set sortedColumnSpans [lsort -decreasing $columnSpans]
-  set maxColumnSpan [lindex [lindex $sortedColumnSpans 0] 0]
-  set maxColumnIndex [lindex [lindex $sortedColumnSpans 0] 1]
-
-  foreach index {i j k l} {
-    set columnDelta($index) [expr $columnSpan($index) / $maxColumnSpan]
-  }
-
-  #
-  # prepare ijkToXY mapping
-  #
-  set ijkToXY [vtkMatrix4x4 New]
-  $ijkToXY DeepCopy $_layers(label,xyToIJK)
-  $ijkToXY Invert
-  set radiusSquared [expr $radius * $radius]
-
-  #
-  # now rasterize the plane 
-  # - what follows can easily be converted to a 
-  #   vtk class for efficiency - it's in tcl now for
-  #   convenience in working out the behavior
-  # - it would also be possible to pre-compute the ijkToXY
-  #   deltas for the linear case for the radius calculation
-  # Outline or rasterizing is:
-  # - start at upper left of image
-  # - coord(i), coord(j), coord(k) is current pixel
-  # - coord is updated using the deltas calculated above 
-  # -- e.g. rowDelta(i) is the change in i with respect to incrementing
-  #    along a single pixel along the 'row'.  For the maxRowIndex this is 1,
-  #    but for others it's less than 1 for subpixel accuracy
-  # - each pixel location is mapped back to XY coordinates to check
-  #   if it's in the brush circle
-  # - in thresholdPaint mode, the label is only painted if the background
-  #   is inside the threshold range
-  #
-  foreach index {i j k l} start $tlIJK {
-    set rowStart($index) $start
-  }
-
-  for {set row 0} {$row <= $maxRowSpan} {incr row} {
-
-    foreach index {i j k} {
-      set coord($index) $rowStart($index)
-    }
-
-    for {set column 0} {$column <= $maxColumnSpan} {incr column} {
-
-      # make a rounded i,j,k for this pixel
-      foreach v {i j k} {
-        set $v [expr int(round($coord($v)))]
-      }
-
-      #
-      # draw the pixel
-      # - only if it's inside the radius
-      # - if threshold mode, only if it's between min max
-      # - note that xy could be done using deltas for speed
-      #
-      
-      set xyzw [$ijkToXY MultiplyPoint $coord(i) $coord(j) $coord(k) 1]
-      set deltaX [expr ($x - [lindex $xyzw 0])]
-      set deltaY [expr ($y - [lindex $xyzw 1])]
-      set distanceSquared [expr $deltaX * $deltaX + $deltaY * $deltaY]
-
-      if { $distanceSquared < $radiusSquared } { 
-        # calc ijkToRAS of pixel is less than radius from paint point
-
-        if { (! $paintOver) && ( [$this getPixel $_layers(label,image) $i $j $k] != 0 ) } {
-          # if not in paint over mode, don't overwrite a nonzero label
-        } else {
-          # otherwise, try to do the painting
-          if { $thresholdPaint } {
-            set bg [$this getPixel $_layers(background,image) $i $j $k]
-            if { $bg >= $thresholdMin && $bg <= $thresholdMax } {
-              $this setPixel $_layers(label,image) $i $j $k $paintColor
-            }
-          } else {
-            $this setPixel $_layers(label,image) $i $j $k $paintColor
-          }
-        }
-      }
-
-      foreach v {i j k} {
-        set coord($v) [expr $coord($v) + $columnDelta($v)]
-      }
-    }
-
-    foreach v {i j k} {
-      set rowStart($v) [expr $rowStart($v) + $rowDelta($v)]
-    }
-
-  }
-
-  # TODO: Modified should be called on the image itself, not
-  # the node, but the Logic isn't yet observing the ImageDataChangedEvent
-  $_layers(label,node) Modified
-
-  $ijkToXY Delete
-  return
-  
 }
 
 proc PaintSWidget::AddPaint {} {

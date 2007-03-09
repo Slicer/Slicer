@@ -44,6 +44,7 @@ if { [itcl::find class DrawSWidget] == "" } {
     # methods
     method processEvent { {caller ""} } {}
     method positionActors {} {}
+    method makeMaskImage {} {}
     method apply {} {}
     method createPolyData {} {}
     method resetPolyData {} {}
@@ -161,27 +162,7 @@ itcl::body DrawSWidget::addPoint {r a s} {
   $lines SetNumberOfCells 1
 }
 
-    
-itcl::body DrawSWidget::apply {} {
-
-  foreach {x y} [$_interactor GetEventPosition] {}
-  $this queryLayers $x $y
-
-  if { $_layers(label,node) == "" } {
-    # if there's no label, we can't draw
-    return
-  }
-
-  # first, close the polyline back to the first point
-  set lines [$o(polyData) GetLines]
-  set idArray [$lines GetData]
-  set p [$idArray GetTuple1 1]
-  $idArray InsertNextTuple1 $p
-  $idArray SetTuple1 0 [expr [$idArray GetNumberOfTuples] - 1]
-
-  # make sure the xyPoints are up to date
-  $this positionActors
-
+itcl::body DrawSWidget::makeMaskImage {} {
 
   #
   # use the slicer2-based vtkImageFillROI filter
@@ -276,6 +257,32 @@ itcl::body DrawSWidget::apply {} {
   $imageData Delete
   $drawPoints Delete
 
+  return [list $maskIJKToRAS $mask]
+}
+
+    
+itcl::body DrawSWidget::apply {} {
+
+  foreach {x y} [$_interactor GetEventPosition] {}
+  $this queryLayers $x $y
+
+  if { $_layers(label,node) == "" } {
+    # if there's no label, we can't draw
+    return
+  }
+
+  # first, close the polyline back to the first point
+  set lines [$o(polyData) GetLines]
+  set idArray [$lines GetData]
+  set p [$idArray GetTuple1 1]
+  $idArray InsertNextTuple1 $p
+  $idArray SetTuple1 0 [expr [$idArray GetNumberOfTuples] - 1]
+
+  # make sure the xyPoints are up to date
+  $this positionActors
+
+  set maskResult [$this makeMaskImage]
+  foreach {maskIJKToRAS mask} $maskResult {}
 
   #
   # at this point, the mask vtkImageData contains a rasterized
@@ -291,6 +298,9 @@ itcl::body DrawSWidget::apply {} {
   # - clamp the bounds to the dimensions of the label image
   #
 
+  [$o(polyData) GetPoints] Modified
+  set bounds [$o(polyData) GetBounds]
+  foreach {xlo xhi ylo yhi zlo zhi} $bounds {}
   set xyToIJK [[$_layers(label,logic) GetXYToIJKTransform] GetMatrix]
   set tlIJK [$xyToIJK MultiplyPoint $xlo $yhi 0 1]
   set trIJK [$xyToIJK MultiplyPoint $xhi $yhi 0 1]
@@ -405,7 +415,6 @@ itcl::body DrawSWidget::processEvent { {caller ""} } {
           set _actionState "drawing"
         } else {
           set _actionState ""
-          $this apply
         }
         $sliceGUI SetGUICommandAbortFlag 1
         $sliceGUI SetGrabID $this
@@ -421,7 +430,8 @@ itcl::body DrawSWidget::processEvent { {caller ""} } {
         }
       }
       "LeftButtonReleaseEvent" {
-  $this apply
+# TODO - hot key to apply?
+$this apply
         set _actionState ""
         $sliceGUI SetGrabID ""
         set _description ""
