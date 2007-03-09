@@ -14,7 +14,7 @@
 #include "vtkImageThermalMap.h"
 #include "vtkObjectFactory.h"
 #include <math.h>
-#include <fstream.h>   // file I/O
+
 
 //------------------------------------------------------------------------------
 vtkImageThermalMap* vtkImageThermalMap::New()

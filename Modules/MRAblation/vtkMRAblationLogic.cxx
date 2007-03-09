@@ -79,7 +79,7 @@ void vtkMRAblationLogic::Apply(vtkSlicerVolumesGUI *volsGUI)
 
     // Sort images
     std::string imageDir(this->MRAblationNode->GetImageDirectory());
-    vtksys::Directory::Directory dir;
+    vtksys::Directory dir;
     int loaded = dir.Load(imageDir.c_str());
     if (! loaded)
     {
@@ -94,7 +94,7 @@ void vtkMRAblationLogic::Apply(vtkSlicerVolumesGUI *volsGUI)
     int count = 1;
 
     // testing
-    std::string files[noOfFiles];
+    std::string *files = new std::string [noOfFiles];
     int ii  = 0;
     while (ii < noOfFiles) {
         files[ii] = dir.GetFile(ii);
@@ -188,10 +188,12 @@ void vtkMRAblationLogic::Apply(vtkSlicerVolumesGUI *volsGUI)
                     {
 
                         int size = first.size();
-                        char fileName[size];
+                        char *fileName = new char [size];
                         strcpy(fileName, first.c_str());
                         vtkSlicerVolumesLogic* volumeLogic = volsGUI->GetLogic();
                         vtkMRMLVolumeNode *volumeNode = volumeLogic->AddArchetypeVolume( fileName, 1, 0 );
+                        delete [] fileName;
+
                         if ( volumeNode == NULL )
                         {
                             // TODO: generate an error...
@@ -271,6 +273,8 @@ void vtkMRAblationLogic::Apply(vtkSlicerVolumesGUI *volsGUI)
 
                 }
             }
+            delete [] files;
+
         }
         else
         {
