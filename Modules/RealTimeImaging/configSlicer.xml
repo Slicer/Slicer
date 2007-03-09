@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE OpenTracker SYSTEM "/home/simond/Projects/SPLOT-build/opentracker/share/opentracker.dtd">
+
+<OpenTracker>
+  <configuration>
+
+  </configuration>
+
+<Callback name="cb1">
+<NetworkSource mode="unicast" number="1" address="localhost" port="54321"/>
+</Callback>
+
+</OpenTracker>

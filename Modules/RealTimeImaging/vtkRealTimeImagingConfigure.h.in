@@ -1,0 +1,29 @@
+/* 
+ * Here is where system computed values get stored.
+ * These values should only change when the target compile platform changes.
+ */
+
+#if defined(WIN32) && !defined(VTKSLICER_STATIC)
+#pragma warning ( disable : 4275 )
+#endif
+
+#cmakedefine CMAKE_WORDS_BIGENDIAN
+#ifdef CMAKE_WORDS_BIGENDIAN
+  #define WORDS_BIGENDIAN
+#else
+  #define WORDS_LITTLEENDIAN
+#endif
+
+#cmakedefine BUILD_SHARED_LIBS
+#ifndef BUILD_SHARED_LIBS
+#define VTKSLICER_STATIC
+#endif
+
+#cmakedefine USE_OPENTRACKER
+#cmakedefine OT_VERSION_13 
+#ifdef USE_OPENTRACKER
+#ifndef OT_VERSION_13
+#define OT_VERSION_20
+#endif
+#endif
+ 
