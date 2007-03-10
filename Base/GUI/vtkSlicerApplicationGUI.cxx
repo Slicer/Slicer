@@ -239,7 +239,7 @@ void vtkSlicerApplicationGUI:: DeleteComponentGUIs()
     if ( this->ViewControlGUI )
       {
 //      this->ViewControlGUI->TearDownGUI ( );
-      this->ViewControlGUI->RemoveSliceGUIObservers();
+      this->ViewControlGUI->RemoveSliceEventObservers();
       this->ViewControlGUI->SetAndObserveMRMLScene ( NULL );
       this->ViewControlGUI->SetApplicationGUI ( NULL);
       this->ViewControlGUI->SetApplication ( NULL );
@@ -780,7 +780,7 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::InitializeNavigationWidget (  )
 {
-
+#ifndef VIEWCONTROL_DEBUG
   vtkSlicerViewControlGUI *vcGUI = this->GetViewControlGUI ( );
   vcGUI->UpdateFromMRML();
   vcGUI->UpdateSliceGUIInteractorStyles();
@@ -788,6 +788,7 @@ void vtkSlicerApplicationGUI::InitializeNavigationWidget (  )
   vcGUI->InitializeNavigationWidgetCamera( );
   vcGUI->UpdateNavigationWidgetViewActors ( );
   vcGUI->ConfigureNavigationWidgetRender ( );
+#endif
 }
 
 
