@@ -25,7 +25,8 @@ if { [itcl::find class CrosshairSWidget] == "" } {
     constructor {args} {}
     destructor {}
 
-    public variable rgba ".5 .9 .5 .6"  ;# crosshair color
+    #public variable rgba ".5 .9 .5 .6"  ;# crosshair color
+    public variable rgba "1.0 0.8 0.1 .6"  ;# crosshair color
 
     variable _compositeNodeObserverTags
     variable _compositeNode
