@@ -93,6 +93,7 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
       this->FieldOfView[1] = y;
       this->FieldOfView[2] = z;
       this->UpdateMatrices();
+      this->Modified();
       }
   }
 
