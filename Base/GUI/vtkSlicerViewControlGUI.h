@@ -216,18 +216,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   virtual void RemoveSliceEventObservers();
   
   // Description:
-  // Add and remove observers on the view node.
-  virtual void AddViewNodeObservers();
-  virtual void RemoveViewNodeObservers();
-
-  // Description:
-  // Add and remove observers on the slice nodes.
-  virtual void RemoveSliceNodeObservers();
-
-
-  // Description:
   // Methods to update GUI, View and MRML
-  virtual void UpdateGUI ( );
   virtual void RequestFOVEntriesUpdate ( );
   virtual void FOVEntriesUpdate();
   virtual void UpdateViewFromMRML();
@@ -265,20 +254,20 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   // Starts and stops automatic view spinning
   virtual void MainViewSpin ( );
   virtual void SpinView (int direction, double degrees );
+  // Description:
+  // Zooms the main view with user-specified
+  // relative (percent) zoom factor.
   virtual void MainViewZoom ( double factor );
-
   // Description:
   // Resets focal point to origin
   virtual void MainViewResetFocalPoint ( );
   // Description:
   // Sets cameras focal point.
   virtual void MainViewSetFocalPoint ( double x, double y, double z);
-    
   // Description:
   // Starts and stops automatic view rocking
   virtual void MainViewRock ( );
   virtual void RockView ( );
-
   // Description:
   // Moves camera down selected axis in MainViewer and looks at
   // focal point from there
@@ -316,16 +305,19 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   // Updates the Navigation widget's camera to track
   // the 3DView camera
   virtual void ConfigureNavigationWidgetRender ( );
+
   // Description:
   // Configures the Navigation widget's camera on
   // startup.
   virtual void InitializeNavigationWidgetCamera ( );
+
   // Description: Similar to vtkRenderer's ResetCamera
   // method, but tries to use a smaller ViewAngle to
   // compute a nearer camera distance that still
-  // accommodates all visible actors in scene. Not
+  // accommodates all visible actors in scene but fills
+  // more of the little render window with stuff. Not
   // working any differently than ResetCamera yet,
-  // for reasons unknown...
+  // for reasons unknown... 
   virtual void ResetNavigationCamera ( );
 
   // Description:

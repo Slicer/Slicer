@@ -342,10 +342,10 @@ vtkSlicerViewControlGUI::~vtkSlicerViewControlGUI ( )
     this->FOVBoxActor = NULL;
     }
 
-
-  this->RemoveViewNodeObservers();
-  this->RemoveSliceNodeObservers();
-  this->SetViewNode ( NULL );
+  vtkSetAndObserveMRMLNodeMacro ( this->ViewNode, NULL );
+  vtkSetAndObserveMRMLNodeMacro ( this->RedSliceNode, NULL );
+  vtkSetAndObserveMRMLNodeMacro ( this->GreenSliceNode, NULL );
+  vtkSetAndObserveMRMLNodeMacro ( this->YellowSliceNode, NULL );
   this->RemoveSliceEventObservers();
   this->RemoveMainViewerEventObservers();
   this->SetRedSliceEvents(NULL);
@@ -650,14 +650,12 @@ void vtkSlicerViewControlGUI::UpdateViewFromMRML()
   if ( this->ViewNode != NULL && node != NULL && this->ViewNode != node)
     {
     // local ViewNode is out of sync with the scene
-    this->RemoveViewNodeObservers();
-    this->SetViewNode (NULL);
+    vtkSetAndObserveMRMLNodeMacro ( this->ViewNode, NULL );
     }
   if ( this->ViewNode != NULL && this->MRMLScene->GetNodeByID(this->ViewNode->GetID()) == NULL)
     {
     // local node not in the scene
-    this->RemoveViewNodeObservers();
-    this->SetViewNode(NULL );
+    vtkSetAndObserveMRMLNodeMacro ( this->ViewNode, NULL );
     }
   if ( this->ViewNode == NULL )
     {
@@ -669,9 +667,9 @@ void vtkSlicerViewControlGUI::UpdateViewFromMRML()
       this->MRMLScene->AddNode(node);
       node->Delete();
       }
-/*
+
     vtkIntArray  *events = vtkIntArray::New();
-    events->InsertNextValue( vtkMRMLViewNode::AnimationEvent);
+    events->InsertNextValue( vtkMRMLViewNode::AnimationModeEvent);
     events->InsertNextValue( vtkMRMLViewNode::RenderModeEvent);
     events->InsertNextValue( vtkMRMLViewNode::StereoModeEvent);
     events->InsertNextValue( vtkMRMLViewNode::VisibilityEvent);
@@ -679,46 +677,9 @@ void vtkSlicerViewControlGUI::UpdateViewFromMRML()
     vtkSetAndObserveMRMLNodeEventsMacro ( this->ViewNode, node, events );
     events->Delete();
     events = NULL;
-*/
-    this->SetViewNode ( node );
-    this->AddViewNodeObservers( );
     }
 }
 
-
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerViewControlGUI::AddViewNodeObservers()
-{
-  // observe scene for add/remove nodes
-  if ( this->ViewNode )
-    {
-    this->ViewNode->AddObserver ( vtkMRMLViewNode::AnimationModeEvent, this->MRMLCallbackCommand );
-    this->ViewNode->AddObserver ( vtkMRMLViewNode::RenderModeEvent, this->MRMLCallbackCommand );
-    this->ViewNode->AddObserver ( vtkMRMLViewNode::StereoModeEvent, this->MRMLCallbackCommand );
-    this->ViewNode->AddObserver ( vtkMRMLViewNode::VisibilityEvent, this->MRMLCallbackCommand );
-    this->ViewNode->AddObserver ( vtkMRMLViewNode::BackgroundColorEvent, this->MRMLCallbackCommand );
-    }
-}
-
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerViewControlGUI::RemoveViewNodeObservers()
-{
-/*
-    vtkSetAndObserveMRMLNodeEventsMacro ( this->ViewNode, NULL);
-*/
-  if ( this->ViewNode )
-    {
-    this->ViewNode->RemoveObservers ( vtkMRMLViewNode::AnimationModeEvent, this->MRMLCallbackCommand );
-    this->ViewNode->RemoveObservers ( vtkMRMLViewNode::RenderModeEvent, this->MRMLCallbackCommand );
-    this->ViewNode->RemoveObservers ( vtkMRMLViewNode::StereoModeEvent, this->MRMLCallbackCommand );
-    this->ViewNode->RemoveObservers ( vtkMRMLViewNode::VisibilityEvent, this->MRMLCallbackCommand );
-    this->ViewNode->RemoveObservers ( vtkMRMLViewNode::BackgroundColorEvent, this->MRMLCallbackCommand );
-    }
-}
 
 
 //---------------------------------------------------------------------------
@@ -776,15 +737,6 @@ void vtkSlicerViewControlGUI::UpdateSlicesFromMRML()
 
 
 
-
-//---------------------------------------------------------------------------
-void vtkSlicerViewControlGUI::RemoveSliceNodeObservers()
-{
-
-   vtkSetAndObserveMRMLNodeMacro(this->RedSliceNode, NULL);
-   vtkSetAndObserveMRMLNodeMacro(this->YellowSliceNode, NULL);
-   vtkSetAndObserveMRMLNodeMacro(this->GreenSliceNode, NULL);
-}
 
 
 //---------------------------------------------------------------------------
@@ -3271,82 +3223,6 @@ void vtkSlicerViewControlGUI::FOVEntriesUpdate ( )
 
 
 
-
-//---------------------------------------------------------------------------
-void vtkSlicerViewControlGUI::UpdateGUI ( )
-{
-
-  vtkMRMLViewNode *vn = this->GetActiveView();
-  if ( vn != NULL )
-    {
-    if ( vn->GetRenderMode() == vtkMRMLViewNode::Orthographic )
-      {
-      this->OrthoButton->SetImageToIcon ( this->SlicerViewControlIcons->GetPerspectiveButtonIcon() );
-      }
-    else
-      {
-      this->OrthoButton->SetImageToIcon ( this->SlicerViewControlIcons->GetOrthoButtonIcon() );
-      }
-    switch ( vn->GetStereoType() )
-      {
-      case vtkMRMLViewNode::NoStereo:
-        this->StereoButton->GetMenu()->SelectItem ( "No stereo");
-        break;
-      case vtkMRMLViewNode::RedBlue:
-        this->StereoButton->GetMenu()->SelectItem ( "Red/Blue");
-        break;
-      case vtkMRMLViewNode::Interlaced:
-        this->StereoButton->GetMenu()->SelectItem ( "Interlaced");        
-        break;
-      case vtkMRMLViewNode::CrystalEyes:
-        this->StereoButton->GetMenu()->SelectItem ( "CrystalEyes");
-        break;
-      default:
-        break;
-      }
-    if ( vn->GetFiducialsVisible() == 1 )
-      {
-      }
-    else
-      {
-      }
-    if ( vn->GetFiducialLabelsVisible() == 1 )
-      {
-      }
-    else
-      {
-      }
-    if ( vn->GetBoxVisible() == 1 )
-      {
-      this->VisibilityButton->GetMenu()->SelectItem ("3D cube" );
-      }
-    else
-      {
-      this->VisibilityButton->GetMenu()->DeselectItem ("3D cube" );
-      }
-    if ( vn->GetAxisLabelsVisible ( ) == 1 )
-      {
-      this->VisibilityButton->GetMenu()->SelectItem ("3D axis labels" );
-      }
-    else
-      {
-      this->VisibilityButton->GetMenu()->DeselectItem ("3D axis labels" );
-      }
-    double *c = vn->GetBackgroundColor();
-    if ( c[0] == 0.0 )
-      {
-      this->VisibilityButton->GetMenu()->SelectItem ("Black background" );
-      }
-    if  (c[0] == 1.0 )
-      {
-      this->VisibilityButton->GetMenu()->SelectItem ("White background");
-      }
-    else 
-      {  
-      this->VisibilityButton->GetMenu()->SelectItem ("Light blue background");
-      }
-    }
-}
 
 
 
