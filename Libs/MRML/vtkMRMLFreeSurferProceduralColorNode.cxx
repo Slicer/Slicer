@@ -56,6 +56,24 @@ vtkMRMLFreeSurferProceduralColorNode::vtkMRMLFreeSurferProceduralColorNode()
 {
   this->LookupTable = NULL;
   this->HideFromEditors = 1;
+  this->LabelsFileName = NULL;
+  this->SurfaceLabelsFileName = NULL;
+
+  // get the home directory and the colour file in the freesurfer lib dir
+  vtksys_stl::string slicerHome = vtksys_stl::string(vtksys::SystemTools::GetEnv("SLICER_HOME"));
+  // check to see if slicer home was set
+  vtksys_stl::vector<vtksys_stl::string> filesVector;
+  filesVector.push_back(""); // for relative path
+  filesVector.push_back(slicerHome);
+  filesVector.push_back(vtksys_stl::string("Libs/FreeSurfer/FreeSurferColorLUT.txt"));
+  vtksys_stl::string colorFileName = vtksys::SystemTools::JoinPath(filesVector);
+  this->SetLabelsFileName(colorFileName.c_str());
+
+  filesVector.pop_back();
+  filesVector.push_back("Libs/FreeSurfer/Simple_surface_labels2002.txt");
+  colorFileName = vtksys::SystemTools::JoinPath(filesVector);
+  this->SetSurfaceLabelsFileName(colorFileName.c_str());
+  
   //this->DebugOn();
 }
 
@@ -66,6 +84,15 @@ vtkMRMLFreeSurferProceduralColorNode::~vtkMRMLFreeSurferProceduralColorNode()
     {
     this->LookupTable->Delete();
     this->LookupTable = NULL;
+    }
+
+  if (this->LabelsFileName)
+    {
+    delete [] this->LabelsFileName;
+    }
+  if (this->SurfaceLabelsFileName)
+    {
+    delete [] this->SurfaceLabelsFileName;
     }
 }
 
@@ -266,6 +293,14 @@ void vtkMRMLFreeSurferProceduralColorNode::PrintSelf(ostream& os, vtkIndent inde
     os << indent << "Look up table:\n";
     this->LookupTable->PrintSelf(os, indent.GetNextIndent());
     }
+  if (this->LabelsFileName)
+    {
+    os << indent << "Volume label map color file: " << this->GetLabelsFileName() << endl;
+    }
+  if (this->SurfaceLabelsFileName)
+    {
+    os << indent << "Surface label map color file: " << this->GetSurfaceLabelsFileName() << endl;
+    }
 }
 
 //-----------------------------------------------------------
@@ -321,6 +356,18 @@ void vtkMRMLFreeSurferProceduralColorNode::SetTypeToGreenRed()
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLFreeSurferProceduralColorNode::SetTypeToLabels()
+{
+  this->SetType(this->Labels);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLFreeSurferProceduralColorNode::SetTypeToSurfaceLabels()
+{
+  this->SetType(this->SurfaceLabels);
+}
+
+//----------------------------------------------------------------------------
 const char* vtkMRMLFreeSurferProceduralColorNode::GetTypeAsString()
 {
   if (this->Type == this->Heat)
@@ -342,6 +389,14 @@ const char* vtkMRMLFreeSurferProceduralColorNode::GetTypeAsString()
   if (this->Type == this->GreenRed)
     {
     return "GreenRed";
+    }
+  if (this->Type == this->Labels)
+    {
+    return "Labels";
+    }
+  if (this->Type == this->SurfaceLabels)
+    {
+    return "SurfaceLabels";
     }
   return "(unknown)";
 }
@@ -368,6 +423,15 @@ const char* vtkMRMLFreeSurferProceduralColorNode::GetTypeAsIDString()
   if (this->Type == this->GreenRed)
     {
     return "vtkMRMLFreeSurferProceduralColorNodeGreenRed";
+    }
+  // these two are not held in this node, but use this node to define constants
+  if (this->Type == this->Labels)
+    {
+    return "vtkMRMLFreeSurferColorNodeLabels";
+    }
+  if (this->Type == this->SurfaceLabels)
+    {
+    return "vtkMRMLFreeSurferColorNodeSurfaceLabels";
     }
   return "(unknown)";
 }
@@ -448,6 +512,11 @@ void vtkMRMLFreeSurferProceduralColorNode::SetType(int type)
       {
       this->GetFSLookupTable()->SetLutTypeToGreenRed();
       this->SetNamesFromColors();
+      }
+    else if (this->Type == this->Labels ||
+             this->Type == this->SurfaceLabels)
+      {
+      // do nothing
       }
     else
       {

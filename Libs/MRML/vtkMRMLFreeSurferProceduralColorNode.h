@@ -85,7 +85,9 @@ public:
   void SetTypeToRedBlue();
   void SetTypeToRedGreen();
   void SetTypeToGreenRed();
-
+  void SetTypeToLabels();
+  void SetTypeToSurfaceLabels();
+  
   void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
 
   //BTX
@@ -97,6 +99,10 @@ public:
   // RedBlue - reversed BlueRed
   // RedGreen - 
   // GreenRed - reversed RedGreen
+  // Labels - info not held in this node, used for creating ids when read
+  // labels file into a vtkMRMLColorTableNode
+  // SurfaceLabels - info not held in this node, used for creating ids when
+  // read surface labesl file into a vtkMRMLColorTableNode
   enum
   {
     Heat = 1,
@@ -104,11 +110,14 @@ public:
     RedBlue = 3,
     RedGreen = 4,
     GreenRed = 5,
+    Labels = 6,
+    SurfaceLabels = 7,
   };
   //ETX
 
   // Description:
-  // Return the lowest and the highest integers, for use in looping
+  // Return the lowest and the highest integers, for use in looping (don't
+  // create labels)
   int GetFirstType() { return this->Heat; };
   int GetLastType () { return this->GreenRed; };
   
@@ -128,6 +137,15 @@ public:
       DisplayModifiedEvent = 20000,
     };
 //ETX
+
+  // Description:
+  // default file name for freesurfer labels
+  vtkGetStringMacro(LabelsFileName);
+  vtkSetStringMacro(LabelsFileName);
+  // Description:
+  // default file name for freesurfer surface labels
+  vtkGetStringMacro(SurfaceLabelsFileName);
+  vtkSetStringMacro(SurfaceLabelsFileName);
   
 protected:
   vtkMRMLFreeSurferProceduralColorNode();
@@ -143,6 +161,9 @@ protected:
   // Description:
   // a lookup table tailored with FreeSurfer colours, constructed according to Type
   vtkFSLookupTable *LookupTable;
+
+  char *LabelsFileName;
+  char *SurfaceLabelsFileName;
 };
 
 #endif
