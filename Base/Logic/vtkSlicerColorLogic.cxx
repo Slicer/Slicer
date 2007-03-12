@@ -128,7 +128,6 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
       }
     node->Delete();
     }
-  basicFSNode->Delete();
   
   // add a regular colour tables holding the freesurfer volume file colours and
   // surface colours
@@ -138,13 +137,7 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
 
   // volume labels
   node->SetName("FSLabels");
-  // get the home directory and the colour file in the freesurfer lib dir
-  vtksys_stl::string slicerHome = vtksys_stl::string(vtksys::SystemTools::GetEnv("SLICER_HOME"));
-  vtksys_stl::vector<vtksys_stl::string> filesVector;
-  filesVector.push_back(""); // for relative path
-  filesVector.push_back(slicerHome);
-  filesVector.push_back(vtksys_stl::string("Libs/FreeSurfer/FreeSurferColorLUT.txt"));
-  vtksys_stl::string colorFileName = vtksys::SystemTools::JoinPath(filesVector);
+  std::string colorFileName = std::string(basicFSNode->GetLabelsFileName());
   vtkDebugMacro("Trying to read colour file " << colorFileName.c_str());
   
   node->SetFileName(colorFileName.c_str());
@@ -167,9 +160,7 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
   node->SetTypeToFile();
   node->SaveWithSceneOff();
   node->SetName("FSSurfaceLabels");
-  filesVector.pop_back();
-  filesVector.push_back("Libs/FreeSurfer/Simple_surface_labels2002.txt");
-  colorFileName = vtksys::SystemTools::JoinPath(filesVector);
+  colorFileName = std::string(basicFSNode->GetSurfaceLabelsFileName());
   vtkDebugMacro("Trying to read colour file " << colorFileName.c_str());
   node->SetFileName(colorFileName.c_str());
   node->ReadFile();
@@ -184,6 +175,7 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
     {
     vtkErrorMacro("Unable to add colour node with freesurfer colours, from file: " << node->GetFileName());
     }
+  basicFSNode->Delete();
   node->Delete();
 }
 
@@ -321,32 +313,18 @@ const char *vtkSlicerColorLogic::GetDefaultLabelMapColorNodeID()
 //----------------------------------------------------------------------------
 const char *vtkSlicerColorLogic::GetDefaultModelColorNodeID()
 {
-  // TODO: return a freesurfer colour node ID
-  // return this->GetDefaultColorTableNodeID(vtkMRMLColorTableNode::Ocean);
   return this->GetDefaultFreeSurferColorNodeID(vtkMRMLFreeSurferProceduralColorNode::Heat);
 }
 
 //----------------------------------------------------------------------------
 const char *vtkSlicerColorLogic::GetDefaultFreeSurferLabelMapColorNodeID()
 {
-  //return
-  //this->GetDefaultFreeSurferColorNodeID(vtkMRMLFreeSurferProceduralColorNode::Labels);
-  vtkMRMLColorTableNode *node = vtkMRMLColorTableNode::New();
-  node->SetTypeToFile();
-  std::string id = this->GetDefaultColorTableNodeID(node->GetType()) + std::string("FreeSurferColorLUT");
-  const char *idChar = id.c_str();
-  node->Delete();
-  return idChar;
+  return this->GetDefaultFreeSurferColorNodeID(vtkMRMLFreeSurferProceduralColorNode::Labels);
 }
 
 //----------------------------------------------------------------------------
 const char *vtkSlicerColorLogic::GetDefaultFreeSurferSurfaceLabelsColorNodeID()
 {
-  vtkMRMLColorTableNode *node = vtkMRMLColorTableNode::New();
-  node->SetTypeToFile();
-  std::string id = this->GetDefaultColorTableNodeID(node->GetType()) + std::string("FreeSurferSurfaceLabels");
-  const char *idChar = id.c_str();
-  node->Delete();
-  return idChar;
+  return this->GetDefaultFreeSurferColorNodeID(vtkMRMLFreeSurferProceduralColorNode::SurfaceLabels);
 }
 
