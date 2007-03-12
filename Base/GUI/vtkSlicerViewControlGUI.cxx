@@ -34,7 +34,7 @@
 #include "vtkSlicerViewControlIcons.h"
 
 // uncomment in order to stub out the NavZoom widget.
-//#define NAVZOOMWIDGET_DEBUG
+#define NAVZOOMWIDGET_DEBUG
 
 // uncomment in order to stub out the FOV Entries.
 //#define FOV_ENTRIES_DEBUG
@@ -1520,29 +1520,48 @@ void vtkSlicerViewControlGUI::UpdateNavigationWidgetViewActors ( )
     vtkRenderer *ren;
     vtkActorCollection *actors;
     vtkActor *actor;
+    double bounds[6];
+    double dimension;
+    double x,y,z;
+    double cutoff = 0.1;
+    double cutoffDimension;
 
     vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));    
     ren = p->GetViewerWidget()->GetMainViewer()->GetRenderer();
+    ren->ComputeVisiblePropBounds( bounds );
+    // get estimate of scene dimension;
+    x = bounds[1] - bounds[0];
+    y = bounds[3] - bounds[2];
+    z = bounds[5] - bounds[4];
+    dimension = x*x + y*y + z*z;
+    cutoffDimension = cutoff * dimension;
 
-    // remove all actors
-    this->NavigationWidget->GetRenderer()->GetActors()->RemoveAllItems();
+    // remove all actors from the navigation widget's renderer
+    vtkActorCollection *navActors = this->NavigationWidget->GetRenderer()->GetActors();
+    navActors->RemoveAllItems();
 
-    // Get actor collection
+    // Get actor collection from the main viewer's renderer
     actors = ren->GetActors();    
     if (actors != NULL )
       {
+      // add the little FOV box in any case.
       this->NavigationWidget->GetRenderer()->AddViewProp( this->FOVBoxActor);
-
       actors->InitTraversal();
       actor = actors->GetNextActor();
-
-      // try adding actors 0-9 and see what breaks it.
-      // Add each actor to the Navigation widget; each
-      // actor should already have its properties and
-      // mapper set.
       while (actor != NULL )
         {
-        this->NavigationWidget->GetRenderer()->AddActor( actor );
+        // get the bbox of this actor
+        actor->GetBounds ( bounds );
+        // check to see if it's big enough to include in the scene...
+        x = bounds[1] - bounds[0];
+        y = bounds[3] - bounds[2];
+        z = bounds[5] - bounds[4];
+        dimension = x*x + y*y + z*z;
+        // add the actor if it's big enough. otherwise don't bother.
+        if ( dimension > cutoffDimension )
+          {
+          this->NavigationWidget->GetRenderer()->AddActor( actor );
+          }
         actor = actors->GetNextActor();
         }
       }
