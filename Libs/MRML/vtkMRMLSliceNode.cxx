@@ -496,3 +496,33 @@ void vtkMRMLSliceNode::UpdateScene(vtkMRMLScene* scene)
     }
 }
 // End
+
+void vtkMRMLSliceNode::JumpSlice(double r, double a, double s)
+{
+  vtkMatrix4x4 *sliceToRAS = this->GetSliceToRAS();
+  double sr = sliceToRAS->GetElement(0, 3);
+  double sa = sliceToRAS->GetElement(1, 3);
+  double ss = sliceToRAS->GetElement(2, 3);
+  if ( r != sr || a != sa || s != ss ) {
+    sliceToRAS->SetElement( 0, 3, r );
+    sliceToRAS->SetElement( 1, 3, a );
+    sliceToRAS->SetElement( 2, 3, s );
+    this->UpdateMatrices();
+  }
+}
+
+void vtkMRMLSliceNode::JumpAllSlices(double r, double a, double s)
+{
+  vtkMRMLSliceNode *node= NULL;
+  vtkMRMLScene *scene = this->GetScene();
+  int nnodes = scene->GetNumberOfNodesByClass("vtkMRMLSliceNode");
+  for (int n=0; n<nnodes; n++)
+    {
+    node = vtkMRMLSliceNode::SafeDownCast (
+          scene->GetNthNodeByClass(n, "vtkMRMLSliceNode"));
+    if ( node != NULL && node != this )
+      {
+      node->JumpSlice(r, a, s);
+      }
+    }
+}

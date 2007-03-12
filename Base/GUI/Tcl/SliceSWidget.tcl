@@ -473,23 +473,11 @@ itcl::body SliceSWidget::moveSlice { delta } {
 itcl::body SliceSWidget::jumpSlice { r a s } {
   set logic [$sliceGUI GetLogic]
   set sliceNode [$logic GetSliceNode]
-  set sliceToRAS [$sliceNode GetSliceToRAS]
-  set sr [$sliceToRAS GetElement 0 3]
-  set sa [$sliceToRAS GetElement 1 3]
-  set ss [$sliceToRAS GetElement 2 3]
-  if { $r != $sr || $a != $sa || $s != $ss } {
-    $sliceToRAS SetElement 0 3 $r
-    $sliceToRAS SetElement 1 3 $a
-    $sliceToRAS SetElement 2 3 $s
-    $sliceNode UpdateMatrices
-  }
+  $sliceNode JumpSlice $r $a $s
 }
 
 itcl::body SliceSWidget::jumpOtherSlices { r a s } {
-  set sliceSWidgets [itcl::find objects -class SliceSWidget]
-  foreach sw $sliceSWidgets {
-    if { $sw != $this } {
-      $sw jumpSlice $r $a $s
-    }
-  }
+  set logic [$sliceGUI GetLogic]
+  set sliceNode [$logic GetSliceNode]
+  $sliceNode JumpAllSlices $r $a $s
 }
