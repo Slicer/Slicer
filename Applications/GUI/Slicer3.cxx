@@ -1502,8 +1502,10 @@ int Slicer3_main(int argc, char *argv[])
 
     // ------------------------------
     // REMOVE OBSERVERS and references to MRML and Logic
+#ifndef GAD_DEBUG
     gradientAnisotropicDiffusionFilterGUI->RemoveGUIObservers ( );
-
+#endif
+    
 #ifndef TRACTOGRAPHY_DEBUG
     slicerTractographyDisplayGUI->RemoveGUIObservers ( );
 #endif
@@ -1607,9 +1609,10 @@ int Slicer3_main(int argc, char *argv[])
     // DELETE 
     
     //--- delete gui first, removing Refs to Logic and MRML
-
+#ifndef GAD_DEBUG
     gradientAnisotropicDiffusionFilterGUI->Delete ();
-
+#endif
+    
 #ifndef TRACTOGRAPHY_DEBUG
     slicerTractographyDisplayGUI->Delete ();
 #endif
