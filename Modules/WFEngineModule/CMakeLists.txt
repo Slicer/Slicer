@@ -12,7 +12,7 @@ SET(WFEngineModule_SRCS
   vtkMRMLWFEngineModuleNode.cxx
   vtkKWMyWizardWidget.cxx
   vtkKWMyWizardWorkflow.cxx
-  vtkWFStepHandler.cxx
+  vtkWFEngineHandler.cxx
   vtkWFEngineEventHandler.cxx
 )
 
