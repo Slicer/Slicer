@@ -75,6 +75,7 @@ SET(LIB_SRCS
   vtkSlicerColorDisplayWidget.cxx
   vtkSlicerMRMLSaveDataWidget.cxx
   vtkSlicerClipModelsWidget.cxx
+  vtkSlicerParameterWidget.cxx
   # VTK Replacement classes
   vtkSlicerInteractorStyle.cxx
   vtkSlicerViewerInteractorStyle.cxx
@@ -99,6 +100,8 @@ INCLUDE_DIRECTORIES(
   ${MRML_BINARY_DIR}
   ${VTKITK_SOURCE_DIR}/Libs/vtkITK
   ${VTK_INCLUDE_DIR}
+  ${ModuleDescriptionParser_SOURCE_DIR}
+  ${ModuleDescriptionParser_BINARY_DIR}
   ${FreeSurfer_SOURCE_DIR}
   ${FreeSurfer_BINARY_DIR}
   )
@@ -112,7 +115,8 @@ KWWidgets_WRAP_TCL(${LIB_NAME} LIB_TCL_SRCS "${LIB_SRCS}" "")
 
 ADD_LIBRARY(${LIB_NAME} ${LIB_TCL_SRCS} ${LIB_SRCS})
 TARGET_LINK_LIBRARIES(${LIB_NAME} 
-  ${KWWidgets_LIBRARIES} 
+  ${KWWidgets_LIBRARIES}
+  ModuleDescriptionParser
   SlicerBaseLogic
   FreeSurfer)
 
