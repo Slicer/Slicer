@@ -914,12 +914,14 @@ void vtkSlicerViewControlGUI::ProcessGUIEvents ( vtkObject *caller,
 #endif
         // set interacting flag -- don't update gui until
         // interaction has stopped.
-        if ( event == vtkCommand::RightButtonPressEvent)
+        if ( event == vtkCommand::RightButtonPressEvent ||
+             event == vtkCommand::MiddleButtonPressEvent )
           {
           this->SliceInteracting = 1;
           }
         // interaction has stopped; update GUI's FOVentry widgets
-        if ( event == vtkCommand::RightButtonReleaseEvent)
+        if ( event == vtkCommand::RightButtonReleaseEvent ||
+             event == vtkCommand::MiddleButtonReleaseEvent )
           {
           this->SliceInteracting = 0;
           this->RequestFOVEntriesUpdate();
@@ -1244,9 +1246,6 @@ void vtkSlicerViewControlGUI::FitFOVToBackground( double fov, int viewer )
 
       vtkMatrix4x4 *sliceToRAS = vtkMatrix4x4::New();
       sliceToRAS->DeepCopy(sliceNode->GetSliceToRAS());
-      sliceToRAS->SetElement(0, 3, 0.0);
-      sliceToRAS->SetElement(1, 3, 0.0);
-      sliceToRAS->SetElement(2, 3, 0.0);
       sliceNode->GetSliceToRAS()->DeepCopy(sliceToRAS);
       sliceToRAS->Delete();
       sliceToRAS = NULL;
@@ -3053,6 +3052,8 @@ void vtkSlicerViewControlGUI::AddSliceEventObservers()
       this->RedSliceEvents->AddObserver ( vtkCommand::MouseMoveEvent, this->GUICallbackCommand );
       this->RedSliceEvents->AddObserver ( vtkCommand::RightButtonPressEvent, this->GUICallbackCommand );
       this->RedSliceEvents->AddObserver ( vtkCommand::RightButtonReleaseEvent, this->GUICallbackCommand );
+      this->RedSliceEvents->AddObserver ( vtkCommand::MiddleButtonPressEvent, this->GUICallbackCommand );
+      this->RedSliceEvents->AddObserver ( vtkCommand::MiddleButtonReleaseEvent, this->GUICallbackCommand );
       }
     if ( this->YellowSliceEvents != NULL )
       {
@@ -3061,6 +3062,8 @@ void vtkSlicerViewControlGUI::AddSliceEventObservers()
       this->YellowSliceEvents->AddObserver ( vtkCommand::MouseMoveEvent, this->GUICallbackCommand );
       this->YellowSliceEvents->AddObserver ( vtkCommand::RightButtonPressEvent, this->GUICallbackCommand );
       this->YellowSliceEvents->AddObserver ( vtkCommand::RightButtonReleaseEvent, this->GUICallbackCommand );
+      this->YellowSliceEvents->AddObserver ( vtkCommand::MiddleButtonPressEvent, this->GUICallbackCommand );
+      this->YellowSliceEvents->AddObserver ( vtkCommand::MiddleButtonReleaseEvent, this->GUICallbackCommand );
       }
     if ( this->GreenSliceEvents != NULL )
       {
@@ -3069,6 +3072,8 @@ void vtkSlicerViewControlGUI::AddSliceEventObservers()
       this->GreenSliceEvents->AddObserver ( vtkCommand::MouseMoveEvent, this->GUICallbackCommand );
       this->GreenSliceEvents->AddObserver ( vtkCommand::RightButtonPressEvent, this->GUICallbackCommand );
       this->GreenSliceEvents->AddObserver ( vtkCommand::RightButtonReleaseEvent, this->GUICallbackCommand );
+      this->GreenSliceEvents->AddObserver ( vtkCommand::MiddleButtonPressEvent, this->GUICallbackCommand );
+      this->GreenSliceEvents->AddObserver ( vtkCommand::MiddleButtonReleaseEvent, this->GUICallbackCommand );
       }
     }
 }
@@ -3085,6 +3090,8 @@ void vtkSlicerViewControlGUI::RemoveSliceEventObservers()
       this->RedSliceEvents->RemoveObservers ( vtkCommand::MouseMoveEvent, this->GUICallbackCommand );
       this->RedSliceEvents->RemoveObservers ( vtkCommand::RightButtonPressEvent, this->GUICallbackCommand );
       this->RedSliceEvents->RemoveObservers ( vtkCommand::RightButtonReleaseEvent, this->GUICallbackCommand );
+      this->RedSliceEvents->RemoveObservers ( vtkCommand::MiddleButtonPressEvent, this->GUICallbackCommand );
+      this->RedSliceEvents->RemoveObservers ( vtkCommand::MiddleButtonReleaseEvent, this->GUICallbackCommand );
       }
     if ( this->YellowSliceEvents != NULL )
       {
@@ -3093,6 +3100,8 @@ void vtkSlicerViewControlGUI::RemoveSliceEventObservers()
       this->YellowSliceEvents->RemoveObservers ( vtkCommand::MouseMoveEvent, this->GUICallbackCommand );
       this->YellowSliceEvents->RemoveObservers ( vtkCommand::RightButtonPressEvent, this->GUICallbackCommand );
       this->YellowSliceEvents->RemoveObservers ( vtkCommand::RightButtonReleaseEvent, this->GUICallbackCommand );
+      this->YellowSliceEvents->RemoveObservers ( vtkCommand::MiddleButtonPressEvent, this->GUICallbackCommand );
+      this->YellowSliceEvents->RemoveObservers ( vtkCommand::MiddleButtonReleaseEvent, this->GUICallbackCommand );
       }
     if ( this->GreenSliceEvents != NULL )
       {
@@ -3101,6 +3110,8 @@ void vtkSlicerViewControlGUI::RemoveSliceEventObservers()
       this->GreenSliceEvents->RemoveObservers ( vtkCommand::MouseMoveEvent, this->GUICallbackCommand );
       this->GreenSliceEvents->RemoveObservers ( vtkCommand::RightButtonPressEvent, this->GUICallbackCommand );
       this->GreenSliceEvents->RemoveObservers ( vtkCommand::RightButtonReleaseEvent, this->GUICallbackCommand );
+      this->GreenSliceEvents->RemoveObservers ( vtkCommand::MiddleButtonPressEvent, this->GUICallbackCommand );
+      this->GreenSliceEvents->RemoveObservers ( vtkCommand::MiddleButtonReleaseEvent, this->GUICallbackCommand );
       }
     }
 }
