@@ -123,7 +123,7 @@ std::vector<WFStepObject::variablePropertyStruct*>* WFStepObject::GetAllEvents()
     {        
         if(std::strcmp((*mIter).first.substr(0,5).c_str(), "event") == 0)
         {
-            std::cout<<(*mIter).first.substr(6,(*mIter).first.size()-1)<<std::endl;
+            //std::cout<<(*mIter).first.substr(6,(*mIter).first.size()-1)<<std::endl;
             stepEvents->push_back((*mIter).second);
         }
     }
@@ -164,4 +164,3 @@ std::string WFStepObject::GetTCLValidationFunction()
     else
         return "";
 }
-

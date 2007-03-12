@@ -48,23 +48,23 @@ bool WFXmlWorkflowManager::IsLoaded()
 
 std::string WFXmlWorkflowManager::getWorkflowName()
 {
-    std::cout<<"getWorkflowName from Node: ";
+    //std::cout<<"getWorkflowName from Node: ";
     if(this->m_parentWFElement)
     {
-        std::cout<<XMLString::transcode(this->m_parentWFElement->getTagName())<<std::endl;
+        //std::cout<<XMLString::transcode(this->m_parentWFElement->getTagName())<<std::endl;
         return XMLString::transcode(m_parentWFElement->getAttribute(XMLString::transcode("id")));
     }            
-    std::cout<<"not found!"<<std::endl;
+    //std::cout<<"not found!"<<std::endl;
     return "";
 }
 
 std::string WFXmlWorkflowManager::getWorkflowDescription()
 {
-    std::cout<<"getWorkflowDescription from Node: ";
+    //std::cout<<"getWorkflowDescription from Node: ";
     DOMElement *metaDataElem = this->getMetadataWFElement();
     if(metaDataElem)
     {
-        std::cout<<XMLString::transcode(metaDataElem->getTagName())<<std::endl;
+        //std::cout<<XMLString::transcode(metaDataElem->getTagName())<<std::endl;
         std::string description = "description";
         DOMNodeList *metaEntries = this->getAllChildesByName(metaDataElem, description);
         if(metaEntries->getLength() > 0)
@@ -72,13 +72,13 @@ std::string WFXmlWorkflowManager::getWorkflowDescription()
             return XMLString::transcode(((DOMElement*)metaEntries->item(0))->getTextContent());
         }
     }            
-    std::cout<<"not found!"<<std::endl;
+    //std::cout<<"not found!"<<std::endl;
     return "";
 }
 
 void WFXmlWorkflowManager::destroy()
 {
-    this->m_isLoaded = false;
+    this->m_isLoaded = false;    
     delete(this);
 }
 
@@ -124,11 +124,10 @@ WFStepObject *WFXmlWorkflowManager::getNextWorkstepDescription(WFStepObject *cur
             bool found = false;
             DOMNodeList *nextStepIDsElements = this->getAllChildesByName(curProcessElement, nextElementRef);
             for(int i = 0; i < nextStepIDsElements->getLength() && !found; i++)
-            {
+            {              
                 DOMElement *curElem = (DOMElement*)(nextStepIDsElements->item(i));
                 std::string nextStepID = XMLString::transcode(curElem->getAttribute(XMLString::transcode("id")));
-                curWS->AddNextStepID(nextStepID);
-                found = true;
+                curWS->AddNextStepID(nextStepID);                                
             }    
         }
         
@@ -154,7 +153,7 @@ WFStepObject *WFXmlWorkflowManager::getNextWorkstepDescription(WFStepObject *cur
             {
                 //get the value of the current Variable
                 bool exit = false;
-                std::cout<<mappingNL->getLength()<<std::endl;
+                //std::cout<<mappingNL->getLength()<<std::endl;
                 for(int j = 0; j < mappingNL->getLength() && !exit; j++)
                 {
                     DOMElement *mapsToElement = this->getFirstChildByName((DOMElement*)(mappingNL->item(j)), mapsTo);
@@ -177,12 +176,11 @@ WFStepObject *WFXmlWorkflowManager::getNextWorkstepDescription(WFStepObject *cur
                         }                        
                         exit = true;
                     }                                        
-                }
-                
+                }        
                 curWS->AddVariable(myCurVarStruct->name, myCurVarStruct);
                 myCurVarStruct = this->getNextVariableFromDecomposition(decompositionName, &varNameSet, decompElem);                
             }    
-        }        
+        }                
 
 //        curWS->SetVariableMapping();
         return curWS;
@@ -246,21 +244,18 @@ DOMElement *WFXmlWorkflowManager::getElementFromID(std::string &id)
             DOMElement *curElem = (DOMElement*)taskNodes->item(i);
             if(strcmp(XMLString::transcode(curElem->getAttribute(XMLString::transcode("id"))),id.c_str()) == 0)
             {
-                std::cout<<id<<" task found"<<std::endl;
+                //std::cout<<id<<" task found"<<std::endl;
                 return curElem;
             }
         }
     }
-    std::cout<<id<<" task not found"<<std::endl;
+    //std::cout<<id<<" task not found"<<std::endl;
     return NULL;
 }
 
 WFStepObject::variablePropertyStruct *WFXmlWorkflowManager::getNextVariableFromDecomposition(const XMLCh *decompositionName, std::set<std::string> *varSet, DOMElement *decomElem)
 {
     WFStepObject::variablePropertyStruct *tempPropStruct = NULL;
-    
-    std::cout<<XMLString::transcode(decompositionName)<<std::endl;
-    
     if(!decomElem)
     {
         DOMNodeList *decompositionList = this->getAllChildesByName(specification, decomposition);
@@ -269,7 +264,7 @@ WFStepObject::variablePropertyStruct *WFXmlWorkflowManager::getNextVariableFromD
         for(int i = 0; i < decompositionList->getLength() && !found; i++)
         {
             DOMElement *curElem = (DOMElement*)(decompositionList->item(i));
-            std::cout<<XMLString::transcode(curElem->getAttribute(XMLString::transcode("id")))<<" == "<<XMLString::transcode(decompositionName)<<std::endl;
+            //std::cout<<XMLString::transcode(curElem->getAttribute(XMLString::transcode("id")))<<" == "<<XMLString::transcode(decompositionName)<<std::endl;
             if(strcmp(XMLString::transcode(curElem->getAttribute(XMLString::transcode("id"))), XMLString::transcode(decompositionName)) == 0)
             {
                 decomElem = curElem;
@@ -347,4 +342,29 @@ WFStepObject::variablePropertyStruct *WFXmlWorkflowManager::getNextVariableFromD
     }
     
     return tempPropStruct;
+}
+
+int WFXmlWorkflowManager::getNumberOfUnprocessedSteps(std::string &curStepID)
+{
+    int m_approxUnprocessedSteps = 0;
+    std::string flowsInto = "flowsInto";
+    std::string nextElementRef = "nextElementRef";
+    
+    DOMElement *curTaskIteratorElement = this->getElementFromID(curStepID);
+    while(curTaskIteratorElement)
+    {
+        m_approxUnprocessedSteps++;
+        DOMElement *flowsIntoElement =  this->getFirstChildByName(curTaskIteratorElement, flowsInto);
+        curStepID = XMLString::transcode(this->getFirstChildByName(flowsIntoElement, nextElementRef)->getAttribute(XMLString::transcode("id")));
+        if(curStepID != "")
+        {
+            curTaskIteratorElement = this->getElementFromID(curStepID);
+        }
+        else
+        {
+            curTaskIteratorElement = NULL;
+        }
+    }
+    
+    return m_approxUnprocessedSteps;
 }

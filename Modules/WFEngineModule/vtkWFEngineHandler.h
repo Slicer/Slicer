@@ -66,6 +66,8 @@ public:
     void LoadNewWorkflowSession(std::string workflowFilename);
     //ETX
     
+    int GetUnprocessedSteps();
+    int GetProcessedSteps();
     const char* GetCurrentStepID();
 protected:
     vtkWFEngineHandler();

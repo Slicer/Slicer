@@ -63,7 +63,7 @@ std::vector<WFXmlConfigManager::myAttrMap> WFEngineOptions::GetLookUpPaths()
   if(IsLoaded())
   {
     lookUpPaths = this->m_WFCfgXmlManager->getAllLookUpPaths();
-    std::cout<<lookUpPaths.size()<<std::endl;    
+    //std::cout<<lookUpPaths.size()<<std::endl;    
   }
   
   return lookUpPaths;
@@ -75,7 +75,7 @@ std::vector<WFXmlConfigManager::myAttrMap> WFEngineOptions::GetKnownWorkflows()
   if(IsLoaded())
   {
     knownWFs = this->m_WFCfgXmlManager->getAllKnownWorkflows();
-    std::cout<<knownWFs.size()<<std::endl;
+    //std::cout<<knownWFs.size()<<std::endl;
   }
 
   return knownWFs;

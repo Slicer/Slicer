@@ -358,6 +358,9 @@ void vtkWFEngineModuleGUI::createWizard()
     m_curWizWidg->Create();
     m_curWizWidg->SetClientAreaMinimumHeight(300);
     
+    m_curWizWidg->SetNumberOfUnprocessedSteps(this->m_wfEngineHandler->GetUnprocessedSteps());
+    m_curWizWidg->SetNumberOfProcessedSteps(this->m_wfEngineHandler->GetProcessedSteps());
+    
     this->GetApplication()->Script("pack %s -side top -anchor ne -expand y -fill both -padx 2 -pady 2", 
             m_curWizWidg->GetWidgetName());
     
@@ -381,6 +384,8 @@ void vtkWFEngineModuleGUI::createWizard()
     wizWorkflow->SetInitialStep(virtFirstStep);
     wizWorkflow->SetFinishStep(virtLastStep);
     wizWorkflow->CreateGoToTransitionsToFinishStep();
+    
+    this->m_curWizWidg->UpdateNavigationGUI();
     // Comment:
     // listen to the workflow next and back Events to handle the workflow dynamically
     // 
@@ -537,7 +542,10 @@ void vtkWFEngineModuleGUI::nextTransitionCallback(vtkObject* obj, unsigned long 
 
         if(wfEngineModule->m_wfEngineHandler->LoadNextWorkStep() == vtkWFEngineHandler::SUCC)
         {            
-            wfEngineModule->workStepValidationCallBack(wfEngineModule->m_wfEngineHandler->GetLoadedWFStep());            
+            wfEngineModule->m_curWizWidg->SetNumberOfUnprocessedSteps(wfEngineModule->m_wfEngineHandler->GetUnprocessedSteps());
+            wfEngineModule->m_curWizWidg->SetNumberOfProcessedSteps(wfEngineModule->m_wfEngineHandler->GetProcessedSteps());            
+            wfEngineModule->workStepValidationCallBack(wfEngineModule->m_wfEngineHandler->GetLoadedWFStep());
+            wfEngineModule->m_curWizWidg->UpdateNavigationGUI();
         }
         else
         {
@@ -558,12 +566,18 @@ void vtkWFEngineModuleGUI::backTransitionCallback(vtkObject* obj, unsigned long 
         vtkKWMyWizardWorkflow *wizWF = wfEngineModule->m_curWizWidg->GetMyWizardWorkflow();
         if(wfEngineModule->m_wfEngineHandler->LoadBackWorkStep() == vtkWFEngineHandler::SUCC)
         {
-            wfEngineModule->workStepValidationCallBack(wfEngineModule->m_wfEngineHandler->GetLoadedWFStep());   
+            wfEngineModule->m_curWizWidg->SetNumberOfUnprocessedSteps(wfEngineModule->m_wfEngineHandler->GetUnprocessedSteps());
+            wfEngineModule->m_curWizWidg->SetNumberOfProcessedSteps(wfEngineModule->m_wfEngineHandler->GetProcessedSteps());            
+            wfEngineModule->workStepValidationCallBack(wfEngineModule->m_wfEngineHandler->GetLoadedWFStep());
+            wfEngineModule->m_curWizWidg->UpdateNavigationGUI();
         }
         else
         {
             wfEngineModule->m_curWFStep = NULL;
+            wfEngineModule->m_curWizWidg->SetNumberOfUnprocessedSteps(wfEngineModule->m_wfEngineHandler->GetUnprocessedSteps());
+            wfEngineModule->m_curWizWidg->SetNumberOfProcessedSteps(0);
             wfEngineModule->m_curWizWidg->GetWizardWorkflow()->AttemptToGoToPreviousStep();            
+            wfEngineModule->m_curWizWidg->UpdateNavigationGUI();
         }
         
         wfEngineModule->workStepGUICallBack();
@@ -583,7 +597,7 @@ void vtkWFEngineModuleGUI::deleteWizardWidgetContainer()
     std::cout<<"deleteWizardWidgetContainer"<<std::endl;
     
     if(this->m_wizFrame)
-    {
+    {     
         this->m_wizFrame->Unpack();
     }
     

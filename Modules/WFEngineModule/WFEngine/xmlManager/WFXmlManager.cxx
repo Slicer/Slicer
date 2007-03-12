@@ -114,12 +114,12 @@ int WFXmlManager::initializeXerces(std::string xmlFileName)
     if(retVal)
     {
      this->xmlDoc = parser->getDocument();
-     std::cout<<XMLString::transcode(this->xmlDoc->getDocumentElement()->getTagName())<<std::endl;
+     //std::cout<<XMLString::transcode(this->xmlDoc->getDocumentElement()->getTagName())<<std::endl;
      this->goutputfile = (char*)xmlFileName.c_str();
     }
-    std::cout<<"retVal="<<retVal<<std::endl;
-    std::cout<<"ErrorCount: "<<parser->getErrorCount()<<std::endl;
-    //std::cout<<this->xmlParser->getErrorCount()<<std::endl;
+    //std::cout<<"retVal="<<retVal<<std::endl;
+    //std::cout<<"ErrorCount: "<<parser->getErrorCount()<<std::endl;
+    ////std::cout<<this->xmlParser->getErrorCount()<<std::endl;
     return retVal;
 }
 
@@ -278,9 +278,9 @@ DOMNodeList *WFXmlManager::getAllChildesByName(std::string &parentTagName, std::
   if (myKnownWFNode != NULL)
   {
    DOMElement *curElem = (DOMElement*)myKnownWFNode;
-   std::cout<<XMLString::transcode(curElem->getTagName())<<" "<<childTagName.c_str()<<std::endl;
+   //std::cout<<XMLString::transcode(curElem->getTagName())<<" "<<childTagName.c_str()<<std::endl;
    DOMNodeList *parentChilds = curElem->getElementsByTagName(XMLString::transcode(childTagName.c_str()));
-   std::cout<<parentChilds->getLength()<<std::endl;
+   //std::cout<<parentChilds->getLength()<<std::endl;
    return parentChilds;
   }
   else return NULL;
@@ -292,9 +292,9 @@ DOMNodeList *WFXmlManager::getAllChildesByName(DOMElement *parentElement, std::s
   //check if the node type is an ElementNode
   if (parentElement != NULL)
   {
-   std::cout<<XMLString::transcode(parentElement->getTagName())<<" "<<childTagName.c_str()<<std::endl;
+   //std::cout<<XMLString::transcode(parentElement->getTagName())<<" "<<childTagName.c_str()<<std::endl;
    DOMNodeList *parentChilds = parentElement->getElementsByTagName(XMLString::transcode(childTagName.c_str()));
-   std::cout<<parentChilds->getLength()<<std::endl;
+   //std::cout<<parentChilds->getLength()<<std::endl;
    return parentChilds;
   }
   else return NULL;
@@ -320,7 +320,7 @@ WFXmlManager::myAttrMap WFXmlManager::getAllAttributesFromElement(DOMElement *cu
  DOMNamedNodeMap *attrMap = curElem->getAttributes();
  for(int i = 0; i < attrMap->getLength(); i++)
  {
-  std::cout<<XMLString::transcode(attrMap->item(i)->getNodeName())<<"='"<<XMLString::transcode(attrMap->item(i)->getNodeValue())<<"'"<<std::endl;
+  //std::cout<<XMLString::transcode(attrMap->item(i)->getNodeName())<<"='"<<XMLString::transcode(attrMap->item(i)->getNodeValue())<<"'"<<std::endl;
   curAttrMap.insert(std::make_pair(XMLString::transcode(attrMap->item(i)->getNodeName()), XMLString::transcode(attrMap->item(i)->getNodeValue())));
  }
  return curAttrMap;
@@ -361,14 +361,14 @@ DOMElement *WFXmlManager::getElementByPath(DOMElement *parentElement, std::strin
             
         }   
     }
-    std::cout<<xmlPath<<" not found!"<<std::endl;
+    //std::cout<<xmlPath<<" not found!"<<std::endl;
     return NULL;
 }
 
 DOMElement *WFXmlManager::getFirstChildByName(DOMElement *parentElement, std::string &tagName)
 {
     DOMNodeList *myKnownWFNL = parentElement->getElementsByTagName(XMLString::transcode(tagName.c_str()));
-    std::cout<<myKnownWFNL->getLength()<<" <"<<tagName<<"> Length"<<std::endl;
+    //std::cout<<myKnownWFNL->getLength()<<" <"<<tagName<<"> Length"<<std::endl;
      
     if(myKnownWFNL->getLength() > 0)
     {

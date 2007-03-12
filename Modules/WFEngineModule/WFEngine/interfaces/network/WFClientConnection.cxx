@@ -21,10 +21,10 @@ WFClientConnection::~WFClientConnection()
 
 bool WFClientConnection::deal_with_data()
 {
- std::cout<<"deal_with_data"<<std::endl;
+ //std::cout<<"deal_with_data"<<std::endl;
  if(!socket_descriptor)
  {
-  std::cout<<"Client socket_descriptor not set!"<<std::endl;
+  //std::cout<<"Client socket_descriptor not set!"<<std::endl;
   return false;
  }
  char buffer[80];     /* Buffer for socket reads */
@@ -35,14 +35,14 @@ bool WFClientConnection::deal_with_data()
  if (recv(socket_descriptor,buffer,size_t(buffer),80) < 0) {
   /* Connection closed, close this end
      and free up entry in connectlist */
-  std::cout<<"Connection lost: FD="<<socket_descriptor<<std::endl;
+  //std::cout<<"Connection lost: FD="<<socket_descriptor<<std::endl;
 //  this->callBack(listnum, NULL);
   close(socket_descriptor);
 //  socket_descriptor = 0;
  } else {
   /* We got some data, so upper case it
      and send it back. */
-  std::cout<<"Received: "<<buffer<<std::endl;
+  //std::cout<<"Received: "<<buffer<<std::endl;
   cur_char = &buffer[0];
 //  this->callBack(listnum,&buffer[0]);
   int i = 0;
@@ -51,7 +51,7 @@ bool WFClientConnection::deal_with_data()
    cur_char++;
    i++;
   }
-  std::cout<<"buffer length: "<<i<<std::endl;
+  //std::cout<<"buffer length: "<<i<<std::endl;
 //  i = recv(connectlist[listnum], , 0);
   try
   {
@@ -67,7 +67,7 @@ bool WFClientConnection::deal_with_data()
    if(checkSocket(socket_descriptor) && success)
    {   
        i = send(socket_descriptor,"\n", 3,0);
-       std::cout<<i<<std::endl;
+       //std::cout<<i<<std::endl;
       }
       else
       {
@@ -77,9 +77,9 @@ bool WFClientConnection::deal_with_data()
   }
   catch(...)
   {
-   std::cout<<"error"<<std::endl;
+   //std::cout<<"error"<<std::endl;
   }
-  std::cout<<"responded: "<<buffer<<std::endl;
+  //std::cout<<"responded: "<<buffer<<std::endl;
  }
  
  return success;
@@ -93,7 +93,7 @@ void WFClientConnection::onSelectReadable(void* v_ptr)
  
  if(!deal_with_data()) //something went wrong
  {
-  std::cout<<"Socket is closed!"<<std::endl;
+  //std::cout<<"Socket is closed!"<<std::endl;
   sc->removeSocket(this);
  }  
 }

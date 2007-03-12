@@ -36,6 +36,13 @@ public:
     
     WFEngine::nmWFStepObject::WFStepObject *getNextWorkStep();
     WFEngine::nmWFStepObject::WFStepObject *getBackWorkStep();
+    
+    int getNumberOfProcessedSteps();
+    
+    // Description:
+    // Gets the number of unprocessed Steps in the workflow. This is just a rough approximation
+    // because it just looks through one path through the workflow graph.
+    int getNumberOfUnprocessedSteps(std::string &curStepID);
 protected:
     WFDirectInterface();
     virtual ~WFDirectInterface();

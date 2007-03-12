@@ -25,6 +25,10 @@ namespace WFEngine
          
          bool IsLoaded();         
          
+         // Description:
+         // Gets the number of unprocessed steps.
+         int getNumberOfUnprocessedSteps(std::string &curStepID);         
+         
      protected:
          WFXmlWorkflowManager();
          virtual ~WFXmlWorkflowManager();
@@ -40,7 +44,7 @@ namespace WFEngine
                   
          DOMElement *getElementFromID(std::string &id);
          
-         WFEngine::nmWFStepObject::WFStepObject::variablePropertyStruct *getNextVariableFromDecomposition(const XMLCh* decompositionName, std::set<std::string> *varSet, DOMElement *decomElem);
+         WFEngine::nmWFStepObject::WFStepObject::variablePropertyStruct *getNextVariableFromDecomposition(const XMLCh* decompositionName, std::set<std::string> *varSet, DOMElement *decomElem);                  
          
          void destroy();
      private:

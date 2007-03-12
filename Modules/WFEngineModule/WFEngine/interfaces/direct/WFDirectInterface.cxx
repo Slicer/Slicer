@@ -28,7 +28,7 @@ std::vector<WFDirectInterface::workflowDesc*> *WFDirectInterface::GetAllKnownWor
 {
     using namespace WFEngine::nmWFWorkflowManager;
     
-    std::cout<<"GetAllKnownWorkflows"<<std::endl;
+    //std::cout<<"GetAllKnownWorkflows"<<std::endl;
     
     std::vector<std::map<std::string, std::string> > knownWFs;
     std::vector<WFDirectInterface::workflowDesc*> *myKnownWFs = new std::vector<WFDirectInterface::workflowDesc*>;
@@ -99,11 +99,35 @@ int WFDirectInterface::IsLoaded()
 
 WFStepObject *WFDirectInterface::getNextWorkStep()
 {
-    return this->m_wfMgr->GetNextWFStep();
+    if(this->IsLoaded())
+    {
+        return this->m_wfMgr->GetNextWFStep();   
+    }    
 }
 
 WFStepObject *WFDirectInterface::getBackWorkStep()
 {
-    this->m_wfMgr->GetPreviousWFStep();
+    if(this->IsLoaded())
+    {
+        this->m_wfMgr->GetPreviousWFStep();   
+    }    
+}
+
+int WFDirectInterface::getNumberOfProcessedSteps()
+{
+    if(this->IsLoaded())
+    {
+        return this->m_wfMgr->getNumberOfProcessedSteps();   
+    }
+    else
+        return -1;
+}
+
+int WFDirectInterface::getNumberOfUnprocessedSteps(std::string &curStepID)
+{
+    if(this->IsLoaded())
+    {
+        this->m_wfMgr->getNumberOfUnprocessedSteps(curStepID);   
+    }    
 }
 

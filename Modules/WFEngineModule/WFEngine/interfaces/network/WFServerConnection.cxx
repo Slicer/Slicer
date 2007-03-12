@@ -48,7 +48,7 @@ int WFServerConnection::bindAndListen()
 
  if(INVALID_SOCKET == socket_descriptor)
  {
-  std::cout<<"Could not create socket"<<std::endl;
+  //std::cout<<"Could not create socket"<<std::endl;
 //  return -1;
  }
  
@@ -71,17 +71,17 @@ int WFServerConnection::bindAndListen()
  r = bind(socket_descriptor, (struct sockaddr*)&addr, sizeof(addr));
  if(SOCKET_ERROR == r)
  {
-  std::cout<<"Could not bind to local socket"<<std::endl;
+  //std::cout<<"Could not bind to local socket"<<std::endl;
   return -1;
  }
  
  r = listen(socket_descriptor, 5);
  if(SOCKET_ERROR == r)
  {
-  std::cout<<"Could not listen to local socket"<<std::endl;
+  //std::cout<<"Could not listen to local socket"<<std::endl;
   return -1;
  }
- std::cout<<"intializeSocket: "<<socket_descriptor<<"-"<<port<<std::endl;
+ //std::cout<<"intializeSocket: "<<socket_descriptor<<"-"<<port<<std::endl;
 // this->socketToPortMap.insert(std::make_pair(sock[curID],port));
 // this->portToMaxConnectionMap.insert(std::make_pair(port, maxConnections));
 // std::vector<int> conns(maxConnections,0);
@@ -100,17 +100,17 @@ int WFServerConnection::bindAndListen()
 void WFServerConnection::sendDataToConnection(int socket, std::string &data)
 {
  bool success = true;
- std::cout<<"send_data"<<std::endl;
+ //std::cout<<"send_data"<<std::endl;
 // if (recv(connectlist[listnum],buffer,size_t(buffer),80) < 0) {
 //  /* Connection closed, close this end
 //     and free up entry in connectlist */
-//  std::cout<<"Connection lost: FD="<<connectlist[listnum]<<";  Slot="<<listnum<<std::endl;
+//  //std::cout<<"Connection lost: FD="<<connectlist[listnum]<<";  Slot="<<listnum<<std::endl;
 //  close(connectlist[listnum]);
 //  connectlist[listnum] = 0;
 // } else {
   /* We got some data, so upper case it
      and send it back. */
- std::cout<<"Sending: "<<data.size()<<" letters"<<std::endl;
+ //std::cout<<"Sending: "<<data.size()<<" letters"<<std::endl;
  if(checkSocket(socket) && success)
  {
   send(socket,data.c_str(), data.size(),0); 
@@ -129,7 +129,7 @@ void WFServerConnection::sendDataToConnection(int socket, std::string &data)
   closeConnectionSlot(socket);
   success = false;
  } 
- std::cout<<"done!"<<std::endl;
+ //std::cout<<"done!"<<std::endl;
 // }
 }
 
@@ -155,7 +155,7 @@ void WFServerConnection::onSelectReadable(void* v_ptr) {
   being 'readable'. Thus, if the listening socket is
   part of the fd_set, we need to accept a new connection. */
  
- std::cout<<"OnReadable:"<<std::endl;
+ //std::cout<<"OnReadable:"<<std::endl;
  int fd = handle_new_connection();
  if(fd > 0)
  {
@@ -165,7 +165,7 @@ void WFServerConnection::onSelectReadable(void* v_ptr) {
  }
  else
  {
-  std::cout<<"something went wrong!"<<std::endl;
+  //std::cout<<"something went wrong!"<<std::endl;
  }
 }
 

@@ -32,7 +32,7 @@ int WFXmlConfigManager::loadConfigFile(std::string &xmlFileName)
 // {
 //  //DOMNode *myXMLConfigFile = this->xmlParser->getDocument();
 //  DOMElement *myRootElem = this->xmlDoc->getDocumentElement();
-//  //  std::cout<<myRootElem->getTagName()<<std::endl;
+//  //  //std::cout<<myRootElem->getTagName()<<std::endl;
 // }
 // return retval;
 //}
@@ -47,7 +47,7 @@ std::vector<WFXmlConfigManager::myAttrMap> WFXmlConfigManager::getAllKnownWorkfl
   std::vector<myAttrMap> myKnownWFList;
   
   DOMNodeList *childNodeList = this->getAllChildesByName(knownWorkflows, workflow);
-  std::cout<<"childNodeList->GetLength "<<childNodeList->getLength()<<std::endl;
+  //std::cout<<"childNodeList->GetLength "<<childNodeList->getLength()<<std::endl;
   myKnownWFList = this->getAttributesOfChilds(childNodeList);
   return myKnownWFList;
 }
@@ -62,10 +62,10 @@ void WFXmlConfigManager::removeAllNodesWithAttribute(std::string &parentTagName,
         DOMElement *curElem = (DOMElement*)(myKnownWFNLs->item(i));
         DOMNamedNodeMap *attrMap = curElem->getAttributes();
         std::string curAttrValue = XMLString::transcode(attrMap->getNamedItem(XMLString::transcode(attribName.c_str()))->getNodeValue());
-        std::cout<<curAttrValue<<"="<<attribValue<<std::endl;
+        //std::cout<<curAttrValue<<"="<<attribValue<<std::endl;
         if(curAttrValue == attribValue)
         {
-          std::cout<<"found"<<std::endl;
+          //std::cout<<"found"<<std::endl;
           curElem->getParentNode()->removeChild(curElem);
           
         }
@@ -85,7 +85,7 @@ std::vector<WFXmlConfigManager::myAttrMap> WFXmlConfigManager::getAllLookUpPaths
 void WFXmlConfigManager::removeKnownWorkflow(std::string &fileName)
 {
   std::string attribName = "fileName";
-  std::cout<<">>>>remove "<<fileName<<std::endl;  
+  //std::cout<<">>>>remove "<<fileName<<std::endl;  
   this->removeAllNodesWithAttribute(knownWorkflows,workflow, attribName, fileName);
 }
 
@@ -115,5 +115,5 @@ void WFXmlConfigManager::addKnownWorkflow(std::string &fileName, bool visible, b
 std::map<std::string, std::string> WFXmlConfigManager::getKnownWorkflows()
 {
     this->tempNodeList = this->getAllChildesByName(knownWorkflows, workflow);
-    std::cout<<tempNodeList->getLength()<<std::endl;
+    //std::cout<<tempNodeList->getLength()<<std::endl;
 }

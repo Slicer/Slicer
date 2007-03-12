@@ -36,7 +36,7 @@ int WFBaseEngine::InitializeWFEngine(std::string wfConfigFile)
 {
   if(wfConfigFile == "")
   {
-    fstream fs_op("wfConfig.xml",ios::in);
+    fstream fs_op("../Modules/WFEngineModule/wfConfig.xml",ios::in);
     if(!fs_op)
     {
      cout<<"wfConfig.xml not found!"<<endl;
@@ -44,7 +44,7 @@ int WFBaseEngine::InitializeWFEngine(std::string wfConfigFile)
     else
     {
      cout<<"wfConfig.xml found!"<<endl;
-     wfConfigFile = "wfConfig.xml";
+     wfConfigFile = "../Modules/WFEngineModule/wfConfig.xml";
      configExists = true;
     }
     fs_op.close();
@@ -100,7 +100,7 @@ void WFBaseEngine::InitializeKnowWorkflows()
   lookUpPaths = this->m_wfeOpts->GetLookUpPaths();
   knowWFs = this->m_wfeOpts->GetKnownWorkflows();
   
-  std::cout<<"***Configuration checkup***"<<std::endl;
+  //std::cout<<"***Configuration checkup***"<<std::endl;
   
   std::vector<WFXmlConfigManager::myAttrMap>::const_iterator endi = knowWFs.end();
   std::vector<WFXmlConfigManager::myAttrMap>::const_iterator iter;
@@ -108,14 +108,14 @@ void WFBaseEngine::InitializeKnowWorkflows()
   {
     WFXmlConfigManager::myAttrMap attrMap = (*iter);
     std::string fn = attrMap["fileName"];
-    std::cout<<fn;
+    //std::cout<<fn;
     if(validateXMLFile(fn))
     {
-        std::cout<<" validated! Keep!"<<std::endl;   
+        //std::cout<<" validated! Keep!"<<std::endl;   
     }      
     else
     {
-        std::cout<<" not validated! Erase!"<<std::endl;
+        //std::cout<<" not validated! Erase!"<<std::endl;
         this->m_wfeOpts->RemoveKnownWorkflow(fn);  
     }
       
@@ -132,7 +132,7 @@ void WFBaseEngine::InitializeKnowWorkflows()
       pdir=opendir(map_iter->second.c_str()); //"." refers to the current dir
       if (!pdir)
       {
-        std::cout<<"opendir(\""<<map_iter->second<<"\") failure; terminating"<<std::endl;
+        //std::cout<<"opendir(\""<<map_iter->second<<"\") failure; terminating"<<std::endl;
         std::string path = map_iter->second;
         this->m_wfeOpts->RemoveLookUpPath(path);
         success = false;
@@ -143,7 +143,7 @@ void WFBaseEngine::InitializeKnowWorkflows()
         while ((pent=readdir(pdir)))
         {
           std::string fileName(pent->d_name);
-          std::cout<<fileName<<std::endl;
+          //std::cout<<fileName<<std::endl;
           std::string pathWithFileName = map_iter->second + "/" + fileName;
           if(fileName.length() > 4)
           {
@@ -158,12 +158,12 @@ void WFBaseEngine::InitializeKnowWorkflows()
         }
         if (errno)
         {
-          std::cout<<"readdir() failure; terminating"<<std::endl;
+          //std::cout<<"readdir() failure; terminating"<<std::endl;
         }
       }      
       closedir(pdir);  
     }
-    std::cout<<"***Configuration done!***"<<std::endl;
+    //std::cout<<"***Configuration done!***"<<std::endl;
   }
   
 //  entryVector::const_iterator endi = osArticle.entries.end();
@@ -230,8 +230,8 @@ void WFBaseEngine::recvClientData(int socket, char* buffer)
 {
   if(buffer == NULL) return;
    
-   std::cout<<"recvClientData:"<<std::endl;
-   std::cout<<buffer<<std::endl;
+   //std::cout<<"recvClientData:"<<std::endl;
+   //std::cout<<buffer<<std::endl;
    
    //int length = sizeof("acknowledgment")+1;
    //char sendData[length];
@@ -243,8 +243,8 @@ void WFBaseEngine::recvOptionsData(int socket, char* buffer)
 {
   if(buffer == NULL) return;
    
-   std::cout<<"recvClientData:"<<std::endl;
-   std::cout<<buffer<<std::endl;
+   //std::cout<<"recvClientData:"<<std::endl;
+   //std::cout<<buffer<<std::endl;
    
    //int length = sizeof("acknowledgment")+1;
    //char sendData[length];

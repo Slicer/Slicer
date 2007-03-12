@@ -3,8 +3,14 @@
 
 #include <vtkKWWizardWidget.h>
 
+#include <map>
+#include <string>
+
 class vtkKWWizardWorkflow;
 class vtkKWMyWizardWorkflow;
+class vtkKWProgressGauge;
+class vtkKWComboBoxWithLabel;
+class vtkKWWizardStep;
 
 class vtkKWMyWizardWidget : public vtkKWWizardWidget
 {
@@ -16,13 +22,25 @@ public:
     vtkKWWizardWorkflow *GetWizardWorkflow();
     vtkKWMyWizardWorkflow *GetMyWizardWorkflow();
     
+    void SetNumberOfUnprocessedSteps(int steps);
+    int GetNumberOfUnprocessedSteps();
+    void SetNumberOfProcessedSteps(int steps);
     //BTX
     enum{
         nextButtonClicked = 10000,
         backButtonClicked
     };
     //ETX
-protected:
+    
+    void UpdateNavigationGUI();
+    
+    virtual void Delete();
+    
+    vtkKWProgressGauge *ProgressGauge;
+    vtkKWComboBoxWithLabel *ComboBox;
+    
+    void ComboBoxEntryChanged(const char*);
+protected:        
     vtkKWMyWizardWidget();
     virtual ~vtkKWMyWizardWidget();
     // Description:
@@ -31,8 +49,18 @@ protected:
     
     static void NextButtonClicked(vtkObject* obj, unsigned long,void*, void*);
     static void BackButtonClicked(vtkObject* obj, unsigned long,void*, void*);
+    
+    static void NavigationStackChanged(vtkObject* obj, unsigned long,void*, void*);
+        
 private:
-    vtkKWMyWizardWorkflow *WizardWorkflow;
+    vtkKWMyWizardWorkflow *WizardWorkflow;     
+    
+    int m_numberOfUnprocessedSteps;
+    int m_numberOfProcessedSteps;
+    
+    //BTX
+    std::map<int, vtkKWWizardStep*> *m_itemToStepMap;
+    //ETX
     
     vtkKWMyWizardWidget(const vtkKWMyWizardWidget&);   // Not implemented.
     void operator=(const vtkKWMyWizardWidget&);  // Not implemented.

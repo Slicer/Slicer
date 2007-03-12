@@ -20,16 +20,16 @@ int WFSocketCollection::addSocket(WFBaseSocket *s)
 {
  mySockets.insert(std::make_pair(s->getSocketDescriptor(), s));
 // FD_SET(s->getSocketDescriptor(), &internal_fd_set);
- std::cout<<max_fd<<"  "<<s->getSocketDescriptor()<<std::endl;
+ //std::cout<<max_fd<<"  "<<s->getSocketDescriptor()<<std::endl;
  if(s->getSocketDescriptor() > max_fd)
   max_fd = s->getSocketDescriptor();
 }
 
 int WFSocketCollection::removeSocket(WFBaseSocket *s)
 {
- std::cout<<mySockets.size()<<std::endl;
+ //std::cout<<mySockets.size()<<std::endl;
  mySockets.erase(s->getSocketDescriptor());
- std::cout<<mySockets.size()<<std::endl;
+ //std::cout<<mySockets.size()<<std::endl;
 }
 
 WFBaseSocket *WFSocketCollection::getSocketByFD(int fd)
@@ -56,7 +56,7 @@ int WFSocketCollection::selectOnSockets()
        int res = select(max_fd+1, &work_set, NULL, NULL, &timeout);
        if (res == 0) {
           // TIME OUT (if so asked)
-       std::cout<<".";
+       //std::cout<<".";
        fflush(stdout);
           return res;
        }
