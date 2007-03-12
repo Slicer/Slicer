@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<specificationSet xmlns="http://www.citi.qut.edu.au/yawl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="Beta 7.1" xsi:schemaLocation="http://www.citi.qut.edu.au/yawl d:/yawl/schema/YAWL_SchemaBeta7.1.xsd">
+  <specification uri="unnamed.ywl">
+    <metaData>
+      <creator>keilhack</creator>
+      <description>No description has been given.</description>
+      <version>0.1</version>
+    </metaData>
+    <schema xmlns="http://www.w3.org/2001/XMLSchema" />
+    <decomposition id="New_Net_1" isRootNet="true" xsi:type="NetFactsType">
+      <processControlElements>
+        <inputCondition id="InputCondition_1">
+          <flowsInto>
+            <nextElementRef id="step0.1_4" />
+          </flowsInto>
+        </inputCondition>
+        <task id="step0.1_4">
+          <name>step0.1</name>
+          <flowsInto>
+            <nextElementRef id="step2_5" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+          <startingMappings>
+            <mapping>
+              <expression query="&lt;gui&gt;test&lt;/gui&gt;" />
+              <mapsTo>gui</mapsTo>
+            </mapping>
+            <mapping>
+              <expression query="&lt;mr-image&gt;&lt;/mr-image&gt;" />
+              <mapsTo>mr-image</mapsTo>
+            </mapping>
+            <mapping>
+              <expression query="&lt;name&gt;&lt;/name&gt;" />
+              <mapsTo>name</mapsTo>
+            </mapping>
+          </startingMappings>
+          <decomposesTo id="input_params" />
+        </task>
+        <task id="step2_5">
+          <name>step2</name>
+          <flowsInto>
+            <nextElementRef id="step3_6" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+        </task>
+        <task id="step3_6">
+          <name>step3</name>
+          <flowsInto>
+            <nextElementRef id="step4_3" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+        </task>
+        <task id="step4_3">
+          <name>step4</name>
+          <flowsInto>
+            <nextElementRef id="OutputCondition_2" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+        </task>
+        <outputCondition id="OutputCondition_2" />
+      </processControlElements>
+    </decomposition>
+    <decomposition id="input_params" xsi:type="WebServiceGatewayFactsType">
+      <inputParam>
+        <name>gui</name>
+        <type>string</type>
+        <namespace>http://www.w3.org/2001/XMLSchema</namespace>
+      </inputParam>
+      <inputParam>
+        <name>mr-image</name>
+        <type>string</type>
+        <namespace>http://www.w3.org/2001/XMLSchema</namespace>
+      </inputParam>
+      <inputParam>
+        <name>name</name>
+        <type>string</type>
+        <namespace>http://www.w3.org/2001/XMLSchema</namespace>
+      </inputParam>
+      <outputParam>
+        <name>gui</name>
+        <type>string</type>
+        <namespace>http://www.w3.org/2001/XMLSchema</namespace>
+      </outputParam>
+      <outputParam>
+        <name>name</name>
+        <type>string</type>
+        <namespace>http://www.w3.org/2001/XMLSchema</namespace>
+      </outputParam>
+    </decomposition>
+  </specification>
+</specificationSet>
+
+
