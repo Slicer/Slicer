@@ -44,7 +44,7 @@ puts "making win32..."
 exec tclkitsh tclkits/sdx.kit wrap Slicer3 -runtime tclkits/tclkit-win32.exe
 file rename -force Slicer3 Slicer3Launchers/Slicer3-win32.exe
 
-if { 0 } {
+if { 1 } {
   # icons are turning into more trouble than they are worth...
 
   puts "setting win32 launcher icons..."

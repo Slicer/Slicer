@@ -24,11 +24,11 @@ proc modifyLauncherIcons { logoDir exe {ico ""} } {
     foreach {index dim bpp numColors} $spec {}
 
     set im [image create photo]
-    puts "$im read $logoDir/3DSlicerLogo-DesktopIcon-${dim}x${dim}x${numColors}.png"
+    #puts "$im read $logoDir/3DSlicerLogo-DesktopIcon-${dim}x${dim}x${numColors}.png"
     $im read $logoDir/3DSlicerLogo-DesktopIcon-${dim}x${dim}x${numColors}.png
-    removeTransparency $im
+    #removeTransparency $im
     puts "::ico::writeIcon $exe $index $bpp $im"
-    catch "::ico::writeIcon $exe $index $bpp $im"
+    ::ico::writeIcon $exe $index $bpp $im
 
   }
 

@@ -568,7 +568,6 @@ int Slicer3_main(int argc, char *argv[])
     //
     // load the custom icons
     //
-#if 0
 #ifdef _WIN32
     {    
       std::string cmd;
@@ -582,7 +581,6 @@ int Slicer3_main(int argc, char *argv[])
         return ( returnCode );
         }
     }
-#endif
 #endif
 
 
