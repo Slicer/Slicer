@@ -37,11 +37,14 @@ INCLUDE(FindXercesC.cmake)
 
 #Build the WFEngine Library
 SET(WFENGINE_BASE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/WFEngine)
+SET(WFENGINE_LIBRARY "")
 SUBDIRS(WFEngine)
 
 SET(WFENGINE_INCLUDE_DIR ${WFENGINE_BASE_DIRECTORY} ${WFENGINE_BASE_DIRECTORY}/engine
                             ${WFENGINE_BASE_DIRECTORY}/interfaces ${WFENGINE_BASE_DIRECTORY}/interfaces/direct 
                             ${WFENGINE_BASE_DIRECTORY}/xmlManager)
+                            
+SET(WFENGINE_LIBRARY ${LIBRARY_OUTPUT_PATH}libWFDirectInterface.so)                                          
                             
 # --------------------------------------------------------------------------
 # Include dirs
@@ -116,6 +119,7 @@ TARGET_LINK_LIBRARIES(WFEngineModule
   ${XERCESC_LIBRARY})
 
 
+SET(WFENGINE_LINK_LIB ${WFENGINE_LIBRARY})
 
 # --------------------------------------------------------------------------
 # Testing (requires some of the examples)
