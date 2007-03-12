@@ -565,8 +565,13 @@ void vtkSlicerFiducialListWidget::ProcessMRMLEvents ( vtkObject *caller,
   
   if (event == vtkMRMLFiducialListNode::DisplayModifiedEvent ||
       event == vtkMRMLFiducialListNode::FiducialModifiedEvent ||
-      (vtkMRMLScene::SafeDownCast(caller) != NULL && event == vtkCommand::ModifiedEvent) ||
-      (vtkMRMLFiducialListNode::SafeDownCast(caller) != NULL && event == vtkCommand::ModifiedEvent))
+      (vtkMRMLFiducialListNode::SafeDownCast(caller) != NULL && event == vtkCommand::ModifiedEvent) ||
+      (vtkMRMLScene::SafeDownCast(caller) != NULL && 
+      (event == vtkMRMLScene::NodeAddedEvent && vtkMRMLFiducialListNode::SafeDownCast((vtkObjectBase *)callData) != NULL ||
+      event == vtkMRMLScene::NodeRemovedEvent && vtkMRMLFiducialListNode::SafeDownCast((vtkObjectBase *)callData) != NULL ||
+      event == vtkMRMLScene::SceneCloseEvent ||
+      event == vtkMRMLScene::NewSceneEvent )) )
+
     {
     // could have finer grain control by calling remove fid props and then
     // update fids from mrml if necessary

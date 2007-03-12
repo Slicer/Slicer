@@ -131,6 +131,10 @@ public:
   // Description:
   // Add a fiducial point to the list with default values
   int AddFiducial( );
+
+  // Description:
+  // Add a fiducial point to the list x, y, z
+  int AddFiducialWithXYZ(float x, float y, float z, int selected);
   
   void RemoveFiducial(vtkMRMLFiducial *o);
   void RemoveFiducial(int i);

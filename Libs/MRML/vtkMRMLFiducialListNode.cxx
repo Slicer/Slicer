@@ -751,6 +751,56 @@ int vtkMRMLFiducialListNode::AddFiducial()
   vtkDebugMacro("AddFiducial: added a fiducial to the list at index " << itemIndex << endl);
   return itemIndex;
 }
+
+//----------------------------------------------------------------------------
+int vtkMRMLFiducialListNode::AddFiducialWithXYZ(float x, float y, float z, int selected)
+{
+  if ( !this->Scene ) 
+    {
+    vtkErrorMacro ( << "Attempt to add Fiducial, but no scene set yet");
+    return (-1);
+    }
+
+  // create a vtkMRMLFiducial and return the fiducial number for later
+  // access
+  vtkMRMLFiducial * fiducial = vtkMRMLFiducial::New();
+
+  // give the point a unique name based on the list name
+  std::stringstream ss;
+  ss << this->GetName();
+  ss << "-P";
+  std::string nameString;
+  ss >> nameString;
+  fiducial->SetID(this->GetScene()->GetUniqueNameByString(nameString.c_str()));
+  // use the same for the label text for now
+  fiducial->SetLabelText(fiducial->GetID());
+  
+  fiducial->SetXYZ(x,y,z);
+
+  fiducial->SetSelected((selected == 0 ? false : true));
+
+  // add it to the collection
+  this->FiducialList->vtkCollection::AddItem(fiducial);
+  int itemIndex = this->FiducialList->vtkCollection::IsItemPresent(fiducial);
+  // decrement the index, because GetNthFiducial needs a 0 based array
+  // index, IsItemPresent returns a 1 based array index
+  itemIndex--;
+
+  // then delete it, the collection has registered it and will keep track of
+  // it
+  fiducial->Delete();
+  fiducial = NULL;
+
+  // let observers know that the node was added
+  //this->InvokeEvent(vtkMRMLScene::NodeAddedEvent, NULL);
+
+  // this list is now modified...
+  this->Modified();
+
+  // return an index for use in getting the item again via GetNthFiducial
+  vtkDebugMacro("AddFiducial: added a fiducial to the list at index " << itemIndex << endl);
+  return itemIndex;
+}
 /*
 //----------------------------------------------------------------------------
 void vtkMRMLFiducialListNode::AddFiducial(vtkMRMLFiducial *o)
