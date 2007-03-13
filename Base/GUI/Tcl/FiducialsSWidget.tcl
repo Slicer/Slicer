@@ -29,6 +29,7 @@ if { [itcl::find class FiducialsSWidget] == "" } {
     variable _seedSWidgets ""
     variable _sceneObserverTags ""
     variable _fiducialListObserverTagPairs ""
+    variable _jumpFiducialIndex 0
 
     # methods
     method processEvent { caller } {}
@@ -53,15 +54,34 @@ itcl::body FiducialsSWidget::constructor {sliceGUI} {
   lappend _nodeObserverTags [$node AddObserver DeleteEvent "::SWidget::ProtectedDelete $this"]
   lappend _nodeObserverTags [$node AddObserver AnyEvent "::SWidget::ProtectedCallback $this processEvent $node"]
 
+
   set scene [$sliceGUI GetMRMLScene]
   lappend _sceneObserverTags [$scene AddObserver DeleteEvent "::SWidget::ProtectedDelete $this"]
   lappend _sceneObserverTags [$scene AddObserver AnyEvent "::SWidget::ProtectedCallback $this processEvent $scene"]
+
+
+  set _guiObserverTags ""
+
+  lappend _guiObserverTags [$sliceGUI AddObserver DeleteEvent "::SWidget::ProtectedDelete $this"]
+
+  set events {  
+    "KeyPressEvent" 
+    }
+  foreach event $events {
+   lappend _guiObserverTags [$sliceGUI AddObserver $event "::SWidget::ProtectedCallback $this processEvent $sliceGUI"]    
+  }
 
   $this processEvent $scene
 }
 
 
 itcl::body FiducialsSWidget::destructor {} {
+
+  if { [info command $sliceGUI] != "" } {
+    foreach tag $_guiObserverTags {
+      $sliceGUI RemoveObserver $tag
+    }
+  }
 
   foreach pair $_fiducialListObserverTagPairs {
     foreach {fidListNode tag} $pair {}
@@ -107,6 +127,44 @@ itcl::body FiducialsSWidget::processEvent { caller } {
     # self destruct
     ::SWidget::ProtectedDelete $this
     return
+  }
+
+  if { $caller == $sliceGUI } {
+    set event [$sliceGUI GetCurrentGUIEvent] 
+    switch $event {
+      "KeyPressEvent" {
+
+        $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
+        switch [$_interactor GetKeySym] {
+          "quoteleft" {
+            #
+            # increment the
+            # index so we will cycle through.
+            #
+            set scene [$sliceGUI GetMRMLScene]
+            set jumpRAS [::FiducialsSWidget::GetNthFiducialRAS $scene $_jumpFiducialIndex]
+            # handle wrap around if needed
+            if { $jumpRAS == "" } {
+              set jumpRAS [::FiducialsSWidget::GetNthFiducialRAS $scene 0]
+              set _jumpFiducialIndex 1
+            } else {
+              incr _jumpFiducialIndex
+            }
+
+            # now jump the slice(s)
+            # - if the slice is linked, then jump all slices to it
+            if { $jumpRAS != "" } {
+              set node [[$sliceGUI GetLogic] GetSliceNode]
+              eval $node JumpSlice $jumpRAS
+              set compositeNode [[$sliceGUI GetLogic] GetSliceCompositeNode]
+              if { [$compositeNode GetLinkedControl] || [$_interactor GetControlKey] } {
+                eval $node JumpAllSlices $jumpRAS
+              }
+            }
+          }
+        }
+      }
+    }
   }
 
   #
@@ -222,5 +280,29 @@ proc FiducialsSWidget::AddFiducial { r a s } {
   # the logic handles saving the state for undo
   set fidIndex [$fidLogic AddFiducialSelected $r $a $s 1]
   $::slicer3::MRMLScene Modified
+}
+
+#
+# find the fiducial that is nth from the beginning in the 
+# current set of lists in the scene 
+#
+proc FiducialsSWidget::GetNthFiducialRAS { scene n } {
+
+  set nLists [$scene GetNumberOfNodesByClass "vtkMRMLFiducialListNode"]
+
+  set jumpRAS ""
+  set count 0
+  for {set i 0} {$i < $nLists} {incr i} {
+    set fidListNode [$scene GetNthNodeByClass $i "vtkMRMLFiducialListNode"]
+    set nFids [$fidListNode GetNumberOfFiducials]
+    if { [expr $count + $nFids] > $n } {
+      set index [expr $n - $count]
+      set jumpRAS [$fidListNode GetNthFiducialXYZ $index]
+      break
+    } else {
+      set count [expr $count + $nFids] 
+    }
+  }
+  return $jumpRAS
 }
 
