@@ -305,3 +305,8 @@ void vtkKWMyWizardWidget::ComboBoxEntryChanged(const char* value)
 {
     std::cout<<"ComboBoxEntryChanged: "<<this->ComboBox->GetWidget()->GetValue()<<std::endl;
 }
+
+void vtkKWMyWizardWidget::RemoveAllObserver()
+{
+    
+}

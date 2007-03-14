@@ -39,6 +39,7 @@ public:
     vtkKWProgressGauge *ProgressGauge;
     vtkKWComboBoxWithLabel *ComboBox;
     
+    void RemoveAllObserver();
     void ComboBoxEntryChanged(const char*);
 protected:        
     vtkKWMyWizardWidget();

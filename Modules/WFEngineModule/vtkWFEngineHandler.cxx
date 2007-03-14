@@ -367,3 +367,27 @@ const char* vtkWFEngineHandler::GetCurrentStepID()
     }
     else return "";
 }
+
+int vtkWFEngineHandler::GetProcessedSteps()
+{
+    if(this->m_initialized)
+    {
+        return this->m_wfDI->getNumberOfProcessedSteps();
+    }
+    return -1;
+}
+
+int vtkWFEngineHandler::GetUnprocessedSteps()
+{
+    if(this->m_initialized)
+    {
+        std::string ID = "";
+        
+        if(this->m_curWFStepObject)
+        {
+            ID = this->m_curWFStepObject->GetID();   
+        }
+        return this->m_wfDI->getNumberOfUnprocessedSteps(ID);
+    }
+    return -1;
+}
