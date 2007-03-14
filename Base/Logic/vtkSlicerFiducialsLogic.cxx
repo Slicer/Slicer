@@ -81,6 +81,7 @@ int vtkSlicerFiducialsLogic::AddFiducialSelected (float x, float y, float z, int
   int index = -1;
   if (selnode != NULL)
     {
+    this->GetMRMLScene()->SaveStateForUndo(selnode);
     
     if (selnode->GetActiveFiducialListID() == NULL)
       {
