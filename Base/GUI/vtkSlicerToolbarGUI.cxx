@@ -23,6 +23,7 @@
 #include "vtkKWSeparator.h"
 #include "vtkKWMenu.h"
 
+
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerToolbarGUI );
 vtkCxxRevisionMacro ( vtkSlicerToolbarGUI, "$Revision: 1.0 $");
@@ -635,9 +636,12 @@ void vtkSlicerToolbarGUI::ResumeViewRockOrSpin ( int mode )
   if ( this->ApplicationGUI != NULL )
     {
     vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));
-    if ( p->GetViewControlGUI()->GetActiveView() != NULL )
+    if ( p->GetViewControlGUI() != NULL )
       {
-      p->GetViewControlGUI()->GetActiveView()->SetAnimationMode( mode );
+      if ( p->GetViewControlGUI()->GetActiveView() != NULL )
+        {
+        p->GetViewControlGUI()->GetActiveView()->SetAnimationMode( mode );
+        }
       }
     }
 }
@@ -650,14 +654,17 @@ int vtkSlicerToolbarGUI::StopViewRockOrSpin ( )
   if ( this->ApplicationGUI != NULL )
     {
     vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));
-    if ( p->GetViewControlGUI()->GetActiveView() != NULL )
+    if ( p->GetViewControlGUI() != NULL )
       {
-      int mode = p->GetViewControlGUI()->GetActiveView()->GetAnimationMode();
-      if ( mode == vtkMRMLViewNode::Rock || mode == vtkMRMLViewNode::Spin )
+      if ( p->GetViewControlGUI()->GetActiveView() != NULL )
         {
-        p->GetViewControlGUI()->GetActiveView()->SetAnimationMode ( vtkMRMLViewNode::Off );
-        }
+        int mode = p->GetViewControlGUI()->GetActiveView()->GetAnimationMode();
+        if ( mode == vtkMRMLViewNode::Rock || mode == vtkMRMLViewNode::Spin )
+          {
+          p->GetViewControlGUI()->GetActiveView()->SetAnimationMode ( vtkMRMLViewNode::Off );
+          }
         return ( mode );
+        }
       }
     }
   return ( 0 );

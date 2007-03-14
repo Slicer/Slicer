@@ -96,7 +96,6 @@ extern "C" {
 //#define WFENGINE_DEBUG
 //#define NEURONAV_DEBUG
 //#define TRACTOGRAPHY_DEBUG
-//#define VIEWCONTROL_DEBUG
 
 #ifndef EMSEG_DEBUG
 #include "vtkEMSegmentLogic.h"
@@ -1013,10 +1012,7 @@ int Slicer3_main(int argc, char *argv[])
     slicesGUI->AddGUIObservers ( );
 #endif
 
-#ifndef VIEWCONTROL_DEBUG
     appGUI->InitializeNavigationWidget();
-#endif
-
 
 #ifndef GAD_DEBUG
     // --- Gradient anisotropic diffusion filter module
