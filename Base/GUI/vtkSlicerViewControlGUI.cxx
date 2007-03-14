@@ -34,7 +34,7 @@
 #include "vtkSlicerViewControlIcons.h"
 
 // uncomment in order to stub out the NavZoom widget.
-#define NAVZOOMWIDGET_DEBUG
+//#define NAVZOOMWIDGET_DEBUG
 
 // uncomment in order to stub out the FOV Entries.
 //#define FOV_ENTRIES_DEBUG
@@ -1518,51 +1518,79 @@ void vtkSlicerViewControlGUI::UpdateNavigationWidgetViewActors ( )
   if ( this->GetApplicationGUI() != NULL )
     {
     vtkRenderer *ren;
-    vtkActorCollection *actors;
-    vtkActor *actor;
+    vtkActorCollection *mainActors;
+    vtkActor *mainActor;
+    vtkActorCollection *navActors;
+    vtkActor *navActor;
+    vtkActor *newActor;
+    vtkPolyDataMapper *newMapper;
     double bounds[6];
     double dimension;
     double x,y,z;
     double cutoff = 0.1;
     double cutoffDimension;
 
+    // iterate thru NavigationWidget's actor collection,
+    // remove item, delete actor, delete mapper.
+    navActors = this->NavigationWidget->GetRenderer()->GetActors();
+    if (navActors != NULL )
+      {
+      navActors->InitTraversal();
+      navActor = navActors->GetNextActor();
+      while (navActor != NULL )
+        {
+        navActors->RemoveItem ( navActor );
+        navActor = navActors->GetNextActor();
+        }
+      }
+
+    // get estimate of Main Viewer's visible scene max dimension;
     vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));    
     ren = p->GetViewerWidget()->GetMainViewer()->GetRenderer();
     ren->ComputeVisiblePropBounds( bounds );
-    // get estimate of scene dimension;
     x = bounds[1] - bounds[0];
     y = bounds[3] - bounds[2];
     z = bounds[5] - bounds[4];
     dimension = x*x + y*y + z*z;
     cutoffDimension = cutoff * dimension;
 
-    // remove all actors from the navigation widget's renderer
-    vtkActorCollection *navActors = this->NavigationWidget->GetRenderer()->GetActors();
-    navActors->RemoveAllItems();
-
     // Get actor collection from the main viewer's renderer
-    actors = ren->GetActors();    
-    if (actors != NULL )
+    mainActors = ren->GetActors();    
+    if (mainActors != NULL )
       {
-      // add the little FOV box in any case.
+      // add the little FOV box to NavigationWidget's actors
       this->NavigationWidget->GetRenderer()->AddViewProp( this->FOVBoxActor);
-      actors->InitTraversal();
-      actor = actors->GetNextActor();
-      while (actor != NULL )
+      mainActors->InitTraversal();
+      mainActor = mainActors->GetNextActor();
+      while (mainActor != NULL )
         {
         // get the bbox of this actor
-        actor->GetBounds ( bounds );
+        mainActor->GetBounds ( bounds );
         // check to see if it's big enough to include in the scene...
         x = bounds[1] - bounds[0];
         y = bounds[3] - bounds[2];
         z = bounds[5] - bounds[4];
         dimension = x*x + y*y + z*z;
-        // add the actor if it's big enough. otherwise don't bother.
-        if ( dimension > cutoffDimension )
+
+        // add a copy of the actor to NavigationWidgets's renderer
+        // only if it's big enough to count (don't bother with tiny
+        // and don't bother with invisible stuff)
+        if ( dimension > cutoffDimension && mainActor->GetVisibility() )
           {
-          this->NavigationWidget->GetRenderer()->AddActor( actor );
+          // ---new: create new actor, mapper, deep copy, add it.
+          newMapper = vtkPolyDataMapper::New();
+          newMapper->ShallowCopy (mainActor->GetMapper() );
+          newMapper->SetInput ( vtkPolyData::SafeDownCast(mainActor->GetMapper()->GetInput()) );
+
+          newActor = vtkActor::New();
+          newActor->ShallowCopy (mainActor );
+          newActor->SetMapper ( newMapper );
+          newMapper->Delete();
+          
+          this->NavigationWidget->GetRenderer()->AddActor( newActor );
+          newActor->Delete();
           }
-        actor = actors->GetNextActor();
+        mainActor = mainActors->GetNextActor();
         }
       }
     }
