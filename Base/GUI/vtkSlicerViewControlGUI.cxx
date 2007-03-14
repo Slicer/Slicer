@@ -1533,15 +1533,11 @@ void vtkSlicerViewControlGUI::UpdateNavigationWidgetViewActors ( )
     // iterate thru NavigationWidget's actor collection,
     // remove item, delete actor, delete mapper.
     navActors = this->NavigationWidget->GetRenderer()->GetActors();
+    
     if (navActors != NULL )
       {
-      navActors->InitTraversal();
-      navActor = navActors->GetNextActor();
-      while (navActor != NULL )
-        {
-        navActors->RemoveItem ( navActor );
-        navActor = navActors->GetNextActor();
-        }
+      this->NavigationWidget->RemoveAllViewProps();
+      navActors->RemoveAllItems();
       }
 
     // get estimate of Main Viewer's visible scene max dimension;
@@ -1575,7 +1571,8 @@ void vtkSlicerViewControlGUI::UpdateNavigationWidgetViewActors ( )
         // add a copy of the actor to NavigationWidgets's renderer
         // only if it's big enough to count (don't bother with tiny
         // and don't bother with invisible stuff)
-        if ( dimension > cutoffDimension && mainActor->GetVisibility() )
+        int vis = mainActor->GetVisibility();
+        if ( dimension > cutoffDimension && vis )
           {
           // ---new: create new actor, mapper, deep copy, add it.
           newMapper = vtkPolyDataMapper::New();
