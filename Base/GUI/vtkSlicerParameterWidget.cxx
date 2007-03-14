@@ -885,6 +885,7 @@ const char *vtkSlicerParameterWidget::GetValueFromWidget(vtkKWWidget *widg)
         return "";
     }
     
+    return "";
 //    strvalue.rdbuf()->freeze(0);
 }
 
