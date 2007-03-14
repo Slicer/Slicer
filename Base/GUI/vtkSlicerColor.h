@@ -73,6 +73,7 @@ class vtkSlicerColor : public vtkObject
     double SliceGUIRed [3];
     double SliceGUIYellow [3];
     double SliceGUIGreen [3];
+    double LightboxBlue [3];
 
     char *GetColorAsHex(double *color);
     
