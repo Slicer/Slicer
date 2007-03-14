@@ -264,6 +264,43 @@ void vtkSlicerMRMLTreeWidget::SelectNodeCallback(const char *id)
     this->InvokeEvent(vtkSlicerMRMLTreeWidget::SelectedEvent, node);
     }
 }
+
+//----------------------------------------------------------------------------
+void vtkSlicerMRMLTreeWidget::NodeParentChangedCallback(
+  const char *nodeID, const char *parentID, const char*)
+{
+  if (!strcmp(parentID, "Scene"))
+    {
+    vtkMRMLTransformableNode *node = vtkMRMLTransformableNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(nodeID));
+    if (node != NULL)
+      {
+      vtkMRMLTransformNode *tnode = node->GetParentTransformNode();
+      if (tnode != NULL)
+        {
+        node->SetAndObserveTransformNodeID(NULL);
+        node->InvokeEvent(vtkMRMLTransformableNode::TransformModifiedEvent);
+        }
+      }
+    }
+  else 
+    {
+    vtkMRMLTransformNode *tnode = vtkMRMLTransformNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(parentID));
+    if (tnode != NULL)
+      {
+      vtkMRMLTransformableNode *node = vtkMRMLTransformableNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(nodeID));
+      if (node != NULL)
+        {
+        if (tnode != NULL)
+          {
+          node->SetAndObserveTransformNodeID(tnode->GetID());
+          node->InvokeEvent(vtkMRMLTransformableNode::TransformModifiedEvent);
+          }
+        }
+      }
+    }
+  this->UpdateTreeFromMRML();
+}
+
 //---------------------------------------------------------------------------
 void vtkSlicerMRMLTreeWidget::ProcessMRMLEvents ( vtkObject *caller,
                                                   unsigned long event, 
@@ -323,6 +360,7 @@ void vtkSlicerMRMLTreeWidget::CreateWidget ( )
   this->TreeWidget->SetParent ( frame->GetFrame() );
   this->TreeWidget->VerticalScrollbarVisibilityOn();
   this->TreeWidget->HorizontalScrollbarVisibilityOff();
+  
   this->TreeWidget->Create ( );
   this->TreeWidget->SetBalloonHelpString("MRML Tree");
   ///  this->TreeWidget->SetBorderWidth(2);
@@ -333,6 +371,8 @@ void vtkSlicerMRMLTreeWidget::CreateWidget ( )
   vtkKWTree *tree = this->TreeWidget->GetWidget();
   tree->SelectionFillOn();
   tree->SetSelectionModeToMultiple ();
+  tree->SetNodeParentChangedCommand(this, "NodeParentChangedCallback");
+  tree->EnableReparentingOn();
   //tree->SetSelectionModeToSingle();
   tree->SetHeight(12);
 

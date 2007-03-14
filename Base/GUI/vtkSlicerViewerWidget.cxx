@@ -1154,15 +1154,16 @@ void vtkSlicerViewerWidget::RemoveHierarchyObservers()
 void vtkSlicerViewerWidget::SetModelDisplayProperty(vtkMRMLModelNode *model,  vtkActor *actor)
 {
   vtkMRMLTransformNode* tnode = model->GetParentTransformNode();
+  vtkMatrix4x4* transformToWorld = vtkMatrix4x4::New();
+  transformToWorld->Identity();
   if (tnode != NULL && tnode->IsLinear())
     {
     vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
-    vtkMatrix4x4* transformToWorld = vtkMatrix4x4::New();
-    transformToWorld->Identity();
     lnode->GetMatrixTransformToWorld(transformToWorld);
-    actor->SetUserMatrix(transformToWorld);
-    transformToWorld->Delete();
     }
+  actor->SetUserMatrix(transformToWorld);
+  transformToWorld->Delete();
+ 
   vtkMRMLModelDisplayNode *dnode = this->GetModelDisplayNode(model);
   if (dnode != NULL)
     {

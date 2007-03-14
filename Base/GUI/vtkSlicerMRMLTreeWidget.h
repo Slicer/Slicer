@@ -69,6 +69,9 @@ public:
   virtual void InsertTransformNodeCallback(const char *id);
 
   virtual void SelectNodeCallback(const char *id);
+  
+  virtual void NodeParentChangedCallback (const char *node, const char *new_parent, const char*);
+  
 
 //BTX
   enum
