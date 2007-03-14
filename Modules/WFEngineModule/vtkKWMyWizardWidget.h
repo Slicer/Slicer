@@ -28,7 +28,8 @@ public:
     //BTX
     enum{
         nextButtonClicked = 10000,
-        backButtonClicked
+        backButtonClicked,
+        comboBoxEntryChanged
     };
     //ETX
     
@@ -39,8 +40,12 @@ public:
     vtkKWProgressGauge *ProgressGauge;
     vtkKWComboBoxWithLabel *ComboBox;
     
-    void RemoveAllObserver();
+    void RemoveAllObservers();
     void ComboBoxEntryChanged(const char*);
+    
+    const char* GetCurrentComboBoxValue();
+    int GetCurrentComboBoxIndex();
+    vtkKWWizardStep *GetGotoWFStep();
 protected:        
     vtkKWMyWizardWidget();
     virtual ~vtkKWMyWizardWidget();
@@ -60,7 +65,7 @@ private:
     int m_numberOfProcessedSteps;
     
     //BTX
-    std::map<int, vtkKWWizardStep*> *m_itemToStepMap;
+    std::map<int, vtkKWWizardStep*> *m_itemToStepMap;    
     //ETX
     
     vtkKWMyWizardWidget(const vtkKWMyWizardWidget&);   // Not implemented.

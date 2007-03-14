@@ -34,7 +34,7 @@ namespace WFEngine
             // Description:
             // This function gets the previous workstep from the internal workstep stack.
             // Returns NULL if no previous workstep is available. This means we are at the initial state.
-            WFEngine::nmWFStepObject::WFStepObject *GetPreviousWFStep();
+            WFEngine::nmWFStepObject::WFStepObject *GetPreviousWFStep();                        
             
             // Description:
             // This function gets the Nth workstep from the internal workstep stack.

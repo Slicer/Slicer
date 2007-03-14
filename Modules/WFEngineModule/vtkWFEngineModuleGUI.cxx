@@ -402,6 +402,12 @@ void vtkWFEngineModuleGUI::createWizard()
     wizCB->SetClientData(this);
     this->m_curWizWidg->AddObserver(vtkKWMyWizardWidget::backButtonClicked, wizCB);
     
+    wizCB = vtkCallbackCommand::New();
+    
+    wizCB->SetCallback(&vtkWFEngineModuleGUI::jumpToStepCallback);
+    wizCB->SetClientData(this);
+    this->m_curWizWidg->AddObserver(vtkKWMyWizardWidget::comboBoxEntryChanged, wizCB);
+    
     // create a new MRMLNode to get track of all workflow variables
     
     vtkMRMLWFEngineModuleNode *myWFENode = vtkMRMLWFEngineModuleNode::New();
@@ -586,6 +592,54 @@ void vtkWFEngineModuleGUI::backTransitionCallback(vtkObject* obj, unsigned long 
         wfEngineModule->m_curWizWidg->Update();
     }
 }
+
+void vtkWFEngineModuleGUI::jumpToStepCallback(vtkObject* obj, unsigned long id,void* callBackData, void*)
+{
+    std::cout<<"jumpToStepCallback: "<<id<<std::endl;
+    vtkWFEngineModuleGUI *wfEngineModule = (vtkWFEngineModuleGUI*)callBackData;
+    if(wfEngineModule)
+    {
+        if(wfEngineModule->m_curWizWidg)
+        {
+            std::cout<<"Value: "<<wfEngineModule->m_curWizWidg->GetCurrentComboBoxValue();
+            std::cout<<" Index: "<<wfEngineModule->m_curWizWidg->GetCurrentComboBoxIndex()<<" == "<<wfEngineModule->m_wfEngineHandler->GetProcessedSteps()<<std::endl;        
+            if(wfEngineModule->m_wfEngineHandler->LoadWorkStepByIndex(wfEngineModule->m_curWizWidg->GetCurrentComboBoxIndex()) == vtkWFEngineHandler::SUCC)
+            {
+                wfEngineModule->m_curWizWidg->SetNumberOfUnprocessedSteps(wfEngineModule->m_wfEngineHandler->GetUnprocessedSteps());
+                wfEngineModule->m_curWizWidg->SetNumberOfProcessedSteps(wfEngineModule->m_wfEngineHandler->GetProcessedSteps());                            
+                wfEngineModule->m_curWFStep = wfEngineModule->m_wfEngineHandler->GetLoadedWFStep();
+                vtkKWWizardStep *gotoStep = wfEngineModule->m_curWizWidg->GetGotoWFStep();
+                vtkKWWizardStep *currentStep = wfEngineModule->m_curWizWidg->GetWizardWorkflow()->GetCurrentStep();
+                if(gotoStep)
+                {
+                    std::cout<<"GotoStep: "<<gotoStep->GetName()<<" - "<<gotoStep->GetDescription()<<std::endl;
+                    wfEngineModule->m_curWizWidg->GetWizardWorkflow()->CreateGoToTransition(currentStep, gotoStep);
+                    wfEngineModule->m_curWizWidg->GetWizardWorkflow()->TryToGoToStepCallback(gotoStep, currentStep);
+                }                
+                wfEngineModule->m_curWizWidg->UpdateNavigationGUI();
+            }
+            else
+            {
+                wfEngineModule->m_curWFStep = NULL;
+                wfEngineModule->m_curWizWidg->SetNumberOfUnprocessedSteps(wfEngineModule->m_wfEngineHandler->GetUnprocessedSteps());
+                wfEngineModule->m_curWizWidg->SetNumberOfProcessedSteps(wfEngineModule->m_wfEngineHandler->GetProcessedSteps());
+                
+                vtkKWWizardStep *initialStep = wfEngineModule->m_curWizWidg->GetWizardWorkflow()->GetInitialStep();
+                vtkKWWizardStep *currentStep = wfEngineModule->m_curWizWidg->GetWizardWorkflow()->GetCurrentStep();
+                std::cout<<"InitialStep: "<<initialStep->GetName()<<" - "<<initialStep->GetDescription()<<std::endl;
+                wfEngineModule->m_curWizWidg->GetWizardWorkflow()->CreateGoToTransition(currentStep, initialStep);
+                wfEngineModule->m_curWizWidg->GetWizardWorkflow()->TryToGoToStepCallback(initialStep, currentStep);                
+                wfEngineModule->m_curWizWidg->UpdateNavigationGUI();
+            }
+        }
+        wfEngineModule->workStepGUICallBack();
+        //because there is no GUI callback in a backtransition we call this manually
+        
+        wfEngineModule->m_curWizWidg->Update();
+    }
+    
+}
+
 
 void vtkWFEngineModuleGUI::workStepGUICallBack()
 {

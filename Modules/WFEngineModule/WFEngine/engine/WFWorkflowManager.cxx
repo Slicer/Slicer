@@ -101,11 +101,12 @@ WFStepObject *WFWorkflowManager::GetPreviousWFStep()
 
 WFStepObject *WFWorkflowManager::GetNthWFStep(int pos)
 {
-    if(this->m_workSteps.size() >= pos)
+    if(this->m_workSteps.size() > pos && pos > 0)
     {
-        this->m_curPos = pos;
+        this->m_curPos = pos - 1;
         return this->m_workSteps[this->m_curPos];
     }
+    this->m_curPos = -1;
     return NULL;
 }
 

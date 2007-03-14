@@ -104,6 +104,7 @@ protected:
     static void loadBtnPushCmdCallback(vtkObject* obj, unsigned long,void*, void*);
     static void nextTransitionCallback(vtkObject* obj, unsigned long,void*, void*);
     static void backTransitionCallback(vtkObject* obj, unsigned long,void*, void*);
+    static void jumpToStepCallback(vtkObject* obj, unsigned long,void*, void*);
     static void closeBtnPushCmdCallback(vtkObject* obj, unsigned long,void*, void*);
     
     static void widgetChangedCallback(vtkObject* obj, unsigned long,void*, void*);

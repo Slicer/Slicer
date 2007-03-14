@@ -113,6 +113,14 @@ WFStepObject *WFDirectInterface::getBackWorkStep()
     }    
 }
 
+WFStepObject *WFDirectInterface::getWorkStepByIndex(int index)
+{
+    if(this->IsLoaded())
+    {
+        this->m_wfMgr->GetNthWFStep(index);   
+    }    
+}
+
 int WFDirectInterface::getNumberOfProcessedSteps()
 {
     if(this->IsLoaded())

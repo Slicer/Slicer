@@ -61,6 +61,7 @@ public:
     
     int LoadBackWorkStep();
     int LoadNextWorkStep();
+    int LoadWorkStepByIndex(int index);
     
     WFEngine::nmWFStepObject::WFStepObject *GetLoadedWFStep();
     void LoadNewWorkflowSession(std::string workflowFilename);

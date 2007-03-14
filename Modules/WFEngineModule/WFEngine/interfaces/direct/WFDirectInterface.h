@@ -36,6 +36,7 @@ public:
     
     WFEngine::nmWFStepObject::WFStepObject *getNextWorkStep();
     WFEngine::nmWFStepObject::WFStepObject *getBackWorkStep();
+    WFEngine::nmWFStepObject::WFStepObject *getWorkStepByIndex(int index);
     
     int getNumberOfProcessedSteps();
     

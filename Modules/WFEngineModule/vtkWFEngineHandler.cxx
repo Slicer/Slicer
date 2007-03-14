@@ -256,6 +256,31 @@ int vtkWFEngineHandler::LoadBackWorkStep()
     }        
 }
 
+int vtkWFEngineHandler::LoadWorkStepByIndex(int index)
+{
+    if(this->m_curWFStepObject)
+    {
+        this->InvokeLeaveEvents();
+    }
+    
+    this->m_curWFStepObject = this->m_wfDI->getWorkStepByIndex(index);
+    
+    if(this->m_curWFStepObject)
+    {
+        this->LoadNextStepFunction(this->m_curWFStepObject->GetTCLNextWorkstepFunction().c_str());
+        this->LoadStepValidationFunction(this->m_curWFStepObject->GetTCLValidationFunction().c_str());
+        
+        this->InvokeEnterEvents();
+        return SUCC;
+    }                
+    else
+    {
+        this->LoadNextStepFunction("");
+        this->LoadStepValidationFunction("");
+        return FAIL;   
+    }        
+}
+
 WFEngine::nmWFStepObject::WFStepObject *vtkWFEngineHandler::GetLoadedWFStep()
 {
     return this->m_curWFStepObject;
