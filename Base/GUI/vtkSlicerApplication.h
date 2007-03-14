@@ -93,6 +93,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   static const char *TemporaryDirectoryRegKey;
   static const char *HomeModuleRegKey;
   static const char *LoadCommandLineModulesRegKey;
+  static const char *EnableDaemonRegKey;
   //ETX
 
   // Descrition:
@@ -120,6 +121,12 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   vtkSetMacro(LoadCommandLineModules, int);
   vtkGetMacro(LoadCommandLineModules, int);
   vtkBooleanMacro(LoadCommandLineModules, int);
+
+  // Description:
+  // Set/Get if the slicer daemon should be loaded
+  vtkSetMacro(EnableDaemon, int);
+  vtkGetMacro(EnableDaemon, int);
+  vtkBooleanMacro(EnableDaemon, int);
 
   // Description:
   // Evaluate a string as a tcl expression
@@ -170,6 +177,16 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   // Add additional copyright messages
   virtual void AddAboutCopyrights(ostream &);
 
+  // Description:
+  // Control the state of the splash screen
+  vtkSetMacro (UseSplashScreen, int);
+  vtkGetMacro (UseSplashScreen, int);
+
+  // Description:
+  // Control the state of the splash screen
+  void SplashMessage (const char * message);
+
+
  protected:
   vtkSlicerApplication ( );
   virtual ~vtkSlicerApplication ( );
@@ -192,6 +209,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   char HomeModule [ vtkKWRegistryHelper::RegistryKeyValueSizeMax];
 
   int LoadCommandLineModules;
+  int EnableDaemon;
 #ifdef USE_PYTHON
   PyObject* PythonModule;
   PyObject* PythonDictionary;
@@ -210,6 +228,8 @@ private:
   DisplayMessageQueue* InternalDisplayMessageQueue;
   
   static vtkSlicerApplication* Instance;
+
+  int UseSplashScreen;
 }; 
 
 #endif

@@ -27,6 +27,7 @@ vtkSlicerApplicationSettingsInterface::vtkSlicerApplicationSettingsInterface()
   this->HomeModuleEntry = NULL;
   this->TemporaryDirectoryButton = NULL;
   this->LoadCommandLineModulesCheckButton = NULL;
+  this->EnableDaemonCheckButton = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -72,6 +73,12 @@ vtkSlicerApplicationSettingsInterface::~vtkSlicerApplicationSettingsInterface()
     {
     this->LoadCommandLineModulesCheckButton->Delete();
     this->LoadCommandLineModulesCheckButton = NULL;
+    }
+
+  if (this->EnableDaemonCheckButton)
+    {
+    this->EnableDaemonCheckButton->Delete();
+    this->EnableDaemonCheckButton = NULL;
     }
 }
 
@@ -131,6 +138,23 @@ void vtkSlicerApplicationSettingsInterface::Create()
     "A confirmation dialog will be presented to the user on deleting nodes.");
 
   tk_cmd << "pack " << this->ConfirmDeleteCheckButton->GetWidgetName()
+         << "  -side top -anchor w -expand no -fill none" << endl;
+
+  // --------------------------------------------------------------
+  // Slicer interface settings : Load Daemon?
+
+  if (!this->EnableDaemonCheckButton)
+    {
+    this->EnableDaemonCheckButton = vtkKWCheckButton::New();
+    }
+  this->EnableDaemonCheckButton->SetParent(frame);
+  this->EnableDaemonCheckButton->Create();
+  this->EnableDaemonCheckButton->SetText("Enable Slicer Daemon");
+  this->EnableDaemonCheckButton->SetCommand(this, "EnableDaemonCallback");
+  this->EnableDaemonCheckButton->SetBalloonHelpString(
+    "The Slicer Daemon will be enabled at startup.\nThis feature allows external programs to connect to a network port opened by Slicer.\nA dialog box will appear when the first connection is made giving you the option to allow connections or not.");
+
+  tk_cmd << "pack " << this->EnableDaemonCheckButton->GetWidgetName()
          << "  -side top -anchor w -expand no -fill none" << endl;
   
   // --------------------------------------------------------------
@@ -268,6 +292,17 @@ void vtkSlicerApplicationSettingsInterface::LoadCommandLineModulesCallback(int s
 }
 
 //----------------------------------------------------------------------------
+void vtkSlicerApplicationSettingsInterface::EnableDaemonCallback(int state)
+{
+  vtkSlicerApplication *app
+    = vtkSlicerApplication::SafeDownCast(this->GetApplication());
+  if (app)
+    {
+    app->SetEnableDaemon(state ? 1 : 0);       
+    }
+}
+
+//----------------------------------------------------------------------------
 void vtkSlicerApplicationSettingsInterface::HomeModuleCallback(char *name)
 {
   vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
@@ -317,6 +352,11 @@ void vtkSlicerApplicationSettingsInterface::Update()
       {
       this->ConfirmDeleteCheckButton->SetSelectedState(
         (strncmp(app->GetConfirmDelete(), "1", 1) == 0) ? 1 : 0);
+      }
+    if (this->EnableDaemonCheckButton)
+      {
+      this->EnableDaemonCheckButton->SetSelectedState(
+        app->GetEnableDaemon() ? 1 : 0);
       }
     if (this->LoadCommandLineModulesCheckButton)
       {

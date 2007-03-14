@@ -313,7 +313,7 @@ static void DebugMessage(const char *msg)
 
 static void SplashMessage(const char *msg)
 {
-  vtkSlicerApplication::GetInstance()->GetSplashScreen()->SetProgressMessage(msg);
+  vtkSlicerApplication::GetInstance()->SplashMessage(msg);
 }
 
 
@@ -699,11 +699,20 @@ int Slicer3_main(int argc, char *argv[])
     delete [] buffer; 
 
     slicerApp->GetSplashScreen()->SetImageName("S3SplashScreen");
-    slicerApp->SupportSplashScreenOn();
-    slicerApp->SplashScreenVisibilityOn();
+    if ( NoSplash )
+      {
+      slicerApp->SetUseSplashScreen(0);
+      slicerApp->SupportSplashScreenOff();
+      slicerApp->SplashScreenVisibilityOff();
+      }
+    else
+      {
+      slicerApp->SetUseSplashScreen(1);
+      slicerApp->SupportSplashScreenOn();
+      slicerApp->SplashScreenVisibilityOn();
+      }
     slicerApp->GetSplashScreen()->SetProgressMessageVerticalOffset(-25);
-    slicerApp->GetSplashScreen()->SetProgressMessage(
-      "Initializing Window...");
+    slicerApp->SplashMessage("Initializing Window...");
 
     // Create MRML scene
     vtkMRMLScene *scene = vtkMRMLScene::New();
@@ -722,8 +731,7 @@ int Slicer3_main(int argc, char *argv[])
     appLogic->SetAndObserveMRMLScene ( scene );
     appLogic->CreateProcessingThread();
 
-    slicerApp->GetSplashScreen()->SetProgressMessage(
-      "Creating Application GUI...");
+    slicerApp->SplashMessage("Creating Application GUI...");
 
     // CREATE APPLICATION GUI, including the main window
     vtkSlicerApplicationGUI *appGUI = vtkSlicerApplicationGUI::New ( );
@@ -762,8 +770,7 @@ int Slicer3_main(int argc, char *argv[])
     // --- Volumes module
 
 #ifndef VOLUMES_DEBUG
-    slicerApp->GetSplashScreen()->SetProgressMessage(
-      "Initializing Volumes Module...");
+    slicerApp->SplashMessage("Initializing Volumes Module...");
 
     vtkSlicerVolumesLogic *volumesLogic = vtkSlicerVolumesLogic::New ( );
     volumesLogic->SetAndObserveMRMLScene ( scene );
@@ -781,8 +788,7 @@ int Slicer3_main(int argc, char *argv[])
 #endif
 
 #ifndef MODELS_DEBUG
-    slicerApp->GetSplashScreen()->SetProgressMessage(
-      "Initializing Models Module...");
+    slicerApp->SplashMessage("Initializing Models Module...");
 
     // --- Models module    
     vtkSlicerModelsLogic *modelsLogic = vtkSlicerModelsLogic::New ( );
@@ -802,8 +808,7 @@ int Slicer3_main(int argc, char *argv[])
 
 
 #ifndef FIDUCIALS_DEBUG
-    slicerApp->GetSplashScreen()->SetProgressMessage(
-      "Initializing Fiducials Module...");
+    slicerApp->SplashMessage("Initializing Fiducials Module...");
 
     // --- Fiducials module    
     vtkSlicerFiducialsLogic *fiducialsLogic = vtkSlicerFiducialsLogic::New ( );
@@ -822,8 +827,7 @@ int Slicer3_main(int argc, char *argv[])
 #endif
 
 #ifndef COLORS_DEBUG
-    slicerApp->GetSplashScreen()->SetProgressMessage(
-      "Initializing Colors Module...");
+    slicerApp->SplashMessage("Initializing Colors Module...");
 
     // -- Color module
     vtkSlicerColorLogic *colorLogic = vtkSlicerColorLogic::New ( );
@@ -914,8 +918,7 @@ int Slicer3_main(int argc, char *argv[])
 #endif 
 
     // --- Transforms module
-    slicerApp->GetSplashScreen()->SetProgressMessage(
-      "Initializing Transforms Module...");
+    slicerApp->SplashMessage("Initializing Transforms Module...");
 
     vtkSlicerTransformsGUI *transformsGUI = vtkSlicerTransformsGUI::New ( );
     transformsGUI->SetApplication ( slicerApp );
@@ -929,8 +932,7 @@ int Slicer3_main(int argc, char *argv[])
     slicerApp->AddModuleGUI ( transformsGUI );
 
     //--- Data module
-    slicerApp->GetSplashScreen()->SetProgressMessage(
-      "Initializing Data Module...");
+    slicerApp->SplashMessage( "Initializing Data Module...");
 
     //vtkSlicerDataLogic *dataLogic = vtkSlicerDataLogic::New ( );
     //dataLogic->SetAndObserveMRMLScene ( scene );
@@ -948,8 +950,7 @@ int Slicer3_main(int argc, char *argv[])
     slicerApp->AddModuleGUI ( dataGUI );
     
 #ifndef CAMERA_DEBUG
-    slicerApp->GetSplashScreen()->SetProgressMessage(
-      "Initializing Camera Module...");
+    slicerApp->SplashMessage("Initializing Camera Module...");
 
     // --- Camera module
     vtkSlicerCamerasGUI *cameraGUI = vtkSlicerCamerasGUI::New ( );
@@ -968,8 +969,7 @@ int Slicer3_main(int argc, char *argv[])
 #endif
 
     // --- Slices module
-    slicerApp->GetSplashScreen()->SetProgressMessage(
-      "Initializing Slices Module...");
+    slicerApp->SplashMessage("Initializing Slices Module...");
     // - set up each of the slice logics (these initialize their
     //   helper classes and nodes the first time the process MRML and
     //   Logic events)
@@ -1020,8 +1020,7 @@ int Slicer3_main(int argc, char *argv[])
 
 #ifndef GAD_DEBUG
     // --- Gradient anisotropic diffusion filter module
-    slicerApp->GetSplashScreen()->SetProgressMessage(
-      "Initializing Gradient Anisotropic Module...");
+    slicerApp->SplashMessage("Initializing Gradient Anisotropic Module...");
     vtkGradientAnisotropicDiffusionFilterGUI *gradientAnisotropicDiffusionFilterGUI = vtkGradientAnisotropicDiffusionFilterGUI::New ( );
     vtkGradientAnisotropicDiffusionFilterLogic *gradientAnisotropicDiffusionFilterLogic  = vtkGradientAnisotropicDiffusionFilterLogic::New ( );
     gradientAnisotropicDiffusionFilterLogic->SetAndObserveMRMLScene ( scene );
@@ -1042,8 +1041,7 @@ int Slicer3_main(int argc, char *argv[])
 
 #ifndef TRACTOGRAPHY_DEBUG
     // --- Tractography Display module
-    slicerApp->GetSplashScreen()->SetProgressMessage(
-      "Initializing Tractography Display Module...");
+    slicerApp->SplashMessage("Initializing Tractography Display Module...");
     vtkSlicerTractographyDisplayGUI *slicerTractographyDisplayGUI = vtkSlicerTractographyDisplayGUI::New ( );
     vtkSlicerFiberBundleLogic *slicerFiberBundleLogic  = vtkSlicerFiberBundleLogic::New ( );
     //slicerFiberBundleLogic->DebugOn ( );
@@ -1108,8 +1106,7 @@ int Slicer3_main(int argc, char *argv[])
 #endif
 
 #ifndef QUERYATLAS_DEBUG
-    slicerApp->GetSplashScreen()->SetProgressMessage(
-      "Initializing Query Atlas Module...");
+    slicerApp->SplashMessage("Initializing Query Atlas Module...");
     //--- Query Atlas Module
     vtkQueryAtlasGUI *queryAtlasGUI = vtkQueryAtlasGUI::New ( );
     vtkQueryAtlasLogic *queryAtlasLogic  = vtkQueryAtlasLogic::New ( );
@@ -1129,8 +1126,7 @@ int Slicer3_main(int argc, char *argv[])
 #endif
     
 #ifndef WFENGINE_DEBUG
-    slicerApp->GetSplashScreen()->SetProgressMessage(
-      "Initializing WFEngine Module...");
+    slicerApp->SplashMessage("Initializing WFEngine Module...");
     //--- WFEngine Module
     vtkWFEngineModuleGUI *wfEngineModuleGUI = vtkWFEngineModuleGUI::New ( );
     vtkWFEngineModuleLogic *wfEngineModuleLogic  = vtkWFEngineModuleLogic::New ( );
@@ -1150,13 +1146,14 @@ int Slicer3_main(int argc, char *argv[])
     wfEngineModuleGUI->AddGUIObservers ( );
 #endif
 
+    //
     // --- SlicerDaemon Module
     // need to source the slicerd.tcl script here
-    // - only start if selected on command line, since 
+    // - only start if selected on command line or enabled in registry, since 
     //   windows firewall will complain. 
-    //   TODO: this could be changed to registry option in the future
+    //
 
-    if ( Daemon )
+    if ( Daemon || slicerApp->GetEnableDaemon() )
       {
       std::string cmd;
       cmd =  "source \"" + slicerBinDir + "/../"
@@ -1258,7 +1255,7 @@ int Slicer3_main(int argc, char *argv[])
         std::string progress_msg("Initializing ");
         progress_msg +=  (*mit) ;
         progress_msg += " Module...";
-        slicerApp->GetSplashScreen()->SetProgressMessage(progress_msg.c_str());
+        slicerApp->SplashMessage(progress_msg.c_str());
 
         vtkSlicerModuleGUI *module;
         module = slicerApp->GetModuleGUIByName( (*mit).c_str() );

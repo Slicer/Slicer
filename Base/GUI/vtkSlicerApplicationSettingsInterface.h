@@ -37,6 +37,7 @@ public:
   virtual void HomeModuleCallback(char *name);
   virtual void TemporaryDirectoryCallback();
   virtual void LoadCommandLineModulesCallback(int state);
+  virtual void EnableDaemonCallback(int state);
 
   // Description:
   // Callbacks for the Slicer application settings
@@ -59,6 +60,7 @@ private:
   vtkKWEntryWithLabel *ModulePathEntry;
   vtkKWLoadSaveButtonWithLabel *TemporaryDirectoryButton;
   vtkKWCheckButton  *LoadCommandLineModulesCheckButton;
+  vtkKWCheckButton  *EnableDaemonCheckButton;
 };
 
 

@@ -22,6 +22,14 @@
       </boolean>
 
       <boolean>
+      <name>NoSplash</name>
+      <longflag>--no_splash</longflag>
+      <description>Disables the startup splash screen</description>
+      <default>false</default>
+      <label>Splash Screen On/Off</label>
+      </boolean>
+
+      <boolean>
       <name>Daemon</name>
       <longflag>--daemon</longflag>
       <description>Turns on the Slicer Daemon (open listening socket port)</description>

@@ -13,6 +13,7 @@
 #include "vtkKWLogWidget.h"
 #include "vtkKWInternationalization.h"
 #include "vtkKWTclInteractor.h"
+#include "vtkKWSplashScreen.h"
 #include "vtkSlicerBaseGUIWin32Header.h"
 #include "vtkKWRegistryHelper.h"
 #include "vtkSlicerGUILayout.h"
@@ -38,6 +39,7 @@ const char *vtkSlicerApplication::TemporaryDirectoryRegKey = "TemporaryDirectory
 const char *vtkSlicerApplication::ConfirmDeleteRegKey = "ConfirmDelete";
 const char *vtkSlicerApplication::HomeModuleRegKey = "HomeModule";
 const char *vtkSlicerApplication::LoadCommandLineModulesRegKey = "LoadCommandLineModules";
+const char *vtkSlicerApplication::EnableDaemonRegKey = "EnableDaemon";
 
 vtkSlicerApplication *vtkSlicerApplication::Instance = NULL;
 
@@ -169,6 +171,7 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
     strcpy(this->ModulePath, "");
     strcpy ( this->HomeModule, "");
     this->LoadCommandLineModules = 1;
+    this->EnableDaemon = 0;
    
     // configure the application before creating
     this->SetName ( "3D Slicer Version 3.0 Beta" );
@@ -222,6 +225,10 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
     //vtkOutputWindow::SetInstance( vtkoutput );
     
     itk::SlicerOutputWindow::SetInstance( itk::SlicerOutputWindow::New() );
+
+    // Use the splash screen by default - needs to be overridden before
+    // the splash is first used
+    this->UseSplashScreen = 1;
 }
 
 //---------------------------------------------------------------------------
@@ -460,6 +467,13 @@ void vtkSlicerApplication::RestoreApplicationSettingsFromRegistry()
     this->LoadCommandLineModules = this->GetIntRegistryValue(
       2, "RunTime", vtkSlicerApplication::LoadCommandLineModulesRegKey);
     }
+
+  if (this->HasRegistryValue(
+    2, "RunTime", vtkSlicerApplication::EnableDaemonRegKey))
+    {
+    this->EnableDaemon = this->GetIntRegistryValue(
+      2, "RunTime", vtkSlicerApplication::EnableDaemonRegKey);
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -486,6 +500,10 @@ void vtkSlicerApplication::SaveApplicationSettingsToRegistry()
   this->SetRegistryValue(
     2, "RunTime", vtkSlicerApplication::LoadCommandLineModulesRegKey, "%d", 
     this->LoadCommandLineModules);
+
+  this->SetRegistryValue(
+    2, "RunTime", vtkSlicerApplication::EnableDaemonRegKey, "%d", 
+    this->EnableDaemon);
 }
 
 //----------------------------------------------------------------------------
@@ -780,3 +798,10 @@ void vtkSlicerApplication::DisplayLogDialog(vtkKWTopLevel* master)
     }
 }
 
+void vtkSlicerApplication::SplashMessage (const char *message)
+{
+  if (this->GetUseSplashScreen())
+    {
+    this->GetSplashScreen()->SetProgressMessage(message);
+    }
+}
