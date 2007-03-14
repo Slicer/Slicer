@@ -42,7 +42,7 @@ if { [itcl::find class SeedSWidget] == "" } {
     public variable text ""
     public variable textScale "1"
 
-    variable _startPosition "0 0 0"
+    variable _startOffset "0 0"
     variable _currentPosition "0 0 0"
 
     # methods
@@ -201,6 +201,7 @@ itcl::body SeedSWidget::pick {} {
   foreach {ex ey} [$interactor GetEventPosition] {}
   if { [expr abs($ex - $x) < 15] && [expr abs($ey - $y) < 15] } {
     set _pickState "over"
+    set _startOffset [list [expr $x - $ex] [expr $y - $ey]] 
   } else {
     set _pickState "outside"
   }
@@ -298,7 +299,10 @@ itcl::body SeedSWidget::processEvent { } {
         "MouseMoveEvent" {
           switch $_actionState {
             "dragging" {
-              set _currentPosition [$this xyToRAS [$_interactor GetEventPosition]]
+              foreach {ex ey} [$_interactor GetEventPosition] {}
+              foreach {dx dy} $_startOffset {}
+              set newxy [list [expr $ex + $dx] [expr $ey + $dy]]
+              set _currentPosition [$this xyToRAS $newxy]
               eval $movingCommand
             }
             default {

@@ -34,6 +34,7 @@ if { [itcl::find class FiducialsSWidget] == "" } {
     # methods
     method processEvent { caller } {}
     method seedMovedCallback {seed fidListNode fidIndex} {}
+    method seedMovingCallback {seed fidListNode fidIndex} {}
     method addFiducialListObserver {fidListNode} {}
 
   }
@@ -241,6 +242,7 @@ itcl::body FiducialsSWidget::processEvent { caller } {
         set seedSWidget [SeedSWidget #auto $sliceGUI]
         $seedSWidget place $r $a $s
         $seedSWidget configure -movedCommand "$this seedMovedCallback $seedSWidget $fidListNode $f"
+        $seedSWidget configure -movingCommand "$this seedMovingCallback $seedSWidget $fidListNode $f"
         $seedSWidget configure -glyph $glyphType
         $seedSWidget configure -scale [$fidListNode GetSymbolScale]
         $seedSWidget configure -color [$fidListNode GetColor]
@@ -269,6 +271,23 @@ itcl::body FiducialsSWidget::seedMovedCallback {seed fidListNode fidIndex} {
   $::slicer3::MRMLScene SaveStateForUndo $fidListNode
   set ras [$seed getRASPosition]
   eval after idle "$fidListNode SetNthFiducialXYZ $fidIndex $ras"
+
+  set sliceNode [[$sliceGUI GetLogic] GetSliceNode]
+  set compositeNode [[$sliceGUI GetLogic] GetSliceCompositeNode]
+  if { [$compositeNode GetLinkedControl] || [$_interactor GetControlKey] } {
+    eval after idle $sliceNode JumpAllSlices $ras
+  }
+}
+
+itcl::body FiducialsSWidget::seedMovingCallback {seed fidListNode fidIndex} {
+
+  # nothing for right now - TODO: could try doing a jumpSlice 
+  # while adjusting the fiducial, but the problem is that this 
+  # class (FiducialsSWidget) re-creates the seeds on every event
+  # from the fiducial list so the seed would be destroyed during
+  # the event handler (which is bad).
+  return 
+
 }
 
 #
