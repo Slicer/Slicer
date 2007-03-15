@@ -45,9 +45,13 @@
 //
 // uncomment the define below to enable use of the GE5 (Signa) reader
 // this is not on by default because the reader does not support
-// reading directions from the file
+// reading directions from the file.
+// The GE5 reader was fixed just after the itk 3.2 release
 //
-//#define USE_ITKGE5READER
+#if (ITK_VERSION_MAJOR > 3) || \
+((ITK_VERSION_MAJOR == 3 && ITK_VERSION_MINOR > 2))
+#define USE_ITKGE5READER
+#endif
 
 #ifdef USE_ITKGE5READER
 #include "itkImageIOFactory.h"
