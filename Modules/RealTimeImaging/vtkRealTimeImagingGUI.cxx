@@ -671,7 +671,7 @@ void vtkRealTimeImagingGUI::ProcessTimerEvents ()
     {
       
         int rate = atoi(this->UpdateRateEntry->GetWidget()->GetValue ());
-        vtkKWTkUtilities::CreateTimerHandler (this->GetApplication, rate, this, "ProcessTimerEvents");
+        vtkKWTkUtilities::CreateTimerHandler (vtkKWApplication::GetMainInterp(), rate, this, "ProcessTimerEvents");
     }
 
     vtkRealTimeImagingLogic *igtLogic = this->Logic;

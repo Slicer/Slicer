@@ -184,7 +184,7 @@ void vtkRealTimeImagingLogic::Init(char *configfile)
 
     context->parseConfiguration(configfile);  // parse the configuration file
 
-    callbackMod->setCallback( "cb1", (CallbackFunction*)&callbackF ,this);    // sets the callback function
+    callbackMod->setCallback( "cb1", (OTCallbackFunction*)&callbackF ,this);    // sets the callback function
 
     context->start();
 

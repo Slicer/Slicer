@@ -49,7 +49,7 @@ void vtkIGTOpenTrackerStream::Init(char *configFile)
     context->parseConfiguration(configFile);  
 
     // sets the callback function
-    callbackMod->setCallback( "cb1", (CallbackFunction*)&callbackF ,this);    
+    callbackMod->setCallback( "cb1", (OTCallbackFunction*)&callbackF ,this);    
     context->start();
 }
 
@@ -343,7 +343,7 @@ void vtkIGTOpenTrackerStream::ProcessTimerEvents()
         this->PollRealtime();
         this->InvokeEvent (vtkCommand::ModifiedEvent);
         vtkKWTkUtilities::CreateTimerHandler(vtkKWApplication::GetMainInterp(), 
-                200, this, "ProcessTimerEvents");        
+                2, this, "ProcessTimerEvents");  // RSierra 3/8/07 The integer defines the update rate. On my laptop there is no differenct in performance (i.e. the CPU load is minimal and approx. 10% for update of 2). Is the value equivalent to ms?        
     }
     else
     {

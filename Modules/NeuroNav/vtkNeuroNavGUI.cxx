@@ -1237,7 +1237,7 @@ void vtkNeuroNavGUI::BuildGUIForServerFrame ()
     this->UpdateRateEntry->SetWidth(25);
     this->UpdateRateEntry->SetLabelWidth(15);
     this->UpdateRateEntry->SetLabelText("Update Rate (ms):");
-    this->UpdateRateEntry->GetWidget()->SetValue ( "200" );
+    this->UpdateRateEntry->GetWidget()->SetValue ( "200" );  // RSierra 3/9/07 This value is currently not updated and should trigger the integer in vtkIGTOpenTrackerStream::ProcessTimerEvents()
     this->Script(
       "pack %s -side top -anchor nw -expand n -padx 2 -pady 2",
       this->UpdateRateEntry->GetWidgetName());
@@ -1799,7 +1799,7 @@ void vtkNeuroNavGUI::UpdateAll()
 
         int checked = this->LocatorModeCheckButton->GetSelectedState(); 
         if (checked)
-        {
+        {/* RSierra 3/9/07 If we remove this section the performance is dramatically increaset but obviously no slices are updated
             vtkSlicerApplicationGUI *appGUI = this->GetApplicationGUI();
 
             vtkMRMLSliceNode *sliceNode0 = appGUI->GetMainSliceGUI0()->GetLogic()->GetSliceNode();
@@ -1810,12 +1810,12 @@ void vtkNeuroNavGUI::UpdateAll()
             sliceNode1->SetSliceToRASByNTP( nx, ny, nz, tx, ty, tz, px, py, pz, 1);
             sliceNode2->SetSliceToRASByNTP( nx, ny, nz, tx, ty, tz, px, py, pz, 2);
 
-
+            *///appGUI->GetMainSliceGUI0()->GetSliceViewer()->GetRenderWidget()->Render();
             // update the display of locator
 #ifdef USE_OPENTRACKER
             this->OpenTrackerStream->SetLocatorTransforms();
 #endif
-            this->UpdateSliceDisplay(px, py, pz);
+            //this->UpdateSliceDisplay(px, py, pz);  // RSierra 3/9/07: This line is redundant. If you remove it the slice views are still updated. 
             this->UpdateLocator();
         }
 
@@ -1841,8 +1841,8 @@ void vtkNeuroNavGUI::UpdateLocator()
             //locatorActor->GetProperty()->SetColor(1, 0, 0);
 
             locatorActor->SetUserMatrix(transform->GetMatrix());
-            locatorActor->Modified();
-            this->GetMRMLScene()->Modified();
+            //locatorActor->Modified();  // RSierra 3/9/07 this and viewerWidget->Render() are reduntant
+            viewerWidget->Render();  // this->GetMRMLScene()->Modified();  // RSierra 3/9/07 replaced call to improve performance
         }
     }
 }

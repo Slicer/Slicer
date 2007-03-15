@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE OpenTracker SYSTEM "/home/hliu/projects/splot-build/opentracker/data/opentracker.dtd">
+<!DOCTYPE OpenTracker SYSTEM "/home/rsierra/Projects/NaviTrack/share/opentracker.dtd">
 
 <OpenTracker>
     <configuration>

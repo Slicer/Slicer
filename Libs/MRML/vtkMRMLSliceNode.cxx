@@ -319,7 +319,7 @@ void vtkMRMLSliceNode::UpdateMatrices()
       {
       this->XYToSlice->DeepCopy( xyToSlice );
       this->XYToRAS->DeepCopy( xyToRAS );
-      this->Modified();
+      this->Modified();  // RSierra 3/9/07 This triggesr the update on the windows. In the IGT module when the slices are updated by the tracker it might be better to trigger the update AFTER all positions are modified to synchoronously update what the user sees ...
       }
 
     xyToSlice->Delete();
