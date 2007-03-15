@@ -101,22 +101,36 @@ IF(USE_TEEM)
   INCLUDE(${TEEM_USE_FILE})
 ENDIF(USE_TEEM)
 
+
 #
 # OpenTracker 
 #
-OPTION(USE_OPENTRACKER "Need OpenTracker lib to build IGT Demo module." OFF)
+OPTION(USE_OPENTRACKER "Build Slicer3 with OpenTracker support." OFF)
+
 IF(USE_OPENTRACKER)
+  # version of opentracker: 1.3 or 2.0
+  # By default, use versin 1.3. If use 2.0, turn it off
+  OPTION(OT_VERSION_13 "Specify the opentracker version." ON)
+
   FIND_LIBRARY(OPENTRACKER_LIB 
-               NAMES NaviTrack
-               PATHS "/home/rsierra/Projects/NaviTrack/" 
-               )
+    NAMES opentrackerd opentracker OpenTracker NaviTrack
+    PATHS "" 
+  )
   IF(OPENTRACKER_LIB-NOTFOUND)
     MESSAGE (FATAL_ERROR "Need OpenTracker to build")
   ENDIF(OPENTRACKER_LIB-NOTFOUND)
 
-  FIND_PATH(OPENTRACKER_INC_DIR "OpenTracker/OpenTracker.h" 
-           "/home/rsierra/Projects/NaviTrack/include/" 
-           )
+  # include file for OpenTracker 1.3
+  IF(OT_VERSION_13)
+    SET(INC "OpenTracker.h")
+  # include file for OpenTracker 2.0 
+  ELSE(OT_VERSION_13)
+    SET(INC "OpenTracker/OpenTracker.h") 
+  ENDIF(OT_VERSION_13)
+  FIND_PATH(OPENTRACKER_INC_DIR "${INC}" 
+    ""
+  )
+
   IF(OPENTRACKER_INC_DIR-NOTFOUND)
     MESSAGE (FATAL_ERROR "Need OpenTracker.h to build")
   ENDIF(OPENTRACKER_INC_DIR-NOTFOUND)
