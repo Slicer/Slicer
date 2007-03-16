@@ -7,11 +7,15 @@ class vtkObject;
 class vtkCallbackCommand;
 class vtkWFEngineHandler;
 class vtkMRMLScene;
+class vtkMRMLFiducialListNode;
 
 class vtkWFEngineEventHandler : public vtkKWObject
 {
 public:
     static vtkWFEngineEventHandler *New();
+    
+    vtkTypeRevisionMacro ( vtkWFEngineEventHandler, vtkKWObject );
+    void PrintSelf ( ostream& os, vtkIndent indent );
     
     void AddWorkflowObservers(vtkWFEngineHandler *curModuleGUI);
         
@@ -21,6 +25,7 @@ public:
     
     void SetEventName(const char* name);
     void SetCurrentStepID(const char* id);
+
 protected:
     vtkWFEngineEventHandler();
     virtual ~vtkWFEngineEventHandler();
@@ -35,6 +40,8 @@ private:
     
     const char* m_id;
     const char* m_eventName;
+    
+    vtkMRMLFiducialListNode *m_fiducialList;
 };
 
 #endif /*VTKWFENGINEEVENTHANDLER_H_*/

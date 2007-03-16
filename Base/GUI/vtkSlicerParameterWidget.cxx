@@ -60,42 +60,61 @@ vtkStandardNewMacro( vtkSlicerParameterWidget );
 
 vtkSlicerParameterWidget::vtkSlicerParameterWidget()
 {
-    this->m_Created = false;
-    this->m_CurrentIndex = -1;
-    this->m_End = true;
-    this->m_InternalWidgetParamList = NULL;
     this->m_ModuleDescription = NULL;
     this->m_ModuleLogic = NULL;
     this->m_ParentWidget = NULL;
+    this->m_InternalWidgetParamList = NULL;
+    this->m_widgID = "";
     this->m_MRMLNode = NULL;
     
     this->m_paramToErrorMap = NULL;
-    this->m_widgID = "";
+    this->Initialize();
 }
 
 vtkSlicerParameterWidget::~vtkSlicerParameterWidget()
 {
+    if(this->m_paramToErrorMap)
+    {
+        this->m_paramToErrorMap->clear();
+        this->m_paramToErrorMap = NULL;
+    }
+    
+    this->DeleteInternalLists();
+    
+    this->m_ParentWidget = NULL;
+    this->m_ModuleDescription = NULL;
+    this->m_ModuleLogic = NULL;
 }
 
-void vtkSlicerParameterWidget::CreateWidgets()
+void vtkSlicerParameterWidget::Initialize()
 {
+    this->m_Created = false;
+    this->m_CurrentIndex = -1;
+    this->m_End = true;
+}
+
+int vtkSlicerParameterWidget::CreateWidgets()
+{
+    this->DeleteInternalLists();
+    this->Initialize();
+    
     if(!this->GetApplication())
     {
         std::cout<<"vtkSlicerParameterWidget: Application is not set!"<<std::endl;
-        return;
+        return ERR;
     }    
     vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
     
     if(!this->m_ModuleDescription)
     {
         std::cout<<"vtkSlicerParameterWidget: ModuleDescription is not set!"<<std::endl;
-        return;
+        return FAIL;
     }
     
     if(!this->GetMRMLNode())
     {
         std::cout<<"vtkSlicerParameterWidget: MRMLNode is not set!"<<std::endl;
-        return;
+        return ERR;
     }
     
     if(!this->m_ParentWidget)
@@ -104,14 +123,14 @@ void vtkSlicerParameterWidget::CreateWidgets()
         vtkKWWindowBase *parentWindows = this->GetApplication()->GetNthWindow(0);
         vtkKWWidget *parentWidget = parentWindows->GetViewFrame();
         if(!parentWidget)
-            return;
+            return ERR;
         else
             this->m_ParentWidget = parentWidget;
     }
     
     std::string title = this->m_ModuleDescription->GetTitle();
     
-    vtkSlicerParameterWidget::moduleParameterWidgetStruct *curModWidgetStruct;
+    vtkSlicerParameterWidget::moduleParameterWidgetStruct *curModWidgetStruct = NULL;
     
     this->m_InternalWidgetParamList = new std::vector<vtkSlicerParameterWidget::moduleParameterWidgetStruct*>;
 //    this->m_internalWidgetToParamMap = new std::map<vtkKWCoreWidget*, ModuleParameter>;
@@ -149,8 +168,6 @@ void vtkSlicerParameterWidget::CreateWidgets()
       // Store the parameter group frame in a SmartPointer
 //      (*this->InternalWidgetMap)[(*pgit).GetLabel()] = parameterGroupFrame;
         
-        parameterGroupFrame->Delete();
-      
         // iterate over each parameter in this group
         std::vector<ModuleParameter>::const_iterator pbeginit
             = (*pgit).GetParameters().begin();
@@ -521,13 +538,15 @@ void vtkSlicerParameterWidget::CreateWidgets()
             parameter->Delete();
         }                
         curModWidgetStruct->paramWidget = parameterGroupFrame;
-        this->m_InternalWidgetParamList->push_back(curModWidgetStruct);
+        this->m_InternalWidgetParamList->push_back(curModWidgetStruct);        
     }//for
     
     //Add all change Events
     
     this->m_Created = true;
     this->m_End = false;
+    
+    return SUCC;
 }
 
 vtkKWWidget *vtkSlicerParameterWidget::GetNextWidget()
@@ -626,89 +645,7 @@ vtkMRMLNode *vtkSlicerParameterWidget::GetMRMLNode()
 
 void vtkSlicerParameterWidget::AddGUIObservers()
 {
-//    this->GUIChangedCallbackCommand->SetClientData(NULL);    
-    
-//    std::map<vtkKWCoreWidget*, ModuleParameter>::iterator mapIter;
-//    for(mapIter = this->m_internalWidgetToParamMap->begin(); mapIter != this->m_internalWidgetToParamMap->end(); mapIter++)
-//    {
-////        vtkKWWidget *curWidg = this->m_ParentWidget->GetChildWidgetWithName((*mapIter).first.c_str());
-//        // Need to determine what type of widget we are using so we can
-//        // set the appropriate type of observer
-//        vtkKWSpinBoxWithLabel *sb = vtkKWSpinBoxWithLabel::SafeDownCast((*mapIter).first);
-//        vtkKWScaleWithEntry *se = vtkKWScaleWithEntry::SafeDownCast((*mapIter).first);
-//        vtkKWCheckButtonWithLabel *cb = vtkKWCheckButtonWithLabel::SafeDownCast((*mapIter).first);
-//        vtkKWEntryWithLabel *e = vtkKWEntryWithLabel::SafeDownCast((*mapIter).first);
-//        vtkSlicerNodeSelectorWidget *ns = vtkSlicerNodeSelectorWidget::SafeDownCast((*mapIter).first);
-//        vtkKWLoadSaveButtonWithLabel *lsb = vtkKWLoadSaveButtonWithLabel::SafeDownCast((*mapIter).first);
-//        vtkKWRadioButtonSetWithLabel *rbs = vtkKWRadioButtonSetWithLabel::SafeDownCast((*mapIter).first);
-//        
-//        //create the callbackCommand
-//        
-//        vtkCallbackCommand *GUIChangedCallbackCommand = vtkCallbackCommand::New();
-//        GUIChangedCallbackCommand->SetCallback(vtkSlicerParameterWidget::GUIChangedCallback);
-//        
-//        callBackDataStruct *cbStruct = new callBackDataStruct;
-//        //    cbStruct->curWidgetName = NULL;
-//        cbStruct->parentClass = this;
-//
-//        if (sb)
-//        {
-////            cbStruct->curWidget = sb->GetWidget();
-//            GUIChangedCallbackCommand->SetClientData(cbStruct);
-//            sb->GetWidget()->AddObserver(vtkKWSpinBox::SpinBoxValueChangedEvent,
-//                    (vtkCommand *) GUIChangedCallbackCommand);
-//        }
-//        else if (se)
-//        {
-////            cbStruct->curWidget = se;
-//            GUIChangedCallbackCommand->SetClientData(cbStruct);
-//            se->AddObserver(vtkKWScale::ScaleValueStartChangingEvent,
-//                    (vtkCommand *) GUIChangedCallbackCommand);
-//            se->AddObserver(vtkKWScale::ScaleValueChangedEvent,
-//                    (vtkCommand *) GUIChangedCallbackCommand);
-//        }
-//        else if (cb)
-//        {
-////            cbStruct->curWidget = cb->GetWidget();
-//            GUIChangedCallbackCommand->SetClientData(cbStruct);
-//            cb->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent,
-//                    (vtkCommand *) GUIChangedCallbackCommand);
-//        }
-//        else if (e)
-//        {
-////            cbStruct->curWidget = e->GetWidget();
-//            GUIChangedCallbackCommand->SetClientData(cbStruct);
-//            e->GetWidget()->AddObserver(vtkKWEntry::EntryValueChangedEvent,
-//                    (vtkCommand *) GUIChangedCallbackCommand);
-//        }
-//        else if (ns)
-//        {
-////            cbStruct->curWidget = ns;
-//            GUIChangedCallbackCommand->SetClientData(cbStruct);
-//            ns->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent,
-//                    (vtkCommand *) GUIChangedCallbackCommand);
-//        }
-//        else if (lsb)
-//        {
-////            cbStruct->curWidget = lsb->GetWidget();
-//            GUIChangedCallbackCommand->SetClientData(cbStruct);
-//            lsb->GetWidget()->AddObserver(vtkKWPushButton::InvokedEvent,
-//                    (vtkCommand *) GUIChangedCallbackCommand);
-//        }
-//        else if (rbs)
-//        {
-//            int num = rbs->GetWidget()->GetNumberOfWidgets();
-//            for (int i=0; i < num; ++i)
-//            {
-//                int id = rbs->GetWidget()->GetIdOfNthWidget(i);
-//                vtkKWRadioButton* rb = rbs->GetWidget()->GetWidget(id);
-////                cbStruct->curWidget= rb;
-//                GUIChangedCallbackCommand->SetClientData(cbStruct);
-//                rb->AddObserver(vtkKWRadioButton::SelectedStateChangedEvent,
-//                        (vtkCommand *) GUIChangedCallbackCommand);
-//            }
-//        }
-//    }//for
+
 }
 
 void vtkSlicerParameterWidget::AddParameterAndEventToWidget(vtkKWCoreWidget *parentWidget, ModuleParameter widgetParameter)
@@ -773,7 +710,13 @@ void vtkSlicerParameterWidget::AddParameterAndEventToWidget(vtkKWCoreWidget *par
             rb->AddObserver(vtkKWRadioButton::SelectedStateChangedEvent,
                     (vtkCommand *) GUIChangedCallbackCommand);
         }
-    }        
+    }
+    
+    if(GUIChangedCallbackCommand)
+    {
+        GUIChangedCallbackCommand->Delete();
+        GUIChangedCallbackCommand = NULL;
+    }
 }
 
 void vtkSlicerParameterWidget::GUIChangedCallback(vtkObject *__caller, unsigned long eid, void *__clientData, void *callData)
@@ -787,39 +730,15 @@ void vtkSlicerParameterWidget::GUIChangedCallback(vtkObject *__caller, unsigned 
         return;
     }
     
-//    vtkSlicerParameterWidget::ParameterWidgetChangedStruct *eventStruct = new vtkSlicerParameterWidget::ParameterWidgetChangedStruct;
-//    eventStruct->inputWidget = (vtkKWWidget*)__caller;
-//    eventStruct->widgetParameter = myCBStruct.widgetParameter;
-//    
     if(myCBStruct->parentClass->GetMRMLNode())
     {
         std::string name = myCBStruct->widgetParameter.GetName();
         const char * value = myCBStruct->parentClass->GetValueFromWidget((vtkKWWidget*)__caller);
         //try to downcast to vtkMRMLWFEngineModuleNode to access their setAttribute directly
         std::cout<<"GUIChangeCallback - name: "<<name<<" value: "<<value<<std::endl;
-        myCBStruct->parentClass->GetMRMLNode()->SetAttribute(myCBStruct->parentClass->GetAttributeName(name), value);   
+        myCBStruct->parentClass->GetMRMLNode()->SetAttribute(myCBStruct->parentClass->GetAttributeName(name), value);
+        myCBStruct->parentClass->InvokeEvent(vtkSlicerParameterWidget::ParameterWidgetChangedEvent, NULL);
     }    
-    
-//    myCBStruct->parentClass->InvokeEvent(vtkSlicerParameterWidget::ParameterWidgetChangedEvent, eventStruct);
-//    
-//    std::map<vtkKWCoreWidget*, ModuleParameter>::iterator iter;
-//    int i = 0;
-//    for(iter = myCBStruct->parentClass->m_internalWidgetToParamMap->begin(); iter != myCBStruct->parentClass->m_internalWidgetToParamMap->end(); iter++)
-//    {
-//        std::cout<<(*iter).first->GetWidgetName()<<" == "<<myCBStruct->curWidget->GetWidgetName()<<std::endl;
-//        if(strcmp((*iter).first->GetWidgetName(), myCBStruct->curWidget->GetWidgetName()) == 0)
-//        {
-//            std::cout<<"Widget found: "<<i<<std::endl;
-//            ModuleParameter curInternalParam = (*iter).second;
-//            break;
-//        }        
-//        i++;
-//    }
-//    std::cout<<myCBStruct->parentClass->m_internalWidgetToParamMap->size()<<std::endl;
-    
-//    ModuleParameter* curParam = &((*iter).second);
-    
-//    myCBStruct->parentClass->InvokeEvent(myCBStruct->parentClass->ParameterWidgetChangedEvent, curParam);
 }
 
 const char *vtkSlicerParameterWidget::GetValueFromWidget(vtkKWWidget *widg)
@@ -1033,4 +952,41 @@ std::string vtkSlicerParameterWidget::GetErrorByParamName(std::string name)
     }
     
     return "";
+}
+
+void vtkSlicerParameterWidget::DeleteInternalLists()
+{
+    std::cout<<"vtkSlicerParameterWidget::DeleteInternalLists"<<std::endl;
+    
+    if(this->m_InternalWidgetParamList)
+    {
+        std::vector<vtkSlicerParameterWidget::moduleParameterWidgetStruct*>::iterator iter;
+        std::cout<<"m_InternalWidgetParamList.size()"<<std::endl;
+        std::cout<<m_InternalWidgetParamList->size()<<std::endl;
+        for(iter = this->m_InternalWidgetParamList->begin(); iter != this->m_InternalWidgetParamList->end(); iter++)
+        {
+            moduleParameterWidgetStruct *curModuleStruct = (moduleParameterWidgetStruct*)(*iter);
+            if(curModuleStruct->paramWidget)
+            {
+                vtkKWFrame *paramFrame = vtkKWFrame::SafeDownCast(curModuleStruct->paramWidget);
+                if(paramFrame)
+                {
+                    std::cout<<"VTKKWFRAME Delete!"<<std::endl;
+                    paramFrame->Delete();
+                } else {
+                  std::cout<<"WARNING: vtkSlicerParameterWidget - try to delete unsupported Widget; return \"\""<<std::endl;        
+                  return;
+                }
+                curModuleStruct->paramWidget = NULL;
+            }
+            if(curModuleStruct->modParams)
+            {
+                curModuleStruct->modParams->clear();
+                curModuleStruct->modParams = NULL;
+            }                       
+        }
+        
+        this->m_InternalWidgetParamList->clear();
+        this->m_InternalWidgetParamList = NULL;
+    }  
 }

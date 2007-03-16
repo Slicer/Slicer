@@ -11,12 +11,21 @@ WFStepObject::WFStepObject()
 
 WFStepObject::~WFStepObject()
 {
-    
+    this->m_nextSteps.clear();
+    this->m_varMap.clear();
+    this->m_ID = "";
+    this->m_name = "";
+    this->m_wfDesc = "";
 }
 
 WFStepObject *WFStepObject::New()
 {
     return new WFStepObject();
+}
+
+void WFStepObject::Destroy()
+{
+    delete(this);
 }
 
 void WFStepObject::SetID(std::string &ID)

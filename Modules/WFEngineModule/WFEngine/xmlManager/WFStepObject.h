@@ -44,6 +44,8 @@ namespace WFEngine
             
             std::vector<variablePropertyStruct*>* GetAllEvents();
             
+            void Destroy();
+            
         protected:
             WFStepObject();
             virtual ~WFStepObject();

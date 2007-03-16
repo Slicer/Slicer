@@ -9,10 +9,8 @@ using namespace WFEngine::nmWFStepObject;
 
 WFStateConverter::WFStateConverter()
 {
-    this->m_isLoaded = false;
-    this->m_KWInput = NULL;
-    this->m_KWState = NULL;
-    this->m_KWTransition = NULL;
+    this->m_isLoaded = false;    
+    this->m_KWState = NULL;    
     this->m_KWWizardStep = NULL;
 }
 
@@ -25,6 +23,19 @@ WFStateConverter::WFStateConverter(WFStepObject *wfStep)
 
 WFStateConverter::~WFStateConverter()
 {
+    if(this->m_KWState)
+    {
+        this->m_KWState->Delete();
+        this->m_KWState = NULL;
+    }
+    
+    if(this->m_KWWizardStep)
+    {
+        this->m_KWWizardStep->Delete();
+        this->m_KWWizardStep = NULL;
+    }
+    
+    this->m_isLoaded = false;
 }
 
 void WFStateConverter::ConvertWFStep(WFStepObject *wfStep)
@@ -83,6 +94,11 @@ vtkKWWizardStep *WFStateConverter::GetKWWizardStep()
 bool WFStateConverter::IsLoaded()
 {
     return this->m_isLoaded;
+}
+
+void WFStateConverter::Destroy()
+{
+    delete(this);
 }
 
 //vtkKWStateMachineState *WFStateConverter::YAWL2KWState(WFStepObject *wfState)

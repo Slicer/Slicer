@@ -20,6 +20,7 @@ vtkKWMyWizardWorkflow::vtkKWMyWizardWorkflow()
 
 vtkKWMyWizardWorkflow::~vtkKWMyWizardWorkflow()
 {
+    this->RemoveAllObservers();
 }
 
 vtkKWWizardWorkflow *vtkKWMyWizardWorkflow::GetWizardWorkflow()
@@ -58,11 +59,13 @@ int vtkKWMyWizardWorkflow::CreateBackTransition(vtkKWWizardStep *origin, vtkKWWi
       
         std::cout<<"BackTransition Callbacks"<<std::endl;
         
-        vtkCallbackCommand *transCB = vtkCallbackCommand::New();
-//        transCB->SetClientData(this);
-        transCB->SetCallback(&vtkKWMyWizardWorkflow::backTransitionStartEventCB);
-        transition->AddObserver(vtkKWStateMachineTransition::StartEvent, transCB);
-        
+//        vtkCallbackCommand *transCB = vtkCallbackCommand::New();
+////        transCB->SetClientData(this);
+//        transCB->SetCallback(&vtkKWMyWizardWorkflow::backTransitionStartEventCB);
+//        transition->AddObserver(vtkKWStateMachineTransition::StartEvent, transCB);
+//        
+//        transCB->Delete();
+//        transCB = NULL;
 //        transCB = vtkCallbackCommand::New();
 //        transCB->SetClientData(this);
 //        transCB->SetCallback(&vtkKWMyWizardWorkflow::backTransitionEndEventCB);
@@ -99,11 +102,13 @@ int vtkKWMyWizardWorkflow::CreateNextTransition(
     
     std::cout<<"NextTransition Callbacks"<<std::endl;
     
-    vtkCallbackCommand *transCB = vtkCallbackCommand::New();
-//    transCB->SetClientData(this);
-    transCB->SetCallback(&vtkKWMyWizardWorkflow::nextTransitionStartEventCB);
-    transition->AddObserver(vtkKWStateMachineTransition::StartEvent, transCB);
-    
+//    vtkCallbackCommand *transCB = vtkCallbackCommand::New();
+////    transCB->SetClientData(this);
+//    transCB->SetCallback(&vtkKWMyWizardWorkflow::nextTransitionStartEventCB);
+//    transition->AddObserver(vtkKWStateMachineTransition::StartEvent, transCB);
+//    
+//    transCB->Delete();
+//    transCB = NULL;
 //    transCB = vtkCallbackCommand::New();
 //    transCB->SetClientData(this);
 //    transCB->SetCallback(&vtkKWMyWizardWorkflow::nextTransitionEndEventCB);

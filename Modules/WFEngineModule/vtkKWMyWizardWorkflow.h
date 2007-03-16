@@ -19,7 +19,6 @@ public:
     int CreateBackTransition(vtkKWWizardStep *origin, vtkKWWizardStep *destination);
     
     int CreateNextTransition(vtkKWWizardStep *origin, vtkKWStateMachineInput *next_input, vtkKWWizardStep *destination);
-    
     //BTX
 //    enum{
 //        nextTransitionStartEvent = 10000,

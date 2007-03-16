@@ -6,8 +6,6 @@
 using namespace WFEngine::nmWFStepObject;
 
 class vtkKWStateMachineState;
-class vtkKWStateMachineInput;
-class vtkKWStateMachineTransition;
 class vtkKWWizardStep;
 
 class WFStateConverter
@@ -19,26 +17,22 @@ public:
 //    static vtkKWStateMachineState *YAWL2KWState(WFEngine::nmWFStepObject::WFStepObject *yawlState);
 //    static WFStepObject *KWState2YAWL(vtkKWStateMachineState *kwState);
     vtkKWStateMachineState *GetKWState();
-    vtkKWStateMachineInput *GetKWInput();
-    vtkKWStateMachineTransition *GetKWTransition();
     
     vtkKWWizardStep *GetKWWizardStep();
     
     void ConvertWFStep(WFStepObject *wfStep);
     
     bool IsLoaded();
+    
+    void Destroy();
 protected:
     virtual ~WFStateConverter();
     
     vtkKWStateMachineState *createKWState(WFStepObject *wfStep);
-    vtkKWStateMachineInput *createKWInput(WFStepObject *wfStep);
-    vtkKWStateMachineInput *createKWTransition(WFStepObject *wfStep);
     vtkKWWizardStep *createKWWizardStep(WFStepObject *wfStep);
 private:
     bool m_isLoaded;
     vtkKWStateMachineState *m_KWState;
-    vtkKWStateMachineInput *m_KWInput;
-    vtkKWStateMachineInput *m_KWTransition;
     vtkKWWizardStep *m_KWWizardStep;
 };
 

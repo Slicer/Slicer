@@ -35,8 +35,6 @@ public:
     
     void UpdateNavigationGUI();
     
-    virtual void Delete();
-    
     vtkKWProgressGauge *ProgressGauge;
     vtkKWComboBoxWithLabel *ComboBox;
     
@@ -63,6 +61,7 @@ private:
     
     int m_numberOfUnprocessedSteps;
     int m_numberOfProcessedSteps;
+    int m_currentSelectedIndex;
     
     //BTX
     std::map<int, vtkKWWizardStep*> *m_itemToStepMap;    

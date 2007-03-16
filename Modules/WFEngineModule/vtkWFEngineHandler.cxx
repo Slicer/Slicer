@@ -19,10 +19,33 @@ vtkWFEngineHandler::vtkWFEngineHandler()
     
     this->m_curModuleDescription = NULL;
     this->m_curWFStepObject = NULL;
+    this->m_wfDI = NULL;
 }
 
 vtkWFEngineHandler::~vtkWFEngineHandler()
 {
+    if(this->m_curModuleDescription)
+    {
+        delete(this->m_curModuleDescription);
+        this->m_curModuleDescription = NULL;
+    }
+    
+    if(this->m_curWFStepObject)
+    {
+        this->m_curWFStepObject->Destroy();
+        this->m_curWFStepObject = NULL;
+    }
+    
+    this->m_errorMSG = "";
+        
+    this->m_validationFuncTCL = NULL;
+    this->m_nextStepFuncTCL = NULL;
+    
+    if(this->m_wfDI)
+    {
+        this->CloseWorkflowSession();
+        this->m_wfDI = NULL;
+    }
 }
 
 int vtkWFEngineHandler::InitializeWFEngine()

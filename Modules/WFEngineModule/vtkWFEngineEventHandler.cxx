@@ -11,12 +11,20 @@
 #include <string>
 #include <sstream>
 
+//---------------------------------------------------------------------------
+vtkStandardNewMacro (vtkWFEngineEventHandler );
+vtkCxxRevisionMacro ( vtkWFEngineEventHandler, "$Revision: 1.0 $");
+
+
+//---------------------------------------------------------------------------
+
 vtkWFEngineEventHandler::vtkWFEngineEventHandler()
 {
     this->m_workflowCB = NULL;
     this->m_mrmlScene = NULL;
     this->m_id = NULL;
     this->m_eventName = NULL;
+    this->m_fiducialList = NULL;
 }
 
 vtkWFEngineEventHandler::~vtkWFEngineEventHandler()
@@ -27,12 +35,24 @@ vtkWFEngineEventHandler::~vtkWFEngineEventHandler()
         this->m_workflowCB = NULL;
     }
     
+    this->m_eventName = NULL;
+    this->m_id = NULL;    
     this->m_mrmlScene = NULL;
+    
+    if(this->m_fiducialList)
+    {
+        this->m_fiducialList->Delete();
+        this->m_fiducialList = NULL;
+    }
 }
 
-vtkWFEngineEventHandler *vtkWFEngineEventHandler::New()
+//---------------------------------------------------------------------------
+void vtkWFEngineEventHandler::PrintSelf ( ostream& os, vtkIndent indent )
 {
-    return new vtkWFEngineEventHandler;
+    this->vtkObject::PrintSelf ( os, indent );
+
+    os << indent << "vtkWFEngineEventHandler: " << this->GetClassName ( ) << "\n";    
+
 }
 
 void vtkWFEngineEventHandler::ProcessWorkflowLeaveEvents(vtkObject *caller, unsigned long event, void *callData, void *clientData)
@@ -70,32 +90,28 @@ void vtkWFEngineEventHandler::ProcessWorkflowLeaveEvents(vtkObject *caller, unsi
                     const char* fidYValue = wfEngineModuleNode->GetAttribute(fidYParameter.c_str());
                     const char* fidZValue = wfEngineModuleNode->GetAttribute(fidZParameter.c_str());
                     
-                    // is there one list?
-                    vtkMRMLFiducialListNode *activeFiducialListNode = NULL;
-                    vtkMRMLNode *node = curWFEventHandler->m_mrmlScene->GetNextNodeByClass("vtkMRMLFiducialListNode");
-                    if (node == NULL)
-                    {
-                        std::cerr << "ERROR: No Fiducial List, adding one first!\n";                    
-                        vtkMRMLNode *newList = curWFEventHandler->m_mrmlScene->CreateNodeByClass("vtkMRMLFiducialListNode");      
-                        if (newList != NULL)
-                        {
-                            curWFEventHandler->m_mrmlScene->AddNode(newList);
-                            activeFiducialListNode = vtkMRMLFiducialListNode::SafeDownCast(newList);
-    //                        newList->Delete();
-                        }              
-                    }
-                    else
-                    {
-                        activeFiducialListNode = vtkMRMLFiducialListNode::SafeDownCast(node);
+                    if(curWFEventHandler->m_fiducialList == NULL)
+                    {              
+                        vtkMRMLNode *node = curWFEventHandler->m_mrmlScene->GetNextNodeByClass("vtkMRMLFiducialListNode");
+                        if (node == NULL) {
+                            std::cerr << "ERROR: No Fiducial List, adding one first!\n";
+                            vtkMRMLNode
+                                    *newList = curWFEventHandler->m_mrmlScene->CreateNodeByClass("vtkMRMLFiducialListNode");
+                            if (newList != NULL) {
+                                curWFEventHandler->m_mrmlScene->AddNode(newList);
+                                curWFEventHandler->m_fiducialList = vtkMRMLFiducialListNode::SafeDownCast(newList);
+                                //                        newList->Delete();
+                            }
+                        }
                     }
                     
-                    if(activeFiducialListNode)
+                    if(curWFEventHandler->m_fiducialList)
                     {
                         int fidID;
-                        fidID = activeFiducialListNode->AddFiducial();
+                        fidID = curWFEventHandler->m_fiducialList->AddFiducial();
                         if(fidNameValue)
                         {
-                            activeFiducialListNode->SetNthFiducialLabelText(fidID, fidNameValue);   
+                            curWFEventHandler->m_fiducialList->SetNthFiducialLabelText(fidID, fidNameValue);   
                         }                        
                         if(fidXValue && fidYValue && fidZValue)
                         {
@@ -117,7 +133,7 @@ void vtkWFEngineEventHandler::ProcessWorkflowLeaveEvents(vtkObject *caller, unsi
                             sz >> z;
                                     
                             
-                            activeFiducialListNode->SetNthFiducialXYZ(fidID, x, y, z);
+                            curWFEventHandler->m_fiducialList->SetNthFiducialXYZ(fidID, x, y, z);
                         }
                     }                                
                 }
@@ -136,7 +152,10 @@ void vtkWFEngineEventHandler::AddWorkflowObservers(vtkWFEngineHandler *curWFHand
     if(curWFHandler)
     {
         curWFHandler->AddObserver(vtkWFEngineHandler::WorkflowStepLeaveEvent, this->m_workflowCB);
-    }          
+    }
+    
+    m_workflowCB->Delete();
+    m_workflowCB = NULL;
 }
 
 void vtkWFEngineEventHandler::SetMRMLScene(vtkMRMLScene *scene)

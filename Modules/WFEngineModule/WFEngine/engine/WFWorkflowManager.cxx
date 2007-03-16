@@ -101,9 +101,9 @@ WFStepObject *WFWorkflowManager::GetPreviousWFStep()
 
 WFStepObject *WFWorkflowManager::GetNthWFStep(int pos)
 {
-    if(this->m_workSteps.size() > pos && pos > 0)
+    if(this->m_workSteps.size() > pos && pos >= 0)
     {
-        this->m_curPos = pos - 1;
+        this->m_curPos = pos;
         return this->m_workSteps[this->m_curPos];
     }
     this->m_curPos = -1;
@@ -126,7 +126,8 @@ WFStepObject *WFWorkflowManager::GetWFStepByID(std::string ID)
 int WFWorkflowManager::getNumberOfProcessedSteps()
 {
     //std::cout<<"getNumberOfProcessedSteps: "<<m_workSteps.size()<<std::endl;
-    return this->m_curPos + 1;
+//    return this->m_curPos + 1;
+    return this->m_workSteps.size();
 }
 //
 //int WFWorkflowManager::GetNumberOfUnprocessedSteps()

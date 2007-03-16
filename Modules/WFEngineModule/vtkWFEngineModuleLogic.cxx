@@ -48,7 +48,11 @@ vtkWFEngineModuleLogic::vtkWFEngineModuleLogic()
 //----------------------------------------------------------------------------
 vtkWFEngineModuleLogic::~vtkWFEngineModuleLogic()
 {
-  this->SetWFEngineModuleNode(NULL);
+    if(this->WFEngineModuleNode)
+    {
+        this->WFEngineModuleNode->Delete();
+        this->SetWFEngineModuleNode(NULL);
+    }  
 }
 
 

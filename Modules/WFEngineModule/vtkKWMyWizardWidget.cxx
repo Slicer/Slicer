@@ -64,11 +64,36 @@ vtkKWMyWizardWidget::vtkKWMyWizardWidget()
     this->ProgressGauge = NULL;
     this->ComboBox = NULL;
     
-    this->m_itemToStepMap = NULL;    
+    this->m_itemToStepMap = NULL;
+    
+    this->m_currentSelectedIndex = -1;
+    this->m_numberOfProcessedSteps = -1;
+    this->m_numberOfUnprocessedSteps = -1;
 }
 
 vtkKWMyWizardWidget::~vtkKWMyWizardWidget()
 {
+    this->RemoveAllObservers();
+    
+    if(this->ProgressGauge)
+    {
+        this->ProgressGauge->Delete();
+        this->ProgressGauge = NULL;
+    }
+    
+    if(this->ComboBox)
+    {        
+        this->ComboBox->Delete();
+        this->ComboBox = NULL;
+    }
+    
+    if(this->m_itemToStepMap)
+    {
+        this->m_itemToStepMap->clear();
+        this->m_itemToStepMap = NULL;
+    }
+    
+    
 }
 
 vtkKWWizardWorkflow *vtkKWMyWizardWidget::GetWizardWorkflow()
@@ -195,6 +220,18 @@ void vtkKWMyWizardWidget::CreateWidget()
   {
       this->m_itemToStepMap = new std::map<int, vtkKWWizardStep*>;
   }
+  
+  curColor->Delete();
+  curColor = NULL;
+  
+  nextBtnClicked->Delete();
+  nextBtnClicked = NULL;
+  
+  backBtnClicked->Delete();
+  backBtnClicked = NULL;
+  
+  navStackChanged->Delete();
+  navStackChanged = NULL;
     
 }
 
@@ -214,6 +251,7 @@ void vtkKWMyWizardWidget::BackButtonClicked(vtkObject* obj, unsigned long,void* 
     vtkKWMyWizardWidget *myWizWidg = (vtkKWMyWizardWidget*)callbackData;
     if(myWizWidg)
     {
+        myWizWidg->m_currentSelectedIndex--;
         myWizWidg->InvokeEvent(vtkKWMyWizardWidget::backButtonClicked);
     }    
 }
@@ -236,7 +274,15 @@ void vtkKWMyWizardWidget::SetNumberOfUnprocessedSteps(int steps)
 
 void vtkKWMyWizardWidget::SetNumberOfProcessedSteps(int steps)
 {
+    if(steps < this->m_numberOfProcessedSteps && this->ComboBox)
+    {       
+        for(int i = steps + 1; i < this->m_numberOfProcessedSteps; i++)
+        {
+            this->ComboBox->GetWidget()->DeleteValue(i);
+        }
+    }
     this->m_numberOfProcessedSteps = steps;
+    this->m_currentSelectedIndex = steps;
 }
 
 void vtkKWMyWizardWidget::UpdateNavigationGUI()
@@ -254,7 +300,7 @@ void vtkKWMyWizardWidget::UpdateNavigationGUI()
     {
         // subtract 2 from the actual navigation stack because of the intial and last step
         int stepAmount = this->m_numberOfUnprocessedSteps + this->m_numberOfProcessedSteps;
-        int processedSteps = this->m_numberOfProcessedSteps;
+        int processedSteps = this->m_currentSelectedIndex;
         percent = (processedSteps * 100 / stepAmount);        
     }
             
@@ -266,11 +312,11 @@ void vtkKWMyWizardWidget::UpdateNavigationGUI()
     bool found = false;
     int selectedIndex = 0;
     
-    std::cout<<this->m_numberOfProcessedSteps + 1 <<" < "<<this->ComboBox->GetWidget()->GetNumberOfValues()<<std::endl;
-    if(this->m_numberOfProcessedSteps < this->ComboBox->GetWidget()->GetNumberOfValues())
+    std::cout<<this->m_currentSelectedIndex + 1 <<" < "<<this->ComboBox->GetWidget()->GetNumberOfValues()<<std::endl;
+    if(this->m_currentSelectedIndex < this->ComboBox->GetWidget()->GetNumberOfValues())
     {
             found = true;
-            selectedIndex = this->m_numberOfProcessedSteps;
+            selectedIndex = this->m_currentSelectedIndex;
     }    
     
     if(!found)
@@ -292,33 +338,34 @@ void vtkKWMyWizardWidget::UpdateNavigationGUI()
     this->ComboBox->GetWidget()->SetValue(temp.c_str());
 }
 
-void vtkKWMyWizardWidget::Delete()
-{
-    if(this->ProgressGauge)
-    {
-        this->ProgressGauge->Unpack();
-        this->ProgressGauge->Delete();
-        this->ProgressGauge = NULL;
-    }
-    
-    if(this->ComboBox)
-    {
-        this->ComboBox->Unpack();
-        this->ComboBox->Delete();
-        this->ComboBox = NULL;
-    }
-    
-    this->Superclass::Delete();
-}
-
 void vtkKWMyWizardWidget::ComboBoxEntryChanged(const char* value)
 {
+    this->m_currentSelectedIndex = this->GetCurrentComboBoxIndex();
     this->InvokeEvent(vtkKWMyWizardWidget::comboBoxEntryChanged);    
 }
 
 void vtkKWMyWizardWidget::RemoveAllObservers()
 {
+    if(this->ComboBox)
+    {
+        this->ComboBox->GetWidget()->RemoveAllObservers();
+        this->ComboBox->GetWidget()->SetCommand(NULL, NULL);
+    }
     
+    if(this->BackButton)
+    {
+        this->BackButton->RemoveAllObservers();
+    }
+    
+    if(this->NextButton)
+    {
+        this->NextButton->RemoveAllObservers();
+    }
+    
+    if(this->WizardWorkflow)
+    {
+        this->WizardWorkflow->RemoveAllObservers();
+    }
 }
 
 const char* vtkKWMyWizardWidget::GetCurrentComboBoxValue()
