@@ -22,8 +22,8 @@ if {0} { ;# comment
 
 
 # 
-# utility to only delete an instance if it hasn't already been deleted
-# (this is useful in event handling)
+# utility to bring up the current window or create a new one
+# - optional path is added to dialog
 #
 namespace eval Loader {
   proc ShowDialog { {path ""} } {
@@ -237,6 +237,10 @@ itcl::body Loader::addRow { path type } {
 
 # add a new archetype or directory to the list box
 # - does a search of the path for volumes and models
+# TODO: add a recursion counter and offer a dialog box
+#       allowing user to cancel out if too many directories
+#       are being added
+#
 itcl::body Loader::add { path } {
 
   set ext [string tolower [file extension $path]]
@@ -255,6 +259,8 @@ itcl::body Loader::add { path } {
       ::vfs::zip::Mount $path /zipfile
       file copy -force /zipfile $tmp
       $this add $tmp
+      # TODO: best way to clean up after read?  Perhaps keeping a list here
+      # that will be cleared after apply or cancel...
     }
   }
 

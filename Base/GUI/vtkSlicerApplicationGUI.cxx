@@ -360,6 +360,12 @@ void vtkSlicerApplicationGUI::ProcessImportSceneCommand()
     return;
 }
 
+//---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::ProcessAddDataCommand()
+{
+  this->GetApplication()->Script("::Loader::ShowDialog");
+}
+
 
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::ProcessCloseSceneCommand()
@@ -704,6 +710,10 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
             this->GetMainSlicerWindow()->GetFileMenu()->InsertCommand (
                       this->GetMainSlicerWindow()->GetFileMenuInsertPosition(),
                                       "Import Scene...", this, "ProcessImportSceneCommand");
+
+            this->GetMainSlicerWindow()->GetFileMenu()->InsertCommand (
+                      this->GetMainSlicerWindow()->GetFileMenuInsertPosition(),
+                                      "Add Data...", this, "ProcessAddDataCommand");
 
             this->GetMainSlicerWindow()->GetFileMenu()->InsertCommand (this->GetMainSlicerWindow()->GetFileMenuInsertPosition(),
                                                "Save", this, "ProcessSaveSceneAsCommand");
