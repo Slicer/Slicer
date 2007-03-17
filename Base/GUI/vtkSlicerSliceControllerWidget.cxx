@@ -966,7 +966,7 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
   if ( this->OffsetScale->GetWidget() == vtkKWScale::SafeDownCast( caller ) &&
           event == vtkKWScale::ScaleValueStartChangingEvent )
     {
-    // set an undo state when the scale starts being drag    this->ged
+    // set an undo state when the scale starts being dragged
     this->MRMLScene->SaveStateForUndo( this->SliceNode );
     }
   else if ( scale == this->LabelOpacityScale->GetWidget() && event == vtkKWScale::ScaleValueStartChangingEvent )
