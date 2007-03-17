@@ -1782,6 +1782,7 @@ int Slicer3_main(int argc, char *argv[])
     
 
     //--- scene next;
+    scene->Clear(1);
     scene->Delete ();
 
     //--- application last

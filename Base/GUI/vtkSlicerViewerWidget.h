@@ -194,6 +194,7 @@ protected:
   void RemoveModelProps();
 
   void RemoveModelObservers();
+  void RemoveModelObservers( vtkMRMLModelNode *model);
 
   void UpdateModelsFromMRML();
   void UpdateModel(vtkMRMLModelNode *model);
@@ -216,6 +217,8 @@ protected:
 
   //BTX
   std::map<const char *, vtkActor *> DisplayedModels;
+
+  std::map<std::string, vtkMRMLModelNode *> DisplayedModelNodes;
 
   std::map<const char *, int> DisplayedModelsClipState;
 

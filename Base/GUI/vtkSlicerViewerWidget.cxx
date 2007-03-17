@@ -843,7 +843,9 @@ void vtkSlicerViewerWidget::UpdateModelsFromMRML()
   if (clearDisplayedModels)
     {
     this->MainViewer->RemoveAllViewProps();
+    this->RemoveModelObservers();
     this->DisplayedModels.clear();
+    this->DisplayedModelNodes.clear();
     this->AddAxisActors();
     }
 
@@ -930,6 +932,7 @@ void vtkSlicerViewerWidget::UpdateModelPolyData(vtkMRMLModelNode *model)
     {
     this->MainViewer->AddViewProp( actor );
     this->DisplayedModels[model->GetID()] = actor;
+    this->DisplayedModelNodes[std::string(model->GetID())] = model;
     actor->Delete();
     }
 
@@ -1065,6 +1068,7 @@ void vtkSlicerViewerWidget::Render()
 void vtkSlicerViewerWidget::RemoveModelProps()
 {
   std::map<const char *, vtkActor *>::iterator iter;
+  std::map<std::string, vtkMRMLModelNode *>::iterator modelIter;
   std::map<const char *, int>::iterator clipIter;
   std::vector<const char *> removedIDs;
   for(iter=this->DisplayedModels.begin(); iter != this->DisplayedModels.end(); iter++) 
@@ -1103,8 +1107,13 @@ void vtkSlicerViewerWidget::RemoveModelProps()
     {
     this->DisplayedModels.erase(removedIDs[i]);
     this->DisplayedModelsClipState.erase(removedIDs[i]);
+    modelIter = this->DisplayedModelNodes.find(std::string(removedIDs[i]));
+    if(modelIter != this->DisplayedModelNodes.end())
+      {
+      this->RemoveModelObservers(modelIter->second);
+      this->DisplayedModelNodes.erase(modelIter->first);
+      }
     }
-  
 }
 
 
@@ -1123,6 +1132,7 @@ void vtkSlicerViewerWidget::RemoveMRMLObservers()
 void vtkSlicerViewerWidget::RemoveModelObservers()
 {
   std::map<const char *, vtkActor *>::iterator iter;
+  std::map<std::string, vtkMRMLModelNode *>::iterator modelIter;
   for(iter=this->DisplayedModels.begin(); iter != this->DisplayedModels.end(); iter++) 
     {
     vtkMRMLModelNode *model = vtkMRMLModelNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(iter->first));
@@ -1132,6 +1142,24 @@ void vtkSlicerViewerWidget::RemoveModelObservers()
       model->RemoveObservers ( vtkMRMLModelNode::DisplayModifiedEvent, this->MRMLCallbackCommand );
       model->RemoveObservers ( vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand );
       }
+    modelIter = this->DisplayedModelNodes.find(std::string(iter->first));
+    if(modelIter != this->DisplayedModelNodes.end())
+      {
+      this->RemoveModelObservers(modelIter->second);
+      this->DisplayedModelNodes.erase(modelIter->first);
+      }
+    }
+
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewerWidget::RemoveModelObservers( vtkMRMLModelNode *model)
+{
+  if (model != NULL)
+    {
+    model->RemoveObservers ( vtkMRMLModelNode::PolyDataModifiedEvent, this->MRMLCallbackCommand );
+    model->RemoveObservers ( vtkMRMLModelNode::DisplayModifiedEvent, this->MRMLCallbackCommand );
+    model->RemoveObservers ( vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand );
     }
 }
 
