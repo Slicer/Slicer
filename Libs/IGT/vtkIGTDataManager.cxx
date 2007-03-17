@@ -48,6 +48,7 @@ const char *vtkIGTDataManager::RegisterStream(int streamType)
             sprintf(name, "igt_matrix_%d", index);
 
             modelNode->SetName(name);
+            modelNode->SetHideFromEditors(1);
             modelNode->SetScene(this->MRMLScene);
             modelNode->SetAndObserveDisplayNodeID(dispNode->GetID());  
             id = std::string(modelNode->GetID());
