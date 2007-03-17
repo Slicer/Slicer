@@ -48,7 +48,7 @@ class ReadDataRequest
 {
 public:
   ReadDataRequest(const std::string& node, const std::string& filename,
-                  bool displayData, bool deleteFile)
+                  int displayData, int deleteFile)
     {
       m_Node = node;
       m_Filename = filename;
@@ -56,8 +56,8 @@ public:
       m_DeleteFile = deleteFile;
     }
 
-  ReadDataRequest(const char *node, const char *filename, bool displayData,
-                  bool deleteFile)
+  ReadDataRequest(const char *node, const char *filename, int displayData,
+                  int deleteFile)
     {
       m_Node = node;
       m_Filename = filename;
@@ -72,14 +72,14 @@ public:
 
   const std::string& GetNode() const { return m_Node; }
   const std::string& GetFilename() const { return m_Filename; }
-  bool GetDisplayData() const { return m_DisplayData; }
-  bool GetDeleteFile() const { return m_DeleteFile; }
+  int GetDisplayData() const { return m_DisplayData; }
+  int GetDeleteFile() const { return m_DeleteFile; }
   
 protected:
   std::string m_Node;
   std::string m_Filename;
-  bool m_DisplayData;
-  bool m_DeleteFile;
+  int m_DisplayData;
+  int m_DeleteFile;
 };
 class ReadDataQueue : public std::queue<ReadDataRequest> {} ;
 
@@ -402,7 +402,7 @@ vtkSlicerApplicationLogic
 
 void vtkSlicerApplicationLogic::ProcessTasks()
 {
-  bool active = true;
+  int active = true;
   vtkSmartPointer<vtkSlicerTask> task = 0;
   
   while (active)
@@ -437,9 +437,9 @@ void vtkSlicerApplicationLogic::ProcessTasks()
     }
 }
 
-bool vtkSlicerApplicationLogic::ScheduleTask( vtkSlicerTask *task )
+int vtkSlicerApplicationLogic::ScheduleTask( vtkSlicerTask *task )
 {
-  bool active;
+  int active;
 
   // std::cout << "Scheduling a task ";
 
@@ -463,9 +463,9 @@ bool vtkSlicerApplicationLogic::ScheduleTask( vtkSlicerTask *task )
 }
 
 
-bool vtkSlicerApplicationLogic::RequestModified( vtkObject *obj )
+int vtkSlicerApplicationLogic::RequestModified( vtkObject *obj )
 {
-  bool active;
+  int active;
 
   //std::cout << "Requesting a modified on " << obj;
 
@@ -489,9 +489,9 @@ bool vtkSlicerApplicationLogic::RequestModified( vtkObject *obj )
   return false;
 }
 
-bool vtkSlicerApplicationLogic::RequestReadData( const char *refNode, const char *filename, bool displayData, bool deleteFile )
+int vtkSlicerApplicationLogic::RequestReadData( const char *refNode, const char *filename, int displayData, int deleteFile )
 {
-  bool active;
+  int active;
 
 //  std::cout << "Requesting " << filename << " be read into node " << refNode << ", display data = " << (displayData?"true":"false") <<  std::endl;
 
@@ -520,7 +520,7 @@ bool vtkSlicerApplicationLogic::RequestReadData( const char *refNode, const char
 
 void vtkSlicerApplicationLogic::ProcessModified()
 {
-  bool active = true;
+  int active = true;
   vtkSmartPointer<vtkObject> obj = 0;
   
   // Check to see if we should be shutting down
@@ -571,7 +571,7 @@ void vtkSlicerApplicationLogic::ProcessModified()
 
 void vtkSlicerApplicationLogic::ProcessReadData()
 {
-  bool active = true;
+  int active = true;
   ReadDataRequest req;
   
   // Check to see if we should be shutting down
@@ -666,7 +666,7 @@ void vtkSlicerApplicationLogic::ProcessReadData()
       // Delete the file if requested
       if (req.GetDeleteFile())
         {
-        bool removed;
+        int removed;
         removed = itksys::SystemTools::RemoveFile( req.GetFilename().c_str() );
         if (!removed)
           {

@@ -182,7 +182,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic : public vtkSlicerL
   // Schedule a task to run in the processing thread. Returns true if
   // task was successfully scheduled. ScheduleTask() is called from the
   // main thread to run something in the processing thread.
-  bool ScheduleTask( vtkSlicerTask* );
+  int ScheduleTask( vtkSlicerTask* );
 
   // Description:
   // Request a Modified call on an object.  This method allows a
@@ -190,16 +190,16 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic : public vtkSlicerL
   // performed in the main thread.  This allows the call to Modified
   // to trigger GUI changes. RequestModified() is called from the
   // processing thread to modify an object in the main thread.
-  bool RequestModified( vtkObject * );
+  int RequestModified( vtkObject * );
 
   // Description:
   // Request that data be read from a file and set it on the referenced
   // node.  The request will be sent to the main thread which will be
   // responsible for reading the data, setting it on the referenced
   // node, and updating the display.
-  bool RequestReadData(const char *refNode, const char *filename,
-                       bool displayData = false,
-                       bool deleteFile=false);
+  int RequestReadData(const char *refNode, const char *filename,
+                       int displayData = false,
+                       int deleteFile=false);
   
   // Description:
   // Process a request on the Modified queue.  This method is called
@@ -268,9 +268,9 @@ private:
   itk::MutexLock::Pointer ReadDataQueueLock;
   //ETX
   int ProcessingThreadId;
-  bool ProcessingThreadActive;
-  bool ModifiedQueueActive;
-  bool ReadDataQueueActive;
+  int ProcessingThreadActive;
+  int ModifiedQueueActive;
+  int ReadDataQueueActive;
 
   ProcessingTaskQueue* InternalTaskQueue;
   ModifiedQueue* InternalModifiedQueue;
