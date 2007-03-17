@@ -1446,29 +1446,36 @@ int Slicer3_main(int argc, char *argv[])
 
     //
     // if there was no script file, the Args should hold a mrml file
+    // 
     //
     if ( File == ""  && Args.size() != 0)
-    {
-        std::vector<std::string>::const_iterator argit = Args.begin();
-        while (argit != Args.end())
+      {
+      std::vector<std::string>::const_iterator argit = Args.begin();
+      while (argit != Args.end())
         {
-            cout << "Arg =  " << *argit << endl;
-            std::string fileName;
-            fileName.append(*argit);
-            // is it a MRML or XML file?
-            if (fileName.find(".mrml",0) != std::string::npos ||
-                fileName.find(".xml",0) != std::string::npos)
+        cout << "Arg =  " << *argit << endl;
+        std::string fileName;
+        fileName.append(*argit);
+        // is it a MRML or XML file?
+        if (fileName.find(".mrml",0) != std::string::npos ||
+            fileName.find(".xml",0) != std::string::npos)
+          {
+          cout << fileName << " is a MRML or XML file, setting MRML scene file name and connecting\n";
+          appLogic->GetMRMLScene()->SetURL(fileName.c_str());
+          // and then load it
+          int errorCode = appLogic->GetMRMLScene()->Connect();
+          if (errorCode != 1)
             {
-                cout << fileName << " is a MRML or XML file, setting MRML scene file name and connecting\n";
-                appLogic->GetMRMLScene()->SetURL(fileName.c_str());
-                // and then load it
-                int errorCode = appLogic->GetMRMLScene()->Connect();
-                if (errorCode != 1)
-                {
-                    slicerCerr("ERROR loading MRML file " << fileName << ", error code = " << errorCode << endl);
-                }
-            }                    
-            ++argit;
+            slicerCerr("ERROR loading MRML file " << fileName << ", error code = " << errorCode << endl);
+            }
+          }                    
+        else
+          {
+          // if it's not a mrml file, assume it is data to load...
+          std::string cmd = "::Loader::ShowDialog " + *argit;
+          res = Slicer3_Tcl_Eval( interp, cmd.c_str() );
+          }
+        ++argit;
         }
     }
 

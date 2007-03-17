@@ -246,6 +246,11 @@ CONFIGURE_FILE(
   ${SlicerBaseGUITcl_DIR}/Slicer2Import.tcl
   COPYONLY
 )
+CONFIGURE_FILE(
+  ${Slicer3_SOURCE_DIR}/Base/GUI/Tcl/Loader.tcl
+  ${SlicerBaseGUITcl_DIR}/Loader.tcl
+  COPYONLY
+)
 
 # Python settings
 IF(USE_PYTHON AND PYTHON_INCLUDE_PATH)
