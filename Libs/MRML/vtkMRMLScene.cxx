@@ -382,6 +382,9 @@ int vtkMRMLScene::Connect()
 
   this->InvokeEvent(this->SceneCloseEvent, NULL);
 
+  this->ClearUndoStack ( );
+  this->ClearRedoStack ( );
+
   // after SceneCloseEvent there may be nodes created such as Camera
   // keep them so we don't call update on them
   vtkMRMLNode *node = NULL;
