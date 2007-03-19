@@ -183,7 +183,14 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (char* filename, in
 
     //displayNode->SetDefaultColorMap();
     vtkSlicerColorLogic *colorLogic = vtkSlicerColorLogic::New();
-    displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultVolumeColorNodeID());
+    if (labelMap) 
+      {
+      displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultLabelMapColorNodeID());
+      }
+    else
+      {
+      displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultVolumeColorNodeID());
+      }
     colorLogic->Delete();
     
     volumeNode->SetStorageNodeID(storageNode->GetID());
