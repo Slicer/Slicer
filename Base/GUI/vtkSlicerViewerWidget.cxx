@@ -592,29 +592,12 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
     {
     // check for events on a model node
     vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(caller);
-    if (event == vtkMRMLModelNode::PolyDataModifiedEvent)
-      {
-      vtkDebugMacro("ProcessMRMLEvents: got a model poly data modified event");
-      this->UpdateModelPolyData(modelNode);
-      this->UpdateModelsFromMRML();
-      this->RequestRender();
-      }
-    else if (event == vtkMRMLModelNode::DisplayModifiedEvent)
-      {
-      vtkDebugMacro("ProcessMRMLEvents: got a model display modified event");
-      this->UpdateModelsFromMRML();     
-      this->RequestRender();
-      }
-    else if (event == vtkMRMLTransformableNode::TransformModifiedEvent)
-      {
-      // is this all that's needed?
-      vtkDebugMacro("ProcessMRMLEvents: got a model transform modified event");
-      this->UpdateFromMRML();
-      }
-    else
-      {
-      vtkDebugMacro("ProcessMRMLEvents: got an unhandled model event " << event);
-      }
+    this->UpdateFromMRML();
+    }
+  else if (vtkMRMLClipModelsNode::SafeDownCast(caller) != NULL &&
+           event == vtkCommand::ModifiedEvent)
+    {
+    this->UpdateFromMRML();
     }
   else if (vtkMRMLModelHierarchyNode::SafeDownCast(caller) &&
            event == vtkCommand::ModifiedEvent)
