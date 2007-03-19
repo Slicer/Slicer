@@ -90,3 +90,6 @@ proc timeTest { {iter 10} } {
   timeSlices on $iter
   timeSlices off $iter
 }
+
+slicePerfTest ../Slicer3/Libs/MRML/Testing/TestData/fixed.nrrd
+exit
