@@ -429,13 +429,7 @@ int vtkWFEngineHandler::GetUnprocessedSteps()
 {
     if(this->m_initialized)
     {
-        std::string ID = "";
-        
-        if(this->m_curWFStepObject)
-        {
-            ID = this->m_curWFStepObject->GetID();   
-        }
-        return this->m_wfDI->getNumberOfUnprocessedSteps(ID);
+       return this->m_wfDI->getNumberOfUnprocessedSteps();
     }
     return -1;
 }

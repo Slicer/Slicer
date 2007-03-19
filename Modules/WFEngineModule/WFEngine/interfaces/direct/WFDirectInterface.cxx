@@ -131,11 +131,11 @@ int WFDirectInterface::getNumberOfProcessedSteps()
         return -1;
 }
 
-int WFDirectInterface::getNumberOfUnprocessedSteps(std::string &curStepID)
+int WFDirectInterface::getNumberOfUnprocessedSteps()
 {
     if(this->IsLoaded())
     {
-        this->m_wfMgr->getNumberOfUnprocessedSteps(curStepID);   
+        this->m_wfMgr->getNumberOfUnprocessedSteps();   
     }    
 }
 

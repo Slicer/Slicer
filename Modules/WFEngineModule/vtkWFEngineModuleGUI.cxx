@@ -496,8 +496,7 @@ void vtkWFEngineModuleGUI::closeBtnPushCmdCallback(vtkObject* obj, unsigned long
 void vtkWFEngineModuleGUI::loadBtnPushCmdCallback(vtkObject* obj, unsigned long, void* param, void*)
 {
     vtkWFEngineModuleGUI *myDW = (vtkWFEngineModuleGUI*)param;
-    std::string selectedWF = myDW->m_mclDW->GetWidget()->GetCellText(myDW->m_mclDW->GetWidget()->GetIndexOfFirstSelectedRow(), 1);
-    std::cout<<selectedWF<<std::endl;
+    std::string selectedWF = myDW->m_mclDW->GetWidget()->GetCellText(myDW->m_mclDW->GetWidget()->GetIndexOfFirstSelectedRow(), 1); 
     vtkKWPushButton *loadBtn = vtkKWPushButton::SafeDownCast(obj);
     if(loadBtn != NULL && myDW->m_wizFrame != NULL)
     {        
@@ -751,11 +750,12 @@ void vtkWFEngineModuleGUI::deleteWizardWidgetContainer()
     
     if(this->m_wizFrame)
     {     
-        this->m_wizFrame->Unpack();
+        this->m_wizFrame->UnpackChildren();
+//        this->m_wizFrame->Unpack();
     }
     
     if(this->m_curParameterWidgets)
-    {
+    {        
         this->m_curParameterWidgets->Delete();
         this->m_curParameterWidgets = NULL;
         std::cout<<"m_curParameterWidgets"<<std::endl;
@@ -770,6 +770,7 @@ void vtkWFEngineModuleGUI::deleteWizardWidgetContainer()
     
     if(this->m_wizFrame)
     {     
+        this->m_wizFrame->RemoveAllChildren();
         this->m_wizFrame->Delete();
         this->m_wizFrame = NULL;
         std::cout<<"m_wizFrame"<<std::endl;
@@ -901,7 +902,7 @@ void vtkWFEngineModuleGUI::UpdateGUI()
     if(this->m_curWizWidg)
     {
         // Destroy all ClientAreaChildren!
-        this->m_curWizWidg->GetClientArea()->RemoveAllChildren();        
+        this->m_curWizWidg->ClearPage();        
     }
     
     if(!this->m_wfEngineHandler)

@@ -47,6 +47,7 @@ namespace WFEngine
             WFEngine::nmWFStepObject::WFStepObject *GetWFStepByID(std::string ID);
             
             int getNumberOfProcessedSteps();
+            int getNumberOfUnprocessedSteps();
                         
         protected:
             WFWorkflowManager();

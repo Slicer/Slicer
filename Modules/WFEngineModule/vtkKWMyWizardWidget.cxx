@@ -276,9 +276,9 @@ void vtkKWMyWizardWidget::SetNumberOfProcessedSteps(int steps)
 {
     if(steps < this->m_numberOfProcessedSteps && this->ComboBox)
     {       
-        for(int i = steps + 1; i < this->m_numberOfProcessedSteps; i++)
+        while(this->ComboBox->GetWidget()->GetNumberOfValues() > steps)
         {
-            this->ComboBox->GetWidget()->DeleteValue(i);
+            this->ComboBox->GetWidget()->DeleteValue(this->ComboBox->GetWidget()->GetNumberOfValues() - 1);
         }
     }
     this->m_numberOfProcessedSteps = steps;
@@ -299,8 +299,8 @@ void vtkKWMyWizardWidget::UpdateNavigationGUI()
     else
     {
         // subtract 2 from the actual navigation stack because of the intial and last step
-        int stepAmount = this->m_numberOfUnprocessedSteps + this->m_numberOfProcessedSteps;
-        int processedSteps = this->m_currentSelectedIndex;
+        int stepAmount = this->m_numberOfUnprocessedSteps + this->m_numberOfProcessedSteps;        
+        int processedSteps = this->m_currentSelectedIndex;        
         percent = (processedSteps * 100 / stepAmount);        
     }
             

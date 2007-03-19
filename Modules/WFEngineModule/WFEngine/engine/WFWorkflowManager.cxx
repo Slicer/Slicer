@@ -129,6 +129,23 @@ int WFWorkflowManager::getNumberOfProcessedSteps()
 //    return this->m_curPos + 1;
     return this->m_workSteps.size();
 }
+int WFWorkflowManager::getNumberOfUnprocessedSteps()
+{
+    std::string ID = "";
+    if(this->m_workSteps.size() > 0)
+    {
+        WFStepObject *curObj = this->m_workSteps[this->m_workSteps.size() - 1];
+        if(curObj)
+        {
+            ID = curObj->GetID();
+        }
+        else
+        {
+            return 0;
+        }       
+    }        
+    return WFXmlWorkflowManager::getNumberOfUnprocessedSteps(ID);
+}
 //
 //int WFWorkflowManager::GetNumberOfUnprocessedSteps()
 //{

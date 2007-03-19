@@ -972,7 +972,9 @@ void vtkSlicerParameterWidget::DeleteInternalLists()
                 if(paramFrame)
                 {
                     std::cout<<"VTKKWFRAME Delete!"<<std::endl;
+                    paramFrame->RemoveAllChildren();
                     paramFrame->Delete();
+                    paramFrame = NULL;
                 } else {
                   std::cout<<"WARNING: vtkSlicerParameterWidget - try to delete unsupported Widget; return \"\""<<std::endl;        
                   return;
