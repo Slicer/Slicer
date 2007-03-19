@@ -278,6 +278,7 @@ proc launch_RunProgram {} {
         }
       }
       "--launch-script" {
+        set ::argv [lreplace $::argv 0 1]
         uplevel #0 source $argv1
         exit
       }
