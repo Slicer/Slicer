@@ -33,6 +33,9 @@ if { [string match -nocase "windows*" $::tcl_platform(os)] } {
   set ::BUILD_SUBDIR  @CMAKE_BUILD_TYPE@
 }
 
+#
+# set variables using cmake configuration
+#
 set ::env(VTK_DIR)           [file normalize @VTK_DIR@]
 set ::env(VTK_BIN_DIR)       [file normalize @VTK_DIR@/bin/$::BUILD_SUBDIR]
 set ::env(KWWidgets_DIR)     [file normalize @KWWidgets_DIR@]
@@ -43,6 +46,7 @@ set ::env(TCL_LIBRARY)       [file normalize @TCL_LIBRARY@]
 set ::env(TCL_DIR)           [file normalize [file dirname [file dirname $::env(TCL_LIBRARY)]]]
 set ::env(TEEM_DIR)          [file normalize @TEEM_DIR@/bin/$::BUILD_SUBDIR]
 set ::env(SLICER_BIN_DIR)    [file normalize @LIBRARY_OUTPUT_PATH@/$::BUILD_SUBDIR]
+set ::env(SLICER_VERSION)    @Slicer3_VERSION_PATCH@
 
 #
 # set up variables for the OS Builds
@@ -188,13 +192,83 @@ proc launch_SetPaths {} {
 #
 proc launch_SplashScreen {} {
 
-  toplevel .splash
-  label .splash.l -text "Placeholder Splash Screen.\n\nSlicer3 starting..."
-  pack .splash.l
-  update
-  after 1000 "destroy .splash"
+  launch_SplashShow
+
+  if { 0 } {
+    # placeholder...
+    toplevel .splash
+    label .splash.l -text "Placeholder Splash Screen.\n\nSlicer3 starting..."
+    pack .splash.l
+    update
+    after 1000 "destroy .splash"
+  }
 
 }
+
+
+#-------------------------------------------------------------------------------
+# .PROC SplashKill
+# Release the application grab on the splash window, destroy the window, and delete the image.
+# .ARGS
+# .END
+#-------------------------------------------------------------------------------
+proc launch_SplashKill {} { 
+    global splashim
+
+    # clear out the event queue
+    update
+
+    # because this is called from bgerror, don't cause any errors 
+    if {[info command .splash] != ""} {
+        # release the grab
+        grab release .splash
+        destroy .splash
+    }
+}
+
+#-------------------------------------------------------------------------------
+# .PROC SplashShow
+# Builds and displays a splash screen, .splash
+# .ARGS
+# int delayms how long to show the splash screen, defaults to 7000, in milliseconds
+# .END
+#-------------------------------------------------------------------------------
+proc launch_SplashShow { {delayms 7000} } {
+    global splashim
+
+    set oscaling [tk scaling]
+    # ignore screen based default scaling and pick scale so words show up nicely inside box
+    tk scaling 1.5
+    set width 500
+    set height 200
+    set splashfont [font create -family Helvetica -size 10]
+    set splashfontb [font create -family Helvetica -size 10 -weight bold]
+    toplevel .splash -relief raised -borderwidth 6 -width $width -height $height -bg white
+    wm overrideredirect .splash 1
+    wm geometry .splash +[expr [winfo screenwidth .splash]/2-($width/2)]+[expr [winfo screenheight .splash]/2-($height/2)]
+
+    # add the program path so slicer can find the picture no matter what directory it is started in 
+
+    if { 0 } {
+      # placeholder for image
+      set splashim [image create photo -file [file join $Path(program) gui/welcome.ppm]]
+      label .splash.l -image $splashim
+      place .splash.l -relx 0.5 -rely 0.35 -anchor center
+    }
+    label .splash.t1 -text "Staring up...\n\nSlicer is NOT an FDA approved medical device." -bg white -fg red -font $splashfontb
+    label .splash.t2 -text "See www.slicer.org for license details." -bg white -fg red -font $splashfont
+    label .splash.v -text "Version: $::env(SLICER_VERSION)" -bg white -fg darkblue -font $splashfont
+
+    place .splash.t1 -relx 0.5 -rely 0.30 -anchor center
+    place .splash.t2 -relx 0.5 -rely 0.50 -anchor center
+    place .splash.v -relx 0.5 -rely 0.80 -anchor center
+    update
+
+    bind .splash <1> launch_SplashKill
+    after 3000 launch_SplashKill
+    tk scaling $oscaling
+}
+
 
 #
 # optional - show dialog
