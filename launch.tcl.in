@@ -28,24 +28,73 @@ wm withdraw .
 #/tmp/Slicer3-3.0.2007-02-06-Linux/lib/InsightToolkit
 #/tmp/Slicer3-3.0.2007-02-06-Linux/lib/Slicer3/tcl/lib
 
+# if SLICER_HOME not set, find it relative to the location of this script
+# -- when run by the launcher, this variable will be set
+if { ![info exists ::SLICER_HOME] } {
+  set wd [pwd]
+  cd [file dirname [file dirname [info script]]]
+  set ::SLICER_HOME [pwd]
+  cd $wd
+}
+set ::env(SLICER_HOME) $::SLICER_HOME
+
+if { [string match -nocase "windows*" $::tcl_platform(os)] } {
+  set ::SLICER_HOME [file attributes $::SLICER_HOME -shortname]
+  set ::env(SLICER_HOME) $::SLICER_HOME
+}
+
+#
+# check if this is an install or a build directory
+# - an install will have a copy of vtk in the bin directory
+# - a build dirctory will not
+#
+set installed 0
+if { [string match -nocase "windows*" $::tcl_platform(os)] } {
+  set ext ".exe"
+}
+
+if { [file exists $::env(SLICER_HOME)/bin/vtk$ext] } {
+  set installed 1
+}
 set ::BUILD_SUBDIR  ""
 if { [string match -nocase "windows*" $::tcl_platform(os)] } {
   set ::BUILD_SUBDIR  @CMAKE_BUILD_TYPE@
 }
 
-#
-# set variables using cmake configuration
-#
-set ::env(VTK_DIR)           [file normalize @VTK_DIR@]
-set ::env(VTK_BIN_DIR)       [file normalize @VTK_DIR@/bin/$::BUILD_SUBDIR]
-set ::env(KWWidgets_DIR)     [file normalize @KWWidgets_DIR@]
-set ::env(KWWidgets_BIN_DIR) [file normalize @KWWidgets_DIR@/bin/$::BUILD_SUBDIR]
-set ::env(ITK_BIN_DIR)       [file normalize @ITK_DIR@/bin/$::BUILD_SUBDIR]
-set ::env(SANDBOX_BIN_DIR)   ""
-set ::env(TCL_LIBRARY)       [file normalize @TCL_LIBRARY@]
-set ::env(TCL_DIR)           [file normalize [file dirname [file dirname $::env(TCL_LIBRARY)]]]
-set ::env(TEEM_DIR)          [file normalize @TEEM_DIR@/bin/$::BUILD_SUBDIR]
-set ::env(SLICER_BIN_DIR)    [file normalize @LIBRARY_OUTPUT_PATH@/$::BUILD_SUBDIR]
+if { $installed } {
+
+  # if installed, everything is in the local tree
+
+  set ::env(vtk_dir)           $::env(SLICER_HOME)/lib
+  set ::env(vtk_bin_dir)       $::env(SLICER_HOME)/bin
+  set ::env(kwwidgets_dir)     $::env(SLICER_HOME)/lib
+  set ::env(kwwidgets_bin_dir) $::env(SLICER_HOME)/bin
+  set ::env(itk_bin_dir)       $::env(SLICER_HOME)/bin
+  set ::env(sandbox_bin_dir)   ""
+  set ::env(tcl_library)       $::env(SLICER_HOME)/lib/Slicer3/tcl/lib
+  set ::env(tcl_dir)           $::env(SLICER_HOME)/lib
+  set ::env(teem_dir)          $::env(SLICER_HOME)/lib
+  set ::env(slicer_bin_dir)    $::env(SLICER_HOME)/bin
+
+} else {
+
+  #
+  # not installed, 
+  # set variables using cmake configuration info
+  #
+  set ::env(VTK_DIR)           [file normalize @VTK_DIR@]
+  set ::env(VTK_BIN_DIR)       [file normalize @VTK_DIR@/bin/$::BUILD_SUBDIR]
+  set ::env(KWWidgets_DIR)     [file normalize @KWWidgets_DIR@]
+  set ::env(KWWidgets_BIN_DIR) [file normalize @KWWidgets_DIR@/bin/$::BUILD_SUBDIR]
+  set ::env(ITK_BIN_DIR)       [file normalize @ITK_DIR@/bin/$::BUILD_SUBDIR]
+  set ::env(SANDBOX_BIN_DIR)   ""
+  set ::env(TCL_LIBRARY)       [file normalize @TCL_LIBRARY@]
+  set ::env(TCL_DIR)           [file normalize [file dirname [file dirname $::env(TCL_LIBRARY)]]]
+  set ::env(TEEM_DIR)          [file normalize @TEEM_DIR@/bin/$::BUILD_SUBDIR]
+  set ::env(SLICER_BIN_DIR)    [file normalize @LIBRARY_OUTPUT_PATH@/$::BUILD_SUBDIR]
+
+}
+
 set ::env(SLICER_VERSION)    @Slicer3_VERSION_PATCH@
 
 #
