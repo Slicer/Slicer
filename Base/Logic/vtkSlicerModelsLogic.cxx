@@ -23,6 +23,7 @@
 #include "vtkMRMLModelStorageNode.h"
 #include "vtkMRMLModelDisplayNode.h"
 #include "vtkSlicerColorLogic.h"
+#include "vtkMRMLFreeSurferModelStorageNode.h"
 
 vtkCxxRevisionMacro(vtkSlicerModelsLogic, "$Revision: 1.9.12.1 $");
 vtkStandardNewMacro(vtkSlicerModelsLogic);
@@ -91,10 +92,22 @@ vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel (char* filename)
 {
   vtkMRMLModelNode *modelNode = vtkMRMLModelNode::New();
   vtkMRMLModelDisplayNode *displayNode = vtkMRMLModelDisplayNode::New();
-  vtkMRMLModelStorageNode *storageNode = vtkMRMLModelStorageNode::New();
-
-  storageNode->SetFileName(filename);
-  if (storageNode->ReadData(modelNode) != 0)
+  vtkMRMLModelStorageNode *mStorageNode = vtkMRMLModelStorageNode::New();
+  vtkMRMLFreeSurferModelStorageNode *fsmStorageNode = vtkMRMLFreeSurferModelStorageNode::New();
+  vtkMRMLStorageNode *storageNode = NULL;
+  
+  mStorageNode->SetFileName(filename);
+  fsmStorageNode->SetFileName(filename);
+  
+  if (mStorageNode->ReadData(modelNode) != 0)
+    {
+    storageNode = mStorageNode;
+    }
+  else if (fsmStorageNode->ReadData(modelNode) != 0)
+    {
+    storageNode = fsmStorageNode;
+    }
+  if (storageNode != NULL)
     {
     const itksys_stl::string fname(filename);
     itksys_stl::string name = itksys::SystemTools::GetFilenameName(fname);
@@ -123,7 +136,8 @@ vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel (char* filename)
     modelNode->Delete();
     modelNode = NULL;
     }
-  storageNode->Delete();
+  mStorageNode->Delete();
+  fsmStorageNode->Delete();
   displayNode->Delete();
 
   return modelNode;  
@@ -184,19 +198,16 @@ int vtkSlicerModelsLogic::AddScalar(char* filename, vtkMRMLModelNode *modelNode)
     }  
 
    // get the storage node and use it to read the scalar file
-  vtkMRMLModelStorageNode *storageNode = NULL;
+  vtkMRMLFreeSurferModelStorageNode *storageNode = NULL;
   vtkMRMLStorageNode *snode = modelNode->GetStorageNode();
   if (snode != NULL)
     {
-    storageNode = vtkMRMLModelStorageNode::SafeDownCast(snode);
+    storageNode = vtkMRMLFreeSurferModelStorageNode::SafeDownCast(snode);
     }
   if (storageNode == NULL)
     {
-    storageNode = vtkMRMLModelStorageNode::New();
-    storageNode->SetScene(this->GetMRMLScene());
-    this->GetMRMLScene()->AddNode(storageNode);  
-    modelNode->SetStorageNodeID(storageNode->GetID());
-    storageNode->Delete();
+    vtkErrorMacro("Model "  << modelNode->GetName() << " does not have a freesurfer storage node associated with it, cannot load scalar overlay.");
+    return 0;
     }
   storageNode->SetFileName(filename);
   storageNode->ReadData(modelNode);
@@ -212,9 +223,6 @@ int vtkSlicerModelsLogic::AddScalar(char* filename, vtkMRMLModelNode *modelNode)
     vtkMRMLColorNode *colorNode = vtkMRMLColorNode::SafeDownCast(displayNode->GetColorNode());
     if (colorNode == NULL)
       {
-      // TODO: try to figure out the best color node to use from the scalar's extension
-      // std::cout << "Model " << modelNode->GetName() << "'s display node's color node is null, using default\n";
-      //displayNode->SetDefaultColorMap();
       vtkSlicerColorLogic *colorLogic = vtkSlicerColorLogic::New();
       displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultModelColorNodeID());
       colorLogic->Delete();
