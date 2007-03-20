@@ -137,9 +137,12 @@ itcl::body FiducialsSWidget::processEvent { caller } {
 
         $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
         switch [$_interactor GetKeySym] {
+          # this is the 'backtick' key in the upper left of the 
+          # keyboard - it seems to have different names on windows vs X
+          "grave" -
           "quoteleft" {
             #
-            # increment the
+            # increment the fiducial
             # index so we will cycle through.
             #
             set scene [$sliceGUI GetMRMLScene]
