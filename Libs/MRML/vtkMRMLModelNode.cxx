@@ -301,7 +301,7 @@ void vtkMRMLModelNode::AddPointScalars(vtkDataArray *array)
     }
   if (this->PolyData == NULL)
     {
-    vtkErrorMacro("No poly data on model " << this->GetName());
+    vtkErrorMacro("AddPointScalars: No poly data on model " << this->GetName());
     return;
     }
   
@@ -328,7 +328,7 @@ void vtkMRMLModelNode::AddCellScalars(vtkDataArray *array)
     }
   if (this->PolyData == NULL)
     {
-    vtkErrorMacro("No poly data on model " << this->GetName());
+    vtkErrorMacro("AddCellScalars: No poly data on model " << this->GetName());
     return;
     }
   
@@ -356,7 +356,7 @@ void vtkMRMLModelNode::RemoveScalars(const char *scalarName)
     }
   if (this->PolyData == NULL)
     {
-    vtkErrorMacro("No poly data on model " << this->GetName());
+    vtkErrorMacro("RemoveScalars: No poly data on model " << this->GetName());
     return;
     }
   // try removing the array from the points first
@@ -500,7 +500,14 @@ int vtkMRMLModelNode::SetActiveScalars(const char *scalarName, const char *typeN
   int retval = -1;
   if (this->PolyData == NULL || scalarName == NULL)
     {
-    vtkErrorMacro("No poly data on model " << this->GetName() << " or the scalar name is null");
+    if (this->PolyData == NULL)
+      {
+      vtkErrorMacro("SetActiveScalars: No poly data on model " << this->GetName());
+      }
+    else
+      {
+      vtkErrorMacro("SetActiveScalars: model " << this->GetName() << " scalar name is null");
+      }
     return retval;
     }
 
