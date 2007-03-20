@@ -20,6 +20,7 @@ SET(MRML_SRCS
         vtkMRMLVectorVolumeNode.cxx        
         vtkMRMLModelNode.cxx
         vtkMRMLModelStorageNode.cxx
+        vtkMRMLFreeSurferModelStorageNode.cxx    
         vtkMRMLModelDisplayNode.cxx
         vtkMRMLClipModelsNode.cxx
         vtkMRMLStorageNode.cxx

@@ -28,19 +28,12 @@ Version:   $Revision: 1.2 $
 #include "vtkPolyDataReader.h"
 #include "vtkXMLPolyDataReader.h"
 #include "vtkSTLReader.h"
-// to read in free surfer files
-#include "vtkFSSurfaceReader.h"
-#include "vtkFSSurfaceWFileReader.h"
-#include "vtkFSSurfaceScalarReader.h"
-#include "vtkFSSurfaceAnnotationReader.h"
-#include "vtkMRMLFreeSurferProceduralColorNode.h"
 #include "vtkMRMLColorTableNode.h"
 
 #include "vtkPolyDataWriter.h"
 #include "vtkXMLPolyDataWriter.h"
 #include "vtkSTLWriter.h"
 
-#include "vtkMRMLFreeSurferProceduralColorNode.h"
 #include "vtkPointData.h"
 
 #include "itksys/SystemTools.hxx"
@@ -95,6 +88,7 @@ void vtkMRMLModelStorageNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLModelStorageNode::ReadXMLAttributes(const char** atts)
 {
+    vtkWarningMacro("ReadXMLAttributes: calling vtkMRMLStorageNode read xml");
 
   vtkMRMLStorageNode::ReadXMLAttributes(atts);
 }
@@ -159,22 +153,6 @@ int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
   std::string extension = name.substr(loc);
 
   vtkDebugMacro("ReadData: extension = " << extension.c_str());
-  // don't delete the polydata if reading in a scalar overlay
-  if ( extension != std::string(".w") &&
-       extension != std::string(".thickness") &&
-       extension != std::string(".curv") &&
-       extension != std::string(".avg_curv") &&
-       extension != std::string(".sulc") &&
-       extension != std::string(".area") &&
-       extension != std::string(".aparc.annot") &&
-       extension != std::string(".cma_aparc.annot") &&
-       extension != std::string(".ad_aparc.annot"))
-    {
-    if (modelNode->GetPolyData()) 
-      {
-      modelNode->SetAndObservePolyData (NULL);
-      }
-    }
 
   int result = 1;
   try
@@ -219,279 +197,6 @@ int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
       modelNode->SetAndObservePolyData(reader->GetOutput());
       reader->Delete();
       }  
-    else if ( extension == std::string(".orig") ||
-              extension == std::string(".inflated") ||
-              extension == std::string(".sphere") ||
-              extension == std::string(".white") ||
-              extension == std::string(".smoothwm") ||
-              extension == std::string(".pial") ) 
-      {
-      //read in a free surfer file
-      // -- create normals and triangle strips also
-      vtkFSSurfaceReader *reader = vtkFSSurfaceReader::New();
-      vtkPolyDataNormals *normals = vtkPolyDataNormals::New();
-      vtkStripper *stripper = vtkStripper::New();
-
-      reader->SetFileName(fullName.c_str());
-      normals->SetSplitting(0);
-      normals->SetInput( reader->GetOutput() );
-      stripper->SetInput( normals->GetOutput() );
-      stripper->Update();
-      modelNode->SetAndObservePolyData(stripper->GetOutput());
-
-      reader->Delete();
-      normals->Delete();
-      stripper->Delete();
-      }
-    else if (extension == std::string(".thickness") ||
-             extension == std::string(".curv") ||
-             extension == std::string(".avg_curv") ||
-             extension == std::string(".sulc") ||
-             extension == std::string(".area"))
-      {
-      // read in a freesurfer scalar overlay
-      // does the model node have point data?
-      if (modelNode->GetPolyData() != NULL &&
-          modelNode->GetPolyData()->GetPointData() != NULL)
-        {
-        int numVertices = modelNode->GetPolyData()->GetPointData()->GetNumberOfTuples();
-
-        vtkFSSurfaceScalarReader *reader = vtkFSSurfaceScalarReader::New();
-        reader->SetFileName(fullName.c_str());
-        // the array to read into
-        vtkFloatArray *floatArray = vtkFloatArray::New();
-        std::string::size_type ptr = name.find_last_of(std::string("/"));
-        std::string scalarName;
-        if (ptr != std::string::npos)
-          {
-          scalarName = name.substr(++ptr);
-          }
-        else
-          {
-          scalarName = name;
-          }
-        floatArray->SetName(scalarName.c_str());
-        reader->SetOutput(floatArray);
-
-        reader->ReadFSScalars();
-
-        std::cout << "Finished reading model overlay file " << fullName.c_str() << "\n\tscalars called " << scalarName.c_str() << ", adding point scalars to model node " << modelNode->GetName() << endl;
-        modelNode->AddPointScalars(floatArray);
-        modelNode->GetDisplayNode()->SetActiveScalarName(scalarName.c_str());
-        // make sure scalars are visible
-        modelNode->GetDisplayNode()->SetScalarVisibility(1);
-        // set the colour look up table
-        vtkMRMLFreeSurferProceduralColorNode *colorNode = vtkMRMLFreeSurferProceduralColorNode::New();
-        if (extension == std::string(".thickness"))
-          {
-          colorNode->SetTypeToGreenRed();
-          }
-        else if (extension == std::string(".curv") ||
-                 extension == std::string(".avg_curv") ||
-                 extension == std::string(".sulc"))
-          {
-          colorNode->SetTypeToGreenRed();
-          }
-        else if (extension == std::string(".area"))
-          {
-          colorNode->SetTypeToRedGreen();
-          }
-        else if (extension == std::string(".fs"))
-          {
-          colorNode->SetTypeToBlueRed();
-          }
-        else if (extension == std::string(".retinotopy"))
-          {
-          vtkWarningMacro("Retinotopy color wheel not implemented yet, using default of Heat.");
-          //colorNode->SetTypeToColorWheel();
-          }
-        vtkDebugMacro("Using color node " << colorNode->GetTypeAsIDString() << " for scalar " << scalarName.c_str());
-        modelNode->GetDisplayNode()->SetAndObserveColorNodeID(colorNode->GetTypeAsIDString());
-        colorNode->Delete();
-        colorNode  = NULL;
-
-        reader->Delete();
-        floatArray->Delete();
-        }
-      }
-    else if (extension == std::string(".w"))
-      {
-      // read in freesurfer .W file scalar overlay
-      // does the model node have point data?
-      if (modelNode->GetPolyData() != NULL &&
-          modelNode->GetPolyData()->GetPointData() != NULL)
-        {
-        int numVertices = modelNode->GetPolyData()->GetPointData()->GetNumberOfTuples();
-
-        // read in a freesurfer W scalar overlay file
-        vtkFSSurfaceWFileReader *reader = vtkFSSurfaceWFileReader::New();
-        reader->SetFileName(fullName.c_str());
-        
-        // the array to read into
-        vtkFloatArray *floatArray = vtkFloatArray::New();
-        std::string::size_type ptr = name.find_last_of(std::string("/"));
-        std::string scalarName;
-        if (ptr != std::string::npos)
-          {
-          scalarName = name.substr(++ptr);
-          }
-        else
-          {
-          scalarName = name;
-          }
-        floatArray->SetName(scalarName.c_str());
-        reader->SetOutput(floatArray);
-        
-        reader->SetNumberOfVertices(numVertices);
-        int retval = reader->ReadWFile();
-        if (retval != 0)
-          {
-          vtkErrorMacro ("Error reading FreeSurfer W overlay file " << fullName.c_str() << ": ");
-          if (retval == 1)
-            {
-            vtkErrorMacro ("Output is null\n");
-            }
-          if (retval == 2)
-            {
-            vtkErrorMacro ("FileName not specified\n");
-            }
-          if (retval == 3)
-            {
-            vtkErrorMacro ("Could not open file\n");
-            }
-          if (retval == 4)
-            {
-            vtkErrorMacro ("Number of values in the file is 0 or negative, or greater than number of vertices in the associated scalar file\n");
-            }
-          if (retval == 5) 
-            {
-            vtkErrorMacro (" Error allocating the array of floats\n");
-            }
-          if (retval == 6)
-            {
-            vtkErrorMacro ("Unexpected EOF\n");
-            }
-          }
-        else
-          {
-          std::cout << "Finished reading model overlay file " << fullName.c_str() << "\n\tscalars called " << scalarName.c_str() << ", adding point scalars to model node" << endl;
-          modelNode->AddPointScalars(floatArray);
-          // set the active array
-          modelNode->GetDisplayNode()->SetActiveScalarName(scalarName.c_str());
-          // make sure scalars are visible
-          modelNode->GetDisplayNode()->SetScalarVisibility(1);
-          // set the colour look up table
-          vtkMRMLFreeSurferProceduralColorNode *colorNode = vtkMRMLFreeSurferProceduralColorNode::New();
-          colorNode->SetTypeToHeat();
-          modelNode->GetDisplayNode()->SetAndObserveColorNodeID(colorNode->GetTypeAsIDString());
-          colorNode->Delete();
-          colorNode = NULL;
-          }
-        reader->Delete();
-        floatArray->Delete();
-        }
-      else
-        {
-        vtkErrorMacro("Cannot read scalar overlay file '" << name.c_str() << "', as there are no points in the model " << modelNode->GetID() << " to associate it with.");
-        }
-      }
-    else if (extension == std::string(".aparc.annot") ||
-             extension == std::string(".cma_aparc.annot") ||
-             extension == std::string(".ad_aparc.annot"))
-      {
-      // read in a FreeSurfer annotation overlay
-      
-      // does the model node have point data?
-      if (modelNode->GetPolyData() != NULL &&
-          modelNode->GetPolyData()->GetPointData() != NULL)
-        {
-        vtkIntArray *scalars;
-        int scalaridx = modelNode->GetPolyData()->GetPointData()->SetActiveScalars("labels");
-        if (scalaridx == -1)
-          {
-          // make a new array
-          scalars = vtkIntArray::New();
-          scalars->SetName("labels");
-          modelNode->AddPointScalars(scalars);
-          scalaridx = modelNode->GetPolyData()->GetPointData()->SetActiveScalars("labels");
-          modelNode->GetDisplayNode()->SetActiveScalarName("labels");
-          modelNode->GetDisplayNode()->SetScalarVisibility(1);
-          scalars->Delete();
-          }
-        scalars = vtkIntArray::SafeDownCast(modelNode->GetPolyData()->GetPointData()->GetArray(scalaridx));
-
-        // set up a look up table
-        vtkMRMLColorTableNode *lutNode = vtkMRMLColorTableNode::New();
-        lutNode->SetTypeToUser();
-        this->Scene->AddNode(lutNode);
-        
-        vtkFSSurfaceAnnotationReader *reader = vtkFSSurfaceAnnotationReader::New();
-        reader->SetFileName(fullName.c_str());
-        reader->SetOutput(scalars);
-        reader->SetColorTableOutput(lutNode->GetLookupTable());
-        //try reading an internal colour table first
-        reader->UseExternalColorTableFileOff();
-        int retval = reader->ReadFSAnnotation();
-        if (retval == 6)
-          {
-          vtkDebugMacro("No Internal Color Table in " << fullName.c_str() << ", trying the default colours");
-          // use the default annotation colours
-          // colorLogic->GetDefaultFreeSurferSurfaceLabelsColorNodeID()
-          
-          vtkCollection *labelNodes = this->Scene->GetNodesByName("FSSurfaceLabels");
-          if (labelNodes->GetNumberOfItems() > 0)
-            {
-            labelNodes->InitTraversal();
-            vtkMRMLColorTableNode *cnode = vtkMRMLColorTableNode::SafeDownCast(labelNodes->GetNextItemAsObject());
-            if (cnode != NULL)
-              {
-              vtkWarningMacro("Could not find an internal colour table in " << fullName.c_str() << ", using default colour node " << cnode->GetName());
-              modelNode->GetDisplayNode()->SetAndObserveColorNodeID(cnode->GetID());
-              cnode = NULL;
-              }
-            }
-          else
-            {
-            vtkErrorMacro("Unable to find an internal nor an external colour look up table for " << fullName.c_str());
-            }
-          }
-        else
-          {          
-          // the color names are formatted as 'index {name} '
-          char *colorNames = reader->GetColorTableNames();
-          int numColours = lutNode->GetNumberOfColors();
-          // set the number of colours so that can use add call to set the names
-          lutNode->SetNumberOfColors(numColours);
-          modelNode->GetDisplayNode()->SetScalarRange(0, numColours);
-          vtkDebugMacro("Got color table names " << colorNames << ", number of colours = " << numColours << endl);
-          std::string colorString = std::string(colorNames);
-          std::string::size_type startBracketIndex = colorString.find("{", 0);
-          std::string::size_type endBracketIndex = colorString.find( "}", 0 );
-          std::string colorIndexString = colorString.substr(0, startBracketIndex - 1);
-          int numNames = 0;
-          while (endBracketIndex != std::string::npos && numNames < reader->GetNumColorTableEntries())
-            {
-            numNames++;
-            std::string colorName = colorString.substr(startBracketIndex+1, endBracketIndex - startBracketIndex - 1);
-            vtkDebugMacro("Adding color name = " << colorName.c_str() << " at index \"" << colorIndexString.c_str() << "\"" << ", as int: " << atoi(colorIndexString.c_str()) <<  endl);
-            lutNode->SetColorName(atoi(colorIndexString.c_str()), colorName.c_str());
-            startBracketIndex = colorString.find("{", endBracketIndex);
-            if (startBracketIndex != std::string::npos)
-              {
-              colorIndexString = colorString.substr(endBracketIndex + 1, startBracketIndex - endBracketIndex - 1);
-              }
-            else
-              {
-              colorIndexString = colorString.substr(endBracketIndex + 1);
-              }
-            endBracketIndex = colorString.find( "}", startBracketIndex);
-            }
-          modelNode->GetDisplayNode()->SetAndObserveColorNodeID(lutNode->GetID());
-          }
-        lutNode->Delete();
-        reader->Delete();
-        }
-      }
     else if (extension == std::string(".stl")) 
       {
       vtkSTLReader *reader = vtkSTLReader::New();
@@ -502,7 +207,7 @@ int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
       }
     else 
       {
-      vtkErrorMacro("Cannot read model file '" << name.c_str() << "' (extension = " << extension.c_str() << ")");
+      vtkWarningMacro("Cannot read model file '" << name.c_str() << "' (extension = " << extension.c_str() << ")");
       return 0;
       }
     }

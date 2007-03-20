@@ -25,6 +25,7 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLLinearTransformNode.h"
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLModelStorageNode.h"
+#include "vtkMRMLFreeSurferModelStorageNode.h"
 #include "vtkMRMLModelDisplayNode.h"
 #include "vtkMRMLClipModelsNode.h"
 #include "vtkMRMLScalarVolumeNode.h"
@@ -91,6 +92,10 @@ vtkMRMLScene::vtkMRMLScene()
   this->RegisterNodeClass( modelstorenode );
   modelstorenode->Delete();
 
+  vtkMRMLFreeSurferModelStorageNode *surfermodelstorenode = vtkMRMLFreeSurferModelStorageNode::New(); 
+  this->RegisterNodeClass( surfermodelstorenode );
+  surfermodelstorenode->Delete();
+  
   vtkMRMLModelDisplayNode *modeldisplaynode = vtkMRMLModelDisplayNode::New(); 
   this->RegisterNodeClass( modeldisplaynode );
   modeldisplaynode->Delete();
