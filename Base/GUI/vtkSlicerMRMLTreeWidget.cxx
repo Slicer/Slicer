@@ -446,8 +446,18 @@ void vtkSlicerMRMLTreeWidget::UpdateTreeFromMRML()
     this->AddNodeToTree(node);
     }
 
-  this->TreeWidget->GetWidget()->SelectNode(selected_node.c_str());
-
+  // check that the selected node is still in the tree
+  if (this->TreeWidget->GetWidget()->HasNode(selected_node.c_str()))
+    {
+    this->TreeWidget->GetWidget()->SelectNode(selected_node.c_str());
+    }
+  else
+    {
+    if (selected_node != "")
+      {
+      vtkWarningMacro("Selected node no longer in tree: " << selected_node.c_str());
+      }
+    }
   // At this point you probably want to reset the MRML node inspector fields
   // in case nothing in the tree is selected anymore (here, we delete all nodes
   // each time, so nothing will be selected, but it's not a bad thing to 
