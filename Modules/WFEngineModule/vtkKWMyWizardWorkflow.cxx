@@ -20,7 +20,7 @@ vtkKWMyWizardWorkflow::vtkKWMyWizardWorkflow()
 
 vtkKWMyWizardWorkflow::~vtkKWMyWizardWorkflow()
 {
-    this->RemoveAllObservers();
+    this->RemoveAllObservers();       
 }
 
 vtkKWWizardWorkflow *vtkKWMyWizardWorkflow::GetWizardWorkflow()

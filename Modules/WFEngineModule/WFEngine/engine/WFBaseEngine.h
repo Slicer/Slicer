@@ -18,6 +18,7 @@ namespace WFEngine
   static WFBaseEngine* New();
   int InitializeWFEngine(std::string wfConfigFile);
 
+  void Destroy();
 #ifndef WFDIRECTINTERFACE
   void RunNetworkInterface();
 #endif

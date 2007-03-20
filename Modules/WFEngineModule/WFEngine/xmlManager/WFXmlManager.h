@@ -68,6 +68,7 @@ namespace WFEngine
 //   virtual WFXmlManager* New() const = 0;
       int saveXmlFile();
       typedef std::map<std::string,std::string> myAttrMap;
+      void Destroy();
   protected:
       DOMDocument* xmlDoc;
       int loadXmlFile(std::string &xmlFileName);

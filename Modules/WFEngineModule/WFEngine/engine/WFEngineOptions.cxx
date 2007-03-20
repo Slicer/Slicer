@@ -9,12 +9,19 @@ using namespace WFEngine::nmWFXmlConfigManager;
 
 WFEngineOptions::WFEngineOptions()
 {
- this->m_configIsActive = false;
- this->m_isLoaded = false;
+    this->m_configIsActive = false;
+    this->m_isLoaded = false;
+    
+    this->m_WFCfgXmlManager = NULL;     
 }
 
 WFEngineOptions::~WFEngineOptions()
 {
+    if(this->m_WFCfgXmlManager)
+    {
+        this->m_WFCfgXmlManager->Destroy();
+        this->m_WFCfgXmlManager = NULL;
+    }
 }
 
 WFEngineOptions* WFEngineOptions::New()
@@ -32,7 +39,7 @@ WFEngineOptions* WFEngineOptions::New()
  return wfeOpts;
 }
 
-int WFEngineOptions::LoadConfigFile(string wfConfigFile)
+int WFEngineOptions::LoadConfigFile(std::string wfConfigFile)
 {
  int retVal = 1;
  this->m_WFCfgXmlManager = WFXmlConfigManager::New();
@@ -43,7 +50,7 @@ int WFEngineOptions::LoadConfigFile(string wfConfigFile)
  }
 }
 
-void WFEngineOptions::SetConfigFile(string wfConfigFile)
+void WFEngineOptions::SetConfigFile(std::string wfConfigFile)
 {
  if(wfConfigFile != "" && this->LoadConfigFile(wfConfigFile))
  {
@@ -119,3 +126,9 @@ void WFEngineOptions::SaveChanges()
 {
   this->m_WFCfgXmlManager->saveXmlFile();
 }
+
+void WFEngineOptions::Destroy()
+{
+    delete(this);
+}
+

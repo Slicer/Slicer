@@ -29,6 +29,7 @@ namespace WFEngine
          // Gets the number of unprocessed steps.
          int getNumberOfUnprocessedSteps(std::string &curStepID);         
          
+         void Destroy();
      protected:
          WFXmlWorkflowManager();
          virtual ~WFXmlWorkflowManager();

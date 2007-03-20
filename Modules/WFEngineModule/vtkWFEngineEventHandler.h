@@ -18,13 +18,13 @@ public:
     void PrintSelf ( ostream& os, vtkIndent indent );
     
     void AddWorkflowObservers(vtkWFEngineHandler *curModuleGUI);
-        
-    void SetMRMLScene(vtkMRMLScene *scene);
-    
-    vtkMRMLScene *GetMRMLScene();
-    
+            
     void SetEventName(const char* name);
     void SetCurrentStepID(const char* id);
+    
+    // Description:
+    // Set the Client Widget to pack in static GUI Objects into the Wizard
+    void SetWizardClientWidget(vtkKWWidget *clientWidget);
 
 protected:
     vtkWFEngineEventHandler();
@@ -34,14 +34,12 @@ protected:
     
 private:
     
-    vtkCallbackCommand *m_workflowCB;
-    
-    vtkMRMLScene *m_mrmlScene;
-    
     const char* m_id;
     const char* m_eventName;
     
     vtkMRMLFiducialListNode *m_fiducialList;
+    
+    vtkKWWidget *m_clientWidget;
 };
 
 #endif /*VTKWFENGINEEVENTHANDLER_H_*/

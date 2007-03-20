@@ -40,6 +40,7 @@ namespace WFEngine
    void RemoveLookUpPath(std::string &path);
    void SaveChanges();
   
+   void Destroy();
   protected:
    WFEngineOptions();
    virtual ~WFEngineOptions();

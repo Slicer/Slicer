@@ -7,7 +7,7 @@
 #include <string>
 
 class vtkKWWizardWorkflow;
-class vtkKWMyWizardWorkflow;
+class vtkKWWizardWorkflow;
 class vtkKWProgressGauge;
 class vtkKWComboBoxWithLabel;
 class vtkKWWizardStep;
@@ -19,8 +19,8 @@ public:
     
     vtkTypeRevisionMacro(vtkKWMyWizardWidget,vtkKWWizardWidget);
     
-    vtkKWWizardWorkflow *GetWizardWorkflow();
-    vtkKWMyWizardWorkflow *GetMyWizardWorkflow();
+//    vtkKWWizardWorkflow *GetWizardWorkflow();
+//    vtkKWMyWizardWorkflow *GetMyWizardWorkflow();
     
     void SetNumberOfUnprocessedSteps(int steps);
     int GetNumberOfUnprocessedSteps();
@@ -57,7 +57,7 @@ protected:
     static void NavigationStackChanged(vtkObject* obj, unsigned long,void*, void*);
         
 private:
-    vtkKWMyWizardWorkflow *WizardWorkflow;     
+//    vtkKWMyWizardWorkflow *WizardWorkflow;     
     
     int m_numberOfUnprocessedSteps;
     int m_numberOfProcessedSteps;

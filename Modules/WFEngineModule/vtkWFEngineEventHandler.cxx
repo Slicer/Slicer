@@ -20,30 +20,24 @@ vtkCxxRevisionMacro ( vtkWFEngineEventHandler, "$Revision: 1.0 $");
 
 vtkWFEngineEventHandler::vtkWFEngineEventHandler()
 {
-    this->m_workflowCB = NULL;
-    this->m_mrmlScene = NULL;
     this->m_id = NULL;
     this->m_eventName = NULL;
     this->m_fiducialList = NULL;
+    this->m_clientWidget = NULL;
 }
 
 vtkWFEngineEventHandler::~vtkWFEngineEventHandler()
 {
-    if(this->m_workflowCB)
-    {
-        this->m_workflowCB->Delete();
-        this->m_workflowCB = NULL;
-    }
-    
     this->m_eventName = NULL;
-    this->m_id = NULL;    
-    this->m_mrmlScene = NULL;
+    this->m_id = NULL;      
     
     if(this->m_fiducialList)
     {
         this->m_fiducialList->Delete();
         this->m_fiducialList = NULL;
     }
+    
+    this->m_clientWidget = NULL;
 }
 
 //---------------------------------------------------------------------------
@@ -68,14 +62,22 @@ void vtkWFEngineEventHandler::ProcessWorkflowLeaveEvents(vtkObject *caller, unsi
         std::cout<<"EVENT catched: "<<curWFEventHandler->m_eventName<<std::endl;
         if(curWFEventHandler->m_eventName && strcmp(curWFEventHandler->m_eventName, "addFiducial") == 0)
         {
-            if(curWFEventHandler->m_mrmlScene)
+            
+            vtkMRMLNode *curNode = NULL;
+                
+            if(curWFHandler)
+            {
+                curNode = curWFHandler->GetWFMRMLNode();
+            }
+              
+            if(curNode)
             {
                 // get Parameter from the m_mrmlScene
-                
-                vtkMRMLNode *tmpWFEngineNode = curWFEventHandler->m_mrmlScene->GetNodeByID("vtkMRMLWFEngineModuleNode1");
-                vtkMRMLWFEngineModuleNode *wfEngineModuleNode = vtkMRMLWFEngineModuleNode::SafeDownCast(tmpWFEngineNode);
+                                
+                vtkMRMLWFEngineModuleNode *wfEngineModuleNode = vtkMRMLWFEngineModuleNode::SafeDownCast(curNode);
                 if(wfEngineModuleNode)
                 {
+                    vtkMRMLScene *curScene = wfEngineModuleNode->GetScene();
                     std::string fidNameParameter = curWFHandler->GetCurrentStepID();
                     fidNameParameter.append(".fidName");
                     std::string fidXParameter = curWFHandler->GetCurrentStepID();
@@ -92,13 +94,13 @@ void vtkWFEngineEventHandler::ProcessWorkflowLeaveEvents(vtkObject *caller, unsi
                     
                     if(curWFEventHandler->m_fiducialList == NULL)
                     {              
-                        vtkMRMLNode *node = curWFEventHandler->m_mrmlScene->GetNextNodeByClass("vtkMRMLFiducialListNode");
+                        vtkMRMLNode *node = curScene->GetNextNodeByClass("vtkMRMLFiducialListNode");
                         if (node == NULL) {
                             std::cerr << "ERROR: No Fiducial List, adding one first!\n";
                             vtkMRMLNode
-                                    *newList = curWFEventHandler->m_mrmlScene->CreateNodeByClass("vtkMRMLFiducialListNode");
+                                    *newList = curScene->CreateNodeByClass("vtkMRMLFiducialListNode");
                             if (newList != NULL) {
-                                curWFEventHandler->m_mrmlScene->AddNode(newList);
+                                curScene->AddNode(newList);
                                 curWFEventHandler->m_fiducialList = vtkMRMLFiducialListNode::SafeDownCast(newList);
                                 //                        newList->Delete();
                             }
@@ -140,32 +142,46 @@ void vtkWFEngineEventHandler::ProcessWorkflowLeaveEvents(vtkObject *caller, unsi
                 
             }        
         }
+        
+        if(curWFEventHandler->m_eventName && strcmp(curWFEventHandler->m_eventName, "showFiducialList") == 0)
+        {
+            if(this->m_clientWidget && curWFHandler)
+            {
+                vtkSlicerApplication *curSlicerApp = vtkSlicerApplication::SafeDownCast(curWFHandler->GetApplication());
+                if(curSlicerApp)
+                {                        
+//                    vtkSlicerFiducialsLogic *fiducialsLogic = vtkSlicerFiducialsLogic::New ( );
+//                    fiducialsLogic->SetAndObserveMRMLScene ( scene );
+//                    vtkSlicerFiducialsGUI *fiducialsGUI = vtkSlicerFiducialsGUI::New ( );
+//                    fiducialsGUI->SetApplication ( curSlicerApp );
+//                    fiducialsGUI->SetApplicationGUI ( curSlicerApp->GetApplicationGUI() );
+//                    fiducialsGUI->SetAndObserveApplicationLogic ( curSlicerApp->GetApplicationGUI()->GetMainSlicerLogic0() );
+//                    fiducialsGUI->SetAndObserveMRMLScene ( scene );
+//                    fiducialsGUI->SetModuleLogic ( fiducialsLogic );
+//                    fiducialsGUI->SetGUIName( "FiducialsWF" );
+//                    fiducialsGUI->GetUIPanel()->SetName ( fiducialsGUI->GetGUIName ( ) );
+//                    fiducialsGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
+//                    fiducialsGUI->GetUIPanel()->Create ( );
+//                    slicerApp->AddModuleGUI ( fiducialsGUI );
+                }
+            }
+        }
     }
 }
 
 void vtkWFEngineEventHandler::AddWorkflowObservers(vtkWFEngineHandler *curWFHandler)
 {
-    this->m_workflowCB = vtkCallbackCommand::New();
-    this->m_workflowCB->SetClientData(this);
-    this->m_workflowCB->SetCallback(&vtkWFEngineEventHandler::ProcessWorkflowLeaveEvents);
+    vtkCallbackCommand *curWorkflowCB = vtkCallbackCommand::New();
+    curWorkflowCB->SetClientData(this);
+    curWorkflowCB->SetCallback(&vtkWFEngineEventHandler::ProcessWorkflowLeaveEvents);
     
     if(curWFHandler)
     {
-        curWFHandler->AddObserver(vtkWFEngineHandler::WorkflowStepLeaveEvent, this->m_workflowCB);
+        curWFHandler->AddObserver(vtkWFEngineHandler::WorkflowStepLeaveEvent, curWorkflowCB);
     }
     
-    m_workflowCB->Delete();
-    m_workflowCB = NULL;
-}
-
-void vtkWFEngineEventHandler::SetMRMLScene(vtkMRMLScene *scene)
-{
-    this->m_mrmlScene = scene;
-}
-
-vtkMRMLScene *vtkWFEngineEventHandler::GetMRMLScene()
-{
-    return this->m_mrmlScene;
+    curWorkflowCB->Delete();
+    curWorkflowCB = NULL;
 }
 
 void vtkWFEngineEventHandler::SetCurrentStepID(const char *id)
@@ -176,4 +192,9 @@ void vtkWFEngineEventHandler::SetCurrentStepID(const char *id)
 void vtkWFEngineEventHandler::SetEventName(const char *name)
 {
     this->m_eventName = name;
+}
+
+void vtkWFEngineEventHandler::SetWizardClientWidget(vtkKWWidget *clientWidget)
+{
+    this->m_clientWidget = clientWidget;
 }

@@ -21,7 +21,7 @@ WFWorkflowManager::WFWorkflowManager() : WFXmlWorkflowManager()
 
 WFWorkflowManager::~WFWorkflowManager()
 {
-    this->m_workSteps.clear();    
+    this->m_workSteps.clear();        
 }
 
 WFWorkflowManager *WFWorkflowManager::New()
@@ -146,11 +146,11 @@ int WFWorkflowManager::getNumberOfUnprocessedSteps()
     }        
     return WFXmlWorkflowManager::getNumberOfUnprocessedSteps(ID);
 }
-//
-//int WFWorkflowManager::GetNumberOfUnprocessedSteps()
-//{
-//    return this->getNumberOfUnprocessedSteps();
-//}
+
+void WFWorkflowManager::Destroy()
+{
+    delete(this);
+}
 
 }//namespace
 

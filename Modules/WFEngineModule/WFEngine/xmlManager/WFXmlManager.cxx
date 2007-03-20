@@ -380,3 +380,8 @@ DOMElement *WFXmlManager::getFirstChildByName(DOMElement *parentElement, std::st
     }    
     return NULL;
 }
+
+void WFXmlManager::Destroy()
+{
+    delete(this);
+}

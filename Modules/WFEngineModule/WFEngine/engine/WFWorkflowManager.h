@@ -49,6 +49,7 @@ namespace WFEngine
             int getNumberOfProcessedSteps();
             int getNumberOfUnprocessedSteps();
                         
+            void Destroy();
         protected:
             WFWorkflowManager();
             virtual ~WFWorkflowManager();

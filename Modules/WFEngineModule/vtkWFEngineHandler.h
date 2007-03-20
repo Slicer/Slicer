@@ -16,6 +16,7 @@ struct Tcl_Interpr;
 
 //BTX
 class ModuleDescription;
+class vtkMRMLNode;
 
 namespace WFEngine {
     namespace nmWFStepObject {
@@ -70,6 +71,10 @@ public:
     int GetUnprocessedSteps();
     int GetProcessedSteps();
     const char* GetCurrentStepID();
+    
+    void SetWFMRMLNode(vtkMRMLNode *node);
+    
+    vtkMRMLNode *GetWFMRMLNode();
 protected:
     vtkWFEngineHandler();
     virtual ~vtkWFEngineHandler();
@@ -101,6 +106,7 @@ private:
     Tcl_Interp *m_tclInterp;
     
     ModuleDescription *m_curModuleDescription;
+    vtkMRMLNode *m_curWFMRMLNode;
     
     //BTX
     WFDirectInterface *m_wfDI;

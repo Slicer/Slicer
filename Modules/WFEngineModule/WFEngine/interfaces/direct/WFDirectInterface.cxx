@@ -139,3 +139,9 @@ int WFDirectInterface::getNumberOfUnprocessedSteps()
     }    
 }
 
+void WFDirectInterface::Destroy()
+{
+    delete(this);
+}
+
+

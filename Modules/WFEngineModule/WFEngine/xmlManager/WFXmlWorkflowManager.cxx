@@ -368,3 +368,8 @@ int WFXmlWorkflowManager::getNumberOfUnprocessedSteps(std::string &curStepID)
     
     return m_approxUnprocessedSteps;
 }
+
+void WFXmlWorkflowManager::Destroy()
+{
+    delete(this);
+}

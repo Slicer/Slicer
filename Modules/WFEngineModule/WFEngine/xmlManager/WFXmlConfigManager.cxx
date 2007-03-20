@@ -117,3 +117,9 @@ std::map<std::string, std::string> WFXmlConfigManager::getKnownWorkflows()
     this->tempNodeList = this->getAllChildesByName(knownWorkflows, workflow);
     //std::cout<<tempNodeList->getLength()<<std::endl;
 }
+
+void WFXmlConfigManager::Destroy()
+{
+    delete(this);
+}
+

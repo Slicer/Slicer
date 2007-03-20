@@ -21,7 +21,7 @@
 #include <vtkKWFrame.h>
 #include "vtkKWMyWizardWidget.h"
 #include <vtkKWWizardStep.h>
-#include "vtkKWMyWizardWorkflow.h"
+#include "vtkKWWizardWorkflow.h"
 #include <vtkKWStateMachineInput.h>
 #include <vtkKWSpinBoxWithLabel.h>
 #include <vtkKWSpinBox.h>
@@ -229,20 +229,22 @@ void vtkWFEngineModuleGUI::BuildGUI ( )
                   loadFrame->GetWidgetName(),
                   this->UIPanel->GetPageWidget("WFEngineModule")->GetWidgetName());
     
-    m_mclDW = vtkKWMultiColumnListWithScrollbars::New();    
-    m_mclDW->SetParent(loadFrame->GetFrame());
-    m_mclDW->Create();
+    this->m_mclDW = vtkKWMultiColumnListWithScrollbars::New();    
+    this->m_mclDW->SetParent(loadFrame->GetFrame());
+    this->m_mclDW->Create();
     
-    m_mclDW->GetWidget()->AddColumn("Workflow-Name");
-    m_mclDW->GetWidget()->AddColumn("File-Name");
-    m_mclDW->GetWidget()->AddColumn("Created");
+    this->m_mclDW->GetWidget()->AddColumn("Workflow-Name");
+    this->m_mclDW->GetWidget()->AddColumn("File-Name");
+    this->m_mclDW->GetWidget()->AddColumn("Created");
     
     vtkCallbackCommand *mclDWSelectionChangedCmd = vtkCallbackCommand::New();
     mclDWSelectionChangedCmd->SetClientData(this);
     mclDWSelectionChangedCmd->SetCallback(&vtkWFEngineModuleGUI::mclDWSelectionChangedCallback);
     
-    m_mclDW->GetWidget()->AddObserver(vtkKWMultiColumnList::SelectionChangedEvent, mclDWSelectionChangedCmd);
+    this->m_mclDW->GetWidget()->AddObserver(vtkKWMultiColumnList::SelectionChangedEvent, mclDWSelectionChangedCmd);
+    
     mclDWSelectionChangedCmd->Delete();
+    mclDWSelectionChangedCmd = NULL;
     
     
     app->Script("pack %s -side top -anchor nw -expand y -fill both -padx 2 -pady 2", 
@@ -280,7 +282,9 @@ void vtkWFEngineModuleGUI::BuildGUI ( )
     menuBtnItemInvoked->SetCallback(&vtkWFEngineModuleGUI::ProcessGUIEvents);
     
     mbWFOpts->GetWidget()->GetMenu()->AddObserver(vtkKWMenu::MenuItemInvokedEvent, menuBtnItemInvoked);
+    
     menuBtnItemInvoked->Delete();
+    menuBtnItemInvoked = NULL;
     
     app->Script("pack %s -side left -anchor nw -expand n -fill none -padx 2 -pady 2", 
             mbWFOpts->GetWidgetName());
@@ -291,13 +295,13 @@ void vtkWFEngineModuleGUI::BuildGUI ( )
         mbWFOpts = NULL;
     }    
 
-    m_pbtnSet = vtkKWPushButtonSet::New();
-    m_pbtnSet->SetParent(buttonFrame);
-    m_pbtnSet->PackHorizontallyOn();
+    this->m_pbtnSet = vtkKWPushButtonSet::New();
+    this->m_pbtnSet->SetParent(buttonFrame);
+    this->m_pbtnSet->PackHorizontallyOn();
     
-    m_pbtnSet->Create();
+    this->m_pbtnSet->Create();
     
-    vtkKWPushButton *pbtn = m_pbtnSet->AddWidget(0);
+    vtkKWPushButton *pbtn = this->m_pbtnSet->AddWidget(0);
     pbtn->SetText("Load");
     pbtn->SetEnabled(0);
     
@@ -308,6 +312,7 @@ void vtkWFEngineModuleGUI::BuildGUI ( )
     pbtn->AddObserver(vtkKWPushButton::InvokedEvent, loadBtnPushCmd);
     
     loadBtnPushCmd->Delete();
+    loadBtnPushCmd = NULL;
 //    pbtn = m_pbtnSet->AddWidget(1);
 //    pbtn->SetText("Close");
 //    pbtn->SetEnabled(1);
@@ -413,7 +418,7 @@ void vtkWFEngineModuleGUI::createWizard()
     this->GetApplication()->Script("pack %s -side top -anchor ne -expand y -fill both -padx 2 -pady 2", 
             m_curWizWidg->GetWidgetName());
     
-    vtkKWMyWizardWorkflow *wizWorkflow = m_curWizWidg->GetMyWizardWorkflow();
+    vtkKWWizardWorkflow *wizWorkflow = m_curWizWidg->GetWizardWorkflow();
                   
 //    create a virtual first and last step to take cover for the input and out vars in that both steps
     
@@ -469,8 +474,11 @@ void vtkWFEngineModuleGUI::createWizard()
     // create WFEngineEventHandler and create all Observers
     
     this->m_wfEngineEventHandler = vtkWFEngineEventHandler::New();
-    this->m_wfEngineEventHandler->SetMRMLScene(this->Logic->GetMRMLScene());
+//    this->m_wfEngineEventHandler->SetMRMLScene(this->Logic->GetMRMLScene());
     this->m_wfEngineEventHandler->AddWorkflowObservers(this->m_wfEngineHandler);
+    
+    
+    this->m_wfEngineHandler->SetWFMRMLNode(myWFENode);
         
     virtFirstStep->Delete();
     virtFirstStep = NULL;
@@ -545,7 +553,7 @@ void vtkWFEngineModuleGUI::closeWorkflow()
 
 void vtkWFEngineModuleGUI::workStepValidationCallBack(WFEngine::nmWFStepObject::WFStepObject *nextWS)
 {
-    vtkKWMyWizardWorkflow *curWF = this->m_curWizWidg->GetMyWizardWorkflow();    
+    vtkKWWizardWorkflow *curWF = this->m_curWizWidg->GetWizardWorkflow();    
     std::cout<<"Steps in navigation stack: "<<curWF->GetNumberOfStepsInNavigationStack()<<std::endl;
     
     if(nextWS)
@@ -629,6 +637,9 @@ void vtkWFEngineModuleGUI::nextTransitionCallback(vtkObject* obj, unsigned long 
             warnDialog->SetText("If you proceed you loose all your data beyond the current Step!");
             warnDialog->Invoke();
             result = warnDialog->GetStatus();
+            
+            warnDialog->Delete();
+            warnDialog = NULL;
         }
         wfEngineModule->UpdateMRML();
         wfEngineModule->UpdateParameter();
@@ -662,7 +673,7 @@ void vtkWFEngineModuleGUI::backTransitionCallback(vtkObject* obj, unsigned long 
     vtkWFEngineModuleGUI *wfEngineModule = (vtkWFEngineModuleGUI*)callBackData;
     if(wfEngineModule)
     {
-        vtkKWMyWizardWorkflow *wizWF = wfEngineModule->m_curWizWidg->GetMyWizardWorkflow();
+        vtkKWWizardWorkflow *wizWF = wfEngineModule->m_curWizWidg->GetWizardWorkflow();
         if(wfEngineModule->m_wfEngineHandler->LoadBackWorkStep() == vtkWFEngineHandler::SUCC)
         {                  
             wfEngineModule->workStepValidationCallBack(wfEngineModule->m_wfEngineHandler->GetLoadedWFStep());
@@ -889,9 +900,7 @@ void vtkWFEngineModuleGUI::UpdateParameter()
         for(iter = this->m_curNameToValueMap->begin(); iter != this->m_curNameToValueMap->end(); iter++)
         {
             const char* value = this->getStepInputValueByName(iter->first);
-            std::string strValue = value;
-            std::cout<<strValue<<std::endl;
-            std::cout<<"name: "<<iter->first<<" value: "<<value<<std::endl;
+            std::string strValue = value;                       
             this->m_wfEngineHandler->AddParameter(iter->first.c_str(), value);
         }        
     }

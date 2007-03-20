@@ -10,11 +10,12 @@ SET(WFEngineModule_SRCS
   vtkWFEngineModuleLogic.cxx
   vtkWFEngineModuleGUI.cxx
   vtkMRMLWFEngineModuleNode.cxx
-  vtkKWMyWizardWidget.cxx
-  vtkKWMyWizardWorkflow.cxx
+  vtkKWMyWizardWidget.cxx  
   vtkWFEngineHandler.cxx
   vtkWFEngineEventHandler.cxx
 )
+# vtkKWMyWizardWorkflow.cxx - obsolent
+
 
 # Abstract/pure virtual classes
 

@@ -31,6 +31,8 @@ namespace WFEngine
    void removeLookUpPath(std::string &path);
    void addKnownWorkflow(std::string &fileName, bool visible, bool enabled);
    std::map<std::string, std::string> getKnownWorkflows();
+   
+   void Destroy();
   protected:
     WFXmlConfigManager();
     virtual ~WFXmlConfigManager();

@@ -50,7 +50,7 @@ vtkKWMyWizardWidget::vtkKWMyWizardWidget()
     this->HelpButton              = NULL;
     this->OKButton                = NULL;
 
-    this->WizardWorkflow          = vtkKWMyWizardWorkflow::New();
+//    this->WizardWorkflow          = vtkKWMyWizardWorkflow::New();
 
     this->BackButtonVisibility    = 1;
     this->NextButtonVisibility    = 1;
@@ -82,7 +82,8 @@ vtkKWMyWizardWidget::~vtkKWMyWizardWidget()
     }
     
     if(this->ComboBox)
-    {        
+    {
+//        this->ComboBox->RemoveAllChildren();
         this->ComboBox->Delete();
         this->ComboBox = NULL;
     }
@@ -93,18 +94,24 @@ vtkKWMyWizardWidget::~vtkKWMyWizardWidget()
         this->m_itemToStepMap = NULL;
     }
     
+//    if(this->WizardWorkflow)
+//    {
+////        this->WizardWorkflow->
+//        this->WizardWorkflow->Delete();
+//        this->WizardWorkflow = NULL;
+//    }   
     
 }
 
-vtkKWWizardWorkflow *vtkKWMyWizardWidget::GetWizardWorkflow()
-{
-    return this->WizardWorkflow;
-}
-
-vtkKWMyWizardWorkflow *vtkKWMyWizardWidget::GetMyWizardWorkflow()
-{
-    return this->WizardWorkflow;
-}
+//vtkKWWizardWorkflow *vtkKWMyWizardWidget::GetWizardWorkflow()
+//{
+//    return this->GetWizardWorkflow();
+//}
+//
+//vtkKWMyWizardWorkflow *vtkKWMyWizardWidget::GetMyWizardWorkflow()
+//{
+//    return this->WizardWorkflow;
+//}
 
 //----------------------------------------------------------------------------
 void vtkKWMyWizardWidget::CreateWidget()
@@ -117,20 +124,18 @@ void vtkKWMyWizardWidget::CreateWidget()
     return;
     }
   
-  if(!this->WizardWorkflow)
-  {
-      this->WizardWorkflow = vtkKWMyWizardWorkflow::New();
-  }
-  if(!this->WizardWorkflow->GetApplication())
-  {
-      this->WizardWorkflow->SetApplication(this->GetApplication());
-  }
+//  if(!this->WizardWorkflow)
+//  {
+//      this->WizardWorkflow = vtkKWMyWizardWorkflow::New();
+//  }
+//  if(!this->WizardWorkflow->GetApplication())
+//  {
+//      this->WizardWorkflow->SetApplication(this->GetApplication());
+//  }
 
   // Call the superclass to create the whole widget
-  this->Superclass::WizardWorkflow = this->WizardWorkflow;
-  this->Superclass::CreateWidget();
-    
-  vtkSlicerColor *curColor = vtkSlicerColor::New();
+//  this->Superclass::WizardWorkflow = this->WizardWorkflow;
+  this->Superclass::CreateWidget();  
   
   // Add some workflow related items into the wizard gui
   if(!this->ComboBox)
@@ -152,10 +157,12 @@ void vtkKWMyWizardWidget::CreateWidget()
   this->ComboBox->SetLabelText("History:");
   this->ComboBox->GetWidget()->ReadOnlyOn();
   this->ComboBox->GetWidget()->SetCommandTriggerToAnyChange();
+
+  vtkSlicerColor *curColor = vtkSlicerColor::New();
   
   this->ComboBox->GetLabel()->SetBackgroundColor(curColor->LightestGreyBlue);
   this->ComboBox->GetWidget()->SetBackgroundColor(curColor->LightestGreyBlue);
-  this->ComboBox->SetBackgroundColor(curColor->LightestGreyBlue);
+  this->ComboBox->SetBackgroundColor(curColor->LightestGreyBlue);    
   
   this->Script("grid %s -row 0 -column 2 -sticky nswe -padx 8",
           this->ComboBox->GetWidgetName());
@@ -349,7 +356,10 @@ void vtkKWMyWizardWidget::RemoveAllObservers()
     if(this->ComboBox)
     {
         this->ComboBox->GetWidget()->RemoveAllObservers();
-        this->ComboBox->GetWidget()->SetCommand(NULL, NULL);
+        
+        // TODO:
+        // Change the format of the function, that it not put any warning after disabling it
+        this->ComboBox->GetWidget()->SetCommand(NULL, "SetValue");
     }
     
     if(this->BackButton)

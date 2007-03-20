@@ -5,6 +5,8 @@
 #include "ModuleDescription.h"
 #include "ModuleDescriptionParser.h"
 
+#include <vtkMRMLNode.h>
+
 vtkWFEngineHandler::vtkWFEngineHandler()
 {
     this->m_errorMSG = "";
@@ -20,6 +22,7 @@ vtkWFEngineHandler::vtkWFEngineHandler()
     this->m_curModuleDescription = NULL;
     this->m_curWFStepObject = NULL;
     this->m_wfDI = NULL;
+    this->m_curWFMRMLNode = NULL;
 }
 
 vtkWFEngineHandler::~vtkWFEngineHandler()
@@ -44,6 +47,7 @@ vtkWFEngineHandler::~vtkWFEngineHandler()
     if(this->m_wfDI)
     {
         this->CloseWorkflowSession();
+        m_wfDI->Destroy();
         this->m_wfDI = NULL;
     }
 }
@@ -111,9 +115,9 @@ int vtkWFEngineHandler::GetNextStepID()
     
     std::string tclFunction = this->m_nextStepFuncTCL;
     tclFunction.append(" \n\r getNextID");
-    std::cout<<tclFunction<<std::endl;
+//    std::cout<<tclFunction<<std::endl;
     const char* returnValue = this->Script(tclFunction.c_str());
-    std::cout<<returnValue<<std::endl;
+//    std::cout<<returnValue<<std::endl;
     
     if(strcmp(returnValue,"true") == 0)
     {
@@ -432,4 +436,14 @@ int vtkWFEngineHandler::GetUnprocessedSteps()
        return this->m_wfDI->getNumberOfUnprocessedSteps();
     }
     return -1;
+}
+
+void vtkWFEngineHandler::SetWFMRMLNode(vtkMRMLNode *node)
+{
+    this->m_curWFMRMLNode = node;
+}
+
+vtkMRMLNode *vtkWFEngineHandler::GetWFMRMLNode()
+{
+    return this->m_curWFMRMLNode;
 }

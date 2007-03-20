@@ -44,6 +44,8 @@ public:
     // Gets the number of unprocessed Steps in the workflow. This is just a rough approximation
     // because it just looks through one path through the workflow graph.
     int getNumberOfUnprocessedSteps();
+    
+    void Destroy();
 protected:
     WFDirectInterface();
     virtual ~WFDirectInterface();

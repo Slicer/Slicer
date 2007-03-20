@@ -25,6 +25,18 @@ WFBaseEngine::WFBaseEngine()
 
 WFBaseEngine::~WFBaseEngine()
 {
+    if(this->m_wfeOpts)
+    {
+        this->m_wfeOpts->Destroy();
+        this->m_wfeOpts = NULL;
+    }
+#ifndef WFDIRECTINTERFACE
+    if(this->m_wfeSC)
+    {
+        delete(this->m_wfeSC);
+        this->m_wfeSC = NULL;
+    }
+#endif
 }
 
 WFBaseEngine* WFBaseEngine::New()
@@ -289,3 +301,9 @@ void WFBaseEngine::RunNetworkInterface()
    this->mainInterfaceLoop();
 }
 #endif
+
+void WFBaseEngine::Destroy()
+{
+    delete(this);
+}
+

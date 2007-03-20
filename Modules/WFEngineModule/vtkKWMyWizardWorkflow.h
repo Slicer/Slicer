@@ -14,7 +14,7 @@ public:
     
     vtkTypeRevisionMacro(vtkKWMyWizardWorkflow,vtkKWWizardWorkflow);
     
-    vtkKWWizardWorkflow *GetWizardWorkflow();
+//    vtkKWWizardWorkflow *GetWizardWorkflow();
         
     int CreateBackTransition(vtkKWWizardStep *origin, vtkKWWizardStep *destination);
     

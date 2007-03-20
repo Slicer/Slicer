@@ -526,6 +526,9 @@ int vtkSlicerParameterWidget::CreateWidgets()
                 errorLabel->SetFont("times 8 bold");
                 app->Script( "pack %s -side top -anchor ne -padx 2 -pady 2",
                         errorLabel->GetWidgetName());
+                
+                errorLabel->Delete();
+                errorLabel = NULL;
             }
 
             curModWidgetStruct->modParams->push_back((*pit));
@@ -536,6 +539,7 @@ int vtkSlicerParameterWidget::CreateWidgets()
             this->AddParameterAndEventToWidget(parameter, (*pit));                        
 
             parameter->Delete();
+            parameter = NULL;
         }                
         curModWidgetStruct->paramWidget = parameterGroupFrame;
         this->m_InternalWidgetParamList->push_back(curModWidgetStruct);        
