@@ -295,7 +295,20 @@ itcl::body Loader::add { path } {
     $this status "Please wait...\nUnpacking $path into $tmp"
     update
 
-    set unzip "c:/cygwin/bin/unzip.exe"
+    #
+    # look for unzip on the system, if not found try the 
+    # tcl fallback
+    #
+    set candidates {
+      "c:/cygwin/bin/unzip.exe"
+      /usr/bin/unzip /bin/unzip /usr/local/bin/unzip
+    }
+    foreach c $candidates {
+      if { [file exists $c] } {
+        set unzip $c
+        break
+      }
+    }
     if { [file exists $unzip] } {
       set cwd [pwd]
       cd $tmp
