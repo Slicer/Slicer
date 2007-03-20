@@ -831,15 +831,15 @@ namespace itk
     char* pDst = (char*)tempmemory;
     
     for(unsigned int pixelIndex = 0;
-  pixelIndex < numPixels; ++pixelIndex, pDst+=valueSize )
+        pixelIndex < numPixels; ++pixelIndex, pDst+=valueSize )
       {
-  for(unsigned int componentIndex =0 ;
-      componentIndex < m_NumberOfComponents;
-      ++componentIndex, pSrc+=valueSize)
-    {
-      std::copy( pSrc, pSrc+ valueSize,
-           pDst + frameSize*componentIndex );
-    } // next component index
+      for(unsigned int componentIndex =0 ;
+          componentIndex < m_NumberOfComponents;
+          ++componentIndex, pSrc+=valueSize)
+        {
+        std::copy( pSrc, pSrc+ valueSize,
+                   pDst + frameSize*componentIndex );
+        } // next component index
       } // next pixelIndex 
   }
 
