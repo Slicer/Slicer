@@ -230,6 +230,6 @@ CONFIGURE_FILE(
 )
 
 INSTALL(
-  ${Slicer3_BINARY_DIR}/lib/launch.tcl
+  FILES ${Slicer3_BINARY_DIR}/lib/launch.tcl
   DESTINATION lib/launch.tcl
 )
