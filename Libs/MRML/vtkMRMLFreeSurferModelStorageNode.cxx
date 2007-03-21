@@ -93,6 +93,14 @@ vtkMRMLFreeSurferModelStorageNode::~vtkMRMLFreeSurferModelStorageNode()
 //----------------------------------------------------------------------------
 void vtkMRMLFreeSurferModelStorageNode::WriteXML(ostream& of, int indent)
 {
+  // make sure that FileName is the surface file name
+  if (this->SurfaceFileName != NULL &&
+      this->FileName != NULL &&
+      strcmp(this->SurfaceFileName, this->FileName) != 0)
+    {
+    vtkWarningMacro("WriteXML: resetting FileName to SurfaceFileName " << this->SurfaceFileName);
+    this->SetFileName(this->SurfaceFileName);
+    }
   Superclass::WriteXML(of, indent);
   if (this->SurfaceFileName != NULL)
     {
