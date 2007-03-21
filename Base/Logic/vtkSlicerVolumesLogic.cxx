@@ -185,22 +185,9 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (char* filename, in
     vtkSlicerColorLogic *colorLogic = vtkSlicerColorLogic::New();
     if (labelMap) 
       {
-      // is it a free surfer label map?
-      std::string fname(filename);
-      std::string::size_type loc = fname.find(".");
-      if (loc != std::string::npos)
+      if (this->IsFreeSurferVolume(filename))
         {
-        std::string extension = fname.substr(loc);
-        if (extension == std::string(".mgz") ||
-            extension == std::string(".mgh") ||
-            extension == std::string(".mgh.gz"))
-          {
-          displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultFreeSurferLabelMapColorNodeID());
-          }
-        else
-          {
-          displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultLabelMapColorNodeID());
-          }
+        displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultFreeSurferLabelMapColorNodeID());
         }
       else
         {
@@ -366,22 +353,9 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (char* filename, in
       {
       if (isLabelMap)
         {
-        // is it a free surfer label map?
-        std::string fname(filename);
-        std::string::size_type loc = fname.find(".");
-        if (loc != std::string::npos)
+        if (this->IsFreeSurferVolume(filename))
           {
-          std::string extension = fname.substr(loc);
-          if (extension == std::string(".mgz") ||
-              extension == std::string(".mgh") ||
-              extension == std::string(".mgh.gz"))
-            {
-            displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultFreeSurferLabelMapColorNodeID());
-            }
-          else
-            {
-            displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultLabelMapColorNodeID());
-            }
+          displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultFreeSurferLabelMapColorNodeID());
           }
         else
           {
@@ -504,3 +478,27 @@ void vtkSlicerVolumesLogic::PrintSelf(ostream& os, vtkIndent indent)
     (this->ActiveVolumeNode ? this->ActiveVolumeNode->GetName() : "(none)") << "\n";
 }
 
+//----------------------------------------------------------------------------
+int vtkSlicerVolumesLogic::IsFreeSurferVolume (char* filename)
+{
+  std::string fname(filename);
+  std::string::size_type loc = fname.find(".");
+  if (loc != std::string::npos)
+    {
+    std::string extension = fname.substr(loc);
+    if (extension == std::string(".mgz") ||
+        extension == std::string(".mgh") ||
+        extension == std::string(".mgh.gz"))
+      {
+      return 1;
+      }
+    else
+      {
+      return 0;
+      }
+    }
+  else
+    {
+    return 0;
+    }
+}

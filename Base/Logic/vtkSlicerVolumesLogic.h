@@ -78,6 +78,12 @@ protected:
   void operator=(const vtkSlicerVolumesLogic&);
 
   // Description:
+  // Examine the file name to see if the extension is one of the supported
+  // freesurfer volume formats. Used to assign the proper colour node to label
+  // maps.
+  int IsFreeSurferVolume (char* filename);
+  
+  // Description:
   //
   vtkMRMLVolumeNode *ActiveVolumeNode;
 };
