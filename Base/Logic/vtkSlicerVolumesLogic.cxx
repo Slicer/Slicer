@@ -185,7 +185,27 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (char* filename, in
     vtkSlicerColorLogic *colorLogic = vtkSlicerColorLogic::New();
     if (labelMap) 
       {
-      displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultLabelMapColorNodeID());
+      // is it a free surfer label map?
+      std::string fname(filename);
+      std::string::size_type loc = fname.find(".");
+      if (loc != std::string::npos)
+        {
+        std::string extension = fname.substr(loc);
+        if (extension == std::string(".mgz") ||
+            extension == std::string(".mgh") ||
+            extension == std::string(".mgh.gz"))
+          {
+          displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultFreeSurferLabelMapColorNodeID());
+          }
+        else
+          {
+          displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultLabelMapColorNodeID());
+          }
+        }
+      else
+        {
+        displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultLabelMapColorNodeID());
+        }
       }
     else
       {
