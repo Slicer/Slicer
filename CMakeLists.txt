@@ -40,6 +40,7 @@ SET (LIBRARY_OUTPUT_PATH ${Slicer3_BINARY_DIR}/bin/
         "Single output directory for building all libraries." 
         FORCE)
 SET (EXECUTABLE_OUTPUT_PATH ${Slicer3_BINARY_DIR}/bin/ 
+
         CACHE PATH 
         "Single output directory for building all executables." 
         FORCE)
@@ -47,6 +48,7 @@ SET (EXECUTABLE_OUTPUT_PATH ${Slicer3_BINARY_DIR}/bin/
 # Slicer libraries subdirectory
 #
 SET (SLICER_INSTALL_LIBRARIES_DIR "lib/Slicer3")
+
 SET (SLICER_LIBRARIES_DIR "${Slicer3_BINARY_DIR}/${SLICER_INSTALL_LIBRARIES_DIR}")
 
 
@@ -59,6 +61,7 @@ IF(Slicer3_BUILD_TESTING)
     INCLUDE (CTest)
     MARK_AS_ADVANCED(TCL_TCLSH DART_ROOT)
 ENDIF(Slicer3_BUILD_TESTING)
+
 
 #
 # Libs
@@ -79,6 +82,7 @@ IF (NOT ITK_FOUND)
   MESSAGE (FATAL_ERROR "Need ITK to build")
 ENDIF (NOT ITK_FOUND)
 
+
 INCLUDE(${ITK_USE_FILE})
 
 
@@ -89,6 +93,7 @@ FIND_PACKAGE(KWWidgets REQUIRED)
 IF (NOT KWWidgets_FOUND)
   MESSAGE (FATAL_ERROR "Need KWWidgets to build")
 ENDIF (NOT KWWidgets_FOUND)
+
 
 INCLUDE(${KWWidgets_USE_FILE})
 
@@ -106,7 +111,6 @@ ENDIF(USE_TEEM)
 # OpenTracker 
 #
 OPTION(USE_OPENTRACKER "Build Slicer3 with OpenTracker support." OFF)
-
 IF(USE_OPENTRACKER)
   # version of opentracker: 1.3 or 2.0
   # By default, use versin 1.3. If use 2.0, turn it off
@@ -114,7 +118,7 @@ IF(USE_OPENTRACKER)
 
   FIND_LIBRARY(OPENTRACKER_LIB 
     NAMES opentrackerd opentracker OpenTracker NaviTrack
-    PATHS "" 
+    PATHS ${OT_LIB_DIR} 
   )
   IF(OPENTRACKER_LIB-NOTFOUND)
     MESSAGE (FATAL_ERROR "Need OpenTracker to build")
@@ -125,10 +129,10 @@ IF(USE_OPENTRACKER)
     SET(INC "OpenTracker.h")
   # include file for OpenTracker 2.0 
   ELSE(OT_VERSION_13)
-    SET(INC "OpenTracker/OpenTracker.h") 
+    SET(INC "OpenTracker/OpenTracker.h")
   ENDIF(OT_VERSION_13)
   FIND_PATH(OPENTRACKER_INC_DIR "${INC}" 
-    ""
+    ${OT_INC_DIR}
   )
 
   IF(OPENTRACKER_INC_DIR-NOTFOUND)
@@ -138,6 +142,17 @@ ELSE(USE_OPENTRACKER)
   SET(OPENTRACKER_LIB "")
   SET(OPENTRACKER_INC_DIR "")
 ENDIF(USE_OPENTRACKER)
+
+
+#
+# IGSTK
+# Built in Slicer3-lib
+#
+OPTION(USE_IGSTK "Build Slicer3 with IGSTK support." OFF)
+IF(USE_IGSTK)
+  FIND_PACKAGE(IGSTK REQUIRED)
+  INCLUDE(${IGSTK_USE_FILE})
+ENDIF(USE_IGSTK)
 
 
 # Generate the default setup paths scripts.
@@ -150,6 +165,7 @@ KWWidgets_GENERATE_SETUP_PATHS_SCRIPTS(
   
 
 # VTK 5.0 does not have VTK_CMAKE_DIR
+
 # Alternatively you could use KWWidget's wrapping, which encapsulate
 # the differences between various VTK versions:
 #  INCLUDE("${KWWidgets_CMAKE_DIR}/KWWidgetsWrappingMacros.cmake")
