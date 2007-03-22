@@ -14,6 +14,7 @@
 
 #include "vtkSlicerNodeSelectorWidget.h"
 #include "vtkSlicerVolumeDisplayWidget.h"
+#include "vtkSlicerVolumeHeaderWidget.h"
 
 class vtkKWPushButton;
 class vtkKWLoadSaveButtonWithLabel;
@@ -111,11 +112,13 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerVolumesGUI : public vtkSlicerModuleGUI
     vtkSlicerModuleCollapsibleFrame *HelpFrame;
     vtkSlicerModuleCollapsibleFrame *LoadFrame;
     vtkSlicerModuleCollapsibleFrame *DisplayFrame;
+    vtkSlicerModuleCollapsibleFrame *InfoFrame;
     vtkSlicerModuleCollapsibleFrame *SaveFrame;
 
     vtkSlicerNodeSelectorWidget* VolumeSelectorWidget;
     vtkKWLoadSaveButton *SaveVolumeButton;
     vtkSlicerVolumeDisplayWidget *VolumeDisplayWidget;
+    vtkSlicerVolumeHeaderWidget *VolumeHeaderWidget;
 
     vtkKWLabel *NACLabel;
     vtkKWLabel *NAMICLabel;

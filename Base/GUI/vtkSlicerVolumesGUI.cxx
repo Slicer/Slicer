@@ -40,10 +40,12 @@ vtkSlicerVolumesGUI::vtkSlicerVolumesGUI ( )
     this->LoadVolumeButton = NULL;
     this->SaveVolumeButton = NULL;
     this->VolumeDisplayWidget = NULL;
+    this->VolumeHeaderWidget = NULL;
 
     this->HelpFrame = NULL;
     this->LoadFrame = NULL;
     this->DisplayFrame = NULL;
+    this->InfoFrame = NULL;
     this->SaveFrame = NULL;
 
     this->NameEntry = NULL;
@@ -85,6 +87,12 @@ vtkSlicerVolumesGUI::~vtkSlicerVolumesGUI ( )
     this->VolumeDisplayWidget->SetParent(NULL );
     this->VolumeDisplayWidget->Delete ( );
     }
+  if (this->VolumeHeaderWidget)
+    {
+    this->VolumeHeaderWidget->SetParent(NULL );
+    this->VolumeHeaderWidget->Delete ( );
+    }
+
   if (this->VolumeSelectorWidget)
     {
     this->VolumeSelectorWidget->SetParent(NULL );
@@ -133,6 +141,12 @@ vtkSlicerVolumesGUI::~vtkSlicerVolumesGUI ( )
     this->DisplayFrame->SetParent ( NULL );
     this->DisplayFrame->Delete ( );
     this->DisplayFrame = NULL;
+    }
+  if ( this->InfoFrame )
+    {
+    this->InfoFrame->SetParent ( NULL );
+    this->InfoFrame->Delete ( );
+    this->InfoFrame = NULL;
     }
 
   if ( this->NACLabel )
@@ -506,6 +520,23 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
     this->VolumeDisplayWidget->Create ( );
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   this->VolumeDisplayWidget->GetWidgetName(), this->DisplayFrame->GetFrame()->GetWidgetName());
+    // ---
+    // Info FRAME            
+    InfoFrame = vtkSlicerModuleCollapsibleFrame::New ( );    
+    this->InfoFrame->SetParent ( page );
+    this->InfoFrame->Create ( );
+    this->InfoFrame->SetLabelText ("Info");
+    this->InfoFrame->CollapseFrame ( );
+    app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
+                  this->InfoFrame->GetWidgetName(), page->GetWidgetName());
+
+    this->VolumeHeaderWidget = vtkSlicerVolumeHeaderWidget::New ( );
+    this->VolumeHeaderWidget->SetMRMLScene(this->GetMRMLScene() );
+    this->VolumeHeaderWidget->SetParent ( this->InfoFrame->GetFrame() );
+    this->VolumeHeaderWidget->Create ( );
+    app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
+                  this->VolumeHeaderWidget->GetWidgetName(), this->InfoFrame->GetFrame()->GetWidgetName());
+
 
     // ---
     // Save FRAME            
