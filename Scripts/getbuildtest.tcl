@@ -326,11 +326,17 @@ runcmd $::CMAKE \
         -DITK_DIR:FILEPATH=$ITK_BINARY_PATH \
         -DKWWidgets_DIR:FILEPATH=$SLICER_LIB/KWWidgets-build \
         -DTEEM_DIR:FILEPATH=$SLICER_LIB/teem-build \
+        -DIGSTK_DIR:FILEPATH=$SLICER_LIB/IGSTK-build \
         -DCMAKE_BUILD_TYPE=$::VTK_BUILD_TYPE \
         -DSlicer3_VERSION_PATCH:STRING=$::GETBUILDTEST(version-patch) \
         -DCPACK_GENERATOR:STRING=$::GETBUILDTEST(cpack-generator) \
         -DCPACK_PACKAGE_FILE_NAME:STRING=$::GETBUILDTEST(binary-filename) \
         -DUSE_TEEM=ON \
+        -DUSE_IGSTK=$::IGSTK \
+        -DUSE_OPENTRACKER=$::OPENTRACKER \
+        -DOT_VERSION_13=$::OT_VERSION \
+        -DOT_LIB_DIR:FILEPATH=$::OT_LIB_DIR \
+        -DOT_INC_DIR:FILEPATH=$::OT_INC_DIR \
         $SLICER_HOME
 
 if { $isWindows } {
