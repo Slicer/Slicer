@@ -49,7 +49,10 @@ void vtkIGTOpenTrackerStream::Init(char *configFile)
     context->parseConfiguration(configFile);  
 
     // sets the callback function
-    callbackMod->setCallback( "cb1", (OTCallbackFunction*)&callbackF ,this);    
+    // if we use NaviTrack (not opentracker), use this function
+    // callbackMod->setCallback( "cb1", (OTCallbackFunction*)&callbackF ,this);    
+    callbackMod->setCallback( "cb1", (CallbackFunction*)&callbackF ,this);    
+ 
     context->start();
 }
 
