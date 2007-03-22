@@ -799,6 +799,62 @@ if { ![file exists $::SANDBOX_TEST_FILE] && ![file exists $::ALT_SANDBOX_TEST_FI
     }
 }
 
+
+################################################################################
+# Get and build igstk 
+#
+
+if { ![file exists $::IGSTK_TEST_FILE] || $::GENLIB(update) } {
+    cd $SLICER_LIB
+
+    runcmd $::CVS -d:pserver:anonymous:igstk@public.kitware.com:/cvsroot/IGSTK login
+    eval "runcmd $::CVS $CVS_CO_FLAGS -d :pserver:anonymous@public.kitware.com:/cvsroot/IGSTK co IGSTK"
+
+    file mkdir $SLICER_LIB/IGSTK-build
+    cd $SLICER_LIB/IGSTK-build
+
+
+    if {$isDarwin} {
+    runcmd $::CMAKE \
+        -G$GENERATOR \
+        -DCMAKE_CXX_COMPILER:STRING=$COMPILER_PATH/$COMPILER \
+        -DCMAKE_CXX_COMPILER_FULLPATH:FILEPATH=$COMPILER_PATH/$COMPILER \
+        -DVTK_DIR:PATH=$VTK_DIR \
+        -DITK_DIR:FILEPATH=$ITK_BINARY_PATH \
+        -DBUILD_SHARED_LIBS:BOOL=ON \
+        -DCMAKE_SKIP_RPATH:BOOL=OFF \
+        -DBUILD_EXAMPLES:BOOL=OFF \
+        -DBUILD_TESTING:BOOL=OFF \
+        -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
+        ../IGSTK
+    } else {
+    runcmd $::CMAKE \
+        -G$GENERATOR \
+        -DCMAKE_CXX_COMPILER:STRING=$COMPILER_PATH/$COMPILER \
+        -DCMAKE_CXX_COMPILER_FULLPATH:FILEPATH=$COMPILER_PATH/$COMPILER \
+        -DVTK_DIR:PATH=$VTK_DIR \
+        -DITK_DIR:FILEPATH=$ITK_BINARY_PATH \
+        -DBUILD_SHARED_LIBS:BOOL=ON \
+        -DCMAKE_SKIP_RPATH:BOOL=ON \
+        -DBUILD_EXAMPLES:BOOL=OFF \
+        -DBUILD_TESTING:BOOL=OFF \
+        -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
+        ../IGSTK
+    }
+
+    if {$isWindows} {
+        if { $MSVC6 } {
+            runcmd $::MAKE IGSTK.dsw /MAKE "ALL_BUILD - $::VTK_BUILD_TYPE"
+        } else {
+            runcmd $::MAKE IGSTK.SLN /build  $::VTK_BUILD_TYPE
+        }
+    } else {
+        eval runcmd $::MAKE 
+    }
+}
+
+
+
 # Are all the test files present and accounted for?  If not, return error code
 
 if { ![file exists $::CMAKE] } {
@@ -806,6 +862,9 @@ if { ![file exists $::CMAKE] } {
 }
 if { ![file exists $::TEEM_TEST_FILE] } {
     puts "Teem test file $::TEEM_TEST_FILE not found."
+}
+if { ![file exists $::IGSTK_TEST_FILE] } {
+    puts "IGSTK test file $::IGSTK_TEST_FILE not found."
 }
 if { ![file exists $::TCL_TEST_FILE] } {
     puts "Tcl test file $::TCL_TEST_FILE not found."
