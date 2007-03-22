@@ -26,7 +26,7 @@
 #include "vtkIGTOpenTrackerStream.h"
 #endif
 #ifdef USE_IGSTK
-#include "vtkIGTOpenTrackerStream.h"
+#include "vtkIGTIGSTKStream.h"
 #endif
 
 
@@ -139,15 +139,18 @@ class VTK_NEURONAV_EXPORT vtkNeuroNavGUI : public vtkSlicerModuleGUI
     vtkKWCheckButton *LocatorModeCheckButton;
     vtkKWCheckButton *UserModeCheckButton;
 
-    /*
     vtkKWMenuButton *RedSliceMenu;
     vtkKWMenuButton *YellowSliceMenu;
     vtkKWMenuButton *GreenSliceMenu;
-    */
 
+#ifdef USE_OPENTRACKER
     vtkKWLoadSaveButtonWithLabel *LoadConfigButton;
-
     vtkKWEntry *ConfigFileEntry;
+#endif
+#ifdef USE_IGSTK
+    vtkKWMenuButtonWithLabel *DeviceMenuButton;
+#endif
+
     vtkKWEntryWithLabel *UpdateRateEntry;
     vtkKWEntryWithLabel * MultiFactorEntry;
 
@@ -185,7 +188,9 @@ class VTK_NEURONAV_EXPORT vtkNeuroNavGUI : public vtkSlicerModuleGUI
 
     void UpdateAll();
     void UpdateLocator();
-    void UpdateSliceDisplay(float x, float y, float z);
+    void UpdateSliceDisplay(float nx, float ny, float nz, 
+                            float tx, float ty, float tz, 
+                            float px, float py, float pz);
 
  private:
     vtkNeuroNavGUI ( const vtkNeuroNavGUI& ); // Not implemented.
@@ -193,7 +198,7 @@ class VTK_NEURONAV_EXPORT vtkNeuroNavGUI : public vtkSlicerModuleGUI
 
     void BuildGUIForHandPieceFrame ();
     void BuildGUIForTrackingFrame ();
-    void BuildGUIForServerFrame ();
+    void BuildGUIForDeviceFrame ();
     void BuildGUIForRegistrationFrame ();
 
     void TrackerLoop();
