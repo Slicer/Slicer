@@ -121,9 +121,28 @@ set ::TCL_INCLUDE_DIR $::SLICER_LIB/tcl-build/include
 set ::CMAKE_PATH $::SLICER_LIB/CMake-build
 set ::SOV_BINARY_DIR ""
 set ::XVNC_EXECUTABLE " "
+set ::IGSTK_DIR $::SLICER_LIB/IGSTK-build 
 
 
-# Files to test if library has already been built by genlib.tcl.
+# Options for building IGT modules in Slicer
+set ::IGSTK "OFF"
+set ::OPENTRACKER "OFF"
+# If the value of OPENTRACKER is "ON", you need to set the following variables:
+
+# ON:  opentracker 1.3
+# OFF: opentracker 2.0
+set ::OT_VERSION "ON"
+
+# OT_LIB_DIR: the absolute path contains the OpenTracker library, 
+# e.g. libOpenTrakcer.so 
+# set ::OT_LIB_DIR /home/hliu/projects/splot-build/opentracker/lib/.libs/
+set ::OT_LIB_DIR ""
+
+# OT_INC: the directory contains "OpenTracker.h" (opentracker 1.3) or 
+#         "OpenTracker/OpenTracker.h" (opentracker 2.0) 
+# set ::OT_INC_DIR /home/hliu/projects/splot-build/opentracker/src
+set ::OT_INC_DIR "" 
+
 
 switch $::tcl_platform(os) {
     "SunOS" -
@@ -162,6 +181,8 @@ switch $::tcl_platform(os) {
         set ::TK_EVENT_PATCH $::SLICER_HOME/tkEventPatch.diff
         set ::BLT_PATCH $::SLICER_HOME/blt-patch.diff
         set ::env(VTK_BUILD_SUBDIR) $::VTK_BUILD_SUBDIR
+        set ::IGSTK_TEST_FILE $::IGSTK_DIR/bin/libIGSTK.so
+
     }
     "Linux" {
         set ::TEEM_BIN_DIR  $::TEEM_BUILD_DIR/bin
@@ -183,6 +204,8 @@ switch $::tcl_platform(os) {
         set ::TK_EVENT_PATCH $::SLICER_HOME/tkEventPatch.diff
         set ::BLT_PATCH $::SLICER_HOME/blt-patch.diff
         set ::env(VTK_BUILD_SUBDIR) $::VTK_BUILD_SUBDIR
+        set ::IGSTK_TEST_FILE $::IGSTK_DIR/bin/libIGSTK.so
+
     }
     "Windows NT" {
     # Windows NT currently covers WinNT, Win2000, XP Home, XP Pro
@@ -212,7 +235,7 @@ switch $::tcl_platform(os) {
         set ::VTK_TK_LIB $::TCL_LIB_DIR/tk84.lib
         set ::VTK_TCLSH $::TCL_BIN_DIR/tclsh84.exe
         set ::ITK_TEST_FILE $::ITK_BINARY_PATH/bin/$::VTK_BUILD_TYPE/ITKCommon.dll
-
+        set ::IGSTK_TEST_FILE $::IGTSTK_DIR/bin/$::VTK_BUILD_TYPE/IGSTK.lib
     }
     default {
         puts stderr "Could not match platform \"$::tcl_platform(os)\"."
