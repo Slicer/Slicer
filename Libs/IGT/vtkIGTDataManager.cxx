@@ -5,6 +5,9 @@
 #include "vtkMRMLModelDisplayNode.h"
 #include "vtkMRMLLinearTransformNode.h"
 #include "vtkCylinderSource.h"
+#include "vtkSphereSource.h"
+#include "vtkAppendPolyData.h"
+
 
 #include <string>
 
@@ -57,16 +60,30 @@ const char *vtkIGTDataManager::RegisterStream(int streamType)
             modelNode->SetAndObserveTransformNodeID(transform->GetID());  
             id = std::string(modelNode->GetID());
 
+            // Cylinder represents the locator stick
             vtkCylinderSource *cylinder = vtkCylinderSource::New();
             cylinder->SetRadius(1.5);
             cylinder->SetHeight(100);
             cylinder->Update();
-            modelNode->SetAndObservePolyData(cylinder->GetOutput());
+            // Sphere represents the locator tip 
+            vtkSphereSource *sphere = vtkSphereSource::New();
+            sphere->SetRadius(2.3);
+            sphere->SetCenter(0, -50, 0);
+            sphere->Update();
+
+            vtkAppendPolyData *apd = vtkAppendPolyData::New();
+            apd->AddInput(sphere->GetOutput());
+            apd->AddInput(cylinder->GetOutput());
+            apd->Update();
+
+            modelNode->SetAndObservePolyData(apd->GetOutput());
             this->Modified();  
             this->MRMLScene->Modified();
 
             modelNode->Delete();
             cylinder->Delete();
+            sphere->Delete();
+            apd->Delete();
             dispNode->Delete();
             transform->Delete();
             }
