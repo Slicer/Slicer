@@ -3,6 +3,7 @@
 #include "vtkObjectFactory.h"
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLModelDisplayNode.h"
+#include "vtkMRMLLinearTransformNode.h"
 #include "vtkCylinderSource.h"
 
 #include <string>
@@ -36,10 +37,12 @@ const char *vtkIGTDataManager::RegisterStream(int streamType)
 
             vtkMRMLModelNode *modelNode = vtkMRMLModelNode::New();
             vtkMRMLModelDisplayNode *dispNode = vtkMRMLModelDisplayNode::New();
+            vtkMRMLLinearTransformNode *transform = vtkMRMLLinearTransformNode::New();
             dispNode->SetVisibility(0);
 
             this->MRMLScene->SaveStateForUndo();
             this->MRMLScene->AddNode(dispNode);
+            this->MRMLScene->AddNode(transform);
             this->MRMLScene->AddNode(modelNode);  
 
             dispNode->SetScene(this->MRMLScene);
@@ -51,6 +54,7 @@ const char *vtkIGTDataManager::RegisterStream(int streamType)
             modelNode->SetHideFromEditors(1);
             modelNode->SetScene(this->MRMLScene);
             modelNode->SetAndObserveDisplayNodeID(dispNode->GetID());  
+            modelNode->SetAndObserveTransformNodeID(transform->GetID());  
             id = std::string(modelNode->GetID());
 
             vtkCylinderSource *cylinder = vtkCylinderSource::New();
@@ -64,6 +68,7 @@ const char *vtkIGTDataManager::RegisterStream(int streamType)
             modelNode->Delete();
             cylinder->Delete();
             dispNode->Delete();
+            transform->Delete();
             }
             break;
 
