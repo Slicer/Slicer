@@ -41,6 +41,8 @@
 #include "vtkIGTDataStream.h"
 
 #include "vtkCylinderSource.h"
+#include "vtkMRMLLinearTransformNode.h"
+
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkNeuroNavGUI );
@@ -1936,39 +1938,28 @@ void vtkNeuroNavGUI::UpdateAll()
 
 void vtkNeuroNavGUI::UpdateLocator()
 {
-    int count = 0;
-    if (! strcmp(this->RedSliceMenu->GetValue(), "Locator")) count++;
-    if (! strcmp(this->YellowSliceMenu->GetValue(), "Locator")) count++;
-    if (! strcmp(this->GreenSliceMenu->GetValue(), "Locator")) count++;
-
-    // Update the locator only if at least one slice is driven by Locator
-    if (count > 0)
-    {
-        vtkTransform *transform = NULL;
+    vtkTransform *transform = NULL;
 #ifdef USE_OPENTRACKER
-        transform = this->OpenTrackerStream->GetLocatorNormalTransform(); 
+    transform = this->OpenTrackerStream->GetLocatorNormalTransform(); 
 #endif
 #ifdef USE_IGSTK
-        transform = this->IGSTKStream->GetLocatorNormalTransform(); 
+    transform = this->IGSTKStream->GetLocatorNormalTransform(); 
 #endif
 
-        if (transform)
-        {
-            vtkSlicerApplicationGUI *appGUI = this->GetApplicationGUI();
-            vtkSlicerViewerWidget *viewerWidget = appGUI->GetViewerWidget();
-
-            vtkActor *locatorActor = viewerWidget->GetActorByID(this->LocatorModelID.c_str());
-            if (locatorActor)
-            {
-                //locatorActor->GetProperty()->SetColor(1, 0, 0);
-
-                locatorActor->SetUserMatrix(transform->GetMatrix());
-                locatorActor->Modified();
-                this->GetMRMLScene()->Modified();
-            }
-        }
+    vtkMRMLModelNode *model = (vtkMRMLModelNode *)this->GetMRMLScene()->GetNodeByID(this->LocatorModelID.c_str()); 
+    vtkMRMLModelDisplayNode *disp = model->GetDisplayNode();
+    int vis = disp->GetVisibility(); 
+    if (vis && transform)
+    {
+        vtkMRMLLinearTransformNode *lnode = (vtkMRMLLinearTransformNode *)model->GetParentTransformNode();
+        lnode->SetAndObserveMatrixTransformToParent(transform->GetMatrix());
+        model->Modified();
+        this->GetMRMLScene()->Modified();
     }
 }
+
+
+
 
 
 
