@@ -382,23 +382,6 @@ inline void CmdLine::parse(int argc, char** argv)
   for (int i = 1; i < argc; i++)
     args.push_back(argv[i]);
 
-
-  // Replace the patterns like --load-dicom with --load_dicom 
-  // (more standard and user friendly)
-  for (unsigned int i = 0; i < args.size(); i++)
-    {
-    if ( args[i].find_first_of("--") == 0 )
-      {
-      std::string::size_type dashIndex; 
-      while ( (dashIndex = args[i].find_first_of("-", 2)) != std::string::npos )
-        {
-        args[i][dashIndex] = '_';
-        }
-      }
-    }
-
-
-
   int requiredCount = 0;
 
   for (int i = 0; static_cast<unsigned int>(i) < args.size(); i++)
