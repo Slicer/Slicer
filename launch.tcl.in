@@ -276,6 +276,19 @@ proc launch_SplashKill {} {
     }
 }
 
+proc launch_SplashAnimate { {delayms 100} } {
+  if {[info command .splash] != ""} {
+    set dots [.splash.v cget -text]
+    if { $dots == "**********" } { 
+      set dots "*" 
+    } else {
+      set dots *$dots
+    }
+    .splash.v configure -text $dots
+    after $delayms "launch_SplashAnimate $delayms"
+  }
+}
+
 #-------------------------------------------------------------------------------
 # .PROC SplashShow
 # Builds and displays a splash screen, .splash
@@ -304,15 +317,21 @@ proc launch_SplashShow { {delayms 7000} } {
       set splashim [image create photo -file [file join $Path(program) gui/welcome.ppm]]
       label .splash.l -image $splashim
       place .splash.l -relx 0.5 -rely 0.35 -anchor center
+      label .splash.t1 -text "Starting up...\n\nSlicer is NOT an FDA approved medical device." -bg white -fg red -font $splashfontb
+      label .splash.t2 -text "See www.slicer.org for license details." -bg white -fg red -font $splashfont
+      label .splash.v -text "Version: $::env(SLICER_VERSION)" -bg white -fg darkblue -font $splashfont
     }
-    label .splash.t1 -text "Starting up...\n\nSlicer is NOT an FDA approved medical device." -bg white -fg red -font $splashfontb
-    label .splash.t2 -text "See www.slicer.org for license details." -bg white -fg red -font $splashfont
-    label .splash.v -text "Version: $::env(SLICER_VERSION)" -bg white -fg darkblue -font $splashfont
+
+    label .splash.t1 -text "Slicer3 starting up..." -bg white -font $splashfontb
+    label .splash.t2 -text "" -bg white -fg red -font $splashfont
+    label .splash.v -text "" -bg white -fg darkblue -font $splashfont
 
     place .splash.t1 -relx 0.5 -rely 0.30 -anchor center
-    place .splash.t2 -relx 0.5 -rely 0.50 -anchor center
-    place .splash.v -relx 0.5 -rely 0.80 -anchor center
+    #place .splash.t2 -relx 0.5 -rely 0.50 -anchor center
+    place .splash.v -relx 0.5 -rely 0.60 -anchor center
     update
+
+    after 100 "launch_SplashAnimate 300" 
 
     bind .splash <1> launch_SplashKill
     after 3000 launch_SplashKill
