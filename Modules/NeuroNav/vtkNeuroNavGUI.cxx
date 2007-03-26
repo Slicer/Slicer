@@ -1921,7 +1921,6 @@ void vtkNeuroNavGUI::UpdateAll()
         this->TAEntry->SetValue(Val);
         sprintf(Val, "%6.2f", tz);
         this->TSEntry->SetValue(Val);
-
         // update the display of locator
 #ifdef USE_OPENTRACKER
         this->OpenTrackerStream->SetLocatorTransforms();
@@ -1953,7 +1952,6 @@ void vtkNeuroNavGUI::UpdateLocator()
     {
         vtkMRMLLinearTransformNode *lnode = (vtkMRMLLinearTransformNode *)model->GetParentTransformNode();
         lnode->SetAndObserveMatrixTransformToParent(transform->GetMatrix());
-        model->Modified();
         this->GetMRMLScene()->Modified();
     }
 }
