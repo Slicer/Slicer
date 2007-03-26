@@ -731,8 +731,9 @@ vtkSlicerApplication::InformationMessage(const char* message)
 //----------------------------------------------------------------------------
 void vtkSlicerApplication::AddAboutCopyrights(ostream &os)
 {
+  os << "Slicer is NOT an FDA approved medical device." << endl << endl;
+  os << "See www.slicer.org for license details." << endl << endl;
   os << "See http://www.na-mic.org/Wiki/index.php/Slicer3:Acknowledgements" << endl << endl;
-
   os << "VTK http://www.vtk.org/copyright.php" << endl;
   os << "ITK http://www.itk.org/HTML/Copyright.htm" << endl;
   os << "KWWidgets http://www.kitware.com/Copyright.htm" << endl;
