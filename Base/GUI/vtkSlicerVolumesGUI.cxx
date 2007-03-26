@@ -452,7 +452,7 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
     this->LoadVolumeButton->GetWidget()->SetText ("Select Volume File");
     this->LoadVolumeButton->GetWidget()->GetLoadSaveDialog()->SetTitle("Open Volume File");
     this->LoadVolumeButton->GetWidget()->GetLoadSaveDialog()->SetFileTypes(
-                                                              "{ {volume} {*.*} }");
+                                                              "{ {Volume} {*} }");
     this->LoadVolumeButton->GetWidget()->GetLoadSaveDialog()->RetrieveLastPathFromRegistry(
       "OpenPath");
     app->Script("pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
