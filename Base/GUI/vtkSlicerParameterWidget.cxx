@@ -1020,23 +1020,23 @@ void vtkSlicerParameterWidget::DeleteInputWidget(vtkKWWidget *widg)
             *rbswl = vtkKWRadioButtonSetWithLabel::SafeDownCast(widg);
     
     if (sb) {
-        sb->GetWidget()->RemoveAllObservers();        
+        //sb->GetWidget()->RemoveAllObservers();        
     } else if (se) {
-        se->RemoveAllObservers();        
+        //se->RemoveAllObservers();        
     } else if (cb) {        
-        cb->GetWidget()->RemoveAllObservers();        
+        //cb->GetWidget()->RemoveAllObservers();        
     } else if (e) {
-        e->GetWidget()->RemoveAllObservers();        
+        //e->GetWidget()->RemoveAllObservers();        
     } else if (ns) {
-        ns->RemoveAllObservers();      
+        //ns->RemoveAllObservers();      
     } else if (lsb) {
-        lsb->GetWidget()->RemoveAllObservers();
+        //lsb->GetWidget()->RemoveAllObservers();
     } else if (rbswl) {
         int num = rbswl->GetWidget()->GetNumberOfWidgets();
         for (int i=0; i < num; ++i) {
             int id = rbswl->GetWidget()->GetIdOfNthWidget(i);
             vtkKWRadioButton* rb = rbswl->GetWidget()->GetWidget(id);
-            rb->RemoveAllObservers();
+            //rb->RemoveAllObservers();
         }        
     } else {
         std::cout<<"WARNING: vtkSlicerParameterWidget - try to set unsupported Widget;";
