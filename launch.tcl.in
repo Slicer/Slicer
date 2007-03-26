@@ -305,7 +305,7 @@ proc launch_SplashShow { {delayms 7000} } {
       label .splash.l -image $splashim
       place .splash.l -relx 0.5 -rely 0.35 -anchor center
     }
-    label .splash.t1 -text "Staring up...\n\nSlicer is NOT an FDA approved medical device." -bg white -fg red -font $splashfontb
+    label .splash.t1 -text "Starting up...\n\nSlicer is NOT an FDA approved medical device." -bg white -fg red -font $splashfontb
     label .splash.t2 -text "See www.slicer.org for license details." -bg white -fg red -font $splashfont
     label .splash.v -text "Version: $::env(SLICER_VERSION)" -bg white -fg darkblue -font $splashfont
 
