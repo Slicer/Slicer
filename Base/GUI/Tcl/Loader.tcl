@@ -65,7 +65,7 @@ namespace eval Loader {
     }
 
     set volumeLogic [$::slicer3::VolumesGUI GetLogic]
-    set node [$volumeLogic AddArchetypeVolume $path $centered $labelMap $name]
+    set node [$volumeLogic AddArchetypeVolume $archetype $centered $labelMap $name]
     set selNode [$::slicer3::ApplicationLogic GetSelectionNode]
 
     if { $node == "" } {
