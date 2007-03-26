@@ -41,6 +41,41 @@ namespace eval Loader {
 
   }
 
+  # 
+  # utility to load an archetype 
+  # - either an archetype filename
+  # - or a directory, from which the first file is selected
+  #   (assumes only one set of files in the directory)
+  #
+  proc LoadArchetype { path {centered 1} {labelMap 0} {name ""} } {
+
+    if { ![file exists $path] } {
+      error "path does not exist: $path"
+    }
+
+    if { [file isdir $path] } {
+      set files [glob -nocomplain $path/*]
+      set archetype [lindex $files 0] 
+    } else {
+      set archetype $path
+    }
+
+    if { $name == "" } {
+      set name [file tail [file root $path]]
+    }
+
+    set volumeLogic [$::slicer3::VolumesGUI GetLogic]
+    set node [$volumeLogic AddArchetypeVolume $path $centered $labelMap $name]
+    set selNode [$::slicer3::ApplicationLogic GetSelectionNode]
+
+    if { $node == "" } {
+      error "Could not open $archetype"
+    } else {
+      $selNode SetReferenceActiveVolumeID [$node GetID]
+      $::slicer3::ApplicationLogic PropagateVolumeSelection
+    }
+  }
+
 }
 
 

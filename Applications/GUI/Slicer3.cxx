@@ -1479,6 +1479,17 @@ int Slicer3_main(int argc, char *argv[])
         }
     }
 
+    //
+    // --load_dicom <directory | filename>
+    //
+    if ( LoadDicomDir != "" )
+      {    
+      // load either a directory or an archetype
+      std::string cmd = "::Loader::LoadArchetype " + LoadDicomDir;
+      res = Slicer3_Tcl_Eval( interp, cmd.c_str() );
+      }
+
+
     //--- set home module based on registry settings
     const char *homeModule = slicerApp->GetHomeModule();
     if ( homeModule && *homeModule )
