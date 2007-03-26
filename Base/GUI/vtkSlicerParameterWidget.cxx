@@ -83,9 +83,7 @@ vtkSlicerParameterWidget::~vtkSlicerParameterWidget()
     
     this->m_ParentWidget = NULL;
     this->m_ModuleDescription = NULL;
-    this->m_ModuleLogic = NULL;
-    
-    this->RemoveAllObservers();
+    this->m_ModuleLogic = NULL;    
 }
 
 void vtkSlicerParameterWidget::Initialize()
