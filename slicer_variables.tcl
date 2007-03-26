@@ -235,7 +235,7 @@ switch $::tcl_platform(os) {
         set ::VTK_TK_LIB $::TCL_LIB_DIR/tk84.lib
         set ::VTK_TCLSH $::TCL_BIN_DIR/tclsh84.exe
         set ::ITK_TEST_FILE $::ITK_BINARY_PATH/bin/$::VTK_BUILD_TYPE/ITKCommon.dll
-        set ::IGSTK_TEST_FILE $::IGTSTK_DIR/bin/$::VTK_BUILD_TYPE/IGSTK.lib
+        set ::IGSTK_TEST_FILE $::IGSTK_DIR/bin/$::VTK_BUILD_TYPE/IGSTK.lib
     }
     default {
         puts stderr "Could not match platform \"$::tcl_platform(os)\"."
