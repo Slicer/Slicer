@@ -84,6 +84,8 @@ vtkSlicerParameterWidget::~vtkSlicerParameterWidget()
     this->m_ParentWidget = NULL;
     this->m_ModuleDescription = NULL;
     this->m_ModuleLogic = NULL;
+    
+    this->RemoveAllObservers();
 }
 
 void vtkSlicerParameterWidget::Initialize()
@@ -970,14 +972,19 @@ void vtkSlicerParameterWidget::DeleteInternalLists()
         for(iter = this->m_InternalWidgetParamList->begin(); iter != this->m_InternalWidgetParamList->end(); iter++)
         {
             moduleParameterWidgetStruct *curModuleStruct = (moduleParameterWidgetStruct*)(*iter);
-            if(curModuleStruct->paramWidget)
+            if(curModuleStruct)
             {
                 vtkKWFrame *paramFrame = vtkKWFrame::SafeDownCast(curModuleStruct->paramWidget);
                 if(paramFrame)
                 {
-                    std::cout<<"VTKKWFRAME Delete!"<<std::endl;
-                    paramFrame->RemoveAllChildren();
-                    paramFrame->Delete();
+                    // iterate through all children to remove observers!
+                    for(int i = 0; i < paramFrame->GetNumberOfChildren(); i++)
+                    {                       
+                        this->DeleteInputWidget(paramFrame->GetNthChild(i));                        
+                    }
+//                    paramFrame->RemoveAllChildren();
+//                    paramFrame->Delete();
+//                    paramFrame->RemoveAllChildren();
                     paramFrame = NULL;
                 } else {
                   std::cout<<"WARNING: vtkSlicerParameterWidget - try to delete unsupported Widget; return \"\""<<std::endl;        
@@ -989,10 +996,58 @@ void vtkSlicerParameterWidget::DeleteInternalLists()
             {
                 curModuleStruct->modParams->clear();
                 curModuleStruct->modParams = NULL;
-            }                       
+            }
+            
+            curModuleStruct = NULL;
         }
         
         this->m_InternalWidgetParamList->clear();
         this->m_InternalWidgetParamList = NULL;
     }  
+}
+
+void vtkSlicerParameterWidget::DeleteInputWidget(vtkKWWidget *widg)
+{
+    vtkKWSpinBoxWithLabel *sb = vtkKWSpinBoxWithLabel::SafeDownCast(widg);
+    vtkKWScaleWithEntry *se = vtkKWScaleWithEntry::SafeDownCast(widg);
+    vtkKWCheckButtonWithLabel *cb = vtkKWCheckButtonWithLabel::SafeDownCast(widg);
+    vtkKWEntryWithLabel *e = vtkKWEntryWithLabel::SafeDownCast(widg);
+    vtkSlicerNodeSelectorWidget
+            *ns = vtkSlicerNodeSelectorWidget::SafeDownCast(widg);
+    vtkKWLoadSaveButtonWithLabel
+            *lsb = vtkKWLoadSaveButtonWithLabel::SafeDownCast(widg);
+    vtkKWRadioButton
+            *rb = vtkKWRadioButton::SafeDownCast(widg);
+    vtkKWRadioButtonSetWithLabel
+            *rbswl = vtkKWRadioButtonSetWithLabel::SafeDownCast(widg);
+    
+    if (sb) {
+        sb->GetWidget()->RemoveAllObservers();        
+    } else if (se) {
+        se->RemoveAllObservers();        
+    } else if (cb) {        
+        cb->GetWidget()->RemoveAllObservers();        
+    } else if (e) {
+        e->GetWidget()->RemoveAllObservers();        
+    } else if (ns) {
+        ns->RemoveAllObservers();      
+    } else if (lsb) {
+        lsb->GetWidget()->RemoveAllObservers();
+    } else if (rbswl) {
+        int num = rbswl->GetWidget()->GetNumberOfWidgets();
+        for (int i=0; i < num; ++i) {
+            int id = rbswl->GetWidget()->GetIdOfNthWidget(i);
+            vtkKWRadioButton* rb = rbswl->GetWidget()->GetWidget(id);
+            rb->RemoveAllObservers();
+        }        
+    } else {
+        std::cout<<"WARNING: vtkSlicerParameterWidget - try to set unsupported Widget;";
+        if(widg) {
+//            std::cout<<widg->GetClassName();
+        } else {
+            std::cout<<"NULL";
+        }        
+        std::cout<<" - return \"\""<<std::endl;        
+        return;
+    }
 }

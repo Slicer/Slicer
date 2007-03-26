@@ -18,7 +18,6 @@
 
 #include "vtkObjectFactory.h"
 #include "vtkObject.h"
-#include "vtkCallbackCommand.h"
 #include <vtksys/SystemTools.hxx> 
 
 #include "vtkWFEngineModuleLogic.h"

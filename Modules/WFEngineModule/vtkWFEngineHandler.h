@@ -17,7 +17,7 @@ struct Tcl_Interpr;
 //BTX
 class ModuleDescription;
 class vtkMRMLNode;
-
+class vtkKWFrame;
 namespace WFEngine {
     namespace nmWFStepObject {
         class WFStepObject;
@@ -75,6 +75,10 @@ public:
     void SetWFMRMLNode(vtkMRMLNode *node);
     
     vtkMRMLNode *GetWFMRMLNode();
+    
+    void SetWizardClientArea(vtkKWFrame *clientArea);
+    
+    vtkKWFrame *GetWizardClientArea();        
 protected:
     vtkWFEngineHandler();
     virtual ~vtkWFEngineHandler();
@@ -107,6 +111,7 @@ private:
     
     ModuleDescription *m_curModuleDescription;
     vtkMRMLNode *m_curWFMRMLNode;
+    vtkKWFrame *m_clientArea;
     
     //BTX
     WFDirectInterface *m_wfDI;

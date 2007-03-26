@@ -11,13 +11,13 @@
       <processControlElements>
         <inputCondition id="InputCondition_1">
           <flowsInto>
-            <nextElementRef id="Add_Fiducial_1_4" />
+            <nextElementRef id="Add_Fiducial_1_5" />
           </flowsInto>
         </inputCondition>
-        <task id="Add_Fiducial_1_4">
+        <task id="Add_Fiducial_1_5">
           <name>Add Fiducial 1</name>
           <flowsInto>
-            <nextElementRef id="Add_Fiducial_1.5_4" />
+            <nextElementRef id="Add_Fiducial_1.5_3" />
           </flowsInto>
           <join code="xor" />
           <split code="and" />
@@ -27,16 +27,20 @@
               <mapsTo>gui</mapsTo>
             </mapping>
             <mapping>
+              <expression query="&lt;event_addFiducial&gt;&lt;/event_addFiducial&gt;" />
+              <mapsTo>event_addFiducial</mapsTo>
+            </mapping>
+            <mapping>
               <expression query="&lt;tclValidationFunc&gt;proc validate {names values} { set retval true; set errorList {};  foreach name $names value $values {  set errorMSG {};  switch $name {   fidName {    if {$value == {}} {set errorMSG {The Fiducial name is not set!}} } }; lappend errorList $errorMSG; if {[string compare $errorMSG {}] != 0} {set retval false}; }; if {$retval != true} {return $errorList} else {return $retval}; }&lt;/tclValidationFunc&gt;" />
               <mapsTo>tclValidationFunc</mapsTo>
             </mapping>
           </startingMappings>
           <decomposesTo id="fid1" />
         </task>
-        <task id="Add_Fiducial_1.5_4">
+        <task id="Add_Fiducial_1.5_3">
           <name>Add Fiducial 1.5</name>
           <flowsInto>
-            <nextElementRef id="Add_Fiducial_2_3" />
+            <nextElementRef id="Add_Fiducial_2_4" />
           </flowsInto>
           <join code="xor" />
           <split code="and" />
@@ -46,19 +50,24 @@
               <mapsTo>gui</mapsTo>
             </mapping>
             <mapping>
+              <expression query="&lt;event_addFiducial&gt;&lt;/event_addFiducial&gt;" />
+              <mapsTo>event_addFiducial</mapsTo>
+            </mapping>
+            <mapping>
               <expression query="&lt;tclValidationFunc&gt;proc validate {names values} { set retval true; set errorList {};  foreach name $names value $values {  set errorMSG {};  switch $name {   fidName {    if {$value == {}} {set errorMSG {The Fiducial name is not set!}} } }; lappend errorList $errorMSG; if {[string compare $errorMSG {}] != 0} {set retval false}; }; if {$retval != true} {return $errorList} else {return $retval}; }&lt;/tclValidationFunc&gt;" />
               <mapsTo>tclValidationFunc</mapsTo>
             </mapping>
           </startingMappings>
           <decomposesTo id="fid1" />
         </task>
-        <task id="Add_Fiducial_2_3">
+        <task id="Add_Fiducial_2_4">
           <name>Add Fiducial 2</name>
           <flowsInto>
             <nextElementRef id="OutputCondition_2" />
           </flowsInto>
           <join code="xor" />
           <split code="and" />
+          <decomposesTo id="addfid2" />
         </task>
         <outputCondition id="OutputCondition_2" />
       </processControlElements>
@@ -94,6 +103,13 @@
         <type>string</type>
         <namespace>http://www.w3.org/2001/XMLSchema</namespace>
       </outputParam>
+    </decomposition>
+    <decomposition id="addfid2" xsi:type="WebServiceGatewayFactsType">
+      <inputParam>
+        <name>event_showFiducialList</name>
+        <type>string</type>
+        <namespace>http://www.w3.org/2001/XMLSchema</namespace>
+      </inputParam>
     </decomposition>
   </specification>
 </specificationSet>

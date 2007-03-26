@@ -88,6 +88,8 @@ protected:
     const char* GetValueFromWidget(vtkKWWidget *widg);
     
     void SetValueForWidget(vtkKWCoreWidget *widg, const char* value);
+    
+    void DeleteInputWidget(vtkKWWidget *widg);
     //BTX
     struct callBackDataStruct{
         ModuleParameter widgetParameter;

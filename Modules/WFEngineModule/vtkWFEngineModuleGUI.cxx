@@ -98,12 +98,17 @@ vtkWFEngineModuleGUI::~vtkWFEngineModuleGUI ( )
     
     if(this->m_mclDW)
     {
+        this->m_mclDW->GetWidget()->RemoveAllObservers();
         this->m_mclDW->Delete();
         this->m_mclDW = NULL;        
     }
     
     if(this->m_pbtnSet)
     {
+        for(int i = 0; i < this->m_pbtnSet->GetNumberOfWidgets(); i++)
+        {
+            this->m_pbtnSet->GetWidget(i)->RemoveAllObservers();
+        }
         this->m_pbtnSet->Delete();
         this->m_pbtnSet = NULL;
     }    
@@ -449,19 +454,25 @@ void vtkWFEngineModuleGUI::createWizard()
     wizCB->SetCallback(&vtkWFEngineModuleGUI::nextTransitionCallback);
     wizCB->SetClientData(this);
     this->m_curWizWidg->AddObserver(vtkKWMyWizardWidget::nextButtonClicked, wizCB);
+    wizCB->Delete();
+    wizCB = NULL;
+    
     
     wizCB = vtkCallbackCommand::New();
     
     wizCB->SetCallback(&vtkWFEngineModuleGUI::backTransitionCallback);
     wizCB->SetClientData(this);
     this->m_curWizWidg->AddObserver(vtkKWMyWizardWidget::backButtonClicked, wizCB);
+    wizCB->Delete();
+    wizCB = NULL;
     
     wizCB = vtkCallbackCommand::New();
     
     wizCB->SetCallback(&vtkWFEngineModuleGUI::jumpToStepCallback);
     wizCB->SetClientData(this);
     this->m_curWizWidg->AddObserver(vtkKWMyWizardWidget::comboBoxEntryChanged, wizCB);
-    
+    wizCB->Delete();
+    wizCB = NULL;
     // create a new MRMLNode to get track of all workflow variables
     
     vtkMRMLWFEngineModuleNode *myWFENode = vtkMRMLWFEngineModuleNode::New();
@@ -474,11 +485,14 @@ void vtkWFEngineModuleGUI::createWizard()
     // create WFEngineEventHandler and create all Observers
     
     this->m_wfEngineEventHandler = vtkWFEngineEventHandler::New();
+    this->m_wfEngineEventHandler->SetApplication(this->GetApplication());
 //    this->m_wfEngineEventHandler->SetMRMLScene(this->Logic->GetMRMLScene());
     this->m_wfEngineEventHandler->AddWorkflowObservers(this->m_wfEngineHandler);
     
     
     this->m_wfEngineHandler->SetWFMRMLNode(myWFENode);
+    
+    this->m_wfEngineHandler->SetWizardClientArea(this->m_curWizWidg->GetClientArea());
         
     virtFirstStep->Delete();
     virtFirstStep = NULL;
@@ -487,10 +501,7 @@ void vtkWFEngineModuleGUI::createWizard()
     virtLastStep = NULL;
     
     myWFENode->Delete();
-    myWFENode = NULL;
-    
-    wizCB->Delete();
-    wizCB = NULL;
+    myWFENode = NULL;        
 }
 
 void vtkWFEngineModuleGUI::closeBtnPushCmdCallback(vtkObject* obj, unsigned long, void* param, void*)
@@ -643,6 +654,13 @@ void vtkWFEngineModuleGUI::nextTransitionCallback(vtkObject* obj, unsigned long 
         }
         wfEngineModule->UpdateMRML();
         wfEngineModule->UpdateParameter();
+        
+        if(wfEngineModule->m_curWizWidg)
+        {
+            // Destroy all ClientAreaChildren!
+            wfEngineModule->m_curWizWidg->ClearPage();        
+        }
+        
         //check step validation   
         if(result == vtkKWMessageDialog::StatusOK && wfEngineModule->m_wfEngineHandler->LoadNextWorkStep() == vtkWFEngineHandler::SUCC )
         {            
@@ -673,6 +691,12 @@ void vtkWFEngineModuleGUI::backTransitionCallback(vtkObject* obj, unsigned long 
     vtkWFEngineModuleGUI *wfEngineModule = (vtkWFEngineModuleGUI*)callBackData;
     if(wfEngineModule)
     {
+        if(wfEngineModule->m_curWizWidg)
+        {
+            // Destroy all ClientAreaChildren!
+            wfEngineModule->m_curWizWidg->ClearPage();        
+        }
+        
         vtkKWWizardWorkflow *wizWF = wfEngineModule->m_curWizWidg->GetWizardWorkflow();
         if(wfEngineModule->m_wfEngineHandler->LoadBackWorkStep() == vtkWFEngineHandler::SUCC)
         {                  
@@ -702,7 +726,11 @@ void vtkWFEngineModuleGUI::jumpToStepCallback(vtkObject* obj, unsigned long id,v
         if(wfEngineModule->m_curWizWidg)
         {
             std::cout<<"Value: "<<wfEngineModule->m_curWizWidg->GetCurrentComboBoxValue();
-            std::cout<<" Index: "<<wfEngineModule->m_curWizWidg->GetCurrentComboBoxIndex()<<" == "<<wfEngineModule->m_wfEngineHandler->GetProcessedSteps()<<std::endl;        
+            std::cout<<" Index: "<<wfEngineModule->m_curWizWidg->GetCurrentComboBoxIndex()<<" == "<<wfEngineModule->m_wfEngineHandler->GetProcessedSteps()<<std::endl;
+            
+            // Destroy all ClientAreaChildren!
+            wfEngineModule->m_curWizWidg->ClearPage();
+            
             if(wfEngineModule->m_wfEngineHandler->LoadWorkStepByIndex(wfEngineModule->m_curWizWidg->GetCurrentComboBoxIndex() - 1) == vtkWFEngineHandler::SUCC)
             {
                 wfEngineModule->m_curWFStep = wfEngineModule->m_wfEngineHandler->GetLoadedWFStep();
@@ -908,12 +936,6 @@ void vtkWFEngineModuleGUI::UpdateParameter()
 
 void vtkWFEngineModuleGUI::UpdateGUI()
 {
-    if(this->m_curWizWidg)
-    {
-        // Destroy all ClientAreaChildren!
-        this->m_curWizWidg->ClearPage();        
-    }
-    
     if(!this->m_wfEngineHandler)
     {
         return;

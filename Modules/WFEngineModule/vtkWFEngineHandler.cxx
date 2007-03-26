@@ -23,6 +23,7 @@ vtkWFEngineHandler::vtkWFEngineHandler()
     this->m_curWFStepObject = NULL;
     this->m_wfDI = NULL;
     this->m_curWFMRMLNode = NULL;
+    this->m_clientArea = NULL;
 }
 
 vtkWFEngineHandler::~vtkWFEngineHandler()
@@ -50,6 +51,8 @@ vtkWFEngineHandler::~vtkWFEngineHandler()
         m_wfDI->Destroy();
         this->m_wfDI = NULL;
     }
+    
+    this->m_clientArea = NULL;
 }
 
 int vtkWFEngineHandler::InitializeWFEngine()
@@ -287,7 +290,7 @@ int vtkWFEngineHandler::LoadWorkStepByIndex(int index)
 {
     if(this->m_curWFStepObject)
     {
-        this->InvokeLeaveEvents();
+        //this->InvokeLeaveEvents();
     }
     
     this->m_curWFStepObject = this->m_wfDI->getWorkStepByIndex(index);
@@ -326,6 +329,7 @@ int vtkWFEngineHandler::CloseWorkflowSession()
     this->m_validationFuncLoaded = false;
     this->m_validationFuncTCL = NULL;
     
+    this->m_clientArea = NULL;
     
     this->m_paramNames.clear();
     this->m_paramValues.clear();
@@ -446,4 +450,14 @@ void vtkWFEngineHandler::SetWFMRMLNode(vtkMRMLNode *node)
 vtkMRMLNode *vtkWFEngineHandler::GetWFMRMLNode()
 {
     return this->m_curWFMRMLNode;
+}
+
+void vtkWFEngineHandler::SetWizardClientArea(vtkKWFrame *clientArea)
+{
+    this->m_clientArea = clientArea;
+}
+
+vtkKWFrame *vtkWFEngineHandler::GetWizardClientArea()
+{
+    return this->m_clientArea;
 }
