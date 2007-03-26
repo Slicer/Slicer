@@ -67,6 +67,7 @@ SET(LIB_SRCS
   vtkKWWindowLevelThresholdEditor.cxx
   vtkSlicerVolumeDisplayWidget.cxx
   vtkSlicerVolumeHeaderWidget.cxx
+  vtkSlicerVolumeFileHeaderWidget.cxx
   vtkSlicerTransformManagerWidget.cxx
   vtkSlicerTransformEditorWidget.cxx
   vtkSlicerMRMLTreeWidget.cxx

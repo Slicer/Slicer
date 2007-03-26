@@ -30,7 +30,7 @@
 #include "vtkMRMLVolumeNode.h"
 
 class vtkMRMLScalarVolumeNode;
-
+class vtkMRMLVolumeHeaderlessStorageNode;
 
 class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerVolumesLogic : public vtkSlicerLogic 
 {
@@ -50,6 +50,12 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerVolumesLogic : public vtkSlicerLogic
   // Create new mrml node and associated storage node.
   // Read image data from a specified file
   vtkMRMLVolumeNode* AddArchetypeVolume (char* filename, int centerImage, int labelMap, const char* volname);
+
+  // Description:
+  // Create new mrml node and associated storage node.
+  // Read image data from a specified file
+  vtkMRMLVolumeNode* AddHeaderVolume (char* filename, int centerImage, int labelMap, const char* volname, 
+                                      vtkMRMLVolumeHeaderlessStorageNode *headerStorage);
 
   // Description:
   // Write volume's image data to a specified file
