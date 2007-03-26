@@ -9,50 +9,60 @@ CONFIGURE_FILE(
 
 
 # --------------------------------------------------------------------------
-# Sources
-
+# Settings for options
+SET(IGT_SRCS
+  vtkIGTDataManager.cxx
+  vtkIGTDataStream.cxx
+  vtkIGTMatrixState.cxx
+  vtkIGTPat2ImgRegistration.cxx
+)
+SET(TRACKING_INTERFACE_LIBRARY "")
 IF(USE_OPENTRACKER)
-SET(IGT_SRCS
+  SET(IGT_SRCS
     vtkIGTDataManager.cxx
     vtkIGTDataStream.cxx
     vtkIGTMatrixState.cxx
+    vtkIGTPat2ImgRegistration.cxx
     vtkIGTOpenTrackerStream.cxx
-    vtkIGTPat2ImgRegistration.cxx
-)
-ELSE(USE_OPENTRACKER)
-SET(IGT_SRCS
-    vtkIGTDataManager.cxx
-    vtkIGTDataStream.cxx
-    vtkIGTMatrixState.cxx
-    vtkIGTPat2ImgRegistration.cxx
-)
+  )
+  SET(TRACKING_INTERFACE_INCLUDE_DIR
+    ${OPENTRACKER_INC_DIR}
+  )
+  SET(TRACKING_INTERFACE_LIB  
+    ${OPENTRACKER_LIB}
+  )
 ENDIF(USE_OPENTRACKER)
 
-
+IF(USE_IGSTK)
+  SET(IGT_SRCS
+    vtkIGTDataManager.cxx
+    vtkIGTDataStream.cxx
+    vtkIGTMatrixState.cxx
+    vtkIGTPat2ImgRegistration.cxx
+    vtkIGTIGSTKStream.cxx
+  )
+  SET(TRACKING_INTERFACE_INCLUDE_DIR
+    ${IGSTK_INCLUDE_DIRS}
+  )
+  SET(TRACKING_INTERFACE_LIB  
+    ${IGSTK_LIBRARIES}
+  )
+ENDIF(USE_IGSTK)
 
 
 # --------------------------------------------------------------------------
 # Include dirs
 
 INCLUDE_DIRECTORIES(
-    #  ${SlicerBaseGUI_SOURCE_DIR}
-    # ${SlicerBaseGUI_BINARY_DIR}
-    # ${SlicerBaseLogic_SOURCE_DIR}
-    # ${SlicerBaseLogic_BINARY_DIR}
   ${MRML_BINARY_DIR}
   ${MRML_SOURCE_DIR}
   ${IGT_BINARY_DIR}
   ${IGT_SOURCE_DIR}
   ${ITK_INCLUDE_DIRS}
   ${VTK_INCLUDE_DIRS}
-
+  ${TRACKING_INTERFACE_INCLUDE_DIR}
   )
 
-IF(USE_OPENTRACKER)
-INCLUDE_DIRECTORIES(
-  ${OPENTRACKER_INC_DIR}
-)
-ENDIF(USE_OPENTRACKER)
 
 # --------------------------------------------------------------------------
 # Wrapping
@@ -62,7 +72,6 @@ VTK_WRAP_TCL3(IGT IGT_TCL_SRCS "${IGT_SRCS}" "")
 
 
 # Build the library
-
 ADD_LIBRARY(IGT 
   ${IGT_SRCS} ${IGT_TCL_SRCS}
   )
@@ -89,10 +98,8 @@ TARGET_LINK_LIBRARIES(IGT
   ITKIO
   ITKDICOMParser
   ${KWWidgets_LIBRARIES}
-  ${OPENTRACKER_LIB}
+  ${TRACKING_INTERFACE_LIB}
   )
-
-
 
 
 # --------------------------------------------------------------------------
