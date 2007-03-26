@@ -491,12 +491,16 @@ inline bool Arg::argMatches( const std::string& argFlag ) const
 {
   // allow matching for patterns like --load-dicom with --load_dicom 
   // (more standard and user friendly)
+  // only change dashes to underscores if the string starts with --
   std::string fixedFlag(argFlag);
-  std::string::size_type nameStartLen = Arg::nameStartString().length(); 
-  std::string::size_type dashIndex; 
-  while ( (dashIndex = fixedFlag.find_first_of("-", nameStartLen)) != std::string::npos )
+  if ( argFlag.find_first_of(Arg::nameStartString()) == 0 )
     {
-    fixedFlag[dashIndex] = '_';
+    std::string::size_type nameStartLen = Arg::nameStartString().length(); 
+    std::string::size_type dashIndex; 
+    while ( (dashIndex = fixedFlag.find_first_of("-", nameStartLen)) != std::string::npos )
+      {
+      fixedFlag[dashIndex] = '_';
+      }
     }
 
   if ( ( fixedFlag == Arg::flagStartString() + _flag && _flag != "" ) ||
