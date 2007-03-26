@@ -49,6 +49,7 @@ if { [string match -nocase "windows*" $::tcl_platform(os)] } {
 # - a build dirctory will not
 #
 set installed 0
+set ext ""
 if { [string match -nocase "windows*" $::tcl_platform(os)] } {
   set ext ".exe"
 }
