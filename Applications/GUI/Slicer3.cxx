@@ -80,7 +80,7 @@ extern "C" {
 #include "Resources/vtkSlicerSplashScreen_ImageData.h"
 
 // uncomment these lines to disable a particular module (handy for debugging)
-//#define CLIMODULES_DEBUG
+#define CLIMODULES_DEBUG
 //#define TCLMODULES_DEBUG
 //#define SLICES_DEBUG
 //#define GAD_DEBUG
@@ -90,11 +90,11 @@ extern "C" {
 //#define COLORS_DEBUG
 //#define FIDUCIALS_DEBUG
 //#define CAMERA_DEBUG
-//#define EMSEG_DEBUG
+#define EMSEG_DEBUG
 #define REALTIMEIMAGING_DEBUG
 #define MRABLATION_DEBUG
 //#define WFENGINE_DEBUG
-//#define NEURONAV_DEBUG
+#define NEURONAV_DEBUG
 //#define TRACTOGRAPHY_DEBUG
 
 #ifndef EMSEG_DEBUG
@@ -1151,6 +1151,7 @@ int Slicer3_main(int argc, char *argv[])
 
     if ( Daemon || slicerApp->GetEnableDaemon() )
       {
+      slicerApp->SplashMessage("Initializing Slicer Daemon...");
       std::string cmd;
       cmd =  "source \"" + slicerBinDir + "/../"
         SLICER_INSTALL_LIBRARIES_DIR "/slicerd.tcl\"; slicerd_start; ";
@@ -1361,6 +1362,7 @@ int Slicer3_main(int argc, char *argv[])
     // - have the GUI construct itself
     //
 
+    slicerApp->SplashMessage("Initializing Scripted Modules...");
     std::string tclCommand = "set ::SLICER_PACKAGES(list) {};";
     tclCommand += "set dirs [glob \"" + slicerBinDir + "/../"
       SLICER_INSTALL_LIBRARIES_DIR "/Modules/Packages/*\"]; ";
@@ -1418,6 +1420,7 @@ int Slicer3_main(int argc, char *argv[])
 
     // ------------------------------
     // DISPLAY WINDOW AND RUN
+    slicerApp->SplashMessage("Finalizing Startup...");
     appGUI->DisplayMainSlicerWindow ( );
 
     // More command line arguments:
@@ -1503,6 +1506,7 @@ int Slicer3_main(int argc, char *argv[])
 #ifdef USE_PYTHON
     vtkSlicerApplication::GetInstance()->InitializePython ( PythonModule, PythonDictionary );
 #endif    
+
     //
     // Run!  - this will return when the user exits
     //
