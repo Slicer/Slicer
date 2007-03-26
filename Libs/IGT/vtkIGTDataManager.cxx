@@ -67,7 +67,7 @@ const char *vtkIGTDataManager::RegisterStream(int streamType)
             cylinder->Update();
             // Sphere represents the locator tip 
             vtkSphereSource *sphere = vtkSphereSource::New();
-            sphere->SetRadius(2.3);
+            sphere->SetRadius(3.0);
             sphere->SetCenter(0, -50, 0);
             sphere->Update();
 
