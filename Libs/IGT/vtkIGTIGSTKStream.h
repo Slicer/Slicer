@@ -12,36 +12,36 @@
 #include "vtkMatrix4x4.h"
 #include "vtkTransform.h"
 
-
 #include <string>
 
-#include <igstkSerialCommunication.h>
+#include "igstkSerialCommunication.h"
 
 #ifdef _WIN32
-#include <igstkSerialCommunicationForWindows.h>
+#include "igstkSerialCommunicationForWindows.h"
 #else
-#include <igstkSerialCommunicationForPosix.h>
+#include "igstkSerialCommunicationForPosix.h"
 #endif
 
-#include <igstkAuroraTracker.h>
-#include <igstkPolarisTracker.h>
+#include "igstkAuroraTracker.h"
+#include "igstkPolarisTracker.h"
 #include "itkStdStreamLogOutput.h"
+
+
+typedef itk::Logger               LoggerType;
+typedef itk::StdStreamLogOutput   LogOutputType;
 
 
 class VTK_IGT_EXPORT vtkIGTIGSTKStream : public vtkObject
 {
 public:
-
-
     static vtkIGTIGSTKStream *New();
     vtkTypeRevisionMacro(vtkIGTIGSTKStream,vtkObject);
     void PrintSelf(ostream& os, vtkIndent indent);
 
     vtkSetMacro(Speed,int);
     vtkSetMacro(MultiFactor,float);
-
     vtkSetMacro(StartTimer,int);
-
+    vtkSetMacro(TrackerType,short);
 
 
     vtkSetObjectMacro(RegMatrix,vtkMatrix4x4);
@@ -61,7 +61,7 @@ public:
     virtual ~vtkIGTIGSTKStream ( );
 
 
-    void Init(char *configFile);
+    void Init();
     void StopPolling();
     void PollRealtime();
     void SetLocatorTransforms();
@@ -72,26 +72,27 @@ public:
 private:
 
     //BTX
-    igstk::PolarisTracker::Pointer       tracker;
-    igstk::SerialCommunication::Pointer  serialCommunication;
+    igstk::AuroraTracker::Pointer        AuroraTracker;
+    igstk::PolarisTracker::Pointer       PolarisTracker;
+
+    igstk::SerialCommunication::Pointer  SerialCommunication;
+
+    LoggerType::Pointer                  Logger;
+    LogOutputType::Pointer               LogFileOutput;  // log output to file
     //ETX
 
 
     int Speed;
     int StartTimer;
     float MultiFactor;
+    short TrackerType;  // 0 - Aurora; 1 - Polaris
 
     vtkMatrix4x4 *LocatorMatrix;
     vtkMatrix4x4 *RegMatrix;
     vtkTransform *LocatorNormalTransform;
 
-    void Normalize(float *a);
-    void Cross(float *a, float *b, float *c);
-    void ApplyTransform(float *position, float *norm, float *transnorm);
-    void CloseConnection();
-
     void quaternion2xyz(float* orientation, float *normal, float *transnormal); 
-
+    void ApplyTransform(float *position, float *norm, float *transnorm);
 
 };
 
