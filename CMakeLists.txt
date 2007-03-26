@@ -247,5 +247,5 @@ CONFIGURE_FILE(
 
 INSTALL(
   FILES ${Slicer3_BINARY_DIR}/lib/launch.tcl
-  DESTINATION lib/launch.tcl
+  DESTINATION lib
 )
