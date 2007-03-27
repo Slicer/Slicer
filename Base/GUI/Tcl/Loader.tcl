@@ -101,7 +101,7 @@ if { [itcl::find class Loader] == "" } {
     variable o ;# array of the objects for this widget, for convenient access
     variable col ;# array of the column indices for easy (and readable) access
 
-    variable _volumeExtensions ".hdr .nhdr .mhd .vti .mgz"
+    variable _volumeExtensions ".hdr .nhdr .nrrd .mhd .vti .mgz"
     variable _modelExtensions ".vtk .vtp"
     variable _observerRecords ""
     variable _cleanupDirs ""
@@ -388,14 +388,17 @@ itcl::body Loader::add { path } {
     #
     # if it's a file, see if it's something we know how to load
     #
+    $this status "Adding $path"
     if { [lsearch $_volumeExtensions $ext] != -1 } {
       $this addRow $path "Volume"
-    }
-    if { [lsearch $_modelExtensions $ext] != -1 } {
+      $this status ""
+    } elseif { [lsearch $_modelExtensions $ext] != -1 } {
       $this addRow $path "Model"
+      $this status ""
+    } else {
+      $this status "Cannot read file $path"
     }
   }
-  $this status ""
 }
 
 #
