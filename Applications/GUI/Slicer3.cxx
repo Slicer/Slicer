@@ -334,7 +334,6 @@ int Slicer3_main(int argc, char *argv[])
     slicerCerr("Error: Cannot find Slicer3 executable" << endl);
     return 1;
     }
-  cout << "Using slicer executable: " << programPath.c_str() << endl;
   
   std::string slicerBinDir
     = vtksys::SystemTools::GetFilenamePath(programPath.c_str());
@@ -376,7 +375,6 @@ int Slicer3_main(int argc, char *argv[])
 
   std::string tclEnv = "TCL_LIBRARY=";
   tclEnv += slicerBinDir + "/../lib/Slicer3/tcl/lib/tcl8.4";
-  cout << "Set environment: " << tclEnv.c_str() << endl;
   vtkKWApplication::PutEnv(const_cast <char *> (tclEnv.c_str()));
 
 
@@ -712,6 +710,8 @@ int Slicer3_main(int argc, char *argv[])
       }
     slicerApp->GetSplashScreen()->SetProgressMessageVerticalOffset(-25);
     slicerApp->SplashMessage("Initializing Window...");
+
+    cout << "Starting Slicer: " << slicerHome.c_str() << endl;
 
     // Create MRML scene
     vtkMRMLScene *scene = vtkMRMLScene::New();
