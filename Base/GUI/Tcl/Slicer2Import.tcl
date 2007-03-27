@@ -139,7 +139,6 @@ proc ImportNodeVolume {node} {
 
     "NRRD" -
     "Generic" {
-      puts stderr "Archetype nodes not yet supported!"
 
       if { [file pathtype $n(fileName)] == "relative" } {
         set fileName $::S2(dir)/$n(fileName)
@@ -148,7 +147,7 @@ proc ImportNodeVolume {node} {
       }
 
       set labelMap 0
-      if { [info exists n(labelMap)] && $n(labelMap) == "yes" } {
+      if { [info exists n(labelMap)] && ($n(labelMap) == "yes"  || $n(labelMap) == "true") } {
           set labelMap 1
       }
 
@@ -225,7 +224,7 @@ proc ImportNodeVolume {node} {
       $volumeNode SetDescription $n(description)
       $imageReader Delete
 
-      if { [info exists n(labelMap)] && $n(labelMap) == "yes" } {
+      if { [info exists n(labelMap)] && ($n(labelMap) == "yes"  || $n(labelMap) == "true") } {
           $volumeNode SetLabelMap 1
       }
 
@@ -271,11 +270,11 @@ proc ImportNodeVolume {node} {
       $volumeDisplayNode SetAndObserveColorNodeID "vtkMRMLColorTableNodeGrey"
     }
   }
-  if { [info exists n(labelMap)] && $n(labelMap) == "yes" } {
+  if { [info exists n(labelMap)] && ($n(labelMap) == "yes"  || $n(labelMap) == "true") } {
     $volumeDisplayNode SetAndObserveColorNodeID "vtkMRMLColorTableNodeLabels"
   }
 
-  if { [info exists n(applyThreshold)] && $n(applyThreshold) == "yes" } {
+  if { [info exists n(applyThreshold)] && ( $n(applyThreshold) == "yes" || $n(applyThreshold) == "true" ) } {
     $volumeDisplayNode SetApplyThreshold 1
   }
   $volumeDisplayNode SetWindow $n(window)
