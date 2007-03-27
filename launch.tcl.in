@@ -243,16 +243,6 @@ proc launch_SetPaths {} {
 proc launch_SplashScreen {} {
 
   launch_SplashShow
-
-  if { 0 } {
-    # placeholder...
-    toplevel .splash
-    label .splash.l -text "Placeholder Splash Screen.\n\nSlicer3 starting..."
-    pack .splash.l
-    update
-    after 1000 "destroy .splash"
-  }
-
 }
 
 
@@ -285,6 +275,7 @@ proc launch_SplashAnimate { {delayms 100} } {
       set dots *$dots
     }
     .splash.v configure -text $dots
+    update
     after $delayms "launch_SplashAnimate $delayms"
   }
 }
@@ -334,7 +325,7 @@ proc launch_SplashShow { {delayms 7000} } {
     after 100 "launch_SplashAnimate 300" 
 
     bind .splash <1> launch_SplashKill
-    after 3000 launch_SplashKill
+    after 10000 launch_SplashKill
     tk scaling $oscaling
 }
 
