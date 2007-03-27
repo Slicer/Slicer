@@ -37,8 +37,9 @@ namespace eval Loader {
     } else {
       set loader [Loader #auto]
     }
-    $loader add $path
-
+    if { $path != "" } {
+      $loader add $path
+    }
   }
 
   # 
