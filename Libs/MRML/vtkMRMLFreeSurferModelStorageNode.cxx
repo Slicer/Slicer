@@ -104,16 +104,21 @@ void vtkMRMLFreeSurferModelStorageNode::WriteXML(ostream& of, int indent)
   Superclass::WriteXML(of, indent);
   if (this->SurfaceFileName != NULL)
     {
-    of << " surfaceFileName=\"" << this->SurfaceFileName << "\" ";    
+    of << " surfaceFileName=\"" << vtkMRMLNode::URLEncodeString(this->SurfaceFileName) << "\" ";    
     }
   
   if (this->GetNumberOfOverlayFiles() > 0)
     {
-    of << " overlays=\"" << endl;
-    // put one per line for ease of parsing when reading
+    of << " overlays=\"";
+    // URL encoded so can use spaces to separate the filenames
     for (unsigned int i = 0; i < this->GetNumberOfOverlayFiles(); i++)
       {      
-      of << this->GetOverlayFileName(i) << endl;
+      of << vtkMRMLNode::URLEncodeString(this->GetOverlayFileName(i));
+      if (i < this->GetNumberOfOverlayFiles() - 1)
+        {
+        // don't put a space after the last filename
+        of << " ";
+        }
       }
     of << "\"" << endl;
     }
@@ -134,7 +139,7 @@ void vtkMRMLFreeSurferModelStorageNode::ReadXMLAttributes(const char** atts)
     if (!strcmp(attName, "surfaceFileName")) 
       {
       vtkDebugMacro("Got surface file name: " << attValue);
-      this->SetSurfaceFileName(attValue);
+      this->SetSurfaceFileName(vtkMRMLNode::URLDecodeString(attValue));
       }
     if (!strcmp(attName, "overlays"))
       {
@@ -142,12 +147,12 @@ void vtkMRMLFreeSurferModelStorageNode::ReadXMLAttributes(const char** atts)
       // one per line
       char *fileNames = (char*)attValue;
       vtkDebugMacro("Have scalar overlay file names: " << fileNames);
-      char *ptr = strtok(fileNames, "\n");
+      char *ptr = strtok(fileNames, " ");
       vtkDebugMacro("Got file name " << ptr);
       while (ptr != NULL)
         {
-        this->AddOverlayFileName(ptr);
-        ptr = strtok(NULL, "\n");
+        this->AddOverlayFileName(vtkMRMLNode::URLDecodeString(ptr));
+        ptr = strtok(NULL, " ");
         vtkDebugMacro("\tfile name = " << ptr);
         }
       }
@@ -224,6 +229,12 @@ int vtkMRMLFreeSurferModelStorageNode::ReadData(vtkMRMLNode *refNode)
     return 0;
     }
 
+  // try to figure out if we're just reading a single file, or if it's called
+  // from a SceneUpdate with geometry and scalar files set
+  // if it's a geometry file and the scalar overlay list isn't empty, re-read
+  // those
+  int isSurfaceFile = 0;
+  
   vtkDebugMacro("ReadData: reading " << fullName.c_str());
   
   // compute file prefix
@@ -281,6 +292,8 @@ int vtkMRMLFreeSurferModelStorageNode::ReadData(vtkMRMLNode *refNode)
       reader->Delete();
       normals->Delete();
       stripper->Delete();
+
+      isSurfaceFile = 1;
       }
     else if (extension == std::string(".thickness") ||
              extension == std::string(".curv") ||
@@ -545,11 +558,23 @@ int vtkMRMLFreeSurferModelStorageNode::ReadData(vtkMRMLNode *refNode)
     {
     result = 0;
     }
-
+  
   if (modelNode->GetPolyData() != NULL) 
     {
     modelNode->GetPolyData()->Modified();
     }
+
+  if (isSurfaceFile && this->GetNumberOfOverlayFiles() > 0)
+    {
+    vtkWarningMacro("Loaded a new freesurfer surface file, reloading " << this->GetNumberOfOverlayFiles() << " scalar overlays");
+    int numLoaded = this->ReloadOverlayFiles(refNode);
+    if (numLoaded != this->GetNumberOfOverlayFiles())
+      {
+      vtkErrorMacro("ReadData: only reloaded " << numLoaded << " scalars, expected " << this->GetNumberOfOverlayFiles());
+      }
+    }
+
+   
   modelNode->SetModifiedSinceRead(0);
   return result;
 }
@@ -627,8 +652,18 @@ void vtkMRMLFreeSurferModelStorageNode::AddOverlayFileName (const char *fileName
     {
     return;
     }
+  std::string fname = std::string(fileName);
+  // is it already there?
+  std::vector< std::string >::iterator iter;
+  for (iter = this->OverlayFiles.begin(); iter != this->OverlayFiles.end(); ++iter)
+    {
+    if ((*iter) == fname)
+      {
+      return;
+      }
+    }
   vtkDebugMacro("Adding overlay file name " << fileName);
-  this->OverlayFiles.push_back(std::string(fileName));
+  this->OverlayFiles.push_back(fname);
 }
 
 //----------------------------------------------------------------------------
@@ -649,4 +684,17 @@ void vtkMRMLFreeSurferModelStorageNode::RemoveOverlayFileName (const char *fileN
       this->OverlayFiles.erase(iter);
       }
     }
+}
+
+//----------------------------------------------------------------------------
+int vtkMRMLFreeSurferModelStorageNode::ReloadOverlayFiles(vtkMRMLNode *refNode)
+{
+  int numLoaded = 0;
+  for (int i = 0; i < this->GetNumberOfOverlayFiles(); i++)
+    {
+    // reset the filename
+    this->SetFileName(this->GetOverlayFileName(i));
+    numLoaded += this->ReadData(refNode);
+    }
+  return numLoaded;
 }

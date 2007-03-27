@@ -73,13 +73,18 @@ class VTK_MRML_EXPORT vtkMRMLFreeSurferModelStorageNode : public vtkMRMLModelSto
   
   // Description:
   // Add an overlay file name to the collection of those associated with this
-  // storage node
+  // storage node, checks for duplicates first
   void AddOverlayFileName (const char *fileName);
 
   // Description:
   // Remove an overlay file name (used if remove an array)
   void RemoveOverlayFileName (const char *fileName);
 
+  // Description:
+  // Go through the current list of overlay files and load them.
+  // Returns number of files sucessfully reloaded
+  int ReloadOverlayFiles( vtkMRMLNode *refNode );
+  
   // Description:
   // Get the ith overlay file name, 0 indexed, return NULL if out of range
   const char *GetOverlayFileName(int i);
