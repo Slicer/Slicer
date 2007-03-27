@@ -88,7 +88,7 @@ int vtkSlicerModelsLogic::AddModels (const char* dirname, const char* suffix )
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel (char* filename)
+vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel (const char* filename)
 {
   vtkMRMLModelNode *modelNode = vtkMRMLModelNode::New();
   vtkMRMLModelDisplayNode *displayNode = vtkMRMLModelDisplayNode::New();
@@ -143,7 +143,7 @@ vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel (char* filename)
   return modelNode;  
 }
 //----------------------------------------------------------------------------
-int vtkSlicerModelsLogic::SaveModel (char* filename, vtkMRMLModelNode *modelNode)
+int vtkSlicerModelsLogic::SaveModel (const char* filename, vtkMRMLModelNode *modelNode)
 {
    if (modelNode == NULL || filename == NULL)
     {
@@ -188,7 +188,7 @@ void vtkSlicerModelsLogic::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-int vtkSlicerModelsLogic::AddScalar(char* filename, vtkMRMLModelNode *modelNode)
+int vtkSlicerModelsLogic::AddScalar(const char* filename, vtkMRMLModelNode *modelNode)
 {
   if (modelNode == NULL ||
       filename == NULL)

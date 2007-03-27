@@ -139,7 +139,7 @@ int vtkSlicerFiberBundleLogic::AddFiberBundles (const char* dirname, const char*
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLFiberBundleNode* vtkSlicerFiberBundleLogic::AddFiberBundle (char* filename)
+vtkMRMLFiberBundleNode* vtkSlicerFiberBundleLogic::AddFiberBundle (const char* filename)
 {
   vtkErrorMacro("Adding fiber bundle from filename " << filename);
 

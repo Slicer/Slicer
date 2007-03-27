@@ -189,7 +189,7 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddHeaderVolume (char* filename, int c
 
 #ifdef USE_TEEM
 //----------------------------------------------------------------------------
-vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (char* filename, int centerImage, int labelMap, const char* volname)
+vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filename, int centerImage, int labelMap, const char* volname)
 {
   vtkMRMLVolumeNode *volumeNode = NULL;
   vtkMRMLVolumeDisplayNode *displayNode = NULL;
@@ -335,7 +335,7 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (char* filename, in
 }
 
 //----------------------------------------------------------------------------
-int vtkSlicerVolumesLogic::SaveArchetypeVolume (char* filename, vtkMRMLVolumeNode *volumeNode)
+int vtkSlicerVolumesLogic::SaveArchetypeVolume (const char* filename, vtkMRMLVolumeNode *volumeNode)
 {
   if (volumeNode == NULL || filename == NULL)
     {
@@ -396,7 +396,7 @@ int vtkSlicerVolumesLogic::SaveArchetypeVolume (char* filename, vtkMRMLVolumeNod
 #else
 
 //----------------------------------------------------------------------------
-vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (char* filename, int centerImage, int labelMap, const char* volname)
+vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filename, int centerImage, int labelMap, const char* volname)
 {
   vtkMRMLVolumeNode *volumeNode = NULL;
   
@@ -496,7 +496,7 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (char* filename, in
 }
 
 //----------------------------------------------------------------------------
-int vtkSlicerVolumesLogic::SaveArchetypeVolume (char* filename, vtkMRMLVolumeNode *volumeNode)
+int vtkSlicerVolumesLogic::SaveArchetypeVolume (const char* filename, vtkMRMLVolumeNode *volumeNode)
 {
   if (volumeNode == NULL || filename == NULL)
     {
@@ -587,7 +587,7 @@ void vtkSlicerVolumesLogic::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-int vtkSlicerVolumesLogic::IsFreeSurferVolume (char* filename)
+int vtkSlicerVolumesLogic::IsFreeSurferVolume (const char* filename)
 {
   std::string fname(filename);
   std::string::size_type loc = fname.find(".");

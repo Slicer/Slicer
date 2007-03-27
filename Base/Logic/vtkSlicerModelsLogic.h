@@ -47,7 +47,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerModelsLogic : public vtkSlicerLogic
   // Description:
   // Create new mrml model node and
   // read it's polydata from a specified file
-  vtkMRMLModelNode* AddModel (char* filename);
+  vtkMRMLModelNode* AddModel (const char* filename);
 
   // Description:
   // Create model nodes and
@@ -56,11 +56,11 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerModelsLogic : public vtkSlicerLogic
 
   // Description:
   // Write model's polydata  to a specified file
-  int SaveModel (char* filename, vtkMRMLModelNode *modelNode);
+  int SaveModel (const char* filename, vtkMRMLModelNode *modelNode);
 
   // Description:
   // Read in a scalar overlay and add it to the model node
-  int AddScalar(char* filename, vtkMRMLModelNode *modelNode);
+  int AddScalar(const char* filename, vtkMRMLModelNode *modelNode);
 
   // Description:
   // Update logic state when MRML scene chenges
