@@ -70,7 +70,7 @@ if { $installed } {
   set ::env(VTK_BIN_DIR)       $::env(SLICER_HOME)/bin
   set ::env(KWWidgets_DIR)     $::env(SLICER_HOME)/lib/KWWidgets
   set ::env(KWWidgets_BIN_DIR) $::env(SLICER_HOME)/bin
-  set ::env(ITK_BIN_DIR)       $::env(SLICER_HOME)/bin
+  set ::env(ITK_BIN_DIR)       $::env(SLICER_HOME)/lib/InsightToolkit
   set ::env(SANDBOX_BIN_DIR)   ""
   set ::env(TCL_LIBRARY)       $::env(SLICER_HOME)/lib/Slicer3/tcl/lib
   set ::env(TCL_DIR)           $::env(SLICER_HOME)/lib
@@ -185,7 +185,7 @@ proc launch_SetPaths {} {
         $::env(BUILD) == $::LINUX} {
         # add vtk, slicer, and tcl bins
             set ::env(LD_LIBRARY_PATH) $::env(VTK_BIN_DIR):$::env(LD_LIBRARY_PATH)
-            set ::env(LD_LIBRARY_PATH) $::env(KWWidgets_BIN_DIR):$::env(LD_LIBRARY_PATH)
+            set ::env(LD_LIBRARY_PATH) $::env(KWWidgets_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(ITK_BIN_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(TCL_DIR)/lib:$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(TEEM_DIR):$::env(LD_LIBRARY_PATH)
