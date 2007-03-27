@@ -29,7 +29,7 @@ Version:   $Revision: 1.2 $
 #include "vtkMRMLVolumeArchetypeStorageNode.h"
 #include "vtkMRMLDiffusionTensorVolumeNode.h"
 #include "vtkMRMLDiffusionWeightedVolumeNode.h"
-//#include "vtkMRMLNRRDStorageNode.h"
+#include "vtkMRMLNRRDStorageNode.h"
 #include "vtkMRMLFiducialListNode.h"
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLModelStorageNode.h"
@@ -687,7 +687,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
     else if (dtvnd || dwvnd)
       {
       // for now, always write out the diffusion tensor nodes
-//      out = vtkMRMLNRRDStorageNode::New();
+      out = vtkMRMLNRRDStorageNode::New();
       }
     else if (mnd)
       {
