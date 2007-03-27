@@ -66,16 +66,16 @@ if { $installed } {
 
   # if installed, everything is in the local tree
 
-  set ::env(vtk_dir)           $::env(SLICER_HOME)/lib
-  set ::env(vtk_bin_dir)       $::env(SLICER_HOME)/bin
-  set ::env(kwwidgets_dir)     $::env(SLICER_HOME)/lib
-  set ::env(kwwidgets_bin_dir) $::env(SLICER_HOME)/bin
-  set ::env(itk_bin_dir)       $::env(SLICER_HOME)/bin
-  set ::env(sandbox_bin_dir)   ""
-  set ::env(tcl_library)       $::env(SLICER_HOME)/lib/Slicer3/tcl/lib
-  set ::env(tcl_dir)           $::env(SLICER_HOME)/lib
-  set ::env(teem_dir)          $::env(SLICER_HOME)/lib
-  set ::env(slicer_bin_dir)    $::env(SLICER_HOME)/bin
+  set ::env(VTK_DIR)           $::env(SLICER_HOME)/lib
+  set ::env(VTK_BIN_DIR)       $::env(SLICER_HOME)/bin
+  set ::env(KWWidgets_DIR)     $::env(SLICER_HOME)/lib/KWWidgets
+  set ::env(KWWidgets_BIN_DIR) $::env(SLICER_HOME)/bin
+  set ::env(ITK_BIN_DIR)       $::env(SLICER_HOME)/bin
+  set ::env(SANDBOX_BIN_DIR)   ""
+  set ::env(TCL_LIBRARY)       $::env(SLICER_HOME)/lib/Slicer3/tcl/lib
+  set ::env(TCL_DIR)           $::env(SLICER_HOME)/lib
+  set ::env(TEEM_DIR)          $::env(SLICER_HOME)/lib
+  set ::env(SLICER_BIN_DIR)    $::env(SLICER_HOME)/bin
 
 } else {
 
@@ -193,7 +193,7 @@ proc launch_SetPaths {} {
         } elseif {$::env(BUILD) ==  $::DARWIN || $::env(BUILD) == $::DARWIN_X86} { 
             # add vtk, slicer, and tcl bins
             set ::env(DYLD_LIBRARY_PATH) $::env(VTK_BIN_DIR):$::env(DYLD_LIBRARY_PATH)
-            set ::env(DYLD_LIBRARY_PATH) $::env(KWWidgets_BIN_DIR):$::env(DYLD_LIBRARY_PATH)
+            set ::env(DYLD_LIBRARY_PATH) $::env(KWWidgets_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(ITK_BIN_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(TCL_DIR)/lib:$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(TEEM_DIR):$::env(DYLD_LIBRARY_PATH)
