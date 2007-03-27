@@ -29,6 +29,13 @@ GENERATECLP(${CLP}_SOURCE ${CLP}.xml ${CLI_SOURCE_DIR}/Resources/ITKLogo.h)
 ADD_EXECUTABLE(${CLP} ${${CLP}_SOURCE})
 TARGET_LINK_LIBRARIES (${CLP} ITKIO ITKBasicFilters)
 
+#####################
+SET (CLP DiffusionWeightedTest)
+
+SET ( ${CLP}_SOURCE ${CLP}.cxx)
+GENERATECLP(${CLP}_SOURCE ${CLP}.xml ${CLI_SOURCE_DIR}/Resources/ITKLogo.h)
+ADD_EXECUTABLE(${CLP} ${${CLP}_SOURCE})
+TARGET_LINK_LIBRARIES (${CLP} ITKIO ITKBasicFilters)
 
 #####################
 SET (CLP LinearRegistration)
