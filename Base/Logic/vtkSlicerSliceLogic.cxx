@@ -664,9 +664,13 @@ void vtkSlicerSliceLogic::FitSliceToBackground(int width, int height)
     return;
     }
 
+  //
+  // Get the size of the volume in RAS space
+  //
 
   vtkMatrix4x4 *ijkToRAS = vtkMatrix4x4::New();
   int dimensions[3];
+  double centerRAS[3];
   double doubleDimensions[4], rasDimensions[4], sliceDimensions[4], absSliceDimensions[4];
   backgroundImage->GetDimensions(dimensions);
   doubleDimensions[0] = dimensions[0];
@@ -675,9 +679,15 @@ void vtkSlicerSliceLogic::FitSliceToBackground(int width, int height)
   doubleDimensions[3] = 0;
   backgroundNode->GetIJKToRASMatrix (ijkToRAS);
   ijkToRAS->MultiplyPoint( doubleDimensions, rasDimensions );
+  centerRAS[0] = rasDimensions[0] / 2.;
+  centerRAS[1] = rasDimensions[1] / 2.;
+  centerRAS[2] = rasDimensions[2] / 2.;
   ijkToRAS->Delete();
 
 
+  //
+  // figure out how big that volume is on this particular slice plane
+  //
   vtkMatrix4x4 *rasToSlice = vtkMatrix4x4::New();
   rasToSlice->DeepCopy(sliceNode->GetSliceToRAS());
   rasToSlice->SetElement(0, 3, 0.0);
@@ -720,11 +730,14 @@ void vtkSlicerSliceLogic::FitSliceToBackground(int width, int height)
 
   sliceNode->SetFieldOfView(fitX, fitY, fitZ);
 
+  //
+  // set the origin to be the center of the volume in RAS
+  //
   vtkMatrix4x4 *sliceToRAS = vtkMatrix4x4::New();
   sliceToRAS->DeepCopy(sliceNode->GetSliceToRAS());
-  sliceToRAS->SetElement(0, 3, 0.0);
-  sliceToRAS->SetElement(1, 3, 0.0);
-  sliceToRAS->SetElement(2, 3, 0.0);
+  sliceToRAS->SetElement(0, 3, centerRAS[0]);
+  sliceToRAS->SetElement(1, 3, centerRAS[1]);
+  sliceToRAS->SetElement(2, 3, centerRAS[2]);
   sliceNode->GetSliceToRAS()->DeepCopy(sliceToRAS);
   sliceToRAS->Delete();
 
