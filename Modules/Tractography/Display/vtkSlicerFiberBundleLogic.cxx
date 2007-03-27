@@ -204,7 +204,7 @@ vtkMRMLFiberBundleNode* vtkSlicerFiberBundleLogic::AddFiberBundle (const char* f
   return fiberBundleNode;  
 }
 //----------------------------------------------------------------------------
-int vtkSlicerFiberBundleLogic::SaveFiberBundle (char* filename, vtkMRMLFiberBundleNode *fiberBundleNode)
+int vtkSlicerFiberBundleLogic::SaveFiberBundle (const char* filename, vtkMRMLFiberBundleNode *fiberBundleNode)
 {
    if (fiberBundleNode == NULL || filename == NULL)
     {

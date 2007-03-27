@@ -51,7 +51,7 @@ class VTK_SLICERTRACTOGRAPHYDISPLAY_EXPORT vtkSlicerFiberBundleLogic : public vt
 
   // Description:
   // Write fiber bundle's polydata  to a specified file.
-  int SaveFiberBundle (char* filename, vtkMRMLFiberBundleNode *fiberBundleNode);
+  int SaveFiberBundle (const char* filename, vtkMRMLFiberBundleNode *fiberBundleNode);
 
   // Description:
   // Update logic state when MRML scene changes.
