@@ -381,6 +381,7 @@ proc launch_FileEvent {fp} {
     } else {
         gets $fp line
         catch {puts $line}
+        launch_SplashKill ;# just in case the pre-splash screen is still up
     }
 }
 
