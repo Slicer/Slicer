@@ -703,7 +703,7 @@ void vtkCommandLineModuleGUI::UpdateGUI ()
             }
           else if (lsb)
             {
-            lsb->GetWidget()->GetLoadSaveDialog()->SetFileName(value.c_str());
+            lsb->GetWidget()->GetLoadSaveDialog()->SetInitialFileName(value.c_str());
             }
           else if (rbs)
             {

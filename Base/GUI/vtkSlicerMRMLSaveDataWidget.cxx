@@ -112,7 +112,7 @@ void vtkSlicerMRMLSaveDataWidget::ProcessWidgetEvents ( vtkObject *caller,
 
   if (this->SaveSceneButton->GetWidget() == vtkKWPushButton::SafeDownCast(caller) && event == vtkKWPushButton::InvokedEvent) 
     {
-    char *fileName = this->SaveSceneButton->GetWidget()->GetFileName();
+    const char *fileName = this->SaveSceneButton->GetWidget()->GetFileName();
     if (fileName)
       {
       this->SaveSceneCheckBox->SetEnabled(1);
@@ -133,7 +133,7 @@ void vtkSlicerMRMLSaveDataWidget::ProcessWidgetEvents ( vtkObject *caller,
 
   else if (this->SaveDataButton->GetWidget() == vtkKWPushButton::SafeDownCast(caller) && event == vtkKWPushButton::InvokedEvent) 
     {
-    char *fileName = this->SaveDataButton->GetWidget()->GetFileName();
+    const char *fileName = this->SaveDataButton->GetWidget()->GetFileName();
     if (fileName) 
       {
       this->SaveDataButton->SetLabelText(fileName);
@@ -200,7 +200,7 @@ void vtkSlicerMRMLSaveDataWidget::ProcessWidgetEvents ( vtkObject *caller,
           }
         }
       }
-    char *fileName = this->SaveSceneButton->GetWidget()->GetFileName();
+    const char *fileName = this->SaveSceneButton->GetWidget()->GetFileName();
     if (fileName == NULL)
       {
       vtkKWMessageDialog *message = vtkKWMessageDialog::New();
@@ -229,7 +229,7 @@ void vtkSlicerMRMLSaveDataWidget::ProcessWidgetEvents ( vtkObject *caller,
 //---------------------------------------------------------------------------
 void vtkSlicerMRMLSaveDataWidget::SaveScene()
 {
-  char *fileName = this->SaveSceneButton->GetWidget()->GetFileName();
+  const char *fileName = this->SaveSceneButton->GetWidget()->GetFileName();
 
   if (fileName && this->GetMRMLScene()) 
     {

@@ -166,7 +166,7 @@ void vtkSlicerModelsGUI::ProcessGUIEvents ( vtkObject *caller,
   if (filebrowse == this->LoadModelButton  && event == vtkKWPushButton::InvokedEvent )
     {
     // If a file has been selected for loading...
-    char *fileName = filebrowse->GetFileName();
+    const char *fileName = filebrowse->GetFileName();
     if ( fileName ) 
       {
       vtkSlicerModelsLogic* modelLogic = this->Logic;
@@ -198,7 +198,7 @@ void vtkSlicerModelsGUI::ProcessGUIEvents ( vtkObject *caller,
     else if (filebrowse == this->LoadModelDirectoryButton  && event == vtkKWPushButton::InvokedEvent )
     {
     // If a file has been selected for loading...
-    char *fileName = filebrowse->GetFileName();
+    const char *fileName = filebrowse->GetFileName();
     if ( fileName ) 
       {
       vtkSlicerModelsLogic* modelLogic = this->Logic;
@@ -226,7 +226,7 @@ void vtkSlicerModelsGUI::ProcessGUIEvents ( vtkObject *caller,
   else if (filebrowse == this->SaveModelButton  && event == vtkKWPushButton::InvokedEvent )
       {
       // If a file has been selected for saving...
-      char *fileName = filebrowse->GetFileName();
+      const char *fileName = filebrowse->GetFileName();
       if ( fileName ) 
       {
         vtkSlicerModelsLogic* ModelLogic = this->Logic;
@@ -245,7 +245,7 @@ void vtkSlicerModelsGUI::ProcessGUIEvents ( vtkObject *caller,
   else if (filebrowse == this->LoadScalarsButton->GetWidget()  && event == vtkKWPushButton::InvokedEvent )
     {
     // If a scalar file has been selected for loading...
-    char *fileName = filebrowse->GetFileName();
+    const char *fileName = filebrowse->GetFileName();
     if ( fileName ) 
       {
       // get the model from the display widget rather than this gui's save

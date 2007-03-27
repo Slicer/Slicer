@@ -250,7 +250,7 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents ( vtkObject *caller,
   else if (this->ApplyButton == vtkKWPushButton::SafeDownCast(caller)  && event == vtkKWPushButton::InvokedEvent )
     {
     // If a file has been selected for loading...
-    char *fileName = this->LoadVolumeButton->GetWidget()->GetFileName();
+    const char *fileName = this->LoadVolumeButton->GetWidget()->GetFileName();
     if ( fileName ) 
       {
 
@@ -306,7 +306,7 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents ( vtkObject *caller,
     else if (this->SaveVolumeButton == vtkKWLoadSaveButton::SafeDownCast(caller) && event == vtkKWPushButton::InvokedEvent )
       {
       // If a file has been selected for saving...
-      char *fileName = this->SaveVolumeButton->GetFileName();
+      const char *fileName = this->SaveVolumeButton->GetFileName();
       if ( fileName ) 
       {
         vtkSlicerVolumesLogic* volumeLogic = this->Logic;

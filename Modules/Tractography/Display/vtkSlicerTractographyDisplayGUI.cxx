@@ -121,7 +121,7 @@ void vtkSlicerTractographyDisplayGUI::ProcessGUIEvents ( vtkObject *caller,
   if (filebrowse == this->LoadTractographyButton  && event == vtkKWPushButton::InvokedEvent )
     {
     // If a file has been selected for loading...
-    char *fileName = filebrowse->GetFileName();
+    const char *fileName = filebrowse->GetFileName();
     if ( fileName ) 
       {
       vtkSlicerFiberBundleLogic* fiberBundleLogic = this->Logic;
@@ -151,7 +151,7 @@ void vtkSlicerTractographyDisplayGUI::ProcessGUIEvents ( vtkObject *caller,
     {
 
     // If a directory has been selected for loading...
-    char *fileName = filebrowse->GetFileName();
+    const char *fileName = filebrowse->GetFileName();
     if ( fileName ) 
       {
       vtkSlicerFiberBundleLogic* fiberBundleLogic = this->Logic;
@@ -176,7 +176,7 @@ void vtkSlicerTractographyDisplayGUI::ProcessGUIEvents ( vtkObject *caller,
   else if (filebrowse == this->SaveTractographyButton  && event == vtkKWPushButton::InvokedEvent )
       {
       // If a file has been selected for saving...
-      char *fileName = filebrowse->GetFileName();
+      const char *fileName = filebrowse->GetFileName();
       if ( fileName ) 
       {
  

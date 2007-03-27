@@ -885,7 +885,7 @@ void vtkSlicerParameterWidget::SetValueForWidget(vtkKWCoreWidget *inputWidget, c
     } else if (ns && ns->GetSelected() != NULL) {
         ns->SetSelected(this->GetMRMLNode()->GetScene()->GetNodeByID(value));
     } else if (lsb) {
-        lsb->GetWidget()->GetLoadSaveDialog()->SetFileName(value);
+       lsb->GetWidget()->GetLoadSaveDialog()->SetInitialFileName(value);
     } else if (rb) {
         vtkKWRadioButtonSetWithLabel *rbs = vtkKWRadioButtonSetWithLabel::SafeDownCast(rb->GetParent());
         if(rbs)

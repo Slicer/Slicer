@@ -290,7 +290,7 @@ void vtkSlicerApplicationGUI::ProcessLoadSceneCommand()
 
     this->LoadSceneDialog->Invoke();
     // If a file has been selected for loading...
-    char *fileName = this->LoadSceneDialog->GetFileName();
+    const char *fileName = this->LoadSceneDialog->GetFileName();
     if ( fileName ) 
       {
         std::string fl(fileName);
@@ -329,7 +329,7 @@ void vtkSlicerApplicationGUI::ProcessImportSceneCommand()
 
     this->LoadSceneDialog->Invoke();
     // If a file has been selected for loading...
-    char *fileName = this->LoadSceneDialog->GetFileName();
+    const char *fileName = this->LoadSceneDialog->GetFileName();
     if ( fileName ) 
       {
         std::string fl(fileName);

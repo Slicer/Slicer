@@ -230,7 +230,7 @@ void vtkEMSegmentRunSegmentationStep::ShowUserInterface()
     this->RunSegmentationSaveTemplateButton->GetLoadSaveDialog()->
       GenerateLastPath(filename.c_str());
     this->RunSegmentationSaveTemplateButton->GetLoadSaveDialog()->
-      SetFileName(filename.c_str());
+      SetInitialFileName(filename.c_str());
     }
   else
     {
@@ -366,7 +366,7 @@ void vtkEMSegmentRunSegmentationStep::ShowUserInterface()
     this->RunSegmentationDirectoryButton->GetLoadSaveDialog()->
       GenerateLastPath(path.c_str());
     this->RunSegmentationDirectoryButton->GetLoadSaveDialog()->
-      SetFileName(path.c_str());
+      SetInitialFileName(path.c_str());
     }
   else
     {
