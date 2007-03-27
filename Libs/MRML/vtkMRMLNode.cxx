@@ -18,6 +18,8 @@ Version:   $Revision: 1.11 $
 #include "vtkCallbackCommand.h"
 
 #include <sstream>
+
+#include "itksys/SystemTools.hxx"
 //------------------------------------------------------------------------------
 vtkMRMLNode* vtkMRMLNode::New()
 {
@@ -262,3 +264,66 @@ void  vtkMRMLNode::ConstructAndSetID(const char * str, int index)
 {
     this->SetID(this->ConstructID(str, index));
 }
+
+
+//----------------------------------------------------------------------------
+const char * vtkMRMLNode::URLEncodeString(const char *inString)
+{
+  if (inString == NULL)
+    {
+    return "(null)";
+    }
+  vtksys_stl::string kwInString = vtksys_stl::string(inString);
+  // encode %
+  itksys::SystemTools::ReplaceString(kwInString,
+                                     "%", "%25");
+  // encode space
+  itksys::SystemTools::ReplaceString(kwInString,
+                                     " ", "%20");
+  // encode single quote
+  itksys::SystemTools::ReplaceString(kwInString,
+                                     "'", "%27");
+  // encode greater than
+  itksys::SystemTools::ReplaceString(kwInString,
+                                     ">", "%3E");
+  // encode less than
+  itksys::SystemTools::ReplaceString(kwInString,
+                                     "<", "%3C");
+  // encode double quote
+  itksys::SystemTools::ReplaceString(kwInString,
+                                     "\"", "%22");
+  return kwInString.c_str();
+}
+
+//----------------------------------------------------------------------------
+const char * vtkMRMLNode::URLDecodeString(const char *inString)
+{
+  if (inString == NULL)
+    {
+    return "(null)";
+    }
+  vtksys_stl::string kwInString = vtksys_stl::string(inString);
+
+  // decode in the opposite order they were encoded in
+  
+  // decode double quote
+  itksys::SystemTools::ReplaceString(kwInString,
+                                     "%22", "\"");
+  // decode less than
+  itksys::SystemTools::ReplaceString(kwInString,
+                                     "%3C", "<");
+  // decode greater than
+  itksys::SystemTools::ReplaceString(kwInString,
+                                     "%3E", ">");
+  // decode single quote
+  itksys::SystemTools::ReplaceString(kwInString,
+                                     "%27", "'");
+  // decode space
+  itksys::SystemTools::ReplaceString(kwInString,
+                                     "%20", " ");
+  // decode %
+  itksys::SystemTools::ReplaceString(kwInString,
+                                     "%25", "%");
+  return kwInString.c_str();
+}
+

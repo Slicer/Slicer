@@ -49,7 +49,7 @@ void vtkMRMLStorageNode::WriteXML(ostream& of, int nIndent)
 
   if (this->FileName != NULL) 
     {
-    of << indent << "fileName=\"" << this->FileName << "\" ";
+    of << indent << "fileName=\"" << vtkMRMLNode::URLEncodeString(this->FileName) << "\" ";
     }
 }
 
@@ -65,7 +65,7 @@ void vtkMRMLStorageNode::ReadXMLAttributes(const char** atts)
     attValue = *(atts++);
     if (!strcmp(attName, "fileName")) 
       {
-      this->SetFileName(attValue);
+      this->SetFileName(vtkMRMLNode::URLDecodeString(attValue));
       }
     }
 }

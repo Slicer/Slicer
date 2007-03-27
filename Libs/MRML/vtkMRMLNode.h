@@ -215,6 +215,16 @@ public:
   // Update the stored reference to another node in the scene
   virtual void UpdateReferenceID(const char *oldID, const char *newID) {};
 
+  // Description:
+  // Utility function that takes in a string and returns a URL encoded
+  // string. Returns the string (null) if the input is null.
+  // Currently only works on %, space, ', ", <, >
+  const char *URLEncodeString(const char *inString);
+  // Description:
+  // Utility function that takes in a URL encoded string and returns a regular
+  // one. Returns the string (null) if the input is null
+  // Currently only works on %, space, ', ", <, >
+  const char *URLDecodeString(const char *inString);
   
 protected:
   
