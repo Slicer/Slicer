@@ -147,6 +147,20 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLogic : public vtkSlicerLogic
   void UpdateSliceCompositeNode();
 
   // Description:
+  // Get the size of the volume, transformed to RAS space
+  void GetBackgroundRASDimensions(double rasDimensions[3], double rasCenter[3]);
+
+  // Description:
+  // Get the size of the volume, transformed to slice space
+  void GetBackgroundSliceDimensions(double sliceDimensions[3], double sliceCenter[3]);
+
+  // Description:
+  // Get the min/max bounds of the volume
+  // - note these are not translated by the current slice offset so they can
+  //   be used to calculate the range (e.g. of a slider) that operates in slice space
+  void GetBackgroundSliceBounds(double sliceBounds[6]);
+
+  // Description:
   // adjust the node's field of view to match the extent of current background volume
   void FitSliceToBackground(int width, int height);
 

@@ -1192,12 +1192,17 @@ void vtkSlicerSliceControllerWidget::ProcessMRMLEvents ( vtkObject *caller, unsi
   //
   // Set the scale range to match the field of view
   //
+  double sliceBounds[6];
+  this->SliceLogic->GetBackgroundSliceBounds(sliceBounds);
+
   double fovover2 = this->SliceNode->GetFieldOfView()[2] / 2.;
+  double newMin = sliceBounds[4];
+  double newMax = sliceBounds[5];
   double min, max;
   this->OffsetScale->GetRange(min, max);
-  if ( min != -fovover2 || max != fovover2 )
+  if ( min != newMin || max != newMax )
     {
-    this->OffsetScale->SetRange(-fovover2, fovover2);
+    this->OffsetScale->SetRange(newMin, newMax);
     modified = 1;
     }
 
