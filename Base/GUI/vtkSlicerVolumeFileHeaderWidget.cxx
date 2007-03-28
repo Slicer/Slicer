@@ -5,7 +5,7 @@
 #include "vtkMRMLVolumeHeaderlessStorageNode.h"
 #include "vtkSlicerVolumeFileHeaderWidget.h"
 
-
+#include "vtkKWDialog.h"
 #include "vtkKWFrame.h"
 #include "vtkKWMenu.h"
 #include "vtkKWMenuButton.h"
@@ -24,6 +24,7 @@ vtkSlicerVolumeFileHeaderWidget::vtkSlicerVolumeFileHeaderWidget ( )
 {
   this->VolumeHeaderlessStorageNode = vtkMRMLVolumeHeaderlessStorageNode::New();
   
+  this->HeaderDialog = NULL;
   this->DimensionEntry0 = NULL;
   this->DimensionEntry1 = NULL;
   
@@ -40,6 +41,8 @@ vtkSlicerVolumeFileHeaderWidget::vtkSlicerVolumeFileHeaderWidget ( )
   this->ScalarTypeMenu = NULL;
   
   this->LittleEndianCheckButton = NULL;
+  this->OkButton = NULL;
+  this->CancelButton = NULL;
   
 }
 
@@ -50,6 +53,21 @@ vtkSlicerVolumeFileHeaderWidget::~vtkSlicerVolumeFileHeaderWidget ( )
   
   this->VolumeHeaderlessStorageNode->Delete();
   
+  if (this->HeaderDialog)
+    {
+    this->HeaderDialog->SetParent(NULL);
+    this->HeaderDialog->Delete();
+    }
+  if (this->OkButton)
+    {
+    this->OkButton->SetParent(NULL);
+    this->OkButton->Delete();
+    }
+  if (this->CancelButton)
+    {
+    this->CancelButton->SetParent(NULL);
+    this->CancelButton->Delete();
+    }
   if (this->DimensionEntry0)
     {
     this->DimensionEntry0->SetParent(NULL);
@@ -126,6 +144,14 @@ void vtkSlicerVolumeFileHeaderWidget::PrintSelf ( ostream& os, vtkIndent indent 
 void vtkSlicerVolumeFileHeaderWidget::ProcessWidgetEvents ( vtkObject *caller,
                                                          unsigned long event, void *callData )
 {
+  if (this->OkButton ==  vtkKWPushButton::SafeDownCast(caller) && event ==  vtkKWPushButton::InvokedEvent)
+    {
+    this->HeaderDialog->OK();
+    }
+  else if (this->CancelButton ==  vtkKWPushButton::SafeDownCast(caller) && event ==  vtkKWPushButton::InvokedEvent)
+    { 
+    this->HeaderDialog->Cancel();
+    }
 } 
 
 
@@ -145,8 +171,20 @@ void vtkSlicerVolumeFileHeaderWidget::RemoveWidgetObservers ( )
 //---------------------------------------------------------------------------
 vtkMRMLVolumeHeaderlessStorageNode* vtkSlicerVolumeFileHeaderWidget::GetVolumeHeaderlessStorageNode ( )
 {
-  //this->VolumeHeaderlessStorageNode->SetFileLittleEndian();
-  
+  this->VolumeHeaderlessStorageNode->SetFileLittleEndian(this->LittleEndianCheckButton->GetSelectedState());
+  this->VolumeHeaderlessStorageNode->SetFileDimensions(this->DimensionEntry0->GetWidget()->GetValueAsInt(), 
+                                                       this->DimensionEntry1->GetValueAsInt(), 
+                                                       0);
+
+  this->VolumeHeaderlessStorageNode->SetFileNumberOfScalarComponents(this->NumScalarsEntry->GetWidget()->GetValueAsInt());
+  this->VolumeHeaderlessStorageNode->SetFileScalarTypeAsString(this->ScalarTypeMenu->GetWidget()->GetValue());
+  this->VolumeHeaderlessStorageNode->SetFileScanOrder(this->ScanOrderMenu->GetWidget()->GetValue());
+  this->VolumeHeaderlessStorageNode->SetFileSpacing(this->SpacingEntry0->GetWidget()->GetValueAsDouble(),
+                                                    this->SpacingEntry1->GetValueAsDouble(),
+                                                    this->SliceThicknessEntry->GetWidget()->GetValueAsDouble() +
+                                                    this->SliceSpacingEntry->GetWidget()->GetValueAsDouble());
+
+
   return this->VolumeHeaderlessStorageNode;
   
 }
@@ -167,32 +205,37 @@ void vtkSlicerVolumeFileHeaderWidget::CreateWidget ( )
   
   this->Superclass::CreateWidget();
   
-  // ---
-  // DISPLAY FRAME            
-  vtkKWFrame *volumeHeaderFrame = vtkKWFrame::New ( );
-  volumeHeaderFrame->SetParent ( this->GetParent() );
-  volumeHeaderFrame->Create ( );
-  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
-                 volumeHeaderFrame->GetWidgetName() );
+  this->HeaderDialog = vtkKWDialog::New();
+  this->HeaderDialog->SetParent ( this->GetParent());
+  this->HeaderDialog->SetTitle("Save Scene and Unsaved Data");
+  this->HeaderDialog->SetSize(400, 200);
+  this->HeaderDialog->Create ( );
   
   vtkKWFrame *dimensionFrame = vtkKWFrame::New ( );
-  dimensionFrame->SetParent ( volumeHeaderFrame );
+  dimensionFrame->SetParent ( this->HeaderDialog );
   dimensionFrame->Create ( );
 
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                  dimensionFrame->GetWidgetName() );
 
   vtkKWFrame *spacingFrame = vtkKWFrame::New ( );
-  spacingFrame->SetParent ( volumeHeaderFrame );
+  spacingFrame->SetParent ( this->HeaderDialog );
   spacingFrame->Create ( );
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                  spacingFrame->GetWidgetName() );
 
   vtkKWFrame *frame = vtkKWFrame::New ( );
-  frame->SetParent ( volumeHeaderFrame );
+  frame->SetParent ( this->HeaderDialog );
   frame->Create ( );
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                  frame->GetWidgetName() );
+
+  vtkKWFrame *saveFrame = vtkKWFrame::New ( );
+  saveFrame->SetParent ( this->HeaderDialog );
+  saveFrame->Create ( );
+  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+                 saveFrame->GetWidgetName() );
+
 
 
   this->DimensionEntry0 = vtkKWEntryWithLabel::New();
@@ -314,9 +357,26 @@ void vtkSlicerVolumeFileHeaderWidget::CreateWidget ( )
     this->LittleEndianCheckButton->GetWidgetName());
 
 
-  volumeHeaderFrame->Delete();
+  // add OK button
+  this->OkButton = vtkKWPushButton::New ( );
+  this->OkButton->SetParent ( saveFrame );
+  this->OkButton->Create ( );
+  this->OkButton->SetText ("Save");
+  this->Script("pack %s -side left -anchor w -padx 2 -pady 4", 
+              this->OkButton->GetWidgetName());
+
+  // add Cancel button
+  this->CancelButton = vtkKWPushButton::New ( );
+  this->CancelButton->SetParent ( saveFrame );
+  this->CancelButton->Create ( );
+  this->CancelButton->SetText ("Cancel");
+  this->Script("pack %s -side left -anchor w -padx 36 -pady 4", 
+              this->CancelButton->GetWidgetName());
+
+
   dimensionFrame->Delete();
   spacingFrame->Delete();
   frame->Delete();
+  saveFrame->Delete();
   
 }

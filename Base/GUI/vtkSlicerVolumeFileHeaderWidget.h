@@ -34,6 +34,7 @@ class vtkMRMLVolumeHeaderlessStorageNode;
 class vtkKWMenuButtonWithLabel;
 class vtkKWCheckButton;
 class vtkKWPushButton;
+class vtkKWDialog;
 
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerVolumeFileHeaderWidget : public vtkSlicerWidget
 {
@@ -68,6 +69,7 @@ protected:
   // Description:
   // Create the widget.
   virtual void CreateWidget();
+  vtkKWDialog  *HeaderDialog;
 
   vtkKWEntryWithLabel *DimensionEntry0;
   vtkKWEntry          *DimensionEntry1;
@@ -84,6 +86,8 @@ protected:
 
   vtkKWCheckButton *LittleEndianCheckButton;
 
+  vtkKWPushButton *OkButton;
+  vtkKWPushButton *CancelButton;
 
 private:
 

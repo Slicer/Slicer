@@ -6,6 +6,8 @@
 #include "vtkSlicerVolumesLogic.h"
 #include "vtkSlicerApplication.h"
 #include "vtkMRMLVolumeNode.h"
+#include "vtkMRMLVolumeHeaderlessStorageNode.h"
+
 #include "vtkSlicerModuleCollapsibleFrame.h"
 
 #include "vtkKWWidget.h"
@@ -22,6 +24,7 @@
 #include "vtkKWEntryWithLabel.h"
 #include "vtkKWMessageDialog.h"
 #include "vtkKWProgressGauge.h"
+#include "vtkSlicerVolumeFileHeaderWidget.h"
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerVolumesGUI );
@@ -281,6 +284,17 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents ( vtkObject *caller,
       vtkMRMLVolumeNode *volumeNode = volumeLogic->AddArchetypeVolume( fileName, centered, labelMap, this->NameEntry->GetWidget()->GetValue() );
       if ( volumeNode == NULL ) 
         {
+        this->VolumeFileHeaderWidget = vtkSlicerVolumeFileHeaderWidget::New();
+        this->VolumeFileHeaderWidget->SetParent ( this->LoadFrame->GetFrame());
+        this->VolumeFileHeaderWidget->SetAndObserveMRMLScene(this->GetMRMLScene());
+        //this->VolumeFileHeaderWidget->AddObserver ( vtkSlicerMRMLSaveDataWidget::DataSavedEvent,  (vtkCommand *)this->GUICallbackCommand );
+        this->VolumeFileHeaderWidget->Create();  
+
+        //this->VolumeFileHeaderWidget->RemoveObservers ( vtkSlicerMRMLSaveDataWidget::DataSavedEvent,  (vtkCommand *)this->GUICallbackCommand );
+        this->VolumeFileHeaderWidget->SetParent(NULL);
+        this->VolumeFileHeaderWidget->Delete();
+        this->VolumeFileHeaderWidget=NULL;
+
         vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
         dialog->SetParent ( this->LoadFrame->GetFrame() );
         dialog->SetStyleToMessage();

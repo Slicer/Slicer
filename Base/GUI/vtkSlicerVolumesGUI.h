@@ -21,6 +21,7 @@ class vtkKWLoadSaveButtonWithLabel;
 class vtkKWLoadSaveButton;
 class vtkKWEntryWithLabel;
 class vtkSlicerModuleCollapsibleFrame;
+class vtkSlicerVolumeFileHeaderWidget;
 
 // Description:
 // This class implements Slicer's Volumes GUI
@@ -119,6 +120,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerVolumesGUI : public vtkSlicerModuleGUI
     vtkKWLoadSaveButton *SaveVolumeButton;
     vtkSlicerVolumeDisplayWidget *VolumeDisplayWidget;
     vtkSlicerVolumeHeaderWidget *VolumeHeaderWidget;
+    vtkSlicerVolumeFileHeaderWidget *VolumeFileHeaderWidget;
 
     vtkKWLabel *NACLabel;
     vtkKWLabel *NAMICLabel;
