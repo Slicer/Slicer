@@ -813,14 +813,16 @@ void vtkNeuroNavGUI::ProcessGUIEvents ( vtkObject *caller,
         {
             int checked = this->LocatorCheckButton->GetSelectedState(); 
 
-            vtkMRMLModelNode *model = (vtkMRMLModelNode *)this->GetMRMLScene()->GetNodeByID(this->LocatorModelID.c_str()); 
-            vtkMRMLModelDisplayNode *disp = model->GetDisplayNode();
+            vtkMRMLModelNode *model = vtkMRMLModelNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->LocatorModelID.c_str())); 
+            if (model != NULL)
+            {
+                vtkMRMLModelDisplayNode *disp = model->GetDisplayNode();
 
-            vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-            vtkSlicerColor *color = app->GetSlicerTheme()->GetSlicerColors ( );
-            disp->SetColor(color->SliceGUIGreen);
-
-            disp->SetVisibility(checked);
+                vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
+                vtkSlicerColor *color = app->GetSlicerTheme()->GetSlicerColors ( );
+                disp->SetColor(color->SliceGUIGreen);
+                disp->SetVisibility(checked);
+            }
 
         }
         else if (this->LocatorModeCheckButton == vtkKWCheckButton::SafeDownCast(caller) 
@@ -1945,14 +1947,17 @@ void vtkNeuroNavGUI::UpdateLocator()
     transform = this->IGSTKStream->GetLocatorNormalTransform(); 
 #endif
 
-    vtkMRMLModelNode *model = (vtkMRMLModelNode *)this->GetMRMLScene()->GetNodeByID(this->LocatorModelID.c_str()); 
-    vtkMRMLModelDisplayNode *disp = model->GetDisplayNode();
-    int vis = disp->GetVisibility(); 
-    if (vis && transform)
+    vtkMRMLModelNode *model = vtkMRMLModelNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->LocatorModelID.c_str())); 
+    if (model != NULL)
     {
-        vtkMRMLLinearTransformNode *lnode = (vtkMRMLLinearTransformNode *)model->GetParentTransformNode();
-        lnode->SetAndObserveMatrixTransformToParent(transform->GetMatrix());
-        this->GetMRMLScene()->Modified();
+        vtkMRMLModelDisplayNode *disp = model->GetDisplayNode();
+        int vis = disp->GetVisibility(); 
+        if (vis && transform)
+        {
+            vtkMRMLLinearTransformNode *lnode = (vtkMRMLLinearTransformNode *)model->GetParentTransformNode();
+            lnode->SetAndObserveMatrixTransformToParent(transform->GetMatrix());
+            this->GetMRMLScene()->Modified();
+        }
     }
 }
 
