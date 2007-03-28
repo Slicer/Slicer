@@ -115,6 +115,54 @@ const char* vtkMRMLVolumeHeaderlessStorageNode::GetFileScalarTypeAsString()
   return "Short";
 }
 
+//----------------------------------------------------------------------------
+void vtkMRMLVolumeHeaderlessStorageNode::SetFileScalarTypeAsString(const char* type)
+{
+  if (!strcmp(type, "Bit"))
+    {
+    this->FileScalarType = VTK_BIT;
+    }
+  else if (!strcmp(type, "Char"))
+    {
+    this->FileScalarType = VTK_CHAR;
+    }
+  else if (!strcmp(type, "UnsignedChar"))
+    {
+    this->FileScalarType = VTK_UNSIGNED_CHAR;
+    }
+  else if (!strcmp(type, "Short"))
+    {
+    this->FileScalarType = VTK_SHORT;
+    }
+  else if (!strcmp(type, "UnsignedShort"))
+    {
+    this->FileScalarType = VTK_UNSIGNED_SHORT;
+    }
+  else if (!strcmp(type, "Int"))
+    {
+    this->FileScalarType = VTK_INT;
+    }
+  else if (!strcmp(type, "UnsignedInt"))
+    {
+    this->FileScalarType = VTK_UNSIGNED_INT;
+    }
+  else if (!strcmp(type, "Long"))
+    {
+    this->FileScalarType = VTK_LONG;
+    }
+  else if (!strcmp(type, "UnsignedLong"))
+    {
+    this->FileScalarType = VTK_UNSIGNED_LONG;
+    }
+  else if (!strcmp(type, "Float"))
+    {
+    this->FileScalarType = VTK_FLOAT;
+    }
+  else if (!strcmp(type, "Double"))
+    {
+    this->FileScalarType = VTK_DOUBLE;
+    }
+}
 
 
 void vtkMRMLVolumeHeaderlessStorageNode::WriteXML(ostream& of, int nIndent)

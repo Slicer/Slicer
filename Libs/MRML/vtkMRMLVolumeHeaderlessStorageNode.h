@@ -108,6 +108,8 @@ class VTK_MRML_EXPORT vtkMRMLVolumeHeaderlessStorageNode : public vtkMRMLStorage
     this->SetFileScalarType(VTK_DOUBLE);};
 
   const char* GetFileScalarTypeAsString();
+
+  void SetFileScalarTypeAsString(const char* );
   
   // Description:
   // The number of scalar components for each voxel. 
