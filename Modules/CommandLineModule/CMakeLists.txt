@@ -41,6 +41,8 @@ INCLUDE_DIRECTORIES(
   ${SlicerBaseGUI_BINARY_DIR}
   ${vtkITK_SOURCE_DIR}
   ${vtkITK_BINARY_DIR}
+  ${vtkTeem_SOURCE_DIR}
+  ${vtkTeem_BINARY_DIR}
   ${ITK_INCLUDE_DIRS}
   ${VTK_INCLUDE_DIRS}
   ${MRML_SOURCE_DIR}
@@ -89,7 +91,12 @@ TARGET_LINK_LIBRARIES(CommandLineModule
   ITKDICOMParser
   ${KWWidgets_LIBRARIES} )
 
-
+IF( TEEM_FOUND )
+  ADD_DEFINITIONS(-DUSE_TEEM)
+  TARGET_LINK_LIBRARIES(CommandLineModule
+    vtkTeem
+  )
+ENDIF( TEEM_FOUND )
 
 # --------------------------------------------------------------------------
 # Testing (requires some of the examples)
