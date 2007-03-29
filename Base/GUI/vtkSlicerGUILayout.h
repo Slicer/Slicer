@@ -42,6 +42,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGUILayout : public vtkKWObject
             SlicerLayoutFourUpView,
             SlicerLayoutOneUp3DView,
             SlicerLayoutOneUpSliceView,
+            SlicerLayoutOneUpRedSliceView,
+            SlicerLayoutOneUpYellowSliceView,
+            SlicerLayoutOneUpGreenSliceView,
             SlicerLayoutTabbed3DView,
             SlicerLayoutTabbedSliceView,
             SlicerLayoutLightboxView
