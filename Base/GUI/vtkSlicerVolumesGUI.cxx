@@ -285,7 +285,7 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents ( vtkObject *caller,
       if ( volumeNode == NULL ) 
         {
         this->VolumeFileHeaderWidget = vtkSlicerVolumeFileHeaderWidget::New();
-        this->VolumeFileHeaderWidget->SetParent ( this->LoadFrame->GetFrame());
+        this->VolumeFileHeaderWidget->SetParent ( this->GetApplicationGUI()->GetMainSlicerWindow());
         this->VolumeFileHeaderWidget->SetAndObserveMRMLScene(this->GetMRMLScene());
         //this->VolumeFileHeaderWidget->AddObserver ( vtkSlicerMRMLSaveDataWidget::DataSavedEvent,  (vtkCommand *)this->GUICallbackCommand );
         this->VolumeFileHeaderWidget->Create();  

@@ -207,7 +207,7 @@ void vtkSlicerVolumeFileHeaderWidget::CreateWidget ( )
   
   this->HeaderDialog = vtkKWDialog::New();
   this->HeaderDialog->SetParent ( this->GetParent());
-  this->HeaderDialog->SetTitle("Save Scene and Unsaved Data");
+  this->HeaderDialog->SetTitle("Volume File Header");
   this->HeaderDialog->SetSize(400, 200);
   this->HeaderDialog->Create ( );
   
@@ -252,7 +252,7 @@ void vtkSlicerVolumeFileHeaderWidget::CreateWidget ( )
   this->DimensionEntry1->SetValueAsInt(0);
   this->DimensionEntry1->SetWidth(8);
 
-  this->Script ( "pack %s %s %s -side left -anchor nw -padx 2 -pady 2 -expand n",
+  this->Script ( "pack %s %s -side left -anchor nw -padx 2 -pady 2 -expand n",
                  this->DimensionEntry0->GetWidgetName ( ),
                  this->DimensionEntry1->GetWidgetName());
 
@@ -270,7 +270,7 @@ void vtkSlicerVolumeFileHeaderWidget::CreateWidget ( )
   this->SpacingEntry1->SetValueAsInt(0);
   this->SpacingEntry1->SetWidth(8);
   
-  this->Script ( "pack %s %s %s -side left -anchor nw -padx 2 -pady 2 -expand n",
+  this->Script ( "pack %s %s -side left -anchor nw -padx 2 -pady 2 -expand n",
                  this->SpacingEntry0->GetWidgetName ( ),
                  this->SpacingEntry1->GetWidgetName());
 
@@ -316,16 +316,16 @@ void vtkSlicerVolumeFileHeaderWidget::CreateWidget ( )
   this->ScalarTypeMenu->SetParent(frame);
   this->ScalarTypeMenu->Create();
   this->ScalarTypeMenu->SetLabelText("Scalar Type:");
-  this->ScanOrderMenu->GetWidget()->GetMenu()->AddRadioButton ( "Char");
-  this->ScanOrderMenu->GetWidget()->GetMenu()->AddRadioButton ( "UnsignedChar");
-  this->ScanOrderMenu->GetWidget()->GetMenu()->AddRadioButton ( "Short");
-  this->ScanOrderMenu->GetWidget()->GetMenu()->AddRadioButton ( "UnsignedShort");
-  this->ScanOrderMenu->GetWidget()->GetMenu()->AddRadioButton ( "Int");
-  this->ScanOrderMenu->GetWidget()->GetMenu()->AddRadioButton ( "UnsignedInt");
-  this->ScanOrderMenu->GetWidget()->GetMenu()->AddRadioButton ( "Long");
-  this->ScanOrderMenu->GetWidget()->GetMenu()->AddRadioButton ( "UnsignedLong");
-  this->ScanOrderMenu->GetWidget()->GetMenu()->AddRadioButton ( "Float");
-  this->ScanOrderMenu->GetWidget()->GetMenu()->AddRadioButton ( "Double");
+  this->ScalarTypeMenu->GetWidget()->GetMenu()->AddRadioButton ( "Char");
+  this->ScalarTypeMenu->GetWidget()->GetMenu()->AddRadioButton ( "UnsignedChar");
+  this->ScalarTypeMenu->GetWidget()->GetMenu()->AddRadioButton ( "Short");
+  this->ScalarTypeMenu->GetWidget()->GetMenu()->AddRadioButton ( "UnsignedShort");
+  this->ScalarTypeMenu->GetWidget()->GetMenu()->AddRadioButton ( "Int");
+  this->ScalarTypeMenu->GetWidget()->GetMenu()->AddRadioButton ( "UnsignedInt");
+  this->ScalarTypeMenu->GetWidget()->GetMenu()->AddRadioButton ( "Long");
+  this->ScalarTypeMenu->GetWidget()->GetMenu()->AddRadioButton ( "UnsignedLong");
+  this->ScalarTypeMenu->GetWidget()->GetMenu()->AddRadioButton ( "Float");
+  this->ScalarTypeMenu->GetWidget()->GetMenu()->AddRadioButton ( "Double");
   this->ScalarTypeMenu->GetWidget()->SetValue("Short");
   this->ScalarTypeMenu->SetLabelWidth(18);
   this->ScalarTypeMenu->SetWidth(48);
@@ -379,4 +379,6 @@ void vtkSlicerVolumeFileHeaderWidget::CreateWidget ( )
   frame->Delete();
   saveFrame->Delete();
   
+
+  this->HeaderDialog->Invoke ( );
 }
