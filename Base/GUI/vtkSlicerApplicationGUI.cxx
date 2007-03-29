@@ -102,7 +102,8 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
     this->SlicesControlFrame = vtkSlicerModuleCollapsibleFrame::New();
     this->ViewControlFrame = vtkSlicerModuleCollapsibleFrame::New();
     this->DropShadowFrame = vtkKWFrame::New();
-    this->LightboxFrame = vtkKWFrame::New ( );
+    this->GridFrame1 = vtkKWFrame::New ( );
+    this->GridFrame2 = vtkKWFrame::New ( );
 
     // initialize in case any are not defined.
     this->ApplicationToolbar = NULL;
@@ -976,11 +977,17 @@ void vtkSlicerApplicationGUI::DestroyMainSliceViewers ( )
           this->MainSliceGUI2->Delete () ;
           this->MainSliceGUI2 = NULL;
         }
-      if ( this->LightboxFrame )
+      if ( this->GridFrame1 )
         {
-          app->Script ("pack forget %s ", this->LightboxFrame->GetWidgetName ( ) );
-          this->LightboxFrame->Delete ( );
-          this->LightboxFrame = NULL;
+          app->Script ("pack forget %s ", this->GridFrame1->GetWidgetName ( ) );
+          this->GridFrame1->Delete ( );
+          this->GridFrame1 = NULL;
+        }
+      if ( this->GridFrame2 )
+        {
+          app->Script ("pack forget %s ", this->GridFrame2->GetWidgetName ( ) );
+          this->GridFrame2->Delete ( );
+          this->GridFrame2 = NULL;
         }
     }
 }
@@ -1057,8 +1064,10 @@ void vtkSlicerApplicationGUI::BuildMainViewer ( int arrangementType)
       vtkSlicerGUILayout *layout = app->GetMainLayout ( );
       vtkSlicerWindow *win = this->MainSlicerWindow;
         
-      this->LightboxFrame->SetParent ( this->MainSlicerWindow->GetViewFrame ( ) );
-      this->LightboxFrame->Create ( );            
+      this->GridFrame1->SetParent ( this->MainSlicerWindow->GetViewFrame ( ) );
+      this->GridFrame1->Create ( );            
+      this->GridFrame2->SetParent ( this->MainSlicerWindow->GetSecondaryPanelFrame ( ) );
+      this->GridFrame2->Create ( );            
       this->CreateMainSliceViewers ( arrangementType );
       this->CreateMain3DViewer (arrangementType );
       this->PackMainViewer ( arrangementType , NULL );
@@ -1141,7 +1150,7 @@ void vtkSlicerApplicationGUI::CreateMain3DViewer ( int arrangementType )
       this->ViewerWidget->SetApplication( app );
       if ( arrangementType == vtkSlicerGUILayout::SlicerLayoutFourUpView )
         {
-        this->ViewerWidget->SetParent ( this->GetLightboxFrame ( ) );
+        this->ViewerWidget->SetParent ( this->GetGridFrame1 ( ) );
         }
       else
         {
@@ -1246,7 +1255,8 @@ void vtkSlicerApplicationGUI::UnpackMainSliceViewers (  )
     //
     if ( this->MainSliceGUI0 )
       {
-      if ( layout->GetCurrentViewArrangement() == vtkSlicerGUILayout::SlicerLayoutFourUpView )
+      if ( layout->GetCurrentViewArrangement() == vtkSlicerGUILayout::SlicerLayoutFourUpView ||
+           layout->GetCurrentViewArrangement() == vtkSlicerGUILayout::SlicerLayoutDefaultView)
         {
         this->MainSliceGUI0->UngridGUI ( );
         }
@@ -1258,7 +1268,8 @@ void vtkSlicerApplicationGUI::UnpackMainSliceViewers (  )
 
     if ( this->MainSliceGUI1 )
       {
-      if ( layout->GetCurrentViewArrangement() == vtkSlicerGUILayout::SlicerLayoutFourUpView )
+      if ( layout->GetCurrentViewArrangement() == vtkSlicerGUILayout::SlicerLayoutFourUpView ||
+           layout->GetCurrentViewArrangement() == vtkSlicerGUILayout::SlicerLayoutDefaultView)           
         {
         this->MainSliceGUI1->UngridGUI ( );
         }
@@ -1270,7 +1281,8 @@ void vtkSlicerApplicationGUI::UnpackMainSliceViewers (  )
 
     if ( this->MainSliceGUI2 )
       {
-      if ( layout->GetCurrentViewArrangement() == vtkSlicerGUILayout::SlicerLayoutFourUpView )
+      if ( layout->GetCurrentViewArrangement() == vtkSlicerGUILayout::SlicerLayoutFourUpView ||
+           layout->GetCurrentViewArrangement() == vtkSlicerGUILayout::SlicerLayoutDefaultView)           
         {
         this->MainSliceGUI2->UngridGUI ( );
         }
@@ -1279,9 +1291,9 @@ void vtkSlicerApplicationGUI::UnpackMainSliceViewers (  )
         this->MainSliceGUI2->UnpackGUI ( );
         }
       }
-    if ( this->LightboxFrame )
+    if ( this->GridFrame1 )
       {
-      app->Script ("pack forget %s ", this->LightboxFrame->GetWidgetName ( ) );
+      app->Script ("pack forget %s ", this->GridFrame1->GetWidgetName ( ) );
       }
     }
 }
@@ -1322,12 +1334,21 @@ void vtkSlicerApplicationGUI::PackConventionalView ( )
       // Expose the main panel frame and secondary panel frame.
 //      this->MainSlicerWindow->SetMainPanelVisibility ( 1 );
       this->MainSlicerWindow->SetSecondaryPanelVisibility ( 1 );
-      
-      this->MainSliceGUI0->PackGUI ( this->MainSlicerWindow->GetSecondaryPanelFrame ( ) );      
-      this->MainSliceGUI1->PackGUI ( this->MainSlicerWindow->GetSecondaryPanelFrame ( ) );
-      this->MainSliceGUI2->PackGUI ( this->MainSlicerWindow->GetSecondaryPanelFrame ( ) );
-      this->ViewerWidget->PackWidget(this->MainSlicerWindow->GetViewFrame() );
 
+        // try gridding the sliceGUIs inside a "GridFrame2"
+        // which itself is packed in the SecondaryPanelFrame.
+        // use column configure to make each GUI resize evenly.
+      this->Script ( "pack %s -side top -fill both -expand y -padx 0 -pady 0 ", this->GridFrame2->GetWidgetName ( ) );
+      this->Script ("grid rowconfigure %s 0 -weight 1", this->GridFrame2->GetWidgetName() );
+      this->Script ("grid columnconfigure %s 0 -weight 1", this->GridFrame2->GetWidgetName() );
+      this->Script ("grid columnconfigure %s 1 -weight 1", this->GridFrame2->GetWidgetName() );
+      this->Script ("grid columnconfigure %s 2 -weight 1", this->GridFrame2->GetWidgetName() );
+      
+      this->ViewerWidget->PackWidget(this->MainSlicerWindow->GetViewFrame() );
+      this->MainSliceGUI0->GridGUI ( this->GetGridFrame2 ( ), 0, 0 );
+      this->MainSliceGUI1->GridGUI ( this->GetGridFrame2 ( ), 0, 1 );
+      this->MainSliceGUI2->GridGUI ( this->GetGridFrame2 ( ), 0, 2 );
+      
       this->MainSlicerWindow->GetViewNotebook()->SetAlwaysShowTabs ( 0 );
       layout->SetCurrentViewArrangement ( vtkSlicerGUILayout::SlicerLayoutDefaultView );
       this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame1Size ( layout->GetDefaultSliceGUIFrameHeight () );
@@ -1415,16 +1436,16 @@ void vtkSlicerApplicationGUI::PackFourUpView ( )
       this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame1Size ( 0 );
       
       // Use this frame in MainSlicerWindow's ViewFrame to grid in the various viewers.
-      this->Script ( "pack %s -side top -fill both -expand y -padx 0 -pady 0 ", this->LightboxFrame->GetWidgetName ( ) );
-      this->Script ("grid rowconfigure %s 0 -weight 1", this->LightboxFrame->GetWidgetName() );
-      this->Script ("grid rowconfigure %s 1 -weight 1", this->LightboxFrame->GetWidgetName() );
-      this->Script ("grid columnconfigure %s 0 -weight 1", this->LightboxFrame->GetWidgetName() );
-      this->Script ("grid columnconfigure %s 1 -weight 1", this->LightboxFrame->GetWidgetName() );
+      this->Script ( "pack %s -side top -fill both -expand y -padx 0 -pady 0 ", this->GridFrame1->GetWidgetName ( ) );
+      this->Script ("grid rowconfigure %s 0 -weight 1", this->GridFrame1->GetWidgetName() );
+      this->Script ("grid rowconfigure %s 1 -weight 1", this->GridFrame1->GetWidgetName() );
+      this->Script ("grid columnconfigure %s 0 -weight 1", this->GridFrame1->GetWidgetName() );
+      this->Script ("grid columnconfigure %s 1 -weight 1", this->GridFrame1->GetWidgetName() );
       
-        this->ViewerWidget->GridWidget ( this->LightboxFrame, 0, 1 );
-        this->MainSliceGUI0->GridGUI ( this->GetLightboxFrame ( ), 0, 0 );
-        this->MainSliceGUI1->GridGUI ( this->GetLightboxFrame ( ), 1, 0 );
-        this->MainSliceGUI2->GridGUI ( this->GetLightboxFrame ( ), 1, 1 );
+        this->ViewerWidget->GridWidget ( this->GridFrame1, 0, 1 );
+        this->MainSliceGUI0->GridGUI ( this->GetGridFrame1 ( ), 0, 0 );
+        this->MainSliceGUI1->GridGUI ( this->GetGridFrame1 ( ), 1, 0 );
+        this->MainSliceGUI2->GridGUI ( this->GetGridFrame1 ( ), 1, 1 );
 
         
       this->MainSlicerWindow->GetViewNotebook()->SetAlwaysShowTabs ( 0 );

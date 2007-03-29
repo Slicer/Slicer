@@ -109,8 +109,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     
     // Description:
     // A frame used in the MainViewFrame of SlicerMainWin
-    // when lightbox view is being displayed.
-    vtkGetObjectMacro ( LightboxFrame, vtkKWFrame );
+    vtkGetObjectMacro ( GridFrame1, vtkKWFrame );
+    vtkGetObjectMacro ( GridFrame2, vtkKWFrame );
     
     // Description:
     // The following (ApplicationToolbar, ViewControlGUI, SlicesControlGUI,
@@ -254,7 +254,8 @@ protected:
 
     // Description:
     // Frame for Lightbox viewing (not yet implemented)
-    vtkKWFrame *LightboxFrame;
+    vtkKWFrame *GridFrame1;
+    vtkKWFrame *GridFrame2;
 
     // Description:
     // Widgets for the File menu
