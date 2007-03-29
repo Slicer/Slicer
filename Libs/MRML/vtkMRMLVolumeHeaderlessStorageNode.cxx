@@ -378,10 +378,10 @@ int vtkMRMLVolumeHeaderlessStorageNode::ReadData(vtkMRMLNode *refNode)
   reader->SetDataScalarType(this->GetFileScalarType());
   reader->SetDataByteOrder(this->GetFileLittleEndian());
 
-  int dim0, dim1, dim2;
-  this->GetFileDimensions(dim0, dim1, dim2);
-  dim2 = names.size();
-  reader->SetDataExtent(0, dim0-1, 0, dim1-1, 0, dim2-1);
+  int dims[3];
+  this->GetFileDimensions(dims[0], dims[1], dims[2]);
+  dims[2] = names.size();
+  reader->SetDataExtent(0, dims[0]-1, 0, dims[1]-1, 0, dims[2]-1);
 
   vtkImageAppend* appender = vtkImageAppend::New();
   
@@ -434,15 +434,9 @@ int vtkMRMLVolumeHeaderlessStorageNode::ReadData(vtkMRMLNode *refNode)
   vtkImageChangeInformation *ici = vtkImageChangeInformation::New();
   ici->SetInput (image);
   ici->SetOutputSpacing( 1, 1, 1 );
+  ici->SetOutputOrigin( 0, 0, 0 );
   ici->Update();
-  if (this->CenterImage) 
-    {
-    ici->SetOutputOrigin(0.5*(this->FileDimensions[0]-1), 0.5*(this->FileDimensions[1]-1), 0.5*(this->FileDimensions[2]-1));
-    }
-  else
-    {
-    ici->SetOutputOrigin( 0, 0, 0 );
-    }
+
   if (ici->GetOutput() == NULL)
     {
     vtkErrorMacro("vtkMRMLVolumeArchetypeStorageNode: Cannot read file");
@@ -460,6 +454,16 @@ int vtkMRMLVolumeHeaderlessStorageNode::ReadData(vtkMRMLNode *refNode)
   vtkMatrix4x4* mat = vtkMatrix4x4::New();
   mat->Identity();
   volNode->ComputeIJKToRASFromScanOrder(this->GetFileScanOrder(), mat);
+
+  if (this->GetCenterImage())
+    {
+    for (int j = 0; j < 3; j++)
+      {
+      mat->SetElement(3, j, -(dims[j]-1)/2.0);
+      }
+    }
+
+
   volNode->SetRASToIJKMatrix(mat);
   mat->Delete();
 

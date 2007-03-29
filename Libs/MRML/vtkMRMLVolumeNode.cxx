@@ -462,7 +462,68 @@ void vtkMRMLVolumeNode::GetRASToIJKMatrix(vtkMatrix4x4* mat)
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeNode::ComputeIJKToRASFromScanOrder(char *order, vtkMatrix4x4 *IJKToRAS)
 {
-  cout << "NOT IMPLEMENTED YET" << "\n";
+  IJKToRAS->Identity();
+  if (order == NULL) 
+    {
+    return;
+    }
+  if (!strcmp(order,"IS") ||
+      !strcmp(order,"Axial IS") ||
+      !strcmp(order,  "Axial"))
+    {
+    double elems[] = { -1,  0,  0,  0,
+                        0, -1,  0,  0, 
+                        0,  0,  1,  0,
+                        0,  0,  0,  1};   
+    IJKToRAS->DeepCopy(elems);
+    }
+  else if (!strcmp(order,"SI") ||
+           !strcmp(order,"Axial SI"))
+    {
+    double elems[] = { -1,  0,  0,  0,
+                        0, -1,  0,  0, 
+                        0,  0, -1,  0,
+                        0,  0,  0,  1};   
+    IJKToRAS->DeepCopy(elems);
+    }
+  else if (!strcmp(order,"RL") ||
+           !strcmp(order,"Sagittal RL") ||
+           !strcmp(order,  "Sagittal"))
+    {
+    double elems[] = {  0, -1,  0,  0,
+                        0,  0, -1,  0, 
+                       -1,  0,  0,  0,
+                        0,  0,  0,  1};   
+    IJKToRAS->DeepCopy(elems);
+    }
+  else if (!strcmp(order,"LR") ||
+      !strcmp(order,"Sagittal LR") )
+    {
+    double elems[] = {  0, -1,  0,  0,
+                        0,  0, -1,  0, 
+                        1,  0,  0,  0,
+                        0,  0,  0,  1};   
+    IJKToRAS->DeepCopy(elems);
+    }
+  else if (!strcmp(order,"PA") ||
+      !strcmp(order,"Coronal PA") ||
+      !strcmp(order,  "Coronal"))
+    {
+    double elems[] = { -1,  0,  0,  0,
+                        0,  0, -1,  0, 
+                        0,  1,  0,  0,
+                        0,  0,  0,  1};   
+    IJKToRAS->DeepCopy(elems);
+    }
+  else if (!strcmp(order,"AP") ||
+      !strcmp(order,"Coronal AP") )
+    {
+    double elems[] = { -1,  0,  0,  0,
+                        0,  0, -1,  0, 
+                        0, -1,  0,  0,
+                        0,  0,  0,  1};   
+    IJKToRAS->DeepCopy(elems);
+    }
 }
 
 //----------------------------------------------------------------------------

@@ -319,10 +319,13 @@ void vtkSlicerVolumeFileHeaderWidget::CreateWidget ( )
   this->ScanOrderMenu->SetParent(frame);
   this->ScanOrderMenu->Create();
   this->ScanOrderMenu->SetLabelText("Scan Order:");
-  this->ScanOrderMenu->GetWidget()->GetMenu()->AddRadioButton ( "Sagital LR");
+  this->ScanOrderMenu->GetWidget()->GetMenu()->AddRadioButton ( "Sagittal LR");
+  this->ScanOrderMenu->GetWidget()->GetMenu()->AddRadioButton ( "Sagittal RL");
   this->ScanOrderMenu->GetWidget()->GetMenu()->AddRadioButton ( "Coronal PA");
+  this->ScanOrderMenu->GetWidget()->GetMenu()->AddRadioButton ( "Coronal AP");
   this->ScanOrderMenu->GetWidget()->GetMenu()->AddRadioButton ( "Axial IS");
-  this->ScanOrderMenu->GetWidget()->SetValue ( "Sagital LR" );
+  this->ScanOrderMenu->GetWidget()->GetMenu()->AddRadioButton ( "Axial SI");
+  this->ScanOrderMenu->GetWidget()->SetValue ( "Sagittal LR" );
   this->ScanOrderMenu->SetLabelWidth(18);
   this->ScanOrderMenu->SetWidth(48);
   this->Script(
