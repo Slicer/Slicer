@@ -56,7 +56,7 @@ vtkSlicerToolbarGUI::vtkSlicerToolbarGUI ( )
 //  this->MeasurementsIconButton = vtkKWPushButton::New ( );
   this->TransformIconButton = vtkKWPushButton::New ( );
   this->SaveSceneIconButton = vtkKWPushButton::New ( );
-  this->LoadSceneIconButton = vtkKWPushButton::New ( );
+  this->LoadSceneIconButton = vtkKWMenuButton::New ( );
   this->ChooseLayoutIconMenuButton = vtkKWMenuButton::New();
   this->InteractionModeRadioButtons = vtkKWRadioButtonSet::New ( );
   this->UndoIconButton = vtkKWPushButton::New ( );
@@ -280,48 +280,52 @@ void vtkSlicerToolbarGUI::PrintSelf ( ostream& os, vtkIndent indent )
 void vtkSlicerToolbarGUI::RemoveGUIObservers ( )
 {
     // Fill in
-    this->HomeIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->DataIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->EditorIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->VolumeIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->ModelIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->FiducialsIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->ColorIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->ChooseLayoutIconMenuButton->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->UndoIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->RedoIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->LoadSceneIconButton->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->SaveSceneIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->HomeIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->DataIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->EditorIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->VolumeIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->ModelIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->FiducialsIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->ColorIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->ChooseLayoutIconMenuButton->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->UndoIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->RedoIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
-    this->InteractionModeRadioButtons->GetWidget( vtkMRMLInteractionNode::PickManipulate )->RemoveObservers( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
-    this->InteractionModeRadioButtons->GetWidget( vtkMRMLInteractionNode::ViewTransform )->RemoveObservers( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
-    this->InteractionModeRadioButtons->GetWidget( vtkMRMLInteractionNode::Place )->RemoveObservers( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->InteractionModeRadioButtons->GetWidget( vtkMRMLInteractionNode::PickManipulate )->RemoveObservers( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->InteractionModeRadioButtons->GetWidget( vtkMRMLInteractionNode::ViewTransform )->RemoveObservers( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->InteractionModeRadioButtons->GetWidget( vtkMRMLInteractionNode::Place )->RemoveObservers( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
     
-    this->ModuleChooseGUI->RemoveGUIObservers();
+  this->ModuleChooseGUI->RemoveGUIObservers();
 }
 
 //---------------------------------------------------------------------------
 void vtkSlicerToolbarGUI::AddGUIObservers ( )
 {
-    // Fill in
-    // add observers onto the module icon buttons 
-    this->HomeIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->DataIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->EditorIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->VolumeIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->ModelIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->FiducialsIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->TransformIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->ColorIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  // Fill in
+  // add observers onto the module icon buttons 
+  this->LoadSceneIconButton->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->SaveSceneIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->HomeIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->DataIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->EditorIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->VolumeIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->ModelIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->FiducialsIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->TransformIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->ColorIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     
-    // view configuration icon button observers...
-    this->ChooseLayoutIconMenuButton->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->UndoIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->RedoIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  // view configuration icon button observers...
+  this->ChooseLayoutIconMenuButton->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->UndoIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->RedoIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
-    this->InteractionModeRadioButtons->GetWidget( vtkMRMLInteractionNode::PickManipulate )->AddObserver ( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
-    this->InteractionModeRadioButtons->GetWidget( vtkMRMLInteractionNode::ViewTransform )->AddObserver ( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
-    this->InteractionModeRadioButtons->GetWidget( vtkMRMLInteractionNode::Place )->AddObserver ( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->InteractionModeRadioButtons->GetWidget( vtkMRMLInteractionNode::PickManipulate )->AddObserver ( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->InteractionModeRadioButtons->GetWidget( vtkMRMLInteractionNode::ViewTransform )->AddObserver ( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->InteractionModeRadioButtons->GetWidget( vtkMRMLInteractionNode::Place )->AddObserver ( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
 
-    this->ModuleChooseGUI->AddGUIObservers();
+  this->ModuleChooseGUI->AddGUIObservers();
 }
 
 
@@ -575,7 +579,25 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
             }
           }
         }
-             
+      else if ( menu == this->LoadSceneIconButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
+        {
+        const char *thingToDo = this->LoadSceneIconButton->GetValue();
+        if ( !strcmp ( thingToDo, "Load scene"))
+          {
+          p->ProcessLoadSceneCommand();
+          this->LoadSceneIconButton->SetValue ( "");
+          }
+        else if (!strcmp (thingToDo, "Import scene"))
+          {
+          p->ProcessImportSceneCommand();
+          this->LoadSceneIconButton->SetValue ("");
+          }
+        else if ( !strcmp ( thingToDo, "Add data" ))
+          {
+          p->ProcessAddDataCommand();
+          this->LoadSceneIconButton->SetValue ("");
+          }
+        }
       if ( pushb == this->UndoIconButton && event == vtkKWPushButton::InvokedEvent )
         {
         p->GetMRMLScene()->Undo();
@@ -583,6 +605,10 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
       else if ( pushb == this->RedoIconButton && event == vtkKWPushButton::InvokedEvent )
         {
         p->GetMRMLScene()->Redo();
+        }
+      else if ( pushb == this->SaveSceneIconButton && event == vtkKWPushButton::InvokedEvent)
+        {
+        p->ProcessSaveSceneAsCommand();
         }
       }
     }
@@ -874,13 +900,26 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   //--- create icons and the labels that display them and add to toolbar
   //
   // load scene icon
+  int index;
   this->LoadSceneIconButton->SetParent ( ltb->GetFrame ( ) );
   this->LoadSceneIconButton->Create();
   this->LoadSceneIconButton->SetReliefToFlat ( );
   this->LoadSceneIconButton->SetBorderWidth ( 0 );
-  this->LoadSceneIconButton->SetOverReliefToNone ( );
+  this->LoadSceneIconButton->IndicatorVisibilityOff();
   this->LoadSceneIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetLoadSceneIcon( ) );
-  this->LoadSceneIconButton->SetBalloonHelpString ( "Load a MRML scene.");
+  this->LoadSceneIconButton->SetBalloonHelpString ( "Load or import a MRML scene, or add data.");
+  this->LoadSceneIconButton->GetMenu()->DeleteAllItems();
+  this->LoadSceneIconButton->GetMenu()->AddRadioButton ( "Load scene" );
+  index = this->LoadSceneIconButton->GetMenu()->GetIndexOfItem ( "Load scene");
+  this->LoadSceneIconButton->GetMenu()->SetItemIndicatorVisibility ( index, 0 );
+  this->LoadSceneIconButton->GetMenu()->AddRadioButton ( "Import scene" );
+  index = this->LoadSceneIconButton->GetMenu()->GetIndexOfItem ( "Import scene");
+  this->LoadSceneIconButton->GetMenu()->SetItemIndicatorVisibility ( index, 0 );
+  this->LoadSceneIconButton->GetMenu()->AddRadioButton ( "Add data" );
+  index = this->LoadSceneIconButton->GetMenu()->GetIndexOfItem ( "Add data");
+  this->LoadSceneIconButton->GetMenu()->SetItemIndicatorVisibility ( index, 0 );
+  this->LoadSceneIconButton->GetMenu()->AddSeparator ( );
+  this->LoadSceneIconButton->GetMenu()->AddCommand ("close");  
   ltb->AddWidget ( this->LoadSceneIconButton );
 
   // save scene icon
@@ -1024,7 +1063,6 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
 
 
   // Layout choose menu
-  int index;
   const char *imageName;
   this->ChooseLayoutIconMenuButton->SetParent ( vtb->GetFrame ( ) );
   this->ChooseLayoutIconMenuButton->Create ( );
