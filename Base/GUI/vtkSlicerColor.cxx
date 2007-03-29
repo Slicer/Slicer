@@ -84,7 +84,7 @@ void vtkSlicerColor::DefineDefaultColorPalette ( ) {
     // GreenSliceControllerGUI
     this->SetColor(this->SliceGUIGreen,  .4337, .6909, .298);
     // Lightbox Controller
-    this->SetColor (this->LightboxBlue, 0.4196,  0.4549, 0.5647);
+    this->SetColor (this->LightboxBlue, 0.6196,  0.6549, 0.7647);
 }
 
 
