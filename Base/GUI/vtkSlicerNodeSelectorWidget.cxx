@@ -418,6 +418,7 @@ void vtkSlicerNodeSelectorWidget::SetSelected(vtkMRMLNode *node)
     {
     this->SelectedID = std::string("");
     m->SetValue("");
+    this->SetBalloonHelpString("Select a node");
     }
 }
 
@@ -430,7 +431,7 @@ void vtkSlicerNodeSelectorWidget::SetSelectedNew(const char *className)
     std::stringstream ss;
     ss << "Create New " << name;
     this->GetWidget()->GetWidget()->SetValue(ss.str().c_str());
-    this->SetBalloonHelpString("Create a new Node");
+    this->SetBalloonHelpString("Create a new node");
     }
 }
 //----------------------------------------------------------------------------
