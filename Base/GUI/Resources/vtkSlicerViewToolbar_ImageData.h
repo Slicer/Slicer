@@ -1,5 +1,21 @@
 /* 
  * Resource generated for file:
+ *    ToolbarChooseView.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_ToolbarChooseView_width          = 21;
+static const unsigned int  image_ToolbarChooseView_height         = 21;
+static const unsigned int  image_ToolbarChooseView_pixel_size     = 3;
+static const unsigned long image_ToolbarChooseView_length         = 264;
+static const unsigned long image_ToolbarChooseView_decoded_length = 1323;
+
+static const unsigned char image_ToolbarChooseView[] = 
+  "eNrVkk0OgyAQRsVVD+A9uimr9hr1ioSgXqTBn2MgSRc9QSd+CUEUS2TVyYvBL/MYURkrWB"
+  "4vbQg9zHqwdB1GG0P3M3VO0wdA70cL0MP5I4bbx9eDEdR24/cgpMTpwfStjn4fl6fr/ui/"
+  "00+fPfPNH3/3Xb2P/2wBx9PTgV7Xz3NAF0J0XlHerWuboMgty6Jt25/6da/ITdSXWRdjzH"
+  "spWlMCvWmaxIdnjJFbVRVuoSul0s9OO7g1dCnluVcHPYcvob/ACg==";
+
+/* 
+ * Resource generated for file:
  *    ToolbarConventionalView.png (zlib, base64) (image file)
  */
 static const unsigned int  image_ToolbarConventionalView_width          = 21;
@@ -36,13 +52,12 @@ static const unsigned char image_ToolbarFourUpView[] =
 static const unsigned int  image_ToolbarLightBoxView_width          = 21;
 static const unsigned int  image_ToolbarLightBoxView_height         = 21;
 static const unsigned int  image_ToolbarLightBoxView_pixel_size     = 3;
-static const unsigned long image_ToolbarLightBoxView_length         = 148;
+static const unsigned long image_ToolbarLightBoxView_length         = 100;
 static const unsigned long image_ToolbarLightBoxView_decoded_length = 1323;
 
 static const unsigned char image_ToolbarLightBoxView[] = 
-  "eNpjYmJgogytQwKOjo54uLa2tshcuPYqMICrJ5JLLe1EOh6NC9HuSC6giu2jQUeMdZGRkZ"
-  "QEXUxMDCVBh0s7JY4nGET62ABJQcfIyPHy5ct3YABkkxF0jIyMQL0iIiJkBx3QBKoHHSUI"
-  "ADllMTg=";
+  "eNpjYmJgogytQwKOjo54uLa2tshcuPYqMICrJ5JLLe1EOh6NC9HuSC6giu2jQTcadDQNus"
+  "jISEqCLiYmhpKgw6WdEsdTggADljWA";
 
 /* 
  * Resource generated for file:
@@ -62,6 +77,34 @@ static const unsigned char image_ToolbarOneUp3DView[] =
 
 /* 
  * Resource generated for file:
+ *    ToolbarOneUpGreenSliceView.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_ToolbarOneUpGreenSliceView_width          = 21;
+static const unsigned int  image_ToolbarOneUpGreenSliceView_height         = 21;
+static const unsigned int  image_ToolbarOneUpGreenSliceView_pixel_size     = 3;
+static const unsigned long image_ToolbarOneUpGreenSliceView_length         = 108;
+static const unsigned long image_ToolbarOneUpGreenSliceView_decoded_length = 1323;
+
+static const unsigned char image_ToolbarOneUpGreenSliceView[] = 
+  "eNpjYmJgogzlbfAhA1Vs9qFEOxAxUexyIFpHLiCo/fnTK5RoxwPWrl07gLYPrN+RtUNsIZ"
+  "UcHn4nz3YGBopsJ6h9YG0nRjtBhAcAACAaq+M=";
+
+/* 
+ * Resource generated for file:
+ *    ToolbarOneUpRedSliceView.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_ToolbarOneUpRedSliceView_width          = 21;
+static const unsigned int  image_ToolbarOneUpRedSliceView_height         = 21;
+static const unsigned int  image_ToolbarOneUpRedSliceView_pixel_size     = 3;
+static const unsigned long image_ToolbarOneUpRedSliceView_length         = 96;
+static const unsigned long image_ToolbarOneUpRedSliceView_decoded_length = 1323;
+
+static const unsigned char image_ToolbarOneUpRedSliceView[] = 
+  "eNpjYmJgogx98jIhD1FFO4VoHbmAoPbnT69Qoh0PWLt27QDaPrB+R9YOsYVUcnj4nTzbGR"
+  "gosp2g9oG1nRjtBBEeAAAk8Ky6";
+
+/* 
+ * Resource generated for file:
  *    ToolbarOneUpSliceView.png (zlib, base64) (image file)
  */
 static const unsigned int  image_ToolbarOneUpSliceView_width          = 21;
@@ -73,6 +116,20 @@ static const unsigned long image_ToolbarOneUpSliceView_decoded_length = 1323;
 static const unsigned char image_ToolbarOneUpSliceView[] = 
   "eNpjYmJgogytIxcQ1P786RVKtA9a29euXTti/Y6sHWILqeRoqiPbdgYGYm03MrIEorS0NA"
   "iDSO3IwMjIaObMma6urmTYDjeBJMcT43eCCA8AAM834EY=";
+
+/* 
+ * Resource generated for file:
+ *    ToolbarOneUpYellowSliceView.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_ToolbarOneUpYellowSliceView_width          = 21;
+static const unsigned int  image_ToolbarOneUpYellowSliceView_height         = 21;
+static const unsigned int  image_ToolbarOneUpYellowSliceView_pixel_size     = 3;
+static const unsigned long image_ToolbarOneUpYellowSliceView_length         = 96;
+static const unsigned long image_ToolbarOneUpYellowSliceView_decoded_length = 1323;
+
+static const unsigned char image_ToolbarOneUpYellowSliceView[] = 
+  "eNpjYmJgogy9vepLHqKKdgrROnIBQe3Pn16hRDsesHbt2gG0fWD9jqwdYgup5PDwO3m2Mz"
+  "BQZDtB7QNrOzHaCSI8AACNzcRU";
 
 /* 
  * Resource generated for file:
