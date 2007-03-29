@@ -17,12 +17,14 @@
 
 ModuleDescription::ModuleDescription()
 {
+  this->Type = "Unknown";
   this->Description = "No description provided";
 }
 
 
 ModuleDescription::ModuleDescription(const ModuleDescription &md)
 {
+  this->Type = md.Type;
   this->Category = md.Category;
   this->Title = md.Title;
   this->Description = md.Description;
@@ -42,6 +44,7 @@ ModuleDescription::ModuleDescription(const ModuleDescription &md)
 void
 ModuleDescription::operator=(const ModuleDescription &md)
 {
+  this->Type= md.Type;
   this->Category = md.Category;
   this->Title = md.Title;
   this->Description = md.Description;
@@ -58,11 +61,12 @@ ModuleDescription::operator=(const ModuleDescription &md)
 }
 
 std::ostream & operator<<(std::ostream &os, const ModuleDescription &module)
-{ 
+{
   os << "Category: " << module.GetCategory() << std::endl;
   os << "Title: " << module.GetTitle() << std::endl;
   os << "Description: " << module.GetDescription() << std::endl;
   os << "Version: " << module.GetVersion() << std::endl;
+  os << "Type: " << module.GetType() << std::endl;
   os << "DocumentationURL: " << module.GetDocumentationURL() << std::endl;
   os << "License: " << module.GetLicense() << std::endl;
   os << "Contributor: " << module.GetContributor() << std::endl;

@@ -113,6 +113,25 @@ public:
     return this->Contributor;
   }
 
+  // Set the type of module: Unknown, SharedObjectModule, CommandLineModule
+  void SetType(const std::string &type)
+  {
+    if (type == "SharedObjectModule" || type == "CommandLineModule")
+      {
+      this->Type = type;
+      }
+    else
+      {
+      this->Type = "Unknown";
+      }
+  }
+
+  // Get the type of the module: Unknown, SharedObjectModule, CommandLineModule
+  const std::string& GetType() const
+  {
+    return this->Type;
+  }
+  
   // Set the target for the module.  This is the entry point for a
   // shared object module and the full command (with path) for an executable.
   void SetTarget(const std::string &target)
@@ -179,6 +198,7 @@ public:
   
   
 private:
+  std::string Type;
   std::string Category;
   std::string Title;
   std::string Location;

@@ -298,6 +298,22 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
     sscanf(target.c_str(), "slicer:%p", &entryPoint);
     isCommandLine = false;
     }
+
+  // verify the status from the ModuleDescription
+  if (isCommandLine)
+    {
+    if (node->GetModuleDescription().GetType() != "CommandLineModule")
+      {
+      vtkWarningMacro("Module reports that it is not a command line module but does not have a shared object module target. " << target.c_str());
+      }
+    }
+  else
+    {
+    if (node->GetModuleDescription().GetType() != "SharedObjectModule")
+      {
+      vtkWarningMacro("Module reports that it is not a shared object module but has a shared object module target. " << target.c_str());
+      }
+    }
   
   // map to keep track of MRML Ids and filenames
   typedef std::map<std::string, std::string> MRMLIDToFileNameMap;

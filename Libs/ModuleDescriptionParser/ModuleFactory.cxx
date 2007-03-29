@@ -441,6 +441,7 @@ ModuleFactory
                 
                 // Construct and configure the module object
                 ModuleDescription module;
+                module.SetType("SharedObjectModule");
 
                 // Set the target as the entry point to call
                 char entryPointAsText[256];
@@ -684,6 +685,7 @@ ModuleFactory
               
                 // Construct and configure the module object
                 ModuleDescription module;
+                module.SetType("CommandLineModule");
                 module.SetTarget( commandName );
                 module.SetLocation( commandName );
 
@@ -890,6 +892,7 @@ ModuleFactory
 
                 // Construct and configure the module object
                 ModuleDescription module;
+                module.SetType("CommandLineModule");
                 module.SetTarget( fullExecutablePath );
                 module.SetLocation( fullExecutablePath );
                 
@@ -1085,6 +1088,7 @@ ModuleFactory
 
                 // Construct and configure the module object
                 ModuleDescription module;
+                module.SetType("CommandLineModule");
                 module.SetTarget( fullExecutablePath );
                 module.SetLocation( fullExecutablePath );
                 
