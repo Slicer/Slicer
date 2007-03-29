@@ -95,6 +95,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
     // stopped. Resumes when finished packing.
     virtual int StopViewRockOrSpin ( );
     virtual void ResumeViewRockOrSpin ( int mode );
+    virtual void SetLayoutMenubuttonValueToCurrentLayout ();
+    const char* GetCurrentLayoutStringName ( );
 
     // Description:
     // Getting and setting the mrml selection node id

@@ -1320,7 +1320,7 @@ void vtkSlicerApplicationGUI::PackConventionalView ( )
       vtkSlicerGUILayout *layout = app->GetMainLayout ( );
 
       // Expose the main panel frame and secondary panel frame.
-      this->MainSlicerWindow->SetMainPanelVisibility ( 1 );
+//      this->MainSlicerWindow->SetMainPanelVisibility ( 1 );
       this->MainSlicerWindow->SetSecondaryPanelVisibility ( 1 );
       
       this->MainSliceGUI0->PackGUI ( this->MainSlicerWindow->GetSecondaryPanelFrame ( ) );      
@@ -1345,7 +1345,7 @@ void vtkSlicerApplicationGUI::PackOneUp3DView ( )
       vtkSlicerGUILayout *layout = app->GetMainLayout ( );
 
       // Expose the main panel frame only
-      this->MainSlicerWindow->SetMainPanelVisibility ( 1 );
+//      this->MainSlicerWindow->SetMainPanelVisibility ( 1 );
       this->MainSlicerWindow->SetSecondaryPanelVisibility ( 0 );
       this->MainSlicerWindow->GetViewNotebook()->SetAlwaysShowTabs ( 0 );      
       this->ViewerWidget->PackWidget(this->MainSlicerWindow->GetViewFrame() );
@@ -1370,7 +1370,7 @@ void vtkSlicerApplicationGUI::PackOneUpSliceView ( const char * whichSlice )
       vtkSlicerGUILayout *layout = app->GetMainLayout ( );
 
       // Expose the main panel frame only
-      this->MainSlicerWindow->SetMainPanelVisibility ( 1 );
+//      this->MainSlicerWindow->SetMainPanelVisibility ( 1 );
       this->MainSlicerWindow->SetSecondaryPanelVisibility ( 0 );
       
       if ( !strcmp (whichSlice, "Red" ) )
@@ -1410,7 +1410,7 @@ void vtkSlicerApplicationGUI::PackFourUpView ( )
       vtkSlicerGUILayout *layout = app->GetMainLayout ( );
 
       // Expose both the main panel frame and secondary panel frame
-      this->MainSlicerWindow->SetMainPanelVisibility ( 1 );
+//      this->MainSlicerWindow->SetMainPanelVisibility ( 1 );
       this->MainSlicerWindow->SetSecondaryPanelVisibility ( 0 );
       this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame1Size ( 0 );
       
@@ -1446,7 +1446,7 @@ void vtkSlicerApplicationGUI::PackTabbed3DView ( )
       vtkSlicerColor *color = app->GetSlicerTheme()->GetSlicerColors ( );
       vtkSlicerGUILayout *layout = app->GetMainLayout ( );
       this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame1Size ( layout->GetDefaultSliceGUIFrameHeight() );      
-      this->MainSlicerWindow->SetMainPanelVisibility ( 1 );
+//      this->MainSlicerWindow->SetMainPanelVisibility ( 1 );
       this->MainSlicerWindow->SetSecondaryPanelVisibility ( 0 );
 
       this->MainSliceGUI0->PackGUI ( this->MainSlicerWindow->GetSecondaryPanelFrame ( ));
@@ -1478,7 +1478,7 @@ void vtkSlicerApplicationGUI::PackTabbedSliceView ( )
       vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
       vtkSlicerColor *color = app->GetSlicerTheme()->GetSlicerColors ( );
       vtkSlicerGUILayout *layout = app->GetMainLayout ( );
-      this->MainSlicerWindow->SetMainPanelVisibility ( 1 );
+//      this->MainSlicerWindow->SetMainPanelVisibility ( 1 );
       this->MainSlicerWindow->SetSecondaryPanelVisibility ( 0 );
 
       this->MainSlicerWindow->GetViewNotebook()->AddPage("Red slice", NULL, NULL, this->ViewerPageTag );

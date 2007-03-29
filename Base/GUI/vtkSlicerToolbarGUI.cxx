@@ -66,8 +66,6 @@ vtkSlicerToolbarGUI::vtkSlicerToolbarGUI ( )
   this->ApplicationGUI = NULL;
   this->InteractionNodeID = NULL;
   this->InteractionNode = NULL;
-
-  
 }
 
 
@@ -493,65 +491,91 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
       if ( menu == this->ChooseLayoutIconMenuButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
         {
         const char *whichLayout = this->ChooseLayoutIconMenuButton->GetValue();
-        mode = this->StopViewRockOrSpin();
-        if ( !strcmp ( whichLayout, "Conventional layout"))
+        const char *currentLayout = this->GetCurrentLayoutStringName ( );
+        // if a different layout is chosen...
+        if ( strcmp ( whichLayout, currentLayout ) )
           {
-          // First, check to see if view is spinning or rocking.
-          // If so, stop view Spin or Rock.
-          p->RepackMainViewer (vtkSlicerGUILayout::SlicerLayoutDefaultView, NULL );
-//        this->ResumeViewRockOrSpin ( mode );
-          }
-        else if (!strcmp( whichLayout, "3D only layout" ))
-          {
-          // First, check to see if view is spinning or rocking.
-          // If so, stop view Spin or Rock.
-          p->RepackMainViewer ( vtkSlicerGUILayout::SlicerLayoutOneUp3DView, NULL);
-//        this->ResumeViewRockOrSpin ( mode );
-          }
-        else if ( !strcmp ( whichLayout, "Four-up layout"))
-          {
-          // First, check to see if view is spinning or rocking.
-          // If so, stop view Spin or Rock.
-          p->RepackMainViewer ( vtkSlicerGUILayout::SlicerLayoutFourUpView, NULL );
-//        this->ResumeViewRockOrSpin ( mode );
-          }
-        else if ( !strcmp (whichLayout, "Tabbed 3D layout") )
-          {
-          // First, check to see if view is spinning or rocking.
-          // If so, stop view Spin or Rock.
-          p->RepackMainViewer ( vtkSlicerGUILayout::SlicerLayoutTabbed3DView, NULL );
-//        this->ResumeViewRockOrSpin ( mode );
-          }
-        else if (!strcmp ( whichLayout, "Tabbed slice layout"))
-          {
-          // First, check to see if view is spinning or rocking.
-          // If so, stop view Spin or Rock.
-          p->RepackMainViewer ( vtkSlicerGUILayout::SlicerLayoutTabbedSliceView, NULL );
-//        this->ResumeViewRockOrSpin ( mode );
-          }
-        else if ( !strcmp (whichLayout, "Red slice only layout") )
-          {
-          // First, check to see if view is spinning or rocking.
-          // If so, stop view Spin or Rock.
-          p->RepackMainViewer ( vtkSlicerGUILayout::SlicerLayoutOneUpSliceView, "Red");
-//        this->ResumeViewRockOrSpin ( mode );
-          }
-        else if ( !strcmp (whichLayout, "Yellow slice only layout") )
-          {
-          // First, check to see if view is spinning or rocking.
-          // If so, stop view Spin or Rock.
-          p->RepackMainViewer ( vtkSlicerGUILayout::SlicerLayoutOneUpSliceView, "Yellow");
-//        this->ResumeViewRockOrSpin ( mode );
-          }
-        else if ( !strcmp (whichLayout, "Green slice only layout") )
-          {
-          // First, check to see if view is spinning or rocking.
-          // If so, stop view Spin or Rock.
-          p->RepackMainViewer ( vtkSlicerGUILayout::SlicerLayoutOneUpSliceView, "Green");
-//        this->ResumeViewRockOrSpin ( mode );
-          }
-        }        
+          mode = this->StopViewRockOrSpin();
+          if ( !strcmp ( whichLayout, "Conventional layout"))
+            {
+            // First, check to see if view is spinning or rocking.
+            // If so, stop view Spin or Rock.
 
+            p->RepackMainViewer (vtkSlicerGUILayout::SlicerLayoutDefaultView, NULL );
+            this->ChooseLayoutIconMenuButton->GetMenu()->SetItemStateToNormal ( "Toggle bottom panel visibility" );
+//        this->ResumeViewRockOrSpin ( mode );
+            }
+          else if (!strcmp( whichLayout, "3D only layout" ))
+            {
+            // First, check to see if view is spinning or rocking.
+            // If so, stop view Spin or Rock.
+            p->RepackMainViewer ( vtkSlicerGUILayout::SlicerLayoutOneUp3DView, NULL);
+            this->ChooseLayoutIconMenuButton->GetMenu()->SetItemStateToDisabled ( "Toggle bottom panel visibility" );
+//        this->ResumeViewRockOrSpin ( mode );
+            }
+          else if ( !strcmp ( whichLayout, "Four-up layout"))
+            {
+            // First, check to see if view is spinning or rocking.
+            // If so, stop view Spin or Rock.
+            p->RepackMainViewer ( vtkSlicerGUILayout::SlicerLayoutFourUpView, NULL );
+            this->ChooseLayoutIconMenuButton->GetMenu()->SetItemStateToDisabled ( "Toggle bottom panel visibility" );
+//        this->ResumeViewRockOrSpin ( mode );
+            }
+          else if ( !strcmp (whichLayout, "Tabbed 3D layout") )
+            {
+            // First, check to see if view is spinning or rocking.
+            // If so, stop view Spin or Rock.
+            p->RepackMainViewer ( vtkSlicerGUILayout::SlicerLayoutTabbed3DView, NULL );
+            this->ChooseLayoutIconMenuButton->GetMenu()->SetItemStateToDisabled ( "Toggle bottom panel visibility" );
+//        this->ResumeViewRockOrSpin ( mode );
+            }
+          else if (!strcmp ( whichLayout, "Tabbed slice layout"))
+            {
+            // First, check to see if view is spinning or rocking.
+            // If so, stop view Spin or Rock.
+            p->RepackMainViewer ( vtkSlicerGUILayout::SlicerLayoutTabbedSliceView, NULL );
+            this->ChooseLayoutIconMenuButton->GetMenu()->SetItemStateToDisabled ( "Toggle bottom panel visibility" );
+//        this->ResumeViewRockOrSpin ( mode );
+            }
+          else if ( !strcmp (whichLayout, "Red slice only layout") )
+            {
+            // First, check to see if view is spinning or rocking.
+            // If so, stop view Spin or Rock.
+            p->RepackMainViewer ( vtkSlicerGUILayout::SlicerLayoutOneUpSliceView, "Red");
+            this->ChooseLayoutIconMenuButton->GetMenu()->SetItemStateToDisabled ( "Toggle bottom panel visibility" );
+//        this->ResumeViewRockOrSpin ( mode );
+            }
+          else if ( !strcmp (whichLayout, "Yellow slice only layout") )
+            {
+            // First, check to see if view is spinning or rocking.
+            // If so, stop view Spin or Rock.
+            p->RepackMainViewer ( vtkSlicerGUILayout::SlicerLayoutOneUpSliceView, "Yellow");
+            this->ChooseLayoutIconMenuButton->GetMenu()->SetItemStateToDisabled ( "Toggle bottom panel visibility" );
+//        this->ResumeViewRockOrSpin ( mode );
+            }
+          else if ( !strcmp (whichLayout, "Green slice only layout") )
+            {
+            // First, check to see if view is spinning or rocking.
+            // If so, stop view Spin or Rock.
+            p->RepackMainViewer ( vtkSlicerGUILayout::SlicerLayoutOneUpSliceView, "Green");
+            this->ChooseLayoutIconMenuButton->GetMenu()->SetItemStateToDisabled ( "Toggle bottom panel visibility" );
+//        this->ResumeViewRockOrSpin ( mode );
+            }
+          else if ( !strcmp ( whichLayout, "Toggle GUI panel visibility"))
+            {
+            int v = p->GetMainSlicerWindow()->GetMainPanelVisibility();
+            p->GetMainSlicerWindow()->SetMainPanelVisibility (!v );
+            this->SetLayoutMenubuttonValueToCurrentLayout ();
+            }
+          else if ( !strcmp ( whichLayout, "Toggle bottom panel visibility"))
+            {
+            int v = p->GetMainSlicerWindow()->GetSecondaryPanelVisibility();
+            p->GetMainSlicerWindow()->SetSecondaryPanelVisibility (!v );
+            this->SetLayoutMenubuttonValueToCurrentLayout ();
+            }
+          }
+        }
+             
       if ( pushb == this->UndoIconButton && event == vtkKWPushButton::InvokedEvent )
         {
         p->GetMRMLScene()->Undo();
@@ -564,6 +588,109 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
     }
 }
 
+//---------------------------------------------------------------------------
+const char* vtkSlicerToolbarGUI::GetCurrentLayoutStringName ( )
+{
+  if ( this->GetApplication() != NULL )
+    {
+    vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication ( ));
+    int layout = app->GetMainLayout()->GetCurrentViewArrangement ();
+    
+    if ( layout == vtkSlicerGUILayout::SlicerLayoutDefaultView)
+      {
+        return ( "Conventional layout" );
+      }
+    else if (layout == vtkSlicerGUILayout::SlicerLayoutFourUpView )
+      {
+        return ( "Four-up layout" );
+      }
+    else if ( layout == vtkSlicerGUILayout::SlicerLayoutOneUp3DView)
+      {
+      return ( "3D only layout" );
+      }
+    else if (layout == vtkSlicerGUILayout::SlicerLayoutOneUpRedSliceView)
+      {
+        return ( "Red slice only layout" );
+      }
+    else if ( layout == vtkSlicerGUILayout::SlicerLayoutOneUpYellowSliceView)
+      {
+      return ( "Yellow slice only layout" );
+      }
+    else if ( layout == vtkSlicerGUILayout::SlicerLayoutOneUpGreenSliceView )
+      {
+      return ( "Green slice only layout" );
+      }
+    else if ( layout == vtkSlicerGUILayout::SlicerLayoutOneUpSliceView )
+      {
+      return ( "Red slice only layout" );
+      }
+    else if ( layout == vtkSlicerGUILayout::SlicerLayoutTabbed3DView )
+      {
+      return ( "Tabbed 3D layout" );
+      }
+    else if ( layout == vtkSlicerGUILayout::SlicerLayoutTabbedSliceView )
+      {
+      return ( "Tabbed slice layout" );
+      }
+    else if (layout == vtkSlicerGUILayout::SlicerLayoutLightboxView )
+      {
+      return ( "Lightbox layout" );
+      }
+    else
+      {
+        return (NULL);
+      }
+    }
+  else
+    {
+    return ( NULL );
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerToolbarGUI::SetLayoutMenubuttonValueToCurrentLayout ()
+{
+  if ( this->GetApplication() != NULL )
+    {
+    vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication ( ));
+    int layout = app->GetMainLayout()->GetCurrentViewArrangement ();
+    switch ( layout )
+      {
+      case vtkSlicerGUILayout::SlicerLayoutDefaultView:
+        this->ChooseLayoutIconMenuButton->SetValue ( "Conventional layout" );
+        break;
+      case vtkSlicerGUILayout::SlicerLayoutFourUpView:
+        this->ChooseLayoutIconMenuButton->SetValue ( "Four-up layout" );
+        break;
+      case vtkSlicerGUILayout::SlicerLayoutOneUp3DView:
+        this->ChooseLayoutIconMenuButton->SetValue ( "3D only layout" );
+        break;
+      case vtkSlicerGUILayout::SlicerLayoutOneUpRedSliceView:
+        this->ChooseLayoutIconMenuButton->SetValue ( "Red slice only layout" );
+        break;
+      case vtkSlicerGUILayout::SlicerLayoutOneUpYellowSliceView:
+        this->ChooseLayoutIconMenuButton->SetValue ( "Yellow slice only layout" );
+        break;
+      case vtkSlicerGUILayout::SlicerLayoutOneUpGreenSliceView:
+        this->ChooseLayoutIconMenuButton->SetValue ( "Green slice only layout" );
+        break;
+      case vtkSlicerGUILayout::SlicerLayoutOneUpSliceView:
+        this->ChooseLayoutIconMenuButton->SetValue ( "Red slice only layout" );
+        break;
+      case vtkSlicerGUILayout::SlicerLayoutTabbed3DView:
+        this->ChooseLayoutIconMenuButton->SetValue ( "Tabbed 3D layout" );
+        break;
+      case vtkSlicerGUILayout::SlicerLayoutTabbedSliceView:
+        this->ChooseLayoutIconMenuButton->SetValue ( "Tabbed slice layout" );
+        break;
+      case vtkSlicerGUILayout::SlicerLayoutLightboxView:              
+        this->ChooseLayoutIconMenuButton->SetValue ( "Lightbox layout" );
+        break;
+      default:
+        break;
+      }
+    }
+}
 
 
 //---------------------------------------------------------------------------
@@ -972,6 +1099,16 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   this->ChooseLayoutIconMenuButton->GetMenu()->SetItemCompoundModeToLeft ( index );
 //  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemVariableValueAsInt ( "Tabbed slice layout", vtkSlicerGUILayout::SlicerLayoutTabbedSliceView);
 
+  this->ChooseLayoutIconMenuButton->GetMenu()->AddRadioButton ( "Toggle GUI panel visibility" );
+  index = this->ChooseLayoutIconMenuButton->GetMenu()->GetIndexOfItem ( "Toggle GUI panel visibility");
+  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemIndicatorVisibility ( index, 0 );
+  this->ChooseLayoutIconMenuButton->GetMenu()->AddRadioButton ( "Toggle bottom panel visibility" );
+  index = this->ChooseLayoutIconMenuButton->GetMenu()->GetIndexOfItem ( "Toggle bottom panel visibility");
+  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemIndicatorVisibility ( index, 0 );
+//      layout->SetCurrentViewArrangement ( vtkSlicerGUILayout::SlicerLayoutTabbedSliceView );
+
+//  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemVariableValueAsInt ( "Tabbed slice layout", vtkSlicerGUILayout::SlicerLayoutTabbedSliceView);
+
 //  this->ChooseLayoutIconMenuButton->GetMenu()->AddRadioButton ( "Lightbox layout");
 //  index = this->ChooseLayoutIconMenuButton->GetMenu()->GetIndexOfItem ( "Lightbox layout");
 //  imageName = "SlicerLightboxLayoutImage";
@@ -983,6 +1120,7 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   this->ChooseLayoutIconMenuButton->GetMenu()->AddSeparator ( );
   this->ChooseLayoutIconMenuButton->GetMenu()->AddCommand ("close");  
   this->ChooseLayoutIconMenuButton->SetBinding ( "<Button-1>", this, "StopViewRockOrSpin" );
+  
   vtb->AddWidget (this->ChooseLayoutIconMenuButton );
 
   this->InteractionModeRadioButtons->SetParent (mmtb->GetFrame ( ) );
