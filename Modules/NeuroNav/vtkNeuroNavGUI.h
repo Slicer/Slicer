@@ -123,7 +123,7 @@ class VTK_NEURONAV_EXPORT vtkNeuroNavGUI : public vtkSlicerModuleGUI
     vtkKWEntry *PAEntry;
     vtkKWEntry *PSEntry;
 
-    vtkKWFrame *FileFrame;
+    vtkKWFrame *ExtraFrame;
 
     /*
     vtkKWScaleWithEntry* RedColorScale;
@@ -149,6 +149,12 @@ class VTK_NEURONAV_EXPORT vtkNeuroNavGUI : public vtkSlicerModuleGUI
 #endif
 #ifdef USE_IGSTK
     vtkKWMenuButtonWithLabel *DeviceMenuButton;
+    vtkKWMenuButtonWithLabel *PortNumberMenuButton;
+    vtkKWMenuButtonWithLabel *BaudRateMenuButton;
+    vtkKWMenuButtonWithLabel *DataBitsMenuButton;
+    vtkKWMenuButtonWithLabel *ParityTypeMenuButton;
+    vtkKWMenuButtonWithLabel *StopBitsMenuButton;
+    vtkKWMenuButtonWithLabel *HandShakeMenuButton;
 #endif
 
     vtkKWEntryWithLabel *UpdateRateEntry;
