@@ -56,6 +56,8 @@ vtkSlicerVolumesGUI::vtkSlicerVolumesGUI ( )
     this->LabelMapCheckButton = NULL;
     this->ApplyButton=NULL;
 
+    this->VolumeFileHeaderWidget = NULL;
+
     NACLabel = NULL;
     NAMICLabel = NULL;
     NCIGTLabel = NULL;
@@ -89,6 +91,11 @@ vtkSlicerVolumesGUI::~vtkSlicerVolumesGUI ( )
     {
     this->VolumeDisplayWidget->SetParent(NULL );
     this->VolumeDisplayWidget->Delete ( );
+    }
+  if (this->VolumeFileHeaderWidget)
+    {
+    this->VolumeFileHeaderWidget->SetParent(NULL );
+    this->VolumeFileHeaderWidget->Delete ( );
     }
   if (this->VolumeHeaderWidget)
     {
@@ -235,6 +242,37 @@ void vtkSlicerVolumesGUI::AddGUIObservers ( )
 void vtkSlicerVolumesGUI::ProcessGUIEvents ( vtkObject *caller,
                                              unsigned long event, void *callData )
 {
+
+  if (this->VolumeFileHeaderWidget == vtkSlicerVolumeFileHeaderWidget::SafeDownCast(caller) && 
+      event == vtkSlicerVolumeFileHeaderWidget::FileHeaderOKEvent )
+    {
+    const char *fileName = this->LoadVolumeButton->GetWidget()->GetFileName();
+    vtkKWMenuButton *mb = this->CenterImageMenu->GetWidget();
+    int centered;
+    if ( !strcmp (mb->GetValue(), "Centered") )   
+      {
+      centered = 1;
+      }
+    else 
+      {
+      centered = 0;
+      }
+    int labelMap;
+    if ( this->LabelMapCheckButton->GetSelectedState() )
+      {
+      labelMap = 1;
+      }
+    else
+      {
+      labelMap = 0;
+      }
+    vtkSlicerVolumesLogic* volumeLogic = this->Logic;
+    vtkMRMLVolumeHeaderlessStorageNode* snode = this->VolumeFileHeaderWidget->GetVolumeHeaderlessStorageNode();
+
+    this->VolumeNode = volumeLogic->AddHeaderVolume(fileName, centered, labelMap,  
+                                                    this->NameEntry->GetWidget()->GetValue(), snode);
+    return;
+    }
   if (this->LoadVolumeButton->GetWidget() == vtkKWLoadSaveButton::SafeDownCast(caller) && event == vtkKWPushButton::InvokedEvent )
     {
     const char * filename = this->LoadVolumeButton->GetWidget()->GetFileName();
@@ -284,30 +322,29 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents ( vtkObject *caller,
       vtkMRMLVolumeNode *volumeNode = volumeLogic->AddArchetypeVolume( fileName, centered, labelMap, this->NameEntry->GetWidget()->GetValue() );
       if ( volumeNode == NULL ) 
         {
-        this->VolumeFileHeaderWidget = vtkSlicerVolumeFileHeaderWidget::New();
-        this->VolumeFileHeaderWidget->SetParent ( this->GetApplicationGUI()->GetMainSlicerWindow());
-        this->VolumeFileHeaderWidget->SetAndObserveMRMLScene(this->GetMRMLScene());
-        //this->VolumeFileHeaderWidget->AddObserver ( vtkSlicerMRMLSaveDataWidget::DataSavedEvent,  (vtkCommand *)this->GUICallbackCommand );
-        this->VolumeFileHeaderWidget->Create();  
-
-        //this->VolumeFileHeaderWidget->RemoveObservers ( vtkSlicerMRMLSaveDataWidget::DataSavedEvent,  (vtkCommand *)this->GUICallbackCommand );
-        this->VolumeFileHeaderWidget->SetParent(NULL);
-        this->VolumeFileHeaderWidget->Delete();
-        this->VolumeFileHeaderWidget=NULL;
-
-        vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
-        dialog->SetParent ( this->LoadFrame->GetFrame() );
-        dialog->SetStyleToMessage();
-        std::string msg = std::string("Unable to read volume file ") + std::string(fileName);
-        dialog->SetText(msg.c_str());
-        dialog->Create ( );
-        dialog->Invoke();
-        dialog->Delete();
+        this->VolumeNode = NULL;
+        this->VolumeFileHeaderWidget->Invoke();  
+        
+        if (this->VolumeNode == NULL) 
+          {
+          vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+          dialog->SetParent ( this->LoadFrame->GetFrame() );
+          dialog->SetStyleToMessage();
+          std::string msg = std::string("Unable to read volume file ") + std::string(fileName);
+          dialog->SetText(msg.c_str());
+          dialog->Create ( );
+          dialog->Invoke();
+          dialog->Delete();
+          }
+        else
+          {
+          volumeNode = this->VolumeNode;
+          }
         }
-      else
-        {
-        this->LoadVolumeButton->GetWidget()->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
 
+      this->LoadVolumeButton->GetWidget()->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
+      if (volumeNode)
+        {
         this->ApplicationLogic->GetSelectionNode()->SetActiveVolumeID( volumeNode->GetID() );
         this->ApplicationLogic->PropagateVolumeSelection();
         this->VolumeDisplayWidget->SetVolumeNode(volumeNode);               
@@ -589,6 +626,13 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
       "OpenPath");
      app->Script("pack %s -side top -anchor w -padx 2 -pady 4", 
                 this->SaveVolumeButton->GetWidgetName());
+
+    this->VolumeFileHeaderWidget = vtkSlicerVolumeFileHeaderWidget::New();
+    this->VolumeFileHeaderWidget->SetParent ( this->GetApplicationGUI()->GetMainSlicerWindow());
+    this->VolumeFileHeaderWidget->SetAndObserveMRMLScene(this->GetMRMLScene());
+    this->VolumeFileHeaderWidget->AddObserver ( vtkSlicerVolumeFileHeaderWidget::FileHeaderOKEvent,  (vtkCommand *)this->GUICallbackCommand );
+    this->VolumeFileHeaderWidget->Create();  
+    this->VolumeFileHeaderWidget->SetInfo("The file format does not match standard volume formats.\n If you want to read it as binary data, fill the header and press Read.\n Otherwise, press Cancel");
     
 }
 

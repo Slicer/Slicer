@@ -377,11 +377,15 @@ int vtkMRMLVolumeHeaderlessStorageNode::ReadData(vtkMRMLNode *refNode)
   reader->SetNumberOfScalarComponents(this->GetFileNumberOfScalarComponents());
   reader->SetDataScalarType(this->GetFileScalarType());
   reader->SetDataByteOrder(this->GetFileLittleEndian());
-  reader->SetDataExtent(this->GetFileDimensions());
+
+  int dim0, dim1, dim2;
+  this->GetFileDimensions(dim0, dim1, dim2);
+  dim2 = names.size();
+  reader->SetDataExtent(0, dim0-1, 0, dim1-1, 0, dim2-1);
 
   vtkImageAppend* appender = vtkImageAppend::New();
   
-  vtkImageData *image = NULL;
+  vtkImageData *image = vtkImageData::New();
 
   int result = 1;
 
@@ -398,12 +402,14 @@ int vtkMRMLVolumeHeaderlessStorageNode::ReadData(vtkMRMLNode *refNode)
       vtkErrorMacro("vtkMRMLVolumeArchetypeStorageNode: Cannot read file");
       reader->RemoveObservers( vtkCommand::ProgressEvent,  this->MRMLCallbackCommand);
       reader->Delete();
+      image->Delete();
       return 0;
       }
     if (reader->GetOutput() == NULL) 
       {
       vtkErrorMacro("vtkMRMLVolumeArchetypeStorageNode: Cannot read file");
       reader->Delete();
+      image->Delete();
       return 0;
       }
     if (i==0)
@@ -442,6 +448,7 @@ int vtkMRMLVolumeHeaderlessStorageNode::ReadData(vtkMRMLNode *refNode)
     vtkErrorMacro("vtkMRMLVolumeArchetypeStorageNode: Cannot read file");
     reader->RemoveObservers( vtkCommand::ProgressEvent,  this->MRMLCallbackCommand);
     reader->Delete();
+    image->Delete();
     ici->Delete();
     return 0;
     }

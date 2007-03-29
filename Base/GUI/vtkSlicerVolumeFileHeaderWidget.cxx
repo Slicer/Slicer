@@ -6,6 +6,7 @@
 #include "vtkSlicerVolumeFileHeaderWidget.h"
 
 #include "vtkKWDialog.h"
+#include "vtkKWLabel.h"
 #include "vtkKWFrame.h"
 #include "vtkKWMenu.h"
 #include "vtkKWMenuButton.h"
@@ -25,6 +26,8 @@ vtkSlicerVolumeFileHeaderWidget::vtkSlicerVolumeFileHeaderWidget ( )
   this->VolumeHeaderlessStorageNode = vtkMRMLVolumeHeaderlessStorageNode::New();
   
   this->HeaderDialog = NULL;
+  this->InfoLabel = NULL;
+
   this->DimensionEntry0 = NULL;
   this->DimensionEntry1 = NULL;
   
@@ -50,13 +53,19 @@ vtkSlicerVolumeFileHeaderWidget::vtkSlicerVolumeFileHeaderWidget ( )
 //---------------------------------------------------------------------------
 vtkSlicerVolumeFileHeaderWidget::~vtkSlicerVolumeFileHeaderWidget ( )
 {
-  
+  this->RemoveWidgetObservers();
+
   this->VolumeHeaderlessStorageNode->Delete();
   
   if (this->HeaderDialog)
     {
     this->HeaderDialog->SetParent(NULL);
     this->HeaderDialog->Delete();
+    }
+  if (this->InfoLabel)
+    {
+    this->InfoLabel->SetParent(NULL);
+    this->InfoLabel->Delete();
     }
   if (this->OkButton)
     {
@@ -147,6 +156,7 @@ void vtkSlicerVolumeFileHeaderWidget::ProcessWidgetEvents ( vtkObject *caller,
   if (this->OkButton ==  vtkKWPushButton::SafeDownCast(caller) && event ==  vtkKWPushButton::InvokedEvent)
     {
     this->HeaderDialog->OK();
+    this->InvokeEvent(vtkSlicerVolumeFileHeaderWidget::FileHeaderOKEvent);
     }
   else if (this->CancelButton ==  vtkKWPushButton::SafeDownCast(caller) && event ==  vtkKWPushButton::InvokedEvent)
     { 
@@ -166,6 +176,8 @@ void vtkSlicerVolumeFileHeaderWidget::ProcessMRMLEvents ( vtkObject *caller,
 //---------------------------------------------------------------------------
 void vtkSlicerVolumeFileHeaderWidget::RemoveWidgetObservers ( ) 
 {
+  this->OkButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+  this->CancelButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
 }
 
 //---------------------------------------------------------------------------
@@ -197,7 +209,6 @@ void vtkSlicerVolumeFileHeaderWidget::CreateWidget ( )
 
   if (this->IsCreated())
     {
-    vtkErrorMacro(<< this->GetClassName() << " already created");
     return;
     }
 
@@ -211,6 +222,13 @@ void vtkSlicerVolumeFileHeaderWidget::CreateWidget ( )
   this->HeaderDialog->SetSize(400, 200);
   this->HeaderDialog->Create ( );
   
+  this->InfoLabel = vtkKWLabel::New();
+  this->InfoLabel->SetParent(this->HeaderDialog);
+  this->InfoLabel->SetWidth(100);
+  this->InfoLabel->Create();
+  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+                 this->InfoLabel->GetWidgetName() );
+
   vtkKWFrame *dimensionFrame = vtkKWFrame::New ( );
   dimensionFrame->SetParent ( this->HeaderDialog );
   dimensionFrame->Create ( );
@@ -237,19 +255,18 @@ void vtkSlicerVolumeFileHeaderWidget::CreateWidget ( )
                  saveFrame->GetWidgetName() );
 
 
-
   this->DimensionEntry0 = vtkKWEntryWithLabel::New();
   this->DimensionEntry0->SetParent(dimensionFrame);
   this->DimensionEntry0->Create();
   this->DimensionEntry0->SetLabelText("Image Dimensions:");
   this->DimensionEntry0->SetLabelWidth(18);
-  this->DimensionEntry0->GetWidget()->SetValueAsInt(0);
+  this->DimensionEntry0->GetWidget()->SetValueAsInt(256);
   this->DimensionEntry0->GetWidget()->SetWidth(8);
 
   this->DimensionEntry1 = vtkKWEntry::New();
   this->DimensionEntry1->SetParent(dimensionFrame);
   this->DimensionEntry1->Create();
-  this->DimensionEntry1->SetValueAsInt(0);
+  this->DimensionEntry1->SetValueAsInt(256);
   this->DimensionEntry1->SetWidth(8);
 
   this->Script ( "pack %s %s -side left -anchor nw -padx 2 -pady 2 -expand n",
@@ -260,14 +277,14 @@ void vtkSlicerVolumeFileHeaderWidget::CreateWidget ( )
   this->SpacingEntry0->SetParent(spacingFrame);
   this->SpacingEntry0->Create();
   this->SpacingEntry0->SetLabelText("Pixel Size:");
-  this->SpacingEntry0->GetWidget()->SetValueAsInt(0);
+  this->SpacingEntry0->GetWidget()->SetValueAsDouble(0.9375);
   this->SpacingEntry0->SetLabelWidth(18);
   this->SpacingEntry0->GetWidget()->SetWidth(8);
  
   this->SpacingEntry1 = vtkKWEntry::New();
   this->SpacingEntry1->SetParent(spacingFrame);
   this->SpacingEntry1->Create();
-  this->SpacingEntry1->SetValueAsInt(0);
+  this->SpacingEntry1->SetValueAsDouble(0.9375);
   this->SpacingEntry1->SetWidth(8);
   
   this->Script ( "pack %s %s -side left -anchor nw -padx 2 -pady 2 -expand n",
@@ -278,7 +295,7 @@ void vtkSlicerVolumeFileHeaderWidget::CreateWidget ( )
   this->SliceThicknessEntry->SetParent(frame);
   this->SliceThicknessEntry->Create();
   this->SliceThicknessEntry->SetLabelText("Slice Thickness:");
-  this->SliceThicknessEntry->GetWidget()->SetValue("");
+  this->SliceThicknessEntry->GetWidget()->SetValueAsDouble(1.5);
   this->SliceThicknessEntry->SetWidth(48);
   this->SliceThicknessEntry->SetLabelWidth(18);
   this->Script(
@@ -289,7 +306,7 @@ void vtkSlicerVolumeFileHeaderWidget::CreateWidget ( )
   this->SliceSpacingEntry->SetParent(frame);
   this->SliceSpacingEntry->Create();
   this->SliceSpacingEntry->SetLabelText("Slice Spacing:");
-  this->SliceSpacingEntry->GetWidget()->SetValue("");
+  this->SliceSpacingEntry->GetWidget()->SetValueAsDouble(0.0);
   this->SliceSpacingEntry->SetWidth(48);
   this->SliceSpacingEntry->SetLabelWidth(18);
   this->Script(
@@ -338,7 +355,7 @@ void vtkSlicerVolumeFileHeaderWidget::CreateWidget ( )
   this->NumScalarsEntry->SetParent(frame);
   this->NumScalarsEntry->Create();
   this->NumScalarsEntry->SetLabelText("Number of Scalars:");
-  this->NumScalarsEntry->GetWidget()->SetValueAsInt(0);
+  this->NumScalarsEntry->GetWidget()->SetValueAsInt(1);
   this->NumScalarsEntry->SetLabelWidth(18);
   this->NumScalarsEntry->SetWidth(48);
   this->Script(
@@ -361,7 +378,7 @@ void vtkSlicerVolumeFileHeaderWidget::CreateWidget ( )
   this->OkButton = vtkKWPushButton::New ( );
   this->OkButton->SetParent ( saveFrame );
   this->OkButton->Create ( );
-  this->OkButton->SetText ("Save");
+  this->OkButton->SetText ("Read");
   this->Script("pack %s -side left -anchor w -padx 2 -pady 4", 
               this->OkButton->GetWidgetName());
 
@@ -378,7 +395,26 @@ void vtkSlicerVolumeFileHeaderWidget::CreateWidget ( )
   spacingFrame->Delete();
   frame->Delete();
   saveFrame->Delete();
-  
 
-  this->HeaderDialog->Invoke ( );
+  this->OkButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+  this->CancelButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+
+ 
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerVolumeFileHeaderWidget::Invoke ( )
+{
+  if (this->HeaderDialog != NULL)
+    {
+    this->HeaderDialog->Invoke ( );
+    }
+}
+
+void vtkSlicerVolumeFileHeaderWidget::SetInfo(char * info)
+{
+  if (this->InfoLabel != NULL)
+    {
+    this->InfoLabel->SetText(info);
+    }
 }

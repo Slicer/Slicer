@@ -50,6 +50,8 @@ vtkSlicerMRMLSaveDataWidget::vtkSlicerMRMLSaveDataWidget ( )
 //---------------------------------------------------------------------------
 vtkSlicerMRMLSaveDataWidget::~vtkSlicerMRMLSaveDataWidget ( )
 {
+  this->RemoveWidgetObservers();
+
   if (this->MultiColumnList)
     {
     this->MultiColumnList->SetParent(NULL);

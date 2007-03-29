@@ -83,7 +83,7 @@ void vtkSlicerVolumesLogic::SetActiveVolumeNode(vtkMRMLVolumeNode *activeNode)
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddHeaderVolume (char* filename, int centerImage, int labelMap, const char* volname, 
+vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddHeaderVolume (const char* filename, int centerImage, int labelMap, const char* volname, 
                                                            vtkMRMLVolumeHeaderlessStorageNode *headerStorage)
 {
   vtkMRMLVolumeNode *volumeNode = NULL;
