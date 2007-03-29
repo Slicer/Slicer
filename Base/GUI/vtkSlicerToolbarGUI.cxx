@@ -16,6 +16,7 @@
 #include "vtkMRMLSelectionNode.h"
 #include "vtkMRMLViewNode.h"
 
+#include "vtkKWTkUtilities.h"
 #include "vtkKWWidget.h"
 #include "vtkKWToolbarSet.h"
 #include "vtkKWFrameWithLabel.h"
@@ -23,6 +24,7 @@
 #include "vtkKWSeparator.h"
 #include "vtkKWMenu.h"
 
+//#define LIGHTBOXGUI_DEBUG
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerToolbarGUI );
@@ -55,13 +57,7 @@ vtkSlicerToolbarGUI::vtkSlicerToolbarGUI ( )
   this->TransformIconButton = vtkKWPushButton::New ( );
   this->SaveSceneIconButton = vtkKWPushButton::New ( );
   this->LoadSceneIconButton = vtkKWPushButton::New ( );
-  this->ConventionalViewIconButton = vtkKWPushButton::New ( );
-  this->OneUp3DViewIconButton = vtkKWPushButton::New ( );
-  this->OneUpSliceViewIconButton = vtkKWMenuButton::New ( );
-  this->FourUpViewIconButton = vtkKWPushButton::New ( );
-  this->Tabbed3DViewIconButton = vtkKWPushButton::New ( );
-  this->TabbedSliceViewIconButton = vtkKWPushButton::New ( );
-  this->LightBoxViewIconButton = vtkKWPushButton::New ( );
+  this->ChooseLayoutIconMenuButton = vtkKWMenuButton::New();
   this->InteractionModeRadioButtons = vtkKWRadioButtonSet::New ( );
   this->UndoIconButton = vtkKWPushButton::New ( );
   this->RedoIconButton = vtkKWPushButton::New ( );
@@ -185,47 +181,11 @@ vtkSlicerToolbarGUI::~vtkSlicerToolbarGUI ( )
     this->LoadSceneIconButton->Delete ( );
     this->LoadSceneIconButton = NULL;
     }
-  if ( this->ConventionalViewIconButton )
+  if ( this->ChooseLayoutIconMenuButton )
     {
-    this->ConventionalViewIconButton->SetParent ( NULL );
-    this->ConventionalViewIconButton->Delete ( );
-    this->ConventionalViewIconButton = NULL;
-    }
-  if ( this->OneUp3DViewIconButton )
-    {
-    this->OneUp3DViewIconButton->SetParent ( NULL );
-    this->OneUp3DViewIconButton->Delete ( );
-    this->OneUp3DViewIconButton = NULL;
-    }
-  if ( this->OneUpSliceViewIconButton )
-    {
-    this->OneUpSliceViewIconButton->SetParent ( NULL );
-    this->OneUpSliceViewIconButton->Delete ( );
-    this->OneUpSliceViewIconButton = NULL;
-    }
-  if ( this->FourUpViewIconButton )
-    {
-    this->FourUpViewIconButton->SetParent ( NULL );
-    this->FourUpViewIconButton->Delete ( );
-    this->FourUpViewIconButton = NULL;
-    }
-  if ( this->Tabbed3DViewIconButton )
-    {
-    this->Tabbed3DViewIconButton->SetParent ( NULL );
-    this->Tabbed3DViewIconButton->Delete ( );
-    this->Tabbed3DViewIconButton = NULL;
-    }
-  if ( this->TabbedSliceViewIconButton )
-    {
-    this->TabbedSliceViewIconButton->SetParent ( NULL );
-    this->TabbedSliceViewIconButton->Delete ( );
-    this->TabbedSliceViewIconButton = NULL;
-    }
-  if ( this->LightBoxViewIconButton )
-    {
-    this->LightBoxViewIconButton->SetParent ( NULL );
-    this->LightBoxViewIconButton->Delete ( );
-    this->LightBoxViewIconButton = NULL;
+    this->ChooseLayoutIconMenuButton->SetParent ( NULL );
+    this->ChooseLayoutIconMenuButton->Delete();
+    this->ChooseLayoutIconMenuButton = NULL;    
     }
   if ( this->UndoIconButton )
     {
@@ -239,8 +199,6 @@ vtkSlicerToolbarGUI::~vtkSlicerToolbarGUI ( )
     this->RedoIconButton->Delete ( );
     this->RedoIconButton = NULL;
     }
-
-    
 
   // Remove the toolbars from the window's toolbar set
     vtkSlicerApplicationGUI *p = this->GetApplicationGUI ( );
@@ -331,13 +289,7 @@ void vtkSlicerToolbarGUI::RemoveGUIObservers ( )
     this->ModelIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->FiducialsIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ColorIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->ConventionalViewIconButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->OneUp3DViewIconButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->OneUpSliceViewIconButton->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->FourUpViewIconButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->Tabbed3DViewIconButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->TabbedSliceViewIconButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->LightBoxViewIconButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->ChooseLayoutIconMenuButton->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->UndoIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->RedoIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
@@ -363,13 +315,7 @@ void vtkSlicerToolbarGUI::AddGUIObservers ( )
     this->ColorIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     
     // view configuration icon button observers...
-    this->ConventionalViewIconButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->OneUp3DViewIconButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->OneUpSliceViewIconButton->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->FourUpViewIconButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->Tabbed3DViewIconButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->TabbedSliceViewIconButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->LightBoxViewIconButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->ChooseLayoutIconMenuButton->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->UndoIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->RedoIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
@@ -542,81 +488,71 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
           }
         }
 
+      // TODO: figure out why we can't resume view rock or spin.
       int mode;
-      if ( menu == this->OneUpSliceViewIconButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
+      if ( menu == this->ChooseLayoutIconMenuButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
         {
-        // First, check to see if view is spinning or rocking.
-        // If so, pause view Spin or Rock.
-        // First, check to see if view is spinning or rocking.
-        // If so, stop view Spin or Rock.
+        const char *whichLayout = this->ChooseLayoutIconMenuButton->GetValue();
         mode = this->StopViewRockOrSpin();
-        const char *whichSlice = this->OneUpSliceViewIconButton->GetValue ( );
-        if ( !strcmp ( whichSlice, "Red slice" ))
+        if ( !strcmp ( whichLayout, "Conventional layout"))
           {
+          // First, check to see if view is spinning or rocking.
+          // If so, stop view Spin or Rock.
+          p->RepackMainViewer (vtkSlicerGUILayout::SlicerLayoutDefaultView, NULL );
+//        this->ResumeViewRockOrSpin ( mode );
+          }
+        else if (!strcmp( whichLayout, "3D only layout" ))
+          {
+          // First, check to see if view is spinning or rocking.
+          // If so, stop view Spin or Rock.
+          p->RepackMainViewer ( vtkSlicerGUILayout::SlicerLayoutOneUp3DView, NULL);
+//        this->ResumeViewRockOrSpin ( mode );
+          }
+        else if ( !strcmp ( whichLayout, "Four-up layout"))
+          {
+          // First, check to see if view is spinning or rocking.
+          // If so, stop view Spin or Rock.
+          p->RepackMainViewer ( vtkSlicerGUILayout::SlicerLayoutFourUpView, NULL );
+//        this->ResumeViewRockOrSpin ( mode );
+          }
+        else if ( !strcmp (whichLayout, "Tabbed 3D layout") )
+          {
+          // First, check to see if view is spinning or rocking.
+          // If so, stop view Spin or Rock.
+          p->RepackMainViewer ( vtkSlicerGUILayout::SlicerLayoutTabbed3DView, NULL );
+//        this->ResumeViewRockOrSpin ( mode );
+          }
+        else if (!strcmp ( whichLayout, "Tabbed slice layout"))
+          {
+          // First, check to see if view is spinning or rocking.
+          // If so, stop view Spin or Rock.
+          p->RepackMainViewer ( vtkSlicerGUILayout::SlicerLayoutTabbedSliceView, NULL );
+//        this->ResumeViewRockOrSpin ( mode );
+          }
+        else if ( !strcmp (whichLayout, "Red slice only layout") )
+          {
+          // First, check to see if view is spinning or rocking.
+          // If so, stop view Spin or Rock.
           p->RepackMainViewer ( vtkSlicerGUILayout::SlicerLayoutOneUpSliceView, "Red");
-          menu->DeselectItem ("Red slice");
+//        this->ResumeViewRockOrSpin ( mode );
           }
-        else if (!strcmp ( whichSlice, "Yellow slice" ))
+        else if ( !strcmp (whichLayout, "Yellow slice only layout") )
           {
+          // First, check to see if view is spinning or rocking.
+          // If so, stop view Spin or Rock.
           p->RepackMainViewer ( vtkSlicerGUILayout::SlicerLayoutOneUpSliceView, "Yellow");
-          menu->DeselectItem ("Yellow slice");
+//        this->ResumeViewRockOrSpin ( mode );
           }
-        else if (!strcmp ( whichSlice, "Green slice" ))
+        else if ( !strcmp (whichLayout, "Green slice only layout") )
           {
+          // First, check to see if view is spinning or rocking.
+          // If so, stop view Spin or Rock.
           p->RepackMainViewer ( vtkSlicerGUILayout::SlicerLayoutOneUpSliceView, "Green");
-          menu->DeselectItem ("Green slice");
+//        this->ResumeViewRockOrSpin ( mode );
           }
-//        this->ResumeViewRockOrSpin ( mode );
-        }
-      if ( pushb == this->ConventionalViewIconButton && event == vtkKWPushButton::InvokedEvent )
-        {
-        // First, check to see if view is spinning or rocking.
-        // If so, stop view Spin or Rock.
-        mode = this->StopViewRockOrSpin();
-        p->RepackMainViewer (vtkSlicerGUILayout::SlicerLayoutDefaultView, NULL );
-//        this->ResumeViewRockOrSpin ( mode );
-        }
-      else if ( pushb == this->OneUp3DViewIconButton && event == vtkKWPushButton::InvokedEvent )
-        {
-        // First, check to see if view is spinning or rocking.
-        // If so, stop view Spin or Rock.
-        mode = this->StopViewRockOrSpin();
-        p->RepackMainViewer ( vtkSlicerGUILayout::SlicerLayoutOneUp3DView, NULL);
-//        this->ResumeViewRockOrSpin ( mode );
-        }
-      else if ( pushb == this->FourUpViewIconButton && event == vtkKWPushButton::InvokedEvent )
-        {
-        // First, check to see if view is spinning or rocking.
-        // If so, stop view Spin or Rock.
-        mode = this->StopViewRockOrSpin();
-        p->RepackMainViewer ( vtkSlicerGUILayout::SlicerLayoutFourUpView, NULL );
-//        this->ResumeViewRockOrSpin ( mode );
-        }
-      else if ( pushb == this->Tabbed3DViewIconButton && event == vtkKWPushButton::InvokedEvent )
-        {
-        // First, check to see if view is spinning or rocking.
-        // If so, stop view Spin or Rock.
-        mode = this->StopViewRockOrSpin();
-        p->RepackMainViewer ( vtkSlicerGUILayout::SlicerLayoutTabbed3DView, NULL );
-//        this->ResumeViewRockOrSpin ( mode );
-        }
-      else if ( pushb == this->TabbedSliceViewIconButton && event == vtkKWPushButton::InvokedEvent )
-        {
-        // First, check to see if view is spinning or rocking.
-        // If so, stop view Spin or Rock.
-        mode = this->StopViewRockOrSpin();
-        p->RepackMainViewer ( vtkSlicerGUILayout::SlicerLayoutTabbedSliceView, NULL );
-//        this->ResumeViewRockOrSpin ( mode );
-        }
-      else if ( pushb == this->LightBoxViewIconButton && event == vtkKWPushButton::InvokedEvent )
-        {
-        // TODO: implement this
-        // First, check to see if view is spinning or rocking.
-        // If so, stop view Spin or Rock.
-        mode = this->StopViewRockOrSpin();
-//        this->ResumeViewRockOrSpin ( mode );
-        }
-      else if ( pushb == this->UndoIconButton && event == vtkKWPushButton::InvokedEvent )
+        }        
+
+      if ( pushb == this->UndoIconButton && event == vtkKWPushButton::InvokedEvent )
         {
         p->GetMRMLScene()->Undo();
         }
@@ -960,81 +896,94 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   urtb->AddWidget ( this->RedoIconButton );
 
 
-  // conventional view icon
-  this->ConventionalViewIconButton->SetParent (vtb->GetFrame ( ) );
-  this->ConventionalViewIconButton->Create ( );
-  this->ConventionalViewIconButton->SetReliefToFlat ( );
-  this->ConventionalViewIconButton->SetBorderWidth ( 0 );
-  this->ConventionalViewIconButton->SetOverReliefToNone ( );
-  this->ConventionalViewIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetConventionalViewIcon ( ) );        
-  this->ConventionalViewIconButton->SetBalloonHelpString ("Display the 3D viewer over 3 slice windows");
-  vtb->AddWidget ( this->ConventionalViewIconButton );
-  // 3Dview-only icon
-  this->OneUp3DViewIconButton->SetParent ( vtb->GetFrame ( ) );
-  this->OneUp3DViewIconButton->Create ( );
-  this->OneUp3DViewIconButton->SetReliefToFlat ( );
-  this->OneUp3DViewIconButton->SetBorderWidth ( 0 );
-  this->OneUp3DViewIconButton->SetOverReliefToNone ( );
-  this->OneUp3DViewIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetOneUp3DViewIcon ( ) );
-  this->OneUp3DViewIconButton->SetBalloonHelpString ( "Display the 3D viewer without any slice windows" );
-  vtb->AddWidget (this->OneUp3DViewIconButton );
+  // Layout choose menu
+  int index;
+  const char *imageName;
+  this->ChooseLayoutIconMenuButton->SetParent ( vtb->GetFrame ( ) );
+  this->ChooseLayoutIconMenuButton->Create ( );
+  this->ChooseLayoutIconMenuButton->SetReliefToFlat ( );
+  this->ChooseLayoutIconMenuButton->SetBorderWidth ( 0 );
+  this->ChooseLayoutIconMenuButton->IndicatorVisibilityOff ( );
+  this->ChooseLayoutIconMenuButton->SetImageToIcon ( this->SlicerToolbarIcons->GetChooseLayoutIcon ( ) );
+  this->ChooseLayoutIconMenuButton->SetBalloonHelpString ( "Choose among layouts for the 3D and Slice viewers" );
+  this->ChooseLayoutIconMenuButton->GetMenu()->DeleteAllItems ( );
 
-  // Slice view-only icon
-  this->OneUpSliceViewIconButton->SetParent ( vtb->GetFrame ( ) );
-  this->OneUpSliceViewIconButton->Create ( );
-  this->OneUpSliceViewIconButton->SetReliefToFlat ( );
-  this->OneUpSliceViewIconButton->SetBorderWidth ( 0 );
-  this->OneUpSliceViewIconButton->IndicatorVisibilityOff ( );
-  this->OneUpSliceViewIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetOneUpSliceViewIcon ( ) );
-  this->OneUpSliceViewIconButton->SetBalloonHelpString ( "Display one slice window with no 3D viewer" );
-  this->OneUpSliceViewIconButton->GetMenu()->DeleteAllItems ( );
-  this->OneUpSliceViewIconButton->GetMenu()->AddRadioButton ( "Red slice" );
-  this->OneUpSliceViewIconButton->GetMenu()->AddRadioButton ( "Yellow slice" );
-  this->OneUpSliceViewIconButton->GetMenu()->AddRadioButton ( "Green slice" );
-  this->OneUpSliceViewIconButton->GetMenu()->AddSeparator ( );
-  this->OneUpSliceViewIconButton->GetMenu()->AddCommand ("close");  
-  this->OneUpSliceViewIconButton->SetBinding ( "<Button-1>", this, "StopViewRockOrSpin" );
-  vtb->AddWidget (this->OneUpSliceViewIconButton );
+  this->ChooseLayoutIconMenuButton->GetMenu()->AddRadioButton ( "Conventional layout" );
+  index = this->ChooseLayoutIconMenuButton->GetMenu()->GetIndexOfItem ( "Conventional layout");
+  imageName = "SlicerConventionalLayoutImage";
+  vtkKWTkUtilities::UpdatePhotoFromIcon ( this->GetApplication(), imageName, this->SlicerToolbarIcons->GetConventionalViewIcon(), 0 );
+  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemImage ( index, imageName);
+  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemCompoundModeToLeft ( index );
+  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemVariableValueAsInt ("Conventional layout", vtkSlicerGUILayout::SlicerLayoutDefaultView );
 
-  // 4 equal windows icon
-  this->FourUpViewIconButton->SetParent ( vtb->GetFrame ( ) );
-  this->FourUpViewIconButton->Create ( );
-  this->FourUpViewIconButton->SetReliefToFlat ( );
-  this->FourUpViewIconButton->SetBorderWidth ( 0 );
-  this->FourUpViewIconButton->SetOverReliefToNone ( );
-  this->FourUpViewIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetFourUpViewIcon ( ) );
-  this->FourUpViewIconButton->SetBalloonHelpString ( "Display the 3D viewer and 3 slice windows in a matrix" );
-  vtb->AddWidget ( this->FourUpViewIconButton );
+  this->ChooseLayoutIconMenuButton->GetMenu()->AddRadioButton ( "Four-up layout");
+  index = this->ChooseLayoutIconMenuButton->GetMenu()->GetIndexOfItem ( "Four-up layout");
+  imageName = "SlicerFourUpLayoutImage";
+  vtkKWTkUtilities::UpdatePhotoFromIcon ( this->GetApplication(), imageName, this->SlicerToolbarIcons->GetFourUpViewIcon(), 0 );
+  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemImage ( index, imageName);
+  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemCompoundModeToLeft ( index );
+  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemVariableValueAsInt ( "Four-up layout", vtkSlicerGUILayout::SlicerLayoutFourUpView );
 
-  // tabbed view icon
-  this->TabbedSliceViewIconButton->SetParent ( vtb->GetFrame ( ) );
-  this->TabbedSliceViewIconButton->Create ( );
-  this->TabbedSliceViewIconButton->SetReliefToFlat ( );
-  this->TabbedSliceViewIconButton->SetBorderWidth ( 0 );
-  this->TabbedSliceViewIconButton->SetOverReliefToNone ( );
-  this->TabbedSliceViewIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetTabbedSliceViewIcon ( ) );
-  this->TabbedSliceViewIconButton->SetBalloonHelpString ( "Display a collection of slices in a notebook" );
-  vtb->AddWidget ( this->TabbedSliceViewIconButton );
+  this->ChooseLayoutIconMenuButton->GetMenu()->AddRadioButton ( "3D only layout");
+  index = this->ChooseLayoutIconMenuButton->GetMenu()->GetIndexOfItem ( "3D only layout");
+  imageName = "Slicer3DOnlyLayoutImage";
+  vtkKWTkUtilities::UpdatePhotoFromIcon ( this->GetApplication(), imageName, this->SlicerToolbarIcons->GetOneUp3DViewIcon(), 0 );
+  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemImage ( index, imageName);
+  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemCompoundModeToLeft ( index );
+  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemVariableValueAsInt ( "3D only layout", vtkSlicerGUILayout::SlicerLayoutOneUp3DView );
 
-  // tabbed view icon
-  this->Tabbed3DViewIconButton->SetParent ( vtb->GetFrame ( ) );
-  this->Tabbed3DViewIconButton->Create ( );
-  this->Tabbed3DViewIconButton->SetReliefToFlat ( );
-  this->Tabbed3DViewIconButton->SetBorderWidth ( 0 );
-  this->Tabbed3DViewIconButton->SetOverReliefToNone ( );
-  this->Tabbed3DViewIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetTabbed3DViewIcon ( ) );
-  this->Tabbed3DViewIconButton->SetBalloonHelpString ( "Display a collection of 3D views in a notebook" );
-  vtb->AddWidget ( this->Tabbed3DViewIconButton );
+  this->ChooseLayoutIconMenuButton->GetMenu()->AddRadioButton ( "Red slice only layout");
+  index = this->ChooseLayoutIconMenuButton->GetMenu()->GetIndexOfItem ( "Red slice only layout");
+  imageName = "SlicerRedSliceOnlyLayoutImage";
+  vtkKWTkUtilities::UpdatePhotoFromIcon ( this->GetApplication(), imageName, this->SlicerToolbarIcons->GetOneUpRedSliceViewIcon(), 0 );
+  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemImage ( index, imageName);
+  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemCompoundModeToLeft ( index );
+  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemVariableValueAsInt ( "Red slice only layout", vtkSlicerGUILayout::SlicerLayoutOneUpRedSliceView);
 
-  // lightbox view icon
-  this->LightBoxViewIconButton->SetParent ( vtb->GetFrame ( ));
-  this->LightBoxViewIconButton->Create ( );
-  this->LightBoxViewIconButton->SetReliefToFlat ( );
-  this->LightBoxViewIconButton->SetBorderWidth ( 0 );
-  this->LightBoxViewIconButton->SetOverReliefToNone ( );
-  this->LightBoxViewIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetLightBoxViewIcon( ) );
-  this->LightBoxViewIconButton->SetBalloonHelpString ( "Display a slice-matrix and no 3D view (not yet available)" );
-  vtb->AddWidget ( this->LightBoxViewIconButton );
+  this->ChooseLayoutIconMenuButton->GetMenu()->AddRadioButton ( "Yellow slice only layout");
+  index = this->ChooseLayoutIconMenuButton->GetMenu()->GetIndexOfItem ( "Yellow slice only layout");
+  imageName = "SlicerYellowSliceOnlyLayoutImage";
+  vtkKWTkUtilities::UpdatePhotoFromIcon ( this->GetApplication(), imageName, this->SlicerToolbarIcons->GetOneUpYellowSliceViewIcon(), 0 );
+  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemImage ( index, imageName);
+  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemCompoundModeToLeft ( index );
+  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemVariableValueAsInt ("Yellow slice only layout", vtkSlicerGUILayout::SlicerLayoutOneUpYellowSliceView);
+
+  this->ChooseLayoutIconMenuButton->GetMenu()->AddRadioButton ( "Green slice only layout" );
+  index = this->ChooseLayoutIconMenuButton->GetMenu()->GetIndexOfItem ( "Green slice only layout");
+  imageName = "SlicerGreenSliceOnlyLayoutImage";
+  vtkKWTkUtilities::UpdatePhotoFromIcon ( this->GetApplication(), imageName, this->SlicerToolbarIcons->GetOneUpGreenSliceViewIcon(), 0 );
+  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemImage ( index, imageName);
+  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemCompoundModeToLeft ( index );
+  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemVariableValueAsInt ( "Green slice only layout", vtkSlicerGUILayout::SlicerLayoutOneUpGreenSliceView);
+
+  this->ChooseLayoutIconMenuButton->GetMenu()->AddRadioButton ( "Tabbed 3D layout" );
+  index = this->ChooseLayoutIconMenuButton->GetMenu()->GetIndexOfItem ( "Tabbed 3D layout");
+  imageName = "SlicerTabbed3DLayoutImage";
+  vtkKWTkUtilities::UpdatePhotoFromIcon ( this->GetApplication(), imageName, this->SlicerToolbarIcons->GetTabbed3DViewIcon(), 0 );
+  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemImage ( index, imageName);
+  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemCompoundModeToLeft ( index );
+  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemVariableValueAsInt ( "Tabbed 3D layout", vtkSlicerGUILayout::SlicerLayoutTabbed3DView);
+
+  this->ChooseLayoutIconMenuButton->GetMenu()->AddRadioButton ( "Tabbed slice layout" );
+  index = this->ChooseLayoutIconMenuButton->GetMenu()->GetIndexOfItem ( "Tabbed slice layout");
+  imageName = "SlicerTabbedSliceLayoutImage";
+  vtkKWTkUtilities::UpdatePhotoFromIcon ( this->GetApplication(), imageName, this->SlicerToolbarIcons->GetTabbedSliceViewIcon(), 0 );
+  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemImage ( index, imageName);
+  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemCompoundModeToLeft ( index );
+  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemVariableValueAsInt ( "Tabbed slice layout", vtkSlicerGUILayout::SlicerLayoutTabbedSliceView);
+
+//  this->ChooseLayoutIconMenuButton->GetMenu()->AddRadioButton ( "Lightbox layout");
+//  index = this->ChooseLayoutIconMenuButton->GetMenu()->GetIndexOfItem ( "Lightbox layout");
+//  imageName = "SlicerLightboxLayoutImage";
+//  vtkKWTkUtilities::UpdatePhotoFromIcon ( this->GetApplication(), imageName, this->SlicerToolbarIcons->GetLightboxViewIcon(), 0 );
+//  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemImage ( index, imageName);
+//  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemCompoundModeToLeft ( index );
+//  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemVariableValueAsInt ( "Lightbox layout", vtkSlicerGUILayout::SlicerLayoutLightboxView);  
+
+  this->ChooseLayoutIconMenuButton->GetMenu()->AddSeparator ( );
+  this->ChooseLayoutIconMenuButton->GetMenu()->AddCommand ("close");  
+  this->ChooseLayoutIconMenuButton->SetBinding ( "<Button-1>", this, "StopViewRockOrSpin" );
+  vtb->AddWidget (this->ChooseLayoutIconMenuButton );
 
   this->InteractionModeRadioButtons->SetParent (mmtb->GetFrame ( ) );
   this->InteractionModeRadioButtons->Create ( );

@@ -22,9 +22,13 @@ vtkSlicerToolbarIcons::vtkSlicerToolbarIcons ( )
     //   this->MeasurementsIcon = vtkKWIcon::New();
     this->SaveSceneIcon = vtkKWIcon::New();
     this->LoadSceneIcon = vtkKWIcon::New();
+    this->ChooseLayoutIcon = vtkKWIcon::New ( );
     this->ConventionalViewIcon = vtkKWIcon::New();
     this->OneUp3DViewIcon = vtkKWIcon::New();
     this->OneUpSliceViewIcon = vtkKWIcon::New();
+    this->OneUpRedSliceViewIcon = vtkKWIcon::New();
+    this->OneUpYellowSliceViewIcon = vtkKWIcon::New();
+    this->OneUpGreenSliceViewIcon = vtkKWIcon::New();
     this->FourUpViewIcon = vtkKWIcon::New();
     this->TabbedSliceViewIcon = vtkKWIcon::New();
     this->Tabbed3DViewIcon = vtkKWIcon::New();
@@ -112,6 +116,11 @@ vtkSlicerToolbarIcons::~vtkSlicerToolbarIcons ( )
     this->LoadSceneIcon->Delete ( );
     this->LoadSceneIcon = NULL;
     }
+  if ( this->ChooseLayoutIcon )
+    {
+    this->ChooseLayoutIcon->Delete();
+    this->ChooseLayoutIcon = NULL;
+    }
   if ( this->ConventionalViewIcon )
     {
     this->ConventionalViewIcon->Delete ( );
@@ -126,6 +135,21 @@ vtkSlicerToolbarIcons::~vtkSlicerToolbarIcons ( )
     {
     this->OneUpSliceViewIcon->Delete ( );
     this->OneUpSliceViewIcon = NULL;
+    }
+  if ( this->OneUpRedSliceViewIcon )
+    {
+    this->OneUpRedSliceViewIcon->Delete ( );
+    this->OneUpRedSliceViewIcon = NULL;
+    }
+  if ( this->OneUpYellowSliceViewIcon )
+    {
+    this->OneUpYellowSliceViewIcon->Delete ( );
+    this->OneUpYellowSliceViewIcon = NULL;
+    }
+  if ( this->OneUpGreenSliceViewIcon )
+    {
+    this->OneUpGreenSliceViewIcon->Delete ( );
+    this->OneUpGreenSliceViewIcon = NULL;
     }
   if ( this->FourUpViewIcon )
     {
@@ -287,6 +311,12 @@ void vtkSlicerToolbarIcons::AssignImageDataToIcons ( )
                                           image_ToolbarConventionalView_pixel_size,
                                           image_ToolbarConventionalView_length, 0);
 
+    this->ChooseLayoutIcon->SetImage( image_ToolbarChooseView,
+                                          image_ToolbarChooseView_width,
+                                          image_ToolbarChooseView_height,
+                                          image_ToolbarChooseView_pixel_size,
+                                          image_ToolbarChooseView_length, 0);
+
     this->OneUp3DViewIcon->SetImage( image_ToolbarOneUp3DView,
                                      image_ToolbarOneUp3DView_width,
                                      image_ToolbarOneUp3DView_height,
@@ -298,6 +328,22 @@ void vtkSlicerToolbarIcons::AssignImageDataToIcons ( )
                                         image_ToolbarOneUpSliceView_height,
                                         image_ToolbarOneUpSliceView_pixel_size,
                                         image_ToolbarOneUpSliceView_length, 0 );
+
+    this->OneUpRedSliceViewIcon->SetImage( image_ToolbarOneUpRedSliceView,
+                                        image_ToolbarOneUpRedSliceView_width,
+                                        image_ToolbarOneUpRedSliceView_height,
+                                        image_ToolbarOneUpRedSliceView_pixel_size,
+                                        image_ToolbarOneUpRedSliceView_length, 0 );
+    this->OneUpYellowSliceViewIcon->SetImage( image_ToolbarOneUpYellowSliceView,
+                                        image_ToolbarOneUpYellowSliceView_width,
+                                        image_ToolbarOneUpYellowSliceView_height,
+                                        image_ToolbarOneUpYellowSliceView_pixel_size,
+                                        image_ToolbarOneUpYellowSliceView_length, 0 );
+    this->OneUpGreenSliceViewIcon->SetImage( image_ToolbarOneUpGreenSliceView,
+                                        image_ToolbarOneUpGreenSliceView_width,
+                                        image_ToolbarOneUpGreenSliceView_height,
+                                        image_ToolbarOneUpGreenSliceView_pixel_size,
+                                        image_ToolbarOneUpGreenSliceView_length, 0 );
     
     this->FourUpViewIcon->SetImage( image_ToolbarFourUpView,
                                     image_ToolbarFourUpView_width,
@@ -401,8 +447,12 @@ void vtkSlicerToolbarIcons::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "SaveSceneIcon" << this->GetSaveSceneIcon ( ) << "\n";
     os << indent << "LoadSceneIcon" << this->GetLoadSceneIcon ( ) << "\n";
     os << indent << "ConventionalViewIcon" << this->GetConventionalViewIcon ( ) << "\n";
+    os << indent << "ChooseLayoutIcon" << this->GetChooseLayoutIcon ( ) << "\n";
     os << indent << "OneUp3DViewIcon" << this->GetOneUp3DViewIcon ( ) << "\n";
     os << indent << "OneUpSliceViewIcon" << this->GetOneUpSliceViewIcon ( ) << "\n";
+    os << indent << "OneUpRedSliceViewIcon" << this->GetOneUpRedSliceViewIcon ( ) << "\n";
+    os << indent << "OneUpYellowSliceViewIcon" << this->GetOneUpYellowSliceViewIcon ( ) << "\n";
+    os << indent << "OneUpGreenSliceViewIcon" << this->GetOneUpGreenSliceViewIcon ( ) << "\n";
     os << indent << "FourUpViewIcon" << this->GetFourUpViewIcon ( ) << "\n";
     os << indent << "TabbedSliceViewIcon" << this->GetTabbedSliceViewIcon ( ) << "\n";
     os << indent << "Tabbed3DViewIcon" << this->GetTabbed3DViewIcon ( ) << "\n";

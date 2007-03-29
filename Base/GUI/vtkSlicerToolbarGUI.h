@@ -62,13 +62,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
 //    vtkGetObjectMacro (MeasurementsIconButton, vtkKWPushButton);
     vtkGetObjectMacro (SaveSceneIconButton, vtkKWPushButton );
     vtkGetObjectMacro (LoadSceneIconButton, vtkKWPushButton );
-    vtkGetObjectMacro (ConventionalViewIconButton, vtkKWPushButton );    
-    vtkGetObjectMacro (OneUp3DViewIconButton, vtkKWPushButton );
-    vtkGetObjectMacro (OneUpSliceViewIconButton, vtkKWMenuButton );
-    vtkGetObjectMacro (FourUpViewIconButton, vtkKWPushButton );
-    vtkGetObjectMacro (Tabbed3DViewIconButton, vtkKWPushButton );
-    vtkGetObjectMacro (TabbedSliceViewIconButton, vtkKWPushButton );
-    vtkGetObjectMacro (LightBoxViewIconButton, vtkKWPushButton );
+    vtkGetObjectMacro (ChooseLayoutIconMenuButton, vtkKWMenuButton );
     vtkGetObjectMacro (UndoIconButton, vtkKWPushButton );
     vtkGetObjectMacro (RedoIconButton, vtkKWPushButton );
     vtkGetObjectMacro (InteractionModeRadioButtons, vtkKWRadioButtonSet );
@@ -146,13 +140,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
 //    vtkKWPushButton *MeasurementsIconButton;
     vtkKWPushButton *SaveSceneIconButton;
     vtkKWPushButton *LoadSceneIconButton;
-    vtkKWPushButton *ConventionalViewIconButton;
-    vtkKWPushButton *OneUp3DViewIconButton;
-    vtkKWMenuButton *OneUpSliceViewIconButton;
-    vtkKWPushButton *FourUpViewIconButton;
-    vtkKWPushButton *Tabbed3DViewIconButton;
-    vtkKWPushButton *TabbedSliceViewIconButton;
-    vtkKWPushButton *LightBoxViewIconButton;
+    vtkKWMenuButton *ChooseLayoutIconMenuButton;
     vtkKWRadioButtonSet *InteractionModeRadioButtons;
 
     vtkSlicerModuleChooseGUI *ModuleChooseGUI;

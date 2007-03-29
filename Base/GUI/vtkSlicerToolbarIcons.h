@@ -33,9 +33,13 @@ class vtkSlicerToolbarIcons : public vtkSlicerIcons
 //    vtkGetObjectMacro (MeasurementsIcon, vtkKWIcon );
     vtkGetObjectMacro (SaveSceneIcon, vtkKWIcon);
     vtkGetObjectMacro (LoadSceneIcon, vtkKWIcon);
+    vtkGetObjectMacro (ChooseLayoutIcon, vtkKWIcon );
     vtkGetObjectMacro (ConventionalViewIcon, vtkKWIcon);
     vtkGetObjectMacro (OneUp3DViewIcon, vtkKWIcon);
     vtkGetObjectMacro (OneUpSliceViewIcon, vtkKWIcon );
+    vtkGetObjectMacro (OneUpRedSliceViewIcon, vtkKWIcon );
+    vtkGetObjectMacro (OneUpGreenSliceViewIcon, vtkKWIcon );
+    vtkGetObjectMacro (OneUpYellowSliceViewIcon, vtkKWIcon );    
     vtkGetObjectMacro (FourUpViewIcon, vtkKWIcon);
     vtkGetObjectMacro (TabbedSliceViewIcon, vtkKWIcon);
     vtkGetObjectMacro (Tabbed3DViewIcon, vtkKWIcon);
@@ -69,9 +73,13 @@ class vtkSlicerToolbarIcons : public vtkSlicerIcons
 //    vtkKWIcon *MeasurementsIcon;
     vtkKWIcon *SaveSceneIcon;
     vtkKWIcon *LoadSceneIcon;
+    vtkKWIcon *ChooseLayoutIcon;
     vtkKWIcon *ConventionalViewIcon;
     vtkKWIcon *OneUp3DViewIcon;
     vtkKWIcon *OneUpSliceViewIcon;
+    vtkKWIcon *OneUpRedSliceViewIcon;
+    vtkKWIcon *OneUpGreenSliceViewIcon;
+    vtkKWIcon *OneUpYellowSliceViewIcon;
     vtkKWIcon *FourUpViewIcon;
     vtkKWIcon *TabbedSliceViewIcon;
     vtkKWIcon *Tabbed3DViewIcon;
