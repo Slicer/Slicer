@@ -274,7 +274,7 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     this->OrientationMenu->Create ( );    
     this->OrientationMenu->GetWidget()->GetWidget()->SetFont ( "-Adobe-Helvetica-Bold-R-Normal-*-9-*-*-*-*-*-*-*" );
     this->OrientationMenu->GetLabel()->SetImageToIcon ( this->SliceControlIcons->GetSetOrIcon() );
-    this->OrientationMenu->GetLabel()->SetBalloonHelpString ("Select orientation" );
+    this->OrientationMenu->SetBalloonHelpString ("Select orientation" );
     vtkKWMenuButton *mb = this->OrientationMenu->GetWidget()->GetWidget();
     mb->SetWidth ( 12 );
     mb->GetMenu()->AddRadioButton ( "Axial" );
@@ -291,7 +291,7 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     this->ForegroundSelector->NoneEnabledOn();
     this->ForegroundSelector->GetWidget()->GetWidget()->SetFont ( "-Adobe-Helvetica-Bold-R-Normal-*-9-*-*-*-*-*-*-*" );
     this->ForegroundSelector->GetLabel()->SetImageToIcon ( this->SliceControlIcons->GetSetFgIcon() );
-    this->ForegroundSelector->GetLabel()->SetBalloonHelpString ( "Select the foreground");
+    this->ForegroundSelector->SetBalloonHelpString ( "Select the foreground");
     this->ForegroundSelector->SetNodeClass ("vtkMRMLVolumeNode", NULL, NULL, NULL);
     this->ForegroundSelector->SetMRMLScene( this->MRMLScene );
     this->ForegroundSelector->GetWidget()->GetWidget()->SetMaximumLabelWidth(10);
@@ -303,7 +303,7 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     this->BackgroundSelector->NoneEnabledOn();
     this->BackgroundSelector->GetWidget()->GetWidget()->SetFont ( "-Adobe-Helvetica-Bold-R-Normal-*-9-*-*-*-*-*-*-*" );
     this->BackgroundSelector->GetLabel()->SetImageToIcon ( this->SliceControlIcons->GetSetBgIcon ( ) );
-    this->BackgroundSelector->GetLabel()->SetBalloonHelpString ( "Select the background");
+    this->BackgroundSelector->SetBalloonHelpString ( "Select the background");
     this->BackgroundSelector->SetNodeClass ("vtkMRMLVolumeNode", NULL, NULL, NULL);
     this->BackgroundSelector->SetMRMLScene( this->MRMLScene );
     this->BackgroundSelector->GetWidget()->GetWidget()->SetMaximumLabelWidth(10);
@@ -315,7 +315,7 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     this->LabelSelector->NoneEnabledOn();
     this->LabelSelector->GetWidget()->GetWidget()->SetFont ( "-Adobe-Helvetica-Bold-R-Normal-*-9-*-*-*-*-*-*-*" );
     this->LabelSelector->GetLabel()->SetImageToIcon ( this->SliceControlIcons->GetSetLbIcon ( ) );
-    this->LabelSelector->GetLabel()->SetBalloonHelpString ( "Select the label map");
+    this->LabelSelector->SetBalloonHelpString ( "Select the label map");
     this->LabelSelector->SetNodeClass ("vtkMRMLVolumeNode", "LabelMap", "1", NULL);
     this->LabelSelector->SetMRMLScene( this->MRMLScene );
     this->LabelSelector->GetWidget()->GetWidget()->SetMaximumLabelWidth(10);
@@ -845,6 +845,7 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
     if (sgui )
       {
       this->UpdateForegroundLayer ( link );
+      this->ForegroundSelector->SetBalloonHelpString ("Select the foreground");
       }
     }
 
@@ -856,6 +857,7 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
     if (sgui )
       {
       this->UpdateBackgroundLayer ( link );
+      this->BackgroundSelector->SetBalloonHelpString ("Select the background");
       }
     }
 
@@ -865,7 +867,11 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
   //
   if ( vtkSlicerNodeSelectorWidget::SafeDownCast(caller) == this->LabelSelector )
     {
-    this->UpdateLabelLayer ( link );
+    if (sgui)
+      {
+      this->UpdateLabelLayer ( link );
+      this->LabelSelector->SetBalloonHelpString ("Select the label map");
+      }
     }
   
   if ( !this->SliceNode)
