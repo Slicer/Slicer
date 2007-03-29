@@ -72,7 +72,7 @@ vtkNeuroNavGUI::vtkNeuroNavGUI ( )
     this->PAEntry = NULL;
     this->PSEntry = NULL;
 
-    this->FileFrame = NULL;
+    this->ExtraFrame = NULL;
 
 /*
     this->RedColorScale = NULL;
@@ -99,6 +99,12 @@ vtkNeuroNavGUI::vtkNeuroNavGUI ( )
 #endif
 #ifdef USE_IGSTK
     this->DeviceMenuButton = NULL;
+    this->PortNumberMenuButton = NULL;
+    this->BaudRateMenuButton = NULL;
+    this->DataBitsMenuButton = NULL;
+    this->ParityTypeMenuButton = NULL;
+    this->StopBitsMenuButton = NULL;
+    this->HandShakeMenuButton = NULL;
 #endif
 
     this->UpdateRateEntry = NULL;
@@ -334,9 +340,40 @@ vtkNeuroNavGUI::~vtkNeuroNavGUI ( )
 #ifdef USE_IGSTK
     if (this->DeviceMenuButton) 
     {
-        this->DeviceMenuButton->SetParent(NULL );
+        this->DeviceMenuButton->SetParent(NULL);
         this->DeviceMenuButton->Delete();
     }
+    if (this->PortNumberMenuButton) 
+    {
+        this->PortNumberMenuButton->SetParent(NULL);
+        this->PortNumberMenuButton->Delete();
+    }
+    if (this->BaudRateMenuButton) 
+    {
+        this->BaudRateMenuButton->SetParent(NULL);
+        this->BaudRateMenuButton->Delete();
+    }
+    if (this->DataBitsMenuButton) 
+    {
+        this->DataBitsMenuButton->SetParent(NULL);
+        this->DataBitsMenuButton->Delete();
+    }
+    if (this->ParityTypeMenuButton) 
+    {
+        this->ParityTypeMenuButton->SetParent(NULL);
+        this->ParityTypeMenuButton->Delete();
+    }
+    if (this->StopBitsMenuButton) 
+    {
+        this->StopBitsMenuButton->SetParent(NULL);
+        this->StopBitsMenuButton->Delete();
+    }
+    if (this->HandShakeMenuButton) 
+    {
+        this->HandShakeMenuButton->SetParent(NULL);
+        this->HandShakeMenuButton->Delete();
+    }
+
 #endif
 
 
@@ -413,9 +450,9 @@ vtkNeuroNavGUI::~vtkNeuroNavGUI ( )
     this->SetModuleLogic ( NULL );
 
 
-    if (this->FileFrame)
+    if (this->ExtraFrame)
     {
-        this->FileFrame->Delete ( );
+        this->ExtraFrame->Delete ( );
     }
 }
 
@@ -624,7 +661,7 @@ void vtkNeuroNavGUI::ProcessGUIEvents ( vtkObject *caller,
                 if (! filename)
                 {
                     vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
-                    dialog->SetParent ( this->FileFrame );
+                    dialog->SetParent ( this->ExtraFrame );
                     dialog->SetStyleToMessage();
                     std::string msg = std::string("Please input a valid configuration file (.xml).");
                     dialog->SetText(msg.c_str());
@@ -1314,21 +1351,21 @@ void vtkNeuroNavGUI::BuildGUIForDeviceFrame ()
     /// Config file frame
     /////////////////////////////////////////////////////////////////////
     // add a file browser 
-    this->FileFrame = vtkKWFrame::New();
-    this->FileFrame->SetParent ( deviceFrame->GetFrame() );
-    this->FileFrame->Create ( );
+    this->ExtraFrame = vtkKWFrame::New();
+    this->ExtraFrame->SetParent ( deviceFrame->GetFrame() );
+    this->ExtraFrame->Create ( );
     this->Script( "pack %s -side top -anchor nw -expand n -padx 2 -pady 2",
-                  this->FileFrame->GetWidgetName());
+                  this->ExtraFrame->GetWidgetName());
 
 #ifdef USE_OPENTRACKER
     this->ConfigFileEntry = vtkKWEntry::New();
-    this->ConfigFileEntry->SetParent(this->FileFrame);
+    this->ConfigFileEntry->SetParent(this->ExtraFrame);
     this->ConfigFileEntry->Create();
     this->ConfigFileEntry->SetWidth(50);
     this->ConfigFileEntry->SetValue ( "" );
 
     this->LoadConfigButton = vtkKWLoadSaveButtonWithLabel::New ( );
-    this->LoadConfigButton->SetParent ( this->FileFrame );
+    this->LoadConfigButton->SetParent ( this->ExtraFrame );
     this->LoadConfigButton->Create ( );
     this->LoadConfigButton->SetWidth(15);
     this->LoadConfigButton->GetWidget()->SetText ("Browse Config File");
@@ -1343,17 +1380,126 @@ void vtkNeuroNavGUI::BuildGUIForDeviceFrame ()
 #endif
 #ifdef USE_IGSTK
     this->DeviceMenuButton = vtkKWMenuButtonWithLabel::New();
-    this->DeviceMenuButton->SetParent(this->FileFrame);
+    this->DeviceMenuButton->SetParent(this->ExtraFrame);
     this->DeviceMenuButton->Create();
     this->DeviceMenuButton->SetWidth(50);
     this->DeviceMenuButton->SetLabelWidth(12);
     this->DeviceMenuButton->SetLabelText("Device Type:");
     this->DeviceMenuButton->GetWidget()->GetMenu()->AddRadioButton("Aurora");
     this->DeviceMenuButton->GetWidget()->GetMenu()->AddRadioButton("Polaris");
-    this->DeviceMenuButton->GetWidget()->SetValue ("Aurora");
+    this->DeviceMenuButton->GetWidget()->SetValue ("Polaris");
     this->Script(
       "pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
       this->DeviceMenuButton->GetWidgetName());
+
+
+    // Port numbers
+    this->PortNumberMenuButton = vtkKWMenuButtonWithLabel::New();
+    this->PortNumberMenuButton->SetParent(this->ExtraFrame);
+    this->PortNumberMenuButton->Create();
+    this->PortNumberMenuButton->SetWidth(50);
+    this->PortNumberMenuButton->SetLabelWidth(12);
+    this->PortNumberMenuButton->SetLabelText("Port Number:");
+    this->PortNumberMenuButton->GetWidget()->GetMenu()->AddRadioButton("Port 0");
+    this->PortNumberMenuButton->GetWidget()->GetMenu()->AddRadioButton("Port 1");
+    this->PortNumberMenuButton->GetWidget()->GetMenu()->AddRadioButton("Port 2");
+    this->PortNumberMenuButton->GetWidget()->GetMenu()->AddRadioButton("Port 3");
+    this->PortNumberMenuButton->GetWidget()->GetMenu()->AddRadioButton("Port 4");
+    this->PortNumberMenuButton->GetWidget()->GetMenu()->AddRadioButton("Port 5");
+    this->PortNumberMenuButton->GetWidget()->GetMenu()->AddRadioButton("Port 6");
+    this->PortNumberMenuButton->GetWidget()->GetMenu()->AddRadioButton("Port 7");
+ 
+    this->PortNumberMenuButton->GetWidget()->SetValue ("Port 0");
+    this->Script(
+      "pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
+      this->PortNumberMenuButton->GetWidgetName());
+
+
+    // Baud rates
+    this->BaudRateMenuButton = vtkKWMenuButtonWithLabel::New();
+    this->BaudRateMenuButton->SetParent(this->ExtraFrame);
+    this->BaudRateMenuButton->Create();
+    this->BaudRateMenuButton->SetWidth(50);
+    this->BaudRateMenuButton->SetLabelWidth(12);
+    this->BaudRateMenuButton->SetLabelText("Baud Rate:");
+    this->BaudRateMenuButton->GetWidget()->GetMenu()->AddRadioButton("9600");
+    this->BaudRateMenuButton->GetWidget()->GetMenu()->AddRadioButton("19200");
+    this->BaudRateMenuButton->GetWidget()->GetMenu()->AddRadioButton("38400");
+    this->BaudRateMenuButton->GetWidget()->GetMenu()->AddRadioButton("57600");
+    this->BaudRateMenuButton->GetWidget()->GetMenu()->AddRadioButton("115200");
+ 
+    this->BaudRateMenuButton->GetWidget()->SetValue ("9600");
+    this->Script(
+      "pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
+      this->BaudRateMenuButton->GetWidgetName());
+
+
+    // Data bits 
+    this->DataBitsMenuButton = vtkKWMenuButtonWithLabel::New();
+    this->DataBitsMenuButton->SetParent(this->ExtraFrame);
+    this->DataBitsMenuButton->Create();
+    this->DataBitsMenuButton->SetWidth(50);
+    this->DataBitsMenuButton->SetLabelWidth(12);
+    this->DataBitsMenuButton->SetLabelText("Data Bits:");
+    this->DataBitsMenuButton->GetWidget()->GetMenu()->AddRadioButton("7");
+    this->DataBitsMenuButton->GetWidget()->GetMenu()->AddRadioButton("8");
+ 
+    this->DataBitsMenuButton->GetWidget()->SetValue ("8");
+    this->Script(
+      "pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
+      this->DataBitsMenuButton->GetWidgetName());
+
+
+    // Parity 
+    this->ParityTypeMenuButton = vtkKWMenuButtonWithLabel::New();
+    this->ParityTypeMenuButton->SetParent(this->ExtraFrame);
+    this->ParityTypeMenuButton->Create();
+    this->ParityTypeMenuButton->SetWidth(50);
+    this->ParityTypeMenuButton->SetLabelWidth(12);
+    this->ParityTypeMenuButton->SetLabelText("Parity Type:");
+    this->ParityTypeMenuButton->GetWidget()->GetMenu()->AddRadioButton("No");
+    this->ParityTypeMenuButton->GetWidget()->GetMenu()->AddRadioButton("Odd");
+    this->ParityTypeMenuButton->GetWidget()->GetMenu()->AddRadioButton("Even");
+ 
+    this->ParityTypeMenuButton->GetWidget()->SetValue ("No");
+    this->Script(
+      "pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
+      this->ParityTypeMenuButton->GetWidgetName());
+
+
+    // Stop bits 
+    this->StopBitsMenuButton = vtkKWMenuButtonWithLabel::New();
+    this->StopBitsMenuButton->SetParent(this->ExtraFrame);
+    this->StopBitsMenuButton->Create();
+    this->StopBitsMenuButton->SetWidth(50);
+    this->StopBitsMenuButton->SetLabelWidth(12);
+    this->StopBitsMenuButton->SetLabelText("Stop Bits:");
+    this->StopBitsMenuButton->GetWidget()->GetMenu()->AddRadioButton("1");
+    this->StopBitsMenuButton->GetWidget()->GetMenu()->AddRadioButton("2");
+
+ 
+    this->StopBitsMenuButton->GetWidget()->SetValue ("1");
+    this->Script(
+      "pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
+      this->StopBitsMenuButton->GetWidgetName());
+
+
+    // Hand shake 
+    this->HandShakeMenuButton = vtkKWMenuButtonWithLabel::New();
+    this->HandShakeMenuButton->SetParent(this->ExtraFrame);
+    this->HandShakeMenuButton->Create();
+    this->HandShakeMenuButton->SetWidth(50);
+    this->HandShakeMenuButton->SetLabelWidth(12);
+    this->HandShakeMenuButton->SetLabelText("Hand Shake:");
+    this->HandShakeMenuButton->GetWidget()->GetMenu()->AddRadioButton("Off");
+    this->HandShakeMenuButton->GetWidget()->GetMenu()->AddRadioButton("On");
+
+ 
+    this->HandShakeMenuButton->GetWidget()->SetValue ("Off");
+    this->Script(
+      "pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
+      this->HandShakeMenuButton->GetWidgetName());
+
 #endif
 
 
