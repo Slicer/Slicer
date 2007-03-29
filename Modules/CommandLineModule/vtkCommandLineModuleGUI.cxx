@@ -600,6 +600,8 @@ void vtkCommandLineModuleGUI::UpdateGUI ()
         w->EnabledOn();
         w->UpdateEnableState();
         }
+      (*this->InternalWidgetMap)["CancelButton"]->EnabledOff();
+      (*this->InternalWidgetMap)["CancelButton"]->UpdateEnableState();
       }
 
     // Set the progress value and balloon help
@@ -1443,6 +1445,8 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
   (*this->InternalWidgetMap)["CancelButton"] = cancel;
   cancel->Delete();
 
+  (*this->InternalWidgetMap)["CancelButton"]->EnabledOff();
+  (*this->InternalWidgetMap)["CancelButton"]->UpdateEnableState();
 }
 
 
