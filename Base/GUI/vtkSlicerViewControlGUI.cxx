@@ -1521,7 +1521,6 @@ void vtkSlicerViewControlGUI::UpdateNavigationWidgetViewActors ( )
     vtkActorCollection *mainActors;
     vtkActor *mainActor;
     vtkActorCollection *navActors;
-    vtkActor *navActor;
     vtkActor *newActor;
     vtkPolyDataMapper *newMapper;
     double bounds[6];
