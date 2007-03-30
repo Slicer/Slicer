@@ -82,8 +82,8 @@ namespace eval ETC {
       set id $Jobs($Project,$name,Id)
       set done "$WorkingDirectory/ETC/$id.completed"
       puts $fid "\# $name"
-      puts $fid "$Jobs($Project,$name,Id): [ExpandDepends $name] $done"
-      puts $fid "\tcd $WorkingDirectory && loopy -r 10 -o $done \"$Jobs($Project,$name,Command)\""
+      puts $fid "$Jobs($Project,$name,Id): [ExpandDepends $name] "
+      puts $fid "\tcd $WorkingDirectory && loopy -r 10 -d $done \'loopy -d $done -w \"$Jobs($Project,$name,Command)\"\'"
     }
     close $fid
   }
