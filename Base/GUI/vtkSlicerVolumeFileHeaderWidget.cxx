@@ -224,8 +224,8 @@ void vtkSlicerVolumeFileHeaderWidget::CreateWidget ( )
   
   this->InfoLabel = vtkKWLabel::New();
   this->InfoLabel->SetParent(this->HeaderDialog);
-  this->InfoLabel->SetWidth(100);
   this->InfoLabel->Create();
+  this->InfoLabel->SetWidth(100);
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                  this->InfoLabel->GetWidgetName() );
 
