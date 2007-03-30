@@ -649,65 +649,11 @@ void vtkNeuroNavGUI::ProcessGUIEvents ( vtkObject *caller,
         if (this->ConnectCheckButton == vtkKWCheckButton::SafeDownCast(caller) 
                 && event == vtkKWCheckButton::SelectedStateChangedEvent )
         {
-            int checked = this->ConnectCheckButton->GetSelectedState(); 
-            int sp = atoi(this->UpdateRateEntry->GetWidget()->GetValue());
-            float multi = atof(this->MultiFactorEntry->GetWidget()->GetValue());
-
 #ifdef USE_OPENTRACKER
-            if (checked)
-            {
-                // connected
-                char *filename = this->LoadConfigButton->GetWidget()->GetFileName();
-                if (! filename)
-                {
-                    vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
-                    dialog->SetParent ( this->ExtraFrame );
-                    dialog->SetStyleToMessage();
-                    std::string msg = std::string("Please input a valid configuration file (.xml).");
-                    dialog->SetText(msg.c_str());
-                    dialog->Create();
-                    dialog->Invoke();
-                    dialog->Delete();
-                    this->ConnectCheckButton->SetSelectedState(0);
-                }
-                else
-                {
-                    this->OpenTrackerStream->Init(filename);
-                    this->OpenTrackerStream->SetSpeed(sp);
-                    this->OpenTrackerStream->SetMultiFactor(multi);
-                    this->OpenTrackerStream->SetStartTimer(1);
-                    this->OpenTrackerStream->ProcessTimerEvents();
-                }
-            }
-            else
-            {
-                this->OpenTrackerStream->SetStartTimer(0);
-            }
+            SetOpenTrackerConnectionParameters();
 #endif
 #ifdef USE_IGSTK
-            if (checked)
-            {
-                vtkKWMenuButton *mb = this->DeviceMenuButton->GetWidget();
-                if (!strcmp (mb->GetValue(), "Aurora"))   
-                {
-                    this->IGSTKStream->SetTrackerType(0);
-                }
-                else 
-                {
-                    this->IGSTKStream->SetTrackerType(1);
-                }
-
-                this->IGSTKStream->Init();
-                this->IGSTKStream->SetSpeed(sp);
-                this->IGSTKStream->SetMultiFactor(multi);
-                this->IGSTKStream->SetStartTimer(1);
-                this->IGSTKStream->ProcessTimerEvents();
-
-            }
-            else
-            {
-                this->IGSTKStream->SetStartTimer(0);
-            }
+            SetIGSTKConnectionParameters();
 #endif
         }
 #ifdef USE_OPENTRACKER
@@ -1400,16 +1346,16 @@ void vtkNeuroNavGUI::BuildGUIForDeviceFrame ()
     this->PortNumberMenuButton->SetWidth(50);
     this->PortNumberMenuButton->SetLabelWidth(12);
     this->PortNumberMenuButton->SetLabelText("Port Number:");
-    this->PortNumberMenuButton->GetWidget()->GetMenu()->AddRadioButton("Port 0");
-    this->PortNumberMenuButton->GetWidget()->GetMenu()->AddRadioButton("Port 1");
-    this->PortNumberMenuButton->GetWidget()->GetMenu()->AddRadioButton("Port 2");
-    this->PortNumberMenuButton->GetWidget()->GetMenu()->AddRadioButton("Port 3");
-    this->PortNumberMenuButton->GetWidget()->GetMenu()->AddRadioButton("Port 4");
-    this->PortNumberMenuButton->GetWidget()->GetMenu()->AddRadioButton("Port 5");
-    this->PortNumberMenuButton->GetWidget()->GetMenu()->AddRadioButton("Port 6");
-    this->PortNumberMenuButton->GetWidget()->GetMenu()->AddRadioButton("Port 7");
+    this->PortNumberMenuButton->GetWidget()->GetMenu()->AddRadioButton("0");
+    this->PortNumberMenuButton->GetWidget()->GetMenu()->AddRadioButton("1");
+    this->PortNumberMenuButton->GetWidget()->GetMenu()->AddRadioButton("2");
+    this->PortNumberMenuButton->GetWidget()->GetMenu()->AddRadioButton("3");
+    this->PortNumberMenuButton->GetWidget()->GetMenu()->AddRadioButton("4");
+    this->PortNumberMenuButton->GetWidget()->GetMenu()->AddRadioButton("5");
+    this->PortNumberMenuButton->GetWidget()->GetMenu()->AddRadioButton("6");
+    this->PortNumberMenuButton->GetWidget()->GetMenu()->AddRadioButton("7");
  
-    this->PortNumberMenuButton->GetWidget()->SetValue ("Port 0");
+    this->PortNumberMenuButton->GetWidget()->SetValue ("0");
     this->Script(
       "pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
       this->PortNumberMenuButton->GetWidgetName());
@@ -2161,3 +2107,130 @@ void vtkNeuroNavGUI::UpdateSliceDisplay(float nx, float ny, float nz,
     }
 }
 
+
+
+#ifdef USE_OPENTRACKER
+void vtkNeuroNavGUI::SetOpenTrackerConnectionParameters()
+{
+    int checked = this->ConnectCheckButton->GetSelectedState(); 
+    if (checked)
+    {
+        // connected
+        char *filename = this->LoadConfigButton->GetWidget()->GetFileName();
+        if (! filename)
+        {
+            vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+            dialog->SetParent ( this->ExtraFrame );
+            dialog->SetStyleToMessage();
+            std::string msg = std::string("Please input a valid configuration file (.xml).");
+            dialog->SetText(msg.c_str());
+            dialog->Create();
+            dialog->Invoke();
+            dialog->Delete();
+            this->ConnectCheckButton->SetSelectedState(0);
+        }
+        else
+        {
+            this->OpenTrackerStream->Init(filename);
+
+            int sp = atoi(this->UpdateRateEntry->GetWidget()->GetValue());
+            float multi = atof(this->MultiFactorEntry->GetWidget()->GetValue());
+
+            this->OpenTrackerStream->SetSpeed(sp);
+            this->OpenTrackerStream->SetMultiFactor(multi);
+            this->OpenTrackerStream->SetStartTimer(1);
+            this->OpenTrackerStream->ProcessTimerEvents();
+        }
+    }
+    else
+    {
+        this->OpenTrackerStream->SetStartTimer(0);
+    }
+}
+#endif
+
+
+
+#ifdef USE_IGSTK
+void vtkNeuroNavGUI::SetIGSTKConnectionParameters()
+{
+    int checked = this->ConnectCheckButton->GetSelectedState(); 
+    if (checked)
+    {
+        // Init the IGSTK data stream
+        this->IGSTKStream->Init();
+
+
+        // Pulling rate for data
+        int sp = atoi(this->UpdateRateEntry->GetWidget()->GetValue());
+        this->IGSTKStream->SetSpeed(sp);
+
+        // Conversion rate
+        float multi = atof(this->MultiFactorEntry->GetWidget()->GetValue());
+        this->IGSTKStream->SetMultiFactor(multi);
+
+        // Device type 
+        vtkKWMenuButton *mb = this->DeviceMenuButton->GetWidget();
+        if (!strcmp (mb->GetValue(), "Polaris"))   
+        {
+            this->IGSTKStream->SetTrackerType(0);
+        }
+        else 
+        {
+            this->IGSTKStream->SetTrackerType(1);
+        }
+
+
+        // Port number
+        int pn = atoi(this->PortNumberMenuButton->GetWidget()->GetValue());
+        this->IGSTKStream->SetPortNumber((PortNumberT)pn);
+
+        // Baud rate 
+        int br = atoi(this->BaudRateMenuButton->GetWidget()->GetValue());
+        this->IGSTKStream->SetBaudRate((BaudRateT)br);
+
+        // Data bits 
+        int db = atoi(this->DataBitsMenuButton->GetWidget()->GetValue());
+        this->IGSTKStream->SetBaudRate((BaudRateT)db);
+
+        // Parity 
+        mb = this->ParityTypeMenuButton->GetWidget();
+        if (!strcmp (mb->GetValue(), "No"))   
+        {
+            this->IGSTKStream->SetParity(igstk::SerialCommunication::NoParity);
+        }
+        else if  (!strcmp (mb->GetValue(), "Odd")) 
+        {
+            this->IGSTKStream->SetParity(igstk::SerialCommunication::OddParity);
+        }
+        else
+        {
+            this->IGSTKStream->SetParity(igstk::SerialCommunication::EvenParity);
+        }
+
+        // Stop bits 
+        int sb = atoi(this->StopBitsMenuButton->GetWidget()->GetValue());
+        this->IGSTKStream->SetStopBits((StopBitsT)sb);
+
+        // Hand shake
+        mb = this->HandShakeMenuButton->GetWidget();
+        if (!strcmp (mb->GetValue(), "Off"))   
+        {
+            this->IGSTKStream->SetHandShake(igstk::SerialCommunication::HandshakeOff);
+        }
+        else
+        {
+            this->IGSTKStream->SetHandShake(igstk::SerialCommunication::HandshakeOn);
+        }
+
+
+        this->IGSTKStream->SetStartTimer(1);
+        this->IGSTKStream->ProcessTimerEvents();
+
+    }
+    else
+    {
+        this->IGSTKStream->SetStartTimer(0);
+    }
+}
+#endif

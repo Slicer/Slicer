@@ -43,20 +43,19 @@ class vtkKWLoadSaveButtonWithLabel;
 class vtkKWMultiColumnListWithScrollbars;
 
 
-
-// Description:
+// Description:    
 // This class implements Slicer's Volumes GUI
 //
 class VTK_NEURONAV_EXPORT vtkNeuroNavGUI : public vtkSlicerModuleGUI
 {
  public:
-    // Description:
+    // Description:    
     // Usual vtk class functions
     static vtkNeuroNavGUI* New (  );
     vtkTypeRevisionMacro ( vtkNeuroNavGUI, vtkSlicerModuleGUI );
     void PrintSelf (ostream& os, vtkIndent indent );
     
-    // Description:
+    // Description:    
     // Get methods on class members (no Set methods required)
     vtkGetObjectMacro ( Logic, vtkNeuroNavLogic );
 
@@ -68,7 +67,7 @@ class VTK_NEURONAV_EXPORT vtkNeuroNavGUI : public vtkSlicerModuleGUI
     void SetAndObserveModuleLogic ( vtkNeuroNavLogic *logic )
         { this->SetAndObserveLogic ( vtkObjectPointer (&this->Logic), logic ); }
 
-    // Description:
+    // Description:    
     // This method builds the IGTDemo module GUI
     virtual void BuildGUI ( );
 
@@ -80,7 +79,7 @@ class VTK_NEURONAV_EXPORT vtkNeuroNavGUI : public vtkSlicerModuleGUI
 
     // Description:
     // Class's mediator methods for processing events invoked by
-    // either the Logic, MRML or GUI.
+    // either the Logic, MRML or GUI.    
     virtual void ProcessLogicEvents ( vtkObject *caller, unsigned long event, void *callData );
     virtual void ProcessGUIEvents ( vtkObject *caller, unsigned long event, void *callData );
     virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
@@ -104,7 +103,6 @@ class VTK_NEURONAV_EXPORT vtkNeuroNavGUI : public vtkSlicerModuleGUI
  protected:
     vtkNeuroNavGUI ( );
     virtual ~vtkNeuroNavGUI ( );
-
     vtkKWEntryWithLabel *NormalOffsetEntry;
     vtkKWEntryWithLabel *TransOffsetEntry;
     vtkKWEntryWithLabel *NXTOffsetEntry;
@@ -113,7 +111,7 @@ class VTK_NEURONAV_EXPORT vtkNeuroNavGUI : public vtkSlicerModuleGUI
     vtkKWEntryWithLabel *TransSizeEntry;
     vtkKWEntryWithLabel *RadiusEntry;
 
-    vtkKWEntry *NREntry;
+    vtkKWEntry *NREntry;    
     vtkKWEntry *NAEntry;
     vtkKWEntry *NSEntry;
     vtkKWEntry *TREntry;
@@ -128,7 +126,7 @@ class VTK_NEURONAV_EXPORT vtkNeuroNavGUI : public vtkSlicerModuleGUI
     /*
     vtkKWScaleWithEntry* RedColorScale;
     vtkKWScaleWithEntry* GreenColorScale;
-    vtkKWScaleWithEntry* BlueColorScale;
+    vtkKWScaleWithEntry* BlueColorScale;    
     */
 
     vtkKWCheckButton *ConnectCheckButton;
@@ -170,7 +168,7 @@ class VTK_NEURONAV_EXPORT vtkNeuroNavGUI : public vtkSlicerModuleGUI
 //    vtkKWPushButton *LoadPointPairPushButton;
 //    vtkKWPushButton *SavePointPairPushButton;
     vtkKWPushButton *DeletePointPairPushButton;
-    vtkKWPushButton *DeleteAllPointPairPushButton;
+    vtkKWPushButton *DeleteAllPointPairPushButton;    
     vtkKWPushButton *RegisterPushButton;
     vtkKWPushButton *ResetPushButton;
 
@@ -212,10 +210,12 @@ class VTK_NEURONAV_EXPORT vtkNeuroNavGUI : public vtkSlicerModuleGUI
 
 #ifdef USE_OPENTRACKER
     vtkIGTOpenTrackerStream *OpenTrackerStream;
+    void SetOpenTrackerConnectionParameters();
 #endif
 
 #ifdef USE_IGSTK    
     vtkIGTIGSTKStream *IGSTKStream;
+    void SetIGSTKConnectionParameters();
 #endif
 
 };
