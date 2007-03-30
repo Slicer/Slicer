@@ -17,7 +17,6 @@ vtkCxxRevisionMacro(vtkIGTIGSTKStream, "$Revision: 1.0 $");
 
 vtkIGTIGSTKStream::vtkIGTIGSTKStream()
 {
-    igstk::RealTimeClock::Initialize();
 
 #if 0
     // Logger
@@ -53,27 +52,7 @@ vtkIGTIGSTKStream::vtkIGTIGSTKStream()
 
 vtkIGTIGSTKStream::~vtkIGTIGSTKStream()
 {
-    if (this->AuroraTracker) 
-    {
-        this->AuroraTracker->SetLogger(NULL);
-        this->AuroraTracker->SetCommunication(NULL);
-        this->AuroraTracker->RequestStopTracking();  
-        this->AuroraTracker->RequestClose();
-        this->AuroraTracker->Delete();
-    }
-    if (this->PolarisTracker) 
-    {
-        this->PolarisTracker->SetLogger(NULL);
-        this->PolarisTracker->SetCommunication(NULL);
-        this->PolarisTracker->RequestStopTracking();  
-        this->PolarisTracker->RequestClose();
-        this->PolarisTracker->Delete();
-    }
-    if (this->SerialCommunication)
-    {
-        this->SerialCommunication->CloseCommunication();
-        this->SerialCommunication->Delete();
-    }
+    ClearTracker();
 
     if (this->LogFileOutput)
     {
@@ -97,34 +76,39 @@ vtkIGTIGSTKStream::~vtkIGTIGSTKStream()
 
 
 
-void vtkIGTIGSTKStream::Init()
+void vtkIGTIGSTKStream::ClearTracker()
 {
-    if (this->SerialCommunication)
-    {
-        this->SerialCommunication->Delete();
-        this->SerialCommunication = NULL;
-    }
-
     if (this->AuroraTracker) 
     {
         this->AuroraTracker->SetLogger(NULL);
-        //this->AuroraTracker->SetCommunication(NULL);
+        this->AuroraTracker->SetCommunication(NULL);
         this->AuroraTracker->RequestStopTracking();  
         this->AuroraTracker->RequestClose();
         this->AuroraTracker->Delete();
         this->AuroraTracker = NULL;
-
     }
     if (this->PolarisTracker) 
     {
         this->PolarisTracker->SetLogger(NULL);
-        //this->PolarisTracker->SetCommunication(NULL);
+        this->PolarisTracker->SetCommunication(NULL);
         this->PolarisTracker->RequestStopTracking();  
         this->PolarisTracker->RequestClose();
         this->PolarisTracker->Delete();
         this->PolarisTracker = NULL;
-
     }
+    if (this->SerialCommunication)
+    {
+        this->SerialCommunication->CloseCommunication();
+        this->SerialCommunication->Delete();
+    }
+}
+
+
+
+void vtkIGTIGSTKStream::Init()
+{
+    ClearTracker();
+    igstk::RealTimeClock::Initialize();
 
 #ifdef _WIN32 
     //running on a windows system
@@ -136,13 +120,12 @@ void vtkIGTIGSTKStream::Init()
     //serialCommunication->SetLogger( m_Logger );
     //set the communication settings
     //This is the serial port of your device. 'PortNumber2' == COM3 under windows
-    this->SerialCommunication->SetPortNumber(igstk::SerialCommunication::PortNumber0);
-
-    this->SerialCommunication->SetParity(igstk::SerialCommunication::NoParity);
-    this->SerialCommunication->SetBaudRate(igstk::SerialCommunication::BaudRate115200);
-    this->SerialCommunication->SetDataBits(igstk::SerialCommunication::DataBits8);
-    this->SerialCommunication->SetStopBits(igstk::SerialCommunication::StopBits1);
-    this->SerialCommunication->SetHardwareHandshake(igstk::SerialCommunication::HandshakeOff);  
+    this->SerialCommunication->SetPortNumber(this->PortNumber);
+    this->SerialCommunication->SetParity(this->Parity);
+    this->SerialCommunication->SetBaudRate(this->BaudRate);
+    this->SerialCommunication->SetDataBits(this->DataBits);
+    this->SerialCommunication->SetStopBits(this->StopBits);
+    this->SerialCommunication->SetHardwareHandshake(this->HandShake);  
     this->SerialCommunication->OpenCommunication();  
 
     if (this->TrackerType == 1)  // Aurora

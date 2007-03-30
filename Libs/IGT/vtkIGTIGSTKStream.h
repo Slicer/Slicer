@@ -118,7 +118,7 @@ private:
     int Speed;
     int StartTimer;
     float MultiFactor;
-    short TrackerType;  // 0 - Aurora; 1 - Polaris
+    short TrackerType;  // 0 - Polaris; 1 - Aurora 
 
     vtkMatrix4x4 *LocatorMatrix;
     vtkMatrix4x4 *RegMatrix;
@@ -126,6 +126,7 @@ private:
 
     void quaternion2xyz(float* orientation, float *normal, float *transnormal); 
     void ApplyTransform(float *position, float *norm, float *transnorm);
+    void ClearTracker();
 
 };
 
