@@ -30,6 +30,13 @@
 typedef itk::Logger               LoggerType;
 typedef itk::StdStreamLogOutput   LogOutputType;
 
+typedef igstk::SerialCommunication::PortNumberType PortNumberT;
+typedef igstk::SerialCommunication::BaudRateType   BaudRateT;
+typedef igstk::SerialCommunication::DataBitsType   DataBitsT;
+typedef igstk::SerialCommunication::ParityType     ParityT;
+typedef igstk::SerialCommunication::StopBitsType   StopBitsT;
+typedef igstk::SerialCommunication::HandshakeType  HandshakeT;
+
 
 class VTK_IGT_EXPORT vtkIGTIGSTKStream : public vtkObject
 {
@@ -37,6 +44,15 @@ public:
     static vtkIGTIGSTKStream *New();
     vtkTypeRevisionMacro(vtkIGTIGSTKStream,vtkObject);
     void PrintSelf(ostream& os, vtkIndent indent);
+
+
+    vtkSetMacro(PortNumber,PortNumberT);
+    vtkSetMacro(BaudRate,BaudRateT);
+    vtkSetMacro(DataBits,DataBitsT);
+    vtkSetMacro(Parity,ParityT);
+    vtkSetMacro(StopBits,StopBitsT);
+    vtkSetMacro(HandShake,HandshakeT);
+
 
     vtkSetMacro(Speed,int);
     vtkSetMacro(MultiFactor,float);
@@ -51,7 +67,7 @@ public:
     vtkGetObjectMacro(LocatorNormalTransform,vtkTransform);
 
     /**
-     * Constructor
+     * Constructor    vtkSetMacro(StopBits,StopBitsType);    vtkSetMacro(StopBits,StopBitsType);
      */
     vtkIGTIGSTKStream();
 
@@ -63,7 +79,9 @@ public:
 
     void Init();
     void StopPolling();
-    void PollRealtime();
+    void PollRealtime();    
+
+
     void SetLocatorTransforms();
     void ProcessTimerEvents();
 
@@ -79,8 +97,23 @@ private:
 
     LoggerType::Pointer                  Logger;
     LogOutputType::Pointer               LogFileOutput;  // log output to file
-    //ETX
 
+
+    // Communication Parameters
+    /**  Port Number */
+    PortNumberT PortNumber;   
+    /** Baud rate of communication */
+    BaudRateT   BaudRate;  
+    /** Number of bits/byte */
+    DataBitsT   DataBits;
+    /** Parity */
+    ParityT     Parity;
+    /** Stop bits */
+    StopBitsT   StopBits;
+    /** Hardware handshaking */
+    HandshakeT  HandShake;
+
+    //ETX
 
     int Speed;
     int StartTimer;

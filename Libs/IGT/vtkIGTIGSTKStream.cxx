@@ -38,7 +38,7 @@ vtkIGTIGSTKStream::vtkIGTIGSTKStream()
 
 
     this->Speed = 0;
-    this->TrackerType = 0;
+    this->TrackerType = 1;
     this->StartTimer = 0;
     this->LocatorNormalTransform = vtkTransform::New();
     this->LocatorMatrix = vtkMatrix4x4::New(); // Identity
@@ -136,7 +136,7 @@ void vtkIGTIGSTKStream::Init()
     //serialCommunication->SetLogger( m_Logger );
     //set the communication settings
     //This is the serial port of your device. 'PortNumber2' == COM3 under windows
-    this->SerialCommunication->SetPortNumber(igstk::SerialCommunication::PortNumber2);
+    this->SerialCommunication->SetPortNumber(igstk::SerialCommunication::PortNumber0);
 
     this->SerialCommunication->SetParity(igstk::SerialCommunication::NoParity);
     this->SerialCommunication->SetBaudRate(igstk::SerialCommunication::BaudRate115200);
@@ -145,7 +145,7 @@ void vtkIGTIGSTKStream::Init()
     this->SerialCommunication->SetHardwareHandshake(igstk::SerialCommunication::HandshakeOff);  
     this->SerialCommunication->OpenCommunication();  
 
-    if (this->TrackerType == 0)  // Aurora
+    if (this->TrackerType == 1)  // Aurora
     {
         //Instantiate the tracker here
         this->AuroraTracker = igstk::AuroraTracker::New();
@@ -176,7 +176,7 @@ void vtkIGTIGSTKStream::Init()
 
 void vtkIGTIGSTKStream::StopPolling()
 {
-    if (this->TrackerType == 0)  // Aurora
+    if (this->TrackerType == 1)  // Aurora
     {
         this->AuroraTracker->RequestStopTracking();
     }
@@ -196,7 +196,7 @@ void vtkIGTIGSTKStream::PollRealtime()
     std::cout<<"Start data acquisition\n";
 
 
-    if (this->TrackerType == 0)  // Aurora
+    if (this->TrackerType == 1)  // Aurora
     {
         //get the tracking data for all tools
         this->AuroraTracker->RequestUpdateStatus();
