@@ -429,7 +429,6 @@ int Slicer3_main(int argc, char *argv[])
   if (PythonModule == NULL)
     {
     std::cout << "Warning: Failed to initialize python" << std::endl;
-    return 1;
     }
   PyObject* PythonDictionary = PyModule_GetDict(PythonModule);
 
@@ -458,29 +457,40 @@ int Slicer3_main(int argc, char *argv[])
     {
     PyErr_Print();
     std::cout << "Error: Failed to initialize Python" << std::endl;
-    return 1;
-    }
-  interp = (Tcl_Interp*) PyLong_AsLong ( PyDict_GetItemString ( PythonDictionary, "addr" ) );
-  if ( (long)interp == -1 )
-    {
-    std::cout << "Error: Failed to get Tcl interp address from Python" << std::endl;
-    return 1;
-    }
-  Py_DECREF(v);
-  if (Py_FlushLine())
-    {
-    PyErr_Clear();
-    }
-  if (!Tcl_PkgPresent(interp, "Tk", NULL, 0))
-    {
-    std::cout << "Error: Python failed to initialize Tk" << std::endl;
-    return 1;
-    }
+    } else 
+      {
+      interp = (Tcl_Interp*) PyLong_AsLong ( PyDict_GetItemString ( PythonDictionary, "addr" ) );
+      if ( (long)interp == -1 )
+        {
+        std::cout << "Error: Failed to get Tcl interp address from Python" << std::endl;
+        }
+      Py_DECREF(v);
+      }
+    if (Py_FlushLine())
+      {
+      PyErr_Clear();
+      }
 
-  std::cout << "Initialized python: addr: " << (long)interp << std::endl;
-  vtkKWApplication::InitializeTcl(interp, &cout);
-  // interp = vtkKWApplication::InitializeTcl(argc, argv, &cerr, interp);
-  std::cout << "Initialized python: Slicer Interp: " << (long)vtkSlicerApplication::GetInstance()->GetMainInterp() << std::endl;
+  if ( !interp )
+    {
+    interp = vtkKWApplication::InitializeTcl(argc, argv, &cout);
+    if (!interp)
+      {
+      slicerCerr("Error: InitializeTcl failed" << endl );
+      return 1;
+      }
+    }
+  else
+    {
+    std::cout << "Initialized python: addr: " << (long)interp << std::endl;
+    vtkKWApplication::InitializeTcl(interp, &cout);
+    // interp = vtkKWApplication::InitializeTcl(argc, argv, &cerr, interp);
+    std::cout << "Initialized python: Slicer Interp: " << (long)vtkSlicerApplication::GetInstance()->GetMainInterp() << std::endl;
+    if (!Tcl_PkgPresent(interp, "Tk", NULL, 0))
+      {
+      std::cout << "Error: Python failed to initialize Tk" << std::endl;
+      }
+    }
 #else
   interp = vtkKWApplication::InitializeTcl(argc, argv, &cout);
   if (!interp)
