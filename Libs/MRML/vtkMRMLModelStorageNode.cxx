@@ -88,8 +88,6 @@ void vtkMRMLModelStorageNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLModelStorageNode::ReadXMLAttributes(const char** atts)
 {
-    vtkWarningMacro("ReadXMLAttributes: calling vtkMRMLStorageNode read xml");
-
   vtkMRMLStorageNode::ReadXMLAttributes(atts);
 }
 
@@ -148,7 +146,8 @@ int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
   std::string::size_type loc = name.find(".");
   if( loc == std::string::npos ) 
     {
-    vtkErrorMacro("ReadData: no file extension specified");
+    vtkErrorMacro("ReadData: no file extension specified: " << name.c_str());
+    return 0;
     }
   std::string extension = name.substr(loc);
 
