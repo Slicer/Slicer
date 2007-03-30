@@ -2169,6 +2169,7 @@ void vtkNeuroNavGUI::SetIGSTKConnectionParameters()
         float multi = atof(this->MultiFactorEntry->GetWidget()->GetValue());
         this->IGSTKStream->SetMultiFactor(multi);
 
+
         // Device type 
         vtkKWMenuButton *mb = this->DeviceMenuButton->GetWidget();
         if (!strcmp (mb->GetValue(), "Polaris"))   
@@ -2178,6 +2179,7 @@ void vtkNeuroNavGUI::SetIGSTKConnectionParameters()
         else 
         {
             this->IGSTKStream->SetTrackerType(1);
+
         }
 
 
@@ -2196,6 +2198,7 @@ void vtkNeuroNavGUI::SetIGSTKConnectionParameters()
         // Parity 
         mb = this->ParityTypeMenuButton->GetWidget();
         if (!strcmp (mb->GetValue(), "No"))   
+
         {
             this->IGSTKStream->SetParity(igstk::SerialCommunication::NoParity);
         }
@@ -2205,6 +2208,7 @@ void vtkNeuroNavGUI::SetIGSTKConnectionParameters()
         }
         else
         {
+
             this->IGSTKStream->SetParity(igstk::SerialCommunication::EvenParity);
         }
 
