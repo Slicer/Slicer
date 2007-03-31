@@ -219,8 +219,8 @@ void vtkSlicerVolumeFileHeaderWidget::CreateWidget ( )
   this->HeaderDialog = vtkKWDialog::New();
   this->HeaderDialog->SetParent ( this->GetParent());
   this->HeaderDialog->SetTitle("Volume File Header");
-  this->HeaderDialog->SetSize(400, 200);
   this->HeaderDialog->Create ( );
+  this->HeaderDialog->SetSize(350, 350);
   
   this->InfoLabel = vtkKWLabel::New();
   this->InfoLabel->SetParent(this->HeaderDialog);

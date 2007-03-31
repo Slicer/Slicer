@@ -459,12 +459,12 @@ int vtkMRMLVolumeHeaderlessStorageNode::ReadData(vtkMRMLNode *refNode)
     {
     for (int j = 0; j < 3; j++)
       {
-      mat->SetElement(3, j, -(dims[j]-1)/2.0);
+      //mat->SetElement(3, j, (dims[j]-1)/2.0);
       }
     }
 
 
-  volNode->SetRASToIJKMatrix(mat);
+  volNode->SetIJKToRASMatrix(mat);
   mat->Delete();
 
   reader->RemoveObservers( vtkCommand::ProgressEvent,  this->MRMLCallbackCommand);
