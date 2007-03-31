@@ -146,7 +146,7 @@ proc QueryAtlasAddModel {} {
 
   # load the data
   set modelNode [vtkMRMLModelNode New]
-  set modelStorageNode [vtkMRMLModelStorageNode New]
+  set modelStorageNode [vtkMRMLFreeSurferModelStorageNode New]
   set modelDisplayNode [vtkMRMLModelDisplayNode New]
 
   $modelStorageNode SetFileName $::QA(filename)
@@ -165,6 +165,8 @@ proc QueryAtlasAddModel {} {
 
     $::slicer3::MRMLScene AddNode $modelNode
     set ::QA(modelNodeID) [$modelNode GetID]
+  } else {
+    puts stderr "Can't read model $::QA(filename)"
   }
 
   $modelNode Delete
