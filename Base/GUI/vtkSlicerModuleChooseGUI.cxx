@@ -431,7 +431,7 @@ void vtkSlicerModuleChooseGUI::BuildGUI ( vtkKWFrame *appF )
       this->ModulesSearch->SetBorderWidth ( 0 );
       this->ModulesSearch->SetImageToIcon ( this->SlicerModuleNavigationIcons->GetModuleSearchIcon() );
       this->ModulesSearch->IndicatorVisibilityOff ( );
-      this->ModulesSearch->SetBalloonHelpString ("Search for the module entered to the right (or use keyboard Ctrl+F).");
+      this->ModulesSearch->SetBalloonHelpString ("Displays module search results for the text entered to the left (or use keyboard Ctrl+F).");
 
       //--- create a small label to show search context
       vtkKWLabel *colonLabel = vtkKWLabel::New ( );
@@ -544,7 +544,7 @@ void vtkSlicerModuleChooseGUI::BuildGUI ( vtkKWToolbar *tb )
       this->ModulesSearch->SetBorderWidth ( 0 );
       this->ModulesSearch->SetImageToIcon ( this->SlicerModuleNavigationIcons->GetModuleSearchIcon() );
       this->ModulesSearch->IndicatorVisibilityOff ( );
-      this->ModulesSearch->SetBalloonHelpString ("Search for the module entered to the right (or use keyboard Ctrl+F).");
+      this->ModulesSearch->SetBalloonHelpString ("Displays module search results for the text entered to the left (or use keyboard Ctrl+F).");
       tb->AddWidget ( this->ModulesSearch);
 
 
