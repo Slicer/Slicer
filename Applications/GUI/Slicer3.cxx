@@ -224,7 +224,22 @@ void printAllInfo(int argc, char **argv)
   fprintf(stdout, "%s", timeStr);
   fprintf(stdout, " User: %s", getenv("USER"));
   
-  fprintf(stdout, " Machine: %s", getenv("HOSTNAME"));
+  fprintf(stdout, " Machine: ");
+  if (getenv("HOSTNAME") == NULL)
+    {
+    if (getenv("HOST") == NULL)
+      {
+      fprintf(stdout, "(unknown)");
+      }
+    else
+      {
+      fprintf(stdout, "%s", getenv("HOST"));
+      }
+    }
+  else
+    {
+    fprintf(stdout, "%s", getenv("HOSTNAME"));
+    }
   fprintf(stdout, " Platform: ");
 #if defined(linux) || defined(__linux)
   fprintf(stdout, "Linux");
