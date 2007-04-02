@@ -292,7 +292,17 @@ const char * vtkMRMLNode::URLEncodeString(const char *inString)
   // encode double quote
   itksys::SystemTools::ReplaceString(kwInString,
                                      "\"", "%22");
-  return kwInString.c_str();
+
+  const char *inStr = kwInString.c_str();
+  char *returnString = NULL;
+  size_t n = strlen(inStr) + 1;
+  std::cout << "inStr = '" << inStr << "', n = " << n << endl;
+  char *cp1 = new char[n];
+  const char *cp2 = (inStr);
+  returnString = cp1;
+  do { *cp1++ = *cp2++; } while ( --n );
+
+  return returnString;
 }
 
 //----------------------------------------------------------------------------
@@ -324,6 +334,15 @@ const char * vtkMRMLNode::URLDecodeString(const char *inString)
   // decode %
   itksys::SystemTools::ReplaceString(kwInString,
                                      "%25", "%");
-  return kwInString.c_str();
+   const char *inStr = kwInString.c_str();
+  char *returnString = NULL;
+  size_t n = strlen(inStr) + 1;
+  std::cout << "inStr = '" << inStr << "', n = " << n << endl;
+  char *cp1 = new char[n];
+  const char *cp2 = (inStr);
+  returnString = cp1;
+  do { *cp1++ = *cp2++; } while ( --n );
+
+  return returnString;
 }
 
