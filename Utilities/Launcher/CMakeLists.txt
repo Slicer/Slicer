@@ -39,9 +39,14 @@ CONFIGURE_FILE ( "${CMAKE_CURRENT_SOURCE_DIR}/Slicer3Launchers/${launcher_name}"
                  "${launcher_binary}"
                  COPYONLY )
 
+INSTALL ( PROGRAMS "${launcher_binary}" DESTINATION "" )
+
 CONFIGURE_FILE ( "${CMAKE_CURRENT_SOURCE_DIR}/3DSlicerLogoICOimages/slicer3.ico"
                  "${Slicer3_BINARY_DIR}/lib"
                  COPYONLY )
+INSTALL(
+  FILES ${Slicer3_BINARY_DIR}/lib/slicer3.ico
+  DESTINATION lib
+)
 
-INSTALL ( PROGRAMS "${launcher_binary}" DESTINATION "" )
 
