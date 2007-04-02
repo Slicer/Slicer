@@ -31,6 +31,8 @@ proc ImportSlicer2Scene {sceneFile} {
   ImportElement $root
 
   $parser Delete
+
+  $::slicer3::MRMLScene SetErrorCode 0
 }
 
 #
