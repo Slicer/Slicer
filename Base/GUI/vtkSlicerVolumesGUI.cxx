@@ -186,7 +186,6 @@ vtkSlicerVolumesGUI::~vtkSlicerVolumesGUI ( )
 
   this->Built = false;
   this->SetModuleLogic ( NULL );
-   vtkSetMRMLNodeMacro (this->VolumeNode, NULL );
 }
 
 
