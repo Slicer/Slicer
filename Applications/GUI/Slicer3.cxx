@@ -220,7 +220,7 @@ void printAllInfo(int argc, char **argv)
   fprintf(stdout, " ProgramVersion: $Revision$ CVS: $Id$ TimeStamp: ");
   time ( &rawtime );
   timeInfo = localtime (&rawtime);
-  strftime (timeStr, 22, "%D-%k-%M-%S-%Z", timeInfo);
+  strftime (timeStr, 22, "%D-%H-%M-%S-%Z", timeInfo);
   fprintf(stdout, "%s", timeStr);
   fprintf(stdout, " User: %s", getenv("USER"));
   
