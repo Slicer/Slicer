@@ -75,10 +75,11 @@ puts stderr "SLICER_HOME is $::SLICER_HOME"
 #set ::SLICER_TAG "http://www.na-mic.org/svn/Slicer3/branches/Slicer3.0-PreAHMBeta"
 set ::SLICER_TAG "http://www.na-mic.org/svn/Slicer3/trunk"
 set ::CMAKE_TAG "CMake-2-4-2"
+#set ::TEEM_TAG "HEAD"
 set ::TEEM_TAG "Teem-1-9-0-patches"
 set ::KWWidgets_TAG "HEAD"
 set ::VTK_TAG "VTK-5-0"
-set ::ITK_TAG ITK-3-0
+set ::ITK_TAG ITK-3-2
 set ::TCL_TAG "core-8-4-6"
 set ::TK_TAG "core-8-4-6"
 set ::ITCL_TAG "itcl-3-2-1"
