@@ -49,7 +49,7 @@
 // The GE5 reader was fixed just after the itk 3.2 release
 //
 #if (ITK_VERSION_MAJOR > 3) || \
-((ITK_VERSION_MAJOR == 3 && ITK_VERSION_MINOR > 2))
+((ITK_VERSION_MAJOR == 3 && ITK_VERSION_MINOR >= 2))
 #define USE_ITKGE5READER
 #endif
 
