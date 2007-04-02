@@ -849,6 +849,19 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
                        this->ModuleDescriptionObject.GetDescription().c_str(),
                        this->ModuleDescriptionObject.GetContributor().c_str());
 
+  // If the module has a logo, then add it to logo frame
+  if (this->GetLogo())
+    {
+    vtkKWLabel *logoLabel = vtkKWLabel::New();
+    logoLabel->SetParent( this->GetLogoFrame() );
+    logoLabel->Create();
+    logoLabel->SetImageToIcon( this->GetLogo() );
+    app->Script("pack %s", logoLabel->GetWidgetName() );
+    
+    (*this->InternalWidgetMap)["LogoLabel"] = logoLabel;
+    logoLabel->Delete();
+    }
+  
   // Make a frame for the module parameters
   vtkSlicerModuleCollapsibleFrame *moduleFrame = vtkSlicerModuleCollapsibleFrame::New ( );
   moduleFrame->SetParent ( this->UIPanel->GetPageWidget ( title.c_str() ) );
