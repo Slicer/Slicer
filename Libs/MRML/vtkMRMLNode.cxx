@@ -296,7 +296,6 @@ const char * vtkMRMLNode::URLEncodeString(const char *inString)
   const char *inStr = kwInString.c_str();
   char *returnString = NULL;
   size_t n = strlen(inStr) + 1;
-  std::cout << "inStr = '" << inStr << "', n = " << n << endl;
   char *cp1 = new char[n];
   const char *cp2 = (inStr);
   returnString = cp1;
@@ -337,7 +336,6 @@ const char * vtkMRMLNode::URLDecodeString(const char *inString)
    const char *inStr = kwInString.c_str();
   char *returnString = NULL;
   size_t n = strlen(inStr) + 1;
-  std::cout << "inStr = '" << inStr << "', n = " << n << endl;
   char *cp1 = new char[n];
   const char *cp2 = (inStr);
   returnString = cp1;
