@@ -24,6 +24,7 @@ SET(ModuleDescriptionParser_SRCS
   ModuleProcessInformation.cxx
   ModuleLogo.cxx
   ModuleFactory.cxx
+  BatchMakeUtilities.cxx
 )
 
 IF (USE_BFD)
