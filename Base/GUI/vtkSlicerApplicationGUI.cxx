@@ -857,7 +857,10 @@ void vtkSlicerApplicationGUI::SetCurrentModuleToHome (  )
           vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
           const char *name = this->GetApplicationToolbar()->GetModuleChooseGUI()->GetModuleNavigator()->GetCurrentModuleName ( );
           //--- save to registry.
-          app->SetHomeModule ( name );
+          if (name != NULL)
+            {
+            app->SetHomeModule ( name );
+            }
           this->GetMainSlicerWindow()->GetApplicationSettingsInterface()->Update();
           }
         }
