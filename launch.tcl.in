@@ -57,8 +57,9 @@ if { [string match -nocase "windows*" $::tcl_platform(os)] } {
 if { [file exists $::env(SLICER_HOME)/bin/vtk$ext] } {
   set installed 1
 }
+
 set ::BUILD_SUBDIR  ""
-if { [string match -nocase "windows*" $::tcl_platform(os)] } {
+if { !$installed && [string match -nocase "windows*" $::tcl_platform(os)] } {
   set ::BUILD_SUBDIR  @CMAKE_BUILD_TYPE@
 }
 
