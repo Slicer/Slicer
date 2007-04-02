@@ -47,6 +47,7 @@ std::string GenerateBatchMakeWrapper(const ModuleDescription& module)
   mp2bm["point"] = "4";  // string ???
   
   // BatchMake format preamble
+  wrapper << "<?xml version=\"1.0\" encoding=\"utf-8\"?>" << std::endl;
   wrapper << "<BatchMakeApplicationWrapper>" << std::endl;
   wrapper << indent1 << "<BatchMakeApplicationWrapperVersion>1.0</BatchMakeApplicationWrapper>" << std::endl;
   wrapper << indent1 << "<Module>" << std::endl;
