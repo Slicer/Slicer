@@ -585,7 +585,6 @@ int Slicer3_main(int argc, char *argv[])
       if ( returnCode )
         {
         slicerCerr("Load Custom Icons: " << cmd.c_str() << endl);
-        return ( returnCode );
         }
     }
 #endif
