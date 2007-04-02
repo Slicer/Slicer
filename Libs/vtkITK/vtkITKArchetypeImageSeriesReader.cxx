@@ -337,111 +337,118 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
 
   itk::ImageIOBase::Pointer imageIO = NULL;
 
-  // If there is only one file in the series, just use an image file reader
-  if (this->FileNames.size() == 1)
+  try
     {
-    itk::OrientImageFilter<ImageType,ImageType>::Pointer orient =
-      itk::OrientImageFilter<ImageType,ImageType>::New();
-    itk::ImageFileReader<ImageType>::Pointer imageReader =
-      itk::ImageFileReader<ImageType>::New();
-    imageReader->SetFileName(this->FileNames[0].c_str());
-    if (isDicomFile)
+    // If there is only one file in the series, just use an image file reader
+    if (this->FileNames.size() == 1)
       {
-      imageReader->SetImageIO(dicomIO);
-      }
-
-    if (this->UseNativeCoordinateOrientation)
-      {
-      imageReader->UpdateOutputInformation();
-      filter = imageReader;
-      }
-    else
-      {
-      orient->SetInput(imageReader->GetOutput());
-      orient->UseImageDirectionOn();
-      orient->SetDesiredCoordinateOrientation(this->DesiredCoordinateOrientation);
-      orient->UpdateOutputInformation();
-      filter = orient;
-      }
-    for (int i = 0; i < 3; i++)
-      {
-      spacing[i] = filter->GetOutput()->GetSpacing()[i];
-      origin[i] = filter->GetOutput()->GetOrigin()[i];
-
-      // Get IJK to RAS direction vector
-      for ( unsigned int j=0; j < filter->GetOutput()->GetImageDimension (); j++ )
+      itk::OrientImageFilter<ImageType,ImageType>::Pointer orient =
+        itk::OrientImageFilter<ImageType,ImageType>::New();
+      itk::ImageFileReader<ImageType>::Pointer imageReader =
+        itk::ImageFileReader<ImageType>::New();
+      imageReader->SetFileName(this->FileNames[0].c_str());
+      if (isDicomFile)
         {
-        IjkToLpsMatrix->SetElement(j, i, spacing[i]*filter->GetOutput()->GetDirection()[j][i]);
+        imageReader->SetImageIO(dicomIO);
         }
-      }
-    region = filter->GetOutput()->GetLargestPossibleRegion();
-    extent[0] = region.GetIndex()[0];
-    extent[1] = region.GetIndex()[0] + region.GetSize()[0] - 1;
-    extent[2] = region.GetIndex()[1];
-    extent[3] = region.GetIndex()[1] + region.GetSize()[1] - 1;
-    extent[4] = region.GetIndex()[2];
-    extent[5] = region.GetIndex()[2] + region.GetSize()[2] - 1;
-    imageIO = imageReader->GetImageIO();
-    if (imageIO.GetPointer() == NULL) 
-      {
-        itkGenericExceptionMacro ( "vtkITKArchetypeImageSeriesReader::ExecuteInformation: ImageIO for file " << fileNameCollapsed.c_str() << " does not exist.");
-        return;
-      }
-    }
-  else
-    {
-    itk::OrientImageFilter<ImageType,ImageType>::Pointer orient =
-      itk::OrientImageFilter<ImageType,ImageType>::New();
-    itk::ImageSeriesReader<ImageType>::Pointer seriesReader =
-      itk::ImageSeriesReader<ImageType>::New();
-    seriesReader->SetFileNames(this->FileNames);
-    if (isDicomFile)
-      {
-        seriesReader->SetImageIO(dicomIO);
-      }
-    else 
-      {
-        imageIO = seriesReader->GetImageIO();
-        if (imageIO.GetPointer() == NULL) 
+
+      if (this->UseNativeCoordinateOrientation)
+        {
+        imageReader->UpdateOutputInformation();
+        filter = imageReader;
+        }
+      else
+        {
+        orient->SetInput(imageReader->GetOutput());
+        orient->UseImageDirectionOn();
+        orient->SetDesiredCoordinateOrientation(this->DesiredCoordinateOrientation);
+        orient->UpdateOutputInformation();
+        filter = orient;
+        }
+      for (int i = 0; i < 3; i++)
+        {
+        spacing[i] = filter->GetOutput()->GetSpacing()[i];
+        origin[i] = filter->GetOutput()->GetOrigin()[i];
+
+        // Get IJK to RAS direction vector
+        for ( unsigned int j=0; j < filter->GetOutput()->GetImageDimension (); j++ )
           {
-            //itkGenericExceptionMacro ( "vtkITKArchetypeImageSeriesReader::ExecuteInformation: ImageIO for file " << fileNameCollapsed.c_str() << " does not exist.");
-            //return;  TODO - figure out why imageIO is NULL for image series with more than one file
+          IjkToLpsMatrix->SetElement(j, i, spacing[i]*filter->GetOutput()->GetDirection()[j][i]);
           }
-      }
-    if (this->UseNativeCoordinateOrientation)
-      {
-      seriesReader->UpdateOutputInformation();
-      filter = seriesReader;
+        }
+      region = filter->GetOutput()->GetLargestPossibleRegion();
+      extent[0] = region.GetIndex()[0];
+      extent[1] = region.GetIndex()[0] + region.GetSize()[0] - 1;
+      extent[2] = region.GetIndex()[1];
+      extent[3] = region.GetIndex()[1] + region.GetSize()[1] - 1;
+      extent[4] = region.GetIndex()[2];
+      extent[5] = region.GetIndex()[2] + region.GetSize()[2] - 1;
+      imageIO = imageReader->GetImageIO();
+      if (imageIO.GetPointer() == NULL) 
+        {
+          itkGenericExceptionMacro ( "vtkITKArchetypeImageSeriesReader::ExecuteInformation: ImageIO for file " << fileNameCollapsed.c_str() << " does not exist.");
+          return;
+        }
       }
     else
       {
-      orient->SetInput(seriesReader->GetOutput());
-      orient->UseImageDirectionOn();
-      orient->SetDesiredCoordinateOrientation(this->DesiredCoordinateOrientation);
-      orient->UpdateOutputInformation();
-      filter = orient;
-      }
-    for (int i = 0; i < 3; i++)
-      {
-      spacing[i] = filter->GetOutput()->GetSpacing()[i];
-      origin[i] = filter->GetOutput()->GetOrigin()[i];
-      // Get IJK to RAS direction vector
-      for ( unsigned int j=0; j < filter->GetOutput()->GetImageDimension (); j++ )
+      itk::OrientImageFilter<ImageType,ImageType>::Pointer orient =
+        itk::OrientImageFilter<ImageType,ImageType>::New();
+      itk::ImageSeriesReader<ImageType>::Pointer seriesReader =
+        itk::ImageSeriesReader<ImageType>::New();
+      seriesReader->SetFileNames(this->FileNames);
+      if (isDicomFile)
         {
-        IjkToLpsMatrix->SetElement(j, i, spacing[i]*filter->GetOutput()->GetDirection()[j][i]);
+          seriesReader->SetImageIO(dicomIO);
         }
-      }
+      else 
+        {
+          imageIO = seriesReader->GetImageIO();
+          if (imageIO.GetPointer() == NULL) 
+            {
+              //itkGenericExceptionMacro ( "vtkITKArchetypeImageSeriesReader::ExecuteInformation: ImageIO for file " << fileNameCollapsed.c_str() << " does not exist.");
+              //return;  TODO - figure out why imageIO is NULL for image series with more than one file
+            }
+        }
+      if (this->UseNativeCoordinateOrientation)
+        {
+        seriesReader->UpdateOutputInformation();
+        filter = seriesReader;
+        }
+      else
+        {
+        orient->SetInput(seriesReader->GetOutput());
+        orient->UseImageDirectionOn();
+        orient->SetDesiredCoordinateOrientation(this->DesiredCoordinateOrientation);
+        orient->UpdateOutputInformation();
+        filter = orient;
+        }
+      for (int i = 0; i < 3; i++)
+        {
+        spacing[i] = filter->GetOutput()->GetSpacing()[i];
+        origin[i] = filter->GetOutput()->GetOrigin()[i];
+        // Get IJK to RAS direction vector
+        for ( unsigned int j=0; j < filter->GetOutput()->GetImageDimension (); j++ )
+          {
+          IjkToLpsMatrix->SetElement(j, i, spacing[i]*filter->GetOutput()->GetDirection()[j][i]);
+          }
+        }
 
-    region = filter->GetOutput()->GetLargestPossibleRegion();
-    extent[0] = region.GetIndex()[0];
-    extent[1] = region.GetIndex()[0] + region.GetSize()[0] - 1;
-    extent[2] = region.GetIndex()[1];
-    extent[3] = region.GetIndex()[1] + region.GetSize()[1] - 1;
-    extent[4] = region.GetIndex()[2];
-    extent[5] = region.GetIndex()[2] + region.GetSize()[2] - 1;
-    imageIO = seriesReader->GetImageIO();
+      region = filter->GetOutput()->GetLargestPossibleRegion();
+      extent[0] = region.GetIndex()[0];
+      extent[1] = region.GetIndex()[0] + region.GetSize()[0] - 1;
+      extent[2] = region.GetIndex()[1];
+      extent[3] = region.GetIndex()[1] + region.GetSize()[1] - 1;
+      extent[4] = region.GetIndex()[2];
+      extent[5] = region.GetIndex()[2] + region.GetSize()[2] - 1;
+      imageIO = seriesReader->GetImageIO();
+      }
     }
-  
+   catch (...)
+    {
+    IjkToLpsMatrix->Delete();
+    throw 1;
+    }
   // Transform from LPS to RAS
   vtkMatrix4x4* LpsToRasMatrix = vtkMatrix4x4::New();
   LpsToRasMatrix->Identity();

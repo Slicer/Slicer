@@ -318,7 +318,8 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents ( vtkObject *caller,
       vtkSlicerVolumesLogic* volumeLogic = this->Logic;
       volumeLogic->AddObserver(vtkCommand::ProgressEvent,  this->LogicCallbackCommand);
 
-      vtkMRMLVolumeNode *volumeNode = volumeLogic->AddArchetypeVolume( fileName, centered, labelMap, this->NameEntry->GetWidget()->GetValue() );
+      vtkMRMLVolumeNode *volumeNode = NULL;
+      volumeNode = volumeLogic->AddArchetypeVolume( fileName, centered, labelMap, this->NameEntry->GetWidget()->GetValue() );
       if ( volumeNode == NULL ) 
         {
         this->VolumeNode = NULL;
