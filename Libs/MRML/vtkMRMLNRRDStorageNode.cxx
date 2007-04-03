@@ -414,12 +414,18 @@ int vtkMRMLNRRDStorageNode::WriteData(vtkMRMLNode *refNode)
   writer->SetBValues(bValues);
   
   writer->Write();
+  int writeFlag = 1;
+  if (writer->GetWriteError())
+    {
+    vtkErrorMacro("ERROR writing NRRD file " << writer->GetFileName());    
+    writeFlag = 0;
+    }
   writer->Delete();
   
   ijkToRas->Delete();
   mf->Delete();
 
-  return 1;
+  return writeFlag;
 
 }
 
