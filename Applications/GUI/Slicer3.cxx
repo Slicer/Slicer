@@ -386,6 +386,7 @@ int Slicer3_main(int argc, char *argv[])
     homeEnv += slicerBinDir + "/../";
     cout << "Set environment: " << homeEnv.c_str() << endl;
     vtkKWApplication::PutEnv(const_cast <char *> (homeEnv.c_str()));
+    vtksys::SystemTools::GetEnv("SLICER_HOME", slicerHome);
     }
 
   std::string tclEnv = "TCL_LIBRARY=";
@@ -595,7 +596,7 @@ int Slicer3_main(int argc, char *argv[])
       std::string cmd;
       int returnCode;
 
-      cmd =  "wm iconbitmap . -default $::env(SLICER_HOME)/lib/slicer3.ico";
+      cmd =  "wm iconbitmap . -default "+ slicerHome + "lib/slicer3.ico";
       returnCode = Slicer3_Tcl_Eval( interp, cmd.c_str() );
       if ( returnCode )
         {
