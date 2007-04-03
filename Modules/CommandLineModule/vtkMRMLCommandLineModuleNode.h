@@ -25,6 +25,10 @@
 
 #include "ModuleDescription.h"
 
+//BTX
+class ModuleDescriptionMap;
+//ETX
+
 class VTK_COMMANDLINEMODULE_EXPORT vtkMRMLCommandLineModuleNode : public vtkMRMLNode
 {
   public:
@@ -86,6 +90,15 @@ class VTK_COMMANDLINEMODULE_EXPORT vtkMRMLCommandLineModuleNode : public vtkMRML
 
   std::string GetParameterAsString(const std::string &name) const;
 //ETX  
+
+  // Description:
+  // Methods to manage the master list of module description prototypes
+//BTX
+  static void RegisterModuleDescription(ModuleDescription& md);
+  static bool HasRegisteredModule(const std::string& name);
+  static ModuleDescription GetRegisteredModuleDescription(const std::string& name);
+  static void ClearRegisteredModules();
+// ETX
   
 private:
   vtkMRMLCommandLineModuleNode();
@@ -95,6 +108,8 @@ private:
 
   ModuleDescription ModuleDescriptionObject;
 
+  static ModuleDescriptionMap *RegisteredModules;
+  
   //BTX
   StatusType m_Status;
   //ETX

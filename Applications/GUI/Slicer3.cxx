@@ -1235,6 +1235,11 @@ int Slicer3_main(int argc, char *argv[])
       moduleFactory.SetModuleDiscoveryMessageCallback( SplashMessage );
       moduleFactory.Scan();
 
+      // Register the node type for the command line modules
+      vtkMRMLCommandLineModuleNode* clmNode = vtkMRMLCommandLineModuleNode::New();
+      scene->RegisterNodeClass(clmNode);
+      clmNode->Delete();
+      
       // add the modules to the available modules
       moduleNames = moduleFactory.GetModuleNames();
       mit = moduleNames.begin();
@@ -1251,6 +1256,9 @@ int Slicer3_main(int argc, char *argv[])
         commandLineModuleGUI
           ->SetModuleDescription( moduleFactory.GetModuleDescription(*mit) );
 
+        // Register the module description in the master list
+        vtkMRMLCommandLineModuleNode::RegisterModuleDescription( moduleFactory.GetModuleDescription(*mit) );
+        
         // Configure the Logic, GUI, and add to app
         commandLineModuleLogic->SetAndObserveMRMLScene ( scene );
         commandLineModuleLogic->SetApplicationLogic (appLogic);

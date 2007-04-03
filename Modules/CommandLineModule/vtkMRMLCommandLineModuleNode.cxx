@@ -15,12 +15,17 @@ Version:   $Revision: 1.2 $
 #include <string>
 #include <iostream>
 #include <sstream>
+#include <map>
 
 #include "vtkObjectFactory.h"
 
 #include "vtkMRMLCommandLineModuleNode.h"
 #include "vtkMRMLScene.h"
 
+// Private implementaton of an std::map
+class ModuleDescriptionMap : public std::map<std::string, ModuleDescription> {};
+
+ModuleDescriptionMap* vtkMRMLCommandLineModuleNode::RegisteredModules = new ModuleDescriptionMap;
 
 //------------------------------------------------------------------------------
 vtkMRMLCommandLineModuleNode* vtkMRMLCommandLineModuleNode::New()
@@ -65,37 +70,57 @@ vtkMRMLCommandLineModuleNode::~vtkMRMLCommandLineModuleNode()
 //----------------------------------------------------------------------------
 void vtkMRMLCommandLineModuleNode::WriteXML(ostream& of, int nIndent)
 {
-  Superclass::WriteXML(of, nIndent);
+  // Serialize a CommandLineModule node.
+  //
+  // Only need to write out enough information from the
+  // ModuleDescription such that we can recognize the node type.  When
+  // we reconstitute a node, we will start with a copy of the
+  // prototype node for that module and then overwrite individual
+  // parameter values using the parameter values indicated here.
 
-  // Write all MRML node attributes into output stream
+
+  // Start by having the superclass write its information
+  Superclass::WriteXML(of, nIndent);
 
   vtkIndent indent(nIndent);
 
-//   {
-//     std::stringstream ss;
-//     ss << this->Conductance;
-//     of << indent << "Conductance='" << ss.str() << "' ";
-//   }
-//   {
-//     std::stringstream ss;
-//     ss << this->NumberOfIterations;
-//     of << indent << "NumberOfIterations='" << ss.str() << "' ";
-//   }
-//   {
-//     std::stringstream ss;
-//     ss << this->TimeStep;
-//     of << indent << "TimeStep='" << ss.str() << "' ";
-//   }
-//   {
-//     std::stringstream ss;
-//     ss << this->InputVolumeRef;
-//     of << indent << "InputVolumeRef='" << ss.str() << "' ";
-//   }
-//   {
-//     std::stringstream ss;
-//     ss << this->OutputVolumeRef;
-//     of << indent << "OutputVolumeRef='" << ss.str() << "' ";
-//   }
+  const ModuleDescription& module = this->GetModuleDescription();
+
+  // Need to write out module description and parameters as
+  // attributes.  Only need to write out the module title and version
+  // in order to be able recognize the node type.  Then we just need
+  // to write out each parameter name and default.  Note that any
+  // references to other nodes are already stored as IDs. So we write
+  // out those IDs.
+  //
+  of << " title=\"" << module.GetTitle() << "\"";
+  of << " version=\"" << module.GetVersion() << "\"";
+  
+  // Loop over the parameter groups, writing each parameter.  Note
+  // that the parameter names are unique.
+  std::vector<ModuleParameterGroup>::const_iterator pgbeginit
+    = module.GetParameterGroups().begin();
+  std::vector<ModuleParameterGroup>::const_iterator pgendit
+    = module.GetParameterGroups().end();
+  std::vector<ModuleParameterGroup>::const_iterator pgit;
+
+  
+  for (pgit = pgbeginit; pgit != pgendit; ++pgit)
+    {
+    // iterate over each parameter in this group
+    std::vector<ModuleParameter>::const_iterator pbeginit
+      = (*pgit).GetParameters().begin();
+    std::vector<ModuleParameter>::const_iterator pendit
+      = (*pgit).GetParameters().end();
+    std::vector<ModuleParameter>::const_iterator pit;
+
+    for (pit = pbeginit; pit != pendit; ++pit)
+      {
+      of << " " << (*pit).GetName()
+         << "=\"" << (*pit).GetDefault() << "\"";
+      }
+    }
+  
 }
 
 //----------------------------------------------------------------------------
@@ -103,44 +128,79 @@ void vtkMRMLCommandLineModuleNode::ReadXMLAttributes(const char** atts)
 {
   vtkMRMLNode::ReadXMLAttributes(atts);
 
-  // Read all MRML node attributes from two arrays of names and values
-//   const char* attName;
-//   const char* attValue;
-//   while (*atts != NULL) 
-//     {
-//     attName = *(atts++);
-//     attValue = *(atts++);
-//     if (!strcmp(attName, "Conductance")) 
-//       {
-//       std::stringstream ss;
-//       ss << attValue;
-//       ss >> this->Conductance;
-//       }
-//     else if (!strcmp(attName, "NumberOfIterations")) 
-//       {
-//       std::stringstream ss;
-//       ss << attValue;
-//       ss >> this->NumberOfIterations;
-//       }
-//     else if (!strcmp(attName, "TimeStep")) 
-//       {
-//       std::stringstream ss;
-//       ss << attValue;
-//       ss >> this->TimeStep;
-//       }
-//     else if (!strcmp(attName, "InputVolumeRef"))
-//       {
-//       std::stringstream ss;
-//       ss << attValue;
-//       ss >> this->InputVolumeRef;
-//       }
-//     else if (!strcmp(attName, "OutputVolumeRef"))
-//       {
-//       std::stringstream ss;
-//       ss << attValue;
-//       ss >> this->OutputVolumeRef;
-//       }
-//     }
+  // To reconstitute a CommandLineModule node:
+  //
+  // 1. Find the prototype node from the "title" and "version".
+  // 2. Copy the prototype node into the current node.
+  // 3. Override parameter values with the attributes (attributes not
+  // consumed by the superclass or known attributes from the prototype
+  // node).
+  //
+  // Referenced nodes are stored as IDs.  Do we need to remap them at all?
+
+  // first look for the title which we need to find the prototype node
+  std::string moduleTitle;
+  std::string moduleVersion;
+
+  const char **tatts = atts;
+  const char *attName;
+  const char *attValue;
+  while (*tatts)
+    {
+    attName = *(tatts++);
+    attValue = *(tatts++);
+
+    if (!strcmp(attName, "title"))
+      {
+      moduleTitle = attValue;
+      }
+    else if (!strcmp(attName, "version"))
+      {
+      moduleVersion = attValue;
+      }
+    }
+
+  // Set an attribute on the node based on the module title so that
+  // the node selectors can filter on it.
+  this->SetAttribute("CommandLineModule", moduleTitle.c_str());
+  
+  // look up the module description from the library
+  if (vtkMRMLCommandLineModuleNode::HasRegisteredModule( moduleTitle ))
+    {
+    this->ModuleDescriptionObject =
+     vtkMRMLCommandLineModuleNode::GetRegisteredModuleDescription(moduleTitle);
+    }
+  else
+    {
+    // can't locate the module, return;
+    return;
+    }
+
+  // Verify the version
+  if (moduleVersion != this->ModuleDescriptionObject.GetVersion())
+    {
+    std::string msg = "Command line module " + moduleTitle + " is version \""
+      + this->ModuleDescriptionObject.GetVersion()
+      + "\" but parameter set from MRML file is version \""
+      + moduleVersion
+      + "\". Parameter set may not load properly,";
+      
+    vtkWarningMacro(<< msg.c_str());
+    }
+  
+  // run through the attributes and pull out any attributes for this
+  // module
+  tatts = atts;
+  while (*tatts)
+    {
+    attName = *(tatts++);
+    attValue = *(tatts++);
+
+    if (this->ModuleDescriptionObject.HasParameter(attName))
+      {
+      this->ModuleDescriptionObject.SetParameterDefaultValue(attName,attValue);
+      }
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -308,4 +368,46 @@ vtkMRMLCommandLineModuleNode
 ::GetStatus()
 {
   return this->m_Status;
+}
+
+
+bool
+vtkMRMLCommandLineModuleNode
+::HasRegisteredModule(const std::string& name)
+{
+  ModuleDescriptionMap::iterator mit;
+
+  mit = (*vtkMRMLCommandLineModuleNode::RegisteredModules).find(name);
+
+  return mit != (*vtkMRMLCommandLineModuleNode::RegisteredModules).end();
+}
+
+ModuleDescription
+vtkMRMLCommandLineModuleNode
+::GetRegisteredModuleDescription(const std::string& name)
+{
+  ModuleDescriptionMap::iterator mit;
+
+  mit = (*vtkMRMLCommandLineModuleNode::RegisteredModules).find(name);
+
+  if (mit != (*vtkMRMLCommandLineModuleNode::RegisteredModules).end())
+    {
+    return (*mit).second;
+    }
+
+  return ModuleDescription();
+}
+
+void
+vtkMRMLCommandLineModuleNode
+::RegisterModuleDescription(ModuleDescription& md)
+{
+  (*vtkMRMLCommandLineModuleNode::RegisteredModules)[md.GetTitle()] = md;
+}
+
+void
+vtkMRMLCommandLineModuleNode
+::ClearRegisteredModules()
+{
+  (*vtkMRMLCommandLineModuleNode::RegisteredModules).clear();
 }

@@ -838,9 +838,6 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
   std::string title = this->ModuleDescriptionObject.GetTitle();
   
   vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-  vtkMRMLCommandLineModuleNode* node = vtkMRMLCommandLineModuleNode::New();
-  this->Logic->GetMRMLScene()->RegisterNodeClass(node);
-  node->Delete();
 
   this->UIPanel->AddPage ( title.c_str(), title.c_str(), NULL );
 
@@ -881,8 +878,8 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
   this->CommandLineModuleNodeSelector->SetParent( moduleFrame->GetFrame() );
   this->CommandLineModuleNodeSelector->Create();
   this->CommandLineModuleNodeSelector->SetMRMLScene(this->Logic->GetMRMLScene());
-  this->CommandLineModuleNodeSelector->UpdateMenu();
-
+  this->CommandLineModuleNodeSelector->SetSelected(NULL); // force empty select
+  
   this->CommandLineModuleNodeSelector->SetBorderWidth(2);
   this->CommandLineModuleNodeSelector->SetReliefToFlat();
   this->CommandLineModuleNodeSelector->SetLabelText( "Parameter set");
@@ -911,7 +908,7 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
   std::vector<ModuleParameterGroup>::const_iterator pgendit
     = this->ModuleDescriptionObject.GetParameterGroups().end();
   std::vector<ModuleParameterGroup>::const_iterator pgit;
-  
+
   for (pgit = pgbeginit; pgit != pgendit; ++pgit)
     {
     // each parameter group is its own labeled frame
