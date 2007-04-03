@@ -28,12 +28,16 @@
 #include "vtkMRMLScene.h"
 #include "vtkMRMLVolumeArchetypeStorageNode.h"
 #include "vtkMRMLModelStorageNode.h"
-#include "vtkMRMLNRRDStorageNode.h"
 #include "vtkMRMLVolumeDisplayNode.h"
 #include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
 #include "vtkMRMLDiffusionWeightedVolumeDisplayNode.h"
 #include "vtkMRMLModelDisplayNode.h"
 #include "vtkSlicerTask.h"
+
+#ifdef USE_TEEM
+#include "vtkMRMLNRRDStorageNode.h"
+#endif
+
 
 #include "itksys/SystemTools.hxx"
 
@@ -621,7 +625,9 @@ void vtkSlicerApplicationLogic::ProcessReadData()
       else if (dtvnd || dwvnd)
         {
         // Load a diffusion tensor or a diffusion weighted node
+#if USE_TEEM
         in = vtkMRMLNRRDStorageNode::New();
+#endif
         if (dtvnd)
           {
           disp = vtkMRMLDiffusionTensorVolumeDisplayNode::New();
