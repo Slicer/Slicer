@@ -305,12 +305,15 @@ void vtkSlicerModuleChooseGUI::SelectModule ( const char *moduleName )
           }
         // Enter selected module.
         vtkSlicerModuleGUI *currentModule = app->GetModuleGUIByName( moduleName );        
-        currentModule->Enter ( );
-        
-        this->RaiseModule ( moduleName );
-        this->GetModuleNavigator()->AddModuleNameToHistoryList ( moduleName );
-        this->PopulateHistoryListMenu ( );
-        this->GetModuleNavigator()->AddModuleNameToNavigationList ( moduleName );
+        if ( currentModule )
+          {
+          currentModule->Enter ( );
+          
+          this->RaiseModule ( moduleName );
+          this->GetModuleNavigator()->AddModuleNameToHistoryList ( moduleName );
+          this->PopulateHistoryListMenu ( );
+          this->GetModuleNavigator()->AddModuleNameToNavigationList ( moduleName );
+          }
         }
       else
         {
