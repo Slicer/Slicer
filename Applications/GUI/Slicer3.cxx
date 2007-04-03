@@ -1242,9 +1242,6 @@ int Slicer3_main(int argc, char *argv[])
         {
         // slicerCerr(moduleFactory.GetModuleDescription(*mit) << endl);
 
-        // For now, create vtkCommandLineModule* items. When the
-        // ModuleFactory can discover shared object modules, then we'll
-        // come back and generalize this.
         vtkCommandLineModuleGUI *commandLineModuleGUI
           = vtkCommandLineModuleGUI::New();
         vtkCommandLineModuleLogic *commandLineModuleLogic
