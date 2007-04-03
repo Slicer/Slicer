@@ -722,7 +722,10 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
     if (out)
       {
       out->SetFileName( (*id2fn).second.c_str() );
-      out->WriteData( nd );
+      if (!out->WriteData( nd ))
+        {
+        vtkErrorMacro("ERROR writing file " << out->GetFileName());
+        }
       out->Delete();
       }
     }
