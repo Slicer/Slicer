@@ -133,10 +133,12 @@ int main(int argc, char * argv[])
     if (infile == NULL)
       {
       std::cerr << "ERROR: cannot open input volume file " << InputVolume << endl;
-      char waiting;
-      std::cout << "Press a key and hit return: ";
-      std::cin >> waiting;
-     
+      if (debug)
+        {
+        char waiting;
+        std::cout << "Press a key and hit return: ";
+        std::cin >> waiting;
+        }
       return EXIT_FAILURE;
       }
     fclose(infile);
