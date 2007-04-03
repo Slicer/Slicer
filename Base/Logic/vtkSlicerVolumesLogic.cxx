@@ -127,21 +127,21 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddHeaderVolume (const char* filename,
       }
 
     this->GetMRMLScene()->SaveStateForUndo();
-    cout<<"Setting scene info"<<endl;
+    vtkDebugMacro("Setting scene info");
     volumeNode->SetScene(this->GetMRMLScene());
     storageNode->SetScene(this->GetMRMLScene());
     displayNode->SetScene(this->GetMRMLScene());
   
     //should we give the user the chance to modify this?.
     double range[2];
-    cout<<"Set basic display info"<<endl;
+    vtkDebugMacro("Set basic display info");
     volumeNode->GetImageData()->GetScalarRange(range);
     displayNode->SetLowerThreshold(range[0]);
     displayNode->SetUpperThreshold(range[1]);
     displayNode->SetWindow(range[1] - range[0]);
     displayNode->SetLevel(0.5 * (range[1] + range[0]) );
 
-    cout<<"Adding node.."<<endl;
+    vtkDebugMacro("Adding node..");
     this->GetMRMLScene()->AddNode(storageNode);  
     this->GetMRMLScene()->AddNode(displayNode);  
 
@@ -167,10 +167,10 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddHeaderVolume (const char* filename,
     volumeNode->SetStorageNodeID(storageNode->GetID());
     volumeNode->SetAndObserveDisplayNodeID(displayNode->GetID());
 
-    cout<<"Name vol node "<<volumeNode->GetClassName()<<endl;
-    cout<<"Display node "<<displayNode->GetClassName()<<endl;
+    vtkDebugMacro("Name vol node "<<volumeNode->GetClassName());
+    vtkDebugMacro("Display node "<<displayNode->GetClassName());
     this->GetMRMLScene()->AddNode(volumeNode);
-    cout<<"Node added to scene"<<endl;
+    vtkDebugMacro("Node added to scene");
 
     this->SetActiveVolumeNode(volumeNode);
 
@@ -213,34 +213,34 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
   storageNode2->AddObserver(vtkCommand::ProgressEvent,  this->LogicCallbackCommand);
 
   // Try to read first with NRRD reader (look if file is a dwi or a tensor)
-  cout<<"TEST DWI: "<< storageNode1->ReadData(dwiNode)<<endl;
+  vtkDebugMacro("TEST DWI: "<< storageNode1->ReadData(dwiNode));
 
   if (storageNode1->ReadData(dwiNode))
     {
-    cout<<"DWI HAS BEEN READ"<<endl;
+    vtkDebugMacro("DWI HAS BEEN READ");
     displayNode = vtkMRMLDiffusionWeightedVolumeDisplayNode::New();
     // Give a chance to set/update displayNode
     volumeNode =  dwiNode;
     storageNode = storageNode1;
-    cout<<"Done setting volumeNode to class: "<<volumeNode->GetClassName()<<endl;
+    vtkDebugMacro("Done setting volumeNode to class: "<<volumeNode->GetClassName());
     }
   else if (storageNode1->ReadData(tensorNode))
     {
-    cout<<"Tensor HAS BEEN READ"<<endl;
+    vtkDebugMacro("Tensor HAS BEEN READ");
     displayNode = vtkMRMLDiffusionTensorVolumeDisplayNode::New();
     volumeNode = tensorNode;
     storageNode = storageNode1;
     }
   else if (storageNode1->ReadData(vectorNode))
     {
-    cout<<"Vector HAS BEEN READ WITH NRRD READER"<<endl;
+    vtkDebugMacro("Vector HAS BEEN READ WITH NRRD READER");
     displayNode = vtkMRMLVectorVolumeDisplayNode::New();
     volumeNode = vectorNode;
     storageNode = storageNode1;
     }
   else if (storageNode2->ReadData(scalarNode))
     {
-    cout<<"Scalar HAS BEEN READ WITH ARCHTYPE READER"<<endl;
+    vtkDebugMacro("Scalar HAS BEEN READ WITH ARCHTYPE READER");
     displayNode = vtkMRMLVolumeDisplayNode::New();
     scalarNode->SetLabelMap(labelMap);
     volumeNode = scalarNode;
@@ -248,7 +248,7 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
     }
   else if (storageNode2->ReadData(vectorNode))
     {
-    cout<<"Vector HAS BEEN READ WITH ARCHTYPE READER"<<endl;
+    vtkDebugMacro("Vector HAS BEEN READ WITH ARCHTYPE READER");
     displayNode = vtkMRMLVectorVolumeDisplayNode::New();
     volumeNode = vectorNode;
     storageNode = storageNode2;
@@ -271,21 +271,21 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
       }
 
     this->GetMRMLScene()->SaveStateForUndo();
-    cout<<"Setting scene info"<<endl;
+    vtkDebugMacro("Setting scene info");
     volumeNode->SetScene(this->GetMRMLScene());
     storageNode->SetScene(this->GetMRMLScene());
     displayNode->SetScene(this->GetMRMLScene());
   
     //should we give the user the chance to modify this?.
     double range[2];
-    cout<<"Set basic display info"<<endl;
+    vtkDebugMacro("Set basic display info");
     volumeNode->GetImageData()->GetScalarRange(range);
     displayNode->SetLowerThreshold(range[0]);
     displayNode->SetUpperThreshold(range[1]);
     displayNode->SetWindow(range[1] - range[0]);
     displayNode->SetLevel(0.5 * (range[1] + range[0]) );
 
-    cout<<"Adding node.."<<endl;
+    vtkDebugMacro("Adding node..");
     this->GetMRMLScene()->AddNode(storageNode);  
     this->GetMRMLScene()->AddNode(displayNode);  
 
@@ -311,10 +311,10 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
     volumeNode->SetStorageNodeID(storageNode->GetID());
     volumeNode->SetAndObserveDisplayNodeID(displayNode->GetID());
 
-    cout<<"Name vol node "<<volumeNode->GetClassName()<<endl;
-    cout<<"Display node "<<displayNode->GetClassName()<<endl;
+    vtkDebugMacro("Name vol node "<<volumeNode->GetClassName());
+    vtkDebugMacro("Display node "<<displayNode->GetClassName());
     this->GetMRMLScene()->AddNode(volumeNode);
-    cout<<"Node added to scene"<<endl;
+    vtkDebugMacro("Node added to scene");
 
     this->SetActiveVolumeNode(volumeNode);
 
