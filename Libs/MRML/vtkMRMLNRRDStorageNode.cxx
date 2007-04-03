@@ -130,7 +130,7 @@ void vtkMRMLNRRDStorageNode::ProcessParentNode(vtkMRMLNode *parentNode)
 
 int vtkMRMLNRRDStorageNode::ReadData(vtkMRMLNode *refNode)
 {
-  cout<<"Reading NRRD data"<<endl;
+  vtkDebugMacro("Reading NRRD data");
   // test whether refNode is a valid node to hold a volume
   if ( !( refNode->IsA("vtkMRMLScalarVolumeNode") || refNode->IsA("vtkMRMLVectorVolumeNode" ) || 
           refNode->IsA("vtkMRMLDiffusionWeightedVolumeNode") ||
@@ -233,7 +233,7 @@ int vtkMRMLNRRDStorageNode::ReadData(vtkMRMLNode *refNode)
     }
   else if ( refNode->IsA("vtkMRMLDiffusionWeightedVolumeNode"))
     {
-    cout<<"Checking we have right info in file"<<endl;
+    vtkDebugMacro("Checking we have right info in file");
     char *value = reader->GetHeaderValue("modality");
     if (value == NULL)
       {
