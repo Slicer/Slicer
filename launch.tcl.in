@@ -70,6 +70,7 @@ if { $installed } {
   set ::env(VTK_DIR)           $::env(SLICER_HOME)/lib
   set ::env(VTK_BIN_DIR)       $::env(SLICER_HOME)/bin
   set ::env(KWWidgets_DIR)     $::env(SLICER_HOME)/lib/KWWidgets
+  set ::env(KWWidgets_LIB_DIR) $::env(SLICER_HOME)/lib/KWWidgets
   set ::env(KWWidgets_BIN_DIR) $::env(SLICER_HOME)/bin
   set ::env(ITK_BIN_DIR)       $::env(SLICER_HOME)/lib/InsightToolkit
   set ::env(SANDBOX_BIN_DIR)   ""
@@ -87,6 +88,7 @@ if { $installed } {
   set ::env(VTK_DIR)           [file normalize @VTK_DIR@]
   set ::env(VTK_BIN_DIR)       [file normalize @VTK_DIR@/bin/$::BUILD_SUBDIR]
   set ::env(KWWidgets_DIR)     [file normalize @KWWidgets_DIR@]
+  set ::env(KWWidgets_LIB_DIR) [file normalize @KWWidgets_DIR@/bin/$::BUILD_SUBDIR]
   set ::env(KWWidgets_BIN_DIR) [file normalize @KWWidgets_DIR@/bin/$::BUILD_SUBDIR]
   set ::env(ITK_BIN_DIR)       [file normalize @ITK_DIR@/bin/$::BUILD_SUBDIR]
   set ::env(SANDBOX_BIN_DIR)   ""
@@ -186,7 +188,7 @@ proc launch_SetPaths {} {
         $::env(BUILD) == $::LINUX} {
         # add vtk, slicer, and tcl bins
             set ::env(LD_LIBRARY_PATH) $::env(VTK_BIN_DIR):$::env(LD_LIBRARY_PATH)
-            set ::env(LD_LIBRARY_PATH) $::env(KWWidgets_DIR):$::env(LD_LIBRARY_PATH)
+            set ::env(LD_LIBRARY_PATH) $::env(KWWidgets_LIB_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(ITK_BIN_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(TCL_DIR)/lib:$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(TEEM_DIR):$::env(LD_LIBRARY_PATH)
@@ -194,7 +196,7 @@ proc launch_SetPaths {} {
         } elseif {$::env(BUILD) ==  $::DARWIN || $::env(BUILD) == $::DARWIN_X86} { 
             # add vtk, slicer, and tcl bins
             set ::env(DYLD_LIBRARY_PATH) $::env(VTK_BIN_DIR):$::env(DYLD_LIBRARY_PATH)
-            set ::env(DYLD_LIBRARY_PATH) $::env(KWWidgets_DIR):$::env(DYLD_LIBRARY_PATH)
+            set ::env(DYLD_LIBRARY_PATH) $::env(KWWidgets_LIB_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(ITK_BIN_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(TCL_DIR)/lib:$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(TEEM_DIR):$::env(DYLD_LIBRARY_PATH)
