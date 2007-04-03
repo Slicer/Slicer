@@ -22,6 +22,7 @@ vtkNRRDWriter::vtkNRRDWriter()
   this->MeasurementFrameMatrix = vtkMatrix4x4::New();
   this->UseCompression = 1;
   this->FileType = VTK_BINARY;
+  this->WriteErrorOff();
 }
 
 //----------------------------------------------------------------------------
@@ -179,10 +180,11 @@ int vtkNRRDWriter::VTKToNrrdPixelType( const int vtkPixelType )
 // Writes all the data from the input.
 void vtkNRRDWriter::WriteData()
 {
-
+  this->WriteErrorOff();
   if (this->GetFileName() == NULL)
     {
     vtkErrorMacro("FileName has not been set. Cannot save file");
+    this->WriteErrorOn();
     return;
     } 
 
@@ -244,6 +246,7 @@ void vtkNRRDWriter::WriteData()
     // Free the nrrd struct but don't touch nrrd->data
     nrrd = nrrdNix(nrrd);
     nio = nrrdIoStateNix(nio);
+    this->WriteErrorOn();
     return; 
     }
   nrrdAxisInfoSet_nva(nrrd, nrrdAxisInfoKind, kind);
@@ -328,12 +331,13 @@ void vtkNRRDWriter::WriteData()
     {
     char *err = biffGetDone(NRRD); // would be nice to free(err)
     vtkErrorMacro("Write: Error writing " 
-                      << this->GetFileName() << ":\n" << err);                  
+                      << this->GetFileName() << ":\n" << err);
+    this->WriteErrorOn();
     }
   // Free the nrrd struct but don't touch nrrd->data
   nrrd = nrrdNix(nrrd);
   nio = nrrdIoStateNix(nio);
-
+  return;
 }
 
 void vtkNRRDWriter::PrintSelf(ostream& os, vtkIndent indent)

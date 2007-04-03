@@ -61,6 +61,10 @@ public:
   void SetFileTypeToASCII() {this->SetFileType(VTK_ASCII);};
   void SetFileTypeToBinary() {this->SetFileType(VTK_BINARY);};
 
+  vtkBooleanMacro(WriteError, int);
+  vtkSetMacro(WriteError, int);
+  vtkGetMacro(WriteError, int);
+  
 protected:
   vtkNRRDWriter();
   ~vtkNRRDWriter();
@@ -71,6 +75,10 @@ protected:
   // Write method. It is called by vtkWriter::Write();
   void WriteData();
 
+  // Description:
+  // Flag to set to on when a write error occured
+  int WriteError;
+  
   char *FileName;
   
   vtkDoubleArray *BValues;
