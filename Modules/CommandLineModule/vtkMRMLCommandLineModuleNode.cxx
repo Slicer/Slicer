@@ -400,7 +400,7 @@ vtkMRMLCommandLineModuleNode
 
 void
 vtkMRMLCommandLineModuleNode
-::RegisterModuleDescription(ModuleDescription& md)
+::RegisterModuleDescription(ModuleDescription md)
 {
   (*vtkMRMLCommandLineModuleNode::RegisteredModules)[md.GetTitle()] = md;
 }

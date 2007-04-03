@@ -94,7 +94,7 @@ class VTK_COMMANDLINEMODULE_EXPORT vtkMRMLCommandLineModuleNode : public vtkMRML
   // Description:
   // Methods to manage the master list of module description prototypes
 //BTX
-  static void RegisterModuleDescription(ModuleDescription& md);
+  static void RegisterModuleDescription(ModuleDescription md);
   static bool HasRegisteredModule(const std::string& name);
   static ModuleDescription GetRegisteredModuleDescription(const std::string& name);
   static void ClearRegisteredModules();
