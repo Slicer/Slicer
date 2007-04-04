@@ -7,6 +7,23 @@ SET(QueryAtlas_SRCS
   vtkQueryAtlasLogic.cxx
   vtkQueryAtlasGUI.cxx
   vtkMRMLQueryAtlasNode.cxx
+
+  # cards and related classes
+  vtkBIRNCard.cxx
+  vtkBIRNCardManager.cxx
+  vtkCard.cxx
+  vtkCardManager.cxx
+  vtkEdgeGradient.cxx
+  vtkFontParameters.cxx
+  vtkFreetypeRasterizer.cxx
+  vtkRasterizerCharacter.cxx
+  vtkRectangle.cxx
+  #vtkSortCommand.cxx
+  vtkSorter.cxx
+  vtkTextureFont.cxx
+  vtkTextureFontManager.cxx
+  vtkTextureText.cxx
+  vtkTextureTextPolys.cxx
 )
 
 # Abstract/pure virtual classes
