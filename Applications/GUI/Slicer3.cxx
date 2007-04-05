@@ -596,7 +596,7 @@ int Slicer3_main(int argc, char *argv[])
       std::string cmd;
       int returnCode;
 
-      cmd =  "wm iconbitmap . -default "+ slicerHome + "lib/slicer3.ico";
+      cmd =  "wm iconbitmap . -default "+ slicerHome + "/lib/slicer3.ico";
       returnCode = Slicer3_Tcl_Eval( interp, cmd.c_str() );
       if ( returnCode )
         {
