@@ -3,36 +3,67 @@
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasInit { {filename ""} } {
   
-  # find the data
-  set ::QA(filename) ""
-  if { $filename != "" } {
-    set ::QA(filename) $filename
-  } else {
-      set candidates {
-          c:/cygwin/home/wjp/data/fBIRN-AHM2006/fbph2-000670986943/surf/lh.pial
-          /workspace/pieper/fBIRN-AHM2006/fbph2-000670986943/surf/lh.pial
-          /projects/birn/data/fBIRN-AHM2006/fbph2-000670986943/surf/lh.pial
-          i:/fBIRN-AHM2006/fbph2-000670986943/surf/lh.pial
-          c:/data/fBIRN-AHM2006/fbph2-000648622547/surf/lh.pial
-          /projects/birn/freesurfer/data/bert/surf/lh.pial
+    
+    # find the data
+    set ::QA(filename) ""
+    if { $filename != "" } {
+        set ::QA(filename) $filename
+    } else {
+        set candidates {
+            c:/cygwin/home/wjp/data/fBIRN-AHM2006/fbph2-000670986943/surf/lh.pial
+            /workspace/pieper/fBIRN-AHM2006/fbph2-000670986943/surf/lh.pial
+            /projects/birn/data/fBIRN-AHM2006/fbph2-000670986943/surf/lh.pial
+            i:/fBIRN-AHM2006/fbph2-000670986943/surf/lh.pial
+            c:/data/fBIRN-AHM2006/fbph2-000648622547/surf/lh.pial
+            /projects/birn/freesurfer/data/bert/surf/lh.pial
+        }
+        foreach c $candidates {
+            if { [file exists $c] } {
+                set ::QA(filename) $c
+                set ::QA(directory) [file dirname [file dirname $::QA(filename)]]
+                break
+            }
+        }
+    }
+
+    QueryAtlasAddBIRNLogo
+    QueryAtlasAddModel
+    QueryAtlasAddVolumes
+    QueryAtlasAddAnnotations 
+    QueryAtlasInitializePicker 
+    QueryAtlasRenderView
+    QueryAtlasUpdateCursor
+    set ::QA(CurrentRASPoint) "0 0 0"
+
+    #--- hardcode these other tcl files for now.
+    #--- TODO: find out how to get the module directory name
+    set ok 0
+    set candidates {
+        c:/cygwin/home/wjp/slicer3Beta/Slicer3/Modules/QueryAtlas/Tcl/QueryAtlasWeb.tcl
     }
     foreach c $candidates {
-      if { [file exists $c] } {
-        set ::QA(filename) $c
-        set ::QA(directory) [file dirname [file dirname $::QA(filename)]]
-        break
-      }
+        if { [file exists $c] } {
+            set ok 1
+            break
+        }
     }
-  }
+    if { $ok } {
+        source $c
+    }
 
-  QueryAtlasAddBIRNLogo
-  QueryAtlasAddModel
-  QueryAtlasAddVolumes
-  QueryAtlasAddAnnotations 
-  QueryAtlasInitializePicker 
-  QueryAtlasRenderView
-  QueryAtlasUpdateCursor
-  set ::QA(CurrentRASPoint) "0 0 0"
+    set ok 0
+    set candidates {
+        c:/cygwin/home/wjp/slicer3Beta/Slicer3/Modules/QueryAtlas/Tcl/QueryAtlasLabelConverter.tcl
+    }
+    foreach c $candidates {
+        if { [file exists $c] } {
+            set ok 1
+            break
+        }
+    }
+    if { $ok } {
+        source $c
+    }
 }
 
 #----------------------------------------------------------------------------------------------------
@@ -783,12 +814,10 @@ proc QueryAtlasPickCallback {} {
   #puts "pointLabels = $pointLabels"
 
   #---Before modifying freesurfer labelname,
-  # get UMLS and Neuronames mapping.
+  # get UMLS, Neuronames, BIRNLex mapping.
   #---  
-#  QueryAtlasGetUMLSMapping pointLabels
-#  QueryAtlasGetNeuronamesMapping pointLabels
-#  QueryAtlasGetSPLBrainAtlasMapping pointLabels
-  
+  set ::QA(BirnLexLabel) [ QueryAtlasFreeSurferLabelsToBirnLexLabels $pointLabels ]
+    
   #--- Now filter the freesurfer label name:
   # Modify label text to remove freesurfer-specific
   # name conventions (underbars, lh, rh, etc.)
@@ -931,6 +960,8 @@ proc QueryAtlasMenuCreate { state } {
   }
 }
 
+
+
 #----------------------------------------------------------------------------------------------------
 #---
 #----------------------------------------------------------------------------------------------------
@@ -1045,12 +1076,6 @@ proc QueryAtlasQuery { site } {
 }
 
 
-#----------------------------------------------------------------------------------------------------
-#---
-#----------------------------------------------------------------------------------------------------
-proc QueryAtlasMapTermsToBrainInfo { terms } {
-    return $terms
-}
 
 #----------------------------------------------------------------------------------------------------
 #---
@@ -1085,7 +1110,7 @@ bgexec C:/jython2.2b1/jython.bat C:/cygwin/home/wjp/hierarchies/simple_atlas_vis
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasConnectHierarchyQueryService { host port } {
 
-    set ::QAsocket [ socket $host $port ]
+    set ::QA(socket) [ socket $host $port ]
     # need a callback if there's data being received...
     # fileevent $::QAsocket readable "QueryAtlasParseHierarchyInformation $::QAsocket"
 }
@@ -1094,21 +1119,20 @@ proc QueryAtlasConnectHierarchyQueryService { host port } {
 #---
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasDisconnectHierarchyQueryService { } {
-
-    close $::QAsocket
+    close $::QA(socket)
 }
 
 
 #----------------------------------------------------------------------------------------------------
 #---
 #----------------------------------------------------------------------------------------------------
-proc QueryAtlasSendHierarchyCommand { line } {
+proc QueryAtlasSendHierarchyCommand { name } {
 
     switch -glob $line {
-        "queryAtlas.send*" {
-            if { [info exists ::QASocket] } {
-                puts $::QAsocket "queryAtlas.ShowStructureName $name"
-                flush $::QAsocket
+        "queryAtlas.show*" {
+            if { [info exists ::QA(socket)] } {
+                puts $::QA(socket) "queryAtlas.ShowStructureName $name"
+                flush $::QA(socket)
             }
             return
         }
@@ -1120,10 +1144,18 @@ proc QueryAtlasSendHierarchyCommand { line } {
 #----------------------------------------------------------------------------------------------------
 #---
 #----------------------------------------------------------------------------------------------------
-proc QueryAtlasParseHierarchyInformation { } {
-
-    set incoming [ read $::QAsocket ]
-
-    #--- now what.
-    puts "QueryAtlas recieved $incoming"
+proc QueryAtlasMapTermsToBrainInfo { terms } {
+    return $terms
 }
+
+
+#----------------------------------------------------------------------------------------------------
+#---
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasFreeSurferLabelsToUMLSCodes { label } {
+    
+}
+
+
+
+
