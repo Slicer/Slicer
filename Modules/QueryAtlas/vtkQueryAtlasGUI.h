@@ -17,7 +17,9 @@ class vtkKWMultiColumnListWithScrollbars;
 class vtkKWMenuButton;
 class vtkKWMenuButtonWithLabel;
 class vtkKWFrame;
-
+class vtkKWLabel;
+class vtkKWCheckButton;
+class vtkKWEntry;
 
 // Description:
 // This class implements Slicer's QueryAtlas GUI
@@ -36,31 +38,35 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     // Get methods on class members ( no Set methods required. )
     vtkGetObjectMacro ( Logic, vtkQueryAtlasLogic);
 
-    // Load scene
+    // Load scene frame and widgets
     vtkGetObjectMacro ( LoadSceneButton, vtkKWPushButton );
 
-    // querybuilder
+    // Querybuilder frame top widgets
     vtkGetObjectMacro (GeneButton, vtkKWPushButton );
     vtkGetObjectMacro (ProteinButton, vtkKWPushButton );
     vtkGetObjectMacro (CellButton, vtkKWPushButton );
     vtkGetObjectMacro (StructureButton, vtkKWPushButton );
     vtkGetObjectMacro (PopulationButton, vtkKWPushButton );
     vtkGetObjectMacro (SpeciesButton, vtkKWPushButton );
+    // Querybuilder frame containing alternate sets of widgets
     vtkGetObjectMacro (SwitchQueryFrame, vtkKWFrame);
     
-    // species 
+    // species panel
     vtkGetObjectMacro (SpeciesFrame, vtkKWFrame);
-    vtkGetObjectMacro (SpeciesMenuButton, vtkKWMenuButton );
+    vtkGetObjectMacro (SpeciesLabel, vtkKWLabel);
+    vtkGetObjectMacro (SpeciesHumanButton, vtkKWCheckButton );
+    vtkGetObjectMacro (SpeciesMouseButton, vtkKWCheckButton);
+    vtkGetObjectMacro (SpeciesMacaqueButton, vtkKWCheckButton );
     
-    // population
+    // population panel
     vtkGetObjectMacro (PopulationFrame, vtkKWFrame );
     vtkGetObjectMacro (DiagnosisMenuButton, vtkKWMenuButtonWithLabel );
     vtkGetObjectMacro (HandednessMenuButton, vtkKWMenuButtonWithLabel );
     vtkGetObjectMacro (GenderMenuButton, vtkKWMenuButtonWithLabel );
     vtkGetObjectMacro (AgeMenuButton, vtkKWMenuButtonWithLabel );
-    vtkGetObjectMacro (ClinicalTestMenuButton, vtkKWMenuButtonWithLabel );
+    vtkGetObjectMacro (DiagnosticsMenuButton, vtkKWMenuButtonWithLabel );
     
-    // structure
+    // structure panel
     vtkGetObjectMacro (StructureFrame, vtkKWFrame );
     vtkGetObjectMacro ( StructureMenuButton, vtkKWMenuButtonWithLabel );
     vtkGetObjectMacro ( ClearButton, vtkKWPushButton );
@@ -70,22 +76,23 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     vtkGetObjectMacro ( DeleteTermButton, vtkKWPushButton );    
     vtkGetObjectMacro ( SearchTermMultiColumnList, vtkKWMultiColumnListWithScrollbars );
 
-    // cell 
+    // cell panel
     vtkGetObjectMacro (CellFrame, vtkKWFrame);
-    // protein
+    // protein panel
     vtkGetObjectMacro (ProteinFrame, vtkKWFrame );
-    // genes
+    // genes panel
     vtkGetObjectMacro (GeneFrame, vtkKWFrame );
 
-    // querymaker
+    // querymaker panel
     vtkGetObjectMacro ( DatabasesMenuButton, vtkKWMenuButton );
     vtkGetObjectMacro ( SearchButton, vtkKWPushButton );
     
-    //hierarchies
+    //hierarchies panel
     vtkGetObjectMacro ( SPLHierarchyButton, vtkKWPushButton );
     vtkGetObjectMacro ( BIRNLexHierarchyButton, vtkKWPushButton );
-
-
+    vtkGetObjectMacro ( HierarchySearchTermEntry, vtkKWEntry );
+    vtkGetObjectMacro ( HierarchySearchButton, vtkKWPushButton );
+    
     
     vtkGetMacro ( NumberOfColumns, int );
     
@@ -99,6 +106,8 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     virtual void BuildGUI ( ) ;
     // Description:
     // Helper methods for building the complicated GUI
+    virtual void UnpackQueryBuilderContextFrames ( );
+    virtual void PackQueryBuilderContextFrame ( vtkKWFrame *f );
     virtual void BuildQueryBuilderContextButtons ( vtkKWFrame *parent );
     virtual void BuildQueryBuilderContextFrames ( vtkKWFrame *parent );
     virtual void BuildSpeciesFrame();
@@ -107,7 +116,9 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     virtual void BuildCellFrame();
     virtual void BuildProteinFrame();
     virtual void BuildGeneFrame();
-    
+    virtual void BuildDiagnosisMenu( vtkKWMenu *m );
+    virtual void BuildDatabasesMenu( vtkKWMenu *m );
+                                    
     // Description:
     // Add/Remove observers on widgets in the GUI
     virtual void AddGUIObservers ( );
@@ -148,6 +159,8 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     // hierarchies frame
     vtkKWPushButton *SPLHierarchyButton;
     vtkKWPushButton *BIRNLexHierarchyButton;
+    vtkKWEntry *HierarchySearchTermEntry;
+    vtkKWPushButton *HierarchySearchButton;
     int NumberOfColumns;
     
     // querybuilder
@@ -161,7 +174,10 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     
     // species frame
     vtkKWFrame *SpeciesFrame;
-    vtkKWMenuButton *SpeciesMenuButton;
+    vtkKWLabel *SpeciesLabel;
+    vtkKWCheckButton *SpeciesHumanButton;
+    vtkKWCheckButton *SpeciesMouseButton;
+    vtkKWCheckButton *SpeciesMacaqueButton;
 
     // population frame
     vtkKWFrame *PopulationFrame;
@@ -169,7 +185,7 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     vtkKWMenuButtonWithLabel *GenderMenuButton;
     vtkKWMenuButtonWithLabel *HandednessMenuButton;
     vtkKWMenuButtonWithLabel *AgeMenuButton;
-    vtkKWMenuButtonWithLabel *ClinicalTestMenuButton;
+    vtkKWMenuButtonWithLabel *DiagnosticsMenuButton;
 
     // structure frame
     vtkKWFrame *StructureFrame;
