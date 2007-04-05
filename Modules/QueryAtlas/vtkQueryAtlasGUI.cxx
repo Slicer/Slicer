@@ -1045,17 +1045,19 @@ void vtkQueryAtlasGUI::BuildQueryBuilderContextButtons ( vtkKWFrame *parent )
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::BuildDatabasesMenu ( vtkKWMenu *m )
 {
- this->DatabasesMenuButton->GetMenu()->AddCheckButton ("google");
-  this->DatabasesMenuButton->GetMenu()->AddCheckButton ("wikipedia");
-  this->DatabasesMenuButton->GetMenu()->AddSeparator();
-  this->DatabasesMenuButton->GetMenu()->AddCheckButton ("pubmed");
-  this->DatabasesMenuButton->GetMenu()->AddCheckButton ("jneurosci");
-  this->DatabasesMenuButton->GetMenu()->AddCheckButton ("ibvd");
-  this->DatabasesMenuButton->GetMenu()->AddCheckButton ("braininfo");  
-  this->DatabasesMenuButton->GetMenu()->AddCheckButton ("metasearch");
-  this->DatabasesMenuButton->GetMenu()->AddSeparator();
-  this->DatabasesMenuButton->GetMenu()->AddCheckButton ("entrez");
-  this->DatabasesMenuButton->GetMenu()->AddCommand ( "close");
+  m->AddRadioButton ("google");
+  m->SelectItem ("google");
+  m->AddRadioButton ("wikipedia");
+  m->AddSeparator();
+  m->AddRadioButton ("pubmed");
+  m->AddRadioButton ("jneurosci");
+  m->AddRadioButton ("ibvd");
+  m->AddRadioButton ("braininfo");  
+  m->AddRadioButton ("metasearch");
+  m->AddSeparator();
+  m->AddRadioButton ("entrez");
+  m->AddSeparator();
+  m->AddCommand ( "close");
 }
 
 
