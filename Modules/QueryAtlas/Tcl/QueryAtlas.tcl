@@ -1108,11 +1108,29 @@ bgexec C:/jython2.2b1/jython.bat C:/cygwin/home/wjp/hierarchies/simple_atlas_vis
 #----------------------------------------------------------------------------------------------------
 #---
 #----------------------------------------------------------------------------------------------------
+proc QueryAtlasSendHierarchyCommand { host port cmd } {
+
+    #--- cmds will be: request_show, request_synonym
+    set ::QA(socket) [ socket $host $port]
+
+    set result ""
+    while {[gets stdin line] >= 0} {
+        puts $sock $cmd
+        flush $sock
+        gets $sock thing
+        append result $thing
+    }
+    return $result
+}
+
+
+#----------------------------------------------------------------------------------------------------
+#---
+#----------------------------------------------------------------------------------------------------
 proc QueryAtlasConnectHierarchyQueryService { host port } {
 
+
     set ::QA(socket) [ socket $host $port ]
-    # need a callback if there's data being received...
-    # fileevent $::QAsocket readable "QueryAtlasParseHierarchyInformation $::QAsocket"
 }
 
 #----------------------------------------------------------------------------------------------------
