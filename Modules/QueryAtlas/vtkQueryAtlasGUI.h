@@ -20,6 +20,8 @@ class vtkKWFrame;
 class vtkKWLabel;
 class vtkKWCheckButton;
 class vtkKWEntry;
+class vtkKWListBox;
+class vtkKWListBoxWithScrollbars;
 
 // Description:
 // This class implements Slicer's QueryAtlas GUI
@@ -43,7 +45,7 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
 
     // Querybuilder frame top widgets
     vtkGetObjectMacro (GeneButton, vtkKWPushButton );
-    vtkGetObjectMacro (ProteinButton, vtkKWPushButton );
+    vtkGetObjectMacro (MiscButton, vtkKWPushButton );
     vtkGetObjectMacro (CellButton, vtkKWPushButton );
     vtkGetObjectMacro (StructureButton, vtkKWPushButton );
     vtkGetObjectMacro (PopulationButton, vtkKWPushButton );
@@ -69,17 +71,17 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     // structure panel
     vtkGetObjectMacro (StructureFrame, vtkKWFrame );
     vtkGetObjectMacro ( StructureMenuButton, vtkKWMenuButtonWithLabel );
-    vtkGetObjectMacro ( ClearButton, vtkKWPushButton );
-    vtkGetObjectMacro ( SelectAllButton, vtkKWPushButton );
-    vtkGetObjectMacro ( SelectNoneButton, vtkKWPushButton );    
-    vtkGetObjectMacro ( AddTermButton, vtkKWPushButton );    
-    vtkGetObjectMacro ( DeleteTermButton, vtkKWPushButton );    
-    vtkGetObjectMacro ( SearchTermMultiColumnList, vtkKWMultiColumnListWithScrollbars );
+    vtkGetObjectMacro ( StructureClearAllButton, vtkKWPushButton );
+    vtkGetObjectMacro ( StructureUseAllButton, vtkKWPushButton );
+    vtkGetObjectMacro ( StructureUseNoneButton, vtkKWPushButton );    
+    vtkGetObjectMacro ( StructureAddTermButton, vtkKWPushButton );    
+    vtkGetObjectMacro ( StructureClearTermButton, vtkKWPushButton );    
+    vtkGetObjectMacro ( StructureMultiColumnList, vtkKWMultiColumnListWithScrollbars );
 
     // cell panel
     vtkGetObjectMacro (CellFrame, vtkKWFrame);
     // protein panel
-    vtkGetObjectMacro (ProteinFrame, vtkKWFrame );
+    vtkGetObjectMacro (MiscFrame, vtkKWFrame );
     // genes panel
     vtkGetObjectMacro (GeneFrame, vtkKWFrame );
 
@@ -92,7 +94,15 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     vtkGetObjectMacro ( BIRNLexHierarchyButton, vtkKWPushButton );
     vtkGetObjectMacro ( HierarchySearchTermEntry, vtkKWEntry );
     vtkGetObjectMacro ( HierarchySearchButton, vtkKWPushButton );
-    
+
+    vtkGetObjectMacro ( CurrentResultsList, vtkKWListBoxWithScrollbars );
+    vtkGetObjectMacro ( DeleteCurrentResultButton, vtkKWPushButton );
+    vtkGetObjectMacro ( DeleteAllCurrentResultsButton, vtkKWPushButton );
+    vtkGetObjectMacro ( SaveCurrentResultsButton, vtkKWPushButton );
+    vtkGetObjectMacro ( PastResultsList, vtkKWListBoxWithScrollbars );    
+    vtkGetObjectMacro ( DeletePastResultButton, vtkKWPushButton );
+    vtkGetObjectMacro ( DeleteAllPastResultsButton, vtkKWPushButton );
+    vtkGetObjectMacro ( SavePastResultsButton, vtkKWPushButton );
     
     vtkGetMacro ( NumberOfColumns, int );
     
@@ -109,12 +119,13 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     virtual void UnpackQueryBuilderContextFrames ( );
     virtual void PackQueryBuilderContextFrame ( vtkKWFrame *f );
     virtual void BuildQueryBuilderContextButtons ( vtkKWFrame *parent );
+    virtual void ColorCodeContextButtons ( vtkKWPushButton *b );
     virtual void BuildQueryBuilderContextFrames ( vtkKWFrame *parent );
     virtual void BuildSpeciesFrame();
     virtual void BuildPopulationFrame();
     virtual void BuildStructureFrame ( );
     virtual void BuildCellFrame();
-    virtual void BuildProteinFrame();
+    virtual void BuildMiscFrame();
     virtual void BuildGeneFrame();
     virtual void BuildDiagnosisMenu( vtkKWMenu *m );
     virtual void BuildDatabasesMenu( vtkKWMenu *m );
@@ -138,11 +149,11 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
 
     // Description:
     // Methods to add and delete search terms.
-    virtual void AddNewSearchTerm ( );
-    virtual void DeleteSelectedSearchTerms ( );
-    virtual void SelectAllSearchTerms ( );
-    virtual void DeselectAllSearchTerms ( );
-    virtual void DeleteAllSearchTerms ( );
+    virtual void AddNewSearchTerm ( const char *context );
+    virtual void DeleteSelectedSearchTerms ( const char *context );
+    virtual void SelectAllSearchTerms ( const char *context );
+    virtual void DeselectAllSearchTerms ( const char *context );
+    virtual void DeleteAllSearchTerms ( const char *context);
 
     
 
@@ -165,7 +176,7 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     
     // querybuilder
     vtkKWPushButton *GeneButton;
-    vtkKWPushButton *ProteinButton;
+    vtkKWPushButton *MiscButton;
     vtkKWPushButton *CellButton;
     vtkKWPushButton *StructureButton;
     vtkKWPushButton *PopulationButton;
@@ -190,21 +201,31 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     // structure frame
     vtkKWFrame *StructureFrame;
     vtkKWMenuButtonWithLabel *StructureMenuButton;
-    vtkKWMultiColumnListWithScrollbars *SearchTermMultiColumnList;
-    vtkKWPushButton *ClearButton;
-    vtkKWPushButton *SelectAllButton;
-    vtkKWPushButton *SelectNoneButton;
-    vtkKWPushButton *AddTermButton;
-    vtkKWPushButton *DeleteTermButton;
+    vtkKWMultiColumnListWithScrollbars *StructureMultiColumnList;
+    vtkKWPushButton *StructureClearAllButton;
+    vtkKWPushButton *StructureUseAllButton;
+    vtkKWPushButton *StructureUseNoneButton;
+    vtkKWPushButton *StructureAddTermButton;
+    vtkKWPushButton *StructureClearTermButton;
 
     // querymaker
     vtkKWPushButton *SearchButton;
     vtkKWMenuButton *DatabasesMenuButton;
 
+    // results frame
+    vtkKWListBoxWithScrollbars *CurrentResultsList;
+    vtkKWPushButton *DeleteCurrentResultButton;
+    vtkKWPushButton *DeleteAllCurrentResultsButton;
+    vtkKWPushButton *SaveCurrentResultsButton;
+    vtkKWListBoxWithScrollbars *PastResultsList;
+    vtkKWPushButton *DeletePastResultButton;
+    vtkKWPushButton *DeleteAllPastResultsButton;
+    vtkKWPushButton *SavePastResultsButton;
+
     // cell frame
     vtkKWFrame *CellFrame;
     // protein frame
-    vtkKWFrame *ProteinFrame;
+    vtkKWFrame *MiscFrame;
     // gene grame
     vtkKWFrame *GeneFrame;
 
