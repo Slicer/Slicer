@@ -6,6 +6,7 @@ proc QueryAtlasInit { {filename ""} } {
     
     # find the data
     set ::QA(filename) ""
+    set $::QA(linkBundleCount) 0
     if { $filename != "" } {
         set ::QA(filename) $filename
     } else {
@@ -841,23 +842,6 @@ proc QueryAtlasPickCallback {} {
   QueryAtlasUpdateCursor
 }
 
-#----------------------------------------------------------------------------------------------------
-#---
-#----------------------------------------------------------------------------------------------------
-proc QueryAtlasGetUMLSMapping { p } {
-}
-
-#----------------------------------------------------------------------------------------------------
-#---
-#----------------------------------------------------------------------------------------------------
-proc QueryAtlasGetNeuronamesMapping { p } {
-}
-
-#----------------------------------------------------------------------------------------------------
-#---
-#----------------------------------------------------------------------------------------------------
-proc QueryAtlasGetSPLBrainAtlasMapping { p } {
-}
 
 
 #----------------------------------------------------------------------------------------------------
@@ -937,6 +921,11 @@ proc QueryAtlasMenuCreate { state } {
         catch "destroy $qaMenu"
 
         menu $qaMenu
+        $qaMenu insert end separator
+        $qaMenu insert end checkbutton -label "Use Search Terms" -variable ::QA(menu,useTerms)
+        $qaMenu insert end command -label "Add To Search Terms" -command "QueryAtlasAddTerms"
+        $qaMenu insert end command -label "Remove All Search Terms" -command "QueryAtlasRemoveTerms"
+
         $qaMenu insert end command -label $::QA(lastLabels) -command ""
         $qaMenu insert end separator
         $qaMenu insert end command -label "Google..." -command "QueryAtlasQuery google"
@@ -945,13 +934,7 @@ proc QueryAtlasMenuCreate { state } {
         $qaMenu insert end command -label "J Neuroscience..." -command "QueryAtlasQuery jneurosci"
         $qaMenu insert end command -label "IBVD..." -command "QueryAtlasQuery ibvd"
         $qaMenu insert end command -label "MetaSearch..." -command "QueryAtlasQuery metasearch"
-        $qaMenu insert end command -label "BrainInfo..." -command "QueryAtlasQUery braininfo"
-
-        $qaMenu insert end separator
-        $qaMenu insert end checkbutton -label "Use Search Terms" -variable ::QA(menu,useTerms)
-        $qaMenu insert end command -label "Add To Search Terms" -command "QueryAtlasAddTerms"
-        $qaMenu insert end command -label "Remove All Search Terms" -command "QueryAtlasRemoveTerms"
-
+        $qaMenu insert end command -label "BrainInfo..." -command "QueryAtlasQuery braininfo"
         
         foreach {x y} $::QA(lastRootXY) {}
         $qaMenu post $x $y
@@ -968,7 +951,7 @@ proc QueryAtlasMenuCreate { state } {
 proc QueryAtlasRemoveTerms {} {
 
   $::slicer3::ApplicationGUI SelectModule QueryAtlas
-  set mcl [[$::slicer3::QueryAtlasGUI GetSearchTermMultiColumnList] GetWidget]
+  set mcl [[$::slicer3::QueryAtlasGUI GetStructureMultiColumnList] GetWidget]
 
   $mcl DeleteAllRows
 }
@@ -976,10 +959,33 @@ proc QueryAtlasRemoveTerms {} {
 #----------------------------------------------------------------------------------------------------
 #---
 #----------------------------------------------------------------------------------------------------
-proc QueryAtlasGetTerms {} {
+proc QueryAtlasGetStructureTerms {} {
 
   $::slicer3::ApplicationGUI SelectModule QueryAtlas
-  set mcl [[$::slicer3::QueryAtlasGUI GetSearchTermMultiColumnList] GetWidget]
+  set mcl [[$::slicer3::QueryAtlasGUI GetStructureMultiColumnList] GetWidget]
+
+  set terms ""
+  set n [$mcl GetNumberOfRows]
+  for {set i 0} {$i < $n} {incr i} {
+    # TODO: figure out the mcl checkbutton access
+    if { 1 || [$mcl GetCellTextAsInt $i 0] } {
+      set term [$mcl GetCellText $i 1]
+        if { ![string match "edit*" $term] && ($term != "") } {
+              set terms "$terms+[$mcl GetCellText $i 1]"
+        }
+    }
+  }
+  set terms [ string trimleft $terms "+"]
+  return $terms
+}
+
+#----------------------------------------------------------------------------------------------------
+#---
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasGetGeneTerms {} {
+
+  $::slicer3::ApplicationGUI SelectModule QueryAtlas
+  set mcl [[$::slicer3::QueryAtlasGUI GetGeneMultiColumnList] GetWidget]
 
   set terms ""
   set n [$mcl GetNumberOfRows]
@@ -992,7 +998,110 @@ proc QueryAtlasGetTerms {} {
       }
     }
   }
+  set terms [ string trimleft $terms "+"]
   return $terms
+}
+
+
+#----------------------------------------------------------------------------------------------------
+#---
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasGetHistologyTerms {} {
+
+  $::slicer3::ApplicationGUI SelectModule QueryAtlas
+  set mcl [[$::slicer3::QueryAtlasGUI GetCellMultiColumnList] GetWidget]
+
+  set terms ""
+  set n [$mcl GetNumberOfRows]
+  for {set i 0} {$i < $n} {incr i} {
+    # TODO: figure out the mcl checkbutton access
+    if { 1 || [$mcl GetCellTextAsInt $i 0] } {
+      set term [$mcl GetCellText $i 1]
+      if { ![string match "edit*" $term] } {
+        set terms "$terms+[$mcl GetCellText $i 1]"
+      }
+    }
+  }
+  set terms [ string trimleft $terms "+"]
+  return $terms
+}
+
+
+
+#----------------------------------------------------------------------------------------------------
+#---
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasGetMiscTerms {} {
+
+  $::slicer3::ApplicationGUI SelectModule QueryAtlas
+  set mcl [[$::slicer3::QueryAtlasGUI GetMiscMultiColumnList] GetWidget]
+
+  set terms ""
+  set n [$mcl GetNumberOfRows]
+  for {set i 0} {$i < $n} {incr i} {
+    # TODO: figure out the mcl checkbutton access
+    if { 1 || [$mcl GetCellTextAsInt $i 0] } {
+      set term [$mcl GetCellText $i 1]
+      if { ![string match "edit*" $term] } {
+        set terms "$terms+[$mcl GetCellText $i 1]"
+      }
+    }
+  }
+  set terms [ string trimleft $terms "+"]
+  return $terms
+}
+
+
+
+#----------------------------------------------------------------------------------------------------
+#---
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasGetDiagnosisTerms { } {
+    $::slicer3::ApplicationGUI SelectModule QueryAtlas
+    set terms ""
+    set mb [[$::slicer3::QueryAtlasGUI GetDiagnosisMenuButton] GetWidget]
+    set terms [ $mb GetValue ]
+    return $terms
+}
+
+
+
+#----------------------------------------------------------------------------------------------------
+#---
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasGetGenderTerms { } {
+    $::slicer3::ApplicationGUI SelectModule QueryAtlas
+    set terms ""
+    set mb [[$::slicer3::QueryAtlasGUI GetGenderMenuButton] GetWidget]
+    set terms [ $mb GetValue ]
+    return $terms
+}
+
+
+#----------------------------------------------------------------------------------------------------
+#---
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasGetSpeciesTerms { } {
+    $::slicer3::ApplicationGUI SelectModule QueryAtlas
+    set terms ""
+    set cb_h [$::slicer3::QueryAtlasGUI GetSpeciesHumanButton]
+    set cb_ms [$::slicer3::QueryAtlasGUI GetSpeciesMouseButton]
+    set cb_mq [$::slicer3::QueryAtlasGUI GetSpeciesMacaqueButton]
+    
+    set human [ cb_h GetSelectedState ]
+    set mouse [ cb_ms GetSelectedState ]
+    set macaque [ cb_mq GetSelectedState ]
+
+    if { $human } {
+        set terms "$human"
+    }
+    if { $mouse } {
+        set terms "$terms+mouse"
+    }
+    if { $macaque } {
+        set terms "$terms+macaque"
+    }
+    return $terms
 }
 
 #----------------------------------------------------------------------------------------------------
@@ -1001,12 +1110,16 @@ proc QueryAtlasGetTerms {} {
 proc QueryAtlasAddTerms {} {
 
   $::slicer3::ApplicationGUI SelectModule QueryAtlas
-  set mcl [[$::slicer3::QueryAtlasGUI GetSearchTermMultiColumnList] GetWidget]
+  set mcl [[$::slicer3::QueryAtlasGUI GetStructureMultiColumnList] GetWidget]
 
   set i [$mcl GetNumberOfRows]
-  $::slicer3::QueryAtlasGUI AddNewSearchTerm
+  $::slicer3::QueryAtlasGUI AddNewSearchTerm $::QA(lastLabels)
   $mcl SetCellTextAsInt $i 0 1
   $mcl SetCellText $i 1 $::QA(lastLabels)
+
+  set h_entry [$::slicer3::QueryAtlasGUI GetHierarchySearchTermEntry]
+  $h_entry SetValue $::QA(lastLabels)
+  
 }
 
 #----------------------------------------------------------------------------------------------------
@@ -1021,7 +1134,7 @@ proc QueryAtlasQuery { site } {
     }
 
     if { $::QA(menu,useTerms) } {
-        set terms "$terms+[QueryAtlasGetTerms]"
+        set terms "$terms+[QueryAtlasGetStructureTerms]"
     }
 
     regsub -all "/" $terms "+" terms
@@ -1100,16 +1213,30 @@ exec C:/jython2.2b1/jython.bat C:/cygwin/home/wjp/hierarchies/simple_atlas_vis.p
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasLaunchBirnLexHierarchy {} {
 
-bgexec C:/jython2.2b1/jython.bat C:/cygwin/home/wjp/hierarchies/simple_atlas_vis.py c:/cygwin/home/wjp/hierarchies/birnLexSubset.simple &
+set jython "c:/jython2.2b1/jython.bat"
+set testdir "c:/cygwin/home/wjp/hierarchies/"
+set SPLscript "simple_atlas_vis.py"
+set SPLdata "atlas-test4.simple"
+set FullPathSPLdemo "$testdir$SPLscript"
+set FullPathSPLdata "$testdir$SPLdata"
+set runstr "$jython $FullPathSPLdemo $FullPathSPLdata"
+#exec $runstr
+exec C:/jython2.2b1/jython.bat C:/cygwin/home/wjp/hierarchies/simple_atlas_vis.py c:/cygwin/home/wjp/hierarchies/birnLexSubset.simple &
 }
+
 
 
 
 #----------------------------------------------------------------------------------------------------
 #---
 #----------------------------------------------------------------------------------------------------
-proc QueryAtlasSendHierarchyCommand { host port cmd } {
+proc QueryAtlasSendHierarchyCommand { } {
 
+    #--- get command from Hierarchy frame widget
+    set cmd ""
+    set host "localhost"
+    set port $::QA(prefusePort)
+    
     #--- cmds will be: request_show, request_synonym
     set ::QA(socket) [ socket $host $port]
 
@@ -1121,57 +1248,6 @@ proc QueryAtlasSendHierarchyCommand { host port cmd } {
         append result $thing
     }
     return $result
-}
-
-
-#----------------------------------------------------------------------------------------------------
-#---
-#----------------------------------------------------------------------------------------------------
-proc QueryAtlasConnectHierarchyQueryService { host port } {
-
-
-    set ::QA(socket) [ socket $host $port ]
-}
-
-#----------------------------------------------------------------------------------------------------
-#---
-#----------------------------------------------------------------------------------------------------
-proc QueryAtlasDisconnectHierarchyQueryService { } {
-    close $::QA(socket)
-}
-
-
-#----------------------------------------------------------------------------------------------------
-#---
-#----------------------------------------------------------------------------------------------------
-proc QueryAtlasSendHierarchyCommand { name } {
-
-    switch -glob $line {
-        "queryAtlas.show*" {
-            if { [info exists ::QA(socket)] } {
-                puts $::QA(socket) "queryAtlas.ShowStructureName $name"
-                flush $::QA(socket)
-            }
-            return
-        }
-    }
-
-}
-
-
-#----------------------------------------------------------------------------------------------------
-#---
-#----------------------------------------------------------------------------------------------------
-proc QueryAtlasMapTermsToBrainInfo { terms } {
-    return $terms
-}
-
-
-#----------------------------------------------------------------------------------------------------
-#---
-#----------------------------------------------------------------------------------------------------
-proc QueryAtlasFreeSurferLabelsToUMLSCodes { label } {
-    
 }
 
 
