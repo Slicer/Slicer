@@ -2157,9 +2157,6 @@ void vtkNeuroNavGUI::SetIGSTKConnectionParameters()
     int checked = this->ConnectCheckButton->GetSelectedState(); 
     if (checked)
     {
-        // Init the IGSTK data stream
-        this->IGSTKStream->Init();
-
 
         // Pulling rate for data
         int sp = atoi(this->UpdateRateEntry->GetWidget()->GetValue());
@@ -2228,13 +2225,12 @@ void vtkNeuroNavGUI::SetIGSTKConnectionParameters()
         }
 
 
-        this->IGSTKStream->SetStartTimer(1);
         this->IGSTKStream->ProcessTimerEvents();
-
+        this->IGSTKStream->SetTracking(1);
     }
     else
     {
-        this->IGSTKStream->SetStartTimer(0);
+        this->IGSTKStream->SetTracking(0);
     }
 }
 #endif
