@@ -48,8 +48,28 @@ vtkQueryAtlasGUI::vtkQueryAtlasGUI ( )
     this->SwitchQueryFrame = NULL;
 
     this->GeneFrame = NULL;
+    this->GeneUseAllButton = NULL;
+    this->GeneUseNoneButton = NULL;
+    this->GeneClearAllButton = NULL;
+    this->GeneAddTermButton = NULL;
+    this->GeneClearTermButton = NULL;    
+    this->GeneMultiColumnList = NULL;
+    
     this->CellFrame = NULL;
+    this->CellUseAllButton = NULL;
+    this->CellUseNoneButton = NULL;
+    this->CellClearAllButton = NULL;
+    this->CellAddTermButton = NULL;
+    this->CellClearTermButton = NULL;    
+    this->CellMultiColumnList = NULL;
+
     this->MiscFrame = NULL;
+    this->MiscUseAllButton = NULL;
+    this->MiscUseNoneButton = NULL;
+    this->MiscClearAllButton = NULL;
+    this->MiscAddTermButton = NULL;
+    this->MiscClearTermButton = NULL;    
+    this->MiscMultiColumnList = NULL;
 
     this->SpeciesFrame = NULL;
     this->SpeciesLabel = NULL;
@@ -86,7 +106,6 @@ vtkQueryAtlasGUI::vtkQueryAtlasGUI ( )
     this->SavePastResultsButton = NULL;
 
     this->NumberOfColumns = 2;
-
 
     this->SPLHierarchyButton = NULL;
     this->BIRNLexHierarchyButton = NULL;
@@ -369,6 +388,117 @@ vtkQueryAtlasGUI::~vtkQueryAtlasGUI ( )
       this->SavePastResultsButton = NULL;
       }
 
+    if ( this->CellMultiColumnList )
+      {
+      this->CellMultiColumnList->SetParent(NULL);
+      this->CellMultiColumnList->Delete();
+      this->CellMultiColumnList = NULL;
+      }
+    if ( this->CellClearAllButton )
+      {
+      this->CellClearAllButton->SetParent(NULL);
+      this->CellClearAllButton->Delete();
+      this->CellClearAllButton  = NULL;
+      }
+    if ( this->CellUseAllButton )
+      {
+      this->CellUseAllButton->SetParent(NULL);
+      this->CellUseAllButton->Delete();
+      this->CellUseAllButton  = NULL;
+      }
+    if ( this->CellUseNoneButton )
+      {
+      this->CellUseNoneButton->SetParent(NULL);
+      this->CellUseNoneButton->Delete();
+      this->CellUseNoneButton  = NULL;
+      }
+    if ( this->CellAddTermButton )
+      {
+      this->CellAddTermButton->SetParent(NULL);
+      this->CellAddTermButton->Delete();
+      this->CellAddTermButton  = NULL;
+      }
+    if ( this->CellClearTermButton )
+      {
+      this->CellClearTermButton->SetParent(NULL);
+      this->CellClearTermButton->Delete();
+      this->CellClearTermButton  = NULL;
+      }
+    
+    if ( this->GeneMultiColumnList )
+      {
+      this->GeneMultiColumnList->SetParent(NULL);
+      this->GeneMultiColumnList->Delete();
+      this->GeneMultiColumnList = NULL;
+      }
+    if ( this->GeneClearAllButton )
+      {
+      this->GeneClearAllButton->SetParent(NULL);
+      this->GeneClearAllButton->Delete();
+      this->GeneClearAllButton  = NULL;
+      }
+    if ( this->GeneUseAllButton )
+      {
+      this->GeneUseAllButton->SetParent(NULL);
+      this->GeneUseAllButton->Delete();
+      this->GeneUseAllButton  = NULL;
+      }
+    if ( this->GeneUseNoneButton )
+      {
+      this->GeneUseNoneButton->SetParent(NULL);
+      this->GeneUseNoneButton->Delete();
+      this->GeneUseNoneButton  = NULL;
+      }
+    if ( this->GeneAddTermButton )
+      {
+      this->GeneAddTermButton->SetParent(NULL);
+      this->GeneAddTermButton->Delete();
+      this->GeneAddTermButton  = NULL;
+      }
+    if ( this->GeneClearTermButton )
+      {
+      this->GeneClearTermButton->SetParent(NULL);
+      this->GeneClearTermButton->Delete();
+      this->GeneClearTermButton  = NULL;
+      }
+
+    if ( this->GeneMultiColumnList )
+      {
+      this->GeneMultiColumnList->SetParent(NULL);
+      this->GeneMultiColumnList->Delete();
+      this->GeneMultiColumnList = NULL;
+      }
+    if ( this->GeneClearAllButton )
+      {
+      this->GeneClearAllButton->SetParent(NULL);
+      this->GeneClearAllButton->Delete();
+      this->GeneClearAllButton  = NULL;
+      }
+    if ( this->GeneUseAllButton )
+      {
+      this->GeneUseAllButton->SetParent(NULL);
+      this->GeneUseAllButton->Delete();
+      this->GeneUseAllButton  = NULL;
+      }
+    if ( this->GeneUseNoneButton )
+      {
+      this->GeneUseNoneButton->SetParent(NULL);
+      this->GeneUseNoneButton->Delete();
+      this->GeneUseNoneButton  = NULL;
+      }
+    if ( this->GeneAddTermButton )
+      {
+      this->GeneAddTermButton->SetParent(NULL);
+      this->GeneAddTermButton->Delete();
+      this->GeneAddTermButton  = NULL;
+      }
+    if ( this->GeneClearTermButton )
+      {
+      this->GeneClearTermButton->SetParent(NULL);
+      this->GeneClearTermButton->Delete();
+      this->GeneClearTermButton  = NULL;
+      }
+
 }
 
 
@@ -401,8 +531,25 @@ void vtkQueryAtlasGUI::RemoveGUIObservers ( )
   this->StructureUseNoneButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
   this->GeneButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->GeneClearAllButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->GeneAddTermButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->GeneClearTermButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
+  this->GeneUseAllButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->GeneUseNoneButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+
   this->MiscButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->MiscClearAllButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->MiscAddTermButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->MiscClearTermButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
+  this->MiscUseAllButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->MiscUseNoneButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+
   this->CellButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->CellClearAllButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->CellAddTermButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->CellClearTermButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
+  this->CellUseAllButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->CellUseNoneButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
   this->SpeciesButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->SpeciesHumanButton->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -448,8 +595,25 @@ void vtkQueryAtlasGUI::AddGUIObservers ( )
   this->StructureUseNoneButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
   this->GeneButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->GeneClearAllButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->GeneAddTermButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->GeneClearTermButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
+  this->GeneUseAllButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->GeneUseNoneButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+
   this->MiscButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->MiscClearAllButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->MiscAddTermButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->MiscClearTermButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
+  this->MiscUseAllButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->MiscUseNoneButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+
   this->CellButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->CellClearAllButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->CellAddTermButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->CellClearTermButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
+  this->CellUseAllButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->CellUseNoneButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
   this->SpeciesButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->SpeciesHumanButton->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -910,7 +1074,7 @@ void vtkQueryAtlasGUI::BuildStructureFrame()
     this->StructureMultiColumnList->GetWidget()->MovableColumnsOff ( );
 
     this->StructureMultiColumnList->GetWidget()->AddColumn ( "Use");
-    this->StructureMultiColumnList->GetWidget()->AddColumn ( "Search Terms" );
+    this->StructureMultiColumnList->GetWidget()->AddColumn ( "Structure search terms" );
 
 //    this->StructureMultiColumnList->GetWidget()->ColumnEditableOn ( this->SelectionColumn );
     this->StructureMultiColumnList->GetWidget()->SetColumnWidth (this->SelectionColumn, 5);
@@ -1111,18 +1275,264 @@ void vtkQueryAtlasGUI::BuildPopulationFrame()
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::BuildCellFrame()
 {
+    vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
+
+    // add multi-column list box for search terms
+    this->CellMultiColumnList = vtkKWMultiColumnListWithScrollbars::New ( );
+    this->CellMultiColumnList->SetParent ( this->CellFrame );
+    this->CellMultiColumnList->Create ( );
+    this->CellMultiColumnList->SetWidth(0);
+    this->CellMultiColumnList->SetHeight(3);
+    this->CellMultiColumnList->GetWidget()->SetSelectionTypeToCell ( );
+    this->CellMultiColumnList->GetWidget()->MovableRowsOff ( );
+    this->CellMultiColumnList->GetWidget()->MovableColumnsOff ( );
+
+    this->CellMultiColumnList->GetWidget()->AddColumn ( "Use");
+    this->CellMultiColumnList->GetWidget()->AddColumn ( "Cell search terms" );
+
+    this->CellMultiColumnList->GetWidget()->SetColumnWidth (this->SelectionColumn, 5);
+    this->CellMultiColumnList->GetWidget()->SetColumnAlignmentToCenter ( this->SelectionColumn );
+    this->CellMultiColumnList->GetWidget()->SetColumnResizable ( this->SelectionColumn, 0 );
+
+    this->CellMultiColumnList->GetWidget()->ColumnEditableOn ( this->SearchTermColumn );
+    this->CellMultiColumnList->GetWidget()->SetColumnWidth (this->SearchTermColumn, 42);
+    this->CellMultiColumnList->GetWidget()->SetColumnAlignmentToLeft (this->SearchTermColumn );
+    this->CellMultiColumnList->GetWidget()->SetColumnResizable ( this->SearchTermColumn, 0 );
+    app->Script ( "pack %s -side top -fill x -expand true", this->CellMultiColumnList->GetWidgetName() );
+
+    // add and pack bottom button frame
+    vtkKWFrame *bbframe = vtkKWFrame::New ( );
+    bbframe->SetParent ( this->CellFrame );
+    bbframe->Create ( );
+    app->Script ( "pack %s -side top -fill x -expand n",  bbframe->GetWidgetName() );
+
+    // add search, clear, select all, select none buttons
+    this->CellUseAllButton = vtkKWPushButton::New ( );
+    this->CellUseAllButton->SetParent ( bbframe );
+    this->CellUseAllButton->Create();
+    this->CellUseAllButton->SetWidth ( 12 );
+    this->CellUseAllButton->SetText ( "Use all" );
+    this->CellUseAllButton->SetBalloonHelpString ( "Marck all search terms for use");
+
+    this->CellUseNoneButton = vtkKWPushButton::New ( );
+    this->CellUseNoneButton->SetParent ( bbframe );
+    this->CellUseNoneButton->Create();
+    this->CellUseNoneButton->SetWidth ( 12 );
+    this->CellUseNoneButton->SetText ( "Use none" );
+    this->CellUseNoneButton->SetBalloonHelpString ( "Unmark all search terms.");
+
+    this->CellClearAllButton = vtkKWPushButton::New ( );
+    this->CellClearAllButton->SetParent ( bbframe );
+    this->CellClearAllButton->Create();
+    this->CellClearAllButton->SetWidth ( 12 );
+    this->CellClearAllButton->SetText ( "Clear all" );
+    this->CellClearAllButton->SetBalloonHelpString ( "Clear all search terms" );
+
+    // add search terms and delete highlighted search terms buttons
+    this->CellAddTermButton = vtkKWPushButton::New ( );
+    this->CellAddTermButton->SetParent ( bbframe );
+    this->CellAddTermButton->Create();
+    this->CellAddTermButton->SetWidth ( 12 );
+    this->CellAddTermButton->SetText ( "Add new" );
+    this->CellAddTermButton->SetBalloonHelpString ( "Add a new search term" );
+    
+    this->CellClearTermButton = vtkKWPushButton::New ( );
+    this->CellClearTermButton->SetParent ( bbframe );
+    this->CellClearTermButton->Create();
+    this->CellClearTermButton->SetWidth ( 12 );
+    this->CellClearTermButton->SetText ( "Clear selected" );
+    this->CellClearTermButton->SetBalloonHelpString ( "Delete highlighted search terms" );
+
+    // grid buttons into place
+    app->Script ( "grid %s -row 0 -column 0 -sticky e -padx 2 -pady 2",
+                  this->CellAddTermButton->GetWidgetName() );
+    app->Script ( "grid %s -row 0 -column 1 -sticky e -padx 2  -pady 2",
+                  this->CellUseAllButton->GetWidgetName() );
+    app->Script ( "grid %s -row 0 -column 2 -sticky w -padx 2 -pady 2",
+                  this->CellUseNoneButton->GetWidgetName() );
+    
+    app->Script ( "grid %s -row 1 -column 1 -sticky e -padx 2 -pady 2",
+                  this->CellClearTermButton->GetWidgetName());
+    app->Script ( "grid %s -row 1 -column 2 -sticky w -padx 2 -pady 2",
+                  this->CellClearAllButton->GetWidgetName() );
+    bbframe->Delete ( );
+
 }
 
 
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::BuildMiscFrame()
 {
+    vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
+
+    // add multi-column list box for search terms
+    this->MiscMultiColumnList = vtkKWMultiColumnListWithScrollbars::New ( );
+    this->MiscMultiColumnList->SetParent ( this->MiscFrame );
+    this->MiscMultiColumnList->Create ( );
+    this->MiscMultiColumnList->SetWidth(0);
+    this->MiscMultiColumnList->SetHeight(3);
+    this->MiscMultiColumnList->GetWidget()->SetSelectionTypeToCell ( );
+    this->MiscMultiColumnList->GetWidget()->MovableRowsOff ( );
+    this->MiscMultiColumnList->GetWidget()->MovableColumnsOff ( );
+
+    this->MiscMultiColumnList->GetWidget()->AddColumn ( "Use");
+    this->MiscMultiColumnList->GetWidget()->AddColumn ( "Miscellaneous search terms" );
+
+    this->MiscMultiColumnList->GetWidget()->SetColumnWidth (this->SelectionColumn, 5);
+    this->MiscMultiColumnList->GetWidget()->SetColumnAlignmentToCenter ( this->SelectionColumn );
+    this->MiscMultiColumnList->GetWidget()->SetColumnResizable ( this->SelectionColumn, 0 );
+
+    this->MiscMultiColumnList->GetWidget()->ColumnEditableOn ( this->SearchTermColumn );
+    this->MiscMultiColumnList->GetWidget()->SetColumnWidth (this->SearchTermColumn, 42);
+    this->MiscMultiColumnList->GetWidget()->SetColumnAlignmentToLeft (this->SearchTermColumn );
+    this->MiscMultiColumnList->GetWidget()->SetColumnResizable ( this->SearchTermColumn, 0 );
+    app->Script ( "pack %s -side top -fill x -expand true", this->MiscMultiColumnList->GetWidgetName() );
+
+    // add and pack bottom button frame
+    vtkKWFrame *bbframe = vtkKWFrame::New ( );
+    bbframe->SetParent ( this->MiscFrame );
+    bbframe->Create ( );
+    app->Script ( "pack %s -side top -fill x -expand n",  bbframe->GetWidgetName() );
+
+    // add search, clear, select all, select none buttons
+    this->MiscUseAllButton = vtkKWPushButton::New ( );
+    this->MiscUseAllButton->SetParent ( bbframe );
+    this->MiscUseAllButton->Create();
+    this->MiscUseAllButton->SetWidth ( 12 );
+    this->MiscUseAllButton->SetText ( "Use all" );
+    this->MiscUseAllButton->SetBalloonHelpString ( "Marck all search terms for use");
+
+    this->MiscUseNoneButton = vtkKWPushButton::New ( );
+    this->MiscUseNoneButton->SetParent ( bbframe );
+    this->MiscUseNoneButton->Create();
+    this->MiscUseNoneButton->SetWidth ( 12 );
+    this->MiscUseNoneButton->SetText ( "Use none" );
+    this->MiscUseNoneButton->SetBalloonHelpString ( "Unmark all search terms.");
+
+    this->MiscClearAllButton = vtkKWPushButton::New ( );
+    this->MiscClearAllButton->SetParent ( bbframe );
+    this->MiscClearAllButton->Create();
+    this->MiscClearAllButton->SetWidth ( 12 );
+    this->MiscClearAllButton->SetText ( "Clear all" );
+    this->MiscClearAllButton->SetBalloonHelpString ( "Clear all search terms" );
+
+    // add search terms and delete highlighted search terms buttons
+    this->MiscAddTermButton = vtkKWPushButton::New ( );
+    this->MiscAddTermButton->SetParent ( bbframe );
+    this->MiscAddTermButton->Create();
+    this->MiscAddTermButton->SetWidth ( 12 );
+    this->MiscAddTermButton->SetText ( "Add new" );
+    this->MiscAddTermButton->SetBalloonHelpString ( "Add a new search term" );
+    
+    this->MiscClearTermButton = vtkKWPushButton::New ( );
+    this->MiscClearTermButton->SetParent ( bbframe );
+    this->MiscClearTermButton->Create();
+    this->MiscClearTermButton->SetWidth ( 12 );
+    this->MiscClearTermButton->SetText ( "Clear selected" );
+    this->MiscClearTermButton->SetBalloonHelpString ( "Delete highlighted search terms" );
+
+    // grid buttons into place
+    app->Script ( "grid %s -row 0 -column 0 -sticky e -padx 2 -pady 2",
+                  this->MiscAddTermButton->GetWidgetName() );
+    app->Script ( "grid %s -row 0 -column 1 -sticky e -padx 2  -pady 2",
+                  this->MiscUseAllButton->GetWidgetName() );
+    app->Script ( "grid %s -row 0 -column 2 -sticky w -padx 2 -pady 2",
+                  this->MiscUseNoneButton->GetWidgetName() );
+    
+    app->Script ( "grid %s -row 1 -column 1 -sticky e -padx 2 -pady 2",
+                  this->MiscClearTermButton->GetWidgetName());
+    app->Script ( "grid %s -row 1 -column 2 -sticky w -padx 2 -pady 2",
+                  this->MiscClearAllButton->GetWidgetName() );
+    bbframe->Delete ( );
+
 }
 
 
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::BuildGeneFrame()
 {
+    vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
+
+    // add multi-column list box for search terms
+    this->GeneMultiColumnList = vtkKWMultiColumnListWithScrollbars::New ( );
+    this->GeneMultiColumnList->SetParent ( this->GeneFrame );
+    this->GeneMultiColumnList->Create ( );
+    this->GeneMultiColumnList->SetWidth(0);
+    this->GeneMultiColumnList->SetHeight(3);
+    this->GeneMultiColumnList->GetWidget()->SetSelectionTypeToCell ( );
+    this->GeneMultiColumnList->GetWidget()->MovableRowsOff ( );
+    this->GeneMultiColumnList->GetWidget()->MovableColumnsOff ( );
+
+    this->GeneMultiColumnList->GetWidget()->AddColumn ( "Use");
+    this->GeneMultiColumnList->GetWidget()->AddColumn ( "Gene search terms" );
+
+    this->GeneMultiColumnList->GetWidget()->SetColumnWidth (this->SelectionColumn, 5);
+    this->GeneMultiColumnList->GetWidget()->SetColumnAlignmentToCenter ( this->SelectionColumn );
+    this->GeneMultiColumnList->GetWidget()->SetColumnResizable ( this->SelectionColumn, 0 );
+
+    this->GeneMultiColumnList->GetWidget()->ColumnEditableOn ( this->SearchTermColumn );
+    this->GeneMultiColumnList->GetWidget()->SetColumnWidth (this->SearchTermColumn, 42);
+    this->GeneMultiColumnList->GetWidget()->SetColumnAlignmentToLeft (this->SearchTermColumn );
+    this->GeneMultiColumnList->GetWidget()->SetColumnResizable ( this->SearchTermColumn, 0 );
+    app->Script ( "pack %s -side top -fill x -expand true", this->GeneMultiColumnList->GetWidgetName() );
+
+    // add and pack bottom button frame
+    vtkKWFrame *bbframe = vtkKWFrame::New ( );
+    bbframe->SetParent ( this->GeneFrame );
+    bbframe->Create ( );
+    app->Script ( "pack %s -side top -fill x -expand n",  bbframe->GetWidgetName() );
+
+    // add search, clear, select all, select none buttons
+    this->GeneUseAllButton = vtkKWPushButton::New ( );
+    this->GeneUseAllButton->SetParent ( bbframe );
+    this->GeneUseAllButton->Create();
+    this->GeneUseAllButton->SetWidth ( 12 );
+    this->GeneUseAllButton->SetText ( "Use all" );
+    this->GeneUseAllButton->SetBalloonHelpString ( "Marck all search terms for use");
+
+    this->GeneUseNoneButton = vtkKWPushButton::New ( );
+    this->GeneUseNoneButton->SetParent ( bbframe );
+    this->GeneUseNoneButton->Create();
+    this->GeneUseNoneButton->SetWidth ( 12 );
+    this->GeneUseNoneButton->SetText ( "Use none" );
+    this->GeneUseNoneButton->SetBalloonHelpString ( "Unmark all search terms.");
+
+    this->GeneClearAllButton = vtkKWPushButton::New ( );
+    this->GeneClearAllButton->SetParent ( bbframe );
+    this->GeneClearAllButton->Create();
+    this->GeneClearAllButton->SetWidth ( 12 );
+    this->GeneClearAllButton->SetText ( "Clear all" );
+    this->GeneClearAllButton->SetBalloonHelpString ( "Clear all search terms" );
+
+    // add search terms and delete highlighted search terms buttons
+    this->GeneAddTermButton = vtkKWPushButton::New ( );
+    this->GeneAddTermButton->SetParent ( bbframe );
+    this->GeneAddTermButton->Create();
+    this->GeneAddTermButton->SetWidth ( 12 );
+    this->GeneAddTermButton->SetText ( "Add new" );
+    this->GeneAddTermButton->SetBalloonHelpString ( "Add a new search term" );
+    
+    this->GeneClearTermButton = vtkKWPushButton::New ( );
+    this->GeneClearTermButton->SetParent ( bbframe );
+    this->GeneClearTermButton->Create();
+    this->GeneClearTermButton->SetWidth ( 12 );
+    this->GeneClearTermButton->SetText ( "Clear selected" );
+    this->GeneClearTermButton->SetBalloonHelpString ( "Delete highlighted search terms" );
+
+    // grid buttons into place
+    app->Script ( "grid %s -row 0 -column 0 -sticky e -padx 2 -pady 2",
+                  this->GeneAddTermButton->GetWidgetName() );
+    app->Script ( "grid %s -row 0 -column 1 -sticky e -padx 2  -pady 2",
+                  this->GeneUseAllButton->GetWidgetName() );
+    app->Script ( "grid %s -row 0 -column 2 -sticky w -padx 2 -pady 2",
+                  this->GeneUseNoneButton->GetWidgetName() );
+    
+    app->Script ( "grid %s -row 1 -column 1 -sticky e -padx 2 -pady 2",
+                  this->GeneClearTermButton->GetWidgetName());
+    app->Script ( "grid %s -row 1 -column 2 -sticky w -padx 2 -pady 2",
+                  this->GeneClearAllButton->GetWidgetName() );
+    bbframe->Delete ( );
+
 }
 
 

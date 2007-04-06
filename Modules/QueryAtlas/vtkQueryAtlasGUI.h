@@ -80,10 +80,30 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
 
     // cell panel
     vtkGetObjectMacro (CellFrame, vtkKWFrame);
+    vtkGetObjectMacro ( CellClearAllButton, vtkKWPushButton );
+    vtkGetObjectMacro ( CellUseAllButton, vtkKWPushButton );
+    vtkGetObjectMacro ( CellUseNoneButton, vtkKWPushButton );    
+    vtkGetObjectMacro ( CellAddTermButton, vtkKWPushButton );    
+    vtkGetObjectMacro ( CellClearTermButton, vtkKWPushButton );    
+    vtkGetObjectMacro ( CellMultiColumnList, vtkKWMultiColumnListWithScrollbars );
+
     // protein panel
     vtkGetObjectMacro (MiscFrame, vtkKWFrame );
+    vtkGetObjectMacro ( MiscClearAllButton, vtkKWPushButton );
+    vtkGetObjectMacro ( MiscUseAllButton, vtkKWPushButton );
+    vtkGetObjectMacro ( MiscUseNoneButton, vtkKWPushButton );    
+    vtkGetObjectMacro ( MiscAddTermButton, vtkKWPushButton );    
+    vtkGetObjectMacro ( MiscClearTermButton, vtkKWPushButton );    
+    vtkGetObjectMacro ( MiscMultiColumnList, vtkKWMultiColumnListWithScrollbars );
+
     // genes panel
     vtkGetObjectMacro (GeneFrame, vtkKWFrame );
+    vtkGetObjectMacro ( GeneClearAllButton, vtkKWPushButton );
+    vtkGetObjectMacro ( GeneUseAllButton, vtkKWPushButton );
+    vtkGetObjectMacro ( GeneUseNoneButton, vtkKWPushButton );    
+    vtkGetObjectMacro ( GeneAddTermButton, vtkKWPushButton );    
+    vtkGetObjectMacro ( GeneClearTermButton, vtkKWPushButton );    
+    vtkGetObjectMacro ( GeneMultiColumnList, vtkKWMultiColumnListWithScrollbars );
 
     // querymaker panel
     vtkGetObjectMacro ( DatabasesMenuButton, vtkKWMenuButton );
@@ -224,10 +244,30 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
 
     // cell frame
     vtkKWFrame *CellFrame;
-    // protein frame
+    vtkKWMultiColumnListWithScrollbars *CellMultiColumnList;
+    vtkKWPushButton *CellClearAllButton;
+    vtkKWPushButton *CellUseAllButton;
+    vtkKWPushButton *CellUseNoneButton;
+    vtkKWPushButton *CellAddTermButton;
+    vtkKWPushButton *CellClearTermButton;
+
+    // misc frame
     vtkKWFrame *MiscFrame;
+    vtkKWMultiColumnListWithScrollbars *MiscMultiColumnList;
+    vtkKWPushButton *MiscClearAllButton;
+    vtkKWPushButton *MiscUseAllButton;
+    vtkKWPushButton *MiscUseNoneButton;
+    vtkKWPushButton *MiscAddTermButton;
+    vtkKWPushButton *MiscClearTermButton;
+
     // gene grame
     vtkKWFrame *GeneFrame;
+    vtkKWMultiColumnListWithScrollbars *GeneMultiColumnList;
+    vtkKWPushButton *GeneClearAllButton;
+    vtkKWPushButton *GeneUseAllButton;
+    vtkKWPushButton *GeneUseNoneButton;
+    vtkKWPushButton *GeneAddTermButton;
+    vtkKWPushButton *GeneClearTermButton;
 
     //BTX
     // Description:
