@@ -29,9 +29,14 @@ vtkStandardNewMacro (vtkQueryAtlasGUI );
 vtkCxxRevisionMacro ( vtkQueryAtlasGUI, "$Revision: 1.0 $");
 
 
-#define _r 0.85
-#define _g 0.85
-#define _b 0.95
+#define _br 0.85
+#define _bg 0.85
+#define _bb 0.95
+
+#define _fr 0.5
+#define _fg 0.5
+#define _fb 0.5
+
 
 //---------------------------------------------------------------------------
 vtkQueryAtlasGUI::vtkQueryAtlasGUI ( )
@@ -654,6 +659,7 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
     // nothing to do here yet...
   vtkKWPushButton *b = vtkKWPushButton::SafeDownCast ( caller );
   vtkKWMenu *m = vtkKWMenu::SafeDownCast ( caller );
+  vtkKWCheckButton *c = vtkKWCheckButton::SafeDownCast ( caller );
   const char *context;
   
   if ( (b == this->LoadSceneButton) && (event == vtkKWPushButton::InvokedEvent ) )
@@ -664,8 +670,19 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
     {
     //    this->Script ( "if { [info exists ::QA(filename) ] } {QueryAtlasLaunchBirnLexHierarchy}");
     }
+  else if ( (b == this->HierarchySearchButton) && (event == vtkKWPushButton::InvokedEvent ) )
+    {
+    //    this->Script ( "if { [info exists ::QA(filename) ] } {QueryAtlasLaunchBirnLexHierarchy}");
+    }
+
   else if ( (b == this->SearchButton) && (event == vtkKWPushButton::InvokedEvent ) )
     {
+    }
+  else if ( (b == this->StructureButton) && (event == vtkKWPushButton::InvokedEvent ) )
+    {
+    this->UnpackQueryBuilderContextFrames();
+    this->PackQueryBuilderContextFrame ( this->StructureFrame );
+    this->ColorCodeContextButtons ( this->StructureButton );
     }
   else if ( (b == this->StructureClearAllButton) && (event == vtkKWPushButton::InvokedEvent ) )
     {
@@ -698,24 +715,93 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
     this->PackQueryBuilderContextFrame ( this->MiscFrame);
     this->ColorCodeContextButtons ( this->MiscButton );
     }
+  else if ( (b == this->MiscClearAllButton) && (event == vtkKWPushButton::InvokedEvent ) )
+    {
+    context = "misc";
+    this->DeleteAllSearchTerms( context );
+    }
+  else if ( (b == this->MiscAddTermButton) && (event == vtkKWPushButton::InvokedEvent ) )
+    {
+    context = "misc";
+    this->AddNewSearchTerm( context );
+    }
+  else if ( (b == this->MiscClearTermButton) && (event == vtkKWPushButton::InvokedEvent ) )
+    {
+    context = "misc";
+    this->DeleteSelectedSearchTerms (context );
+    }
+  else if ( (b == this->MiscUseAllButton) && (event == vtkKWPushButton::InvokedEvent ) )
+    {
+    context = "misc";
+    this->SelectAllSearchTerms ( context );
+    }
+  else if ( (b == this->MiscUseNoneButton) && (event == vtkKWPushButton::InvokedEvent ) )
+    {
+    context = "misc";
+    this->DeselectAllSearchTerms ( context );
+    }  
   else if ( (b == this->GeneButton) && (event == vtkKWPushButton::InvokedEvent ) )
     {
     this->UnpackQueryBuilderContextFrames();
     this->PackQueryBuilderContextFrame ( this->GeneFrame);
     this->ColorCodeContextButtons ( this->GeneButton );
     }
+  else if ( (b == this->GeneClearAllButton) && (event == vtkKWPushButton::InvokedEvent ) )
+    {
+    context = "gene";
+    this->DeleteAllSearchTerms( context );
+    }
+  else if ( (b == this->GeneAddTermButton) && (event == vtkKWPushButton::InvokedEvent ) )
+    {
+    context = "gene";
+    this->AddNewSearchTerm( context );
+    }
+  else if ( (b == this->GeneClearTermButton) && (event == vtkKWPushButton::InvokedEvent ) )
+    {
+    context = "gene";
+    this->DeleteSelectedSearchTerms (context );
+    }
+  else if ( (b == this->GeneUseAllButton) && (event == vtkKWPushButton::InvokedEvent ) )
+    {
+    context = "gene";
+    this->SelectAllSearchTerms ( context );
+    }
+  else if ( (b == this->GeneUseNoneButton) && (event == vtkKWPushButton::InvokedEvent ) )
+    {
+    context = "gene";
+    this->DeselectAllSearchTerms ( context );
+    }  
   else if ( (b == this->CellButton) && (event == vtkKWPushButton::InvokedEvent ) )
     {
     this->UnpackQueryBuilderContextFrames();
     this->PackQueryBuilderContextFrame ( this->CellFrame);    
     this->ColorCodeContextButtons ( this->CellButton );
     }
-  else if ( (b == this->StructureButton) && (event == vtkKWPushButton::InvokedEvent ) )
+  else if ( (b == this->CellClearAllButton) && (event == vtkKWPushButton::InvokedEvent ) )
     {
-    this->UnpackQueryBuilderContextFrames();
-    this->PackQueryBuilderContextFrame ( this->StructureFrame );
-    this->ColorCodeContextButtons ( this->StructureButton );
+    context = "cell";
+    this->DeleteAllSearchTerms( context );
     }
+  else if ( (b == this->CellAddTermButton) && (event == vtkKWPushButton::InvokedEvent ) )
+    {
+    context = "cell";
+    this->AddNewSearchTerm( context );
+    }
+  else if ( (b == this->CellClearTermButton) && (event == vtkKWPushButton::InvokedEvent ) )
+    {
+    context = "cell";
+    this->DeleteSelectedSearchTerms (context );
+    }
+  else if ( (b == this->CellUseAllButton) && (event == vtkKWPushButton::InvokedEvent ) )
+    {
+    context = "cell";
+    this->SelectAllSearchTerms ( context );
+    }
+  else if ( (b == this->CellUseNoneButton) && (event == vtkKWPushButton::InvokedEvent ) )
+    {
+    context = "cell";
+    this->DeselectAllSearchTerms ( context );
+    }  
   else if ( (b == this->PopulationButton) && (event == vtkKWPushButton::InvokedEvent ) )
     {
     this->UnpackQueryBuilderContextFrames();
@@ -729,22 +815,52 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
     this->ColorCodeContextButtons ( this->SpeciesButton );
     }
 
-//    if ( (m == this->DatabasesMenuButton->GetMenu() ) && (event == vtkKWMenu::MenuItemInvokedEvent ) )
-//    {
-//    }
+  if (( m== this->DiagnosisMenuButton->GetWidget()->GetMenu()) && (event == vtkKWMenu::MenuItemInvokedEvent ) )
+    {
+    }
+  else if (( m== this->GenderMenuButton->GetWidget()->GetMenu()) && (event == vtkKWMenu::MenuItemInvokedEvent ) )
+    {
+    }
+  else if (( m== this->HandednessMenuButton->GetWidget()->GetMenu()) && (event == vtkKWMenu::MenuItemInvokedEvent ) )
+    {
+    }
+  else if (( m== this->AgeMenuButton->GetWidget()->GetMenu()) && (event == vtkKWMenu::MenuItemInvokedEvent ) )
+    {
+    }
+  else if (( m== this->DiagnosticsMenuButton->GetWidget()->GetMenu()) && (event == vtkKWMenu::MenuItemInvokedEvent ) )
+    {
+    }
+  if ((c == this->SpeciesHumanButton) && (event == vtkKWCheckButton::SelectedStateChangedEvent))
+    {
+    }
+  if ((c == this->SpeciesMouseButton) && (event == vtkKWCheckButton::SelectedStateChangedEvent))
+    {
+    }
+  if ((c == this->SpeciesMacaqueButton) && (event == vtkKWCheckButton::SelectedStateChangedEvent))
+    {
+    }
     return;
 }
 
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::ColorCodeContextButtons ( vtkKWPushButton *b )
 {
-  this->MiscButton->SetBackgroundColor ( _r, _g, _b );
-  this->GeneButton->SetBackgroundColor ( _r, _g, _b );
-  this->CellButton->SetBackgroundColor ( _r, _g, _b );
-  this->StructureButton->SetBackgroundColor ( _r, _g, _b );
-  this->PopulationButton->SetBackgroundColor ( _r, _g, _b );
-  this->SpeciesButton->SetBackgroundColor ( _r, _g, _b );
+  this->MiscButton->SetBackgroundColor ( _br, _bg, _bb );
+  this->GeneButton->SetBackgroundColor ( _br, _bg, _bb );
+  this->CellButton->SetBackgroundColor ( _br, _bg, _bb );
+  this->StructureButton->SetBackgroundColor ( _br, _bg, _bb );
+  this->PopulationButton->SetBackgroundColor ( _br, _bg, _bb );
+  this->SpeciesButton->SetBackgroundColor ( _br, _bg, _bb );
+
+  this->MiscButton->SetForegroundColor ( _fr, _fg, _fb );
+  this->GeneButton->SetForegroundColor ( _fr, _fg, _fb );
+  this->CellButton->SetForegroundColor ( _fr, _fg, _fb );
+  this->StructureButton->SetForegroundColor ( _fr, _fg, _fb );
+  this->PopulationButton->SetForegroundColor ( _fr, _fg, _fb );
+  this->SpeciesButton->SetForegroundColor ( _fr, _fg, _fb );
+
   b->SetBackgroundColor (1.0, 1.0, 1.0);
+  b->SetForegroundColor (0.0, 0.0, 0.0);
 }
 
 
@@ -913,7 +1029,7 @@ void vtkQueryAtlasGUI::BuildGUI ( )
     vtkKWLabel *sl = vtkKWLabel::New();
     sl->SetParent ( searchFrame->GetFrame() );
     sl->Create();
-    sl->SetText ("databases: ");
+    sl->SetText ("search target: ");
     this->DatabasesMenuButton = vtkKWMenuButton::New();
     this->DatabasesMenuButton->SetParent ( searchFrame->GetFrame() );
     this->DatabasesMenuButton->Create();
@@ -951,7 +1067,7 @@ void vtkQueryAtlasGUI::BuildGUI ( )
     curL->Create();
     curL->SetWidth ( 45 );
     curL->SetText ( "Results of current search" );
-    curL->SetBackgroundColor ( _r, _g, _b);
+    curL->SetBackgroundColor ( _br, _bg, _bb);
     this->CurrentResultsList = vtkKWListBoxWithScrollbars::New();
     this->CurrentResultsList->SetParent ( curF );
     this->CurrentResultsList->Create();
@@ -1657,8 +1773,10 @@ void vtkQueryAtlasGUI::BuildQueryBuilderContextButtons ( vtkKWFrame *parent )
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::BuildDatabasesMenu ( vtkKWMenu *m )
 {
+  m->AddRadioButton ("all");
+  m->SelectItem ("all");
+  m->AddSeparator();
   m->AddRadioButton ("google");
-  m->SelectItem ("google");
   m->AddRadioButton ("wikipedia");
   m->AddSeparator();
   m->AddRadioButton ("pubmed");
