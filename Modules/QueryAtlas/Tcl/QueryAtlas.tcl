@@ -6,7 +6,7 @@ proc QueryAtlasInit { {filename ""} } {
     
     # find the data
     set ::QA(filename) ""
-    set $::QA(linkBundleCount) 0
+    set ::QA(linkBundleCount) 0
     if { $filename != "" } {
         set ::QA(filename) $filename
     } else {
