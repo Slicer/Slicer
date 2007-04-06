@@ -162,8 +162,6 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLayerLogic : public vtkSlicerLo
   // of the VolumeNode and the SliceNode
   void UpdateTransforms(); 
 
-  void UpdateTransformsOLD();
-
   void ScalarVolumeNodeUpdateTransforms();
 
   void VectorVolumeNodeUpdateTransforms();
