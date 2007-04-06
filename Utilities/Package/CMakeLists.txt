@@ -18,6 +18,7 @@ CONFIGURE_FILE(
   "${Slicer3_BINARY_DIR}/PackageLibraries/CMakeLists.txt"
   @ONLY)
 
+
 # If the cmake version includes cpack, use it
 INCLUDE(InstallRequiredSystemLibraries)
 INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/InstallDebugSystemLibraries.cmake)
@@ -45,6 +46,9 @@ ENDIF(EXISTS "${TEEM_DIR}/CMakeCache.txt")
 IF(APPLE)
   SET(CPACK_PACKAGE_ICON "${Slicer3_SOURCE_DIR}/Utilities/Package/Slicer3.icns")
 ENDIF(APPLE)
+
+# slicer3 does _not_ require setting the windows path
+SET(CPACK_NSIS_MODIFY_PATH OFF)
 
 SET(CPACK_PACKAGE_EXECUTABLES "..\\\\Slicer3" "Slicer")
 INCLUDE(CPack)
