@@ -28,15 +28,28 @@ proc randRange {min max} {
   return [expr $min + rand() * ($max-$min)]
 }
 
-proc TestCards {} {
+proc Slicer3TestCards {} {
   set renderWidget [[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer]
-  set icondir $::env(SLICER_HOME)/../Slicer3/Utilities/Launcher/3DSlicerLogoICOimages
+  #set icondir $::env(SLICER_HOME)/../Slicer3/Utilities/Launcher/3DSlicerLogoICOimages
   set icon $icondir/3DSlicerLogo-DesktopIcon-48x48x256.png
   for { set i 0 } { $i < 20 } { incr i } {
     set card [Card #auto $renderWidget]
     set ras [list [randRange -100 100] [randRange -100 100] [randRange -100 100]]
     set scale [randRange 1 30]
     $card configure -text "card $i" -ras $ras -scale $scale -icon $icon -follow 0
+  }
+}
+
+proc TestCards {} {
+  set renderWidget [[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer]
+  set icondir $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/ImageData
+  set fontDir $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Fonts
+  foreach icon [glob $icondir/*.png] {
+    set card [Card #auto $renderWidget]
+    set ras [list [randRange -100 100] [randRange -100 100] [randRange -100 100]]
+    set scale [randRange 1 30]
+    $card configure -text "card [expr round([randRange 0 100])]" \
+      -ras $ras -scale $scale -icon $icon -follow 0 -fontDir $fontDir
   }
 }
 
@@ -88,6 +101,7 @@ if { [itcl::find class Card] == "" } {
     public variable text ""  ;# the text to display - can contain line breaks
     public variable follow 1  ;# make this a follower or not
     public variable font "default"  ;# what font to use (default means arial).
+    public variable fontDir ""  ;# what font dir to use
     public variable ras "0 0 0"  ;# what font to use (default means arial).
     public variable scale "1"  ;# what font to use (default means arial).
 
@@ -102,6 +116,7 @@ if { [itcl::find class Card] == "" } {
     variable _renderer ""
     variable _camera ""
     variable _interactor ""
+    variable _style ""
     variable _annotation ""
 
     # methods
@@ -142,6 +157,7 @@ itcl::configbody Card::renderWidget {
   set _renderer [[[$renderWidget GetRenderWindow] GetRenderers] GetItemAsObject 1]
   set _camera [$_renderer GetActiveCamera]
   set _interactor [$renderWidget GetRenderWindowInteractor]
+  set _style [$_interactor GetInteractorStyle] 
   set _annotation [$renderWidget GetCornerAnnotation]
   $this addActors
 }
@@ -181,7 +197,15 @@ itcl::body Card::constructor {renderWidget} {
   # lappend _observerTags [list $_camera $tag]
 
   set events {  
-    "KeyPressEvent" "LeftButtonPressEvent" "EndInteractionEvent"
+    "EndInteractionEvent"
+    }
+  foreach event $events {
+    set tag [$_style AddObserver $event "::Card::ProtectedCallback $this processEvent $_style $event"]    
+    lappend _observerTags [list $_interactor $tag]
+  }
+
+  set events {  
+    "KeyPressEvent"
     }
   foreach event $events {
     set tag [$_interactor AddObserver $event "::Card::ProtectedCallback $this processEvent $_interactor $event"]    
@@ -215,6 +239,7 @@ itcl::body Card::processEvent { caller event } {
     return
   }
 
+
   if { $caller ==$_interactor } {
     switch $event {
       "KeyPressEvent" {
@@ -225,6 +250,9 @@ itcl::body Card::processEvent { caller event } {
           }
         }
       }
+    }
+  } elseif { $caller == $_style } {
+    switch $event {
       "EndInteractionEvent" {
         $this positionActors
       }
@@ -276,12 +304,12 @@ itcl::body Card::updateActors {} {
   # update text actor
 
   set fontParams [$o(tText) GetFontParameters] 
+  $fontParams SetFontDirectory $fontDir
   if { $font != "default" } {
     $fontParams SetFontFileName $font
   } else {
-    $fontParams SetFontFileName "SHOWG.TTF"
+    $fontParams SetFontFileName "ARIAL.TTF"
   }
-  $fontParams SetFontDirectory c:/WINDOWS/Fonts/
   $fontParams SetBlur 2
   $fontParams SetStyle 2
   $o(tText) SetText $text
@@ -297,22 +325,22 @@ itcl::body Card::updateActors {} {
 
 itcl::body Card::positionActors {} {
 
-  set viewT [vtkTransform New]
-  $viewT DeepCopy [$_camera GetViewTransformObject]
+  set viewM [vtkMatrix4x4 New]
+  $viewM DeepCopy [[$_camera GetViewTransformObject] GetMatrix]
   foreach i {0 1 2} {
-    [$viewT GetMatrix] SetElement $i 3  0
+    $viewM SetElement $i 3  0
   }
-  $viewT Inverse
+  $viewM Invert
 
   # update text actor
 
   foreach {r a s} $ras {}
 
-  set delta [$viewT TransformVector $scale 0 0]
-  foreach {dr da ds} $delta {}
+  set delta [$viewM MultiplyPoint [expr 0.6 * $scale] 0 0 0]
+  foreach {dr da ds dw} $delta {}
   $o(actor) SetPosition [expr $r + $dr] [expr $a + $da] [expr $s + $ds] 
   $o(actor) SetScale $scale
-  $o(actor) SetUserTransform $viewT
+  $o(actor) SetUserMatrix $viewM
 
   if { $follow } {
     $o(actor) SetCamera $_camera
@@ -322,9 +350,9 @@ itcl::body Card::positionActors {} {
   
   # update icon actor
 
-  $o(iconActor) SetPosition $r $a $s
+  $o(iconActor) SetPosition $r $a [expr $s + ($scale / 4.)]
   $o(iconActor) SetScale $scale
-  $o(iconActor) SetUserTransform $viewT
+  $o(iconActor) SetUserMatrix $viewM
 
   if { $follow } {
     $o(iconActor) SetCamera $_camera
@@ -332,5 +360,5 @@ itcl::body Card::positionActors {} {
     $o(iconActor) SetCamera ""
   }
 
-  $viewT Delete
+  $viewM Delete
 }
