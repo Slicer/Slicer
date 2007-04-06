@@ -7,6 +7,8 @@
 #define IGTIGSTKSTREAM_H
 
 
+#include "itkCommand.h"
+
 #include "vtkIGTWin32Header.h" 
 #include "vtkObject.h"
 #include "vtkMatrix4x4.h"
@@ -15,20 +17,9 @@
 #include <string>
 
 #include "igstkSerialCommunication.h"
-
-#ifdef _WIN32
-#include "igstkSerialCommunicationForWindows.h"
-#else
-#include "igstkSerialCommunicationForPosix.h"
-#endif
-
 #include "igstkAuroraTracker.h"
 #include "igstkPolarisTracker.h"
-#include "itkStdStreamLogOutput.h"
 
-
-typedef itk::Logger               LoggerType;
-typedef itk::StdStreamLogOutput   LogOutputType;
 
 typedef igstk::SerialCommunication::PortNumberType PortNumberT;
 typedef igstk::SerialCommunication::BaudRateType   BaudRateT;
@@ -55,8 +46,8 @@ public:
 
 
     vtkSetMacro(Speed,int);
+    vtkSetMacro(Tracking,int);
     vtkSetMacro(MultiFactor,float);
-    vtkSetMacro(StartTimer,int);
     vtkSetMacro(TrackerType,short);
 
 
@@ -76,15 +67,10 @@ public:
     //Destructor
     virtual ~vtkIGTIGSTKStream ( );
 
-
-    void Init();
-    void StopPolling();
-    void PollRealtime();    
-
-
-    void SetLocatorTransforms();
     void ProcessTimerEvents();
 
+    void PullRealTime();    
+    void SetLocatorTransforms();
     void callbackF(double*, double*);
 
 private:
@@ -92,11 +78,6 @@ private:
     //BTX
     igstk::AuroraTracker::Pointer        AuroraTracker;
     igstk::PolarisTracker::Pointer       PolarisTracker;
-
-    igstk::SerialCommunication::Pointer  SerialCommunication;
-
-    LoggerType::Pointer                  Logger;
-    LogOutputType::Pointer               LogFileOutput;  // log output to file
 
 
     // Communication Parameters
@@ -116,9 +97,9 @@ private:
     //ETX
 
     int Speed;
-    int StartTimer;
     float MultiFactor;
     short TrackerType;  // 0 - Polaris; 1 - Aurora 
+    int Tracking;
 
     vtkMatrix4x4 *LocatorMatrix;
     vtkMatrix4x4 *RegMatrix;
@@ -126,9 +107,11 @@ private:
 
     void quaternion2xyz(float* orientation, float *normal, float *transnormal); 
     void ApplyTransform(float *position, float *norm, float *transnorm);
-    void ClearTracker();
 
 };
+
+
+
 
 #endif // IGTIGSTKSTREAM_H
 
