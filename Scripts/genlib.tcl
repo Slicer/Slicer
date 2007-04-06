@@ -849,6 +849,12 @@ if { ![file exists $::IGSTK_TEST_FILE] || $::GENLIB(update) } {
             runcmd $::MAKE IGSTK.SLN /build  $::VTK_BUILD_TYPE
         }
     } else {
+        # Running this cmake again will populate those CMake variables 
+        # in IGSTK/CMakeLists.txt marked as MARK_AS_ADVANCED with their 
+        # default values. For instance, IGSTK_SERIAL_PORT_0, IGSTK_SERIAL_PORT_1,
+        # IGSTK_SERIAL_PORT_2, ......
+        eval runcmd $::CMAKE ../IGSTK 
+
         eval runcmd $::MAKE 
     }
 }
