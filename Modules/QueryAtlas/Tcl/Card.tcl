@@ -24,6 +24,23 @@ namespace eval Card {
   }
 }
 
+namespace eval Card {
+  proc HitTest {x y} {
+    foreach card [itcl::find objects -class Card] {
+      $card configure -highlight 0
+    }
+    foreach card [itcl::find objects -class Card] {
+      if { [$card hitTest $x $y] } {
+        $card configure -highlight 1
+        return $card
+      } 
+    }
+    return ""
+  }
+}
+
+
+
 proc randRange {min max} {
   return [expr $min + rand() * ($max-$min)]
 }
@@ -106,6 +123,7 @@ if { [itcl::find class Card] == "" } {
     public variable ras "0 0 0"  ;# what font to use (default means arial).
     public variable anchor "0 0 0"  ;# where to draw the anchor line to 
     public variable scale "1"  ;# what font to use (default means arial).
+    public variable highlight "0"  ;# should the card be highlighted or not
 
     variable _vtkObjects ""
     variable _pickState "outside"
@@ -128,7 +146,7 @@ if { [itcl::find class Card] == "" } {
     method addActors {} {}
     method updateActors {} {}
     method positionActors {} {}
-    method pick {} {}
+    method hitTest {x y} {}
     method highlight {} {}
     method place {x y z} {}
 
@@ -155,8 +173,9 @@ if { [itcl::find class Card] == "" } {
 #
 itcl::configbody Card::renderWidget {
   $this removeActors
-  #set _renderer [$renderWidget GetRenderer]
-  set _renderer [[[$renderWidget GetRenderWindow] GetRenderers] GetItemAsObject 1]
+  set _renderer [$renderWidget GetRenderer]
+  #set _renderer [$renderWidget GetOverlayRenderer]
+  #set _renderer [[[$renderWidget GetRenderWindow] GetRenderers] GetItemAsObject 1]
   set _camera [$_renderer GetActiveCamera]
   set _interactor [$renderWidget GetRenderWindowInteractor]
   set _style [$_interactor GetInteractorStyle] 
@@ -178,7 +197,7 @@ itcl::configbody Card::icon {
 }
 
 # generic configbody for several different parameters
-foreach param {text follow font ras scale} {
+foreach param {text follow font ras scale highlight} {
   itcl::configbody Card::$param { $this updateActors }
 }
 
@@ -268,7 +287,8 @@ itcl::body Card::removeActors {} {
 
   foreach actor {actor iconActor lineActor} {
     if { [info exists o($actor)] } {
-      $_renderer RemoveActor $o($actor)
+      #$_renderer RemoveActor $o($actor)
+      $renderWidget RemoveViewProp $o($actor)
     }
   }
 }
@@ -282,7 +302,8 @@ itcl::body Card::addActors {} {
   set o(actor) [vtkNew vtkFollower]
   $o(actor) SetMapper [[$o(tText) GetFollower] GetMapper]
   $o(actor) SetTexture [$o(tText) GetTexture]
-  $_renderer AddActor $o(actor)
+  #$_renderer AddActor $o(actor)
+  $renderWidget AddViewProp $o(actor)
   
   #
   # set up the icon
@@ -294,7 +315,8 @@ itcl::body Card::addActors {} {
   $o(iconMapper) SetInput [$o(iconSource) GetOutput]
   $o(iconActor) SetMapper $o(iconMapper)
   $o(iconActor) SetTexture $o(iconTexture)
-  $_renderer AddActor $o(iconActor)
+  #$_renderer AddActor $o(iconActor)
+  $renderWidget AddViewProp $o(iconActor)
 
   #
   # set up the anchor line
@@ -304,7 +326,8 @@ itcl::body Card::addActors {} {
   set o(lineActor) [vtkNew vtkActor]
   $o(lineMapper) SetInput [$o(lineSource) GetOutput]
   $o(lineActor) SetMapper $o(lineMapper)
-  $_renderer AddActor $o(lineActor)
+  #$_renderer AddActor $o(lineActor)
+  $renderWidget AddViewProp $o(lineActor)
 
   $this updateActors
 }
@@ -363,7 +386,11 @@ itcl::body Card::positionActors {} {
   # update icon actor
 
   $o(iconActor) SetPosition $r $a [expr $s + ($scale / 4.)]
-  $o(iconActor) SetScale $scale
+  if { $highlight } {
+    $o(iconActor) SetScale [expr 1.1 * $scale]
+  } else {
+    $o(iconActor) SetScale $scale
+  }
   $o(iconActor) SetUserMatrix $viewM
 
   if { $follow } {
@@ -377,6 +404,31 @@ itcl::body Card::positionActors {} {
   eval $o(lineSource) SetPoint1 $anchor
   eval $o(lineSource) SetPoint2 $ras
 
-
   $viewM Delete
+
+  $this hitTest 0 0
+}
+
+itcl::body Card::hitTest {hitx hity} {
+
+  set tkwindow [$renderWidget  GetWidgetName]
+  set width [winfo width $tkwindow]
+  set height [winfo height $tkwindow]
+
+  set m [$_camera GetCompositePerspectiveTransformMatrix [expr (1. * $width) / $height] 0 1]
+  set vport [eval $m MultiplyPoint $ras 1]
+  set w [lindex $vport 3]
+  set vx [expr [lindex $vport 0] / $w]
+  set vy [expr [lindex $vport 1] / $w]
+
+
+  set x [expr $width * (1. + $vx)/2.]
+  set y [expr $height * (1. + $vy)/2.]
+
+  # puts "$this $ras -> $vport --> $vx $vy --> $x $y"
+
+  if { [expr abs( $hitx - $x )/2.] < $scale && [expr abs( $hity - $y )/2.] < $scale } {
+    return 1
+  }
+  return 0
 }

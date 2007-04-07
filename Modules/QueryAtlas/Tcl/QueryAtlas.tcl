@@ -42,6 +42,7 @@ proc QueryAtlasInit { {filename ""} } {
     #--- other files that we need
     source $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Tcl/QueryAtlasWeb.tcl
     source $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Tcl/Card.tcl
+    source $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Tcl/CardFan.tcl
 }
 
 #----------------------------------------------------------------------------------------------------
@@ -679,19 +680,25 @@ proc QueryAtlasPickCallback {} {
   foreach {x y} $::QA(lastWindowXY) {}
   set ::QA(lastRootXY) [winfo pointerxy [$renderWidget GetWidgetName]]
 
-
   #
   # use the prop picker to see if we're over the model, or the slices
   # - set the 'hit' variable accordingly for later processing
   #
   set hit ""
   if { [$::QA(propPicker) PickProp $x $y $renderer] } {
-      set prop [$::QA(propPicker) GetViewProp]
-      if { $prop == $actor} {
-          set hit "QueryActor"
+    set prop [$::QA(propPicker) GetViewProp]
+    if { $prop == $actor} {
+      set hit "QueryActor"
     } else {
-      set id [$viewer GetIDByActor $prop]
-      set hit "Model"
+      set mrmlID [$viewer GetIDByActor $prop]
+      if { $mrmlID != "" } {
+        set hit "Model"
+      } 
+    }
+  } else {
+    set card [::Card::HitTest $x $y]
+    if { $card != "" } {
+      set hit "Card"
     }
   }
 
@@ -700,7 +707,7 @@ proc QueryAtlasPickCallback {} {
   #
   set pointLabels ""
   if { $hit == "Model" } {
-      set node [$::slicer3::MRMLScene GetNodeByID $id]
+      set node [$::slicer3::MRMLScene GetNodeByID $mrmlID]
       if { $node != "" && [$node GetDescription] != "" } {
         array set nodes [$node GetDescription]
         set nodes(sliceNode) [$::slicer3::MRMLScene GetNodeByID $nodes(SliceID)]
@@ -714,21 +721,21 @@ proc QueryAtlasPickCallback {} {
         set cellID [$::QA(cellPicker) GetCellId]
         set pCoords [$::QA(cellPicker) GetPCoords]
         if { $cellID != -1 } {
-            set polyData [[$prop GetMapper] GetInput]
-            set cell [$polyData GetCell $cellID]
-            
-            #--- this gets the RAS point we're pointing to.
-            set rasPoint [QueryAtlasPCoordsToWorld $cell $pCoords]
-            set ::QA(CurrentRASPoint) $rasPoint
+          set polyData [[$prop GetMapper] GetInput]
+          set cell [$polyData GetCell $cellID]
+          
+          #--- this gets the RAS point we're pointing to.
+          set rasPoint [QueryAtlasPCoordsToWorld $cell $pCoords]
+          set ::QA(CurrentRASPoint) $rasPoint
 
-            set labelID [$nodes(compositeNode) GetLabelVolumeID]
-            set nodes(labelNode) [$::slicer3::MRMLScene GetNodeByID $labelID]
-            set rasToIJK [vtkMatrix4x4 New]
-            $nodes(labelNode) GetRASToIJKMatrix $rasToIJK
-            set ijk [lrange [eval $rasToIJK MultiplyPoint $rasPoint 1] 0 2]
-            set imageData [$nodes(labelNode) GetImageData]
-            foreach var {i j k} val $ijk {
-                set $var [expr int(round($val))]
+          set labelID [$nodes(compositeNode) GetLabelVolumeID]
+          set nodes(labelNode) [$::slicer3::MRMLScene GetNodeByID $labelID]
+          set rasToIJK [vtkMatrix4x4 New]
+          $nodes(labelNode) GetRASToIJKMatrix $rasToIJK
+          set ijk [lrange [eval $rasToIJK MultiplyPoint $rasPoint 1] 0 2]
+          set imageData [$nodes(labelNode) GetImageData]
+          foreach var {i j k} val $ijk {
+            set $var [expr int(round($val))]
           }
           set labelValue [$imageData GetScalarComponentAsDouble $i $j $k 0]
           if { [info exists ::QAFS($labelValue,name)] } {
@@ -785,13 +792,16 @@ proc QueryAtlasPickCallback {} {
       } else {
         set pointLabels "background"
       }
+  } 
+
+  if { $hit == "Card" } {
+    set pointLabels ""
   } else {
     if { $pointLabels == "" } {
       set pointLabels "background"
     }
   }
 
-  #puts "pointLabels = $pointLabels"
 
   #---Before modifying freesurfer labelname,
   # get UMLS, Neuronames, BIRNLex mapping.
