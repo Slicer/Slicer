@@ -2225,8 +2225,11 @@ void vtkNeuroNavGUI::SetIGSTKConnectionParameters()
         }
 
 
-        this->IGSTKStream->ProcessTimerEvents();
         this->IGSTKStream->SetTracking(1);
+        this->IGSTKStream->Init();
+        this->IGSTKStream->ProcessTimerEvents();
+        // this->IGSTKStream->PullRealTime();
+
     }
     else
     {
