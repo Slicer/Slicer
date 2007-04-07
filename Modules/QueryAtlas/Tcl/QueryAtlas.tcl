@@ -40,7 +40,7 @@ proc QueryAtlasInit { {filename ""} } {
     set ::QA(SceneLoaded) 1
     
     #--- other files that we need
-    source $::env(SLICER_HOME)/Modules/QueryAtlas/Tcl/QueryAtlasWeb.tcl
+    source $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Tcl/QueryAtlasWeb.tcl
 }
 
 #----------------------------------------------------------------------------------------------------
@@ -700,7 +700,7 @@ proc QueryAtlasPickCallback {} {
   #
   if { $hit == "Model" } {
       set node [$::slicer3::MRMLScene GetNodeByID $id]
-      if { [$node GetDescription] != "" } {
+      if { $node != "" && [$node GetDescription] != "" } {
         array set nodes [$node GetDescription]
         set nodes(sliceNode) [$::slicer3::MRMLScene GetNodeByID $nodes(SliceID)]
         set nodes(compositeNode) [$::slicer3::MRMLScene GetNodeByID $nodes(CompositeID)]
@@ -1177,9 +1177,9 @@ proc QueryAtlasLaunchBirnLexHierarchy {} {
 
     if { [ info exists ::QA(SceneLoaded) ] } {
         if { $::QA(SceneLoaded) } {
-            if { [file exists $::env(SLICER_HOME)/Modules/QueryAtlas/Java/birnlexvis.jar] &&
-                  [file exists $::env(SLICER_HOME)/Modules/QueryAtlas/Java/birnlex-demo.simple ] } {
-                exec java -jar $::env(SLICER_HOME)/Modules/QueryAtlas/Java/birnlexvis.jar -h $::QA(birnlexHost) -p $::QA(birnlexPort) -t SlicerBIRNLex $::env(SLICER_HOME)/Modules/QueryAtlas/Java/birnlex-demo.simple &
+            if { [file exists $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Java/birnlexvis.jar] &&
+                  [file exists $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Java/birnlex-demo.simple ] } {
+                exec java -jar $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Java/birnlexvis.jar -h $::QA(birnlexHost) -p $::QA(birnlexPort) -t SlicerBIRNLex $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Java/birnlex-demo.simple &
                 set ::QA(birnlexLaunched) 1
             }
         }
@@ -1235,7 +1235,7 @@ proc QueryAtlasFreeSurferLabelsToBirnLexLabels { label } {
     
     set retLabel ""
     
-    set labelTable "$::env(SLICER_HOME)/Modules/QueryAtlas/Tcl/FreeSurferLabels2BirnLexLabels.txt"
+    set labelTable "$::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Tcl/FreeSurferLabels2BirnLexLabels.txt"
     set fp [ open $labelTable r ]
 
     while { ! [eof $fp ] } {
