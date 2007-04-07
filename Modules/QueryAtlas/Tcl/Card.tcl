@@ -43,13 +43,13 @@ proc Slicer3TestCards {} {
 proc TestCards {} {
   set renderWidget [[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer]
   set icondir $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/ImageData
-  set fontDir $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Fonts
   foreach icon [glob $icondir/*.png] {
     set card [Card #auto $renderWidget]
-    set ras [list [randRange -100 100] [randRange -100 100] [randRange -100 100]]
+    set ras [list [randRange -200 200] [randRange -200 200] [randRange -200 200]]
+    set anchor [list [randRange -100 100] [randRange -100 100] [randRange -100 100]]
     set scale [randRange 1 30]
     $card configure -text "card [expr round([randRange 0 100])]" \
-      -ras $ras -scale $scale -icon $icon -follow 0 -fontDir $fontDir
+      -ras $ras -anchor $anchor -scale $scale -icon $icon -follow 0 
   }
 }
 
@@ -101,8 +101,10 @@ if { [itcl::find class Card] == "" } {
     public variable text ""  ;# the text to display - can contain line breaks
     public variable follow 1  ;# make this a follower or not
     public variable font "default"  ;# what font to use (default means arial).
-    public variable fontDir ""  ;# what font dir to use
+    # public variable fontDir "$::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Fonts/"  ;# where to find the fonts
+    public variable fontDir "c:/windows/fonts"  ;# where to find the fonts
     public variable ras "0 0 0"  ;# what font to use (default means arial).
+    public variable anchor "0 0 0"  ;# where to draw the anchor line to 
     public variable scale "1"  ;# what font to use (default means arial).
 
     variable _vtkObjects ""
@@ -189,26 +191,26 @@ itcl::body Card::constructor {renderWidget} {
 
   set _observerTags ""
 
-  set tag [$renderWidget AddObserver DeleteEvent "::Card::ProtectedDelete $this"]
+  set tag [$renderWidget AddObserver DeleteEvent \
+        "::Card::ProtectedDelete $this"]
   lappend _observerTags [list $renderWidget $tag]
 
     
-  # set tag [$_camera AddObserver ModifiedEvent "::Card::ProtectedCallback $this processEvent $_camera ModifiedEvent"]
-  # lappend _observerTags [list $_camera $tag]
-
   set events {  
     "EndInteractionEvent"
-    }
+  }
   foreach event $events {
-    set tag [$_style AddObserver $event "::Card::ProtectedCallback $this processEvent $_style $event"]    
+    set tag [$_style AddObserver $event \
+        "::Card::ProtectedCallback $this processEvent $_style $event"]    
     lappend _observerTags [list $_interactor $tag]
   }
 
   set events {  
     "KeyPressEvent"
-    }
+  }
   foreach event $events {
-    set tag [$_interactor AddObserver $event "::Card::ProtectedCallback $this processEvent $_interactor $event"]    
+    set tag [$_interactor AddObserver $event \
+        "::Card::ProtectedCallback $this processEvent $_interactor $event"]    
     lappend _observerTags [list $_interactor $tag]
   }
 }
@@ -263,11 +265,11 @@ itcl::body Card::processEvent { caller event } {
 }
 
 itcl::body Card::removeActors {} {
-  if { [info exists o(actor)] } {
-    $_renderer RemoveActor $o(actor)
-  }
-  if { [info exists o(iconActor)] } {
-    $_renderer RemoveActor $o(iconActor)
+
+  foreach actor {actor iconActor lineActor} {
+    if { [info exists o($actor)] } {
+      $_renderer RemoveActor $o($actor)
+    }
   }
 }
 
@@ -294,6 +296,16 @@ itcl::body Card::addActors {} {
   $o(iconActor) SetTexture $o(iconTexture)
   $_renderer AddActor $o(iconActor)
 
+  #
+  # set up the anchor line
+  #
+  set o(lineSource) [vtkNew vtkLineSource]
+  set o(lineMapper) [vtkNew vtkPolyDataMapper]
+  set o(lineActor) [vtkNew vtkActor]
+  $o(lineMapper) SetInput [$o(lineSource) GetOutput]
+  $o(lineActor) SetMapper $o(lineMapper)
+  $_renderer AddActor $o(lineActor)
+
   $this updateActors
 }
 
@@ -308,7 +320,7 @@ itcl::body Card::updateActors {} {
   if { $font != "default" } {
     $fontParams SetFontFileName $font
   } else {
-    $fontParams SetFontFileName "ARIAL.TTF"
+    $fontParams SetFontFileName "arial.ttf"
   }
   $fontParams SetBlur 2
   $fontParams SetStyle 2
@@ -359,6 +371,12 @@ itcl::body Card::positionActors {} {
   } else {
     $o(iconActor) SetCamera ""
   }
+
+  # update line actor
+
+  eval $o(lineSource) SetPoint1 $anchor
+  eval $o(lineSource) SetPoint2 $ras
+
 
   $viewM Delete
 }

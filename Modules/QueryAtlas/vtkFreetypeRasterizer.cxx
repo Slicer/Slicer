@@ -87,7 +87,7 @@ int vtkFreetypeRasterizer::LoadFont(char *fontname)
         return this->mError;
     }
     else if (sError) {
-        vtkErrorMacro("vtkFreetypeRasterizer: file not found: %s" <<  fontname);
+        vtkErrorMacro("vtkFreetypeRasterizer: file not found: " <<  fontname);
         this->mError = 1;
         return this->mError;
     }

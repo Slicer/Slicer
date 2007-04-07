@@ -119,7 +119,7 @@ int vtkTextureFont::CreateFont()
         charExtend += params->GetStyleBorderSize();
     }
 
-    sprintf(fontpath, "%s%s", params->GetFontDirectory(), params->GetFontFileName());
+    sprintf(fontpath, "%s/%s", params->GetFontDirectory(), params->GetFontFileName());
 
     int lerror = CreateRasterizer(fontpath);
 
