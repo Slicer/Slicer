@@ -41,6 +41,7 @@ proc QueryAtlasInit { {filename ""} } {
     
     #--- other files that we need
     source $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Tcl/QueryAtlasWeb.tcl
+    source $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Tcl/Card.tcl
 }
 
 #----------------------------------------------------------------------------------------------------
@@ -694,10 +695,10 @@ proc QueryAtlasPickCallback {} {
     }
   }
 
-
   #
   # set the 'pointlabels' depending on the thing picked
   #
+  set pointLabels ""
   if { $hit == "Model" } {
       set node [$::slicer3::MRMLScene GetNodeByID $id]
       if { $node != "" && [$node GetDescription] != "" } {
@@ -785,7 +786,9 @@ proc QueryAtlasPickCallback {} {
         set pointLabels "background"
       }
   } else {
+    if { $pointLabels == "" } {
       set pointLabels "background"
+    }
   }
 
   #puts "pointLabels = $pointLabels"
