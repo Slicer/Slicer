@@ -668,11 +668,17 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
     }
   else if ( (b == this->BIRNLexHierarchyButton) && (event == vtkKWPushButton::InvokedEvent ) )
     {
-    //    this->Script ( "if { [info exists ::QA(filename) ] } {QueryAtlasLaunchBirnLexHierarchy}");
+    this->Script ( "source ../../../Slicer3/Modules/QueryAtlas/Tcl/QueryAtlas.tcl; QueryAtlasLaunchBirnLexHierarchy" );
     }
   else if ( (b == this->HierarchySearchButton) && (event == vtkKWPushButton::InvokedEvent ) )
     {
-    //    this->Script ( "if { [info exists ::QA(filename) ] } {QueryAtlasLaunchBirnLexHierarchy}");
+    //--- get last clicked (or typed) structure from the HierarchySearchTermEntry
+    const char *structureLabel =  this->HierarchySearchTermEntry->GetValue();
+    if ( !strcmp (structureLabel, "" ))
+      {
+      structureLabel = "BIRNLex_subset";
+      }
+    this->Script ( "source ../../../Slicer3/Modules/QueryAtlas/Tcl/QueryAtlas.tcl; QueryAtlasSendHierarchyCommand  %s", structureLabel );
     }
 
   else if ( (b == this->SearchButton) && (event == vtkKWPushButton::InvokedEvent ) )

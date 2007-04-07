@@ -1,7 +1,7 @@
 #
 FreeSurferLabel BirnLexSearchTerm IBVDSearchTerm UMLS(if) NeuroNames(if)
 #
-
+BIRNLex_subset BIRNLex_subset
 Unknown                               
 Left-Cerebral-Exterior                
 Left-Cerebral-White-Matter cerebral_white_matter       

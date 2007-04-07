@@ -158,7 +158,7 @@ proc QueryAtlasMakeEntrezCountQuery { url } {
     package require http
 
     puts "making count query........."
-    set ::QA(entrezCountFileName) "C:/cygwin/tmp/QA.counts"
+     set ::QA(entrezCountFileName) "$::env(SLICER_HOME)/Modules/QueryAtlas/tmp/QA.counts"
     set ::QA(entrezCountFile) [ open $::QA(entrezCountFileName) w+ ]
     set token [ ::http::geturl $url -channel $::QA(entrezCountFile) ]
     close $::QA(entrezCountFile)

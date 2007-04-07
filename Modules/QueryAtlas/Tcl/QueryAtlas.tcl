@@ -7,6 +7,8 @@ proc QueryAtlasInit { {filename ""} } {
     # find the data
     set ::QA(filename) ""
     set ::QA(linkBundleCount) 0
+    set ::QA(SceneLoaded) 0
+    
     if { $filename != "" } {
         set ::QA(filename) $filename
     } else {
@@ -35,36 +37,10 @@ proc QueryAtlasInit { {filename ""} } {
     QueryAtlasRenderView
     QueryAtlasUpdateCursor
     set ::QA(CurrentRASPoint) "0 0 0"
-
-    #--- hardcode these other tcl files for now.
-    #--- TODO: find out how to get the module directory name
-    set ok 0
-    set candidates {
-        c:/cygwin/home/wjp/slicer3Beta/Slicer3/Modules/QueryAtlas/Tcl/QueryAtlasWeb.tcl
-    }
-    foreach c $candidates {
-        if { [file exists $c] } {
-            set ok 1
-            break
-        }
-    }
-    if { $ok } {
-        source $c
-    }
-
-    set ok 0
-    set candidates {
-        c:/cygwin/home/wjp/slicer3Beta/Slicer3/Modules/QueryAtlas/Tcl/QueryAtlasLabelConverter.tcl
-    }
-    foreach c $candidates {
-        if { [file exists $c] } {
-            set ok 1
-            break
-        }
-    }
-    if { $ok } {
-        source $c
-    }
+    set ::QA(SceneLoaded) 1
+    
+    #--- other files that we need
+    source $::env(SLICER_HOME)/Modules/QueryAtlas/Tcl/QueryAtlasWeb.tcl
 }
 
 #----------------------------------------------------------------------------------------------------
@@ -1190,38 +1166,24 @@ proc QueryAtlasQuery { site } {
 
 
 
-#----------------------------------------------------------------------------------------------------
-#---
-#----------------------------------------------------------------------------------------------------
-proc QueryAtlasLaunchSPLHierarchy {} {
-
-set jython "c:/jython2.2b1/jython.bat"
-set testdir "c:/cygwin/home/wjp/hierarchies/"
-set SPLscript "simple_atlas_vis.py"
-set SPLdata "atlas-test4.simple"
-set FullPathSPLdemo "$testdir$SPLscript"
-set FullPathSPLdata "$testdir$SPLdata"
-set runstr "$jython $FullPathSPLdemo $FullPathSPLdata"
-#exec $runstr
-
-exec C:/jython2.2b1/jython.bat C:/cygwin/home/wjp/hierarchies/simple_atlas_vis.py c:/cygwin/home/wjp/hierarchies/SPLBrainAtlas.simple &
-
-}
 
 #----------------------------------------------------------------------------------------------------
 #---
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasLaunchBirnLexHierarchy {} {
 
-set jython "c:/jython2.2b1/jython.bat"
-set testdir "c:/cygwin/home/wjp/hierarchies/"
-set SPLscript "simple_atlas_vis.py"
-set SPLdata "atlas-test4.simple"
-set FullPathSPLdemo "$testdir$SPLscript"
-set FullPathSPLdata "$testdir$SPLdata"
-set runstr "$jython $FullPathSPLdemo $FullPathSPLdata"
-#exec $runstr
-exec C:/jython2.2b1/jython.bat C:/cygwin/home/wjp/hierarchies/simple_atlas_vis.py c:/cygwin/home/wjp/hierarchies/birnLexSubset.simple &
+    set ::QA(birnlexHost) "localhost"
+    set ::QA(birnlexPort) 3334
+
+    if { [ info exists ::QA(SceneLoaded) ] } {
+        if { $::QA(SceneLoaded) } {
+            if { [file exists $::env(SLICER_HOME)/Modules/QueryAtlas/Java/birnlexvis.jar] &&
+                  [file exists $::env(SLICER_HOME)/Modules/QueryAtlas/Java/birnlex-demo.simple ] } {
+                exec java -jar $::env(SLICER_HOME)/Modules/QueryAtlas/Java/birnlexvis.jar -h $::QA(birnlexHost) -p $::QA(birnlexPort) -t SlicerBIRNLex $::env(SLICER_HOME)/Modules/QueryAtlas/Java/birnlex-demo.simple &
+                set ::QA(birnlexLaunched) 1
+            }
+        }
+    }
 }
 
 
@@ -1230,24 +1192,65 @@ exec C:/jython2.2b1/jython.bat C:/cygwin/home/wjp/hierarchies/simple_atlas_vis.p
 #----------------------------------------------------------------------------------------------------
 #---
 #----------------------------------------------------------------------------------------------------
-proc QueryAtlasSendHierarchyCommand { } {
+proc QueryAtlasSendHierarchyCommand { label } {
 
-    #--- get command from Hierarchy frame widget
-    set cmd ""
-    set host "localhost"
-    set port $::QA(prefusePort)
-    
-    #--- cmds will be: request_show, request_synonym
-    set ::QA(socket) [ socket $host $port]
+    if { [info exists ::QA(birnlexLaunched)] } {
+        #--- get command from Hierarchy frame widget
+        set result ""
+        
+        #--- translate the label throught the FS to BIRNLex converter
+        set newLabel [ QueryAtlasFreeSurferLabelsToBirnLexLabels $label ]
+        if { $newLabel == "" } {
+            #--- if the converter didn't give us anything back, try sending the orig string
+            set newLabel $label
+        }
+        if { $newLabel != "" } {
+            #--- make search reqest to birnlexviz demo if port/host are defined
+            if { [ info exists ::QA(birnlexHost) ] && [ info exists ::QA(birnlexPort) ] } {
+                set ::QA(socket) [ socket $::QA(birnlexHost) $::QA(birnlexPort) ]
 
-    set result ""
-    while {[gets stdin line] >= 0} {
-        puts $sock $cmd
-        flush $sock
-        gets $sock thing
-        append result $thing
+                #--- for now just put -- don't read from stdin
+                puts $::QA(socket) $newLabel
+                flush $::QA(socket)
+
+                #            while {[gets stdin line] >= 0} {
+                #                puts $::QA(socket) $newLabel
+                #                flush $::QA(socket)
+                #                gets $::QA(socket) thing
+                #                append result $thing
+                #            }
+                close $::QA(socket)
+            }
+
+        }
+        return $result
     }
-    return $result
+}
+
+
+#----------------------------------------------------------------------------------------------------
+#---
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasFreeSurferLabelsToBirnLexLabels { label } {
+    
+    set retLabel ""
+    
+    set labelTable "$::env(SLICER_HOME)/Modules/QueryAtlas/Tcl/FreeSurferLabels2BirnLexLabels.txt"
+    set fp [ open $labelTable r ]
+
+    while { ! [eof $fp ] } {
+        gets $fp line
+        set tst [ string first $label $line ]
+        if  { $tst > 0 } {
+            #--- get second term in line
+            set retLabel [ lindex $line 1 ]
+            #--- get rid of underscores
+            regsub -all -- "_" $retLabel " " retLabel
+            break
+        }
+    }
+    close $fp
+    return $retLabel
 }
 
 
