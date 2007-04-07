@@ -169,6 +169,7 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
 
     // Description:
     // Methods to add and delete search terms.
+    virtual void AddNewStructureSearchTerm ( const char *term );
     virtual void AddNewSearchTerm ( const char *context );
     virtual void DeleteSelectedSearchTerms ( const char *context );
     virtual void SelectAllSearchTerms ( const char *context );

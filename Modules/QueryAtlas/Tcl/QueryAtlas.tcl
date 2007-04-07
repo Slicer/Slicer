@@ -912,8 +912,8 @@ proc QueryAtlasMenuCreate { state } {
         menu $qaMenu
         $qaMenu insert end separator
         $qaMenu insert end checkbutton -label "Use Search Terms" -variable ::QA(menu,useTerms)
-        $qaMenu insert end command -label "Add To Search Terms" -command "QueryAtlasAddTerms"
-        $qaMenu insert end command -label "Remove All Search Terms" -command "QueryAtlasRemoveTerms"
+        $qaMenu insert end command -label "Add To Search Terms" -command "QueryAtlasAddStructureTerms"
+        $qaMenu insert end command -label "Remove All Search Terms" -command "QueryAtlasRemoveStructureTerms"
 
         $qaMenu insert end command -label $::QA(lastLabels) -command ""
         $qaMenu insert end separator
@@ -923,7 +923,6 @@ proc QueryAtlasMenuCreate { state } {
         $qaMenu insert end command -label "J Neuroscience..." -command "QueryAtlasQuery jneurosci"
         $qaMenu insert end command -label "IBVD..." -command "QueryAtlasQuery ibvd"
         $qaMenu insert end command -label "MetaSearch..." -command "QueryAtlasQuery metasearch"
-        $qaMenu insert end command -label "BrainInfo..." -command "QueryAtlasQuery braininfo"
         
         foreach {x y} $::QA(lastRootXY) {}
         $qaMenu post $x $y
@@ -937,7 +936,7 @@ proc QueryAtlasMenuCreate { state } {
 #----------------------------------------------------------------------------------------------------
 #---
 #----------------------------------------------------------------------------------------------------
-proc QueryAtlasRemoveTerms {} {
+proc QueryAtlasRemoveStructureTerms {} {
 
   $::slicer3::ApplicationGUI SelectModule QueryAtlas
   set mcl [[$::slicer3::QueryAtlasGUI GetStructureMultiColumnList] GetWidget]
@@ -1077,12 +1076,12 @@ proc QueryAtlasGetSpeciesTerms { } {
     set cb_ms [$::slicer3::QueryAtlasGUI GetSpeciesMouseButton]
     set cb_mq [$::slicer3::QueryAtlasGUI GetSpeciesMacaqueButton]
     
-    set human [ cb_h GetSelectedState ]
-    set mouse [ cb_ms GetSelectedState ]
-    set macaque [ cb_mq GetSelectedState ]
+    set human [ $cb_h GetSelectedState ]
+    set mouse [ $cb_ms GetSelectedState ]
+    set macaque [ $cb_mq GetSelectedState ]
 
     if { $human } {
-        set terms "$human"
+        set terms "human"
     }
     if { $mouse } {
         set terms "$terms+mouse"
@@ -1096,20 +1095,36 @@ proc QueryAtlasGetSpeciesTerms { } {
 #----------------------------------------------------------------------------------------------------
 #---
 #----------------------------------------------------------------------------------------------------
-proc QueryAtlasAddTerms {} {
+proc QueryAtlasGetSearchTargets { } {
 
+    set mb [$::slicer3::QueryAtlasGUI GetDatabasesMenuButton ]
+    set target ""
+    set target [ $mb GetValue ]
+    return $target
+}
+
+
+
+#----------------------------------------------------------------------------------------------------
+#---
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasAddStructureTerms {} {
+
+    #--- add term to listbox.
   $::slicer3::ApplicationGUI SelectModule QueryAtlas
   set mcl [[$::slicer3::QueryAtlasGUI GetStructureMultiColumnList] GetWidget]
 
   set i [$mcl GetNumberOfRows]
-  $::slicer3::QueryAtlasGUI AddNewSearchTerm $::QA(lastLabels)
+  $::slicer3::QueryAtlasGUI AddNewStructureSearchTerm $::QA(lastLabels)
   $mcl SetCellTextAsInt $i 0 1
   $mcl SetCellText $i 1 $::QA(lastLabels)
 
+  #--- set hierarchy entry with most recently selected term
   set h_entry [$::slicer3::QueryAtlasGUI GetHierarchySearchTermEntry]
   $h_entry SetValue $::QA(lastLabels)
   
 }
+
 
 #----------------------------------------------------------------------------------------------------
 #---
@@ -1164,11 +1179,6 @@ proc QueryAtlasQuery { site } {
                 
             }
             $::slicer3::Application OpenLink $url
-        }
-        "braininfo" {
-            set terms [ QueryAtlasMapTermsToBrainInfo $terms ]
-            $::slicer3::Application OpenLink \
-                http://braininfo.rprc.washington.edu/Scripts/hiercentraldirectory.aspx?ID=$terms
         }
         "metasearch" {
             $::slicer3::Application OpenLink \

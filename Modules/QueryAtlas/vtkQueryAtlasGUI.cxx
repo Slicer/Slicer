@@ -660,7 +660,10 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
   vtkKWPushButton *b = vtkKWPushButton::SafeDownCast ( caller );
   vtkKWMenu *m = vtkKWMenu::SafeDownCast ( caller );
   vtkKWCheckButton *c = vtkKWCheckButton::SafeDownCast ( caller );
+  vtkKWListBox *lb = vtkKWListBox::SafeDownCast ( caller );
   const char *context;
+  int index;
+  const char *name;
   
   if ( (b == this->LoadSceneButton) && (event == vtkKWPushButton::InvokedEvent ) )
     {
@@ -683,6 +686,7 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
 
   else if ( (b == this->SearchButton) && (event == vtkKWPushButton::InvokedEvent ) )
     {
+    this->Script ( "QueryAtlasFormURLsForTargets");
     }
   else if ( (b == this->StructureButton) && (event == vtkKWPushButton::InvokedEvent ) )
     {
@@ -820,7 +824,53 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
     this->PackQueryBuilderContextFrame ( this->SpeciesFrame );
     this->ColorCodeContextButtons ( this->SpeciesButton );
     }
-
+  else if ( (b == this->DeleteCurrentResultButton ) && (event == vtkKWPushButton::InvokedEvent ) )
+    {
+    index = this->CurrentResultsList->GetWidget()->GetSelectionIndex();
+    if ( index >= 0)
+      {
+      this->CurrentResultsList->GetWidget()->DeleteRange( index, index );
+      }
+    }
+  else if ( (b == this->DeleteAllCurrentResultsButton ) && (event == vtkKWPushButton::InvokedEvent ) )
+    {
+    this->CurrentResultsList->GetWidget()->DeleteAll();
+    }
+  else if ( (b == this->SaveCurrentResultsButton ) && (event == vtkKWPushButton::InvokedEvent ) )
+    {
+    this->Script ( "QueryAtlasBundleSearchResults");
+    }
+  else if ( (b == this->DeletePastResultButton ) && (event == vtkKWPushButton::InvokedEvent ) )
+    {
+    index = this->PastResultsList->GetWidget()->GetSelectionIndex();
+    if ( index >= 0)
+      {
+      this->PastResultsList->GetWidget()->DeleteRange( index, index );
+      }
+    }
+  else if ( (b == this->DeleteAllPastResultsButton ) && (event == vtkKWPushButton::InvokedEvent ) )
+    {
+    this->PastResultsList->GetWidget()->DeleteAll();
+    }
+  else if ( (b == this->SavePastResultsButton ) && (event == vtkKWPushButton::InvokedEvent ) )
+    {
+    this->Script( "QueryAtlasSaveLinkBundlesToFile");
+    }
+  if ((lb = this->CurrentResultsList->GetWidget()) && (event == vtkKWListBox::ListBoxSelectionChangedEvent ))
+    {
+    // open selected one in browser
+    index = lb->GetSelectionIndex ();
+    name = lb->GetItem ( index );
+    vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());
+//    app->OpenLink ( name );
+    }
+  else if ((lb = this->PastResultsList->GetWidget()) && (event == vtkKWListBox::ListBoxSelectionChangedEvent ))
+    {
+    // nothing for now...
+    index = lb->GetSelectionIndex ();
+    name = lb->GetItem ( index );
+    }
+  // no need to do anything here; we'll just get the widget values with tcl.
   if (( m== this->DiagnosisMenuButton->GetWidget()->GetMenu()) && (event == vtkKWMenu::MenuItemInvokedEvent ) )
     {
     }
@@ -1782,16 +1832,15 @@ void vtkQueryAtlasGUI::BuildDatabasesMenu ( vtkKWMenu *m )
   m->AddRadioButton ("all");
   m->SelectItem ("all");
   m->AddSeparator();
-  m->AddRadioButton ("google");
-  m->AddRadioButton ("wikipedia");
+  m->AddRadioButton ("Google");
+  m->AddRadioButton ("Wikipedia");
   m->AddSeparator();
-  m->AddRadioButton ("pubmed");
-  m->AddRadioButton ("jneurosci");
-  m->AddRadioButton ("ibvd");
-  m->AddRadioButton ("braininfo");  
-  m->AddRadioButton ("metasearch");
+  m->AddRadioButton ("PubMed");
+  m->AddRadioButton ("JNeurosci");
+  m->AddRadioButton ("IBVD");
+  m->AddRadioButton ("Metasearch");
   m->AddSeparator();
-  m->AddRadioButton ("entrez");
+  m->AddRadioButton ("Entrez");
   m->AddSeparator();
   m->AddCommand ( "close");
 }
@@ -1821,11 +1870,40 @@ void vtkQueryAtlasGUI::BuildDiagnosisMenu( vtkKWMenu *m )
 void vtkQueryAtlasGUI::SelectAllSearchTerms ( const char *c )
 {
   vtkDebugMacro("vtkQueryAtlasGUI: ProcessGUIEvent: Select All SearchTerms event. \n");  
-  int numrows = this->StructureMultiColumnList->GetWidget()->GetNumberOfRows();
   int i;
-  for ( i = 0; i < numrows; i++ )
+  int numrows;
+  
+  if ( !(strcmp (c, "structure") ))
     {
-    this->StructureMultiColumnList->GetWidget()->SetCellText ( i, this->SelectionColumn, "1" );
+      numrows = this->StructureMultiColumnList->GetWidget()->GetNumberOfRows();
+      for ( i = 0; i < numrows; i++ )
+        {
+        this->StructureMultiColumnList->GetWidget()->SetCellText ( i, this->SelectionColumn, "1" );
+        }
+    }
+  else if ( !(strcmp (c, "cell")))
+    {
+    numrows = this->CellMultiColumnList->GetWidget()->GetNumberOfRows();
+    for ( i = 0; i < numrows; i++ )
+      {
+      this->CellMultiColumnList->GetWidget()->SetCellText ( i, this->SelectionColumn, "1" );
+      }
+    }
+  else if ( !(strcmp (c, "gene")))
+    {
+      numrows = this->GeneMultiColumnList->GetWidget()->GetNumberOfRows();
+      for ( i = 0; i < numrows; i++ )
+        {
+        this->GeneMultiColumnList->GetWidget()->SetCellText ( i, this->SelectionColumn, "1" );
+        }
+    }
+  else if ( !(strcmp(c, "misc")))
+    {
+      numrows = this->MiscMultiColumnList->GetWidget()->GetNumberOfRows();
+      for ( i = 0; i < numrows; i++ )
+        {
+        this->MiscMultiColumnList->GetWidget()->SetCellText ( i, this->SelectionColumn, "1" );
+        }
     }
 }
 
@@ -1833,11 +1911,40 @@ void vtkQueryAtlasGUI::SelectAllSearchTerms ( const char *c )
 void vtkQueryAtlasGUI::DeselectAllSearchTerms ( const char *c)
 {
   vtkDebugMacro("vtkQueryAtlasGUI: ProcessGUIEvent: Deselect All SearchTerms event. \n");  
-  int numrows = this->StructureMultiColumnList->GetWidget()->GetNumberOfRows();
   int i;
-  for ( i = 0; i < numrows; i++ )
+  int numrows;
+
+  if ( !(strcmp(c, "structure")))
     {
-    this->StructureMultiColumnList->GetWidget()->SetCellText ( i, this->SelectionColumn, "0" );
+      numrows = this->StructureMultiColumnList->GetWidget()->GetNumberOfRows();
+      for ( i = 0; i < numrows; i++ )
+        {
+        this->StructureMultiColumnList->GetWidget()->SetCellText ( i, this->SelectionColumn, "0" );
+        }
+    }
+  else if ( !(strcmp(c, "cell")))
+    {
+      numrows = this->CellMultiColumnList->GetWidget()->GetNumberOfRows();
+      for ( i = 0; i < numrows; i++ )
+        {
+        this->CellMultiColumnList->GetWidget()->SetCellText ( i, this->SelectionColumn, "0" );
+        }
+    }
+  else if ( !(strcmp(c, "gene")))
+    {
+      numrows = this->GeneMultiColumnList->GetWidget()->GetNumberOfRows();
+      for ( i = 0; i < numrows; i++ )
+        {
+        this->GeneMultiColumnList->GetWidget()->SetCellText ( i, this->SelectionColumn, "0" );
+        }
+    }
+  else if ( !(strcmp(c, "misc")))
+    {
+      numrows = this->MiscMultiColumnList->GetWidget()->GetNumberOfRows();
+      for ( i = 0; i < numrows; i++ )
+        {
+        this->MiscMultiColumnList->GetWidget()->SetCellText ( i, this->SelectionColumn, "0" );
+        }
     }
 }
 
@@ -1846,11 +1953,43 @@ void vtkQueryAtlasGUI::DeselectAllSearchTerms ( const char *c)
 void vtkQueryAtlasGUI::DeleteAllSearchTerms ( const char *c)
 {
   vtkDebugMacro("vtkQueryAtlasGUI: ProcessGUIEvent: Clear All SearchTerms event. \n");
-  int numrows = this->StructureMultiColumnList->GetWidget()->GetNumberOfRows();
+  int numrows;
   // remove each row
-  this->StructureMultiColumnList->GetWidget()->DeleteAllRows();
+
+  if ( !(strcmp(c, "structure")))
+    {
+      numrows = this->StructureMultiColumnList->GetWidget()->GetNumberOfRows();
+      this->StructureMultiColumnList->GetWidget()->DeleteAllRows();
+    }
+  else if ( !(strcmp(c, "cell")))
+    {
+      numrows = this->CellMultiColumnList->GetWidget()->GetNumberOfRows();
+      this->CellMultiColumnList->GetWidget()->DeleteAllRows();
+    }
+  else if ( !(strcmp(c, "gene")))
+    {
+      numrows = this->GeneMultiColumnList->GetWidget()->GetNumberOfRows();
+      this->GeneMultiColumnList->GetWidget()->DeleteAllRows();
+    }
+  else if ( !(strcmp(c, "misc")))
+    {
+      numrows = this->MiscMultiColumnList->GetWidget()->GetNumberOfRows();
+      this->MiscMultiColumnList->GetWidget()->DeleteAllRows();
+    }
 }
 
+
+
+//---------------------------------------------------------------------------
+void vtkQueryAtlasGUI::AddNewStructureSearchTerm ( const char *term )
+{
+  vtkDebugMacro("vtkQueryAtlasGUI: ProcessGUIEvent: Adding New SearchTerms event. \n");
+  int i = this->StructureMultiColumnList->GetWidget()->GetNumberOfRows();
+  this->StructureMultiColumnList->GetWidget()->InsertCellTextAsInt ( i, this->SelectionColumn, 0 );
+  this->StructureMultiColumnList->GetWidget()->SetCellWindowCommandToCheckButton (i, this->SelectionColumn );
+  this->StructureMultiColumnList->GetWidget()->InsertCellText (i, this->SearchTermColumn, "edit search term here" );
+  this->StructureMultiColumnList->GetWidget()->SetColumnEditWindowToEntry (this->SearchTermColumn);
+}
 
 
 //---------------------------------------------------------------------------
@@ -1858,11 +1997,39 @@ void vtkQueryAtlasGUI::AddNewSearchTerm ( const char *c)
 {
     // default search terms in list
   vtkDebugMacro("vtkQueryAtlasGUI: ProcessGUIEvent: Adding New SearchTerms event. \n");
-    int i = this->StructureMultiColumnList->GetWidget()->GetNumberOfRows();
-    this->StructureMultiColumnList->GetWidget()->InsertCellTextAsInt ( i, this->SelectionColumn, 0 );
-    this->StructureMultiColumnList->GetWidget()->SetCellWindowCommandToCheckButton (i, this->SelectionColumn );
-    this->StructureMultiColumnList->GetWidget()->InsertCellText (i, this->SearchTermColumn, "edit search term here" );
-    this->StructureMultiColumnList->GetWidget()->SetColumnEditWindowToEntry (this->SearchTermColumn);
+  int i;
+  if ( !(strcmp(c, "structure")))
+    {
+      i = this->StructureMultiColumnList->GetWidget()->GetNumberOfRows();
+      this->StructureMultiColumnList->GetWidget()->InsertCellTextAsInt ( i, this->SelectionColumn, 0 );
+      this->StructureMultiColumnList->GetWidget()->SetCellWindowCommandToCheckButton (i, this->SelectionColumn );
+      this->StructureMultiColumnList->GetWidget()->InsertCellText (i, this->SearchTermColumn, "edit search term here" );
+      this->StructureMultiColumnList->GetWidget()->SetColumnEditWindowToEntry (this->SearchTermColumn);
+    }
+  else if ( !(strcmp(c, "cell")))
+    {
+      i = this->CellMultiColumnList->GetWidget()->GetNumberOfRows();
+      this->CellMultiColumnList->GetWidget()->InsertCellTextAsInt ( i, this->SelectionColumn, 0 );
+      this->CellMultiColumnList->GetWidget()->SetCellWindowCommandToCheckButton (i, this->SelectionColumn );
+      this->CellMultiColumnList->GetWidget()->InsertCellText (i, this->SearchTermColumn, "edit search term here" );
+      this->CellMultiColumnList->GetWidget()->SetColumnEditWindowToEntry (this->SearchTermColumn);
+    }
+  else if ( !(strcmp(c, "gene")))
+    {
+      i = this->GeneMultiColumnList->GetWidget()->GetNumberOfRows();
+      this->GeneMultiColumnList->GetWidget()->InsertCellTextAsInt ( i, this->SelectionColumn, 0 );
+      this->GeneMultiColumnList->GetWidget()->SetCellWindowCommandToCheckButton (i, this->SelectionColumn );
+      this->GeneMultiColumnList->GetWidget()->InsertCellText (i, this->SearchTermColumn, "edit search term here" );
+      this->GeneMultiColumnList->GetWidget()->SetColumnEditWindowToEntry (this->SearchTermColumn);
+    }
+  else if ( !(strcmp(c, "misc")))
+    {
+      i = this->MiscMultiColumnList->GetWidget()->GetNumberOfRows();
+      this->MiscMultiColumnList->GetWidget()->InsertCellTextAsInt ( i, this->SelectionColumn, 0 );
+      this->MiscMultiColumnList->GetWidget()->SetCellWindowCommandToCheckButton (i, this->SelectionColumn );
+      this->MiscMultiColumnList->GetWidget()->InsertCellText (i, this->SearchTermColumn, "edit search term here" );
+      this->MiscMultiColumnList->GetWidget()->SetColumnEditWindowToEntry (this->SearchTermColumn);
+    }
 }
 
 
@@ -1870,41 +2037,63 @@ void vtkQueryAtlasGUI::AddNewSearchTerm ( const char *c)
 void vtkQueryAtlasGUI::DeleteSelectedSearchTerms ( const char *c)
 {
   vtkDebugMacro("vtkQueryAtlasGUI: ProcessGUIEvent: DeleteSearchTerm event\n");
-  // check to see if should confirm
-  const char * confirmDelete = ((vtkSlicerApplication *)this->GetApplication())->GetConfirmDelete();
-  int confirmDeleteFlag = 0;
-  if (confirmDelete != NULL &&
-      strncmp(confirmDelete, "1", 1) == 0)
+  int numRows;
+  int row[1];
+  // get the row that was last selected and remove by index
+  if ( !(strcmp(c, "structure")))
     {
-    vtkDebugMacro("vtkQueryAtlasGUI: ProcessGUIEvent: confirm delete flag is 1\n");
-    confirmDeleteFlag = 1;
+      numRows = this->StructureMultiColumnList->GetWidget()->GetNumberOfSelectedRows();
+      if (numRows == 1)
+        {
+        this->StructureMultiColumnList->GetWidget()->GetSelectedRows(row);
+        this->StructureMultiColumnList->GetWidget()->DeleteRow ( row[0] );
+        }
+      else
+        {
+        vtkErrorMacro (<< "Selected rows (" << numRows << ") not 1, just pick one to delete for now\n");
+        return;
+        }
     }
-  else
+  else if ( !(strcmp(c, "cell")))
     {
-    vtkDebugMacro("Not confirming deletes, confirmDelete = '" << confirmDelete << "'\n");
+      numRows = this->CellMultiColumnList->GetWidget()->GetNumberOfSelectedRows();
+      if (numRows == 1)
+        {
+        this->CellMultiColumnList->GetWidget()->GetSelectedRows(row);
+        this->CellMultiColumnList->GetWidget()->DeleteRow ( row[0] );
+        }
+      else
+        {
+        vtkErrorMacro (<< "Selected rows (" << numRows << ") not 1, just pick one to delete for now\n");
+        return;
+        }
     }
-  // save state for undo hrm... not populating the mrml node yet with these search terms, so...
-  //this->MRMLScene->SaveStateForUndo();
-        
-  // get the row that was last selected
-  int numRows = this->StructureMultiColumnList->GetWidget()->GetNumberOfSelectedRows();
-  if (numRows == 1)
+  else if ( !(strcmp(c, "gene")))
     {
-    int row[1];
-    this->StructureMultiColumnList->GetWidget()->GetSelectedRows(row);
-
-    if (confirmDeleteFlag)
-      {
-      // confirm that really want to remove this term
-      std::cout << "Deleting search term " << row[0] << endl;
-      }
-            
-    // then remove that row by index
-    this->StructureMultiColumnList->GetWidget()->DeleteRow ( row[0] );
+      numRows = this->GeneMultiColumnList->GetWidget()->GetNumberOfSelectedRows();
+      if (numRows == 1)
+        {
+        this->GeneMultiColumnList->GetWidget()->GetSelectedRows(row);
+        this->GeneMultiColumnList->GetWidget()->DeleteRow ( row[0] );
+        }
+      else
+        {
+        vtkErrorMacro (<< "Selected rows (" << numRows << ") not 1, just pick one to delete for now\n");
+        return;
+        }
     }
-  else
+  else if ( !(strcmp(c, "misc")))
     {
-    vtkErrorMacro (<< "Selected rows (" << numRows << ") not 1, just pick one to delete for now\n");
-    return;
+      numRows = this->MiscMultiColumnList->GetWidget()->GetNumberOfSelectedRows();
+      if (numRows == 1)
+        {
+        this->MiscMultiColumnList->GetWidget()->GetSelectedRows(row);
+        this->MiscMultiColumnList->GetWidget()->DeleteRow ( row[0] );
+        }
+      else
+        {
+        vtkErrorMacro (<< "Selected rows (" << numRows << ") not 1, just pick one to delete for now\n");
+        return;
+        }
     }
 }
