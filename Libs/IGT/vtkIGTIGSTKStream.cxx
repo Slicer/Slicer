@@ -395,38 +395,28 @@ void vtkIGTIGSTKStream::ApplyTransform(float *position, float *norm, float *tran
 
 
 
-#if 0
-void vtkIGTIGSTKStream::ProcessTimerEvents()
-{
-    if (this->StartTimer)
-    {
-        this->PollRealtime();
-        this->InvokeEvent (vtkCommand::ModifiedEvent);
-        vtkKWTkUtilities::CreateTimerHandler(vtkKWApplication::GetMainInterp(), 
-                this->Speed, this, "ProcessTimerEvents");        
-    }
-    else
-    {
-        this->StopPolling();
-    }
-}
-#endif
-
 
 void vtkIGTIGSTKStream::ProcessTimerEvents()
 {
     if (this->Tracking)
     {
         this->PullRealTime();
+        // this->InvokeEvent (vtkCommand::ModifiedEvent);
+        // vtkKWTkUtilities::CreateTimerHandler(vtkKWApplication::GetMainInterp(), 
+        //        this->Speed, this, "ProcessTimerEvents");        
+        vtkKWTkUtilities::CreateTimerHandler(vtkKWApplication::GetMainInterp(), 
+                300, this, "ProcessTimerEvents");        
+ 
     }
-
-    vtkKWTkUtilities::CreateTimerHandler(vtkKWApplication::GetMainInterp(), 
-                2000, this, "ProcessTimerEvents");  
+    else
+    {
+        this->StopPulling();
+    }
 }
 
 
 
-void vtkIGTIGSTKStream::PullRealTime()
+void vtkIGTIGSTKStream::Init()
 {
 
     igstk::RealTimeClock::Initialize();
@@ -460,7 +450,7 @@ void vtkIGTIGSTKStream::PullRealTime()
     logger->SetPriorityLevel( itk::Logger::DEBUG);
 
 
-    serialComm->SetLogger( logger );
+    // serialComm->SetLogger( logger );
     serialComm->SetPortNumber( igstk::SerialCommunication::PortNumber0 );
     serialComm->SetParity( igstk::SerialCommunication::NoParity );
     serialComm->SetBaudRate( igstk::SerialCommunication::BaudRate115200 );
@@ -471,43 +461,57 @@ void vtkIGTIGSTKStream::PullRealTime()
 
     serialComm->OpenCommunication();
 
-    igstk::PolarisTracker::Pointer tracker = igstk::PolarisTracker::New();
+    this->PolarisTracker = igstk::PolarisTracker::New();
 //    igstk::AuroraTracker::Pointer tracker = igstk::AuroraTracker::New();
 
-    tracker->SetLogger( logger );
-    tracker->SetCommunication( serialComm );
-    tracker->RequestOpen();
-    tracker->RequestInitialize();
+    // tracker->SetLogger( logger );
+    this->PolarisTracker->SetCommunication( serialComm );
+    this->PolarisTracker->RequestOpen();
+    this->PolarisTracker->RequestInitialize();
 
-    unsigned int ntools = tracker->GetNumberOfTools();
-    tracker->RequestStartTracking();
+    itksys::SystemTools::Delay(30000);
+ 
+    std::cout << "\nInit done.\n";
+}
+
+
+
+void vtkIGTIGSTKStream::StopPulling()
+{
+    this->PolarisTracker->RequestReset();
+    this->PolarisTracker->RequestClose();
+    // serialComm->CloseCommunication();
+    std::cout << "Stop pulling." << std::endl;
+}
+
+
+
+void vtkIGTIGSTKStream::PullRealTime()
+{
+
+    unsigned int ntools = this->PolarisTracker->GetNumberOfTools();
+    this->PolarisTracker->RequestStartTracking();
 
     typedef igstk::Transform            TransformType;
     typedef ::itk::Vector<double, 3>    VectorType;
     typedef ::itk::Versor<double>       VersorType;
 
-    while (this->Tracking)
+    for (int y = 0; y < 5; y++)
     {
-        tracker->RequestUpdateStatus();
-        for (unsigned int port = 0; port < 4; port++)
-        {
-            TransformType             transform;
-            VectorType                position;
+        this->PolarisTracker->RequestUpdateStatus();
+        TransformType             transform;
+        VectorType                position;
 
-            tracker->GetToolTransform( port, 0, transform );
-            position = transform.GetTranslation();
-            std::cout << "Port " << port << "  Position = (" << position[0]
-                << "," << position[1] << "," << position[2]
-                << ")" << std::endl;
-        }
+        this->PolarisTracker->GetToolTransform( 0, 0, transform );
+        position = transform.GetTranslation();
+        std::cout << "  Position = (" << position[0]
+            << "," << position[1] << "," << position[2]
+            << ")" << std::endl;
 
         itksys::SystemTools::Delay(100);
     }
 
-    tracker->RequestReset();
-    tracker->RequestStopTracking();
-    tracker->RequestClose();
-    serialComm->CloseCommunication();
-    std::cout << "Serial communication closed." << std::endl;
+    this->PolarisTracker->RequestStopTracking();
+    std::cout << "Pull realtime." << std::endl;
 }
 

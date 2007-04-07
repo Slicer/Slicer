@@ -69,6 +69,8 @@ public:
 
     void ProcessTimerEvents();
 
+    void Init();
+    void StopPulling();
     void PullRealTime();    
     void SetLocatorTransforms();
     void callbackF(double*, double*);
