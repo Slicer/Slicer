@@ -664,11 +664,11 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
   
   if ( (b == this->LoadSceneButton) && (event == vtkKWPushButton::InvokedEvent ) )
     {
-    this->Script ( "source ../../../Slicer3/Modules/QueryAtlas/Tcl/QueryAtlas.tcl; QueryAtlasInit");
+    this->Script ( "source $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Tcl/QueryAtlas.tcl; QueryAtlasInit");
     }
   else if ( (b == this->BIRNLexHierarchyButton) && (event == vtkKWPushButton::InvokedEvent ) )
     {
-    this->Script ( "source ../../../Slicer3/Modules/QueryAtlas/Tcl/QueryAtlas.tcl; QueryAtlasLaunchBirnLexHierarchy" );
+    this->Script ( "source $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Tcl/QueryAtlas.tcl; QueryAtlasLaunchBirnLexHierarchy" );
     }
   else if ( (b == this->HierarchySearchButton) && (event == vtkKWPushButton::InvokedEvent ) )
     {
@@ -678,7 +678,7 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
       {
       structureLabel = "BIRNLex_subset";
       }
-    this->Script ( "source ../../../Slicer3/Modules/QueryAtlas/Tcl/QueryAtlas.tcl; QueryAtlasSendHierarchyCommand  %s", structureLabel );
+    this->Script ( "source $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Tcl/QueryAtlas.tcl; QueryAtlasSendHierarchyCommand  %s", structureLabel );
     }
 
   else if ( (b == this->SearchButton) && (event == vtkKWPushButton::InvokedEvent ) )
