@@ -484,6 +484,26 @@ proc QueryAtlasPopulateSearchResultsBox { } {
 #----------------------------------------------------------------------------------------------------
 #---
 #----------------------------------------------------------------------------------------------------
+proc QueryAtlasOpenLink { } {
+
+    set lb [[$::slicer3::QueryAtlasGUI GetCurrentResultsList ] GetWidget]
+    set index [ $lb GetSelectionIndex ]
+    if { $index >= 0 } {
+        set name [ $lb GetItem $index ]
+        # is this a url?
+        set tst [ string first "http" $name ]
+        if { $tst >= 0 } {
+            $::slicer3::Application OpenLink $name
+            $lb SetSelectState $index 0
+        }
+    }
+}
+
+
+
+#----------------------------------------------------------------------------------------------------
+#---
+#----------------------------------------------------------------------------------------------------
 proc QueryAtlasBundleSearchResults { } {
 
     incr ::QA(linkBundleCount) 

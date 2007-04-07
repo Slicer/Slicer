@@ -582,7 +582,7 @@ void vtkQueryAtlasGUI::RemoveGUIObservers ( )
   this->DeleteCurrentResultButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->DeleteAllCurrentResultsButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->CurrentResultsList->GetWidget()->RemoveObservers(vtkKWListBox::ListBoxSelectionChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->PastResultsList->GetWidget()->RemoveObservers(vtkKWListBox::ListBoxSelectionChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+//  this->PastResultsList->GetWidget()->RemoveObservers(vtkKWListBox::ListBoxSelectionChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 }
 
 
@@ -646,7 +646,7 @@ void vtkQueryAtlasGUI::AddGUIObservers ( )
   this->DeleteCurrentResultButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->DeleteAllCurrentResultsButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->CurrentResultsList->GetWidget()->AddObserver(vtkKWListBox::ListBoxSelectionChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->PastResultsList->GetWidget()->AddObserver(vtkKWListBox::ListBoxSelectionChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+//  this->PastResultsList->GetWidget()->AddObserver(vtkKWListBox::ListBoxSelectionChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   
 }
 
@@ -858,17 +858,10 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
     }
   if ((lb = this->CurrentResultsList->GetWidget()) && (event == vtkKWListBox::ListBoxSelectionChangedEvent ))
     {
-    // open selected one in browser
-    index = lb->GetSelectionIndex ();
-    name = lb->GetItem ( index );
-    vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());
-//    app->OpenLink ( name );
+    this->Script ("QueryAtlasOpenLink");
     }
   else if ((lb = this->PastResultsList->GetWidget()) && (event == vtkKWListBox::ListBoxSelectionChangedEvent ))
     {
-    // nothing for now...
-    index = lb->GetSelectionIndex ();
-    name = lb->GetItem ( index );
     }
   // no need to do anything here; we'll just get the widget values with tcl.
   if (( m== this->DiagnosisMenuButton->GetWidget()->GetMenu()) && (event == vtkKWMenu::MenuItemInvokedEvent ) )
