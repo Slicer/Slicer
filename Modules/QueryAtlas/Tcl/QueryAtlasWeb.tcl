@@ -532,7 +532,7 @@ proc QueryAtlasBundleSearchResults { } {
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasSaveLinkBundlesToFile { } {
 
-    set ::QA(linkBundleFileName) "$::env(SLICER_HOME)/Modules/QueryAtlas/tmp/QA.links"
+    set ::QA(linkBundleFileName) "$::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/tmp/QA.links"
     puts "saving to $::QA(linkBundleFileName)..."
     set ::QA(linkBundleFile) [ open $::QA(linkBundleFileName) w+ ]
     #--- expand each bundle in the list and write them line by line to file
@@ -565,7 +565,7 @@ proc QueryAtlasMakeEntrezCountQuery { url } {
     package require http
 
     puts "making count query........."
-     set ::QA(entrezCountFileName) "$::env(SLICER_HOME)/Modules/QueryAtlas/tmp/QA.counts"
+     set ::QA(entrezCountFileName) "$::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/tmp/QA.counts"
     set ::QA(entrezCountFile) [ open $::QA(entrezCountFileName) w+ ]
     set token [ ::http::geturl $url -channel $::QA(entrezCountFile) ]
     close $::QA(entrezCountFile)
