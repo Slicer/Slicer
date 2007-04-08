@@ -389,6 +389,12 @@ proc QueryAtlasFormURLsForEntrez { } {
             }
         }
     }
+
+    #--- build and display the fan of links in 3DViewer
+    set len [ llength $::QA(entrezDatabaseNames) ]
+    if { $len > 0 } {
+#        QueryAtlasBuildLinkFan
+    }
 }
 
 
@@ -685,5 +691,132 @@ proc QueryAtlasExtractContentWithTcl { open_tag close_tag  } {
     return ""
 }
 
+
+#----------------------------------------------------------------------------------------------------
+#---
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasBuildLinkFan { } {
+
+    #-- get rid of the last round of links
+    puts "deleting link fan"
+    QueryAtlasDeleteLinkFan
+    
+    #--- get the render widget and set the icon directory
+    set renderWidget [[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer]
+    set renderer [ $renderWidget GetRenderer ]
+    puts "got renderer"
+    
+    set icondir $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/ImageData
+    puts "icondir = $icondir"
+
+    #--- create  a list of icon names
+    set iconset [glob $icondir/*.png]
+    puts "iconset = $iconset"
+
+    #--- use only the icons for which there is a matching databasename
+    set icons ""
+    foreach name $::QA(entrezDatabaseNames) {
+        #-- search iconset for name
+        foreach icon $iconset {
+            set index [ string first $name.png $icon]
+            if { $index >= 0 } {
+                lappend icons $icon
+                break
+            }
+        }
+    }
+    
+    #-- create a cardfan with some number of cards
+    if { [ info exists ::QA(entrezDatabaseNames) ] } {
+    set len [ llength $::QA(entrezDatabaseNames)] 
+
+        if { $len > 0 } {
+            set ::QA(cardFan) [CardFan #auto [llength $::QA(entrezDatabaseNames)]]
+            puts "created cardfan"            
+
+            puts "using $::QA(entrezDatabaseNames)"
+            #--- for each icon in icons and associated card in the cardfan
+            #--- set the card's icon and text (fix the text)                 
+            foreach icon $icons card [$::QA(cardFan) cards] name $::QA(entrezDatabaseNames) {
+                $card configure -icon $icon -text $name
+            }
+            puts "configured cardfan"
+
+            #--- get the scene's bounding box...
+            set bounds [ $renderer ComputeVisiblePropBounds ]
+            #--- get the max dimension of the bbox.
+            set xmin [ lindex $bounds 0 ]
+            set xmax [ lindex $bounds 1 ]
+            set ymin [ lindex $bounds 2 ]
+            set ymax [ lindex $bounds 3 ]
+            set zmin [ lindex $bounds 4 ]
+            set zmax [ lindex $bounds 5 ]
+            set diagx [ expr ($xmax - $xmin) ]
+            set diagy [ expr ($ymax - $ymin) ]
+            set diagz [ expr ($zmax - $zmin) ]
+
+            set diagx [ expr $diagx * $diagx ]
+            set diagy [ expr $diagy * $diagy ]
+            set diagz [ expr $diagz * $diagz ]
+
+            set radius [ expr $diagx + $diagy + $diagz ]
+
+            #-- what if we have just a single point in scene?
+            if {  $radius == 0 } {
+                set radius 1.0
+            } 
+            set radius [ expr (sqrt ($radius) * 0.5 ) ]
+            
+            #--- add a little extra bump
+            set radius [ expr $radius + ( $radius * 0.2) ]
+            puts "radius = $radius"
+            puts "anchor = $::QA(cardRASAnchor)"
+            #--- and configure the cardfan's spacing, scale, startpoint and radius
+            $::QA(cardFan) configure -spacing 15 -anchor $::QA(cardRASAnchor) -radius $radius
+            $::QA(cardFan) configureAll -scale 10 -follow 0
+            puts "done."
+        }
+    }
+}
+
+#----------------------------------------------------------------------------------------------------
+#---
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasDeleteLinkFan { } {
+
+    if { [ info exists ::QA(cardFan) ] } {
+        itcl::delete object $::QA(cardFan)
+        unset -nocomplain ::QA(cardFan)
+    } 
+}
+
+
+
+
+#----------------------------------------------------------------------------------------------------
+#---
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasTestFan { } {
+
+    #--- get the render widget and set the icon directory
+    set renderWidget [[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer]
+    set icondir $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/ImageData
+
+    #--- create  a list of icon names
+    set icons [lrange [glob $icondir/*.png] 0 4]
+
+    #-- create a cardfan with some number of cards
+    set cardFan [CardFan #auto [llength $icons]]
+
+    #--- for each icon in icons and associated card in the cardfan
+    #--- set the card's icon and text (fix the text)                 
+    foreach icon $icons card [$cardFan cards] {
+          $card configure -icon $icon -text [file tail $icon]
+   }
+
+    #--- and configure the cardfan's spacing, scale, startpoint and radius
+    $cardFan configure -spacing 15 -anchor [list 0 0 0] -radius 50
+    $cardFan configureAll -scale 10 -follow 0
+}
 
 

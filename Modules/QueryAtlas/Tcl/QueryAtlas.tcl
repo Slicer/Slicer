@@ -887,7 +887,7 @@ proc QueryAtlasMenuCreate { state } {
   set renderWidget [[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer]
   set interactor [$renderWidget GetRenderWindowInteractor] 
   set position [$interactor GetEventPosition]
-
+  set ::QA(cardRASAnchor) $::QA(CurrentRASPoint)
 
   if { ![info exists ::QA(menu,useTerms)] } {
     set ::QA(menu,useTerms) 1
