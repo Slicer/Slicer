@@ -663,7 +663,6 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
   vtkKWListBox *lb = vtkKWListBox::SafeDownCast ( caller );
   const char *context;
   int index;
-  const char *name;
   
   if ( (b == this->LoadSceneButton) && (event == vtkKWPushButton::InvokedEvent ) )
     {
@@ -1111,14 +1110,17 @@ void vtkQueryAtlasGUI::BuildGUI ( )
     vtkKWFrame *curF = vtkKWFrame::New();
     curF->SetParent ( resultsFrame->GetFrame() );
     curF->Create();
+    vtkKWFrame *topcurF = vtkKWFrame::New();
+    topcurF->SetParent ( resultsFrame->GetFrame() );
+    topcurF->Create();
     vtkKWLabel *curL = vtkKWLabel::New();
-    curL->SetParent ( curF );
+    curL->SetParent ( topcurF );
     curL->Create();
     curL->SetWidth ( 45 );
     curL->SetText ( "Results of current search" );
     curL->SetBackgroundColor ( _br, _bg, _bb);
     this->CurrentResultsList = vtkKWListBoxWithScrollbars::New();
-    this->CurrentResultsList->SetParent ( curF );
+    this->CurrentResultsList->SetParent ( topcurF );
     this->CurrentResultsList->Create();
     this->CurrentResultsList->GetWidget()->SetWidth ( 45 );
     this->CurrentResultsList->GetWidget()->SetHeight (4 );
@@ -1140,14 +1142,17 @@ void vtkQueryAtlasGUI::BuildGUI ( )
     vtkKWFrame *pastF = vtkKWFrame::New();
     pastF->SetParent ( resultsFrame->GetFrame() );
     pastF->Create();
+    vtkKWFrame *toppastF = vtkKWFrame::New();
+    toppastF->SetParent ( resultsFrame->GetFrame() );
+    toppastF->Create();
     vtkKWLabel *pastL = vtkKWLabel::New();
-    pastL->SetParent ( pastF );
+    pastL->SetParent ( toppastF );
     pastL->Create();
     pastL->SetWidth ( 45 );
     pastL->SetText ( "Reserved search result bundles" );
     pastL->SetBackgroundColor ( 0.85, 0.85, 0.95 );
     this->PastResultsList = vtkKWListBoxWithScrollbars::New();
-    this->PastResultsList->SetParent ( pastF );
+    this->PastResultsList->SetParent ( toppastF );
     this->PastResultsList->Create();
     this->PastResultsList->GetWidget()->SetWidth ( 45 );
     this->PastResultsList->GetWidget()->SetHeight ( 4 );
@@ -1166,29 +1171,34 @@ void vtkQueryAtlasGUI::BuildGUI ( )
     this->SavePastResultsButton->Create();    
     this->SavePastResultsButton->SetText ("Save to file");
 
-    app->Script ("pack %s -side top -padx 0 -pady 2 -fill x -expand true", curF->GetWidgetName() );
-    app->Script ("pack %s -side top -padx 0 -pady 2 -fill x -expand true", pastF->GetWidgetName() );
+    app->Script( "pack %s -side top -padx 0 -pady 2 -fill both -expand 1", topcurF->GetWidgetName() );
+    app->Script ("pack %s -side top -padx 0 -pady 2 -fill x -expand 1", curL->GetWidgetName() );
+    app->Script ("pack %s -side top -padx 0 -pady 0 -fill both -expand 1", this->CurrentResultsList->GetWidgetName() );
 
-    app->Script ("grid %s -row 0 -columnspan 3 -sticky ew", curL->GetWidgetName() );
-    app->Script ("grid %s -row 1 -columnspan 3 -sticky ew", this->CurrentResultsList->GetWidgetName() );
-    app->Script ("grid %s -row 2 -column 0 -sticky ew -pady 4", this->DeleteCurrentResultButton->GetWidgetName() );    
-    app->Script ("grid %s -row 2 -column 1 -sticky ew -pady 4 -padx 4", this->DeleteAllCurrentResultsButton->GetWidgetName() );    
-    app->Script ("grid %s -row 2 -column 2 -sticky ew -pady 4", this->SaveCurrentResultsButton->GetWidgetName() );    
+    app->Script ("pack %s -side top -padx 0 -pady 2 -fill x -expand 1", curF->GetWidgetName() );
+    app->Script ("grid %s -row 0 -column 0 -sticky ew -pady 4", this->DeleteCurrentResultButton->GetWidgetName() );    
+    app->Script ("grid %s -row 0 -column 1 -sticky ew -pady 4 -padx 4", this->DeleteAllCurrentResultsButton->GetWidgetName() );    
+    app->Script ("grid %s -row 0 -column 2 -sticky ew -pady 4", this->SaveCurrentResultsButton->GetWidgetName() );    
     app->Script ("grid columnconfigure %s 0 -weight 1", this->DeleteCurrentResultButton->GetWidgetName() );    
     app->Script ("grid columnconfigure %s 1 -weight 1", this->DeleteAllCurrentResultsButton->GetWidgetName() );    
     app->Script ("grid columnconfigure %s 2 -weight 1", this->SaveCurrentResultsButton->GetWidgetName() );    
 
-    app->Script ("grid %s -columnspan 3 -row 0 -sticky ew", pastL->GetWidgetName() );
-    app->Script ("grid %s -columnspan 3 -row 1 -sticky ew", this->PastResultsList->GetWidgetName() );
-    app->Script ("grid %s -row 2 -column 0 -sticky ew -pady 4", this->DeletePastResultButton->GetWidgetName() );    
-    app->Script ("grid %s -row 2 -column 1 -sticky ew -pady 4 -padx 4", this->DeleteAllPastResultsButton->GetWidgetName() );    
-    app->Script ("grid %s -row 2 -column 2 -sticky ew -pady 4", this->SavePastResultsButton->GetWidgetName() );    
+    app->Script( "pack %s -side top -padx 0 -pady 2 -fill both -expand 1", toppastF->GetWidgetName() );
+    app->Script ("pack %s -side top -padx 0 -pady 2 -fill x -expand 1", pastL->GetWidgetName() );
+    app->Script ("pack %s -side top -padx 0 -pady 0 -fill both -expand 1", this->PastResultsList->GetWidgetName() );
+
+    app->Script ("pack %s -side top -padx 0 -pady 2 -fill x -expand 1", pastF->GetWidgetName() );
+    app->Script ("grid %s -row 0 -column 0 -sticky ew -pady 4", this->DeletePastResultButton->GetWidgetName() );    
+    app->Script ("grid %s -row 0 -column 1 -sticky ew -pady 4 -padx 4", this->DeleteAllPastResultsButton->GetWidgetName() );    
+    app->Script ("grid %s -row 0 -column 2 -sticky ew -pady 4", this->SavePastResultsButton->GetWidgetName() );    
     app->Script ("grid columnconfigure %s 0 -weight 1", this->DeletePastResultButton->GetWidgetName() );    
     app->Script ("grid columnconfigure %s 1 -weight 1", this->DeleteAllPastResultsButton->GetWidgetName() );    
     app->Script ("grid columnconfigure %s 2 -weight 1", this->SavePastResultsButton->GetWidgetName() );    
 
     curL->Delete();
     pastL->Delete();
+    topcurF->Delete();
+    toppastF->Delete();
     curF->Delete();
     pastF->Delete();
 
