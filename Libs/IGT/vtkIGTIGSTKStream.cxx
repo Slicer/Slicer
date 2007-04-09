@@ -5,6 +5,8 @@
 #include "vtkCommand.h"
 #include "vtkCallbackCommand.h"
 
+#include "vnl/vnl_float_3.h"
+
 #include "itksys/SystemTools.hxx"
 #include "itkStdStreamLogOutput.h"
 #ifdef _WIN32
@@ -154,7 +156,8 @@ void vtkIGTIGSTKStream::UpdateLocatorMatrix(float *position, float *orientation)
 void vtkIGTIGSTKStream::SetLocatorTransforms()
 {
     // Get locator matrix
-    float p[3], n[3], t[3], c[3];
+    vnl_float_3 p, n, t, c;
+    
     p[0] = this->LocatorMatrix->GetElement(0, 0);
     p[1] = this->LocatorMatrix->GetElement(1, 0);
     p[2] = this->LocatorMatrix->GetElement(2, 0);
@@ -169,14 +172,13 @@ void vtkIGTIGSTKStream::SetLocatorTransforms()
     // Ensure N, T orthogonal:
     //    C = N x T
     //    T = C x N
-    // this->Cross(c, n, t);
-    // this->Cross(t, c, n);
+    c = vnl_cross_3d(n, t);
+    t = vnl_cross_3d(c, n);
 
     // Ensure vectors are normalized
-    // this->Normalize(n);
-    // this->Normalize(t);
-    // this->Normalize(c); 
-
+    n.normalize();
+    t.normalize();
+    c.normalize(); 
 
     /*
     # Find transform, N, that brings the locator coordinate frame 
@@ -277,32 +279,6 @@ void vtkIGTIGSTKStream::SetLocatorTransforms()
 
 
 
-#if 0
-void vtkIGTIGSTKStream::Normalize(float *a)
-{
-    float d;
-    d = sqrt(a[0]*a[0] + a[1]*a[1] + a[2]*a[2]);
-
-    if (d == 0.0) return;
-
-    a[0] = a[0] / d;
-    a[1] = a[1] / d;
-    a[2] = a[2] / d;
-}
-
-
-
-// a = b x c
-void vtkIGTIGSTKStream::Cross(float *a, float *b, float *c)
-{
-    a[0] = b[1]*c[2] - c[1]*b[2];
-    a[1] = c[0]*b[2] - b[0]*c[2];
-    a[2] = b[0]*c[1] - c[0]*b[1];
-}
-#endif
-
-
-
 void vtkIGTIGSTKStream::ApplyTransform(float *position, float *norm, float *transnorm)
 {
     // Transform position, norm and transnorm
@@ -342,7 +318,7 @@ void vtkIGTIGSTKStream::ProcessTimerEvents()
     {
         this->PullRealTime();
         vtkKWTkUtilities::CreateTimerHandler(vtkKWApplication::GetMainInterp(), 
-                200, this, "ProcessTimerEvents");        
+                100, this, "ProcessTimerEvents");        
  
     }
     else
