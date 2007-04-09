@@ -2224,12 +2224,11 @@ void vtkNeuroNavGUI::SetIGSTKConnectionParameters()
             this->IGSTKStream->SetHandShake(igstk::SerialCommunication::HandshakeOn);
         }
 
-
         this->IGSTKStream->SetTracking(1);
+        this->IGSTKStream->SetSpeed(sp);
+        this->IGSTKStream->SetMultiFactor(multi);
         this->IGSTKStream->Init();
         this->IGSTKStream->ProcessTimerEvents();
-        // this->IGSTKStream->PullRealTime();
-
     }
     else
     {
