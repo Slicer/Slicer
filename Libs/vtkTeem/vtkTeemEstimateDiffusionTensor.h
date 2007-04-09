@@ -7,8 +7,8 @@
 
   Program:   3D Slicer
   Module:    $RCSfile: vtkTeemEstimateDiffusionTensor.h,v $
-  Date:      $Date: 2006/10/24 20:06:47 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2007/04/09 08:10:16 $
+  Version:   $Revision: 1.3.2.1 $
 
 =========================================================================auto=*/
 // .NAME vtkTeemEstimateDiffusionTensor - 
@@ -39,16 +39,18 @@ class VTK_TEEM_EXPORT vtkTeemEstimateDiffusionTensor : public vtkImageToImageFil
   // Set the 3-vectors describing the gradient directions
   void SetDiffusionGradient(int num, vtkFloatingPointType gradient[3])
     {
-    this->DiffusionGradient->SetTuple(num,gradient);
+    this->DiffusionGradients->SetTuple(num,gradient);
     this->Modified();
     }
   void SetDiffusionGradient(int num, vtkFloatingPointType g0, vtkFloatingPointType g1, vtkFloatingPointType g2)
     {
-      this->DiffusionGradient->SetComponent(num,0,g0);
-      this->DiffusionGradient->SetComponent(num,1,g1);
-      this->DiffusionGradient->SetComponent(num,2,g2);
+      this->DiffusionGradients->SetComponent(num,0,g0);
+      this->DiffusionGradients->SetComponent(num,1,g1);
+      this->DiffusionGradients->SetComponent(num,2,g2);
       this->Modified();
     }
+  void SetDiffusionGradients(vtkDoubleArray *grad);
+  vtkGetObjectMacro(DiffusionGradients,vtkDoubleArray);
 
   // Description:
   // Get the 3-vectors describing the gradient directions
@@ -57,18 +59,30 @@ class VTK_TEEM_EXPORT vtkTeemEstimateDiffusionTensor : public vtkImageToImageFil
   // the following look messy but are copied from vtkSetGet.h,
   // just adding the num parameter we need.
 
-  void SetB(int num,double b)
+  void SetBValue(int num,double b)
    {
-     this->B->SetValue(num,b);
+     this->BValues->SetValue(num,b);
      this->Modified();
    } 
-  
+  void SetBValues(vtkDoubleArray *bValues);
+  vtkGetObjectMacro(BValues,vtkDoubleArray);
+
+  // Description:
+  // Get Baseline Image
+  vtkGetObjectMacro(Baseline,vtkImageData);
+
+  // Description:
+  // Get Average of all DWI images
+  vtkGetObjectMacro(AverageDWI,vtkImageData);
+
 //BTX
   enum
     {
-      tenEstimateMethodLLS = 0,
-      tenEstimateMethodNLS,
-      tenEstimateMethodWLS
+      tenEstimateMethodUnknown,  /* 0 */
+      tenEstimateMethodLLS,      /* 1 */
+      tenEstimateMethodWLS,      /* 2 */
+      tenEstimateMethodNLS,      /* 3 */
+      tenEstimateMethodLast
     };
 //ETX
    //Description
@@ -112,9 +126,11 @@ class VTK_TEEM_EXPORT vtkTeemEstimateDiffusionTensor : public vtkImageToImageFil
 
   int NumberOfGradients;
 
-  vtkDoubleArray *B;
-  vtkDoubleArray *DiffusionGradient;
+  vtkDoubleArray *BValues;
+  vtkDoubleArray *DiffusionGradients;
 
+  vtkImageData *Baseline;
+  vtkImageData *AverageDWI;
 
   // for transforming tensors
   vtkTransform *Transform;
