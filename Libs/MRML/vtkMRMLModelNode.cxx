@@ -146,7 +146,10 @@ void vtkMRMLModelNode::Copy(vtkMRMLNode *anode)
 
   this->SetStorageNodeID(node->StorageNodeID);
   this->SetDisplayNodeID(node->DisplayNodeID);
-  this->SetPolyData(node->PolyData);
+  if (node->PolyData)
+    {
+    this->SetPolyData(node->PolyData);
+    }
 }
 
 //----------------------------------------------------------------------------

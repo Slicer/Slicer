@@ -48,6 +48,7 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLCameraNode.h"
 #include "vtkMRMLViewNode.h"
 #include "vtkMRMLModelHierarchyNode.h"
+#include "vtkMRMLSceneSnapshotNode.h"
 
 #ifdef USE_TEEM
 #include "vtkMRMLNRRDStorageNode.h"
@@ -184,6 +185,10 @@ vtkMRMLScene::vtkMRMLScene()
   vtkMRMLModelHierarchyNode *mhier = vtkMRMLModelHierarchyNode::New();
   this->RegisterNodeClass ( mhier );
   mhier->Delete();
+
+  vtkMRMLSceneSnapshotNode *sshot = vtkMRMLSceneSnapshotNode::New();
+  this->RegisterNodeClass ( sshot );
+  sshot->Delete();
 
 #ifdef USE_TEEM
   vtkMRMLNRRDStorageNode *nrrd = vtkMRMLNRRDStorageNode::New();
@@ -611,7 +616,9 @@ int vtkMRMLScene::Commit(const char* url)
 
     node->WriteXML(file, indent);
     
-    file << vindent << "></" << node->GetNodeTagName() << ">\n";
+    file << vindent << ">";
+    node->WriteNodeBodyXML(file, indent);
+    file << "</" << node->GetNodeTagName() << ">\n";
     
     if ( deltaIndent > 0 ) 
       {
@@ -657,6 +664,11 @@ void vtkMRMLScene::RequestNodeID(vtkMRMLNode *node, const char *ID)
 //------------------------------------------------------------------------------
 vtkMRMLNode*  vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
 {
+  if (!n->GetAddToScene())
+    {
+    return NULL;
+    }
+
   //TODO convert URL to Root directory
   //n->SetSceneRootDir("");
   
@@ -708,6 +720,11 @@ vtkMRMLNode*  vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
 //------------------------------------------------------------------------------
 vtkMRMLNode*  vtkMRMLScene::AddNode(vtkMRMLNode *n)
 {
+  if (!n->GetAddToScene())
+    {
+    return NULL;
+    }
+
   vtkMRMLNode* node = this->AddNodeNoNotify(n);
   this->InvokeEvent(this->NodeAddedEvent, n);
   this->Modified();

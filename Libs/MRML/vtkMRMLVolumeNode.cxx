@@ -197,7 +197,7 @@ void vtkMRMLVolumeNode::Copy(vtkMRMLNode *anode)
       this->IJKToRASDirections[i][j] = node->IJKToRASDirections[i][j];
       }
     }
-  if (this->ImageData) 
+  if (node->ImageData != NULL)
     {
     this->SetImageData(node->ImageData);
     }

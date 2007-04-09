@@ -19,7 +19,9 @@ vtkCxxRevisionMacro ( vtkSlicerDataGUI, "$Revision: 1.0 $");
 //---------------------------------------------------------------------------
 vtkSlicerDataGUI::vtkSlicerDataGUI ( )
 {
-  MRMLTreeWidget = vtkSlicerMRMLTreeWidget::New();
+  this->MRMLTreeWidget = vtkSlicerMRMLTreeWidget::New();
+  this->SceneSnapshotWidget = vtkSlicerSceneSnapshotWidget::New();
+
   NACLabel = NULL;
   NAMICLabel = NULL;
   NCIGTLabel = NULL;
@@ -35,6 +37,12 @@ vtkSlicerDataGUI::~vtkSlicerDataGUI ( )
     this->MRMLTreeWidget->RemoveWidgetObservers ( );
     this->MRMLTreeWidget->SetParent (NULL );
     this->MRMLTreeWidget->Delete ( );
+    }
+  if (this->SceneSnapshotWidget)
+    {
+    this->SceneSnapshotWidget->RemoveWidgetObservers ( );
+    this->SceneSnapshotWidget->SetParent (NULL );
+    this->SceneSnapshotWidget->Delete ( );
     }
   if ( this->NACLabel )
     {
@@ -239,8 +247,24 @@ void vtkSlicerDataGUI::BuildGUI ( )
     this->MRMLTreeWidget->Create ( );
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   this->MRMLTreeWidget->GetWidgetName(), displayModifyFrame->GetFrame()->GetWidgetName());
-    
+
+    // Snapshot FRAME
+    vtkSlicerModuleCollapsibleFrame *snapshotFrame = vtkSlicerModuleCollapsibleFrame::New ( );
+    snapshotFrame->SetParent ( this->UIPanel->GetPageWidget ( "Data" ) );
+    snapshotFrame->Create ( );
+    snapshotFrame->ExpandFrame ( );
+    snapshotFrame->SetLabelText ("Scene Snaphots");
+    app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
+                  snapshotFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Data")->GetWidgetName());
+
+    this->SceneSnapshotWidget->SetAndObserveMRMLScene(this->GetMRMLScene() );
+    this->SceneSnapshotWidget->SetParent ( snapshotFrame->GetFrame() );
+    this->SceneSnapshotWidget->Create ( );
+    app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
+                  this->SceneSnapshotWidget->GetWidgetName(), snapshotFrame->GetFrame()->GetWidgetName());
+
     displayModifyFrame->Delete ( );
+    snapshotFrame->Delete ( );
 }
 
 

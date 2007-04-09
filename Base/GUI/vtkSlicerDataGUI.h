@@ -9,6 +9,7 @@
 #include "vtkSlicerModuleGUI.h"
 #include "vtkSlicerModuleLogic.h"
 #include "vtkSlicerMRMLTreeWidget.h"
+#include "vtkSlicerSceneSnapshotWidget.h"
 #include "vtkKWLabel.h"
 
 //#include "vtkSlicerDataLogic.h"
@@ -88,6 +89,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerDataGUI : public vtkSlicerModuleGUI
     
     // Widgets for the Data module
   vtkSlicerMRMLTreeWidget *MRMLTreeWidget;
+  vtkSlicerSceneSnapshotWidget *SceneSnapshotWidget;
   vtkKWLabel *NACLabel;
   vtkKWLabel *NAMICLabel;
   vtkKWLabel *NCIGTLabel;

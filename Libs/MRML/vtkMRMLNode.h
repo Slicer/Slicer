@@ -123,6 +123,11 @@ public:
   // NOTE: Subclasses should implement this method
   // NOTE: Call this method in the subclass impementation
   virtual void WriteXML(ostream& of, int indent);
+
+  // Description:
+  // Write this node's body to a MRML file in XML format.
+  virtual void WriteNodeBodyXML(ostream& of, int indent){};
+
   
   // Description:
   // Copy everything from another node of the same type.
@@ -207,6 +212,13 @@ public:
   vtkGetMacro(SaveWithScene, int);
   vtkSetMacro(SaveWithScene, int);
   vtkBooleanMacro(SaveWithScene, int);
+
+  // Description:
+  // node added to MRML scene
+  vtkGetMacro(AddToScene, int);
+  vtkSetMacro(AddToScene, int);
+  vtkBooleanMacro(AddToScene, int);
+
   
   vtkMRMLScene* GetScene() {return this->Scene;};
   void SetScene(vtkMRMLScene* scene) {this->Scene = scene;};
@@ -235,7 +247,7 @@ protected:
   void operator=(const vtkMRMLNode&);
   
   vtkSetMacro(Indent, int);
-  
+
   //BTX
   // a shared set of functions that call the
   // virtual ProcessMRMLEvents
@@ -257,6 +269,7 @@ protected:
   char *SingletonTag;
   int Indent;
   int HideFromEditors;
+  int AddToScene;
 
   int  ModifiedSinceRead;
   int  SaveWithScene;
@@ -273,7 +286,7 @@ private:
   // Description:
   // ID use by other nodes to reference this node in XML
   vtkSetStringMacro(ID);
-  
+ 
   // Description:
   // Return the string that can be used for the id given a string and an
   // index
