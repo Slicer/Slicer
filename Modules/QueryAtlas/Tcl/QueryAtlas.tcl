@@ -639,6 +639,38 @@ proc QueryAtlasPCoordsToWorld {cell pCoords} {
   return "$x0 $x1 $x2"
 }
 
+#----------------------------------------------------------------------------------------------------
+#--- utility routine that should be provided by vtkKWRenderWidget
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasWorldToScreen { r a s } {
+
+  set viewer [$::slicer3::ApplicationGUI GetViewerWidget] 
+  set renderWidget [$viewer GetMainViewer]
+  set camera [[$renderWidget GetRenderer] GetActiveCamera]
+  set tkwindow [$renderWidget  GetWidgetName]
+  set width [winfo width $tkwindow]
+  set height [winfo height $tkwindow]
+
+  set m [$camera GetCompositePerspectiveTransformMatrix [expr (1. * $width) / $height] 0 1]
+  set vport [eval $m MultiplyPoint $r $a $s 1]
+  set w [lindex $vport 3]
+  set vx [expr [lindex $vport 0] / $w]
+  set vy [expr [lindex $vport 1] / $w]
+
+
+  set x [expr $width * (1. + $vx)/2.]
+  set y [expr $height * (1. + $vy)/2.]
+
+  return "$x $y"
+}
+
+proc QueryAtlasDistance { fromXY toXY } {
+  set sum 0
+  foreach f $fromXY t $toXY {
+    set sum [expr $sum + ($f-$t)*($f-$t)]
+  }
+  return [expr sqrt($sum)]
+}
 
 
 #----------------------------------------------------------------------------------------------------
@@ -684,29 +716,24 @@ proc QueryAtlasPickCallback {} {
   # use the prop picker to see if we're over the model, or the slices
   # - set the 'hit' variable accordingly for later processing
   #
-  set hit ""
+  set ::QA(currentHit) ""
   if { [$::QA(propPicker) PickProp $x $y $renderer] } {
     set prop [$::QA(propPicker) GetViewProp]
     if { $prop == $actor} {
-      set hit "QueryActor"
+      set ::QA(currentHit) "QueryActor"
     } else {
       set mrmlID [$viewer GetIDByActor $prop]
       if { $mrmlID != "" } {
-        set hit "Model"
+        set ::QA(currentHit) "Model"
       } 
     }
-  } else {
-    set card [::Card::HitTest $x $y]
-    if { $card != "" } {
-      set hit "Card"
-    }
-  }
+  } 
 
   #
   # set the 'pointlabels' depending on the thing picked
   #
   set pointLabels ""
-  if { $hit == "Model" } {
+  if { $::QA(currentHit) == "Model" } {
       set node [$::slicer3::MRMLScene GetNodeByID $mrmlID]
       if { $node != "" && [$node GetDescription] != "" } {
         array set nodes [$node GetDescription]
@@ -740,7 +767,7 @@ proc QueryAtlasPickCallback {} {
           set labelValue [$imageData GetScalarComponentAsDouble $i $j $k 0]
           if { [info exists ::QAFS($labelValue,name)] } {
               if { $::QAFS($labelValue,name) == "Unknown" } {
-                  set hit "QueryActor"
+                  set ::QA(currentHit) "QueryActor"
               } else {
                   set pointLabels "$::QAFS($labelValue,name)"
               }
@@ -753,7 +780,7 @@ proc QueryAtlasPickCallback {} {
 
     }
 
-  if { $hit == "QueryActor" } {
+  if { $::QA(currentHit) == "QueryActor" } {
       #
       # get the color under the mouse from label image
       #
@@ -771,33 +798,48 @@ proc QueryAtlasPickCallback {} {
         set cell [$::QA(polyData) GetCell $cellNumber]
 
         set labels [[$::QA(polyData) GetPointData] GetScalars "labels"]
+        set points [$::QA(polyData) GetPoints]
 
         array set labelMap $::QA(labelMap)
         set pointLabels ""
         set numberOfPoints [$cell GetNumberOfPoints]
 
+        set nearestRAS "0 0 0"
+        set nearestIndex ""
+        set nearestDistance 1000000
+
         for {set p 0} {$p < $numberOfPoints} {incr p} {
           set index [$cell GetPointId $p]
-          set pointLabel [$labels GetValue $index]
-          if { [info exists labelMap($pointLabel)] } {
-            set labelName $labelMap($pointLabel)
-            if { [lsearch $pointLabels $labelName] == -1 } {
-              lappend pointLabels $labelName
-            }
-          } else {
-            lappend pointLabels "unknown"
+          set ras [$points GetPoint $index]
+          set xy [eval QueryAtlasWorldToScreen $ras]
+          set dist [QueryAtlasDistance $xy "$x $y"]
+          if { $dist < $nearestDistance } {
+            set nearestDistance $dist
+            set nearestIndex $index
+            set nearestRAS $ras
           }
         }
-        regsub -all " " $pointLabels "/" pointLabels
-      } else {
-        set pointLabels "background"
+        
+        if { $nearestIndex != "" } {
+          set ::QA(CurrentRASPoint) $nearestRAS
+          set pointLabel [$labels GetValue $index]
+          if { [info exists labelMap($pointLabel)] } {
+            set pointLabels $labelMap($pointLabel)
+          } else {
+            lappend pointLabels ""
+          }
+        }
       }
   } 
 
-  if { $hit == "Card" } {
-    set pointLabels ""
-  } else {
-    if { $pointLabels == "" } {
+  # - nothing is hit yet, so check the cards
+  if { $pointLabels == "" } {
+    set card [::Card::HitTest $x $y]
+    if { $card != "" } {
+      set ::QA(currentHit) "Card"
+      set ::QA(currentCard) $card
+      set ::QA(CurrentRASPoint) [$card cget -ras]
+    } else {
       set pointLabels "background"
     }
   }
@@ -905,24 +947,36 @@ proc QueryAtlasMenuCreate { state } {
     "end" {
       if { $::QA(menu,startPosition) == $position } {
 
+        set c [Card #auto $renderWidget]
+        $c configure -ras "200 200 200" -anchor $::QA(menuRAS) -text hoot
+
+        set ::QA(menuRAS) $::QA(CurrentRASPoint)
+
         set parent [[$::slicer3::ApplicationGUI GetMainSlicerWindow] GetWidgetName]
         set qaMenu $parent.qaMenu
         catch "destroy $qaMenu"
-
         menu $qaMenu
-        $qaMenu insert end separator
-        $qaMenu insert end checkbutton -label "Use Search Terms" -variable ::QA(menu,useTerms)
-        $qaMenu insert end command -label "Add To Search Terms" -command "QueryAtlasAddStructureTerms"
-        $qaMenu insert end command -label "Remove All Search Terms" -command "QueryAtlasRemoveStructureTerms"
 
-        $qaMenu insert end command -label $::QA(lastLabels) -command ""
-        $qaMenu insert end separator
-        $qaMenu insert end command -label "Google..." -command "QueryAtlasQuery google"
-        $qaMenu insert end command -label "Wikipedia..." -command "QueryAtlasQuery wikipedia"
-        $qaMenu insert end command -label "PubMed..." -command "QueryAtlasQuery pubmed"
-        $qaMenu insert end command -label "J Neuroscience..." -command "QueryAtlasQuery jneurosci"
-        $qaMenu insert end command -label "IBVD..." -command "QueryAtlasQuery ibvd"
-        $qaMenu insert end command -label "MetaSearch..." -command "QueryAtlasQuery metasearch"
+        if { $::QA(currentHit) == "Card" } { 
+          # bring up a card menu
+          set topic [file root [$::QA(currentCard) cget -text]]
+          $qaMenu insert end command -label "Browse $topic" -command "$::slicer3::Application OpenLink $::QA(url,EntrezLinks)"
+        } else {
+          # bring up a search menu
+
+          $qaMenu insert end checkbutton -label "Use Search Terms" -variable ::QA(menu,useTerms)
+          $qaMenu insert end command -label "Add To Search Terms" -command "QueryAtlasAddStructureTerms"
+          $qaMenu insert end command -label "Remove All Search Terms" -command "QueryAtlasRemoveStructureTerms"
+
+          $qaMenu insert end command -label $::QA(lastLabels) -command ""
+          $qaMenu insert end separator
+          $qaMenu insert end command -label "Google..." -command "QueryAtlasQuery google"
+          $qaMenu insert end command -label "Wikipedia..." -command "QueryAtlasQuery wikipedia"
+          $qaMenu insert end command -label "PubMed..." -command "QueryAtlasQuery pubmed"
+          $qaMenu insert end command -label "J Neuroscience..." -command "QueryAtlasQuery jneurosci"
+          $qaMenu insert end command -label "IBVD..." -command "QueryAtlasQuery ibvd"
+          $qaMenu insert end command -label "MetaSearch..." -command "QueryAtlasQuery metasearch"
+        }
         
         foreach {x y} $::QA(lastRootXY) {}
         $qaMenu post $x $y
