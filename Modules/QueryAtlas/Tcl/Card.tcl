@@ -266,8 +266,8 @@ itcl::body Card::processEvent { caller event } {
       "KeyPressEvent" {
         switch [$_interactor GetKeySym] {
           default {
-            set char [$_interactor GetKeySym]
-            $this configure -text $text$char
+            #set char [$_interactor GetKeySym]
+            #$this configure -text $text$char
           }
         }
       }
