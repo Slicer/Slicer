@@ -127,6 +127,37 @@ int main(int argc, char * argv[])
 
     vtkMRMLScene *modelScene = NULL;
     vtkSlicerColorLogic *colorLogic = NULL;
+    // keep track of number of models that will be generated, for filter
+    // watcher reporting
+    float numModelsToGenerate = 1.0;
+    float numSingletonFilterSteps;
+    float numRepeatedFilterSteps;
+    float numFilterSteps;
+    // increment after each filter is run
+    float currentFilterOffset = 0.0;
+    if (makeMultiple) 
+      {
+      numSingletonFilterSteps = 4;
+      if (JointSmoothing)
+        {
+        numRepeatedFilterSteps = 7;
+        }
+      else
+        {
+        numRepeatedFilterSteps = 9;
+        }
+      numModelsToGenerate = EndLabel - StartLabel +1;
+      }
+    else
+      {
+      numSingletonFilterSteps = 1;
+      numRepeatedFilterSteps = 9;
+      }
+    numFilterSteps = numSingletonFilterSteps + (numRepeatedFilterSteps * numModelsToGenerate);
+    if (debug)
+      {
+      std::cout << "numModelsToGenerate = "<< numModelsToGenerate << ", numFilterSteps " << numFilterSteps << endl;
+      }
     // check for the input file
     FILE * infile;
     infile = fopen(InputVolume.c_str(),"r");
@@ -148,7 +179,8 @@ int main(int argc, char * argv[])
     vtkPluginFilterWatcher watchReader(reader,
                                        "Read Volume",
                                        CLPProcessInformation,
-                                       1.0/15.0, 0.0/15.0);
+                                       1.0/numFilterSteps, currentFilterOffset/numFilterSteps);
+    currentFilterOffset++;
     reader->SetArchetype(InputVolume.c_str());
     reader->SetOutputScalarTypeToNative();
     reader->SetDesiredCoordinateOrientationToNative();
@@ -196,7 +228,6 @@ int main(int argc, char * argv[])
           {
           if (debug)
             {
-            colorLogic->DebugOn();
             std::cout << "Color Logic setting mrml scene" << endl;
             }
           colorLogic->SetMRMLScene(modelScene);
@@ -212,33 +243,24 @@ int main(int argc, char * argv[])
     if (makeMultiple) 
       {
       hist = vtkImageAccumulate::New();
-      vtkPluginFilterWatcher watchImageAccumlate(hist,
-                                                 "Histogram",
-                                                 CLPProcessInformation,
-                                                 1.0/15.0, 1.0/15.0);
       hist->SetInput(image); 
       hist->SetComponentExtent(0, 1023, 0, 0, 0, 0);
       hist->SetComponentOrigin(0, 0, 0);
-      hist->SetComponentSpacing(1,1,1);
-      if (debug)
-        {        
-        std::cout << "Making mult, after hist, before marching cubes" << endl;
-        }
+      hist->SetComponentSpacing(1,1,1);      
       
       cubes = vtkDiscreteMarchingCubes::New();
       std::string comment = "Generate All Models";
       vtkPluginFilterWatcher watchDMCubes(cubes,
                                           comment.c_str(),
                                           CLPProcessInformation,
-                                          1.0/15.0, 2.0/15.0);
+                                          1.0/numFilterSteps,
+                                          currentFilterOffset/numFilterSteps);
+      currentFilterOffset += 1.0;
       
       cubes->SetInput(image);
       cubes->GenerateValues((EndLabel-StartLabel +1), StartLabel, EndLabel);
       cubes->Update();
-      if (debug)
-        {
-        std::cout << "Making mult, after cube" << endl;
-        }
+      
       if (JointSmoothing)
         {
         float passBand = 0.001;
@@ -247,7 +269,9 @@ int main(int argc, char * argv[])
         vtkPluginFilterWatcher watchSmoother(smoother,
                                              comment.c_str(),
                                              CLPProcessInformation,
-                                             1.0/15.0, 3.0/15.0);
+                                             1.0/numFilterSteps,
+                                             currentFilterOffset/numFilterSteps);
+        currentFilterOffset += 1.0;
         cubes->ReleaseDataFlagOn();
         smoother->SetInput(cubes->GetOutput());
         smoother->SetNumberOfIterations(Smooth);
@@ -261,6 +285,14 @@ int main(int argc, char * argv[])
         smoother->Update();
         //        smoother->ReleaseDataFlagOn();
         }
+
+      vtkPluginFilterWatcher watchImageAccumlate(hist,
+                                                 "Histogram All Models",
+                                                 CLPProcessInformation,
+                                                 1.0/numFilterSteps,
+                                                 currentFilterOffset/numFilterSteps);
+      currentFilterOffset += 1.0;
+      
       hist->Update();
       if (useColorNode)
         {
@@ -272,9 +304,12 @@ int main(int argc, char * argv[])
           // should be 20, or 714 if it's the SPL atlas
           int numDefaultLabelMapColor = 
             vtkMRMLColorTableNode::SafeDownCast(modelScene->GetNodeByID(colorLogic->GetDefaultLabelMapColorNodeID()))->GetLookupTable()->GetNumberOfColors();
-          // should be 5003
-          int numDefaultFSLabelMapColor =
-            vtkMRMLColorTableNode::SafeDownCast(modelScene->GetNodeByID(colorLogic->GetDefaultFreeSurferLabelMapColorNodeID()))->GetLookupTable()->GetNumberOfColors();
+          // should be 5003, may have failed if it couldn't read in the file
+          int numDefaultFSLabelMapColor = 0;
+          if (modelScene->GetNodeByID(colorLogic->GetDefaultFreeSurferLabelMapColorNodeID()) != NULL)
+            {
+            numDefaultFSLabelMapColor = vtkMRMLColorTableNode::SafeDownCast(modelScene->GetNodeByID(colorLogic->GetDefaultFreeSurferLabelMapColorNodeID()))->GetLookupTable()->GetNumberOfColors();
+            }
           if (debug)
             {
             std::cout << "\tmax = " << max[0] << ", " << max[1] << ", " << max[2] << endl;
@@ -285,12 +320,18 @@ int main(int argc, char * argv[])
             if (debug) { std::cout << "Using default label map colour node" << endl; }
             colorNode = vtkMRMLColorTableNode::SafeDownCast(modelScene->GetNodeByID(colorLogic->GetDefaultLabelMapColorNodeID()));
             }          
-          else
+          else if (max[0] < numDefaultFSLabelMapColor)
             {
-            // use the big freesurfer one
+            // use the freesurfer one
             if (debug) { std::cout << "Using default freesurfer colour node" << endl; }
             colorNode =  vtkMRMLColorTableNode::SafeDownCast(modelScene->GetNodeByID(colorLogic->GetDefaultFreeSurferLabelMapColorNodeID()));
-            }                   
+            }
+          else
+            {
+            // default to the default label map one
+            if (debug) { std::cout << "Using default label map colour node as a last resort" << endl; }
+            colorNode = vtkMRMLColorTableNode::SafeDownCast(modelScene->GetNodeByID(colorLogic->GetDefaultLabelMapColorNodeID()));
+            }
           }
         else
           {
@@ -335,6 +376,10 @@ int main(int argc, char * argv[])
       std::cout << endl;
       }
     transformIJKtoRAS->Inverse();
+
+    //
+    // Loop through all the labels
+    //    
     for (int i = StartLabel; i <= EndLabel; i++)
       {
       if (makeMultiple)
@@ -424,7 +469,9 @@ int main(int argc, char * argv[])
         vtkPluginFilterWatcher watchImageThreshold(imageThreshold,
                                                    comment.c_str(),
                                                    CLPProcessInformation,
-                                                   1.0/15.0, 4.0/15.0);
+                                                   1.0/numFilterSteps,
+                                                   currentFilterOffset/numFilterSteps);
+        currentFilterOffset += 1.0;
         imageThreshold->SetInput(image);
         imageThreshold->SetReplaceIn(1);
         imageThreshold->SetReplaceOut(1);
@@ -449,7 +496,9 @@ int main(int argc, char * argv[])
         vtkPluginFilterWatcher watchThreshold(threshold,
                                               comment.c_str(),
                                               CLPProcessInformation,
-                                              1.0/15.0, 5.0/15.0);
+                                              1.0/numFilterSteps,
+                                              currentFilterOffset/numFilterSteps);
+        currentFilterOffset += 1.0;       
         threshold->SetInput(smoother->GetOutput());
         // In VTK 5.0, this is deprecated - the default behaviour seems to
         // be okay
@@ -473,7 +522,9 @@ int main(int argc, char * argv[])
         vtkPluginFilterWatcher watchThreshold(mcubes,
                                               comment.c_str(),
                                               CLPProcessInformation,
-                                              1.0/15.0, 6.0/15.0);
+                                              1.0/numFilterSteps, 
+                                              currentFilterOffset/numFilterSteps);
+        currentFilterOffset += 1.0;
           
         mcubes->SetInput(imageToStructuredPoints->GetOutput());
         mcubes->SetValue(0,100.5);
@@ -517,7 +568,9 @@ int main(int argc, char * argv[])
       vtkPluginFilterWatcher watchImageThreshold(decimator,
                                                  comment.c_str(),
                                                  CLPProcessInformation,
-                                                 1.0/15.0, 7.0/15.0);
+                                                 1.0/numFilterSteps, 
+                                                 currentFilterOffset/numFilterSteps);
+      currentFilterOffset += 1.0;
       if (JointSmoothing == 0)
         {
         decimator->SetInput(mcubes->GetOutput());
@@ -557,7 +610,9 @@ int main(int argc, char * argv[])
         vtkPluginFilterWatcher watchReverser(reverser,
                                              comment.c_str(),
                                              CLPProcessInformation,
-                                             1.0/15.0, 8.0/15.0);
+                                             1.0/numFilterSteps, 
+                                             currentFilterOffset/numFilterSteps);
+        currentFilterOffset += 1.0;
         reverser->SetInput(decimator->GetOutput());
         reverser->ReverseNormalsOn();
         (reverser->GetOutput())->ReleaseDataFlagOn();
@@ -573,7 +628,9 @@ int main(int argc, char * argv[])
           vtkPluginFilterWatcher watchSmoother(smootherSinc,
                                                comment.c_str(),
                                                CLPProcessInformation,
-                                               1.0/15.0, 9.0/15.0);
+                                               1.0/numFilterSteps, 
+                                               currentFilterOffset/numFilterSteps);
+          currentFilterOffset += 1.0; 
           smootherSinc->SetPassBand(0.1);
           if (Smooth == 1)
             {
@@ -603,7 +660,10 @@ int main(int argc, char * argv[])
           vtkPluginFilterWatcher watchSmoother(smootherPoly,
                                                comment.c_str(),
                                                CLPProcessInformation,
-                                               1.0/15.0, 10.0/15.0);
+                                               1.0/numFilterSteps, 
+                                               currentFilterOffset/numFilterSteps);
+          currentFilterOffset += 1.0;
+        
           // this next line massively rounds corners
           smootherPoly->SetRelaxationFactor(0.33);
           smootherPoly->SetFeatureAngle(60);
@@ -632,7 +692,10 @@ int main(int argc, char * argv[])
       vtkPluginFilterWatcher watchTransformer(transformer,
                                               comment1.c_str(),
                                               CLPProcessInformation,
-                                              1.0/15.0, 11.0/15.0);
+                                              1.0/numFilterSteps, 
+                                              currentFilterOffset/numFilterSteps);
+      currentFilterOffset += 1.0;
+      
       if (JointSmoothing == 0)
         {
         if (strcmp(FilterType.c_str(),"Sinc") == 0)
@@ -669,7 +732,10 @@ int main(int argc, char * argv[])
       vtkPluginFilterWatcher watchNormals(normals,
                                           comment2.c_str(),
                                           CLPProcessInformation,
-                                          1.0/15.0, 12.0/15.0);
+                                          1.0/numFilterSteps, 
+                                          currentFilterOffset/numFilterSteps);
+      currentFilterOffset += 1.0;
+      
       if (PointNormals)
         {
         normals->ComputePointNormalsOn();
@@ -689,7 +755,10 @@ int main(int argc, char * argv[])
       vtkPluginFilterWatcher watchStripper(stripper,
                                            comment3.c_str(),
                                            CLPProcessInformation,
-                                           1.0/15.0, 13.0/15.0);
+                                           1.0/numFilterSteps, 
+                                           currentFilterOffset/numFilterSteps);
+      currentFilterOffset += 1.0;
+       
       stripper->SetInput(normals->GetOutput());
       
       (stripper->GetOutput())->ReleaseDataFlagOff();
@@ -704,7 +773,10 @@ int main(int argc, char * argv[])
       vtkPluginFilterWatcher watchWriter(writer,
                                          comment4.c_str(),
                                          CLPProcessInformation,
-                                         1.0/15.0, 14.0/15.0);
+                                         1.0/numFilterSteps, 
+                                         currentFilterOffset/numFilterSteps);
+      currentFilterOffset += 1.0;
+      
       writer->SetInput(stripper->GetOutput());
       writer->SetFileType(2);
       std::string fileName;
@@ -719,7 +791,7 @@ int main(int argc, char * argv[])
         }
       writer->SetFileName(fileName.c_str());
 
-      //if (debug)
+      if (debug)
         {
         std::cout << "Writing model " << " " << labelName << " to file " << writer->GetFileName()  << endl;
         }
@@ -831,26 +903,46 @@ int main(int argc, char * argv[])
       }
     if (smoother)
       {
+      if (debug)
+        {
+        std::cout << "Deleting smoother" << endl;
+        }
       smoother->SetInput(NULL);
       smoother->Delete();
       }    
     if (hist) 
       {
+      if (debug)
+        {
+        std::cout << "Deleting hist" << endl;
+        }
       hist->SetInput(NULL);
       hist->Delete();
       }
     if (smootherSinc)
       {
+      if (debug)
+        {
+        std::cout << "Deleting smootherSinc" << endl;
+        }
       smootherSinc->SetInput(NULL);
       smootherSinc->Delete();
       }
     if (smootherPoly)
       {
+      if (debug)
+        {
+        std::cout << "Deleting smoother poly" << endl;
+        }
       smootherPoly->SetInput(NULL);
       smootherPoly->Delete();
       }
     if (decimator)
       {
+      if (debug)
+        {
+        std::cout << "Deleting decimator" << endl;
+        }
       decimator->SetInput(NULL);
       decimator->Delete();
       }
@@ -865,6 +957,10 @@ int main(int argc, char * argv[])
       }
     if (imageThreshold)
       {
+      if (debug)
+        {
+        std::cout << "Deleting image threshold" << endl;
+        }
       imageThreshold->SetInput(NULL);
       imageThreshold->Delete();
       }
@@ -879,6 +975,10 @@ int main(int argc, char * argv[])
       }
     if (imageToStructuredPoints)
       {
+      if (debug)
+        {
+        std::cout << "Deleting iamge to structured points" << endl;
+        }
       imageToStructuredPoints->SetInput(NULL);
       imageToStructuredPoints->Delete();
       }
@@ -893,42 +993,80 @@ int main(int argc, char * argv[])
       }
     if (transformIJKtoRAS)
       {
+      if (debug)
+        {
+        std::cout << "Deleting transform ijk to ras" << endl;
+        }
       transformIJKtoRAS->SetInput(NULL);
       transformIJKtoRAS->Delete();
       }
     if (reverser)
       {
+      if (debug)
+        {
+        std::cout << "Deleting reverser" << endl;
+        }
       reverser->SetInput(NULL);
       reverser->Delete();
       }
     if (transformer)
       {
+      if (debug)
+        {
+        std::cout << "Deleting transformer" << endl;
+        }
       transformer->SetInput(NULL);
       transformer->Delete();
       }
     if (normals)
       {
+      if (debug)
+        {
+        std::cout << "Deleting normals" << endl;
+        }
       normals->SetInput(NULL);
       normals->Delete();
       }
     if (stripper)
       {
+      if (debug)
+        {
+        std::cout << "Deleting stripper" << endl;
+        }
       stripper->SetInput(NULL);
       stripper->Delete();
       }
     if (ici)
       {
+      if (debug)
+        {
+        std::cout << "Deleting ici, no set input null" << endl;
+        }
+      ici->SetInput(NULL);
       ici->Delete();
+      }
+    if (debug)
+      {
+      std::cout << "Deleting reader" << endl;
       }
     reader->Delete();
     
     if (colorLogic)
       {
+      if (debug)
+        {
+        std::cout << "Deleting color logic" << endl;
+        colorLogic->DebugOn();
+        }
       colorLogic->Delete();
       colorLogic = NULL;
       }
     if (modelScene)
       {
+      if (debug)
+        {
+        std::cout << "Deleting model scene" << endl;
+        }
       modelScene->Clear(1);
       modelScene->Delete();
       modelScene = NULL;
