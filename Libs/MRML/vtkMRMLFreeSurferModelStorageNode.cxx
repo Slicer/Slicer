@@ -78,6 +78,7 @@ vtkMRMLNode* vtkMRMLFreeSurferModelStorageNode::CreateNodeInstance()
 vtkMRMLFreeSurferModelStorageNode::vtkMRMLFreeSurferModelStorageNode()
 {
   this->SurfaceFileName = NULL;
+  this->UseStripper = 1;
 }
 
 //----------------------------------------------------------------------------
@@ -111,7 +112,7 @@ void vtkMRMLFreeSurferModelStorageNode::WriteXML(ostream& of, int indent)
     {
     of << " overlays=\"";
     // URL encoded so can use spaces to separate the filenames
-    for (unsigned int i = 0; i < this->GetNumberOfOverlayFiles(); i++)
+    for ( int i = 0; i < this->GetNumberOfOverlayFiles(); i++)
       {      
       of << vtkMRMLNode::URLEncodeString(this->GetOverlayFileName(i));
       if (i < this->GetNumberOfOverlayFiles() - 1)
@@ -187,7 +188,7 @@ void vtkMRMLFreeSurferModelStorageNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "Overlay File Names: " << endl;
   if (this->GetNumberOfOverlayFiles() > 0)
     {    
-    for (unsigned int i = 0; i < this->GetNumberOfOverlayFiles(); i++)
+    for ( int i = 0; i < this->GetNumberOfOverlayFiles(); i++)
       {
       os << indent << indent << this->GetOverlayFileName(i) << endl;
       }
@@ -281,9 +282,17 @@ int vtkMRMLFreeSurferModelStorageNode::ReadData(vtkMRMLNode *refNode)
       reader->SetFileName(fullName.c_str());
       normals->SetSplitting(0);
       normals->SetInput( reader->GetOutput() );
-      stripper->SetInput( normals->GetOutput() );
-      stripper->Update();
-      modelNode->SetAndObservePolyData(stripper->GetOutput());
+      if ( this->GetUseStripper() )
+        {
+        stripper->SetInput( normals->GetOutput() );
+        stripper->Update();
+        modelNode->SetAndObservePolyData(stripper->GetOutput());
+        }
+      else
+        {
+        normals->Update();
+        modelNode->SetAndObservePolyData(normals->GetOutput());
+        }
 
       // save the surface file name, as the model storage node superclass
       // variable file name gets overwritten if we load in a scalar overlay

@@ -165,6 +165,8 @@ proc QueryAtlasAddModel {} {
   set modelDisplayNode [vtkMRMLModelDisplayNode New]
 
   $modelStorageNode SetFileName $::QA(filename)
+  $modelStorageNode SetUseStripper 0
+
   if { [$modelStorageNode ReadData $modelNode] != 0 } {
     $modelNode SetName [file tail $::QA(filename)]
 
@@ -947,8 +949,18 @@ proc QueryAtlasMenuCreate { state } {
     "end" {
       if { $::QA(menu,startPosition) == $position } {
 
-        set c [Card #auto $renderWidget]
-        $c configure -ras "200 200 200" -anchor $::QA(menuRAS) -text hoot
+        if { 0 } {
+          # some debugging help to see where the click point is (puts a ball at CurrentRASPoint
+          set s [vtkSphereSource New]
+          set m [vtkPolyDataMapper New]
+          set a [vtkActor New]
+          $m SetInput [$s GetOutput]
+          $a SetMapper $m
+          [$renderWidget GetRenderer] AddActor $a
+          eval $a SetPosition $::QA(CurrentRASPoint)
+          $a SetScale 5 5 5
+        }
+
 
         set ::QA(menuRAS) $::QA(CurrentRASPoint)
 

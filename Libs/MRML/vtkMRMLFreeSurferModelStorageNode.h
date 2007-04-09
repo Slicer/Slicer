@@ -88,6 +88,11 @@ class VTK_MRML_EXPORT vtkMRMLFreeSurferModelStorageNode : public vtkMRMLModelSto
   // Description:
   // Get the ith overlay file name, 0 indexed, return NULL if out of range
   const char *GetOverlayFileName(int i);
+
+  // Description:
+  // Control use of the triangle stipper when reading the polydata
+  vtkGetMacro(UseStripper, int);
+  vtkSetMacro(UseStripper, int);
   
   // Description:
   // Set/Get the surface file name (the super class variable will be over
@@ -108,6 +113,8 @@ protected:
   //ETX
 
   char *SurfaceFileName;
+
+  int UseStripper;
 };
 
 #endif
