@@ -73,7 +73,7 @@ public:
     void StopPulling();
     void PullRealTime();    
     void SetLocatorTransforms();
-    void callbackF(double*, double*);
+    void CleanTracker();
 
 private:
 
@@ -107,7 +107,8 @@ private:
     vtkMatrix4x4 *RegMatrix;
     vtkTransform *LocatorNormalTransform;
 
-    void quaternion2xyz(float* orientation, float *normal, float *transnormal); 
+    void UpdateLocatorMatrix(float *positon, float *orientation);
+    void QuaternionToXYZ(float *orientation, float *normal, float *transnormal); 
     void ApplyTransform(float *position, float *norm, float *transnorm);
 
 };
