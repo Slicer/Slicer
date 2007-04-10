@@ -682,6 +682,12 @@ void vtkSlicerModelDisplayWidget::CreateWidget ( )
 
   this->ColorSelectorWidget->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
    
+  vtkMRMLNode *selected = this->ModelSelectorWidget->GetSelected();
+  if (selected)
+    {
+    this->ModelSelectorWidget->SetSelected(NULL);
+    this->ModelSelectorWidget->SetSelected(selected);
+    }
   modelDisplayFrame->Delete();
     
 }
