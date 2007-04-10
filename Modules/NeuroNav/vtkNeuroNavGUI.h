@@ -190,6 +190,21 @@ class VTK_NEURONAV_EXPORT vtkNeuroNavGUI : public vtkSlicerModuleGUI
 
     vtkCallbackCommand *DataCallbackCommand;
 
+    // Access the slice windows
+    vtkSlicerSliceLogic *Logic0;
+    vtkSlicerSliceLogic *Logic1;
+    vtkSlicerSliceLogic *Logic2;
+    vtkMRMLSliceNode *SliceNode0;
+    vtkMRMLSliceNode *SliceNode1;
+    vtkMRMLSliceNode *SliceNode2;
+    vtkSlicerSliceControllerWidget *Control0;
+    vtkSlicerSliceControllerWidget *Control1;
+    vtkSlicerSliceControllerWidget *Control2;
+
+    int NeedOrientationUpdate0;
+    int NeedOrientationUpdate1;
+    int NeedOrientationUpdate2;
+
     void UpdateAll();
     void UpdateLocator();
     void UpdateSliceDisplay(float nx, float ny, float nz, 
