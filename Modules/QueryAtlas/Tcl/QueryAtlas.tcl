@@ -1281,7 +1281,9 @@ proc QueryAtlasLaunchBirnLexHierarchy {} {
 #----------------------------------------------------------------------------------------------------
 #---
 #----------------------------------------------------------------------------------------------------
-proc QueryAtlasSendHierarchyCommand { label } {
+proc QueryAtlasSendHierarchyCommand { args } {
+
+    regsub -all -- " " $args "-" label
 
     if { [info exists ::QA(birnlexLaunched)] } {
         #--- get command from Hierarchy frame widget
