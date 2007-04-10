@@ -2017,16 +2017,13 @@ void vtkNeuroNavGUI::UpdateAll()
         this->TAEntry->SetValue(Val);
         sprintf(Val, "%6.2f", tz);
         this->TSEntry->SetValue(Val);
+
+
         // update the display of locator
-#ifdef USE_OPENTRACKER
-        this->OpenTrackerStream->SetLocatorTransforms();
-#endif
-#ifdef USE_IGSTK
-        this->IGSTKStream->SetLocatorTransforms();
-#endif
+        if (this->LocatorCheckButton->GetSelectedState()) this->UpdateLocator();
+
         //this->UpdateSliceDisplay(px, py, pz);  // RSierra 3/9/07: This line is redundant. If you remove it the slice views are still updated.
         this->UpdateSliceDisplay(nx, ny, nz, tx, ty, tz, px, py, pz);
-        this->UpdateLocator();
     }
 }
 
@@ -2035,18 +2032,18 @@ void vtkNeuroNavGUI::UpdateLocator()
 {
     vtkTransform *transform = NULL;
 #ifdef USE_OPENTRACKER
+    this->OpenTrackerStream->SetLocatorTransforms();
     transform = this->OpenTrackerStream->GetLocatorNormalTransform(); 
 #endif
 #ifdef USE_IGSTK
+    this->IGSTKStream->SetLocatorTransforms();
     transform = this->IGSTKStream->GetLocatorNormalTransform(); 
 #endif
 
     vtkMRMLModelNode *model = vtkMRMLModelNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->LocatorModelID.c_str())); 
     if (model != NULL)
     {
-        vtkMRMLModelDisplayNode *disp = model->GetDisplayNode();
-        int vis = disp->GetVisibility(); 
-        if (vis && transform)
+        if (transform)
         {
             vtkMRMLLinearTransformNode *lnode = (vtkMRMLLinearTransformNode *)model->GetParentTransformNode();
             lnode->SetAndObserveMatrixTransformToParent(transform->GetMatrix());
@@ -2057,16 +2054,18 @@ void vtkNeuroNavGUI::UpdateLocator()
 
 
 
-
-
-
 void vtkNeuroNavGUI::UpdateSliceDisplay(float nx, float ny, float nz, 
                                         float tx, float ty, float tz, 
                                         float px, float py, float pz)
 {
+    // Axial
     if (strcmp(this->RedSliceMenu->GetValue(), "Locator"))
     {
-        if (this->NeedOrientationUpdate0) this->SliceNode0->SetOrientationToAxial();
+        if (this->NeedOrientationUpdate0) 
+        {
+            this->SliceNode0->SetOrientationToAxial();
+            this->NeedOrientationUpdate0 = 0;
+        }
     }
     else
     {
@@ -2075,9 +2074,15 @@ void vtkNeuroNavGUI::UpdateSliceDisplay(float nx, float ny, float nz,
         this->Logic0->SetSliceOffset(pz);
         this->NeedOrientationUpdate0 = 1;
     }
+
+    // Sagittal
     if (strcmp(this->YellowSliceMenu->GetValue(), "Locator"))
     {
-        if (this->NeedOrientationUpdate1) this->SliceNode1->SetOrientationToSagittal();
+        if (this->NeedOrientationUpdate1) 
+        {
+            this->SliceNode1->SetOrientationToSagittal();
+            this->NeedOrientationUpdate1 = 0;
+        }
     }
     else
     {
@@ -2086,9 +2091,15 @@ void vtkNeuroNavGUI::UpdateSliceDisplay(float nx, float ny, float nz,
         this->Logic1->SetSliceOffset(px);
         this->NeedOrientationUpdate1 = 1;
     }
+
+    // Coronal
     if (strcmp(this->GreenSliceMenu->GetValue(), "Locator"))
     {
-        if (this->NeedOrientationUpdate2) this->SliceNode2->SetOrientationToCoronal();
+        if (this->NeedOrientationUpdate2) 
+        {
+            this->SliceNode2->SetOrientationToCoronal();
+            this->NeedOrientationUpdate2 = 0;
+        }
     }
     else
     {
