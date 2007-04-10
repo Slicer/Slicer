@@ -223,10 +223,11 @@ void vtkMRMLSliceNode::SetSliceToRASByNTP (double Nx, double Ny, double Nz,
     {
         // para-Axial 
         case 0: 
-            // negN
-            this->SliceToRAS->SetElement(0, 2, negN[0]);
-            this->SliceToRAS->SetElement(1, 2, negN[1]);
-            this->SliceToRAS->SetElement(2, 2, negN[2]);
+            // N
+            this->SliceToRAS->SetElement(0, 2, n[0]);
+            this->SliceToRAS->SetElement(1, 2, n[1]);
+            this->SliceToRAS->SetElement(2, 2, n[2]);
+
             // C 
             this->SliceToRAS->SetElement(0, 1, c[0]);
             this->SliceToRAS->SetElement(1, 1, c[1]);
@@ -240,10 +241,11 @@ void vtkMRMLSliceNode::SetSliceToRASByNTP (double Nx, double Ny, double Nz,
 
         // para-Sagittal 
         case 1: 
-            // negT 
-            this->SliceToRAS->SetElement(0, 2, negT[0]);
-            this->SliceToRAS->SetElement(1, 2, negT[1]);
-            this->SliceToRAS->SetElement(2, 2, negT[2]);
+            // T
+            this->SliceToRAS->SetElement(0, 2, t[0]);
+            this->SliceToRAS->SetElement(1, 2, t[1]);
+            this->SliceToRAS->SetElement(2, 2, t[2]);
+
             // negN 
             this->SliceToRAS->SetElement(0, 1, negN[0]);
             this->SliceToRAS->SetElement(1, 1, negN[1]);
