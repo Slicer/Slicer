@@ -61,7 +61,7 @@ public:
     virtual ~vtkIGTOpenTrackerStream ( );
 
 
-    void Init(char *configFile);
+    void Init(const char *configFile);
     void StopPolling();
     void PollRealtime();
     void SetLocatorTransforms();

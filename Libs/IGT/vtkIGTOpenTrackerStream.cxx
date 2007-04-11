@@ -38,7 +38,7 @@ vtkIGTOpenTrackerStream::~vtkIGTOpenTrackerStream()
 
 }
 
-void vtkIGTOpenTrackerStream::Init(char *configFile)
+void vtkIGTOpenTrackerStream::Init(const char *configFile)
 {
     fprintf(stderr,"config file: %s\n",configFile);
     this->context = new Context(1); 
