@@ -111,7 +111,6 @@ void vtkSlicerSceneSnapshotWidget::ProcessMRMLEvents ( vtkObject *caller,
 
 //---------------------------------------------------------------------------
 void vtkSlicerSceneSnapshotWidget::RemoveWidgetObservers ( ) {
-  this->SnapshotSelectorWidget->SetMRMLScene(NULL);
   this->SnapshotSelectorWidget->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->CreateSnapshotButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->RestoreSceneButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
