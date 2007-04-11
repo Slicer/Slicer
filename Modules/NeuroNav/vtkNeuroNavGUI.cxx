@@ -2119,7 +2119,7 @@ void vtkNeuroNavGUI::SetOpenTrackerConnectionParameters()
     if (checked)
     {
         // connected
-        char *filename = this->LoadConfigButton->GetWidget()->GetFileName();
+        const char *filename = this->LoadConfigButton->GetWidget()->GetFileName();
         if (! filename)
         {
             vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
