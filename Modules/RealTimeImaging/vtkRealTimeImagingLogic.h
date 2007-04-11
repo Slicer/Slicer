@@ -83,7 +83,7 @@ public:
 
     vtkGetMacro(NumberOfPoints,int);
 
-    void Init(char *configfile);
+    void Init(const char *configfile);
     void CloseConnection();
     void PollRealtime();
 

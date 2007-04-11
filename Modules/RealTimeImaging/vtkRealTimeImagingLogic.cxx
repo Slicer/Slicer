@@ -173,7 +173,7 @@ void vtkRealTimeImagingLogic::SetNumberOfPoints(int no)
 
 
 
-void vtkRealTimeImagingLogic::Init(char *configfile)
+void vtkRealTimeImagingLogic::Init(const char *configfile)
 {
 
 #ifdef USE_OPENTRACKER

@@ -472,7 +472,7 @@ void vtkRealTimeImagingGUI::ProcessGUIEvents ( vtkObject *caller,
         if (checked)
         {
             // connected
-            char * filename = this->LoadConfigButton->GetWidget()->GetFileName();
+            const char * filename = this->LoadConfigButton->GetWidget()->GetFileName();
             if (! filename)
             {
                 // TODO: Generate an error ...
