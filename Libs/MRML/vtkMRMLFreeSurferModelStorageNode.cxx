@@ -37,6 +37,8 @@ Version:   $Revision: 1.2 $
 #include "vtkMRMLFreeSurferProceduralColorNode.h"
 #include "vtkPointData.h"
 
+#include "vtkITKArchetypeImageSeriesScalarReader.h"
+
 #include "itksys/SystemTools.hxx"
 
 #include "vtkCollection.h"
@@ -79,6 +81,16 @@ vtkMRMLFreeSurferModelStorageNode::vtkMRMLFreeSurferModelStorageNode()
 {
   this->SurfaceFileName = NULL;
   this->UseStripper = 1;
+  // set up the list of known surface overlay file extensions
+  this->AddOverlayFileExtension(std::string(".w"));
+  this->AddOverlayFileExtension(std::string(".thickness"));
+  this->AddOverlayFileExtension(std::string(".curv"));
+  this->AddOverlayFileExtension(std::string(".avg_curv"));
+  this->AddOverlayFileExtension(std::string(".sulc"));
+  this->AddOverlayFileExtension(std::string(".area"));
+  this->AddOverlayFileExtension(std::string(".annot"));
+  this->AddOverlayFileExtension(std::string(".mgz"));
+  this->AddOverlayFileExtension(std::string(".mgh"));
 }
 
 //----------------------------------------------------------------------------
@@ -249,13 +261,7 @@ int vtkMRMLFreeSurferModelStorageNode::ReadData(vtkMRMLNode *refNode)
 
   vtkDebugMacro("ReadData: extension = " << extension.c_str());
   // don't delete the polydata if reading in a scalar overlay
-  if ( extension != std::string(".w") &&
-       extension != std::string(".thickness") &&
-       extension != std::string(".curv") &&
-       extension != std::string(".avg_curv") &&
-       extension != std::string(".sulc") &&
-       extension != std::string(".area") &&
-       extension != std::string(".annot"))
+  if ( !IsKnownOverlayFileExtension(extension) )
     {
     if (modelNode->GetPolyData()) 
       {
@@ -557,6 +563,106 @@ int vtkMRMLFreeSurferModelStorageNode::ReadData(vtkMRMLNode *refNode)
         this->AddOverlayFileName(fullName.c_str());
         }
       }
+    else if (extension == std::string(".mgz") ||
+             extension == std::string(".mgh"))
+      {
+      // read in a freesurfer scalar overlay held in a volume file
+      // does the model node have point data?
+      if (modelNode->GetPolyData() != NULL &&
+          modelNode->GetPolyData()->GetPointData() != NULL)
+        {
+        int numVertices = modelNode->GetPolyData()->GetPointData()->GetNumberOfTuples();
+        // read the volume
+        vtkITKArchetypeImageSeriesScalarReader *reader = vtkITKArchetypeImageSeriesScalarReader::New();
+        reader->SetArchetype(fullName.c_str());
+        reader->SetOutputScalarTypeToNative();
+        reader->SetDesiredCoordinateOrientationToNative();
+        int result = 1;
+        try
+          {
+          reader->Update();
+          }
+        catch (...)
+          {
+          vtkErrorMacro("vtkMRMLFreeSurferModelStorageNode::ReadData Cannot read scalar overlay volume file " << fullName.c_str());
+          reader->Delete();
+          return 0;
+          }
+        if (reader->GetOutput() == NULL) 
+          {
+          vtkErrorMacro("vtkMRMLFreeSurferModelStorageNode::ReadData Cannot read scalar overlay volume file " << fullName.c_str());
+          reader->Delete();
+          return 0;
+          }
+        vtkImageData *imageData = reader->GetOutput();
+        if (imageData == NULL)
+          {
+          vtkErrorMacro("vtkMRMLFreeSurferModelStorageNode::ReadData Unable to get image data out of scalar overlay volume file " << fullName.c_str());
+          reader->Delete();
+          return 0;
+          }
+        int numPoints = imageData->GetNumberOfPoints();
+        vtkDebugMacro("Testing volume file for scalar overlay, num vertices = " << numVertices << ", image data number of points = " << numPoints );      
+        // only valid if volume w*h*d == num vertices
+        if (numPoints != numVertices)
+          {
+          vtkErrorMacro("vtkMRMLFreeSurferModelStorageNode::ReadData : volume file data size " << numPoints << " not the same as model vertices " << numVertices);
+          reader->Delete();
+          return 0;
+          }
+        
+        // put it into an array        
+        vtkFloatArray *floatArray = vtkFloatArray::New();
+        std::string::size_type ptr = name.find_last_of(std::string("/"));
+        std::string scalarName;
+        if (ptr != std::string::npos)
+          {
+          scalarName = name.substr(++ptr);
+          }
+        else
+          {
+          scalarName = name;
+          }
+        floatArray->SetName(scalarName.c_str());
+
+        // transfer the volume values to the float array
+        floatArray->SetNumberOfValues(numVertices);
+        float minValue = imageData->GetPointData()->GetScalars()->GetTuple1(0);
+        float maxValue = imageData->GetPointData()->GetScalars()->GetTuple1(0);
+        float pointValue;
+        for (int i = 0; i < numVertices; i++)
+          {
+          pointValue = imageData->GetPointData()->GetScalars()->GetTuple1(i);
+          floatArray->SetValue(i, pointValue);
+          if (pointValue < minValue)
+            {
+            minValue = pointValue;
+            }
+          if (pointValue > maxValue)
+            {
+            maxValue = pointValue;
+            }
+          }
+        vtkDebugMacro("ReadData: Setting scalar range, using min value = " << minValue << ", max value = " << maxValue);
+        modelNode->GetDisplayNode()->SetScalarRange(minValue, maxValue);
+        
+        // add the scalars to the model
+        modelNode->AddPointScalars(floatArray);
+        // set the active array
+        modelNode->GetDisplayNode()->SetActiveScalarName(scalarName.c_str());
+        // make sure scalars are visible
+        modelNode->GetDisplayNode()->SetScalarVisibility(1);
+        // use the heat colour scale
+        vtkMRMLFreeSurferProceduralColorNode *colorNode = vtkMRMLFreeSurferProceduralColorNode::New();
+        colorNode->SetTypeToHeat();
+        modelNode->GetDisplayNode()->SetAndObserveColorNodeID(colorNode->GetTypeAsIDString());
+        colorNode->Delete();
+        colorNode = NULL;         
+       
+        reader->Delete();
+        this->AddOverlayFileName(fullName.c_str());
+        }  // end of have poly data
+      }
     else 
       {
       vtkErrorMacro("Cannot read model file '" << name.c_str() << "' (extension = " << extension.c_str() << ")");
@@ -706,4 +812,26 @@ int vtkMRMLFreeSurferModelStorageNode::ReloadOverlayFiles(vtkMRMLNode *refNode)
     numLoaded += this->ReadData(refNode);
     }
   return numLoaded;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLFreeSurferModelStorageNode::AddOverlayFileExtension(std::string ext)
+{
+  if (!IsKnownOverlayFileExtension(ext))
+    {
+    this->KnownOverlayFileExtensions.push_back(ext);
+    }
+}
+//----------------------------------------------------------------------------
+bool vtkMRMLFreeSurferModelStorageNode::IsKnownOverlayFileExtension(std::string ext)
+{
+  std::vector< std::string >::iterator iter;
+  for (iter = this->KnownOverlayFileExtensions.begin(); iter != this->KnownOverlayFileExtensions.end(); ++iter)
+    {
+    if ((*iter) == ext)
+      {
+      return true;
+      }
+    }
+  return false;  
 }

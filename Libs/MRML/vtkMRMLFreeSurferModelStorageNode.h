@@ -99,7 +99,16 @@ class VTK_MRML_EXPORT vtkMRMLFreeSurferModelStorageNode : public vtkMRMLModelSto
   // written if this storage node is used to load overlays)
   vtkSetStringMacro(SurfaceFileName);
   vtkGetStringMacro(SurfaceFileName);
- 
+
+//BTX
+  // Description:
+  // Add a known overlay file extension
+  void AddOverlayFileExtension(std::string ext);
+  // Description:
+  // returns true if on the list, false otherwise
+  bool IsKnownOverlayFileExtension(std::string ext);
+//ETX
+  
 protected:
   vtkMRMLFreeSurferModelStorageNode();
   ~vtkMRMLFreeSurferModelStorageNode();
@@ -110,6 +119,9 @@ protected:
   // the overlay files that were applied to this model
   //BTX
   std::vector< std::string > OverlayFiles;
+  // Description:
+  // a list of valid overlay file extensions
+  std::vector< std::string > KnownOverlayFileExtensions; 
   //ETX
 
   char *SurfaceFileName;
