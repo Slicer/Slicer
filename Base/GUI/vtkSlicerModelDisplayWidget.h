@@ -47,21 +47,12 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description:
-  // Getting setting  MRML ModelNodeID.
-  vtkGetStringMacro ( ModelNodeID );
-  vtkSetStringMacro ( ModelNodeID );
+  // Set  MRML ModelDisplayNode.
+  void SetModelDisplayNode ( vtkMRMLModelDisplayNode *node );
   
+  // Description:
+  // Set  MRML ModelNode for dscalar colors
   void SetModelNode ( vtkMRMLModelNode *node );
-
-  // Description:
-  // Getting setting and observing MRML ModelDisplayNodeID.
-  vtkGetStringMacro ( ModelDisplayNodeID );
-  vtkSetStringMacro ( ModelDisplayNodeID );
-
-  // Description:
-  // Get the currently displayed model node (called from vtkSlicerModelsGUI
-  // for loading scalars)
-  vtkGetObjectMacro ( ModelSelectorWidget, vtkSlicerNodeSelectorWidget );
   
   // Description:
   // alternative method to propagate events generated in GUI to logic / mrml
@@ -94,10 +85,9 @@ public:
   void UpdateWidget();
   void UpdateMRML();
   
-  char* ModelNodeID;
-  char* ModelDisplayNodeID;
+  vtkMRMLModelDisplayNode* ModelDisplayNode;
+  vtkMRMLModelNode *ModelNode;
   
-  vtkSlicerNodeSelectorWidget* ModelSelectorWidget;
   vtkKWCheckButtonWithLabel *VisibilityButton;
   vtkKWCheckButtonWithLabel *ScalarVisibilityButton;
   vtkKWMenuButtonWithLabel *ScalarMenu;

@@ -25,20 +25,22 @@ vtkCxxRevisionMacro ( vtkSlicerModelsGUI, "$Revision: 1.0 $");
 vtkSlicerModelsGUI::vtkSlicerModelsGUI ( )
 {
 
-    // classes not yet defined!
-    this->Logic = NULL;
-    //this->ModelNode = NULL;
-    this->LoadModelButton = NULL;
-    this->LoadModelDirectoryButton = NULL;
-    this->SaveModelButton = NULL;
-    this->ModelSelectorWidget = NULL;
-    this->ModelDisplayWidget = NULL;
-    this->ClipModelsWidget = NULL;
-    this->LoadScalarsButton = NULL;
-    NACLabel = NULL;
-    NAMICLabel =NULL;
-    NCIGTLabel = NULL;
-    BIRNLabel = NULL;
+  // classes not yet defined!
+  this->Logic = NULL;
+  //this->ModelNode = NULL;
+  this->LoadModelButton = NULL;
+  this->LoadModelDirectoryButton = NULL;
+  this->SaveModelButton = NULL;
+  this->ModelSelectorWidget = NULL;
+  this->ModelDisplayWidget = NULL;
+  this->ClipModelsWidget = NULL;
+  this->LoadScalarsButton = NULL;
+  this->ModelDisplaySelectorWidget = NULL;
+
+  NACLabel = NULL;
+  NAMICLabel =NULL;
+  NCIGTLabel = NULL;
+  BIRNLabel = NULL;
 }
 
 
@@ -48,6 +50,13 @@ vtkSlicerModelsGUI::~vtkSlicerModelsGUI ( )
   this->RemoveGUIObservers();
 
   this->SetModuleLogic ( NULL );
+
+  if (this->ModelDisplaySelectorWidget)
+    {
+    this->ModelDisplaySelectorWidget->SetParent(NULL);
+    this->ModelDisplaySelectorWidget->Delete();
+    this->ModelDisplaySelectorWidget = NULL;
+    }
 
   if (this->LoadModelButton ) 
     {
@@ -144,6 +153,10 @@ void vtkSlicerModelsGUI::RemoveGUIObservers ( )
     {
     this->LoadScalarsButton->GetWidget()->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
     }
+  if (this->ModelDisplaySelectorWidget)
+    {
+    this->ModelDisplaySelectorWidget->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
+    }
 }
 
 
@@ -154,6 +167,8 @@ void vtkSlicerModelsGUI::AddGUIObservers ( )
   this->LoadModelDirectoryButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
   this->SaveModelButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
   this->LoadScalarsButton->GetWidget()->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+  this->ModelDisplaySelectorWidget->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
+
 }
 
 
@@ -162,6 +177,21 @@ void vtkSlicerModelsGUI::AddGUIObservers ( )
 void vtkSlicerModelsGUI::ProcessGUIEvents ( vtkObject *caller,
                                             unsigned long event, void *callData )
 {
+
+  if (vtkSlicerNodeSelectorWidget::SafeDownCast(caller) == this->ModelDisplaySelectorWidget && 
+        event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent ) 
+    {
+    vtkMRMLModelNode *model = 
+        vtkMRMLModelNode::SafeDownCast(this->ModelDisplaySelectorWidget->GetSelected());
+
+    if (model != NULL && model->GetDisplayNode() != NULL)
+      {
+      this->ModelDisplayWidget->SetModelDisplayNode(model->GetDisplayNode());
+      this->ModelDisplayWidget->SetModelNode(model);
+      }
+    return;
+    }
+
   vtkKWLoadSaveButton *filebrowse = vtkKWLoadSaveButton::SafeDownCast(caller);
   if (filebrowse == this->LoadModelButton  && event == vtkKWPushButton::InvokedEvent )
     {
@@ -250,7 +280,7 @@ void vtkSlicerModelsGUI::ProcessGUIEvents ( vtkObject *caller,
       {
       // get the model from the display widget rather than this gui's save
       // model selector
-      vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(this->ModelDisplayWidget->GetModelSelectorWidget()->GetSelected());
+      vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(this->ModelDisplaySelectorWidget->GetSelected());
       if (modelNode != NULL)
         {
         vtkDebugMacro("vtkSlicerModelsGUI: loading scalar for model " << modelNode->GetName());
@@ -437,6 +467,24 @@ void vtkSlicerModelsGUI::BuildGUI ( )
     app->Script("pack %s -side top -anchor nw -padx 2 -pady 4", 
                 this->LoadScalarsButton->GetWidgetName());
 
+    this->ModelDisplaySelectorWidget = vtkSlicerNodeSelectorWidget::New() ;
+    this->ModelDisplaySelectorWidget->SetParent ( modDisplayFrame->GetFrame() );
+    this->ModelDisplaySelectorWidget->Create ( );
+    this->ModelDisplaySelectorWidget->SetNodeClass("vtkMRMLModelNode", NULL, NULL, NULL);
+    this->ModelDisplaySelectorWidget->SetChildClassesEnabled(0);
+    this->ModelDisplaySelectorWidget->SetMRMLScene(this->GetMRMLScene());
+    this->ModelDisplaySelectorWidget->SetBorderWidth(2);
+    // this->ModelDisplaySelectorWidget->SetReliefToGroove();
+    this->ModelDisplaySelectorWidget->SetPadX(2);
+    this->ModelDisplaySelectorWidget->SetPadY(2);
+    this->ModelDisplaySelectorWidget->GetWidget()->GetWidget()->IndicatorVisibilityOff();
+    this->ModelDisplaySelectorWidget->GetWidget()->GetWidget()->SetWidth(24);
+    this->ModelDisplaySelectorWidget->SetLabelText( "Model Select: ");
+    this->ModelDisplaySelectorWidget->SetBalloonHelpString("select a model from the current mrml scene.");
+    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+                   this->ModelDisplaySelectorWidget->GetWidgetName());
+
+
     this->ModelDisplayWidget = vtkSlicerModelDisplayWidget::New ( );
     this->ModelDisplayWidget->SetMRMLScene(this->GetMRMLScene() );
     this->ModelDisplayWidget->SetParent ( modDisplayFrame->GetFrame() );
@@ -500,7 +548,18 @@ void vtkSlicerModelsGUI::BuildGUI ( )
       "OpenPath");
      app->Script("pack %s -side top -anchor w -padx 2 -pady 4", 
                 this->SaveModelButton->GetWidgetName());
-    
+
+   this->ProcessGUIEvents (this->ModelDisplaySelectorWidget,
+                          vtkSlicerNodeSelectorWidget::NodeSelectedEvent, NULL );
+    /*
+    vtkMRMLNode *selected = this->ModelDisplaySelectorWidget->GetSelected();
+    if (selected)
+      {
+      this->ModelSelectorWidget->SetSelected(NULL);
+      this->ModelSelectorWidget->SetSelected(selected);
+      }
+    */
+
     modLoadFrame->Delete ( );
     modDisplayFrame->Delete ( );
     clipFrame->Delete ( );

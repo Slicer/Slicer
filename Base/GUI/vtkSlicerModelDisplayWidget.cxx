@@ -36,10 +36,9 @@ vtkCxxRevisionMacro ( vtkSlicerModelDisplayWidget, "$Revision: 1.0 $");
 vtkSlicerModelDisplayWidget::vtkSlicerModelDisplayWidget ( )
 {
 
-    this->ModelNodeID = NULL;
-    this->ModelDisplayNodeID = NULL;
+    this->ModelDisplayNode = NULL;
+    this->ModelNode = NULL;
 
-    this->ModelSelectorWidget = NULL;
     this->VisibilityButton = NULL;
     this->ScalarVisibilityButton = NULL;
     this->ScalarMenu = NULL;
@@ -58,12 +57,6 @@ vtkSlicerModelDisplayWidget::~vtkSlicerModelDisplayWidget ( )
   this->RemoveMRMLObservers();
   this->RemoveWidgetObservers();
 
-  if (this->ModelSelectorWidget)
-    {
-    this->ModelSelectorWidget->SetParent(NULL);
-    this->ModelSelectorWidget->Delete();
-    this->ModelSelectorWidget = NULL;
-    }
   if (this->VisibilityButton)
     {
     this->VisibilityButton->SetParent(NULL);
@@ -112,10 +105,9 @@ vtkSlicerModelDisplayWidget::~vtkSlicerModelDisplayWidget ( )
     this->ChangeColorButton->Delete();
     this->ChangeColorButton= NULL;
     }
-  
+  vtkSetAndObserveMRMLNodeMacro(this->ModelNode, NULL);
+  vtkSetAndObserveMRMLNodeMacro(this->ModelDisplayNode, NULL);
   this->SetMRMLScene ( NULL );
-  this->SetModelNodeID (NULL);
-  this->SetModelDisplayNodeID (NULL);
   
 }
 
@@ -126,31 +118,34 @@ void vtkSlicerModelDisplayWidget::PrintSelf ( ostream& os, vtkIndent indent )
     this->vtkObject::PrintSelf ( os, indent );
 
     os << indent << "vtkSlicerModelDisplayWidget: " << this->GetClassName ( ) << "\n";
-    os << indent << "ModelNode ID: " << this->GetModelNodeID() << "\n";
-    os << indent << "ModelDisplayNode ID: " << this->GetModelDisplayNodeID() << "\n";
     // print widgets?
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerModelDisplayWidget::SetModelNode ( vtkMRMLModelNode *modelNode )
+void vtkSlicerModelDisplayWidget::SetModelDisplayNode ( vtkMRMLModelDisplayNode *node )
 { 
-  // Select this model node
-  this->ModelSelectorWidget->SetSelected(modelNode); 
-
-
   // 
   // Set the member variables and do a first process
   //
-  this->RemoveMRMLObservers();
+  vtkSetAndObserveMRMLNodeMacro(this->ModelDisplayNode, node);
 
-  this->SetModelNodeID( modelNode->GetID() );
-  this->SetModelDisplayNodeID( modelNode->GetDisplayNodeID() );
-
-  this->AddMRMLObservers();
-
-  if ( modelNode )
+  if ( node )
     {
-    this->ProcessMRMLEvents(modelNode, vtkCommand::ModifiedEvent, NULL);
+    this->UpdateWidget();
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerModelDisplayWidget::SetModelNode ( vtkMRMLModelNode *node )
+{ 
+  // 
+  // Set the member variables and do a first process
+  //
+  vtkSetAndObserveMRMLNodeMacro(this->ModelNode, node);
+
+  if ( node )
+    {
+    this->UpdateWidget();
     }
 }
 
@@ -159,104 +154,61 @@ void vtkSlicerModelDisplayWidget::ProcessWidgetEvents ( vtkObject *caller,
                                                          unsigned long event, void *callData )
 {
 
-  //
-  // process model selector events
-  //
-  vtkSlicerNodeSelectorWidget *modelSelector = 
-      vtkSlicerNodeSelectorWidget::SafeDownCast(caller);
-
-  if (modelSelector == this->ModelSelectorWidget && 
-        event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent ) 
-    {
-    vtkMRMLModelNode *model = 
-        vtkMRMLModelNode::SafeDownCast(this->ModelSelectorWidget->GetSelected());
-
-    if (model != NULL)
-      {
-      this->SetModelNode(model);
-      }
-
-    return;
-    }
-
-  if (this->ModelDisplayNodeID != NULL && 
+  if (this->ModelDisplayNode != NULL && 
     !(vtkKWSurfaceMaterialPropertyWidget::SafeDownCast(caller) == this->SurfaceMaterialPropertyWidget && event == this->SurfaceMaterialPropertyWidget->GetPropertyChangedEvent()) &&
     !(vtkKWScale::SafeDownCast(caller) == this->OpacityScale->GetWidget() && event == vtkKWScale::ScaleValueChangingEvent) &&
     !(vtkKWScale::SafeDownCast(caller) == this->OpacityScale->GetWidget() && event == vtkKWScale::ScaleValueChangedEvent))
     {
-    this->MRMLScene->SaveStateForUndo(this->MRMLScene->GetNodeByID(this->ModelDisplayNodeID));
+    if (this->MRMLScene->GetNodeByID(this->ModelDisplayNode->GetID()))
+      {
+      this->MRMLScene->SaveStateForUndo(this->ModelDisplayNode);
+      }
     }
   
   this->UpdateMRML();
+}
 
-  if ((event == this->SurfaceMaterialPropertyWidget->GetPropertyChangingEvent() ||
-       event == this->SurfaceMaterialPropertyWidget->GetPropertyChangedEvent() ||
-       event == vtkKWChangeColorButton::ColorChangedEvent) &&
-      this->ModelDisplayNodeID != NULL)
+
+//---------------------------------------------------------------------------
+void vtkSlicerModelDisplayWidget::UpdateMRML()
+{
+  
+  if ( this->ModelDisplayNode )
     {
-      vtkMRMLNode *node = this->MRMLScene->GetNodeByID(this->ModelDisplayNodeID);
-      if (node != NULL)
-        {
-        node->Modified();
-        }
-    }
-  //
-  // process color selector events
-  //
-  // done in UpdateMRML
-  /*
-  vtkSlicerNodeSelectorWidget *colSelector = 
-    vtkSlicerNodeSelectorWidget::SafeDownCast(caller);
-  if (colSelector == this->ColorSelectorWidget && 
-      event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent &&
-      this->ModelDisplayNodeID != NULL) 
-    {
-    vtkMRMLColorNode *color =
-      vtkMRMLColorNode::SafeDownCast(this->ColorSelectorWidget->GetSelected());
-    if (color != NULL)
+    this->ModelDisplayNode->SetVisibility(this->VisibilityButton->GetWidget()->GetSelectedState());
+    this->ModelDisplayNode->SetScalarVisibility(this->ScalarVisibilityButton->GetWidget()->GetSelectedState());
+    // get the value of the button, it's the selected item in the menu
+    this->ModelDisplayNode->SetActiveScalarName(this->ScalarMenu->GetWidget()->GetValue());
+    vtkDebugMacro("Set display node active scalar name to " << this->ModelDisplayNode->GetActiveScalarName());
+    if (this->ColorSelectorWidget->GetSelected() != NULL)
       {
-      // get the model display node
-      vtkMRMLModelDisplayNode *displayNode = NULL;
-      if (this->ModelDisplayNodeID != NULL)
+      vtkMRMLColorNode *color =
+        vtkMRMLColorNode::SafeDownCast(this->ColorSelectorWidget->GetSelected());
+      if (color != NULL &&
+          this->ModelDisplayNode->GetColorNodeID() == NULL ||
+          strcmp(this->ModelDisplayNode->GetColorNodeID(), color->GetID()) != 0)
         {
-        displayNode = 
-          vtkMRMLModelDisplayNode::SafeDownCast (this->MRMLScene->GetNodeByID(this->ModelDisplayNodeID) );
-        if (displayNode != NULL)
-          {
-          if (displayNode->GetColorNodeID() == NULL)
-            {
-            vtkWarningMacro("Model display node doesn't have a color node, setting a default.\n");
-            //displayNode->SetDefaultColorMap();
-            vtkSlicerColorLogic *colorLogic = vtkSlicerColorGUI::SafeDownCast(vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Color"))->GetLogic();
-            if (colorLogic)
-              {
-              displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultModelColorNodeID());
-              }
-            }
-          // set and observe it's colour node id
-          if (displayNode->GetColorNodeID() == NULL ||
-              strcmp(displayNode->GetColorNodeID(), color->GetID()) != 0)
-            {
-            // there's a change, set it
-            displayNode->SetAndObserveColorNodeID(color->GetID());
-            }
-          else
-            {
-            //std::cout << "Display node's color node is not null and it's the same, so not setting it\n";
-            }      
-          }        
+        // there's a change, set it
+        vtkDebugMacro("UpdateMRML: setting the display node's color node to " << color->GetID());
+        this->ModelDisplayNode->SetAndObserveColorNodeID(color->GetID());
         }
-      else
-        {
-        //std::cout << "Display node is null, can't set it's color id\n";
-        }  
       }
-    else
+    this->ModelDisplayNode->SetClipping(this->ClippingButton->GetWidget()->GetSelectedState());
+    this->ModelDisplayNode->SetOpacity(this->OpacityScale->GetWidget()->GetValue());
+    if (this->SurfaceMaterialPropertyWidget->GetProperty() == NULL)
       {
-      //std::cout << "Color node from the widget is null, can't set the display node's color id\n";
+      vtkProperty *prop = vtkProperty::New();
+      this->SurfaceMaterialPropertyWidget->SetProperty(prop);
+      prop->Delete();
       }
+
+    this->ModelDisplayNode->SetAmbient(this->SurfaceMaterialPropertyWidget->GetProperty()->GetAmbient());
+    this->ModelDisplayNode->SetDiffuse(this->SurfaceMaterialPropertyWidget->GetProperty()->GetDiffuse());
+    this->ModelDisplayNode->SetSpecular(this->SurfaceMaterialPropertyWidget->GetProperty()->GetSpecular());
+    this->ModelDisplayNode->SetPower(this->SurfaceMaterialPropertyWidget->GetProperty()->GetSpecularPower());
+    this->ModelDisplayNode->SetColor(this->ChangeColorButton->GetColor());
+    
     }
-  */
 }
 
 
@@ -264,7 +216,7 @@ void vtkSlicerModelDisplayWidget::ProcessWidgetEvents ( vtkObject *caller,
 void vtkSlicerModelDisplayWidget::ProcessMRMLEvents ( vtkObject *caller,
                                               unsigned long event, void *callData )
 {
-  if ( !this->ModelNodeID )
+  if ( !this->ModelDisplayNode )
     {
     return;
     }
@@ -273,239 +225,135 @@ void vtkSlicerModelDisplayWidget::ProcessMRMLEvents ( vtkObject *caller,
     vtkDebugMacro("ProcessMRMLEvents already processing " << this->ProcessingMRMLEvent);
     return;
     }
+  
   this->ProcessingMRMLEvent = event;
   
-  vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(caller);
 
-  if (modelNode != NULL &&
-      modelNode == this->MRMLScene->GetNodeByID(this->ModelNodeID) && 
+  if (this->ModelDisplayNode == vtkMRMLModelDisplayNode::SafeDownCast(caller) &&
       event == vtkCommand::ModifiedEvent)
     {
-    vtkMRMLModelDisplayNode *displayNode = modelNode->GetDisplayNode();
-    
-    // if we're already observing a display node, remove the observers
-    if (this->ModelDisplayNodeID != NULL)
-      {
-      // if it's not this one
-      if (displayNode != NULL &&
-          strcmp(displayNode->GetID(), this->ModelDisplayNodeID) != 0)
-        {
-        this->RemoveMRMLObservers();
-        }
-      }
-    // if the modified model node has a display node
-    if (displayNode != NULL)
-      {
-      // and it's not the one we were observing
-      if (this->ModelDisplayNodeID == NULL ||
-          strcmp(this->ModelDisplayNodeID, displayNode->GetID()) != 0)
-        {
-        // watch the new one
-        this->SetModelDisplayNodeID(displayNode->GetID()); 
-        this->AddMRMLObservers();
-        }
-      }
+    this->UpdateWidget();
     }
-
-  vtkMRMLModelDisplayNode *modelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(caller);
-  // did the display node change for the model currently in the widget?
-  if (modelDisplayNode != NULL &&
-      this->MRMLScene->GetNodeByID(this->ModelNodeID) != NULL &&
-      vtkMRMLModelNode::SafeDownCast(this->MRMLScene->GetNodeByID(this->ModelNodeID))->GetDisplayNode() == modelDisplayNode &&
-      event == vtkCommand::ModifiedEvent)
-    {
-    // update the color node selector in update widget
-    //this->ColorSelectorWidget->SetSelected(modelDisplayNode->GetColorNode());
-    }
-  this->UpdateWidget();
-
   this->ProcessingMRMLEvent = 0;
 }
 
-//---------------------------------------------------------------------------
-void vtkSlicerModelDisplayWidget::AddMRMLObservers ( )
-{
-  if ( !this->ModelNodeID )
-    {
-    return;
-    }
-
-  vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(this->MRMLScene->GetNodeByID(this->ModelNodeID));
-  
-  if (modelNode != NULL)
-    {
-    vtkMRMLModelDisplayNode *displayNode = modelNode->GetDisplayNode();
-    
-    if (displayNode != NULL)
-      {
-        displayNode->AddObserver(vtkCommand::ModifiedEvent,
-                                 (vtkCommand *)this->MRMLCallbackCommand );      
-      }
-    }
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerModelDisplayWidget::RemoveMRMLObservers ( )
-{
-  if ( !this->ModelNodeID )
-    {
-    return;
-    }
-
-  vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(this->MRMLScene->GetNodeByID(this->ModelNodeID));
-  
-  if (modelNode != NULL)
-    {
-    vtkMRMLModelDisplayNode *displayNode = modelNode->GetDisplayNode();
-    
-    if (displayNode != NULL)
-      {
-        displayNode->RemoveObservers(vtkCommand::ModifiedEvent,
-                                        (vtkCommand *)this->MRMLCallbackCommand );
-      }
-    }
-}
 
 //---------------------------------------------------------------------------
 void vtkSlicerModelDisplayWidget::UpdateWidget()
 {
   
-  if ( this->ModelDisplayNodeID )
+  if ( this->ModelDisplayNode == NULL )
     {
-    vtkMRMLModelDisplayNode *displayNode = 
-      vtkMRMLModelDisplayNode::SafeDownCast(this->MRMLScene->GetNodeByID(
-                                              this->ModelDisplayNodeID));
-    if (displayNode != NULL) 
-      {
-      this->VisibilityButton->GetWidget()->SetSelectedState(displayNode->GetVisibility());
-      this->ScalarVisibilityButton->GetWidget()->SetSelectedState(displayNode->GetScalarVisibility());
-
-      // get the model node so can get at it's scalars
-      vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(this->MRMLScene->GetNodeByID(this->ModelNodeID));
-      if (modelNode != NULL &&
-          modelNode->GetPolyData() != NULL)
-        {
-        // populate the scalars menu from the model node
-        int numPointScalars;
-        int numCellScalars;
-        if (modelNode->GetPolyData()->GetPointData() != NULL)
-          {
-          numPointScalars = modelNode->GetPolyData()->GetPointData()->GetNumberOfArrays();
-          }
-        else
-          {
-          numPointScalars = 0;
-          }
-        if (modelNode->GetPolyData()->GetCellData() != NULL)
-          {
-          numCellScalars = modelNode->GetPolyData()->GetCellData()->GetNumberOfArrays();
-          }
-        else
-          {
-          numCellScalars = 0;
-          }
-        vtkDebugMacro("numPointScalars = " << numPointScalars << ", numCellScalars = " << numCellScalars);
-        this->ScalarMenu->GetWidget()->GetMenu()->DeleteAllItems();
-        // clear the button text
-        this->ScalarMenu->GetWidget()->SetValue("");
-        for (int p = 0; p < numPointScalars; p++)
-          {
-          vtkDebugMacro("Adding point scalar " << p << " " << modelNode->GetPolyData()->GetPointData()->GetArray(p)->GetName());
-          this->ScalarMenu->GetWidget()->GetMenu()->AddRadioButton(modelNode->GetPolyData()->GetPointData()->GetArray(p)->GetName());
-          }
-        for (int c = 0; c < numCellScalars; c++)
-          {
-          vtkDebugMacro("Adding cell scalar " << c << " " << modelNode->GetPolyData()->GetCellData()->GetArray(c)->GetName());
-          this->ScalarMenu->GetWidget()->GetMenu()->AddRadioButton(modelNode->GetPolyData()->GetCellData()->GetArray(c)->GetName());
-          }
-        } else { vtkDebugMacro("ModelNode is null, can't set up the scalars menu\n"); }
-      // set the active one if it's not already set
-      this->ScalarMenu->GetWidget()->GetMenu()->SelectItem(displayNode->GetActiveScalarName());
-      // get the color node
-      if (displayNode->GetColorNode() != NULL)
-        {
-        vtkMRMLColorNode *color =
-          vtkMRMLColorNode::SafeDownCast(this->ColorSelectorWidget->GetSelected());
-        if (color == NULL ||
-            strcmp(displayNode->GetColorNodeID(), color->GetID()) != 0)
-          {
-          this->ColorSelectorWidget->SetSelected(displayNode->GetColorNode());
-          }
-        }
-      else
-        {
-        // clear the selection
-        this->ColorSelectorWidget->SetSelected(NULL);
-        }
-      this->ClippingButton->GetWidget()->SetSelectedState(displayNode->GetClipping());
-      this->OpacityScale->GetWidget()->SetValue(displayNode->GetOpacity());
-      if (this->SurfaceMaterialPropertyWidget->GetProperty() == NULL)
-        {
-        vtkProperty *prop = vtkProperty::New();
-        this->SurfaceMaterialPropertyWidget->SetProperty(prop);
-        prop->Delete();
-        }
-        
-      this->SurfaceMaterialPropertyWidget->GetProperty()->SetAmbient(displayNode->GetAmbient());
-      this->SurfaceMaterialPropertyWidget->GetProperty()->SetDiffuse(displayNode->GetDiffuse());
-      this->SurfaceMaterialPropertyWidget->GetProperty()->SetSpecular(displayNode->GetSpecular());
-      this->SurfaceMaterialPropertyWidget->GetProperty()->SetSpecularPower(displayNode->GetPower());
-      this->ChangeColorButton->SetColor(displayNode->GetColor());
-      this->SurfaceMaterialPropertyWidget->Update();
-      }
-    
     return;
     }
+  
+  // get the model node so can get at it's scalars
+  if (this->ModelNode != NULL &&
+      this->ModelNode->GetPolyData() != NULL)
+    {
+    // populate the scalars menu from the model node
+    int numPointScalars;
+    int numCellScalars;
+    if (this->ModelNode->GetPolyData()->GetPointData() != NULL)
+      {
+      numPointScalars = this->ModelNode->GetPolyData()->GetPointData()->GetNumberOfArrays();
+      }
+    else
+      {
+      numPointScalars = 0;
+      }
+    if (this->ModelNode->GetPolyData()->GetCellData() != NULL)
+      {
+      numCellScalars = this->ModelNode->GetPolyData()->GetCellData()->GetNumberOfArrays();
+      }
+    else
+      {
+      numCellScalars = 0;
+      }
+    vtkDebugMacro("numPointScalars = " << numPointScalars << ", numCellScalars = " << numCellScalars);
+    this->ScalarMenu->GetWidget()->GetMenu()->DeleteAllItems();
+    // clear the button text
+    this->ScalarMenu->GetWidget()->SetValue("");
+    for (int p = 0; p < numPointScalars; p++)
+      {
+      vtkDebugMacro("Adding point scalar " << p << " " << this->ModelNode->GetPolyData()->GetPointData()->GetArray(p)->GetName());
+      this->ScalarMenu->GetWidget()->GetMenu()->AddRadioButton(this->ModelNode->GetPolyData()->GetPointData()->GetArray(p)->GetName());
+      }
+    for (int c = 0; c < numCellScalars; c++)
+      {
+      vtkDebugMacro("Adding cell scalar " << c << " " << this->ModelNode->GetPolyData()->GetCellData()->GetArray(c)->GetName());
+      this->ScalarMenu->GetWidget()->GetMenu()->AddRadioButton(this->ModelNode->GetPolyData()->GetCellData()->GetArray(c)->GetName());
+      }
+    } 
+  else 
+    { 
+    vtkDebugMacro("ModelNode is null, can't set up the scalars menu\n"); 
+    }
+  
+  this->VisibilityButton->GetWidget()->SetSelectedState(this->ModelDisplayNode->GetVisibility());
+  this->ScalarVisibilityButton->GetWidget()->SetSelectedState(this->ModelDisplayNode->GetScalarVisibility());
+  
+  // set the active one if it's not already set
+  this->ScalarMenu->GetWidget()->GetMenu()->SelectItem(this->ModelDisplayNode->GetActiveScalarName());
+  // get the color node
+  if (this->ModelDisplayNode->GetColorNode() != NULL)
+    {
+    vtkMRMLColorNode *color =
+      vtkMRMLColorNode::SafeDownCast(this->ColorSelectorWidget->GetSelected());
+    if (color == NULL ||
+        strcmp(this->ModelDisplayNode->GetColorNodeID(), color->GetID()) != 0)
+      {
+      this->ColorSelectorWidget->SetSelected(this->ModelDisplayNode->GetColorNode());
+      }
+    }
+  else
+    {
+    // clear the selection
+    this->ColorSelectorWidget->SetSelected(NULL);
+    }
+  this->ClippingButton->GetWidget()->SetSelectedState(this->ModelDisplayNode->GetClipping());
+  this->OpacityScale->GetWidget()->SetValue(this->ModelDisplayNode->GetOpacity());
+  if (this->SurfaceMaterialPropertyWidget->GetProperty() == NULL)
+    {
+    vtkProperty *prop = vtkProperty::New();
+    this->SurfaceMaterialPropertyWidget->SetProperty(prop);
+    prop->Delete();
+    }
+  
+  this->SurfaceMaterialPropertyWidget->GetProperty()->SetAmbient(this->ModelDisplayNode->GetAmbient());
+  this->SurfaceMaterialPropertyWidget->GetProperty()->SetDiffuse(this->ModelDisplayNode->GetDiffuse());
+  this->SurfaceMaterialPropertyWidget->GetProperty()->SetSpecular(this->ModelDisplayNode->GetSpecular());
+  this->SurfaceMaterialPropertyWidget->GetProperty()->SetSpecularPower(this->ModelDisplayNode->GetPower());
+  this->ChangeColorButton->SetColor(this->ModelDisplayNode->GetColor());
+  this->SurfaceMaterialPropertyWidget->Update();
+}
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerModelDisplayWidget::AddMRMLObservers ( )
+{
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerModelDisplayWidget::UpdateMRML()
+void vtkSlicerModelDisplayWidget::RemoveMRMLObservers ( )
 {
-  
-  if ( this->ModelDisplayNodeID )
+  if (this->ModelDisplayNode)
     {
-    vtkMRMLModelDisplayNode *displayNode = 
-      vtkMRMLModelDisplayNode::SafeDownCast(this->MRMLScene->GetNodeByID(
-                                              this->ModelDisplayNodeID));
-    if (displayNode != NULL) 
-      {
-      displayNode->SetVisibility(this->VisibilityButton->GetWidget()->GetSelectedState());
-      displayNode->SetScalarVisibility(this->ScalarVisibilityButton->GetWidget()->GetSelectedState());
-      // get the value of the button, it's the selected item in the menu
-      displayNode->SetActiveScalarName(this->ScalarMenu->GetWidget()->GetValue());
-      vtkDebugMacro("Set display node active scalar name to " << displayNode->GetActiveScalarName());
-      if (this->ColorSelectorWidget->GetSelected() != NULL)
-        {
-        vtkMRMLColorNode *color =
-          vtkMRMLColorNode::SafeDownCast(this->ColorSelectorWidget->GetSelected());
-        if (color != NULL &&
-            displayNode->GetColorNodeID() == NULL ||
-            strcmp(displayNode->GetColorNodeID(), color->GetID()) != 0)
-          {
-          // there's a change, set it
-          vtkDebugMacro("UpdateMRML: setting the display node's color node to " << color->GetID());
-          displayNode->SetAndObserveColorNodeID(color->GetID());
-          }
-        }
-      displayNode->SetClipping(this->ClippingButton->GetWidget()->GetSelectedState());
-      displayNode->SetOpacity(this->OpacityScale->GetWidget()->GetValue());
-      displayNode->SetAmbient(this->SurfaceMaterialPropertyWidget->GetProperty()->GetAmbient());
-      displayNode->SetDiffuse(this->SurfaceMaterialPropertyWidget->GetProperty()->GetDiffuse());
-      displayNode->SetSpecular(this->SurfaceMaterialPropertyWidget->GetProperty()->GetSpecular());
-      displayNode->SetPower(this->SurfaceMaterialPropertyWidget->GetProperty()->GetSpecularPower());
-      displayNode->SetColor(this->ChangeColorButton->GetColor());
-
-      }
-    
-    return;
+    this->ModelDisplayNode->RemoveObservers(vtkCommand::ModifiedEvent,
+                                            (vtkCommand *)this->MRMLCallbackCommand );
     }
+  
+  if (this->ModelNode)
+    {
+    this->ModelNode->RemoveObservers(vtkCommand::ModifiedEvent,
+                                     (vtkCommand *)this->MRMLCallbackCommand );
+    }
+  
 }
 
 
 //---------------------------------------------------------------------------
 void vtkSlicerModelDisplayWidget::RemoveWidgetObservers ( ) {
-  this->ModelSelectorWidget->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
-  
   this->VisibilityButton->GetWidget()->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->ScalarVisibilityButton->GetWidget()->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->ScalarMenu->GetWidget()->GetMenu()->RemoveObservers(vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand);
@@ -550,23 +398,6 @@ void vtkSlicerModelDisplayWidget::CreateWidget ( )
 */
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                  modelDisplayFrame->GetWidgetName() );
-
-  this->ModelSelectorWidget = vtkSlicerNodeSelectorWidget::New() ;
-  this->ModelSelectorWidget->SetParent ( modelDisplayFrame );
-  this->ModelSelectorWidget->Create ( );
-  this->ModelSelectorWidget->SetNodeClass("vtkMRMLModelNode", NULL, NULL, NULL);
-  this->ModelSelectorWidget->SetChildClassesEnabled(0);
-  this->ModelSelectorWidget->SetMRMLScene(this->GetMRMLScene());
-  this->ModelSelectorWidget->SetBorderWidth(2);
-  // this->ModelSelectorWidget->SetReliefToGroove();
-  this->ModelSelectorWidget->SetPadX(2);
-  this->ModelSelectorWidget->SetPadY(2);
-  this->ModelSelectorWidget->GetWidget()->GetWidget()->IndicatorVisibilityOff();
-  this->ModelSelectorWidget->GetWidget()->GetWidget()->SetWidth(24);
-  this->ModelSelectorWidget->SetLabelText( "Model Select: ");
-  this->ModelSelectorWidget->SetBalloonHelpString("select a model from the current mrml scene.");
-  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
-                 this->ModelSelectorWidget->GetWidgetName());
 
   // Don't select child classes (like FiberBundles)
   //this->ModelSelectorWidget->ChildClassesEnabledOff();
@@ -664,7 +495,6 @@ void vtkSlicerModelDisplayWidget::CreateWidget ( )
                  this->SurfaceMaterialPropertyWidget->GetWidgetName() );
 
   // add observers
-  this->ModelSelectorWidget->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
   
   this->OpacityScale->GetWidget()->AddObserver(vtkKWScale::ScaleValueStartChangingEvent, (vtkCommand *)this->GUICallbackCommand );
   this->OpacityScale->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangingEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -682,12 +512,6 @@ void vtkSlicerModelDisplayWidget::CreateWidget ( )
 
   this->ColorSelectorWidget->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
    
-  vtkMRMLNode *selected = this->ModelSelectorWidget->GetSelected();
-  if (selected)
-    {
-    this->ModelSelectorWidget->SetSelected(NULL);
-    this->ModelSelectorWidget->SetSelected(selected);
-    }
   modelDisplayFrame->Delete();
     
 }
