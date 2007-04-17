@@ -303,6 +303,20 @@ void vtkMRMLFiducialListNode::Copy(vtkMRMLNode *anode)
   this->SetDiffuse(node->Diffuse);
   this->SetSpecular(node->Specular);
   this->SetPower(node->Power);
+
+  // Copy all fiducials
+  this->RemoveAllFiducials();
+  int numPoints = node->GetNumberOfFiducials();
+  for (int f=0; f < numPoints ; f++)
+    {
+    // as remove them from the end of the list, the size of the list
+    // will shrink as the iterator f reduces
+    vtkMRMLFiducial *fid = vtkMRMLFiducial::SafeDownCast(node->FiducialList->vtkCollection::GetItemAsObject(f));
+    int index = this->AddFiducial();
+    vtkMRMLFiducial *fidThis = this->GetNthFiducial(index);
+    fidThis->Copy(fid);
+    }
+  this->Modified();
 }
 
 //----------------------------------------------------------------------------
