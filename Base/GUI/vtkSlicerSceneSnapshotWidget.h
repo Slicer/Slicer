@@ -31,6 +31,7 @@
 
 #include "vtkMRMLSceneSnapshotNode.h"
 
+class vtkKWSimpleEntryDialog;
 
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSceneSnapshotWidget : public vtkSlicerWidget
 {
@@ -64,6 +65,7 @@ protected:
   vtkSlicerNodeSelectorWidget* SnapshotSelectorWidget;
   vtkKWPushButton* CreateSnapshotButton;
   vtkKWPushButton* RestoreSceneButton;
+  vtkKWSimpleEntryDialog *NameDialog;
   
 private:
 

@@ -6,6 +6,9 @@
 #include "vtkKWFrame.h"
 #include "vtkKWMenu.h"
 #include "vtkKWMenuButton.h"
+#include "vtkKWSimpleEntryDialog.h"
+#include "vtkKWEntryWithLabel.h"
+#include "vtkKWEntry.h"
 
 #include "vtkMRMLVolumeNode.h"
 #include "vtkMRMLVolumeDisplayNode.h"
@@ -30,12 +33,19 @@ vtkSlicerSceneSnapshotWidget::vtkSlicerSceneSnapshotWidget ( )
     this->SnapshotSelectorWidget = NULL;
     this->RestoreSceneButton = NULL;
     this->CreateSnapshotButton = NULL;
+    this->NameDialog = NULL;
 }
 
 
 //---------------------------------------------------------------------------
 vtkSlicerSceneSnapshotWidget::~vtkSlicerSceneSnapshotWidget ( )
 {
+  if (this->SnapshotSelectorWidget)
+    {
+    this->NameDialog->SetParent(NULL);
+    this->NameDialog->Delete();
+    this->NameDialog = NULL;
+    }
   if (this->SnapshotSelectorWidget)
     {
     this->SnapshotSelectorWidget->SetParent(NULL);
@@ -83,6 +93,21 @@ void vtkSlicerSceneSnapshotWidget::ProcessWidgetEvents ( vtkObject *caller,
     this->SnapshotSelectorWidget->ProcessNewNodeCommand("vtkMRMLSceneSnapshotNode", "SceneSnapshot");
     vtkMRMLSceneSnapshotNode *snapshotNode = 
       vtkMRMLSceneSnapshotNode::SafeDownCast(this->SnapshotSelectorWidget->GetSelected());
+      
+    vtkKWEntryWithLabel *entry = this->NameDialog->GetEntry();
+    entry->GetWidget()->SetValue(snapshotNode->GetName());
+    int result = this->NameDialog->Invoke();
+
+    if (!result) 
+      {
+      this->MRMLScene->RemoveNode(snapshotNode);
+      snapshotNode = NULL;
+      }
+    else 
+      {
+      snapshotNode->SetName(entry->GetWidget()->GetValue());
+      this->SnapshotSelectorWidget->UpdateMenu();
+      }
     if (snapshotNode)
       {
       snapshotNode->StoreScene();
@@ -131,54 +156,70 @@ void vtkSlicerSceneSnapshotWidget::CreateWidget ( )
 
   this->Superclass::CreateWidget();
   
-  // ---
-  // DISPLAY FRAME            
+  this->NameDialog  = vtkKWSimpleEntryDialog::New();
+  this->NameDialog->SetParent ( this->GetParent());
+  this->NameDialog->SetTitle("Scene Snapshot Name");
+  this->NameDialog->SetSize(400, 200);
+  this->NameDialog->SetStyleToOkCancel();
+  vtkKWEntryWithLabel *entry = this->NameDialog->GetEntry();
+  entry->SetLabelText("Snapshot Name");
+  entry->GetWidget()->SetValue("");
+  this->NameDialog->Create ( );
+
+  // FRAME            
   vtkKWFrame *frame = vtkKWFrame::New ( );
   frame->SetParent ( this->GetParent() );
   frame->Create ( );
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                  frame->GetWidgetName() );
-  
-  this->SnapshotSelectorWidget = vtkSlicerNodeSelectorWidget::New() ;
-  this->SnapshotSelectorWidget->SetParent ( frame );
-  this->SnapshotSelectorWidget->Create ( );
-  this->SnapshotSelectorWidget->SetNodeClass("vtkMRMLSceneSnapshotNode", NULL, NULL, NULL);
-  this->SnapshotSelectorWidget->SetShowHidden(1);
-  this->SnapshotSelectorWidget->SetMRMLScene(this->GetMRMLScene());
-  this->SnapshotSelectorWidget->SetBorderWidth(2);
-  // this->SnapshotSelectorWidget->SetReliefToGroove();
-  this->SnapshotSelectorWidget->SetPadX(2);
-  this->SnapshotSelectorWidget->SetPadY(2);
-  this->SnapshotSelectorWidget->GetWidget()->GetWidget()->IndicatorVisibilityOff();
-  this->SnapshotSelectorWidget->GetWidget()->GetWidget()->SetWidth(24);
-  this->SnapshotSelectorWidget->SetLabelText( "Scene Snapshot Select: ");
-  this->SnapshotSelectorWidget->SetBalloonHelpString("select a scene snapshot.");
-  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
-                 this->SnapshotSelectorWidget->GetWidgetName());
-  this->SnapshotSelectorWidget->SetWidgetName("SnapshotSelector");
 
-    // CreateSnapshot button
+
+    // Create Snapshot button
   this->CreateSnapshotButton = vtkKWPushButton::New();
   this->CreateSnapshotButton->SetParent(frame);
   this->CreateSnapshotButton->Create();
   this->CreateSnapshotButton->SetText("Create Scene Snapshot");
-  this->CreateSnapshotButton->SetWidth ( 40);
+  //this->CreateSnapshotButton->SetWidth ( 40);
   this->Script(
                "pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
                this->CreateSnapshotButton->GetWidgetName());
+
+  // Restore FRAME            
+  vtkKWFrame *frameRestore = vtkKWFrame::New ( );
+  frameRestore->SetParent ( frame );
+  frameRestore->Create ( );
+  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+                 frameRestore->GetWidgetName() );  
+
+  this->SnapshotSelectorWidget = vtkSlicerNodeSelectorWidget::New() ;
+  this->SnapshotSelectorWidget->SetParent ( frameRestore );
+  this->SnapshotSelectorWidget->Create ( );
+  this->SnapshotSelectorWidget->SetNodeClass("vtkMRMLSceneSnapshotNode", NULL, NULL, NULL);
+  this->SnapshotSelectorWidget->SetShowHidden(1);
+  this->SnapshotSelectorWidget->SetMRMLScene(this->GetMRMLScene());
+  //this->SnapshotSelectorWidget->SetBorderWidth(2);
+  // this->SnapshotSelectorWidget->SetReliefToGroove();
+  //this->SnapshotSelectorWidget->SetPadX(2);
+  //this->SnapshotSelectorWidget->SetPadY(2);
+  this->SnapshotSelectorWidget->GetWidget()->GetWidget()->IndicatorVisibilityOff();
+  this->SnapshotSelectorWidget->GetWidget()->GetWidget()->SetWidth(24);
+  this->SnapshotSelectorWidget->SetLabelText( "Scene Snapshot:");
+  this->SnapshotSelectorWidget->SetBalloonHelpString("select a scene snapshot.");
+  this->Script ( "pack %s -side left -anchor nw -fill x -padx 2 -pady 2",
+                 this->SnapshotSelectorWidget->GetWidgetName());
+  this->SnapshotSelectorWidget->SetWidgetName("SnapshotSelector");
+
   
-  
-  // CreateSnapshot button
+  // Restore Snapshot button
   this->RestoreSceneButton = vtkKWPushButton::New();
-  this->RestoreSceneButton->SetParent(frame);
+  this->RestoreSceneButton->SetParent(frameRestore);
   this->RestoreSceneButton->Create();
-  this->RestoreSceneButton->SetText("Restore Scene from Snapshot");
-  this->RestoreSceneButton->SetWidth ( 40);
+  this->RestoreSceneButton->SetText("Restore");
+  this->RestoreSceneButton->SetWidth ( 24);
   this->Script(
-               "pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
+               "pack %s -side left -anchor nw -expand n -padx 2 -pady 2", 
                this->RestoreSceneButton->GetWidgetName());
   
-
   if (this->MRMLScene != NULL)
     {
     this->SnapshotSelectorWidget->SetMRMLScene(this->MRMLScene);
@@ -189,5 +230,6 @@ void vtkSlicerSceneSnapshotWidget::CreateWidget ( )
   
   
   frame->Delete();
+  frameRestore->Delete();
   
 }
