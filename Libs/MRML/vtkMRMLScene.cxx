@@ -881,6 +881,30 @@ vtkCollection* vtkMRMLScene::GetNodesByName(const char* name)
   return nodes;
 }
 
+//------------------------------------------------------------------------------
+vtkMRMLNode* vtkMRMLScene::GetNodeByID(std::string id)
+{
+//  return this->GetNodeByID(id.c_str());
+  vtkMRMLNode *node = NULL;
+  if (id == "" || this == NULL  || this->CurrentScene == NULL)
+    {
+    return NULL;
+    }
+  for (int n=0; n < this->CurrentScene->GetNumberOfItems(); n++) 
+    {
+    //node = (vtkMRMLNode*)this->CurrentScene->GetItemAsObject(n);
+    node = vtkMRMLNode::SafeDownCast(this->CurrentScene->GetItemAsObject(n));
+    if (node == NULL)
+      {
+      return NULL;
+      }
+    if (id == node->GetID())
+      {
+      return node;
+      }
+    }
+  return NULL;
+}
 
 //------------------------------------------------------------------------------
 vtkMRMLNode* vtkMRMLScene::GetNodeByID(const char* id)

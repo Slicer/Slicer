@@ -158,7 +158,10 @@ public:
   // Description:
   // Get node given a unique ID
   vtkMRMLNode *GetNodeByID(const char* name);
-
+  //BTX
+  vtkMRMLNode *GetNodeByID(std::string name);
+  //ETX
+  
   // Description:
   // Get nodes of a specified class having the specified name
   vtkCollection *GetNodesByClassByName(const char* className, const char* name);
