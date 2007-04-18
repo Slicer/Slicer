@@ -122,14 +122,15 @@ void vtkMRMLColorNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 vtkLookupTable * vtkMRMLColorNode::GetLookupTable()
 {
-  vtkWarningMacro("Subclass has not implemented GetLookupTable, returning NULL");
+  vtkDebugMacro("Subclass has not implemented GetLookupTable, returning NULL");
   return NULL;
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLColorNode::ReadFile ()
+int vtkMRMLColorNode::ReadFile ()
 {
   vtkErrorMacro("Subclass has not implemented ReadFile.");
+  return 0;
 }
 
 //----------------------------------------------------------------------------

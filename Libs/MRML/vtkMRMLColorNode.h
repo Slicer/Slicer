@@ -54,7 +54,8 @@ public:
 
   // Description:
   // Read in a text file holding colours
-  virtual void ReadFile ();
+  // Return 1 on sucess, 0 on failure
+  virtual int ReadFile ();
   
   // Description:
   // Copy the node's attributes to this object
