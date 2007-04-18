@@ -721,7 +721,8 @@ int vtkMRMLModelNode::CompositeScalars(const char* backgroundName, const char* o
     // value. If we're not showing one side, use the background
     // value. If we are showing curvature (and have it), the
     // background value is our curvature value.
-    float overlayMid = 2.0; // 0.5 * (overlayMax - overlayMin) + overlayMin;
+    float overlayMid = 0.5 * (overlayMax - overlayMin) + overlayMin; // 2.0;
+    vtkDebugMacro("CompositeScalars: using overlay mid = " << overlayMid);
     float overlay = 0.0;
     float background = 0.0;
     for( int nValue = 0; nValue < cValues; nValue++ )
@@ -823,6 +824,10 @@ int vtkMRMLModelNode::CompositeScalars(const char* backgroundName, const char* o
 
     // make them active
     this->GetDisplayNode()->SetActiveScalarName(composedName.c_str());
+
+    // clean up
+    colorNode->Delete();
+    colorNode = NULL;
     
     return 1;
 }
