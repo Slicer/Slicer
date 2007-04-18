@@ -816,7 +816,7 @@ int vtkMRMLModelNode::CompositeScalars(const char* backgroundName, const char* o
     if (colorNode->GetID() != NULL)
       {
       this->GetDisplayNode()->SetAndObserveColorNodeID(colorNode->GetID());
-      this->GetDisplayNode()->SetScalarRange(overlayMin, overlayMax);
+      this->GetDisplayNode()->SetScalarRange(-overlayMax, overlayMax);
       }
     
     // add the new scalars
@@ -828,6 +828,8 @@ int vtkMRMLModelNode::CompositeScalars(const char* backgroundName, const char* o
     // clean up
     colorNode->Delete();
     colorNode = NULL;
+    composedScalars->Delete();
+    composedScalars = NULL;
     
     return 1;
 }
