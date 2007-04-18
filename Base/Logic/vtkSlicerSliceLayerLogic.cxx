@@ -225,15 +225,31 @@ void vtkSlicerSliceLayerLogic::UpdateNodeReferences ()
       {
       // TODO: this is a hack
       vtkErrorMacro("UpdateNodeReferences: Volume Node " << this->VolumeNode->GetID() << " doesn't have a display node, adding one.");
-      displayNode = vtkMRMLVolumeDisplayNode::New();
-      displayNode->SetScene(this->MRMLScene);
-      this->MRMLScene->AddNode(displayNode);
-      int isLabelMap = 0;
+      int isLabelMap =0;
       if (vtkMRMLScalarVolumeNode::SafeDownCast(this->VolumeNode))
         {
+        displayNode = vtkMRMLVolumeDisplayNode::New();
         isLabelMap = vtkMRMLScalarVolumeNode::SafeDownCast(this->VolumeNode)->GetLabelMap();
         }
-      displayNode->SetDefaultColorMap(isLabelMap);
+      else if (vtkMRMLVectorVolumeNode::SafeDownCast(this->VolumeNode))
+        {
+        displayNode = vtkMRMLVectorVolumeDisplayNode::New();
+        }
+      else if (vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(this->VolumeNode))
+        {
+        displayNode = vtkMRMLDiffusionWeightedVolumeDisplayNode::New();
+        }
+      else if (vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(this->VolumeNode))
+        {
+        displayNode = vtkMRMLDiffusionTensorVolumeDisplayNode::New();
+        }
+      displayNode->SetScene(this->MRMLScene);
+      this->MRMLScene->AddNode(displayNode);
+
+      if (isLabelMap)
+        {
+        displayNode->SetDefaultColorMap(isLabelMap);
+        }
       this->VolumeNode->SetAndObserveDisplayNodeID(displayNode->GetID());
       displayNode->Delete();
       }
