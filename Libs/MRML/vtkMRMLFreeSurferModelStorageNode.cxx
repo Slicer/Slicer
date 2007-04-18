@@ -660,6 +660,7 @@ int vtkMRMLFreeSurferModelStorageNode::ReadData(vtkMRMLNode *refNode)
         colorNode = NULL;         
        
         reader->Delete();
+        floatArray->Delete();
         this->AddOverlayFileName(fullName.c_str());
         }  // end of have poly data
       }
