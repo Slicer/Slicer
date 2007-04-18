@@ -258,11 +258,12 @@ proc launch_SplashScreen {} {
 proc launch_SplashKill {} { 
     global splashim
 
-    # clear out the event queue
-    update
-
     # because this is called from bgerror, don't cause any errors 
     if {[info command .splash] != ""} {
+
+        # clear out the event queue
+        update
+
         # release the grab
         grab release .splash
         destroy .splash
@@ -369,9 +370,17 @@ proc launch_LicenseDialog {} {
     }
 }
 
+
+proc launch_puts {args} {
+  if { [catch "puts [list $args]" res] } {
+    puts $res
+  }
+}
+
 #
 # helper proc to handle text coming from the child process
 #
+set ::count 0
 proc launch_FileEvent {fp} {
     global ::END
     if {[eof $fp]} {
@@ -383,7 +392,7 @@ proc launch_FileEvent {fp} {
         set ::END 1
     } else {
         gets $fp line
-        catch {puts $line}
+        puts $line
         launch_SplashKill ;# just in case the pre-splash screen is still up
     }
 }
