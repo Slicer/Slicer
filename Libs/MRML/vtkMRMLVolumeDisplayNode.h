@@ -119,6 +119,9 @@ class VTK_MRML_EXPORT vtkMRMLVolumeDisplayNode : public vtkMRMLNode
   // Description:
   // String ID of the color MRML node
   void SetAndObserveColorNodeID(const char *ColorNodeID);
+  //BTX
+  void SetAndObserveColorNodeID(std::string ColorNodeID);
+  //ETX
   vtkGetStringMacro(ColorNodeID);
 
   // Description:

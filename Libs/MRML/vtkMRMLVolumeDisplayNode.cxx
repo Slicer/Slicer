@@ -304,6 +304,20 @@ vtkMRMLColorNode* vtkMRMLVolumeDisplayNode::GetColorNode()
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLVolumeDisplayNode::SetAndObserveColorNodeID(std::string colorNodeID)
+{
+  vtkSetAndObserveMRMLObjectMacro(this->ColorNode, NULL);
+
+  this->SetColorNodeID(colorNodeID.c_str());
+ 
+  vtkMRMLColorNode *cnode = this->GetColorNode();
+  if (cnode != NULL)
+    {
+    vtkSetAndObserveMRMLObjectMacro(this->ColorNode, cnode);
+    }
+}
+  
+//----------------------------------------------------------------------------
 void vtkMRMLVolumeDisplayNode::SetAndObserveColorNodeID(const char *colorNodeID)
 {
   vtkSetAndObserveMRMLObjectMacro(this->ColorNode, NULL);
