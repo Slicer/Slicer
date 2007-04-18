@@ -222,7 +222,7 @@ ADD_TEST(Slicer3CLTest1 ${Slicer3_BINARY_DIR}/Slicer3 --help)
 ADD_TEST(Slicer3CLTest2 ${Slicer3_BINARY_DIR}/Slicer3 --xml)
 ADD_TEST(Slicer3CLTest3 ${Slicer3_BINARY_DIR}/Slicer3 -f ${Slicer3_SOURCE_DIR}/Applications/GUI/Testing/TestScript.tcl)
 ADD_TEST(Slicer3CLTest4 ${Slicer3_BINARY_DIR}/Slicer3 --eval "puts testing ,. exit 0")
-ADD_TEST(Slicer3CLTest5 ${Slicer3_BINARY_DIR}/Slicer3 --exec "puts testing ,. $::slicer3::Application Exit")
+ADD_TEST(Slicer3CLTest5 ${Slicer3_BINARY_DIR}/Slicer3 --exec "puts testing ,. exit 0")
 ADD_TEST(Slicer3CLTest6 ${Slicer3_BINARY_DIR}/Slicer3 --script ${Slicer3_SOURCE_DIR}/Applications/GUI/Testing/TestScript.tcl)
 ADD_TEST(Slicer3CLTest7 ${Slicer3_BINARY_DIR}/Slicer3 --script ${Slicer3_SOURCE_DIR}/Applications/GUI/Testing/LoadSceneTest.tcl)
 
