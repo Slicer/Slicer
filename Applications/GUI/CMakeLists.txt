@@ -146,8 +146,6 @@ ELSE(WFENGINEMODULE)
 ADD_DEFINITIONS(-DWFENGINE_DEBUG)
 ENDIF(WFENGINEMODULE)
 
-MESSAGE(STATUS "TEST" ${WFENGINE_LINK_LIB})
-
 TARGET_LINK_LIBRARIES( Slicer3${SLICER_EXE_SUFFIX}
     SlicerBaseLogic
     SlicerBaseGUI
@@ -220,20 +218,20 @@ GENERATECLP(${SRC} Slicer3.xml)
 # Command line parsing tests
 #
 
-ADD_TEST(Slicer3CLTest1 ${EXECUTABLE_OUTPUT_PATH}/Slicer3 --help)
-ADD_TEST(Slicer3CLTest2 ${EXECUTABLE_OUTPUT_PATH}/Slicer3 --xml)
-ADD_TEST(Slicer3CLTest3 ${EXECUTABLE_OUTPUT_PATH}/Slicer3 -f ${Slicer3_SOURCE_DIR}/Applications/GUI/Testing/TestScript.tcl)
-#ADD_TEST(Slicer3CLTest4 ${EXECUTABLE_OUTPUT_PATH}/Slicer3 --eval "puts testing ,. exit 0")
-#ADD_TEST(Slicer3CLTest5 ${EXECUTABLE_OUTPUT_PATH}/Slicer3 --exec "puts testing ,. $::slicer3::Application Exit")
-ADD_TEST(Slicer3CLTest6 ${EXECUTABLE_OUTPUT_PATH}/Slicer3 --script ${Slicer3_SOURCE_DIR}/Applications/GUI/Testing/TestScript.tcl)
-ADD_TEST(Slicer3CLTest7 ${EXECUTABLE_OUTPUT_PATH}/Slicer3 --script ${Slicer3_SOURCE_DIR}/Applications/GUI/Testing/LoadSceneTest.tcl)
+ADD_TEST(Slicer3CLTest1 ${Slicer3_BINARY_DIR}/Slicer3 --help)
+ADD_TEST(Slicer3CLTest2 ${Slicer3_BINARY_DIR}/Slicer3 --xml)
+ADD_TEST(Slicer3CLTest3 ${Slicer3_BINARY_DIR}/Slicer3 -f ${Slicer3_SOURCE_DIR}/Applications/GUI/Testing/TestScript.tcl)
+ADD_TEST(Slicer3CLTest4 ${Slicer3_BINARY_DIR}/Slicer3 --eval "puts testing ,. exit 0")
+ADD_TEST(Slicer3CLTest5 ${Slicer3_BINARY_DIR}/Slicer3 --exec "puts testing ,. $::slicer3::Application Exit")
+ADD_TEST(Slicer3CLTest6 ${Slicer3_BINARY_DIR}/Slicer3 --script ${Slicer3_SOURCE_DIR}/Applications/GUI/Testing/TestScript.tcl)
+ADD_TEST(Slicer3CLTest7 ${Slicer3_BINARY_DIR}/Slicer3 --script ${Slicer3_SOURCE_DIR}/Applications/GUI/Testing/LoadSceneTest.tcl)
 
 #
 # MRML Tests
 #
 
-ADD_TEST(Slicer3MRMLUndo ${EXECUTABLE_OUTPUT_PATH}/Slicer3 -f ${Slicer3_SOURCE_DIR}/Libs/MRML/Testing/testUndo.tcl)
-ADD_TEST(Slicer3MRMLVolume ${EXECUTABLE_OUTPUT_PATH}/Slicer3 -f ${Slicer3_SOURCE_DIR}/Libs/MRML/Testing/testVolume.tcl)
+ADD_TEST(Slicer3MRMLUndo ${Slicer3_BINARY_DIR}/Slicer3 -f ${Slicer3_SOURCE_DIR}/Libs/MRML/Testing/testUndo.tcl)
+ADD_TEST(Slicer3MRMLVolume ${Slicer3_BINARY_DIR}/Slicer3 -f ${Slicer3_SOURCE_DIR}/Libs/MRML/Testing/testVolume.tcl)
 
 #
 # make the testing
