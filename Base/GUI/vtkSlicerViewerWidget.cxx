@@ -39,6 +39,7 @@
 #include "vtkMRMLClipModelsNode.h"
 #include "vtkMRMLModelHierarchyNode.h"
 #include "vtkMRMLColorNode.h"
+#include "vtkMRMLProceduralColorNode.h"
 
 #include "vtkKWWidget.h"
 
@@ -1185,10 +1186,17 @@ void vtkSlicerViewerWidget::SetModelDisplayProperty(vtkMRMLModelNode *model,  vt
     // table
     if (dnode->GetScalarVisibility())
       {
-      if (dnode->GetColorNode() != NULL &&
-          dnode->GetColorNode()->GetLookupTable() != NULL)
+      if (dnode->GetColorNode() != NULL)
+        {
+        if (dnode->GetColorNode()->GetLookupTable() != NULL)
         {
         actor->GetMapper()->SetLookupTable(dnode->GetColorNode()->GetLookupTable());
+        }
+        else if (dnode->GetColorNode()->IsA("vtkMRMLProceduralColorNode") &&
+                 vtkMRMLProceduralColorNode::SafeDownCast(dnode->GetColorNode())->GetColorTransferFunction() != NULL)
+          {
+          actor->GetMapper()->SetLookupTable((vtkScalarsToColors*)(vtkMRMLProceduralColorNode::SafeDownCast(dnode->GetColorNode())->GetColorTransferFunction()));
+          }
         }
       
       if (dnode->GetActiveScalarName() != NULL)
