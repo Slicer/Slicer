@@ -179,7 +179,7 @@ void vtkMRMLColorTableNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLColorTableNode::ReadFile ()
+int vtkMRMLColorTableNode::ReadFile ()
 {
 
   // open the file for reading input
@@ -267,7 +267,9 @@ void vtkMRMLColorTableNode::ReadFile ()
   else
     {
     vtkErrorMacro("ERROR opening colour file " << this->FileName << endl);
+    return 0;
     }
+  return 1;
 }
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.

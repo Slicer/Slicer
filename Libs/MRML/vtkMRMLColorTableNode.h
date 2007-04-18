@@ -56,7 +56,7 @@ public:
   // Read in a text file holding colour table elements
   // id name r g b a
   // comments start with a hash mark
-  virtual void ReadFile ();
+  virtual int ReadFile ();
   
   // Description:
   // Copy the node's attributes to this object
