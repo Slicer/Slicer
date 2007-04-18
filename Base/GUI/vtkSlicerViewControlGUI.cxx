@@ -953,7 +953,7 @@ void vtkSlicerViewControlGUI::ProcessGUIEvents ( vtkObject *caller,
         val = this->RedFOVEntry->GetWidget()->GetValueAsDouble();
         snode  = appGUI->GetMainSliceGUI0()->GetSliceNode();
         appGUI->GetMRMLScene()->SaveStateForUndo( snode );
-        if ( val > 0 )
+        if ( val > 0 && snode && appGUI )
           {
           this->FitFOVToBackground( val, 0 );
           }
@@ -964,7 +964,7 @@ void vtkSlicerViewControlGUI::ProcessGUIEvents ( vtkObject *caller,
         val = this->YellowFOVEntry->GetValueAsDouble();
         snode  = appGUI->GetMainSliceGUI1()->GetSliceNode();
         appGUI->GetMRMLScene()->SaveStateForUndo( snode );
-        if ( val > 0 )
+        if ( val > 0 && snode && appGUI )
           {
           this->FitFOVToBackground( val, 1 );
           }
@@ -975,7 +975,7 @@ void vtkSlicerViewControlGUI::ProcessGUIEvents ( vtkObject *caller,
         val = this->GreenFOVEntry->GetValueAsDouble();
         snode  = appGUI->GetMainSliceGUI2()->GetSliceNode();
         appGUI->GetMRMLScene()->SaveStateForUndo( snode );
-        if ( val > 0 )
+        if ( val > 0 && snode && appGUI )
           {
           this->FitFOVToBackground( val, 2 );
           }
