@@ -15,7 +15,8 @@
 // defined color information.
 // .SECTION Description
 // Procedural nodes define methods that are used to map colours to scalar
-// values. Usually they will incorporate a custom subclass of a vtkLookupTable.
+// values. Usually they will incorporate a custom subclass of a
+// vtkLookupTable, or a vtkColorTransferFunction.
 
 #ifndef __vtkMRMLProceduralColorNode_h
 #define __vtkMRMLProceduralColorNode_h
@@ -27,6 +28,8 @@
 #include "vtkMRMLNode.h"
 #include "vtkMRMLColorNode.h"
 
+
+class vtkColorTransferFunction;
 class VTK_MRML_EXPORT vtkMRMLProceduralColorNode : public vtkMRMLColorNode
 {
 public:
@@ -87,8 +90,12 @@ public:
 
   // Description:
   // Read in a text file with procedural definitions
-  virtual void ReadFile ();
-  
+  virtual int ReadFile ();
+
+  // Description:
+  // Get the color transfer function for this node
+  vtkGetObjectMacro(ColorTransferFunction, vtkColorTransferFunction);
+
 protected:
   vtkMRMLProceduralColorNode();
   ~vtkMRMLProceduralColorNode();
@@ -96,7 +103,8 @@ protected:
   void operator=(const vtkMRMLProceduralColorNode&);
   
   // Description:
-  // a lookup table tailored with custom colours, constructed according to Type
+  // a color transfer function built up by calls to AddRGBPoint and Build
+  vtkColorTransferFunction *ColorTransferFunction;
 };
 
 #endif

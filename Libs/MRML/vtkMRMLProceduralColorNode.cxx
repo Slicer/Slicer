@@ -21,6 +21,8 @@ Version:   $Revision: 1.0 $
 #include "vtkMRMLProceduralColorNode.h"
 #include "vtkMRMLScene.h"
 
+#include "vtkColorTransferFunction.h"
+
 //------------------------------------------------------------------------------
 vtkMRMLProceduralColorNode* vtkMRMLProceduralColorNode::New()
 {
@@ -56,13 +58,19 @@ vtkMRMLProceduralColorNode::vtkMRMLProceduralColorNode()
   this->Name = NULL;
   this->SetName("");
   this->FileName = NULL;
-  
+
+  this->ColorTransferFunction = NULL;
+  this->ColorTransferFunction = vtkColorTransferFunction::New();
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLProceduralColorNode::~vtkMRMLProceduralColorNode()
 {
-
+  if (this->ColorTransferFunction)
+    {
+    this->ColorTransferFunction->Delete();
+    this->ColorTransferFunction = NULL;
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -134,7 +142,8 @@ void vtkMRMLProceduralColorNode::SetType(int type)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLProceduralColorNode::ReadFile()
+int vtkMRMLProceduralColorNode::ReadFile()
 {
   vtkErrorMacro("Subclass didn't define ReadFile!");
+  return 0;
 }
