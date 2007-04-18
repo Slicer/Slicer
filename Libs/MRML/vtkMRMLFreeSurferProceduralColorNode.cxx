@@ -60,7 +60,22 @@ vtkMRMLFreeSurferProceduralColorNode::vtkMRMLFreeSurferProceduralColorNode()
   this->SurfaceLabelsFileName = NULL;
 
   // get the home directory and the colour file in the freesurfer lib dir
-  vtksys_stl::string slicerHome = vtksys_stl::string(vtksys::SystemTools::GetEnv("SLICER_HOME"));
+  vtksys_stl::string slicerHome;
+  if (vtksys::SystemTools::GetEnv("SLICER_HOME") == NULL)
+    {
+    if (vtksys::SystemTools::GetEnv("PWD") != NULL)
+      {
+      slicerHome =  vtksys_stl::string(vtksys::SystemTools::GetEnv("PWD"));
+      }
+    else
+      {
+      slicerHome =  vtksys_stl::string("");
+      }
+    }
+  else
+    {
+    slicerHome = vtksys_stl::string(vtksys::SystemTools::GetEnv("SLICER_HOME"));
+    }
   // check to see if slicer home was set
   vtksys_stl::vector<vtksys_stl::string> filesVector;
   filesVector.push_back(""); // for relative path
