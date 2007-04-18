@@ -465,22 +465,22 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
     this->NACLabel = vtkKWLabel::New();
     this->NACLabel->SetParent ( this->GetLogoFrame() );
     this->NACLabel->Create();
-    this->NACLabel->SetImageToIcon ( vtkSlicerModuleGUI::AcknowledgementIcons->GetNACLogo() );
+    this->NACLabel->SetImageToIcon ( this->GetAcknowledgementIcons()->GetNACLogo() );
 
     this->NAMICLabel = vtkKWLabel::New();
     this->NAMICLabel->SetParent ( this->GetLogoFrame() );
     this->NAMICLabel->Create();
-    this->NAMICLabel->SetImageToIcon ( vtkSlicerModuleGUI::AcknowledgementIcons->GetNAMICLogo() );    
+    this->NAMICLabel->SetImageToIcon ( this->GetAcknowledgementIcons()->GetNAMICLogo() );    
 
     this->NCIGTLabel = vtkKWLabel::New();
     this->NCIGTLabel->SetParent ( this->GetLogoFrame() );
     this->NCIGTLabel->Create();
-    this->NCIGTLabel->SetImageToIcon ( vtkSlicerModuleGUI::AcknowledgementIcons->GetNCIGTLogo() );
+    this->NCIGTLabel->SetImageToIcon ( this->GetAcknowledgementIcons()->GetNCIGTLogo() );
     
     this->BIRNLabel = vtkKWLabel::New();
     this->BIRNLabel->SetParent ( this->GetLogoFrame() );
     this->BIRNLabel->Create();
-    this->BIRNLabel->SetImageToIcon ( vtkSlicerModuleGUI::AcknowledgementIcons->GetBIRNLogo() );
+    this->BIRNLabel->SetImageToIcon ( this->GetAcknowledgementIcons()->GetBIRNLogo() );
     app->Script ( "grid %s -row 0 -column 0 -padx 2 -pady 2 -sticky w", this->NAMICLabel->GetWidgetName());
     app->Script ("grid %s -row 0 -column 1 -padx 2 -pady 2 -sticky w",  this->NACLabel->GetWidgetName());
     app->Script ( "grid %s -row 1 -column 0 -padx 2 -pady 2 -sticky w",  this->BIRNLabel->GetWidgetName());

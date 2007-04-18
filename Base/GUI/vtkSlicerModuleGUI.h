@@ -54,7 +54,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleGUI : public vtkSlicerComponentG
 
     // Description:
     // Get the Icons for Acknowledging Sponsorship of Slicer's base.
-    vtkGetObjectMacro (AcknowledgementIcons, vtkSlicerBaseAcknowledgementLogoIcons );
+  vtkSlicerBaseAcknowledgementLogoIcons* GetAcknowledgementIcons ();
 
   // Description:
   // Get/Set Macro for ApplicationGUI: allow Modules to access

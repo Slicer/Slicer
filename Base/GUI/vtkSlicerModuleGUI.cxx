@@ -9,7 +9,7 @@
 vtkCxxRevisionMacro(vtkSlicerModuleGUI, "$Revision: 1.0 $");
 vtkStandardNewMacro ( vtkSlicerModuleGUI );
 
-vtkSlicerBaseAcknowledgementLogoIcons* vtkSlicerModuleGUI::AcknowledgementIcons = vtkSlicerBaseAcknowledgementLogoIcons::New(); 
+vtkSlicerBaseAcknowledgementLogoIcons* vtkSlicerModuleGUI::AcknowledgementIcons = NULL;
 
 //---------------------------------------------------------------------------
 vtkSlicerModuleGUI::vtkSlicerModuleGUI ( ) {
@@ -79,6 +79,14 @@ vtkSlicerModuleGUI::~vtkSlicerModuleGUI ( ) {
 }
 
 
+vtkSlicerBaseAcknowledgementLogoIcons* vtkSlicerModuleGUI::GetAcknowledgementIcons () 
+{
+  if  ( vtkSlicerModuleGUI::AcknowledgementIcons == NULL )
+    {
+    vtkSlicerModuleGUI::AcknowledgementIcons = vtkSlicerBaseAcknowledgementLogoIcons::New(); 
+    }
+  return vtkSlicerModuleGUI::AcknowledgementIcons;
+}
 
 //---------------------------------------------------------------------------
 void vtkSlicerModuleGUI::BuildHelpAndAboutFrame ( vtkKWWidget *parent,
