@@ -27,6 +27,9 @@ Version:   $Revision: 1.3 $
 #include "vtkCellData.h"
 #include "vtkFloatArray.h"
 
+#include "vtkMRMLProceduralColorNode.h"
+#include "vtkColorTransferFunction.h"
+
 //------------------------------------------------------------------------------
 vtkMRMLModelNode* vtkMRMLModelNode::New()
 {
@@ -651,4 +654,175 @@ int vtkMRMLModelNode::SetActiveCellScalars(const char *scalarName, int attribute
       return -1;
       }
     }
+}
+
+//---------------------------------------------------------------------------
+int vtkMRMLModelNode::CompositeScalars(const char* backgroundName, const char* overlayName,
+                                       float overlayMin, float overlayMax,
+                                       int showOverlayPositive, int showOverlayNegative,
+                                       int reverseOverlay)
+{
+
+    if (backgroundName == NULL || overlayName == NULL)
+      {
+      vtkErrorMacro("CompositeScalars: one of the input array names is null");
+      return 0;
+      }
+
+    bool haveCurvScalars = false;
+    // is there a curv scalar in the composite?
+    if (strstr(backgroundName, "curv") != NULL ||
+        strstr(overlayName, "curv") != NULL)
+      {
+      haveCurvScalars = true;
+      }
+    
+    // get the scalars to composite, putting any curv file in scalars 1
+    vtkDataArray *scalars1, *scalars2;
+    if (!haveCurvScalars ||
+        strstr(backgroundName, "curv") != NULL)
+      {
+      scalars1 = this->PolyData->GetPointData()->GetScalars(backgroundName);
+      scalars2 = this->PolyData->GetPointData()->GetScalars(overlayName);
+      }
+    else
+      {
+      scalars1 = this->PolyData->GetPointData()->GetScalars(overlayName);
+      scalars2 = this->PolyData->GetPointData()->GetScalars(backgroundName);
+      }
+    if (scalars1 == NULL || scalars2 == NULL)
+      {
+      vtkErrorMacro("CompositScalars: unable to find the named scalar arrays " << backgroundName << " and/or " << overlayName);
+      return 0;
+      }
+    if (scalars1->GetNumberOfTuples() != scalars1->GetNumberOfTuples())
+      {
+      vtkErrorMacro("CompositeScalars: sizes of scalar arrays don't match");
+      return 0;
+      }
+    // Get the number of elements and initialize the composed scalar
+    // array.
+    int cValues = 0;
+    cValues = scalars1->GetNumberOfTuples();
+
+    vtkFloatArray* composedScalars = vtkFloatArray::New();
+
+    std::stringstream ss;
+    ss << backgroundName;
+    ss << "+";
+    ss << overlayName;
+    std::string composedName = std::string(ss.str());
+    composedScalars->SetName(composedName.c_str());
+    composedScalars->Allocate( cValues );
+    composedScalars->SetNumberOfComponents( 1 );
+   
+    // For each value, check the overlay value. If it's < min, use
+    // the background value. If we're reversing, reverse the overlay
+    // value. If we're not showing one side, use the background
+    // value. If we are showing curvature (and have it), the
+    // background value is our curvature value.
+    float overlayMid = 2.0; // 0.5 * (overlayMax - overlayMin) + overlayMin;
+    float overlay = 0.0;
+    float background = 0.0;
+    for( int nValue = 0; nValue < cValues; nValue++ )
+      {
+      background = scalars1->GetTuple1(nValue);
+      overlay = scalars2->GetTuple1(nValue);
+      
+      if( reverseOverlay )
+        {
+        overlay = -overlay;
+        }
+      if( overlay > 0 && !showOverlayPositive )
+        {
+        overlay = 0;
+        }
+      
+      if( overlay < 0 && !showOverlayNegative )
+        {
+        overlay = 0;
+        }
+      
+      // Insert the appropriate color into the composed array.
+      if( overlay < overlayMin &&
+          overlay > -overlayMin )
+        {
+        composedScalars->InsertNextValue( background );
+        }
+      else
+        {
+        composedScalars->InsertNextValue( overlay );
+        }
+      }
+    
+    // set up a colour node
+    vtkMRMLProceduralColorNode *colorNode = vtkMRMLProceduralColorNode::New();
+    vtkColorTransferFunction *func = colorNode->GetColorTransferFunction();
+
+    // adapted from FS code that assumed that one scalar was curvature, the
+    // other heat overlay
+    const double EPS = 0.00001; // epsilon
+    double curvatureMin = 0;
+    
+    if (haveCurvScalars)
+      {
+      curvatureMin = 0.5;
+      }
+    bool bUseGray = true;
+    if( overlayMin <= curvatureMin )
+      {
+      curvatureMin = overlayMin - EPS;
+      bUseGray = false;
+      }
+    func->AddRGBPoint( -overlayMax, 0, 1, 1 );
+    func->AddRGBPoint( -overlayMid, 0, 0, 1 );
+    func->AddRGBPoint( -overlayMin, 0, 0, 1 );
+    
+    if( bUseGray && overlayMin != 0 )
+      {
+      func->AddRGBPoint( -overlayMin + EPS, 0.5, 0.5, 0.5 );
+      if( haveCurvScalars)
+        {
+        func->AddRGBPoint( -curvatureMin - EPS, 0.5, 0.5, 0.5 );
+        }
+      }
+    if( haveCurvScalars && overlayMin != 0 )
+      {
+      func->AddRGBPoint( -curvatureMin, 0.6, 0.6, 0.6 );
+      func->AddRGBPoint(  0,            0.6, 0.6, 0.6 );
+      func->AddRGBPoint(  EPS,          0.4, 0.4, 0.4 );
+      func->AddRGBPoint(  curvatureMin, 0.4, 0.4, 0.4 );
+      }
+    
+    if ( bUseGray && overlayMin != 0 )
+      {
+      if( haveCurvScalars )
+        {
+        func->AddRGBPoint( curvatureMin + EPS, 0.5, 0.5, 0.5 );
+        }
+      func->AddRGBPoint( overlayMin - EPS, 0.5, 0.5, 0.5 );
+      }
+
+    func->AddRGBPoint( overlayMin, 1, 0, 0 );
+    func->AddRGBPoint( overlayMid, 1, 0, 0 );
+    func->AddRGBPoint( overlayMax, 1, 1, 0 );
+    
+    func->Build();
+    
+    // use the new colornode
+    this->Scene->AddNode(colorNode);
+    vtkDebugMacro("CompositeScalars: created color transfer function, and added proc color node to scene, id = " << colorNode->GetID());
+    if (colorNode->GetID() != NULL)
+      {
+      this->GetDisplayNode()->SetAndObserveColorNodeID(colorNode->GetID());
+      this->GetDisplayNode()->SetScalarRange(overlayMin, overlayMax);
+      }
+    
+    // add the new scalars
+    this->AddPointScalars(composedScalars);
+
+    // make them active
+    this->GetDisplayNode()->SetActiveScalarName(composedName.c_str());
+    
+    return 1;
 }
