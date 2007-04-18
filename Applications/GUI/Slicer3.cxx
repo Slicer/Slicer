@@ -644,7 +644,7 @@ int Slicer3_main(int argc, char *argv[])
       if { $args != {} && [string is integer $args] == \"1\" } { \
         %s SetExitStatus $args \
       } else { \
-        %s SetExitStatus -1 \
+        %s SetExitStatus 0 \
       } ;\
       after idle \"%s Exit\"; \
     }", 
