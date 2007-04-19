@@ -312,9 +312,14 @@ void vtkMRMLFiducialListNode::Copy(vtkMRMLNode *anode)
     // as remove them from the end of the list, the size of the list
     // will shrink as the iterator f reduces
     vtkMRMLFiducial *fid = vtkMRMLFiducial::SafeDownCast(node->FiducialList->vtkCollection::GetItemAsObject(f));
-    int index = this->AddFiducial();
-    vtkMRMLFiducial *fidThis = this->GetNthFiducial(index);
+    // can't just use AddFiducial, as it sets and increments a unique id
+    vtkMRMLFiducial *fidThis = vtkMRMLFiducial::New();
     fidThis->Copy(fid);
+    // manual copy of id
+    fidThis->SetID(fid->GetID());
+    this->FiducialList->vtkCollection::AddItem(fidThis);
+    fidThis->Delete();
+    fidThis = NULL;
     }
   this->Modified();
 }
