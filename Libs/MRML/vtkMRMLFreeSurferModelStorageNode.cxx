@@ -524,6 +524,12 @@ int vtkMRMLFreeSurferModelStorageNode::ReadData(vtkMRMLNode *refNode)
             vtkErrorMacro("Unable to find an internal nor an external colour look up table for " << fullName.c_str());
             result = 6;
             }
+          if (labelNodes)
+            {
+            labelNodes->RemoveAllItems();
+            labelNodes->Delete();
+            labelNodes = NULL;
+            }
           }
         else
           {          
