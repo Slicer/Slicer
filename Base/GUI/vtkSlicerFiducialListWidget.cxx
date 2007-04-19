@@ -525,7 +525,8 @@ void vtkSlicerFiducialListWidget::ProcessWidgetEvents ( vtkObject *caller,
       {
       // check for a valid RAS point
       double *rasPoint = this->GetViewerWidget()->GetPickedRAS();
-      if (rasPoint != NULL)
+      if (rasPoint != NULL &&
+          vtkSlicerFiducialsGUI::SafeDownCast(vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Fiducials")) != NULL )
         {
         vtkSlicerFiducialsLogic *fidLogic  = vtkSlicerFiducialsGUI::SafeDownCast(vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Fiducials"))->GetLogic();
         int modelIndex = fidLogic->AddFiducialSelected(rasPoint[0], rasPoint[1], rasPoint[2], 1);
