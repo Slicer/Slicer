@@ -197,6 +197,22 @@ void vtkSlicerViewerWidget::PrintSelf ( ostream& os, vtkIndent indent )
 
     os << indent << "vtkSlicerViewerWidget: " << this->GetClassName ( ) << "\n";
 
+    os << indent << "RenderPending = " << this->RenderPending << "\n";
+    os << indent << "ProcessingMRMLEvent = " << this->ProcessingMRMLEvent << "\n";
+    
+    os << indent << "ClipType = " << this->ClipType << "\n";
+    os << indent << "RedSliceClipState = " << this->RedSliceClipState << "\n";
+    os << indent << "YellowSliceClipState = " << this->YellowSliceClipState << "\n";
+    os << indent << "GreenSliceClipState = " << this->GreenSliceClipState << "\n";
+    os << indent << "ClippingOn = " << (this->ClippingOn ? "true" : "false") << "\n";
+
+    os << indent << "ModelHierarchiesPresent = " << this->ModelHierarchiesPresent << "\n";
+    os << indent << "SceneClosing = " << this->SceneClosing << "\n";
+    
+    os << indent << "PickedNodeName = " << this->PickedNodeName.c_str() << "\n";
+    os << indent << "PickedRAS = (" << this->PickedRAS[0] << ", " << this->PickedRAS[1] << ", "<< this->PickedRAS[2] << "\n";
+    os << indent << "PickedCellID = " << this->PickedCellID << "\n";
+    os << indent << "PickedPointID = " << this->PickedPointID << "\n";
     // print widgets?
 }
 
@@ -1358,6 +1374,29 @@ int vtkSlicerViewerWidget::Pick(int x, int y)
   if (this->CellPicker->Pick(displayPoint, ren))
     {
     this->CellPicker->GetPickPosition(pickPoint);
+    this->SetPickedCellID(this->CellPicker->GetCellId());
+    // get the pointer to the poly data that the cell was in
+    vtkPolyData *polyData = vtkPolyData::SafeDownCast(this->CellPicker->GetDataSet());
+    if (polyData != NULL)
+      {
+      // now find the model this poly data belongs to
+      std::map<std::string, vtkMRMLModelNode *>::iterator modelIter;
+      for (modelIter = this->DisplayedModelNodes.begin();
+           modelIter != this->DisplayedModelNodes.end();
+           modelIter++)
+        {
+        vtkDebugMacro("Checking model " << modelIter->first.c_str() << "'s polydata");
+        if (modelIter->second != NULL)
+          {
+          if (modelIter->second->GetPolyData() == polyData)
+            {
+            vtkDebugMacro("Found matching poly data, pick was on model " << modelIter->first.c_str());
+            this->PickedNodeName = modelIter->first;
+            continue;
+            }
+          }
+        }
+      }
     }
   else
     {
