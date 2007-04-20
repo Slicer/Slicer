@@ -143,7 +143,7 @@ vtkSlicerVolumesGUI::~vtkSlicerVolumesGUI ( )
   if (this->ScalarDisplayFrame)
     {
     this->ScalarDisplayFrame->SetParent(NULL );
-    this->NameEntry->Delete( );
+    this->ScalarDisplayFrame->Delete( );
     }
   if (this->DWIDisplayFrame)
     {
