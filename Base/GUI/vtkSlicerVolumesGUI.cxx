@@ -390,7 +390,8 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents ( vtkObject *caller,
 
       return;
     }
-    else if (this->VolumeSelectorWidget == vtkSlicerNodeSelectorWidget::SafeDownCast(caller) && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent ) 
+    else if (this->VolumeSelectorWidget == vtkSlicerNodeSelectorWidget::SafeDownCast(caller) &&
+             event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent ) 
       {
         vtkMRMLVolumeNode *volume = 
         vtkMRMLVolumeNode::SafeDownCast(this->VolumeSelectorWidget->GetSelected());
@@ -475,6 +476,7 @@ void vtkSlicerVolumesGUI::Exit ( )
   this->ReleaseModuleEventBindings();
 }
 
+//---------------------------------------------------------------------------
 void vtkSlicerVolumesGUI::UpdateFramesFromMRML()
 {
 
@@ -484,11 +486,18 @@ void vtkSlicerVolumesGUI::UpdateFramesFromMRML()
   vtkMRMLVolumeNode *refNode = 
         vtkMRMLVolumeNode::SafeDownCast(this->VolumeSelectorWidget->GetSelected());
 
-  // Update Volume Header Widget
+  // Update Volume Header and Display Widget
   if (refNode != NULL)
     {
     this->VolumeHeaderWidget->SetVolumeNode(refNode);
     this->VolumeHeaderWidget->UpdateWidgetFromMRML();
+    if (this->VolumeDisplayWidget != NULL)
+      {
+      this->VolumeDisplayWidget->SetVolumeNode(refNode);
+      // TODO: this call shouldn't be necessary, the set volume node should
+      // trigger a modified event that triggers update widget from mrml
+      this->VolumeDisplayWidget->UpdateWidgetFromMRML();
+      }
     }
   // Update Display Widget according to the selected Volume Node
   vtkSlicerVolumeDisplayWidget *oldDisplayWidget = this->VolumeDisplayWidget;
