@@ -38,6 +38,8 @@ vtkSlicerVolumeHeaderWidget::vtkSlicerVolumeHeaderWidget ( )
   this->ScalarTypeEntry = NULL;
   
   this->FileNameEntry = NULL;
+
+  this->AddNodeSelectorWidget = 0;
 }
 
 
@@ -139,39 +141,51 @@ void vtkSlicerVolumeHeaderWidget::SetVolumeNode ( vtkMRMLVolumeNode *volumeNode 
   if (volumeNode == this->GetVolumeNode ()) 
     {
     return;
-    } 
+    }
 
-  this->VolumeSelectorWidget->SetSelected(volumeNode); 
+  if (this->VolumeSelectorWidget)
+    {
+    this->VolumeSelectorWidget->SetSelected(volumeNode); 
+    // observe node modified events are not being observed
+    vtkIntArray  *events = vtkIntArray::New();
+    events->InsertNextValue( vtkCommand::ModifiedEvent);
+    events->InsertNextValue( vtkMRMLVolumeNode::DisplayModifiedEvent);
+    events->InsertNextValue( vtkMRMLVolumeNode::ImageDataModifiedEvent);
 
-  // observe node modified events are not being observed
-  vtkIntArray  *events = vtkIntArray::New();
-  events->InsertNextValue( vtkCommand::ModifiedEvent);
-  events->InsertNextValue( vtkMRMLVolumeNode::DisplayModifiedEvent);
-  events->InsertNextValue( vtkMRMLVolumeNode::ImageDataModifiedEvent);
-
-  vtkSetAndObserveMRMLNodeEventsMacro ( this->VolumeNode, volumeNode, events );
-  events->Delete();
-
+    vtkSetAndObserveMRMLNodeEventsMacro ( this->VolumeNode, volumeNode, events );
+    events->Delete();
+    }
+  else
+    {
+    this->VolumeNode=volumeNode;
+    }
   // 
   // Set the member variables and do a first process
   //
   if ( volumeNode != NULL)
-    {  
+    {
     this->ProcessMRMLEvents(volumeNode, vtkCommand::ModifiedEvent, NULL);
     }
 }
 
 //---------------------------------------------------------------------------
 vtkMRMLVolumeNode * vtkSlicerVolumeHeaderWidget::GetVolumeNode ()
-{ 
-   vtkMRMLVolumeNode *volume = 
+{
+  vtkMRMLVolumeNode *volume;
+  if (this->VolumeSelectorWidget)
+    {
+    volume = 
         vtkMRMLVolumeNode::SafeDownCast(this->VolumeSelectorWidget->GetSelected());
-
+    }
+  else
+    {
+    volume = this->VolumeNode;
+    }
    return volume;
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLStorageNode * vtkSlicerVolumeHeaderWidget::GetVolumeDisplayNode ()
+vtkMRMLStorageNode * vtkSlicerVolumeHeaderWidget::GetVolumeStorageNode ()
 { 
    vtkMRMLStorageNode *storage = NULL;
    vtkMRMLVolumeNode *volume = this->GetVolumeNode();
@@ -190,24 +204,26 @@ void vtkSlicerVolumeHeaderWidget::ProcessWidgetEvents ( vtkObject *caller,
   //
   // process volume selector events
   //
-  vtkSlicerNodeSelectorWidget *volSelector = 
+  if (this->VolumeSelectorWidget)
+    {
+    vtkSlicerNodeSelectorWidget *volSelector = 
       vtkSlicerNodeSelectorWidget::SafeDownCast(caller);
 
-  if (volSelector == this->VolumeSelectorWidget && 
+    if (volSelector == this->VolumeSelectorWidget && 
         event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent ) 
-    {
-    vtkMRMLVolumeNode *volume = 
+      {
+      vtkMRMLVolumeNode *volume = 
         vtkMRMLVolumeNode::SafeDownCast(this->VolumeSelectorWidget->GetSelected());
 
-    if (volume != NULL)
-      {
-      this->SetVolumeNode(volume);
-      this->UpdateWidgetFromMRML();
+      if (volume != NULL)
+        {
+        this->SetVolumeNode(volume);
+        this->UpdateWidgetFromMRML();
+        }
       }
-
     return;
     }
-} 
+}
 
 
 
@@ -254,7 +270,7 @@ void vtkSlicerVolumeHeaderWidget::UpdateWidgetFromMRML ()
       }
     }
 
-  vtkMRMLStorageNode *storageNode = this->GetVolumeDisplayNode();
+  vtkMRMLStorageNode *storageNode = this->GetVolumeStorageNode();
   if (storageNode != NULL) 
     {
     this->FileNameEntry->GetWidget()->SetValue(storageNode->GetFileName());
@@ -263,10 +279,26 @@ void vtkSlicerVolumeHeaderWidget::UpdateWidgetFromMRML ()
 }
 
 //---------------------------------------------------------------------------
+void vtkSlicerVolumeHeaderWidget::AddWidgetObservers ( ) 
+{
+  if (this->VolumeSelectorWidget)
+    {
+    if (this->MRMLScene != NULL)
+      {
+      this->VolumeSelectorWidget->SetMRMLScene(this->MRMLScene);
+      }
+    this->VolumeSelectorWidget->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
+    }
+}
+
+//---------------------------------------------------------------------------
 void vtkSlicerVolumeHeaderWidget::RemoveWidgetObservers ( ) 
 {
-  this->VolumeSelectorWidget->SetMRMLScene(NULL);
-  this->VolumeSelectorWidget->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
+  if (this->VolumeSelectorWidget)
+    {
+    this->VolumeSelectorWidget->SetMRMLScene(NULL);
+    this->VolumeSelectorWidget->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
+    }
 }
 
 
@@ -292,23 +324,31 @@ void vtkSlicerVolumeHeaderWidget::CreateWidget ( )
   volumeHeaderFrame->Create ( );
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                  volumeHeaderFrame->GetWidgetName() );
-  
-  this->VolumeSelectorWidget = vtkSlicerNodeSelectorWidget::New() ;
-  this->VolumeSelectorWidget->SetParent ( volumeHeaderFrame );
-  this->VolumeSelectorWidget->Create ( );
-  this->VolumeSelectorWidget->SetNodeClass("vtkMRMLScalarVolumeNode", NULL, NULL, NULL);
-  this->VolumeSelectorWidget->SetMRMLScene(this->GetMRMLScene());
-  this->VolumeSelectorWidget->SetBorderWidth(2);
-  // this->VolumeSelectorWidget->SetReliefToGroove();
-  this->VolumeSelectorWidget->SetPadX(2);
-  this->VolumeSelectorWidget->SetPadY(2);
-  this->VolumeSelectorWidget->GetWidget()->GetWidget()->IndicatorVisibilityOff();
-  this->VolumeSelectorWidget->SetLabelText( "Volume Select: ");
-  this->VolumeSelectorWidget->SetBalloonHelpString("select a volume from the current mrml scene.");
-  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
-                 this->VolumeSelectorWidget->GetWidgetName());
-  this->VolumeSelectorWidget->SetWidgetName("DisplayVolumeSelector");
 
+  if (this->AddNodeSelectorWidget)
+    {
+    this->VolumeSelectorWidget = vtkSlicerNodeSelectorWidget::New() ;
+    this->VolumeSelectorWidget->SetParent ( volumeHeaderFrame );
+    this->VolumeSelectorWidget->Create ( );
+    this->VolumeSelectorWidget->SetNodeClass("vtkMRMLVolumeNode", NULL, NULL, NULL);
+    this->VolumeSelectorWidget->SetMRMLScene(this->GetMRMLScene());
+    this->VolumeSelectorWidget->SetBorderWidth(2);
+    // this->VolumeSelectorWidget->SetReliefToGroove();
+    this->VolumeSelectorWidget->SetPadX(2);
+    this->VolumeSelectorWidget->SetPadY(2);
+    this->VolumeSelectorWidget->GetWidget()->GetWidget()->IndicatorVisibilityOff();
+    this->VolumeSelectorWidget->SetLabelText( "Volume Select: ");
+    this->VolumeSelectorWidget->SetBalloonHelpString("select a volume from the current mrml scene.");
+    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+                 this->VolumeSelectorWidget->GetWidgetName());
+    this->VolumeSelectorWidget->SetWidgetName("DisplayVolumeSelector");
+    }
+  else
+    {
+    this->VolumeSelectorWidget = NULL;
+    }
+
+  std::cout<<"Selector Widget: "<<this->VolumeSelectorWidget<<std::endl;
   vtkKWFrame *dimensionFrame = vtkKWFrame::New ( );
   dimensionFrame->SetParent ( volumeHeaderFrame );
   dimensionFrame->Create ( );
@@ -471,16 +511,11 @@ void vtkSlicerVolumeHeaderWidget::CreateWidget ( )
                this->FileNameEntry->GetWidgetName());
 
 
-  if (this->MRMLScene != NULL)
-    {
-    this->VolumeSelectorWidget->SetMRMLScene(this->MRMLScene);
-    }
-  this->VolumeSelectorWidget->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
-  
+  this->AddWidgetObservers();
   volumeHeaderFrame->Delete();
   dimensionFrame->Delete();
   spacingFrame->Delete();
   originFrame->Delete();
   frame->Delete();
-  
+
 }

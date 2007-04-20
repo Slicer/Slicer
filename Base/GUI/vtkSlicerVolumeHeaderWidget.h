@@ -57,12 +57,24 @@ public:
   virtual void RemoveWidgetObservers ( );
 
   // Description:
+  // add observers on widgets in the class
+  virtual void AddWidgetObservers ( );
+
+  virtual void UpdateWidgetFromMRML();
+
+  // Description:
   // get current volume node
   vtkMRMLVolumeNode* GetVolumeNode ();
   
   // Description:
-  // get current volume display node
-  vtkMRMLStorageNode* GetVolumeDisplayNode ();
+  // get current volume storage node
+  vtkMRMLStorageNode* GetVolumeStorageNode ();
+
+  // Description:
+  // Add a Node Selector Widget
+  vtkSetMacro(AddNodeSelectorWidget,int);
+  vtkGetMacro(AddNodeSelectorWidget,int);
+  vtkBooleanMacro(AddNodeSelectorWidget,int);
 
 protected:
   vtkSlicerVolumeHeaderWidget();
@@ -72,7 +84,7 @@ protected:
   // Create the widget.
   virtual void CreateWidget();
 
-  void UpdateWidgetFromMRML();
+  int AddNodeSelectorWidget;
 
   vtkMRMLVolumeNode *VolumeNode;
 
