@@ -51,10 +51,20 @@ public:
   // Description:
   // alternative method to propagate events generated in GUI to logic / mrml
   virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
-  
+
+  // Description:
+  // add observers on widgets in the class
+  virtual void AddWidgetObservers ( );
+
   // Description:
   // removes observers on widgets in the class
   virtual void RemoveWidgetObservers ( );
+
+  virtual void UpdateWidgetFromMRML();
+
+  // Description:
+  // This method releases references and removes observers.
+  virtual void TearDownWidget ( );
 
   // Description:
   // get current volume node
@@ -72,13 +82,8 @@ protected:
   // Create the widget.
   virtual void CreateWidget();
 
-  void UpdateWidgetFromMRML();
-  
-  vtkSlicerNodeSelectorWidget* VolumeSelectorWidget;
-  vtkSlicerNodeSelectorWidget* ColorSelectorWidget;
-  vtkKWWindowLevelThresholdEditor* WindowLevelThresholdEditor;
-  vtkKWCheckButton* InterpolateButton;
-  
+  vtkMRMLVolumeNode *VolumeNode;
+ 
 private:
 
 
