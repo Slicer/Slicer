@@ -7,6 +7,7 @@
 #include "vtkSlicerModuleLogic.h"
 //#include "vtkSlicerModelsLogic.h"
 #include "vtkSlicerModelDisplayWidget.h"
+#include "vtkSlicerModelHierarchyWidget.h"
 #include "vtkSlicerModuleCollapsibleFrame.h"
 
 #include "vtkKWFrameWithLabel.h"
@@ -36,6 +37,7 @@ vtkSlicerModelsGUI::vtkSlicerModelsGUI ( )
   this->ClipModelsWidget = NULL;
   this->LoadScalarsButton = NULL;
   this->ModelDisplaySelectorWidget = NULL;
+  this->ModelHierarchyWidget = NULL;
 
   NACLabel = NULL;
   NAMICLabel =NULL;
@@ -56,6 +58,13 @@ vtkSlicerModelsGUI::~vtkSlicerModelsGUI ( )
     this->ModelDisplaySelectorWidget->SetParent(NULL);
     this->ModelDisplaySelectorWidget->Delete();
     this->ModelDisplaySelectorWidget = NULL;
+    }
+
+  if (this->ModelHierarchyWidget)
+    {
+    this->ModelHierarchyWidget->SetParent(NULL);
+    this->ModelHierarchyWidget->Delete();
+    this->ModelHierarchyWidget = NULL;
     }
 
   if (this->LoadModelButton ) 
@@ -549,6 +558,25 @@ void vtkSlicerModelsGUI::BuildGUI ( )
      app->Script("pack %s -side top -anchor w -padx 2 -pady 4", 
                 this->SaveModelButton->GetWidgetName());
 
+     // Hierarchy FRAME  
+    vtkSlicerModuleCollapsibleFrame *hierFrame = vtkSlicerModuleCollapsibleFrame::New ( );
+    hierFrame->SetParent ( this->UIPanel->GetPageWidget ( "Models" ) );
+    hierFrame->Create ( );
+    hierFrame->SetLabelText ("Model Hierarchy");
+    hierFrame->CollapseFrame ( );
+    app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
+                  hierFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Models")->GetWidgetName());
+
+    this->ModelHierarchyWidget = vtkSlicerModelHierarchyWidget::New ( );
+    this->ModelHierarchyWidget->SetMRMLScene(this->GetMRMLScene() );
+    this->ModelHierarchyWidget->SetParent ( hierFrame->GetFrame() );
+    this->ModelHierarchyWidget->SetMRMLScene(this->GetMRMLScene());
+    this->ModelHierarchyWidget->Create ( );
+    app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
+                  this->ModelHierarchyWidget->GetWidgetName(), 
+                  hierFrame->GetFrame()->GetWidgetName());
+    
+
    this->ProcessGUIEvents (this->ModelDisplaySelectorWidget,
                           vtkSlicerNodeSelectorWidget::NodeSelectedEvent, NULL );
     /*
@@ -564,6 +592,7 @@ void vtkSlicerModelsGUI::BuildGUI ( )
     modDisplayFrame->Delete ( );
     clipFrame->Delete ( );
     modelSaveFrame->Delete();
+    hierFrame->Delete ( );
 }
 
 

@@ -81,6 +81,7 @@ SET(LIB_SRCS
   vtkSlicerClipModelsWidget.cxx
   vtkSlicerParameterWidget.cxx
   vtkSlicerSceneSnapshotWidget.cxx
+  vtkSlicerModelHierarchyWidget.cxx
   # VTK Replacement classes
   vtkSlicerInteractorStyle.cxx
   vtkSlicerViewerInteractorStyle.cxx

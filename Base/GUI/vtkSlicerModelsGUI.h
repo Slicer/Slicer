@@ -26,6 +26,7 @@
 // This class implements Slicer's Models GUI
 //
 class vtkSlicerModelDisplayWidget;
+class vtkSlicerModelHierarchyWidget;
 
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModelsGUI : public vtkSlicerModuleGUI
 {
@@ -120,6 +121,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModelsGUI : public vtkSlicerModuleGUI
     vtkSlicerModelDisplayWidget *ModelDisplayWidget;
 
     vtkSlicerClipModelsWidget *ClipModelsWidget;
+
+    vtkSlicerModelHierarchyWidget *ModelHierarchyWidget;
 
     vtkSlicerModelsLogic *Logic;
 
