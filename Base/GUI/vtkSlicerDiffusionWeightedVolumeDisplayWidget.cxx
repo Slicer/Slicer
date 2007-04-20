@@ -250,6 +250,19 @@ void vtkSlicerDiffusionWeightedVolumeDisplayWidget::ProcessMRMLEvents ( vtkObjec
 void vtkSlicerDiffusionWeightedVolumeDisplayWidget::UpdateWidgetFromMRML ()
 {
   vtkMRMLDiffusionWeightedVolumeDisplayNode *displayNode = vtkMRMLDiffusionWeightedVolumeDisplayNode::SafeDownCast(this->GetVolumeDisplayNode());
+
+  // check to see if the color selector widget has it's mrml scene set (it
+  // could have been set to null)
+  if ( this->ColorSelectorWidget )
+    {
+    if (this->GetMRMLScene() != NULL &&
+        this->ColorSelectorWidget->GetMRMLScene() == NULL)
+      {
+      vtkDebugMacro("UpdateWidgetFromMRML: resetting the color selector's mrml scene");
+      this->ColorSelectorWidget->SetMRMLScene(this->GetMRMLScene());
+      }
+    }
+  
   if (displayNode != NULL) 
     {
     this->WindowLevelThresholdEditor->SetWindowLevel(
