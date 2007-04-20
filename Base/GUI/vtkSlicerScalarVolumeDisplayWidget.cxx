@@ -232,6 +232,7 @@ void vtkSlicerScalarVolumeDisplayWidget::ProcessMRMLEvents ( vtkObject *caller,
     return;
     }
 }
+
 //---------------------------------------------------------------------------
 void vtkSlicerScalarVolumeDisplayWidget::UpdateWidgetFromMRML ()
 {
@@ -241,6 +242,17 @@ void vtkSlicerScalarVolumeDisplayWidget::UpdateWidgetFromMRML ()
     this->WindowLevelThresholdEditor->SetImageData(volumeNode->GetImageData());
     }
 
+  // check to see if the color selector widget has it's mrml scene set (it
+  // could have been set to null)
+  if ( this->ColorSelectorWidget )
+    {
+    if (this->GetMRMLScene() != NULL &&
+        this->ColorSelectorWidget->GetMRMLScene() == NULL)
+      {
+      vtkDebugMacro("UpdateWidgetFromMRML: resetting the color selector's mrml scene");
+      this->ColorSelectorWidget->SetMRMLScene(this->GetMRMLScene());
+      }
+    }
   vtkMRMLVolumeDisplayNode *displayNode = this->GetVolumeDisplayNode();
   if (displayNode != NULL) 
     {
@@ -256,10 +268,12 @@ void vtkSlicerScalarVolumeDisplayWidget::UpdateWidgetFromMRML ()
     this->InterpolateButton->SetSelectedState( displayNode->GetInterpolate()  );
 
     }
+  
   return;
 
 }
 
+//---------------------------------------------------------------------------
 void vtkSlicerScalarVolumeDisplayWidget::AddWidgetObservers ( )
 {
    this->ColorSelectorWidget->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -310,7 +324,7 @@ void vtkSlicerScalarVolumeDisplayWidget::CreateWidget ( )
     this->ColorSelectorWidget = vtkSlicerNodeSelectorWidget::New() ;
     this->ColorSelectorWidget->SetParent ( volDisplayFrame );
     this->ColorSelectorWidget->Create ( );
-    this->ColorSelectorWidget->SetNodeClass("vtkMRMLColorTableNode", NULL, NULL, NULL);
+    this->ColorSelectorWidget->SetNodeClass("vtkMRMLColorNode", NULL, NULL, NULL);
     this->ColorSelectorWidget->ShowHiddenOn();
     this->ColorSelectorWidget->SetMRMLScene(this->GetMRMLScene());
     this->ColorSelectorWidget->SetBorderWidth(2);
@@ -320,7 +334,7 @@ void vtkSlicerScalarVolumeDisplayWidget::CreateWidget ( )
     this->ColorSelectorWidget->GetWidget()->GetWidget()->IndicatorVisibilityOff();
     this->ColorSelectorWidget->GetWidget()->GetWidget()->SetWidth(24);
     this->ColorSelectorWidget->SetLabelText( "Color Select: ");
-    this->ColorSelectorWidget->SetBalloonHelpString("select a volume from the current mrml scene.");
+    this->ColorSelectorWidget->SetBalloonHelpString("select a color from the current mrml scene.");
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                   this->ColorSelectorWidget->GetWidgetName());
 
