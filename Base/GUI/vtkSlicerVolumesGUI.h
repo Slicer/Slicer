@@ -14,6 +14,9 @@
 
 #include "vtkSlicerNodeSelectorWidget.h"
 #include "vtkSlicerVolumeDisplayWidget.h"
+#include "vtkSlicerDiffusionWeightedVolumeDisplayWidget.h"
+#include "vtkSlicerScalarVolumeDisplayWidget.h"
+
 #include "vtkSlicerVolumeHeaderWidget.h"
 
 class vtkKWPushButton;
@@ -21,6 +24,7 @@ class vtkKWLoadSaveButtonWithLabel;
 class vtkKWLoadSaveButton;
 class vtkKWEntryWithLabel;
 class vtkSlicerModuleCollapsibleFrame;
+class vtkSlicerVolumeFileHeaderWidget;
 class vtkSlicerVolumeFileHeaderWidget;
 
 // Description:
@@ -48,6 +52,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerVolumesGUI : public vtkSlicerModuleGUI
     vtkGetObjectMacro (HelpFrame, vtkSlicerModuleCollapsibleFrame );
     vtkGetObjectMacro (LoadFrame, vtkSlicerModuleCollapsibleFrame );
     vtkGetObjectMacro (DisplayFrame, vtkSlicerModuleCollapsibleFrame );
+    vtkGetObjectMacro (OptionFrame, vtkSlicerModuleCollapsibleFrame );
     vtkGetObjectMacro (SaveFrame, vtkSlicerModuleCollapsibleFrame );
 
     vtkGetObjectMacro ( VolumeDisplayWidget, vtkSlicerVolumeDisplayWidget );
@@ -87,7 +92,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerVolumesGUI : public vtkSlicerModuleGUI
     virtual void ProcessLogicEvents ( vtkObject *caller, unsigned long event, void *callData );
     virtual void ProcessGUIEvents ( vtkObject *caller, unsigned long event, void *callData );
     virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
-    
+
     // Description:
     // Describe behavior at module startup and exit.
     virtual void Enter ( );
@@ -96,12 +101,15 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerVolumesGUI : public vtkSlicerModuleGUI
  protected:
     vtkSlicerVolumesGUI ( );
     virtual ~vtkSlicerVolumesGUI ( );
-    
+
     char *SelectedVolumeID;
 
     // Module logic and mrml pointers
     vtkSlicerVolumesLogic *Logic;
     vtkMRMLVolumeNode *VolumeNode;
+
+    virtual void UpdateFramesFromMRML();
+
 
     // Widgets for the Volumes module
     vtkKWLoadSaveButtonWithLabel *LoadVolumeButton;
@@ -114,13 +122,21 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerVolumesGUI : public vtkSlicerModuleGUI
     vtkSlicerModuleCollapsibleFrame *LoadFrame;
     vtkSlicerModuleCollapsibleFrame *DisplayFrame;
     vtkSlicerModuleCollapsibleFrame *InfoFrame;
+    vtkSlicerModuleCollapsibleFrame *OptionFrame;
     vtkSlicerModuleCollapsibleFrame *SaveFrame;
+
+    vtkKWFrame *ScalarDisplayFrame;
+    vtkKWFrame *DWIDisplayFrame;
+    vtkKWFrame *VolumeDisplayFrame;
 
     vtkSlicerNodeSelectorWidget* VolumeSelectorWidget;
     vtkKWLoadSaveButton *SaveVolumeButton;
     vtkSlicerVolumeDisplayWidget *VolumeDisplayWidget;
+    vtkSlicerScalarVolumeDisplayWidget *scalarVDW;
+    vtkSlicerDiffusionWeightedVolumeDisplayWidget *dwiVDW;
     vtkSlicerVolumeHeaderWidget *VolumeHeaderWidget;
     vtkSlicerVolumeFileHeaderWidget *VolumeFileHeaderWidget;
+
 
     vtkKWLabel *NACLabel;
     vtkKWLabel *NAMICLabel;
