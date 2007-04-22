@@ -29,8 +29,6 @@ Authors: Michael McKenna, David Small, Steve Pieper.
 #include "vtkCollection.h"
 
 
-static vtkCollection *sTextureFonts = vtkCollection::New();
-
 
 // TODO - find a good method to auto determine a freetype font path.  
 // if there isn't a standard, should use use an environment var?
