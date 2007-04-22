@@ -72,10 +72,6 @@ bool vtkCard::DefaultUseBoxEdge = 1;
 vtkFloatingPointType vtkCard::DefaultBoxColor[3] = {1, 1, 1};
 
 
-// i'm not really using the card list anymore (it was for sorting), but it's fine to have around.
-static vtkCollection *sCards = vtkCollection::New();
-
-
 vtkCard::vtkCard()
 {
     int i;
@@ -140,19 +136,12 @@ vtkCard::vtkCard()
 
     this->LevelNum = 0;
 
-    sCards->AddItem(this);
 }
 
 
 vtkCard::~vtkCard() {
-    sCards->RemoveItem(this);
 
     // TODO - other deletes and cleanups (?)
-}
-
-
-vtkCollection *vtkCard::GetCards() {
-    return sCards;
 }
 
 

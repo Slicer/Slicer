@@ -173,8 +173,6 @@ public:
     void AddActors();
 
 
-    static vtkCollection *GetCards();
-
     vtkCollection *GetOtherTexts();
 
 
