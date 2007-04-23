@@ -72,7 +72,8 @@ void vtkSlicerScalarVolumeDisplayWidget::PrintSelf ( ostream& os, vtkIndent inde
 void vtkSlicerScalarVolumeDisplayWidget::ProcessWidgetEvents ( vtkObject *caller,
                                                          unsigned long event, void *callData )
 {
-
+  this->Superclass::ProcessWidgetEvents(caller, event, callData);
+  
   //
   // process color selector events
   //
@@ -236,6 +237,8 @@ void vtkSlicerScalarVolumeDisplayWidget::ProcessMRMLEvents ( vtkObject *caller,
 //---------------------------------------------------------------------------
 void vtkSlicerScalarVolumeDisplayWidget::UpdateWidgetFromMRML ()
 {
+  vtkDebugMacro("UpdateWidgetFromMRML");
+  
   vtkMRMLVolumeNode *volumeNode = this->GetVolumeNode();
   if (volumeNode != NULL)
     {
@@ -252,8 +255,9 @@ void vtkSlicerScalarVolumeDisplayWidget::UpdateWidgetFromMRML ()
       vtkDebugMacro("UpdateWidgetFromMRML: resetting the color selector's mrml scene");
       this->ColorSelectorWidget->SetMRMLScene(this->GetMRMLScene());
       }
-    }
+    }  
   vtkMRMLVolumeDisplayNode *displayNode = this->GetVolumeDisplayNode();
+  
   if (displayNode != NULL) 
     {
     this->WindowLevelThresholdEditor->SetWindowLevel(
@@ -276,15 +280,19 @@ void vtkSlicerScalarVolumeDisplayWidget::UpdateWidgetFromMRML ()
 //---------------------------------------------------------------------------
 void vtkSlicerScalarVolumeDisplayWidget::AddWidgetObservers ( )
 {
+  this->Superclass::AddWidgetObservers();
+  
    this->ColorSelectorWidget->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
    this->WindowLevelThresholdEditor->AddObserver(vtkKWWindowLevelThresholdEditor::ValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
    this->WindowLevelThresholdEditor->AddObserver(vtkKWWindowLevelThresholdEditor::ValueStartChangingEvent, (vtkCommand *)this->GUICallbackCommand );
    this->InterpolateButton->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+
 }
 
 //---------------------------------------------------------------------------
 void vtkSlicerScalarVolumeDisplayWidget::RemoveWidgetObservers ( ) 
 {
+  this->Superclass::RemoveWidgetObservers();
 
   this->ColorSelectorWidget->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->WindowLevelThresholdEditor->RemoveObservers(vtkKWWindowLevelThresholdEditor::ValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -292,7 +300,6 @@ void vtkSlicerScalarVolumeDisplayWidget::RemoveWidgetObservers ( )
   this->InterpolateButton->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 
   this->WindowLevelThresholdEditor->SetImageData(NULL); 
-
 }
 
 

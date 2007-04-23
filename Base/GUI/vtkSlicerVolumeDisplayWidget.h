@@ -41,8 +41,17 @@ public:
   static vtkSlicerVolumeDisplayWidget* New();
   vtkTypeRevisionMacro(vtkSlicerVolumeDisplayWidget,vtkSlicerWidget);
   void PrintSelf(ostream& os, vtkIndent indent);
-  
-  void SetVolumeNode ( vtkMRMLVolumeNode *node );
+
+  // Description:
+  // get current volume node
+  vtkGetObjectMacro(VolumeNode, vtkMRMLVolumeNode);
+
+  // Description:
+  // Keep track of changes in the volume node
+  void SetVolumeNode ( vtkMRMLVolumeNode *node )
+  {
+    vtkSetAndObserveMRMLNodeMacro( this->VolumeNode, node);
+  }
   
   // Description:
   // alternative method to propagate events generated in GUI to logic / mrml
@@ -65,10 +74,6 @@ public:
   // Description:
   // This method releases references and removes observers.
   virtual void TearDownWidget ( );
-
-  // Description:
-  // get current volume node
-  vtkMRMLVolumeNode* GetVolumeNode ();
   
   // Description:
   // get current volume display node

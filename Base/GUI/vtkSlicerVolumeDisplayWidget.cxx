@@ -36,6 +36,8 @@ vtkSlicerVolumeDisplayWidget::~vtkSlicerVolumeDisplayWidget ( )
 {
 
   this->SetMRMLScene ( NULL );
+  vtkSetMRMLNodeMacro(this->VolumeNode, NULL);
+
 }
 
 
@@ -45,39 +47,13 @@ void vtkSlicerVolumeDisplayWidget::PrintSelf ( ostream& os, vtkIndent indent )
     this->vtkObject::PrintSelf ( os, indent );
 
     os << indent << "vtkSlicerVolumeDisplayWidget: " << this->GetClassName ( ) << "\n";
+
+    if (this->VolumeNode)
+      {
+      os << indent << "VolumeNode:" << "\n";
+      this->VolumeNode->PrintSelf(os, indent.GetNextIndent());
+      }
     // print widgets?
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerVolumeDisplayWidget::SetVolumeNode ( vtkMRMLVolumeNode *volumeNode )
-{
-  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting VolumeNode to " << volumeNode);
-  // Select this volume node
-  if (this->VolumeNode != volumeNode)
-    {
-    this->VolumeNode = volumeNode;
-    vtkDebugMacro("SetVolumeNode: calling modified on this, should trigger a process mrml event via the observers");
-    this->Modified();
-    }
-  // TODO: display node modified events are not being observed
-
-  
-  // 
-  // Set the member variables and do a first process
-  //
-  if ( volumeNode != NULL)
-    {
-//    this->ProcessMRMLEvents(volumeNode, vtkCommand::ModifiedEvent, NULL);
-    }
-}
-
-//---------------------------------------------------------------------------
-vtkMRMLVolumeNode * vtkSlicerVolumeDisplayWidget::GetVolumeNode ()
-{ 
-   vtkMRMLVolumeNode *volume = 
-        vtkMRMLVolumeNode::SafeDownCast(this->VolumeNode);
-
-   return volume;
 }
 
 //---------------------------------------------------------------------------
@@ -106,7 +82,8 @@ void vtkSlicerVolumeDisplayWidget::ProcessMRMLEvents ( vtkObject *caller,
 
   vtkDebugMacro("ProcessMRMLEvents: event = " << event);
   // when the volume node changes, just get a modified on this
-  if (event == vtkCommand::ModifiedEvent)
+  if (vtkSlicerVolumeDisplayWidget::SafeDownCast(caller) != NULL &&
+      event == vtkCommand::ModifiedEvent)
     {
     vtkDebugMacro("ProcessMRMLEvents: got modified event, hopefully from my volume node, calling myupdate widget from mrml");
     // check that the display node is correct
