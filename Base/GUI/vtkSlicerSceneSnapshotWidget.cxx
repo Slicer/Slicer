@@ -111,6 +111,7 @@ void vtkSlicerSceneSnapshotWidget::ProcessWidgetEvents ( vtkObject *caller,
     if (snapshotNode)
       {
       snapshotNode->StoreScene();
+      //snapshotNode->Delete();
       }
     }
   else if (this->RestoreSceneButton == vtkKWPushButton::SafeDownCast(caller)  && event == vtkKWPushButton::InvokedEvent )

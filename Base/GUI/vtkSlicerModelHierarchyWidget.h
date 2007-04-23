@@ -34,6 +34,7 @@
 
 class vtkKWMenu;
 class vtkKWTreeWithScrollbars;
+class vtkKWSimpleEntryDialog;
 
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModelHierarchyWidget : public vtkSlicerWidget
 {
@@ -97,6 +98,8 @@ private:
   
   vtkKWTreeWithScrollbars *TreeWidget;
   vtkKWMenu *ContextMenu;
+
+  vtkKWSimpleEntryDialog *NameDialog;
 
   vtkSlicerModelHierarchyWidget(const vtkSlicerModelHierarchyWidget&); // Not implemented
   void operator=(const vtkSlicerModelHierarchyWidget&); // Not Implemented

@@ -2,6 +2,7 @@
 #include "vtkObjectFactory.h"
 
 #include "vtkMRMLModelHierarchyNode.h"
+#include "vtkMRMLModelDisplayNode.h"
 
 #include "vtkSlicerModelHierarchyWidget.h"
 
@@ -15,6 +16,8 @@
 #include "vtkKWTkUtilities.h"
 #include "vtkKWEntryWithLabel.h"
 #include "vtkKWLabelWithLabel.h"
+#include "vtkKWSimpleEntryDialog.h"
+#include "vtkKWEntry.h"
 
 #include "vtkKWTreeWithScrollbars.h"
 
@@ -49,7 +52,7 @@ vtkSlicerModelHierarchyWidget::~vtkSlicerModelHierarchyWidget ( )
     }
   if (this->MRMLScene)
     {
-    this->SetAndObserveMRMLSceneEvents(this->GetMRMLScene(), NULL);
+    this->SetMRMLScene(NULL);
     }
 }
 
@@ -162,16 +165,33 @@ void vtkSlicerModelHierarchyWidget::DeleteNodeCallback(const char *id)
 //---------------------------------------------------------------------------
 void vtkSlicerModelHierarchyWidget::InsertHierarchyNodeCallback(const char *id)
 {
+
   vtkMRMLModelHierarchyNode *parentNode = vtkMRMLModelHierarchyNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(id));
   vtkMRMLModelHierarchyNode *node = vtkMRMLModelHierarchyNode::New();
+
   this->GetMRMLScene()->AddNodeNoNotify(node);
-  if (parentNode != NULL)
+  vtkKWEntryWithLabel *entry = this->NameDialog->GetEntry();
+  entry->GetWidget()->SetValue(node->GetName());
+  int result = this->NameDialog->Invoke();
+  if (!result) 
     {
-    node->SetParentNodeID(parentNode->GetID());
+    this->MRMLScene->RemoveNode(node);
+    node = NULL;
     }
-  node->SetName(node->GetID());
-  this->UpdateTreeFromMRML();
-  this->GetMRMLScene()->InvokeEvent(vtkMRMLScene::NodeAddedEvent);
+  else 
+    {
+
+    node->SetName(entry->GetWidget()->GetValue());
+    if (parentNode != NULL)
+      {
+      node->SetParentNodeID(parentNode->GetID());
+      }
+    vtkMRMLModelDisplayNode *dnode = vtkMRMLModelDisplayNode::New();
+    this->GetMRMLScene()->AddNodeNoNotify(dnode);
+    node->SetAndObserveDisplayNodeID(dnode->GetID());
+    this->UpdateTreeFromMRML();
+    this->GetMRMLScene()->InvokeEvent(vtkMRMLScene::NodeAddedEvent, node);
+    }
 }
 
 
@@ -338,6 +358,16 @@ void vtkSlicerModelHierarchyWidget::CreateWidget ( )
   events->InsertNextValue(vtkMRMLScene::NewSceneEvent);
   this->SetAndObserveMRMLSceneEvents(this->GetMRMLScene(), events);
   events->Delete();
+
+  this->NameDialog  = vtkKWSimpleEntryDialog::New();
+  this->NameDialog->SetParent ( this->GetParent());
+  this->NameDialog->SetTitle("Model Hierarchy Name");
+  this->NameDialog->SetSize(400, 200);
+  this->NameDialog->SetStyleToOkCancel();
+  vtkKWEntryWithLabel *entry = this->NameDialog->GetEntry();
+  entry->SetLabelText("Hierarchy Name");
+  entry->GetWidget()->SetValue("");
+  this->NameDialog->Create ( );
 
   this->UpdateTreeFromMRML();
 

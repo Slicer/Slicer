@@ -573,7 +573,7 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
     && (event == vtkMRMLScene::NodeAddedEvent || event == vtkMRMLScene::NodeRemovedEvent ) )
     {
     vtkMRMLNode *node = (vtkMRMLNode*) (callData);
-    if (node != NULL && node->IsA("vtkMRMLModelNode") )
+    if (node != NULL && ( node->IsA("vtkMRMLModelNode") || node->IsA("vtkMRMLModelHierarchyNode")))
       {
       this->UpdateFromMRML();
       }
@@ -619,7 +619,7 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
   else if (vtkMRMLModelHierarchyNode::SafeDownCast(caller) &&
            event == vtkCommand::ModifiedEvent)
     {
-    vtkDebugMacro("ProcessMRMLEvents: got a model hierarchy node modified event");
+    this->UpdateFromMRML();
     }
   else
     {
