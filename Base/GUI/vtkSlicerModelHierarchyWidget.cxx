@@ -169,6 +169,9 @@ void vtkSlicerModelHierarchyWidget::ProcessWidgetEvents ( vtkObject *caller,
 
           sprintf(command, "DeleteNodeCallback {%s}", (const char *)callData);
           this->ContextMenu->AddCommand("Delete Model Hierarchy Node", this, command);
+
+          sprintf(command, "RenameNodeCallback {%s}", (const char *)callData);
+          this->ContextMenu->AddCommand("Rename Model Hierarchy Node", this, command);
           }
         }
       else if ( node == NULL )
@@ -213,6 +216,28 @@ void vtkSlicerModelHierarchyWidget::DeleteNodeCallback(const char *id)
 }
 
 //---------------------------------------------------------------------------
+void vtkSlicerModelHierarchyWidget::RenameNodeCallback(const char *id)
+{
+  // cout << "I want to delete MRML node " << id << endl;
+  // delete node, then repopulate tree
+  for (unsigned int i=0; i<this->SelectedLeaves.size(); i++)
+    {
+    vtkMRMLNode *node = this->GetMRMLScene()->GetNodeByID(this->SelectedLeaves[i].c_str());
+    if (node != NULL)
+      {
+      vtkKWEntryWithLabel *entry = this->NameDialog->GetEntry();
+      entry->GetWidget()->SetValue(node->GetName());
+      int result = this->NameDialog->Invoke();
+      if (result) 
+        {
+        node->SetName(entry->GetWidget()->GetValue());
+        }
+      }
+    }
+  this->UpdateTreeFromMRML();
+}
+
+//---------------------------------------------------------------------------
 void vtkSlicerModelHierarchyWidget::InsertHierarchyNodeCallback(const char *id)
 {
 
@@ -230,7 +255,6 @@ void vtkSlicerModelHierarchyWidget::InsertHierarchyNodeCallback(const char *id)
     }
   else 
     {
-
     node->SetName(entry->GetWidget()->GetValue());
     if (parentNode != NULL)
       {
