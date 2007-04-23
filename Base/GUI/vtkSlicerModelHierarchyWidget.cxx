@@ -114,6 +114,7 @@ void vtkSlicerModelHierarchyWidget::ProcessWidgetEvents ( vtkObject *caller,
         {
         this->TreeWidget->GetWidget()->ClearSelection();
         this->TreeWidget->GetWidget()->SelectNode((const char *)callData);
+        selected = this->TreeWidget->GetWidget()->GetSelection();
         this->SelectedLeaves.clear();
         this->SelectedLeaves.push_back((const char *)callData);
         }

@@ -122,7 +122,10 @@ vtkSlicerVolumeHeaderWidget::~vtkSlicerVolumeHeaderWidget ( )
     }
 
   this->SetMRMLScene ( NULL );  
-  vtkSetAndObserveMRMLNodeMacro(this->VolumeNode, NULL);
+  if (this->VolumeNode)
+    {
+    vtkSetAndObserveMRMLNodeMacro(this->VolumeNode, NULL);
+    }
 }
 
 

@@ -563,6 +563,8 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
   if (event == vtkMRMLScene::SceneCloseEvent )
     {
     this->SceneClosing = true;
+    this->RemoveHierarchyObservers();
+    this->RemoveModelObservers();
     }
   else 
     {
@@ -844,6 +846,7 @@ void vtkSlicerViewerWidget::UpdateModelsFromMRML()
     {
     this->MainViewer->RemoveAllViewProps();
     this->RemoveModelObservers();
+    this->RemoveHierarchyObservers();
     this->DisplayedModels.clear();
     this->DisplayedModelNodes.clear();
     this->AddAxisActors();
@@ -982,7 +985,7 @@ void vtkSlicerViewerWidget::CheckModelHierarchies()
 //---------------------------------------------------------------------------
 void vtkSlicerViewerWidget::AddHierarchiyObservers()
 {
-  if (this->MRMLScene == NULL)
+   if (this->MRMLScene == NULL)
     {
     return;
     }
@@ -1175,6 +1178,7 @@ void vtkSlicerViewerWidget::RemoveHierarchyObservers()
       node->RemoveObservers ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
       }
     }
+  RegisteredModelHierarchies.clear();
 }
 
 
