@@ -55,6 +55,7 @@ vtkMRMLModelHierarchyNode::vtkMRMLModelHierarchyNode()
   this->ModelNodeID = NULL;
   this->DisplayNodeID = NULL;
   this->ModelDisplayNode = NULL;
+  this->HideFromEditors = 1;
   this->Expanded = 1;
 }
 
