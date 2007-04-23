@@ -383,6 +383,7 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents ( vtkObject *caller,
         {
         this->ApplicationLogic->GetSelectionNode()->SetActiveVolumeID( volumeNode->GetID() );
         this->ApplicationLogic->PropagateVolumeSelection();
+        this->VolumeSelectorWidget->SetSelected( volumeNode );
         this->VolumeDisplayWidget->SetVolumeNode(volumeNode);
         }
       volumeLogic->RemoveObservers(vtkCommand::ProgressEvent,  this->GUICallbackCommand);
