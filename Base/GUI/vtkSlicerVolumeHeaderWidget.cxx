@@ -351,7 +351,6 @@ void vtkSlicerVolumeHeaderWidget::CreateWidget ( )
     this->VolumeSelectorWidget = NULL;
     }
 
-  std::cout<<"Selector Widget: "<<this->VolumeSelectorWidget<<std::endl;
   vtkKWFrame *dimensionFrame = vtkKWFrame::New ( );
   dimensionFrame->SetParent ( volumeHeaderFrame );
   dimensionFrame->Create ( );
