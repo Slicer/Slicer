@@ -194,7 +194,7 @@ int vtkMRMLNRRDStorageNode::ReadData(vtkMRMLNode *refNode)
   // Check if this is a NRRD file that we can read
   if (!reader->CanReadFile(fullName.c_str()))
     {
-    vtkErrorMacro("vtkMRMLNRRDStorageNode: This is not a nrrd file");
+    vtkDebugMacro("vtkMRMLNRRDStorageNode: This is not a nrrd file");
     reader->Delete();
     return 0;
     }
