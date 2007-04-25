@@ -290,7 +290,7 @@ int vtkSlicerMRMLSaveDataWidget::UpdateFromMRML()
       }
     vtkMRMLVolumeNode *vnode = vtkMRMLVolumeNode::SafeDownCast(node);
     vtkMRMLStorageNode* snode = vnode->GetStorageNode();
-    if (snode == NULL && node->GetModifiedSinceRead()) 
+    if (snode == NULL) 
       {
       vtkMRMLVolumeArchetypeStorageNode *storageNode = vtkMRMLVolumeArchetypeStorageNode::New();
       storageNode->SetScene(this->GetMRMLScene());

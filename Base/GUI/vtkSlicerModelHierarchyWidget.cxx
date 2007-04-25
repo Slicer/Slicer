@@ -349,8 +349,8 @@ void vtkSlicerModelHierarchyWidget::ProcessMRMLEvents ( vtkObject *caller,
                                                   void *callData )
 {
   if (event == vtkCommand::ModifiedEvent ||
-      event == vtkMRMLScene::NodeAddedEvent || 
-      event == vtkMRMLScene::NodeRemovedEvent || 
+      ((event == vtkMRMLScene::NodeAddedEvent || event == vtkMRMLScene::NodeRemovedEvent) && 
+      (reinterpret_cast<vtkMRMLModelNode *>(callData) || reinterpret_cast<vtkMRMLModelHierarchyNode *>(callData))) ||
       event == vtkMRMLScene::NewSceneEvent)
     {
     this->UpdateTreeFromMRML();
