@@ -467,41 +467,41 @@ vtkQueryAtlasGUI::~vtkQueryAtlasGUI ( )
       this->GeneClearTermButton  = NULL;
       }
 
-    if ( this->GeneMultiColumnList )
+    if ( this->MiscMultiColumnList )
       {
-      this->GeneMultiColumnList->SetParent(NULL);
-      this->GeneMultiColumnList->Delete();
-      this->GeneMultiColumnList = NULL;
+      this->MiscMultiColumnList->SetParent(NULL);
+      this->MiscMultiColumnList->Delete();
+      this->MiscMultiColumnList = NULL;
       }
-    if ( this->GeneClearAllButton )
+    if ( this->MiscClearAllButton )
       {
-      this->GeneClearAllButton->SetParent(NULL);
-      this->GeneClearAllButton->Delete();
-      this->GeneClearAllButton  = NULL;
+      this->MiscClearAllButton->SetParent(NULL);
+      this->MiscClearAllButton->Delete();
+      this->MiscClearAllButton  = NULL;
       }
-    if ( this->GeneUseAllButton )
+    if ( this->MiscUseAllButton )
       {
-      this->GeneUseAllButton->SetParent(NULL);
-      this->GeneUseAllButton->Delete();
-      this->GeneUseAllButton  = NULL;
+      this->MiscUseAllButton->SetParent(NULL);
+      this->MiscUseAllButton->Delete();
+      this->MiscUseAllButton  = NULL;
       }
-    if ( this->GeneUseNoneButton )
+    if ( this->MiscUseNoneButton )
       {
-      this->GeneUseNoneButton->SetParent(NULL);
-      this->GeneUseNoneButton->Delete();
-      this->GeneUseNoneButton  = NULL;
+      this->MiscUseNoneButton->SetParent(NULL);
+      this->MiscUseNoneButton->Delete();
+      this->MiscUseNoneButton  = NULL;
       }
-    if ( this->GeneAddTermButton )
+    if ( this->MiscAddTermButton )
       {
-      this->GeneAddTermButton->SetParent(NULL);
-      this->GeneAddTermButton->Delete();
-      this->GeneAddTermButton  = NULL;
+      this->MiscAddTermButton->SetParent(NULL);
+      this->MiscAddTermButton->Delete();
+      this->MiscAddTermButton  = NULL;
       }
-    if ( this->GeneClearTermButton )
+    if ( this->MiscClearTermButton )
       {
-      this->GeneClearTermButton->SetParent(NULL);
-      this->GeneClearTermButton->Delete();
-      this->GeneClearTermButton  = NULL;
+      this->MiscClearTermButton->SetParent(NULL);
+      this->MiscClearTermButton->Delete();
+      this->MiscClearTermButton  = NULL;
       }
 
 }
