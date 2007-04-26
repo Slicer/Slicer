@@ -59,21 +59,6 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
      <description>Name to use for this model. Ignored if making multiple models, which uses the label name</description>
      <default>Model</default>
    </string>
-   <boolean>
-     <name>GenerateAll</name>
-     <label>Generate All Models</label>
-     <longflag>--generateAll</longflag>
-     <description>Generate all models that exist within the range Start Label to End Label. If false and an Anatomy Label File is specified, only models which have an entry in the Anatomy Label File will be generated.</description>
-     <default>false</default>
-   </boolean>
-   <file fileExtensions=".csv">
-     <name>AnatomyLabelFile</name>
-     <channel>input</channel>
-     <label>Anatomy Label File</label>
-     <longflag>--anatomyLabelFile</longflag>
-     <description>A file containing a comma separted list of anatomy names and label numbers.</description>
-     <default></default>
-   </file>
    <integer>
      <name>Smooth</name>
      <label>Smooth</label>
@@ -120,8 +105,34 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
    </string-enumeration>
 </parameters>
 <parameters>
+   <label>Anatomical Information</label>
+   <description>Use external information to name models</description>
+   <file fileExtensions=".csv">
+     <name>AnatomyLabelFile</name>
+     <channel>input</channel>
+     <label>Anatomy Label File</label>
+     <longflag>--anatomyLabelFile</longflag>
+     <description>A file containing a comma separted list of anatomy names and label numbers. If not set, a best guess color look up table will be used.</description>
+     <default></default>
+   </file>
+   <boolean>
+     <name>SkipUnNamed</name>
+     <label>Skip Un-Named Labels</label>
+     <longflag>--skipUnNamed</longflag>
+     <description> If true and an Anatomy Label File is specified, only models which have an entry in the Anatomy Label File will be generated. If false, generate all models that exist within the label range.</description>
+     <default>true</default>
+   </boolean>
+</parameters>
+<parameters>
   <label>Create Multiple</label>
   <description>Create more than one model at the same time</description>
+  <boolean>
+     <name>GenerateAll</name>
+     <label>Generate All Models</label>
+     <longflag>--generateAll</longflag>
+     <description>Generate models for all labels in the input volume. Ignores Start Label and End Label settings.</description>
+     <default>false</default>
+   </boolean>
   <integer>
     <name>EndLabel</name>
     <label>End Label</label>

@@ -105,7 +105,7 @@ int main(int argc, char * argv[])
     vtkImageData * image;
     vtkDiscreteMarchingCubes  * cubes = NULL;
     vtkWindowedSincPolyDataFilter *smoother = NULL;
-    bool makeMultiple = (EndLabel > StartLabel ? true : false);
+    bool makeMultiple;
     vtkImageAccumulate *hist = NULL;
     std::vector<int> skippedModels;
     std::vector<int> madeModels;
@@ -135,6 +135,16 @@ int main(int argc, char * argv[])
     float numFilterSteps;
     // increment after each filter is run
     float currentFilterOffset = 0.0;
+
+    // figure out if we're making multiple models
+    if (GenerateAll)
+      {
+      makeMultiple = true;
+      }
+    else
+      {
+      makeMultiple = (EndLabel > StartLabel ? true : false);
+      }
     if (makeMultiple) 
       {
       numSingletonFilterSteps = 4;
@@ -249,7 +259,7 @@ int main(int argc, char * argv[])
       hist->SetComponentSpacing(1,1,1);      
       
       cubes = vtkDiscreteMarchingCubes::New();
-      std::string comment = "Generate All Models";
+      std::string comment = "Discrete Marching Cubes";
       vtkPluginFilterWatcher watchDMCubes(cubes,
                                           comment.c_str(),
                                           CLPProcessInformation,
@@ -294,9 +304,35 @@ int main(int argc, char * argv[])
       currentFilterOffset += 1.0;
       
       hist->Update();
+      double *max = hist->GetMax();
+      double *min = hist->GetMin();
+
+      if (GenerateAll)
+        {
+        if (debug)
+          {
+          std::cout << "GenerateAll flag is true, resetting the start and end labels from: " << StartLabel << " and " << EndLabel << " to " << min[0] << " and " << max[0] << endl;
+          }
+        StartLabel = (int)floor(min[0]);
+        EndLabel = (int)floor(max[0]);
+        // recalculate the number of filter steps, discount the labels with no
+        // voxels       
+        numModelsToGenerate = 0;
+        for (int i = StartLabel; i <= EndLabel; i++)
+          {
+          if((int)floor((((hist->GetOutput())->GetPointData())->GetScalars())->GetTuple1(i)) > 0)
+            {
+            numModelsToGenerate++;
+            }
+          }
+        if (debug)
+          {
+          std::cout << "GenerateAll: there are " << numModelsToGenerate << " models to be generated." << endl;
+          }
+        numFilterSteps = numSingletonFilterSteps + (numRepeatedFilterSteps * numModelsToGenerate);
+        }
       if (useColorNode)
         {
-        double *max = hist->GetMax();
         if (max != NULL)
           {          
           // check the max value in the input label map against number of
@@ -431,7 +467,7 @@ int main(int argc, char * argv[])
             }
           else
             {
-            if (GenerateAll)
+            if (!SkipUnNamed)
               {
               labelName  = Name + std::string("_") + stringI;
               }
