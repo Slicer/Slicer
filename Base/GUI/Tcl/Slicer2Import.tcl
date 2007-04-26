@@ -28,6 +28,8 @@ proc ImportSlicer2Scene {sceneFile} {
   set ::S2(dir) [file dirname [file normalize $sceneFile]]
   set ::S2(transformIDStack) ""
   set ::S2(fiducialListNode) ""
+  set ::S2_HParent_ID ""
+
   ImportElement $root
 
   $parser Delete
@@ -40,7 +42,9 @@ proc ImportSlicer2Scene {sceneFile} {
 # nested parts
 #
 proc ImportElement {element} {
-  
+  # save current parent locally
+  set parent $::S2_HParent_ID
+
   # import this element
   ImportNode $element
 
@@ -61,6 +65,9 @@ proc ImportElement {element} {
   }
   # strip away the nesting marker
   set ::S2(transformIDStack) [lrange $::S2(transformIDStack) 0 end-1]
+
+  # restore parent locally
+  set ::S2_HParent_ID $parent
 }
 
 #
@@ -314,9 +321,19 @@ proc ImportNodeModel {node} {
 
   set logic [$::slicer3::ModelsGUI GetLogic]
   set mnode [$logic AddModel $fileName]
+  set dnode [$mnode GetDisplayNode]
+
+  set ::S2_Model_ID($n(id)) [$mnode GetID]
+
+  if { [info exists n(visibility)] } {
+    if {$n(visibility) == "false"} {
+      $dnode SetVisibility 0
+    } else {
+      $dnode SetVisibility 1
+    }
+  }
 
   if { [info exists n(color)] } {
-      set dnode [$mnode GetDisplayNode]
       set cnode [$::slicer3::MRMLScene GetNodeByID vtkMRMLColorTableNodeLabels]
       for {set i 0} {$i < [$cnode GetNumberOfColors]} {incr i} {
           if {[$cnode GetColorName $i] == $n(color)} {
@@ -324,6 +341,73 @@ proc ImportNodeModel {node} {
           }
       } 
   }
+}
+
+proc ImportNodeHierarchy {node} {
+  set ::S2_HParent_ID ""
+}
+
+proc ImportNodeModelGroup {node} {
+  upvar $node n
+  set hnode [vtkMRMLModelHierarchyNode New]
+  set dnode [vtkMRMLModelDisplayNode New]
+  $hnode SetScene $::slicer3::MRMLScene
+  $dnode SetScene $::slicer3::MRMLScene
+
+  if { [info exists n(visibility)] } {
+    if {$n(visibility) == "false"} {
+      $dnode SetVisibility 0
+    } else {
+      $dnode SetVisibility 1
+    }
+  }
+
+  if { [info exists n(name)] } {
+    $hnode SetName $n(name)
+  }
+
+  if { [info exists n(color)] } {
+      set cnode [$::slicer3::MRMLScene GetNodeByID vtkMRMLColorTableNodeLabels]
+      for {set i 0} {$i < [$cnode GetNumberOfColors]} {incr i} {
+          if {[$cnode GetColorName $i] == $n(color)} {
+              eval $dnode SetColor [lrange [[$cnode GetLookupTable] GetTableValue $i] 0 2]
+          }
+      } 
+  }
+  set dnode [$::slicer3::MRMLScene AddNodeNoNotify $dnode]
+  set hnode [$::slicer3::MRMLScene AddNode $hnode]
+
+  if {$::S2_HParent_ID != ""} {
+    $hnode SetParentNodeIDReference $::S2_HParent_ID
+  }
+
+  $hnode SetAndObserveDisplayNodeID [$dnode GetID]
+
+  set ::S2_HParent_ID [$hnode GetID]
+}
+
+proc ImportNodeModelRef {node} {
+  upvar $node n
+  set hnode [vtkMRMLModelHierarchyNode New]
+  $hnode SetScene $::slicer3::MRMLScene
+
+  $hnode SetExpanded 1
+  set id2 $n(ModelRefID)
+  set id3 $::S2_Model_ID($id2)
+  $hnode SetName [[$::slicer3::MRMLScene GetNodeByID $id3] GetName]
+
+  set dnode [vtkMRMLModelDisplayNode New]
+  set dnode [$::slicer3::MRMLScene AddNodeNoNotify $dnode]
+
+  set hnode [$::slicer3::MRMLScene AddNode $hnode]
+
+  if {$::S2_HParent_ID != ""} {
+    $hnode SetParentNodeIDReference $::S2_HParent_ID
+  }
+  $hnode SetModelNodeIDReference $id3
+
+  $hnode SetAndObserveDisplayNodeID [$dnode GetID]
+
 }
 
 proc ImportNodeFiducials {node} {

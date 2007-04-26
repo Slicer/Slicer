@@ -76,6 +76,12 @@ public:
   vtkSetReferenceStringMacro(ModelNodeID);
   vtkGetStringMacro(ModelNodeID);
 
+  // Need this for tcl wrapping to call ReferenceStringMacro methods
+  void SetModelNodeIDReference(const char* ref) {
+    this->SetModelNodeID(ref);
+  };
+
+
   // Description:
   // String ID of the display MRML node
   void SetAndObserveDisplayNodeID(const char *DisplayNodeID);

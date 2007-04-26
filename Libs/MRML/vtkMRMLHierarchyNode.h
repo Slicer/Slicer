@@ -68,6 +68,11 @@ class VTK_MRML_EXPORT vtkMRMLHierarchyNode : public vtkMRMLNode
   // Associated prent MRML node
   vtkMRMLHierarchyNode* GetParentNode();
 
+  // Need this for tcl wrapping to call ReferenceStringMacro methods
+  void SetParentNodeIDReference(const char* ref) {
+    this->SetParentNodeID(ref);
+  };
+
 
 protected:
   vtkMRMLHierarchyNode();
