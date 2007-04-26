@@ -251,6 +251,10 @@ void vtkSlicerModelDisplayWidget::UpdateWidget()
   if (this->ModelNode != NULL &&
       this->ModelNode->GetPolyData() != NULL)
     {
+    this->ScalarVisibilityButton->SetEnabled(1); 
+    this->ScalarMenu->SetEnabled(1);
+    this->ColorSelectorWidget->SetEnabled(1);
+
     // populate the scalars menu from the model node
     int numPointScalars;
     int numCellScalars;
@@ -287,6 +291,9 @@ void vtkSlicerModelDisplayWidget::UpdateWidget()
     } 
   else 
     { 
+    this->ScalarVisibilityButton->SetEnabled(0); 
+    this->ScalarMenu->SetEnabled(0);
+    this->ColorSelectorWidget->SetEnabled(0);
     vtkDebugMacro("ModelNode is null, can't set up the scalars menu\n"); 
     }
   
