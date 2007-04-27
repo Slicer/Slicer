@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>
+  Diffusion Tensor.Estimation
+  </category>
+  <title>
+  Diffusion Tensor Estimation
+  </title>
+  <description>
+  Performs a tensor model estimation from diffusion weighted images.
+  There are three estimation methods available: least squares, weigthed least squares and non-linear estimation. The first method is the traditional method for tensor estimation and the fastest one. Weigthed least squares takes into account the noise characteristics of the MRI images to weight the DWI samples used in the estimation based on its intensity magnitude. The last method is the more complex.
+  </description>
+  <version>0.1.0.$Revision: 1892 $(alpha)</version>
+  <documentation-url></documentation-url>
+  <license></license>
+  <contributor>Raul San Jose</contributor>
+  <acknowledgements>This command module is based on the estimation capabilities of teem</acknowledgements>
+
+  <parameters>
+    <label>IO</label>
+    <description>Input/output parameters</description>
+    <image type="diffusion-weighted">
+      <name>inputVolume</name>
+      <label>Input DWI Volume</label>
+      <channel>input</channel>
+      <index>0</index>
+      <description>Input DWI volume</description>
+    </image>
+    <image type="tensor">
+      <name>outputTensor</name>
+      <label>Output DTI Volume</label>
+      <channel>output</channel>
+      <index>1</index>
+      <description>Estimated DTI volume</description>
+    </image>
+    <image type ="scalar">
+      <name>outputBaseline</name>
+      <label>Output Baseline Volume</label>
+      <channel>output</channel>
+      <index>2</index>
+      <description>Estimated DTI volume</description>
+    </image>
+  </parameters>
+  <parameters>
+    <label>Estimation Parameters</label>
+    <description> Parameters for the estimation algorithm</description>
+    <string-enumeration>
+      <name>estimationMethod</name>
+      <flag>e</flag>
+      <longflag>enumeration</longflag>
+      <description>An enumeration of strings</description>
+      <label>Estimation Parameters</label>
+      <default>Least Squares</default>
+      <element>Least Squares</element>
+      <element>Weigthed Least Squares</element>
+      <element>Non Linear</element>
+    </string-enumeration>
+  </parameters>
+</executable>
