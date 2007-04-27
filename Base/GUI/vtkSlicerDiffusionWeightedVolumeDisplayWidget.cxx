@@ -83,6 +83,7 @@ void vtkSlicerDiffusionWeightedVolumeDisplayWidget::ProcessWidgetEvents ( vtkObj
                                                          unsigned long event, void *callData )
 {
 
+  this->Superclass::ProcessWidgetEvents(caller, event, callData);
   //
   // process volume selector events
   //
@@ -248,7 +249,8 @@ void vtkSlicerDiffusionWeightedVolumeDisplayWidget::ProcessMRMLEvents ( vtkObjec
 }
 //---------------------------------------------------------------------------
 void vtkSlicerDiffusionWeightedVolumeDisplayWidget::UpdateWidgetFromMRML ()
-{
+{ 
+  vtkDebugMacro("UpdateWidgetFromMRML");
   vtkMRMLDiffusionWeightedVolumeDisplayNode *displayNode = vtkMRMLDiffusionWeightedVolumeDisplayNode::SafeDownCast(this->GetVolumeDisplayNode());
 
   // check to see if the color selector widget has it's mrml scene set (it
@@ -281,25 +283,28 @@ void vtkSlicerDiffusionWeightedVolumeDisplayWidget::UpdateWidgetFromMRML ()
 }
 
 void vtkSlicerDiffusionWeightedVolumeDisplayWidget::AddWidgetObservers ( )
-{
-    this->DiffusionSelectorWidget->AddObserver (vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->ColorSelectorWidget->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->WindowLevelThresholdEditor->AddObserver(vtkKWWindowLevelThresholdEditor::ValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->WindowLevelThresholdEditor->AddObserver(vtkKWWindowLevelThresholdEditor::ValueStartChangingEvent, (vtkCommand *)this->GUICallbackCommand );
-   this->InterpolateButton->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+{  
+  this->Superclass::AddWidgetObservers();
+
+  this->DiffusionSelectorWidget->AddObserver (vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->ColorSelectorWidget->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->WindowLevelThresholdEditor->AddObserver(vtkKWWindowLevelThresholdEditor::ValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->WindowLevelThresholdEditor->AddObserver(vtkKWWindowLevelThresholdEditor::ValueStartChangingEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->InterpolateButton->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 }
 
 //---------------------------------------------------------------------------
 void vtkSlicerDiffusionWeightedVolumeDisplayWidget::RemoveWidgetObservers ( ) 
 {
+  this->Superclass::RemoveWidgetObservers();
 
-    this->DiffusionSelectorWidget->RemoveObservers (vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->ColorSelectorWidget->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->WindowLevelThresholdEditor->RemoveObservers(vtkKWWindowLevelThresholdEditor::ValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->WindowLevelThresholdEditor->RemoveObservers(vtkKWWindowLevelThresholdEditor::ValueStartChangingEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->InterpolateButton->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->DiffusionSelectorWidget->RemoveObservers (vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->ColorSelectorWidget->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->WindowLevelThresholdEditor->RemoveObservers(vtkKWWindowLevelThresholdEditor::ValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->WindowLevelThresholdEditor->RemoveObservers(vtkKWWindowLevelThresholdEditor::ValueStartChangingEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->InterpolateButton->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 
-    this->WindowLevelThresholdEditor->SetImageData(NULL);
+  this->WindowLevelThresholdEditor->SetImageData(NULL);
 }
 
 
@@ -368,7 +373,7 @@ void vtkSlicerDiffusionWeightedVolumeDisplayWidget::CreateWidget ( )
     this->InterpolateButton->SetText("Interpolate");
     this->Script(
       "pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
-      this->InterpolateButton->GetWidgetName());
+    this->InterpolateButton->GetWidgetName());
 
     this->WindowLevelThresholdEditor = vtkKWWindowLevelThresholdEditor::New();
     this->WindowLevelThresholdEditor->SetParent ( volDisplayFrame );
