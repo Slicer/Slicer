@@ -72,6 +72,10 @@ class VTK_MRML_EXPORT vtkMRMLNRRDStorageNode : public vtkMRMLStorageNode
   vtkGetMacro(CenterImage, int);
   vtkSetMacro(CenterImage, int);
 
+  // Description:
+  // Access the nrrd header fields to create a diffusion gradient table
+  int ParseDiffusionInformation(vtkNRRDReader *reader,vtkDoubleArray *grad,vtkDoubleArray *bvalues);
+
 protected:
 
 
@@ -80,7 +84,6 @@ protected:
   vtkMRMLNRRDStorageNode(const vtkMRMLNRRDStorageNode&);
   void operator=(const vtkMRMLNRRDStorageNode&);
 
-  int ParseDiffusionInformation(vtkNRRDReader *reader,vtkDoubleArray *grad,vtkDoubleArray *bvalues);
   int CenterImage;
 
 };
