@@ -46,7 +46,6 @@ vtkSlicerModelDisplayWidget::vtkSlicerModelDisplayWidget ( )
     this->ClippingButton = NULL;
     this->OpacityScale = NULL;
     this->SurfaceMaterialPropertyWidget = NULL;
-
     this->ProcessingMRMLEvent = 0;
 }
 

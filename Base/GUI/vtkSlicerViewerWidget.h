@@ -36,6 +36,7 @@
 
 class vtkMRMLModelNode;
 class vtkMRMLModelDisplayNode;
+class vtkSlicerModelHierarchyLogic;
 class vtkPolyData;
 class vtkCellArray;
 class vtkActor;
@@ -250,6 +251,8 @@ protected:
   bool ClippingOn;
   
   bool ModelHierarchiesPresent;
+
+  vtkSlicerModelHierarchyLogic *ModelHierarchyLogic;
 
   vtkMRMLCameraNode *CameraNode;
   vtkMRMLViewNode *ViewNode;

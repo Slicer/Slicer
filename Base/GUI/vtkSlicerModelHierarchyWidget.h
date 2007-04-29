@@ -39,6 +39,8 @@ class vtkKWSimpleEntryDialog;
 class vtkSlicerNodeSelectorWidget;
 class vtkSlicerModelDisplayWidget;
 
+class vtkSlicerModelHierarchyLogic;
+
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModelHierarchyWidget : public vtkSlicerWidget
 {
   
@@ -111,6 +113,8 @@ private:
   vtkSlicerNodeSelectorWidget *ModelDisplaySelectorWidget;
 
   vtkSlicerModelDisplayWidget *ModelDisplayWidget;
+
+  vtkSlicerModelHierarchyLogic *ModelHierarchyLogic;
 
   vtkSlicerModelHierarchyWidget(const vtkSlicerModelHierarchyWidget&); // Not implemented
   void operator=(const vtkSlicerModelHierarchyWidget&); // Not Implemented

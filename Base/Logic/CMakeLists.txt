@@ -12,6 +12,7 @@ SET(SlicerBaseLogic_SRCS
   vtkSlicerSliceLayerLogic.cxx 
   vtkSlicerVolumesLogic.cxx 
   vtkSlicerModelsLogic.cxx 
+  vtkSlicerModelHierarchyLogic.cxx
   vtkSlicerFiducialsLogic.cxx
   vtkSlicerColorLogic.cxx
   # slicer's vtk extensions

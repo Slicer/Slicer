@@ -6,6 +6,8 @@
 
 #include "vtkSlicerModelHierarchyWidget.h"
 
+#include "vtkSlicerModelHierarchyLogic.h"
+
 #include "vtkKWFrameWithLabel.h"
 #include "vtkKWMenu.h"
 #include "vtkKWEntry.h"
@@ -38,6 +40,7 @@ vtkSlicerModelHierarchyWidget::vtkSlicerModelHierarchyWidget ( )
   this->ModelDisplayWidget = NULL;
 
   this->ModelDisplayNode = NULL;
+  this->ModelHierarchyLogic = vtkSlicerModelHierarchyLogic::New();
 
 }
 
@@ -83,6 +86,11 @@ vtkSlicerModelHierarchyWidget::~vtkSlicerModelHierarchyWidget ( )
   if (this->ModelDisplayNode)
     {
     vtkSetAndObserveMRMLNodeMacro(this->ModelDisplayNode, NULL);
+    }
+
+  if (this->ModelHierarchyLogic)
+    {
+    this->ModelHierarchyLogic->Delete();
     }
 
   if (this->MRMLScene)
@@ -494,6 +502,9 @@ void vtkSlicerModelHierarchyWidget::CreateWidget ( )
 void vtkSlicerModelHierarchyWidget::UpdateTreeFromMRML()
   
 {
+  this->ModelHierarchyLogic->SetMRMLScene(this->MRMLScene);
+  this->ModelHierarchyLogic->CreateModelToHierarchyMap();
+
   vtksys_stl::string selected_node(
     this->TreeWidget->GetWidget()->GetSelection());
   this->TreeWidget->GetWidget()->DeleteAllNodes();
@@ -582,8 +593,7 @@ void vtkSlicerModelHierarchyWidget::AddNodeToTree(vtkMRMLNode *node)
 
   if ( node->IsA("vtkMRMLModelNode"))
     {
-    parentNode = vtkMRMLModelHierarchyNode::GetModelHierarchyNode(this->GetMRMLScene(),
-                                                                  node->GetID());
+    parentNode = this->ModelHierarchyLogic->GetModelHierarchyNode(node->GetID());
     }
   else if ( node->IsA("vtkMRMLModelHierarchyNode") )
     {

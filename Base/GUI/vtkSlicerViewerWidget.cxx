@@ -41,6 +41,8 @@
 #include "vtkMRMLColorNode.h"
 #include "vtkMRMLProceduralColorNode.h"
 
+#include "vtkSlicerModelHierarchyLogic.h"
+
 #include "vtkKWWidget.h"
 
 // for picking
@@ -80,6 +82,7 @@ vtkSlicerViewerWidget::vtkSlicerViewerWidget ( )
   this->SceneClosing = false;
 
   this->ModelHierarchiesPresent = false;
+  this->ModelHierarchyLogic = vtkSlicerModelHierarchyLogic::New();
 
   this->ApplicationLogic = NULL;
   this->WorldPointPicker = vtkWorldPointPicker::New();
@@ -187,7 +190,12 @@ vtkSlicerViewerWidget::~vtkSlicerViewerWidget ( )
     this->PointPicker->Delete();
     this->PointPicker = NULL;
     }
-  this->ApplicationLogic = NULL;  
+  this->ApplicationLogic = NULL; 
+
+  if (this->ModelHierarchyLogic)
+    {
+    this->ModelHierarchyLogic->Delete();
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -978,7 +986,8 @@ void vtkSlicerViewerWidget::CheckModelHierarchies()
     {
     return;
     }
-  int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLModelHierarchyNode");
+  this->ModelHierarchyLogic->SetMRMLScene(this->MRMLScene);
+  int nnodes = this->ModelHierarchyLogic->CreateModelToHierarchyMap();
   this->ModelHierarchiesPresent = nnodes > 0 ? true:false;
 }
 
@@ -1023,8 +1032,7 @@ vtkMRMLModelDisplayNode* vtkSlicerViewerWidget::GetModelDisplayNode(vtkMRMLModel
   if (this->ModelHierarchiesPresent)
     {
     vtkMRMLModelHierarchyNode* mhnode = NULL;
-    mhnode = vtkMRMLModelHierarchyNode::GetModelHierarchyNode(this->MRMLScene,
-                                                              model->GetID());
+    mhnode = this->ModelHierarchyLogic->GetModelHierarchyNode(model->GetID());
     if (mhnode) 
       {
       mhnode = mhnode->GetUnExpandedParentNode();
