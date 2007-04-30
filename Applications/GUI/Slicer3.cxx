@@ -998,7 +998,6 @@ int Slicer3_main(int argc, char *argv[])
     //   helper classes and nodes the first time the process MRML and
     //   Logic events)
     vtkIntArray *events = vtkIntArray::New();
-    events->InsertNextValue(vtkCommand::ModifiedEvent);
     events->InsertNextValue(vtkMRMLScene::NewSceneEvent);
     events->InsertNextValue(vtkMRMLScene::SceneCloseEvent);
 
