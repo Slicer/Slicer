@@ -410,11 +410,14 @@ int vtkMRMLScene::Connect()
   
   if (res)
     {  
+     
+    std::map<std::string, vtkMRMLNode *> nodesAddedByClass;
+
     // create node references
     nnodes = this->CurrentScene->GetNumberOfItems();
     int nold = existingNodes->GetNumberOfItems();
     vtkMRMLNode *node1 = NULL;
-    
+
     for (n=0; n<nnodes; n++)
       {
       bool update = true;
@@ -436,6 +439,7 @@ int vtkMRMLScene::Connect()
     
     // send events
     this->InvokeEvent(this->NewSceneEvent, NULL);
+
     for (n=0; n<nnodes; n++) 
       {
       bool update = true;
@@ -451,12 +455,22 @@ int vtkMRMLScene::Connect()
         }
       if (update)
         {
-        this->InvokeEvent(this->NodeAddedEvent, node);        
+        nodesAddedByClass[std::string(node->GetClassName())] = node;
+        //this->InvokeEvent(this->NodeAddedEvent, node);        
         }
-      }      
+      }    
+
+    // send one NodeAddedEvent event per class
+    std::map<std::string, vtkMRMLNode *>::iterator iter;
+    for(iter = nodesAddedByClass.begin(); iter != nodesAddedByClass.end(); iter++)
+      {
+      this->InvokeEvent(this->NodeAddedEvent, iter->second);        
+      }
+
     this->Modified();
 
     // node are modified
+    /*
     for (n=0; n<nnodes; n++)       {
       bool update = true;
       node = (vtkMRMLNode *)this->CurrentScene->GetItemAsObject(n);
@@ -473,7 +487,8 @@ int vtkMRMLScene::Connect()
         {
         node->Modified();
         }
-      }     
+      } 
+      */
   }
   
   this->SetUndoFlag(undoFlag);

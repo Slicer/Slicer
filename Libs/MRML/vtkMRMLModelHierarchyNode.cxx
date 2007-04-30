@@ -173,6 +173,8 @@ void vtkMRMLModelHierarchyNode::PrintSelf(ostream& os, vtkIndent indent)
 void vtkMRMLModelHierarchyNode::UpdateScene(vtkMRMLScene *scene)
 {
   Superclass::UpdateScene(scene);
+  this->SetAndObserveDisplayNodeID(this->GetDisplayNodeID());
+
 }
 
 //-----------------------------------------------------------
