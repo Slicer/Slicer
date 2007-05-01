@@ -196,7 +196,9 @@ int Slicer3_Tcl_Eval ( Tcl_Interp *interp, const char *script )
     {
     // TODO: need to figure out how to turn on the stdio channels
     // so puts will work from scripts in windows...
-    slicerCerr("Error: " << Tcl_GetStringResult( interp ) << "\n");
+    slicerCerr("Error: " << Tcl_GetStringResult( interp ) << "\n" 
+      << "while executing:\n" << script << "\n\n" 
+      << Tcl_GetVar2( interp, "errorInfo", NULL, TCL_GLOBAL_ONLY | TCL_LEAVE_ERR_MSG ) );
     return 1;
     }
   return 0;
