@@ -101,7 +101,7 @@ int vtkAbaqusFileWriter::RequestData(
     // node definitions
     if (AbaqusHeader.length() > 0)
     {
-      out << AbaqusHeader << std::endl;
+      out << AbaqusHeader.c_str() << std::endl;
     }
     out << "*NODE" << std::endl;
     double point[3];
