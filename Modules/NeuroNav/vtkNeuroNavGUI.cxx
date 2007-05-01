@@ -2141,13 +2141,13 @@ void vtkNeuroNavGUI::SetOpenTrackerConnectionParameters()
 
             this->OpenTrackerStream->SetSpeed(sp);
             this->OpenTrackerStream->SetMultiFactor(multi);
-            this->OpenTrackerStream->SetStartTimer(1);
+            this->OpenTrackerStream->SetTracking(1);
             this->OpenTrackerStream->ProcessTimerEvents();
         }
     }
     else
     {
-        this->OpenTrackerStream->SetStartTimer(0);
+        this->OpenTrackerStream->SetTracking(0);
     }
 }
 #endif
