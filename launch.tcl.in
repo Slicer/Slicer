@@ -260,10 +260,6 @@ proc launch_SplashKill {} {
 
     # because this is called from bgerror, don't cause any errors 
     if {[info command .splash] != ""} {
-
-        # clear out the event queue
-        update
-
         # release the grab
         grab release .splash
         destroy .splash
@@ -382,7 +378,6 @@ proc launch_puts {args} {
 #
 set ::count 0
 proc launch_FileEvent {fp} {
-    global ::END
     if {[eof $fp]} {
         set ret [catch "close $fp" res]
         set ::saved_errorCode $::errorCode
