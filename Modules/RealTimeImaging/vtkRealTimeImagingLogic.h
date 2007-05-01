@@ -39,15 +39,9 @@
 #include "vtkSlicerColorLogic.h"
 
 
-#ifdef USE_OPENTRACKER
-#ifdef OT_VERSION_20
+#ifdef USE_NAVITRACK
 #include "OpenTracker/OpenTracker.h"
 #include "OpenTracker/common/CallbackModule.h"
-#endif
-#ifdef OT_VERSION_13
-#include "OpenTracker.h"
-#include "common/CallbackModule.h"
-#endif
 
 #include "Image.h"
 #if defined(_WIN32) || defined(__CYGWIN__)
@@ -87,7 +81,7 @@ public:
     void CloseConnection();
     void PollRealtime();
 
-#ifdef USE_OPENTRACKER
+#ifdef USE_NAVITRACK
     static void callbackF(const Node&, const Event &event, void *data);
 #endif
 
@@ -119,7 +113,7 @@ protected:
     vtkRealTimeImagingLogic(const vtkRealTimeImagingLogic&);
     void operator=(const vtkRealTimeImagingLogic&);
 
-#ifdef USE_OPENTRACKER
+#ifdef USE_NAVITRACK
     Context *context;
 #endif
 
@@ -150,6 +144,4 @@ protected:
 };
 
 #endif
-
-
   

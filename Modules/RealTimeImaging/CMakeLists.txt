@@ -1,8 +1,8 @@
 PROJECT(RealTimeImaging)
 
-#Check if OpenTracker is switch on, else don't compile that module!
+#Check if NaviTrack is switch on, else don't compile that module!
 
-IF(USE_OPENTRACKER)
+IF(USE_NAVITRACK)
 
 #
 # Sources
@@ -34,7 +34,7 @@ INCLUDE_DIRECTORIES(
   ${VTK_INCLUDE_DIR}
   ${MRML_SOURCE_DIR}
   ${MRML_BINARY_DIR}
-  ${OPENTRACKER_INC_DIR}
+  ${NAVITRACK_INC}
   )
 
 #
@@ -79,7 +79,7 @@ TARGET_LINK_LIBRARIES(RealTimeImaging
   ITKDICOMParser
   ${KWWidgets_LIBRARIES} 
   vtkHybridTCL
-  ${OPENTRACKER_LIB}
+  ${NAVITRACK_LIB}
   )
 
 #
@@ -90,6 +90,6 @@ CONFIGURE_FILE(
   ${RealTimeImaging_BINARY_DIR}/vtkRealTimeImagingConfigure.h
   )
  
-ELSE(USE_OPENTRACKER)
- MESSAGE("You have to turn OpenTracker 'ON' to compile RealTimeImageing")
-ENDIF(USE_OPENTRACKER)
+ELSE(USE_NAVITRACK)
+ MESSAGE("You have to turn NAVITRACK 'ON' to compile RealTimeImageing")
+ENDIF(USE_NAVITRACK)

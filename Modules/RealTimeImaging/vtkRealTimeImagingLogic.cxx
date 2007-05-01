@@ -55,9 +55,9 @@ vtkRealTimeImagingLogic::vtkRealTimeImagingLogic()
 
     this->LocatorNormalTransform = vtkTransform::New();
 
-#ifdef USE_OPENTRACKER
+#ifdef USE_NAVITRACK
     Event::registerGenericTypeName((Image*)NULL,"MedScanImage");
-    cout << "Using OpenTracker" << endl;
+    cout << "Using NaviTrack" << endl;
 #endif
 }
 
@@ -176,7 +176,7 @@ void vtkRealTimeImagingLogic::SetNumberOfPoints(int no)
 void vtkRealTimeImagingLogic::Init(const char *configfile)
 {
 
-#ifdef USE_OPENTRACKER
+#ifdef USE_NAVITRACK
     fprintf(stderr,"config file: %s\n",configfile);
     this->context = new Context(1); 
     // get callback module from the context
@@ -186,12 +186,7 @@ void vtkRealTimeImagingLogic::Init(const char *configfile)
 
     // if we use NaviTrack (not opentracker), use this function:
     // callbackMod->setCallback( "cb1", (OTCallbackFunction*)&callbackF ,this);    
-#ifdef OT_VERSION_20
     callbackMod->setCallback( "cb1", (OTCallbackFunction*)&callbackF ,this);    
-#endif
-#ifdef OT_VERSION_13
-    callbackMod->setCallback( "cb1", (CallbackFunction*)&callbackF ,this);    
-#endif
 
     context->start();
 
@@ -225,7 +220,7 @@ void vtkRealTimeImagingLogic::Init(const char *configfile)
 
 void vtkRealTimeImagingLogic::CloseConnection()
 {
-#ifdef USE_OPENTRACKER
+#ifdef USE_NAVITRACK
     context->close();
 #endif
 
@@ -255,7 +250,7 @@ void vtkRealTimeImagingLogic::quaternion2xyz(float* orientation, float *normal, 
 
 void vtkRealTimeImagingLogic::PollRealtime()
 {
-#ifdef USE_OPENTRACKER
+#ifdef USE_NAVITRACK
     context->pushEvents();       // push event and
     context->pullEvents();       // pull event 
     context->stop();
@@ -263,7 +258,7 @@ void vtkRealTimeImagingLogic::PollRealtime()
 }
 
 
-#ifdef USE_OPENTRACKER
+#ifdef USE_NAVITRACK
 void vtkRealTimeImagingLogic::callbackF(const Node&, const Event &event, void *data)
 {
     float position[3];
@@ -319,7 +314,7 @@ void vtkRealTimeImagingLogic::callbackF(const Node&, const Event &event, void *d
 
     VOT->LocatorMatrix->SetElement(3,3,1);
 
-#ifdef USE_OPENTRACKER
+#ifdef USE_NAVITRACK
     // Check for an image attribute
     if(event.hasAttribute("image"))
     {
