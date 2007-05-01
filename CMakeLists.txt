@@ -108,40 +108,31 @@ ENDIF(USE_TEEM)
 
 
 #
-# OpenTracker 
+# NaviTrack 
 #
-OPTION(USE_OPENTRACKER "Build Slicer3 with OpenTracker support." OFF)
-IF(USE_OPENTRACKER)
-  # version of opentracker: 1.3 or 2.0
-  # By default, use versin 1.3. If use 2.0, turn it off
-  OPTION(OT_VERSION_13 "Specify the opentracker version." ON)
+OPTION(USE_NAVITRACK "Build Slicer3 with NaviTrack support." OFF)
+IF(USE_NAVITRACK)
 
-  FIND_LIBRARY(OPENTRACKER_LIB 
-    NAMES opentrackerd opentracker OpenTracker NaviTrack
-    PATHS ${OT_LIB_DIR} 
+  FIND_LIBRARY(NAVITRACK_LIB 
+    NAMES NaviTrack
+    PATHS ${NAVITRACK_LIB_DIR} 
   )
-  IF(OPENTRACKER_LIB-NOTFOUND)
-    MESSAGE (FATAL_ERROR "Need OpenTracker to build")
-  ENDIF(OPENTRACKER_LIB-NOTFOUND)
+  IF(NAVITRACK_LIB-NOTFOUND)
+    MESSAGE (FATAL_ERROR "Need NaviTrack to build")
+  ENDIF(NAVITRACK_LIB-NOTFOUND)
 
-  # include file for OpenTracker 1.3
-  IF(OT_VERSION_13)
-    SET(INC "OpenTracker.h")
   # include file for OpenTracker 2.0 
-  ELSE(OT_VERSION_13)
-    SET(INC "OpenTracker/OpenTracker.h")
-  ENDIF(OT_VERSION_13)
-  FIND_PATH(OPENTRACKER_INC_DIR "${INC}" 
-    ${OT_INC_DIR}
+  FIND_PATH(NAVITRACK_INC "OpenTracker/OpenTracker.h" 
+    ${NAVITRACK_INC_DIR}
   )
 
-  IF(OPENTRACKER_INC_DIR-NOTFOUND)
+  IF(NAVITRACK_INC-NOTFOUND)
     MESSAGE (FATAL_ERROR "Need OpenTracker.h to build")
-  ENDIF(OPENTRACKER_INC_DIR-NOTFOUND)
-ELSE(USE_OPENTRACKER)
-  SET(OPENTRACKER_LIB "")
-  SET(OPENTRACKER_INC_DIR "")
-ENDIF(USE_OPENTRACKER)
+  ENDIF(NAVITRACK_INC-NOTFOUND)
+ELSE(USE_NAVITRACK)
+  SET(NAVITRACK_LIB "")
+  SET(NAVITRACK_INC "")
+ENDIF(USE_NAVITRACK)
 
 
 #
