@@ -19,6 +19,6 @@
   #define VTKSLICER_STATIC
 #endif
 
-#cmakedefine USE_OPENTRACKER
+#cmakedefine USE_NAVITRACK
 #cmakedefine USE_IGSTK
 

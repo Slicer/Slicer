@@ -22,7 +22,7 @@
 
 #include <string>
 
-#ifdef USE_OPENTRACKER
+#ifdef USE_NAVITRACK
 #include "vtkIGTOpenTrackerStream.h"
 #endif
 #ifdef USE_IGSTK
@@ -141,7 +141,7 @@ class VTK_NEURONAV_EXPORT vtkNeuroNavGUI : public vtkSlicerModuleGUI
     vtkKWMenuButton *YellowSliceMenu;
     vtkKWMenuButton *GreenSliceMenu;
 
-#ifdef USE_OPENTRACKER
+#ifdef USE_NAVITRACK
     vtkKWLoadSaveButtonWithLabel *LoadConfigButton;
     vtkKWEntry *ConfigFileEntry;
 #endif
@@ -223,7 +223,7 @@ class VTK_NEURONAV_EXPORT vtkNeuroNavGUI : public vtkSlicerModuleGUI
     void TrackerLoop();
 
 
-#ifdef USE_OPENTRACKER
+#ifdef USE_NAVITRACK
     vtkIGTOpenTrackerStream *OpenTrackerStream;
     void SetOpenTrackerConnectionParameters();
 #endif
