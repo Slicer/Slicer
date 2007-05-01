@@ -29,11 +29,11 @@ typedef igstk::SerialCommunication::StopBitsType   StopBitsT;
 typedef igstk::SerialCommunication::HandshakeType  HandshakeT;
 
 
-class VTK_IGT_EXPORT vtkIGTIGSTKStream : public vtkObject
+class VTK_IGT_EXPORT vtkIGTIGSTKStream : public vtkIGTDataStream
 {
 public:
     static vtkIGTIGSTKStream *New();
-    vtkTypeRevisionMacro(vtkIGTIGSTKStream,vtkObject);
+    vtkTypeRevisionMacro(vtkIGTIGSTKStream,vtkIGTDataStream);
     void PrintSelf(ostream& os, vtkIndent indent);
 
 
@@ -45,17 +45,7 @@ public:
     vtkSetMacro(HandShake,HandshakeT);
 
 
-    vtkSetMacro(Speed,int);
-    vtkSetMacro(Tracking,int);
-    vtkSetMacro(MultiFactor,float);
     vtkSetMacro(TrackerType,short);
-
-
-    vtkSetObjectMacro(RegMatrix,vtkMatrix4x4);
-    vtkGetObjectMacro(RegMatrix,vtkMatrix4x4);
-
-    vtkGetObjectMacro(LocatorMatrix,vtkMatrix4x4);
-    vtkGetObjectMacro(LocatorNormalTransform,vtkTransform);
 
     /**
      * Constructor    vtkSetMacro(StopBits,StopBitsType);    vtkSetMacro(StopBits,StopBitsType);
@@ -72,7 +62,7 @@ public:
     void Init();
     void StopPulling();
     void PullRealTime();    
-    void SetLocatorTransforms();
+    // void SetLocatorTransforms();
     void CleanTracker();
 
 private:
@@ -98,18 +88,9 @@ private:
 
     //ETX
 
-    int Speed;
-    float MultiFactor;
     short TrackerType;  // 0 - Polaris; 1 - Aurora 
-    int Tracking;
-
-    vtkMatrix4x4 *LocatorMatrix;
-    vtkMatrix4x4 *RegMatrix;
-    vtkTransform *LocatorNormalTransform;
 
     void UpdateLocatorMatrix(float *positon, float *orientation);
-    void QuaternionToXYZ(float *orientation, float *normal, float *transnormal); 
-    void ApplyTransform(float *position, float *norm, float *transnorm);
 
 };
 
