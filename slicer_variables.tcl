@@ -127,23 +127,17 @@ set ::IGSTK_DIR $::SLICER_LIB/IGSTK-build
 
 # Options for building IGT modules in Slicer
 set ::IGSTK "OFF"
-set ::OPENTRACKER "OFF"
-# If the value of OPENTRACKER is "ON", you need to set the following variables:
+set ::NAVITRACK "OFF"
 
-# ON:  opentracker 1.3
-# OFF: opentracker 2.0
-set ::OT_VERSION "ON"
+# The absolute path and directory containing the navitrack library,
+# for instance on linux the libNaviTrack.so
+# set ::NAVITRACK_LIB_DIR /home/hliu/projects/navitrack/NaviTrack-build
+set ::NAVITRACK_LIB_DIR "" 
 
-# OT_LIB_DIR: the absolute path contains the OpenTracker library, 
-# e.g. libOpenTrakcer.so 
-# set ::OT_LIB_DIR /home/hliu/projects/splot-build/opentracker/lib/.libs/
-set ::OT_LIB_DIR ""
-
-# OT_INC: the directory contains "OpenTracker.h" (opentracker 1.3) or 
-#         "OpenTracker/OpenTracker.h" (opentracker 2.0) 
-# set ::OT_INC_DIR /home/hliu/projects/splot-build/opentracker/src
-set ::OT_INC_DIR "" 
-
+# The navitrack include directry, e.g.
+# /home/hliu/projects/navitrack/NaviTrack/include
+# set ::NAVITRACK_INC_DIR /home/hliu/projects/navitrack/NaviTrack/include
+set ::NAVITRACK_INC_DIR "" 
 
 switch $::tcl_platform(os) {
     "SunOS" -
