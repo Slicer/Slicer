@@ -49,6 +49,11 @@ public:
   // Description:
   // Set the selected node, the color id, and update the widgets
   void SetColorNode ( vtkMRMLColorNode *node );
+
+  // Description:
+  // Get the color node, needed for the Editor
+  vtkGetObjectMacro ( ColorNode, vtkMRMLColorNode );
+  
   // Description:
   // Getting and setting the mrml color node id
   vtkGetStringMacro(ColorNodeID);
@@ -62,6 +67,7 @@ public:
   enum
   {
       ColorIDModifiedEvent = 30000,
+      SelectedColorModifiedEvent = 30001,
   };
   //ETX
 

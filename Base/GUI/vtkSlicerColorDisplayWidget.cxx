@@ -222,6 +222,7 @@ void vtkSlicerColorDisplayWidget::ProcessWidgetEvents ( vtkObject *caller,
       event == vtkKWMultiColumnList::SelectionChangedEvent)
     {
     this->UpdateSelectedColor();
+    this->InvokeEvent(vtkSlicerColorDisplayWidget::SelectedColorModifiedEvent);
     return;
     }
   
@@ -507,13 +508,13 @@ void vtkSlicerColorDisplayWidget::UpdateSelectedColor()
     {
     int selectedColor = this->GetSelectedColorIndex();
     std::stringstream ss;
-    ss << "Selected Color Index: ";
+    ss << "Selected Color Label: ";
     if (selectedColor != -1)
       {
       ss << selectedColor;
       }
     this->SelectedColorLabel->SetText(ss.str().c_str());
-    } 
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -602,6 +603,15 @@ void vtkSlicerColorDisplayWidget::CreateWidget ( )
   this->Script("pack %s -side top -anchor w -padx 2 -pady 2 -in %s",
                this->NumberOfColorsLabel->GetWidgetName(), 
                displayFrame->GetWidgetName());
+
+  // Display the currently selected colour index
+  this->SelectedColorLabel = vtkKWLabel::New();
+  this->SelectedColorLabel->SetParent(displayFrame);
+  this->SelectedColorLabel->Create();
+  this->SelectedColorLabel->SetText("Selected Color Label: ");
+  app->Script("pack %s -side top -anchor w -padx 2 -pady 2 -in %s",
+              this->SelectedColorLabel->GetWidgetName(),
+              displayFrame->GetWidgetName());
   
   // Display the colours in the lookup table
   this->MultiColumnList = vtkKWMultiColumnListWithScrollbars::New ( );
@@ -638,15 +648,6 @@ void vtkSlicerColorDisplayWidget::CreateWidget ( )
                 this->MultiColumnList->GetWidgetName(),
                 displayFrame->GetWidgetName());
   this->MultiColumnList->GetWidget()->SetCellUpdatedCommand(this, "UpdateElement");
-
-  // Display the currently selected colour index
-  this->SelectedColorLabel = vtkKWLabel::New();
-  this->SelectedColorLabel->SetParent(displayFrame);
-  this->SelectedColorLabel->Create();
-  this->SelectedColorLabel->SetText("Selected Color Index: ");
-  app->Script("pack %s -side top -anchor w -padx 4 -pady 2 -in %s",
-              this->SelectedColorLabel->GetWidgetName(),
-              displayFrame->GetWidgetName());
               
   // button frame
   vtkKWFrame *buttonFrame = vtkKWFrame::New();
