@@ -41,6 +41,7 @@ int main (int argc, char *argv[])
   fin.seekg (0, std::ios::beg);
   char * XML = new char[len+1];
   fin.read (XML, len);
+  XML[len] = '\0';
 
   ModuleDescription module;
   ModuleDescriptionParser parser;
