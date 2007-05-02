@@ -19,6 +19,8 @@
 #include "vtkSlicerColorLogic.h"
 #include "vtkMRMLColorTableNode.h"
 #include "vtkMRMLFreeSurferProceduralColorNode.h"
+#include "vtkMRMLProceduralColorNode.h"
+#include "vtkColorTransferFunction.h"
 
 #include "vtkMRMLFiducial.h"
 #include "vtkMRMLFiducialListNode.h"
@@ -102,6 +104,35 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
     }
   basicNode->Delete();
 
+  // add a random procedural node that covers full integer range
+  vtkMRMLProceduralColorNode *procNode = vtkMRMLProceduralColorNode::New();
+  procNode->SetName("RandomInt");
+  procNode->SaveWithSceneOff();
+  const char* procNodeID = this->GetDefaultProceduralColorNodeID(procNode->GetName());
+  procNode->SetSingletonTag(procNodeID);
+  if (this->GetMRMLScene()->GetNodeByID(procNodeID) == NULL)
+    {
+    this->GetMRMLScene()->RequestNodeID(procNode, procNodeID);        
+    this->GetMRMLScene()->AddNode(procNode);
+    
+    vtkColorTransferFunction *func = procNode->GetColorTransferFunction();
+    int minValue =  VTK_INT_MIN;
+    int maxValue =  VTK_INT_MAX;
+    double m = (double)minValue;
+    double diff = (double)maxValue - (double)minValue;
+    double spacing = diff/1000.0;
+    while (m <= maxValue)
+      {
+      double r = (rand()%255)/255.0;
+      double b = (rand()%255)/255.0;
+      double g = (rand()%255)/255.0;
+      func->AddRGBPoint( m, r, g, b);     
+      m += (int)(spacing);
+      }
+    func->Build();
+    }
+  procNode->Delete();
+  
   // add freesurfer nodes
   vtkDebugMacro("Adding Freesurfer nodes");
   vtkMRMLFreeSurferProceduralColorNode *basicFSNode = vtkMRMLFreeSurferProceduralColorNode::New();
@@ -241,7 +272,7 @@ void vtkSlicerColorLogic::RemoveDefaultColorNodes()
       basicNode->SetType(i);
       //std::string id = std::string(this->GetDefaultColorTableNodeID(i));
       const char* id = this->GetDefaultColorTableNodeID(i);
-      vtkWarningMacro("vtkSlicerColorLogic::RemoveDefaultColorNodes: trying to find node with id " << id << endl);
+      vtkDebugMacro("vtkSlicerColorLogic::RemoveDefaultColorNodes: trying to find node with id " << id << endl);
       node = vtkMRMLColorTableNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(id));
       if (node != NULL)
         {
@@ -265,6 +296,20 @@ void vtkSlicerColorLogic::RemoveDefaultColorNodes()
       }
     }
   basicFSNode->Delete();
+
+   // remove the random procedural color nodes (after the fs proc nodes as
+   // getting them by class)
+  int numProcNodes = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLProceduralColorNode");
+  for (int i = 0; i < numProcNodes; i++)
+    {
+    vtkMRMLProceduralColorNode *procNode =  vtkMRMLProceduralColorNode::SafeDownCast(this->GetMRMLScene()->GetNthNodeByClass(i, "vtkMRMLProceduralColorNode"));
+    if (procNode != NULL &&
+        strcmp(procNode->GetID(), this->GetDefaultProceduralColorNodeID(procNode->GetName())) == 0)
+      {
+      // it's one we added
+      this->GetMRMLScene()->RemoveNode(procNode);
+      }
+    }
   
   // remove the fs lookup table node
   node = vtkMRMLColorTableNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->GetDefaultFreeSurferLabelMapColorNodeID()));
@@ -339,3 +384,12 @@ const char * vtkSlicerColorLogic::GetDefaultFreeSurferSurfaceLabelsColorNodeID()
   return this->GetDefaultFreeSurferColorNodeID(vtkMRMLFreeSurferProceduralColorNode::SurfaceLabels);
 }
 
+//----------------------------------------------------------------------------
+char * vtkSlicerColorLogic::GetDefaultProceduralColorNodeID(const char *name)
+{
+  char *id;
+  std::string idStr = std::string("vtkMRMLProceduralColorNode") + std::string(name);
+  id = new char[idStr.length()];
+  strcpy(id, idStr.c_str());
+  return id;
+}
