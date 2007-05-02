@@ -41,7 +41,7 @@ proc EditorTearDownGUI {this} {
     nodeSelector volumesCreate volumeName volumesSelect
     volumesFrame paintThreshold paintOver paintDropper
     paintRadius paintRange paintEnable paintLabel
-    paintPaint paintDraw
+    paintPaint paintDraw paintColor
       paintFrame rebuildButton
   }
 
@@ -197,8 +197,8 @@ proc EditorBuildGUI {this} {
   $::Editor($this,paintLabel) DisplayLabelOn
   $::Editor($this,paintLabel) SetValue 1
   [$::Editor($this,paintLabel) GetLabel] SetText "Label: "
-  pack [$::Editor($this,paintLabel) GetWidgetName] \
-    -side top -anchor e -fill x -padx 2 -pady 2 
+#  pack [$::Editor($this,paintLabel) GetWidgetName] \
+#    -side top -anchor e -fill x -padx 2 -pady 2 
 
   set ::Editor($this,paintOver) [vtkKWCheckButtonWithLabel New]
   $::Editor($this,paintOver) SetParent [$::Editor($this,paintFrame) GetFrame]
@@ -223,6 +223,19 @@ proc EditorBuildGUI {this} {
   $::Editor($this,paintThreshold) SetBalloonHelpString "Enable/Disable threshold mode for painting."
   pack [$::Editor($this,paintThreshold) GetWidgetName] \
     -side top -anchor e -fill x -padx 2 -pady 2 
+
+  set ::Editor($this,paintColor) [vtkSlicerColorDisplayWidget New]
+  $::Editor($this,paintColor) SetParent [$::Editor($this,paintFrame) GetFrame]
+  $::Editor($this,paintColor) SetMRMLScene  [[$this GetLogic] GetMRMLScene]
+  $::Editor($this,paintColor) Create
+  # set it up with the labels color node. 
+  # TODO: here and in vtkSlicerVolumesLogic::CreateLabelVolume, use the color logic to get a default color node id
+  set colorNode [vtkMRMLColorTableNode New]
+  $colorNode SetTypeToLabels
+  $::Editor($this,paintColor) SetColorNode [[[$this GetLogic] GetMRMLScene] GetNodeByID [$colorNode GetTypeAsIDString]]
+  $colorNode Delete
+  pack [$::Editor($this,paintColor) GetWidgetName] \
+    -side top -anchor e -fill x -padx 2 -pady 2
 
   set ::Editor($this,paintRange) [vtkKWRange New]
   $::Editor($this,paintRange) SetParent [$::Editor($this,paintFrame) GetFrame]
@@ -251,6 +264,8 @@ proc EditorAddGUIObservers {this} {
   $this AddObserverByNumber $::Editor($this,paintDraw) 10000 
   $this AddObserverByNumber $::Editor($this,paintPaint) 10000 
   $this AddObserverByNumber $::Editor($this,paintLabel) 10001 
+  $this AddObserverByNumber $::Editor($this,paintColor) 30000
+  $this AddObserverByNumber $::Editor($this,paintColor) 30001
   $this AddObserverByNumber $::Editor($this,paintRange) 10001 
   $this AddObserverByNumber [$::Editor($this,paintThreshold) GetWidget] 10000 
   $this AddObserverByNumber [$::Editor($this,paintOver) GetWidget] 10000 
@@ -315,6 +330,23 @@ proc EditorProcessGUIEvents {this caller event} {
         EditorUpdateSWidgets $this
       }
     }
+  } elseif { $caller == $::Editor($this,paintColor) } {
+      switch $event {
+          "30000" {
+              # puts "Got color node modified event, changing label map's color node to [[$::Editor($this,paintColor) GetColorNode] GetID]"
+              # update the label volume's display node so that it will show up with the correct colours
+              set selectionNode [[[$this GetLogic] GetApplicationLogic]  GetSelectionNode]
+              set labelVolume [[[$this GetLogic] GetMRMLScene] GetNodeByID [$selectionNode GetActiveLabelVolumeID]]
+              # this won't work because the labelVolume is a vtkMRMLNode, need to cast it?
+              # [$labelVolume GetVolumeDisplayNode] SetColorNode [$::Editor($this,paintColor) GetColorNode]
+
+              EditorUpdateSWidgets $this
+          }
+          "30001" {
+              # Got selected color modified event
+              EditorUpdateSWidgets $this
+          }
+      }
   } elseif { $caller == $::Editor($this,paintRadius) } {
     switch $event {
       "10001" {
@@ -361,14 +393,16 @@ proc EditorUpdateSWidgets {this} {
   foreach {lo hi} [$::Editor($this,paintRange) GetRange] {}
 
   set cmd ::PaintSWidget::ConfigureAll
-    $cmd -paintColor [$::Editor($this,paintLabel) GetValue]
+    # $cmd -paintColor [$::Editor($this,paintLabel) GetValue]
+    $cmd -paintColor [$::Editor($this,paintColor) GetSelectedColorIndex]
     $cmd -paintOver [[$::Editor($this,paintOver) GetWidget] GetSelectedState]
     $cmd -paintDropper [[$::Editor($this,paintDropper) GetWidget] GetSelectedState]
     $cmd -thresholdPaint [[$::Editor($this,paintThreshold) GetWidget] GetSelectedState]
     $cmd -thresholdMin $lo -thresholdMax $hi
 
   set cmd ::DrawSWidget::ConfigureAll
-    $cmd -drawColor [$::Editor($this,paintLabel) GetValue]
+    # $cmd -drawColor [$::Editor($this,paintLabel) GetValue]
+    $cmd -drawColor [$::Editor($this,paintColor) GetSelectedColorIndex]
     $cmd -drawOver [[$::Editor($this,paintOver) GetWidget] GetSelectedState]
     $cmd -thresholdPaint [[$::Editor($this,paintThreshold) GetWidget] GetSelectedState]
     $cmd -thresholdMin $lo -thresholdMax $hi
@@ -410,6 +444,9 @@ proc EditorCreateLabelVolume {this} {
   $selectionNode SetReferenceActiveLabelVolumeID [$labelNode GetID]
   [[$this GetLogic] GetApplicationLogic]  PropagateVolumeSelection
 
+  # update the color node to show the label volume's display node's color node
+  $::Editor($this,paintColor) SetColorNode [[$labelNode GetDisplayNode] GetColorNode]
+
   $labelNode Delete
 
   # update the editor range to be the full range of the background image
@@ -417,6 +454,7 @@ proc EditorCreateLabelVolume {this} {
   eval $::Editor($this,paintRange) SetWholeRange $range
   eval $::Editor($this,paintRange) SetRange $range
 
+  
 }
 
 proc EditorSetRandomLabelColormap { {size 255} } {
