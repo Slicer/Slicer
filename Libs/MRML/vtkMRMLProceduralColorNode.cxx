@@ -105,6 +105,11 @@ void vtkMRMLProceduralColorNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   
   Superclass::PrintSelf(os,indent);
+  if (this->ColorTransferFunction != NULL)
+    {
+    os << indent << "ColorTransferFunction:" << endl;
+    this->ColorTransferFunction->PrintSelf(os, indent.GetNextIndent());
+    }
 }
 
 //-----------------------------------------------------------
