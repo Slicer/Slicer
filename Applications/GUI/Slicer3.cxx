@@ -23,6 +23,7 @@
 #include "vtkKWUserInterfacePanel.h"
 #include "vtkKWUserInterfaceManager.h"
 #include "vtkKWUserInterfaceManagerNotebook.h"
+#include "vtkKWLogDialog.h"
 #include "vtkSlicerGUICollection.h"
 #include "vtkSlicerVolumesGUI.h"
 #include "vtkSlicerModelsGUI.h"
@@ -638,19 +639,29 @@ int Slicer3_main(int argc, char *argv[])
     Commandlinemodule_Init(interp);
     Scriptedmodule_Init(interp);
 
-
+  // first call to GetInstance will create the Application
   vtkSlicerApplication *slicerApp = vtkSlicerApplication::GetInstance ( );
-  slicerApp->Script ( "rename exit tcl_exit" );
-  slicerApp->Script ( 
-    "proc exit {args} { \
-      if { $args != {} && [string is integer $args] == \"1\" } { \
-        %s SetExitStatus $args \
-      } else { \
-        %s SetExitStatus 0 \
-      } ;\
-      after idle \"%s Exit\"; \
-    }", 
-    slicerApp->GetTclName(), slicerApp->GetTclName(), slicerApp->GetTclName() );
+
+    {
+    std::string cmd, slicerAppName;
+
+    slicerAppName = slicerApp->GetTclName();
+
+    slicerApp->Script ("namespace eval slicer3 set Application %s", slicerAppName.c_str());
+
+    cmd = "rename exit tcl_exit; ";
+
+    cmd += 
+     "proc exit {args} { \
+        if { $args != {} && [string is integer $args] == \"1\" } { \
+          " + slicerAppName + " SetExitStatus $args \
+        } else { \
+          " + slicerAppName + " SetExitStatus 0 \
+        } ;\
+        after idle {" + slicerAppName + " Exit}; \
+      }";
+      Slicer3_Tcl_Eval( interp, cmd.c_str() );
+    }
 
     //
     // use the startup script passed on command line if it exists
@@ -671,7 +682,10 @@ int Slicer3_main(int argc, char *argv[])
       Slicer3_Tcl_Eval( interp, cmd.c_str() );
 
       cmd = "source " + File;
-      return ( Slicer3_Tcl_Eval( interp, cmd.c_str() ) );
+      int returnCode = Slicer3_Tcl_Eval( interp, cmd.c_str() );
+      Slicer3_Tcl_Eval( interp, "update" );
+      slicerApp->Delete();
+      return ( returnCode );
       }
 
     //
@@ -767,14 +781,6 @@ int Slicer3_main(int argc, char *argv[])
     appGUI->BuildGUI ( );
     appGUI->AddGUIObservers ( );
     slicerApp->SetApplicationGUI ( appGUI );
-    /*
-    const char *name1;
-    name1 = slicerApp->GetTclName();
-    slicerApp->Script ("namespace eval slicer3 set Application %s", name1);
-    name1 = appGUI->GetTclName();
-    slicerApp->Script ("namespace eval slicer3 set ApplicationGUI %s", name1);
-    int res1 = slicerApp->StartApplication();
-    */
 
     // ------------------------------
     // CREATE MODULE LOGICS & GUIS; add to GUI collection
@@ -1302,10 +1308,10 @@ int Slicer3_main(int argc, char *argv[])
     // - set some handy variables so it will be easy to access these classes
     ///  from   the tkcon
     // - all the variables are put in the slicer3 tcl namespace for easy access
+    // - note, slicerApp is loaded as $::slicer3::Application above, so it
+    //   can be used from scripts that run without the GUI
     //
     const char *name;
-    name = slicerApp->GetTclName();
-    slicerApp->Script ("namespace eval slicer3 set Application %s", name);
     name = appGUI->GetTclName();
     slicerApp->Script ("namespace eval slicer3 set ApplicationGUI %s", name);
 #ifndef SLICES_DEBUG
@@ -1875,6 +1881,8 @@ int main(int argc, char *argv[])
     return Slicer3_main(argc, argv);
 }
 #endif
+
+
 
 
 
