@@ -705,7 +705,10 @@ int Slicer3_main(int argc, char *argv[])
       cmd += "regsub -all {\\.,} $::SLICER(eval) \";\" ::SLICER(eval);";
       cmd += "regsub -all {,\\.} $::SLICER(eval) \";\" ::SLICER(eval);";
       cmd += "eval $::SLICER(eval);";
-      return ( Slicer3_Tcl_Eval( interp, cmd.c_str() ) );
+      int returnCode = Slicer3_Tcl_Eval( interp, cmd.c_str() );
+      Slicer3_Tcl_Eval( interp, "update" );
+      slicerApp->Delete();
+      return ( returnCode );
       }
 
     // Create SlicerGUI application, style, and main window 
