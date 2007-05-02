@@ -125,6 +125,11 @@ public:
   // Most color nodes will implement a look up table, so provide a top level
   // get method
   virtual vtkLookupTable * GetLookupTable();
+
+  // Description:
+  // get/set the string used for an unnamed colour
+  vtkGetStringMacro(NoName);
+  vtkSetStringMacro(NoName);
   
 protected:
   vtkMRMLColorNode();
@@ -150,6 +155,10 @@ protected:
   // Description:
   // A file name to read text attributes from
   char *FileName;
+
+  // Description:
+  // the string used for an unnamed colour
+  char *NoName;
 };
 
 #endif

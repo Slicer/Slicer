@@ -55,6 +55,9 @@ vtkMRMLColorNode::vtkMRMLColorNode()
   this->SetName("");
   this->FileName = NULL;
   this->Type = -1;
+
+  this->NoName = NULL;
+  this->SetNoName("(none)");
 }
 
 //----------------------------------------------------------------------------
@@ -64,6 +67,12 @@ vtkMRMLColorNode::~vtkMRMLColorNode()
     {  
     delete [] this->FileName;
     this->FileName = NULL;
+    }
+
+  if (this->NoName)
+    {
+    delete [] this->NoName;
+    this->NoName = NULL;
     }
 }
 
@@ -146,6 +155,7 @@ void vtkMRMLColorNode::Copy(vtkMRMLNode *anode)
     this->SetType(node->Type);
     }
   this->SetFileName(node->FileName);
+  this->SetNoName(node->NoName);
 }
 
 //----------------------------------------------------------------------------
@@ -160,6 +170,9 @@ void vtkMRMLColorNode::PrintSelf(ostream& os, vtkIndent indent)
 
   os << indent << "Type: (" << this->GetTypeAsString() << ")\n";
 
+  os << indent << "NoName = " <<
+    (this->NoName ? this->NoName : "(not set)") <<  "\n";
+     
   if (this->Names.size() > 0)
     {
     os << indent << "Color Names:\n";
@@ -267,7 +280,7 @@ const char *vtkMRMLColorNode::GetColorName(int ind)
     {
     if (strcmp(this->Names[ind].c_str(), "") == 0)
       {
-      return "(none)";
+      return this->NoName;
       }
     else
       {
