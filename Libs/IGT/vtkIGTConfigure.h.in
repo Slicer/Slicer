@@ -21,4 +21,7 @@
 
 #cmakedefine USE_NAVITRACK
 #cmakedefine USE_IGSTK
+#ifdef USE_IGSTK
+#define EXECUTABLE_OUTPUT_PATH "@EXECUTABLE_OUTPUT_PATH@"
+#endif
 

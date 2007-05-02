@@ -1,6 +1,8 @@
 #include "vtkIGTIGSTKStream.h"
 #include "vtkObjectFactory.h"
-// #include "vtkCommand.h"
+#include "vtkKWTkUtilities.h"
+#include "vtkKWApplication.h"
+#include "vtkCommand.h"
 // #include "vtkCallbackCommand.h"
 
 #include "itksys/SystemTools.hxx"
@@ -297,4 +299,23 @@ void vtkIGTIGSTKStream::PullRealTime()
 
     // std::cout << "Pull realtime." << std::endl;
 }
+
+
+
+void vtkIGTIGSTKStream::ProcessTimerEvents()
+{
+    if (this->Tracking)
+    {
+        this->PullRealTime();
+        vtkKWTkUtilities::CreateTimerHandler(vtkKWApplication::GetMainInterp(), 
+                this->Speed, this, "ProcessTimerEvents");        
+ 
+    }
+    else
+    {
+        this->StopPulling();
+    }
+}
+
+
 

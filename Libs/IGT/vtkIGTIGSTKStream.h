@@ -7,12 +7,12 @@
 #define IGTIGSTKSTREAM_H
 
 
-#include "itkCommand.h"
+// #include "itkCommand.h"
 
 #include "vtkIGTWin32Header.h" 
 #include "vtkObject.h"
-#include "vtkMatrix4x4.h"
-#include "vtkTransform.h"
+#include "vtkIGTDataStream.h"
+
 
 #include <string>
 
