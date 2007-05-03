@@ -190,6 +190,10 @@ int main(int argc, char * argv[])
                                        "Read Volume",
                                        CLPProcessInformation,
                                        1.0/numFilterSteps, currentFilterOffset/numFilterSteps);
+    if (debug)
+      {
+      watchReader.QuietOn();
+      }
     currentFilterOffset++;
     reader->SetArchetype(InputVolume.c_str());
     reader->SetOutputScalarTypeToNative();
@@ -265,8 +269,11 @@ int main(int argc, char * argv[])
                                           CLPProcessInformation,
                                           1.0/numFilterSteps,
                                           currentFilterOffset/numFilterSteps);
+      if (debug)
+        {
+        watchDMCubes.QuietOn();
+        }
       currentFilterOffset += 1.0;
-      
       cubes->SetInput(image);
       cubes->GenerateValues((EndLabel-StartLabel +1), StartLabel, EndLabel);
       cubes->Update();
@@ -282,6 +289,10 @@ int main(int argc, char * argv[])
                                              1.0/numFilterSteps,
                                              currentFilterOffset/numFilterSteps);
         currentFilterOffset += 1.0;
+        if (debug)
+          {
+          watchSmoother.QuietOn();
+          }
         cubes->ReleaseDataFlagOn();
         smoother->SetInput(cubes->GetOutput());
         smoother->SetNumberOfIterations(Smooth);
@@ -296,17 +307,24 @@ int main(int argc, char * argv[])
         //        smoother->ReleaseDataFlagOn();
         }
 
-      vtkPluginFilterWatcher watchImageAccumlate(hist,
+      vtkPluginFilterWatcher watchImageAccumulate(hist,
                                                  "Histogram All Models",
                                                  CLPProcessInformation,
                                                  1.0/numFilterSteps,
                                                  currentFilterOffset/numFilterSteps);
       currentFilterOffset += 1.0;
-      
+      if (debug)
+        {
+        watchImageAccumulate.QuietOn();
+        }
       hist->Update();
       double *max = hist->GetMax();
       double *min = hist->GetMin();
-
+       if (debug)
+         {
+         std::cout << "Min = " << min[0] << " and max = " << max[0] << endl;
+         }
+       
       if (GenerateAll)
         {
         if (debug)
@@ -322,12 +340,13 @@ int main(int argc, char * argv[])
           {
           if((int)floor((((hist->GetOutput())->GetPointData())->GetScalars())->GetTuple1(i)) > 0)
             {
+            if (debug && i < 0 && i > -100) { std::cout << i << " "; }
             numModelsToGenerate++;
             }
           }
         if (debug)
           {
-          std::cout << "GenerateAll: there are " << numModelsToGenerate << " models to be generated." << endl;
+          std::cout << endl << "GenerateAll: there are " << numModelsToGenerate << " models to be generated." << endl;
           }
         numFilterSteps = numSingletonFilterSteps + (numRepeatedFilterSteps * numModelsToGenerate);
         }
@@ -508,6 +527,10 @@ int main(int argc, char * argv[])
                                                    1.0/numFilterSteps,
                                                    currentFilterOffset/numFilterSteps);
         currentFilterOffset += 1.0;
+        if (debug)
+          {
+          watchImageThreshold.QuietOn();
+          }
         imageThreshold->SetInput(image);
         imageThreshold->SetReplaceIn(1);
         imageThreshold->SetReplaceOut(1);
@@ -534,7 +557,11 @@ int main(int argc, char * argv[])
                                               CLPProcessInformation,
                                               1.0/numFilterSteps,
                                               currentFilterOffset/numFilterSteps);
-        currentFilterOffset += 1.0;       
+        currentFilterOffset += 1.0;
+        if (debug)
+          {
+          watchThreshold.QuietOn();
+          }
         threshold->SetInput(smoother->GetOutput());
         // In VTK 5.0, this is deprecated - the default behaviour seems to
         // be okay
@@ -561,7 +588,10 @@ int main(int argc, char * argv[])
                                               1.0/numFilterSteps, 
                                               currentFilterOffset/numFilterSteps);
         currentFilterOffset += 1.0;
-          
+        if (debug)
+          {
+          watchThreshold.QuietOn();
+          }
         mcubes->SetInput(imageToStructuredPoints->GetOutput());
         mcubes->SetValue(0,100.5);
         mcubes->ComputeScalarsOff();
@@ -572,20 +602,41 @@ int main(int argc, char * argv[])
         
         if (debug)
           {
-          std::cout << "Number of polygons = " << (mcubes->GetOutput())->GetNumberOfPolys() << endl;
+          std::cout << "\nNumber of polygons = " << (mcubes->GetOutput())->GetNumberOfPolys() << endl;
           }
 
         if ((mcubes->GetOutput())->GetNumberOfPolys()  == 0) 
           {
           std::cout << "Cannot create a model from label "<< i << "\nNo polygons can be created,\nthere may be no voxels with this label in the volume." << endl;
-          imageThreshold->SetInput(NULL);
-          imageToStructuredPoints->SetInput(NULL);
-          mcubes->SetInput(NULL);
-          transformIJKtoRAS->Delete();
-          imageThreshold->Delete();
-          imageToStructuredPoints->Delete();
-          mcubes->Delete();
-          mcubes = NULL;
+          if (transformIJKtoRAS)
+            {
+            transformIJKtoRAS->Delete();
+            transformIJKtoRAS = NULL;
+            }
+          if (imageThreshold)
+            {
+            if (debug)
+              {
+              std::cout << "Setting image threshold input to null" << endl;
+              }
+            imageThreshold->SetInput(NULL);
+            imageThreshold->RemoveAllInputs();              
+            imageThreshold->Delete();
+            imageThreshold = NULL;
+              
+            }
+          if (imageToStructuredPoints)
+            {
+            imageToStructuredPoints->SetInput(NULL);
+            imageToStructuredPoints->Delete();
+            imageToStructuredPoints = NULL;
+            }
+          if (mcubes)
+            {
+            mcubes->SetInput(NULL);
+            mcubes->Delete();
+            mcubes = NULL;
+            }
           skipLabel = 1;
           std::cout << "...continuing" << endl;
           continue;
@@ -607,6 +658,10 @@ int main(int argc, char * argv[])
                                                  1.0/numFilterSteps, 
                                                  currentFilterOffset/numFilterSteps);
       currentFilterOffset += 1.0;
+      if (debug)
+          {
+          watchImageThreshold.QuietOn();
+          }
       if (JointSmoothing == 0)
         {
         decimator->SetInput(mcubes->GetOutput());
@@ -649,6 +704,10 @@ int main(int argc, char * argv[])
                                              1.0/numFilterSteps, 
                                              currentFilterOffset/numFilterSteps);
         currentFilterOffset += 1.0;
+        if (debug)
+          {
+          watchReverser.QuietOn();
+          }
         reverser->SetInput(decimator->GetOutput());
         reverser->ReverseNormalsOn();
         (reverser->GetOutput())->ReleaseDataFlagOn();
@@ -666,7 +725,11 @@ int main(int argc, char * argv[])
                                                CLPProcessInformation,
                                                1.0/numFilterSteps, 
                                                currentFilterOffset/numFilterSteps);
-          currentFilterOffset += 1.0; 
+          currentFilterOffset += 1.0;
+          if (debug)
+            {
+            watchSmoother.QuietOn();
+            }
           smootherSinc->SetPassBand(0.1);
           if (Smooth == 1)
             {
@@ -699,6 +762,10 @@ int main(int argc, char * argv[])
                                                1.0/numFilterSteps, 
                                                currentFilterOffset/numFilterSteps);
           currentFilterOffset += 1.0;
+          if (debug)
+            {
+            watchSmoother.QuietOn();
+            }
         
           // this next line massively rounds corners
           smootherPoly->SetRelaxationFactor(0.33);
@@ -731,7 +798,10 @@ int main(int argc, char * argv[])
                                               1.0/numFilterSteps, 
                                               currentFilterOffset/numFilterSteps);
       currentFilterOffset += 1.0;
-      
+      if (debug)
+        {
+        watchTransformer.QuietOn();
+        }
       if (JointSmoothing == 0)
         {
         if (strcmp(FilterType.c_str(),"Sinc") == 0)
@@ -771,6 +841,10 @@ int main(int argc, char * argv[])
                                           1.0/numFilterSteps, 
                                           currentFilterOffset/numFilterSteps);
       currentFilterOffset += 1.0;
+      if (debug)
+        {
+        watchNormals.QuietOn();
+        }
       
       if (PointNormals)
         {
@@ -794,7 +868,11 @@ int main(int argc, char * argv[])
                                            1.0/numFilterSteps, 
                                            currentFilterOffset/numFilterSteps);
       currentFilterOffset += 1.0;
-       
+      if (debug)
+        {
+        watchStripper.QuietOn();
+        }
+      
       stripper->SetInput(normals->GetOutput());
       
       (stripper->GetOutput())->ReleaseDataFlagOff();
@@ -812,6 +890,10 @@ int main(int argc, char * argv[])
                                          1.0/numFilterSteps, 
                                          currentFilterOffset/numFilterSteps);
       currentFilterOffset += 1.0;
+      if (debug)
+        {
+        watchWriter.QuietOn();
+        }
       
       writer->SetInput(stripper->GetOutput());
       writer->SetFileType(2);
@@ -835,7 +917,7 @@ int main(int argc, char * argv[])
         
       writer->SetInput(NULL);
       writer->Delete();
-
+      writer = NULL;
       if (modelScene != NULL)
         {
         if (debug)
@@ -884,15 +966,18 @@ int main(int argc, char * argv[])
           }
         // clean up
         dnode->Delete();
+        dnode = NULL;
         snode->Delete();
+        snode = NULL;
         mnode->Delete();
+        mnode = NULL;
         }
         } // end of skipping an empty label
       } // end of loop over labels
     if (debug)
       {
       std::cout << "End of looping over labels" << endl;
-      }
+     } 
     // Report what was done
     if (madeModels.size() > 0) 
       {
@@ -998,7 +1083,12 @@ int main(int argc, char * argv[])
         std::cout << "Deleting image threshold" << endl;
         }
       imageThreshold->SetInput(NULL);
+      imageThreshold->RemoveAllInputs();
       imageThreshold->Delete();
+      if (debug)
+        {
+        std::cout << "... done deleting image threshold" << endl;
+        }
       }
     if (threshold)
       {
@@ -1092,7 +1182,6 @@ int main(int argc, char * argv[])
       if (debug)
         {
         std::cout << "Deleting color logic" << endl;
-        colorLogic->DebugOn();
         }
       colorLogic->Delete();
       colorLogic = NULL;
