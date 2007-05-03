@@ -67,9 +67,10 @@ public:
     }
 
   /** Methods to control the verbosity of the messages. Quiet
-   * reporting limits the information emitted at a ProgressEvent. */
-  void QuietOn() {Quiet = true;};
-  void QuietOff() {Quiet = false;};
+   * reporting limits the information emitted at a ProgressEvent: only filter
+   * start and filter end are emitted. */
+  void QuietOn() { this->SetQuiet(true);};
+  void QuietOff() { this->SetQuiet(false);};
 
   /** Methods to access member data */
   /** Get a pointer to the process object being watched. */
@@ -83,9 +84,9 @@ public:
   double GetStart() {return this->Start;};
   double GetFraction() {return this->Fraction;};
 
-  /** Set/Get the quiet mode boolean. If true, verbose progess is
+  /** Set/Get the quiet mode boolean. If false, verbose progress is
     * reported. */
-  void SetQuiet(bool val) {Quiet=val;};
+  void SetQuiet(bool val);
   bool GetQuiet() {return Quiet;};
 
   /** Get the comment for the watcher. */

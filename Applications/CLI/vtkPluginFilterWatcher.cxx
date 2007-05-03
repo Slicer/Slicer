@@ -148,19 +148,22 @@ public:
         }
       else
         {
-        std::cout << "<filter-progress>"
-                  << (this->Watcher->GetProcess()->GetProgress() *
-                      this->Watcher->GetFraction()) + this->Watcher->GetStart()
-                  << "</filter-progress>"
-                  << std::endl;
-        if (this->Watcher->GetFraction() != 1.0)
+        if (!this->Quiet)
           {
-          std::cout << "<filter-stage-progress>"
-                    << this->Watcher->GetProcess()->GetProgress()
-                    << "</filter-stage-progress>"
+          std::cout << "<filter-progress>"
+                    << (this->Watcher->GetProcess()->GetProgress() *
+                        this->Watcher->GetFraction()) + this->Watcher->GetStart()
+                    << "</filter-progress>"
                     << std::endl;
+          if (this->Watcher->GetFraction() != 1.0)
+            {
+            std::cout << "<filter-stage-progress>"
+                      << this->Watcher->GetProcess()->GetProgress()
+                      << "</filter-stage-progress>"
+                      << std::endl;
+            }
+          std::cout << std::flush;
           }
-        std::cout << std::flush;
         }
       }
   }
@@ -169,8 +172,13 @@ public:
   {
     this->Watcher = w;
   }
+  /** Set/Get the quiet mode boolean. If false, verbose progress is
+   * reported. */
+  void SetQuiet(bool val) {Quiet=val;};
+  bool GetQuiet() {return Quiet;};
 private:
   vtkPluginFilterWatcher *Watcher;
+  bool Quiet;
 
 };
 
@@ -206,7 +214,8 @@ vtkPluginFilterWatcher
 
   this->ProgressFilterCommand = vtkPluginWatcherProgress::New();;
   this->ProgressFilterCommand->SetWatcher(this);
-
+  this->ProgressFilterCommand->SetQuiet(this->GetQuiet());
+  
   // Add the commands as observers
   this->StartTag = this->Process->AddObserver(vtkCommand::StartEvent,
                                               this->StartFilterCommand);
@@ -236,5 +245,14 @@ vtkPluginFilterWatcher
       }
 
     this->Process->UnRegister(0);
+    }
+}
+
+void vtkPluginFilterWatcher::SetQuiet(bool val)
+{
+  Quiet=val;
+  if (this->ProgressFilterCommand)
+    {
+    this->ProgressFilterCommand->SetQuiet(val);
     }
 }
