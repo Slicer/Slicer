@@ -3,8 +3,19 @@ PROJECT(MeshFilter)
 #
 # Sources
 #
+IF(VTK_MAJOR_VERSION LESS 5)
+  SET(AddVtk_SRCS vtkTable.cxx vtkTableReader.cxx)
+ELSE(VTK_MAJOR_VERSION LESS 5)
+  IF(VTK_MAJOR_VERSION EQUAL 5)
+    IF(VTK_MINOR_VERSION LESS 1)
+      SET(AddVtk_SRCS vtkTable.cxx vtkTableReader.cxx)
+    ENDIF(VTK_MINOR_VERSION LESS 1)
+  ENDIF(VTK_MAJOR_VERSION EQUAL 5)
+ENDIF(VTK_MAJOR_VERSION LESS 5)
+
 SET(MeshFilter_SRCS 
   vtkRebinMaterialProperty.cxx
+  ${AddVtk_SRCS}
 )
 
 # Include dirs
