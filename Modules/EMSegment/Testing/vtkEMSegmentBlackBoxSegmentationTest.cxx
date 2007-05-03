@@ -89,13 +89,17 @@ bool ImageDiff(vtkImageData* resultData, std::string standardFilename)
 
   vtkImageAccumulate* differenceAccumulator = vtkImageAccumulate::New();
   differenceAccumulator->SetInputConnection(imageDifference->GetOutputPort());
-  differenceAccumulator->SetIgnoreZero(1);
+  //differenceAccumulator->IgnoreZeroOn();
   differenceAccumulator->Update();
   
-  imagesDiffer = differenceAccumulator->GetVoxelCount() > 0;
+  //imagesDiffer = differenceAccumulator->GetVoxelCount() > 0;
+  imagesDiffer = 
+    differenceAccumulator->GetMin()[0] != 0.0 ||
+    differenceAccumulator->GetMax()[0] != 0.0;
+    
   if (imagesDiffer)
   {
-    std::cerr << "(ignoring zero) Num / Min / Max / Mean difference = " 
+    std::cerr << "((temporarily not) ignoring zero) Num / Min / Max / Mean difference = " 
               << differenceAccumulator->GetVoxelCount()  << " / "
               << differenceAccumulator->GetMin()[0]      << " / "
               << differenceAccumulator->GetMax()[0]      << " / "
