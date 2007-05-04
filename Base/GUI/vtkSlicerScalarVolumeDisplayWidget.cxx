@@ -221,7 +221,7 @@ void vtkSlicerScalarVolumeDisplayWidget::ProcessMRMLEvents ( vtkObject *caller,
   if (volumeNode == curVolumeNode && 
       volumeNode != NULL && event == vtkCommand::ModifiedEvent)
     {
-    if (volumeNode)
+    if (volumeNode && volumeNode->GetImageData())
       {
       this->WindowLevelThresholdEditor->SetImageData(volumeNode->GetImageData());
       }
