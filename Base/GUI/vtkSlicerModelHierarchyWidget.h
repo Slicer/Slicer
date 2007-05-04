@@ -69,6 +69,8 @@ public:
 
   virtual void RenameNodeCallback(const char *id);
 
+  virtual void SelectNodeCallback(const char *id);
+
   virtual void OpenHierarchyCommand(const char *id);
 
   virtual void CloseHierarchyCommand(const char *id);

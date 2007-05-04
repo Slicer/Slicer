@@ -568,9 +568,8 @@ void vtkSlicerModelsGUI::BuildGUI ( )
                   hierFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Models")->GetWidgetName());
 
     this->ModelHierarchyWidget = vtkSlicerModelHierarchyWidget::New ( );
-    this->ModelHierarchyWidget->SetMRMLScene(this->GetMRMLScene() );
+    this->ModelHierarchyWidget->SetAndObserveMRMLScene(this->GetMRMLScene() );
     this->ModelHierarchyWidget->SetParent ( hierFrame->GetFrame() );
-    this->ModelHierarchyWidget->SetMRMLScene(this->GetMRMLScene());
     this->ModelHierarchyWidget->Create ( );
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   this->ModelHierarchyWidget->GetWidgetName(), 
