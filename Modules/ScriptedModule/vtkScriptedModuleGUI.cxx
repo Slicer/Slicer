@@ -80,6 +80,19 @@ void vtkScriptedModuleGUI::RemoveLogicObservers()
 void vtkScriptedModuleGUI::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
+
+  os << indent << "ModuleName: " << (this->ModuleName ? this->ModuleName : "null") << endl;
+  os << indent << "Logic: " << endl;
+  if (this->Logic)
+    {
+    this->Logic->PrintSelf(os, indent.GetNextIndent());
+    }
+
+  os << indent << "ScriptedModuleNode: " << endl;
+  if (this->ScriptedModuleNode)
+    {
+    this->ScriptedModuleNode->PrintSelf(os, indent.GetNextIndent());
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -187,3 +200,16 @@ unsigned long vtkScriptedModuleGUI::AddObserverByNumber ( vtkObject *observee, u
 } 
 
 
+//---------------------------------------------------------------------------
+unsigned long vtkScriptedModuleGUI::AddMRMLObserverByNumber ( vtkObject *observee, unsigned long event ) {
+  return ( observee->AddObserver(event, (vtkCommand *)this->MRMLCallbackCommand) );
+}
+
+//---------------------------------------------------------------------------
+void vtkScriptedModuleGUI::RemoveMRMLObserverByNumber ( vtkObject *observee, unsigned long event ) {
+
+  if (observee->HasObserver(event, (vtkCommand *)this->MRMLCallbackCommand))
+    {
+    observee->RemoveObservers(event, (vtkCommand *)this->MRMLCallbackCommand);
+    }
+}
