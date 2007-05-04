@@ -238,19 +238,19 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
     volumeNode = vectorNode;
     storageNode = storageNode1;
     }
+  else if (storageNode2->ReadData(vectorNode) && vectorNode->GetImageData()->GetNumberOfScalarComponents() == 3)
+    {
+    vtkDebugMacro("Vector HAS BEEN READ WITH ARCHTYPE READER");
+    displayNode = vtkMRMLVectorVolumeDisplayNode::New();
+    volumeNode = vectorNode;
+    storageNode = storageNode2;
+    }
   else if (storageNode2->ReadData(scalarNode))
     {
     vtkDebugMacro("Scalar HAS BEEN READ WITH ARCHTYPE READER");
     displayNode = vtkMRMLVolumeDisplayNode::New();
     scalarNode->SetLabelMap(labelMap);
     volumeNode = scalarNode;
-    storageNode = storageNode2;
-    }
-  else if (storageNode2->ReadData(vectorNode))
-    {
-    vtkDebugMacro("Vector HAS BEEN READ WITH ARCHTYPE READER");
-    displayNode = vtkMRMLVectorVolumeDisplayNode::New();
-    volumeNode = vectorNode;
     storageNode = storageNode2;
     }
 
