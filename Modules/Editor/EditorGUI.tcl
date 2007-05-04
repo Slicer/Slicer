@@ -333,13 +333,19 @@ proc EditorProcessGUIEvents {this caller event} {
   } elseif { $caller == $::Editor($this,paintColor) } {
       switch $event {
           "30000" {
-              # puts "Got color node modified event, changing label map's color node to [[$::Editor($this,paintColor) GetColorNode] GetID]"
               # update the label volume's display node so that it will show up with the correct colours
               set selectionNode [[[$this GetLogic] GetApplicationLogic]  GetSelectionNode]
               set labelVolume [[[$this GetLogic] GetMRMLScene] GetNodeByID [$selectionNode GetActiveLabelVolumeID]]
-              # this won't work because the labelVolume is a vtkMRMLNode, need to cast it?
-              # [$labelVolume GetVolumeDisplayNode] SetColorNode [$::Editor($this,paintColor) GetColorNode]
-
+              if {$labelVolume != ""} {
+                  set displayNode [$labelVolume GetDisplayNode] 
+                  if {$displayNode != ""} {
+                      $displayNode SetAndObserveColorNodeID [[$::Editor($this,paintColor) GetColorNode] GetID]
+                  } else {
+                      puts "ERROR: display node not found"
+                  }
+              } else {
+                  puts "ERROR: active label volume not found"
+              }
               EditorUpdateSWidgets $this
           }
           "30001" {
