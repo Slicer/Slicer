@@ -395,6 +395,26 @@ void vtkSlicerSliceLayerLogic::ScalarVolumeNodeUpdateTransforms()
 //----------------------------------------------------------------------------
 void vtkSlicerSliceLayerLogic::VectorVolumeNodeUpdateTransforms()
 {
+  double window = 0;
+  double level = 0;
+  int interpolate = 0;
+  int applyThreshold = 0;
+  double lowerThreshold = 0;
+  double upperThreshold = 0;
+  vtkLookupTable *lookupTable = NULL;
+  vtkMRMLVectorVolumeNode *vectorVolumeNode = vtkMRMLVectorVolumeNode::SafeDownCast (this->VolumeNode);
+
+  vtkMRMLVectorVolumeDisplayNode *vectorVolumeDisplayNode = vtkMRMLVectorVolumeDisplayNode::SafeDownCast(this->VolumeDisplayNode);
+
+  if (vectorVolumeDisplayNode)
+    {
+    interpolate = vectorVolumeDisplayNode->GetInterpolate();
+    }
+
+  this->VectorSlicePipeline(vectorVolumeNode->GetImageData(), interpolate);
+
+  this->Slice->SetSliceTransform( this->XYToIJKTransform ); 
+  this->Reslice->SetResliceTransform( this->XYToIJKTransform ); 
 
 }
 
@@ -641,6 +661,78 @@ void vtkSlicerSliceLayerLogic::ScalarSlicePipeline(vtkImageData *imageData, int 
   this->AppendComponents->AddInputConnection(0, this->AlphaLogic->GetOutput()->GetProducerPort() );
   }
 
+//----------------------------------------------------------------------------
+void vtkSlicerSliceLayerLogic::VectorSlicePipeline(vtkImageData *imageData, int interpolate)
+{
+
+  if ( imageData && interpolate )
+    {
+    this->Slice->SetInterpolationModeToNearestNeighbor();
+    this->Reslice->SetInterpolationModeToNearestNeighbor();
+    }
+  else
+    {
+    this->Slice->SetInterpolationModeToLinear();
+    this->Reslice->SetInterpolationModeToLinear();
+    }
+
+  this->Slice->SetInput( imageData );
+  this->Reslice->SetInput( imageData );
+
+    //
+    // Configure the imaging pipeline
+    //
+    // - make an alpha channel for the image data from the node
+    // - perform the reslice 
+    // - extract the luminance and alpha for individual processing
+    // -- use the luminance to get a second alpha channel
+    // -- or the two alpha channels
+    // - run the luminance through the window level and color maps
+    // - append the alpha channel to the final RGB image
+    //
+
+  if ( this->GetUseReslice() )
+    {
+    this->ResliceExtractLuminance->SetInput(this->Reslice->GetOutput() );
+    }
+  else 
+    {
+    this->ResliceExtractLuminance->SetInput(this->Slice->GetOutput() );
+    }
+  this->ResliceExtractLuminance->SetComponents(0);
+
+  if ( this->GetUseReslice() )
+    {
+    this->ResliceExtractAlpha->SetInput(this->Reslice->GetOutput() );
+    }
+  else
+    {
+    this->ResliceExtractAlpha->SetInput(this->Slice->GetOutput() );
+    }
+  this->ResliceExtractAlpha->SetComponents(1);
+  this->ResliceAlphaCast->SetInput( this->ResliceExtractAlpha->GetOutput() );
+
+  if ( interpolate )
+    {
+    this->Slice->SetInterpolationModeToLinear();
+    this->Reslice->SetInterpolationModeToLinear();
+    }
+  else
+    {
+    this->Slice->SetInterpolationModeToNearestNeighbor();
+    this->Reslice->SetInterpolationModeToNearestNeighbor();
+    }
+
+  this->AppendComponents->RemoveAllInputs();
+  if ( this->GetUseReslice() )
+    {
+    this->AppendComponents->SetInputConnection(0, this->Reslice->GetOutput()->GetProducerPort() );
+    }
+  else
+    {
+    this->AppendComponents->SetInputConnection(0, this->Slice->GetOutput()->GetProducerPort() );
+    }
+  }
 
 //----------------------------------------------------------------------------
 void vtkSlicerSliceLayerLogic::PrintSelf(ostream& os, vtkIndent indent)
