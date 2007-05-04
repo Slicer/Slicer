@@ -75,6 +75,7 @@
 #include "itkGE5ImageIO.h"
 #include "itkNiftiImageIO.h"
 #include "itkVTKImageIO.h"
+#include "itkTIFFImageIO.h"
 #include "itkAnalyzeImageIO.h"
 #include <itksys/SystemTools.hxx>
 
@@ -227,6 +228,7 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
   itk::AnalyzeImageIO::Pointer analyzeIO = itk::AnalyzeImageIO::New();
   itk::NiftiImageIO::Pointer niftiIO = itk::NiftiImageIO::New();
   itk::VTKImageIO::Pointer vtkIO = itk::VTKImageIO::New();
+  itk::TIFFImageIO::Pointer tiffIO = itk::TIFFImageIO::New();
 
   // Test whether the input file is a DICOM file
   bool isDicomFile = dicomIO->CanReadFile(this->Archetype);
@@ -276,6 +278,7 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
 #endif
             niftiIO->CanReadFile(this->Archetype) ||
             vtkIO->CanReadFile(this->Archetype) ||
+            tiffIO->CanReadFile(this->Archetype) ||
             analyzeIO->CanReadFile(this->Archetype))
     {
     if (candidateFiles.size() == 0)
