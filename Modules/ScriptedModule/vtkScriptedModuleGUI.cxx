@@ -156,9 +156,17 @@ void vtkScriptedModuleGUI::ProcessMRMLEvents ( vtkObject *caller,
                                             unsigned long event,
                                             void *callData ) 
 {
-  // TODO: map the object and event to strings for tcl
+  vtkDebugMacro("ProcessMRMLEvents()");
+  vtkMRMLNode *mrmlNode = vtkMRMLNode::SafeDownCast(caller);
+
+  if (mrmlNode != NULL)
+    {
+    vtkDebugMacro("vtkScriptedModuleGUI::ProcessMRMLEvents: calling script " <<  this->GetModuleName() << "ProcessMRMLEvents with event " << event);
+    this->GetApplication()->Script("%sProcessMRMLEvents %s %s %ld", 
+                                   this->GetModuleName(), this->GetTclName(), mrmlNode->GetID(), event);
+    }
   
-  //std::cout << "ProcessMRMLEvents()" << std::endl;
+  
   // if parameter node has been changed externally, update GUI widgets
   // with new values 
   vtkMRMLScriptedModuleNode* node
