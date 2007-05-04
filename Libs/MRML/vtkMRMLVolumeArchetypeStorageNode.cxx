@@ -26,6 +26,8 @@ Version:   $Revision: 1.6 $
 
 #include "vtkMatrix4x4.h"
 #include "vtkImageData.h"
+#include "vtkDataArray.h"
+#include "vtkPointData.h"
 #include "vtkITKArchetypeImageSeriesReader.h"
 #include "vtkITKArchetypeImageSeriesScalarReader.h"
 #include "vtkITKArchetypeImageSeriesVectorReader.h"
@@ -132,7 +134,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
 {
 
   // test whether refNode is a valid node to hold a volume
-  if ( !(refNode->IsA("vtkMRMLScalarVolumeNode")) || refNode->IsA("vtkMRMLVectorVolumeNode" ) )
+  if ( !( refNode->IsA("vtkMRMLScalarVolumeNode") || refNode->IsA("vtkMRMLVectorVolumeNode" ) ) )
     {
     vtkErrorMacro("Reference node is not a vtkMRMLVolumeNode");
     return 0;         
@@ -204,7 +206,8 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
     reader->Delete();
     return 0;
     }
-  if (reader->GetOutput() == NULL) 
+  if (reader->GetOutput() == NULL 
+      || reader->GetOutput()->GetPointData()->GetScalars()->GetNumberOfTuples() == 0) 
     {
     vtkErrorMacro("vtkMRMLVolumeArchetypeStorageNode: Cannot read file");
     reader->Delete();
