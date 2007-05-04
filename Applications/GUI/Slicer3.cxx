@@ -1197,7 +1197,7 @@ int Slicer3_main(int argc, char *argv[])
 #ifndef CLIMODULES_DEBUG
     std::vector<std::string> moduleNames;
     std::vector<std::string>::const_iterator mit;
-    if (slicerApp->GetLoadCommandLineModules())
+    if ( slicerApp->GetLoadCommandLineModules() && !NoModules )
       {
       // --- Scan for command line and shared object modules
       //

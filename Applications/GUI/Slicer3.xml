@@ -30,6 +30,14 @@
       </boolean>
 
       <boolean>
+      <name>NoModules</name>
+      <longflag>--no_modules</longflag>
+      <description>Disables the loading of Command Line Modules</description>
+      <default>false</default>
+      <label>Command Line Modules On/Off</label>
+      </boolean>
+
+      <boolean>
       <name>Daemon</name>
       <longflag>--daemon</longflag>
       <description>Turns on the Slicer Daemon (open listening socket port)</description>
