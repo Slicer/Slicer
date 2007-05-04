@@ -280,9 +280,20 @@ proc EditorAddGUIObservers {this} {
   $this AddObserverByNumber [$::Editor($this,paintOver) GetWidget] 10000 
   $this AddObserverByNumber [$::Editor($this,paintDropper) GetWidget] 10000 
   $this AddObserverByNumber $::Editor($this,paintRadius) 10001 
+    
+#    $this DebugOn
+    if {[$this GetDebug]} {
+        puts "Adding mrml observer to selection node, modified event"
+    
+    $this AddMRMLObserverByNumber [[[$this GetLogic] GetApplicationLogic] GetSelectionNode] 31
+    }
 }
 
 proc EditorRemoveGUIObservers {this} {
+    if {[$this GetDebug]} {
+        puts "Removing mrml observer on selection node, modified event"
+        $this RemoveMRMLObserverByNumber [[[$this GetLogic] GetApplicationLogic] GetSelectionNode] 31
+    }
 }
 
 proc EditorRemoveLogicObservers {this} {
@@ -408,7 +419,7 @@ proc EditorUpdateSWidgets {this} {
   foreach {lo hi} [$::Editor($this,paintRange) GetRange] {}
 
   set cmd ::PaintSWidget::ConfigureAll
-    $cmd -colorsColor [$::Editor($this,colorsColor) GetSelectedColorIndex]
+    $cmd -paintColor [$::Editor($this,colorsColor) GetSelectedColorIndex]
     $cmd -paintOver [[$::Editor($this,paintOver) GetWidget] GetSelectedState]
     $cmd -paintDropper [[$::Editor($this,paintDropper) GetWidget] GetSelectedState]
     $cmd -thresholdPaint [[$::Editor($this,paintThreshold) GetWidget] GetSelectedState]
@@ -424,13 +435,42 @@ proc EditorUpdateSWidgets {this} {
 proc EditorUpdateMRML {this} {
 }
 
-proc EditorProcessMRMLEvents {this caller event} {
+proc EditorProcessMRMLEvents {this callerID event} {
+    if {[$this GetDebug]} {
+        puts "EditorProcessMRMLEvents: event = $event, callerID = $callerID"
+    }
+    set caller [[[$this GetLogic] GetMRMLScene] GetNodeByID $callerID]
+    set selectionNode  [[[$this GetLogic] GetApplicationLogic]  GetSelectionNode]
+    if {$caller == $selectionNode && $event == 31} {
+        if {[$this GetDebug]} {
+            puts "...caller is selection node, with modified event"
+        }
+        # get the active label volume
+        set labelVolume [[[$this GetLogic] GetMRMLScene] GetNodeByID [$selectionNode GetActiveLabelVolumeID]]
+        # check it's display node colour node
+        set displayNode [$labelVolume GetDisplayNode] 
+        # is it the one we're showing?
+        if {$displayNode != "" && [$displayNode GetColorNodeID] != [[$::Editor($this,colorsColor) GetColorNode] GetID]} {
+            if {[$this GetDebug]} {
+                puts "Resetting the color node"
+            }
+            $::Editor($this,colorsColor) SetColorNode [$displayNode GetColorNode]
+        }
+    }
 }
 
 proc EditorEnter {this} {
+    if {[$this GetDebug]} {
+        puts "EditorEnter: Adding mrml observer on selection node, modified event"
+    }
+    $this AddMRMLObserverByNumber [[[$this GetLogic] GetApplicationLogic]  GetSelectionNode] 31
 }
 
 proc EditorExit {this} {
+    if {[$this GetDebug]} {
+        puts "EditorExit: Removing mrml observer on selection node modified event"
+    }
+    $this RemoveMRMLObserverByNumber [[[$this GetLogic] GetApplicationLogic]  GetSelectionNode] 31
 }
 
 # TODO: there might be a better place to put this for general use...  
