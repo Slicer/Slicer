@@ -223,6 +223,7 @@ protected:
   // Generic pipeline for scalar slice logic
   void ScalarSlicePipeline(vtkImageData *imageData, int labelMap, double window, double level, int interpolate, vtkLookupTable *lookupTable, int applyThreshold, double lowerThreshold, double upperThreshold);
 
+  void VectorSlicePipeline(vtkImageData *imageData, int interpolate);
 };
 
 #endif
