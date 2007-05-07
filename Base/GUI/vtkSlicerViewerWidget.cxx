@@ -619,7 +619,24 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
     {
     // check for events on a model node
     vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(caller);
-    this->UpdateFromMRML();
+    if (this->DisplayedModels.find(modelNode->GetID()) != this->DisplayedModels.end() &&
+       (event == vtkCommand::ModifiedEvent ||
+        event == vtkMRMLModelNode::PolyDataModifiedEvent ||
+        event == vtkMRMLModelNode::DisplayModifiedEvent) )
+      {
+      // if the node is already cached with an actor process only this one
+      // if it was not visible and is still not visible do nothing
+      vtkMRMLModelDisplayNode *dnode = this->GetModelDisplayNode(modelNode);
+      if (!(dnode && dnode->GetVisibility() == 0 && this->GetDisplayedModelsVisibility(modelNode) == 0))
+        {
+        this->UpdateModifiedModel(modelNode);
+        this->RequestRender( );
+        }
+      }
+    else
+      {
+      this->UpdateFromMRML();
+      }
     }
   else if (vtkMRMLClipModelsNode::SafeDownCast(caller) != NULL &&
            event == vtkCommand::ModifiedEvent)
@@ -886,18 +903,22 @@ void vtkSlicerViewerWidget::UpdateModelsFromMRML()
       {
       continue;
       }
-    // add nodes that are not in the list yet
-    if (this->DisplayedModels.find(model->GetID()) == this->DisplayedModels.end() )
-      {
-      this->UpdateModel(model);
-      } 
-    //vtkActor *actor = this->DisplayedModels.find(model->GetID())->second;
-    vtkActor *actor = this->DisplayedModels[ model->GetID() ];
-    this->SetModelDisplayProperty(model, actor);
+    this->UpdateModifiedModel(model);
     } // end while
 
 }
 
+//---------------------------------------------------------------------------
+void vtkSlicerViewerWidget::UpdateModifiedModel(vtkMRMLModelNode *model)
+{
+  if (this->DisplayedModels.find(model->GetID()) == this->DisplayedModels.end() )
+    {
+    this->UpdateModel(model);
+    } 
+  //vtkActor *actor = this->DisplayedModels.find(model->GetID())->second;
+  vtkActor *actor = this->DisplayedModels[ model->GetID() ];
+  this->SetModelDisplayProperty(model, actor);
+}
 
 //---------------------------------------------------------------------------
 void vtkSlicerViewerWidget::UpdateModelPolyData(vtkMRMLModelNode *model)
@@ -944,6 +965,14 @@ void vtkSlicerViewerWidget::UpdateModelPolyData(vtkMRMLModelNode *model)
     this->MainViewer->AddViewProp( actor );
     this->DisplayedModels[model->GetID()] = actor;
     this->DisplayedModelNodes[std::string(model->GetID())] = model;
+    if (modelDisplayNode)
+      {
+      this->DisplayedModelsVisibility[model->GetID()] = modelDisplayNode->GetVisibility();
+      }
+    else
+      {
+      this->DisplayedModelsVisibility[model->GetID()] = 1;
+      }
     actor->Delete();
     }
 
@@ -1118,6 +1147,7 @@ void vtkSlicerViewerWidget::RemoveModelProps()
     {
     this->DisplayedModels.erase(removedIDs[i]);
     this->DisplayedModelsClipState.erase(removedIDs[i]);
+    this->DisplayedModelsVisibility.erase(removedIDs[i]);
     modelIter = this->DisplayedModelNodes.find(std::string(removedIDs[i]));
     if(modelIter != this->DisplayedModelNodes.end())
       {
@@ -1127,6 +1157,19 @@ void vtkSlicerViewerWidget::RemoveModelProps()
     }
 }
 
+int vtkSlicerViewerWidget::GetDisplayedModelsVisibility(vtkMRMLModelNode *model)
+{
+  int visibility = 1;
+  
+  std::map<const char *, int>::iterator iter;
+  iter = this->DisplayedModelsVisibility.find(model->GetID());
+  if (iter != this->DisplayedModelsVisibility.end())
+    {
+    visibility = iter->second;
+    }
+
+  return visibility;
+}
 
 //---------------------------------------------------------------------------
 void vtkSlicerViewerWidget::RemoveMRMLObservers()
@@ -1208,7 +1251,8 @@ void vtkSlicerViewerWidget::SetModelDisplayProperty(vtkMRMLModelNode *model,  vt
   if (dnode != NULL)
     {
     actor->SetVisibility(dnode->GetVisibility());
-    
+    this->DisplayedModelsVisibility[model->GetID()] = dnode->GetVisibility();
+
     actor->GetMapper()->SetScalarVisibility(dnode->GetScalarVisibility());
     // if the scalars are visible, set active scalars, try to get the lookup
     // table

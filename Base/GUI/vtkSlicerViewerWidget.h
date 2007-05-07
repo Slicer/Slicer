@@ -200,6 +200,8 @@ protected:
   void UpdateModelsFromMRML();
   void UpdateModel(vtkMRMLModelNode *model);
   void UpdateModelPolyData(vtkMRMLModelNode *model);
+  void UpdateModifiedModel(vtkMRMLModelNode *model);
+
   void CreateClipSlices();
 
   void CreateAxis();
@@ -216,12 +218,16 @@ protected:
 
   void SetModelDisplayProperty(vtkMRMLModelNode *model,  vtkActor *actor);
 
+  int GetDisplayedModelsVisibility(vtkMRMLModelNode *model);
+
+
   //BTX
   std::map<const char *, vtkActor *> DisplayedModels;
 
   std::map<std::string, vtkMRMLModelNode *> DisplayedModelNodes;
 
   std::map<const char *, int> DisplayedModelsClipState;
+  std::map<const char *, int> DisplayedModelsVisibility;
 
   std::vector<vtkFollower *> AxisLabelActors;
 

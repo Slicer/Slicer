@@ -42,12 +42,18 @@ vtkSlicerSliceLogic::vtkSlicerSliceLogic()
   this->SliceModelNode = NULL;
   this->Name = NULL;
   this->SliceModelDisplayNode = NULL;
+  this->ImageData = vtkImageData::New();
 }
 
 //----------------------------------------------------------------------------
 vtkSlicerSliceLogic::~vtkSlicerSliceLogic()
 {
   this->SetSliceNode(NULL);
+
+  if (this->ImageData)
+    {
+    this->ImageData->Delete();
+    }
 
   if ( this->Blend ) 
     {
@@ -293,6 +299,7 @@ void vtkSlicerSliceLogic::ProcessLogicEvents()
     xyToRAS->MultiplyPoint(inPt, outPt);
     points->SetPoint(3, outPt3);
 
+    this->UpdateImageData();
     this->SliceModelNode->GetPolyData()->Modified();
     vtkMRMLModelDisplayNode *modelDisplayNode = this->SliceModelNode->GetDisplayNode();
     if ( modelDisplayNode )
@@ -514,6 +521,8 @@ void vtkSlicerSliceLogic::UpdatePipeline()
       this->SliceModelNode->GetDisplayNode()->SetVisibility( this->SliceNode->GetSliceVisible() );
       this->SliceModelNode->GetDisplayNode()->SetAndObserveTextureImageData(this->GetImageData());
       }
+
+    this->UpdateImageData();
 
     this->Modified();
     }

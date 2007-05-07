@@ -109,13 +109,29 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLogic : public vtkSlicerLogic
   // the tail of the pipeline
   // -- returns NULL if none of the inputs exist
   vtkImageData *GetImageData () { 
+     if ( (this->GetBackgroundLayer() != NULL && this->GetBackgroundLayer()->GetImageData() != NULL) ||
+         (this->GetForegroundLayer() != NULL && this->GetForegroundLayer()->GetImageData() != NULL) ||
+         (this->GetLabelLayer() != NULL && this->GetLabelLayer()->GetImageData() != NULL) ) 
+      {     
+      return this->ImageData;
+      }
+     else
+      {
+      return NULL;
+      }
+  };
+
+  void UpdateImageData () { 
     if ( (this->GetBackgroundLayer() != NULL && this->GetBackgroundLayer()->GetImageData() != NULL) ||
          (this->GetForegroundLayer() != NULL && this->GetForegroundLayer()->GetImageData() != NULL) ||
-         (this->GetLabelLayer() != NULL && this->GetLabelLayer()->GetImageData() != NULL) ) {
-      return (this->Blend->GetOutput()); 
-    } else {
-      return NULL;
-    }
+         (this->GetLabelLayer() != NULL && this->GetLabelLayer()->GetImageData() != NULL) ) 
+      {     
+      this->Blend->Update(); 
+      if (this->Blend->GetOutput()->GetMTime() > this->ImageData->GetMTime())
+        {
+        this->ImageData->DeepCopy( this->Blend->GetOutput()); 
+        }
+      }
   };
 
   // Description:
@@ -190,6 +206,7 @@ protected:
   double ForegroundOpacity;
   double LabelOpacity;
   vtkImageBlend *Blend;
+  vtkImageData *ImageData;
 
   vtkMRMLModelNode *SliceModelNode;
   vtkMRMLModelDisplayNode *SliceModelDisplayNode;
