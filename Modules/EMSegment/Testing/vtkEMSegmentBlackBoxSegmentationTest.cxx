@@ -116,6 +116,7 @@ int main(int argc, char** argv)
   // run the segmentation
   try
   {
+    std::cerr << "Starting segmentation..." << std::endl;
     emLogic->StartSegmentation();
   }
   catch (...)
@@ -183,7 +184,9 @@ int main(int argc, char** argv)
   mrmlScene->Delete();
   emLogic->SetAndObserveMRMLScene(NULL);
   emLogic->Delete();
-  
+
+  std::cerr << "All clean..." << std::endl;
+
   return EXIT_SUCCESS;
 }
 
