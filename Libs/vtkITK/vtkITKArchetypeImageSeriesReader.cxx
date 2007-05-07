@@ -406,12 +406,12 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
         }
       else 
         {
-          imageIO = seriesReader->GetImageIO();
-          if (imageIO.GetPointer() == NULL) 
-            {
-              //itkGenericExceptionMacro ( "vtkITKArchetypeImageSeriesReader::ExecuteInformation: ImageIO for file " << fileNameCollapsed.c_str() << " does not exist.");
-              //return;  TODO - figure out why imageIO is NULL for image series with more than one file
-            }
+        itk::ImageFileReader<ImageType>::Pointer imageReader =
+          itk::ImageFileReader<ImageType>::New();
+        imageReader->SetFileName(this->FileNames[0].c_str());
+        imageReader->UpdateOutputInformation();
+        imageIO = imageReader->GetImageIO();
+        seriesReader->SetImageIO(imageIO);
         }
       if (this->UseNativeCoordinateOrientation)
         {
