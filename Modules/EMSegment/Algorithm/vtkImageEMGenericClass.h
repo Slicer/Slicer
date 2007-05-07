@@ -21,7 +21,7 @@
 #define __vtkImageEMGenericClass_h 
   
 #include "vtkEMSegment.h"
-
+#include <iostream>
 #include "vtkImageMultipleInputFilter.h"
 #include "vtkImageData.h"
 #include "vtkOStreamWrapper.h"
@@ -223,7 +223,9 @@ class VTK_EMSEGMENT_EXPORT vtkImageEMGenericClass : public vtkImageMultipleInput
 protected:
   vtkImageEMGenericClass();
   vtkImageEMGenericClass(const vtkImageEMGenericClass&) {};
-  ~vtkImageEMGenericClass(){this->DeleteVariables(); UpdateBlubber->Delete();} 
+  ~vtkImageEMGenericClass(){
+    this->DeleteVariables(); 
+  } 
 
   // Disable this function
   // vtkImageData* GetOutput() {return NULL;}
@@ -253,7 +255,6 @@ protected:
   
   ProtocolMessages ErrorMessage;      // Lists all the error messges -> allows them to be displayed in tcl too 
   ProtocolMessages WarningMessage;    // Lists all the error messges -> allows them to be displayed in tcl too 
-  vtkImageData *UpdateBlubber;        // We are just creating this parameter so that the Update Pipeline works properly 
 
   int PrintWeights;                   // Print out Weights (1 = Normal 2=as shorts normed to 1000)   
 

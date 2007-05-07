@@ -83,11 +83,11 @@ vtkImageEMGenericClass::vtkImageEMGenericClass()
     // this->vtkSource::RemoveOutput(this->Outputs[0]);
 
     // This is Just Created so the Update pipeline works properly 
-    UpdateBlubber = vtkImageData::New();
+    vtkImageData* UpdateBlubber = vtkImageData::New();
     UpdateBlubber->SetExtent(0,0,0,0,0,0);
     UpdateBlubber->AllocateScalars();
     this->SetInput(0,UpdateBlubber);
-
+    UpdateBlubber->Delete();
     this->PrintWeights        = 0;
  }
 
