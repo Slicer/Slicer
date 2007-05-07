@@ -2,120 +2,7 @@
 #include <string>
 #include "vtkMRMLScene.h"
 #include "vtkEMSegmentLogic.h"
-#include "vtkImageMathematics.h"
-#include "vtkImageAccumulate.h"
-#include "vtkITKArchetypeImageSeriesReader.h"
-#include "vtkITKArchetypeImageSeriesScalarReader.h"
-
-/**
- *
- * Black box test for EMSegmenter.  This test runs the EMSegment
- * algorithm on a data set described in a MRML scene file.  The
- * segmentation results are compared to a known "correct" answer
- * segmentation image file.
- */
-
-//
-// This function checks to see if the image stored in standardFilename
-// differs from resultData.  True is returned if the images differ,
-// false is returned if they are identical.
-bool ImageDiff(vtkImageData* resultData, std::string standardFilename)
-{
-  bool imagesDiffer = false;
-
-  //
-  // read segmentation result standard
-  vtkITKArchetypeImageSeriesReader* standardReader = 
-    vtkITKArchetypeImageSeriesScalarReader::New();
-  standardReader->SetArchetype(standardFilename.c_str());
-  standardReader->SetOutputScalarTypeToNative();
-  standardReader->SetDesiredCoordinateOrientationToNative();
-  standardReader->SetUseNativeOriginOn();
-  try
-  {
-    standardReader->Update();
-  }
-  catch (...)
-  {
-    std::cerr << "Error reading standard image: " << std::endl;
-    standardReader->Delete();
-    return true;
-  }
-
-  //
-  // compare image origin and spacing
-  for (unsigned int i = 0; i < 3; ++i)
-  {
-    if (resultData->GetSpacing()[i] != 
-        standardReader->GetOutput()->GetSpacing()[i] ||
-        resultData->GetOrigin()[i] != 
-        standardReader->GetOutput()->GetOrigin()[i])
-    {
-      //
-      // display spacing and origin info for resultData
-      std::cerr << "Image spacing and/or origin does not match standard!" 
-                << std::endl;
-      std::cerr << "result origin: " 
-                << resultData->GetOrigin()[0] << " "
-                << resultData->GetOrigin()[1] << " "
-                << resultData->GetOrigin()[2] << std::endl;
-      std::cerr << "result spacing: " 
-                << resultData->GetSpacing()[0] << " "
-                << resultData->GetSpacing()[1] << " "
-                << resultData->GetSpacing()[2] << std::endl;
-
-      std::cerr << "Standard origin: " 
-                << standardReader->GetOutput()->GetOrigin()[0] << " "
-                << standardReader->GetOutput()->GetOrigin()[1] << " "
-                << standardReader->GetOutput()->GetOrigin()[2] << std::endl;
-      std::cerr << "Standard spacing: " 
-                << standardReader->GetOutput()->GetSpacing()[0] << " "
-                << standardReader->GetOutput()->GetSpacing()[1] << " "
-                << standardReader->GetOutput()->GetSpacing()[2] << std::endl;
-      imagesDiffer = true;
-    }
-  }
-  if (!imagesDiffer)
-  {
-    std::cerr << "Result image origin and spacing match." << std::endl;
-  }
-
-  //
-  // compare image voxels
-  vtkImageMathematics* imageDifference = vtkImageMathematics::New();
-  imageDifference->SetOperationToSubtract();
-  imageDifference->SetInput1(resultData);
-  imageDifference->SetInput2(standardReader->GetOutput());
-
-  vtkImageAccumulate* differenceAccumulator = vtkImageAccumulate::New();
-  differenceAccumulator->SetInputConnection(imageDifference->GetOutputPort());
-  //differenceAccumulator->IgnoreZeroOn();
-  differenceAccumulator->Update();
-  
-  //imagesDiffer = differenceAccumulator->GetVoxelCount() > 0;
-  imagesDiffer = 
-    differenceAccumulator->GetMin()[0] != 0.0 ||
-    differenceAccumulator->GetMax()[0] != 0.0;
-    
-  if (imagesDiffer)
-  {
-    std::cerr << "((temporarily not) ignoring zero) Num / Min / Max / Mean difference = " 
-              << differenceAccumulator->GetVoxelCount()  << " / "
-              << differenceAccumulator->GetMin()[0]      << " / "
-              << differenceAccumulator->GetMax()[0]      << " / "
-              << differenceAccumulator->GetMean()[0]     << std::endl;
-  }
-  else
-  {
-    std::cerr << "Result image voxels match." << std::endl;
-  }
-
-  standardReader->Delete();
-  imageDifference->Delete();
-  differenceAccumulator->Delete();
-
-  return imagesDiffer;
-}
+#include "vtkEMSegmentTestUtilities.h"
 
 int main(int argc, char** argv)
 {
@@ -124,6 +11,8 @@ int main(int argc, char** argv)
   std::string sceneRootDirectory;
   std::string parametersNodeName;
   std::string correctSegmentationFilename;
+  enum TestType { ReadScene, CopyScene, ManualCopyScene, SetScene };
+  TestType testType = ReadScene;
 
   //
   // parse command line
@@ -143,7 +32,7 @@ int main(int argc, char** argv)
   sceneRootDirectory          = argv[2];
   parametersNodeName          = argv[3];
   correctSegmentationFilename = argv[4];
-  
+
   //
   // create a mrml scene that will hold the data parameters
   vtkMRMLScene* mrmlScene = vtkMRMLScene::New();
@@ -158,15 +47,20 @@ int main(int argc, char** argv)
   emLogic->SetAndObserveMRMLScene(mrmlScene);
   emLogic->RegisterMRMLNodesWithScene();
 
-  //
-  // read the scene
   try 
   {
     mrmlScene->Import();
   }
   catch (...)
   {
-    std::cerr << "Error parsing mrml scene: " << std::endl;
+    std::cerr << "Error reading/setting mrml scene: " << std::endl;
+
+    // clean up
+    mrmlScene->Clear(true);
+    mrmlScene->Delete();
+    emLogic->SetAndObserveMRMLScene(NULL);
+    emLogic->Delete();
+
     return EXIT_FAILURE;
   }
   std::cerr << "Imported: " << mrmlScene->GetNumberOfNodes()
@@ -191,6 +85,13 @@ int main(int argc, char** argv)
       catch (...)
       {
         std::cerr << "Error setting parameter set: " << std::endl;
+
+        // clean up
+        mrmlScene->Clear(true);
+        mrmlScene->Delete();
+        emLogic->SetAndObserveMRMLScene(NULL);
+        emLogic->Delete();
+
         return EXIT_FAILURE;
       }
       foundParameters = true;
@@ -201,10 +102,16 @@ int main(int argc, char** argv)
   if (!foundParameters)
   {
     std::cerr << "Error: parameters not found in scene" << std::endl;
+    
+    // clean up
+    mrmlScene->Clear(true);
+    mrmlScene->Delete();
+    emLogic->SetAndObserveMRMLScene(NULL);
+    emLogic->Delete();
+
     return EXIT_FAILURE;    
   }
   
-
   //
   // run the segmentation
   try
@@ -214,6 +121,13 @@ int main(int argc, char** argv)
   catch (...)
   {
     std::cerr << "Error running segmentation: " << std::endl;
+
+    // clean up
+    mrmlScene->Clear(true);
+    mrmlScene->Delete();
+    emLogic->SetAndObserveMRMLScene(NULL);
+    emLogic->Delete();
+
     return EXIT_FAILURE;
   }
 
@@ -233,6 +147,13 @@ int main(int argc, char** argv)
   catch (...)
   {
     std::cerr << "Error geting result from scene: " << std::endl;
+
+    // clean up
+    mrmlScene->Clear(true);
+    mrmlScene->Delete();
+    emLogic->SetAndObserveMRMLScene(NULL);
+    emLogic->Delete();
+
     return EXIT_FAILURE;
   }
 
@@ -242,6 +163,13 @@ int main(int argc, char** argv)
   if (imagesDiffer)
   {
     std::cerr << "Result does not match standard!" << std::endl;
+
+    // clean up
+    mrmlScene->Clear(true);
+    mrmlScene->Delete();
+    emLogic->SetAndObserveMRMLScene(NULL);
+    emLogic->Delete();
+
     return EXIT_FAILURE;    
   }
   else
@@ -255,5 +183,7 @@ int main(int argc, char** argv)
   mrmlScene->Delete();
   emLogic->SetAndObserveMRMLScene(NULL);
   emLogic->Delete();
+  
+  return EXIT_SUCCESS;
 }
 

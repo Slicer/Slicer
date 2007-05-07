@@ -21,6 +21,7 @@ IF( NOT DISABLE_CXX_TESTING )
   ADD_EXECUTABLE(
     vtkEMSegmentBlackBoxSegmentationTest 
     vtkEMSegmentBlackBoxSegmentationTest.cxx
+    vtkEMSegmentTestUtilities.cxx
     )
   TARGET_LINK_LIBRARIES(
     vtkEMSegmentBlackBoxSegmentationTest
@@ -29,7 +30,7 @@ IF( NOT DISABLE_CXX_TESTING )
     )
 
   ADD_TEST(
-    vtkEMSegmentBlackBoxSegmentationTest_TutorialDataSmall 
+    vtkEMSegmentBlackBoxSegmentationTest_TutorialDataSmallRead
     ${EXECUTABLE_OUTPUT_PATH}/vtkEMSegmentBlackBoxSegmentationTest
     ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/EMSegmentTutorialTemplate_small.mrml
     ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/
