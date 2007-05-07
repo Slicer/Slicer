@@ -622,7 +622,8 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
     if (this->DisplayedModels.find(modelNode->GetID()) != this->DisplayedModels.end() &&
        (event == vtkCommand::ModifiedEvent ||
         event == vtkMRMLModelNode::PolyDataModifiedEvent ||
-        event == vtkMRMLModelNode::DisplayModifiedEvent) )
+        event == vtkMRMLModelNode::DisplayModifiedEvent) &&
+        this->UpdateClipSlicesFormMRML() == 0 && this->ClippingOn == false)
       {
       // if the node is already cached with an actor process only this one
       // if it was not visible and is still not visible do nothing
