@@ -209,13 +209,28 @@ unsigned long vtkScriptedModuleGUI::AddObserverByNumber ( vtkObject *observee, u
 
 
 //---------------------------------------------------------------------------
-unsigned long vtkScriptedModuleGUI::AddMRMLObserverByNumber ( vtkObject *observee, unsigned long event ) {
+unsigned long vtkScriptedModuleGUI::AddMRMLObserverByNumber ( vtkObject *observee, unsigned long event )
+{
+  if (observee == NULL)
+    {
+    vtkErrorMacro("AddMRMLObserverByNumber: observee is null, returning -1");
+    return -1;
+    }
+  if (observee->HasObserver(event, (vtkCommand *)this->MRMLCallbackCommand) )
+    {
+    return event;
+    }
   return ( observee->AddObserver(event, (vtkCommand *)this->MRMLCallbackCommand) );
 }
 
 //---------------------------------------------------------------------------
-void vtkScriptedModuleGUI::RemoveMRMLObserverByNumber ( vtkObject *observee, unsigned long event ) {
-
+void vtkScriptedModuleGUI::RemoveMRMLObserverByNumber ( vtkObject *observee, unsigned long event )
+{
+  if (observee == NULL)
+    {
+    vtkErrorMacro("RemoveMRMLObserverByNumber: observee is null");
+    }
+  vtkDebugMacro("RemoveMRMLObserverByNumber: event = " << event);
   if (observee->HasObserver(event, (vtkCommand *)this->MRMLCallbackCommand))
     {
     observee->RemoveObservers(event, (vtkCommand *)this->MRMLCallbackCommand);
