@@ -2922,7 +2922,7 @@ void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
       this->SelectViewButton->SetBorderWidth ( 0 );
       this->SelectViewButton->SetImageToIcon ( this->SlicerViewControlIcons->GetSelectViewButtonIcon() );
       this->SelectViewButton->IndicatorVisibilityOff ( );
-      this->SelectViewButton->SetBalloonHelpString ( "Save curren or select among already saved 3D views.");
+      this->SelectViewButton->SetBalloonHelpString ( "Save current or select among already saved 3D views.");
       //--- Menubutton to capture or select among saved 3D views.
       this->SelectCameraButton->SetParent ( f3);
       this->SelectCameraButton->Create ( );
