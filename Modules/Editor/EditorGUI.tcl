@@ -281,19 +281,19 @@ proc EditorAddGUIObservers {this} {
   $this AddObserverByNumber [$::Editor($this,paintDropper) GetWidget] 10000 
   $this AddObserverByNumber $::Editor($this,paintRadius) 10001 
     
-#    $this DebugOn
+# $this DebugOn
     if {[$this GetDebug]} {
         puts "Adding mrml observer to selection node, modified event"
-    
-    $this AddMRMLObserverByNumber [[[$this GetLogic] GetApplicationLogic] GetSelectionNode] 31
     }
+    $this AddMRMLObserverByNumber [[[$this GetLogic] GetApplicationLogic] GetSelectionNode] 31
+    
 }
 
 proc EditorRemoveGUIObservers {this} {
     if {[$this GetDebug]} {
         puts "Removing mrml observer on selection node, modified event"
-        $this RemoveMRMLObserverByNumber [[[$this GetLogic] GetApplicationLogic] GetSelectionNode] 31
     }
+    $this RemoveMRMLObserverByNumber [[[$this GetLogic] GetApplicationLogic] GetSelectionNode] 31
 }
 
 proc EditorRemoveLogicObservers {this} {
@@ -436,26 +436,73 @@ proc EditorUpdateMRML {this} {
 }
 
 proc EditorProcessMRMLEvents {this callerID event} {
-    if {[$this GetDebug]} {
+    if { [$this GetDebug] } {
         puts "EditorProcessMRMLEvents: event = $event, callerID = $callerID"
     }
     set caller [[[$this GetLogic] GetMRMLScene] GetNodeByID $callerID]
+    if { $caller == "" } {
+        return
+    }
     set selectionNode  [[[$this GetLogic] GetApplicationLogic]  GetSelectionNode]
-    if {$caller == $selectionNode && $event == 31} {
-        if {[$this GetDebug]} {
+    # get the active label volume
+    set labelVolume [[[$this GetLogic] GetMRMLScene] GetNodeByID [$selectionNode GetActiveLabelVolumeID]]
+    if { $labelVolume == "" } {
+        if { [$this GetDebug] } { puts "No labelvolume..." }
+        return
+    }
+    # check it's display node colour node
+    set displayNode [$labelVolume GetDisplayNode] 
+
+    if { $caller == $selectionNode && $event == 31 } {
+        if { [$this GetDebug] } {
             puts "...caller is selection node, with modified event"
         }
-        # get the active label volume
-        set labelVolume [[[$this GetLogic] GetMRMLScene] GetNodeByID [$selectionNode GetActiveLabelVolumeID]]
-        # check it's display node colour node
-        set displayNode [$labelVolume GetDisplayNode] 
+        if {[info exists ::Editor($this,observedNodeID)] && $::Editor($this,observedNodeID) != "" &&
+        $::Editor($this,observedNodeID) != [$selectionNode GetActiveLabelVolumeID]} {
+            # remove the observer on the old volume's display node
+            if { [$this GetDebug] } {
+                puts "Removing mrml observer on last node: $::Editor($this,observedNodeID) and $::Editor($this,observedEvent)"
+            }
+            $this RemoveMRMLObserverByNumber [[[$this GetLogic] GetMRMLScene] GetNodeByID $::Editor($this,observedNodeID)] $::Editor($this,observedEvent)
+        }
+        
+
         # is it the one we're showing?
-        if {$displayNode != "" && [$displayNode GetColorNodeID] != [[$::Editor($this,colorsColor) GetColorNode] GetID]} {
-            if {[$this GetDebug]} {
-                puts "Resetting the color node"
+        if { $displayNode != "" } {
+            if { [$displayNode GetColorNodeID] != [[$::Editor($this,colorsColor) GetColorNode] GetID] } {
+                if { [$this GetDebug] } {
+                    puts "Resetting the color node"
+                }
+                $::Editor($this,colorsColor) SetColorNode [$displayNode GetColorNode]
+            }
+            # add an observer on the volume node for display modified events
+            if { [$this GetDebug] } {
+                puts "Adding display node observer on label volume [$labelVolume GetID]"
+            }
+            $this AddMRMLObserverByNumber $labelVolume 18000
+            set ::Editor($this,observedNodeID) [$labelVolume GetID]
+            set ::Editor($this,observedEvent) 18000
+        } else {
+            if { [$this GetDebug] } {
+                puts "Not resetting the color node, resetting the observed node id,  not adding display node observers, display node is null"
+            }
+            set ::Editor($this,observedNodeID) ""
+            set ::Editor($this,observedEvent) -1
+        }
+        return
+    } 
+
+    if { $caller == $labelVolume && $event == 18000 } {
+        if { [$this GetDebug] } {
+            puts "... caller is label volume, got a display modified event, display node = $displayNode"
+        }
+        if { $displayNode != "" && [$displayNode GetColorNodeID] != [[$::Editor($this,colorsColor) GetColorNode] GetID] } {
+            if { [$this GetDebug] } {
+                puts "...resetting the color node"
             }
             $::Editor($this,colorsColor) SetColorNode [$displayNode GetColorNode]
         }
+        return
     }
 }
 
