@@ -182,8 +182,22 @@ itcl::body SWidget::getPixel { image i j k } {
     if { $ind < 0 || $ind >= $dimension } {return "Unknown"}
   }
   set n [$image GetNumberOfScalarComponents]
-  for {set c 0} {$c < $n} {incr c} {
-    lappend pixel [$image GetScalarComponentAsDouble $i $j $k $c]
+
+  if { 0 } {
+    ### BUG IN vtkImageData GetScalarComponentAsDouble ??? 
+    for {set c 0} {$c < $n} {incr c} {
+      lappend pixel [$image GetScalarComponentAsDouble $i $j $k $c]
+    }
+  } else {
+    # directly access the scalars to get pixel value
+    # - need to compensate because the increments already include the pixel size
+    set scalars [[$image GetPointData] GetScalars]
+    set idx 0
+    set factors [list $n [expr $n * $n] [expr $n * $n * $n]]
+    foreach index "i j k" inc [$image GetIncrements] factor $factors {
+      set idx [expr $idx + [set $index] * $inc / $factor]
+    }
+    set pixel [$scalars GetTuple$n $idx]
   }
   return $pixel
 }
