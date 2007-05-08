@@ -480,10 +480,10 @@ void vtkSlicerSliceLogic::UpdatePipeline()
 
     // Label
     id = this->SliceCompositeNode->GetLabelVolumeID();
-    vtkMRMLScalarVolumeNode *lbnode = NULL;
+    vtkMRMLVolumeNode *lbnode = NULL;
     if (id)
       {
-      lbnode = vtkMRMLScalarVolumeNode::SafeDownCast (this->MRMLScene->GetNodeByID(id));
+      lbnode = vtkMRMLVolumeNode::SafeDownCast (this->MRMLScene->GetNodeByID(id));
       }
     
     if (this->LabelLayer)
@@ -661,14 +661,14 @@ void vtkSlicerSliceLogic::GetBackgroundRASDimensions(double rasDimensions[3], do
 
   vtkMRMLSliceNode *sliceNode = this->GetSliceNode();
   vtkMRMLSliceCompositeNode *compositeNode = this->GetSliceCompositeNode();
-  vtkMRMLScalarVolumeNode *backgroundNode = NULL;
+  vtkMRMLVolumeNode *backgroundNode = NULL;
 
   if ( !sliceNode || !compositeNode )
     {
     return;
     }
   
-  backgroundNode = vtkMRMLScalarVolumeNode::SafeDownCast (
+  backgroundNode = vtkMRMLVolumeNode::SafeDownCast (
       this->MRMLScene->GetNodeByID( compositeNode->GetBackgroundVolumeID() ));
 
   vtkImageData *backgroundImage;
@@ -812,14 +812,14 @@ void vtkSlicerSliceLogic::FitSliceToBackground(int width, int height)
 {
   vtkMRMLSliceNode *sliceNode = this->GetSliceNode();
   vtkMRMLSliceCompositeNode *compositeNode = this->GetSliceCompositeNode();
-  vtkMRMLScalarVolumeNode *backgroundNode = NULL;
+  vtkMRMLVolumeNode *backgroundNode = NULL;
 
   if ( !sliceNode || !compositeNode )
     {
     return;
     }
   
-  backgroundNode = vtkMRMLScalarVolumeNode::SafeDownCast (
+  backgroundNode = vtkMRMLVolumeNode::SafeDownCast (
       this->MRMLScene->GetNodeByID( compositeNode->GetBackgroundVolumeID() ));
 
   vtkImageData *backgroundImage;
