@@ -64,7 +64,7 @@ void vtkITKArchetypeImageSeriesVectorReader::ExecuteData(vtkDataObject *output)
     }
 
   vtkImageData *data = vtkImageData::SafeDownCast(output);
-  data->UpdateInformation();
+  //data->UpdateInformation();
   data->SetExtent(0,0,0,0,0,0);
   data->AllocateScalars();
   data->SetExtent(data->GetWholeExtent());
@@ -161,18 +161,18 @@ void vtkITKArchetypeImageSeriesVectorReader::ExecuteData(vtkDataObject *output)
         default:
           vtkErrorMacro(<< "UpdateFromFile: Unknown data type");
         }
-      }
-    else 
-      {
+    }
+      else 
+    {
       vtkErrorMacro(<< "UpdateFromFile: Unsupported Number Of Components: 3 != " << this->GetNumberOfComponents());
-      }
+    }
     }
   else
     {
-    if (this->GetNumberOfComponents() == 3)
+      if (this->GetNumberOfComponents() == 3)
       {
-      switch (this->OutputScalarType)
-        {
+    switch (this->OutputScalarType)
+      {
         vtkITKExecuteDataFromSeriesVector(VTK_DOUBLE, double);
         vtkITKExecuteDataFromSeriesVector(VTK_FLOAT, float);
         vtkITKExecuteDataFromSeriesVector(VTK_LONG, long);
@@ -183,14 +183,14 @@ void vtkITKArchetypeImageSeriesVectorReader::ExecuteData(vtkDataObject *output)
         vtkITKExecuteDataFromSeriesVector(VTK_UNSIGNED_SHORT, unsigned short);
         vtkITKExecuteDataFromSeriesVector(VTK_CHAR, char);
         vtkITKExecuteDataFromSeriesVector(VTK_UNSIGNED_CHAR, unsigned char);
-        default:
+      default:
         vtkErrorMacro(<< "UpdateFromFile: Unknown data type");
-        }
       }
-    else 
-      {
-      vtkErrorMacro(<< "UpdateFromFile: Unsupported Number Of Components: 3 != " << this->GetNumberOfComponents());
       }
+      else 
+    {
+          vtkErrorMacro(<< "UpdateFromFile: Unsupported Number Of Components: 3 != " << this->GetNumberOfComponents());
+    }
     }
 }
 
