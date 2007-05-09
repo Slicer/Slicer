@@ -218,7 +218,7 @@ void vtkSlicerViewerWidget::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "SceneClosing = " << this->SceneClosing << "\n";
     
     os << indent << "PickedNodeName = " << this->PickedNodeName.c_str() << "\n";
-    os << indent << "PickedRAS = (" << this->PickedRAS[0] << ", " << this->PickedRAS[1] << ", "<< this->PickedRAS[2] << "\n";
+    os << indent << "PickedRAS = (" << this->PickedRAS[0] << ", " << this->PickedRAS[1] << ", "<< this->PickedRAS[2] << ")\n";
     os << indent << "PickedCellID = " << this->PickedCellID << "\n";
     os << indent << "PickedPointID = " << this->PickedPointID << "\n";
     // print widgets?
@@ -1449,6 +1449,35 @@ int vtkSlicerViewerWidget::Pick(int x, int y)
             {
             vtkDebugMacro("Found matching poly data, pick was on model " << modelIter->first.c_str());
             this->PickedNodeName = modelIter->first;
+            
+            // figure out the closest vertex in the picked cell to the picked RAS
+            // point. Only doing this on model nodes for now.
+            vtkCell *cell = polyData->GetCell(this->GetPickedCellID());
+            if (cell != NULL)
+              {
+              int numPoints = cell->GetNumberOfPoints();
+              int closestPointId = -1;
+              double closestDistance = 0.0l;
+              for (int p = 0; p < numPoints; p++)
+                {
+                int pointId = cell->GetPointId(p);
+                double *pointCoords = polyData->GetPoint(pointId);
+                if (pointCoords != NULL)
+                  {
+                  double distance = sqrt(pow(pointCoords[0]-pickPoint[0], 2) +
+                                         pow(pointCoords[1]-pickPoint[1], 2) +
+                                         pow(pointCoords[2]-pickPoint[2], 2));
+                  if (p == 0 ||
+                      distance < closestDistance)
+                    {
+                    closestDistance = distance;
+                    closestPointId = pointId;
+                    }
+                  }
+                }
+              vtkDebugMacro("Pick: found closest point id = " << closestPointId << ", distance = " << closestDistance);
+              this->SetPickedPointID(closestPointId);
+              }
             continue;
             }
           }
