@@ -21,7 +21,6 @@
 #include "vtkImageEMLocalSuperClass.h"
 
 #include "vtkSlicerVolumesLogic.h"
-#include "vtkSlicerApplication.h"
 #include "vtkMatrix4x4.h"
 #include "vtkMath.h"
 
