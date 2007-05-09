@@ -6,6 +6,7 @@
 
 int main(int argc, char** argv)
 {
+  std::cerr << "Starting EM black box test..." << std::endl;
   std::vector<std::string> targetImageFilenames;
   std::string mrmlSceneFilename;
   std::string sceneRootDirectory;
@@ -32,6 +33,24 @@ int main(int argc, char** argv)
   sceneRootDirectory          = argv[2];
   parametersNodeName          = argv[3];
   correctSegmentationFilename = argv[4];
+
+#ifdef WIN32
+  //
+  // strip backslashes from parameter node name (present if spaces were used)
+  std::string tmpNodeName = parametersNodeName;
+  parametersNodeName.clear();
+  for (unsigned int i = 0; i < tmpNodeName.size(); ++i)
+    {
+      if (tmpNodeName[i] != '\\')
+        {
+        parametersNodeName.push_back(tmpNodeName[i]);
+        }
+      else if (i > 0 && tmpNodeName[i-1] == '\\')
+        {
+        parametersNodeName.push_back(tmpNodeName[i]);
+        }
+    }
+#endif
 
   //
   // create a mrml scene that will hold the data parameters
@@ -72,6 +91,9 @@ int main(int argc, char** argv)
   std::cerr << "Found " << numParameterSets << " EM top level nodes."
             << std::endl;
   bool foundParameters = false;
+  std::cerr << "Searching for an EM parameter node named: " 
+            << parametersNodeName << std::endl;
+
   for (int i = 0; i < numParameterSets; ++i)
   {
     std::string currentNodeName(emLogic->GetNthParameterSetName(i)); 
@@ -97,6 +119,11 @@ int main(int argc, char** argv)
       foundParameters = true;
       break;
     }
+    else
+      {
+      std::cerr << "Found non-matching EM parameters node: " 
+                << currentNodeName << std::endl;
+      }
   }
 
   if (!foundParameters)

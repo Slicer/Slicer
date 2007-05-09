@@ -29,11 +29,15 @@ IF( NOT DISABLE_CXX_TESTING )
     vtkCommon
     )
 
-  SET( EM_COMMAND_LINE_TEST_DIR ${EXECUTABLE_OUTPUT_PATH})
-
+  IF(WIN32)
+    SET( EM_COMMAND_LINE_TEST_PREFIX ${Slicer3_BINARY_DIR}/Slicer3.exe --launch ${EXECUTABLE_OUTPUT_PATH}/\${CTEST_CONFIGURATION_TYPE}/)
+  ELSE(WIN32)
+    SET( EM_COMMAND_LINE_TEST_PREFIX ${EXECUTABLE_OUTPUT_PATH}/)
+  ENDIF(WIN32)
+    
   ADD_TEST(
     vtkEMSegmentBlackBoxSegmentationTest_TutorialDataSmallRead
-    ${EM_COMMAND_LINE_TEST_DIR}/vtkEMSegmentBlackBoxSegmentationTest
+    ${EM_COMMAND_LINE_TEST_PREFIX}vtkEMSegmentBlackBoxSegmentationTest
     ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/EMSegmentTutorialTemplate_small.mrml
     ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/
     "EMSegment Tutorial Template"
