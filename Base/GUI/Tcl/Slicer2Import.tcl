@@ -335,11 +335,16 @@ proc ImportNodeModel {node} {
 
   if { [info exists n(color)] } {
       set cnode [$::slicer3::MRMLScene GetNodeByID vtkMRMLColorTableNodeLabels]
+      set saveColor 0
       for {set i 0} {$i < [$cnode GetNumberOfColors]} {incr i} {
           if {[$cnode GetColorName $i] == $n(color)} {
               eval $dnode SetColor [lrange [[$cnode GetLookupTable] GetTableValue $i] 0 2]
+              set saveColor 1
           }
       } 
+      if {$saveColor == 0} {
+          $dnode SetAttribute colorid $n(color)
+      }
   }
 }
 
@@ -442,6 +447,27 @@ proc ImportNodePoint {node} {
   if { [info exists n(xyz)] } {
     foreach {x y z} $n(xyz) {}
     $::S2(fiducialListNode) SetNthFiducialXYZ $f $x $y $z
+  }
+}
+
+proc ImportNodeColor {node} {
+  upvar $node n
+  if { [info exists n(name)] } {
+      set id $n(name)
+      if { [info exists n(diffuseColor)] } {
+          foreach {r g b} $n(diffuseColor) {}
+          $::slicer3::MRMLScene InitTraversal
+          set ndnodes [$::slicer3::MRMLScene GetNumberOfNodesByClass vtkMRMLModelDisplayNode]
+          for {set i 0} {$i < $ndnodes} {incr i} {
+              set dnode [$::slicer3::MRMLScene GetNthNodeByClass $i vtkMRMLModelDisplayNode]
+              set cid [$dnode GetAttribute colorid]
+              #$dnode SetAttribute one $id
+              #$dnode SetAttribute two $cid
+              if {$id == $cid} {
+                  $dnode SetColor $r $g $b
+              }
+          }
+      }
   }
 }
 
