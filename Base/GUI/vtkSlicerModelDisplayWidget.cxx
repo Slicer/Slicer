@@ -47,6 +47,10 @@ vtkSlicerModelDisplayWidget::vtkSlicerModelDisplayWidget ( )
     this->OpacityScale = NULL;
     this->SurfaceMaterialPropertyWidget = NULL;
     this->ProcessingMRMLEvent = 0;
+
+    this->UpdatingMRML = 0;
+    this->UpdatingWidget = 0;
+
 }
 
 
@@ -171,7 +175,13 @@ void vtkSlicerModelDisplayWidget::ProcessWidgetEvents ( vtkObject *caller,
 //---------------------------------------------------------------------------
 void vtkSlicerModelDisplayWidget::UpdateMRML()
 {
-  
+  if (this->UpdatingMRML || this->UpdatingWidget)
+    {
+    return;
+    }
+
+  this->UpdatingMRML = 1;
+
   if ( this->ModelDisplayNode )
     {
     this->ModelDisplayNode->SetVisibility(this->VisibilityButton->GetWidget()->GetSelectedState());
@@ -205,9 +215,17 @@ void vtkSlicerModelDisplayWidget::UpdateMRML()
     this->ModelDisplayNode->SetDiffuse(this->SurfaceMaterialPropertyWidget->GetProperty()->GetDiffuse());
     this->ModelDisplayNode->SetSpecular(this->SurfaceMaterialPropertyWidget->GetProperty()->GetSpecular());
     this->ModelDisplayNode->SetPower(this->SurfaceMaterialPropertyWidget->GetProperty()->GetSpecularPower());
-    this->ModelDisplayNode->SetColor(this->ChangeColorButton->GetColor());
-    
+    double *rgb = this->ChangeColorButton->GetColor();
+    double *rgb1 = ModelDisplayNode->GetColor();
+    if (fabs(rgb[0]-rgb1[0]) > 0.001 ||
+        fabs(rgb[1]-rgb1[1]) > 0.001 ||
+        fabs(rgb[2]-rgb1[2]) > 0.001)
+      {
+      this->ModelDisplayNode->SetColor(this->ChangeColorButton->GetColor());
+      }
     }
+  this->UpdatingMRML = 0;
+
 }
 
 
@@ -240,9 +258,15 @@ void vtkSlicerModelDisplayWidget::ProcessMRMLEvents ( vtkObject *caller,
 //---------------------------------------------------------------------------
 void vtkSlicerModelDisplayWidget::UpdateWidget()
 {
+  if (this->UpdatingMRML || this->UpdatingWidget)
+    {
+    return;
+    }
+  this->UpdatingWidget = 1;
   
   if ( this->ModelDisplayNode == NULL )
     {
+    this->UpdatingWidget = 0;
     return;
     }
   
@@ -330,8 +354,18 @@ void vtkSlicerModelDisplayWidget::UpdateWidget()
   this->SurfaceMaterialPropertyWidget->GetProperty()->SetDiffuse(this->ModelDisplayNode->GetDiffuse());
   this->SurfaceMaterialPropertyWidget->GetProperty()->SetSpecular(this->ModelDisplayNode->GetSpecular());
   this->SurfaceMaterialPropertyWidget->GetProperty()->SetSpecularPower(this->ModelDisplayNode->GetPower());
-  this->ChangeColorButton->SetColor(this->ModelDisplayNode->GetColor());
+  double *rgb = this->ChangeColorButton->GetColor();
+  double *rgb1 = ModelDisplayNode->GetColor();
+  if (fabs(rgb[0]-rgb1[0]) > 0.001 ||
+      fabs(rgb[1]-rgb1[1]) > 0.001 ||
+      fabs(rgb[2]-rgb1[2]) > 0.001)
+    {
+    this->ChangeColorButton->SetColor(this->ModelDisplayNode->GetColor());
+    }
+
   this->SurfaceMaterialPropertyWidget->Update();
+  this->UpdatingWidget = 0;
+
 }
 
 
