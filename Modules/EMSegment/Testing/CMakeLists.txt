@@ -15,9 +15,6 @@ SET( RUN_EXTRA_EMSEGMENT_TESTS 0)
 
 IF( NOT DISABLE_CXX_TESTING )
 
-  INCLUDE(${CMAKE_ROOT}/Modules/Dart.cmake)
-  ENABLE_TESTING()
-
   ADD_EXECUTABLE(
     vtkEMSegmentBlackBoxSegmentationTest 
     vtkEMSegmentBlackBoxSegmentationTest.cxx
