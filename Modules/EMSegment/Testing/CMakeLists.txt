@@ -29,9 +29,11 @@ IF( NOT DISABLE_CXX_TESTING )
     vtkCommon
     )
 
+  SET( EM_COMMAND_LINE_TEST_DIR ${EXECUTABLE_OUTPUT_PATH})
+
   ADD_TEST(
     vtkEMSegmentBlackBoxSegmentationTest_TutorialDataSmallRead
-    ${EXECUTABLE_OUTPUT_PATH}/vtkEMSegmentBlackBoxSegmentationTest
+    ${EM_COMMAND_LINE_TEST_DIR}/vtkEMSegmentBlackBoxSegmentationTest
     ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/EMSegmentTutorialTemplate_small.mrml
     ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/
     "EMSegment Tutorial Template"
