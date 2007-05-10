@@ -726,8 +726,8 @@ void vtkMRMLColorTableNode::SetType(int type)
     else if (this->Type == this->Labels)
       {
       // from Slicer2's Colors.xml
-      this->GetLookupTable()->SetNumberOfTableValues(21);
-      this->GetLookupTable()->SetTableRange(0,21);
+      this->GetLookupTable()->SetNumberOfTableValues(257);
+      this->GetLookupTable()->SetTableRange(0,257);
       this->Names.clear();
       this->Names.resize(this->GetLookupTable()->GetNumberOfTableValues());
       
@@ -764,35 +764,42 @@ void vtkMRMLColorTableNode::SetType(int type)
       this->SetColorName(10, "Post-Gyrus");
       this->GetLookupTable()->SetTableValue(10, 0.9, 0.9, 0.5, 1.0);
 
-      this->SetColorName(11, "jake");
-      this->GetLookupTable()->SetTableValue(11, 0.2, 0.5, 0.8, 1.0);
+      for (int offset = 0; offset <= 240; offset += 10)
+        {
+        this->SetColorName(offset + 11, "jake");
+        this->GetLookupTable()->SetTableValue(offset + 11, 0.2, 0.5, 0.8, 1.0);
+        
+        this->SetColorName(offset + 12, "elwood");
+        this->GetLookupTable()->SetTableValue(offset + 12, 0.2, 0.8, 0.5, 1.0);
+        
+        this->SetColorName(offset + 13, "gato");
+        this->GetLookupTable()->SetTableValue(offset + 13, 0.8, 0.5, 0.2, 1.0);
+        
+        this->SetColorName(offset + 14, "avery");
+        this->GetLookupTable()->SetTableValue(offset + 14, 0.8, 0.2, 0.5, 1.0);
+        
+        this->SetColorName(offset + 15, "mambazo");
+        this->GetLookupTable()->SetTableValue(offset + 15, 0.5, 0.2, 0.8, 1.0);
+        
+        this->SetColorName(offset + 16, "domino");
+        this->GetLookupTable()->SetTableValue(offset + 16, 0.5, 0.8, 0.2, 1.0);
 
-      this->SetColorName(12, "elwood");
-      this->GetLookupTable()->SetTableValue(12, 0.2, 0.8, 0.5, 1.0);
-
-      this->SetColorName(13, "gato");
-      this->GetLookupTable()->SetTableValue(13, 0.8, 0.5, 0.2, 1.0);
-
-      this->SetColorName(14, "avery");
-      this->GetLookupTable()->SetTableValue(14, 0.8, 0.2, 0.5, 1.0);
-
-      this->SetColorName(15, "mambazo");
-      this->GetLookupTable()->SetTableValue(15, 0.5, 0.2, 0.8, 1.0);
-
-      this->SetColorName(16, "domino");
-      this->GetLookupTable()->SetTableValue(16, 0.5, 0.8, 0.2, 1.0);
-
-      this->SetColorName(17, "monk");
-      this->GetLookupTable()->SetTableValue(17, 0.2, 0.2, 0.8, 1.0);
-
-      this->SetColorName(18, "forest");
-      this->GetLookupTable()->SetTableValue(18, 0.8, 0.8, 0.2, 1.0);
-
-      this->SetColorName(19, "dylan");
-      this->GetLookupTable()->SetTableValue(19, 0.2, 0.8, 0.8, 1.0);
-
-      this->SetColorName(20, "kales");
-      this->GetLookupTable()->SetTableValue(20, 0.5, 0.5, 0.5, 1.0);
+        if (offset <= 230)
+          {
+          // these ones don't go past 256
+          this->SetColorName(offset + 17, "monk");
+          this->GetLookupTable()->SetTableValue(offset + 17, 0.2, 0.2, 0.8, 1.0);
+          
+          this->SetColorName(offset + 18, "forest");
+          this->GetLookupTable()->SetTableValue(offset + 18, 0.8, 0.8, 0.2, 1.0);
+          
+          this->SetColorName(offset + 19, "dylan");
+          this->GetLookupTable()->SetTableValue(offset + 19, 0.2, 0.8, 0.8, 1.0);
+          
+          this->SetColorName(offset + 20, "kales");
+          this->GetLookupTable()->SetTableValue(offset + 20, 0.5, 0.5, 0.5, 1.0);
+          }
+        }
       /*
       this->SetColorName(300, "fMRI-neg");
       this->GetLookupTable()->SetTableValue(300, 0.0, 0.8, 1.0, 1.0);
