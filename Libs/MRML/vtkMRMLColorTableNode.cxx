@@ -996,6 +996,35 @@ this->SetColorName(7, "fMRI-high"); this->GetLookupTable()->SetTableValue(7, 0.5
 this->SetColorName(8, "fMRI-low"); this->GetLookupTable()->SetTableValue(8, 0.9, 0.9, 0.5, 1.0);
 this->SetColorName(9, "Pre-Gyrus"); this->GetLookupTable()->SetTableValue(9, 0.9, 0.7, 0.9, 1.0);
 this->SetColorName(10, "Post-Gyrus"); this->GetLookupTable()->SetTableValue(10, 0.9, 0.9, 0.5, 1.0);
+this->SetColorName(11, "jake");
+this->GetLookupTable()->SetTableValue(11, 0.2, 0.5, 0.8, 1.0);
+
+this->SetColorName(12, "elwood");
+this->GetLookupTable()->SetTableValue(12, 0.2, 0.8, 0.5, 1.0);
+        
+this->SetColorName(13, "gato");
+this->GetLookupTable()->SetTableValue(13, 0.8, 0.5, 0.2, 1.0);
+        
+this->SetColorName(14, "avery");
+this->GetLookupTable()->SetTableValue(14, 0.8, 0.2, 0.5, 1.0);
+        
+this->SetColorName(15, "mambazo");
+this->GetLookupTable()->SetTableValue(15, 0.5, 0.2, 0.8, 1.0);
+        
+this->SetColorName(16, "domino");
+this->GetLookupTable()->SetTableValue(16, 0.5, 0.8, 0.2, 1.0);
+
+this->SetColorName(17, "monk");
+this->GetLookupTable()->SetTableValue(17, 0.2, 0.2, 0.8, 1.0);
+          
+this->SetColorName(18, "forest");
+this->GetLookupTable()->SetTableValue(18, 0.8, 0.8, 0.2, 1.0);
+          
+this->SetColorName(19, "dylan");
+this->GetLookupTable()->SetTableValue(19, 0.2, 0.8, 0.8, 1.0);
+          
+this->SetColorName(20, "kales");
+this->GetLookupTable()->SetTableValue(20, 0.5, 0.5, 0.5, 1.0);
       }
     else if (this->Type == this->Random)
       {
