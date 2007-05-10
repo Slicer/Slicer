@@ -67,7 +67,7 @@ Key targetT2Normed_small.mhd VolumeNodeID vtkMRMLScalarVolumeNode2" ></EMSTarget
 <EMSSegmenter
  id="vtkMRMLEMSSegmenterNode1" name="vtkMRMLEMSSegmenterNode1"  hideFromEditors="false" TemplateNodeID="vtkMRMLEMSTemplateNode1" AtlasNodeID="NULL" TargetNodeID="NULL" OutputVolumeNodeID="vtkMRMLScalarVolumeNode7" WorkingDirectory="NULL" ></EMSSegmenter>
 <EMS
- id="vtkMRMLEMSNode1" name="EMSegment Tutorial Template"  hideFromEditors="false" SegmenterNodeID="vtkMRMLEMSSegmenterNode1" TemplateFilename="NULL" SaveTemplateAfterSegmentation="0" ></EMS>
+ id="vtkMRMLEMSNode1" name="EMSegmentTutorialTemplate"  hideFromEditors="false" SegmenterNodeID="vtkMRMLEMSSegmenterNode1" TemplateFilename="NULL" SaveTemplateAfterSegmentation="0" ></EMS>
 <EMSTreeParametersLeaf
  id="vtkMRMLEMSTreeParametersLeafNode2" name="vtkMRMLEMSTreeParametersLeafNode2"  hideFromEditors="false" GlobalParametersNodeID="vtkMRMLEMSGlobalParametersNode1" PrintQuality="0" IntensityLabel="1008" LogMean="0 0 " LogCovariance="0 0 0 0 " ></EMSTreeParametersLeaf>
 <EMSTreeParametersParent
