@@ -411,7 +411,24 @@ itcl::body SliceSWidget::updateAnnotation {x y r a s} {
   set logic [$sliceGUI GetLogic]
   set sliceCompositeNode [$logic GetSliceCompositeNode]
 
-  set labelText "Lb: $_layers(label,pixel)"
+  
+  # get the display node for the label volume, extract the name of the colour used to represent the label pixel
+  set colorName ""
+  if {[info command $_layers(label,node)] != "" && \
+      $_layers(label,node) != "" && \
+      $_layers(label,pixel) != "" && \
+      $_layers(label,pixel) != "Unknown"} {
+      set labelDisplayNode [$_layers(label,node) GetDisplayNode]
+      if {$labelDisplayNode != "" && [$labelDisplayNode GetColorNodeID] != ""} {
+          set colorNode [$labelDisplayNode GetColorNode]
+          if {$colorNode != ""} {
+              if {[string is integer $_layers(label,pixel)]} {
+                  set colorName [$colorNode GetColorName $_layers(label,pixel)]
+              }
+          }
+      }
+  }
+  set labelText "Lb: $_layers(label,pixel) $colorName"
   set voxelText "Fg: $_layers(foreground,pixel)\nBg: $_layers(background,pixel)"
   set ijkText [format "Bg I: %d\nBg J: %d\nBg K: %d" \
                 $_layers(background,i) $_layers(background,j) $_layers(background,k)]
