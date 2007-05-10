@@ -292,7 +292,7 @@ proc ImportNodeVolume {node} {
     }
   }
   if { [info exists n(labelMap)] && ($n(labelMap) == "yes"  || $n(labelMap) == "true") } {
-    $volumeDisplayNode SetAndObserveColorNodeID "vtkMRMLColorTableNodeLabels"
+    $volumeDisplayNode SetAndObserveColorNodeID "vtkMRMLColorTableNodeSPLBrainAtlas"
   }
 
   if { [info exists n(applyThreshold)] && ( $n(applyThreshold) == "yes" || $n(applyThreshold) == "true" ) } {
@@ -334,7 +334,7 @@ proc ImportNodeModel {node} {
   }
 
   if { [info exists n(color)] } {
-      set cnode [$::slicer3::MRMLScene GetNodeByID vtkMRMLColorTableNodeLabels]
+      set cnode [$::slicer3::MRMLScene GetNodeByID vtkMRMLColorTableNodeSPLBrainAtlas]
       set saveColor 0
       for {set i 0} {$i < [$cnode GetNumberOfColors]} {incr i} {
           if {[$cnode GetColorName $i] == $n(color)} {
@@ -372,7 +372,7 @@ proc ImportNodeModelGroup {node} {
   }
 
   if { [info exists n(color)] } {
-      set cnode [$::slicer3::MRMLScene GetNodeByID vtkMRMLColorTableNodeLabels]
+      set cnode [$::slicer3::MRMLScene GetNodeByID vtkMRMLColorTableNodeSPLBrainAtlas]
       for {set i 0} {$i < [$cnode GetNumberOfColors]} {incr i} {
           if {[$cnode GetColorName $i] == $n(color)} {
               eval $dnode SetColor [lrange [[$cnode GetLookupTable] GetTableValue $i] 0 2]
@@ -401,8 +401,8 @@ proc ImportNodeModelRef {node} {
   set id3 $::S2_Model_ID($id2)
   $hnode SetName [[$::slicer3::MRMLScene GetNodeByID $id3] GetName]
 
-  set dnode [vtkMRMLModelDisplayNode New]
-  set dnode [$::slicer3::MRMLScene AddNodeNoNotify $dnode]
+  #set dnode [vtkMRMLModelDisplayNode New]
+  #set dnode [$::slicer3::MRMLScene AddNodeNoNotify $dnode]
 
   set hnode [$::slicer3::MRMLScene AddNode $hnode]
 
@@ -411,7 +411,7 @@ proc ImportNodeModelRef {node} {
   }
   $hnode SetModelNodeIDReference $id3
 
-  $hnode SetAndObserveDisplayNodeID [$dnode GetID]
+  #$hnode SetAndObserveDisplayNodeID [$dnode GetID]
 
 }
 
@@ -465,6 +465,24 @@ proc ImportNodeColor {node} {
               #$dnode SetAttribute two $cid
               if {$id == $cid} {
                   $dnode SetColor $r $g $b
+              }
+          }
+
+          if { [info exists n(labels)] } {
+              set cnode [$::slicer3::MRMLScene GetNodeByID vtkMRMLColorTableNodeSPLBrainAtlas]
+              
+              set addColor 1
+              for {set i 0} {$i < [$cnode GetNumberOfColors]} {incr i} {
+                  if {[$cnode GetColorName $i] == $n(name)} {
+                      set addColor 0
+                  }
+              } 
+              if {$addColor == 1} {
+                  set index [expr [llength $n(labels)] - 1]
+                  for {} { $index > 0 } { incr index -1 } {
+                      set element [lindex $n(labels) $index]
+                      $cnode SetColor $element $n(name) $r $g $b
+                  }
               }
           }
       }
