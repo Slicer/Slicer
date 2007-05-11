@@ -467,24 +467,6 @@ proc ImportNodeColor {node} {
                   $dnode SetColor $r $g $b
               }
           }
-
-          if { [info exists n(labels)] } {
-              set cnode [$::slicer3::MRMLScene GetNodeByID vtkMRMLColorTableNodeSPLBrainAtlas]
-              
-              set addColor 1
-              for {set i 0} {$i < [$cnode GetNumberOfColors]} {incr i} {
-                  if {[$cnode GetColorName $i] == $n(name)} {
-                      set addColor 0
-                  }
-              } 
-              if {$addColor == 1} {
-                  set index [expr [llength $n(labels)] - 1]
-                  for {} { $index > 0 } { incr index -1 } {
-                      set element [lindex $n(labels) $index]
-                      $cnode SetColor $element $n(name) $r $g $b
-                  }
-              }
-          }
       }
   }
 }
