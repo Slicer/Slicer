@@ -1063,6 +1063,54 @@ this->SetColorName(215, "Cvent"); this->GetLookupTable()->SetTableValue(215, 0.9
 this->SetColorName(216, "Cbrain"); this->GetLookupTable()->SetTableValue(216, 0.25, 0.41, 0.88, 1.0);
 this->SetColorName(217, "Cneo"); this->GetLookupTable()->SetTableValue(217, 0.86, 0.86, 0.86, 1.0);
 
+// from SPL-BrainAtlas-label_list.txt
+// these ones reuse the colours from above labels
+this->SetColorName(500, "R internal medullary lamina"); this->GetLookupTable()->SetTableValue(500, 0.496094, 0.160156, 0.160156, 1.0);
+this->SetColorName(508, "R anterior thalamic nucleus"); this->GetLookupTable()->SetTableValue(508, 0.179688, 0.542969, 0.339844, 1.0);
+this->SetColorName(510, "R dorsomedial thalamic nucleus"); this->GetLookupTable()->SetTableValue(510, 0.738281, 0.710938, 0.414062, 1.0);
+this->SetColorName(512, "R centromedian thalamic nucleus"); this->GetLookupTable()->SetTableValue(512, 0.953125, 0.636719, 0.375, 1.0);
+this->SetColorName(520, "R lateral dorsal thalamic nucleus"); this->GetLookupTable()->SetTableValue(520, 0.238281, 0.347656, 0.664062, 1.0);
+
+// random colours
+this->SetColorName(300, "R eyeball"); this->GetLookupTable()->SetTableValue(300, 0.319904, 0.642596, 0.955996, 1.0);
+this->SetColorName(301, "L eyeball"); this->GetLookupTable()->SetTableValue(301, 0.20555, 0.413782, 0.033933, 1.0);
+this->SetColorName(310, "right optic nerve");  this->GetLookupTable()->SetTableValue(310, 0.045365, 0.0929314, 0.534089, 1.0);
+this->SetColorName(311, "left optic nerve");    this->GetLookupTable()->SetTableValue(311, 0.7688, 0.705624, 0.936026, 1.0);
+this->SetColorName(320, "R lateral geniculate body");    this->GetLookupTable()->SetTableValue(320, 0.889925, 0.0851735, 0.182946, 1.0);
+this->SetColorName(321, "L lateral geniculate body");    this->GetLookupTable()->SetTableValue(321, 0.689865, 0.829552, 0.704344, 1.0);
+this->SetColorName(330, "R optic radiation");     this->GetLookupTable()->SetTableValue(330, 0.782856, 0.41314, 0.232718, 1.0);
+this->SetColorName(331, "L optic radiation");     this->GetLookupTable()->SetTableValue(331, 0.795529, 0.648302, 0.93609, 1.0);
+this->SetColorName(340, "pituitary gland");      this->GetLookupTable()->SetTableValue(340, 0.191761, 0.283533, 0.751209, 1.0);
+this->SetColorName(360, "Internal capsule R (ant. limb)"); this->GetLookupTable()->SetTableValue(360, 0.55132, 0.612966, 0.689746, 1.0);
+this->SetColorName(361, "Internal capsule L (ant. limb)"); this->GetLookupTable()->SetTableValue(361, 0.319898, 0.858679, 0.603211, 1.0);
+this->SetColorName(440, "R internal capsule posterior limb"); this->GetLookupTable()->SetTableValue(440, 0.382556, 0.0279277, 0.401158, 1.0);
+this->SetColorName(441, "L internal capsule posterior limb"); this->GetLookupTable()->SetTableValue(441, 0.680197, 0.077629, 0.142262, 1.0);
+
+this->SetColorName(501, "L internal medullary lamina"); this->GetLookupTable()->SetTableValue(501, 0.237788, 0.291066, 0.845814, 1.0);
+this->SetColorName(502, "R medial geniculate body");  this->GetLookupTable()->SetTableValue(502, 0.152208, 0.585537, 0.193475, 1.0);
+this->SetColorName(503, "L medial geniculate body"); this->GetLookupTable()->SetTableValue(503, 0.810623, 0.173531, 0.484983, 1.0);
+this->SetColorName(504, "R lateral geniculate body"); this->GetLookupTable()->SetTableValue(504, 0.151863, 0.366957, 0.491736, 1.0);
+this->SetColorName(505, "L lateral geniculate body"); this->GetLookupTable()->SetTableValue(505, 0.910094, 0.265257, 0.893188, 1.0);
+this->SetColorName(506, "R pulvinar"); this->GetLookupTable()->SetTableValue(506, 0.220351, 0.631798, 0.571077, 1.0);
+this->SetColorName(507, "L pulvinar"); this->GetLookupTable()->SetTableValue(507, 0.332158, 0.104455, 0.502931, 1.0);
+
+this->SetColorName(509, "L anterior thalamic nucleus"); this->GetLookupTable()->SetTableValue(509, 0.567394, 0.854165, 0.0401409, 1.0);
+
+this->SetColorName(511, "L dorsomedial thalamic nucleus"); this->GetLookupTable()->SetTableValue(511, 0.108022, 0.639396, 0.013111, 1.0);
+
+this->SetColorName(513, "L centromedian thalamic nucleus"); this->GetLookupTable()->SetTableValue(513, 0.720184, 0.101814, 0.482945, 1.0);
+this->SetColorName(514, "R ventral anterior thalamic nucleus"); this->GetLookupTable()->SetTableValue(514, 0.254355, 0.676697, 0.896782, 1.0);
+this->SetColorName(515, "L ventral anterior thalamic nucleus"); this->GetLookupTable()->SetTableValue(515, 0.759896, 0.720292, 0.907623, 1.0);
+this->SetColorName(516, "R ventral lateral thalamic nucleus"); this->GetLookupTable()->SetTableValue(516, 0.928611, 0.377663, 0.899756, 1.0);
+this->SetColorName(517, "L ventral lateral thalamic nucleus"); this->GetLookupTable()->SetTableValue(517, 0.77888, 0.324255, 0.194231, 1.0);
+this->SetColorName(518, "R lateral posterior thalamic nucleus"); this->GetLookupTable()->SetTableValue(518, 0.995553, 0.161296, 0.708034, 1.0);
+this->SetColorName(519, "L lateral posterior thalamic nucleus"); this->GetLookupTable()->SetTableValue(519, 0.501519, 0.936301, 0.716323, 1.0);
+
+this->SetColorName(521, "L lateral dorsal thalamic nucleus"); this->GetLookupTable()->SetTableValue(521, 0.10519, 0.209205, 0.559397, 1.0);
+this->SetColorName(522, "R VPM"); this->GetLookupTable()->SetTableValue(522, 0.705432, 0.0782337, 0.51053, 1.0);
+this->SetColorName(523, "L VPM"); this->GetLookupTable()->SetTableValue(523, 0.196197, 0.274211, 0.638602, 1.0);
+this->SetColorName(524, "R VPL"); this->GetLookupTable()->SetTableValue(524, 0.448208, 0.0398718, 0.467251, 1.0);
+this->SetColorName(525, "L VPL"); this->GetLookupTable()->SetTableValue(525, 0.777565, 0.381004, 0.160044, 1.0);
       }
     else if (this->Type == this->Random)
       {
