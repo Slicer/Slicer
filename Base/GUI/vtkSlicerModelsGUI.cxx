@@ -617,7 +617,6 @@ void vtkSlicerModelsGUI::BuildGUI ( )
     */
 
     modLoadFrame->Delete ( );
-    this->ModelDisplayFrame->Delete ( );
     clipFrame->Delete ( );
     modelSaveFrame->Delete();
     hierFrame->Delete ( );
