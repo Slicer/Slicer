@@ -182,7 +182,12 @@ void vtkSlicerModelHierarchyWidget::ProcessWidgetEvents ( vtkObject *caller,
           this->ContextMenu->AddCommand("Rename", this, command);
 
           sprintf(command, "SelectNodeCallback {%s}", (const char *)callData);
-          this->ContextMenu->AddCommand("Select for Editing", this, command);
+          this->ContextMenu->AddCommand("Edit Display", this, command);
+          }
+        else if (node != NULL && node->IsA("vtkMRMLModelNode"))
+          {
+          sprintf(command, "SelectNodeCallback {%s}", (const char *)callData);
+          this->ContextMenu->AddCommand("Edit Display", this, command);
           }
         }
       else if ( node == NULL )
@@ -256,8 +261,14 @@ void vtkSlicerModelHierarchyWidget::SelectNodeCallback(const char *id)
     vtkMRMLNode *node = this->GetMRMLScene()->GetNodeByID(this->SelectedLeaves[i].c_str());
     if (node != NULL)
       {
-      this->ModelDisplaySelectorWidget->SetSelected(node);
-      this->InvokeEvent(vtkSlicerModelHierarchyWidget::SelectedEvent, node);
+      if (node->IsA("vtkMRMLModelHierarchyNode")) 
+        {
+        this->ModelDisplaySelectorWidget->SetSelected(node);
+        }
+      else if (node->IsA("vtkMRMLModelNode")) 
+        {
+        this->InvokeEvent(vtkSlicerModelHierarchyWidget::SelectedEvent, node);
+        }
       }
     }
 }

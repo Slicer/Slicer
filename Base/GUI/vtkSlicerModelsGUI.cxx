@@ -38,6 +38,7 @@ vtkSlicerModelsGUI::vtkSlicerModelsGUI ( )
   this->LoadScalarsButton = NULL;
   this->ModelDisplaySelectorWidget = NULL;
   this->ModelHierarchyWidget = NULL;
+  this->ModelDisplayFrame = NULL;
 
   NACLabel = NULL;
   NAMICLabel =NULL;
@@ -126,6 +127,11 @@ vtkSlicerModelsGUI::~vtkSlicerModelsGUI ( )
     this->BIRNLabel->Delete();
     this->BIRNLabel = NULL;
     }
+  if (this->ModelDisplayFrame)
+    {
+    this->ModelDisplayFrame->SetParent ( NULL );
+    this->ModelDisplayFrame->Delete();
+    }
   this->Built = false;
 }
 
@@ -166,6 +172,11 @@ void vtkSlicerModelsGUI::RemoveGUIObservers ( )
     {
     this->ModelDisplaySelectorWidget->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
     }
+  if (this->ModelHierarchyWidget)
+    { 
+    this->ModelHierarchyWidget->RemoveObservers(vtkSlicerModelHierarchyWidget::SelectedEvent, (vtkCommand *)this->GUICallbackCommand );
+    }
+
 }
 
 
@@ -177,7 +188,7 @@ void vtkSlicerModelsGUI::AddGUIObservers ( )
   this->SaveModelButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
   this->LoadScalarsButton->GetWidget()->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
   this->ModelDisplaySelectorWidget->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
-
+  this->ModelHierarchyWidget->AddObserver(vtkSlicerModelHierarchyWidget::SelectedEvent, (vtkCommand *)this->GUICallbackCommand );
 }
 
 
@@ -186,6 +197,24 @@ void vtkSlicerModelsGUI::AddGUIObservers ( )
 void vtkSlicerModelsGUI::ProcessGUIEvents ( vtkObject *caller,
                                             unsigned long event, void *callData )
 {
+
+  if (vtkSlicerModelHierarchyWidget::SafeDownCast(caller) == this->ModelHierarchyWidget && 
+      event == vtkSlicerModelHierarchyWidget::SelectedEvent)
+    {
+    vtkMRMLModelNode *model = reinterpret_cast<vtkMRMLModelNode *>(callData);
+    if (model != NULL && model->GetDisplayNode() != NULL)
+      {
+      this->ModelDisplaySelectorWidget->SetSelected(model);
+      if (this->ModelDisplayFrame)
+        {
+        this->ModelDisplayFrame->ExpandFrame();
+        this->ModelDisplayFrame->Raise();
+        }
+      //this->ModelDisplayWidget->SetModelDisplayNode(model->GetDisplayNode());
+      //this->ModelDisplayWidget->SetModelNode(model);
+      }
+    return;
+    }
 
   if (vtkSlicerNodeSelectorWidget::SafeDownCast(caller) == this->ModelDisplaySelectorWidget && 
         event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent ) 
@@ -457,16 +486,16 @@ void vtkSlicerModelsGUI::BuildGUI ( )
 
   
     // DISPLAY FRAME            
-    vtkSlicerModuleCollapsibleFrame *modDisplayFrame = vtkSlicerModuleCollapsibleFrame::New ( );
-    modDisplayFrame->SetParent ( this->UIPanel->GetPageWidget ( "Models" ) );
-    modDisplayFrame->Create ( );
-    modDisplayFrame->SetLabelText ("Display");
-    modDisplayFrame->CollapseFrame ( );
+    this->ModelDisplayFrame = vtkSlicerModuleCollapsibleFrame::New ( );
+    this->ModelDisplayFrame->SetParent ( this->UIPanel->GetPageWidget ( "Models" ) );
+    this->ModelDisplayFrame->Create ( );
+    this->ModelDisplayFrame->SetLabelText ("Display");
+    this->ModelDisplayFrame->CollapseFrame ( );
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                  modDisplayFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Models")->GetWidgetName());
+                  this->ModelDisplayFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Models")->GetWidgetName());
 
     this->LoadScalarsButton = vtkKWLoadSaveButtonWithLabel::New();
-    this->LoadScalarsButton->SetParent ( modDisplayFrame->GetFrame() );
+    this->LoadScalarsButton->SetParent ( this->ModelDisplayFrame->GetFrame() );
     this->LoadScalarsButton->Create ( );
     this->LoadScalarsButton->SetLabelText ("Load FreeSurfer Overlay: ");
     this->LoadScalarsButton->GetWidget()->SetText ("None");
@@ -477,7 +506,7 @@ void vtkSlicerModelsGUI::BuildGUI ( )
                 this->LoadScalarsButton->GetWidgetName());
 
     this->ModelDisplaySelectorWidget = vtkSlicerNodeSelectorWidget::New() ;
-    this->ModelDisplaySelectorWidget->SetParent ( modDisplayFrame->GetFrame() );
+    this->ModelDisplaySelectorWidget->SetParent ( this->ModelDisplayFrame->GetFrame() );
     this->ModelDisplaySelectorWidget->Create ( );
     this->ModelDisplaySelectorWidget->SetNodeClass("vtkMRMLModelNode", NULL, NULL, NULL);
     this->ModelDisplaySelectorWidget->SetChildClassesEnabled(0);
@@ -496,11 +525,11 @@ void vtkSlicerModelsGUI::BuildGUI ( )
 
     this->ModelDisplayWidget = vtkSlicerModelDisplayWidget::New ( );
     this->ModelDisplayWidget->SetMRMLScene(this->GetMRMLScene() );
-    this->ModelDisplayWidget->SetParent ( modDisplayFrame->GetFrame() );
+    this->ModelDisplayWidget->SetParent ( this->ModelDisplayFrame->GetFrame() );
     this->ModelDisplayWidget->Create ( );
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   this->ModelDisplayWidget->GetWidgetName(), 
-                  modDisplayFrame->GetFrame()->GetWidgetName());
+                  this->ModelDisplayFrame->GetFrame()->GetWidgetName());
 
     // Clip FRAME  
     vtkSlicerModuleCollapsibleFrame *clipFrame = vtkSlicerModuleCollapsibleFrame::New ( );
@@ -588,7 +617,7 @@ void vtkSlicerModelsGUI::BuildGUI ( )
     */
 
     modLoadFrame->Delete ( );
-    modDisplayFrame->Delete ( );
+    this->ModelDisplayFrame->Delete ( );
     clipFrame->Delete ( );
     modelSaveFrame->Delete();
     hierFrame->Delete ( );

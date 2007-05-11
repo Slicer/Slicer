@@ -27,6 +27,7 @@
 //
 class vtkSlicerModelDisplayWidget;
 class vtkSlicerModelHierarchyWidget;
+class vtkSlicerModuleCollapsibleFrame;
 
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModelsGUI : public vtkSlicerModuleGUI
 {
@@ -125,6 +126,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModelsGUI : public vtkSlicerModuleGUI
     vtkSlicerModelHierarchyWidget *ModelHierarchyWidget;
 
     vtkSlicerModelsLogic *Logic;
+
+    vtkSlicerModuleCollapsibleFrame *ModelDisplayFrame;
 
  private:
     vtkSlicerModelsGUI ( const vtkSlicerModelsGUI& ); // Not implemented.
