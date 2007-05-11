@@ -824,6 +824,77 @@ void vtkMRMLColorTableNode::SetType(int type)
       
       this->SetColorName(0, "Black");
       this->GetLookupTable()->SetTableValue(0, 0, 0, 0, 1.0);
+      // add in the slicer2 colours first, they may get over written by the
+      // custom colours
+            this->SetColorName(0, "Black");
+      this->GetLookupTable()->SetTableValue(0, 0, 0, 0, 1.0);
+
+      this->SetColorName(1, "jake");
+      this->GetLookupTable()->SetTableValue(1, 0.2, 0.5, 0.8, 1.0);
+
+      this->SetColorName(2, "Skin");
+      this->GetLookupTable()->SetTableValue(2, 1.0, 0.8, 0.7, 1.0);
+
+      this->SetColorName(3, "Brain");
+      this->GetLookupTable()->SetTableValue(3, 1.0, 1.0, 1.0, 1.0);
+
+      this->SetColorName(4, "Ventricles");
+      this->GetLookupTable()->SetTableValue(4, 0.4, 0.7, 1.0, 1.0);
+
+      this->SetColorName(5, "Vessels");
+      this->GetLookupTable()->SetTableValue(5, 0.9, 0.5, 0.5, 1.0);
+
+      this->SetColorName(6, "Tumor");
+      this->GetLookupTable()->SetTableValue(6, 0.5, 0.9, 0.5, 1.0);
+
+      this->SetColorName(7, "fMRI-high");
+      this->GetLookupTable()->SetTableValue(7, 0.5, 0.9, 0.9, 1.0);
+
+      this->SetColorName(8, "fMRI-low");
+      this->GetLookupTable()->SetTableValue(8, 0.9, 0.9, 0.5, 1.0);
+
+      this->SetColorName(9, "Pre-Gyrus");
+      this->GetLookupTable()->SetTableValue(9, 0.9, 0.7, 0.9, 1.0);
+
+      this->SetColorName(10, "Post-Gyrus");
+      this->GetLookupTable()->SetTableValue(10, 0.9, 0.9, 0.5, 1.0);
+
+      for (int offset = 0; offset <= 240; offset += 10)
+        {
+        this->SetColorName(offset + 11, "jake");
+        this->GetLookupTable()->SetTableValue(offset + 11, 0.2, 0.5, 0.8, 1.0);
+        
+        this->SetColorName(offset + 12, "elwood");
+        this->GetLookupTable()->SetTableValue(offset + 12, 0.2, 0.8, 0.5, 1.0);
+        
+        this->SetColorName(offset + 13, "gato");
+        this->GetLookupTable()->SetTableValue(offset + 13, 0.8, 0.5, 0.2, 1.0);
+        
+        this->SetColorName(offset + 14, "avery");
+        this->GetLookupTable()->SetTableValue(offset + 14, 0.8, 0.2, 0.5, 1.0);
+        
+        this->SetColorName(offset + 15, "mambazo");
+        this->GetLookupTable()->SetTableValue(offset + 15, 0.5, 0.2, 0.8, 1.0);
+        
+        this->SetColorName(offset + 16, "domino");
+        this->GetLookupTable()->SetTableValue(offset + 16, 0.5, 0.8, 0.2, 1.0);
+
+        if (offset <= 230)
+          {
+          // these ones don't go past 256
+          this->SetColorName(offset + 17, "monk");
+          this->GetLookupTable()->SetTableValue(offset + 17, 0.2, 0.2, 0.8, 1.0);
+          
+          this->SetColorName(offset + 18, "forest");
+          this->GetLookupTable()->SetTableValue(offset + 18, 0.8, 0.8, 0.2, 1.0);
+          
+          this->SetColorName(offset + 19, "dylan");
+          this->GetLookupTable()->SetTableValue(offset + 19, 0.2, 0.8, 0.8, 1.0);
+          
+          this->SetColorName(offset + 20, "kales");
+          this->GetLookupTable()->SetTableValue(offset + 20, 0.5, 0.5, 0.5, 1.0);
+          }
+        }
       this->SetColorName(101, "C2"); this->GetLookupTable()->SetTableValue(101, 0.996094, 0.746094, 0.792969, 1.0);
 this->SetColorName(633, "C3"); this->GetLookupTable()->SetTableValue(633, 0.7, 0.7, 0, 1.0);
 this->SetColorName(681, "C4"); this->GetLookupTable()->SetTableValue(681, 1, 0.65, 0.64, 1.0);
@@ -988,43 +1059,7 @@ this->SetColorName(214, "Cstem"); this->GetLookupTable()->SetTableValue(214, 0.6
 this->SetColorName(215, "Cvent"); this->GetLookupTable()->SetTableValue(215, 0.9, 0.9, 0.98, 1.0);
 this->SetColorName(216, "Cbrain"); this->GetLookupTable()->SetTableValue(216, 0.25, 0.41, 0.88, 1.0);
 this->SetColorName(217, "Cneo"); this->GetLookupTable()->SetTableValue(217, 0.86, 0.86, 0.86, 1.0);
-this->SetColorName(3, "Brain"); this->GetLookupTable()->SetTableValue(3, 1.0, 1.0, 1.0, 1.0);
-this->SetColorName(4, "Ventricles"); this->GetLookupTable()->SetTableValue(4, 0.4, 0.7, 1, 1.0);
-this->SetColorName(5, "Vessels"); this->GetLookupTable()->SetTableValue(5, 0.9, 0.5, 0.5, 1.0);
-this->SetColorName(6, "Tumor"); this->GetLookupTable()->SetTableValue(6, 0.5, 0.9, 0.5, 1.0);
-this->SetColorName(7, "fMRI-high"); this->GetLookupTable()->SetTableValue(7, 0.5, 0.9, 0.9, 1.0);
-this->SetColorName(8, "fMRI-low"); this->GetLookupTable()->SetTableValue(8, 0.9, 0.9, 0.5, 1.0);
-this->SetColorName(9, "Pre-Gyrus"); this->GetLookupTable()->SetTableValue(9, 0.9, 0.7, 0.9, 1.0);
-this->SetColorName(10, "Post-Gyrus"); this->GetLookupTable()->SetTableValue(10, 0.9, 0.9, 0.5, 1.0);
-this->SetColorName(11, "jake");
-this->GetLookupTable()->SetTableValue(11, 0.2, 0.5, 0.8, 1.0);
 
-this->SetColorName(12, "elwood");
-this->GetLookupTable()->SetTableValue(12, 0.2, 0.8, 0.5, 1.0);
-        
-this->SetColorName(13, "gato");
-this->GetLookupTable()->SetTableValue(13, 0.8, 0.5, 0.2, 1.0);
-        
-this->SetColorName(14, "avery");
-this->GetLookupTable()->SetTableValue(14, 0.8, 0.2, 0.5, 1.0);
-        
-this->SetColorName(15, "mambazo");
-this->GetLookupTable()->SetTableValue(15, 0.5, 0.2, 0.8, 1.0);
-        
-this->SetColorName(16, "domino");
-this->GetLookupTable()->SetTableValue(16, 0.5, 0.8, 0.2, 1.0);
-
-this->SetColorName(17, "monk");
-this->GetLookupTable()->SetTableValue(17, 0.2, 0.2, 0.8, 1.0);
-          
-this->SetColorName(18, "forest");
-this->GetLookupTable()->SetTableValue(18, 0.8, 0.8, 0.2, 1.0);
-          
-this->SetColorName(19, "dylan");
-this->GetLookupTable()->SetTableValue(19, 0.2, 0.8, 0.8, 1.0);
-          
-this->SetColorName(20, "kales");
-this->GetLookupTable()->SetTableValue(20, 0.5, 0.5, 0.5, 1.0);
       }
     else if (this->Type == this->Random)
       {
