@@ -895,17 +895,20 @@ void vtkMRMLColorTableNode::SetType(int type)
           this->GetLookupTable()->SetTableValue(offset + 20, 0.5, 0.5, 0.5, 1.0);
           }
         }
+      this->SetColorName(628, "C0"); this->GetLookupTable()->SetTableValue(628, 0.6, 0.8, 0.3, 1.0);
+      this->SetColorName(629, "C0"); this->GetLookupTable()->SetTableValue(629, 0.6, 0.8, 0.3, 1.0);
+      
       this->SetColorName(101, "C2"); this->GetLookupTable()->SetTableValue(101, 0.996094, 0.746094, 0.792969, 1.0);
-this->SetColorName(633, "C3"); this->GetLookupTable()->SetTableValue(633, 0.7, 0.7, 0, 1.0);
-this->SetColorName(681, "C4"); this->GetLookupTable()->SetTableValue(681, 1, 0.65, 0.64, 1.0);
-this->SetColorName(689, "C5"); this->GetLookupTable()->SetTableValue(689, 0.9, 0.4, 0.4, 1.0);
-this->SetColorName(632, "C3"); this->GetLookupTable()->SetTableValue(632, 0.7, 0.7, 0, 1.0);
+      this->SetColorName(632, "C3"); this->GetLookupTable()->SetTableValue(632, 0.7, 0.7, 0, 1.0);
+      this->SetColorName(633, "C3"); this->GetLookupTable()->SetTableValue(633, 0.7, 0.7, 0, 1.0);
 this->SetColorName(680, "C4"); this->GetLookupTable()->SetTableValue(680, 1, 0.65, 0.64, 1.0);
+this->SetColorName(681, "C4"); this->GetLookupTable()->SetTableValue(681, 1, 0.65, 0.64, 1.0);
 this->SetColorName(688, "C5"); this->GetLookupTable()->SetTableValue(688, 0.9, 0.4, 0.4, 1.0);
+this->SetColorName(689, "C5"); this->GetLookupTable()->SetTableValue(689, 0.9, 0.4, 0.4, 1.0);
 this->SetColorName(140, "C6"); this->GetLookupTable()->SetTableValue(140, 0.597656, 0.796875, 0.195312, 1.0);
 this->SetColorName(672, "C7"); this->GetLookupTable()->SetTableValue(672, 0.9, 0.6, 0.35, 1.0);
-this->SetColorName(712, "C8"); this->GetLookupTable()->SetTableValue(712, 0.39, 0.85, 0.27, 1.0);
 this->SetColorName(673, "C7"); this->GetLookupTable()->SetTableValue(673, 0.9, 0.6, 0.35, 1.0);
+this->SetColorName(712, "C8"); this->GetLookupTable()->SetTableValue(712, 0.39, 0.85, 0.27, 1.0);
 this->SetColorName(713, "C8"); this->GetLookupTable()->SetTableValue(713, 0.39, 0.85, 0.27, 1.0);
 this->SetColorName(102, "C9"); this->GetLookupTable()->SetTableValue(102, 0.25, 0.410156, 0.878906, 1.0);
 this->SetColorName(97, "C10"); this->GetLookupTable()->SetTableValue(97, 0.25, 0.871094, 0.816406, 1.0);
@@ -1190,7 +1193,7 @@ void vtkMRMLColorTableNode::SetColor(int entry, const char *name, double r, doub
   if (entry < 0 ||
       entry >= this->GetLookupTable()->GetNumberOfTableValues())
     {
-      vtkErrorMacro( "vtkMRMLColorTableNode::SetColor: requested entry " << entry << " is out of table range: 0 - " << this->GetLookupTable()->GetNumberOfTableValues() << endl);
+    vtkErrorMacro( "vtkMRMLColorTableNode::SetColor: requested entry " << entry << " is out of table range: 0 - " << this->GetLookupTable()->GetNumberOfTableValues() << ", call SetNumberOfColors" << endl);
       return;
     }
 
