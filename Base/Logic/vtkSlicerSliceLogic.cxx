@@ -219,7 +219,7 @@ void vtkSlicerSliceLogic::ProcessMRMLEvents(vtkObject * caller,
     && (event == vtkMRMLScene::NodeAddedEvent || event == vtkMRMLScene::NodeRemovedEvent ) )
     {
     vtkMRMLNode *node = (vtkMRMLNode*) (callData);
-    if (node == NULL || !(node->IsA("vtkMRMLSliceCompositeNode") || node->IsA("vtkMRMLSliceNode") ) )
+    if (node == NULL || !(node->IsA("vtkMRMLSliceCompositeNode") || node->IsA("vtkMRMLSliceNode") || node->IsA("vtkMRMLVolumeNode")) )
       {
       return;
       }
@@ -242,6 +242,8 @@ void vtkSlicerSliceLogic::ProcessMRMLEvents(vtkObject * caller,
   //
   // check that our referenced nodes exist, and if not set to None
   //
+
+  /** PROBABLY DONT NEED TO DO THAT And it causes load scene to override ID's
   if ( this->MRMLScene->GetNodeByID( this->SliceCompositeNode->GetForegroundVolumeID() ) == NULL )
     {
     this->SliceCompositeNode->SetForegroundVolumeID(NULL);
@@ -256,7 +258,8 @@ void vtkSlicerSliceLogic::ProcessMRMLEvents(vtkObject * caller,
     {
     this->SliceCompositeNode->SetBackgroundVolumeID(NULL);
     }
-    
+   **/
+
   if (event != vtkMRMLScene::NewSceneEvent) 
     {
     this->UpdatePipeline();

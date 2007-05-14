@@ -345,6 +345,7 @@ void vtkMRMLSliceCompositeNode::Copy(vtkMRMLNode *anode)
 
   this->SetBackgroundVolumeID(node->GetBackgroundVolumeID());
   this->SetForegroundVolumeID(node->GetForegroundVolumeID());
+  this->SetLabelVolumeID(node->GetLabelVolumeID());
   this->SetForegroundOpacity(node->GetForegroundOpacity());
   this->SetLabelOpacity(node->GetLabelOpacity());
   this->SetLinkedControl (node->GetLinkedControl());

@@ -192,6 +192,8 @@ void vtkMRMLVolumeNode::Copy(vtkMRMLNode *anode)
   // Matrices
   for(int i=0; i<3; i++) 
     {
+    this->Origin[i] = node->Origin[i];
+    this->Spacing[i] = node->Spacing[i];
     for(int j=0; j<3; j++) 
       {
       this->IJKToRASDirections[i][j] = node->IJKToRASDirections[i][j];
@@ -201,9 +203,6 @@ void vtkMRMLVolumeNode::Copy(vtkMRMLNode *anode)
     {
     this->SetImageData(node->ImageData);
     }
-
-  this->SetOrigin(node->GetOrigin());
-  this->SetSpacing(node->GetSpacing());
 
   this->SetStorageNodeID(node->StorageNodeID);
   this->SetDisplayNodeID(node->DisplayNodeID);
