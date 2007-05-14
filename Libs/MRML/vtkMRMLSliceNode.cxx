@@ -364,6 +364,8 @@ void vtkMRMLSliceNode::WriteXML(ostream& of, int nIndent)
   of << indent << "sliceToRAS=\"" << ss.str().c_str() << "\" ";
   of << indent << "layoutName=\"" << this->GetLayoutName() << "\" ";
   of << indent << "orientation=\"" << this->OrientationString << "\" ";
+  of << indent << " sliceVisibility=\"" << (this->SliceVisible ? "true" : "false") << "\"";
+
 
 }
 
@@ -389,6 +391,17 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
         {
         ss >> val;
         this->FieldOfView[i] = val;
+        }
+      }
+    else if (!strcmp(attName, "sliceVisibility")) 
+      {
+      if (!strcmp(attValue,"true")) 
+        {
+        this->SliceVisible = 1;
+        }
+      else
+        {
+        this->SliceVisible = 0;
         }
       }
    else if (!strcmp(attName, "orientation")) 
@@ -438,6 +451,7 @@ void vtkMRMLSliceNode::Copy(vtkMRMLNode *anode)
   Superclass::Copy(anode);
   vtkMRMLSliceNode *node = vtkMRMLSliceNode::SafeDownCast(anode);
 
+  this->SetSliceVisible(node->GetSliceVisible());
   this->SliceToRAS->DeepCopy(node->GetSliceToRAS());
   this->SetOrientationString(node->GetOrientationString());
 
