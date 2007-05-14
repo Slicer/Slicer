@@ -50,7 +50,7 @@ class vtkCellPicker;
 class vtkPointPicker;
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewerWidget : public vtkSlicerWidget
 {
-  
+
 public:
   static vtkSlicerViewerWidget* New();
   vtkTypeRevisionMacro(vtkSlicerViewerWidget,vtkSlicerWidget);
@@ -213,6 +213,11 @@ protected:
   void CheckModelHierarchies();
   void AddHierarchiyObservers();
   void RemoveHierarchyObservers();
+
+  void UpdateModelHierarchies() {
+    this->CheckModelHierarchies();
+    this->AddHierarchiyObservers();
+    };
 
   vtkMRMLModelDisplayNode* GetModelDisplayNode(vtkMRMLModelNode *model);
 

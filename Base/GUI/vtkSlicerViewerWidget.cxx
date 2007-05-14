@@ -583,8 +583,13 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
     && (event == vtkMRMLScene::NodeAddedEvent || event == vtkMRMLScene::NodeRemovedEvent ) )
     {
     vtkMRMLNode *node = (vtkMRMLNode*) (callData);
-    if (node != NULL && ( node->IsA("vtkMRMLModelNode") || node->IsA("vtkMRMLModelHierarchyNode")))
+    if (node != NULL && node->IsA("vtkMRMLModelNode") )
       {
+      this->UpdateFromMRML();
+      }
+    else if (node != NULL && node->IsA("vtkMRMLModelHierarchyNode") )
+      {
+      this->UpdateModelHierarchies();
       this->UpdateFromMRML();
       }
     else if (node != NULL && node->IsA("vtkMRMLClipModelsNode") )
@@ -647,6 +652,7 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
   else if (vtkMRMLModelHierarchyNode::SafeDownCast(caller) &&
            event == vtkCommand::ModifiedEvent)
     {
+    this->UpdateModelHierarchies();
     this->UpdateFromMRML();
     }
   else
@@ -825,8 +831,6 @@ void vtkSlicerViewerWidget::CreateWidget ( )
 //---------------------------------------------------------------------------
 void vtkSlicerViewerWidget::UpdateFromMRML()
 {
-  this->CheckModelHierarchies();
-
   this->UpdateAxis();
 
   this->UpdateCameraNode();
@@ -836,8 +840,6 @@ void vtkSlicerViewerWidget::UpdateFromMRML()
   this->RemoveModelProps ( );
   
   this->UpdateModelsFromMRML();
-
-  this->AddHierarchiyObservers();
 
   this->RequestRender ( );
 }
