@@ -279,6 +279,11 @@ void vtkSlicerNodeSelectorWidget::UpdateMenu()
             sc << "ProcessCommand " << node->GetID();
 
             this->GetWidget()->GetWidget()->GetMenu()->AddRadioButton(node->GetName());
+            // do we need a column break?
+            if (count != 0 && count % 40 == 0)
+              {
+              this->GetWidget()->GetWidget()->GetMenu()->SetItemColumnBreak(count, 1);
+              }
             this->GetWidget()->GetWidget()->GetMenu()->SetItemCommand(count++, this, sc.str().c_str());
             if (oldSelectedNode == node)
             {
