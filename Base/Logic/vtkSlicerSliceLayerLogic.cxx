@@ -162,9 +162,18 @@ vtkSlicerSliceLayerLogic::~vtkSlicerSliceLayerLogic()
 //----------------------------------------------------------------------------
 void vtkSlicerSliceLayerLogic::ProcessMRMLEvents(vtkObject * caller, 
                                             unsigned long event, 
-                                            void * /*callData*/)
+                                            void *callData)
 {
-  
+  if ( vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene 
+    && (event == vtkMRMLScene::NodeAddedEvent || event == vtkMRMLScene::NodeRemovedEvent ) )
+    {
+    vtkMRMLNode *node = (vtkMRMLNode*) (callData);
+    if (node == NULL || !(node->IsA("vtkMRMLVolumeNode") || node->IsA("vtkMRMLSliceNode")))
+      {
+      return;
+      }
+    }
+
   if (this->VolumeDisplayNode == vtkMRMLVolumeDisplayNode::SafeDownCast(caller) &&
       event == vtkCommand::ModifiedEvent)
     {

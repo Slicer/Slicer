@@ -107,20 +107,8 @@ void vtkSlicerSliceLogic::UpdateSliceNode()
       node = vtkMRMLSliceNode::New();
       node->SetLayoutName(this->GetName());
       //node->SetSingletonTag(this->GetName());
-
-      if ( !strcmp( this->GetName(), "Red" ) )
-        {
-        node->SetOrientationToAxial();
-        }
-      if ( !strcmp( this->GetName(), "Yellow" ) )
-        {
-        node->SetOrientationToSagittal();
-        }
-      if ( !strcmp( this->GetName(), "Green" ) )
-        {
-        node->SetOrientationToCoronal();
-        }
       this->SetSliceNode (node);
+      this->UpdateSliceNodeFromLayout();
       node->Delete();
       }
     else
@@ -139,6 +127,29 @@ void vtkSlicerSliceLogic::UpdateSliceNode()
     this->MRMLScene->AddNodeNoNotify(node);
     this->SetSliceNode (node);
     node->UnRegister(this);
+    }
+}
+
+//----------------------------------------------------------------------------
+
+void vtkSlicerSliceLogic::UpdateSliceNodeFromLayout()
+{
+  if (this->SliceNode == NULL)
+    {
+    return;
+    }
+
+  if ( !strcmp( this->GetName(), "Red" ) )
+    {
+    this->SliceNode->SetOrientationToAxial();
+    }
+  if ( !strcmp( this->GetName(), "Yellow" ) )
+    {
+    this->SliceNode->SetOrientationToSagittal();
+    }
+  if ( !strcmp( this->GetName(), "Green" ) )
+    {
+    this->SliceNode->SetOrientationToCoronal();
     }
 }
 
@@ -204,11 +215,19 @@ void vtkSlicerSliceLogic::ProcessMRMLEvents(vtkObject * caller,
   // if you don't have a node yet, look in the scene to see if 
   // one exists for you to use.  If not, create one and add it to the scene
   //  
+  if ( vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene 
+    && (event == vtkMRMLScene::NodeAddedEvent || event == vtkMRMLScene::NodeRemovedEvent ) )
+    {
+    vtkMRMLNode *node = (vtkMRMLNode*) (callData);
+    if (node == NULL || !(node->IsA("vtkMRMLSliceCompositeNode") || node->IsA("vtkMRMLSliceNode") ) )
+      {
+      return;
+      }
+    }
+
   if (event == vtkMRMLScene::SceneCloseEvent) 
     {
-    this->SetSliceCompositeNode (NULL);
-    this->SetSliceNode (NULL);
-
+    this->UpdateSliceNodeFromLayout();
     this->DeleteSliceModel();
 
     return;
@@ -363,7 +382,15 @@ void vtkSlicerSliceLogic::SetBackgroundLayer(vtkSlicerSliceLayerLogic *Backgroun
   if (this->BackgroundLayer)
     {
     this->BackgroundLayer->Register(this);
-    this->BackgroundLayer->SetAndObserveMRMLScene( this->MRMLScene );
+
+    vtkIntArray *events = vtkIntArray::New();
+    events->InsertNextValue(vtkMRMLScene::NewSceneEvent);
+    events->InsertNextValue(vtkMRMLScene::SceneCloseEvent);
+    events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
+    events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
+    this->BackgroundLayer->SetAndObserveMRMLSceneEvents ( this->MRMLScene, events );
+    events->Delete();
+
     this->BackgroundLayer->SetSliceNode(SliceNode);
     this->BackgroundLayer->AddObserver( vtkCommand::ModifiedEvent, this->LogicCallbackCommand );
     }
@@ -385,7 +412,15 @@ void vtkSlicerSliceLogic::SetForegroundLayer(vtkSlicerSliceLayerLogic *Foregroun
   if (this->ForegroundLayer)
     {
     this->ForegroundLayer->Register(this);
-    this->ForegroundLayer->SetAndObserveMRMLScene( this->MRMLScene );
+
+    vtkIntArray *events = vtkIntArray::New();
+    events->InsertNextValue(vtkMRMLScene::NewSceneEvent);
+    events->InsertNextValue(vtkMRMLScene::SceneCloseEvent);
+    events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
+    events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
+    this->ForegroundLayer->SetAndObserveMRMLSceneEvents ( this->MRMLScene, events );
+    events->Delete();
+
     this->ForegroundLayer->SetSliceNode(SliceNode);
     this->ForegroundLayer->AddObserver( vtkCommand::ModifiedEvent, this->LogicCallbackCommand );
     }
@@ -407,7 +442,15 @@ void vtkSlicerSliceLogic::SetLabelLayer(vtkSlicerSliceLayerLogic *LabelLayer)
   if (this->LabelLayer)
     {
     this->LabelLayer->Register(this);
-    this->LabelLayer->SetAndObserveMRMLScene( this->MRMLScene );
+
+    vtkIntArray *events = vtkIntArray::New();
+    events->InsertNextValue(vtkMRMLScene::NewSceneEvent);
+    events->InsertNextValue(vtkMRMLScene::SceneCloseEvent);
+    events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
+    events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
+    this->LabelLayer->SetAndObserveMRMLSceneEvents ( this->MRMLScene, events );
+    events->Delete();
+
     this->LabelLayer->SetSliceNode(SliceNode);
     this->LabelLayer->AddObserver( vtkCommand::ModifiedEvent, this->LogicCallbackCommand );
     }

@@ -159,6 +159,10 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLogic : public vtkSlicerLogic
   void UpdateSliceNode();
 
   // Description:
+  // Upadte slicer node given a layout name
+  void UpdateSliceNodeFromLayout();
+
+  // Description:
   // manage and syncronise the SliceCompositeNode
   void UpdateSliceCompositeNode();
 

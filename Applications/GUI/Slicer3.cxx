@@ -1011,6 +1011,8 @@ int Slicer3_main(int argc, char *argv[])
     vtkIntArray *events = vtkIntArray::New();
     events->InsertNextValue(vtkMRMLScene::NewSceneEvent);
     events->InsertNextValue(vtkMRMLScene::SceneCloseEvent);
+    events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
+    events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
 
     vtkSlicerSliceLogic *sliceLogic0 = vtkSlicerSliceLogic::New ( );
     sliceLogic0->SetName("Red");
