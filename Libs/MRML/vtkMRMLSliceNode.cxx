@@ -439,6 +439,7 @@ void vtkMRMLSliceNode::Copy(vtkMRMLNode *anode)
   vtkMRMLSliceNode *node = vtkMRMLSliceNode::SafeDownCast(anode);
 
   this->SliceToRAS->DeepCopy(node->GetSliceToRAS());
+  this->SetOrientationString(node->GetOrientationString());
 
   int i;
   for(i=0; i<3; i++) 
