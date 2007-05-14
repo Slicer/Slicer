@@ -793,6 +793,9 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
     this->VolumeFileHeaderWidget->Create();  
     this->VolumeFileHeaderWidget->SetInfo("The file format does not match standard volume formats.\n If you want to read it as binary data, fill the header and press Read.\n Otherwise, press Cancel");
 
+    this->ProcessGUIEvents (this->VolumeSelectorWidget,
+                            vtkSlicerNodeSelectorWidget::NodeSelectedEvent, NULL );
+
 }
 
 
