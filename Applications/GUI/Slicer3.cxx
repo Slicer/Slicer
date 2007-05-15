@@ -54,7 +54,7 @@
 #include "vtkScriptedModuleGUI.h"
 
 #include "ModuleFactory.h"
- 
+
 #ifdef USE_PYTHON
 // If debug, Python wants pythonxx_d.lib, so fake it out
 #ifdef _DEBUG
@@ -210,24 +210,26 @@ void printAllInfo(int argc, char **argv)
   int i;
   struct tm * timeInfo;
   time_t rawtime;
-  // mm/dd/yy-hh-mm-ss-TZ
+  // yyyy/mm/dd-hh-mm-ss-ms-TZ
   // plus one for 3 char time zone
-  char timeStr[22];
-  
-  fprintf(stdout, "ProgramName: %s", argv[0]);
-  fprintf(stdout, " ProgramArguments:");
+  char timeStr[27];
+
+  fprintf(stdout, "<ProcessStep>\n");
+  fprintf(stdout, "<Program version=\"$Revision$\">%s</ProgramName>\n", argv[0]);
+  fprintf(stdout, "<ProgramArguments>");
   for (i = 1; i < argc; i++)
     {
     fprintf(stdout, " %s", argv[i]);
     }
-  fprintf(stdout, " ProgramVersion: $Revision$ CVS: $Id$ TimeStamp: ");
+  fprintf(stdout, "</ProgramArguments>\n");
+  fprintf(stdout, "<CVS>$Id$</CVS> <TimeStamp>");
   time ( &rawtime );
   timeInfo = localtime (&rawtime);
-  strftime (timeStr, 22, "%D-%H-%M-%S-%Z", timeInfo);
-  fprintf(stdout, "%s", timeStr);
-  fprintf(stdout, " User: %s", getenv("USER"));
+  strftime (timeStr, 27, "%Y/%m/%d-%H-%M-%S-00-%Z", timeInfo);
+  fprintf(stdout, "%s</TimeStamp>\n", timeStr);
+  fprintf(stdout, "<User>%s</User>\n", getenv("USER"));
   
-  fprintf(stdout, " Machine: ");
+  fprintf(stdout, "<HostName>");
   if (getenv("HOSTNAME") == NULL)
     {
     if (getenv("HOST") == NULL)
@@ -243,7 +245,21 @@ void printAllInfo(int argc, char **argv)
     {
     fprintf(stdout, "%s", getenv("HOSTNAME"));
     }
-  fprintf(stdout, " Platform: ");
+  fprintf(stdout, "</HostName><Platform version=\"");
+#if defined(sun) || defined(__sun)
+#if defined(__SunOS_5_7)
+  fprintf(stdout, "2.7");
+#endif
+#if defined(__SunOS_5_8)
+  fprintf(stdout, "8");
+#endif
+#endif
+#if defined(linux) || defined(__linux)
+  fprintf(stdout, "unknown");
+#endif
+  
+  fprintf(stdout, "\">");
+  // now the platform name
 #if defined(linux) || defined(__linux)
   fprintf(stdout, "Linux");
 #endif 
@@ -263,31 +279,15 @@ void printAllInfo(int argc, char **argv)
 #if defined(_WIN32) || defined(__WIN32__)
   fprintf(stdout, "Windows");
 #endif
-  fprintf(stdout, " PlatformVersion: ");
+  fprintf(stdout, "</Platform>\n");
+
+  if (getenv("MACHTYPE") != NULL)
+    {
+    fprintf(stdout, "<Architecture>%s</Architecture>\n", getenv("MACHTYPE"));
+    }
   
-#if defined(sun) || defined(__sun)
-#if defined(__SunOS_5_7)
-  fprintf(stdout, "2.7");
-#endif
-#if defined(__SunOS_5_8)
-  fprintf(stdout, "8");
-#endif
-#endif
-#if defined(linux) || defined(__linux)
-  fprintf(stdout, "unknown");
-#endif
-  fprintf(stdout, " CompilerName: ");
-#if defined(__GNUC__)
-  fprintf(stdout, "GCC");
-#else
-#if defined(_MSC_VER)
-  fprintf(stdout, "MSC");
-#else
-  fprintf(stdout, "UKNOWN");
-#endif
-#endif
-  fprintf(stdout, " CompilerVersion: ");
-#if defined(__GNUC__)
+  fprintf(stdout, "<Compiler version=\"");
+  #if defined(__GNUC__)
 #if defined(__GNU_PATCHLEVEL__)
   fprintf(stdout, "%d", (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__));
 #else
@@ -297,12 +297,31 @@ void printAllInfo(int argc, char **argv)
 #if defined(_MSC_VER)
   fprintf(stdout, "%d", (_MSC_VER));
 #endif
+  // now the compiler name
+  fprintf(stdout, ">");
+#if defined(__GNUC__)
+  fprintf(stdout, "GCC");
+#else
+#if defined(_MSC_VER)
+  fprintf(stdout, "MSC");
+#else
+  fprintf(stdout, "UKNOWN");
+#endif
+#endif
+  fprintf(stdout, "</Compiler>\n");
+
   
-  fprintf(stdout, " LibName: VTK LibVersion: %s LibName: ITK LibVersion: unknown", VTK_VERSION);
+  fprintf(stdout, "<Library version=\"%s\">VTK</Librarary><Library version=\"unknown\">ITK</Library><Library version=\"%s\">KWWidgets</Library>\n", VTK_VERSION, KWWidgets_VERSION);
   int major, minor, patchLevel;
   Tcl_GetVersion(&major, &minor, &patchLevel, NULL);
-  fprintf(stdout, " LibName: TCL LibVersion: %d.%d.%d", major, minor, patchLevel);
-  //fprintf(stdout, " LibName: TK LibVersion: %d.%d.%d", major, minor, patchLevel);
+  fprintf(stdout, "<Library version=\"%d.%d.%d\">TCL</Library>\n", major, minor, patchLevel);
+  //fprintf(stdout, "<Library version=\"%d.%d.%d\">TK</Library>\n", major,
+  //minor, patchLevel);
+#ifdef USE_PYTHON
+  fprintf(stdout, "<Library version=\"%s\">Python</Library>\n", PY_VERSION);
+#endif
+  fprintf(stdout, "<Repository>$HeadURL$</Repository>\n");
+  fprintf(stdout, "<ProcessStep>\n");
   fprintf(stdout, "\n");
   
 }
@@ -405,8 +424,8 @@ int Slicer3_main(int argc, char *argv[])
   itkAutoLoadPath = ptemp + ":" + itkAutoLoadPath;
 #endif
   itkAutoLoadPath = "ITK_AUTOLOAD_PATH=" + itkAutoLoadPath;
-  int putSuccess
-    = vtkKWApplication::PutEnv(const_cast <char *> (itkAutoLoadPath.c_str()));
+  int putSuccess = 
+    vtkKWApplication::PutEnv(const_cast <char *> (itkAutoLoadPath.c_str()));
   if (!putSuccess)
     {
     cout << "Unable to set ITK_AUTOLOAD_PATH. " << itkAutoLoadPath << endl;
