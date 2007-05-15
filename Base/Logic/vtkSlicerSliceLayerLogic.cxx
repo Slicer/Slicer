@@ -167,7 +167,7 @@ void vtkSlicerSliceLayerLogic::ProcessMRMLEvents(vtkObject * caller,
   if ( vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene 
     && (event == vtkMRMLScene::NodeAddedEvent || event == vtkMRMLScene::NodeRemovedEvent ) )
     {
-    vtkMRMLNode *node = (vtkMRMLNode*) (callData);
+    vtkMRMLNode *node =  reinterpret_cast<vtkMRMLNode*> (callData);
     if (node == NULL || !(node->IsA("vtkMRMLVolumeNode") || node->IsA("vtkMRMLSliceNode")))
       {
       return;
