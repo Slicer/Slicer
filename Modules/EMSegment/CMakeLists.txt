@@ -129,6 +129,15 @@ IF(BUILD_TESTING)
 ENDIF(BUILD_TESTING)
 
 #
+# command line application
+#
+OPTION(Slicer3_BUILD_EMSEGMENT_COMMANDLINE "Build EMSegment command-line application" OFF)
+MARK_AS_ADVANCED(Slicer3_BUILD_EMSEGMENT_COMMANDLINE)
+IF (Slicer3_BUILD_EMSEGMENT_COMMANDLINE)
+  SUBDIRS(CommandLineApplication)
+ENDIF(Slicer3_BUILD_EMSEGMENT_COMMANDLINE)
+
+#
 # Configure include file
 #
 CONFIGURE_FILE(
