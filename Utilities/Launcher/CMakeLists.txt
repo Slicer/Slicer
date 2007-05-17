@@ -19,6 +19,9 @@ ENDIF(${launcher_platform} MATCHES Windows)
 
 IF(${launcher_platform} MATCHES Linux)
   EXEC_PROGRAM( uname ARGS -m OUTPUT_VARIABLE machine ) 
+  IF (${machine} MATCHES "i686")
+    SET (machine "x86") 
+  ENDIF (${machine} MATCHES "i686")
   SET(launcher_platform  linux-${machine})
 ENDIF(${launcher_platform} MATCHES Linux)
 
