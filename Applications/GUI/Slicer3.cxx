@@ -726,7 +726,7 @@ int Slicer3_main(int argc, char *argv[])
     //
     if ( Eval != "" )
       {    
-      std::string cmd = "set ::SLICER(eval) {" + Eval + "} ; ";
+      std::string cmd = "set ::SLICER(eval) \"" + Eval + "\" ; ";
       cmd += "regsub -all {\\.,} $::SLICER(eval) \";\" ::SLICER(eval); ";
       cmd += "regsub -all {,\\.} $::SLICER(eval) \";\" ::SLICER(eval); ";
       cmd += "eval $::SLICER(eval);";
@@ -1507,9 +1507,9 @@ int Slicer3_main(int argc, char *argv[])
     //
     if ( Exec != "" )
       {    
-      std::string cmd = "set ::SLICER(exec) \"" + Exec + "\";";
-      cmd += "regsub -all {\\.,} $::SLICER(exec) \";\" ::SLICER(exec);";
-      cmd += "regsub -all {,\\.} $::SLICER(exec) \";\" ::SLICER(exec);";
+      std::string cmd = "set ::SLICER(exec) \"" + Exec + "\" ; ";
+      cmd += "regsub -all {\\.,} $::SLICER(exec) \";\" ::SLICER(exec); ";
+      cmd += "regsub -all {,\\.} $::SLICER(exec) \";\" ::SLICER(exec); ";
       cmd += "eval $::SLICER(exec);";
       res = Slicer3_Tcl_Eval( interp, cmd.c_str() );
       }
@@ -1911,6 +1911,7 @@ int main(int argc, char *argv[])
     return Slicer3_main(argc, argv);
 }
 #endif
+
 
 
 
