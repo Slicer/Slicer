@@ -20,16 +20,19 @@ wm withdraw .
 #
 # This script is used for both the slicer build directory and for the slicer
 # install directory.
+#
+# Note: the version of this file called launch.tcl.in will be configured by 
+# cmake such that tokens between @ signs will be replaced by the variable 
+# from the cmake cache
+#
  
 
-# these are the directories needed for the cpacked install directory:
-#/tmp/Slicer3-3.0.2007-02-06-Linux/lib
-#/tmp/Slicer3-3.0.2007-02-06-Linux/lib/KWWidgets:
-#/tmp/Slicer3-3.0.2007-02-06-Linux/lib/InsightToolkit
-#/tmp/Slicer3-3.0.2007-02-06-Linux/lib/Slicer3/tcl/lib
-
+#
 # if SLICER_HOME not set, find it relative to the location of this script
-# -- when run by the launcher, this variable will be set
+# -- when run by the launcher, this variable will be set already
+# -- this environment variable can be relied on by slicer code to know "where it lives"
+#    e.g. the build or install dir, so resources and other files can be found
+#
 if { ![info exists ::SLICER_HOME] } {
   set wd [pwd]
   cd [file dirname [file dirname [info script]]]
@@ -58,6 +61,8 @@ if { [file exists $::env(SLICER_HOME)/bin/vtk$ext] } {
   set installed 1
 }
 
+# for windows builds there's an extra subdir like "Debug" or "RelWithDebInfo"
+# (it doesn't exist once the program has been installed)
 set ::BUILD_SUBDIR  ""
 if { !$installed && [string match -nocase "windows*" $::tcl_platform(os)] } {
   set ::BUILD_SUBDIR  @CMAKE_BUILD_TYPE@
@@ -134,22 +139,55 @@ switch $::tcl_platform(os) {
         set ::env(BUILD) $::WINDOWS 
     }
 }
+
+proc launch_ParseArgs {argv} {
+
+  set ::LAUNCH(showSplash) 1
+  set ::LAUNCH(launchCommand) ""
+
+  # 
+  # look for launcher-specific arguments
+  #  --launch <program>
+  # or 
+  #  --launch-script <script.tcl>
+  #    (this is a special case that runs the script
+  #     in this interp and then exits)
+  #
+  # and obey --no-splash, but don't swallow it (pass it on to slicer)
+  #
+
+  set argv0 [lindex $::argv 0]
+  set argv1 [lindex $::argv 1]
+  switch -- $argv0 {
+    "--launch" {
+      if { $argv1 == "" } {
+        error "--launch requires argument of program to run"
+      } else {
+          set ::LAUNCH(launchCommand) $argv1
+          set ::argv [lreplace $::argv 0 1]
+
+          # don't show splash if running a custom command
+          set ::LAUNCH(showSplash) 0
+      }
+    }
+    "--launch-script" {
+      set ::argv [lreplace $::argv 0 1]
+      uplevel #0 source $argv1
+      exit
+    }
+  }
+
+  # check for the no splash argument
+  foreach arg $::argv {
+    switch -- $arg {
+      "--no-splash" {
+          set ::LAUNCH(showSplash) 0
+      }
+    }
+  }
+}
+
 proc launch_InitEnvironment {} {
-
-    # if SLICER_HOME not set, find it relative to the location of this script
-    # -- when run by the launcher, this variable will be set
-    if { ![info exists ::SLICER_HOME] } {
-        set wd [pwd]
-        cd [file dirname [file dirname [info script]]]
-        set ::SLICER_HOME [pwd]
-        cd $wd
-    }
-    set ::env(SLICER_HOME) $::SLICER_HOME
-
-    if { $::env(BUILD) == $::WINDOWS } {
-        set ::SLICER_HOME [file attributes $::SLICER_HOME -shortname]
-        set ::env(SLICER_HOME) $::SLICER_HOME
-    }
 
     # if it is an empty string or doesn't exist, set the LD_LIBRARY_PATH 
     if { ![info exists ::env(LD_LIBRARY_PATH)] ||
@@ -244,8 +282,9 @@ proc launch_SetPaths {} {
 # optional - show splash screen
 #
 proc launch_SplashScreen {} {
-
-  launch_SplashShow
+  if { $::LAUNCH(showSplash) } {
+    launch_SplashShow
+  }
 }
 
 
@@ -256,7 +295,6 @@ proc launch_SplashScreen {} {
 # .END
 #-------------------------------------------------------------------------------
 proc launch_SplashKill {} { 
-    global splashim
 
     # because this is called from bgerror, don't cause any errors 
     if {[info command .splash] != ""} {
@@ -288,7 +326,6 @@ proc launch_SplashAnimate { {delayms 100} } {
 # .END
 #-------------------------------------------------------------------------------
 proc launch_SplashShow { {delayms 7000} } {
-    global splashim
 
     set oscaling [tk scaling]
     # ignore screen based default scaling and pick scale so words show up nicely inside box
@@ -299,19 +336,9 @@ proc launch_SplashShow { {delayms 7000} } {
     set splashfontb [font create -family Helvetica -size 10 -weight bold]
     toplevel .splash -relief raised -borderwidth 6 -width $width -height $height -bg white
     wm overrideredirect .splash 1
-    wm geometry .splash +[expr [winfo screenwidth .splash]/2-($width/2)]+[expr [winfo screenheight .splash]/2-($height/2)]
-
-    # add the program path so slicer can find the picture no matter what directory it is started in 
-
-    if { 0 } {
-      # placeholder for image
-      set splashim [image create photo -file [file join $Path(program) gui/welcome.ppm]]
-      label .splash.l -image $splashim
-      place .splash.l -relx 0.5 -rely 0.35 -anchor center
-      label .splash.t1 -text "Starting up...\n\nSlicer is NOT an FDA approved medical device." -bg white -fg red -font $splashfontb
-      label .splash.t2 -text "See www.slicer.org for license details." -bg white -fg red -font $splashfont
-      label .splash.v -text "Version: $::env(SLICER_VERSION)" -bg white -fg darkblue -font $splashfont
-    }
+    set xcorner [expr [winfo screenwidth .splash]/2-($width/2)]
+    set ycorner [expr [winfo screenheight .splash]/2-($height/2)]
+    wm geometry .splash +$xcorner+$ycorner
 
     label .splash.t1 -text "Slicer3 starting up..." -bg white -font $splashfontb
     label .splash.t2 -text "" -bg white -fg red -font $splashfont
@@ -327,43 +354,6 @@ proc launch_SplashShow { {delayms 7000} } {
     bind .splash <1> launch_SplashKill
     after 10000 launch_SplashKill
     tk scaling $oscaling
-}
-
-
-#
-# optional - show dialog
-#
-proc launch_LicenseDialog {} {
-
-
-    set msg "Slicer is an experimental software package.\nAny clinical use requires proper research controls.\nSelecting \"Ok\" below binds you to the license agreement.\nSee www.slicer.org for details.\n"
-
-    set argv0 [lindex $::argv 0]
-    if { $argv0 == "-y" || $argv0 == "--agree_to_license" || $argv0 == "--batch" } {
-        set ::argv [lreplace $::argv 0 0]
-    } else {
-        if { ![file exists $::env(HOME)/.IAgreeToSlicersLicense] } {
-
-            if { [catch "package require Tk"] } {
-                puts "\n$msg"
-                puts -nonewline "Agree? \[Hit Enter for \"Ok\"\] "
-                flush stdout
-                gets stdin line
-                if { $line != "" } {
-                    set resp "cancel"
-                } else {
-                    set resp "ok"
-                }
-            } else {
-                wm withdraw .
-                set resp [tk_messageBox -message $msg -type okcancel -title "Slicer3"]
-            }
-
-            if {$resp == "cancel"} {
-                exit
-            }
-        }
-    }
 }
 
 
@@ -400,34 +390,6 @@ proc launch_FileEvent {fp} {
 #
 proc launch_RunProgram {} {
 
-
-    # 
-    # look for launcher-specific arguments
-    #  --launch <program>
-    # or 
-    #  --launch-script <script.tcl>
-    #
-    set launch_command ""
-    set argv0 [lindex $::argv 0]
-    set argv1 [lindex $::argv 1]
-    switch -- $argv0 {
-      "--launch" {
-        if { $argv1 == "" } {
-          error "--launch requires argument of program to run"
-        } else {
-            set launch_command $argv1
-            set ::argv [lreplace $::argv 0 1]
-        }
-      }
-      "--launch-script" {
-        set ::argv [lreplace $::argv 0 1]
-        uplevel #0 source $argv1
-        exit
-      }
-    }
-
-
-
     #
     # change from tcl escape to shell escape for command line arguments 
     # that contain spaces -- note that shell notation only works for a single
@@ -460,13 +422,13 @@ proc launch_RunProgram {} {
     # 
     # determine the correct arguments and executable for the platform
     #
-    if { $launch_command == "" } {
+    if { $::LAUNCH(launchCommand) == "" } {
         if {$::env(BUILD) == $::WINDOWS} {
-            set launch_command $::SLICER_HOME/bin/$::BUILD_SUBDIR/Slicer3-real.exe
+            set ::LAUNCH(launchCommand) $::SLICER_HOME/bin/$::BUILD_SUBDIR/Slicer3-real.exe
         } else {
             # turn curly braces into quotes
             regsub -all "{|}" $::argv "\\\"" ::argv
-            set launch_command $::SLICER_HOME/bin/Slicer3-real
+            set ::LAUNCH(launchCommand) $::SLICER_HOME/bin/Slicer3-real
         }
     }
 
@@ -474,9 +436,9 @@ proc launch_RunProgram {} {
                          # launch and not leftovers from previous 'catch' calls
 
     if {$::env(BUILD) == $::WINDOWS} {
-        set fp [open "| \"$launch_command\" $::argv" r]
+        set fp [open "| \"$::LAUNCH(launchCommand)\" $::argv" r]
     } else {
-        set fp [open "| csh -f -c \"$launch_command $::argv \" |& cat" r]
+        set fp [open "| csh -f -c \"$::LAUNCH(launchCommand) $::argv \" |& cat" r]
     }
 
     #
@@ -529,14 +491,13 @@ proc launch_RunProgram {} {
 #######  The actual steps for launching:
 ######
 
+launch_ParseArgs $argv 
+
 launch_InitEnvironment 
 
 launch_SetPaths 
 
 launch_SplashScreen
-
-# - no licenseDialog needed for Slicer3
-#launch_LicenseDialog
 
 #
 # run program until it exits and then exit this script with the ouput
