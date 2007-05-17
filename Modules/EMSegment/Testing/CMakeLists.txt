@@ -31,13 +31,16 @@ IF( NOT DISABLE_CXX_TESTING )
   # launcher is needed to set up shared library paths correctly.
   # We create a prefix for the test executable that accomplishes this
   # wrapping.  
-  SET( EM_COMMAND_LINE_TEST_PREFIX ${Slicer3_BINARY_DIR}/Slicer3 --launch ${EXECUTABLE_OUTPUT_PATH}/\${CTEST_CONFIGURATION_TYPE}/)
+  SET( EM_COMMAND_LINE_TEST_PREFIX ${Slicer3_BINARY_DIR}/Slicer3 --launch ${EXECUTABLE_OUTPUT_PATH})
+  IF (WIN32)
+    SET( EM_COMMAND_LINE_TEST_PREFIX ${EM_COMMAND_LINE_TEST_PREFIX}/${CMAKE_BUILD_TYPE})
+  ENDIF (WIN32)
     
   # test that the segmentation results match what the expected
   # results.
   ADD_TEST(
     vtkEMSegmentBlackBoxSegmentationTest_TutorialDataSmallRead
-    ${EM_COMMAND_LINE_TEST_PREFIX}vtkEMSegmentBlackBoxSegmentationTest
+    ${EM_COMMAND_LINE_TEST_PREFIX}/vtkEMSegmentBlackBoxSegmentationTest
     ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/EMSegmentTutorialTemplate_small.mrml
     ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/
     "EMSegmentTutorialTemplate"
@@ -49,7 +52,7 @@ IF( NOT DISABLE_CXX_TESTING )
     # results.
     ADD_TEST(
       vtkEMSegmentBlackBoxSegmentationTest_TutorialDataLarge
-      ${EM_COMMAND_LINE_TEST_PREFIX}vtkEMSegmentBlackBoxSegmentationTest
+      ${EM_COMMAND_LINE_TEST_PREFIX}/vtkEMSegmentBlackBoxSegmentationTest
       ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/EMSegmentTutorialTemplate_large.mrml
       ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/
       "EMSegment Tutorial Template"
