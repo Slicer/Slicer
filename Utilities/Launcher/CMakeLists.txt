@@ -18,7 +18,11 @@ IF(${launcher_platform} MATCHES Windows)
 ENDIF(${launcher_platform} MATCHES Windows)
 
 IF(${launcher_platform} MATCHES Linux)
-  SET(launcher_platform  linux-x86)
+  IF(CMAKE_CL_64)
+    SET(launcher_platform  linux-x86_64)
+  ELSE(CMAKE_CL_64)
+    SET(launcher_platform  linux-x86)
+  ENDIF(CMAKE_CL_64)
 ENDIF(${launcher_platform} MATCHES Linux)
 
 MESSAGE ( "launcher_platform is ${launcher_platform}" )
