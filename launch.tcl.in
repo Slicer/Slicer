@@ -164,6 +164,7 @@ proc launch_ParseArgs {argv} {
         error "--launch requires argument of program to run"
       } else {
           set ::LAUNCH(launchCommand) $argv1
+          regsub -all "\\\\" $::LAUNCH(launchCommand) "/" ::LAUNCH(launchCommand)
           set ::argv [lreplace $::argv 0 1]
 
           # don't show splash if running a custom command
@@ -404,8 +405,11 @@ proc launch_RunProgram {} {
         lappend newargv $a
     }
     set ::argv $newargv
-    # turn curly braces into quotes
-    regsub -all "{|}" $::argv "\\\"" ::argv
+
+    if {$::env(BUILD) != $::WINDOWS} {
+      # turn curly braces into quotes
+      regsub -all "{|}" $::argv "\\\"" ::argv
+    }
 
 
     #
@@ -492,11 +496,12 @@ proc launch_RunProgram {} {
 
 launch_ParseArgs $argv 
 
+launch_SplashScreen
+
 launch_InitEnvironment 
 
 launch_SetPaths 
 
-launch_SplashScreen
 
 #
 # run program until it exits and then exit this script with the ouput
