@@ -94,7 +94,6 @@ extern "C" {
 //#define EMSEG_DEBUG
 #define REALTIMEIMAGING_DEBUG
 #define MRABLATION_DEBUG
-//#define WFENGINE_DEBUG
 //#define NEURONAV_DEBUG
 //#define TRACTOGRAPHY_DEBUG
 
@@ -530,6 +529,7 @@ int Slicer3_main(int argc, char *argv[])
       }
     }
 #else
+  /* not python */
   interp = vtkKWApplication::InitializeTcl(argc, argv, &cout);
   if (!interp)
     {
@@ -538,6 +538,7 @@ int Slicer3_main(int argc, char *argv[])
     }
 #endif
     
+
     // Tell KWWidgets to make names like .vtkKWPushButton10 instead of .10 
     vtkKWWidget::UseClassNameInWidgetNameOn();
 
@@ -659,6 +660,11 @@ int Slicer3_main(int argc, char *argv[])
     Scriptedmodule_Init(interp);
 
   // first call to GetInstance will create the Application
+  // 
+  // make a substitute tcl proc for the 'exit' built in that
+  // goes through the vtkKWApplication methodology for exiting 
+  // cleanly
+  //
   vtkSlicerApplication *slicerApp = vtkSlicerApplication::GetInstance ( );
 
     {

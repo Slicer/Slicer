@@ -12,6 +12,7 @@ SUBDIRS(
   Editor
   QueryAtlas
   Tractography
+  #Meshing
 )
 
 

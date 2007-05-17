@@ -218,20 +218,20 @@ GENERATECLP(${SRC} Slicer3.xml)
 # Command line parsing tests
 #
 
-ADD_TEST(Slicer3CLTest1 ${Slicer3_BINARY_DIR}/Slicer3 --help)
-ADD_TEST(Slicer3CLTest2 ${Slicer3_BINARY_DIR}/Slicer3 --xml)
-ADD_TEST(Slicer3CLTest3 ${Slicer3_BINARY_DIR}/Slicer3 -f ${Slicer3_SOURCE_DIR}/Applications/GUI/Testing/TestScript.tcl)
-ADD_TEST(Slicer3CLTest4 ${Slicer3_BINARY_DIR}/Slicer3 --eval "puts testing ,. exit 0")
-ADD_TEST(Slicer3CLTest5 ${Slicer3_BINARY_DIR}/Slicer3 --exec "puts testing ,. exit 0")
-ADD_TEST(Slicer3CLTest6 ${Slicer3_BINARY_DIR}/Slicer3 --script ${Slicer3_SOURCE_DIR}/Applications/GUI/Testing/TestScript.tcl)
-ADD_TEST(Slicer3CLTest7 ${Slicer3_BINARY_DIR}/Slicer3 --script ${Slicer3_SOURCE_DIR}/Applications/GUI/Testing/LoadSceneTest.tcl)
+ADD_TEST(Slicer3CLTest1 ${Slicer3_BINARY_DIR}/Slicer3 --no-splash --help)
+ADD_TEST(Slicer3CLTest2 ${Slicer3_BINARY_DIR}/Slicer3 --xml --no-splash)
+ADD_TEST(Slicer3CLTest3 ${Slicer3_BINARY_DIR}/Slicer3 --no-splash -f ${Slicer3_SOURCE_DIR}/Applications/GUI/Testing/TestScript.tcl)
+ADD_TEST(Slicer3CLTest4 ${Slicer3_BINARY_DIR}/Slicer3 --no-splash --eval "puts testing ,. exit 0")
+ADD_TEST(Slicer3CLTest5 ${Slicer3_BINARY_DIR}/Slicer3 --no-splash --exec "puts testing ,. exit 0")
+ADD_TEST(Slicer3CLTest6 ${Slicer3_BINARY_DIR}/Slicer3 --no-splash --script ${Slicer3_SOURCE_DIR}/Applications/GUI/Testing/TestScript.tcl)
+ADD_TEST(Slicer3CLTest7 ${Slicer3_BINARY_DIR}/Slicer3 --no-splash --script ${Slicer3_SOURCE_DIR}/Applications/GUI/Testing/LoadSceneTest.tcl)
 
 #
 # MRML Tests
 #
 
-ADD_TEST(Slicer3MRMLUndo ${Slicer3_BINARY_DIR}/Slicer3 -f ${Slicer3_SOURCE_DIR}/Libs/MRML/Testing/testUndo.tcl)
-ADD_TEST(Slicer3MRMLVolume ${Slicer3_BINARY_DIR}/Slicer3 -f ${Slicer3_SOURCE_DIR}/Libs/MRML/Testing/testVolume.tcl)
+ADD_TEST(Slicer3MRMLUndo ${Slicer3_BINARY_DIR}/Slicer3 --no-splash -f ${Slicer3_SOURCE_DIR}/Libs/MRML/Testing/testUndo.tcl)
+ADD_TEST(Slicer3MRMLVolume ${Slicer3_BINARY_DIR}/Slicer3 --no-splash -f ${Slicer3_SOURCE_DIR}/Libs/MRML/Testing/testVolume.tcl)
 
 #
 # make the testing
