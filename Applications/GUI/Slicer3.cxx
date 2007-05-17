@@ -726,9 +726,9 @@ int Slicer3_main(int argc, char *argv[])
     //
     if ( Eval != "" )
       {    
-      std::string cmd = "set ::SLICER(eval) \"" + Eval + "\";";
-      cmd += "regsub -all {\\.,} $::SLICER(eval) \";\" ::SLICER(eval);";
-      cmd += "regsub -all {,\\.} $::SLICER(eval) \";\" ::SLICER(eval);";
+      std::string cmd = "set ::SLICER(eval) {" + Eval + "} ; ";
+      cmd += "regsub -all {\\.,} $::SLICER(eval) \";\" ::SLICER(eval); ";
+      cmd += "regsub -all {,\\.} $::SLICER(eval) \";\" ::SLICER(eval); ";
       cmd += "eval $::SLICER(eval);";
       int returnCode = Slicer3_Tcl_Eval( interp, cmd.c_str() );
       Slicer3_Tcl_Eval( interp, "update" );
