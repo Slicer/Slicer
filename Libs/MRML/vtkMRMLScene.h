@@ -294,6 +294,7 @@ public:
   vtkSetMacro(ErrorCode,unsigned long);
   vtkGetMacro(ErrorCode,unsigned long);
 
+
 //BTX
   void SetErrorMessage(const std::string &error) {
     this->ErrorMessage = error;
@@ -303,6 +304,16 @@ public:
     return this->ErrorMessage;
   };
 //ETX
+
+  void SetErrorMessage(const char * message)
+    {
+    this->SetErrorMessage(std::string(message));
+    }
+
+  const char *GetErrorMessagePointer()
+    {
+    return (this->GetErrorMessage().c_str());
+    }
 
 protected:
   vtkMRMLScene();

@@ -85,7 +85,9 @@ proc ImportNode {element} {
   set nodeType [$element GetName]
   set handler ImportNode$nodeType
   if { [info command $handler] == "" } {
-    error "no handler for $nodeType"
+    set err [$::slicer3::MRMLScene GetErrorMessagePointer]
+    $::slicer3::MRMLScene SetErrorMessage "$err\nno handler for $nodeType"
+    $::slicer3::MRMLScene SetErrorCode 1
   }
 
   # call the handler for this element
@@ -472,7 +474,8 @@ proc ImportNodeColor {node} {
 }
 
 proc ImportNodeOptions {node} {
-  puts stderr "warning: option nodes cannot be imported"
+  $::slicer3::MRMLScene SetErrorMessage "$err\nwarning: option nodes cannot be imported"
+  $::slicer3::MRMLScene SetErrorCode 1
 }
 
 
