@@ -396,7 +396,6 @@ proc launch_RunProgram {} {
     # level of nesting
     # - change backslashes to forward slashes (for windows paths)
     # - escape the spaces in each of the arguments
-    # - then remove the curly braces
     #
     regsub -all "\\\\" $::argv "/" ::argv
     set newargv ""
@@ -405,6 +404,8 @@ proc launch_RunProgram {} {
         lappend newargv $a
     }
     set ::argv $newargv
+    # turn curly braces into quotes
+    regsub -all "{|}" $::argv "\\\"" ::argv
 
 
     #
@@ -426,8 +427,6 @@ proc launch_RunProgram {} {
         if {$::env(BUILD) == $::WINDOWS} {
             set ::LAUNCH(launchCommand) $::SLICER_HOME/bin/$::BUILD_SUBDIR/Slicer3-real.exe
         } else {
-            # turn curly braces into quotes
-            regsub -all "{|}" $::argv "\\\"" ::argv
             set ::LAUNCH(launchCommand) $::SLICER_HOME/bin/Slicer3-real
         }
     }
