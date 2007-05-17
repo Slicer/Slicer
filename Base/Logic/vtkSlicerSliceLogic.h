@@ -194,6 +194,11 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLogic : public vtkSlicerLogic
   double GetSliceOffset();
   void SetSliceOffset(double offset);
 
+  // Description:
+  // Make a slice model with the current configuration
+  void CreateSliceModel();
+  void DeleteSliceModel();
+
 protected:
   vtkSlicerSliceLogic();
   ~vtkSlicerSliceLogic();
@@ -215,8 +220,6 @@ protected:
   vtkMRMLModelNode *SliceModelNode;
   vtkMRMLModelDisplayNode *SliceModelDisplayNode;
 
-  void CreateSliceModel();
-  void DeleteSliceModel();
 };
 
 #endif
