@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>
+  Segmentation
+  </category>
+  <title>
+  EMSegment Command-line
+  </title>
+  <description>
+EMSegment command-line module description.
+  </description>
+  <version>0.1.0.$Revision: 2085 $(alpha)</version>
+  <documentation-url>http://wiki.na-mic.org/Wiki/index.php/Slicer3:EM</documentation-url>
+  <license></license>
+  <contributor>Brad Davis</contributor>
+  <acknowledgements>Many people have contributed to the development of the EMSegment algorithm and implementations.</acknowledgements>
+  <parameters>
+    <label>Parameters</label>
+    <description>Parameters for the EMSegment algorithm</description>
+
+    <string>
+      <name>parametersMRMLNodeName</name>
+      <longflag>--parametersMRMLNodeName</longflag>
+      <description>The name of the EMSegment parameters node.</description>
+      <label>Parameters Node Name</label>
+    </string>    
+
+    <string>
+      <name>resultMRMLNodeName</name>
+      <longflag>--resultMRMLNodeName</longflag>
+      <description>The name of the result node.</description>
+      <label>Result Node Name</label>
+    </string>    
+
+    <file>
+      <name>resultVolumeFileName</name>
+      <longflag>--resultVolumeFileName</longflag>
+      <description>The name of the segmentation result volume.</description>
+      <label>Result Folume Filename</label>
+    </file>    
+
+    <file>
+      <name>mrmlDataRoot</name>
+      <longflag>--mrmlDataRoot</longflag>
+      <description>Override default mrml data root</description>
+      <label>MRML Data Root</label>
+    </file>    
+
+    <file>
+      <name>mrmlSceneFileName</name>
+      <longflag>--mrmlSceneFileName</longflag>
+      <description>Active MRML Scene</description>
+      <label>MRML Scene</label>
+    </file>    
+
+    <integer-vector>
+      <name>regionOfInterestBegin</name>
+      <longflag>--regionOfInterestBegin</longflag>
+      <description>The first voxel contained in the ROI.</description>
+      <label>ROI Begin</label>
+      <default>0,0,0</default>
+    </integer-vector>
+
+    <integer-vector>
+      <name>regionOfInterestEnd</name>
+      <longflag>--regionOfInterestEnd</longflag>
+      <description>One past the last voxel contained in the ROI.</description>
+      <label>ROI End</label>
+      <default>0,0,0</default>
+    </integer-vector>
+
+    <boolean>
+      <name>noThreads</name>
+      <longflag>--noThreads</longflag>
+      <description>Disable multithreading</description>
+      <label>Disable Multithreading</label>
+      <default>false</default>
+    </boolean>
+
+    <boolean>
+      <name>verbose</name>
+      <longflag>--verbose</longflag>
+      <description>enable verbose output</description>
+      <label>Verbose Output</label>
+      <default>false</default>
+    </boolean>
+
+  </parameters>
+
+  <parameters>
+    <label>Experimental</label>
+    <description>Subject to change, removal</description>
+
+    <file>
+      <name>correctSegmentationFileName</name>
+      <longflag>--correctSegmentationFilename</longflag>
+      <description>Compare segmentation results to a standard</description>
+      <label>Standard File Name</label>
+    </file>    
+
+  </parameters>
+</executable>
+
