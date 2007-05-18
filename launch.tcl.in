@@ -2,7 +2,6 @@
 # the next line restarts using tclsh \
     exec wish "$0" "$@"
 
-wm withdraw .
 
 #
 # launch.tcl
@@ -283,6 +282,7 @@ proc launch_SetPaths {} {
 # optional - show splash screen
 #
 proc launch_SplashScreen {} {
+  wm withdraw .
   if { $::LAUNCH(showSplash) } {
     launch_SplashShow
   }
