@@ -19,7 +19,6 @@ proc modifyLauncherIcons { logoDir exe {ico ""} } {
 
   foreach spec $iconSpecs {
 
-    puts $spec
 
     foreach {index dim bpp numColors} $spec {}
 
@@ -27,7 +26,7 @@ proc modifyLauncherIcons { logoDir exe {ico ""} } {
     #puts "$im read $logoDir/3DSlicerLogo-DesktopIcon-${dim}x${dim}x${numColors}.png"
     $im read $logoDir/3DSlicerLogo-DesktopIcon-${dim}x${dim}x${numColors}.png
     #removeTransparency $im
-    puts "::ico::writeIcon $exe $index $bpp $im"
+    #puts "::ico::writeIcon $exe $index $bpp $im"
     ::ico::writeIcon $exe $index $bpp $im
 
   }

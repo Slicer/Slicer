@@ -13,9 +13,6 @@
 # which does the rest from there.
 #
 
-package require Tk
-wm withdraw .
-
 #
 # follow links to find "real" install dir
 #
