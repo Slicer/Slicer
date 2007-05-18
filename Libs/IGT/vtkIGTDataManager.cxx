@@ -41,6 +41,8 @@ const char *vtkIGTDataManager::RegisterStream(int streamType)
             vtkMRMLModelNode *modelNode = vtkMRMLModelNode::New();
             vtkMRMLModelDisplayNode *dispNode = vtkMRMLModelDisplayNode::New();
             vtkMRMLLinearTransformNode *transform = vtkMRMLLinearTransformNode::New();
+            transform->SetHideFromEditors(1);
+            transform->SetName("IGTDataManagerTransform");
             dispNode->SetVisibility(0);
 
             this->MRMLScene->SaveStateForUndo();
