@@ -46,66 +46,6 @@ if { [string match -nocase "windows*" $::tcl_platform(os)] } {
 }
 
 #
-# check if this is an install or a build directory
-# - an install will have a copy of vtk in the bin directory
-# - a build dirctory will not
-#
-set installed 0
-set ext ""
-if { [string match -nocase "windows*" $::tcl_platform(os)] } {
-  set ext ".exe"
-}
-
-if { [file exists $::env(SLICER_HOME)/bin/vtk$ext] } {
-  set installed 1
-}
-
-# for windows builds there's an extra subdir like "Debug" or "RelWithDebInfo"
-# (it doesn't exist once the program has been installed)
-set ::BUILD_SUBDIR  ""
-if { !$installed && [string match -nocase "windows*" $::tcl_platform(os)] } {
-  set ::BUILD_SUBDIR  @CMAKE_BUILD_TYPE@
-}
-
-if { $installed } {
-
-  # if installed, everything is in the local tree
-
-  set ::env(VTK_DIR)           $::env(SLICER_HOME)/lib
-  set ::env(VTK_BIN_DIR)       $::env(SLICER_HOME)/bin
-  set ::env(KWWidgets_DIR)     $::env(SLICER_HOME)/lib/KWWidgets
-  set ::env(KWWidgets_LIB_DIR) $::env(SLICER_HOME)/lib/KWWidgets
-  set ::env(KWWidgets_BIN_DIR) $::env(SLICER_HOME)/bin
-  set ::env(ITK_BIN_DIR)       $::env(SLICER_HOME)/lib/InsightToolkit
-  set ::env(SANDBOX_BIN_DIR)   ""
-  set ::env(TCL_LIBRARY)       $::env(SLICER_HOME)/lib/Slicer3/tcl/lib
-  set ::env(TCL_DIR)           $::env(SLICER_HOME)/lib/Slicer3/tcl
-  set ::env(TEEM_DIR)          $::env(SLICER_HOME)/lib
-  set ::env(SLICER_BIN_DIR)    $::env(SLICER_HOME)/bin
-
-} else {
-
-  #
-  # not installed, 
-  # set variables using cmake configuration info
-  #
-  set ::env(VTK_DIR)           [file normalize @VTK_DIR@]
-  set ::env(VTK_BIN_DIR)       [file normalize @VTK_DIR@/bin/$::BUILD_SUBDIR]
-  set ::env(KWWidgets_DIR)     [file normalize @KWWidgets_DIR@]
-  set ::env(KWWidgets_LIB_DIR) [file normalize @KWWidgets_DIR@/bin/$::BUILD_SUBDIR]
-  set ::env(KWWidgets_BIN_DIR) [file normalize @KWWidgets_DIR@/bin/$::BUILD_SUBDIR]
-  set ::env(ITK_BIN_DIR)       [file normalize @ITK_DIR@/bin/$::BUILD_SUBDIR]
-  set ::env(SANDBOX_BIN_DIR)   ""
-  set ::env(TCL_LIBRARY)       [file normalize @TCL_LIBRARY@]
-  set ::env(TCL_DIR)           [file normalize [file dirname [file dirname $::env(TCL_LIBRARY)]]]
-  set ::env(TEEM_DIR)          [file normalize @TEEM_DIR@/bin/$::BUILD_SUBDIR]
-  set ::env(SLICER_BIN_DIR)    [file normalize @LIBRARY_OUTPUT_PATH@/$::BUILD_SUBDIR]
-
-}
-
-set ::env(SLICER_VERSION)    @Slicer3_VERSION_PATCH@
-
-#
 # set up variables for the OS Builds
 # 
 set ::SOLARIS "solaris8"
@@ -138,6 +78,88 @@ switch $::tcl_platform(os) {
         set ::env(BUILD) $::WINDOWS 
     }
 }
+
+#
+# check if this is an install or a build directory
+# - an install will have a copy of vtk in the bin directory
+# - a build dirctory will not
+#
+set installed 0
+set ext ""
+if { [string match -nocase "windows*" $::tcl_platform(os)] } {
+  set ext ".exe"
+}
+
+if { [file exists $::env(SLICER_HOME)/bin/vtk$ext] } {
+  set installed 1
+}
+
+# for windows builds there's an extra subdir like "Debug" or "RelWithDebInfo"
+# (it doesn't exist once the program has been installed)
+set ::BUILD_SUBDIR  ""
+if { !$installed && [string match -nocase "windows*" $::tcl_platform(os)] } {
+  set ::BUILD_SUBDIR  @CMAKE_BUILD_TYPE@
+}
+
+if { $installed } {
+
+  # if installed, everything is in the local tree
+
+  if {$::env(BUILD) == $::WINDOWS} {
+    set ::SLICER3_REAL $::SLICER_HOME/bin/Slicer3-real.exe
+  } else {
+    set ::SLICER3_REAL $::SLICER_HOME/bin/Slicer3-real
+  }
+  set ::env(VTK_DIR)           $::env(SLICER_HOME)/lib
+  set ::env(VTK_BIN_DIR)       $::env(SLICER_HOME)/bin
+  set ::env(KWWidgets_DIR)     $::env(SLICER_HOME)/lib/KWWidgets
+  set ::env(KWWidgets_LIB_DIR) $::env(SLICER_HOME)/lib/KWWidgets
+  set ::env(KWWidgets_BIN_DIR) $::env(SLICER_HOME)/bin
+  set ::env(ITK_BIN_DIR)       $::env(SLICER_HOME)/lib/InsightToolkit
+  set ::env(SANDBOX_BIN_DIR)   ""
+  set ::env(TCL_LIBRARY)       $::env(SLICER_HOME)/lib/Slicer3/tcl/lib
+  set ::env(TCL_DIR)           $::env(SLICER_HOME)/lib/Slicer3/tcl
+  set ::env(TEEM_DIR)          $::env(SLICER_HOME)/lib
+  set ::env(SLICER_BIN_DIR)    $::env(SLICER_HOME)/bin
+
+} else {
+
+  #
+  # not installed, 
+  # set variables using cmake configuration info
+  # - if CMAKE_BUILD_TYPE not set, look for build type
+  #
+  if {$::env(BUILD) == $::WINDOWS} {
+    if { $::BUILD_SUBDIR != "" } {
+      set ::SLICER3_REAL $::SLICER_HOME/bin/$::BUILD_SUBDIR/Slicer3-real.exe
+    } else {
+      foreach buildType {Debug RelWithDebInfo Release MinSizeRel} {
+        set ::SLICER3_REAL $::SLICER_HOME/bin/$buildType/Slicer3-real.exe
+        if { [file exists $::SLICER3_REAL] } {
+          set ::BUILD_SUBDIR $buildType
+          break;
+        }
+      }
+    }
+  } else {
+    set ::SLICER3_REAL $::SLICER_HOME/bin/Slicer3-real
+  }
+  set ::env(VTK_DIR)           [file normalize @VTK_DIR@]
+  set ::env(VTK_BIN_DIR)       [file normalize @VTK_DIR@/bin/$::BUILD_SUBDIR]
+  set ::env(KWWidgets_DIR)     [file normalize @KWWidgets_DIR@]
+  set ::env(KWWidgets_LIB_DIR) [file normalize @KWWidgets_DIR@/bin/$::BUILD_SUBDIR]
+  set ::env(KWWidgets_BIN_DIR) [file normalize @KWWidgets_DIR@/bin/$::BUILD_SUBDIR]
+  set ::env(ITK_BIN_DIR)       [file normalize @ITK_DIR@/bin/$::BUILD_SUBDIR]
+  set ::env(SANDBOX_BIN_DIR)   ""
+  set ::env(TCL_LIBRARY)       [file normalize @TCL_LIBRARY@]
+  set ::env(TCL_DIR)           [file normalize [file dirname [file dirname $::env(TCL_LIBRARY)]]]
+  set ::env(TEEM_DIR)          [file normalize @TEEM_DIR@/bin/$::BUILD_SUBDIR]
+  set ::env(SLICER_BIN_DIR)    [file normalize @LIBRARY_OUTPUT_PATH@/$::BUILD_SUBDIR]
+
+}
+
+set ::env(SLICER_VERSION)    @Slicer3_VERSION_PATCH@
+
 
 proc launch_ParseArgs {argv} {
 
@@ -429,11 +451,7 @@ proc launch_RunProgram {} {
     # determine the correct arguments and executable for the platform
     #
     if { $::LAUNCH(launchCommand) == "" } {
-        if {$::env(BUILD) == $::WINDOWS} {
-            set ::LAUNCH(launchCommand) $::SLICER_HOME/bin/$::BUILD_SUBDIR/Slicer3-real.exe
-        } else {
-            set ::LAUNCH(launchCommand) $::SLICER_HOME/bin/Slicer3-real
-        }
+      set ::LAUNCH(launchCommand) $::SLICER3_REAL
     }
 
     set ::errorInfo ""  ;# reset error info so we are sure to get errors from the 
