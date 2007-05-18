@@ -139,13 +139,16 @@ void vtkKWWindowLevelThresholdEditor::SetImageData(vtkImageData* imageData)
       tempImageData->UnRegister(this);
       }
       
-    this->UpdateFromImage();
+    if (this->ImageData)
+      {
+      this->UpdateFromImage();
 
-    this->UpdateTransferFunction();
+      this->UpdateTransferFunction();
 
-    this->UpdateAutoLevels();
+      this->UpdateAutoLevels();
 
-    this->Modified();   
+      this->Modified();
+      }
     }
 }
 
