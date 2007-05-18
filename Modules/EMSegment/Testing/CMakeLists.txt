@@ -43,7 +43,7 @@ IF( NOT DISABLE_CXX_TESTING )
     ${EM_COMMAND_LINE_TEST_PREFIX}/vtkEMSegmentBlackBoxSegmentationTest
     ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/EMSegmentTutorialTemplate_small.mrml
     ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/
-    "EMSegmentTutorialTemplate"
+    "EMSegment Tutorial Template"
     ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/StandardData/StandardSegmentationResult_small.mhd
     )
 
