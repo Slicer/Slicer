@@ -29,6 +29,8 @@ vtkSlicerScalarVolumeDisplayWidget::vtkSlicerScalarVolumeDisplayWidget ( )
     this->ColorSelectorWidget = NULL;
     this->WindowLevelThresholdEditor = NULL;
     this->InterpolateButton = NULL;
+    this->UpdatingMRML = 0;
+    this->UpdatingWidget = 0;
 }
 
 
@@ -72,6 +74,13 @@ void vtkSlicerScalarVolumeDisplayWidget::PrintSelf ( ostream& os, vtkIndent inde
 void vtkSlicerScalarVolumeDisplayWidget::ProcessWidgetEvents ( vtkObject *caller,
                                                          unsigned long event, void *callData )
 {
+  if (this->UpdatingMRML || this->UpdatingWidget)
+    {
+    return;
+    }
+
+  this->UpdatingWidget = 1;
+
   this->Superclass::ProcessWidgetEvents(caller, event, callData);
   
   //
@@ -98,6 +107,7 @@ void vtkSlicerScalarVolumeDisplayWidget::ProcessWidgetEvents ( vtkObject *caller
           }
         }
       }
+    this->UpdatingWidget = 0;
     return;
     }
   //
@@ -121,6 +131,7 @@ void vtkSlicerScalarVolumeDisplayWidget::ProcessWidgetEvents ( vtkObject *caller
         vtkMRMLVolumeNode *volumeNode = this->GetVolumeNode();
         if (volumeNode == NULL)
           {
+          this->UpdatingWidget = 0;
           return;
           }
         else 
@@ -174,8 +185,22 @@ void vtkSlicerScalarVolumeDisplayWidget::ProcessWidgetEvents ( vtkObject *caller
       displayNode->SetUpperThreshold(this->WindowLevelThresholdEditor->GetUpperThreshold());
       displayNode->SetLowerThreshold(this->WindowLevelThresholdEditor->GetLowerThreshold());
       displayNode->SetAutoWindowLevel(this->WindowLevelThresholdEditor->GetAutoWindowLevel());
-      displayNode->SetAutoThreshold(this->WindowLevelThresholdEditor->GetAutoThreshold());
-      displayNode->SetApplyThreshold(this->WindowLevelThresholdEditor->GetApplyThreshold());
+      int thresholdType = this->WindowLevelThresholdEditor->GetThresholdType();
+      if (thresholdType == vtkKWWindowLevelThresholdEditor::ThresholdOff) 
+        {
+        displayNode->SetApplyThreshold(0);
+        }
+      else if (thresholdType == vtkKWWindowLevelThresholdEditor::ThresholdAuto) 
+        {
+        displayNode->SetApplyThreshold(1);
+        displayNode->SetAutoThreshold(1);
+        }
+      else if (thresholdType == vtkKWWindowLevelThresholdEditor::ThresholdManual) 
+        {
+        displayNode->SetApplyThreshold(1);
+        displayNode->SetAutoThreshold(0);
+        }
+      this->UpdatingWidget = 0;
       return;
       }
     }
@@ -188,6 +213,7 @@ void vtkSlicerScalarVolumeDisplayWidget::ProcessWidgetEvents ( vtkObject *caller
       {
       this->MRMLScene->SaveStateForUndo(displayNode);
       }
+    this->UpdatingWidget = 0;
     return;
     }
 
@@ -200,6 +226,7 @@ void vtkSlicerScalarVolumeDisplayWidget::ProcessWidgetEvents ( vtkObject *caller
         {
         displayNode->SetInterpolate( this->InterpolateButton->GetSelectedState() );
         }
+      this->UpdatingWidget = 0;
       return;
       }
 }
@@ -210,9 +237,17 @@ void vtkSlicerScalarVolumeDisplayWidget::ProcessWidgetEvents ( vtkObject *caller
 void vtkSlicerScalarVolumeDisplayWidget::ProcessMRMLEvents ( vtkObject *caller,
                                               unsigned long event, void *callData )
 {
+  if (this->UpdatingMRML || this->UpdatingWidget)
+    {
+    return;
+    }
+
+  this->UpdatingMRML = 1;
+
   vtkMRMLVolumeNode *curVolumeNode = this->GetVolumeNode();
   if (curVolumeNode  == NULL)
     {
+    this->UpdatingMRML = 0;
     return;
     }
 
@@ -230,6 +265,7 @@ void vtkSlicerScalarVolumeDisplayWidget::ProcessMRMLEvents ( vtkObject *caller,
   if (event == vtkCommand::ModifiedEvent)
     {
     this->UpdateWidgetFromMRML();
+    this->UpdatingMRML = 0;
     return;
     }
 }
@@ -265,8 +301,18 @@ void vtkSlicerScalarVolumeDisplayWidget::UpdateWidgetFromMRML ()
     this->WindowLevelThresholdEditor->SetThreshold(
           displayNode->GetLowerThreshold(), displayNode->GetUpperThreshold() );
     this->WindowLevelThresholdEditor->SetAutoWindowLevel( displayNode->GetAutoWindowLevel() );
-    this->WindowLevelThresholdEditor->SetAutoThreshold( displayNode->GetAutoThreshold() );
-    this->WindowLevelThresholdEditor->SetApplyThreshold( displayNode->GetApplyThreshold() );
+    if (displayNode->GetApplyThreshold() == 0) 
+      {
+      this->WindowLevelThresholdEditor->SetThresholdType(vtkKWWindowLevelThresholdEditor::ThresholdOff);
+      }
+    else if (displayNode->GetAutoThreshold())
+      {
+      this->WindowLevelThresholdEditor->SetThresholdType(vtkKWWindowLevelThresholdEditor::ThresholdAuto);
+      }
+    else
+      {
+      this->WindowLevelThresholdEditor->SetThresholdType(vtkKWWindowLevelThresholdEditor::ThresholdManual);
+      }
     // set the color node selector to reflect the volume's color node
     this->ColorSelectorWidget->SetSelected(displayNode->GetColorNode());
     this->InterpolateButton->SetSelectedState( displayNode->GetInterpolate()  );

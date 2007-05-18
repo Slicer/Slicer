@@ -190,8 +190,21 @@ void vtkSlicerDiffusionWeightedVolumeDisplayWidget::ProcessWidgetEvents ( vtkObj
       displayNode->SetUpperThreshold(this->WindowLevelThresholdEditor->GetUpperThreshold());
       displayNode->SetLowerThreshold(this->WindowLevelThresholdEditor->GetLowerThreshold());
       displayNode->SetAutoWindowLevel(this->WindowLevelThresholdEditor->GetAutoWindowLevel());
-      displayNode->SetAutoThreshold(this->WindowLevelThresholdEditor->GetAutoThreshold());
-      displayNode->SetApplyThreshold(this->WindowLevelThresholdEditor->GetApplyThreshold());
+      int thresholdType = this->WindowLevelThresholdEditor->GetThresholdType();
+      if (thresholdType == vtkKWWindowLevelThresholdEditor::ThresholdOff) 
+        {
+        displayNode->SetApplyThreshold(0);
+        }
+      else if (thresholdType == vtkKWWindowLevelThresholdEditor::ThresholdAuto) 
+        {
+        displayNode->SetApplyThreshold(1);
+        displayNode->SetAutoThreshold(1);
+        }
+      else if (thresholdType == vtkKWWindowLevelThresholdEditor::ThresholdManual) 
+        {
+        displayNode->SetApplyThreshold(1);
+        displayNode->SetAutoThreshold(0);
+        }
       return;
       }
     }
@@ -272,8 +285,18 @@ void vtkSlicerDiffusionWeightedVolumeDisplayWidget::UpdateWidgetFromMRML ()
     this->WindowLevelThresholdEditor->SetThreshold(
           displayNode->GetLowerThreshold(), displayNode->GetUpperThreshold() );
     this->WindowLevelThresholdEditor->SetAutoWindowLevel( displayNode->GetAutoWindowLevel() );
-    this->WindowLevelThresholdEditor->SetAutoThreshold( displayNode->GetAutoThreshold() );
-    this->WindowLevelThresholdEditor->SetApplyThreshold( displayNode->GetApplyThreshold() );
+    if (displayNode->GetApplyThreshold() == 0) 
+      {
+      this->WindowLevelThresholdEditor->SetThresholdType(vtkKWWindowLevelThresholdEditor::ThresholdOff);
+      }
+    else if (displayNode->GetAutoThreshold())
+      {
+      this->WindowLevelThresholdEditor->SetThresholdType(vtkKWWindowLevelThresholdEditor::ThresholdAuto);
+      }
+    else
+      {
+      this->WindowLevelThresholdEditor->SetThresholdType(vtkKWWindowLevelThresholdEditor::ThresholdManual);
+      }
     // set the color node selector to reflect the volume's color node
     this->ColorSelectorWidget->SetSelected(displayNode->GetColorNode());
     this->DiffusionSelectorWidget->GetScale()->SetValue(displayNode->GetDiffusionComponent());

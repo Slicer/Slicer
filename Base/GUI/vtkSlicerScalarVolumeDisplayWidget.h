@@ -75,6 +75,9 @@ protected:
   vtkKWWindowLevelThresholdEditor* WindowLevelThresholdEditor;
   vtkKWCheckButton* InterpolateButton;
 
+  int UpdatingMRML;
+  int UpdatingWidget;
+
 private:
 
 

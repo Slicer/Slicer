@@ -66,14 +66,9 @@ public:
   double GetLowerThreshold();
 
   // Description:
-  // Get GetAutoThreshold 0/1
-  int GetAutoThreshold();
-  void SetAutoThreshold(int value);
-
-  // Description:
-  // Get TresholdApply 0 or 1
-  int GetApplyThreshold();
-  void SetApplyThreshold(int value);
+  // Get/Set enum Off/Auto/Manual Threshold
+  int GetThresholdType();
+  void SetThresholdType(int value);
 
   // Description:
   // Get GetAutoWindowLevel 0/1
@@ -105,11 +100,19 @@ public:
   void ProcessThresholdStartCommand(double min, double max);
 
 //BTX
-  enum
+   enum
+    {
+      ThresholdOff = 0,
+      ThresholdManual,
+      ThresholdAuto
+    };
+
+    enum
     {
       ValueChangedEvent = 10000,
       ValueStartChangingEvent
     };
+
 //ETX
 
 protected:
