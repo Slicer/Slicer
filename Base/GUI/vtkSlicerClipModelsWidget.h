@@ -57,6 +57,7 @@ protected:
 
   void UpdateGUI();
   void UpdateMRML();
+  void UpdateClipModelsNode();
 
   //
   // Slice controller subwidgets

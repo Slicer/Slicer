@@ -210,6 +210,8 @@ void vtkSlicerClipModelsWidget::CreateWidget ( )
   this->AddWidgetObservers();
 
   frame->Delete();
+
+  this->UpdateGUI();
 }
 
 //----------------------------------------------------------------------------
@@ -231,18 +233,37 @@ void vtkSlicerClipModelsWidget::ProcessWidgetEvents ( vtkObject *caller,
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerClipModelsWidget::UpdateMRML()
+void vtkSlicerClipModelsWidget::UpdateClipModelsNode()
 {
+  if (this->GetMRMLScene() == NULL)
+    {
+    vtkSetMRMLNodeMacro(this->ClipModelsNode, NULL);
+    return;
+    }
+
+  vtkMRMLClipModelsNode *node = vtkMRMLClipModelsNode::SafeDownCast(this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLClipModelsNode"));
+  if (this->ClipModelsNode != NULL && node != NULL && strcmp(node->GetID(), this->ClipModelsNode->GetID()) )
+    {
+    vtkSetAndObserveMRMLNodeMacro(this->ClipModelsNode, node);
+    }
+  
+  if (this->ClipModelsNode == NULL && node != NULL)
+    {
+    vtkSetAndObserveMRMLNodeMacro(this->ClipModelsNode, node);
+    }
   if (this->ClipModelsNode == NULL)
     {
-    // no parameter node selected yet, create new
-    this->ClipModelsNodeSelector->SetSelectedNew("vtkMRMLClipModelsNode");
-    this->ClipModelsNodeSelector->ProcessNewNodeCommand("vtkMRMLClipModelsNode", "ClipModelsParameters");
-    vtkMRMLClipModelsNode *n = vtkMRMLClipModelsNode::SafeDownCast(this->ClipModelsNodeSelector->GetSelected());
-
-    // set an observe new node 
-    vtkSetAndObserveMRMLNodeMacro(this->ClipModelsNode, n);
+    node = vtkMRMLClipModelsNode::New();
+    this->GetMRMLScene()->AddNode(node);
+    vtkSetAndObserveMRMLNodeMacro(this->ClipModelsNode, node);
+    node->Delete();
    }
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerClipModelsWidget::UpdateMRML()
+{
+  this->UpdateClipModelsNode();
 
   vtkKWMenuButton *mb = this->YellowSliceClipStateMenu->GetWidget();
   if ( !strcmp (mb->GetValue(), "Off") )   
@@ -309,20 +330,13 @@ void vtkSlicerClipModelsWidget::ProcessMRMLEvents ( vtkObject *caller, unsigned 
 //----------------------------------------------------------------------------
 void vtkSlicerClipModelsWidget::UpdateGUI()
 {
-  vtkMRMLClipModelsNode *clipNode = NULL;
-  if ( this->ClipModelsNode != NULL)
-    {
-    clipNode = this->ClipModelsNode;
-    }
-  else 
-    {
-    clipNode = vtkMRMLClipModelsNode::New();
-    }
+  this->UpdateClipModelsNode();
+
   // 
   // Update the menu to match the node
   //
   vtkKWMenuButton *mb = this->YellowSliceClipStateMenu->GetWidget();
-  switch (clipNode->GetYellowSliceClipState())
+  switch (this->ClipModelsNode->GetYellowSliceClipState())
     {
     case vtkMRMLClipModelsNode::ClipOff:
       mb->SetValue("Off");
@@ -338,7 +352,7 @@ void vtkSlicerClipModelsWidget::UpdateGUI()
     }
   
   mb = this->RedSliceClipStateMenu->GetWidget();
-  switch (clipNode->GetRedSliceClipState())
+  switch (this->ClipModelsNode->GetRedSliceClipState())
     {
     case vtkMRMLClipModelsNode::ClipOff:
       mb->SetValue("Off");
@@ -354,7 +368,7 @@ void vtkSlicerClipModelsWidget::UpdateGUI()
     }
   
   mb = this->GreenSliceClipStateMenu->GetWidget();
-  switch (clipNode->GetGreenSliceClipState())
+  switch (this->ClipModelsNode->GetGreenSliceClipState())
     {
     case vtkMRMLClipModelsNode::ClipOff:
       mb->SetValue("Off");
@@ -371,7 +385,7 @@ void vtkSlicerClipModelsWidget::UpdateGUI()
   
 
   mb = this->ClipTypeMenu->GetWidget();
-  switch (clipNode->GetClipType())
+  switch (this->ClipModelsNode->GetClipType())
     {
     case vtkMRMLClipModelsNode::ClipIntersection:
       mb->SetValue("Intersection");
@@ -381,10 +395,6 @@ void vtkSlicerClipModelsWidget::UpdateGUI()
       break;
     default:
       break;
-    }
-  if ( this->ClipModelsNode == NULL)
-    {
-    clipNode->Delete();
     }
 }
 
