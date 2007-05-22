@@ -59,6 +59,9 @@ vtkMRMLNode::vtkMRMLNode()
 
   this->AddToScene = 1;
 
+  this->DisableModifiedEvent = 0;
+  this->ModifiedEventPending = 0;
+
   // Set up callbacks
   this->MRMLCallbackCommand = vtkCallbackCommand::New ( );
   this->MRMLCallbackCommand->SetClientData( reinterpret_cast<void *>(this) );

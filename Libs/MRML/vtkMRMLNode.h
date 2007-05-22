@@ -219,6 +219,51 @@ public:
   vtkSetMacro(AddToScene, int);
   vtkBooleanMacro(AddToScene, int);
 
+  // Description:
+  // Turn off generating InvokeEvent for set macros
+  vtkGetMacro(DisableModifiedEvent, int);
+  void SetDisableModifiedEvent(int onOff)
+    {
+    this->DisableModifiedEvent = onOff;
+    }
+  void DisableModifiedEventOn()
+    {
+    this->SetDisableModifiedEvent(1);
+    }
+  void DisableModifiedEventOff()
+    {
+    this->SetDisableModifiedEvent(0);
+    }
+
+  virtual void Modified() 
+    {
+    if (!this->GetDisableModifiedEvent())
+      {
+      Superclass::Modified();
+      }
+    else
+      {
+      this->ModifiedEventPending = 1;
+      }
+    }
+
+  void InvokePendingModifiedEvent ()
+    {
+    if ( this->ModifiedEventPending )
+      {
+      Superclass::Modified();
+      }
+    this->ModifiedEventPending = 0;
+    }
+
+  void CopyWithSingleModifiedEvent (vtkMRMLNode *node)
+    {
+    int oldMode = this->GetDisableModifiedEvent();
+    this->DisableModifiedEventOn();
+    this->Copy(node);
+    this->InvokePendingModifiedEvent();
+    this->SetDisableModifiedEvent(oldMode);
+    }
   
   vtkMRMLScene* GetScene() {return this->Scene;};
   void SetScene(vtkMRMLScene* scene) {this->Scene = scene;};
@@ -302,6 +347,8 @@ private:
   std::string TempID;
   //ETX
 
+  int DisableModifiedEvent;
+  int ModifiedEventPending;
 };
 
 #endif

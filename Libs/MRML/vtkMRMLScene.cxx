@@ -284,7 +284,7 @@ void vtkMRMLScene::ResetNodes()
     char *tag = nodes[i]->GetSingletonTag();
 
     newNode = nodes[i]->CreateNodeInstance();
-    nodes[i]->Copy(newNode);
+    nodes[i]->CopyWithSingleModifiedEvent(newNode);
     nodes[i]->SetSaveWithScene(save);
     nodes[i]->SetHideFromEditors(hide);
     nodes[i]->SetSingletonTag(tag);
@@ -702,7 +702,7 @@ vtkMRMLNode*  vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
       if (sn->GetSingletonTag() != NULL && strcmp(sn->GetSingletonTag(),
                                                   n->GetSingletonTag()) == 0)
         {
-        sn->Copy(n);
+        sn->CopyWithSingleModifiedEvent(n);
         return sn;
         }
       }
@@ -1224,7 +1224,7 @@ void vtkMRMLScene::CopyNodeInUndoStack(vtkMRMLNode *copyNode)
   vtkMRMLNode *snode = copyNode->CreateNodeInstance();
   if (snode != NULL) 
     {
-    snode->Copy(copyNode);
+    snode->CopyWithSingleModifiedEvent(copyNode);
     }
   vtkCollection* undoScene = dynamic_cast < vtkCollection *>( this->UndoStack.back() );
   int nnodes = undoScene->GetNumberOfItems();
@@ -1247,7 +1247,7 @@ void vtkMRMLScene::CopyNodeInRedoStack(vtkMRMLNode *copyNode)
   vtkMRMLNode *snode = copyNode->CreateNodeInstance();
   if (snode != NULL) 
     {
-    snode->Copy(copyNode);
+    snode->CopyWithSingleModifiedEvent(copyNode);
     }
   vtkCollection* undoScene = dynamic_cast < vtkCollection *>( this->RedoStack.back() );
   int nnodes = undoScene->GetNumberOfItems();
@@ -1333,7 +1333,7 @@ void vtkMRMLScene::Undo()
       // nodes differ, copy from undo to current scene
       // but before create a copy in redo stack from current
       this->CopyNodeInRedoStack(curIter->second);
-      curIter->second->Copy(iter->second);
+      curIter->second->CopyWithSingleModifiedEvent(iter->second);
       }
     }
   
@@ -1438,7 +1438,7 @@ void vtkMRMLScene::Redo()
       // nodes differ, copy from redo to current scene
       // but before create a copy in undo stack from current
       this->CopyNodeInUndoStack(curIter->second);
-      curIter->second->Copy(iter->second);
+      curIter->second->CopyWithSingleModifiedEvent(iter->second);
       }
     }
   
