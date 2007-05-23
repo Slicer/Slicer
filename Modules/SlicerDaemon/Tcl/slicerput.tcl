@@ -4,7 +4,7 @@ exec tclsh "$0" "$@"
 
 
 #
-# slicerput - sp 2005-09-23
+# slicerput - sp 2005-09-23 
 # - communicates with slicerd
 # - reads nrrd streams from stdin and puts them into slicer
 #
@@ -23,12 +23,16 @@ if { ! [string match "NRRD*" $magic] } {
     exit -1
 }
 
-set dimensions ""
-set space_origin "(0,0,0)"
-set space_directions "(1,0,0) (0,1,0) (0,0,1)"
+set dimensions "none"
+set space_origin "none"
+set space_directions "none"
+
+# components: hard coded. Set to be 1.
 set components 1
 set scalar_type $nrrd_to_vtk_types(short)
-
+set measurement_frame "none"
+set kinds "none"
+set isTensor "?"
 
 while { [gets stdin line] > 0 } {
     switch -glob -- $line {
@@ -46,28 +50,64 @@ while { [gets stdin line] > 0 } {
         "space directions:*" {
             set space_directions [lrange $line 2 end]
         }
+        "kinds:*" {
+            set kinds [lrange $line 1 end]
+        }
         "space origin:*" {
             set space_origin [lrange $line 2 end]
+        }
+        "measurement frame:*" {
+            set measurement_frame [lrange $line 2 end]
+        }
+        "space:*" {
+            set space [lindex $line 1]
         }
     }
 }
 
-puts "put"
-puts "image $name"
-puts "dimensions $dimensions"
-puts "space_origin $space_origin"
-puts "space_directions $space_directions"
-puts "components $components"
-puts "scalar_type $scalar_type"
+if { [lindex $kinds 0] == "3D-masked-symmetric-matrix" } {
+    # tensor
+    set isTensor 1
+    set space_directions [lrange $space_directions 1 end]
+    puts stderr "This is a tensor! space_directions $space_directions"
+} else {
+    # assume scalar  
+    set isTensor 0
+}
+
+puts stderr "put"
+puts stderr "image $name"
+puts stderr "space $space"
+puts stderr "dimensions $dimensions"
+puts stderr "space_origin $space_origin"
+puts stderr "space_directions $space_directions"
+puts stderr "kinds $kinds"
+puts stderr "components $components"
+puts stderr "scalar_type $scalar_type"
+
+if {!($space eq "left-posterior-superior" || \
+    $space eq "right-anterior-superior")} {
+        puts stderr "\nSpace \"$space\" is not supported."
+        puts stderr "Please choose a volume that is in RAS or LPS.\n"
+        return
+}
 
 set sock [socket localhost 18943]
 puts $sock "put"
 puts $sock "image $name"
+puts $sock "space $space"
 puts $sock "dimensions $dimensions"
 puts $sock "space_origin $space_origin"
 puts $sock "space_directions $space_directions"
+puts $sock "kinds $kinds"
 puts $sock "components $components"
 puts $sock "scalar_type $scalar_type"
+
+if {$isTensor} {
+  puts stderr "measurement_frame: $measurement_frame"
+  puts $sock "measurement_frame $measurement_frame"
+}
+    
 flush $sock
 
 fconfigure stdin -translation binary -encoding binary
