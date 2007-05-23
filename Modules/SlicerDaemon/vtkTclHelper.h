@@ -27,7 +27,8 @@
 #include "vtkTcl.h"
 #include "vtkObject.h"
 #include "vtkImageData.h"
-
+#include "vtkMRMLVolumeNode.h"
+#include "vtkMatrix4x4.h"
 #include <vtkSlicerDaemonWin32Header.h>
 
 
@@ -43,17 +44,26 @@ public:
 
     vtkSetObjectMacro(ImageData, vtkImageData);
     vtkGetObjectMacro(ImageData, vtkImageData);
+    vtkSetObjectMacro(VolumeNode, vtkMRMLVolumeNode);
+    vtkGetObjectMacro(VolumeNode, vtkMRMLVolumeNode);
+    vtkSetObjectMacro(MeasurementFrame, vtkMatrix4x4);
+    vtkGetObjectMacro(MeasurementFrame, vtkMatrix4x4);
 
+    void GetRASToVTKMatrix(vtkMatrix4x4 *RASToVTK);
     void SendImageDataScalars(char *sockname);
+    void SendImageDataTensors(char *sockname);
     void ReceiveImageDataScalars(char *sockname);
+    void ReceiveImageDataTensors(char *sockname);
     const char *Execute (char *Command);
 
 
 protected:
     vtkTclHelper();
     ~vtkTclHelper(); 
-
-    vtkImageData *ImageData;           
+    
+    vtkMRMLVolumeNode *VolumeNode;
+    vtkImageData *ImageData;    
+    vtkMatrix4x4 *MeasurementFrame;    
     Tcl_Interp *Interp;           /* Tcl interpreter */
 };
 
