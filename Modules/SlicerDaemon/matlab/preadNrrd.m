@@ -1,23 +1,35 @@
-
 function headerInfo = preadNrrd( p )
 
 % read a nrrd image from a pipe opened by popenr
 
-
 clear headerInfo;
 
-% headerInfo.content = '';
-% headerInfo.type = '';
-% headerInfo.dimension = 0;
-% headerInfo.space = '';
-% headerInfo.sizes = [0; 0; 0];
-% headerInfo.spaceorigin = [0; 0; 0];
-% headerInfo.spacedirections = [0; 0; 0; 0; 0; 0; 0; 0; 0];
-% headerInfo.encoding = '';
-% headerInfo.endian = '';
-% headerInfo.data = '';
-              
-headerInfo = '';
+% default header:
+headerInfo.content = '???';
+headerInfo.type = '???';
+headerInfo.dimension = '???';
+headerInfo.space = '???';
+headerInfo.sizes = '???';
+headerInfo.endian = '???';
+headerInfo.encoding = '???';
+headerInfo.spaceorigin = [NaN; NaN; NaN];
+
+% tensor has to have headerInfo.kinds = [{'3D-masked-symmetric-matrix'}; \
+% {'space'};{'space'};{'space'}];
+headerInfo.kinds = [{'???'};{'???'};{'???'}];
+headerInfo.data = '???';
+
+% headerInfo.thicknesses: don't care for now
+
+% space directions: tensor data is expected to have 10 values (the first 
+% one representing 'none', scalar data is expected to have 9 values 
+headerInfo.spacedirections = [NaN; NaN; NaN; NaN; NaN; NaN; NaN; NaN; NaN];
+
+% these fields are optional:
+% headerInfo.spaceunits = [{'???'}; {'???'}; {'???'}];
+% headerInfo.centerings = [{'???'}; {'cell'}; {'cell'}; {'cell'}];
+% headerInfo.measurementframe = [NaN; NaN; NaN; NaN; NaN; NaN; NaN; NaN; NaN];
+   
 
 cs = pgetl(p);
 
@@ -65,10 +77,11 @@ while( ~strcmp (cs, '') )
     end
     
   elseif ( foundKeyword('SPACE DIRECTIONS:', cs ) )
-    
-    iSD = extractNumbersWithout( cs(length('SPACE DIRECTIONS:')+1:end), {'(',')',','} );
-
-    if (length(iSD)~=9)
+    % in case of a tensor volume there are 4 dimensions, but only 3 of
+    % them are in space
+    space_dir_tmp = strrep( cs(length('SPACE DIRECTIONS:')+1:end), 'none', 'NaN' );
+    iSD = extractNumbersWithout( space_dir_tmp, {'(',')',','} );
+    if (length(iSD)~=9 & length(iSD)~=10)
       fprintf('Warning: %i space directions found.\n', iSD );
     end
     
@@ -106,7 +119,7 @@ while( ~strcmp (cs, '') )
     iSO = extractNumbersWithout( cs(length('SPACE ORIGIN:')+1:end), {'(',')',','} );
     
     if (length(iSO)~=3)
-      fprintf('Warning: %i space directions found.\n', iSD );
+      fprintf('Warning: %i space directions found.\n', iSO );
     end
     
     headerInfo.spaceorigin = iSO;
@@ -149,6 +162,17 @@ if (strcmp(headerInfo,'') == 1)
     return
 end
 
+if (strcmp(headerInfo.kinds(1),'3D-masked-symmetric-matrix'))
+    % assume tensor data
+    
+    % assumed default centerings for tenssor data:
+    %headerInfo.centerings = [{'???'};{'cell'};{'cell'};{'cell'}];
+     headerInfo.centerings = {'???' 'cell' 'cell' 'cell'};
+    % assumed default space units for tenssor data:
+    %headerInfo.spaceunits = [{'mm'};{'mm'};{'mm'}];
+    headerInfo.spaceunits = {'mm' 'mm' 'mm'};
+end 
+
 % Now read the data...
 
 popenType = nrrd2popenType( headerInfo.type );
@@ -162,6 +186,7 @@ headerInfo.data = reshape(headerInfo.data, headerInfo.sizes');
 
 % correct data type according to nrrd data type
 switch headerInfo.type
+%switch popenType
     case {'short'}
         headerInfo.data = int16(headerInfo.data);
     case {'double'}
