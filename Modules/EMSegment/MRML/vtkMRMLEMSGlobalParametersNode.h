@@ -4,8 +4,6 @@
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
 #include "vtkEMSegment.h"
-#include "vtkMRMLEMSAtlasNode.h"
-#include "vtkMRMLEMSTargetNode.h"
 
 class VTK_EMSEGMENT_EXPORT vtkMRMLEMSGlobalParametersNode : 
   public vtkMRMLNode
@@ -33,26 +31,6 @@ public:
   // Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "EMSGlobalParameters";}
 
-  // Description:
-  // Updates this node if it depends on other nodes
-  // when the node is deleted in the scene
-  virtual void UpdateReferences();
-
-  // Description:
-  // Update the stored reference to another node in the scene
-  virtual void UpdateReferenceID(const char *oldID, const char *newID);
-
-  //
-  // related mrml nodes
-  //
-  vtkGetStringMacro(AtlasNodeID);
-  vtkSetReferenceStringMacro(AtlasNodeID);
-  vtkMRMLEMSAtlasNode* GetAtlasNode();
-
-  vtkGetStringMacro(TargetNodeID);
-  vtkSetReferenceStringMacro(TargetNodeID);
-  vtkMRMLEMSTargetNode* GetTargetNode();
-
   //
   // general parmeters
   //
@@ -61,6 +39,9 @@ public:
 
   vtkSetVectorMacro(SegmentationBoundaryMax, int, 3);
   vtkGetVectorMacro(SegmentationBoundaryMax, int, 3);
+
+  vtkSetMacro(NumberOfTargetInputChannels, int);
+  vtkGetMacro(NumberOfTargetInputChannels, int);
 
   //
   // registration parameters
@@ -98,20 +79,11 @@ public:
   vtkGetStringMacro(WorkingDirectory);
   vtkSetStringMacro(WorkingDirectory);
 
-  //
-  // convinience method: queries target node
-  // 
-  virtual int GetNumberOfTargetInputChannels();
-
 protected:
   vtkMRMLEMSGlobalParametersNode();
   ~vtkMRMLEMSGlobalParametersNode();
   vtkMRMLEMSGlobalParametersNode(const vtkMRMLEMSGlobalParametersNode&);
   void operator=(const vtkMRMLEMSGlobalParametersNode&);
-
-  // references to other nodes
-  char*                               AtlasNodeID;
-  char*                               TargetNodeID;
 
   int                                 RegistrationAffineType;
   int                                 RegistrationDeformableType;
@@ -129,6 +101,8 @@ protected:
 
   int                                 SegmentationBoundaryMin[3];
   int                                 SegmentationBoundaryMax[3];
+
+  int                                 NumberOfTargetInputChannels;
 };
 
 #endif

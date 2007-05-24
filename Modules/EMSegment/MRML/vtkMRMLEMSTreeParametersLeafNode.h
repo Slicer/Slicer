@@ -4,7 +4,7 @@
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
 #include "vtkEMSegment.h"
-#include "vtkMRMLEMSGlobalParametersNode.h"
+#include "vtkMRMLScene.h"
 
 #include <vector>
 
@@ -34,19 +34,9 @@ public:
   // Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "EMSTreeParametersLeaf";}
 
-  // Description:
-  // Updates this node if it depends on other nodes
-  // when the node is deleted in the scene
-  virtual void UpdateReferences();
-
-  // Description:
-  // Update the stored reference to another node in the scene
-  virtual void UpdateReferenceID(const char *oldID, const char *newID);
-
   vtkGetMacro(NumberOfTargetInputChannels, unsigned int);
   virtual void SetNumberOfTargetInputChannels(unsigned int n);
-  // synchronize with global parameters
-  virtual void SynchronizeNumberOfTargetInputChannels();
+  virtual void SynchronizeNumberOfTargetInputChannels(int numberOfChannels);
 
   vtkGetMacro(IntensityLabel, int);
   vtkSetMacro(IntensityLabel, int);
@@ -60,21 +50,11 @@ public:
   virtual double GetLogCovariance(int row, int column) const;
   virtual void SetLogCovariance(int row, int column, double value);
 
-  //
-  // related nodes
-  //
-  vtkSetReferenceStringMacro(GlobalParametersNodeID);
-  vtkGetStringMacro(GlobalParametersNodeID);
-  virtual vtkMRMLEMSGlobalParametersNode* GetGlobalParametersNode();
-
 protected:
   vtkMRMLEMSTreeParametersLeafNode();
   ~vtkMRMLEMSTreeParametersLeafNode();
   vtkMRMLEMSTreeParametersLeafNode(const vtkMRMLEMSTreeParametersLeafNode&);
   void operator=(const vtkMRMLEMSTreeParametersLeafNode&);
-
-  // references to other nodes
-  char*                               GlobalParametersNodeID;
 
   int                                 PrintQuality;
   int                                 IntensityLabel;

@@ -38,8 +38,7 @@ CreateNodeInstance()
 //-----------------------------------------------------------------------------
 vtkMRMLEMSGlobalParametersNode::vtkMRMLEMSGlobalParametersNode()
 {
-  this->AtlasNodeID                   = NULL;
-  this->TargetNodeID                  = NULL;
+  this->NumberOfTargetInputChannels   = 0;
 
   this->RegistrationAffineType        = 0;
   this->RegistrationDeformableType    = 0;
@@ -66,8 +65,6 @@ vtkMRMLEMSGlobalParametersNode::vtkMRMLEMSGlobalParametersNode()
 //-----------------------------------------------------------------------------
 vtkMRMLEMSGlobalParametersNode::~vtkMRMLEMSGlobalParametersNode()
 {
-  this->SetAtlasNodeID(NULL);
-  this->SetTargetNodeID(NULL);
   this->SetWorkingDirectory(NULL);
 }
 
@@ -77,11 +74,8 @@ void vtkMRMLEMSGlobalParametersNode::WriteXML(ostream& of, int nIndent)
   Superclass::WriteXML(of, nIndent);
   vtkIndent indent(nIndent);
 
-  of << indent << "AtlasNodeID=\"" 
-     << (this->AtlasNodeID ? this->AtlasNodeID : "NULL") << "\" ";
-
-  of << indent << "TargetNodeID=\"" 
-     << (this->TargetNodeID ? this->TargetNodeID : "NULL") << "\" ";
+  of << indent << "NumberOfTargetInputChannels=\"" 
+     << this->NumberOfTargetInputChannels << "\" ";
 
   of << indent << "WorkingDirectory=\"" 
      << (this->WorkingDirectory ? this->WorkingDirectory : "NULL") << "\" ";
@@ -127,40 +121,6 @@ void vtkMRMLEMSGlobalParametersNode::WriteXML(ostream& of, int nIndent)
 }
 
 //-----------------------------------------------------------------------------
-void
-vtkMRMLEMSGlobalParametersNode::
-UpdateReferenceID(const char* oldID, const char* newID)
-{
-  if (this->AtlasNodeID && !strcmp(oldID, this->AtlasNodeID))
-    {
-    this->SetAtlasNodeID(newID);
-    }
-  if (this->TargetNodeID && !strcmp(oldID, this->TargetNodeID))
-    {
-    this->SetTargetNodeID(newID);
-    }
-}
-
-//-----------------------------------------------------------------------------
-void 
-vtkMRMLEMSGlobalParametersNode::
-UpdateReferences()
-{
-  Superclass::UpdateReferences();
-
-  if (this->AtlasNodeID != NULL && 
-      this->Scene->GetNodeByID(this->AtlasNodeID) == NULL)
-    {
-    this->SetAtlasNodeID(NULL);
-    }
-  if (this->TargetNodeID != NULL && 
-      this->Scene->GetNodeByID(this->TargetNodeID) == NULL)
-    {
-    this->SetTargetNodeID(NULL);
-    }
-}
-
-//-----------------------------------------------------------------------------
 void vtkMRMLEMSGlobalParametersNode::ReadXMLAttributes(const char** attrs)
 {
   Superclass::ReadXMLAttributes(attrs);
@@ -172,15 +132,12 @@ void vtkMRMLEMSGlobalParametersNode::ReadXMLAttributes(const char** attrs)
     key = *attrs++;
     val = *attrs++;
     
-    if (!strcmp(key, "AtlasNodeID"))
+
+    if (!strcmp(key, "NumberOfTargetInputChannels"))
       {
-      this->SetAtlasNodeID(val);
-      this->Scene->AddReferencedNodeID(this->AtlasNodeID, this); 
-      }
-    else if (!strcmp(key, "TargetNodeID"))
-      {
-      this->SetTargetNodeID(val);
-      this->Scene->AddReferencedNodeID(this->TargetNodeID, this); 
+        vtksys_stl::stringstream ss;
+        ss << val;
+        ss >> this->NumberOfTargetInputChannels;
       }
     else if (!strcmp(key, "WorkingDirectory"))
       {
@@ -266,8 +223,7 @@ void vtkMRMLEMSGlobalParametersNode::Copy(vtkMRMLNode *rhs)
   vtkMRMLEMSGlobalParametersNode* node = 
     (vtkMRMLEMSGlobalParametersNode*) rhs;
 
-  this->SetAtlasNodeID(node->AtlasNodeID);
-  this->SetTargetNodeID(node->TargetNodeID);
+  this->SetNumberOfTargetInputChannels(node->NumberOfTargetInputChannels);
   this->SetWorkingDirectory(node->WorkingDirectory);
 
   this->SetSegmentationBoundaryMin(node->SegmentationBoundaryMin);
@@ -290,11 +246,8 @@ void vtkMRMLEMSGlobalParametersNode::PrintSelf(ostream& os,
 {
   Superclass::PrintSelf(os, indent);
 
-  os << indent << "AtlasNodeID: "
-     << (this->AtlasNodeID ? this->AtlasNodeID : "(none)") << "\n";
-
-  os << indent << "TargetNodeID: "
-     << (this->TargetNodeID ? this->TargetNodeID : "(none)") << "\n";
+  os << indent << "NumberOfTargetInputChannels: "
+     << this->NumberOfTargetInputChannels << "\n";
 
   os << indent << "WorkingDirectory: " 
      << (this->WorkingDirectory ? this->WorkingDirectory : "(none)") << "\n";
@@ -332,49 +285,3 @@ void vtkMRMLEMSGlobalParametersNode::PrintSelf(ostream& os,
      << this->MultithreadingEnabled << "\n";
 }
 
-//-----------------------------------------------------------------------------
-vtkMRMLEMSAtlasNode*
-vtkMRMLEMSGlobalParametersNode::
-GetAtlasNode()
-{
-  vtkMRMLEMSAtlasNode* node = NULL;
-  if (this->GetScene() && this->GetAtlasNodeID() )
-    {
-    vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->AtlasNodeID);
-    node = vtkMRMLEMSAtlasNode::SafeDownCast(snode);
-    }
-  return node;
-}
-
-//-----------------------------------------------------------------------------
-vtkMRMLEMSTargetNode*
-vtkMRMLEMSGlobalParametersNode::
-GetTargetNode()
-{
-  vtkMRMLEMSTargetNode* node = NULL;
-  if (this->GetScene() && this->GetTargetNodeID() )
-    {
-    vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->TargetNodeID);
-    node = vtkMRMLEMSTargetNode::SafeDownCast(snode);
-    }
-  return node;
-}
-
-//-----------------------------------------------------------------------------
-int
-vtkMRMLEMSGlobalParametersNode::
-GetNumberOfTargetInputChannels()
-{
-  //
-  // get target node
-  //
-  vtkMRMLEMSTargetNode* target = this->GetTargetNode();
-  if (target == NULL)
-    {
-    return 0;
-    }
-  else
-    {
-    return target->GetNumberOfVolumes();
-    }
-}

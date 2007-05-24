@@ -252,11 +252,12 @@ public:
                                                     vtkIdType volumeID);
 
   // target volumes
-  virtual int       GetTargetNumberOfSelectedVolumes();
+  virtual int         GetTargetNumberOfSelectedVolumes();
   // index in [0, #selected volumes)
-  virtual vtkIdType GetTargetSelectedVolumeNthID(int n); 
-  virtual void      AddTargetSelectedVolume(vtkIdType volumeID);
-  virtual void      RemoveTargetSelectedVolume(vtkIdType volumeID);
+  virtual vtkIdType   GetTargetSelectedVolumeNthID(int n); 
+  virtual const char* GetTargetSelectedVolumeNthMRMLID(int n); 
+  virtual void        AddTargetSelectedVolume(vtkIdType volumeID);
+  virtual void        RemoveTargetSelectedVolume(vtkIdType volumeID);
 
   //
   // registration parameters
@@ -305,6 +306,7 @@ public:
 
   virtual const char*  GetOutputVolumeMRMLID();
   virtual void         SetOutputVolumeMRMLID(const char* mrmlID);
+  virtual void         SetOutputVolumeID(vtkIdType volumeID);
 
   //
   // actions
@@ -353,6 +355,8 @@ public:
 
   virtual void PrintTree(vtkIdType rootID, vtkIndent indent);
 
+  virtual vtkMRMLEMSSegmenterNode*        GetSegmenterNode();
+
 private:
   vtkEMSegmentLogic();
   ~vtkEMSegmentLogic();
@@ -366,7 +370,6 @@ private:
   //
   // convienince functions for managing MRML nodes
   //
-  virtual vtkMRMLEMSSegmenterNode*        GetSegmenterNode();
   virtual vtkMRMLEMSTemplateNode*         GetTemplateNode();
   virtual vtkMRMLEMSGlobalParametersNode* GetGlobalParametersNode();
   virtual vtkMRMLEMSTreeNode*             GetTreeRootNode();

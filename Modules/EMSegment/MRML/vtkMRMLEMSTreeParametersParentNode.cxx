@@ -1,7 +1,6 @@
 #include "vtkMRMLEMSTreeParametersParentNode.h"
 #include <sstream>
 #include "vtkMRMLScene.h"
-#include "vtkMRMLEMSGlobalParametersNode.h"
 
 //-----------------------------------------------------------------------------
 vtkMRMLEMSTreeParametersParentNode* 
@@ -38,8 +37,6 @@ CreateNodeInstance()
 //-----------------------------------------------------------------------------
 vtkMRMLEMSTreeParametersParentNode::vtkMRMLEMSTreeParametersParentNode()
 {
-  this->GlobalParametersNodeID        = NULL;
-  
   this->Alpha                         = 0.7;
 
   this->PrintBias                     = 0;
@@ -68,7 +65,6 @@ vtkMRMLEMSTreeParametersParentNode::vtkMRMLEMSTreeParametersParentNode()
 //-----------------------------------------------------------------------------
 vtkMRMLEMSTreeParametersParentNode::~vtkMRMLEMSTreeParametersParentNode()
 {
-  this->SetGlobalParametersNodeID(NULL);
 }
 
 //-----------------------------------------------------------------------------
@@ -76,10 +72,6 @@ void vtkMRMLEMSTreeParametersParentNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
   vtkIndent indent(nIndent);
-
-  of << indent << "GlobalParametersNodeID=\"" 
-     << (this->GlobalParametersNodeID ? this->GlobalParametersNodeID : "NULL")
-     << "\" ";
 
   of << indent << "Alpha=\"" << this->Alpha << "\" ";
 
@@ -124,32 +116,6 @@ void vtkMRMLEMSTreeParametersParentNode::WriteXML(ostream& of, int nIndent)
 }
 
 //-----------------------------------------------------------------------------
-void
-vtkMRMLEMSTreeParametersParentNode::
-UpdateReferenceID(const char* oldID, const char* newID)
-{
-  if (this->GlobalParametersNodeID && 
-      !strcmp(oldID, this->GlobalParametersNodeID))
-    {
-    this->SetGlobalParametersNodeID(newID);
-    }
-}
-
-//-----------------------------------------------------------------------------
-void 
-vtkMRMLEMSTreeParametersParentNode::
-UpdateReferences()
-{
-  Superclass::UpdateReferences();
-
-  if (this->GlobalParametersNodeID != NULL && 
-      this->Scene->GetNodeByID(this->GlobalParametersNodeID) == NULL)
-    {
-    this->SetGlobalParametersNodeID(NULL);
-    }
-}
-
-//-----------------------------------------------------------------------------
 void vtkMRMLEMSTreeParametersParentNode::ReadXMLAttributes(const char** attrs)
 {
   Superclass::ReadXMLAttributes(attrs);
@@ -164,12 +130,7 @@ void vtkMRMLEMSTreeParametersParentNode::ReadXMLAttributes(const char** attrs)
     key = *attrs++;
     val = *attrs++;
     
-    if (!strcmp(key, "GlobalParametersNodeID"))
-      {
-      this->SetGlobalParametersNodeID(val);
-      this->Scene->AddReferencedNodeID(this->GlobalParametersNodeID, this);   
-      }
-    else if (!strcmp(key, "Alpha"))
+    if (!strcmp(key, "Alpha"))
       {
       vtksys_stl::stringstream ss;
       ss << val;
@@ -287,7 +248,6 @@ void vtkMRMLEMSTreeParametersParentNode::Copy(vtkMRMLNode *rhs)
   vtkMRMLEMSTreeParametersParentNode* node = 
     (vtkMRMLEMSTreeParametersParentNode*) rhs;
 
-  this->SetGlobalParametersNodeID(node->GlobalParametersNodeID);
   this->SetAlpha(node->Alpha);
 
   this->SetPrintBias(node->PrintBias);
@@ -317,10 +277,6 @@ void vtkMRMLEMSTreeParametersParentNode::PrintSelf(ostream& os,
                                                    vtkIndent indent)
 {
   Superclass::PrintSelf(os, indent);
-
-  os << indent << "GlobalParametersNodeID: "
-     << (this->GlobalParametersNodeID ? this->GlobalParametersNodeID :"(none)")
-     << "\n";
 
   os << indent << "Alpha: " << this->Alpha << "\n";
 
@@ -357,17 +313,3 @@ void vtkMRMLEMSTreeParametersParentNode::PrintSelf(ostream& os,
      << this->GenerateBackgroundProbability << "\n";
 }
 
-//-----------------------------------------------------------------------------
-vtkMRMLEMSGlobalParametersNode*
-vtkMRMLEMSTreeParametersParentNode::
-GetGlobalParametersNode()
-{
-  vtkMRMLEMSGlobalParametersNode* node = NULL;
-  if (this->GetScene() && this->GetGlobalParametersNodeID() )
-    {
-    vtkMRMLNode* snode = this->GetScene()->
-      GetNodeByID(this->GlobalParametersNodeID);
-    node = vtkMRMLEMSGlobalParametersNode::SafeDownCast(snode);
-    }
-  return node;
-}

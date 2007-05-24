@@ -4,7 +4,7 @@
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
 #include "vtkEMSegment.h"
-#include "vtkMRMLEMSGlobalParametersNode.h"
+#include "vtkMRMLScene.h"
 
 class VTK_EMSEGMENT_EXPORT vtkMRMLEMSTreeParametersParentNode : 
   public vtkMRMLNode
@@ -31,15 +31,6 @@ public:
   // Description:
   // Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "EMSTreeParametersParent";}
-
-  // Description:
-  // Updates this node if it depends on other nodes
-  // when the node is deleted in the scene
-  virtual void UpdateReferences();
-
-  // Description:
-  // Update the stored reference to another node in the scene
-  virtual void UpdateReferenceID(const char *oldID, const char *newID);
 
   // Alpha determines the influence of the Markov random field
   // 0 => no influence, 1 => maximum influence
@@ -115,13 +106,6 @@ public:
   //
   vtkGetMacro(GenerateBackgroundProbability, int);
   vtkSetMacro(GenerateBackgroundProbability, int);
-
-  //
-  // related MRML nodes
-  //
-  vtkGetStringMacro(GlobalParametersNodeID);
-  vtkSetReferenceStringMacro(GlobalParametersNodeID);
-  virtual vtkMRMLEMSGlobalParametersNode* GetGlobalParametersNode();
 
 protected:
   vtkMRMLEMSTreeParametersParentNode();

@@ -1,7 +1,6 @@
 #include "vtkMRMLEMSTreeParametersLeafNode.h"
 #include <sstream>
 #include "vtkMRMLScene.h"
-#include "vtkMRMLEMSGlobalParametersNode.h"
 #include <algorithm>
 
 //-----------------------------------------------------------------------------
@@ -40,7 +39,6 @@ CreateNodeInstance()
 vtkMRMLEMSTreeParametersLeafNode::vtkMRMLEMSTreeParametersLeafNode()
 {
   this->NumberOfTargetInputChannels = 0;
-  this->GlobalParametersNodeID      = NULL;
   this->PrintQuality                = 0;
   this->IntensityLabel              = 0;
 }
@@ -48,7 +46,6 @@ vtkMRMLEMSTreeParametersLeafNode::vtkMRMLEMSTreeParametersLeafNode()
 //-----------------------------------------------------------------------------
 vtkMRMLEMSTreeParametersLeafNode::~vtkMRMLEMSTreeParametersLeafNode()
 {
-  this->SetGlobalParametersNodeID(NULL);
 }
 
 //-----------------------------------------------------------------------------
@@ -56,10 +53,6 @@ void vtkMRMLEMSTreeParametersLeafNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
   vtkIndent indent(nIndent);
-
-  of << indent << "GlobalParametersNodeID=\"" 
-     << (this->GlobalParametersNodeID ? this->GlobalParametersNodeID : "NULL")
-     << "\" ";
 
   of << indent << "PrintQuality=\""
      << this->PrintQuality << "\" ";
@@ -86,32 +79,6 @@ void vtkMRMLEMSTreeParametersLeafNode::WriteXML(ostream& of, int nIndent)
 }
 
 //-----------------------------------------------------------------------------
-void
-vtkMRMLEMSTreeParametersLeafNode::
-UpdateReferenceID(const char* oldID, const char* newID)
-{
-  if (this->GlobalParametersNodeID && 
-      !strcmp(oldID, this->GlobalParametersNodeID))
-    {
-    this->SetGlobalParametersNodeID(newID);
-    }
-}
-
-//-----------------------------------------------------------------------------
-void 
-vtkMRMLEMSTreeParametersLeafNode::
-UpdateReferences()
-{
-  Superclass::UpdateReferences();
-
-  if (this->GlobalParametersNodeID != NULL && 
-      this->Scene->GetNodeByID(this->GlobalParametersNodeID) == NULL)
-    {
-    this->SetGlobalParametersNodeID(NULL);
-    }
-}
-
-//-----------------------------------------------------------------------------
 void vtkMRMLEMSTreeParametersLeafNode::ReadXMLAttributes(const char** attrs)
 {
   Superclass::ReadXMLAttributes(attrs);
@@ -126,12 +93,7 @@ void vtkMRMLEMSTreeParametersLeafNode::ReadXMLAttributes(const char** attrs)
     key = *attrs++;
     val = *attrs++;
     
-    if (!strcmp(key, "GlobalParametersNodeID"))
-      {
-      this->SetGlobalParametersNodeID(val);
-      this->Scene->AddReferencedNodeID(this->GlobalParametersNodeID, this);   
-      }
-    else if (!strcmp(key, "PrintQuality"))
+    if (!strcmp(key, "PrintQuality"))
       {
       vtksys_stl::stringstream ss;
       ss << val;
@@ -204,7 +166,6 @@ void vtkMRMLEMSTreeParametersLeafNode::Copy(vtkMRMLNode *rhs)
   vtkMRMLEMSTreeParametersLeafNode* node = 
     (vtkMRMLEMSTreeParametersLeafNode*) rhs;
 
-  this->SetGlobalParametersNodeID(node->GlobalParametersNodeID);
   this->SetNumberOfTargetInputChannels(node->GetNumberOfTargetInputChannels());
   this->SetPrintQuality(node->PrintQuality);
   this->SetIntensityLabel(node->IntensityLabel);
@@ -217,10 +178,6 @@ void vtkMRMLEMSTreeParametersLeafNode::PrintSelf(ostream& os,
                                                  vtkIndent indent)
 {
   Superclass::PrintSelf(os, indent);
-
-  os << indent << "GlobalParametersNodeID: " 
-     << (this->GlobalParametersNodeID ? this->GlobalParametersNodeID :"(none)")
-     << "\n";
 
   os << indent << "PrintQuality: "
      << this->PrintQuality
@@ -306,29 +263,8 @@ SetLogCovariance(int row, int column, double value)
 //-----------------------------------------------------------------------------
 void
 vtkMRMLEMSTreeParametersLeafNode::
-SynchronizeNumberOfTargetInputChannels()
+SynchronizeNumberOfTargetInputChannels(int numberOfChannels)
 {
-  //
-  // get global parameters node
-  //
-  vtkMRMLEMSGlobalParametersNode* node = vtkMRMLEMSGlobalParametersNode::
-    SafeDownCast(this->GetScene()->GetNodeByID(this->GlobalParametersNodeID));
-
-  int numChannels = node == NULL ? 0 : node->GetNumberOfTargetInputChannels();
-  this->SetNumberOfTargetInputChannels(numChannels);
+  this->SetNumberOfTargetInputChannels(numberOfChannels);
 }
 
-//-----------------------------------------------------------------------------
-vtkMRMLEMSGlobalParametersNode*
-vtkMRMLEMSTreeParametersLeafNode::
-GetGlobalParametersNode()
-{
-  vtkMRMLEMSGlobalParametersNode* node = NULL;
-  if (this->GetScene() && this->GetGlobalParametersNodeID() )
-    {
-    vtkMRMLNode* snode = this->GetScene()->
-      GetNodeByID(this->GlobalParametersNodeID);
-    node = vtkMRMLEMSGlobalParametersNode::SafeDownCast(snode);
-    }
-  return node;
-}
