@@ -7,95 +7,89 @@
   EMSegment Command-line
   </title>
   <description>
-EMSegment command-line module description.
+  EMSegment command-line module description and help.
   </description>
   <version>0.1.0.$Revision: 2085 $(alpha)</version>
   <documentation-url>http://wiki.na-mic.org/Wiki/index.php/Slicer3:EM</documentation-url>
   <license></license>
   <contributor>Brad Davis</contributor>
-  <acknowledgements>Many people have contributed to the development of the EMSegment algorithm and implementations.</acknowledgements>
+
+  <acknowledgements>Many people and organizations have contributed to the funding, design, and development of the EMSegment algorithm and its various implementations.</acknowledgements>
+
   <parameters>
-    <label>Parameters</label>
-    <description>Parameters for the EMSegment algorithm</description>
+    <label>Inputs and Outputs</label>
+    <description>Altorithm input and output.</description>
+
+    <file>
+      <name>mrmlSceneFileName</name>
+      <longflag>mrmlSceneFileName</longflag>
+
+      <description>Active MRML scene that contains EMSegment algorithm parameters.</description>
+
+      <label>MRML Scene</label>
+    </file>    
 
     <string>
       <name>parametersMRMLNodeName</name>
-      <longflag>--parametersMRMLNodeName</longflag>
-      <description>The name of the EMSegment parameters node.</description>
-      <label>Parameters Node Name</label>
-    </string>    
+      <longflag>parametersMRMLNodeName</longflag>
 
-    <string>
-      <name>resultMRMLNodeName</name>
-      <longflag>--resultMRMLNodeName</longflag>
-      <description>The name of the result node.</description>
-      <label>Result Node Name</label>
+      <description>The name of the EMSegment parameters node within the active MRML scene.</description>
+
+      <label>Parameters Node Name</label>
     </string>    
 
     <file>
       <name>resultVolumeFileName</name>
-      <longflag>--resultVolumeFileName</longflag>
-      <description>The name of the segmentation result volume.</description>
-      <label>Result Folume Filename</label>
+      <longflag>resultVolumeFileName</longflag>
+
+      <description>The name of the segmentation result volume.  This flag should be used if the output volume is not currently defined by a MRML node (if it is, use resultMRMLNodeName instead).  </description>
+
+      <label>Result Volume Filename</label>
     </file>    
 
-    <file>
-      <name>mrmlDataRoot</name>
-      <longflag>--mrmlDataRoot</longflag>
-      <description>Override default mrml data root</description>
-      <label>MRML Data Root</label>
-    </file>    
+    <string-vector>
+      <name>targetVolumeFileNames</name>
+      <longflag>targetVolumeFileNames</longflag>
 
-    <file>
-      <name>mrmlSceneFileName</name>
-      <longflag>--mrmlSceneFileName</longflag>
-      <description>Active MRML Scene</description>
-      <label>MRML Scene</label>
-    </file>    
+      <description>Names of target volumes (to be segmented).  This flag should be used if the volumes are not present in the MRML scene (if they are, use targetMRMLNodeNames instead).  The number of target images must be less than or equal to the number of target images specified in the parameter set, and these images must be spatially aligned.</description>
 
-    <integer-vector>
-      <name>regionOfInterestBegin</name>
-      <longflag>--regionOfInterestBegin</longflag>
-      <description>The first voxel contained in the ROI.</description>
-      <label>ROI Begin</label>
-      <default>0,0,0</default>
-    </integer-vector>
+      <label>Target FileNames</label>      
+    </string-vector>
+  </parameters>
 
-    <integer-vector>
-      <name>regionOfInterestEnd</name>
-      <longflag>--regionOfInterestEnd</longflag>
-      <description>One past the last voxel contained in the ROI.</description>
-      <label>ROI End</label>
-      <default>0,0,0</default>
-    </integer-vector>
+  <parameters advanced="true">
+    <label>Parameters</label>
+    <description>Algorithm Parameters</description>
 
     <boolean>
-      <name>noThreads</name>
-      <longflag>--noThreads</longflag>
-      <description>Disable multithreading</description>
+      <name>disableMultithreading</name>
+      <longflag>disableMultithreading</longflag>
+      <description>Disable multithreading.</description>
       <label>Disable Multithreading</label>
       <default>false</default>
     </boolean>
 
     <boolean>
       <name>verbose</name>
-      <longflag>--verbose</longflag>
-      <description>enable verbose output</description>
+      <longflag>verbose</longflag>
+      <description>Enable verbose output.</description>
       <label>Verbose Output</label>
       <default>false</default>
     </boolean>
 
   </parameters>
 
-  <parameters>
+  <parameters advanced="true">
     <label>Experimental</label>
     <description>Subject to change, removal</description>
 
     <file>
-      <name>correctSegmentationFileName</name>
-      <longflag>--correctSegmentationFilename</longflag>
-      <description>Compare segmentation results to a standard</description>
-      <label>Standard File Name</label>
+      <name>resultMRMLSceneFileName</name>
+      <longflag>resultMRMLSceneFileName</longflag>
+
+      <description>Write a MRML file that contains the target images and output labelmap.</description>
+
+      <label>Result MRML Scene File Name</label>
     </file>    
 
   </parameters>

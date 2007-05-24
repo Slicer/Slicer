@@ -4,86 +4,48 @@
 
 #include "vtkMRMLScene.h"
 #include "vtkEMSegmentLogic.h"
-#include "vtkEMSegmentTestUtilities.h"
+#include "vtkMRMLEMSSegmenterNode.h"
 #include "EMSegmentCommandLineCLP.h"
+#include <vtksys/SystemTools.hxx>
+#include <stdexcept>
 
 int main(int argc, char** argv)
 {
+  //
+  // parse arguments using the CLP system; this creates variables.
   PARSE_ARGS;
 
-//   //
-//   // basic arguments
-//   std::string                  mrmlSceneFilename;
-//   std::vector<std::string>     targetImageFilenames;
-
-//   //
-//   // vars for options
-//   std::string                  parametersMRMLNodeName;
-//   std::string                  parametersMRMLNodeID;
-
-//   std::string                  resultMRMLNodeName;
-//   std::string                  resultMRMLNodeID;
-//   std::string                  resultVolumeFilename;
-
-//   std::string                  mrmlDataRoot;
-
-//   std::string                  correctSegmentationFilename;
-
-//   bool                         noThreads        = false;
-//   bool                         verbose          = false;
-//   bool                         help             = false;
-
-//   //
-//   // internal options          
-//   bool                         verboseArgParsing = false;
-
-//   static int                   EXIT_ARGUMENT_FAILURE = -10;
-
-  if (verbose)
-  {
-    std::cerr << "parametersMRMLNodeName: " << parametersMRMLNodeName 
-              << std::endl;
-    std::cerr << "resultMRMLNodeName: " << resultMRMLNodeName << std::endl;
-    std::cerr << "resultVolumeFileName: " << resultVolumeFileName << std::endl;
-    std::cerr << "mrmlDataRoot: " << mrmlDataRoot << std::endl;
-    std::cerr << "mrmlSceneFileName: " << mrmlSceneFileName << std::endl;
-    std::cerr << "regionOfInterestBegin: [" 
-              << regionOfInterestBegin[0] << ", "
-              << regionOfInterestBegin[1] << ", "
-              << regionOfInterestBegin[2] << "]" << std::endl;
-    std::cerr << "regionOfInterestEnd: [" 
-              << regionOfInterestEnd[0] << ", "
-              << regionOfInterestEnd[1] << ", "
-              << regionOfInterestEnd[2] << "]" << std::endl;
-    std::cerr << "noThreads: " << noThreads << std::endl;    
-    std::cerr << "verbose: " << verbose << std::endl;    
-    std::cerr << "correctSegmentationFileName: " << correctSegmentationFileName << std::endl;
-  }
+  bool useDefaultParametersNode = parametersMRMLNodeName.empty();
+  bool useDefaultTarget         = targetVolumeFileNames.empty();
+  bool useDefaultOutput         = resultVolumeFileName.empty();
+  bool segmentationSucceeded    = true;
 
   //
-  // make sure arguments are sufficient
-  bool argsSufficient = true;
+  // make sure arguments are sufficient and unique
+  bool argsOK = true;
   if (mrmlSceneFileName.empty())
   {
     std::cerr << "Error: mrmlSceneFileName must be specified." << std::endl;
-    argsSufficient = false;
+    argsOK = false;
   }
-  if (mrmlDataRoot.empty())
-  {
-    std::cerr << "Error: mrmlDataRoot must be specified." << std::endl;
-    argsSufficient = false;
-  }
-  if (!argsSufficient)
+  if (!argsOK)
   {
     std::cerr << "Try --help for usage..." << std::endl;
     exit(EXIT_FAILURE);
   }
-  
+
   //
-  // create a mrml scene that will hold the data parameters
+  // make sure files exist
+  if (!vtksys::SystemTools::FileExists(mrmlSceneFileName.c_str()))
+  {
+    std::cerr << "Error: MRML scene file does not exist." << std::endl;
+    exit(EXIT_FAILURE);
+  }
+
+  //
+  // create a mrml scene that will hold the parameters and data
   vtkMRMLScene* mrmlScene = vtkMRMLScene::New();
   vtkMRMLScene::SetActiveScene(mrmlScene);
-  mrmlScene->SetRootDirectory(mrmlDataRoot.c_str());
   mrmlScene->SetURL(mrmlSceneFileName.c_str());
 
   //
@@ -93,153 +55,209 @@ int main(int argc, char** argv)
   emLogic->SetAndObserveMRMLScene(mrmlScene);
   emLogic->RegisterMRMLNodesWithScene();
 
+  //
+  // global try block makes sure data is cleaned up if anything goes
+  // wrong
   try 
   {
-    mrmlScene->Import();
-  }
-  catch (...)
-  {
-    std::cerr << "Error reading/setting mrml scene: " << std::endl;
-
-    // clean up
-    mrmlScene->Clear(true);
-    mrmlScene->Delete();
-    emLogic->SetAndObserveMRMLScene(NULL);
-    emLogic->Delete();
-
-    return EXIT_FAILURE;
-  }
-  std::cerr << "Imported: " << mrmlScene->GetNumberOfNodes()
-            << " nodes." << std::endl;
-
-  //
-  // populate the logic class with testing data
-  int numParameterSets = emLogic->GetNumberOfParameterSets();
-  std::cerr << "Found " << numParameterSets << " EM top level nodes."
-            << std::endl;
-  bool foundParameters = false;
-  std::cerr << "Searching for an EM parameter node named: " 
-            << parametersMRMLNodeName << std::endl;
-
-  for (int i = 0; i < numParameterSets; ++i)
-  {
-    std::string currentNodeName(emLogic->GetNthParameterSetName(i)); 
-    std::cerr << "Node " << i << " name: " << currentNodeName << std::endl;
-    if (parametersMRMLNodeName == currentNodeName)
+    //
+    // read the mrml scene
+    try 
     {
-      try
+      if (verbose) std::cerr << "Reading MRML scene...";
+      mrmlScene->Connect();
+      if (verbose) std::cerr << "DONE" << std::endl;
+    }
+    catch (...)
+    {
+      throw std::runtime_error("ERROR: failed to import mrml scene.");
+    }
+
+    int numParameterSets = emLogic->GetNumberOfParameterSets();
+    if (verbose) std::cerr << "Imported: " << mrmlScene->GetNumberOfNodes()
+                           << (mrmlScene->GetNumberOfNodes() == 1 
+                               ? " node" : " nodes")
+                           << ", including " << numParameterSets 
+                           << " EM parameter "
+                           << (numParameterSets == 1 ? "node." : "nodes.")
+                           << std::endl;
+  
+    //
+    // make sure there is at least one parameter set
+    if (numParameterSets < 1)
+    {
+      throw std::
+        runtime_error("ERROR: no EMSegment parameter nodes in scene.");
+    }
+
+    //
+    // find the parameter set in the MRML scene
+    int parameterNodeIndex = 0;
+    if (useDefaultParametersNode)
+    {
+      if (verbose) std::cerr << "Using default parameter set named: " 
+                             << emLogic->GetNthParameterSetName(0) 
+                             << std::endl;    
+    }
+    else
+    {
+      // search for the named parameter set
+      bool foundParameters = false;
+      if (verbose) std::cerr << "Searching for an EM parameter node named: " 
+                             << parametersMRMLNodeName << std::endl;
+      
+      for (int i = 0; i < numParameterSets; ++i)
       {
-        emLogic->SetLoadedParameterSetIndex(i);
+        std::string currentNodeName(emLogic->GetNthParameterSetName(i)); 
+        if (verbose) std::cerr << "Node " << i 
+                               << " name: " << currentNodeName << std::endl;
+        if (parametersMRMLNodeName == currentNodeName)
+        {
+          parameterNodeIndex = i;
+          foundParameters = true;
+          break;
+        }
+        else
+        {
+          if (verbose) std::cerr << "Found non-matching EM parameters node: " 
+                                 << currentNodeName << std::endl;
+        }
+      }
+      
+      // make sure the parameters were found
+      if (!foundParameters)
+      {
+        throw std::
+          runtime_error("ERROR: EMSegment parameters absent from scene.");
+      }
+    }
+
+    //
+    // populate the logic with the parameters
+    try
+    {
+      emLogic->SetLoadedParameterSetIndex(parameterNodeIndex);
+    }
+    catch (...)
+    {
+      throw std::runtime_error("ERROR: failed to set EMSegment parameters.");
+    }
+
+    //
+    // make sure the basic parameters are available
+    // !!!
+    // segmenter node
+    // global parameters
+
+    //
+    // set the target images
+    if (useDefaultTarget)
+    {
+      if (!emLogic->GetSegmenterNode()->GetTargetNode())
+      {
+        throw std::runtime_error("ERROR: no default target node available.");
+      }
+    }
+    else
+    {
+      try 
+      {
+        // create target node
+        vtkMRMLEMSTargetNode* targetNode = vtkMRMLEMSTargetNode::New();
+        mrmlScene->AddNode(targetNode);        
+
+        // connect target node to segmenter
+        emLogic->GetSegmenterNode()->SetTargetNodeID(targetNode->GetID());
       }
       catch (...)
       {
-        std::cerr << "Error setting parameter set: " << std::endl;
-
-        // clean up
-        mrmlScene->Clear(true);
-        mrmlScene->Delete();
-        emLogic->SetAndObserveMRMLScene(NULL);
-        emLogic->Delete();
-
-        return EXIT_FAILURE;
+        throw std::runtime_error("ERROR: failed to add target node.");
       }
-      foundParameters = true;
-      break;
-    }
-    else
+
+      for (unsigned int imageIndex = 0; 
+           imageIndex < targetVolumeFileNames.size(); ++imageIndex)
       {
-      std::cerr << "Found non-matching EM parameters node: " 
-                << currentNodeName << std::endl;
+        if (verbose) std::cerr << "Loading target image " << imageIndex
+                               << "...";
+        try
+        {
+          // load image into scene
+          // emLogic->AddTargetSelectedVolumeByMRMLID()
+        }
+        catch(...)
+        {
+          throw std::runtime_error("ERROR: failed to load target image.");
+        }
       }
+    }
+
+    //
+    // set the result labelmap image
+
+    //
+    // update logic parameters from command line
+    emLogic->SetEnableMultithreading(!disableMultithreading);
+    if (verbose) 
+      std::cerr << "Multithreading is " 
+                << (disableMultithreading ? "disabled." : "enabled.")
+                << std::endl;
+
+    int segmentationBoundaryMin[3];
+    int segmentationBoundaryMax[3];
+    emLogic->GetSegmentationBoundaryMin(segmentationBoundaryMin);
+    emLogic->GetSegmentationBoundaryMax(segmentationBoundaryMax);
+    if (verbose) std::cerr 
+      << "ROI is [" 
+      << segmentationBoundaryMin[0] << ", "
+      << segmentationBoundaryMin[1] << ", "
+      << segmentationBoundaryMin[2] << "] -->> ["
+      << segmentationBoundaryMax[0] << ", "
+      << segmentationBoundaryMax[1] << ", "
+      << segmentationBoundaryMax[2] << "]" << std::endl;
+
+    //
+    // check parameters' node structure
+    if (!emLogic->CheckMRMLNodeStructure())
+    {
+      throw std::
+        runtime_error("ERROR: EMSegment invalid parameter node structure");
+    }
+
+    //
+    // run the segmentation
+    try
+    {
+      if (verbose) std::cerr << "Starting segmentation..." << std::endl;
+      emLogic->StartSegmentation();
+      if (verbose) std::cerr << "Segmentation complete." << std::endl;
+    }
+    catch (...)
+    {
+      throw std::runtime_error("ERROR: failed to run segmentation.");
+    }
+
+    //
+    // save the results in the MRML scene
   }
-
-  if (!foundParameters)
+  catch (std::runtime_error& e)
   {
-    std::cerr << "Error: parameters not found in scene" << std::endl;
-    
-    // clean up
-    mrmlScene->Clear(true);
-    mrmlScene->Delete();
-    emLogic->SetAndObserveMRMLScene(NULL);
-    emLogic->Delete();
-
-    return EXIT_FAILURE;    
+    std::cerr << "Errors detetected.  Segmentation failed." << std::endl;
+    segmentationSucceeded = false;
+  }
+  catch (...)
+  {
+    std::cerr << "Unknown error detected.  Segmentation failed." << std::endl;
+    segmentationSucceeded = false;
   }
   
   //
-  // run the segmentation
-  try
-  {
-    std::cerr << "Starting segmentation..." << std::endl;
-    emLogic->StartSegmentation();
-  }
-  catch (...)
-  {
-    std::cerr << "Error running segmentation: " << std::endl;
-
-    // clean up
-    mrmlScene->Clear(true);
-    mrmlScene->Delete();
-    emLogic->SetAndObserveMRMLScene(NULL);
-    emLogic->Delete();
-
-    return EXIT_FAILURE;
-  }
-
-  //
-  // get a pointer to the results
-  std::string resultMRMLID = emLogic->GetOutputVolumeMRMLID();
-  std::cerr << "Results stored in mrml node: " << resultMRMLID << std::endl;
-  vtkImageData* resultImage = NULL;
-  try 
-  {
-    vtkMRMLVolumeNode* node   = vtkMRMLVolumeNode::
-      SafeDownCast(mrmlScene->GetNodeByID(resultMRMLID.c_str()));
-    resultImage = node->GetImageData();
-    resultImage->SetSpacing(node->GetSpacing());
-    resultImage->SetOrigin(node->GetOrigin());
-  }
-  catch (...)
-  {
-    std::cerr << "Error geting result from scene: " << std::endl;
-
-    // clean up
-    mrmlScene->Clear(true);
-    mrmlScene->Delete();
-    emLogic->SetAndObserveMRMLScene(NULL);
-    emLogic->Delete();
-
-    return EXIT_FAILURE;
-  }
-
-  //
-  // compare results with standard segmentation results
-  bool imagesDiffer = ImageDiff(resultImage, correctSegmentationFileName);
-  if (imagesDiffer)
-  {
-    std::cerr << "Result does not match standard!" << std::endl;
-
-    // clean up
-    mrmlScene->Clear(true);
-    mrmlScene->Delete();
-    emLogic->SetAndObserveMRMLScene(NULL);
-    emLogic->Delete();
-
-    return EXIT_FAILURE;    
-  }
-  else
-  {
-    std::cerr << "Segmentation matches standard." << std::endl;    
-  }
-
-  //
   // clean up
+  if (verbose) std::cerr << "Cleaning up...";
   mrmlScene->Clear(true);
   mrmlScene->Delete();
   emLogic->SetAndObserveMRMLScene(NULL);
   emLogic->Delete();
+  if (verbose) std::cerr << "DONE" << std::endl;
 
-  std::cerr << "All clean..." << std::endl;
-
-  return EXIT_SUCCESS;  
+  return segmentationSucceeded ? EXIT_SUCCESS : EXIT_FAILURE;  
 }
