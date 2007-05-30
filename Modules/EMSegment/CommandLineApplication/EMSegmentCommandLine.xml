@@ -81,7 +81,7 @@
 
   <parameters advanced="true">
     <label>Experimental</label>
-    <description>Subject to change, removal</description>
+    <description>Subject to change and removal</description>
 
     <file>
       <name>resultStandardVolumeFileName</name>
@@ -91,6 +91,14 @@
 
       <label>Result Standard Image</label>
     </file>    
+
+    <boolean>
+      <name>dontWriteResults</name>
+      <longflag>dontWriteResults</longflag>
+      <description>Used for testing.  Don't actually write the resulting labelmap to disk.</description>
+      <label>Don't write results.</label>
+      <default>false</default>
+    </boolean>
 
   </parameters>
 </executable>

@@ -43,6 +43,7 @@ SET(EMSegment_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkImageEMLocalSuperClass.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkSimonParameterReaderWriter.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkTimeDef.cxx
+#  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkImageMeanIntensityNormalization.cxx
 # not used in current implementation---used in slicer2 modules
 #  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkImageEMAtlasClass.cxx
 #  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkImageEMAtlasSegmenter.cxx
@@ -131,11 +132,7 @@ ENDIF(BUILD_TESTING)
 #
 # command line application
 #
-OPTION(Slicer3_BUILD_EMSEGMENT_COMMANDLINE "Build EMSegment command-line application" OFF)
-MARK_AS_ADVANCED(Slicer3_BUILD_EMSEGMENT_COMMANDLINE)
-IF (Slicer3_BUILD_EMSEGMENT_COMMANDLINE)
-  SUBDIRS(CommandLineApplication)
-ENDIF(Slicer3_BUILD_EMSEGMENT_COMMANDLINE)
+SUBDIRS(CommandLineApplication)
 
 #
 # Configure include file

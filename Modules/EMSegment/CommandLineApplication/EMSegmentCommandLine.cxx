@@ -16,6 +16,64 @@
 #include "vtkITKArchetypeImageSeriesScalarReader.h"
 #include "vtkImageData.h"
 
+vtkMRMLVolumeNode*
+AddNewScalarArchetypeVolume(vtkMRMLScene* mrmlScene,
+                            const char* filename, 
+                            int centerImage, 
+                            int labelMap, 
+                            const char* volname)
+{
+  vtkMRMLVolumeDisplayNode *displayNode  = vtkMRMLVolumeDisplayNode::New();
+  vtkMRMLScalarVolumeNode  *scalarNode   = vtkMRMLScalarVolumeNode::New();
+  scalarNode->SetLabelMap(labelMap);
+  vtkMRMLVolumeNode        *volumeNode   = scalarNode;
+
+  // i/o mechanism
+  vtkMRMLVolumeArchetypeStorageNode *storageNode = 
+    vtkMRMLVolumeArchetypeStorageNode::New();
+  storageNode->SetFileName(filename);
+  storageNode->SetCenterImage(centerImage);
+
+  // set the volume's name
+  if (volname == NULL)
+  {
+    const vtksys_stl::string fname(filename);
+    vtksys_stl::string name = vtksys::SystemTools::GetFilenameName(fname);
+    volumeNode->SetName(name.c_str());
+  }
+  else
+  {
+    volumeNode->SetName(volname);
+  }
+
+  // add nodes to scene
+  volumeNode->SetScene(mrmlScene);  
+  storageNode->SetScene(mrmlScene); 
+  displayNode->SetScene(mrmlScene); 
+
+  mrmlScene->AddNode(storageNode);  
+  mrmlScene->AddNode(displayNode);  
+
+  volumeNode->SetStorageNodeID(storageNode->GetID());
+  volumeNode->SetAndObserveDisplayNodeID(displayNode->GetID());
+
+  mrmlScene->AddNode(volumeNode);
+
+  if (scalarNode)
+  {
+    scalarNode->Delete();
+  }
+  if (storageNode)
+  {
+    storageNode->Delete();
+  }
+  if (displayNode)
+  {
+    displayNode->Delete();
+  }
+  return volumeNode;    
+}
+
 vtkMRMLVolumeNode* 
 AddScalarArchetypeVolume(vtkMRMLScene* mrmlScene,
                          const char* filename, 
@@ -355,9 +413,19 @@ int main(int argc, char** argv)
 
     //
     // make sure the basic parameters are available
-    // !!!
-    // segmenter node
-    // global parameters
+    if (!emLogic->GetSegmenterNode())
+    {
+      throw std::runtime_error("ERROR: MRML: Missing segmenter node.");
+    }
+    if (!emLogic->GetSegmenterNode()->GetTemplateNode())
+    {
+      throw std::runtime_error("ERROR: MRML: Missing template node.");
+    }
+    if (!emLogic->GetSegmenterNode()->GetTemplateNode()->
+        GetGlobalParametersNode())
+    {
+      throw std::runtime_error("ERROR: MRML: Missing global parameters node.");
+    }
 
     //
     // set the target images
@@ -487,15 +555,15 @@ int main(int argc, char** argv)
         // create volume node
         if (verbose) std::cerr << "Creating output volume node...";
         vtkMRMLVolumeNode* outputNode = 
-          AddScalarArchetypeVolume(mrmlScene,
-                                   resultVolumeFileName.c_str(),
-                                   true,
-                                   true,
-                                   NULL);
+          AddNewScalarArchetypeVolume(mrmlScene,
+                                      resultVolumeFileName.c_str(),
+                                      true,
+                                      true,
+                                      NULL);
 
         if (!outputNode)
           {
-          throw std::runtime_error("failed to load image.");
+          throw std::runtime_error("failed to create output image");
           }
 
         // connect output volume node to segmenter
@@ -553,9 +621,6 @@ int main(int argc, char** argv)
       throw std::runtime_error("ERROR: failed to run segmentation.");
       }
 
-    //
-    // save the results
-    // !!!
     }
   catch (std::runtime_error& e)
     {
@@ -568,6 +633,35 @@ int main(int argc, char** argv)
     std::cerr << "Unknown error detected.  Segmentation failed." << std::endl;
     segmentationSucceeded = false;
     }
+
+  if (!dontWriteResults)
+  {
+    //
+    // save the results
+    if (verbose) std::cerr << "Saving segmentation result...";
+    try
+    {
+      emLogic->GetSegmenterNode()->GetOutputVolumeNode()->GetStorageNode()->
+        WriteData(emLogic->GetSegmenterNode()->GetOutputVolumeNode());
+    }
+    catch (std::runtime_error& e)
+    {
+      std::cerr << e.what() << std::endl;
+      std::cerr << "Errors detetected.  Writing failed." << std::endl;
+      segmentationSucceeded = false;
+    }
+    catch (...)
+    {
+      std::cerr << "Unknown error detected.  Writing failed." << std::endl;
+      segmentationSucceeded = false;
+    }
+    if (verbose) std::cerr << "DONE" << std::endl;
+  }
+  else
+  {
+    if (verbose)
+      std::cerr << "Skipping over saving segmentation results." << std::endl;
+  }
 
   //
   // compare results to standard image

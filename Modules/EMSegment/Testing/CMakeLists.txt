@@ -12,7 +12,8 @@ INCLUDE_DIRECTORIES (
 # require a testing dataset that is not distributed by default with
 # Slicer3.  NB: The extra tests may take a long time and a large
 # amount of memory!!!  
-SET( RUN_EXTRA_EMSEGMENT_TESTS 0)
+SET( RUN_EXTRA_SHORT_EMSEGMENT_TESTS 1)
+SET( RUN_EXTRA_LONG_EMSEGMENT_TESTS 0)
 
 IF( NOT DISABLE_CXX_TESTING )
 
@@ -72,6 +73,8 @@ IF( NOT DISABLE_CXX_TESTING )
   ADD_TEST(
     EMSegCL_EFBogusMRMLScene
     ${EM_COMMAND_LINE_TEST_PREFIX}/EMSegmentCommandLine
+    --verbose
+    --dontWriteResults
     --mrmlSceneFileName 
     /tmp/bogus_file_scene.mrml
     )
@@ -85,6 +88,7 @@ IF( NOT DISABLE_CXX_TESTING )
     EMSegCL_DefaultNodes
     ${EM_COMMAND_LINE_TEST_PREFIX}/EMSegmentCommandLine
     --verbose 
+    --dontWriteResults
     --mrmlSceneFileName 
     ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/EMSegmentTutorialTemplate_small.mrml
     --resultStandardVolumeFileName 
@@ -95,6 +99,7 @@ IF( NOT DISABLE_CXX_TESTING )
     EMSegCL_DisableMultithreading
     ${EM_COMMAND_LINE_TEST_PREFIX}/EMSegmentCommandLine
     --verbose 
+    --dontWriteResults
     --disableMultithreading
     --mrmlSceneFileName 
     ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/EMSegmentTutorialTemplate_small.mrml
@@ -109,6 +114,7 @@ IF( NOT DISABLE_CXX_TESTING )
     EMSegCL_SpecifiedParameterNode
     ${EM_COMMAND_LINE_TEST_PREFIX}/EMSegmentCommandLine
     --verbose 
+    --dontWriteResults
     --mrmlSceneFileName 
     ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/EMSegmentTutorialTemplate_small.mrml
     --parametersMRMLNodeName 
@@ -121,6 +127,7 @@ IF( NOT DISABLE_CXX_TESTING )
     EMSegCL_EFBogusParameterNode
     ${EM_COMMAND_LINE_TEST_PREFIX}/EMSegmentCommandLine
     --verbose 
+    --dontWriteResults
     --mrmlSceneFileName 
     ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/EMSegmentTutorialTemplate_small.mrml
     --parametersMRMLNodeName BogusNodeName  
@@ -136,6 +143,7 @@ IF( NOT DISABLE_CXX_TESTING )
     EMSegCL_SpecifiedTargetImages
     ${EM_COMMAND_LINE_TEST_PREFIX}/EMSegmentCommandLine
     --verbose 
+    --dontWriteResults
     --mrmlSceneFileName 
     ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/EMSegmentTutorialTemplate_small.mrml
     --targetVolumeFileNames
@@ -148,6 +156,7 @@ IF( NOT DISABLE_CXX_TESTING )
     EMSegCL_EFBogusTargetImages
     ${EM_COMMAND_LINE_TEST_PREFIX}/EMSegmentCommandLine
     --verbose 
+    --dontWriteResults
     --mrmlSceneFileName 
     ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/EMSegmentTutorialTemplate_small.mrml
     --targetVolumeFileNames
@@ -163,6 +172,7 @@ IF( NOT DISABLE_CXX_TESTING )
     EMSegCL_EFTooManyImages
     ${EM_COMMAND_LINE_TEST_PREFIX}/EMSegmentCommandLine
     --verbose 
+    --dontWriteResults
     --mrmlSceneFileName 
     ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/EMSegmentTutorialTemplate_small.mrml
     --targetVolumeFileNames
@@ -178,6 +188,7 @@ IF( NOT DISABLE_CXX_TESTING )
     EMSegCL_EFTooFewImages
     ${EM_COMMAND_LINE_TEST_PREFIX}/EMSegmentCommandLine
     --verbose 
+    --dontWriteResults
     --mrmlSceneFileName 
     ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/EMSegmentTutorialTemplate_small.mrml
     --targetVolumeFileNames
@@ -193,6 +204,7 @@ IF( NOT DISABLE_CXX_TESTING )
     EMSegCL_SpecifiedResultImage
     ${EM_COMMAND_LINE_TEST_PREFIX}/EMSegmentCommandLine
     --verbose 
+    --dontWriteResults
     --mrmlSceneFileName 
     ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/EMSegmentTutorialTemplate_small.mrml
     --resultVolumeFileName
@@ -205,6 +217,7 @@ IF( NOT DISABLE_CXX_TESTING )
     EMSegCL_SpecifiedEverything
     ${EM_COMMAND_LINE_TEST_PREFIX}/EMSegmentCommandLine
     --verbose 
+    --dontWriteResults
     --mrmlSceneFileName 
     ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/EMSegmentTutorialTemplate_small.mrml
     --resultVolumeFileName
@@ -219,6 +232,7 @@ IF( NOT DISABLE_CXX_TESTING )
     EMSegCL_EFBogusResultStandardImage
     ${EM_COMMAND_LINE_TEST_PREFIX}/EMSegmentCommandLine
     --verbose 
+    --dontWriteResults
     --mrmlSceneFileName 
     ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/EMSegmentTutorialTemplate_small.mrml
     --resultStandardVolumeFileName
@@ -230,7 +244,34 @@ IF( NOT DISABLE_CXX_TESTING )
     PASS_REGULAR_EXPRESSION 
     "Error: result standard volume file does not exist")
 
-  IF ( RUN_EXTRA_EMSEGMENT_TESTS )
+  IF ( RUN_EXTRA_SHORT_EMSEGMENT_TESTS )
+
+    ADD_TEST(
+      EMSegCL_SpecifiedResultImageWriteIt
+      ${EM_COMMAND_LINE_TEST_PREFIX}/EMSegmentCommandLine
+      --verbose 
+      --mrmlSceneFileName 
+      ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/EMSegmentTutorialTemplate_small.mrml
+      --resultVolumeFileName
+      /tmp/EMSegCL_SpecifiedResultImageWriteIt_Result.mhd
+      --resultStandardVolumeFileName
+      ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/StandardData/StandardSegmentationResult_small.mhd
+      )
+
+    # be careful, this overwrites data!
+    #ADD_TEST(
+    #  EMSegCL_DefaultNodesOverwriteResults
+    #  ${EM_COMMAND_LINE_TEST_PREFIX}/EMSegmentCommandLine
+    #  --verbose 
+    #  --mrmlSceneFileName 
+    #  ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/EMSegmentTutorialTemplate_small.mrml
+    #  --resultStandardVolumeFileName 
+    #  ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/StandardData/StandardSegmentationResult_small.mhd
+    #  )
+
+  ENDIF (RUN_EXTRA_SHORT_EMSEGMENT_TESTS )
+
+  IF ( RUN_EXTRA_LONG_EMSEGMENT_TESTS )
     # test that the segmentation results match what the expected
     # results.
     ADD_TEST(
