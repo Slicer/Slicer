@@ -32,11 +32,41 @@ public:
   // Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "EMSTarget";}
 
+  // Description:
+  // Updates this node if it depends on other nodes
+  // when the node is deleted in the scene
+  virtual void UpdateReferences();
+
+  // Description:
+  // Update the stored reference to another node in the scene
+  virtual void UpdateReferenceID(const char *oldID, const char *newID);
+
+  virtual void   AddVolume(const char* key, const char* volumeNodeID);
+
+  virtual void   RemoveAllVolumes();
+  virtual void   RemoveVolumeByKey(const char* key);
+  virtual void   RemoveVolumeByNodeID(const char* key);
+  virtual void   RemoveNthVolume(int n);
+
+  virtual void   MoveNthVolume(int n, int toIndex);
+  
+  // set/get parameter node for intensity normalization
+  virtual const char* GetNthIntensityNormalizationParametersNode(int n);
+  virtual void SetNthIntensityNormalizationParametersNode(int n, 
+                                                          const char* nodeID);
+
 protected:
   vtkMRMLEMSTargetNode();
   ~vtkMRMLEMSTargetNode();
   vtkMRMLEMSTargetNode(const vtkMRMLEMSTargetNode&);
   void operator=(const vtkMRMLEMSTargetNode&);
+
+  //BTX
+  typedef vtkstd::vector<std::string>  IntensityNormalizationParameterListType;
+  typedef IntensityNormalizationParameterListType::iterator 
+  IntensityNormalizationParameterListIterator;
+  IntensityNormalizationParameterListType IntensityNormalizationParameterList;
+  //ETX
 };
 
 #endif
