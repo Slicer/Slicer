@@ -45,7 +45,9 @@ public:
 
   vtkGetMacro(NumberOfTargetInputChannels, unsigned int);
   virtual void SetNumberOfTargetInputChannels(unsigned int n);
-  virtual void SynchronizeNumberOfTargetInputChannels(unsigned int n);
+  virtual void AddTargetInputChannel();
+  virtual void RemoveTargetInputChannel(int index);
+  virtual void MoveTargetInputChannel(int fromIndex, int toIndex);
 
   // additional parameters valid for leaf nodes
   vtkSetReferenceStringMacro(LeafParametersNodeID);

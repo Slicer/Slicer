@@ -195,7 +195,7 @@ itcl::body SWidget::getPixel { image i j k } {
     foreach "w h d" [$image GetDimensions] {}
     set sliceSize [expr $w * $h]
     set idx [expr $i + $j*$w + $k*$sliceSize]
-    if { $scalars != "" } {
+    if { $scalars != "" && $n <= 4 } {
       set pixel [$scalars GetTuple$n $idx]
     } else {
       set pixel "Unknown"

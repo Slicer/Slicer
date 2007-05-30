@@ -262,7 +262,7 @@ GetOutputVolumeNode()
   if (this->GetScene() && this->GetOutputVolumeNodeID() )
     {
     vtkMRMLNode* snode = 
-      this->GetScene()->GetNodeByID(this->TargetNodeID);
+      this->GetScene()->GetNodeByID(this->OutputVolumeNodeID);
     node = vtkMRMLScalarVolumeNode::SafeDownCast(snode);
     }
   return node;

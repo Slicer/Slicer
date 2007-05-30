@@ -396,19 +396,21 @@ void vtkKWWindowLevelThresholdEditor::UpdateFromImage()
 {
   if (this->ImageData != NULL)
   {   
+    if ( this->ImageData->GetPointData()->GetScalars() != NULL )
+      {
+      this->Histogram->BuildHistogram( this->ImageData->GetPointData()->GetScalars(), 0);
+      double *range = this->Histogram->GetRange();
 
-    this->Histogram->BuildHistogram( this->ImageData->GetPointData()->GetScalars(), 0);
-    double *range = this->Histogram->GetRange();
+      this->ThresholdRange->SetWholeRange(range[0], range[1]);
+      this->WindowLevelRange->SetWholeRange(range[0] - 0.5 * (range[0] + range[1]), range[1] + 0.5 * (range[0] + range[1]));
 
-    this->ThresholdRange->SetWholeRange(range[0], range[1]);
-    this->WindowLevelRange->SetWholeRange(range[0] - 0.5 * (range[0] + range[1]), range[1] + 0.5 * (range[0] + range[1]));
+      this->SetWindowLevel(range[1] - range[0], 0.5 * (range[0] + range[1]) );
+      this->SetThreshold(range[0], range[1]);
 
-    this->SetWindowLevel(range[1] - range[0], 0.5 * (range[0] + range[1]) );
-    this->SetThreshold(range[0], range[1]);
-
-    // avoid crash when Image not set for histogram
-    this->ColorTransferFunctionEditor->SetHistogram(NULL);
-    this->ColorTransferFunctionEditor->SetHistogram(this->Histogram);
+      // avoid crash when Image not set for histogram
+      this->ColorTransferFunctionEditor->SetHistogram(NULL);
+      this->ColorTransferFunctionEditor->SetHistogram(this->Histogram);
+    }
   }
 }
 //----------------------------------------------------------------------------

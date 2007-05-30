@@ -47,14 +47,14 @@
       <label>Result Volume Filename</label>
     </file>    
 
-    <string-vector>
+    <file multiple="true">
       <name>targetVolumeFileNames</name>
       <longflag>targetVolumeFileNames</longflag>
 
       <description>Names of target volumes (to be segmented).  This flag should be used if the volumes are not present in the MRML scene (if they are, use targetMRMLNodeNames instead).  The number of target images must be less than or equal to the number of target images specified in the parameter set, and these images must be spatially aligned.</description>
 
       <label>Target FileNames</label>      
-    </string-vector>
+    </file>
   </parameters>
 
   <parameters advanced="true">
@@ -84,12 +84,12 @@
     <description>Subject to change, removal</description>
 
     <file>
-      <name>resultMRMLSceneFileName</name>
-      <longflag>resultMRMLSceneFileName</longflag>
+      <name>resultStandardVolumeFileName</name>
+      <longflag>resultStandardVolumeFileName</longflag>
 
-      <description>Write a MRML file that contains the target images and output labelmap.</description>
+      <description>Used for testing.  Compare segmentation results to this image and return EXIT_FAILURE if they do not match.</description>
 
-      <label>Result MRML Scene File Name</label>
+      <label>Result Standard Image</label>
     </file>    
 
   </parameters>

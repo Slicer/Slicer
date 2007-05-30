@@ -120,7 +120,7 @@ void vtkSlicerDiffusionWeightedVolumeDisplayWidget::ProcessWidgetEvents ( vtkObj
       if (displayNode != NULL)
         {
         // set and observe it's colour node id
-        if (strcmp(displayNode->GetColorNodeID(), color->GetID()) != 0)
+        if (displayNode->GetColorNodeID() && strcmp(displayNode->GetColorNodeID(), color->GetID()) != 0)
           {
           // there's a change, set it
           displayNode->SetAndObserveColorNodeID(color->GetID());

@@ -303,6 +303,36 @@ SetNumberOfTargetInputChannels(unsigned int n)
 }
 
 //-----------------------------------------------------------------------------
+void
+vtkMRMLEMSTreeParametersNode::
+AddTargetInputChannel()
+{
+  ++this->NumberOfTargetInputChannels;
+  this->InputChannelWeights.push_back(1.0);
+}
+
+//-----------------------------------------------------------------------------
+void
+vtkMRMLEMSTreeParametersNode::
+RemoveTargetInputChannel(int index)
+{
+  --this->NumberOfTargetInputChannels;
+  this->InputChannelWeights.erase(InputChannelWeights.begin() + index);
+}
+
+//-----------------------------------------------------------------------------
+void
+vtkMRMLEMSTreeParametersNode::
+MoveTargetInputChannel(int fromIndex, int toIndex)
+{
+  double movingValue = this->InputChannelWeights[fromIndex];
+  std::rotate(this->InputChannelWeights.begin()+fromIndex,
+              this->InputChannelWeights.begin()+fromIndex+1,
+              this->InputChannelWeights.begin()+toIndex+1);
+  this->InputChannelWeights[toIndex] = movingValue;
+}
+
+//-----------------------------------------------------------------------------
 double
 vtkMRMLEMSTreeParametersNode::
 GetInputChannelWeight(int index) const
@@ -316,14 +346,6 @@ vtkMRMLEMSTreeParametersNode::
 SetInputChannelWeight(int index, double value)
 {
   this->InputChannelWeights[index] = value;
-}
-
-//-----------------------------------------------------------------------------
-void
-vtkMRMLEMSTreeParametersNode::
-SynchronizeNumberOfTargetInputChannels(unsigned int numberOfChannels)
-{
-  this->SetNumberOfTargetInputChannels(numberOfChannels);
 }
 
 //-----------------------------------------------------------------------------

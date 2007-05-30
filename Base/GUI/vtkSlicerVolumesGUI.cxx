@@ -486,19 +486,7 @@ void vtkSlicerVolumesGUI::UpdateFramesFromMRML()
   vtkMRMLVolumeNode *refNode = 
         vtkMRMLVolumeNode::SafeDownCast(this->VolumeSelectorWidget->GetSelected());
 
-  // Update Volume Header and Display Widget
-  if (refNode != NULL)
-    {
-    this->VolumeHeaderWidget->SetVolumeNode(refNode);
-    this->VolumeHeaderWidget->UpdateWidgetFromMRML();
-    if (this->VolumeDisplayWidget != NULL)
-      {
-      this->VolumeDisplayWidget->SetVolumeNode(refNode);
-      // TODO: this call shouldn't be necessary, the set volume node should
-      // trigger a modified event that triggers update widget from mrml
-      this->VolumeDisplayWidget->UpdateWidgetFromMRML();
-      }
-    }
+
   // Update Display Widget according to the selected Volume Node
   vtkSlicerVolumeDisplayWidget *oldDisplayWidget = this->VolumeDisplayWidget;
   vtkKWFrame * oldFrame = this->VolumeDisplayFrame;
@@ -519,7 +507,15 @@ void vtkSlicerVolumesGUI::UpdateFramesFromMRML()
       }
     else if ( refNode->IsA("vtkMRMLVectorVolumeNode") ) 
       {
-      //this->VolumeDisplayWidget = vtkSlicerVectorVolumeDisplayWidget();
+      /* TODO: 
+      if (this->VolumeDisplayWidget != vectorVDW)
+        {
+        this->VolumeDisplayWidget->TearDownWidget();
+        tearDown = 1;
+        this->VolumeDisplayWidget = this->vectorVDW;
+        this->VolumeDisplayFrame = this->VectorDisplayFrame;
+        }
+        */
       }
     else if ( refNode->IsA("vtkMRMLDiffusionWeightedVolumeNode") )
       {
@@ -533,7 +529,19 @@ void vtkSlicerVolumesGUI::UpdateFramesFromMRML()
       }
     else if ( refNode->IsA("vtkMRMLDiffusionTensorVolumeNode") )
       {
-      //this->VolumeDisplayWidget = vtkSlicerDiffusionTensorVolumeDisplayWidget();
+        /* TODO: 
+      if (this->VolumeDisplayWidget != dtiVDW)
+        {
+        this->VolumeDisplayWidget->TearDownWidget();
+        tearDown = 1;
+        this->VolumeDisplayWidget = this->dtiVDW;
+        this->VolumeDisplayFrame = this->DTIDisplayFrame;
+        }
+        */
+      }
+    else 
+      {
+        vtkErrorMacro ( "unknown type " << refNode->GetClassName() );
       }
     }
 
@@ -551,6 +559,21 @@ void vtkSlicerVolumesGUI::UpdateFramesFromMRML()
     // Unpack old VolumeDisplayWidget
     this->Script ( "pack forget %s",
                   oldFrame->GetWidgetName());
+    }
+
+    // Update Volume Header and Display Widget
+  // TODO: this may not be needed once the parts above are doing the right things
+  if (refNode != NULL)
+    {
+    this->VolumeHeaderWidget->SetVolumeNode(refNode);
+    this->VolumeHeaderWidget->UpdateWidgetFromMRML();
+    if (this->VolumeDisplayWidget != NULL)
+      {
+      this->VolumeDisplayWidget->SetVolumeNode(refNode);
+      // TODO: this call shouldn't be necessary, the set volume node should
+      // trigger a modified event that triggers update widget from mrml
+      this->VolumeDisplayWidget->UpdateWidgetFromMRML();
+      }
     }
 }
 

@@ -489,6 +489,9 @@ void vtkSlicerSliceLogic::SetLabelOpacity(double LabelOpacity)
 //----------------------------------------------------------------------------
 void vtkSlicerSliceLogic::UpdatePipeline()
 {
+
+  int modified = 0;
+
   if ( this->SliceCompositeNode )
     {
     // get the background and foreground image data from the layers
@@ -508,7 +511,11 @@ void vtkSlicerSliceLogic::UpdatePipeline()
     
     if (this->BackgroundLayer)
       {
-      this->BackgroundLayer->SetVolumeNode (bgnode);
+      if ( this->BackgroundLayer->GetVolumeNode() != bgnode ) 
+        {
+        this->BackgroundLayer->SetVolumeNode (bgnode);
+        modified = 1;
+        }
       }
 
     // Foreground
@@ -521,7 +528,11 @@ void vtkSlicerSliceLogic::UpdatePipeline()
     
     if (this->ForegroundLayer)
       {
-      this->ForegroundLayer->SetVolumeNode (fgnode);
+      if ( this->ForegroundLayer->GetVolumeNode() != fgnode ) 
+        {
+        this->ForegroundLayer->SetVolumeNode (fgnode);
+        modified = 1;
+        }
       }
 
     // Label
@@ -534,7 +545,11 @@ void vtkSlicerSliceLogic::UpdatePipeline()
     
     if (this->LabelLayer)
       {
-      this->LabelLayer->SetVolumeNode (lbnode);
+      if ( this->LabelLayer->GetVolumeNode() != lbnode ) 
+        {
+        this->LabelLayer->SetVolumeNode (lbnode);
+        modified = 1;
+        }
       }
 
     // Now update the image blend with the background and foreground and label
@@ -542,35 +557,64 @@ void vtkSlicerSliceLogic::UpdatePipeline()
     //    we keep track so that someone could, for example, have a NULL background
     //    with a non-null foreground and label and everything will work with the 
     //    label opacity
-    this->Blend->RemoveAllInputs ( );
+    //
+    vtkImageBlend *tempBlend = vtkImageBlend::New();
+    
+    tempBlend->RemoveAllInputs ( );
     int layerIndex = 0;
     if ( this->BackgroundLayer && this->BackgroundLayer->GetImageData() )
       {
-      this->Blend->AddInput( this->BackgroundLayer->GetImageData() );
-      this->Blend->SetOpacity( layerIndex++, 1.0 );
+      tempBlend->AddInput( this->BackgroundLayer->GetImageData() );
+      tempBlend->SetOpacity( layerIndex++, 1.0 );
       }
     if ( this->ForegroundLayer && this->ForegroundLayer->GetImageData() )
       {
-      this->Blend->AddInput( this->ForegroundLayer->GetImageData() );
-      this->Blend->SetOpacity( layerIndex++, this->SliceCompositeNode->GetForegroundOpacity() );
+      tempBlend->AddInput( this->ForegroundLayer->GetImageData() );
+      tempBlend->SetOpacity( layerIndex++, this->SliceCompositeNode->GetForegroundOpacity() );
       }
     if ( this->LabelLayer && this->LabelLayer->GetImageData() )
       {
-      this->Blend->AddInput( this->LabelLayer->GetImageData() );
-      this->Blend->SetOpacity( layerIndex++, this->SliceCompositeNode->GetLabelOpacity() );
+      tempBlend->AddInput( this->LabelLayer->GetImageData() );
+      tempBlend->SetOpacity( layerIndex++, this->SliceCompositeNode->GetLabelOpacity() );
       }
+
+    for (layerIndex = 0; layerIndex < tempBlend->GetNumberOfInputs(); layerIndex++)
+      {
+      if ( tempBlend->GetInput(layerIndex) != this->Blend->GetInput(layerIndex) )
+        {
+        this->Blend->SetInput(layerIndex, tempBlend->GetInput(layerIndex));
+        modified = 1;
+        }
+      if ( tempBlend->GetOpacity(layerIndex) != this->Blend->GetOpacity(layerIndex) )
+        {
+        this->Blend->SetOpacity(layerIndex, tempBlend->GetOpacity(layerIndex));
+        modified = 1;
+        }
+      }
+
+    tempBlend->Delete();
+
 
     if ( this->SliceModelNode && 
           this->SliceModelNode->GetDisplayNode() &&
             this->SliceNode ) 
       {
-      this->SliceModelNode->GetDisplayNode()->SetVisibility( this->SliceNode->GetSliceVisible() );
-      this->SliceModelNode->GetDisplayNode()->SetAndObserveTextureImageData(this->GetImageData());
+      if (this->SliceModelNode->GetDisplayNode()->GetVisibility() != this->SliceNode->GetSliceVisible() )
+        {
+        this->SliceModelNode->GetDisplayNode()->SetVisibility( this->SliceNode->GetSliceVisible() );
+        }
+      if (this->SliceModelNode->GetDisplayNode()->GetTextureImageData() != this->GetImageData())
+        {
+        this->SliceModelNode->GetDisplayNode()->SetAndObserveTextureImageData(this->GetImageData());
+        }
       }
 
     this->UpdateImageData();
 
-    this->Modified();
+    if ( modified )
+      {
+      this->Modified();
+      }
     }
 }
 

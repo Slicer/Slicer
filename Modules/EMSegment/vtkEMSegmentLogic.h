@@ -257,7 +257,10 @@ public:
   virtual vtkIdType   GetTargetSelectedVolumeNthID(int n); 
   virtual const char* GetTargetSelectedVolumeNthMRMLID(int n); 
   virtual void        AddTargetSelectedVolume(vtkIdType volumeID);
+  virtual void        AddTargetSelectedVolumeByMRMLID(char* mrmlID);
   virtual void        RemoveTargetSelectedVolume(vtkIdType volumeID);
+  virtual void        MoveTargetSelectedVolume(int fromIndex,
+                                               int toIndex);
 
   //
   // registration parameters
@@ -382,7 +385,10 @@ private:
 
   virtual vtkMRMLVolumeNode* GetVolumeNode(vtkIdType);
 
-  virtual void           PropogateChangeInNumberOfSelectedTargetImages();
+  virtual void           PropogateAdditionOfSelectedTargetImage();
+  virtual void           PropogateRemovalOfSelectedTargetImage(int index);
+  virtual void           PropogateMovementOfSelectedTargetImage(int fromIndex,
+                                                                int toIndex);
   virtual void           UpdateMeanAndCovarianceFromSample(vtkIdType nodeID);
 
   //BTX

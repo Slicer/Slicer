@@ -36,7 +36,9 @@ public:
 
   vtkGetMacro(NumberOfTargetInputChannels, unsigned int);
   virtual void SetNumberOfTargetInputChannels(unsigned int n);
-  virtual void SynchronizeNumberOfTargetInputChannels(int numberOfChannels);
+  virtual void AddTargetInputChannel();
+  virtual void RemoveTargetInputChannel(int index);
+  virtual void MoveTargetInputChannel(int fromIndex, int toIndex);
 
   vtkGetMacro(IntensityLabel, int);
   vtkSetMacro(IntensityLabel, int);

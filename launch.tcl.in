@@ -304,9 +304,9 @@ proc launch_SetPaths {} {
 # optional - show splash screen
 #
 proc launch_SplashScreen {} {
-  package require Tk
-  wm withdraw .
   if { $::LAUNCH(showSplash) } {
+    package require Tk
+    wm withdraw .
     launch_SplashShow
   }
 }

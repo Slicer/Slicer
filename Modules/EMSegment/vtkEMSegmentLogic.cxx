@@ -1702,7 +1702,17 @@ AddTargetSelectedVolume(vtkIdType volumeID)
   this->GetSegmenterNode()->GetTargetNode()->
     AddVolume(name.c_str(), mrmlID);
   
-  this->PropogateChangeInNumberOfSelectedTargetImages();
+  // propogate change to parameters nodes
+  this->PropogateAdditionOfSelectedTargetImage();
+}
+
+//----------------------------------------------------------------------------
+void
+vtkEMSegmentLogic::
+AddTargetSelectedVolumeByMRMLID(char* mrmlID)
+{
+  vtkIdType volumeID = this->MapMRMLNodeIDToVTKNodeID(mrmlID);
+  this->AddTargetSelectedVolume(volumeID);
 }
 
 //----------------------------------------------------------------------------
@@ -1718,11 +1728,46 @@ RemoveTargetSelectedVolume(vtkIdType volumeID)
     return;
     }
 
-  // remove 
+  // get this image's index in the target list
+  int imageIndex = this->GetSegmenterNode()->GetTargetNode()->
+    GetIndexByVolumeNodeID(mrmlID);
+  if (imageIndex < 0)
+    {
+    vtkErrorMacro("Volume not present in target: " << volumeID);
+    return;
+    }
+
+  // remove from target
   this->GetSegmenterNode()->GetTargetNode()->
     RemoveVolumeByNodeID(mrmlID);
 
-  this->PropogateChangeInNumberOfSelectedTargetImages();
+  // propogate change to parameters nodes
+  this->PropogateRemovalOfSelectedTargetImage(imageIndex);
+}
+
+//----------------------------------------------------------------------------
+void
+vtkEMSegmentLogic::
+MoveTargetSelectedVolume(int fromIndex, int toIndex)
+{
+  // make sure the indices make sense
+  if (fromIndex < 0 || fromIndex >= this->GetTargetNumberOfSelectedVolumes())
+    {
+    vtkErrorMacro("invalid target from index " << fromIndex);
+    return;
+    }
+  if (toIndex < 0 || toIndex >= this->GetTargetNumberOfSelectedVolumes())
+    {
+    vtkErrorMacro("invalid target to index " << toIndex);
+    return;
+    }
+
+  // move inside target node
+  this->GetSegmenterNode()->GetTargetNode()->
+    MoveNthVolume(fromIndex, toIndex);
+
+  // propogate change to parameters nodes
+  this->PropogateMovementOfSelectedTargetImage(fromIndex, toIndex);
 }
 
 //----------------------------------------------------------------------------
@@ -2664,14 +2709,14 @@ AddNewTreeNode()
 
   // update memory
   leafParametersNode->
-    SynchronizeNumberOfTargetInputChannels(this->GetSegmenterNode()->
-                                           GetTargetNode()->
-                                           GetNumberOfVolumes());
+    SetNumberOfTargetInputChannels(this->GetSegmenterNode()->
+                                   GetTargetNode()->
+                                   GetNumberOfVolumes());
   treeParametersNode->
-    SynchronizeNumberOfTargetInputChannels(this->
-                                           GetSegmenterNode()->
-                                           GetTargetNode()->
-                                           GetNumberOfVolumes());
+    SetNumberOfTargetInputChannels(this->
+                                   GetSegmenterNode()->
+                                   GetTargetNode()->
+                                   GetNumberOfVolumes());
 
   // create tree node and add it to the scene
   vtkMRMLEMSTreeNode* treeNode = 
@@ -2974,7 +3019,7 @@ GetListOfTreeNodeIDs(vtkIdType rootNodeID, vtkstd::vector<vtkIdType>& idList)
 //-----------------------------------------------------------------------------
 void
 vtkEMSegmentLogic::
-PropogateChangeInNumberOfSelectedTargetImages()
+PropogateAdditionOfSelectedTargetImage()
 {
   //
   // update (1) global parameters node, (2) channel weights in tree
@@ -2983,10 +3028,11 @@ PropogateChangeInNumberOfSelectedTargetImages()
   int numberOfTargetChannels = 
     this->GetSegmenterNode()->GetTargetNode()->GetNumberOfVolumes();
 
+  // update global parameter node
   this->GetGlobalParametersNode()->
     SetNumberOfTargetInputChannels(numberOfTargetChannels);
 
-  // iterate over nodes
+  // iterate over tree nodes
   typedef vtkstd::vector<vtkIdType>  NodeIDList;
   typedef NodeIDList::const_iterator NodeIDListIterator;
   NodeIDList nodeIDList;
@@ -2999,22 +3045,93 @@ PropogateChangeInNumberOfSelectedTargetImages()
     vtkMRMLEMSTreeParametersNode* parametersNode = 
       treeNode->GetParametersNode();
     parametersNode->
-      SynchronizeNumberOfTargetInputChannels(numberOfTargetChannels);
-
-    // copy from current input channels
-    // !!!bcd!!!
+      AddTargetInputChannel();
 
     // update mean and covariance
     vtkMRMLEMSTreeParametersLeafNode* leafParametersNode = 
       parametersNode->GetLeafParametersNode();
     leafParametersNode->
-      SynchronizeNumberOfTargetInputChannels(numberOfTargetChannels);
+      AddTargetInputChannel();
 
     if (this->TreeInfoMap[*i].DistributionSpecificationMethod == 
         vtkEMSegmentLogic::DistributionSpecificationManuallySample)
       {
       this->UpdateMeanAndCovarianceFromSample(*i);
       }
+    }
+}
+
+//-----------------------------------------------------------------------------
+void
+vtkEMSegmentLogic::
+PropogateRemovalOfSelectedTargetImage(int imageIndex)
+{
+  std::cerr << "Removing target image: " << imageIndex << std::endl;
+
+  //
+  // update (1) global parameters node, (2) channel weights in tree
+  // parameters & (3) intensity distributions
+  //
+  int numberOfTargetChannels = 
+    this->GetSegmenterNode()->GetTargetNode()->GetNumberOfVolumes();
+
+  // update global parameter node
+  this->GetGlobalParametersNode()->
+    SetNumberOfTargetInputChannels(numberOfTargetChannels);
+
+  // iterate over tree nodes
+  typedef vtkstd::vector<vtkIdType>  NodeIDList;
+  typedef NodeIDList::const_iterator NodeIDListIterator;
+  NodeIDList nodeIDList;
+  this->GetListOfTreeNodeIDs(this->GetTreeRootNodeID(), nodeIDList);
+  for (NodeIDListIterator i = nodeIDList.begin(); i != nodeIDList.end(); ++i)
+    {
+    vtkMRMLEMSTreeNode* treeNode = this->GetTreeNode(*i);
+    
+    // update channel weights
+    vtkMRMLEMSTreeParametersNode* parametersNode = 
+      treeNode->GetParametersNode();
+    parametersNode->
+      RemoveTargetInputChannel(imageIndex);
+
+    // update mean and covariance
+    vtkMRMLEMSTreeParametersLeafNode* leafParametersNode = 
+      parametersNode->GetLeafParametersNode();
+    leafParametersNode->
+      RemoveTargetInputChannel(imageIndex);
+    }
+}
+
+//-----------------------------------------------------------------------------
+void
+vtkEMSegmentLogic::
+PropogateMovementOfSelectedTargetImage(int fromIndex, int toIndex)
+{
+  //
+  // update (1) channel weights in tree parameters & (2) intensity
+  // distributions
+  //
+
+  // iterate over tree nodes
+  typedef vtkstd::vector<vtkIdType>  NodeIDList;
+  typedef NodeIDList::const_iterator NodeIDListIterator;
+  NodeIDList nodeIDList;
+  this->GetListOfTreeNodeIDs(this->GetTreeRootNodeID(), nodeIDList);
+  for (NodeIDListIterator i = nodeIDList.begin(); i != nodeIDList.end(); ++i)
+    {
+    vtkMRMLEMSTreeNode* treeNode = this->GetTreeNode(*i);
+    
+    // update channel weights
+    vtkMRMLEMSTreeParametersNode* parametersNode = 
+      treeNode->GetParametersNode();
+    parametersNode->
+      MoveTargetInputChannel(fromIndex, toIndex);
+
+    // update mean and covariance
+    vtkMRMLEMSTreeParametersLeafNode* leafParametersNode = 
+      parametersNode->GetLeafParametersNode();
+    leafParametersNode->
+      MoveTargetInputChannel(fromIndex, toIndex);
     }
 }
 

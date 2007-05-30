@@ -14,17 +14,10 @@ SET (CLP_MODULE EMSegmentCommandLine)
 
 SET ( ${CLP_MODULE}_SOURCE
   ${CLP_MODULE}.cxx
-  vtkEMSegmentTestUtilities.cxx
 )
 
 # generate command line parsing
 GENERATECLP( ${CLP_MODULE}_SOURCE ${CLP_MODULE}.xml )
-
-# output libs should to in Plugins
-IF (Slicer3_SOURCE_DIR)
-  SET(LIBRARY_OUTPUT_PATH "${SLICER_LIBRARIES_DIR}/Plugins")
-  SET(EXECUTABLE_OUTPUT_PATH "${SLICER_LIBRARIES_DIR}/Plugins")
-ENDIF (Slicer3_SOURCE_DIR)
 
 # build a stand-alone executable
 ADD_EXECUTABLE( ${CLP_MODULE} ${${CLP_MODULE}_SOURCE} )
@@ -34,13 +27,19 @@ TARGET_LINK_LIBRARIES(
   vtkCommon
   )
 
+# output libs should to in Plugins
+#IF (Slicer3_SOURCE_DIR)
+#  SET(LIBRARY_OUTPUT_PATH "${SLICER_LIBRARIES_DIR}/Plugins")
+#  SET(EXECUTABLE_OUTPUT_PATH "${SLICER_LIBRARIES_DIR}/Plugins")
+#ENDIF (Slicer3_SOURCE_DIR)
+
 # pluggable library
-ADD_LIBRARY( ${CLP_MODULE}Lib SHARED ${${CLP_MODULE}_SOURCE} )
-SET_TARGET_PROPERTIES ( ${CLP_MODULE}Lib 
-  PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint" 
-  )
-TARGET_LINK_LIBRARIES( 
-  ${CLP_MODULE}Lib
-  EMSegment
-  vtkCommon
-  )
+#ADD_LIBRARY( ${CLP_MODULE}Lib SHARED ${${CLP_MODULE}_SOURCE} )
+#SET_TARGET_PROPERTIES ( ${CLP_MODULE}Lib 
+#  PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint" 
+#  )
+#TARGET_LINK_LIBRARIES( 
+#  ${CLP_MODULE}Lib
+#  EMSegment
+#  vtkCommon
+#  )

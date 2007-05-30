@@ -229,6 +229,53 @@ SetNumberOfTargetInputChannels(unsigned int n)
 }
 
 //-----------------------------------------------------------------------------
+void
+vtkMRMLEMSTreeParametersLeafNode::
+AddTargetInputChannel()
+{
+  this->LogMean.push_back(0.0);
+  for (unsigned int i = 0; i < this->NumberOfTargetInputChannels; ++i)
+    {
+    this->LogCovariance[i].push_back(0.0);
+    }
+  ++this->NumberOfTargetInputChannels; 
+  this->LogCovariance.
+    push_back(vtkstd::vector<double>(this->NumberOfTargetInputChannels, 0.0));
+}
+
+//-----------------------------------------------------------------------------
+void
+vtkMRMLEMSTreeParametersLeafNode::
+RemoveTargetInputChannel(int index)
+{
+  this->LogMean.erase(this->LogMean.begin() + index);
+  for (unsigned int i = 0; i < this->NumberOfTargetInputChannels; ++i)
+    {
+    this->LogCovariance[i].erase(this->LogCovariance[i].begin() + index);
+    }
+  this->LogCovariance.erase(this->LogCovariance.begin() + index);
+  --this->NumberOfTargetInputChannels;
+}
+
+//-----------------------------------------------------------------------------
+void
+vtkMRMLEMSTreeParametersLeafNode::
+MoveTargetInputChannel(int fromIndex, int toIndex)
+{
+  double movingValue = this->LogMean[fromIndex];
+  std::rotate(this->LogMean.begin()+fromIndex,
+              this->LogMean.begin()+fromIndex+1,
+              this->LogMean.begin()+toIndex+1);
+  this->LogMean[toIndex] = movingValue;
+
+  vtkstd::vector<double> movingVector = this->LogCovariance[fromIndex];
+  std::rotate(this->LogCovariance.begin()+fromIndex,
+              this->LogCovariance.begin()+fromIndex+1,
+              this->LogCovariance.begin()+toIndex+1);
+  this->LogCovariance[toIndex] = movingVector;  
+}
+
+//-----------------------------------------------------------------------------
 double
 vtkMRMLEMSTreeParametersLeafNode::
 GetLogMean(int index) const
@@ -260,11 +307,5 @@ SetLogCovariance(int row, int column, double value)
   this->LogCovariance[row][column] = value;
 }
 
-//-----------------------------------------------------------------------------
-void
-vtkMRMLEMSTreeParametersLeafNode::
-SynchronizeNumberOfTargetInputChannels(int numberOfChannels)
-{
-  this->SetNumberOfTargetInputChannels(numberOfChannels);
-}
+
 
