@@ -313,6 +313,6 @@ IF( NOT DISABLE_CXX_TESTING )
       ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/StandardData/StandardSegmentationResult_large.mhd
       )
 
-  ENDIF ( RUN_EXTRA_EMSEGMENT_TESTS )
+  ENDIF ( RUN_EXTRA_LONG_EMSEGMENT_TESTS )
 
 ENDIF( NOT DISABLE_CXX_TESTING )
