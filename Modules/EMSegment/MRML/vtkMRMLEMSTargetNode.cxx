@@ -3,6 +3,7 @@
 #include "vtkMRMLScene.h"
 #include <algorithm>
 #include <iterator>
+#include "vtkMRMLEMSIntensityNormalizationParametersNode.h"
 
 vtkMRMLEMSTargetNode* 
 vtkMRMLEMSTargetNode::
@@ -109,10 +110,20 @@ void vtkMRMLEMSTargetNode::ReadXMLAttributes(const char** attrs)
       vtksys_stl::stringstream ss;
       ss << val;
       vtksys_stl::string s;
+
+      int index = 0;
       while (ss >> s)
         {
-        this->IntensityNormalizationParameterList.push_back(s);
+        if (this->IntensityNormalizationParameterList.size() <= index)
+          {
+          this->IntensityNormalizationParameterList.push_back(s);
+          }
+        else
+          {
+          this->IntensityNormalizationParameterList[index] = s;
+          }
         this->Scene->AddReferencedNodeID(s.c_str(), this);
+        ++index;
         }
       }
     }
@@ -204,3 +215,35 @@ MoveNthVolume(int n, int toIndex)
     this->IntensityNormalizationParameterList.begin();
   vtksys_stl::swap(*(b+n), *(b+toIndex));
 }
+
+const char*
+vtkMRMLEMSTargetNode::
+GetNthIntensityNormalizationParametersNodeID(int n)
+{
+  return this->IntensityNormalizationParameterList[n].c_str();
+}
+
+
+vtkMRMLEMSIntensityNormalizationParametersNode*
+vtkMRMLEMSTargetNode::
+GetNthIntensityNormalizationParametersNode(int n)
+{
+  vtkMRMLEMSIntensityNormalizationParametersNode* node = NULL;
+  if (this->GetScene() && 
+      this->GetNthIntensityNormalizationParametersNodeID(n))
+    {
+      vtkMRMLNode* snode = this->GetScene()->
+        GetNodeByID(this->GetNthIntensityNormalizationParametersNodeID(n));
+      node = 
+        vtkMRMLEMSIntensityNormalizationParametersNode::SafeDownCast(snode);
+    }
+  return node;  
+}
+
+void
+vtkMRMLEMSTargetNode::
+SetNthIntensityNormalizationParametersNodeID(int n, const char* id)
+{
+  this->IntensityNormalizationParameterList[n] = id;
+}
+

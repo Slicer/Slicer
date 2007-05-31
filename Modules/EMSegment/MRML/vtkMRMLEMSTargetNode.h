@@ -6,6 +6,8 @@
 #include "vtkEMSegment.h"
 #include "vtkMRMLEMSVolumeCollectionNode.h"
 
+class vtkMRMLEMSIntensityNormalizationParametersNode;
+
 class VTK_EMSEGMENT_EXPORT vtkMRMLEMSTargetNode : 
   public vtkMRMLEMSVolumeCollectionNode
 {
@@ -51,9 +53,11 @@ public:
   virtual void   MoveNthVolume(int n, int toIndex);
   
   // set/get parameter node for intensity normalization
-  //  virtual const char* GetNthIntensityNormalizationParametersNode(int n);
-  //virtual void SetNthIntensityNormalizationParametersNode(int n, 
-  //                                                        const char* nodeID);
+  virtual vtkMRMLEMSIntensityNormalizationParametersNode*
+    GetNthIntensityNormalizationParametersNode(int n);
+  virtual const char* GetNthIntensityNormalizationParametersNodeID(int n);
+  virtual void SetNthIntensityNormalizationParametersNodeID(int n, 
+                                                            const char* nodeID);
 
 protected:
   vtkMRMLEMSTargetNode();
