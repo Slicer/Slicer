@@ -191,6 +191,7 @@ protected:
   vtkKWRenderWidget *MainViewer;
   vtkKWFrame *ViewerFrame;
   int RenderPending;
+  int UpdateFromMRMLRequested;
 
   void RemoveModelProps();
 

@@ -63,6 +63,7 @@ vtkSlicerViewerWidget::vtkSlicerViewerWidget ( )
   this->RenderPending = 0;  
   this->ViewerFrame = NULL;
   this->ProcessingMRMLEvent = 0;
+  this->UpdateFromMRMLRequested = 0;
 
   this->CameraNode = NULL;
 
@@ -585,12 +586,16 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
     vtkMRMLNode *node = (vtkMRMLNode*) (callData);
     if (node != NULL && node->IsA("vtkMRMLModelNode") )
       {
-      this->UpdateFromMRML();
+      this->UpdateFromMRMLRequested = 1;
+      this->RequestRender();
+      //this->UpdateFromMRML();
       }
     else if (node != NULL && node->IsA("vtkMRMLModelHierarchyNode") )
       {
       this->UpdateModelHierarchies();
-      this->UpdateFromMRML();
+      this->UpdateFromMRMLRequested = 1;
+      this->RequestRender();
+      //this->UpdateFromMRML();
       }
     else if (node != NULL && node->IsA("vtkMRMLClipModelsNode") )
       {
@@ -602,14 +607,15 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
         {
         vtkSetMRMLNodeMacro(this->ClipModelsNode, NULL);
         }
-      this->UpdateFromMRML();
+      this->UpdateFromMRMLRequested = 1;
+      this->RequestRender();
+      //this->UpdateFromMRML();
       }
     }
   else if (vtkMRMLCameraNode::SafeDownCast(caller) != NULL &&
            event == vtkCommand::ModifiedEvent)
     {
     vtkDebugMacro("ProcessingMRML: got a camera node modified event");
-    //this->UpdateFromMRML();
     this->UpdateCameraNode();
     this->RequestRender();
     }
@@ -641,19 +647,32 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
       }
     else
       {
-      this->UpdateFromMRML();
+      this->UpdateFromMRMLRequested = 1;
+      this->RequestRender();
+      //this->UpdateFromMRML();
       }
     }
   else if (vtkMRMLClipModelsNode::SafeDownCast(caller) != NULL &&
            event == vtkCommand::ModifiedEvent)
     {
-    this->UpdateFromMRML();
+    this->UpdateFromMRMLRequested = 1;
+    this->RequestRender();
+    //this->UpdateFromMRML();
+    }
+  else if (vtkMRMLSliceNode::SafeDownCast(caller) != NULL &&
+           event == vtkCommand::ModifiedEvent && (this->UpdateClipSlicesFormMRML() || this->ClippingOn))
+    {
+    this->UpdateFromMRMLRequested = 1;
+    this->RequestRender();
+    //this->UpdateFromMRML();
     }
   else if (vtkMRMLModelHierarchyNode::SafeDownCast(caller) &&
            event == vtkCommand::ModifiedEvent)
     {
     this->UpdateModelHierarchies();
-    this->UpdateFromMRML();
+    this->UpdateFromMRMLRequested = 1;
+    this->RequestRender();
+    //this->UpdateFromMRML();
     }
   else
     {
@@ -842,6 +861,8 @@ void vtkSlicerViewerWidget::UpdateFromMRML()
   this->UpdateModelsFromMRML();
 
   this->RequestRender ( );
+
+  this->UpdateFromMRMLRequested = 0;
 }
 
 //---------------------------------------------------------------------------
@@ -852,10 +873,11 @@ void vtkSlicerViewerWidget::UpdateModelsFromMRML()
   std::vector<vtkMRMLModelNode *> slices;
 
   // find volume slices
-  scene->InitTraversal();
   bool clearDisplayedModels = false;
-  while (node=scene->GetNextNodeByClass("vtkMRMLModelNode"))
+  int nnodes = scene->GetNumberOfNodesByClass("vtkMRMLModelNode");
+  for (int n=0; n<nnodes; n++)
     {
+    node = scene->GetNthNodeByClass(n, "vtkMRMLModelNode");
     vtkMRMLModelNode *model = vtkMRMLModelNode::SafeDownCast(node);
     // render slices last so that transparent objects are rendered in front of them
     if (!strcmp(model->GetName(), "Red Volume Slice") ||
@@ -895,10 +917,10 @@ void vtkSlicerViewerWidget::UpdateModelsFromMRML()
     }
   
   // render the rest of the models
-  scene->InitTraversal();
-  while (node=scene->GetNextNodeByClass("vtkMRMLModelNode"))
+  int nmodels = scene->GetNumberOfNodesByClass("vtkMRMLModelNode");
+  for (int n=0; n<nmodels; n++)
     {
-    vtkMRMLModelNode *model = vtkMRMLModelNode::SafeDownCast(node);
+    vtkMRMLModelNode *model = vtkMRMLModelNode::SafeDownCast(scene->GetNthNodeByClass(n, "vtkMRMLModelNode"));
     // render slices last so that transparent objects are rendered in fron of them
     if (!strcmp(model->GetName(), "Red Volume Slice") ||
         !strcmp(model->GetName(), "Green Volume Slice") ||
@@ -914,10 +936,7 @@ void vtkSlicerViewerWidget::UpdateModelsFromMRML()
 //---------------------------------------------------------------------------
 void vtkSlicerViewerWidget::UpdateModifiedModel(vtkMRMLModelNode *model)
 {
-  if (this->DisplayedModels.find(model->GetID()) == this->DisplayedModels.end() )
-    {
-    this->UpdateModel(model);
-    } 
+  this->UpdateModel(model);
   //vtkActor *actor = this->DisplayedModels.find(model->GetID())->second;
   vtkActor *actor = this->DisplayedModels[ model->GetID() ];
   this->SetModelDisplayProperty(model, actor);
@@ -927,6 +946,24 @@ void vtkSlicerViewerWidget::UpdateModifiedModel(vtkMRMLModelNode *model)
 void vtkSlicerViewerWidget::UpdateModelPolyData(vtkMRMLModelNode *model)
 {
   vtkMRMLModelDisplayNode *modelDisplayNode = this->GetModelDisplayNode(model);
+  vtkActor* actor = NULL;
+  std::map<const char *, vtkActor *>::iterator ait;
+
+  ait = this->DisplayedModels.find(model->GetID());
+  if (ait == this->DisplayedModels.end() )
+    {
+    actor = vtkActor::New();
+    }
+  else
+    {
+    actor = (*ait).second;
+    std::map<const char *, int>::iterator cit = this->DisplayedModelsClipState.find(model->GetID());
+    if (modelDisplayNode && cit != this->DisplayedModelsClipState.end() && cit->second == modelDisplayNode->GetClipping())
+      {
+      this->DisplayedModelsVisibility[model->GetID()] = modelDisplayNode->GetVisibility();
+      return;
+      }
+    }
 
   vtkClipPolyData *clipper = NULL;
   if (this->ClippingOn && modelDisplayNode != NULL && modelDisplayNode->GetClipping())
@@ -948,18 +985,7 @@ void vtkSlicerViewerWidget::UpdateModelPolyData(vtkMRMLModelNode *model)
     mapper->SetInput ( model->GetPolyData() );
     }
 
-  vtkActor* actor;
-  std::map<const char *, vtkActor *>::iterator ait;
-
-  ait = this->DisplayedModels.find(model->GetID());
-  if (ait == this->DisplayedModels.end() )
-    {
-    actor = vtkActor::New();
-    }
-  else
-    {
-    actor = (*ait).second;
-    }
+ 
   actor->SetMapper( mapper );
   mapper->Delete();
 
@@ -1101,6 +1127,11 @@ void vtkSlicerViewerWidget::RequestRender()
 //---------------------------------------------------------------------------
 void vtkSlicerViewerWidget::Render()
 {
+  if (this->UpdateFromMRMLRequested)
+    {
+    this->UpdateFromMRML();
+    }
+
   this->MainViewer->Render();
   vtkDebugMacro("vtkSlicerViewerWidget::Render called render" << endl);
   this->SetRenderPending(0);
