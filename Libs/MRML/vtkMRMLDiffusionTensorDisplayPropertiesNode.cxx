@@ -353,3 +353,163 @@ vtkPolyData * vtkMRMLDiffusionTensorDisplayPropertiesNode::GetGlyphSource ( )
   return ( this->GlyphSource );
 
 }
+
+const char* vtkMRMLDiffusionTensorDisplayPropertiesNode::GetScalarEnumAsString(int var)
+{
+  if (var ==  this->Trace)
+    {
+    return "Trace";
+    }
+  if (var == this->Determinant)
+    {
+    return "Determinant";
+    }
+  if (var == this->RelativeAnisotropy)
+    {
+    return "RelativeAnisotropy";
+    }
+  if (var == this->FractionalAnisotropy)
+    {
+    return "FractionalAnisotropy";
+    }
+  if (var == this->MaxEigenvalue)
+    {
+    return "MaxEigenvalue";
+    }
+  if (var == this->MidEigenvalue)
+    {
+    return "MidEigenvalue";
+    }
+  if (var == this->MinEigenvalue)
+    {
+    return "MinEigenvalue";
+    }
+  if (var == this->LinearMeasure)
+    {
+    return "LinearMeasure";
+    }
+  if (var == this->PlanarMeasure)
+    {
+    return "PlanarMeasure";
+    }
+  if (var == this->SphericalMeasure)
+    {
+    return "SphericalMeasure";
+    }
+  if (var == this->ColorOrientation)
+    {
+    return "ColorOrientation";
+    }
+  if (var == this->D11)
+    {
+    return "D11";
+    }
+  if (var == this->D22)
+    {
+    return "D22";
+    }
+  if (var == this->D33)
+    {
+    return "D33";
+    }
+  if (var == this->Mode)
+    {
+    return "Mode";
+    }
+  if (var == this->ColorMode)
+    {
+    return "ColorMode";
+    }
+  if (var == this->MaxEigenvalueProjX)
+    {
+    return "MaxEigenvalueProjX";
+    }
+  if (var == this->MaxEigenvalueProjY)
+    {
+    return "MaxEigenvalueProjY";
+    }
+  if (var == this->MaxEigenvalueProjZ)
+    {
+    return "MaxEigenvalueProjZ";
+    }
+  if (var == this->MaxEigenvec_ProjX)
+    {
+    return "MaxEigenvec_ProjX";
+    }
+  if (var == this->MaxEigenvec_ProjY)
+    {
+    return "MaxEigenvec_ProjY";
+    }
+  if (var == this->MaxEigenvec_ProjZ)
+    {
+    return "MaxEigenvec_ProjZ";
+    }
+  if (var == this->ParallelDiffusivity)
+    {
+    return "ParallelDiffusivity";
+    }
+  if (var == this->PerpendicularDiffusivity)
+    {
+    return "PerpendicularDiffusivity";
+    }
+  if (var == this->ColorOrientationMiddleEigenvector)
+    {
+    return "ColorOrientationMiddleEigenvector";
+    }
+  if (var == this->ColorOrientationMinEigenvector)
+    {
+    return "ColorOrientationMinEigenvector";
+    }
+  return "(unknown)";
+}
+
+const char* vtkMRMLDiffusionTensorDisplayPropertiesNode::GetScalarInvariantAsString()
+{
+  return this->GetScalarEnumAsString(this->ScalarInvariant);
+}
+
+const char* vtkMRMLDiffusionTensorDisplayPropertiesNode::GetGlyphGeometryAsString()
+{
+  if (this->GlyphGeometry == this->Lines)
+    {
+    return "Lines";
+    }
+  if (this->GlyphGeometry == this->Tubes)
+    {
+    return "Tubes";
+    }
+  if (this->GlyphGeometry == this->Ellipsoids)
+    {
+    return "Ellipsoids";
+    }
+  if (this->GlyphGeometry == this->Superquadrics)
+    {
+    return "Superquadrics";
+    }
+  return "(unknown)";
+}
+
+const char*
+vtkMRMLDiffusionTensorDisplayPropertiesNode::GetGlyphEigenvectorAsString()
+{
+
+  if (this->GlyphEigenvector == this->Major)
+    {
+    return "Major";
+    }
+  if (this->GlyphEigenvector == this->Middle)
+    {
+    return "Middle";
+    }
+  if (this->GlyphEigenvector == this->Minor)
+    {
+    return "Minor";
+    }
+  return "(unknown)";
+}
+
+const char *
+vtkMRMLDiffusionTensorDisplayPropertiesNode::GetColorGlyphByAsString()
+{
+  return this->GetScalarEnumAsString(this->ColorGlyphBy);
+}

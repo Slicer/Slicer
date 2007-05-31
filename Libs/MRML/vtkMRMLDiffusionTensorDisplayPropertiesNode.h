@@ -117,19 +117,47 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
     this->SetScalarInvariant(this->Trace);
   };
 
+  //Description:
+  // Set scalar invariant to relative anisotropy
+  void SetScalarInvariantToRelativeAnisotropy() {
+    this->SetScalarInvariant(this->RelativeAnisotropy);
+  };
+
   // Description:
   // Set scalar invariant to FA (normalized variance of eigenvalues)
   void SetScalarInvariantToFractionalAnisotropy() {
     this->SetScalarInvariant(this->FractionalAnisotropy);
-  };  
+  };
 
   // Description:
   // Set scalar invariant to C_L (Westin's linear measure)
   void SetScalarInvariantToLinearMeasure() {
     this->SetScalarInvariant(this->LinearMeasure);
-  };  
+  };
+
+  // Description:
+  // Set scalar invariant to C_P (Westin's planar measure)
+  void SetScalarInvariantToPlanerMeasure() {
+    this->SetScalarInvariant(this->PlanarMeasure);
+  };
+
+  // Description:
+  // Set scalar invariant to C_S (Westin's spherical measure)
+  void SetScalarInvariantToSphericalMeasure() {
+    this->SetScalarInvariant(this->SphericalMeasure);
+  }
 
   // TO DO: add the rest of the scalars
+
+  // Description:
+  // Return the lowest and highest integers, for use in looping
+  int GetFirstScalarInvariant() {return this->Trace;};
+  int GetLastScalarInvariant() {return this->ColorOrientationMinEigenvector;};
+
+  // Description:
+  // Return a text string describing the ScalarInvariant variable
+  virtual const char * GetScalarInvariantAsString();
+
 
   //--------------------------------------------------------------------------
   // Display Information: Types of glyph geometry that can be displayed
@@ -169,6 +197,16 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
   void SetGlyphGeometryToSuperquadrics() {
     this->SetGlyphGeometry(this->Superquadrics);
   };
+
+
+  // Description:
+  // Return the lowest and highest integers, for use in looping
+  int GetFirstGlyphGeometry() {return this->Lines;};
+  int GetLastGlyphGeometry() {return this->Superquadrics;};
+
+  // Description:
+  // Return a text string describing the GlyphGeometry variable
+  virtual const char * GetGlyphGeometryAsString();
 
   //--------------------------------------------------------------------------
   // Display Information: Parameters of glyph geometry
@@ -226,6 +264,15 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
   void SetGlyphEigenvectorToMinor() {
     this->SetGlyphEigenvector(this->Minor);
   };
+
+  // Description:
+  // Return the lowest and highest integers, for use in looping
+  int GetFirstGlyphEigenvector() {return this->Major;};
+  int GetLastGlyphEigenvector() {return this->Minor;};
+
+  // Description:
+  // Return a text string describing GlyphEigenvector variable
+  virtual const char * GetGlyphEigenvectorAsString();
 
   
   //--------------------------------------------------------------------------
@@ -300,6 +347,15 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
   // Get type of scalar invariant (tensor-derived scalar, invariant to tensor 
   // rotation) selected for display.
   vtkSetMacro(ColorGlyphBy, int);
+
+  // Description:
+  // Return the lowest and highest integers, for use in looping
+  int GetFirstColorGlyphBy() {this->Trace;};
+  int GetLastColorGlyphBy() {this->ColorOrientationMinEigenvector;};
+  
+  // Description:
+  // Return a text string describing the ColorGlyphBy
+  virtual const char * GetColorGlyphByAsString();
  
   // Description:
   // Set scalar invariant to trace (sum of eigenvalues).
@@ -374,6 +430,9 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
   // and reference count it.  
   // TO DO: is this causing an extra modified event?
   vtkSetObjectMacro( GlyphSource, vtkPolyData );
+
+  //Helper function to get the string of Scalar enums
+  virtual const char *GetScalarEnumAsString(int val);
 
   // TO DO: add specific lookup tables ranging from 0..1 for or -1 1
   // for scalar invariants with those ranges
