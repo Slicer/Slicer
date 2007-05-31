@@ -350,8 +350,8 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
 
   // Description:
   // Return the lowest and highest integers, for use in looping
-  int GetFirstColorGlyphBy() {this->Trace;};
-  int GetLastColorGlyphBy() {this->ColorOrientationMinEigenvector;};
+  int GetFirstColorGlyphBy() {return this->Trace;};
+  int GetLastColorGlyphBy() {return this->ColorOrientationMinEigenvector;};
   
   // Description:
   // Return a text string describing the ColorGlyphBy
