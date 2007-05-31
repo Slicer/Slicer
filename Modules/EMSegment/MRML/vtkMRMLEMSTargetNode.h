@@ -51,9 +51,9 @@ public:
   virtual void   MoveNthVolume(int n, int toIndex);
   
   // set/get parameter node for intensity normalization
-  virtual const char* GetNthIntensityNormalizationParametersNode(int n);
-  virtual void SetNthIntensityNormalizationParametersNode(int n, 
-                                                          const char* nodeID);
+  //  virtual const char* GetNthIntensityNormalizationParametersNode(int n);
+  //virtual void SetNthIntensityNormalizationParametersNode(int n, 
+  //                                                        const char* nodeID);
 
 protected:
   vtkMRMLEMSTargetNode();
