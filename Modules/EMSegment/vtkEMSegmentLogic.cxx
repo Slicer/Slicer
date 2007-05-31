@@ -2307,6 +2307,7 @@ GetEnableMultithreading()
   else
   {
     vtkErrorMacro("Attempt to read from non-existing global parameter node.");
+    return 0;
   }
 }
 

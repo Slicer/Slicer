@@ -455,7 +455,7 @@ int main(int argc, char** argv)
         emLogic->GetSegmenterNode()->SetTargetNodeID(targetNode->GetID());
 
         if (verbose) 
-          std:cerr << targetNode->GetID() << " DONE" << std::endl;
+          std::cerr << targetNode->GetID() << " DONE" << std::endl;
 
         targetNode->Delete();
 
