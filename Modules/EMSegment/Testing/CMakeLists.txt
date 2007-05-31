@@ -28,6 +28,16 @@ IF( NOT DISABLE_CXX_TESTING )
     vtkCommon
     )
 
+  ADD_EXECUTABLE(
+    vtkEMSegmentReadWriteMRMLTest
+    vtkEMSegmentReadWriteMRMLTest.cxx
+    )
+  TARGET_LINK_LIBRARIES(
+    vtkEMSegmentReadWriteMRMLTest
+    EMSegment
+    vtkCommon
+    )
+
   # The test is a stand-alone executable.  However, the Slicer3
   # launcher is needed to set up shared library paths correctly.
   # We create a prefix for the test executable that accomplishes this
@@ -258,6 +268,26 @@ IF( NOT DISABLE_CXX_TESTING )
       ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/StandardData/StandardSegmentationResult_small.mhd
       )
 
+  # test that the mrml readers/writers work
+  ADD_TEST(
+    vtkEMSegmentReadWriteMRMLTest_ReadWriteTutorialData
+    ${EM_COMMAND_LINE_TEST_PREFIX}/vtkEMSegmentReadWriteMRMLTest
+    ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/EMSegmentTutorialTemplate_small.mrml
+    /tmp/EMSegmentTutorialTemplate_small_Result.mrml
+    )
+
+  ADD_TEST(
+    vtkEMSegmentReadWriteMRMLTest_DiffReadWriteTutorialData
+    diff -s
+    ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/EMSegmentTutorialTemplate_small.mrml
+    /tmp/EMSegmentTutorialTemplate_small_Result.mrml
+    )
+  SET_TESTS_PROPERTIES(
+    vtkEMSegmentReadWriteMRMLTest_DiffReadWriteTutorialData    
+    PROPERTIES
+    PASS_REGULAR_EXPRESSION 
+    "are identical")
+    
     # be careful, this overwrites data!
     #ADD_TEST(
     #  EMSegCL_DefaultNodesOverwriteResults

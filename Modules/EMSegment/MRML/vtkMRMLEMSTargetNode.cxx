@@ -78,9 +78,10 @@ UpdateReferences()
     }
 }
 
-void vtkMRMLEMSTargetNode::WriteXML(ostream& of, int indent)
+void vtkMRMLEMSTargetNode::WriteXML(ostream& of, int nIndent)
 {
-  Superclass::WriteXML(of, indent);
+  Superclass::WriteXML(of, nIndent);
+  vtkIndent indent(nIndent);
 
   of << indent << "IntensityNormalizationParameterNodeIDs=\"";
   vtksys_stl::copy(this->IntensityNormalizationParameterList.begin(),

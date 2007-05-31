@@ -4,43 +4,43 @@
 <VolumeDisplay
  id="vtkMRMLVolumeDisplayNode1" name="vtkMRMLVolumeDisplayNode1"  hideFromEditors="true" window="112.46" level="100.19" upperThreshold="528" lowerThreshold="0" interpolate="1" autoWindowLevel="0" applyThreshold="0" autoThreshold="0" colorNodeRef="vtkMRMLColorTableNodeGrey" ></VolumeDisplay>
 <Volume
- id="vtkMRMLScalarVolumeNode1" name="targetT1Normed_small.mhd"  hideFromEditors="false" storageNodeRef="vtkMRMLVolumeArchetypeStorageNode1" displayNodeRef="vtkMRMLVolumeDisplayNode1" ijkToRASDirections="1   0   0 -0   0   1 0 -1 0 " spacing="3.75 3.75 6" origin="-119.531 -92.25 119.531" labelMap="0" ></Volume>
+ id="vtkMRMLScalarVolumeNode1" name="targetT1Normed_small.mhd"  hideFromEditors="false" storageNodeRef="vtkMRMLVolumeArchetypeStorageNode1" displayNodeRef="vtkMRMLVolumeDisplayNode1" ijkToRASDirections="1   0   0 -0   0   1 0 -1 0 " spacing="3.75 3.75 6" origin="-118.125 -90 118.125" labelMap="0" ></Volume>
 <VolumeArchetypeStorage
  id="vtkMRMLVolumeArchetypeStorageNode2" name="vtkMRMLVolumeArchetypeStorageNode2"  hideFromEditors="true" fileName="VolumeData/targetT2Normed_small.mhd" centerImage="1" ></VolumeArchetypeStorage>
 <VolumeDisplay
  id="vtkMRMLVolumeDisplayNode2" name="vtkMRMLVolumeDisplayNode2"  hideFromEditors="true" window="680.06" level="360.64" upperThreshold="1217" lowerThreshold="0" interpolate="1" autoWindowLevel="0" applyThreshold="0" autoThreshold="0" colorNodeRef="vtkMRMLColorTableNodeGrey" ></VolumeDisplay>
 <Volume
- id="vtkMRMLScalarVolumeNode2" name="targetT2Normed_small.mhd"  hideFromEditors="false" storageNodeRef="vtkMRMLVolumeArchetypeStorageNode2" displayNodeRef="vtkMRMLVolumeDisplayNode2" ijkToRASDirections="1   0   0 -0   0   1 0 -1 0 " spacing="3.75 3.75 6" origin="-119.531 -92.25 119.531" labelMap="0" ></Volume>
+ id="vtkMRMLScalarVolumeNode2" name="targetT2Normed_small.mhd"  hideFromEditors="false" storageNodeRef="vtkMRMLVolumeArchetypeStorageNode2" displayNodeRef="vtkMRMLVolumeDisplayNode2" ijkToRASDirections="1   0   0 -0   0   1 0 -1 0 " spacing="3.75 3.75 6" origin="-118.125 -90 118.125" labelMap="0" ></Volume>
 <VolumeArchetypeStorage
  id="vtkMRMLVolumeArchetypeStorageNode3" name="vtkMRMLVolumeArchetypeStorageNode3"  hideFromEditors="true" fileName="VolumeData/atlasBackgroundReg_small.mhd" centerImage="1" ></VolumeArchetypeStorage>
 <VolumeDisplay
  id="vtkMRMLVolumeDisplayNode3" name="vtkMRMLVolumeDisplayNode3"  hideFromEditors="true" window="78" level="43" upperThreshold="82" lowerThreshold="0" interpolate="1" autoWindowLevel="1" applyThreshold="0" autoThreshold="0" colorNodeRef="vtkMRMLColorTableNodeGrey" ></VolumeDisplay>
 <Volume
- id="vtkMRMLScalarVolumeNode3" name="atlasBackgroundReg_small.mhd"  hideFromEditors="false" storageNodeRef="vtkMRMLVolumeArchetypeStorageNode3" displayNodeRef="vtkMRMLVolumeDisplayNode3" ijkToRASDirections="1   0   0 -0   0   1 0 -1 0 " spacing="3.75 3.75 6" origin="-119.531 -92.25 119.531" labelMap="0" ></Volume>
+ id="vtkMRMLScalarVolumeNode3" name="atlasBackgroundReg_small.mhd"  hideFromEditors="false" storageNodeRef="vtkMRMLVolumeArchetypeStorageNode3" displayNodeRef="vtkMRMLVolumeDisplayNode3" ijkToRASDirections="1   0   0 -0   0   1 0 -1 0 " spacing="3.75 3.75 6" origin="-118.125 -90 118.125" labelMap="0" ></Volume>
 <VolumeArchetypeStorage
  id="vtkMRMLVolumeArchetypeStorageNode4" name="vtkMRMLVolumeArchetypeStorageNode4"  hideFromEditors="true" fileName="VolumeData/atlasCSFReg_small.mhd" centerImage="1" ></VolumeArchetypeStorage>
 <VolumeDisplay
  id="vtkMRMLVolumeDisplayNode4" name="vtkMRMLVolumeDisplayNode4"  hideFromEditors="true" window="78" level="43" upperThreshold="81" lowerThreshold="0" interpolate="1" autoWindowLevel="1" applyThreshold="0" autoThreshold="0" colorNodeRef="vtkMRMLColorTableNodeGrey" ></VolumeDisplay>
 <Volume
- id="vtkMRMLScalarVolumeNode4" name="atlasCSFReg_small.mhd"  hideFromEditors="false" storageNodeRef="vtkMRMLVolumeArchetypeStorageNode4" displayNodeRef="vtkMRMLVolumeDisplayNode4" ijkToRASDirections="1   0   0 -0   0   1 0 -1 0 " spacing="3.75 3.75 6" origin="-119.531 -92.25 119.531" labelMap="0" ></Volume>
+ id="vtkMRMLScalarVolumeNode4" name="atlasCSFReg_small.mhd"  hideFromEditors="false" storageNodeRef="vtkMRMLVolumeArchetypeStorageNode4" displayNodeRef="vtkMRMLVolumeDisplayNode4" ijkToRASDirections="1   0   0 -0   0   1 0 -1 0 " spacing="3.75 3.75 6" origin="-118.125 -90 118.125" labelMap="0" ></Volume>
 <VolumeArchetypeStorage
  id="vtkMRMLVolumeArchetypeStorageNode5" name="vtkMRMLVolumeArchetypeStorageNode5"  hideFromEditors="true" fileName="VolumeData/atlasGreymatterReg_small.mhd" centerImage="1" ></VolumeArchetypeStorage>
 <VolumeDisplay
  id="vtkMRMLVolumeDisplayNode5" name="vtkMRMLVolumeDisplayNode5"  hideFromEditors="true" window="78" level="43" upperThreshold="82" lowerThreshold="0" interpolate="1" autoWindowLevel="1" applyThreshold="0" autoThreshold="0" colorNodeRef="vtkMRMLColorTableNodeGrey" ></VolumeDisplay>
 <Volume
- id="vtkMRMLScalarVolumeNode5" name="atlasGreymatterReg_small.mhd"  hideFromEditors="false" storageNodeRef="vtkMRMLVolumeArchetypeStorageNode5" displayNodeRef="vtkMRMLVolumeDisplayNode5" ijkToRASDirections="1   0   0 -0   0   1 0 -1 0 " spacing="3.75 3.75 6" origin="-119.531 -92.25 119.531" labelMap="0" ></Volume>
+ id="vtkMRMLScalarVolumeNode5" name="atlasGreymatterReg_small.mhd"  hideFromEditors="false" storageNodeRef="vtkMRMLVolumeArchetypeStorageNode5" displayNodeRef="vtkMRMLVolumeDisplayNode5" ijkToRASDirections="1   0   0 -0   0   1 0 -1 0 " spacing="3.75 3.75 6" origin="-118.125 -90 118.125" labelMap="0" ></Volume>
 <VolumeArchetypeStorage
  id="vtkMRMLVolumeArchetypeStorageNode6" name="vtkMRMLVolumeArchetypeStorageNode6"  hideFromEditors="true" fileName="VolumeData/atlasWhitematterReg_small.mhd" centerImage="1" ></VolumeArchetypeStorage>
 <VolumeDisplay
  id="vtkMRMLVolumeDisplayNode6" name="vtkMRMLVolumeDisplayNode6"  hideFromEditors="true" window="78" level="43" upperThreshold="82" lowerThreshold="0" interpolate="1" autoWindowLevel="1" applyThreshold="0" autoThreshold="0" colorNodeRef="vtkMRMLColorTableNodeGrey" ></VolumeDisplay>
 <Volume
- id="vtkMRMLScalarVolumeNode6" name="atlasWhitematterReg_small.mhd"  hideFromEditors="false" storageNodeRef="vtkMRMLVolumeArchetypeStorageNode6" displayNodeRef="vtkMRMLVolumeDisplayNode6" ijkToRASDirections="1   0   0 -0   0   1 0 -1 0 " spacing="3.75 3.75 6" origin="-119.531 -92.25 119.531" labelMap="0" ></Volume>
+ id="vtkMRMLScalarVolumeNode6" name="atlasWhitematterReg_small.mhd"  hideFromEditors="false" storageNodeRef="vtkMRMLVolumeArchetypeStorageNode6" displayNodeRef="vtkMRMLVolumeDisplayNode6" ijkToRASDirections="1   0   0 -0   0   1 0 -1 0 " spacing="3.75 3.75 6" origin="-118.125 -90 118.125" labelMap="0" ></Volume>
 <VolumeArchetypeStorage
  id="vtkMRMLVolumeArchetypeStorageNode7" name="vtkMRMLVolumeArchetypeStorageNode7"  hideFromEditors="true" fileName="VolumeData/segmentationResult_small.mhd" centerImage="1" ></VolumeArchetypeStorage>
 <VolumeDisplay
  id="vtkMRMLVolumeDisplayNode7" name="vtkMRMLVolumeDisplayNode7"  hideFromEditors="true" window="6" level="5" upperThreshold="8" lowerThreshold="0" interpolate="1" autoWindowLevel="1" applyThreshold="0" autoThreshold="0" colorNodeRef="vtkMRMLColorTableNodeLabels" ></VolumeDisplay>
 <Volume
- id="vtkMRMLScalarVolumeNode7" name="segmentationResult_small.mhd"  hideFromEditors="false" storageNodeRef="vtkMRMLVolumeArchetypeStorageNode7" displayNodeRef="vtkMRMLVolumeDisplayNode7" ijkToRASDirections="1   0   0 -0   0   1 0 -1 0 " spacing="3.75 3.75 6" origin="-119.531 -92.25 119.531" labelMap="1" ></Volume>
+ id="vtkMRMLScalarVolumeNode7" name="segmentationResult_small.mhd"  hideFromEditors="false" storageNodeRef="vtkMRMLVolumeArchetypeStorageNode7" displayNodeRef="vtkMRMLVolumeDisplayNode7" ijkToRASDirections="1   0   0 -0   0   1 0 -1 0 " spacing="3.75 3.75 6" origin="-118.125 -90 118.125" labelMap="1" ></Volume>
 <EMSAtlas
  id="vtkMRMLEMSAtlasNode1" name="vtkMRMLEMSAtlasNode1"  hideFromEditors="false" VolumeNodeIDs="
 Key vtkMRMLEMSTreeNode7 VolumeNodeID vtkMRMLScalarVolumeNode3
@@ -51,7 +51,7 @@ Key vtkMRMLEMSTreeNode6 VolumeNodeID vtkMRMLScalarVolumeNode6" NumberOfTrainingS
 <EMSTarget
  id="vtkMRMLEMSTargetNode1" name="vtkMRMLEMSTargetNode1"  hideFromEditors="false" VolumeNodeIDs="
 Key targetT1Normed_small.mhd VolumeNodeID vtkMRMLScalarVolumeNode1
-Key targetT2Normed_small.mhd VolumeNodeID vtkMRMLScalarVolumeNode2" ></EMSTarget>
+Key targetT2Normed_small.mhd VolumeNodeID vtkMRMLScalarVolumeNode2" IntensityNormalizationParameterNodeIDs="None None " ></EMSTarget>
 <EMSGlobalParameters
  id="vtkMRMLEMSGlobalParametersNode1" name="vtkMRMLEMSGlobalParametersNode1"  hideFromEditors="false" NumberOfTargetInputChannels="2" WorkingDirectory="NULL" SegmentationBoundaryMin="1 1 1" SegmentationBoundaryMax="64 64 31" RegistrationAffineType="0" RegistrationDeformableType="0" RegistrationInterpolationType="0" RegistrationAtlasVolumeKey="" RegistrationTargetVolumeKey="" SaveIntermediateResults="0" SaveSurfaceModels="0" MultithreadingEnabled="1" ></EMSGlobalParameters>
 <EMSTreeParametersLeaf
