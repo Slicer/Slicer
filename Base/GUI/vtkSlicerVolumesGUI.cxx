@@ -351,11 +351,21 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents ( vtkObject *caller,
          labelMap = 0;
          }
 
+      std::string fileString(fileName);
+      for (unsigned int i = 0; i < fileString.length(); i++)
+        {
+        if (fileString[i] == '\\')
+          {
+          fileString[i] = '/';
+          }
+        }
+
       vtkSlicerVolumesLogic* volumeLogic = this->Logic;
       volumeLogic->AddObserver(vtkCommand::ProgressEvent,  this->LogicCallbackCommand);
 
       vtkMRMLVolumeNode *volumeNode = NULL;
-      volumeNode = volumeLogic->AddArchetypeVolume( fileName, centered, labelMap, this->NameEntry->GetWidget()->GetValue() );
+      std::string archetype( this->NameEntry->GetWidget()->GetValue() );
+      volumeNode = volumeLogic->AddArchetypeVolume( fileString.c_str(), centered, labelMap, archetype.c_str() );
       if ( volumeNode == NULL ) 
         {
         this->VolumeNode = NULL;
