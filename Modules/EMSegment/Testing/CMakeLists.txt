@@ -12,7 +12,7 @@ INCLUDE_DIRECTORIES (
 # require a testing dataset that is not distributed by default with
 # Slicer3.  NB: The extra tests may take a long time and a large
 # amount of memory!!!  
-SET( RUN_EXTRA_SHORT_EMSEGMENT_TESTS 1)
+SET( RUN_EXTRA_SHORT_EMSEGMENT_TESTS 0)
 SET( RUN_EXTRA_LONG_EMSEGMENT_TESTS 0)
 
 IF( NOT DISABLE_CXX_TESTING )
