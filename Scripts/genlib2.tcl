@@ -237,42 +237,38 @@ if { ![file exists $SLICER_LIB] } {
 # set in slicer_vars
 if { ![file exists $::CMAKE] || $::GENLIB(update) } {
     cd $::SLICER_LIB
+    file mkdir $::CMAKE_PATH
 
     if {$isWindows} {
       runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/Binaries/Windows/CMake-build CMake-build
     } else {
         runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/CMake CMake
 
-        cd CMake
+        cd $::CMAKE_PATH
         runcmd $SLICER_LIB/CMake/bootstrap
         eval runcmd $::MAKE
     }
 }
 
-exit
 
 ################################################################################
 # Get and build tcl, tk, itcl, widgets
 #
 
-# on windows, tcl won't build right, as can't configure, so save commands have to run
+# on windows, tcl won't build right, as can't configure
 if { ![file exists $::TCL_TEST_FILE] || $::GENLIB(update) } {
 
     if {$isWindows} {
-      if { ! $::GENLIB(update) } {
-        puts stderr "Slicer3-lib_win32.zip did not download and unzip Tcl correctly."
-        exit
-      }
+      runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/Binaries/Windows/tcl-build tcl-build
     }
 
     file mkdir $SLICER_LIB/tcl
     cd $SLICER_LIB/tcl
 
-    runcmd $::CVS -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer login
-    eval "runcmd $::CVS $CVS_CO_FLAGS -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer checkout -r $::TCL_TAG tcl"
+    runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/tcl/tcl tcl
 
     if {$isWindows} {
-        # can't do windows
+        # nothing to do for windows
     } else {
         cd $SLICER_LIB/tcl/tcl/unix
 
@@ -285,8 +281,7 @@ if { ![file exists $::TCL_TEST_FILE] || $::GENLIB(update) } {
 if { ![file exists $::TK_TEST_FILE] || $::GENLIB(update) } {
     cd $SLICER_LIB/tcl
 
-    runcmd $::CVS -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer login
-    eval "runcmd $::CVS $CVS_CO_FLAGS -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer checkout -r $::TK_TAG tk"
+    runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/tcl/tk tk
 
     if {$isDarwin} {
         if { ![file exists $SLICER_LIB/tcl/isPatched] } {
@@ -305,7 +300,7 @@ if { ![file exists $::TK_TEST_FILE] || $::GENLIB(update) } {
     }
 
     if {$isWindows} {
-        # can't do windows
+        # don't need to do windows
     } else {
         cd $SLICER_LIB/tcl/tk/unix
 
@@ -318,8 +313,7 @@ if { ![file exists $::TK_TEST_FILE] || $::GENLIB(update) } {
 if { ![file exists $::ITCL_TEST_FILE] || $::GENLIB(update) } {
     cd $SLICER_LIB/tcl
 
-    runcmd $::CVS -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer login
-    eval "runcmd $::CVS $CVS_CO_FLAGS -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer checkout -r $::ITCL_TAG incrTcl"
+    runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/tcl/incrTcl incrTcl
 
     cd $SLICER_LIB/tcl/incrTcl
 
@@ -343,9 +337,7 @@ if { ![file exists $::ITCL_TEST_FILE] || $::GENLIB(update) } {
 if { ![file exists $::IWIDGETS_TEST_FILE] || $::GENLIB(update) } {
     cd $SLICER_LIB/tcl
 
-    runcmd $::CVS -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer login
-    eval "runcmd $::CVS $CVS_CO_FLAGS -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer checkout -r $::IWIDGETS_TAG iwidgets"
-
+    runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/tcl/iwidgets iwidgets
 
     if {$isWindows} {
         # can't do windows
@@ -367,8 +359,7 @@ if { ![file exists $::IWIDGETS_TEST_FILE] || $::GENLIB(update) } {
 if { ![file exists $::BLT_TEST_FILE] || $::GENLIB(update) } {
     cd $SLICER_LIB/tcl
 
-    runcmd $::CVS -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer login
-    eval "runcmd $::CVS $CVS_CO_FLAGS -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer co -r $::BLT_TAG blt"
+    runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/tcl/blt blt
 
     if { $isWindows } {
         # can't do Windows
@@ -407,14 +398,7 @@ if { ![file exists $::BLT_TEST_FILE] || $::GENLIB(update) } {
 if { ![file exists $::VTK_TEST_FILE] || $::GENLIB(update) } {
     cd $SLICER_LIB
 
-    runcmd $::CVS -d :pserver:anonymous:vtk@public.kitware.com:/cvsroot/VTK login
-    eval "runcmd $::CVS $CVS_CO_FLAGS -d :pserver:anonymous@public.kitware.com:/cvsroot/VTK checkout -r $::VTK_TAG VTK"
-
-    # Andy's temporary hack to get around wrong permissions in VTK cvs repository
-    # catch statement is to make file attributes work with RH 7.3
-    if { !$isWindows } {
-        catch "file attributes $SLICER_LIB/VTK/VTKConfig.cmake.in -permissions a+rw"
-    }
+    runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/VTK VTK
 
     file mkdir $SLICER_LIB/VTK-build
     cd $SLICER_LIB/VTK-build
@@ -527,8 +511,7 @@ if { ![file exists $::VTK_TEST_FILE] || $::GENLIB(update) } {
 if { ![file exists $::KWWidgets_TEST_FILE] || $::GENLIB(update) } {
     cd $SLICER_LIB
 
-    runcmd $::CVS -d :pserver:anoncvs:@www.kwwidgets.org:/cvsroot/KWWidgets login
-    eval "runcmd $::CVS $CVS_CO_FLAGS -d :pserver:anoncvs@www.kwwidgets.org:/cvsroot/KWWidgets checkout -r $::KWWidgets_TAG KWWidgets"
+    runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/KWWidgets KWWidgets
 
     file mkdir $SLICER_LIB/KWWidgets-build
     cd $SLICER_LIB/KWWidgets-build
@@ -565,8 +548,7 @@ if { ![file exists $::KWWidgets_TEST_FILE] || $::GENLIB(update) } {
 if { ![file exists $::ITK_TEST_FILE] || $::GENLIB(update) } {
     cd $SLICER_LIB
 
-    runcmd $::CVS -d :pserver:anoncvs:@www.vtk.org:/cvsroot/Insight login
-    eval "runcmd $::CVS $CVS_CO_FLAGS -d :pserver:anoncvs@www.vtk.org:/cvsroot/Insight checkout -r $::ITK_TAG Insight"
+    runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/Insight Insight
 
     file mkdir $SLICER_LIB/Insight-build
     cd $SLICER_LIB/Insight-build
@@ -618,8 +600,7 @@ if { ![file exists $::ITK_TEST_FILE] || $::GENLIB(update) } {
 if { ![file exists $::TEEM_TEST_FILE] || $::GENLIB(update) } {
     cd $SLICER_LIB
 
-    runcmd $::CVS -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer login
-    eval "runcmd $::CVS $CVS_CO_FLAGS -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer checkout -r $::TEEM_TAG teem"
+    runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/teem teem
 
     file mkdir $SLICER_LIB/teem-build
     cd $SLICER_LIB/teem-build
@@ -655,9 +636,9 @@ if { ![file exists $::TEEM_TEST_FILE] || $::GENLIB(update) } {
         -DBUILD_TESTING:BOOL=OFF \
         -DTEEM_ZLIB:BOOL=ON \
         -DTEEM_PNG:BOOL=ON \
-        -DTEEM_VTK_MANGLE:BOOL=ON \
+        -DBUILD_VTK_CAPATIBLE_TEEM:BOOL=ON \
         -DTEEM_VTK_TOOLKITS_IPATH:FILEPATH=$::SLICER_LIB/VTK-build \
-        -DZLIB_INCLUDE_DIR:PATH=$::SLICER_LIB/VTK/Utilities/vtkzlib \
+        -DZLIB_INCLUDE_DIR:PATH=$::SLICER_LIB/VTK/Utilities \
         -DTEEM_ZLIB_DLLCONF_IPATH:PATH=$::SLICER_LIB/VTK-build/Utilities \
         -DZLIB_LIBRARY:FILEPATH=$::SLICER_LIB/VTK-build/bin/$::VTK_BUILD_SUBDIR/$zlib \
         -DPNG_PNG_INCLUDE_DIR:PATH=$::SLICER_LIB/VTK/Utilities/vtkpng \
@@ -681,7 +662,8 @@ if { ![file exists $::TEEM_TEST_FILE] || $::GENLIB(update) } {
 ################################################################################
 # Get and build the sandbox
 
-if { ![file exists $::SANDBOX_TEST_FILE] && ![file exists $::ALT_SANDBOX_TEST_FILE] || $::GENLIB(update) } {
+# NOTE: disabled for now - nothing in the sandbox we actually need...
+if { 0 && ![file exists $::SANDBOX_TEST_FILE] && ![file exists $::ALT_SANDBOX_TEST_FILE] || $::GENLIB(update) } {
     cd $SLICER_LIB
 
     runcmd $::SVN checkout $::SANDBOX_TAG NAMICSandBox
@@ -777,8 +759,7 @@ if { ![file exists $::SANDBOX_TEST_FILE] && ![file exists $::ALT_SANDBOX_TEST_FI
 if { ![file exists $::IGSTK_TEST_FILE] || $::GENLIB(update) } {
     cd $SLICER_LIB
 
-    runcmd $::CVS -d:pserver:anonymous:igstk@public.kitware.com:/cvsroot/IGSTK login
-    eval "runcmd $::CVS $CVS_CO_FLAGS -d :pserver:anonymous@public.kitware.com:/cvsroot/IGSTK co IGSTK"
+    runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/IGSTK IGSTK
 
     file mkdir $SLICER_LIB/IGSTK-build
     cd $SLICER_LIB/IGSTK-build
@@ -950,12 +931,9 @@ if { ![file exists $::CMAKE] || \
          ![file exists $::IWIDGETS_TEST_FILE] || \
          ![file exists $::BLT_TEST_FILE] || \
          ![file exists $::VTK_TEST_FILE] || \
-         ![file exists $::ITK_TEST_FILE] || \
-         ![file exists $::SANDBOX_TEST_FILE] } {
-    if { ![file exists $::ALT_SANDBOX_TEST_FILE] } {
+         ![file exists $::ITK_TEST_FILE]  } {
     puts "Not all packages compiled; check errors and run genlib.tcl again."
     exit 1
-    }
 } else {
     puts "All packages compiled."
     exit 0
