@@ -150,6 +150,17 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode::UpdateScene(vtkMRMLScene *scene)
 
 }
 
+//-----------------------------------------------------------
+void vtkMRMLDiffusionTensorVolumeDisplayNode::UpdateReferences()
+{
+  Superclass::UpdateReferences();
+
+  if (this->DiffusionTensorDisplayPropertiesNodeID != NULL && this->Scene->GetNodeByID(this->DiffusionTensorDisplayPropertiesNodeID) == NULL)
+    {
+    this->SetAndObserveDiffusionTensorDisplayPropertiesNodeID(NULL);
+    }
+}
+
 //----------------------------------------------------------------------------
 void vtkMRMLDiffusionTensorVolumeDisplayNode::UpdateReferenceID(const char *oldID, const char *newID)
 {
