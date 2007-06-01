@@ -8,7 +8,10 @@ class vtkMRMLEMSNode;
 class vtkMRMLEMSGlobalParametersNode;
 class vtkMRMLEMSSegmenterNode;
 class vtkMRMLEMSTemplateNode;
+class vtkMRMLEMSTargetNode;
+class vtkMRMLEMSAtlasNode;
 class vtkMRMLEMSTreeNode;
+class vtkMRMLScalarVolumeNode;
 
 class vtkImageEMLocalSegmenter;
 class vtkImageEMLocalSuperClass;
@@ -374,6 +377,9 @@ private:
   // convienince functions for managing MRML nodes
   //
   virtual vtkMRMLEMSTemplateNode*         GetTemplateNode();
+  virtual vtkMRMLEMSTargetNode*           GetTargetNode();
+  virtual vtkMRMLEMSAtlasNode*            GetAtlasNode();
+  virtual vtkMRMLScalarVolumeNode*        GetOutputVolumeNode();
   virtual vtkMRMLEMSGlobalParametersNode* GetGlobalParametersNode();
   virtual vtkMRMLEMSTreeNode*             GetTreeRootNode();
   virtual vtkMRMLEMSTreeNode*             GetTreeNode(vtkIdType);

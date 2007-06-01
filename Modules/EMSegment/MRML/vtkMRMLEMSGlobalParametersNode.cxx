@@ -42,7 +42,7 @@ vtkMRMLEMSGlobalParametersNode::vtkMRMLEMSGlobalParametersNode()
 
   this->RegistrationAffineType        = 0;
   this->RegistrationDeformableType    = 0;
-  this->RegistrationInterpolationType = 0;
+  this->RegistrationInterpolationType = 0; // !!! this needs to be specified
 
   this->RegistrationAtlasVolumeKey    = NULL;
   this->RegistrationTargetVolumeKey   = NULL;
