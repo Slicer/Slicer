@@ -54,6 +54,18 @@ public:
   vtkGetMacro(PrintInfo, int);
   vtkSetMacro(PrintInfo, int);
 
+  vtkGetMacro(Enabled, int);
+  vtkSetMacro(Enabled, int);
+  vtkBooleanMacro(Enabled, int);
+
+  //
+  // default settings
+  virtual void SetToDefaultT1SPGR();
+  virtual void SetToDefaultT2();
+  // sometimes T2 image histograms have a large "hump" at the end, use
+  // this setting for those cases
+  virtual void SetToDefaultT2_2();
+
 protected:
   double           NormValue;
   int              NormType;
@@ -61,6 +73,7 @@ protected:
   int              MaxHistogramSmoothingWidth;
   float            RelativeMaxVoxelNum;
   int              PrintInfo;
+  int              Enabled;
 
 private:
   vtkMRMLEMSIntensityNormalizationParametersNode();

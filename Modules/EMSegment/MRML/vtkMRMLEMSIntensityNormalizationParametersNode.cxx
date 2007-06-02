@@ -37,19 +37,51 @@ CreateNodeInstance()
 //-----------------------------------------------------------------------------
 vtkMRMLEMSIntensityNormalizationParametersNode::vtkMRMLEMSIntensityNormalizationParametersNode()
 {
-  // initialize for T1 spgr
-  this->NormValue                      = 90;
-  this->NormType                       = 1; //!!!INTENSITY_NORM_MEAN_MRI;
-  this->InitialHistogramSmoothingWidth = 5;
-  this->MaxHistogramSmoothingWidth     = 10;
-  this->RelativeMaxVoxelNum            = 0.99;
+  this->SetToDefaultT1SPGR();
   this->PrintInfo                      = 1;
+  this->Enabled                        = 1;
 }
 
 //-----------------------------------------------------------------------------
 vtkMRMLEMSIntensityNormalizationParametersNode::~vtkMRMLEMSIntensityNormalizationParametersNode()
 {
   // nothing to do here
+}
+
+//-----------------------------------------------------------------------------
+void
+vtkMRMLEMSIntensityNormalizationParametersNode::
+SetToDefaultT1SPGR()
+{
+  this->NormValue                      = 90;
+  this->NormType                       = 1; //!!!INTENSITY_NORM_MEAN_MRI;
+  this->InitialHistogramSmoothingWidth = 5;
+  this->MaxHistogramSmoothingWidth     = 10;
+  this->RelativeMaxVoxelNum            = 0.99;
+}
+
+//-----------------------------------------------------------------------------
+void
+vtkMRMLEMSIntensityNormalizationParametersNode::
+SetToDefaultT2()
+{
+  this->NormValue                      = 310;
+  this->NormType                       = 1; //!!!INTENSITY_NORM_MEAN_MRI;
+  this->InitialHistogramSmoothingWidth = 5;
+  this->MaxHistogramSmoothingWidth     = 10;
+  this->RelativeMaxVoxelNum            = 0.99;
+}
+
+//-----------------------------------------------------------------------------
+void
+vtkMRMLEMSIntensityNormalizationParametersNode::
+SetToDefaultT2_2()
+{
+  this->NormValue                      = 310;
+  this->NormType                       = 1; //!!!INTENSITY_NORM_MEAN_MRI;
+  this->InitialHistogramSmoothingWidth = 5;
+  this->MaxHistogramSmoothingWidth     = 10;
+  this->RelativeMaxVoxelNum            = 0.95;
 }
 
 //-----------------------------------------------------------------------------
@@ -70,6 +102,8 @@ void vtkMRMLEMSIntensityNormalizationParametersNode::WriteXML(ostream& of, int n
      << this->RelativeMaxVoxelNum << "\" ";
   of << indent << "PrintInfo=\"" 
      << this->PrintInfo << "\" ";
+  of << indent << "Enabled=\"" 
+     << this->Enabled << "\" ";
 }
 
 //-----------------------------------------------------------------------------
@@ -123,6 +157,12 @@ void vtkMRMLEMSIntensityNormalizationParametersNode::ReadXMLAttributes(const cha
       ss << val;
       ss >> this->PrintInfo;
       }
+    else if (!strcmp(key, "Enabled"))
+      {
+      vtksys_stl::stringstream ss;
+      ss << val;
+      ss >> this->Enabled;
+      }
     }
 }
 
@@ -140,6 +180,7 @@ void vtkMRMLEMSIntensityNormalizationParametersNode::Copy(vtkMRMLNode *rhs)
   this->SetMaxHistogramSmoothingWidth(node->MaxHistogramSmoothingWidth);
   this->SetRelativeMaxVoxelNum(node->RelativeMaxVoxelNum);
   this->SetPrintInfo(node->PrintInfo);
+  this->SetEnabled(node->Enabled);
 }
 
 //-----------------------------------------------------------------------------
@@ -158,6 +199,8 @@ void vtkMRMLEMSIntensityNormalizationParametersNode::PrintSelf(ostream& os,
      << this->RelativeMaxVoxelNum << "\n";
   os << indent << "PrintInfo: " 
      << this->PrintInfo << "\n";
+  os << indent << "Enabled: " 
+     << this->Enabled << "\n";
 }
 
 
