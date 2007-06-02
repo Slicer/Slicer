@@ -16,7 +16,7 @@
 #include "vtkMRMLEMSTreeParametersLeafNode.h"
 #include "vtkMRMLEMSTreeParametersParentNode.h"
 #include "vtkMRMLEMSTreeParametersNode.h"
-
+#include "vtkMRMLEMSIntensityNormalizationParametersNode.h"
 #include "vtkImageEMLocalSegmenter.h"
 #include "vtkImageEMLocalSuperClass.h"
 
@@ -1755,6 +1755,179 @@ MoveTargetSelectedVolume(int fromIndex, int toIndex)
 
   // propogate change to parameters nodes
   this->PropogateMovementOfSelectedTargetImage(fromIndex, toIndex);
+}
+
+//----------------------------------------------------------------------------
+void
+vtkEMSegmentLogic::
+SetNthTargetVolumeIntensityNormalizationToDefaultT1SPGR(int n)
+{
+  this->GetSegmenterNode()->GetTargetNode()->
+    GetNthIntensityNormalizationParametersNode(n)->
+    SetToDefaultT1SPGR();
+}
+
+//----------------------------------------------------------------------------
+void
+vtkEMSegmentLogic::
+SetNthTargetVolumeIntensityNormalizationToDefaultT2(int n)
+{
+  this->GetSegmenterNode()->GetTargetNode()->
+    GetNthIntensityNormalizationParametersNode(n)->
+    SetToDefaultT2();
+}
+
+//----------------------------------------------------------------------------
+void
+vtkEMSegmentLogic::
+SetNthTargetVolumeIntensityNormalizationToDefaultT2_2(int n)
+{
+  this->GetSegmenterNode()->GetTargetNode()->
+    GetNthIntensityNormalizationParametersNode(n)->
+    SetToDefaultT2_2();  
+}
+
+//----------------------------------------------------------------------------
+void
+vtkEMSegmentLogic::
+SetNthTargetVolumeIntensityNormalizationNormValue(int n, double d)
+{
+  this->GetSegmenterNode()->GetTargetNode()->
+    GetNthIntensityNormalizationParametersNode(n)->
+    SetNormValue(d);  
+}
+
+//----------------------------------------------------------------------------
+double
+vtkEMSegmentLogic::
+GetNthTargetVolumeIntensityNormalizationNormValue(int n)
+{
+  return this->GetSegmenterNode()->GetTargetNode()->
+    GetNthIntensityNormalizationParametersNode(n)->
+    GetNormValue();  
+}
+
+//----------------------------------------------------------------------------
+void
+vtkEMSegmentLogic::
+SetNthTargetVolumeIntensityNormalizationNormType(int n, int t)
+{
+  this->GetSegmenterNode()->GetTargetNode()->
+    GetNthIntensityNormalizationParametersNode(n)->
+    SetNormType(t);  
+}
+
+//----------------------------------------------------------------------------
+int
+vtkEMSegmentLogic::
+GetNthTargetVolumeIntensityNormalizationNormType(int n)
+{
+  return this->GetSegmenterNode()->GetTargetNode()->
+    GetNthIntensityNormalizationParametersNode(n)->
+    GetNormType();  
+}
+
+//----------------------------------------------------------------------------
+void
+vtkEMSegmentLogic::
+SetNthTargetVolumeIntensityNormalizationInitialHistogramSmoothingWidth
+(int n, int t)
+{
+  this->GetSegmenterNode()->GetTargetNode()->
+    GetNthIntensityNormalizationParametersNode(n)->
+    SetInitialHistogramSmoothingWidth(t);  
+}
+
+//----------------------------------------------------------------------------
+int
+vtkEMSegmentLogic::
+GetNthTargetVolumeIntensityNormalizationInitialHistogramSmoothingWidth
+(int n)
+{
+  return this->GetSegmenterNode()->GetTargetNode()->
+    GetNthIntensityNormalizationParametersNode(n)->
+    GetInitialHistogramSmoothingWidth();  
+}
+
+//----------------------------------------------------------------------------
+void
+vtkEMSegmentLogic::
+SetNthTargetVolumeIntensityNormalizationMaxHistogramSmoothingWidth(int n, 
+                                                                   int t)
+{
+  this->GetSegmenterNode()->GetTargetNode()->
+    GetNthIntensityNormalizationParametersNode(n)->
+    SetMaxHistogramSmoothingWidth(t);  
+}
+
+//----------------------------------------------------------------------------
+int
+vtkEMSegmentLogic::
+GetNthTargetVolumeIntensityNormalizationMaxHistogramSmoothingWidth(int n)
+{
+  return this->GetSegmenterNode()->GetTargetNode()->
+    GetNthIntensityNormalizationParametersNode(n)->
+    GetMaxHistogramSmoothingWidth();  
+}
+
+void
+vtkEMSegmentLogic::
+SetNthTargetVolumeIntensityNormalizationRelativeMaxVoxelNum(int n, 
+                                                            float f)
+{
+  this->GetSegmenterNode()->GetTargetNode()->
+    GetNthIntensityNormalizationParametersNode(n)->
+    SetRelativeMaxVoxelNum(f);  
+}
+
+//----------------------------------------------------------------------------
+float
+vtkEMSegmentLogic::
+GetNthTargetVolumeIntensityNormalizationRelativeMaxVoxelNum(int n)
+{
+  return this->GetSegmenterNode()->GetTargetNode()->
+    GetNthIntensityNormalizationParametersNode(n)->
+    GetRelativeMaxVoxelNum();  
+}
+
+//----------------------------------------------------------------------------
+void
+vtkEMSegmentLogic::
+SetNthTargetVolumeIntensityNormalizationPrintInfo(int n, int t)
+{
+  this->GetSegmenterNode()->GetTargetNode()->
+    GetNthIntensityNormalizationParametersNode(n)->
+    SetPrintInfo(t);  
+}
+
+//----------------------------------------------------------------------------
+int
+vtkEMSegmentLogic::
+GetNthTargetVolumeIntensityNormalizationPrintInfo(int n)
+{
+  return this->GetSegmenterNode()->GetTargetNode()->
+    GetNthIntensityNormalizationParametersNode(n)->
+    GetPrintInfo();  
+}
+
+//----------------------------------------------------------------------------
+void
+vtkEMSegmentLogic::
+SetNthTargetVolumeIntensityNormalizationEnabled(int n, int t)
+{
+  this->GetSegmenterNode()->GetTargetNode()->
+    GetNthIntensityNormalizationParametersNode(n)->
+    SetEnabled(t);  
+}
+
+//----------------------------------------------------------------------------
+int
+vtkEMSegmentLogic::
+GetNthTargetVolumeIntensityNormalizationEnabled(int n)
+{
+  return this->GetSegmenterNode()->GetTargetNode()->
+    GetNthIntensityNormalizationParametersNode(n)->
+    GetEnabled();  
 }
 
 //----------------------------------------------------------------------------

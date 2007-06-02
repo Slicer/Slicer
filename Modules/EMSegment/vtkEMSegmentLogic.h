@@ -264,6 +264,49 @@ public:
   virtual void        RemoveTargetSelectedVolume(vtkIdType volumeID);
   virtual void        MoveTargetSelectedVolume(int fromIndex,
                                                int toIndex);
+  //
+  // target volume normalization
+  virtual void  
+    SetNthTargetVolumeIntensityNormalizationToDefaultT1SPGR(int n);
+  virtual void  
+    SetNthTargetVolumeIntensityNormalizationToDefaultT2(int n);
+  virtual void  
+    SetNthTargetVolumeIntensityNormalizationToDefaultT2_2(int n);
+
+  virtual void 
+    SetNthTargetVolumeIntensityNormalizationNormValue(int n, double d);
+  virtual double
+    GetNthTargetVolumeIntensityNormalizationNormValue(int n);
+
+  virtual void 
+    SetNthTargetVolumeIntensityNormalizationNormType(int n, int i);
+  virtual int
+    GetNthTargetVolumeIntensityNormalizationNormType(int n);
+
+  virtual void 
+    SetNthTargetVolumeIntensityNormalizationInitialHistogramSmoothingWidth(int n, int i);
+  virtual int 
+    GetNthTargetVolumeIntensityNormalizationInitialHistogramSmoothingWidth(int n);
+
+  virtual void 
+    SetNthTargetVolumeIntensityNormalizationMaxHistogramSmoothingWidth(int n, int i);
+  virtual int 
+    GetNthTargetVolumeIntensityNormalizationMaxHistogramSmoothingWidth(int n);
+
+  virtual void 
+    SetNthTargetVolumeIntensityNormalizationRelativeMaxVoxelNum(int n, float f);
+  virtual float
+    GetNthTargetVolumeIntensityNormalizationRelativeMaxVoxelNum(int n);
+
+  virtual void 
+    SetNthTargetVolumeIntensityNormalizationPrintInfo(int n, int i);
+  virtual int 
+    GetNthTargetVolumeIntensityNormalizationPrintInfo(int n);
+
+  virtual void 
+    SetNthTargetVolumeIntensityNormalizationEnabled(int n, int i);
+  virtual int 
+    GetNthTargetVolumeIntensityNormalizationEnabled(int n);
 
   //
   // registration parameters
