@@ -133,7 +133,8 @@ void vtkMRMLEMSVolumeCollectionNode::ReadXMLAttributes(const char** attrs)
       
       while (ss >> k1 && ss >> v1 && ss >> k2 && ss >> v2)
         {
-        this->Scene->AddReferencedNodeID(v2.c_str(), this);
+        // moving to AddVolume
+        //this->Scene->AddReferencedNodeID(v2.c_str(), this);
         this->AddVolume(v1.c_str(), v2.c_str());
         }
       }
@@ -174,6 +175,7 @@ AddVolume(const char* key, const char* volumeNodeID)
   this->KeyList.push_back(key);
   this->KeyToVolumeNodeIDMap[key] = volumeNodeID;
   this->VolumeNodeIDToKeyMap[volumeNodeID] = key;
+  this->Scene->AddReferencedNodeID(volumeNodeID, this);
 }
 
 int
