@@ -810,7 +810,8 @@ void vtkNeuroNavGUI::ProcessGUIEvents ( vtkObject *caller,
         {
             int checked = this->LocatorCheckButton->GetSelectedState(); 
 
-            vtkMRMLModelNode *model = vtkMRMLModelNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->LocatorModelID.c_str())); 
+            // vtkMRMLModelNode *model = vtkMRMLModelNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->LocatorModelID.c_str())); 
+            vtkMRMLModelNode *model = vtkMRMLModelNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID("vtkMRMLModelNode1")); 
             if (model != NULL)
             {
                 vtkMRMLModelDisplayNode *disp = model->GetDisplayNode();
@@ -2040,7 +2041,8 @@ void vtkNeuroNavGUI::UpdateLocator()
     transform = this->IGSTKStream->GetLocatorNormalTransform(); 
 #endif
 
-    vtkMRMLModelNode *model = vtkMRMLModelNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->LocatorModelID.c_str())); 
+    //vtkMRMLModelNode *model = vtkMRMLModelNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->LocatorModelID.c_str())); 
+    vtkMRMLModelNode *model = vtkMRMLModelNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID("vtkMRMLModelNode1")); 
     if (model != NULL)
     {
         if (transform)
