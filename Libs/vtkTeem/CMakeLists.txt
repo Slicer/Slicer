@@ -63,6 +63,16 @@ IF(Slicer3_SOURCE_DIR)
   ENDIF(BUILD_SHARED_LIBS)
 ENDIF(Slicer3_SOURCE_DIR)
 
+# after teem 1.9, all the teem libraries are groups in one big libteem.so
+IF ( ${TEEM_VERSION_MAJOR} GREATER 1 )
+  SET(TEEM_LIBRARIES teem)
+ELSE ( ${TEEM_VERSION_MAJOR} GREATER 1 )
+  IF ( ${TEEM_VERSION_MINOR} LESS 10 )
+    SET(TEEM_LIBRARIES air biff nrrd ten ell)
+  ELSE ( ${TEEM_VERSION_MINOR} LESS 10 )
+    SET(TEEM_LIBRARIES teem)
+  ENDIF ( ${TEEM_VERSION_MINOR} LESS 10 )
+ENDIF ( ${TEEM_VERSION_MAJOR} GREATER 1 )
 
 TARGET_LINK_LIBRARIES(vtkTeem 
   vtkCommon
@@ -70,11 +80,7 @@ TARGET_LINK_LIBRARIES(vtkTeem
   vtkImaging
   vtkIOTCL
   vtkGraphicsTCL
-  air
-  biff
-  nrrd
-  ten
-  ell
+  ${TEEM_LIBRARIES}
   )
 
 
