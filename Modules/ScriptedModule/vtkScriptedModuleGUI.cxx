@@ -214,7 +214,7 @@ unsigned long vtkScriptedModuleGUI::AddMRMLObserverByNumber ( vtkObject *observe
   if (observee == NULL)
     {
     vtkErrorMacro("AddMRMLObserverByNumber: observee is null, returning -1");
-    return -1;
+    return VTK_UNSIGNED_LONG_MAX;
     }
   if (observee->HasObserver(event, (vtkCommand *)this->MRMLCallbackCommand) )
     {
