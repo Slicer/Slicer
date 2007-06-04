@@ -6,7 +6,8 @@ PROJECT(EMSegment)
 SET(EMSegment_SRCS 
   # module
   vtkEMSegmentGUI.cxx
-  vtkEMSegmentLogic.cxx
+  vtkEMSegmentLogic.cxx 
+  vtkEMSegmentMRMLManager.cxx 
   # wizard
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkEMSegmentParametersSetStep.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkEMSegmentIntensityImagesStep.cxx
