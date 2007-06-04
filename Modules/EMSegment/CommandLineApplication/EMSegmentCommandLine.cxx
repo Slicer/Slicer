@@ -267,11 +267,11 @@ int main(int argc, char** argv)
     {
       if (tmpNodeName[i] != '\\')
         {
-        parametersNodeName.push_back(tmpNodeName[i]);
+        parametersMRMLNodeName.push_back(tmpNodeName[i]);
         }
       else if (i > 0 && tmpNodeName[i-1] == '\\')
         {
-        parametersNodeName.push_back(tmpNodeName[i]);
+        parametersMRMLNodeName.push_back(tmpNodeName[i]);
         }
     }
 #endif  
