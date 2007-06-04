@@ -17,6 +17,12 @@
       <description>Seed points</description>
       <label>Seed Points</label>
     </point>
+    <region multiple="false" coordinateSystem="ijk">
+      <name>region</name>
+      <longflag>--region</longflag>
+      <description>Region of interest</description>
+      <label>Region of interest</label>
+    </region>
     <float-vector multiple="true">
       <name>vec</name>
       <longflag>--vec</longflag>

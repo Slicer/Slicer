@@ -14,6 +14,13 @@ int main (int argc, char *argv[])
       }
     std::cout << std::endl;
     }
+
+  std::cout << "Region: ";
+  for (unsigned int j = 0; j < region.size(); j++)
+    {
+    std::cout << region[j] << " ";
+    }
+  std::cout << std::endl;
   return 0;
 }
 
