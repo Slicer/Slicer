@@ -556,9 +556,10 @@ void vtkSlicerModelHierarchyWidget::UpdateTreeFromMRML()
   this->TreeWidget->GetWidget()->AddNode(NULL, "Scene", "Scene");
   this->TreeWidget->GetWidget()->OpenNode("Scene");
 
-  scene->InitTraversal();
-  while (node=scene->GetNextNode())
+  int nnodes = scene->GetNumberOfNodes();
+  for (int n=0; n<nnodes; n++)
     {
+    node = scene->GetNthNode(n);
     this->AddNodeToTree(node);
     }
 
@@ -677,9 +678,11 @@ vtkMRMLNode* vtkSlicerModelHierarchyWidget::GetSelectedNodeInTree()
 
   vtkMRMLScene *scene = this->GetMRMLScene();
   vtkMRMLNode *node = NULL, *first_selected_node = NULL;
-  scene->InitTraversal();
-  while (node = scene->GetNextNode())
+
+  int nnodes = scene->GetNumberOfNodes();
+  for (int n=0; n<nnodes; n++)
     {
+    node = scene->GetNthNode(n);
     if (!strcmp(node->GetID(), selected_node.c_str()))
       {
       first_selected_node = node;

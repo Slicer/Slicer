@@ -241,11 +241,12 @@ void vtkSlicerMRMLSaveDataWidget::SaveScene()
     directory = directory + vtksys_stl::string("/");
 
     // convert absolute paths to relative
-    this->MRMLScene->InitTraversal();
-    
+    vtkMRMLScene *scene = this->GetMRMLScene();
     vtkMRMLNode *node;
-    while ( (node = this->MRMLScene->GetNextNodeByClass("vtkMRMLStorageNode") ) != NULL)
+    int nnodes = scene->GetNumberOfNodesByClass("vtkMRMLStorageNode");
+    for (int n=0; n<nnodes; n++)
       {
+      node = scene->GetNthNodeByClass(n, "vtkMRMLStorageNode");
       vtkMRMLStorageNode *snode = vtkMRMLStorageNode::SafeDownCast(node);
       if (!this->MRMLScene->IsFilePathRelative(snode->GetFileName()))
         {        
@@ -273,7 +274,6 @@ int vtkSlicerMRMLSaveDataWidget::UpdateFromMRML()
   this->Nodes.clear();
   this->StorageNodes.clear();
 
-  this->MRMLScene->InitTraversal();
   vtkMRMLNode *node;
   int nModified = 0;
   this->MultiColumnList->GetWidget()->DeleteAllRows ();

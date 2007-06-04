@@ -856,11 +856,10 @@ void vtkSlicerFiducialListWidget::UpdateFiducialsFromMRML()
 
   vtkDebugMacro("UpdateFiducialsFromMRML: Starting to update the viewer's actors, glyphs for the fid lists.");
   
-  scene->InitTraversal();
-
-  while (node=scene->GetNextNodeByClass("vtkMRMLFiducialListNode"))
+  int nnodes = scene->GetNumberOfNodesByClass("vtkMRMLFiducialListNode");
+  for (int n=0; n<nnodes; n++)
     {
-    vtkMRMLFiducialListNode *flist = vtkMRMLFiducialListNode::SafeDownCast(node);
+    vtkMRMLFiducialListNode *flist = vtkMRMLFiducialListNode::SafeDownCast(scene->GetNthNodeByClass(n, "vtkMRMLFiducialListNode"));
 
     if (flist->HasObserver ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand ) == 0)
       {
@@ -1248,27 +1247,28 @@ void vtkSlicerFiducialListWidget::RemoveFiducialObservers()
     }
     // remove the observers on all the fiducial lists
     vtkMRMLFiducialListNode *flist;
-    this->GetMRMLScene()->InitTraversal();
-    while ((flist = vtkMRMLFiducialListNode::SafeDownCast(this->GetMRMLScene()->GetNextNodeByClass("vtkMRMLFiducialListNode"))) != NULL)
-    {
-        vtkDebugMacro("Removing observers on fiducial list " << flist->GetID());
-        if (flist->HasObserver (vtkCommand::ModifiedEvent, this->MRMLCallbackCommand ) == 1)
-          {
-          flist->RemoveObservers ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
-          }
-        if (flist->HasObserver( vtkMRMLFiducialListNode::DisplayModifiedEvent, this->MRMLCallbackCommand ) == 1)
-          {
-          flist->RemoveObservers ( vtkMRMLFiducialListNode::DisplayModifiedEvent, this->MRMLCallbackCommand );
-          }
-        if (flist->HasObserver( vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand ) == 1)
-          {
-          flist->RemoveObservers ( vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand );
-          }
-        if (flist->HasObserver(vtkMRMLFiducialListNode::FiducialModifiedEvent, this->MRMLCallbackCommand ) == 1)
-          {
-          flist->RemoveObservers ( vtkMRMLFiducialListNode::FiducialModifiedEvent, this->MRMLCallbackCommand );
-          }
-    }
+    int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLFiducialListNode");
+    for (int n=0; n<nnodes; n++)
+      {
+      flist = vtkMRMLFiducialListNode::SafeDownCast(this->GetMRMLScene()->GetNthNodeByClass(n, "vtkMRMLFiducialListNode"));
+      vtkDebugMacro("Removing observers on fiducial list " << flist->GetID());
+      if (flist->HasObserver (vtkCommand::ModifiedEvent, this->MRMLCallbackCommand ) == 1)
+        {
+        flist->RemoveObservers ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+        }
+      if (flist->HasObserver( vtkMRMLFiducialListNode::DisplayModifiedEvent, this->MRMLCallbackCommand ) == 1)
+        {
+        flist->RemoveObservers ( vtkMRMLFiducialListNode::DisplayModifiedEvent, this->MRMLCallbackCommand );
+        }
+      if (flist->HasObserver( vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand ) == 1)
+        {
+        flist->RemoveObservers ( vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand );
+        }
+      if (flist->HasObserver(vtkMRMLFiducialListNode::FiducialModifiedEvent, this->MRMLCallbackCommand ) == 1)
+        {
+        flist->RemoveObservers ( vtkMRMLFiducialListNode::FiducialModifiedEvent, this->MRMLCallbackCommand );
+        }
+      }
     flist = NULL;
 }
 
