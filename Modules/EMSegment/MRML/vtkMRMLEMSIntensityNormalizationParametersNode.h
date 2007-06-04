@@ -5,7 +5,6 @@
 #include "vtkMRMLNode.h"
 
 #include "vtkEMSegment.h"
-#include "vtkMRMLEMSSegmenterNode.h"
 
 class VTK_EMSEGMENT_EXPORT vtkMRMLEMSIntensityNormalizationParametersNode : 
   public vtkMRMLNode

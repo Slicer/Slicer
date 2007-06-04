@@ -5,6 +5,7 @@
 #include "vtkMRMLNode.h"
 #include "vtkEMSegment.h"
 #include "vtkMRMLEMSTemplateNode.h"
+#include "vtkMRMLEMSWorkingDataNode.h"
 #include "vtkMRMLEMSAtlasNode.h"
 #include "vtkMRMLEMSTargetNode.h"
 
@@ -62,6 +63,10 @@ public:
   vtkSetReferenceStringMacro(OutputVolumeNodeID);
   vtkMRMLScalarVolumeNode* GetOutputVolumeNode();
 
+  vtkGetStringMacro         (WorkingDataNodeID);
+  vtkSetReferenceStringMacro(WorkingDataNodeID);
+  vtkMRMLEMSWorkingDataNode* GetWorkingDataNode();
+
   vtkGetStringMacro(WorkingDirectory);
   vtkSetStringMacro(WorkingDirectory);
 
@@ -75,6 +80,7 @@ protected:
   char*                               AtlasNodeID;
   char*                               TargetNodeID;
   char*                               OutputVolumeNodeID;
+  char*                               WorkingDataNodeID;
 
   char*                               WorkingDirectory;
 };

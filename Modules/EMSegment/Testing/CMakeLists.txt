@@ -106,6 +106,17 @@ IF( NOT DISABLE_CXX_TESTING )
     )
 
   ADD_TEST(
+    EMSegCL_Normalize
+    ${EM_COMMAND_LINE_TEST_PREFIX}/EMSegmentCommandLine
+    --verbose 
+    --dontWriteResults
+    --mrmlSceneFileName 
+    ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/EMSegmentTutorialTemplate_small_normalizationOn.mrml
+    --resultStandardVolumeFileName 
+    ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/StandardData/StandardSegmentationResult_small.mhd
+    )
+
+  ADD_TEST(
     EMSegCL_DisableMultithreading
     ${EM_COMMAND_LINE_TEST_PREFIX}/EMSegmentCommandLine
     --verbose 
@@ -270,20 +281,39 @@ IF( NOT DISABLE_CXX_TESTING )
 
   # test that the mrml readers/writers work
   ADD_TEST(
-    vtkEMSegmentReadWriteMRMLTest_ReadWriteTutorialData
+    EMSegMRML_ReadWriteTutorialData
     ${EM_COMMAND_LINE_TEST_PREFIX}/vtkEMSegmentReadWriteMRMLTest
     ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/EMSegmentTutorialTemplate_small.mrml
     /tmp/EMSegmentTutorialTemplate_small_Result.mrml
     )
 
   ADD_TEST(
-    vtkEMSegmentReadWriteMRMLTest_DiffReadWriteTutorialData
+    EMSegMRML_DiffTutorialData
     diff -s
     ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/EMSegmentTutorialTemplate_small.mrml
     /tmp/EMSegmentTutorialTemplate_small_Result.mrml
     )
   SET_TESTS_PROPERTIES(
-    vtkEMSegmentReadWriteMRMLTest_DiffReadWriteTutorialData    
+    EMSegMRML_DiffTutorialData    
+    PROPERTIES
+    PASS_REGULAR_EXPRESSION 
+    "are identical")
+
+  ADD_TEST(
+    EMSegMRML_ReadWriteNormalized
+    ${EM_COMMAND_LINE_TEST_PREFIX}/vtkEMSegmentReadWriteMRMLTest
+    ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/EMSegmentTutorialTemplate_small_normalizationOn.mrml
+    /tmp/EMSegmentTutorialTemplate_small_normalizationOn_Result.mrml
+    )
+
+  ADD_TEST(
+    EMSegMRML_DiffNormalized
+    diff -s
+    ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/EMSegmentTutorialTemplate_small_normalizationOn.mrml
+    /tmp/EMSegmentTutorialTemplate_small_normalizationOn_Result.mrml
+    )
+  SET_TESTS_PROPERTIES(
+    EMSegMRML_DiffNormalized
     PROPERTIES
     PASS_REGULAR_EXPRESSION 
     "are identical")

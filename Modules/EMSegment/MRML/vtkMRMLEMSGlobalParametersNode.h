@@ -4,6 +4,7 @@
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
 #include "vtkEMSegment.h"
+#include "vtkMRMLEMSIntensityNormalizationParametersNode.h"
 
 class VTK_EMSEGMENT_EXPORT vtkMRMLEMSGlobalParametersNode : 
   public vtkMRMLNode
@@ -14,6 +15,15 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual vtkMRMLNode* CreateNodeInstance();
+
+  // Description:
+  // Updates this node if it depends on other nodes
+  // when the node is deleted in the scene
+  virtual void UpdateReferences();
+
+  // Description:
+  // Update the stored reference to another node in the scene
+  virtual void UpdateReferenceID(const char *oldID, const char *newID);
 
   // Description:
   // Set node attributes
@@ -40,7 +50,9 @@ public:
   vtkSetVectorMacro(SegmentationBoundaryMax, int, 3);
   vtkGetVectorMacro(SegmentationBoundaryMax, int, 3);
 
-  vtkSetMacro(NumberOfTargetInputChannels, int);
+  virtual void AddTargetInputChannel();
+  virtual void RemoveNthTargetInputChannel(int n);
+  virtual void MoveNthTargetInputChannel(int fromIndex, int toIndex);
   vtkGetMacro(NumberOfTargetInputChannels, int);
 
   //
@@ -79,6 +91,16 @@ public:
   vtkGetStringMacro(WorkingDirectory);
   vtkSetStringMacro(WorkingDirectory);
 
+  //
+  // intensity normlaization parameters
+  //
+  vtkMRMLEMSIntensityNormalizationParametersNode*
+    GetNthIntensityNormalizationParametersNode(int n);
+  virtual const char* GetNthIntensityNormalizationParametersNodeID(int n);
+  virtual void 
+    SetNthIntensityNormalizationParametersNodeID(int n, 
+                                                 const char* nodeID);
+
 protected:
   vtkMRMLEMSGlobalParametersNode();
   ~vtkMRMLEMSGlobalParametersNode();
@@ -103,6 +125,13 @@ protected:
   int                                 SegmentationBoundaryMax[3];
 
   int                                 NumberOfTargetInputChannels;
+
+  //BTX
+  typedef vtkstd::vector<std::string>  IntensityNormalizationParameterListType;
+  typedef IntensityNormalizationParameterListType::iterator 
+  IntensityNormalizationParameterListIterator;
+  IntensityNormalizationParameterListType IntensityNormalizationParameterList;
+  //ETX
 };
 
 #endif

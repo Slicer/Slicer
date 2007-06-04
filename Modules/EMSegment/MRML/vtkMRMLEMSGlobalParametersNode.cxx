@@ -2,6 +2,7 @@
 #include <sstream>
 #include "vtkMRMLScene.h"
 #include <algorithm>
+#include <iterator>
 
 //-----------------------------------------------------------------------------
 vtkMRMLEMSGlobalParametersNode* 
@@ -69,6 +70,40 @@ vtkMRMLEMSGlobalParametersNode::~vtkMRMLEMSGlobalParametersNode()
 }
 
 //-----------------------------------------------------------------------------
+void
+vtkMRMLEMSGlobalParametersNode::
+UpdateReferenceID(const char* oldID, const char* newID)
+{
+  for (IntensityNormalizationParameterListIterator i = 
+         this->IntensityNormalizationParameterList.begin(); 
+       i != this->IntensityNormalizationParameterList.end(); ++i)
+    {
+    if (oldID && newID && *i == vtksys_stl::string(oldID))
+      {
+      *i = newID;
+      }
+    }
+}
+
+//-----------------------------------------------------------------------------
+void 
+vtkMRMLEMSGlobalParametersNode::
+UpdateReferences()
+{
+  Superclass::UpdateReferences();
+
+  for (IntensityNormalizationParameterListIterator i = 
+         this->IntensityNormalizationParameterList.begin(); 
+       i != this->IntensityNormalizationParameterList.end(); ++i)
+    {
+    if (this->Scene->GetNodeByID((*i).c_str()) == NULL)
+      {
+      *i = "NULL";
+      }
+    }
+}
+
+//-----------------------------------------------------------------------------
 void vtkMRMLEMSGlobalParametersNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
@@ -118,6 +153,13 @@ void vtkMRMLEMSGlobalParametersNode::WriteXML(ostream& of, int nIndent)
        << this->SaveSurfaceModels << "\" ";
     of << indent << "MultithreadingEnabled=\"" 
        << this->MultithreadingEnabled << "\" ";
+
+    of << indent << "IntensityNormalizationParameterNodeIDs=\"";
+    vtksys_stl::copy(this->IntensityNormalizationParameterList.begin(),
+                     this->IntensityNormalizationParameterList.end(),
+                     vtksys_stl::
+                     ostream_iterator<vtksys_stl::string>(of, " "));
+    of << "\" ";
 }
 
 //-----------------------------------------------------------------------------
@@ -213,6 +255,23 @@ void vtkMRMLEMSGlobalParametersNode::ReadXMLAttributes(const char** attrs)
       ss << val;
       ss >> this->MultithreadingEnabled;
       }
+    if (!strcmp(key, "IntensityNormalizationParameterNodeIDs"))
+      {
+      vtksys_stl::stringstream ss;
+      ss << val;
+      vtksys_stl::string s;
+
+      int index = 0;
+      while (ss >> s)
+        {
+        this->IntensityNormalizationParameterList.push_back(s);
+        if (s != "NULL")
+          {
+          this->Scene->AddReferencedNodeID(s.c_str(), this);
+          }
+        ++index;
+        }
+      }
     }
 }
 
@@ -223,7 +282,7 @@ void vtkMRMLEMSGlobalParametersNode::Copy(vtkMRMLNode *rhs)
   vtkMRMLEMSGlobalParametersNode* node = 
     (vtkMRMLEMSGlobalParametersNode*) rhs;
 
-  this->SetNumberOfTargetInputChannels(node->NumberOfTargetInputChannels);
+  this->NumberOfTargetInputChannels = node->NumberOfTargetInputChannels;
   this->SetWorkingDirectory(node->WorkingDirectory);
 
   this->SetSegmentationBoundaryMin(node->SegmentationBoundaryMin);
@@ -238,6 +297,9 @@ void vtkMRMLEMSGlobalParametersNode::Copy(vtkMRMLNode *rhs)
   this->SetSaveIntermediateResults(node->SaveIntermediateResults);
   this->SetSaveSurfaceModels(node->SaveSurfaceModels);
   this->SetMultithreadingEnabled(node->MultithreadingEnabled);
+
+  this->IntensityNormalizationParameterList = 
+    node->IntensityNormalizationParameterList;
 }
 
 //-----------------------------------------------------------------------------
@@ -283,5 +345,86 @@ void vtkMRMLEMSGlobalParametersNode::PrintSelf(ostream& os,
      << this->SaveSurfaceModels << "\n";
   os << indent << "MultithreadingEnabled: " 
      << this->MultithreadingEnabled << "\n";
+
+  os << indent << "IntensityNormalizationParameterNodeIDs: ";
+  vtksys_stl::copy(this->IntensityNormalizationParameterList.begin(),
+                   this->IntensityNormalizationParameterList.end(),
+                   vtksys_stl::ostream_iterator<vtksys_stl::string>(os, " "));
+  os << "\n";
 }
 
+const char*
+vtkMRMLEMSGlobalParametersNode::
+GetNthIntensityNormalizationParametersNodeID(int n)
+{
+  return this->IntensityNormalizationParameterList[n].c_str();
+}
+
+
+vtkMRMLEMSIntensityNormalizationParametersNode*
+vtkMRMLEMSGlobalParametersNode::
+GetNthIntensityNormalizationParametersNode(int n)
+{
+  vtkMRMLEMSIntensityNormalizationParametersNode* node = NULL;
+  if (this->GetScene() && 
+      this->GetNthIntensityNormalizationParametersNodeID(n))
+    {
+      vtkMRMLNode* snode = this->GetScene()->
+        GetNodeByID(this->GetNthIntensityNormalizationParametersNodeID(n));
+      node = 
+        vtkMRMLEMSIntensityNormalizationParametersNode::SafeDownCast(snode);
+    }
+  return node;  
+}
+
+void
+vtkMRMLEMSGlobalParametersNode::
+SetNthIntensityNormalizationParametersNodeID(int n, const char* id)
+{
+  this->IntensityNormalizationParameterList[n] = id;
+  this->Scene->AddReferencedNodeID(id, this);  
+}
+
+void
+vtkMRMLEMSGlobalParametersNode::
+AddTargetInputChannel()
+{
+  ++this->NumberOfTargetInputChannels;
+
+  // create intensity normalization parameter node
+  vtkMRMLEMSIntensityNormalizationParametersNode* intensityNormalizationNode
+    = vtkMRMLEMSIntensityNormalizationParametersNode::New();
+  intensityNormalizationNode->SetScene(this->GetScene());
+  this->GetScene()->AddNode(intensityNormalizationNode);
+
+  // add it to the scene
+  this->IntensityNormalizationParameterList.
+    push_back(intensityNormalizationNode->GetID());
+  this->GetScene()->
+    AddReferencedNodeID(intensityNormalizationNode->GetID(), this);
+
+  // clean up
+  intensityNormalizationNode->Delete();
+}
+
+void
+vtkMRMLEMSGlobalParametersNode::
+RemoveNthTargetInputChannel(int n)
+{
+  --this->NumberOfTargetInputChannels;
+  this->IntensityNormalizationParameterList.
+    erase(this->IntensityNormalizationParameterList.begin() + n);
+}
+
+void
+vtkMRMLEMSGlobalParametersNode::
+MoveNthTargetInputChannel(int n, int toIndex)
+{
+  if (toIndex == n)
+    {
+    return;
+    }
+  IntensityNormalizationParameterListIterator b = 
+    this->IntensityNormalizationParameterList.begin();
+  vtksys_stl::swap(*(b+n), *(b+toIndex));
+}

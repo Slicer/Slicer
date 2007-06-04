@@ -1,9 +1,6 @@
 #include "vtkMRMLEMSTargetNode.h"
 #include <sstream>
 #include "vtkMRMLScene.h"
-#include <algorithm>
-#include <iterator>
-#include "vtkMRMLEMSIntensityNormalizationParametersNode.h"
 
 vtkMRMLEMSTargetNode* 
 vtkMRMLEMSTargetNode::
@@ -45,50 +42,10 @@ vtkMRMLEMSTargetNode::~vtkMRMLEMSTargetNode()
   // nothing to do here
 }
 
-//-----------------------------------------------------------------------------
-void
-vtkMRMLEMSTargetNode::
-UpdateReferenceID(const char* oldID, const char* newID)
-{
-  for (IntensityNormalizationParameterListIterator i = 
-         this->IntensityNormalizationParameterList.begin(); 
-       i != this->IntensityNormalizationParameterList.end(); ++i)
-    {
-    if (oldID && newID && *i == vtksys_stl::string(oldID))
-      {
-      *i = newID;
-      }
-    }
-}
-
-//-----------------------------------------------------------------------------
-void 
-vtkMRMLEMSTargetNode::
-UpdateReferences()
-{
-  Superclass::UpdateReferences();
-
-  for (IntensityNormalizationParameterListIterator i = 
-         this->IntensityNormalizationParameterList.begin(); 
-       i != this->IntensityNormalizationParameterList.end(); ++i)
-    {
-    if (this->Scene->GetNodeByID((*i).c_str()) == NULL)
-      {
-      *i = "None";
-      }
-    }
-}
-
 void vtkMRMLEMSTargetNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
   vtkIndent indent(nIndent);
-
-  of << indent << "IntensityNormalizationParameterNodeIDs=\"";
-  vtksys_stl::copy(this->IntensityNormalizationParameterList.begin(),
-                   this->IntensityNormalizationParameterList.end(),
-                   vtksys_stl::ostream_iterator<vtksys_stl::string>(of, " "));
-  of << "\" ";
 }
 
 void vtkMRMLEMSTargetNode::ReadXMLAttributes(const char** attrs)
@@ -104,146 +61,18 @@ void vtkMRMLEMSTargetNode::ReadXMLAttributes(const char** attrs)
     {
     key = *attrs++;
     val = *attrs++;
-
-    if (!strcmp(key, "IntensityNormalizationParameterNodeIDs"))
-      {
-      vtksys_stl::stringstream ss;
-      ss << val;
-      vtksys_stl::string s;
-
-      int index = 0;
-      while (ss >> s)
-        {
-        if (this->IntensityNormalizationParameterList.size() <= index)
-          {
-          this->IntensityNormalizationParameterList.push_back(s);
-          }
-        else
-          {
-          this->IntensityNormalizationParameterList[index] = s;
-          }
-        this->Scene->AddReferencedNodeID(s.c_str(), this);
-        ++index;
-        }
-      }
     }
 }
 
 void vtkMRMLEMSTargetNode::Copy(vtkMRMLNode *rhs)
 {
   Superclass::Copy(rhs);
-
-  vtkMRMLEMSTargetNode* node = 
-    (vtkMRMLEMSTargetNode*) rhs;
-
-  this->IntensityNormalizationParameterList = 
-    node->IntensityNormalizationParameterList;
 }
 
 void vtkMRMLEMSTargetNode::PrintSelf(ostream& os, 
                                      vtkIndent indent)
 {
   Superclass::PrintSelf(os, indent);
-
-  os << indent << "IntensityNormalizationParameterNodeIDs: ";
-  vtksys_stl::copy(this->IntensityNormalizationParameterList.begin(),
-                   this->IntensityNormalizationParameterList.end(),
-                   vtksys_stl::ostream_iterator<vtksys_stl::string>(os, " "));
-  os << "\n";
 }
 
-void
-vtkMRMLEMSTargetNode::
-AddVolume(const char* key, const char* volumeNodeID)
-{
-  Superclass::AddVolume(key, volumeNodeID);
-  this->IntensityNormalizationParameterList.push_back("None");
-}
-
-void
-vtkMRMLEMSTargetNode::
-RemoveAllVolumes()
-{
-  Superclass::RemoveAllVolumes();
-  this->IntensityNormalizationParameterList.clear();
-}
-
-void
-vtkMRMLEMSTargetNode::
-RemoveVolumeByKey(const char* key)
-{
-  int index = this->GetIndexByKey(key);
-  Superclass::RemoveVolumeByKey(key);
-  
-  this->IntensityNormalizationParameterList.
-    erase(this->IntensityNormalizationParameterList.begin() + index);
-}
-
-void
-vtkMRMLEMSTargetNode::
-RemoveVolumeByNodeID(const char* nodeID)
-{
-  int index = this->GetIndexByVolumeNodeID(nodeID);
-  Superclass::RemoveVolumeByNodeID(nodeID);
-  
-  this->IntensityNormalizationParameterList.
-    erase(this->IntensityNormalizationParameterList.begin() + index);
-}
-
-void
-vtkMRMLEMSTargetNode::
-RemoveNthVolume(int n)
-{
-  Superclass::RemoveNthVolume(n);
-  
-  this->IntensityNormalizationParameterList.
-    erase(this->IntensityNormalizationParameterList.begin() + n);
-}
-
-void
-vtkMRMLEMSTargetNode::
-MoveNthVolume(int n, int toIndex)
-{
-  if (toIndex == n)
-    {
-    return;
-    }
-
-  Superclass::MoveNthVolume(n, toIndex);
-
-  IntensityNormalizationParameterListIterator b = 
-    this->IntensityNormalizationParameterList.begin();
-  vtksys_stl::swap(*(b+n), *(b+toIndex));
-}
-
-const char*
-vtkMRMLEMSTargetNode::
-GetNthIntensityNormalizationParametersNodeID(int n)
-{
-  return this->IntensityNormalizationParameterList[n].c_str();
-}
-
-
-vtkMRMLEMSIntensityNormalizationParametersNode*
-vtkMRMLEMSTargetNode::
-GetNthIntensityNormalizationParametersNode(int n)
-{
-  vtkMRMLEMSIntensityNormalizationParametersNode* node = NULL;
-  if (this->GetScene() && 
-      this->GetNthIntensityNormalizationParametersNodeID(n))
-    {
-      vtkMRMLNode* snode = this->GetScene()->
-        GetNodeByID(this->GetNthIntensityNormalizationParametersNodeID(n));
-      node = 
-        vtkMRMLEMSIntensityNormalizationParametersNode::SafeDownCast(snode);
-    }
-  return node;  
-}
-
-void
-vtkMRMLEMSTargetNode::
-SetNthIntensityNormalizationParametersNodeID(int n, const char* id)
-{
-  this->IntensityNormalizationParameterList[n] = id;
-}
 
