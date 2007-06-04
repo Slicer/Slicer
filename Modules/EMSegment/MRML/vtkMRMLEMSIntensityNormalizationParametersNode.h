@@ -32,7 +32,7 @@ public:
   // Description:
   // Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName()
-    {return "EMSIntensityNormalizationParemeters";}
+    {return "EMSIntensityNormalizationParameters";}
 
   //
   // parameters for normalization filter
