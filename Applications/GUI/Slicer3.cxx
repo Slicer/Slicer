@@ -1503,7 +1503,7 @@ int Slicer3_main(int argc, char *argv[])
     // use the startup code passed on command line if it exists
     // Example for csh to exit after startup:
     //
-    // ./Slicer3 --exec 'after idle $::slicer3::Application Exit' 
+    // ./Slicer3 --exec exit' 
     //
     if ( Exec != "" )
       {    
@@ -1539,9 +1539,15 @@ int Slicer3_main(int argc, char *argv[])
             slicerCerr("ERROR loading MRML file " << fileName << ", error code = " << errorCode << endl);
             }
           }                    
+        else if (fileName.find(".tcl",0) != std::string::npos)
+          {
+          // if it's a tcl file source it after the app starts
+          std::string cmd = "after idle {source " + *argit + "}";
+          res = Slicer3_Tcl_Eval( interp, cmd.c_str() );
+          }
         else
           {
-          // if it's not a mrml file, assume it is data to load...
+          // if we're not sure, assume it is data to load...
           std::string cmd = "::Loader::ShowDialog " + *argit;
           res = Slicer3_Tcl_Eval( interp, cmd.c_str() );
           }
