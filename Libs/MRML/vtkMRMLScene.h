@@ -29,6 +29,7 @@ Version:   $Revision: 1.18 $
 #include <vector>
 #include <string>
 #include <vtksys/SystemTools.hxx> 
+#include <vtksys/hash_map.hxx> 
 
 #include "vtkCollection.h"
 #include "vtkObjectFactory.h"
@@ -352,10 +353,17 @@ protected:
   std::vector< vtkMRMLNode* > ReferencingNodes;
   std::map< std::string, std::string> ReferencedIDChanges;
   
+  //vtksys::hash_map<const char*, vtkMRMLNode*> NodeIDs;
+  std::map<std::string, vtkMRMLNode*> NodeIDs;
+
   std::string ErrorMessage;
   //ETX
   
   void UpdateNodeReferences();
+
+  void UpdateNodeIDs();
+
+  unsigned long NodeIDsMTime;
 
   void RemoveAllNodesExceptSingletons();
 

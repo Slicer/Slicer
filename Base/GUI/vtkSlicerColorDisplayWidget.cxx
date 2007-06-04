@@ -136,7 +136,14 @@ void vtkSlicerColorDisplayWidget::SetColorNode ( vtkMRMLColorNode *colorNode )
   //
   this->RemoveMRMLObservers();
 
-  this->SetColorNodeID( colorNode->GetID() );
+  if (colorNode)
+    {
+    this->SetColorNodeID( colorNode->GetID() );
+    }
+  else
+    {
+    this->SetColorNodeID(NULL);
+    }
 
   this->AddMRMLObservers();
 

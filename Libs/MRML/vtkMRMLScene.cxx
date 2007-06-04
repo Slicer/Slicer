@@ -58,6 +58,8 @@ Version:   $Revision: 1.18 $
 //------------------------------------------------------------------------------
 vtkMRMLScene::vtkMRMLScene() 
 {
+  this->NodeIDsMTime = 0;
+
   this->ClassNameList = NULL;
   this->RegisteredNodeClasses.clear();
   this->UniqueIDByClass.clear();
@@ -731,9 +733,8 @@ vtkMRMLNode*  vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
     {
     n->SetName(n->GetID());
     }
-  this->CurrentScene->vtkCollection::AddItem((vtkObject *)n);
   n->SetScene( this );
-
+  this->CurrentScene->vtkCollection::AddItem((vtkObject *)n);
   return n;
 }
 
@@ -904,47 +905,26 @@ vtkCollection* vtkMRMLScene::GetNodesByName(const char* name)
 //------------------------------------------------------------------------------
 vtkMRMLNode* vtkMRMLScene::GetNodeByID(std::string id)
 {
-//  return this->GetNodeByID(id.c_str());
-  vtkMRMLNode *node = NULL;
-  if (id == "" || this == NULL  || this->CurrentScene == NULL)
-    {
-    return NULL;
-    }
-  for (int n=0; n < this->CurrentScene->GetNumberOfItems(); n++) 
-    {
-    //node = (vtkMRMLNode*)this->CurrentScene->GetItemAsObject(n);
-    node = vtkMRMLNode::SafeDownCast(this->CurrentScene->GetItemAsObject(n));
-    if (node == NULL)
-      {
-      return NULL;
-      }
-    if (id == node->GetID())
-      {
-      return node;
-      }
-    }
-  return NULL;
+  return this->GetNodeByID(id.c_str());
 }
 
 //------------------------------------------------------------------------------
 vtkMRMLNode* vtkMRMLScene::GetNodeByID(const char* id)
 {
+  if (id == NULL) 
+    {
+    return NULL;
+    }
 
   vtkMRMLNode *node = NULL;
-  if (id == NULL || this == NULL || this->CurrentScene == NULL)
-   {
-   return NULL;
-   }
-  for (int n=0; n < this->CurrentScene->GetNumberOfItems(); n++) 
+  this->UpdateNodeIDs();
+  //vtksys::hash_map<const char*, vtkMRMLNode*>::iterator it = this->NodeIDs.find(id);
+  std::map<std::string, vtkMRMLNode*>::iterator it = this->NodeIDs.find(std::string(id));
+  if (it != this->NodeIDs.end())
     {
-    node = (vtkMRMLNode*)this->CurrentScene->GetItemAsObject(n);
-    if (node->GetID() && !strcmp(node->GetID(), id)) 
-      {
-      return node;
-      }
+    node = it->second;
     }
-  
-  return NULL;
+  return node;
 }
 
 //------------------------------------------------------------------------------
@@ -1534,3 +1514,21 @@ void vtkMRMLScene::UpdateNodeReferences()
   }
 
 }
+
+//------------------------------------------------------------------------------
+void vtkMRMLScene::UpdateNodeIDs()
+{
+  if (this->CurrentScene->GetMTime() > this->NodeIDsMTime)
+    {
+    this->NodeIDs.clear();
+    vtkMRMLNode *node;
+    int nnodes = this->CurrentScene->GetNumberOfItems();
+    for (unsigned int n=0; n<nnodes; n++)
+      {
+      node = this->GetNthNode(n);
+      this->NodeIDs[std::string(node->GetID())] = node;
+      }
+    }
+  this->NodeIDsMTime = this->CurrentScene->GetMTime();
+}
+
