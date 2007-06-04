@@ -65,7 +65,7 @@ class VTK_MRML_EXPORT vtkMRMLNRRDStorageNode : public vtkMRMLStorageNode
 
   // Description:
   // Get node XML tag name (like Storage, Model)
-  virtual const char* GetNodeTagName()  {return "VolumeArchetypeStorage";};
+  virtual const char* GetNodeTagName()  {return "NRRDStorage";};
 
   // Description:
   // Center image on read

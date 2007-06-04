@@ -493,7 +493,9 @@ int vtkMRMLScene::Connect()
       } 
       */
   }
-  
+
+  this->SetErrorCode (!res);  // XML Parser return 0 on error, but scene error code of 0 is normal
+  this->SetErrorMessage (std::string("Error loading scene"));
   this->SetUndoFlag(undoFlag);
   
   existingNodes->RemoveAllItems();
@@ -578,10 +580,10 @@ int vtkMRMLScene::LoadIntoScene(vtkCollection* nodeCollection)
     parser->SetNodeCollection(nodeCollection);
     }
   parser->SetFileName(URL.c_str());
-  parser->Parse();
+  int result = parser->Parse();
   parser->Delete();
 
-  return 1;
+  return result;
 }
 
 //------------------------------------------------------------------------------
