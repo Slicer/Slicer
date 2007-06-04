@@ -258,6 +258,24 @@ int main(int argc, char** argv)
   bool useDefaultOutput         = resultVolumeFileName.empty();
   bool segmentationSucceeded    = true;
 
+#ifdef WIN32
+  //
+  // strip backslashes from parameter node name (present if spaces were used)
+  std::string tmpNodeName = parametersMRMLNodeName;
+  parametersMRMLNodeName.clear();
+  for (unsigned int i = 0; i < tmpNodeName.size(); ++i)
+    {
+      if (tmpNodeName[i] != '\\')
+        {
+        parametersNodeName.push_back(tmpNodeName[i]);
+        }
+      else if (i > 0 && tmpNodeName[i-1] == '\\')
+        {
+        parametersNodeName.push_back(tmpNodeName[i]);
+        }
+    }
+#endif  
+
   //
   // make sure arguments are sufficient and unique
   bool argsOK = true;
