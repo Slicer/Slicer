@@ -911,7 +911,7 @@ vtkMRMLNode* vtkMRMLScene::GetNodeByID(std::string id)
 //------------------------------------------------------------------------------
 vtkMRMLNode* vtkMRMLScene::GetNodeByID(const char* id)
 {
-  if (id == NULL) 
+  if (this == NULL || id == NULL) 
     {
     return NULL;
     }
