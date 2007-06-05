@@ -283,12 +283,14 @@ void vtkMRMLScene::ResetNodes()
     {
     int save = nodes[i]->GetSaveWithScene();
     int hide = nodes[i]->GetHideFromEditors();
+    int select = nodes[i]->GetSelectable();
     char *tag = nodes[i]->GetSingletonTag();
 
     newNode = nodes[i]->CreateNodeInstance();
     nodes[i]->CopyWithSingleModifiedEvent(newNode);
     nodes[i]->SetSaveWithScene(save);
     nodes[i]->SetHideFromEditors(hide);
+    nodes[i]->SetSelectable(select);
     nodes[i]->SetSingletonTag(tag);
     newNode->Delete();
     }

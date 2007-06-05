@@ -251,13 +251,17 @@ void vtkSlicerNodeSelectorWidget::UpdateMenu()
 
     vtkMRMLNode *node = NULL;
     vtkMRMLNode *selectedNode = NULL;
-    this->MRMLScene->InitTraversal();
     bool selected = false;
     for (c=0; c < this->GetNumberOfNodeClasses(); c++)
     {
       const char *className = this->GetNodeClass(c);
+      this->MRMLScene->InitTraversal();
       while ( (node = this->MRMLScene->GetNextNodeByClass(className) ) != NULL)
         {
+        if (!node->GetSelectable())
+          {
+          continue;
+          }
         if (!this->ShowHidden && node->GetHideFromEditors())
           {
           continue;

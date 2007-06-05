@@ -56,6 +56,7 @@ vtkMRMLNode::vtkMRMLNode()
   this->Scene = NULL;
 
   this->HideFromEditors = 1;
+  this->Selectable = 1;
 
   this->AddToScene = 1;
 

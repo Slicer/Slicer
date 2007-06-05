@@ -201,6 +201,7 @@ void vtkSlicerClipModelsWidget::CreateWidget ( )
   this->ClipTypeMenu->SetLabelText("Clip Type:");
   this->ClipTypeMenu->GetWidget()->GetMenu()->AddRadioButton ( "Intersection");
   this->ClipTypeMenu->GetWidget()->GetMenu()->AddRadioButton ( "Union");
+  this->ClipTypeMenu->GetWidget()->GetMenu()->AddRadioButton ( "Off");
   this->ClipTypeMenu->GetWidget()->SetValue ( "Intersection" );
   //this->ClipTypeMenu->GetWidget()->SetWidth ( 7 );
   this->Script(
@@ -315,6 +316,12 @@ void vtkSlicerClipModelsWidget::UpdateMRML()
   else if ( !strcmp (mb->GetValue(), "Union") )   
     {
     this->ClipModelsNode->SetClipType(vtkMRMLClipModelsNode::ClipUnion);
+    }
+  else if ( !strcmp (mb->GetValue(), "Off") )   
+    {
+    this->ClipModelsNode->SetYellowSliceClipState(vtkMRMLClipModelsNode::ClipOff);
+    this->ClipModelsNode->SetGreenSliceClipState(vtkMRMLClipModelsNode::ClipOff);
+    this->ClipModelsNode->SetRedSliceClipState(vtkMRMLClipModelsNode::ClipOff);
     }
 
 }

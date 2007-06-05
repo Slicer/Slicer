@@ -203,12 +203,20 @@ void vtkSlicerModelHierarchyWidget::ProcessWidgetEvents ( vtkObject *caller,
   if (vtkSlicerNodeSelectorWidget::SafeDownCast(caller) == this->ModelDisplaySelectorWidget && 
         event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent ) 
     {
-    vtkMRMLModelHierarchyNode *model = 
+    vtkMRMLModelNode *model = 
+        vtkMRMLModelNode::SafeDownCast(this->ModelDisplaySelectorWidget->GetSelected());
+
+    vtkMRMLModelHierarchyNode *hmodel = 
         vtkMRMLModelHierarchyNode::SafeDownCast(this->ModelDisplaySelectorWidget->GetSelected());
 
     if (model != NULL && model->GetDisplayNode() != NULL)
       {
       this->ModelDisplayWidget->SetModelDisplayNode(model->GetDisplayNode());
+      this->ModelDisplayWidget->SetModelNode(model);
+      }
+    else if (hmodel != NULL && hmodel->GetDisplayNode() != NULL)
+      {
+      this->ModelDisplayWidget->SetModelDisplayNode(hmodel->GetDisplayNode());
       this->ModelDisplayWidget->SetModelNode(NULL);
       }
     return;
@@ -261,14 +269,13 @@ void vtkSlicerModelHierarchyWidget::SelectNodeCallback(const char *id)
     vtkMRMLNode *node = this->GetMRMLScene()->GetNodeByID(this->SelectedLeaves[i].c_str());
     if (node != NULL)
       {
-      if (node->IsA("vtkMRMLModelHierarchyNode")) 
-        {
-        this->ModelDisplaySelectorWidget->SetSelected(node);
-        }
-      else if (node->IsA("vtkMRMLModelNode")) 
+      this->ModelDisplaySelectorWidget->SetSelected(node);
+      /**
+       if (node->IsA("vtkMRMLModelNode")) 
         {
         this->InvokeEvent(vtkSlicerModelHierarchyWidget::SelectedEvent, node);
         }
+        **/
       }
     }
 }
@@ -374,6 +381,7 @@ void vtkSlicerModelHierarchyWidget::NodeParentChangedCallback(
         if (!parentHierNode)
           {
           parentHierNode = vtkMRMLModelHierarchyNode::New();
+          parentHierNode->SetSelectable(0);
           this->GetMRMLScene()->AddNode(parentHierNode);
           }
         vtkMRMLModelHierarchyNode *oldParentNode = vtkMRMLModelHierarchyNode::SafeDownCast(parentHierNode->GetParentNode());
@@ -488,6 +496,7 @@ void vtkSlicerModelHierarchyWidget::CreateWidget ( )
   this->ModelDisplaySelectorWidget->SetParent ( dframe->GetFrame() );
   this->ModelDisplaySelectorWidget->Create ( );
   this->ModelDisplaySelectorWidget->SetNodeClass("vtkMRMLModelHierarchyNode", NULL, NULL, NULL);
+  this->ModelDisplaySelectorWidget->AddNodeClass("vtkMRMLModelNode", NULL, NULL, NULL);
   this->ModelDisplaySelectorWidget->SetChildClassesEnabled(0);
   this->ModelDisplaySelectorWidget->SetShowHidden(1);
   this->ModelDisplaySelectorWidget->SetMRMLScene(this->GetMRMLScene());

@@ -156,6 +156,12 @@ public:
   vtkSetMacro(HideFromEditors, int);
   vtkBooleanMacro(HideFromEditors, int);
 
+  // Description:
+  // Describes if the node is selectable
+  vtkGetMacro(Selectable, int);
+  vtkSetMacro(Selectable, int);
+  vtkBooleanMacro(Selectable, int);
+
   
   // Description:
   // method to propagate events generated in mrml
@@ -315,6 +321,7 @@ protected:
   char *SingletonTag;
   int Indent;
   int HideFromEditors;
+  int Selectable;
   int AddToScene;
 
   int  ModifiedSinceRead;
