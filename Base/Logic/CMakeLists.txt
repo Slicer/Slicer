@@ -10,7 +10,6 @@ SET(SlicerBaseLogic_SRCS
   vtkSlicerTask.cxx
   vtkSlicerSliceLogic.cxx 
   vtkSlicerSliceLayerLogic.cxx
-  vtkImageResliceMask.cxx 
   vtkSlicerVolumesLogic.cxx 
   vtkSlicerModelsLogic.cxx 
   vtkSlicerModelHierarchyLogic.cxx
@@ -23,6 +22,7 @@ SET(SlicerBaseLogic_SRCS
   vtkImageBimodalAnalysis.cxx
   vtkImageFillROI.cxx
   vtkSlicerGlyphSource2D.cxx
+  #vtkImageResliceMask.cxx 
 )
 
 # Abstract/pure virtual classes
