@@ -1008,6 +1008,7 @@ void vtkSlicerViewerWidget::UpdateModelPolyData(vtkMRMLModelNode *model)
   if (clipper)
     {
     this->DisplayedModelsClipState[model->GetID()] = 1;
+    clipper->Delete();
     }
   else
     {
