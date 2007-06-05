@@ -22,14 +22,6 @@ IF (Slicer3_SOURCE_DIR)
 ENDIF (Slicer3_SOURCE_DIR)
 
 #####################
-SET (CLP StochasticTractographyFilter)
-
-SET ( ${CLP}_SOURCE ${CLP}.cxx)
-GENERATECLP(${CLP}_SOURCE ${CLP}.xml ${CLI_SOURCE_DIR}/Resources/ITKLogo.h)
-ADD_EXECUTABLE(${CLP} ${${CLP}_SOURCE})
-TARGET_LINK_LIBRARIES (${CLP} ITKIO ITKBasicFilters ITKCommon)
-
-#####################
 SET (CLP DiffusionTensorTest)
 
 SET ( ${CLP}_SOURCE ${CLP}.cxx)
