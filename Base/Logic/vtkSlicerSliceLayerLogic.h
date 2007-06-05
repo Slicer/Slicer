@@ -41,7 +41,7 @@
 #include "vtkMRMLVolumeNode.h"
 #include "vtkMRMLSliceNode.h"
 
-#include "vtkImageResliceMask.h"
+#include "vtkImageReslice.h"
 #include "vtkImageSlice.h"
 #include "vtkImageMapToColors.h"
 
@@ -88,10 +88,10 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLayerLogic : public vtkSlicerLo
   // Description:
   // The image reslice or slice being used
   vtkGetObjectMacro (Slice, vtkImageSlice);
-  vtkGetObjectMacro (Reslice, vtkImageResliceMask);
+  vtkGetObjectMacro (Reslice, vtkImageReslice);
 
   // Description:
-  // Select the vtkImageResliceMask or slicer's own vtkImageSlice
+  // Select the vtkImageReslice or slicer's own vtkImageSlice
   vtkGetMacro (UseReslice, int);
   vtkSetMacro (UseReslice, int);
   vtkBooleanMacro(UseReslice, int);
@@ -200,7 +200,7 @@ protected:
   vtkImageExtractComponents *ResliceExtractAlpha;
   vtkImageCast *ResliceAlphaCast;
   vtkImageLogic *AlphaLogic;
-  vtkImageResliceMask *Reslice;
+  vtkImageReslice *Reslice;
   vtkImageSlice *Slice;
   vtkImageMapToColors *MapToColors;
   vtkImageThreshold *Threshold;
@@ -211,7 +211,7 @@ protected:
   // VTK class instances that implement the DWI logic operations
   vtkImageExtractComponents *DWIExtractComponent;
 
-  vtkImageResliceMask *DTIReslice;
+  vtkImageReslice *DTIReslice;
   vtkDiffusionTensorMathematics *DTIMathematics;
 
   // TODO: make this a vtkAbstractTransform for non-linear
