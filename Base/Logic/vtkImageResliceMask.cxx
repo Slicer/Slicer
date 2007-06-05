@@ -1983,8 +1983,8 @@ void vtkImageResliceMaskExecute(vtkImageResliceMask *self,
   int (*interpolate)(void *&outPtr, const void *inPtr,
                      const int inExt[6], const vtkIdType inInc[3],
                      int numscalars, const double point[3],
-                     int mode, const void *background, void *&out, const bool flag);
-  void (*setpixels)(void *&out, const void *in, int numscalars, int n, void *&out, const bool flag);
+                     int mode, const void *background, void *&outMask, const bool flag);
+  void (*setpixels)(void *&outPtr, const void *in, int numscalars, int n, void *&out, const bool flag);
 
   // the 'mode' species what to do with the 'pad' (out-of-bounds) area
   int mode = VTK_RESLICE_BACKGROUND;
@@ -2159,8 +2159,8 @@ void vtkOptimizedExecute(vtkImageResliceMask *self,
   int (*interpolate)(void *&outPtr, const void *inPtr,
                      const int inExt[6], const vtkIdType inInc[3],
                      int numscalars, const F point[3],
-                     int mode, const void *background, void *&out, const bool flag);
-  void (*setpixels)(void *&out, const void *in, int numscalars, int n, void *&out, const bool flag);
+                     int mode, const void *background, void *&outMask, const bool flag);
+  void (*setpixels)(void *&out, const void *in, int numscalars, int n, void *&outMask, const bool flag);
 
   int mode = VTK_RESLICE_BACKGROUND;
   int wrap = 0;
@@ -3061,8 +3061,8 @@ void vtkReslicePermuteExecute(vtkImageResliceMask *self,
                     const vtkIdType *iX, const F *fX,
                     const vtkIdType *iY, const F *fY,
                     const vtkIdType *iZ, const F *fZ,
-                    const int useNearestNeighbor[3], void *&out, const bool flag);
-  void (*setpixels)(void *&out, const void *in, int numscalars, int n, void *&out, const bool flag);
+                    const int useNearestNeighbor[3], void *&outMask, const bool flag);
+  void (*setpixels)(void *&out, const void *in, int numscalars, int n, void *&outMask, const bool flag);
   vtkGetResliceSummationFunc(self, &summation, interpolationMode);
   vtkGetSetPixelsFunc(self, &setpixels);
 
