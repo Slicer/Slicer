@@ -47,7 +47,7 @@ vtkSlicerSliceLayerLogic::vtkSlicerSliceLayerLogic()
 
   // Create the parts for the scalar layer pipeline
   this->Slice = vtkImageSlice::New();
-  this->Reslice = vtkImageReslice::New();
+  this->Reslice = vtkImageResliceMask::New();
   this->ResliceThreshold = vtkImageThreshold::New();
   this->ResliceAppendComponents = vtkImageAppendComponents::New();
   this->ResliceExtractLuminance = vtkImageExtractComponents::New();
@@ -63,7 +63,7 @@ vtkSlicerSliceLayerLogic::vtkSlicerSliceLayerLogic()
   this->DWIExtractComponent = vtkImageExtractComponents::New();
 
   // Create the components for the DTI layer pipeline
-  this->DTIReslice = vtkImageReslice::New();
+  this->DTIReslice = vtkImageResliceMask::New();
   #ifdef USE_TEEM
     this->DTIMathematics = vtkDiffusionTensorMathematics::New();
   #else
@@ -530,7 +530,7 @@ void vtkSlicerSliceLayerLogic::DiffusionTensorVolumeNodeUpdateTransforms()
 
 }
 
-
+#include <vtkInformation.h>
 //----------------------------------------------------------------------------
 void vtkSlicerSliceLayerLogic::ScalarSlicePipeline(vtkImageData *imageData, int labelMap, double window, double level, int interpolate, vtkLookupTable *lookupTable, int applyThreshold, double lowerThreshold, double upperThreshold)
 {
@@ -546,16 +546,21 @@ void vtkSlicerSliceLayerLogic::ScalarSlicePipeline(vtkImageData *imageData, int 
     this->Reslice->SetInterpolationModeToLinear();
     }
 
+  this->Slice->SetInput( imageData ); 
+  this->Reslice->SetInput( imageData ); 
+
   // Prime the imaging pipeline
   // - add an alpha channel to the input data
-  this->ResliceThreshold->SetInput( imageData ); 
-  this->ResliceAppendComponents->RemoveAllInputs();
 
-  this->ResliceAppendComponents->SetInputConnection(0, imageData->GetProducerPort());
-  this->ResliceAppendComponents->AddInputConnection(0, this->ResliceThreshold->GetOutput()->GetProducerPort());
+  if ( this->GetUseReslice() )
+    {
+    this->ResliceThreshold->SetInput( this->Reslice->GetOutput() ); 
+    }
+  else
+    {
+    this->ResliceThreshold->SetInput( this->Slice->GetOutput() );
+    }
 
-  this->Slice->SetInput( this->ResliceAppendComponents->GetOutput() ); 
-  this->Reslice->SetInput( this->ResliceAppendComponents->GetOutput() ); 
 
     //
     // Configure the imaging pipeline
@@ -569,26 +574,7 @@ void vtkSlicerSliceLayerLogic::ScalarSlicePipeline(vtkImageData *imageData, int 
     // - append the alpha channel to the final RGB image
     //
 
-  if ( this->GetUseReslice() )
-    {
-    this->ResliceExtractLuminance->SetInput(this->Reslice->GetOutput() );
-    }
-  else 
-    {
-    this->ResliceExtractLuminance->SetInput(this->Slice->GetOutput() );
-    }
-  this->ResliceExtractLuminance->SetComponents(0);
-
-  if ( this->GetUseReslice() )
-    {
-    this->ResliceExtractAlpha->SetInput(this->Reslice->GetOutput() );
-    }
-  else
-    {
-    this->ResliceExtractAlpha->SetInput(this->Slice->GetOutput() );
-    }
-  this->ResliceExtractAlpha->SetComponents(1);
-  this->ResliceAlphaCast->SetInput( this->ResliceExtractAlpha->GetOutput() );
+  this->ResliceAlphaCast->SetInput( this->Reslice->GetBackgroundMask());//GetOutput() );//
 
   if ( interpolate && !labelMap )
     {
@@ -618,20 +604,41 @@ void vtkSlicerSliceLayerLogic::ScalarSlicePipeline(vtkImageData *imageData, int 
     {
     // Don't put label maps through the window/level filter,
     // because this will map them to unsigned char
-    this->MapToColors->SetInput( this->ResliceExtractLuminance->GetOutput() );
+    if ( this->GetUseReslice() )
+      {
+      this->MapToColors->SetInput( this->Reslice->GetOutput() );
+      }
+    else
+      {
+      this->MapToColors->SetInput( this->Slice->GetOutput() );
+      }
     } 
   else
     {
     // a non-label map is windowed first, then mapped through lookup table
     this->MapToWindowLevelColors->SetWindow(window);
     this->MapToWindowLevelColors->SetLevel(level);
-
-    this->MapToWindowLevelColors->SetInput( this->ResliceExtractLuminance->GetOutput() );
+    if ( this->GetUseReslice() )
+      {
+      this->MapToWindowLevelColors->SetInput( this->Reslice->GetOutput() );
+      }
+    else
+      {
+      this->MapToWindowLevelColors->SetInput( this->Slice->GetOutput() );
+      }
+    //this->MapToWindowLevelColors->SetInput( this->ResliceExtractLuminance->GetOutput() );
     this->MapToWindowLevelColors->SetOutputFormatToLuminance();
     this->MapToColors->SetInput( this->MapToWindowLevelColors->GetOutput() );
     }
 
-  this->Threshold->SetInput( this->ResliceExtractLuminance->GetOutput() );
+  if ( this->GetUseReslice() )
+    {
+    this->Threshold->SetInput( this->Reslice->GetOutput() );
+    }
+  else
+    {
+    this->Threshold->SetInput( this->Slice->GetOutput() );
+    }  
   this->Threshold->SetOutputScalarTypeToUnsignedChar();
 
   if ( applyThreshold )
@@ -645,7 +652,7 @@ void vtkSlicerSliceLayerLogic::ScalarSlicePipeline(vtkImageData *imageData, int 
     }
   else
     {
-    if ( labelMap )
+    if ( labelMap ) // RSierra; caution!! If the labelmap exceeds 255 the alpha will go funny
       {
       // don't apply threshold - let it come from the label map
       this->Threshold->ReplaceInOff();
@@ -669,6 +676,7 @@ void vtkSlicerSliceLayerLogic::ScalarSlicePipeline(vtkImageData *imageData, int 
   this->AppendComponents->SetInputConnection(0, this->MapToColors->GetOutput()->GetProducerPort() );
   this->AppendComponents->AddInputConnection(0, this->AlphaLogic->GetOutput()->GetProducerPort() );
   }
+
 
 //----------------------------------------------------------------------------
 void vtkSlicerSliceLayerLogic::VectorSlicePipeline(vtkImageData *imageData, int interpolate)

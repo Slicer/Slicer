@@ -437,7 +437,7 @@ void vtkSlicerApplicationLogic::ProcessTasks()
       }
 
     // busy wait
-    itksys::SystemTools::Delay(100);
+    //itksys::SystemTools::Delay(100);//  RSierra 3/29/07 this is a long wait for NeuroNav
     }
 }
 
@@ -563,7 +563,7 @@ void vtkSlicerApplicationLogic::ProcessModified()
     {
     // schedule the next timer sooner in case there is stuff in the queue
     vtkKWTkUtilities::CreateTimerHandler(vtkKWApplication::GetMainInterp(),
-                                         5, this, "ProcessModified");
+                                         1, this, "ProcessModified");// RSierra 3/29/07 lowered value to minimize wait for NeuroNav
     }
   else
     {

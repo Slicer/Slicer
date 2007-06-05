@@ -110,7 +110,7 @@ ENDIF(USE_TEEM)
 #
 # NaviTrack 
 #
-OPTION(USE_NAVITRACK "Build Slicer3 with NaviTrack support." OFF)
+OPTION(USE_NAVITRACK "Build Slicer3 with NaviTrack support." ON)
 IF(USE_NAVITRACK)
 
   FIND_LIBRARY(NAVITRACK_LIB 

@@ -9,7 +9,8 @@ SET(SlicerBaseLogic_SRCS
   vtkSlicerModuleLogic.cxx 
   vtkSlicerTask.cxx
   vtkSlicerSliceLogic.cxx 
-  vtkSlicerSliceLayerLogic.cxx 
+  vtkSlicerSliceLayerLogic.cxx
+  vtkImageResliceMask.cxx 
   vtkSlicerVolumesLogic.cxx 
   vtkSlicerModelsLogic.cxx 
   vtkSlicerModelHierarchyLogic.cxx
