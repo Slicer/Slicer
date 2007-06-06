@@ -48,7 +48,6 @@ vtkMRMLNode::vtkMRMLNode()
   // Must set name to NULL first so that the SetName
   // macro will not free memory.
   this->Name = NULL;
-  this->SetName("");
 
   this->SingletonTag = NULL;
 
