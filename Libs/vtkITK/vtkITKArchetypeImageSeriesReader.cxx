@@ -94,6 +94,7 @@ vtkITKArchetypeImageSeriesReader::vtkITKArchetypeImageSeriesReader()
   this->FileNameSliceCount = 0;
   this->UseNativeOrigin = false;
   this->OutputScalarType = VTK_FLOAT;
+  this->NumberOfComponents = 0;
   this->UseNativeScalarType = 0;
   for (int i = 0; i < 3; i++)
     {
