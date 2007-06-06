@@ -73,6 +73,8 @@ vtkMRMLScene::vtkMRMLScene()
   this->ReferencingNodes.clear();
   this->ReferencedIDChanges.clear();
 
+  this->ErrorCode = 0;
+
   //
   // Register all the 'built-in' nodes for the library
   // - note: the scene will maintain a registered pointer to the nodes,
