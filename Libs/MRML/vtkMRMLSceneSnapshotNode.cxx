@@ -205,7 +205,7 @@ void vtkMRMLSceneSnapshotNode::RestoreScene()
       vtkMRMLNode *snode = this->Scene->GetNodeByID(node->GetID());
       if (snode)
         {
-        snode->Copy(node);
+        snode->CopyWithSingleModifiedEvent(node);
         }
       }
     }

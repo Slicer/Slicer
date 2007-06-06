@@ -21,6 +21,7 @@ vtkSlicerDataGUI::vtkSlicerDataGUI ( )
 {
   this->MRMLTreeWidget = vtkSlicerMRMLTreeWidget::New();
   this->SceneSnapshotWidget = vtkSlicerSceneSnapshotWidget::New();
+  this->RecordSnapshotWidget = vtkSlicerRecordSnapshotWidget::New();
 
   NACLabel = NULL;
   NAMICLabel = NULL;
@@ -43,6 +44,12 @@ vtkSlicerDataGUI::~vtkSlicerDataGUI ( )
     this->SceneSnapshotWidget->RemoveWidgetObservers ( );
     this->SceneSnapshotWidget->SetParent (NULL );
     this->SceneSnapshotWidget->Delete ( );
+    }
+  if (this->RecordSnapshotWidget)
+    {
+    this->RecordSnapshotWidget->RemoveWidgetObservers ( );
+    this->RecordSnapshotWidget->SetParent (NULL );
+    this->RecordSnapshotWidget->Delete ( );
     }
   if ( this->NACLabel )
     {
@@ -262,6 +269,14 @@ void vtkSlicerDataGUI::BuildGUI ( )
     this->SceneSnapshotWidget->Create ( );
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   this->SceneSnapshotWidget->GetWidgetName(), snapshotFrame->GetFrame()->GetWidgetName());
+
+
+    this->RecordSnapshotWidget->SetAndObserveMRMLScene(this->GetMRMLScene() );
+    this->RecordSnapshotWidget->SetParent ( snapshotFrame->GetFrame() );
+    this->RecordSnapshotWidget->Create ( );
+    app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
+                  this->RecordSnapshotWidget->GetWidgetName(), snapshotFrame->GetFrame()->GetWidgetName());
+
 
     displayModifyFrame->Delete ( );
     snapshotFrame->Delete ( );
