@@ -25,7 +25,7 @@
 #include "vtkKWScale.h"
 #include "vtkKWLabel.h"
 #include "vtkKWRange.h"
-#include "vtkKWExtent.h""
+#include "vtkKWExtent.h"
 
 class vtkKWMultiColumnListWithScrollbars;
 class vtkKWPushButton;
