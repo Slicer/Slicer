@@ -22,6 +22,7 @@ SET(SlicerBaseLogic_SRCS
   vtkImageBimodalAnalysis.cxx
   vtkImageFillROI.cxx
   vtkSlicerGlyphSource2D.cxx
+  vtkSlicerROILogic.cxx
   #vtkImageResliceMask.cxx 
 )
 
