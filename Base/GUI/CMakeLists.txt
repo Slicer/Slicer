@@ -86,6 +86,7 @@ SET(LIB_SRCS
   # VTK Replacement classes
   vtkSlicerInteractorStyle.cxx
   vtkSlicerViewerInteractorStyle.cxx
+  vtkSlicerROIGUI.cxx
   )
 
 # Helper classes
