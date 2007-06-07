@@ -7,6 +7,10 @@ INCLUDE_DIRECTORIES (
   ${VTK_INCLUDE_DIR}
   )
 
+SET( EMSegment_TEST_DIR ${EMSegment_BINARY_DIR} )
+SET( EMSegment_TUTORIAL_DIR 
+  ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest )
+
 # Extra Tests:
 # Change this to 1 if you want to run the extra EMSegment tests.  They
 # require a testing dataset that is not distributed by default with
@@ -46,18 +50,25 @@ IF( NOT DISABLE_CXX_TESTING )
   IF (WIN32)
     SET( EM_COMMAND_LINE_TEST_PREFIX ${EM_COMMAND_LINE_TEST_PREFIX}/${CMAKE_BUILD_TYPE})
   ENDIF (WIN32)
-    
-  # test that the segmentation results match what the expected
-  # results.
+
+  ############################################################################
+  #
+  # command line tests---does the logic work, does it fail elegently
+  #
+  ############################################################################
+
+  # Test that the segmentation results match what the expected
+  # results.  This is a legacy test that should not be removed.
   ADD_TEST(
     vtkEMSegmentBlackBoxSegmentationTest_TutorialDataSmallRead
     ${EM_COMMAND_LINE_TEST_PREFIX}/vtkEMSegmentBlackBoxSegmentationTest
-    ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/EMSegmentTutorialTemplate_small.mrml
-    ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/
+    ${EMSegment_TUTORIAL_DIR}/EMSegmentTutorialTemplate_small.mrml
+    ${EMSegment_TUTORIAL_DIR}
     "EMSegment Tutorial Template"
-    ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/StandardData/StandardSegmentationResult_small.mhd
+    ${EMSegment_TUTORIAL_DIR}/StandardData/StandardSegmentationResult_small.mhd
     )
 
+  # Does help work right?
   ADD_TEST(
     EMSegCL_Help
     ${EM_COMMAND_LINE_TEST_PREFIX}/EMSegmentCommandLine
@@ -69,6 +80,7 @@ IF( NOT DISABLE_CXX_TESTING )
     PASS_REGULAR_EXPRESSION "USAGE"
     )
 
+  # Does the version argument work right?
   ADD_TEST(
     EMSegCL_Version
     ${EM_COMMAND_LINE_TEST_PREFIX}/EMSegmentCommandLine
@@ -80,42 +92,151 @@ IF( NOT DISABLE_CXX_TESTING )
     PASS_REGULAR_EXPRESSION "version"
     )
 
+  # Does the segmenter work and give the correct answer using the
+  # default parameters from the small template scene.
   ADD_TEST(
-    EMSegCL_EFBogusMRMLScene
-    ${EM_COMMAND_LINE_TEST_PREFIX}/EMSegmentCommandLine
-    --verbose
-    --dontWriteResults
-    --mrmlSceneFileName 
-    /tmp/bogus_file_scene.mrml
-    )
-  SET_TESTS_PROPERTIES(
-    EMSegCL_EFBogusMRMLScene
-    PROPERTIES
-    PASS_REGULAR_EXPRESSION
-    "Error: MRML scene file does not exist.")
-
-  ADD_TEST(
-    EMSegCL_DefaultNodes
+    EMSegCL_RunDefaultNodes
     ${EM_COMMAND_LINE_TEST_PREFIX}/EMSegmentCommandLine
     --verbose 
-    --dontWriteResults
     --mrmlSceneFileName 
-    ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/EMSegmentTutorialTemplate_small.mrml
-    --resultStandardVolumeFileName 
-    ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/StandardData/StandardSegmentationResult_small.mhd
+    ${EMSegment_TUTORIAL_DIR}/EMSegmentTutorialTemplate_small.mrml
+    --resultVolumeFileName
+    ${EMSegment_TEST_DIR}/EMSegCL_Result.mhd
+    )
+  ADD_TEST(
+    EMSegCL_DiffDefaultNodesResult
+    cmake -E compare_files
+    ${EMSegment_TUTORIAL_DIR}/StandardData/StandardSegmentationResult_small.raw
+    ${EMSegment_TEST_DIR}/EMSegCL_Result.raw
+    )
+  ADD_TEST(
+    EMSegCL_RemoveDefaultNodesResult   
+    cmake -E remove
+    ${EMSegment_TEST_DIR}/EMSegCL_Result.raw ${EMSegment_TEST_DIR}/EMSegCL_Result.mhd
     )
 
+  # Does the segmenter work and give the correct answer when
+  # normalization is turned on?
   ADD_TEST(
-    EMSegCL_Normalize
+    EMSegCL_RunNormalize
     ${EM_COMMAND_LINE_TEST_PREFIX}/EMSegmentCommandLine
     --verbose 
-    --dontWriteResults
     --mrmlSceneFileName 
-    ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/EMSegmentTutorialTemplate_small_normalizationOn.mrml
-    --resultStandardVolumeFileName 
-    ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/StandardData/StandardSegmentationResult_small.mhd
+    ${EMSegment_TUTORIAL_DIR}/EMSegmentTutorialTemplate_small_normalizationOn.mrml
+    --resultVolumeFileName 
+    ${EMSegment_TEST_DIR}/EMSegCL_Result.mhd
+    )
+  ADD_TEST(
+    EMSegCL_DiffNormalizeResult
+    cmake -E compare_files
+    ${EMSegment_TUTORIAL_DIR}/StandardData/StandardSegmentationResult_small.raw
+    ${EMSegment_TEST_DIR}/EMSegCL_Result.raw
+    )
+  ADD_TEST(
+    EMSegCL_RemoveNormalizeResult   
+    cmake -E remove
+    ${EMSegment_TEST_DIR}/EMSegCL_Result.raw ${EMSegment_TEST_DIR}/EMSegCL_Result.mhd
     )
 
+  # Does the segmenter work and give the correct answer when
+  # the parameters node is specified on the command line?
+  ADD_TEST(
+    EMSegCL_RunSetParameterNode
+    ${EM_COMMAND_LINE_TEST_PREFIX}/EMSegmentCommandLine
+    --verbose 
+    --mrmlSceneFileName 
+    ${EMSegment_TUTORIAL_DIR}/EMSegmentTutorialTemplate_small.mrml
+    --parametersMRMLNodeName 
+    EMSegment\ Tutorial\ Template    
+    --resultVolumeFileName 
+    ${EMSegment_TEST_DIR}/EMSegCL_Result.mhd
+    )
+  ADD_TEST(
+    EMSegCL_DiffSetParameterNodeResult
+    cmake -E compare_files
+    ${EMSegment_TUTORIAL_DIR}/StandardData/StandardSegmentationResult_small.raw
+    ${EMSegment_TEST_DIR}/EMSegCL_Result.raw
+    )
+  ADD_TEST(
+    EMSegCL_RemoveSetParameterNodeResult
+    cmake -E remove
+    ${EMSegment_TEST_DIR}/EMSegCL_Result.raw ${EMSegment_TEST_DIR}/EMSegCL_Result.mhd
+    )
+
+  # Does the segmenter work and give the correct answer when
+  # the target images are specified on the command line?
+  ADD_TEST(
+    EMSegCL_RunSetTargetImages
+    ${EM_COMMAND_LINE_TEST_PREFIX}/EMSegmentCommandLine
+    --verbose 
+    --mrmlSceneFileName 
+    ${EMSegment_TUTORIAL_DIR}/EMSegmentTutorialTemplate_small.mrml
+    --targetVolumeFileNames
+    ${EMSegment_TUTORIAL_DIR}/VolumeData/targetT1Normed_small.mhd,${EMSegment_TUTORIAL_DIR}/VolumeData/targetT2Normed_small.mhd
+    --resultVolumeFileName 
+    ${EMSegment_TEST_DIR}/EMSegCL_Result.mhd
+    )
+  ADD_TEST(
+    EMSegCL_DiffSetTargetImagesResult
+    cmake -E compare_files
+    ${EMSegment_TUTORIAL_DIR}/StandardData/StandardSegmentationResult_small.raw
+    ${EMSegment_TEST_DIR}/EMSegCL_Result.raw
+    )
+  ADD_TEST(
+    EMSegCL_RemoveSetTargetImagesResult
+    cmake -E remove
+    ${EMSegment_TEST_DIR}/EMSegCL_Result.raw ${EMSegment_TEST_DIR}/EMSegCL_Result.mhd
+    )
+
+  # Does the segmenter work and give the correct answer when
+  # the result image is specified on the command line?
+  ADD_TEST(
+    EMSegCL_RunSetResultImage
+    ${EM_COMMAND_LINE_TEST_PREFIX}/EMSegmentCommandLine
+    --verbose 
+    --mrmlSceneFileName 
+    ${EMSegment_TUTORIAL_DIR}/EMSegmentTutorialTemplate_small.mrml
+    --resultVolumeFileName 
+    ${EMSegment_TEST_DIR}/EMSegCL_Result.mhd
+    )
+  ADD_TEST(
+    EMSegCL_DiffSetResultImageResult
+    cmake -E compare_files
+    ${EMSegment_TUTORIAL_DIR}/StandardData/StandardSegmentationResult_small.raw
+    ${EMSegment_TEST_DIR}/EMSegCL_Result.raw
+    )
+  ADD_TEST(
+    EMSegCL_RemoveSetResultImageResult
+    cmake -E remove
+    ${EMSegment_TEST_DIR}/EMSegCL_Result.raw ${EMSegment_TEST_DIR}/EMSegCL_Result.mhd
+    )
+
+  # Does the segmenter work and give the correct answer when
+  # the everything is specified on the command line?
+  ADD_TEST(
+    EMSegCL_RunSetEverything
+    ${EM_COMMAND_LINE_TEST_PREFIX}/EMSegmentCommandLine
+    --verbose 
+    --mrmlSceneFileName 
+    ${EMSegment_TUTORIAL_DIR}/EMSegmentTutorialTemplate_small.mrml
+    --resultVolumeFileName 
+    ${EMSegment_TEST_DIR}/EMSegCL_Result.mhd
+    --targetVolumeFileNames
+    ${EMSegment_TUTORIAL_DIR}/VolumeData/targetT1Normed_small.mhd,${EMSegment_TUTORIAL_DIR}/VolumeData/targetT2Normed_small.mhd
+    )
+  ADD_TEST(
+    EMSegCL_DiffSetEverythingResult
+    cmake -E compare_files
+    ${EMSegment_TUTORIAL_DIR}/StandardData/StandardSegmentationResult_small.raw
+    ${EMSegment_TEST_DIR}/EMSegCL_Result.raw
+    )
+  ADD_TEST(
+    EMSegCL_RemoveSetEverythingResult
+    cmake -E remove
+    ${EMSegment_TEST_DIR}/EMSegCL_Result.raw ${EMSegment_TEST_DIR}/EMSegCL_Result.mhd
+    )
+
+  # Is multithreading disabled when command line flag is given?
   ADD_TEST(
     EMSegCL_DisableMultithreading
     ${EM_COMMAND_LINE_TEST_PREFIX}/EMSegmentCommandLine
@@ -123,34 +244,22 @@ IF( NOT DISABLE_CXX_TESTING )
     --dontWriteResults
     --disableMultithreading
     --mrmlSceneFileName 
-    ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/EMSegmentTutorialTemplate_small.mrml
+    ${EMSegment_TUTORIAL_DIR}/EMSegmentTutorialTemplate_small.mrml
     )
   SET_TESTS_PROPERTIES(
     EMSegCL_DisableMultithreading
     PROPERTIES
     PASS_REGULAR_EXPRESSION "Multithreading is disabled"
     )
-  
-  ADD_TEST(
-    EMSegCL_SpecifiedParameterNode
-    ${EM_COMMAND_LINE_TEST_PREFIX}/EMSegmentCommandLine
-    --verbose 
-    --dontWriteResults
-    --mrmlSceneFileName 
-    ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/EMSegmentTutorialTemplate_small.mrml
-    --parametersMRMLNodeName 
-    EMSegment\ Tutorial\ Template    
-    --resultStandardVolumeFileName 
-    ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/StandardData/StandardSegmentationResult_small.mhd
-    )
 
+  # Does it fail elegently when a bogus parameter node is specified?
   ADD_TEST(
     EMSegCL_EFBogusParameterNode
     ${EM_COMMAND_LINE_TEST_PREFIX}/EMSegmentCommandLine
     --verbose 
     --dontWriteResults
     --mrmlSceneFileName 
-    ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/EMSegmentTutorialTemplate_small.mrml
+    ${EMSegment_TUTORIAL_DIR}/EMSegmentTutorialTemplate_small.mrml
     --parametersMRMLNodeName BogusNodeName  
     )
   SET_TESTS_PROPERTIES(
@@ -158,30 +267,32 @@ IF( NOT DISABLE_CXX_TESTING )
     PROPERTIES
     PASS_REGULAR_EXPRESSION
     "ERROR: no EMSegment parameters found in scene with name ")
-    
 
+  # Does it fail elegently when a bogus mrml scene is specified?
   ADD_TEST(
-    EMSegCL_SpecifiedTargetImages
+    EMSegCL_EFBogusMRMLScene
     ${EM_COMMAND_LINE_TEST_PREFIX}/EMSegmentCommandLine
-    --verbose 
+    --verbose
     --dontWriteResults
     --mrmlSceneFileName 
-    ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/EMSegmentTutorialTemplate_small.mrml
-    --targetVolumeFileNames
-    ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/VolumeData/targetT1Normed_small.mhd,${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/VolumeData/targetT2Normed_small.mhd
-    --resultStandardVolumeFileName 
-    ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/StandardData/StandardSegmentationResult_small.mhd
+    /tmp/bogus_file_scene21.mrml
     )
+  SET_TESTS_PROPERTIES(
+    EMSegCL_EFBogusMRMLScene
+    PROPERTIES
+    PASS_REGULAR_EXPRESSION
+    "Error: MRML scene file does not exist.")
 
+  # Does it fail elegently when a bogus target images are specified?
   ADD_TEST(
     EMSegCL_EFBogusTargetImages
     ${EM_COMMAND_LINE_TEST_PREFIX}/EMSegmentCommandLine
     --verbose 
     --dontWriteResults
     --mrmlSceneFileName 
-    ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/EMSegmentTutorialTemplate_small.mrml
+    ${EMSegment_TUTORIAL_DIR}/EMSegmentTutorialTemplate_small.mrml
     --targetVolumeFileNames
-    ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/VolumeData/targetT1Normed_small.mhd,${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/VolumeData/targetT2Normed_small.mhd,bogusFile.mhd
+    ${EMSegment_TUTORIAL_DIR}/VolumeData/targetT1Normed_small.mhd,${EMSegment_TUTORIAL_DIR}/VolumeData/bogus.mhd
     )
   SET_TESTS_PROPERTIES(
     EMSegCL_EFBogusTargetImages
@@ -189,15 +300,16 @@ IF( NOT DISABLE_CXX_TESTING )
     PASS_REGULAR_EXPRESSION
     "Error: target volume file ")
 
+  # Does it fail elegently when too many target images are specified?
   ADD_TEST(
     EMSegCL_EFTooManyImages
     ${EM_COMMAND_LINE_TEST_PREFIX}/EMSegmentCommandLine
     --verbose 
     --dontWriteResults
     --mrmlSceneFileName 
-    ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/EMSegmentTutorialTemplate_small.mrml
+    ${EMSegment_TUTORIAL_DIR}/EMSegmentTutorialTemplate_small.mrml
     --targetVolumeFileNames
-    ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/VolumeData/targetT1Normed_small.mhd,${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/VolumeData/targetT2Normed_small.mhd,${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/VolumeData/targetT2Normed_small.mhd
+    ${EMSegment_TUTORIAL_DIR}/VolumeData/targetT1Normed_small.mhd,${EMSegment_TUTORIAL_DIR}/VolumeData/targetT2Normed_small.mhd,${EMSegment_TUTORIAL_DIR}/VolumeData/targetT2Normed_small.mhd
     )
   SET_TESTS_PROPERTIES(
     EMSegCL_EFTooManyImages
@@ -205,15 +317,16 @@ IF( NOT DISABLE_CXX_TESTING )
     PASS_REGULAR_EXPRESSION
     "ERROR: Number of input channels")
 
+  # Does it fail elegently when too few target images are specified?
   ADD_TEST(
     EMSegCL_EFTooFewImages
     ${EM_COMMAND_LINE_TEST_PREFIX}/EMSegmentCommandLine
     --verbose 
     --dontWriteResults
     --mrmlSceneFileName 
-    ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/EMSegmentTutorialTemplate_small.mrml
+    ${EMSegment_TUTORIAL_DIR}/EMSegmentTutorialTemplate_small.mrml
     --targetVolumeFileNames
-    ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/VolumeData/targetT1Normed_small.mhd
+    ${EMSegment_TUTORIAL_DIR}/VolumeData/targetT1Normed_small.mhd
     )
   SET_TESTS_PROPERTIES(
     EMSegCL_EFTooFewImages
@@ -221,43 +334,17 @@ IF( NOT DISABLE_CXX_TESTING )
     PASS_REGULAR_EXPRESSION
     "ERROR: Number of input channels")
 
-  ADD_TEST(
-    EMSegCL_SpecifiedResultImage
-    ${EM_COMMAND_LINE_TEST_PREFIX}/EMSegmentCommandLine
-    --verbose 
-    --dontWriteResults
-    --mrmlSceneFileName 
-    ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/EMSegmentTutorialTemplate_small.mrml
-    --resultVolumeFileName
-    ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/VolumeData/test_result.mhd    
-    --resultStandardVolumeFileName 
-    ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/StandardData/StandardSegmentationResult_small.mhd
-    )
-
-  ADD_TEST(
-    EMSegCL_SpecifiedEverything
-    ${EM_COMMAND_LINE_TEST_PREFIX}/EMSegmentCommandLine
-    --verbose 
-    --dontWriteResults
-    --mrmlSceneFileName 
-    ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/EMSegmentTutorialTemplate_small.mrml
-    --resultVolumeFileName
-    ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/VolumeData/test_result.mhd    
-    --targetVolumeFileNames
-    ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/VolumeData/targetT1Normed_small.mhd,${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/VolumeData/targetT2Normed_small.mhd
-    --resultStandardVolumeFileName
-    ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/StandardData/StandardSegmentationResult_small.mhd
-    )
-
+  # Does it fail elegently when a bogus result standard is specified?
+  # legacy, eventually remove!!!
   ADD_TEST(
     EMSegCL_EFBogusResultStandardImage
     ${EM_COMMAND_LINE_TEST_PREFIX}/EMSegmentCommandLine
     --verbose 
     --dontWriteResults
     --mrmlSceneFileName 
-    ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/EMSegmentTutorialTemplate_small.mrml
+    ${EMSegment_TUTORIAL_DIR}/EMSegmentTutorialTemplate_small.mrml
     --resultStandardVolumeFileName
-    ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/VolumeData/bogus_file.mhd
+    ${EMSegment_TEST_DIR}/bogus_file.mhd
     )
   SET_TESTS_PROPERTIES(
     EMSegCL_EFBogusResultStandardImage
@@ -265,89 +352,52 @@ IF( NOT DISABLE_CXX_TESTING )
     PASS_REGULAR_EXPRESSION 
     "Error: result standard volume file does not exist")
 
+  ############################################################################
+  #
+  # MRML---do the logic readers and writers work?
+  #
+  ############################################################################
+
+  # Make sure the default parameter set has not changed
+  ADD_TEST(
+    EMSegMRML_WriteDefaultNodes
+    ${EM_COMMAND_LINE_TEST_PREFIX}/EMSegmentCommandLine
+    --verbose 
+    --generateEmptyMRMLSceneAndQuit
+    ${EMSegment_TEST_DIR}/EMSegMRML_EmptyMRMLScene.mrml
+    )
+  ADD_TEST(
+    EMSegMRML_DiffDefaultNodes
+    cmake -E compare_files
+    ${EMSegment_SOURCE_DIR}/Testing/TestData/DefaultMRMLNodes.mrml
+    ${EMSegment_TEST_DIR}/EMSegMRML_EmptyMRMLScene.mrml
+    )
+  ADD_TEST(
+    EMSegMRML_RemoveDefaultNodes
+    cmake -E remove
+    ${EMSegment_TEST_DIR}/EMSegMRML_EmptyMRMLScene.mrml
+    )
+
+  # Test that the mrml readers/writers work.
+  ADD_TEST(
+    EMSegMRML_ReadWriteTutorialData
+    ${EM_COMMAND_LINE_TEST_PREFIX}/vtkEMSegmentReadWriteMRMLTest
+    ${EMSegment_TUTORIAL_DIR}/EMSegmentTutorialTemplate_small_normalizationOn.mrml
+    ${EMSegment_TEST_DIR}/EMSegmentMRML_ReadWriteTutorialScene.mrml
+    )
+  ADD_TEST(
+    EMSegMRML_DiffTutorialData
+    cmake -E compare_files
+    ${EMSegment_TUTORIAL_DIR}/EMSegmentTutorialTemplate_small_normalizationOn.mrml
+    ${EMSegment_TEST_DIR}/EMSegmentMRML_ReadWriteTutorialScene.mrml
+    )
+  ADD_TEST(
+    EMSegMRML_RemoveTutorialDataOutput
+    cmake -E remove
+    ${EMSegment_TEST_DIR}/EMSegmentMRML_ReadWriteTutorialScene.mrml
+    )
+
   IF ( RUN_EXTRA_SHORT_EMSEGMENT_TESTS )
-
-    ADD_TEST(
-      EMSegCL_SpecifiedResultImageWriteIt
-      ${EM_COMMAND_LINE_TEST_PREFIX}/EMSegmentCommandLine
-      --verbose 
-      --mrmlSceneFileName 
-      ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/EMSegmentTutorialTemplate_small.mrml
-      --resultVolumeFileName
-      /tmp/EMSegCL_SpecifiedResultImageWriteIt_Result.mhd
-      --resultStandardVolumeFileName
-      ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/StandardData/StandardSegmentationResult_small.mhd
-      )
-    ADD_TEST(
-      EMSegMRML_DiffLabelmap
-      diff -s
-      ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/StandardData/StandardSegmentationResult_small.raw
-      /tmp/EMSegCL_SpecifiedResultImageWriteIt_Result.raw
-      )
-    SET_TESTS_PROPERTIES(
-      EMSegMRML_DiffLabelmap    
-      PROPERTIES
-      PASS_REGULAR_EXPRESSION 
-      "are identical")
-
-    # test that default nodes have not been changed
-    ADD_TEST(
-      EMSegMRML_WriteDefaultNodes
-      ${EM_COMMAND_LINE_TEST_PREFIX}/EMSegmentCommandLine
-      --verbose 
-      --generateEmptyMRMLSceneAndQuit
-      /tmp/EMSegCL_EmptyMRMLScene.mrml
-      )
-    ADD_TEST(
-      EMSegMRML_DiffDefaultNodes
-      diff -s
-      ${EMSegment_SOURCE_DIR}/Testing/TestData/DefaultMRMLNodes.mrml
-      /tmp/EMSegCL_EmptyMRMLScene.mrml
-      )
-    SET_TESTS_PROPERTIES(
-      EMSegMRML_DiffDefaultNodes    
-      PROPERTIES
-      PASS_REGULAR_EXPRESSION 
-      "are identical"
-      )
-    
-    # test that the mrml readers/writers work
-    ADD_TEST(
-      EMSegMRML_ReadWriteTutorialData
-      ${EM_COMMAND_LINE_TEST_PREFIX}/vtkEMSegmentReadWriteMRMLTest
-      ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/EMSegmentTutorialTemplate_small.mrml
-      /tmp/EMSegmentTutorialTemplate_small_Result.mrml
-      )
-    ADD_TEST(
-      EMSegMRML_DiffTutorialData
-      diff -s
-      ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/EMSegmentTutorialTemplate_small.mrml
-      /tmp/EMSegmentTutorialTemplate_small_Result.mrml
-      )
-    SET_TESTS_PROPERTIES(
-      EMSegMRML_DiffTutorialData    
-      PROPERTIES
-      PASS_REGULAR_EXPRESSION 
-      "are identical"
-      )
-    
-    ADD_TEST(
-      EMSegMRML_ReadWriteNormalized
-      ${EM_COMMAND_LINE_TEST_PREFIX}/vtkEMSegmentReadWriteMRMLTest
-      ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/EMSegmentTutorialTemplate_small_normalizationOn.mrml
-      /tmp/EMSegmentTutorialTemplate_small_normalizationOn_Result.mrml
-      )    
-    ADD_TEST(
-      EMSegMRML_DiffNormalized
-      diff -s
-      ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/EMSegmentTutorialTemplate_small_normalizationOn.mrml
-      /tmp/EMSegmentTutorialTemplate_small_normalizationOn_Result.mrml
-      )
-    SET_TESTS_PROPERTIES(
-      EMSegMRML_DiffNormalized
-      PROPERTIES
-      PASS_REGULAR_EXPRESSION 
-      "are identical")
     
     # build by hand
     #ADD_TEST(
