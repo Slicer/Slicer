@@ -31,6 +31,7 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLVectorVolumeNode.h"
 #include "vtkMRMLFiducialListNode.h"
+#include "vtkMRMLROIListNode.h"
 #include "vtkMRMLSliceCompositeNode.h"
 #include "vtkMRMLSelectionNode.h"
 #include "vtkMRMLSliceNode.h"
@@ -120,6 +121,10 @@ vtkMRMLScene::vtkMRMLScene()
   vtkMRMLFiducialListNode *fidln = vtkMRMLFiducialListNode::New(); 
   this->RegisterNodeClass( fidln );
   fidln->Delete();
+
+  vtkMRMLROIListNode *roiln = vtkMRMLROIListNode::New(); 
+  this->RegisterNodeClass( roiln );
+  roiln->Delete();
   
   vtkMRMLSliceCompositeNode *scompn = vtkMRMLSliceCompositeNode::New(); 
   this->RegisterNodeClass( scompn );

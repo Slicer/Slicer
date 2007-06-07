@@ -78,6 +78,12 @@ class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
   void SetReferenceActiveFiducialListID (char *id) { this->SetActiveFiducialListID(id); };
 
   // Description:
+  // the ID of a MRMLROIList
+  vtkGetStringMacro (ActiveROIListID);
+  vtkSetReferenceStringMacro (ActiveROIListID);
+  void SetReferenceActiveROIListID (char *id) { this->SetActiveROIListID(id); };
+
+  // Description:
   // the ID of a MRMLCameraNode
   vtkGetStringMacro (ActiveCameraID );
   vtkSetReferenceStringMacro ( ActiveCameraID );
@@ -98,6 +104,7 @@ protected:
   char *ActiveVolumeID;
   char *ActiveLabelVolumeID;
   char *ActiveFiducialListID;
+  char *ActiveROIListID;
   char *ActiveCameraID;
   char *ActiveViewID;
 };
