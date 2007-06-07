@@ -297,6 +297,7 @@ std::string StripBackslashes(const std::string& s)
       outString.push_back(s[i]);
       }
     }
+  return outString;
 }
 
 int main(int argc, char** argv)
