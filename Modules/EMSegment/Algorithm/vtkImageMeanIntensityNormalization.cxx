@@ -133,7 +133,6 @@ void vtkImageMeanIntensityNormalization::SmoothHistogram(const int* Input , cons
 int vtkImageMeanIntensityNormalization::DetermineFilterMin(const int* HIST_PTR, const int HIST_Length) {
 
   int *HIST_SMOOTH_Ptr    = new int[ HIST_Length];
-  int HIST_SMOOTH_Length;
 
   int iter = 1;
   int result = -1;

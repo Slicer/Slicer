@@ -26,7 +26,6 @@ int main(int argc, char **argv)
     FILE *sp = NULL;
     char *str = NULL;
     int count;
-    int len;
     int i;
  
     if (argc != 2)

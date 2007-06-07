@@ -408,7 +408,7 @@ int vtkTeemEstimateDiffusionTensor::SetGradientsToContext(tenEstimateContext *te
   //Fill ngrad  from vtkArray
   ngrad  = nrrdNew();
   nbmat = nrrdNew();
-  char *err;
+  char *err = NULL;
   const int type = nrrdTypeDouble;
   size_t size[2];
   size[0]=3;
