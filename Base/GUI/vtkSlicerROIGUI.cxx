@@ -586,7 +586,7 @@ void vtkSlicerROIGUI::SetGUIFromList(vtkMRMLROIListNode * activeROIListNode)
     }
   else if (numPoints > 1)
     {
-    this->MultiColumnList->GetWidget()->GetSelectedCells(LastSeletedRow,LastSeletedCol;
+    this->MultiColumnList->GetWidget()->GetSelectedCells(LastSeletedRow,LastSeletedCol);
     if (LastSeletedRow[0]  > numPoints - 1)
       {
       CurrentSeletedRow = numPoints - 1;
