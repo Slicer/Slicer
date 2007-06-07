@@ -45,11 +45,11 @@ vtkSlicerRecordSnapshotWidget::~vtkSlicerRecordSnapshotWidget ( )
     this->ReplayButton->Delete();
     this->ReplayButton = NULL;
     }
-  if (this->ReplayButton)
+  if (this->StopRecordButton)
     {
-    this->ReplayButton->SetParent(NULL);
-    this->ReplayButton->Delete();
-    this->ReplayButton = NULL;
+    this->StopRecordButton->SetParent(NULL);
+    this->StopRecordButton->Delete();
+    this->StopRecordButton = NULL;
     }
   if (this->StartRecordButton)
     {
