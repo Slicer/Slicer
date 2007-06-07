@@ -52,10 +52,12 @@ Key vtkMRMLEMSTreeNode6 VolumeNodeID vtkMRMLScalarVolumeNode6" NumberOfTrainingS
  id="vtkMRMLEMSTargetNode1" name="vtkMRMLEMSTargetNode1"  hideFromEditors="false" VolumeNodeIDs="
 Key targetT1Normed_small.mhd VolumeNodeID vtkMRMLScalarVolumeNode1
 Key targetT2Normed_small.mhd VolumeNodeID vtkMRMLScalarVolumeNode2" ></EMSTarget>
+<EMSWorkingData
+ id="vtkMRMLEMSWorkingDataNode1" name="vtkMRMLEMSWorkingDataNode1"  hideFromEditors="false" VolumeNodeIDs="" InputTargetNodeID="NULL" NormalizedTargetNodeID="NULL" AlignedTargetNodeID="NULL" InputAtlasNodeID="NULL" AlignedAtlasNodeID="NULL" ></EMSWorkingData>
 <EMSGlobalParameters
  id="vtkMRMLEMSGlobalParametersNode1" name="vtkMRMLEMSGlobalParametersNode1"  hideFromEditors="false" NumberOfTargetInputChannels="2" WorkingDirectory="NULL" SegmentationBoundaryMin="1 1 1" SegmentationBoundaryMax="64 64 31" RegistrationAffineType="0" RegistrationDeformableType="0" RegistrationInterpolationType="0" RegistrationAtlasVolumeKey="" RegistrationTargetVolumeKey="" SaveIntermediateResults="0" SaveSurfaceModels="0" MultithreadingEnabled="1" IntensityNormalizationParameterNodeIDs="vtkMRMLEMSIntensityNormalizationParametersNode1 vtkMRMLEMSIntensityNormalizationParametersNode2 " ></EMSGlobalParameters>
 <EMSTreeParametersLeaf
- id="vtkMRMLEMSTreeParametersLeafNode1" name="vtkMRMLEMSTreeParametersLeafNode1"  hideFromEditors="false" PrintQuality="0" IntensityLabel="1007" LogMean="0 0 " LogCovariance="0 0 0 0 " ></EMSTreeParametersLeaf>
+ id="vtkMRMLEMSTreeParametersLeafNode1" name="vtkMRMLEMSTreeParametersLeafNode1"  hideFromEditors="false" PrintQuality="0" IntensityLabel="1007" LogMean="0 0 " LogCovariance="0 0 0 0 " DistributionSpecificationMethod="0" DistributionSamplePointsRAS="" ></EMSTreeParametersLeaf>
 <EMSTreeParametersParent
  id="vtkMRMLEMSTreeParametersParentNode1" name="vtkMRMLEMSTreeParametersParentNode1"  hideFromEditors="false" Alpha="0.99" PrintBias="0" BiasCalculationMaxIterations="-1" SmoothingKernelWidth="11" SmoothingKernelSigma="5" StopEMType="0" StopEMMaxIterations="4" StopEMValue="0" StopMFAType="0" StopMFAMaxIterations="2" StopMFAValue="0" PrintFrequency="0" PrintLabelMap="0" PrintEMLabelMapConvergence="0" PrintEMWeightsConvergence="0" PrintMFALabelMapConvergence="0" PrintMFAWeightsConvergence="0" GenerateBackgroundProbability="0" ></EMSTreeParametersParent>
 <EMSTreeParameters
@@ -65,11 +67,11 @@ Key targetT2Normed_small.mhd VolumeNodeID vtkMRMLScalarVolumeNode2" ></EMSTarget
 <EMSTemplate
  id="vtkMRMLEMSTemplateNode1" name="vtkMRMLEMSTemplateNode1"  hideFromEditors="false" TreeNodeID="vtkMRMLEMSTreeNode1" GlobalParametersNodeID="vtkMRMLEMSGlobalParametersNode1" ></EMSTemplate>
 <EMSSegmenter
- id="vtkMRMLEMSSegmenterNode1" name="vtkMRMLEMSSegmenterNode1"  hideFromEditors="false" TemplateNodeID="vtkMRMLEMSTemplateNode1" AtlasNodeID="vtkMRMLEMSAtlasNode1" TargetNodeID="vtkMRMLEMSTargetNode1" OutputVolumeNodeID="vtkMRMLScalarVolumeNode7" WorkingDataNodeID="NULL" WorkingDirectory="NULL" ></EMSSegmenter>
+ id="vtkMRMLEMSSegmenterNode1" name="vtkMRMLEMSSegmenterNode1"  hideFromEditors="false" TemplateNodeID="vtkMRMLEMSTemplateNode1" AtlasNodeID="vtkMRMLEMSAtlasNode1" TargetNodeID="vtkMRMLEMSTargetNode1" OutputVolumeNodeID="vtkMRMLScalarVolumeNode7" WorkingDataNodeID="vtkMRMLEMSWorkingDataNode1" WorkingDirectory="NULL" ></EMSSegmenter>
 <EMS
  id="vtkMRMLEMSNode1" name="EMSegment Tutorial Template"  hideFromEditors="false" SegmenterNodeID="vtkMRMLEMSSegmenterNode1" TemplateFilename="NULL" SaveTemplateAfterSegmentation="0" ></EMS>
 <EMSTreeParametersLeaf
- id="vtkMRMLEMSTreeParametersLeafNode2" name="vtkMRMLEMSTreeParametersLeafNode2"  hideFromEditors="false" PrintQuality="0" IntensityLabel="1008" LogMean="0 0 " LogCovariance="0 0 0 0 " ></EMSTreeParametersLeaf>
+ id="vtkMRMLEMSTreeParametersLeafNode2" name="vtkMRMLEMSTreeParametersLeafNode2"  hideFromEditors="false" PrintQuality="0" IntensityLabel="1008" LogMean="0 0 " LogCovariance="0 0 0 0 " DistributionSpecificationMethod="0" DistributionSamplePointsRAS="" ></EMSTreeParametersLeaf>
 <EMSTreeParametersParent
  id="vtkMRMLEMSTreeParametersParentNode2" name="vtkMRMLEMSTreeParametersParentNode2"  hideFromEditors="false" Alpha="0.99" PrintBias="0" BiasCalculationMaxIterations="-1" SmoothingKernelWidth="11" SmoothingKernelSigma="5" StopEMType="0" StopEMMaxIterations="4" StopEMValue="0" StopMFAType="0" StopMFAMaxIterations="2" StopMFAValue="0" PrintFrequency="0" PrintLabelMap="0" PrintEMLabelMapConvergence="0" PrintEMWeightsConvergence="0" PrintMFALabelMapConvergence="0" PrintMFAWeightsConvergence="0" GenerateBackgroundProbability="0" ></EMSTreeParametersParent>
 <EMSTreeParameters
@@ -77,7 +79,7 @@ Key targetT2Normed_small.mhd VolumeNodeID vtkMRMLScalarVolumeNode2" ></EMSTarget
 <EMSTree
  id="vtkMRMLEMSTreeNode2" name="Background"  hideFromEditors="false" ParentNodeID="vtkMRMLEMSTreeNode1" TreeParametersNodeID="vtkMRMLEMSTreeParametersNode2" Label="NULL" ></EMSTree>
 <EMSTreeParametersLeaf
- id="vtkMRMLEMSTreeParametersLeafNode3" name="vtkMRMLEMSTreeParametersLeafNode3"  hideFromEditors="false" PrintQuality="0" IntensityLabel="1009" LogMean="0 0 " LogCovariance="0 0 0 0 " ></EMSTreeParametersLeaf>
+ id="vtkMRMLEMSTreeParametersLeafNode3" name="vtkMRMLEMSTreeParametersLeafNode3"  hideFromEditors="false" PrintQuality="0" IntensityLabel="1009" LogMean="0 0 " LogCovariance="0 0 0 0 " DistributionSpecificationMethod="0" DistributionSamplePointsRAS="" ></EMSTreeParametersLeaf>
 <EMSTreeParametersParent
  id="vtkMRMLEMSTreeParametersParentNode3" name="vtkMRMLEMSTreeParametersParentNode3"  hideFromEditors="false" Alpha="0.99" PrintBias="0" BiasCalculationMaxIterations="-1" SmoothingKernelWidth="11" SmoothingKernelSigma="5" StopEMType="0" StopEMMaxIterations="4" StopEMValue="0" StopMFAType="0" StopMFAMaxIterations="2" StopMFAValue="0" PrintFrequency="0" PrintLabelMap="0" PrintEMLabelMapConvergence="0" PrintEMWeightsConvergence="0" PrintMFALabelMapConvergence="0" PrintMFAWeightsConvergence="0" GenerateBackgroundProbability="0" ></EMSTreeParametersParent>
 <EMSTreeParameters
@@ -85,7 +87,7 @@ Key targetT2Normed_small.mhd VolumeNodeID vtkMRMLScalarVolumeNode2" ></EMSTarget
 <EMSTree
  id="vtkMRMLEMSTreeNode3" name="ICC"  hideFromEditors="false" ParentNodeID="vtkMRMLEMSTreeNode1" TreeParametersNodeID="vtkMRMLEMSTreeParametersNode3" Label="NULL" ></EMSTree>
 <EMSTreeParametersLeaf
- id="vtkMRMLEMSTreeParametersLeafNode4" name="vtkMRMLEMSTreeParametersLeafNode4"  hideFromEditors="false" PrintQuality="0" IntensityLabel="5" LogMean="4.0437 6.3336 " LogCovariance="0.025513 -0.011894 -0.011894 0.0058532 " ></EMSTreeParametersLeaf>
+ id="vtkMRMLEMSTreeParametersLeafNode4" name="vtkMRMLEMSTreeParametersLeafNode4"  hideFromEditors="false" PrintQuality="0" IntensityLabel="5" LogMean="4.0437 6.3336 " LogCovariance="0.025513 -0.011894 -0.011894 0.0058532 " DistributionSpecificationMethod="0" DistributionSamplePointsRAS="" ></EMSTreeParametersLeaf>
 <EMSTreeParametersParent
  id="vtkMRMLEMSTreeParametersParentNode4" name="vtkMRMLEMSTreeParametersParentNode4"  hideFromEditors="false" Alpha="0.7" PrintBias="0" BiasCalculationMaxIterations="-1" SmoothingKernelWidth="11" SmoothingKernelSigma="5" StopEMType="0" StopEMMaxIterations="0" StopEMValue="0" StopMFAType="0" StopMFAMaxIterations="0" StopMFAValue="0" PrintFrequency="0" PrintLabelMap="0" PrintEMLabelMapConvergence="0" PrintEMWeightsConvergence="0" PrintMFALabelMapConvergence="0" PrintMFAWeightsConvergence="0" GenerateBackgroundProbability="0" ></EMSTreeParametersParent>
 <EMSTreeParameters
@@ -93,7 +95,7 @@ Key targetT2Normed_small.mhd VolumeNodeID vtkMRMLScalarVolumeNode2" ></EMSTarget
 <EMSTree
  id="vtkMRMLEMSTreeNode4" name="CSF"  hideFromEditors="false" ParentNodeID="vtkMRMLEMSTreeNode3" TreeParametersNodeID="vtkMRMLEMSTreeParametersNode4" Label="NULL" ></EMSTree>
 <EMSTreeParametersLeaf
- id="vtkMRMLEMSTreeParametersLeafNode5" name="vtkMRMLEMSTreeParametersLeafNode5"  hideFromEditors="false" PrintQuality="0" IntensityLabel="4" LogMean="4.4809 5.832 " LogCovariance="0.004737 -0.0041684 -0.0041684 0.0046437 " ></EMSTreeParametersLeaf>
+ id="vtkMRMLEMSTreeParametersLeafNode5" name="vtkMRMLEMSTreeParametersLeafNode5"  hideFromEditors="false" PrintQuality="0" IntensityLabel="4" LogMean="4.4809 5.832 " LogCovariance="0.004737 -0.0041684 -0.0041684 0.0046437 " DistributionSpecificationMethod="0" DistributionSamplePointsRAS="" ></EMSTreeParametersLeaf>
 <EMSTreeParametersParent
  id="vtkMRMLEMSTreeParametersParentNode5" name="vtkMRMLEMSTreeParametersParentNode5"  hideFromEditors="false" Alpha="0.7" PrintBias="0" BiasCalculationMaxIterations="-1" SmoothingKernelWidth="11" SmoothingKernelSigma="5" StopEMType="0" StopEMMaxIterations="0" StopEMValue="0" StopMFAType="0" StopMFAMaxIterations="0" StopMFAValue="0" PrintFrequency="0" PrintLabelMap="0" PrintEMLabelMapConvergence="0" PrintEMWeightsConvergence="0" PrintMFALabelMapConvergence="0" PrintMFAWeightsConvergence="0" GenerateBackgroundProbability="0" ></EMSTreeParametersParent>
 <EMSTreeParameters
@@ -101,7 +103,7 @@ Key targetT2Normed_small.mhd VolumeNodeID vtkMRMLScalarVolumeNode2" ></EMSTarget
 <EMSTree
  id="vtkMRMLEMSTreeNode5" name="Grey_Matter"  hideFromEditors="false" ParentNodeID="vtkMRMLEMSTreeNode3" TreeParametersNodeID="vtkMRMLEMSTreeParametersNode5" Label="NULL" ></EMSTree>
 <EMSTreeParametersLeaf
- id="vtkMRMLEMSTreeParametersLeafNode6" name="vtkMRMLEMSTreeParametersLeafNode6"  hideFromEditors="false" PrintQuality="0" IntensityLabel="8" LogMean="4.7194 5.7093 " LogCovariance="0.0012969 -0.00048307 -0.00048307 0.0012954 " ></EMSTreeParametersLeaf>
+ id="vtkMRMLEMSTreeParametersLeafNode6" name="vtkMRMLEMSTreeParametersLeafNode6"  hideFromEditors="false" PrintQuality="0" IntensityLabel="8" LogMean="4.7194 5.7093 " LogCovariance="0.0012969 -0.00048307 -0.00048307 0.0012954 " DistributionSpecificationMethod="0" DistributionSamplePointsRAS="" ></EMSTreeParametersLeaf>
 <EMSTreeParametersParent
  id="vtkMRMLEMSTreeParametersParentNode6" name="vtkMRMLEMSTreeParametersParentNode6"  hideFromEditors="false" Alpha="0.7" PrintBias="0" BiasCalculationMaxIterations="-1" SmoothingKernelWidth="11" SmoothingKernelSigma="5" StopEMType="0" StopEMMaxIterations="0" StopEMValue="0" StopMFAType="0" StopMFAMaxIterations="0" StopMFAValue="0" PrintFrequency="0" PrintLabelMap="0" PrintEMLabelMapConvergence="0" PrintEMWeightsConvergence="0" PrintMFALabelMapConvergence="0" PrintMFAWeightsConvergence="0" GenerateBackgroundProbability="0" ></EMSTreeParametersParent>
 <EMSTreeParameters
@@ -109,7 +111,7 @@ Key targetT2Normed_small.mhd VolumeNodeID vtkMRMLScalarVolumeNode2" ></EMSTarget
 <EMSTree
  id="vtkMRMLEMSTreeNode6" name="White_Matter"  hideFromEditors="false" ParentNodeID="vtkMRMLEMSTreeNode3" TreeParametersNodeID="vtkMRMLEMSTreeParametersNode6" Label="NULL" ></EMSTree>
 <EMSTreeParametersLeaf
- id="vtkMRMLEMSTreeParametersLeafNode7" name="vtkMRMLEMSTreeParametersLeafNode7"  hideFromEditors="false" PrintQuality="0" IntensityLabel="0" LogMean="1.4343 2.2381 " LogCovariance="0.25361 0.0070688 0.0070688 1.5541 " ></EMSTreeParametersLeaf>
+ id="vtkMRMLEMSTreeParametersLeafNode7" name="vtkMRMLEMSTreeParametersLeafNode7"  hideFromEditors="false" PrintQuality="0" IntensityLabel="0" LogMean="1.4343 2.2381 " LogCovariance="0.25361 0.0070688 0.0070688 1.5541 " DistributionSpecificationMethod="0" DistributionSamplePointsRAS="" ></EMSTreeParametersLeaf>
 <EMSTreeParametersParent
  id="vtkMRMLEMSTreeParametersParentNode7" name="vtkMRMLEMSTreeParametersParentNode7"  hideFromEditors="false" Alpha="0.7" PrintBias="0" BiasCalculationMaxIterations="-1" SmoothingKernelWidth="11" SmoothingKernelSigma="5" StopEMType="0" StopEMMaxIterations="0" StopEMValue="0" StopMFAType="0" StopMFAMaxIterations="0" StopMFAValue="0" PrintFrequency="0" PrintLabelMap="0" PrintEMLabelMapConvergence="0" PrintEMWeightsConvergence="0" PrintMFALabelMapConvergence="0" PrintMFAWeightsConvergence="0" GenerateBackgroundProbability="0" ></EMSTreeParametersParent>
 <EMSTreeParameters
@@ -117,7 +119,7 @@ Key targetT2Normed_small.mhd VolumeNodeID vtkMRMLScalarVolumeNode2" ></EMSTarget
 <EMSTree
  id="vtkMRMLEMSTreeNode7" name="Air"  hideFromEditors="false" ParentNodeID="vtkMRMLEMSTreeNode2" TreeParametersNodeID="vtkMRMLEMSTreeParametersNode7" Label="NULL" ></EMSTree>
 <EMSTreeParametersLeaf
- id="vtkMRMLEMSTreeParametersLeafNode8" name="vtkMRMLEMSTreeParametersLeafNode8"  hideFromEditors="false" PrintQuality="0" IntensityLabel="2" LogMean="4.6282 4.8883 " LogCovariance="0.0050214 0.0096528 0.0096528 0.037652 " ></EMSTreeParametersLeaf>
+ id="vtkMRMLEMSTreeParametersLeafNode8" name="vtkMRMLEMSTreeParametersLeafNode8"  hideFromEditors="false" PrintQuality="0" IntensityLabel="2" LogMean="4.6282 4.8883 " LogCovariance="0.0050214 0.0096528 0.0096528 0.037652 " DistributionSpecificationMethod="0" DistributionSamplePointsRAS="" ></EMSTreeParametersLeaf>
 <EMSTreeParametersParent
  id="vtkMRMLEMSTreeParametersParentNode8" name="vtkMRMLEMSTreeParametersParentNode8"  hideFromEditors="false" Alpha="0.7" PrintBias="0" BiasCalculationMaxIterations="-1" SmoothingKernelWidth="11" SmoothingKernelSigma="5" StopEMType="0" StopEMMaxIterations="0" StopEMValue="0" StopMFAType="0" StopMFAMaxIterations="0" StopMFAValue="0" PrintFrequency="0" PrintLabelMap="0" PrintEMLabelMapConvergence="0" PrintEMWeightsConvergence="0" PrintMFALabelMapConvergence="0" PrintMFAWeightsConvergence="0" GenerateBackgroundProbability="0" ></EMSTreeParametersParent>
 <EMSTreeParameters

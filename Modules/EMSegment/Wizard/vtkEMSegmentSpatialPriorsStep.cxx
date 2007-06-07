@@ -1,7 +1,7 @@
 #include "vtkEMSegmentSpatialPriorsStep.h"
 
 #include "vtkEMSegmentGUI.h"
-#include "vtkEMSegmentLogic.h"
+#include "vtkEMSegmentMRMLManager.h"
 
 #include "vtkKWFrame.h"
 #include "vtkKWFrameWithLabel.h"
@@ -58,9 +58,9 @@ void vtkEMSegmentSpatialPriorsStep::ShowUserInterface()
     this->GetGUI()->GetAnatomicalStructureStep();
   anat_step->ShowAnatomicalStructureTree();
 
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
 
-  vtkIdType vol_id = logic->GetTreeRootNodeID();
+  vtkIdType vol_id = mrmlManager->GetTreeRootNodeID();
   const char *root_node = 
     anat_step->GetAnatomicalStructureTree()->GetWidget()->FindNodeWithUserDataAsInt(
       NULL, vol_id);
@@ -127,7 +127,7 @@ void vtkEMSegmentSpatialPriorsStep::DisplaySelectedNodeSpatialPriorsCallback()
 {
   // Update the UI with the proper value, if there is a selection
 
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
   vtkEMSegmentAnatomicalStructureStep *anat_step = 
     this->GetGUI()->GetAnatomicalStructureStep();
   vtkKWTree *tree = anat_step->GetAnatomicalStructureTree()->GetWidget();
@@ -138,7 +138,7 @@ void vtkEMSegmentSpatialPriorsStep::DisplaySelectedNodeSpatialPriorsCallback()
     {
     sel_node = tree->GetSelection();
     sel_vol_id = tree->GetNodeUserDataAsInt(sel_node.c_str());
-    has_valid_selection = logic->GetTreeNodeIsLeaf(sel_vol_id);
+    has_valid_selection = mrmlManager->GetTreeNodeIsLeaf(sel_vol_id);
     }
   char buffer[256];
 
@@ -154,7 +154,7 @@ void vtkEMSegmentSpatialPriorsStep::DisplaySelectedNodeSpatialPriorsCallback()
       this->SpatialPriorsVolumeMenuButton->SetEnabled(tree->GetEnabled());
       sprintf(buffer, "SpatialPriorsVolumeCallback %d", sel_vol_id);
       this->PopulateMenuWithLoadedVolumes(menu, this, buffer);
-      vtkIdType vol_id = logic->GetTreeNodeSpatialPriorVolumeID(sel_vol_id);
+      vtkIdType vol_id = mrmlManager->GetTreeNodeSpatialPriorVolumeID(sel_vol_id);
       if(!this->SetMenuButtonSelectedItem(menu, vol_id))
         {
         this->SpatialPriorsVolumeMenuButton->GetWidget()->SetValue("");
@@ -174,8 +174,8 @@ void vtkEMSegmentSpatialPriorsStep::SpatialPriorsVolumeCallback(
 {
   // The spatial prior volume has changed because of user interaction
 
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
-  logic->SetTreeNodeSpatialPriorVolumeID(sel_vol_id, vol_id);
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  mrmlManager->SetTreeNodeSpatialPriorVolumeID(sel_vol_id, vol_id);
 }
 
 //----------------------------------------------------------------------------

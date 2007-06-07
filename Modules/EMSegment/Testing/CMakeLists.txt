@@ -12,7 +12,7 @@ INCLUDE_DIRECTORIES (
 # require a testing dataset that is not distributed by default with
 # Slicer3.  NB: The extra tests may take a long time and a large
 # amount of memory!!!  
-SET( RUN_EXTRA_SHORT_EMSEGMENT_TESTS 0)
+SET( RUN_EXTRA_SHORT_EMSEGMENT_TESTS 1)
 SET( RUN_EXTRA_LONG_EMSEGMENT_TESTS 0)
 
 IF( NOT DISABLE_CXX_TESTING )
@@ -278,46 +278,101 @@ IF( NOT DISABLE_CXX_TESTING )
       --resultStandardVolumeFileName
       ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/StandardData/StandardSegmentationResult_small.mhd
       )
+    ADD_TEST(
+      EMSegMRML_DiffLabelmap
+      diff -s
+      ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/StandardData/StandardSegmentationResult_small.raw
+      /tmp/EMSegCL_SpecifiedResultImageWriteIt_Result.raw
+      )
+    SET_TESTS_PROPERTIES(
+      EMSegMRML_DiffLabelmap    
+      PROPERTIES
+      PASS_REGULAR_EXPRESSION 
+      "are identical")
 
-  # test that the mrml readers/writers work
-  ADD_TEST(
-    EMSegMRML_ReadWriteTutorialData
-    ${EM_COMMAND_LINE_TEST_PREFIX}/vtkEMSegmentReadWriteMRMLTest
-    ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/EMSegmentTutorialTemplate_small.mrml
-    /tmp/EMSegmentTutorialTemplate_small_Result.mrml
-    )
-
-  ADD_TEST(
-    EMSegMRML_DiffTutorialData
-    diff -s
-    ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/EMSegmentTutorialTemplate_small.mrml
-    /tmp/EMSegmentTutorialTemplate_small_Result.mrml
-    )
-  SET_TESTS_PROPERTIES(
-    EMSegMRML_DiffTutorialData    
-    PROPERTIES
-    PASS_REGULAR_EXPRESSION 
-    "are identical")
-
-  ADD_TEST(
-    EMSegMRML_ReadWriteNormalized
-    ${EM_COMMAND_LINE_TEST_PREFIX}/vtkEMSegmentReadWriteMRMLTest
-    ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/EMSegmentTutorialTemplate_small_normalizationOn.mrml
-    /tmp/EMSegmentTutorialTemplate_small_normalizationOn_Result.mrml
-    )
-
-  ADD_TEST(
-    EMSegMRML_DiffNormalized
-    diff -s
-    ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/EMSegmentTutorialTemplate_small_normalizationOn.mrml
-    /tmp/EMSegmentTutorialTemplate_small_normalizationOn_Result.mrml
-    )
-  SET_TESTS_PROPERTIES(
-    EMSegMRML_DiffNormalized
-    PROPERTIES
-    PASS_REGULAR_EXPRESSION 
-    "are identical")
+    # test that default nodes have not been changed
+    ADD_TEST(
+      EMSegMRML_WriteDefaultNodes
+      ${EM_COMMAND_LINE_TEST_PREFIX}/EMSegmentCommandLine
+      --verbose 
+      --generateEmptyMRMLSceneAndQuit
+      /tmp/EMSegCL_EmptyMRMLScene.mrml
+      )
+    ADD_TEST(
+      EMSegMRML_DiffDefaultNodes
+      diff -s
+      ${EMSegment_SOURCE_DIR}/Testing/TestData/DefaultMRMLNodes.mrml
+      /tmp/EMSegCL_EmptyMRMLScene.mrml
+      )
+    SET_TESTS_PROPERTIES(
+      EMSegMRML_DiffDefaultNodes    
+      PROPERTIES
+      PASS_REGULAR_EXPRESSION 
+      "are identical"
+      )
     
+    # test that the mrml readers/writers work
+    ADD_TEST(
+      EMSegMRML_ReadWriteTutorialData
+      ${EM_COMMAND_LINE_TEST_PREFIX}/vtkEMSegmentReadWriteMRMLTest
+      ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/EMSegmentTutorialTemplate_small.mrml
+      /tmp/EMSegmentTutorialTemplate_small_Result.mrml
+      )
+    ADD_TEST(
+      EMSegMRML_DiffTutorialData
+      diff -s
+      ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/EMSegmentTutorialTemplate_small.mrml
+      /tmp/EMSegmentTutorialTemplate_small_Result.mrml
+      )
+    SET_TESTS_PROPERTIES(
+      EMSegMRML_DiffTutorialData    
+      PROPERTIES
+      PASS_REGULAR_EXPRESSION 
+      "are identical"
+      )
+    
+    ADD_TEST(
+      EMSegMRML_ReadWriteNormalized
+      ${EM_COMMAND_LINE_TEST_PREFIX}/vtkEMSegmentReadWriteMRMLTest
+      ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/EMSegmentTutorialTemplate_small_normalizationOn.mrml
+      /tmp/EMSegmentTutorialTemplate_small_normalizationOn_Result.mrml
+      )    
+    ADD_TEST(
+      EMSegMRML_DiffNormalized
+      diff -s
+      ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/EMSegmentTutorialTemplate_small_normalizationOn.mrml
+      /tmp/EMSegmentTutorialTemplate_small_normalizationOn_Result.mrml
+      )
+    SET_TESTS_PROPERTIES(
+      EMSegMRML_DiffNormalized
+      PROPERTIES
+      PASS_REGULAR_EXPRESSION 
+      "are identical")
+    
+    # build by hand
+    #ADD_TEST(
+    #  EMSegCL_RebuildLarge
+    #  ${EM_COMMAND_LINE_TEST_PREFIX}/EMSegmentCommandLine
+    #  --verbose 
+    #  --mrmlSceneFileName 
+    #  ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/VolumeData/RebuildLarge.mrml
+    #  --resultVolumeFileName
+    #  /tmp/EMSegCL_RebuildLarge_Result.mhd
+    #  --resultStandardVolumeFileName
+    #  ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/StandardData/StandardSegmentationResult_large.mhd
+    #  )
+    #ADD_TEST(
+    #  EMSegMRML_DiffRebuildLarge
+    #  diff -s
+    #  ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/StandardData/StandardSegmentationResult_large.raw
+    #  /tmp/EMSegCL_RebuildLarge_Result.raw
+    #  )
+    #SET_TESTS_PROPERTIES(
+    #  EMSegMRML_DiffRebuildLarge    
+    #  PROPERTIES
+    #  PASS_REGULAR_EXPRESSION 
+    #  "are identical")
+
     # be careful, this overwrites data!
     #ADD_TEST(
     #  EMSegCL_DefaultNodesOverwriteResults
@@ -328,7 +383,7 @@ IF( NOT DISABLE_CXX_TESTING )
     #  --resultStandardVolumeFileName 
     #  ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/StandardData/StandardSegmentationResult_small.mhd
     #  )
-
+    
   ENDIF (RUN_EXTRA_SHORT_EMSEGMENT_TESTS )
 
   IF ( RUN_EXTRA_LONG_EMSEGMENT_TESTS )
@@ -341,6 +396,21 @@ IF( NOT DISABLE_CXX_TESTING )
       ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/
       "EMSegment Tutorial Template"
       ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/StandardData/StandardSegmentationResult_large.mhd
+      )
+
+    ADD_TEST(
+      EMSegCL_Valgrind
+      valgrind ${EM_COMMAND_LINE_TEST_PREFIX}/EMSegmentCommandLine
+      --verbose 
+      --dontWriteResults
+      --mrmlSceneFileName 
+      ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/EMSegmentTutorialTemplate_small.mrml
+      --resultVolumeFileName
+      ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/VolumeData/test_result.mhd    
+      --targetVolumeFileNames
+      ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/VolumeData/targetT1Normed_small.mhd,${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/VolumeData/targetT2Normed_small.mhd
+      --resultStandardVolumeFileName
+      ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest/StandardData/StandardSegmentationResult_small.mhd
       )
 
   ENDIF ( RUN_EXTRA_LONG_EMSEGMENT_TESTS )

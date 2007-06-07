@@ -1,7 +1,7 @@
 #include "vtkEMSegmentParametersSetStep.h"
 
 #include "vtkEMSegmentGUI.h"
-#include "vtkEMSegmentLogic.h"
+#include "vtkEMSegmentMRMLManager.h"
 
 #include "vtkKWWizardWidget.h"
 #include "vtkKWWizardWorkflow.h"
@@ -107,7 +107,7 @@ void vtkEMSegmentParametersSetStep::PopulateLoadedParameterSets(
     return;
     }
 
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
 
   vtkKWMenu *menu = 
     this->ParameterSetMenuButton->GetWidget()->GetMenu();
@@ -117,10 +117,10 @@ void vtkEMSegmentParametersSetStep::PopulateLoadedParameterSets(
   sprintf(buffer, "%s %d", method, -1);
   menu->AddRadioButton("Create New Parameters", obj, buffer);
   
-  int nb_of_sets = logic->GetNumberOfParameterSets();
+  int nb_of_sets = mrmlManager->GetNumberOfParameterSets();
   for(int index = 0; index < nb_of_sets; index++)
     {
-    const char *name = logic->GetNthParameterSetName(index);
+    const char *name = mrmlManager->GetNthParameterSetName(index);
     if (name)
       {
       sprintf(buffer, "%s %d", method, index);
@@ -138,7 +138,7 @@ void vtkEMSegmentParametersSetStep::UpdateLoadedParameterSets()
     return;
     }
 
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
 
   vtkKWMenuButton *menuButton = this->ParameterSetMenuButton->GetWidget();
   vtksys_stl::string sel_value = "";
@@ -168,7 +168,7 @@ void vtkEMSegmentParametersSetStep::UpdateLoadedParameterSets()
   // if there is no previous selection, select the first loaded set,
   // or if there is no loaded set, leave it blank
 
-  int nb_of_sets = logic->GetNumberOfParameterSets();
+  int nb_of_sets = mrmlManager->GetNumberOfParameterSets();
   if(nb_of_sets > 0 &&
      menuButton->GetMenu()->GetNumberOfItems() > 1)
     {
@@ -181,19 +181,19 @@ void vtkEMSegmentParametersSetStep::UpdateLoadedParameterSets()
 void vtkEMSegmentParametersSetStep::SelectedParameterSetChangedCallback(
   int index)
 {
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
 
   // New Parameters
 
   if (index < 0)
     {
-    logic->CreateAndObserveNewParameterSet();
-    //Assuming the logic adds the node to the end.
-    int nb_of_sets = logic->GetNumberOfParameterSets();
+    mrmlManager->CreateAndObserveNewParameterSet();
+    //Assuming the mrml manager adds the node to the end.
+    int nb_of_sets = mrmlManager->GetNumberOfParameterSets();
     if (nb_of_sets > 0)
       {
       this->UpdateLoadedParameterSets();
-      const char *name = logic->GetNthParameterSetName(nb_of_sets-1);
+      const char *name = mrmlManager->GetNthParameterSetName(nb_of_sets-1);
       if (name)
         {
         // Select the newly created parameter set
@@ -208,7 +208,7 @@ void vtkEMSegmentParametersSetStep::SelectedParameterSetChangedCallback(
     }
   else
     {
-    logic->SetLoadedParameterSetIndex(index);
+    mrmlManager->SetLoadedParameterSetIndex(index);
     }
   
   vtkEMSegmentAnatomicalStructureStep *anat_step = 

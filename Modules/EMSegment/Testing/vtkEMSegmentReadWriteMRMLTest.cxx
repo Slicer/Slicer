@@ -56,12 +56,12 @@ int main(int argc, char** argv)
                 << " nodes." << std::endl;
     }
 
-    // clean up
-    mrmlScene->Clear(true);
-    mrmlScene->Delete();
-    emLogic->SetAndObserveMRMLScene(NULL);
-    emLogic->Delete();
-
-    return success ? EXIT_SUCCESS : EXIT_FAILURE;    
+  // clean up
+  mrmlScene->Clear(true);
+  mrmlScene->Delete();
+  emLogic->SetAndObserveMRMLScene(NULL);
+  emLogic->Delete();
+  
+  return success ? EXIT_SUCCESS : EXIT_FAILURE;    
 }
 

@@ -5,6 +5,7 @@
 #include "vtkEMSegment.h"
 
 class vtkEMSegmentLogic;
+class vtkEMSegmentMRMLManager;
 class vtkMRMLEMSNode;
 class vtkKWWizardWidget;
 class vtkEMSegmentParametersSetStep;
@@ -33,6 +34,10 @@ public:
   vtkGetObjectMacro(Logic, vtkEMSegmentLogic);
   virtual void SetLogic(vtkEMSegmentLogic*);
   
+  // Get/Set mrml manager node
+  vtkGetObjectMacro(MRMLManager, vtkEMSegmentMRMLManager);
+  virtual void SetMRMLManager(vtkEMSegmentMRMLManager*);
+
   // Description: 
   // Get/Set MRML node
   vtkGetObjectMacro(Node, vtkMRMLEMSNode);
@@ -116,8 +121,9 @@ private:
   // Updates registration progress on the status bar of the main application. 
   virtual void UpdateRegistrationProgress();
 
-  vtkEMSegmentLogic *Logic;
-  vtkMRMLEMSNode    *Node;
+  vtkEMSegmentLogic       *Logic;
+  vtkEMSegmentMRMLManager *MRMLManager;
+  vtkMRMLEMSNode          *Node;
   
   char *ModuleName;
 

@@ -1,7 +1,7 @@
 #include "vtkEMSegmentNodeParametersStep.h"
 
 #include "vtkEMSegmentGUI.h"
-#include "vtkEMSegmentLogic.h"
+#include "vtkEMSegmentMRMLManager.h"
 
 #include "vtkKWWizardWidget.h"
 #include "vtkKWWizardWorkflow.h"
@@ -902,7 +902,7 @@ void vtkEMSegmentNodeParametersStep::DisplaySelectedNodeParametersCallback()
 {
   // Update the UI with the proper value, if there is a selection
 
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
   vtkEMSegmentAnatomicalStructureStep *anat_step = 
     this->GetGUI()->GetAnatomicalStructureStep();
   vtkKWTree *tree = anat_step->GetAnatomicalStructureTree()->GetWidget();
@@ -914,12 +914,12 @@ void vtkEMSegmentNodeParametersStep::DisplaySelectedNodeParametersCallback()
     {
     sel_node = tree->GetSelection();
     sel_vol_id = tree->GetNodeUserDataAsInt(sel_node.c_str());
-    sel_is_leaf_node = logic->GetTreeNodeIsLeaf(sel_vol_id);
+    sel_is_leaf_node = mrmlManager->GetTreeNodeIsLeaf(sel_vol_id);
     }
 
   int enabled = tree->GetEnabled();
   int row;
-  int nb_of_target_volumes = logic->GetTargetNumberOfSelectedVolumes();
+  int nb_of_target_volumes = mrmlManager->GetTargetNumberOfSelectedVolumes();
   char buffer[256];
 
   // Update the class probability scale
@@ -934,7 +934,7 @@ void vtkEMSegmentNodeParametersStep::DisplaySelectedNodeParametersCallback()
       this->NodeParametersGlobalPriorScale->SetEndCommand(this, buffer);
       this->NodeParametersGlobalPriorScale->SetEntryCommand(this, buffer);
       this->NodeParametersGlobalPriorScale->SetValue(
-        logic->GetTreeNodeClassProbability(sel_vol_id));
+        mrmlManager->GetTreeNodeClassProbability(sel_vol_id));
       }
     else
       {
@@ -958,7 +958,7 @@ void vtkEMSegmentNodeParametersStep::DisplaySelectedNodeParametersCallback()
       this->NodeParametersSpatialPriorWeightScale->SetEntryCommand(
         this, buffer);
       this->NodeParametersSpatialPriorWeightScale->SetValue(
-        logic->GetTreeNodeSpatialPriorWeight(sel_vol_id));
+        mrmlManager->GetTreeNodeSpatialPriorWeight(sel_vol_id));
       }
     else
       {
@@ -985,11 +985,11 @@ void vtkEMSegmentNodeParametersStep::DisplaySelectedNodeParametersCallback()
       for (row = 0; row < nb_of_target_volumes; row++)
         {
         list->AddRow();
-        int vol_id = logic->GetTargetSelectedVolumeNthID(row);
-        list->SetCellText(row, 0, logic->GetVolumeName(vol_id));
+        int vol_id = mrmlManager->GetTargetSelectedVolumeNthID(row);
+        list->SetCellText(row, 0, mrmlManager->GetVolumeName(vol_id));
         list->SetCellTextAsDouble(
           row, 1, 
-          logic->GetTreeNodeInputChannelWeight(sel_vol_id, row));
+          mrmlManager->GetTreeNodeInputChannelWeight(sel_vol_id, row));
         }
       }
     else
@@ -1010,7 +1010,7 @@ void vtkEMSegmentNodeParametersStep::DisplaySelectedNodeParametersCallback()
       this->NodeParametersAlphaScale->SetEndCommand(this, buffer);
       this->NodeParametersAlphaScale->SetEntryCommand(this, buffer);
       this->NodeParametersAlphaScale->SetValue(
-        logic->GetTreeNodeAlpha(sel_vol_id));
+        mrmlManager->GetTreeNodeAlpha(sel_vol_id));
       }
     else
       {
@@ -1049,24 +1049,24 @@ void vtkEMSegmentNodeParametersStep::DisplaySelectedNodeParametersCallback()
       {
       this->StoppingConditionsEMMenuButton->SetEnabled(tree->GetEnabled());
       sprintf(buffer, "StoppingConditionsEMCallback %d %d", 
-              sel_vol_id, vtkEMSegmentLogic::StoppingConditionIterations);
+              sel_vol_id, vtkEMSegmentMRMLManager::StoppingConditionIterations);
       menu->AddRadioButton("Iterations", this, buffer);
       sprintf(buffer, "StoppingConditionsEMCallback %d %d", 
-              sel_vol_id, vtkEMSegmentLogic::StoppingConditionLabelMapMeasure);
+              sel_vol_id, vtkEMSegmentMRMLManager::StoppingConditionLabelMapMeasure);
       menu->AddRadioButton("Label Map", this, buffer);
       sprintf(buffer, "StoppingConditionsEMCallback %d %d", 
-              sel_vol_id, vtkEMSegmentLogic::StoppingConditionWeightsMeasure);
+              sel_vol_id, vtkEMSegmentMRMLManager::StoppingConditionWeightsMeasure);
       menu->AddRadioButton("Weights", this, buffer);
       vtksys_stl::string value;
-      switch (logic->GetTreeNodeStoppingConditionEMType(sel_vol_id))
+      switch (mrmlManager->GetTreeNodeStoppingConditionEMType(sel_vol_id))
         {
-        case vtkEMSegmentLogic::StoppingConditionIterations:
+        case vtkEMSegmentMRMLManager::StoppingConditionIterations:
           value = "Iterations";
           break;
-        case vtkEMSegmentLogic::StoppingConditionLabelMapMeasure:
+        case vtkEMSegmentMRMLManager::StoppingConditionLabelMapMeasure:
           value = "Label Map";
           break;
-        case vtkEMSegmentLogic::StoppingConditionWeightsMeasure:
+        case vtkEMSegmentMRMLManager::StoppingConditionWeightsMeasure:
           value = "Weights";
           break;
         }
@@ -1092,7 +1092,7 @@ void vtkEMSegmentNodeParametersStep::DisplaySelectedNodeParametersCallback()
       sprintf(buffer, "StoppingConditionsEMIterationsCallback %d", sel_vol_id);
       entry->SetCommand(this, buffer);
       entry->SetValueAsInt(
-        logic->GetTreeNodeStoppingConditionEMIterations(sel_vol_id));
+        mrmlManager->GetTreeNodeStoppingConditionEMIterations(sel_vol_id));
       }
     else
       {
@@ -1101,8 +1101,8 @@ void vtkEMSegmentNodeParametersStep::DisplaySelectedNodeParametersCallback()
       entry->SetValue("");
       }
     if (has_valid_selection && !sel_is_leaf_node &&
-        logic->GetTreeNodeStoppingConditionEMType(sel_vol_id) ==
-        vtkEMSegmentLogic::StoppingConditionIterations)
+        mrmlManager->GetTreeNodeStoppingConditionEMType(sel_vol_id) ==
+        vtkEMSegmentMRMLManager::StoppingConditionIterations)
       {
       this->Script("grid %s",
                    this->StoppingConditionsEMIterationsEntry->GetWidgetName());
@@ -1125,7 +1125,7 @@ void vtkEMSegmentNodeParametersStep::DisplaySelectedNodeParametersCallback()
       sprintf(buffer, "StoppingConditionsEMValueCallback %d", sel_vol_id);
       entry->SetCommand(this, buffer);
       entry->SetValueAsDouble(
-        logic->GetTreeNodeStoppingConditionEMValue(sel_vol_id));
+        mrmlManager->GetTreeNodeStoppingConditionEMValue(sel_vol_id));
       }
     else
       {
@@ -1134,10 +1134,10 @@ void vtkEMSegmentNodeParametersStep::DisplaySelectedNodeParametersCallback()
       entry->SetValue("");
       }
     if (has_valid_selection && !sel_is_leaf_node && 
-        (logic->GetTreeNodeStoppingConditionEMType(sel_vol_id) ==
-         vtkEMSegmentLogic::StoppingConditionLabelMapMeasure ||
-         logic->GetTreeNodeStoppingConditionEMType(sel_vol_id) ==
-         vtkEMSegmentLogic::StoppingConditionWeightsMeasure))
+        (mrmlManager->GetTreeNodeStoppingConditionEMType(sel_vol_id) ==
+         vtkEMSegmentMRMLManager::StoppingConditionLabelMapMeasure ||
+         mrmlManager->GetTreeNodeStoppingConditionEMType(sel_vol_id) ==
+         vtkEMSegmentMRMLManager::StoppingConditionWeightsMeasure))
       {
       this->Script("grid %s",
                    this->StoppingConditionsEMValueEntry->GetWidgetName());
@@ -1160,24 +1160,24 @@ void vtkEMSegmentNodeParametersStep::DisplaySelectedNodeParametersCallback()
       {
       this->StoppingConditionsMFAMenuButton->SetEnabled(tree->GetEnabled());
       sprintf(buffer, "StoppingConditionsMFACallback %d %d", 
-              sel_vol_id, vtkEMSegmentLogic::StoppingConditionIterations);
+              sel_vol_id, vtkEMSegmentMRMLManager::StoppingConditionIterations);
       menu->AddRadioButton("Iterations", this, buffer);
       sprintf(buffer, "StoppingConditionsMFACallback %d %d", 
-              sel_vol_id, vtkEMSegmentLogic::StoppingConditionLabelMapMeasure);
+              sel_vol_id, vtkEMSegmentMRMLManager::StoppingConditionLabelMapMeasure);
       menu->AddRadioButton("Label Map", this, buffer);
       sprintf(buffer, "StoppingConditionsMFACallback %d %d", 
-              sel_vol_id, vtkEMSegmentLogic::StoppingConditionWeightsMeasure);
+              sel_vol_id, vtkEMSegmentMRMLManager::StoppingConditionWeightsMeasure);
       menu->AddRadioButton("Weights", this, buffer);
       vtksys_stl::string value;
-      switch (logic->GetTreeNodeStoppingConditionMFAType(sel_vol_id))
+      switch (mrmlManager->GetTreeNodeStoppingConditionMFAType(sel_vol_id))
         {
-        case vtkEMSegmentLogic::StoppingConditionIterations:
+        case vtkEMSegmentMRMLManager::StoppingConditionIterations:
           value = "Iterations";
           break;
-        case vtkEMSegmentLogic::StoppingConditionLabelMapMeasure:
+        case vtkEMSegmentMRMLManager::StoppingConditionLabelMapMeasure:
           value = "Label Map";
           break;
-        case vtkEMSegmentLogic::StoppingConditionWeightsMeasure:
+        case vtkEMSegmentMRMLManager::StoppingConditionWeightsMeasure:
           value = "Weights";
           break;
         }
@@ -1203,7 +1203,7 @@ void vtkEMSegmentNodeParametersStep::DisplaySelectedNodeParametersCallback()
       sprintf(buffer, "StoppingConditionsMFAIterationsCallback %d",sel_vol_id);
       entry->SetCommand(this, buffer);
       entry->SetValueAsInt(
-        logic->GetTreeNodeStoppingConditionMFAIterations(sel_vol_id));
+        mrmlManager->GetTreeNodeStoppingConditionMFAIterations(sel_vol_id));
       }
     else
       {
@@ -1212,8 +1212,8 @@ void vtkEMSegmentNodeParametersStep::DisplaySelectedNodeParametersCallback()
       entry->SetValue("");
       }
     if (has_valid_selection && !sel_is_leaf_node && 
-        logic->GetTreeNodeStoppingConditionMFAType(sel_vol_id) ==
-        vtkEMSegmentLogic::StoppingConditionIterations)
+        mrmlManager->GetTreeNodeStoppingConditionMFAType(sel_vol_id) ==
+        vtkEMSegmentMRMLManager::StoppingConditionIterations)
       {
       this->Script("grid %s",
                   this->StoppingConditionsMFAIterationsEntry->GetWidgetName());
@@ -1236,7 +1236,7 @@ void vtkEMSegmentNodeParametersStep::DisplaySelectedNodeParametersCallback()
       sprintf(buffer, "StoppingConditionsMFAValueCallback %d",sel_vol_id);
       entry->SetCommand(this, buffer);
       entry->SetValueAsDouble(
-        logic->GetTreeNodeStoppingConditionMFAValue(sel_vol_id));
+        mrmlManager->GetTreeNodeStoppingConditionMFAValue(sel_vol_id));
       }
     else
       {
@@ -1245,10 +1245,10 @@ void vtkEMSegmentNodeParametersStep::DisplaySelectedNodeParametersCallback()
       entry->SetValue("");
       }
     if (has_valid_selection && !sel_is_leaf_node && 
-        (logic->GetTreeNodeStoppingConditionMFAType(sel_vol_id) ==
-         vtkEMSegmentLogic::StoppingConditionLabelMapMeasure ||
-         logic->GetTreeNodeStoppingConditionMFAType(sel_vol_id) ==
-         vtkEMSegmentLogic::StoppingConditionWeightsMeasure))
+        (mrmlManager->GetTreeNodeStoppingConditionMFAType(sel_vol_id) ==
+         vtkEMSegmentMRMLManager::StoppingConditionLabelMapMeasure ||
+         mrmlManager->GetTreeNodeStoppingConditionMFAType(sel_vol_id) ==
+         vtkEMSegmentMRMLManager::StoppingConditionWeightsMeasure))
       {
       this->Script("grid %s",
                    this->StoppingConditionsMFAValueEntry->GetWidgetName());
@@ -1271,7 +1271,7 @@ void vtkEMSegmentNodeParametersStep::DisplaySelectedNodeParametersCallback()
       sprintf(buffer,"StoppingConditionsBiasIterationsCallback %d",sel_vol_id);
       entry->SetCommand(this, buffer);
       entry->SetValueAsInt(
-        logic->GetTreeNodeBiasCalculationMaxIterations(sel_vol_id));
+        mrmlManager->GetTreeNodeBiasCalculationMaxIterations(sel_vol_id));
       this->Script(
         "grid %s",
         this->StoppingConditionsBiasIterationsEntry->GetWidgetName());
@@ -1297,7 +1297,7 @@ void vtkEMSegmentNodeParametersStep::DisplaySelectedNodeParametersCallback()
       this->NodeParametersPrintWeightCheckButton->SetEnabled(enabled);
       sprintf(buffer, "NodeParametersPrintWeightCallback %d", sel_vol_id);
       cb->SetCommand(this, buffer);
-      cb->SetSelectedState(logic->GetTreeNodePrintWeight(sel_vol_id));
+      cb->SetSelectedState(mrmlManager->GetTreeNodePrintWeight(sel_vol_id));
       }
     else
       {
@@ -1317,7 +1317,7 @@ void vtkEMSegmentNodeParametersStep::DisplaySelectedNodeParametersCallback()
       {
       sprintf(buffer, "NodeParametersPrintQualityCallback %d", sel_vol_id);
       cb->SetCommand(this, buffer);
-      cb->SetSelectedState(logic->GetTreeNodePrintQuality(sel_vol_id));
+      cb->SetSelectedState(mrmlManager->GetTreeNodePrintQuality(sel_vol_id));
       this->Script("pack %s -side top -anchor nw -padx 2 -pady 2", 
                    this->NodeParametersPrintQualityCheckButton->GetWidgetName());
       }
@@ -1342,7 +1342,7 @@ void vtkEMSegmentNodeParametersStep::DisplaySelectedNodeParametersCallback()
       this->NodeParametersPrintFrequencyScale->SetEndCommand(this, buffer);
       this->NodeParametersPrintFrequencyScale->SetEntryCommand(this, buffer);
       this->NodeParametersPrintFrequencyScale->
-        SetValue(logic->GetTreeNodePrintFrequency(sel_vol_id));
+        SetValue(mrmlManager->GetTreeNodePrintFrequency(sel_vol_id));
       this->Script("pack %s -side top -anchor nw -padx 2 -pady 2", 
                    this->NodeParametersPrintFrequencyScale->GetWidgetName());
       }
@@ -1365,7 +1365,7 @@ void vtkEMSegmentNodeParametersStep::DisplaySelectedNodeParametersCallback()
       {
       sprintf(buffer, "NodeParametersPrintBiasCallback %d", sel_vol_id);
       cb->SetCommand(this, buffer);
-      cb->SetSelectedState(logic->GetTreeNodePrintBias(sel_vol_id));
+      cb->SetSelectedState(mrmlManager->GetTreeNodePrintBias(sel_vol_id));
       this->Script("pack %s -side top -anchor nw -padx 2 -pady 2", 
                    this->NodeParametersPrintBiasCheckButton->GetWidgetName());
       }
@@ -1388,7 +1388,7 @@ void vtkEMSegmentNodeParametersStep::DisplaySelectedNodeParametersCallback()
       {
       sprintf(buffer, "NodeParametersPrintLabelMapCallback %d", sel_vol_id);
       cb->SetCommand(this, buffer);
-      cb->SetSelectedState(logic->GetTreeNodePrintLabelMap(sel_vol_id));
+      cb->SetSelectedState(mrmlManager->GetTreeNodePrintLabelMap(sel_vol_id));
       this->Script("pack %s -side top -anchor nw -padx 2 -pady 2", 
         this->NodeParametersPrintLabelMapCheckButton->GetWidgetName());
       }
@@ -1413,7 +1413,7 @@ void vtkEMSegmentNodeParametersStep::DisplaySelectedNodeParametersCallback()
       sprintf(buffer, "NodeParametersPrintEMLabelMapCallback %d", sel_vol_id);
       cb->SetCommand(this, buffer);
       cb->SetSelectedState(
-        logic->GetTreeNodePrintEMLabelMapConvergence(sel_vol_id));
+        mrmlManager->GetTreeNodePrintEMLabelMapConvergence(sel_vol_id));
       }
     else
       {
@@ -1433,7 +1433,7 @@ void vtkEMSegmentNodeParametersStep::DisplaySelectedNodeParametersCallback()
       sprintf(buffer, "NodeParametersPrintEMWeightsCallback %d", sel_vol_id);
       cb->SetCommand(this, buffer);
       cb->SetSelectedState(
-        logic->GetTreeNodePrintEMWeightsConvergence(sel_vol_id));
+        mrmlManager->GetTreeNodePrintEMWeightsConvergence(sel_vol_id));
       }
     else
       {
@@ -1453,7 +1453,7 @@ void vtkEMSegmentNodeParametersStep::DisplaySelectedNodeParametersCallback()
       sprintf(buffer, "NodeParametersPrintMFALabelMapCallback %d", sel_vol_id);
       cb->SetCommand(this, buffer);
       cb->SetSelectedState(
-        logic->GetTreeNodePrintMFALabelMapConvergence(sel_vol_id));
+        mrmlManager->GetTreeNodePrintMFALabelMapConvergence(sel_vol_id));
       }
     else
       {
@@ -1473,7 +1473,7 @@ void vtkEMSegmentNodeParametersStep::DisplaySelectedNodeParametersCallback()
       sprintf(buffer, "NodeParametersPrintMFAWeightsCallback %d", sel_vol_id);
       cb->SetCommand(this, buffer);
       cb->SetSelectedState(
-        logic->GetTreeNodePrintMFAWeightsConvergence(sel_vol_id));
+        mrmlManager->GetTreeNodePrintMFAWeightsConvergence(sel_vol_id));
       }
     else
       {
@@ -1546,7 +1546,7 @@ void vtkEMSegmentNodeParametersStep::DisplaySelectedNodeParametersCallback()
       sprintf(buffer, "ExcludeIncompleteEStepCallback %d", sel_vol_id);
       cb->SetCommand(this, buffer);
       cb->SetSelectedState(
-        logic->GetTreeNodeExcludeFromIncompleteEStep(sel_vol_id));
+        mrmlManager->GetTreeNodeExcludeFromIncompleteEStep(sel_vol_id));
       this->NodeParametersExcludeIncompleteEStepCheckButton->SetEnabled(
         enabled);
       }
@@ -1569,7 +1569,7 @@ void vtkEMSegmentNodeParametersStep::DisplaySelectedNodeParametersCallback()
       sprintf(buffer, "GenerateBackgroundProbabilityCallback %d", sel_vol_id);
       cb->SetCommand(this, buffer);
       cb->SetSelectedState(
-        logic->GetTreeNodeGenerateBackgroundProbability(sel_vol_id));
+        mrmlManager->GetTreeNodeGenerateBackgroundProbability(sel_vol_id));
       this->Script(
         "pack %s -side top -anchor nw -padx 2 -pady 2", 
         this->NodeParametersGenerateBackgroundProbabilityCheckButton->GetWidgetName());
@@ -1591,8 +1591,8 @@ void vtkEMSegmentNodeParametersStep::NodeParametersGlobalPriorChangedCallback(
 {
   // The class probability has changed because of user interaction
 
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
-  logic->SetTreeNodeClassProbability(sel_vol_id, value);
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  mrmlManager->SetTreeNodeClassProbability(sel_vol_id, value);
 }
 
 //----------------------------------------------------------------------------
@@ -1601,8 +1601,8 @@ void vtkEMSegmentNodeParametersStep::NodeParametersSpatialPriorWeightChangedCall
 {
   // The spatial prior weight has changed because of user interaction
 
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
-  logic->SetTreeNodeSpatialPriorWeight(sel_vol_id, value);
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  mrmlManager->SetTreeNodeSpatialPriorWeight(sel_vol_id, value);
 }
 
 //----------------------------------------------------------------------------
@@ -1614,8 +1614,8 @@ void vtkEMSegmentNodeParametersStep::NodeParametersInputChannelWeightChangedCall
   double w = atof(value);
   if (w >= 0 && w <= 1.0)
     {
-    vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
-    logic->SetTreeNodeInputChannelWeight(sel_vol_id, row, atof(value));
+    vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+    mrmlManager->SetTreeNodeInputChannelWeight(sel_vol_id, row, atof(value));
     }
   else
     {
@@ -1632,8 +1632,8 @@ void vtkEMSegmentNodeParametersStep::NodeParametersAlphaChangedCallback(
 {
   // The alpha has changed because of user interaction
 
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
-  logic->SetTreeNodeAlpha(sel_vol_id, value);
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  mrmlManager->SetTreeNodeAlpha(sel_vol_id, value);
 }
 
 //----------------------------------------------------------------------------
@@ -1642,10 +1642,10 @@ void vtkEMSegmentNodeParametersStep::StoppingConditionsEMCallback(
 {
   // The EM stopping condition has changed because of user interaction
 
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
-  if (value != logic->GetTreeNodeStoppingConditionEMType(sel_vol_id))
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  if (value != mrmlManager->GetTreeNodeStoppingConditionEMType(sel_vol_id))
     {
-    logic->SetTreeNodeStoppingConditionEMType(sel_vol_id, value);
+    mrmlManager->SetTreeNodeStoppingConditionEMType(sel_vol_id, value);
     this->DisplaySelectedNodeParametersCallback();
     }
 }
@@ -1657,10 +1657,10 @@ void vtkEMSegmentNodeParametersStep::StoppingConditionsEMIterationsCallback(
   // The EM iterations has changed because of user interaction
 
   int v = (int)abs(atoi(value));
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
-  if (v != logic->GetTreeNodeStoppingConditionEMIterations(sel_vol_id))
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  if (v != mrmlManager->GetTreeNodeStoppingConditionEMIterations(sel_vol_id))
     {
-    logic->SetTreeNodeStoppingConditionEMIterations(sel_vol_id, v);
+    mrmlManager->SetTreeNodeStoppingConditionEMIterations(sel_vol_id, v);
     this->DisplaySelectedNodeParametersCallback(); // in case the value < 0
     }
 }
@@ -1671,8 +1671,8 @@ void vtkEMSegmentNodeParametersStep::StoppingConditionsEMValueCallback(
 {
   // The EM value has changed because of user interaction
 
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
-  logic->SetTreeNodeStoppingConditionEMValue(sel_vol_id, atof(value));
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  mrmlManager->SetTreeNodeStoppingConditionEMValue(sel_vol_id, atof(value));
 }
 
 //----------------------------------------------------------------------------
@@ -1681,10 +1681,10 @@ void vtkEMSegmentNodeParametersStep::StoppingConditionsMFACallback(
 {
   // The MFA stopping condition has changed because of user interaction
 
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
-  if (value != logic->GetTreeNodeStoppingConditionMFAType(sel_vol_id))
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  if (value != mrmlManager->GetTreeNodeStoppingConditionMFAType(sel_vol_id))
     {
-    logic->SetTreeNodeStoppingConditionMFAType(sel_vol_id, value);
+    mrmlManager->SetTreeNodeStoppingConditionMFAType(sel_vol_id, value);
     this->DisplaySelectedNodeParametersCallback();
     }
 }
@@ -1695,11 +1695,11 @@ void vtkEMSegmentNodeParametersStep::StoppingConditionsMFAIterationsCallback(
 {
   // The MFA iterations has changed because of user interaction
 
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
   int v = (int)abs(atoi(value));
-  if (v != logic->GetTreeNodeStoppingConditionMFAIterations(sel_vol_id))
+  if (v != mrmlManager->GetTreeNodeStoppingConditionMFAIterations(sel_vol_id))
     {
-    logic->SetTreeNodeStoppingConditionMFAIterations(sel_vol_id, v);
+    mrmlManager->SetTreeNodeStoppingConditionMFAIterations(sel_vol_id, v);
     this->DisplaySelectedNodeParametersCallback(); // in case the value < 0
     }
 }
@@ -1710,8 +1710,8 @@ void vtkEMSegmentNodeParametersStep::StoppingConditionsMFAValueCallback(
 {
   // The MFA value has changed because of user interaction
 
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
-  logic->SetTreeNodeStoppingConditionMFAValue(sel_vol_id, atof(value));
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  mrmlManager->SetTreeNodeStoppingConditionMFAValue(sel_vol_id, atof(value));
 }
 
 //----------------------------------------------------------------------------
@@ -1721,8 +1721,8 @@ void vtkEMSegmentNodeParametersStep::StoppingConditionsBiasIterationsCallback(
   // The Bias calculation max iterations value 
   // has changed because of user interaction
 
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
-  logic->SetTreeNodeBiasCalculationMaxIterations(
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  mrmlManager->SetTreeNodeBiasCalculationMaxIterations(
     sel_vol_id, atoi(value));
 }
 
@@ -1732,8 +1732,8 @@ void vtkEMSegmentNodeParametersStep::NodeParametersPrintWeightCallback(
 {
   // The print weight has changed because of user interaction
 
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
-  logic->SetTreeNodePrintWeight(sel_vol_id, value);
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  mrmlManager->SetTreeNodePrintWeight(sel_vol_id, value);
 }
 
 //----------------------------------------------------------------------------
@@ -1742,8 +1742,8 @@ void vtkEMSegmentNodeParametersStep::NodeParametersPrintQualityCallback(
 {
   // The print quality has changed because of user interaction
 
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
-  logic->SetTreeNodePrintQuality(sel_vol_id, value);
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  mrmlManager->SetTreeNodePrintQuality(sel_vol_id, value);
 }
 
 //----------------------------------------------------------------------------
@@ -1752,8 +1752,8 @@ void vtkEMSegmentNodeParametersStep::NodeParametersPrintFrequencyChangedCallback
 {
   // The print frequency has changed because of user interaction
 
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
-  logic->SetTreeNodePrintFrequency(sel_vol_id, value);
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  mrmlManager->SetTreeNodePrintFrequency(sel_vol_id, value);
 }
 
 //----------------------------------------------------------------------------
@@ -1762,8 +1762,8 @@ void vtkEMSegmentNodeParametersStep::NodeParametersPrintBiasCallback(
 {
   // The print bias has changed because of user interaction
 
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
-  logic->SetTreeNodePrintBias(sel_vol_id, value);
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  mrmlManager->SetTreeNodePrintBias(sel_vol_id, value);
 }
 
 //----------------------------------------------------------------------------
@@ -1772,8 +1772,8 @@ void vtkEMSegmentNodeParametersStep::NodeParametersPrintLabelMapCallback(
 {
   // The print label map has changed because of user interaction
 
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
-  logic->SetTreeNodePrintLabelMap(sel_vol_id, value);
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  mrmlManager->SetTreeNodePrintLabelMap(sel_vol_id, value);
 }
 
 //----------------------------------------------------------------------------
@@ -1782,8 +1782,8 @@ void vtkEMSegmentNodeParametersStep::NodeParametersPrintEMLabelMapCallback(
 {
   // The print EM label map convergence has changed because of user interaction
 
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
-  logic->SetTreeNodePrintEMLabelMapConvergence(sel_vol_id, value);
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  mrmlManager->SetTreeNodePrintEMLabelMapConvergence(sel_vol_id, value);
 }
 
 //----------------------------------------------------------------------------
@@ -1792,8 +1792,8 @@ void vtkEMSegmentNodeParametersStep::NodeParametersPrintEMWeightsCallback(
 {
   // The print EM weight convergence has changed because of user interaction
 
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
-  logic->SetTreeNodePrintEMWeightsConvergence(sel_vol_id, value);
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  mrmlManager->SetTreeNodePrintEMWeightsConvergence(sel_vol_id, value);
 }
 
 //----------------------------------------------------------------------------
@@ -1801,8 +1801,8 @@ void vtkEMSegmentNodeParametersStep::NodeParametersPrintMFALabelMapCallback(
   vtkIdType sel_vol_id, int value)
 {
   // The print MFA label map convergence has changed because of user interaction
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
-  logic->SetTreeNodePrintMFALabelMapConvergence(sel_vol_id, value);
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  mrmlManager->SetTreeNodePrintMFALabelMapConvergence(sel_vol_id, value);
 }
 
 //----------------------------------------------------------------------------
@@ -1811,8 +1811,8 @@ void vtkEMSegmentNodeParametersStep::NodeParametersPrintMFAWeightsCallback(
 {
   // The print MFA weight convergence has changed because of user interaction
 
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
-  logic->SetTreeNodePrintMFAWeightsConvergence(sel_vol_id, value);
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  mrmlManager->SetTreeNodePrintMFAWeightsConvergence(sel_vol_id, value);
 }
 
 //----------------------------------------------------------------------------
@@ -1822,8 +1822,8 @@ void vtkEMSegmentNodeParametersStep::ExcludeIncompleteEStepCallback(
   // The exclude from incomplete EStep checkbox has changed 
   // because of user interaction
 
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
-  logic->SetTreeNodeExcludeFromIncompleteEStep(sel_vol_id, state);
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  mrmlManager->SetTreeNodeExcludeFromIncompleteEStep(sel_vol_id, state);
 }
 
 //----------------------------------------------------------------------------
@@ -1833,8 +1833,8 @@ void vtkEMSegmentNodeParametersStep::GenerateBackgroundProbabilityCallback(
   // The generate background probability checkbox has changed
   // because of user interaction
 
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
-  logic->SetTreeNodeGenerateBackgroundProbability(sel_vol_id, state);
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  mrmlManager->SetTreeNodeGenerateBackgroundProbability(sel_vol_id, state);
 }
 
 //----------------------------------------------------------------------------

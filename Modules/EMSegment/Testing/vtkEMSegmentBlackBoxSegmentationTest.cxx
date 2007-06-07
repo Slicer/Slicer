@@ -87,7 +87,7 @@ int main(int argc, char** argv)
 
   //
   // populate the logic class with testing data
-  int numParameterSets = emLogic->GetNumberOfParameterSets();
+  int numParameterSets = emLogic->GetMRMLManager()->GetNumberOfParameterSets();
   std::cerr << "Found " << numParameterSets << " EM top level nodes."
             << std::endl;
   bool foundParameters = false;
@@ -96,13 +96,13 @@ int main(int argc, char** argv)
 
   for (int i = 0; i < numParameterSets; ++i)
   {
-    std::string currentNodeName(emLogic->GetNthParameterSetName(i)); 
+    std::string currentNodeName(emLogic->GetMRMLManager()->GetNthParameterSetName(i)); 
     std::cerr << "Node " << i << " name: " << currentNodeName << std::endl;
     if (parametersNodeName == currentNodeName)
     {
       try
       {
-        emLogic->SetLoadedParameterSetIndex(i);
+        emLogic->GetMRMLManager()->SetLoadedParameterSetIndex(i);
       }
       catch (...)
       {
@@ -161,7 +161,7 @@ int main(int argc, char** argv)
 
   //
   // get a pointer to the results
-  std::string resultMRMLID = emLogic->GetOutputVolumeMRMLID();
+  std::string resultMRMLID = emLogic->GetMRMLManager()->GetOutputVolumeMRMLID();
   std::cerr << "Results stored in mrml node: " << resultMRMLID << std::endl;
   vtkImageData* resultImage = NULL;
   try 

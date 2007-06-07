@@ -100,6 +100,7 @@ extern "C" {
 #ifndef EMSEG_DEBUG
 #include "vtkEMSegmentLogic.h"
 #include "vtkEMSegmentGUI.h"
+#include "vtkEMSegmentMRMLManager.h"
 #endif
 
 #ifndef REALTIMEIMAGING_DEBUG
@@ -1145,6 +1146,7 @@ int Slicer3_main(int argc, char *argv[])
 
     emSegmentGUI->SetAndObserveMRMLScene (scene);
     emSegmentGUI->SetLogic(emSegmentLogic);
+    emSegmentGUI->SetMRMLManager(emSegmentLogic->GetMRMLManager());
     emSegmentGUI->SetApplication(slicerApp);
     emSegmentGUI->SetApplicationLogic(appLogic);
     emSegmentGUI->SetApplicationGUI(appGUI);

@@ -32,6 +32,12 @@ public:
   // Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "EMSTreeParametersParent";}
 
+  vtkGetMacro(NumberOfTargetInputChannels, unsigned int);
+  vtkSetMacro(NumberOfTargetInputChannels, unsigned int);
+  virtual void AddTargetInputChannel() {}
+  virtual void RemoveNthTargetInputChannel(int index) {}
+  virtual void MoveNthTargetInputChannel(int fromIndex, int toIndex) {}
+
   // Alpha determines the influence of the Markov random field
   // 0 => no influence, 1 => maximum influence
   vtkGetMacro(Alpha, double);
@@ -145,6 +151,8 @@ protected:
 
   // misc.
   int                                 GenerateBackgroundProbability;
+
+  unsigned int                        NumberOfTargetInputChannels;
 };
 
 #endif

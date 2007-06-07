@@ -12,32 +12,41 @@ class vtkMRMLEMSTemplateNode;
 class vtkMRMLEMSTargetNode;
 class vtkMRMLEMSAtlasNode;
 class vtkMRMLEMSTreeNode;
+class vtkMRMLEMSTreeParametersNode;
+class vtkMRMLEMSTreeParametersParentNode;
+//class vtkMRMLEMSTreeParametersLeafNode;
+class vtkMRMLEMSWorkingDataNode;
 class vtkMRMLScalarVolumeNode;
 class vtkMRMLVolumeNode;
 
-class vtkImageEMLocalSegmenter;
-class vtkImageEMLocalSuperClass;
-class vtkImageEMLocalGenericClass;
-class vtkImageEMLocalClass;
+// need enum values
+#include "MRML/vtkMRMLEMSTreeParametersLeafNode.h"
+
+class vtkMRMLScene;
 
 #include <vtksys/stl/string>
 #include <vtksys/stl/map>
 #include <vtksys/stl/vector>
 
 class VTK_EMSEGMENT_EXPORT vtkEMSegmentMRMLManager : 
-  public vtkSlicerModuleLogic
+  public vtkObject
 {
 public:
   static vtkEMSegmentMRMLManager *New();
-  vtkTypeMacro(vtkEMSegmentMRMLManager,vtkSlicerModuleLogic);
+  vtkTypeMacro(vtkEMSegmentMRMLManager,vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
 
+  // the current mrml scene
+  vtkSetObjectMacro(MRMLScene, vtkMRMLScene);
+  vtkGetObjectMacro(MRMLScene, vtkMRMLScene);
+
+  // Get/Set MRML node storing parameter values
+  virtual void SetNode(vtkMRMLEMSNode*);
+  vtkGetObjectMacro(Node, vtkMRMLEMSNode);
+
+  // this will be be passed along by the logic node 
   virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event,
                                    void *callData );
-
-  // Description: Get/Set MRML node storing parameter values
-  vtkGetObjectMacro(Node, vtkMRMLEMSNode);
-  virtual void SetAndObserveNode(vtkMRMLEMSNode *n);
 
   //
   // functions for getting and setting the current template builder
@@ -88,9 +97,12 @@ public:
   //BTX
   enum
     {
-    DistributionSpecificationManual = 0,
-    DistributionSpecificationManuallySample,
-    DistributionSpecificationAutoSample
+    DistributionSpecificationManual = 
+    vtkMRMLEMSTreeParametersLeafNode::DistributionSpecificationManual,
+    DistributionSpecificationManuallySample = 
+    vtkMRMLEMSTreeParametersLeafNode::DistributionSpecificationManuallySample,
+    DistributionSpecificationAutoSample =
+    vtkMRMLEMSTreeParametersLeafNode::DistributionSpecificationAutoSample
     };
   //ETX
   virtual int   GetTreeNodeDistributionSpecificationMethod(vtkIdType nodeID);
@@ -215,9 +227,9 @@ public:
   //BTX
   enum
     {
-    StoppingConditionIterations,
-    StoppingConditionLabelMapMeasure,
-    StoppingConditionWeightsMeasure
+    StoppingConditionIterations = 0,
+    StoppingConditionLabelMapMeasure = 1,
+    StoppingConditionWeightsMeasure = 2
     };
   //ETX
   virtual int      GetTreeNodeStoppingConditionMFAType(vtkIdType nodeID);
@@ -314,10 +326,10 @@ public:
   //BTX
   enum
     {
-    InterpolationLinear,
-    InterpolationNearestNeighbor,
+    InterpolationLinear = 0,
+    InterpolationNearestNeighbor = 1,
     // !!!todo!!! there is no corresponding definition in the algorithm!
-    InterpolationCubic
+    InterpolationCubic = 2
     };
   //ETX
   virtual int       GetRegistrationInterpolationType();
@@ -373,22 +385,10 @@ public:
   //
   virtual void      RegisterMRMLNodesWithScene();
 
-  //
-  // special testing functions
-  virtual void      PopulateTestingData();
-
   // Return if we have a global parameters node
   virtual int HasGlobalParametersNode();
 
   virtual void PrintTree(vtkIdType rootID, vtkIndent indent);
-
-  virtual vtkMRMLEMSSegmenterNode*        GetSegmenterNode();
-
-private:
-  vtkEMSegmentMRMLManager();
-  ~vtkEMSegmentMRMLManager();
-  vtkEMSegmentMRMLManager(const vtkEMSegmentMRMLManager&);
-  void operator=(const vtkEMSegmentMRMLManager&);
 
   //
   // convienince functions for managing MRML nodes
@@ -400,18 +400,33 @@ private:
   virtual vtkMRMLEMSGlobalParametersNode* GetGlobalParametersNode();
   virtual vtkMRMLEMSTreeNode*             GetTreeRootNode();
   virtual vtkMRMLEMSTreeNode*             GetTreeNode(vtkIdType);
+  virtual vtkMRMLEMSTreeParametersNode*   GetTreeParametersNode(vtkIdType);  
+  virtual vtkMRMLEMSTreeParametersLeafNode* 
+    GetTreeParametersLeafNode(vtkIdType);  
+  virtual vtkMRMLEMSTreeParametersParentNode* 
+    GetTreeParametersParentNode(vtkIdType);  
+  virtual vtkMRMLEMSSegmenterNode*        GetSegmenterNode();
+  virtual vtkMRMLVolumeNode*              GetVolumeNode(vtkIdType);
+  virtual vtkMRMLEMSWorkingDataNode*      GetWorkingDataNode();
+
+private:
+  vtkEMSegmentMRMLManager();
+  ~vtkEMSegmentMRMLManager();
+  vtkEMSegmentMRMLManager(const vtkEMSegmentMRMLManager&);
+  void operator=(const vtkEMSegmentMRMLManager&);
 
   virtual vtkIdType                       AddNewTreeNode();
   virtual vtkIdType                       GetNewVTKNodeID();
 
   virtual void           RemoveTreeNodeParametersNodes(vtkIdType nodeID);
 
-  virtual vtkMRMLVolumeNode* GetVolumeNode(vtkIdType);
-
   virtual void           PropogateAdditionOfSelectedTargetImage();
   virtual void           PropogateRemovalOfSelectedTargetImage(int index);
   virtual void           PropogateMovementOfSelectedTargetImage(int fromIndex,
                                                                 int toIndex);
+
+  // Update intensity statistics for a particular tissue type.
+  virtual void      UpdateIntensityDistributionFromSample(vtkIdType nodeID);
 
   //BTX
   virtual void           GetListOfTreeNodeIDs(vtkIdType rootNodeID, 
@@ -434,35 +449,9 @@ private:
 
   virtual void               UpdateMapsFromMRML();
 
-  //
-  // convienince methods for running algorithm
-  //
-  virtual void CopyDataToSegmenter(vtkImageEMLocalSegmenter* segmenter);
-  virtual void CopyAtlasDataToSegmenter(vtkImageEMLocalSegmenter* segmenter);
-  virtual void CopyTargetDataToSegmenter(vtkImageEMLocalSegmenter* segmenter);
-  virtual void CopyGlobalDataToSegmenter(vtkImageEMLocalSegmenter* segmenter);
-  virtual void CopyTreeDataToSegmenter(vtkImageEMLocalSuperClass* node,
-                                       vtkIdType nodeID);
-  virtual void CopyTreeGenericDataToSegmenter(vtkImageEMLocalGenericClass* 
-                                              node,
-                                              vtkIdType nodeID);
-  virtual void CopyTreeParentDataToSegmenter(vtkImageEMLocalSuperClass* node,
-                                             vtkIdType nodeID);
-  virtual void CopyTreeLeafDataToSegmenter(vtkImageEMLocalClass* node,
-                                           vtkIdType nodeID);
+  // the current mrml scene
+  vtkMRMLScene*   MRMLScene;
 
-  //
-  // convienience methods for translating enums
-  //
-  virtual int 
-  ConvertGUIEnumToAlgorithmEnumStoppingConditionType(int guiEnumValue);
-  virtual int 
-  ConvertAlgorithmEnumToGUIEnumStoppingConditionType(int algEnumValue);
-  virtual int 
-  ConvertGUIEnumToAlgorithmEnumInterpolationType(int guiEnumValue);
-  virtual int 
-  ConvertAlgorithmEnumToGUIEnumInterpolationType(int algEnumValue);
-  
   //
   // parameters node that is currently under consideration
   //
@@ -485,30 +474,6 @@ private:
   VTKToMRMLMapType                                VTKNodeIDToMRMLNodeIDMap;
   typedef vtksys_stl::map<vtksys_stl::string, vtkIdType>  MRMLToVTKMapType;
   MRMLToVTKMapType                                MRMLNodeIDToVTKNodeIDMap;
-  //ETX
-
-  //
-  // Information related to anatomical tree nodes that is not stored
-  // in mrml nodes.  This is the distribution specification method and
-  // possibly a list of points from which to sample the images to
-  // determine intensity distributions.  This might better be stored
-  // in the mrml scene?
-  //
-  //BTX
-  typedef vtksys_stl::vector<vtksys_stl::vector<double> > SamplePointsList;
-  struct TreeInfo 
-    {
-    int                DistributionSpecificationMethod;
-    SamplePointsList   SamplePoints;
-    
-    TreeInfo() 
-      {
-      DistributionSpecificationMethod = 
-        vtkEMSegmentMRMLManager::DistributionSpecificationManual;
-      }
-    };
-  typedef vtksys_stl::map<vtkIdType, TreeInfo>        TreeInfoMapType;
-  TreeInfoMapType                                     TreeInfoMap;  
   //ETX
 };
 

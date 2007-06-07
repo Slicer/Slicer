@@ -314,7 +314,7 @@ AddTargetInputChannel()
 //-----------------------------------------------------------------------------
 void
 vtkMRMLEMSTreeParametersNode::
-RemoveTargetInputChannel(int index)
+RemoveNthTargetInputChannel(int index)
 {
   --this->NumberOfTargetInputChannels;
   this->InputChannelWeights.erase(InputChannelWeights.begin() + index);
@@ -323,7 +323,7 @@ RemoveTargetInputChannel(int index)
 //-----------------------------------------------------------------------------
 void
 vtkMRMLEMSTreeParametersNode::
-MoveTargetInputChannel(int fromIndex, int toIndex)
+MoveNthTargetInputChannel(int fromIndex, int toIndex)
 {
   double movingValue = this->InputChannelWeights[fromIndex];
   std::rotate(this->InputChannelWeights.begin()+fromIndex,

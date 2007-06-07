@@ -31,6 +31,7 @@
 
 vtkCxxSetObjectMacro(vtkEMSegmentGUI,Node,vtkMRMLEMSNode);
 vtkCxxSetObjectMacro(vtkEMSegmentGUI,Logic,vtkEMSegmentLogic);
+vtkCxxSetObjectMacro(vtkEMSegmentGUI,MRMLManager,vtkEMSegmentMRMLManager);
 
 //----------------------------------------------------------------------------
 vtkEMSegmentGUI* vtkEMSegmentGUI::New()
@@ -49,6 +50,7 @@ vtkEMSegmentGUI* vtkEMSegmentGUI::New()
 //----------------------------------------------------------------------------
 vtkEMSegmentGUI::vtkEMSegmentGUI()
 {
+  this->MRMLManager  = NULL;
   this->Logic        = NULL;
   this->Node         = NULL;
   this->ModuleName   = NULL;
@@ -79,6 +81,7 @@ vtkEMSegmentGUI::~vtkEMSegmentGUI()
   this->RemoveMRMLNodeObservers();
   this->RemoveLogicObservers();
 
+  this->SetMRMLManager(NULL);
   this->SetLogic(NULL);
   this->SetNode(NULL);
 
@@ -550,19 +553,19 @@ void vtkEMSegmentGUI::PopulateTestingData()
       }
     dir->Delete();
        
-    this->Logic->SetTreeNodeSpatialPriorVolumeID(
-      this->Logic->GetTreeRootNodeID(), 
-      this->Logic->GetVolumeNthID(0));
+    this->MRMLManager->SetTreeNodeSpatialPriorVolumeID(
+      this->MRMLManager->GetTreeRootNodeID(), 
+      this->MRMLManager->GetVolumeNthID(0));
 
-    this->Logic->SetRegistrationAtlasVolumeID(
-      this->Logic->GetVolumeNthID(0));
-    this->Logic->AddTargetSelectedVolume(
-      this->Logic->GetVolumeNthID(1));
-    this->Logic->SetRegistrationTargetVolumeID(
-      this->Logic->GetVolumeNthID(1));
+    this->MRMLManager->SetRegistrationAtlasVolumeID(
+      this->MRMLManager->GetVolumeNthID(0));
+    this->MRMLManager->AddTargetSelectedVolume(
+      this->MRMLManager->GetVolumeNthID(1));
+    this->MRMLManager->SetRegistrationTargetVolumeID(
+      this->MRMLManager->GetVolumeNthID(1));
 
-    this->Logic->SetSaveWorkingDirectory(file_path.c_str());
-    this->Logic->
+    this->MRMLManager->SetSaveWorkingDirectory(file_path.c_str());
+    this->MRMLManager->
       SetSaveTemplateFilename(file_path.append("EMSTemplate.mrml").c_str());
     }
 } 

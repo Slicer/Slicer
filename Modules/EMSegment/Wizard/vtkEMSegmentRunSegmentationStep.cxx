@@ -2,6 +2,7 @@
 
 #include "vtkEMSegmentGUI.h"
 #include "vtkEMSegmentLogic.h"
+#include "vtkEMSegmentMRMLManager.h"
 
 #include "vtkKWCheckButton.h"
 #include "vtkKWCheckButtonWithLabel.h"
@@ -145,7 +146,7 @@ void vtkEMSegmentRunSegmentationStep::ShowUserInterface()
 {
   this->Superclass::ShowUserInterface();
 
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
   vtkKWWizardWidget *wizard_widget = this->GetGUI()->GetWizardWidget();
 
   vtkKWWidget *parent = wizard_widget->GetClientArea();;
@@ -189,15 +190,15 @@ void vtkEMSegmentRunSegmentationStep::ShowUserInterface()
       GetWidget()->SetCommand(this, "SaveAfterSegmentationCallback");
     }
   this->RunSegmentationSaveAfterSegmentationCheckButton->
-    GetWidget()->SetSelectedState(
-      logic->GetSaveTemplateAfterSegmentation());
+    GetWidget()->
+    SetSelectedState(mrmlManager->GetSaveTemplateAfterSegmentation());
 
   this->Script(
     "pack %s -side left -anchor nw -padx 2 -pady 2", 
     this->RunSegmentationSaveAfterSegmentationCheckButton->GetWidgetName());
 
   this->RunSegmentationSaveAfterSegmentationCheckButton->SetEnabled(
-    logic->HasGlobalParametersNode() ? enabled : 0);
+    mrmlManager->HasGlobalParametersNode() ? enabled : 0);
 
   // Create the save template button
 
@@ -223,10 +224,10 @@ void vtkEMSegmentRunSegmentationStep::ShowUserInterface()
       SetFileTypes("{{MRML File} {.mrml}} {{All Files} {*.*}}");
     }
 
-  if (logic->GetSaveTemplateFilename() &&
-      vtksys::SystemTools::FileExists(logic->GetSaveTemplateFilename()))
+  if (mrmlManager->GetSaveTemplateFilename() &&
+      vtksys::SystemTools::FileExists(mrmlManager->GetSaveTemplateFilename()))
     {
-    vtksys_stl::string filename = logic->GetSaveTemplateFilename();
+    vtksys_stl::string filename = mrmlManager->GetSaveTemplateFilename();
     this->RunSegmentationSaveTemplateButton->GetLoadSaveDialog()->
       GenerateLastPath(filename.c_str());
     this->RunSegmentationSaveTemplateButton->GetLoadSaveDialog()->
@@ -239,7 +240,7 @@ void vtkEMSegmentRunSegmentationStep::ShowUserInterface()
       RetrieveLastPathFromRegistry("OpenPath");
     }
   this->RunSegmentationSaveTemplateButton->SetEnabled(
-    logic->HasGlobalParametersNode() ? enabled : 0);
+    mrmlManager->HasGlobalParametersNode() ? enabled : 0);
 
   this->Script(
     "pack %s -side left -anchor nw -fill x -padx 2 -pady 2", 
@@ -304,9 +305,9 @@ void vtkEMSegmentRunSegmentationStep::ShowUserInterface()
 
   this->RunSegmentationSaveIntermediateCheckButton->
     GetWidget()->SetSelectedState(
-      logic->GetSaveIntermediateResults());
+      mrmlManager->GetSaveIntermediateResults());
   this->RunSegmentationSaveIntermediateCheckButton->SetEnabled(
-    logic->HasGlobalParametersNode() ? enabled : 0);
+    mrmlManager->HasGlobalParametersNode() ? enabled : 0);
 
   // Create the generate surface model button
 
@@ -334,9 +335,9 @@ void vtkEMSegmentRunSegmentationStep::ShowUserInterface()
   
   this->RunSegmentationGenerateSurfaceCheckButton->
     GetWidget()->SetSelectedState(
-      logic->GetSaveSurfaceModels());
+      mrmlManager->GetSaveSurfaceModels());
   this->RunSegmentationGenerateSurfaceCheckButton->SetEnabled(
-    logic->HasGlobalParametersNode() ? enabled : 0);
+    mrmlManager->HasGlobalParametersNode() ? enabled : 0);
 
   // Create the directory button
 
@@ -359,10 +360,10 @@ void vtkEMSegmentRunSegmentationStep::ShowUserInterface()
     this->RunSegmentationDirectoryButton->GetLoadSaveDialog()->ChooseDirectoryOn();
     }
 
-  if (logic->GetSaveWorkingDirectory() &&
-    vtksys::SystemTools::FileIsDirectory(logic->GetSaveWorkingDirectory()))
+  if (mrmlManager->GetSaveWorkingDirectory() &&
+    vtksys::SystemTools::FileIsDirectory(mrmlManager->GetSaveWorkingDirectory()))
     {
-    vtksys_stl::string path = logic->GetSaveWorkingDirectory();
+    vtksys_stl::string path = mrmlManager->GetSaveWorkingDirectory();
     this->RunSegmentationDirectoryButton->GetLoadSaveDialog()->
       GenerateLastPath(path.c_str());
     this->RunSegmentationDirectoryButton->GetLoadSaveDialog()->
@@ -376,7 +377,7 @@ void vtkEMSegmentRunSegmentationStep::ShowUserInterface()
     }
 
   this->RunSegmentationDirectoryButton->SetEnabled(
-    logic->HasGlobalParametersNode() ? enabled : 0);
+    mrmlManager->HasGlobalParametersNode() ? enabled : 0);
 
   this->Script(
     "pack %s -side left -anchor nw -fill x -padx 2 -pady 2", 
@@ -412,7 +413,7 @@ void vtkEMSegmentRunSegmentationStep::ShowUserInterface()
     this->RunSegmentationOutVolumeSelector->SetParent(
       this->RunSegmentationOutputFrame->GetFrame());
     this->RunSegmentationOutVolumeSelector->Create();
-    this->RunSegmentationOutVolumeSelector->SetMRMLScene(logic->GetMRMLScene());
+    this->RunSegmentationOutVolumeSelector->SetMRMLScene(mrmlManager->GetMRMLScene());
 
     this->RunSegmentationOutVolumeSelector->SetBorderWidth(2);
     this->RunSegmentationOutVolumeSelector->SetLabelText( "Output Volume: ");
@@ -420,11 +421,11 @@ void vtkEMSegmentRunSegmentationStep::ShowUserInterface()
       "select an output volume from the current mrml scene.");
     }
   this->RunSegmentationOutVolumeSelector->UpdateMenu();
-  if(logic->GetOutputVolumeMRMLID())
+  if(mrmlManager->GetOutputVolumeMRMLID())
     {
     this->RunSegmentationOutVolumeSelector->SetSelected(
       this->RunSegmentationOutVolumeSelector->GetMRMLScene()->
-      GetNodeByID(logic->GetOutputVolumeMRMLID()));
+      GetNodeByID(mrmlManager->GetOutputVolumeMRMLID()));
     }
   this->Script(
     "pack %s -side top -anchor nw -padx 2 -pady 2", 
@@ -482,13 +483,13 @@ void vtkEMSegmentRunSegmentationStep::ShowUserInterface()
   vtkKWMatrixWidget *maxMatrix = 
     this->RunSegmentationROIMaxMatrix->GetWidget();
   int ijk[3] = {0, 0, 0};
-  logic->GetSegmentationBoundaryMax(ijk);
+  mrmlManager->GetSegmentationBoundaryMax(ijk);
   this->PopulateSegmentationROIMatrix(maxMatrix, ijk);
 
   this->Script("pack %s -side left -anchor nw -padx 2 -pady 2",
                this->RunSegmentationROIMaxMatrix->GetWidgetName());
   this->RunSegmentationROIMaxMatrix->SetEnabled(
-    logic->HasGlobalParametersNode() ? enabled : 0);
+    mrmlManager->HasGlobalParametersNode() ? enabled : 0);
 
   // Create Min boundary matrix
 
@@ -522,13 +523,13 @@ void vtkEMSegmentRunSegmentationStep::ShowUserInterface()
     }
   vtkKWMatrixWidget *minMatrix = 
     this->RunSegmentationROIMinMatrix->GetWidget();
-  logic->GetSegmentationBoundaryMin(ijk);
+  mrmlManager->GetSegmentationBoundaryMin(ijk);
   this->PopulateSegmentationROIMatrix(minMatrix, ijk);
 
   this->Script("pack %s -side right -anchor nw -padx 2 -pady 2",
                this->RunSegmentationROIMinMatrix->GetWidgetName());
   this->RunSegmentationROIMinMatrix->SetEnabled(
-    logic->HasGlobalParametersNode() ? enabled : 0);
+    mrmlManager->HasGlobalParametersNode() ? enabled : 0);
 
   // Create the run frame
 
@@ -567,7 +568,7 @@ void vtkEMSegmentRunSegmentationStep::ShowUserInterface()
       GetWidget()->SetCommand(this, "MultiThreadingCallback");
     }
   this->RunSegmentationMultiThreadCheckButton->SetEnabled(
-    logic->HasGlobalParametersNode() ? enabled : 0);
+    mrmlManager->HasGlobalParametersNode() ? enabled : 0);
 
   this->Script(
     "pack %s -side top -anchor nw -padx 2 -pady 2", 
@@ -575,7 +576,7 @@ void vtkEMSegmentRunSegmentationStep::ShowUserInterface()
 
   this->RunSegmentationMultiThreadCheckButton->
     GetWidget()->SetSelectedState(
-      logic->GetEnableMultithreading());
+      mrmlManager->GetEnableMultithreading());
 
   // Configure the OK button to start
 
@@ -647,8 +648,8 @@ void vtkEMSegmentRunSegmentationStep::ProcessRunRegistrationOutputGUIEvents(
       event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent  &&
       this->RunSegmentationOutVolumeSelector->GetSelected() != NULL) 
     { 
-    vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
-    logic->SetOutputVolumeMRMLID(
+    vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+    mrmlManager->SetOutputVolumeMRMLID(
       this->RunSegmentationOutVolumeSelector->GetSelected()->GetID());
     }
 }
@@ -668,8 +669,9 @@ void vtkEMSegmentRunSegmentationStep::SelectTemplateFileCallback()
         SaveLastPathToRegistry("OpenPath");
       vtksys_stl::string filename = 
         this->RunSegmentationSaveTemplateButton->GetFileName();
+      vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
       vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
-      logic->SetSaveTemplateFilename(filename.c_str());
+      mrmlManager->SetSaveTemplateFilename(filename.c_str());
       logic->SaveTemplateNow();
       }
     }
@@ -700,8 +702,8 @@ void vtkEMSegmentRunSegmentationStep::SelectDirectoryCallback()
           }
         }
 
-      vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
-      logic->SetSaveWorkingDirectory(filename.c_str());
+      vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+      mrmlManager->SetSaveWorkingDirectory(filename.c_str());
       }
     }
 }
@@ -712,8 +714,8 @@ void vtkEMSegmentRunSegmentationStep::SaveAfterSegmentationCallback(
 {
   // The save template checkbutton has changed because of user interaction
 
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
-  logic->SetSaveTemplateAfterSegmentation(state);
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  mrmlManager->SetSaveTemplateAfterSegmentation(state);
 }
 
 //----------------------------------------------------------------------------
@@ -721,8 +723,8 @@ void vtkEMSegmentRunSegmentationStep::SaveIntermediateCallback(int state)
 {
   // The save intermediate checkbutton has changed because of user interaction
 
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
-  logic->SetSaveIntermediateResults(state);
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  mrmlManager->SetSaveIntermediateResults(state);
 }
 
 //----------------------------------------------------------------------------
@@ -731,8 +733,8 @@ void vtkEMSegmentRunSegmentationStep::GenerateSurfaceModelsCallback(
 {
   // The save surface checkbutton has changed because of user interaction
 
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
-  logic->SetSaveSurfaceModels(state);
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  mrmlManager->SetSaveSurfaceModels(state);
 }
 
 //----------------------------------------------------------------------------
@@ -740,10 +742,13 @@ void vtkEMSegmentRunSegmentationStep::RunSegmentationROIMaxChangedCallback(
     int row, int col, const char *value)
 {
   int ijk[3] = {0, 0, 0};
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
-  logic->GetSegmentationBoundaryMax(ijk);
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  mrmlManager->GetSegmentationBoundaryMax(ijk);
   ijk[col] = atoi(value);
-  logic->SetSegmentationBoundaryMax(ijk);
+  if (mrmlManager->HasGlobalParametersNode())
+    {
+    mrmlManager->SetSegmentationBoundaryMax(ijk);
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -751,10 +756,13 @@ void vtkEMSegmentRunSegmentationStep::RunSegmentationROIMinChangedCallback(
     int row, int col, const char *value)
 {
   int ijk[3] = {0, 0, 0};
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
-  logic->GetSegmentationBoundaryMin(ijk);
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  mrmlManager->GetSegmentationBoundaryMin(ijk);
   ijk[col] = atoi(value);
-  logic->SetSegmentationBoundaryMin(ijk);
+  if (mrmlManager->HasGlobalParametersNode())
+    {
+    mrmlManager->SetSegmentationBoundaryMin(ijk);
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -762,8 +770,8 @@ void vtkEMSegmentRunSegmentationStep::MultiThreadingCallback(int state)
 {
   // The multithreading checkbutton has changed because of user interaction
 
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
-  logic->SetEnableMultithreading(state);
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  mrmlManager->SetEnableMultithreading(state);
 }
 
 //----------------------------------------------------------------------------
@@ -776,8 +784,8 @@ void vtkEMSegmentRunSegmentationStep::StartSegmentationCallback()
 //----------------------------------------------------------------------------
 void vtkEMSegmentRunSegmentationStep::CancelSegmentationCallback()
 {
-  //vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
-  //logic->CancelSegmentation();
+  //vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  //mrmlManager->CancelSegmentation();
 }
 
 //----------------------------------------------------------------------------

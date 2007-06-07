@@ -1,7 +1,7 @@
 #include "vtkEMSegmentRegistrationParametersStep.h"
 
 #include "vtkEMSegmentGUI.h"
-#include "vtkEMSegmentLogic.h"
+#include "vtkEMSegmentMRMLManager.h"
 
 #include "vtkKWFrame.h"
 #include "vtkKWFrameWithLabel.h"
@@ -76,7 +76,7 @@ void vtkEMSegmentRegistrationParametersStep::ShowUserInterface()
 {
   this->Superclass::ShowUserInterface();
 
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
   vtkKWWizardWidget *wizard_widget = this->GetGUI()->GetWizardWidget();
   wizard_widget->GetCancelButton()->SetEnabled(0);
 
@@ -133,16 +133,16 @@ void vtkEMSegmentRegistrationParametersStep::ShowUserInterface()
     this->RegistrationParametersAtlasImageMenuButton->
     GetWidget()->GetMenu(), this,"RegistrationAtlasImageCallback");
 
-  if(!logic->GetVolumeNumberOfChoices() ||
+  if(!mrmlManager->GetVolumeNumberOfChoices() ||
      !this->SetMenuButtonSelectedItem(
        this->RegistrationParametersAtlasImageMenuButton->
-       GetWidget()->GetMenu(), logic->GetRegistrationAtlasVolumeID()))
+       GetWidget()->GetMenu(), mrmlManager->GetRegistrationAtlasVolumeID()))
     {
     this->RegistrationParametersAtlasImageMenuButton->
       GetWidget()->SetValue("");
     }
   this->RegistrationParametersAtlasImageMenuButton->SetEnabled(
-    logic->GetVolumeNumberOfChoices() ? enabled : 0);
+    mrmlManager->GetVolumeNumberOfChoices() ? enabled : 0);
 
   // Create the target image volume selector
 
@@ -174,16 +174,16 @@ void vtkEMSegmentRegistrationParametersStep::ShowUserInterface()
     this->RegistrationParametersTargetImageMenuButton->
     GetWidget()->GetMenu(), this, "RegistrationTargetImageCallback");
 
-  if(!logic->GetTargetNumberOfSelectedVolumes() ||
+  if(!mrmlManager->GetTargetNumberOfSelectedVolumes() ||
      !this->SetMenuButtonSelectedItem(
        this->RegistrationParametersTargetImageMenuButton->
-       GetWidget()->GetMenu(), logic->GetRegistrationTargetVolumeID()))
+       GetWidget()->GetMenu(), mrmlManager->GetRegistrationTargetVolumeID()))
     {
     this->RegistrationParametersTargetImageMenuButton->
       GetWidget()->SetValue("");
     }
   this->RegistrationParametersTargetImageMenuButton->SetEnabled(
-    logic->GetTargetNumberOfSelectedVolumes() ? enabled : 0);
+    mrmlManager->GetTargetNumberOfSelectedVolumes() ? enabled : 0);
 
   // Create the affine registration menu button
 
@@ -216,10 +216,10 @@ void vtkEMSegmentRegistrationParametersStep::ShowUserInterface()
       "Select affine registration.");
     }
   //Disable for now
-  //sprintf(buffer, "%d", logic->GetRegistrationAffineType());
+  //sprintf(buffer, "%d", mrmlManager->GetRegistrationAffineType());
   //this->RegistrationParametersAffineMenuButton->GetWidget()->SetValue(buffer);
   //this->RegistrationParametersAffineMenuButton->SetEnabled(
-  //  logic->HasGlobalParametersNode() ? enabled : 0);
+  //  mrmlManager->HasGlobalParametersNode() ? enabled : 0);
   
   this->RegistrationParametersAffineMenuButton->SetEnabled(0);
 
@@ -257,11 +257,11 @@ void vtkEMSegmentRegistrationParametersStep::ShowUserInterface()
       GetMenu()->AddRadioButton("1", this, buffer);
     }
   //Disable for now
-  //sprintf(buffer, "%d", logic->GetRegistrationDeformableType());
+  //sprintf(buffer, "%d", mrmlManager->GetRegistrationDeformableType());
   //this->RegistrationParametersDeformableMenuButton->GetWidget()->SetValue(
   //  buffer);
   //this->RegistrationParametersDeformableMenuButton->SetEnabled(
-  //  logic->HasGlobalParametersNode() ? enabled : 0);
+  //  mrmlManager->HasGlobalParametersNode() ? enabled : 0);
 
   this->RegistrationParametersDeformableMenuButton->SetEnabled(0);
 
@@ -291,16 +291,16 @@ void vtkEMSegmentRegistrationParametersStep::ShowUserInterface()
       "Select interpolation type.");
 
     sprintf(buffer, "RegistrationInterpolationCallback %d", 
-            vtkEMSegmentLogic::InterpolationNearestNeighbor);
+            vtkEMSegmentMRMLManager::InterpolationNearestNeighbor);
     this->RegistrationParametersInterpolationMenuButton->
       GetWidget()->GetMenu()->AddRadioButton("Nearest Neighbor", this, buffer);
     sprintf(buffer, "RegistrationInterpolationCallback %d", 
-            vtkEMSegmentLogic::InterpolationLinear);
+            vtkEMSegmentMRMLManager::InterpolationLinear);
     this->RegistrationParametersInterpolationMenuButton->
       GetWidget()->GetMenu()->AddRadioButton("Linear", this, buffer);
     // !!! cubic interpolation is not currently supported by algorithm
     //     sprintf(buffer, "RegistrationInterpolationCallback %d", 
-    //             vtkEMSegmentLogic::InterpolationCubic);
+    //             vtkEMSegmentMRMLManager::InterpolationCubic);
     //     this->RegistrationParametersInterpolationMenuButton->
     //       GetWidget()->GetMenu()->AddRadioButton("Cubic", this, buffer);
     }
@@ -310,23 +310,23 @@ void vtkEMSegmentRegistrationParametersStep::ShowUserInterface()
     this->RegistrationParametersInterpolationMenuButton->GetWidgetName());
 
   vtksys_stl::string value;
-  int v = logic->GetRegistrationInterpolationType();
-  if (v == vtkEMSegmentLogic::InterpolationNearestNeighbor)
+  int v = mrmlManager->GetRegistrationInterpolationType();
+  if (v == vtkEMSegmentMRMLManager::InterpolationNearestNeighbor)
     {
     value = "Nearest Neighbor";
     }
-  else if (v == vtkEMSegmentLogic::InterpolationLinear)
+  else if (v == vtkEMSegmentMRMLManager::InterpolationLinear)
     {
     value = "Linear";
     }
-  else if (v == vtkEMSegmentLogic::InterpolationCubic)
+  else if (v == vtkEMSegmentMRMLManager::InterpolationCubic)
     {
     value = "Cubic";
     }
   this->RegistrationParametersInterpolationMenuButton->GetWidget()->SetValue(
     value.c_str());
   this->RegistrationParametersInterpolationMenuButton->SetEnabled(
-    logic->HasGlobalParametersNode() ? enabled : 0);
+    mrmlManager->HasGlobalParametersNode() ? enabled : 0);
 }
 
 //----------------------------------------------------------------------------
@@ -335,8 +335,8 @@ void vtkEMSegmentRegistrationParametersStep::RegistrationAtlasImageCallback(
 {
   // The atlas image has changed because of user interaction
 
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
-  logic->SetRegistrationAtlasVolumeID(volume_id);
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  mrmlManager->SetRegistrationAtlasVolumeID(volume_id);
 }
 
 //----------------------------------------------------------------------------
@@ -345,8 +345,8 @@ void vtkEMSegmentRegistrationParametersStep::RegistrationTargetImageCallback(
 {
   // The target image has changed because of user interaction
 
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
-  logic->SetRegistrationTargetVolumeID(volume_id);
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  mrmlManager->SetRegistrationTargetVolumeID(volume_id);
 }
 
 //----------------------------------------------------------------------------
@@ -355,8 +355,8 @@ void vtkEMSegmentRegistrationParametersStep::RegistrationAffineCallback(
 {
   // The affine registration type has changed because of user interaction
 
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
-  logic->SetRegistrationAffineType(type);
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  mrmlManager->SetRegistrationAffineType(type);
 }
 
 //----------------------------------------------------------------------------
@@ -365,8 +365,8 @@ void vtkEMSegmentRegistrationParametersStep::RegistrationDeformableCallback(
 {
   // The deformable registration type has changed because of user interaction
 
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
-  logic->SetRegistrationDeformableType(type);
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  mrmlManager->SetRegistrationDeformableType(type);
 }
 
 //----------------------------------------------------------------------------
@@ -375,8 +375,8 @@ void vtkEMSegmentRegistrationParametersStep::RegistrationInterpolationCallback(
 {
   // The interpolation type has changed because of user interaction
 
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
-  logic->SetRegistrationInterpolationType(type);
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  mrmlManager->SetRegistrationInterpolationType(type);
 }
 
 //----------------------------------------------------------------------------

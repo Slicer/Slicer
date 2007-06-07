@@ -1,7 +1,7 @@
 #include "vtkEMSegmentIntensityDistributionsStep.h"
 
 #include "vtkEMSegmentGUI.h"
-#include "vtkEMSegmentLogic.h"
+#include "vtkEMSegmentMRMLManager.h"
 
 #include "vtkKWLabel.h"
 #include "vtkKWMenu.h"
@@ -93,8 +93,8 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
     this->GetGUI()->GetAnatomicalStructureStep();
   anat_step->ShowAnatomicalStructureTree();
 
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
-  vtkIdType vol_id = logic->GetTreeRootNodeID();
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  vtkIdType vol_id = mrmlManager->GetTreeRootNodeID();
   const char *root_node = 
     anat_step->GetAnatomicalStructureTree()->GetWidget()->FindNodeWithUserDataAsInt(NULL, vol_id);
   if (root_node && *root_node)
@@ -270,7 +270,7 @@ vtkEMSegmentIntensityDistributionsStep::DisplaySelectedNodeIntensityDistribution
 {
   // Update the UI with the proper value, if there is a selection
 
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
   vtkEMSegmentAnatomicalStructureStep *anat_step = 
     this->GetGUI()->GetAnatomicalStructureStep();
   vtkKWTree *tree = anat_step->GetAnatomicalStructureTree()->GetWidget();
@@ -282,15 +282,16 @@ vtkEMSegmentIntensityDistributionsStep::DisplaySelectedNodeIntensityDistribution
     {
     sel_node = tree->GetSelection();
     sel_vol_id = tree->GetNodeUserDataAsInt(sel_node.c_str());
-    has_valid_selection = logic->GetTreeNodeIsLeaf(sel_vol_id);
+    has_valid_selection = mrmlManager->GetTreeNodeIsLeaf(sel_vol_id);
     manually_sample_mode = 
-      logic->GetTreeNodeDistributionSpecificationMethod(sel_vol_id) ==
-      vtkEMSegmentLogic::DistributionSpecificationManuallySample;
+      mrmlManager->GetTreeNodeDistributionSpecificationMethod(sel_vol_id) ==
+      vtkEMSegmentMRMLManager::
+      DistributionSpecificationManuallySample;
     }
 
   int enabled = tree->GetEnabled();
   int row, col;
-  int nb_of_target_volumes = logic->GetTargetNumberOfSelectedVolumes();
+  int nb_of_target_volumes = mrmlManager->GetTargetNumberOfSelectedVolumes();
   char buffer[256];
 
   // Update the distribution specification menu button
@@ -306,30 +307,35 @@ vtkEMSegmentIntensityDistributionsStep::DisplaySelectedNodeIntensityDistribution
       this->IntensityDistributionSpecificationMenuButton->SetEnabled(enabled);
       sprintf(
         buffer, "IntensityDistributionSpecificationCallback %d %d", 
-        sel_vol_id, vtkEMSegmentLogic::DistributionSpecificationManual);
+        sel_vol_id, vtkEMSegmentMRMLManager::
+        DistributionSpecificationManual);
       menu->AddRadioButton("Manual", this, buffer);
       sprintf(
         buffer, "IntensityDistributionSpecificationCallback %d %d", 
-        sel_vol_id,vtkEMSegmentLogic::DistributionSpecificationManuallySample);
+        sel_vol_id,vtkEMSegmentMRMLManager::
+        DistributionSpecificationManuallySample);
       menu->AddRadioButton("Manual Sampling", this, buffer);
       sprintf(
         buffer, "IntensityDistributionSpecificationCallback %d %d", 
-        sel_vol_id, vtkEMSegmentLogic::DistributionSpecificationAutoSample);
+        sel_vol_id, vtkEMSegmentMRMLManager::
+        DistributionSpecificationAutoSample);
       menu->AddRadioButton("Auto Sampling", this, buffer);
 
       // temporarily disable auto sampling because it is not currently
       // implemented
       menu->SetItemStateToDisabled("Auto Sampling");
 
-      switch (logic->GetTreeNodeDistributionSpecificationMethod(sel_vol_id))
+      switch (mrmlManager->GetTreeNodeDistributionSpecificationMethod(sel_vol_id))
         {
-        case vtkEMSegmentLogic::DistributionSpecificationManual:
+        case vtkEMSegmentMRMLManager::DistributionSpecificationManual:
           value = "Manual";
           break;
-        case vtkEMSegmentLogic::DistributionSpecificationManuallySample:
+        case vtkEMSegmentMRMLManager::
+        DistributionSpecificationManuallySample:
           value = "Manual Sampling";
           break;
-        case vtkEMSegmentLogic::DistributionSpecificationAutoSample:
+        case vtkEMSegmentMRMLManager::
+        DistributionSpecificationAutoSample:
           value = "Auto Sampling";
           break;
         }
@@ -357,8 +363,8 @@ vtkEMSegmentIntensityDistributionsStep::DisplaySelectedNodeIntensityDistribution
       matrix->SetNumberOfColumns(nb_of_target_volumes);
       matrix->SetNumberOfRows(1);
       matrix->SetReadOnly(
-        logic->GetTreeNodeDistributionSpecificationMethod(sel_vol_id) !=
-        vtkEMSegmentLogic::DistributionSpecificationManual);
+        mrmlManager->GetTreeNodeDistributionSpecificationMethod(sel_vol_id) !=
+        vtkEMSegmentMRMLManager::DistributionSpecificationManual);
       sprintf(
         buffer, "IntensityDistributionMeanChangedCallback %d", sel_vol_id);
       matrix->SetElementChangedCommand(this, buffer);
@@ -367,7 +373,7 @@ vtkEMSegmentIntensityDistributionsStep::DisplaySelectedNodeIntensityDistribution
         {
         matrix->SetElementValueAsDouble(
           0, col, 
-          logic->GetTreeNodeDistributionLogMean(sel_vol_id, col));
+          mrmlManager->GetTreeNodeDistributionLogMean(sel_vol_id, col));
         }
       }
     else
@@ -391,8 +397,8 @@ vtkEMSegmentIntensityDistributionsStep::DisplaySelectedNodeIntensityDistribution
       matrix->SetNumberOfColumns(nb_of_target_volumes);
       matrix->SetNumberOfRows(nb_of_target_volumes);
       matrix->SetReadOnly(
-        logic->GetTreeNodeDistributionSpecificationMethod(sel_vol_id) !=
-        vtkEMSegmentLogic::DistributionSpecificationManual);
+        mrmlManager->GetTreeNodeDistributionSpecificationMethod(sel_vol_id) !=
+        vtkEMSegmentMRMLManager::DistributionSpecificationManual);
       sprintf(
         buffer,"IntensityDistributionCovarianceChangedCallback %d",sel_vol_id);
       matrix->SetElementChangedCommand(this, buffer);
@@ -403,7 +409,7 @@ vtkEMSegmentIntensityDistributionsStep::DisplaySelectedNodeIntensityDistribution
           {
           matrix->SetElementValueAsDouble(
             row, col, 
-            logic->GetTreeNodeDistributionLogCovariance(
+            mrmlManager->GetTreeNodeDistributionLogCovariance(
               sel_vol_id, row, col));
           }
         }
@@ -447,20 +453,20 @@ vtkEMSegmentIntensityDistributionsStep::DisplaySelectedNodeIntensityDistribution
       for (col = 0; col < nb_of_target_volumes; ++col)
         {
         vtkIdType volumeID = 
-          logic->GetTargetSelectedVolumeNthID(col);
-        const char* title = logic->GetVolumeName(volumeID);
+          mrmlManager->GetTargetSelectedVolumeNthID(col);
+        const char* title = mrmlManager->GetVolumeName(volumeID);
         list->SetColumnTitle(col, title);
         }
       double intensity;
       int nb_samples = 
-        logic->GetTreeNodeDistributionNumberOfSamples(sel_vol_id);
+        mrmlManager->GetTreeNodeDistributionNumberOfSamples(sel_vol_id);
       for (row = 0; row < nb_samples; row++)
         {
         list->AddRow();
         for (col = 0; col < nb_of_target_volumes; col++)
           {
-          int vol_id = logic->GetTargetSelectedVolumeNthID(col);
-          intensity = logic->GetTreeNodeDistributionSampleIntensityValue(
+          int vol_id = mrmlManager->GetTargetSelectedVolumeNthID(col);
+          intensity = mrmlManager->GetTreeNodeDistributionSampleIntensityValue(
             sel_vol_id, row, vol_id);
           list->SetCellTextAsDouble(row, col, intensity);
           }
@@ -479,10 +485,10 @@ void vtkEMSegmentIntensityDistributionsStep::IntensityDistributionSpecificationC
 {
   // The distribution specification has changed because of user interaction
 
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
-  if (type != logic->GetTreeNodeDistributionSpecificationMethod(sel_vol_id))
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  if (type != mrmlManager->GetTreeNodeDistributionSpecificationMethod(sel_vol_id))
     {
-    logic->SetTreeNodeDistributionSpecificationMethod(sel_vol_id, type);
+    mrmlManager->SetTreeNodeDistributionSpecificationMethod(sel_vol_id, type);
     this->DisplaySelectedNodeIntensityDistributionsCallback();
     }
 }
@@ -493,8 +499,8 @@ void vtkEMSegmentIntensityDistributionsStep::IntensityDistributionMeanChangedCal
 {
   // The distribution mean vector has changed because of user interaction
 
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
-  logic->SetTreeNodeDistributionLogMean(sel_vol_id, col, atof(value));
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  mrmlManager->SetTreeNodeDistributionLogMean(sel_vol_id, col, atof(value));
 }
 
 //---------------------------------------------------------------------------
@@ -504,8 +510,8 @@ vtkEMSegmentIntensityDistributionsStep::IntensityDistributionCovarianceChangedCa
 {
   // The distribution covariance matrix has changed because of user interaction
 
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
-  logic->SetTreeNodeDistributionLogCovariance(sel_vol_id, row,col,atof(value));
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  mrmlManager->SetTreeNodeDistributionLogCovariance(sel_vol_id, row,col,atof(value));
 }
 
 //----------------------------------------------------------------------------
@@ -524,7 +530,7 @@ void vtkEMSegmentIntensityDistributionsStep::AddIntensityDistributionSamplePoint
     return;
     }
 
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
   vtkEMSegmentAnatomicalStructureStep *anat_step = 
     this->GetGUI()->GetAnatomicalStructureStep();
   vtkKWTree *tree = anat_step->GetAnatomicalStructureTree()->GetWidget();
@@ -535,14 +541,15 @@ void vtkEMSegmentIntensityDistributionsStep::AddIntensityDistributionSamplePoint
     sel_node = tree->GetSelection();
     sel_vol_id = tree->GetNodeUserDataAsInt(sel_node.c_str());
     if (sel_node.size() &&
-        logic->GetTreeNodeIsLeaf(sel_vol_id) &&
-        logic->GetTreeNodeDistributionSpecificationMethod(sel_vol_id) ==
-        vtkEMSegmentLogic::DistributionSpecificationManuallySample)
+        mrmlManager->GetTreeNodeIsLeaf(sel_vol_id) &&
+        mrmlManager->GetTreeNodeDistributionSpecificationMethod(sel_vol_id) ==
+        vtkEMSegmentMRMLManager::
+        DistributionSpecificationManuallySample)
       {
-      logic->AddTreeNodeDistributionSamplePoint(sel_vol_id, ras);
+      mrmlManager->AddTreeNodeDistributionSamplePoint(sel_vol_id, ras);
       this->DisplaySelectedNodeIntensityDistributionsCallback();
       int nb_samples = 
-        logic->GetTreeNodeDistributionNumberOfSamples(sel_vol_id);
+        mrmlManager->GetTreeNodeDistributionNumberOfSamples(sel_vol_id);
       vtkKWMultiColumnList *list = 
        this->IntensityDistributionManualSamplingList->GetWidget()->GetWidget();
       list->SeeRow(nb_samples - 1);
@@ -606,11 +613,11 @@ vtkEMSegmentIntensityDistributionsStep::DeleteManualIntensitySampleCallback(
 
   if (sample_index >= 0)
     {
-    vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
+    vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
     vtkKWMultiColumnList *list = 
       this->IntensityDistributionManualSamplingList->GetWidget()->GetWidget();
     list->DeleteRow(sample_index);
-    logic->RemoveTreeNodeDistributionSamplePoint(sel_vol_id, sample_index);
+    mrmlManager->RemoveTreeNodeDistributionSamplePoint(sel_vol_id, sample_index);
     this->DisplaySelectedNodeIntensityDistributionsCallback();
     }
 }
@@ -621,11 +628,11 @@ vtkEMSegmentIntensityDistributionsStep::DeleteAllManualIntensitySampleCallback(v
 {
   // All samples have been deleted because of user interaction
 
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
   vtkKWMultiColumnList *list = 
     this->IntensityDistributionManualSamplingList->GetWidget()->GetWidget();
   list->DeleteAllRows();
-  logic->RemoveAllTreeNodeDistributionSamplePoints(sel_vol_id);
+  mrmlManager->RemoveAllTreeNodeDistributionSamplePoints(sel_vol_id);
   this->DisplaySelectedNodeIntensityDistributionsCallback();
 }
 

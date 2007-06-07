@@ -1,6 +1,6 @@
 #include "vtkEMSegmentStep.h"
 #include "vtkEMSegmentGUI.h"
-#include "vtkEMSegmentLogic.h"
+#include "vtkEMSegmentMRMLManager.h"
 
 #include "vtkKWWizardWidget.h"
 #include "vtkKWWizardWorkflow.h"
@@ -60,13 +60,13 @@ void vtkEMSegmentStep::PopulateMenuWithLoadedVolumes(
   menu->DeleteAllItems();
   char buffer[256];
 
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
-  int nb_of_volumes = logic->GetVolumeNumberOfChoices();
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  int nb_of_volumes = mrmlManager->GetVolumeNumberOfChoices();
   for(int index=0; index < nb_of_volumes; index++)
     {
-    vtkIdType vol_id = logic->GetVolumeNthID(index);
+    vtkIdType vol_id = mrmlManager->GetVolumeNthID(index);
     sprintf(buffer, "%s %d", callback, vol_id);
-    const char *name = logic->GetVolumeName(vol_id);
+    const char *name = mrmlManager->GetVolumeName(vol_id);
     if (name)
       {
       menu->AddRadioButton(name, object, buffer);
@@ -110,12 +110,12 @@ void vtkEMSegmentStep::PopulateMenuWithTargetVolumes(
   vtkIdType vol_id;
   char buffer[256];
 
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
-  int nb_of_volumes = logic->GetTargetNumberOfSelectedVolumes();
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  int nb_of_volumes = mrmlManager->GetTargetNumberOfSelectedVolumes();
   for(int index = 0; index < nb_of_volumes; index++)
     {
-    vol_id = logic->GetTargetSelectedVolumeNthID(index);
-    const char *name = logic->GetVolumeName(vol_id);
+    vol_id = mrmlManager->GetTargetSelectedVolumeNthID(index);
+    const char *name = mrmlManager->GetVolumeName(vol_id);
     if (name)
       {
       sprintf(buffer, "%s %d", callback, vol_id);

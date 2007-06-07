@@ -1,7 +1,7 @@
 #include "vtkEMSegmentAnatomicalStructureStep.h"
 
 #include "vtkEMSegmentGUI.h"
-#include "vtkEMSegmentLogic.h"
+#include "vtkEMSegmentMRMLManager.h"
 
 #include "vtkKWWizardWidget.h"
 #include "vtkKWWizardWorkflow.h"
@@ -98,7 +98,7 @@ vtkEMSegmentAnatomicalStructureStep::~vtkEMSegmentAnatomicalStructureStep()
 void vtkEMSegmentAnatomicalStructureStep::ShowAnatomicalStructureTree()
 {
   vtkKWWizardWidget *wizard_widget = this->GetGUI()->GetWizardWidget();
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
 
   // Create the frame
 
@@ -191,7 +191,7 @@ void vtkEMSegmentAnatomicalStructureStep::ShowAnatomicalStructureTree()
 
   // Populate the tree
 
-  vtkIdType root_id = logic->GetTreeRootNodeID();
+  vtkIdType root_id = mrmlManager->GetTreeRootNodeID();
   if (root_id)
     {
     this->PopulateAnatomicalStructureTree(NULL, root_id);
@@ -305,7 +305,7 @@ void vtkEMSegmentAnatomicalStructureStep::DisplaySelectedNodeAnatomicalAttribute
 {
   // Update the UI with the proper value, if there is a selection
 
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
   vtkKWTree *tree = this->AnatomicalStructureTree->GetWidget();
   vtksys_stl::string sel_node;
   vtkIdType sel_vol_id = 0;
@@ -315,7 +315,7 @@ void vtkEMSegmentAnatomicalStructureStep::DisplaySelectedNodeAnatomicalAttribute
     {
     sel_node = tree->GetSelection();
     sel_vol_id = tree->GetNodeUserDataAsInt(sel_node.c_str());
-    sel_is_leaf_node = logic->GetTreeNodeIsLeaf(sel_vol_id);
+    sel_is_leaf_node = mrmlManager->GetTreeNodeIsLeaf(sel_vol_id);
     }
   int enabled = tree->GetEnabled();
   char buffer[256];
@@ -348,7 +348,7 @@ void vtkEMSegmentAnatomicalStructureStep::DisplaySelectedNodeAnatomicalAttribute
     vtkKWEntry *entry = this->AnatomicalNodeIntensityLabelEntry->GetWidget();
     if (has_valid_selection && sel_is_leaf_node)
       {
-      int intLabel = logic->GetTreeNodeIntensityLabel(sel_vol_id);
+      int intLabel = mrmlManager->GetTreeNodeIntensityLabel(sel_vol_id);
       this->AnatomicalNodeIntensityLabelEntry->SetEnabled(enabled);
       sprintf(buffer, 
               "SelectedNodeIntensityLabelChangedCallback %d", sel_vol_id);
@@ -377,7 +377,7 @@ void vtkEMSegmentAnatomicalStructureStep::DisplaySelectedNodeAnatomicalAttribute
       sprintf(buffer, "SelectedNodeColorChangedCallback %d", sel_vol_id);
       this->AnatomicalNodeAttributeColorButton->SetCommand(this, buffer);
       double rgb[3] = { 0.5, 0.5, 0.5 };
-      logic->GetTreeNodeColor(sel_vol_id, rgb);
+      mrmlManager->GetTreeNodeColor(sel_vol_id, rgb);
       this->AnatomicalNodeAttributeColorButton->SetColor(rgb);
       this->Script("pack %s -side top -anchor nw -padx 2 -pady 2", 
                    this->AnatomicalNodeAttributeColorButton->GetWidgetName());
@@ -401,9 +401,9 @@ void vtkEMSegmentAnatomicalStructureStep::SetAnatomicalTreeNodesSelectableOn()
     return;
     }
   
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
   vtkKWTree *tree = this->AnatomicalStructureTree->GetWidget();
-  vtkIdType vol_id = logic->GetTreeRootNodeID();
+  vtkIdType vol_id = mrmlManager->GetTreeRootNodeID();
   const char *root_node = tree->FindNodeWithUserDataAsInt(NULL, vol_id);
   if (root_node && *root_node)
     {
@@ -423,21 +423,21 @@ void vtkEMSegmentAnatomicalStructureStep::SetAnatomicalTreeLeafNodeSelectableSta
     return;
     }
 
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
   vtksys_stl::string parent_node = parent;
   vtkKWTree *tree = this->AnatomicalStructureTree->GetWidget();
   vtkIdType vol_id = tree->GetNodeUserDataAsInt(parent_node.c_str());
   vtkIdType child_id;
 
-  int nb_children = logic->GetTreeNodeNumberOfChildren(vol_id);
+  int nb_children = mrmlManager->GetTreeNodeNumberOfChildren(vol_id);
   for (int i = 0; i < nb_children; i++)
     {
-    child_id = logic->GetTreeNodeChildNodeID(vol_id, i);
+    child_id = mrmlManager->GetTreeNodeChildNodeID(vol_id, i);
     const char* node = 
       tree->FindNodeWithUserDataAsInt(parent_node.c_str(), child_id);
     if (node)
       {
-      if (logic->GetTreeNodeIsLeaf(child_id))
+      if (mrmlManager->GetTreeNodeIsLeaf(child_id))
         {
         tree->SetNodeSelectableFlag(node, state);
         }
@@ -473,21 +473,21 @@ void vtkEMSegmentAnatomicalStructureStep::SetAnatomicalTreeParentNodeSelectableS
     return;
     }
 
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
   vtksys_stl::string parent_node = parent;
   vtkKWTree *tree = this->AnatomicalStructureTree->GetWidget();
   vtkIdType vol_id = tree->GetNodeUserDataAsInt(parent_node.c_str());
   vtkIdType child_id;
 
-  int nb_children = logic->GetTreeNodeNumberOfChildren(vol_id);
+  int nb_children = mrmlManager->GetTreeNodeNumberOfChildren(vol_id);
   for (int i = 0; i < nb_children; i++)
     {
-    child_id = logic->GetTreeNodeChildNodeID(vol_id, i);
+    child_id = mrmlManager->GetTreeNodeChildNodeID(vol_id, i);
     const char* node = 
       tree->FindNodeWithUserDataAsInt(parent_node.c_str(), child_id);
     if (node)
       {
-      if (!logic->GetTreeNodeIsLeaf(child_id))
+      if (!mrmlManager->GetTreeNodeIsLeaf(child_id))
         {
         this->SetAnatomicalTreeParentNodeSelectableState(node, state);
         }
@@ -523,10 +523,10 @@ void vtkEMSegmentAnatomicalStructureStep::PopulateAnatomicalStructureTree(
   // node position had changed since last call (i.e. the node was already
   // there but was moved), this will not be updated accordingly (todo)
 
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
   const char *found = tree->FindNodeWithUserDataAsInt(parent, vol_id);
   vtksys_stl::stringstream node;
-  vtksys_stl::string nodename(logic->GetTreeNodeName(vol_id));
+  vtksys_stl::string nodename(mrmlManager->GetTreeNodeName(vol_id));
   if (!found)
     {
     node << tree->GetTclName() << vol_id;
@@ -541,11 +541,11 @@ void vtkEMSegmentAnatomicalStructureStep::PopulateAnatomicalStructureTree(
 
   // Insert its children
 
-  int nb_children = logic->GetTreeNodeNumberOfChildren(vol_id);
+  int nb_children = mrmlManager->GetTreeNodeNumberOfChildren(vol_id);
   for (int i = 0; i < nb_children; i++)
     {
     this->PopulateAnatomicalStructureTree(
-      node.str().c_str(), logic->GetTreeNodeChildNodeID(vol_id, i));
+      node.str().c_str(), mrmlManager->GetTreeNodeChildNodeID(vol_id, i));
     }
 }
    
@@ -615,26 +615,26 @@ void vtkEMSegmentAnatomicalStructureStep::DeleteNodeCallback(vtkIdType sel_vol_i
         "Are you sure you want to delete this sub-class and its children?",
         vtkKWMessageDialog::WarningIcon | vtkKWMessageDialog::InvokeAtPointer))
     {
-    vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
+    vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
     vtkKWTree *tree = this->AnatomicalStructureTree->GetWidget();
     vtksys_stl::string sel_node(
       tree->FindNodeWithUserDataAsInt(NULL, sel_vol_id));
     vtksys_stl::string parent_node(tree->GetNodeParent(sel_node.c_str()));
     tree->DeleteNode(sel_node.c_str());
     tree->SelectSingleNode(parent_node.c_str());
-    logic->RemoveTreeNode(sel_vol_id);
+    mrmlManager->RemoveTreeNode(sel_vol_id);
     }
 }
 
 //----------------------------------------------------------------------------
 void vtkEMSegmentAnatomicalStructureStep::AddChildNodeCallback(vtkIdType sel_vol_id)
 {
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
   vtkKWTree *tree = this->AnatomicalStructureTree->GetWidget();
   vtksys_stl::string sel_node(
     tree->FindNodeWithUserDataAsInt(NULL, sel_vol_id));
   char child_node[256];
-  vtkIdType child_id = logic->AddTreeNode(sel_vol_id);
+  vtkIdType child_id = mrmlManager->AddTreeNode(sel_vol_id);
   sprintf(child_node, "node_%d", child_id);
   tree->AddNode(sel_node.c_str(), child_node, child_node);
   tree->SetNodeUserDataAsInt(child_node, child_id); 
@@ -649,11 +649,11 @@ void vtkEMSegmentAnatomicalStructureStep::NodeParentChangedCallback(
 {
   // Reparent a node (by drag and dropping)
 
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
   vtkKWTree *tree = this->AnatomicalStructureTree->GetWidget();
   vtkIdType vol_id = tree->GetNodeUserDataAsInt(node);
   vtkIdType new_parent_vol_id = tree->GetNodeUserDataAsInt(new_parent);
-  logic->SetTreeNodeParentNodeID(vol_id, new_parent_vol_id);
+  mrmlManager->SetTreeNodeParentNodeID(vol_id, new_parent_vol_id);
 }
 
 //----------------------------------------------------------------------------
@@ -662,14 +662,14 @@ void vtkEMSegmentAnatomicalStructureStep::SelectedNodeNameChangedCallback(
 {
   // The node name has changed because of user interaction
 
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
   vtkKWTree *tree = this->AnatomicalStructureTree->GetWidget();
   const char *found_node = tree->FindNodeWithUserDataAsInt(NULL, sel_vol_id);
   if (found_node)
     {
     vtksys_stl::string node(found_node);
     tree->SetNodeText(node.c_str(), value);
-    logic->SetTreeNodeName(sel_vol_id, value);
+    mrmlManager->SetTreeNodeName(sel_vol_id, value);
     }
 }
 
@@ -679,13 +679,13 @@ void vtkEMSegmentAnatomicalStructureStep::SelectedNodeIntensityLabelChangedCallb
 {
   // The node label has changed because of user interaction
 
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
   vtkKWTree *tree = this->AnatomicalStructureTree->GetWidget();
   const char *found_node = tree->FindNodeWithUserDataAsInt(NULL, sel_vol_id);
   if (found_node)
     {
     vtksys_stl::string node(found_node);
-    logic->SetTreeNodeIntensityLabel(sel_vol_id, value);
+    mrmlManager->SetTreeNodeIntensityLabel(sel_vol_id, value);
     }
 }
 
@@ -695,9 +695,9 @@ void vtkEMSegmentAnatomicalStructureStep::SelectedNodeColorChangedCallback(
 {
   // The node color has changed because of user interaction
 
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
   double rgb[3]; rgb[0] = r; rgb[1] = g; rgb[2] = b;
-  logic->SetTreeNodeColor(sel_vol_id, rgb);
+  mrmlManager->SetTreeNodeColor(sel_vol_id, rgb);
 }
 
 //----------------------------------------------------------------------------

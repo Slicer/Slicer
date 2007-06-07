@@ -5,6 +5,7 @@
 #include "vtkMRMLScene.h"
 #include "vtkMRMLVolumeArchetypeStorageNode.h"
 #include "vtkEMSegmentLogic.h"
+#include "vtkEMSegmentMRMLManager.h"
 #include "vtkMRMLEMSSegmenterNode.h"
 #include "EMSegmentCommandLineCLP.h"
 #include <vtksys/SystemTools.hxx>
@@ -36,15 +37,15 @@ AddNewScalarArchetypeVolume(vtkMRMLScene* mrmlScene,
 
   // set the volume's name
   if (volname == NULL)
-  {
+    {
     const vtksys_stl::string fname(filename);
     vtksys_stl::string name = vtksys::SystemTools::GetFilenameName(fname);
     volumeNode->SetName(name.c_str());
-  }
+    }
   else
-  {
+    {
     volumeNode->SetName(volname);
-  }
+    }
 
   // add nodes to scene
   volumeNode->SetScene(mrmlScene);  
@@ -60,17 +61,17 @@ AddNewScalarArchetypeVolume(vtkMRMLScene* mrmlScene,
   mrmlScene->AddNode(volumeNode);
 
   if (scalarNode)
-  {
+    {
     scalarNode->Delete();
-  }
+    }
   if (storageNode)
-  {
+    {
     storageNode->Delete();
-  }
+    }
   if (displayNode)
-  {
+    {
     displayNode->Delete();
-  }
+    }
   return volumeNode;    
 }
 
@@ -162,25 +163,25 @@ bool ImageDiff(vtkImageData* resultData, std::string standardFilename)
   standardReader->SetDesiredCoordinateOrientationToNative();
   standardReader->SetUseNativeOriginOn();
   try
-  {
+    {
     standardReader->Update();
-  }
+    }
   catch (...)
-  {
+    {
     std::cerr << "Error reading standard image: " << std::endl;
     standardReader->Delete();
     return true;
-  }
+    }
 
   //
   // compare image origin and spacing
   for (unsigned int i = 0; i < 3; ++i)
-  {
+    {
     if (resultData->GetSpacing()[i] != 
         standardReader->GetOutput()->GetSpacing()[i] ||
         resultData->GetOrigin()[i] != 
         standardReader->GetOutput()->GetOrigin()[i])
-    {
+      {
       //
       // display spacing and origin info for resultData
       std::cerr << "Image spacing and/or origin does not match standard!" 
@@ -203,12 +204,12 @@ bool ImageDiff(vtkImageData* resultData, std::string standardFilename)
                 << standardReader->GetOutput()->GetSpacing()[1] << " "
                 << standardReader->GetOutput()->GetSpacing()[2] << std::endl;
       imagesDiffer = true;
+      }
     }
-  }
   if (!imagesDiffer)
-  {
+    {
     std::cerr << "Result image origin and spacing match." << std::endl;
-  }
+    }
 
   //
   // compare image voxels
@@ -228,23 +229,74 @@ bool ImageDiff(vtkImageData* resultData, std::string standardFilename)
     differenceAccumulator->GetMax()[0] != 0.0;
     
   if (imagesDiffer)
-  {
+    {
     std::cerr << "((temporarily not) ignoring zero) Num / Min / Max / Mean difference = " 
               << differenceAccumulator->GetVoxelCount()  << " / "
               << differenceAccumulator->GetMin()[0]      << " / "
               << differenceAccumulator->GetMax()[0]      << " / "
               << differenceAccumulator->GetMean()[0]     << std::endl;
-  }
+    }
   else
-  {
+    {
     std::cerr << "Result image voxels match." << std::endl;
-  }
+    }
 
   standardReader->Delete();
   imageDifference->Delete();
   differenceAccumulator->Delete();
 
   return imagesDiffer;
+}
+
+void GenerateEmptyMRMLScene(const char* filename)
+{
+  // create scene, logic, and add parameters to scene
+  vtkMRMLScene* mrmlScene = vtkMRMLScene::New();
+  vtkMRMLScene::SetActiveScene(mrmlScene);
+  mrmlScene->SetURL(filename);
+  
+  vtkEMSegmentLogic* emLogic             = vtkEMSegmentLogic::New();
+  emLogic->SetAndObserveMRMLScene(mrmlScene);
+  emLogic->RegisterMRMLNodesWithScene();
+  vtkIntArray *emsEvents                 = vtkIntArray::New();
+  emsEvents->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
+  emsEvents->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
+  emLogic->SetAndObserveMRMLSceneEvents(mrmlScene, emsEvents);
+  emsEvents->Delete();    
+
+  emLogic->GetMRMLManager()->CreateAndObserveNewParameterSet();
+
+  // write the scene
+  try 
+    {
+    mrmlScene->Commit();
+    }
+  catch (...)
+    {
+    std::cerr << "ERROR: could not write mrml scene." << std::endl;
+    }
+
+  // clean up
+  mrmlScene->Clear(true);
+  mrmlScene->Delete();
+  emLogic->SetAndObserveMRMLScene(NULL);
+  emLogic->Delete();  
+}
+
+std::string StripBackslashes(const std::string& s)
+{
+  std::string outString;
+  for (unsigned int i = 0; i < s.size(); ++i)
+    {
+    if (s[i] != '\\')
+      {
+      outString.push_back(s[i]);
+      }
+    else if (i > 0 && s[i-1] == '\\')
+      {
+      outString.push_back(s[i]);
+      }
+    }
 }
 
 int main(int argc, char** argv)
@@ -258,22 +310,16 @@ int main(int argc, char** argv)
   bool useDefaultOutput         = resultVolumeFileName.empty();
   bool segmentationSucceeded    = true;
 
+  if (!generateEmptyMRMLSceneAndQuit.empty())
+    {
+    GenerateEmptyMRMLScene(generateEmptyMRMLSceneAndQuit.c_str());
+    exit(0);
+    }
+
 #ifdef WIN32
   //
   // strip backslashes from parameter node name (present if spaces were used)
-  std::string tmpNodeName = parametersMRMLNodeName;
-  parametersMRMLNodeName.clear();
-  for (unsigned int i = 0; i < tmpNodeName.size(); ++i)
-    {
-      if (tmpNodeName[i] != '\\')
-        {
-        parametersMRMLNodeName.push_back(tmpNodeName[i]);
-        }
-      else if (i > 0 && tmpNodeName[i-1] == '\\')
-        {
-        parametersMRMLNodeName.push_back(tmpNodeName[i]);
-        }
-    }
+  parametersMRMLNodeName = StripBackslashes(parametersMRMLNodeName);
 #endif  
 
   //
@@ -295,30 +341,30 @@ int main(int argc, char** argv)
   if (!vtksys::SystemTools::FileExists(mrmlSceneFileName.c_str()))
     {
     std::cerr << "Error: MRML scene file does not exist." << std::endl;
-      std::cerr << mrmlSceneFileName << std::endl;      
+    std::cerr << mrmlSceneFileName << std::endl;      
     exit(EXIT_FAILURE);
     }
 
   if (!resultStandardVolumeFileName.empty() && 
       !vtksys::SystemTools::FileExists(resultStandardVolumeFileName.c_str()))
-  {
+    {
     std::cerr << "Error: result standard volume file does not exist." 
               << std::endl;
-      std::cerr << resultStandardVolumeFileName << std::endl;      
+    std::cerr << resultStandardVolumeFileName << std::endl;      
     exit(EXIT_FAILURE);
-  }
+    }
 
   for (unsigned int i = 0; i < targetVolumeFileNames.size(); ++i)
-  {
+    {
     if (!vtksys::SystemTools::
         FileExists(targetVolumeFileNames[i].c_str()))
-    {
+      {
       std::cerr << "Error: target volume file " << i << " does not exist." 
                 << std::endl;
       std::cerr << targetVolumeFileNames[i] << std::endl;      
       exit(EXIT_FAILURE);
+      }
     }
-  }
 
   //
   // create a mrml scene that will hold the parameters and data
@@ -329,14 +375,20 @@ int main(int argc, char** argv)
   //
   // create an instance of vtkEMSegmentLogic and connect it with the
   // MRML scene
-  vtkEMSegmentLogic* emLogic = vtkEMSegmentLogic::New();
+  vtkEMSegmentLogic* emLogic             = vtkEMSegmentLogic::New();
   emLogic->SetAndObserveMRMLScene(mrmlScene);
-  vtkIntArray *emsEvents = vtkIntArray::New();
+  emLogic->RegisterMRMLNodesWithScene();
+  vtkIntArray *emsEvents                 = vtkIntArray::New();
   emsEvents->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
   emsEvents->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
   emLogic->SetAndObserveMRMLSceneEvents(mrmlScene, emsEvents);
   emsEvents->Delete();
-  emLogic->RegisterMRMLNodesWithScene();
+
+  //
+  // For the EMSegment logic, getting and setting of parameters in the
+  // MRML scene is delegated to the EMSegment MRML manager.  Get a
+  // shortcut to the manager.
+  vtkEMSegmentMRMLManager* emMRMLManager = emLogic->GetMRMLManager();
 
   //
   // global try block makes sure data is cleaned up if anything goes
@@ -356,7 +408,7 @@ int main(int argc, char** argv)
       throw std::runtime_error("ERROR: failed to import mrml scene.");
       }
 
-    int numParameterSets = emLogic->GetNumberOfParameterSets();
+    int numParameterSets = emMRMLManager->GetNumberOfParameterSets();
     if (verbose) std::cerr << "Imported: " << mrmlScene->GetNumberOfNodes()
                            << (mrmlScene->GetNumberOfNodes() == 1 
                                ? " node" : " nodes")
@@ -379,7 +431,7 @@ int main(int argc, char** argv)
     if (useDefaultParametersNode)
       {
       if (verbose) std::cerr << "Using default parameter set named: " 
-                             << emLogic->GetNthParameterSetName(0) 
+                             << emMRMLManager->GetNthParameterSetName(0) 
                              << std::endl;    
       }
     else
@@ -391,7 +443,7 @@ int main(int argc, char** argv)
       
       for (int i = 0; i < numParameterSets; ++i)
         {
-        std::string currentNodeName(emLogic->GetNthParameterSetName(i)); 
+        std::string currentNodeName(emMRMLManager->GetNthParameterSetName(i)); 
         if (verbose) std::cerr << "Node " << i 
                                << " name: " << currentNodeName << std::endl;
         if (parametersMRMLNodeName == currentNodeName)
@@ -419,10 +471,10 @@ int main(int argc, char** argv)
       }
 
     //
-    // populate the logic with the parameters
+    // populate the mrmlManager with the parameters
     try
       {
-      emLogic->SetLoadedParameterSetIndex(parameterNodeIndex);
+      emMRMLManager->SetLoadedParameterSetIndex(parameterNodeIndex);
       }
     catch (...)
       {
@@ -431,31 +483,30 @@ int main(int argc, char** argv)
 
     //
     // make sure the basic parameters are available
-    if (!emLogic->GetSegmenterNode())
-    {
+    if (!emMRMLManager->GetSegmenterNode())
+      {
       throw std::runtime_error("ERROR: MRML: Missing segmenter node.");
-    }
-    if (!emLogic->GetSegmenterNode()->GetTemplateNode())
-    {
+      }
+    if (!emMRMLManager->GetTemplateNode())
+      {
       throw std::runtime_error("ERROR: MRML: Missing template node.");
-    }
-    if (!emLogic->GetSegmenterNode()->GetTemplateNode()->
-        GetGlobalParametersNode())
-    {
+      }
+    if (!emMRMLManager->GetGlobalParametersNode())
+      {
       throw std::runtime_error("ERROR: MRML: Missing global parameters node.");
-    }
+      }
 
     //
     // set the target images
     if (useDefaultTarget)
       {
-      if (!emLogic->GetSegmenterNode()->GetTargetNode())
+      if (!emMRMLManager->GetTargetNode())
         {
         throw std::runtime_error("ERROR: no default target node available.");
         }
       if (verbose) 
         std::cerr << "Using default target node named: " 
-                  << emLogic->GetSegmenterNode()->GetTargetNode()->GetName()
+                  << emMRMLManager->GetTargetNode()->GetName()
                   << std::endl;
       }
     else
@@ -470,7 +521,8 @@ int main(int argc, char** argv)
         mrmlScene->AddNode(targetNode);        
 
         // connect target node to segmenter
-        emLogic->GetSegmenterNode()->SetTargetNodeID(targetNode->GetID());
+        emMRMLManager->GetSegmenterNode()->
+          SetTargetNodeID(targetNode->GetID());
 
         if (verbose) 
           std::cerr << targetNode->GetID() << " DONE" << std::endl;
@@ -479,7 +531,7 @@ int main(int argc, char** argv)
 
         if (verbose)
           std::cerr << "Segmenter's target node is now: " 
-                    << emLogic->GetSegmenterNode()->GetTargetNode()->GetID()
+                    << emMRMLManager->GetTargetNode()->GetID()
                     << std::endl;
         }
       catch (...)
@@ -511,8 +563,8 @@ int main(int argc, char** argv)
             }
        
           // set volume name and ID in map
-          emLogic->GetSegmenterNode()->GetTargetNode()->
-            AddVolume(volumeNode->GetID(), volumeNode->GetID());
+          emMRMLManager->GetTargetNode()->AddVolume(volumeNode->GetID(), 
+                                                    volumeNode->GetID());
           }
         catch(...)
           {
@@ -527,27 +579,27 @@ int main(int argc, char** argv)
     //
     // make sure the number of input channels matches the expected
     // value in the parameters
-    if (emLogic->GetSegmenterNode()->GetTemplateNode()->
-        GetGlobalParametersNode()->GetNumberOfTargetInputChannels() !=
-        emLogic->GetSegmenterNode()->GetTargetNode()->GetNumberOfVolumes())
+    if (emMRMLManager->GetGlobalParametersNode()->
+        GetNumberOfTargetInputChannels() !=
+        emMRMLManager->GetTargetNode()->GetNumberOfVolumes())
       {
-          vtkstd::stringstream ss;
-          ss << "ERROR: Number of input channels (" << 
-            emLogic->GetSegmenterNode()->GetTargetNode()->GetNumberOfVolumes()
-             << ") does not match expected value from parameters (" << 
-            emLogic->GetSegmenterNode()->GetTemplateNode()->
-            GetGlobalParametersNode()->GetNumberOfTargetInputChannels() 
-             << ")";
-          throw std::runtime_error(ss.str());
+      vtkstd::stringstream ss;
+      ss << "ERROR: Number of input channels (" << 
+        emMRMLManager->GetTargetNode()->GetNumberOfVolumes()
+         << ") does not match expected value from parameters (" << 
+        emMRMLManager->GetGlobalParametersNode()->
+        GetNumberOfTargetInputChannels() 
+         << ")";
+      throw std::runtime_error(ss.str());
       }
     else
       {
       if (verbose)
         std::cerr << "Number of input channels (" <<
-          emLogic->GetSegmenterNode()->GetTargetNode()->GetNumberOfVolumes()
+          emMRMLManager->GetTargetNode()->GetNumberOfVolumes()
                   << ") matches expected value from parameters (" <<
-          emLogic->GetSegmenterNode()->GetTemplateNode()->
-          GetGlobalParametersNode()->GetNumberOfTargetInputChannels() 
+          emMRMLManager->GetGlobalParametersNode()->
+          GetNumberOfTargetInputChannels() 
                   << ")" << std::endl;
       }
 
@@ -555,7 +607,7 @@ int main(int argc, char** argv)
     // set the result labelmap image
     if (useDefaultOutput)
       {
-      if (!emLogic->GetSegmenterNode()->GetOutputVolumeNode())
+      if (!emMRMLManager->GetOutputVolumeNode())
         {
         throw std::
           runtime_error("ERROR: no default output volume node available.");
@@ -563,7 +615,7 @@ int main(int argc, char** argv)
       if (verbose) 
         std::cerr << "Using default output volume node named: " 
                   << 
-          emLogic->GetSegmenterNode()->GetOutputVolumeNode()->GetName()
+          emMRMLManager->GetOutputVolumeNode()->GetName()
                   << std::endl;
       }
     else
@@ -585,7 +637,7 @@ int main(int argc, char** argv)
           }
 
         // connect output volume node to segmenter
-        emLogic->GetSegmenterNode()->
+        emMRMLManager->GetSegmenterNode()->
           SetOutputVolumeNodeID(outputNode->GetID());
 
         if (verbose) 
@@ -599,7 +651,7 @@ int main(int argc, char** argv)
 
     //
     // update logic parameters from command line
-    emLogic->SetEnableMultithreading(!disableMultithreading);
+    emMRMLManager->SetEnableMultithreading(!disableMultithreading);
     if (verbose) 
       std::cerr << "Multithreading is " 
                 << (disableMultithreading ? "disabled." : "enabled.")
@@ -607,8 +659,8 @@ int main(int argc, char** argv)
 
     int segmentationBoundaryMin[3];
     int segmentationBoundaryMax[3];
-    emLogic->GetSegmentationBoundaryMin(segmentationBoundaryMin);
-    emLogic->GetSegmentationBoundaryMax(segmentationBoundaryMax);
+    emMRMLManager->GetSegmentationBoundaryMin(segmentationBoundaryMin);
+    emMRMLManager->GetSegmentationBoundaryMax(segmentationBoundaryMax);
     if (verbose) std::cerr 
       << "ROI is [" 
       << segmentationBoundaryMin[0] << ", "
@@ -620,7 +672,7 @@ int main(int argc, char** argv)
 
     //
     // check parameters' node structure
-    if (!emLogic->CheckMRMLNodeStructure())
+    if (!emMRMLManager->CheckMRMLNodeStructure())
       {
       throw std::
         runtime_error("ERROR: EMSegment invalid parameter node structure");
@@ -653,46 +705,46 @@ int main(int argc, char** argv)
     }
 
   if (!dontWriteResults)
-  {
+    {
     //
     // save the results
     if (verbose) std::cerr << "Saving segmentation result...";
     try
-    {
-      emLogic->GetSegmenterNode()->GetOutputVolumeNode()->GetStorageNode()->
-        WriteData(emLogic->GetSegmenterNode()->GetOutputVolumeNode());
-    }
+      {
+      emMRMLManager->GetOutputVolumeNode()->GetStorageNode()->
+        WriteData(emMRMLManager->GetOutputVolumeNode());
+      }
     catch (std::runtime_error& e)
-    {
+      {
       std::cerr << e.what() << std::endl;
       std::cerr << "Errors detetected.  Writing failed." << std::endl;
       segmentationSucceeded = false;
-    }
+      }
     catch (...)
-    {
+      {
       std::cerr << "Unknown error detected.  Writing failed." << std::endl;
       segmentationSucceeded = false;
-    }
+      }
     if (verbose) std::cerr << "DONE" << std::endl;
-  }
+    }
   else
-  {
+    {
     if (verbose)
       std::cerr << "Skipping over saving segmentation results." << std::endl;
-  }
+    }
 
   //
   // compare results to standard image
   if (!resultStandardVolumeFileName.empty())
-  {
+    {
     if (verbose) 
       cerr << "Comparing results with standard..." << std::endl;
 
     try
-    {
+      {
       //
       // get a pointer to the results
-      std::string resultMRMLID = emLogic->GetOutputVolumeMRMLID();
+      std::string resultMRMLID = emMRMLManager->GetOutputVolumeMRMLID();
       std::cerr << "Extracting results from mrml node: " 
                 << resultMRMLID << std::endl;
       vtkImageData* resultImage = NULL;
@@ -706,29 +758,29 @@ int main(int argc, char** argv)
       // compare result with standard image
       bool imagesDiffer = ImageDiff(resultImage, resultStandardVolumeFileName);
       if (imagesDiffer)
-      {
+        {
         if (verbose) 
           if (verbose) cerr << "Result DOES NOT match standard!" << std::endl;
         segmentationSucceeded = false;
-      }
+        }
       else
-      {
+        {
         if (verbose) cerr << "Result matches standard!" << std::endl;
         segmentationSucceeded = true;
+        }
       }
-    }
     catch (std::runtime_error& e)
-    {
+      {
       std::cerr << e.what() << std::endl;
       std::cerr << "Errors detetected.  Comparison failed." << std::endl;
       segmentationSucceeded = false;
-    }
+      }
     catch (...)
-    {
+      {
       std::cerr << "Unknown error detected.  Comparison failed." << std::endl;
       segmentationSucceeded = false;
+      }
     }
-  }
 
   //
   // clean up

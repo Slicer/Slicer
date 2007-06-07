@@ -111,20 +111,20 @@ void vtkEMSegmentIntensityImagesStep::PopulateIntensityImagesTargetVolumeSelecto
   char buffer[256];
   bool found = false;
 
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
-  int nb_of_volumes = logic->GetVolumeNumberOfChoices();
-  int nb_of_target_volumes = logic->GetTargetNumberOfSelectedVolumes();
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  int nb_of_volumes = mrmlManager->GetVolumeNumberOfChoices();
+  int nb_of_target_volumes = mrmlManager->GetTargetNumberOfSelectedVolumes();
   
   // Update the source volume list 
 
   this->IntensityImagesTargetVolumeSelector->RemoveItemsFromSourceList();
   for (int index = 0; index < nb_of_volumes; index++)
     {
-    vol_id = logic->GetVolumeNthID(index);
+    vol_id = mrmlManager->GetVolumeNthID(index);
     found = false;
     for(int i = 0; i < nb_of_target_volumes; i++)
       {
-      target_vol_id = logic->GetTargetSelectedVolumeNthID(i);
+      target_vol_id = mrmlManager->GetTargetSelectedVolumeNthID(i);
       if (vol_id == target_vol_id)
         {
         found = true;
@@ -133,7 +133,7 @@ void vtkEMSegmentIntensityImagesStep::PopulateIntensityImagesTargetVolumeSelecto
       }
     if (!found)
       {
-      const char *name = logic->GetVolumeName(vol_id);
+      const char *name = mrmlManager->GetVolumeName(vol_id);
       if (name)
         {
         sprintf(buffer, "%s (%d)", name, vol_id);
@@ -146,8 +146,8 @@ void vtkEMSegmentIntensityImagesStep::PopulateIntensityImagesTargetVolumeSelecto
 
   for(int i = 0; i < nb_of_target_volumes; i++)
     {
-    target_vol_id = logic->GetTargetSelectedVolumeNthID(i);
-    const char *name = logic->GetVolumeName(target_vol_id);
+    target_vol_id = mrmlManager->GetTargetSelectedVolumeNthID(i);
+    const char *name = mrmlManager->GetVolumeName(target_vol_id);
     if (name)
       {
       sprintf(buffer, "%s (%d)", name, target_vol_id);
@@ -161,14 +161,14 @@ void vtkEMSegmentIntensityImagesStep::IntensityImagesTargetSelectionChangedCallb
 {
   // The target volumes have changed because of user interaction
 
-  vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
   vtkIdType vol_id;
-  int nb_of_volumes = logic->GetTargetNumberOfSelectedVolumes();
+  int nb_of_volumes = mrmlManager->GetTargetNumberOfSelectedVolumes();
   while(nb_of_volumes > 0)
     {
-    vol_id = logic->GetTargetSelectedVolumeNthID(0);
-    logic->RemoveTargetSelectedVolume(vol_id);
-    nb_of_volumes = logic->GetTargetNumberOfSelectedVolumes();
+    vol_id = mrmlManager->GetTargetSelectedVolumeNthID(0);
+    mrmlManager->RemoveTargetSelectedVolume(vol_id);
+    nb_of_volumes = mrmlManager->GetTargetNumberOfSelectedVolumes();
     }
   
   // Add selected target volumes
@@ -186,7 +186,7 @@ void vtkEMSegmentIntensityImagesStep::IntensityImagesTargetSelectionChangedCallb
     if (pos1 != vtksys_stl::string::npos && pos2 != vtksys_stl::string::npos)
       {
       vol_id = atoi(targettext.substr(pos1+1, pos2-pos1-1).c_str());
-      logic->AddTargetSelectedVolume(vol_id);
+      mrmlManager->AddTargetSelectedVolume(vol_id);
       }
     }
 }

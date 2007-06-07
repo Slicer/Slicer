@@ -38,9 +38,10 @@ CreateNodeInstance()
 //-----------------------------------------------------------------------------
 vtkMRMLEMSTreeParametersLeafNode::vtkMRMLEMSTreeParametersLeafNode()
 {
-  this->NumberOfTargetInputChannels = 0;
-  this->PrintQuality                = 0;
-  this->IntensityLabel              = 0;
+  this->NumberOfTargetInputChannels     = 0;
+  this->PrintQuality                    = 0;
+  this->IntensityLabel                  = 0;
+  this->DistributionSpecificationMethod = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -74,6 +75,18 @@ void vtkMRMLEMSTreeParametersLeafNode::WriteXML(ostream& of, int nIndent)
       {
       of << this->LogCovariance[r][c] << " ";
       }
+    }
+  of << "\" ";
+
+  of << indent << "DistributionSpecificationMethod=\""
+     << this->DistributionSpecificationMethod << "\" ";
+
+  of << indent << "DistributionSamplePointsRAS=\"";
+  for (SamplePointListConstIterator i = 
+         this->DistributionSamplePointsRAS.begin();
+       i != this->DistributionSamplePointsRAS.end(); ++i)
+    {
+    of << (*i)[0] << " " << (*i)[1] << " " << (*i)[2] << " ";
     }
   of << "\" ";
 }
@@ -156,6 +169,23 @@ void vtkMRMLEMSTreeParametersLeafNode::ReadXMLAttributes(const char** attrs)
           }   
         }
       }
+    else if (!strcmp(key, "DistributionSpecificationMethod"))
+      {
+      vtksys_stl::stringstream ss;
+      ss << val;
+      ss >> this->DistributionSpecificationMethod;
+      }
+    else if (!strcmp(key, "DistributionSamplePointsRAS"))
+      {
+      this->DistributionSamplePointsRAS.clear();
+      vtksys_stl::stringstream ss;
+      ss << val;
+      vtkstd::vector<double> point(3);
+      while (ss >> point[0] >> point[1] >> point[2])
+        {
+        this->DistributionSamplePointsRAS.push_back(point);
+        }
+      }
     }
 }
 
@@ -171,6 +201,9 @@ void vtkMRMLEMSTreeParametersLeafNode::Copy(vtkMRMLNode *rhs)
   this->SetIntensityLabel(node->IntensityLabel);
   this->LogMean = node->LogMean;
   this->LogCovariance = node->LogCovariance;
+  this->SetDistributionSpecificationMethod
+    (node->DistributionSpecificationMethod);
+  this->DistributionSamplePointsRAS = node->DistributionSamplePointsRAS;
 }
 
 //-----------------------------------------------------------------------------
@@ -203,6 +236,18 @@ void vtkMRMLEMSTreeParametersLeafNode::PrintSelf(ostream& os,
       }
     }
   os << "\n";
+
+  os << indent << "DistributionSpecificationMethod: "
+     << this->DistributionSpecificationMethod
+     << "\n";
+
+  os << indent << "DistributionSamplePointsRAS: \n";
+  for (SamplePointListConstIterator i = 
+         this->DistributionSamplePointsRAS.begin();
+       i != this->DistributionSamplePointsRAS.end(); ++i)
+    {
+    os << (*i)[0] << " " << (*i)[1] << " " << (*i)[2] << "\n";
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -246,7 +291,7 @@ AddTargetInputChannel()
 //-----------------------------------------------------------------------------
 void
 vtkMRMLEMSTreeParametersLeafNode::
-RemoveTargetInputChannel(int index)
+RemoveNthTargetInputChannel(int index)
 {
   this->LogMean.erase(this->LogMean.begin() + index);
   for (unsigned int i = 0; i < this->NumberOfTargetInputChannels; ++i)
@@ -260,7 +305,7 @@ RemoveTargetInputChannel(int index)
 //-----------------------------------------------------------------------------
 void
 vtkMRMLEMSTreeParametersLeafNode::
-MoveTargetInputChannel(int fromIndex, int toIndex)
+MoveNthTargetInputChannel(int fromIndex, int toIndex)
 {
   double movingValue = this->LogMean[fromIndex];
   std::rotate(this->LogMean.begin()+fromIndex,
@@ -307,5 +352,49 @@ SetLogCovariance(int row, int column, double value)
   this->LogCovariance[row][column] = value;
 }
 
+//-----------------------------------------------------------------------------
+int 
+vtkMRMLEMSTreeParametersLeafNode::
+GetNumberOfSamplePoints() const
+{
+  return this->DistributionSamplePointsRAS.size();
+}
 
+//-----------------------------------------------------------------------------
+void 
+vtkMRMLEMSTreeParametersLeafNode::
+AddSamplePoint(double xyz[3])
+{
+  PointType point(3);
+  point[0] = xyz[0];
+  point[1] = xyz[1];
+  point[2] = xyz[2];
+  this->DistributionSamplePointsRAS.push_back(point);
+}
+
+//-----------------------------------------------------------------------------
+void 
+vtkMRMLEMSTreeParametersLeafNode::
+RemoveNthSamplePoint(int n)
+{
+  this->DistributionSamplePointsRAS.erase
+    (this->DistributionSamplePointsRAS.begin()+n);
+}
+
+//-----------------------------------------------------------------------------
+void 
+vtkMRMLEMSTreeParametersLeafNode::
+ClearSamplePoints()
+{
+  this->DistributionSamplePointsRAS.clear();
+}
+
+//-----------------------------------------------------------------------------
+void 
+vtkMRMLEMSTreeParametersLeafNode::
+GetNthSamplePoint(int n, double xyz[3]) const
+{
+  vtkstd::copy(this->DistributionSamplePointsRAS[n].begin(), 
+               this->DistributionSamplePointsRAS[n].end(), &xyz[0]);
+}
 

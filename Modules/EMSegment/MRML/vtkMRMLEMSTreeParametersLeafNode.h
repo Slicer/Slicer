@@ -37,8 +37,8 @@ public:
   vtkGetMacro(NumberOfTargetInputChannels, unsigned int);
   virtual void SetNumberOfTargetInputChannels(unsigned int n);
   virtual void AddTargetInputChannel();
-  virtual void RemoveTargetInputChannel(int index);
-  virtual void MoveTargetInputChannel(int fromIndex, int toIndex);
+  virtual void RemoveNthTargetInputChannel(int index);
+  virtual void MoveNthTargetInputChannel(int fromIndex, int toIndex);
 
   vtkGetMacro(IntensityLabel, int);
   vtkSetMacro(IntensityLabel, int);
@@ -52,6 +52,23 @@ public:
   virtual double GetLogCovariance(int row, int column) const;
   virtual void SetLogCovariance(int row, int column, double value);
 
+  //BTX
+  enum
+    {
+    DistributionSpecificationManual = 0,
+    DistributionSpecificationManuallySample,
+    DistributionSpecificationAutoSample
+    };
+  //ETX
+  vtkGetMacro(DistributionSpecificationMethod, int);
+  vtkSetMacro(DistributionSpecificationMethod, int);
+
+  virtual int GetNumberOfSamplePoints() const;
+  virtual void AddSamplePoint(double xyz[3]);
+  virtual void RemoveNthSamplePoint(int n);
+  virtual void ClearSamplePoints();
+  virtual void GetNthSamplePoint(int n, double xyz[3]) const;
+
 protected:
   vtkMRMLEMSTreeParametersLeafNode();
   ~vtkMRMLEMSTreeParametersLeafNode();
@@ -60,8 +77,15 @@ protected:
 
   int                                 PrintQuality;
   int                                 IntensityLabel;
+  int                                 DistributionSpecificationMethod;
 
   //BTX
+  typedef vtkstd::vector<double>                PointType;
+  typedef vtkstd::vector<PointType>             SamplePointListType;
+  typedef SamplePointListType::iterator         SamplePointListIterator;
+  typedef SamplePointListType::const_iterator   SamplePointListConstIterator;
+
+  SamplePointListType                           DistributionSamplePointsRAS;
   vtkstd::vector<double>                        LogMean;
   vtkstd::vector<vtkstd::vector<double> >       LogCovariance;
   //ETX

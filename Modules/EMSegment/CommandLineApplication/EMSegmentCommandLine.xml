@@ -100,6 +100,13 @@
       <default>false</default>
     </boolean>
 
+    <file>
+      <name>generateEmptyMRMLSceneAndQuit</name>
+      <longflag>generateEmptyMRMLSceneAndQuit</longflag>
+      <description>Used for testing.  Only write a scene with default mrml parameters.</description>
+      <label>Write default scene.</label>
+    </file>
+
   </parameters>
 </executable>
 
