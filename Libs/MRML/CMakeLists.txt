@@ -56,6 +56,8 @@ SET(MRML_SRCS
         vtkMRMLHierarchyNode.cxx
         vtkMRMLModelHierarchyNode.cxx
         vtkMRMLSceneSnapshotNode.cxx
+        vtkMRMLROINode.cxx
+        vtkMRMLROIListNode.cxx
         # Note: when you add new node types, add
         # register code to the vtkMRMLScene constructor
 )
