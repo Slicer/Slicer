@@ -1699,16 +1699,8 @@ void
 vtkEMSegmentMRMLManager::
 RemoveTargetSelectedVolume(vtkIdType volumeID)
 {
-  // map to MRML ID
-  const char* mrmlID = this->MapVTKNodeIDToMRMLNodeID(volumeID);
-  if (mrmlID == NULL || strlen(mrmlID) == 0)
-    {
-    vtkErrorMacro("Could not map volume ID: " << volumeID);
-    return;
-    }
-
   // get this image's index in the target list
-  int imageIndex = this->GetTargetNode()->GetIndexByVolumeNodeID(mrmlID);
+  int imageIndex = this->GetTargetVolumeIndex(volumeID);
   if (imageIndex < 0)
     {
     vtkErrorMacro("Volume not present in target: " << volumeID);
@@ -1716,7 +1708,7 @@ RemoveTargetSelectedVolume(vtkIdType volumeID)
     }
 
   // remove from target
-  this->GetTargetNode()->RemoveVolumeByNodeID(mrmlID);
+  this->GetTargetNode()->RemoveNthVolume(imageIndex);
 
   // propogate change to parameters nodes
   this->PropogateRemovalOfSelectedTargetImage(imageIndex);
@@ -1759,11 +1751,45 @@ SetNthTargetVolumeIntensityNormalizationToDefaultT1SPGR(int n)
 //----------------------------------------------------------------------------
 void
 vtkEMSegmentMRMLManager::
+SetTargetVolumeIntensityNormalizationToDefaultT1SPGR(vtkIdType volumeID)
+{
+  // get this image's index in the target list
+  int imageIndex = this->GetTargetVolumeIndex(volumeID);
+  if (imageIndex < 0)
+    {
+    vtkErrorMacro("Volume not present in target: " << volumeID);
+    return;
+    }
+
+  // set parameters
+  this->SetNthTargetVolumeIntensityNormalizationToDefaultT1SPGR(imageIndex);
+}
+
+//----------------------------------------------------------------------------
+void
+vtkEMSegmentMRMLManager::
 SetNthTargetVolumeIntensityNormalizationToDefaultT2(int n)
 {
   this->GetGlobalParametersNode()->
     GetNthIntensityNormalizationParametersNode(n)->
     SetToDefaultT2();
+}
+
+//----------------------------------------------------------------------------
+void
+vtkEMSegmentMRMLManager::
+SetTargetVolumeIntensityNormalizationToDefaultT2(vtkIdType volumeID)
+{
+  // get this image's index in the target list
+  int imageIndex = this->GetTargetVolumeIndex(volumeID);
+  if (imageIndex < 0)
+    {
+    vtkErrorMacro("Volume not present in target: " << volumeID);
+    return;
+    }
+
+  // set parameters
+  this->SetNthTargetVolumeIntensityNormalizationToDefaultT2(imageIndex);
 }
 
 //----------------------------------------------------------------------------
@@ -1779,11 +1805,45 @@ SetNthTargetVolumeIntensityNormalizationToDefaultT2_2(int n)
 //----------------------------------------------------------------------------
 void
 vtkEMSegmentMRMLManager::
+SetTargetVolumeIntensityNormalizationToDefaultT2_2(vtkIdType volumeID)
+{
+  // get this image's index in the target list
+  int imageIndex = this->GetTargetVolumeIndex(volumeID);
+  if (imageIndex < 0)
+    {
+    vtkErrorMacro("Volume not present in target: " << volumeID);
+    return;
+    }
+
+  // set parameters
+  this->SetNthTargetVolumeIntensityNormalizationToDefaultT2_2(imageIndex);
+}
+
+//----------------------------------------------------------------------------
+void
+vtkEMSegmentMRMLManager::
 SetNthTargetVolumeIntensityNormalizationNormValue(int n, double d)
 {
   this->GetGlobalParametersNode()->
     GetNthIntensityNormalizationParametersNode(n)->
     SetNormValue(d);  
+}
+
+//----------------------------------------------------------------------------
+void
+vtkEMSegmentMRMLManager::
+SetTargetVolumeIntensityNormalizationNormValue(vtkIdType volumeID, double d)
+{
+  // get this image's index in the target list
+  int imageIndex = this->GetTargetVolumeIndex(volumeID);
+  if (imageIndex < 0)
+    {
+    vtkErrorMacro("Volume not present in target: " << volumeID);
+    return;
+    }
+
+  // set parameters
+  this->SetNthTargetVolumeIntensityNormalizationNormValue(imageIndex, d);
 }
 
 //----------------------------------------------------------------------------
@@ -1797,6 +1857,23 @@ GetNthTargetVolumeIntensityNormalizationNormValue(int n)
 }
 
 //----------------------------------------------------------------------------
+double
+vtkEMSegmentMRMLManager::
+GetTargetVolumeIntensityNormalizationNormValue(vtkIdType volumeID)
+{
+  // get this image's index in the target list
+  int imageIndex = this->GetTargetVolumeIndex(volumeID);
+  if (imageIndex < 0)
+    {
+    vtkErrorMacro("Volume not present in target: " << volumeID);
+    return 0;
+    }
+
+  // get parameters
+  return this->GetNthTargetVolumeIntensityNormalizationNormValue(imageIndex);
+}
+
+//----------------------------------------------------------------------------
 void
 vtkEMSegmentMRMLManager::
 SetNthTargetVolumeIntensityNormalizationNormType(int n, int t)
@@ -1807,6 +1884,23 @@ SetNthTargetVolumeIntensityNormalizationNormType(int n, int t)
 }
 
 //----------------------------------------------------------------------------
+void
+vtkEMSegmentMRMLManager::
+SetTargetVolumeIntensityNormalizationNormType(vtkIdType volumeID, int t)
+{
+  // get this image's index in the target list
+  int imageIndex = this->GetTargetVolumeIndex(volumeID);
+  if (imageIndex < 0)
+    {
+    vtkErrorMacro("Volume not present in target: " << volumeID);
+    return;
+    }
+
+  // set parameters
+  this->SetNthTargetVolumeIntensityNormalizationNormType(imageIndex, t);
+}
+
+//----------------------------------------------------------------------------
 int
 vtkEMSegmentMRMLManager::
 GetNthTargetVolumeIntensityNormalizationNormType(int n)
@@ -1814,6 +1908,23 @@ GetNthTargetVolumeIntensityNormalizationNormType(int n)
   return this->GetGlobalParametersNode()->
     GetNthIntensityNormalizationParametersNode(n)->
     GetNormType();  
+}
+
+//----------------------------------------------------------------------------
+int
+vtkEMSegmentMRMLManager::
+GetTargetVolumeIntensityNormalizationNormType(vtkIdType volumeID)
+{
+  // get this image's index in the target list
+  int imageIndex = this->GetTargetVolumeIndex(volumeID);
+  if (imageIndex < 0)
+    {
+    vtkErrorMacro("Volume not present in target: " << volumeID);
+    return 0;
+    }
+
+  // get parameters
+  return this->GetNthTargetVolumeIntensityNormalizationNormType(imageIndex);
 }
 
 //----------------------------------------------------------------------------
@@ -1828,6 +1939,23 @@ SetNthTargetVolumeIntensityNormalizationInitialHistogramSmoothingWidth
 }
 
 //----------------------------------------------------------------------------
+void
+vtkEMSegmentMRMLManager::
+SetTargetVolumeIntensityNormalizationInitialHistogramSmoothingWidth(vtkIdType volumeID, int t)
+{
+  // get this image's index in the target list
+  int imageIndex = this->GetTargetVolumeIndex(volumeID);
+  if (imageIndex < 0)
+    {
+    vtkErrorMacro("Volume not present in target: " << volumeID);
+    return;
+    }
+
+  // set parameters
+  this->SetNthTargetVolumeIntensityNormalizationInitialHistogramSmoothingWidth(imageIndex, t);
+}
+
+//----------------------------------------------------------------------------
 int
 vtkEMSegmentMRMLManager::
 GetNthTargetVolumeIntensityNormalizationInitialHistogramSmoothingWidth
@@ -1836,6 +1964,23 @@ GetNthTargetVolumeIntensityNormalizationInitialHistogramSmoothingWidth
   return this->GetGlobalParametersNode()->
     GetNthIntensityNormalizationParametersNode(n)->
     GetInitialHistogramSmoothingWidth();  
+}
+
+//----------------------------------------------------------------------------
+int
+vtkEMSegmentMRMLManager::
+GetTargetVolumeIntensityNormalizationInitialHistogramSmoothingWidth(vtkIdType volumeID)
+{
+  // get this image's index in the target list
+  int imageIndex = this->GetTargetVolumeIndex(volumeID);
+  if (imageIndex < 0)
+    {
+    vtkErrorMacro("Volume not present in target: " << volumeID);
+    return 0;
+    }
+
+  // get parameters
+  return this->GetNthTargetVolumeIntensityNormalizationInitialHistogramSmoothingWidth(imageIndex);
 }
 
 //----------------------------------------------------------------------------
@@ -1850,6 +1995,23 @@ SetNthTargetVolumeIntensityNormalizationMaxHistogramSmoothingWidth(int n,
 }
 
 //----------------------------------------------------------------------------
+void
+vtkEMSegmentMRMLManager::
+SetTargetVolumeIntensityNormalizationMaxHistogramSmoothingWidth(vtkIdType volumeID, int t)
+{
+  // get this image's index in the target list
+  int imageIndex = this->GetTargetVolumeIndex(volumeID);
+  if (imageIndex < 0)
+    {
+    vtkErrorMacro("Volume not present in target: " << volumeID);
+    return;
+    }
+
+  // set parameters
+  this->SetNthTargetVolumeIntensityNormalizationMaxHistogramSmoothingWidth(imageIndex, t);
+}
+
+//----------------------------------------------------------------------------
 int
 vtkEMSegmentMRMLManager::
 GetNthTargetVolumeIntensityNormalizationMaxHistogramSmoothingWidth(int n)
@@ -1857,6 +2019,23 @@ GetNthTargetVolumeIntensityNormalizationMaxHistogramSmoothingWidth(int n)
   return this->GetGlobalParametersNode()->
     GetNthIntensityNormalizationParametersNode(n)->
     GetMaxHistogramSmoothingWidth();  
+}
+
+//----------------------------------------------------------------------------
+int
+vtkEMSegmentMRMLManager::
+GetTargetVolumeIntensityNormalizationMaxHistogramSmoothingWidth(vtkIdType volumeID)
+{
+  // get this image's index in the target list
+  int imageIndex = this->GetTargetVolumeIndex(volumeID);
+  if (imageIndex < 0)
+    {
+    vtkErrorMacro("Volume not present in target: " << volumeID);
+    return 0;
+    }
+
+  // get parameters
+  return this->GetNthTargetVolumeIntensityNormalizationMaxHistogramSmoothingWidth(imageIndex);
 }
 
 void
@@ -1870,6 +2049,24 @@ SetNthTargetVolumeIntensityNormalizationRelativeMaxVoxelNum(int n,
 }
 
 //----------------------------------------------------------------------------
+void
+vtkEMSegmentMRMLManager::
+SetTargetVolumeIntensityNormalizationRelativeMaxVoxelNum(vtkIdType volumeID, float f)
+{
+  // get this image's index in the target list
+  int imageIndex = this->GetTargetVolumeIndex(volumeID);
+  if (imageIndex < 0)
+    {
+    vtkErrorMacro("Volume not present in target: " << volumeID);
+    return;
+    }
+
+  // set parameters
+  this->SetNthTargetVolumeIntensityNormalizationRelativeMaxVoxelNum(imageIndex,
+                                                                    f);
+}
+
+//----------------------------------------------------------------------------
 float
 vtkEMSegmentMRMLManager::
 GetNthTargetVolumeIntensityNormalizationRelativeMaxVoxelNum(int n)
@@ -1877,6 +2074,23 @@ GetNthTargetVolumeIntensityNormalizationRelativeMaxVoxelNum(int n)
   return this->GetGlobalParametersNode()->
     GetNthIntensityNormalizationParametersNode(n)->
     GetRelativeMaxVoxelNum();  
+}
+
+//----------------------------------------------------------------------------
+float
+vtkEMSegmentMRMLManager::
+GetTargetVolumeIntensityNormalizationRelativeMaxVoxelNum(vtkIdType volumeID)
+{
+  // get this image's index in the target list
+  int imageIndex = this->GetTargetVolumeIndex(volumeID);
+  if (imageIndex < 0)
+    {
+    vtkErrorMacro("Volume not present in target: " << volumeID);
+    return 0;
+    }
+
+  // get parameters
+  return this->GetNthTargetVolumeIntensityNormalizationRelativeMaxVoxelNum(imageIndex);
 }
 
 //----------------------------------------------------------------------------
@@ -1890,6 +2104,23 @@ SetNthTargetVolumeIntensityNormalizationPrintInfo(int n, int t)
 }
 
 //----------------------------------------------------------------------------
+void
+vtkEMSegmentMRMLManager::
+SetTargetVolumeIntensityNormalizationPrintInfo(vtkIdType volumeID, int t)
+{
+  // get this image's index in the target list
+  int imageIndex = this->GetTargetVolumeIndex(volumeID);
+  if (imageIndex < 0)
+    {
+    vtkErrorMacro("Volume not present in target: " << volumeID);
+    return;
+    }
+
+  // set parameters
+  this->SetNthTargetVolumeIntensityNormalizationPrintInfo(imageIndex, t);
+}
+
+//----------------------------------------------------------------------------
 int
 vtkEMSegmentMRMLManager::
 GetNthTargetVolumeIntensityNormalizationPrintInfo(int n)
@@ -1900,6 +2131,23 @@ GetNthTargetVolumeIntensityNormalizationPrintInfo(int n)
 }
 
 //----------------------------------------------------------------------------
+int
+vtkEMSegmentMRMLManager::
+GetTargetVolumeIntensityNormalizationPrintInfo(vtkIdType volumeID)
+{
+  // get this image's index in the target list
+  int imageIndex = this->GetTargetVolumeIndex(volumeID);
+  if (imageIndex < 0)
+    {
+    vtkErrorMacro("Volume not present in target: " << volumeID);
+    return 0;
+    }
+
+  // get parameters
+  return this->GetNthTargetVolumeIntensityNormalizationPrintInfo(imageIndex);
+}
+
+//----------------------------------------------------------------------------
 void
 vtkEMSegmentMRMLManager::
 SetNthTargetVolumeIntensityNormalizationEnabled(int n, int t)
@@ -1907,6 +2155,23 @@ SetNthTargetVolumeIntensityNormalizationEnabled(int n, int t)
   this->GetGlobalParametersNode()->
     GetNthIntensityNormalizationParametersNode(n)->
     SetEnabled(t);  
+}
+
+//----------------------------------------------------------------------------
+void
+vtkEMSegmentMRMLManager::
+SetTargetVolumeIntensityNormalizationEnabled(vtkIdType volumeID, int t)
+{
+  // get this image's index in the target list
+  int imageIndex = this->GetTargetVolumeIndex(volumeID);
+  if (imageIndex < 0)
+    {
+    vtkErrorMacro("Volume not present in target: " << volumeID);
+    return;
+    }
+
+  // set parameters
+  this->SetNthTargetVolumeIntensityNormalizationEnabled(imageIndex, t);
 }
 
 //----------------------------------------------------------------------------
@@ -1922,6 +2187,23 @@ GetNthTargetVolumeIntensityNormalizationEnabled(int n)
   return this->GetGlobalParametersNode()->
     GetNthIntensityNormalizationParametersNode(n)->
     GetEnabled();  
+}
+
+//----------------------------------------------------------------------------
+int
+vtkEMSegmentMRMLManager::
+GetTargetVolumeIntensityNormalizationEnabled(vtkIdType volumeID)
+{
+  // get this image's index in the target list
+  int imageIndex = this->GetTargetVolumeIndex(volumeID);
+  if (imageIndex < 0)
+    {
+    vtkErrorMacro("Volume not present in target: " << volumeID);
+    return 0;
+    }
+
+  // get parameters
+  return this->GetNthTargetVolumeIntensityNormalizationEnabled(imageIndex);
 }
 
 //----------------------------------------------------------------------------
@@ -3078,6 +3360,23 @@ GetListOfTreeNodeIDs(vtkIdType rootNodeID, vtkstd::vector<vtkIdType>& idList)
     this->GetListOfTreeNodeIDs(this->GetTreeNodeChildNodeID(rootNodeID, i), 
                                idList);
     }
+}
+
+//-----------------------------------------------------------------------------
+int
+vtkEMSegmentMRMLManager::
+GetTargetVolumeIndex(vtkIdType volumeID)
+{
+  // map to MRML ID
+  const char* mrmlID = this->MapVTKNodeIDToMRMLNodeID(volumeID);
+  if (mrmlID == NULL || strlen(mrmlID) == 0)
+    {
+    vtkErrorMacro("Could not map volume ID: " << volumeID);
+    return -1;
+    }
+
+  // get this image's index in the target list
+  return this->GetTargetNode()->GetIndexByVolumeNodeID(mrmlID);
 }
 
 //-----------------------------------------------------------------------------

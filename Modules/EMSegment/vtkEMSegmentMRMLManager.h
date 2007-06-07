@@ -275,44 +275,79 @@ public:
   virtual void  
     SetNthTargetVolumeIntensityNormalizationToDefaultT1SPGR(int n);
   virtual void  
+    SetTargetVolumeIntensityNormalizationToDefaultT1SPGR(vtkIdType volumeID);
+  virtual void  
     SetNthTargetVolumeIntensityNormalizationToDefaultT2(int n);
   virtual void  
+    SetTargetVolumeIntensityNormalizationToDefaultT2(vtkIdType volumeID);
+  virtual void  
     SetNthTargetVolumeIntensityNormalizationToDefaultT2_2(int n);
+  virtual void  
+    SetTargetVolumeIntensityNormalizationToDefaultT2_2(vtkIdType volumeID);
 
   virtual void 
     SetNthTargetVolumeIntensityNormalizationNormValue(int n, double d);
+  virtual void 
+    SetTargetVolumeIntensityNormalizationNormValue(vtkIdType volumeID, 
+                                                   double d);
   virtual double
     GetNthTargetVolumeIntensityNormalizationNormValue(int n);
+  virtual double
+    GetTargetVolumeIntensityNormalizationNormValue(vtkIdType volumeID);
 
   virtual void 
     SetNthTargetVolumeIntensityNormalizationNormType(int n, int i);
+  virtual void 
+    SetTargetVolumeIntensityNormalizationNormType(vtkIdType volumeID, int i);
   virtual int
     GetNthTargetVolumeIntensityNormalizationNormType(int n);
+  virtual int
+    GetTargetVolumeIntensityNormalizationNormType(vtkIdType volumeID);
 
   virtual void 
     SetNthTargetVolumeIntensityNormalizationInitialHistogramSmoothingWidth(int n, int i);
+  virtual void 
+    SetTargetVolumeIntensityNormalizationInitialHistogramSmoothingWidth(vtkIdType volumeID, int i);
   virtual int 
     GetNthTargetVolumeIntensityNormalizationInitialHistogramSmoothingWidth(int n);
+  virtual int 
+    GetTargetVolumeIntensityNormalizationInitialHistogramSmoothingWidth(vtkIdType volumeID);
 
   virtual void 
     SetNthTargetVolumeIntensityNormalizationMaxHistogramSmoothingWidth(int n, int i);
+  virtual void 
+    SetTargetVolumeIntensityNormalizationMaxHistogramSmoothingWidth(vtkIdType volumeID, int i);
   virtual int 
     GetNthTargetVolumeIntensityNormalizationMaxHistogramSmoothingWidth(int n);
+  virtual int 
+    GetTargetVolumeIntensityNormalizationMaxHistogramSmoothingWidth(vtkIdType volumeID);
 
   virtual void 
     SetNthTargetVolumeIntensityNormalizationRelativeMaxVoxelNum(int n, float f);
+  virtual void 
+    SetTargetVolumeIntensityNormalizationRelativeMaxVoxelNum(vtkIdType volumeID, float f);
   virtual float
     GetNthTargetVolumeIntensityNormalizationRelativeMaxVoxelNum(int n);
+  virtual float
+    GetTargetVolumeIntensityNormalizationRelativeMaxVoxelNum(vtkIdType volumeID);
 
   virtual void 
     SetNthTargetVolumeIntensityNormalizationPrintInfo(int n, int i);
+  virtual void 
+    SetTargetVolumeIntensityNormalizationPrintInfo(vtkIdType volumeID, int i);
   virtual int 
     GetNthTargetVolumeIntensityNormalizationPrintInfo(int n);
+  virtual int 
+    GetTargetVolumeIntensityNormalizationPrintInfo(vtkIdType volumeID);
 
   virtual void 
     SetNthTargetVolumeIntensityNormalizationEnabled(int n, int i);
+  virtual void 
+    SetTargetVolumeIntensityNormalizationEnabled(vtkIdType volumeID, int i);
   virtual int 
     GetNthTargetVolumeIntensityNormalizationEnabled(int n);
+  virtual int 
+    GetTargetVolumeIntensityNormalizationEnabled(vtkIdType volumeID);
 
   //
   // registration parameters
@@ -436,18 +471,20 @@ private:
   //
   // convienience functions for managing ID mapping (mrml id <-> vtkIdType)
   //
-  virtual vtkIdType          MapMRMLNodeIDToVTKNodeID(const char* MRMLNodeID);
-  virtual const char*        MapVTKNodeIDToMRMLNodeID(vtkIdType vtkID);
+  virtual vtkIdType    MapMRMLNodeIDToVTKNodeID(const char* MRMLNodeID);
+  virtual const char*  MapVTKNodeIDToMRMLNodeID(vtkIdType vtkID);
 
-  virtual void               IDMapInsertPair(vtkIdType vtkID, 
-                                             const char* MRMLNodeID);
-  virtual void               IDMapRemovePair(vtkIdType vtkID);
-  virtual void               IDMapRemovePair(const char* MRMLNodeID);
+  virtual void         IDMapInsertPair(vtkIdType vtkID, 
+                                       const char* MRMLNodeID);
+  virtual void         IDMapRemovePair(vtkIdType vtkID);
+  virtual void         IDMapRemovePair(const char* MRMLNodeID);
 
-  virtual int                IDMapContainsMRMLNodeID(const char* MRMLNodeID);
-  virtual int                IDMapContainsVTKNodeID(vtkIdType id);
+  virtual int          IDMapContainsMRMLNodeID(const char* MRMLNodeID);
+  virtual int          IDMapContainsVTKNodeID(vtkIdType id);
 
-  virtual void               UpdateMapsFromMRML();
+  virtual void         UpdateMapsFromMRML();
+
+  virtual int          GetTargetVolumeIndex(vtkIdType vtkID);
 
   // the current mrml scene
   vtkMRMLScene*   MRMLScene;
