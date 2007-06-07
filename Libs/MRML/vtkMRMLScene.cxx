@@ -1531,7 +1531,7 @@ void vtkMRMLScene::UpdateNodeIDs()
     {
     this->NodeIDs.clear();
     vtkMRMLNode *node;
-    int nnodes = this->CurrentScene->GetNumberOfItems();
+    unsigned int nnodes = this->CurrentScene->GetNumberOfItems();
     for (unsigned int n=0; n<nnodes; n++)
       {
       node = this->GetNthNode(n);
