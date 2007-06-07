@@ -55,6 +55,9 @@
 
 #include "ModuleFactory.h"
 
+#include "vtkSlicerROILogic.h"
+#include "vtkSlicerROIGUI.h"
+
 #ifdef USE_PYTHON
 // If debug, Python wants pythonxx_d.lib, so fake it out
 #ifdef _DEBUG
@@ -887,6 +890,23 @@ int Slicer3_main(int argc, char *argv[])
     slicerApp->AddModuleGUI ( fiducialsGUI );
 #endif
 
+    slicerApp->SplashMessage("Initializing ROI Module...");
+
+    // --- Fiducials module    
+    vtkSlicerROILogic *ROILogic = vtkSlicerROILogic::New ( );
+    ROILogic->SetAndObserveMRMLScene ( scene );
+    vtkSlicerROIGUI *ROIGUI = vtkSlicerROIGUI::New ( );
+    ROIGUI->SetApplication ( slicerApp );
+    ROIGUI->SetApplicationGUI ( appGUI );
+    ROIGUI->SetAndObserveApplicationLogic ( appLogic );
+    ROIGUI->SetAndObserveMRMLScene ( scene );
+    ROIGUI->SetModuleLogic ( ROILogic );
+    ROIGUI->SetGUIName( "ROI" );
+    ROIGUI->GetUIPanel()->SetName ( ROIGUI->GetGUIName ( ) );
+    ROIGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
+    ROIGUI->GetUIPanel()->Create ( );
+    slicerApp->AddModuleGUI ( ROIGUI );
+
 #ifndef COLORS_DEBUG
     slicerApp->SplashMessage("Initializing Colors Module...");
 
@@ -913,6 +933,8 @@ int Slicer3_main(int argc, char *argv[])
     colorGUI->GetUIPanel()->Create ( );
     slicerApp->AddModuleGUI ( colorGUI );
 #endif
+
+
 
 
 #ifndef REALTIMEIMAGING_DEBUG
@@ -1363,6 +1385,11 @@ int Slicer3_main(int argc, char *argv[])
     name = fiducialsGUI->GetTclName();
     slicerApp->Script ("namespace eval slicer3 set FiducialsGUI %s", name);
 #endif
+
+    name = ROIGUI->GetTclName();
+    slicerApp->Script ("namespace eval slicer3 set ROIGUI %s", name);
+ 
+
 #ifndef COLORS_DEBUG
     name = colorGUI->GetTclName();
     slicerApp->Script ("namespace eval slicer3 set ColorGUI %s", name);
@@ -1619,6 +1646,9 @@ int Slicer3_main(int argc, char *argv[])
 #ifndef FIDUCIALS_DEBUG
     fiducialsGUI->TearDownGUI ( );
 #endif
+
+    ROIGUI->TearDownGUI ( );
+
 #ifndef COLORS_DEBUG
     colorGUI->TearDownGUI ( );
 #endif
@@ -1724,6 +1754,9 @@ int Slicer3_main(int argc, char *argv[])
 #ifndef FIDUCIALS_DEBUG
     fiducialsGUI->Delete ();
 #endif
+
+    ROIGUI->Delete ();
+
 #ifndef COLORS_DEBUG
     colorGUI->Delete();
 #endif
@@ -1821,6 +1854,10 @@ int Slicer3_main(int argc, char *argv[])
     fiducialsLogic->SetAndObserveMRMLScene ( NULL );
     fiducialsLogic->Delete();
 #endif
+
+    ROILogic->SetAndObserveMRMLScene ( NULL );
+    ROILogic->Delete();
+
 #ifndef COLORS_DEBUG
     colorLogic->SetAndObserveMRMLScene ( NULL );
     colorLogic->Delete();
