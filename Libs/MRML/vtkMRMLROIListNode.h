@@ -1,7 +1,8 @@
-
 #ifndef __vtkMRMLROIListNode_h
 #define __vtkMRMLROIListNode_h
+
 #include <string> 
+
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
 #include "vtkMRMLROINode.h"
@@ -14,7 +15,7 @@
 // .SECTION Description
 
 class VTK_MRML_EXPORT vtkMRMLROIListNode : public vtkMRMLTransformableNode
-  {
+{
   public:
     static vtkMRMLROIListNode *New();
     vtkTypeMacro(vtkMRMLROIListNode,vtkMRMLTransformableNode);
@@ -50,7 +51,7 @@ class VTK_MRML_EXPORT vtkMRMLROIListNode : public vtkMRMLTransformableNode
     void UpdateReferences();
 
     // Description:
-    //  Get the number of ROIs in the list
+    // Get the number of ROIs in the list
     int GetNumberOfROIs();
 
     // Description:
@@ -61,6 +62,7 @@ class VTK_MRML_EXPORT vtkMRMLROIListNode : public vtkMRMLTransformableNode
     int SetNthROILabelText(int n, const char *text);
     int SetNthROISelected(int n, int flag);
     int SetNthROIID(int n, const char *id);
+
     // Description:
     // Get the elements of the ROI box
     // Return a three element float holding the position
@@ -73,28 +75,30 @@ class VTK_MRML_EXPORT vtkMRMLROIListNode : public vtkMRMLTransformableNode
     int GetNthROISelected(int n);
     // get the id of the nth fiducial
     const char *GetNthROIID(int n);
+
     // Description:
     // Add a ROI point to the list with default values
     int AddROI( );
+
     void RemoveROI(int i);
     void RemoveAllROIs();
 
     void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
 
-    // BTX
+    //BTX
     // Description:
     // DisplayModifiedEvent is generated when display node parameters is changed
     // PolyDataModifiedEvent is generated when something else is changed
     enum
       {
-      DisplayModifiedEvent = 21000,
-      PolyDataModifiedEvent = 21001,
+      DisplayModifiedEvent = 21000,  
+      PolyDataModifiedEvent = 21001, 
       ROIModifiedEvent = 21002,
       };
+    //ETX
 
-    // ETX
     // Description:
-    // Get/Set for list visibility
+    // Get/Set for list visibility 
     void SetVisibility(int visible);
     vtkGetMacro(Visibility,int);
 
