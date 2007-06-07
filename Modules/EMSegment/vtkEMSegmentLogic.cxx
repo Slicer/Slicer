@@ -114,14 +114,14 @@ StartPreprocessing()
   }
 
   // set the input to the working data
-  this->MRMLManager->GetWorkingDataNode()->SetInputTargetNodeID
-    (this->MRMLManager->GetSegmenterNode()->GetTargetNodeID());
-  this->MRMLManager->GetWorkingDataNode()->SetInputAtlasNodeID
-    (this->MRMLManager->GetSegmenterNode()->GetAtlasNodeID());
+  //this->MRMLManager->GetWorkingDataNode()->SetInputTargetNodeID
+  //(this->MRMLManager->GetSegmenterNode()->GetTargetNodeID());
+  //this->MRMLManager->GetWorkingDataNode()->SetInputAtlasNodeID
+  //(this->MRMLManager->GetSegmenterNode()->GetAtlasNodeID());
 
-  this->StartPreprocessingTargetIntensityNormalization();
-  this->StartPreprocessingTargetToTargetRegistration();
-  this->StartPreprocessingAtlasToTargetRegistration();
+  //this->StartPreprocessingTargetIntensityNormalization();
+  //this->StartPreprocessingTargetToTargetRegistration();
+  //this->StartPreprocessingAtlasToTargetRegistration();
 }
 
 //----------------------------------------------------------------------------
@@ -129,11 +129,91 @@ void
 vtkEMSegmentLogic::
 StartPreprocessingTargetIntensityNormalization()
 {
-  // clone input to normalized target node
+  // get input target from working node
+  vtkMRMLEMSTargetNode* inputTarget = 
+    this->MRMLManager->GetWorkingDataNode()->GetInputTargetNode();
+  if (inputTarget == NULL)
+  {
+    vtkErrorMacro("Input target node is null, aborting!");
+  }
+  
+  // check that global parameters exist
+  if (!this->MRMLManager->GetGlobalParametersNode())
+  {
+    vtkErrorMacro("Global parameters node is null, aborting!");
+  }
 
-  // set up vtk filter
+  // get a pointer to the mrml manager for easy access
+  vtkEMSegmentMRMLManager* m = this->MRMLManager;
 
-  // run filter
+  //
+  // clone intput to normalized target node, this will serve as output
+  // !!! todo
+  vtkMRMLEMSTargetNode* normalizedTarget = NULL; //!!!
+
+  //
+  // apply normalization
+  for (unsigned int i = 0; i < normalizedTarget->GetNumberOfVolumes(); ++i)
+    {
+    if (!m->GetNthTargetVolumeIntensityNormalizationEnabled(i))
+      {
+      // don't apply normaliation to this image
+      continue;
+      }
+   
+    // get image data
+    vtkImageData* inData = 
+      inputTarget->GetNthVolumeNode(i)->GetImageData();
+    vtkImageData* outData = 
+      normalizedTarget->GetNthVolumeNode(i)->GetImageData(); 
+    if (inData == NULL)
+      {
+      vtkErrorMacro("Normalization input is null, skipping: " << i);
+      continue;
+      }
+    if (outData == NULL)
+      {
+      vtkErrorMacro("Normalization output is null, skipping: " << i);
+      continue;
+      }
+
+    // setup vtk filter
+    vtkImageMeanIntensityNormalization* normFilter =
+      vtkImageMeanIntensityNormalization::New();
+    normFilter->SetNormValue
+      (m->GetNthTargetVolumeIntensityNormalizationNormValue(i));
+    normFilter->SetNormType
+      (m->GetNthTargetVolumeIntensityNormalizationNormType(i));
+    normFilter->SetInitialHistogramSmoothingWidth
+      (m->
+       GetNthTargetVolumeIntensityNormalizationInitialHistogramSmoothingWidth(i));
+    normFilter->SetMaxHistogramSmoothingWidth
+      (m->GetNthTargetVolumeIntensityNormalizationMaxHistogramSmoothingWidth(i));
+    normFilter->SetRelativeMaxVoxelNum
+      (m->GetNthTargetVolumeIntensityNormalizationRelativeMaxVoxelNum(i));
+    normFilter->SetPrintInfo
+      (m->GetNthTargetVolumeIntensityNormalizationPrintInfo(i));
+    normFilter->SetInput(inData);
+    normFilter->SetOutput(outData);
+
+    // execute filter
+    try
+      {
+      normFilter->Update();
+      }
+    catch (...)
+      {
+      vtkErrorMacro("Error executing normalization filter for target image " 
+                    << i << ".  Skipping this image.");
+      }
+    normFilter->Delete();
+    }
+       
+  // replace target in segmenter node with the normalized target
+  this->MRMLManager->GetSegmenterNode()->
+    SetTargetNodeID(normalizedTarget->GetID());
+
+  // !!! need to update intensity statistics if calculated !!!
 }
 
 //----------------------------------------------------------------------------
