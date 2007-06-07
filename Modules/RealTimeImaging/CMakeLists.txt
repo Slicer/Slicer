@@ -91,5 +91,5 @@ CONFIGURE_FILE(
   )
  
 ELSE(USE_NAVITRACK)
- MESSAGE("You have to turn NAVITRACK 'ON' to compile RealTimeImageing")
+  # MESSAGE("You have to turn NAVITRACK 'ON' to compile RealTimeImageing")
 ENDIF(USE_NAVITRACK)
