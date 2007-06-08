@@ -16,9 +16,10 @@ SET( EMSegment_TUTORIAL_DIR
 # require a testing dataset that is not distributed by default with
 # Slicer3.  NB: The extra tests may take a long time and a large
 # amount of memory!!!  
-SET( RUN_VALGRIND_EMSEGMENT_TESTS 0)
-SET( RUN_EXTRA_SHORT_EMSEGMENT_TESTS 0)
-SET( RUN_EXTRA_LONG_EMSEGMENT_TESTS 0)
+SET( RUN_VALGRIND_EMSEGMENT_TESTS 0 )
+SET( RUN_EXTRA_SHORT_EMSEGMENT_TESTS 0 )
+SET( RUN_EXTRA_LONG_EMSEGMENT_TESTS 0 )
+SET( EMSEG_REMOVE_TMP_TEST_DATA 1 )
 
 IF( NOT DISABLE_CXX_TESTING )
 
@@ -110,11 +111,13 @@ IF( NOT DISABLE_CXX_TESTING )
     ${EMSegment_TUTORIAL_DIR}/StandardData/StandardSegmentationResult_small.raw
     ${EMSegment_TEST_DIR}/EMSegCL_Result.raw
     )
-  ADD_TEST(
-    EMSegCL_RemoveDefaultNodesResult   
-    ${CMAKE_COMMAND} -E remove
-    ${EMSegment_TEST_DIR}/EMSegCL_Result.raw ${EMSegment_TEST_DIR}/EMSegCL_Result.mhd
-    )
+  IF( EMSEG_REMOVE_TMP_TEST_DATA )
+    ADD_TEST(
+      EMSegCL_RemoveDefaultNodesResult   
+      ${CMAKE_COMMAND} -E remove
+      ${EMSegment_TEST_DIR}/EMSegCL_Result.raw ${EMSegment_TEST_DIR}/EMSegCL_Result.mhd
+      )
+   ENDIF( EMSEG_REMOVE_TMP_TEST_DATA )
 
   # Does the segmenter work and give the correct answer when
   # normalization is turned on?
@@ -130,14 +133,16 @@ IF( NOT DISABLE_CXX_TESTING )
   ADD_TEST(
     EMSegCL_DiffNormalizeResult
     ${CMAKE_COMMAND} -E compare_files
-    ${EMSegment_TUTORIAL_DIR}/StandardData/StandardSegmentationResult_small.raw
+    ${EMSegment_TUTORIAL_DIR}/StandardData/StandardSegmentationResult_small_normalizationOn.raw
     ${EMSegment_TEST_DIR}/EMSegCL_Result.raw
     )
-  ADD_TEST(
-    EMSegCL_RemoveNormalizeResult   
-    ${CMAKE_COMMAND} -E remove
-    ${EMSegment_TEST_DIR}/EMSegCL_Result.raw ${EMSegment_TEST_DIR}/EMSegCL_Result.mhd
-    )
+  IF( EMSEG_REMOVE_TMP_TEST_DATA )
+    ADD_TEST(
+      EMSegCL_RemoveNormalizeResult   
+      ${CMAKE_COMMAND} -E remove
+      ${EMSegment_TEST_DIR}/EMSegCL_Result.raw ${EMSegment_TEST_DIR}/EMSegCL_Result.mhd
+      )
+   ENDIF( EMSEG_REMOVE_TMP_TEST_DATA )
 
   # Does the segmenter work and give the correct answer when
   # the parameters node is specified on the command line?
@@ -158,11 +163,13 @@ IF( NOT DISABLE_CXX_TESTING )
     ${EMSegment_TUTORIAL_DIR}/StandardData/StandardSegmentationResult_small.raw
     ${EMSegment_TEST_DIR}/EMSegCL_Result.raw
     )
-  ADD_TEST(
-    EMSegCL_RemoveSetParameterNodeResult
-    ${CMAKE_COMMAND} -E remove
-    ${EMSegment_TEST_DIR}/EMSegCL_Result.raw ${EMSegment_TEST_DIR}/EMSegCL_Result.mhd
-    )
+  IF( EMSEG_REMOVE_TMP_TEST_DATA )
+    ADD_TEST(
+      EMSegCL_RemoveSetParameterNodeResult
+      ${CMAKE_COMMAND} -E remove
+      ${EMSegment_TEST_DIR}/EMSegCL_Result.raw ${EMSegment_TEST_DIR}/EMSegCL_Result.mhd
+      )
+   ENDIF( EMSEG_REMOVE_TMP_TEST_DATA )
 
   # Does the segmenter work and give the correct answer when
   # the target images are specified on the command line?
@@ -183,11 +190,13 @@ IF( NOT DISABLE_CXX_TESTING )
     ${EMSegment_TUTORIAL_DIR}/StandardData/StandardSegmentationResult_small.raw
     ${EMSegment_TEST_DIR}/EMSegCL_Result.raw
     )
-  ADD_TEST(
-    EMSegCL_RemoveSetTargetImagesResult
-    ${CMAKE_COMMAND} -E remove
-    ${EMSegment_TEST_DIR}/EMSegCL_Result.raw ${EMSegment_TEST_DIR}/EMSegCL_Result.mhd
-    )
+  IF( EMSEG_REMOVE_TMP_TEST_DATA )
+    ADD_TEST(
+      EMSegCL_RemoveSetTargetImagesResult
+      ${CMAKE_COMMAND} -E remove
+      ${EMSegment_TEST_DIR}/EMSegCL_Result.raw ${EMSegment_TEST_DIR}/EMSegCL_Result.mhd
+      )
+   ENDIF( EMSEG_REMOVE_TMP_TEST_DATA )
 
   # Does the segmenter work and give the correct answer when
   # the result image is specified on the command line?
@@ -206,11 +215,13 @@ IF( NOT DISABLE_CXX_TESTING )
     ${EMSegment_TUTORIAL_DIR}/StandardData/StandardSegmentationResult_small.raw
     ${EMSegment_TEST_DIR}/EMSegCL_Result.raw
     )
-  ADD_TEST(
-    EMSegCL_RemoveSetResultImageResult
-    ${CMAKE_COMMAND} -E remove
-    ${EMSegment_TEST_DIR}/EMSegCL_Result.raw ${EMSegment_TEST_DIR}/EMSegCL_Result.mhd
-    )
+  IF( EMSEG_REMOVE_TMP_TEST_DATA )
+    ADD_TEST(
+      EMSegCL_RemoveSetResultImageResult
+      ${CMAKE_COMMAND} -E remove
+      ${EMSegment_TEST_DIR}/EMSegCL_Result.raw ${EMSegment_TEST_DIR}/EMSegCL_Result.mhd
+      )
+   ENDIF( EMSEG_REMOVE_TMP_TEST_DATA )
 
   # Does the segmenter work and give the correct answer when
   # the everything is specified on the command line?
@@ -231,11 +242,13 @@ IF( NOT DISABLE_CXX_TESTING )
     ${EMSegment_TUTORIAL_DIR}/StandardData/StandardSegmentationResult_small.raw
     ${EMSegment_TEST_DIR}/EMSegCL_Result.raw
     )
-  ADD_TEST(
-    EMSegCL_RemoveSetEverythingResult
-    ${CMAKE_COMMAND} -E remove
-    ${EMSegment_TEST_DIR}/EMSegCL_Result.raw ${EMSegment_TEST_DIR}/EMSegCL_Result.mhd
-    )
+  IF( EMSEG_REMOVE_TMP_TEST_DATA )
+    ADD_TEST(
+      EMSegCL_RemoveSetEverythingResult
+      ${CMAKE_COMMAND} -E remove
+      ${EMSegment_TEST_DIR}/EMSegCL_Result.raw ${EMSegment_TEST_DIR}/EMSegCL_Result.mhd
+      )
+   ENDIF( EMSEG_REMOVE_TMP_TEST_DATA )
 
   # Is multithreading disabled when command line flag is given?
   ADD_TEST(
@@ -373,11 +386,13 @@ IF( NOT DISABLE_CXX_TESTING )
     ${EMSegment_SOURCE_DIR}/Testing/TestData/DefaultMRMLNodes.mrml
     ${EMSegment_TEST_DIR}/EMSegMRML_EmptyMRMLScene.mrml
     )
-  ADD_TEST(
-    EMSegMRML_RemoveDefaultNodes
-    ${CMAKE_COMMAND} -E remove
-    ${EMSegment_TEST_DIR}/EMSegMRML_EmptyMRMLScene.mrml
-    )
+  IF( EMSEG_REMOVE_TMP_TEST_DATA )
+    ADD_TEST(
+      EMSegMRML_RemoveDefaultNodes
+      ${CMAKE_COMMAND} -E remove
+      ${EMSegment_TEST_DIR}/EMSegMRML_EmptyMRMLScene.mrml
+      )
+   ENDIF( EMSEG_REMOVE_TMP_TEST_DATA )
 
   # Test that the mrml readers/writers work.
   ADD_TEST(
@@ -392,11 +407,13 @@ IF( NOT DISABLE_CXX_TESTING )
     ${EMSegment_TUTORIAL_DIR}/EMSegmentTutorialTemplate_small_normalizationOn.mrml
     ${EMSegment_TEST_DIR}/EMSegmentMRML_ReadWriteTutorialScene.mrml
     )
-  ADD_TEST(
-    EMSegMRML_RemoveTutorialDataOutput
-    ${CMAKE_COMMAND} -E remove
-    ${EMSegment_TEST_DIR}/EMSegmentMRML_ReadWriteTutorialScene.mrml
-    )
+  IF( EMSEG_REMOVE_TMP_TEST_DATA )
+    ADD_TEST(
+      EMSegMRML_RemoveTutorialDataOutput
+      ${CMAKE_COMMAND} -E remove
+      ${EMSegment_TEST_DIR}/EMSegmentMRML_ReadWriteTutorialScene.mrml
+      )
+   ENDIF( EMSEG_REMOVE_TMP_TEST_DATA )
 
   IF ( RUN_VALGRIND_EMSEGMENT_TESTS )
     ADD_TEST(
