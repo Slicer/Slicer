@@ -394,7 +394,8 @@ void
 vtkMRMLEMSTreeParametersLeafNode::
 GetNthSamplePoint(int n, double xyz[3]) const
 {
-  vtkstd::copy(this->DistributionSamplePointsRAS[n].begin(), 
-               this->DistributionSamplePointsRAS[n].end(), &xyz[0]);
+  xyz[0] = this->DistributionSamplePointsRAS[n][0];
+  xyz[1] = this->DistributionSamplePointsRAS[n][1];
+  xyz[2] = this->DistributionSamplePointsRAS[n][2];
 }
 
