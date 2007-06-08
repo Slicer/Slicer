@@ -574,6 +574,45 @@ vtkMRMLScalarVolumeNode *vtkSlicerVolumesLogic::CreateLabelVolume (vtkMRMLScene 
   return (labelNode);
 }
 
+//----------------------------------------------------------------------------
+vtkMRMLScalarVolumeNode*
+vtkSlicerVolumesLogic::
+CloneVolume (vtkMRMLScene *scene, vtkMRMLVolumeNode *volumeNode, char *name)
+{
+  if ( volumeNode == NULL ) 
+    {
+    return NULL;
+    }
+
+  // clone the display node
+  vtkMRMLVolumeDisplayNode *clonedDisplayNode = 
+    vtkMRMLVolumeDisplayNode::New();
+  clonedDisplayNode->Copy(volumeNode->GetDisplayNode());
+  scene->AddNode(clonedDisplayNode);
+
+  // clone the volume node
+  vtkMRMLScalarVolumeNode *clonedVolumeNode = vtkMRMLScalarVolumeNode::New();
+  clonedVolumeNode->Copy(volumeNode);
+  clonedVolumeNode->SetStorageNodeID(NULL);
+  clonedVolumeNode->SetName(name);
+  clonedVolumeNode->SetAndObserveDisplayNodeID(clonedDisplayNode->GetID());
+
+  // copy over the volume's data
+  vtkImageData* clonedVolumeData = vtkImageData::New(); 
+  clonedVolumeData->DeepCopy(volumeNode->GetImageData());
+  clonedVolumeNode->SetAndObserveImageData( clonedVolumeData );
+  clonedVolumeNode->SetModifiedSinceRead(1);
+
+  // add the cloned volume to the scene
+  scene->AddNode(clonedVolumeNode);
+
+  // remove references
+  clonedVolumeNode->Delete();
+  clonedVolumeData->Delete();
+  clonedDisplayNode->Delete();
+
+  return (clonedVolumeNode);
+}
 
 //----------------------------------------------------------------------------
 void vtkSlicerVolumesLogic::PrintSelf(ostream& os, vtkIndent indent)

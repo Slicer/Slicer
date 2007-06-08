@@ -67,6 +67,10 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerVolumesLogic : public vtkSlicerLogic
   vtkMRMLScalarVolumeNode *CreateLabelVolume (vtkMRMLScene *scene, vtkMRMLVolumeNode *volumeNode, char *name);
 
   // Description:
+  // Create a deep copy of a volume and add it to the scene
+  vtkMRMLScalarVolumeNode *CloneVolume (vtkMRMLScene *scene, vtkMRMLVolumeNode *volumeNode, char *name);
+
+  // Description:
   // Update MRML events
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
                                   unsigned long /*event*/, 
