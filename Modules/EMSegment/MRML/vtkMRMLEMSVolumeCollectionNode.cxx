@@ -178,6 +178,16 @@ AddVolume(const char* key, const char* volumeNodeID)
   this->Scene->AddReferencedNodeID(volumeNodeID, this);
 }
 
+void
+vtkMRMLEMSVolumeCollectionNode::
+SetNthVolumeNodeID(int n, const char* volumeNodeID)
+{
+  KeyIterator i = this->KeyList.begin();
+  vtksys_stl::advance(i, n);
+  this->KeyToVolumeNodeIDMap[*i] = volumeNodeID;
+  this->Scene->AddReferencedNodeID(volumeNodeID, this);
+}
+
 int
 vtkMRMLEMSVolumeCollectionNode::
 GetNumberOfVolumes()

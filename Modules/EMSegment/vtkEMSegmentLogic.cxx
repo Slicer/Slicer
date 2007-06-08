@@ -114,12 +114,12 @@ StartPreprocessing()
   }
 
   // set the input to the working data
-  //this->MRMLManager->GetWorkingDataNode()->SetInputTargetNodeID
-  //(this->MRMLManager->GetSegmenterNode()->GetTargetNodeID());
-  //this->MRMLManager->GetWorkingDataNode()->SetInputAtlasNodeID
-  //(this->MRMLManager->GetSegmenterNode()->GetAtlasNodeID());
+  this->MRMLManager->GetWorkingDataNode()->SetInputTargetNodeID
+    (this->MRMLManager->GetSegmenterNode()->GetTargetNodeID());
+  this->MRMLManager->GetWorkingDataNode()->SetInputAtlasNodeID
+    (this->MRMLManager->GetSegmenterNode()->GetAtlasNodeID());
 
-  //this->StartPreprocessingTargetIntensityNormalization();
+  this->StartPreprocessingTargetIntensityNormalization();
   //this->StartPreprocessingTargetToTargetRegistration();
   //this->StartPreprocessingAtlasToTargetRegistration();
 }
@@ -129,28 +129,39 @@ void
 vtkEMSegmentLogic::
 StartPreprocessingTargetIntensityNormalization()
 {
-  // get input target from working node
-  vtkMRMLEMSTargetNode* inputTarget = 
-    this->MRMLManager->GetWorkingDataNode()->GetInputTargetNode();
-  if (inputTarget == NULL)
-  {
-    vtkErrorMacro("Input target node is null, aborting!");
-  }
-  
-  // check that global parameters exist
-  if (!this->MRMLManager->GetGlobalParametersNode())
-  {
-    vtkErrorMacro("Global parameters node is null, aborting!");
-  }
+  std::cerr << "Starting intensity normalization..." << std::endl;
 
   // get a pointer to the mrml manager for easy access
   vtkEMSegmentMRMLManager* m = this->MRMLManager;
 
-  //
-  // clone intput to normalized target node, this will serve as output
-  // !!! todo
-  vtkMRMLEMSTargetNode* normalizedTarget = NULL; //!!!
-
+  // get input target from working node
+  vtkMRMLEMSTargetNode* inputTarget = 
+    m->GetWorkingDataNode()->GetInputTargetNode();
+  if (inputTarget == NULL)
+    {
+    vtkErrorMacro("Input target node is null, aborting!");
+    }
+  
+  // check that global parameters exist
+  if (!this->MRMLManager->GetGlobalParametersNode())
+    {
+    vtkErrorMacro("Global parameters node is null, aborting!");
+    }
+  
+  // set up the normalized target node
+  vtkMRMLEMSTargetNode* normalizedTarget = 
+    m->GetWorkingDataNode()->GetNormalizedTargetNode();
+  if (!normalizedTarget)
+    {
+    // clone intput to new normalized target node
+    std::cerr << "Cloning target node...";
+    normalizedTarget = m->CloneTargetNode(inputTarget, "NormalizedTarget");
+    std::cerr << "Done." << std::endl;
+    std::cerr << "Node is " << (normalizedTarget ? "Non-null" : "Null")
+              << std::endl;
+    std::cerr << "Number of images is: " << normalizedTarget->GetNumberOfVolumes() << std::endl;
+    }
+  
   //
   // apply normalization
   for (unsigned int i = 0; i < normalizedTarget->GetNumberOfVolumes(); ++i)
@@ -158,9 +169,11 @@ StartPreprocessingTargetIntensityNormalization()
     if (!m->GetNthTargetVolumeIntensityNormalizationEnabled(i))
       {
       // don't apply normaliation to this image
+      std::cerr << "Skipping image " << i << "." << std::endl;
       continue;
       }
-   
+    std::cerr << "Normalizing image " << i << "..." << std::endl;
+    
     // get image data
     vtkImageData* inData = 
       inputTarget->GetNthVolumeNode(i)->GetImageData();
@@ -213,7 +226,10 @@ StartPreprocessingTargetIntensityNormalization()
   this->MRMLManager->GetSegmenterNode()->
     SetTargetNodeID(normalizedTarget->GetID());
 
-  // !!! need to update intensity statistics if calculated !!!
+  std::cerr << "Normalization complete." << std::endl;
+
+  // intensity statistics, if computed from data, must be updated
+  m->UpdateIntensityDistributions();
 }
 
 //----------------------------------------------------------------------------

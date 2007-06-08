@@ -65,6 +65,11 @@ int main(int argc, char** argv)
   vtkEMSegmentLogic* emLogic = vtkEMSegmentLogic::New();
   emLogic->SetAndObserveMRMLScene(mrmlScene);
   emLogic->RegisterMRMLNodesWithScene();
+  vtkIntArray *emsEvents                 = vtkIntArray::New();
+  emsEvents->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
+  emsEvents->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
+  emLogic->SetAndObserveMRMLSceneEvents(mrmlScene, emsEvents);
+  emsEvents->Delete();
 
   try 
   {

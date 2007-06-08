@@ -23,6 +23,8 @@
 #include "vtkMatrix4x4.h"
 #include "vtkMath.h"
 
+#include "vtkSlicerVolumesLogic.h"
+
 // needed to translate between enums
 #include "EMLocalInterface.h"
 
@@ -619,6 +621,28 @@ GetTreeNodeDistributionSampleIntensityValue(vtkIdType nodeID,
                                static_cast<int>(vtkMath::Round(ijkPoint[2])),
                                0);
   return intensityValue;
+}
+
+//-----------------------------------------------------------------------------
+void
+vtkEMSegmentMRMLManager::
+UpdateIntensityDistributions()
+{
+  // iterate over tree nodes
+  typedef vtkstd::vector<vtkIdType>  NodeIDList;
+  typedef NodeIDList::const_iterator NodeIDListIterator;
+  NodeIDList nodeIDList;
+  this->GetListOfTreeNodeIDs(this->GetTreeRootNodeID(), nodeIDList);
+  for (NodeIDListIterator i = nodeIDList.begin(); i != nodeIDList.end(); ++i)
+    {
+    if (this->GetTreeParametersLeafNode(*i)->
+        GetDistributionSpecificationMethod() == 
+        vtkMRMLEMSTreeParametersLeafNode::
+        DistributionSpecificationManuallySample)
+      {
+      this->UpdateIntensityDistributionFromSample(*i);
+      }
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -2963,6 +2987,76 @@ GetSegmenterNode()
     {
     return this->Node->GetSegmenterNode();
     }
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLEMSTargetNode*
+vtkEMSegmentMRMLManager::
+CloneTargetNode(vtkMRMLEMSTargetNode* targetNode, char* name)
+{
+  if (targetNode == NULL)
+    {
+    return NULL;
+    }
+
+  // clone the target node
+  vtkMRMLEMSTargetNode* clonedTarget = vtkMRMLEMSTargetNode::New();
+  clonedTarget->Copy(targetNode);
+  clonedTarget->SetName(name);
+
+  // replace each image with a cloned image
+  vtkSlicerVolumesLogic* volumeLogic = vtkSlicerVolumesLogic::New();
+  for (unsigned int i = 0; i < clonedTarget->GetNumberOfVolumes(); ++i)
+  {    
+    vtkMRMLScalarVolumeNode* clonedVolume = 
+      volumeLogic->CloneVolume(this->MRMLScene,
+                               clonedTarget->GetNthVolumeNode(i),
+                               clonedTarget->GetNthVolumeNode(i)->GetName());
+    clonedTarget->SetNthVolumeNodeID(i, clonedVolume->GetID());
+  }
+
+  // add the target node to the scene
+  this->MRMLScene->AddNode(clonedTarget);
+
+  // clean up
+  volumeLogic->Delete();
+  clonedTarget->Delete();
+
+  return clonedTarget;
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLEMSAtlasNode*
+vtkEMSegmentMRMLManager::
+CloneAtlasNode(vtkMRMLEMSAtlasNode* atlasNode, char* name)
+{
+  if (atlasNode == NULL)
+    {
+    return NULL;
+    }
+
+  // clone the atlas node
+  vtkMRMLEMSAtlasNode* clonedAtlas = vtkMRMLEMSAtlasNode::New();
+  clonedAtlas->Copy(atlasNode);
+  clonedAtlas->SetName(name);
+
+  // replace each image with a cloned image
+  vtkSlicerVolumesLogic* volumeLogic = vtkSlicerVolumesLogic::New();
+  for (unsigned int i = 0; i < clonedAtlas->GetNumberOfVolumes(); ++i)
+  {
+    vtkMRMLScalarVolumeNode* clonedVolume = 
+      volumeLogic->CloneVolume(this->MRMLScene,
+                               clonedAtlas->GetNthVolumeNode(i),
+                               clonedAtlas->GetNthVolumeNode(i)->GetName());
+    clonedAtlas->SetNthVolumeNodeID(i, clonedVolume->GetID());
+  }
+
+  // add the atlas node to the scene
+  this->MRMLScene->AddNode(clonedAtlas);
+
+  // clean up
+  volumeLogic->Delete();
+  clonedAtlas->Delete();
 }
 
 //----------------------------------------------------------------------------

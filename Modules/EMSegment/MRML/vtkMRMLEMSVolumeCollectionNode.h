@@ -58,6 +58,8 @@ public:
   virtual int                GetIndexByVolumeNodeID(const char* nodeID);
 
   virtual const char*        GetNthVolumeNodeID(int n);
+  virtual void               SetNthVolumeNodeID(int n, const char* nodeID);
+
   virtual const char*        GetNthKey(int n);
   virtual vtkMRMLVolumeNode* GetNthVolumeNode(int n);
 

@@ -139,6 +139,9 @@ public:
   GetTreeNodeDistributionSampleIntensityValue(vtkIdType nodeID, 
                                               int tupleNumber, 
                                               vtkIdType volumeID);
+
+  virtual void     UpdateIntensityDistributions();
+
   // Step 5
 
   virtual int      GetTreeNodePrintWeight(vtkIdType nodeID);
@@ -443,6 +446,12 @@ public:
   virtual vtkMRMLEMSSegmenterNode*        GetSegmenterNode();
   virtual vtkMRMLVolumeNode*              GetVolumeNode(vtkIdType);
   virtual vtkMRMLEMSWorkingDataNode*      GetWorkingDataNode();
+
+  virtual vtkMRMLEMSTargetNode* CloneTargetNode(vtkMRMLEMSTargetNode* target,
+                                                char* name);
+
+  virtual vtkMRMLEMSAtlasNode*  CloneAtlasNode(vtkMRMLEMSAtlasNode* target,
+                                               char* name);
 
 private:
   vtkEMSegmentMRMLManager();
