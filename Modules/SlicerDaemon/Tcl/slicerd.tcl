@@ -175,11 +175,11 @@ proc slicerd_sock_fileevent {sock} {
             vtkMatrix4x4 ::slicerd::export_matrix
             $node GetRASToIJKMatrix ::slicerd::export_matrix
             ::slicerd::export_matrix Invert
-            set space_origin [format "(%.7g, %.7g, %.7g)" \
+            set space_origin [format "(%.15g, %.15g, %.15g)" \
                                   [::slicerd::export_matrix GetElement 0 3]\
                                   [::slicerd::export_matrix GetElement 1 3]\
                                   [::slicerd::export_matrix GetElement 2 3] ]
-            set space_directions [format "(%.7g, %.7g, %.7g) (%.7g, %.7g, %.7g) (%.7g, %.7g, %.7g)" \
+            set space_directions [format "(%.15g, %.15g, %.15g) (%.15g, %.15g, %.15g) (%.15g, %.15g, %.15g)" \
                                       [::slicerd::export_matrix GetElement 0 0]\
                                       [::slicerd::export_matrix GetElement 1 0]\
                                       [::slicerd::export_matrix GetElement 2 0]\
@@ -206,7 +206,7 @@ proc slicerd_sock_fileevent {sock} {
                 ::slicerd::measurement_frame_matrix Transpose
                 
                 # measurement frame in the nrrd header is columnwise 
-                set measurement_frame [format "(%.7g, %.7g, %.7g) (%.7g, %.7g, %.7g) (%.7g, %.7g, %.7g)" \
+                set measurement_frame [format "(%.15g, %.15g, %.15g) (%.15g, %.15g, %.15g) (%.15g, %.15g, %.15g)" \
                                            [::slicerd::measurement_frame_matrix GetElement 0 0]\
                                            [::slicerd::measurement_frame_matrix GetElement 1 0]\
                                            [::slicerd::measurement_frame_matrix GetElement 2 0]\
@@ -332,7 +332,7 @@ proc slicerd_sock_fileevent {sock} {
                 puts "Assume scalar"
                 set node [vtkMRMLScalarVolumeNode New]
             }
-          
+
             $node SetName $name
             $node SetDescription "Imported via slicerd"
             
@@ -346,21 +346,25 @@ proc slicerd_sock_fileevent {sock} {
             $idata AllocateScalars
 
             ::tcl_$sock SetImageData $idata
-            slicerd_parse_space_directions $node $space_origin $space_directions $space
+            #slicerd_parse_space_directions $node $space_origin $space_directions $space
 
             fconfigure $sock -translation binary -encoding binary
 
             if {  [lindex $kinds 0] == "3D-masked-symmetric-matrix" } {
+                # space directions contains "none", cut it out
+                slicerd_parse_space_directions $node $space_origin [lrange $space_directions 1 end] $space
                 ::tcl_$sock SetVolumeNode $node
                 slicerd_parse_space_measurement_frame_and_setMF ::tcl_$sock \
                     $measurement_frame $space
                 ::tcl_$sock ReceiveImageDataTensors $sock
-            } else {         
+            } else { 
+                slicerd_parse_space_directions $node $space_origin $space_directions $space        
                 ::tcl_$sock ReceiveImageDataScalars $sock
             }
             fconfigure $sock -translation auto
             $node SetAndObserveImageData $idata
             $idata Delete
+
             $::slicer3::MRMLScene AddNode $node
             [$::slicer3::ApplicationLogic GetSelectionNode] SetReferenceActiveVolumeID [$node GetID]
             $::slicer3::ApplicationLogic PropagateVolumeSelection
@@ -441,7 +445,7 @@ proc slicerd_parse_space_measurement_frame_and_setMF {tcl_sock mf_line space} {
 # - unfortunately, this is some nasty math to do in tcl
 #
 proc slicerd_parse_space_directions {node space_origin space_directions space} {
-
+    puts "NOW  slicerd_parse_space_directions is called"
     #
     # parse the 'space directions' and 'space origin' information into
     # a slicer RasToIjk and related matrices by telling the mrml node
