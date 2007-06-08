@@ -900,6 +900,7 @@ void vtkSlicerViewerWidget::UpdateModelsFromMRML()
     this->DisplayedModels.clear();
     this->DisplayedModelNodes.clear();
     this->AddAxisActors();
+    this->UpdateModelHierarchies();
     }
 
   // render slices first
