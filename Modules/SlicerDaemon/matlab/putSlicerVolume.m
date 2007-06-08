@@ -1,4 +1,4 @@
-function result = putSlicerVolume( volume )
+function result = putSlicerVolume( volume, transformDT_flag )
 
 % This is an example script that shows how to establish a writing pipe to a
 % running slicer daemon (start Slicer3 with option --daemon).
@@ -33,7 +33,17 @@ if p_w < 0
     error(['Error running popenr(',cmd_w,')']);
 end
 
-pwriteNrrd(p_w,volume)
+if nargin==2
+    if (strcmp(transformDT_flag,'transformDT'))
+        pwriteNrrd(p_w,volume,1)
+    else
+        pwriteNrrd(p_w,volume,0)
+    end
+else
+    pwriteNrrd(p_w,volume,0)
+end
+    
+%pwriteNrrd(p_w,volume)
 
 % close pipe
 popenw(p_w,[])
