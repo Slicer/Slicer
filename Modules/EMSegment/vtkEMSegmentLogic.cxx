@@ -164,7 +164,7 @@ StartPreprocessingTargetIntensityNormalization()
   
   //
   // apply normalization
-  for (unsigned int i = 0; i < normalizedTarget->GetNumberOfVolumes(); ++i)
+  for (int i = 0; i < normalizedTarget->GetNumberOfVolumes(); ++i)
     {
     if (!m->GetNthTargetVolumeIntensityNormalizationEnabled(i))
       {

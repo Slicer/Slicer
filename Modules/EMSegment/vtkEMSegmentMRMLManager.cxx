@@ -3006,7 +3006,7 @@ CloneTargetNode(vtkMRMLEMSTargetNode* targetNode, char* name)
 
   // replace each image with a cloned image
   vtkSlicerVolumesLogic* volumeLogic = vtkSlicerVolumesLogic::New();
-  for (unsigned int i = 0; i < clonedTarget->GetNumberOfVolumes(); ++i)
+  for (int i = 0; i < clonedTarget->GetNumberOfVolumes(); ++i)
   {    
     vtkMRMLScalarVolumeNode* clonedVolume = 
       volumeLogic->CloneVolume(this->MRMLScene,
@@ -3042,7 +3042,7 @@ CloneAtlasNode(vtkMRMLEMSAtlasNode* atlasNode, char* name)
 
   // replace each image with a cloned image
   vtkSlicerVolumesLogic* volumeLogic = vtkSlicerVolumesLogic::New();
-  for (unsigned int i = 0; i < clonedAtlas->GetNumberOfVolumes(); ++i)
+  for (int i = 0; i < clonedAtlas->GetNumberOfVolumes(); ++i)
   {
     vtkMRMLScalarVolumeNode* clonedVolume = 
       volumeLogic->CloneVolume(this->MRMLScene,
@@ -3057,6 +3057,8 @@ CloneAtlasNode(vtkMRMLEMSAtlasNode* atlasNode, char* name)
   // clean up
   volumeLogic->Delete();
   clonedAtlas->Delete();
+
+  return clonedAtlas;
 }
 
 //----------------------------------------------------------------------------
