@@ -16,6 +16,7 @@ SET( EMSegment_TUTORIAL_DIR
 # require a testing dataset that is not distributed by default with
 # Slicer3.  NB: The extra tests may take a long time and a large
 # amount of memory!!!  
+SET( RUN_VALGRIND_EMSEGMENT_TESTS 0)
 SET( RUN_EXTRA_SHORT_EMSEGMENT_TESTS 0)
 SET( RUN_EXTRA_LONG_EMSEGMENT_TESTS 0)
 
@@ -396,6 +397,18 @@ IF( NOT DISABLE_CXX_TESTING )
     cmake -E remove
     ${EMSegment_TEST_DIR}/EMSegmentMRML_ReadWriteTutorialScene.mrml
     )
+
+  IF ( RUN_VALGRIND_EMSEGMENT_TESTS )
+    ADD_TEST(
+      EMSegMRML_ValgrindTest
+      valgrind --leak-check=full 
+      ${EXECUTABLE_OUTPUT_PATH}/EMSegmentCommandLine
+      --verbose 
+      --mrmlSceneFileName 
+      ${EMSegment_TUTORIAL_DIR}/EMSegmentTutorialTemplate_small_normalizationOn.mrml
+      --dontWriteResults
+      )
+  ENDIF ( RUN_VALGRIND_EMSEGMENT_TESTS )
 
   IF ( RUN_EXTRA_SHORT_EMSEGMENT_TESTS )
     
