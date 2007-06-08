@@ -45,10 +45,10 @@ vtkMRMLEMSGlobalParametersNode::vtkMRMLEMSGlobalParametersNode()
   this->RegistrationDeformableType    = 0;
   this->RegistrationInterpolationType = 0; // !!! this needs to be specified
 
-  this->RegistrationAtlasVolumeKey    = NULL;
-  this->RegistrationTargetVolumeKey   = NULL;
+  this->RegistrationAtlasVolumeKey = NULL;
+  this->RegistrationTargetVolumeKey = NULL;
 
-  this->WorkingDirectory              = NULL;
+  this->WorkingDirectory = NULL;
 
   this->SaveIntermediateResults       = 0;
   this->SaveSurfaceModels             = 0;
@@ -67,6 +67,8 @@ vtkMRMLEMSGlobalParametersNode::vtkMRMLEMSGlobalParametersNode()
 vtkMRMLEMSGlobalParametersNode::~vtkMRMLEMSGlobalParametersNode()
 {
   this->SetWorkingDirectory(NULL);
+  this->SetRegistrationTargetVolumeKey(NULL);
+  this->SetRegistrationAtlasVolumeKey(NULL);
 }
 
 //-----------------------------------------------------------------------------

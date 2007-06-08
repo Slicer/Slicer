@@ -96,6 +96,10 @@ vtkMRMLSliceNode::~vtkMRMLSliceNode()
     {
     this->XYToRAS->Delete();
     }
+  if ( this->OrientationString )
+    {
+    delete [] this->OrientationString;
+    }
   this->SetLayoutName(NULL);
 }
 

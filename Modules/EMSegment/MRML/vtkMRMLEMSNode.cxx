@@ -46,6 +46,7 @@ vtkMRMLEMSNode::vtkMRMLEMSNode()
 vtkMRMLEMSNode::~vtkMRMLEMSNode()
 {
   this->SetSegmenterNodeID(NULL);
+  this->SetTemplateFilename(NULL);
 }
 
 //-----------------------------------------------------------------------------

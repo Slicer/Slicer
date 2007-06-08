@@ -92,10 +92,15 @@ vtkMRMLNode::~vtkMRMLNode()
     {
     delete [] this->ID;
     }
+  if (this->SceneRootDir)
+    {
+    delete [] this->SceneRootDir;
+    }
   if (this->MRMLObserverManager)
     {
     this->MRMLObserverManager->Delete();
     }
+
   // unregister and set null pointers.
   if ( this->MRMLCallbackCommand )
     {
