@@ -52,8 +52,10 @@ public:
     void GetRASToVTKMatrix(vtkMatrix4x4 *RASToVTK);
     void SendImageDataScalars(char *sockname);
     void SendImageDataTensors(char *sockname);
+    void SendImageDataTensors_UndoSlicerTransform(char *sockname);
     void ReceiveImageDataScalars(char *sockname);
     void ReceiveImageDataTensors(char *sockname);
+    void ReceiveImageDataTensors_DoSlicerTransform(char *sockname);
     const char *Execute (char *Command);
 
 
