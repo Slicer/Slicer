@@ -68,8 +68,8 @@ while { [gets stdin line] > 0 } {
 if { [lindex $kinds 0] == "3D-masked-symmetric-matrix" } {
     # tensor
     set isTensor 1
-    set space_directions [lrange $space_directions 1 end]
-    puts stderr "This is a tensor! space_directions $space_directions"
+    #set space_directions [lrange $space_directions 1 end]
+    #puts stderr "This is a tensor! space_directions $space_directions"
 } else {
     # assume scalar  
     set isTensor 0
