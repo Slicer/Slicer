@@ -1,5 +1,5 @@
 
-function pwriteNrrd( p, header )
+function pwriteNrrd( p, header ,transformDT)
 
 % write a nrrd image to a pipe opened by popenw
 
@@ -37,15 +37,17 @@ end
 popenw(p,10,'char');
 
 popenw(p,double('space directions: '),'char');
-if ( (length(header.spacedirections)==10) && isnan(header.spacedirections(1)) )
+if (strcmp(header.kinds(1), '3D-masked-symmetric-matrix'))
+%if ( (length(header.spacedirections)==10) && isnan(header.spacedirections(1)) )
     % assume tensor data
-    header.spacedirections = header.spacedirections(2:end);
+%    header.spacedirections = header.spacedirections(2:end);
     popenw(p,double('none '),'char');
 end
 for outerlooper = 1:3
     popenw(p,double('('),'char');
     for looper = 1:3
-        str = sprintf ( '%f', header.spacedirections( (outerlooper-1) * 3 + looper ) );
+       % str = sprintf ( '%f', header.spacedirections( (outerlooper-1) * 3 + looper ) );
+       str = sprintf ( '%f', header.spacedirections(looper,outerlooper));  
         popenw(p,double(str),'char');
         if (looper < 3)
             popenw(p,double(','),'char');
@@ -69,7 +71,8 @@ if (strcmp(header.kinds(1), '3D-masked-symmetric-matrix'))
     for outerlooper = 1:3
         popenw(p,double('('),'char');
         for looper = 1:3
-            str = sprintf ( '%f', header.measurementframe( (outerlooper-1) * 3 + looper ) );
+            %str = sprintf ( '%f', header.measurementframe( (outerlooper-1) * 3 + looper ) );
+            str = sprintf ( '%f', header.measurementframe(looper,outerlooper) );
             popenw(p,double(str),'char');
             if (looper < 3)
                 popenw(p,double(','),'char');
@@ -88,6 +91,10 @@ popenw(p,double([header.endian, 10]),'char');
 
 popenw(p,10,'char');
 popenType = nrrd2popenType( header.type );
+
+if (transformDT & strcmp(header.kinds(1),'3D-masked-symmetric-matrix'))
+    header = doSlicerReduce(header);
+end
 
 % popenw expects double data since the mex-way to access parameters only
 % works for double-pointers (see function mxGetPr)
