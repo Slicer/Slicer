@@ -106,13 +106,13 @@ IF( NOT DISABLE_CXX_TESTING )
     )
   ADD_TEST(
     EMSegCL_DiffDefaultNodesResult
-    cmake -E compare_files
+    ${CMAKE_COMMAND} -E compare_files
     ${EMSegment_TUTORIAL_DIR}/StandardData/StandardSegmentationResult_small.raw
     ${EMSegment_TEST_DIR}/EMSegCL_Result.raw
     )
   ADD_TEST(
     EMSegCL_RemoveDefaultNodesResult   
-    cmake -E remove
+    ${CMAKE_COMMAND} -E remove
     ${EMSegment_TEST_DIR}/EMSegCL_Result.raw ${EMSegment_TEST_DIR}/EMSegCL_Result.mhd
     )
 
@@ -129,13 +129,13 @@ IF( NOT DISABLE_CXX_TESTING )
     )
   ADD_TEST(
     EMSegCL_DiffNormalizeResult
-    cmake -E compare_files
+    ${CMAKE_COMMAND} -E compare_files
     ${EMSegment_TUTORIAL_DIR}/StandardData/StandardSegmentationResult_small.raw
     ${EMSegment_TEST_DIR}/EMSegCL_Result.raw
     )
   ADD_TEST(
     EMSegCL_RemoveNormalizeResult   
-    cmake -E remove
+    ${CMAKE_COMMAND} -E remove
     ${EMSegment_TEST_DIR}/EMSegCL_Result.raw ${EMSegment_TEST_DIR}/EMSegCL_Result.mhd
     )
 
@@ -154,13 +154,13 @@ IF( NOT DISABLE_CXX_TESTING )
     )
   ADD_TEST(
     EMSegCL_DiffSetParameterNodeResult
-    cmake -E compare_files
+    ${CMAKE_COMMAND} -E compare_files
     ${EMSegment_TUTORIAL_DIR}/StandardData/StandardSegmentationResult_small.raw
     ${EMSegment_TEST_DIR}/EMSegCL_Result.raw
     )
   ADD_TEST(
     EMSegCL_RemoveSetParameterNodeResult
-    cmake -E remove
+    ${CMAKE_COMMAND} -E remove
     ${EMSegment_TEST_DIR}/EMSegCL_Result.raw ${EMSegment_TEST_DIR}/EMSegCL_Result.mhd
     )
 
@@ -179,13 +179,13 @@ IF( NOT DISABLE_CXX_TESTING )
     )
   ADD_TEST(
     EMSegCL_DiffSetTargetImagesResult
-    cmake -E compare_files
+    ${CMAKE_COMMAND} -E compare_files
     ${EMSegment_TUTORIAL_DIR}/StandardData/StandardSegmentationResult_small.raw
     ${EMSegment_TEST_DIR}/EMSegCL_Result.raw
     )
   ADD_TEST(
     EMSegCL_RemoveSetTargetImagesResult
-    cmake -E remove
+    ${CMAKE_COMMAND} -E remove
     ${EMSegment_TEST_DIR}/EMSegCL_Result.raw ${EMSegment_TEST_DIR}/EMSegCL_Result.mhd
     )
 
@@ -202,13 +202,13 @@ IF( NOT DISABLE_CXX_TESTING )
     )
   ADD_TEST(
     EMSegCL_DiffSetResultImageResult
-    cmake -E compare_files
+    ${CMAKE_COMMAND} -E compare_files
     ${EMSegment_TUTORIAL_DIR}/StandardData/StandardSegmentationResult_small.raw
     ${EMSegment_TEST_DIR}/EMSegCL_Result.raw
     )
   ADD_TEST(
     EMSegCL_RemoveSetResultImageResult
-    cmake -E remove
+    ${CMAKE_COMMAND} -E remove
     ${EMSegment_TEST_DIR}/EMSegCL_Result.raw ${EMSegment_TEST_DIR}/EMSegCL_Result.mhd
     )
 
@@ -227,13 +227,13 @@ IF( NOT DISABLE_CXX_TESTING )
     )
   ADD_TEST(
     EMSegCL_DiffSetEverythingResult
-    cmake -E compare_files
+    ${CMAKE_COMMAND} -E compare_files
     ${EMSegment_TUTORIAL_DIR}/StandardData/StandardSegmentationResult_small.raw
     ${EMSegment_TEST_DIR}/EMSegCL_Result.raw
     )
   ADD_TEST(
     EMSegCL_RemoveSetEverythingResult
-    cmake -E remove
+    ${CMAKE_COMMAND} -E remove
     ${EMSegment_TEST_DIR}/EMSegCL_Result.raw ${EMSegment_TEST_DIR}/EMSegCL_Result.mhd
     )
 
@@ -369,13 +369,13 @@ IF( NOT DISABLE_CXX_TESTING )
     )
   ADD_TEST(
     EMSegMRML_DiffDefaultNodes
-    cmake -E compare_files
+    ${CMAKE_COMMAND} -E compare_files
     ${EMSegment_SOURCE_DIR}/Testing/TestData/DefaultMRMLNodes.mrml
     ${EMSegment_TEST_DIR}/EMSegMRML_EmptyMRMLScene.mrml
     )
   ADD_TEST(
     EMSegMRML_RemoveDefaultNodes
-    cmake -E remove
+    ${CMAKE_COMMAND} -E remove
     ${EMSegment_TEST_DIR}/EMSegMRML_EmptyMRMLScene.mrml
     )
 
@@ -388,13 +388,13 @@ IF( NOT DISABLE_CXX_TESTING )
     )
   ADD_TEST(
     EMSegMRML_DiffTutorialData
-    cmake -E compare_files
+    ${CMAKE_COMMAND} -E compare_files
     ${EMSegment_TUTORIAL_DIR}/EMSegmentTutorialTemplate_small_normalizationOn.mrml
     ${EMSegment_TEST_DIR}/EMSegmentMRML_ReadWriteTutorialScene.mrml
     )
   ADD_TEST(
     EMSegMRML_RemoveTutorialDataOutput
-    cmake -E remove
+    ${CMAKE_COMMAND} -E remove
     ${EMSegment_TEST_DIR}/EMSegmentMRML_ReadWriteTutorialScene.mrml
     )
 
