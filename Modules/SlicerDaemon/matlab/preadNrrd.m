@@ -1,6 +1,7 @@
-function headerInfo = preadNrrd( p )
+function headerInfo = preadNrrd( p, transformDT )
 
 % read a nrrd image from a pipe opened by popenr
+% input: p pipe, transformDT: boolean
 
 clear headerInfo;
 
@@ -12,23 +13,23 @@ headerInfo.space = '???';
 headerInfo.sizes = '???';
 headerInfo.endian = '???';
 headerInfo.encoding = '???';
-headerInfo.spaceorigin = [NaN; NaN; NaN];
+headerInfo.spaceorigin = [NaN NaN NaN];
 
-% tensor has to have headerInfo.kinds = [{'3D-masked-symmetric-matrix'}; \
-% {'space'};{'space'};{'space'}];
-headerInfo.kinds = [{'???'};{'???'};{'???'}];
+% tensor has to have headerInfo.kinds = [{'3D-masked-symmetric-matrix'} \
+% {'space'} {'space'} {'space'}];
+headerInfo.kinds = [{'???'} {'???'} {'???'}];
 headerInfo.data = '???';
 
 % headerInfo.thicknesses: don't care for now
 
 % space directions: tensor data is expected to have 10 values (the first 
 % one representing 'none', scalar data is expected to have 9 values 
-headerInfo.spacedirections = [NaN; NaN; NaN; NaN; NaN; NaN; NaN; NaN; NaN];
+headerInfo.spacedirections = [NaN NaN NaN; NaN NaN NaN; NaN NaN NaN];
 
 % these fields are optional:
-% headerInfo.spaceunits = [{'???'}; {'???'}; {'???'}];
-% headerInfo.centerings = [{'???'}; {'cell'}; {'cell'}; {'cell'}];
-% headerInfo.measurementframe = [NaN; NaN; NaN; NaN; NaN; NaN; NaN; NaN; NaN];
+% headerInfo.spaceunits = [{'???'} {'???'} {'???'}];
+% headerInfo.centerings = [{'???'} {'cell'} {'cell'} {'cell'}];
+% headerInfo.measurementframe = [NaN NaN NaN; NaN NaN NaN; NaN NaN NaN];
    
 
 cs = pgetl(p);
@@ -79,18 +80,23 @@ while( ~strcmp (cs, '') )
   elseif ( foundKeyword('SPACE DIRECTIONS:', cs ) )
     % in case of a tensor volume there are 4 dimensions, but only 3 of
     % them are in space
-    space_dir_tmp = strrep( cs(length('SPACE DIRECTIONS:')+1:end), 'none', 'NaN' );
+    % space_dir_tmp = strrep( cs(length('SPACE DIRECTIONS:')+1:end), 'none', 'NaN' );
+    % decided that the "none" is not needed in matlab, it's nicer to have a
+    % matrix
+    space_dir_tmp = strrep( cs(length('SPACE DIRECTIONS:')+1:end), 'none', '' );
     iSD = extractNumbersWithout( space_dir_tmp, {'(',')',','} );
     if (length(iSD)~=9 & length(iSD)~=10)
       fprintf('Warning: %i space directions found.\n', iSD );
     end
     
-    headerInfo.spacedirections = iSD;
+    headerInfo.spacedirections = [iSD(1) iSD(4) iSD(7); ...
+                                  iSD(2) iSD(5) iSD(8); ...
+                                  iSD(3) iSD(6) iSD(9)];
     
   elseif ( foundKeyword('SIZES:', cs ) )
     
     iSizes = sscanf( cs(length('SIZES:')+1:end), '%i' ); % parse sizes
-    headerInfo.sizes = iSizes;
+    headerInfo.sizes = iSizes';
     
   elseif ( foundKeyword('THICKNESSES:', cs ) )
 
@@ -105,7 +111,7 @@ while( ~strcmp (cs, '') )
   elseif ( foundKeyword('KINDS:', cs ) )
     
     headerInfo.kinds = extractStringList( cs(length('KINDS:')+1:end) );
-    
+        
   elseif ( foundKeyword('CENTERINGS:', cs ) )
     
     headerInfo.centerings = extractStringList( cs(length('CENTERINGS:')+1:end ) );
@@ -122,13 +128,15 @@ while( ~strcmp (cs, '') )
       fprintf('Warning: %i space directions found.\n', iSO );
     end
     
-    headerInfo.spaceorigin = iSO;
+    headerInfo.spaceorigin = iSO';
     
     
   elseif ( foundKeyword('MEASUREMENT FRAME:', cs ) )
     
     iMF = extractNumbersWithout( cs(length('MEASUREMENT FRAME:')+1:end), {'(',')',','} );
-    headerInfo.measurementframe = iMF;
+    headerInfo.measurementframe = [iMF(1) iMF(4) iMF(7); ...
+                                   iMF(2) iMF(5) iMF(8); ...
+                                   iMF(3) iMF(6) iMF(9)];
     
   elseif ( foundKeyword('MODALITY', cs ) )
     
@@ -182,8 +190,11 @@ dataSize = prod(headerInfo.sizes);
 % slicer sends data in little endian always.
 
 headerInfo.data = popenr(p, dataSize, popenType);
-headerInfo.data = reshape(headerInfo.data, headerInfo.sizes');
+headerInfo.data = reshape(headerInfo.data, headerInfo.sizes);
 
+if (transformDT & strcmp(headerInfo.kinds(1),'3D-masked-symmetric-matrix'))
+    headerInfo = undoSlicerReduce(headerInfo);
+end
 % correct data type according to nrrd data type
 switch headerInfo.type
 %switch popenType
