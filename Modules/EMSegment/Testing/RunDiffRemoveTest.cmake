@@ -3,7 +3,7 @@
 # temporary file(s).  Second, a temporary file is compared to a known
 # standard file.  Finally, the temporary file(s) is deleted.
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.4.6 FATAL_ERROR)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.4.2 FATAL_ERROR)
 
 MESSAGE(STATUS "test_name='${test_name}'")
 MESSAGE(STATUS "test_exe='${test_exe}'")
