@@ -68,6 +68,7 @@ SET(LIB_SRCS
   vtkSlicerVolumeDisplayWidget.cxx
   vtkSlicerScalarVolumeDisplayWidget.cxx
   vtkSlicerDiffusionWeightedVolumeDisplayWidget.cxx
+  vtkSlicerDiffusionTensorVolumeDisplayWidget.cxx
   vtkSlicerVolumeHeaderWidget.cxx
   vtkSlicerVolumeFileHeaderWidget.cxx
   vtkSlicerTransformManagerWidget.cxx
