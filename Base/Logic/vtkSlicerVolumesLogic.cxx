@@ -37,6 +37,7 @@
 #include "vtkMRMLVectorVolumeDisplayNode.h"
 #include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
 #include "vtkMRMLDiffusionWeightedVolumeDisplayNode.h"
+#include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
 
 vtkCxxRevisionMacro(vtkSlicerVolumesLogic, "$Revision: 1.9.12.1 $");
 vtkStandardNewMacro(vtkSlicerVolumesLogic);
@@ -193,6 +194,7 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
 {
   vtkMRMLVolumeNode *volumeNode = NULL;
   vtkMRMLVolumeDisplayNode *displayNode = NULL;
+  vtkMRMLDiffusionTensorDisplayPropertiesNode *displayPropertiesNode = NULL;
 
   vtkMRMLScalarVolumeNode *scalarNode = vtkMRMLScalarVolumeNode::New();
   vtkMRMLVectorVolumeNode *vectorNode = vtkMRMLVectorVolumeNode::New();
@@ -228,6 +230,7 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
     {
     vtkDebugMacro("Tensor HAS BEEN READ");
     displayNode = vtkMRMLDiffusionTensorVolumeDisplayNode::New();
+    displayPropertiesNode = vtkMRMLDiffusionTensorDisplayPropertiesNode::New();
     volumeNode = tensorNode;
     storageNode = storageNode1;
     }
@@ -275,6 +278,10 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
     volumeNode->SetScene(this->GetMRMLScene());
     storageNode->SetScene(this->GetMRMLScene());
     displayNode->SetScene(this->GetMRMLScene());
+    if (displayPropertiesNode)
+      {
+      displayPropertiesNode->SetScene(this->GetMRMLScene());
+      }
   
     //should we give the user the chance to modify this?.
     double range[2];
@@ -286,8 +293,12 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
     displayNode->SetLevel(0.5 * (range[1] + range[0]) );
 
     vtkDebugMacro("Adding node..");
-    this->GetMRMLScene()->AddNode(storageNode);  
-    this->GetMRMLScene()->AddNode(displayNode);  
+    this->GetMRMLScene()->AddNode(storageNode);
+    this->GetMRMLScene()->AddNode(displayNode);
+    if (displayPropertiesNode)
+      {
+      this->GetMRMLScene()->AddNode(displayPropertiesNode);
+      }
 
     //displayNode->SetDefaultColorMap();
     vtkSlicerColorLogic *colorLogic = vtkSlicerColorLogic::New();
@@ -310,6 +321,14 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
     
     volumeNode->SetStorageNodeID(storageNode->GetID());
     volumeNode->SetAndObserveDisplayNodeID(displayNode->GetID());
+    if (displayPropertiesNode)
+      {
+      vtkMRMLDiffusionTensorVolumeDisplayNode *dtiDisplayNode = vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(displayNode);
+      if (dtiDisplayNode)
+        {
+        dtiDisplayNode->SetAndObserveDiffusionTensorDisplayPropertiesNodeID(displayPropertiesNode->GetID());
+        }
+      }
 
     vtkDebugMacro("Name vol node "<<volumeNode->GetClassName());
     vtkDebugMacro("Display node "<<displayNode->GetClassName());
@@ -330,6 +349,10 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
   if (displayNode)
     {
     displayNode->Delete();
+    }
+  if (displayPropertiesNode)
+    {
+    displayPropertiesNode->Delete();
     }
   return volumeNode;
 }
