@@ -114,7 +114,7 @@ void vtkSlicerDiffusionTensorVolumeDisplayWidget::ProcessWidgetEvents ( vtkObjec
     vtkMRMLDiffusionTensorVolumeDisplayNode *displayNode = vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(this->GetVolumeDisplayNode());
     if (displayNode != NULL)
       {
-      const char *scalarSelection = ((vtkKWMenuButton *) (scalarMenuButton->GetWidget()))->GetValue();
+      const char *scalarSelection = scalarMenuButton->GetWidget()->GetWidget()->GetValue();
       displayNode->GetDiffusionTensorDisplayPropertiesNode()->SetScalarInvariant(this->ScalarModeMap[std::string(scalarSelection)]);
       }
     return;
@@ -133,7 +133,7 @@ void vtkSlicerDiffusionTensorVolumeDisplayWidget::ProcessWidgetEvents ( vtkObjec
     vtkMRMLDiffusionTensorVolumeDisplayNode *displayNode = vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(this->GetVolumeDisplayNode());
     if (displayNode != NULL)
       {
-      const char *glyphSelection = ((vtkKWMenuButton *) (glyphMenuButton->GetWidget()))->GetValue();
+      const char *glyphSelection = glyphMenuButton->GetWidget()->GetWidget()->GetValue();
       displayNode->GetDiffusionTensorDisplayPropertiesNode()->SetGlyphGeometry(this->GlyphModeMap[std::string(glyphSelection)]);
       }
     return;
@@ -335,14 +335,14 @@ void vtkSlicerDiffusionTensorVolumeDisplayWidget::UpdateWidgetFromMRML ()
     {
     if (propNode != NULL)
       {
-      ((vtkKWMenuButton *) (this->ScalarModeMenu->GetWidget()))->SetValue(propNode->GetScalarInvariantAsString());
+      this->ScalarModeMenu->GetWidget()->GetWidget()->SetValue(propNode->GetScalarInvariantAsString());
       }
     }
   if ( this->GlyphModeMenu )
     {
     if (propNode != NULL)
       {
-      ((vtkKWMenuButton *) (this->GlyphModeMenu->GetWidget()))->SetValue(propNode->GetGlyphGeometryAsString());
+      this->GlyphModeMenu->GetWidget()->GetWidget()->SetValue(propNode->GetGlyphGeometryAsString());
       }
     }
   if ( this->GlyphButton )
@@ -469,11 +469,23 @@ void vtkSlicerDiffusionTensorVolumeDisplayWidget::CreateWidget ( )
   glyphMenuButton->Create();
 
   vtkMRMLDiffusionTensorVolumeDisplayNode *displayNode = vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(this->GetVolumeDisplayNode());
+  vtkMRMLDiffusionTensorDisplayPropertiesNode *propNode = NULL;
+
+  if (displayNode == NULL)
+    {
+    //Create dummy display Node to set init variables
+    displayNode = vtkMRMLDiffusionTensorVolumeDisplayNode::New();
+    }
 
   if (displayNode != NULL)
     {
     vtkMRMLDiffusionTensorDisplayPropertiesNode *propNode =
   vtkMRMLDiffusionTensorDisplayPropertiesNode::SafeDownCast(displayNode->GetDiffusionTensorDisplayPropertiesNode());
+    if (propNode == NULL)
+      {
+      //Create dummy display Node to set
+      propNode = vtkMRMLDiffusionTensorDisplayPropertiesNode::New();
+      }
 
     if (propNode != NULL)
       {
@@ -481,29 +493,33 @@ void vtkSlicerDiffusionTensorVolumeDisplayWidget::CreateWidget ( )
       int initIdx = propNode->GetFirstScalarInvariant();
       int endIdx = propNode->GetLastScalarInvariant();
       int currentVal = propNode->GetScalarInvariant();
+      this->ScalarModeMap.clear();
+
       for (int k=initIdx ; k<=endIdx ; k++)
         {
         propNode->SetScalarInvariant(k);
         const char* tag = propNode->GetScalarInvariantAsString();
         this->ScalarModeMap[std::string(tag)]=k;
-        ((vtkKWMenuButton *) (scalarMenuButton->GetWidget()))->GetMenu()->AddRadioButton(tag);
+        scalarMenuButton->GetWidget()->GetWidget()->GetMenu()->AddRadioButton(tag);
         }
       // Restore inital scalar Invariant value
       propNode->SetScalarInvariant(currentVal);
+      scalarMenuButton->GetWidget()->GetWidget()->SetValue(propNode->GetScalarInvariantAsString());
 
       initIdx = propNode->GetFirstGlyphGeometry();
       endIdx = propNode->GetLastGlyphGeometry();
       currentVal = propNode->GetGlyphGeometry();
+      this->GlyphModeMap.clear();
       for (int k=initIdx ; k<=endIdx ; k++)
         {
         propNode->SetGlyphGeometry(k);
         const char *tag = propNode->GetGlyphGeometryAsString();
         this->GlyphModeMap[std::string(tag)]=k;
-        ((vtkKWMenuButton *) (glyphMenuButton->GetWidget()))->GetMenu()->AddRadioButton(tag);
+        glyphMenuButton->GetWidget()->GetWidget()->GetMenu()->AddRadioButton(tag);
         }
       //Restore inital scalar Invariant value
       propNode->SetScalarInvariant(currentVal);
-
+      glyphMenuButton->GetWidget()->GetWidget()->SetValue(propNode->GetGlyphGeometryAsString());
       }
     //Set glyph button
     if (displayNode->GetVisualizationMode() == vtkMRMLDiffusionTensorVolumeDisplayNode::visModeBoth)
@@ -573,4 +589,16 @@ void vtkSlicerDiffusionTensorVolumeDisplayWidget::CreateWidget ( )
 
     //volDisplayFrame->Delete();
 
+    //Delete dummy display nodes
+    if (displayNode != NULL)
+      {
+       if (propNode != displayNode->GetDiffusionTensorDisplayPropertiesNode() && propNode != NULL)
+        {
+        propNode->Delete();
+        }
+       if (displayNode != this->GetVolumeDisplayNode() )
+        {
+        displayNode->Delete();
+        }
+      }
 }
