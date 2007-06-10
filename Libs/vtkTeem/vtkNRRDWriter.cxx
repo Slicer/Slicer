@@ -21,6 +21,7 @@ vtkNRRDWriter::vtkNRRDWriter()
   this->IJKToRASMatrix = vtkMatrix4x4::New();
   this->MeasurementFrameMatrix = vtkMatrix4x4::New();
   this->UseCompression = 1;
+  this->DiffusionWeigthedData = 0;
   this->FileType = VTK_BINARY;
   this->WriteErrorOff();
 }
@@ -78,6 +79,7 @@ void vtkNRRDWriter::vtkImageDataInfoToNrrdInfo(vtkImageData *in, int &nrrdKind, 
 {
 
   vtkDataArray *array;
+  this->DiffusionWeigthedData = 0;
   if ((array = static_cast<vtkDataArray *> (in->GetPointData()->GetScalars())))
     {
     numComp = array->GetNumberOfComponents();
@@ -101,9 +103,10 @@ void vtkNRRDWriter::vtkImageDataInfoToNrrdInfo(vtkImageData *in, int &nrrdKind, 
       default:
         int numGrad = this->DiffusionGradients->GetNumberOfTuples();
         int numBValues = this->BValues->GetNumberOfTuples();
-        if (numGrad == numBValues && numGrad == numComp)
+        if (numGrad == numBValues && numGrad == numComp && numGrad>6)
           {
           nrrdKind = nrrdKindList;
+          this->DiffusionWeigthedData = 1;
           }
         else
           {
@@ -270,7 +273,7 @@ void vtkNRRDWriter::WriteData()
     }
 
   // 2. Take care about diffusion data
-  if (this->DiffusionGradients && this->BValues)
+  if (this->DiffusionWeigthedData)
     {
     int numGrad = this->DiffusionGradients->GetNumberOfTuples();
     int numBValues = this->BValues->GetNumberOfTuples();
@@ -299,8 +302,8 @@ void vtkNRRDWriter::WriteData()
         sprintf(value,"%f %f %f",grad[0]*factor, grad[1]*factor, grad[2]*factor);
         nrrdKeyValueAdd(nrrd,key, value);
         }
-     }
-  }
+      }
+    }
 
   // set encoding for data: compressed (raw), (uncompressed) raw, or ascii
   if ( this->GetUseCompression() && nrrdEncodingGzip->available() )
