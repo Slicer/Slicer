@@ -504,7 +504,11 @@ void vtkSlicerSliceLayerLogic::DiffusionTensorVolumeNodeUpdateTransforms()
 
   if (dtiVolumeDisplayNode)
     {
-    //this->DTIMathematics->SetOperation(dtiVolumeDisplayNode->GetScalarMode());
+    vtkMRMLDiffusionTensorDisplayPropertiesNode *propNode = vtkMRMLDiffusionTensorDisplayPropertiesNode::SafeDownCast(dtiVolumeDisplayNode->GetDiffusionTensorDisplayPropertiesNode());
+      if (propNode)
+        {
+        this->DTIMathematics->SetOperation(propNode->GetScalarInvariant());
+        }
     interpolate = dtiVolumeDisplayNode->GetInterpolate();
     if (dtiVolumeDisplayNode->GetColorNode())
       {
