@@ -16,19 +16,23 @@ SET( EMSegment_TUTORIAL_DIR
 # require a testing dataset that is not distributed by default with
 # Slicer3.  NB: The extra tests may take a long time and a large
 # amount of memory!!!  
-SET( EMSEG_RUN_VALGRIND_TESTS    0 
-  CACHE PATH "Enable EMSegment Valgrind test."
+SET( EMSEG_RUN_VALGRIND_TESTS    OFF
+  CACHE BOOL "Enable EMSegment Valgrind test." FORCE
   )
-SET(EMSEG_RUN_EXTRA_SHORT_TESTS  0 
-  CACHE PATH "Enable EMSegment extra, short tests."
+MARK_AS_ADVANCED(EMSEG_RUN_VALGRIND_TESTS)
+SET(EMSEG_RUN_EXTRA_SHORT_TESTS  OFF
+  CACHE BOOL "Enable EMSegment extra, short tests." FORCE
   )
-SET(EMSEG_RUN_EXTRA_LONG_TESTS   0 
-  CACHE PATH "Enable EMSegment extra, long tests."
+MARK_AS_ADVANCED(EMSEG_RUN_EXTRA_SHORT_TESTS)
+SET(EMSEG_RUN_EXTRA_LONG_TESTS   OFF
+  CACHE BOOL "Enable EMSegment extra, long tests." FORCE
   )
+MARK_AS_ADVANCED(EMSEG_RUN_EXTRA_LONG_TESTS)
 
 # Set to 1 to remove temporary test output files
-SET(EMSEG_REMOVE_TMP_TEST_DATA   1  
-  CACHE PATH "Remove EMSegment temporary test data.")
+SET(EMSEG_REMOVE_TMP_TEST_DATA   OFF
+  CACHE BOOL "Remove EMSegment temporary test data." FORCE)
+MARK_AS_ADVANCED(EMSEG_REMOVE_TMP_TEST_DATA)
 
 IF( NOT DISABLE_CXX_TESTING )
 
