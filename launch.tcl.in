@@ -144,17 +144,17 @@ if { $installed } {
   } else {
     set ::SLICER3_REAL $::SLICER_HOME/bin/Slicer3-real
   }
-  set ::env(VTK_DIR)           [file normalize @VTK_DIR@]
-  set ::env(VTK_BIN_DIR)       [file normalize @VTK_DIR@/bin/$::BUILD_SUBDIR]
-  set ::env(KWWidgets_DIR)     [file normalize @KWWidgets_DIR@]
-  set ::env(KWWidgets_LIB_DIR) [file normalize @KWWidgets_DIR@/bin/$::BUILD_SUBDIR]
-  set ::env(KWWidgets_BIN_DIR) [file normalize @KWWidgets_DIR@/bin/$::BUILD_SUBDIR]
-  set ::env(ITK_BIN_DIR)       [file normalize @ITK_DIR@/bin/$::BUILD_SUBDIR]
+  set ::env(VTK_DIR)           [file normalize "@VTK_DIR@"]
+  set ::env(VTK_BIN_DIR)       [file normalize "@VTK_DIR@/bin/$::BUILD_SUBDIR"]
+  set ::env(KWWidgets_DIR)     [file normalize "@KWWidgets_DIR@"]
+  set ::env(KWWidgets_LIB_DIR) [file normalize "@KWWidgets_DIR@/bin/$::BUILD_SUBDIR"]
+  set ::env(KWWidgets_BIN_DIR) [file normalize "@KWWidgets_DIR@/bin/$::BUILD_SUBDIR"]
+  set ::env(ITK_BIN_DIR)       [file normalize "@ITK_DIR@/bin/$::BUILD_SUBDIR"]
   set ::env(SANDBOX_BIN_DIR)   ""
-  set ::env(TCL_LIBRARY)       [file normalize @TCL_LIBRARY@]
+  set ::env(TCL_LIBRARY)       [file normalize "@TCL_LIBRARY@"]
   set ::env(TCL_DIR)           [file normalize [file dirname [file dirname $::env(TCL_LIBRARY)]]]
-  set ::env(TEEM_DIR)          [file normalize @TEEM_DIR@/bin/$::BUILD_SUBDIR]
-  set ::env(SLICER_BIN_DIR)    [file normalize @LIBRARY_OUTPUT_PATH@/$::BUILD_SUBDIR]
+  set ::env(TEEM_DIR)          [file normalize "@TEEM_DIR@/bin/$::BUILD_SUBDIR"]
+  set ::env(SLICER_BIN_DIR)    [file normalize "@LIBRARY_OUTPUT_PATH@/$::BUILD_SUBDIR"]
 
 }
 
