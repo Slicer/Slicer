@@ -260,6 +260,11 @@ CONFIGURE_FILE(
   ${SlicerBaseGUITcl_DIR}/Loader.tcl
   COPYONLY
 )
+CONFIGURE_FILE(
+  ${Slicer3_SOURCE_DIR}/Base/GUI/Tcl/MRMLWatcher.tcl
+  ${SlicerBaseGUITcl_DIR}/MRMLWatcher.tcl
+  COPYONLY
+)
 
 # Python settings
 IF(USE_PYTHON AND PYTHON_INCLUDE_PATH)
