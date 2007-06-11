@@ -1182,9 +1182,12 @@ void vtkSlicerFiducialsGUI::UpdateElement(int row, int col, char * str)
                 float * xyz = activeFiducialListNode->GetNthFiducialXYZ(row);
                 // now set the new one
                 float newCoordinate = atof(str);
-                if (col == this->XColumn) { activeFiducialListNode->SetNthFiducialXYZ(row, newCoordinate, xyz[1], xyz[2]); }
-                if (col == this->YColumn) { activeFiducialListNode->SetNthFiducialXYZ(row, xyz[0], newCoordinate, xyz[2]); }
-                if (col == this->ZColumn) { activeFiducialListNode->SetNthFiducialXYZ(row, xyz[0], xyz[1], newCoordinate); }
+                if ( xyz )
+                  {
+                  if (col == this->XColumn) { activeFiducialListNode->SetNthFiducialXYZ(row, newCoordinate, xyz[1], xyz[2]); }
+                  if (col == this->YColumn) { activeFiducialListNode->SetNthFiducialXYZ(row, xyz[0], newCoordinate, xyz[2]); }
+                  if (col == this->ZColumn) { activeFiducialListNode->SetNthFiducialXYZ(row, xyz[0], xyz[1], newCoordinate); }
+                  }            
             }
             else if (col >= this->OrWColumn  && col <= this->OrZColumn)
             {
