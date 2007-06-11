@@ -307,7 +307,7 @@ void vtkSlicerDiffusionWeightedVolumeDisplayWidget::UpdateWidgetFromMRML ()
       }
     }
   
-  if (displayNode != NULL) 
+  if (displayNode != NULL  && this->WindowLevelThresholdEditor != NULL) 
     {
     this->WindowLevelThresholdEditor->SetWindowLevel(
           displayNode->GetWindow(), displayNode->GetLevel() );
