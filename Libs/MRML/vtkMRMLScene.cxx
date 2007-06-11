@@ -610,7 +610,11 @@ int vtkMRMLScene::Commit(const char* url)
   int indent=0, deltaIndent;
   
   // Open file
-  file.open(url);
+#ifdef _WIN32
+  file.open(url, std::ios::out | std::ios::binary);
+#else
+  file.open(url, std::ios::out);
+#endif
   if (file.fail()) 
     {
     vtkErrorMacro("Write: Could not open file " << url);
