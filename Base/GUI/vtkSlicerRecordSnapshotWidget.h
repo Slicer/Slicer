@@ -53,8 +53,8 @@ public:
   // removes observers on widgets in the class
   virtual void RemoveWidgetObservers ( );
 
-  virtual void AddMRMLObseervers();
-  virtual void RemoveMRMLObseervers();
+  virtual void AddMRMLObservers();
+  virtual void RemoveMRMLObservers();
 
 protected:
   vtkSlicerRecordSnapshotWidget();

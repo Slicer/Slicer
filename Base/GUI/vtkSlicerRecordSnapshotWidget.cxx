@@ -83,12 +83,12 @@ void vtkSlicerRecordSnapshotWidget::ProcessWidgetEvents ( vtkObject *caller,
   if (this->StartRecordButton == vtkKWPushButton::SafeDownCast(caller)  && event == vtkKWPushButton::InvokedEvent )
     {
     this->Sanpshots.clear();
-    this->AddMRMLObseervers();
+    this->AddMRMLObservers();
     }
 
   else if (this->StopRecordButton == vtkKWPushButton::SafeDownCast(caller)  && event == vtkKWPushButton::InvokedEvent )
     {
-    this->RemoveMRMLObseervers();
+    this->RemoveMRMLObservers();
     }
 
 
@@ -194,7 +194,7 @@ void vtkSlicerRecordSnapshotWidget::CreateWidget ( )
   
   if (this->MRMLScene != NULL)
     {
-    //this->AddMRMLObseervers();
+    //this->AddMRMLObservers();
     }
 
   this->StartRecordButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -207,7 +207,7 @@ void vtkSlicerRecordSnapshotWidget::CreateWidget ( )
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerRecordSnapshotWidget::AddMRMLObseervers()
+void vtkSlicerRecordSnapshotWidget::AddMRMLObservers()
 {
   int nnodes = this->MRMLScene->GetNumberOfNodes();
   vtkMRMLNode *node;
@@ -216,13 +216,13 @@ void vtkSlicerRecordSnapshotWidget::AddMRMLObseervers()
     node = this->MRMLScene->GetNthNode(n);
     if (node && !node->IsA("vtkMRMLSceneSnapshotNode"))
       {
-      node->AddObserver(vtkCommand::ModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand );
+      node->AddObserver(vtkCommand::AnyEvent, (vtkCommand *)this->MRMLCallbackCommand );
       }
     }
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerRecordSnapshotWidget::RemoveMRMLObseervers()
+void vtkSlicerRecordSnapshotWidget::RemoveMRMLObservers()
 {
   int nnodes = this->MRMLScene->GetNumberOfNodes();
   vtkMRMLNode *node;
@@ -231,7 +231,7 @@ void vtkSlicerRecordSnapshotWidget::RemoveMRMLObseervers()
     node = this->MRMLScene->GetNthNode(n);
     if (node && !node->IsA("vtkMRMLSceneSnapshotNode"))
       {
-      node->RemoveObservers(vtkCommand::ModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand );
+      node->RemoveObservers(vtkCommand::AnyEvent, (vtkCommand *)this->MRMLCallbackCommand );
       }
     }
 }
