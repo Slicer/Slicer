@@ -100,7 +100,7 @@ void vtkSlicerRecordSnapshotWidget::ProcessWidgetEvents ( vtkObject *caller,
       snapshotNode->RestoreScene();
       // Cause Render
       //this->Script("sleep 2");
-      //this->Script("vtkTemp503 Render");
+      this->Script("update");
       }
     }
 
