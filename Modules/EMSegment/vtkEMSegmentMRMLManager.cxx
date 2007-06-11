@@ -1741,7 +1741,7 @@ RemoveTargetSelectedVolume(vtkIdType volumeID)
 //----------------------------------------------------------------------------
 void
 vtkEMSegmentMRMLManager::
-MoveTargetSelectedVolume(int fromIndex, int toIndex)
+MoveNthTargetSelectedVolume(int fromIndex, int toIndex)
 {
   // make sure the indices make sense
   if (fromIndex < 0 || fromIndex >= this->GetTargetNumberOfSelectedVolumes())
@@ -1760,6 +1760,21 @@ MoveTargetSelectedVolume(int fromIndex, int toIndex)
 
   // propogate change to parameters nodes
   this->PropogateMovementOfSelectedTargetImage(fromIndex, toIndex);
+}
+
+//----------------------------------------------------------------------------
+void
+vtkEMSegmentMRMLManager::
+MoveTargetSelectedVolume(vtkIdType volumeID, int toIndex)
+{
+  // get this image's index in the target list
+  int imageIndex = this->GetTargetVolumeIndex(volumeID);
+  if (imageIndex < 0)
+    {
+    vtkErrorMacro("Volume not present in target: " << volumeID);
+    return;
+    }
+  this->MoveNthTargetSelectedVolume(imageIndex, toIndex);
 }
 
 //----------------------------------------------------------------------------
