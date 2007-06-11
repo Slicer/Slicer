@@ -1,0 +1,15 @@
+NRRD0005
+# Complete NRRD file format specification at:
+# http://teem.sourceforge.net/nrrd/format.html
+type: float
+dimension: 4
+space: right-anterior-superior
+sizes: 7 64 32 16
+space directions: none (3.125,0,0) (0,6.25,0) (0,0,12.5)
+centerings: ??? cell cell cell
+kinds: 3D-masked-symmetric-matrix space space space
+endian: little
+encoding: gzip
+space origin: (-98.4375,-96.875,-93.75)
+measurement frame: (0.428571,0.857143,-0.285714) (-0.285714,0.428571,0.857143) (0.857143,-0.285714,0.428571)
+data file: helix-DTI.raw.gz
