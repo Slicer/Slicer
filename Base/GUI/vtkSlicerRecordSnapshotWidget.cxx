@@ -94,6 +94,7 @@ void vtkSlicerRecordSnapshotWidget::ProcessWidgetEvents ( vtkObject *caller,
 
   else if (this->ReplayButton == vtkKWPushButton::SafeDownCast(caller)  && event == vtkKWPushButton::InvokedEvent )
     {
+    this->MRMLScene->SaveStateForUndo();
     for (unsigned int i=0; i<this->Sanpshots.size(); i++)
       {
       vtkMRMLSceneSnapshotNode *snapshotNode = this->Sanpshots[i];

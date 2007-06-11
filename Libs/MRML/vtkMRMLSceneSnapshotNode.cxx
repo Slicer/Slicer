@@ -195,9 +195,35 @@ void vtkMRMLSceneSnapshotNode::RestoreScene()
     return;
     }
 
-  vtkMRMLNode *node = NULL;
+  int nnodesSanpshot = this->Nodes->GetNumberOfItems();
   int n;
-  for (n=0; n < this->Nodes->GetNumberOfItems(); n++) 
+  vtkMRMLNode *node = NULL;
+
+  // remove nodes in the scene which are not stored in the snapshot
+  std::map<std::string, vtkMRMLNode*> snapshotMap;
+  for (n=0; n<nnodesSanpshot; n++) 
+    {
+    node  = dynamic_cast < vtkMRMLNode *>(this->Nodes->GetItemAsObject(n));
+    if (node) 
+      {
+      snapshotMap[node->GetID()] = node;
+      }
+    }
+  int nnodesScene = this->Scene->GetNumberOfNodes();
+  for (n=0; n<nnodesScene; n++)
+    {
+    node = this->Scene->GetNthNode(n);
+    if (node)
+      {
+      std::map<std::string, vtkMRMLNode*>::iterator iter = snapshotMap.find(std::string(node->GetID()));
+      if (iter == snapshotMap.end() && !node->IsA("vtkMRMLSceneSnapshotNode"))
+        {
+        this->Scene->RemoveNode(node);
+        }
+      }
+    }
+
+  for (n=0; n < nnodesSanpshot; n++) 
     {
     node = (vtkMRMLNode*)this->Nodes->GetItemAsObject(n);
     if (node)
@@ -206,6 +232,10 @@ void vtkMRMLSceneSnapshotNode::RestoreScene()
       if (snode)
         {
         snode->CopyWithSingleModifiedEvent(node);
+        }
+      else 
+        {
+        this->Scene->AddNode(node);
         }
       }
     }

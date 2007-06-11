@@ -120,6 +120,7 @@ void vtkSlicerSceneSnapshotWidget::ProcessWidgetEvents ( vtkObject *caller,
       vtkMRMLSceneSnapshotNode::SafeDownCast(this->SnapshotSelectorWidget->GetSelected());
     if (snapshotNode)
       {
+      this->MRMLScene->SaveStateForUndo();
       snapshotNode->RestoreScene();
       }
     }

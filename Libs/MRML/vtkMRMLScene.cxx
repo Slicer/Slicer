@@ -1141,14 +1141,7 @@ void vtkMRMLScene::SaveStateForUndo (vtkCollection* nodes)
 //------------------------------------------------------------------------------
 void vtkMRMLScene::SaveStateForUndo ()
 {
-  if (this->InUndo) 
-    {
-    return;
-    }
-
-  this->ClearRedoStack();
-  this->SetUndoOn();
-  this->PushIntoUndoStack();
+  this->SaveStateForUndo(this->CurrentScene);
 } 
 
 //------------------------------------------------------------------------------
