@@ -7,7 +7,13 @@
 #include "vtkEMSegmentLogic.h"
 #include "vtkEMSegmentMRMLManager.h"
 #include "vtkMRMLEMSSegmenterNode.h"
+
+#ifdef EM_CL_GUI
+#include "EMSegmentCommandLine_GUIVersionCLP.h"
+#else
 #include "EMSegmentCommandLineCLP.h"
+#endif
+
 #include <vtksys/SystemTools.hxx>
 #include <stdexcept>
 
@@ -305,6 +311,36 @@ int main(int argc, char** argv)
   //
   // parse arguments using the CLP system; this creates variables.
   PARSE_ARGS;
+
+#ifdef EM_CL_GUI
+  // the GUI as a different interface than the command line; adapt.
+  // This is due to limitiations of the auto-generated gui and because
+  // we want the gui version to be very simple.
+  std::vector<std::string> targetVolumeFileNames;
+  if (!targetVolumeFileName1.empty())
+    {
+    targetVolumeFileNames.push_back(targetVolumeFileName1);
+    }
+  if (!targetVolumeFileName2.empty())
+    {
+    targetVolumeFileNames.push_back(targetVolumeFileName1);
+    }
+  if (!targetVolumeFileName3.empty())
+    {
+    targetVolumeFileNames.push_back(targetVolumeFileName1);
+    }
+  if (!targetVolumeFileName4.empty())
+    {
+    targetVolumeFileNames.push_back(targetVolumeFileName1);
+    }
+  if (!targetVolumeFileName5.empty())
+    {
+    targetVolumeFileNames.push_back(targetVolumeFileName1);
+    }
+  std::string resultStandardVolumeFileName = "";
+  std::string generateEmptyMRMLSceneAndQuit = "";
+  bool dontWriteResults = false;
+#endif
 
   bool useDefaultParametersNode = parametersMRMLNodeName.empty();
   bool useDefaultTarget         = targetVolumeFileNames.empty();
