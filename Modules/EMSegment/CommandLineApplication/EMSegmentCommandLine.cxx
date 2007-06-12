@@ -311,6 +311,8 @@ int main(int argc, char** argv)
   bool useDefaultOutput         = resultVolumeFileName.empty();
   bool segmentationSucceeded    = true;
 
+  if (verbose) std::cerr << "Starting EMSegment Command Line." << std::endl;
+
   if (!generateEmptyMRMLSceneAndQuit.empty())
     {
     GenerateEmptyMRMLScene(generateEmptyMRMLSceneAndQuit.c_str());

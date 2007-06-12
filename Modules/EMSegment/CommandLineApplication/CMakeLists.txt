@@ -27,19 +27,23 @@ TARGET_LINK_LIBRARIES(
   vtkCommon
   )
 
-# output libs should to in Plugins
-#IF (Slicer3_SOURCE_DIR)
-#  SET(LIBRARY_OUTPUT_PATH "${SLICER_LIBRARIES_DIR}/Plugins")
-#  SET(EXECUTABLE_OUTPUT_PATH "${SLICER_LIBRARIES_DIR}/Plugins")
-#ENDIF (Slicer3_SOURCE_DIR)
+SET( EMSEG_GENERATE_CLGUI OFF BOOL )
 
-# pluggable library
-#ADD_LIBRARY( ${CLP_MODULE}Lib SHARED ${${CLP_MODULE}_SOURCE} )
-#SET_TARGET_PROPERTIES ( ${CLP_MODULE}Lib 
-#  PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint" 
-#  )
-#TARGET_LINK_LIBRARIES( 
-#  ${CLP_MODULE}Lib
-#  EMSegment
-#  vtkCommon
-#  )
+IF ( EMSEG_GENERATE_CLGUI )
+  # output libs should to in Plugins
+  IF (Slicer3_SOURCE_DIR)
+    SET(LIBRARY_OUTPUT_PATH "${SLICER_LIBRARIES_DIR}/Plugins")
+    #  SET(EXECUTABLE_OUTPUT_PATH "${SLICER_LIBRARIES_DIR}/Plugins")
+  ENDIF (Slicer3_SOURCE_DIR)
+  
+  # pluggable library
+  ADD_LIBRARY( ${CLP_MODULE}Lib SHARED ${${CLP_MODULE}_SOURCE} )
+  SET_TARGET_PROPERTIES ( ${CLP_MODULE}Lib 
+    PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint -DEM_CL_GUI"
+    )
+  TARGET_LINK_LIBRARIES( 
+    ${CLP_MODULE}Lib
+    EMSegment
+    vtkCommon
+    )
+ENDIF ( EMSEG_GENERATE_CLGUI )

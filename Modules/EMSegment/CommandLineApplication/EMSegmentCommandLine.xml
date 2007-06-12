@@ -34,7 +34,8 @@
       <longflag>resultVolumeFileName</longflag>
 
       <description>The file name that the segmentation result volume will be written to.</description>
-      <label>Result Volume Filename</label>
+      <label>Result Labelmap</label>
+      <channel>output</channel>
     </file>    
 
     <file multiple="true" fileExtensions=".mhd">
@@ -43,7 +44,8 @@
 
       <description>File names of target volumes (to be segmented).  The number of target images must be equal to the number of target images specified in the parameter set, and these images must be spatially aligned.</description>
 
-      <label>Target FileNames</label>      
+      <label>Target Volumes</label>      
+      <channel>input</channel>
     </file>
   </parameters>
 
@@ -89,6 +91,7 @@
       <description>Used for testing.  Compare segmentation results to this image and return EXIT_FAILURE if they do not match.</description>
 
       <label>Result Standard Image</label>
+      <channel>input</channel>
     </file>    
 
     <boolean>
@@ -104,6 +107,7 @@
       <longflag>generateEmptyMRMLSceneAndQuit</longflag>
       <description>Used for testing.  Only write a scene with default mrml parameters.</description>
       <label>Write default scene.</label>
+      <channel>output</channel>
     </file>
 
   </parameters>
