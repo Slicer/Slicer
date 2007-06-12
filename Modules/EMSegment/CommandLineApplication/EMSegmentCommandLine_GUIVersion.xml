@@ -4,10 +4,10 @@
   Segmentation
   </category>
   <title>
-  EMSegment Command-line
+  EMSegment Simple
   </title>
   <description>
-  EMSegment command-line module description and help.
+  EMSegment Simple module description and help.
   </description>
   <version>0.1.0.$Revision: 2085 $(alpha)</version>
   <documentation-url>http://wiki.na-mic.org/Wiki/index.php/Slicer3:EM</documentation-url>
