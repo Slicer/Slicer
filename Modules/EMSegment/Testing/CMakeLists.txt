@@ -60,6 +60,17 @@ IF( NOT DISABLE_CXX_TESTING )
     vtkCommon
     )
 
+  ADD_EXECUTABLE(
+    vtkEMSegmentMRMLManagerTest
+    vtkEMSegmentMRMLManagerTest.cxx
+    vtkEMSegmentTestUtilities.cxx
+    )
+  TARGET_LINK_LIBRARIES(
+    vtkEMSegmentMRMLManagerTest
+    EMSegment
+    vtkCommon
+    )
+
   ############################################################################
   # The test is a stand-alone executable.  However, the Slicer3
   # launcher is needed to set up shared library paths correctly.
@@ -77,6 +88,14 @@ IF( NOT DISABLE_CXX_TESTING )
   # command line tests---does the logic work, does it fail elegently
   #
   ############################################################################
+
+  # Does the mrml manager's api function correctly?
+  ADD_TEST(
+    vtkEMSegmentMRMLManagerTest
+    ${SLICER_EXE} ${WRAPPED_EXE_PREFIX}/vtkEMSegmentMRMLManagerTest
+    ${EMSegment_TUTORIAL_DIR}/EMSegmentTutorialTemplate_small.mrml
+    "EMSegment Tutorial Template"
+    )
 
   # Test that the segmentation results match what the expected
   # results.  This is a legacy test that should not be removed.
