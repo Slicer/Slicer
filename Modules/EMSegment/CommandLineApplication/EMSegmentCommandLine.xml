@@ -20,7 +20,7 @@
     <label>Inputs and Outputs</label>
     <description>Altorithm input and output.</description>
 
-    <file>
+    <file fileExtensions=".mrml">
       <name>mrmlSceneFileName</name>
       <longflag>mrmlSceneFileName</longflag>
 
@@ -29,29 +29,19 @@
       <label>MRML Scene</label>
     </file>    
 
-    <string>
-      <name>parametersMRMLNodeName</name>
-      <longflag>parametersMRMLNodeName</longflag>
-
-      <description>The name of the EMSegment parameters node within the active MRML scene.</description>
-
-      <label>Parameters Node Name</label>
-    </string>    
-
-    <file>
+    <file fileExtensions=".mhd">
       <name>resultVolumeFileName</name>
       <longflag>resultVolumeFileName</longflag>
 
-      <description>The name of the segmentation result volume.  This flag should be used if the output volume is not currently defined by a MRML node (if it is, use resultMRMLNodeName instead).  </description>
-
+      <description>The file name that the segmentation result volume will be written to.</description>
       <label>Result Volume Filename</label>
     </file>    
 
-    <file multiple="true">
+    <file multiple="true" fileExtensions=".mhd">
       <name>targetVolumeFileNames</name>
       <longflag>targetVolumeFileNames</longflag>
 
-      <description>Names of target volumes (to be segmented).  This flag should be used if the volumes are not present in the MRML scene (if they are, use targetMRMLNodeNames instead).  The number of target images must be less than or equal to the number of target images specified in the parameter set, and these images must be spatially aligned.</description>
+      <description>File names of target volumes (to be segmented).  The number of target images must be equal to the number of target images specified in the parameter set, and these images must be spatially aligned.</description>
 
       <label>Target FileNames</label>      
     </file>
@@ -60,6 +50,15 @@
   <parameters advanced="true">
     <label>Parameters</label>
     <description>Algorithm Parameters</description>
+
+    <string>
+      <name>parametersMRMLNodeName</name>
+      <longflag>parametersMRMLNodeName</longflag>
+
+      <description>The name of the EMSegment parameters node within the active MRML scene.  Leave blank for default.</description>
+
+      <label>Parameters Node Name</label>
+    </string>    
 
     <boolean>
       <name>disableMultithreading</name>
