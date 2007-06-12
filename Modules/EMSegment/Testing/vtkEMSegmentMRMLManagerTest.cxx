@@ -83,7 +83,8 @@ int main(int argc, char** argv)
 
     for (int i = 0; i < numParameterSets; ++i)
       {
-      std::string currentNodeName(emLogic->GetMRMLManager()->GetNthParameterSetName(i)); 
+      std::string 
+        currentNodeName(emLogic->GetMRMLManager()->GetNthParameterSetName(i)); 
       std::cerr << "Node " << i << " name: " << currentNodeName << std::endl;
       if (parametersNodeName == currentNodeName)
         {
