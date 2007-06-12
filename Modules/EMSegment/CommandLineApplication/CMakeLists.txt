@@ -27,7 +27,7 @@ TARGET_LINK_LIBRARIES(
   vtkCommon
   )
 
-SET( EMSEG_GENERATE_CLGUI OFF BOOL )
+SET( EMSEG_GENERATE_CLGUI 0 )
 
 IF ( EMSEG_GENERATE_CLGUI )
   # output libs should to in Plugins
