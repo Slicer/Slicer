@@ -7,14 +7,33 @@
   EMSegment Simple
   </title>
   <description>
-  EMSegment Simple module description and help.
+
+  This module is under construction.
+
+  The EMSegment Simple module provides a simplified interface to the
+  EMSegment algorithm.  It should be used to segment new images once a
+  parameter set has been established.  You must specify (1) the MRML
+  scene that contains the EMSegment parameters, (2) a file that the
+  output labelmap will be stored in, and (3) a set of target input
+  images.
+
+  The MRML scene that contains the parameters should be generated
+  using the EMSegment module.  A library of example parameter files is
+  available at the wiki page.  If you have one that might be useful to
+  others, please consider contributing it.
+
+  The result labelmap can be any file name that you want to create
+  (e.g., SegmentationResult.mhd).
+
+  You should specify as many target images as are present in the
+  EMSegment parameter set (e.g., 2 if the set uses an MR T1 and MR T2
+  image).  These images should be aligned.  
+
   </description>
   <version>0.1.0.$Revision: 2085 $(alpha)</version>
   <documentation-url>http://wiki.na-mic.org/Wiki/index.php/Slicer3:EM</documentation-url>
   <license></license>
-  <contributor>Brad Davis</contributor>
-
-  <acknowledgements>Many people and organizations have contributed to the funding, design, and development of the EMSegment algorithm and its various implementations.</acknowledgements>
+  <contributor>Many people and organizations have contributed to the funding, design, and development of the EMSegment algorithm and its various implementations.</contributor>
 
   <parameters>
     <label>Inputs and Outputs</label>
