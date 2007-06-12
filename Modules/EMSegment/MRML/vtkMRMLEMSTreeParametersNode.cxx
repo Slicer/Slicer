@@ -325,11 +325,11 @@ void
 vtkMRMLEMSTreeParametersNode::
 MoveNthTargetInputChannel(int fromIndex, int toIndex)
 {
-  double movingValue = this->InputChannelWeights[fromIndex];
-  std::rotate(this->InputChannelWeights.begin()+fromIndex,
-              this->InputChannelWeights.begin()+fromIndex+1,
-              this->InputChannelWeights.begin()+toIndex+1);
-  this->InputChannelWeights[toIndex] = movingValue;
+  double movingParam = this->InputChannelWeights[fromIndex];
+  this->InputChannelWeights.erase(this->InputChannelWeights.begin() + 
+                                  fromIndex);
+  this->InputChannelWeights.insert(this->InputChannelWeights.begin() + 
+                                   toIndex, movingParam);
 }
 
 //-----------------------------------------------------------------------------

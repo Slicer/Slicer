@@ -428,5 +428,7 @@ MoveNthTargetInputChannel(int n, int toIndex)
     }
   IntensityNormalizationParameterListIterator b = 
     this->IntensityNormalizationParameterList.begin();
-  vtksys_stl::swap(*(b+n), *(b+toIndex));
+  std::string movingParam = this->IntensityNormalizationParameterList[n];
+  this->IntensityNormalizationParameterList.erase(b + n);
+  this->IntensityNormalizationParameterList.insert(b + toIndex, movingParam);
 }

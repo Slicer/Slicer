@@ -307,17 +307,22 @@ void
 vtkMRMLEMSTreeParametersLeafNode::
 MoveNthTargetInputChannel(int fromIndex, int toIndex)
 {
-  double movingValue = this->LogMean[fromIndex];
-  std::rotate(this->LogMean.begin()+fromIndex,
-              this->LogMean.begin()+fromIndex+1,
-              this->LogMean.begin()+toIndex+1);
-  this->LogMean[toIndex] = movingValue;
+  double movingParam = this->LogMean[fromIndex];
+  this->LogMean.erase(this->LogMean.begin() + fromIndex);
+  this->LogMean.insert(this->LogMean.begin() + toIndex, movingParam);
 
-  vtkstd::vector<double> movingVector = this->LogCovariance[fromIndex];
-  std::rotate(this->LogCovariance.begin()+fromIndex,
-              this->LogCovariance.begin()+fromIndex+1,
-              this->LogCovariance.begin()+toIndex+1);
-  this->LogCovariance[toIndex] = movingVector;  
+  for (unsigned int i = 0; i < this->NumberOfTargetInputChannels; ++i)
+    {
+    double movingParam = this->LogCovariance[i][fromIndex];
+    this->LogCovariance[i].erase(this->LogCovariance[i].begin() + fromIndex);
+    this->LogCovariance[i].insert(this->LogCovariance[i].begin() + toIndex, 
+                                  movingParam);
+    }
+
+  vtkstd::vector<double> movingVec = this->LogCovariance[fromIndex];
+  this->LogCovariance.erase(this->LogCovariance.begin() + fromIndex);
+  this->LogCovariance.insert(this->LogCovariance.begin() + toIndex, 
+                                movingVec);
 }
 
 //-----------------------------------------------------------------------------
