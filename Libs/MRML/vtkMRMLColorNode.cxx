@@ -152,10 +152,15 @@ void vtkMRMLColorNode::Copy(vtkMRMLNode *anode)
 
   if (node->Type != -1)
     {
-    this->SetType(node->Type);
+    // not using SetType, as that will basically recreate a new color node,
+    // very slow
+    this->Type = node->Type;
     }
   this->SetFileName(node->FileName);
   this->SetNoName(node->NoName);
+
+  // copy names
+  this->Names = node->Names;
 }
 
 //----------------------------------------------------------------------------
@@ -172,7 +177,7 @@ void vtkMRMLColorNode::PrintSelf(ostream& os, vtkIndent indent)
 
   os << indent << "NoName = " <<
     (this->NoName ? this->NoName : "(not set)") <<  "\n";
-     
+  
   if (this->Names.size() > 0)
     {
     os << indent << "Color Names:\n";
@@ -276,7 +281,7 @@ void vtkMRMLColorNode::SetNamesFromColors()
 //---------------------------------------------------------------------------
 const char *vtkMRMLColorNode::GetColorName(int ind)
 {
-    if (ind < (int)this->Names.size() && ind >= 0)
+  if (ind < (int)this->Names.size() && ind >= 0)
     {
     if (strcmp(this->Names[ind].c_str(), "") == 0)
       {
