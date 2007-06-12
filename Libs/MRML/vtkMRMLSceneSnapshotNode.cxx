@@ -209,6 +209,7 @@ void vtkMRMLSceneSnapshotNode::RestoreScene()
       snapshotMap[node->GetID()] = node;
       }
     }
+  std::vector<vtkMRMLNode*> removedNodes;
   int nnodesScene = this->Scene->GetNumberOfNodes();
   for (n=0; n<nnodesScene; n++)
     {
@@ -218,9 +219,13 @@ void vtkMRMLSceneSnapshotNode::RestoreScene()
       std::map<std::string, vtkMRMLNode*>::iterator iter = snapshotMap.find(std::string(node->GetID()));
       if (iter == snapshotMap.end() && !node->IsA("vtkMRMLSceneSnapshotNode"))
         {
-        this->Scene->RemoveNode(node);
+        removedNodes.push_back(node);
         }
       }
+    }
+  for(n=0; n<removedNodes.size(); n++)
+    {
+    this->Scene->RemoveNode(removedNodes[n]);
     }
 
   for (n=0; n < nnodesSanpshot; n++) 
