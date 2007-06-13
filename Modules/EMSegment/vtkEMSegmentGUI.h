@@ -10,6 +10,7 @@ class vtkMRMLEMSNode;
 class vtkKWWizardWidget;
 class vtkEMSegmentParametersSetStep;
 class vtkEMSegmentIntensityImagesStep;
+class vtkEMSegmentIntensityNormalizationStep;
 class vtkEMSegmentAnatomicalStructureStep;
 class vtkEMSegmentSpatialPriorsStep;
 class vtkEMSegmentNodeParametersStep;
@@ -134,6 +135,7 @@ private:
   vtkEMSegmentAnatomicalStructureStep    *AnatomicalStructureStep;
   vtkEMSegmentSpatialPriorsStep          *SpatialPriorsStep;
   vtkEMSegmentIntensityImagesStep        *IntensityImagesStep;
+  vtkEMSegmentIntensityNormalizationStep *NormalizationStep;
   vtkEMSegmentIntensityDistributionsStep *IntensityDistributionsStep;
   vtkEMSegmentNodeParametersStep         *NodeParametersStep;
   vtkEMSegmentRegistrationParametersStep *RegistrationParametersStep;

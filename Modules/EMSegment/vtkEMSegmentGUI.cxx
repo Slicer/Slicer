@@ -23,6 +23,7 @@
 #include "vtkEMSegmentNodeParametersStep.h"
 #include "vtkEMSegmentIntensityDistributionsStep.h"
 #include "vtkEMSegmentIntensityImagesStep.h"
+#include "vtkEMSegmentIntensityNormalizationStep.h"
 #include "vtkEMSegmentRegistrationParametersStep.h"
 #include "vtkEMSegmentRunSegmentationStep.h"
 
@@ -61,6 +62,7 @@ vtkEMSegmentGUI::vtkEMSegmentGUI()
   this->AnatomicalStructureStep    = NULL;
   this->SpatialPriorsStep          = NULL;
   this->IntensityImagesStep        = NULL;
+  this->NormalizationStep          = NULL;
   this->IntensityDistributionsStep = NULL;
   this->NodeParametersStep         = NULL;
   this->RegistrationParametersStep = NULL;
@@ -113,6 +115,12 @@ vtkEMSegmentGUI::~vtkEMSegmentGUI()
     {
     this->IntensityImagesStep->Delete();
     this->IntensityImagesStep = NULL;
+    }
+  
+  if (this->NormalizationStep)
+    {
+    this->NormalizationStep->Delete();
+    this->NormalizationStep = NULL;
     }
 
   if (this->IntensityDistributionsStep)
@@ -389,6 +397,16 @@ void vtkEMSegmentGUI::BuildGUI()
   wizard_workflow->AddNextStep(this->IntensityImagesStep);
 
   // -----------------------------------------------------------------
+  // Intensity Normalization step
+
+  if (!this->NormalizationStep)
+    {
+    this->NormalizationStep = vtkEMSegmentIntensityNormalizationStep::New();
+    this->NormalizationStep->SetGUI(this);
+    }
+  wizard_workflow->AddNextStep(this->NormalizationStep);
+
+  // -----------------------------------------------------------------
   // Intensity Distributions step
 
   if (!this->IntensityDistributionsStep)
@@ -459,6 +477,11 @@ void vtkEMSegmentGUI::TearDownGUI()
   if (this->IntensityImagesStep)
     {
     this->IntensityImagesStep->SetGUI(NULL);
+    }
+
+  if (this->NormalizationStep)
+    {
+    this->NormalizationStep->SetGUI(NULL);
     }
 
   if (this->IntensityDistributionsStep)
