@@ -250,6 +250,7 @@ void vtkMRMLScene::Clear(int removeSingletons)
 
   this->ClearUndoStack ( );
   this->ClearRedoStack ( );
+  this->UniqueIDByClass.clear();
 
   this->SetUndoOn();
 
@@ -408,6 +409,7 @@ int vtkMRMLScene::Connect()
 
   this->ClearUndoStack ( );
   this->ClearRedoStack ( );
+  this->UniqueIDByClass.clear();
 
   // after SceneCloseEvent there may be nodes created such as Camera
   // keep them so we don't call update on them
@@ -998,7 +1000,15 @@ void vtkMRMLScene::PrintSelf(ostream& os, vtkIndent indent)
 //------------------------------------------------------------------------------
 int vtkMRMLScene::GetUniqueIDIndexByClass(const char* className)
 {
-  return this->GetUniqueIDIndexByClassFromIndex(className, 1);
+  int hint = 1;
+  std::map< std::string, int>::iterator it = this->UniqueIDByClass.find(std::string(className));
+  if (it != this->UniqueIDByClass.end())
+    {
+    hint = it->second;
+    }
+  int index = this->GetUniqueIDIndexByClassFromIndex(className, hint);
+  this->UniqueIDByClass[std::string(className)] = index+1;
+  return index;
 }
 
 //------------------------------------------------------------------------------
