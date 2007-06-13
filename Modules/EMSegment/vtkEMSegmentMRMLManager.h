@@ -82,6 +82,9 @@ public:
   virtual const char* GetTreeNodeLabel(vtkIdType id);
   virtual void        SetTreeNodeLabel(vtkIdType id, const char* label);
 
+  virtual int      GetTreeNodeIntensityLabel(vtkIdType nodeID);
+  virtual void     SetTreeNodeIntensityLabel(vtkIdType nodeID, int label);
+
   virtual const char* GetTreeNodeName(vtkIdType id);
   virtual void        SetTreeNodeName(vtkIdType id, const char* label);
 
@@ -149,9 +152,6 @@ public:
 
   virtual int      GetTreeNodePrintQuality(vtkIdType nodeID);
   virtual void     SetTreeNodePrintQuality(vtkIdType nodeID, int shouldPrint);
-
-  virtual int      GetTreeNodeIntensityLabel(vtkIdType nodeID);
-  virtual void     SetTreeNodeIntensityLabel(vtkIdType nodeID, int label);
 
   virtual int      GetTreeNodePrintFrequency(vtkIdType nodeID);
   virtual void     SetTreeNodePrintFrequency(vtkIdType nodeID, 
