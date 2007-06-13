@@ -17,7 +17,7 @@ vtkCxxRevisionMacro(vtkEMSegmentIntensityImagesStep, "$Revision: 1.1 $");
 //----------------------------------------------------------------------------
 vtkEMSegmentIntensityImagesStep::vtkEMSegmentIntensityImagesStep()
 {
-  this->SetName("4/8. Select Target Images");
+  this->SetName("4/9. Select Target Images");
   this->SetDescription("Choose the set of images that will be segmented.");
 
   this->IntensityImagesTargetSelectorFrame  = NULL;

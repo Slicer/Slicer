@@ -29,7 +29,7 @@ vtkCxxRevisionMacro(vtkEMSegmentIntensityDistributionsStep, "$Revision: 1.2 $");
 //----------------------------------------------------------------------------
 vtkEMSegmentIntensityDistributionsStep::vtkEMSegmentIntensityDistributionsStep()
 {
-  this->SetName("5/8. Specify Intensity Distributions");
+  this->SetName("6/9. Specify Intensity Distributions");
   this->SetDescription(
     "Define intensity distribution for each anatomical structure.");
 

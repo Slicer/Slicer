@@ -23,7 +23,7 @@ vtkCxxRevisionMacro(vtkEMSegmentSpatialPriorsStep, "$Revision: 1.2 $");
 //----------------------------------------------------------------------------
 vtkEMSegmentSpatialPriorsStep::vtkEMSegmentSpatialPriorsStep()
 {
-  this->SetName("3/8. Assign Atlas");
+  this->SetName("3/9. Assign Atlas");
   this->SetDescription("Assign atlases for anatomical structures.");
 
   this->SpatialPriorsVolumeFrame      = NULL;

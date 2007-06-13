@@ -23,7 +23,7 @@ vtkCxxRevisionMacro(vtkEMSegmentParametersSetStep, "$Revision: 1.2 $");
 //----------------------------------------------------------------------------
 vtkEMSegmentParametersSetStep::vtkEMSegmentParametersSetStep()
 {
-  this->SetName("1/8. Select Parameter Set");
+  this->SetName("1/9. Select Parameter Set");
   this->SetDescription("Select existing or create new parameter set.");
 
   this->ParameterSetFrame      = NULL;

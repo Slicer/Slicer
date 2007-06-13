@@ -20,7 +20,7 @@ vtkCxxRevisionMacro(vtkEMSegmentRegistrationParametersStep, "$Revision: 1.1 $");
 //----------------------------------------------------------------------------
 vtkEMSegmentRegistrationParametersStep::vtkEMSegmentRegistrationParametersStep()
 {
-  this->SetName("7/8. Edit Registration Parameters");
+  this->SetName("8/9. Edit Registration Parameters");
   this->SetDescription("Specify atlas-to-target registration parameters.");
 
   this->RegistrationParametersFrame                   = NULL;

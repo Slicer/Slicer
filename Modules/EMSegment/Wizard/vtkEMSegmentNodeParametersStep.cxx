@@ -33,7 +33,7 @@ vtkCxxRevisionMacro(vtkEMSegmentNodeParametersStep, "$Revision: 1.2 $");
 //----------------------------------------------------------------------------
 vtkEMSegmentNodeParametersStep::vtkEMSegmentNodeParametersStep()
 {
-  this->SetName("6/8. Edit Node-based Parameters");
+  this->SetName("7/9. Edit Node-based Parameters");
   this->SetDescription("Specify node-based segmentation parameters.");
 
   this->NodeParametersNotebook                 = NULL;
