@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Registration</category>
+  <title>RealignVolume</title>
+  <description>Realigns a volume based on a transformation matrix. It can make a transform using a list of fiducials.</description>
+<version>1.0</version>
+<documentation-url>http://www.slicer.org</documentation-url>
+  <license>slicer3</license>
+  <contributor>Nicole Aucoin</contributor>
+<acknowledgements>
+This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.
+</acknowledgements>
+<parameters>
+   <label>IO</label>
+    <description>Input/output parameters</description>
+    <image type="scalar">
+      <name>InputVolume</name>
+      <label>Input Volume</label>
+      <channel>input</channel>
+      <index>0</index>
+      <description>Input volume.</description>
+      </image>
+      <point coordinateSystem="ras" multiple="true">
+      <name>ACPC</name>
+      <label>ACPC Line</label>
+      <longflag>--acpc</longflag>
+      <description>ACPC line</description>
+      <default>0,0,0</default>
+      </point>
+      <point coordinateSystem="ras" multiple="true">
+      <name>Midline</name>
+      <label>Midline</label>
+      <longflag>--midline</longflag>
+      <description>Mid line</description>
+      <default>0,0,0</default>
+      </point>
+     <image type="scalar">
+      <name>OutputVolume</name>
+      <label>Output Volume</label>
+      <channel>output</channel>
+      <index>1</index>
+      <description>Output realigned volume</description>
+    </image>
+    <string-enumeration>
+      <name>InterpolationType</name>
+      <label>Interpolation Type</label>
+      <description>Controls the type of interpolation done when reslicing</description>
+      <longflag>--interpolationtype</longflag>
+      <element>NearestNeighbor</element>
+      <element>Linear</element>
+      <element>Cubic</element>
+      <default>NearestNeighbor</default> 
+    </string-enumeration>
+
+
+</parameters>
+</executable>
