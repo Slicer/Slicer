@@ -323,19 +323,19 @@ int main(int argc, char** argv)
     }
   if (!targetVolumeFileName2.empty())
     {
-    targetVolumeFileNames.push_back(targetVolumeFileName1);
+    targetVolumeFileNames.push_back(targetVolumeFileName2);
     }
   if (!targetVolumeFileName3.empty())
     {
-    targetVolumeFileNames.push_back(targetVolumeFileName1);
+    targetVolumeFileNames.push_back(targetVolumeFileName3);
     }
   if (!targetVolumeFileName4.empty())
     {
-    targetVolumeFileNames.push_back(targetVolumeFileName1);
+    targetVolumeFileNames.push_back(targetVolumeFileName4);
     }
   if (!targetVolumeFileName5.empty())
     {
-    targetVolumeFileNames.push_back(targetVolumeFileName1);
+    targetVolumeFileNames.push_back(targetVolumeFileName5);
     }
   std::string resultStandardVolumeFileName = "";
   std::string generateEmptyMRMLSceneAndQuit = "";
