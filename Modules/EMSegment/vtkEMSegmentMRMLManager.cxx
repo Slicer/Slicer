@@ -2295,7 +2295,7 @@ SetRegistrationAtlasVolumeID(vtkIdType volumeID)
     }
 
   // set volume name and ID in map
-  this->GetTargetNode()->AddVolume(registrationVolumeName.c_str(), mrmlID);
+  this->GetAtlasNode()->AddVolume(registrationVolumeName.c_str(), mrmlID);
 
   this->GetGlobalParametersNode()->
     SetRegistrationAtlasVolumeKey(registrationVolumeName.c_str());
