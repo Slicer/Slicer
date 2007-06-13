@@ -45,6 +45,14 @@ IF ( EMSEG_GENERATE_CLGUI )
     #  SET(EXECUTABLE_OUTPUT_PATH "${SLICER_LIBRARIES_DIR}/Plugins")
   ENDIF (Slicer3_SOURCE_DIR)
   
+  # executable (mainly for batchmake right now)
+  ADD_EXECUTABLE( ${CLP_MODULE_GUI} ${${CLP_MODULE_GUI}_SOURCE} )
+  TARGET_LINK_LIBRARIES(
+    ${CLP_MODULE_GUI}
+    EMSegment
+    vtkCommon
+    )
+
   # pluggable library
   ADD_LIBRARY( ${CLP_MODULE_GUI}Lib SHARED ${${CLP_MODULE_GUI}_SOURCE} )
   SET_TARGET_PROPERTIES ( ${CLP_MODULE_GUI}Lib 
