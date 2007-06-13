@@ -7,8 +7,8 @@
 
   Program:   3D Slicer
   Module:    $RCSfile: vtkNRRDReader.h,v $
-  Date:      $Date: 2006/04/12 19:00:38 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2007/06/12 19:13:59 $
+  Version:   $Revision: 1.3.2.1 $
 
 =========================================================================auto=*/
 /*=========================================================================
@@ -136,9 +136,90 @@ public:
     UseNativeOrigin = false;
   }
 
- int NrrdToVTKScalarType( const int nrrdPixelType );
+  int NrrdToVTKScalarType( const int nrrdPixelType ) const
+  {
+  switch( nrrdPixelType )
+    {
+    default:
+    case nrrdTypeDefault:
+      return VTK_VOID;
+      break;
+    case nrrdTypeChar:
+      return VTK_CHAR;
+      break;
+    case nrrdTypeUChar:
+      return VTK_UNSIGNED_CHAR;
+      break;
+    case nrrdTypeShort:
+      return VTK_SHORT;
+      break;
+    case nrrdTypeUShort:
+      return VTK_UNSIGNED_SHORT;
+      break;
+      //    case nrrdTypeLLong:
+      //      return LONG ;
+      //      break;
+      //    case nrrdTypeULong:
+      //      return ULONG;
+      //      break;
+    case nrrdTypeInt:
+      return VTK_INT;
+      break;
+    case nrrdTypeUInt:
+      return VTK_UNSIGNED_INT;
+      break;
+    case nrrdTypeFloat:
+      return VTK_FLOAT;
+      break;
+    case nrrdTypeDouble:
+      return VTK_DOUBLE;
+      break;
+    case nrrdTypeBlock:
+      return -1;
+      break;
+    }
+  }
 
- int VTKToNrrdPixelType( const int vtkPixelType );
+  int VTKToNrrdPixelType( const int vtkPixelType ) const
+  {
+  switch( vtkPixelType )
+    {
+    default:
+    case VTK_VOID:
+      return nrrdTypeDefault;
+      break;
+    case VTK_CHAR:
+      return nrrdTypeChar;
+      break;
+    case VTK_UNSIGNED_CHAR:
+      return nrrdTypeUChar;
+      break;
+    case VTK_SHORT:
+      return nrrdTypeShort;
+      break;
+    case VTK_UNSIGNED_SHORT:
+      return nrrdTypeUShort;
+      break;
+      //    case nrrdTypeLLong:
+      //      return LONG ;
+      //      break;
+      //    case nrrdTypeULong:
+      //      return ULONG;
+      //      break;
+    case VTK_INT:
+      return nrrdTypeInt;
+      break;
+    case VTK_UNSIGNED_INT:
+      return nrrdTypeUInt;
+      break;
+    case VTK_FLOAT:
+      return nrrdTypeFloat;
+      break;
+    case VTK_DOUBLE:
+      return nrrdTypeDouble;
+      break;
+    }
+  }
 
 vtkImageData * AllocateOutputData(vtkDataObject *out);
 void AllocatePointData(vtkImageData *out);
@@ -149,6 +230,7 @@ protected:
                          
   vtkMatrix4x4* RasToIjkMatrix;
   vtkMatrix4x4* MeasurementFrameMatrix;
+  vtkMatrix4x4* NRRDWorldToRasMatrix;
 
   char* HeaderKeys;
   char* CurrentFileName;
