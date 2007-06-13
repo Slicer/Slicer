@@ -203,7 +203,7 @@ itcl::body DrawSWidget::makeMaskImage {} {
   #    pixel in the rasterized image map.  Probably has to 
   #    do with how boundary conditions are handled in the filler
   set w [expr int($xhi - $xlo) + 4]
-  set h [expr int($yhi - $ylo) + 2]
+  set h [expr int($yhi - $ylo) + 4]
 
   set imageData [vtkImageData New]
   $imageData SetDimensions $w $h 1

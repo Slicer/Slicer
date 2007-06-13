@@ -253,12 +253,17 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *ptr)
 
           if ( ptr == NULL ) 
             {
+            int dimensions[3];
+            self->GetMaskImage()->GetDimensions(dimensions);
             // TODO: this will leak matrices...
-            vtkErrorWithObjectMacro ( self, << "Cannot get mask pointer for pixel\n"
+            vtkErrorWithObjectMacro ( self, << "vtkImageSlicePaintPaint:\nCannot get mask pointer for pixel\n"
               << "workingWorld = " << 
               workingWorld[0] << " " <<  workingWorld[1] << " " << workingWorld[2] << "\n"
               << "intMaskIJK = " << 
-              intMaskIJK[0] << " " <<  intMaskIJK[1] << " " << intMaskIJK[2] << "\n" );
+              intMaskIJK[0] << " " <<  intMaskIJK[1] << " " << intMaskIJK[2] << "\n" 
+              << "maskDimensions = " << 
+              dimensions[0] << " " <<  dimensions[1] << " " << dimensions[2] << "\n" 
+              );
             return;
             }
 
