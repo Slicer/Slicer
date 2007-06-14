@@ -33,6 +33,7 @@ vtkSlicerROIGUI::vtkSlicerROIGUI ( )
   this->ROIListNodeID = NULL;
   this->ROIListNode = NULL;
   this->ROIListSelectorWidget = NULL;
+  this->VolumeNodeSelectorWidget = NULL;
   this->AddROIButton = NULL;
   this->RemoveROIButton = NULL;
   this->RemoveROIListButton= NULL;
@@ -67,7 +68,12 @@ vtkSlicerROIGUI::~vtkSlicerROIGUI ( )
     this->ROIListSelectorWidget->Delete();
     this->ROIListSelectorWidget = NULL;
     }
-
+  if ( this->VolumeNodeSelectorWidget )
+    {
+    this->VolumeNodeSelectorWidget->SetParent(NULL);
+    this->VolumeNodeSelectorWidget->Delete();
+    this->VolumeNodeSelectorWidget = NULL;
+    }
   if ( this->AddROIButton )
     {
     this->AddROIButton->SetParent ( NULL );
@@ -170,6 +176,8 @@ void vtkSlicerROIGUI::RemoveGUIObservers ( )
 
   this->ROIListSelectorWidget->RemoveObservers(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand);
 
+  this->VolumeNodeSelectorWidget->RemoveObservers(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand);
+
   this->AddROIButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
   this->RemoveROIButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -202,6 +210,8 @@ void vtkSlicerROIGUI::AddGUIObservers ( )
   this->MultiColumnList->GetWidget()->AddObserver(vtkKWMultiColumnList::SelectionChangedEvent, (vtkCommand *)this->GUICallbackCommand);
 
   this->ROIListSelectorWidget->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
+
+  this->VolumeNodeSelectorWidget->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
 
   this->AddROIButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
 
@@ -294,6 +304,15 @@ void vtkSlicerROIGUI::ProcessGUIEvents ( vtkObject *caller,
     }
   // save state for undo
   //this->MRMLScene->SaveStateForUndo(activeROIListNode);
+
+  vtkSlicerNodeSelectorWidget *VlolumeSelector = 
+    vtkSlicerNodeSelectorWidget::SafeDownCast(caller);
+  if (VlolumeSelector == this->VolumeNodeSelectorWidget &&
+    event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent )
+    {
+    vtkDebugMacro("vtkSlicerROIGUI: ProcessGUIEvent volume Node Selector Event: " << event << ".\n");
+    //activeROIListNode->SetMRMLVolume(vtkMRMLVolumeNode::SafeDownCast(VlolumeSelector->GetSelected()));
+    }
 
   vtkKWPushButton *button = vtkKWPushButton::SafeDownCast(caller);
   if (button == this->AddROIButton  && event ==  vtkKWPushButton::InvokedEvent)
@@ -451,7 +470,7 @@ void vtkSlicerROIGUI::ProcessGUIEvents ( vtkObject *caller,
       activeROIListNode->SetNthROIXYZ(row[0], xyz[0], xyz[1], xyz[2]);
       activeROIListNode->SetNthROIDeltaXYZ(row[0], Deltaxyz[0], Deltaxyz[1], Deltaxyz[2]);
       }
-    else
+    else if (numRows > 1)
       {
       vtkErrorMacro ("Selected rows (" << numRows << ") not 1, just pick one to delete for now\n");
       return;
@@ -901,6 +920,24 @@ void vtkSlicerROIGUI::BuildGUI ( )
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
     this->ROIListSelectorWidget->GetWidgetName());
 
+  // Vlolume node selector
+  this->VolumeNodeSelectorWidget = vtkSlicerNodeSelectorWidget::New();
+  this->VolumeNodeSelectorWidget->SetParent(ROIListFrame->GetFrame());
+  this->VolumeNodeSelectorWidget->Create();
+  this->VolumeNodeSelectorWidget->SetNodeClass("vtkMRMLVolumeNode", NULL, NULL, NULL);
+  this->VolumeNodeSelectorWidget->SetMRMLScene(this->GetMRMLScene());
+  this->VolumeNodeSelectorWidget->SetSelected(NULL); // force empty select
+  this->VolumeNodeSelectorWidget->SetNoneEnabled(1);
+  this->VolumeNodeSelectorWidget->UpdateMenu();
+  this->VolumeNodeSelectorWidget->SetBorderWidth(2);
+  this->VolumeNodeSelectorWidget->SetPadX(2);
+  this->VolumeNodeSelectorWidget->SetPadY(2);
+  this->VolumeNodeSelectorWidget->GetWidget()->SetWidth(24);
+  this->VolumeNodeSelectorWidget->SetLabelText( "Volume Node Select: ");
+  this->VolumeNodeSelectorWidget->SetBalloonHelpString("Select a volume node associated with the ROI.");
+  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+    this->VolumeNodeSelectorWidget->GetWidgetName());
+
   // add the multicolumn list to show the points
   this->MultiColumnList = vtkKWMultiColumnListWithScrollbars::New ( );
   this->MultiColumnList->SetParent ( ROIListFrame->GetFrame() );
@@ -1269,6 +1306,7 @@ void vtkSlicerROIGUI::SetROIListNodeID (char * id)
   // set up observers on the new node
   if (ROIlist != NULL)
     {
+    vtkSetAndObserveMRMLObjectMacro(this->ROIListNode, NULL);
     vtkIntArray *events = vtkIntArray::New();
     events->InsertNextValue(vtkCommand::ModifiedEvent);
     events->InsertNextValue(vtkMRMLROIListNode::DisplayModifiedEvent);

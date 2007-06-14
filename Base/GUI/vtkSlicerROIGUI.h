@@ -117,6 +117,8 @@ public:
   // Description:
   // Which ROI list node are we displaying in this gui 
   vtkSlicerNodeSelectorWidget* ROIListSelectorWidget;
+  // Volume node selector  
+  vtkSlicerNodeSelectorWidget* VolumeNodeSelectorWidget;
 
 protected:
   vtkSlicerROIGUI ( );
