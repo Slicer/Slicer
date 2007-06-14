@@ -31,6 +31,7 @@ vtkSlicerROIGUI::vtkSlicerROIGUI ( )
 {
   this->Logic = NULL;
   this->ROIListNodeID = NULL;
+  this->VolumeNodeID = NULL;
   this->ROIListNode = NULL;
   this->ROIListSelectorWidget = NULL;
   this->VolumeNodeSelectorWidget = NULL;
@@ -60,6 +61,12 @@ vtkSlicerROIGUI::~vtkSlicerROIGUI ( )
 {
   this->SetModuleLogic (NULL);
   this->SetROIListNodeID(NULL);
+  
+  if (this->VolumeNodeID)
+    {
+    delete [] this->VolumeNodeID;
+    this->VolumeNodeID = NULL;
+    }
   vtkSetMRMLNodeMacro(this->ROIListNode, NULL);
 
   if (this->ROIListSelectorWidget)
@@ -311,7 +318,20 @@ void vtkSlicerROIGUI::ProcessGUIEvents ( vtkObject *caller,
     event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent )
     {
     vtkDebugMacro("vtkSlicerROIGUI: ProcessGUIEvent volume Node Selector Event: " << event << ".\n");
-    //activeROIListNode->SetMRMLVolume(vtkMRMLVolumeNode::SafeDownCast(VlolumeSelector->GetSelected()));
+    vtkMRMLVolumeNode *VolumeNode =
+      vtkMRMLVolumeNode::SafeDownCast(this->VolumeNodeSelectorWidget->GetSelected());
+    if (VolumeNode == NULL)
+      {
+      this->SetVolumeNodeID(NULL);
+      activeROIListNode->SetVolumeNodeID(this->VolumeNodeID);
+      activeROIListNode->SetAllVolumeNodeID();
+      }
+    else
+      {
+      this->SetVolumeNodeID(VolumeNode->GetID());
+      activeROIListNode->SetVolumeNodeID(this->VolumeNodeID);
+      activeROIListNode->SetAllVolumeNodeID();
+      }
     }
 
   vtkKWPushButton *button = vtkKWPushButton::SafeDownCast(caller);
@@ -732,6 +752,30 @@ void vtkSlicerROIGUI::SetGUIFromList(vtkMRMLROIListNode * activeROIListNode)
     {
     vtkErrorMacro ("vtkSlicerROIGUI::SetGUIFromList: ERROR: no active ROI list node in the gui class!\n");                
     return;
+    }
+
+  vtkMRMLVolumeNode *VolumeNode =
+    vtkMRMLVolumeNode::SafeDownCast(this->VolumeNodeSelectorWidget->GetSelected());
+  char* ActiveVolumeNodeID = activeROIListNode->GetVolumeNodeID();
+  if (VolumeNode)
+    {
+    if (VolumeNode->GetID() != ActiveVolumeNodeID)
+      {
+      if (ActiveVolumeNodeID != NULL)
+        {
+        this->VolumeNodeSelectorWidget->SetSelected((vtkMRMLVolumeNode *)this->MRMLScene->GetNodeByID(ActiveVolumeNodeID)); 
+        }
+      else 
+        {
+        this->VolumeNodeSelectorWidget->SetSelected(NULL); 
+        }
+      this->VolumeNodeSelectorWidget->UpdateMenu();
+      }
+    }
+  else if (ActiveVolumeNodeID != NULL)
+    {
+    this->VolumeNodeSelectorWidget->SetSelected((vtkMRMLVolumeNode *)this->MRMLScene->GetNodeByID(ActiveVolumeNodeID)); 
+    this->VolumeNodeSelectorWidget->UpdateMenu();
     }
 
   vtkDebugMacro(<< "\tupdating the x, y, z location and deltea x, y, z \n");
