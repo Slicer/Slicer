@@ -54,6 +54,7 @@ vtkMRMLROIListNode::vtkMRMLROIListNode()
   this->Specular = 0;
   this->Power = 1;
   this->HideFromEditors = 0;
+  this->VolumeNodeID = NULL;
   return;
 }
 
@@ -70,6 +71,11 @@ vtkMRMLROIListNode::~vtkMRMLROIListNode()
     {
     delete [] this->Name;
     this->Name = NULL;
+    }
+  if (this->VolumeNodeID)
+    {
+    delete [] this->VolumeNodeID;
+    this->VolumeNodeID = NULL;
     }
   return;
 }
@@ -96,6 +102,11 @@ void vtkMRMLROIListNode::WriteXML(ostream& of, int nIndent)
   of << " specular=\"" << this->Specular << "\"";
   of << " power=\"" << this->Power << "\"";
   of << " opacity=\"" << this->Opacity << "\"";
+  
+  if (this->VolumeNodeID != NULL)
+    {
+    of << " VolumeNodeID=\"" << this->VolumeNodeID << "\"";
+    }
 
   if (this->GetNumberOfROIs() > 0)
     {
@@ -182,6 +193,12 @@ void vtkMRMLROIListNode::ReadXMLAttributes(const char** atts)
       std::stringstream ss;
       ss << attValue;
       ss >> this->Opacity;
+      }
+    else if (!strcmp(attName, "VolumeNodeID")) 
+      {
+      std::stringstream ss;
+      ss << attValue;
+      this->SetVolumeNodeID(attValue);
       }
     else if (!strcmp(attName, "ROI"))
       {
@@ -644,3 +661,20 @@ vtkMRMLROINode* vtkMRMLROIListNode::GetNthROINode(int n)
     return (vtkMRMLROINode*)this->ROIList->GetItemAsObject(n);
     }
 }
+
+//----------------------------------------------------------------------------
+void vtkMRMLROIListNode::SetAllVolumeNodeID()
+{
+  int numROIs = this->GetNumberOfROIs();
+  for (int n = 0; n < numROIs; ++n)
+    {
+    // Set the Volume ID for each ROI
+     vtkMRMLROINode *node = this->GetNthROINode(n);
+     node->SetVolumeNodeID(this->VolumeNodeID);
+    }
+  // the list contents have been modified
+  this->InvokeEvent(vtkMRMLROIListNode::ROIModifiedEvent, NULL);
+  this->Modified();
+  return;
+}
+

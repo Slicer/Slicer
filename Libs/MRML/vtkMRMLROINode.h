@@ -76,7 +76,8 @@ public:
 
   void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
 
-
+  vtkGetStringMacro(VolumeNodeID);
+  vtkSetStringMacro(VolumeNodeID);
 protected:
   vtkMRMLROINode();
   ~vtkMRMLROINode();
@@ -92,5 +93,6 @@ protected:
   char *ID;
   char *LabelText;
   bool Selected;
+  char *VolumeNodeID;
 };
 #endif

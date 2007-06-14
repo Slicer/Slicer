@@ -144,9 +144,17 @@ class VTK_MRML_EXPORT vtkMRMLROIListNode : public vtkMRMLNode
     vtkSetMacro(Power, double);
     vtkGetMacro(Power, double);
 
+    vtkGetStringMacro(VolumeNodeID);
+    vtkSetStringMacro(VolumeNodeID);
+
+    // Description:
+    // Set the Volume node ID for each roi node in the list
+    void SetAllVolumeNodeID();
+
   protected:
     vtkMRMLROIListNode();
     ~vtkMRMLROIListNode();
+
     vtkMRMLROIListNode(const vtkMRMLROIListNode&);
     void operator=(const vtkMRMLROIListNode&);
 
@@ -171,5 +179,9 @@ class VTK_MRML_EXPORT vtkMRMLROIListNode : public vtkMRMLNode
     double Diffuse;
     double Specular;
     double Power;
+    
+    // Description:
+    // The ID of the volume node that is associated with the ROI 
+    char *VolumeNodeID;
 };
 #endif

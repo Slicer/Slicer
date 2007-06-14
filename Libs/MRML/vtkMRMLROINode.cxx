@@ -54,6 +54,7 @@ vtkMRMLROINode::vtkMRMLROINode()
   this->ID = NULL;
   this->SetID("");
   this->Selected = false;
+  this->VolumeNodeID = NULL;
   return;
 }
 
@@ -70,6 +71,11 @@ vtkMRMLROINode::~vtkMRMLROINode()
     delete [] this->ID;
     this->ID = NULL;
     }
+  if (this->VolumeNodeID)
+    {
+    delete [] this->VolumeNodeID;
+    this->VolumeNodeID = NULL;
+    }
   return;
 }
 
@@ -84,6 +90,10 @@ void vtkMRMLROINode::WriteXML(ostream& of, int nIndent)
   if (this->ID != NULL) 
     {
     of <<  " ROINodeID " << this->ID;
+    }
+  if (this->VolumeNodeID != NULL)
+    {
+    of << " VolumeNodeID " << this->VolumeNodeID;
     }
   if (this->LabelText != NULL)
     {
@@ -143,6 +153,10 @@ void vtkMRMLROINode::ReadXMLAttributes( const char** atts)
       {
       this->SetID(attValue);
       }
+    else if (!strcmp(attName, "VolumeNodeID")) 
+      {
+      this->SetVolumeNodeID(attValue);
+      }
     else if (!strcmp(attName, "LabelText"))
       {
       this->SetLabelText(attValue);
@@ -168,12 +182,23 @@ void vtkMRMLROINode::ReadXMLString(const char *keyValuePairs)
   ss >> this->ID;
   vtkDebugMacro("ReadXMLString: got id " << this->ID);
 
-  // now get out the labeltext key
+  // get out the volume id
   ss >> keyName;
-  // now get the label text value
-  ss >> this->LabelText;
-  vtkDebugMacro("ReadXMLString: got label text " << this->LabelText);
-
+  if (!strcmp(keyName, "VolumeNodeID"))
+    {
+    char* IDValue = new char[1024];
+    ss >> IDValue;
+    this->SetVolumeNodeID(IDValue);
+    delete [] IDValue;
+    vtkDebugMacro("ReadXMLString: got VolumeNodeID " << this->VolumeNodeID);
+    }
+  else
+    {
+    // now get the label text value
+    ss >> this->LabelText;
+    vtkDebugMacro("ReadXMLString: got label text " << this->LabelText);
+    }
+  
   // get the xyz key
   ss >> keyName;
   // now get the x, y, z values
