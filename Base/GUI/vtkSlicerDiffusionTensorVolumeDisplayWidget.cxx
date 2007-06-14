@@ -103,18 +103,16 @@ void vtkSlicerDiffusionTensorVolumeDisplayWidget::ProcessWidgetEvents ( vtkObjec
   //
   // process scalar mode menu events
   //
-  vtkKWMenuButtonWithSpinButtonsWithLabel *scalarMenuButton = 
-      vtkKWMenuButtonWithSpinButtonsWithLabel::SafeDownCast(caller);
+  vtkKWMenu *scalarMenu = 
+      vtkKWMenu::SafeDownCast(caller);
 
-
-
-  if (scalarMenuButton == this->ScalarModeMenu && 
+  if (scalarMenu == this->ScalarModeMenu->GetWidget()->GetWidget()->GetMenu() && 
         event == vtkKWMenu::MenuItemInvokedEvent)
     {
     vtkMRMLDiffusionTensorVolumeDisplayNode *displayNode = vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(this->GetVolumeDisplayNode());
     if (displayNode != NULL)
       {
-      const char *scalarSelection = scalarMenuButton->GetWidget()->GetWidget()->GetValue();
+      const char *scalarSelection = this->ScalarModeMenu->GetWidget()->GetWidget()->GetValue();
       displayNode->GetDiffusionTensorDisplayPropertiesNode()->SetScalarInvariant(this->ScalarModeMap[std::string(scalarSelection)]);
       }
     return;
@@ -123,17 +121,17 @@ void vtkSlicerDiffusionTensorVolumeDisplayWidget::ProcessWidgetEvents ( vtkObjec
   //
   // process glyph mode menu events
   //
-  vtkKWMenuButtonWithSpinButtonsWithLabel *glyphMenuButton = 
-      vtkKWMenuButtonWithSpinButtonsWithLabel::SafeDownCast(caller);
+  vtkKWMenu *glyphMenu = 
+      vtkKWMenu::SafeDownCast(caller);
 
 
-  if (glyphMenuButton == this->GlyphModeMenu && 
+  if (glyphMenu == this->GlyphModeMenu->GetWidget()->GetWidget()->GetMenu() && 
         event == vtkKWMenu::MenuItemInvokedEvent)
     {
     vtkMRMLDiffusionTensorVolumeDisplayNode *displayNode = vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(this->GetVolumeDisplayNode());
     if (displayNode != NULL)
       {
-      const char *glyphSelection = glyphMenuButton->GetWidget()->GetWidget()->GetValue();
+      const char *glyphSelection = this->GlyphModeMenu->GetWidget()->GetWidget()->GetValue();
       displayNode->GetDiffusionTensorDisplayPropertiesNode()->SetGlyphGeometry(this->GlyphModeMap[std::string(glyphSelection)]);
       }
     return;
@@ -402,8 +400,8 @@ void vtkSlicerDiffusionTensorVolumeDisplayWidget::AddWidgetObservers ( )
 {  
   this->Superclass::AddWidgetObservers();
 
-  this->ScalarModeMenu->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->GlyphModeMenu->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->ScalarModeMenu->GetWidget()->GetWidget()->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->GlyphModeMenu->GetWidget()->GetWidget()->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->GlyphButton->AddObserver( vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand); 
   this->ColorSelectorWidget->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->WindowLevelThresholdEditor->AddObserver(vtkKWWindowLevelThresholdEditor::ValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -416,8 +414,8 @@ void vtkSlicerDiffusionTensorVolumeDisplayWidget::RemoveWidgetObservers ( )
 {
   this->Superclass::RemoveWidgetObservers();
 
-  this->ScalarModeMenu->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->GlyphModeMenu->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->ScalarModeMenu->GetWidget()->GetWidget()->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->GlyphModeMenu->GetWidget()->GetWidget()->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->GlyphButton->RemoveObservers (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand); 
   this->ColorSelectorWidget->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->WindowLevelThresholdEditor->RemoveObservers(vtkKWWindowLevelThresholdEditor::ValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
