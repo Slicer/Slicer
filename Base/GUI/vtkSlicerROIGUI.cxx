@@ -31,7 +31,7 @@ vtkSlicerROIGUI::vtkSlicerROIGUI ( )
 {
   this->Logic = NULL;
   this->ROIListNodeID = NULL;
-  this->VolumeNodeID = NULL;
+  //this->VolumeNodeID = NULL;
   this->ROIListNode = NULL;
   this->ROIListSelectorWidget = NULL;
   this->VolumeNodeSelectorWidget = NULL;
@@ -62,11 +62,11 @@ vtkSlicerROIGUI::~vtkSlicerROIGUI ( )
   this->SetModuleLogic (NULL);
   this->SetROIListNodeID(NULL);
   
-  if (this->VolumeNodeID)
+  /*if (this->VolumeNodeID)
     {
     delete [] this->VolumeNodeID;
     this->VolumeNodeID = NULL;
-    }
+    }*/
   vtkSetMRMLNodeMacro(this->ROIListNode, NULL);
 
   if (this->ROIListSelectorWidget)
@@ -322,17 +322,20 @@ void vtkSlicerROIGUI::ProcessGUIEvents ( vtkObject *caller,
       vtkMRMLVolumeNode::SafeDownCast(this->VolumeNodeSelectorWidget->GetSelected());
     if (VolumeNode == NULL)
       {
-      this->SetVolumeNodeID(NULL);
-      activeROIListNode->SetVolumeNodeID(this->VolumeNodeID);
+      // this->SetVolumeNodeID(NULL);
+      activeROIListNode->SetVolumeNodeID(NULL);
       activeROIListNode->SetAllVolumeNodeID();
       }
     else
       {
-      this->SetVolumeNodeID(VolumeNode->GetID());
-      activeROIListNode->SetVolumeNodeID(this->VolumeNodeID);
+      //this->SetVolumeNodeID(VolumeNode->GetID());
+      activeROIListNode->SetVolumeNodeID(VolumeNode->GetID());
       activeROIListNode->SetAllVolumeNodeID();
+      activeROIListNode->UpdateIJK();
       }
     }
+
+  char* ActiveVolumeNodeID = activeROIListNode->GetVolumeNodeID();
 
   vtkKWPushButton *button = vtkKWPushButton::SafeDownCast(caller);
   if (button == this->AddROIButton  && event ==  vtkKWPushButton::InvokedEvent)
@@ -422,7 +425,7 @@ void vtkSlicerROIGUI::ProcessGUIEvents ( vtkObject *caller,
     activeROIListNode->SetSelectedColor(this->ROISelectedColorButton->GetColor());
     }
 
-  // list symbol and text sizes
+  // list and text sizes
   vtkKWScaleWithEntry *scale = vtkKWScaleWithEntry::SafeDownCast(caller);
   if (scale == this->ROITextScale && event == vtkKWScale::ScaleValueChangedEvent)
     {
@@ -432,6 +435,7 @@ void vtkSlicerROIGUI::ProcessGUIEvents ( vtkObject *caller,
     {
     activeROIListNode->SetOpacity(this->ROIOpacity->GetValue());
     }
+  // Position and Size Scale sizes
   else if ((scale == this->XPositionScale || scale == this->YPositionScale || scale == this->ZPositionScale)&& event == vtkKWScale::ScaleValueChangedEvent)
     {
     int numRows = this->MultiColumnList->GetWidget()->GetNumberOfSelectedRows();
@@ -443,7 +447,14 @@ void vtkSlicerROIGUI::ProcessGUIEvents ( vtkObject *caller,
       x = this->XPositionScale->GetValue();
       y = this->YPositionScale->GetValue();
       z = this->ZPositionScale->GetValue();
-      activeROIListNode->SetNthROIXYZ(row[0], x, y, z );
+      if(ActiveVolumeNodeID ==NULL)
+        {
+        activeROIListNode->SetNthROIXYZ(row[0], x, y, z );
+        }
+      else
+        {
+        activeROIListNode->SetNthROIIJK(row[0], x, y, z );
+        }      
       }
     }
   else if ((scale == this->XRangeScale || scale == this->YRangeScale || scale == this->ZRangeScale)&& event == vtkKWScale::ScaleValueChangedEvent)
@@ -457,7 +468,14 @@ void vtkSlicerROIGUI::ProcessGUIEvents ( vtkObject *caller,
       Deltax = this->XRangeScale->GetValue();
       Deltay = this->YRangeScale->GetValue();
       Deltaz = this->ZRangeScale->GetValue();
-      activeROIListNode->SetNthROIDeltaXYZ(row[0], Deltax, Deltay, Deltaz);
+      if(ActiveVolumeNodeID ==NULL)
+        {
+        activeROIListNode->SetNthROIDeltaXYZ(row[0], Deltax, Deltay, Deltaz);
+        }
+      else
+        {
+        activeROIListNode->SetNthROIDeltaIJK(row[0], Deltax, Deltay, Deltaz);
+        }
       }
     }
 
@@ -474,8 +492,16 @@ void vtkSlicerROIGUI::ProcessGUIEvents ( vtkObject *caller,
       float *xyz;
       float *Deltaxyz;
       // then remove that ROI by index
-      xyz = activeROIListNode->GetNthROIXYZ(row[0]);
-      Deltaxyz = activeROIListNode->GetNthROIDeltaXYZ(row[0]);
+      if(ActiveVolumeNodeID ==NULL)
+        {
+        xyz = activeROIListNode->GetNthROIXYZ(row[0]);
+        Deltaxyz = activeROIListNode->GetNthROIDeltaXYZ(row[0]);
+        }
+      else
+        {
+        xyz = activeROIListNode->GetNthROIIJK(row[0]);
+        Deltaxyz = activeROIListNode->GetNthROIDeltaIJK(row[0]);
+        }
 
       if (xyz[0] == this->XPositionScale->GetValue() &&
         xyz[1] == this->YPositionScale->GetValue() &&
@@ -487,8 +513,16 @@ void vtkSlicerROIGUI::ProcessGUIEvents ( vtkObject *caller,
         {
         return;
         }
-      activeROIListNode->SetNthROIXYZ(row[0], xyz[0], xyz[1], xyz[2]);
-      activeROIListNode->SetNthROIDeltaXYZ(row[0], Deltaxyz[0], Deltaxyz[1], Deltaxyz[2]);
+      if(ActiveVolumeNodeID ==NULL)
+        {
+        activeROIListNode->SetNthROIXYZ(row[0], xyz[0], xyz[1], xyz[2]);
+        activeROIListNode->SetNthROIDeltaXYZ(row[0], Deltaxyz[0], Deltaxyz[1], Deltaxyz[2]);
+        }
+      else
+        {
+        activeROIListNode->SetNthROIIJK(row[0], xyz[0], xyz[1], xyz[2]);
+        activeROIListNode->SetNthROIDeltaIJK(row[0], Deltaxyz[0], Deltaxyz[1], Deltaxyz[2]);
+        }
       }
     else if (numRows > 1)
       {
@@ -529,13 +563,13 @@ void vtkSlicerROIGUI::ProcessMRMLEvents ( vtkObject *caller,
       && event == vtkCommand::ModifiedEvent)
       {
       vtkDebugMacro("The selection node changed\n");
-      // is the active fid list id out of synch with our selection?
+      // is the active roi list id out of synch with our selection?
       if (selnode->GetActiveROIListID() != NULL &&
         this->GetROIListNodeID() != NULL)
         {
         if (strcmp(selnode->GetActiveROIListID(), this->GetROIListNodeID()) != 0)
           {
-          vtkDebugMacro("Updating the fid gui's fid list node id\n");
+          vtkDebugMacro("Updating the ROI gui's ROI list node id\n");
           this->SetROIListNodeID(selnode->GetActiveROIListID());
           }
         }
@@ -611,6 +645,80 @@ void vtkSlicerROIGUI::SetGUIFromList(vtkMRMLROIListNode * activeROIListNode)
       }
     return;
     }
+
+  // Update the volume selector widget 
+  vtkMRMLVolumeNode *VolumeNode =
+    vtkMRMLVolumeNode::SafeDownCast(this->VolumeNodeSelectorWidget->GetSelected());
+  char* ActiveVolumeNodeID = activeROIListNode->GetVolumeNodeID();
+  if (VolumeNode)
+    {
+    if (VolumeNode->GetID() != ActiveVolumeNodeID)
+      {
+      if (ActiveVolumeNodeID != NULL)
+        {
+        this->VolumeNodeSelectorWidget->SetSelected((vtkMRMLVolumeNode *)this->MRMLScene->GetNodeByID(ActiveVolumeNodeID)); 
+        }
+      else 
+        {
+        this->VolumeNodeSelectorWidget->SetSelected(NULL); 
+        this->VolumeNodeSelectorWidget->SetSelected((vtkMRMLVolumeNode *)this->MRMLScene->GetNodeByID(ActiveVolumeNodeID)); 
+        }
+      this->VolumeNodeSelectorWidget->UpdateMenu();
+      }
+    }
+  else if (ActiveVolumeNodeID != NULL)
+    {
+    this->VolumeNodeSelectorWidget->SetSelected((vtkMRMLVolumeNode *)this->MRMLScene->GetNodeByID(ActiveVolumeNodeID)); 
+    this->VolumeNodeSelectorWidget->UpdateMenu();
+    }
+
+  // Update the label text: 
+  // No volume selected IJK coordinates, 
+  // Volume selected RAS coordinate
+  if (ActiveVolumeNodeID == NULL)
+    {
+    this->XPositionScale->SetLabelText("X Position:");
+    this->YPositionScale->SetLabelText("Y Position:");
+    this->ZPositionScale->SetLabelText("Z Position:");
+    this->XRangeScale->SetLabelText("X Size:");
+    this->YRangeScale->SetLabelText("Y Size:");
+    this->ZRangeScale->SetLabelText("Z Size:");
+    this->MultiColumnList->GetWidget()->SetColumnTitle (2, "X");
+    this->MultiColumnList->GetWidget()->SetColumnTitle (3, "Y");
+    this->MultiColumnList->GetWidget()->SetColumnTitle (4, "Z");
+    this->MultiColumnList->GetWidget()->SetColumnTitle (5,"X Size");
+    this->MultiColumnList->GetWidget()->SetColumnTitle (6,"Y Size");
+    this->MultiColumnList->GetWidget()->SetColumnTitle (7,"Z Size");
+
+    this->XPositionScale->GetWidget()->SetRange(-1000, 1000);
+    this->YPositionScale->GetWidget()->SetRange(-1000, 1000);
+    this->ZPositionScale->GetWidget()->SetRange(-1000, 1000);
+    }
+  else 
+    {
+    this->XPositionScale->SetLabelText("I  Position:");
+    this->YPositionScale->SetLabelText("J Position:");
+    this->ZPositionScale->SetLabelText("K Position:");
+    this->XRangeScale->SetLabelText("I  Size:");
+    this->YRangeScale->SetLabelText("J Size:");
+    this->ZRangeScale->SetLabelText("K Size:");
+    this->MultiColumnList->GetWidget()->SetColumnTitle(2, "I");
+    this->MultiColumnList->GetWidget()->SetColumnTitle(3, "J");
+    this->MultiColumnList->GetWidget()->SetColumnTitle(4, "K");
+    this->MultiColumnList->GetWidget()->SetColumnTitle(5, "I Size");
+    this->MultiColumnList->GetWidget()->SetColumnTitle(6, "J Size");
+    this->MultiColumnList->GetWidget()->SetColumnTitle(7, "K Size");
+
+    //Update the range according the volume size
+    VolumeNode = vtkMRMLVolumeNode::SafeDownCast(this->VolumeNodeSelectorWidget->GetSelected());
+    int* dims = new int[3];
+    VolumeNode->GetImageData()->GetDimensions(dims);
+    this->XPositionScale->GetWidget()->SetRange(0, dims[0]);
+    this->YPositionScale->GetWidget()->SetRange(0, dims[1]);
+    this->ZPositionScale->GetWidget()->SetRange(0, dims[2]);
+    delete [] dims;
+    }
+
   int numPoints = activeROIListNode->GetNumberOfROIs();
   bool deleteFlag = true;
   //Used to set the selected cell and update the xyz position scalewidget
@@ -656,7 +764,6 @@ void vtkSlicerROIGUI::SetGUIFromList(vtkMRMLROIListNode * activeROIListNode)
 
 
   // a row for each point
-
   float *xyz;
   float *Deltaxyz;
 
@@ -670,14 +777,28 @@ void vtkSlicerROIGUI::SetGUIFromList(vtkMRMLROIListNode * activeROIListNode)
       }
     vtkDebugMacro("SetGUIFromList: getting " << row << "the ROI xyz - total ROIs = " << numPoints);
     // now populate it
-    xyz = activeROIListNode->GetNthROIXYZ(row);
+    if(ActiveVolumeNodeID == NULL)
+      {
+      xyz = activeROIListNode->GetNthROIXYZ(row);
+      }
+    else
+      {
+      xyz = activeROIListNode->GetNthROIIJK(row);
+      }
     if (xyz == NULL)
       {
       vtkErrorMacro ("SetGUIFromList: ERROR: got null xyz for point " << row << endl);
       }
 
-    vtkDebugMacro("Getting nth ROI Deltaxyz");            
-    Deltaxyz = activeROIListNode->GetNthROIDeltaXYZ(row);
+    vtkDebugMacro("Getting nth ROI Deltaxyz"); 
+    if(ActiveVolumeNodeID == NULL)
+      {
+      Deltaxyz = activeROIListNode->GetNthROIDeltaXYZ(row);
+      }
+    else
+      {
+      Deltaxyz = activeROIListNode->GetNthROIDeltaIJK(row);
+      }
 
     if (activeROIListNode->GetNthROILabelText(row) != NULL)
       {
@@ -754,29 +875,7 @@ void vtkSlicerROIGUI::SetGUIFromList(vtkMRMLROIListNode * activeROIListNode)
     return;
     }
 
-  vtkMRMLVolumeNode *VolumeNode =
-    vtkMRMLVolumeNode::SafeDownCast(this->VolumeNodeSelectorWidget->GetSelected());
-  char* ActiveVolumeNodeID = activeROIListNode->GetVolumeNodeID();
-  if (VolumeNode)
-    {
-    if (VolumeNode->GetID() != ActiveVolumeNodeID)
-      {
-      if (ActiveVolumeNodeID != NULL)
-        {
-        this->VolumeNodeSelectorWidget->SetSelected((vtkMRMLVolumeNode *)this->MRMLScene->GetNodeByID(ActiveVolumeNodeID)); 
-        }
-      else 
-        {
-        this->VolumeNodeSelectorWidget->SetSelected(NULL); 
-        }
-      this->VolumeNodeSelectorWidget->UpdateMenu();
-      }
-    }
-  else if (ActiveVolumeNodeID != NULL)
-    {
-    this->VolumeNodeSelectorWidget->SetSelected((vtkMRMLVolumeNode *)this->MRMLScene->GetNodeByID(ActiveVolumeNodeID)); 
-    this->VolumeNodeSelectorWidget->UpdateMenu();
-    }
+ 
 
   vtkDebugMacro(<< "\tupdating the x, y, z location and deltea x, y, z \n");
   //update the xyz position and xyz size according the selected row
@@ -787,9 +886,16 @@ void vtkSlicerROIGUI::SetGUIFromList(vtkMRMLROIListNode * activeROIListNode)
     this->MultiColumnList->GetWidget()->GetSelectedRows(row);
     //float* xyz;
     //float* Deltaxyz;
-    xyz = activeROIListNode->GetNthROIXYZ(row[0]);
-    Deltaxyz = activeROIListNode->GetNthROIDeltaXYZ(row[0]);
-
+    if (ActiveVolumeNodeID == NULL)
+      {
+      xyz = activeROIListNode->GetNthROIXYZ(row[0]);
+      Deltaxyz = activeROIListNode->GetNthROIDeltaXYZ(row[0]);
+      }
+    else
+      {
+      xyz = activeROIListNode->GetNthROIIJK(row[0]);
+      Deltaxyz = activeROIListNode->GetNthROIDeltaIJK(row[0]);
+      }
     this->XPositionScale->SetValue(xyz[0]);
     this->YPositionScale->SetValue(xyz[1]);
     this->ZPositionScale->SetValue(xyz[2]);
@@ -1277,6 +1383,7 @@ void vtkSlicerROIGUI::UpdateElement(int row, int col, char * str)
       return;
       }
 
+    char *ActiveVolumeNodeID = activeROIListNode->GetVolumeNodeID();
     // now update the requested value
     if (col == this->NameColumn)
       {
@@ -1291,16 +1398,87 @@ void vtkSlicerROIGUI::UpdateElement(int row, int col, char * str)
     else if (col >= this->XColumn && col <= this->DeltaZColumn)
       {
       // get the current xyz
-      float * xyz = activeROIListNode->GetNthROIXYZ(row);
-      float * Deltaxyz = activeROIListNode->GetNthROIDeltaXYZ(row);
+      float * xyz;
+      float * Deltaxyz;
+      if (ActiveVolumeNodeID == NULL)
+        {
+        xyz = activeROIListNode->GetNthROIXYZ(row);
+        Deltaxyz = activeROIListNode->GetNthROIDeltaXYZ(row);
+        }
+      else
+        {
+        xyz = activeROIListNode->GetNthROIIJK(row);
+        Deltaxyz = activeROIListNode->GetNthROIDeltaIJK(row);
+        }
+     
       // now set the new one
       float newCoordinate = atof(str);
-      if (col == this->XColumn) { activeROIListNode->SetNthROIXYZ(row, newCoordinate, xyz[1], xyz[2]); }
-      if (col == this->YColumn) { activeROIListNode->SetNthROIXYZ(row, xyz[0], newCoordinate, xyz[2]); }
-      if (col == this->ZColumn) { activeROIListNode->SetNthROIXYZ(row, xyz[0], xyz[1], newCoordinate); }
-      if (col == this->DeltaXColumn) { activeROIListNode->SetNthROIDeltaXYZ(row, newCoordinate, Deltaxyz[1], Deltaxyz[2]); }
-      if (col == this->DeltaYColumn) { activeROIListNode->SetNthROIDeltaXYZ(row, Deltaxyz[0], newCoordinate, Deltaxyz[2]); }
-      if (col == this->DeltaZColumn) { activeROIListNode->SetNthROIDeltaXYZ(row, Deltaxyz[0], Deltaxyz[1], newCoordinate); }
+      if (col == this->XColumn) 
+        { 
+        if (ActiveVolumeNodeID == NULL)
+          {
+          activeROIListNode->SetNthROIXYZ(row, newCoordinate, xyz[1], xyz[2]); 
+          }
+        else
+          {
+          activeROIListNode->SetNthROIIJK(row, newCoordinate, xyz[1], xyz[2]); 
+          }
+        }
+      if (col == this->YColumn) 
+        { 
+        if (ActiveVolumeNodeID == NULL)
+          {
+          activeROIListNode->SetNthROIXYZ(row, xyz[0], newCoordinate, xyz[2]);
+          }
+        else
+          {
+          activeROIListNode->SetNthROIIJK(row, xyz[0], newCoordinate, xyz[2]);
+          }
+        }
+      if (col == this->ZColumn) 
+        { 
+        if (ActiveVolumeNodeID == NULL)
+          {
+          activeROIListNode->SetNthROIXYZ(row, xyz[0], xyz[1], newCoordinate);
+          }
+        else
+          {
+          activeROIListNode->SetNthROIIJK(row, xyz[0], xyz[1], newCoordinate);
+          }
+        }
+      if (col == this->DeltaXColumn) 
+        { 
+        if (ActiveVolumeNodeID == NULL)
+          {
+          activeROIListNode->SetNthROIDeltaXYZ(row, newCoordinate, Deltaxyz[1], Deltaxyz[2]); 
+          }
+        else
+          {
+          activeROIListNode->SetNthROIDeltaIJK(row, newCoordinate, Deltaxyz[1], Deltaxyz[2]); 
+          }
+        }
+      if (col == this->DeltaYColumn) 
+        { 
+        if (ActiveVolumeNodeID == NULL)
+          {
+          activeROIListNode->SetNthROIDeltaXYZ(row, Deltaxyz[0], newCoordinate, Deltaxyz[2]);  
+          }
+        else
+          {
+          activeROIListNode->SetNthROIDeltaIJK(row, Deltaxyz[0], newCoordinate, Deltaxyz[2]); 
+          }
+        }
+      if (col == this->DeltaZColumn) 
+        {
+        if (ActiveVolumeNodeID == NULL)
+          {
+          activeROIListNode->SetNthROIDeltaXYZ(row, Deltaxyz[0], Deltaxyz[1], newCoordinate);
+          }
+        else
+          {
+          activeROIListNode->SetNthROIDeltaIJK(row, Deltaxyz[0], Deltaxyz[1], newCoordinate);
+          }
+        }
       }
     else
       {

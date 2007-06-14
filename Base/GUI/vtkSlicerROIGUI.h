@@ -106,8 +106,8 @@ public:
   vtkGetStringMacro(ROIListNodeID);
   void SetROIListNodeID(char *id);
 
-  vtkGetStringMacro(VolumeNodeID);
-  vtkSetStringMacro(VolumeNodeID);
+ /* vtkGetStringMacro(VolumeNodeID);
+  vtkSetStringMacro(VolumeNodeID);*/
 
   // Description:
   // Set the selected node, the fid list id, and update the widgets
@@ -134,9 +134,9 @@ protected:
   // The ID of the ROI node that is currently displayed in the GUI
   char *ROIListNodeID;
 
-  // Description:
-  // The ID of the volume node that is associated with the ROI 
-  char *VolumeNodeID;
+  //// Description:
+  //// The ID of the volume node that is associated with the ROI 
+  //char *VolumeNodeID;
 
   // Description:
   // The fiducial list node that is currently displayed in the GUI
