@@ -137,7 +137,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
 
   // Description:
   // Set scalar invariant to C_P (Westin's planar measure)
-  void SetScalarInvariantToPlanerMeasure() {
+  void SetScalarInvariantToPlanarMeasure() {
     this->SetScalarInvariant(this->PlanarMeasure);
   };
 
