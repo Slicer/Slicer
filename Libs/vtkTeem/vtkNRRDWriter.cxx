@@ -224,7 +224,7 @@ void vtkNRRDWriter::WriteData()
     baseDim = 0;
     }
   nrrdDim = baseDim + spaceDim;
-
+  
   unsigned int axi;
   for (axi=0; axi < spaceDim; axi++)
     {
@@ -237,6 +237,7 @@ void vtkNRRDWriter::WriteData()
       spaceDir[axi+baseDim][saxi] = this->IJKToRASMatrix->GetElement(saxi,axi);
       }
     }
+
   if (nrrdWrap_nva(nrrd, const_cast<void *> (buffer),
                    this->VTKToNrrdPixelType( vtkType ),
                    nrrdDim, size)
@@ -254,6 +255,7 @@ void vtkNRRDWriter::WriteData()
     }
   nrrdAxisInfoSet_nva(nrrd, nrrdAxisInfoKind, kind);
   nrrdAxisInfoSet_nva(nrrd, nrrdAxisInfoSpaceDirection, spaceDir);
+  nrrd->space = nrrdSpaceRightAnteriorSuperior;
 
   // Go through MetaDataDictionary and set either specific nrrd field
   // or a key/value pair
