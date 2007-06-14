@@ -53,7 +53,7 @@ vtkMRMLROIListNode::vtkMRMLROIListNode()
   this->Diffuse = 1.0;
   this->Specular = 0;
   this->Power = 1;
-
+  this->HideFromEditors = 0;
   return;
 }
 

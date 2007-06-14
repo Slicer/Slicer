@@ -14,11 +14,11 @@
 // .NAME vtkMRMLROIListNode - MRML list node to represent a list of ROINODE 
 // .SECTION Description
 
-class VTK_MRML_EXPORT vtkMRMLROIListNode : public vtkMRMLTransformableNode
+class VTK_MRML_EXPORT vtkMRMLROIListNode : public vtkMRMLNode
 {
   public:
     static vtkMRMLROIListNode *New();
-    vtkTypeMacro(vtkMRMLROIListNode,vtkMRMLTransformableNode);
+    vtkTypeMacro(vtkMRMLROIListNode,vtkMRMLNode);
     void PrintSelf(ostream& os, vtkIndent indent);
 
     //--------------------------------------------------------------------------
