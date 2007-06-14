@@ -131,7 +131,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <channel>input</channel>
       <index>0</index>
       <description>First index argument is an image</description>
-      <label>Second index argument</label>
+      <label>First index argument</label>
     </image>
     <image>
       <name>arg1</name>
@@ -140,5 +140,14 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <description>Second index argument is an image</description>
       <label>Second index argument</label>
     </image>
+  </parameters>
+  <parameters>
+        <label>Regions of interest</label>
+        <region multiple="true">
+           <name>regions</name>
+           <label>Region list</label>
+           <longflag>region</longflag>
+           <description>List of regions to process</description>
+        </region>
   </parameters>
 </executable>

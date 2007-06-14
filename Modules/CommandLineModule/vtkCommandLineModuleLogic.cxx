@@ -30,6 +30,7 @@ Version:   $Revision: 1.2 $
 #include "vtkMRMLDiffusionTensorVolumeNode.h"
 #include "vtkMRMLDiffusionWeightedVolumeNode.h"
 #include "vtkMRMLFiducialListNode.h"
+#include "vtkMRMLROIListNode.h"
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLModelStorageNode.h"
 #include "vtkMRMLModelDisplayNode.h"
@@ -121,7 +122,7 @@ vtkCommandLineModuleLogic
   // 2. If the consumer of the file cannot communicate directly with
   // the MRML scene, then a real temporary filename is constructed.
   // The filename will point to the Temporary directory defined for
-  // Slicer. THe filename will be unique to the process (multiple
+  // Slicer. The filename will be unique to the process (multiple
   // running instances of slicer will not collide).  The filename
   // will be unique to the node in the process (the same node will be
   // encoded to the same filename every time within that running
@@ -434,7 +435,9 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
             && (*pit).GetTag() != "float-vector"
             && (*pit).GetTag() != "double-vector"
             && (*pit).GetTag() != "string-vector"
-            && (*pit).GetTag() != "image" && (*pit).GetTag() != "point"
+            && (*pit).GetTag() != "image"
+            && (*pit).GetTag() != "point"
+            && (*pit).GetTag() != "region"
             && (*pit).GetTag() != "geometry")
           {
           // simple parameter, write flag and value
@@ -535,6 +538,57 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
             }
           continue;
           }
+        if ((*pit).GetTag() == "region")
+          {
+          // get the region node
+          vtkMRMLNode *node
+            = this->MRMLScene->GetNodeByID((*pit).GetDefault().c_str());
+          vtkMRMLROIListNode *regions = vtkMRMLROIListNode::SafeDownCast(node);
+
+          if (regions)
+            {
+            // check to see if module can handle more than one region
+            long numberOfSelectedRegions=0;
+            for (int i=0; i < regions->GetNumberOfROIs(); ++i)
+              {
+              if (regions->GetNthROISelected(i))
+                {
+                numberOfSelectedRegions++;
+                }
+              }
+            
+            if (numberOfSelectedRegions == 1
+                || (*pit).GetMultiple() == "true")
+              {
+              for (int i=0; i < regions->GetNumberOfROIs(); ++i)
+                {
+                float *pt;
+                float *delta;
+                std::ostrstream roiAsString;
+
+                if (regions->GetNthROISelected(i))
+                  {
+                  pt = regions->GetNthROIXYZ(i);
+                  delta = regions->GetNthROIDeltaXYZ(i);
+                  roiAsString << pt[0] << "," << pt[1] << "," << pt[2] << ","
+                             << delta[0] << "," << delta[1] << "," << delta[2]
+                             << std::ends;
+                  roiAsString.rdbuf()->freeze();
+                  
+                  commandLineAsString.push_back(prefix + flag);
+                  commandLineAsString.push_back(roiAsString.str());
+                  }
+                }
+              }
+            else
+              {
+              // Can't support this command line with this region
+              // list
+              vtkErrorMacro("Module does not support multiple regions. Region list contains " << numberOfSelectedRegions << " selected regions.");
+              }
+            }
+          continue;
+          }
         }
       }
     }
@@ -573,6 +627,8 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
         && (*iit).second.GetTag() != "file"
         && (*iit).second.GetTag() != "directory"
         && (*iit).second.GetTag() != "string"
+        && (*iit).second.GetTag() != "point"
+        && (*iit).second.GetTag() != "region"
         && (*iit).second.GetTag() != "integer-vector"
         && (*iit).second.GetTag() != "float-vector"
         && (*iit).second.GetTag() != "double-vector"
@@ -602,8 +658,18 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
         return;
         }
       }
+    else if ((*iit).second.GetTag() == "point"
+             || (*iit).second.GetTag() == "region")
+      {
+      vtkErrorMacro("Fiducials and ROIs are not currently supported as index arguments to modules.");
+      node->SetStatus(vtkMRMLCommandLineModuleNode::Idle, false);
+      this->GetApplicationLogic()->RequestModified( node );
+      return;
+      }
     else
       {
+      // image or geometry index parameter
+      
       MRMLIDToFileNameMap::const_iterator id2fn;
 
       if ((*iit).second.GetChannel() == "input")
