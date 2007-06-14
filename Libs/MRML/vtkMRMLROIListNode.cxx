@@ -491,6 +491,86 @@ int vtkMRMLROIListNode::SetNthROIXYZ(int n, float x, float y, float z)
     }
   node->SetXYZ(x,y,z);
 
+  //Update IJK
+  if (this->VolumeNodeID != NULL)
+    {
+    vtkMRMLVolumeNode *VolumeNode  = vtkMRMLVolumeNode::SafeDownCast(this->Scene->GetNodeByID(this->VolumeNodeID));
+    if (VolumeNode)
+      {
+      double rasPoint[4] = { x, y, z, 1.0 };
+      double ijkPoint[4];
+      vtkMatrix4x4* rasToijk = vtkMatrix4x4::New();
+      VolumeNode->GetRASToIJKMatrix(rasToijk);
+      rasToijk->MultiplyPoint(rasPoint, ijkPoint);
+      rasToijk->Delete();
+      
+      int* dims = new int[3];
+      VolumeNode->GetImageData()->GetDimensions(dims);
+      ijkPoint[0] = ijkPoint[0] >= 0 ? ijkPoint[0] : 0;
+      ijkPoint[0] = ijkPoint[0] < dims[0] ? ijkPoint[0] : dims[0];
+      ijkPoint[1] = ijkPoint[1] >= 0 ? ijkPoint[1] : 0;
+      ijkPoint[1] = ijkPoint[1] < dims[1] ? ijkPoint[1] : dims[1];
+      ijkPoint[2] = ijkPoint[2] >= 0 ? ijkPoint[2] : 0;
+      ijkPoint[2] = ijkPoint[2] < dims[2] ? ijkPoint[2] : dims[2];
+      delete [] dims;
+      
+      node->SetIJK(ijkPoint[0], ijkPoint[1], ijkPoint[2]);
+      }
+    else
+      {
+      vtkDebugMacro("No volume selected ...\n");
+      }
+    }
+
+
+  // the list contents have been modified
+  node = NULL;
+  this->InvokeEvent(vtkMRMLROIListNode::ROIModifiedEvent, NULL);
+  return 0;
+}
+
+//----------------------------------------------------------------------------
+int vtkMRMLROIListNode::SetNthROIIJK(int n, float i, float j, float k)
+{
+  vtkMRMLROINode *node = this->GetNthROINode(n);
+  if (node == NULL)
+    {
+    vtkErrorMacro("Unable to get ROI number " << n);
+    return 1;
+    }
+  if (this->VolumeNodeID != NULL)
+    {
+    vtkMRMLVolumeNode *VolumeNode  = vtkMRMLVolumeNode::SafeDownCast(this->Scene->GetNodeByID(this->VolumeNodeID));
+    if (VolumeNode)
+      {
+
+      int* dims = new int[3];
+      VolumeNode->GetImageData()->GetDimensions(dims);
+      i = i >= 0 ? i : 0;
+      i = i < dims[0] ? i : dims[0];
+      j = j >= 0 ? j : 0;
+      j = j < dims[1] ? j : dims[1];
+      k = k >= 0 ? k : 0;
+      k = k < dims[2] ? k : dims[2];
+      delete [] dims;
+
+      node->SetIJK(i,j,k);
+
+      //Update XYZ
+      double rasPoint[4]; 
+      double ijkPoint[4]= { i, j, k, 1.0 };
+      vtkMatrix4x4* ijkToras = vtkMatrix4x4::New();
+      VolumeNode->GetIJKToRASMatrix(ijkToras);
+      ijkToras->MultiplyPoint(ijkPoint,rasPoint);
+      ijkToras->Delete();
+      node->SetXYZ(rasPoint[0], rasPoint[1], rasPoint[2]);
+      }
+    else
+      {
+      vtkDebugMacro("No volume selected ...\n");
+      }
+    }
+
   // the list contents have been modified
   node = NULL;
   this->InvokeEvent(vtkMRMLROIListNode::ROIModifiedEvent, NULL);
@@ -514,6 +594,22 @@ float * vtkMRMLROIListNode::GetNthROIXYZ(int n)
 }
 
 //----------------------------------------------------------------------------
+float * vtkMRMLROIListNode::GetNthROIIJK(int n)
+{
+  vtkMRMLROINode *node = this->GetNthROINode(n);
+  if (node != NULL)
+    {
+    float * ijk = node->GetIJK();
+    node = NULL;
+    return ijk;
+    }
+  else
+    {
+    return NULL;
+    }
+}
+
+//----------------------------------------------------------------------------
 int vtkMRMLROIListNode::SetNthROIDeltaXYZ(int n, float Deltax, float Deltay, float Deltaz)
 {
   vtkMRMLROINode *node = this->GetNthROINode(n);
@@ -523,6 +619,54 @@ int vtkMRMLROIListNode::SetNthROIDeltaXYZ(int n, float Deltax, float Deltay, flo
     return 1;
     }
   node->SetDeltaXYZ(Deltax,Deltay,Deltaz);
+
+   //Update DeltaIJK
+  if (this->VolumeNodeID != NULL)
+    {
+    vtkMRMLVolumeNode *VolumeNode  = vtkMRMLVolumeNode::SafeDownCast(this->Scene->GetNodeByID(this->VolumeNodeID));
+    if (VolumeNode)
+      {
+      double* spacing = VolumeNode->GetSpacing();
+      node->SetDeltaIJK(Deltax / spacing[0], Deltay / spacing[1], Deltaz / spacing[2]);
+      }
+    else
+      {
+      vtkDebugMacro("No volume selected ...\n");
+      }
+    }
+
+  // the list contents have been modified
+  node = NULL;
+  this->InvokeEvent(vtkMRMLROIListNode::ROIModifiedEvent, NULL);
+  return 0;
+}
+
+//----------------------------------------------------------------------------
+int vtkMRMLROIListNode::SetNthROIDeltaIJK(int n, float Deltai, float Deltaj, float Deltak)
+{
+  vtkMRMLROINode *node = this->GetNthROINode(n);
+  if (node == NULL)
+    {
+    vtkErrorMacro("Unable to get ROI number " << n);
+    return 1;
+    }
+  node->SetDeltaIJK(Deltai,Deltaj,Deltak);
+
+   //Update DeltaXYZ
+  if (this->VolumeNodeID != NULL)
+    {
+    vtkMRMLVolumeNode *VolumeNode  = vtkMRMLVolumeNode::SafeDownCast(this->Scene->GetNodeByID(this->VolumeNodeID));
+    if (VolumeNode)
+      {
+      double* spacing = VolumeNode->GetSpacing();
+      node->SetDeltaXYZ((int)Deltai * spacing[0], (int)Deltaj * spacing[1], (int)Deltak * spacing[2]);
+      }
+    else
+      {
+      vtkDebugMacro("No volume selected ...\n");
+      }
+    }
+
 
   // the list contents have been modified
   node = NULL;
@@ -539,6 +683,22 @@ float * vtkMRMLROIListNode::GetNthROIDeltaXYZ(int n)
     float * Deltaxyz = node->GetDeltaXYZ();
     node = NULL;
     return Deltaxyz;
+    }
+  else
+    {
+    return NULL;
+    }
+}
+
+//----------------------------------------------------------------------------
+float * vtkMRMLROIListNode::GetNthROIDeltaIJK(int n)
+{
+  vtkMRMLROINode *node = this->GetNthROINode(n);
+  if (node != NULL)
+    {
+    float * Deltaijk = node->GetDeltaIJK();
+    node = NULL;
+    return Deltaijk;
     }
   else
     {
@@ -678,3 +838,21 @@ void vtkMRMLROIListNode::SetAllVolumeNodeID()
   return;
 }
 
+//----------------------------------------------------------------------------
+void vtkMRMLROIListNode::UpdateIJK()  
+{
+  int numROIs = this->GetNumberOfROIs();
+  vtkMRMLVolumeNode *VolumeNode  = vtkMRMLVolumeNode::SafeDownCast(this->Scene->GetNodeByID(this->VolumeNodeID));
+
+  if(VolumeNode != NULL)
+    {
+    for (int n = 0; n < numROIs; ++n)
+      {
+      float *xyz = this->GetNthROIXYZ(n);
+      this->SetNthROIXYZ(n, xyz[0], xyz[1], xyz[2]);
+      float *Deltaxzy = this->GetNthROIDeltaXYZ(n);
+      this->SetNthROIDeltaXYZ(n, Deltaxzy[0], Deltaxzy[1], Deltaxzy[2]);
+      }
+    }
+  return;
+}

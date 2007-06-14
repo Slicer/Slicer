@@ -59,6 +59,9 @@ class VTK_MRML_EXPORT vtkMRMLROIListNode : public vtkMRMLNode
     // so that the appropriate events can be invoked. Returns 0 on success
     int SetNthROIXYZ(int n, float x, float y, float z);
     int SetNthROIDeltaXYZ(int n, float Deltax, float Deltay, float Deltaz);
+    int SetNthROIIJK(int n, float i, float j, float k);
+    int SetNthROIDeltaIJK(int n, float Deltai, float Deltaj, float Deltak);
+
     int SetNthROILabelText(int n, const char *text);
     int SetNthROISelected(int n, int flag);
     int SetNthROIID(int n, const char *id);
@@ -67,8 +70,10 @@ class VTK_MRML_EXPORT vtkMRMLROIListNode : public vtkMRMLNode
     // Get the elements of the ROI box
     // Return a three element float holding the position
     float *GetNthROIXYZ(int n);
+    float *GetNthROIIJK(int n);
     // Return a three element float holding the size of the ROI box
     float *GetNthROIDeltaXYZ(int n);
+    float *GetNthROIDeltaIJK(int n);
     // get the label text of the nth fiducial
     const char *GetNthROILabelText(int n);
     // get the selected state on the nth fiducial
@@ -151,6 +156,10 @@ class VTK_MRML_EXPORT vtkMRMLROIListNode : public vtkMRMLNode
     // Set the Volume node ID for each roi node in the list
     void SetAllVolumeNodeID();
 
+    // Description:
+    // Update the IJK coordinates according RAS
+    void UpdateIJK();
+    
   protected:
     vtkMRMLROIListNode();
     ~vtkMRMLROIListNode();

@@ -48,6 +48,9 @@ vtkMRMLROINode::vtkMRMLROINode()
 {
   this->XYZ[0] = this->XYZ[1] = this->XYZ[2] = 0.0;
   this->DeltaXYZ[0] = this->DeltaXYZ[1] = this->DeltaXYZ[2] = 4.0;
+
+  this->IJK[0] = this->IJK[1] = this->IJK[2] = 0;
+  this->DeltaIJK[0] = this->DeltaIJK[1] = this->DeltaIJK[2] = 0;
   // so that the SetLabelText macro won't try to free memory
   this->LabelText = NULL;
   this->SetLabelText(""); 
@@ -256,5 +259,81 @@ void vtkMRMLROINode::ProcessMRMLEvents ( vtkObject *caller,
                                         void *callData )
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
+  return;
+}
+
+//-----------------------------------------------------------------------------
+void vtkMRMLROINode::SetXYZ(float X, float Y, float Z)
+{
+  this->XYZ[0] = X;
+  this->XYZ[1] = Y;
+  this->XYZ[2] = Z;
+
+  this->Modified();
+  return;
+}
+
+//-----------------------------------------------------------------------------
+void vtkMRMLROINode::SetXYZ(float* XYZ)
+{
+  this->SetXYZ(XYZ[0], XYZ[1], XYZ[2]);
+  return;
+}
+
+//-----------------------------------------------------------------------------
+void vtkMRMLROINode::SetDeltaXYZ(float DeltaX, float DeltaY, float DeltaZ)
+{ 
+  this->DeltaXYZ[0] = DeltaX;
+  this->DeltaXYZ[1] = DeltaY;
+  this->DeltaXYZ[2] = DeltaZ;
+
+  this->Modified();
+  return;
+}
+
+//-----------------------------------------------------------------------------
+void vtkMRMLROINode::SetDeltaXYZ(float* DeltaXYZ)
+{
+  this->SetDeltaXYZ(DeltaXYZ[0], DeltaXYZ[1], DeltaXYZ[2]);
+  return;
+}
+
+//-----------------------------------------------------------------------------
+void vtkMRMLROINode::SetIJK(float I, float J, float K)
+{
+  this->IJK[0] = I;
+  this->IJK[1] = J;
+  this->IJK[2] = K;
+
+  //Update  
+
+  return;
+}
+
+//-----------------------------------------------------------------------------
+void vtkMRMLROINode::SetIJK(float* IJK)
+{
+  this->SetIJK(IJK[0], IJK[1], IJK[2]);
+  this->Modified();
+  return;
+}
+
+//-----------------------------------------------------------------------------
+void vtkMRMLROINode::SetDeltaIJK(float DeltaI, float DeltaJ, float DeltaK)
+{
+  this->DeltaIJK[0] = DeltaI;
+  this->DeltaIJK[1] = DeltaJ;
+  this->DeltaIJK[2] = DeltaK;
+
+  //Update
+
+  this->Modified();
+  return;
+}
+
+//-----------------------------------------------------------------------------
+void vtkMRMLROINode::SetDeltaIJK(float* DeltaIJK)
+{
+  this->SetDeltaIJK(DeltaIJK[0], DeltaIJK[1], DeltaIJK[2]);
   return;
 }

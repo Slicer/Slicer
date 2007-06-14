@@ -4,6 +4,7 @@
 #include <string> 
 
 #include "vtkMRML.h"
+#include "vtkMRMLVolumeNode.h"
 #include "vtkMRMLNode.h"
 #include "vtkMRMLTransformableNode.h"
 
@@ -54,13 +55,23 @@ public:
   void UpdateReferences();
 
   // Description:
-  // Get/Set for Point
-  vtkSetVector3Macro(XYZ,float);
+  // Get/Set for ROI Position RAS cooridnates
+  void SetXYZ(float X, float Y, float Z);
+  void SetXYZ(float* XYZ);
   vtkGetVectorMacro(XYZ,float,3);
 
-  // Get/Set for orientation 
-  vtkSetVector3Macro(DeltaXYZ,float);
+  // Get/Set for ROI Size  RAS cooridnates
+  void SetDeltaXYZ(float DeltaX, float DeltaY, float DeltaZ);
+  void SetDeltaXYZ(float* DeltaXYZ);
   vtkGetVectorMacro(DeltaXYZ,float,3);
+
+  void SetIJK(float I, float J, float K);
+  void SetIJK(float* IJK);
+  vtkGetVectorMacro(IJK,float,3);
+
+  void SetDeltaIJK(float DeltaI, float DeltaJ, float DeltaK);
+  void SetDeltaIJK(float* DeltaIJK);
+  vtkGetVectorMacro(DeltaIJK,float,3);
 
   // Get/Set for LabelText
   vtkSetStringMacro(LabelText);
@@ -85,11 +96,17 @@ protected:
   void operator=(const vtkMRMLROINode&);
 
   // Description:
-  // The location of the ROI centroid
+  // The location of the ROI centroid in RAS space
   float XYZ[3];  
   // Description:
-  // The size of  of the ROI box
+  // The size of  of the ROI box in RAS space
   float DeltaXYZ[3];
+  // Description:
+  // The location of the ROI centroid in IJK space
+  float IJK[3];  
+  // Description:
+  // The size of  of the ROI box in IJK space
+  float DeltaIJK[3];
   char *ID;
   char *LabelText;
   bool Selected;
