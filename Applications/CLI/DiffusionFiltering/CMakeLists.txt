@@ -1,0 +1,5 @@
+PROJECT( DiffusionFiltering )
+
+SUBDIRS(
+  dwiNoiseFilter
+)
