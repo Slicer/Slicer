@@ -47,10 +47,10 @@ void vtkMRMLROINode::PrintSelf(ostream& os, vtkIndent indent)
 vtkMRMLROINode::vtkMRMLROINode()
 {
   this->XYZ[0] = this->XYZ[1] = this->XYZ[2] = 0.0;
-  this->DeltaXYZ[0] = this->DeltaXYZ[1] = this->DeltaXYZ[2] = 4.0;
+  this->RadiusXYZ[0] = this->RadiusXYZ[1] = this->RadiusXYZ[2] = 4.0;
 
   this->IJK[0] = this->IJK[1] = this->IJK[2] = 0;
-  this->DeltaIJK[0] = this->DeltaIJK[1] = this->DeltaIJK[2] = 0;
+  this->RadiusIJK[0] = this->RadiusIJK[1] = this->RadiusIJK[2] = 0;
   // so that the SetLabelText macro won't try to free memory
   this->LabelText = NULL;
   this->SetLabelText(""); 
@@ -106,8 +106,8 @@ void vtkMRMLROINode::WriteXML(ostream& of, int nIndent)
   of <<  " XYZ " 
     << this->XYZ[0] << " " << this->XYZ[1] << " " << this->XYZ[2];
 
-  of <<  " DeltaXYZ " 
-    << this->DeltaXYZ[0] << " " << this->DeltaXYZ[1] << " " << this->DeltaXYZ[2];
+  of <<  " RadiusXYZ " 
+    << this->RadiusXYZ[0] << " " << this->RadiusXYZ[1] << " " << this->RadiusXYZ[2];
   of << " Selected " << this->Selected;
 
   return;
@@ -135,7 +135,7 @@ void vtkMRMLROINode::ReadXMLAttributes( const char** atts)
         this->XYZ[i] = val;
         }
       }
-    if (!strcmp(attName, "DeltaXYZ")) 
+    if (!strcmp(attName, "RadiusXYZ")) 
       {
       std::stringstream ss;
       double val;
@@ -143,7 +143,7 @@ void vtkMRMLROINode::ReadXMLAttributes( const char** atts)
       for(int i=0; i<3; i++) 
         {
         ss >> val;
-        this->DeltaXYZ[i] = val;
+        this->RadiusXYZ[i] = val;
         }
       }
     if (!strcmp(attName, "Selected")) 
@@ -209,12 +209,12 @@ void vtkMRMLROINode::ReadXMLString(const char *keyValuePairs)
   ss >> this->XYZ[1];
   ss >> this->XYZ[2];
 
-  // get the Deltaxyz key
+  // get the Radiusxyz key
   ss >> keyName;
   // now get the x, y, z values
-  ss >> this->DeltaXYZ[0];
-  ss >> this->DeltaXYZ[1];
-  ss >> this->DeltaXYZ[2];
+  ss >> this->RadiusXYZ[0];
+  ss >> this->RadiusXYZ[1];
+  ss >> this->RadiusXYZ[2];
 
   // get the selected flag
   ss >> keyName;
@@ -230,7 +230,7 @@ void vtkMRMLROINode::Copy(vtkMRMLNode *anode)
   //  vtkObject::Copy(anode);
   vtkMRMLROINode *node = (vtkMRMLROINode *) anode;
   this->SetXYZ(node->XYZ);
-  this->SetDeltaXYZ(node->DeltaXYZ);
+  this->SetRadiusXYZ(node->RadiusXYZ);
   this->SetLabelText(node->GetLabelText());
   this->SetID(node->ID);
   this->SetSelected(node->GetSelected());
@@ -281,20 +281,20 @@ void vtkMRMLROINode::SetXYZ(float* XYZ)
 }
 
 //-----------------------------------------------------------------------------
-void vtkMRMLROINode::SetDeltaXYZ(float DeltaX, float DeltaY, float DeltaZ)
+void vtkMRMLROINode::SetRadiusXYZ(float RadiusX, float RadiusY, float RadiusZ)
 { 
-  this->DeltaXYZ[0] = DeltaX;
-  this->DeltaXYZ[1] = DeltaY;
-  this->DeltaXYZ[2] = DeltaZ;
+  this->RadiusXYZ[0] = RadiusX;
+  this->RadiusXYZ[1] = RadiusY;
+  this->RadiusXYZ[2] = RadiusZ;
 
   this->Modified();
   return;
 }
 
 //-----------------------------------------------------------------------------
-void vtkMRMLROINode::SetDeltaXYZ(float* DeltaXYZ)
+void vtkMRMLROINode::SetRadiusXYZ(float* RadiusXYZ)
 {
-  this->SetDeltaXYZ(DeltaXYZ[0], DeltaXYZ[1], DeltaXYZ[2]);
+  this->SetRadiusXYZ(RadiusXYZ[0], RadiusXYZ[1], RadiusXYZ[2]);
   return;
 }
 
@@ -319,11 +319,11 @@ void vtkMRMLROINode::SetIJK(float* IJK)
 }
 
 //-----------------------------------------------------------------------------
-void vtkMRMLROINode::SetDeltaIJK(float DeltaI, float DeltaJ, float DeltaK)
+void vtkMRMLROINode::SetRadiusIJK(float RadiusI, float RadiusJ, float RadiusK)
 {
-  this->DeltaIJK[0] = DeltaI;
-  this->DeltaIJK[1] = DeltaJ;
-  this->DeltaIJK[2] = DeltaK;
+  this->RadiusIJK[0] = RadiusI;
+  this->RadiusIJK[1] = RadiusJ;
+  this->RadiusIJK[2] = RadiusK;
 
   //Update
 
@@ -332,8 +332,8 @@ void vtkMRMLROINode::SetDeltaIJK(float DeltaI, float DeltaJ, float DeltaK)
 }
 
 //-----------------------------------------------------------------------------
-void vtkMRMLROINode::SetDeltaIJK(float* DeltaIJK)
+void vtkMRMLROINode::SetRadiusIJK(float* RadiusIJK)
 {
-  this->SetDeltaIJK(DeltaIJK[0], DeltaIJK[1], DeltaIJK[2]);
+  this->SetRadiusIJK(RadiusIJK[0], RadiusIJK[1], RadiusIJK[2]);
   return;
 }

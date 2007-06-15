@@ -610,7 +610,7 @@ float * vtkMRMLROIListNode::GetNthROIIJK(int n)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLROIListNode::SetNthROIDeltaXYZ(int n, float Deltax, float Deltay, float Deltaz)
+int vtkMRMLROIListNode::SetNthROIRadiusXYZ(int n, float Radiusx, float Radiusy, float Radiusz)
 {
   vtkMRMLROINode *node = this->GetNthROINode(n);
   if (node == NULL)
@@ -618,16 +618,16 @@ int vtkMRMLROIListNode::SetNthROIDeltaXYZ(int n, float Deltax, float Deltay, flo
     vtkErrorMacro("Unable to get ROI number " << n);
     return 1;
     }
-  node->SetDeltaXYZ(Deltax,Deltay,Deltaz);
+  node->SetRadiusXYZ(Radiusx,Radiusy,Radiusz);
 
-   //Update DeltaIJK
+   //Update RadiusIJK
   if (this->VolumeNodeID != NULL)
     {
     vtkMRMLVolumeNode *VolumeNode  = vtkMRMLVolumeNode::SafeDownCast(this->Scene->GetNodeByID(this->VolumeNodeID));
     if (VolumeNode)
       {
       double* spacing = VolumeNode->GetSpacing();
-      node->SetDeltaIJK(Deltax / spacing[0], Deltay / spacing[1], Deltaz / spacing[2]);
+      node->SetRadiusIJK(Radiusx / spacing[0], Radiusy / spacing[1], Radiusz / spacing[2]);
       }
     else
       {
@@ -642,7 +642,7 @@ int vtkMRMLROIListNode::SetNthROIDeltaXYZ(int n, float Deltax, float Deltay, flo
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLROIListNode::SetNthROIDeltaIJK(int n, float Deltai, float Deltaj, float Deltak)
+int vtkMRMLROIListNode::SetNthROIRadiusIJK(int n, float Radiusi, float Radiusj, float Radiusk)
 {
   vtkMRMLROINode *node = this->GetNthROINode(n);
   if (node == NULL)
@@ -650,16 +650,16 @@ int vtkMRMLROIListNode::SetNthROIDeltaIJK(int n, float Deltai, float Deltaj, flo
     vtkErrorMacro("Unable to get ROI number " << n);
     return 1;
     }
-  node->SetDeltaIJK(Deltai,Deltaj,Deltak);
+  node->SetRadiusIJK(Radiusi,Radiusj,Radiusk);
 
-   //Update DeltaXYZ
+   //Update RadiusXYZ
   if (this->VolumeNodeID != NULL)
     {
     vtkMRMLVolumeNode *VolumeNode  = vtkMRMLVolumeNode::SafeDownCast(this->Scene->GetNodeByID(this->VolumeNodeID));
     if (VolumeNode)
       {
       double* spacing = VolumeNode->GetSpacing();
-      node->SetDeltaXYZ((int)Deltai * spacing[0], (int)Deltaj * spacing[1], (int)Deltak * spacing[2]);
+      node->SetRadiusXYZ((int)Radiusi * spacing[0], (int)Radiusj * spacing[1], (int)Radiusk * spacing[2]);
       }
     else
       {
@@ -675,14 +675,14 @@ int vtkMRMLROIListNode::SetNthROIDeltaIJK(int n, float Deltai, float Deltaj, flo
 }
 
 //----------------------------------------------------------------------------
-float * vtkMRMLROIListNode::GetNthROIDeltaXYZ(int n)
+float * vtkMRMLROIListNode::GetNthROIRadiusXYZ(int n)
 {
   vtkMRMLROINode *node = this->GetNthROINode(n);
   if (node != NULL)
     {
-    float * Deltaxyz = node->GetDeltaXYZ();
+    float * Radiusxyz = node->GetRadiusXYZ();
     node = NULL;
-    return Deltaxyz;
+    return Radiusxyz;
     }
   else
     {
@@ -691,14 +691,14 @@ float * vtkMRMLROIListNode::GetNthROIDeltaXYZ(int n)
 }
 
 //----------------------------------------------------------------------------
-float * vtkMRMLROIListNode::GetNthROIDeltaIJK(int n)
+float * vtkMRMLROIListNode::GetNthROIRadiusIJK(int n)
 {
   vtkMRMLROINode *node = this->GetNthROINode(n);
   if (node != NULL)
     {
-    float * Deltaijk = node->GetDeltaIJK();
+    float * Radiusijk = node->GetRadiusIJK();
     node = NULL;
-    return Deltaijk;
+    return Radiusijk;
     }
   else
     {
@@ -850,8 +850,8 @@ void vtkMRMLROIListNode::UpdateIJK()
       {
       float *xyz = this->GetNthROIXYZ(n);
       this->SetNthROIXYZ(n, xyz[0], xyz[1], xyz[2]);
-      float *Deltaxzy = this->GetNthROIDeltaXYZ(n);
-      this->SetNthROIDeltaXYZ(n, Deltaxzy[0], Deltaxzy[1], Deltaxzy[2]);
+      float *Radiusxzy = this->GetNthROIRadiusXYZ(n);
+      this->SetNthROIRadiusXYZ(n, Radiusxzy[0], Radiusxzy[1], Radiusxzy[2]);
       }
     }
   return;

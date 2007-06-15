@@ -55,37 +55,49 @@ class VTK_MRML_EXPORT vtkMRMLROIListNode : public vtkMRMLNode
     int GetNumberOfROIs();
 
     // Description:
-    // Restrict access to the ROI points, pass in a value via the list
+    // Restrict access to the ROI, pass in a value via the list
     // so that the appropriate events can be invoked. Returns 0 on success
+
+    // Description:
+    // Get/Set for Nth ROI node Position in RAS cooridnates
+    // Note: The ROI Postion is the center of the ROI 
     int SetNthROIXYZ(int n, float x, float y, float z);
-    int SetNthROIDeltaXYZ(int n, float Deltax, float Deltay, float Deltaz);
-    int SetNthROIIJK(int n, float i, float j, float k);
-    int SetNthROIDeltaIJK(int n, float Deltai, float Deltaj, float Deltak);
-
-    int SetNthROILabelText(int n, const char *text);
-    int SetNthROISelected(int n, int flag);
-    int SetNthROIID(int n, const char *id);
-
-    // Description:
-    // Get the elements of the ROI box
-    // Return a three element float holding the position
     float *GetNthROIXYZ(int n);
+    // Description:
+    // Get/Set for Nth radius of the ROI in RAS cooridnates
+    int SetNthROIRadiusXYZ(int n, float Radiusx, float Radiusy, float Radiusz);
+    float *GetNthROIRadiusXYZ(int n);
+    // Description:
+    // Get/Set for Nth ROI node Position in IJK cooridnates
+    // Note: The ROI Postion is the center of the ROI 
+    int SetNthROIIJK(int n, float i, float j, float k);
     float *GetNthROIIJK(int n);
-    // Return a three element float holding the size of the ROI box
-    float *GetNthROIDeltaXYZ(int n);
-    float *GetNthROIDeltaIJK(int n);
-    // get the label text of the nth fiducial
-    const char *GetNthROILabelText(int n);
-    // get the selected state on the nth fiducial
-    int GetNthROISelected(int n);
-    // get the id of the nth fiducial
-    const char *GetNthROIID(int n);
+    // Description:
+    // Get/Set for Nth radius of the ROI in IJK cooridnates
+    int SetNthROIRadiusIJK(int n, float Radiusi, float Radiusj, float Radiusk);
+    float *GetNthROIRadiusIJK(int n);
 
     // Description:
-    // Add a ROI point to the list with default values
+    // Get/Set for label text of the Nth ROI  
+    int SetNthROILabelText(int n, const char *text);
+    const char *GetNthROILabelText(int n);
+    // Description:
+    // Get/Set for selected flag of the Nth ROI  
+    int SetNthROISelected(int n, int flag);
+    int GetNthROISelected(int n);
+    // Description:
+    // Get/Set for ID of the Nth ROI  
+    int SetNthROIID(int n, const char *id); 
+    const char *GetNthROIID(int n);
+   
+    // Description:
+    // Add an ROI to the list with default values
     int AddROI( );
-
+    // Description:
+    // Remove an ROI from the list 
     void RemoveROI(int i);
+    // Description:
+    // Remove all ROIs from the list 
     void RemoveAllROIs();
 
     void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
@@ -125,39 +137,42 @@ class VTK_MRML_EXPORT vtkMRMLROIListNode : public vtkMRMLNode
     vtkGetVectorMacro(SelectedColor,double,3);
 
     // Description:
-    // Opacity of the fiducial surface expressed as a number from 0 to 1
+    // Opacity of the ROI expressed as a number from 0 to 1
     void SetOpacity(double opacity);
     vtkGetMacro(Opacity, double);
 
     // Description:
-    // Ambient of the fiducial surface expressed as a number from 0 to 100
+    // Ambient of the ROI expressed as a number from 0 to 100
     vtkSetMacro(Ambient, double);
     vtkGetMacro(Ambient, double);
 
     // Description:
-    // Diffuse of the fiducial surface expressed as a number from 0 to 100
+    // Diffuse of the ROI expressed as a number from 0 to 100
     vtkSetMacro(Diffuse, double);
     vtkGetMacro(Diffuse, double);
 
     // Description:
-    // Specular of the fiducial surface expressed as a number from 0 to 100
+    // Specular of the ROI expressed as a number from 0 to 100
     vtkSetMacro(Specular, double);
     vtkGetMacro(Specular, double);
 
     // Description:
-    // Power of the fiducial surface expressed as a number from 0 to 100
+    // Power of the ROI expressed as a number from 0 to 100
     vtkSetMacro(Power, double);
     vtkGetMacro(Power, double);
 
+    // Description:
+    // Get/Set for the volume ID associated with the ROI
     vtkGetStringMacro(VolumeNodeID);
     vtkSetStringMacro(VolumeNodeID);
 
     // Description:
-    // Set the Volume node ID for each roi node in the list
+    // Set the Volume node ID for each ROI node in the list
     void SetAllVolumeNodeID();
 
     // Description:
-    // Update the IJK coordinates according RAS
+    // Syncronize the ROI position and radius in IJK 
+    // coordinates according RAS coordinates
     void UpdateIJK();
     
   protected:
@@ -182,7 +197,7 @@ class VTK_MRML_EXPORT vtkMRMLROIListNode : public vtkMRMLNode
     vtkMRMLROINode* GetNthROINode(int n);
 
     // Description:
-    // Numbers relating to the 3D render of the fiducials
+    // Numbers relating to the 3D render of the ROI
     double Opacity;
     double Ambient;
     double Diffuse;

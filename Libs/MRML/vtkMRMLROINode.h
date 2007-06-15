@@ -33,7 +33,6 @@ public:
 
   virtual void ReadXMLString( const char *keyValuePairs);
 
-
   // Description:
   // Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
@@ -55,32 +54,41 @@ public:
   void UpdateReferences();
 
   // Description:
-  // Get/Set for ROI Position RAS cooridnates
+  // Get/Set for ROI Position in RAS cooridnates
+  // Note: The ROI Postion is the center of the ROI 
   void SetXYZ(float X, float Y, float Z);
   void SetXYZ(float* XYZ);
   vtkGetVectorMacro(XYZ,float,3);
 
-  // Get/Set for ROI Size  RAS cooridnates
-  void SetDeltaXYZ(float DeltaX, float DeltaY, float DeltaZ);
-  void SetDeltaXYZ(float* DeltaXYZ);
-  vtkGetVectorMacro(DeltaXYZ,float,3);
+  // Description:
+  // Get/Set for radius of the ROI in RAS cooridnates
+  void SetRadiusXYZ(float RadiusX, float RadiusY, float RadiusZ);
+  void SetRadiusXYZ(float* RadiusXYZ);
+  vtkGetVectorMacro(RadiusXYZ,float,3);
 
+  // Description:
+  // Get/Set for ROI Position in IJK cooridnates
   void SetIJK(float I, float J, float K);
   void SetIJK(float* IJK);
   vtkGetVectorMacro(IJK,float,3);
 
-  void SetDeltaIJK(float DeltaI, float DeltaJ, float DeltaK);
-  void SetDeltaIJK(float* DeltaIJK);
-  vtkGetVectorMacro(DeltaIJK,float,3);
+  // Description:
+  // Get/Set for radius of the ROI in IJK cooridnates
+  void SetRadiusIJK(float RadiusI, float RadiusJ, float RadiusK);
+  void SetRadiusIJK(float* RadiusIJK);
+  vtkGetVectorMacro(RadiusIJK,float,3);
 
+  // Description:
   // Get/Set for LabelText
   vtkSetStringMacro(LabelText);
   vtkGetStringMacro(LabelText);
 
+  // Description:
   // Get/Set for ID
   vtkGetStringMacro(ID);
   vtkSetStringMacro(ID);
 
+  // Description:
   // Get/Set for Selected
   vtkGetMacro(Selected, bool);
   vtkSetMacro(Selected, bool);
@@ -97,19 +105,25 @@ protected:
 
   // Description:
   // The location of the ROI centroid in RAS space
+  // Note: The ROI Postion is the center of the ROI 
   float XYZ[3];  
   // Description:
-  // The size of  of the ROI box in RAS space
-  float DeltaXYZ[3];
+  // The raidus of  of the ROI box in RAS space
+  float RadiusXYZ[3];
   // Description:
   // The location of the ROI centroid in IJK space
+  // Note: The ROI Postion is the center of the ROI 
   float IJK[3];  
   // Description:
-  // The size of  of the ROI box in IJK space
-  float DeltaIJK[3];
+  // The radius of the ROI box in IJK space
+  float RadiusIJK[3];
+
   char *ID;
   char *LabelText;
   bool Selected;
+
+  // Description:
+  // The ID of the volume associated with the ROI 
   char *VolumeNodeID;
 };
 #endif
