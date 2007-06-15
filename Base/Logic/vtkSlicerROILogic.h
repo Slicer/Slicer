@@ -1,4 +1,4 @@
-// .NAME vtkSlicerFiducialsLogic - slicer logic class for ROI manipulation
+// .NAME vtkSlicerROILogic - slicer logic class for ROI manipulation
 // .SECTION Description
 // This class manages the logic associated ROI
 
