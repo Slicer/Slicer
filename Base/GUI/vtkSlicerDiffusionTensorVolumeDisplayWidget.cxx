@@ -113,7 +113,10 @@ void vtkSlicerDiffusionTensorVolumeDisplayWidget::ProcessWidgetEvents ( vtkObjec
     if (displayNode != NULL)
       {
       const char *scalarSelection = this->ScalarModeMenu->GetWidget()->GetWidget()->GetValue();
-      displayNode->GetDiffusionTensorDisplayPropertiesNode()->SetScalarInvariant(this->ScalarModeMap[std::string(scalarSelection)]);
+      if (displayNode->GetDiffusionTensorDisplayPropertiesNode())
+        {
+        displayNode->GetDiffusionTensorDisplayPropertiesNode()->SetScalarInvariant(this->ScalarModeMap[std::string(scalarSelection)]);
+        }
       }
     return;
     }
@@ -132,7 +135,10 @@ void vtkSlicerDiffusionTensorVolumeDisplayWidget::ProcessWidgetEvents ( vtkObjec
     if (displayNode != NULL)
       {
       const char *glyphSelection = this->GlyphModeMenu->GetWidget()->GetWidget()->GetValue();
-      displayNode->GetDiffusionTensorDisplayPropertiesNode()->SetGlyphGeometry(this->GlyphModeMap[std::string(glyphSelection)]);
+      if (displayNode->GetDiffusionTensorDisplayPropertiesNode())
+        {
+        displayNode->GetDiffusionTensorDisplayPropertiesNode()->SetGlyphGeometry(this->GlyphModeMap[std::string(glyphSelection)]);
+        }
       }
     return;
     }
