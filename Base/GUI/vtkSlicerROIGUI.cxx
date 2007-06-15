@@ -462,19 +462,19 @@ void vtkSlicerROIGUI::ProcessGUIEvents ( vtkObject *caller,
     int numRows = this->MultiColumnList->GetWidget()->GetNumberOfSelectedRows();
     if (numRows == 1)
       {
-      float Deltax, Deltay, Deltaz;
+      float Radiusx, Radiusy, Radiusz;
       int row[1];
       this->MultiColumnList->GetWidget()->GetSelectedRows(row);
-      Deltax = this->XRangeScale->GetValue();
-      Deltay = this->YRangeScale->GetValue();
-      Deltaz = this->ZRangeScale->GetValue();
+      Radiusx = this->XRangeScale->GetValue();
+      Radiusy = this->YRangeScale->GetValue();
+      Radiusz = this->ZRangeScale->GetValue();
       if(ActiveVolumeNodeID ==NULL)
         {
-        activeROIListNode->SetNthROIDeltaXYZ(row[0], Deltax, Deltay, Deltaz);
+        activeROIListNode->SetNthROIRadiusXYZ(row[0], Radiusx, Radiusy, Radiusz);
         }
       else
         {
-        activeROIListNode->SetNthROIDeltaIJK(row[0], Deltax, Deltay, Deltaz);
+        activeROIListNode->SetNthROIRadiusIJK(row[0], Radiusx, Radiusy, Radiusz);
         }
       }
     }
@@ -490,25 +490,25 @@ void vtkSlicerROIGUI::ProcessGUIEvents ( vtkObject *caller,
       this->MultiColumnList->GetWidget()->GetSelectedRows(row);
 
       float *xyz;
-      float *Deltaxyz;
+      float *Radiusxyz;
       // then remove that ROI by index
       if(ActiveVolumeNodeID ==NULL)
         {
         xyz = activeROIListNode->GetNthROIXYZ(row[0]);
-        Deltaxyz = activeROIListNode->GetNthROIDeltaXYZ(row[0]);
+        Radiusxyz = activeROIListNode->GetNthROIRadiusXYZ(row[0]);
         }
       else
         {
         xyz = activeROIListNode->GetNthROIIJK(row[0]);
-        Deltaxyz = activeROIListNode->GetNthROIDeltaIJK(row[0]);
+        Radiusxyz = activeROIListNode->GetNthROIRadiusIJK(row[0]);
         }
 
       if (xyz[0] == this->XPositionScale->GetValue() &&
         xyz[1] == this->YPositionScale->GetValue() &&
         xyz[2] == this->ZPositionScale->GetValue() &&
-        Deltaxyz[0] == this->XRangeScale->GetValue() &&
-        Deltaxyz[1] == this->YRangeScale->GetValue() &&
-        Deltaxyz[2] == this->ZRangeScale->GetValue())
+        Radiusxyz[0] == this->XRangeScale->GetValue() &&
+        Radiusxyz[1] == this->YRangeScale->GetValue() &&
+        Radiusxyz[2] == this->ZRangeScale->GetValue())
         //xyz values are not changed
         {
         return;
@@ -516,12 +516,12 @@ void vtkSlicerROIGUI::ProcessGUIEvents ( vtkObject *caller,
       if(ActiveVolumeNodeID ==NULL)
         {
         activeROIListNode->SetNthROIXYZ(row[0], xyz[0], xyz[1], xyz[2]);
-        activeROIListNode->SetNthROIDeltaXYZ(row[0], Deltaxyz[0], Deltaxyz[1], Deltaxyz[2]);
+        activeROIListNode->SetNthROIRadiusXYZ(row[0], Radiusxyz[0], Radiusxyz[1], Radiusxyz[2]);
         }
       else
         {
         activeROIListNode->SetNthROIIJK(row[0], xyz[0], xyz[1], xyz[2]);
-        activeROIListNode->SetNthROIDeltaIJK(row[0], Deltaxyz[0], Deltaxyz[1], Deltaxyz[2]);
+        activeROIListNode->SetNthROIRadiusIJK(row[0], Radiusxyz[0], Radiusxyz[1], Radiusxyz[2]);
         }
       }
     else if (numRows > 1)
@@ -678,17 +678,23 @@ void vtkSlicerROIGUI::SetGUIFromList(vtkMRMLROIListNode * activeROIListNode)
   if (ActiveVolumeNodeID == NULL)
     {
     this->XPositionScale->SetLabelText("X Position:");
+    this->XPositionScale->SetBalloonHelpString ( "Set the center X postion of the ROI BOX in RAS coordinates");
     this->YPositionScale->SetLabelText("Y Position:");
+    this->YPositionScale->SetBalloonHelpString ( "Set the center Y postion of the ROI BOX in RAS coordinates");
     this->ZPositionScale->SetLabelText("Z Position:");
-    this->XRangeScale->SetLabelText("X Size:");
-    this->YRangeScale->SetLabelText("Y Size:");
-    this->ZRangeScale->SetLabelText("Z Size:");
+    this->ZPositionScale->SetBalloonHelpString ( "Set the center Z postion of the ROI BOX in RAS coordinates");
+    this->XRangeScale->SetLabelText("X Radius:");
+    this->XRangeScale->SetBalloonHelpString ( "Set the radius of the ROI box along X direction in RAS coordinates.");
+    this->YRangeScale->SetLabelText("Y Radius:");
+    this->YRangeScale->SetBalloonHelpString ( "Set the radius of the ROI box along Y direction in RAS coordinates.");
+    this->ZRangeScale->SetLabelText("Z Radius:");
+    this->ZRangeScale->SetBalloonHelpString ( "Set the radius of the ROI box along Z direction in RAS coordinates.");
     this->MultiColumnList->GetWidget()->SetColumnTitle (2, "X");
     this->MultiColumnList->GetWidget()->SetColumnTitle (3, "Y");
     this->MultiColumnList->GetWidget()->SetColumnTitle (4, "Z");
-    this->MultiColumnList->GetWidget()->SetColumnTitle (5,"X Size");
-    this->MultiColumnList->GetWidget()->SetColumnTitle (6,"Y Size");
-    this->MultiColumnList->GetWidget()->SetColumnTitle (7,"Z Size");
+    this->MultiColumnList->GetWidget()->SetColumnTitle (5,"X Radius");
+    this->MultiColumnList->GetWidget()->SetColumnTitle (6,"Y Radius");
+    this->MultiColumnList->GetWidget()->SetColumnTitle (7,"Z Radius");
 
     this->XPositionScale->GetWidget()->SetRange(-1000, 1000);
     this->YPositionScale->GetWidget()->SetRange(-1000, 1000);
@@ -697,17 +703,23 @@ void vtkSlicerROIGUI::SetGUIFromList(vtkMRMLROIListNode * activeROIListNode)
   else 
     {
     this->XPositionScale->SetLabelText("I  Position:");
+    this->XPositionScale->SetBalloonHelpString ( "Set the center I postion of the ROI BOX in IJK coordinates");
     this->YPositionScale->SetLabelText("J Position:");
+    this->YPositionScale->SetBalloonHelpString ( "Set the center J postion of the ROI BOX in IJK coordinates");
     this->ZPositionScale->SetLabelText("K Position:");
-    this->XRangeScale->SetLabelText("I  Size:");
-    this->YRangeScale->SetLabelText("J Size:");
-    this->ZRangeScale->SetLabelText("K Size:");
+    this->ZPositionScale->SetBalloonHelpString ( "Set the center K postion of the ROI BOX in IJK coordinates");
+    this->XRangeScale->SetLabelText("I  Radius:");
+    this->XRangeScale->SetBalloonHelpString ( "Set the radius of the ROI box along I direction in IJK coordinates.");
+    this->YRangeScale->SetLabelText("J Radius:");
+    this->YRangeScale->SetBalloonHelpString ( "Set the radius of the ROI box along J direction in IJK coordinates.");
+    this->ZRangeScale->SetLabelText("K Radius:");
+    this->ZRangeScale->SetBalloonHelpString ( "Set the radius of the ROI box along K direction in IJK coordinates.");
     this->MultiColumnList->GetWidget()->SetColumnTitle(2, "I");
     this->MultiColumnList->GetWidget()->SetColumnTitle(3, "J");
     this->MultiColumnList->GetWidget()->SetColumnTitle(4, "K");
-    this->MultiColumnList->GetWidget()->SetColumnTitle(5, "I Size");
-    this->MultiColumnList->GetWidget()->SetColumnTitle(6, "J Size");
-    this->MultiColumnList->GetWidget()->SetColumnTitle(7, "K Size");
+    this->MultiColumnList->GetWidget()->SetColumnTitle(5, "I Radius");
+    this->MultiColumnList->GetWidget()->SetColumnTitle(6, "J Radius");
+    this->MultiColumnList->GetWidget()->SetColumnTitle(7, "K Radius");
 
     //Update the range according the volume size
     VolumeNode = vtkMRMLVolumeNode::SafeDownCast(this->VolumeNodeSelectorWidget->GetSelected());
@@ -765,7 +777,7 @@ void vtkSlicerROIGUI::SetGUIFromList(vtkMRMLROIListNode * activeROIListNode)
 
   // a row for each point
   float *xyz;
-  float *Deltaxyz;
+  float *Radiusxyz;
 
   for (int row = 0; row < numPoints; row++)
     {
@@ -790,14 +802,14 @@ void vtkSlicerROIGUI::SetGUIFromList(vtkMRMLROIListNode * activeROIListNode)
       vtkErrorMacro ("SetGUIFromList: ERROR: got null xyz for point " << row << endl);
       }
 
-    vtkDebugMacro("Getting nth ROI Deltaxyz"); 
+    vtkDebugMacro("Getting nth ROI Radiusxyz"); 
     if(ActiveVolumeNodeID == NULL)
       {
-      Deltaxyz = activeROIListNode->GetNthROIDeltaXYZ(row);
+      Radiusxyz = activeROIListNode->GetNthROIRadiusXYZ(row);
       }
     else
       {
-      Deltaxyz = activeROIListNode->GetNthROIDeltaIJK(row);
+      Radiusxyz = activeROIListNode->GetNthROIRadiusIJK(row);
       }
 
     if (activeROIListNode->GetNthROILabelText(row) != NULL)
@@ -840,19 +852,19 @@ void vtkSlicerROIGUI::SetGUIFromList(vtkMRMLROIListNode * activeROIListNode)
         }
       }
 
-    if (Deltaxyz != NULL)
+    if (Radiusxyz != NULL)
       {
-      if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row,this->DeltaXColumn) != Deltaxyz[0])
+      if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row,this->RadiusXColumn) != Radiusxyz[0])
         {
-        this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,this->DeltaXColumn,Deltaxyz[0]);
+        this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,this->RadiusXColumn,Radiusxyz[0]);
         } 
-      if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row,this->DeltaYColumn) != Deltaxyz[1])
+      if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row,this->RadiusYColumn) != Radiusxyz[1])
         {
-        this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,this->DeltaYColumn,Deltaxyz[1]);
+        this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,this->RadiusYColumn,Radiusxyz[1]);
         }
-      if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row,this->DeltaZColumn) != Deltaxyz[2])
+      if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row,this->RadiusZColumn) != Radiusxyz[2])
         {
-        this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,this->DeltaZColumn,Deltaxyz[2]);
+        this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,this->RadiusZColumn,Radiusxyz[2]);
         } 
       }
     }
@@ -878,30 +890,30 @@ void vtkSlicerROIGUI::SetGUIFromList(vtkMRMLROIListNode * activeROIListNode)
  
 
   vtkDebugMacro(<< "\tupdating the x, y, z location and deltea x, y, z \n");
-  //update the xyz position and xyz size according the selected row
+  //update the xyz position and xyz Radius according the selected row
   int numRows = this->MultiColumnList->GetWidget()->GetNumberOfSelectedRows();
   if (numRows == 1)
     {
     int row[1];
     this->MultiColumnList->GetWidget()->GetSelectedRows(row);
     //float* xyz;
-    //float* Deltaxyz;
+    //float* Radiusxyz;
     if (ActiveVolumeNodeID == NULL)
       {
       xyz = activeROIListNode->GetNthROIXYZ(row[0]);
-      Deltaxyz = activeROIListNode->GetNthROIDeltaXYZ(row[0]);
+      Radiusxyz = activeROIListNode->GetNthROIRadiusXYZ(row[0]);
       }
     else
       {
       xyz = activeROIListNode->GetNthROIIJK(row[0]);
-      Deltaxyz = activeROIListNode->GetNthROIDeltaIJK(row[0]);
+      Radiusxyz = activeROIListNode->GetNthROIRadiusIJK(row[0]);
       }
     this->XPositionScale->SetValue(xyz[0]);
     this->YPositionScale->SetValue(xyz[1]);
     this->ZPositionScale->SetValue(xyz[2]);
-    this->XRangeScale->SetValue(Deltaxyz[0]);
-    this->YRangeScale->SetValue(Deltaxyz[1]);
-    this->ZRangeScale->SetValue(Deltaxyz[2]);
+    this->XRangeScale->SetValue(Radiusxyz[0]);
+    this->YRangeScale->SetValue(Radiusxyz[1]);
+    this->ZRangeScale->SetValue(Radiusxyz[2]);
     }
 
 
@@ -1104,9 +1116,9 @@ void vtkSlicerROIGUI::BuildGUI ( )
   this->MultiColumnList->GetWidget()->AddColumn("X");
   this->MultiColumnList->GetWidget()->AddColumn("Y");
   this->MultiColumnList->GetWidget()->AddColumn("Z");
-  this->MultiColumnList->GetWidget()->AddColumn("X Size");
-  this->MultiColumnList->GetWidget()->AddColumn("Y Size");
-  this->MultiColumnList->GetWidget()->AddColumn("Z Size");
+  this->MultiColumnList->GetWidget()->AddColumn("X Radius");
+  this->MultiColumnList->GetWidget()->AddColumn("Y Radius");
+  this->MultiColumnList->GetWidget()->AddColumn("Z Radius");
 
   // make the selected column editable by checkbox
   this->MultiColumnList->GetWidget()->SetColumnEditWindowToCheckButton(this->SelectedColumn);
@@ -1118,7 +1130,7 @@ void vtkSlicerROIGUI::BuildGUI ( )
     this->MultiColumnList->GetWidget()->SetColumnWidth(col, 6);
     this->MultiColumnList->GetWidget()->SetColumnAlignmentToLeft(col);
     this->MultiColumnList->GetWidget()->ColumnEditableOn(col);
-    if (col >= this->XColumn && col <= this->DeltaZColumn)
+    if (col >= this->XColumn && col <= this->RadiusZColumn)
       {
       this->MultiColumnList->GetWidget()->SetColumnEditWindowToSpinBox(col);
       }
@@ -1191,7 +1203,7 @@ void vtkSlicerROIGUI::BuildGUI ( )
   this->XPositionScale->SetParent( XPositionFrame );
   this->XPositionScale->Create();
   this->XPositionScale->SetLabelText("X Position:");
-  this->XPositionScale->SetBalloonHelpString ( "Set the cnetroid Postion of the ROI in x direction.");
+  this->XPositionScale->SetBalloonHelpString ( "Set the center X postion of the ROI BOX in RAS coordinates");
   this->XPositionScale->GetWidget()->SetRange(-256.0, 256.0);
   this->XPositionScale->GetWidget()->SetOrientationToHorizontal ();
   this->XPositionScale->GetWidget()->SetResolution(1);
@@ -1201,8 +1213,8 @@ void vtkSlicerROIGUI::BuildGUI ( )
   this->XRangeScale = vtkKWScaleWithEntry::New();
   this->XRangeScale->SetParent( XPositionFrame );
   this->XRangeScale->Create();
-  this->XRangeScale->SetLabelText("X Size:");
-  this->XRangeScale->SetBalloonHelpString ( "Set the range of the ROI box in x direction.");
+  this->XRangeScale->SetLabelText("X Radius:");
+  this->XRangeScale->SetBalloonHelpString ( "Set the radius of the ROI box along X direction in RAS coordinates.");
   this->XRangeScale->GetWidget()->SetRange(0.0, 20.0);
   this->XRangeScale->GetWidget()->SetOrientationToHorizontal ();
   this->XRangeScale->GetWidget()->SetResolution(0.5);
@@ -1224,7 +1236,7 @@ void vtkSlicerROIGUI::BuildGUI ( )
   this->YPositionScale->SetParent( YPositionFrame );
   this->YPositionScale->Create();
   this->YPositionScale->SetLabelText("Y Position:");
-  this->YPositionScale->SetBalloonHelpString ( "Set the cnetroid Postion of the ROI in y direction.");
+  this->YPositionScale->SetBalloonHelpString ( "Set the center Y postion of the ROI BOX in RAS coordinates");
   this->YPositionScale->GetWidget()->SetRange(-256.0, 256.0);
   this->YPositionScale->GetWidget()->SetOrientationToHorizontal ();
   this->YPositionScale->GetWidget()->SetResolution(1);
@@ -1234,8 +1246,8 @@ void vtkSlicerROIGUI::BuildGUI ( )
   this->YRangeScale = vtkKWScaleWithEntry::New();
   this->YRangeScale->SetParent( YPositionFrame );
   this->YRangeScale->Create();
-  this->YRangeScale->SetLabelText("Y Size:");
-  this->YRangeScale->SetBalloonHelpString ( "Set the range of the ROI box in y direction.");
+  this->YRangeScale->SetLabelText("Y Radius:");
+  this->YRangeScale->SetBalloonHelpString ( "Set the radius of the ROI box along Y direction in RAS coordinates.");
   this->YRangeScale->GetWidget()->SetRange(0.0, 20.0);
   this->YRangeScale->GetWidget()->SetOrientationToHorizontal ();
   this->YRangeScale->GetWidget()->SetResolution(0.5);
@@ -1257,7 +1269,7 @@ void vtkSlicerROIGUI::BuildGUI ( )
   this->ZPositionScale->SetParent( ZPositionFrame );
   this->ZPositionScale->Create();
   this->ZPositionScale->SetLabelText("Z Position:");
-  this->ZPositionScale->SetBalloonHelpString ( "Set the cnetroid Postion of the ROI in z direction.");
+  this->ZPositionScale->SetBalloonHelpString ( "Set the center Z postion of the ROI BOX in RAS coordinates");
   this->ZPositionScale->GetWidget()->SetRange(-256.0, 256.0);
   this->ZPositionScale->GetWidget()->SetOrientationToHorizontal ();
   this->ZPositionScale->GetWidget()->SetResolution(1);
@@ -1267,8 +1279,8 @@ void vtkSlicerROIGUI::BuildGUI ( )
   this->ZRangeScale = vtkKWScaleWithEntry::New();
   this->ZRangeScale->SetParent( ZPositionFrame );
   this->ZRangeScale->Create();
-  this->ZRangeScale->SetLabelText("Z Size:");
-  this->ZRangeScale->SetBalloonHelpString ( "Set the range of the ROI box in z direction.");
+  this->ZRangeScale->SetLabelText("Z Radius:");
+  this->ZRangeScale->SetBalloonHelpString ( "Set the radius of the ROI box along Z direction in RAS coordinates.");
   this->ZRangeScale->GetWidget()->SetRange(0.0, 20.0);
   this->ZRangeScale->GetWidget()->SetOrientationToHorizontal ();
   this->ZRangeScale->GetWidget()->SetResolution(0.5);
@@ -1395,20 +1407,20 @@ void vtkSlicerROIGUI::UpdateElement(int row, int col, char * str)
       vtkDebugMacro("UpdateElement: setting node " <<  activeROIListNode->GetNthROILabelText(row) << "'s selected flag to " << str << endl);
       activeROIListNode->SetNthROISelected(row, (atoi(str) == 1));
       }
-    else if (col >= this->XColumn && col <= this->DeltaZColumn)
+    else if (col >= this->XColumn && col <= this->RadiusZColumn)
       {
       // get the current xyz
       float * xyz;
-      float * Deltaxyz;
+      float * Radiusxyz;
       if (ActiveVolumeNodeID == NULL)
         {
         xyz = activeROIListNode->GetNthROIXYZ(row);
-        Deltaxyz = activeROIListNode->GetNthROIDeltaXYZ(row);
+        Radiusxyz = activeROIListNode->GetNthROIRadiusXYZ(row);
         }
       else
         {
         xyz = activeROIListNode->GetNthROIIJK(row);
-        Deltaxyz = activeROIListNode->GetNthROIDeltaIJK(row);
+        Radiusxyz = activeROIListNode->GetNthROIRadiusIJK(row);
         }
      
       // now set the new one
@@ -1446,37 +1458,37 @@ void vtkSlicerROIGUI::UpdateElement(int row, int col, char * str)
           activeROIListNode->SetNthROIIJK(row, xyz[0], xyz[1], newCoordinate);
           }
         }
-      if (col == this->DeltaXColumn) 
+      if (col == this->RadiusXColumn) 
         { 
         if (ActiveVolumeNodeID == NULL)
           {
-          activeROIListNode->SetNthROIDeltaXYZ(row, newCoordinate, Deltaxyz[1], Deltaxyz[2]); 
+          activeROIListNode->SetNthROIRadiusXYZ(row, newCoordinate, Radiusxyz[1], Radiusxyz[2]); 
           }
         else
           {
-          activeROIListNode->SetNthROIDeltaIJK(row, newCoordinate, Deltaxyz[1], Deltaxyz[2]); 
+          activeROIListNode->SetNthROIRadiusIJK(row, newCoordinate, Radiusxyz[1], Radiusxyz[2]); 
           }
         }
-      if (col == this->DeltaYColumn) 
+      if (col == this->RadiusYColumn) 
         { 
         if (ActiveVolumeNodeID == NULL)
           {
-          activeROIListNode->SetNthROIDeltaXYZ(row, Deltaxyz[0], newCoordinate, Deltaxyz[2]);  
+          activeROIListNode->SetNthROIRadiusXYZ(row, Radiusxyz[0], newCoordinate, Radiusxyz[2]);  
           }
         else
           {
-          activeROIListNode->SetNthROIDeltaIJK(row, Deltaxyz[0], newCoordinate, Deltaxyz[2]); 
+          activeROIListNode->SetNthROIRadiusIJK(row, Radiusxyz[0], newCoordinate, Radiusxyz[2]); 
           }
         }
-      if (col == this->DeltaZColumn) 
+      if (col == this->RadiusZColumn) 
         {
         if (ActiveVolumeNodeID == NULL)
           {
-          activeROIListNode->SetNthROIDeltaXYZ(row, Deltaxyz[0], Deltaxyz[1], newCoordinate);
+          activeROIListNode->SetNthROIRadiusXYZ(row, Radiusxyz[0], Radiusxyz[1], newCoordinate);
           }
         else
           {
-          activeROIListNode->SetNthROIDeltaIJK(row, Deltaxyz[0], Deltaxyz[1], newCoordinate);
+          activeROIListNode->SetNthROIRadiusIJK(row, Radiusxyz[0], Radiusxyz[1], newCoordinate);
           }
         }
       }
@@ -1497,7 +1509,7 @@ void vtkSlicerROIGUI::SetROIListNode (vtkMRMLROIListNode *ROIListNode)
     return;
     }
   // save the ID
-  vtkDebugMacro("setting the fid list node id to " << ROIListNode->GetID());
+  vtkDebugMacro("setting the ROI list node id to " << ROIListNode->GetID());
   this->SetROIListNodeID(ROIListNode->GetID());
   return;
 }
@@ -1548,7 +1560,7 @@ void vtkSlicerROIGUI::SetROIListNodeID (char * id)
     this->ApplicationLogic->GetSelectionNode() != NULL &&
     this->ROIListNodeID != NULL)
     {
-    vtkDebugMacro("ROI GUI: setting the active fid list id to " << this->ROIListNodeID);
+    vtkDebugMacro("ROI GUI: setting the active ROI list id to " << this->ROIListNodeID);
     this->ApplicationLogic->GetSelectionNode()->SetActiveROIListID( this->ROIListNodeID );
     }
   return;

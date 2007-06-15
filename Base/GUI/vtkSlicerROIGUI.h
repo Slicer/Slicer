@@ -11,7 +11,6 @@
 #include "vtkSlicerModuleLogic.h"
 #include "vtkSlicerNodeSelectorWidget.h"
 #include "vtkSlicerROILogic.h"
-#include "vtkMRMLFiducial.h"
 #include "vtkMRMLROINode.h"
 #include "vtkMRMLROIListNode.h"
 
@@ -92,7 +91,7 @@ public:
   // Description:
   // Once know that the GUI has to be cleared and updated to show elements
   // from a new list, use this call
-  virtual void SetGUIFromList(vtkMRMLROIListNode * activeFiducialListNode);
+  virtual void SetGUIFromList(vtkMRMLROIListNode * activeROIListNode);
 
   // Description:
   // Methods describe behavior at module enter and exit.
@@ -102,15 +101,12 @@ public:
   virtual void UpdateElement(int row, int col, char * str);
 
   // Description:
-  // Getting and setting the mrml fiducail list node id
+  // Getting and setting the mrml ROI list node id
   vtkGetStringMacro(ROIListNodeID);
   void SetROIListNodeID(char *id);
 
- /* vtkGetStringMacro(VolumeNodeID);
-  vtkSetStringMacro(VolumeNodeID);*/
-
   // Description:
-  // Set the selected node, the fid list id, and update the widgets
+  // Set the selected node, the ROI list id, and update the widgets
   void SetROIListNode(vtkMRMLROIListNode *ROIListNode);
 
   // Description:
@@ -120,13 +116,16 @@ public:
   // Description:
   // Which ROI list node are we displaying in this gui 
   vtkSlicerNodeSelectorWidget* ROIListSelectorWidget;
-  // Volume node selector  
+
+  // Description:
+  // Which voliume node is associated with the ROI 
   vtkSlicerNodeSelectorWidget* VolumeNodeSelectorWidget;
 
 protected:
   vtkSlicerROIGUI ( );
   virtual ~vtkSlicerROIGUI ( );
 
+  // Description:
   // Module logic and mrml pointers
   vtkSlicerROILogic *Logic;
 
@@ -134,12 +133,8 @@ protected:
   // The ID of the ROI node that is currently displayed in the GUI
   char *ROIListNodeID;
 
-  //// Description:
-  //// The ID of the volume node that is associated with the ROI 
-  //char *VolumeNodeID;
-
   // Description:
-  // The fiducial list node that is currently displayed in the GUI
+  // The ROI list node that is currently displayed in the GUI
   vtkMRMLROIListNode *ROIListNode;
 
   // Widgets for the ROI module
@@ -166,7 +161,7 @@ protected:
   // ROI colour
   vtkKWChangeColorButton *ROIColorButton;
 
-  // ROI selected fiducial colour
+  // ROI selected ROI colour
   vtkKWChangeColorButton *ROISelectedColorButton;
 
   // text scale
@@ -192,9 +187,9 @@ protected:
     XColumn = 2,
     YColumn = 3,
     ZColumn = 4,
-    DeltaXColumn = 5,
-    DeltaYColumn = 6,
-    DeltaZColumn = 7,
+    RadiusXColumn = 5,
+    RadiusYColumn = 6,
+    RadiusZColumn = 7,
     };
   //ETX
 
