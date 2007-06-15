@@ -563,15 +563,15 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
               for (int i=0; i < regions->GetNumberOfROIs(); ++i)
                 {
                 float *pt;
-                float *delta;
+                float *Radius;
                 std::ostrstream roiAsString;
 
                 if (regions->GetNthROISelected(i))
                   {
                   pt = regions->GetNthROIXYZ(i);
-                  delta = regions->GetNthROIDeltaXYZ(i);
+                  Radius = regions->GetNthROIRadiusXYZ(i);
                   roiAsString << pt[0] << "," << pt[1] << "," << pt[2] << ","
-                             << delta[0] << "," << delta[1] << "," << delta[2]
+                             << Radius[0] << "," << Radius[1] << "," << Radius[2]
                              << std::ends;
                   roiAsString.rdbuf()->freeze();
                   
