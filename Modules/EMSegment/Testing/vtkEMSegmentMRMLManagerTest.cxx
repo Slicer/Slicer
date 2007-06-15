@@ -91,7 +91,6 @@ int main(int argc, char** argv)
   std::string parametersNodeName          = argv[2];
 
   // generate some magic numbers to use for testing
-  srand(time(0));
   const int    MAGIC_INT     = rand();
   const double MAGIC_DOUBLE  = 3.14159 * rand();
   const double MAGIC_DOUBLE2 = 3.14159 * rand();
