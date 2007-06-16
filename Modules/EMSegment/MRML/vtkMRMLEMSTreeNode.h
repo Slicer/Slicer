@@ -61,6 +61,7 @@ public:
   virtual int GetNumberOfChildNodes();
   virtual char* GetNthChildNodeID(int n);
   virtual vtkMRMLEMSTreeNode* GetNthChildNode(int n);
+  virtual int GetChildIndexByMRMLID(char* childID);
 
 protected:
   vtkMRMLEMSTreeNode();

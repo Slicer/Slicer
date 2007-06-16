@@ -214,6 +214,36 @@ GetNthChildNodeID(int n)
 }
 
 //-----------------------------------------------------------------------------
+int
+vtkMRMLEMSTreeNode::
+GetChildIndexByMRMLID(char* childID)
+{
+  int numChildren = 0;
+  int numTreeNodes = this->GetScene()->
+    GetNumberOfNodesByClass("vtkMRMLEMSTreeNode");
+  for (int i = 0; i < numTreeNodes; ++i)
+    {
+    vtkMRMLNode* node = this->GetScene()->
+      GetNthNodeByClass(i,"vtkMRMLEMSTreeNode");
+    vtkMRMLEMSTreeNode* treeNode = vtkMRMLEMSTreeNode::SafeDownCast(node);
+
+    if (treeNode->GetParentNodeID() != NULL &&
+        vtksys_stl::string(this->GetID()) == 
+        vtksys_stl::string(treeNode->GetParentNodeID()))
+      {
+      if (vtksys_stl::string(treeNode->GetID()) == std::string(childID))
+        {
+        return numChildren;
+        }
+      ++numChildren;
+      }
+    }
+
+  // didn't find it
+  return -1;
+}
+
+//-----------------------------------------------------------------------------
 vtkMRMLEMSTreeNode*
 vtkMRMLEMSTreeNode::
 GetParentNode()
