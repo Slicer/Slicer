@@ -21,6 +21,7 @@ class vtkMRMLVolumeNode;
 
 // need enum values
 #include "MRML/vtkMRMLEMSTreeParametersLeafNode.h"
+#include "MRML/vtkMRMLEMSClassInteractionMatrixNode.h"
 
 class vtkMRMLScene;
 
@@ -183,6 +184,25 @@ public:
   virtual int      GetTreeNodeExcludeFromIncompleteEStep(vtkIdType nodeID);
   virtual void     SetTreeNodeExcludeFromIncompleteEStep(vtkIdType nodeID, 
                                                          int shouldExclude);
+
+  //BTX
+  enum 
+    {
+      DirectionWest  = vtkMRMLEMSClassInteractionMatrixNode::DirectionWest, 
+      DirectionNorth = vtkMRMLEMSClassInteractionMatrixNode::DirectionNorth,
+      DirectionUp    = vtkMRMLEMSClassInteractionMatrixNode::DirectionUp, 
+      DirectionEast  = vtkMRMLEMSClassInteractionMatrixNode::DirectionEast, 
+      DirectionSouth = vtkMRMLEMSClassInteractionMatrixNode::DirectionSouth, 
+      DirectionDown  = vtkMRMLEMSClassInteractionMatrixNode::DirectionDown
+    };
+  //ETX
+  virtual double   GetTreeNodeClassInteraction(vtkIdType nodeID, 
+                                               int direction,
+                                               int row, int column);
+  virtual void     SetTreeNodeClassInteraction(vtkIdType nodeID, 
+                                               int direction,
+                                               int row, int column,
+                                               double value);
 
   virtual double   GetTreeNodeAlpha(vtkIdType nodeID);
   virtual void     SetTreeNodeAlpha(vtkIdType nodeID, double value);
@@ -446,6 +466,8 @@ public:
     GetTreeParametersLeafNode(vtkIdType);  
   virtual vtkMRMLEMSTreeParametersParentNode* 
     GetTreeParametersParentNode(vtkIdType);  
+  virtual vtkMRMLEMSClassInteractionMatrixNode* 
+    GetTreeClassInteractionNode(vtkIdType);  
   virtual vtkMRMLEMSSegmenterNode*        GetSegmenterNode();
   virtual vtkMRMLVolumeNode*              GetVolumeNode(vtkIdType);
   virtual vtkMRMLEMSWorkingDataNode*      GetWorkingDataNode();

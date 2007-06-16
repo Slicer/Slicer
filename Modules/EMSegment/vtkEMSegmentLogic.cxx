@@ -163,6 +163,10 @@ StartPreprocessingTargetIntensityNormalization()
     }
   
   //
+  // check that the number of target images did not change
+  // !!! todo !!!
+
+  //
   // apply normalization
   for (int i = 0; i < normalizedTarget->GetNumberOfVolumes(); ++i)
     {
@@ -659,6 +663,7 @@ CopyTreeDataToSegmenter(vtkImageEMLocalSuperClass* node, vtkIdType nodeID)
   // add children
   unsigned int numChildren = 
     this->MRMLManager->GetTreeNodeNumberOfChildren(nodeID);
+  double totalProbability = 0.0;
   for (unsigned int i = 0; i < numChildren; ++i)
     {
     vtkIdType childID = this->MRMLManager->GetTreeNodeChildNodeID(nodeID, i);
@@ -684,24 +689,39 @@ CopyTreeDataToSegmenter(vtkImageEMLocalSuperClass* node, vtkIdType nodeID)
       node->AddSubClass(childNode, i);
       childNode->Delete();
       }
+
+    totalProbability += 
+      this->MRMLManager->GetTreeNodeClassProbability(childID);
+    }
+
+  if (totalProbability != 1.0)
+    {
+    vtkWarningMacro("Warning: child probabilities don't sum to unity for node "
+                    << this->MRMLManager->GetTreeNodeName(nodeID)
+                    << " they sum to " << totalProbability);
     }
 
   // update Markov matrices
-  //!!todo!!! for now these are set to the identity
-  for (unsigned int r = 0; r < numChildren; ++r)
+  const unsigned int numDirections = 6;
+  bool nodeHasMatrix = 
+    this->MRMLManager->GetTreeClassInteractionNode(nodeID) != NULL;
+  if (!nodeHasMatrix)
     {
-    for (unsigned int c = 0; c < numChildren; ++c)
+    vtkWarningMacro("CIM not available, using identity.");
+    }
+  for (unsigned int d = 0; d < numDirections; ++d)
+    {
+    for (unsigned int r = 0; r < numChildren; ++r)
       {
-      // matrices are up, down, left, right, north, south (not nesc
-      // right order)
-      for (unsigned int whichMatrix = 0; whichMatrix < 6; ++whichMatrix)
+      for (unsigned int c = 0; c < numChildren; ++c)
         {
-        double val = (r == c ? 1.0 : 0.0);
-        node->SetMarkovMatrix(val, whichMatrix, c, r);
+        double val = nodeHasMatrix 
+          ? this->MRMLManager->GetTreeNodeClassInteraction(nodeID, d, r, c)
+          : (r == c ? 1.0 : 0.0);
+        node->SetMarkovMatrix(val, d, c, r);
         }
       }
     }
-
   node->Update();
 }
 

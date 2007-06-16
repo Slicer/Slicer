@@ -10,7 +10,9 @@
 <EMSTreeParametersLeaf
  id="vtkMRMLEMSTreeParametersLeafNode1" name="vtkMRMLEMSTreeParametersLeafNode1"  hideFromEditors="false" PrintQuality="0" IntensityLabel="1000" LogMean="" LogCovariance="" DistributionSpecificationMethod="0" DistributionSamplePointsRAS="" ></EMSTreeParametersLeaf>
 <EMSTreeParametersParent
- id="vtkMRMLEMSTreeParametersParentNode1" name="vtkMRMLEMSTreeParametersParentNode1"  hideFromEditors="false" Alpha="0.7" PrintBias="0" BiasCalculationMaxIterations="-1" SmoothingKernelWidth="11" SmoothingKernelSigma="5" StopEMType="0" StopEMMaxIterations="0" StopEMValue="0" StopMFAType="0" StopMFAMaxIterations="0" StopMFAValue="0" PrintFrequency="0" PrintLabelMap="0" PrintEMLabelMapConvergence="0" PrintEMWeightsConvergence="0" PrintMFALabelMapConvergence="0" PrintMFAWeightsConvergence="0" GenerateBackgroundProbability="0" ></EMSTreeParametersParent>
+ id="vtkMRMLEMSTreeParametersParentNode1" name="vtkMRMLEMSTreeParametersParentNode1"  hideFromEditors="false" ClassInteractionMatrixNodeID="vtkMRMLEMSClassInteractionMatrixNode1" Alpha="0.7" PrintBias="0" BiasCalculationMaxIterations="-1" SmoothingKernelWidth="11" SmoothingKernelSigma="5" StopEMType="0" StopEMMaxIterations="0" StopEMValue="0" StopMFAType="0" StopMFAMaxIterations="0" StopMFAValue="0" PrintFrequency="0" PrintLabelMap="0" PrintEMLabelMapConvergence="0" PrintEMWeightsConvergence="0" PrintMFALabelMapConvergence="0" PrintMFAWeightsConvergence="0" GenerateBackgroundProbability="0" ></EMSTreeParametersParent>
+<EMSClassInteractionMatrix
+ id="vtkMRMLEMSClassInteractionMatrixNode1" name="vtkMRMLEMSClassInteractionMatrixNode1"  hideFromEditors="false" West="" North="" Up="" East="" South="" Down="" ></EMSClassInteractionMatrix>
 <EMSTreeParameters
  id="vtkMRMLEMSTreeParametersNode1" name="vtkMRMLEMSTreeParametersNode1"  hideFromEditors="false" ParentParametersNodeID="vtkMRMLEMSTreeParametersParentNode1" LeafParametersNodeID="vtkMRMLEMSTreeParametersLeafNode1" ColorRGB="1 0 0" InputChannelWeights="" SpatialPriorVolumeName="" SpatialPriorWeight="0" ClassProbability="0" ExcludeFromIncompleteEStep="0" PrintWeights="0" ></EMSTreeParameters>
 <EMSTree

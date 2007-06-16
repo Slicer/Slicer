@@ -5,6 +5,7 @@
 #include "vtkMRMLNode.h"
 #include "vtkEMSegment.h"
 #include "vtkMRMLScene.h"
+#include "vtkMRMLEMSClassInteractionMatrixNode.h"
 
 class VTK_EMSEGMENT_EXPORT vtkMRMLEMSTreeParametersParentNode : 
   public vtkMRMLNode
@@ -32,11 +33,26 @@ public:
   // Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "EMSTreeParametersParent";}
 
+  // Description:
+  // Updates this node if it depends on other nodes
+  // when the node is deleted in the scene
+  virtual void UpdateReferences();
+
+  // Description:
+  // Update the stored reference to another node in the scene
+  virtual void UpdateReferenceID(const char *oldID, const char *newID);  
+
   vtkGetMacro(NumberOfTargetInputChannels, unsigned int);
   vtkSetMacro(NumberOfTargetInputChannels, unsigned int);
   virtual void AddTargetInputChannel() {}
   virtual void RemoveNthTargetInputChannel(int index) {}
   virtual void MoveNthTargetInputChannel(int fromIndex, int toIndex) {}
+
+  // class interaction matrix
+  vtkSetReferenceStringMacro(ClassInteractionMatrixNodeID);
+  vtkGetStringMacro(ClassInteractionMatrixNodeID);
+  virtual vtkMRMLEMSClassInteractionMatrixNode* 
+  GetClassInteractionMatrixNode();
 
   // Alpha determines the influence of the Markov random field
   // 0 => no influence, 1 => maximum influence
@@ -120,7 +136,7 @@ protected:
   void operator=(const vtkMRMLEMSTreeParametersParentNode&);
 
   // references to other nodes
-  char*                               GlobalParametersNodeID;
+  char*                               ClassInteractionMatrixNodeID;
 
   // Markov field influence
   double                              Alpha;

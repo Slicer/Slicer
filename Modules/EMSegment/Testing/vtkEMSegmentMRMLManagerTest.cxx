@@ -433,6 +433,8 @@ int main(int argc, char** argv)
       // add node A under root
       int numChildren = m->GetTreeNodeNumberOfChildren(rootID);
 
+      std::cerr << "Adding A...";
+
       vtkIdType idA = m->AddTreeNode(rootID);
       m->SetTreeNodeIntensityLabel(idA, int('A'));
       
@@ -445,12 +447,14 @@ int main(int argc, char** argv)
         }
 
       // add node B and C under A
+      std::cerr << "Adding B&C...";
       vtkIdType idB = m->AddTreeNode(idA);
       m->SetTreeNodeIntensityLabel(idB, int('B'));
       vtkIdType idC = m->AddTreeNode(idA);
       m->SetTreeNodeIntensityLabel(idC, int('C'));
 
       // add node D under B
+      std::cerr << "Adding D...";
       vtkIdType idD = m->AddTreeNode(idB);
       m->SetTreeNodeIntensityLabel(idD, int('D'));
 
@@ -464,7 +468,49 @@ int main(int argc, char** argv)
         localPass = false;
         }
       
+      // check CIM sizes
+      if (m->GetTreeClassInteractionNode(rootID)->GetNumberOfClasses() != 3 ||
+          m->GetTreeClassInteractionNode(idA)->GetNumberOfClasses() != 2 ||
+          m->GetTreeClassInteractionNode(idB)->GetNumberOfClasses() != 1 ||
+          m->GetTreeClassInteractionNode(idC)->GetNumberOfClasses() != 0 ||
+          m->GetTreeClassInteractionNode(idD)->GetNumberOfClasses() != 0)
+        {
+        std::cerr << "Error adding child nodes: CIM size error" << std::endl;
+
+        std::cerr 
+          << "Root:" 
+          << m->GetTreeClassInteractionNode(rootID)->GetNumberOfClasses()
+          << " A:" 
+          << m->GetTreeClassInteractionNode(idA)->GetNumberOfClasses()
+          << " B:" 
+          << m->GetTreeClassInteractionNode(idB)->GetNumberOfClasses()
+          << " C:" 
+          << m->GetTreeClassInteractionNode(idC)->GetNumberOfClasses()
+          << " D:" 
+          << m->GetTreeClassInteractionNode(idD)->GetNumberOfClasses()
+          << std::endl;
+
+        pass = false;
+        localPass = false;
+        }
+      
+      // check CIM entries
+      for (unsigned int direction = 0; direction < 6; ++direction)
+        {
+        if (m->GetTreeNodeClassInteraction(idA, direction, 0, 0) != 1 ||
+            m->GetTreeNodeClassInteraction(idA, direction, 1, 1) != 1 ||
+            m->GetTreeNodeClassInteraction(idA, direction, 0, 1) != 0 ||
+            m->GetTreeNodeClassInteraction(idA, direction, 1, 0) != 0 ||
+            m->GetTreeNodeClassInteraction(idB, direction, 0, 0) != 1)
+          {
+          std::cerr << "Error adding child nodes: CIM size error" << std::endl;
+          pass = false;
+          localPass = false;
+          }
+        }
+
       // move node D to node C
+      std::cerr << "Moving D...";
       m->SetTreeNodeParentNodeID(idD, idC);
       if (m->GetTreeNodeIsLeaf(idA) ||
           !m->GetTreeNodeIsLeaf(idB) || 
@@ -477,6 +523,7 @@ int main(int argc, char** argv)
         }
 
       // remove node B
+      std::cerr << "Removing B...";
       m->RemoveTreeNode(idB);
       if (m->GetTreeNodeNumberOfChildren(idA) != 1 ||
           m->GetTreeNodeIsLeaf(idC) ||
@@ -496,7 +543,44 @@ int main(int argc, char** argv)
         localPass = false;
         }
       
+      // check CIM sizes
+      if (m->GetTreeClassInteractionNode(rootID)->GetNumberOfClasses() != 3 ||
+          m->GetTreeClassInteractionNode(idA)->GetNumberOfClasses() != 1 ||
+          m->GetTreeClassInteractionNode(idC)->GetNumberOfClasses() != 1 ||
+          m->GetTreeClassInteractionNode(idD)->GetNumberOfClasses() != 0)
+        {
+        std::cerr << "Error moving child nodes: CIM size error" << std::endl;
+
+        std::cerr 
+          << "Root:" 
+          << m->GetTreeClassInteractionNode(rootID)->GetNumberOfClasses()
+          << " A:" 
+          << m->GetTreeClassInteractionNode(idA)->GetNumberOfClasses()
+          << " C:" 
+          << m->GetTreeClassInteractionNode(idC)->GetNumberOfClasses()
+          << " D:" 
+          << m->GetTreeClassInteractionNode(idD)->GetNumberOfClasses()
+          << std::endl;
+
+        pass = false;
+        localPass = false;
+        }
+      
+      // check CIM entries
+      for (unsigned int direction = 0; direction < 6; ++direction)
+        {
+        if (m->GetTreeNodeClassInteraction(rootID, direction, 0, 0) != 1 ||
+            m->GetTreeNodeClassInteraction(idC, direction, 0, 0) != 1 ||
+            m->GetTreeNodeClassInteraction(idA, direction, 0, 0) != 1)
+          {
+          std::cerr << "Error moving child nodes: CIM size error" << std::endl;
+          pass = false;
+          localPass = false;
+          }
+        }
+
       // remove node A
+      std::cerr << "Removing A...";
       m->RemoveTreeNode(idA);
       if (numChildren != m->GetTreeNodeNumberOfChildren(rootID) ||
           m->GetTreeNode(idA) != NULL ||
@@ -508,7 +592,8 @@ int main(int argc, char** argv)
         pass = false;
         localPass = false;
         }
-          
+      std::cerr << (localPass ? "OK" : "FAILED") << std::endl;
+
       /////////////////////////////////////////////////////////////////
       // manipulate atlas
       /////////////////////////////////////////////////////////////////

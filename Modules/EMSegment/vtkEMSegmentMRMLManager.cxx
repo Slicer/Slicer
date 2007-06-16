@@ -19,6 +19,7 @@
 #include "vtkMRMLEMSTreeParametersNode.h"
 #include "vtkMRMLEMSWorkingDataNode.h"
 #include "vtkMRMLEMSIntensityNormalizationParametersNode.h"
+#include "vtkMRMLEMSClassInteractionMatrixNode.h"
 
 #include "vtkMatrix4x4.h"
 #include "vtkMath.h"
@@ -250,7 +251,57 @@ SetTreeNodeParentNodeID(vtkIdType childNodeID, vtkIdType newParentNodeID)
     return;
     }
 
+  // remove the entry for this node in the old parent's class
+  // interaction matrix
+  vtkMRMLEMSTreeNode* oldParentNode = childNode->GetParentNode();
+  if (oldParentNode)
+    {
+    vtkIdType oldParentID = 
+      this->MapMRMLNodeIDToVTKNodeID(oldParentNode->GetID());
+    if (oldParentID == ERROR_NODE_VTKID)
+      {
+      vtkErrorMacro("Can't get old parent vtk id for node: " 
+                    << newParentNodeID);
+      return;    
+      }
+    
+    vtkMRMLEMSClassInteractionMatrixNode* oldMatrixNode = 
+      this->GetTreeClassInteractionNode(oldParentID);
+    if (oldMatrixNode)
+      {
+      int childIndex = 
+        childNode->GetParentNode()->GetChildIndexByMRMLID(childNode->GetID());
+      if (childIndex < 0)
+        {
+        vtkErrorMacro("ERROR: can't find child's index in old parent node.");
+        }
+      else
+        {
+        oldMatrixNode->RemoveNthClass(childIndex);
+        }
+      }
+    else
+      {
+      vtkErrorMacro("Error: parent node doesn't have a matrix node for node ID:"
+                    << childNodeID);
+      }
+    }
+
+  // point the child to the new parent
   childNode->SetParentNodeID(parentNode->GetID());
+
+  // add entry in CIM matrix for new parent
+  vtkMRMLEMSClassInteractionMatrixNode* newMatrixNode = 
+    this->GetTreeClassInteractionNode(newParentNodeID);
+  if (newMatrixNode)
+    {
+    newMatrixNode->AddClass();
+    }
+  else
+    {
+    vtkErrorMacro("Error: new parent node doesn't have a matrix for node ID:"
+                  << childNodeID);
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -300,6 +351,36 @@ RemoveTreeNode(vtkIdType removedNodeID)
   // remove parameters nodes associated with this node
   this->RemoveTreeNodeParametersNodes(removedNodeID);
 
+  // remove the entry for this node in the old parent's class
+  // interaction matrix
+  vtkMRMLEMSTreeNode* parentNode = node->GetParentNode();
+  if (parentNode)
+    {
+    vtkIdType parentID = this->MapMRMLNodeIDToVTKNodeID(parentNode->GetID());
+    if (parentID != ERROR_NODE_VTKID)
+      {
+      vtkMRMLEMSClassInteractionMatrixNode* matrixNode = 
+        this->GetTreeClassInteractionNode(parentID);
+      if (matrixNode)
+        {
+        int childIndex = parentNode->GetChildIndexByMRMLID(node->GetID());
+        if (childIndex < 0)
+          {
+          vtkErrorMacro("ERROR: can't find child's index in parent node.");
+          }
+        else
+          {
+          matrixNode->RemoveNthClass(childIndex);
+          }
+        }
+      else
+        {
+        vtkErrorMacro("Error: parent node doesn't have a matrix node for node ID:"
+                      << removedNodeID);
+        }  
+      }
+    }
+ 
   // remove node from scene  
   this->GetMRMLScene()->RemoveNode(node);
 }
@@ -1068,6 +1149,42 @@ SetTreeNodeExcludeFromIncompleteEStep(vtkIdType nodeID, int shouldExclude)
   n->GetParametersNode()->SetExcludeFromIncompleteEStep(shouldExclude);  
 }
 
+//----------------------------------------------------------------------------
+double   
+vtkEMSegmentMRMLManager::
+GetTreeNodeClassInteraction(vtkIdType nodeID, 
+                            int direction,
+                            int rowIndex,
+                            int columnIndex)
+{
+  vtkMRMLEMSClassInteractionMatrixNode* node = 
+    this->GetTreeClassInteractionNode(nodeID);
+  if (node == NULL)
+    {
+    vtkErrorMacro("Class interaction node is null for nodeID: " << nodeID);
+    return 0;
+    }
+  return node->GetClassInteraction(direction, rowIndex, columnIndex);
+}
+
+//----------------------------------------------------------------------------
+void
+vtkEMSegmentMRMLManager::
+SetTreeNodeClassInteraction(vtkIdType nodeID, 
+                            int direction,
+                            int rowIndex, 
+                            int columnIndex,
+                            double value)
+{
+  vtkMRMLEMSClassInteractionMatrixNode* node = 
+    this->GetTreeClassInteractionNode(nodeID);
+  if (node == NULL)
+    {
+    vtkErrorMacro("Class interaction node is null for nodeID: " << nodeID);
+    return;
+    }
+  node->SetClassInteraction(direction, rowIndex, columnIndex, value);
+}
 
 //----------------------------------------------------------------------------
 double
@@ -2863,6 +2980,22 @@ GetTreeParametersParentNode(vtkIdType nodeID)
 }
 
 //----------------------------------------------------------------------------
+vtkMRMLEMSClassInteractionMatrixNode*
+vtkEMSegmentMRMLManager::
+GetTreeClassInteractionNode(vtkIdType nodeID)
+{
+  vtkMRMLEMSTreeParametersParentNode* node = 
+    this->GetTreeParametersParentNode(nodeID);
+  if (node == NULL)
+    {
+    vtkWarningMacro("Tree parameters parent node is null for node id: " 
+                    << nodeID);
+    return NULL;
+    }
+  return node->GetClassInteractionMatrixNode();
+}
+
+//----------------------------------------------------------------------------
 vtkMRMLVolumeNode*
 vtkEMSegmentMRMLManager::
 GetVolumeNode(vtkIdType volumeID)
@@ -3185,11 +3318,18 @@ CreateAndObserveNewParameterSet()
   parentParametersNode->SetHideFromEditors(this->HideNodesFromEditors);
   this->GetMRMLScene()->AddNode(parentParametersNode);
 
+  vtkMRMLEMSClassInteractionMatrixNode* classInteractionMatrixNode = 
+    vtkMRMLEMSClassInteractionMatrixNode::New();
+  classInteractionMatrixNode->SetHideFromEditors(this->HideNodesFromEditors);
+  this->GetMRMLScene()->AddNode(classInteractionMatrixNode);
+
   vtkMRMLEMSTreeParametersNode* treeParametersNode = 
     vtkMRMLEMSTreeParametersNode::New();
   treeParametersNode->SetHideFromEditors(this->HideNodesFromEditors);
   this->GetMRMLScene()->AddNode(treeParametersNode);
   
+  parentParametersNode->
+    SetClassInteractionMatrixNodeID(classInteractionMatrixNode->GetID());
   treeParametersNode->SetLeafParametersNodeID(leafParametersNode->GetID());
   treeParametersNode->SetParentParametersNodeID(parentParametersNode->GetID());
 
@@ -3242,6 +3382,7 @@ CreateAndObserveNewParameterSet()
   targetNode->Delete();
   workingNode->Delete();
   globalParametersNode->Delete();
+  classInteractionMatrixNode->Delete();
   leafParametersNode->Delete();
   parentParametersNode->Delete();
   treeParametersNode->Delete();
@@ -3267,12 +3408,19 @@ AddNewTreeNode()
   parentParametersNode->SetHideFromEditors(this->HideNodesFromEditors);
   this->GetMRMLScene()->AddNode(parentParametersNode);
 
+  vtkMRMLEMSClassInteractionMatrixNode* classInteractionMatrixNode = 
+    vtkMRMLEMSClassInteractionMatrixNode::New();
+  classInteractionMatrixNode->SetHideFromEditors(this->HideNodesFromEditors);
+  this->GetMRMLScene()->AddNode(classInteractionMatrixNode);
+
   vtkMRMLEMSTreeParametersNode* treeParametersNode = 
     vtkMRMLEMSTreeParametersNode::New();
   treeParametersNode->SetHideFromEditors(this->HideNodesFromEditors);
   this->GetMRMLScene()->AddNode(treeParametersNode);
 
   // add connections  
+  parentParametersNode->
+    SetClassInteractionMatrixNodeID(classInteractionMatrixNode->GetID());
   treeParametersNode->SetLeafParametersNodeID(leafParametersNode->GetID());
   treeParametersNode->SetParentParametersNodeID(parentParametersNode->GetID());
 
@@ -3300,6 +3448,7 @@ AddNewTreeNode()
   this->SetTreeNodeIntensityLabel(treeNodeID, treeNodeID);
   
   // delete nodes
+  classInteractionMatrixNode->Delete();
   leafParametersNode->Delete();
   parentParametersNode->Delete();
   treeParametersNode->Delete();
@@ -3330,6 +3479,14 @@ RemoveTreeNodeParametersNodes(vtkIdType nodeID)
       this->GetMRMLScene()->RemoveNode(leafParametersNode);
       }
 
+    // remove class interaction matrix node
+    vtkMRMLNode* classInteractionMatrixNode = parametersNode->
+      GetParentParametersNode()->GetClassInteractionMatrixNode();
+    if (classInteractionMatrixNode != NULL)
+      {
+      this->GetMRMLScene()->RemoveNode(classInteractionMatrixNode);
+      }
+    
     // remove parent node parameters
     vtkMRMLNode* parentParametersNode = parametersNode->
       GetParentParametersNode();
@@ -3613,6 +3770,11 @@ RegisterMRMLNodesWithScene()
     vtkMRMLEMSTreeParametersParentNode::New();
   this->GetMRMLScene()->RegisterNodeClass(emsTreeParametersParentNode);
   emsTreeParametersParentNode->Delete();
+
+  vtkMRMLEMSClassInteractionMatrixNode* emsClassInteractionMatrixNode = 
+    vtkMRMLEMSClassInteractionMatrixNode::New();
+  this->GetMRMLScene()->RegisterNodeClass(emsClassInteractionMatrixNode);
+  emsClassInteractionMatrixNode->Delete();
 
   vtkMRMLEMSTreeParametersLeafNode* emsTreeParametersLeafNode = 
     vtkMRMLEMSTreeParametersLeafNode::New();

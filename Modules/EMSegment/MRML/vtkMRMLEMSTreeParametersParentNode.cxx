@@ -37,6 +37,8 @@ CreateNodeInstance()
 //-----------------------------------------------------------------------------
 vtkMRMLEMSTreeParametersParentNode::vtkMRMLEMSTreeParametersParentNode()
 {
+  this->ClassInteractionMatrixNodeID  = NULL;
+  
   this->Alpha                         = 0.7;
 
   this->PrintBias                     = 0;
@@ -65,6 +67,7 @@ vtkMRMLEMSTreeParametersParentNode::vtkMRMLEMSTreeParametersParentNode()
 //-----------------------------------------------------------------------------
 vtkMRMLEMSTreeParametersParentNode::~vtkMRMLEMSTreeParametersParentNode()
 {
+  this->SetClassInteractionMatrixNodeID(NULL);
 }
 
 //-----------------------------------------------------------------------------
@@ -72,6 +75,11 @@ void vtkMRMLEMSTreeParametersParentNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
   vtkIndent indent(nIndent);
+
+  of << indent << "ClassInteractionMatrixNodeID=\"" 
+     << (this->ClassInteractionMatrixNodeID ? 
+         this->ClassInteractionMatrixNodeID : "NULL")
+     << "\" ";
 
   of << indent << "Alpha=\"" << this->Alpha << "\" ";
 
@@ -116,6 +124,32 @@ void vtkMRMLEMSTreeParametersParentNode::WriteXML(ostream& of, int nIndent)
 }
 
 //-----------------------------------------------------------------------------
+void
+vtkMRMLEMSTreeParametersParentNode::
+UpdateReferenceID(const char* oldID, const char* newID)
+{
+  if (this->ClassInteractionMatrixNodeID && 
+      !strcmp(oldID, this->ClassInteractionMatrixNodeID))
+    {
+    this->SetClassInteractionMatrixNodeID(newID);
+    }
+}
+
+//-----------------------------------------------------------------------------
+void 
+vtkMRMLEMSTreeParametersParentNode::
+UpdateReferences()
+{
+  Superclass::UpdateReferences();
+
+  if (this->ClassInteractionMatrixNodeID != NULL && 
+      this->Scene->GetNodeByID(this->ClassInteractionMatrixNodeID) == NULL)
+    {
+    this->SetClassInteractionMatrixNodeID(NULL);
+    }
+}
+
+//-----------------------------------------------------------------------------
 void vtkMRMLEMSTreeParametersParentNode::ReadXMLAttributes(const char** attrs)
 {
   Superclass::ReadXMLAttributes(attrs);
@@ -129,8 +163,14 @@ void vtkMRMLEMSTreeParametersParentNode::ReadXMLAttributes(const char** attrs)
     {
     key = *attrs++;
     val = *attrs++;
-    
-    if (!strcmp(key, "Alpha"))
+
+    if (!strcmp(key, "ClassInteractionMatrixNodeID"))
+      {
+      this->SetClassInteractionMatrixNodeID(val);
+      this->Scene->AddReferencedNodeID(this->ClassInteractionMatrixNodeID, 
+                                       this);   
+      }    
+    else if (!strcmp(key, "Alpha"))
       {
       vtksys_stl::stringstream ss;
       ss << val;
@@ -248,6 +288,8 @@ void vtkMRMLEMSTreeParametersParentNode::Copy(vtkMRMLNode *rhs)
   vtkMRMLEMSTreeParametersParentNode* node = 
     (vtkMRMLEMSTreeParametersParentNode*) rhs;
 
+  this->SetClassInteractionMatrixNodeID(node->ClassInteractionMatrixNodeID);
+
   this->SetAlpha(node->Alpha);
 
   this->SetPrintBias(node->PrintBias);
@@ -277,6 +319,11 @@ void vtkMRMLEMSTreeParametersParentNode::PrintSelf(ostream& os,
                                                    vtkIndent indent)
 {
   Superclass::PrintSelf(os, indent);
+
+  os << indent << "ClassInteractionMatrixNodeID: " 
+     << (this->ClassInteractionMatrixNodeID ? 
+         this->ClassInteractionMatrixNodeID : "(none)")
+     << "\n";
 
   os << indent << "Alpha: " << this->Alpha << "\n";
 
@@ -313,3 +360,17 @@ void vtkMRMLEMSTreeParametersParentNode::PrintSelf(ostream& os,
      << this->GenerateBackgroundProbability << "\n";
 }
 
+//-----------------------------------------------------------------------------
+vtkMRMLEMSClassInteractionMatrixNode*
+vtkMRMLEMSTreeParametersParentNode::
+GetClassInteractionMatrixNode()
+{
+  vtkMRMLEMSClassInteractionMatrixNode* node = NULL;
+  if (this->GetScene() && this->GetClassInteractionMatrixNodeID() )
+    {
+    vtkMRMLNode* snode = this->GetScene()->
+      GetNodeByID(this->ClassInteractionMatrixNodeID);
+    node = vtkMRMLEMSClassInteractionMatrixNode::SafeDownCast(snode);
+    }
+  return node;
+}

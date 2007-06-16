@@ -1,19 +1,18 @@
 GUI Tests
 =========================
 1) Slicer loads without crashing and exits without vtk leaks
-Checked 06June07
 
-2) No module is loaded
+2) No parameter node is loaded
   a) go back and forth through all steps with no errors or warnings
   b) go from each step to finish and back---no errors or warnings
   c) buttons are disabled
   d) run gives appropriate message
   e) Slicer exits without vtk leaks
 
-3) Tutorial module is loaded---look at all parameters but don't change
+3) Tutorial parameters are loaded---look at all parameters but don't change
   a) go back and forth through all steps with no errors or warnings
   b) go from each step to finish and back---no errors or warnings
-  c) buttons are disabled
+  c) buttons are disabled/enabled appropriately
   d) run gives appropriate message
   e) Slicer exits without vtk leaks
   f) results match 
@@ -41,4 +40,17 @@ Current Bugs
 6/8: can't edit input channel weights
 8/8: hide save panel
 
-
+13 June 07 --- davisb
+=========================
+1) OK
+2) OK
+3) Minor Warnings:
+  c) 8/9 should be disabled (not implemented)
+  b) warnings on step 8/9
+Warning: In /usr/local/dev/src/Slicer3/Modules/EMSegment/vtkEMSegmentMRMLManager.cxx, line 2265
+vtkEMSegmentMRMLManager (0x41d0210): AtlasVolumeName is NULL/blank.
+Warning: In /usr/local/dev/src/Slicer3/Modules/EMSegment/vtkEMSegmentMRMLManager.cxx, line 2320
+vtkEMSegmentMRMLManager (0x41d0210): TargetVolumeName is NULL/blank.
+4) 
+  Warning 1/9: regarding checking mrml nodes but no output volume
+  

@@ -75,7 +75,10 @@ void vtkMRMLEMSTreeParametersLeafNode::WriteXML(ostream& of, int nIndent)
       {
       of << this->LogCovariance[r][c] << " ";
       }
-    of << "| ";
+    if (r < this->GetNumberOfTargetInputChannels() - 1)
+      {
+      of << "| ";
+      }
     }
   of << "\" ";
 
