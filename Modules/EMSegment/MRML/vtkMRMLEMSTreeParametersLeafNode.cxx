@@ -75,6 +75,7 @@ void vtkMRMLEMSTreeParametersLeafNode::WriteXML(ostream& of, int nIndent)
       {
       of << this->LogCovariance[r][c] << " ";
       }
+    of << "| ";
     }
   of << "\" ";
 
@@ -141,9 +142,19 @@ void vtkMRMLEMSTreeParametersLeafNode::ReadXMLAttributes(const char** attrs)
       }
     else if (!strcmp(key, "LogCovariance"))
       {
+      // remove visual row seperators
+      std::string valStr(val);
+      for (int i = 0; i < valStr.size(); ++i)
+        {
+        if (valStr[i] == '|')
+          {
+          valStr[i] = ' ';
+          }
+        }
+
       // read data into a temporary vector
       vtksys_stl::stringstream ss;
-      ss << val;
+      ss << valStr;
       double d;
       vtksys_stl::vector<double> tmpVec;
       while (ss >> d)
