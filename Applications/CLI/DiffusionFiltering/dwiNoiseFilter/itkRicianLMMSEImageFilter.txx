@@ -333,10 +333,8 @@ RicianLMMSEImageFilter< TInputImage, TOutputImage>
 ::GenerateData()
 {
 
-  this->PrintSelf(std::cout, 0 );
+  //this->PrintSelf(std::cout, 0 );
 
-#warning "This is a slow implementation. Future versions should"
-#warning " (a) implement a multithreaded version."
 
   typename  InputImageType::ConstPointer input  = this->GetInput();
   const int vDIMENSION = input->GetNumberOfComponentsPerPixel();
