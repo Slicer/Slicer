@@ -632,8 +632,13 @@ void vtkSlicerApplicationLogic::ProcessReadData()
       else if (dtvnd || dwvnd)
         {
         // Load a diffusion tensor or a diffusion weighted node
+        //
+        // Need to maintain the original coordinate frame established by 
+        // the images sent to the execution model 
 #if USE_TEEM
-        in = vtkMRMLNRRDStorageNode::New();
+        vtkMRMLNRRDStorageNode *nin = vtkMRMLNRRDStorageNode::New();
+        nin->SetCenterImage(0);
+        in = nin;
 #endif
         if (dtvnd)
           {
