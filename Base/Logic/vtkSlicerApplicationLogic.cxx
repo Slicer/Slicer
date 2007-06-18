@@ -619,7 +619,14 @@ void vtkSlicerApplicationLogic::ProcessReadData()
       if (svnd || vvnd)
         {
         // Load a scalar or vector volume node
-        in = vtkMRMLVolumeArchetypeStorageNode::New();
+        //
+        // Need to maintain the original coordinate frame established by 
+        // the images sent to the execution model 
+        vtkMRMLVolumeArchetypeStorageNode *vin 
+            = vtkMRMLVolumeArchetypeStorageNode::New();
+        vin->SetCenterImage(0);
+        in = vin;
+
         disp = vtkMRMLVolumeDisplayNode::New();
         }
       else if (dtvnd || dwvnd)
