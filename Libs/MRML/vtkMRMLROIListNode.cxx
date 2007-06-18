@@ -659,7 +659,7 @@ int vtkMRMLROIListNode::SetNthROIRadiusIJK(int n, float Radiusi, float Radiusj, 
     if (VolumeNode)
       {
       double* spacing = VolumeNode->GetSpacing();
-      node->SetRadiusXYZ((int)Radiusi * spacing[0], (int)Radiusj * spacing[1], (int)Radiusk * spacing[2]);
+      node->SetRadiusXYZ(Radiusi * spacing[0], Radiusj * spacing[1], Radiusk * spacing[2]);
       }
     else
       {
