@@ -365,13 +365,13 @@ RicianLMMSEImageFilter< TInputImage, TOutputImage>
   ProgressReporter progress(this, 0, output->GetRequestedRegion().GetNumberOfPixels()*m_Iterations);
   
   //InputPixelType sum[vDIMENSION];
-  double sum[vDIMENSION];
+  double *sum = new double[vDIMENSION];
 
-  double dSecondAveragedMoment[vDIMENSION];
-  double dFourthAveragedMoment[vDIMENSION];
-  double dSquaredMagnitude[vDIMENSION];
+  double *dSecondAveragedMoment = new double[vDIMENSION];
+  double *dFourthAveragedMoment = new double[vDIMENSION];
+  double *dSquaredMagnitude = new double[vDIMENSION];
 
-  int iNumberOfUsedVoxels[vDIMENSION];
+  int *iNumberOfUsedVoxels = new int[vDIMENSION];
 
   int iWriteIntoOutput = 1;   // toggles between the two states, so there is no extra copying
 
