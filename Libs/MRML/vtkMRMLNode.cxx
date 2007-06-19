@@ -127,7 +127,9 @@ void vtkMRMLNode::Copy(vtkMRMLNode *node)
     }
   this->HideFromEditors = node->HideFromEditors;
   this->SaveWithScene = node->SaveWithScene ;
- 
+  this->Selectable = node->Selectable;
+  this->AddToScene = node->AddToScene;
+
   if (node->GetSingletonTag())
     {
     this->SetSingletonTag( node->GetSingletonTag() );
@@ -175,6 +177,8 @@ void vtkMRMLNode::WriteXML(ostream& of, int nIndent)
     }
   of << indent << " hideFromEditors=\"" << (this->HideFromEditors ? "true" : "false") << "\" ";
 
+  of << indent << " selectable=\"" << (this->Selectable ? "true" : "false") << "\" ";
+
 }
 
 //----------------------------------------------------------------------------
@@ -207,6 +211,17 @@ void vtkMRMLNode::ReadXMLAttributes(const char** atts)
       else
         {
         this->HideFromEditors = 0;
+        }
+      }
+    else if (!strcmp(attName, "selectable")) 
+      {
+      if (!strcmp(attValue,"true")) 
+        {
+        this->Selectable = 1;
+        }
+      else
+        {
+        this->Selectable = 0;
         }
       }
     } 

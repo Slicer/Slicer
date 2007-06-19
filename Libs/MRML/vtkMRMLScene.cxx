@@ -50,6 +50,7 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLViewNode.h"
 #include "vtkMRMLModelHierarchyNode.h"
 #include "vtkMRMLSceneSnapshotNode.h"
+#include "vtkMRMLSnapshotClipNode.h"
 
 #ifdef USE_TEEM
 #include "vtkMRMLNRRDStorageNode.h"
@@ -198,6 +199,10 @@ vtkMRMLScene::vtkMRMLScene()
   vtkMRMLSceneSnapshotNode *sshot = vtkMRMLSceneSnapshotNode::New();
   this->RegisterNodeClass ( sshot );
   sshot->Delete();
+
+  vtkMRMLSnapshotClipNode *cshot = vtkMRMLSnapshotClipNode::New();
+  this->RegisterNodeClass ( cshot );
+  cshot->Delete();
 
 #ifdef USE_TEEM
   vtkMRMLNRRDStorageNode *nrrd = vtkMRMLNRRDStorageNode::New();

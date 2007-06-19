@@ -33,6 +33,10 @@ vtkSlicerRecordSnapshotWidget::vtkSlicerRecordSnapshotWidget ( )
   this->StartRecordButton = NULL;
   this->StopRecordButton = NULL;
   this->ReplayButton = NULL;
+  this->SaveClipButton = NULL;
+  this->ClipSelectorWidget = NULL;
+  this->NameDialog = NULL;
+
 }
 
 
@@ -57,6 +61,24 @@ vtkSlicerRecordSnapshotWidget::~vtkSlicerRecordSnapshotWidget ( )
     this->StartRecordButton->Delete();
     this->StartRecordButton = NULL;
     }
+  if (this->SaveClipButton)
+    {
+    this->SaveClipButton->SetParent(NULL);
+    this->SaveClipButton->Delete();
+    this->SaveClipButton = NULL;
+    }
+  if (this->ClipSelectorWidget)
+    {
+    this->ClipSelectorWidget->SetParent(NULL);
+    this->ClipSelectorWidget->Delete();
+    this->ClipSelectorWidget = NULL;
+    }
+  if (this->NameDialog)
+    {
+    this->NameDialog->SetParent(NULL);
+    this->NameDialog->Delete();
+    this->NameDialog = NULL;
+    }
    
   this->SetMRMLScene ( NULL );  
 }
@@ -77,10 +99,40 @@ void vtkSlicerRecordSnapshotWidget::ProcessWidgetEvents ( vtkObject *caller,
                                                          unsigned long event, void *callData )
 {
 
-  //
-  // process volume selector events
-  //
-  if (this->StartRecordButton == vtkKWPushButton::SafeDownCast(caller)  && event == vtkKWPushButton::InvokedEvent )
+  if (this->SaveClipButton == vtkKWPushButton::SafeDownCast(caller)  && event == vtkKWPushButton::InvokedEvent )
+    {
+    this->ClipSelectorWidget->SetSelectedNew("vtkMRMLSnapshotClipNode");
+    this->ClipSelectorWidget->ProcessNewNodeCommand("vtkMRMLSnapshotClipNode", "SnapshotClip");
+    vtkMRMLSnapshotClipNode *clipNode = 
+      vtkMRMLSnapshotClipNode::SafeDownCast(this->ClipSelectorWidget->GetSelected());
+    
+    vtkKWEntryWithLabel *entry = this->NameDialog->GetEntry();
+    entry->GetWidget()->SetValue(clipNode->GetName());
+    int result = this->NameDialog->Invoke();
+
+    if (!result) 
+      {
+      this->MRMLScene->RemoveNode(clipNode);
+      clipNode = NULL;
+      }
+    else 
+      {
+      clipNode->SetName(entry->GetWidget()->GetValue());
+      this->ClipSelectorWidget->UpdateMenu();
+      }
+    if (clipNode)
+      {
+      for (unsigned int i=0; i<this->Sanpshots.size(); i++)
+        {
+        vtkMRMLSceneSnapshotNode *snapshotNode = this->Sanpshots[i];
+        snapshotNode->SetSelectable(0);
+        clipNode->AddSceneSanpshotNode(snapshotNode);
+        this->MRMLScene->AddNodeNoNotify(snapshotNode);
+        }
+      this->Sanpshots.clear();
+      }
+    }
+  else if (this->StartRecordButton == vtkKWPushButton::SafeDownCast(caller)  && event == vtkKWPushButton::InvokedEvent )
     {
     this->Sanpshots.clear();
     this->AddMRMLObservers();
@@ -94,17 +146,33 @@ void vtkSlicerRecordSnapshotWidget::ProcessWidgetEvents ( vtkObject *caller,
 
   else if (this->ReplayButton == vtkKWPushButton::SafeDownCast(caller)  && event == vtkKWPushButton::InvokedEvent )
     {
-    this->MRMLScene->SaveStateForUndo();
-    for (unsigned int i=0; i<this->Sanpshots.size(); i++)
+    vtkMRMLSnapshotClipNode *clipNode = 
+         vtkMRMLSnapshotClipNode::SafeDownCast(this->ClipSelectorWidget->GetSelected());
+    if (this->Sanpshots.size() > 0 && clipNode == NULL)
       {
-      vtkMRMLSceneSnapshotNode *snapshotNode = this->Sanpshots[i];
-      snapshotNode->RestoreScene();
-      // Cause Render
-      //this->Script("sleep 2");
-      this->Script("update");
+      this->MRMLScene->SaveStateForUndo();
+      for (unsigned int i=0; i<this->Sanpshots.size(); i++)
+        {
+        vtkMRMLSceneSnapshotNode *snapshotNode = this->Sanpshots[i];
+        snapshotNode->RestoreScene();
+        // Cause Render
+        //this->Script("sleep 2");
+        this->Script("update");
+        }
+      }
+    else if (clipNode != NULL)
+      {
+      this->MRMLScene->SaveStateForUndo();
+      for ( int i=0; i< clipNode->GetNumberOfSceneSanpshotNodes(); i++)
+        {
+        vtkMRMLSceneSnapshotNode *snapshotNode = clipNode->GetSceneSanpshotNode(i);
+        snapshotNode->RestoreScene();
+        // Cause Render
+        //this->Script("sleep 2");
+        this->Script("update");
+        }
       }
     }
-
 } 
 
 
@@ -136,6 +204,10 @@ void vtkSlicerRecordSnapshotWidget::RemoveWidgetObservers ( ) {
     {
     this->ReplayButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     }
+  if (this->SaveClipButton)
+    {
+    this->SaveClipButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    }
 }
 
 
@@ -154,6 +226,16 @@ void vtkSlicerRecordSnapshotWidget::CreateWidget ( )
 
   this->Superclass::CreateWidget();
   
+  this->NameDialog  = vtkKWSimpleEntryDialog::New();
+  this->NameDialog->SetParent ( this->GetParent());
+  this->NameDialog->SetTitle("Snapshot Clip Name");
+  this->NameDialog->SetSize(400, 200);
+  this->NameDialog->SetStyleToOkCancel();
+  vtkKWEntryWithLabel *entry = this->NameDialog->GetEntry();
+  entry->SetLabelText("Clip Name");
+  entry->GetWidget()->SetValue("");
+  this->NameDialog->Create ( );
+
 
   // FRAME            
   vtkKWFrame *frame = vtkKWFrame::New ( );
@@ -183,6 +265,38 @@ void vtkSlicerRecordSnapshotWidget::CreateWidget ( )
                "pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
                this->StopRecordButton->GetWidgetName());
 
+  // Create Snapshot button
+  this->SaveClipButton = vtkKWPushButton::New();
+  this->SaveClipButton->SetParent(frame);
+  this->SaveClipButton->Create();
+  this->SaveClipButton->SetText("Save Clip with Scene");
+  //this->SaveClipButton->SetWidth ( 40);
+  this->Script(
+               "pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
+               this->SaveClipButton->GetWidgetName());
+
+
+  this->ClipSelectorWidget = vtkSlicerNodeSelectorWidget::New() ;
+  this->ClipSelectorWidget->SetParent ( frame);
+  this->ClipSelectorWidget->Create ( );
+  this->ClipSelectorWidget->SetNodeClass("vtkMRMLSnapshotClipNode", NULL, NULL, NULL);
+  this->ClipSelectorWidget->SetShowHidden(1);
+  this->ClipSelectorWidget->SetMRMLScene(this->GetMRMLScene());
+  this->ClipSelectorWidget->SetNoneEnabled(1);
+  //this->ClipSelectorWidget->SetBorderWidth(2);
+  // this->ClipSelectorWidget->SetReliefToGroove();
+  //this->ClipSelectorWidget->SetPadX(2);
+  //this->ClipSelectorWidget->SetPadY(2);
+  this->ClipSelectorWidget->GetWidget()->GetWidget()->IndicatorVisibilityOff();
+  this->ClipSelectorWidget->GetWidget()->GetWidget()->SetWidth(24);
+  this->ClipSelectorWidget->SetLabelText( "Snapshot Clip:");
+  this->ClipSelectorWidget->SetBalloonHelpString("select a scene snapshot.");
+  this->Script ( "pack %s -side left -anchor nw -fill x -padx 2 -pady 2",
+                 this->ClipSelectorWidget->GetWidgetName());
+  this->ClipSelectorWidget->SetWidgetName("SnapshotSelector");
+
+
+
   // Restore Snapshot button
   this->ReplayButton = vtkKWPushButton::New();
   this->ReplayButton->SetParent(frame);
@@ -201,7 +315,7 @@ void vtkSlicerRecordSnapshotWidget::CreateWidget ( )
   this->StartRecordButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->StopRecordButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->ReplayButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  
+  this->SaveClipButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   
   frame->Delete();
   

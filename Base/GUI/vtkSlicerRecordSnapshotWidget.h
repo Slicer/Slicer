@@ -25,10 +25,12 @@
 #define __vtkSlicerRecordSnapshotWidget_h
 
 #include "vtkSlicerWidget.h"
+#include "vtkSlicerNodeSelectorWidget.h"
 
 #include "vtkKWPushButton.h"
 
 #include "vtkMRMLSceneSnapshotNode.h"
+#include "vtkMRMLSnapshotClipNode.h"
 
 class vtkKWSimpleEntryDialog;
 
@@ -67,6 +69,10 @@ protected:
   vtkKWPushButton* StartRecordButton;
   vtkKWPushButton* StopRecordButton;
   vtkKWPushButton* ReplayButton;
+
+  vtkKWPushButton* SaveClipButton;
+  vtkSlicerNodeSelectorWidget* ClipSelectorWidget;
+  vtkKWSimpleEntryDialog *NameDialog;
 
   //BTX
   std::vector <vtkMRMLSceneSnapshotNode *> Sanpshots;

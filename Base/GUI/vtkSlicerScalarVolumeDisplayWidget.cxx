@@ -276,7 +276,7 @@ void vtkSlicerScalarVolumeDisplayWidget::UpdateWidgetFromMRML ()
   vtkDebugMacro("UpdateWidgetFromMRML");
   
   vtkMRMLVolumeNode *volumeNode = this->GetVolumeNode();
-  if (volumeNode != NULL)
+  if (volumeNode != NULL && this->WindowLevelThresholdEditor)
     {
     this->WindowLevelThresholdEditor->SetImageData(volumeNode->GetImageData());
     }
@@ -294,7 +294,7 @@ void vtkSlicerScalarVolumeDisplayWidget::UpdateWidgetFromMRML ()
     }  
   vtkMRMLVolumeDisplayNode *displayNode = this->GetVolumeDisplayNode();
   
-  if (displayNode != NULL) 
+  if (displayNode != NULL && this->WindowLevelThresholdEditor) 
     {
     this->WindowLevelThresholdEditor->SetWindowLevel(
           displayNode->GetWindow(), displayNode->GetLevel() );
