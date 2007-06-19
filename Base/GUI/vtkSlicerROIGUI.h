@@ -146,13 +146,20 @@ protected:
   // remove all the ROI boxes on this list
   vtkKWPushButton *RemoveROIListButton;
 
-  // text scale
+  // ROI position and Raidus scale
   vtkKWScaleWithEntry * XPositionScale;
   vtkKWScaleWithEntry * YPositionScale;
   vtkKWScaleWithEntry * ZPositionScale;
-  vtkKWScaleWithEntry * XRangeScale;
-  vtkKWScaleWithEntry * YRangeScale;
-  vtkKWScaleWithEntry * ZRangeScale;
+  vtkKWScaleWithEntry * XRadiusScale;
+  vtkKWScaleWithEntry * YRadiusScale;
+  vtkKWScaleWithEntry * ZRadiusScale;
+
+  vtkKWLabel *XPositionLabel;
+  vtkKWLabel *YPositionLabel;
+  vtkKWLabel *ZPositionLabel;
+  vtkKWLabel *XRadiusLabel;
+  vtkKWLabel *YRadiusLabel;
+  vtkKWLabel *ZRadiusLabel;
 
   // ROI visibility
   vtkKWPushButton *VisibilityToggle;

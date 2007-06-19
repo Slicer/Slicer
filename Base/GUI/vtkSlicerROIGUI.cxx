@@ -51,9 +51,16 @@ vtkSlicerROIGUI::vtkSlicerROIGUI ( )
   this->XPositionScale = NULL;
   this->YPositionScale = NULL;
   this->ZPositionScale = NULL;
-  this->XRangeScale = NULL;
-  this->YRangeScale = NULL;
-  this->ZRangeScale = NULL;
+  this->XRadiusScale = NULL;
+  this->YRadiusScale = NULL;
+  this->ZRadiusScale = NULL;
+
+  this->XPositionLabel = NULL;
+  this->YPositionLabel = NULL;
+  this->ZPositionLabel = NULL;
+  this->XRadiusLabel = NULL;
+  this->YRadiusLabel = NULL;
+  this->ZRadiusLabel = NULL;
 }
 
 //---------------------------------------------------------------------------
@@ -149,20 +156,62 @@ vtkSlicerROIGUI::~vtkSlicerROIGUI ( )
     this->ZPositionScale->Delete();
     this->ZPositionScale = NULL;
     }
-  if (this->XRangeScale) {
-    this->XRangeScale->SetParent(NULL);
-    this->XRangeScale->Delete();
-    this->XRangeScale = NULL;
+  if (this->XRadiusScale) {
+    this->XRadiusScale->SetParent(NULL);
+    this->XRadiusScale->Delete();
+    this->XRadiusScale = NULL;
     }
-  if (this->YRangeScale) {
-    this->YRangeScale->SetParent(NULL);
-    this->YRangeScale->Delete();
-    this->YRangeScale = NULL;
+  if (this->YRadiusScale) {
+    this->YRadiusScale->SetParent(NULL);
+    this->YRadiusScale->Delete();
+    this->YRadiusScale = NULL;
     }
-  if (this->ZRangeScale) {
-    this->ZRangeScale->SetParent(NULL);
-    this->ZRangeScale->Delete();
-    this->ZRangeScale = NULL;
+  if (this->ZRadiusScale) {
+    this->ZRadiusScale->SetParent(NULL);
+    this->ZRadiusScale->Delete();
+    this->ZRadiusScale = NULL;
+    }
+
+  if ( this->XPositionLabel )
+    {
+    this->XPositionLabel->SetParent ( NULL );
+    this->XPositionLabel->Delete();
+    this->XPositionLabel = NULL;
+    }
+
+  if ( this->YPositionLabel )
+    {
+    this->YPositionLabel->SetParent ( NULL );
+    this->YPositionLabel->Delete();
+    this->YPositionLabel = NULL;
+    }
+
+  if ( this->ZPositionLabel )
+    {
+    this->ZPositionLabel->SetParent ( NULL );
+    this->ZPositionLabel->Delete();
+    this->ZPositionLabel = NULL;
+    }
+
+  if ( this->XRadiusLabel )
+    {
+    this->XRadiusLabel->SetParent ( NULL );
+    this->XRadiusLabel->Delete();
+    this->XRadiusLabel = NULL;
+    }
+
+  if ( this->YRadiusLabel )
+    {
+    this->YRadiusLabel->SetParent ( NULL );
+    this->YRadiusLabel->Delete();
+    this->YRadiusLabel = NULL;
+    }
+
+  if ( this->ZRadiusLabel )
+    {
+    this->ZRadiusLabel->SetParent ( NULL );
+    this->ZRadiusLabel->Delete();
+    this->ZRadiusLabel = NULL;
     }
   return;
 }
@@ -194,9 +243,9 @@ void vtkSlicerROIGUI::RemoveGUIObservers ( )
   this->XPositionScale->RemoveObservers(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->YPositionScale->RemoveObservers(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->ZPositionScale->RemoveObservers(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
-  this->XRangeScale->RemoveObservers(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
-  this->YRangeScale->RemoveObservers(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
-  this->ZRangeScale->RemoveObservers(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->XRadiusScale->RemoveObservers(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->YRadiusScale->RemoveObservers(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->ZRadiusScale->RemoveObservers(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
 
   this->VisibilityToggle->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
@@ -229,9 +278,9 @@ void vtkSlicerROIGUI::AddGUIObservers ( )
   this->XPositionScale->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->YPositionScale->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->ZPositionScale->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
-  this->XRangeScale->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
-  this->YRangeScale->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
-  this->ZRangeScale->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->XRadiusScale->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->YRadiusScale->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->ZRadiusScale->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
 
   this->VisibilityToggle->AddObserver (vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
 
@@ -457,7 +506,7 @@ void vtkSlicerROIGUI::ProcessGUIEvents ( vtkObject *caller,
         }      
       }
     }
-  else if ((scale == this->XRangeScale || scale == this->YRangeScale || scale == this->ZRangeScale)&& event == vtkKWScale::ScaleValueChangedEvent)
+  else if ((scale == this->XRadiusScale || scale == this->YRadiusScale || scale == this->ZRadiusScale)&& event == vtkKWScale::ScaleValueChangedEvent)
     {
     int numRows = this->MultiColumnList->GetWidget()->GetNumberOfSelectedRows();
     if (numRows == 1)
@@ -465,9 +514,9 @@ void vtkSlicerROIGUI::ProcessGUIEvents ( vtkObject *caller,
       float Radiusx, Radiusy, Radiusz;
       int row[1];
       this->MultiColumnList->GetWidget()->GetSelectedRows(row);
-      Radiusx = this->XRangeScale->GetValue();
-      Radiusy = this->YRangeScale->GetValue();
-      Radiusz = this->ZRangeScale->GetValue();
+      Radiusx = this->XRadiusScale->GetValue();
+      Radiusy = this->YRadiusScale->GetValue();
+      Radiusz = this->ZRadiusScale->GetValue();
       if(ActiveVolumeNodeID ==NULL)
         {
         activeROIListNode->SetNthROIRadiusXYZ(row[0], Radiusx, Radiusy, Radiusz);
@@ -491,7 +540,7 @@ void vtkSlicerROIGUI::ProcessGUIEvents ( vtkObject *caller,
 
       float *xyz;
       float *Radiusxyz;
-      // then remove that ROI by index
+     
       if(ActiveVolumeNodeID ==NULL)
         {
         xyz = activeROIListNode->GetNthROIXYZ(row[0]);
@@ -506,9 +555,9 @@ void vtkSlicerROIGUI::ProcessGUIEvents ( vtkObject *caller,
       if (xyz[0] == this->XPositionScale->GetValue() &&
         xyz[1] == this->YPositionScale->GetValue() &&
         xyz[2] == this->ZPositionScale->GetValue() &&
-        Radiusxyz[0] == this->XRangeScale->GetValue() &&
-        Radiusxyz[1] == this->YRangeScale->GetValue() &&
-        Radiusxyz[2] == this->ZRangeScale->GetValue())
+        Radiusxyz[0] == this->XRadiusScale->GetValue() &&
+        Radiusxyz[1] == this->YRadiusScale->GetValue() &&
+        Radiusxyz[2] == this->ZRadiusScale->GetValue())
         //xyz values are not changed
         {
         return;
@@ -672,65 +721,6 @@ void vtkSlicerROIGUI::SetGUIFromList(vtkMRMLROIListNode * activeROIListNode)
     this->VolumeNodeSelectorWidget->UpdateMenu();
     }
 
-  // Update the label text: 
-  // No volume selected IJK coordinates, 
-  // Volume selected RAS coordinate
-  if (ActiveVolumeNodeID == NULL)
-    {
-    this->XPositionScale->SetLabelText("X Position:");
-    this->XPositionScale->SetBalloonHelpString ( "Set the center X postion of the ROI BOX in RAS coordinates");
-    this->YPositionScale->SetLabelText("Y Position:");
-    this->YPositionScale->SetBalloonHelpString ( "Set the center Y postion of the ROI BOX in RAS coordinates");
-    this->ZPositionScale->SetLabelText("Z Position:");
-    this->ZPositionScale->SetBalloonHelpString ( "Set the center Z postion of the ROI BOX in RAS coordinates");
-    this->XRangeScale->SetLabelText("X Radius:");
-    this->XRangeScale->SetBalloonHelpString ( "Set the radius of the ROI box along X direction in RAS coordinates.");
-    this->YRangeScale->SetLabelText("Y Radius:");
-    this->YRangeScale->SetBalloonHelpString ( "Set the radius of the ROI box along Y direction in RAS coordinates.");
-    this->ZRangeScale->SetLabelText("Z Radius:");
-    this->ZRangeScale->SetBalloonHelpString ( "Set the radius of the ROI box along Z direction in RAS coordinates.");
-    this->MultiColumnList->GetWidget()->SetColumnTitle (2, "X");
-    this->MultiColumnList->GetWidget()->SetColumnTitle (3, "Y");
-    this->MultiColumnList->GetWidget()->SetColumnTitle (4, "Z");
-    this->MultiColumnList->GetWidget()->SetColumnTitle (5,"X Radius");
-    this->MultiColumnList->GetWidget()->SetColumnTitle (6,"Y Radius");
-    this->MultiColumnList->GetWidget()->SetColumnTitle (7,"Z Radius");
-
-    this->XPositionScale->GetWidget()->SetRange(-1000, 1000);
-    this->YPositionScale->GetWidget()->SetRange(-1000, 1000);
-    this->ZPositionScale->GetWidget()->SetRange(-1000, 1000);
-    }
-  else 
-    {
-    this->XPositionScale->SetLabelText("I  Position:");
-    this->XPositionScale->SetBalloonHelpString ( "Set the center I postion of the ROI BOX in IJK coordinates");
-    this->YPositionScale->SetLabelText("J Position:");
-    this->YPositionScale->SetBalloonHelpString ( "Set the center J postion of the ROI BOX in IJK coordinates");
-    this->ZPositionScale->SetLabelText("K Position:");
-    this->ZPositionScale->SetBalloonHelpString ( "Set the center K postion of the ROI BOX in IJK coordinates");
-    this->XRangeScale->SetLabelText("I  Radius:");
-    this->XRangeScale->SetBalloonHelpString ( "Set the radius of the ROI box along I direction in IJK coordinates.");
-    this->YRangeScale->SetLabelText("J Radius:");
-    this->YRangeScale->SetBalloonHelpString ( "Set the radius of the ROI box along J direction in IJK coordinates.");
-    this->ZRangeScale->SetLabelText("K Radius:");
-    this->ZRangeScale->SetBalloonHelpString ( "Set the radius of the ROI box along K direction in IJK coordinates.");
-    this->MultiColumnList->GetWidget()->SetColumnTitle(2, "I");
-    this->MultiColumnList->GetWidget()->SetColumnTitle(3, "J");
-    this->MultiColumnList->GetWidget()->SetColumnTitle(4, "K");
-    this->MultiColumnList->GetWidget()->SetColumnTitle(5, "I Radius");
-    this->MultiColumnList->GetWidget()->SetColumnTitle(6, "J Radius");
-    this->MultiColumnList->GetWidget()->SetColumnTitle(7, "K Radius");
-
-    //Update the range according the volume size
-    VolumeNode = vtkMRMLVolumeNode::SafeDownCast(this->VolumeNodeSelectorWidget->GetSelected());
-    int* dims = new int[3];
-    VolumeNode->GetImageData()->GetDimensions(dims);
-    this->XPositionScale->GetWidget()->SetRange(0, dims[0]);
-    this->YPositionScale->GetWidget()->SetRange(0, dims[1]);
-    this->ZPositionScale->GetWidget()->SetRange(0, dims[2]);
-    delete [] dims;
-    }
-
   int numPoints = activeROIListNode->GetNumberOfROIs();
   bool deleteFlag = true;
   //Used to set the selected cell and update the xyz position scalewidget
@@ -869,14 +859,10 @@ void vtkSlicerROIGUI::SetGUIFromList(vtkMRMLROIListNode * activeROIListNode)
       }
     }
 
-
   if (numPoints >=1)
     {
     this->MultiColumnList->GetWidget()->SelectCell(CurrentSeletedRow,CurrentSeletedCol);
     }
-
-
-
 
   vtkDebugMacro("Now going to update GUI from the logic's active list");
 
@@ -887,7 +873,64 @@ void vtkSlicerROIGUI::SetGUIFromList(vtkMRMLROIListNode * activeROIListNode)
     return;
     }
 
- 
+  // Update the label text: 
+  // No volume selected IJK coordinates, 
+  // Volume selected RAS coordinate
+  if (ActiveVolumeNodeID == NULL)
+    {
+    this->XPositionLabel->SetText("X Position:");
+    this->XPositionScale->SetBalloonHelpString ( "Set the center X postion of the ROI BOX in RAS coordinates");
+    this->YPositionLabel->SetText("Y Position:");
+    this->YPositionScale->SetBalloonHelpString ( "Set the center Y postion of the ROI BOX in RAS coordinates");
+    this->ZPositionLabel->SetText("Z Position:");
+    this->ZPositionScale->SetBalloonHelpString ( "Set the center Z postion of the ROI BOX in RAS coordinates");
+    this->XRadiusLabel->SetText("X Radius:");
+    this->XRadiusScale->SetBalloonHelpString ( "Set the radius of the ROI box along X direction in RAS coordinates.");
+    this->YRadiusLabel->SetText("Y Radius:");
+    this->YRadiusScale->SetBalloonHelpString ( "Set the radius of the ROI box along Y direction in RAS coordinates.");
+    this->ZRadiusLabel->SetText("Z Radius:");
+    this->ZRadiusScale->SetBalloonHelpString ( "Set the radius of the ROI box along Z direction in RAS coordinates.");
+    this->MultiColumnList->GetWidget()->SetColumnTitle (2, "X");
+    this->MultiColumnList->GetWidget()->SetColumnTitle (3, "Y");
+    this->MultiColumnList->GetWidget()->SetColumnTitle (4, "Z");
+    this->MultiColumnList->GetWidget()->SetColumnTitle (5,"X Radius");
+    this->MultiColumnList->GetWidget()->SetColumnTitle (6,"Y Radius");
+    this->MultiColumnList->GetWidget()->SetColumnTitle (7,"Z Radius");
+
+    this->XPositionScale->GetWidget()->SetRange(-1000, 1000);
+    this->YPositionScale->GetWidget()->SetRange(-1000, 1000);
+    this->ZPositionScale->GetWidget()->SetRange(-1000, 1000);
+    }
+  else 
+    {
+    this->XPositionLabel->SetText("I  Position:");
+    this->XPositionScale->SetBalloonHelpString ( "Set the center I postion of the ROI BOX in IJK coordinates");
+    this->YPositionLabel->SetText("J  Position:");
+    this->YPositionScale->SetBalloonHelpString ( "Set the center J postion of the ROI BOX in IJK coordinates");
+    this->ZPositionLabel->SetText("K  Position:");
+    this->ZPositionScale->SetBalloonHelpString ( "Set the center K postion of the ROI BOX in IJK coordinates");
+    this->XRadiusLabel->SetText("I  Radius:");
+    this->XRadiusScale->SetBalloonHelpString ( "Set the radius of the ROI box along I direction in IJK coordinates.");
+    this->YRadiusLabel->SetText("J  Radius:");
+    this->YRadiusScale->SetBalloonHelpString ( "Set the radius of the ROI box along J direction in IJK coordinates.");
+    this->ZRadiusLabel->SetText("K  Radius:");
+    this->ZRadiusScale->SetBalloonHelpString ( "Set the radius of the ROI box along K direction in IJK coordinates.");
+    this->MultiColumnList->GetWidget()->SetColumnTitle(2, "I");
+    this->MultiColumnList->GetWidget()->SetColumnTitle(3, "J");
+    this->MultiColumnList->GetWidget()->SetColumnTitle(4, "K");
+    this->MultiColumnList->GetWidget()->SetColumnTitle(5, "I Radius");
+    this->MultiColumnList->GetWidget()->SetColumnTitle(6, "J Radius");
+    this->MultiColumnList->GetWidget()->SetColumnTitle(7, "K Radius");
+
+    //Update the range according the volume size
+    VolumeNode = vtkMRMLVolumeNode::SafeDownCast(this->VolumeNodeSelectorWidget->GetSelected());
+    int* dims = new int[3];
+    VolumeNode->GetImageData()->GetDimensions(dims);
+    this->XPositionScale->GetWidget()->SetRange(0, dims[0]);
+    this->YPositionScale->GetWidget()->SetRange(0, dims[1]);
+    this->ZPositionScale->GetWidget()->SetRange(0, dims[2]);
+    delete [] dims;
+    }
 
   vtkDebugMacro(<< "\tupdating the x, y, z location and deltea x, y, z \n");
   //update the xyz position and xyz Radius according the selected row
@@ -911,11 +954,10 @@ void vtkSlicerROIGUI::SetGUIFromList(vtkMRMLROIListNode * activeROIListNode)
     this->XPositionScale->SetValue(xyz[0]);
     this->YPositionScale->SetValue(xyz[1]);
     this->ZPositionScale->SetValue(xyz[2]);
-    this->XRangeScale->SetValue(Radiusxyz[0]);
-    this->YRangeScale->SetValue(Radiusxyz[1]);
-    this->ZRangeScale->SetValue(Radiusxyz[2]);
+    this->XRadiusScale->SetValue(Radiusxyz[0]);
+    this->YRadiusScale->SetValue(Radiusxyz[1]);
+    this->ZRadiusScale->SetValue(Radiusxyz[2]);
     }
-
 
   if (this->GetVisibilityToggle() != NULL &&
     this->GetVisibilityIcons() != NULL)
@@ -993,6 +1035,8 @@ void vtkSlicerROIGUI::SetGUIFromList(vtkMRMLROIListNode * activeROIListNode)
     {
     this->ROIOpacity->SetValue(scale);
     }
+
+  
   return;
 }
 
@@ -1198,30 +1242,42 @@ void vtkSlicerROIGUI::BuildGUI ( )
     XPositionFrame->GetWidgetName(),
     displayFrame->GetFrame()->GetWidgetName());
 
+  // x position label
+  this->XPositionLabel = vtkKWLabel::New();
+  this->XPositionLabel->SetParent ( XPositionFrame );
+  this->XPositionLabel->Create();
+  this->XPositionLabel->SetWidth(8);
+  this->XPositionLabel->SetText("X Position:");
+
   // x position scale
   this->XPositionScale = vtkKWScaleWithEntry::New();
   this->XPositionScale->SetParent( XPositionFrame );
   this->XPositionScale->Create();
-  this->XPositionScale->SetLabelText("X Position:");
   this->XPositionScale->SetBalloonHelpString ( "Set the center X postion of the ROI BOX in RAS coordinates");
   this->XPositionScale->GetWidget()->SetRange(-256.0, 256.0);
   this->XPositionScale->GetWidget()->SetOrientationToHorizontal ();
   this->XPositionScale->GetWidget()->SetResolution(1);
   this->XPositionScale->SetEntryWidth(4);
 
-  // x range scale
-  this->XRangeScale = vtkKWScaleWithEntry::New();
-  this->XRangeScale->SetParent( XPositionFrame );
-  this->XRangeScale->Create();
-  this->XRangeScale->SetLabelText("X Radius:");
-  this->XRangeScale->SetBalloonHelpString ( "Set the radius of the ROI box along X direction in RAS coordinates.");
-  this->XRangeScale->GetWidget()->SetRange(0.0, 20.0);
-  this->XRangeScale->GetWidget()->SetOrientationToHorizontal ();
-  this->XRangeScale->GetWidget()->SetResolution(0.5);
-  this->XRangeScale->SetEntryWidth(4);
+  // x radius label
+  this->XRadiusLabel = vtkKWLabel::New();
+  this->XRadiusLabel->SetParent ( XPositionFrame );
+  this->XRadiusLabel->Create();
+  this->XRadiusLabel->SetWidth(7);
+  this->XRadiusLabel->SetText("X Radius:");
 
-  app->Script("pack %s %s -side left -anchor w -padx 2 -pady 2 -in %s", 
-    this->XPositionScale->GetWidgetName(), this->XRangeScale->GetWidgetName(),XPositionFrame->GetWidgetName() );
+  // x Radius scale
+  this->XRadiusScale = vtkKWScaleWithEntry::New();
+  this->XRadiusScale->SetParent( XPositionFrame );
+  this->XRadiusScale->Create();
+  this->XRadiusScale->SetBalloonHelpString ( "Set the radius of the ROI box along X direction in RAS coordinates.");
+  this->XRadiusScale->GetWidget()->SetRange(0.0, 20.0);
+  this->XRadiusScale->GetWidget()->SetOrientationToHorizontal ();
+  this->XRadiusScale->GetWidget()->SetResolution(0.5);
+  this->XRadiusScale->SetEntryWidth(4);
+
+  app->Script("pack %s %s %s %s -side left -anchor w -padx 2 -pady 2 -in %s", 
+    this->XPositionLabel->GetWidgetName(), this->XPositionScale->GetWidgetName(), this->XRadiusLabel->GetWidgetName(), this->XRadiusScale->GetWidgetName(),  XPositionFrame->GetWidgetName() );
 
   // y Position frame
   vtkKWFrame *YPositionFrame = vtkKWFrame::New();
@@ -1231,30 +1287,42 @@ void vtkSlicerROIGUI::BuildGUI ( )
     YPositionFrame->GetWidgetName(),
     displayFrame->GetFrame()->GetWidgetName());
 
+  // y position label
+  this->YPositionLabel = vtkKWLabel::New();
+  this->YPositionLabel->SetParent ( YPositionFrame );
+  this->YPositionLabel->Create();
+  this->YPositionLabel->SetWidth(8);
+  this->YPositionLabel->SetText("Y Position:");
+
   // y position scale
   this->YPositionScale = vtkKWScaleWithEntry::New();
   this->YPositionScale->SetParent( YPositionFrame );
   this->YPositionScale->Create();
-  this->YPositionScale->SetLabelText("Y Position:");
   this->YPositionScale->SetBalloonHelpString ( "Set the center Y postion of the ROI BOX in RAS coordinates");
   this->YPositionScale->GetWidget()->SetRange(-256.0, 256.0);
   this->YPositionScale->GetWidget()->SetOrientationToHorizontal ();
   this->YPositionScale->GetWidget()->SetResolution(1);
   this->YPositionScale->SetEntryWidth(4);
 
-  // y range scale
-  this->YRangeScale = vtkKWScaleWithEntry::New();
-  this->YRangeScale->SetParent( YPositionFrame );
-  this->YRangeScale->Create();
-  this->YRangeScale->SetLabelText("Y Radius:");
-  this->YRangeScale->SetBalloonHelpString ( "Set the radius of the ROI box along Y direction in RAS coordinates.");
-  this->YRangeScale->GetWidget()->SetRange(0.0, 20.0);
-  this->YRangeScale->GetWidget()->SetOrientationToHorizontal ();
-  this->YRangeScale->GetWidget()->SetResolution(0.5);
-  this->YRangeScale->SetEntryWidth(4);
+  // y radius label
+  this->YRadiusLabel = vtkKWLabel::New();
+  this->YRadiusLabel->SetParent ( YPositionFrame );
+  this->YRadiusLabel->Create();
+  this->YRadiusLabel->SetWidth(7);
+  this->YRadiusLabel->SetText("Y Radius:");
 
-  app->Script("pack %s %s -side left -anchor w -padx 2 -pady 2 -in %s", 
-    this->YPositionScale->GetWidgetName(), this->YRangeScale->GetWidgetName(),YPositionFrame->GetWidgetName() );
+  // y Radius scale
+  this->YRadiusScale = vtkKWScaleWithEntry::New();
+  this->YRadiusScale->SetParent( YPositionFrame );
+  this->YRadiusScale->Create();
+  this->YRadiusScale->SetBalloonHelpString ( "Set the radius of the ROI box along Y direction in RAS coordinates.");
+  this->YRadiusScale->GetWidget()->SetRange(0.0, 20.0);
+  this->YRadiusScale->GetWidget()->SetOrientationToHorizontal ();
+  this->YRadiusScale->GetWidget()->SetResolution(0.5);
+  this->YRadiusScale->SetEntryWidth(4);
+
+  app->Script("pack %s %s %s %s -side left -anchor w -padx 2 -pady 2 -in %s", 
+    this->YPositionLabel->GetWidgetName(), this->YPositionScale->GetWidgetName(), this->YRadiusLabel->GetWidgetName(), this->YRadiusScale->GetWidgetName(),YPositionFrame->GetWidgetName() );
 
   // zPosition frame
   vtkKWFrame *ZPositionFrame = vtkKWFrame::New();
@@ -1264,31 +1332,42 @@ void vtkSlicerROIGUI::BuildGUI ( )
     ZPositionFrame->GetWidgetName(),
     displayFrame->GetFrame()->GetWidgetName());
 
+  // z position label
+  this->ZPositionLabel = vtkKWLabel::New();
+  this->ZPositionLabel->SetParent ( ZPositionFrame );
+  this->ZPositionLabel->Create();
+  this->ZPositionLabel->SetWidth(8);
+  this->ZPositionLabel->SetText("Z Position:");
+
   // z position scale
   this->ZPositionScale = vtkKWScaleWithEntry::New();
   this->ZPositionScale->SetParent( ZPositionFrame );
   this->ZPositionScale->Create();
-  this->ZPositionScale->SetLabelText("Z Position:");
   this->ZPositionScale->SetBalloonHelpString ( "Set the center Z postion of the ROI BOX in RAS coordinates");
   this->ZPositionScale->GetWidget()->SetRange(-256.0, 256.0);
   this->ZPositionScale->GetWidget()->SetOrientationToHorizontal ();
   this->ZPositionScale->GetWidget()->SetResolution(1);
   this->ZPositionScale->SetEntryWidth(4);
 
-  // x range scale
-  this->ZRangeScale = vtkKWScaleWithEntry::New();
-  this->ZRangeScale->SetParent( ZPositionFrame );
-  this->ZRangeScale->Create();
-  this->ZRangeScale->SetLabelText("Z Radius:");
-  this->ZRangeScale->SetBalloonHelpString ( "Set the radius of the ROI box along Z direction in RAS coordinates.");
-  this->ZRangeScale->GetWidget()->SetRange(0.0, 20.0);
-  this->ZRangeScale->GetWidget()->SetOrientationToHorizontal ();
-  this->ZRangeScale->GetWidget()->SetResolution(0.5);
-  this->ZRangeScale->SetEntryWidth(4);
+  // z radius label
+  this->ZRadiusLabel = vtkKWLabel::New();
+  this->ZRadiusLabel->SetParent ( ZPositionFrame );
+  this->ZRadiusLabel->Create();
+  this->ZRadiusLabel->SetWidth(7);
+  this->ZRadiusLabel->SetText("Z Radius:");
 
-  app->Script("pack %s %s -side left -anchor w -padx 2 -pady 2 -in %s", 
-    this->ZPositionScale->GetWidgetName(), this->ZRangeScale->GetWidgetName(),ZPositionFrame->GetWidgetName() );
+  // z radius scale
+  this->ZRadiusScale = vtkKWScaleWithEntry::New();
+  this->ZRadiusScale->SetParent( ZPositionFrame );
+  this->ZRadiusScale->Create();
+  this->ZRadiusScale->SetBalloonHelpString ( "Set the radius of the ROI box along Z direction in RAS coordinates.");
+  this->ZRadiusScale->GetWidget()->SetRange(0.0, 20.0);
+  this->ZRadiusScale->GetWidget()->SetOrientationToHorizontal ();
+  this->ZRadiusScale->GetWidget()->SetResolution(0.5);
+  this->ZRadiusScale->SetEntryWidth(4);
 
+  app->Script("pack %s %s %s %s -side left -anchor w -padx 2 -pady 2 -in %s", 
+    this->ZPositionLabel->GetWidgetName(), this->ZPositionScale->GetWidgetName(), this->ZRadiusLabel->GetWidgetName(), this->ZRadiusScale->GetWidgetName(),ZPositionFrame->GetWidgetName() );
 
   // scale frame
   vtkKWFrame *scaleFrame = vtkKWFrame::New();
