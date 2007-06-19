@@ -319,7 +319,7 @@ TARGET_LINK_LIBRARIES (${CLP}Lib ITKIO ITKBasicFilters)
 #ENDIF (Slicer3_BUILD_TESTING)
 
 
-SUBDIRS( DiffusionFiltering )
+#SUBDIRS( DiffusionFiltering )
 
 IF (Slicer3_SOURCE_DIR)
   # install each target in the production area (where it would appear in an 
