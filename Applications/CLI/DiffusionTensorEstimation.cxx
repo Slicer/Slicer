@@ -18,6 +18,7 @@
 #include "vtkNRRDReader.h"
 #include "vtkNRRDWriter.h"
 #include "vtkMRMLNRRDStorageNode.h"
+#include "vtkMath.h"
 #include "vtkImageData.h"
 #include "vtkDoubleArray.h"
 
@@ -36,17 +37,16 @@ int main( int argc, const char * argv[] )
   vtkDoubleArray *bValues = vtkDoubleArray::New();
   vtkDoubleArray *grads = vtkDoubleArray::New();
   vtkMRMLNRRDStorageNode *helper = vtkMRMLNRRDStorageNode::New();
-
+  
   if ( !helper->ParseDiffusionInformation(reader,grads,bValues) )
     {
     std::cerr << argv[0] << ": Error parsing Diffusion information" << std::endl;
-    bValues->Delete();
-    grads->Delete();
-    reader->Delete();
-    helper->Delete();
+    //bValues->Delete();
+    //grads->Delete();
+    //reader->Delete();
+    //helper->Delete();
     return EXIT_FAILURE;
     }
-
   vtkTeemEstimateDiffusionTensor *estim = vtkTeemEstimateDiffusionTensor::New();
 
   estim->SetInput(reader->GetOutput());
@@ -58,31 +58,36 @@ int main( int argc, const char * argv[] )
   double *sp = reader->GetOutput()->GetSpacing();
   vtkMatrix4x4 *mf = vtkMatrix4x4::New();
   mf->DeepCopy(reader->GetMeasurementFrameMatrix());
-  vtkMatrix4x4 *rasToIjk = vtkMatrix4x4::New();
-  rasToIjk->DeepCopy(reader->GetRasToIjkMatrix());
+  vtkMatrix4x4 *rasToIjkRotation = vtkMatrix4x4::New();
+  rasToIjkRotation->DeepCopy(reader->GetRasToIjkMatrix());
 
   //Set Translation to zero
   for (int i=0;i<3;i++)
     {
-    rasToIjk->SetElement(i,3,0);
+    rasToIjkRotation->SetElement(i,3,0);
     }
-  vtkMatrix4x4 *scale = vtkMatrix4x4::New();
-  scale->Identity();
-  scale->SetElement(0,0,sp[0]);
-  scale->SetElement(1,1,sp[1]);
-  scale->SetElement(2,2,sp[2]);
+  //Remove scaling in rasToIjk to make a real roation matrix
+  double col[3];
+  for (int jjj = 0; jjj < 3; jjj++) 
+    {
+    for (int iii = 0; iii < 3; iii++)
+      {
+      col[iii]=rasToIjkRotation->GetElement(iii,jjj);
+      }
+    vtkMath::Normalize(col);
+    for (int iii = 0; iii < 3; iii++)
+      {
+      rasToIjkRotation->SetElement(iii,jjj,col[iii]);
+     }  
+  }
 
   vtkTransform *trans = vtkTransform::New();
   trans->PostMultiply();
   trans->SetMatrix(mf);
-  trans->Concatenate(rasToIjk);
-  trans->Concatenate(scale);
+  trans->Concatenate(rasToIjkRotation);
   trans->Update();
 
-
-
   estim->SetTransform(trans);
-
   if (estimationMethod == std::string("Least Squares"))
     {
     estim->SetEstimationMethodToLLS();
@@ -97,18 +102,21 @@ int main( int argc, const char * argv[] )
     }
 
   estim->Update();
+  vtkImageData *tensorImage = estim->GetOutput();
+  tensorImage->GetPointData()->SetScalars(NULL);
 
-  //Compute IjkToRas (used by Writer)
-  reader->GetRasToIjkMatrix()->Invert();
-  
   //Save tensor
   vtkNRRDWriter *writer = vtkNRRDWriter::New();
-  writer->SetInput(estim->GetOutput());
+  writer->SetInput(tensorImage);
   writer->SetFileName( outputTensor.c_str() );
   writer->UseCompressionOn();
+  //Compute IjkToRas (used by Writer)
+  reader->GetRasToIjkMatrix()->Invert();
   writer->SetIJKToRASMatrix( reader->GetRasToIjkMatrix() );
-  rasToIjk->Invert();
-  writer->SetMeasurementFrameMatrix( rasToIjk );
+  //Compute measurement frame: Take into account that we have transformed
+  //the gradients so tensor components are defined in ijk.
+  rasToIjkRotation->Invert();
+  writer->SetMeasurementFrameMatrix( rasToIjkRotation );
   writer->Write();
 
   writer->Delete();
@@ -122,12 +130,12 @@ int main( int argc, const char * argv[] )
   writer2->Write();
   
   // Deleting objects
+  cout<<"Ready to Delete"<<endl;
   //bValues->Delete();
   //grads->Delete();
   //helper->Delete();
   //mf->Delete();
-  //rasToIjk->Delete();
-  //scale->Delete();
+  //rasToIjkRotation->Delete();
   //trans->Delete();
   //estim->Delete();
   //writer2->Delete();
