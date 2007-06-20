@@ -43,6 +43,10 @@
 #include <fstream>
 #include <stdio.h>
 
+#ifndef M_PI
+#define M_PI 3.141516
+#endif
+
 using namespace std;
 
 namespace itk
@@ -239,7 +243,7 @@ RicianLMMSEImageFilter< TInputImage, TOutputImage >
   dLowerBound = dDesiredMin;
   dUpperBound = dDesiredMax;
 
-  iNumBins = (int)round( (dUpperBound-dLowerBound)*m_HistogramResolutionFactor );
+  iNumBins = (int) ( (dUpperBound-dLowerBound)*m_HistogramResolutionFactor );
   
   std::cout << "number of bins = " << iNumBins << std::endl;
 
@@ -557,7 +561,12 @@ RicianLMMSEImageFilter< TInputImage, TOutputImage>
   }
 
   // delete the temporary image
-  
+  delete[] sum; 
+  delete[] dSecondAveragedMoment;
+  delete[] dFourthAveragedMoment;
+  delete[] dSquaredMagnitude;
+  delete[] iNumberOfUsedVoxels;
+
 }
 
 /**
