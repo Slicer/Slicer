@@ -69,9 +69,11 @@
 #endif
 
 extern "C" {
-  void init_mytkinter(void );
+  void init_mytkinter( Tcl_Interp* );
   void init_slicer(void );
 }
+#include "vtkTclUtil.h"
+
 #endif
 
 #include <vtksys/SystemTools.hxx>
@@ -441,6 +443,13 @@ int Slicer3_main(int argc, char *argv[])
   // -- later in this function tcl scripts are executed 
   //    and some additional global variables are defined
   Tcl_Interp *interp = NULL;
+  interp = vtkKWApplication::InitializeTcl(argc, argv, &cout);
+  if (!interp)
+    {
+    slicerCerr("Error: InitializeTcl failed" << endl );
+    return 1;
+    }
+
 #ifdef USE_PYTHON
 
 #if WIN32
@@ -448,101 +457,62 @@ int Slicer3_main(int argc, char *argv[])
 #else
 #define PathSep ":"
 #endif
-  // Initialize Python
-
-  // Set up the search path
-  std::string pythonEnv = "PYTHONPATH=";
-
-  const char* existingPythonEnv = vtksys::SystemTools::GetEnv("PYTHONPATH");
-  if ( existingPythonEnv )
-    {
-    pythonEnv += std::string ( existingPythonEnv ) + PathSep;
-    }
-
-  pythonEnv += slicerBinDir + "/../../Slicer3/Base/GUI/Python" + PathSep;
-  pythonEnv += slicerBinDir + "/../Base/GUI/Python";
-  vtkKWApplication::PutEnv(const_cast <char *> (pythonEnv.c_str()));
-  std::cout << "Environment: " << pythonEnv << std::endl; 
-  
-  Py_Initialize();
-  PySys_SetArgv(argc, argv);
-  PyObject* PythonModule = PyImport_AddModule("__main__");
-  if (PythonModule == NULL)
-    {
-    std::cout << "Warning: Failed to initialize python" << std::endl;
-    }
-  PyObject* PythonDictionary = PyModule_GetDict(PythonModule);
-
-  // Intercept _tkinter, and use ours...
-  init_mytkinter();
-  init_slicer();
-  // let Python start Tcl/Tk, then get the interperter
-  PyObject* v;
-
-  std::string TkinitString = "import Tkinter, sys;"
-    "tk = Tkinter.Tk();"
-    "tk.loadtk();"
-    "addr = tk.interpaddr();\n"
-    "sys.path.append ( \""
-    + slicerBinDir + "/../../Slicer3/Base/GUI/Python"
-    + "\" );\n"
-    "sys.path.append ( \""
-    + slicerBinDir + "/../Base/GUI/Python"
-    + "\" );\n";
-  
-  v = PyRun_String( TkinitString.c_str(),
-                    Py_file_input,
-                    PythonDictionary,
-                    PythonDictionary );
-  if (v == NULL)
-    {
-    PyErr_Print();
-    std::cout << "Error: Failed to initialize Python" << std::endl;
-    } else 
-      {
-      interp = (Tcl_Interp*) PyLong_AsLong ( PyDict_GetItemString ( PythonDictionary, "addr" ) );
-      if ( (long)interp == -1 )
-        {
-        std::cout << "Error: Failed to get Tcl interp address from Python" << std::endl;
-        }
-      Py_DECREF(v);
-      }
-    if (Py_FlushLine())
-      {
-      PyErr_Clear();
-      }
-
-  if ( !interp )
-    {
-    interp = vtkKWApplication::InitializeTcl(argc, argv, &cout);
-    if (!interp)
-      {
-      slicerCerr("Error: InitializeTcl failed" << endl );
-      return 1;
-      }
-    }
-  else
-    {
-    std::cout << "Initialized python: addr: " << (long)interp << std::endl;
-    vtkKWApplication::InitializeTcl(interp, &cout);
-    // interp = vtkKWApplication::InitializeTcl(argc, argv, &cerr, interp);
-    std::cout << "Initialized python: Slicer Interp: " << (long)vtkSlicerApplication::GetInstance()->GetMainInterp() << std::endl;
-    if (!Tcl_PkgPresent(interp, "Tk", NULL, 0))
-      {
-      std::cout << "Error: Python failed to initialize Tk" << std::endl;
-      }
-    }
-#else
-  /* not python */
-  interp = vtkKWApplication::InitializeTcl(argc, argv, &cout);
-  if (!interp)
-    {
-    slicerCerr("Error: InitializeTcl failed" << endl );
-    return 1;
-    }
-#endif
+    // Initialize Python
     
+    // Set up the search path
+    std::string pythonEnv = "PYTHONPATH=";
+    
+    const char* existingPythonEnv = vtksys::SystemTools::GetEnv("PYTHONPATH");
+    if ( existingPythonEnv )
+      {
+      pythonEnv += std::string ( existingPythonEnv ) + PathSep;
+      }
 
+    pythonEnv += slicerBinDir + "/../../Slicer3/Base/GUI/Python" + PathSep;
+    pythonEnv += slicerBinDir + "/../Base/GUI/Python";
+    vtkKWApplication::PutEnv(const_cast <char *> (pythonEnv.c_str()));
+  
+    Py_Initialize();
+    PySys_SetArgv(argc, argv);
+    PyObject* PythonModule = PyImport_AddModule("__main__");
+    if (PythonModule == NULL)
+      {
+      std::cout << "Warning: Failed to initialize python" << std::endl;
+      }
+    PyObject* PythonDictionary = PyModule_GetDict(PythonModule);
+
+    // Intercept _tkinter, and use ours...
+    init_mytkinter(interp);
+    init_slicer();
+    PyObject* v;
+
+    std::string TkinitString = "import Tkinter, sys;"
+      "tk = Tkinter.Tk();"
+      "sys.path.append ( \""
+      + slicerBinDir + "/../../Slicer3/Base/GUI/Python"
+      + "\" );\n"
+      "sys.path.append ( \""
+      + slicerBinDir + "/../Base/GUI/Python"
+      + "\" );\n";
+  
+    v = PyRun_String( TkinitString.c_str(),
+                      Py_file_input,
+                      PythonDictionary,
+                      PythonDictionary );
+    if (v == NULL)
+      {
+      PyErr_Print();
+      }
+    else
+      {
+      if (Py_FlushLine())
+        {
+        PyErr_Clear();
+        }
+      }
+#endif
+
+  
     // Tell KWWidgets to make names like .vtkKWPushButton10 instead of .10 
     vtkKWWidget::UseClassNameInWidgetNameOn();
 
@@ -1355,6 +1325,8 @@ int Slicer3_main(int argc, char *argv[])
         }
       }
 #endif
+    
+    
 
     //
     // get the Tcl name so the vtk class will be registered in the interpreter

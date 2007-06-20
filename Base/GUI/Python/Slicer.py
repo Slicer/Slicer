@@ -45,6 +45,17 @@ class SlicerWrapper:
     def __getattr__ ( self, name ):
         """Returns a function object suitable for calling the wrapped function"""
         return lambda *a: self.__callVTKmethod ( str(name), *a )
+    def __eq__ ( self, other ):
+        """Allows for equality testing"""
+        if other is None:
+            return False
+        return (other.__class__ is self.__class__ and other.__dict__ == self.__dict__)
+    def __ne__ ( self, other ):
+        """Allows for equality testing"""
+        if other is None:
+            return True
+        return not (other.__class__ is self.__class__ and other.__dict__ == self.__dict__)
+
 
 
 class Slicer:

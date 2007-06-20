@@ -248,6 +248,10 @@ static PyThreadState *tcl_tstate = NULL;
 #define FREECAST (char *)
 #endif
 
+
+/* Hold the external interpreter */
+static Tcl_Interp* ExternalInterp = NULL;
+
 /**** Tkapp Object Declaration ****/
 
 static PyTypeObject Tkapp_Type;
@@ -603,7 +607,12 @@ Tkapp_New(char *screenName, char *baseName, char *className,
   if (v == NULL)
     return NULL;
 
-  v->interp = Tcl_CreateInterp();
+  if ( ExternalInterp != NULL ) {
+    fprintf ( stderr, "Using existing Interp\n" );
+    v->interp = ExternalInterp;
+  } else {
+    v->interp = Tcl_CreateInterp();
+  }
   v->wantobjects = wantobjects;
   v->threaded = Tcl_GetVar2Ex(v->interp, "tcl_platform", "threaded",
           TCL_GLOBAL_ONLY) != NULL;
@@ -694,10 +703,12 @@ Tkapp_New(char *screenName, char *baseName, char *className,
     ckfree(args);
   }
 
-  if (Tcl_AppInit(v->interp) != TCL_OK) {
-    PyObject *result = Tkinter_Error((PyObject *)v);
-    Py_DECREF((PyObject *)v);
-    return (TkappObject *)result;
+  if ( ExternalInterp == NULL ) {
+    if (Tcl_AppInit(v->interp) != TCL_OK) {
+      PyObject *result = Tkinter_Error((PyObject *)v);
+      Py_DECREF((PyObject *)v);
+      return (TkappObject *)result;
+    }
   }
 
   EnableEventHook();
@@ -3102,10 +3113,12 @@ ins_string(PyObject *d, char *name, char *val)
 }
 
 
-PyMODINIT_FUNC init_mytkinter(void)
+PyMODINIT_FUNC init_mytkinter( Tcl_Interp* interp )
 {
   PyObject *m, *d;
 
+  ExternalInterp = interp;
+  printf ( "Init\n" );
   Tkapp_Type.ob_type = &PyType_Type;
 
 #ifdef WITH_THREAD
@@ -3168,6 +3181,7 @@ PyMODINIT_FUNC init_mytkinter(void)
      interpreter and thread state have already been destroyed! */
   Py_AtExit(Tcl_Finalize);
 #endif
+
 
 }
 #endif
