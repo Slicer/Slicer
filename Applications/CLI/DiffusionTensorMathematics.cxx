@@ -89,6 +89,7 @@ int main( int argc, const char * argv[] )
   //Compute IjkToRas (used by Writer)
   reader->GetRasToIjkMatrix()->Invert();
   writer->SetIJKToRASMatrix( reader->GetRasToIjkMatrix() );
+  writer->Write();
 
   return EXIT_SUCCESS;
 }
