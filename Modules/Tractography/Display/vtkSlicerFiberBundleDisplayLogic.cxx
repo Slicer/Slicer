@@ -59,7 +59,10 @@ vtkSlicerFiberBundleDisplayLogic::~vtkSlicerFiberBundleDisplayLogic()
     vtkSetAndObserveMRMLNodeMacro( this->FiberBundleNode, NULL );
     }
 
-  this->DeleteTemporaryModelNodeForDisplay ( this->LineModelNode, this->LineModelDisplayNode );
+
+  this->DeleteLineModelNodes();
+  this->DeleteTubeModelNodes();
+  this->DeleteGlyphModelNodes();
 
   this->DiffusionTensorGlyphFilter->Delete ( );
 
