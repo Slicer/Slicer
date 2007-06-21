@@ -183,7 +183,17 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
 
   // Description:
   // Set the type of glyph geometry (line, ellipsoid, etc.) 
-  vtkSetMacro(GlyphGeometry, int);
+  //vtkSetMacro(GlyphGeometry, int);
+  // Also update the glyph polydata source
+  void SetGlyphGeometry( int geometry ) {
+
+    if ( this->GlyphGeometry != geometry ) 
+      {
+      this->GlyphGeometry = geometry;
+      this->UpdateGlyphSource();
+      this->Modified();
+      }
+  }
 
   void SetGlyphGeometryToLines() {
     this->SetGlyphGeometry(this->Lines);
@@ -245,8 +255,26 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
 
   // Description
   // Which eigenvector to display with lines or tubes glyphs
-  vtkSetMacro(GlyphEigenvector, int);
-  
+  //vtkSetMacro(GlyphEigenvector, int);
+    // Description:
+  // Set the type of glyph geometry (line, ellipsoid, etc.) 
+  //vtkSetMacro(GlyphGeometry, int);
+  // Also update the glyph polydata source
+  void SetGlyphEigenvector( int eigenvector ) {
+
+    if ( this->GlyphEigenvector != eigenvector ) 
+      {
+      this->GlyphEigenvector = eigenvector;
+      if ( this->GlyphGeometry == this->Lines || this->GlyphGeometry == this->Tubes)
+        {
+        // Update the source if the eigenvector has changed
+        this->UpdateGlyphSource();
+        }
+
+      this->Modified();
+      }
+  }
+
   // Description
   // Display major eigenvector with lines or tubes glyphs
   void SetGlyphEigenvectorToMajor() {
@@ -384,13 +412,15 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
   // Description:
   // Get a polydata object according to current glyph display settings
   // (so a line, sphere, or tube) to use as a source for a glyphing filter.
-  vtkPolyData * GetGlyphSource ( );
+  vtkGetObjectMacro( GlyphSource, vtkPolyData );
 
  protected:
   vtkMRMLDiffusionTensorDisplayPropertiesNode();
   ~vtkMRMLDiffusionTensorDisplayPropertiesNode();
   vtkMRMLDiffusionTensorDisplayPropertiesNode(const vtkMRMLDiffusionTensorDisplayPropertiesNode&);
   void operator=(const vtkMRMLDiffusionTensorDisplayPropertiesNode&);
+
+  void UpdateGlyphSource ( );
 
   // ---- Parameters that should be written to MRML --- //
 

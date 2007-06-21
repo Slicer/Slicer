@@ -63,7 +63,7 @@ vtkMRMLDiffusionTensorDisplayPropertiesNode::vtkMRMLDiffusionTensorDisplayProper
   this->ColorGlyphBy = this->FractionalAnisotropy;
 
   // Glyph general parameters
-  this->GlyphScaleFactor = 1000;
+  this->GlyphScaleFactor = 50;
   this->GlyphExtractEigenvalues = 1;
   this->GlyphEigenvector = this->Major;
 
@@ -75,8 +75,8 @@ vtkMRMLDiffusionTensorDisplayPropertiesNode::vtkMRMLDiffusionTensorDisplayProper
   this->TubeGlyphNumberOfSides = 4; // was 6 in dtmri.tcl
 
   // Ellipsoid Glyph parameters
-  this->EllipsoidGlyphThetaResolution = 6; // was 12
-  this->EllipsoidGlyphPhiResolution = 6; // was 12
+  this->EllipsoidGlyphThetaResolution = 9; // was 12
+  this->EllipsoidGlyphPhiResolution = 9; // was 12
 
   // Superquadric Glyph parameters
   this->SuperquadricGlyphGamma = 1;
@@ -263,8 +263,10 @@ void vtkMRMLDiffusionTensorDisplayPropertiesNode::PrintSelf(ostream& os, vtkInde
 
 
 //----------------------------------------------------------------------------
-vtkPolyData * vtkMRMLDiffusionTensorDisplayPropertiesNode::GetGlyphSource ( )
+void vtkMRMLDiffusionTensorDisplayPropertiesNode::UpdateGlyphSource ( )
 {
+  vtkDebugMacro("Get Glyph Source");
+
   // Get rid of any old glyph source
   if ( this->GlyphSource != NULL )
     {
@@ -304,7 +306,7 @@ vtkPolyData * vtkMRMLDiffusionTensorDisplayPropertiesNode::GetGlyphSource ( )
       line->Update( );
 
       // if we are doing tubes, put a tube on the line
-      if (this->GlyphGeometry == this->Tubes)
+      if (this->GlyphGeometry == Tubes)
         {
         vtkTubeFilter *tube = vtkTubeFilter::New();
         tube->SetInput( line->GetOutput( ) );
@@ -315,10 +317,11 @@ vtkPolyData * vtkMRMLDiffusionTensorDisplayPropertiesNode::GetGlyphSource ( )
         this->SetGlyphSource( tube->GetOutput( ) );
         tube->Delete( );
 
+        vtkDebugMacro("Get Glyph Source: Tubes");
         }
       else
         {
-
+        vtkDebugMacro("Get Glyph Source: Lines");
         // here we are just displaying lines
         this->SetGlyphSource( line->GetOutput( ) );
 
@@ -340,18 +343,17 @@ vtkPolyData * vtkMRMLDiffusionTensorDisplayPropertiesNode::GetGlyphSource ( )
       this->SetGlyphSource( sphere->GetOutput( ) );
       sphere->Delete( );
 
+      vtkDebugMacro("Get Glyph Source: Ellipsoids");
       }
 
       break;
 
     case Superquadrics:
+      vtkErrorMacro("vtkMRMLDiffusionTensorDisplayPropertiesNode: Superquadric glyph source not handled yet.");
       // Here do nothing, the superquadric must be created specifically for each tensor
       break;
 
     }
-
-  return ( this->GlyphSource );
-
 }
 
 const char* vtkMRMLDiffusionTensorDisplayPropertiesNode::GetScalarEnumAsString(int var)
