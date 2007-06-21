@@ -490,6 +490,12 @@ int vtkDiffusionTensorGlyph::RequestData(
 
         }
 
+      // Use the square root of the eigenvalues for scaling
+      // for DTI 
+      w[0] = sqrt( w[0] );
+      w[1] = sqrt( w[1] );
+      w[2] = sqrt( w[2] );
+
       // compute scale factors (this modifies eigenvalues so 
       // scalar invariants were computed already above)
       w[0] *= this->ScaleFactor;
