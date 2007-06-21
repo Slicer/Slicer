@@ -184,6 +184,14 @@ void vtkSlicerSliceLayerLogic::ProcessMRMLEvents(vtkObject * caller,
       vtkDebugMacro("vtkSlicerSliceLayerLogic::ProcessMRMLEvents: got a volume display node modified event, updating the map to colors!\n");
       this->MapToColors->SetLookupTable( this->VolumeDisplayNode->GetColorNode()->GetLookupTable());
       }
+    vtkMRMLDiffusionTensorVolumeDisplayNode *dtiVDN = vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(caller);
+    if (this->VolumeDisplayNode == dtiVDN && dtiVDN != NULL)
+      {
+      if (dtiVDN->GetDiffusionTensorDisplayPropertiesNode())
+        {
+        this->DTIMathematics->SetOperation(dtiVDN->GetDiffusionTensorDisplayPropertiesNode()->GetScalarInvariant());
+        }
+      }
     else
       {      
       vtkDebugMacro("vtkSlicerSliceLayerLogic::ProcessMRMLEvents: volume display node " << (this->VolumeDisplayNode == NULL ? " is null" : "is set, but") << ", not updating map to colors (color node may be null)\n");
@@ -223,6 +231,7 @@ void vtkSlicerSliceLayerLogic::UpdateNodeReferences ()
 {
   // if there's a display node, observe it
   vtkMRMLVolumeDisplayNode *displayNode = NULL;
+  vtkMRMLDiffusionTensorDisplayPropertiesNode *propNode = NULL;
   if ( this->VolumeNode )
     {
     const char *id = this->VolumeNode->GetDisplayNodeID();
@@ -251,9 +260,17 @@ void vtkSlicerSliceLayerLogic::UpdateNodeReferences ()
       else if (vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(this->VolumeNode))
         {
         displayNode = vtkMRMLDiffusionTensorVolumeDisplayNode::New();
+        propNode = vtkMRMLDiffusionTensorDisplayPropertiesNode::New();
         }
       displayNode->SetScene(this->MRMLScene);
       this->MRMLScene->AddNode(displayNode);
+
+      if (propNode)
+        {
+        propNode->SetScene(this->MRMLScene);
+        this->MRMLScene->AddNode(propNode);
+        displayNode->SetAndObserveColorNodeID(propNode->GetID());
+        }
 
       if (isLabelMap)
         {
