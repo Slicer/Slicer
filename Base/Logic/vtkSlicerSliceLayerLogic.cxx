@@ -189,7 +189,9 @@ void vtkSlicerSliceLayerLogic::ProcessMRMLEvents(vtkObject * caller,
       {
       if (dtiVDN->GetDiffusionTensorDisplayPropertiesNode())
         {
+#if USE_TEEM        
         this->DTIMathematics->SetOperation(dtiVDN->GetDiffusionTensorDisplayPropertiesNode()->GetScalarInvariant());
+#endif
         }
       }
     else
