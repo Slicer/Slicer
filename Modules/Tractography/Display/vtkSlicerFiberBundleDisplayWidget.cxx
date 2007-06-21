@@ -27,16 +27,15 @@ vtkSlicerFiberBundleDisplayWidget::vtkSlicerFiberBundleDisplayWidget ( )
     this->FiberBundleDisplayNodeID = NULL;
 
     this->FiberBundleSelectorWidget = NULL;
-    this->VisibilityButton = NULL;
-    this->ScalarVisibilityButton = NULL;
     this->ColorSelectorWidget = NULL;
     this->ClippingButton = NULL;
     this->OpacityScale = NULL;
-    this->SurfaceMaterialPropertyWidget = NULL;
 
     this->LineVisibilityButton = NULL;
     this->TubeVisibilityButton = NULL;
     this->GlyphVisibilityButton = NULL;
+
+    this->GlyphDisplayWidget = NULL;
 
     
 }
@@ -53,18 +52,6 @@ vtkSlicerFiberBundleDisplayWidget::~vtkSlicerFiberBundleDisplayWidget ( )
     this->FiberBundleSelectorWidget->SetParent(NULL);
     this->FiberBundleSelectorWidget->Delete();
     this->FiberBundleSelectorWidget = NULL;
-    }
-  if (this->VisibilityButton)
-    {
-    this->VisibilityButton->SetParent(NULL);
-    this->VisibilityButton->Delete();
-    this->VisibilityButton = NULL;
-    }
-  if (this->ScalarVisibilityButton)
-    {
-    this->ScalarVisibilityButton->SetParent(NULL);
-    this->ScalarVisibilityButton->Delete();
-    this->ScalarVisibilityButton = NULL;
     }
    if (this->ColorSelectorWidget)
     {
@@ -83,12 +70,6 @@ vtkSlicerFiberBundleDisplayWidget::~vtkSlicerFiberBundleDisplayWidget ( )
     this->OpacityScale->SetParent(NULL);
     this->OpacityScale->Delete();
     this->OpacityScale = NULL;
-    }
-  if (this->SurfaceMaterialPropertyWidget)
-    {
-    this->SurfaceMaterialPropertyWidget->SetParent(NULL);
-    this->SurfaceMaterialPropertyWidget->Delete();
-    this->SurfaceMaterialPropertyWidget = NULL;
     }
   if (this->ChangeColorButton)
     {
@@ -116,6 +97,13 @@ vtkSlicerFiberBundleDisplayWidget::~vtkSlicerFiberBundleDisplayWidget ( )
     this->GlyphVisibilityButton->SetParent(NULL);
     this->GlyphVisibilityButton->Delete();
     this->GlyphVisibilityButton = NULL;
+    }
+
+  if (this->GlyphDisplayWidget)
+    {
+    this->GlyphDisplayWidget->SetParent(NULL);
+    this->GlyphDisplayWidget->Delete();
+    this->GlyphDisplayWidget = NULL;
     }
 
 
@@ -154,6 +142,17 @@ void vtkSlicerFiberBundleDisplayWidget::SetFiberBundleNode ( vtkMRMLFiberBundleN
 
   this->SetFiberBundleNodeID( fiberBundleNode->GetID() );
   this->SetFiberBundleDisplayNodeID( fiberBundleNode->GetDisplayNodeID() );
+    
+  // Update widgets 
+  vtkMRMLFiberBundleDisplayNode *node = 
+    vtkMRMLFiberBundleDisplayNode::SafeDownCast( this->MRMLScene->GetNodeByID( this->FiberBundleDisplayNodeID ) );
+  if ( node )
+    {
+    vtkMRMLDiffusionTensorDisplayPropertiesNode *dpnode = 
+      vtkMRMLDiffusionTensorDisplayPropertiesNode::SafeDownCast( node->GetFiberGlyphDTDisplayPropertiesNode() );
+    this->GlyphDisplayWidget->SetDiffusionTensorDisplayPropertiesNode(dpnode);
+
+    }
 
   // Start observing the new node
   this->AddMRMLObservers();
@@ -190,8 +189,7 @@ void vtkSlicerFiberBundleDisplayWidget::ProcessWidgetEvents ( vtkObject *caller,
     return;
     }
   
-  if (this->FiberBundleDisplayNodeID != NULL && 
-    !(vtkKWSurfaceMaterialPropertyWidget::SafeDownCast(caller) == this->SurfaceMaterialPropertyWidget && event == this->SurfaceMaterialPropertyWidget->GetPropertyChangedEvent()) &&
+  if (this->FiberBundleDisplayNodeID != NULL  &&
     !(vtkKWScale::SafeDownCast(caller) == this->OpacityScale->GetWidget() && event == vtkKWScale::ScaleValueChangingEvent) &&
     !(vtkKWScale::SafeDownCast(caller) == this->OpacityScale->GetWidget() && event == vtkKWScale::ScaleValueChangedEvent))
     {
@@ -200,17 +198,6 @@ void vtkSlicerFiberBundleDisplayWidget::ProcessWidgetEvents ( vtkObject *caller,
   
   this->UpdateMRML();
 
-  if ((event == this->SurfaceMaterialPropertyWidget->GetPropertyChangingEvent() ||
-       event == this->SurfaceMaterialPropertyWidget->GetPropertyChangedEvent() ||
-       event == vtkKWChangeColorButton::ColorChangedEvent) &&
-      this->FiberBundleDisplayNodeID != NULL)
-    {
-      vtkMRMLNode *node = this->MRMLScene->GetNodeByID(this->FiberBundleDisplayNodeID);
-      if (node != NULL)
-        {
-        node->Modified();
-        }
-    }
   //
   // process color selector events
   //
@@ -236,6 +223,7 @@ void vtkSlicerFiberBundleDisplayWidget::ProcessWidgetEvents ( vtkObject *caller,
           if (displayNode->GetColorNodeID() == NULL ||
               strcmp(displayNode->GetColorNodeID(), color->GetID()) != 0)
             {
+            vtkErrorMacro("Setting color node");
             // there's a change, set it
             displayNode->SetAndObserveColorNodeID(color->GetID());
             }
@@ -348,28 +336,17 @@ void vtkSlicerFiberBundleDisplayWidget::UpdateWidget()
                                               this->FiberBundleDisplayNodeID));
     if (displayNode != NULL) 
       {
-      this->VisibilityButton->GetWidget()->SetSelectedState(displayNode->GetVisibility());
-      this->ScalarVisibilityButton->GetWidget()->SetSelectedState(displayNode->GetScalarVisibility());
       this->ClippingButton->GetWidget()->SetSelectedState(displayNode->GetClipping());
       this->OpacityScale->GetWidget()->SetValue(displayNode->GetOpacity());
-      if (this->SurfaceMaterialPropertyWidget->GetProperty() == NULL)
-        {
-        vtkProperty *prop = vtkProperty::New();
-        this->SurfaceMaterialPropertyWidget->SetProperty(prop);
-        prop->Delete();
-        }
-        
-      this->SurfaceMaterialPropertyWidget->GetProperty()->SetAmbient(displayNode->GetAmbient());
-      this->SurfaceMaterialPropertyWidget->GetProperty()->SetDiffuse(displayNode->GetDiffuse());
-      this->SurfaceMaterialPropertyWidget->GetProperty()->SetSpecular(displayNode->GetSpecular());
-      this->SurfaceMaterialPropertyWidget->GetProperty()->SetSpecularPower(displayNode->GetPower());
+
       this->ChangeColorButton->SetColor(displayNode->GetColor());
-      this->SurfaceMaterialPropertyWidget->Update();
 
 
       this->LineVisibilityButton->GetWidget()->SetSelectedState(displayNode->GetFiberLineVisibility());
       this->TubeVisibilityButton->GetWidget()->SetSelectedState(displayNode->GetFiberTubeVisibility());
       this->GlyphVisibilityButton->GetWidget()->SetSelectedState(displayNode->GetFiberGlyphVisibility());
+
+      // TO DO glyph widget
 
       }
     
@@ -388,19 +365,15 @@ void vtkSlicerFiberBundleDisplayWidget::UpdateMRML()
                                               this->FiberBundleDisplayNodeID));
     if (displayNode != NULL) 
       {
-      displayNode->SetVisibility(this->VisibilityButton->GetWidget()->GetSelectedState());
-      displayNode->SetScalarVisibility(this->ScalarVisibilityButton->GetWidget()->GetSelectedState());
       displayNode->SetClipping(this->ClippingButton->GetWidget()->GetSelectedState());
       displayNode->SetOpacity(this->OpacityScale->GetWidget()->GetValue());
-      displayNode->SetAmbient(this->SurfaceMaterialPropertyWidget->GetProperty()->GetAmbient());
-      displayNode->SetDiffuse(this->SurfaceMaterialPropertyWidget->GetProperty()->GetDiffuse());
-      displayNode->SetSpecular(this->SurfaceMaterialPropertyWidget->GetProperty()->GetSpecular());
-      displayNode->SetPower(this->SurfaceMaterialPropertyWidget->GetProperty()->GetSpecularPower());
       displayNode->SetColor(this->ChangeColorButton->GetColor());
 
       displayNode->SetFiberLineVisibility(this->LineVisibilityButton->GetWidget()->GetSelectedState());
       displayNode->SetFiberTubeVisibility(this->TubeVisibilityButton->GetWidget()->GetSelectedState());
       displayNode->SetFiberGlyphVisibility(this->GlyphVisibilityButton->GetWidget()->GetSelectedState());
+
+      // TO DO glyph widget
 
       }
     
@@ -413,26 +386,21 @@ void vtkSlicerFiberBundleDisplayWidget::UpdateMRML()
 void vtkSlicerFiberBundleDisplayWidget::RemoveWidgetObservers ( ) {
   this->FiberBundleSelectorWidget->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
   
-  this->VisibilityButton->GetWidget()->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->ScalarVisibilityButton->GetWidget()->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-
   this->ClippingButton->GetWidget()->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   
   this->OpacityScale->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueChangingEvent, (vtkCommand *)this->GUICallbackCommand );
   this->OpacityScale->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueStartChangingEvent, (vtkCommand *)this->GUICallbackCommand );
   this->OpacityScale->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 
-  this->ChangeColorButton->AddObserver(vtkKWChangeColorButton::ColorChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->ChangeColorButton->RemoveObservers(vtkKWChangeColorButton::ColorChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 
-  this->SurfaceMaterialPropertyWidget->RemoveObservers(this->SurfaceMaterialPropertyWidget->GetPropertyChangedEvent(), (vtkCommand *)this->GUICallbackCommand );
-  this->SurfaceMaterialPropertyWidget->RemoveObservers(this->SurfaceMaterialPropertyWidget->GetPropertyChangingEvent(), (vtkCommand *)this->GUICallbackCommand );
-  
   this->ColorSelectorWidget->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
 
   this->LineVisibilityButton->GetWidget()->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->TubeVisibilityButton->GetWidget()->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->GlyphVisibilityButton->GetWidget()->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 
+  // TO DO glyph widget
 }
 
 
@@ -478,22 +446,6 @@ void vtkSlicerFiberBundleDisplayWidget::CreateWidget ( )
   this->FiberBundleSelectorWidget->SetBalloonHelpString("select a fiberBundle from the current mrml scene.");
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                  this->FiberBundleSelectorWidget->GetWidgetName());
-
-  this->VisibilityButton = vtkKWCheckButtonWithLabel::New();
-  this->VisibilityButton->SetParent ( fiberBundleDisplayFrame );
-  this->VisibilityButton->Create ( );
-  this->VisibilityButton->SetLabelText("Visibility");
-  this->VisibilityButton->SetBalloonHelpString("set fiberBundle visibility.");
-  this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
-                 this->VisibilityButton->GetWidgetName() );
-
-  this->ScalarVisibilityButton = vtkKWCheckButtonWithLabel::New();
-  this->ScalarVisibilityButton->SetParent ( fiberBundleDisplayFrame );
-  this->ScalarVisibilityButton->Create ( );
-  this->ScalarVisibilityButton->SetLabelText("Scalar Visibility");
-  this->ScalarVisibilityButton->SetBalloonHelpString("set fiberBundle scalar visibility.");
-  this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
-                 this->ScalarVisibilityButton->GetWidgetName() );
 
   // a selector to change the color node associated with this display
   this->ColorSelectorWidget = vtkSlicerNodeSelectorWidget::New() ;
@@ -541,14 +493,6 @@ void vtkSlicerFiberBundleDisplayWidget::CreateWidget ( )
   this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
                  this->ChangeColorButton->GetWidgetName() );
 
-  this->SurfaceMaterialPropertyWidget = vtkKWSurfaceMaterialPropertyWidget::New();
-  this->SurfaceMaterialPropertyWidget->SetParent ( fiberBundleDisplayFrame );
-  this->SurfaceMaterialPropertyWidget->Create ( );
-  this->SurfaceMaterialPropertyWidget->SetBalloonHelpString("set fiberBundle opacity value.");
-  this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
-                 this->SurfaceMaterialPropertyWidget->GetWidgetName() );
-
-
   this->LineVisibilityButton = vtkKWCheckButtonWithLabel::New();
   this->LineVisibilityButton->SetParent ( fiberBundleDisplayFrame );
   this->LineVisibilityButton->Create ( );
@@ -571,7 +515,13 @@ void vtkSlicerFiberBundleDisplayWidget::CreateWidget ( )
   this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
                  this->GlyphVisibilityButton->GetWidgetName() );
 
-
+  this->GlyphDisplayWidget = vtkSlicerDiffusionTensorGlyphDisplayWidget::New();
+  this->GlyphDisplayWidget->SetParent ( fiberBundleDisplayFrame );
+  this->GlyphDisplayWidget->Create ( );
+  this->GlyphDisplayWidget->SetBalloonHelpString("set glyph display parameters.");
+  this->GlyphDisplayWidget->SetMRMLScene(this->GetMRMLScene());
+  this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
+                 this->GlyphDisplayWidget->GetWidgetName() );
 
   // add observers
   this->FiberBundleSelectorWidget->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
@@ -580,15 +530,9 @@ void vtkSlicerFiberBundleDisplayWidget::CreateWidget ( )
   this->OpacityScale->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangingEvent, (vtkCommand *)this->GUICallbackCommand );
   this->OpacityScale->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   
-  this->VisibilityButton->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->ScalarVisibilityButton->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-
   this->ClippingButton->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   
   this->ChangeColorButton->AddObserver(vtkKWChangeColorButton::ColorChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-
-  this->SurfaceMaterialPropertyWidget->AddObserver(this->SurfaceMaterialPropertyWidget->GetPropertyChangedEvent(), (vtkCommand *)this->GUICallbackCommand );
-  this->SurfaceMaterialPropertyWidget->AddObserver(this->SurfaceMaterialPropertyWidget->GetPropertyChangingEvent(), (vtkCommand *)this->GUICallbackCommand );
 
   this->ColorSelectorWidget->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
    
@@ -598,7 +542,7 @@ void vtkSlicerFiberBundleDisplayWidget::CreateWidget ( )
   this->GlyphVisibilityButton->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 
 
-
+  // TO DO glyph widget
 
 
 

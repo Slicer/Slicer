@@ -26,9 +26,10 @@
 #include "vtkSlicerWidget.h"
 
 #include "vtkSlicerNodeSelectorWidget.h"
+#include "vtkSlicerDiffusionTensorGlyphDisplayWidget.h"
+
 #include "vtkKWCheckButtonWithLabel.h"
 #include "vtkKWScaleWithLabel.h"
-#include "vtkKWSurfaceMaterialPropertyWidget.h"
 #include "vtkKWChangeColorButton.h"
 
 #include "vtkMRMLFiberBundleNode.h"
@@ -113,17 +114,16 @@ public:
   // Description:
   // All of the widgets used in this widget
   vtkSlicerNodeSelectorWidget* FiberBundleSelectorWidget;
-  vtkKWCheckButtonWithLabel *VisibilityButton;
-  vtkKWCheckButtonWithLabel *ScalarVisibilityButton;
   vtkSlicerNodeSelectorWidget* ColorSelectorWidget;
   vtkKWCheckButtonWithLabel *ClippingButton;
   vtkKWScaleWithLabel  *OpacityScale;
-  vtkKWSurfaceMaterialPropertyWidget *SurfaceMaterialPropertyWidget;
   vtkKWChangeColorButton *ChangeColorButton;
 
   vtkKWCheckButtonWithLabel *LineVisibilityButton;
   vtkKWCheckButtonWithLabel *TubeVisibilityButton;
   vtkKWCheckButtonWithLabel *GlyphVisibilityButton;
+
+  vtkSlicerDiffusionTensorGlyphDisplayWidget *GlyphDisplayWidget;
 
 private:
 

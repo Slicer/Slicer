@@ -23,13 +23,8 @@
 #include "vtkMRMLFiberBundleDisplayNode.h"
 
 #include "vtkTubeFilter.h"
-#include "vtkLineSource.h"
 
-#ifdef USE_TEEM
-#include "vtkDiffusionTensorGlyph.h"
-#endif
-
-#include "vtkPointData.h"
+//#include "vtkPointData.h"
 
 
 #include <sstream>
@@ -50,6 +45,8 @@ vtkSlicerFiberBundleDisplayLogic::vtkSlicerFiberBundleDisplayLogic()
 
   this->FiberBundleNode = NULL;
 
+
+  this->DiffusionTensorGlyphFilter = vtkDiffusionTensorGlyph::New();
 }
 
 //----------------------------------------------------------------------------
@@ -63,6 +60,9 @@ vtkSlicerFiberBundleDisplayLogic::~vtkSlicerFiberBundleDisplayLogic()
     }
 
   this->DeleteTemporaryModelNodeForDisplay ( this->LineModelNode, this->LineModelDisplayNode );
+
+  this->DiffusionTensorGlyphFilter->Delete ( );
+
 }
 
 
@@ -464,14 +464,16 @@ void vtkSlicerFiberBundleDisplayLogic::CreateGlyphModel ( )
       {
 
       this->GlyphModelDisplayNode->SetVisibility( fiberBundleDisplayNode->GetVisibility ( ) );
-      this->GlyphModelDisplayNode->SetOpacity( fiberBundleDisplayNode->GetFiberGlyphOpacity ( ) );
+      // TO DO: opacity for all glyph tube line separately
+      //this->GlyphModelDisplayNode->SetOpacity( fiberBundleDisplayNode->GetFiberGlyphOpacity ( ) );
+      this->GlyphModelDisplayNode->SetOpacity( fiberBundleDisplayNode->GetOpacity ( ) );
       this->GlyphModelDisplayNode->SetColor( fiberBundleDisplayNode->GetColor ( ) );
       this->GlyphModelDisplayNode->SetAmbient( fiberBundleDisplayNode->GetAmbient ( ) );
       this->GlyphModelDisplayNode->SetDiffuse( fiberBundleDisplayNode->GetDiffuse ( ) );
 
-      
-      //this->GlyphModelDisplayNode->GetColorModeForFiberGlyphs();
-      // set display properties according to the tensor-specific display properties node
+      this->GlyphModelDisplayNode->SetAndObserveColorNodeID( fiberBundleDisplayNode->GetColorNodeID ( ) );
+
+      // set display properties according to the tensor-specific display properties node for glyphs
       vtkMRMLDiffusionTensorDisplayPropertiesNode * DTDisplayNode = fiberBundleDisplayNode->GetFiberGlyphDTDisplayPropertiesNode( );
 
       if (DTDisplayNode != NULL)
@@ -481,18 +483,22 @@ void vtkSlicerFiberBundleDisplayLogic::CreateGlyphModel ( )
 
         // get tensors from the fiber bundle node and glyph them
 #ifdef USE_TEEM
-      
+        // TO DO: include superquadrics
         // if glyph type is other than superquadrics, get glyph source
         if (DTDisplayNode->GetGlyphGeometry( ) != vtkMRMLDiffusionTensorDisplayPropertiesNode::Superquadrics)
           {
-          vtkDiffusionTensorGlyph *glyphFilter = vtkDiffusionTensorGlyph::New();
 
-          glyphFilter->SetInput(this->FiberBundleNode->GetPolyData () );
-          glyphFilter->ClampScalingOff();
+          this->DiffusionTensorGlyphFilter->SetInput(this->FiberBundleNode->GetPolyData () );
+          this->DiffusionTensorGlyphFilter->ClampScalingOff();
+
+          // TO DO: implement max # ellipsoids, random sampling features
+          this->DiffusionTensorGlyphFilter->SetResolution(2);
         
-          glyphFilter->SetScaleFactor( DTDisplayNode->GetGlyphScaleFactor( ) );
+          this->DiffusionTensorGlyphFilter->SetScaleFactor( DTDisplayNode->GetGlyphScaleFactor( ) );
 
-          glyphFilter->SetSource( DTDisplayNode->GetGlyphSource( ) );
+          this->DiffusionTensorGlyphFilter->SetSource( DTDisplayNode->GetGlyphSource( ) );
+
+          vtkErrorMacro("setting glyph geometry" << DTDisplayNode->GetGlyphGeometry( ) );
 
           // set glyph coloring
           if (fiberBundleDisplayNode->GetColorModeForFiberGlyphs ( ) == vtkMRMLFiberBundleDisplayNode::colorModeSolid)
@@ -500,6 +506,7 @@ void vtkSlicerFiberBundleDisplayLogic::CreateGlyphModel ( )
             this->GlyphModelDisplayNode->ScalarVisibilityOff( );
             }
           else
+            {
             if (fiberBundleDisplayNode->GetColorModeForFiberGlyphs ( ) == vtkMRMLFiberBundleDisplayNode::colorModeScalar)
               {
 
@@ -510,38 +517,81 @@ void vtkSlicerFiberBundleDisplayLogic::CreateGlyphModel ( )
                 case vtkMRMLDiffusionTensorDisplayPropertiesNode::FractionalAnisotropy:
                   {
                   vtkErrorMacro("coloring with FA==============================");
-                  glyphFilter->ColorGlyphsByFractionalAnisotropy( );
+                  this->DiffusionTensorGlyphFilter->ColorGlyphsByFractionalAnisotropy( );
                   }
                   break;
                 case vtkMRMLDiffusionTensorDisplayPropertiesNode::LinearMeasure:
                   {
                   vtkErrorMacro("coloring with Cl=============================");
-                  glyphFilter->ColorGlyphsByLinearMeasure( );
+                  this->DiffusionTensorGlyphFilter->ColorGlyphsByLinearMeasure( );
                   }
                   break;
                 case vtkMRMLDiffusionTensorDisplayPropertiesNode::Trace:
                   {
                   vtkErrorMacro("coloring with trace =================");
-                  glyphFilter->ColorGlyphsByTrace( );
+                  this->DiffusionTensorGlyphFilter->ColorGlyphsByTrace( );
                   }
+                  break;
                 case vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientation:
                   {
                   vtkErrorMacro("coloring with direction (re-implement)");
-                  glyphFilter->ColorGlyphsByOrientation( );
+                  this->DiffusionTensorGlyphFilter->ColorGlyphsByOrientation( );
+                  }
+                  break;
+                case vtkMRMLDiffusionTensorDisplayPropertiesNode::PlanarMeasure:
+                  {
+                  vtkErrorMacro("coloring with planar");
+                  this->DiffusionTensorGlyphFilter->ColorGlyphsByPlanarMeasure( );
+                  }
+                  break;
+                case vtkMRMLDiffusionTensorDisplayPropertiesNode::MaxEigenvalue:
+                  {
+                  vtkErrorMacro("coloring with max eigenval");
+                  this->DiffusionTensorGlyphFilter->ColorGlyphsByMaxEigenvalue( );
+                  }
+                  break;
+                case vtkMRMLDiffusionTensorDisplayPropertiesNode::MidEigenvalue:
+                  {
+                  vtkErrorMacro("coloring with mid eigenval");
+                  this->DiffusionTensorGlyphFilter->ColorGlyphsByMidEigenvalue( );
+                  }
+                  break;
+                case vtkMRMLDiffusionTensorDisplayPropertiesNode::MinEigenvalue:
+                  {
+                  vtkErrorMacro("coloring with min eigenval");
+                  this->DiffusionTensorGlyphFilter->ColorGlyphsByMinEigenvalue( );
+                  }
+                  break;
+                case vtkMRMLDiffusionTensorDisplayPropertiesNode::RelativeAnisotropy:
+                  {
+                  vtkErrorMacro("coloring with relative anisotropy");
+                  this->DiffusionTensorGlyphFilter->ColorGlyphsByRelativeAnisotropy( );
                   }
                   break;
                   
                 }
-              }
+              }  // if color scalar
+            }   // end else
 
-          glyphFilter->Update ( );
-          this->GlyphModelNode->SetAndObservePolyData(glyphFilter->GetOutput( ) );
 
-          glyphFilter->Delete ( );
+          // this update is needed to get the scalar range correct
+          this->DiffusionTensorGlyphFilter->Update ( );
+          this->GlyphModelDisplayNode->SetScalarRange( this->DiffusionTensorGlyphFilter->GetOutput()->GetScalarRange() );
+
+          //vtkErrorMacro("TEST NULL PD_________________-------------------___________");
+          //this->GlyphModelNode->SetAndObservePolyData( NULL );
+          vtkErrorMacro("set and observe PD _________________-------------------___________");
+          // this did not change the polydata originally
+          this->GlyphModelNode->SetAndObservePolyData( this->DiffusionTensorGlyphFilter->GetOutput( ) );
+          vtkErrorMacro("DONE set and observe PD _________________-------------------___________");
+          
+          // try sending modified event to see if pd updates
+          //this->DiffusionTensorGlyphFilter->GetOutput()->Modified();
 
           }
         else
           {
+          // TO DO:
           // Do superquadrics
 
           }
