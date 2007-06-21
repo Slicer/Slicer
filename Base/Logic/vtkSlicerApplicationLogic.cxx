@@ -38,6 +38,9 @@
 #include "vtkMRMLNRRDStorageNode.h"
 #endif
 
+#ifdef linux 
+#include "unistd.h"
+#endif
 
 #include "itksys/SystemTools.hxx"
 
