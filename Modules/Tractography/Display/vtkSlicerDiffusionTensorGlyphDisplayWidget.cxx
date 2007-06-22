@@ -267,7 +267,7 @@ void vtkSlicerDiffusionTensorGlyphDisplayWidget::AddMRMLObservers ( )
 void vtkSlicerDiffusionTensorGlyphDisplayWidget::RemoveMRMLObservers ( )
 {
 
-  vtkErrorWithObjectMacro(this,"Remove mrml observers ;) " << this->DiffusionTensorDisplayPropertiesNodeID);
+  //vtkErrorWithObjectMacro(this,"Remove mrml observers ;) " << this->DiffusionTensorDisplayPropertiesNodeID);
 
   if ( !this->DiffusionTensorDisplayPropertiesNodeID )
     {
