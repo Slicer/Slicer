@@ -11,10 +11,15 @@ SUBDIRS(
   SlicerDaemon
   Editor
   QueryAtlas
-  Tractography
   #Meshing
 #  QdecModule
 )
+
+IF(USE_TEEM)
+  SUBDIRS(
+    Tractography
+    )
+ENDIF(USE_TEEM)
 
 
 IF (Slicer3_BUILD_TESTING)

@@ -161,12 +161,10 @@ TARGET_LINK_LIBRARIES( Slicer3${SLICER_EXE_SUFFIX}
     MRML
     IGT
     GradientAnisotropicDiffusionFilter
-    SlicerTractographyDisplay
     EMSegment
  #   RealTimeImaging
  #   MRAblation
     NeuroNav
-    QdecModule
     QueryAtlas
     CommandLineModule
     ScriptedModule
@@ -177,7 +175,15 @@ TARGET_LINK_LIBRARIES( Slicer3${SLICER_EXE_SUFFIX}
     ITKIO
     ${WFENGINE_LINK_LIB}
     ${KWWidgets_LIBRARIES}
-    Qdec)
+#    QdecModule
+#    Qdec
+)
+
+IF(USE_TEEM)
+  TARGET_LINK_LIBRARIES( Slicer3${SLICER_EXE_SUFFIX}
+    SlicerTractographyDisplay
+    )
+ENDIF(USE_TEEM)
 
 IF(USE_PYTHON AND PYTHON_LIBRARIES)
   TARGET_LINK_LIBRARIES( Slicer3${SLICER_EXE_SUFFIX} SlicerGUIPython)
