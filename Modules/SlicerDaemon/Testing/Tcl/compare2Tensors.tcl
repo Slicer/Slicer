@@ -1,53 +1,79 @@
 global state
-#set n1 [$::slicer3::MRMLScene GetNthNodeByClass [lindex $argv 0] vtkMRMLVolumeNode]
-#set n2 [$::slicer3::MRMLScene GetNthNodeByClass [lindex $argv 1] vtkMRMLVolumeNode]
 
-$::slicer3::MRMLScene SetURL /projects/schiz/guest/kquintus/projects/Slicer3/Modules/SlicerDaemon/Testing/slicerDaemonTensorTestData.mrml
+#
+# Write tcl output to a file
+#
+
+set outfile [open "$::env(SLICER_HOME)/Modules/SlicerDaemon/Testing/DaemonTest_compareTensors.txt" w]
+puts  $outfile "This is a Slicer Daemon tensor test"
+puts  $outfile "-------------------------------------\n"
+
+# check if SlicerDaemon is running, otherwise exit 1. 
+# if another Slicer has is running at test time the default port
+# is already taken and we can't do the test
+
+if {[info exists ::SLICERD(serversock)] == 0} {
+    puts $outfile "Another Slicer Daemon ist already running at test time. Slicer Daemon could not be startet on the default port."
+    puts $outfile "Abort Test with exit 1"
+    close $outfile
+    exit 1
+    return
+}
+puts "CTEST_FULL_OUTPUT"
+
+# helper proc
+#
+proc launch_FileEvent {fp} {
+    if {[eof $fp]} {
+        puts "EOF happened"
+        set ret [catch "close $fp" res]
+        set ::END 1
+    } else {
+        puts "still waiting for EOF"
+        gets $fp line
+        puts $line
+    }
+}
+
+
+
+
+$::slicer3::MRMLScene SetURL  $::env(SLICER_HOME)/../Slicer3/Modules/SlicerDaemon/Testing/slicerDaemonTensorTestData.mrml
 $::slicer3::MRMLScene Connect
 
+
+
 set tensor_name "helix-DTI.nhdr"
-#"helix.nhdr"
 set piped_tensor_name "tensor_piped_around"
 
-puts "Open command pipeline channel for command \
-~/schiz/projects/Slicer3/Modules/SlicerDaemon/Tcl/slicerget.tcl $tensor_name | \
-~/schiz/projects/Slicer3/Modules/SlicerDaemon/Tcl/slicerput.tcl $piped_tensor_name"
+puts  $outfile "Open command pipeline channel for command \
+$::env(SLICER_HOME)/../Slicer3/Modules/SlicerDaemon/Tcl/slicerget.tcl $tensor_name | \
+$::env(SLICER_HOME)/../Slicer3/Modules/SlicerDaemon/Tcl/slicerput.tcl $piped_tensor_name"
 
 update
 set ::SLICERD(approved) "yes"
 
-set fp [open "| ~/schiz/projects/Slicer3/Modules/SlicerDaemon/Tcl/slicerget.tcl $tensor_name | ~/schiz/projects/Slicer3/Modules/SlicerDaemon/Tcl/slicerput.tcl $piped_tensor_name" r ]
-fconfigure $fp -blocking 0
+set fp [open "| $::env(SLICER_HOME)/../Slicer3/Modules/SlicerDaemon/Tcl/slicerget.tcl $tensor_name | $::env(SLICER_HOME)/../Slicer3/Modules/SlicerDaemon/Tcl/slicerput.tcl $piped_tensor_name" r ]
+#fconfigure $fp -blocking 0
 
-puts "Wait until there's no more output to stdout coming from the channel ..."
+puts $outfile "Wait until there's no more output to stdout coming from the channel ..."
+ 
+# now go into a loop waiting for the child process
+# - the launch_FileEvent handles output from the child and
+#   also detects when the child exits and sets global variables
+#   to handle the return code
+#
+set ::END 0
+fileevent $fp readable "launch_FileEvent $fp"
+puts "Now I am starting to wait"
+vwait ::END
 
-#fileevent $fp readable [puts "Now it's readable!"]
-#puts "This is eof: [eof $fp]"
-#gets $fp line
-#puts $line
-
-#puts "Now I'm waiting..."
-#vwait state
-#puts "Enough waiting..."
-
-#fileevent stderr readable [puts "Now stderr is readable!"]
 
 
-while { ![eof $fp]} {
-    after 1000
-    puts "Wait until stdout of pipeline is at the end."
-    update   
-    gets $fp line
-    puts $line
-}
-
-close $fp
-
-puts "Volume has been piped to stdout and written back into slicer."
+puts  $outfile "Volume has been piped to stdout and written back into slicer."
 update
-puts "Compare new volume with original"
+puts $outfile "Compare new volume with original"
 # compare new volume with original
-
 set n1 ""
 set n2 ""
 
@@ -66,16 +92,20 @@ for {set n 0} {$n < $numNodes} {incr n} {
 }
 
 if { $n1 eq ""} {
-    puts "Could not find tensor node $tensor_name . Stopped."
-    exit 0
+
+    puts $outfile "Could not find tensor node $tensor_name . Stopped."
+    puts  $outfile "exit 1"
+    close $outfile
+    exit 1
+    return
 }
 if { $n2 eq ""} {
-    puts "Could not find tensor node $piped_tensor_name . Stopped."
-    exit 0
+    puts  $outfile "Could not find tensor node $piped_tensor_name . Stopped."
+    puts  $outfile "exit 1"
+    close $outfile
+    exit 1
+    return
 }
-
-#set n1 [$::slicer3::MRMLScene GetNthNodeByClass 1 vtkMRMLVolumeNode]
-#set n2 [$::slicer3::MRMLScene GetNthNodeByClass 2 vtkMRMLVolumeNode]
 
 set im1 [$n1 GetImageData]
 set t1 [[$im1 GetPointData] GetTensors]
@@ -84,7 +114,7 @@ set im2 [$n2 GetImageData]
 set t2 [[$im2 GetPointData] GetTensors]
 
 if {$t1 == "" || $t2 == ""} {
-    puts "One of the volumes doens't have tensor data"
+    puts  $outfile "One of the volumes doens't have tensor data"
     return
 }
 
@@ -92,7 +122,7 @@ set numTuples [$t1 GetNumberOfTuples]
 set numTuples2 [$t2 GetNumberOfTuples]
 
 if { $numTuples != $numTuples2 } {
-    puts "The tensor volumes [$n1 GetName] and [$n2 GetName] don't have \
+    puts  $outfile "The tensor volumes [$n1 GetName] and [$n2 GetName] don't have \
           the same amount of tuples, can't compare.\n"
     return
 }
@@ -101,9 +131,9 @@ set numComponents [$t1 GetNumberOfComponents]
 set numComponents2 [$t2 GetNumberOfComponents]
 
 if { $numComponents != $numComponents2 } {
-    puts "The tensor volumes [$n1 GetName] and [$n2 GetName] don't have \
+    puts $outfile "The tensor volumes [$n1 GetName] and [$n2 GetName] don't have \
           the same number of components. Can't compare.\n"
-    return
+   return
 }
 
 set min [expr [$t1 GetComponent 0 0] - [$t2 GetComponent 0 0]]
@@ -142,27 +172,33 @@ for {set n 0} {$n < $numTuples} {incr n} {
 }
 
 set mean [expr $d_sum/$numTuples]
-puts "Absolute differences:"
-puts "---------------------"
-puts "Mean difference: $mean"
-puts "Min difference: $min"
-puts "Max difference: $max\n"
+puts $outfile "Absolute differences:"
+puts  $outfile "---------------------"
+puts $outfile "Mean difference: $mean"
+puts $outfile "Min difference: $min"
+puts $outfile "Max difference: $max\n"
 
 set mean_relative [expr $d_sum_relative/($numTuples - $count_zeros)]
-puts "Relative differences:"
-puts "---------------------"
-puts "Number of tensor elements: [expr $numTuples * $numComponents]"
-puts "Exclude zero values for calculation of relative error."
-puts "Number of excluded zero values: $count_zeros"
-puts "Mean realitve difference: $mean_relative"
-puts "Min realive difference: $min_relative"
-puts "Max relative difference: $max_relative\n"
+puts $outfile "Relative differences:"
+puts $outfile "---------------------"
+puts $outfile "Number of tensor elements: [expr $numTuples * $numComponents]"
+puts $outfile "Exclude zero values for calculation of relative error."
+puts $outfile "Number of excluded zero values: $count_zeros"
+puts $outfile "Mean realitve difference: $mean_relative"
+puts $outfile "Min realive difference: $min_relative"
+puts $outfile "Max relative difference: $max_relative\n"
 
-
-set mean_realtive 4
 
 if {$mean == 0 & $mean_relative == 0} {
+    puts  $outfile "\nTensor volumes are identical. Test succeeded."
+    close $outfile
     exit 0
+    return
+    
 } else {
+    puts  $outfile "\nTensor volumes are different. Test failed."
+    close $outfile
     exit 1
+    return
 }
+
