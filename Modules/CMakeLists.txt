@@ -13,7 +13,7 @@ SUBDIRS(
   QueryAtlas
   Tractography
   #Meshing
-  QdecModule
+#  QdecModule
 )
 
 
