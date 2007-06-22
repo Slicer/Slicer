@@ -327,6 +327,21 @@ SET_TARGET_PROPERTIES (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoi
 TARGET_LINK_LIBRARIES (${CLP}Lib ITKIO ITKBasicFilters)
 
 
+#####################
+SET (CLP LabelMapSmoothing)
+
+SET ( ${CLP}_SOURCE ${CLP}.cxx)
+GENERATECLP(${CLP}_SOURCE ${CLP}.xml ${CLI_SOURCE_DIR}/Resources/ITKLogo.h)
+ADD_EXECUTABLE(${CLP} ${${CLP}_SOURCE})
+TARGET_LINK_LIBRARIES (${CLP} ITKIO ITKAlgorithms ITKBasicFilters)
+
+ADD_LIBRARY(${CLP}Lib SHARED ${${CLP}_SOURCE})
+SET_TARGET_PROPERTIES (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
+TARGET_LINK_LIBRARIES (${CLP}Lib ITKIO ITKAlgorithms ITKBasicFilters)
+
+#####################
+
+
 #IF (Slicer3_BUILD_TESTING)
 #  SUBDIRS( Testing )
 #ENDIF (Slicer3_BUILD_TESTING)
@@ -374,6 +389,7 @@ IF (Slicer3_SOURCE_DIR)
         LinearRegistration
         AffineRegistration
         BSplineDeformableRegistration
+        LabelMapSmoothing
   )
 
   FOREACH(target ${TARGETS})
