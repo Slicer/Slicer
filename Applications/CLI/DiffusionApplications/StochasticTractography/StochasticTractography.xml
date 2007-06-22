@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>filtering</category>
+  <title>Stochastic Tractography Filter</title>
+  <description>
+  Generates a map of connectivity probabilities from a DWI volume.
+  </description>
+  <version>1.0</version>
+  <documentationurl></documentationurl>
+  <license></license>
+  <contributor>Tri Ngo</contributor>
+
+  <parameters>
+    <label>
+    Stochastic Tractography Parameters
+    </label>
+    <description>
+    Parameters for the Stochastic Tractography algorithm
+    </description>
+
+    <integer>
+      <name>labelnumber</name>
+      <flag>l</flag>
+      <longflag>labelnumber</longflag>
+      <description>Label Number to use as seed points</description>
+      <label>Seed Point(s) Label Number</label>
+      <default>0</default>
+      <constraints>
+        <minimum>0</minimum>
+        <step>1</step>
+      </constraints>
+    </integer>
+    
+    <integer>
+      <name>endlabelnumber</name>
+      <flag>e</flag>
+      <longflag>endlabelnumber</longflag>
+      <description>Label Number to use as end region</description>
+      <label>End Region Label Number</label>
+      <default>1</default>
+      <constraints>
+        <minimum>0</minimum>
+        <step>1</step>
+      </constraints>
+    </integer>
+       
+    <integer>
+      <name>totaltracts</name>
+      <flag>t</flag>
+      <longflag>totaltracts</longflag>
+      <description>Number of Sample Tracts</description>
+      <label>Total Tracts</label>
+      <default>100</default>
+      <constraints>
+        <minimum>0</minimum>
+        <step>1</step>
+      </constraints>
+    </integer>
+
+    <integer>
+      <name>maxtractlength</name>
+      <flag>m</flag>
+      <longflag>maxtractlength</longflag>
+      <description>Maximum Length of Sample Tract</description>
+      <label>Maximum Tract Length</label>
+      <default>100</default>
+      <constraints>
+        <minimum>0</minimum>
+        <step>1</step>
+      </constraints>
+    </integer>
+    <integer>
+      <name>stepsize</name>
+      <flag>s</flag>
+      <longflag>stepsize</longflag>
+      <description>The length of each segment of the tract in mm</description>
+      <label>Step Size(mm)</label>
+      <default>1</default>
+      <constraints>
+        <minimum>0.1</minimum>
+        <step>0.1</step>
+      </constraints>
+    </integer>
+    <integer>
+      <name>maxlikelihoodcachesize</name>
+      <flag>c</flag>
+      <longflag>maxlikelihoodcachesize</longflag>
+      <description>Maximum Size of Likelihood Cache</description>
+      <label>Maximum Cache Size</label>
+      <default>100</default>
+      <constraints>
+        <minimum>0</minimum>
+        <step>1</step>
+      </constraints>
+    </integer>
+    <string>
+      <name>outputprefix</name>
+      <flag>o</flag>
+      <longflag>outputprefix</longflag>
+      <description>Prefix for the output files</description>
+      <label>Output Filename Prefix</label>
+      <default>"Output"</default>
+    </string>
+    <boolean>
+      <name>outputimageswitch</name>
+      <flag>i</flag>
+      <default>false</default>
+      <longflag>outputimageswitch</longflag>
+      <label>Produce Output Images</label>
+      <description>Output Tensor, FA maps and Connectivity Maps</description>
+    </boolean>
+    <boolean>
+      <name>recenteroriginswitch</name>
+      <flag>r</flag>
+      <default>false</default>
+      <longflag>recenteroriginswitch</longflag>
+      <label>Recenter Image Origins</label>
+      <description>Ignore the origins of the ROI and WM mask and set it to be the same as the DWI image origin</description>
+    </boolean>
+    <integer>
+      <name>totalthreads</name>
+      <flag>j</flag>
+      <longflag>totalthreads</longflag>
+      <description>Total number of threads to use.  Default value of zero sets number of threads to number of CPUs</description>
+      <label>Total Threads</label>
+      <default>0</default>
+      <constraints>
+        <minimum>0</minimum>
+        <step>1</step>
+      </constraints>
+    </integer>
+  </parameters>
+
+  <parameters>
+    <label>IO</label>
+    <description>Input/output parameters</description>
+    <image type="diffusion-weighted">
+      <name>dwifilename</name>
+      <label>Input Volume</label>
+      <channel>input</channel>
+      <index>0</index>
+      <description>Input DWI volume to be filtered</description>
+    </image>
+    <image>
+      <name>wmpfilename</name>
+      <label>Input White Matter Probability Volume</label>
+      <channel>input</channel>
+      <index>1</index>
+      <description>Input Mask volume that provides the probability that the voxel is white matter </description>
+    </image>
+    <image>
+      <name>roifilename</name>
+      <label>Input ROI Volume</label>
+      <channel>input</channel>
+      <index>2</index>
+      <description>Input ROI volume used to seed algorithm</description>
+    </image>
+  </parameters>
+
+</executable>
