@@ -347,6 +347,7 @@ runcmd $::CMAKE \
         -DKWWidgets_DIR:FILEPATH=$SLICER_LIB/KWWidgets-build \
         -DTEEM_DIR:FILEPATH=$SLICER_LIB/teem-build \
         -DIGSTK_DIR:FILEPATH=$SLICER_LIB/IGSTK-build \
+        -DSandBox_DIR:FILEPATH=$SLICER_LIB/NAMICSandBox \
         -DCMAKE_BUILD_TYPE=$::VTK_BUILD_TYPE \
         -DSlicer3_VERSION_PATCH:STRING=$::GETBUILDTEST(version-patch) \
         -DCPACK_GENERATOR:STRING=$::GETBUILDTEST(cpack-generator) \
