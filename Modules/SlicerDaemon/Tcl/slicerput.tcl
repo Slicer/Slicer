@@ -113,7 +113,7 @@ flush $sock
 fconfigure stdin -translation binary -encoding binary
 fconfigure $sock -translation binary -encoding binary
 set imagedata [read -nonewline stdin]
-puts "read [string length $imagedata] bytes"
+puts "This is slicerput on stdout: read [string length $imagedata] bytes"
 puts -nonewline $sock $imagedata
 flush $sock
 close $sock
