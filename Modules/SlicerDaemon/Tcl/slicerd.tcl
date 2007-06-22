@@ -24,7 +24,6 @@
 # - checks with the user on first connection to see if it's okay to accept connections
 #
 
-
 set __comment {
 
     # a noop -- just copy image onto itself
@@ -82,7 +81,6 @@ proc slicerd_sock_cb { sock addr port } {
                                      -title "Slicer Daemon" \
                                      -message "Connection Attemped from $addr.\n\nAllow external connections?"]
     }
-
     if { $::SLICERD(approved)  == "no" } {
         close $sock
         return
@@ -327,9 +325,9 @@ proc slicerd_sock_fileevent {sock} {
                 set  measurement_frame [lrange $measurement_frame 1 end]
                 set dimensions [lrange $dimensions 1 end]
                 set node [vtkMRMLDiffusionTensorVolumeNode New]
-                puts "It's a tensor"
+                puts "SlicerDaemon: Assume you want to put a tensor volume."
             } else {
-                puts "Assume scalar"
+                puts "SlicerDaemon: Assume you want to put a scalar volume."
                 set node [vtkMRMLScalarVolumeNode New]
             }
 
@@ -369,6 +367,7 @@ proc slicerd_sock_fileevent {sock} {
             [$::slicer3::ApplicationLogic GetSelectionNode] SetReferenceActiveVolumeID [$node GetID]
             $::slicer3::ApplicationLogic PropagateVolumeSelection
             $node Delete
+           
         }
         "eval*" {
             puts $sock [eval $line]
@@ -445,7 +444,6 @@ proc slicerd_parse_space_measurement_frame_and_setMF {tcl_sock mf_line space} {
 # - unfortunately, this is some nasty math to do in tcl
 #
 proc slicerd_parse_space_directions {node space_origin space_directions space} {
-    puts "NOW  slicerd_parse_space_directions is called"
     #
     # parse the 'space directions' and 'space origin' information into
     # a slicer RasToIjk and related matrices by telling the mrml node
@@ -516,8 +514,8 @@ proc slicerd_parse_space_directions {node space_origin space_directions space} {
         set val [lindex $space_origin $i]
         ::slicerd::Ijk_matrix SetElement $i 3 $val
     }    
-    puts "::slicerd::Ijk_matrix before:"
-    puts [::slicerd::Ijk_matrix Print]
+    #puts "::slicerd::Ijk_matrix before:"
+    #puts [::slicerd::Ijk_matrix Print]
     
     if {$space eq "left-posterior-superior"} {
         # in slicer everything is in RAS, so we need to transform
@@ -536,8 +534,8 @@ proc slicerd_parse_space_directions {node space_origin space_directions space} {
     ::slicerd::Ijk_matrix Invert
     
     $node SetRASToIJKMatrix ::slicerd::Ijk_matrix
-    puts "Here the RASToIJK matrix:\n"
-    puts [::slicerd::Ijk_matrix Print]
+    #puts "Here the RASToIJK matrix:\n"
+    #puts [::slicerd::Ijk_matrix Print]
 
     ::slicerd::Ijk_matrix Delete
 }
