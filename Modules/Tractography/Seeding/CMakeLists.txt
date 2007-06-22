@@ -27,11 +27,12 @@ SET(SlicerTractographySeeding_SRCS
 
 # Helper classes
 
-#SET_SOURCE_FILES_PROPERTIES(
-  #vtkModule.cxx
-  #PROPERTIES
-  #WRAP_EXCLUDE "TRUE"
-  #)
+SET_SOURCE_FILES_PROPERTIES(
+  vtkHyperPointandArray.cxx
+  vtkTractographyPointAndArray.cxx
+  PROPERTIES
+  WRAP_EXCLUDE "TRUE"
+  )
 
 # --------------------------------------------------------------------------
 # Include dirs
