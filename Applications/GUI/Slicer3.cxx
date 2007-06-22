@@ -101,6 +101,7 @@ extern "C" {
 #define MRABLATION_DEBUG
 //#define NEURONAV_DEBUG
 //#define TRACTOGRAPHY_DEBUG
+//#define QDEC_DEBUG
 
 #ifndef EMSEG_DEBUG
 #include "vtkEMSegmentLogic.h"
@@ -128,6 +129,10 @@ extern "C" {
 #include "vtkWFEngineModuleGUI.h"
 #endif
 
+#ifndef QDEC_DEBUG
+#include "vtkQdecModuleLogic.h"
+#include "vtkQdecModuleGUI.h"
+#endif
 //
 // note: always write to cout rather than cerr so log messages will
 // appear in the correct order when running tests.  Normally cerr preempts cout
@@ -174,6 +179,9 @@ extern "C" int Realtimeimaging_Init(Tcl_Interp *interp);
 #ifndef WFENGINE_DEBUG
 extern "C" int Wfenginemodule_Init(Tcl_Interp *interp);
 #endif
+#ifndef QDEC_DEBUG
+extern "C" int Qdecmodule_Init(Tcl_Interp *interp);
+#endif
 extern "C" int Gradientanisotropicdiffusionfilter_Init(Tcl_Interp *interp);
 extern "C" int Slicertractographydisplay_Init(Tcl_Interp *interp);
 extern "C" int Queryatlas_Init(Tcl_Interp *interp);
@@ -219,14 +227,14 @@ void printAllInfo(int argc, char **argv)
   // plus one for 3 char time zone
   char timeStr[27];
 
-  fprintf(stdout, "<ProcessStep>\n");
-  fprintf(stdout, "<Program version=\"$Revision$\">%s</ProgramName>\n", argv[0]);
-  fprintf(stdout, "<ProgramArguments>");
+  fprintf(stdout, "<processStep>\n");
+  fprintf(stdout, "<program version=\"$Revision$\">%s</programName>\n", argv[0]);
+  fprintf(stdout, "<programArguments>");
   for (i = 1; i < argc; i++)
     {
     fprintf(stdout, " %s", argv[i]);
     }
-  fprintf(stdout, "</ProgramArguments>\n");
+  fprintf(stdout, "</programArguments>\n");
   fprintf(stdout, "<CVS>$Id$</CVS> <TimeStamp>");
   time ( &rawtime );
   timeInfo = localtime (&rawtime);
@@ -250,7 +258,7 @@ void printAllInfo(int argc, char **argv)
     {
     fprintf(stdout, "%s", getenv("HOSTNAME"));
     }
-  fprintf(stdout, "</HostName><Platform version=\"");
+  fprintf(stdout, "</HostName><platform version=\"");
 #if defined(sun) || defined(__sun)
 #if defined(__SunOS_5_7)
   fprintf(stdout, "2.7");
@@ -284,7 +292,7 @@ void printAllInfo(int argc, char **argv)
 #if defined(_WIN32) || defined(__WIN32__)
   fprintf(stdout, "Windows");
 #endif
-  fprintf(stdout, "</Platform>\n");
+  fprintf(stdout, "</platform>\n");
 
   if (getenv("MACHTYPE") != NULL)
     {
@@ -316,17 +324,17 @@ void printAllInfo(int argc, char **argv)
   fprintf(stdout, "</Compiler>\n");
 
   
-  fprintf(stdout, "<Library version=\"%s\">VTK</Librarary><Library version=\"unknown\">ITK</Library><Library version=\"%s\">KWWidgets</Library>\n", VTK_VERSION, KWWidgets_VERSION);
+  fprintf(stdout, "<library version=\"%s\">VTK</librarary><library version=\"unknown\">ITK</library><library version=\"%s\">KWWidgets</library>\n", VTK_VERSION, KWWidgets_VERSION);
   int major, minor, patchLevel;
   Tcl_GetVersion(&major, &minor, &patchLevel, NULL);
-  fprintf(stdout, "<Library version=\"%d.%d.%d\">TCL</Library>\n", major, minor, patchLevel);
-  //fprintf(stdout, "<Library version=\"%d.%d.%d\">TK</Library>\n", major,
+  fprintf(stdout, "<library version=\"%d.%d.%d\">TCL</library>\n", major, minor, patchLevel);
+  //fprintf(stdout, "<library version=\"%d.%d.%d\">TK</library>\n", major,
   //minor, patchLevel);
 #ifdef USE_PYTHON
-  fprintf(stdout, "<Library version=\"%s\">Python</Library>\n", PY_VERSION);
+  fprintf(stdout, "<library version=\"%s\">Python</library>\n", PY_VERSION);
 #endif
-  fprintf(stdout, "<Repository>$HeadURL$</Repository>\n");
-  fprintf(stdout, "<ProcessStep>\n");
+  fprintf(stdout, "<repository>$HeadURL$</repository>\n");
+  fprintf(stdout, "<processStep>\n");
   fprintf(stdout, "\n");
   
 }
@@ -625,7 +633,10 @@ int Slicer3_main(int argc, char *argv[])
 #ifndef WFENGINE_DEBUG
     Wfenginemodule_Init(interp);
 #endif
-
+#ifndef QDEC_DEBUG
+    Qdecmodule_Init(interp);
+#endif
+    
     Gradientanisotropicdiffusionfilter_Init(interp);
     Slicertractographydisplay_Init(interp);
     Queryatlas_Init(interp);
@@ -1198,6 +1209,27 @@ int Slicer3_main(int argc, char *argv[])
     wfEngineModuleGUI->AddGUIObservers ( );
 #endif
 
+#ifndef QDEC_DEBUG
+    slicerApp->SplashMessage("Initializing Qdec Module...");
+    //--- QDEC Module
+    vtkQdecModuleGUI *qdecModuleGUI = vtkQdecModuleGUI::New ( );
+    vtkQdecModuleLogic *qdecModuleLogic  = vtkQdecModuleLogic::New ( );
+    qdecModuleLogic->SetAndObserveMRMLScene ( scene );
+    qdecModuleLogic->SetApplicationLogic ( appLogic );
+    qdecModuleLogic->SetMRMLScene(scene);
+    qdecModuleGUI->SetAndObserveModuleLogic(qdecModuleLogic);
+    qdecModuleGUI->SetApplication ( slicerApp );
+    qdecModuleGUI->SetApplicationLogic ( appLogic );
+    qdecModuleGUI->SetApplicationGUI ( appGUI );
+    qdecModuleGUI->SetGUIName( "QdecModule" );
+    qdecModuleGUI->GetUIPanel()->SetName ( qdecModuleGUI->GetGUIName ( ) );
+    qdecModuleGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
+    qdecModuleGUI->GetUIPanel()->Create ( );
+    slicerApp->AddModuleGUI ( qdecModuleGUI );
+    qdecModuleGUI->BuildGUI ( );
+    qdecModuleGUI->AddGUIObservers ( );
+#endif
+
     //
     // --- SlicerDaemon Module
     // need to source the slicerd.tcl script here
@@ -1392,6 +1424,11 @@ int Slicer3_main(int argc, char *argv[])
     slicerApp->Script ("namespace eval slicer3 set WFEngineModuleGUI %s", name);
 #endif
 
+#ifndef QDEC_DEBUG
+    name = qdecModuleGUI->GetTclName();
+    slicerApp->Script ("namespace eval slicer3 set QdecModuleGUI %s", name);
+#endif
+    
     if ( appGUI->GetViewerWidget() )
       {
       name = appGUI->GetViewerWidget()->GetTclName();
@@ -1638,6 +1675,10 @@ int Slicer3_main(int argc, char *argv[])
     wfEngineModuleGUI->TearDownGUI ( );
 #endif
 
+#ifndef QDEC_DEBUG
+    qdecModuleGUI->TearDownGUI ( );
+#endif
+
     transformsGUI->TearDownGUI ( );
 #ifndef CAMERA_DEBUG
     cameraGUI->RemoveGUIObservers ( );
@@ -1746,6 +1787,11 @@ int Slicer3_main(int argc, char *argv[])
     wfEngineModuleGUI->Delete ( );
 #endif
 
+#ifndef QDEC_DEBUG
+    qdecModuleGUI->Delete ( );
+#endif
+
+    
     transformsGUI->Delete ();
 #ifndef CAMERA_DEBUG
     cameraGUI->Delete ();
@@ -1853,6 +1899,12 @@ int Slicer3_main(int argc, char *argv[])
     wfEngineModuleLogic->SetAndObserveMRMLScene ( NULL );
     wfEngineModuleLogic->Delete ( );
 #endif
+  
+#ifndef QDEC_DEBUG
+    qdecModuleLogic->SetAndObserveMRMLScene ( NULL );
+    qdecModuleLogic->Delete ( );
+#endif
+
     sliceLogic2->SetAndObserveMRMLScene ( NULL );
     sliceLogic2->Delete ();
     sliceLogic1->SetAndObserveMRMLScene ( NULL );
