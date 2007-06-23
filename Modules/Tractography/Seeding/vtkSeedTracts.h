@@ -64,12 +64,11 @@ class VTK_SLICERTRACTOGRAPHYSEEDING_EXPORT vtkSeedTracts : public vtkObject
   // that pass through ROI2.
   void SeedStreamlinesFromROIIntersectWithROI2();
 
-  // Description
-  // Seed each streamline, cause it to Update, save its info to disk
-  // and then Delete it.  This is a way to seed in the whole brain
-  // without running out of memory. Nothing is displayed in the renderers.
-  // Both the models and the lines of points (text files) are saved.
-  void SeedAndSaveStreamlinesInROI(char *pointsFilename, char *modelFilename);
+ // Description
+ // Store all the streamlines in one vtkPolyData and
+ // transform the points to be in RAS. It takes
+ // special care of transforming the tensor
+ void TransformStreamlinesToRASAndAppendToPolyData(vtkPolyData *outFibers);
 
   // Description
   // Start a streamline from the input point.
@@ -234,9 +233,6 @@ class VTK_SLICERTRACTOGRAPHYSEEDING_EXPORT vtkSeedTracts : public vtkObject
  protected:
   vtkSeedTracts();
   ~vtkSeedTracts();
-
-  void SaveStreamlineAsTextFile(ofstream &filePoints,
-                                vtkPolyData *currStreamline);
 
   vtkHyperStreamline *CreateHyperStreamline();
 
