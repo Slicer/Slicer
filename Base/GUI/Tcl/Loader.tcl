@@ -109,12 +109,14 @@ if { [itcl::find class Loader] == "" } {
 
     # methods
     method clear {} {}
-    method add {path} {}
+    method add {paths} {}
     method addRow { path type } {}
     method processEvents {caller} {}
     method apply {} {}
     method errorDialog {errorText} {}
     method status {message} {}
+    method chooseDirectory {} {}
+    method getOpenFile {} {}
 
     method objects {} {return [array get o]}
 
@@ -314,90 +316,92 @@ itcl::body Loader::addRow { path type } {
 #       allowing user to cancel out if too many directories
 #       are being added
 #
-itcl::body Loader::add { path } {
+itcl::body Loader::add { paths } {
 
-  $this status "Examining $path"
-  set ext [string tolower [file extension $path]]
-
-  #
-  # if it's a zip archive, copy the contents to a temp
-  # directory and load from there
-  #
-  if { $ext == ".zip" || $ext == ".xar" } {
-
-    set tmp [$::slicer3::Application GetTemporaryDirectory]
-    set tmp $tmp/Loader-[pid]-[clock seconds]-[clock clicks]
-    file mkdir $tmp
-    $this status "Please wait...\nUnpacking $path into $tmp"
-    update
+  foreach path $paths {
+    $this status "Examining $path"
+    set ext [string tolower [file extension $path]]
 
     #
-    # look for unzip on the system, if not found try the 
-    # tcl fallback
+    # if it's a zip archive, copy the contents to a temp
+    # directory and load from there
     #
-    set candidates {
-      "c:/cygwin/bin/unzip.exe"
-      /usr/bin/unzip /bin/unzip /usr/local/bin/unzip
-    }
-    foreach c $candidates {
-      if { [file exists $c] } {
-        set unzip $c
-        break
-      }
-    }
-    if { [file exists $unzip] } {
-      set cwd [pwd]
-      cd $tmp
-      set fp [open "| $unzip $path" "r"]
-      while { ![eof $fp] } {
-        set line [read $fp]
-        $this status $line
-        after 50 update
-      }
-      catch "close $fp"
-      $this add $tmp
-      lappend _cleanupDirs $tmp
-      cd $cwd
-    } else {
-      # use the tcl vfs zip implementation - slow
-      set ret [catch "package require vfs::zip" res]
-      if { $ret } {
-        $this errorDialog "Cannot find zipfile reader, cannot process $path"
-      } else {
+    if { $ext == ".zip" || $ext == ".xar" } {
 
-        # use new routines
-        uplevel #0 eval $::_fixed_zip_code
+      set tmp [$::slicer3::Application GetTemporaryDirectory]
+      set tmp $tmp/Loader-[pid]-[clock seconds]-[clock clicks]
+      file mkdir $tmp
+      $this status "Please wait...\nUnpacking $path into $tmp"
+      update
 
-        # TODO: let user pick the destination to save the unzipped data
-        set fd [::vfs::zip::Mount $path /zipfile]
-        file copy -force /zipfile $tmp
+      #
+      # look for unzip on the system, if not found try the 
+      # tcl fallback
+      #
+      set candidates {
+        "c:/cygwin/bin/unzip.exe"
+        /usr/bin/unzip /bin/unzip /usr/local/bin/unzip
+      }
+      foreach c $candidates {
+        if { [file exists $c] } {
+          set unzip $c
+          break
+        }
+      }
+      if { [file exists $unzip] } {
+        set cwd [pwd]
+        cd $tmp
+        set fp [open "| $unzip $path" "r"]
+        while { ![eof $fp] } {
+          set line [read $fp]
+          $this status $line
+          after 50 update
+        }
+        catch "close $fp"
         $this add $tmp
-        ::vfs::zip::Unmount $fd /zipfile
         lappend _cleanupDirs $tmp
+        cd $cwd
+      } else {
+        # use the tcl vfs zip implementation - slow
+        set ret [catch "package require vfs::zip" res]
+        if { $ret } {
+          $this errorDialog "Cannot find zipfile reader, cannot process $path"
+        } else {
+
+          # use new routines
+          uplevel #0 eval $::_fixed_zip_code
+
+          # TODO: let user pick the destination to save the unzipped data
+          set fd [::vfs::zip::Mount $path /zipfile]
+          file copy -force /zipfile $tmp
+          $this add $tmp
+          ::vfs::zip::Unmount $fd /zipfile
+          lappend _cleanupDirs $tmp
+        }
       }
     }
-  }
 
-  # 
-  # if it's a directory, look at each element (recurse)
-  #
-  if { [file isdir $path] } {
-    foreach item [glob -nocomplain $path/*] {
-      $this add $item
-    }
-  } else {
+    # 
+    # if it's a directory, look at each element (recurse)
     #
-    # if it's a file, see if it's something we know how to load
-    #
-    $this status "Adding $path"
-    if { [lsearch $_volumeExtensions $ext] != -1 } {
-      $this addRow $path "Volume"
-      $this status ""
-    } elseif { [lsearch $_modelExtensions $ext] != -1 } {
-      $this addRow $path "Model"
-      $this status ""
+    if { [file isdir $path] } {
+      foreach item [glob -nocomplain $path/*] {
+        $this add $item
+      }
     } else {
-      $this status "Cannot read file $path"
+      #
+      # if it's a file, see if it's something we know how to load
+      #
+      $this status "Adding $path"
+      if { [lsearch $_volumeExtensions $ext] != -1 } {
+        $this addRow $path "Volume"
+        $this status ""
+      } elseif { [lsearch $_modelExtensions $ext] != -1 } {
+        $this addRow $path "Model"
+        $this status ""
+      } else {
+        $this status "Cannot read file $path"
+      }
     }
   }
 }
@@ -455,13 +459,13 @@ itcl::body Loader::processEvents { caller } {
 
   if { $caller == $o(addDir) } {
     # TODO: switch to kwwidgets directory browser
-    $this add [tk_chooseDirectory]
+    $this add [$this chooseDirectory]
     return
   }
 
   if { $caller == $o(addFile) } {
     # TODO: switch to kwwidgets directory browser
-    $this add [tk_getOpenFile]
+    $this add [$this getOpenFile]
     return
   }
 
@@ -486,6 +490,40 @@ itcl::body Loader::status { message } {
   $o(status) SetText $message
 }
 
+itcl::body Loader::chooseDirectory {} {
+
+  set dialog [vtkKWLoadSaveDialog New]
+  $dialog ChooseDirectoryOn
+  $dialog SetParent $o(toplevel)
+  $dialog Create
+  $dialog Invoke
+  set dir [[$dialog GetFileNames] GetValue 0]
+  $dialog Delete
+  
+  return $dir
+}
+
+itcl::body Loader::getOpenFile {} {
+
+  set dialog [vtkKWLoadSaveDialog New]
+  $dialog SetParent $o(toplevel)
+  $dialog Create
+  $dialog Invoke
+
+  set files ""
+  set names [$dialog GetFileNames]
+  set namesSize [$names GetNumberOfValues]
+  for {set i 0} {$i < $namesSize} {incr i} {
+    lappend files [$names GetValue $i]
+  }
+  $dialog Delete
+  
+  return $files
+}
+
+
+
+################################################################################
 #
 # code below comes from updated version of tcl vfs - include it
 # here to fix a zero length file problem (but make it work against
