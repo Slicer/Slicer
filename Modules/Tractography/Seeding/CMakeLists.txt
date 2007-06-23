@@ -8,8 +8,8 @@ SET(SlicerTractographySeeding_SRCS
   vtkHyperPointandArray.cxx
   vtkHyperStreamlineDTMRI.cxx
   vtkHyperStreamlineTeem.cxx
-  vtkImageGetTensorComponents.cxx
-  vtkImageSetTensorComponents.cxx
+  #vtkImageGetTensorComponents.cxx
+  #vtkImageSetTensorComponents.cxx
   vtkPreciseHyperStreamline.cxx
   vtkPreciseHyperStreamlinePoints.cxx
   vtkSeedTracts.cxx
