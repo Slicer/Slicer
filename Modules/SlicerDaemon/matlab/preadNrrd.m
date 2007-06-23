@@ -165,7 +165,7 @@ while( ~strcmp (cs, '') )
 end
 
 
-if (strcmp(headerInfo,'') == 1) 
+if (strcmp(headerInfo.data,'') == 1) 
     fprintf('No data.\n');
     return
 end
