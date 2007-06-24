@@ -799,7 +799,7 @@ void vtkSeedTracts::SeedStreamlinesFromROIIntersectWithROI2()
 
   int idxX, idxY, idxZ;
   int maxX, maxY, maxZ;
-  int inIncX, inIncY, inIncZ;
+  vtkIdType inIncX, inIncY, inIncZ;
   int inExt[6];
   double point[3], point2[3];
   unsigned long count = 0;
