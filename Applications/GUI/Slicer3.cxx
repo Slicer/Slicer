@@ -41,8 +41,6 @@
 #include "vtkGradientAnisotropicDiffusionFilterLogic.h"
 #include "vtkGradientAnisotropicDiffusionFilterGUI.h"
 
-#include "vtkSlicerFiberBundleLogic.h"
-
 #include "vtkQueryAtlasLogic.h"
 #include "vtkQueryAtlasGUI.h"
 
@@ -107,6 +105,7 @@ extern "C" {
 #define QDEC_DEBUG
 
 #ifndef TRACTOGRAPHY_DEBUG
+#include "vtkSlicerFiberBundleLogic.h"
 #include "vtkSlicerTractographyDisplayGUI.h"
 #endif
 
