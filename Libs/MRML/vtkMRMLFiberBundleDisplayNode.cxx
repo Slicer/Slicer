@@ -60,7 +60,7 @@ vtkMRMLFiberBundleDisplayNode::vtkMRMLFiberBundleDisplayNode()
   this->FiberGlyphOpacity = 1;
 
   this->FiberTubeRadius = 0.5;
-  this->FiberTubeNumberOfSides = 4;
+  this->FiberTubeNumberOfSides = 6;
 
   // Enumerated
   this->ColorModeForFiberLines = this->colorModeSolid;
