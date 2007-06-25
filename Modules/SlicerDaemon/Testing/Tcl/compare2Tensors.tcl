@@ -53,7 +53,7 @@ $::env(SLICER_HOME)/../Slicer3/Modules/SlicerDaemon/Tcl/slicerput.tcl $piped_ten
 update
 set ::SLICERD(approved) "yes"
 
-set fp [open "| $::env(SLICER_HOME)/../Slicer3/Modules/SlicerDaemon/Tcl/slicerget.tcl $tensor_name | $::env(SLICER_HOME)/../Slicer3/Modules/SlicerDaemon/Tcl/slicerput.tcl $piped_tensor_name" r ]
+set fp [open "| tclsh $::env(SLICER_HOME)/../Slicer3/Modules/SlicerDaemon/Tcl/slicerget.tcl $tensor_name | tclsh $::env(SLICER_HOME)/../Slicer3/Modules/SlicerDaemon/Tcl/slicerput.tcl $piped_tensor_name" r ]
 #fconfigure $fp -blocking 0
 
 puts $outfile "Wait until there's no more output to stdout coming from the channel ..."
