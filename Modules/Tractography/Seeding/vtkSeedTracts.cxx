@@ -105,7 +105,11 @@ vtkSeedTracts::~vtkSeedTracts()
     this->VtkHyperStreamlineTeemSettings->Delete();
 
   // collection
-  if (this->Streamlines) this->Streamlines->Delete();
+  if (this->Streamlines)
+    {
+    this->DeleteAllStreamlines();
+    this->Streamlines->Delete();
+    }
 }
 
 
@@ -1005,4 +1009,45 @@ void vtkSeedTracts::SeedStreamlinesFromROIIntersectWithROI2()
 
   timer->StopTimer();
   std::cout << "Tractography in ROI time: " << timer->GetElapsedTime() << endl;
+}
+
+//----------------------------------------------------------------------------
+void vtkSeedTracts::DeleteAllStreamlines()
+{
+  int numStreamlines, i;
+
+  i=0;
+  numStreamlines = this->Streamlines->GetNumberOfItems();
+  while (i < numStreamlines)
+    {
+      vtkDebugMacro( << "Deleting streamline " << i);
+      // always delete the first streamline from the collections
+      // (they change size as we do this, shrinking away)
+      this->DeleteStreamline(0);
+      i++;
+    }
+  
+}
+
+// Delete one streamline and all of its associated objects.
+// Here we delete the actual vtkHyperStreamline subclass object.
+// We call helper class DeleteStreamline functions in order
+// to get rid of (for example) graphics display objects.
+//----------------------------------------------------------------------------
+void vtkSeedTracts::DeleteStreamline(int index)
+{
+  vtkHyperStreamline *currStreamline;
+
+  // Delete actual streamline
+  vtkDebugMacro( << "Delete stream" );
+  currStreamline = (vtkHyperStreamline *)
+    this->Streamlines->GetItemAsObject(index);
+  if (currStreamline != NULL)
+    {
+      this->Streamlines->RemoveItem(index);
+      currStreamline->Delete();
+    }
+
+  vtkDebugMacro( << "Done deleting streamline");
+
 }

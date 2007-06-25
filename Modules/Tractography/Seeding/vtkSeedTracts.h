@@ -224,6 +224,15 @@ class VTK_SLICERTRACTOGRAPHYSEEDING_EXPORT vtkSeedTracts : public vtkObject
  // which the user can modify. 
  void UpdateAllHyperStreamlineSettings();
 
+  // Description
+  // Delete all streamlines
+  void DeleteAllStreamlines();
+
+  // Description
+  // Delete a particular streamline. Also calls method in vtkDisplayTracts
+  // to delete graphics objects for this streamline.
+  void DeleteStreamline(int index);
+
  // Description
  // Minimum length in mm for a path (otherwise the path will be deleted).
  // Currently only used in SeedAndSaveStreamlinesInROI.
