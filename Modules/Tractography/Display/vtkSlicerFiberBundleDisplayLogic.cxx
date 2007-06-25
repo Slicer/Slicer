@@ -288,6 +288,7 @@ void vtkSlicerFiberBundleDisplayLogic::CreateLineModel ( )
       this->LineModelDisplayNode->SetColor( fiberBundleDisplayNode->GetColor ( ) );
       this->LineModelDisplayNode->SetAmbient( fiberBundleDisplayNode->GetAmbient ( ) );
       this->LineModelDisplayNode->SetDiffuse( fiberBundleDisplayNode->GetDiffuse ( ) );
+      this->LineModelDisplayNode->SetClipping( fiberBundleDisplayNode->GetClipping ( ) );
 
       //vtkDebugMacro("Updating line model according to DT display node");
 
@@ -369,6 +370,7 @@ void vtkSlicerFiberBundleDisplayLogic::CreateTubeModel ( )
       this->TubeModelDisplayNode->SetColor( fiberBundleDisplayNode->GetColor ( ) );
       this->TubeModelDisplayNode->SetAmbient( fiberBundleDisplayNode->GetAmbient ( ) );
       this->TubeModelDisplayNode->SetDiffuse( fiberBundleDisplayNode->GetDiffuse ( ) );
+      this->TubeModelDisplayNode->SetClipping( fiberBundleDisplayNode->GetClipping ( ) );
 
 
       // get polylines from the fiber bundle node and tube them
@@ -473,6 +475,7 @@ void vtkSlicerFiberBundleDisplayLogic::CreateGlyphModel ( )
       this->GlyphModelDisplayNode->SetColor( fiberBundleDisplayNode->GetColor ( ) );
       this->GlyphModelDisplayNode->SetAmbient( fiberBundleDisplayNode->GetAmbient ( ) );
       this->GlyphModelDisplayNode->SetDiffuse( fiberBundleDisplayNode->GetDiffuse ( ) );
+      this->GlyphModelDisplayNode->SetClipping( fiberBundleDisplayNode->GetClipping ( ) );
 
       this->GlyphModelDisplayNode->SetAndObserveColorNodeID( fiberBundleDisplayNode->GetColorNodeID ( ) );
 
