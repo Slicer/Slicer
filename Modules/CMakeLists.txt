@@ -12,7 +12,7 @@ SUBDIRS(
   Editor
   QueryAtlas
   #Meshing
-#  QdecModule
+  QdecModule
 )
 
 IF(USE_TEEM)
