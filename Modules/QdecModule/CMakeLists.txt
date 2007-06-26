@@ -2,6 +2,8 @@ PROJECT(QdecModule)
 
 SET (MODULE QdecModule)
 
+
+
 # --------------------------------------------------------------------------
 # Sources
 
@@ -28,7 +30,7 @@ SET(${MODULE}_SRCS
 
 # --------------------------------------------------------------------------
 # Include dirs
-
+# MESSAGE(STATUS "QDecModle: SandBox dir = ${SandBox_DIR}, Qdec binary dir = ${Qdec_BINARY_DIR}")
 INCLUDE_DIRECTORIES(
   ${${MODULE}_SOURCE_DIR}
   ${${MODULE}_BINARY_DIR}
@@ -45,6 +47,7 @@ INCLUDE_DIRECTORIES(
   ${MRML_SOURCE_DIR}
   ${MRML_BINARY_DIR}
   ${SandBox_DIR}/Qdec
+  ${SandBox_DIR}-build/Qdec
   )
 
 
@@ -55,7 +58,7 @@ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 INCLUDE("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
 VTK_WRAP_TCL3(${MODULE} ${MODULE}_TCL_SRCS "${${MODULE}_SRCS}" "")
 
-MESSAGE(STATUS "QdecModule: MODULE = ${MODULE}\nSandbox dir = ${SandBox_DIR}\nadding link dir = ${SandBox_DIR}-build/bin")
+# MESSAGE(STATUS "QdecModule: MODULE = ${MODULE}\nSandbox dir = ${SandBox_DIR}\nadding link dir = ${SandBox_DIR}-build/bin")
 
 # --------------------------------------------------------------------------
 # Build the library
@@ -63,7 +66,7 @@ MESSAGE(STATUS "QdecModule: MODULE = ${MODULE}\nSandbox dir = ${SandBox_DIR}\nad
 # differentiate between the Module's library file and the Slicer3-lib NAMIC SandBox Qdec library file
 LINK_DIRECTORIES(${SandBox_DIR}-build/bin)
 
-ADD_LIBRARY(${MODULE}
+ADD_LIBRARY(${MODULE} SHARED
   ${${MODULE}_SRCS}
   ${${MODULE}_TCL_SRCS}
   )
@@ -73,7 +76,6 @@ IF(BUILD_SHARED_LIBS)
 ENDIF(BUILD_SHARED_LIBS)
 
 TARGET_LINK_LIBRARIES(${MODULE}
-  ${MODULE}
   SlicerBaseLogic 
   SlicerBaseGUI 
   MRML
@@ -91,7 +93,9 @@ TARGET_LINK_LIBRARIES(${MODULE}
   ITKBasicFilters
   ITKIO
   ITKDICOMParser
-  ${KWWidgets_LIBRARIES} )
+  ${KWWidgets_LIBRARIES} 
+  Qdec
+  )
 
 
 
@@ -99,9 +103,10 @@ TARGET_LINK_LIBRARIES(${MODULE}
 # Testing (requires some of the examples)
 
 IF(BUILD_TESTING)
-  SUBDIRS(Testing)
+#  SUBDIRS(Testing)
 ENDIF(BUILD_TESTING)
 
+# MESSAGE(STATUS "Configuring QdecModule: to bind dir: ${${MODULE}_BINARY_DIR}")
 CONFIGURE_FILE(
   ${${MODULE}_SOURCE_DIR}/vtkQdecModuleConfigure.h.in 
   ${${MODULE}_BINARY_DIR}/vtkQdecModuleConfigure.h
