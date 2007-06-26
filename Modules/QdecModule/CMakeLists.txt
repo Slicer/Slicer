@@ -1,15 +1,12 @@
 PROJECT(QdecModule)
 
-SET (MODULE QdecModule)
-
-
 
 # --------------------------------------------------------------------------
 # Sources
 
-SET(${MODULE}_SRCS
-  vtk${MODULE}Logic.cxx
-  vtk${MODULE}GUI.cxx
+SET(QdecModule_SRCS
+  vtkQdecModuleLogic.cxx
+  vtkQdecModuleGUI.cxx
 )
 
 # Abstract/pure virtual classes
@@ -30,10 +27,10 @@ SET(${MODULE}_SRCS
 
 # --------------------------------------------------------------------------
 # Include dirs
-# MESSAGE(STATUS "QDecModle: SandBox dir = ${SandBox_DIR}, Qdec binary dir = ${Qdec_BINARY_DIR}")
+# MESSAGE(STATUS "QDecModle: Qdec binary dir = ${Qdec_BINARY_DIR}")
 INCLUDE_DIRECTORIES(
-  ${${MODULE}_SOURCE_DIR}
-  ${${MODULE}_BINARY_DIR}
+  ${QdecModule_SOURCE_DIR}
+  ${QdecModule_BINARY_DIR}
   ${SlicerBase_SOURCE_DIR}
   ${SlicerBase_BINARY_DIR}
   ${SlicerBaseLogic_SOURCE_DIR}
@@ -46,8 +43,8 @@ INCLUDE_DIRECTORIES(
   ${VTK_INCLUDE_DIRS}
   ${MRML_SOURCE_DIR}
   ${MRML_BINARY_DIR}
-  ${SandBox_DIR}/Qdec
-  ${SandBox_DIR}-build/Qdec
+  ${Qdec_BINARY_DIR}
+  ${Qdec_SOURCE_DIR}
   )
 
 
@@ -56,26 +53,26 @@ INCLUDE_DIRECTORIES(
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 INCLUDE("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
-VTK_WRAP_TCL3(${MODULE} ${MODULE}_TCL_SRCS "${${MODULE}_SRCS}" "")
+VTK_WRAP_TCL3(QdecModule QdecModule_TCL_SRCS "${QdecModule_SRCS}" "")
 
-# MESSAGE(STATUS "QdecModule: MODULE = ${MODULE}\nSandbox dir = ${SandBox_DIR}\nadding link dir = ${SandBox_DIR}-build/bin")
+# MESSAGE(STATUS "QdecModule: MODULE = QdecModule\nSandbox dir = ${SandBox_DIR}\nadding link dir = ${SandBox_DIR}-build/bin")
 
 # --------------------------------------------------------------------------
 # Build the library
 
 # differentiate between the Module's library file and the Slicer3-lib NAMIC SandBox Qdec library file
-LINK_DIRECTORIES(${SandBox_DIR}-build/bin)
+LINK_DIRECTORIES(${Qdec_BINARY_DIR})
 
-ADD_LIBRARY(${MODULE} SHARED
-  ${${MODULE}_SRCS}
-  ${${MODULE}_TCL_SRCS}
+ADD_LIBRARY(QdecModule 
+  ${QdecModule_SRCS}
+  ${QdecModule_TCL_SRCS}
   )
 
 IF(BUILD_SHARED_LIBS)
-  INSTALL_TARGETS(${SLICER3_LIB_INSTALL_DIR} ${MODULE})
+  INSTALL_TARGETS(${SLICER3_LIB_INSTALL_DIR} QdecModule)
 ENDIF(BUILD_SHARED_LIBS)
 
-TARGET_LINK_LIBRARIES(${MODULE}
+TARGET_LINK_LIBRARIES(QdecModule
   SlicerBaseLogic 
   SlicerBaseGUI 
   MRML
@@ -106,8 +103,8 @@ IF(BUILD_TESTING)
 #  SUBDIRS(Testing)
 ENDIF(BUILD_TESTING)
 
-# MESSAGE(STATUS "Configuring QdecModule: to bind dir: ${${MODULE}_BINARY_DIR}")
+# MESSAGE(STATUS "Configuring QdecModule: to bind dir: ${QdecModule_BINARY_DIR}")
 CONFIGURE_FILE(
-  ${${MODULE}_SOURCE_DIR}/vtkQdecModuleConfigure.h.in 
-  ${${MODULE}_BINARY_DIR}/vtkQdecModuleConfigure.h
+  ${QdecModule_SOURCE_DIR}/vtkQdecModuleConfigure.h.in 
+  ${QdecModule_BINARY_DIR}/vtkQdecModuleConfigure.h
 )
