@@ -234,12 +234,14 @@ int main( int argc, const char * argv[] )
     
     switch (componentType)
       {
+#ifndef WIN32
       case itk::ImageIOBase::UCHAR:
         return DoIt( argc, argv, static_cast<unsigned char>(0));
         break;
       case itk::ImageIOBase::CHAR:
         return DoIt( argc, argv, static_cast<char>(0));
         break;
+#endif
       case itk::ImageIOBase::USHORT:
         return DoIt( argc, argv, static_cast<unsigned short>(0));
         break;
@@ -252,12 +254,14 @@ int main( int argc, const char * argv[] )
       case itk::ImageIOBase::INT:
         return DoIt( argc, argv, static_cast<int>(0));
         break;
+#ifndef WIN32
       case itk::ImageIOBase::ULONG:
         return DoIt( argc, argv, static_cast<unsigned long>(0));
         break;
       case itk::ImageIOBase::LONG:
         return DoIt( argc, argv, static_cast<long>(0));
         break;
+#endif
       case itk::ImageIOBase::FLOAT:
     std::cout << "FLOAT type not currently supported." << std::endl;
     break;
