@@ -46,7 +46,7 @@ Version:   $Revision: 1.2 $
 #include "vtkKWEntryWithLabel.h"
 #include "vtkKWMultiColumnList.h"
 #include "vtkKWMultiColumnListWithScrollbars.h"
-
+#include "vtkKWLabel.h"
 
 //------------------------------------------------------------------------------
 vtkQdecModuleGUI* vtkQdecModuleGUI::New()
@@ -60,7 +60,6 @@ vtkQdecModuleGUI* vtkQdecModuleGUI::New()
   // If the factory was unable to create the object, then create it here.
   return new vtkQdecModuleGUI;
 }
-
 
 //----------------------------------------------------------------------------
 vtkQdecModuleGUI::vtkQdecModuleGUI()
@@ -128,7 +127,7 @@ vtkQdecModuleGUI::~vtkQdecModuleGUI()
 //----------------------------------------------------------------------------
 void vtkQdecModuleGUI::PrintSelf(ostream& os, vtkIndent indent)
 {
-  
+  os << indent << "vtkQdecModuleGUI" << endl;
 }
 
 //---------------------------------------------------------------------------
@@ -170,7 +169,8 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
 {
   vtkKWPushButton *b = vtkKWPushButton::SafeDownCast ( caller );
   
-  
+  //this->DebugOn();
+
   if (b == this->ApplyButton && event == vtkKWPushButton::InvokedEvent ) 
     {
     vtkDebugMacro("Apply button pushed");

@@ -43,16 +43,7 @@ vtkQdecModuleLogic* vtkQdecModuleLogic::New()
 //----------------------------------------------------------------------------
 vtkQdecModuleLogic::vtkQdecModuleLogic()
 {
-  // have to check this here, or will get seg fault when try to instantiate a QdecProject
-  if (NULL == getenv( "SUBJECTS_DIR" ) )
-    {
-    vtkErrorMacro("Unable to init QDECProject: please set SUBJECTS_DIR environment variable");
-    this->QDECProject = NULL;
-    }
-  else
-    {
     this->QDECProject = new QdecProject();
-    }
 }
 
 //----------------------------------------------------------------------------
@@ -71,13 +62,6 @@ void vtkQdecModuleLogic::PrintSelf(ostream& os, vtkIndent indent)
   
 }
 
-//----------------------------------------------------------------------------
-void vtkQdecModuleLogic::Apply(vtkSlicerVolumesGUI *volsGUI)
-{
-
-
-    return;
-}
 
 //----------------------------------------------------------------------------
 int vtkQdecModuleLogic::LoadDataTable(const char* fileName)

@@ -14,12 +14,12 @@
 #ifndef __vtkQdecModuleGUI_h
 #define __vtkQdecModuleGUI_h
 
-#include "vtkSlicerBaseGUIWin32Header.h"
+#include "vtkQdecModuleWin32Header.h"
 #include "vtkSlicerModuleGUI.h"
 
+#include "vtkQdecModule.h"
 #include "vtkMRMLScene.h"
 #include "vtkQdecModuleLogic.h"
-
 
 class vtkKWFrame;
 class vtkKWScaleWithEntry;
@@ -31,9 +31,11 @@ class vtkKWMultiColumnListWithScrollbars;
 
 class VTK_QDECMODULE_EXPORT vtkQdecModuleGUI : public vtkSlicerModuleGUI
 {
-  public:
+public:
+
   static vtkQdecModuleGUI *New();
-  vtkTypeMacro(vtkQdecModuleGUI,vtkSlicerModuleGUI);
+ // vtkTypeMacro(vtkQdecModuleGUI,vtkSlicerModuleGUI);
+
   void PrintSelf(ostream& os, vtkIndent indent);
 
   void SetAndObserveModuleLogic ( vtkQdecModuleLogic *logic )

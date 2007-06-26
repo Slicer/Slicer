@@ -16,7 +16,6 @@
 
 #include "vtkSlicerModuleLogic.h"
 #include "vtkMRMLScene.h"
-#include "vtkSlicerVolumesGUI.h"
 
 
 #include "vtkQdecModule.h"
@@ -32,10 +31,7 @@ class VTK_QDECMODULE_EXPORT vtkQdecModuleLogic : public vtkSlicerModuleLogic
 
   // TODO: do we need to observe MRML here?
   virtual void ProcessMrmlEvents ( vtkObject *caller, unsigned long event,
-                                   void *callData ){};  
-  
-  // The method that creates and runs VTK or ITK pipeline
-  void Apply(vtkSlicerVolumesGUI *volsGUI);
+                                   void *callData ){};
 
   // Description:
   // Qdec project, encapsulates useful methods
