@@ -87,7 +87,6 @@ ExtractVolumeFilter<TInputImage, TOutputImage>
 
   // Compute the new region size.
   OutputImageRegionType outputRegion;
-  SizeType   sz;
   OutputImageIndexType   idx;
 
   InputImageSizeType input_sz =

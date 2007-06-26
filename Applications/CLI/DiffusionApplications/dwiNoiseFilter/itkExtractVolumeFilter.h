@@ -82,13 +82,6 @@ public:
    *
    * \sa ImageToImageFilter::GenerateInputRequestedRegion() */
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-  /** Begin concept checking */
-  itkConceptMacro(InputConvertibleToOutputCheck,
-    (Concept::Convertible<InputPixelType, OutputPixelType>));
-  /** End concept checking */
-#endif
-
 protected:
   ExtractVolumeFilter()
     {
