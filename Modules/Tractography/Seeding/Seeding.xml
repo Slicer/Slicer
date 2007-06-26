@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>
+  Tractography.Seeding
+  </category>
+  <title>
+  Tractography
+  </title>
+  <description>
+  Seed tracts from a ROI
+  </description>
+  <version>0.1.0.$Revision: 1892 $(alpha)</version>
+  <documentation-url></documentation-url>
+  <license></license>
+  <contributor>Raul San Jose</contributor>
+  <acknowledgements>LMI</acknowledgements>
+
+  <parameters>
+    <label>IO</label>
+    <description>Input/output parameters</description>
+    <image type ="tensor">
+      <name>InputVolume</name>
+      <label>Input DTI Volume</label>
+      <channel>input</channel>
+      <index>0</index>
+      <description>Input DTI volume</description>
+    </image>
+    <image type ="label">
+      <name>InputROI</name>
+      <label>Input ROI</label>
+      <channel>input</channel>
+      <index>1</index>
+      <description>Label map with seeding ROIs</description>
+    </image>
+    <geometry>
+      <name>OutputFibers</name>
+      <label>Output Fiber bundle</label>
+      <channel>output</channel>
+      <index>2</index>
+      <description>Tractography result</description>
+    </geometry>
+  </parameters>
+  <parameters>
+    <label>Seed Placement Options</label>
+    <description>Options for seed placement</description>
+    
+    <double>
+      <name>SeedSpacing</name>
+      <label>Seed Spacing</label>
+      <flag>-s</flag>
+      <longflag>--seedspacing</longflag>
+      <description>Spacing (in mm) between seed points</description>
+      <default>1</default>
+      <constraints>
+      	<minimum>0.1</minimum>
+	<maximum>10</maximum>
+	<step>0.1</step>
+      </constraints>
+    </double>
+    
+    <boolean>
+      <name>RandomGrid</name>
+      <label>Random Grid</label>
+      <flag>-r</flag>
+      <longflag>--randomgrid</longflag>
+      <description>Enable random placing of seeds</description>
+      <default>false</default>  	
+    </boolean>
+      
+    <double>
+      <name>ClTh</name>
+      <label>Cl Threshold</label>
+      <flag>-c</flag>
+      <longflag>--clthreshold</longflag>
+      <description>Minimum Linear Measurement for the seeding to start.</description>
+      <default>0.3</default>
+      <constraints>
+        <minimum>0</minimum>
+	<maximum>1</maximum>
+	<step>0.1</step>
+      </constraints>
+    </double>
+  </parameters>
+      
+  <parameters>
+    <label> Tractography Seeding Parameters</label>
+    <description>Parameters for the tractography method</description>
+    
+    <double>
+      <name>MinimumLength</name>
+      <label>Minimum Length</label>
+      <flag>-l</flag>
+      <longflag>--minimumlength</longflag>
+      <description>Minimum length of the fibers (in mm)</description>
+      <default>10</default>
+      <constraints>
+        <minimum>0</minimum>
+	<maximum>200</maximum>
+	<step>1</step>
+      </constraints>
+    </double>
+    
+    <double>
+      <name>MaximumLength</name>
+      <label>Maximum Length</label>
+      <flag>-h</flag>
+      <longflag>--maximumlength</longflag>
+      <description>Maximum lenght of fibers (in mm)</description>
+      <default>800</default>
+      <constraints>
+        <minimum>0</minimum>
+	<maximum>2000</maximum>
+	<step>1</step>
+      </constraints>
+    </double>
+    
+    <string-enumeration>
+      <name>StoppingMode</name>
+      <label>Stopping Mode</label>
+      <description>Tensor measurement used to stop the tractography</description>
+      <flag>-m</flag>
+      <longflag>--stoppingmode</longflag>      	
+      <default>LinearMeasurement</default>
+      <element>LinearMeasurement</element>
+      <element>PlanarMeasurement</element>
+      <element>FractionalAnisotropy</element>
+    </string-enumeration>
+    
+    <double>
+      <name>StoppingValue</name>
+      <label>Stopping Value</label>
+      <description>Tractography will stop when the stopping measurement drops below this value</description>
+      <flag>-v</flag>
+      <longflag>--stoppingvalue</longflag>
+      <default>0.1</default>
+      <constraints>
+        <minimum>0</minimum>
+	<maximum>1</maximum>
+	<step>0.1</step>
+      </constraints>
+    </double>  	
+      
+  </parameters>
+  
+  <parameters>
+    <label>ROI definition</label>
+    <description>Selection of label/s for ROI definition</description>
+    
+    <integer>
+      <name>ROIlabel</name>
+      <label> ROI label</label>
+      <flag>-l</flag>
+      <longflag>--label</longflag>
+      <description>ROI label value that defines seeding region.</description>
+      <default>1</default>
+    </integer>
+  </parameters>  
+</executable>
