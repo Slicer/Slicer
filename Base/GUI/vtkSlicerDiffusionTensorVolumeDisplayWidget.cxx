@@ -116,6 +116,7 @@ void vtkSlicerDiffusionTensorVolumeDisplayWidget::ProcessWidgetEvents ( vtkObjec
       if (displayNode->GetDiffusionTensorDisplayPropertiesNode())
         {
         displayNode->GetDiffusionTensorDisplayPropertiesNode()->SetScalarInvariant(this->ScalarModeMap[std::string(scalarSelection)]);
+        this->UpdateWidgetFromMRML();
         }
       }
     return;

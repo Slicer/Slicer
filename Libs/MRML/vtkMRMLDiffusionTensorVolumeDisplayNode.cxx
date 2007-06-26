@@ -138,6 +138,13 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode::ProcessMRMLEvents ( vtkObject *cal
                                            void *callData )
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
+
+  vtkMRMLDiffusionTensorDisplayPropertiesNode *pnode = this->GetDiffusionTensorDisplayPropertiesNode();
+  if (pnode != NULL && pnode == vtkMRMLDiffusionTensorDisplayPropertiesNode::SafeDownCast(caller) &&
+      event ==  vtkCommand::ModifiedEvent)
+    {
+    this->InvokeEvent(vtkCommand::ModifiedEvent, NULL);
+    }
   return;
 }
 
