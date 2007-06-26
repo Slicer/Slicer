@@ -497,7 +497,10 @@ itcl::body Loader::chooseDirectory {} {
   $dialog SetParent $o(toplevel)
   $dialog Create
   $dialog Invoke
-  set dir [[$dialog GetFileNames] GetValue 0]
+  set dir ""
+  if { [[$dialog GetFileNames] GetNumberOfValues] } {
+    set dir [[$dialog GetFileNames] GetValue 0]
+  }
   $dialog Delete
   
   return $dir
