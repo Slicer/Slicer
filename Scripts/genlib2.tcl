@@ -390,6 +390,66 @@ if { ![file exists $::BLT_TEST_FILE] || $::GENLIB(update) } {
     }
 }
 
+################################################################################
+# Get and build python
+#
+
+if { ![file exists $::PYTHON_TEST_FILE] || $::GENLIB(update) } {
+
+    file mkdir $SLICER_LIB/python
+    file mkdir $SLICER_LIB/python-build
+    cd $SLICER_LIB/python
+
+    runcmd $::SVN co http://svn.python.org/projects/python/branches/release25-maint
+
+    if { $isWindows } {
+        # can't do Windows
+    } else {
+        cd $SLICER_LIB/python/release25-maint
+        runcmd ./configure --prefix=$SLICER_LIB/python-build --with-tcl=$SLICER_LIB/tcl-build --enable-shared
+        eval runcmd $::MAKE
+        puts [catch "eval runcmd $::SERIAL_MAKE install" res] ;# try twice - it probably fails first time...
+    }
+}
+
+################################################################################
+# Get and build numpy and scipy
+#
+
+if { ![file exists $::NUMPY_TEST_FILE] || $::GENLIB(update) } {
+
+    set ::env(PYTHONHOME)        $SLICER_LIB/python-build
+    cd $SLICER_LIB/python
+
+    # do numpy
+
+    runcmd $::SVN co http://svn.scipy.org/svn/numpy/trunk numpy
+
+    if { $isWindows } {
+        # can't do Windows
+    } else {
+        if { $isDarwin } {
+            set ::env(DYLD_LIBRARY_PATH) $SLICER_LIB/python-build/lib:$::env(DYLD_LIBRARY_PATH)
+        } else {
+            if { [info exists ::env(LD_LIBRARY_PATH)] } {
+                set ::env(LD_LIBRARY_PATH) $SLICER_LIB/python-build/lib:$::env(LD_LIBRARY_PATH)
+            } else {
+                set ::env(LD_LIBRARY_PATH) $SLICER_LIB/python-build/lib
+            }
+        }
+        cd $SLICER_LIB/python/numpy
+        runcmd $SLICER_LIB/python-build/bin/python ./setup.py install
+    }
+
+
+    # do scipy
+
+    cd $SLICER_LIB/python
+    runcmd $::SVN co http://svn.scipy.org/svn/scipy/trunk scipy
+
+    cd $SLICER_LIB/python/scipy
+    #runcmd $SLICER_LIB/python-build/bin/python ./setup.py install
+}
 
 ################################################################################
 # Get and build vtk
@@ -644,6 +704,7 @@ if { ![file exists $::TEEM_TEST_FILE] || $::GENLIB(update) } {
         -DPNG_PNG_INCLUDE_DIR:PATH=$::SLICER_LIB/VTK/Utilities/vtkpng \
         -DTEEM_PNG_DLLCONF_IPATH:PATH=$::SLICER_LIB/VTK-build/Utilities \
         -DPNG_LIBRARY:FILEPATH=$::SLICER_LIB/VTK-build/bin/$::VTK_BUILD_SUBDIR/$png \
+        -DTEEM_SUBLIBRARIES:BOOL=TRUE \
         ../teem
 
     if {$isWindows} {

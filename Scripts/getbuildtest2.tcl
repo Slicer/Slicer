@@ -326,16 +326,19 @@ if {$::GETBUILDTEST(verbose)} {
 if {$isLinux || $isDarwin} {
     set ::GETBUILDTEST(cpack-generator) "STGZ"
     set ::GETBUILDTEST(cpack-extension) ".sh"
+    set ::GETBUILDTEST(shared-lib-extension) ".so"
     # if wish to have .tar.gz, use generator = TGZ and extension = .tar.gz
 }
 if {$isWindows} {
     set ::GETBUILDTEST(cpack-generator) "NSIS"
     set ::GETBUILDTEST(cpack-extension) ".exe"
+    set ::GETBUILDTEST(shared-lib-extension) ".dll"
 }
 # once dmg packaging is done
 if {0 && $isDarwin} {
-   set ::GETBUILDTEST(cpack-generator) "OSXX11"
-   set ::GETBUILDTEST(cpack-extension) ".dmg"
+    set ::GETBUILDTEST(cpack-generator) "OSXX11"
+    set ::GETBUILDTEST(cpack-extension) ".dmg"
+    set ::GETBUILDTEST(shared-lib-extension) ".dyld"
 }
 
 # build the slicer
@@ -353,6 +356,9 @@ runcmd $::CMAKE \
         -DCPACK_GENERATOR:STRING=$::GETBUILDTEST(cpack-generator) \
         -DCPACK_PACKAGE_FILE_NAME:STRING=$::GETBUILDTEST(binary-filename) \
         -DUSE_TEEM=ON \
+        -DUSE_PYTHON=OFF \
+        -DPYTHON_INCLUDE_PATH:PATH=$::SLICER_LIB/python-build/include/python2.5 \
+        -DPYTHON_LIBRARY:FILEPATH=$::SLICER_LIB/python-build/lib/libpython2.5$::GETBUILDTEST(shared-lib-extension) \
         -DUSE_IGSTK=$::IGSTK \
         -DUSE_OPENTRACKER=$::OPENTRACKER \
         -DOT_VERSION_13=$::OT_VERSION \
