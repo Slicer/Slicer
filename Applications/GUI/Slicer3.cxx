@@ -1,4 +1,3 @@
-
 #include "vtkRenderWindow.h"
 
 #include "vtkKWApplication.h"
@@ -102,7 +101,7 @@ extern "C" {
 #else
 //#define TRACTOGRAPHY_DEBUG
 #endif
-#define QDEC_DEBUG
+//#define QDEC_DEBUG
 
 #ifndef TRACTOGRAPHY_DEBUG
 #include "vtkSlicerFiberBundleLogic.h"

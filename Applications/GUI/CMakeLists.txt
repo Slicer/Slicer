@@ -45,6 +45,7 @@ SET (SRC
 
 # --------------------------------------------------------------------------
 # Include dirs
+# MESSAGE(STATUS "Setting up dir_list, Qdec bin dir = ${Qdec_BINARY_DIR}, Qdec src dir = ${Qdec_SOURCE_DIR}")
 
 SET(dir_list
   ${SlicerBase_SOURCE_DIR}
@@ -81,6 +82,8 @@ SET(dir_list
   ${NeuroNav_BINARY_DIR}
   ${NeuroNav_Init_SOURCE_DIR}
   ${NeuroNav_Init_BINARY_DIR}
+  ${Qdec_SOURCE_DIR}
+  ${Qdec_BINARY_DIR}
   ${QdecModule_SOURCE_DIR}
   ${QdecModule_BINARY_DIR}
   ${QdecModule_Init_SOURCE_DIR}
@@ -107,8 +110,6 @@ SET(dir_list
   ${VTK_INCLUDE_DIR}
   ${NAVITRACK_INC}
   ${IGSTK_INCLUDE_DIRS}
-  ${SandBox_DIR}/Qdec
-  ${SandBox_DIR}-build/bin 
   )
 
 IF(USE_PYTHON AND PYTHON_INCLUDE_PATH)
@@ -117,9 +118,6 @@ IF(USE_PYTHON AND PYTHON_INCLUDE_PATH)
 ENDIF(USE_PYTHON AND PYTHON_INCLUDE_PATH)
 
 INCLUDE_DIRECTORIES(${dir_list})
-
-# to find the QDEC library
-LINK_DIRECTORIES(${SandBox_DIR}-build/bin)
 
 # On Win32 platforms, let's configure the KWWidgets sample resource file
 # to get a nice application icon and some additional information.
@@ -175,8 +173,8 @@ TARGET_LINK_LIBRARIES( Slicer3${SLICER_EXE_SUFFIX}
     ITKIO
     ${WFENGINE_LINK_LIB}
     ${KWWidgets_LIBRARIES}
-#    QdecModule
-#    Qdec
+    Qdec
+    QdecModule
 )
 
 IF(USE_TEEM)
