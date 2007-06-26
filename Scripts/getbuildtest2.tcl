@@ -334,11 +334,13 @@ if {$isWindows} {
     set ::GETBUILDTEST(cpack-extension) ".exe"
     set ::GETBUILDTEST(shared-lib-extension) ".dll"
 }
-# once dmg packaging is done
-if {0 && $isDarwin} {
+if {$isDarwin} {
+  if { 0 } {
+    # once dmg packaging is done
     set ::GETBUILDTEST(cpack-generator) "OSXX11"
     set ::GETBUILDTEST(cpack-extension) ".dmg"
-    set ::GETBUILDTEST(shared-lib-extension) ".dyld"
+  }
+  set ::GETBUILDTEST(shared-lib-extension) ".dylib"
 }
 
 # build the slicer
@@ -356,7 +358,7 @@ runcmd $::CMAKE \
         -DCPACK_GENERATOR:STRING=$::GETBUILDTEST(cpack-generator) \
         -DCPACK_PACKAGE_FILE_NAME:STRING=$::GETBUILDTEST(binary-filename) \
         -DUSE_TEEM=ON \
-        -DUSE_PYTHON=OFF \
+        -DUSE_PYTHON=ON \
         -DPYTHON_INCLUDE_PATH:PATH=$::SLICER_LIB/python-build/include/python2.5 \
         -DPYTHON_LIBRARY:FILEPATH=$::SLICER_LIB/python-build/lib/libpython2.5$::GETBUILDTEST(shared-lib-extension) \
         -DUSE_IGSTK=$::IGSTK \
