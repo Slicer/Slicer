@@ -330,13 +330,25 @@ int vtkMRMLFreeSurferModelStorageNode::ReadData(vtkMRMLNode *refNode)
         std::string::size_type ptr = name.find_last_of(std::string("/"));
         std::string scalarName;
         if (ptr != std::string::npos)
-          {
-          scalarName = name.substr(++ptr);
-          }
+        {
+            // find the dir name above
+            std::string::size_type ptrNext = ptr;
+            std::string::size_type dirptr = name.find_last_of(std::string("/"), --ptrNext);
+            if (dirptr != std::string::npos)
+            {
+                scalarName = name.substr(++dirptr);
+                vtkErrorMacro("Using dir name in scalar name " << scalarName.c_str());
+            }
+            else
+            {
+                scalarName = name.substr(++ptr);
+                vtkErrorMacro("Not using the dir name in the scalar name " << scalarName.c_str());
+            }
+        }
         else
-          {
-          scalarName = name;
-          }
+        {
+            scalarName = name;
+        }
         floatArray->SetName(scalarName.c_str());
         reader->SetOutput(floatArray);
 
@@ -622,9 +634,22 @@ int vtkMRMLFreeSurferModelStorageNode::ReadData(vtkMRMLNode *refNode)
         std::string::size_type ptr = name.find_last_of(std::string("/"));
         std::string scalarName;
         if (ptr != std::string::npos)
-          {
-          scalarName = name.substr(++ptr);
-          }
+        {
+            // find the dir name above
+            std::string::size_type ptrNext = ptr;
+            std::string::size_type dirptr = name.find_last_of(std::string("/"), --ptrNext);
+            if (dirptr != std::string::npos)
+            {
+                scalarName = name.substr(++dirptr);
+                vtkErrorMacro("Using dir name in scalar name " << scalarName.c_str());
+            }
+            else
+            {
+                scalarName = name.substr(++ptr);
+                vtkErrorMacro("Not using the dir name in the scalar name " << scalarName.c_str());
+            }
+
+        }
         else
           {
           scalarName = name;
