@@ -50,6 +50,10 @@ Version:   $Revision: 1.2 $
 #include "vtkKWListBoxWithScrollbars.h"
 #include "vtkKWListBoxWithScrollbarsWithLabel.h"
 
+// for loading the outputs of the GLM processing
+#include "vtkSlicerModelsGUI.h"
+#include "vtkSlicerModelsLogic.h"
+
 //------------------------------------------------------------------------------
 vtkQdecModuleGUI* vtkQdecModuleGUI::New()
 {
@@ -264,7 +268,7 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
           {
           cont2 = this->ContinuousFactorsListBox->GetWidget()->GetWidget()->GetItem(i);
           }
-    factorNum++;
+        factorNum++;
         }
       }
     
@@ -275,9 +279,9 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
       if ( this->DiscreteFactorsListBox->GetWidget()->GetWidget()->GetSelectState(i))
         {
         vtkDebugMacro("\t" <<  this->DiscreteFactorsListBox->GetWidget()->GetWidget()->GetItem(i));
-    if (factorNum == 0)
-      {
-        dis1 = this->DiscreteFactorsListBox->GetWidget()->GetWidget()->GetItem(i);
+        if (factorNum == 0)
+          {    
+          dis1 = this->DiscreteFactorsListBox->GetWidget()->GetWidget()->GetItem(i);
       }
     else if (factorNum == 1)
       {
@@ -336,6 +340,26 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
     string fnSurface = fnSubjects + "/fsaverage/surf/ " + sHemi + ".average";
     vtkDebugMacro( "Surface: " << fnSurface.c_str() );
     
+    // get the Models Logic and load the average surface file
+    vtkSlicerModelsLogic *modelsLogic = vtkSlicerModelsGUI::SafeDownCast(vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Models"))->GetLogic();
+    vtkMRMLModelNode *modelNode = NULL;
+    if (modelsLogic)
+      {
+    modelNode = modelsLogic->AddModel( fnSurface.c_str() );
+    if (modelNode == NULL)
+      {
+        vtkErrorMacro("Unable to load average surface file " << fnSurface.c_str());
+      }
+    else
+      {
+        vtkDebugMacro("Loaded average surface file " << fnSurface.c_str());
+      }
+      }
+    else
+      {
+    vtkErrorMacro("Unable to get at Models module to load average surface file.");
+      }
+
     // We should have the same number of questions as sig file. Each
     // sig file has a correpsponding question, and they are in the same
     // order in the vector.
@@ -352,6 +376,14 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
       vtkDebugMacro( "Contrast " << nContrast << ": \""
              << lContrastQuestions[nContrast].c_str() << "\" in file " 
              << lfnContrastSigs[nContrast].c_str() );
+      // load the sig file
+      if (modelsLogic)
+    {
+      if (!modelsLogic->AddScalar(lfnContrastSigs[nContrast].c_str(), modelNode))
+        {
+          vtkErrorMacro("Unable to add contrast to average model surface: " << lfnContrastSigs[nContrast].c_str());
+        }
+    }
     }
     
     // The regression coefficient and std dev files to load.
