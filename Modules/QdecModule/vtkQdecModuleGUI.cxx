@@ -47,6 +47,9 @@ Version:   $Revision: 1.2 $
 #include "vtkKWMultiColumnList.h"
 #include "vtkKWMultiColumnListWithScrollbars.h"
 #include "vtkKWLabel.h"
+#include "vtkKWListBox.h"
+#include "vtkKWListBoxWithScrollbars.h"
+#include "vtkKWListBoxWithScrollbarsWithLabel.h"
 
 //------------------------------------------------------------------------------
 vtkQdecModuleGUI* vtkQdecModuleGUI::New()
@@ -67,8 +70,8 @@ vtkQdecModuleGUI::vtkQdecModuleGUI()
   this->NAMICLabel = NULL;
   this->SubjectsDirectoryButton = NULL;
   this->LoadTableButton = NULL;
-  this->ContinuousFactorsLabel = NULL;
-  this->DiscreteFactorsLabel = NULL;
+  this->ContinuousFactorsListBox = NULL;
+  this->DiscreteFactorsListBox = NULL;
   this->ApplyButton = NULL;
   this->MultiColumnList = NULL;
   
@@ -100,20 +103,20 @@ vtkQdecModuleGUI::~vtkQdecModuleGUI()
     this->SubjectsDirectoryButton->SetParent(NULL);
     this->SubjectsDirectoryButton->Delete();
     this->SubjectsDirectoryButton = NULL;
-    }
-
-  if ( this->DiscreteFactorsLabel )
+    }  
+   
+  if ( this->DiscreteFactorsListBox )
     {
-    this->DiscreteFactorsLabel->SetParent ( NULL );
-    this->DiscreteFactorsLabel->Delete();
-    this->DiscreteFactorsLabel = NULL;
+    this->DiscreteFactorsListBox->SetParent ( NULL );
+    this->DiscreteFactorsListBox->Delete();
+    this->DiscreteFactorsListBox = NULL;
     }
-
-   if ( this->ContinuousFactorsLabel )
+ 
+   if ( this->ContinuousFactorsListBox )
     {
-    this->ContinuousFactorsLabel->SetParent ( NULL );
-    this->ContinuousFactorsLabel->Delete();
-    this->ContinuousFactorsLabel = NULL;
+    this->ContinuousFactorsListBox->SetParent ( NULL );
+    this->ContinuousFactorsListBox->Delete();
+    this->ContinuousFactorsListBox = NULL;
     }
 
    if (this->MultiColumnList)
@@ -143,7 +146,7 @@ void vtkQdecModuleGUI::AddGUIObservers ( )
 {
   this->SubjectsDirectoryButton->GetWidget()->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
   this->LoadTableButton->GetWidget()->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
-
+  
   this->ApplyButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 }
 
@@ -187,7 +190,25 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
 
   if (b == this->ApplyButton && event == vtkKWPushButton::InvokedEvent ) 
     {
+    this->DebugOn();
     vtkDebugMacro("Apply button pushed");
+    vtkDebugMacro("Selected continuous factors = ");
+    for (int i = 0; i < this->ContinuousFactorsListBox->GetWidget()->GetWidget()->GetNumberOfItems(); i++)
+      {
+      if ( this->ContinuousFactorsListBox->GetWidget()->GetWidget()->GetSelectState(i))
+        {
+        vtkDebugMacro("\t" <<  this->ContinuousFactorsListBox->GetWidget()->GetWidget()->GetItem(i));
+        }
+      }
+    vtkDebugMacro("Selected discrete factors = ");
+    for (int i = 0; i < this->DiscreteFactorsListBox->GetWidget()->GetWidget()->GetNumberOfItems(); i++)
+      {
+      if ( this->DiscreteFactorsListBox->GetWidget()->GetWidget()->GetSelectState(i))
+        {
+        vtkDebugMacro("\t" <<  this->DiscreteFactorsListBox->GetWidget()->GetWidget()->GetItem(i));
+        }
+      }
+     this->DebugOff();
     return;
     }
 
@@ -256,22 +277,19 @@ void vtkQdecModuleGUI::UpdateGUI ()
     {
     // get the discrete and continuous factors
     vector< string > discreteFactors = this->GetLogic()->QDECProject->GetDiscreteFactors();
-    string newFactors = "Discrete factors: ";      
+    this->DiscreteFactorsListBox->GetWidget()->GetWidget()->DeleteAll();
     for (int i = 0; i < discreteFactors.size(); i++)
       {
-      newFactors = newFactors + string("\n") + discreteFactors[i];
+      this->DiscreteFactorsListBox->GetWidget()->GetWidget()->Append(discreteFactors[i].c_str());
       }
-    this->DiscreteFactorsLabel->SetText(newFactors.c_str());
       
     vector< string > continuousFactors = this->GetLogic()->QDECProject->GetContinousFactors();
-    
-    newFactors = "Continuous factors: ";
+
+    this->ContinuousFactorsListBox->GetWidget()->GetWidget()->DeleteAll();
     for (int i = 0; i < continuousFactors.size(); i++)
       {
-      newFactors = newFactors + string("\n") + continuousFactors[i];
-      }
-    this->ContinuousFactorsLabel->SetText(newFactors.c_str());
-    
+      this->ContinuousFactorsListBox->GetWidget()->GetWidget()->Append(continuousFactors[i].c_str());
+      }    
       
     // now populate the table    
     if (this->MultiColumnList)
@@ -437,21 +455,24 @@ void vtkQdecModuleGUI::BuildGUI ( )
                 this->MultiColumnList->GetWidgetName());
   this->MultiColumnList->GetWidget()->SetCellUpdatedCommand(this, "UpdateElement");
   
-  
-  this->DiscreteFactorsLabel = vtkKWLabel::New();
-  this->DiscreteFactorsLabel->SetParent( subjectsFrame->GetFrame() );
-  this->DiscreteFactorsLabel->Create();
-  this->DiscreteFactorsLabel->SetText("Discrete factors: ");
+  this->DiscreteFactorsListBox = vtkKWListBoxWithScrollbarsWithLabel::New();
+  this->DiscreteFactorsListBox->SetParent( subjectsFrame->GetFrame() );
+  this->DiscreteFactorsListBox->SetLabelText("Discrete Factors (choose up to two):" );
+  this->DiscreteFactorsListBox->Create();
+  this->DiscreteFactorsListBox->GetWidget()->GetWidget()->SetSelectionModeToMultiple();
+  this->DiscreteFactorsListBox->GetWidget()->GetWidget()->ExportSelectionOff();
   app->Script("pack %s -side top -anchor nw -padx 2 -pady 4 -in %s", 
-              this->DiscreteFactorsLabel->GetWidgetName(),
+              this->DiscreteFactorsListBox->GetWidgetName(),
               subjectsFrame->GetFrame()->GetWidgetName());
-
-  this->ContinuousFactorsLabel = vtkKWLabel::New();
-  this->ContinuousFactorsLabel->SetParent( subjectsFrame->GetFrame() );
-  this->ContinuousFactorsLabel->Create();
-  this->ContinuousFactorsLabel->SetText("Continuous factors: ");
+  
+  this->ContinuousFactorsListBox = vtkKWListBoxWithScrollbarsWithLabel::New();
+  this->ContinuousFactorsListBox->SetParent( subjectsFrame->GetFrame() );
+  this->ContinuousFactorsListBox->SetLabelText("Continuous Factors (choose two):");
+  this->ContinuousFactorsListBox->Create();
+  this->ContinuousFactorsListBox->GetWidget()->GetWidget()->SetSelectionModeToMultiple();
+  this->ContinuousFactorsListBox->GetWidget()->GetWidget()->ExportSelectionOff();
   app->Script("pack %s -side top -anchor nw -padx 2 -pady 4 -in %s", 
-              this->ContinuousFactorsLabel->GetWidgetName(),
+              this->ContinuousFactorsListBox->GetWidgetName(),
               subjectsFrame->GetFrame()->GetWidgetName());
 
   this->ApplyButton = vtkKWPushButton::New();

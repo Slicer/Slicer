@@ -28,7 +28,7 @@ class vtkSlicerNodeSelectorWidget;
 class vtkKWLoadSaveButtonWithLabel;
 class vtkKWEntryWithLabel;
 class vtkKWMultiColumnListWithScrollbars;
-
+class vtkKWListBoxWithScrollbarsWithLabel;
 class VTK_QDECMODULE_EXPORT vtkQdecModuleGUI : public vtkSlicerModuleGUI
 {
 public:
@@ -81,8 +81,8 @@ public:
   // Description:
   // Get methods on class members ( no Set methods required. )
   vtkGetObjectMacro ( LoadTableButton, vtkKWLoadSaveButtonWithLabel );
-  vtkGetObjectMacro ( ContinuousFactorsLabel, vtkKWLabel );
-  vtkGetObjectMacro ( DiscreteFactorsLabel, vtkKWLabel );
+  vtkGetObjectMacro ( ContinuousFactorsListBox, vtkKWListBoxWithScrollbarsWithLabel );
+  vtkGetObjectMacro ( DiscreteFactorsListBox, vtkKWListBoxWithScrollbarsWithLabel );
 
   // Description:
   // Update the elements of the multi column list box
@@ -106,8 +106,8 @@ protected:
   // GUI elements
   vtkKWLabel *NAMICLabel;
   vtkKWLoadSaveButtonWithLabel* LoadTableButton;
-  vtkKWLabel *DiscreteFactorsLabel;
-  vtkKWLabel *ContinuousFactorsLabel;
+  vtkKWListBoxWithScrollbarsWithLabel *DiscreteFactorsListBox;
+  vtkKWListBoxWithScrollbarsWithLabel *ContinuousFactorsListBox;
   vtkKWPushButton* ApplyButton;
   vtkKWMultiColumnListWithScrollbars *MultiColumnList;
   vtkKWLoadSaveButtonWithLabel* SubjectsDirectoryButton;
