@@ -239,8 +239,6 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
                                            void *callData ) 
 {
   vtkKWPushButton *b = vtkKWPushButton::SafeDownCast ( caller );
-  
-  //this->DebugOn();
 
   if (b == this->ApplyButton && event == vtkKWPushButton::InvokedEvent ) 
     {
@@ -294,14 +292,15 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
     vtkDebugMacro("Measure = " << this->MeasureMenu->GetValue());
     vtkDebugMacro("Hemisphere = " << this->HemisphereMenu->GetValue());
     vtkDebugMacro("Smoothness = " << this->SmoothnessMenu->GetValue());
-    this->DebugOff();
+
     // now pass it into the QDEC project to create a design
-    int err = this->GetLogic()->QDECProject->CreateGlmDesign(this->DesignEntry->GetWidget()->GetValue(),
-                           dis1.c_str(), dis2.c_str(), cont1.c_str(), cont2.c_str(),
-                           this->MeasureMenu->GetValue(),
-                           this->HemisphereMenu->GetValue(),
-                           atoi(this->SmoothnessMenu->GetValue()), 
-                           NULL); // progress update GUI
+    int err = this->GetLogic()->QDECProject->CreateGlmDesign
+      ( this->DesignEntry->GetWidget()->GetValue(),
+    dis1.c_str(), dis2.c_str(), cont1.c_str(), cont2.c_str(),
+    this->MeasureMenu->GetValue(),
+    this->HemisphereMenu->GetValue(),
+    atoi(this->SmoothnessMenu->GetValue()), 
+    NULL ); // progress update GUI
     
     if (err == 0)
       {
@@ -320,9 +319,52 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
     else
       {
     vtkErrorMacro("Error creating the GLM Design...");
-    return;
       }
+
+
     
+    // Make sure we got the results.
+    QdecGlmFitResults* results =
+      this->GetLogic()->QDECProject->GetGlmFitResults();
+    assert( results );
+
+    // fsaverage surface to load. This isn't returned in the results,
+    // but we know where it is because it's just a normal subject in
+    // the subjects dir.
+    string fnSubjects = this->GetLogic()->QDECProject->GetSubjectsDir();
+    string sHemi =  this->GetLogic()->QDECProject->GetHemi();
+    string fnSurface = fnSubjects + "/fsaverage/surf/ " + sHemi + ".average";
+    vtkDebugMacro( "Surface: " << fnSurface.c_str() );
+    
+    // We should have the same number of questions as sig file. Each
+    // sig file has a correpsponding question, and they are in the same
+    // order in the vector.
+    vector<string> lContrastQuestions = results->GetContrastQuestions();
+    vector<string> lfnContrastSigs = results->GetContrastSigFiles();
+    assert( lContrastQuestions.size() == lfnContrastSigs.size() );
+
+    // Go through and get our sig files and questions.
+    vector<string>::iterator fn;
+    for( int nContrast = 0; 
+     nContrast < results->GetContrastQuestions().size(); 
+     nContrast++ ) {
+     
+      vtkDebugMacro( "Contrast " << nContrast << ": \""
+             << lContrastQuestions[nContrast].c_str() << "\" in file " 
+             << lfnContrastSigs[nContrast].c_str() );
+    }
+    
+    // The regression coefficient and std dev files to load.
+    string fnRegressionCoefficients = results->GetRegressionCoefficientsFile();
+    string fnStdDev = results->GetResidualErrorStdDevFile();
+    vtkDebugMacro( "Regressions coefficients: "
+           << fnRegressionCoefficients.c_str() );
+    vtkDebugMacro( "Std dev: " << fnStdDev.c_str() );
+
+    // The fsgd file to plot.
+    string fnFSGD = results->GetFsgdFile();
+    vtkDebugMacro( "FSGD plot file: " << fnFSGD.c_str() );
+    this->DebugOff();
     return;
     }
 
