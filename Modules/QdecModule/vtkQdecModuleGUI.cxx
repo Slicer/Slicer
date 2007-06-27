@@ -65,6 +65,7 @@ vtkQdecModuleGUI* vtkQdecModuleGUI::New()
 vtkQdecModuleGUI::vtkQdecModuleGUI()
 {
   this->NAMICLabel = NULL;
+  this->SubjectsDirectoryButton = NULL;
   this->LoadTableButton = NULL;
   this->ContinuousFactorsLabel = NULL;
   this->DiscreteFactorsLabel = NULL;
@@ -92,6 +93,13 @@ vtkQdecModuleGUI::~vtkQdecModuleGUI()
     this->LoadTableButton->SetParent(NULL);
     this->LoadTableButton->Delete();
     this->LoadTableButton = NULL;
+    }
+
+  if ( this->SubjectsDirectoryButton )
+    {
+    this->SubjectsDirectoryButton->SetParent(NULL);
+    this->SubjectsDirectoryButton->Delete();
+    this->SubjectsDirectoryButton = NULL;
     }
 
   if ( this->DiscreteFactorsLabel )
@@ -133,6 +141,7 @@ void vtkQdecModuleGUI::PrintSelf(ostream& os, vtkIndent indent)
 //---------------------------------------------------------------------------
 void vtkQdecModuleGUI::AddGUIObservers ( ) 
 {
+  this->SubjectsDirectoryButton->GetWidget()->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
   this->LoadTableButton->GetWidget()->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
 
   this->ApplyButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -143,6 +152,11 @@ void vtkQdecModuleGUI::AddGUIObservers ( )
 //---------------------------------------------------------------------------
 void vtkQdecModuleGUI::RemoveGUIObservers ( )
 {
+  if (this->SubjectsDirectoryButton)
+    {
+    this->SubjectsDirectoryButton->GetWidget()->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+    }
+  
   if (this->LoadTableButton)
     {
     this->LoadTableButton->GetWidget()->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
@@ -174,6 +188,24 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
   if (b == this->ApplyButton && event == vtkKWPushButton::InvokedEvent ) 
     {
     vtkDebugMacro("Apply button pushed");
+    return;
+    }
+
+   vtkKWLoadSaveButton *dirbrowse = vtkKWLoadSaveButton::SafeDownCast(caller);
+
+  if (dirbrowse == this->SubjectsDirectoryButton->GetWidget()  && event == vtkKWPushButton::InvokedEvent )
+    {
+    // If a table file has been selected for loading...
+    const char *fileName = this->SubjectsDirectoryButton->GetWidget()->GetFileName();
+    if (!fileName || strcmp(fileName,"") == 0)
+      {
+      vtkDebugMacro("Empty filename");
+      this->SubjectsDirectoryButton->GetWidget()->SetText ("None");
+      this->GetLogic()->QDECProject->SetSubjectsDir("None");
+      return;
+      }
+    vtkDebugMacro("Setting the qdec projects subjects dir to " << fileName);
+    this->GetLogic()->QDECProject->SetSubjectsDir(fileName);
     return;
     }
   
@@ -360,6 +392,25 @@ void vtkQdecModuleGUI::BuildGUI ( )
                 subjectsFrame->GetWidgetName(),
                 this->UIPanel->GetPageWidget("QdecModule")->GetWidgetName());
 
+  this->SubjectsDirectoryButton = vtkKWLoadSaveButtonWithLabel::New();
+  this->SubjectsDirectoryButton->SetParent ( subjectsFrame->GetFrame() );
+  this->SubjectsDirectoryButton->Create ( );
+  this->SubjectsDirectoryButton->SetLabelText ("Set SUBJECTS_DIR:");
+  this->SubjectsDirectoryButton->GetWidget()->GetLoadSaveDialog()->SetTitle("Select the FreeSurfer Subjects directory");
+  this->SubjectsDirectoryButton->GetWidget()->GetLoadSaveDialog()->ChooseDirectoryOn();
+  if (getenv("SUBJECTS_DIR") == NULL)
+    {
+    this->SubjectsDirectoryButton->GetWidget()->SetText ("None");
+    this->SubjectsDirectoryButton->GetWidget()->GetLoadSaveDialog()->SetInitialFileName( "." );
+    }
+  else
+    {
+    this->SubjectsDirectoryButton->GetWidget()->SetText (getenv("SUBJECTS_DIR"));
+    this->SubjectsDirectoryButton->GetWidget()->GetLoadSaveDialog()->SetInitialFileName(getenv("SUBJECTS_DIR"));
+    }
+  app->Script("pack %s -side top -anchor nw -padx 2 -pady 4", 
+              this->SubjectsDirectoryButton->GetWidgetName());
+  
   this->LoadTableButton = vtkKWLoadSaveButtonWithLabel::New();
   this->LoadTableButton->SetParent ( subjectsFrame->GetFrame() );
   this->LoadTableButton->Create ( );

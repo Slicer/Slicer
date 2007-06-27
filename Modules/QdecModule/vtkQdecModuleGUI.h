@@ -110,6 +110,7 @@ protected:
   vtkKWLabel *ContinuousFactorsLabel;
   vtkKWPushButton* ApplyButton;
   vtkKWMultiColumnListWithScrollbars *MultiColumnList;
+  vtkKWLoadSaveButtonWithLabel* SubjectsDirectoryButton;
   
   // Description:
   // Pointer to the module's logic class
