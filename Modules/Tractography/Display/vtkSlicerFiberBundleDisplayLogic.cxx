@@ -488,7 +488,6 @@ void vtkSlicerFiberBundleDisplayLogic::CreateGlyphModel ( )
 
 
         // get tensors from the fiber bundle node and glyph them
-#ifdef USE_TEEM
         // TO DO: include superquadrics
         // if glyph type is other than superquadrics, get glyph source
         if (DTDisplayNode->GetGlyphGeometry( ) != vtkMRMLDiffusionTensorDisplayPropertiesNode::Superquadrics)
@@ -601,7 +600,6 @@ void vtkSlicerFiberBundleDisplayLogic::CreateGlyphModel ( )
           // Do superquadrics
 
           }
-#endif
 
         } // end if dt display props node not null
 

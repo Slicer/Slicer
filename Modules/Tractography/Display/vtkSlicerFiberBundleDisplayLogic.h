@@ -31,9 +31,7 @@
 #include "vtkMRMLFiberBundleNode.h"
 #include "vtkMRMLFiberBundleDisplayNode.h"
 
-#ifdef USE_TEEM
 #include "vtkDiffusionTensorGlyph.h"
-#endif
 
 
 class VTK_SLICERTRACTOGRAPHYDISPLAY_EXPORT vtkSlicerFiberBundleDisplayLogic : public vtkSlicerLogic 
