@@ -246,27 +246,83 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
     {
     this->DebugOn();
     vtkDebugMacro("Apply button pushed");
-    vtkDebugMacro("Selected continuous factors = ");
-    for (int i = 0; i < this->ContinuousFactorsListBox->GetWidget()->GetWidget()->GetNumberOfItems(); i++)
+    
+    std::string cont1 = "none";
+    std::string cont2 = "none";
+    std::string dis1 = "none";
+    std::string dis2 = "none";
+    int factorNum = 0;
+    for (int i = 0; (i < this->ContinuousFactorsListBox->GetWidget()->GetWidget()->GetNumberOfItems()) && 
+                    (factorNum < 2); i++)
       {
       if ( this->ContinuousFactorsListBox->GetWidget()->GetWidget()->GetSelectState(i))
         {
         vtkDebugMacro("\t" <<  this->ContinuousFactorsListBox->GetWidget()->GetWidget()->GetItem(i));
+        if (factorNum == 0)
+          {
+          cont1 = this->ContinuousFactorsListBox->GetWidget()->GetWidget()->GetItem(i);
+          }
+        else if (factorNum == 1)
+          {
+          cont2 = this->ContinuousFactorsListBox->GetWidget()->GetWidget()->GetItem(i);
+          }
+    factorNum++;
         }
       }
-    vtkDebugMacro("Selected discrete factors = ");
-    for (int i = 0; i < this->DiscreteFactorsListBox->GetWidget()->GetWidget()->GetNumberOfItems(); i++)
+    
+    factorNum = 0;
+    for (int i = 0; (i < this->DiscreteFactorsListBox->GetWidget()->GetWidget()->GetNumberOfItems()) &&
+                    (factorNum < 2); i++)
       {
       if ( this->DiscreteFactorsListBox->GetWidget()->GetWidget()->GetSelectState(i))
         {
         vtkDebugMacro("\t" <<  this->DiscreteFactorsListBox->GetWidget()->GetWidget()->GetItem(i));
+    if (factorNum == 0)
+      {
+        dis1 = this->DiscreteFactorsListBox->GetWidget()->GetWidget()->GetItem(i);
+      }
+    else if (factorNum == 1)
+      {
+        dis2 = this->DiscreteFactorsListBox->GetWidget()->GetWidget()->GetItem(i);
+      }
+    factorNum++;
         }
       }
+    vtkDebugMacro("Selected discrete factors = " << dis1.c_str() << " and " << dis2.c_str());
+    vtkDebugMacro("Selected continuous factors = " << cont1.c_str() << " and " << cont2.c_str());
     vtkDebugMacro("Design name = " << this->DesignEntry->GetWidget()->GetValue());
     vtkDebugMacro("Measure = " << this->MeasureMenu->GetValue());
     vtkDebugMacro("Hemisphere = " << this->HemisphereMenu->GetValue());
     vtkDebugMacro("Smoothness = " << this->SmoothnessMenu->GetValue());
     this->DebugOff();
+    // now pass it into the QDEC project to create a design
+    int err = this->GetLogic()->QDECProject->CreateGlmDesign(this->DesignEntry->GetWidget()->GetValue(),
+                           dis1.c_str(), dis2.c_str(), cont1.c_str(), cont2.c_str(),
+                           this->MeasureMenu->GetValue(),
+                           this->HemisphereMenu->GetValue(),
+                           atoi(this->SmoothnessMenu->GetValue()), 
+                           NULL); // progress update GUI
+    
+    if (err == 0)
+      {
+    // success!
+    vtkDebugMacro("Success in making the GLM design.");
+    err = this->GetLogic()->QDECProject->RunGlmFit();
+    if (err == 0)
+      {
+        vtkDebugMacro("Succeeded in running Glm Fit.");
+      }
+    else
+      {
+        vtkErrorMacro("Error running GLM Fit...");
+      }
+      }
+    else
+      {
+    vtkErrorMacro("Error creating the GLM Design...");
+    return;
+      }
+    
     return;
     }
 
