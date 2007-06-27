@@ -60,24 +60,25 @@ QdecGlmDesign::QdecGlmDesign ( QdecDataTable* iDataTable )
     {
       this->mfnSubjectsDir = getenv("SUBJECTS_DIR");
       this->mfnWorkingDir = getenv("SUBJECTS_DIR");
+#ifndef _WIN32
+      int err = mkdir( this->mfnWorkingDir.c_str(), 0777);
+#else
+      int err = mkdir (this->mfnWorkingDir.c_str());
+#endif
+      if( err != 0 && errno != EEXIST )
+        {
+        fprintf( stderr,
+                 "ERROR: QdecGlmDesign::Constructor: "
+                 "could not create directory %s\n",
+                 this->mfnWorkingDir.c_str());
+        }
     }
   this->msAverageSubject = "fsaverage";
   this->mfnFsgdfFile = "qdec.fsgd";
   this->mfnYdataFile = "y.mgh";
   this->mfnWorkingDir += "/qdec";
 
-#ifndef _WIN32
-  int err = mkdir( this->mfnWorkingDir.c_str(), 0777);
-#else
-  int err = mkdir (this->mfnWorkingDir.c_str());
-#endif
-  if( err != 0 && errno != EEXIST )
-  {
-    fprintf( stderr,
-             "ERROR: QdecGlmDesign::Constructor: "
-             "could not create directory %s\n",
-             this->mfnWorkingDir.c_str());
-  }
+
 }
 
 QdecGlmDesign::~QdecGlmDesign ( )
@@ -243,20 +244,28 @@ int QdecGlmDesign::Create ( QdecDataTable* iDataTable,
       ( "Saving configuration design..." );
     this->mProgressUpdateGUI->UpdateProgressPercent( 20 );
   }
-
+  if (strcmp(this->mfnWorkingDir.c_str(),"") != 0)
+    {
 #ifndef _WIN32
-  int err = mkdir( this->mfnWorkingDir.c_str(), 0777);
+    int err = mkdir( this->mfnWorkingDir.c_str(), 0777);
 #else
-  int err = mkdir ( this->mfnWorkingDir.c_str());
+    int err = mkdir ( this->mfnWorkingDir.c_str());
 #endif
 
-  if( err != 0 && errno != EEXIST )
-  {
-    fprintf( stderr,
-             "ERROR: QdecGlmDesign::Create: could not create directory %s\n",
-             this->mfnWorkingDir.c_str());
-    return(-2);
-  }
+    if( err != 0 && errno != EEXIST )
+      {
+      fprintf( stderr,
+               "ERROR: QdecGlmDesign::Create: could not create directory %s\n",
+               this->mfnWorkingDir.c_str());
+      return(-2);
+      }
+    }
+  else
+    {
+    fprintf(stderr,
+            "ERROR: QdecGlmDesign::Create: working directory not set, cannot save fsgd file\n");
+    return (-2);
+    }
 
   if( this->WriteFsgdFile() )
   {
