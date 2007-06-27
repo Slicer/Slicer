@@ -31,6 +31,7 @@ vtkSlicerDiffusionTensorGlyphDisplayWidget::vtkSlicerDiffusionTensorGlyphDisplay
 
     this->GlyphScale = NULL;
 
+    this->TubeNumberOfSidesScale = NULL;
 }
 
 
@@ -69,6 +70,13 @@ vtkSlicerDiffusionTensorGlyphDisplayWidget::~vtkSlicerDiffusionTensorGlyphDispla
     this->GlyphScale->SetParent(NULL);
     this->GlyphScale->Delete();
     this->GlyphScale = NULL;
+    }
+
+  if (this->TubeNumberOfSidesScale)
+    {
+    this->TubeNumberOfSidesScale->SetParent(NULL);
+    this->TubeNumberOfSidesScale->Delete();
+    this->TubeNumberOfSidesScale = NULL;
     }
 
 
@@ -191,6 +199,34 @@ void vtkSlicerDiffusionTensorGlyphDisplayWidget::ProcessWidgetEvents ( vtkObject
     vtkErrorWithObjectMacro(this,"Process WIDGET... Events, display node glyph set!  ;)");
     return;
     }
+
+
+  // advanced -> tube glyph frame
+  // process eigenvector menu events
+  vtkKWMenu *tubeEigMenuButton = 
+      vtkKWMenu::SafeDownCast(caller);
+  if (tubeEigMenuButton == this->TubeGlyphEigenvectorMenu->GetWidget()->GetMenu())
+    vtkErrorWithObjectMacro(this,"Process WIDGET... Events, tube eig menu event!  ;)" << event);
+
+  if (tubeEigMenuButton == this->TubeGlyphEigenvectorMenu->GetWidget()->GetMenu() && 
+        event == vtkKWMenu::MenuItemInvokedEvent)
+    {
+    displayNode->SetGlyphEigenvector(this->GlyphEigenvectorMap[std::string(this->TubeGlyphEigenvectorMenu->GetWidget()->GetValue())]);
+    vtkErrorWithObjectMacro(this,"Process WIDGET... Events, display node glyph set!  ;)");
+    return;
+    }
+  // process number of sides scale events
+  vtkKWScale *tubeSidesScale = vtkKWScale::SafeDownCast(caller);
+  if (tubeSidesScale == this->TubeNumberOfSidesScale->GetWidget() )
+    vtkErrorWithObjectMacro(this,"Process WIDGET... Events, tubeSides scale event!  ;)" << event);
+
+  if (tubeSidesScale == this->TubeNumberOfSidesScale->GetWidget() && 
+        event == vtkKWScale::ScaleValueChangedEvent)
+    {
+    vtkErrorWithObjectMacro(this,"Process WIDGET... Events, number of tube sides set!  ;)");
+    displayNode->SetTubeGlyphNumberOfSides(this->TubeNumberOfSidesScale->GetWidget()->GetValue());
+    return;
+    }
 }
 
 
@@ -302,7 +338,12 @@ void vtkSlicerDiffusionTensorGlyphDisplayWidget::UpdateWidget()
       this->GlyphColorMenu->GetWidget()->SetValue(displayNode->GetColorGlyphByAsString());
       this->LineGlyphEigenvectorMenu->GetWidget()->SetValue(displayNode->GetGlyphEigenvectorAsString());
 
+      this->TubeGlyphEigenvectorMenu->GetWidget()->SetValue(displayNode->GetGlyphEigenvectorAsString());
+
       this->GlyphScale->GetWidget()->SetValue(displayNode->GetGlyphScaleFactor());
+
+      this->TubeNumberOfSidesScale->GetWidget()->SetValue(displayNode->GetTubeGlyphNumberOfSides());
+
       } 
     else 
       {
@@ -311,6 +352,7 @@ void vtkSlicerDiffusionTensorGlyphDisplayWidget::UpdateWidget()
     
     return;
     }
+  vtkErrorWithObjectMacro(this,"DONE Update widget  ;)");
 }
 
 // TO DO: is this used?
@@ -332,6 +374,7 @@ void vtkSlicerDiffusionTensorGlyphDisplayWidget::UpdateMRML()
       displayNode->SetColorGlyphBy(this->GlyphColorMap[std::string(this->GlyphColorMenu->GetWidget()->GetValue())]);
       displayNode->SetGlyphEigenvector(this->GlyphEigenvectorMap[std::string(this->LineGlyphEigenvectorMenu->GetWidget()->GetValue())]);
       displayNode->SetGlyphScaleFactor(this->GlyphScale->GetWidget()->GetValue());
+      displayNode->SetTubeGlyphNumberOfSides(this->TubeNumberOfSidesScale->GetWidget()->GetValue());
       }
     else 
       {
@@ -350,12 +393,14 @@ void vtkSlicerDiffusionTensorGlyphDisplayWidget::AddWidgetObservers ( ) {
   this->GlyphGeometryMenu->GetWidget()->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->GlyphColorMenu->GetWidget()->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->LineGlyphEigenvectorMenu->GetWidget()->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->TubeGlyphEigenvectorMenu->GetWidget()->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
   //this->VisibilityButton->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   //this->GlyphScale->GetWidget()->AddObserver(vtkKWScale::ScaleValueStartChangingEvent, (vtkCommand *)this->GUICallbackCommand );
   //this->GlyphScale->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangingEvent, (vtkCommand *)this->GUICallbackCommand );
   this->GlyphScale->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-  
+
+  this->TubeNumberOfSidesScale->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 
 }
 
@@ -367,12 +412,15 @@ void vtkSlicerDiffusionTensorGlyphDisplayWidget::RemoveWidgetObservers ( ) {
   this->GlyphGeometryMenu->GetWidget()->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->GlyphColorMenu->GetWidget()->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->LineGlyphEigenvectorMenu->GetWidget()->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->TubeGlyphEigenvectorMenu->GetWidget()->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
   //this->VisibilityButton->GetWidget()->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   
   //this->GlyphScale->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueChangingEvent, (vtkCommand *)this->GUICallbackCommand );
   //this->GlyphScale->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueStartChangingEvent, (vtkCommand *)this->GUICallbackCommand );
   this->GlyphScale->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+
+  this->TubeNumberOfSidesScale->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 
 }
 
@@ -556,6 +604,48 @@ void vtkSlicerDiffusionTensorGlyphDisplayWidget::CreateWidget ( )
 
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                  tubeFrame->GetWidgetName() );
+
+
+  // tube glyph eigenvector menu
+  vtkKWMenuButtonWithLabel *tubeEigMenuButton = 
+    vtkKWMenuButtonWithLabel::New();
+
+  this->TubeGlyphEigenvectorMenu = tubeEigMenuButton;
+  tubeEigMenuButton->SetParent( tubeFrame->GetFrame() );
+  tubeEigMenuButton->Create();
+
+  // initialize eigenvector menu
+  initIdx = propNode->GetFirstGlyphEigenvector();
+  endIdx = propNode->GetLastGlyphEigenvector();
+  currentVal = propNode->GetGlyphEigenvector();
+  this->GlyphEigenvectorMap.clear();
+  for (k=initIdx ; k<=endIdx ; k++)
+    {
+    propNode->SetGlyphEigenvector(k);
+    const char *tag = propNode->GetGlyphEigenvectorAsString();
+    this->GlyphEigenvectorMap[std::string(tag)]=k;
+    tubeEigMenuButton->GetWidget()->GetMenu()->AddRadioButton(tag);
+    }
+  // init to class default value
+  propNode->SetGlyphEigenvector(currentVal);
+  tubeEigMenuButton->GetWidget()->SetValue(propNode->GetGlyphEigenvectorAsString());
+
+  // pack eigenvector menu
+  tubeEigMenuButton->SetLabelText("Glyph Eigenvector");
+  this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+               tubeEigMenuButton->GetWidgetName());
+
+
+  this->TubeNumberOfSidesScale = vtkKWScaleWithLabel::New();
+  this->TubeNumberOfSidesScale->SetParent ( tubeFrame->GetFrame() );
+  this->TubeNumberOfSidesScale->Create ( );
+  this->TubeNumberOfSidesScale->SetLabelText("Number Of Sides");
+  this->TubeNumberOfSidesScale->GetWidget()->SetRange(1,20);
+  this->TubeNumberOfSidesScale->GetWidget()->SetResolution(1);
+  this->TubeNumberOfSidesScale->SetBalloonHelpString("set number of sides of the tube.");
+  this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
+                 this->TubeNumberOfSidesScale->GetWidgetName() );
+
 
   // ---
   // Ellipsoids FRAME            
