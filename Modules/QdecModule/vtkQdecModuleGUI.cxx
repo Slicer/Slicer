@@ -377,7 +377,7 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
              << lContrastQuestions[nContrast].c_str() << "\" in file " 
              << lfnContrastSigs[nContrast].c_str() );
       // load the sig file
-      if (modelsLogic)
+      if (modelsLogic && modelNode)
     {
       if (!modelsLogic->AddScalar(lfnContrastSigs[nContrast].c_str(), modelNode))
         {
@@ -394,7 +394,7 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
     vtkDebugMacro( "Std dev: " << fnStdDev.c_str() );
     
     // load the std dev file
-    if (modelsLogic)
+    if (modelsLogic && modelNode)
       {
     if (!modelsLogic->AddScalar(fnStdDev.c_str(), modelNode))
       {
