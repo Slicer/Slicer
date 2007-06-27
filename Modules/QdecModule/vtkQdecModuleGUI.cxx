@@ -374,6 +374,11 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
       {
         // grab the curvature array name
         curvArrayName = modelNode->GetActivePointScalarName("scalars");
+    if (strstr(curvArrayName.c_str(), "") == 0)
+      {
+        // hack it together
+        curvArrayName = "surf/" + sHemi + ".curv";
+      }
         vtkDebugMacro("Got the curvature array name: " << curvArrayName.c_str());
       }
       }
@@ -405,6 +410,29 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
     {
       // composite with the curv
       string sigArrayName = modelNode->GetActivePointScalarName("scalars");
+      if (strstr(sigArrayName.c_str(), "") == 0)
+    {
+      // hack it together
+      std::string name = lfnContrastSigs[nContrast];
+      std::string::size_type ptr = name.find_last_of(std::string("/"));
+      if (ptr != std::string::npos)
+        {
+        // find the dir name above
+        std::string::size_type dirptr = name.find_last_of(std::string("/"), ptr);
+        if (dirptr != std::string::npos)
+          {
+          sigArrayName = name.substr(++dirptr);
+          }
+        else
+          {
+          sigArrayName = name.substr(++ptr);
+          }
+        }
+      else
+        {
+        sigArrayName = name;
+        }
+    }
       vtkDebugMacro("Compositing curv " << curvArrayName.c_str() << " with sig array " << sigArrayName.c_str());
       modelNode->CompositeScalars(curvArrayName.c_str(), sigArrayName.c_str(), 2, 5, 1, 1, 0);
     }
