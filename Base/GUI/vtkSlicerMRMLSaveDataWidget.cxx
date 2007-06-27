@@ -264,6 +264,10 @@ void vtkSlicerMRMLSaveDataWidget::SaveScene()
 int vtkSlicerMRMLSaveDataWidget::UpdateFromMRML()
   
 {
+  if (!this->IsCreated())
+    {
+    return 0;
+    }
   if (this->IsProcessing) 
   {
     return 0;
@@ -459,7 +463,7 @@ void vtkSlicerMRMLSaveDataWidget::ProcessMRMLEvents ( vtkObject *caller,
 {
   if (event == vtkCommand::ModifiedEvent)
     {
-    this->UpdateFromMRML();
+    //this->UpdateFromMRML();
     }
 }
 
@@ -653,14 +657,22 @@ void vtkSlicerMRMLSaveDataWidget::CreateWidget ( )
   dataFrame->Delete();
   saveFrame->Delete();
 
-  this->UpdateFromMRML();
 
   this->MultiColumnList->SetEnabled(1);
   this->OkButton->SetEnabled(1);
   this->SaveSceneCheckBox->SetEnabled(0);
   this->SaveSceneCheckBox->SetSelectedState(0);
-
-  this->SaveDialog->Invoke ( );
   
 }
 
+void vtkSlicerMRMLSaveDataWidget::Invoke ( )
+{
+  this->Create();
+
+  this->UpdateFromMRML();
+
+  if (this->SaveDialog)
+    {
+    this->SaveDialog->Invoke ( );
+    }
+}

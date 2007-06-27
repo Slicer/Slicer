@@ -142,7 +142,8 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
 
     //--- Save and load scene dialogs, widgets
     this->LoadSceneDialog = vtkKWLoadSaveDialog::New();
-    this->SaveDataWidget = NULL;
+
+    this->SaveDataWidget = vtkSlicerMRMLSaveDataWidget::New();
 
     //--- unique tag used to mark all view notebook pages
     //--- so that they can be identified and deleted when 
@@ -155,6 +156,13 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
 //---------------------------------------------------------------------------
 vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
 {
+    if (this->SaveDataWidget)
+      {
+      this->SaveDataWidget->SetParent(NULL);
+      this->SaveDataWidget->Delete();
+      this->SaveDataWidget=NULL;
+      }
+
     if ( this->SliceGUICollection )
       {
         this->SliceGUICollection->RemoveAllItems();
@@ -390,16 +398,11 @@ void vtkSlicerApplicationGUI::ProcessCloseSceneCommand()
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::ProcessSaveSceneAsCommand()
 {
-    this->SaveDataWidget = vtkSlicerMRMLSaveDataWidget::New();
-    this->SaveDataWidget->SetParent ( this->MainSlicerWindow);
     this->SaveDataWidget->SetAndObserveMRMLScene(this->GetMRMLScene());
     this->SaveDataWidget->AddObserver ( vtkSlicerMRMLSaveDataWidget::DataSavedEvent,  (vtkCommand *)this->GUICallbackCommand );
-    this->SaveDataWidget->Create();  
+    this->SaveDataWidget->Invoke();  
 
     this->SaveDataWidget->RemoveObservers ( vtkSlicerMRMLSaveDataWidget::DataSavedEvent,  (vtkCommand *)this->GUICallbackCommand );
-    this->SaveDataWidget->SetParent(NULL);
-    this->SaveDataWidget->Delete();
-    this->SaveDataWidget=NULL;
     return;
 }    
 
@@ -450,6 +453,11 @@ void vtkSlicerApplicationGUI::AddGUIObservers ( )
       vtkSlicerSliceControllerWidget::ShrinkEvent, 
       (vtkCommand *)this->GUICallbackCommand);
     }
+  if (this->SaveDataWidget)
+    {
+    this->SaveDataWidget->AddObserver ( vtkSlicerMRMLSaveDataWidget::DataSavedEvent,  (vtkCommand *)this->GUICallbackCommand );
+    }
+
 }
 
 
@@ -499,6 +507,11 @@ void vtkSlicerApplicationGUI::RemoveGUIObservers ( )
       vtkSlicerSliceControllerWidget::ShrinkEvent, 
       (vtkCommand *)this->GUICallbackCommand);
     }
+  if (this->SaveDataWidget)
+    {
+    this->SaveDataWidget->RemoveObservers ( vtkSlicerMRMLSaveDataWidget::DataSavedEvent,  (vtkCommand *)this->GUICallbackCommand );
+    }
+
 }
 
 //---------------------------------------------------------------------------
@@ -613,9 +626,13 @@ void vtkSlicerApplicationGUI::SelectModule ( const char *moduleName )
 void vtkSlicerApplicationGUI::BuildGUI ( )
 {
     int i;
+
+    this->SaveDataWidget->SetParent ( this->MainSlicerWindow);
+    this->SaveDataWidget->SetAndObserveMRMLScene(this->GetMRMLScene());
     
     // Set up the conventional window: 3Dviewer, slice widgets, UI panel for now.
     if ( this->GetApplication() != NULL ) {
+
         vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
         vtkSlicerGUILayout *layout = app->GetMainLayout ( );
         

@@ -67,6 +67,10 @@ public:
   // update list from MRML, return number of nodes need to save
   // TODO: make update event driven so that we don't have to call this
   int UpdateFromMRML();
+
+  // Description:
+  // invoke the widget
+  void Invoke();
   
     //BTX
   enum
