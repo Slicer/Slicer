@@ -392,7 +392,15 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
     vtkDebugMacro( "Regressions coefficients: "
            << fnRegressionCoefficients.c_str() );
     vtkDebugMacro( "Std dev: " << fnStdDev.c_str() );
-
+    
+    // load the std dev file
+    if (modelsLogic)
+      {
+    if (!modelsLogic->AddScalar(fnStdDev.c_str(), modelNode))
+      {
+        vtkErrorMacro("Unable to add the residual errors std dev file " << fnStdDev.c_str() << " to the average surface model");
+      }
+      }
     // The fsgd file to plot.
     string fnFSGD = results->GetFsgdFile();
     vtkDebugMacro( "FSGD plot file: " << fnFSGD.c_str() );
