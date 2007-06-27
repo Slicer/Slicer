@@ -371,17 +371,18 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
           vtkErrorMacro("Unable to add curvature to average model surface: " << curvFileName.c_str());
         }
     else
-      {
+    {
         // grab the curvature array name
         curvArrayName = modelNode->GetActivePointScalarName("scalars");
-    if (strstr(curvArrayName.c_str(), "") == 0)
-      {
-        // hack it together
-        curvArrayName = "surf/" + sHemi + ".curv";
-      }
-        vtkDebugMacro("Got the curvature array name: " << curvArrayName.c_str());
-      }
-      }
+        if (strstr(curvArrayName.c_str(), "") == 0)
+        {
+            // hack it together
+            curvArrayName = "surf/" + sHemi + ".curv";
+            vtkDebugMacro("Failed to get the active point scalars name, so using cuv array name = '" << curvArrayName.c_str() << "'");
+        }
+        vtkDebugMacro("Added the curvature file " << curvFileName.c_str() << ", got the curvature array name: '" << curvArrayName.c_str() << "'");
+    }
+    }
 
     // We should have the same number of questions as sig file. Each
     // sig file has a correpsponding question, and they are in the same
@@ -422,6 +423,7 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
         if (dirptr != std::string::npos)
           {
           sigArrayName = name.substr(++dirptr);
+          vtkDebugMacro("created sig array name = '" << sigArrayName .c_str() << "'");
           }
         else
           {
@@ -433,7 +435,7 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
         sigArrayName = name;
         }
     }
-      vtkDebugMacro("Compositing curv " << curvArrayName.c_str() << " with sig array " << sigArrayName.c_str());
+      vtkDebugMacro("Compositing curv '" << curvArrayName.c_str() << "' with sig array '" << sigArrayName.c_str() << "'");
       modelNode->CompositeScalars(curvArrayName.c_str(), sigArrayName.c_str(), 2, 5, 1, 1, 0);
     }
     }
