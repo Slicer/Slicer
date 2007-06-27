@@ -112,6 +112,14 @@ protected:
   vtkKWMultiColumnListWithScrollbars *MultiColumnList;
   vtkKWLoadSaveButtonWithLabel* SubjectsDirectoryButton;
   vtkKWEntryWithLabel *DesignEntry;
+  vtkKWLabel *MeasureLabel;
+  vtkKWMenuButton *MeasureMenu;
+
+  vtkKWLabel *HemisphereLabel;
+  vtkKWMenuButton *HemisphereMenu;
+
+  vtkKWLabel *SmoothnessLabel;
+  vtkKWMenuButton *SmoothnessMenu;
   
   // Description:
   // Pointer to the module's logic class

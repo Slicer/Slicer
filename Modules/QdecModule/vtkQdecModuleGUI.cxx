@@ -74,7 +74,12 @@ vtkQdecModuleGUI::vtkQdecModuleGUI()
   this->DiscreteFactorsListBox = NULL;
   this->ApplyButton = NULL;
   this->MultiColumnList = NULL;
-  
+  this->MeasureLabel = NULL;
+  this->MeasureMenu = NULL;
+  this->HemisphereLabel = NULL;
+  this->HemisphereMenu = NULL;
+  this->SmoothnessLabel = NULL;
+  this->SmoothnessMenu = NULL;
   this->Logic = NULL;
 }
 
@@ -132,7 +137,49 @@ vtkQdecModuleGUI::~vtkQdecModuleGUI()
      this->MultiColumnList->Delete();
      this->MultiColumnList = NULL;
      }
-  
+
+   if ( this->MeasureLabel )
+    {
+    this->MeasureLabel->SetParent ( NULL );
+    this->MeasureLabel->Delete();
+    this->MeasureLabel = NULL;
+    }
+
+   if ( this->MeasureMenu )
+    {
+    this->MeasureMenu->SetParent ( NULL );
+    this->MeasureMenu->Delete();
+    this->MeasureMenu = NULL;
+    }
+
+    if ( this->HemisphereLabel )
+    {
+    this->HemisphereLabel->SetParent ( NULL );
+    this->HemisphereLabel->Delete();
+    this->HemisphereLabel = NULL;
+    }
+
+   if ( this->HemisphereMenu )
+    {
+    this->HemisphereMenu->SetParent ( NULL );
+    this->HemisphereMenu->Delete();
+    this->HemisphereMenu = NULL;
+    }
+
+    if ( this->SmoothnessLabel )
+    {
+    this->SmoothnessLabel->SetParent ( NULL );
+    this->SmoothnessLabel->Delete();
+    this->SmoothnessLabel = NULL;
+    }
+
+   if ( this->SmoothnessMenu )
+    {
+    this->SmoothnessMenu->SetParent ( NULL );
+    this->SmoothnessMenu->Delete();
+    this->SmoothnessMenu = NULL;
+    }
+    
   if ( this->ApplyButton )
     {
     this->ApplyButton->Delete();
@@ -216,6 +263,9 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
         }
       }
     vtkDebugMacro("Design name = " << this->DesignEntry->GetWidget()->GetValue());
+    vtkDebugMacro("Measure = " << this->MeasureMenu->GetValue());
+    vtkDebugMacro("Hemisphere = " << this->HemisphereMenu->GetValue());
+    vtkDebugMacro("Smoothness = " << this->SmoothnessMenu->GetValue());
     this->DebugOff();
     return;
     }
@@ -503,6 +553,88 @@ void vtkQdecModuleGUI::BuildGUI ( )
               this->ContinuousFactorsListBox->GetWidgetName(),
               designFrame->GetFrame()->GetWidgetName());
 
+  vtkKWFrameWithLabel* measuresFrame = vtkKWFrameWithLabel::New();
+  measuresFrame->SetParent( designFrame->GetFrame() );
+  measuresFrame->Create();
+  measuresFrame->SetLabelText( "Measures" );
+  this->Script( "pack %s -fill x", measuresFrame->GetWidgetName() );
+
+  
+  int nRow = 0;
+  this->MeasureLabel = vtkKWLabel::New();
+  this->MeasureLabel->SetParent(measuresFrame->GetFrame() );
+  this->MeasureLabel->Create();
+  this->MeasureLabel->SetText("Measure: ");
+  this->MeasureLabel->SetJustificationToRight();
+  app->Script( "grid %s -column 0 -row %d -sticky ne -in %s",
+               this->MeasureLabel->GetWidgetName(), nRow,
+               measuresFrame->GetFrame()->GetWidgetName());
+
+  this->MeasureMenu = vtkKWMenuButton::New();
+  this->MeasureMenu->SetParent(measuresFrame->GetFrame() );
+  this->MeasureMenu->Create();
+  this->MeasureMenu->GetMenu()->AddRadioButton("thickness");
+  this->MeasureMenu->GetMenu()->AddRadioButton("sulc");
+  this->MeasureMenu->GetMenu()->AddRadioButton("curv");
+  this->MeasureMenu->GetMenu()->AddRadioButton("jacobian");
+  this->MeasureMenu->GetMenu()->AddRadioButton("area");
+  this->MeasureMenu->SetValue("thickness");
+  app->Script( "grid %s -column 1 -row %d -sticky nw -in %s",
+               this->MeasureMenu->GetWidgetName(), nRow,
+               measuresFrame->GetFrame()->GetWidgetName());
+  
+  nRow++;
+  this->HemisphereLabel = vtkKWLabel::New();
+  this->HemisphereLabel->SetParent(measuresFrame->GetFrame() );
+  this->HemisphereLabel->Create();
+  this->HemisphereLabel->SetText("Hemisphere: ");
+  this->HemisphereLabel->SetJustificationToRight();
+  app->Script( "grid %s -column 0 -row %d -sticky ne -in %s",
+               this->HemisphereLabel->GetWidgetName(), nRow,
+               measuresFrame->GetFrame()->GetWidgetName());
+
+  this->HemisphereMenu = vtkKWMenuButton::New();
+  this->HemisphereMenu->SetParent(measuresFrame->GetFrame() );
+  this->HemisphereMenu->Create();
+  this->HemisphereMenu->GetMenu()->AddRadioButton("lh");
+  this->HemisphereMenu->GetMenu()->AddRadioButton("rh");
+  this->HemisphereMenu->SetValue("lh");
+  app->Script( "grid %s -column 1 -row %d -sticky nw -in %s",
+               this->HemisphereMenu->GetWidgetName(), nRow,
+               measuresFrame->GetFrame()->GetWidgetName());
+  nRow++;
+
+  this->SmoothnessLabel = vtkKWLabel::New();
+  this->SmoothnessLabel->SetParent(measuresFrame->GetFrame());
+  this->SmoothnessLabel->Create();
+  this->SmoothnessLabel->SetText("Smoothness (FWHM, mm): ");
+  this->SmoothnessLabel->SetJustificationToRight();
+  app->Script( "grid %s -column 0 -row %d -sticky ne -in %s",
+               this->SmoothnessLabel->GetWidgetName(), nRow,
+               measuresFrame->GetFrame()->GetWidgetName());
+
+  this->SmoothnessMenu = vtkKWMenuButton::New();
+  this->SmoothnessMenu->SetParent(measuresFrame->GetFrame());
+  this->SmoothnessMenu->Create();
+  this->SmoothnessMenu->GetMenu()->AddRadioButton( "0" );
+  this->SmoothnessMenu->GetMenu()->AddRadioButton( "5" );
+  this->SmoothnessMenu->GetMenu()->AddRadioButton( "10" );
+  this->SmoothnessMenu->GetMenu()->AddRadioButton( "15" );
+  this->SmoothnessMenu->GetMenu()->AddRadioButton( "20" );
+  this->SmoothnessMenu->GetMenu()->AddRadioButton( "25" );
+  this->SmoothnessMenu->SetValue( "10" );
+  this->Script( "grid %s -column 1 -row %d -sticky nw -in %s",
+                this->SmoothnessMenu->GetWidgetName(), nRow,
+                measuresFrame->GetFrame()->GetWidgetName());
+
+  // weight the grid
+  for( int nRowConfigure = 0; nRowConfigure <= nRow; nRowConfigure++ )
+    {
+    this->Script( "grid rowconfigure %s %d -pad 4",
+                  measuresFrame->GetFrame()->GetWidgetName(),
+                  nRowConfigure );
+    }
+  
   this->ApplyButton = vtkKWPushButton::New();
   this->ApplyButton->SetParent( designFrame->GetFrame() );
   this->ApplyButton->Create();
@@ -512,8 +644,10 @@ void vtkQdecModuleGUI::BuildGUI ( )
               this->ApplyButton->GetWidgetName(),
               designFrame->GetFrame()->GetWidgetName());
   
-  subjectsFrame->Delete();
+
+  measuresFrame->Delete();
   designFrame->Delete();
+  subjectsFrame->Delete();
 }
 
 //---------------------------------------------------------------------------
