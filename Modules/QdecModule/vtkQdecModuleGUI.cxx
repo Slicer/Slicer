@@ -337,7 +337,7 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
     // the subjects dir.
     string fnSubjects = this->GetLogic()->QDECProject->GetSubjectsDir();
     string sHemi =  this->GetLogic()->QDECProject->GetHemi();
-    string fnSurface = fnSubjects + "/fsaverage/surf/" + sHemi + ".average";
+    string fnSurface = fnSubjects + "/fsaverage/surf/" + sHemi + ".inflated";
     vtkDebugMacro( "Surface: " << fnSurface.c_str() );
     
     // get the Models Logic and load the average surface file
