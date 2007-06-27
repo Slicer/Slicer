@@ -360,6 +360,24 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
     vtkErrorMacro("Unable to get at Models module to load average surface file.");
       }
 
+    // load in the curvature overlay
+    string curvFileName = fnSubjects + "/fsaverage/surf/" + sHemi + ".curv";
+    vtkDebugMacro( "Surface: " << curvFileName.c_str() );
+    string curvArrayName = "";
+    if (modelsLogic && modelNode)
+      {
+    if (!modelsLogic->AddScalar(curvFileName.c_str(), modelNode))
+        {
+          vtkErrorMacro("Unable to add curvature to average model surface: " << curvFileName.c_str());
+        }
+    else
+      {
+        // grab the curvature array name
+        curvArrayName = modelNode->GetActivePointScalarName("scalars");
+        vtkDebugMacro("Got the curvature array name: " << curvArrayName.c_str());
+      }
+      }
+
     // We should have the same number of questions as sig file. Each
     // sig file has a correpsponding question, and they are in the same
     // order in the vector.
@@ -383,6 +401,13 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
         {
           vtkErrorMacro("Unable to add contrast to average model surface: " << lfnContrastSigs[nContrast].c_str());
         }
+      else
+    {
+      // composite with the curv
+      string sigArrayName = modelNode->GetActivePointScalarName("scalars");
+      vtkDebugMacro("Compositing curv " << curvArrayName.c_str() << " with sig array " << sigArrayName.c_str());
+      modelNode->CompositeScalars(curvArrayName.c_str(), sigArrayName.c_str(), 2, 5, 1, 1, 0);
+    }
     }
     }
     
