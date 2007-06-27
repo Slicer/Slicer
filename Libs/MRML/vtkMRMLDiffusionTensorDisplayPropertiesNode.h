@@ -310,8 +310,21 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
   // Description:
   // Resolution of lines displayed as tensor glyphs
   vtkGetMacro(LineGlyphResolution, int);
-  vtkSetMacro(LineGlyphResolution, int);
+  //vtkSetMacro(LineGlyphResolution, int);
+  void SetLineGlyphResolution( int resolution ) {
 
+    if ( this->LineGlyphResolution != resolution ) 
+      {
+      this->LineGlyphResolution = resolution;
+      if ( this->GlyphGeometry == this->Lines || this->GlyphGeometry == this->Tubes)
+        {
+        // Update the source if the resolution has changed
+        this->UpdateGlyphSource();
+        }
+
+      this->Modified();
+      }
+  }
 
   //--------------------------------------------------------------------------
   // Display Information: Parameters of Tubes glyph geometry
@@ -323,13 +336,40 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
 
   // Description:
   // Set the radius of the tube glyph
-  vtkSetMacro(TubeGlyphRadius, double);
+  //vtkSetMacro(TubeGlyphRadius, double);
+  void SetTubeGlyphRadius( int radius ) {
+
+    if ( this->TubeGlyphRadius != radius ) 
+      {
+      this->TubeGlyphRadius = radius;
+      if ( this->GlyphGeometry == this->Lines || this->GlyphGeometry == this->Tubes)
+        {
+        // Update the source if the radius has changed
+        this->UpdateGlyphSource();
+        }
+
+      this->Modified();
+      }
+  }
 
   // Description:
   // Number of sides of tube glyph (3 gives a triangular tube, etc.)
   vtkGetMacro(TubeGlyphNumberOfSides, int);
-  vtkSetMacro(TubeGlyphNumberOfSides, int);
+  //vtkSetMacro(TubeGlyphNumberOfSides, int);
+  void SetTubeGlyphNumberOfSides( int numberOfSides ) {
 
+    if ( this->TubeGlyphNumberOfSides != numberOfSides ) 
+      {
+      this->TubeGlyphNumberOfSides = numberOfSides;
+      if ( this->GlyphGeometry == this->Lines || this->GlyphGeometry == this->Tubes)
+        {
+        // Update the source if the numberOfSides has changed
+        this->UpdateGlyphSource();
+        }
+
+      this->Modified();
+      }
+  }
   //--------------------------------------------------------------------------
   // Display Information: Parameters of Ellipsoids glyph geometry
   //--------------------------------------------------------------------------
