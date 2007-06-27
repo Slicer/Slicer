@@ -111,6 +111,7 @@ protected:
   vtkKWPushButton* ApplyButton;
   vtkKWMultiColumnListWithScrollbars *MultiColumnList;
   vtkKWLoadSaveButtonWithLabel* SubjectsDirectoryButton;
+  vtkKWEntryWithLabel *DesignEntry;
   
   // Description:
   // Pointer to the module's logic class

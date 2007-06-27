@@ -43,7 +43,6 @@ Version:   $Revision: 1.2 $
 #include "vtkKWLoadSaveButtonWithLabel.h"
 #include "vtkKWLoadSaveButton.h"
 #include "vtkKWLoadSaveDialog.h"
-#include "vtkKWEntryWithLabel.h"
 #include "vtkKWMultiColumnList.h"
 #include "vtkKWMultiColumnListWithScrollbars.h"
 #include "vtkKWLabel.h"
@@ -70,6 +69,7 @@ vtkQdecModuleGUI::vtkQdecModuleGUI()
   this->NAMICLabel = NULL;
   this->SubjectsDirectoryButton = NULL;
   this->LoadTableButton = NULL;
+  this->DesignEntry = NULL;
   this->ContinuousFactorsListBox = NULL;
   this->DiscreteFactorsListBox = NULL;
   this->ApplyButton = NULL;
@@ -104,7 +104,14 @@ vtkQdecModuleGUI::~vtkQdecModuleGUI()
     this->SubjectsDirectoryButton->Delete();
     this->SubjectsDirectoryButton = NULL;
     }  
-   
+
+  if ( this->DesignEntry )
+    {
+    this->DesignEntry->SetParent(NULL);
+    this->DesignEntry->Delete();
+    this->DesignEntry = NULL;
+    }
+  
   if ( this->DiscreteFactorsListBox )
     {
     this->DiscreteFactorsListBox->SetParent ( NULL );
@@ -208,7 +215,8 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
         vtkDebugMacro("\t" <<  this->DiscreteFactorsListBox->GetWidget()->GetWidget()->GetItem(i));
         }
       }
-     this->DebugOff();
+    vtkDebugMacro("Design name = " << this->DesignEntry->GetWidget()->GetValue());
+    this->DebugOff();
     return;
     }
 
@@ -454,37 +462,58 @@ void vtkQdecModuleGUI::BuildGUI ( )
   app->Script ( "pack %s -fill both -expand true",
                 this->MultiColumnList->GetWidgetName());
   this->MultiColumnList->GetWidget()->SetCellUpdatedCommand(this, "UpdateElement");
+
+  // ---
+  // Design Frame
+  vtkSlicerModuleCollapsibleFrame *designFrame = vtkSlicerModuleCollapsibleFrame::New ( );
+  designFrame->SetParent ( page );
+  designFrame->Create ( );
+  designFrame->SetLabelText ("Design");
+  designFrame->ExpandFrame ( );
+  app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
+                designFrame->GetWidgetName(),
+                this->UIPanel->GetPageWidget("QdecModule")->GetWidgetName());
+
+  this->DesignEntry = vtkKWEntryWithLabel::New();
+  this->DesignEntry->SetParent( designFrame->GetFrame());
+  this->DesignEntry->SetLabelText ("Design Name:");
+  this->DesignEntry->Create();
+  this->DesignEntry->GetWidget()->SetValue("Untitled");
+  app->Script("pack %s -side top -anchor nw -padx 2 -pady 4 -in %s", 
+              this->DesignEntry->GetWidgetName(),
+              designFrame->GetFrame()->GetWidgetName());
   
   this->DiscreteFactorsListBox = vtkKWListBoxWithScrollbarsWithLabel::New();
-  this->DiscreteFactorsListBox->SetParent( subjectsFrame->GetFrame() );
+  this->DiscreteFactorsListBox->SetParent( designFrame->GetFrame() );
   this->DiscreteFactorsListBox->SetLabelText("Discrete Factors (choose up to two):" );
   this->DiscreteFactorsListBox->Create();
   this->DiscreteFactorsListBox->GetWidget()->GetWidget()->SetSelectionModeToMultiple();
   this->DiscreteFactorsListBox->GetWidget()->GetWidget()->ExportSelectionOff();
   app->Script("pack %s -side top -anchor nw -padx 2 -pady 4 -in %s", 
               this->DiscreteFactorsListBox->GetWidgetName(),
-              subjectsFrame->GetFrame()->GetWidgetName());
+              designFrame->GetFrame()->GetWidgetName());
   
   this->ContinuousFactorsListBox = vtkKWListBoxWithScrollbarsWithLabel::New();
-  this->ContinuousFactorsListBox->SetParent( subjectsFrame->GetFrame() );
+  this->ContinuousFactorsListBox->SetParent( designFrame->GetFrame() );
   this->ContinuousFactorsListBox->SetLabelText("Continuous Factors (choose two):");
   this->ContinuousFactorsListBox->Create();
   this->ContinuousFactorsListBox->GetWidget()->GetWidget()->SetSelectionModeToMultiple();
   this->ContinuousFactorsListBox->GetWidget()->GetWidget()->ExportSelectionOff();
   app->Script("pack %s -side top -anchor nw -padx 2 -pady 4 -in %s", 
               this->ContinuousFactorsListBox->GetWidgetName(),
-              subjectsFrame->GetFrame()->GetWidgetName());
+              designFrame->GetFrame()->GetWidgetName());
 
   this->ApplyButton = vtkKWPushButton::New();
-  this->ApplyButton->SetParent( subjectsFrame->GetFrame() );
+  this->ApplyButton->SetParent( designFrame->GetFrame() );
   this->ApplyButton->Create();
   this->ApplyButton->SetText("Apply");
   this->ApplyButton->SetWidth ( 8 );
   app->Script("pack %s -side top -anchor e -padx 20 -pady 10 -in %s", 
               this->ApplyButton->GetWidgetName(),
-              subjectsFrame->GetFrame()->GetWidgetName());
+              designFrame->GetFrame()->GetWidgetName());
   
   subjectsFrame->Delete();
+  designFrame->Delete();
 }
 
 //---------------------------------------------------------------------------
