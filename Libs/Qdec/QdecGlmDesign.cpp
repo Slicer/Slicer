@@ -51,28 +51,8 @@ QdecGlmDesign::QdecGlmDesign ( QdecDataTable* iDataTable )
   this->msMeasure = "thickness";
   this->msHemi = "lh";
   this->mSmoothness = 10;
-  if (NULL == getenv("SUBJECTS_DIR"))
-    {
-      this->mfnSubjectsDir = "";
-      this->mfnWorkingDir = "";
-    }
-  else
-    {
-      this->mfnSubjectsDir = getenv("SUBJECTS_DIR");
-      this->mfnWorkingDir = getenv("SUBJECTS_DIR");
-#ifndef _WIN32
-      int err = mkdir( this->mfnWorkingDir.c_str(), 0777);
-#else
-      int err = mkdir (this->mfnWorkingDir.c_str());
-#endif
-      if( err != 0 && errno != EEXIST )
-        {
-        fprintf( stderr,
-                 "ERROR: QdecGlmDesign::Constructor: "
-                 "could not create directory %s\n",
-                 this->mfnWorkingDir.c_str());
-        }
-    }
+  this->SetSubjectsDir(getenv("SUBJECTS_DIR"));
+  
   this->msAverageSubject = "fsaverage";
   this->mfnFsgdfFile = "qdec.fsgd";
   this->mfnYdataFile = "y.mgh";
@@ -348,7 +328,29 @@ string QdecGlmDesign::GetSubjectsDir ( )
  */
 void QdecGlmDesign::SetSubjectsDir ( const char* ifnSubjectsDir )
 {
-  this->mfnSubjectsDir = ifnSubjectsDir; 
+  //  this->mfnSubjectsDir = ifnSubjectsDir; 
+  if (NULL == ifnSubjectsDir)
+    {
+      this->mfnSubjectsDir = "";
+      this->mfnWorkingDir = "";
+    }
+  else
+    {
+      this->mfnSubjectsDir = ifnSubjectsDir;
+      this->mfnWorkingDir = ifnSubjectsDir;
+#ifndef _WIN32
+      int err = mkdir( this->mfnWorkingDir.c_str(), 0777);
+#else
+      int err = mkdir (this->mfnWorkingDir.c_str());
+#endif
+      if( err != 0 && errno != EEXIST )
+        {
+        fprintf( stderr,
+                 "ERROR: QdecGlmDesign::Constructor: "
+                 "could not create directory %s\n",
+                 this->mfnWorkingDir.c_str());
+        }
+    }
 }
 
 
