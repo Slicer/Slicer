@@ -15,12 +15,15 @@ SUBDIRS(
   QdecModule
 )
 
-IF(USE_TEEM)
+
+# enable tractography if teem is present
+IF( TEEM_FOUND )
   SUBDIRS(
     Tractography
-    )
-ENDIF(USE_TEEM)
-
+   )
+  # set up teem variable for compiling if needed
+  ADD_DEFINITIONS(-DUSE_TEEM)
+ENDIF( TEEM_FOUND )
 
 IF (Slicer3_BUILD_TESTING)
     SUBDIRS( Testing )
