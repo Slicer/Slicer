@@ -53,6 +53,7 @@ Version:   $Revision: 1.2 $
 // for loading the outputs of the GLM processing
 #include "vtkSlicerModelsGUI.h"
 #include "vtkSlicerModelsLogic.h"
+#include "vtkGDFReader.h"
 
 //------------------------------------------------------------------------------
 vtkQdecModuleGUI* vtkQdecModuleGUI::New()
@@ -461,6 +462,11 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
     // The fsgd file to plot.
     string fnFSGD = results->GetFsgdFile();
     vtkDebugMacro( "FSGD plot file: " << fnFSGD.c_str() );
+
+    // read the file
+    vtkGDFReader *gdfReader = vtkGDFReader::New();
+    gdfReader->ReadHeader(fnFSGD.c_str(), 1);
+    vtkDebugMacro("FSGD file read in, y.mgh data file name = " << gdfReader->GetDataFileName());
     this->DebugOff();
     return;
     }
