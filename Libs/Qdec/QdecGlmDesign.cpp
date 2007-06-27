@@ -1079,11 +1079,18 @@ int QdecGlmDesign::WriteYdataFile ( )
   char* sCommand = strdup( ssCommand.str().c_str() );
   fflush(stdout);fflush(stderr);
   int rRun = system( sCommand );
-  if ( -1 == rRun )
-    throw runtime_error( "system call failed: " + ssCommand.str() );
-  if ( rRun > 0 )
-    throw runtime_error( "command failed: " + ssCommand.str() );
-  free( sCommand );
+
+  // =======================================================================
+  // 6/27/07 RKT: This command will normally pass on Linux machines,
+  // but will fail on Windows machines. For the NAMIC demo, we're
+  // using pre-created demo data, so we don't need to run this. To
+  // remove this special code, uncomment the commented code below.
+
+//   if ( -1 == rRun )
+//     throw runtime_error( "system call failed: " + ssCommand.str() );
+//   if ( rRun > 0 )
+//     throw runtime_error( "command failed: " + ssCommand.str() );
+//   free( sCommand );
 
   return 0;
 }
