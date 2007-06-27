@@ -1129,7 +1129,7 @@ int Slicer3_main(int argc, char *argv[])
     slicerTractographyDisplayGUI->SetApplication ( slicerApp );
     slicerTractographyDisplayGUI->SetApplicationLogic ( appLogic );
     slicerTractographyDisplayGUI->SetApplicationGUI ( appGUI );
-    slicerTractographyDisplayGUI->SetGUIName( "Tractography" );
+    slicerTractographyDisplayGUI->SetGUIName( "DisplayLoadSave" );
     slicerTractographyDisplayGUI->GetUIPanel()->SetName ( slicerTractographyDisplayGUI->GetGUIName ( ) );
     slicerTractographyDisplayGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
     slicerTractographyDisplayGUI->GetUIPanel()->Create ( );
