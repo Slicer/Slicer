@@ -133,6 +133,7 @@ class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLTransformableNode
   // String ID of the storage MRML node
   vtkSetReferenceStringMacro(StorageNodeID);
   vtkGetStringMacro(StorageNodeID);
+  void SetReferenceStorageNodeID(char *iD) {this->SetStorageNodeID(iD);}
 
   // Description:
   // String ID of the display MRML node
