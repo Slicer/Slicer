@@ -129,16 +129,19 @@ public:
 
     // Description:
     // log y
-    vtkGetMacro(LogY, double);
-    vtkSetMacro(LogY, double);
+    vtkGetMacro(LogY, int);
+    vtkSetMacro(LogY, int);
 
     // Description:
-    // residual
+    // an output of the mri_glmfit analysis and is used when doing 
+    // automatic thresholding of the data (something like FDR).
     vtkGetMacro(ResidualFWHM, double);
     vtkSetMacro(ResidualFWHM, double);
 
     // Description:
-    // 
+    // a flag for demeaning the Variable (eg, to remove the mean
+    // from age) prior to processing. This is something that should probably
+    // not be used.
     vtkGetMacro(DeMeanFlag, int);
     vtkSetMacro(DeMeanFlag, int);
 
@@ -206,7 +209,7 @@ protected:
     int SmoothSteps;
     char * SUBJECTS_DIR;
     int SynthSeed;
-    double LogY;
+    int LogY;
     double ResidualFWHM;
     int DeMeanFlag;
 
