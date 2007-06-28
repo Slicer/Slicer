@@ -10,11 +10,13 @@
 #include "vtkKWPushButton.h"
 #include "vtkKWFrame.h"
 #include "vtkKWTopLevel.h"
+#include "vtkKWEntry.h"
 
 #include "vtkSlicerModuleCollapsibleFrame.h"
 #include "vtkSlicerWidget.h"
 #include "vtkSlicerNodeSelectorWidget.h"
 #include "vtkSlicerSlicesControlIcons.h"
+#include "vtkSlicerToolbarIcons.h"
 #include "vtkSlicerVisibilityIcons.h"
 
 #include "vtkMRMLSliceNode.h"
@@ -40,13 +42,19 @@ public:
   vtkGetObjectMacro ( VisibilityToggle, vtkKWPushButton );
   vtkGetObjectMacro ( LinkButton, vtkKWPushButton );
   vtkGetObjectMacro ( VisibilityIcons, vtkSlicerVisibilityIcons );
+  vtkGetObjectMacro ( ViewConfigureIcons, vtkSlicerToolbarIcons );
   vtkGetObjectMacro ( SliceControlIcons, vtkSlicerSlicesControlIcons);
   vtkGetObjectMacro ( ScaleFrame, vtkKWFrame );
   vtkGetObjectMacro ( LabelOpacityButton, vtkKWPushButton );
   vtkGetObjectMacro ( LabelOpacityScale, vtkKWScaleWithEntry );
   vtkGetObjectMacro ( LabelOpacityTopLevel, vtkKWTopLevel );
+  vtkGetObjectMacro ( LightboxTopLevel, vtkKWTopLevel );
   vtkGetObjectMacro ( FitToWindowButton, vtkKWPushButton );
   vtkGetObjectMacro ( VolumeDisplayMenuButton, vtkKWMenuButton );
+  vtkGetObjectMacro ( LightboxButton, vtkKWMenuButton );
+  vtkGetObjectMacro ( LightboxWidthEntry, vtkKWEntry );
+  vtkGetObjectMacro ( LightboxHeightEntry, vtkKWEntry );
+  vtkGetObjectMacro ( LightboxApplyButton, vtkKWPushButton);
 
   void RemoveWidgetObservers ( );
   void AddWidgetObservers ( );
@@ -96,7 +104,9 @@ public:
   virtual int AllSlicesLinked ( );
   virtual void HideLabelOpacityScaleAndEntry ( );
   virtual void PopUpLabelOpacityScaleAndEntry ( );
-
+  virtual void HideLightboxCustomLayoutFrame ( );
+  virtual void PopUpLightboxCustomLayoutFrame ( );
+  
   // Description:
   // Shrink/Expand the widget
   virtual void Shrink();
@@ -143,13 +153,18 @@ protected:
   vtkKWPushButton *LabelOpacityButton;
   vtkKWScaleWithEntry *LabelOpacityScale;
   vtkKWTopLevel *LabelOpacityTopLevel;
-
+  vtkKWTopLevel *LightboxTopLevel;
   vtkSlicerVisibilityIcons *VisibilityIcons;
+  vtkSlicerToolbarIcons *ViewConfigureIcons;
   vtkSlicerSlicesControlIcons *SliceControlIcons;
   vtkKWFrame *ScaleFrame;
   vtkKWPushButton *ColorCodeButton;
   vtkKWPushButton *FitToWindowButton;
   vtkKWMenuButton *VolumeDisplayMenuButton;
+  vtkKWMenuButton *LightboxButton;
+  vtkKWEntry *LightboxWidthEntry;
+  vtkKWEntry *LightboxHeightEntry;
+  vtkKWPushButton *LightboxApplyButton;
 
   //
   // Nodes

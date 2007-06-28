@@ -41,8 +41,10 @@ vtkSlicerSliceControllerWidget::vtkSlicerSliceControllerWidget ( ) {
   this->LabelOpacityButton = NULL;
   this->LabelOpacityScale = NULL;
   this->LabelOpacityTopLevel = NULL;
+  this->LightboxTopLevel = NULL;
   this->LinkButton = NULL;
   this->VisibilityIcons = NULL;
+  this->ViewConfigureIcons = NULL;
   this->SliceNode = NULL;
   this->SliceCompositeNode = NULL;
   this->SliceLogic = NULL;
@@ -52,6 +54,10 @@ vtkSlicerSliceControllerWidget::vtkSlicerSliceControllerWidget ( ) {
   this->ContainerFrame = NULL;
   this->FitToWindowButton = NULL;
   this->VolumeDisplayMenuButton = NULL;
+  this->LightboxButton = NULL;
+  this->LightboxWidthEntry = NULL;
+  this->LightboxHeightEntry = NULL;
+  this->LightboxApplyButton = NULL;
 }
 
 
@@ -124,6 +130,30 @@ vtkSlicerSliceControllerWidget::~vtkSlicerSliceControllerWidget ( ){
     this->LabelOpacityTopLevel->Delete  ( );
     this->LabelOpacityTopLevel = NULL;
     }
+  if ( this->LightboxTopLevel )
+    {
+    this->LightboxTopLevel->SetParent(NULL);
+    this->LightboxTopLevel->Delete  ( );
+    this->LightboxTopLevel = NULL;
+    }
+  if ( this->LightboxButton )
+    {
+    this->LightboxButton->SetParent ( NULL );
+    this->LightboxButton->Delete();
+    this->LightboxButton = NULL;
+    }
+  if ( this->LightboxWidthEntry )
+    {
+    this->LightboxWidthEntry->SetParent ( NULL );
+    this->LightboxWidthEntry->Delete();
+    this->LightboxWidthEntry = NULL;    
+    }
+  if ( this->LightboxHeightEntry )
+    {
+    this->LightboxHeightEntry->SetParent ( NULL );
+    this->LightboxHeightEntry->Delete();
+    this->LightboxHeightEntry = NULL;    
+    }
   if ( this->LinkButton )
     {
     this->LinkButton->SetParent(NULL);
@@ -134,6 +164,11 @@ vtkSlicerSliceControllerWidget::~vtkSlicerSliceControllerWidget ( ){
     {
     this->VisibilityIcons->Delete  ( );
     this->VisibilityIcons = NULL;
+    }
+  if ( this->ViewConfigureIcons )
+    {
+    this->ViewConfigureIcons->Delete ( );
+    this->ViewConfigureIcons = NULL;
     }
   if ( this->SliceControlIcons )
     {
@@ -158,7 +193,18 @@ vtkSlicerSliceControllerWidget::~vtkSlicerSliceControllerWidget ( ){
     this->ContainerFrame->Delete ( );
     this->ContainerFrame = NULL;
     }
-
+  if ( this->LightboxButton )
+    {
+    this->LightboxButton->SetParent ( NULL );
+    this->LightboxButton->Delete();
+    this->LightboxButton = NULL;
+    }
+  if ( this->LightboxApplyButton )
+    {
+    this->LightboxApplyButton->SetParent ( NULL );
+    this->LightboxApplyButton->Delete();
+    this->LightboxApplyButton = NULL;
+    }
   this->SetSliceNode ( NULL );
   this->SetSliceCompositeNode ( NULL );
   this->SetSliceLogic ( NULL );
@@ -191,7 +237,8 @@ void vtkSlicerSliceControllerWidget::AddWidgetObservers ( )
     this->LinkButton->AddObserver (vtkKWPushButton::InvokedEvent, this->GUICallbackCommand );
     this->FitToWindowButton->AddObserver (vtkKWPushButton::InvokedEvent, this->GUICallbackCommand );
     this->VolumeDisplayMenuButton->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand );    
-
+    this->LightboxButton->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand );
+    this->LightboxApplyButton->AddObserver (vtkKWPushButton::InvokedEvent, this->GUICallbackCommand );
 }
   
 
@@ -218,7 +265,9 @@ void vtkSlicerSliceControllerWidget::RemoveWidgetObservers ( ) {
     this->LabelOpacityButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, this->GUICallbackCommand );
     this->LinkButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, this->GUICallbackCommand );        
     this->FitToWindowButton->RemoveObservers (vtkKWPushButton::InvokedEvent, this->GUICallbackCommand );
-    this->VolumeDisplayMenuButton->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand );    
+    this->VolumeDisplayMenuButton->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand );
+    this->LightboxButton->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand );
+    this->LightboxApplyButton->RemoveObservers (vtkKWPushButton::InvokedEvent, this->GUICallbackCommand );
 }
 
 
@@ -383,15 +432,86 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
 //    this->VolumeDisplayMenuButton->GetMenu()->SetItemStateToDisabled ("Background volume");
 //    this->VolumeDisplayMenuButton->GetMenu()->SetItemStateToDisabled ("Label map");
     this->VolumeDisplayMenuButton->GetMenu()->AddSeparator();
-    this->VolumeDisplayMenuButton->GetMenu()->AddCommand ( "close" );    
+    this->VolumeDisplayMenuButton->GetMenu()->AddCommand ( "close" );
 
+    //
+    // Create a lightbox menubutton that allows viewer to be reconfigured
+    //
+    this->ViewConfigureIcons = vtkSlicerToolbarIcons::New ( );
+    this->LightboxButton = vtkKWMenuButton::New();
+    this->LightboxButton->SetParent ( this->ScaleFrame );
+    this->LightboxButton->Create();
+    this->LightboxButton->SetBorderWidth ( 0 );
+    this->LightboxButton->IndicatorVisibilityOff ( );
+    this->LightboxButton->SetImageToIcon ( this->ViewConfigureIcons->GetLightBoxViewIcon ( ) );
+    this->LightboxButton->SetBalloonHelpString ( "Configure the Slice viewer layout");
+    this->LightboxButton->GetMenu()->AddRadioButton ("1x1 view");
+    this->LightboxButton->GetMenu()->AddRadioButton ("2x2 view");
+    this->LightboxButton->GetMenu()->AddRadioButton ("3x3 view");
+    this->LightboxButton->GetMenu()->AddRadioButton ( "6x6 view");    
+    this->LightboxButton->GetMenu()->AddRadioButton ( "customized view");    
+    this->LightboxButton->GetMenu()->AddSeparator ( );
+    this->LightboxButton->GetMenu()->AddCommand ("close");
+
+    this->LightboxButton->GetMenu()->SetItemStateToDisabled ( "2x2 view");
+    this->LightboxButton->GetMenu()->SetItemStateToDisabled ( "3x3 view");
+    this->LightboxButton->GetMenu()->SetItemStateToDisabled ( "6x6 view");
+            
+    //--- Pop-up frame for custom NXM lightbox configuration
+    vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast (this->GetApplication());
+    this->LightboxTopLevel = vtkKWTopLevel::New ( );
+    this->LightboxTopLevel->SetApplication ( app );
+    this->LightboxTopLevel->SetMasterWindow ( this->LightboxButton );
+    this->LightboxTopLevel->Create ( );
+    this->LightboxTopLevel->HideDecorationOn ( );
+    this->LightboxTopLevel->Withdraw ( );
+    this->LightboxTopLevel->SetBorderWidth ( 2 );
+    this->LightboxTopLevel->SetReliefToGroove ( );
+
+    //--- create temporary pop-up frame to display when custom configuration is selected
+    vtkKWFrame *popUpFrame1 = vtkKWFrame::New ( );
+    popUpFrame1->SetParent ( this->LightboxTopLevel );
+    popUpFrame1->Create ( );
+    popUpFrame1->SetBinding ( "<Leave>", this, "HideLightboxCustomLayoutFrame" );
+    this->Script ( "pack %s -side left -anchor w -padx 2 -pady 2 -fill x -fill y -expand n", popUpFrame1->GetWidgetName ( ) );   
+    this->LightboxWidthEntry = vtkKWEntry::New ( );
+    this->LightboxWidthEntry->SetParent ( popUpFrame1 );
+    this->LightboxWidthEntry->Create ( );
+    this->LightboxWidthEntry->SetValueAsInt (1);
+    this->LightboxWidthEntry->SetWidth ( 3 );
+    this->LightboxHeightEntry = vtkKWEntry::New ( );
+    this->LightboxHeightEntry->SetParent ( popUpFrame1 );
+    this->LightboxHeightEntry->Create ( );
+    this->LightboxHeightEntry->SetWidth ( 3 );
+    this->LightboxHeightEntry->SetValueAsInt (1);
+    vtkKWLabel *widthLabel = vtkKWLabel::New();
+    widthLabel->SetParent ( popUpFrame1 );
+    widthLabel->Create ( );
+    widthLabel->SetText ( "horizontal:" );
+    vtkKWLabel *heightLabel = vtkKWLabel::New();
+    heightLabel->SetParent ( popUpFrame1 );
+    heightLabel->Create ( );
+    heightLabel->SetText ( "vertical:" );
+    this->LightboxApplyButton = vtkKWPushButton::New ( );
+    this->LightboxApplyButton->SetParent ( popUpFrame1 );
+    this->LightboxApplyButton->Create ( );
+    this->LightboxApplyButton->SetText ("Apply");    
+    this->Script ( "grid %s -row 0 -column 0 -padx 2 -pady 8", widthLabel->GetWidgetName());
+    this->Script ( "grid %s -row 0 -column 1 -padx 6 -pady 8", this->LightboxWidthEntry->GetWidgetName() );
+    this->Script ( "grid %s -row 1 -column 0 -padx 2 -pady 8", heightLabel->GetWidgetName());
+    this->Script ( "grid %s -row 1 -column 1 -padx 6 -pady 8", this->LightboxHeightEntry->GetWidgetName() );
+    this->Script ( "grid %s -row 2 -column 0 -columnspan 2 -pady 8", this->LightboxApplyButton->GetWidgetName() );
+    // delete temporary stuff
+    widthLabel->Delete();
+    heightLabel->Delete();
+    popUpFrame1->Delete();
+    
     //--- Popup Scale with Entry (displayed when user clicks LabelOpacityButton
     //--- LabelOpacityButton, LabelOpacityScale and its entry will be observed
     //--- and their events handled in ProcessGUIEvents;
     //--- the pop-up and hide behavior of the latter two will be managed locally
     //--- in the GUI.
     //--- TODO: make a SlicerWidget that handles this behavior. Leave event?
-    vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast (this->GetApplication());
     this->LabelOpacityTopLevel = vtkKWTopLevel::New ( );
     this->LabelOpacityTopLevel->SetApplication ( app );
     this->LabelOpacityTopLevel->SetMasterWindow ( this->LabelOpacityButton );
@@ -401,14 +521,14 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     this->LabelOpacityTopLevel->SetBorderWidth ( 2 );
     this->LabelOpacityTopLevel->SetReliefToGroove ( );
     //--- create temporary frame
-    vtkKWFrame *PopUpFrame = vtkKWFrame::New ( );
-    PopUpFrame->SetParent ( this->LabelOpacityTopLevel );
-    PopUpFrame->Create ( );
-    PopUpFrame->SetBinding ( "<Leave>", this, "HideLabelOpacityScaleAndEntry" );
-    this->Script ( "pack %s -side left -anchor w -padx 2 -pady 2 -fill x -fill y -expand n", PopUpFrame->GetWidgetName ( ) );   
+    vtkKWFrame *popUpFrame2 = vtkKWFrame::New ( );
+    popUpFrame2->SetParent ( this->LabelOpacityTopLevel );
+    popUpFrame2->Create ( );
+    popUpFrame2->SetBinding ( "<Leave>", this, "HideLabelOpacityScaleAndEntry" );
+    this->Script ( "pack %s -side left -anchor w -padx 2 -pady 2 -fill x -fill y -expand n", popUpFrame2->GetWidgetName ( ) );   
     // Scale and entry packed in the pop-up toplevel's frame
     this->LabelOpacityScale = vtkKWScaleWithEntry::New ( );
-    this->LabelOpacityScale->SetParent ( PopUpFrame );
+    this->LabelOpacityScale->SetParent ( popUpFrame2 );
     this->LabelOpacityScale->Create ( );
     this->LabelOpacityScale->SetRange ( 0.0, 1.0 );
     this->LabelOpacityScale->SetResolution ( 0.01 );
@@ -423,7 +543,7 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     this->LabelOpacityButton->SetImageToIcon ( this->SliceControlIcons->GetLabelOpacityIcon() );
     this->LabelOpacityButton->SetBalloonHelpString ( "Popup scale to adjust opacity of Label Layer." );
     //--- delete temporary frame
-    PopUpFrame->Delete ( );
+    popUpFrame2->Delete ( );
 
     //
     // Create a scale to control the slice number displayed
@@ -466,6 +586,8 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
                   this->LabelOpacityButton->GetWidgetName ( ) );
     this->Script ("pack %s -side left -expand n -padx 1", 
                   this->VolumeDisplayMenuButton->GetWidgetName ( ) );    
+    this->Script ("pack %s -side left -expand n -padx 1", 
+                  this->LightboxButton->GetWidgetName ( ) );    
     this->Script("pack %s -side left -fill x -expand y", 
                  this->OffsetScale->GetWidgetName());
 
@@ -781,7 +903,8 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
   int link, i, nnodes;
   vtkMRMLSliceCompositeNode *cnode;
   vtkMRMLSliceNode *snode;
-  
+  int numHPanes, numVPanes;
+    
   //
   // --- Find out whether SliceViewers are linked or unlinked
   // --- so we know how to handle control.
@@ -882,13 +1005,13 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
   //
   // Was event invoked by other widgets? (button, scale, entry, menu)?
   //
-  vtkKWPushButton *toggle = vtkKWPushButton::SafeDownCast ( caller );
+  vtkKWPushButton *button = vtkKWPushButton::SafeDownCast ( caller );
   vtkKWScale *scale = vtkKWScale::SafeDownCast (caller);
   vtkKWEntry *entry = vtkKWEntry::SafeDownCast(caller);
   vtkKWMenu *menu = vtkKWMenu::SafeDownCast(caller);
-  
+
   // Toggle the SliceNode's visibility.
-  if ( toggle == this->GetVisibilityToggle() && event == vtkKWPushButton::InvokedEvent )
+  if ( button == this->GetVisibilityToggle() && event == vtkKWPushButton::InvokedEvent )
     {
     //--- if slice viewers are linked, modify all Controller's SliceNodes
     int vis = this->SliceNode->GetSliceVisible();
@@ -913,16 +1036,16 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
   //
   // Toggle the Linked control or pop up opacity scale.
   //
-  if ( toggle == this->GetLinkButton() && event == vtkKWPushButton::InvokedEvent )
+  if ( button == this->GetLinkButton() && event == vtkKWPushButton::InvokedEvent )
     {
     this->MRMLScene->SaveStateForUndo ( this->SliceNode );
     this->ToggleSlicesLink ( );
     }
-  else if ( toggle == this->LabelOpacityButton && event == vtkKWPushButton::InvokedEvent )
+  else if ( button == this->LabelOpacityButton && event == vtkKWPushButton::InvokedEvent )
     {
     this->PopUpLabelOpacityScaleAndEntry();
     }
-  else if ( toggle == this->FitToWindowButton && event == vtkKWPushButton::InvokedEvent )
+  else if ( button == this->FitToWindowButton && event == vtkKWPushButton::InvokedEvent )
     {
      this->FitSliceToBackground ( link );
     }
@@ -965,6 +1088,80 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
         }
       }
     }
+  else if ( menu == this->LightboxButton->GetMenu() &&
+            event == vtkKWMenu::MenuItemInvokedEvent && app )
+    {
+
+
+    //
+    // Lightbox view functionality developing here.
+    //
+    if ( !strcmp ( this->LightboxButton->GetValue(), "1x1 view") )
+      {
+      if ( link && sgui )
+        {
+        // apply this reformat to all slice MRML
+        }
+      else
+        {
+        // apply this reformat to only this slice MRML
+        }
+      }
+    else if ( !strcmp ( this->LightboxButton->GetValue(), "2x2 view") )
+      {
+      if ( link && sgui )
+        {
+        // apply this reformat to all slice MRMLs
+        }
+      else
+        {
+        // apply this reformat to only this slice MRML
+        }
+      }
+    else if  ( !strcmp ( this->LightboxButton->GetValue(), "3x3 view" ) )
+      {
+      if ( link && sgui )
+        {
+        // apply this reformat to all slice MRMLs
+        }
+      else
+        {
+        // apply this reformat to only this slice MRML
+        }
+      }
+    else if ( !strcmp ( this->LightboxButton->GetValue (), "6x6 view") )
+      {
+      if ( link && sgui )
+        {
+        // apply this reformat to all slice MRMLs
+        }
+      else
+        {
+        // apply this reformat to only this slice MRML
+        }
+      }
+    else if ( !strcmp ( this->LightboxButton->GetValue (), "customized view") )
+      {
+      // pop up a toplevel to specify NXM view
+      PopUpLightboxCustomLayoutFrame();
+      }
+    }
+  if ( button == this->LightboxApplyButton &&
+            event == vtkKWPushButton::InvokedEvent )
+    {
+    numHPanes = this->LightboxWidthEntry->GetValueAsInt();
+    numVPanes = this->LightboxHeightEntry->GetValueAsInt();
+    if ( link && sgui )
+      {
+      // apply this reformat to all slice MRMLs
+      }
+    else
+      {
+      // apply this reformat to only this slice MRML
+      }
+    }
+
+
   
   //
   // Scales starting to move? save state for undo.
@@ -1029,6 +1226,45 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
     }
 
 }
+
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerSliceControllerWidget::HideLightboxCustomLayoutFrame ( )
+{
+  if ( !this->LightboxTopLevel )
+    {
+    return;
+    }
+  this->LightboxTopLevel->Withdraw();
+
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerSliceControllerWidget::PopUpLightboxCustomLayoutFrame()
+{
+  if ( !this->LightboxButton || !this->LightboxButton->IsCreated())
+    {
+    return;
+    }
+
+  // Get the position of the mouse, the position and size of the push button,
+  // the size of the scale.
+
+  int x, y, px, py, ph;
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast ( this->GetApplication());
+  
+  vtkKWTkUtilities::GetMousePointerCoordinates(this->LightboxButton, &x, &y);
+  vtkKWTkUtilities::GetWidgetCoordinates(this->LabelOpacityButton, &px, &py);
+  vtkKWTkUtilities::GetWidgetSize(this->LightboxButton, NULL, &ph);
+ 
+  this->LightboxTopLevel->SetPosition(px-ph, py+ph);
+  app->ProcessPendingEvents();
+  this->LightboxTopLevel->DeIconify();
+  this->LightboxTopLevel->Raise();
+
+}
+
 
 //---------------------------------------------------------------------------
 void vtkSlicerSliceControllerWidget::HideLabelOpacityScaleAndEntry ( )
@@ -1213,6 +1449,15 @@ void vtkSlicerSliceControllerWidget::ProcessMRMLEvents ( vtkObject *caller, unsi
     }
 
 
+  //
+  //  Update the values of the LightboxWidthEntry and LightboxHeightEntry
+  // to match the state of the viewer....
+  // int wid = this->GetLightboxWidthEntry->GetValueAsInt();
+  // int hit = this->GetLightboxHeightEntry->GetValueAsInt ();
+  // ....compare with node value.... if different, then set.
+  // this->GetLightboxWidthEntry->SetValueAsInt();
+  // this->GetLightboxHeightEntry->SetValueAsInt();
+  
   //
   // Update the VisibilityButton in the SliceController to match the logic state
   //
