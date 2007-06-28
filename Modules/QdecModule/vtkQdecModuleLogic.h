@@ -16,7 +16,7 @@
 
 #include "vtkSlicerModuleLogic.h"
 #include "vtkMRMLScene.h"
-
+#include "vtkSlicerModelsLogic.h"
 
 #include "vtkQdecModule.h"
 
@@ -41,7 +41,28 @@ class VTK_QDECMODULE_EXPORT vtkQdecModuleLogic : public vtkSlicerModuleLogic
   // Load in the data table, uses QDECProject method
   int LoadDataTable(const char* fileName);
 
-  
+  // Description:
+  // set the subjects directory in the qdec project, using None if null or empty string passed
+  void SetSubjectsDirectory(const char *fileName);
+
+  // Description:
+  // Set up the GLM design on the Qdec project
+  // Returns 0 on success
+  int CreateGlmDesign(const char *name, const char *discreteFactor1, const char *discreteFactor2, const char *continuousFactor1, const char *continuousFactor2, const char* measure, const char* hemisphere, int smoothness);
+
+  // Description:
+  // Run the GLM fit, pass through it's return, 0 is success
+  int RunGlmFit();
+
+  // Description:
+  // Try to load the results of the GLM fit run
+  // return 0 on success
+  int LoadResults(vtkSlicerModelsLogic *modelsLogic);
+
+  // Description:
+  // Load the plottable results data
+  int LoadPlotData();
+
 protected:
   vtkQdecModuleLogic();
   ~vtkQdecModuleLogic();
