@@ -7,6 +7,7 @@ PROJECT(QdecModule)
 SET(QdecModule_SRCS
   vtkQdecModuleLogic.cxx
   vtkQdecModuleGUI.cxx
+  vtkGDFReader.cxx
 )
 
 # Abstract/pure virtual classes
