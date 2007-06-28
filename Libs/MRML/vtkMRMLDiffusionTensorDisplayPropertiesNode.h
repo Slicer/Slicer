@@ -337,7 +337,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
   // Description:
   // Set the radius of the tube glyph
   //vtkSetMacro(TubeGlyphRadius, double);
-  void SetTubeGlyphRadius( double radius ) {
+  void SetTubeGlyphRadius( int radius ) {
 
     if ( this->TubeGlyphRadius != radius ) 
       {

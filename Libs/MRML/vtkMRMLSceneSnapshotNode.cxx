@@ -176,7 +176,7 @@ void vtkMRMLSceneSnapshotNode::StoreScene()
     if (node && !node->IsA("vtkMRMLSceneSnapshotNode") && !node->IsA("vtkMRMLSnapshotClipNode")  && node->GetSaveWithScene() )
       {
       vtkMRMLNode *newNode = node->CreateNodeInstance();
-      newNode->Copy(node);
+      newNode->CopyWithScene(node);
       this->Nodes->vtkCollection::AddItem((vtkObject *)newNode);
       }
     }
@@ -237,7 +237,7 @@ void vtkMRMLSceneSnapshotNode::RestoreScene()
       vtkMRMLNode *snode = this->Scene->GetNodeByID(node->GetID());
       if (snode)
         {
-        snode->CopyWithSingleModifiedEvent(node);
+        snode->CopyWithSceneWithSingleModifiedEvent(node);
         }
       else 
         {

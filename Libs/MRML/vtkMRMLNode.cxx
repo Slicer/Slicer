@@ -111,8 +111,9 @@ vtkMRMLNode::~vtkMRMLNode()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLNode::Copy(vtkMRMLNode *node)
+void vtkMRMLNode::CopyWithScene(vtkMRMLNode *node)
 {
+
   if (node->GetScene())
     {
     this->SetScene(node->GetScene());
@@ -121,6 +122,12 @@ void vtkMRMLNode::Copy(vtkMRMLNode *node)
     {
     this->SetID( node->GetID() );
     } 
+  this->Copy(node);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLNode::Copy(vtkMRMLNode *node)
+{
   if (node->GetName() && strcmp(node->GetName(),""))
     {
     this->SetName(node->GetName());

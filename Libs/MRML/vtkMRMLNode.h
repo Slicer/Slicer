@@ -131,10 +131,14 @@ public:
 
   
   // Description:
-  // Copy everything from another node of the same type.
+  // Copy paramters (not including ID and Scene) from another node of the same type.
   // NOTE: Subclasses should implement this method
   // NOTE: Call this method in the subclass impementation
   virtual void Copy(vtkMRMLNode *node);
+
+  // Description:
+  // Copy everything from another node of the same type.
+   void CopyWithScene(vtkMRMLNode *node);
 
   // Description:
   // Get node XML tag name (like Volume, Model)
@@ -271,6 +275,16 @@ public:
     this->InvokePendingModifiedEvent();
     this->SetDisableModifiedEvent(oldMode);
     }
+
+  void CopyWithSceneWithSingleModifiedEvent (vtkMRMLNode *node)
+    {
+    int oldMode = this->GetDisableModifiedEvent();
+    this->DisableModifiedEventOn();
+    this->CopyWithScene(node);
+    this->InvokePendingModifiedEvent();
+    this->SetDisableModifiedEvent(oldMode);
+    }
+
   
   vtkMRMLScene* GetScene() {return this->Scene;};
   void SetScene(vtkMRMLScene* scene) {this->Scene = scene;};

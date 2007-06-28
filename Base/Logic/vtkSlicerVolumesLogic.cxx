@@ -94,7 +94,7 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddHeaderVolume (const char* filename,
   vtkMRMLVectorVolumeNode *vectorNode = vtkMRMLVectorVolumeNode::New();
 
   vtkMRMLVolumeHeaderlessStorageNode *storageNode = vtkMRMLVolumeHeaderlessStorageNode::New();
-  storageNode->Copy(headerStorage);
+  storageNode->CopyWithScene(headerStorage);
   
   storageNode->SetFileName(filename);
   storageNode->SetCenterImage(centerImage);
@@ -566,7 +566,7 @@ vtkMRMLScalarVolumeNode *vtkSlicerVolumesLogic::CreateLabelVolume (vtkMRMLScene 
 
   // create a volume node as copy of source volume
   vtkMRMLScalarVolumeNode *labelNode = vtkMRMLScalarVolumeNode::New();
-  labelNode->Copy(volumeNode);
+  labelNode->CopyWithScene(volumeNode);
   labelNode->SetStorageNodeID(NULL);
   labelNode->SetModifiedSinceRead(1);
   labelNode->SetLabelMap(1);
@@ -610,12 +610,12 @@ CloneVolume (vtkMRMLScene *scene, vtkMRMLVolumeNode *volumeNode, char *name)
   // clone the display node
   vtkMRMLVolumeDisplayNode *clonedDisplayNode = 
     vtkMRMLVolumeDisplayNode::New();
-  clonedDisplayNode->Copy(volumeNode->GetDisplayNode());
+  clonedDisplayNode->CopyWithScene(volumeNode->GetDisplayNode());
   scene->AddNode(clonedDisplayNode);
 
   // clone the volume node
   vtkMRMLScalarVolumeNode *clonedVolumeNode = vtkMRMLScalarVolumeNode::New();
-  clonedVolumeNode->Copy(volumeNode);
+  clonedVolumeNode->CopyWithScene(volumeNode);
   clonedVolumeNode->SetStorageNodeID(NULL);
   clonedVolumeNode->SetName(name);
   clonedVolumeNode->SetAndObserveDisplayNodeID(clonedDisplayNode->GetID());

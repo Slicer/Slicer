@@ -43,7 +43,6 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLDiffusionWeightedVolumeNode.h"
 #include "vtkMRMLDiffusionTensorVolumeNode.h"
 #include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
-#include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
 #include "vtkMRMLFiberBundleNode.h"
 #include "vtkMRMLFiberBundleDisplayNode.h"
 #include "vtkMRMLFiberBundleStorageNode.h"
@@ -159,17 +158,12 @@ vtkMRMLScene::vtkMRMLScene()
   vtkMRMLDiffusionTensorVolumeNode *dtvn = vtkMRMLDiffusionTensorVolumeNode::New();
   this->RegisterNodeClass (dtvn);
   dtvn->Delete();
-
-  vtkMRMLDiffusionTensorDisplayPropertiesNode *dtdpn =
-                         vtkMRMLDiffusionTensorDisplayPropertiesNode::New();
-  this->RegisterNodeClass (dtdpn);
-  dtdpn->Delete();
-
+  
   vtkMRMLDiffusionWeightedVolumeDisplayNode *dwvdn =
                          vtkMRMLDiffusionWeightedVolumeDisplayNode::New();
   this->RegisterNodeClass (dwvdn);
   dwvdn->Delete();
-
+  
   vtkMRMLDiffusionTensorVolumeDisplayNode *dtvdn =
                          vtkMRMLDiffusionTensorVolumeDisplayNode::New();
   this->RegisterNodeClass (dtvdn);
@@ -306,7 +300,7 @@ void vtkMRMLScene::ResetNodes()
     char *tag = nodes[i]->GetSingletonTag();
 
     newNode = nodes[i]->CreateNodeInstance();
-    nodes[i]->CopyWithSingleModifiedEvent(newNode);
+    nodes[i]->CopyWithSceneWithSingleModifiedEvent(newNode);
     nodes[i]->SetSaveWithScene(save);
     nodes[i]->SetHideFromEditors(hide);
     nodes[i]->SetSelectable(select);
@@ -732,7 +726,7 @@ vtkMRMLNode*  vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
       if (sn->GetSingletonTag() != NULL && strcmp(sn->GetSingletonTag(),
                                                   n->GetSingletonTag()) == 0)
         {
-        sn->CopyWithSingleModifiedEvent(n);
+        sn->CopyWithSceneWithSingleModifiedEvent(n);
         return sn;
         }
       }
@@ -776,6 +770,21 @@ vtkMRMLNode*  vtkMRMLScene::AddNode(vtkMRMLNode *n)
   this->InvokeEvent(this->NodeAddedEvent, n);
   this->Modified();
   return node;
+}
+
+//------------------------------------------------------------------------------
+vtkMRMLNode*  vtkMRMLScene::AddNodeCopy(vtkMRMLNode *n)
+{
+  if (!n->GetAddToScene())
+    {
+    return NULL;
+    }
+  vtkMRMLNode* node = n->CreateNodeInstance();
+  node->Copy(n);
+
+  vtkMRMLNode* nnode = this->AddNode(node);
+  node->Delete();
+  return nnode;
 }
 
 //------------------------------------------------------------------------------
@@ -1233,7 +1242,7 @@ void vtkMRMLScene::CopyNodeInUndoStack(vtkMRMLNode *copyNode)
   vtkMRMLNode *snode = copyNode->CreateNodeInstance();
   if (snode != NULL) 
     {
-    snode->CopyWithSingleModifiedEvent(copyNode);
+    snode->CopyWithSceneWithSingleModifiedEvent(copyNode);
     }
   vtkCollection* undoScene = dynamic_cast < vtkCollection *>( this->UndoStack.back() );
   int nnodes = undoScene->GetNumberOfItems();
@@ -1256,7 +1265,7 @@ void vtkMRMLScene::CopyNodeInRedoStack(vtkMRMLNode *copyNode)
   vtkMRMLNode *snode = copyNode->CreateNodeInstance();
   if (snode != NULL) 
     {
-    snode->CopyWithSingleModifiedEvent(copyNode);
+    snode->CopyWithSceneWithSingleModifiedEvent(copyNode);
     }
   vtkCollection* undoScene = dynamic_cast < vtkCollection *>( this->RedoStack.back() );
   int nnodes = undoScene->GetNumberOfItems();
@@ -1342,7 +1351,7 @@ void vtkMRMLScene::Undo()
       // nodes differ, copy from undo to current scene
       // but before create a copy in redo stack from current
       this->CopyNodeInRedoStack(curIter->second);
-      curIter->second->CopyWithSingleModifiedEvent(iter->second);
+      curIter->second->CopyWithSceneWithSingleModifiedEvent(iter->second);
       }
     }
   
@@ -1447,7 +1456,7 @@ void vtkMRMLScene::Redo()
       // nodes differ, copy from redo to current scene
       // but before create a copy in undo stack from current
       this->CopyNodeInUndoStack(curIter->second);
-      curIter->second->CopyWithSingleModifiedEvent(iter->second);
+      curIter->second->CopyWithSceneWithSingleModifiedEvent(iter->second);
       }
     }
   

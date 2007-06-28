@@ -3149,7 +3149,7 @@ CloneTargetNode(vtkMRMLEMSTargetNode* targetNode, char* name)
 
   // clone the target node
   vtkMRMLEMSTargetNode* clonedTarget = vtkMRMLEMSTargetNode::New();
-  clonedTarget->Copy(targetNode);
+  clonedTarget->CopyWithScene(targetNode);
   clonedTarget->SetName(name);
 
   // replace each image with a cloned image
@@ -3185,7 +3185,7 @@ CloneAtlasNode(vtkMRMLEMSAtlasNode* atlasNode, char* name)
 
   // clone the atlas node
   vtkMRMLEMSAtlasNode* clonedAtlas = vtkMRMLEMSAtlasNode::New();
-  clonedAtlas->Copy(atlasNode);
+  clonedAtlas->CopyWithScene(atlasNode);
   clonedAtlas->SetName(name);
 
   // replace each image with a cloned image
