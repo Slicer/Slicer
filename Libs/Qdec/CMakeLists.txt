@@ -19,7 +19,6 @@ SET(Qdec_SRCS
        QdecGlmFitResults.cpp
        QdecSubject.cpp
        QdecUtilities.cpp
-       vtkGDFReader.cxx
 )
 
 # Abstract/pure virtual classes
