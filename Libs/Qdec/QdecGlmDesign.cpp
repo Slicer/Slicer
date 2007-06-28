@@ -193,7 +193,7 @@ int QdecGlmDesign::Create ( QdecDataTable* iDataTable,
     qf = this->mDataTable->GetFactor( isFirstContinuousFactor );
     if( NULL == qf )
     {
-      fprintf( stderr,"ERROR: QdecGlmDesign::Create: bad factor!\n" );
+      fprintf( stderr,"ERROR: QdecGlmDesign::Create: bad first continuous factor %s\n", isFirstContinuousFactor );
       return -1;
     }
     assert( qf->IsContinuous() );
@@ -205,7 +205,7 @@ int QdecGlmDesign::Create ( QdecDataTable* iDataTable,
     qf = this->mDataTable->GetFactor( isSecondContinuousFactor );
     if( NULL == qf )
     {
-      fprintf( stderr,"ERROR: QdecGlmDesign::Create: bad factor!\n" );
+      fprintf( stderr,"ERROR: QdecGlmDesign::Create: bad second continuous factor %s\n", isSecondContinuousFactor);
       return -1;
     }
     assert( qf->IsContinuous() );

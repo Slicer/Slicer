@@ -77,7 +77,7 @@ string QdecSubject::GetDiscreteFactor (const char* isFactorName )
     }
   }
 
-  throw runtime_error( "ERROR: QdecSubject::GetDiscreteFactor failure\n" );
+  throw runtime_error( string("ERROR: QdecSubject::GetDiscreteFactor failure, cannot find factor ") + string(isFactorName) );
   return NULL;
 }
 
@@ -99,7 +99,7 @@ double QdecSubject::GetContinuousFactor (const char* isFactorName )
     }
   }
 
-  throw runtime_error( "ERROR: QdecSubject::GetContinuousFactor failure\n" );
+  throw runtime_error( string("ERROR: QdecSubject::GetContinuousFactor failure, cannot find factor: ") + string(isFactorName));
   return 0.0;
 }
 
