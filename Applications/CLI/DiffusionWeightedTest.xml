@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
   <category>
-  Diffusion Weigthed.Test
+  Diffusion Weighted.Test
   </category>
   <title>
   Simple DWI IO Test
