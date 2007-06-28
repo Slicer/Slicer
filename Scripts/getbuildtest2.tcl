@@ -265,14 +265,20 @@ if { $::GETBUILDTEST(doxy) && ![file exists $::env(SLICER_DOC)] } {
 #
 
 
-# svn checkout (does an update if it already exists)
-cd $::SLICER_HOME/..
-if { [file exists Slicer3] } {
-  cd Slicer3
-  runcmd svn switch $::SLICER_TAG
+# svn checkout (does an update if it already exists) 
+# NB: In order for "Continuous" tests to submit to the dashboard we must be sure not to update here.
+if { $::GETBUILDTEST(test-type) != "Continuous" } {
+  cd $::SLICER_HOME/..
+  if { [file exists Slicer3] } {
+    cd Slicer3
+    runcmd svn switch $::SLICER_TAG
+  } else {
+    runcmd svn checkout $::SLICER_TAG Slicer3
+  }
 } else {
-  runcmd svn checkout $::SLICER_TAG Slicer3
+    puts "Skipping update of Slicer3 until continuous test starts."
 }
+
 
 # svn checkout of SIGN
 cd $::SLICER_HOME/Libs
