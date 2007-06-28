@@ -344,6 +344,7 @@ int main(int argc, char** argv)
 
   bool useDefaultParametersNode = parametersMRMLNodeName.empty();
   bool useDefaultTarget         = targetVolumeFileNames.empty();
+  bool useDefaultAtlas          = atlasVolumeFileNames.empty();
   bool useDefaultOutput         = resultVolumeFileName.empty();
   bool segmentationSucceeded    = true;
 
@@ -401,6 +402,18 @@ int main(int argc, char** argv)
       std::cerr << "Error: target volume file " << i << " does not exist." 
                 << std::endl;
       std::cerr << targetVolumeFileNames[i] << std::endl;      
+      exit(EXIT_FAILURE);
+      }
+    }
+
+  for (unsigned int i = 0; i < atlasVolumeFileNames.size(); ++i)
+    {
+    if (!vtksys::SystemTools::
+        FileExists(atlasVolumeFileNames[i].c_str()))
+      {
+      std::cerr << "Error: atlas volume file " << i << " does not exist." 
+                << std::endl;
+      std::cerr << atlasVolumeFileNames[i] << std::endl;      
       exit(EXIT_FAILURE);
       }
     }
@@ -640,6 +653,94 @@ int main(int argc, char** argv)
           emMRMLManager->GetGlobalParametersNode()->
           GetNumberOfTargetInputChannels() 
                   << ")" << std::endl;
+      }
+
+    //
+    // set the atlas images
+    if (useDefaultAtlas)
+      {
+      if (!emMRMLManager->GetAtlasNode())
+        {
+        throw std::runtime_error("ERROR: no default atlas node available.");
+        }
+      if (verbose) 
+        std::cerr << "Using default atlas node named: " 
+                  << emMRMLManager->GetAtlasNode()->GetName()
+                  << std::endl;
+      }
+    else
+      {
+
+      if (!emMRMLManager->GetAtlasNode())
+        {
+        throw std::runtime_error("ERROR: parameters must already contain an atlas node if you wish to speficy atlas volumes.");
+        }
+      vtkMRMLEMSAtlasNode* oldAtlasNode = emMRMLManager->GetAtlasNode();
+        
+      try 
+        {
+        if (verbose) 
+          std::cerr << "Adding an atlas node..."; 
+
+        // create atlas node
+        vtkMRMLEMSAtlasNode* atlasNode = vtkMRMLEMSAtlasNode::New();
+        mrmlScene->AddNode(atlasNode);        
+
+        // connect atlas node to segmenter
+        emMRMLManager->GetSegmenterNode()->
+          SetAtlasNodeID(atlasNode->GetID());
+
+        if (verbose) 
+          std::cerr << atlasNode->GetID() << " DONE" << std::endl;
+
+        atlasNode->Delete();
+
+        if (verbose)
+          std::cerr << "Segmenter's atlas node is now: " 
+                    << emMRMLManager->GetAtlasNode()->GetID()
+                    << std::endl;
+        }
+      catch (...)
+        {
+        throw std::runtime_error("ERROR: failed to add atlas node.");
+        }
+
+      if (verbose)
+        std::cerr << "Adding " << atlasVolumeFileNames.size() 
+                  << " atlas images..." << std::endl;
+      for (unsigned int imageIndex = 0; 
+           imageIndex < atlasVolumeFileNames.size(); ++imageIndex)
+        {
+        if (verbose) std::cerr << "Loading atlas image " << imageIndex
+                               << "..." << std::endl;
+        try
+          {
+          // load image into scene
+          vtkMRMLVolumeNode* volumeNode = 
+            AddScalarArchetypeVolume(mrmlScene, 
+                                     atlasVolumeFileNames[imageIndex].c_str(),
+                                     false,
+                                     false,
+                                     NULL);
+          
+          if (!volumeNode)
+            {
+            throw std::runtime_error("failed to load image.");
+            }
+       
+          // set volume name and ID in map
+          emMRMLManager->GetAtlasNode()->
+            AddVolume(oldAtlasNode->GetNthKey(imageIndex), 
+                      volumeNode->GetID());
+          }
+        catch(...)
+          {
+          vtkstd::stringstream ss;
+          ss << "ERROR: failed to load atlas image "
+             << atlasVolumeFileNames[imageIndex];
+          throw std::runtime_error(ss.str());
+          }
+        }
       }
 
     //

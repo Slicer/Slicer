@@ -202,6 +202,8 @@ IF( NOT DISABLE_CXX_TESTING )
     --mrmlSceneFileName ${EMSegment_TUTORIAL_DIR}/EMSegmentTutorialTemplate_small.mrml 
     --targetVolumeFileNames
     ${EMSegment_TUTORIAL_DIR}/VolumeData/targetT1Normed_small.mhd,${EMSegment_TUTORIAL_DIR}/VolumeData/targetT2Normed_small.mhd
+    --atlasVolumeFileNames
+    ${EMSegment_TUTORIAL_DIR}/VolumeData/atlasBackgroundReg_small.mhd,${EMSegment_TUTORIAL_DIR}/VolumeData/atlasBackgroundReg_small.mhd,${EMSegment_TUTORIAL_DIR}/VolumeData/atlasCSFReg_small.mhd,${EMSegment_TUTORIAL_DIR}/VolumeData/atlasGreymatterReg_small.mhd,${EMSegment_TUTORIAL_DIR}/VolumeData/atlasWhitematterReg_small.mhd
     --parametersMRMLNodeName EMSegment\ Tutorial\ Template
     --resultVolumeFileName "${test_file_prefix}.mhd"
     )

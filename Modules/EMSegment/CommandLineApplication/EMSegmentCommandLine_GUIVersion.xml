@@ -106,6 +106,16 @@
       <label>Target Volume 5</label>      
       <channel>input</channel>
     </file>
+
+    <file multiple="true" fileExtensions=".mhd">
+      <name>atlasVolumeFileNames</name>
+      <longflag>atlasVolumeFileNames</longflag>
+
+      <description>File names of atlas (spatial) probability maps.  The number of atlas volumes must match the number specified in the parameter set.  The ordering must match the ordering defined in the mrml parameters file.</description>
+      <label>Atlas Volumes</label>      
+      <channel>input</channel>
+    </file>
+
   </parameters>
 
   <parameters advanced="true">
