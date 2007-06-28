@@ -128,6 +128,21 @@ public:
     vtkSetMacro(SynthSeed, int);
 
     // Description:
+    // log y
+    vtkGetMacro(LogY, double);
+    vtkSetMacro(LogY, double);
+
+    // Description:
+    // residual
+    vtkGetMacro(ResidualFWHM, double);
+    vtkSetMacro(ResidualFWHM, double);
+
+    // Description:
+    // 
+    vtkGetMacro(DeMeanFlag, int);
+    vtkSetMacro(DeMeanFlag, int);
+
+    // Description:
     // descriptor file to design matrix conversion method
     vtkGetStringMacro(gd2mtx);
    
@@ -191,6 +206,9 @@ protected:
     int SmoothSteps;
     char * SUBJECTS_DIR;
     int SynthSeed;
+    double LogY;
+    double ResidualFWHM;
+    int DeMeanFlag;
 
     // for testing
     vtkSetStringMacro(ErrVal);

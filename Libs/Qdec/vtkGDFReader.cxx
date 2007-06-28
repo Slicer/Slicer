@@ -380,6 +380,18 @@ int vtkGDFReader::ReadHeader(const char *filename, int flag)
           {
               sscanf(line, "%*s %d", &this->SynthSeed);
           }
+          else if (strncasecmp(line, "LogY", 4) == 0)
+            {
+            sscanf(line, "%*s %d", &this->LogY);
+            }
+          else if (strncasecmp(line, "ResidualFWHM", 12) == 0)
+            {
+            sscanf(line, "%*s %g", &this->ResidualFWHM);
+            }
+          else if (strncasecmp(line, "DeMeanFlag", 10) == 0)
+            {
+            sscanf(line, "%*s %d", &this->DeMeanFlag);
+            }
           else
           {
               vtkWarningMacro(<<"Warning: unknown tag in line, skipping:\n" << line);
