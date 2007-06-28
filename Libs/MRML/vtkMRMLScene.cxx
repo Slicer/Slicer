@@ -43,6 +43,7 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLDiffusionWeightedVolumeNode.h"
 #include "vtkMRMLDiffusionTensorVolumeNode.h"
 #include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
+#include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
 #include "vtkMRMLFiberBundleNode.h"
 #include "vtkMRMLFiberBundleDisplayNode.h"
 #include "vtkMRMLFiberBundleStorageNode.h"
@@ -158,12 +159,17 @@ vtkMRMLScene::vtkMRMLScene()
   vtkMRMLDiffusionTensorVolumeNode *dtvn = vtkMRMLDiffusionTensorVolumeNode::New();
   this->RegisterNodeClass (dtvn);
   dtvn->Delete();
-  
+
+  vtkMRMLDiffusionTensorDisplayPropertiesNode *dtdpn =
+                         vtkMRMLDiffusionTensorDisplayPropertiesNode::New();
+  this->RegisterNodeClass (dtdpn);
+  dtdpn->Delete();
+
   vtkMRMLDiffusionWeightedVolumeDisplayNode *dwvdn =
                          vtkMRMLDiffusionWeightedVolumeDisplayNode::New();
   this->RegisterNodeClass (dwvdn);
   dwvdn->Delete();
-  
+
   vtkMRMLDiffusionTensorVolumeDisplayNode *dtvdn =
                          vtkMRMLDiffusionTensorVolumeDisplayNode::New();
   this->RegisterNodeClass (dtvdn);
