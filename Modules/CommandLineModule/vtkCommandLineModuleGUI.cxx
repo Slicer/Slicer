@@ -1276,7 +1276,14 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
         {
         vtkSlicerNodeSelectorWidget *tparameter
           = vtkSlicerNodeSelectorWidget::New();
-        tparameter->SetNodeClass("vtkMRMLModelNode",
+
+        std::string nodeClass;
+        if((*pit).GetType() == "fiberbundle")
+          nodeClass = "vtkMRMLFiberBundleNode";
+        else //   "model"
+          nodeClass = "vtkMRMLModelNode";
+
+        tparameter->SetNodeClass(nodeClass.c_str(),
                                  NULL,
                                  NULL,
                                  (title + " Model").c_str());
@@ -1295,7 +1302,13 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
         vtkSlicerNodeSelectorWidget *tparameter
           = vtkSlicerNodeSelectorWidget::New();
         
-        tparameter->SetNodeClass("vtkMRMLModelNode",
+        std::string nodeClass;
+        if((*pit).GetType() == "fiberbundle")
+          nodeClass = "vtkMRMLFiberBundleNode";
+        else // "model"
+          nodeClass = "vtkMRMLModelNode";
+
+        tparameter->SetNodeClass(nodeClass.c_str(),
                                  NULL,
                                  NULL,
                                  (title + " Model").c_str());

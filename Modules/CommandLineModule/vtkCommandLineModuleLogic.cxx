@@ -34,6 +34,8 @@ Version:   $Revision: 1.2 $
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLModelStorageNode.h"
 #include "vtkMRMLModelDisplayNode.h"
+#include "vtkMRMLFiberBundleNode.h"
+#include "vtkMRMLFiberBundleStorageNode.h"
 
 #ifdef USE_TEEM // If we have NRRD support
 #include "vtkMRMLNRRDStorageNode.h"
@@ -756,6 +758,8 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
       = vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(nd);
     vtkMRMLModelNode *mnd
       = vtkMRMLModelNode::SafeDownCast(nd);
+    vtkMRMLFiberBundleNode *fbnd
+      = vtkMRMLFiberBundleNode::SafeDownCast(nd);
 
     vtkMRMLStorageNode *out = 0;
 
@@ -777,6 +781,10 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
 #else
       vtkErrorMacro ( "Slicer3 was not complied with TEEM support, export of diffusion tensor nodes disabled" );
 #endif
+      }
+    else if (fbnd)
+      {
+      out = vtkMRMLFiberBundleStorageNode::New();
       }
     else if (mnd)
       {

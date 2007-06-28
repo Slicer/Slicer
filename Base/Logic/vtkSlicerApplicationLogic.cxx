@@ -25,13 +25,16 @@
 #include "vtkMRMLDiffusionTensorVolumeNode.h"
 #include "vtkMRMLDiffusionWeightedVolumeNode.h"
 #include "vtkMRMLModelNode.h"
+#include "vtkMRMLFiberBundleNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLVolumeArchetypeStorageNode.h"
 #include "vtkMRMLModelStorageNode.h"
+#include "vtkMRMLFiberBundleStorageNode.h"
 #include "vtkMRMLVolumeDisplayNode.h"
 #include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
 #include "vtkMRMLDiffusionWeightedVolumeDisplayNode.h"
 #include "vtkMRMLModelDisplayNode.h"
+#include "vtkMRMLFiberBundleDisplayNode.h"
 #include "vtkSlicerTask.h"
 
 #ifdef USE_TEEM
@@ -607,6 +610,7 @@ void vtkSlicerApplicationLogic::ProcessReadData()
     vtkMRMLDiffusionTensorVolumeNode *dtvnd = 0;
     vtkMRMLDiffusionWeightedVolumeNode *dwvnd = 0;
     vtkMRMLModelNode *mnd = 0;
+    vtkMRMLFiberBundleNode *fbnd = 0;
 
     nd = this->MRMLScene->GetNodeByID( req.GetNode().c_str() );
 
@@ -615,6 +619,7 @@ void vtkSlicerApplicationLogic::ProcessReadData()
     dtvnd = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(nd);
     dwvnd = vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(nd);
     mnd   = vtkMRMLModelNode::SafeDownCast(nd);
+    fbnd  = vtkMRMLFiberBundleNode::SafeDownCast(fbnd);
 
     // Read the data into the referenced node
     if (itksys::SystemTools::FileExists( req.GetFilename().c_str() ))
@@ -651,6 +656,12 @@ void vtkSlicerApplicationLogic::ProcessReadData()
           {
           disp = vtkMRMLDiffusionWeightedVolumeDisplayNode::New();
           }
+        }
+      else if (fbnd)
+        {
+        // Load a fiber bundle node
+        in = vtkMRMLFiberBundleStorageNode::New();
+        disp = vtkMRMLFiberBundleDisplayNode::New();
         }
       else if (mnd)
         {

@@ -879,6 +879,26 @@ startElement(void *userData, const char *element, const char **attrs)
           return;
           }
         }
+      else if ((strcmp(attrs[2*attr], "type") == 0))
+        {
+        if ((strcmp(attrs[2*attr+1], "fiberbundle") == 0) ||
+            (strcmp(attrs[2*attr+1], "model") == 0))
+          {
+          parameter->SetType(attrs[2*attr+1]);
+          }
+        else
+          {
+          std::string error("ModuleDescriptionParser Error: \"" + std::string(attrs[2*attr+1]) + "\" is not a valid value for the attribute \"" + "type" + "\". Only \"fiberbundle\", \"model\" are accepted.");
+          if (ps->ErrorDescription.size() == 0)
+            {
+            ps->ErrorDescription = error;
+            ps->ErrorLine = XML_GetCurrentLineNumber(ps->Parser);
+            ps->Error = true;
+            }
+          ps->OpenTags.push(name);
+          return;
+          }
+        }
       else if ((strcmp(attrs[2*attr], "fileExtensions") == 0))
         {
         parameter->SetFileExtensionsAsString(attrs[2*attr+1]);
