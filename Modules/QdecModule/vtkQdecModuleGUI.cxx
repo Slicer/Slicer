@@ -328,16 +328,22 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
     
     // get the models logic to use to load the models and scalars (can't access it in the Logic class)
     vtkSlicerModelsLogic *modelsLogic = vtkSlicerModelsGUI::SafeDownCast(vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Models"))->GetLogic();
-    if (this->GetLogic()->LoadResults(modelsLogic) != 0)
+    if (this->GetLogic()->LoadResults(modelsLogic, this->GetApplication()) != 0)
       {
       vtkErrorMacro("Unable to load results of GLM fit processing");
       }
-
-    if (this->GetLogic()->LoadPlotData() != 0)
+/*
+  // done in LoadResults
+    if (this->GetLogic()->LoadPlotData(NULL) != 0)
       {
       vtkErrorMacro("Unable to plot results");
       return;
       }
+    // load up the script
+    this->GetApplication()->LoadScript("../Slicer3/Libs/Qdec/vtkFreeSurferReaders.tcl"); // fsgdfPlot.tcl
+
+    
+*/
     if (this->GetDebug())
       {
       this->GetLogic()->DebugOff();

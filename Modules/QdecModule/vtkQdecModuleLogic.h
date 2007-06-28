@@ -21,6 +21,7 @@
 #include "vtkQdecModule.h"
 
 #include "QdecProject.h"
+#include "vtkKWApplication.h"
 
 class VTK_QDECMODULE_EXPORT vtkQdecModuleLogic : public vtkSlicerModuleLogic
 {
@@ -57,11 +58,11 @@ class VTK_QDECMODULE_EXPORT vtkQdecModuleLogic : public vtkSlicerModuleLogic
   // Description:
   // Try to load the results of the GLM fit run
   // return 0 on success
-  int LoadResults(vtkSlicerModelsLogic *modelsLogic);
+  int LoadResults(vtkSlicerModelsLogic *modelsLogic, vtkKWApplication *app);
 
   // Description:
   // Load the plottable results data
-  int LoadPlotData();
+  int LoadPlotData(const char *fileName);
 
 protected:
   vtkQdecModuleLogic();

@@ -159,7 +159,7 @@ int vtkQdecModuleLogic::RunGlmFit()
 }
 
 //----------------------------------------------------------------------------
-int vtkQdecModuleLogic::LoadResults(vtkSlicerModelsLogic *modelsLogic)
+int vtkQdecModuleLogic::LoadResults(vtkSlicerModelsLogic *modelsLogic, vtkKWApplication *app)
 {
   if (!QDECProject)
     {
@@ -303,35 +303,77 @@ int vtkQdecModuleLogic::LoadResults(vtkSlicerModelsLogic *modelsLogic)
       vtkErrorMacro("Unable to add the residual errors std dev file " << fnStdDev.c_str() << " to the average surface model");
       }
     }
+
+  // read the plot file
+  string fnFSGD =  results->GetFsgdFile();
+  vtkDebugMacro( "FSGD plot file: " << fnFSGD.c_str() );
+
+  // read the file
+  vtkGDFReader *gdfReader = vtkGDFReader::New();
+  gdfReader->ReadHeader(fnFSGD.c_str(), 1);
+  string dataFileName = gdfReader->GetDataFileName();
+  vtkDebugMacro("FSGD file read in, y.mgh data file name = " << dataFileName.c_str());
+  
+  // load the data file, associating it with the model
+  if (modelsLogic && modelNode)
+    {
+    if (!modelsLogic->AddScalar(dataFileName.c_str(), modelNode))
+      {
+      vtkErrorMacro("Unable to add the fsgd data file " << dataFileName.c_str() << " to the average surface model");
+      }
+    }
+  else
+    {
+    vtkErrorMacro("Unable to load the y.mgh file");
+    }
+  gdfReader->Delete();
+
+  app->LoadScript("../Slicer3/Libs/Qdec/vtkFreeSurferReaders.tcl");
+  // set the plot file name
+  app->Script("set ::vtkFreeSurferReaders(PlotFileName) %s", this->QDECProject->GetGlmFitResults()->GetFsgdFile());
+  app->Script("vtkFreeSurferReadersPlotApply %s", modelNode->GetID());
+
   return 0;
 }
 
 
 //----------------------------------------------------------------------------
-int vtkQdecModuleLogic::LoadPlotData()
+int vtkQdecModuleLogic::LoadPlotData(const char *fileName)
 {
   if (!QDECProject)
     {
     return -1;
     }
-   // Make sure we got the results.
-  QdecGlmFitResults* results =
-    this->QDECProject->GetGlmFitResults();
-  if (results == NULL)
-    {
-    vtkErrorMacro("LoadPlotData: results are null.");
-    return -1;
-    }
-  vtkDebugMacro("Got the GLM Fit results from the QDEC project");
+  
   // The fsgd file to plot.
-  string fnFSGD = results->GetFsgdFile();
+  string fnFSGD;
+  if (fileName == NULL)
+    {
+    // Make sure we got the results.
+    QdecGlmFitResults* results =
+      this->QDECProject->GetGlmFitResults();
+    if (results == NULL)
+      {
+      vtkErrorMacro("LoadPlotData: results are null.");
+      return -1;
+      }
+    vtkDebugMacro("Got the GLM Fit results from the QDEC project");
+    fnFSGD = results->GetFsgdFile();
+    }
+  else
+    {
+    fnFSGD = string(fileName);
+    }
   vtkDebugMacro( "FSGD plot file: " << fnFSGD.c_str() );
     
   // read the file
   vtkGDFReader *gdfReader = vtkGDFReader::New();
   gdfReader->ReadHeader(fnFSGD.c_str(), 1);
-  vtkDebugMacro("FSGD file read in, y.mgh data file name = " << gdfReader->GetDataFileName());
+  string dataFileName = gdfReader->GetDataFileName();
+  vtkDebugMacro("FSGD file read in, y.mgh data file name = " << dataFileName.c_str());
   
+  // load the data file, associating it with the model
+  // - done in LoadResults
 
   gdfReader->Delete();
   return 0;
