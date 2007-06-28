@@ -204,7 +204,9 @@ int QdecGlmFit::Run ( QdecGlmDesign* iGlmDesign )
     iGlmDesign->GetProgressUpdateGUI()->EndActionWithProgress();
       }
 
-  } else {
+  } 
+  else 
+    {
     // =======================================================================
     // 6/27/07 RKT: This is special code to fake the results of
     // running mri_glmfit on a machine that doesn't have that binary
@@ -221,22 +223,22 @@ int QdecGlmFit::Run ( QdecGlmDesign* iGlmDesign )
     vector< string > lfnSigFiles;
     for ( unsigned int i=0; i < iGlmDesign->GetContrastNames().size(); i++ )
       {
-    string sigFile = iGlmDesign->GetWorkingDir();
-    sigFile += "/";
-    sigFile += contrastNames[i];
-    sigFile += "/sig.mgh";
+      string sigFile = iGlmDesign->GetWorkingDir();
+      sigFile += "/";
+      sigFile += contrastNames[i];
+      sigFile += "/sig.mgh";
+      
+      // Check if it exists and is readable.
+      QdecUtilities::AssertFileIsReadable( sigFile.c_str() );
+      
+      lfnSigFiles.push_back( sigFile );
+      }
     
-    // Check if it exists and is readable.
-    QdecUtilities::AssertFileIsReadable( sigFile.c_str() );
-    
-    lfnSigFiles.push_back( sigFile );
-     }
-
     // form output filename
     string fnContrastsOutput;
     fnContrastsOutput = iGlmDesign->GetWorkingDir();
     fnContrastsOutput += "/contrasts.sig.mgh";
-
+    
     // Other data names.
     string fnResidualErrorStdDevFile = iGlmDesign->GetWorkingDir();
     fnResidualErrorStdDevFile += "/rstd.mgh";
@@ -248,20 +250,20 @@ int QdecGlmFit::Run ( QdecGlmDesign* iGlmDesign )
     // Make the results.
     QdecGlmFitResults* glmFitResults = 
       new QdecGlmFitResults( iGlmDesign, 
-                 lfnSigFiles, 
-                 fnContrastsOutput,
-                 fnResidualErrorStdDevFile,
-                 fnRegressionCoefficientsFile,
-                 fnFsgdFile );
-
+                             lfnSigFiles, 
+                             fnContrastsOutput,
+                             fnResidualErrorStdDevFile,
+                             fnRegressionCoefficientsFile,
+                             fnFsgdFile );
+    
     // Check it.
     assert( glmFitResults );
 
     // Make it ours.
     this->mGlmFitResults = glmFitResults;
-
+    
     // =======================================================================
-  }
+    }
 
 
   return 0;
