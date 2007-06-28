@@ -224,7 +224,7 @@ void vtkSlicerDiffusionTensorGlyphDisplayWidget::ProcessWidgetEvents ( vtkObject
         event == vtkKWScale::ScaleValueChangedEvent)
     {
     vtkErrorWithObjectMacro(this,"Process WIDGET... Events, number of tube sides set!  ;)");
-    displayNode->SetTubeGlyphNumberOfSides(this->TubeNumberOfSidesScale->GetWidget()->GetValue());
+    displayNode->SetTubeGlyphNumberOfSides((int) this->TubeNumberOfSidesScale->GetWidget()->GetValue());
     return;
     }
 }
@@ -374,7 +374,7 @@ void vtkSlicerDiffusionTensorGlyphDisplayWidget::UpdateMRML()
       displayNode->SetColorGlyphBy(this->GlyphColorMap[std::string(this->GlyphColorMenu->GetWidget()->GetValue())]);
       displayNode->SetGlyphEigenvector(this->GlyphEigenvectorMap[std::string(this->LineGlyphEigenvectorMenu->GetWidget()->GetValue())]);
       displayNode->SetGlyphScaleFactor(this->GlyphScale->GetWidget()->GetValue());
-      displayNode->SetTubeGlyphNumberOfSides(this->TubeNumberOfSidesScale->GetWidget()->GetValue());
+      displayNode->SetTubeGlyphNumberOfSides((int) this->TubeNumberOfSidesScale->GetWidget()->GetValue());
       }
     else 
       {
