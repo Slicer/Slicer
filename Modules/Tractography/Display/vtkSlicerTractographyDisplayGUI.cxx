@@ -307,14 +307,15 @@ void vtkSlicerTractographyDisplayGUI::BuildGUI ( )
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   modDisplayFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Tractography")->GetWidgetName());
     
-    this->AllFiberBundlesDisplayWidget = vtkSlicerAllFiberBundlesDisplayWidget::New ( );
-    this->AllFiberBundlesDisplayWidget->SetMRMLScene(this->Logic->GetMRMLScene() );
-    this->AllFiberBundlesDisplayWidget->SetParent ( modDisplayFrame->GetFrame() );
-    this->AllFiberBundlesDisplayWidget->Create ( );
-    //this->AllFiberBundlesDisplayWidget->DebugOn ( );
-    app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                  this->AllFiberBundlesDisplayWidget->GetWidgetName(), 
-                  modDisplayFrame->GetFrame()->GetWidgetName());
+
+//     this->AllFiberBundlesDisplayWidget = vtkSlicerAllFiberBundlesDisplayWidget::New ( );
+//     this->AllFiberBundlesDisplayWidget->SetMRMLScene(this->Logic->GetMRMLScene() );
+//     this->AllFiberBundlesDisplayWidget->SetParent ( modDisplayFrame->GetFrame() );
+//     this->AllFiberBundlesDisplayWidget->Create ( );
+//     //this->AllFiberBundlesDisplayWidget->DebugOn ( );
+//     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
+//                   this->AllFiberBundlesDisplayWidget->GetWidgetName(), 
+//                   modDisplayFrame->GetFrame()->GetWidgetName());
 
 
     this->FiberBundleDisplayWidget = vtkSlicerFiberBundleDisplayWidget::New ( );
