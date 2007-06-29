@@ -106,13 +106,20 @@ int main( int argc, const char * argv[] )
   th->SetOutValue(0);
   th->ReplaceInOn();
   th->ReplaceOutOn();
-  th->SetOutputScalarTypeToUnsignedShort();
+  th->SetOutputScalarTypeToShort();
+  th->Update();
   
   //PENDING: Do merging with input ROI
   
   seed->SetInputROI(th->GetOutput());
   seed->SetInputROIValue(1);
-  
+  //ROI comes from tensor, IJKToRAS is the same
+  // as the tensor
+  vtkTransform *trans2 = vtkTransform::New();
+  trans2->Identity();
+  trans2->SetMatrix(TensorRASToIJK);
+  trans2->Inverse();
+  seed->SetROIToWorld(trans2);
   
   //4. Set Tractography specific parameters
   seed->SetIsotropicSeeding(1);
@@ -143,6 +150,9 @@ int main( int argc, const char * argv[] )
   streamer->SetStoppingThreshold(StoppingValue);
   streamer->SetMaximumPropagationDistance(MaximumLength);
   
+  // Temp fix to provide a scalar
+  seed->GetInputTensorField()->GetPointData()->SetScalars(math->GetOutput()->GetPointData()->GetScalars());
+
   //5. Run the thing
   seed->SeedStreamlinesInROI();
   
@@ -153,6 +163,7 @@ int main( int argc, const char * argv[] )
   //Save result
   vtkPolyDataWriter *writer = vtkPolyDataWriter::New();
   writer->SetFileName(OutputFibers.c_str());
+  writer->SetFileTypeToBinary();
   writer->SetInput(outFibers);
   writer->Write();
 
