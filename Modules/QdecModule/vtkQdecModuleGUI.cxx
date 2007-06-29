@@ -332,18 +332,6 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
       {
       vtkErrorMacro("Unable to load results of GLM fit processing");
       }
-/*
-  // done in LoadResults
-    if (this->GetLogic()->LoadPlotData(NULL) != 0)
-      {
-      vtkErrorMacro("Unable to plot results");
-      return;
-      }
-    // load up the script
-    this->GetApplication()->LoadScript("../Slicer3/Libs/Qdec/vtkFreeSurferReaders.tcl"); // fsgdfPlot.tcl
-
-    
-*/
     if (this->GetDebug())
       {
       this->GetLogic()->DebugOff();
