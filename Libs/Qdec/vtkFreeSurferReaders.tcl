@@ -3673,8 +3673,6 @@ proc vtkFreeSurferReadersLoadColour { {overwriteFlag 1}} {
 proc vtkFreeSurferReadersGDFInit {} {
     global vtkFreeSurferReaders 
 
-    set ::Module(verbose) 1
-
     set vtkFreeSurferReaders(kValid,lMarkers)  {square circle diamond plus cross splus scross triangle}
     set vtkFreeSurferReaders(kValid,lColors) {red blue green yellow black purple orange pink brown}
     set vtkFreeSurferReaders(gGDF,lID) {}
@@ -5309,6 +5307,10 @@ proc vtkFreeSurferReadersPlotApply { mid } {
     global vtkFreeSurferReaders Volume
 
     puts "About to read $vtkFreeSurferReaders(PlotFileName)..."
+
+    if {[info vars ::Module(verbose)] == ""} {
+      set ::Module(verbose) 0
+    }
 
     if {$::Module(verbose)} {
         puts "vtkFreeSurferReadersPlotApply: starting"
