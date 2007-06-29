@@ -21,7 +21,7 @@
 #include "vtkSlicerColorGUI.h"
 #include "vtkSlicerColorLogic.h"
 #include "vtkMRMLScalarVolumeNode.h"
-#include "vtkDiffusionTensorMathematics.h"
+//#include "vtkDiffusionTensorMathematics.h"
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerDiffusionTensorVolumeDisplayWidget );
