@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>filtering</category>
+  <category>Tractography.Seeding</category>
   <title>Stochastic Tractography Filter</title>
   <description>
   Generates a map of connectivity probabilities from a DWI volume.
