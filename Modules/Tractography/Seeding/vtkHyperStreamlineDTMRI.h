@@ -104,10 +104,10 @@ protected:
   ~vtkHyperStreamlineDTMRI();
 
   // Integrate data
-  void Execute();
-  void BuildLines();
-  void BuildLinesForSingleTrajectory();
-  void BuildLinesForTwoTrajectories();
+  virtual int RequestData(vtkInformation *,vtkInformationVector**, vtkInformationVector *);
+  void BuildLines(vtkDataSet *input, vtkPolyData *output);
+  void BuildLinesForSingleTrajectory(vtkDataSet *input, vtkPolyData *output);
+  void BuildLinesForTwoTrajectories(vtkDataSet *input, vtkPolyData *output);
 
   vtkFloatingPointType RadiusOfCurvature;
   int StoppingMode;

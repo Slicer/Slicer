@@ -125,7 +125,7 @@ void vtkHyperStreamlineTeem::VisualizeFibers( const Nrrd *fibers )
     }
   
   vtkDebugMacro( << "Building lines");
-  BuildLines();
+  BuildLines(vtkDataSet::SafeDownCast(this->GetInput(0)),this->GetOutput());
 }
 
 

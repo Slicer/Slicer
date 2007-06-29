@@ -20,6 +20,8 @@
 #include "vtkObjectFactory.h"
 #include "vtkPointData.h"
 #include "vtkPolyData.h"
+#include "vtkInformation.h"
+#include "vtkInformationVector.h"
 #include "vtkTractographyPointAndArray.h"
 
 // the superclass had these classes in the vtkHyperStreamline.cxx
@@ -126,13 +128,21 @@ static void FixVectors(vtkFloatingPointType **prev, vtkFloatingPointType **curre
     }
 }
 
-void vtkHyperStreamlineDTMRI::Execute()
+int vtkHyperStreamlineDTMRI::RequestData(
+  vtkInformation *vtkNotUsed(request),
+  vtkInformationVector **inputVector,
+  vtkInformationVector *outputVector)
 {
-#if (VTK_MAJOR_VERSION >= 5)
-  vtkDataSet *input = this->GetPolyDataInput(0);
-#else
-  vtkDataSet *input = this->GetInput();
-#endif
+vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
+vtkInformation *outInfo = outputVector->GetInformationObject(0);
+
+//Get the input and output
+vtkDataSet *input = vtkDataSet::SafeDownCast(
+  inInfo->Get(vtkDataObject::DATA_OBJECT()));
+vtkPolyData *output = vtkPolyData::SafeDownCast(
+  outInfo->Get(vtkDataObject::DATA_OBJECT()));
+
+
   vtkPointData *pd=input->GetPointData();
   vtkDataArray *inScalars;
   vtkDataArray *inTensors;
@@ -167,14 +177,19 @@ void vtkHyperStreamlineDTMRI::Execute()
   if ( ! (inTensors=pd->GetTensors()) )
     {
     vtkErrorMacro(<<"No tensor data defined!");
-    return;
+    return 0;
     }
   w = new vtkFloatingPointType[input->GetMaxCellSize()];
 
   inScalars = pd->GetScalars();
-
-  cellTensors = vtkDataArray::CreateDataArray(inTensors->GetDataType());
-  cellScalars = vtkDataArray::CreateDataArray(inScalars->GetDataType());
+  if (inTensors)
+    {
+    cellTensors = vtkDataArray::CreateDataArray(inTensors->GetDataType());
+    }
+  if (inScalars)
+    {
+    cellScalars = vtkDataArray::CreateDataArray(inScalars->GetDataType());
+    }
   int numComp;
   if (inTensors)
     {
@@ -538,39 +553,41 @@ void vtkHyperStreamlineDTMRI::Execute()
 
     } //for each hyperstreamline
 
-  this->BuildLines();
+  this->BuildLines(input,output);
 
   delete [] w;
-  cellTensors->Delete();
-  cellScalars->Delete();
+  if (inTensors)
+    {
+    cellTensors->Delete();
+    }
+  if (inScalars)
+    {
+    cellScalars->Delete();
+    }
 
   // note: these two lines fix memory leak in code copied from vtk
   delete [] this->Streamers;
   this->Streamers = NULL;
+  return 1;
 }
 
-void vtkHyperStreamlineDTMRI::BuildLines()
+void vtkHyperStreamlineDTMRI::BuildLines(vtkDataSet *input, vtkPolyData *output)
 {
 
   if ( this->OneTrajectoryPerSeedPoint == 1  )
-    this->BuildLinesForSingleTrajectory();
+    this->BuildLinesForSingleTrajectory(input, output);
   else
-    this->BuildLinesForTwoTrajectories();
+    this->BuildLinesForTwoTrajectories(input, output);
 }
 
-void vtkHyperStreamlineDTMRI::BuildLinesForTwoTrajectories()
+void vtkHyperStreamlineDTMRI::BuildLinesForTwoTrajectories(vtkDataSet *input, vtkPolyData *output)
 {
   vtkTractographyPoint *sPtr;
   vtkPoints *newPoints;
   vtkCellArray *newLines;
   vtkFloatArray *newScalars=NULL;
   vtkFloatArray *newTensors=NULL;
-#if (VTK_MAJOR_VERSION >= 5)
-  vtkDataSet *input = this->GetPolyDataInput(0);
-#else
-  vtkDataSet *input = this->GetInput();
-#endif
-  vtkPolyData *output = this->GetOutput();
+
   vtkPointData *outPD = output->GetPointData();
 
   vtkIdType numIntPts;
@@ -693,19 +710,14 @@ void vtkHyperStreamlineDTMRI::BuildLinesForTwoTrajectories()
 }
 
 
-void vtkHyperStreamlineDTMRI::BuildLinesForSingleTrajectory()
+void vtkHyperStreamlineDTMRI::BuildLinesForSingleTrajectory(vtkDataSet *input, vtkPolyData *output)
 {
   vtkTractographyPoint *sPtr;
   vtkPoints *newPoints;
   vtkCellArray *newLines;
   vtkFloatArray *newScalars=NULL;
   vtkFloatArray *newTensors=NULL;
-#if (VTK_MAJOR_VERSION >= 5)
-  vtkDataSet *input = this->GetPolyDataInput(0);
-#else
-  vtkDataSet *input = this->GetInput();
-#endif
-  vtkPolyData *output = this->GetOutput();
+
   vtkPointData *outPD = output->GetPointData();
 
   vtkIdType numIntPts;
