@@ -21,6 +21,7 @@
 #include "vtkSlicerColorGUI.h"
 #include "vtkSlicerColorLogic.h"
 #include "vtkMRMLScalarVolumeNode.h"
+#include "vtkDiffusionTensorMathematics.h"
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerDiffusionTensorVolumeDisplayWidget );
@@ -31,6 +32,7 @@ vtkCxxRevisionMacro ( vtkSlicerDiffusionTensorVolumeDisplayWidget, "$Revision: 1
 vtkSlicerDiffusionTensorVolumeDisplayWidget::vtkSlicerDiffusionTensorVolumeDisplayWidget ( )
 {
     this->ScalarModeMenu = NULL;
+    this->ScalarOptionsFrame=NULL;
     this->GlyphButton = NULL;
     this->GlyphModeMenu = NULL;
     this->InterpolateButton = NULL;
@@ -48,6 +50,12 @@ vtkSlicerDiffusionTensorVolumeDisplayWidget::~vtkSlicerDiffusionTensorVolumeDisp
     this->ScalarModeMenu->SetParent(NULL);
     this->ScalarModeMenu->Delete();
     this->ScalarModeMenu = NULL;
+    }
+  if (this->ScalarOptionsFrame)
+    {
+    this->ScalarOptionsFrame->SetParent(NULL);
+    this->ScalarOptionsFrame->Delete();
+    this->ScalarOptionsFrame = NULL;
     }
   if (this->GlyphButton)
     {
@@ -462,6 +470,59 @@ void vtkSlicerDiffusionTensorVolumeDisplayWidget::CreateWidget ( )
   this->ScalarModeMenu = scalarMenuButton;
   scalarMenuButton->SetParent( volDisplayFrame );
   scalarMenuButton->Create();
+  scalarMenuButton->SetLabelText("Scalar Mode");
+  this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+                 scalarMenuButton->GetWidgetName());
+  // --
+  // SCALAR OPTIONS FRAME  
+  vtkSlicerModuleCollapsibleFrame *scalarFrame = vtkSlicerModuleCollapsibleFrame::New ( );
+  this->ScalarOptionsFrame = scalarFrame;
+  scalarFrame->SetParent ( volDisplayFrame );
+  scalarFrame->Create ( );
+  scalarFrame->SetLabelText ("Scalar Vis Options");
+  scalarFrame->ExpandFrame ( );
+  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
+    scalarFrame->GetWidgetName(), volDisplayFrame->GetWidgetName());
+
+     // a selector to change the color node associated with this display
+    this->ColorSelectorWidget = vtkSlicerNodeSelectorWidget::New() ;
+    this->ColorSelectorWidget->SetParent ( scalarFrame->GetFrame() );
+    this->ColorSelectorWidget->Create ( );
+    this->ColorSelectorWidget->SetNodeClass("vtkMRMLColorNode", NULL, NULL, NULL);
+    this->ColorSelectorWidget->ShowHiddenOn();
+    this->ColorSelectorWidget->SetMRMLScene(this->GetMRMLScene());
+    this->ColorSelectorWidget->SetBorderWidth(2);
+    // this->ColorSelectorWidget->SetReliefToGroove();
+    this->ColorSelectorWidget->SetPadX(2);
+    this->ColorSelectorWidget->SetPadY(2);
+    this->ColorSelectorWidget->GetWidget()->GetWidget()->IndicatorVisibilityOff();
+    this->ColorSelectorWidget->GetWidget()->GetWidget()->SetWidth(24);
+    this->ColorSelectorWidget->SetLabelText( "Color Select: ");
+    this->ColorSelectorWidget->SetBalloonHelpString("select a volume from the current mrml scene.");
+    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+      this->ColorSelectorWidget->GetWidgetName());
+
+    this->InterpolateButton = vtkKWCheckButton::New();
+    this->InterpolateButton->SetParent(scalarFrame->GetFrame());
+    this->InterpolateButton->Create();
+    this->InterpolateButton->SelectedStateOn();
+    this->InterpolateButton->SetText("Interpolate");
+    this->Script(
+      "pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
+    this->InterpolateButton->GetWidgetName());
+
+    this->WindowLevelThresholdEditor = vtkKWWindowLevelThresholdEditor::New();
+    this->WindowLevelThresholdEditor->SetParent ( scalarFrame->GetFrame());
+    this->WindowLevelThresholdEditor->Create ( );
+    vtkMRMLVolumeNode *volumeNode = this->GetVolumeNode();
+    if (volumeNode != NULL)
+      {
+      this->WindowLevelThresholdEditor->SetImageData(volumeNode->GetImageData());
+      }
+    this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
+      this->WindowLevelThresholdEditor->GetWidgetName());
+
+ 
 
   vtkKWCheckButton *glyphButton = vtkKWCheckButton::New();
   this->GlyphButton = glyphButton;
@@ -538,53 +599,12 @@ void vtkSlicerDiffusionTensorVolumeDisplayWidget::CreateWidget ( )
     }
 
     //Packing
-    scalarMenuButton->SetLabelText("Scalar Mode");
-    this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
-                 scalarMenuButton->GetWidgetName());
     glyphButton->SetText("Active glyphs");
     this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                  glyphButton->GetWidgetName());
     glyphMenuButton->SetLabelText("Glyph Type");
     this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                  glyphMenuButton->GetWidgetName());
-
-    // a selector to change the color node associated with this display
-    this->ColorSelectorWidget = vtkSlicerNodeSelectorWidget::New() ;
-    this->ColorSelectorWidget->SetParent ( volDisplayFrame );
-    this->ColorSelectorWidget->Create ( );
-    this->ColorSelectorWidget->SetNodeClass("vtkMRMLColorNode", NULL, NULL, NULL);
-    this->ColorSelectorWidget->ShowHiddenOn();
-    this->ColorSelectorWidget->SetMRMLScene(this->GetMRMLScene());
-    this->ColorSelectorWidget->SetBorderWidth(2);
-    // this->ColorSelectorWidget->SetReliefToGroove();
-    this->ColorSelectorWidget->SetPadX(2);
-    this->ColorSelectorWidget->SetPadY(2);
-    this->ColorSelectorWidget->GetWidget()->GetWidget()->IndicatorVisibilityOff();
-    this->ColorSelectorWidget->GetWidget()->GetWidget()->SetWidth(24);
-    this->ColorSelectorWidget->SetLabelText( "Color Select: ");
-    this->ColorSelectorWidget->SetBalloonHelpString("select a volume from the current mrml scene.");
-    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
-                  this->ColorSelectorWidget->GetWidgetName());
-
-    this->InterpolateButton = vtkKWCheckButton::New();
-    this->InterpolateButton->SetParent(volDisplayFrame);
-    this->InterpolateButton->Create();
-    this->InterpolateButton->SelectedStateOn();
-    this->InterpolateButton->SetText("Interpolate");
-    this->Script(
-      "pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
-    this->InterpolateButton->GetWidgetName());
-
-    this->WindowLevelThresholdEditor = vtkKWWindowLevelThresholdEditor::New();
-    this->WindowLevelThresholdEditor->SetParent ( volDisplayFrame );
-    this->WindowLevelThresholdEditor->Create ( );
-    vtkMRMLVolumeNode *volumeNode = this->GetVolumeNode();
-    if (volumeNode != NULL)
-      {
-      this->WindowLevelThresholdEditor->SetImageData(volumeNode->GetImageData());
-      }
-    this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
-                  this->WindowLevelThresholdEditor->GetWidgetName() );
 
     this->AddWidgetObservers();
     if (this->MRMLScene != NULL)
@@ -593,6 +613,8 @@ void vtkSlicerDiffusionTensorVolumeDisplayWidget::CreateWidget ( )
       }
 
     //volDisplayFrame->Delete();
+
+
 
     //Delete dummy display nodes
     if (displayNode != NULL)

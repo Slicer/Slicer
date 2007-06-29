@@ -31,7 +31,7 @@
 #include "vtkKWScaleWithEntry.h"
 #include "vtkKWMenuButtonWithSpinButtonsWithLabel.h"
 #include "vtkKWCheckButton.h"
-
+#include "vtkSlicerModuleCollapsibleFrame.h"
 #include "vtkMRMLVolumeNode.h"
 #include "vtkMRMLVolumeDisplayNode.h"
 
@@ -71,6 +71,7 @@ protected:
   virtual void CreateWidget();
 
   vtkKWMenuButtonWithSpinButtonsWithLabel* ScalarModeMenu;
+  vtkSlicerModuleCollapsibleFrame* ScalarOptionsFrame; 
   vtkKWCheckButton* GlyphButton;
   vtkKWMenuButtonWithSpinButtonsWithLabel* GlyphModeMenu; 
   vtkSlicerNodeSelectorWidget* ColorSelectorWidget;
