@@ -319,7 +319,7 @@ int vtkQdecModuleLogic::LoadResults(vtkSlicerModelsLogic *modelsLogic, vtkKWAppl
 
   app->LoadScript("../Libs/Qdec/vtkFreeSurferReaders.tcl");
   // set the plot file name
-  app->Script("set ::vtkFreeSurferReaders(PlotFileName) %s", dataFileName);
+  app->Script("set ::vtkFreeSurferReaders(PlotFileName) %s", dataFileName.c_str());
   app->Script("vtkFreeSurferReadersPlotApply %s", modelNode->GetID());
 
   return 0;
