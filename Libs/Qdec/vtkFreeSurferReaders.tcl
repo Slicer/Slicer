@@ -3784,10 +3784,12 @@ proc vtkFreeSurferReadersGDFPlotBuildWindow { iID } {
         return
     }
     # Make the graph.
+    if {[info command $gwPlot] == ""} {
     blt::graph $gwPlot \
         -title $vtkFreeSurferReaders(gGDF,$iID,title) \
         -plotbackground white \
         -relief raised -border 2
+    }
 
     # Bind our callbacks.
     $gwPlot legend bind all <Enter> [list vtkFreeSurferReadersGDFPlotCBLegendEnter $iID %W]
@@ -3811,16 +3813,20 @@ proc vtkFreeSurferReadersGDFPlotBuildWindow { iID } {
     eval {label $lwInfo -textvariable vtkFreeSurferReaders(gPlot,$iID,state,info)}
 
     # Make the variable menu.
+    if {[info command $owVar] == ""} {
     iwidgets::optionmenu $owVar \
         -labeltext "Variable menu" \
         -command "vtkFreeSurferReadersPlotSetVariable $iID" 
         # -labelfont $::Gui(WLA)
 
+    }
     # Make the mode menu.
+    if {[info command $owLegendMode] == ""} {
     iwidgets::optionmenu $owLegendMode \
         -labeltext "Mode menu" \
         -command "vtkFreeSurferReadersPlotSetMode $iID" 
         # -labelfont $::Gui(WLA)
+    }
     $owLegendMode config -state disabled 
 #    $owLegendMode add command subject -label "View by subject"
 #    $owLegendMode add command class -label "View by class"
@@ -3829,9 +3835,11 @@ proc vtkFreeSurferReadersGDFPlotBuildWindow { iID } {
     $owLegendMode config -state normal 
 
     # Make a frame for the class controls, which we'll fill in later.
+    if {[info command $fwClassConfig] == ""} {
     iwidgets::labeledframe $fwClassConfig -labeltext "Configure Classes"
+    
 
-    # Place everything in the window.
+    # Place everything in the window if the widgets weren't created this time through
     grid $gwPlot        -column 0 -row 0 -columnspan 3 -sticky news
     grid $lwInfo        -column 0 -row 1 -sticky nwe
     grid $owLegendMode  -column 1 -row 1 -sticky se
@@ -3843,6 +3851,7 @@ proc vtkFreeSurferReadersGDFPlotBuildWindow { iID } {
     grid rowconfigure $wwTop 0 -weight 1
     grid rowconfigure $wwTop 1 -weight 0
     grid rowconfigure $wwTop 2 -weight 0
+    }
 
     # Set the names in the gWidgets array.
     set vtkFreeSurferReaders(gWidgets,$iID,wwTop)          $wwTop
@@ -5350,7 +5359,7 @@ proc vtkFreeSurferReadersPlotApply { mid } {
     mybreader Delete
     MainEndProgress
     } else {
-    if {[file extension $datafilename] == ".mgz" ||
+       if {[file extension $datafilename] == ".mgz" ||
         [file extension $datafilename] == ".mgh"} {
         catch "reader Delete"
         vtkITKArchetypeImageSeriesVectorReader reader
@@ -5367,7 +5376,7 @@ proc vtkFreeSurferReadersPlotApply { mid } {
         $vtkFreeSurferReaders(plot,$vtkFreeSurferReaders(gGDF,dataID),scalars) Register $::slicer3::Application
         set scalarsVar vtkFreeSurferReaders(plot,$vtkFreeSurferReaders(gGDF,dataID),scalars)
         reader Delete
-    }
+       }
     }
 
     if {$::Module(verbose)} {
