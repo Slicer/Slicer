@@ -314,23 +314,12 @@ int vtkQdecModuleLogic::LoadResults(vtkSlicerModelsLogic *modelsLogic, vtkKWAppl
   string dataFileName = gdfReader->GetDataFileName();
   vtkDebugMacro("FSGD file read in, y.mgh data file name = " << dataFileName.c_str());
   
-  // load the data file, associating it with the model
-  if (modelsLogic && modelNode)
-    {
-    if (!modelsLogic->AddScalar(dataFileName.c_str(), modelNode))
-      {
-      vtkErrorMacro("Unable to add the fsgd data file " << dataFileName.c_str() << " to the average surface model");
-      }
-    }
-  else
-    {
-    vtkErrorMacro("Unable to load the y.mgh file");
-    }
+  // don't load the data file, it's loaded in the tcl code and associated with the model there
   gdfReader->Delete();
 
-  app->LoadScript("../Slicer3/Libs/Qdec/vtkFreeSurferReaders.tcl");
+  app->LoadScript("../Libs/Qdec/vtkFreeSurferReaders.tcl");
   // set the plot file name
-  app->Script("set ::vtkFreeSurferReaders(PlotFileName) %s", this->QDECProject->GetGlmFitResults()->GetFsgdFile());
+  app->Script("set ::vtkFreeSurferReaders(PlotFileName) %s", dataFileName);
   app->Script("vtkFreeSurferReadersPlotApply %s", modelNode->GetID());
 
   return 0;
