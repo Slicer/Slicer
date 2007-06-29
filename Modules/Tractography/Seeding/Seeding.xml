@@ -4,7 +4,7 @@
   Tractography.Seeding
   </category>
   <title>
-  Tractography
+  Seeding
   </title>
   <description>
   Seed tracts from a ROI
@@ -25,14 +25,15 @@
       <index>0</index>
       <description>Input DTI volume</description>
     </image>
-    <image type ="label">
+    
+    <!-- <image type ="label">
       <name>InputROI</name>
       <label>Input ROI</label>
       <channel>input</channel>
       <index>1</index>
       <description>Label map with seeding ROIs</description>
-    </image>
-    <geometry>
+    </image> -->
+    <geometry type = "fiberbundle">
       <name>OutputFibers</name>
       <label>Output Fiber bundle</label>
       <channel>output</channel>
@@ -103,7 +104,7 @@
     <double>
       <name>MaximumLength</name>
       <label>Maximum Length</label>
-      <flag>-h</flag>
+      <flag>-m</flag>
       <longflag>--maximumlength</longflag>
       <description>Maximum lenght of fibers (in mm)</description>
       <default>800</default>
@@ -118,7 +119,7 @@
       <name>StoppingMode</name>
       <label>Stopping Mode</label>
       <description>Tensor measurement used to stop the tractography</description>
-      <flag>-m</flag>
+      <flag>-f</flag>
       <longflag>--stoppingmode</longflag>      	
       <default>LinearMeasurement</default>
       <element>LinearMeasurement</element>
@@ -149,7 +150,7 @@
     <integer>
       <name>ROIlabel</name>
       <label> ROI label</label>
-      <flag>-l</flag>
+      <flag>-o</flag>
       <longflag>--label</longflag>
       <description>ROI label value that defines seeding region.</description>
       <default>1</default>
