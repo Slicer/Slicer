@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>
+  Filtering
+  </category>
+  <title>
+  Zero Crossing Based Edge Detection Filter
+  </title>
+  <description>
+  The Zero Crossing Based Edge Detection Filter detects edges on an image by first applying 
+  the Discrete Gaussian Image Filter to smooth out the image. Then it applies the Laplacian 
+  Image Filter to find the edges (ie pixels with value zero). Finally, it uses the Zero 
+  Crossing Image Filter to map the edges detected by the Laplacian Image Filter to one and 
+  the rest of the image to zero and produces a binary image.
+  </description>
+  <version>0.1.0.$Revision: 2085 $(alpha)</version>
+  <documentation-url></documentation-url>
+  <license></license>
+  <contributor>Elliot Uvero</contributor>
+  <acknowledgements>This command module was derived from Insight/Examples/Filtering/MedianImageFilter (copyright) Insight Software Consortium</acknowledgements>
+  <parameters>
+    <label>Zero Crossing Based Edge Detection Filter Parameters</label>
+    <description>Parameters for the zero crossing based edge detection filter</description>
+    <float>
+      <name>variance</name>
+      <longflag>--variance</longflag>
+      <description>The variance used by the Discrete Gaussian Image Filter.</description>
+      <label>Variance</label>
+      <default>0</default>
+    </float>
+
+        <float>
+                <name>maximumError</name>
+                <longflag>--maximumError</longflag>
+                <description>The maximum error used by the Discrete Gaussian Image Filter. 
+                Value must be between 0 and 1. 
+                </description>
+                <label>Maximum Error</label>
+                <default>0</default>
+        </float>
+
+  </parameters>
+
+  <parameters>
+    <label>IO</label>
+    <description>Input/output parameters</description>
+    <image>
+      <name>inputVolume</name>
+      <label>Input Volume</label>
+      <channel>input</channel>
+      <index>0</index>
+      <description>Input volume to be filtered</description>
+    </image>
+    <image>
+      <name>outputVolume</name>
+      <label>Output Volume</label>
+      <channel>output</channel>
+      <index>1</index>
+      <description>Output filtered volume</description>
+    </image>
+  </parameters>
+
+</executable>

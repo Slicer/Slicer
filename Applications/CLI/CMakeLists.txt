@@ -356,6 +356,18 @@ INCLUDE_DIRECTORIES(
 ENDIF(USE_TEEM)
 
 #####################
+SET (CLP ZeroCrossingBasedEdgeDetectionImageFilter)
+
+SET ( ${CLP}_SOURCE ${CLP}.cxx)
+GENERATECLP(${CLP}_SOURCE ${CLP}.xml ${CLI_SOURCE_DIR}/Resources/ITKLogo.h)
+ADD_EXECUTABLE(${CLP} ${${CLP}_SOURCE})
+TARGET_LINK_LIBRARIES (${CLP} ITKIO ITKBasicFilters)
+
+ADD_LIBRARY(${CLP}Lib SHARED ${${CLP}_SOURCE})
+SET_TARGET_PROPERTIES (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
+TARGET_LINK_LIBRARIES (${CLP}Lib ITKIO ITKBasicFilters)
+
+#####################
 
 
 #IF (Slicer3_BUILD_TESTING)
