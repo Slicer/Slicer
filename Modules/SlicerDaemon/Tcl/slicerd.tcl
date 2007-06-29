@@ -198,11 +198,7 @@ proc slicerd_sock_fileevent {sock} {
                 
                 vtkMatrix4x4 ::slicerd::measurement_frame_matrix
                 $node GetMeasurementFrameMatrix ::slicerd::measurement_frame_matrix
-                
-                # I think the meassurement frame stored in the node is transposed, 
-                # I transpose it back to the original one
-                ::slicerd::measurement_frame_matrix Transpose
-                
+             
                 # measurement frame in the nrrd header is columnwise 
                 set measurement_frame [format "(%.15g, %.15g, %.15g) (%.15g, %.15g, %.15g) (%.15g, %.15g, %.15g)" \
                                            [::slicerd::measurement_frame_matrix GetElement 0 0]\
