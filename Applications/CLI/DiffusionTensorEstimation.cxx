@@ -12,7 +12,7 @@
 
 #include "itkPluginFilterWatcher.h"
 #include "itkPluginUtilities.h"
-
+#include "vtkSmartPointer.h"
 #include "vtkTeemEstimateDiffusionTensor.h"
 #include "vtkMatrix4x4.h"
 #include "vtkNRRDReader.h"
@@ -30,24 +30,21 @@ int main( int argc, const char * argv[] )
 
   PARSE_ARGS;
 
-  vtkNRRDReader *reader = vtkNRRDReader::New();
+  //vtkNRRDReader *reader = vtkNRRDReader::New();
+  vtkSmartPointer<vtkNRRDReader> reader = vtkNRRDReader::New();
   reader->SetFileName(inputVolume.c_str());
   reader->Update();
 
-  vtkDoubleArray *bValues = vtkDoubleArray::New();
-  vtkDoubleArray *grads = vtkDoubleArray::New();
-  vtkMRMLNRRDStorageNode *helper = vtkMRMLNRRDStorageNode::New();
+  vtkSmartPointer<vtkDoubleArray> bValues = vtkDoubleArray::New();
+  vtkSmartPointer<vtkDoubleArray> grads = vtkDoubleArray::New();
+  vtkSmartPointer<vtkMRMLNRRDStorageNode> helper = vtkMRMLNRRDStorageNode::New();
   
   if ( !helper->ParseDiffusionInformation(reader,grads,bValues) )
     {
     std::cerr << argv[0] << ": Error parsing Diffusion information" << std::endl;
-    //bValues->Delete();
-    //grads->Delete();
-    //reader->Delete();
-    //helper->Delete();
     return EXIT_FAILURE;
     }
-  vtkTeemEstimateDiffusionTensor *estim = vtkTeemEstimateDiffusionTensor::New();
+  vtkSmartPointer<vtkTeemEstimateDiffusionTensor> estim = vtkTeemEstimateDiffusionTensor::New();
 
   estim->SetInput(reader->GetOutput());
   estim->SetNumberOfGradients(grads->GetNumberOfTuples());
@@ -56,9 +53,9 @@ int main( int argc, const char * argv[] )
 
   // Compute Transformation that brings the gradients to ijk
   double *sp = reader->GetOutput()->GetSpacing();
-  vtkMatrix4x4 *mf = vtkMatrix4x4::New();
+  vtkSmartPointer<vtkMatrix4x4> mf = vtkMatrix4x4::New();
   mf->DeepCopy(reader->GetMeasurementFrameMatrix());
-  vtkMatrix4x4 *rasToIjkRotation = vtkMatrix4x4::New();
+  vtkSmartPointer<vtkMatrix4x4> rasToIjkRotation = vtkMatrix4x4::New();
   rasToIjkRotation->DeepCopy(reader->GetRasToIjkMatrix());
 
   //Set Translation to zero
@@ -81,7 +78,7 @@ int main( int argc, const char * argv[] )
      }  
   }
 
-  vtkTransform *trans = vtkTransform::New();
+  vtkSmartPointer<vtkTransform> trans = vtkTransform::New();
   trans->PostMultiply();
   trans->SetMatrix(mf);
   trans->Concatenate(rasToIjkRotation);
@@ -106,7 +103,7 @@ int main( int argc, const char * argv[] )
   tensorImage->GetPointData()->SetScalars(NULL);
 
   //Save tensor
-  vtkNRRDWriter *writer = vtkNRRDWriter::New();
+  vtkSmartPointer<vtkNRRDWriter> writer = vtkNRRDWriter::New();
   writer->SetInput(tensorImage);
   writer->SetFileName( outputTensor.c_str() );
   writer->UseCompressionOn();
@@ -119,28 +116,13 @@ int main( int argc, const char * argv[] )
   writer->SetMeasurementFrameMatrix( rasToIjkRotation );
   writer->Write();
 
-  writer->Delete();
-
   //Save baseline
-  vtkNRRDWriter *writer2 = vtkNRRDWriter::New();
+  vtkSmartPointer<vtkNRRDWriter> writer2 = vtkNRRDWriter::New();
   writer2->SetInput(estim->GetBaseline());
   writer2->SetFileName( outputBaseline.c_str() );
   writer2->UseCompressionOn();
   writer2->SetIJKToRASMatrix( reader->GetRasToIjkMatrix() );
   writer2->Write();
   
-  // Deleting objects
-  cout<<"Ready to Delete"<<endl;
-  //bValues->Delete();
-  //grads->Delete();
-  //helper->Delete();
-  //mf->Delete();
-  //rasToIjkRotation->Delete();
-  //trans->Delete();
-  //estim->Delete();
-  //writer2->Delete();
-  //reader->Delete();
-
-
   return EXIT_SUCCESS;
 }
