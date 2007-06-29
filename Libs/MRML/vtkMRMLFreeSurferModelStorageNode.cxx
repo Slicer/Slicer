@@ -337,12 +337,12 @@ int vtkMRMLFreeSurferModelStorageNode::ReadData(vtkMRMLNode *refNode)
             if (dirptr != std::string::npos)
             {
                 scalarName = name.substr(++dirptr);
-                vtkErrorMacro("Using dir name in scalar name " << scalarName.c_str());
+                vtkDebugMacro("Using dir name in scalar name " << scalarName.c_str());
             }
             else
             {
                 scalarName = name.substr(++ptr);
-                vtkErrorMacro("Not using the dir name in the scalar name " << scalarName.c_str());
+                vtkDebugMacro("Not using the dir name in the scalar name " << scalarName.c_str());
             }
         }
         else
@@ -641,12 +641,12 @@ int vtkMRMLFreeSurferModelStorageNode::ReadData(vtkMRMLNode *refNode)
             if (dirptr != std::string::npos)
             {
                 scalarName = name.substr(++dirptr);
-                vtkErrorMacro("Using dir name in scalar name " << scalarName.c_str());
+                vtkDebugMacro("Using dir name in scalar name " << scalarName.c_str());
             }
             else
             {
                 scalarName = name.substr(++ptr);
-                vtkErrorMacro("Not using the dir name in the scalar name " << scalarName.c_str());
+                vtkDebugMacro("Not using the dir name in the scalar name " << scalarName.c_str());
             }
 
         }
