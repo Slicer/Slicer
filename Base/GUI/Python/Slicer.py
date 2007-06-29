@@ -21,13 +21,41 @@ class SlicerWrapper:
     def __repr__ ( self ):
         return "<Slicer object: " + self.obj + ">"
     def __str__ ( self ):
-        return self.obj
+        return self.__repr__ ()
     def __init__ ( self, slicer, obj ):
         self.obj = obj
         self.slicer = slicer
+    def __convertString ( self, inString ):
+        # print "inString: ", inString
+        outList = []
+        IsList = True
+        AreFloats = None
+        try:
+            for ii in string.split ( inString ):
+                # print ii
+                foo = eval ( ii )
+                if type ( foo ) == int or type ( foo ) == float:
+                    if type ( foo ) == float:
+                        AreFloats = True
+                    outList.append ( foo )
+                else:
+                    IsList = None
+                    break
+            if IsList:
+                if AreFloats:
+                    outList = [float ( ii ) for ii in outList]
+                if len ( outList ) == 1:
+                    return outList[0]
+                return outList
+            else:
+                return inString
+        except Exception:
+            pass
+        return inString
     def __eval ( self, inString ):
-        print inString
-        return tk.tk.call ( *string.split ( inString ) )
+        # print "calling: ", inString
+        result = tk.tk.call ( *string.split ( inString ) )
+        return self.__convertString ( result )
     def __callVTKmethod ( self, m, *a ):
         cstring = ''
         cstring += self.obj
@@ -39,7 +67,7 @@ class SlicerWrapper:
         if tk.tk.call ( 'info', 'command', value ):
             return SlicerWrapper ( self, value )
         else:
-            return value
+            return self.__convertString ( value )
     def __repr__ ( self ):
         return str ( self.obj )
     def __getattr__ ( self, name ):
@@ -63,21 +91,30 @@ class Slicer:
     def __init__ ( self ):
         self.callTk = tk.tk.call
         self.ns = "::slicer3"
+    def eval ( self, inString ):
+        return self.__eval ( inString )
     def __eval ( self, inString ):
         # print inString
         return self.callTk ( *string.split ( inString ) )
-    def __getattr__ ( self, name ):
-        # Get the variable from the namespace
-        qname = self.ns + "::" + name
-        if self.__eval ( 'info exists ' + qname ):
-            cname = str ( self.__eval ( 'set ' + qname ) );
-            # print "found cname: ", cname
-            if self.__eval ( 'info command ' + cname ):
-                return SlicerWrapper ( self, cname )
-            else:
-                return cname
-        else:
-            raise Exception ( "attribute " + qname + " does not exist" )
+    def __getattr__ ( self, inName ):
+        # Get the variable or command from the namespace
+        qname = self.ns + "::" + inName
+        for name in ( inName, qname ):
+            # if it's a variable, find the value, and see if it's a command
+            if self.__eval ( 'info exists ' + name ):
+                print "found name: ", name
+                cname = str ( self.__eval ( 'set ' + name ) );
+                # print "found cname: ", cname
+                if self.__eval ( 'info command ' + cname ):
+                    print "Returning Wrapped object: ", cname
+                    return SlicerWrapper ( self, cname )
+                else:
+                    print "Returning object: ", cname
+                    return cname
+            if self.__eval ( 'info command ' + name ):
+                print "Returning Wrapped object, wo/lookup"
+                return SlicerWrapper ( self, name )
+        raise Exception ( "attribute " + qname + " does not exist" )
 
 
 # (RelWithDebInfo) 7 % [[$::slicer3::ApplicationGUI GetMainSliceGUI0]  GetSliceViewer]  GetWidgetName
@@ -94,15 +131,23 @@ def ListVolumeNodes():
     for idx in range ( int ( count ) ):
         nodes[idx] = scene.GetNthNodeByClass ( idx, 'vtkMRMLVolumeNode' )
     return nodes
+
+def ParseArgs ( ModuleArgs ):
+    """This is a helper function to strip off all the flags
+    and make them keyword args to the eventual Execute call
+    returns a tuple of FlagArgs and PositionalArgs"""
+    FlagArgs = {}
+    PositionalArgs = []
     
-
-
-import scipy.ndimage
-def test():
-    nodes = ListVolumeNodes()
-    t2 = nodes[0]
-    data = t2.GetImageData().ToArray()
-    temp = scipy.ndimage.gaussian_filter ( data, 2.0 )
-    data[:] = temp[:]
-
-    
+    # Check each argument in turn, if we hit one that
+    # does not start with a "-", it's the positional args.
+    while len ( ModuleArgs ) != 0:
+        arg = ModuleArgs.pop ( 0 );
+        print "Looking at: ", arg
+        if arg.startswith ( "-" ):
+            FlagArgs[arg.lstrip( "-" )] = ModuleArgs.pop ( 0 )
+        else:
+            PositionalArgs.append ( arg )
+            while len ( ModuleArgs ) != 0:
+                PositionalArgs.append ( ModuleArgs.pop ( 0 ) )
+    return FlagArgs, PositionalArgs

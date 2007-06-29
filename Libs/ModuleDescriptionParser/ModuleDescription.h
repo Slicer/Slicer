@@ -116,7 +116,9 @@ public:
   // Set the type of module: Unknown, SharedObjectModule, CommandLineModule
   void SetType(const std::string &type)
   {
-    if (type == "SharedObjectModule" || type == "CommandLineModule")
+    if (type == "SharedObjectModule" 
+        || type == "CommandLineModule"
+        || type == "PythonModule")
       {
       this->Type = type;
       }

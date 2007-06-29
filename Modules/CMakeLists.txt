@@ -11,6 +11,7 @@ SUBDIRS(
   SlicerDaemon
   Editor
   QueryAtlas
+  Python
   #Meshing
   QdecModule
 )

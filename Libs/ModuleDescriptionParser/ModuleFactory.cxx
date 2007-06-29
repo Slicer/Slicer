@@ -31,6 +31,17 @@
 #include "BinaryFileDescriptor.h"
 #endif
 
+#ifdef USE_PYTHON
+// If debug, Python wants pythonxx_d.lib, so fake it out
+#ifdef _DEBUG
+#undef _DEBUG
+#include <Python.h>
+#define _DEBUG
+#else
+#include <Python.h>
+#endif
+#endif
+
 static void
 splitString (std::string &text,
              std::string &separators,
@@ -47,6 +58,22 @@ splitString (std::string &text,
     start = text.find_first_not_of(separators, stop+1);
     }
 }
+
+inline bool
+NameIsPythonModule ( const char* name )
+{
+  std::string extension = ".py";
+  std::string sname = name;
+  std::transform(sname.begin(), sname.end(), sname.begin(),
+                 (int (*)(int))std::tolower);
+  if ( sname.rfind(extension) == sname.size() - extension.size() )
+    {
+    return true;
+    }
+  return false;
+}
+
+
 
 /**
  * A file scoped function to determine if a file has
@@ -292,13 +319,16 @@ ModuleFactory
 {
   // Scan for shared object modules first since they will be higher
   // performance than command line module
-  int numberOfShared, numberOfExecutables, numberOfPeekedExecutables;
+  int numberOfShared, numberOfExecutables, numberOfPeekedExecutables, numberOfPython = 0;
 
   numberOfShared = this->ScanForSharedObjectModules();
   numberOfPeekedExecutables = this->ScanForCommandLineModulesByPeeking();
   numberOfExecutables = this->ScanForCommandLineModulesByExecuting();
+#ifdef USE_PYTHON
+  numberOfPython = this->ScanForPythonModulesByLoading();
+#endif
 
-  if (numberOfShared + numberOfExecutables + numberOfPeekedExecutables == 0)
+  if (numberOfShared + numberOfExecutables + numberOfPeekedExecutables + numberOfPython == 0)
     {
     this->WarningMessage( ("No plugin modules found. Check your module search path and your " + this->Name + " installation.").c_str() );
     }
@@ -1287,4 +1317,191 @@ ModuleFactory
   
   // clean up
   itksysProcess_Delete(process);
+}
+
+
+long
+ModuleFactory
+::ScanForPythonModulesByLoading()
+{
+  long numberTested = 0;
+  long numberFound = 0;
+  double t0, t1;
+  
+#ifdef USE_PYTHON
+  // add any of the self-describing Python modules available
+  if (this->SearchPath == "")
+    {
+    this->WarningMessage( "Empty module search path." );
+    return 0;
+    }
+
+  PyObject* PythonModule = PyImport_AddModule("__main__");
+  if (PythonModule == NULL)
+    {
+    this->WarningMessage ( "Failed to initialize python" );
+    return 0;
+    }
+  PyObject* PythonDictionary = PyModule_GetDict(PythonModule);
+  
+  std::vector<std::string> modulePaths;
+#ifdef _WIN32
+  std::string delim(";");
+#else
+  std::string delim(":");
+#endif
+  splitString(this->SearchPath, delim, modulePaths);
+
+  std::vector<std::string>::const_iterator pit;
+  
+  t0 = itksys::SystemTools::GetTime();  
+  for (pit = modulePaths.begin(); pit != modulePaths.end(); ++pit)
+    {
+    std::stringstream information;
+  
+    information << "Searching " << *pit
+                << " for Python plugins." << std::endl;
+    
+    itksys::Directory directory;
+    directory.Load( (*pit).c_str() );
+
+    for ( unsigned int ii=0; ii < directory.GetNumberOfFiles(); ++ii)
+      {
+      const char *filename = directory.GetFile(ii);
+      
+      // skip any directories
+      if (!itksys::SystemTools::FileIsDirectory(filename))
+        {
+        // make sure the file has a shared library extension
+        if ( NameIsPythonModule(filename) )
+          {
+          numberTested++;
+          
+          // library name 
+          std::string fullLibraryPath = std::string(directory.GetPath())
+            + "/" + filename;
+          //std::cout << "Checking " << fullLibraryPath << std::endl;
+
+          // early exit if we have already tested this file and succeeded
+          ModuleFileMap::iterator fit
+            = this->InternalFileMap->find(fullLibraryPath);
+          if (fit != this->InternalFileMap->end())
+            {
+            // file was already discovered as a module
+            information << "Python module already discovered at " << fullLibraryPath
+                        << std::endl;
+            continue;
+            }
+
+
+          // Add the current path, if it doesn't exist, try to load the xml
+          // for the module
+          std::string LoadModuleString = "import sys;\n"
+            "ModulePath = \"" + std::string ( directory.GetPath()) + "\"\n"
+            "ModuleFileName = \"" + filename + "\"\n"
+            "ModuleName = ModuleFileName[:-3]\n"
+            "if not ModulePath in sys.path:\n"
+            "    sys.path.append ( ModulePath )\n"
+            "Module = __import__ ( ModuleName )\n"
+            "print 'Module: ', dir ( Module )\n"
+            "if 'XML' in dir ( Module ):\n"
+            "    print 'Found XML!'\n"
+            "    XML = Module.XML\n"
+            "if 'toXML' in dir ( Module ):\n"
+            "    XML = Module.ToXML()\n"
+            "if not 'Execute' in dir ( Module ):\n"
+            "    XML = None\n";
+
+          PyObject* v;
+      
+          v = PyRun_String( LoadModuleString.c_str(),
+                            Py_file_input,
+                            PythonDictionary,
+                            PythonDictionary );
+          if (v == NULL)
+            {
+            PyErr_Print();
+            continue;
+            }
+          else
+            {
+            if (Py_FlushLine())
+              {
+              PyErr_Clear();
+              }
+            }
+          // Pull out the XML variable, and add the module...
+          char* XMLString = PyString_AsString ( PyDict_GetItemString ( PythonDictionary, "XML" ) );
+          if ( XMLString == NULL )
+            {
+            continue;
+            }
+          std::string xml = XMLString;
+          std::string ModuleName = PyString_AsString ( PyDict_GetItemString ( PythonDictionary, "ModuleName" ) );
+          // check if the module generated a valid xml description
+          if (xml.compare(0, 5, "<?xml") == 0)
+            {
+            this->InternalFileMap->insert(fullLibraryPath);
+            // Construct and configure the module object
+            ModuleDescription module;
+            module.SetType("PythonModule");
+            module.SetTarget( ModuleName.c_str() );
+            module.SetLocation( fullLibraryPath );
+
+            // Parse the xml to build the description of the module
+            // and the parameters
+            ModuleDescriptionParser parser;
+            parser.Parse(xml, module);
+
+            // Check to make sure the module is not already in the
+            // list
+            ModuleDescriptionMap::iterator mit
+              = this->InternalMap->find(module.GetTitle());
+
+            std::string splash_msg("Discovered ");
+            splash_msg +=  module.GetTitle();
+            splash_msg += " Module...";
+            this->ModuleDiscoveryMessage(splash_msg.c_str());
+                
+            if (mit == this->InternalMap->end())
+              {
+              // Store the module in the list
+              (*this->InternalMap)[module.GetTitle()] =  module ;
+              
+              information << "A module named \"" << module.GetTitle()
+                          << "\" has been discovered at "
+                          << module.GetLocation() << "("
+                          << module.GetTarget() << ")" << std::endl;
+              numberFound++;
+              }
+            else
+              {
+              information << "A module named \"" << module.GetTitle()
+                          << "\" has already been discovered." << std::endl
+                          << "    First discovered at "
+                          << (*mit).second.GetLocation()
+                          << "(" << (*mit).second.GetTarget() << ")"
+                          << std::endl
+                          << "    Then discovered at "
+                          << module.GetLocation()
+                          << "(" << module.GetTarget() << ")"
+                          << std::endl
+                          << "    Keeping first module." << std::endl;
+              }
+            }
+          }
+        }
+      }
+    this->InformationMessage( information.str().c_str() );
+    }
+  t1 = itksys::SystemTools::GetTime();
+  
+  std::stringstream information;
+  information << "Tested " << numberTested << " files as Python plugins. Found "
+              << numberFound << " new plugins in " << t1 - t0
+              << " seconds." << std::endl;
+  
+  this->InformationMessage( information.str().c_str() );
+#endif
+  return numberFound;
 }

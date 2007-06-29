@@ -95,7 +95,10 @@ TARGET_LINK_LIBRARIES(QdecModule
   Qdec
   )
 
-
+IF (USE_PYTHON)
+  ADD_DEFINITIONS(-DUSE_PYTHON)
+  INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
+ENDIF(USE_PYTHON)
 
 # --------------------------------------------------------------------------
 # Testing (requires some of the examples)

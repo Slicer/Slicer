@@ -98,6 +98,12 @@ IF( TEEM_FOUND )
   TARGET_LINK_LIBRARIES(SlicerTractographyDisplay vtkTeem)
 ENDIF( TEEM_FOUND )
 
+IF (USE_PYTHON)
+  ADD_DEFINITIONS(-DUSE_PYTHON)
+  INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
+ENDIF(USE_PYTHON)
+
+
 # --------------------------------------------------------------------------
 # Testing (requires some of the examples)
 

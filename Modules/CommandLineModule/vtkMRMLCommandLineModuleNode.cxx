@@ -93,8 +93,8 @@ void vtkMRMLCommandLineModuleNode::WriteXML(ostream& of, int nIndent)
   // references to other nodes are already stored as IDs. So we write
   // out those IDs.
   //
-  of << " title=\"" << module.GetTitle() << "\"";
-  of << " version=\"" << module.GetVersion() << "\"";
+  of << " title=\"" << this->URLEncodeString ( module.GetTitle().c_str() ) << "\"";
+  of << " version=\"" << this->URLEncodeString ( module.GetVersion().c_str() ) << "\"";
   
   // Loop over the parameter groups, writing each parameter.  Note
   // that the parameter names are unique.
@@ -116,8 +116,8 @@ void vtkMRMLCommandLineModuleNode::WriteXML(ostream& of, int nIndent)
 
     for (pit = pbeginit; pit != pendit; ++pit)
       {
-      of << " " << (*pit).GetName()
-         << "=\"" << (*pit).GetDefault() << "\"";
+      of << " " << this->URLEncodeString ( (*pit).GetName().c_str() )
+         << "=\"" << this->URLEncodeString ( (*pit).GetDefault().c_str() ) << "\"";
       }
     }
   

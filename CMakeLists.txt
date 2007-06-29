@@ -73,6 +73,7 @@ ENDIF(Slicer3_BUILD_TESTING)
 OPTION(USE_PYTHON "Integrate a python interpreter into Slicer." OFF)
 IF (USE_PYTHON)
    FIND_PACKAGE(PythonLibs)
+   ADD_DEFINITIONS(-DUSE_PYTHON)
 ENDIF(USE_PYTHON)
 
 

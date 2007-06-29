@@ -96,6 +96,9 @@ protected:
   // method). 
   virtual long ScanForCommandLineModulesByPeeking();
 
+  virtual long ScanForPythonModulesByLoading();
+
+
   // Get the logo for a command line module
   virtual void GetLogoForCommandLineModuleByExecuting(ModuleDescription&);
   

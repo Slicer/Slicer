@@ -23,6 +23,7 @@
 
 #include <string>
 
+typedef enum { CommandLineModule, SharedObjectModule, PythonModule } CommandLineModuleType;
 
 class VTK_COMMANDLINEMODULE_EXPORT vtkCommandLineModuleLogic : public vtkSlicerModuleLogic
 {
@@ -55,7 +56,7 @@ protected:
                                      const std::string& type,
                                      const std::string& name,
                                      const std::vector<std::string>& extensions,
-                                     bool isCommandLineModule) const;
+                                     CommandLineModuleType commandType) const;
   //ETX
 
   // The method that runs the command line module
