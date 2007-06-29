@@ -708,7 +708,7 @@ void vtkQdecModuleGUI::BuildGUI ( )
   this->ApplyButton = vtkKWPushButton::New();
   this->ApplyButton->SetParent( designFrame->GetFrame() );
   this->ApplyButton->Create();
-  this->ApplyButton->SetText("Apply");
+  this->ApplyButton->SetText("Run GLM Fit");
   this->ApplyButton->SetWidth ( 8 );
   app->Script("pack %s -side top -anchor e -padx 20 -pady 10 -in %s", 
               this->ApplyButton->GetWidgetName(),
