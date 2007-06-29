@@ -67,3 +67,8 @@ TARGET_LINK_LIBRARIES(Qdec
 #  SUBDIRS(Testing)
 # ENDIF(BUILD_TESTING)
 
+CONFIGURE_FILE(
+  ${Qdec_SOURCE_DIR}/vtkFreeSurferReaders.tcl
+  ${Qdec_BINARY_DIR}/vtkFreeSurferReaders.tcl
+  COPYONLY
+)
