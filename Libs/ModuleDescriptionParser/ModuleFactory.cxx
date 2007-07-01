@@ -1326,9 +1326,9 @@ ModuleFactory
 {
   long numberTested = 0;
   long numberFound = 0;
-  double t0, t1;
   
 #ifdef USE_PYTHON
+  double t0, t1;
   // add any of the self-describing Python modules available
   if (this->SearchPath == "")
     {
