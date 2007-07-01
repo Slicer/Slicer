@@ -68,7 +68,7 @@ for {set i 0} {$i < $argc} {incr i} {
         "--release" {
             set ::GETBUILDTEST(release) "--release"
         }
-             "-t" -
+        "-t" -
         "--test-type" {
             incr i
             if { $i == $argc } {
