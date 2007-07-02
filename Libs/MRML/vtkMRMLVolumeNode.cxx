@@ -171,12 +171,12 @@ void vtkMRMLVolumeNode::ReadXMLAttributes(const char** atts)
     else if (!strcmp(attName, "storageNodeRef")) 
       {
       this->SetStorageNodeID(attValue);
-      this->Scene->AddReferencedNodeID(this->StorageNodeID, this);
+      //this->Scene->AddReferencedNodeID(this->StorageNodeID, this);
       }
     else if (!strcmp(attName, "displayNodeRef")) 
       {
       this->SetDisplayNodeID(attValue);
-      this->Scene->AddReferencedNodeID(this->DisplayNodeID, this);
+      //this->Scene->AddReferencedNodeID(this->DisplayNodeID, this);
       }
    }  
 }

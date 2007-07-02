@@ -267,17 +267,17 @@ void vtkMRMLFiberBundleDisplayNode::ReadXMLAttributes(const char** atts)
     else if (!strcmp(attName, "fiberLineDisplayNodeRef")) 
       {
       this->SetFiberLineDTDisplayPropertiesNodeID(attValue);
-      this->Scene->AddReferencedNodeID(this->FiberLineDTDisplayPropertiesNodeID, this);
+      //this->Scene->AddReferencedNodeID(this->FiberLineDTDisplayPropertiesNodeID, this);
       }
     else if (!strcmp(attName, "fiberTubeDisplayNodeRef")) 
       {
       this->SetFiberTubeDTDisplayPropertiesNodeID(attValue);
-      this->Scene->AddReferencedNodeID(this->FiberTubeDTDisplayPropertiesNodeID, this);
+      //this->Scene->AddReferencedNodeID(this->FiberTubeDTDisplayPropertiesNodeID, this);
       }
     else if (!strcmp(attName, "fiberGlyphDisplayNodeRef")) 
       {
       this->SetFiberGlyphDTDisplayPropertiesNodeID(attValue);
-      this->Scene->AddReferencedNodeID(this->FiberGlyphDTDisplayPropertiesNodeID, this);
+      //this->Scene->AddReferencedNodeID(this->FiberGlyphDTDisplayPropertiesNodeID, this);
       }
     }  
 }

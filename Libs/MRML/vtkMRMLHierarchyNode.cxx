@@ -81,7 +81,7 @@ void vtkMRMLHierarchyNode::ReadXMLAttributes(const char** atts)
     if (!strcmp(attName, "parentNodeRef")) 
       {
       this->SetParentNodeID(attValue);
-      this->Scene->AddReferencedNodeID(this->ParentNodeID, this);
+      //this->Scene->AddReferencedNodeID(this->ParentNodeID, this);
       }
     }
 }

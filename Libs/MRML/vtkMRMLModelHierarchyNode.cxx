@@ -119,12 +119,12 @@ void vtkMRMLModelHierarchyNode::ReadXMLAttributes(const char** atts)
     if (!strcmp(attName, "modelNodeRef")) 
       {
       this->SetModelNodeID(attValue);
-      this->Scene->AddReferencedNodeID(this->ModelNodeID, this);
+      //this->Scene->AddReferencedNodeID(this->ModelNodeID, this);
       }
     else if (!strcmp(attName, "displayNodeRef")) 
       {
       this->SetDisplayNodeID(attValue);
-      this->Scene->AddReferencedNodeID(this->DisplayNodeID, this);
+      //this->Scene->AddReferencedNodeID(this->DisplayNodeID, this);
       }
     else if (!strcmp(attName, "expanded")) 
         {

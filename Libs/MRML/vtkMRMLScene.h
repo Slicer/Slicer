@@ -277,6 +277,10 @@ public:
     this->ReferencedIDChanges.clear();
   };
 
+  void RemoveNodeReferences(vtkMRMLNode *node);
+
+  vtkCollection* GetReferencedNodes(vtkMRMLNode *node);
+
 //BTX
   // Description:
   // Get/Set the active Scene 
@@ -326,13 +330,14 @@ protected:
   vtkMRMLScene(const vtkMRMLScene&);
   void operator=(const vtkMRMLScene&);
   
-
   void PushIntoUndoStack();
   void PushIntoRedoStack();
 
   void CopyNodeInUndoStack(vtkMRMLNode *node);
   void CopyNodeInRedoStack(vtkMRMLNode *node);
-  
+
+  void AddReferencedNodes(vtkMRMLNode *node, vtkCollection *refNodes);
+
   vtkCollection* CurrentScene;
   int UndoStackSize;
   bool UndoFlag;

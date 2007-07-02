@@ -227,7 +227,7 @@ void vtkMRMLVolumeDisplayNode::ReadXMLAttributes(const char** atts)
     else if (!strcmp(attName, "colorNodeRef")) 
       {
       this->SetColorNodeID(attValue);
-      this->Scene->AddReferencedNodeID(this->ColorNodeID, this);
+      //this->Scene->AddReferencedNodeID(this->ColorNodeID, this);
       }
 
     }  

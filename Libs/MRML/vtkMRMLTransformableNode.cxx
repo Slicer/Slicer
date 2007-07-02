@@ -81,7 +81,7 @@ void vtkMRMLTransformableNode::ReadXMLAttributes(const char** atts)
     if (!strcmp(attName, "transformNodeRef")) 
       {
       this->SetAndObserveTransformNodeID(attValue);
-      this->Scene->AddReferencedNodeID(this->TransformNodeID, this);
+      //this->Scene->AddReferencedNodeID(this->TransformNodeID, this);
       }
     }
 }
