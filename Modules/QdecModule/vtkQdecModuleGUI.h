@@ -38,12 +38,14 @@ public:
 
   void PrintSelf(ostream& os, vtkIndent indent);
 
+   // Description: Get/Set module logic
+  vtkGetObjectMacro (Logic, vtkQdecModuleLogic);
+  
+  void SetModuleLogic ( vtkQdecModuleLogic *logic )
+  { this->SetLogic ( vtkObjectPointer (&this->Logic), logic ); }
+   
   void SetAndObserveModuleLogic ( vtkQdecModuleLogic *logic )
   { this->SetAndObserveLogic ( vtkObjectPointer (&this->Logic), logic ); }
-
-   // Description: Get/Set MRML node
-  vtkGetObjectMacro (Logic, vtkQdecModuleLogic);
-  vtkSetObjectMacro (Logic, vtkQdecModuleLogic);
   
   // Description:
   // Create widgets

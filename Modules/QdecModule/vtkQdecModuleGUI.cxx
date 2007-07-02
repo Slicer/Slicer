@@ -72,8 +72,8 @@ vtkQdecModuleGUI::vtkQdecModuleGUI()
   this->SubjectsDirectoryButton = NULL;
   this->LoadTableButton = NULL;
   this->DesignEntry = NULL;
-  this->ContinuousFactorsListBox = NULL;
   this->DiscreteFactorsListBox = NULL;
+  this->ContinuousFactorsListBox = NULL;
   this->ApplyButton = NULL;
   this->MultiColumnList = NULL;
   this->MeasureLabel = NULL;
@@ -90,19 +90,13 @@ vtkQdecModuleGUI::~vtkQdecModuleGUI()
 {
   this->RemoveMRMLNodeObservers ( );
   this->RemoveLogicObservers ( );
-
+  this->SetModuleLogic (NULL);
+ 
   if ( this->NAMICLabel )
     {
     this->NAMICLabel->SetParent ( NULL );
     this->NAMICLabel->Delete();
     this->NAMICLabel = NULL;
-    }
-  
-  if ( this->LoadTableButton )
-    {
-    this->LoadTableButton->SetParent(NULL);
-    this->LoadTableButton->Delete();
-    this->LoadTableButton = NULL;
     }
 
   if ( this->SubjectsDirectoryButton )
@@ -110,7 +104,14 @@ vtkQdecModuleGUI::~vtkQdecModuleGUI()
     this->SubjectsDirectoryButton->SetParent(NULL);
     this->SubjectsDirectoryButton->Delete();
     this->SubjectsDirectoryButton = NULL;
-    }  
+    }
+   
+  if ( this->LoadTableButton )
+    {
+    this->LoadTableButton->SetParent(NULL);
+    this->LoadTableButton->Delete();
+    this->LoadTableButton = NULL;
+    }
 
   if ( this->DesignEntry )
     {
@@ -133,6 +134,12 @@ vtkQdecModuleGUI::~vtkQdecModuleGUI()
     this->ContinuousFactorsListBox = NULL;
     }
 
+   if ( this->ApplyButton )
+    {
+    this->ApplyButton->Delete();
+    this->ApplyButton = NULL;
+    }
+ 
    if (this->MultiColumnList)
      {
      this->MultiColumnList->SetParent(NULL);
@@ -181,14 +188,6 @@ vtkQdecModuleGUI::~vtkQdecModuleGUI()
     this->SmoothnessMenu->Delete();
     this->SmoothnessMenu = NULL;
     }
-    
-  if ( this->ApplyButton )
-    {
-    this->ApplyButton->Delete();
-    this->ApplyButton = NULL;
-    }
-
-  this->SetLogic (NULL);
 }
 
 //----------------------------------------------------------------------------
@@ -401,7 +400,7 @@ void vtkQdecModuleGUI::UpdateMRML ()
 //---------------------------------------------------------------------------
 void vtkQdecModuleGUI::UpdateGUI ()
 {
-  if (this->GetLogic()->QDECProject)
+  if (this->GetLogic() && this->GetLogic()->QDECProject)
     {
     // get the discrete and continuous factors
     vector< string > discreteFactors = this->GetLogic()->QDECProject->GetDiscreteFactors();
@@ -488,6 +487,10 @@ void vtkQdecModuleGUI::UpdateGUI ()
         }
       }
     } // end of valid QdecProject
+  else
+    {
+    vtkErrorMacro("UpdateGUI: invalid Logic or Qdec Project");
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -723,6 +726,11 @@ void vtkQdecModuleGUI::BuildGUI ( )
 //---------------------------------------------------------------------------
 void vtkQdecModuleGUI::UpdateElement(int row, int col, char * str)
 {
+  if (!this->MultiColumnList)
+    {
+    vtkErrorMacro("UpdateElement: cannot update element, multi column list is null");
+    return;
+    }
   vtkDebugMacro("UpdateElement: row = " << row << ", col = " << col << ", str = " << str << "\n");
   
   // make sure that the row and column exists in the table
