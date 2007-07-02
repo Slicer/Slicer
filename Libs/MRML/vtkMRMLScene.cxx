@@ -773,7 +773,7 @@ vtkMRMLNode*  vtkMRMLScene::AddNode(vtkMRMLNode *n)
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLNode*  vtkMRMLScene::AddNodeCopy(vtkMRMLNode *n)
+vtkMRMLNode*  vtkMRMLScene::CopyNode(vtkMRMLNode *n)
 {
   if (!n->GetAddToScene())
     {

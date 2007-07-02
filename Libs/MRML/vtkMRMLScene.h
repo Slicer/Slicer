@@ -122,7 +122,7 @@ public:
 
   // Description:
   // Add a copy of a node to the scene.
-  vtkMRMLNode* AddNodeCopy(vtkMRMLNode *n);
+  vtkMRMLNode* CopyNode(vtkMRMLNode *n);
 
   // Description:
   // Add a node to the scene.
