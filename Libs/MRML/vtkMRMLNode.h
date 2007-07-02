@@ -138,7 +138,7 @@ public:
 
   // Description:
   // Copy everything from another node of the same type.
-   void CopyWithScene(vtkMRMLNode *node);
+  void CopyWithScene(vtkMRMLNode *node);
 
   // Description:
   // Get node XML tag name (like Volume, Model)

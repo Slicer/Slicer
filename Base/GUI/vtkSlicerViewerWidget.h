@@ -228,16 +228,16 @@ protected:
 
 
   //BTX
-  std::map<const char *, vtkActor *> DisplayedModels;
+  std::map<std::string, vtkActor *> DisplayedModelActors;
 
   std::map<std::string, vtkMRMLModelNode *> DisplayedModelNodes;
 
-  std::map<const char *, int> DisplayedModelsClipState;
-  std::map<const char *, int> DisplayedModelsVisibility;
+  std::map<std::string, int> DisplayedModelsClipState;
+  std::map<std::string, int> DisplayedModelsVisibility;
 
   std::vector<vtkFollower *> AxisLabelActors;
 
-  std::map<const char *, int>  RegisteredModelHierarchies;
+  std::map<std::string, int>  RegisteredModelHierarchies;
   //ETX
 
   vtkActor *BoxAxisActor;
