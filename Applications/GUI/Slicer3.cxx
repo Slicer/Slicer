@@ -101,7 +101,7 @@ extern "C" {
 #else
 //#define TRACTOGRAPHY_DEBUG
 #endif
-//#define QDEC_DEBUG
+#define QDEC_DEBUG
 
 #ifndef TRACTOGRAPHY_DEBUG
 #include "vtkSlicerFiberBundleLogic.h"
@@ -1517,6 +1517,7 @@ int Slicer3_main(int argc, char *argv[])
     //
     // create the three main slice viewers after slicesGUI is created
     //
+    slicerApp->SplashMessage("Configuring Slices and Modules...");
     appGUI->PopulateModuleChooseList ( );
 #ifndef SLICES_DEBUG
     appGUI->SetSliceGUICollection ( slicesGUI->GetSliceGUICollection() );
