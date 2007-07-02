@@ -470,10 +470,26 @@ void vtkSlicerMRMLSaveDataWidget::ProcessMRMLEvents ( vtkObject *caller,
 //---------------------------------------------------------------------------
 void vtkSlicerMRMLSaveDataWidget::RemoveWidgetObservers ( ) 
 {
-  this->OkButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
-  this->CancelButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
-  this->SaveSceneButton->GetWidget()->RemoveObservers( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->SaveDataButton->GetWidget()->RemoveObservers( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  if (this->OkButton)
+    {
+    this->OkButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  
+        (vtkCommand *)this->GUICallbackCommand );
+    }
+  if (this->CancelButton)
+    {
+    this->CancelButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  
+        (vtkCommand *)this->GUICallbackCommand );
+    }
+  if (this->SaveSceneButton)
+    {
+    this->SaveSceneButton->GetWidget()->RemoveObservers( vtkKWPushButton::InvokedEvent, 
+        (vtkCommand *)this->GUICallbackCommand );
+    }
+  if (this->SaveDataButton)
+    {
+    this->SaveDataButton->GetWidget()->RemoveObservers( vtkKWPushButton::InvokedEvent, 
+        (vtkCommand *)this->GUICallbackCommand );
+    }
 
 }
 
