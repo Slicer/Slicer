@@ -86,6 +86,8 @@ void vtkMRMLTensorVolumeNode::WriteXML(ostream& of, int nIndent)
       }
     }
     of << indent << "measurementFrame=\"" << ss.str() << "\" ";
+
+   of << indent << "order=\"" << Order << "\"";
 }
 
 //----------------------------------------------------------------------------
@@ -114,6 +116,13 @@ void vtkMRMLTensorVolumeNode::ReadXMLAttributes(const char** atts)
           this->MeasurementFrameMatrix[i][j] = val;
           }
         }
+      }
+
+    if (!strcmp(attName, "order"))
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> Order;
       }
   }
 

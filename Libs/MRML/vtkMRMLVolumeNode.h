@@ -137,17 +137,17 @@ class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLTransformableNode
 
   // Description:
   // String ID of the display MRML node
-  void SetAndObserveDisplayNodeID(const char *DisplayNodeID);
+  virtual void SetAndObserveDisplayNodeID(const char *DisplayNodeID);
   vtkGetStringMacro(DisplayNodeID);
 
 
   // Description:
   // Associated storage MRML node
-  vtkMRMLStorageNode* GetStorageNode();
+  virtual vtkMRMLStorageNode* GetStorageNode();
 
   // Description:
   // Associated display MRML node
-  vtkMRMLVolumeDisplayNode* GetDisplayNode();
+  virtual vtkMRMLVolumeDisplayNode* GetDisplayNode();
 
   // Description:
   // Associated ImageData

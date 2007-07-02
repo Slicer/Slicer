@@ -25,8 +25,7 @@
 #define __vtkMRMLVectorVolumeDisplayNode_h
 
 #include "vtkMRML.h"
-#include "vtkMRMLVolumeDisplayNode.h"
-#include "vtkMRMLStorageNode.h"
+#include "vtkMRMLVolumeGlyphDisplayNode.h"
 #include "vtkMRMLColorNode.h"
 
 #include "vtkMatrix4x4.h"
@@ -34,11 +33,11 @@
 
 class vtkImageData;
 
-class VTK_MRML_EXPORT vtkMRMLVectorVolumeDisplayNode : public vtkMRMLVolumeDisplayNode
+class VTK_MRML_EXPORT vtkMRMLVectorVolumeDisplayNode : public vtkMRMLVolumeGlyphDisplayNode
 {
   public:
   static vtkMRMLVectorVolumeDisplayNode *New();
-  vtkTypeMacro(vtkMRMLVectorVolumeDisplayNode,vtkMRMLVolumeDisplayNode);
+  vtkTypeMacro(vtkMRMLVectorVolumeDisplayNode,vtkMRMLVolumeGlyphDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual vtkMRMLNode* CreateNodeInstance();
@@ -57,35 +56,12 @@ class VTK_MRML_EXPORT vtkMRMLVectorVolumeDisplayNode : public vtkMRMLVolumeDispl
 
   // Description:
   // Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() {return "DiffusionWeightedVolumeDisplay";};
+  virtual const char* GetNodeTagName() {return "VectorVolumeDisplay";};
 
   //--------------------------------------------------------------------------
   // Display Information
   //--------------------------------------------------------------------------
 
-  // Description:
-  // Set/Get visualization Mode
-  //BTX
-  enum 
-    {
-    visModeScalar = 0,
-    visModeGlyph = 1,
-    visModeBoth = 2,
-    };
-  //ETX
-
-  vtkGetMacro(VisualizationMode, int);
-  vtkSetMacro(VisualizationMode, int);
-
-  void SetVisualizationModeToScalarVolume() {
-    this->SetVisualizationMode(this->visModeScalar);
-  };  
-  void SetVisualizationModeToGlyphs() {
-    this->SetVisualizationMode(this->visModeGlyph);
-  };  
-  void SetVisualizationModeToBoth() {
-    this->SetVisualizationMode(this->visModeBoth);
-  };  
 
   //BTX
   enum
@@ -124,7 +100,6 @@ protected:
   vtkMRMLVectorVolumeDisplayNode(const vtkMRMLVectorVolumeDisplayNode&);
   void operator=(const vtkMRMLVectorVolumeDisplayNode&);
 
-  int VisualizationMode;
   int ScalarMode;
   int GlyphMode;
 };

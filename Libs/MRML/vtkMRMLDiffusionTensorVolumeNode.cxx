@@ -20,6 +20,7 @@ Version:   $Revision: 1.14 $
 #include "vtkCallbackCommand.h"
 
 #include "vtkMRMLDiffusionTensorVolumeNode.h"
+#include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
 #include "vtkMRMLScene.h"
 
 //------------------------------------------------------------------------------
@@ -52,35 +53,24 @@ vtkMRMLNode* vtkMRMLDiffusionTensorVolumeNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLDiffusionTensorVolumeNode::vtkMRMLDiffusionTensorVolumeNode()
 {
-  this->BaselineNodeID = NULL;
-  this->MaskNodeID = NULL;
-  this->DiffusionWeightedNodeID = NULL;
-  //Pair of ID-pointer for observing the corresponding Display node.
-  this->DisplayNodeID = NULL;
   this->Order = 2; //Second order Tensor
+}
+//----------------------------------------------------------------------------
+
+void vtkMRMLDiffusionTensorVolumeNode::SetAndObserveDisplayNodeID(const char *displayNodeID)
+{
+  if (this->GetScene() && vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(this->GetScene()->GetNodeByID(displayNodeID))!=NULL)
+  {
+    Superclass::SetAndObserveDisplayNodeID(displayNodeID);
+
+  } else {
+    vtkErrorMacro("The node to display can not display diffusion tensors");
+  }
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLDiffusionTensorVolumeNode::~vtkMRMLDiffusionTensorVolumeNode()
 {
-
-  if (this->BaselineNodeID)
-    {
-    delete [] this->BaselineNodeID;
-    this->BaselineNodeID = NULL;
-    }
-  if (this->MaskNodeID)
-    {
-    delete [] this->MaskNodeID;
-    this->MaskNodeID = NULL;
-    }
-
-  if (this->DiffusionWeightedNodeID)
-    {
-    delete [] this->DiffusionWeightedNodeID;
-    this->DiffusionWeightedNodeID = NULL;
-    }
-   this->SetAndObserveDisplayNodeID(NULL); 
 }
 
 //----------------------------------------------------------------------------
@@ -89,7 +79,7 @@ void vtkMRMLDiffusionTensorVolumeNode::WriteXML(ostream& of, int nIndent)
   Superclass::WriteXML(of, nIndent);
  
   vtkIndent indent(nIndent);
-  std::stringstream ss;
+
 }
 
 //----------------------------------------------------------------------------
@@ -104,10 +94,6 @@ void vtkMRMLDiffusionTensorVolumeNode::ReadXMLAttributes(const char** atts)
     {
     attName = *(atts++);
     attValue = *(atts++);
-
-    if (!strcmp(attName, "measurementFrame"))
-      {
-      }
   }      
 
 } 
@@ -120,85 +106,11 @@ void vtkMRMLDiffusionTensorVolumeNode::Copy(vtkMRMLNode *anode)
 {
   Superclass::Copy(anode);
   vtkMRMLDiffusionTensorVolumeNode *node = (vtkMRMLDiffusionTensorVolumeNode *) anode;
-
 }
-
-//----------------------------------------------------------------------------
-vtkMRMLVolumeNode* vtkMRMLDiffusionTensorVolumeNode::GetBaselineNode()
-{
-  vtkMRMLVolumeNode* node = NULL;
-  if (this->GetScene() && this->GetBaselineNodeID() )
-    {
-    vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->BaselineNodeID);
-    node = vtkMRMLVolumeNode::SafeDownCast(snode);
-    }
-  return node;
-}
-
-//----------------------------------------------------------------------------
-vtkMRMLVolumeNode* vtkMRMLDiffusionTensorVolumeNode::GetMaskNode()
-{
-  vtkMRMLVolumeNode* node = NULL;
-  if (this->GetScene() && this->GetMaskNodeID() )
-    {
-    vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->MaskNodeID);
-    node = vtkMRMLVolumeNode::SafeDownCast(snode);
-    }
-  return node;
-}
-
-
-//----------------------------------------------------------------------------
-vtkMRMLDiffusionWeightedVolumeNode* vtkMRMLDiffusionTensorVolumeNode::GetDiffusionWeightedNode()
-{
-  vtkMRMLDiffusionWeightedVolumeNode* node = NULL;
-  if (this->GetScene() && this->GetDiffusionWeightedNodeID() )
-    {
-    vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->DiffusionWeightedNodeID);
-    node = vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(snode);
-    }
-  return node;
-}
-
-//----------------------------------------------------------------------------
-//vtkMRMLVolumeDisplayNode* vtkMRMLVolumeNode::GetDisplayNode()
-//{
-//  vtkMRMLDiffusionTensorVolumeDisplayNode* node = NULL;
-//  if (this->GetScene() && this->GetDisplayNodeID() )
-//    {
-//    vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->DisplayNodeID);
-//    node = vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(snode);
-//    }
-//  return node;
-//}
-
-
-//-----------------------------------------------------------
-//void vtkMRMLDiffusionTensorVolumeNode::UpdateScene(vtkMRMLScene *scene)
-//{
-//  Superclass::UpdateScene(scene);
-
-//  if (this->GetDiffusionWeightedNodeID()) 
-//    {
-//    this->SetAndObserveDisplayNodeID(this->GetDiffusionWeightedNodeID());
-//    }
-//}
 
 //----------------------------------------------------------------------------
 void vtkMRMLDiffusionTensorVolumeNode::UpdateReferenceID(const char *oldID, const char *newID)
 {
-  if (this->BaselineNodeID && !strcmp(oldID, this->BaselineNodeID))
-    {
-    this->SetBaselineNodeID(newID);
-    }
-  if (this->MaskNodeID && !strcmp(oldID, this->MaskNodeID))
-    {
-    this->SetMaskNodeID(newID);
-    }
-  if (this->DiffusionWeightedNodeID && !strcmp(oldID, this->DiffusionWeightedNodeID))
-    {
-    this->SetDiffusionWeightedNodeID(newID);
-    }
   Superclass::UpdateReferenceID(oldID,newID);
 }
 
@@ -206,19 +118,6 @@ void vtkMRMLDiffusionTensorVolumeNode::UpdateReferenceID(const char *oldID, cons
 void vtkMRMLDiffusionTensorVolumeNode::UpdateReferences()
 {
   Superclass::UpdateReferences();
-
-if (this->BaselineNodeID != NULL && this->Scene->GetNodeByID(this->BaselineNodeID) == NULL)
-    {
-    this->SetBaselineNodeID(NULL);
-    }
-if (this->MaskNodeID != NULL && this->Scene->GetNodeByID(this->MaskNodeID) == NULL)
-    {
-    this->SetMaskNodeID(NULL);
-    }
-if (this->DiffusionWeightedNodeID != NULL && this->Scene->GetNodeByID(this->DiffusionWeightedNodeID) == NULL)
-    {
-    this->SetDiffusionWeightedNodeID(NULL);
-    }
 }
 
 //---------------------------------------------------------------------------
@@ -233,16 +132,6 @@ void vtkMRMLDiffusionTensorVolumeNode::ProcessMRMLEvents ( vtkObject *caller,
 void vtkMRMLDiffusionTensorVolumeNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os,indent);
-  
-  os << indent << "DiffusionWeightedNodeID: " <<
-    (this->DiffusionWeightedNodeID ? this->DiffusionWeightedNodeID : "(none)") << "\n";
-
-  os << indent << "BaselineNodeID: " <<
-    (this->BaselineNodeID ? this->BaselineNodeID : "(none)") << "\n";
-
-  os << indent << "MaskNodeID: " <<
-    (this->MaskNodeID ? this->MaskNodeID : "(none)") << "\n";
-
 }
 
 

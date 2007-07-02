@@ -22,6 +22,7 @@ Version:   $Revision: 1.2 $
 #include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
 #include "vtkMRMLScene.h"
 
+#include "vtkSphereSource.h"
 
 //------------------------------------------------------------------------------
 vtkMRMLDiffusionTensorVolumeDisplayNode* vtkMRMLDiffusionTensorVolumeDisplayNode::New()
@@ -53,6 +54,9 @@ vtkMRMLNode* vtkMRMLDiffusionTensorVolumeDisplayNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLDiffusionTensorVolumeDisplayNode::vtkMRMLDiffusionTensorVolumeDisplayNode()
 {
+ this->DiffusionTensorGlyphFilter = vtkDiffusionTensorGlyph::New();
+ this->DiffusionTensorGlyphFilter->SetSource( (vtkSphereSource::New())->GetOutput() );
+
  this->VisualizationMode = 0;
  this->DiffusionTensorDisplayPropertiesNode = NULL;
  this->DiffusionTensorDisplayPropertiesNodeID = NULL;
@@ -62,6 +66,7 @@ vtkMRMLDiffusionTensorVolumeDisplayNode::vtkMRMLDiffusionTensorVolumeDisplayNode
 vtkMRMLDiffusionTensorVolumeDisplayNode::~vtkMRMLDiffusionTensorVolumeDisplayNode()
 {
   this->SetAndObserveDiffusionTensorDisplayPropertiesNodeID(NULL); 
+  this->DiffusionTensorGlyphFilter->Delete();
 }
 
 
@@ -73,11 +78,7 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode::WriteXML(ostream& of, int nIndent)
   vtkIndent indent(nIndent);
 
   std::stringstream ss;
-  ss << this->VisualizationMode;
-  of << indent << "visualizationMode=\"" << ss.str() << "\" ";
-
-  ss.clear();
-  if (this->DiffusionTensorDisplayPropertiesNodeID != NULL)
+ if (this->DiffusionTensorDisplayPropertiesNodeID != NULL)
     {
     ss << this->DiffusionTensorDisplayPropertiesNodeID;
     of << indent << "diffussionTensorDisplayPropertiesNodeID=\"" << ss.str() << "\" ";
@@ -96,13 +97,7 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode::ReadXMLAttributes(const char** att
     {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "visualizationMode")) 
-      {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> this->VisualizationMode;
-      }
-    else if (!strcmp(attName, "diffusionTensorDisplayPropertiesNodeID"))
+    if (!strcmp(attName, "diffusionTensorDisplayPropertiesNodeID"))
       {
       this->SetDiffusionTensorDisplayPropertiesNodeID(attValue);
       this->Scene->AddReferencedNodeID(this->DiffusionTensorDisplayPropertiesNodeID, this);
@@ -118,7 +113,6 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode::Copy(vtkMRMLNode *anode)
   Superclass::Copy(anode);
   vtkMRMLDiffusionTensorVolumeDisplayNode *node = (vtkMRMLDiffusionTensorVolumeDisplayNode *) anode;
 
-  this->SetVisualizationMode(node->VisualizationMode);
   this->SetDiffusionTensorDisplayPropertiesNodeID(node->DiffusionTensorDisplayPropertiesNodeID);
 }
 
@@ -128,7 +122,7 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode::PrintSelf(ostream& os, vtkIndent i
   
   Superclass::PrintSelf(os,indent);
 
-  os << indent << "Visualization Mode:   " << this->VisualizationMode << "\n";
+
   os << indent << "DiffusionTensorDisplayPropertiesNodeID:   " << this->DiffusionTensorDisplayPropertiesNodeID << "\n";
 }
 
@@ -166,6 +160,28 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode::UpdateReferences()
     {
     this->SetAndObserveDiffusionTensorDisplayPropertiesNodeID(NULL);
     }
+}
+//-----------------------------------------------------------
+vtkPolyData* vtkMRMLDiffusionTensorVolumeDisplayNode::GetPolyData()
+{
+  vtkErrorMacro("Showing Tensor Glyph");
+  this->DiffusionTensorGlyphFilter->SetInput(this->GetSlicedImageData () );
+  this->DiffusionTensorGlyphFilter->ClampScalingOff();
+
+          // TO DO: implement max # ellipsoids, random sampling features
+ this->DiffusionTensorGlyphFilter->SetResolution(2);
+        
+//          this->DiffusionTensorGlyphFilter->SetScaleFactor( DTDisplayNode->GetGlyphScaleFactor( ) );
+
+//          this->DiffusionTensorGlyphFilter->SetSource( DTDisplayNode->GetGlyphSource( ) );
+  this->DiffusionTensorGlyphFilter->SetScaleFactor( 1500  );
+
+
+
+  this->DiffusionTensorGlyphFilter->ColorGlyphsByFractionalAnisotropy( );
+  this->DiffusionTensorGlyphFilter->Update ( );
+ 
+  return this->DiffusionTensorGlyphFilter->GetOutput();
 }
 
 //----------------------------------------------------------------------------

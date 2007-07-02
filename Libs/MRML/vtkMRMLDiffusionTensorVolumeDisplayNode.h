@@ -25,16 +25,21 @@
 #define __vtkMRMLDiffusionTensorVolumeDisplayNode_h
 
 #include "vtkMRML.h"
-#include "vtkMRMLVolumeDisplayNode.h"
+#include "vtkMRMLVolumeGlyphDisplayNode.h"
 #include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
+
+#ifdef USE_TEEM
+#include "vtkDiffusionTensorGlyph.h"
+#endif
+
 
 class vtkImageData;
 
-class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeDisplayNode : public vtkMRMLVolumeDisplayNode
+class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeDisplayNode : public vtkMRMLVolumeGlyphDisplayNode
 {
   public:
   static vtkMRMLDiffusionTensorVolumeDisplayNode *New();
-  vtkTypeMacro(vtkMRMLDiffusionTensorVolumeDisplayNode,vtkMRMLVolumeDisplayNode);
+  vtkTypeMacro(vtkMRMLDiffusionTensorVolumeDisplayNode,vtkMRMLVolumeGlyphDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual vtkMRMLNode* CreateNodeInstance();
@@ -54,6 +59,8 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeDisplayNode : public vtkMRMLVo
   // Description:
   // Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "DiffusionTensorVolumeDisplay";};
+
+  virtual vtkPolyData* GetPolyData();
 
   // Description:
   // Updates this node if it depends on other nodes
@@ -78,30 +85,6 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeDisplayNode : public vtkMRMLVo
   // Display Information
   //--------------------------------------------------------------------------
 
-  // Description:
-  // Set/Get visualization Mode
-  //BTX
-  enum 
-    {
-    visModeScalar = 0,
-    visModeGlyph = 1,
-    visModeBoth = 2,
-    };
-  //ETX
-
-  vtkGetMacro(VisualizationMode, int);
-  vtkSetMacro(VisualizationMode, int);
-
-  void SetVisualizationModeToScalarVolume() {
-    this->SetVisualizationMode(this->visModeScalar);
-  };  
-  void SetVisualizationModeToGlyphs() {
-    this->SetVisualizationMode(this->visModeGlyph);
-  };  
-  void SetVisualizationModeToBoth() {
-    this->SetVisualizationMode(this->visModeBoth);
-  };
-
   //--------------------------------------------------------------------------
   // MRML nodes that are observed
   //--------------------------------------------------------------------------
@@ -123,14 +106,15 @@ protected:
   ~vtkMRMLDiffusionTensorVolumeDisplayNode();
   vtkMRMLDiffusionTensorVolumeDisplayNode(const vtkMRMLDiffusionTensorVolumeDisplayNode&);
   void operator=(const vtkMRMLDiffusionTensorVolumeDisplayNode&);
-
-  int VisualizationMode;
   
   vtkMRMLDiffusionTensorDisplayPropertiesNode *DiffusionTensorDisplayPropertiesNode;
   char *DiffusionTensorDisplayPropertiesNodeID;
 
   vtkSetReferenceStringMacro(DiffusionTensorDisplayPropertiesNodeID);
 
+#ifdef USE_TEEM
+  vtkDiffusionTensorGlyph* DiffusionTensorGlyphFilter;
+#endif
 };
 
 #endif

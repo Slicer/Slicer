@@ -72,8 +72,6 @@ void vtkMRMLVectorVolumeDisplayNode::WriteXML(ostream& of, int nIndent)
   vtkIndent indent(nIndent);
 
   std::stringstream ss;
-  ss << this->VisualizationMode;
-  of << indent << "visualizationMode=\"" << ss.str() << "\" ";
 
   ss.clear();
   ss << this->ScalarMode;
@@ -96,13 +94,7 @@ void vtkMRMLVectorVolumeDisplayNode::ReadXMLAttributes(const char** atts)
     {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "visualizationMode")) 
-      {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> this->VisualizationMode;
-      }
-    else if (!strcmp(attName, "scalarMode"))
+    if (!strcmp(attName, "scalarMode"))
       {
       std::stringstream ss;
       ss << attValue;
@@ -125,7 +117,6 @@ void vtkMRMLVectorVolumeDisplayNode::Copy(vtkMRMLNode *anode)
   Superclass::Copy(anode);
   vtkMRMLVectorVolumeDisplayNode *node = (vtkMRMLVectorVolumeDisplayNode *) anode;
 
-  this->SetVisualizationMode(node->VisualizationMode);
   this->SetScalarMode(node->ScalarMode);
   this->SetGlyphMode(node->GlyphMode);
 }
@@ -136,7 +127,6 @@ void vtkMRMLVectorVolumeDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   
   Superclass::PrintSelf(os,indent);
 
-  os << indent << "Visualization Mode:   " << this->VisualizationMode << "\n";
   os << indent << "Scalar Mode:   " << this->ScalarMode << "\n";
   os << indent << "Glyph Mode:    " << this->GlyphMode << "\n";
 }

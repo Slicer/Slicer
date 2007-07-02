@@ -25,12 +25,11 @@
 #define __vtkMRMLDiffusionTensorVolumeNode_h
 
 
-#include "vtkMRMLTensorVolumeNode.h"
-#include "vtkMRMLDiffusionWeightedVolumeNode.h"
+#include "vtkMRMLDiffusionImageVolumeNode.h"
 
 class vtkDoubleArray;
 
-class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeNode : public vtkMRMLTensorVolumeNode
+class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeNode : public vtkMRMLDiffusionImageVolumeNode
 {
   public:
   static vtkMRMLDiffusionTensorVolumeNode *New();
@@ -55,36 +54,9 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeNode : public vtkMRMLTensorVol
   // Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "DiffusionTensorVolume";};
 
- // Description:
-  // String ID of the storage MRML node
-  vtkSetReferenceStringMacro(BaselineNodeID);
-  vtkGetStringMacro(BaselineNodeID);
-
   // Description:
-  // String ID of the display MRML node
-  vtkSetReferenceStringMacro(MaskNodeID);
-  vtkGetStringMacro(MaskNodeID);
-
- // Description:
-  // String ID of the display MRML node
-  vtkSetReferenceStringMacro(DiffusionWeightedNodeID);
-  vtkGetStringMacro(DiffusionWeightedNodeID);
-
-  // Description:
-  // Associated volume MRML node
-  vtkMRMLVolumeNode* GetBaselineNode();
-
-  // Description:
-  // Associated volume MRML node
-  vtkMRMLVolumeNode* GetMaskNode();
-
-  // Description:
-  // Associated volume MRML node
-  vtkMRMLDiffusionWeightedVolumeNode* GetDiffusionWeightedNode();
-
-  // Description:
-  // Associated volume MRML node
-  //vtkMRMLDiffusionTensorVolumeDisplayNode* GetDisplayNode();
+  // Associated volume display MRML node
+  virtual void SetAndObserveDisplayNodeID(const char *DisplayNodeID);
 
   // Description:
   // Update the stored reference to another node in the scene
@@ -105,27 +77,13 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeNode : public vtkMRMLTensorVol
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
                                    unsigned long /*event*/, 
                                    void * /*callData*/ );
-
-//BTX
-  // Description:
-  // DisplayModifiedEvent is generated when display node parameters is changed
-  // PolyDataModifiedEvent is generated when PloyData is changed
-  enum
-    {
-      DWIModifiedEvent = 18002,
-    };
-//ETX  
-  
+ 
 
 protected:
   vtkMRMLDiffusionTensorVolumeNode();
   ~vtkMRMLDiffusionTensorVolumeNode();
   vtkMRMLDiffusionTensorVolumeNode(const vtkMRMLDiffusionTensorVolumeNode&);
   void operator=(const vtkMRMLDiffusionTensorVolumeNode&);
-  
-  char *BaselineNodeID;
-  char *MaskNodeID;
-  char *DiffusionWeightedNodeID;
 
 };
 
