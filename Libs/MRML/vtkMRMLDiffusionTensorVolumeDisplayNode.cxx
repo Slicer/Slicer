@@ -55,7 +55,10 @@ vtkMRMLNode* vtkMRMLDiffusionTensorVolumeDisplayNode::CreateNodeInstance()
 vtkMRMLDiffusionTensorVolumeDisplayNode::vtkMRMLDiffusionTensorVolumeDisplayNode()
 {
  this->DiffusionTensorGlyphFilter = vtkDiffusionTensorGlyph::New();
- this->DiffusionTensorGlyphFilter->SetSource( (vtkSphereSource::New())->GetOutput() );
+ vtkSphereSource *sphere = vtkSphereSource::New();
+ sphere->Update();
+ this->DiffusionTensorGlyphFilter->SetSource( sphere->GetOutput() );
+ sphere->Delete();
 
  this->VisualizationMode = 0;
  this->DiffusionTensorDisplayPropertiesNode = NULL;
