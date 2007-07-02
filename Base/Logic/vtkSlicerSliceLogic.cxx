@@ -558,6 +558,10 @@ void vtkSlicerSliceLogic::UpdatePipeline()
     //    with a non-null foreground and label and everything will work with the 
     //    label opacity
     //
+    // -- first make a temp blend instance and set it up according to the current 
+    //    parameters.  Then check if this is the same as the current 'real' blend,
+    //    and if not send a modified event
+    //
     vtkImageBlend *tempBlend = vtkImageBlend::New();
     
     tempBlend->RemoveAllInputs ( );
@@ -974,6 +978,8 @@ void vtkSlicerSliceLogic::FitSliceToBackground(int width, int height)
 // adjust the node's field of view to match the extent of all volume layers
 void vtkSlicerSliceLogic::FitSliceToAll(int width, int height)
 {
+  // TODO...
+  vtkErrorMacro ("not yet implemented");
 }
 
 // Get/Set the current distance from the origin to the slice plane
