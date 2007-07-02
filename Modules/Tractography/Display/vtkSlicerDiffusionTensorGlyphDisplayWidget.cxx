@@ -28,6 +28,7 @@ vtkSlicerDiffusionTensorGlyphDisplayWidget::vtkSlicerDiffusionTensorGlyphDisplay
     this->GlyphGeometryMenu = NULL;
     this->GlyphColorMenu = NULL;
     this->LineGlyphEigenvectorMenu = NULL;
+    this->TubeGlyphEigenvectorMenu = NULL;
 
     this->GlyphScale = NULL;
 
@@ -64,6 +65,12 @@ vtkSlicerDiffusionTensorGlyphDisplayWidget::~vtkSlicerDiffusionTensorGlyphDispla
     this->LineGlyphEigenvectorMenu->SetParent(NULL);
     this->LineGlyphEigenvectorMenu->Delete();
     this->LineGlyphEigenvectorMenu = NULL;
+    }
+  if (this->TubeGlyphEigenvectorMenu)
+    {
+    this->TubeGlyphEigenvectorMenu->SetParent(NULL);
+    this->TubeGlyphEigenvectorMenu->Delete();
+    this->TubeGlyphEigenvectorMenu = NULL;
     }
   if (this->GlyphScale)
     {
