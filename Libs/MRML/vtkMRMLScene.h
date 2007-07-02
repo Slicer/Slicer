@@ -279,6 +279,8 @@ public:
 
   void RemoveNodeReferences(vtkMRMLNode *node);
 
+  // Description: 
+  // Return collection of all nodes referenced directly or indirectly by a node.
   vtkCollection* GetReferencedNodes(vtkMRMLNode *node);
 
 //BTX
