@@ -13,6 +13,7 @@
 =========================================================================auto=*/
 
 #include "vtkObjectFactory.h"
+#include "vtkSmartPointer.h"
 #include "vtkSlicerApplicationLogic.h"
 
 #include "vtkSlicerColorLogic.h"
@@ -25,6 +26,8 @@
 #include "vtkMRMLDiffusionTensorVolumeNode.h"
 #include "vtkMRMLDiffusionWeightedVolumeNode.h"
 #include "vtkMRMLModelNode.h"
+#include "vtkMRMLTransformNode.h"
+#include "vtkMRMLLinearTransformNode.h"
 #include "vtkMRMLFiberBundleNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLVolumeArchetypeStorageNode.h"
@@ -60,7 +63,11 @@ public:
   ReadDataRequest(const std::string& node, const std::string& filename,
                   int displayData, int deleteFile)
     {
-      m_Node = node;
+      m_TargetNodes.clear();
+      m_SourceNodes.clear();
+      m_IsScene = false;
+      
+      m_TargetNodes.push_back(node);
       m_Filename = filename;
       m_DisplayData = displayData;
       m_DeleteFile = deleteFile;
@@ -69,27 +76,62 @@ public:
   ReadDataRequest(const char *node, const char *filename, int displayData,
                   int deleteFile)
     {
-      m_Node = node;
+      m_TargetNodes.clear();
+      m_SourceNodes.clear();
+      m_IsScene = false;
+      
+      m_TargetNodes.push_back(node);
+      m_Filename = filename;
+      m_DisplayData = displayData;
+      m_DeleteFile = deleteFile;
+    }
+
+  ReadDataRequest(const std::vector<std::string>& targetNodes,
+                  const std::vector<std::string>& sourceNodes,
+                  const std::string& filename,
+                  int displayData, int deleteFile)
+    {
+      m_IsScene = true;
+
+      m_TargetNodes = targetNodes;
+      m_SourceNodes = sourceNodes;
       m_Filename = filename;
       m_DisplayData = displayData;
       m_DeleteFile = deleteFile;
     }
 
   ReadDataRequest()
-    : m_Node(""), m_Filename(""), m_DisplayData( false ), m_DeleteFile( false )
+    : m_Filename(""), m_DisplayData( false ), m_DeleteFile( false ),
+      m_IsScene( false )
     {
     }
 
-  const std::string& GetNode() const { return m_Node; }
+  const std::string& GetNode() const
+    {
+      static const std::string empty;
+      if (m_TargetNodes.size() > 0)
+        {
+        return m_TargetNodes[0];
+        }
+      
+      return empty;
+    }
+  
+  const std::vector<std::string>& GetSourceNodes() const {return m_SourceNodes;}
+  const std::vector<std::string>& GetTargetNodes() const {return m_TargetNodes;}
   const std::string& GetFilename() const { return m_Filename; }
   int GetDisplayData() const { return m_DisplayData; }
   int GetDeleteFile() const { return m_DeleteFile; }
+  int GetIsScene() const { return m_IsScene; };
   
 protected:
-  std::string m_Node;
+  std::vector<std::string> m_TargetNodes;
+  std::vector<std::string> m_SourceNodes;
   std::string m_Filename;
   int m_DisplayData;
   int m_DeleteFile;
+  bool m_IsScene;
+  
 };
 class ReadDataQueue : public std::queue<ReadDataRequest> {} ;
 
@@ -528,6 +570,40 @@ int vtkSlicerApplicationLogic::RequestReadData( const char *refNode, const char 
 }
 
 
+int
+vtkSlicerApplicationLogic
+::RequestReadScene(const std::string& filename,
+                   std::vector<std::string> &targetIDs,
+                   std::vector<std::string> &sourceIDs,
+                   int displayData, int deleteFile)
+{
+  int active;
+
+//  std::cout << "Requesting scene " << filename << " be read " <<  std::endl;
+
+  // only request to read a file if the ReadData queue is up
+  this->ReadDataQueueActiveLock->Lock();
+  active = this->ReadDataQueueActive;
+  this->ReadDataQueueActiveLock->Unlock();
+
+  if (active)
+    {
+    this->ReadDataQueueLock->Lock();
+    (*this->InternalReadDataQueue).push( ReadDataRequest(targetIDs,
+                                                         sourceIDs,
+                                                         filename,
+                                                         displayData,
+                                                         deleteFile) );
+    this->ReadDataQueueLock->Unlock();
+    
+    return true;
+    }
+
+  // could not request the record be added to the queue
+  return false;
+}
+
+
 void vtkSlicerApplicationLogic::ProcessModified()
 {
   int active = true;
@@ -591,7 +667,7 @@ void vtkSlicerApplicationLogic::ProcessReadData()
   
   if (active)
     {
-    // pull an object off the queue to modify
+    // pull an object off the queue 
     this->ReadDataQueueLock->Lock();
     if ((*this->InternalReadDataQueue).size() > 0)
       {
@@ -601,189 +677,14 @@ void vtkSlicerApplicationLogic::ProcessReadData()
       }
     this->ReadDataQueueLock->Unlock();
 
-    // What type of node is the data really?
-    vtkMRMLNode *nd = 0;
-    vtkMRMLNode *disp = 0;
-    vtkMRMLStorageNode *in = 0;
-    vtkMRMLScalarVolumeNode *svnd = 0;
-    vtkMRMLVectorVolumeNode *vvnd = 0;
-    vtkMRMLDiffusionTensorVolumeNode *dtvnd = 0;
-    vtkMRMLDiffusionWeightedVolumeNode *dwvnd = 0;
-    vtkMRMLModelNode *mnd = 0;
-    vtkMRMLFiberBundleNode *fbnd = 0;
-
-    nd = this->MRMLScene->GetNodeByID( req.GetNode().c_str() );
-
-    svnd  = vtkMRMLScalarVolumeNode::SafeDownCast(nd);
-    vvnd  = vtkMRMLVectorVolumeNode::SafeDownCast(nd);
-    dtvnd = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(nd);
-    dwvnd = vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(nd);
-    mnd   = vtkMRMLModelNode::SafeDownCast(nd);
-    fbnd  = vtkMRMLFiberBundleNode::SafeDownCast(fbnd);
-
-    // Read the data into the referenced node
-    if (itksys::SystemTools::FileExists( req.GetFilename().c_str() ))
+    if (req.GetIsScene())
       {
-      if (svnd || vvnd)
-        {
-        // Load a scalar or vector volume node
-        //
-        // Need to maintain the original coordinate frame established by 
-        // the images sent to the execution model 
-        vtkMRMLVolumeArchetypeStorageNode *vin 
-            = vtkMRMLVolumeArchetypeStorageNode::New();
-        vin->SetCenterImage(0);
-        in = vin;
-
-        disp = vtkMRMLVolumeDisplayNode::New();
-        }
-      else if (dtvnd || dwvnd)
-        {
-        // Load a diffusion tensor or a diffusion weighted node
-        //
-        // Need to maintain the original coordinate frame established by 
-        // the images sent to the execution model 
-#if USE_TEEM
-        vtkMRMLNRRDStorageNode *nin = vtkMRMLNRRDStorageNode::New();
-        nin->SetCenterImage(0);
-        in = nin;
-#endif
-        if (dtvnd)
-          {
-          disp = vtkMRMLDiffusionTensorVolumeDisplayNode::New();
-          }
-        else
-          {
-          disp = vtkMRMLDiffusionWeightedVolumeDisplayNode::New();
-          }
-        }
-      else if (fbnd)
-        {
-        // Load a fiber bundle node
-        in = vtkMRMLFiberBundleStorageNode::New();
-        disp = vtkMRMLFiberBundleDisplayNode::New();
-        }
-      else if (mnd)
-        {
-        // Load a model node
-        in = vtkMRMLModelStorageNode::New();
-        disp = vtkMRMLModelDisplayNode::New();
-        }
-
-      // Have the storage node read the data into the current node
-      if (in)
-        {
-        try
-          {
-          in->SetFileName( req.GetFilename().c_str() );
-          in->ReadData( nd );
-          }
-        catch (itk::ExceptionObject& exc)
-          {
-          std::stringstream information;
-          information << "Exception while reading " << req.GetFilename()
-                      << ", " << exc;
-          vtkErrorMacro( << information.str().c_str() );
-          }
-        catch (...)
-          {
-          std::stringstream information;
-          information << "Unknown exception while reading "
-                      << req.GetFilename();
-          vtkErrorMacro( << information.str().c_str() );
-          }
-        in->Delete();
-        }
-
-      // Delete the file if requested
-      if (req.GetDeleteFile())
-        {
-        int removed;
-        removed = itksys::SystemTools::RemoveFile( req.GetFilename().c_str() );
-        if (!removed)
-          {
-          std::stringstream information;
-          information << "Unable to delete temporary file "
-                      << req.GetFilename() << std::endl;
-          vtkWarningMacro( << information.str().c_str() );
-          }
-        }
+      this->ProcessReadSceneData(req);
       }
-
-    // Display the data if requested
-    //
-    if (req.GetDisplayData())
+    else
       {
-      // Set up the display node.  What if the node already had a
-      // display node?
-      if (disp)
-        {
-//        std::cout << " vtkSlicerApplicationLogic::ProcessReadData\n";
-        disp->SetScene( this->MRMLScene );
-        disp = this->MRMLScene->AddNode( disp );
-        int isLabelMap = 0;
-        if (svnd)
-          {
-          isLabelMap = svnd->GetLabelMap();
-          }
-        vtkMRMLVolumeDisplayNode *displayNode = vtkMRMLVolumeDisplayNode::SafeDownCast(disp);
-        if (displayNode)
-          {
-          //  int isLabelMap = svnd->GetLabelMap();            
-          //std::cout << "vtkSlicerApplicationLogic: setting the volume display node default color, islabelmap = " << isLabelMap << "\n";
-          //displayNode->SetDefaultColorMap(isLabelMap);
-          //std::cout << "\tdisp color node id = " <<
-          //(displayNode->GetColorNodeID() == NULL ? "NULL" :
-          //displayNode->GetColorNodeID()) << endl;
-          vtkSlicerColorLogic *colorLogic = vtkSlicerColorLogic::New();
-          //vtkSlicerColorGUI::SafeDownCast(vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Color"))->GetLogic();
-          if (colorLogic)
-            {
-            if (isLabelMap)
-              {
-              displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultLabelMapColorNodeID());
-              }
-            else
-              {
-              displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultVolumeColorNodeID());
-              }
-            colorLogic->Delete();
-            }
-          } 
-        if (svnd)
-          {
-          svnd->SetAndObserveDisplayNodeID( disp->GetID() );
-          }
-        else if (vvnd) vvnd->SetAndObserveDisplayNodeID( disp->GetID() );
-        else if (dtvnd) dtvnd->SetAndObserveDisplayNodeID( disp->GetID() );
-        else if (dwvnd) dwvnd->SetAndObserveDisplayNodeID( disp->GetID() );
-        else if (mnd) mnd->SetAndObserveDisplayNodeID( disp->GetID() );
-        
-        disp->Delete();
-        }
-
-      // If scalar volume, set the volume as the active volume and
-      // propagate selection.
-      //
-      // Models are always displayed when loaded above.
-      // 
-      // Tensors? Vectors?
-      if (svnd)
-        {
-        if (svnd->GetLabelMap())
-          {
-          this->GetSelectionNode()
-            ->SetActiveLabelVolumeID( req.GetNode().c_str() );
-          }
-        else
-          {
-          this->GetSelectionNode()
-            ->SetActiveVolumeID( req.GetNode().c_str() );
-          }
-        this->PropagateVolumeSelection();
-        }
+      this->ProcessReadNodeData(req);
       }
-    
     }
   
   // schedule the next timer
@@ -801,3 +702,285 @@ void vtkSlicerApplicationLogic::ProcessReadData()
     }
 }
 
+
+void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
+{
+  // What type of node is the data really? Or is it a scene
+  vtkMRMLNode *nd = 0;
+  vtkMRMLNode *disp = 0;
+  vtkMRMLStorageNode *in = 0;
+  vtkMRMLScalarVolumeNode *svnd = 0;
+  vtkMRMLVectorVolumeNode *vvnd = 0;
+  vtkMRMLDiffusionTensorVolumeNode *dtvnd = 0;
+  vtkMRMLDiffusionWeightedVolumeNode *dwvnd = 0;
+  vtkMRMLModelNode *mnd = 0;
+  vtkMRMLLinearTransformNode *ltnd = 0;
+  vtkMRMLFiberBundleNode *fbnd = 0;
+  
+  nd = this->MRMLScene->GetNodeByID( req.GetNode().c_str() );
+  
+  svnd  = vtkMRMLScalarVolumeNode::SafeDownCast(nd);
+  vvnd  = vtkMRMLVectorVolumeNode::SafeDownCast(nd);
+  dtvnd = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(nd);
+  dwvnd = vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(nd);
+  mnd   = vtkMRMLModelNode::SafeDownCast(nd);
+  ltnd  = vtkMRMLLinearTransformNode::SafeDownCast(nd);
+  fbnd  = vtkMRMLFiberBundleNode::SafeDownCast(fbnd);
+  
+  // Read the data into the referenced node
+  if (itksys::SystemTools::FileExists( req.GetFilename().c_str() ))
+    {
+    if (svnd || vvnd)
+      {
+      // Load a scalar or vector volume node
+      //
+      // Need to maintain the original coordinate frame established by 
+      // the images sent to the execution model 
+      vtkMRMLVolumeArchetypeStorageNode *vin 
+        = vtkMRMLVolumeArchetypeStorageNode::New();
+      vin->SetCenterImage(0);
+      in = vin;
+      
+      disp = vtkMRMLVolumeDisplayNode::New();
+      }
+    else if (dtvnd || dwvnd)
+      {
+      // Load a diffusion tensor or a diffusion weighted node
+      //
+      // Need to maintain the original coordinate frame established by 
+      // the images sent to the execution model 
+#if USE_TEEM
+      vtkMRMLNRRDStorageNode *nin = vtkMRMLNRRDStorageNode::New();
+      nin->SetCenterImage(0);
+      in = nin;
+#endif
+      if (dtvnd)
+        {
+        disp = vtkMRMLDiffusionTensorVolumeDisplayNode::New();
+        }
+      else
+        {
+        disp = vtkMRMLDiffusionWeightedVolumeDisplayNode::New();
+        }
+      }
+    else if (fbnd)
+      {
+      // Load a fiber bundle node
+      in = vtkMRMLFiberBundleStorageNode::New();
+      disp = vtkMRMLFiberBundleDisplayNode::New();
+      }
+    else if (mnd)
+      {
+      // Load a model node
+      in = vtkMRMLModelStorageNode::New();
+      disp = vtkMRMLModelDisplayNode::New();
+      }
+    else if (ltnd)
+      {
+      // Load a linear transform node
+      
+      // no storage node for transforms, need to read a scene (should
+      // have been in ProcessReadSceneData()
+      }
+    
+    // Have the storage node read the data into the current node
+    if (in)
+      {
+      try
+        {
+        in->SetFileName( req.GetFilename().c_str() );
+        in->ReadData( nd );
+        }
+      catch (itk::ExceptionObject& exc)
+        {
+        std::stringstream information;
+        information << "Exception while reading " << req.GetFilename()
+                    << ", " << exc;
+        vtkErrorMacro( << information.str().c_str() );
+        }
+      catch (...)
+        {
+        std::stringstream information;
+        information << "Unknown exception while reading "
+                    << req.GetFilename();
+        vtkErrorMacro( << information.str().c_str() );
+        }
+      in->Delete();
+      }
+    
+    // Delete the file if requested
+    if (req.GetDeleteFile())
+      {
+      int removed;
+      removed = itksys::SystemTools::RemoveFile( req.GetFilename().c_str() );
+      if (!removed)
+        {
+        std::stringstream information;
+        information << "Unable to delete temporary file "
+                    << req.GetFilename() << std::endl;
+        vtkWarningMacro( << information.str().c_str() );
+        }
+      }
+    }
+
+  // Display the data if requested
+  //
+  if (req.GetDisplayData())
+    {
+    // Set up the display node.  What if the node already had a
+    // display node?
+    if (disp)
+      {
+//        std::cout << " vtkSlicerApplicationLogic::ProcessReadData\n";
+      disp->SetScene( this->MRMLScene );
+      disp = this->MRMLScene->AddNode( disp );
+      int isLabelMap = 0;
+      if (svnd)
+        {
+        isLabelMap = svnd->GetLabelMap();
+        }
+      vtkMRMLVolumeDisplayNode *displayNode = vtkMRMLVolumeDisplayNode::SafeDownCast(disp);
+      if (displayNode)
+        {
+        //  int isLabelMap = svnd->GetLabelMap();            
+        //std::cout << "vtkSlicerApplicationLogic: setting the volume display node default color, islabelmap = " << isLabelMap << "\n";
+        //displayNode->SetDefaultColorMap(isLabelMap);
+        //std::cout << "\tdisp color node id = " <<
+        //(displayNode->GetColorNodeID() == NULL ? "NULL" :
+        //displayNode->GetColorNodeID()) << endl;
+        vtkSlicerColorLogic *colorLogic = vtkSlicerColorLogic::New();
+        //vtkSlicerColorGUI::SafeDownCast(vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Color"))->GetLogic();
+        if (colorLogic)
+          {
+          if (isLabelMap)
+            {
+            displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultLabelMapColorNodeID());
+            }
+          else
+            {
+            displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultVolumeColorNodeID());
+            }
+          colorLogic->Delete();
+          }
+        } 
+      if (svnd)
+        {
+        svnd->SetAndObserveDisplayNodeID( disp->GetID() );
+        }
+      else if (vvnd) vvnd->SetAndObserveDisplayNodeID( disp->GetID() );
+      else if (dtvnd) dtvnd->SetAndObserveDisplayNodeID( disp->GetID() );
+      else if (dwvnd) dwvnd->SetAndObserveDisplayNodeID( disp->GetID() );
+      else if (mnd) mnd->SetAndObserveDisplayNodeID( disp->GetID() );
+      
+      disp->Delete();
+      }
+    
+    // If scalar volume, set the volume as the active volume and
+    // propagate selection.
+    //
+    // Models are always displayed when loaded above.
+    // 
+    // Tensors? Vectors?
+    if (svnd)
+      {
+      if (svnd->GetLabelMap())
+        {
+        this->GetSelectionNode()
+          ->SetActiveLabelVolumeID( req.GetNode().c_str() );
+        }
+      else
+        {
+        this->GetSelectionNode()
+          ->SetActiveVolumeID( req.GetNode().c_str() );
+        }
+      this->PropagateVolumeSelection();
+      }
+    }
+  
+}
+
+void vtkSlicerApplicationLogic::ProcessReadSceneData(ReadDataRequest& req)
+{
+  if (req.GetSourceNodes().size() != req.GetTargetNodes().size())
+    {
+    // Can't do ID remapping if the two node lists are different
+    // sizes. Just import the scene. (This is where we would put to
+    // the code to load into a node heirarchy (with a corresponding
+    // change in the conditional above)).
+    this->MRMLScene->SetURL( req.GetFilename().c_str() );
+    this->MRMLScene->Import();
+
+    // Delete the file if requested
+    if (req.GetDeleteFile())
+      {
+      int removed;
+      removed = itksys::SystemTools::RemoveFile( req.GetFilename().c_str() );
+      if (!removed)
+        {
+        std::stringstream information;
+        information << "Unable to delete temporary file "
+                    << req.GetFilename() << std::endl;
+        vtkWarningMacro( << information.str().c_str() );
+        }
+      }
+
+    return;
+    }
+  
+  vtkSmartPointer<vtkMRMLScene> miniscene = vtkMRMLScene::New();
+  miniscene->SetURL( req.GetFilename().c_str() );
+  miniscene->Import();
+
+
+  // iterate over the list of nodes specified to read
+  std::vector<std::string>::const_iterator tit;
+  std::vector<std::string>::const_iterator sit;
+
+  tit = req.GetTargetNodes().begin();
+  sit = req.GetSourceNodes().begin();
+
+  while (sit != req.GetSourceNodes().end())
+    {
+    vtkMRMLNode *source;
+    vtkMRMLNode *target;
+
+    source = miniscene->GetNodeByID( (*sit).c_str() );
+    target = this->MRMLScene->GetNodeByID( (*tit).c_str() );
+
+    if (source && target)
+      {
+      target->Copy(source);
+      }
+    else if (!source)
+      {
+      std::stringstream information;
+      information << "Node " << (*sit) << " not found in scene file "
+                  << req.GetFilename() << std::endl;
+      vtkWarningMacro( << information.str().c_str() );
+      }
+    else if (!target)
+      {
+      std::stringstream information;
+      information << "Node " << (*tit) << " not found in current scene."
+                  << std::endl;
+      vtkWarningMacro( << information.str().c_str() );
+      }
+    
+    ++sit;
+    ++tit;
+    }
+
+  // Delete the file if requested
+  if (req.GetDeleteFile())
+    {
+    int removed;
+    removed = itksys::SystemTools::RemoveFile( req.GetFilename().c_str() );
+    if (!removed)
+      {
+      std::stringstream information;
+      information << "Unable to delete temporary file "
+                  << req.GetFilename() << std::endl;
+      vtkWarningMacro( << information.str().c_str() );
+      }
+    }
+}

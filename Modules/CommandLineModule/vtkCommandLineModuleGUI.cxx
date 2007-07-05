@@ -1325,6 +1325,72 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
         tparameter->SetLabelText( (*pit).GetLabel().c_str());
         parameter = tparameter;
         }
+      else if ((*pit).GetTag() == "transform" && (*pit).GetChannel() == "input")
+        {
+        vtkSlicerNodeSelectorWidget *tparameter
+          = vtkSlicerNodeSelectorWidget::New();
+
+        std::string nodeClass = "vtkMRMLTransformNode";
+        if ((*pit).GetType() == "linear")
+          {
+          nodeClass = "vtkMRMLLinearTransformNode";
+          }
+        else if ((*pit).GetType() == "nonlinear")
+          {
+          // no nonlinear nodes are currently, so default to TransformNode
+          }
+
+        tparameter->SetNodeClass(nodeClass.c_str(),
+                                 NULL,
+                                 NULL,
+                                 (title + " Transform").c_str());
+        tparameter->SetParent( parameterGroupFrame->GetFrame() );
+        tparameter->Create();
+        tparameter->SetMRMLScene(this->Logic->GetMRMLScene());
+        tparameter->UpdateMenu();
+        
+        tparameter->SetBorderWidth(2);
+        tparameter->SetReliefToFlat();
+        tparameter->SetLabelText( (*pit).GetLabel().c_str());
+        parameter = tparameter;
+        }
+      else if ((*pit).GetTag() == "transform" && (*pit).GetChannel() =="output")
+        {
+        vtkSlicerNodeSelectorWidget *tparameter
+          = vtkSlicerNodeSelectorWidget::New();
+
+        // Note: TransformNode is abstract making it inappropriate for
+        // an output type since the node selector must be able to make
+        // an instance of the class.  For now, revert to LinearTransformNode.
+
+        std::string nodeClass = "vtkMRMLLinearTransformNode";
+        if ((*pit).GetType() == "linear")
+          {
+          nodeClass = "vtkMRMLLinearTransformNode";
+          }
+        else if ((*pit).GetType() == "nonlinear")
+          {
+          // no nonlinear nodes are currently, default to LinearTransformNode
+          }
+
+
+        tparameter->SetNodeClass(nodeClass.c_str(),
+                                 NULL,
+                                 NULL,
+                                 (title + " Transform").c_str());
+        tparameter->SetNewNodeEnabled(1);
+        tparameter->SetNoneEnabled(1);
+        // tparameter->SetNewNodeName((title+" output").c_str());
+        tparameter->SetParent( parameterGroupFrame->GetFrame() );
+        tparameter->Create();
+        tparameter->SetMRMLScene(this->Logic->GetMRMLScene());
+        tparameter->UpdateMenu();
+        
+        tparameter->SetBorderWidth(2);
+        tparameter->SetReliefToFlat();
+        tparameter->SetLabelText( (*pit).GetLabel().c_str());
+        parameter = tparameter;
+        }
       else if ((*pit).GetTag() == "directory")
         {
         vtkKWLoadSaveButtonWithLabel *tparameter

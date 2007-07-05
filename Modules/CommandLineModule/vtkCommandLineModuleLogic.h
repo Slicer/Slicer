@@ -53,10 +53,11 @@ public:
 protected:
   //BTX
   std::string ConstructTemporaryFileName(const std::string& tag,
-                                     const std::string& type,
-                                     const std::string& name,
+                                         const std::string& type,
+                                         const std::string& name,
                                      const std::vector<std::string>& extensions,
                                      CommandLineModuleType commandType) const;
+  std::string ConstructTemporarySceneFileName(vtkMRMLScene *scene);
   //ETX
 
   // The method that runs the command line module

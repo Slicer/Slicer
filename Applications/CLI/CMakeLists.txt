@@ -130,7 +130,7 @@ SET (CLP ExecutionModelTour)
 SET ( ${CLP}_SOURCE ${CLP}.cxx)
 GENERATECLP(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/BillsLogo.h)
 ADD_EXECUTABLE(${CLP} ${${CLP}_SOURCE})
-TARGET_LINK_LIBRARIES (${CLP} ITKIO ITKBasicFilters)
+TARGET_LINK_LIBRARIES (${CLP} ITKIO ITKBasicFilters MRML)
 
 #####################
 

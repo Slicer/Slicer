@@ -40,6 +40,7 @@
 class ProcessingTaskQueue;
 class ModifiedQueue;
 class ReadDataQueue;
+class ReadDataRequest;
 class vtkSlicerTask;
 //ETX
 
@@ -200,6 +201,22 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic : public vtkSlicerL
   int RequestReadData(const char *refNode, const char *filename,
                        int displayData = false,
                        int deleteFile=false);
+
+  // Description:
+  // Request that a scene be read from a file. Mappings of node IDs in
+  // the file (sourceIDs) to node IDs in the main scene
+  // (targetIDs) can be specified. Only nodes listed in sourceIDs are
+  // loaded back into the main scene.  Hierarchical nodes will be
+  // handled specially, in that only the top node needs to be listed
+  // in the sourceIds.
+  //
+  //BTX
+  int RequestReadScene(const std::string& filename,
+                       std::vector<std::string> &targetIDs,
+                       std::vector<std::string> &sourceIDs,
+                       int displayData = false,
+                       int deleteFile = false);
+  //ETX
   
   // Description:
   // Process a request on the Modified queue.  This method is called
@@ -242,7 +259,24 @@ protected:
   // Description:
   // Task processing loop that is run in the processing thread
   void ProcessTasks();
-  
+
+  // Description:
+  // Process a request to read data into a node.  This method is
+  // called by ProcessReadData() in the application main thread
+  // because calls to load data will cause a Modified() on a node
+  // which can force a render.
+  //BTX
+  void ProcessReadNodeData( ReadDataRequest &req );
+  //EXT
+
+  // Description:
+  // Process a request to read data into a scene.  This method is
+  // called by ProcessReadData() in the application main thread
+  // because calls to load data will cause a Modified() on a node
+  // which can force a render.
+  //BTX
+  void ProcessReadSceneData( ReadDataRequest &req );
+  //EXT
   
 private:
   
