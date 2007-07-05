@@ -54,11 +54,13 @@ vtkMRMLNode* vtkMRMLDiffusionTensorVolumeDisplayNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLDiffusionTensorVolumeDisplayNode::vtkMRMLDiffusionTensorVolumeDisplayNode()
 {
+#ifdef USE_TEEM
  this->DiffusionTensorGlyphFilter = vtkDiffusionTensorGlyph::New();
  vtkSphereSource *sphere = vtkSphereSource::New();
  sphere->Update();
  this->DiffusionTensorGlyphFilter->SetSource( sphere->GetOutput() );
  sphere->Delete();
+#endif
 
  this->VisualizationMode = 0;
  this->DiffusionTensorDisplayPropertiesNode = NULL;
@@ -69,7 +71,9 @@ vtkMRMLDiffusionTensorVolumeDisplayNode::vtkMRMLDiffusionTensorVolumeDisplayNode
 vtkMRMLDiffusionTensorVolumeDisplayNode::~vtkMRMLDiffusionTensorVolumeDisplayNode()
 {
   this->SetAndObserveDiffusionTensorDisplayPropertiesNodeID(NULL); 
+#ifdef USE_TEEM
   this->DiffusionTensorGlyphFilter->Delete();
+#endif
 }
 
 
@@ -168,6 +172,7 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode::UpdateReferences()
 vtkPolyData* vtkMRMLDiffusionTensorVolumeDisplayNode::GetPolyData()
 {
   vtkErrorMacro("Showing Tensor Glyph");
+#ifdef USE_TEEM
   this->DiffusionTensorGlyphFilter->SetInput(this->GetSlicedImageData () );
   this->DiffusionTensorGlyphFilter->ClampScalingOff();
 
@@ -185,6 +190,9 @@ vtkPolyData* vtkMRMLDiffusionTensorVolumeDisplayNode::GetPolyData()
   this->DiffusionTensorGlyphFilter->Update ( );
  
   return this->DiffusionTensorGlyphFilter->GetOutput();
+#else
+  return NULL;
+#endif
 }
 
 //----------------------------------------------------------------------------
