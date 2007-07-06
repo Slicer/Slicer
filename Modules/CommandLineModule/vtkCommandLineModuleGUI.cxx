@@ -843,8 +843,10 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
 
   // Build the Help and About frame
   this->BuildHelpAndAboutFrame(this->UIPanel->GetPageWidget ( title.c_str() ),
-                       this->ModuleDescriptionObject.GetDescription().c_str(),
-                       this->ModuleDescriptionObject.GetContributor().c_str());
+                    this->ModuleDescriptionObject.GetDescription().c_str(),
+                    (this->ModuleDescriptionObject.GetAcknowledgements()
+                     + "\n\n" + 
+                     this->ModuleDescriptionObject.GetContributor()).c_str());
 
   // If the module has a logo, then add it to logo frame
   if (this->GetLogo())
