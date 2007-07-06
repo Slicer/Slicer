@@ -61,6 +61,9 @@ SET(MRML_SRCS
         vtkMRMLSnapshotClipNode.cxx
         vtkMRMLROINode.cxx
         vtkMRMLROIListNode.cxx
+        vtkMRMLUnstructuredGridNode.cxx
+        vtkMRMLUnstructuredGridDisplayNode.cxx
+        vtkMRMLUnstructuredGridStorageNode.cxx
         # Note: when you add new node types, add
         # register code to the vtkMRMLScene constructor
 )

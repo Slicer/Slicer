@@ -51,6 +51,9 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLModelHierarchyNode.h"
 #include "vtkMRMLSceneSnapshotNode.h"
 #include "vtkMRMLSnapshotClipNode.h"
+#include "vtkMRMLUnstructuredGridNode.h"
+#include "vtkMRMLUnstructuredGridDisplayNode.h"
+#include "vtkMRMLUnstructuredGridStorageNode.h"
 
 #ifdef USE_TEEM
 #include "vtkMRMLNRRDStorageNode.h"
@@ -203,6 +206,19 @@ vtkMRMLScene::vtkMRMLScene()
   vtkMRMLSnapshotClipNode *cshot = vtkMRMLSnapshotClipNode::New();
   this->RegisterNodeClass ( cshot );
   cshot->Delete();
+
+  vtkMRMLUnstructuredGridNode *unstg = vtkMRMLUnstructuredGridNode::New();
+  this->RegisterNodeClass ( unstg );
+  unstg->Delete();
+
+  vtkMRMLUnstructuredGridDisplayNode *unstgd = vtkMRMLUnstructuredGridDisplayNode::New();
+  this->RegisterNodeClass ( unstgd );
+  unstgd->Delete();
+
+  vtkMRMLUnstructuredGridStorageNode *unstgs = vtkMRMLUnstructuredGridStorageNode::New();
+  this->RegisterNodeClass ( unstgs );
+  unstgs->Delete();
+
 
 #ifdef USE_TEEM
   vtkMRMLNRRDStorageNode *nrrd = vtkMRMLNRRDStorageNode::New();
