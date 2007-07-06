@@ -41,7 +41,7 @@ TARGET_LINK_LIBRARIES (${CLP}
     vtkITK vtkImaging vtkGraphics vtkIO
     ITKIO
     ModuleDescriptionParser vtkTeem
-    # MRML
+    MRML
 )
 INCLUDE_DIRECTORIES(
         ${vtkITK_SOURCE_DIR} 
