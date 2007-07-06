@@ -98,7 +98,8 @@ MRMLIDImageIO
       }
 
     // now pull off the scene
-    hloc = fname.find("/", loc);
+    vtkMRMLScene *scene;
+    hloc = fname.find("#", loc);
     if (hloc == std::string::npos)
       {
       // no scene specified
@@ -107,29 +108,38 @@ MRMLIDImageIO
     if (hloc >= loc)
       {
       this->SceneID = std::string(fname.begin()+loc, fname.begin()+hloc);
+      
+      sscanf(this->SceneID.c_str(), "%p", &scene);
+
+      if (!scene)
+        {
+        // not a valid scene pointer
+        return 0;
+        }
       }
     else
       {
       this->SceneID = "";
       }
-    loc = hloc+1;   // skip the slash
+    loc = hloc+1;   // skip the hash
     
     // now pull off the node
     this->NodeID = std::string(fname.begin()+loc, fname.end());
     
-    // so far so good.  now see if we can cast down to a MRMLVolumeNode
+    // so far so good.  now lookup the node in the scene and see if we
+    // can cast down to a MRMLVolumeNode
     //
-    // Scenes and nodes should be specified by tags not by pointer
-    std::string ptrAsString = this->NodeID;
-    vtkObjectBase *ptr = 0;
-    
-    sscanf(ptrAsString.c_str(), "%p", &ptr);
+    vtkMRMLNode *node = scene->GetNodeByID(this->NodeID.c_str());
 
-    vtkMRMLVolumeNode* vptr = vtkMRMLVolumeNode::SafeDownCast(ptr);
-    if (vptr != 0)
+    if (node)
       {
-      // we are indeed referencing a volume node
-      return vptr;
+      vtkMRMLVolumeNode *vnode = vtkMRMLVolumeNode::SafeDownCast(node);
+    
+      if (vnode)
+        {
+        // we are indeed referencing a volume node
+        return vnode;
+        }
       }
     }
   

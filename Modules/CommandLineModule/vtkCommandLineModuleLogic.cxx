@@ -159,9 +159,9 @@ vtkCommandLineModuleLogic
   // Constructing a temporary filename from a node involves:
   //
   // 1. If the consumer of the file can communicate directly with the
-  // MRML scene, then the node is encoded as slicer:%p/%p where the
-  // first pointer is the address of the scene which contains the node
-  // and the second pointer is the pointer to the node.
+  // MRML scene, then the node is encoded as slicer:%p#%s where the
+  // pointer is the address of the scene which contains the node
+  // and the string is the MRML node ID.
   //
   // 2. If the consumer of the file is a Python module, it operates
   // in the process space of Slicer.  The Python module can be given
@@ -233,15 +233,15 @@ vtkCommandLineModuleLogic
 
       // Redefine the filename to be a reference to a slicer node.
       
-      // Must be large enough to hold slicer:, / and two copies of the
-      // ascii representation of the pointer. 256 should be more than
-      // enough.
-      char tname[256];
+      // Must be large enough to hold slicer:, #, an ascii
+      // representation of the scene pointer and the MRML node ID. 
+      char *tname = new char[name.size() + 100];
       
-      sprintf(tname, "slicer:%p/%p", this->MRMLScene,
-              this->MRMLScene->GetNodeByID(name.c_str()));
+      sprintf(tname, "slicer:%p#%s", this->MRMLScene, name.c_str());
       
       fname = tname;
+
+      delete [] tname;
       }
     }
 

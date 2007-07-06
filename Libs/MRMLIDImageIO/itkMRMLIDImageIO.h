@@ -44,8 +44,8 @@ namespace itk
  * ImageFileReader/ImageFileWriter to read and write the data.
  *
  * The "filename" specified will look like a URI:
- *     slicer:<scene id>/<node id>                  - local slicer
- *     slicer://<hostname>/<scene id>/<node id>     - remote slicer
+ *     slicer:<scene id>#<node id>                  - local slicer
+ *     slicer://<hostname>/<scene id>#<node id>     - remote slicer
  *
  * This code was written on the Massachusettes Turnpike with extreme
  * glare on the LCD.
