@@ -51,7 +51,18 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <element>Cubic</element>
       <default>NearestNeighbor</default> 
     </string-enumeration>
-
+    <transform type="linear">
+      <longflag>transform1</longflag>
+      <description>An input transform</description>
+      <label>Input transform</label>
+      <channel>input</channel>
+    </transform>
+    <transform type="linear">
+      <longflag>transform2</longflag>
+      <description>An output transform</description>
+      <label>Output transform</label>
+      <channel>output</channel>
+    </transform>
 
 </parameters>
 </executable>
