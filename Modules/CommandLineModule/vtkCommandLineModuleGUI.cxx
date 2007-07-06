@@ -75,9 +75,6 @@ vtkCommandLineModuleGUI* vtkCommandLineModuleGUI::New()
 //----------------------------------------------------------------------------
 vtkCommandLineModuleGUI::vtkCommandLineModuleGUI()
 {
-  this->CommandLineModuleNodeSelector = vtkSlicerNodeSelectorWidget::New();
-  this->CommandLineModuleNodeSelector->ShowHiddenOn();
-  
   this->Logic = NULL;
   this->CommandLineModuleNode = NULL;
 
@@ -104,13 +101,6 @@ vtkCommandLineModuleGUI::~vtkCommandLineModuleGUI()
   // Delete all the widgets
   delete this->InternalWidgetMap;
   
-  if ( this->CommandLineModuleNodeSelector )
-    {
-    this->CommandLineModuleNodeSelector->SetParent(NULL);
-    this->CommandLineModuleNodeSelector->Delete();
-    this->CommandLineModuleNodeSelector = NULL;
-    }
-
   this->SetLogic (NULL);
   // wjp test
   if ( this->CommandLineModuleNode ) {
@@ -185,9 +175,9 @@ void vtkCommandLineModuleGUI::PrintSelf(ostream& os, vtkIndent indent)
 //---------------------------------------------------------------------------
 void vtkCommandLineModuleGUI::AddGUIObservers ( ) 
 {
-  this->CommandLineModuleNodeSelector->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
+  (*this->InternalWidgetMap)["CommandLineModuleNodeSelector"]->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
 
-  this->CommandLineModuleNodeSelector->AddObserver (vtkSlicerNodeSelectorWidget::NewNodeEvent, (vtkCommand *)this->NewNodeCallbackCommand );  
+  (*this->InternalWidgetMap)["CommandLineModuleNodeSelector"]->AddObserver (vtkSlicerNodeSelectorWidget::NewNodeEvent, (vtkCommand *)this->NewNodeCallbackCommand );  
 
   (*this->InternalWidgetMap)["ApplyButton"]->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
@@ -262,30 +252,38 @@ void vtkCommandLineModuleGUI::AddGUIObservers ( )
 //---------------------------------------------------------------------------
 void vtkCommandLineModuleGUI::RemoveGUIObservers ( )
 {
-  if (this->CommandLineModuleNodeSelector)
-    {
-    this->CommandLineModuleNodeSelector->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
+  ModuleWidgetMap::const_iterator wit;
+  ModuleWidgetMap::const_iterator wend;
 
-    this->CommandLineModuleNodeSelector->RemoveObservers (vtkSlicerNodeSelectorWidget::NewNodeEvent, (vtkCommand *)this->NewNodeCallbackCommand );  
+  wend = (*this->InternalWidgetMap).end();
+
+  wit = (*this->InternalWidgetMap).find("CommandLineModuleNodeSelector");
+  if ( wit != wend)
+    {
+    (*wit).second->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
+
+    (*wit).second->RemoveObservers (vtkSlicerNodeSelectorWidget::NewNodeEvent, (vtkCommand *)this->NewNodeCallbackCommand );  
     }
 
-  if ( (*this->InternalWidgetMap)["ApplyButton"] )
+  wit = (*this->InternalWidgetMap).find("ApplyButton"); 
+  if ( wit != wend )
     {
-    (*this->InternalWidgetMap)["ApplyButton"]->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+    (*wit).second->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
     }
 
-  if ( (*this->InternalWidgetMap)["CancelButton"] )
+  wit = (*this->InternalWidgetMap).find("CancelButton"); 
+  if ( wit != wend )
     {
-    (*this->InternalWidgetMap)["CancelButton"]->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+    (*wit).second->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
     }
   
-  if ( (*this->InternalWidgetMap)["DefaultButton"] )
+  wit =  (*this->InternalWidgetMap).find("DefaultButton");
+  if ( wit != wend )
     {
-    (*this->InternalWidgetMap)["DefaultButton"]->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+    (*wit).second->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
     }
 
   // remove observers for each widget created
-  ModuleWidgetMap::const_iterator wit;
   for (wit = this->InternalWidgetMap->begin();
        wit != this->InternalWidgetMap->end(); ++wit)
     {
@@ -358,12 +356,14 @@ void vtkCommandLineModuleGUI::ProcessGUIEvents ( vtkObject *caller,
   // std::cout << "ProcessGUIEvents()" << std::endl;
   vtkKWPushButton *b = vtkKWPushButton::SafeDownCast(caller);
   vtkSlicerNodeSelectorWidget *selector = vtkSlicerNodeSelectorWidget::SafeDownCast(caller);
+  vtkSlicerNodeSelectorWidget *moduleNodeSelector = vtkSlicerNodeSelectorWidget::SafeDownCast( (*this->InternalWidgetMap)["CommandLineModuleNodeSelector"].GetPointer() );
 
-  if (selector == this->CommandLineModuleNodeSelector && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent ) 
+  if (selector && selector == moduleNodeSelector
+      && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent ) 
     {
     // Selected a new parameter node
     // std::cout << "  Selector" << std::endl;
-    vtkMRMLCommandLineModuleNode* n = vtkMRMLCommandLineModuleNode::SafeDownCast(this->CommandLineModuleNodeSelector->GetSelected());
+    vtkMRMLCommandLineModuleNode* n = vtkMRMLCommandLineModuleNode::SafeDownCast(moduleNodeSelector->GetSelected());
     if (n == NULL) 
       {
       return;
@@ -373,14 +373,14 @@ void vtkCommandLineModuleGUI::ProcessGUIEvents ( vtkObject *caller,
 
     this->UpdateGUI();
     }
-  else if (selector == this->CommandLineModuleNodeSelector && event == vtkSlicerNodeSelectorWidget::NewNodeEvent )
+  else if (selector && selector == moduleNodeSelector && event == vtkSlicerNodeSelectorWidget::NewNodeEvent )
     {
     // creating a new parameter node
     //std::cout << "  New node" << std::endl;
     vtkMRMLCommandLineModuleNode* n = vtkMRMLCommandLineModuleNode::SafeDownCast((vtkObjectBase*)callData);
     n->SetModuleDescription( this->ModuleDescriptionObject );
     }
-  else if (selector == this->CommandLineModuleNodeSelector && selector->GetSelected() == NULL)
+  else if (selector && selector == moduleNodeSelector && selector->GetSelected() == NULL)
     {
     return;
     }
@@ -439,10 +439,11 @@ void vtkCommandLineModuleGUI::UpdateMRML ()
     {
     // no parameter node selected yet, create new
     //std::cout << "  Creating a new node" << std::endl;
-    this->CommandLineModuleNodeSelector->SetSelectedNew("vtkMRMLCommandLineModuleNode");
+    vtkSlicerNodeSelectorWidget *moduleNodeSelector = vtkSlicerNodeSelectorWidget::SafeDownCast((*this->InternalWidgetMap)["CommandLineModuleNodeSelector"]);
+    moduleNodeSelector->SetSelectedNew("vtkMRMLCommandLineModuleNode");
     this->CreatingNewNode = true;
-    this->CommandLineModuleNodeSelector->ProcessNewNodeCommand("vtkMRMLCommandLineModuleNode", this->ModuleDescriptionObject.GetTitle().c_str());
-    n = vtkMRMLCommandLineModuleNode::SafeDownCast(this->CommandLineModuleNodeSelector->GetSelected());
+    moduleNodeSelector->ProcessNewNodeCommand("vtkMRMLCommandLineModuleNode", this->ModuleDescriptionObject.GetTitle().c_str());
+    n = vtkMRMLCommandLineModuleNode::SafeDownCast(moduleNodeSelector->GetSelected());
     this->CreatingNewNode = false;
 
     if (n == NULL)
@@ -874,22 +875,29 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
   (*this->InternalWidgetMap)["ModuleFrame"] = moduleFrame;
   moduleFrame->Delete();
 
-  this->CommandLineModuleNodeSelector->SetNodeClass("vtkMRMLCommandLineModuleNode", "CommandLineModule", title.c_str(), title.c_str());
-  this->CommandLineModuleNodeSelector->SetNewNodeEnabled(1);
-  //this->CommandLineModuleNodeSelector->SetNewNodeName((title+" parameters").c_str());
-  this->CommandLineModuleNodeSelector->SetParent( moduleFrame->GetFrame() );
-  this->CommandLineModuleNodeSelector->Create();
-  this->CommandLineModuleNodeSelector->SetMRMLScene(this->Logic->GetMRMLScene());
-  this->CommandLineModuleNodeSelector->SetSelected(NULL); // force empty select
-  
-  this->CommandLineModuleNodeSelector->SetBorderWidth(2);
-  this->CommandLineModuleNodeSelector->SetReliefToFlat();
-  this->CommandLineModuleNodeSelector->SetLabelText( "Parameter set");
+  vtkSlicerNodeSelectorWidget*
+    moduleNodeSelector = vtkSlicerNodeSelectorWidget::New();
+  moduleNodeSelector->ShowHiddenOn();
+  moduleNodeSelector->SetNodeClass("vtkMRMLCommandLineModuleNode", "CommandLineModule", title.c_str(), title.c_str());
+  moduleNodeSelector->SetNewNodeEnabled(1);
+  moduleNodeSelector->SetParent( moduleFrame->GetFrame() );
+  moduleNodeSelector->Create();
+  moduleNodeSelector->SetMRMLScene(this->Logic->GetMRMLScene());
+  moduleNodeSelector->SetSelected(NULL);  // force empt select
+
+  moduleNodeSelector->SetBorderWidth(2);
+  moduleNodeSelector->SetReliefToFlat();
+  moduleNodeSelector->SetLabelText( "Parameter set");
+
 
   std::string nodeSelectorBalloonHelp = "select a \"" + title + " parameters\" node from the current mrml scene.";
-  this->CommandLineModuleNodeSelector->SetBalloonHelpString(nodeSelectorBalloonHelp.c_str());
+  moduleNodeSelector->SetBalloonHelpString(nodeSelectorBalloonHelp.c_str());
   app->Script("pack %s -side top -anchor e -padx 20 -pady 4", 
-                this->CommandLineModuleNodeSelector->GetWidgetName());
+              moduleNodeSelector->GetWidgetName());
+
+  (*this->InternalWidgetMap)["CommandLineModuleNodeSelector"]
+    = moduleNodeSelector;
+  moduleNodeSelector->Delete();
 
   // Add a block indicating the status of the module (on this
   // parameter set)

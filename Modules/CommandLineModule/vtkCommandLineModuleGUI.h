@@ -139,8 +139,6 @@ private:
 
   ModuleWidgetMap *InternalWidgetMap;
 
-  vtkSlicerNodeSelectorWidget* CommandLineModuleNodeSelector;
-  
   vtkCommandLineModuleLogic *Logic;
   vtkMRMLCommandLineModuleNode* CommandLineModuleNode;
 
