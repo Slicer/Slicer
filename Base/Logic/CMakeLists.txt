@@ -23,7 +23,7 @@ SET(SlicerBaseLogic_SRCS
   vtkImageFillROI.cxx
   vtkSlicerGlyphSource2D.cxx
   vtkSlicerROILogic.cxx
-  #vtkImageResliceMask.cxx 
+  vtkImageResliceMask.cxx 
 )
 
 # Abstract/pure virtual classes

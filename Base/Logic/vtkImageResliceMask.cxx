@@ -862,8 +862,6 @@ int vtkImageResliceMask::RequestInformation(
 //----------------------------------------------------------------------------
 //  Interpolation subroutines and associated code 
 //----------------------------------------------------------------------------
-//  Interpolation subroutines and associated code 
-//----------------------------------------------------------------------------
 // Three interpolation functions are supported: NearestNeighbor, Trilinear,
 // and Tricubic.  These routines have the following signature:
 //
@@ -1152,7 +1150,7 @@ int vtkNearestNeighborInterpolation(T *&outPtr, const T *inPtr,
                                     const int inExt[6],
                                     const vtkIdType inInc[3],
                                     int numscalars, const F point[3],
-                                    int mode, const T *background, unsigned char *&BackgroundMaskPtr,  const bool value)
+                                    int mode, const T *background, unsigned char *&BackgroundMaskPtr,  bool value)
 {
   int inIdX0 = vtkResliceRound(point[0]) - inExt[0];
   int inIdY0 = vtkResliceRound(point[1]) - inExt[2];
@@ -1216,7 +1214,7 @@ template <class F, class T>
 int vtkTrilinearInterpolation(T *&outPtr, const T *inPtr,
                               const int inExt[6], const vtkIdType inInc[3],
                               int numscalars, const F point[3],
-                              int mode, const T *background, unsigned char *&BackgroundMaskPtr,  const bool value)
+                              int mode, const T *background, unsigned char *&BackgroundMaskPtr,  bool value)
 {
   F fx, fy, fz;
   int floorX = vtkResliceFloor(point[0], fx);
@@ -1407,7 +1405,7 @@ template <class F, class T>
 int vtkTricubicInterpolation(T *&outPtr, const T *inPtr,
                              const int inExt[6], const vtkIdType inInc[3],
                              int numscalars, const F point[3],
-                             int mode, const T *background, unsigned char *&BackgroundMaskPtr,  const bool value)
+                             int mode, const T *background, unsigned char *&BackgroundMaskPtr,  bool value)
 {
   F fx, fy, fz;
   int floorX = vtkResliceFloor(point[0], fx);
@@ -1641,7 +1639,7 @@ void vtkGetResliceInterpFunc(vtkImageResliceMask *self,
                                                  int numscalars,
                                                  const F point[3],
                                                  int mode,
-                                                 const void *background, void *&backgroundmask, const bool flag))
+                                                 const void *background, void *&backgroundmask, bool flag))
 {
   int dataType = self->GetOutput()->GetScalarType();
   int interpolationMode = self->GetInterpolationMode();
@@ -1656,7 +1654,7 @@ void vtkGetResliceInterpFunc(vtkImageResliceMask *self,
                                      const vtkIdType inInc[3],
                                      int numscalars, const F point[3],
                                      int mode,
-                                     const VTK_TT *background, unsigned char *&backgroundmask, const bool flag))interpolate) = \
+                                     const VTK_TT *background, unsigned char *&backgroundmask, bool flag))interpolate) = \
                          &vtkNearestNeighborInterpolation);
         default:
           interpolate = 0;
@@ -1670,7 +1668,7 @@ void vtkGetResliceInterpFunc(vtkImageResliceMask *self,
                                      const vtkIdType inInc[3],
                                      int numscalars, const F point[3],
                                      int mode,
-                                     const VTK_TT *background, unsigned char *&backgroundmask, const bool flag))interpolate) = \
+                                     const VTK_TT *background, unsigned char *&backgroundmask, bool flag))interpolate) = \
                          &vtkTrilinearInterpolation);
         default:
           interpolate = 0;
@@ -1684,7 +1682,7 @@ void vtkGetResliceInterpFunc(vtkImageResliceMask *self,
                                      const vtkIdType inInc[3],
                                      int numscalars, const F point[3],
                                      int mode,
-                                     const VTK_TT *background, unsigned char *&backgroundmask, const bool flag))interpolate) = \
+                                     const VTK_TT *background, unsigned char *&backgroundmask, bool flag))interpolate) = \
                          &vtkTricubicInterpolation);
         default:
           interpolate = 0;
@@ -1718,7 +1716,7 @@ void vtkSetPixels(T *&outPtr, const T *inPtr, int numscalars, int n)
     }
 }
 template<class T>
-void vtkSetPixels(T *&outPtr, const T *inPtr, int numscalars, int n, unsigned char *&BackgroundMaskPtr, const bool value)
+void vtkSetPixels(T *&outPtr, const T *inPtr, int numscalars, int n, unsigned char *&BackgroundMaskPtr, bool value)
 {
   for (int i = 0; i < n; i++)
     {
@@ -1745,7 +1743,7 @@ void vtkSetPixels1(T *&outPtr, const T *inPtr,
 }
 template<class T>
 void vtkSetPixels1(T *&outPtr, const T *inPtr,
-                          int vtkNotUsed(numscalars), int n, unsigned char *&BackgroundMaskPtr, const bool value)
+                          int vtkNotUsed(numscalars), int n, unsigned char *&BackgroundMaskPtr, bool value)
 {
   T val = *inPtr;
   for (int i = 0; i < n; i++)
@@ -1788,7 +1786,7 @@ void vtkGetSetPixelsFunc(vtkImageResliceMask *self,
 // get a pixel copy function that is appropriate for the data type
 void vtkGetSetPixelsFunc(vtkImageResliceMask *self,
                          void (**setpixels)(void *&out, const void *in,
-                                            int numscalars, int n, void *&backgroundmask, const bool flag))
+                                            int numscalars, int n, void *&backgroundmask, bool flag))
 {
   int dataType = self->GetOutput()->GetScalarType();
   int numscalars = self->GetOutput()->GetNumberOfScalarComponents();
@@ -1799,7 +1797,7 @@ void vtkGetSetPixelsFunc(vtkImageResliceMask *self,
       switch (dataType)
         {
         vtkTemplateAliasMacro(*((void (**)(VTK_TT *&out, const VTK_TT *in,
-                                      int numscalars, int n, unsigned char *&backgroundmask, const bool flag))setpixels) = \
+                                      int numscalars, int n, unsigned char *&backgroundmask, bool flag))setpixels) = \
                          vtkSetPixels1);
         default:
           setpixels = 0;
@@ -1808,7 +1806,7 @@ void vtkGetSetPixelsFunc(vtkImageResliceMask *self,
       switch (dataType)
         {
         vtkTemplateAliasMacro(*((void (**)(VTK_TT *&out, const VTK_TT *in,
-                                      int numscalars, int n, unsigned char *&backgroundmask, const bool flag))setpixels) = \
+                                      int numscalars, int n, unsigned char *&backgroundmask, bool flag))setpixels) = \
                          vtkSetPixels);
         default:
           setpixels = 0;
@@ -1867,10 +1865,10 @@ int vtkResliceGetNextExtent(vtkImageStencilData *stencil,
                             void (*setpixels)(void *&out,
                                               const void *in,
                                               int numscalars,
-                                              int n, void *&backgroundmask, const bool flag),
+                                              int n, void *&backgroundmask, bool flag),
                             int &iter,
                             void *&BackgroundMaskPtr, 
-                            const bool flag)
+                            bool flag)
 {
   // trivial case if stencil is not set
   if (!stencil)
@@ -1983,8 +1981,8 @@ void vtkImageResliceMaskExecute(vtkImageResliceMask *self,
   int (*interpolate)(void *&outPtr, const void *inPtr,
                      const int inExt[6], const vtkIdType inInc[3],
                      int numscalars, const double point[3],
-                     int mode, const void *background, void *&outMask, const bool flag);
-  void (*setpixels)(void *&outPtr, const void *in, int numscalars, int n, void *&out, const bool flag);
+                     int mode, const void *background, void *&outMask, bool flag);
+  void (*setpixels)(void *&outPtr, const void *in, int numscalars, int n, void *&out, bool flag);
 
   // the 'mode' species what to do with the 'pad' (out-of-bounds) area
   int mode = VTK_RESLICE_BACKGROUND;
@@ -2159,8 +2157,8 @@ void vtkOptimizedExecute(vtkImageResliceMask *self,
   int (*interpolate)(void *&outPtr, const void *inPtr,
                      const int inExt[6], const vtkIdType inInc[3],
                      int numscalars, const F point[3],
-                     int mode, const void *background, void *&outMask, const bool flag);
-  void (*setpixels)(void *&out, const void *in, int numscalars, int n, void *&outMask, const bool flag);
+                     int mode, const void *background, void *&outMask, bool flag);
+  void (*setpixels)(void *&out, const void *in, int numscalars, int n, void *&outMask, bool flag);
 
   int mode = VTK_RESLICE_BACKGROUND;
   int wrap = 0;
@@ -2348,7 +2346,7 @@ void vtkPermuteNearestSummation(T *&outPtr, const T *inPtr,
                                 const vtkIdType *iX, const F *,
                                 const vtkIdType *iY, const F *,
                                 const vtkIdType *iZ, const F *,
-                                const int [3], unsigned char *&BackgroundMaskPtr,  const bool value)
+                                const int [3], unsigned char *&BackgroundMaskPtr,  bool value)
 {
   const T *inPtr0 = inPtr + iY[0] + iZ[0];
 
@@ -2373,7 +2371,7 @@ void vtkPermuteNearestSummation1(T *&outPtr, const T *inPtr,
                                  const vtkIdType *iX, const F *,
                                  const vtkIdType *iY, const F *,
                                  const vtkIdType *iZ, const F *,
-                                 const int [3], unsigned char *&BackgroundMaskPtr,  const bool value)
+                                 const int [3], unsigned char *&BackgroundMaskPtr,  bool value)
 {
   const T *inPtr0 = inPtr + iY[0] + iZ[0];
 
@@ -2393,7 +2391,7 @@ void vtkPermuteTrilinearSummation(T *&outPtr, const T *inPtr,
                                   const vtkIdType *iX, const F *fX,
                                   const vtkIdType *iY, const F *fY,
                                   const vtkIdType *iZ, const F *fZ,
-                                  const int useNearestNeighbor[3], unsigned char *&BackgroundMaskPtr,  const bool value)
+                                  const int useNearestNeighbor[3], unsigned char *&BackgroundMaskPtr,  bool value)
 {
   vtkIdType i00 = iY[0] + iZ[0];
   vtkIdType i01 = iY[0] + iZ[1];
@@ -2514,7 +2512,7 @@ void vtkPermuteTricubicSummation(T *&outPtr, const T *inPtr,
                                  const vtkIdType *iX, const F *fX,
                                  const vtkIdType *iY, const F *fY,
                                  const vtkIdType *iZ, const F *fZ,
-                                 const int useNearestNeighbor[3], unsigned char *&BackgroundMaskPtr,  const bool value)
+                                 const int useNearestNeighbor[3], unsigned char *&BackgroundMaskPtr,  bool value)
 {
   // speed things up a bit for bicubic interpolation
   int k1 = 0;
@@ -2587,7 +2585,7 @@ void vtkGetResliceSummationFunc(vtkImageResliceMask *self,
                                                    const vtkIdType *iX, const F *fX,
                                                    const vtkIdType *iY, const F *fY,
                                                    const vtkIdType *iZ, const F *fZ,
-                                                   const int useNearest[3], void *&backgroundmask, const bool flag),
+                                                   const int useNearest[3], void *&backgroundmask, bool flag),
                                 int interpolationMode)
 {
   int scalarType = self->GetOutput()->GetScalarType();
@@ -2602,7 +2600,7 @@ void vtkGetResliceSummationFunc(vtkImageResliceMask *self,
                                       const vtkIdType *iX, const F *fX,
                                       const vtkIdType *iY, const F *fY,
                                       const vtkIdType *iZ, const F *fZ,
-                                      const int useNearest[3], unsigned char *&backgroundmask, const bool flag))summation) = \
+                                      const int useNearest[3], unsigned char *&backgroundmask, bool flag))summation) = \
                          vtkPermuteNearestSummation);
         default:
           summation = 0;
@@ -2616,7 +2614,7 @@ void vtkGetResliceSummationFunc(vtkImageResliceMask *self,
                                       const vtkIdType *iX, const F *fX,
                                       const vtkIdType *iY, const F *fY,
                                       const vtkIdType *iZ, const F *fZ,
-                                      const int useNearest[3], unsigned char *&backgroundmask, const bool flag))summation) = \
+                                      const int useNearest[3], unsigned char *&backgroundmask, bool flag))summation) = \
                          vtkPermuteTrilinearSummation);
         default:
           summation = 0;
@@ -2630,7 +2628,7 @@ void vtkGetResliceSummationFunc(vtkImageResliceMask *self,
                                       const vtkIdType *iX, const F *fX,
                                       const vtkIdType *iY, const F *fY,
                                       const vtkIdType *iZ, const F *fZ,
-                                      const int useNearest[3], unsigned char *&backgroundmask, const bool flag))summation) = \
+                                      const int useNearest[3], unsigned char *&backgroundmask, bool flag))summation) = \
                          vtkPermuteTricubicSummation);
         default:
           summation = 0;
@@ -3061,8 +3059,8 @@ void vtkReslicePermuteExecute(vtkImageResliceMask *self,
                     const vtkIdType *iX, const F *fX,
                     const vtkIdType *iY, const F *fY,
                     const vtkIdType *iZ, const F *fZ,
-                    const int useNearestNeighbor[3], void *&outMask, const bool flag);
-  void (*setpixels)(void *&out, const void *in, int numscalars, int n, void *&outMask, const bool flag);
+                    const int useNearestNeighbor[3], void *&outMask, bool flag);
+  void (*setpixels)(void *&out, const void *in, int numscalars, int n, void *&outMask, bool flag);
   vtkGetResliceSummationFunc(self, &summation, interpolationMode);
   vtkGetSetPixelsFunc(self, &setpixels);
 
@@ -3183,7 +3181,7 @@ int vtkIsPermutationMatrix(F matrix[4][4])
 //----------------------------------------------------------------------------
 // check a matrix to see whether it is the identity matrix
 
-int vtkIsIdentityMatrix(vtkMatrix4x4 *matrix)
+int vtkIsIdentityMatrix2(vtkMatrix4x4 *matrix)
 {
   static double identity[16] = {1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1};
   int i,j;
@@ -3262,7 +3260,7 @@ vtkMatrix4x4 *vtkImageResliceMask::GetIndexMatrix(vtkInformation *inInfo,
     }
   
   // check to see if we have an identity matrix
-  isIdentity = vtkIsIdentityMatrix(transform->GetMatrix());
+  isIdentity = vtkIsIdentityMatrix2(transform->GetMatrix());
 
   // the outMatrix takes OutputData indices to OutputData coordinates,
   // the inMatrix takes InputData coordinates to InputData indices
