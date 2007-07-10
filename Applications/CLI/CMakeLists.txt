@@ -374,7 +374,7 @@ TARGET_LINK_LIBRARIES (${CLP}Lib ITKIO ITKBasicFilters)
 #  SUBDIRS( Testing )
 #ENDIF (Slicer3_BUILD_TESTING)
 
-
+SUBDIRS ( Realign )
 SUBDIRS( DiffusionApplications )
 
 IF (Slicer3_SOURCE_DIR)
