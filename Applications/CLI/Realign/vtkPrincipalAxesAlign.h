@@ -23,6 +23,7 @@
 // The direction of the eigenvector for the largest eigenvalue is the XAxis,
 // the direction of the eigenvector for the smallest eigenvalue is the ZAxis,
 // and the YAxis the the eigenvector for the remaining eigenvalue.
+#define VTK_Realign_EXPORT __declspec(dllexport)
 
 class VTK_Realign_EXPORT vtkPrincipalAxesAlign : public vtkPolyDataToPolyDataFilter
 {
