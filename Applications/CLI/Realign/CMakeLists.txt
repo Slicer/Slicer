@@ -9,13 +9,9 @@ CONFIGURE_FILE(
 )
 
 FIND_PACKAGE(GenerateCLP REQUIRED)
-FIND_PACKAGE(vtkITK REQUIRED)
 
 FIND_PACKAGE(ModuleDescriptionParser REQUIRED)
 LINK_DIRECTORIES(${ModuleDescriptionParser_BINARY_DIR} ${vtkTeem_LIB_DIR})
-
-FIND_PACKAGE(ITK REQUIRED)
-INCLUDE(${ITK_USE_FILE})
 
 FIND_PACKAGE(VTK REQUIRED)
 INCLUDE(${VTK_USE_FILE})
@@ -35,17 +31,18 @@ SET (CLP Realign)
 
 SET ( ${CLP}_SOURCE ${CLP}.cxx vtkPrincipalAxesAlign.cxx ${CLI_SOURCE_DIR}/vtkPluginFilterWatcher.cxx )
 GENERATECLP(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
-LINK_DIRECTORIES(${vtkITK_LIB_DIR})
 ADD_EXECUTABLE(${CLP} ${${CLP}_SOURCE})
 TARGET_LINK_LIBRARIES (${CLP}
-    vtkITK vtkImaging vtkGraphics vtkIO
-    ITKIO
+     vtkImaging vtkGraphics vtkIO
     ModuleDescriptionParser vtkTeem
     MRML
 )
+
+ADD_LIBRARY(${CLP}Lib SHARED ${${CLP}_SOURCE})
+SET_TARGET_PROPERTIES (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
+TARGET_LINK_LIBRARIES (${CLP}Lib vtkImaging vtkGraphics vtkIO ModuleDescriptionParser vtkTeem MRML)
+
 INCLUDE_DIRECTORIES(
-        ${vtkITK_SOURCE_DIR} 
-        ${vtkITK_BINARY_DIR}
         ${vtkTeem_SOURCE_DIR}  ${vtkTeem_BINARY_DIR}
         ${MRML_SOURCE_DIR} ${MRML_BINARY_DIR})
 
