@@ -403,6 +403,12 @@ void vtkSlicerApplication::RestoreApplicationSettingsFromRegistry()
   std::string pathWithSlicer;
   itksys::SystemTools::SplitPath(temporaryDirectory.c_str(), pathcomponents);
   pathcomponents.push_back("Slicer3");
+#ifndef _WIN32
+  if ( getenv("USER") != NULL )
+    {
+    pathcomponents.push_back(getenv("USER"));
+    }
+#endif
   pathWithSlicer = itksys::SystemTools::JoinPath(pathcomponents);
   
   itksys::SystemTools::MakeDirectory(pathWithSlicer.c_str());
