@@ -37,8 +37,10 @@ class vtkSlicerApplicationGUI;
 class vtkKWScale;
 class vtkKWScaleWithEntry;
 class vtkKWPushButton;
-class vtkKWCheckButton;
-class vtkKWRadioButton;
+//class vtkKWCheckButton;
+//class vtkKWRadioButton;
+class vtkSlicerCheckButtonWidget;
+class vtkSlicerRadioButtonWidget;
 class vtkKWLabel;
 class vtkKWMenuButton;
 class vtkKWEntry;
@@ -112,8 +114,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
 
   // Description:
   // Get the widgets in the ViewControlGUI
-  vtkGetObjectMacro (SpinButton, vtkKWCheckButton);
-  vtkGetObjectMacro (RockButton, vtkKWCheckButton);
+//  vtkGetObjectMacro (SpinButton, vtkKWCheckButton);
+//  vtkGetObjectMacro (RockButton, vtkKWCheckButton);
+  vtkGetObjectMacro (SpinButton, vtkSlicerCheckButtonWidget );
+  vtkGetObjectMacro (RockButton, vtkSlicerCheckButtonWidget );
   vtkGetObjectMacro (OrthoButton, vtkKWPushButton);
   vtkGetObjectMacro (CenterButton, vtkKWPushButton);
   vtkGetObjectMacro (SelectViewButton, vtkKWMenuButton);
@@ -124,9 +128,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   vtkGetObjectMacro (YellowFOVEntry, vtkKWEntry);
   vtkGetObjectMacro (GreenFOVEntry, vtkKWEntry);
   vtkGetObjectMacro (ZoomEntry, vtkKWEntryWithLabel);
-  vtkGetObjectMacro (LookFromButton, vtkKWRadioButton);
-  vtkGetObjectMacro (RotateAroundButton, vtkKWRadioButton );
-
+//  vtkGetObjectMacro (LookFromButton, vtkKWRadioButton);
+//  vtkGetObjectMacro (RotateAroundButton, vtkKWRadioButton );
+  vtkGetObjectMacro (LookFromButton, vtkSlicerRadioButtonWidget );
+  vtkGetObjectMacro (RotateAroundButton, vtkSlicerRadioButtonWidget);
   
   // Description:
   // Get the Widgets that display the RotateAround rollover images
@@ -378,11 +383,15 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   
   vtkSlicerApplicationGUI *ApplicationGUI;
   vtkSlicerViewControlIcons *SlicerViewControlIcons;
-  vtkKWCheckButton *SpinButton;
-  vtkKWCheckButton *RockButton;
+//  vtkKWCheckButton *SpinButton;
+//  vtkKWCheckButton *RockButton;
+  vtkSlicerCheckButtonWidget *SpinButton;
+  vtkSlicerCheckButtonWidget *RockButton;
   vtkKWPushButton *OrthoButton;
-  vtkKWRadioButton *LookFromButton;
-  vtkKWRadioButton *RotateAroundButton;
+//  vtkKWRadioButton *LookFromButton;
+//  vtkKWRadioButton *RotateAroundButton;
+  vtkSlicerRadioButtonWidget *LookFromButton;
+  vtkSlicerRadioButtonWidget *RotateAroundButton;
   vtkKWPushButton *CenterButton;
   vtkKWMenuButton *StereoButton;
   vtkKWMenuButton *SelectViewButton;

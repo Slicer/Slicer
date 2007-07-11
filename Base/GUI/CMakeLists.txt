@@ -33,6 +33,7 @@ SET(LIB_SRCS
   vtkSlicerToolbarIcons.cxx
   vtkSlicerViewControlIcons.cxx
   vtkSlicerSlicesControlIcons.cxx
+  vtkSlicerCheckRadioButtonIcons.cxx
   vtkSlicerApplication.cxx
   vtkSlicerComponentGUI.cxx
   vtkSlicerModuleGUI.cxx
@@ -84,6 +85,8 @@ SET(LIB_SRCS
   vtkSlicerSceneSnapshotWidget.cxx
   vtkSlicerRecordSnapshotWidget.cxx
   vtkSlicerModelHierarchyWidget.cxx
+  vtkSlicerCheckButtonWidget.cxx
+  vtkSlicerRadioButtonWidget.cxx
   # VTK Replacement classes
   vtkSlicerInteractorStyle.cxx
   vtkSlicerViewerInteractorStyle.cxx

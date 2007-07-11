@@ -142,25 +142,44 @@ void vtkSlicerTheme::Install ( )
                              this->SlicerColors->FocusTextColor );
 
     
-    // Slicer Checkbuttons
-    odb->AddEntryAsDouble3 ("vtkKWCheckButton", "SetSelectColor",
-                   this->SlicerColors->LightGrey );
-//    odb->AddEntryAsDouble3 ("vtkKWCheckButton", "SetActiveBackgroundColor",
-//                            this->SlicerColors->ActiveMenuBackgroundColor );
+    // Slicer KW Checkbuttons
     odb->AddEntryAsDouble3 ("vtkKWCheckButton", "SetActiveBackgroundColor",
                             this->SlicerColors->GUIBgColor );
-    odb->AddEntry( "vtkKWCheckButton", "IndicatorVisibilityOn", NULL);
+    odb->AddEntry( "vtkKWCheckButton", "IndicatorVisibilityOff", NULL);
     odb->AddEntryAsDouble3( "vtkKWCheckButton", "SetSelectColor", this->SlicerColors->HighlightColor);
+    // Slicer Custom CheckbuttonWidgets
+    odb->AddEntryAsDouble3 ("vtkSlicerCheckButtonWidget", "SetSelectColor",
+                            this->SlicerColors->GUIBgColor );
+    odb->AddEntryAsDouble3 ("vtkSlicerCheckButtonWidget", "SetActiveBackgroundColor",
+                            this->SlicerColors->GUIBgColor );
+    odb->AddEntry( "vtkSlicerCheckButtonWidget", "IndicatorVisibilityOff", NULL);
+    odb->AddEntry ( "vtkSlicerCheckButtonWidget", "SetReliefToFlat", NULL );
+    odb->AddEntry ( "vtkSlicerCheckButtonWidget", "SetOffReliefToFlat", NULL );
+    odb->AddEntry ( "vtkSlicerCheckButtonWidget", "SetOverReliefToFlat", NULL );
+    odb->AddEntry ( "vtkSlicerCheckButtonWidget", "SetSelectedStateOn", NULL );
+    odb->AddEntryAsInt ("vtkSlicerCheckButtonWidget", "SetBorderWidth", 0 );
+    odb->AddEntryAsInt ("vtkSlicerCheckButtonWidget", "SetHighlightThickness", 0 );
+    odb->AddEntryAsInt ( "vtkSlicerCheckButtonWidget", "SetPadX", 4 );
+    odb->AddEntryAsInt ( "vtkSlicerCheckButtonWidget", "SetPadY", 4 );
 
-    
-
-    // Slicer Radiobuttons
-    odb->AddEntryAsDouble3 ("vtkKWRadioButton", "SetSelectColor",
-                   this->SlicerColors->LightGrey );
-//    odb->AddEntryAsDouble3 ("vtkKWRadioButton", "SetActiveBackgroundColor",
-//                            this->SlicerColors->ActiveMenuBackgroundColor );
+    // Slicer KW Radiobuttons
+    odb->AddEntryAsDouble3 ("vtkKWRadioButton", "SetSelectColor", this->SlicerColors->HighlightColor );
     odb->AddEntryAsDouble3 ("vtkKWRadioButton", "SetActiveBackgroundColor",
                             this->SlicerColors->GUIBgColor );
+    // Slicer Custom RadiobuttonWidgets
+    odb->AddEntryAsDouble3 ("vtkSlicerRadioButtonWidget", "SetSelectColor",
+                            this->SlicerColors->GUIBgColor );
+    odb->AddEntryAsDouble3 ("vtkSlicerRadioButtonWidget", "SetActiveBackgroundColor",
+                            this->SlicerColors->GUIBgColor );
+    odb->AddEntry( "vtkSlicerRadioButtonWidget", "IndicatorVisibilityOff", NULL);
+    odb->AddEntry ( "vtkSlicerRadioButtonWidget", "SetReliefToFlat", NULL );
+    odb->AddEntry ( "vtkSlicerRadioButtonWidget", "SetOffReliefToFlat", NULL );
+    odb->AddEntry ( "vtkSlicerRadioButtonWidget", "SetOverReliefToFlat", NULL );
+    odb->AddEntry ( "vtkSlicerRadioButtonWidget", "SetSelectedStateOn", NULL );
+    odb->AddEntryAsInt ("vtkSlicerRadioButtonWidget", "SetBorderWidth", 0 );
+    odb->AddEntryAsInt ("vtkSlicerRadioButtonWidget", "SetHighlightThickness", 0 );
+    odb->AddEntryAsInt ( "vtkSlicerRadioButtonWidget", "SetPadX", 4 );
+    odb->AddEntryAsInt ( "vtkSlicerRadioButtonWidget", "SetPadY", 4 );
 
     
     // Slicer WidgetWithLabel (scrap the groove around all)

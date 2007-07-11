@@ -30,15 +30,19 @@ vtkSlicerViewControlIcons::vtkSlicerViewControlIcons ( )
     this->ViewAxisBottomCornerIcon = vtkKWIcon::New ( );    
     this->ViewAxisCenterIcon = vtkKWIcon::New ( );    
 
-    this->SpinButtonIcon = vtkKWIcon::New ( );
-    this->RockButtonIcon = vtkKWIcon::New ( );
+    this->SpinOffButtonIcon = vtkKWIcon::New ( );
+    this->SpinOnButtonIcon = vtkKWIcon::New ( );
+    this->RockOffButtonIcon = vtkKWIcon::New ( );
+    this->RockOnButtonIcon = vtkKWIcon::New ( );
     this->OrthoButtonIcon = vtkKWIcon::New ( );
     this->PerspectiveButtonIcon = vtkKWIcon::New ( );
     this->CenterButtonIcon = vtkKWIcon::New ( );
     this->SelectViewButtonIcon = vtkKWIcon::New ( );
     this->StereoButtonIcon = vtkKWIcon::New ( );
-    this->LookFromButtonIcon = vtkKWIcon::New ( );
-    this->RotateAroundButtonIcon = vtkKWIcon::New ( );
+    this->LookFromOffButtonIcon = vtkKWIcon::New ( );
+    this->LookFromOnButtonIcon = vtkKWIcon::New ( );
+    this->RotateAroundOffButtonIcon = vtkKWIcon::New ( );
+    this->RotateAroundOnButtonIcon = vtkKWIcon::New ( );
     this->VisibilityButtonIcon = vtkKWIcon::New ( );
     this->SelectCameraButtonIcon = vtkKWIcon::New ( );
     
@@ -118,15 +122,25 @@ vtkSlicerViewControlIcons::~vtkSlicerViewControlIcons ( )
         this->ViewAxisCenterIcon->Delete ( );
         this->ViewAxisCenterIcon = NULL;
     }
-    if ( this->SpinButtonIcon )
+    if ( this->SpinOffButtonIcon )
       {
-      this->SpinButtonIcon->Delete ( );
-      this->SpinButtonIcon = NULL;
+      this->SpinOffButtonIcon->Delete ( );
+      this->SpinOffButtonIcon = NULL;
       }
-    if ( this->RockButtonIcon )
+    if ( this->RockOffButtonIcon )
       {
-      this->RockButtonIcon->Delete ( );
-      this->RockButtonIcon = NULL;
+      this->RockOffButtonIcon->Delete ( );
+      this->RockOffButtonIcon = NULL;
+      }
+    if ( this->SpinOnButtonIcon )
+      {
+      this->SpinOnButtonIcon->Delete ( );
+      this->SpinOnButtonIcon = NULL;
+      }
+    if ( this->RockOnButtonIcon )
+      {
+      this->RockOnButtonIcon->Delete ( );
+      this->RockOnButtonIcon = NULL;
       }
     if ( this->OrthoButtonIcon )
       {
@@ -153,15 +167,25 @@ vtkSlicerViewControlIcons::~vtkSlicerViewControlIcons ( )
       this->StereoButtonIcon->Delete ( );
       this->StereoButtonIcon = NULL;
       }
-    if ( this->LookFromButtonIcon )
+    if ( this->LookFromOffButtonIcon )
       {
-      this->LookFromButtonIcon->Delete ( );
-      this->LookFromButtonIcon = NULL;
+      this->LookFromOffButtonIcon->Delete ( );
+      this->LookFromOffButtonIcon = NULL;
       }
-    if ( this->RotateAroundButtonIcon )
+    if ( this->RotateAroundOffButtonIcon )
       {
-      this->RotateAroundButtonIcon->Delete ( );
-      this->RotateAroundButtonIcon = NULL;
+      this->RotateAroundOffButtonIcon->Delete ( );
+      this->RotateAroundOffButtonIcon = NULL;
+      }
+    if ( this->LookFromOnButtonIcon )
+      {
+      this->LookFromOnButtonIcon->Delete ( );
+      this->LookFromOnButtonIcon = NULL;
+      }
+    if ( this->RotateAroundOnButtonIcon )
+      {
+      this->RotateAroundOnButtonIcon->Delete ( );
+      this->RotateAroundOnButtonIcon = NULL;
       }
     if ( this->VisibilityButtonIcon )
       {
@@ -271,16 +295,26 @@ void vtkSlicerViewControlIcons::AssignImageDataToIcons ( ) {
                                       image_ViewAxisMiddle_height,
                                       image_ViewAxisMiddle_pixel_size,
                                       image_ViewAxisMiddle_length, 0);
-  this->SpinButtonIcon->SetImage ( image_ViewSpin,
-                                   image_ViewSpin_width,
-                                   image_ViewSpin_height,
-                                   image_ViewSpin_pixel_size,
-                                   image_ViewSpin_length, 0 );                                   
-  this->RockButtonIcon->SetImage ( image_ViewRock,
-                                   image_ViewRock_width,
-                                   image_ViewRock_height,
-                                   image_ViewRock_pixel_size,
-                                   image_ViewRock_length, 0 );                                   
+  this->SpinOffButtonIcon->SetImage ( image_ViewSpinRadioOff,
+                                   image_ViewSpinRadioOff_width,
+                                   image_ViewSpinRadioOff_height,
+                                   image_ViewSpinRadioOff_pixel_size,
+                                   image_ViewSpinRadioOff_length, 0 );                                   
+  this->RockOffButtonIcon->SetImage ( image_ViewRockRadioOff,
+                                   image_ViewRockRadioOff_width,
+                                   image_ViewRockRadioOff_height,
+                                   image_ViewRockRadioOff_pixel_size,
+                                   image_ViewRockRadioOff_length, 0 );                                   
+  this->SpinOnButtonIcon->SetImage ( image_ViewSpinRadioOn,
+                                   image_ViewSpinRadioOn_width,
+                                   image_ViewSpinRadioOn_height,
+                                   image_ViewSpinRadioOn_pixel_size,
+                                   image_ViewSpinRadioOn_length, 0 );                                   
+  this->RockOnButtonIcon->SetImage ( image_ViewRockRadioOn,
+                                   image_ViewRockRadioOn_width,
+                                   image_ViewRockRadioOn_height,
+                                   image_ViewRockRadioOn_pixel_size,
+                                   image_ViewRockRadioOn_length, 0 );                                   
   this->OrthoButtonIcon->SetImage ( image_ViewOrtho,
                                    image_ViewOrtho_width,
                                    image_ViewOrtho_height,
@@ -306,16 +340,26 @@ void vtkSlicerViewControlIcons::AssignImageDataToIcons ( ) {
                                    image_ViewStereo_height,
                                    image_ViewStereo_pixel_size,
                                    image_ViewStereo_length, 0 );                                   
-  this->LookFromButtonIcon->SetImage ( image_ViewAxisLookFrom,
-                                   image_ViewAxisLookFrom_width,
-                                   image_ViewAxisLookFrom_height,
-                                   image_ViewAxisLookFrom_pixel_size,
-                                   image_ViewAxisLookFrom_length, 0 );                                   
-  this->RotateAroundButtonIcon->SetImage ( image_ViewAxisRotateAround,
-                                   image_ViewAxisRotateAround_width,
-                                   image_ViewAxisRotateAround_height,
-                                   image_ViewAxisRotateAround_pixel_size,
-                                   image_ViewAxisRotateAround_length, 0 );                                   
+  this->LookFromOffButtonIcon->SetImage ( image_ViewAxisLookFromRadioOff,
+                                   image_ViewAxisLookFromRadioOff_width,
+                                   image_ViewAxisLookFromRadioOff_height,
+                                   image_ViewAxisLookFromRadioOff_pixel_size,
+                                   image_ViewAxisLookFromRadioOff_length, 0 );                                   
+  this->RotateAroundOffButtonIcon->SetImage ( image_ViewAxisRotateAroundRadioOff,
+                                   image_ViewAxisRotateAroundRadioOff_width,
+                                   image_ViewAxisRotateAroundRadioOff_height,
+                                   image_ViewAxisRotateAroundRadioOff_pixel_size,
+                                   image_ViewAxisRotateAroundRadioOff_length, 0 );                                   
+  this->LookFromOnButtonIcon->SetImage ( image_ViewAxisLookFromRadioOn,
+                                   image_ViewAxisLookFromRadioOn_width,
+                                   image_ViewAxisLookFromRadioOn_height,
+                                   image_ViewAxisLookFromRadioOn_pixel_size,
+                                   image_ViewAxisLookFromRadioOn_length, 0 );                                   
+  this->RotateAroundOnButtonIcon->SetImage ( image_ViewAxisRotateAroundRadioOn,
+                                   image_ViewAxisRotateAroundRadioOn_width,
+                                   image_ViewAxisRotateAroundRadioOn_height,
+                                   image_ViewAxisRotateAroundRadioOn_pixel_size,
+                                   image_ViewAxisRotateAroundRadioOn_length, 0 );                                   
   this->VisibilityButtonIcon->SetImage ( image_ViewFeaturesVisible,
                                          image_ViewFeaturesVisible_width,
                                          image_ViewFeaturesVisible_height,
@@ -362,15 +406,19 @@ void vtkSlicerViewControlIcons::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "ViewAxisTopCornerIcon" << this->GetViewAxisTopCornerIcon () << "\n";
     os << indent << "ViewAxisBottomCornerIcon" << this->GetViewAxisBottomCornerIcon () << "\n";
     os << indent << "ViewAxisCenterIcon" << this->GetViewAxisCenterIcon () << "\n";
-    os << indent << "SpinButtonIcon" << this->GetSpinButtonIcon () << "\n";
-    os << indent << "RockButtonIcon" << this->GetRockButtonIcon () << "\n";
+    os << indent << "SpinOffButtonIcon" << this->GetSpinOffButtonIcon () << "\n";
+    os << indent << "RockOffButtonIcon" << this->GetRockOffButtonIcon () << "\n";
+    os << indent << "SpinOnButtonIcon" << this->GetSpinOnButtonIcon () << "\n";
+    os << indent << "RockOnButtonIcon" << this->GetRockOnButtonIcon () << "\n";
     os << indent << "OrthoButtonIcon" << this->GetOrthoButtonIcon () << "\n";
     os << indent << "PerspectiveButtonIcon" << this->GetPerspectiveButtonIcon () << "\n";
     os << indent << "CenterButtonIcon" << this->GetCenterButtonIcon () << "\n";
     os << indent << "SelectViewButtonIcon" << this->GetSelectViewButtonIcon () << "\n";
     os << indent << "StereoButtonIcon" << this->GetStereoButtonIcon () << "\n";
-    os << indent << "LookFromButtonIcon" << this->GetLookFromButtonIcon () << "\n";
-    os << indent << "RotateAroundButtonIcon" << this->GetRotateAroundButtonIcon () << "\n";
+    os << indent << "LookFromOffButtonIcon" << this->GetLookFromOffButtonIcon () << "\n";
+    os << indent << "RotateAroundOffButtonIcon" << this->GetRotateAroundOffButtonIcon () << "\n";
+    os << indent << "LookFromOnButtonIcon" << this->GetLookFromOnButtonIcon () << "\n";
+    os << indent << "RotateAroundOnButtonIcon" << this->GetRotateAroundOnButtonIcon () << "\n";
     os << indent << "VisibilityButtonIcon" << this->GetVisibilityButtonIcon () << "\n";
     os << indent << "SelectCameraButtonIcon" << this->GetSelectCameraButtonIcon () << "\n";
 }
