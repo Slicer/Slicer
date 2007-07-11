@@ -21,7 +21,7 @@
 
 #include <vtkRealignConfigure.h>
 
-#if defined(WIN32) && !defined(VTKRealign_STATIC)
+#if defined(WIN32) && !defined(Realign_STATIC)
 #if defined(Realign_EXPORTS)
 #define VTK_Realign_EXPORT __declspec( dllexport ) 
 #else
