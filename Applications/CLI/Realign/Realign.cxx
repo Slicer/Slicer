@@ -303,7 +303,7 @@ int main(int argc, char * argv[])
       {
       if (debug)
         {
-        std:cout << "Doing resample...\n";
+        std::cout << "Doing resample...\n";
         }
       vtkImageData *Target = vtkImageData::New();
       Target->DeepCopy(image);
