@@ -47,7 +47,7 @@ void vtkMRMLROINode::PrintSelf(ostream& os, vtkIndent indent)
 vtkMRMLROINode::vtkMRMLROINode()
 {
   this->XYZ[0] = this->XYZ[1] = this->XYZ[2] = 0.0;
-  this->RadiusXYZ[0] = this->RadiusXYZ[1] = this->RadiusXYZ[2] = 4.0;
+  this->RadiusXYZ[0] = this->RadiusXYZ[1] = this->RadiusXYZ[2] = 10.0;
 
   this->IJK[0] = this->IJK[1] = this->IJK[2] = 0;
   this->RadiusIJK[0] = this->RadiusIJK[1] = this->RadiusIJK[2] = 0;

@@ -251,6 +251,11 @@ CONFIGURE_FILE(
   COPYONLY
 )
 CONFIGURE_FILE(
+  ${Slicer3_SOURCE_DIR}/Base/GUI/Tcl/RegionsSWidget.tcl
+  ${SlicerBaseGUITcl_DIR}/RegionsSWidget.tcl
+  COPYONLY
+)
+CONFIGURE_FILE(
   ${Slicer3_SOURCE_DIR}/Base/GUI/Tcl/Slicer2Import.tcl
   ${SlicerBaseGUITcl_DIR}/Slicer2Import.tcl
   COPYONLY

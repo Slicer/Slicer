@@ -34,6 +34,7 @@ if { [itcl::find class SliceSWidget] == "" } {
     variable _fiducialsSWidget ""
     variable _gridSWidget ""
     variable _crosshairSWidget ""
+    variable _regionsSWidget ""
 
     # methods
     method resizeSliceNode {} {}
@@ -58,6 +59,7 @@ itcl::body SliceSWidget::constructor {sliceGUI} {
   set _gridSWidget [GridSWidget #auto $sliceGUI]
   $_gridSWidget configure -layer "label"
   set _crosshairSWidget [CrosshairSWidget #auto $sliceGUI]
+  set _regionsSWidget [RegionsSWidget #auto $sliceGUI]
  
   # create matrices to store transform state
   set o(storeXYToRAS) [$this vtkNew vtkMatrix4x4]
@@ -118,6 +120,8 @@ itcl::body SliceSWidget::destructor {} {
   ::SWidget::ProtectedDelete $_gridSWidget
 
   ::SWidget::ProtectedDelete $_crosshairSWidget
+
+  ::SWidget::ProtectedDelete $_regionsSWidget
 
   if { [info command $sliceGUI] != "" } {
     foreach tag $_guiObserverTags {
