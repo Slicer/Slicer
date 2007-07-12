@@ -205,7 +205,7 @@ void vtkSlicerApplicationSettingsInterface::Create()
   this->HomeModuleEntry->SetLabelText( "Home Module:" );
   this->HomeModuleEntry->SetLabelWidth(label_width);
   this->HomeModuleEntry->GetWidget()->SetCommand ( 
-    this, "SetHomeModuleCallback" );
+    this, "HomeModuleCallback" );
   this->HomeModuleEntry->SetBalloonHelpString ( 
     "Module displayed at startup and when 'home' icon is clicked." );
 

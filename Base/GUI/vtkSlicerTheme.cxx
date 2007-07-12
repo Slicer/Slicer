@@ -145,7 +145,6 @@ void vtkSlicerTheme::Install ( )
     // Slicer KW Checkbuttons
     odb->AddEntryAsDouble3 ("vtkKWCheckButton", "SetActiveBackgroundColor",
                             this->SlicerColors->GUIBgColor );
-    odb->AddEntry( "vtkKWCheckButton", "IndicatorVisibilityOff", NULL);
     odb->AddEntryAsDouble3( "vtkKWCheckButton", "SetSelectColor", this->SlicerColors->HighlightColor);
     // Slicer Custom CheckbuttonWidgets
     odb->AddEntryAsDouble3 ("vtkSlicerCheckButtonWidget", "SetSelectColor",
