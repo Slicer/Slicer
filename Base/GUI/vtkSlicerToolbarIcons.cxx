@@ -33,14 +33,20 @@ vtkSlicerToolbarIcons::vtkSlicerToolbarIcons ( )
     this->TabbedSliceViewIcon = vtkKWIcon::New();
     this->Tabbed3DViewIcon = vtkKWIcon::New();
     this->LightBoxViewIcon = vtkKWIcon::New();
-    this->MousePickIcon = vtkKWIcon::New();
-    this->MousePickIconLow = vtkKWIcon::New();
-    this->MouseTransformViewIcon = vtkKWIcon::New();
-    this->MouseTransformViewIconLow = vtkKWIcon::New();
-    this->MousePlaceIcon = vtkKWIcon::New ( );
-    this->MousePlaceIconLow = vtkKWIcon::New ( );
-    this->MouseManipulateIcon = vtkKWIcon::New ( );
-    this->MouseManipulateIconLow = vtkKWIcon::New ( );
+
+    this->MousePickOnIcon = vtkKWIcon::New();
+    this->MousePickOffIcon = vtkKWIcon::New();
+    this->MousePickDisabledIcon = vtkKWIcon::New();    
+    this->MouseTransformViewOnIcon = vtkKWIcon::New();
+    this->MouseTransformViewOffIcon = vtkKWIcon::New();
+    this->MouseTransformViewDisabledIcon = vtkKWIcon::New();    
+    this->MousePlaceOnIcon = vtkKWIcon::New ( );
+    this->MousePlaceOffIcon = vtkKWIcon::New ( );
+    this->MousePlaceDisabledIcon = vtkKWIcon::New ( );
+    this->MouseManipulateOnIcon = vtkKWIcon::New ( );
+    this->MouseManipulateOffIcon = vtkKWIcon::New ( );
+    this->MouseManipulateDisabledIcon = vtkKWIcon::New ( );
+
     this->UndoIcon = vtkKWIcon::New ( );
     this->RedoIcon = vtkKWIcon::New ( );
     this->AssignImageDataToIcons ( );
@@ -171,47 +177,66 @@ vtkSlicerToolbarIcons::~vtkSlicerToolbarIcons ( )
     this->LightBoxViewIcon->Delete ( );
     this->LightBoxViewIcon = NULL;
     }
-  if ( this->MousePickIcon )
+  if ( this->MousePickOnIcon )
     {
-    this->MousePickIcon->Delete ( );
-    this->MousePickIcon = NULL;
+    this->MousePickOnIcon->Delete ( );
+    this->MousePickOnIcon = NULL;
     }
-  if ( this->MousePlaceIcon )
+  if ( this->MousePickOffIcon )
     {
-    this->MousePlaceIcon->Delete ( );
-    this->MousePlaceIcon = NULL;
+    this->MousePickOffIcon->Delete ( );
+    this->MousePickOffIcon = NULL;
     }
-  if ( this->MouseManipulateIcon )
+  if ( this->MousePickDisabledIcon )
     {
-    this->MouseManipulateIcon->Delete ( );
-    this->MouseManipulateIcon = NULL;
+    this->MousePickDisabledIcon->Delete ( );
+    this->MousePickDisabledIcon = NULL;
     }
-  if ( this->MouseTransformViewIcon )
+  if ( this->MousePlaceOnIcon )
     {
-    this->MouseTransformViewIcon->Delete ( );
-    this->MouseTransformViewIcon = NULL;
+    this->MousePlaceOnIcon->Delete ( );
+    this->MousePlaceOnIcon = NULL;
     }
-  if ( this->MousePickIconLow )
+  if ( this->MousePlaceOffIcon )
     {
-    this->MousePickIconLow->Delete ( );
-    this->MousePickIconLow = NULL;
+    this->MousePlaceOffIcon->Delete ( );
+    this->MousePlaceOffIcon = NULL;
     }
-  if ( this->MousePlaceIconLow )
+  if ( this->MousePlaceDisabledIcon )
     {
-    this->MousePlaceIconLow->Delete ( );
-    this->MousePlaceIconLow = NULL;
+    this->MousePlaceDisabledIcon->Delete ( );
+    this->MousePlaceDisabledIcon = NULL;
     }
-  if ( this->MouseManipulateIconLow )
+  if ( this->MouseManipulateOnIcon )
     {
-    this->MouseManipulateIconLow->Delete ( );
-    this->MouseManipulateIconLow = NULL;
+    this->MouseManipulateOnIcon->Delete ( );
+    this->MouseManipulateOnIcon = NULL;
     }
-  if ( this->MouseTransformViewIconLow )
+  if ( this->MouseManipulateOffIcon )
     {
-    this->MouseTransformViewIconLow->Delete ( );
-    this->MouseTransformViewIconLow = NULL;
+    this->MouseManipulateOffIcon->Delete ( );
+    this->MouseManipulateOffIcon = NULL;
     }
-
+  if ( this->MouseManipulateDisabledIcon )
+    {
+    this->MouseManipulateDisabledIcon->Delete ( );
+    this->MouseManipulateDisabledIcon = NULL;
+    }
+  if ( this->MouseTransformViewOnIcon )
+    {
+    this->MouseTransformViewOnIcon->Delete ( );
+    this->MouseTransformViewOnIcon = NULL;
+    }
+  if ( this->MouseTransformViewOffIcon )
+    {
+    this->MouseTransformViewOffIcon->Delete ( );
+    this->MouseTransformViewOffIcon = NULL;
+    }
+  if ( this->MouseTransformViewDisabledIcon )
+    {
+    this->MouseTransformViewDisabledIcon->Delete ( );
+    this->MouseTransformViewDisabledIcon = NULL;
+    }
   if ( this->UndoIcon )
     {
     this->UndoIcon->Delete ( );
@@ -369,49 +394,70 @@ void vtkSlicerToolbarIcons::AssignImageDataToIcons ( )
                                       image_ToolbarLightBoxView_pixel_size,
                                       image_ToolbarLightBoxView_length, 0);
     
-    this->MousePickIcon->SetImage (image_ToolbarMousePick,
-                                   image_ToolbarMousePick_width,
-                                   image_ToolbarMousePick_height,
-                                   image_ToolbarMousePick_pixel_size,
-                                   image_ToolbarMousePick_length, 0);
-    this->MouseTransformViewIcon->SetImage (image_ToolbarMouseRotate,
-                                   image_ToolbarMouseRotate_width,
-                                   image_ToolbarMouseRotate_height,
-                                   image_ToolbarMouseRotate_pixel_size,
-                                            image_ToolbarMouseRotate_length, 0);
-    this->MousePlaceIcon->SetImage (image_ToolbarMousePlace,
-                                   image_ToolbarMousePlace_width,
-                                   image_ToolbarMousePlace_height,
-                                   image_ToolbarMousePlace_pixel_size,
-                                            image_ToolbarMousePlace_length, 0);
+    this->MousePickOnIcon->SetImage (image_MousePickOn,
+                                   image_MousePickOn_width,
+                                   image_MousePickOn_height,
+                                   image_MousePickOn_pixel_size,
+                                   image_MousePickOn_length, 0);
+    this->MousePickOffIcon->SetImage (image_MousePickOff,
+                                   image_MousePickOff_width,
+                                   image_MousePickOff_height,
+                                   image_MousePickOff_pixel_size,
+                                   image_MousePickOff_length, 0);
+    this->MousePickDisabledIcon->SetImage (image_MousePickDisabled,
+                                   image_MousePickDisabled_width,
+                                   image_MousePickDisabled_height,
+                                   image_MousePickDisabled_pixel_size,
+                                   image_MousePickDisabled_length, 0);
 
-    this->MouseManipulateIcon->SetImage (image_ToolbarMouseManipulate,
-                                   image_ToolbarMouseManipulate_width,
-                                   image_ToolbarMouseManipulate_height,
-                                   image_ToolbarMouseManipulate_pixel_size,
-                                            image_ToolbarMouseManipulate_length, 0);
 
-    this->MousePickIconLow->SetImage (image_ToolbarMousePickLow,
-                                   image_ToolbarMousePickLow_width,
-                                   image_ToolbarMousePickLow_height,
-                                   image_ToolbarMousePickLow_pixel_size,
-                                   image_ToolbarMousePickLow_length, 0);
-    this->MouseTransformViewIconLow->SetImage (image_ToolbarMouseRotateLow,
-                                   image_ToolbarMouseRotateLow_width,
-                                   image_ToolbarMouseRotateLow_height,
-                                   image_ToolbarMouseRotateLow_pixel_size,
-                                            image_ToolbarMouseRotate_length, 0);
-    this->MousePlaceIconLow->SetImage (image_ToolbarMousePlaceLow,
-                                   image_ToolbarMousePlaceLow_width,
-                                   image_ToolbarMousePlaceLow_height,
-                                   image_ToolbarMousePlaceLow_pixel_size,
-                                            image_ToolbarMousePlaceLow_length, 0);
+    this->MouseTransformViewOnIcon->SetImage (image_MouseRotateOn,
+                                   image_MouseRotateOn_width,
+                                   image_MouseRotateOn_height,
+                                   image_MouseRotateOn_pixel_size,
+                                            image_MouseRotateOn_length, 0);
+    this->MouseTransformViewOffIcon->SetImage (image_MouseRotateOff,
+                                   image_MouseRotateOff_width,
+                                   image_MouseRotateOff_height,
+                                   image_MouseRotateOff_pixel_size,
+                                            image_MouseRotateOff_length, 0);
+    this->MouseTransformViewDisabledIcon->SetImage (image_MouseRotateDisabled,
+                                   image_MouseRotateDisabled_width,
+                                   image_MouseRotateDisabled_height,
+                                   image_MouseRotateDisabled_pixel_size,
+                                            image_MouseRotateDisabled_length, 0);
+    
+    this->MousePlaceOnIcon->SetImage (image_MousePlaceOn,
+                                   image_MousePlaceOn_width,
+                                   image_MousePlaceOn_height,
+                                   image_MousePlaceOn_pixel_size,
+                                            image_MousePlaceOn_length, 0);
+    this->MousePlaceOffIcon->SetImage (image_MousePlaceOff,
+                                   image_MousePlaceOff_width,
+                                   image_MousePlaceOff_height,
+                                   image_MousePlaceOff_pixel_size,
+                                            image_MousePlaceOff_length, 0);
+    this->MousePlaceDisabledIcon->SetImage (image_MousePlaceDisabled,
+                                   image_MousePlaceDisabled_width,
+                                   image_MousePlaceDisabled_height,
+                                   image_MousePlaceDisabled_pixel_size,
+                                            image_MousePlaceDisabled_length, 0);
 
-    this->MouseManipulateIconLow->SetImage (image_ToolbarMouseManipulateLow,
-                                   image_ToolbarMouseManipulateLow_width,
-                                   image_ToolbarMouseManipulateLow_height,
-                                   image_ToolbarMouseManipulateLow_pixel_size,
-                                            image_ToolbarMouseManipulateLow_length, 0);
+    this->MouseManipulateOnIcon->SetImage (image_MouseManipulateOn,
+                                   image_MouseManipulateOn_width,
+                                   image_MouseManipulateOn_height,
+                                   image_MouseManipulateOn_pixel_size,
+                                            image_MouseManipulateOn_length, 0);
+    this->MouseManipulateOffIcon->SetImage (image_MouseManipulateOff,
+                                   image_MouseManipulateOff_width,
+                                   image_MouseManipulateOff_height,
+                                   image_MouseManipulateOff_pixel_size,
+                                            image_MouseManipulateOff_length, 0);
+    this->MouseManipulateDisabledIcon->SetImage (image_MouseManipulateDisabled,
+                                   image_MouseManipulateDisabled_width,
+                                   image_MouseManipulateDisabled_height,
+                                   image_MouseManipulateDisabled_pixel_size,
+                                            image_MouseManipulateDisabled_length, 0);
 
     this->UndoIcon->SetImage ( image_ToolbarUndo,
                                image_ToolbarUndo_width,
@@ -457,14 +503,23 @@ void vtkSlicerToolbarIcons::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "TabbedSliceViewIcon" << this->GetTabbedSliceViewIcon ( ) << "\n";
     os << indent << "Tabbed3DViewIcon" << this->GetTabbed3DViewIcon ( ) << "\n";
     os << indent << "LightBoxViewIcon" << this->GetLightBoxViewIcon ( ) << "\n";
-    os << indent << "MousePickIcon" << this->GetMousePickIcon ( ) << "\n";
-    os << indent << "MouseTransformViewIcon" << this->GetMouseTransformViewIcon ( ) << "\n";
-    os << indent << "MousePlaceIcon" << this->GetMousePlaceIcon ( ) << "\n";
-    os << indent << "MouseManipulateIcon" << this->GetMouseManipulateIcon ( ) << "\n";
-    os << indent << "MousePickIconLow" << this->GetMousePickIconLow ( ) << "\n";
-    os << indent << "MouseTransformViewIconLow" << this->GetMouseTransformViewIconLow ( ) << "\n";
-    os << indent << "MousePlaceIconLow" << this->GetMousePlaceIconLow ( ) << "\n";
-    os << indent << "MouseManipulateIconLow" << this->GetMouseManipulateIconLow ( ) << "\n";
+
+    os << indent << "MousePickOnIcon" << this->GetMousePickOnIcon ( ) << "\n";
+    os << indent << "MousePickOffIcon" << this->GetMousePickOffIcon ( ) << "\n";
+    os << indent << "MousePickDisabledIcon" << this->GetMousePickDisabledIcon ( ) << "\n";
+
+    os << indent << "MouseTransformViewOnIcon" << this->GetMouseTransformViewOnIcon ( ) << "\n";
+    os << indent << "MouseTransformViewOffIcon" << this->GetMouseTransformViewOffIcon ( ) << "\n";
+    os << indent << "MouseTransformViewDisabledIcon" << this->GetMouseTransformViewDisabledIcon ( ) << "\n";
+    
+    os << indent << "MousePlaceOnIcon" << this->GetMousePlaceOnIcon ( ) << "\n";
+    os << indent << "MousePlaceOffIcon" << this->GetMousePlaceOffIcon ( ) << "\n";
+    os << indent << "MousePlaceDisabledIcon" << this->GetMousePlaceDisabledIcon ( ) << "\n";
+    
+    os << indent << "MouseManipulateOnIcon" << this->GetMouseManipulateOnIcon ( ) << "\n";
+    os << indent << "MouseManipulateOffIcon" << this->GetMouseManipulateOffIcon ( ) << "\n";
+    os << indent << "MouseManipulateDisabledIcon" << this->GetMouseManipulateDisabledIcon ( ) << "\n";
+
     os << indent << "UndoIcon" << this->GetUndoIcon ( ) << "\n";
     os << indent << "RedoIcon" << this->GetRedoIcon ( ) << "\n";
 }

@@ -87,6 +87,7 @@ SET(LIB_SRCS
   vtkSlicerModelHierarchyWidget.cxx
   vtkSlicerCheckButtonWidget.cxx
   vtkSlicerRadioButtonWidget.cxx
+  vtkSlicerRadioButtonWidgetSet.cxx
   # VTK Replacement classes
   vtkSlicerInteractorStyle.cxx
   vtkSlicerViewerInteractorStyle.cxx

@@ -15,8 +15,9 @@
 #include "vtkKWFrame.h"
 #include "vtkKWToolbar.h"
 #include "vtkKWPushButton.h"
-#include "vtkKWRadioButtonSet.h"
+#include "vtkSlicerRadioButtonWidgetSet.h"
 #include "vtkKWMenuButton.h"
+#include "vtkSlicerRadioButtonWidget.h"
 
 class vtkSlicerApplicationGUI;
 
@@ -65,7 +66,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
     vtkGetObjectMacro (ChooseLayoutIconMenuButton, vtkKWMenuButton );
     vtkGetObjectMacro (UndoIconButton, vtkKWPushButton );
     vtkGetObjectMacro (RedoIconButton, vtkKWPushButton );
-    vtkGetObjectMacro (InteractionModeRadioButtons, vtkKWRadioButtonSet );
+    
+//    vtkGetObjectMacro (InteractionModeRadioButtons, vtkKWRadioButtonSet );
+    vtkGetObjectMacro ( InteractionModeRadioButtons, vtkSlicerRadioButtonWidgetSet );
 
     // Description:
     // This method builds the Data module's GUI
@@ -143,7 +146,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
     vtkKWPushButton *SaveSceneIconButton;
     vtkKWMenuButton *LoadSceneIconButton;
     vtkKWMenuButton *ChooseLayoutIconMenuButton;
-    vtkKWRadioButtonSet *InteractionModeRadioButtons;
+
+    vtkSlicerRadioButtonWidgetSet *InteractionModeRadioButtons;
 
     vtkSlicerModuleChooseGUI *ModuleChooseGUI;
     vtkSlicerApplicationGUI *ApplicationGUI;
