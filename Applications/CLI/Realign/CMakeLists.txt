@@ -30,7 +30,7 @@ INCLUDE_DIRECTORIES( ${CLI_SOURCE_DIR} )
 SET (CLP Realign)
 
 SET ( ${CLP}_SOURCE ${CLP}.cxx vtkPrincipalAxesAlign.cxx ${CLI_SOURCE_DIR}/vtkPluginFilterWatcher.cxx )
-GENERATECLP(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
+GENERATECLP(${CLP}.cxx ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
 ADD_EXECUTABLE(${CLP} ${${CLP}_SOURCE})
 TARGET_LINK_LIBRARIES (${CLP}
      vtkImaging vtkGraphics vtkIO
@@ -54,6 +54,7 @@ IF (Slicer3_SOURCE_DIR)
   # from a build)
   SET(TARGETS        
         Realign
+        RealignLib
   )
 
   FOREACH(target ${TARGETS})
