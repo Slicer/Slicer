@@ -74,18 +74,27 @@ int main( int argc, char * argv[] )
   reader->SetFileName (inputVolume.c_str());
 
   OtsuFilter->SetInput( reader->GetOutput() );
-  OtsuFilter->SetOutsideValue( outsideValue );
-  OtsuFilter->SetInsideValue(  insideValue  );
+
+  if (brightObjects)
+    {
+    OtsuFilter->SetOutsideValue( 255 );
+    OtsuFilter->SetInsideValue(  0  );
+    }
+  else
+    {
+    OtsuFilter->SetOutsideValue( 0 );
+    OtsuFilter->SetInsideValue(  255  );
+    }
   OtsuFilter->SetNumberOfHistogramBins( numberOfBins );
 
   CCFilter->SetInput (OtsuFilter->GetOutput());
   if (faceConnected)
     {
-    CCFilter->FullyConnectedOn();
+    CCFilter->FullyConnectedOff();
     }
   else
     {
-    CCFilter->FullyConnectedOff();
+    CCFilter->FullyConnectedOn();
     }
   RelabelFilter->SetInput (CCFilter->GetOutput());
   RelabelFilter->SetMinimumObjectSize(minimumObjectSize);
