@@ -128,7 +128,7 @@ int main(int argc, char * argv[])
     vtkImageData * image;
 
     // set up filter watcher
-    float numFilterSteps = 1.0;
+    float numFilterSteps = 2.0;
     // increment after each filter is run
     float currentFilterOffset = 0.0;
     
@@ -208,6 +208,12 @@ int main(int argc, char * argv[])
         {        
         std::cout << "Executing PrincipalAxesAlign\n";
         }
+      vtkPluginFilterWatcher watchPA(pa,
+                                       "Principle Axes Align",
+                                       CLPProcessInformation,
+                                       1.0/numFilterSteps,
+                                       currentFilterOffset/numFilterSteps);
+      currentFilterOffset++;
       pa->Update();
       
       vtkFloatingPointType *normal = pa->GetZAxis();
