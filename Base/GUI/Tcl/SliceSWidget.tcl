@@ -153,6 +153,12 @@ itcl::body SliceSWidget::destructor {} {
 #
 itcl::body SliceSWidget::resizeSliceNode {} {
 
+  if { $_layers(background,node) != "" } {
+    set logic [$sliceGUI GetLogic]
+    set sliceSpacing [$logic GetBackgroundSliceSpacing]
+    $this configure -sliceStep [lindex $sliceSpacing 2]
+  }
+
   set tkwindow [$_renderWidget  GetWidgetName]
   set w [winfo width $tkwindow]
   set h [winfo height $tkwindow]

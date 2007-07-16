@@ -43,6 +43,7 @@ vtkSlicerSliceLogic::vtkSlicerSliceLogic()
   this->Name = NULL;
   this->SliceModelDisplayNode = NULL;
   this->ImageData = vtkImageData::New();
+  this->SliceSpacing[0] = this->SliceSpacing[1] = this->SliceSpacing[2] = 1;
 }
 
 //----------------------------------------------------------------------------
@@ -853,6 +854,53 @@ void vtkSlicerSliceLogic::GetBackgroundSliceDimensions(double sliceDimensions[3]
   sliceCenter[2] = sliceHCenter[2];
 }
 
+// Get the spacing of the volume, transformed to slice space
+double *vtkSlicerSliceLogic::GetBackgroundSliceSpacing()
+{
+  vtkMatrix4x4 *ijkToRAS = vtkMatrix4x4::New();
+  vtkMatrix4x4 *rasToSlice = vtkMatrix4x4::New();
+  vtkMatrix4x4 *ijkToSlice = vtkMatrix4x4::New();
+
+  vtkMRMLSliceNode *sliceNode = this->GetSliceNode();
+  vtkMRMLSliceCompositeNode *compositeNode = this->GetSliceCompositeNode();
+  vtkMRMLVolumeNode *backgroundNode = NULL;
+
+  if ( !sliceNode || !compositeNode )
+    {
+    return (this->SliceSpacing);
+    }
+  
+  backgroundNode = vtkMRMLVolumeNode::SafeDownCast (
+      this->MRMLScene->GetNodeByID( compositeNode->GetBackgroundVolumeID() ));
+
+  if ( !backgroundNode )
+    {
+    return (this->SliceSpacing);
+    }
+
+  backgroundNode->GetIJKToRASMatrix(ijkToRAS);
+  rasToSlice->DeepCopy(sliceNode->GetSliceToRAS());
+  rasToSlice->Invert();
+
+  ijkToSlice->Multiply4x4(rasToSlice, ijkToRAS, ijkToSlice);
+
+  double invector[4];
+  invector[0] = invector[1] = invector[2] = 1.0;
+  invector[3] = 0.0;
+  double spacing[4];
+  ijkToSlice->MultiplyPoint(invector, spacing);
+  int i;
+  for (i = 0; i < 3; i++)
+    {
+    this->SliceSpacing[i] = fabs(spacing[i]);
+    }
+
+  ijkToRAS->Delete();
+  rasToSlice->Delete();
+  ijkToSlice->Delete();
+
+  return (this->SliceSpacing);
+}
 
 void vtkSlicerSliceLogic::GetBackgroundSliceBounds(double sliceBounds[6])
 {

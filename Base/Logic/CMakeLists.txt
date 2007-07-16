@@ -66,6 +66,7 @@ INCLUDE_DIRECTORIES(
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 INCLUDE("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
+SET(VTK_WRAP_HINTS ${SlicerBaseLogic_SOURCE_DIR}/Wrapping/Tcl/hints)
 VTK_WRAP_TCL3(SlicerBaseLogic SlicerBaseLogic_TCL_SRCS "${SlicerBaseLogic_SRCS}" "")
 
 

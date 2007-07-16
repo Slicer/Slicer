@@ -1448,6 +1448,17 @@ void vtkSlicerSliceControllerWidget::ProcessMRMLEvents ( vtkObject *caller, unsi
     modified = 1;
     }
 
+  //
+  // Set the scale increments to match the z spacing (rotated
+  // into slice space)
+  //
+  const double *sliceSpacing;
+  sliceSpacing = this->SliceLogic->GetBackgroundSliceSpacing();
+
+  this->OffsetScale->SetResolution(sliceSpacing[2]);
+  this->Script ("%s configure -digits 20", 
+                this->OffsetScale->GetScale()->GetWidgetName());
+
 
   //
   //  Update the values of the LightboxWidthEntry and LightboxHeightEntry

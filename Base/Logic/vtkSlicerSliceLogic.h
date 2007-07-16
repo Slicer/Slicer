@@ -175,6 +175,12 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLogic : public vtkSlicerLogic
   void GetBackgroundSliceDimensions(double sliceDimensions[3], double sliceCenter[3]);
 
   // Description:
+  // Get the spacing of the volume, transformed to slice space 
+  // - to be used, for example, to set the slice increment for stepping a single 
+  //   voxel relative to the current slice view
+  double *GetBackgroundSliceSpacing();
+
+  // Description:
   // Get the min/max bounds of the volume
   // - note these are not translated by the current slice offset so they can
   //   be used to calculate the range (e.g. of a slider) that operates in slice space
@@ -219,6 +225,7 @@ protected:
 
   vtkMRMLModelNode *SliceModelNode;
   vtkMRMLModelDisplayNode *SliceModelDisplayNode;
+  double SliceSpacing[3];
 
 };
 
