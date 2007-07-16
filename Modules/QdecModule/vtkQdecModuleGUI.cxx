@@ -405,7 +405,7 @@ void vtkQdecModuleGUI::UpdateGUI ()
     // get the discrete and continuous factors
     vector< string > discreteFactors = this->GetLogic()->QDECProject->GetDiscreteFactors();
     this->DiscreteFactorsListBox->GetWidget()->GetWidget()->DeleteAll();
-    for (int i = 0; i < discreteFactors.size(); i++)
+    for (unsigned int i = 0; i < discreteFactors.size(); i++)
       {
       this->DiscreteFactorsListBox->GetWidget()->GetWidget()->Append(discreteFactors[i].c_str());
       }
@@ -413,7 +413,7 @@ void vtkQdecModuleGUI::UpdateGUI ()
     vector< string > continuousFactors = this->GetLogic()->QDECProject->GetContinousFactors();
 
     this->ContinuousFactorsListBox->GetWidget()->GetWidget()->DeleteAll();
-    for (int i = 0; i < continuousFactors.size(); i++)
+    for (unsigned int i = 0; i < continuousFactors.size(); i++)
       {
       this->ContinuousFactorsListBox->GetWidget()->GetWidget()->Append(continuousFactors[i].c_str());
       }    
@@ -432,12 +432,12 @@ void vtkQdecModuleGUI::UpdateGUI ()
         {
         this->MultiColumnList->GetWidget()->DeleteAllColumns();
         this->MultiColumnList->GetWidget()->AddColumn("Subject");
-        for (int i = 0; i < discreteFactors.size(); i++)
+        for (unsigned int i = 0; i < discreteFactors.size(); i++)
           {
           vtkDebugMacro("Adding a column for discrete factor: " << discreteFactors[i].c_str());
           this->MultiColumnList->GetWidget()->AddColumn(discreteFactors[i].c_str());
           }
-        for (int i = 0; i < continuousFactors.size(); i++)
+        for (unsigned int i = 0; i < continuousFactors.size(); i++)
           {
           vtkDebugMacro("Adding a column for cont factor: " << continuousFactors[i].c_str());
           this->MultiColumnList->GetWidget()->AddColumn(continuousFactors[i].c_str());
@@ -447,13 +447,13 @@ void vtkQdecModuleGUI::UpdateGUI ()
         {
         // just make sure the column names are correct
         int col = 1;
-        for (int i = 0; i < discreteFactors.size(); i++)
+        for (unsigned int i = 0; i < discreteFactors.size(); i++)
           {
           vtkDebugMacro("Setting a column name at " << col << " for discrete factor: " << discreteFactors[i].c_str());
           this->MultiColumnList->GetWidget()->SetColumnName(col, discreteFactors[i].c_str());
           col++;
           }
-        for (int i = 0; i < continuousFactors.size(); i++)
+        for (unsigned int i = 0; i < continuousFactors.size(); i++)
           {
           vtkDebugMacro("Setting a column name at " << col << " for continuous factor: " << continuousFactors[i].c_str());
           this->MultiColumnList->GetWidget()->SetColumnName(col, continuousFactors[i].c_str());
@@ -463,7 +463,7 @@ void vtkQdecModuleGUI::UpdateGUI ()
       
       vector< string > subjectIDs = this->GetLogic()->QDECProject->GetDataTable()->GetSubjectIDs();
       vector< QdecSubject* > subjects = this->GetLogic()->QDECProject->GetDataTable()->GetSubjects();
-      for (int row = 0; row < subjectIDs.size(); row++)
+      for (unsigned int row = 0; row < subjectIDs.size(); row++)
         {
         this->MultiColumnList->GetWidget()->AddRow();
         int col = 0;
@@ -471,14 +471,14 @@ void vtkQdecModuleGUI::UpdateGUI ()
         this->MultiColumnList->GetWidget()->SetCellText(row, col, subjectIDs[row].c_str());
         col++;
         // these are strings
-        for (int i = 0; i < discreteFactors.size(); i++)
+        for (unsigned int i = 0; i < discreteFactors.size(); i++)
           {
           vtkDebugMacro("Setting cell at " << row << " " << col << " to factor " << discreteFactors[i].c_str() << " = " << subjects[row]->GetDiscreteFactor(discreteFactors[i].c_str()).c_str());
           this->MultiColumnList->GetWidget()->SetCellText(row, col, subjects[row]->GetDiscreteFactor(discreteFactors[i].c_str()).c_str());
           col++;
           }
         // these are numbers
-        for (int i = 0; i < continuousFactors.size(); i++)
+        for (unsigned int i = 0; i < continuousFactors.size(); i++)
           {
           vtkDebugMacro("Setting cell at " << row << " " << col << " to factor " << continuousFactors[i].c_str() << " = " << subjects[row]->GetContinuousFactor(continuousFactors[i].c_str()));
           this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row, col, subjects[row]->GetContinuousFactor(continuousFactors[i].c_str()));

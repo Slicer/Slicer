@@ -235,7 +235,7 @@ int vtkQdecModuleLogic::LoadResults(vtkSlicerModelsLogic *modelsLogic, vtkKWAppl
   
   // Go through and get our sig files and questions.
   vector<string>::iterator fn;
-  for( int nContrast = 0; 
+  for( unsigned int nContrast = 0; 
        nContrast < results->GetContrastQuestions().size(); 
        nContrast++ ) {
   
