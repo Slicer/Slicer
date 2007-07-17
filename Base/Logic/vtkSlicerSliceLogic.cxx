@@ -753,7 +753,7 @@ void vtkSlicerSliceLogic::CreateSliceModel()
 }
 
 // Get the size of the volume, transformed to RAS space
-void vtkSlicerSliceLogic::GetBackgroundRASDimensions(double rasDimensions[3], double rasCenter[3])
+void vtkSlicerSliceLogic::GetBackgroundRASBox(double rasDimensions[3], double rasCenter[3])
 {
   rasCenter[0] = rasDimensions[0] = 0.0;
   rasCenter[1] = rasDimensions[1] = 0.0;
@@ -787,15 +787,15 @@ void vtkSlicerSliceLogic::GetBackgroundRASDimensions(double rasDimensions[3], do
   int dimensions[3];
   backgroundImage->GetDimensions(dimensions);
   double doubleDimensions[4], rasHDimensions[4], rasHCenter[4];
-  doubleDimensions[0] = dimensions[0];
-  doubleDimensions[1] = dimensions[1];
-  doubleDimensions[2] = dimensions[2];
+  doubleDimensions[0] = dimensions[0] - 1;
+  doubleDimensions[1] = dimensions[1] - 1;
+  doubleDimensions[2] = dimensions[2] - 1;
   doubleDimensions[3] = 0;
   backgroundNode->GetIJKToRASMatrix (ijkToRAS);
   ijkToRAS->MultiplyPoint( doubleDimensions, rasHDimensions );
-  doubleDimensions[0] = dimensions[0]/2.;
-  doubleDimensions[1] = dimensions[1]/2.;
-  doubleDimensions[2] = dimensions[2]/2.;
+  doubleDimensions[0] = (dimensions[0]-1)/2.;
+  doubleDimensions[1] = (dimensions[1]-1)/2.;
+  doubleDimensions[2] = (dimensions[2]-1)/2.;
   doubleDimensions[3] = 1.;
   ijkToRAS->MultiplyPoint( doubleDimensions, rasHCenter );
   ijkToRAS->Delete();
@@ -824,9 +824,11 @@ void vtkSlicerSliceLogic::GetBackgroundSliceDimensions(double sliceDimensions[3]
     return;
     }
   
+  // create homogeneous versions of vectors (names with H in them)
+  // for doing matrix transforms
   double rasDimensions[3], rasHDimensions[4], sliceHDimensions[4];
   double rasCenter[3], rasHCenter[4], sliceHCenter[4];
-  this->GetBackgroundRASDimensions(rasDimensions, rasCenter);
+  this->GetBackgroundRASBox(rasDimensions, rasCenter);
   rasHDimensions[0] = rasDimensions[0];
   rasHDimensions[1] = rasDimensions[1];
   rasHDimensions[2] = rasDimensions[2];
@@ -923,7 +925,7 @@ void vtkSlicerSliceLogic::GetBackgroundSliceBounds(double sliceBounds[6])
   double rasDimensions[3], rasCenter[3];
   double rasHMin[4], rasHMax[4]; 
   double sliceHMin[4], sliceHMax[4]; 
-  this->GetBackgroundRASDimensions(rasDimensions, rasCenter);
+  this->GetBackgroundRASBox(rasDimensions, rasCenter);
   rasHMin[0] = rasCenter[0] - rasDimensions[0] / 2.;
   rasHMin[1] = rasCenter[1] - rasDimensions[1] / 2.;
   rasHMin[2] = rasCenter[2] - rasDimensions[2] / 2.;
@@ -977,7 +979,7 @@ void vtkSlicerSliceLogic::FitSliceToBackground(int width, int height)
     }
 
   double rasDimensions[3], rasCenter[3];
-  this->GetBackgroundRASDimensions (rasDimensions, rasCenter);
+  this->GetBackgroundRASBox (rasDimensions, rasCenter);
   double sliceDimensions[3], sliceCenter[3];
   this->GetBackgroundSliceDimensions (sliceDimensions, sliceCenter);
 

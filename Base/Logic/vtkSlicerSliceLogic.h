@@ -168,7 +168,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLogic : public vtkSlicerLogic
 
   // Description:
   // Get the size of the volume, transformed to RAS space
-  void GetBackgroundRASDimensions(double rasDimensions[3], double rasCenter[3]);
+  void GetBackgroundRASBox(double rasDimensions[3], double rasCenter[3]);
 
   // Description:
   // Get the size of the volume, transformed to slice space
