@@ -198,12 +198,12 @@ itcl::body DrawSWidget::makeMaskImage {} {
   set bounds [$o(polyData) GetBounds]
   foreach {xlo xhi ylo yhi zlo zhi} $bounds {}
   # round to int and add extra pixel for both sides
-  # -- TODO: figure out why we need to add two pixels on each 
+  # -- TODO: figure out why we need to add buffer pixels on each 
   #    side for the width in order to end up with a single extra
   #    pixel in the rasterized image map.  Probably has to 
   #    do with how boundary conditions are handled in the filler
-  set w [expr int($xhi - $xlo) + 4]
-  set h [expr int($yhi - $ylo) + 4]
+  set w [expr int($xhi - $xlo) + 32]
+  set h [expr int($yhi - $ylo) + 32]
 
   set imageData [vtkImageData New]
   $imageData SetDimensions $w $h 1
