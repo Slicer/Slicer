@@ -58,9 +58,9 @@ vtkMRMLSliceCompositeNode::vtkMRMLSliceCompositeNode()
   this->ForegroundOpacity = 0.0; // start by showing only the background volume
   this->LabelOpacity = 1.0; // Show the label if there is one
   this->LinkedControl = 0;
-  this->ForegroundGrid = 1;
+  this->ForegroundGrid = 0;
   this->BackgroundGrid = 0;
-  this->LabelGrid = 0;
+  this->LabelGrid = 1;
   this->FiducialVisibility = 1;
   this->FiducialLabelVisibility = 1;
   this->AnnotationSpace = vtkMRMLSliceCompositeNode::IJKAndRAS;

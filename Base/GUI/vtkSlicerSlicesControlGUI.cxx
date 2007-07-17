@@ -832,6 +832,8 @@ void vtkSlicerSlicesControlGUI::BuildVisibilityMenu ( )
   this->FeaturesVisibleButton->GetMenu()->AddCommand ("close");
   this->FeaturesVisibleButton->GetMenu()->SetItemStateToDisabled ("Fiducial points");
   this->FeaturesVisibleButton->GetMenu()->SetItemStateToDisabled ("Fiducial labels");
+  this->FeaturesVisibleButton->GetMenu()->SetItemStateToDisabled ("Foreground grid");
+  this->FeaturesVisibleButton->GetMenu()->SetItemStateToDisabled ("Background grid");
 //  this->FeaturesVisibleButton->GetMenu()->SelectItem ("Fiducial points");
 //  this->FeaturesVisibleButton->GetMenu()->SelectItem ("Fiducial labels");
   this->FeaturesVisibleButton->GetMenu()->DeselectItem ("Foreground grid");

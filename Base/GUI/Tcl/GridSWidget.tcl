@@ -76,6 +76,10 @@ itcl::body GridSWidget::constructor {sliceGUI} {
   set node [[$sliceGUI GetLogic] GetSliceNode]
   lappend _nodeObserverTags [$node AddObserver DeleteEvent "::SWidget::ProtectedDelete $this"]
   lappend _nodeObserverTags [$node AddObserver AnyEvent "::SWidget::ProtectedCallback $this processEvent $node"]
+
+  set node [[$sliceGUI GetLogic] GetSliceCompositeNode]
+  lappend _nodeObserverTags [$node AddObserver DeleteEvent "::SWidget::ProtectedDelete $this"]
+  lappend _nodeObserverTags [$node AddObserver AnyEvent "::SWidget::ProtectedCallback $this processEvent $node"]
 }
 
 
@@ -125,6 +129,12 @@ itcl::body GridSWidget::processEvent { {caller ""} } {
   foreach {r a s t} $ras {}
 
   set node [[$sliceGUI GetLogic] GetSliceNode]
+  if { $caller == $node } {
+    $this updateGrid
+    return
+  }
+
+  set node [[$sliceGUI GetLogic] GetSliceCompositeNode]
   if { $caller == $node } {
     $this updateGrid
     return
@@ -182,6 +192,11 @@ itcl::body GridSWidget::addGridLine { startPoint endPoint } {
 itcl::body GridSWidget::updateGrid { } {
 
   $this resetGrid
+  
+  if { ![$_sliceCompositeNode GetLabelGrid] } {
+    $o(gridActor) SetVisibility 0
+    return
+  }
 
   #
   # check the size cutoff
