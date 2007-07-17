@@ -41,6 +41,10 @@ vtkSlicerDiffusionWeightedVolumeDisplayWidget::vtkSlicerDiffusionWeightedVolumeD
 //---------------------------------------------------------------------------
 vtkSlicerDiffusionWeightedVolumeDisplayWidget::~vtkSlicerDiffusionWeightedVolumeDisplayWidget ( )
 {
+  if (this->IsCreated())
+    {
+    this->RemoveWidgetObservers();
+    }
  
  if (this->DiffusionSelectorWidget)
     {

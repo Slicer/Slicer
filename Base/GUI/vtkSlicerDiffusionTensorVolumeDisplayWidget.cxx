@@ -44,6 +44,10 @@ vtkSlicerDiffusionTensorVolumeDisplayWidget::vtkSlicerDiffusionTensorVolumeDispl
 //---------------------------------------------------------------------------
 vtkSlicerDiffusionTensorVolumeDisplayWidget::~vtkSlicerDiffusionTensorVolumeDisplayWidget ( )
 {
+  if (this->IsCreated())
+    {
+    this->RemoveWidgetObservers();
+    }
  
   if (this->ScalarModeMenu)
     {
@@ -234,6 +238,7 @@ void vtkSlicerDiffusionTensorVolumeDisplayWidget::ProcessWidgetEvents ( vtkObjec
           propNode->SetScene(this->MRMLScene);
           this->MRMLScene->AddNode (propNode);
           displayNode->SetAndObserveDiffusionTensorDisplayPropertiesNodeID(propNode->GetID());
+          propNode->Delete();
           //displayNode->SetDefaultColorMap();
           if (this->GetApplication() &&
               vtkSlicerApplication::SafeDownCast(this->GetApplication()) &&
@@ -484,43 +489,43 @@ void vtkSlicerDiffusionTensorVolumeDisplayWidget::CreateWidget ( )
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
     scalarFrame->GetWidgetName(), volDisplayFrame->GetWidgetName());
 
-     // a selector to change the color node associated with this display
-    this->ColorSelectorWidget = vtkSlicerNodeSelectorWidget::New() ;
-    this->ColorSelectorWidget->SetParent ( scalarFrame->GetFrame() );
-    this->ColorSelectorWidget->Create ( );
-    this->ColorSelectorWidget->SetNodeClass("vtkMRMLColorNode", NULL, NULL, NULL);
-    this->ColorSelectorWidget->ShowHiddenOn();
-    this->ColorSelectorWidget->SetMRMLScene(this->GetMRMLScene());
-    this->ColorSelectorWidget->SetBorderWidth(2);
-    // this->ColorSelectorWidget->SetReliefToGroove();
-    this->ColorSelectorWidget->SetPadX(2);
-    this->ColorSelectorWidget->SetPadY(2);
-    this->ColorSelectorWidget->GetWidget()->GetWidget()->IndicatorVisibilityOff();
-    this->ColorSelectorWidget->GetWidget()->GetWidget()->SetWidth(24);
-    this->ColorSelectorWidget->SetLabelText( "Color Select: ");
-    this->ColorSelectorWidget->SetBalloonHelpString("select a volume from the current mrml scene.");
-    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
-      this->ColorSelectorWidget->GetWidgetName());
+   // a selector to change the color node associated with this display
+  this->ColorSelectorWidget = vtkSlicerNodeSelectorWidget::New() ;
+  this->ColorSelectorWidget->SetParent ( scalarFrame->GetFrame() );
+  this->ColorSelectorWidget->Create ( );
+  this->ColorSelectorWidget->SetNodeClass("vtkMRMLColorNode", NULL, NULL, NULL);
+  this->ColorSelectorWidget->ShowHiddenOn();
+  this->ColorSelectorWidget->SetMRMLScene(this->GetMRMLScene());
+  this->ColorSelectorWidget->SetBorderWidth(2);
+  // this->ColorSelectorWidget->SetReliefToGroove();
+  this->ColorSelectorWidget->SetPadX(2);
+  this->ColorSelectorWidget->SetPadY(2);
+  this->ColorSelectorWidget->GetWidget()->GetWidget()->IndicatorVisibilityOff();
+  this->ColorSelectorWidget->GetWidget()->GetWidget()->SetWidth(24);
+  this->ColorSelectorWidget->SetLabelText( "Color Select: ");
+  this->ColorSelectorWidget->SetBalloonHelpString("select a volume from the current mrml scene.");
+  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+    this->ColorSelectorWidget->GetWidgetName());
 
-    this->InterpolateButton = vtkKWCheckButton::New();
-    this->InterpolateButton->SetParent(scalarFrame->GetFrame());
-    this->InterpolateButton->Create();
-    this->InterpolateButton->SelectedStateOn();
-    this->InterpolateButton->SetText("Interpolate");
-    this->Script(
-      "pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
-    this->InterpolateButton->GetWidgetName());
+  this->InterpolateButton = vtkKWCheckButton::New();
+  this->InterpolateButton->SetParent(scalarFrame->GetFrame());
+  this->InterpolateButton->Create();
+  this->InterpolateButton->SelectedStateOn();
+  this->InterpolateButton->SetText("Interpolate");
+  this->Script(
+    "pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
+  this->InterpolateButton->GetWidgetName());
 
-    this->WindowLevelThresholdEditor = vtkKWWindowLevelThresholdEditor::New();
-    this->WindowLevelThresholdEditor->SetParent ( scalarFrame->GetFrame());
-    this->WindowLevelThresholdEditor->Create ( );
-    vtkMRMLVolumeNode *volumeNode = this->GetVolumeNode();
-    if (volumeNode != NULL)
-      {
-      this->WindowLevelThresholdEditor->SetImageData(volumeNode->GetImageData());
-      }
-    this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
-      this->WindowLevelThresholdEditor->GetWidgetName());
+  this->WindowLevelThresholdEditor = vtkKWWindowLevelThresholdEditor::New();
+  this->WindowLevelThresholdEditor->SetParent ( scalarFrame->GetFrame());
+  this->WindowLevelThresholdEditor->Create ( );
+  vtkMRMLVolumeNode *volumeNode = this->GetVolumeNode();
+  if (volumeNode != NULL)
+    {
+    this->WindowLevelThresholdEditor->SetImageData(volumeNode->GetImageData());
+    }
+  this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
+    this->WindowLevelThresholdEditor->GetWidgetName());
 
  
 
@@ -545,8 +550,7 @@ void vtkSlicerDiffusionTensorVolumeDisplayWidget::CreateWidget ( )
 
   if (displayNode != NULL)
     {
-    vtkMRMLDiffusionTensorDisplayPropertiesNode *propNode =
-  vtkMRMLDiffusionTensorDisplayPropertiesNode::SafeDownCast(displayNode->GetDiffusionTensorDisplayPropertiesNode());
+    propNode = vtkMRMLDiffusionTensorDisplayPropertiesNode::SafeDownCast(displayNode->GetDiffusionTensorDisplayPropertiesNode());
     if (propNode == NULL)
       {
       //Create dummy display Node to set

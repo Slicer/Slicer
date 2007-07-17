@@ -37,6 +37,10 @@ vtkSlicerScalarVolumeDisplayWidget::vtkSlicerScalarVolumeDisplayWidget ( )
 //---------------------------------------------------------------------------
 vtkSlicerScalarVolumeDisplayWidget::~vtkSlicerScalarVolumeDisplayWidget ( )
 {
+  if (this->IsCreated())
+    {
+    this->RemoveWidgetObservers();
+    }
 
   if (this->ColorSelectorWidget)
     {

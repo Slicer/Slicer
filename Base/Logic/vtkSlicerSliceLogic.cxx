@@ -857,9 +857,6 @@ void vtkSlicerSliceLogic::GetBackgroundSliceDimensions(double sliceDimensions[3]
 // Get the spacing of the volume, transformed to slice space
 double *vtkSlicerSliceLogic::GetBackgroundSliceSpacing()
 {
-  vtkMatrix4x4 *ijkToRAS = vtkMatrix4x4::New();
-  vtkMatrix4x4 *rasToSlice = vtkMatrix4x4::New();
-  vtkMatrix4x4 *ijkToSlice = vtkMatrix4x4::New();
 
   vtkMRMLSliceNode *sliceNode = this->GetSliceNode();
   vtkMRMLSliceCompositeNode *compositeNode = this->GetSliceCompositeNode();
@@ -877,6 +874,10 @@ double *vtkSlicerSliceLogic::GetBackgroundSliceSpacing()
     {
     return (this->SliceSpacing);
     }
+
+  vtkMatrix4x4 *ijkToRAS = vtkMatrix4x4::New();
+  vtkMatrix4x4 *rasToSlice = vtkMatrix4x4::New();
+  vtkMatrix4x4 *ijkToSlice = vtkMatrix4x4::New();
 
   backgroundNode->GetIJKToRASMatrix(ijkToRAS);
   rasToSlice->DeepCopy(sliceNode->GetSliceToRAS());
