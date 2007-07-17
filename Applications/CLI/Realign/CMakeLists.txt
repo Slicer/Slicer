@@ -1,13 +1,5 @@
 PROJECT( Realign )
 
-# 
-# --------------------------------------------------------------------------
-# Special build configs (to handle linking on windows)
-CONFIGURE_FILE(
-  vtkRealignConfigure.h.in
-  Applications/CLI/Realign/vtkRealignConfigure.h
-)
-
 FIND_PACKAGE(GenerateCLP REQUIRED)
 
 FIND_PACKAGE(ModuleDescriptionParser REQUIRED)
