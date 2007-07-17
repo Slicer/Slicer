@@ -13,7 +13,6 @@
 =========================================================================auto=*/
 #ifndef __vtk_principal_axes_align_h
 #define __vtk_principal_axes_align_h
-#include "vtkRealignWin32Header.h"
 #include <vtkPolyDataToPolyDataFilter.h>
 #include <vtkSetGet.h>
 // ---------------------------------------------------------
@@ -23,7 +22,6 @@
 // The direction of the eigenvector for the largest eigenvalue is the XAxis,
 // the direction of the eigenvector for the smallest eigenvalue is the ZAxis,
 // and the YAxis the the eigenvector for the remaining eigenvalue.
-// VTK_Realign_EXPORT
 class  vtkPrincipalAxesAlign : public vtkPolyDataToPolyDataFilter
 {
  public:
