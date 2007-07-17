@@ -38,8 +38,8 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <name>OutputVolume</name>
       <label>Output Volume</label>
       <channel>output</channel>
-      <index>1</index>
-      <description>Output realigned volume</description>
+      <longflag>--outputvolume</longflag>
+      <description>Output realigned volume, optional</description>
     </image>
     <string-enumeration>
       <name>InterpolationType</name>
