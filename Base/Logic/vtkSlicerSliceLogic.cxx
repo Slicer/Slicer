@@ -583,6 +583,10 @@ void vtkSlicerSliceLogic::UpdatePipeline()
       tempBlend->SetOpacity( layerIndex++, this->SliceCompositeNode->GetLabelOpacity() );
       }
 
+    if ( tempBlend->GetNumberOfInputs() != this->Blend->GetNumberOfInputs() )
+      {
+      this->Blend->RemoveAllInputs();
+      }
     for (layerIndex = 0; layerIndex < tempBlend->GetNumberOfInputs(); layerIndex++)
       {
       if ( tempBlend->GetInput(layerIndex) != this->Blend->GetInput(layerIndex) )
