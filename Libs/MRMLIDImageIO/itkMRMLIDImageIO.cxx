@@ -223,6 +223,16 @@ MRMLIDImageIO
     m_Origin[0] *= -1;
     m_Origin[1] *= -1;
 
+    if (node->GetImageData() == NULL)
+      {
+      itkWarningMacro("itkMRMLIDImageIO: ReadImageInformation: node image data is null.");
+      return;
+      }
+    if (node->GetImageData()->GetDimensions() == NULL)
+      {
+      itkWarningMacro("itkMRMLIDImageIO: ReadImageInformation: node image data has null dimentions");
+      return;
+      }
     this->SetDimensions(0, node->GetImageData()->GetDimensions()[0]);
     this->SetDimensions(1, node->GetImageData()->GetDimensions()[1]);
     this->SetDimensions(2, node->GetImageData()->GetDimensions()[2]);
