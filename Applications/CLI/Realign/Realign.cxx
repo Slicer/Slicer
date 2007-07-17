@@ -132,22 +132,6 @@ int main(int argc, char * argv[])
     // increment after each filter is run
     float currentFilterOffset = 0.0;
     
-    // check for the input file
-    FILE * infile;
-    infile = fopen(InputVolume.c_str(),"r");
-    if (infile == NULL)
-      {
-      std::cerr << "ERROR: cannot open input volume file " << InputVolume << endl;
-      if (debug)
-        {
-        char waiting;
-        std::cout << "Press a key and hit return: ";
-        std::cin >> waiting;
-        }
-      return EXIT_FAILURE;
-      }
-    fclose(infile);
-    
     // read in the input volume
     reader = vtkITKArchetypeImageSeriesScalarReader::New();
     vtkPluginFilterWatcher watchReader(reader,
