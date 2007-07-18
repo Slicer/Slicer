@@ -763,7 +763,16 @@ int vtkSlicerColorDisplayWidget::GetSelectedColorIndex()
     return -1;
     }
   int numRows = this->MultiColumnList->GetWidget()->GetNumberOfSelectedRows();
-  int row[1];
+  int row[1];  
+  if (numRows == 0 &&
+      this->MultiColumnList->GetWidget()->GetNumberOfRows() > 1)
+    {
+    // no selection was made, set it up to select index 1 (0 is black)
+    row[0] = 1;
+    this->MultiColumnList->GetWidget()->SelectCell(row[0],0);
+    numRows = this->MultiColumnList->GetWidget()->GetNumberOfSelectedRows();
+    vtkDebugMacro("No rows were selected, forcing selection of row " << row[0] << ", numRows = " << numRows);
+    }
   if (numRows == 1)
     {
     this->MultiColumnList->GetWidget()->GetSelectedRows(row);
