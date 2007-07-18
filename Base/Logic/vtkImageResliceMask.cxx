@@ -1179,10 +1179,10 @@ int vtkNearestNeighborInterpolation(T *&outPtr, const T *inPtr,
     else if (mode == VTK_RESLICE_BACKGROUND ||
              mode == VTK_RESLICE_BORDER)
       {
+      *BackgroundMaskPtr++ = (unsigned char)(0);
       do
         {
         *outPtr++ = *background++;
-        *BackgroundMaskPtr++ = (unsigned char)(0);
         }
       while (--numscalars);
       return 0;
@@ -1194,10 +1194,10 @@ int vtkNearestNeighborInterpolation(T *&outPtr, const T *inPtr,
     }
 
   inPtr += inIdX0*inInc[0]+inIdY0*inInc[1]+inIdZ0*inInc[2];
+  *BackgroundMaskPtr++ = (unsigned char)(255*value);
   do
     {
     *outPtr++ = *inPtr++;
-    *BackgroundMaskPtr++ = (unsigned char)(255*value);
     }
   while (--numscalars);
 
@@ -1243,10 +1243,10 @@ int vtkTrilinearInterpolation(T *&outPtr, const T *inPtr,
           vtkInterpolateBorder(inIdY0, inIdY1, inExtY, fy) ||
           vtkInterpolateBorder(inIdZ0, inIdZ1, inExtZ, fz))
         {
+        *BackgroundMaskPtr++ = (unsigned char)(0);
         do
           {
           *outPtr++ = *background++;
-          *BackgroundMaskPtr++ = (unsigned char)(0);
           }
         while (--numscalars);
         return 0;
@@ -1274,10 +1274,10 @@ int vtkTrilinearInterpolation(T *&outPtr, const T *inPtr,
       }
     else if (mode == VTK_RESLICE_BACKGROUND)
       {
+      *BackgroundMaskPtr++ = (unsigned char)(0);
       do
         {
         *outPtr++ = *background++;
-        *BackgroundMaskPtr++ = (unsigned char)(0);
         }
       while (--numscalars);
       return 0;
@@ -1311,7 +1311,7 @@ int vtkTrilinearInterpolation(T *&outPtr, const T *inPtr,
 
   const T *inPtr0 = inPtr + factX0;
   const T *inPtr1 = inPtr + factX1;
-
+  *BackgroundMaskPtr++ = (unsigned char)(255*value);
   do
     {
     F result = (rx*(ryrz*inPtr0[i00] + ryfz*inPtr0[i01] +
@@ -1320,7 +1320,6 @@ int vtkTrilinearInterpolation(T *&outPtr, const T *inPtr,
                     fyrz*inPtr1[i10] + fyfz*inPtr1[i11]));
 
     vtkResliceRound(result, *outPtr++);
-    *BackgroundMaskPtr++ = (unsigned char)(255*value);
     inPtr0++;
     inPtr1++;
     }
@@ -1444,10 +1443,10 @@ int vtkTricubicInterpolation(T *&outPtr, const T *inPtr,
           vtkInterpolateBorderCheck(inIdY0, inIdY1, inExtY, fy) ||
           vtkInterpolateBorderCheck(inIdZ0, inIdZ1, inExtZ, fz))
         {
+          *BackgroundMaskPtr++ = (unsigned char)(0);
         do
           {
           *outPtr++ = *background++;
-          *BackgroundMaskPtr++ = (unsigned char)(0);
           }
         while (--numscalars);
         return 0;
@@ -1457,10 +1456,11 @@ int vtkTricubicInterpolation(T *&outPtr, const T *inPtr,
       {
       if (mode == VTK_RESLICE_BACKGROUND)
         {
+        *BackgroundMaskPtr++ = (unsigned char)(0);
         do
           {
           *outPtr++ = *background++;
-          *BackgroundMaskPtr++ = (unsigned char)(0);
+
           }
         while (--numscalars);
         return 0;
@@ -1592,7 +1592,7 @@ int vtkTricubicInterpolation(T *&outPtr, const T *inPtr,
         }
       }
     }
-  
+  *BackgroundMaskPtr++ = (unsigned char)(255*value);
   do // loop over components
     {
     F val = 0;
@@ -1619,7 +1619,6 @@ int vtkTricubicInterpolation(T *&outPtr, const T *inPtr,
     while (++k <= k2);
 
     vtkResliceClamp(val, *outPtr++);
-    *BackgroundMaskPtr++ = (unsigned char)(255*value);
     inPtr++;
     }
   while (--numscalars);
@@ -1721,11 +1720,11 @@ void vtkSetPixels(T *&outPtr, const T *inPtr, int numscalars, int n, unsigned ch
   for (int i = 0; i < n; i++)
     {
     const T *tmpPtr = inPtr;
+    *BackgroundMaskPtr++ = (unsigned char)(255*value);
     int m = numscalars;
     do
       {
       *outPtr++ = *tmpPtr++;
-      *BackgroundMaskPtr++ = (unsigned char)(255*value);
       }
     while (--m);
     }
@@ -2354,11 +2353,11 @@ void vtkPermuteNearestSummation(T *&outPtr, const T *inPtr,
     {
     const T *tmpPtr = &inPtr0[iX[0]];
     iX++;
+    *BackgroundMaskPtr++ = (unsigned char)(255*value);
     int m = numscalars;
     do
       {
       *outPtr++ = *tmpPtr++;
-      *BackgroundMaskPtr++ = (unsigned char)(255*value);
       }
     while (--m);
     }
@@ -2416,11 +2415,11 @@ void vtkPermuteTrilinearSummation(T *&outPtr, const T *inPtr,
       iX += 2;
 
       const T *inPtr0 = inPtr + i00 + t0;
+      *BackgroundMaskPtr++ = (unsigned char)(255*value);
       int m = numscalars;
       do 
         {
         *outPtr++ = *inPtr0++;
-        *BackgroundMaskPtr++ = (unsigned char)(255*value);
         }
       while (--m);
       }
@@ -2431,14 +2430,14 @@ void vtkPermuteTrilinearSummation(T *&outPtr, const T *inPtr,
       {
       vtkIdType t0 = iX[0];
       iX += 2;
-          
+
       const T *inPtr0 = inPtr + t0; 
+      *BackgroundMaskPtr++ = (unsigned char)(255*value);
       int m = numscalars;
       do 
         {
         F result = (rz*inPtr0[i00] + fz*inPtr0[i01]);
         vtkResliceRound(result, *outPtr++);
-        *BackgroundMaskPtr++ = (unsigned char)(255*value);
         inPtr0++;
         }
       while (--m);
@@ -2458,6 +2457,7 @@ void vtkPermuteTrilinearSummation(T *&outPtr, const T *inPtr,
 
       const T *inPtr0 = inPtr + t0;
       const T *inPtr1 = inPtr + t1;
+      *BackgroundMaskPtr++ = (unsigned char)(255*value);
       int m = numscalars;
       do 
         {
@@ -2465,7 +2465,6 @@ void vtkPermuteTrilinearSummation(T *&outPtr, const T *inPtr,
                     fx*(ry*inPtr1[i00] + fy*inPtr1[i10]));
 
         vtkResliceRound(result, *outPtr++);
-        *BackgroundMaskPtr++ = (unsigned char)(255*value);
         inPtr0++;
         inPtr1++;
         }
@@ -2486,6 +2485,7 @@ void vtkPermuteTrilinearSummation(T *&outPtr, const T *inPtr,
 
       const T *inPtr0 = inPtr + t0;
       const T *inPtr1 = inPtr + t1;
+      *BackgroundMaskPtr++ = (unsigned char)(255*value);
       int m = numscalars;
       do 
         {
@@ -2495,7 +2495,7 @@ void vtkPermuteTrilinearSummation(T *&outPtr, const T *inPtr,
                         fyrz*inPtr1[i10] + fyfz*inPtr1[i11]));
 
         vtkResliceRound(result, *outPtr++);
-        *BackgroundMaskPtr++ = (unsigned char)(255*value);
+
         inPtr0++;
         inPtr1++;
         }
@@ -2537,6 +2537,7 @@ void vtkPermuteTricubicSummation(T *&outPtr, const T *inPtr,
     fX += 4;
 
     const T *inPtr0 = inPtr;
+    *BackgroundMaskPtr++ = (unsigned char)(255*value);
     int c = numscalars;
     do
       { // loop over components
@@ -2568,7 +2569,7 @@ void vtkPermuteTricubicSummation(T *&outPtr, const T *inPtr,
       while (++k <= k2);
 
       vtkResliceClamp(result, *outPtr++);
-      *BackgroundMaskPtr++ = (unsigned char)(255*value);
+
       inPtr0++;
       }
     while (--c);
