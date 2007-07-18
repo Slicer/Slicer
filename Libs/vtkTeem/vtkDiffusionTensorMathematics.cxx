@@ -99,6 +99,7 @@ void vtkDiffusionTensorMathematics::ExecuteInformation(vtkImageData **inDatas,
 
   // We always want to output float, unless it is color
   outData->SetScalarType(VTK_FLOAT);
+  outData->SetNumberOfScalarComponents(1);
 
   if (this->Operation == VTK_TENS_COLOR_ORIENTATION)
     {
