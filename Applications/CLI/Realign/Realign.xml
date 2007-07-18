@@ -2,7 +2,7 @@
 <executable>
   <category>Registration</category>
   <title>RealignVolume</title>
-  <description>Realigns a volume based on a transformation matrix. It can make a transform using a list of fiducials.</description>
+  <description>Realigns a volume based on a transformation matrix (if output volume is specified). It can make a transform using a list of fiducials. If pass in a transform matrix and an output volume, but no fiducials, applies the transform to the input volume.</description>
 <version>1.0</version>
 <documentation-url>http://www.slicer.org</documentation-url>
   <license>slicer3</license>
