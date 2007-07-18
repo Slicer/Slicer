@@ -1,5 +1,6 @@
 #include "vtkObject.h"
 #include "vtkObjectFactory.h"
+#include "vtkStringArray.h"
 #include <itksys/SystemTools.hxx> 
 
 #include "vtkSlicerMRMLSaveDataWidget.h"
@@ -657,6 +658,10 @@ void vtkSlicerMRMLSaveDataWidget::CreateWidget ( )
   this->SaveDataButton->GetWidget()->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
   
+  this->MultiColumnList->SetEnabled(1);
+  this->OkButton->SetEnabled(1);
+  this->SaveSceneCheckBox->SetEnabled(0);
+  this->SaveSceneCheckBox->SetSelectedState(0);
   
   if (this->MRMLScene != NULL)
     {
@@ -667,17 +672,21 @@ void vtkSlicerMRMLSaveDataWidget::CreateWidget ( )
       dir += std::string("/");
       }
     this->SetDataDirectoryName(dir.c_str());
+    if ( this->MRMLScene->GetURL() )
+      {
+      this->SaveSceneButton->GetWidget()->SetInitialFileName( this->MRMLScene->GetURL() );
+      this->SaveSceneButton->GetWidget()->SetText( this->MRMLScene->GetURL() );
+      vtkStringArray *fileNames = this->SaveSceneButton->GetWidget()->GetLoadSaveDialog()->GetFileNames();
+      fileNames->Reset();
+      fileNames->InsertNextValue( this->MRMLScene->GetURL() );
+      this->SaveSceneCheckBox->SetEnabled(1);
+      this->SaveSceneCheckBox->SelectedStateOn();
+      }
     }
     
   frame->Delete();
   dataFrame->Delete();
   saveFrame->Delete();
-
-
-  this->MultiColumnList->SetEnabled(1);
-  this->OkButton->SetEnabled(1);
-  this->SaveSceneCheckBox->SetEnabled(0);
-  this->SaveSceneCheckBox->SetSelectedState(0);
   
 }
 
