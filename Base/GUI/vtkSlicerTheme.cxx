@@ -4,6 +4,9 @@
 #include "vtkKWApplication.h"
 #include "vtkSlicerApplication.h"
 #include "vtkKWOptionDataBase.h"
+#include "vtkKWIcon.h"
+#include "vtkSlicerCheckRadioButtonIcons.h"
+#include "vtkKWTkUtilities.h"
 
 
 //---------------------------------------------------------------------------
@@ -14,6 +17,7 @@ vtkCxxRevisionMacro ( vtkSlicerTheme, "$Revision: 1.0 $");
 vtkSlicerTheme::vtkSlicerTheme ( )
 {
     this->SlicerColors = vtkSlicerColor::New ( );
+    this->CheckRadioIcons = vtkSlicerCheckRadioButtonIcons::New();
 }
 
 
@@ -25,6 +29,11 @@ vtkSlicerTheme::~vtkSlicerTheme ( )
         this->SlicerColors->Delete ( );
         this->SlicerColors = NULL;
     }
+    if ( this->CheckRadioIcons )
+      {
+      this->CheckRadioIcons->Delete();
+      this->CheckRadioIcons = NULL;
+      }
 }
 
 
@@ -43,10 +52,45 @@ void vtkSlicerTheme::Install ( )
     vtkKWOptionDataBase *odb = app->GetOptionDataBase ( );
     
     // ---
-    // Set default font:
+    // check applicatoin settings to see if there's a font preference
     // ---
-    odb->AddFontOptions ( "{Helvetica 8 normal}" );
+
     
+    // ---
+    // If not, set default font based on screen resolution
+    // ---
+    const char *wid;
+    wid = app->Script ("set x [ winfo screenwidth . ]");
+    int width = atoi (wid);
+    
+    if ( width >= 4000 )
+      {
+      // very very large screen
+      odb->AddFontOptions ( "{Helvetica 14 normal}" );
+      this->AddSlicerFontOptions ( "{Helvetica 14 normal}" );
+      this->FontPointSize = 14;
+      }
+    else if ( width >= 3000 )
+      {
+      // very large screen
+      odb->AddFontOptions ( "{Helvetica 12 normal}" );
+      this->AddSlicerFontOptions ( "{Helvetica 12 normal}" );
+      this->FontPointSize = 12;
+      }
+    else if ( width >= 2000 )
+      {
+      // large screen
+      odb->AddFontOptions ( "{Helvetica 10 normal}" );
+      this->AddSlicerFontOptions ( "{Helvetica 10 normal}" );
+      this->FontPointSize = 10;
+      }
+    else 
+      {
+      // small to medium resolution
+      odb->AddFontOptions ( "{Helvetica 8 normal}" );
+      this->AddSlicerFontOptions ( "{Helvetica 8 normal}" );
+      this->FontPointSize = 8;
+      }
 
     // ---
     // Background and foreground for all widgets in general (some will be overridden):
@@ -143,44 +187,47 @@ void vtkSlicerTheme::Install ( )
 
     
     // Slicer KW Checkbuttons
+    const char *checkOnImage = "checkOn";
+    const char *offImage = "checkRadioOff";
     odb->AddEntryAsDouble3 ("vtkKWCheckButton", "SetActiveBackgroundColor",
                             this->SlicerColors->GUIBgColor );
-    odb->AddEntryAsDouble3( "vtkKWCheckButton", "SetSelectColor", this->SlicerColors->HighlightColor);
-    // Slicer Custom CheckbuttonWidgets
-    odb->AddEntryAsDouble3 ("vtkSlicerCheckButtonWidget", "SetSelectColor",
-                            this->SlicerColors->GUIBgColor );
-    odb->AddEntryAsDouble3 ("vtkSlicerCheckButtonWidget", "SetActiveBackgroundColor",
-                            this->SlicerColors->GUIBgColor );
-    odb->AddEntry( "vtkSlicerCheckButtonWidget", "IndicatorVisibilityOff", NULL);
-    odb->AddEntry ( "vtkSlicerCheckButtonWidget", "SetReliefToFlat", NULL );
-    odb->AddEntry ( "vtkSlicerCheckButtonWidget", "SetOffReliefToFlat", NULL );
-    odb->AddEntry ( "vtkSlicerCheckButtonWidget", "SetOverReliefToFlat", NULL );
-    odb->AddEntry ( "vtkSlicerCheckButtonWidget", "SetSelectedStateOn", NULL );
-    odb->AddEntryAsInt ("vtkSlicerCheckButtonWidget", "SetBorderWidth", 0 );
-    odb->AddEntryAsInt ("vtkSlicerCheckButtonWidget", "SetHighlightThickness", 0 );
-    odb->AddEntryAsInt ( "vtkSlicerCheckButtonWidget", "SetPadX", 4 );
-    odb->AddEntryAsInt ( "vtkSlicerCheckButtonWidget", "SetPadY", 4 );
+    odb->AddEntryAsDouble3( "vtkKWCheckButton", "SetSelectColor", this->SlicerColors->GUIBgColor);
+    vtkKWTkUtilities::UpdatePhotoFromIcon ( app, checkOnImage, this->CheckRadioIcons->GetSelectCheckIcon(), 0 );
+    vtkKWTkUtilities::UpdatePhotoFromIcon ( app, offImage, this->CheckRadioIcons->GetDeselectIcon(), 0 );
+    odb->AddEntry( "vtkKWCheckButton", "IndicatorVisibilityOff", NULL );
+    odb->AddEntry ( "vtkKWCheckButton", "SetReliefToFlat", NULL );
+    odb->AddEntry ( "vtkKWCheckButton", "SetOffReliefToFlat", NULL );
+    odb->AddEntry ( "vtkKWCheckButton", "SetOverReliefToFlat", NULL );
+    odb->AddEntryAsInt ("vtkKWCheckButton", "SetBorderWidth", 0 );
+    odb->AddEntryAsInt ("vtkKWCheckButton", "SetHighlightThickness", 0 );
+    odb->AddEntryAsInt ( "vtkKWCheckButton", "SetPadX", 4 );
+    odb->AddEntryAsInt ( "vtkKWCheckButton", "SetPadY", 4 );
+    odb->AddEntry ( "vtkKWCheckButton", "SetConfigurationOption -image", offImage);
+    odb->AddEntry ( "vtkKWCheckButton", "SetConfigurationOption -selectimage", checkOnImage);    
+    odb->AddEntry ( "vtkKWCheckButton", "SetCompoundModeToLeft", NULL );
+
 
     // Slicer KW Radiobuttons
-    odb->AddEntryAsDouble3 ("vtkKWRadioButton", "SetSelectColor", this->SlicerColors->HighlightColor );
+    const char *radioOnImage = "radioOn";
+    vtkKWTkUtilities::UpdatePhotoFromIcon ( app, radioOnImage, this->CheckRadioIcons->GetSelectRadioIcon(), 0 );
+    odb->AddEntryAsDouble3 ("vtkKWRadioButton", "SetSelectColor", this->SlicerColors->GUIBgColor );
     odb->AddEntryAsDouble3 ("vtkKWRadioButton", "SetActiveBackgroundColor",
                             this->SlicerColors->GUIBgColor );
-    // Slicer Custom RadiobuttonWidgets
-    odb->AddEntryAsDouble3 ("vtkSlicerRadioButtonWidget", "SetSelectColor",
+    odb->AddEntryAsDouble3 ("vtkKWRadioButton", "SetActiveBackgroundColor",
                             this->SlicerColors->GUIBgColor );
-    odb->AddEntryAsDouble3 ("vtkSlicerRadioButtonWidget", "SetActiveBackgroundColor",
-                            this->SlicerColors->GUIBgColor );
-    odb->AddEntry( "vtkSlicerRadioButtonWidget", "IndicatorVisibilityOff", NULL);
-    odb->AddEntry ( "vtkSlicerRadioButtonWidget", "SetReliefToFlat", NULL );
-    odb->AddEntry ( "vtkSlicerRadioButtonWidget", "SetOffReliefToFlat", NULL );
-    odb->AddEntry ( "vtkSlicerRadioButtonWidget", "SetOverReliefToFlat", NULL );
-    odb->AddEntry ( "vtkSlicerRadioButtonWidget", "SetSelectedStateOn", NULL );
-    odb->AddEntryAsInt ("vtkSlicerRadioButtonWidget", "SetBorderWidth", 0 );
-    odb->AddEntryAsInt ("vtkSlicerRadioButtonWidget", "SetHighlightThickness", 0 );
-    odb->AddEntryAsInt ( "vtkSlicerRadioButtonWidget", "SetPadX", 4 );
-    odb->AddEntryAsInt ( "vtkSlicerRadioButtonWidget", "SetPadY", 4 );
+    odb->AddEntryAsDouble3( "vtkKWRadioButton", "SetSelectColor", this->SlicerColors->GUIBgColor);
+    odb->AddEntry( "vtkKWRadioButton", "IndicatorVisibilityOff", NULL );
+    odb->AddEntry ( "vtkKWRadioButton", "SetReliefToFlat", NULL );
+    odb->AddEntry ( "vtkKWRadioButton", "SetOffReliefToFlat", NULL );
+    odb->AddEntry ( "vtkKWRadioButton", "SetOverReliefToFlat", NULL );
+    odb->AddEntryAsInt ("vtkKWRadioButton", "SetBorderWidth", 0 );
+    odb->AddEntryAsInt ("vtkKWRadioButton", "SetHighlightThickness", 0 );
+    odb->AddEntryAsInt ( "vtkKWRadioButton", "SetPadX", 4 );
+    odb->AddEntryAsInt ( "vtkKWRadioButton", "SetPadY", 4 );
+    odb->AddEntry ( "vtkKWRadioButton", "SetConfigurationOption -image", offImage);
+    odb->AddEntry ( "vtkKWRadioButton", "SetConfigurationOption -selectimage", radioOnImage);    
+    odb->AddEntry ( "vtkKWRadioButton", "SetCompoundModeToLeft", NULL );
 
-    
     // Slicer WidgetWithLabel (scrap the groove around all)
     odb->AddEntry ( "vtkKWWidgetWithLabel", "SetRelief", "flat" );    
 
@@ -238,6 +285,24 @@ void vtkSlicerTheme::Install ( )
 
 }
 
+
+//---------------------------------------------------------------------------
+void vtkSlicerTheme::AddSlicerFontOptions ( const char *font )
+{
+  if (!font)
+    {
+    return;
+    }
+
+  vtksys_stl::string font_spec(font);
+  if (font_spec[0] != '{')
+    {
+    font_spec.insert(0, "{");
+    font_spec += '}';
+    }
+
+//    this->AddEntry("vtkSlicerModuleChooseGUI::ModulesLabel", "SetFont", font_spec.c_str());
+}
 
 //---------------------------------------------------------------------------
 void vtkSlicerTheme::PrintSelf ( ostream& os, vtkIndent indent )

@@ -3,6 +3,7 @@
 
 #include "vtkKWTheme.h"
 #include "vtkSlicerColor.h"
+#include "vtkSlicerCheckRadioButtonIcons.h"
 
 class vtkSlicerTheme : public vtkKWTheme
 {
@@ -16,15 +17,24 @@ class vtkSlicerTheme : public vtkKWTheme
     // Description:
     // Get method for SlicerColor class
     vtkGetObjectMacro ( SlicerColors, vtkSlicerColor );
+    vtkGetMacro ( FontPointSize, int);
 
     // Description:
     // Ask the default Slicer theme to install itself
     virtual void Install ( );
+
+    // Description:
+    // Convenience method that sets font for slicer widgets
+    // and special-case fonts throughout the Application
+    virtual void AddSlicerFontOptions (const char *font);
     
  protected:
     vtkSlicerTheme ( );
     virtual ~vtkSlicerTheme ( );
     vtkSlicerColor *SlicerColors;
+
+    int FontPointSize;
+    vtkSlicerCheckRadioButtonIcons *CheckRadioIcons;
     
  private:
     vtkSlicerTheme (const vtkSlicerTheme& ); // Not implemented

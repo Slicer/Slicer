@@ -58,7 +58,7 @@ vtkSlicerToolbarGUI::vtkSlicerToolbarGUI ( )
   this->SaveSceneIconButton = vtkKWPushButton::New ( );
   this->LoadSceneIconButton = vtkKWMenuButton::New ( );
   this->ChooseLayoutIconMenuButton = vtkKWMenuButton::New();
-  this->InteractionModeRadioButtons = vtkSlicerRadioButtonWidgetSet::New ( );
+  this->InteractionModeRadioButtons = vtkKWRadioButtonSet::New ( );
   this->UndoIconButton = vtkKWPushButton::New ( );
   this->RedoIconButton = vtkKWPushButton::New ( );
   this->ModuleChooseGUI = vtkSlicerModuleChooseGUI::New ( );
@@ -353,7 +353,6 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
     if ( app != NULL )
       {
       vtkKWRadioButton *radiob = vtkKWRadioButton::SafeDownCast ( caller );
-      vtkSlicerRadioButtonWidget *sradiob = vtkSlicerRadioButtonWidget::SafeDownCast ( caller );
       vtkKWPushButton *pushb = vtkKWPushButton::SafeDownCast ( caller );
       vtkKWMenu *menu = vtkKWMenu::SafeDownCast ( caller );
   
@@ -361,30 +360,30 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
         {            
         // Process events from top row of buttons
         // Mouse mode buttons:
-        if ( sradiob == this->InteractionModeRadioButtons->GetWidget ( vtkMRMLInteractionNode::PickManipulate )
+        if ( radiob == this->InteractionModeRadioButtons->GetWidget ( vtkMRMLInteractionNode::PickManipulate )
              && event == vtkKWRadioButton::SelectedStateChangedEvent )
           {
-          val = sradiob->GetSelectedState();
+          val = radiob->GetSelectedState();
           if ( val && interactionNode )
             {
             interactionNode->SetLastInteractionMode ( interactionNode->GetCurrentInteractionMode() );
             interactionNode->SetCurrentInteractionMode ( vtkMRMLInteractionNode::PickManipulate );
             }
           }
-        else if ( sradiob == this->InteractionModeRadioButtons->GetWidget ( vtkMRMLInteractionNode::ViewTransform )
+        else if ( radiob == this->InteractionModeRadioButtons->GetWidget ( vtkMRMLInteractionNode::ViewTransform )
                   && event == vtkKWRadioButton::SelectedStateChangedEvent)
           {
-          val = sradiob->GetSelectedState();
+          val = radiob->GetSelectedState();
           if ( val && interactionNode )
             {
             interactionNode->SetLastInteractionMode ( interactionNode->GetCurrentInteractionMode() );
             interactionNode->SetCurrentInteractionMode ( vtkMRMLInteractionNode::ViewTransform );
             }
           }
-        else if ( sradiob == this->InteractionModeRadioButtons->GetWidget ( vtkMRMLInteractionNode::Place )
+        else if ( radiob == this->InteractionModeRadioButtons->GetWidget ( vtkMRMLInteractionNode::Place )
                   && event == vtkKWRadioButton::SelectedStateChangedEvent)
           {
-          val = sradiob->GetSelectedState();
+          val = radiob->GetSelectedState();
           if ( val && interactionNode )
             {
             interactionNode->SetLastInteractionMode ( interactionNode->GetCurrentInteractionMode() );
@@ -788,7 +787,7 @@ void vtkSlicerToolbarGUI::ProcessMRMLEvents ( vtkObject *caller,
     std::cout << "The selection node changed\n";
     int mode = interactionNode->GetCurrentInteractionMode();
     
-    vtkSlicerRadioButtonWidget *radiob = this->InteractionModeRadioButtons->GetWidget ( mode );
+    vtkKWRadioButton *radiob = this->InteractionModeRadioButtons->GetWidget ( mode );
     if (radiob != NULL &&
         radiob->GetSelectedState() != 1)
       {
@@ -1186,7 +1185,7 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
     mouseMode = vtkMRMLInteractionNode::ViewTransform;
     }
   
-  vtkSlicerRadioButtonWidget *radiob = this->InteractionModeRadioButtons->AddWidget ( vtkMRMLInteractionNode::PickManipulate );
+  vtkKWRadioButton *radiob = this->InteractionModeRadioButtons->AddWidget ( vtkMRMLInteractionNode::PickManipulate );
   radiob->SetImageToIcon ( this->SlicerToolbarIcons->GetMousePickOffIcon ( ) );
   radiob->SetSelectImageToIcon ( this->SlicerToolbarIcons->GetMousePickOnIcon ( ) );
   radiob->SetBalloonHelpString ( "Set the 3DViewer mouse mode to 'pick'" );

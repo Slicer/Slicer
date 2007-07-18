@@ -24,8 +24,6 @@
 #include "vtkKWPushButton.h"
 #include "vtkKWCheckButton.h"
 #include "vtkKWRadioButton.h"
-#include "vtkSlicerCheckButtonWidget.h"
-#include "vtkSlicerRadioButtonWidget.h"
 #include "vtkKWLabel.h"
 #include "vtkKWMenuButton.h"
 #include "vtkKWMenu.h"
@@ -482,14 +480,10 @@ void vtkSlicerViewControlGUI::PrintSelf ( ostream& os, vtkIndent indent )
 void vtkSlicerViewControlGUI::RemoveGUIObservers ( )
 {
   // FILL IN
-//    this->LookFromButton->RemoveObservers (vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-//    this->RotateAroundButton->RemoveObservers (vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->LookFromButton->RemoveObservers (vtkSlicerRadioButtonWidget::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->RotateAroundButton->RemoveObservers (vtkSlicerRadioButtonWidget::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );    
-//    this->SpinButton->RemoveObservers (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-//    this->RockButton->RemoveObservers (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->SpinButton->RemoveObservers (vtkSlicerCheckButtonWidget::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->RockButton->RemoveObservers (vtkSlicerCheckButtonWidget::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->LookFromButton->RemoveObservers (vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->RotateAroundButton->RemoveObservers (vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->SpinButton->RemoveObservers (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->RockButton->RemoveObservers (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 
     this->OrthoButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->StereoButton->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -513,14 +507,10 @@ void vtkSlicerViewControlGUI::RemoveGUIObservers ( )
 void vtkSlicerViewControlGUI::AddGUIObservers ( )
 {
   // FILL IN
-//    this->LookFromButton->AddObserver (vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-//    this->RotateAroundButton->AddObserver (vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->LookFromButton->AddObserver (vtkSlicerRadioButtonWidget::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->RotateAroundButton->AddObserver (vtkSlicerRadioButtonWidget::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-//    this->SpinButton->AddObserver (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-//    this->RockButton->AddObserver (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->SpinButton->AddObserver (vtkSlicerCheckButtonWidget::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->RockButton->AddObserver (vtkSlicerCheckButtonWidget::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->LookFromButton->AddObserver (vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->RotateAroundButton->AddObserver (vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->SpinButton->AddObserver (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->RockButton->AddObserver (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 
     this->OrthoButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->StereoButton->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -910,9 +900,8 @@ void vtkSlicerViewControlGUI::ProcessGUIEvents ( vtkObject *caller,
     vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( appGUI->GetApplication() );
     if ( app != NULL )
       {
-//      vtkKWCheckButton *b = vtkKWCheckButton::SafeDownCast ( caller );
-      vtkSlicerCheckButtonWidget *b = vtkSlicerCheckButtonWidget::SafeDownCast ( caller );
-      vtkSlicerRadioButtonWidget *r = vtkSlicerRadioButtonWidget::SafeDownCast ( caller );
+      vtkKWCheckButton *b = vtkKWCheckButton::SafeDownCast ( caller );
+      vtkKWRadioButton *r = vtkKWRadioButton::SafeDownCast ( caller );
       vtkKWPushButton *p = vtkKWPushButton::SafeDownCast ( caller );
       vtkKWMenu *m = vtkKWMenu::SafeDownCast ( caller );
       vtkKWEntry *e = vtkKWEntry::SafeDownCast ( caller );
@@ -995,7 +984,7 @@ void vtkSlicerViewControlGUI::ProcessGUIEvents ( vtkObject *caller,
           }
         }
 #endif
-      // Make requested changes to the ViewNode      vtkSlicerCheckButtonWidget *b = vtkSlicerCheckButtonWidget::SafeDownCast ( caller );
+      // Make requested changes to the ViewNode      
       // save state for undo
       if ( m == this->StereoButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent ||
            m == this->VisibilityButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent ||
@@ -2766,20 +2755,16 @@ void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
       vtkSlicerGUILayout *layout = app->GetMainLayout ( );
 
       this->SlicerViewControlIcons = vtkSlicerViewControlIcons::New ( );
-//      this->SpinButton = vtkKWCheckButton::New ( );
-//      this->RockButton = vtkKWCheckButton::New ( );
-      this->SpinButton = vtkSlicerCheckButtonWidget::New ( );
-      this->RockButton = vtkSlicerCheckButtonWidget::New ( );
+      this->SpinButton = vtkKWCheckButton::New ( );
+      this->RockButton = vtkKWCheckButton::New ( );
       this->OrthoButton = vtkKWPushButton::New ( );
 
       this->CenterButton = vtkKWPushButton::New ( );
       this->StereoButton = vtkKWMenuButton::New ( );
       this->SelectViewButton = vtkKWMenuButton::New ( );
       this->SelectCameraButton = vtkKWMenuButton::New ( );
-//      this->LookFromButton = vtkKWRadioButton::New ( );
-//      this->RotateAroundButton = vtkKWRadioButton::New ( );
-      this->LookFromButton = vtkSlicerRadioButtonWidget::New ( );
-      this->RotateAroundButton = vtkSlicerRadioButtonWidget::New ( );
+      this->LookFromButton = vtkKWRadioButton::New ( );
+      this->RotateAroundButton = vtkKWRadioButton::New ( );
       this->RedFOVEntry = vtkKWEntryWithLabel::New ( );
       this->YellowFOVEntry = vtkKWEntry::New();
       this->GreenFOVEntry = vtkKWEntry::New();
