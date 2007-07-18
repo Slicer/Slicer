@@ -15,7 +15,7 @@ Version:   $Revision: 3328 $
 #include "RealignCLP.h"
 #include "vtkITKArchetypeImageSeriesReader.h"
 #include "vtkITKArchetypeImageSeriesScalarReader.h"
-#include "vtkNRRDWriter.h"
+#include "vtkITKImageWriter.h"
 #include "vtkImageData.h"
 #include "vtkImageChangeInformation.h"
 #include "vtkTransform.h"
@@ -95,7 +95,9 @@ int main(int argc, char * argv[])
       std::cout << "\nStarting..." << std::endl;
       }
 
-    if (transform1Filename != transform2Filename)
+    // if both transforms are specified, but are not the same, exit
+    if (transform1Filename != "" && transform2Filename != "" &&
+        transform1Filename != transform2Filename)
       {
       std::cerr << "Module only accepts transforms from the same scene. Two scenes were specified: " << transform1Filename << " and " << transform2Filename << std::endl;
       return EXIT_FAILURE;
@@ -113,8 +115,7 @@ int main(int argc, char * argv[])
       outNode = vtkMRMLLinearTransformNode::SafeDownCast(scene->GetNodeByID( transform2ID ));
       if (!outNode)
         {
-        std::cerr << "No output transform found! Specified transform ID = " << transform2ID << std::endl;
-        return EXIT_FAILURE;
+        std::cout << "No output transform found. Specified transform ID = " << transform2ID << ". Only applying input transform" << std::endl;
         }
       }
     else
@@ -125,7 +126,7 @@ int main(int argc, char * argv[])
   
     // vtk vars
     vtkITKArchetypeImageSeriesReader* reader = NULL;
-    vtkImageData * image;
+    vtkImageData *image;
 
     // set up filter watcher
     float numFilterSteps = 2.0;
@@ -163,7 +164,19 @@ int main(int argc, char * argv[])
     vtkTransform *trans = vtkTransform::New();
     trans->Identity();
     trans->PostMultiply();
-    
+
+    // check to see if had no input points
+    if (Midline.size() == 0 && ACPC.size() == 0)
+      {
+      // use the input matrix
+      vtkMRMLLinearTransformNode *transformNode = vtkMRMLLinearTransformNode::SafeDownCast(node);
+      if (transformNode != NULL)
+        {
+        trans->SetMatrix(transformNode->GetMatrixTransformToParent());
+        }
+      }
+    else
+      {
     if (Midline.size() > 0)
       {
       vtkMath *math = vtkMath::New();
@@ -279,6 +292,8 @@ int main(int argc, char * argv[])
         }
       trans->RotateX(tangent - 1.0);
       }
+      }
+    
     double det = trans->GetMatrix()->Determinant();
     if (debug)
       {
@@ -324,8 +339,12 @@ int main(int argc, char * argv[])
       // reslice!
       reslice->Update();
 
-      // save
-      vtkNRRDWriter *writer = vtkNRRDWriter::New();
+      // save, use the itk writer so that memory mapping works
+      vtkITKImageWriter *writer = vtkITKImageWriter::New();
+      if (debug)
+        {
+        writer->DebugOn();
+        }
       writer->SetFileName(OutputVolume.c_str());
       writer->SetInput(reslice->GetOutput());
       writer->Write();
@@ -356,14 +375,15 @@ int main(int argc, char * argv[])
       {
       outNode->SetAndObserveMatrixTransformToParent(trans->GetMatrix());
       scene->Commit( transform2Filename.c_str() );
+      }
+    if (scene)
+      {
       scene->Clear(1);
       scene->Delete();
       }
-    else
+    if (trans)
       {
-      std::cerr << "No output transform found! Specified transform ID = " << transform2ID << std::endl;
-      return EXIT_FAILURE;
+      trans->Delete();
       }
-    trans->Delete();
     return EXIT_SUCCESS;
 }
