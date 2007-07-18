@@ -35,8 +35,14 @@ void ITKWriteVTKImage(vtkITKImageWriter *self, vtkImageData *inputImage, char *f
 
   vtkMatrix4x4 *ijkToRasMatrix = vtkMatrix4x4::New();
 
-  vtkMatrix4x4::Invert(rasToIjkMatrix, ijkToRasMatrix);
-
+  if (rasToIjkMatrix == NULL)
+    {
+    std::cerr << "ITKWriteVTKImage: rasToIjkMatrix is null" << std::endl;
+    }
+  else
+    {
+    vtkMatrix4x4::Invert(rasToIjkMatrix, ijkToRasMatrix);
+    }
   ijkToRasMatrix->Transpose();
 
   typename ImageType::DirectionType direction;
