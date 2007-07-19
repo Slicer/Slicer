@@ -169,27 +169,32 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode::UpdateReferences()
     }
 }
 //-----------------------------------------------------------
-vtkPolyData* vtkMRMLDiffusionTensorVolumeDisplayNode::GetPolyData()
+vtkPolyData* vtkMRMLDiffusionTensorVolumeDisplayNode::ExecuteGlyphPipeLineAndGetPolyData( vtkImageData* imageData )
 {
-  vtkErrorMacro("Showing Tensor Glyph");
 #ifdef USE_TEEM
-  this->DiffusionTensorGlyphFilter->SetInput(this->GetSlicedImageData () );
-  this->DiffusionTensorGlyphFilter->ClampScalingOff();
+  if ( true || this->GetVisualizationMode()==this->visModeGlyph || this->GetVisualizationMode()==this->visModeBoth )
+  {
+    vtkErrorMacro("Showing Tensor Glyph from data");
+    imageData->PrintSelf( std::cout, vtkIndent() );
+    this->DiffusionTensorGlyphFilter->SetInput( imageData );
+    this->DiffusionTensorGlyphFilter->ClampScalingOff();
 
-          // TO DO: implement max # ellipsoids, random sampling features
- this->DiffusionTensorGlyphFilter->SetResolution(2);
-        
-//          this->DiffusionTensorGlyphFilter->SetScaleFactor( DTDisplayNode->GetGlyphScaleFactor( ) );
-
-//          this->DiffusionTensorGlyphFilter->SetSource( DTDisplayNode->GetGlyphSource( ) );
-  this->DiffusionTensorGlyphFilter->SetScaleFactor( 1500  );
-
+            // TO DO: implement max # ellipsoids, random sampling features
+   this->DiffusionTensorGlyphFilter->SetResolution(2);
+          
+    this->DiffusionTensorGlyphFilter->SetSource( this->GetDiffusionTensorDisplayPropertiesNode()->GetGlyphSource()   );
+  //  this->DiffusionTensorGlyphFilter->SetScaleFactor( this->GetDiffusionTensorDisplayPropertiesNode()->GetGlyphScaleFactor()  );
+    this->DiffusionTensorGlyphFilter->SetScaleFactor(100);
 
 
-  this->DiffusionTensorGlyphFilter->ColorGlyphsByFractionalAnisotropy( );
-  this->DiffusionTensorGlyphFilter->Update ( );
- 
-  return this->DiffusionTensorGlyphFilter->GetOutput();
+
+    this->DiffusionTensorGlyphFilter->ColorGlyphsByFractionalAnisotropy( );
+    this->DiffusionTensorGlyphFilter->Update ( );
+   
+    return this->DiffusionTensorGlyphFilter->GetOutput();
+  } else {
+    return NULL;
+  }
 #else
   return NULL;
 #endif

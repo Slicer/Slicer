@@ -85,6 +85,7 @@ vtkMRMLDiffusionTensorDisplayPropertiesNode::vtkMRMLDiffusionTensorDisplayProper
 
   // VTK Objects
   this->GlyphSource = NULL;
+  this->UpdateGlyphSource();
 
 }
 

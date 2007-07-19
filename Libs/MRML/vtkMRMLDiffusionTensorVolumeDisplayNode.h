@@ -60,7 +60,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeDisplayNode : public vtkMRMLVo
   // Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "DiffusionTensorVolumeDisplay";};
 
-  virtual vtkPolyData* GetPolyData();
+  virtual vtkPolyData* ExecuteGlyphPipeLineAndGetPolyData( vtkImageData* );
 
   // Description:
   // Updates this node if it depends on other nodes
