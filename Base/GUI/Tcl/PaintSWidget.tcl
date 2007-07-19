@@ -288,6 +288,7 @@ itcl::body PaintSWidget::paintAddPoint {x y} {
     paintFeedback 
   } else {
     $this paintApply
+    $_layers(label,node) Modified
   }
 }
 
