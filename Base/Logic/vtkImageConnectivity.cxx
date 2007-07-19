@@ -201,8 +201,8 @@ static void vtkImageConnectivityExecute(vtkImageConnectivity *self,
   // For looping though output (and input) pixels.
   int outMin0, outMax0, outMin1, outMax1, outMin2, outMax2;
   int outIdx0, outIdx1, outIdx2;
-  int inInc0, inInc1, inInc2;
-  int outInc0, outInc1, outInc2;
+  vtkIdType inInc0, inInc1, inInc2;
+  vtkIdType outInc0, outInc1, outInc2;
   short *inPtr0, *outPtr0, *outPtr1;
   short minForegnd = (short)self->GetMinForeground();
   short maxForegnd = (short)self->GetMaxForeground();
