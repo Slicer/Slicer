@@ -166,7 +166,10 @@ void vtkSlicerSliceGlyphLogic::ProcessMRMLEvents(vtkObject * caller,
     else
       {      
       vtkDebugMacro("vtkSlicerSliceGlyphLogic::ProcessMRMLEvents: volume display node " << (this->VolumeDisplayNode == NULL ? " is null" : "is set, but") << ", not updating map to colors (color node may be null)\n");
-      this->LookupTable = this->VolumeDisplayNode->GetColorNode()->GetLookupTable();
+      if (this->VolumeDisplayNode)
+        {
+        this->LookupTable = this->VolumeDisplayNode->GetColorNode()->GetLookupTable();
+        }
       }
     }
   this->UpdateTransforms();
@@ -192,13 +195,14 @@ void vtkSlicerSliceGlyphLogic::SetVolumeNode(vtkMRMLVolumeNode *volumeNode)
   events->InsertNextValue(vtkMRMLTransformableNode::TransformModifiedEvent);
   events->InsertNextValue(vtkCommand::ModifiedEvent);
   vtkSetAndObserveMRMLNodeEventsMacro(this->VolumeNode, volumeNode, events );
-  this->LookupTable = volumeNode->GetDisplayNode()->GetColorNode()->GetLookupTable();
-
   events->Delete();
-
-  // Update the reslice transform to move this image into XY
-  this->UpdateTransforms();
-  this->UpdatePipeline();
+  if ( volumeNode )
+    {
+    this->LookupTable = volumeNode->GetDisplayNode()->GetColorNode()->GetLookupTable();
+    // Update the reslice transform to move this image into XY
+    this->UpdateTransforms();
+    this->UpdatePipeline();    
+    }
 }
 
 //----------------------------------------------------------------------------
