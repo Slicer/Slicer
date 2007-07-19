@@ -38,9 +38,12 @@
 #include "vtkMRMLSliceNode.h"
 #include "vtkMRMLSliceCompositeNode.h"
 #include "vtkSlicerSliceLayerLogic.h"
+#include "vtkSlicerSliceGlyphLogic.h"
 #include "vtkMRMLModelNode.h"
 
 #include "vtkImageBlend.h"
+#include "vtkCollection.h"
+#include "vtkPolyDataCollection.h"
 
 class vtkImageData;
 class vtkMRMLModelDisplayNode;
@@ -77,6 +80,18 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLogic : public vtkSlicerLogic
   void SetForegroundLayer (vtkSlicerSliceLayerLogic *ForegroundLayer);
 
   // Description:
+  // The background slice glyph layer
+  // TODO: this will eventually be generalized to a list of layers
+  vtkGetObjectMacro (BackgroundGlyphLayer, vtkSlicerSliceGlyphLogic);
+  void SetBackgroundGlyphLayer (vtkSlicerSliceGlyphLogic *BackgroundLayer);
+
+  // Description:
+  // The forground slice layer
+  // TODO: this will eventually be generalized to a list of layers
+  vtkGetObjectMacro (ForegroundGlyphLayer, vtkSlicerSliceGlyphLogic);
+  void SetForegroundGlyphLayer (vtkSlicerSliceGlyphLogic *ForegroundGlyphLayer);
+
+  // Description:
   // The Label slice layer
   // TODO: this will eventually be generalized to a list of layers
   vtkGetObjectMacro (LabelLayer, vtkSlicerSliceLayerLogic);
@@ -104,6 +119,14 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLogic : public vtkSlicerLogic
   // The compositing filter
   // TODO: this will eventually be generalized to a per-layer compositing function
   vtkGetObjectMacro (Blend, vtkImageBlend);
+
+  // Description:
+  // All the PolyData objects to render
+  vtkGetObjectMacro (PolyDataCollection, vtkPolyDataCollection);
+
+  // Description:
+  // All the LookupTable objects to color the PolyData object
+  vtkGetObjectMacro (LookupTableCollection, vtkCollection);
 
   // Description:
   // the tail of the pipeline
@@ -218,10 +241,17 @@ protected:
   vtkSlicerSliceLayerLogic *BackgroundLayer;
   vtkSlicerSliceLayerLogic *ForegroundLayer;
   vtkSlicerSliceLayerLogic *LabelLayer;
+
+  vtkSlicerSliceGlyphLogic *ForegroundGlyphLayer;
+  vtkSlicerSliceGlyphLogic *BackgroundGlyphLayer;
+
   double ForegroundOpacity;
   double LabelOpacity;
   vtkImageBlend *Blend;
   vtkImageData *ImageData;
+
+  vtkPolyDataCollection *PolyDataCollection;
+  vtkCollection *LookupTableCollection;
 
   vtkMRMLModelNode *SliceModelNode;
   vtkMRMLModelDisplayNode *SliceModelDisplayNode;
