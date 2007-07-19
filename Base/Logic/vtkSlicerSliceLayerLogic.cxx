@@ -63,7 +63,7 @@ vtkSlicerSliceLayerLogic::vtkSlicerSliceLayerLogic()
   this->DWIExtractComponent = vtkImageExtractComponents::New();
 
   // Create the components for the DTI layer pipeline
-  this->DTIReslice = vtkImageResliceMask::New();
+  this->DTIReslice = vtkImageReslice::New();
   #ifdef USE_TEEM
     this->DTIMathematics = vtkDiffusionTensorMathematics::New();
   #else
@@ -442,8 +442,7 @@ void vtkSlicerSliceLayerLogic::VectorVolumeNodeUpdateTransforms()
   this->VectorSlicePipeline(vectorVolumeNode->GetImageData(), interpolate);
 
   this->Slice->SetSliceTransform( this->XYToIJKTransform ); 
-  this->Reslice->SetResliceTransform( this->XYToIJKTransform ); 
-
+  this->Reslice->SetResliceTransform( this->XYToIJKTransform );
 }
 
 //----------------------------------------------------------------------------
@@ -537,7 +536,8 @@ void vtkSlicerSliceLayerLogic::DiffusionTensorVolumeNodeUpdateTransforms()
     }
 
     this->DTIMathematics->Update();
-    //cout<<"Output range: "<<this->DTIMathematics->GetOutput()->GetScalarRange()[1]<<endl;
+   cout<<"DTIMathematics Number Scalar components: "<<this->DTIMathematics->GetOutput()->GetNumberOfScalarComponents()<<endl;
+  //this->DTIMathematics->GetOutput()->SetNumberOfScalarComponents(1);
   this->ScalarSlicePipeline(this->DTIMathematics->GetOutput(),0,window,level,interpolate, lookupTable, applyThreshold,lowerThreshold,upperThreshold);
 
   //Set the right transformations
