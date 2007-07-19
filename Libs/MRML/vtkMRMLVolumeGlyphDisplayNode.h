@@ -78,10 +78,7 @@ class VTK_MRML_EXPORT vtkMRMLVolumeGlyphDisplayNode : public vtkMRMLVolumeDispla
   vtkGetMacro(VisualizationMode, int);
   vtkSetMacro(VisualizationMode, int);
 
-  vtkGetObjectMacro(SlicedImageData, vtkImageData );
-  vtkSetObjectMacro(SlicedImageData, vtkImageData );
-
-  virtual vtkPolyData* GetPolyData();
+  virtual vtkPolyData* ExecuteGlyphPipeLineAndGetPolyData( vtkImageData* );
 
   void SetVisualizationModeToScalarVolume() {
     this->SetVisualizationMode(this->visModeScalar);
