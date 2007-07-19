@@ -93,6 +93,8 @@ class VTK_MRML_EXPORT vtkMRMLVectorVolumeDisplayNode : public vtkMRMLVolumeGlyph
   void SetGlyphModeToTubes() {
     this->SetGlyphMode(this->glyphModeTubes);
   };
+
+  virtual vtkPolyData* ExecuteGlyphPipeLineAndGetPolyData( vtkImageData* ) {return NULL;};
   
 protected:
   vtkMRMLVectorVolumeDisplayNode();
