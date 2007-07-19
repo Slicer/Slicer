@@ -28,7 +28,7 @@ proc EditorReload { {this ""} } {
   }
   # TODO: figure this out from the CMakeCache and only offer the 
   # reload button if the source files exist
-  source c:/pieper/bwh/slicer3/debug/Slicer3/Modules/Editor/EditorGUI.tcl
+  source $::env(SLICER_HOME)/../Slicer3/Modules/Editor/EditorGUI.tcl
   EditorBuildGUI $this
   EditorAddGUIObservers $this
 
@@ -42,7 +42,7 @@ proc EditorTearDownGUI {this} {
     volumesFrame paintThreshold paintOver paintDropper
     paintRadius paintRange paintEnable paintLabel
     paintPaint paintDraw 
-      paintFrame rebuildButton colorsColor colorsFrame
+    paintFrame rebuildButton colorsColor colorsFrame
   }
 
   foreach w $widgets {
