@@ -54,8 +54,6 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerGlyphLogic : public vtkSlicerLogic
   vtkTypeRevisionMacro(vtkSlicerGlyphLogic,vtkSlicerLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  vtkSlicerGlyphLogic();
-  ~vtkSlicerGlyphLogic();
 
   // Description:
   // The volume display node has the render properties of the volume
@@ -70,6 +68,11 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerGlyphLogic : public vtkSlicerLogic
   virtual vtkPolyData* GetPolyData();
 
   protected:
+    vtkSlicerGlyphLogic();
+    ~vtkSlicerGlyphLogic();
+    vtkSlicerGlyphLogic(const vtkSlicerGlyphLogic&);
+    void operator=(const vtkSlicerGlyphLogic&);
+
     vtkMRMLVolumeDisplayNode* VolumeDisplayNode;
     vtkImageData* ImageData;   
     vtkPolyData*  PolyData; 
