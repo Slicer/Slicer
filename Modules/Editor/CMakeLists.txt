@@ -22,6 +22,7 @@ FILE(MAKE_DIRECTORY ${Editor_DIR})
 SET(TCLFILES
   pkgIndex.tcl
   Editor.tcl EditorNode.tcl EditorLogic.tcl EditorGUI.tcl
+  PaintSWidget.tcl DrawSWidget.tcl
   EffectSWidget.tcl
   SaveIslandEffect.tcl
 )

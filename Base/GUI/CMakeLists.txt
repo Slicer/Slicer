@@ -199,8 +199,7 @@ FILE(MAKE_DIRECTORY ${SlicerBaseGUITcl_DIR})
 
 SET(TCLFILES
   pkgIndex.tcl SliceViewerInteractor.tcl
-  SWidget.tcl SliceSWidget.tcl SeedSWidget.tcl
-  PaintSWidget.tcl DrawSWidget.tcl CsysSWidget.tcl
+  SWidget.tcl SliceSWidget.tcl SeedSWidget.tcl CsysSWidget.tcl
   FiducialsSWidget.tcl GridSWidget.tcl CrosshairSWidget.tcl
   RegionsSWidget.tcl Slicer2Import.tcl Loader.tcl MRMLWatcher.tcl
 )

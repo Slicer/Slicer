@@ -111,6 +111,11 @@ if { [itcl::find class SWidget] == "" } {
       set _vtkObjects ""
     }
 
+    # generic useful routine
+    method superclass {} {
+      return [lindex [$this info heritage] 1]
+    }
+
   }
 }
 

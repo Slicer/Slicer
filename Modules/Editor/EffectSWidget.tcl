@@ -32,10 +32,12 @@ if { [itcl::find class EffectSWidget] == "" } {
     destructor {}
 
     public variable scope "all"
+    public variable cursorFile ""
 
     variable _startPosition "0 0 0"
     variable _currentPosition "0 0 0"
     variable _cursorActors ""
+    variable _outputLabel ""
 
     # methods
     method processEvent {} {}
@@ -44,6 +46,10 @@ if { [itcl::find class EffectSWidget] == "" } {
     method createCursor {} {}
     method preview {} {}
     method apply {} {}
+    method postApply {} {}
+    method getInputBackground {} {}
+    method getInputLabel {} {}
+    method getOutputLabel {} {}
   }
 }
 
@@ -113,8 +119,7 @@ itcl::body EffectSWidget::createCursor {} {
   $o(cursorMapper) SetColorLevel 128
 
   set reader [vtkPNGReader New]
-  #TODO: configure icons into build directory...
-  $reader SetFileName c:/tmp/DrawFreePolylineROI.png
+  $reader SetFileName $cursorFile
   $reader Update
   $o(cursorMapper) SetInput [$reader GetOutput]
   $reader Delete
@@ -161,48 +166,118 @@ itcl::body EffectSWidget::preProcessEvent { } {
   return 0
 }
 
-itcl::body EffectSWidget::processEvent { } {
-  # to be overridden by subclass
-  # - should include call to superclass preProcessEvent
-  #   to handle 'friendly' interaction with other SWidgets
+#
+# manage the data to work on:
+# - input is always the current contents of the 
+#   background and label layers
+#   -- can be either the whole volume or just visible portion
+# - output is a temp buffer that gets re-inserted into
+#   the label layer using the postApply method
+# 
 
-  [$this superclass] preProcessEvent
-
+itcl::body EffectSWidget::getInputBackground {} {
+  set logic [[$sliceGUI GetLogic]  GetBackgroundLayer]
+  switch $scope {
+    "all" {
+      set node [$logic GetVolumeNode]
+      return [$node GetImageData]
+    }
+    "visible" {
+      return [$logic GetImageData]
+    }
+  }
+  return ""
 }
 
-itcl::body EffectSWidget::apply {} {
-  # to be overridden by subclass
+itcl::body EffectSWidget::getInputLabel {} {
+  set logic [[$sliceGUI GetLogic]  GetLabelLayer]
+  switch $scope {
+    "all" {
+      set node [$logic GetVolumeNode]
+      return [$node GetImageData]
+    }
+    "visible" {
+      return [$logic GetImageData]
+    }
+  }
+  return ""
 }
+
+itcl::body EffectSWidget::getOutputLabel {} {
+  if { $_outputLabel == "" } {
+    set _outputLabel [vtkImageData New]
+  }
+  return $_outputLabel
+}
+
+itcl::body EffectSWidget::postApply {} {
+  set logic [[$sliceGUI GetLogic]  GetLabelLayer]
+  switch $scope {
+    "all" {
+      set node [$logic GetVolumeNode]
+      $node SetAndObserveImageData $_outputLabel
+    }
+    "visible" {
+      # TODO: need to use vtkImageSlicePaint to insert visible
+      # paint back into the label volume
+      error "not yet supported"
+    }
+  }
+  $_outputLabel Delete
+  set _outputLabel ""
+}
+
+
+#
+# default implementations of methods to be overridden by subclass
+#
 
 itcl::body EffectSWidget::preview {} {
   # to be overridden by subclass
 }
 
-proc EffectSWidget::AddEffect {} {
+
+itcl::body EffectSWidget::processEvent { } {
+  # to be overridden by subclass
+  # - should include call to superclass preProcessEvent
+  #   to handle 'friendly' interaction with other SWidgets
+
+  $this preProcessEvent
+
+  # your event procesing here...
+
+}
+
+
+#
+# helper procs to manage effects
+#
+
+proc EffectSWidget::Add {effect} {
   foreach sw [itcl::find objects -class SliceSWidget] {
     set sliceGUI [$sw cget -sliceGUI]
     if { [info command $sliceGUI] != "" } {
-      EffectSWidget #auto [$sw cget -sliceGUI]
+      $effect #auto $sliceGUI
     }
   }
 }
 
-proc EffectSWidget::RemoveEffect {} {
-  foreach pw [itcl::find objects -class EffectSWidget] {
+proc EffectSWidget::Remove {effect} {
+  foreach pw [itcl::find objects -class $effect] {
     itcl::delete object $pw
   }
 }
 
-proc EffectSWidget::ToggleEffect {} {
-  if { [itcl::find objects -class EffectSWidget] == "" } {
-    EffectSWidget::AddEffect
+proc EffectSWidget::Toggle {effect} {
+  if { [itcl::find objects -class $effect] == "" } {
+    EffectSWidget::Add $effect
   } else {
-    EffectSWidget::RemoveEffect
+    EffectSWidget::Remove $effect
   }
 }
 
-proc EffectSWidget::ConfigureAll { args } {
-  foreach pw [itcl::find objects -class EffectSWidget] {
+proc EffectSWidget::ConfigureAll { effect args } {
+  foreach pw [itcl::find objects -class $effect] {
     eval $pw configure $args
   }
 }

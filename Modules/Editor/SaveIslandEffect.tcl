@@ -54,7 +54,8 @@ itcl::body SaveIslandEffect::destructor {} {
 
 itcl::body SaveIslandEffect::processEvent { } {
 
-  if { [[$this superclass] preProcessEvent] } {
+  if { [$this preProcessEvent] } {
+    # superclass processed the event, so we don't
     return
   }
 
@@ -63,46 +64,14 @@ itcl::body SaveIslandEffect::processEvent { } {
 
   switch $event {
     "LeftButtonPressEvent" {
-      set _actionState "painting"
-      foreach {x y} [$_interactor GetEventPosition] {}
-      if { $paintDropper } {
-        # in Dropper mode, set the paint color to be the first pixel you touch
-        $this queryLayers $x $y
-        set paintColor [$this getPixel $_layers(label,image) \
-          $_layers(label,i) $_layers(label,j) $_layers(label,k)]
-      }
-      $this paintAddPoint $x $y
+      $this apply
       $sliceGUI SetGUICommandAbortFlag 1
       $sliceGUI SetGrabID $this
-      [$_renderWidget GetRenderWindow] HideCursor
-    }
-    "MouseMoveEvent" {
-      if {0} {
-        $o(cursorActor) VisibilityOn
-        switch $_actionState {
-          "painting" {
-            foreach {x y} [$_interactor GetEventPosition] {}
-            $this paintAddPoint $x $y
-          }
-          default {
-          }
-        }
-      }
-    }
-    "LeftButtonReleaseEvent" {
-      $this paintApply
-      [$_renderWidget GetRenderWindow] ShowCursor
-      $_layers(label,node) Modified
-      set _actionState ""
-      $sliceGUI SetGrabID ""
-      set _description ""
     }
     "EnterEvent" {
-      set _description "Ready Save Islands!"
       $o(cursorActor) VisibilityOn
     }
     "LeaveEvent" {
-      set _description ""
       $o(cursorActor) VisibilityOff
     }
   }
@@ -112,35 +81,20 @@ itcl::body SaveIslandEffect::processEvent { } {
 }
 
 itcl::body SaveIslandEffect::apply {} {
-  # to be overridden by subclass
+
+  foreach {x y} [$_interactor GetEventPosition] {}
+  $this queryLayers $x $y
+
+  set conn [vtkImageConnectivity New]
+  $conn SetFunctionToSaveIsland
+  $conn SetSeed $_layers(label,i) $_layers(label,j) $_layers(label,k) 
+  $conn SetInput [$this getInputLabel]
+  $conn SetOutput [$this getOutputLabel]
+  [$this getOutputLabel] Update
+
+  $conn Delete
+
+  $this postApply
 }
 
 
-proc SaveIslandEffect::AddSaveIsland {} {
-  foreach sw [itcl::find objects -class SliceSWidget] {
-    set sliceGUI [$sw cget -sliceGUI]
-    if { [info command $sliceGUI] != "" } {
-      SaveIslandEffect #auto $sliceGUI
-    }
-  }
-}
-
-proc SaveIslandEffect::RemoveSaveIsland {} {
-  foreach pw [itcl::find objects -class SaveIslandEffect] {
-    itcl::delete object $pw
-  }
-}
-
-proc SaveIslandEffect::ToggleSaveIsland {} {
-  if { [itcl::find objects -class SaveIslandEffect] == "" } {
-    SaveIslandEffect::AddSaveIsland
-  } else {
-    SaveIslandEffect::RemoveSaveIsland
-  }
-}
-
-proc SaveIslandEffect::ConfigureAll { args } {
-  foreach pw [itcl::find objects -class SaveIslandEffect] {
-    eval $pw configure $args
-  }
-}
