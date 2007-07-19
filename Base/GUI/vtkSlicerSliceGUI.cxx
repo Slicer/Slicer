@@ -258,6 +258,14 @@ void vtkSlicerSliceGUI::ProcessLogicEvents ( vtkObject *caller,
     vtkSlicerSliceViewer *sliceViewer = this->GetSliceViewer( );
     vtkKWRenderWidget *rw = sliceViewer->GetRenderWidget ();
     sliceViewer->GetImageMapper()->SetInput ( sliceLogic->GetImageData( ) );
+  
+/*
+    sliceLogic->GetPolyDataCollection( );
+    sliceLogic->GetLookupTableCollection( );
+*/
+ 
+    sliceViewer->SetCoordinatedPolyDataAndLookUpTableCollections( sliceLogic->GetPolyDataCollection(), sliceLogic->GetLookupTableCollection()  );
+
     //rw->ResetCamera ( );
     sliceViewer->RequestRender ( );
     }
