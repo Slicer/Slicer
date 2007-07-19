@@ -4,6 +4,7 @@ PROJECT(SlicerBaseLogic)
 # Sources
 
 SET(SlicerBaseLogic_SRCS
+  # Logic classes (data management and calculation)
   vtkSlicerLogic.cxx 
   vtkSlicerApplicationLogic.cxx 
   vtkSlicerModuleLogic.cxx 
@@ -15,7 +16,7 @@ SET(SlicerBaseLogic_SRCS
   vtkSlicerModelHierarchyLogic.cxx
   vtkSlicerFiducialsLogic.cxx
   vtkSlicerColorLogic.cxx
-  # slicer's vtk extensions
+  # slicer's vtk extensions (filters)
   vtkImageSlicePaint.cxx 
   vtkImageSlice.cxx 
   vtkImageAccumulateDiscrete.cxx
@@ -24,6 +25,7 @@ SET(SlicerBaseLogic_SRCS
   vtkSlicerGlyphSource2D.cxx
   vtkSlicerROILogic.cxx
   vtkImageResliceMask.cxx 
+  vtkImageConnectivity.cxx 
 )
 
 # Abstract/pure virtual classes
