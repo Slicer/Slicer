@@ -7,6 +7,7 @@ if {0} { ;# comment
 
   EffectSWidget a superclass for editor effects
 
+  - subclasses of this need to define their specialness
 
 # TODO : 
 
