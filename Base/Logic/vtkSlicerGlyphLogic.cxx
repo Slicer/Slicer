@@ -108,13 +108,20 @@ vtkPolyData* vtkSlicerGlyphLogic::GetPolyData()
 
     vtkPolyData* polyData =  VolumeGlyphDisplayNode->ExecuteGlyphPipeLineAndGetPolyData( this->ImageData );
 
+
     if (polyData!=NULL)
     {
+#if 0
       PolyData->DeepCopy(polyData); 
 
       vtkErrorMacro("Getting the PolyData:");
       PolyData->PrintSelf(std::cout, vtkIndent());
       return PolyData;
+#endif
+
+      this->PolyData = polyData;
+      return (this->PolyData);
+
     } else {
       return NULL;
     }
