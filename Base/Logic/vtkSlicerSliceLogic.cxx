@@ -22,6 +22,7 @@
 #include "vtkSlicerSliceLogic.h"
 
 #include <sstream>
+#include <iostream>
 
 vtkCxxRevisionMacro(vtkSlicerSliceLogic, "$Revision: 1.9.12.1 $");
 vtkStandardNewMacro(vtkSlicerSliceLogic);
@@ -32,11 +33,15 @@ vtkSlicerSliceLogic::vtkSlicerSliceLogic()
   this->BackgroundLayer = NULL;
   this->ForegroundLayer = NULL;
   this->LabelLayer = NULL;
+  this->BackgroundGlyphLayer = NULL;
+  this->ForegroundGlyphLayer = NULL;
   this->SliceNode = NULL;
   this->SliceCompositeNode = NULL;
   this->ForegroundOpacity = 0.5; // Start by blending fg/bg
   this->LabelOpacity = 1.0;
   this->Blend = vtkImageBlend::New();
+  this->PolyDataCollection = vtkPolyDataCollection::New();
+  this->LookupTableCollection = vtkCollection::New();
   this->SetForegroundOpacity(this->ForegroundOpacity);
   this->SetLabelOpacity(this->LabelOpacity);
   this->SliceModelNode = NULL;
@@ -61,11 +66,15 @@ vtkSlicerSliceLogic::~vtkSlicerSliceLogic()
     this->Blend->Delete();
     this->Blend = NULL;
     }
-
+  this->PolyDataCollection->Delete();
+  this->LookupTableCollection->Delete();
+ 
   this->SetBackgroundLayer (NULL);
   this->SetForegroundLayer (NULL);
   this->SetLabelLayer (NULL);
-
+  this->SetBackgroundGlyphLayer (NULL);
+  this->SetForegroundGlyphLayer (NULL);
+ 
   if ( this->SliceCompositeNode ) 
     {
     vtkSetAndObserveMRMLNodeMacro( this->SliceCompositeNode, NULL );
@@ -270,6 +279,7 @@ void vtkSlicerSliceLogic::ProcessMRMLEvents(vtkObject * caller,
 //----------------------------------------------------------------------------
 void vtkSlicerSliceLogic::ProcessLogicEvents()
 {
+
   //
   // if we don't have layers yet, create them 
   //
@@ -289,6 +299,18 @@ void vtkSlicerSliceLogic::ProcessLogicEvents()
     {
     vtkSlicerSliceLayerLogic *layer = vtkSlicerSliceLayerLogic::New();
     this->SetLabelLayer (layer);
+    layer->Delete();
+    }
+  if ( this->BackgroundGlyphLayer == NULL )
+    {
+    vtkSlicerSliceGlyphLogic *layer = vtkSlicerSliceGlyphLogic::New();
+    this->SetBackgroundGlyphLayer (layer);
+    layer->Delete();
+    }
+  if ( this->ForegroundGlyphLayer == NULL )
+    {
+    vtkSlicerSliceGlyphLogic *layer = vtkSlicerSliceGlyphLogic::New();
+    this->SetForegroundGlyphLayer (layer);
     layer->Delete();
     }
 
@@ -461,6 +483,65 @@ void vtkSlicerSliceLogic::SetLabelLayer(vtkSlicerSliceLayerLogic *LabelLayer)
 
   this->Modified();
 }
+//----------------------------------------------------------------------------
+void vtkSlicerSliceLogic::SetBackgroundGlyphLayer(vtkSlicerSliceGlyphLogic *BackgroundGlyphLayer)
+{
+  if (this->BackgroundGlyphLayer)
+    {
+    this->BackgroundGlyphLayer->RemoveObserver( this->LogicCallbackCommand );
+    this->BackgroundGlyphLayer->SetAndObserveMRMLScene( NULL );
+    this->BackgroundGlyphLayer->Delete();
+    }
+  this->BackgroundGlyphLayer = BackgroundGlyphLayer;
+
+  if (this->BackgroundGlyphLayer)
+    {
+    this->BackgroundGlyphLayer->Register(this);
+
+    vtkIntArray *events = vtkIntArray::New();
+    events->InsertNextValue(vtkMRMLScene::NewSceneEvent);
+    events->InsertNextValue(vtkMRMLScene::SceneCloseEvent);
+    events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
+    events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
+    this->BackgroundGlyphLayer->SetAndObserveMRMLSceneEvents ( this->MRMLScene, events );
+    events->Delete();
+
+    this->BackgroundGlyphLayer->SetSliceNode(SliceNode);
+    this->BackgroundGlyphLayer->AddObserver( vtkCommand::ModifiedEvent, this->LogicCallbackCommand );
+    }
+
+  this->Modified();
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerSliceLogic::SetForegroundGlyphLayer(vtkSlicerSliceGlyphLogic *ForegroundGlyphLayer)
+{
+  if (this->ForegroundGlyphLayer)
+    {
+    this->ForegroundGlyphLayer->RemoveObserver( this->LogicCallbackCommand );
+    this->ForegroundGlyphLayer->SetAndObserveMRMLScene( NULL );
+    this->ForegroundGlyphLayer->Delete();
+    }
+  this->ForegroundGlyphLayer = ForegroundGlyphLayer;
+
+  if (this->ForegroundGlyphLayer)
+    {
+    this->ForegroundGlyphLayer->Register(this);
+
+    vtkIntArray *events = vtkIntArray::New();
+    events->InsertNextValue(vtkMRMLScene::NewSceneEvent);
+    events->InsertNextValue(vtkMRMLScene::SceneCloseEvent);
+    events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
+    events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
+    this->ForegroundGlyphLayer->SetAndObserveMRMLSceneEvents ( this->MRMLScene, events );
+    events->Delete();
+
+    this->ForegroundGlyphLayer->SetSliceNode(SliceNode);
+    this->ForegroundGlyphLayer->AddObserver( vtkCommand::ModifiedEvent, this->LogicCallbackCommand );
+    }
+
+  this->Modified();
+}
 
 
 //----------------------------------------------------------------------------
@@ -491,6 +572,7 @@ void vtkSlicerSliceLogic::SetLabelOpacity(double LabelOpacity)
 void vtkSlicerSliceLogic::UpdatePipeline()
 {
 
+
   int modified = 0;
 
   if ( this->SliceCompositeNode )
@@ -518,6 +600,15 @@ void vtkSlicerSliceLogic::UpdatePipeline()
         modified = 1;
         }
       }
+    if (this->BackgroundGlyphLayer)
+      {
+      if ( bgnode && (bgnode->GetDisplayNode()) && (bgnode->GetDisplayNode()->IsA("vtkMRMLVolumeGlyphDisplayNode")) && (this->BackgroundGlyphLayer->GetVolumeNode() != bgnode) ) 
+        {
+        vtkErrorMacro("Background node is a glyph DisplayNode:"<<bgnode->GetDisplayNode());
+        this->BackgroundGlyphLayer->SetVolumeNode (bgnode);
+        modified = 1;
+        }
+      }
 
     // Foreground
     id = this->SliceCompositeNode->GetForegroundVolumeID();
@@ -536,6 +627,17 @@ void vtkSlicerSliceLogic::UpdatePipeline()
         }
       }
 
+    if (this->ForegroundGlyphLayer)
+      {
+
+      if (  fgnode && (fgnode->GetDisplayNode()) && (fgnode->GetDisplayNode()->IsA("vtkMRMLVolumeGlyphDisplayNode")) && (this->ForegroundGlyphLayer->GetVolumeNode() != fgnode) ) 
+        {
+  std::cout<<"Foreground node is a glyph\n";
+  std::cout.flush();
+        this->ForegroundGlyphLayer->SetVolumeNode (bgnode);
+        modified = 1;
+        }
+      }
     // Label
     id = this->SliceCompositeNode->GetLabelVolumeID();
     vtkMRMLVolumeNode *lbnode = NULL;
@@ -552,6 +654,8 @@ void vtkSlicerSliceLogic::UpdatePipeline()
         modified = 1;
         }
       }
+
+
 
     // Now update the image blend with the background and foreground and label
     // -- layer 0 opacity is ignored, but since not all inputs may be non-null, 
@@ -604,6 +708,36 @@ void vtkSlicerSliceLogic::UpdatePipeline()
     tempBlend->Delete();
 
 
+
+
+   //Glyphs
+
+    PolyDataCollection->RemoveAllItems();
+    LookupTableCollection->RemoveAllItems();
+
+
+    if ( this->BackgroundGlyphLayer && this->BackgroundGlyphLayer->GetPolyData() )
+    {
+      if (this->BackgroundGlyphLayer->GetPolyData())
+        PolyDataCollection->AddItem(this->BackgroundGlyphLayer->GetPolyData());
+      if (this->BackgroundGlyphLayer->GetLookupTable()) 
+  LookupTableCollection->AddItem(this->BackgroundGlyphLayer->GetLookupTable());
+    }
+
+
+    if ( this->ForegroundGlyphLayer && this->ForegroundGlyphLayer->GetPolyData() )
+    {
+      if (this->ForegroundGlyphLayer->GetPolyData())
+        PolyDataCollection->AddItem(this->ForegroundGlyphLayer->GetPolyData());
+      if (this->ForegroundGlyphLayer->GetLookupTable())
+        LookupTableCollection->AddItem(this->ForegroundGlyphLayer->GetLookupTable());
+    }
+
+
+
+
+    //Models
+
     if ( this->SliceModelNode && 
           this->SliceModelNode->GetDisplayNode() &&
             this->SliceNode ) 
@@ -620,11 +754,15 @@ void vtkSlicerSliceLogic::UpdatePipeline()
 
     this->UpdateImageData();
 
+
+
     if ( modified )
       {
       this->Modified();
       }
     }
+
+
 }
 
 //----------------------------------------------------------------------------
@@ -649,6 +787,10 @@ void vtkSlicerSliceLogic::PrintSelf(ostream& os, vtkIndent indent)
     (this->Blend ? "not null" : "(none)") << "\n";
   os << indent << "ForegroundOpacity: " << this->ForegroundOpacity << "\n";
   os << indent << "LabelOpacity: " << this->LabelOpacity << "\n";
+  os << indent << "BackgroundGlyphLayer: " <<
+    (this->BackgroundGlyphLayer ? "not null" : "(none)") << "\n";
+  os << indent << "ForegroundGlyphLayer: " <<
+    (this->ForegroundGlyphLayer ? "not null" : "(none)") << "\n"; 
 
 }
 
