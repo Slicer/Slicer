@@ -541,7 +541,7 @@ void vtkSlicerSliceGlyphLogic::DiffusionTensorVolumeNodeUpdateTransforms()
 //----------------------------------------------------------------------------
 vtkPolyData* vtkSlicerSliceGlyphLogic::GetPolyData()
 {
-  this->SlicerGlyphLogic->GetPolyData();
+  return (this->SlicerGlyphLogic->GetPolyData());
 /*
   if ( this->VolumeDisplayNode && this->VolumeDisplayNode->IsA("vtkMRMLVolumeGlyphDisplayNode") )
   {
@@ -571,7 +571,7 @@ void vtkSlicerSliceGlyphLogic::PrintSelf(ostream& os, vtkIndent indent)
   if (this->VolumeDisplayNode)
     {
     this->VolumeDisplayNode->PrintSelf(os, nextIndent);
-    }
+  }
  os << indent << "Reslice:\n";
   if (this->Reslice)
     {
