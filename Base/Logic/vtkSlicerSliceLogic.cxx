@@ -380,6 +380,15 @@ void vtkSlicerSliceLogic::SetSliceNode(vtkMRMLSliceNode *sliceNode)
     this->LabelLayer->SetSliceNode(sliceNode);
     }
 
+  if (this->BackgroundGlyphLayer)
+    {
+    this->BackgroundGlyphLayer->SetSliceNode(sliceNode);
+    }
+  if (this->ForegroundGlyphLayer)
+    {
+    this->ForegroundGlyphLayer->SetSliceNode(sliceNode);
+    }
+
   this->Modified();
 
 }
