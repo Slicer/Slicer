@@ -42,6 +42,7 @@
 #include "vtkMRMLSliceNode.h"
 
 #include "vtkImageResliceMask.h"
+#include "vtkImageReslice.h"
 #include "vtkImageSlice.h"
 #include "vtkImageMapToColors.h"
 
@@ -211,7 +212,7 @@ protected:
   // VTK class instances that implement the DWI logic operations
   vtkImageExtractComponents *DWIExtractComponent;
 
-  vtkImageResliceMask *DTIReslice;
+  vtkImageReslice *DTIReslice;
   vtkDiffusionTensorMathematics *DTIMathematics;
 
   // TODO: make this a vtkAbstractTransform for non-linear
