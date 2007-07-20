@@ -52,6 +52,10 @@ Version:   $Revision: 1.2 $
 
 #include "vtkSlicerModelsGUI.h"
 
+// for pick events
+#include "vtkSlicerViewerWidget.h"
+#include "vtkSlicerViewerInteractorStyle.h"
+
 //------------------------------------------------------------------------------
 vtkQdecModuleGUI* vtkQdecModuleGUI::New()
 {
@@ -83,6 +87,10 @@ vtkQdecModuleGUI::vtkQdecModuleGUI()
   this->SmoothnessLabel = NULL;
   this->SmoothnessMenu = NULL;
   this->Logic = NULL;
+
+  // for picking
+  this->ViewerWidget = NULL;
+  this->InteractorStyle = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -136,6 +144,7 @@ vtkQdecModuleGUI::~vtkQdecModuleGUI()
 
    if ( this->ApplyButton )
     {
+    this->ApplyButton->SetParent(NULL);
     this->ApplyButton->Delete();
     this->ApplyButton = NULL;
     }
@@ -188,6 +197,52 @@ vtkQdecModuleGUI::~vtkQdecModuleGUI()
     this->SmoothnessMenu->Delete();
     this->SmoothnessMenu = NULL;
     }
+   
+   this->SetViewerWidget(NULL);   
+   this->SetInteractorStyle(NULL);
+}
+
+//---------------------------------------------------------------------------
+void vtkQdecModuleGUI::CreateModuleEventBindings ( )
+{
+  vtkDebugMacro("CreateModuleEventBindings");
+}
+
+//---------------------------------------------------------------------------
+void vtkQdecModuleGUI::ReleaseModuleEventBindings ( )
+{
+  vtkDebugMacro("ReleaseModuleEventBindings");
+}
+
+
+//----------------------------------------------------------------------------
+void vtkQdecModuleGUI::Enter()
+{
+  vtkDebugMacro("Enter...");
+  if ( this->Built == false )
+    {
+    this->BuildGUI();
+    this->AddGUIObservers();
+    }
+  this->CreateModuleEventBindings();
+  this->UpdateGUI();
+}
+
+//----------------------------------------------------------------------------
+void vtkQdecModuleGUI::Exit()
+{
+  vtkDebugMacro("Exit: removing observers on picking");
+  this->ReleaseModuleEventBindings();
+}
+
+//---------------------------------------------------------------------------
+void vtkQdecModuleGUI::TearDownGUI ( )
+{
+  this->Exit();
+  if ( this->Built )
+    {
+    this->RemoveGUIObservers();
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -239,6 +294,7 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
                                            unsigned long event,
                                            void *callData ) 
 {
+  
   vtkKWPushButton *b = vtkKWPushButton::SafeDownCast ( caller );
 
   if (b == this->ApplyButton && event == vtkKWPushButton::InvokedEvent ) 
@@ -379,7 +435,7 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
     else
       {
       filebrowse->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
-      vtkDebugMacro("ProcessGUIEvents: was able to load file " << fileName);
+      vtkDebugMacro("vtkQdecModuleGUI:ProcessGUIEvents: was able to load file " << fileName);
       if (this->GetDebug())
         {
         this->GetLogic()->QDECProject->DumpDataTable ( stdout );
@@ -387,6 +443,62 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
       this->UpdateGUI();
       
       }
+    return;
+    }
+
+  // check for pick events
+  if (event == vtkSlicerViewerInteractorStyle::PickEvent &&
+      vtkSlicerViewerInteractorStyle::SafeDownCast(caller) != NULL &&
+      callData != NULL)
+    {
+    this->DebugOn();
+    vtkDebugMacro("vtkQdecModuleGUI:ProcessGUIEvents: Pick event!\n");
+    // do the pick
+    int x = ((int *)callData)[0];
+    int y = ((int *)callData)[1];
+    if (this->GetViewerWidget()->Pick(x,y) != 0)
+      {
+      // check for a valid vertex point
+      vtkIdType pointID = this->GetViewerWidget()->GetPickedPointID();
+      if (pointID != -1)
+        {
+        // get the node name
+        const char *nodeName = this->GetViewerWidget()->GetPickedNodeName();
+        if (strcmp(nodeName, "") != 0)
+          {
+          vtkDebugMacro("vtkQdecModuleGUI:ProcessGUIEvents: got picked node " << nodeName << " with point id = " << pointID);
+          vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
+          if (app)
+            {
+            std::string plotReturn = app->Script("vtkFreeSurferReadersPlotPlotData %d %d", pointID, 0);
+            vtkDebugMacro("Plot call return value = " << plotReturn.c_str());
+            // swallow the pick
+            if (this->GUICallbackCommand != NULL)
+              {
+              vtkDebugMacro("vtkQdecModuleGUI:ProcessGUIEvents: swallowing the pick");
+              this->GUICallbackCommand->SetAbortFlag(1);
+              }
+            else
+              {
+              vtkErrorMacro("Unable to get the gui call back command that calls process widget events, event = " << event << " is not swallowed here");
+              }
+            }
+          }
+        else
+          {
+          vtkDebugMacro("vtkQdecModuleGUI:ProcessGUIEvents: invalid node name");
+          }
+        }
+      else
+        {
+        vtkDebugMacro("vtkQdecModuleGUI:ProcessGUIEvents: invalid picked point");
+        }
+      }
+    else
+      {
+      vtkDebugMacro("vtkQdecModuleGUI:ProcessGUIEvents: invalid pick");
+      }
+    this->DebugOff();
     return;
     }
 }
@@ -712,7 +824,7 @@ void vtkQdecModuleGUI::BuildGUI ( )
   this->ApplyButton->SetParent( designFrame->GetFrame() );
   this->ApplyButton->Create();
   this->ApplyButton->SetText("Run GLM Fit");
-  this->ApplyButton->SetWidth ( 8 );
+  this->ApplyButton->SetWidth ( 12 );
   app->Script("pack %s -side top -anchor e -padx 20 -pady 10 -in %s", 
               this->ApplyButton->GetWidgetName(),
               designFrame->GetFrame()->GetWidgetName());
@@ -721,6 +833,16 @@ void vtkQdecModuleGUI::BuildGUI ( )
   measuresFrame->Delete();
   designFrame->Delete();
   subjectsFrame->Delete();
+
+
+   // for plotting
+  const char *tclScript = "Libs/Qdec/vtkFreeSurferReaders.tcl";
+  if (app->LoadScript(tclScript) == 0)
+    {
+    vtkErrorMacro("vtkQdecModuleGUI::BuildGUI: unable to load in tcl script " << tclScript);
+    }
+
+  this->Built = true;
 }
 
 //---------------------------------------------------------------------------
@@ -742,5 +864,32 @@ void vtkQdecModuleGUI::UpdateElement(int row, int col, char * str)
   else
     {
     vtkErrorMacro ("Invalid row " << row << " or column " << col <<  ", valid columns are 0-" << this->MultiColumnList->GetWidget()->GetNumberOfColumns() << "\n");
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkQdecModuleGUI::SetViewerWidget ( vtkSlicerViewerWidget *viewerWidget )
+{
+  this->ViewerWidget = viewerWidget;
+}
+
+//----------------------------------------------------------------------------
+void vtkQdecModuleGUI::SetInteractorStyle( vtkSlicerViewerInteractorStyle *interactorStyle )
+{
+  // note: currently the GUICallbackCommand calls ProcessGUIEvents
+  // remove observers
+  if (this->InteractorStyle != NULL &&
+      this->InteractorStyle->HasObserver(vtkSlicerViewerInteractorStyle::PickEvent, this->GUICallbackCommand) == 1)
+    {
+    this->InteractorStyle->RemoveObservers(vtkSlicerViewerInteractorStyle::PickEvent, (vtkCommand *)this->GUICallbackCommand);
+    }
+  
+  this->InteractorStyle = interactorStyle;
+
+  // add observers
+  if (this->InteractorStyle)
+    {
+    vtkDebugMacro("vtkQdecModuleGUI::SetInteractorStyle: Adding observer on interactor style");
+    this->InteractorStyle->AddObserver(vtkSlicerViewerInteractorStyle::PickEvent, (vtkCommand *)this->GUICallbackCommand);
     }
 }
