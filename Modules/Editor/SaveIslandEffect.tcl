@@ -85,13 +85,17 @@ itcl::body SaveIslandEffect::apply {} {
   foreach {x y} [$_interactor GetEventPosition] {}
   $this queryLayers $x $y
 
+  if { [$this getInputLabel] == "" || [$this getOutputLabel] == "" } {
+    $this flashCursor 3
+    return
+  }
+
   set conn [vtkImageConnectivity New]
   $conn SetFunctionToSaveIsland
   $conn SetSeed $_layers(label,i) $_layers(label,j) $_layers(label,k) 
   $conn SetInput [$this getInputLabel]
   $conn SetOutput [$this getOutputLabel]
   [$this getOutputLabel] Update
-
   $conn Delete
 
   $this postApply

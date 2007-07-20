@@ -33,7 +33,7 @@ if { [itcl::find class EffectSWidget] == "" } {
     destructor {}
 
     public variable scope "all"
-    public variable cursorFile ""
+    public variable cursorFile "c:/tmp/buttons.png"
 
     variable _startPosition "0 0 0"
     variable _currentPosition "0 0 0"
@@ -51,6 +51,7 @@ if { [itcl::find class EffectSWidget] == "" } {
     method getInputBackground {} {}
     method getInputLabel {} {}
     method getOutputLabel {} {}
+    method flashCursor { {repeat 1} {delay 100} } {}
   }
 }
 
@@ -141,6 +142,21 @@ itcl::body EffectSWidget::positionCursor {} {
   }
 }
 
+itcl::body EffectSWidget::flashCursor { {repeat 1} {delay 100} } {
+
+  for {set i 0} {$i < $repeat} {incr i} {
+    set oldVisibility [$o(cursorActor) GetVisibility]
+    $o(cursorActor) SetVisibility [expr !$oldVisibility]
+    [$sliceGUI GetSliceViewer] RequestRender
+    update
+    after $delay
+    $o(cursorActor) SetVisibility $oldVisibility
+    [$sliceGUI GetSliceViewer] RequestRender
+    update
+  }
+}
+
+
 #
 # returns 1 if the event is 'swallowed' by
 # the superclass, otherwise returns 0 and the
@@ -181,7 +197,9 @@ itcl::body EffectSWidget::getInputBackground {} {
   switch $scope {
     "all" {
       set node [$logic GetVolumeNode]
-      return [$node GetImageData]
+      if { $node != "" } {
+        return [$node GetImageData]
+      }
     }
     "visible" {
       return [$logic GetImageData]
@@ -195,7 +213,9 @@ itcl::body EffectSWidget::getInputLabel {} {
   switch $scope {
     "all" {
       set node [$logic GetVolumeNode]
-      return [$node GetImageData]
+      if { $node != "" } {
+        return [$node GetImageData]
+      }
     }
     "visible" {
       return [$logic GetImageData]
@@ -245,7 +265,24 @@ itcl::body EffectSWidget::processEvent { } {
 
   $this preProcessEvent
 
-  # your event procesing here...
+  # your event processing can replace the dummy code below...
+
+  switch $event {
+    "LeftButtonPressEvent" {
+      $this apply
+      $sliceGUI SetGUICommandAbortFlag 1
+      $sliceGUI SetGrabID $this
+    }
+    "EnterEvent" {
+      $o(cursorActor) VisibilityOn
+    }
+    "LeaveEvent" {
+      $o(cursorActor) VisibilityOff
+    }
+  }
+
+  $this positionCursor
+  [$sliceGUI GetSliceViewer] RequestRender
 
 }
 
