@@ -22,6 +22,7 @@ FILE(MAKE_DIRECTORY ${Editor_DIR})
 SET(TCLFILES
   pkgIndex.tcl
   Editor.tcl EditorNode.tcl EditorLogic.tcl EditorGUI.tcl
+  EditBox.tcl
   PaintSWidget.tcl DrawSWidget.tcl
   EffectSWidget.tcl
   SaveIslandEffect.tcl
@@ -59,6 +60,8 @@ ImplicitEllipse.png ImplicitEllipseDisabled.png ImplicitEllipseSelected.png
 ImplicitRectangle.png ImplicitRectangleDisabled.png ImplicitRectangleSelected.png
 InterpolateLabels.png InterpolateLabelsDisabled.png InterpolateLabelsSelected.png
 LabelOpacity.png LabelOpacityDisabled.png LabelOpacitySelected.png
+LabelVisibilityOn.png LabelVisibilityOnDisabled.png LabelVisibilityOnSelected.png
+LabelVisibilityOff.png LabelVisibilityOffDisabled.png LabelVisibilityOffSelected.png
 MakeModel.png MakeModelDisabled.png MakeModelSelected.png
 NextFiducial.png NextFiducialDisabled.png NextFiducialSelected.png
 PaintLabel.png PaintLabelDisabled.png PaintLabelSelected.png

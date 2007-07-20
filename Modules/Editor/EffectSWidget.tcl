@@ -33,7 +33,7 @@ if { [itcl::find class EffectSWidget] == "" } {
     destructor {}
 
     public variable scope "all"
-    public variable cursorFile "c:/tmp/buttons.png"
+    public variable cursorFile "c:/pieper/bwh/slicer3/debug/slicer3/Modules/Editor/ImageData/ConnectedComponents.png"
 
     variable _startPosition "0 0 0"
     variable _currentPosition "0 0 0"
@@ -51,7 +51,7 @@ if { [itcl::find class EffectSWidget] == "" } {
     method getInputBackground {} {}
     method getInputLabel {} {}
     method getOutputLabel {} {}
-    method flashCursor { {repeat 1} {delay 100} } {}
+    method flashCursor { {repeat 1} {delay 50} } {}
   }
 }
 
@@ -142,7 +142,7 @@ itcl::body EffectSWidget::positionCursor {} {
   }
 }
 
-itcl::body EffectSWidget::flashCursor { {repeat 1} {delay 100} } {
+itcl::body EffectSWidget::flashCursor { {repeat 1} {delay 50} } {
 
   for {set i 0} {$i < $repeat} {incr i} {
     set oldVisibility [$o(cursorActor) GetVisibility]
@@ -266,6 +266,9 @@ itcl::body EffectSWidget::processEvent { } {
   $this preProcessEvent
 
   # your event processing can replace the dummy code below...
+
+  set event [$sliceGUI GetCurrentGUIEvent] 
+  set _currentPosition [$this xyToRAS [$_interactor GetEventPosition]]
 
   switch $event {
     "LeftButtonPressEvent" {

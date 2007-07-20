@@ -33,7 +33,9 @@
 #include "vtkSlicerModuleCollapsibleFrame.h"
 #include "vtkKWRenderWidget.h"
 #include "vtkKWLoadSaveDialog.h"
+#include "vtkKWIcon.h"
 
+#include "vtkImageData.h"
 #include "vtkRenderWindow.h"
 #include "vtkRenderWindowInteractor.h"
 #include "vtkSlicerViewerWidget.h"
@@ -235,6 +237,17 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // Raise module's panel.
     void SelectModule ( const char *moduleName );
 
+    // Description:
+    // Helper routine to set images for icons
+    //
+    void SetIconImage (vtkKWIcon *icon, vtkImageData *image)
+      {
+      int *dims = image->GetDimensions();
+      int nComps = image->GetNumberOfScalarComponents();
+      icon->SetImage ( static_cast <const unsigned char *> (image->GetScalarPointer()),
+                       dims[0], dims[1], nComps,
+                       dims[0] * dims[1] * nComps, vtkKWIcon::ImageOptionFlipVertical);
+      };
 
 protected:
     vtkSlicerApplicationGUI ( );
