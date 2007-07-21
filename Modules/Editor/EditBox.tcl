@@ -23,18 +23,17 @@ namespace eval EditBox {
   # utility to bring up the current window or create a new one
   # - optional path is added to dialog
   #
-  proc ShowDialog { {path ""} } {
+  proc ShowDialog {} {
 
     set editBoxes [itcl::find objects -class EditBox]
     if { $editBoxes != "" } {
       set editBox [lindex $editBoxes 0]
-      array set o [$editBox objects]
-      raise [$o(toplevel) GetWidgetName]
+      $editBox centerOnPointer
+      $editBox show
     } else {
       set editBox [EditBox #auto]
-    }
-    if { $path != "" } {
-      $editBox add $path
+      $editBox configure -mode "popup"
+      $editBox create
     }
   }
 
@@ -57,24 +56,28 @@ if { [itcl::find class EditBox] == "" } {
 
     # configure options
     public variable frame ""  ;# the frame to build in (if "", build in dialog)
-    public variable mode "dialog"  ;# or "menu" which goes away after click
+    public variable mode "dialog"  ;# or "menu" or "popup" which goes away after click
 
     variable _vtkObjects ""
 
     variable o ;# array of the objects for this widget, for convenient access
 
-    variable _observerRecords ;# list of the observers so we can clean up
+    variable _observerRecords "" ;# list of the observers so we can clean up
     variable _effects ;# array of effects (icons plus classes to invoke)
 
     # methods
     method create {} {}
+    method createButtonRow {effects} {}
     method findEffects { {path ""} } {}
+    method centerOnPointer { {xy ""} } {}
     method show {} {}
     method hide {} {}
+    method selectEffect {effect} {}
     method processEvents {caller} {}
     method errorDialog {errorText} {}
 
     method objects {} {return [array get o]}
+    method effects {} {return [array get _effects]}
 
     # make a new instance of a class and add it to the list for cleanup
     method vtkNew {class} {
@@ -120,18 +123,6 @@ itcl::body EditBox::destructor {} {
 
 itcl::configbody EditBox::mode {
 
-  switch $mode {
-    "menu" {
-      # remove decorations from the toplevel
-      wm overrideredirect [$o(toplevel) GetWidgetName] 1
-    }
-    "dialog" {
-      wm overrideredirect [$o(toplevel) GetWidgetName] 0
-    }
-    default {
-      error "unknown mode $mode"
-    }
-  }
 }
 
 
@@ -158,11 +149,59 @@ itcl::body EditBox::findEffects { {path ""} } {
   foreach effect $_effects(list) {
     set _effects($effect,class) EffectSWidget
     set _effects($effect,icon) [vtkNew vtkKWIcon]
+    set _effects($effect,imageData) [vtkImageData New]
     $reader SetFileName $iconDir/$effect.png
     $reader Update
+    $_effects($effect,imageData) DeepCopy [$reader GetOutput]
     $::slicer3::ApplicationGUI SetIconImage $_effects($effect,icon) [$reader GetOutput]
   }
   $reader Delete
+}
+
+#
+# create a row of the edit box given a list of 
+# effect names (items in _effects(list)
+#
+itcl::body EditBox::createButtonRow {effects} {
+
+  set name [vtkNew vtkKWFrame]
+  set o($name,buttonFrame) $name
+  $o($name,buttonFrame) SetParent $o(toplevel)
+  $o($name,buttonFrame) Create
+  pack [$o($name,buttonFrame) GetWidgetName] -side top -anchor nw -fill x
+
+  set widgetList ""
+
+  foreach effect $effects {
+    set o($effect,button) [vtkNew vtkKWPushButton]
+    set pushButton $o($effect,button)
+    $pushButton SetParent $o($name,buttonFrame)
+    $pushButton Create
+    $pushButton SetText $effect
+    $pushButton SetImageToIcon $_effects($effect,icon)
+    $pushButton SetBalloonHelpString $effect
+    [$pushButton GetBalloonHelpManager] SetDelay 300
+
+    #
+    # TODO: would prefer to use the events for consistency, but apparently
+    # there is no way to observe the InvokedEvent from wrapped languages
+    #set tag [$pushButton AddObserver ModifiedEvent "$this processEvents $pushButton"]
+    #lappend _observerRecords [list $pushButton $tag]
+    #$pushButton SetCommand $pushButton Modified
+    ## AND there is no way to pass a script to the command
+    #SetCommand(vtkObject *object, const char *method);
+    #
+    # - THIS IS REALLY ANNOYING!
+    #
+
+    # instead I do this, which is elegant, but breaks the KWWidgets abstraction (a bit)
+    [$pushButton GetWidgetName] configure -command  "$this selectEffect $effect"
+
+    $pushButton SetBalloonHelpString $effect
+
+    lappend widgetList [$pushButton GetWidgetName]
+  }
+  eval pack $widgetList -side left -anchor w -padx 4 -pady 2
 }
 
 # create the edit box
@@ -184,34 +223,103 @@ itcl::body EditBox::create { } {
 
   # delete this instance when the window is closed
   wm protocol [$o(toplevel) GetWidgetName] \
-    WM_DELETE_WINDOW "itcl::delete object $this"
+    WM_DELETE_WINDOW "$this hide"
+  bind [$o(toplevel) GetWidgetName] <Key-space> "$this hide"
 
   #
   # the buttons
   #
 
-  set o(buttonFrame) [vtkNew vtkKWFrame]
-  $o(buttonFrame) SetParent $o(toplevel)
-  $o(buttonFrame) Create
-  pack [$o(buttonFrame) GetWidgetName] -side top -anchor nw -fill x
-
-  set widgetList ""
-  foreach effect {PaintLabel ThresholdPaintLabel FreehandDrawLabel ThresholdBucket} {
-    set o(effect) [vtkNew vtkKWPushButton]
-    $o(effect) SetParent $o(buttonFrame)
-    $o(effect) Create
-    $o(effect) SetText $effect
-    $o(effect) SetImageToIcon $_effects($effect,icon)
-    $o(effect) SetBalloonHelpString $effect
-    set tag [$o(effect) AddObserver ModifiedEvent "$this processEvents $o(effect)"]
-    lappend _observerRecords [list $o(effect) $tag]
-    $o(effect) SetCommand $o(effect) Modified
-    lappend widgetList [$o(effect) GetWidgetName]
+  $this createButtonRow {SnapToGridOn ChooseColor SlurpColor}
+  $this createButtonRow {ChangeLabel ToggleLabelOutline LabelVisibilityOn}
+  $this createButtonRow {PaintLabel ThresholdPaintLabel FreehandDrawLabel ThresholdBucket}
+  $this createButtonRow {EraseLabel ImplicitEllipse ImplicitRectangle ImplicitCube}
+  $this createButtonRow {IdentifyIslands ChangeIslands DeleteIslands SaveIslands}
+  $this createButtonRow {ErodeLabel DilateLabel Threshold ChangeLabel}
+  $this createButtonRow {InterpolateLabels MakeModel Watershed ConnectedComponents}
+  $this createButtonRow {PreviousFiducial NextFiducial FiducialVisibilityOn DeleteFiducials}
+  $this createButtonRow {GoToEditorModule PinOpen}
+ 
+  if { $mode == "popup" } {
+  }
+  switch $mode {
+    "popup" {
+      # remove decorations from the toplevel and position at cursor
+      wm overrideredirect [$o(toplevel) GetWidgetName] 1
+      $o(toplevel) SetDisplayPositionToPointer
+    }
+    "menu" {
+      # remove decorations from the toplevel
+      wm overrideredirect [$o(toplevel) GetWidgetName] 1
+    }
+    "dialog" {
+      wm overrideredirect [$o(toplevel) GetWidgetName] 0
+    }
+    default {
+      error "unknown mode $mode"
+    }
   }
 
-  eval pack $widgetList -side left -anchor w -padx 4 -pady 2
-
   $o(toplevel) Display
+}
+
+itcl::body EditBox::centerOnPointer { {xy ""} } {
+
+  # find the pointer (or used passed coord)
+  if { $xy != "" } {
+    foreach {x y} {$xy} {}
+  } else {
+    foreach {x y} [winfo pointerxy .] {}
+  }
+
+  # find the width, height, location of the toplevel (t)
+  set t [$o(toplevel) GetWidgetName]
+  set geom [wm geometry $t]
+  set whxy [split $geom "+x"]
+  foreach {tw th tx ty} $whxy {}
+  set tw2 [expr $tw / 2]
+  set th2 [expr $th / 2]
+
+  # center the toplevel around the cursor
+  set newx [expr $x - $tw2]
+  set newy [expr $y - $th2]
+
+  # try to keep the window on the screen
+  if { $newx < 0 } { set newx 50 }
+  if { $newy < 0 } { set newy 50 }
+  set sw [winfo screenwidth .]
+  set sh [winfo screenheight .]
+  if { [expr $newx + $tw] > $sw } { set newx [expr $sw - $tw - 50] }
+  if { [expr $newy + $th] > $sh } { set newy [expr $sh - $th - 50] }
+
+  wm geometry $t +$newx+$newy
+}
+
+itcl::body EditBox::show {} {
+  wm deiconify [$o(toplevel) GetWidgetName]
+  raise [$o(toplevel) GetWidgetName]
+  focus [$o(toplevel) GetWidgetName]
+}
+
+itcl::body EditBox::hide {} {
+  wm withdraw [$o(toplevel) GetWidgetName]
+}
+
+#
+# manage the editor effects
+#
+itcl::body EditBox::selectEffect { effect } {
+
+  EffectSWidget::RemoveAll
+  EffectSWidget::Add $_effects($effect,class)
+  EffectSWidget::SetCursorAll $_effects($effect,class) $_effects($effect,imageData)
+
+  switch $mode {
+    "popup" -
+    "menu" {
+      $this hide
+    }
+  }
 }
 
 
@@ -222,34 +330,20 @@ itcl::body EditBox::create { } {
 #
 itcl::body EditBox::processEvents { caller } {
 
+  puts "caller is $caller"
+
   foreach effect $_effects(list) {
     if { $caller == $o(effect) } {
       EffectSWidget::Add $_effects($effect,class)
+      return
     }
   }
 
-  if { $caller == $o(addDir) } {
-    # TODO: switch to kwwidgets directory browser
-    $this add [$this chooseDirectory]
-    return
-  }
 
-  if { $caller == $o(addFile) } {
-    # TODO: switch to kwwidgets directory browser
-    $this add [$this getOpenFile]
-    return
-  }
-
-  if { $caller == $o(apply) } {
-    $this apply
-    after idle "itcl::delete object $this"
-    return
-  }
-
-  if { $caller == $o(cancel) } {
-    after idle "itcl::delete object $this"
-    return
-  }
+#  if { $caller == $o(cancel) } {
+#    after idle "itcl::delete object $this"
+#    return
+#  }
   
   puts "unknown event from $caller"
 }
@@ -257,4 +351,5 @@ itcl::body EditBox::processEvents { caller } {
 itcl::body EditBox::errorDialog { errorText } {
   puts $errorText
 }
+
 

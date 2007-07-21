@@ -33,7 +33,6 @@ if { [itcl::find class EffectSWidget] == "" } {
     destructor {}
 
     public variable scope "all"
-    public variable cursorFile "c:/pieper/bwh/slicer3/debug/slicer3/Modules/Editor/ImageData/ConnectedComponents.png"
 
     variable _startPosition "0 0 0"
     variable _currentPosition "0 0 0"
@@ -45,6 +44,7 @@ if { [itcl::find class EffectSWidget] == "" } {
     method preProcessEvent {} {}
     method positionCursor {} {}
     method createCursor {} {}
+    method setCursor {imageData} { $o(cursorMapper) SetInput $imageData }
     method preview {} {}
     method apply {} {}
     method postApply {} {}
@@ -114,22 +114,22 @@ itcl::configbody EffectSWidget::scope {
 
 itcl::body EffectSWidget::createCursor {} {
 
+  set o(cursorDummyImage) [vtkNew vtkImageData]
+  $o(cursorDummyImage) AllocateScalars
   set o(cursorMapper) [vtkNew vtkImageMapper]
+  $o(cursorMapper) SetInput $o(cursorDummyImage)
   set o(cursorActor) [vtkNew vtkActor2D]
   $o(cursorActor) SetMapper $o(cursorMapper)
   $o(cursorMapper) SetColorWindow 255
   $o(cursorMapper) SetColorLevel 128
 
-  set reader [vtkPNGReader New]
-  $reader SetFileName $cursorFile
-  $reader Update
-  $o(cursorMapper) SetInput [$reader GetOutput]
-  $reader Delete
   lappend _cursorActors $o(cursorActor)
 
   foreach actor $_cursorActors {
     [$_renderWidget GetRenderer] AddActor2D $o(cursorActor)
   }
+
+  $o(cursorActor) VisibilityOff
 }
 
 itcl::body EffectSWidget::positionCursor {} {
@@ -175,7 +175,7 @@ itcl::body EffectSWidget::preProcessEvent { } {
   if { ($grabID != "") && ($grabID != $this) } {
     # some other widget wants these events
     # -- we can position wrt the current slice node
-    $this positionActors
+    $this positionCursor
     [$sliceGUI GetSliceViewer] RequestRender
     return 1
   }
@@ -303,6 +303,12 @@ proc EffectSWidget::Add {effect} {
   }
 }
 
+proc EffectSWidget::RemoveAll {} {
+  foreach ew [itcl::find objects -isa EffectSWidget] {
+    itcl::delete object $ew
+  }
+}
+
 proc EffectSWidget::Remove {effect} {
   foreach pw [itcl::find objects -class $effect] {
     itcl::delete object $pw
@@ -320,5 +326,12 @@ proc EffectSWidget::Toggle {effect} {
 proc EffectSWidget::ConfigureAll { effect args } {
   foreach pw [itcl::find objects -class $effect] {
     eval $pw configure $args
+  }
+}
+
+proc EffectSWidget::SetCursorAll { effect imageData } {
+
+  foreach ew [itcl::find objects -class $effect] {
+    $ew setCursor $imageData
   }
 }

@@ -743,9 +743,9 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
                 this->GetMainSlicerWindow()->GetFileMenuInsertPosition());
 
             // don't need the 'close command'
-            this->GetMainSlicerWindow()->GetFileMenu()->DeleteItem (
-                                                                    this->GetMainSlicerWindow()->GetFileMenu()->GetIndexOfItem(
-                                                                                                                               this->GetMainSlicerWindow()->GetFileCloseMenuLabel()));
+            this->GetMainSlicerWindow()->GetFileMenu()->DeleteItem ( 
+                this->GetMainSlicerWindow()->GetFileMenu()->GetIndexOfItem(
+                    this->GetMainSlicerWindow()->GetFileCloseMenuLabel()));
             //
             // Edit Menu
             //
@@ -758,11 +758,18 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
             i = this->MainSlicerWindow->GetEditMenu()->AddCommand ( "Redo", NULL, "$::slicer3::MRMLScene Redo" );
             this->MainSlicerWindow->GetEditMenu()->SetItemAccelerator ( i, "Ctrl+Y");
             this->MainSlicerWindow->GetEditMenu()->SetBindingForItemAccelerator ( i, this->MainSlicerWindow);
+            
+            this->GetMainSlicerWindow()->GetEditMenu()->InsertSeparator (this->GetMainSlicerWindow()->GetEditMenu()->GetNumberOfItems());
+            i = this->MainSlicerWindow->GetEditMenu()->AddCommand ( "Edit Box", NULL, "::EditBox::ShowDialog" );
+            this->MainSlicerWindow->GetEditMenu()->SetItemAccelerator ( i, "space");
+            this->MainSlicerWindow->GetEditMenu()->SetBindingForItemAccelerator ( i, this->MainSlicerWindow);
+
 #ifdef USE_PYTHON
             i = this->MainSlicerWindow->GetWindowMenu()->AddCommand ( "Python console", NULL, "$::slicer3::ApplicationGUI PythonConsole" );
             this->MainSlicerWindow->GetWindowMenu()->SetItemAccelerator ( i, "Ctrl+P");
             this->MainSlicerWindow->GetWindowMenu()->SetBindingForItemAccelerator ( i, this->MainSlicerWindow);
 #endif
+
             // this->MainSlicerWindow->GetEditMenu()->SetItemAccelerator ( i, "Ctrl+Y");
             // this->MainSlicerWindow->GetEditMenu()->SetBindingForItemAccelerator ( i, this->MainSlicerWindow);
 
