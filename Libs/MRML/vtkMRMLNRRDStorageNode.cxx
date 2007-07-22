@@ -406,6 +406,7 @@ int vtkMRMLNRRDStorageNode::WriteData(vtkMRMLNode *refNode)
   vtkNRRDWriter *writer = vtkNRRDWriter::New();
   writer->SetFileName(fullName.c_str());
   writer->SetInput(volNode->GetImageData() );
+  writer->SetUseCompression(this->GetUseCompression());
 
   // set volume attributes
   writer->SetIJKToRASMatrix(ijkToRas);

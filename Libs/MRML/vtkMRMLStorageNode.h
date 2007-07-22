@@ -64,6 +64,11 @@ class VTK_MRML_EXPORT vtkMRMLStorageNode : public vtkMRMLNode
   vtkGetStringMacro(FileName);
 
   // Description:
+  // Use compression on write
+  vtkGetMacro(UseCompression, int);
+  vtkSetMacro(UseCompression, int);
+
+  // Description:
   // Propagate Progress Event generated in ReadData
   virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
 
@@ -74,6 +79,7 @@ protected:
   void operator=(const vtkMRMLStorageNode&);
 
   char *FileName;
+  int UseCompression;
 
 };
 

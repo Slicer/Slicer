@@ -6,6 +6,9 @@
 #include "vtkSlicerVolumesLogic.h"
 #include "vtkSlicerApplication.h"
 #include "vtkMRMLVolumeNode.h"
+#include "vtkMRMLStorageNode.h"
+#include "vtkMRMLVolumeArchetypeStorageNode.h"
+#include "vtkMRMLNRRDStorageNode.h"
 #include "vtkMRMLVolumeHeaderlessStorageNode.h"
 
 #include "vtkSlicerModuleCollapsibleFrame.h"
@@ -63,6 +66,7 @@ vtkSlicerVolumesGUI::vtkSlicerVolumesGUI ( )
     this->NameEntry = NULL;
     this->CenterImageMenu = NULL;
     this->LabelMapCheckButton = NULL;
+    this->UseCompressionCheckButton = NULL;
     this->ApplyButton=NULL;
 
     this->VolumeFileHeaderWidget = NULL;
@@ -121,6 +125,11 @@ vtkSlicerVolumesGUI::~vtkSlicerVolumesGUI ( )
     {
     this->LabelMapCheckButton->SetParent(NULL );
     this->LabelMapCheckButton->Delete ( );
+    }
+  if (this->UseCompressionCheckButton)
+    {
+    this->UseCompressionCheckButton->SetParent(NULL );
+    this->UseCompressionCheckButton->Delete ( );
     }
   if (this->ApplyButton)
     {
@@ -267,6 +276,10 @@ void vtkSlicerVolumesGUI::RemoveGUIObservers ( )
       {
       this->ApplyButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
       }
+    if (this->UseCompressionCheckButton)
+      {
+      this->UseCompressionCheckButton->RemoveObservers ( vtkKWCheckButton::SelectedStateChangedEvent,  (vtkCommand *)this->GUICallbackCommand );
+      }
 }
 
 
@@ -280,6 +293,7 @@ void vtkSlicerVolumesGUI::AddGUIObservers ( )
     this->LoadVolumeButton->GetWidget()->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->SaveVolumeButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ApplyButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->UseCompressionCheckButton->AddObserver ( vtkKWCheckButton::SelectedStateChangedEvent,  (vtkCommand *)this->GUICallbackCommand );
 }
 
 
@@ -288,7 +302,45 @@ void vtkSlicerVolumesGUI::AddGUIObservers ( )
 void vtkSlicerVolumesGUI::ProcessGUIEvents ( vtkObject *caller,
                                              unsigned long event, void *callData )
 {
-
+  if (event == vtkKWCheckButton::SelectedStateChangedEvent && 
+      this->UseCompressionCheckButton == vtkKWCheckButton::SafeDownCast(caller))
+    {
+    vtkMRMLVolumeNode *refNode = 
+        vtkMRMLVolumeNode::SafeDownCast(this->VolumeSelectorWidget->GetSelected());
+    if (refNode != NULL)
+      {
+      if ( refNode->IsA("vtkMRMLScalarVolumeNode") ) 
+        {
+        // set UI widgets for Archetype storage node
+        vtkMRMLVolumeArchetypeStorageNode *snode = vtkMRMLVolumeArchetypeStorageNode::SafeDownCast(
+          refNode->GetStorageNode());
+        if (snode == NULL) 
+          {
+          snode = vtkMRMLVolumeArchetypeStorageNode::New();
+          snode->SetScene(this->GetMRMLScene());
+          this->GetMRMLScene()->AddNode(snode);
+          refNode->SetStorageNodeID(snode->GetID());
+          snode->Delete();
+          }
+        snode->SetUseCompression(this->UseCompressionCheckButton->GetSelectedState());
+        }
+      else 
+        {
+         // set UI widgets for NRRD storage node
+        vtkMRMLNRRDStorageNode *snode = vtkMRMLNRRDStorageNode::SafeDownCast(
+          refNode->GetStorageNode());
+        if (snode == NULL) 
+          {
+          snode = vtkMRMLNRRDStorageNode::New();
+          snode->SetScene(this->GetMRMLScene());
+          this->GetMRMLScene()->AddNode(snode);
+          refNode->SetStorageNodeID(snode->GetID());
+          snode->Delete();
+          }
+        snode->SetUseCompression(this->UseCompressionCheckButton->GetSelectedState());
+        }
+      }
+    }
   if (this->VolumeFileHeaderWidget == vtkSlicerVolumeFileHeaderWidget::SafeDownCast(caller) && 
       event == vtkSlicerVolumeFileHeaderWidget::FileHeaderOKEvent )
     {
@@ -516,6 +568,37 @@ void vtkSlicerVolumesGUI::UpdateFramesFromMRML()
   vtkKWFrame *frame = NULL;
   if (refNode != NULL)
     {
+    if ( refNode->IsA("vtkMRMLScalarVolumeNode") ) 
+      {
+      // set UI widgets for Archetype storage node
+      vtkMRMLVolumeArchetypeStorageNode *snode = vtkMRMLVolumeArchetypeStorageNode::SafeDownCast(
+        refNode->GetStorageNode());
+      if (snode == NULL) 
+        {
+        snode = vtkMRMLVolumeArchetypeStorageNode::New();
+        snode->SetScene(this->GetMRMLScene());
+        this->GetMRMLScene()->AddNode(snode);
+        refNode->SetStorageNodeID(snode->GetID());
+        snode->Delete();
+        }
+      this->UseCompressionCheckButton->SetSelectedState(snode->GetUseCompression());
+      }
+    else 
+      {
+       // set UI widgets for NRRD storage node
+      vtkMRMLNRRDStorageNode *snode = vtkMRMLNRRDStorageNode::SafeDownCast(
+        refNode->GetStorageNode());
+      if (snode == NULL) 
+        {
+        snode = vtkMRMLNRRDStorageNode::New();
+        snode->SetScene(this->GetMRMLScene());
+        this->GetMRMLScene()->AddNode(snode);
+        refNode->SetStorageNodeID(snode->GetID());
+        snode->Delete();
+        }
+      this->UseCompressionCheckButton->SetSelectedState(snode->GetUseCompression());
+      }
+    
     if ( refNode->IsA("vtkMRMLScalarVolumeNode") ) 
       {
       if (this->VolumeDisplayWidget != scalarVDW)
@@ -824,6 +907,16 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
     this->SaveFrame->CollapseFrame ( );
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   this->SaveFrame->GetWidgetName(), page->GetWidgetName());
+
+
+    this->UseCompressionCheckButton = vtkKWCheckButton::New();
+    this->UseCompressionCheckButton->SetParent(this->SaveFrame->GetFrame());
+    this->UseCompressionCheckButton->Create();
+    this->UseCompressionCheckButton->SelectedStateOn();
+    this->UseCompressionCheckButton->SetText("Use Compression");
+    this->Script(
+      "pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
+      this->UseCompressionCheckButton->GetWidgetName());
 
     this->SaveVolumeButton = vtkKWLoadSaveButton::New ( );
     this->SaveVolumeButton->SetParent ( this->SaveFrame->GetFrame() );

@@ -75,11 +75,11 @@ void vtkMRMLVolumeArchetypeStorageNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
   vtkIndent indent(nIndent);
-
+  {
   std::stringstream ss;
   ss << this->CenterImage;
   of << indent << "centerImage=\"" << ss.str() << "\" ";
-
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -119,7 +119,6 @@ void vtkMRMLVolumeArchetypeStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 {  
   vtkMRMLStorageNode::PrintSelf(os,indent);
   os << indent << "CenterImage:   " << this->CenterImage << "\n";
-
 }
 
 //----------------------------------------------------------------------------
@@ -292,6 +291,7 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteData(vtkMRMLNode *refNode)
   writer->SetFileName(fullName.c_str());
   
   writer->SetInput( volNode->GetImageData() );
+  writer->SetUseCompression(this->GetUseCompression());
 
   // set volume attributes
   vtkMatrix4x4* mat = vtkMatrix4x4::New();

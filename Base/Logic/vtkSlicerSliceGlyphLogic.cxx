@@ -113,20 +113,43 @@ vtkSlicerSliceGlyphLogic::~vtkSlicerSliceGlyphLogic()
   
   this->SetSliceNode(NULL);
   this->SetVolumeNode(NULL);
-  this->XYToIJKTransform->Delete();
+  if (this->XYToIJKTransform)
+    {
+    this->XYToIJKTransform->Delete();
+    }
 
   this->Reslice->SetInput( NULL );
 
-  this->Reslice->Delete();
-  this->DTIReslice->Delete();
-  this->DWIExtractComponent->Delete();
+  if (this->Reslice)
+    {
+    this->Reslice->Delete();
+    }
+  if ( this->DTIReslice)
+    {
+    this->DTIReslice->Delete();
+    }
+  if (this->DWIExtractComponent)
+    {
+    this->DWIExtractComponent->Delete();
+    }
 #ifdef USE_TEEM
-  this->DTIMathematics->Delete();
+  if (this->DTIMathematics)
+    {
+    this->DTIMathematics->Delete();
+    }
 #endif
-  this->LookupTable->Delete();
-
-  this->AssignAttributeTensorsFromScalars->Delete();
-  this->AssignAttributeScalarsFromTensors->Delete();
+  if (this->LookupTable)
+    {
+    this->LookupTable->Delete();
+    }
+  if (this->AssignAttributeTensorsFromScalars)
+    {
+    this->AssignAttributeTensorsFromScalars->Delete();
+    }
+  if (this->AssignAttributeScalarsFromTensors)
+    {
+    this->AssignAttributeScalarsFromTensors->Delete();
+    }
 }
 
 //----------------------------------------------------------------------------

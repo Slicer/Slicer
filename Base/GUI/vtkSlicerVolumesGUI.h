@@ -117,6 +117,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerVolumesGUI : public vtkSlicerModuleGUI
     vtkKWEntryWithLabel  *NameEntry;
     vtkKWMenuButtonWithLabel *CenterImageMenu;
     vtkKWCheckButton *LabelMapCheckButton;
+    vtkKWCheckButton *UseCompressionCheckButton;
     vtkKWPushButton *ApplyButton;
 
     vtkSlicerModuleCollapsibleFrame *HelpFrame;

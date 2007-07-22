@@ -71,7 +71,6 @@ class VTK_MRML_EXPORT vtkMRMLVolumeArchetypeStorageNode : public vtkMRMLStorageN
   vtkGetMacro(CenterImage, int);
   vtkSetMacro(CenterImage, int);
 
-
 protected:
 
 
