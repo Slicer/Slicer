@@ -1025,7 +1025,7 @@ proc vtkFreeSurferReadersPlotPlotData { iID dID} {
                 # if it's a different slope for each class, calc it, otherwise use the already calcd slope
                 if {$vtkFreeSurferReaders(gGDF,$dID,gd2mtx) == "dods"} {
                     if {$slopeArray($thisClass,N) > 0} {
-                        set slope [expr (($slopeArray(thisClass,N) * $slopeArray($thisClass,sumxy)) - ($slopeArray($thisClass,sumx) * $slopeArray($thisClass,sumy))) / ( ($slopeArray($thisClass,N) * $slopeArray($thisClass,sumxx)) - ($slopeArray($thisClass,sumx)*$slopeArray($thisClass,sumx)))] 
+                        set slope [expr (($slopeArray($thisClass,N) * $slopeArray($thisClass,sumxy)) - ($slopeArray($thisClass,sumx) * $slopeArray($thisClass,sumy))) / ( ($slopeArray($thisClass,N) * $slopeArray($thisClass,sumxx)) - ($slopeArray($thisClass,sumx)*$slopeArray($thisClass,sumx)))] 
                         if {$::vtkFreeSurferReaders(verbose)} {
                             puts "Got slope $slope for class $thisClass"
                         }
