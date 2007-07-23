@@ -64,12 +64,27 @@ class VTK_QDECMODULE_EXPORT vtkQdecModuleLogic : public vtkSlicerModuleLogic
   // Load the plottable results data
   int LoadPlotData(const char *fileName);
 
+  // Description:
+  // get/set the name of the tcl script that holds the plotting commands
+  vtkGetStringMacro(PlotTclScript);
+  vtkSetStringMacro(PlotTclScript);
+
+  // Description:
+  // have we loaded the plot tcl script?
+  vtkGetMacro(TclScriptLoaded, int);
+  vtkSetMacro(TclScriptLoaded, int);
+
 protected:
   vtkQdecModuleLogic();
   ~vtkQdecModuleLogic();
   vtkQdecModuleLogic(const vtkQdecModuleLogic&);
   void operator=(const vtkQdecModuleLogic&);
 
+  // Description:
+  // the name of the tcl script with the plotting commands
+  char * PlotTclScript;
+
+  int TclScriptLoaded;
 };
 
 #endif

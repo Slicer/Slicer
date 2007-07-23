@@ -48,7 +48,23 @@ vtkQdecModuleLogic* vtkQdecModuleLogic::New()
 vtkQdecModuleLogic::vtkQdecModuleLogic()
 {
     this->QDECProject = new QdecProject();
+
+    this->PlotTclScript = NULL;
+    vtksys_stl::string slicerHome;
+    if (!vtksys::SystemTools::GetEnv("SLICER_HOME", slicerHome))
+      {
+      this->PlotTclScript = "../Libs/Qdec/vtkFreeSurferReaders.tcl";
+      vtkDebugMacro("Can't find SLICER_HOME env var, using plot tcl script path = " << this->GetPlotTclScript());
+      }
+    else
+      {
+      std::string scriptPath = slicerHome + "/Libs/Qdec/vtkFreeSurferReaders.tcl";
+      this->SetPlotTclScript(const_cast <char *> (scriptPath.c_str()));
+      vtkDebugMacro("Found SLICER_HOME env var, using plot tcl script path = " << this->GetPlotTclScript());
+      }
+    this->TclScriptLoaded = 0;
 }
+
 
 //----------------------------------------------------------------------------
 vtkQdecModuleLogic::~vtkQdecModuleLogic()
@@ -58,6 +74,12 @@ vtkQdecModuleLogic::~vtkQdecModuleLogic()
     delete this->QDECProject;
     this->QDECProject = NULL;
     }
+  if (this->PlotTclScript)
+    {
+    delete [] this->PlotTclScript;
+    this->PlotTclScript = NULL;
+    }
+
 }
 
 //----------------------------------------------------------------------------
@@ -317,14 +339,21 @@ int vtkQdecModuleLogic::LoadResults(vtkSlicerModelsLogic *modelsLogic, vtkKWAppl
   // don't load the data file, it's loaded in the tcl code and associated with the model there
   gdfReader->Delete();
 
-  app->LoadScript("../Libs/Qdec/vtkFreeSurferReaders.tcl");
+  if (!this->GetTclScriptLoaded())
+    {
+      vtkWarningMacro("Loading tcl script: " << this->GetPlotTclScript());
+      app->LoadScript(this->GetPlotTclScript());
+      this->SetTclScriptLoaded(1);
+    }
   // set the plot file name
-  app->Script("set ::vtkFreeSurferReaders(PlotFileName) %s", dataFileName.c_str());
-  app->Script("vtkFreeSurferReadersPlotApply %s", modelNode->GetID());
+  std::string scriptReturn;
+  scriptReturn = app->Script("set ::vtkFreeSurferReaders(PlotFileName) %s", fnFSGD.c_str());
+  vtkDebugMacro("Set the plot file name to " << fnFSGD.c_str() << ", return value from tcl script call = " << scriptReturn.c_str());
+  scriptReturn = app->Script("vtkFreeSurferReadersPlotApply %s", modelNode->GetID());
+  vtkDebugMacro("Called PlotApply with model id " << modelNode->GetID() << ", return value from tcl script call = " << scriptReturn.c_str());
 
   return 0;
 }
-
 
 //----------------------------------------------------------------------------
 int vtkQdecModuleLogic::LoadPlotData(const char *fileName)
