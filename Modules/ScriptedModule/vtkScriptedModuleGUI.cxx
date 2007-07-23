@@ -47,6 +47,12 @@ vtkScriptedModuleGUI::vtkScriptedModuleGUI()
 vtkScriptedModuleGUI::~vtkScriptedModuleGUI()
 {
 
+  if (this->GetApplication())
+    {
+    this->GetApplication()->Script("%sDestructor %s", 
+      this->GetModuleName(), this->GetTclName());
+    }
+
   this->RemoveMRMLNodeObservers();
   this->RemoveLogicObservers();
 

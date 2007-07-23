@@ -7,6 +7,11 @@ proc EditorConstructor {this} {
 }
 
 proc EditorDestructor {this} {
+
+  set editBoxes [itcl::find objects -class EditBox]
+  foreach e $editBoxes {
+    itcl::delete object $e
+  }
 }
 
 

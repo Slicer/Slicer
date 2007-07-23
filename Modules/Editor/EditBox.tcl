@@ -36,7 +36,6 @@ namespace eval EditBox {
       $editBox create
     }
   }
-
 }
 
 
@@ -72,7 +71,9 @@ if { [itcl::find class EditBox] == "" } {
     method centerOnPointer { {xy ""} } {}
     method show {} {}
     method hide {} {}
+    method setMode {mode} {}
     method selectEffect {effect} {}
+    method togglePin {} {}
     method processEvents {caller} {}
     method errorDialog {errorText} {}
 
@@ -122,7 +123,32 @@ itcl::body EditBox::destructor {} {
 }
 
 itcl::configbody EditBox::mode {
+  $this setMode $mode
+}
 
+# break this out from the configbody so it can be called
+# directly from create (but then can be changed later)
+itcl::body EditBox::setMode {mode} {
+
+  if { [info exists o(toplevel)] } {
+    switch $mode {
+      "popup" {
+        # remove decorations from the toplevel and position at cursor
+        wm overrideredirect [$o(toplevel) GetWidgetName] 1
+        $o(toplevel) SetDisplayPositionToPointer
+      }
+      "menu" {
+        # remove decorations from the toplevel
+        wm overrideredirect [$o(toplevel) GetWidgetName] 1
+      }
+      "dialog" {
+        wm overrideredirect [$o(toplevel) GetWidgetName] 0
+      }
+      default {
+        error "unknown mode $mode"
+      }
+    }
+  }
 }
 
 
@@ -142,6 +168,7 @@ itcl::body EditBox::findEffects { {path ""} } {
     LabelVisibilityOff LabelVisibilityOn MakeModel NextFiducial PaintLabel
     PinOpen PreviousFiducial SaveIslands SlurpColor SnapToGridOff SnapToGridOn
     ThresholdBucket ThresholdPaintLabel Threshold ToggleLabelOutline Watershed
+    DefaultTool
   }
 
   set iconDir $::env(SLICER_HOME)/lib/Slicer3/Modules/Packages/Editor/ImageData
@@ -149,7 +176,7 @@ itcl::body EditBox::findEffects { {path ""} } {
   foreach effect $_effects(list) {
     set _effects($effect,class) EffectSWidget
     set _effects($effect,icon) [vtkNew vtkKWIcon]
-    set _effects($effect,imageData) [vtkImageData New]
+    set _effects($effect,imageData) [vtkNew vtkImageData]
     $reader SetFileName $iconDir/$effect.png
     $reader Update
     $_effects($effect,imageData) DeepCopy [$reader GetOutput]
@@ -230,7 +257,7 @@ itcl::body EditBox::create { } {
   # the buttons
   #
 
-  $this createButtonRow {SnapToGridOn ChooseColor SlurpColor}
+  $this createButtonRow {DefaultTool SnapToGridOn ChooseColor SlurpColor}
   $this createButtonRow {ChangeLabel ToggleLabelOutline LabelVisibilityOn}
   $this createButtonRow {PaintLabel ThresholdPaintLabel FreehandDrawLabel ThresholdBucket}
   $this createButtonRow {EraseLabel ImplicitEllipse ImplicitRectangle ImplicitCube}
@@ -240,25 +267,7 @@ itcl::body EditBox::create { } {
   $this createButtonRow {PreviousFiducial NextFiducial FiducialVisibilityOn DeleteFiducials}
   $this createButtonRow {GoToEditorModule PinOpen}
  
-  if { $mode == "popup" } {
-  }
-  switch $mode {
-    "popup" {
-      # remove decorations from the toplevel and position at cursor
-      wm overrideredirect [$o(toplevel) GetWidgetName] 1
-      $o(toplevel) SetDisplayPositionToPointer
-    }
-    "menu" {
-      # remove decorations from the toplevel
-      wm overrideredirect [$o(toplevel) GetWidgetName] 1
-    }
-    "dialog" {
-      wm overrideredirect [$o(toplevel) GetWidgetName] 0
-    }
-    default {
-      error "unknown mode $mode"
-    }
-  }
+  $this setMode $mode
 
   $o(toplevel) Display
 }
@@ -311,18 +320,45 @@ itcl::body EditBox::hide {} {
 itcl::body EditBox::selectEffect { effect } {
 
   EffectSWidget::RemoveAll
-  EffectSWidget::Add $_effects($effect,class)
-  EffectSWidget::SetCursorAll $_effects($effect,class) $_effects($effect,imageData)
+
+  switch $effect {
+    "DefaultTool" {
+      # do nothing - this will reset cursor mode
+    }
+    "PinOpen" {
+      $this togglePin
+    }
+    default {
+      EffectSWidget::Add $_effects($effect,class)
+      EffectSWidget::SetCursorAll $_effects($effect,class) $_effects($effect,imageData)
+    }
+  }
 
   switch $mode {
     "popup" -
     "menu" {
       $this hide
     }
+    "dialog" {
+    }
   }
 }
 
 
+
+itcl::body EditBox::togglePin {} {
+  switch $mode {
+    "popup" -
+    "menu" {
+      $this configure -mode "dialog"
+      after idle raise [$o(toplevel) GetWidgetName]
+    }
+    "dialog" {
+      $this configure -mode "popup"
+    }
+  }
+}
+  
 
 #
 # handle gui events

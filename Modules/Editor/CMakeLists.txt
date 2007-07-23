@@ -78,6 +78,7 @@ ToggleLabelOutline.png ToggleLabelOutlineDisabled.png ToggleLabelOutlineSelected
 Watershed.png WatershedDisabled.png WatershedSelected.png
 ThresholdPaintLabel.png ThresholdPaintLabelDisabled.png ThresholdPaintLabelSelected.png
 ThresholdBucket.png ThresholdBucketDisabled.png ThresholdBucketSelected.png
+DefaultTool.png DefaultToolDisabled.png DefaultToolSelected.png
 )
 
 FOREACH(imagefile ${IMAGEFILES})
