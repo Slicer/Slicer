@@ -143,6 +143,7 @@ void vtkSlicerScalarVolumeDisplayWidget::ProcessWidgetEvents ( vtkObject *caller
           displayNode = vtkMRMLVolumeDisplayNode::New ();
           displayNode->SetScene(this->MRMLScene);
           this->MRMLScene->AddNode (displayNode);
+          displayNode->Delete();
           //displayNode->SetDefaultColorMap();
           if (this->GetApplication() &&
               vtkSlicerApplication::SafeDownCast(this->GetApplication()) &&
@@ -176,7 +177,6 @@ void vtkSlicerScalarVolumeDisplayWidget::ProcessWidgetEvents ( vtkObject *caller
             {
             vtkDebugMacro("Unable to get application or color gui");
             }
-          displayNode->Delete();
           }
 
       volumeNode->SetAndObserveDisplayNodeID( displayNode->GetID() );

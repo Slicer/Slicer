@@ -171,6 +171,7 @@ void vtkSlicerDiffusionWeightedVolumeDisplayWidget::ProcessWidgetEvents ( vtkObj
           displayNode = vtkMRMLDiffusionWeightedVolumeDisplayNode::New ();
           displayNode->SetScene(this->MRMLScene);
           this->MRMLScene->AddNode (displayNode);
+          displayNode->Delete();
           //displayNode->SetDefaultColorMap();
           if (this->GetApplication() &&
               vtkSlicerApplication::SafeDownCast(this->GetApplication()) &&
@@ -192,7 +193,6 @@ void vtkSlicerDiffusionWeightedVolumeDisplayWidget::ProcessWidgetEvents ( vtkObj
             {
             vtkDebugMacro("Unable to get application or color gui");
             }
-          displayNode->Delete();
           }
       volumeNode->SetAndObserveDisplayNodeID( displayNode->GetID() );
       }

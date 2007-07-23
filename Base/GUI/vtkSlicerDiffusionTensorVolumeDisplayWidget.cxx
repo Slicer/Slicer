@@ -234,6 +234,7 @@ void vtkSlicerDiffusionTensorVolumeDisplayWidget::ProcessWidgetEvents ( vtkObjec
           displayNode = vtkMRMLDiffusionTensorVolumeDisplayNode::New ();
           displayNode->SetScene(this->MRMLScene);
           this->MRMLScene->AddNode (displayNode);
+          displayNode->Delete();
           vtkMRMLDiffusionTensorDisplayPropertiesNode *propNode = vtkMRMLDiffusionTensorDisplayPropertiesNode::New();
           propNode->SetScene(this->MRMLScene);
           this->MRMLScene->AddNode (propNode);
@@ -260,7 +261,6 @@ void vtkSlicerDiffusionTensorVolumeDisplayWidget::ProcessWidgetEvents ( vtkObjec
             {
             vtkDebugMacro("Unable to get application or color gui");
             }
-          displayNode->Delete();
           }
       volumeNode->SetAndObserveDisplayNodeID( displayNode->GetID() );
       }
@@ -627,7 +627,7 @@ void vtkSlicerDiffusionTensorVolumeDisplayWidget::CreateWidget ( )
         {
         propNode->Delete();
         }
-       if (displayNode != this->GetVolumeDisplayNode() )
+       if (displayNode != vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(this->GetVolumeDisplayNode()) )
         {
         displayNode->Delete();
         }

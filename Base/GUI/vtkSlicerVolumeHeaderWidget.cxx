@@ -149,19 +149,16 @@ void vtkSlicerVolumeHeaderWidget::SetVolumeNode ( vtkMRMLVolumeNode *volumeNode 
   if (this->VolumeSelectorWidget)
     {
     this->VolumeSelectorWidget->SetSelected(volumeNode); 
-    // observe node modified events are not being observed
-    vtkIntArray  *events = vtkIntArray::New();
-    events->InsertNextValue( vtkCommand::ModifiedEvent);
-    events->InsertNextValue( vtkMRMLVolumeNode::DisplayModifiedEvent);
-    events->InsertNextValue( vtkMRMLVolumeNode::ImageDataModifiedEvent);
+    }
+  // observe node modified events are not being observed
+  vtkIntArray  *events = vtkIntArray::New();
+  events->InsertNextValue( vtkCommand::ModifiedEvent);
+  events->InsertNextValue( vtkMRMLVolumeNode::DisplayModifiedEvent);
+  events->InsertNextValue( vtkMRMLVolumeNode::ImageDataModifiedEvent);
 
-    vtkSetAndObserveMRMLNodeEventsMacro ( this->VolumeNode, volumeNode, events );
-    events->Delete();
-    }
-  else
-    {
-    this->VolumeNode=volumeNode;
-    }
+  vtkSetAndObserveMRMLNodeEventsMacro ( this->VolumeNode, volumeNode, events );
+  events->Delete();
+    
   // 
   // Set the member variables and do a first process
   //
