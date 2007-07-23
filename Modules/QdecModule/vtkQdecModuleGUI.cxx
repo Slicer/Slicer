@@ -835,11 +835,19 @@ void vtkQdecModuleGUI::BuildGUI ( )
   subjectsFrame->Delete();
 
 
-   // for plotting
-  const char *tclScript = "Libs/Qdec/vtkFreeSurferReaders.tcl";
-  if (app->LoadScript(tclScript) == 0)
+  // for plotting
+  if (!this->GetLogic()->GetTclScriptLoaded())
     {
-    vtkErrorMacro("vtkQdecModuleGUI::BuildGUI: unable to load in tcl script " << tclScript);
+      const char *tclScript = this->GetLogic()->GetPlotTclScript(); //"Libs/Qdec/vtkFreeSurferReaders.tcl";
+      vtkWarningMacro("Loading: " << tclScript);
+      if (app->LoadScript(tclScript) == 0)
+        {
+        vtkErrorMacro("vtkQdecModuleGUI::BuildGUI: unable to load in tcl script " << tclScript);
+        }
+      else
+        {
+        this->GetLogic()->SetTclScriptLoaded(1);
+        }
     }
 
   this->Built = true;
