@@ -150,6 +150,10 @@ vtkSlicerSliceGlyphLogic::~vtkSlicerSliceGlyphLogic()
     {
     this->AssignAttributeScalarsFromTensors->Delete();
     }
+  if (this->SlicerGlyphLogic)
+    {
+    this->SlicerGlyphLogic->Delete();
+    }
 }
 
 //----------------------------------------------------------------------------
