@@ -110,6 +110,8 @@ itcl::body EditBox::constructor { {frame ""} } {
 
 itcl::body EditBox::destructor {} {
 
+  EffectSWidget::RemoveAll
+
   foreach record $_observerRecords {
     foreach {obj tag} $record {
       if { [info command $obj] != "" } {
@@ -160,21 +162,37 @@ itcl::body EditBox::findEffects { {path ""} } {
 
   array unset _effects
 
-  set _effects(list) {
-    ChangeIslands ChangeLabel ChooseColor ConnectedComponents DeleteFiducials
-    DeleteIslands DilateLabel EraseLabel ErodeLabel FiducialVisibilityOff
-    FiducialVisibilityOn FreehandDrawLabel GoToEditorModule IdentifyIslands
-    ImplicitCube ImplicitEllipse ImplicitRectangle InterpolateLabels LabelOpacity
-    LabelVisibilityOff LabelVisibilityOn MakeModel NextFiducial PaintLabel
-    PinOpen PreviousFiducial SaveIslands SlurpColor SnapToGridOff SnapToGridOn
-    ThresholdBucket ThresholdPaintLabel Threshold ToggleLabelOutline Watershed
+  # effects that change the mouse cursor
+  set _effects(list,mouseTools) {
+    ChangeIslands ChangeLabel ChooseColor 
+    ImplicitCube ImplicitEllipse ImplicitRectangle 
+    FreehandDrawLabel EraseLabel DeleteIslands ConnectedComponents 
+    ThresholdBucket ThresholdPaintLabel SaveIslands SlurpColor PaintLabel
     DefaultTool
   }
+  # effects that operate from the menu
+  set _effects(list,operations) {
+    ErodeLabel DilateLabel DeleteFiducials
+    FiducialVisibilityOff
+    FiducialVisibilityOn GoToEditorModule 
+    IdentifyIslands
+    LabelVisibilityOff LabelVisibilityOn MakeModel NextFiducial 
+    SnapToGridOff SnapToGridOn
+    Threshold PinOpen PreviousFiducial  InterpolateLabels LabelOpacity
+    ToggleLabelOutline Watershed
+  }
+
+  # combined list of all effects
+  set _effects(list) [concat $_effects(list,mouseTools) $_effects(list,operations)]
 
   set iconDir $::env(SLICER_HOME)/lib/Slicer3/Modules/Packages/Editor/ImageData
   set reader [vtkPNGReader New]
   foreach effect $_effects(list) {
-    set _effects($effect,class) EffectSWidget
+    if { [info command ${effect}Effect] != "" } {
+      set _effects($effect,class) ${effect}SWidget
+    } else {
+      set _effects($effect,class) EffectSWidget
+    }
     set _effects($effect,icon) [vtkNew vtkKWIcon]
     set _effects($effect,imageData) [vtkNew vtkImageData]
     $reader SetFileName $iconDir/$effect.png
@@ -321,6 +339,12 @@ itcl::body EditBox::selectEffect { effect } {
 
   EffectSWidget::RemoveAll
 
+  # mouse tool changes cursor, and dismisses popup/menu
+  set mouseTool 0
+  if { [lsearch $_effects(list,mouseTools) $effect] != -1 } {
+    set mouseTool 1
+  }
+
   switch $effect {
     "DefaultTool" {
       # do nothing - this will reset cursor mode
@@ -328,16 +352,29 @@ itcl::body EditBox::selectEffect { effect } {
     "PinOpen" {
       $this togglePin
     }
+    "GoToEditorModule" {
+      set toolbar [$::slicer3::ApplicationGUI GetApplicationToolbar]
+      [$toolbar GetModuleChooseGUI] SelectModule "Editor"
+    }
+    "MakeModel" {
+      #TODO: invoke the real modelmaker.  Figure out which label map to use (each slice
+      # could have a different label layer -- for now use the red one...
+      EditorTestQuickModel
+    }
     default {
-      EffectSWidget::Add $_effects($effect,class)
-      EffectSWidget::SetCursorAll $_effects($effect,class) $_effects($effect,imageData)
+      if { $mouseTool } {
+        EffectSWidget::Add $_effects($effect,class)
+        EffectSWidget::SetCursorAll $_effects($effect,class) $_effects($effect,imageData)
+      }
     }
   }
 
   switch $mode {
     "popup" -
     "menu" {
-      $this hide
+      if { $mouseTool } {
+        $this hide
+      }
     }
     "dialog" {
     }

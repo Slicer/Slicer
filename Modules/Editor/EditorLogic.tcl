@@ -18,8 +18,6 @@ proc EditorAddQuickModel { sliceLogic } {
   }
   set imageData [$volumeNode GetImageData]
 
-  puts [$imageData Print]
-
   #
   # make a poly data in RAS space
   #
@@ -45,8 +43,6 @@ proc EditorAddQuickModel { sliceLogic } {
   $modelNode SetAndObserveDisplayNodeID [$modelDisplayNode GetID]
   $::slicer3::MRMLScene AddNode $modelNode
   $modelNode SetAndObservePolyData [$tpdf GetOutput]
-
-  puts [[$tpdf GetOutput] Print]
 
   #
   # clean up

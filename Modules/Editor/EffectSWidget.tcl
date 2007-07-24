@@ -289,6 +289,11 @@ itcl::body EffectSWidget::processEvent { } {
 
 }
 
+itcl::body EffectSWidget::apply {} {
+  # default behavior, just flash...
+  $this flashCursor 3
+}
+
 
 #
 # helper procs to manage effects
