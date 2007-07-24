@@ -38,6 +38,7 @@ if { [itcl::find class EffectSWidget] == "" } {
     variable _currentPosition "0 0 0"
     variable _cursorActors ""
     variable _outputLabel ""
+    variable _observerRecords "" ;# list of the observers so we can clean up
 
     # methods
     method processEvent {} {}
@@ -51,7 +52,13 @@ if { [itcl::find class EffectSWidget] == "" } {
     method getInputBackground {} {}
     method getInputLabel {} {}
     method getOutputLabel {} {}
+    method getOptionFrame {} {}
+    method buildOptions {} {}
+    method tearDownOptions {} {}
+    method previewOptions {} {}
+    method applyOptions {} {}
     method flashCursor { {repeat 1} {delay 50} } {}
+    method errorDialog { message } {}
   }
 }
 
@@ -91,6 +98,14 @@ itcl::body EffectSWidget::destructor {} {
   if { [info command $_sliceNode] != "" } {
     foreach tag $_nodeObserverTags {
       $_sliceNode RemoveObserver $tag
+    }
+  }
+
+  foreach record $_observerRecords {
+    foreach {obj tag} $record {
+      if { [info command $obj] != "" } {
+        $obj RemoveObserver $tag
+      }
     }
   }
 
@@ -141,6 +156,27 @@ itcl::body EffectSWidget::positionCursor {} {
     eval $actor SetPosition $x $y
   }
 }
+
+itcl::body EffectSWidget::getOptionFrame { } {
+  # TODO: this should be more general
+  # but for now there should only be one option frame and one editor instance
+  set frameVar [lindex [array names ::Editor *optionsFrame] 0]
+  if { $frameVar != "" } {
+    return [$::Editor($frameVar) GetFrame]
+  } else {
+    return ""
+  }
+}
+
+itcl::body EffectSWidget::buildOptions { } {
+  # default implementation, there is nothing
+}
+
+itcl::body EffectSWidget::tearDownOptions { } {
+  # default implementation, there is nothing
+}
+
+
 
 itcl::body EffectSWidget::flashCursor { {repeat 1} {delay 50} } {
 
@@ -292,6 +328,11 @@ itcl::body EffectSWidget::processEvent { } {
 itcl::body EffectSWidget::apply {} {
   # default behavior, just flash...
   $this flashCursor 3
+}
+
+itcl::body EffectSWidget::errorDialog { message } {
+  # TODO: convert this to a kww dialog
+  tk_messageBox -message $message
 }
 
 

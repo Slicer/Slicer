@@ -47,6 +47,7 @@ proc EditorTearDownGUI {this} {
     volumesFrame paintThreshold paintOver paintDropper
     paintRadius paintRange paintEnable paintLabel
     paintPaint paintDraw 
+    optionsFrame
     paintFrame rebuildButton colorsColor colorsFrame
   }
 
@@ -238,6 +239,16 @@ proc EditorBuildGUI {this} {
   $::Editor($this,paintRange) SetReliefToGroove
   $::Editor($this,paintRange) SetBalloonHelpString "In threshold mode, the label will only be set if the background value is within this range."
   # don't pack this, it gets conditionally packed below
+
+  #
+  # Tool Options
+  #
+  set ::Editor($this,optionsFrame) [vtkSlicerModuleCollapsibleFrame New]
+  $::Editor($this,optionsFrame) SetParent $pageWidget
+  $::Editor($this,optionsFrame) Create
+  $::Editor($this,optionsFrame) SetLabelText "Effect Options"
+  pack [$::Editor($this,optionsFrame) GetWidgetName] \
+    -side top -anchor nw -fill x -padx 2 -pady 2 -in [$pageWidget GetWidgetName]
 
   #
   # Rebuild Button

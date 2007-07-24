@@ -9,4 +9,5 @@ package ifneeded Editor 3.0 [list
   source [file join $dir DrawSWidget.tcl]
   source [file join $dir EffectSWidget.tcl]
   source [file join $dir SaveIslandEffect.tcl]
+  source [file join $dir ThresholdEffect.tcl]
 ]

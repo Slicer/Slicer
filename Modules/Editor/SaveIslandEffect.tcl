@@ -100,5 +100,3 @@ itcl::body SaveIslandEffect::apply {} {
 
   $this postApply
 }
-
-

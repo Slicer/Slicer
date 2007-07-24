@@ -189,7 +189,7 @@ itcl::body EditBox::findEffects { {path ""} } {
   set reader [vtkPNGReader New]
   foreach effect $_effects(list) {
     if { [info command ${effect}Effect] != "" } {
-      set _effects($effect,class) ${effect}SWidget
+      set _effects($effect,class) ${effect}Effect
     } else {
       set _effects($effect,class) EffectSWidget
     }
@@ -337,6 +337,7 @@ itcl::body EditBox::hide {} {
 #
 itcl::body EditBox::selectEffect { effect } {
 
+puts "selecting $effect"
   EffectSWidget::RemoveAll
 
   # mouse tool changes cursor, and dismisses popup/menu
@@ -362,11 +363,21 @@ itcl::body EditBox::selectEffect { effect } {
       EditorTestQuickModel
     }
     default {
+      EffectSWidget::Add $_effects($effect,class)
       if { $mouseTool } {
-        EffectSWidget::Add $_effects($effect,class)
         EffectSWidget::SetCursorAll $_effects($effect,class) $_effects($effect,imageData)
       }
     }
+  }
+
+  #
+  # if an effect was added, find the first instance and have it build an 
+  # options GUI
+  #
+  set w [lindex [itcl::find objects -class $_effects($effect,class)] 0]
+puts "building options for $w of $effect"
+  if { $w != "" } {
+    $w buildOptions
   }
 
   switch $mode {
@@ -426,3 +437,13 @@ itcl::body EditBox::errorDialog { errorText } {
 }
 
 
+proc eeeee {} {
+  itcl::delete class EditBox
+  itcl::delete class EffectSWidget
+
+  source $::env(SLICER_HOME)/../Slicer3/Modules/Editor/EditBox.tcl
+  source $::env(SLICER_HOME)/../Slicer3/Modules/Editor/EffectSWidget.tcl
+  foreach eff [glob $::env(SLICER_HOME)/../Slicer3/Modules/Editor/*Effect.tcl] {
+    source $eff
+  }
+}

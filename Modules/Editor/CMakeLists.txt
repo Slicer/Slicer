@@ -25,7 +25,7 @@ SET(TCLFILES
   EditBox.tcl
   PaintSWidget.tcl DrawSWidget.tcl
   EffectSWidget.tcl
-  SaveIslandEffect.tcl
+  SaveIslandEffect.tcl ThresholdEffect.tcl
 )
 
 FOREACH(tclfile ${TCLFILES})
