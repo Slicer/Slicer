@@ -64,6 +64,7 @@ SET(MRML_SRCS
         vtkMRMLUnstructuredGridNode.cxx
         vtkMRMLUnstructuredGridDisplayNode.cxx
         vtkMRMLUnstructuredGridStorageNode.cxx
+        vtkMRMLDisplayNode.cxx
         # Note: when you add new node types, add
         # register code to the vtkMRMLScene constructor
 )
@@ -81,6 +82,7 @@ SET_SOURCE_FILES_PROPERTIES(
   vtkMRMLNode.cxx 
   vtkMRMLVolumeNode.cxx
   vtkMRMLTransformNode.cxx
+  vtkMRMLDisplayNode.cxx
   ABSTRACT
   )
 

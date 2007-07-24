@@ -25,17 +25,18 @@
 #include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
 #include "vtkMRMLStorageNode.h"
+#include "vtkMRMLDisplayNode.h"
 #include "vtkMRMLColorNode.h"
 
 #include "vtkMatrix4x4.h"
 #include "vtkTransform.h"
 #include "vtkImageData.h"
 
-class VTK_MRML_EXPORT vtkMRMLModelDisplayNode : public vtkMRMLNode
+class VTK_MRML_EXPORT vtkMRMLModelDisplayNode : public vtkMRMLDisplayNode
 {
 public:
   static vtkMRMLModelDisplayNode *New();
-  vtkTypeMacro(vtkMRMLModelDisplayNode,vtkMRMLNode);
+  vtkTypeMacro(vtkMRMLModelDisplayNode,vtkMRMLDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent);
   
   //--------------------------------------------------------------------------

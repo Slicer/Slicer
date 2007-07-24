@@ -92,7 +92,14 @@ class VTK_MRML_EXPORT vtkMRMLUnstructuredGridDisplayNode : public vtkMRMLModelDi
       return NULL;
       }
   }
-
+   
+  // Description:
+  // Update the pipeline based on this node attributes
+  virtual void UpdatePolyDataPipeline() 
+    {
+    this->ShrinkPolyData->SetShrinkFactor(this->ShrinkFactor);
+    };
+ 
   //--------------------------------------------------------------------------
   // Display Information: Geometry to display (not mutually exclusive)
   //--------------------------------------------------------------------------

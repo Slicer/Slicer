@@ -114,7 +114,6 @@ void vtkMRMLUnstructuredGridDisplayNode::Copy(vtkMRMLNode *anode)
 {
   Superclass::Copy(anode);
   vtkMRMLUnstructuredGridDisplayNode *node = (vtkMRMLUnstructuredGridDisplayNode *) anode;
-
   this->SetShrinkFactor(node->ShrinkFactor);
 }
 
@@ -136,7 +135,7 @@ void vtkMRMLUnstructuredGridDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
   if (caller == this &&
       event ==  vtkCommand::ModifiedEvent)
     {
-    this->ShrinkPolyData->SetShrinkFactor(this->ShrinkFactor);
+    this->UpdatePolyDataPipeline();
     }
   Superclass::ProcessMRMLEvents(caller, event, callData);
   return;
