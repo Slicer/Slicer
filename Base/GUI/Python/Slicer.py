@@ -132,22 +132,45 @@ def ListVolumeNodes():
         nodes[idx] = scene.GetNthNodeByClass ( idx, 'vtkMRMLVolumeNode' )
     return nodes
 
-def ParseArgs ( ModuleArgs ):
+def ParseArgs ( ModuleArgs, ArgTags ):
     """This is a helper function to strip off all the flags
     and make them keyword args to the eventual Execute call
     returns a tuple of FlagArgs and PositionalArgs"""
+
+    def CastArg (arg,argtag):
+        if argtag == 'boolean':
+            if argval == 'true':
+                argval = True
+            else:
+                argval = False
+        elif argtag == 'integer':
+            argval = int(arg)
+        elif argtag in ['float','double']:
+            argval = float(arg)
+        elif argtag == 'integer-vector':
+            argval = [int(el) for el in arg.split(',')]
+        elif argtag in ['float-vector', 'double-vector']:
+            argval = [float(el) for el in arg.split(',')]
+        elif argtag == 'string-vector':
+            argval = arg.split(',')
+        else:
+            argval = arg
+        return argval
+
     FlagArgs = {}
     PositionalArgs = []
-    
+
     # Check each argument in turn, if we hit one that
     # does not start with a "-", it's the positional args.
     while len ( ModuleArgs ) != 0:
         arg = ModuleArgs.pop ( 0 );
         print "Looking at: ", arg
+#LUCA BEGIN
         if arg.startswith ( "-" ):
-            FlagArgs[arg.lstrip( "-" )] = ModuleArgs.pop ( 0 )
+            FlagArgs[arg.lstrip( "-" )] = CastArg(ModuleArgs.pop(0),ArgTags.pop(0))
         else:
-            PositionalArgs.append ( arg )
+            PositionalArgs.append(CastArg(arg,ArgTags.pop(0)))
             while len ( ModuleArgs ) != 0:
-                PositionalArgs.append ( ModuleArgs.pop ( 0 ) )
+                PositionalArgs.append(CastArg(ModuleArgs.pop(0),ArgTags.pop(0)))
+#LUCA END
     return FlagArgs, PositionalArgs

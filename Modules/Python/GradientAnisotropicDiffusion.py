@@ -99,10 +99,11 @@ N-dimensions.
 
 def Execute ( inputVolume, outputVolume, conductance=1.0, timeStep=0.0625, iterations=1 ):
     print "Executing Python Demo Application!"
-    # For the moment, be sure to cast...
-    conductance = float ( conductance )
-    timeStep = float ( timeStep )
-    iterations = int ( iterations )
+#LUCA BEGIN
+#    conductance = float ( conductance )
+#    timeStep = float ( timeStep )
+#    iterations = int ( iterations )
+#LUCA END
     Slicer = __import__ ( "Slicer" );
     slicer = Slicer.Slicer()
     scene = slicer.MRMLScene

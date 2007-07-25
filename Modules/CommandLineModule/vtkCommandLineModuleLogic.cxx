@@ -1329,19 +1329,36 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
       "import sys;\n"
       "import Slicer;\n"
       "ModuleName = \"" + node->GetModuleDescription().GetTarget() + "\"\n"
-      "ModuleArgs = []\n";
+//LUCA BEGIN
+      "ModuleArgs = []\n"
+      "ArgTags = []\n";
+//LUCA END
 
     // Now add the individual command line items
     for (std::vector<std::string>::size_type i=1; i < commandLineAsString.size(); ++i)
       {
       ExecuteModuleString += "ModuleArgs.append ( '" + commandLineAsString[i] + "' );\n";
       }
-    // import and reload the module
+//LUCA BEGIN
+    for (pgit = pgbeginit; pgit != pgendit; ++pgit)
+      {
+      // iterate over each parameter in this group
+      std::vector<ModuleParameter>::const_iterator pbeginit
+        = (*pgit).GetParameters().begin();
+      std::vector<ModuleParameter>::const_iterator pendit
+        = (*pgit).GetParameters().end();
+      std::vector<ModuleParameter>::const_iterator pit;  
+      for (pit = pbeginit; pit != pendit; ++pit)
+        {
+        ExecuteModuleString += "ArgTags.append ( '" + (*pit).GetTag() + "' );\n";
+        }
+      }
     ExecuteModuleString +=
-      "FlagArgs, PositionalArgs = Slicer.ParseArgs ( ModuleArgs )\n"
+      "FlagArgs, PositionalArgs = Slicer.ParseArgs ( ModuleArgs, ArgTags )\n"
       "Module = __import__ ( ModuleName )\n"
       "reload ( Module )\n"
       "Module.Execute ( *PositionalArgs, **FlagArgs )\n";
+//LUCA END
 #ifdef USE_PYTHON    
     PyObject* v;
       
