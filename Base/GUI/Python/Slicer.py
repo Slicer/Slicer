@@ -165,12 +165,10 @@ def ParseArgs ( ModuleArgs, ArgTags ):
     while len ( ModuleArgs ) != 0:
         arg = ModuleArgs.pop ( 0 );
         print "Looking at: ", arg
-#LUCA BEGIN
         if arg.startswith ( "-" ):
             FlagArgs[arg.lstrip( "-" )] = CastArg(ModuleArgs.pop(0),ArgTags.pop(0))
         else:
             PositionalArgs.append(CastArg(arg,ArgTags.pop(0)))
             while len ( ModuleArgs ) != 0:
                 PositionalArgs.append(CastArg(ModuleArgs.pop(0),ArgTags.pop(0)))
-#LUCA END
     return FlagArgs, PositionalArgs

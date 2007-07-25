@@ -1329,17 +1329,14 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
       "import sys;\n"
       "import Slicer;\n"
       "ModuleName = \"" + node->GetModuleDescription().GetTarget() + "\"\n"
-//LUCA BEGIN
       "ModuleArgs = []\n"
       "ArgTags = []\n";
-//LUCA END
 
     // Now add the individual command line items
     for (std::vector<std::string>::size_type i=1; i < commandLineAsString.size(); ++i)
       {
       ExecuteModuleString += "ModuleArgs.append ( '" + commandLineAsString[i] + "' );\n";
       }
-//LUCA BEGIN
     for (pgit = pgbeginit; pgit != pgendit; ++pgit)
       {
       // iterate over each parameter in this group
@@ -1358,7 +1355,6 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
       "Module = __import__ ( ModuleName )\n"
       "reload ( Module )\n"
       "Module.Execute ( *PositionalArgs, **FlagArgs )\n";
-//LUCA END
 #ifdef USE_PYTHON    
     PyObject* v;
       
