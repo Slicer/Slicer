@@ -354,8 +354,7 @@ puts "selecting $effect"
       $this togglePin
     }
     "GoToEditorModule" {
-      set toolbar [$::slicer3::ApplicationGUI GetApplicationToolbar]
-      [$toolbar GetModuleChooseGUI] SelectModule "Editor"
+      EditorSelectModule
     }
     "MakeModel" {
       #TODO: invoke the real modelmaker.  Figure out which label map to use (each slice
@@ -375,9 +374,9 @@ puts "selecting $effect"
   # options GUI
   #
   set w [lindex [itcl::find objects -class $_effects($effect,class)] 0]
-puts "building options for $w of $effect"
   if { $w != "" } {
     $w buildOptions
+    $w preview
   }
 
   switch $mode {

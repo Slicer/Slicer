@@ -3,7 +3,6 @@
 #
 
 proc EditorConstructor {this} {
-  set ::Editor(singleton) $this
 }
 
 proc EditorDestructor {this} {
@@ -64,6 +63,11 @@ proc EditorTearDownGUI {this} {
 }
 
 proc EditorBuildGUI {this} {
+
+  if { [info exists ::Editor(singleton)] } {
+    error "editor singleton already created"
+  }
+  set ::Editor(singleton) $this
 
   #
   # create and register the node class
@@ -448,6 +452,9 @@ proc EditorUpdateSWidgets {this} {
     $cmd -thresholdMin $lo -thresholdMax $hi
 }
 
+#
+# Accessors to editor state
+#
 proc EditorGetPaintLabel {this} {
   return [$::Editor($this,colorsColor) GetSelectedColorIndex]
 }
@@ -458,6 +465,38 @@ proc EditorGetPaintColor {this} {
   set index [$::Editor($this,colorsColor) GetSelectedColorIndex]
   return [$lut GetTableValue $index]
 }
+
+proc EditorGetPaintThreshold {this} {
+  return [$::Editor($this,paintRange) GetRange]
+}
+
+proc EditorSetPaintThreshold {this min max} {
+  $::Editor($this,paintRange) SetRange $min $max
+  EditorUpdateSWidgets $this
+}
+
+proc EditorGetPaintThresholdState {this onOff} {
+  return [[$::Editor($this,paintThreshold) GetWidget] GetSelectedState]
+}
+
+proc EditorSetPaintThresholdState {this onOff} {
+  [$::Editor($this,paintThreshold) GetWidget] SetSelectedState $onOff
+  EditorUpdateSWidgets $this
+}
+
+proc EditorGetOptionsFrame {this} {
+  return [$::Editor($this,optionsFrame) GetFrame]
+}
+
+proc EditorSelectModule {} {
+  set toolbar [$::slicer3::ApplicationGUI GetApplicationToolbar]
+  [$toolbar GetModuleChooseGUI] SelectModule "Editor"
+}
+
+
+#
+# MRML Event processing
+#
 
 proc EditorUpdateMRML {this} {
 }

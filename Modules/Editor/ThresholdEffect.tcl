@@ -43,6 +43,7 @@ if { [itcl::find class ThresholdEffect] == "" } {
     method tearDownOptions {} {}
     method previewOptions {} {}
     method applyOptions {} {}
+    method setPaintThreshold {} {}
   }
 }
 
@@ -76,18 +77,23 @@ itcl::body ThresholdEffect::processEvent { } {
 
 itcl::body ThresholdEffect::apply {} {
 
+  $this configure -scope "all"
+
   if { [$this getInputBackground] == "" || [$this getOutputLabel] == "" } {
     $this errorDialog "Background and Label map needed for Threshold"
     return
   }
 
-  set conn [vtkImageThreshold New]
-  $conn SetFunctionToThreshold
-  $conn SetSeed $_layers(label,i) $_layers(label,j) $_layers(label,k) 
-  $conn SetInput [$this getInputLabel]
-  $conn SetOutput [$this getOutputLabel]
-  [$this getOutputLabel] Update
-  $conn Delete
+  set thresh [vtkImageThreshold New]
+  $thresh SetInput [$this getInputBackground]
+  eval $thresh ThresholdBetween $range
+  $thresh SetInValue [EditorGetPaintLabel $::Editor(singleton)]
+  $thresh SetOutValue 0
+  $thresh SetOutput [$this getOutputLabel]
+  $thresh Update
+  $thresh Delete
+
+  [$sliceGUI GetSliceViewer] RequestRender
 
   $this postApply
 }
@@ -151,7 +157,7 @@ itcl::body ThresholdEffect::buildOptions { } {
   # a range setting for threshold values
   #
   set o(range) [vtkNew vtkKWRange]
-  $o(range) SetParent [$this getOptionFrame]
+  $o(range) SetParent [$this getOptionsFrame]
   $o(range) Create
   $o(range) SetLabelText "Min/Max for Threshold Paint"
   $o(range) SetWholeRange 0 2000
@@ -161,21 +167,46 @@ itcl::body ThresholdEffect::buildOptions { } {
 
   set range [[$this getInputBackground] GetScalarRange]
   eval $o(range) SetWholeRange $range
+  foreach {lo hi} $range {}
+  set lo [expr $lo + (0.5 * ($hi - $lo))]
   eval $o(range) SetRange $range
 
   pack [$o(range) GetWidgetName] \
     -side top -anchor e -fill x -padx 2 -pady 2 
 
+
+  #
+  # a cancel button
+  #
+  set o(cancel) [vtkNew vtkKWPushButton]
+  $o(cancel) SetParent [$this getOptionsFrame]
+  $o(cancel) Create
+  $o(cancel) SetText "Cancel"
+  $o(cancel) SetBalloonHelpString "Cancel threshold without applying to label map."
+  pack [$o(cancel) GetWidgetName] \
+    -side right -anchor e -padx 2 -pady 2 
+
+  #
+  # use for painting button
+  #
+  set o(useForPainting) [vtkNew vtkKWPushButton]
+  $o(useForPainting) SetParent [$this getOptionsFrame]
+  $o(useForPainting) Create
+  $o(useForPainting) SetText "Use For Paint"
+  $o(useForPainting) SetBalloonHelpString "Transfer the current threshold settings to be used for Paint and Draw operations."
+  pack [$o(useForPainting) GetWidgetName] \
+    -side right -anchor e -padx 2 -pady 2 
+
   #
   # an apply button
   #
   set o(apply) [vtkNew vtkKWPushButton]
-  $o(apply) SetParent [$this getOptionFrame]
+  $o(apply) SetParent [$this getOptionsFrame]
   $o(apply) Create
   $o(apply) SetText "Apply"
   $o(apply) SetBalloonHelpString "Apply current threshold settings to the label map."
   pack [$o(apply) GetWidgetName] \
-    -side top -anchor e -padx 2 -pady 2 
+    -side right -anchor e -padx 2 -pady 2 
 
   #
   # event observers - TODO: if there were a way to make these more specific, I would...
@@ -184,11 +215,15 @@ itcl::body ThresholdEffect::buildOptions { } {
   lappend _observerRecords "$o(range) $tag"
   set tag [$o(apply) AddObserver AnyEvent "$this applyOptions"]
   lappend _observerRecords "$o(apply) $tag"
+  set tag [$o(useForPainting) AddObserver AnyEvent "$this setPaintThreshold"]
+  lappend _observerRecords "$o(useForPainting) $tag"
+  set tag [$o(cancel) AddObserver AnyEvent "after idle ::EffectSWidget::RemoveAll"]
+  lappend _observerRecords "$o(cancel) $tag"
 }
 
 itcl::body ThresholdEffect::tearDownOptions { } {
   if { [info exists o(range)] } {
-    foreach w "range apply" {
+    foreach w "range apply useForPainting cancel" {
       $o($w) SetParent ""
       pack forget [$o($w) GetWidgetName] 
     }
@@ -210,3 +245,9 @@ itcl::body ThresholdEffect::applyOptions { } {
   }
 }
 
+itcl::body ThresholdEffect::setPaintThreshold {} {
+
+  set editor $::Editor(singleton)
+  eval EditorSetPaintThreshold $editor [$o(range) GetRange]
+  EditorSetPaintThresholdState $editor 1
+}

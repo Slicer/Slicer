@@ -52,7 +52,7 @@ if { [itcl::find class EffectSWidget] == "" } {
     method getInputBackground {} {}
     method getInputLabel {} {}
     method getOutputLabel {} {}
-    method getOptionFrame {} {}
+    method getOptionsFrame {} {}
     method buildOptions {} {}
     method tearDownOptions {} {}
     method previewOptions {} {}
@@ -157,16 +157,9 @@ itcl::body EffectSWidget::positionCursor {} {
   }
 }
 
-itcl::body EffectSWidget::getOptionFrame { } {
-  # TODO: this should be more general
-  # but for now there should only be one option frame and one editor instance
-  #set frameVar [lindex [array names ::Editor *optionsFrame] 0]
-  set frameVar $::Editor(singleton),optionsFrame
-  if { $frameVar != "" } {
-    return [$::Editor($frameVar) GetFrame]
-  } else {
-    return ""
-  }
+itcl::body EffectSWidget::getOptionsFrame { } {
+  EditorSelectModule
+  return [EditorGetOptionsFrame $::Editor(singleton)]
 }
 
 itcl::body EffectSWidget::buildOptions { } {
@@ -239,7 +232,8 @@ itcl::body EffectSWidget::getInputBackground {} {
       }
     }
     "visible" {
-      return [$logic GetImageData]
+      #return [$logic GetImageData]
+      return [[$logic GetReslice] GetOutput]
     }
   }
   return ""
