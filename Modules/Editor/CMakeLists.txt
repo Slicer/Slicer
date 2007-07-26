@@ -67,7 +67,7 @@ NextFiducial.png NextFiducialDisabled.png NextFiducialSelected.png
 PaintLabel.png PaintLabelDisabled.png PaintLabelSelected.png
 PinOpen.png PinOpenDisabled.png PinOpenSelected.png
 PreviousFiducial.png PreviousFiducialDisabled.png PreviousFiducialSelected.png
-SaveIslands.png SaveIslandsDisabled.png SaveIslandsSelected.png
+SaveIsland.png SaveIslandDisabled.png SaveIslandSelected.png
 SlurpColor.png SlurpColorDisabled.png SlurpColorSelected.png
 SnapToGridOff.png SnapToGridOffDisabled.png SnapToGridOffSelected.png
 SnapToGridOn.png SnapToGridOnDisabled.png SnapToGridOnSelected.png

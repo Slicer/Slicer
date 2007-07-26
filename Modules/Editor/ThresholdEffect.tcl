@@ -93,8 +93,6 @@ itcl::body ThresholdEffect::apply {} {
   $thresh Update
   $thresh Delete
 
-  [$sliceGUI GetSliceViewer] RequestRender
-
   $this postApply
 }
 
@@ -161,7 +159,6 @@ itcl::body ThresholdEffect::buildOptions { } {
   $o(range) Create
   $o(range) SetLabelText "Min/Max for Threshold Paint"
   $o(range) SetWholeRange 0 2000
-  $o(range) SetRange 50 2000
   $o(range) SetReliefToGroove
   $o(range) SetBalloonHelpString "Set the range of the background values that should be labeled."
 
@@ -169,7 +166,7 @@ itcl::body ThresholdEffect::buildOptions { } {
   eval $o(range) SetWholeRange $range
   foreach {lo hi} $range {}
   set lo [expr $lo + (0.5 * ($hi - $lo))]
-  eval $o(range) SetRange $range
+  $o(range) SetRange $lo $hi
 
   pack [$o(range) GetWidgetName] \
     -side top -anchor e -fill x -padx 2 -pady 2 
@@ -238,7 +235,6 @@ itcl::body ThresholdEffect::previewOptions { } {
 }
 
 itcl::body ThresholdEffect::applyOptions { } {
-  puts "got apply callback"
   $this previewOptions
   foreach te [itcl::find objects -class ThresholdEffect] {
     $te apply

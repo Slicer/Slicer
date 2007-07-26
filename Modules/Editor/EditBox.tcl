@@ -167,7 +167,7 @@ itcl::body EditBox::findEffects { {path ""} } {
     ChangeIslands ChangeLabel ChooseColor 
     ImplicitCube ImplicitEllipse ImplicitRectangle 
     FreehandDrawLabel EraseLabel DeleteIslands ConnectedComponents 
-    ThresholdBucket ThresholdPaintLabel SaveIslands SlurpColor PaintLabel
+    ThresholdBucket ThresholdPaintLabel SaveIsland SlurpColor PaintLabel
     DefaultTool
   }
   # effects that operate from the menu
@@ -279,7 +279,7 @@ itcl::body EditBox::create { } {
   $this createButtonRow {ChangeLabel ToggleLabelOutline LabelVisibilityOn}
   $this createButtonRow {PaintLabel ThresholdPaintLabel FreehandDrawLabel ThresholdBucket}
   $this createButtonRow {EraseLabel ImplicitEllipse ImplicitRectangle ImplicitCube}
-  $this createButtonRow {IdentifyIslands ChangeIslands DeleteIslands SaveIslands}
+  $this createButtonRow {IdentifyIslands ChangeIslands DeleteIslands SaveIsland}
   $this createButtonRow {ErodeLabel DilateLabel Threshold ChangeLabel}
   $this createButtonRow {InterpolateLabels MakeModel Watershed ConnectedComponents}
   $this createButtonRow {PreviousFiducial NextFiducial FiducialVisibilityOn DeleteFiducials}
@@ -376,7 +376,7 @@ puts "selecting $effect"
   set w [lindex [itcl::find objects -class $_effects($effect,class)] 0]
   if { $w != "" } {
     $w buildOptions
-    $w preview
+    $w previewOptions
   }
 
   switch $mode {

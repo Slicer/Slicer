@@ -39,6 +39,7 @@ proc EditorAddQuickModel { sliceLogic } {
   $modelNode SetName "QuickModel"
   $modelNode SetScene $::slicer3::MRMLScene
   $modelDisplayNode SetScene $::slicer3::MRMLScene
+  eval $modelDisplayNode SetColor [lrange [EditorGetPaintColor $::Editor(singleton)] 0 2]
   $::slicer3::MRMLScene AddNode $modelDisplayNode
   $modelNode SetAndObserveDisplayNodeID [$modelDisplayNode GetID]
   $::slicer3::MRMLScene AddNode $modelNode

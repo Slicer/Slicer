@@ -35,6 +35,8 @@ if { [itcl::find class SaveIslandEffect] == "" } {
     method processEvent {} {}
     method preview {} {}
     method apply {} {}
+    method buildOptions {} {}
+    method tearDownOptions {} {}
   }
 }
 
@@ -99,4 +101,34 @@ itcl::body SaveIslandEffect::apply {} {
   $conn Delete
 
   $this postApply
+}
+
+  
+itcl::body SaveIslandEffect::buildOptions {} {
+
+  #
+  # a cancel button
+  #
+  set o(cancel) [vtkNew vtkKWPushButton]
+  $o(cancel) SetParent [$this getOptionsFrame]
+  $o(cancel) Create
+  $o(cancel) SetText "Cancel"
+  $o(cancel) SetBalloonHelpString "Cancel threshold without applying to label map."
+  pack [$o(cancel) GetWidgetName] \
+    -side right -anchor e -padx 2 -pady 2 
+
+  #
+  # event observers - TODO: if there were a way to make these more specific, I would...
+  #
+  set tag [$o(cancel) AddObserver AnyEvent "after idle ::EffectSWidget::RemoveAll"]
+  lappend _observerRecords "$o(cancel) $tag"
+}
+
+itcl::body SaveIslandEffect::tearDownOptions { } {
+  if { [info exists o(range)] } {
+    foreach w "cancel" {
+      $o($w) SetParent ""
+      pack forget [$o($w) GetWidgetName] 
+    }
+  }
 }
