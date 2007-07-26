@@ -102,16 +102,38 @@ itcl::body ThresholdEffect::preview {} {
     return
   }
 
+  #
+  # make a lookup table where inside the threshold is opaque and colored
+  # by the label color, while the background is transparent (black)
+  #
+
+  set color [::EditorGetPaintColor $::Editor(singleton)]
+  set lut [vtkLookupTable New]
+  $lut SetRampToLinear
+  $lut SetNumberOfTableValues 2
+  $lut SetTableRange 0 1
+  $lut SetTableValue 0  0 0 0  0
+  eval $lut SetTableValue 1  $color
+  set map [vtkImageMapToRGBA New]
+  $map SetOutputFormatToRGBA
+  $map SetLookupTable $lut
+
   set thresh [vtkImageThreshold New]
+  #TODO: this background has already been windowed - so range is not correct
   $thresh SetInput [$this getInputBackground]
-  #TODO: this has already been windowed - so range is not correct
   eval $thresh ThresholdBetween $range
-  $thresh SetInValue 255
+  $thresh SetInValue 1
   $thresh SetOutValue 0
-  $thresh SetOutputScalarTypeToShort
-  $thresh Update
-  $o(cursorMapper) SetInput [$thresh GetOutput]
+  $thresh SetOutputScalarTypeToUnsignedChar
+  $map SetInput [$thresh GetOutput]
+
+  $map Update
+
+  $o(cursorMapper) SetInput [$map GetOutput]
   $o(cursorActor) VisibilityOn
+
+  $map Delete
+  $lut Delete
   $thresh Delete
 
   [$sliceGUI GetSliceViewer] RequestRender

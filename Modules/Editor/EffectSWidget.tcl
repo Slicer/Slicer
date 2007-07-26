@@ -160,7 +160,8 @@ itcl::body EffectSWidget::positionCursor {} {
 itcl::body EffectSWidget::getOptionFrame { } {
   # TODO: this should be more general
   # but for now there should only be one option frame and one editor instance
-  set frameVar [lindex [array names ::Editor *optionsFrame] 0]
+  #set frameVar [lindex [array names ::Editor *optionsFrame] 0]
+  set frameVar $::Editor(singleton),optionsFrame
   if { $frameVar != "" } {
     return [$::Editor($frameVar) GetFrame]
   } else {

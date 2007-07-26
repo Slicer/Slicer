@@ -3,7 +3,7 @@
 #
 
 proc EditorConstructor {this} {
-
+  set ::Editor(singleton) $this
 }
 
 proc EditorDestructor {this} {
@@ -446,6 +446,17 @@ proc EditorUpdateSWidgets {this} {
     $cmd -drawOver [[$::Editor($this,paintOver) GetWidget] GetSelectedState]
     $cmd -thresholdPaint [[$::Editor($this,paintThreshold) GetWidget] GetSelectedState]
     $cmd -thresholdMin $lo -thresholdMax $hi
+}
+
+proc EditorGetPaintLabel {this} {
+  return [$::Editor($this,colorsColor) GetSelectedColorIndex]
+}
+
+proc EditorGetPaintColor {this} {
+  set node [$::Editor($this,colorsColor) GetColorNode]
+  set lut [$node GetLookupTable]
+  set index [$::Editor($this,colorsColor) GetSelectedColorIndex]
+  return [$lut GetTableValue $index]
 }
 
 proc EditorUpdateMRML {this} {
