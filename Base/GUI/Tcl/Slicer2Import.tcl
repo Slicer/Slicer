@@ -158,10 +158,14 @@ proc ImportNodeVolume {node} {
     set n(description) ""
   }
 
-  switch $n(fileType) {
+  switch [string tolower $n(fileType)] {
 
-    "NRRD" -
-    "Generic" {
+    "nrrd" -
+    "generic" {
+
+      if { ![info exists n(fileName)] } {
+        set n(fileName) [format $n(filePattern) $n(filePrefix)]
+      }
 
       if { [file pathtype $n(fileName)] == "relative" } {
         set fileName $::S2(dir)/$n(fileName)
@@ -180,7 +184,8 @@ proc ImportNodeVolume {node} {
 
     }
 
-    "Basic" {
+    "headerless" -
+    "basic" {
 
       #
       # first, parse the slicer2 node
@@ -261,6 +266,14 @@ proc ImportNodeVolume {node} {
       $::slicer3::MRMLScene AddNode $volumeNode
       $volumeNode SetAndObserveDisplayNodeID [$volumeDisplayNode GetID]
 
+      # use the RASToIJK information from the file, to override what the 
+      # archetype reader might have set
+      set rasToVTK [vtkMatrix4x4 New]
+      eval $rasToVTK DeepCopy $n(rasToVtkMatrix)
+      $volumeNode SetRASToIJKMatrix $rasToVTK
+      $rasToVTK Delete
+
+
       #
       # clean up
       #
@@ -272,29 +285,22 @@ proc ImportNodeVolume {node} {
 
   set volumeNode [$::slicer3::MRMLScene GetNodeByID $volumeNodeID]
 
-  # use the RASToIJK information from the file, to override what the 
-  # archetype reader might have set
-  set rasToVTK [vtkMatrix4x4 New]
-  eval $rasToVTK DeepCopy $n(rasToVtkMatrix)
-  $volumeNode SetRASToIJKMatrix $rasToVTK
-  $rasToVTK Delete
-
   # use the current top of stack (might be "" if empty, but that's okay)
   set transformID [lindex $::S2(transformIDStack) end]
   $volumeNode SetAndObserveTransformNodeID $transformID
 
   set volumeDisplayNode [$volumeNode GetDisplayNode]
 
-  switch { $n(colorLUT) } {
+  switch -- $n(colorLUT) {
     "0" {
       $volumeDisplayNode SetAndObserveColorNodeID "vtkMRMLColorTableNodeGrey"
+    }
+    "-1" {
+      $volumeDisplayNode SetAndObserveColorNodeID "vtkMRMLColorTableNodeLabels"
     }
     default {
       $volumeDisplayNode SetAndObserveColorNodeID "vtkMRMLColorTableNodeGrey"
     }
-  }
-  if { [info exists n(labelMap)] && ($n(labelMap) == "yes"  || $n(labelMap) == "true") } {
-    $volumeDisplayNode SetAndObserveColorNodeID "vtkMRMLColorTableNodeSPLBrainAtlas"
   }
 
   if { [info exists n(applyThreshold)] && ( $n(applyThreshold) == "yes" || $n(applyThreshold) == "true" ) } {
