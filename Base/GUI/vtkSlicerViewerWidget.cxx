@@ -589,7 +589,8 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
       {
       if (event == vtkMRMLScene::NodeRemovedEvent)
         {
-        this->RemoveDispalyedID(std::string(node->GetID()));
+        std::string sid(node->GetID());
+        this->RemoveDispalyedID(sid);
         }
       this->UpdateFromMRMLRequested = 1;
       this->RequestRender();
