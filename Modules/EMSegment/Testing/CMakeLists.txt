@@ -149,6 +149,7 @@ IF( NOT DISABLE_CXX_TESTING )
     --verbose 
     --mrmlSceneFileName ${EMSegment_TUTORIAL_DIR}/EMSegmentTutorialTemplate_small.mrml 
     --resultVolumeFileName "${test_file_prefix}.mhd"
+    --disableCompression
     )
   ADD_TEST(
     ${test_name} ${CMAKE_COMMAND} -V -VV "-Dtest_name:STRING=${test_name}"
@@ -175,6 +176,7 @@ IF( NOT DISABLE_CXX_TESTING )
     --verbose 
     --mrmlSceneFileName ${EMSegment_TUTORIAL_DIR}/EMSegmentTutorialTemplate_small_normalizationOn.mrml 
     --resultVolumeFileName "${test_file_prefix}.mhd"
+    --disableCompression
     )
   ADD_TEST(
     ${test_name} ${CMAKE_COMMAND} -V -VV "-Dtest_name:STRING=${test_name}"
@@ -206,6 +208,7 @@ IF( NOT DISABLE_CXX_TESTING )
     ${EMSegment_TUTORIAL_DIR}/VolumeData/atlasBackgroundReg_small.mhd,${EMSegment_TUTORIAL_DIR}/VolumeData/atlasBackgroundReg_small.mhd,${EMSegment_TUTORIAL_DIR}/VolumeData/atlasCSFReg_small.mhd,${EMSegment_TUTORIAL_DIR}/VolumeData/atlasGreymatterReg_small.mhd,${EMSegment_TUTORIAL_DIR}/VolumeData/atlasWhitematterReg_small.mhd
     --parametersMRMLNodeName EMSegment\ Tutorial\ Template
     --resultVolumeFileName "${test_file_prefix}.mhd"
+    --disableCompression
     )
   ADD_TEST(
     ${test_name} ${CMAKE_COMMAND} -V -VV "-Dtest_name:STRING=${test_name}"

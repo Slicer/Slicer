@@ -852,6 +852,8 @@ int main(int argc, char** argv)
     try
       {
       emMRMLManager->GetOutputVolumeNode()->GetStorageNode()->
+        SetUseCompression(!disableCompression);
+      emMRMLManager->GetOutputVolumeNode()->GetStorageNode()->
         WriteData(emMRMLManager->GetOutputVolumeNode());
       }
     catch (std::runtime_error& e)

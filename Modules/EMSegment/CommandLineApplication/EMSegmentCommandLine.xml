@@ -120,6 +120,14 @@
       <channel>output</channel>
     </file>
 
+    <boolean>
+      <name>disableCompression</name>
+      <longflag>disableCompression</longflag>
+      <description>Don't use compression when writing result image to disk.</description>
+      <label>Disable compression.</label>
+      <default>false</default>
+    </boolean>
+
   </parameters>
 </executable>
 
