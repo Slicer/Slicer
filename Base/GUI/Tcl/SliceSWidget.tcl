@@ -361,6 +361,7 @@ itcl::body SliceSWidget::processEvent { } {
       [$::slicer3::ApplicationGUI GetMainSlicerWindow]  SetStatusText ""
     }
     "TimerEvent" { }
+    "CharEvent" - 
     "KeyPressEvent" { 
       $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
       switch [$_interactor GetKeySym] {
