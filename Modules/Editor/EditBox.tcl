@@ -95,6 +95,11 @@ if { [itcl::find class EditBox] == "" } {
       set _vtkObjects ""
     }
 
+    # interact with the status line on the main window
+    method statusText {msg} {
+      [$::slicer3::ApplicationGUI GetMainSlicerWindow]  SetStatusText $msg
+    }
+
   }
 }
 
@@ -337,7 +342,7 @@ itcl::body EditBox::hide {} {
 #
 itcl::body EditBox::selectEffect { effect } {
 
-puts "selecting $effect"
+  $this statusText "Selecting $effect"
   EffectSWidget::RemoveAll
 
   # mouse tool changes cursor, and dismisses popup/menu

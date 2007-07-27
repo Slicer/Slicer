@@ -116,6 +116,10 @@ if { [itcl::find class SWidget] == "" } {
       return [lindex [$this info heritage] 1]
     }
 
+    # interact with the status line on the main window
+    method statusText {msg} {
+      [$::slicer3::ApplicationGUI GetMainSlicerWindow]  SetStatusText $msg
+    }
   }
 }
 

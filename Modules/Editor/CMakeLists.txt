@@ -46,7 +46,7 @@ ChangeLabel.png ChangeLabelDisabled.png ChangeLabelSelected.png
 ChooseColor.png ChooseColorDisabled.png ChooseColorSelected.png
 ConnectedComponents.png ConnectedComponentsDisabled.png ConnectedComponentsSelected.png
 DeleteFiducials.png DeleteFiducialsDisabled.png DeleteFiducialsSelected.png
-DeleteIslands.png DeleteIslandsDisabled.png DeleteIslandsSelected.png
+RemoveIslands.png RemoveIslandsDisabled.png RemoveIslandsSelected.png
 DilateLabel.png DilateLabelDisabled.png DilateLabelSelected.png
 EraseLabel.png EraseLabelDisabled.png EraseLabelSelected.png
 ErodeLabel.png ErodeLabelDisabled.png ErodeLabelSelected.png
