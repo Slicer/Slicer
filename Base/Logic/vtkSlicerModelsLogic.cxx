@@ -213,7 +213,7 @@ int vtkSlicerModelsLogic::AddScalar(const char* filename, vtkMRMLModelNode *mode
   storageNode->ReadData(modelNode);
 
   // check to see if the model display node has a colour node already
-  vtkMRMLModelDisplayNode *displayNode = modelNode->GetDisplayNode();
+  vtkMRMLModelDisplayNode *displayNode = modelNode->GetModelDisplayNode();
   if (displayNode == NULL)
     {
     vtkWarningMacro("Model " << modelNode->GetName() << "'s display node is null\n");

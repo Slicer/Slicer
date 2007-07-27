@@ -346,7 +346,7 @@ void vtkSlicerSliceLogic::ProcessLogicEvents()
 
     this->UpdateImageData();
     this->SliceModelNode->GetPolyData()->Modified();
-    vtkMRMLModelDisplayNode *modelDisplayNode = this->SliceModelNode->GetDisplayNode();
+    vtkMRMLModelDisplayNode *modelDisplayNode = this->SliceModelNode->GetModelDisplayNode();
     if ( modelDisplayNode )
       {
       modelDisplayNode->SetVisibility( this->SliceNode->GetSliceVisible() );
@@ -748,16 +748,16 @@ void vtkSlicerSliceLogic::UpdatePipeline()
     //Models
 
     if ( this->SliceModelNode && 
-          this->SliceModelNode->GetDisplayNode() &&
+          this->SliceModelNode->GetModelDisplayNode() &&
             this->SliceNode ) 
       {
-      if (this->SliceModelNode->GetDisplayNode()->GetVisibility() != this->SliceNode->GetSliceVisible() )
+      if (this->SliceModelNode->GetModelDisplayNode()->GetVisibility() != this->SliceNode->GetSliceVisible() )
         {
-        this->SliceModelNode->GetDisplayNode()->SetVisibility( this->SliceNode->GetSliceVisible() );
+        this->SliceModelNode->GetModelDisplayNode()->SetVisibility( this->SliceNode->GetSliceVisible() );
         }
-      if (this->SliceModelNode->GetDisplayNode()->GetTextureImageData() != this->GetImageData())
+      if (this->SliceModelNode->GetModelDisplayNode()->GetTextureImageData() != this->GetImageData())
         {
-        this->SliceModelNode->GetDisplayNode()->SetAndObserveTextureImageData(this->GetImageData());
+        this->SliceModelNode->GetModelDisplayNode()->SetAndObserveTextureImageData(this->GetImageData());
         }
       }
 

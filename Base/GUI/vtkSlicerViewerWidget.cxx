@@ -572,6 +572,7 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
   if (event == vtkMRMLScene::SceneCloseEvent )
     {
     this->SceneClosing = true;
+    this->RemoveModelProps();
     this->RemoveHierarchyObservers();
     this->RemoveModelObservers();
     }
@@ -586,6 +587,10 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
     vtkMRMLNode *node = (vtkMRMLNode*) (callData);
     if (node != NULL && node->IsA("vtkMRMLModelNode") )
       {
+      if (event == vtkMRMLScene::NodeRemovedEvent)
+        {
+        this->RemoveDispalyedID(std::string(node->GetID()));
+        }
       this->UpdateFromMRMLRequested = 1;
       this->RequestRender();
       //this->UpdateFromMRML();
@@ -1105,12 +1110,12 @@ vtkMRMLModelDisplayNode* vtkSlicerViewerWidget::GetModelDisplayNode(vtkMRMLModel
       }
     else
       {
-      dnode = model->GetDisplayNode();
+      dnode = model->GetModelDisplayNode();
       }
     }
   else 
     {
-    dnode = model->GetDisplayNode();
+    dnode = model->GetModelDisplayNode();
     }
   return dnode;
 }
@@ -1146,7 +1151,6 @@ void vtkSlicerViewerWidget::Render()
 void vtkSlicerViewerWidget::RemoveModelProps()
 {
   std::map<std::string, vtkActor *>::iterator iter;
-  std::map<std::string, vtkMRMLModelNode *>::iterator modelIter;
   std::map<std::string, int>::iterator clipIter;
   std::vector<std::string> removedIDs;
   for(iter=this->DisplayedModelActors.begin(); iter != this->DisplayedModelActors.end(); iter++) 
@@ -1183,15 +1187,21 @@ void vtkSlicerViewerWidget::RemoveModelProps()
     }
   for (unsigned int i=0; i< removedIDs.size(); i++)
     {
-    this->DisplayedModelActors.erase(removedIDs[i]);
-    this->DisplayedModelsClipState.erase(removedIDs[i]);
-    this->DisplayedModelsVisibility.erase(removedIDs[i]);
-    modelIter = this->DisplayedModelNodes.find(std::string(removedIDs[i]));
-    if(modelIter != this->DisplayedModelNodes.end())
-      {
-      this->RemoveModelObservers(modelIter->second);
-      this->DisplayedModelNodes.erase(modelIter->first);
-      }
+    this->RemoveDispalyedID(removedIDs[i]);
+    }
+}
+
+void vtkSlicerViewerWidget::RemoveDispalyedID(std::string &id)
+{
+  std::map<std::string, vtkMRMLModelNode *>::iterator modelIter;
+  this->DisplayedModelActors.erase(id);
+  this->DisplayedModelsClipState.erase(id);
+  this->DisplayedModelsVisibility.erase(id);
+  modelIter = this->DisplayedModelNodes.find(id);
+  if(modelIter != this->DisplayedModelNodes.end())
+    {
+    this->RemoveModelObservers(modelIter->second);
+    this->DisplayedModelNodes.erase(modelIter->first);
     }
 }
 

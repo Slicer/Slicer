@@ -228,6 +228,8 @@ protected:
 
 
   //BTX
+  void RemoveDispalyedID(std::string &id);
+
   std::map<std::string, vtkActor *> DisplayedModelActors;
 
   std::map<std::string, vtkMRMLModelNode *> DisplayedModelNodes;

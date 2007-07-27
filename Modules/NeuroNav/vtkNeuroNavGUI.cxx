@@ -814,7 +814,7 @@ void vtkNeuroNavGUI::ProcessGUIEvents ( vtkObject *caller,
             vtkMRMLModelNode *model = vtkMRMLModelNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID("vtkMRMLModelNode1")); 
             if (model != NULL)
             {
-                vtkMRMLModelDisplayNode *disp = model->GetDisplayNode();
+                vtkMRMLModelDisplayNode *disp = model->GetModelDisplayNode();
 
                 vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
                 vtkSlicerColor *color = app->GetSlicerTheme()->GetSlicerColors ( );

@@ -32,15 +32,15 @@
 #include "vtkMRMLNode.h"
 #include "vtkMRMLStorageNode.h"
 #include "vtkMRMLVolumeDisplayNode.h"
-#include "vtkMRMLTransformableNode.h"
+#include "vtkMRMLDisplayableNode.h"
 
 class vtkImageData;
 
-class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLTransformableNode
+class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLDisplayableNode
 {
   public:
   static vtkMRMLVolumeNode *New(){return NULL;};
-  vtkTypeMacro(vtkMRMLVolumeNode,vtkMRMLTransformableNode);
+  vtkTypeMacro(vtkMRMLVolumeNode,vtkMRMLDisplayableNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual vtkMRMLNode* CreateNodeInstance() = 0;
@@ -135,11 +135,6 @@ class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLTransformableNode
   vtkGetStringMacro(StorageNodeID);
   void SetReferenceStorageNodeID(char *iD) {this->SetStorageNodeID(iD);}
 
-  // Description:
-  // String ID of the display MRML node
-  virtual void SetAndObserveDisplayNodeID(const char *DisplayNodeID);
-  vtkGetStringMacro(DisplayNodeID);
-
 
   // Description:
   // Associated storage MRML node
@@ -147,7 +142,10 @@ class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLTransformableNode
 
   // Description:
   // Associated display MRML node
-  virtual vtkMRMLVolumeDisplayNode* GetDisplayNode();
+  virtual vtkMRMLVolumeDisplayNode* GetVolumeDisplayNode()
+  {
+    return vtkMRMLVolumeDisplayNode::SafeDownCast(this->DisplayNode);
+  }
 
   // Description:
   // Associated ImageData
@@ -166,7 +164,6 @@ class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLTransformableNode
   // PolyDataModifiedEvent is generated when PloyData is changed
   enum
     {
-      DisplayModifiedEvent = 18000,
       ImageDataModifiedEvent = 18001,
     };
 //ETX
@@ -176,8 +173,6 @@ protected:
   ~vtkMRMLVolumeNode();
   vtkMRMLVolumeNode(const vtkMRMLVolumeNode&);
   void operator=(const vtkMRMLVolumeNode&);
-
-  vtkSetReferenceStringMacro(DisplayNodeID);
 
   vtkSetObjectMacro(ImageData, vtkImageData);
 
@@ -189,10 +184,8 @@ protected:
   double Origin[3];
 
   char *StorageNodeID;
-  char *DisplayNodeID;
 
   vtkImageData               *ImageData;
-  vtkMRMLVolumeDisplayNode   *VolumeDisplayNode;
 
 };
 

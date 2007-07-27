@@ -224,7 +224,7 @@ void vtkSlicerModelsGUI::ProcessGUIEvents ( vtkObject *caller,
 
     if (model != NULL && model->GetDisplayNode() != NULL)
       {
-      this->ModelDisplayWidget->SetModelDisplayNode(model->GetDisplayNode());
+      this->ModelDisplayWidget->SetModelDisplayNode(model->GetModelDisplayNode());
       this->ModelDisplayWidget->SetModelNode(model);
       }
     return;

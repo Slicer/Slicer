@@ -225,7 +225,7 @@ void vtkSlicerSliceGlyphLogic::SetVolumeNode(vtkMRMLVolumeNode *volumeNode)
   events->Delete();
   if ( volumeNode )
     {
-    this->LookupTable = volumeNode->GetDisplayNode()->GetColorNode()->GetLookupTable();
+    this->LookupTable = volumeNode->GetVolumeDisplayNode()->GetColorNode()->GetLookupTable();
     // Update the reslice transform to move this image into XY
     this->UpdateTransforms();
     this->UpdatePipeline();    
@@ -347,7 +347,7 @@ void vtkSlicerSliceGlyphLogic::UpdatePipeline()
 
     this->SlicerGlyphLogic->SetImageData( imageData ); 
     vtkErrorMacro("Setting the volumeDisplayNode to the GlyphLogic: "<<this->GetVolumeNode()->GetDisplayNode());
-    this->SlicerGlyphLogic->SetVolumeDisplayNode( this->GetVolumeNode()->GetDisplayNode() );
+    this->SlicerGlyphLogic->SetVolumeDisplayNode( this->GetVolumeNode()->GetVolumeDisplayNode() );
   }
  
 

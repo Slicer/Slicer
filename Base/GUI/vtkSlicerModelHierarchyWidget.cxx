@@ -211,7 +211,7 @@ void vtkSlicerModelHierarchyWidget::ProcessWidgetEvents ( vtkObject *caller,
 
     if (model != NULL && model->GetDisplayNode() != NULL)
       {
-      this->ModelDisplayWidget->SetModelDisplayNode(model->GetDisplayNode());
+      this->ModelDisplayWidget->SetModelDisplayNode(model->GetModelDisplayNode());
       this->ModelDisplayWidget->SetModelNode(model);
       }
     else if (hmodel != NULL && hmodel->GetDisplayNode() != NULL)

@@ -258,16 +258,17 @@ void vtkMRMLScene::Clear(int removeSingletons)
   if (!removeSingletons)
     {
     this->RemoveAllNodesExceptSingletons();
+    this->InvokeEvent(this->SceneCloseEvent, NULL);
     this->ResetNodes();
     }
   else
     {
     this->CurrentScene->RemoveAllItems();
+    this->InvokeEvent(this->SceneCloseEvent, NULL);
     }
   
   this->ClearReferencedNodeID();
 
-  this->InvokeEvent(this->SceneCloseEvent, NULL);
 
   this->ClearUndoStack ( );
   this->ClearRedoStack ( );
@@ -293,6 +294,8 @@ void vtkMRMLScene::RemoveAllNodesExceptSingletons()
     }
     for(unsigned int i=0; i<removeNodes.size(); i++)
       {
+      //this->RemoveNode(removeNodes[i]);
+      //this->InvokeEvent(this->NodeRemovedEvent, removeNodes[i]);
       this->CurrentScene->vtkCollection::RemoveItem(removeNodes[i]);
       }
 }
@@ -819,7 +822,7 @@ void vtkMRMLScene::RemoveNode(vtkMRMLNode *n)
     node = (vtkMRMLNode*)this->CurrentScene->GetItemAsObject(i);
     node->UpdateReferences();
     }
-  this->Modified();
+  //this->Modified();
 }
 
 //------------------------------------------------------------------------------

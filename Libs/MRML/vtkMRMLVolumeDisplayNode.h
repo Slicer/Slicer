@@ -23,6 +23,7 @@
 #include "vtkMRMLNode.h"
 #include "vtkMRMLStorageNode.h"
 #include "vtkMRMLColorNode.h"
+#include "vtkMRMLDisplayNode.h"
 
 #include "vtkMatrix4x4.h"
 #include "vtkTransform.h"
@@ -30,11 +31,11 @@
 
 class vtkImageData;
 
-class VTK_MRML_EXPORT vtkMRMLVolumeDisplayNode : public vtkMRMLNode
+class VTK_MRML_EXPORT vtkMRMLVolumeDisplayNode : public vtkMRMLDisplayNode
 {
   public:
   static vtkMRMLVolumeDisplayNode *New();
-  vtkTypeMacro(vtkMRMLVolumeDisplayNode,vtkMRMLNode);
+  vtkTypeMacro(vtkMRMLVolumeDisplayNode,vtkMRMLDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual vtkMRMLNode* CreateNodeInstance();
