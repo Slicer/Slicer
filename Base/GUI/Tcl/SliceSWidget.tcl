@@ -364,13 +364,12 @@ itcl::body SliceSWidget::processEvent { } {
     "CharEvent" - 
     "KeyPressEvent" { 
       $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
+      $sliceGUI SetGUICommandAbortFlag 1
       switch [$_interactor GetKeySym] {
         "v" {
-          $sliceGUI SetGUICommandAbortFlag 1
           $_sliceNode SetSliceVisible [expr ![$_sliceNode GetSliceVisible]]
         }
         "r" {
-
           # use c++ version of calculation
           set tkwindow [$_renderWidget  GetWidgetName]
           set w [winfo width $tkwindow]
@@ -384,6 +383,12 @@ itcl::body SliceSWidget::processEvent { } {
         }
         "f" - "Right" - "Up" {
           $this incrementSlice
+        }
+        "space" {
+          ::EditBox::ShowDialog
+        }
+        "c" {
+          ::Box::ShowDialog ColorBox
         }
         default {
           puts "[$_interactor GetKeyCode], [$_interactor GetKeySym]"

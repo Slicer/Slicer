@@ -22,10 +22,11 @@ FILE(MAKE_DIRECTORY ${Editor_DIR})
 SET(TCLFILES
   pkgIndex.tcl
   Editor.tcl EditorNode.tcl EditorLogic.tcl EditorGUI.tcl
-  EditBox.tcl
+  Box.tcl EditBox.tcl ColorBox.tcl
   PaintSWidget.tcl DrawSWidget.tcl
   EffectSWidget.tcl
   SaveIslandEffect.tcl ThresholdEffect.tcl RemoveIslandsEffect.tcl
+  ChangeIslandEffect.tcl
 )
 
 FOREACH(tclfile ${TCLFILES})

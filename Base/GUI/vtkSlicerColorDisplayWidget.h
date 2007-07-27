@@ -101,6 +101,7 @@ public:
   // on the vtkMRMLColorNode. Returns -1 if no list box or no selection,
   // or if more than one row is selected.
   int GetSelectedColorIndex();
+  void SetSelectedColorIndex(int index);
 
   // Description:
   // API for setting ColorNode, and observing it

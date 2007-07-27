@@ -459,6 +459,10 @@ proc EditorGetPaintLabel {this} {
   return [$::Editor($this,colorsColor) GetSelectedColorIndex]
 }
 
+proc EditorSetPaintLabel {this index} {
+  $::Editor($this,colorsColor) SetSelectedColorIndex $index
+}
+
 proc EditorGetPaintColor {this} {
   set node [$::Editor($this,colorsColor) GetColorNode]
   set lut [$node GetLookupTable]

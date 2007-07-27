@@ -729,12 +729,16 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
                       this->GetMainSlicerWindow()->GetFileMenuInsertPosition(),
                                       "Import Scene...", this, "ProcessImportSceneCommand");
 
-            this->GetMainSlicerWindow()->GetFileMenu()->InsertCommand (
+            i = this->GetMainSlicerWindow()->GetFileMenu()->InsertCommand (
                       this->GetMainSlicerWindow()->GetFileMenuInsertPosition(),
                                       "Add Data...", this, "ProcessAddDataCommand");
+            this->MainSlicerWindow->GetFileMenu()->SetItemAccelerator ( i, "Ctrl-A");
+            this->MainSlicerWindow->GetFileMenu()->SetBindingForItemAccelerator ( i, this->MainSlicerWindow);
 
-            this->GetMainSlicerWindow()->GetFileMenu()->InsertCommand (this->GetMainSlicerWindow()->GetFileMenuInsertPosition(),
+            i = this->GetMainSlicerWindow()->GetFileMenu()->InsertCommand (this->GetMainSlicerWindow()->GetFileMenuInsertPosition(),
                                                "Save", this, "ProcessSaveSceneAsCommand");
+            this->MainSlicerWindow->GetFileMenu()->SetItemAccelerator ( i, "Ctrl-S");
+            this->MainSlicerWindow->GetFileMenu()->SetBindingForItemAccelerator ( i, this->MainSlicerWindow);
 
             this->GetMainSlicerWindow()->GetFileMenu()->InsertCommand (this->GetMainSlicerWindow()->GetFileMenuInsertPosition(),
                                                "Close Scene", this, "ProcessCloseSceneCommand");
@@ -761,8 +765,6 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
             
             this->GetMainSlicerWindow()->GetEditMenu()->InsertSeparator (this->GetMainSlicerWindow()->GetEditMenu()->GetNumberOfItems());
             i = this->MainSlicerWindow->GetEditMenu()->AddCommand ( "Edit Box", NULL, "::EditBox::ShowDialog" );
-            this->MainSlicerWindow->GetEditMenu()->SetItemAccelerator ( i, "space");
-            this->MainSlicerWindow->GetEditMenu()->SetBindingForItemAccelerator ( i, this->MainSlicerWindow);
 
 #ifdef USE_PYTHON
             i = this->MainSlicerWindow->GetWindowMenu()->AddCommand ( "Python console", NULL, "$::slicer3::ApplicationGUI PythonConsole" );
