@@ -737,7 +737,7 @@ void vtkMRMLColorTableNode::SetType(int type)
       this->SetColorName(1, "jake");
       this->GetLookupTable()->SetTableValue(1, 0.2, 0.5, 0.8, 1.0);
 
-      this->SetColorName(2, "Skin");
+      this->SetColorName(2, "Peach");
       this->GetLookupTable()->SetTableValue(2, 1.0, 0.8, 0.7, 1.0);
 
       this->SetColorName(3, "Brain");
@@ -832,7 +832,7 @@ void vtkMRMLColorTableNode::SetType(int type)
       this->SetColorName(1, "jake");
       this->GetLookupTable()->SetTableValue(1, 0.2, 0.5, 0.8, 1.0);
 
-      this->SetColorName(2, "Skin");
+      this->SetColorName(2, "Peach");
       this->GetLookupTable()->SetTableValue(2, 1.0, 0.8, 0.7, 1.0);
 
       this->SetColorName(3, "Brain");
