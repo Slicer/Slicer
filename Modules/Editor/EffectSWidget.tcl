@@ -33,12 +33,16 @@ if { [itcl::find class EffectSWidget] == "" } {
     destructor {}
 
     public variable scope "all"
+    public variable animationSteps "20"
+    public variable animationDelay "100"
 
     variable _startPosition "0 0 0"
     variable _currentPosition "0 0 0"
     variable _cursorActors ""
     variable _outputLabel ""
     variable _observerRecords "" ;# list of the observers so we can clean up
+    variable _cursorAnimationTag ""
+    variable _cursorAnimationState 0
 
     # methods
     method processEvent {} {}
@@ -58,6 +62,8 @@ if { [itcl::find class EffectSWidget] == "" } {
     method previewOptions {} {}
     method applyOptions {} {}
     method flashCursor { {repeat 1} {delay 50} } {}
+    method animateCursor { {onOff "on"} } {}
+    method setAnimationState { p } {}
     method errorDialog { message } {}
   }
 }
@@ -88,6 +94,8 @@ itcl::body EffectSWidget::constructor {sliceGUI} {
 }
 
 itcl::body EffectSWidget::destructor {} {
+
+  $this animateCursor off
 
   if { [info command $sliceGUI] != "" } {
     foreach tag $_guiObserverTags {
@@ -186,6 +194,45 @@ itcl::body EffectSWidget::flashCursor { {repeat 1} {delay 50} } {
   }
 }
 
+#
+# background animation for the cursor
+# - useful for showing events as 'pending'
+#
+itcl::body EffectSWidget::animateCursor { {onOff "on"} } {
+  
+  if { $onOff == "off" } {
+    if { $_cursorAnimationTag != "" } {
+      after cancel $_cursorAnimationTag
+      set $_cursorAnimationTag ""
+    }
+    $this setAnimationState 1
+    set _cursorAnimationState 0
+    return
+  }
+
+  set p [expr $_cursorAnimationState / (1.0 * $animationSteps)]
+
+  $this setAnimationState $p
+  #[$sliceGUI GetSliceViewer] RequestRender
+  [$sliceGUI GetSliceViewer] Render
+
+  incr _cursorAnimationState
+  set _cursorAnimationTag [after $animationDelay "$this animateCursor on"]
+}
+
+#
+# for virtual override 
+# - p will be 0 to 1 loop
+#
+itcl::body EffectSWidget::setAnimationState { p } {
+  # example - set opacity of actor in cosine
+  # (won't work for image actors)
+  # see ThresholdEffect for example on image
+  set amt [expr 0.5 * (1 + cos(6.2831852 * ($p - floor($p)))) ]
+  foreach a $_cursorActors {
+    [$a GetProperty] SetOpacity $amt
+  }
+}
 
 #
 # returns 1 if the event is 'swallowed' by

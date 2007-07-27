@@ -369,7 +369,7 @@ itcl::body SliceSWidget::processEvent { } {
           $sliceGUI SetGUICommandAbortFlag 1
           $_sliceNode SetSliceVisible [expr ![$_sliceNode GetSliceVisible]]
         }
-        "f" {
+        "r" {
 
           # use c++ version of calculation
           set tkwindow [$_renderWidget  GetWidgetName]
@@ -379,10 +379,10 @@ itcl::body SliceSWidget::processEvent { } {
           $_sliceNode UpdateMatrices
           $sliceGUI SetGUICommandAbortFlag 1
         }
-        "Left" - "Down" {
+        "b" - "Left" - "Down" {
           $this decrementSlice
         }
-        "Right" - "Up" {
+        "f" - "Right" - "Up" {
           $this incrementSlice
         }
         default {

@@ -171,7 +171,7 @@ itcl::body EditBox::findEffects { {path ""} } {
   set _effects(list,mouseTools) {
     ChangeIslands ChangeLabel ChooseColor 
     ImplicitCube ImplicitEllipse ImplicitRectangle 
-    FreehandDrawLabel EraseLabel DeleteIslands ConnectedComponents 
+    FreehandDrawLabel EraseLabel RemoveIslands ConnectedComponents 
     ThresholdBucket ThresholdPaintLabel SaveIsland SlurpColor PaintLabel
     DefaultTool
   }
@@ -284,7 +284,7 @@ itcl::body EditBox::create { } {
   $this createButtonRow {ChangeLabel ToggleLabelOutline LabelVisibilityOn}
   $this createButtonRow {PaintLabel ThresholdPaintLabel FreehandDrawLabel ThresholdBucket}
   $this createButtonRow {EraseLabel ImplicitEllipse ImplicitRectangle ImplicitCube}
-  $this createButtonRow {IdentifyIslands ChangeIslands DeleteIslands SaveIsland}
+  $this createButtonRow {IdentifyIslands ChangeIslands RemoveIslands SaveIsland}
   $this createButtonRow {ErodeLabel DilateLabel Threshold ChangeLabel}
   $this createButtonRow {InterpolateLabels MakeModel Watershed ConnectedComponents}
   $this createButtonRow {PreviousFiducial NextFiducial FiducialVisibilityOn DeleteFiducials}

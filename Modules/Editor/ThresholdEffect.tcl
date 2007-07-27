@@ -42,6 +42,7 @@ if { [itcl::find class ThresholdEffect] == "" } {
     method buildOptions {} {}
     method tearDownOptions {} {}
     method previewOptions {} {}
+    method setAnimationState { p } {}
     method applyOptions {} {}
     method setPaintThreshold {} {}
   }
@@ -112,15 +113,15 @@ itcl::body ThresholdEffect::preview {} {
   #
 
   set color [::EditorGetPaintColor $::Editor(singleton)]
-  set lut [vtkLookupTable New]
-  $lut SetRampToLinear
-  $lut SetNumberOfTableValues 2
-  $lut SetTableRange 0 1
-  $lut SetTableValue 0  0 0 0  0
-  eval $lut SetTableValue 1  $color
+  set o(lut) [vtkNew vtkLookupTable]
+  $o(lut) SetRampToLinear
+  $o(lut) SetNumberOfTableValues 2
+  $o(lut) SetTableRange 0 1
+  $o(lut) SetTableValue 0  0 0 0  0
+  eval $o(lut) SetTableValue 1  $color
   set map [vtkImageMapToRGBA New]
   $map SetOutputFormatToRGBA
-  $map SetLookupTable $lut
+  $map SetLookupTable $o(lut)
 
   set thresh [vtkImageThreshold New]
   #TODO: this background has already been windowed - so range is not correct
@@ -137,10 +138,21 @@ itcl::body ThresholdEffect::preview {} {
   $o(cursorActor) VisibilityOn
 
   $map Delete
-  $lut Delete
   $thresh Delete
 
   [$sliceGUI GetSliceViewer] RequestRender
+}
+
+#
+# p will be 0 to 1 loop
+#
+itcl::body ThresholdEffect::setAnimationState { p } {
+
+  if { [info exists o(lut)] } {
+    set amt [expr 0.5 + 0.25 * (1 + cos(6.2831852 * ($p - floor($p)))) ]
+    set color [$o(lut) GetTableValue 1]
+    eval $o(lut) SetTableValue 1 [lreplace $color 3 3 $amt]
+  }
 }
 
 itcl::body ThresholdEffect::positionCursor {} {
@@ -230,7 +242,9 @@ itcl::body ThresholdEffect::tearDownOptions { } {
 itcl::body ThresholdEffect::previewOptions { } {
   foreach te [itcl::find objects -class ThresholdEffect] {
     $te configure -range [$o(range) GetRange]
+    $te animateCursor off
     $te preview
+    $te animateCursor on
   }
 }
 
