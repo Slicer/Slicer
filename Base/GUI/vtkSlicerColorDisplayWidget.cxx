@@ -771,7 +771,7 @@ int vtkSlicerColorDisplayWidget::GetSelectedColorIndex()
     row = 1;
     this->MultiColumnList->GetWidget()->SelectSingleRow(row);
     numRows = this->MultiColumnList->GetWidget()->GetNumberOfSelectedRows();
-    vtkDebugMacro("No rows were selected, forcing selection of row " << row[0] << ", numRows = " << numRows);
+    vtkDebugMacro("No rows were selected, forcing selection of row " << row << ", numRows = " << numRows);
     }
 
   if (numRows != 1)
