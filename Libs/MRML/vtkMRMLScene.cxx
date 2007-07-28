@@ -274,9 +274,9 @@ void vtkMRMLScene::Clear(int removeSingletons)
   this->ClearRedoStack ( );
   this->UniqueIDByClass.clear();
 
-  this->SetUndoOn();
 
   this->Modified();
+  this->SetUndoOn();
 }
 
 //------------------------------------------------------------------------------
@@ -295,8 +295,11 @@ void vtkMRMLScene::RemoveAllNodesExceptSingletons()
     for(unsigned int i=0; i<removeNodes.size(); i++)
       {
       //this->RemoveNode(removeNodes[i]);
-      //this->InvokeEvent(this->NodeRemovedEvent, removeNodes[i]);
-      this->CurrentScene->vtkCollection::RemoveItem(removeNodes[i]);
+      node = removeNodes[i];
+      //node->Register(this);
+      this->CurrentScene->vtkCollection::RemoveItem(node);
+      //this->InvokeEvent(this->NodeRemovedEvent,node);
+      //node->UnRegister(this);
       }
 }
 

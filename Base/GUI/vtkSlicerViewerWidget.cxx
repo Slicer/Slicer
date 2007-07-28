@@ -575,6 +575,9 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
     this->RemoveModelProps();
     this->RemoveHierarchyObservers();
     this->RemoveModelObservers();
+    this->UpdateFromMRML();
+    //this->MainViewer->RemoveAllViewProps();
+    this->Render();
     }
   else 
     {
@@ -590,11 +593,14 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
       if (event == vtkMRMLScene::NodeRemovedEvent)
         {
         std::string sid(node->GetID());
-        this->RemoveDispalyedID(sid);
+        this->UpdateFromMRML();
+        //this->RemoveDispalyedID(sid);
         }
-      this->UpdateFromMRMLRequested = 1;
-      this->RequestRender();
-      //this->UpdateFromMRML();
+      else
+        {
+        this->UpdateFromMRMLRequested = 1;
+        this->RequestRender();
+        }
       }
     else if (node != NULL && node->IsA("vtkMRMLModelHierarchyNode") )
       {
@@ -1201,7 +1207,7 @@ void vtkSlicerViewerWidget::RemoveDispalyedID(std::string &id)
   modelIter = this->DisplayedModelNodes.find(id);
   if(modelIter != this->DisplayedModelNodes.end())
     {
-    this->RemoveModelObservers(modelIter->second);
+    //this->RemoveModelObservers(modelIter->second);
     this->DisplayedModelNodes.erase(modelIter->first);
     }
 }
