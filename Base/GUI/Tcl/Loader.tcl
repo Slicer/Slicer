@@ -412,13 +412,23 @@ itcl::body Loader::add { paths } {
 #
 itcl::body Loader::apply { } {
 
+  set mainWindow [$::slicer3::ApplicationGUI GetMainSlicerWindow]
+  set progressGauge [$mainWindow GetProgressGauge]
+  $progressGauge SetValue 0
+  
   set w [$o(list) GetWidget] 
   set rows [$w GetNumberOfRows]
 
   for {set row 0} {$row < $rows} {incr row} {
+
+    $progressGauge SetValue [expr 100 * ($row / ($rows - 1.))]
+
     if { [$w GetCellTextAsInt $row $col(Select)] } {
+
       set path [$w GetCellText $row $col(File)]
       set name [$w GetCellText $row $col(Name)]
+      $mainWindow SetStatusText "Loading: $path"
+
       switch [$w GetCellText $row $col(Type)] {
         "Volume" {
           set centered [$w GetCellTextAsInt $row $col(Centered)]
@@ -448,6 +458,8 @@ itcl::body Loader::apply { } {
       }
     }
   }
+  $mainWindow SetStatusText ""
+  $progressGauge SetValue 0
 }
 
 
