@@ -117,6 +117,9 @@ void vtkMRMLDisplayableNode::PrintSelf(ostream& os, vtkIndent indent)
 void vtkMRMLDisplayableNode::UpdateScene(vtkMRMLScene *scene)
 {
    Superclass::UpdateScene(scene);
+   this->SetAndObservePolyData(this->GetPolyData());
+   this->SetAndObserveDisplayNodeID(this->GetDisplayNodeID());
+
 }
 
 //-----------------------------------------------------------

@@ -22,11 +22,11 @@
 #include "vtkMRMLModelStorageNode.h"
 #include "vtkMRMLUnstructuredGridNode.h" 
 
-class VTK_MRML_EXPORT vtkMRMLUnstructuredGridStorageNode : public vtkMRMLModelStorageNode
+class VTK_MRML_EXPORT vtkMRMLUnstructuredGridStorageNode : public vtkMRMLStorageNode
 {
   public:
   static vtkMRMLUnstructuredGridStorageNode *New();
-  vtkTypeMacro(vtkMRMLUnstructuredGridStorageNode,vtkMRMLModelStorageNode);
+  vtkTypeMacro(vtkMRMLUnstructuredGridStorageNode,vtkMRMLStorageNode);
   //void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual vtkMRMLNode* CreateNodeInstance();

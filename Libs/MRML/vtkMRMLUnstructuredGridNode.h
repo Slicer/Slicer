@@ -32,14 +32,15 @@
 #include "vtkMRMLNode.h"
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLStorageNode.h"
+#include "vtkMRMLUnstructuredGridDisplayNode.h"
 
 class vtkCallbackCommand;
 
-class VTK_MRML_EXPORT vtkMRMLUnstructuredGridNode : public vtkMRMLModelNode
+class VTK_MRML_EXPORT vtkMRMLUnstructuredGridNode : public vtkMRMLDisplayableNode
 {
 public:
   static vtkMRMLUnstructuredGridNode *New();
-  vtkTypeMacro(vtkMRMLUnstructuredGridNode,vtkMRMLModelNode);
+  vtkTypeMacro(vtkMRMLUnstructuredGridNode,vtkMRMLDisplayableNode);
 
   void PrintSelf(ostream& os, vtkIndent indent);
   
@@ -50,15 +51,58 @@ public:
   virtual vtkMRMLNode* CreateNodeInstance();
 
   // Description:
+  // Read node attributes from XML file
+  virtual void ReadXMLAttributes( const char** atts);
+
+  // Description:
+  // Write this node's information to a MRML file in XML format.
+  virtual void WriteXML(ostream& of, int indent);
+
+
+  // Description:
+  // Copy the node's attributes to this object
+  virtual void Copy(vtkMRMLNode *node);
+  
+  // Description:
   // Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "UnstructuredGrid";};
 
+   // Description:
+  // Updates this node if it depends on other nodes 
+  // when the node is deleted in the scene
+  virtual void UpdateReferences();
+
   // Description:
   // Finds the storage node and read the data
-  // Finds the display node and sets display pipelie
   virtual void UpdateScene(vtkMRMLScene *scene);
 
   // Description:
+  // Update the stored reference to another node in the scene
+  virtual void UpdateReferenceID(const char *oldID, const char *newID);
+
+  // Description:
+  // Get associated model display MRML node
+  vtkMRMLModelDisplayNode* GetModelDisplayNode() 
+  {
+    return vtkMRMLModelDisplayNode::SafeDownCast(this->DisplayNode);
+  }
+
+  // Description:
+  // String ID of the storage MRML node
+  vtkSetReferenceStringMacro(StorageNodeID);
+  void SetReferenceStorageNodeID(const char *id) { this->SetStorageNodeID(id); }
+  vtkGetStringMacro(StorageNodeID);
+
+  // Description:
+  // Get associated storage MRML node
+  vtkMRMLStorageNode* GetStorageNode();
+  
+  // Description:
+  // alternative method to propagate events generated in Display nodes
+  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
+                                   unsigned long /*event*/, 
+                                   void * /*callData*/ );
+    // Description:
   // Set and observe UnstructuredGrid  for this model
   vtkGetObjectMacro(UnstructuredGrid, vtkUnstructuredGrid);
   void SetAndObserveUnstructuredGrid(vtkUnstructuredGrid *UnstructuredGrid);
@@ -70,6 +114,8 @@ protected:
   void operator=(const vtkMRMLUnstructuredGridNode&);
 
   vtkSetObjectMacro(UnstructuredGrid, vtkUnstructuredGrid);
+
+  char *StorageNodeID;
 
 
   // Data

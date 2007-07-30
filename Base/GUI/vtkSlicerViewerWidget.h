@@ -34,8 +34,8 @@
 #include "vtkMRMLCameraNode.h"
 #include "vtkMRMLViewNode.h"
 
-class vtkMRMLModelNode;
-class vtkMRMLModelDisplayNode;
+class vtkMRMLDisplayableNode;
+class vtkMRMLDisplayNode;
 class vtkSlicerModelHierarchyLogic;
 class vtkPolyData;
 class vtkCellArray;
@@ -196,12 +196,12 @@ protected:
   void RemoveModelProps();
 
   void RemoveModelObservers();
-  void RemoveModelObservers( vtkMRMLModelNode *model);
+  void RemoveModelObservers( vtkMRMLDisplayableNode *model);
 
   void UpdateModelsFromMRML();
-  void UpdateModel(vtkMRMLModelNode *model);
-  void UpdateModelPolyData(vtkMRMLModelNode *model);
-  void UpdateModifiedModel(vtkMRMLModelNode *model);
+  void UpdateModel(vtkMRMLDisplayableNode *model);
+  void UpdateModelPolyData(vtkMRMLDisplayableNode *model);
+  void UpdateModifiedModel(vtkMRMLDisplayableNode *model);
 
   void CreateClipSlices();
 
@@ -220,11 +220,11 @@ protected:
     this->AddHierarchiyObservers();
     };
 
-  vtkMRMLModelDisplayNode* GetModelDisplayNode(vtkMRMLModelNode *model);
+  vtkMRMLDisplayNode* GetDisplayNode(vtkMRMLDisplayableNode *model);
 
-  void SetModelDisplayProperty(vtkMRMLModelNode *model,  vtkActor *actor);
+  void SetModelDisplayProperty(vtkMRMLDisplayableNode *model,  vtkActor *actor);
 
-  int GetDisplayedModelsVisibility(vtkMRMLModelNode *model);
+  int GetDisplayedModelsVisibility(vtkMRMLDisplayableNode *model);
 
 
   //BTX
@@ -232,7 +232,7 @@ protected:
 
   std::map<std::string, vtkActor *> DisplayedModelActors;
 
-  std::map<std::string, vtkMRMLModelNode *> DisplayedModelNodes;
+  std::map<std::string, vtkMRMLDisplayableNode *> DisplayedModelNodes;
 
   std::map<std::string, int> DisplayedModelsClipState;
   std::map<std::string, int> DisplayedModelsVisibility;

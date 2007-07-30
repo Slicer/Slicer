@@ -33,11 +33,11 @@
 #include "vtkMRMLUnstructuredGridNode.h"
 
 
-class VTK_MRML_EXPORT vtkMRMLUnstructuredGridDisplayNode : public vtkMRMLModelDisplayNode
+class VTK_MRML_EXPORT vtkMRMLUnstructuredGridDisplayNode : public vtkMRMLDisplayNode
 {
  public:
   static vtkMRMLUnstructuredGridDisplayNode *New (  );
-  vtkTypeMacro ( vtkMRMLUnstructuredGridDisplayNode,vtkMRMLModelDisplayNode );
+  vtkTypeMacro ( vtkMRMLUnstructuredGridDisplayNode,vtkMRMLDisplayNode );
   void PrintSelf ( ostream& os, vtkIndent indent );
   
   //--------------------------------------------------------------------------
