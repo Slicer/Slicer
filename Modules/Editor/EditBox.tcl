@@ -172,7 +172,7 @@ itcl::body EditBox::create { } {
   # delete this instance when the window is closed
   wm protocol [$o(toplevel) GetWidgetName] \
     WM_DELETE_WINDOW "$this hide"
-  bind [$o(toplevel) GetWidgetName] <Key-space> "$this hide"
+  bind [$o(toplevel) GetWidgetName] <Key-space> "$this hide; focus [[$::slicer3::ApplicationGUI GetMainSlicerWindow] GetWidgetName]"
 
   #
   # the buttons
