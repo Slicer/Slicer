@@ -765,6 +765,22 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
             
             this->GetMainSlicerWindow()->GetEditMenu()->InsertSeparator (this->GetMainSlicerWindow()->GetEditMenu()->GetNumberOfItems());
             i = this->MainSlicerWindow->GetEditMenu()->AddCommand ( "Edit Box", NULL, "::EditBox::ShowDialog" );
+            //
+            // Note: adding "space" as the accelerator means that when you try to type a space
+            // into an entry box inside the slicer main window the edit box pops up
+            //  -- this could be fixed by adding the following tcl code to the vtkKWEntry
+            //
+            //   bind $w <space> "::tk::CancelRepeat ; ::tk::EntryInsert %W %A; break"
+            //  or eve
+            //   bind $w <KeyPress> "::tk::CancelRepeat ; ::tk::EntryInsert %W %A; break"
+            //
+            // so that more single-character accelerators can be used.
+            //
+            // for now, just live with the popup since there aren't many entries where
+            // people will be typing spaces.
+            //
+            this->MainSlicerWindow->GetEditMenu()->SetItemAccelerator ( i, "space");
+            this->MainSlicerWindow->GetEditMenu()->SetBindingForItemAccelerator ( i, this->MainSlicerWindow);
 
 #ifdef USE_PYTHON
             i = this->MainSlicerWindow->GetWindowMenu()->AddCommand ( "Python console", NULL, "$::slicer3::ApplicationGUI PythonConsole" );
