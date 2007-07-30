@@ -70,15 +70,6 @@ class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLDisplayableNode
   // Finds the storage node and read the data
   virtual void UpdateScene(vtkMRMLScene *scene);
 
-  // Description:
-  // Updates this node if it depends on other nodes 
-  // when the node is deleted in the scene
-  virtual void UpdateReferences();
-
-  // Description:
-  // Update the stored reference to another node in the scene
-  virtual void UpdateReferenceID(const char *oldID, const char *newID);
-
   //--------------------------------------------------------------------------
   // RAS->IJK Matrix Calculation
   //--------------------------------------------------------------------------
@@ -130,17 +121,6 @@ class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLDisplayableNode
   void SetRASToIJKMatrix(vtkMatrix4x4* mat);
 
   // Description:
-  // String ID of the storage MRML node
-  vtkSetReferenceStringMacro(StorageNodeID);
-  vtkGetStringMacro(StorageNodeID);
-  void SetReferenceStorageNodeID(char *iD) {this->SetStorageNodeID(iD);}
-
-
-  // Description:
-  // Associated storage MRML node
-  virtual vtkMRMLStorageNode* GetStorageNode();
-
-  // Description:
   // Associated display MRML node
   virtual vtkMRMLVolumeDisplayNode* GetVolumeDisplayNode()
   {
@@ -182,8 +162,6 @@ protected:
   // these are mappings to mm space
   double Spacing[3];
   double Origin[3];
-
-  char *StorageNodeID;
 
   vtkImageData               *ImageData;
 

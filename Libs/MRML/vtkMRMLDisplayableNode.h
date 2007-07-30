@@ -94,7 +94,16 @@ public:
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
                                    unsigned long /*event*/, 
                                    void * /*callData*/ );
+  // Description:
+  // String ID of the storage MRML node
+  vtkSetReferenceStringMacro(StorageNodeID);
+  void SetReferenceStorageNodeID(const char *id) { this->SetStorageNodeID(id); }
+  vtkGetStringMacro(StorageNodeID);
 
+  // Description:
+  // Get associated storage MRML node
+  vtkMRMLStorageNode* GetStorageNode();
+  
 //BTX
   // Description:
   // DisplayModifiedEvent is generated when display node parameters is changed
@@ -120,6 +129,7 @@ public:
   vtkPolyData *PolyData;
   
   char *DisplayNodeID;
+  char *StorageNodeID;
 
   vtkMRMLDisplayNode *DisplayNode;
 };
