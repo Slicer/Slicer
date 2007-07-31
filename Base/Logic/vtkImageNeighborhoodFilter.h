@@ -56,7 +56,7 @@ public:
 
   // Description:
   // Get the increments to use when looping through the mask.
-  void GetMaskIncrements(int &maskInc0, int &maskInc1, int &maskInc2);
+  void GetMaskIncrements(vtkIdType &maskInc0, vtkIdType &maskInc1, vtkIdType &maskInc2);
 
 protected:
   vtkImageNeighborhoodFilter();

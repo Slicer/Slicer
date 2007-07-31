@@ -61,26 +61,26 @@ template <class T>
 static void vtkImageErodeExecute(vtkImageErode *self,
                      vtkImageData *inData, T *inPtr,
                      vtkImageData *outData,
-                     vtkIdType outExt[6], int id)
+                     int outExt[6], int id)
 {
   // For looping though output (and input) pixels.
-  vtkIdType outMin0, outMax0, outMin1, outMax1, outMin2, outMax2;
-  vtkIdType outIdx0, outIdx1, outIdx2;
+  int outMin0, outMax0, outMin1, outMax1, outMin2, outMax2;
+  int outIdx0, outIdx1, outIdx2;
   vtkIdType inInc0, inInc1, inInc2;
   vtkIdType outInc0, outInc1, outInc2;
   T *inPtr0, *inPtr1, *inPtr2;
   T *outPtr0, *outPtr1, *outPtr2;
   int numComps, outIdxC;
   // For looping through hood pixels
-  vtkIdType hoodMin0, hoodMax0, hoodMin1, hoodMax1, hoodMin2, hoodMax2;
-  vtkIdType hoodIdx0, hoodIdx1, hoodIdx2;
+  int hoodMin0, hoodMax0, hoodMin1, hoodMax1, hoodMin2, hoodMax2;
+  int hoodIdx0, hoodIdx1, hoodIdx2;
   T *hoodPtr0, *hoodPtr1, *hoodPtr2;
   // For looping through the mask.
   unsigned char *maskPtr, *maskPtr0, *maskPtr1, *maskPtr2;
   vtkIdType maskInc0, maskInc1, maskInc2;
   // The extent of the whole input image
-  vtkIdType inImageMin0, inImageMin1, inImageMin2;
-  vtkIdType inImageMax0, inImageMax1, inImageMax2;
+  int inImageMin0, inImageMin1, inImageMin2;
+  int inImageMax0, inImageMax1, inImageMax2;
   // Other
   T backgnd = (T)(self->GetBackground());
   T foregnd = (T)(self->GetForeground());

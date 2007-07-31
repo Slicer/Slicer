@@ -138,9 +138,9 @@ void vtkImageNeighborhoodFilter::SetNeighborTo8()
 //----------------------------------------------------------------------------
 // Description:
 // increments to loop through mask.
-void vtkImageNeighborhoodFilter::GetMaskIncrements(int &maskInc0,
-                                                   int &maskInc1,
-                                                   int &maskInc2)
+void vtkImageNeighborhoodFilter::GetMaskIncrements(vtkIdType &maskInc0,
+                                                   vtkIdType &maskInc1,
+                                                   vtkIdType &maskInc2)
 {
   maskInc0 = 1;
   maskInc1 = this->KernelSize[0];
@@ -151,12 +151,12 @@ void vtkImageNeighborhoodFilter::GetMaskIncrements(int &maskInc0,
 // Description:
 // This is like the extent of the neighborhood, but relative to the
 // current voxel
-void vtkImageNeighborhoodFilter::GetRelativeHoodExtent(vtkIdType &hoodMin0,
-                                                       vtkIdType &hoodMax0,
-                                                       vtkIdType &hoodMin1,
-                                                       vtkIdType &hoodMax1,
-                                                       vtkIdType &hoodMin2,
-                                                       vtkIdType &hoodMax2)
+void vtkImageNeighborhoodFilter::GetRelativeHoodExtent(int &hoodMin0,
+                                                       int &hoodMax0,
+                                                       int &hoodMin1,
+                                                       int &hoodMax1,
+                                                       int &hoodMin2,
+                                                       int &hoodMax2)
 {
   // Neighborhood around current pixel (kernel has radius 1)
   hoodMin0 = - this->KernelMiddle[0];
