@@ -770,16 +770,13 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
             // into an entry box inside the slicer main window the edit box pops up
             //  -- this could be fixed by adding the following tcl code to the vtkKWEntry
             //
-            //   bind $w <space> "::tk::CancelRepeat ; ::tk::EntryInsert %W %A; break"
-            //  or eve
             //   bind $w <KeyPress> "::tk::CancelRepeat ; ::tk::EntryInsert %W %A; break"
             //
-            // so that more single-character accelerators can be used.
+            // so that single-character accelerators can be used.
             //
-            // for now, just live with the popup since there aren't many entries where
-            // people will be typing spaces.
+            // for now, rather than just live with the popup, use F1
             //
-            this->MainSlicerWindow->GetEditMenu()->SetItemAccelerator ( i, "space");
+            this->MainSlicerWindow->GetEditMenu()->SetItemAccelerator ( i, "F1");
             this->MainSlicerWindow->GetEditMenu()->SetBindingForItemAccelerator ( i, this->MainSlicerWindow);
 
 #ifdef USE_PYTHON
