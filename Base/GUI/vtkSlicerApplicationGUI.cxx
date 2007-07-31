@@ -721,9 +721,11 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
             // 
             // File Menu
             //
-            this->GetMainSlicerWindow()->GetFileMenu()->InsertCommand (
+            i = this->GetMainSlicerWindow()->GetFileMenu()->InsertCommand (
                       this->GetMainSlicerWindow()->GetFileMenuInsertPosition(),
                                       "Load Scene...", this, "ProcessLoadSceneCommand");
+            this->MainSlicerWindow->GetFileMenu()->SetItemAccelerator ( i, "Ctrl-O");
+            this->MainSlicerWindow->GetFileMenu()->SetBindingForItemAccelerator ( i, this->MainSlicerWindow);
 
             this->GetMainSlicerWindow()->GetFileMenu()->InsertCommand (
                       this->GetMainSlicerWindow()->GetFileMenuInsertPosition(),
@@ -740,8 +742,10 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
             this->MainSlicerWindow->GetFileMenu()->SetItemAccelerator ( i, "Ctrl-S");
             this->MainSlicerWindow->GetFileMenu()->SetBindingForItemAccelerator ( i, this->MainSlicerWindow);
 
-            this->GetMainSlicerWindow()->GetFileMenu()->InsertCommand (this->GetMainSlicerWindow()->GetFileMenuInsertPosition(),
+            i = this->GetMainSlicerWindow()->GetFileMenu()->InsertCommand (this->GetMainSlicerWindow()->GetFileMenuInsertPosition(),
                                                "Close Scene", this, "ProcessCloseSceneCommand");
+            this->MainSlicerWindow->GetFileMenu()->SetItemAccelerator ( i, "Ctrl-W");
+            this->MainSlicerWindow->GetFileMenu()->SetBindingForItemAccelerator ( i, this->MainSlicerWindow);
 
             this->GetMainSlicerWindow()->GetFileMenu()->InsertSeparator (
                 this->GetMainSlicerWindow()->GetFileMenuInsertPosition());
@@ -784,9 +788,6 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
             this->MainSlicerWindow->GetWindowMenu()->SetItemAccelerator ( i, "Ctrl+P");
             this->MainSlicerWindow->GetWindowMenu()->SetBindingForItemAccelerator ( i, this->MainSlicerWindow);
 #endif
-
-            // this->MainSlicerWindow->GetEditMenu()->SetItemAccelerator ( i, "Ctrl+Y");
-            // this->MainSlicerWindow->GetEditMenu()->SetBindingForItemAccelerator ( i, this->MainSlicerWindow);
 
             //
             // View Menu
