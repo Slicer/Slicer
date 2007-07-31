@@ -425,7 +425,6 @@ proc EffectSWidget::Add {effect} {
 
 proc EffectSWidget::RemoveAll {} {
   foreach ew [itcl::find objects -isa EffectSWidget] {
-puts "deleting $ew"
     itcl::delete object $ew
   }
 }
