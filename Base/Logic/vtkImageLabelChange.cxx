@@ -45,7 +45,7 @@ template <class T>
 static void vtkImageLabelChangeExecute(vtkImageLabelChange *self,
                      vtkImageData *inData, T *inPtr,
                      vtkImageData *outData, 
-                     int outExt[6], int id)
+                     vtkIdType outExt[6], int id)
 {
     T *outPtr = (T *)outData->GetScalarPointerForExtent(outExt);
     // looping
@@ -89,7 +89,7 @@ static void vtkImageLabelChangeExecute(vtkImageLabelChange *self,
 // the datas data types.
 void vtkImageLabelChange::ThreadedExecute(vtkImageData *inData, 
                     vtkImageData *outData,
-                    int outExt[6], int id)
+                    vtkIdType outExt[6], int id)
 {
     // Check Single component
     int x1;
