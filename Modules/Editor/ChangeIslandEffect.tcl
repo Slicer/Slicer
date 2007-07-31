@@ -68,7 +68,6 @@ itcl::body ChangeIslandEffect::processEvent { } {
     "LeftButtonPressEvent" {
       $this apply
       $sliceGUI SetGUICommandAbortFlag 1
-      $sliceGUI SetGrabID $this
     }
     "EnterEvent" {
       $o(cursorActor) VisibilityOn
@@ -98,7 +97,10 @@ itcl::body ChangeIslandEffect::apply {} {
   $conn SetOutputLabel [EditorGetPaintLabel $::Editor(singleton)]
   $conn SetInput [$this getInputLabel]
   $conn SetOutput [$this getOutputLabel]
+
+  $this setProgressFilter $conn "Change Island"
   [$this getOutputLabel] Update
+
   $conn Delete
 
   $this postApply
@@ -123,11 +125,16 @@ itcl::body ChangeIslandEffect::buildOptions {} {
   #
   set tag [$o(cancel) AddObserver AnyEvent "after idle ::EffectSWidget::RemoveAll"]
   lappend _observerRecords "$o(cancel) $tag"
+
+  if { [$this getInputLabel] == "" } {
+    $this errorDialog "Need to have a label layer to use island effect"
+    after idle ::EffectSWidget::RemoveAll
+  }
 }
 
 itcl::body ChangeIslandEffect::tearDownOptions { } {
-  if { [info exists o(range)] } {
-    foreach w "cancel" {
+  foreach w "cancel" {
+    if { [info exists o($w)] } {
       $o($w) SetParent ""
       pack forget [$o($w) GetWidgetName] 
     }

@@ -56,7 +56,7 @@ itcl::body ThresholdEffect::constructor {sliceGUI} {
 }
 
 itcl::body ThresholdEffect::destructor {} {
-  $this tearDownOptions
+  # rely on superclass destructor
 }
 
 # ------------------------------------------------------------------
@@ -91,6 +91,7 @@ itcl::body ThresholdEffect::apply {} {
   $thresh SetInValue [EditorGetPaintLabel $::Editor(singleton)]
   $thresh SetOutValue 0
   $thresh SetOutput [$this getOutputLabel]
+  $this setProgressFilter $thresh "Threshold"
   $thresh Update
   $thresh Delete
 
@@ -162,6 +163,7 @@ itcl::body ThresholdEffect::positionCursor {} {
 }
 
 itcl::body ThresholdEffect::buildOptions { } {
+
   
   #
   # a range setting for threshold values
@@ -174,11 +176,13 @@ itcl::body ThresholdEffect::buildOptions { } {
   $o(range) SetReliefToGroove
   $o(range) SetBalloonHelpString "Set the range of the background values that should be labeled."
 
-  set range [[$this getInputBackground] GetScalarRange]
-  eval $o(range) SetWholeRange $range
-  foreach {lo hi} $range {}
-  set lo [expr $lo + (0.5 * ($hi - $lo))]
-  $o(range) SetRange $lo $hi
+  if { [$this getInputBackground] != "" } {
+    set range [[$this getInputBackground] GetScalarRange]
+    eval $o(range) SetWholeRange $range
+    foreach {lo hi} $range {}
+    set lo [expr $lo + (0.25 * ($hi - $lo))]
+    $o(range) SetRange $lo $hi
+  }
 
   pack [$o(range) GetWidgetName] \
     -side top -anchor e -fill x -padx 2 -pady 2 
@@ -228,13 +232,20 @@ itcl::body ThresholdEffect::buildOptions { } {
   lappend _observerRecords "$o(useForPainting) $tag"
   set tag [$o(cancel) AddObserver AnyEvent "after idle ::EffectSWidget::RemoveAll"]
   lappend _observerRecords "$o(cancel) $tag"
+
+  if { [$this getInputBackground] == "" || [$this getInputLabel] == "" } {
+    $this errorDialog "Need to have background and label layers to use threshold"
+    after idle ::EffectSWidget::RemoveAll
+  }
 }
 
 itcl::body ThresholdEffect::tearDownOptions { } {
   if { [info exists o(range)] } {
     foreach w "range apply useForPainting cancel" {
-      $o($w) SetParent ""
-      pack forget [$o($w) GetWidgetName] 
+      if { [info exists o($w)] } {
+        $o($w) SetParent ""
+        pack forget [$o($w) GetWidgetName] 
+      }
     }
   }
 }
@@ -250,9 +261,8 @@ itcl::body ThresholdEffect::previewOptions { } {
 
 itcl::body ThresholdEffect::applyOptions { } {
   $this previewOptions
-  foreach te [itcl::find objects -class ThresholdEffect] {
-    $te apply
-  }
+  set te [lindex [itcl::find objects -class ThresholdEffect] 0]
+  $te apply
 }
 
 itcl::body ThresholdEffect::setPaintThreshold {} {

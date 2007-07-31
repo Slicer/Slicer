@@ -67,7 +67,7 @@ itcl::body EditBox::findEffects { {path ""} } {
 
   # effects that change the mouse cursor
   set _effects(list,mouseTools) {
-    ChangeIslands ChangeLabel ChooseColor 
+    ChangeIsland ChangeLabel ChooseColor 
     ImplicitCube ImplicitEllipse ImplicitRectangle 
     FreehandDrawLabel EraseLabel RemoveIslands ConnectedComponents 
     ThresholdBucket ThresholdPaintLabel SaveIsland SlurpColor PaintLabel
@@ -173,6 +173,8 @@ itcl::body EditBox::create { } {
   wm protocol [$o(toplevel) GetWidgetName] \
     WM_DELETE_WINDOW "$this hide"
   bind [$o(toplevel) GetWidgetName] <Key-space> "$this hide; focus [[$::slicer3::ApplicationGUI GetMainSlicerWindow] GetWidgetName]"
+  bind [$o(toplevel) GetWidgetName] <Key-F1> "$this hide; focus [[$::slicer3::ApplicationGUI GetMainSlicerWindow] GetWidgetName]"
+  bind [$o(toplevel) GetWidgetName] <Key-Escape> "$this selectEffect DefaultTool; $this hide"
 
   #
   # the buttons
@@ -182,7 +184,7 @@ itcl::body EditBox::create { } {
   $this createButtonRow {ChangeLabel ToggleLabelOutline LabelVisibilityOn}
   $this createButtonRow {PaintLabel ThresholdPaintLabel FreehandDrawLabel ThresholdBucket}
   $this createButtonRow {EraseLabel ImplicitEllipse ImplicitRectangle ImplicitCube}
-  $this createButtonRow {IdentifyIslands ChangeIslands RemoveIslands SaveIsland}
+  $this createButtonRow {IdentifyIslands ChangeIsland RemoveIslands SaveIsland}
   $this createButtonRow {ErodeLabel DilateLabel Threshold ChangeLabel}
   $this createButtonRow {InterpolateLabels MakeModel Watershed ConnectedComponents}
   $this createButtonRow {PreviousFiducial NextFiducial FiducialVisibilityOn DeleteFiducials}

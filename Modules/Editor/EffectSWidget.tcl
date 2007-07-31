@@ -64,6 +64,8 @@ if { [itcl::find class EffectSWidget] == "" } {
     method flashCursor { {repeat 1} {delay 50} } {}
     method animateCursor { {onOff "on"} } {}
     method setAnimationState { p } {}
+    method setProgressFilter { filter {description ""} } {}
+    method progressCallback { event caller description } {}
     method errorDialog { message } {}
   }
 }
@@ -96,6 +98,7 @@ itcl::body EffectSWidget::constructor {sliceGUI} {
 itcl::body EffectSWidget::destructor {} {
 
   $this animateCursor off
+  $this tearDownOptions
 
   if { [info command $sliceGUI] != "" } {
     foreach tag $_guiObserverTags {
@@ -352,7 +355,6 @@ itcl::body EffectSWidget::processEvent { } {
     "LeftButtonPressEvent" {
       $this apply
       $sliceGUI SetGUICommandAbortFlag 1
-      $sliceGUI SetGrabID $this
     }
     "EnterEvent" {
       $o(cursorActor) VisibilityOn
@@ -377,6 +379,36 @@ itcl::body EffectSWidget::errorDialog { message } {
   tk_messageBox -message $message
 }
 
+itcl::body EffectSWidget::setProgressFilter { filter {description ""} } {
+
+  foreach event {StartEvent ProgressEvent EndEvent} {
+    $filter AddObserver $event [list $this progressCallback $event $filter "$description"]
+  }
+
+}
+
+itcl::body EffectSWidget::progressCallback { event caller description } {
+
+  set mainWindow [$::slicer3::ApplicationGUI GetMainSlicerWindow]
+  set progressGauge [$mainWindow GetProgressGauge]
+
+  switch $event {
+    "StartEvent" { 
+      $mainWindow SetStatusText "$description"
+      $progressGauge SetValue 0
+    }
+    "ProgressEvent" {
+      $progressGauge SetValue [expr 100 * [$caller GetProgress]]
+    }
+    "DeleteEvent" - 
+    "EndEvent" {
+      $progressGauge SetValue 0
+      $mainWindow SetStatusText ""
+    }
+  }
+}
+
+
 
 #
 # helper procs to manage effects
@@ -393,6 +425,7 @@ proc EffectSWidget::Add {effect} {
 
 proc EffectSWidget::RemoveAll {} {
   foreach ew [itcl::find objects -isa EffectSWidget] {
+puts "deleting $ew"
     itcl::delete object $ew
   }
 }

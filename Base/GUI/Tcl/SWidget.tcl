@@ -238,3 +238,16 @@ itcl::body SWidget::setPixel { image i j k value } {
   }
   return 0
 }
+
+#
+# TODO: this little helper reloads the swidget functionality
+#
+proc sssss {} {
+  itcl::delete class SWidget
+
+  set dir $::env(SLICER_HOME)/../Slicer3/Base/GUI/Tcl
+  source $dir/SWidget.tcl
+  foreach sw [glob $dir/*SWidget.tcl] {
+    source $sw
+  }
+}

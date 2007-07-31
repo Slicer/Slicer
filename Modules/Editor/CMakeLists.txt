@@ -42,7 +42,7 @@ ENDFOREACH(tclfile)
 #
 FILE(MAKE_DIRECTORY ${EditorImageData_DIR})
 SET(IMAGEFILES
-ChangeIslands.png ChangeIslandsDisabled.png ChangeIslandsSelected.png
+ChangeIsland.png ChangeIslandDisabled.png ChangeIslandSelected.png
 ChangeLabel.png ChangeLabelDisabled.png ChangeLabelSelected.png
 ChooseColor.png ChooseColorDisabled.png ChooseColorSelected.png
 ConnectedComponents.png ConnectedComponentsDisabled.png ConnectedComponentsSelected.png
