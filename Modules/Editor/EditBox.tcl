@@ -67,16 +67,17 @@ itcl::body EditBox::findEffects { {path ""} } {
 
   # effects that change the mouse cursor
   set _effects(list,mouseTools) {
-    ChangeIsland ChangeLabel ChooseColor 
+    ChangeIsland ChooseColor 
     ImplicitCube ImplicitEllipse ImplicitRectangle 
     FreehandDrawLabel EraseLabel RemoveIslands ConnectedComponents 
     ThresholdBucket ThresholdPaintLabel SaveIsland SlurpColor PaintLabel
     DefaultTool
   }
+
   # effects that operate from the menu
   set _effects(list,operations) {
-    ErodeLabel DilateLabel DeleteFiducials
-    FiducialVisibilityOff
+    ErodeLabel DilateLabel DeleteFiducials LabelOpacity
+    ChangeLabel FiducialVisibilityOff
     FiducialVisibilityOn GoToEditorModule 
     IdentifyIslands
     LabelVisibilityOff LabelVisibilityOn MakeModel NextFiducial 
@@ -84,6 +85,22 @@ itcl::body EditBox::findEffects { {path ""} } {
     Threshold PinOpen PreviousFiducial  InterpolateLabels LabelOpacity
     ToggleLabelOutline Watershed
   }
+
+  set _effects(list,disabled) {
+    ChooseColor 
+    ImplicitCube ImplicitEllipse ImplicitRectangle 
+    ConnectedComponents 
+    SlurpColor 
+    DeleteFiducials LabelOpacity
+    FiducialVisibilityOff
+    FiducialVisibilityOn 
+    IdentifyIslands
+    LabelVisibilityOff LabelVisibilityOn NextFiducial 
+    SnapToGridOff SnapToGridOn
+    PreviousFiducial  InterpolateLabels LabelOpacity
+    ToggleLabelOutline Watershed
+  }
+
 
   # combined list of all effects
   set _effects(list) [concat $_effects(list,mouseTools) $_effects(list,operations)]
@@ -97,11 +114,19 @@ itcl::body EditBox::findEffects { {path ""} } {
       set _effects($effect,class) EffectSWidget
     }
     set _effects($effect,icon) [vtkNew vtkKWIcon]
-    set _effects($effect,imageData) [vtkNew vtkImageData]
-    $reader SetFileName $iconDir/$effect.png
-    $reader Update
-    $_effects($effect,imageData) DeepCopy [$reader GetOutput]
-    $::slicer3::ApplicationGUI SetIconImage $_effects($effect,icon) [$reader GetOutput]
+    foreach iconType { "" Selected Disabled} {
+      set _effects($effect,imageData$iconType) [vtkNew vtkImageData]
+      $reader SetFileName $iconDir/$effect$iconType.png
+      $reader Update
+      $_effects($effect,imageData$iconType) DeepCopy [$reader GetOutput]
+    }
+
+    set iconMode ""
+    if { [lsearch $_effects(list,disabled) $effect] != -1 } {
+      set iconMode "Disabled"
+    }
+    $::slicer3::ApplicationGUI SetIconImage \
+        $_effects($effect,icon) $_effects($effect,imageData$iconMode)
   }
   $reader Delete
 }
@@ -128,7 +153,11 @@ itcl::body EditBox::createButtonRow {effects} {
     $pushButton SetText $effect
     $pushButton SetImageToIcon $_effects($effect,icon)
     $pushButton SetBalloonHelpString $effect
+    $pushButton SetBorderWidth 0
     [$pushButton GetBalloonHelpManager] SetDelay 300
+    if { [lsearch $_effects(list,disabled) $effect] != -1 } {
+      $pushButton SetStateToDisabled
+    }
 
     #
     # TODO: would prefer to use the events for consistency, but apparently
@@ -181,7 +210,7 @@ itcl::body EditBox::create { } {
   #
 
   $this createButtonRow {DefaultTool SnapToGridOn ChooseColor SlurpColor}
-  $this createButtonRow {ChangeLabel ToggleLabelOutline LabelVisibilityOn}
+  $this createButtonRow {LabelOpacity ToggleLabelOutline LabelVisibilityOn}
   $this createButtonRow {PaintLabel ThresholdPaintLabel FreehandDrawLabel ThresholdBucket}
   $this createButtonRow {EraseLabel ImplicitEllipse ImplicitRectangle ImplicitCube}
   $this createButtonRow {IdentifyIslands ChangeIsland RemoveIslands SaveIsland}

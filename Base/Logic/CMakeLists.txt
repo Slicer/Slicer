@@ -28,6 +28,7 @@ SET(SlicerBaseLogic_SRCS
   vtkSlicerROILogic.cxx
   vtkImageResliceMask.cxx 
   vtkImageConnectivity.cxx 
+  vtkImageLabelChange.cxx 
 )
 
 # Abstract/pure virtual classes

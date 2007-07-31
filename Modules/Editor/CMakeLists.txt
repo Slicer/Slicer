@@ -26,7 +26,7 @@ SET(TCLFILES
   PaintSWidget.tcl DrawSWidget.tcl
   EffectSWidget.tcl
   SaveIslandEffect.tcl ThresholdEffect.tcl RemoveIslandsEffect.tcl
-  ChangeIslandEffect.tcl
+  ChangeIslandEffect.tcl ChangeLabelEffect.tcl
 )
 
 FOREACH(tclfile ${TCLFILES})

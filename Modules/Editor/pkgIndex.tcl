@@ -12,6 +12,7 @@ package ifneeded Editor 3.0 [list
   source [file join $dir EffectSWidget.tcl]
   source [file join $dir SaveIslandEffect.tcl]
   source [file join $dir ChangeIslandEffect.tcl]
+  source [file join $dir ChangeLabelEffect.tcl]
   source [file join $dir ThresholdEffect.tcl]
   source [file join $dir RemoveIslandsEffect.tcl]
 ]

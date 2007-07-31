@@ -70,10 +70,6 @@ itcl::body ThresholdEffect::processEvent { } {
     return
   }
 
-  # TODO: there needs be a way to preview the threshold
-  # on a per-slice basis... this should probably be done
-  # by grabbing the background out of the logic layer
-
 }
 
 itcl::body ThresholdEffect::apply {} {

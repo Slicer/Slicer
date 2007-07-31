@@ -39,10 +39,13 @@ if { [itcl::find class ColorBox] == "" } {
     inherit Box
 
     public variable selectCommand ""
+    public variable colorNode ""
 
     # methods
     method create {} {}
+    method update {} {}
     method processEvents {caller} {}
+    method getColorNode {} {}
 
   }
 }
@@ -74,14 +77,22 @@ itcl::body ColorBox::create { } {
   bind [$o(toplevel) GetWidgetName] <KeyPress> "$this hide"
 
 
-  set o(colors) [vtkNew vtkSlicerColorDisplayWidget]
-  $o(colors) SetParent $o(toplevel)
-  $o(colors) SetMRMLScene $::slicer3::MRMLScene
-  $o(colors) Create
-  set colorNode [vtkMRMLColorTableNode New]
-  $colorNode SetTypeToLabels
-  $o(colors) SetColorNode [$::slicer3::MRMLScene GetNodeByID [$colorNode GetTypeAsIDString]]
-  $colorNode Delete
+  set node [$this getColorNode]
+  if { $node == "" } {
+    set o(colors) [vtkNew vtkKWLabel]
+    $o(colors) SetParent $o(toplevel)
+    $o(colors) SetText "Cannot display colors.\nNo label layer is selected."
+    $o(colors) Create
+  } else {
+    set o(colors) [vtkNew vtkSlicerColorDisplayWidget]
+    $o(colors) SetParent $o(toplevel)
+    $o(colors) SetMRMLScene $::slicer3::MRMLScene
+    $o(colors) Create
+    set colorNode [vtkMRMLColorTableNode New]
+    $colorNode SetTypeToLabels
+    $o(colors) SetColorNode [$::slicer3::MRMLScene GetNodeByID [$colorNode GetTypeAsIDString]]
+    $colorNode Delete
+  }
   pack [$o(colors) GetWidgetName] \
     -side top -anchor e -fill x -padx 2 -pady 2 
 
@@ -93,6 +104,8 @@ itcl::body ColorBox::create { } {
   $o(toplevel) Display
 }
 
+itcl::body ColorBox::update {} {
+}
 
 #
 # handle gui events
@@ -109,4 +122,16 @@ itcl::body ColorBox::processEvents { caller } {
     }
     $this hide
   }
+}
+
+#
+# get the color node for the label map in the Red slice
+#
+itcl::body ColorBox::getColorNode {} {
+  set logic [[$::slicer3::ApplicationGUI GetMainSliceLogic0] GetLabelLayer]
+  set volumeDisplayNode [$logic GetVolumeDisplayNode]
+  if { $volumeDisplayNode == "" } {
+    return ""
+  }
+  return [$volumeDisplayNode GetColorNode]
 }

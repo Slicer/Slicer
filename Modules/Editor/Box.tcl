@@ -29,6 +29,7 @@ namespace eval Box {
     if { $boxes != "" } {
       set box [lindex $boxes 0]
       $box centerOnPointer
+      $box update
       $box show
     } else {
       set box [$class #auto]
@@ -65,6 +66,7 @@ if { [itcl::find class Box] == "" } {
 
     # methods
     method create {} {}
+    method update {} {}
     method centerOnPointer { {xy ""} } {}
     method show {} {}
     method hide {} {}
