@@ -45,7 +45,7 @@ public:
   vtkGetObjectMacro ( ColorNodeTypeLabel, vtkKWLabel);
   vtkGetObjectMacro ( NumberOfColorsLabel, vtkKWLabel);
   vtkGetObjectMacro ( AddColorButton, vtkKWPushButton);
-
+  vtkGetObjectMacro ( MultiColumnList, vtkKWMultiColumnListWithScrollbars );
   // Description:
   // Set the selected node, the color id, and update the widgets
   void SetColorNode ( vtkMRMLColorNode *node );
