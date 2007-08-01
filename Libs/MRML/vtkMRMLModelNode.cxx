@@ -213,7 +213,7 @@ const char * vtkMRMLModelNode::GetActivePointScalarName(const char *type)
     vtkErrorMacro("Unknown point scalar type " << type);
     return "";
     }
-  vtkErrorMacro("GetActivePointScalarName: unable to get " << type << " data to get the name");
+  vtkWarningMacro("GetActivePointScalarName: node " << this->GetName() << " unable to get " << type << " data to get the name, so active name is returned as an empty string");
   return "";
 }
 
@@ -470,7 +470,7 @@ int vtkMRMLModelNode::CompositeScalars(const char* backgroundName, const char* o
       }
     if (scalars1 == NULL || scalars2 == NULL)
       {
-      vtkErrorMacro("CompositScalars: unable to find the named scalar arrays " << backgroundName << " and/or " << overlayName);
+      vtkErrorMacro("CompositeScalars: unable to find the named scalar arrays " << backgroundName << " and/or " << overlayName);
       return 0;
       }
     if (scalars1->GetNumberOfTuples() != scalars1->GetNumberOfTuples())
@@ -536,6 +536,7 @@ int vtkMRMLModelNode::CompositeScalars(const char* backgroundName, const char* o
     
     // set up a colour node
     vtkMRMLProceduralColorNode *colorNode = vtkMRMLProceduralColorNode::New();
+    colorNode->SetName(composedName.c_str());
     vtkColorTransferFunction *func = colorNode->GetColorTransferFunction();
 
     // adapted from FS code that assumed that one scalar was curvature, the
