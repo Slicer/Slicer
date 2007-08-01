@@ -299,7 +299,7 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
 
   if (b == this->ApplyButton && event == vtkKWPushButton::InvokedEvent ) 
     {
-    this->DebugOn();
+    //this->DebugOn();
     if (this->GetDebug())
       {
       this->GetLogic()->DebugOn();
