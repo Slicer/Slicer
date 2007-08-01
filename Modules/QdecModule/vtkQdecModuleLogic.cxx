@@ -187,6 +187,7 @@ int vtkQdecModuleLogic::LoadResults(vtkSlicerModelsLogic *modelsLogic, vtkKWAppl
     {
     return -1;
     }
+
   // Make sure we got the results.
   QdecGlmFitResults* results =
     this->QDECProject->GetGlmFitResults();
@@ -227,7 +228,7 @@ int vtkQdecModuleLogic::LoadResults(vtkSlicerModelsLogic *modelsLogic, vtkKWAppl
   
   // load in the curvature overlay
   string curvFileName = fnSubjects + "/fsaverage/surf/" + sHemi + ".curv";
-  vtkDebugMacro( "Surface: " << curvFileName.c_str() );
+  vtkDebugMacro( "Surface: " << curvFileName.c_str() << ", adding curv file to " << modelNode->GetName() );
   string curvArrayName = "";
   if (modelsLogic && modelNode)
     {
@@ -248,6 +249,7 @@ int vtkQdecModuleLogic::LoadResults(vtkSlicerModelsLogic *modelsLogic, vtkKWAppl
       vtkDebugMacro("Added the curvature file " << curvFileName.c_str() << ", got the curvature array name: '" << curvArrayName.c_str() << "'");
       }
     }
+
   // We should have the same number of questions as sig file. Each
   // sig file has a correpsponding question, and they are in the same
   // order in the vector.
@@ -259,56 +261,57 @@ int vtkQdecModuleLogic::LoadResults(vtkSlicerModelsLogic *modelsLogic, vtkKWAppl
   vector<string>::iterator fn;
   for( unsigned int nContrast = 0; 
        nContrast < results->GetContrastQuestions().size(); 
-       nContrast++ ) {
-  
-  vtkDebugMacro( "Contrast " << nContrast << ": \""
-                 << lContrastQuestions[nContrast].c_str() << "\" in file " 
-                 << lfnContrastSigs[nContrast].c_str() );
-  // load the sig file
-  if (modelsLogic && modelNode)
+       nContrast++ ) 
     {
-    if (!modelsLogic->AddScalar(lfnContrastSigs[nContrast].c_str(), modelNode))
+  
+    vtkDebugMacro( "Contrast " << nContrast << ": \""
+                   << lContrastQuestions[nContrast].c_str() << "\" in file " 
+                   << lfnContrastSigs[nContrast].c_str() );
+    // load the sig file
+    if (modelsLogic && modelNode)
       {
-      vtkErrorMacro("Unable to add contrast to average model surface: " << lfnContrastSigs[nContrast].c_str());
-      }
-    else
-      {
-      if (strcmp(curvArrayName.c_str(), "") != 0)
+      if (!modelsLogic->AddScalar(lfnContrastSigs[nContrast].c_str(), modelNode))
         {
-        // composite with the curv
-        string sigArrayName = modelNode->GetActivePointScalarName("scalars");
-        if (strcmp(sigArrayName.c_str(), "") == 0)
+        vtkErrorMacro("Unable to add contrast to average model surface: " << lfnContrastSigs[nContrast].c_str());
+        }
+      else
+        {
+        if (strcmp(curvArrayName.c_str(), "") != 0)
           {
-          // hack it together
-          std::string::size_type ptr = lfnContrastSigs[nContrast].find_last_of(std::string("/"));
-          
-          
-          if (ptr != std::string::npos)
+          // composite with the curv
+          string sigArrayName = modelNode->GetActivePointScalarName("scalars");
+          if (strcmp(sigArrayName.c_str(), "") == 0)
             {
-            // find the dir name above
-            std::string::size_type dirptr = lfnContrastSigs[nContrast].find_last_of(std::string("/"), ptr);
-            if (dirptr != std::string::npos)
+            // hack it together
+            std::string::size_type ptr = lfnContrastSigs[nContrast].find_last_of(std::string("/"));
+            
+            
+            if (ptr != std::string::npos)
               {
-              sigArrayName = lfnContrastSigs[nContrast].substr(++dirptr);
-              vtkDebugMacro("created sig array name = '" << sigArrayName .c_str() << "'");
+              // find the dir name above
+              std::string::size_type dirptr = lfnContrastSigs[nContrast].find_last_of(std::string("/"), ptr);
+              if (dirptr != std::string::npos)
+                {
+                sigArrayName = lfnContrastSigs[nContrast].substr(++dirptr);
+                vtkDebugMacro("created sig array name = '" << sigArrayName .c_str() << "'");
+                }
+              else
+                {
+                sigArrayName = lfnContrastSigs[nContrast].substr(++ptr);
+                }
               }
             else
               {
-              sigArrayName = lfnContrastSigs[nContrast].substr(++ptr);
+              sigArrayName = lfnContrastSigs[nContrast];
               }
             }
-          else
-            {
-            sigArrayName = lfnContrastSigs[nContrast];
-            }
+          vtkDebugMacro("Compositing curv '" << curvArrayName.c_str() << "' with sig array '" << sigArrayName.c_str() << "'");
+          modelNode->CompositeScalars(curvArrayName.c_str(), sigArrayName.c_str(), 2, 5, 1, 1, 0);
           }
-        vtkDebugMacro("Compositing curv '" << curvArrayName.c_str() << "' with sig array '" << sigArrayName.c_str() << "'");
-        modelNode->CompositeScalars(curvArrayName.c_str(), sigArrayName.c_str(), 2, 5, 1, 1, 0);
         }
       }
     }
-  }
-  
+
   // The regression coefficient and std dev files to load.
   string fnRegressionCoefficients = results->GetRegressionCoefficientsFile();
   string fnStdDev = results->GetResidualErrorStdDevFile();
@@ -331,6 +334,7 @@ int vtkQdecModuleLogic::LoadResults(vtkSlicerModelsLogic *modelsLogic, vtkKWAppl
   vtkDebugMacro( "FSGD plot file: " << fnFSGD.c_str() );
 
   // read the file
+  /*
   vtkGDFReader *gdfReader = vtkGDFReader::New();
   gdfReader->ReadHeader(fnFSGD.c_str(), 1);
   string dataFileName = gdfReader->GetDataFileName();
@@ -338,6 +342,18 @@ int vtkQdecModuleLogic::LoadResults(vtkSlicerModelsLogic *modelsLogic, vtkKWAppl
   
   // don't load the data file, it's loaded in the tcl code and associated with the model there
   gdfReader->Delete();
+  */
+
+  // set the default to be the curv file for now
+  if (modelNode)
+    {
+    modelNode->SetActiveScalars(curvArrayName.c_str(), "scalars");
+    // set the colour table
+    if (modelNode->GetDisplayNode())
+      {
+      modelNode->GetDisplayNode()->SetAndObserveColorNodeID("vtkMRMLFreeSurferProceduralColorNodeGreenRed");
+      }
+    }
 
   if (!this->GetTclScriptLoaded())
     {
@@ -350,7 +366,12 @@ int vtkQdecModuleLogic::LoadResults(vtkSlicerModelsLogic *modelsLogic, vtkKWAppl
   scriptReturn = app->Script("set ::vtkFreeSurferReaders(PlotFileName) %s", fnFSGD.c_str());
   vtkDebugMacro("Set the plot file name to " << fnFSGD.c_str() << ", return value from tcl script call = " << scriptReturn.c_str());
   scriptReturn = app->Script("vtkFreeSurferReadersPlotApply %s", modelNode->GetID());
-  vtkDebugMacro("Called PlotApply with model id " << modelNode->GetID() << ", return value from tcl script call = " << scriptReturn.c_str());
+  vtkDebugMacro("Called vtkFreeSurferReadersPlotApply with model id " << modelNode->GetID() << ", return value from tcl script call = " << scriptReturn.c_str());
+
+  if (this->GetDebug())
+    {
+    this->DebugOff();
+    }
 
   return 0;
 }
@@ -384,6 +405,7 @@ int vtkQdecModuleLogic::LoadPlotData(const char *fileName)
     }
   vtkDebugMacro( "FSGD plot file: " << fnFSGD.c_str() );
     
+
   // read the file
   vtkGDFReader *gdfReader = vtkGDFReader::New();
   gdfReader->ReadHeader(fnFSGD.c_str(), 1);
