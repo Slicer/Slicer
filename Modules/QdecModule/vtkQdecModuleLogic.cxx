@@ -282,6 +282,7 @@ int vtkQdecModuleLogic::LoadResults(vtkSlicerModelsLogic *modelsLogic, vtkKWAppl
           string sigArrayName = modelNode->GetActivePointScalarName("scalars");
           if (strcmp(sigArrayName.c_str(), "") == 0)
             {
+            vtkDebugMacro("Got an empty string for the sig array, building it's name");
             // hack it together
             std::string::size_type ptr = lfnContrastSigs[nContrast].find_last_of(std::string("/"));
             
@@ -289,16 +290,17 @@ int vtkQdecModuleLogic::LoadResults(vtkSlicerModelsLogic *modelsLogic, vtkKWAppl
             if (ptr != std::string::npos)
               {
               // find the dir name above
-              std::string::size_type dirptr = lfnContrastSigs[nContrast].find_last_of(std::string("/"), ptr);
+              std::string::size_type ptrNext = ptr;
+              std::string::size_type dirptr = lfnContrastSigs[nContrast].find_last_of(std::string("/"), --ptrNext);
               if (dirptr != std::string::npos)
                 {
                 sigArrayName = lfnContrastSigs[nContrast].substr(++dirptr);
-                vtkDebugMacro("created sig array name = '" << sigArrayName .c_str() << "'");
                 }
               else
                 {
                 sigArrayName = lfnContrastSigs[nContrast].substr(++ptr);
                 }
+              vtkDebugMacro("created sig array name = '" << sigArrayName.c_str() << "', from input " << lfnContrastSigs[nContrast].c_str());
               }
             else
               {
