@@ -9,12 +9,14 @@
   <description>
 This filter smoothes a binary label map.  With a label map as input,
 this filter runs an anti-alising algorithm followed by a Gaussian
-smoothing algorithm.  The output is a smoothed label map.
+smoothing algorithm.  The output is a smoothed label map.  This filter is based on work developed at the University of Utah, and implemented at GE Research.
   </description>
   <version>1.0</version>
   <documentationurl></documentationurl>
   <license></license>
   <contributor>Dirk Padfield</contributor>
+  <contributor>Josh Cates</contributor>
+  <contributor>Ross Whitaker</contributor>
 <acknowledgements>
 This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.
 </acknowledgements>
