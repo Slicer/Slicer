@@ -421,7 +421,7 @@ itcl::body Loader::apply { } {
 
   for {set row 0} {$row < $rows} {incr row} {
 
-    $progressGauge SetValue [expr 100 * ($row / ($rows - 1.))]
+    $progressGauge SetValue [expr 100 * $row / (1. * $rows)]
 
     if { [$w GetCellTextAsInt $row $col(Select)] } {
 
