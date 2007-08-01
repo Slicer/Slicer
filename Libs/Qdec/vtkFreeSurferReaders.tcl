@@ -263,7 +263,7 @@ proc FreeSurferReadersFiducialsPointCreatedCallback {type fid pid} {
 proc vtkFreeSurferReadersGDFInit {} {
     global vtkFreeSurferReaders 
 
-    set vtkFreeSurferReaders(verbose) 1
+    set vtkFreeSurferReaders(verbose) 0
     set vtkFreeSurferReaders(kValid,lMarkers)  {square circle diamond plus cross splus scross triangle}
     set vtkFreeSurferReaders(kValid,lColors) {red blue green yellow black purple orange pink brown}
     set vtkFreeSurferReaders(gGDF,lID) {}
@@ -733,9 +733,10 @@ proc vtkFreeSurferReadersPlotParseHeader { ifnHeader } {
 # .ARGS
 # int iID the id of the vertex to plot
 # int dID the id of the data file to plot, can be found in $::vtkFreeSurferReaders(gGDF,dataID)
+# vector RAS the x,y,z of the vertex, optional
 # .END
 #-------------------------------------------------------------------------------
-proc vtkFreeSurferReadersPlotPlotData { iID dID} {
+proc vtkFreeSurferReadersPlotPlotData { iID dID {RAS {0.0 0.0 0.0}} } {
     global vtkFreeSurferReaders
 
     # Don't plot if the window isn't built or we don't have data.
@@ -752,7 +753,15 @@ proc vtkFreeSurferReadersPlotPlotData { iID dID} {
     if {$::vtkFreeSurferReaders(verbose)} { puts "\nvtkFreeSurferReadersPlotPlotData iID = $iID, dID = $dID" }
 
     # update the info label variable
-    set vtkFreeSurferReaders(gPlot,$dID,state,info) "Vertex number $iID"
+    # set vtkFreeSurferReaders(gPlot,$dID,state,info) "Vertex number $iID"
+    if {$RAS == {0.0 0.0 0.0}} {
+        vtkFreeSurferReadersPlotSetInfo $dID "Vertex number $iID"
+    } else {
+        set x [lindex $RAS 0]
+        set y [lindex $RAS 1] 
+        set z [lindex $RAS 2]
+        vtkFreeSurferReadersPlotSetInfo $dID "($x, $y, $z) Vertex number $iID"
+    }
 
     set gw $vtkFreeSurferReaders(gWidgets,$dID,gwPlot)
 
@@ -1891,11 +1900,11 @@ proc vtkFreeSurferReadersPlotApply { mid } {
     puts "About to read $vtkFreeSurferReaders(PlotFileName)..."
 
     if {[info vars ::vtkFreeSurferReaders(verbose)] == ""} {
-      set ::vtkFreeSurferReaders(verbose) 0
+      set ::vtkFreeSurferReaders(verbose) 1
     }
 
     if {$::vtkFreeSurferReaders(verbose)} {
-        puts "vtkFreeSurferReadersPlotApply: starting"
+        puts "vtkFreeSurferReadersPlotApply: starting, calling GDFInit"
     }
     vtkFreeSurferReadersGDFInit
     set vtkFreeSurferReaders(gGDF,dataID) [vtkFreeSurferReadersPlotParseHeader $vtkFreeSurferReaders(PlotFileName)]
@@ -1922,47 +1931,48 @@ proc vtkFreeSurferReadersPlotApply { mid } {
     # this isn't working so well, so save the scalars as a vtkDataArray    
     # set dataID [vtkFreeSurferReadersApply]
     if {[file extension $datafilename] == ".bhdr"} {
-    catch "mybreader Delete"
-    vtkBVolumeReader mybreader
-    set ::Gui(progressText) "Reading b data volume"
-    mybreader AddObserver StartEvent MainStartProgress
-    mybreader AddObserver ProgressEvent "MainShowProgress mybreader"
-    mybreader AddObserver EndEvent MainEndProgress
-    
-    mybreader SetFileName $vtkFreeSurferReaders(VolumeFileName)
-    mybreader SetFilePrefix $stem
-    mybreader SetStem $stem
-    set retval [mybreader ReadVolumeHeader]
-    if {$retval == 0} {
-        puts "ERROR reading  $vtkFreeSurferReaders(VolumeFileName)"
-        mybreader Delete
-        return -1
-    }
-    set vtkFreeSurferReaders(plot,$vtkFreeSurferReaders(gGDF,dataID),scalars) [mybreader ReadVolumeData]
-    set scalarsVar vtkFreeSurferReaders(plot,$vtkFreeSurferReaders(gGDF,dataID),scalars)
-    mybreader Delete
-    MainEndProgress
-    } else {
-       if {[file extension $datafilename] == ".mgz" ||
-        [file extension $datafilename] == ".mgh"} {
-        catch "reader Delete"
-        vtkITKArchetypeImageSeriesVectorReader reader
-        reader SetArchetype $datafilename
-        reader SetOutputScalarTypeToNative
-        reader SetDesiredCoordinateOrientationToNative
-        reader Update
-        if {$::vtkFreeSurferReaders(verbose)} { puts "Read the data file $datafilename" }
-        set imageData [reader GetOutput]
-        set numPoints [$imageData GetNumberOfPoints]
-        if {$::vtkFreeSurferReaders(verbose)} { puts "Got number of points $numPoints" }
-        set vtkFreeSurferReaders(plot,$vtkFreeSurferReaders(gGDF,dataID),scalars) [[$imageData GetPointData] GetScalars]
-        # need to register it to hold onto it over tcl calls
-        $vtkFreeSurferReaders(plot,$vtkFreeSurferReaders(gGDF,dataID),scalars) Register $::slicer3::Application
+        catch "mybreader Delete"
+        vtkBVolumeReader mybreader
+        set ::Gui(progressText) "Reading b data volume"
+        mybreader AddObserver StartEvent MainStartProgress
+        mybreader AddObserver ProgressEvent "MainShowProgress mybreader"
+        mybreader AddObserver EndEvent MainEndProgress
+        
+        mybreader SetFileName $vtkFreeSurferReaders(VolumeFileName)
+        mybreader SetFilePrefix $stem
+        mybreader SetStem $stem
+        set retval [mybreader ReadVolumeHeader]
+        if {$retval == 0} {
+            puts "ERROR reading  $vtkFreeSurferReaders(VolumeFileName)"
+            mybreader Delete
+            return -1
+        }
+        set vtkFreeSurferReaders(plot,$vtkFreeSurferReaders(gGDF,dataID),scalars) [mybreader ReadVolumeData]
         set scalarsVar vtkFreeSurferReaders(plot,$vtkFreeSurferReaders(gGDF,dataID),scalars)
-        reader Delete
-       }
+        mybreader Delete
+        MainEndProgress
+    } else {
+        if {[file extension $datafilename] == ".mgz" ||
+            [file extension $datafilename] == ".mgh"} {
+            catch "reader Delete"
+            vtkITKArchetypeImageSeriesVectorReader reader
+            reader SetArchetype $datafilename
+            reader SetOutputScalarTypeToNative
+            reader SetDesiredCoordinateOrientationToNative
+            reader Update
+            if {$::vtkFreeSurferReaders(verbose)} { puts "Read the data file $datafilename" }
+            set imageData [reader GetOutput]
+            set numPoints [$imageData GetNumberOfPoints]
+            if {$::vtkFreeSurferReaders(verbose)} { puts "Got number of points $numPoints" }
+            set vtkFreeSurferReaders(plot,$vtkFreeSurferReaders(gGDF,dataID),scalars) [[$imageData GetPointData] GetScalars]
+            # need to register it to hold onto it over tcl calls
+            $vtkFreeSurferReaders(plot,$vtkFreeSurferReaders(gGDF,dataID),scalars) Register $::slicer3::Application
+            set scalarsVar vtkFreeSurferReaders(plot,$vtkFreeSurferReaders(gGDF,dataID),scalars)
+            if {$::vtkFreeSurferReaders(verbose)} { puts "Set scalarsVar to $scalarsVar, data id = $vtkFreeSurferReaders(gGDF,dataID)" }
+            reader Delete
+        }
     }
-
+    
     if {$::vtkFreeSurferReaders(verbose)} {
         if {[info var scalarsVar] != ""} {
             puts "vtkFreeSurferReadersGDFPlotRead: read data file, got id $scalarsVar"
@@ -2100,11 +2110,11 @@ proc vtkFreeSurferReadersPlotBuildPointList {pointID scalarVar} {
 
     # add to it, just the subject data for this vertex
     if {[info command [subst $$scalarVar]] != ""} {
-    set numPoints [[subst $$scalarVar] GetNumberOfTuples]
-    set numSubjects [[subst $$scalarVar] GetNumberOfComponents]
+        set numPoints [[subst $$scalarVar] GetNumberOfTuples]
+        set numSubjects [[subst $$scalarVar] GetNumberOfComponents]
     } else {
-    set numPoints 0
-    set numSubjects 0
+        set numPoints 0
+        set numSubjects 0
     }
     if {$::vtkFreeSurferReaders(verbose)} { puts "BuildPointList: got numPoints = $numPoints, numSubjects = $numSubjects" }
 
