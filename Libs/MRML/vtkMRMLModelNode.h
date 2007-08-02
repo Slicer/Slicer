@@ -56,7 +56,7 @@ public:
   // Get associated model display MRML node
   vtkMRMLModelDisplayNode* GetModelDisplayNode() 
   {
-    return vtkMRMLModelDisplayNode::SafeDownCast(this->DisplayNode);
+    return vtkMRMLModelDisplayNode::SafeDownCast(this->GetDisplayNode());
   }
 
 

@@ -124,7 +124,7 @@ class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLDisplayableNode
   // Associated display MRML node
   virtual vtkMRMLVolumeDisplayNode* GetVolumeDisplayNode()
   {
-    return vtkMRMLVolumeDisplayNode::SafeDownCast(this->DisplayNode);
+    return vtkMRMLVolumeDisplayNode::SafeDownCast(this->GetDisplayNode());
   }
 
   // Description:

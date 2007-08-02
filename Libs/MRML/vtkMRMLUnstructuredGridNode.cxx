@@ -57,7 +57,7 @@ vtkMRMLUnstructuredGridNode::~vtkMRMLUnstructuredGridNode()
 {
   if ( this->UnstructuredGrid)
     {
-    this->UnstructuredGrid->Delete();
+    this->SetAndObserveUnstructuredGrid(NULL);
     }
 }
 
@@ -108,7 +108,7 @@ void vtkMRMLUnstructuredGridNode::UpdateScene(vtkMRMLScene *scene)
 {
   Superclass::UpdateScene(scene);
 
-  vtkMRMLNode *mnode = scene->GetNodeByID(this->DisplayNodeID);
+  vtkMRMLNode *mnode = scene->GetNodeByID(this->GetDisplayNodeID());
   if (mnode) 
     {
     vtkMRMLUnstructuredGridDisplayNode *node  = dynamic_cast < vtkMRMLUnstructuredGridDisplayNode *>(mnode);

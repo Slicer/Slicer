@@ -541,6 +541,9 @@ void vtkSlicerModelHierarchyWidget::CreateWidget ( )
   this->UpdateTreeFromMRML();
 
   this->ModelDisplaySelectorWidget->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
+  
+  this->ProcessWidgetEvents (this->ModelDisplaySelectorWidget,
+                             vtkSlicerNodeSelectorWidget::NodeSelectedEvent, NULL );
 
   frame->Delete();
   dframe->Delete();

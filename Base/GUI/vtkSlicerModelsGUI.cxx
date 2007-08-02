@@ -607,6 +607,8 @@ void vtkSlicerModelsGUI::BuildGUI ( )
 
    this->ProcessGUIEvents (this->ModelDisplaySelectorWidget,
                           vtkSlicerNodeSelectorWidget::NodeSelectedEvent, NULL );
+
+
     /*
     vtkMRMLNode *selected = this->ModelDisplaySelectorWidget->GetSelected();
     if (selected)
