@@ -73,7 +73,7 @@ SET (CLP LinearRegistration)
 SET ( ${CLP}_SOURCE ${CLP}.cxx)
 GENERATECLP(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
 ADD_EXECUTABLE(${CLP} ${${CLP}_SOURCE})
-TARGET_LINK_LIBRARIES (${CLP} ITKIO ITKBasicFilters)
+TARGET_LINK_LIBRARIES (${CLP} ITKIO ITKBasicFilters ITKNumerics)
 
 #####################
 SET (CLP AffineRegistration)
@@ -81,7 +81,7 @@ SET (CLP AffineRegistration)
 SET ( ${CLP}_SOURCE ${CLP}.cxx)
 GENERATECLP(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
 ADD_EXECUTABLE(${CLP} ${${CLP}_SOURCE})
-TARGET_LINK_LIBRARIES (${CLP} ITKIO ITKBasicFilters)
+TARGET_LINK_LIBRARIES (${CLP} ITKIO ITKBasicFilters ITKNumerics)
 
 #####################
 SET (CLP BSplineDeformableRegistration)
@@ -89,7 +89,7 @@ SET (CLP BSplineDeformableRegistration)
 SET ( ${CLP}_SOURCE ${CLP}.cxx)
 GENERATECLP(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
 ADD_EXECUTABLE(${CLP} ${${CLP}_SOURCE})
-TARGET_LINK_LIBRARIES (${CLP} ITKStatistics ITKIO ITKBasicFilters)
+TARGET_LINK_LIBRARIES (${CLP} ITKStatistics ITKIO ITKBasicFilters ITKNumerics)
 
 #####################
 SET (CLP CheckerBoard)
