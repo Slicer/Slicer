@@ -9,6 +9,8 @@ vtkCxxRevisionMacro(vtkSlicerWindow, "$Revision: 1.0 $");
 vtkSlicerWindow::vtkSlicerWindow()
 {
   this->FeedbackMenu = NULL;
+  this->FontSizeMenu = NULL;
+  this->FontFamilyMenu = NULL;
 }
 
 
@@ -23,6 +25,18 @@ vtkSlicerWindow::~vtkSlicerWindow()
     {
     this->FeedbackMenu->Delete();
     this->FeedbackMenu = NULL;
+    }
+  if ( this->FontSizeMenu )
+    {
+    this->FontSizeMenu->SetParent ( NULL );
+    this->FontSizeMenu->Delete();
+    this->FontSizeMenu = NULL;
+    }
+  if ( this->FontFamilyMenu )
+    {
+    this->FontFamilyMenu->SetParent ( NULL );
+    this->FontFamilyMenu->Delete();
+    this->FontFamilyMenu = NULL;
     }
 }
 
@@ -74,6 +88,31 @@ void vtkSlicerWindow::CreateWidget()
     // Usually at the end
     this->GetMenu()->AddCascade("Feedback", this->FeedbackMenu);
     }
+
+  if ( !this->FontSizeMenu )
+    {
+    this->FontSizeMenu = vtkKWMenu::New();
+    }
+
+  if (!this->FontSizeMenu->IsCreated() && this->GetViewMenu() && this->IsCreated())
+    {
+    this->FontSizeMenu->SetParent ( this->GetViewMenu() );
+    this->FontSizeMenu->SetTearOff(0);
+    this->FontSizeMenu->Create();
+    }
+
+  if ( !this->FontFamilyMenu )
+    {
+    this->FontFamilyMenu = vtkKWMenu::New();
+    }
+
+  if (!this->FontFamilyMenu->IsCreated() && this->GetViewMenu() && this->IsCreated())
+    {
+    this->FontFamilyMenu->SetParent ( this->GetViewMenu() );
+    this->FontFamilyMenu->SetTearOff(0);
+    this->FontFamilyMenu->Create();
+    }
+
 }
 
 
