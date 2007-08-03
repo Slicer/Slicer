@@ -341,7 +341,8 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
     }
 
   scalarNode->Delete();
-  vectorNode->Delete();
+  // TODO: figure out why using the itk VectorImage causes a crash when deleting
+  //vectorNode->Delete();
   dwiNode->Delete();
   tensorNode->Delete();
   storageNode1->Delete();
