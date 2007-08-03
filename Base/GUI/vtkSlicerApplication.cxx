@@ -19,6 +19,7 @@
 #include "vtkSlicerGUILayout.h"
 #include "vtkSlicerGUICollection.h"
 #include "vtkSlicerTheme.h"
+#include "vtkSlicerFont.h"
 
 #include "vtkOutputWindow.h"
 #include "itkOutputWindow.h"
@@ -40,6 +41,8 @@ const char *vtkSlicerApplication::ConfirmDeleteRegKey = "ConfirmDelete";
 const char *vtkSlicerApplication::HomeModuleRegKey = "HomeModule";
 const char *vtkSlicerApplication::LoadCommandLineModulesRegKey = "LoadCommandLineModules";
 const char *vtkSlicerApplication::EnableDaemonRegKey = "EnableDaemon";
+const char *vtkSlicerApplication::ApplicationFontSizeRegKey = "ApplicationFontSize";
+const char *vtkSlicerApplication::ApplicationFontFamilyRegKey = "ApplicationFontFamily";
 
 vtkSlicerApplication *vtkSlicerApplication::Instance = NULL;
 
@@ -173,6 +176,10 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
     this->LoadCommandLineModules = 1;
     this->EnableDaemon = 0;
    
+    // defaults
+    strcpy (this->ApplicationFontSize, "" );
+    strcpy ( this->ApplicationFontFamily, "" );
+
     // configure the application before creating
     this->SetName ( "3D Slicer Version 3.0 Beta" );
 
@@ -483,6 +490,18 @@ void vtkSlicerApplication::RestoreApplicationSettingsFromRegistry()
     this->EnableDaemon = this->GetIntRegistryValue(
       2, "RunTime", vtkSlicerApplication::EnableDaemonRegKey);
     }
+
+  if ( this->HasRegistryValue(2, "RunTime", vtkSlicerApplication::ApplicationFontSizeRegKey))
+    {
+
+    this->GetRegistryValue (
+      2, "RunTime", vtkSlicerApplication::ApplicationFontSizeRegKey, this->ApplicationFontSize);
+    }
+  if ( this->HasRegistryValue(2, "RunTime", vtkSlicerApplication::ApplicationFontFamilyRegKey))
+    {
+    this->GetRegistryValue (
+       2, "RunTime", vtkSlicerApplication::ApplicationFontFamilyRegKey, this->ApplicationFontFamily );
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -497,6 +516,11 @@ void vtkSlicerApplication::SaveApplicationSettingsToRegistry()
   this->SetRegistryValue(
     2, "RunTime", vtkSlicerApplication::HomeModuleRegKey, "%s", 
     this->HomeModule);
+
+  this->SetRegistryValue ( 2, "RunTime", vtkSlicerApplication::ApplicationFontFamilyRegKey, "%s",
+                           this->ApplicationFontFamily);
+  this->SetRegistryValue ( 2, "RunTime", vtkSlicerApplication::ApplicationFontSizeRegKey, "%s",
+                           this->ApplicationFontSize);
 
   this->SetRegistryValue(
     2, "RunTime", vtkSlicerApplication::ModulePathRegKey, "%s", 
@@ -516,6 +540,48 @@ void vtkSlicerApplication::SaveApplicationSettingsToRegistry()
 }
 
 //----------------------------------------------------------------------------
+void vtkSlicerApplication::SetApplicationFontFamily ( const char *family)
+{
+    if (family)
+    {
+        if (strcmp(this->ApplicationFontFamily, family) != 0
+        && strlen(family) < vtkKWRegistryHelper::RegistryKeyValueSizeMax)
+        {
+            strcpy(this->ApplicationFontFamily, family);
+            this->Modified();
+        }
+    }
+}
+//----------------------------------------------------------------------------
+const char *vtkSlicerApplication::GetApplicationFontFamily () const
+{
+  return this->ApplicationFontFamily;
+}
+
+
+//----------------------------------------------------------------------------
+void vtkSlicerApplication::SetApplicationFontSize ( const char *size)
+{
+    if (size )
+    {
+        if (strcmp(this->ApplicationFontSize, size) != 0
+        && strlen(size) < vtkKWRegistryHelper::RegistryKeyValueSizeMax)
+        {
+            strcpy(this->ApplicationFontSize, size);
+            this->Modified();
+        }
+    }
+}
+//----------------------------------------------------------------------------
+const char *vtkSlicerApplication::GetApplicationFontSize () const
+{
+  return this->ApplicationFontSize;
+}
+
+
+
+
+//----------------------------------------------------------------------------
 void vtkSlicerApplication::SetConfirmDelete(const char* state)
 {
     if (state)
@@ -528,6 +594,7 @@ void vtkSlicerApplication::SetConfirmDelete(const char* state)
         }
     }
 }
+
 
 //----------------------------------------------------------------------------
 const char *vtkSlicerApplication::GetConfirmDelete() const

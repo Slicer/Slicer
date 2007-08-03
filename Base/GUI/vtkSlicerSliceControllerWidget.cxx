@@ -8,6 +8,7 @@
 #include "vtkSlicerApplicationGUI.h"
 #include "vtkSlicerSlicesControlGUI.h"
 #include "vtkSlicerVolumesGUI.h"
+#include "vtkSlicerTheme.h"
 
 #include "vtkKWWidget.h"
 #include "vtkKWScaleWithEntry.h"
@@ -21,6 +22,7 @@
 #include "vtkKWPushButton.h"
 #include "vtkKWTkUtilities.h"
 #include "vtkKWIcon.h"
+
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro ( vtkSlicerSliceControllerWidget );
@@ -280,7 +282,6 @@ void vtkSlicerSliceControllerWidget::ApplyColorCode ( double *c )
 
 
 
-
 //---------------------------------------------------------------------------
 void vtkSlicerSliceControllerWidget::CreateWidget ( ) 
 {
@@ -315,17 +316,18 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     this->ContainerFrame->SetParent ( this );
     this->ContainerFrame->Create ( );
 
+    vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication() );
     //
     // Orientation  (TODO: make this into a vtkSlicerOrientationWidget)
     //
     this->OrientationMenu = vtkKWMenuButtonWithSpinButtonsWithLabel::New ();
     this->OrientationMenu->SetParent ( this->ContainerFrame );
     this->OrientationMenu->Create ( );    
-    this->OrientationMenu->GetWidget()->GetWidget()->SetFont ( "-Adobe-Helvetica-Bold-R-Normal-*-9-*-*-*-*-*-*-*" );
+//    this->OrientationMenu->GetWidget()->GetWidget()->SetFont ( "-Adobe-Helvetica-Bold-R-Normal-*-9-*-*-*-*-*-*-*" );
     this->OrientationMenu->GetLabel()->SetImageToIcon ( this->SliceControlIcons->GetSetOrIcon() );
     this->OrientationMenu->SetBalloonHelpString ("Select orientation" );
     vtkKWMenuButton *mb = this->OrientationMenu->GetWidget()->GetWidget();
-    mb->SetWidth ( 12 );
+    mb->SetWidth ( 10 );
     mb->GetMenu()->AddRadioButton ( "Axial" );
     mb->GetMenu()->AddRadioButton ( "Sagittal" );
     mb->GetMenu()->AddRadioButton ( "Coronal" );
@@ -338,37 +340,37 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
    this->ForegroundSelector->SetParent ( this->ContainerFrame );
     this->ForegroundSelector->Create ( );
     this->ForegroundSelector->NoneEnabledOn();
-    this->ForegroundSelector->GetWidget()->GetWidget()->SetFont ( "-Adobe-Helvetica-Bold-R-Normal-*-9-*-*-*-*-*-*-*" );
+//    this->ForegroundSelector->GetWidget()->GetWidget()->SetFont ( "-Adobe-Helvetica-Bold-R-Normal-*-9-*-*-*-*-*-*-*" );
     this->ForegroundSelector->GetLabel()->SetImageToIcon ( this->SliceControlIcons->GetSetFgIcon() );
     this->ForegroundSelector->SetBalloonHelpString ( "Select the foreground");
     this->ForegroundSelector->SetNodeClass ("vtkMRMLVolumeNode", NULL, NULL, NULL);
     this->ForegroundSelector->SetMRMLScene( this->MRMLScene );
     this->ForegroundSelector->GetWidget()->GetWidget()->SetMaximumLabelWidth(10);
-    this->ForegroundSelector->GetWidget()->GetWidget()->SetWidth(12);
+    this->ForegroundSelector->GetWidget()->GetWidget()->SetWidth(10);
 
     this->BackgroundSelector = vtkSlicerNodeSelectorWidget::New();
     this->BackgroundSelector->SetParent ( this->ContainerFrame );
     this->BackgroundSelector->Create ( );
     this->BackgroundSelector->NoneEnabledOn();
-    this->BackgroundSelector->GetWidget()->GetWidget()->SetFont ( "-Adobe-Helvetica-Bold-R-Normal-*-9-*-*-*-*-*-*-*" );
+//    this->BackgroundSelector->GetWidget()->GetWidget()->SetFont ( "-Adobe-Helvetica-Bold-R-Normal-*-9-*-*-*-*-*-*-*" );
     this->BackgroundSelector->GetLabel()->SetImageToIcon ( this->SliceControlIcons->GetSetBgIcon ( ) );
     this->BackgroundSelector->SetBalloonHelpString ( "Select the background");
     this->BackgroundSelector->SetNodeClass ("vtkMRMLVolumeNode", NULL, NULL, NULL);
     this->BackgroundSelector->SetMRMLScene( this->MRMLScene );
     this->BackgroundSelector->GetWidget()->GetWidget()->SetMaximumLabelWidth(10);
-    this->BackgroundSelector->GetWidget()->GetWidget()->SetWidth(12);
+    this->BackgroundSelector->GetWidget()->GetWidget()->SetWidth(10);
 
     this->LabelSelector = vtkSlicerNodeSelectorWidget::New();
     this->LabelSelector->SetParent ( this->ContainerFrame );
     this->LabelSelector->Create ( );
     this->LabelSelector->NoneEnabledOn();
-    this->LabelSelector->GetWidget()->GetWidget()->SetFont ( "-Adobe-Helvetica-Bold-R-Normal-*-9-*-*-*-*-*-*-*" );
+//    this->LabelSelector->GetWidget()->GetWidget()->SetFont ( "-Adobe-Helvetica-Bold-R-Normal-*-9-*-*-*-*-*-*-*" );
     this->LabelSelector->GetLabel()->SetImageToIcon ( this->SliceControlIcons->GetSetLbIcon ( ) );
     this->LabelSelector->SetBalloonHelpString ( "Select the label map");
     this->LabelSelector->SetNodeClass ("vtkMRMLVolumeNode", "LabelMap", "1", NULL);
     this->LabelSelector->SetMRMLScene( this->MRMLScene );
     this->LabelSelector->GetWidget()->GetWidget()->SetMaximumLabelWidth(10);
-    this->LabelSelector->GetWidget()->GetWidget()->SetWidth(12);
+    this->LabelSelector->GetWidget()->GetWidget()->SetWidth(10);
 
     //
     // Create the frame to contain scale and visibility toggle
@@ -458,7 +460,6 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     this->LightboxButton->GetMenu()->SetItemStateToDisabled ( "6x6 view");
             
     //--- Pop-up frame for custom NXM lightbox configuration
-    vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast (this->GetApplication());
     this->LightboxTopLevel = vtkKWTopLevel::New ( );
     this->LightboxTopLevel->SetApplication ( app );
     this->LightboxTopLevel->SetMasterWindow ( this->LightboxButton );
@@ -807,11 +808,14 @@ void vtkSlicerSliceControllerWidget::FitSliceToBackground ( int link )
   vtkSlicerSlicesGUI *ssgui;
   vtkSlicerSliceGUI *sgui;
   vtkSlicerApplication *app;
+  vtkSlicerApplicationGUI *appGUI;
   int found = 0;
     
   // find the sliceGUI for this controller
   app = vtkSlicerApplication::SafeDownCast (this->GetApplication());
   ssgui = vtkSlicerSlicesGUI::SafeDownCast ( app->GetModuleGUIByName ("Slices") );
+  appGUI = ssgui->GetApplicationGUI ( );
+
   if ( ssgui->GetSliceGUICollection() )
     {
     ssgui->GetSliceGUICollection()->InitTraversal();
@@ -865,6 +869,7 @@ void vtkSlicerSliceControllerWidget::FitSliceToBackground ( int link )
           "%d", &h);
         sgui->GetLogic()->FitSliceToBackground ( w, h );
         sgui->GetSliceNode()->UpdateMatrices( );
+        appGUI->GetSlicesControlGUI()->RequestFOVEntriesUpdate();
         sgui = vtkSlicerSliceGUI::SafeDownCast ( ssgui->GetSliceGUICollection()->GetNextItemAsObject() );
         }
       }
@@ -888,6 +893,7 @@ void vtkSlicerSliceControllerWidget::FitSliceToBackground ( int link )
 
       sgui->GetLogic()->FitSliceToBackground ( w, h );
       this->SliceNode->UpdateMatrices( );
+      appGUI->GetSlicesControlGUI()->RequestFOVEntriesUpdate();      
       }
     }
 }

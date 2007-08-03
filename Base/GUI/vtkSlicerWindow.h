@@ -19,6 +19,11 @@ public:
   static vtkSlicerWindow* New();
   vtkTypeRevisionMacro(vtkSlicerWindow,vtkKWWindow);
 
+  // Description:
+  // Get the menu for controlling font sizes.
+  vtkGetObjectMacro (FontSizeMenu, vtkKWMenu);
+  vtkGetObjectMacro (FontFamilyMenu, vtkKWMenu);
+
   vtkGetObjectMacro ( FeedbackMenu, vtkKWMenu );
   // Description:
   // Get the Application Settings Interface as well as the Application
@@ -29,7 +34,14 @@ protected:
   vtkSlicerWindow();
   virtual ~vtkSlicerWindow();
 
+  // Description:
+  // Menu with options for users to report feedback
   vtkKWMenu *FeedbackMenu;
+
+  // Description:
+  // Cascade menu for controlling font sizes and family.
+  vtkKWMenu *FontSizeMenu;
+  vtkKWMenu *FontFamilyMenu;
 
   // Description:
   // Create the widget.

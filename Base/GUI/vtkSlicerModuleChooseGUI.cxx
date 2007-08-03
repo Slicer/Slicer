@@ -471,7 +471,6 @@ void vtkSlicerModuleChooseGUI::BuildGUI ( vtkKWToolbar *tb )
       this->ModulesLabel->SetText ( "   Modules:");
       this->ModulesLabel->SetAnchorToWest ( );
       this->ModulesLabel->SetWidth ( 9 );
-      this->ModulesLabel->SetFont ( "-Adobe-Helvetica-Bold-R-Normal-*-10-*-*-*-*-*-*-*" );
       tb->AddWidget ( this->ModulesLabel );
 
       //--- All modules menu button
@@ -480,7 +479,6 @@ void vtkSlicerModuleChooseGUI::BuildGUI ( vtkKWToolbar *tb )
       this->ModulesMenuButton->SetWidth ( 24 );
       this->ModulesMenuButton->IndicatorVisibilityOn ( );
       this->ModulesMenuButton->SetBalloonHelpString ("Select a Slicer module.");
-      this->ModulesMenuButton->SetFont ( "-Adobe-Helvetica-Bold-R-Normal-*-10-*-*-*-*-*-*-*" );
       tb->AddWidget ( this->ModulesMenuButton );
       
       this->ModulesPrev->SetParent ( tb->GetFrame() );
@@ -527,7 +525,6 @@ void vtkSlicerModuleChooseGUI::BuildGUI ( vtkKWToolbar *tb )
       this->ModulesSearchEntry->SetCommandTriggerToAnyChange();
       this->ModulesSearchEntry->SetBalloonHelpString ("Type the name of a module you want to select and click the 'search' button.");
       this->ModulesSearchEntry->SetForegroundColor ( 0.5, 0.5, 0.5);
-      this->ModulesSearchEntry->SetFont ( "-Adobe-Helvetica-Bold-R-Normal-*-10-*-*-*-*-*-*-*" );
       tb->AddWidget ( this->ModulesSearchEntry );
 
       //--- create a small label to show search context

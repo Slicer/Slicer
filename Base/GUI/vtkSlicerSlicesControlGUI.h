@@ -8,6 +8,8 @@
 
 #include "vtkSlicerBaseGUIWin32Header.h"
 #include "vtkSlicerComponentGUI.h"
+#include "vtkMRMLSliceNode.h"
+#include "vtkSlicerInteractorStyle.h"
 
 class vtkSlicerApplicationGUI;
 class vtkSlicerSlicesControlIcons;
@@ -17,6 +19,8 @@ class vtkKWMenuButton;
 class vtkKWScaleWithEntry;
 class vtkKWTopLevel;
 class vtkKWFrame;
+class vtkKWEntry;
+class vtkKWEntryWithLabel;
 
 // Description:
 // This class implements Slicer's SlicesControl Panel on Main GUI panel
@@ -39,13 +43,37 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesControlGUI : public vtkSlicerCom
     vtkGetObjectMacro ( LabelOpacityButton, vtkKWPushButton );
     vtkGetObjectMacro ( LabelOpacityScale, vtkKWScaleWithEntry );
     vtkGetObjectMacro ( LabelOpacityTopLevel, vtkKWTopLevel );
+    vtkGetObjectMacro ( FieldOfViewTopLevel, vtkKWTopLevel );
 //    vtkGetObjectMacro ( GridButton, vtkKWMenuButton );
     vtkGetObjectMacro ( AnnotationButton, vtkKWMenuButton );
     vtkGetObjectMacro ( SpatialUnitsButton, vtkKWMenuButton );
     vtkGetObjectMacro ( CrossHairButton, vtkKWMenuButton );
     vtkGetObjectMacro (FeaturesVisibleButton, vtkKWMenuButton );
     vtkGetObjectMacro (FitToWindowButton, vtkKWPushButton );
+    vtkGetObjectMacro ( FieldOfViewButton, vtkKWPushButton );
     vtkGetObjectMacro ( SlicesControlIcons, vtkSlicerSlicesControlIcons );
+    vtkGetObjectMacro (RedFOVEntry, vtkKWEntryWithLabel);
+    vtkGetObjectMacro (GreenFOVEntry, vtkKWEntryWithLabel);    
+    vtkGetObjectMacro (YellowFOVEntry, vtkKWEntryWithLabel);
+
+    vtkGetObjectMacro ( RedSliceNode, vtkMRMLSliceNode );
+    vtkGetObjectMacro ( YellowSliceNode, vtkMRMLSliceNode );  
+    vtkGetObjectMacro ( GreenSliceNode, vtkMRMLSliceNode );
+    vtkSetObjectMacro ( RedSliceNode, vtkMRMLSliceNode );
+    vtkSetObjectMacro ( YellowSliceNode, vtkMRMLSliceNode );  
+    vtkSetObjectMacro ( GreenSliceNode, vtkMRMLSliceNode );
+    vtkSetObjectMacro ( RedSliceEvents, vtkSlicerInteractorStyle );
+    vtkSetObjectMacro ( YellowSliceEvents, vtkSlicerInteractorStyle );
+    vtkSetObjectMacro ( GreenSliceEvents, vtkSlicerInteractorStyle );
+    vtkGetObjectMacro ( RedSliceEvents, vtkSlicerInteractorStyle );
+    vtkGetObjectMacro ( YellowSliceEvents, vtkSlicerInteractorStyle );
+    vtkGetObjectMacro ( GreenSliceEvents, vtkSlicerInteractorStyle );
+
+    vtkGetMacro (EntryUpdatePending, int );
+    vtkSetMacro (EntryUpdatePending, int);
+    vtkGetMacro ( SliceInteracting, int );
+    vtkGetMacro (ProcessingMRMLEvent, int);
+    
     
     // Description:
     // Get the main slicer toolbars.
@@ -76,6 +104,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesControlGUI : public vtkSlicerCom
 
     virtual void HideLabelOpacityScaleAndEntry ( );
     virtual void PopUpLabelOpacityScaleAndEntry ( );
+    virtual void PopUpFieldOfViewEntries ( );
+    virtual void HideFieldOfViewEntries ( );
+    virtual void FitFOVToBackground( double fov, int viewer );
+
     virtual void BuildAnnotationMenu ( );
     virtual void BuildCrossHairMenu ( );
     virtual void BuildSpacesMenu ( );
@@ -87,6 +119,14 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesControlGUI : public vtkSlicerCom
     virtual void ModifySpatialUnitsMode ( );
     virtual void ModifyCrossHairMode ( );
     virtual void ModifyVisibility ();
+    
+    virtual void UpdateSliceGUIInteractorStyles ( );
+    virtual void UpdateSlicesFromMRML();
+    virtual void UpdateFromMRML( );
+    virtual void RequestFOVEntriesUpdate ( );
+    virtual void FOVEntriesUpdate ( );
+    virtual void RemoveSliceEventObservers();
+    virtual void AddSliceEventObservers();
     
  protected:
     vtkSlicerSlicesControlGUI ( );
@@ -103,12 +143,27 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesControlGUI : public vtkSlicerCom
     vtkKWPushButton *LabelOpacityButton;
     vtkKWScaleWithEntry *LabelOpacityScale;
     vtkKWTopLevel *LabelOpacityTopLevel;
+    vtkKWTopLevel *FieldOfViewTopLevel;
 //    vtkKWMenuButton *GridButton;
     vtkKWMenuButton *AnnotationButton;
     vtkKWMenuButton *SpatialUnitsButton;
     vtkKWMenuButton *CrossHairButton;
     vtkKWMenuButton *FeaturesVisibleButton;
     vtkKWPushButton *FitToWindowButton;
+    vtkKWPushButton *FieldOfViewButton;
+    vtkKWEntryWithLabel *RedFOVEntry;
+    vtkKWEntryWithLabel *YellowFOVEntry;
+    vtkKWEntryWithLabel *GreenFOVEntry;
+    vtkMRMLSliceNode *RedSliceNode;
+    vtkMRMLSliceNode *YellowSliceNode;
+    vtkMRMLSliceNode *GreenSliceNode;
+    vtkSlicerInteractorStyle *RedSliceEvents;
+    vtkSlicerInteractorStyle *YellowSliceEvents;
+    vtkSlicerInteractorStyle *GreenSliceEvents;
+    int SliceInteracting;
+    int ProcessingMRMLEvent;
+    int EntryUpdatePending;
+    bool SceneClosing;
     
  private:
     vtkSlicerSlicesControlGUI ( const vtkSlicerSlicesControlGUI& ); // Not implemented.

@@ -120,9 +120,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   vtkGetObjectMacro (SelectCameraButton, vtkKWMenuButton);
   vtkGetObjectMacro (StereoButton, vtkKWMenuButton);
   vtkGetObjectMacro (VisibilityButton, vtkKWMenuButton );
-  vtkGetObjectMacro (RedFOVEntry, vtkKWEntryWithLabel);
-  vtkGetObjectMacro (YellowFOVEntry, vtkKWEntry);
-  vtkGetObjectMacro (GreenFOVEntry, vtkKWEntry);
+//  vtkGetObjectMacro (RedFOVEntry, vtkKWEntryWithLabel);
+//  vtkGetObjectMacro (YellowFOVEntry, vtkKWEntry);
+//  vtkGetObjectMacro (GreenFOVEntry, vtkKWEntry);
   vtkGetObjectMacro (ZoomEntry, vtkKWEntryWithLabel);
   vtkGetObjectMacro (LookFromButton, vtkKWRadioButton);
   vtkGetObjectMacro (RotateAroundButton, vtkKWRadioButton );
@@ -170,10 +170,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   vtkSetObjectMacro ( RedSliceEvents, vtkSlicerInteractorStyle );
   vtkSetObjectMacro ( YellowSliceEvents, vtkSlicerInteractorStyle );
   vtkSetObjectMacro ( GreenSliceEvents, vtkSlicerInteractorStyle );
-  vtkSetObjectMacro ( MainViewerEvents, vtkSlicerViewerInteractorStyle );
   vtkGetObjectMacro ( RedSliceEvents, vtkSlicerInteractorStyle );
   vtkGetObjectMacro ( YellowSliceEvents, vtkSlicerInteractorStyle );
   vtkGetObjectMacro ( GreenSliceEvents, vtkSlicerInteractorStyle );
+  vtkSetObjectMacro ( MainViewerEvents, vtkSlicerViewerInteractorStyle );
+
   vtkGetObjectMacro ( MainViewerEvents, vtkSlicerViewerInteractorStyle);
 
   // Description:
@@ -216,8 +217,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   
   // Description:
   // Methods to update GUI, View and MRML
-  virtual void RequestFOVEntriesUpdate ( );
-  virtual void FOVEntriesUpdate();
   virtual void UpdateViewFromMRML();
   virtual void UpdateSlicesFromMRML();
   virtual void UpdateFromMRML ( );
@@ -293,8 +292,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   // when mouse moves over a slice window.
   virtual void SliceViewMagnify( int event, vtkSlicerInteractorStyle *istyle);
 
-  virtual void FitFOVToBackground( double fov, int viewer );
-
   // Description:
   // Keeps the actors added to the Navigation Widget's
   // renderer the same as those in the 3DView's renderer.
@@ -323,6 +320,15 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   // Create the rectangle on the NavigationWidget that
   // indicates the 3DView's FOV.
   virtual void CreateFieldOfViewBoxActor ( );
+  
+  // Description:
+  // Method updates the GUI's widget's font size
+  // when a user selects a different font size.
+  // Normally the theme would take care of this,
+  // but since the GUI isn't derived from a vtkKWWidget,
+  // KWWidgets theme mechanism doesn't recognize the
+  // class context.
+  virtual void ReconfigureGUIFonts ( );
   
   // Description:
   // Groups of callbacks that handle the state change of
@@ -387,9 +393,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   vtkKWMenuButton *SelectViewButton;
   vtkKWMenuButton *SelectCameraButton;
   vtkKWMenuButton *VisibilityButton;
-  vtkKWEntryWithLabel *RedFOVEntry;
-  vtkKWEntry *YellowFOVEntry;
-  vtkKWEntry *GreenFOVEntry;
+//  vtkKWEntryWithLabel *RedFOVEntry;
+//  vtkKWEntry *YellowFOVEntry;
+//  vtkKWEntry *GreenFOVEntry;
   vtkKWEntryWithLabel *ZoomEntry;
     
   // navzoom scale, navzoomin/outiconbutton tmpNavigationZoom, all the icon buttons.    

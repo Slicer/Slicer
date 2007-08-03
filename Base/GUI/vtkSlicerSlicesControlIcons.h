@@ -43,6 +43,7 @@ class vtkSlicerSlicesControlIcons : public vtkSlicerIcons
     vtkGetObjectMacro ( FitToWindowIcon, vtkKWIcon );
     vtkGetObjectMacro ( FeaturesVisibleIcon, vtkKWIcon );
     vtkGetObjectMacro (WinLevThreshColIcon, vtkKWIcon);
+    vtkGetObjectMacro (FieldOfViewIcon, vtkKWIcon );
 
     // Description:
     // Method for setting images for widgets in Slicer's SlicesControlFrame
@@ -71,6 +72,7 @@ class vtkSlicerSlicesControlIcons : public vtkSlicerIcons
     vtkKWIcon *FitToWindowIcon;
     vtkKWIcon *FeaturesVisibleIcon;
     vtkKWIcon *WinLevThreshColIcon;
+    vtkKWIcon *FieldOfViewIcon;
 
  private:
     vtkSlicerSlicesControlIcons (const vtkSlicerSlicesControlIcons& ); // Not implemented

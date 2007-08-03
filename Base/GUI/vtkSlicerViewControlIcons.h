@@ -58,7 +58,9 @@ class vtkSlicerViewControlIcons : public vtkSlicerIcons
     vtkGetObjectMacro (SelectCameraButtonIcon, vtkKWIcon );
 
     vtkGetObjectMacro (NavZoomInIcon, vtkKWIcon);
-    vtkGetObjectMacro (NavZoomOutIcon, vtkKWIcon);    
+    vtkGetObjectMacro (NavZoomOutIcon, vtkKWIcon);
+
+    vtkGetObjectMacro (PercentZoomIcon, vtkKWIcon );
 
     // Description:
     // Method for setting images for widgets in Slicer's ViewControlFrame
@@ -102,6 +104,7 @@ class vtkSlicerViewControlIcons : public vtkSlicerIcons
 
     vtkKWIcon *NavZoomInIcon;
     vtkKWIcon *NavZoomOutIcon;
+    vtkKWIcon *PercentZoomIcon;
 
     
  private:

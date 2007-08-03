@@ -14,6 +14,7 @@ class vtkKWFrameWithLabel;
 class vtkKWEntryWithLabel;
 class vtkKWLoadSaveButtonWithLabel;
 class vtkKWCheckButton;
+class vtkKWRadioButtonSet;
 
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationSettingsInterface
   : public vtkKWApplicationSettingsInterface
@@ -21,6 +22,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationSettingsInterface
 public:
   static vtkSlicerApplicationSettingsInterface* New();
   vtkTypeRevisionMacro(vtkSlicerApplicationSettingsInterface,vtkKWApplicationSettingsInterface);
+  vtkGetObjectMacro (FontSizeButtons, vtkKWRadioButtonSet );
+  vtkGetObjectMacro (FontFamilyButtons, vtkKWRadioButtonSet );
 
   // Description:
   // Create the widget.
@@ -33,6 +36,7 @@ public:
 
   // Description:
   // Callbacks for the Module application settings. Internal, do not use.
+
   virtual void ModulePathCallback(char *);
   virtual void HomeModuleCallback(char *name);
   virtual void TemporaryDirectoryCallback();
@@ -42,7 +46,11 @@ public:
   // Description:
   // Callbacks for the Slicer application settings
   virtual void ConfirmDeleteCallback(int state);
-  
+  // Description:
+  // Callbacks for the Slicer font settings.
+  virtual void SetFontFamilyCallback ( );
+  virtual void SetFontSizeCallback ( );
+
 protected:
   vtkSlicerApplicationSettingsInterface();
   ~vtkSlicerApplicationSettingsInterface();
@@ -56,9 +64,12 @@ private:
   vtkKWCheckButton  *ConfirmDeleteCheckButton;
   
   vtkKWFrameWithLabel *ModuleSettingsFrame;
+  vtkKWFrameWithLabel *FontSettingsFrame;
   vtkKWEntryWithLabel *HomeModuleEntry;
   vtkKWEntryWithLabel *ModulePathEntry;
   vtkKWLoadSaveButtonWithLabel *TemporaryDirectoryButton;
+  vtkKWRadioButtonSet *FontSizeButtons;
+  vtkKWRadioButtonSet *FontFamilyButtons;
   vtkKWCheckButton  *LoadCommandLineModulesCheckButton;
   vtkKWCheckButton  *EnableDaemonCheckButton;
 };

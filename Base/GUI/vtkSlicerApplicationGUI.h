@@ -34,6 +34,7 @@
 #include "vtkKWRenderWidget.h"
 #include "vtkKWLoadSaveDialog.h"
 #include "vtkKWIcon.h"
+#include "vtkKWMenu.h"
 
 #include "vtkImageData.h"
 #include "vtkRenderWindow.h"
@@ -167,6 +168,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // Description:
     // These methods configure and pack the Slicer Window
     virtual void PackFirstSliceViewerFrame ( );
+    virtual void SetApplicationFontSize ( );
+    virtual void SetApplicationFontFamily ( );
 
     // Description:
     // These methods configure the Main Viewer's layout
@@ -212,10 +215,14 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     virtual void SetCurrentModuleToHome();
     virtual void PythonConsole();
 
-    virtual void InitializeNavigationWidget ();
+    virtual void InitializeViewControlGUI ();
+    virtual void InitializeSlicesControlGUI ();
 
     virtual void Save3DViewConfig ( );
     virtual void Restore3DViewConfig ( );
+
+    virtual void UpdateFontSizeMenu();
+    virtual void UpdateFontFamilyMenu();
 
     // Description:
     // Methods invoked by making selections from Help menu
@@ -307,6 +314,7 @@ protected:
     // Description:
     // Collection of SliceViewers
     vtkSlicerSliceGUICollection *SliceGUICollection;
+
 
     // Description:
     // Used to tag all pages added to the tabbed notebook

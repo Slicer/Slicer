@@ -49,6 +49,8 @@ vtkSlicerViewControlIcons::vtkSlicerViewControlIcons ( )
     //--- "Zoom in and out icons
     this->NavZoomInIcon = vtkKWIcon::New();
     this->NavZoomOutIcon = vtkKWIcon::New();
+    this->PercentZoomIcon = vtkKWIcon::New();
+
 
     //--- read in image data and assign to Icons.
     this->AssignImageDataToIcons ( );
@@ -207,7 +209,11 @@ vtkSlicerViewControlIcons::~vtkSlicerViewControlIcons ( )
         this->NavZoomOutIcon->Delete ( );
         this->NavZoomOutIcon = NULL;
     }
-
+    if ( this->PercentZoomIcon )
+      {
+      this->PercentZoomIcon->Delete();
+      this->PercentZoomIcon = NULL;
+      }
 
 }
 
@@ -369,8 +375,7 @@ void vtkSlicerViewControlIcons::AssignImageDataToIcons ( ) {
                                            image_ViewCameraSelect_width,
                                            image_ViewCameraSelect_height,
                                            image_ViewCameraSelect_pixel_size,
-                                           image_ViewCameraSelect_length, 0 );                                           
-
+                                           image_ViewCameraSelect_length, 0 );
     this->NavZoomInIcon->SetImage( image_NavZoomIn,
                                    image_NavZoomIn_width,
                                    image_NavZoomIn_height,
@@ -379,6 +384,11 @@ void vtkSlicerViewControlIcons::AssignImageDataToIcons ( ) {
                                     image_NavZoomOut_width,
                                     image_NavZoomOut_height,
                                     image_NavZoomOut_pixel_size, 0, 0);
+    this->PercentZoomIcon->SetImage( image_PercentRelativeZoom,
+                                    image_PercentRelativeZoom_width,
+                                    image_PercentRelativeZoom_height,
+                                    image_PercentRelativeZoom_pixel_size,
+                                     image_PercentRelativeZoom_length, 0);
     
 }
 
@@ -421,4 +431,5 @@ void vtkSlicerViewControlIcons::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "RotateAroundOnButtonIcon" << this->GetRotateAroundOnButtonIcon () << "\n";
     os << indent << "VisibilityButtonIcon" << this->GetVisibilityButtonIcon () << "\n";
     os << indent << "SelectCameraButtonIcon" << this->GetSelectCameraButtonIcon () << "\n";
+    os << indent << "PercentZoomIcon" << this->GetPercentZoomIcon () << "\n";
 }

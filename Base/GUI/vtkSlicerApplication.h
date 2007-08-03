@@ -94,7 +94,20 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   static const char *HomeModuleRegKey;
   static const char *LoadCommandLineModulesRegKey;
   static const char *EnableDaemonRegKey;
+  static const char *ApplicationFontFamilyRegKey;
+  static const char *ApplicationFontSizeRegKey;
   //ETX
+
+
+  // Description:
+  // Set/Get the application font family
+  void SetApplicationFontFamily ( const char *family);
+  const char *GetApplicationFontFamily ( ) const;
+
+  // Description:
+  // Set/Get the application font size
+  void SetApplicationFontSize ( const char *size );
+  const char *GetApplicationFontSize ( ) const;
 
   // Descrition:
   // Set/Get the confirm delete flag
@@ -207,6 +220,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   char ModulePath[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
   char TemporaryDirectory[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
   char HomeModule [ vtkKWRegistryHelper::RegistryKeyValueSizeMax];
+  char ApplicationFontSize [vtkKWRegistryHelper::RegistryKeyValueSizeMax];
+  char ApplicationFontFamily [vtkKWRegistryHelper::RegistryKeyValueSizeMax];
 
   int LoadCommandLineModules;
   int EnableDaemon;

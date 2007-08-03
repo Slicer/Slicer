@@ -118,7 +118,7 @@ public:
   virtual void UpdateLabelLayer ( int link );
   virtual void RaiseVolumeDisplayPanel ( char *id );
   virtual void FitSliceToBackground ( int link );
-  
+
   //BTX
   enum 
   {
