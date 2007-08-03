@@ -14,6 +14,22 @@ static const unsigned char image_SliceBG[] =
 
 /* 
  * Resource generated for file:
+ *    SlicesFieldOfView.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_SlicesFieldOfView_width          = 21;
+static const unsigned int  image_SlicesFieldOfView_height         = 21;
+static const unsigned int  image_SlicesFieldOfView_pixel_size     = 3;
+static const unsigned long image_SlicesFieldOfView_length         = 216;
+static const unsigned long image_SlicesFieldOfView_decoded_length = 1323;
+
+static const unsigned char image_SlicesFieldOfView[] = 
+  "eNpjYmJgogx98jJBRjstNbYutn571RcZAUVC2qzyNvggI6popxCtIxcQ1G5kZES2dqDekp"
+  "IyV1dXMrQbGVkCUXBwKIRBnuN1dXVJdTyyXcjaMd2AqR3oUzza0UISTTskrID+1cUGgOJA"
+  "WWQTMG03AgGctqPFAtX9TnnIUyve0VIdxJy0tDS4gaSmeSB35syZcAPJyHH4I46MDEsJAg"
+  "BuvFxw";
+
+/* 
+ * Resource generated for file:
  *    SliceFG.png (zlib, base64) (image file)
  */
 static const unsigned int  image_SliceFG_width          = 21;

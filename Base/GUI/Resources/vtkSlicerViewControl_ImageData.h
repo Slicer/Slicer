@@ -497,3 +497,20 @@ static const unsigned char image_ViewStereo[] =
   "AIDTC0nYEjIrUj204H7ZT4nfI0TzvtRkaWQJSWlgZhkGG7kZHRzJkzXV1dyXY80ARMx//5"
   "84cYvUBlf//+/ffvH5D9DwyYKC7oACMLd4k=";
 
+/* 
+ * Resource generated for file:
+ *    PercentRelativeZoom.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_PercentRelativeZoom_width          = 21;
+static const unsigned int  image_PercentRelativeZoom_height         = 21;
+static const unsigned int  image_PercentRelativeZoom_pixel_size     = 3;
+static const unsigned long image_PercentRelativeZoom_length         = 268;
+static const unsigned long image_PercentRelativeZoom_decoded_length = 1323;
+
+static const unsigned char image_PercentRelativeZoom[] = 
+  "eNq9lLENwyAQRXdhg4gmA6ROR53OK7ACbUrGSM0KrMAKrOA8+RSEILYsI/vrdPogf/+7M3"
+  "ieT8T99RnRShzQ3p7vOo751jFfgscPZcc5573fM14em6YJQhZJSskYs6GClOG4BTVBG2Ps"
+  "B9vIZRlCkLLJYYEU0/j+lcsOpmjFWmudc+YlLMnlo6y515D66V0phZYMX3NvtJhKF/00+t"
+  "77wdKyVIvEWgshF/n2dagnRhmUjZAMv+DgjZ/5kRs3ft/H/zZ78AUg7GP2";
+
+
