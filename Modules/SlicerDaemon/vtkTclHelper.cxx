@@ -40,7 +40,6 @@ vtkTclHelper::vtkTclHelper()
   this->Interp = NULL;
   this->ImageData = NULL;
   this->VolumeNode = NULL;
-  // this->MeasurementFrame = NULL;
   this->MeasurementFrame = vtkMatrix4x4::New();
   this->MeasurementFrame->Identity();
 }
@@ -56,10 +55,6 @@ vtkTclHelper::GetRASToVTKMatrix(vtkMatrix4x4 *RASToVTK)
 { 
   RASToVTK->Identity();
  
-  //cerr.setf(ios::fixed);
-  //cerr.precision(20);
-  //cerr << "GetRASToVTKMatrix from the node.\n";
-  
   //GetRASToVTK Matrix from the node
   this->VolumeNode->GetRASToIJKMatrix(RASToVTK);
   //normalize matrix RASToVTK       
@@ -136,36 +131,9 @@ vtkTclHelper::SendImageDataTensors(char *sockname)
   int dims[3];
   vtkFloatingPointType tensor[3][3];
   vtkDataArray *tensorArray;
-  // vtkMatrix4x4 *RASToVTK;
-  /*vtkMatrix4x4 *measurementFrame_T;
-  vtkMatrix4x4 *measurementFrame_inv;
-  vtkMatrix4x4 *measurementFrame_T_inv;
-  vtkMatrix4x4 *RASToVTK_inv;
-  vtkMatrix4x4 *RASToVTK_T_inv;
-  vtkMatrix4x4 *tmp;*/
   vtkMatrix4x4 *t;
 
-  //  tmp = vtkMatrix4x4::New();
   t = vtkMatrix4x4::New();
-  
-  // RASToVTK = vtkMatrix4x4::New();
-  // GetRASToVTKMatrix(RASToVTK);                 
-                         
-  // RASToVTK_inv = vtkMatrix4x4::New();
-  //RASToVTK_inv->Identity();
-  //vtkMatrix4x4::Invert(RASToVTK,RASToVTK_inv);
-  //RASToVTK_T_inv = vtkMatrix4x4::New();
-  //RASToVTK_T_inv->Identity();
-  //vtkMatrix4x4::Transpose(RASToVTK,RASToVTK_T_inv);
-  //RASToVTK_T_inv->Invert();
-  
-  //  measurementFrame_inv = vtkMatrix4x4::New();
-  //m//easurementFrame_inv->Identity();
-  //vtkMatrix4x4::Invert(this->MeasurementFrame,measurementFrame_inv);
-  //measurementFrame_T_inv = vtkMatrix4x4::New();
-  //measurementFrame_T_inv->Identity();
-  //vtkMatrix4x4::Transpose(this->MeasurementFrame,measurementFrame_T_inv);
-  //m/easurementFrame_T_inv->Invert();
   
   if ( ! (mode & TCL_WRITABLE) )
     {   vtkErrorMacro ("Socket " << sockname << " is not writable\n");
@@ -201,35 +169,17 @@ vtkTclHelper::SendImageDataTensors(char *sockname)
      
       for (int i = 0; i < numTuples; i++)
         {
-          //tmp->Identity();
-          // t->Identity();
           tensorArray->GetTuple(i, (vtkFloatingPointType *) tensor);
-          
-          /* t->SetElement(0,0,(double)(tensor[0][0]));
-          t->SetElement(0,1,(double)(tensor[0][1]));
-          t->SetElement(0,2,(double)(tensor[0][2]));
-          t->SetElement(1,0,(double)(tensor[1][0]));
-          t->SetElement(1,1,(double)(tensor[1][1]));
-          t->SetElement(1,2,(double)(tensor[1][2]));
-          t->SetElement(2,0,(double)(tensor[2][0]));
-          t->SetElement(2,1,(double)(tensor[2][1]));
-          t->SetElement(2,2,(double)(tensor[2][2]));*/
-        
-          /* vtkMatrix4x4::Multiply4x4(measurementFrame_inv, RASToVTK_inv, tmp);
-          vtkMatrix4x4::Multiply4x4(tmp, t, tmp);
-          vtkMatrix4x4::Multiply4x4(tmp, RASToVTK_T_inv, tmp);
-          vtkMatrix4x4::Multiply4x4(tmp, measurementFrame_T_inv, t);
-          */
-        
+         
           // sending out tensor in this form:  mask Mxx Mxy Mxz Myy Myz Mzz
           // mask for now is always 1
           serializedTensorsP[7*i+0] = (float) 1;
-          serializedTensorsP[7*i+1] = (float)(tensor[0][0]);//(t->GetElement(0,0));
-          serializedTensorsP[7*i+2] = (float)(tensor[0][1]);//(t->GetElement(0,1));
-          serializedTensorsP[7*i+3] = (float)(tensor[0][2]); //(t->GetElement(0,2));
-          serializedTensorsP[7*i+4] = (float)(tensor[1][1]);// (t->GetElement(1,1));
-          serializedTensorsP[7*i+5] = (float)(tensor[1][2]);// (t->GetElement(1,2));
-          serializedTensorsP[7*i+6] = (float)(tensor[2][2]); //(t->GetElement(2,2));
+          serializedTensorsP[7*i+1] = (float)(tensor[0][0]);
+          serializedTensorsP[7*i+2] = (float)(tensor[0][1]);
+          serializedTensorsP[7*i+3] = (float)(tensor[0][2]); 
+          serializedTensorsP[7*i+4] = (float)(tensor[1][1]);
+          serializedTensorsP[7*i+5] = (float)(tensor[1][2]);
+          serializedTensorsP[7*i+6] = (float)(tensor[2][2]);
         }
 
       written = Tcl_WriteRaw(channel, (char *)(serializedTensorsP_copy), bytes);
@@ -281,9 +231,6 @@ vtkTclHelper::SendImageDataTensors(char *sockname)
 void
 vtkTclHelper::SendImageDataTensors_UndoSlicerTransform(char *sockname)
 {
-  
-  //vtkGenericWarningMacro("The Node got passed in! "<<this->VolumeNode->GetClassName()<<"\n");
-   
   int mode, elementSize, numTuples, written;
   int bytes, tensorArraySize;
   Tcl_Channel channel = Tcl_GetChannel(this->Interp, sockname, &mode);
@@ -466,12 +413,6 @@ vtkTclHelper::ReceiveImageDataTensors(char *sockname)
   float *serializedTensorsP;
   float mxx, mxy, mxz, myy, myz, mzz; 
   vtkFloatArray* tensorArray;
-  /* vtkMatrix4x4 *RASToVTK;
-  vtkMatrix4x4 *measurementFrame_T;
-  vtkMatrix4x4 *RASToVTK_T;
-  vtkMatrix4x4 *tmp;
-  vtkMatrix4x4 *T_nrrd;
-  */   
   Tcl_Channel channel = Tcl_GetChannel(this->Interp, sockname, &mode);
   
   if ( ! (mode & TCL_READABLE) )
@@ -483,15 +424,6 @@ vtkTclHelper::ReceiveImageDataTensors(char *sockname)
     {   vtkErrorMacro ("Image Data is NULL");
       return;
     }
-  // RASToVTK = vtkMatrix4x4::New();
-  // GetRASToVTKMatrix(RASToVTK);           
-  //RASToVTK_T = vtkMatrix4x4::New();
-  //RASToVTK_T->Identity();
-  //vtkMatrix4x4::Transpose(RASToVTK,RASToVTK_T);
-  //measurementFrame_T = vtkMatrix4x4::New();
-  //measurementFrame_T ->Identity();
-  //vtkMatrix4x4::Transpose(this->MeasurementFrame, measurementFrame_T);
- 
   this->ImageData->GetDimensions(dims);
   elementSize = this->ImageData->GetScalarSize();
   numberOfTuples = dims[0] * dims[1] * dims[2]; 
@@ -516,9 +448,6 @@ vtkTclHelper::ReceiveImageDataTensors(char *sockname)
       {   vtkErrorMacro ("Only read " << read << " but expected to read " << bytes << "\n");
         return;
       }
-    
-    // T_nrrd = vtkMatrix4x4::New();
-    //tmp = vtkMatrix4x4::New();
     for (int i=0; i < tensorArray->GetNumberOfTuples(); i++)
       {
         /* throw away every 7th value because that is the mask that we don't pay
@@ -531,23 +460,6 @@ vtkTclHelper::ReceiveImageDataTensors(char *sockname)
         myz = *serializedTensorsP; serializedTensorsP++;
         mzz = *serializedTensorsP; serializedTensorsP++;
         
-       //  T_nrrd->Identity(); 
-//         T_nrrd->SetElement(0,0,mxx);
-//         T_nrrd->SetElement(0,1,mxy);
-//         T_nrrd->SetElement(1,0,mxy);
-//         T_nrrd->SetElement(0,2,mxz);
-//         T_nrrd->SetElement(2,0,mxz); 
-//         T_nrrd->SetElement(1,1,myy);
-//         T_nrrd->SetElement(1,2,myz);
-//         T_nrrd->SetElement(2,1,myz); 
-//         T_nrrd->SetElement(2,2,mzz);
-        
-//         tmp->Identity();
-//         vtkMatrix4x4::Multiply4x4(RASToVTK, this->MeasurementFrame, tmp);
-//         vtkMatrix4x4::Multiply4x4(tmp, T_nrrd, tmp);
-//         vtkMatrix4x4::Multiply4x4(tmp, measurementFrame_T, tmp);
-//         vtkMatrix4x4::Multiply4x4(tmp,RASToVTK_T, tmp);
-       
         tensorArray->SetComponent(i,0,mxx);
         tensorArray->SetComponent(i,1,mxy);
         tensorArray->SetComponent(i,2,mxz);
