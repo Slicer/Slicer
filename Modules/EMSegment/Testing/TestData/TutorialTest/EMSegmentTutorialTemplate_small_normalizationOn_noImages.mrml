@@ -1,0 +1,107 @@
+<MRML>
+<EMSAtlas
+ id="vtkMRMLEMSAtlasNode1" name="vtkMRMLEMSAtlasNode1"  hideFromEditors="false"  selectable="true" VolumeNodeIDs="
+Key vtkMRMLEMSTreeNode7 VolumeNodeID vtkMRMLScalarVolumeNode3
+Key vtkMRMLEMSTreeNode8 VolumeNodeID vtkMRMLScalarVolumeNode3
+Key vtkMRMLEMSTreeNode4 VolumeNodeID vtkMRMLScalarVolumeNode4
+Key vtkMRMLEMSTreeNode5 VolumeNodeID vtkMRMLScalarVolumeNode5
+Key vtkMRMLEMSTreeNode6 VolumeNodeID vtkMRMLScalarVolumeNode6" NumberOfTrainingSamples="82" ></EMSAtlas>
+<EMSTarget
+ id="vtkMRMLEMSTargetNode1" name="vtkMRMLEMSTargetNode1"  hideFromEditors="false"  selectable="true" VolumeNodeIDs="
+Key targetT1Normed_small.mhd VolumeNodeID vtkMRMLScalarVolumeNode1
+Key targetT2Normed_small.mhd VolumeNodeID vtkMRMLScalarVolumeNode2" ></EMSTarget>
+<EMSWorkingData
+ id="vtkMRMLEMSWorkingDataNode1" name="vtkMRMLEMSWorkingDataNode1"  hideFromEditors="false"  selectable="true" VolumeNodeIDs="" InputTargetNodeID="NULL" NormalizedTargetNodeID="NULL" AlignedTargetNodeID="NULL" InputAtlasNodeID="NULL" AlignedAtlasNodeID="NULL" ></EMSWorkingData>
+<EMSGlobalParameters
+ id="vtkMRMLEMSGlobalParametersNode1" name="vtkMRMLEMSGlobalParametersNode1"  hideFromEditors="false"  selectable="true" NumberOfTargetInputChannels="2" WorkingDirectory="NULL" SegmentationBoundaryMin="1 1 1" SegmentationBoundaryMax="64 64 31" RegistrationAffineType="0" RegistrationDeformableType="0" RegistrationInterpolationType="0" RegistrationAtlasVolumeKey="" RegistrationTargetVolumeKey="" SaveIntermediateResults="0" SaveSurfaceModels="0" MultithreadingEnabled="1" IntensityNormalizationParameterNodeIDs="vtkMRMLEMSIntensityNormalizationParametersNode1 vtkMRMLEMSIntensityNormalizationParametersNode2 " ></EMSGlobalParameters>
+<EMSTreeParametersLeaf
+ id="vtkMRMLEMSTreeParametersLeafNode1" name="vtkMRMLEMSTreeParametersLeafNode1"  hideFromEditors="false"  selectable="true" PrintQuality="0" IntensityLabel="1007" LogMean="0 0 " LogCovariance="0 0 | 0 0 " DistributionSpecificationMethod="0" DistributionSamplePointsRAS="" ></EMSTreeParametersLeaf>
+<EMSTreeParametersParent
+ id="vtkMRMLEMSTreeParametersParentNode1" name="vtkMRMLEMSTreeParametersParentNode1"  hideFromEditors="false"  selectable="true" ClassInteractionMatrixNodeID="vtkMRMLEMSClassInteractionMatrixNode1" Alpha="0.99" PrintBias="0" BiasCalculationMaxIterations="-1" SmoothingKernelWidth="11" SmoothingKernelSigma="5" StopEMType="0" StopEMMaxIterations="4" StopEMValue="0" StopMFAType="0" StopMFAMaxIterations="2" StopMFAValue="0" PrintFrequency="0" PrintLabelMap="0" PrintEMLabelMapConvergence="0" PrintEMWeightsConvergence="0" PrintMFALabelMapConvergence="0" PrintMFAWeightsConvergence="0" GenerateBackgroundProbability="0" ></EMSTreeParametersParent>
+<EMSClassInteractionMatrix
+ id="vtkMRMLEMSClassInteractionMatrixNode1" name="vtkMRMLEMSClassInteractionMatrixNode1"  hideFromEditors="false"  selectable="true" West="1 0 | 0 1 " North="1 0 | 0 1 " Up="1 0 | 0 1 " East="1 0 | 0 1 " South="1 0 | 0 1 " Down="1 0 | 0 1 " ></EMSClassInteractionMatrix>
+<EMSTreeParameters
+ id="vtkMRMLEMSTreeParametersNode1" name="vtkMRMLEMSTreeParametersNode1"  hideFromEditors="false"  selectable="true" ParentParametersNodeID="vtkMRMLEMSTreeParametersParentNode1" LeafParametersNodeID="vtkMRMLEMSTreeParametersLeafNode1" ColorRGB="0 0 0" InputChannelWeights="1 1 " SpatialPriorVolumeName="" SpatialPriorWeight="1" ClassProbability="1" ExcludeFromIncompleteEStep="0" PrintWeights="0" ></EMSTreeParameters>
+<EMSTree
+ id="vtkMRMLEMSTreeNode1" name="Root"  hideFromEditors="false"  selectable="true" ParentNodeID="NULL" TreeParametersNodeID="vtkMRMLEMSTreeParametersNode1" Label="Root" ></EMSTree>
+<EMSTemplate
+ id="vtkMRMLEMSTemplateNode1" name="vtkMRMLEMSTemplateNode1"  hideFromEditors="false"  selectable="true" TreeNodeID="vtkMRMLEMSTreeNode1" GlobalParametersNodeID="vtkMRMLEMSGlobalParametersNode1" ></EMSTemplate>
+<EMSSegmenter
+ id="vtkMRMLEMSSegmenterNode1" name="vtkMRMLEMSSegmenterNode1"  hideFromEditors="false"  selectable="true" TemplateNodeID="vtkMRMLEMSTemplateNode1" AtlasNodeID="vtkMRMLEMSAtlasNode1" TargetNodeID="vtkMRMLEMSTargetNode1" OutputVolumeNodeID="vtkMRMLScalarVolumeNode7" WorkingDataNodeID="vtkMRMLEMSWorkingDataNode1" WorkingDirectory="NULL" ></EMSSegmenter>
+<EMS
+ id="vtkMRMLEMSNode1" name="EMSegment Tutorial Template"  hideFromEditors="false"  selectable="true" SegmenterNodeID="vtkMRMLEMSSegmenterNode1" TemplateFilename="NULL" SaveTemplateAfterSegmentation="0" ></EMS>
+<EMSTreeParametersLeaf
+ id="vtkMRMLEMSTreeParametersLeafNode2" name="vtkMRMLEMSTreeParametersLeafNode2"  hideFromEditors="false"  selectable="true" PrintQuality="0" IntensityLabel="1008" LogMean="0 0 " LogCovariance="0 0 | 0 0 " DistributionSpecificationMethod="0" DistributionSamplePointsRAS="" ></EMSTreeParametersLeaf>
+<EMSTreeParametersParent
+ id="vtkMRMLEMSTreeParametersParentNode2" name="vtkMRMLEMSTreeParametersParentNode2"  hideFromEditors="false"  selectable="true" ClassInteractionMatrixNodeID="vtkMRMLEMSClassInteractionMatrixNode2" Alpha="0.99" PrintBias="0" BiasCalculationMaxIterations="-1" SmoothingKernelWidth="11" SmoothingKernelSigma="5" StopEMType="0" StopEMMaxIterations="4" StopEMValue="0" StopMFAType="0" StopMFAMaxIterations="2" StopMFAValue="0" PrintFrequency="0" PrintLabelMap="0" PrintEMLabelMapConvergence="0" PrintEMWeightsConvergence="0" PrintMFALabelMapConvergence="0" PrintMFAWeightsConvergence="0" GenerateBackgroundProbability="0" ></EMSTreeParametersParent>
+<EMSClassInteractionMatrix
+ id="vtkMRMLEMSClassInteractionMatrixNode2" name="vtkMRMLEMSClassInteractionMatrixNode2"  hideFromEditors="false"  selectable="true" West="1 0 | 0 1 " North="1 0 | 0 1 " Up="1 0 | 0 1 " East="1 0 | 0 1 " South="1 0 | 0 1 " Down="1 0 | 0 1 " ></EMSClassInteractionMatrix>
+<EMSTreeParameters
+ id="vtkMRMLEMSTreeParametersNode2" name="vtkMRMLEMSTreeParametersNode2"  hideFromEditors="false"  selectable="true" ParentParametersNodeID="vtkMRMLEMSTreeParametersParentNode2" LeafParametersNodeID="vtkMRMLEMSTreeParametersLeafNode2" ColorRGB="0 0 0" InputChannelWeights="1 1 " SpatialPriorVolumeName="" SpatialPriorWeight="1" ClassProbability="0.15" ExcludeFromIncompleteEStep="0" PrintWeights="0" ></EMSTreeParameters>
+<EMSTree
+ id="vtkMRMLEMSTreeNode2" name="Background"  hideFromEditors="false"  selectable="true" ParentNodeID="vtkMRMLEMSTreeNode1" TreeParametersNodeID="vtkMRMLEMSTreeParametersNode2" Label="NULL" ></EMSTree>
+<EMSTreeParametersLeaf
+ id="vtkMRMLEMSTreeParametersLeafNode3" name="vtkMRMLEMSTreeParametersLeafNode3"  hideFromEditors="false"  selectable="true" PrintQuality="0" IntensityLabel="1009" LogMean="0 0 " LogCovariance="0 0 | 0 0 " DistributionSpecificationMethod="0" DistributionSamplePointsRAS="" ></EMSTreeParametersLeaf>
+<EMSTreeParametersParent
+ id="vtkMRMLEMSTreeParametersParentNode3" name="vtkMRMLEMSTreeParametersParentNode3"  hideFromEditors="false"  selectable="true" ClassInteractionMatrixNodeID="vtkMRMLEMSClassInteractionMatrixNode3" Alpha="0.99" PrintBias="0" BiasCalculationMaxIterations="-1" SmoothingKernelWidth="11" SmoothingKernelSigma="5" StopEMType="0" StopEMMaxIterations="4" StopEMValue="0" StopMFAType="0" StopMFAMaxIterations="2" StopMFAValue="0" PrintFrequency="0" PrintLabelMap="0" PrintEMLabelMapConvergence="0" PrintEMWeightsConvergence="0" PrintMFALabelMapConvergence="0" PrintMFAWeightsConvergence="0" GenerateBackgroundProbability="0" ></EMSTreeParametersParent>
+<EMSClassInteractionMatrix
+ id="vtkMRMLEMSClassInteractionMatrixNode3" name="vtkMRMLEMSClassInteractionMatrixNode3"  hideFromEditors="false"  selectable="true" West="1 0 0 | 0 1 0 | 0 0 1 " North="1 0 0 | 0 1 0 | 0 0 1 " Up="1 0 0 | 0 1 0 | 0 0 1 " East="1 0 0 | 0 1 0 | 0 0 1 " South="1 0 0 | 0 1 0 | 0 0 1 " Down="1 0 0 | 0 1 0 | 0 0 1 " ></EMSClassInteractionMatrix>
+<EMSTreeParameters
+ id="vtkMRMLEMSTreeParametersNode3" name="vtkMRMLEMSTreeParametersNode3"  hideFromEditors="false"  selectable="true" ParentParametersNodeID="vtkMRMLEMSTreeParametersParentNode3" LeafParametersNodeID="vtkMRMLEMSTreeParametersLeafNode3" ColorRGB="0 0 0" InputChannelWeights="1 1 " SpatialPriorVolumeName="" SpatialPriorWeight="1" ClassProbability="0.85" ExcludeFromIncompleteEStep="0" PrintWeights="0" ></EMSTreeParameters>
+<EMSTree
+ id="vtkMRMLEMSTreeNode3" name="ICC"  hideFromEditors="false"  selectable="true" ParentNodeID="vtkMRMLEMSTreeNode1" TreeParametersNodeID="vtkMRMLEMSTreeParametersNode3" Label="NULL" ></EMSTree>
+<EMSTreeParametersLeaf
+ id="vtkMRMLEMSTreeParametersLeafNode4" name="vtkMRMLEMSTreeParametersLeafNode4"  hideFromEditors="false"  selectable="true" PrintQuality="0" IntensityLabel="5" LogMean="4.0437 6.3336 " LogCovariance="0.025513 -0.011894 | -0.011894 0.0058532 " DistributionSpecificationMethod="0" DistributionSamplePointsRAS="" ></EMSTreeParametersLeaf>
+<EMSTreeParametersParent
+ id="vtkMRMLEMSTreeParametersParentNode4" name="vtkMRMLEMSTreeParametersParentNode4"  hideFromEditors="false"  selectable="true" ClassInteractionMatrixNodeID="vtkMRMLEMSClassInteractionMatrixNode4" Alpha="0.7" PrintBias="0" BiasCalculationMaxIterations="-1" SmoothingKernelWidth="11" SmoothingKernelSigma="5" StopEMType="0" StopEMMaxIterations="0" StopEMValue="0" StopMFAType="0" StopMFAMaxIterations="0" StopMFAValue="0" PrintFrequency="0" PrintLabelMap="0" PrintEMLabelMapConvergence="0" PrintEMWeightsConvergence="0" PrintMFALabelMapConvergence="0" PrintMFAWeightsConvergence="0" GenerateBackgroundProbability="0" ></EMSTreeParametersParent>
+<EMSClassInteractionMatrix
+ id="vtkMRMLEMSClassInteractionMatrixNode4" name="vtkMRMLEMSClassInteractionMatrixNode4"  hideFromEditors="false"  selectable="true" West="" North="" Up="" East="" South="" Down="" ></EMSClassInteractionMatrix>
+<EMSTreeParameters
+ id="vtkMRMLEMSTreeParametersNode4" name="vtkMRMLEMSTreeParametersNode4"  hideFromEditors="false"  selectable="true" ParentParametersNodeID="vtkMRMLEMSTreeParametersParentNode4" LeafParametersNodeID="vtkMRMLEMSTreeParametersLeafNode4" ColorRGB="0.9 0.5 0.5" InputChannelWeights="0.1 1 " SpatialPriorVolumeName="vtkMRMLEMSTreeNode4" SpatialPriorWeight="0.01" ClassProbability="0.25" ExcludeFromIncompleteEStep="0" PrintWeights="0" ></EMSTreeParameters>
+<EMSTree
+ id="vtkMRMLEMSTreeNode4" name="CSF"  hideFromEditors="false"  selectable="true" ParentNodeID="vtkMRMLEMSTreeNode3" TreeParametersNodeID="vtkMRMLEMSTreeParametersNode4" Label="NULL" ></EMSTree>
+<EMSTreeParametersLeaf
+ id="vtkMRMLEMSTreeParametersLeafNode5" name="vtkMRMLEMSTreeParametersLeafNode5"  hideFromEditors="false"  selectable="true" PrintQuality="0" IntensityLabel="4" LogMean="4.4809 5.832 " LogCovariance="0.004737 -0.0041684 | -0.0041684 0.0046437 " DistributionSpecificationMethod="0" DistributionSamplePointsRAS="" ></EMSTreeParametersLeaf>
+<EMSTreeParametersParent
+ id="vtkMRMLEMSTreeParametersParentNode5" name="vtkMRMLEMSTreeParametersParentNode5"  hideFromEditors="false"  selectable="true" ClassInteractionMatrixNodeID="vtkMRMLEMSClassInteractionMatrixNode5" Alpha="0.7" PrintBias="0" BiasCalculationMaxIterations="-1" SmoothingKernelWidth="11" SmoothingKernelSigma="5" StopEMType="0" StopEMMaxIterations="0" StopEMValue="0" StopMFAType="0" StopMFAMaxIterations="0" StopMFAValue="0" PrintFrequency="0" PrintLabelMap="0" PrintEMLabelMapConvergence="0" PrintEMWeightsConvergence="0" PrintMFALabelMapConvergence="0" PrintMFAWeightsConvergence="0" GenerateBackgroundProbability="0" ></EMSTreeParametersParent>
+<EMSClassInteractionMatrix
+ id="vtkMRMLEMSClassInteractionMatrixNode5" name="vtkMRMLEMSClassInteractionMatrixNode5"  hideFromEditors="false"  selectable="true" West="" North="" Up="" East="" South="" Down="" ></EMSClassInteractionMatrix>
+<EMSTreeParameters
+ id="vtkMRMLEMSTreeParametersNode5" name="vtkMRMLEMSTreeParametersNode5"  hideFromEditors="false"  selectable="true" ParentParametersNodeID="vtkMRMLEMSTreeParametersParentNode5" LeafParametersNodeID="vtkMRMLEMSTreeParametersLeafNode5" ColorRGB="0 1 1" InputChannelWeights="1 0.1 " SpatialPriorVolumeName="vtkMRMLEMSTreeNode5" SpatialPriorWeight="0.01" ClassProbability="0.45" ExcludeFromIncompleteEStep="0" PrintWeights="0" ></EMSTreeParameters>
+<EMSTree
+ id="vtkMRMLEMSTreeNode5" name="Grey_Matter"  hideFromEditors="false"  selectable="true" ParentNodeID="vtkMRMLEMSTreeNode3" TreeParametersNodeID="vtkMRMLEMSTreeParametersNode5" Label="NULL" ></EMSTree>
+<EMSTreeParametersLeaf
+ id="vtkMRMLEMSTreeParametersLeafNode6" name="vtkMRMLEMSTreeParametersLeafNode6"  hideFromEditors="false"  selectable="true" PrintQuality="0" IntensityLabel="8" LogMean="4.7194 5.7093 " LogCovariance="0.0012969 -0.00048307 | -0.00048307 0.0012954 " DistributionSpecificationMethod="0" DistributionSamplePointsRAS="" ></EMSTreeParametersLeaf>
+<EMSTreeParametersParent
+ id="vtkMRMLEMSTreeParametersParentNode6" name="vtkMRMLEMSTreeParametersParentNode6"  hideFromEditors="false"  selectable="true" ClassInteractionMatrixNodeID="vtkMRMLEMSClassInteractionMatrixNode6" Alpha="0.7" PrintBias="0" BiasCalculationMaxIterations="-1" SmoothingKernelWidth="11" SmoothingKernelSigma="5" StopEMType="0" StopEMMaxIterations="0" StopEMValue="0" StopMFAType="0" StopMFAMaxIterations="0" StopMFAValue="0" PrintFrequency="0" PrintLabelMap="0" PrintEMLabelMapConvergence="0" PrintEMWeightsConvergence="0" PrintMFALabelMapConvergence="0" PrintMFAWeightsConvergence="0" GenerateBackgroundProbability="0" ></EMSTreeParametersParent>
+<EMSClassInteractionMatrix
+ id="vtkMRMLEMSClassInteractionMatrixNode6" name="vtkMRMLEMSClassInteractionMatrixNode6"  hideFromEditors="false"  selectable="true" West="" North="" Up="" East="" South="" Down="" ></EMSClassInteractionMatrix>
+<EMSTreeParameters
+ id="vtkMRMLEMSTreeParametersNode6" name="vtkMRMLEMSTreeParametersNode6"  hideFromEditors="false"  selectable="true" ParentParametersNodeID="vtkMRMLEMSTreeParametersParentNode6" LeafParametersNodeID="vtkMRMLEMSTreeParametersLeafNode6" ColorRGB="0.9 0.9 0.5" InputChannelWeights="0.95 0.05 " SpatialPriorVolumeName="vtkMRMLEMSTreeNode6" SpatialPriorWeight="0.7" ClassProbability="0.3" ExcludeFromIncompleteEStep="0" PrintWeights="0" ></EMSTreeParameters>
+<EMSTree
+ id="vtkMRMLEMSTreeNode6" name="White_Matter"  hideFromEditors="false"  selectable="true" ParentNodeID="vtkMRMLEMSTreeNode3" TreeParametersNodeID="vtkMRMLEMSTreeParametersNode6" Label="NULL" ></EMSTree>
+<EMSTreeParametersLeaf
+ id="vtkMRMLEMSTreeParametersLeafNode7" name="vtkMRMLEMSTreeParametersLeafNode7"  hideFromEditors="false"  selectable="true" PrintQuality="0" IntensityLabel="0" LogMean="1.4343 2.2381 " LogCovariance="0.25361 0.0070688 | 0.0070688 1.5541 " DistributionSpecificationMethod="0" DistributionSamplePointsRAS="" ></EMSTreeParametersLeaf>
+<EMSTreeParametersParent
+ id="vtkMRMLEMSTreeParametersParentNode7" name="vtkMRMLEMSTreeParametersParentNode7"  hideFromEditors="false"  selectable="true" ClassInteractionMatrixNodeID="vtkMRMLEMSClassInteractionMatrixNode7" Alpha="0.7" PrintBias="0" BiasCalculationMaxIterations="-1" SmoothingKernelWidth="11" SmoothingKernelSigma="5" StopEMType="0" StopEMMaxIterations="0" StopEMValue="0" StopMFAType="0" StopMFAMaxIterations="0" StopMFAValue="0" PrintFrequency="0" PrintLabelMap="0" PrintEMLabelMapConvergence="0" PrintEMWeightsConvergence="0" PrintMFALabelMapConvergence="0" PrintMFAWeightsConvergence="0" GenerateBackgroundProbability="0" ></EMSTreeParametersParent>
+<EMSClassInteractionMatrix
+ id="vtkMRMLEMSClassInteractionMatrixNode7" name="vtkMRMLEMSClassInteractionMatrixNode7"  hideFromEditors="false"  selectable="true" West="" North="" Up="" East="" South="" Down="" ></EMSClassInteractionMatrix>
+<EMSTreeParameters
+ id="vtkMRMLEMSTreeParametersNode7" name="vtkMRMLEMSTreeParametersNode7"  hideFromEditors="false"  selectable="true" ParentParametersNodeID="vtkMRMLEMSTreeParametersParentNode7" LeafParametersNodeID="vtkMRMLEMSTreeParametersLeafNode7" ColorRGB="1 0.8 0.7" InputChannelWeights="1 1 " SpatialPriorVolumeName="vtkMRMLEMSTreeNode7" SpatialPriorWeight="1" ClassProbability="0.7" ExcludeFromIncompleteEStep="0" PrintWeights="0" ></EMSTreeParameters>
+<EMSTree
+ id="vtkMRMLEMSTreeNode7" name="Air"  hideFromEditors="false"  selectable="true" ParentNodeID="vtkMRMLEMSTreeNode2" TreeParametersNodeID="vtkMRMLEMSTreeParametersNode7" Label="NULL" ></EMSTree>
+<EMSTreeParametersLeaf
+ id="vtkMRMLEMSTreeParametersLeafNode8" name="vtkMRMLEMSTreeParametersLeafNode8"  hideFromEditors="false"  selectable="true" PrintQuality="0" IntensityLabel="2" LogMean="4.6282 4.8883 " LogCovariance="0.0050214 0.0096528 | 0.0096528 0.037652 " DistributionSpecificationMethod="0" DistributionSamplePointsRAS="" ></EMSTreeParametersLeaf>
+<EMSTreeParametersParent
+ id="vtkMRMLEMSTreeParametersParentNode8" name="vtkMRMLEMSTreeParametersParentNode8"  hideFromEditors="false"  selectable="true" ClassInteractionMatrixNodeID="vtkMRMLEMSClassInteractionMatrixNode8" Alpha="0.7" PrintBias="0" BiasCalculationMaxIterations="-1" SmoothingKernelWidth="11" SmoothingKernelSigma="5" StopEMType="0" StopEMMaxIterations="0" StopEMValue="0" StopMFAType="0" StopMFAMaxIterations="0" StopMFAValue="0" PrintFrequency="0" PrintLabelMap="0" PrintEMLabelMapConvergence="0" PrintEMWeightsConvergence="0" PrintMFALabelMapConvergence="0" PrintMFAWeightsConvergence="0" GenerateBackgroundProbability="0" ></EMSTreeParametersParent>
+<EMSClassInteractionMatrix
+ id="vtkMRMLEMSClassInteractionMatrixNode8" name="vtkMRMLEMSClassInteractionMatrixNode8"  hideFromEditors="false"  selectable="true" West="" North="" Up="" East="" South="" Down="" ></EMSClassInteractionMatrix>
+<EMSTreeParameters
+ id="vtkMRMLEMSTreeParametersNode8" name="vtkMRMLEMSTreeParametersNode8"  hideFromEditors="false"  selectable="true" ParentParametersNodeID="vtkMRMLEMSTreeParametersParentNode8" LeafParametersNodeID="vtkMRMLEMSTreeParametersLeafNode8" ColorRGB="1 0 0" InputChannelWeights="1 1 " SpatialPriorVolumeName="vtkMRMLEMSTreeNode8" SpatialPriorWeight="1" ClassProbability="0.3" ExcludeFromIncompleteEStep="0" PrintWeights="0" ></EMSTreeParameters>
+<EMSTree
+ id="vtkMRMLEMSTreeNode8" name="Skull"  hideFromEditors="false"  selectable="true" ParentNodeID="vtkMRMLEMSTreeNode2" TreeParametersNodeID="vtkMRMLEMSTreeParametersNode8" Label="NULL" ></EMSTree>
+<EMSIntensityNormalizationParameters
+ id="vtkMRMLEMSIntensityNormalizationParametersNode1" name="vtkMRMLEMSIntensityNormalizationParametersNode1"  hideFromEditors="true"  selectable="true" NormValue="90" NormType="1" InitialHistogramSmoothingWidth="5" MaxHistogramSmoothingWidth="10" RelativeMaxVoxelNum="0.99" PrintInfo="1" Enabled="1" ></EMSIntensityNormalizationParameters>
+<EMSIntensityNormalizationParameters
+ id="vtkMRMLEMSIntensityNormalizationParametersNode2" name="vtkMRMLEMSIntensityNormalizationParametersNode2"  hideFromEditors="true"  selectable="true" NormValue="310" NormType="1" InitialHistogramSmoothingWidth="5" MaxHistogramSmoothingWidth="10" RelativeMaxVoxelNum="0.99" PrintInfo="1" Enabled="1" ></EMSIntensityNormalizationParameters>
+</MRML>
