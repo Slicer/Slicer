@@ -68,7 +68,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
     vtkGetObjectMacro (UndoIconButton, vtkKWPushButton );
     vtkGetObjectMacro (RedoIconButton, vtkKWPushButton );
     
-    vtkGetObjectMacro (InteractionModeRadioButtons, vtkKWRadioButtonSet );
+    vtkGetObjectMacro (MousePickButton, vtkKWRadioButton);
+    vtkGetObjectMacro (MousePlaceButton, vtkKWRadioButton);
+    vtkGetObjectMacro (MouseTransformViewButton, vtkKWRadioButton);    
+
+
 
     // Description:
     // This method builds the Data module's GUI
@@ -100,7 +104,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
     virtual void ResumeViewRockOrSpin ( int mode );
     virtual void SetLayoutMenubuttonValueToCurrentLayout ();
     const char* GetCurrentLayoutStringName ( );
-
+    virtual void ReconfigureGUIFonts ( );
+  
     // Description:
     // Getting and setting the mrml selection node id
     vtkGetStringMacro(InteractionNodeID);
@@ -147,7 +152,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
     vtkKWMenuButton *LoadSceneIconButton;
     vtkKWMenuButton *ChooseLayoutIconMenuButton;
 
-    vtkKWRadioButtonSet *InteractionModeRadioButtons;
+    vtkKWRadioButton *MousePickButton;
+    vtkKWRadioButton *MousePlaceButton;
+    vtkKWRadioButton *MouseTransformViewButton;
 
     vtkSlicerModuleChooseGUI *ModuleChooseGUI;
     vtkSlicerApplicationGUI *ApplicationGUI;

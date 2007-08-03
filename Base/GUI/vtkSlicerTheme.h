@@ -1,8 +1,15 @@
 #ifndef __vtkSlicerTheme_h
 #define __vtkSlicerTheme_h
 
+#include <map>
+#include <vector>
+#include <string>
+#include <vtksys/SystemTools.hxx>
+#include <vtksys/hash_map.hxx>
+
 #include "vtkKWTheme.h"
 #include "vtkSlicerColor.h"
+#include "vtkSlicerFont.h"
 #include "vtkSlicerCheckRadioButtonIcons.h"
 
 class vtkSlicerTheme : public vtkKWTheme
@@ -17,23 +24,64 @@ class vtkSlicerTheme : public vtkKWTheme
     // Description:
     // Get method for SlicerColor class
     vtkGetObjectMacro ( SlicerColors, vtkSlicerColor );
-    vtkGetMacro ( FontPointSize, int);
+    vtkGetObjectMacro ( SlicerFonts, vtkSlicerFont );
+    vtkGetMacro (FontSize0, int );
+    vtkGetMacro (FontSize1, int );    
+    vtkGetMacro (FontSize2, int );
+    
+    virtual const char *GetFontFamily ( )
+        {
+        return ( this->FontFamily );
+        }
+    virtual void SetFontFamily ( const char *font )
+        {
+        this->FontFamily = font;
+        }
+    virtual void SetApplicationFont0 ( const char *str )
+        {
+        this->ApplicationFont0 = str;
+        }
+    virtual void SetApplicationFont1 ( const char *str )
+        {
+        this->ApplicationFont1 = str;
+        }
+    virtual void SetApplicationFont2 ( const char *str )
+        {
+        this->ApplicationFont2 = str;
+        }
+    const char *GetApplicationFont0 ( )
+        {
+        return this->ApplicationFont0;
+        }
+    const char *GetApplicationFont1 ( )
+        {
+        return this->ApplicationFont1;
+        }
+    const char *GetApplicationFont2 ( )
+        {
+        return this->ApplicationFont2;
+        }
 
     // Description:
     // Ask the default Slicer theme to install itself
     virtual void Install ( );
-
-    // Description:
-    // Convenience method that sets font for slicer widgets
-    // and special-case fonts throughout the Application
-    virtual void AddSlicerFontOptions (const char *font);
+    virtual void InstallFonts ( );
     
  protected:
     vtkSlicerTheme ( );
     virtual ~vtkSlicerTheme ( );
     vtkSlicerColor *SlicerColors;
+    vtkSlicerFont *SlicerFonts;
+    
+    const char *FontFamily;
+    int FontSize0;
+    int FontSize1;
+    int FontSize2;
 
-    int FontPointSize;
+    const char *ApplicationFont0;
+    const char *ApplicationFont1;
+    const char *ApplicationFont2;
+    
     vtkSlicerCheckRadioButtonIcons *CheckRadioIcons;
     
  private:
