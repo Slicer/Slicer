@@ -795,15 +795,24 @@ int Slicer3_main(int argc, char *argv[])
 
     slicerApp->SplashMessage("Creating Application GUI...");
 
-    // CREATE APPLICATION GUI, including the main window
+    // CREATE APPLICATION GUI, including the main window 
     vtkSlicerApplicationGUI *appGUI = vtkSlicerApplicationGUI::New ( );
     appGUI->SetApplication ( slicerApp );
     appGUI->SetAndObserveApplicationLogic ( appLogic );
     appGUI->SetAndObserveMRMLScene ( scene );
+    // set fonts from registry before building GUI...
+/*
+    if ( appGUI->GetMainSlicerWindow()->GetApplicationSettingsInterface() )
+      {
+      slicerApp->GetSlicerTheme()->InstallFonts();
+      }
+*/
     appGUI->BuildGUI ( );
     appGUI->AddGUIObservers ( );
     slicerApp->SetApplicationGUI ( appGUI );
 
+
+    
     // ------------------------------
     // CREATE MODULE LOGICS & GUIS; add to GUI collection
     // (presumably these will be auto-detected, not listed out as below...)
@@ -1087,7 +1096,9 @@ int Slicer3_main(int argc, char *argv[])
     slicesGUI->AddGUIObservers ( );
 #endif
 
-    appGUI->InitializeNavigationWidget();
+    appGUI->InitializeSlicesControlGUI();
+    appGUI->InitializeViewControlGUI();
+//    appGUI->InitializeNavigationWidget();
 
 #ifndef GAD_DEBUG
     // --- Gradient anisotropic diffusion filter module
