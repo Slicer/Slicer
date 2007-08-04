@@ -5,12 +5,13 @@
 static const unsigned int  image_SliceBG_width          = 21;
 static const unsigned int  image_SliceBG_height         = 21;
 static const unsigned int  image_SliceBG_pixel_size     = 3;
-static const unsigned long image_SliceBG_length         = 120;
+static const unsigned long image_SliceBG_length         = 164;
 static const unsigned long image_SliceBG_decoded_length = 1323;
 
 static const unsigned char image_SliceBG[] = 
-  "eNr7/384gAq8gBjtnRtvYUXEa4+ICMeFiNR+FRsgSTsDXkCM9jM4AEnamZgYIGjdunXkaU"
-  "dj0M52ICDbdgiARDHZ2iEA0/HkaSc+4tC0k5psRiAAABItEwI=";
+  "eNpjYKAU/CcX0EI78U7Fpf3/IQesCL/2LDCAa0fYSLR2ZNuxM7Bpz0ICZNgOsZcS22mhHc"
+  "39JGknPuLQtJOabJC1owE8Upja8QCC2rECPFJYkw1We42MLIEoLS0NwiAjwxoZGc2cOdPV"
+  "1ZXs/A40gerFBSUAAD8nDAI=";
 
 /* 
  * Resource generated for file:
@@ -35,12 +36,13 @@ static const unsigned char image_SlicesFieldOfView[] =
 static const unsigned int  image_SliceFG_width          = 21;
 static const unsigned int  image_SliceFG_height         = 21;
 static const unsigned int  image_SliceFG_pixel_size     = 3;
-static const unsigned long image_SliceFG_length         = 120;
+static const unsigned long image_SliceFG_length         = 176;
 static const unsigned long image_SliceFG_decoded_length = 1323;
 
 static const unsigned char image_SliceFG[] = 
-  "eNr7/384AAO8gBjtnRtvYUXEa2fAC4jRfgYHIFU7ExMDBMG1TwcD4rWj2X7t2jV6akdzPE"
-  "1tBwKytUMA/ogjRjseQFA7BADVXMMBiNSOB/wfBWAAAPDxGxk=";
+  "eNpjYKAU/CcXYNWehRcQox2Xdfi1E/QjQe1vpjH8P+SAifBrh/gLxIYpRlhKnHYIF6GYRN"
+  "vRtKOZQGfbqa4dT7JB044r4nAlWrh2krIGruREZBpGSzbEZBOCWQYrMDKyBKK0tDQIg1Tt"
+  "YBOMZs6c6erqSobtcBPIczwev1MCALReGwc=";
 
 /* 
  * Resource generated for file:
@@ -49,12 +51,13 @@ static const unsigned char image_SliceFG[] =
 static const unsigned int  image_SliceLB_width          = 21;
 static const unsigned int  image_SliceLB_height         = 21;
 static const unsigned int  image_SliceLB_pixel_size     = 3;
-static const unsigned long image_SliceLB_length         = 120;
+static const unsigned long image_SliceLB_length         = 148;
 static const unsigned long image_SliceLB_decoded_length = 1323;
 
 static const unsigned char image_SliceLB[] = 
-  "eNr7/384AAa8gBjtVXMPYUUkaVfUMsHUrg0GZGu/evUq5dqnggHZ2oEkHbTDERnasUYcMd"
-  "rxAILaIQCiBisgUjseQFA7BADV4HIDkdrxgP+jAAwA/dQITg==";
+  "eNpjYKAU/CcX0EJ7Fl5AjHZc1uHXTtBegtrx24tLO8GoIaj9/yEHrIhU7WhGDQ/teJINkb"
+  "bjSrRo2qHiMC6mvaRGHP4sQzDZGBlZAlFaWhqEQUaGNTIymjlzpqurK9n5HWgC1YsLSgAA"
+  "E0gfiA==";
 
 /* 
  * Resource generated for file:
@@ -63,13 +66,14 @@ static const unsigned char image_SliceLB[] =
 static const unsigned int  image_SliceOR_width          = 21;
 static const unsigned int  image_SliceOR_height         = 21;
 static const unsigned int  image_SliceOR_pixel_size     = 3;
-static const unsigned long image_SliceOR_length         = 172;
+static const unsigned long image_SliceOR_length         = 216;
 static const unsigned long image_SliceOR_decoded_length = 1323;
 
 static const unsigned char image_SliceOR[] = 
-  "eNr7/3+wgytXrlCi3cLCjBK9ra2tRCpmYmLAjwhqfwUDQHshjEWLFkEYxGtHNodU7UD1QM"
-  "YiDAAUBIYD0FW44gKiC4/t+GMBqGDt7ktABGcA0ZSFO+CC+OMIj3aILK50RTDK6BbyyNrh"
-  "eonUTkmqQzaHkpxCvEW0yOP0AQBPdDwJ";
+  "eNqtlMEJwCAMRaUjeSjtAK7iJg7h1Y1cwyXaT4VgDcRY+/EQEl+MRjVmVddXafDj2D/jYE"
+  "MISnzbjDyGOK85pcSjMt7OnMUxH0ZighPngKooIcdriK9eSoGz68KPxSOzgLdRjg9blnPW"
+  "HF1+RAaE1ck5ixOrxFduXZtHeCkavPNYe2J476sh49TrdwYbY3TOTb33LsPsdzHc+4pugw"
+  "JDpw==";
 
 /* 
  * Resource generated for file:
