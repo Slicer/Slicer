@@ -100,7 +100,7 @@ itcl::body ColorTree::constructor { {scene ""} } {
   #
   set o(toplevel) [vtkNew vtkKWTopLevel]
   $o(toplevel) SetApplication $::slicer3::Application
-  $o(toplevel) SetTitle "Add Data"
+  $o(toplevel) SetTitle "Color Tree"
   $o(toplevel) Create
 
   # delete this instance when the window is closed
@@ -114,7 +114,7 @@ itcl::body ColorTree::constructor { {scene ""} } {
   #
   # create columns
   #
-  $_tree column create -expand yes -text "Node" -itembackground {#F7F7F7} -tag colNode
+  $_tree column create -text "Node" -itembackground {#F7F7F7} -tag colNode
   $_tree column create -text "Color Name" -itembackground {} -tag colName
   $_tree column create -text "Color" -justify center -itembackground {} -tag colColor
 
