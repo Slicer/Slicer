@@ -35,7 +35,7 @@ public:
   // Description:
   // Get/Set the Widgets in this composite widget.
   vtkGetObjectMacro ( OffsetScale, vtkKWScaleWithEntry );
-  vtkGetObjectMacro ( OrientationMenu, vtkKWMenuButtonWithSpinButtonsWithLabel );
+  vtkGetObjectMacro ( OrientationSelector, vtkKWMenuButtonWithSpinButtonsWithLabel );
   vtkGetObjectMacro ( ForegroundSelector, vtkSlicerNodeSelectorWidget );
   vtkGetObjectMacro ( BackgroundSelector, vtkSlicerNodeSelectorWidget );
   vtkGetObjectMacro ( LabelSelector, vtkSlicerNodeSelectorWidget );
@@ -55,6 +55,10 @@ public:
   vtkGetObjectMacro ( LightboxWidthEntry, vtkKWEntry );
   vtkGetObjectMacro ( LightboxHeightEntry, vtkKWEntry );
   vtkGetObjectMacro ( LightboxApplyButton, vtkKWPushButton);
+  vtkGetObjectMacro ( OrientationMenuButton, vtkKWMenuButton );
+  vtkGetObjectMacro ( ForegroundMenuButton, vtkKWMenuButton );
+  vtkGetObjectMacro ( BackgroundMenuButton, vtkKWMenuButton );
+  vtkGetObjectMacro ( LabelMenuButton, vtkKWMenuButton );
 
   void RemoveWidgetObservers ( );
   void AddWidgetObservers ( );
@@ -71,6 +75,10 @@ public:
     {
     vtkSetAndObserveMRMLNodeMacro(this->SliceNode, snode );
     }
+
+  // Description:
+  // updates FG and BG layer menus when Slice Logic is updated.
+  virtual void UpdateLayerMenus();
 
   // Description:
   // slice logic controlling the slice to be manipulated
@@ -144,10 +152,19 @@ protected:
   // Slice controller subwidgets
   //
   vtkKWScaleWithEntry *OffsetScale;
-  vtkKWMenuButtonWithSpinButtonsWithLabel *OrientationMenu;
+  vtkKWMenuButtonWithSpinButtonsWithLabel *OrientationSelector;
   vtkSlicerNodeSelectorWidget *ForegroundSelector;
   vtkSlicerNodeSelectorWidget *BackgroundSelector;
   vtkSlicerNodeSelectorWidget *LabelSelector;
+  
+  //
+  // MenuButtons next to selectors with drop-down
+  // menu of options for each layer.
+  vtkKWMenuButton *OrientationMenuButton;
+  vtkKWMenuButton *ForegroundMenuButton;
+  vtkKWMenuButton *BackgroundMenuButton;
+  vtkKWMenuButton *LabelMenuButton;
+
   vtkKWPushButton *VisibilityToggle;
   vtkKWPushButton *LinkButton;
   vtkKWPushButton *LabelOpacityButton;

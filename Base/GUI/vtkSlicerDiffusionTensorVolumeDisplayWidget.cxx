@@ -322,17 +322,28 @@ void vtkSlicerDiffusionTensorVolumeDisplayWidget::ProcessMRMLEvents ( vtkObject 
                                               unsigned long event, void *callData )
 {
   vtkMRMLVolumeNode *curVolumeNode = this->GetVolumeNode();
+
   if (curVolumeNode  == NULL)
     {
     return;
     }
 
   vtkMRMLVolumeNode *volumeNode = vtkMRMLVolumeNode::SafeDownCast(caller);
-
   if (volumeNode == curVolumeNode && 
       volumeNode != NULL && event == vtkCommand::ModifiedEvent)
     {
     this->WindowLevelThresholdEditor->SetImageData(volumeNode->GetImageData());
+
+    //--- check the interpolation which may have been modified from the SliceGUI
+    if ( this->GetVolumeDisplayNode() && this->InterpolateButton )
+      {
+      if (this->GetVolumeDisplayNode()->GetInterpolate() != this->InterpolateButton->GetSelectedState() )
+        {
+        this->InterpolateButton->SetSelectedState( this->GetVolumeDisplayNode()->GetInterpolate()  );
+        }
+      }
+    //--- end check interpolation
+
     }
 
   if (event == vtkCommand::ModifiedEvent)

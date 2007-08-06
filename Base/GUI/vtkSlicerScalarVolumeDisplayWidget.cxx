@@ -256,13 +256,20 @@ void vtkSlicerScalarVolumeDisplayWidget::ProcessMRMLEvents ( vtkObject *caller,
     }
 
   vtkMRMLVolumeNode *volumeNode = vtkMRMLVolumeNode::SafeDownCast(caller);
-
   if (volumeNode == curVolumeNode && 
       volumeNode != NULL && event == vtkCommand::ModifiedEvent)
     {
     if (volumeNode && volumeNode->GetImageData())
       {
       this->WindowLevelThresholdEditor->SetImageData(volumeNode->GetImageData());
+      }
+    // check the interpolation which may have been modified from the SliceGUI
+    if (this->GetVolumeDisplayNode() && this->InterpolateButton )
+      {
+      if (this->GetVolumeDisplayNode()->GetInterpolate() != this->InterpolateButton->GetSelectedState() )
+        {
+        this->InterpolateButton->SetSelectedState( this->GetVolumeDisplayNode()->GetInterpolate()  );
+        }
       }
     }
 
@@ -320,7 +327,6 @@ void vtkSlicerScalarVolumeDisplayWidget::UpdateWidgetFromMRML ()
     // set the color node selector to reflect the volume's color node
     this->ColorSelectorWidget->SetSelected(displayNode->GetColorNode());
     this->InterpolateButton->SetSelectedState( displayNode->GetInterpolate()  );
-
     }
   
   return;

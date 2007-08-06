@@ -418,5 +418,9 @@ void vtkSlicerSliceGUI::SetupViewerAndController()
     {
     this->GetSliceViewer()->GetImageMapper()->SetInput( idata );
     }
+  if ( this->GetSliceController() )
+    {
+    this->GetSliceController()->UpdateLayerMenus();
+    }
 }
 
