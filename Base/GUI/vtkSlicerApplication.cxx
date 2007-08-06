@@ -177,8 +177,8 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
     this->EnableDaemon = 0;
    
     // defaults
-    strcpy (this->ApplicationFontSize, "" );
-    strcpy ( this->ApplicationFontFamily, "" );
+    strcpy (this->ApplicationFontSize, "small" );
+    strcpy ( this->ApplicationFontFamily, "Arial" );
 
     // configure the application before creating
     this->SetName ( "3D Slicer Version 3.0 Beta" );
@@ -493,10 +493,10 @@ void vtkSlicerApplication::RestoreApplicationSettingsFromRegistry()
 
   if ( this->HasRegistryValue(2, "RunTime", vtkSlicerApplication::ApplicationFontSizeRegKey))
     {
-
     this->GetRegistryValue (
       2, "RunTime", vtkSlicerApplication::ApplicationFontSizeRegKey, this->ApplicationFontSize);
     }
+
   if ( this->HasRegistryValue(2, "RunTime", vtkSlicerApplication::ApplicationFontFamilyRegKey))
     {
     this->GetRegistryValue (
