@@ -536,6 +536,7 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     this->LightboxButton->GetMenu()->SetItemStateToDisabled ( "2x2 view");
     this->LightboxButton->GetMenu()->SetItemStateToDisabled ( "3x3 view");
     this->LightboxButton->GetMenu()->SetItemStateToDisabled ( "6x6 view");
+    this->LightboxButton->GetMenu()->SetItemStateToDisabled ( "customized view" );
             
     //--- Pop-up frame for custom NXM lightbox configuration
     this->LightboxTopLevel = vtkKWTopLevel::New ( );
