@@ -428,10 +428,6 @@ proc slicerd_parse_space_measurement_frame_and_setMF {tcl_sock mf_line space} {
     
     $tcl_sock SetMeasurementFrame measurement_frame_matrix
 
-    # The transposing is theoretically wrong, but is done here to be consistant 
-    # with the mf that the volume wuold have inslicer3 when loaded by the
-    # vtkNRRDReader
-    measurement_frame_matrix Transpose
     [$tcl_sock GetVolumeNode] SetMeasurementFrameMatrix measurement_frame_matrix
 }
 
