@@ -20,7 +20,7 @@ rasToijk=inv(sd);
 
 % normalize rasToijk columnwise
 RASToIJKRotationMatrix = rasToijk./repmat([norm(rasToijk(:,1)), ...
-        norm(rasToijk(:,2)), norm(rasToijk(:,3))], 3, 1)
+        norm(rasToijk(:,2)), norm(rasToijk(:,3))], 3, 1);
 
 RASToIJKRotationMatrix_trans = RASToIJKRotationMatrix';
 mf_trans = mf';
