@@ -108,9 +108,10 @@ protected:
   void ModuleDiscoveryMessage( const char *);
   
   
-private:
   ModuleDescriptionMap *InternalMap;
   ModuleFileMap *InternalFileMap;
+
+private:
 
   std::string Name;
   std::string SearchPath;
