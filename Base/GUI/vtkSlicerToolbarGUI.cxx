@@ -525,6 +525,7 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
           //---
           //--- Add code to pop up Editor toolbox here
           //---
+          app->Script ("::EditBox::ShowDialog");
           }
 
         }
@@ -1051,7 +1052,7 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   this->EditorToolboxIconButton->SetBorderWidth ( 0 );
   this->EditorToolboxIconButton->SetOverReliefToNone ( );
   this->EditorToolboxIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetEditorToolboxIcon ( ) );
-  this->EditorToolboxIconButton->SetBalloonHelpString ( "Editor Toolbox (space-key)");        
+  this->EditorToolboxIconButton->SetBalloonHelpString ( "EditBox (F1)");        
   mtb->AddWidget ( this->EditorToolboxIconButton );
 
   // editor module icon
