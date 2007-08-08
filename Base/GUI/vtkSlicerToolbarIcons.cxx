@@ -15,7 +15,7 @@ vtkSlicerToolbarIcons::vtkSlicerToolbarIcons ( )
     this->VolumeIcon = vtkKWIcon::New();
     this->ModelIcon = vtkKWIcon::New();
     this->EditorIcon = vtkKWIcon::New();
-    //    this->EditorToolboxIcon = vtkKWIcon::New();
+    this->EditorToolboxIcon = vtkKWIcon::New();
     this->TransformIcon = vtkKWIcon::New();
     this->ColorIcon = vtkKWIcon::New();
     this->FiducialsIcon = vtkKWIcon::New();
@@ -83,13 +83,13 @@ vtkSlicerToolbarIcons::~vtkSlicerToolbarIcons ( )
     this->EditorIcon->Delete ( );
     this->EditorIcon = NULL;
     }
-/*
+
   if ( this->EditorToolboxIcon )
     {
     this->EditorToolboxIcon->Delete ( );
     this->EditorToolboxIcon = NULL;
     }
-*/
+
   if ( this->TransformIcon )
     {
     this->TransformIcon->Delete ( );
@@ -285,14 +285,13 @@ void vtkSlicerToolbarIcons::AssignImageDataToIcons ( )
                                 image_ToolbarEditorToolbox_pixel_size,
                                 image_ToolbarEditorToolbox_length, 0 );
     
-/*
-  // if we make an editor toolbox later, change its icon.
-    this->EditorToolboxIcon->SetImage( image_ToolbarEditorToolbox,
-                                       image_ToolbarEditorToolbox_width,
-                                       image_ToolbarEditorToolbox_height,
-                                       image_ToolbarEditorToolbox_pixel_size,
-                                       image_ToolbarEditorToolbox_length, 0 );
-*/    
+  // use the new toolbox image data for editor toolbox
+    this->EditorToolboxIcon->SetImage( image_EditorToolbox,
+                                       image_EditorToolbox_width,
+                                       image_EditorToolbox_height,
+                                       image_EditorToolbox_pixel_size,
+                                       image_EditorToolbox_length, 0 );
+
     this->TransformIcon->SetImage( image_ToolbarTransform,
                                image_ToolbarTransform_width,
                                image_ToolbarTransform_height,
@@ -485,7 +484,7 @@ void vtkSlicerToolbarIcons::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "VolumeIcon" << this->GetVolumeIcon ( ) << "\n";
     os << indent << "ModelIcon" << this->GetModelIcon ( ) << "\n";
     os << indent << "EditorIcon" << this->GetEditorIcon ( ) << "\n";
-//    os << indent << "EditorToolboxIcon" << this->GetEditorToolboxIcon ( ) << "\n";
+    os << indent << "EditorToolboxIcon" << this->GetEditorToolboxIcon ( ) << "\n";
     os << indent << "TransformIcon" << this->GetTransformIcon ( ) << "\n";    
     os << indent << "ColorIcon" << this->GetColorIcon ( ) << "\n";
     os << indent << "FiducialsIcon" << this->GetFiducialsIcon ( ) << "\n";

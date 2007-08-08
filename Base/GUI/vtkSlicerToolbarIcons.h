@@ -26,7 +26,7 @@ class vtkSlicerToolbarIcons : public vtkSlicerIcons
     vtkGetObjectMacro (VolumeIcon, vtkKWIcon);
     vtkGetObjectMacro (ModelIcon, vtkKWIcon);
     vtkGetObjectMacro (EditorIcon, vtkKWIcon);
-//    vtkGetObjectMacro (EditorToolboxIcon, vtkKWIcon);
+    vtkGetObjectMacro (EditorToolboxIcon, vtkKWIcon);
     vtkGetObjectMacro (TransformIcon, vtkKWIcon);
     vtkGetObjectMacro (ColorIcon, vtkKWIcon);
     vtkGetObjectMacro (FiducialsIcon, vtkKWIcon);
@@ -70,7 +70,7 @@ class vtkSlicerToolbarIcons : public vtkSlicerIcons
     vtkKWIcon *VolumeIcon;
     vtkKWIcon *ModelIcon;
     vtkKWIcon *EditorIcon;
-//    vtkKWIcon *EditorToolboxIcon;
+    vtkKWIcon *EditorToolboxIcon;
     vtkKWIcon *TransformIcon;
     vtkKWIcon *ColorIcon;
     vtkKWIcon *FiducialsIcon;

@@ -57,7 +57,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
     vtkGetObjectMacro (VolumeIconButton, vtkKWPushButton );
     vtkGetObjectMacro (ModelIconButton, vtkKWPushButton );
     vtkGetObjectMacro (EditorIconButton, vtkKWPushButton );
-//    vtkGetObjectMacro (EditorToolboxIconButton, vtkKWPushButton );
+    vtkGetObjectMacro (EditorToolboxIconButton, vtkKWPushButton );
     vtkGetObjectMacro (TransformIconButton, vtkKWPushButton );
     vtkGetObjectMacro (ColorIconButton, vtkKWPushButton );
     vtkGetObjectMacro (FiducialsIconButton, vtkKWPushButton);
@@ -143,7 +143,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
     vtkKWPushButton *VolumeIconButton;
     vtkKWPushButton *ModelIconButton;
     vtkKWPushButton *EditorIconButton;
-//  vtkKWPushButton *EditorToolboxIconButton;
+  vtkKWPushButton *EditorToolboxIconButton;
     vtkKWPushButton *TransformIconButton;    
     vtkKWPushButton *ColorIconButton;
     vtkKWPushButton *FiducialsIconButton;

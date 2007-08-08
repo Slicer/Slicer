@@ -52,7 +52,7 @@ vtkSlicerToolbarGUI::vtkSlicerToolbarGUI ( )
   this->VolumeIconButton = vtkKWPushButton::New ( );
   this->ModelIconButton = vtkKWPushButton::New ( );
   this->EditorIconButton = vtkKWPushButton::New ( );
-//  this->EditorToolboxIconButton = vtkKWPushButton::New ( );
+  this->EditorToolboxIconButton = vtkKWPushButton::New ( );
   this->ColorIconButton = vtkKWPushButton::New ( );
   this->FiducialsIconButton = vtkKWPushButton::New ( );
 //  this->MeasurementsIconButton = vtkKWPushButton::New ( );
@@ -138,14 +138,13 @@ vtkSlicerToolbarGUI::~vtkSlicerToolbarGUI ( )
     this->EditorIconButton->Delete ( );
     this->EditorIconButton = NULL;
     }
-/*
+
   if ( this->EditorToolboxIconButton )
     {
     this->EditorToolboxIconButton->SetParent ( NULL );
     this->EditorToolboxIconButton->Delete ( );
     this->EditorToolboxIconButton = NULL;
     }
-*/
   if ( this->TransformIconButton )
     {
     this->TransformIconButton->SetParent ( NULL );
@@ -318,6 +317,7 @@ void vtkSlicerToolbarGUI::RemoveGUIObservers ( )
   this->HomeIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->DataIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->EditorIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->EditorToolboxIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->VolumeIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->ModelIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->FiducialsIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -342,6 +342,7 @@ void vtkSlicerToolbarGUI::AddGUIObservers ( )
   this->HomeIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->DataIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->EditorIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->EditorToolboxIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->VolumeIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->ModelIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->FiducialsIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -519,6 +520,13 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
             vtkDebugMacro ("ERROR:  no slicer module gui found for Editor\n");
             }
           }
+        else if (pushb == this->EditorToolboxIconButton && event == vtkKWPushButton::InvokedEvent )
+          {
+          //---
+          //--- Add code to pop up Editor toolbox here
+          //---
+          }
+
         }
 
       // TODO: figure out why we can't resume view rock or spin.
@@ -1036,16 +1044,16 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   mtb->AddWidget ( this->FiducialsIconButton );
 
   // editor module icon
-/*
+
   this->EditorToolboxIconButton->SetParent ( mtb->GetFrame ( ) );
   this->EditorToolboxIconButton->Create ( );
   this->EditorToolboxIconButton->SetReliefToFlat ( );
   this->EditorToolboxIconButton->SetBorderWidth ( 0 );
   this->EditorToolboxIconButton->SetOverReliefToNone ( );
   this->EditorToolboxIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetEditorToolboxIcon ( ) );
-  this->EditorToolboxIconButton->SetBalloonHelpString ( "Editor Toolbox (not yet available)");        
+  this->EditorToolboxIconButton->SetBalloonHelpString ( "Editor Toolbox (space-key)");        
   mtb->AddWidget ( this->EditorToolboxIconButton );
-*/
+
   // editor module icon
   this->EditorIconButton->SetParent ( mtb->GetFrame ( ) );
   this->EditorIconButton->Create ( );
