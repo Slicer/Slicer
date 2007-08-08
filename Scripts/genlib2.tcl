@@ -283,22 +283,6 @@ if { ![file exists $::TK_TEST_FILE] || $::GENLIB(update) } {
 
     runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/tcl/tk tk
 
-    if {$isDarwin} {
-        if { ![file exists $SLICER_LIB/tcl/isPatched] } {
-                puts "Patching..."
-                runcmd curl -k -O https://share.spl.harvard.edu/share/birn/public/software/External/Patches/tkEventPatch.diff
-                runcmd cp tkEventPatch.diff $SLICER_LIB/tcl/tk/generic
-                cd $SLICER_LIB/tcl/tk/generic
-                runcmd patch -i tkEventPatch.diff
-
-                # create a file to make sure tkEvent.c isn't patched twice
-                runcmd touch $SLICER_LIB/tcl/isPatched
-                file delete $SLICER_LIB/tcl/tk/generic/tkEventPatch.diff
-        } else {
-            puts "tkEvent.c already patched."
-        }
-    }
-
     if {$isWindows} {
         # don't need to do windows
     } else {
@@ -364,18 +348,6 @@ if { ![file exists $::BLT_TEST_FILE] || $::GENLIB(update) } {
     if { $isWindows } {
         # can't do Windows
     } elseif { $isDarwin } {
-        if { ![file exists $SLICER_LIB/tcl/isPatchedBLT] } {
-            puts "Patching..."
-            runcmd curl -k -O https://share.spl.harvard.edu/share/birn/public/software/External/Patches/bltpatch
-            cd $SLICER_LIB/tcl/blt
-            runcmd patch -p2 < ../bltpatch
-
-            # create a file to make sure BLT isn't patched twice
-            runcmd touch $SLICER_LIB/tcl/isPatchedBLT
-            file delete $SLICER_LIB/tcl/bltpatch
-        } else {
-            puts "BLT already patched."
-        }
 
         cd $SLICER_LIB/tcl/blt
         runcmd ./configure --with-tcl=$SLICER_LIB/tcl/tcl/unix --with-tk=$SLICER_LIB/tcl-build --prefix=$SLICER_LIB/tcl-build --enable-shared --x-includes=/usr/X11R6/include --with-cflags=-fno-common
