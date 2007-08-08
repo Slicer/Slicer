@@ -114,8 +114,10 @@ void vtkITKArchetypeImageSeriesVectorReader::ExecuteData(vtkDataObject *output)
       typedef itk::VectorImage<VectorPixelType,3> image2##typeN;\
       typedef itk::ImageSource<image2##typeN> FilterType; \
       FilterType::Pointer filter; \
-      itk::ImageFileReader<image2##typeN>::Pointer reader2##typeN = \
-            itk::ImageFileReader<image2##typeN>::New(); \
+      typedef itk::ImageFileReader<\
+        image2##typeN, \
+          itk::DefaultConvertPixelTraits < VectorPixelType > > ReaderType##typeN; \
+      ReaderType##typeN::Pointer reader2##typeN = ReaderType##typeN::New();\
       reader2##typeN->SetFileName(this->FileNames[0].c_str()); \
       if (this->UseNativeCoordinateOrientation) \
         { \
