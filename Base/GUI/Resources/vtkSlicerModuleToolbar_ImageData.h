@@ -54,13 +54,13 @@ static const unsigned char image_ToolbarEditor[] =
 static const unsigned int  image_EditorToolbox_width          = 21;
 static const unsigned int  image_EditorToolbox_height         = 21;
 static const unsigned int  image_EditorToolbox_pixel_size     = 3;
-static const unsigned long image_EditorToolbox_length         = 200;
+static const unsigned long image_EditorToolbox_length         = 160;
 static const unsigned long image_EditorToolbox_decoded_length = 1323;
 
 static const unsigned char image_EditorToolbox[] = 
-  "eNpjYmJgogz9JxcQr11/iT4yIkk7UP2pZ1uBCJlBO+1oTsWKcGnHahfxtlt6TyNb+6S5Rx"
-  "XNOoEkeY7XcZhgEb8RSJIRdEBLgXohCMgmVTvEagjCdAD+ZINsNaYDCCZaZKuxOgCP9rOX"
-  "nlS17QAiz6h5wJAPTFoM4QLFScoybZP2A7XPWnySvBw3pLWTUdpQggD7HGqQ";
+  "eNpjYmJgogz9JxcMfu0M9ZzIiCTtQPWnnm0FIv0l+hAGsglU147mVCACakRGeLRj2oXJoK"
+  "l2NKdiokHreOSQhzuVjGQDdwaaeiITLYXakX0BFzEysgSitLQ0CIOMHGdkZDRz5kxXV1ey"
+  "MyzQBCrmdwoBAEwyY7Q=";
 
 /* 
  * Resource generated for file:
