@@ -9,7 +9,7 @@
 #include "itkImageIOBase.h"
 #include "itkMatrix.h"
 
-#include <itkzlib/zlib.h>
+#include <itk_zlib.h>
 
 //#include "itkMGHIOWin32Header.h"
 
