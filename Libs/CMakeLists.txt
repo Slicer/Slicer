@@ -21,6 +21,7 @@ SUBDIRS(
       MRMLIDImageIO
       MGHImageIO
       IGT
+      #SIGN
 )
 
 

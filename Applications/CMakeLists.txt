@@ -3,6 +3,7 @@ PROJECT( Applications )
 SUBDIRS(
   CLI
   GUI
+  #SIGN
 )
 
 
