@@ -481,7 +481,7 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
           vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
           if (app)
             {
-            std::string plotReturn = app->Script("vtkFreeSurferReadersPlotPlotData %d %d", pointID, 0);
+            std::string plotReturn = app->Script("vtkFreeSurferReadersPlotPlotData %d %s", pointID, nodeName);
             vtkDebugMacro("Plot call return value = " << plotReturn.c_str());
             // swallow the pick
             if (this->GUICallbackCommand != NULL)
