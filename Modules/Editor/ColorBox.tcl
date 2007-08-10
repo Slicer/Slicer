@@ -77,13 +77,19 @@ itcl::body ColorBox::create { } {
   bind [$o(toplevel) GetWidgetName] <KeyPress> "$this hide"
 
 
+  $this update
   set node [$this getColorNode]
   if { $node == "" } {
-    set o(colors) [vtkNew vtkKWLabel]
+    set o(colors) [vtkNew vtkKWPushButton]
     $o(colors) SetParent $o(toplevel)
     $o(colors) SetText "Cannot display colors.\nNo label layer is selected."
     $o(colors) Create
+
+    set tag [$o(colors) AddObserver AnyEvent "$this processEvents $o(colors)"]
+    lappend _observerRecords [list $o(colors) $tag]
+
   } else {
+
     set o(colors) [vtkNew vtkSlicerColorDisplayWidget]
     $o(colors) SetParent $o(toplevel)
     $o(colors) SetMRMLScene $::slicer3::MRMLScene
@@ -92,19 +98,17 @@ itcl::body ColorBox::create { } {
     $colorNode SetTypeToLabels
     $o(colors) SetColorNode [$::slicer3::MRMLScene GetNodeByID [$colorNode GetTypeAsIDString]]
     $colorNode Delete
+
+    set tag [$o(colors) AddObserver AnyEvent "$this processEvents $o(colors)"]
+    lappend _observerRecords [list $o(colors) $tag]
   }
   pack [$o(colors) GetWidgetName] \
     -side top -anchor e -fill x -padx 2 -pady 2 
 
-  set tag [$o(colors) AddObserver AnyEvent "$this processEvents $o(colors)"]
-  lappend _observerRecords [list $o(colors) $tag]
 
   $this setMode $mode
 
   $o(toplevel) Display
-}
-
-itcl::body ColorBox::update {} {
 }
 
 #
