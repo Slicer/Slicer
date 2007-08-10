@@ -56,6 +56,9 @@ Version:   $Revision: 1.2 $
 #include "vtkSlicerViewerWidget.h"
 #include "vtkSlicerViewerInteractorStyle.h"
 
+// for path manipulation
+#include "itksys/SystemTools.hxx"
+
 //------------------------------------------------------------------------------
 vtkQdecModuleGUI* vtkQdecModuleGUI::New()
 {
@@ -96,6 +99,14 @@ vtkQdecModuleGUI::vtkQdecModuleGUI()
 //----------------------------------------------------------------------------
 vtkQdecModuleGUI::~vtkQdecModuleGUI()
 {
+  if (this->GetLogic()->GetTclScriptLoaded())
+    {
+    vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
+    if (app)
+      {
+      app->Script("vtkFreeSurferReadersExit");
+      }
+    }
   this->RemoveMRMLNodeObservers ( );
   this->RemoveLogicObservers ( );
   this->SetModuleLogic (NULL);
@@ -451,12 +462,12 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
       vtkSlicerViewerInteractorStyle::SafeDownCast(caller) != NULL &&
       callData != NULL)
     {
-    this->DebugOn();
     vtkDebugMacro("vtkQdecModuleGUI:ProcessGUIEvents: Pick event!\n");
     // do the pick
     int x = ((int *)callData)[0];
     int y = ((int *)callData)[1];
-    if (this->GetViewerWidget()->Pick(x,y) != 0)
+    if (this->GetViewerWidget() &&
+        this->GetViewerWidget()->Pick(x,y) != 0)
       {
       // check for a valid vertex point
       vtkIdType pointID = this->GetViewerWidget()->GetPickedPointID();
@@ -498,7 +509,6 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
       {
       vtkDebugMacro("vtkQdecModuleGUI:ProcessGUIEvents: invalid pick");
       }
-    this->DebugOff();
     return;
     }
 }
@@ -676,7 +686,24 @@ void vtkQdecModuleGUI::BuildGUI ( )
   this->LoadTableButton->SetParent ( subjectsFrame->GetFrame() );
   this->LoadTableButton->Create ( );
   this->LoadTableButton->SetLabelText ("Load Table Data File:");
-  this->LoadTableButton->GetWidget()->SetText ("None");
+  // check to see if there's a qdec table data file in the subjects dir
+  
+  std::string testDatFile = "None";
+  if (getenv("SUBJECTS_DIR") != NULL)
+    {
+    std::vector<std::string> pathcomponents;
+    itksys::SystemTools::SplitPath(getenv("SUBJECTS_DIR"), pathcomponents);
+    pathcomponents.push_back("qdec");
+    pathcomponents.push_back("qdec.table.dat");
+    testDatFile = itksys::SystemTools::JoinPath(pathcomponents);
+
+    if (!itksys::SystemTools::LocateFileInDir(testDatFile.c_str(), testDatFile.c_str(), testDatFile))
+      {
+      testDatFile = "None";
+      }
+    }
+  this->LoadTableButton->GetWidget()->SetText (testDatFile.c_str());
+
   this->LoadTableButton->GetWidget()->GetLoadSaveDialog()->SetTitle("Open QDEC table data file");
   this->LoadTableButton->GetWidget()->GetLoadSaveDialog()->RetrieveLastPathFromRegistry("OpenPath");
   this->LoadTableButton->GetWidget()->GetLoadSaveDialog()->SetFileTypes("{ {All} {.*} } { {Data} {.dat} }");
