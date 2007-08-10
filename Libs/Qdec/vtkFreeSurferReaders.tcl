@@ -290,7 +290,8 @@ proc vtkFreeSurferReadersGDFInit {} {
 # .END
 #-------------------------------------------------------------------------------
 proc vtkFreeSurferReadersExit {} {
-    if {$::vtkFreeSurferReaders(gbLibLoaded)} {
+    global vtkFreeSurferReaders
+    if {$vtkFreeSurferReaders(gbLibLoaded)} {
         catch "vtkFreeSurferReaders(gdfReader) Delete"
     }
 }
@@ -743,13 +744,34 @@ proc vtkFreeSurferReadersPlotParseHeader { ifnHeader } {
 # from scratch.
 # .ARGS
 # int iID the id of the vertex to plot
-# int dID the id of the data file to plot, can be found in $::vtkFreeSurferReaders(gGDF,dataID)
+# int dID the id of the data file to plot, can be found in $::vtkFreeSurferReaders(gGDF,dataID). If a string, is treated as the model name, found in vtkFreeSurferReaders(plot,modelID) linked with it's data id, and converted to an int
 # vector RAS the x,y,z of the vertex, optional
 # .END
 #-------------------------------------------------------------------------------
 proc vtkFreeSurferReadersPlotPlotData { iID dID {RAS {0.0 0.0 0.0}} } {
     global vtkFreeSurferReaders
 
+    if {$::vtkFreeSurferReaders(verbose)} {
+        puts "vtkFreeSurferReadersPlotPlotData: iID = $iID, dID = $dID"
+    }
+    # figure out if the dID is an int or a text string
+    if { [string is integer $dID] == 0} {
+        # find the model id 
+        if {$::vtkFreeSurferReaders(verbose)} {
+            puts "vtkFreeSurferReadersPlotPlotData: trying to link data id $dID with an integer value from $vtkFreeSurferReaders(plot,modelID)"
+        }
+        foreach {dataID modelID} $vtkFreeSurferReaders(plot,modelID) {
+            if {$::vtkFreeSurferReaders(verbose)} {
+                puts "Checking data id $dataID and modelID $modelID"
+            }
+            if {$modelID == $dID} {
+                set dID $dataID
+                if {$::vtkFreeSurferReaders(verbose)} {
+                    puts "Found data id $dID for model $modelID"
+                }
+            }
+        }
+    }
     # Don't plot if the window isn't built or we don't have data.
     if { ![info exists vtkFreeSurferReaders(gWidgets,$dID,bWindowBuilt)] ||
          ![info exists vtkFreeSurferReaders(gGDF,$dID,bReadHeader)] ||
@@ -1919,6 +1941,9 @@ proc vtkFreeSurferReadersPlotApply { mid } {
     }
     vtkFreeSurferReadersGDFInit
     set vtkFreeSurferReaders(gGDF,dataID) [vtkFreeSurferReadersPlotParseHeader $vtkFreeSurferReaders(PlotFileName)]
+    if {$::vtkFreeSurferReaders(verbose)} {
+        puts "vtkFreeSurferReadersPlotApply: have model id $mid and data id $vtkFreeSurferReaders(gGDF,dataID)"
+    }
 
     # now read the data
     set datafilename [vtkFreeSurferReaders(gdfReader) GetDataFileName]
@@ -1936,7 +1961,7 @@ proc vtkFreeSurferReadersPlotApply { mid } {
     set Volume(name) [vtkFreeSurferReaders(gdfReader) GetTitle]
 
     if {$::vtkFreeSurferReaders(verbose)} {
-        puts "vtkFreeSurferReadersGDFPlotRead: read the header $vtkFreeSurferReaders(PlotFileName), now about to try reading the data file $vtkFreeSurferReaders(VolumeFileName)"
+        puts "vtkFreeSurferReadersGDFPlotApply: read the header $vtkFreeSurferReaders(PlotFileName), now about to try reading the data file $vtkFreeSurferReaders(VolumeFileName)"
     }
 
     # this isn't working so well, so save the scalars as a vtkDataArray    
@@ -1986,9 +2011,9 @@ proc vtkFreeSurferReadersPlotApply { mid } {
     
     if {$::vtkFreeSurferReaders(verbose)} {
         if {[info var scalarsVar] != ""} {
-            puts "vtkFreeSurferReadersGDFPlotRead: read data file, got id $scalarsVar"
+            puts "vtkFreeSurferReadersGDFPlotApply: read data file, got id $scalarsVar"
         } else {
-            puts "vtkFreeSurferReadersGDFPlotRead: read data file, but scalars var is not valid"
+            puts "vtkFreeSurferReadersGDFPlotApply: read data file, but scalars var is not valid"
         }
     }
 
@@ -1997,7 +2022,11 @@ proc vtkFreeSurferReadersPlotApply { mid } {
     # get the model id of the active model (assume that the linking still works), otherwise
     # need to figure out which of $Model(idList) is $modelname
     # set mid $::Model(activeID)
-    set vtkFreeSurferReaders(plot,$vtkFreeSurferReaders(gGDF,dataID),modelID) $mid
+    # set vtkFreeSurferReaders(plot,$vtkFreeSurferReaders(gGDF,dataID),modelID) $mid
+    lappend vtkFreeSurferReaders(plot,modelID) $vtkFreeSurferReaders(gGDF,dataID) $mid
+    if {$::vtkFreeSurferReaders(verbose)} {
+        puts "Linking data id $vtkFreeSurferReaders(gGDF,dataID) to model id: $mid"
+    }
 
     # set it to be pickable
     #::Model($mid,actor,viewRen) SetPickable 1
@@ -2021,6 +2050,9 @@ proc vtkFreeSurferReadersPlotApply { mid } {
     set vtkFreeSurferReaders(gPlot,$vtkFreeSurferReaders(gGDF,dataID),state,nVariable) 0
     vtkFreeSurferReadersPlotSetMode $vtkFreeSurferReaders(gGDF,dataID)
 
+    if {$::vtkFreeSurferReaders(verbose)} {
+        puts "vtkFreeSurferReadersPlotApply: returning data id $vtkFreeSurferReaders(gGDF,dataID)"
+    }
     return $vtkFreeSurferReaders(gGDF,dataID)
 }
 
@@ -2262,7 +2294,7 @@ proc vtkFreeSurferReadersPickPlot {widget x y} {
                 puts "\tPlotting point $pid, data id = $vtkFreeSurferReaders(gGDF,dataID)"
             }
             set ::vtkFreeSurferReaders(verbose) $verb
-            vtkFreeSurferReadersPlotPlotData $pid $vtkFreeSurferReaders(gGDF,dataID) 
+            vtkFreeSurferReadersPlotPlotData $pid $vtkFreeSurferReaders(plot,$vtkFreeSurferReaders(gGDF,dataID),modelID) 
         }
     } else {
         if {$::vtkFreeSurferReaders(verbose)} {
